@@ -139,7 +139,7 @@ BOOL SVBlobAnalyzeFeatureDialogClass::OnInitDialog()
 
 		if (!m_pTool)
 		{
-			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+			SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 			Exception.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16080);
 		}
 		
@@ -415,7 +415,7 @@ void SVBlobAnalyzeFeatureDialogClass::OnButtonSetRange()
 
 	if (index == LB_ERR || index < 0)
 	{
-		SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+		SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16087);
 	}
 	else
@@ -424,7 +424,7 @@ void SVBlobAnalyzeFeatureDialogClass::OnButtonSetRange()
 
 		if (nullptr == pAnalyzerResult)
 		{
-			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16088);
 		}
 		else

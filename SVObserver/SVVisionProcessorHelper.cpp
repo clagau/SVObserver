@@ -32,7 +32,6 @@
 #include "SVObjectLibrary\GlobalConst.h"
 #include "SVObjectLibrary\SVObjectLibrary.h"
 #include "ObjectInterfaces\SVUserMessage.h"
-#include "MessageNotification.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -1163,10 +1162,14 @@ HRESULT SVVisionProcessorHelper::RegisterMonitorList( const SVString& rListName,
 void SVVisionProcessorHelper::Startup()
 {
 	m_AsyncProcedure.Create( &SVVisionProcessorHelper::APCThreadProcess, boost::bind(&SVVisionProcessorHelper::ThreadProcess, this, _1), "SVVisionProcessorHelper", SVNone );
+
+	SvStl::MessageMgrStd::setNotificationFunction( boost::bind( &SVVisionProcessorHelper::FireMessageNotification, this, _1, _2, _3 ) );
 }
 
 void SVVisionProcessorHelper::Shutdown()
 {
+	SvStl::MessageMgrStd::setNotificationFunction( SvStl::NotifyFunctor() );
+
 	m_AsyncProcedure.Destroy();
 }
 
@@ -1193,9 +1196,11 @@ HRESULT SVVisionProcessorHelper::FireModeChanged(svModeEnum mode)
 	HRESULT status = m_AsyncProcedure.Signal(nullptr);
 	return status;
 }
-HRESULT SVVisionProcessorHelper::FireMessageNotification(SvStl::NotificationEnum type, int ErrorNumber, LPCTSTR errormessage  )
+HRESULT SVVisionProcessorHelper::FireMessageNotification( int Type, int MessageNumber, LPCTSTR MessageText )
 {
-	m_MessageNotification.SetNotification(type, ErrorNumber, errormessage  );
+	SvStl::NotificationEnum NotificationType( SvStl::NotificationEnum::MsgUknown );
+	NotificationType = static_cast<SvStl::NotificationEnum> (Type);
+	m_MessageNotification.SetNotification( NotificationType, MessageNumber, MessageText );
 	HRESULT status = m_AsyncProcedure.Signal(nullptr);
 	return status;
 }
@@ -1204,14 +1209,14 @@ void CALLBACK SVVisionProcessorHelper::APCThreadProcess( DWORD_PTR dwParam )
 {
 }
 
-void SVVisionProcessorHelper::ThreadProcess( bool& p_WaitForEvents )
+void SVVisionProcessorHelper::ThreadProcess( bool& rWaitForEvents )
 {
-	ProcessLastModified( p_WaitForEvents );
-	NotifyModeChanged( p_WaitForEvents );
-	m_MessageNotification.ProcessNotification();
+	ProcessLastModified( rWaitForEvents );
+	NotifyModeChanged( rWaitForEvents );
+	ProcessNotification( rWaitForEvents );
 }
 
-void SVVisionProcessorHelper::ProcessLastModified( bool& p_WaitForEvents )
+void SVVisionProcessorHelper::ProcessLastModified( bool& rWaitForEvents )
 {
 	if( m_PrevModifiedTime != m_LastModifiedTime )
 	{
@@ -1233,7 +1238,35 @@ void SVVisionProcessorHelper::ProcessLastModified( bool& p_WaitForEvents )
 	}
 }
 
-void SVVisionProcessorHelper::NotifyModeChanged( bool& p_WaitForEvents )
+void SVVisionProcessorHelper::ProcessNotification( bool& rWaitForEvents )
+{
+
+	Concurrency::critical_section::scoped_lock  scopedLock( m_MessageNotification.getLock() );
+
+	if( !m_MessageNotification.isProcessed() )
+	{
+		std::string JsonNotification;
+		Json::FastWriter Writer;
+		Json::Value Object(Json::objectValue);
+		Json::Value ElementObject(Json::objectValue);
+
+		ElementObject[SVRC::notification::MessageType] = m_MessageNotification.getType();
+		ElementObject[SVRC::notification::MessageNumber] = m_MessageNotification.getMessageNumber();
+		ElementObject[SVRC::notification::MessageText] = m_MessageNotification.getMessageText();
+
+		Object[SVRC::notification::notification ] = SVRC::notification::MessageNotification;
+		Object[SVRC::notification::dataitems] = ElementObject;
+
+		JsonNotification = Writer.write( Object ).c_str();
+
+		SVSocketRemoteCommandManager::Instance().ProcessJsonNotification( JsonNotification );
+
+		m_MessageNotification.setProcessed( true );
+	}
+
+}
+
+void SVVisionProcessorHelper::NotifyModeChanged( bool& rWaitForEvents )
 {
 	if( m_prevMode != m_lastMode )
 	{
@@ -1300,4 +1333,3 @@ void SVVisionProcessorHelper::SetValuesOrImagesMonitoredObjectLists( const SVNam
 		}
 	}
 }
-

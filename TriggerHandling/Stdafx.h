@@ -72,12 +72,7 @@
 #include <boost/config.hpp>
 #define BOOST_DATE_TIME_NO_LIB
 #include <boost/date_time.hpp>
+#include <boost/function.hpp> //Used by static library
 #include <boost/utility.hpp>
 #pragma endregion Precompiled Headers
-
-#include "SVObjectLibrary\SVClsIds.h"
-// Global includes that everyone needs
-//@ Not every module needs these includes - fix this - SEJ
-#include "SVOResource\resource.h"
-
 

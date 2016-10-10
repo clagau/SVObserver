@@ -16,7 +16,7 @@
 #include "SVPatAdvancedPageClass.h"
 #include "SVPatAnalyzeSetupDlgSheet.h"
 #include "SVGlobal.h"
-#include "SVStatusLibrary\MessageManagerResource.h"
+#include "SVStatusLibrary\MessageManager.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
 #include "SVMessage\SVMessage.h"
 #include "SVOMFCLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
@@ -478,7 +478,7 @@ BOOL SVPatAdvancedPageClass::ProcessOnKillfocus(UINT nId)
 	catch ( const SvStl::MessageContainer& rSvE )
 	{
 		//Now that we have caught the exception we would like to display it
-		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 		Msg.setMessage( rSvE.getMessage() );
 		GetDlgItem(nId)->SetFocus();
 		((CEdit *)GetDlgItem(nId))->SetSel(0, -1);
@@ -604,7 +604,7 @@ void SVPatAdvancedPageClass::OnOK()
 	catch ( const SvStl::MessageContainer& rSvE )
 	{
 		//Now that we have caught the exception we would like to display it
-		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 		Msg.setMessage( rSvE.getMessage() );
 	}
 }
@@ -680,7 +680,7 @@ BOOL SVPatAdvancedPageClass::OnKillActive()
 	catch ( const SvStl::MessageContainer& rSvE )
 	{
 		//Now that we have caught the exception we would like to display it
-		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 		Msg.setMessage( rSvE.getMessage() );
 		return false;
 	}

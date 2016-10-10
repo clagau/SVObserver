@@ -27,7 +27,7 @@ static char THIS_FILE[] = __FILE__;
 BOOL SVPackedFile::PackFiles( const CString& szFile, const CString& szPackedFile )
 {
 	CFileException FileException;
-	SvStl::MessageMgrNoDisplay Exception( SvStl::DataOnly );
+	SvStl::MessageMgrStd Exception( SvStl::DataOnly );
 	TCHAR szMessage[80], szDrive[_MAX_DRIVE], szDir[_MAX_DIR], szFName[_MAX_FNAME], szExt[_MAX_EXT];
 	HANDLE hFindFile;
 	WIN32_FIND_DATAW FindData;
@@ -145,7 +145,7 @@ BOOL SVPackedFile::UnPackFiles( const CString& szPackedFile, const CString& szUn
 	DWORD dwPackedFileVersion;
 	TCHAR szMessage[80];
 	CString szPath;
-	SvStl::MessageMgrNoDisplay Exception( SvStl::DataOnly );
+	SvStl::MessageMgrStd Exception( SvStl::DataOnly );
 	UINT CountRead, PathLen, BytesRead;
 	BYTE Buffer[_MAX_PATH * sizeof (TCHAR)];
 	TCHAR szDrive[_MAX_DRIVE], szDir[_MAX_DIR], szFName[_MAX_FNAME], szExt[_MAX_EXT];

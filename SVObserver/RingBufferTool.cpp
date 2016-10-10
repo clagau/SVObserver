@@ -149,7 +149,7 @@ BOOL RingBufferTool::OnValidate()
 	if( SvOi::cRingBufferDepthMin > ringBufferDepth || SvOi::cRingBufferDepthMax < ringBufferDepth )
 	{
 		bValid = false;
-		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+		SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 		SVStringArray msgList;
 		msgList.push_back(SvUl_SF::Format("%d", SvOi::cRingBufferDepthMin));
 		msgList.push_back(SvUl_SF::Format("%d", SvOi::cRingBufferDepthMax));

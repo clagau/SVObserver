@@ -137,7 +137,7 @@ void TableObject::createColumnObject(SVGUID embeddedID, LPCTSTR name, int arrayS
 	{
 		delete pObject;
 		ASSERT(FALSE);
-		SvStl::MessageMgrNoDisplay e( SvStl::DataOnly );
+		SvStl::MessageMgrStd e( SvStl::DataOnly );
 		e.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_TableObject_createColumnValueObjectFailed, SvStl::SourceFileParams(StdMessageParams) );
 		e.Throw();
 	}

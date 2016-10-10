@@ -630,7 +630,7 @@ HRESULT SVInspectionTreeParser< SVTreeType >::CreateInspectionObject(GUID& inspe
 		}
 		else
 		{
-			SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
+			SvStl::MessageMgrStd e( SvStl::LogOnly );
 			e.setMessage( SVMSG_SVO_57_PARSERTREE_INSPECTIONCREATE_ERROR, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10010_TreeParser_InspectionCreateFailed );
 			hr = -SvOi::Err_10010_TreeParser_InspectionCreateFailed;
 		}

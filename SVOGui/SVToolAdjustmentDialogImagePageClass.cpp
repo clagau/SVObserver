@@ -15,7 +15,7 @@
 //Moved to precompiled header: #include <afxctl.h>
 #include "SVToolAdjustmentDialogImagePageClass.h"
 #include "SVObjectLibrary\SVClsIDs.h"
-#include "SVStatusLibrary\MessageManagerResource.h"
+#include "SVStatusLibrary\MessageManager.h"
 #include "TextDefinesSvOg.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
 #include "SVMessage\SVMessage.h"
@@ -121,7 +121,7 @@ namespace Seidenader { namespace SVOGui
 
 				if (bIsValid && !IsToolValid())
 				{
-					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_ToolPositionError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10232 );
 				}
 			}

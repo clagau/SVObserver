@@ -19,7 +19,7 @@
 #include "SVObjectLibrary\SVObjectLibrary.h"
 #include "SVObjectLibrary\GlobalConst.h"
 #include "SVMessage\SVMessage.h"
-#include "SVStatusLibrary\MessageManagerResource.h"
+#include "SVStatusLibrary\MessageManager.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
 #include "ObjectSelectorLibrary/SelectorItemVector.h"
 #pragma endregion Includes
@@ -261,7 +261,7 @@ bool RootObject::createRootChild( LPCTSTR ChildName, SVObjectTypeEnum ObjectType
 	}
 	else
 	{
-		SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
+		SvStl::MessageMgrStd Exception( SvStl::LogAndDisplay );
 		Exception.setMessage( SVMSG_SVO_67_MAIN_BRANCH_NOT_CREATED, ChildName, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_25017_RootChildCreate );
 	}
 	

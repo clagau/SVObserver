@@ -63,7 +63,7 @@ void SVPixelAnalyzerClass::init()
 
 	if (!pAnalyzerResult)
 	{
-		SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+		SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16187);
 
 	}
@@ -102,7 +102,7 @@ BOOL SVPixelAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateStruc
         if (! SVImageAnalyzerClass::CreateObject( PCreateStructure ) )
         {
 			
-			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16121);
 			LastError =  -SvOi::Err_16121;
 			break;
@@ -112,7 +112,7 @@ BOOL SVPixelAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateStruc
 		
         if (!pSVImage)
         {
-			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16122);
 			LastError =  -SvOi::Err_16122;
 			break;
@@ -124,7 +124,7 @@ BOOL SVPixelAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateStruc
 		}
 		catch(const SvStl::MessageContainer& rContain)
 		{
-			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 			MesMan.setMessage( rContain.getMessage());
 			LastError =  -SvOi::Err_16123;
 			break;
@@ -146,7 +146,7 @@ BOOL SVPixelAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateStruc
 		
 		if( m_histResultID.empty() )
 		{
-			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16124);
 			LastError =  -SvOi::Err_16124;
 			break;
@@ -187,7 +187,7 @@ BOOL SVPixelAnalyzerClass::onRun(SVRunStatusClass &RRunStatus)
 
         if( ! pInputImage )
         {
-			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16188);
 			LastError = SvOi::Err_16188;
 			break;
@@ -195,7 +195,7 @@ BOOL SVPixelAnalyzerClass::onRun(SVRunStatusClass &RRunStatus)
 
         if ( ! pInputImage->GetImageHandle( ImageHandle ) || ImageHandle.empty() )
         {
-			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16189);
 			LastError = SvOi::Err_16189;
 			break;
@@ -208,7 +208,7 @@ BOOL SVPixelAnalyzerClass::onRun(SVRunStatusClass &RRunStatus)
 
 		if( l_Code != SVMEE_STATUS_OK )
         {
-			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16190);
 			LastError = SvOi::Err_16190;
 			break;
@@ -218,7 +218,7 @@ BOOL SVPixelAnalyzerClass::onRun(SVRunStatusClass &RRunStatus)
 		
 		if( l_Code != SVMEE_STATUS_OK )
         {
-			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16191);
 			LastError = SvOi::Err_16191;
 			break;
@@ -252,7 +252,7 @@ BOOL SVPixelAnalyzerClass::OnValidate ()
 
 		if ( m_histResultID.empty() )
 		{
-			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16197);
 			LastError = -SvOi::Err_16197;
 			break;
@@ -261,7 +261,7 @@ BOOL SVPixelAnalyzerClass::OnValidate ()
 
 		if ( m_alHistValues.size() != m_svlHistValueArraySize)
 		{
-			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16198);
 			LastError = -SvOi::Err_16198;
 			break;

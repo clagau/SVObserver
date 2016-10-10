@@ -211,7 +211,7 @@ long SVLongValueObjectClass::convertString2Long(const CString& rValue ) const
 	SVStringArray msgList;
 	msgList.push_back(SVString(rValue));
 	msgList.push_back(GetName());
-	SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+	SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 	Exception.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_ValueObject_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 	Exception.Throw();
 	return 0; //will never reached, because the exception will throw before. But this line avoid a warning

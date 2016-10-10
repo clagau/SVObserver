@@ -31,7 +31,7 @@
 #include "SVImageLibrary\MatroxImageData.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
-#include "SVStatusLibrary\MessageManagerResource.h"
+#include "SVStatusLibrary\MessageManager.h"
 #include "TextDefinesSvO.h"
 #pragma endregion Includes
 
@@ -234,7 +234,7 @@ BOOL SVImageClass::DestroyImage()
 
 		if ( ! bOk )
 		{
-			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+			SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_ImageClass_DestroyError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10051 ); 
 		}
 	}
@@ -1005,7 +1005,7 @@ HRESULT SVImageClass::GetChildImageHandle( const GUID& p_rChildID, SVSmartHandle
 				CString sMsgStr;
 				sMsgStr.Format("S_FALSE == l_pParentImage->GetChildImageHandle( p_rChildID, p_rsvBufferHandle )");
 
-				SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+				SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 				Exception.setMessage( SVMSG_SVO_5053_CHILDIMAGEHANDLESFALSE, sMsgStr, SvStl::SourceFileParams(StdMessageParams) );
 			}
 		}
@@ -1014,7 +1014,7 @@ HRESULT SVImageClass::GetChildImageHandle( const GUID& p_rChildID, SVSmartHandle
 			CString sMsgStr;
 			sMsgStr.Format("nullptr == l_pParentImage");
 
-			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+			SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 			Exception.setMessage( SVMSG_SVO_5054_NULLPARENTIMAGE, sMsgStr, SvStl::SourceFileParams(StdMessageParams) );
 
 			l_hrOk = S_FALSE;
@@ -1037,7 +1037,7 @@ HRESULT SVImageClass::GetChildImageHandle( const GUID& p_rChildID, SVSmartHandle
 					CString sMsgStr;
 					sMsgStr.Format("if (l_Iter->second.m_pImageHandles->GetImageHandle( p_rsvBufferHandle )");
 
-					SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+					SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 					Exception.setMessage( SVMSG_SVO_5055_NULLCHILDHANDLE, sMsgStr, SvStl::SourceFileParams(StdMessageParams) );
 				}
 			}
@@ -1068,7 +1068,7 @@ HRESULT SVImageClass::GetChildImageHandle( const GUID& p_rChildID, SVImageIndexS
 				CString sMsgStr;
 				sMsgStr.Format("S_FALSE == l_pParentImage->GetChildImageHandle( m_svChildIndexArray[ p_lChildIndex ], p_rsvBufferHandle )");
 
-				SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+				SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 				Exception.setMessage( SVMSG_SVO_5056_CHILDIMAGEHANDLESFALSE, sMsgStr, SvStl::SourceFileParams(StdMessageParams) );
 			}
 
@@ -1078,7 +1078,7 @@ HRESULT SVImageClass::GetChildImageHandle( const GUID& p_rChildID, SVImageIndexS
 			CString sMsgStr;
 			sMsgStr.Format("nullptr == l_pParentImage");
 
-			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+			SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 			Exception.setMessage( SVMSG_SVO_5057_NULLPARENTIMAGE, sMsgStr, SvStl::SourceFileParams(StdMessageParams) );
 			l_hrOk = S_FALSE;
 		}
@@ -1104,7 +1104,7 @@ HRESULT SVImageClass::GetChildImageHandle( const GUID& p_rChildID, SVImageIndexS
 					CString sMsgStr;
 					sMsgStr.Format("null ptr == l_Iter->second.m_pImageHandles->GetImageHandle( l_Handle.GetIndex(), p_rsvBufferHandle )");
 
-					SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+					SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 					Exception.setMessage( SVMSG_SVO_5058_NULLCHILDHANDLE, sMsgStr, SvStl::SourceFileParams(StdMessageParams) );
 				}
 			}
@@ -1130,7 +1130,7 @@ HRESULT SVImageClass::GetParentImageHandle( SVSmartHandlePointer &p_rsvBufferHan
 
 		if( S_OK != l_hrOk )
 		{
-			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+			SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 			Exception.setMessage( SVMSG_SVO_5059_GETCHILDERROR, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
 		}
 	}
@@ -1153,7 +1153,7 @@ HRESULT SVImageClass::GetParentImageHandle( SVImageIndexStruct p_svBufferIndex, 
 
 		if( S_OK != l_hrOk )
 		{
-			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+			SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 			Exception.setMessage( SVMSG_SVO_5060_GETCHILDERROR, SvOi::Tid_GetParentImageHandleError, SvStl::SourceFileParams(StdMessageParams) );
 		}
 	}

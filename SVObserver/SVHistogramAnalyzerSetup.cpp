@@ -17,7 +17,7 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVResult.h"
 #include "SVSetupDialogManager.h"
-#include "SVStatusLibrary/MessageManagerResource.h"
+#include "SVStatusLibrary/MessageManager.h"
 #include "TextDefinesSvO.h"
 #include "ObjectInterfaces/ErrorNumbers.h"
 #include "SVOMFCLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
@@ -209,7 +209,7 @@ inline void SVHistogramAnalyzerSetupClass::SetResultRange(const GUID & resultGui
 	}
 	else
 	{
-		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_NoResultObject, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10234 );
 	}
 }

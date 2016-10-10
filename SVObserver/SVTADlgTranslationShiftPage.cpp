@@ -21,7 +21,7 @@
 #include "SVShiftTool.h"
 #include "SVShiftToolUtility.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
-#include "SVStatusLibrary\MessageManagerResource.h"
+#include "SVStatusLibrary\MessageManager.h"
 #pragma endregion Includes
 
 #pragma region Declarations

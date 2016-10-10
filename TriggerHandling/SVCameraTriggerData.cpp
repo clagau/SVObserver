@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 09:48:56  $
 //******************************************************************************
 #include "stdafx.h"
+#include "SVObjectLibrary\SVClsIds.h"
 #include "SVCameraTriggerData.h"
 
 namespace Seidenader { namespace TriggerHandling {

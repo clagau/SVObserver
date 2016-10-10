@@ -19,7 +19,7 @@
 #include "SVFormulaEditorPage.h"
 #include "SVOResource/ConstGlobalSvOr.h"
 #include "SVUtilityLibrary/LoadDll.h"
-#include "SVStatusLibrary/MessageManagerResource.h"
+#include "SVStatusLibrary/MessageManager.h"
 #include "SVMessage/SVMessage.h"
 #include "ObjectInterfaces/ErrorNumbers.h"
 #include "Scintilla.h"
@@ -125,7 +125,7 @@ namespace Seidenader { namespace SVOGui
 		HRESULT hOK = SvUl::LoadDll::Instance().getDll( scintillaPath, ScintillaInstance );
 		if (S_OK != hOK || nullptr == ScintillaInstance)
 		{
-			SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
+			SvStl::MessageMgrStd Exception( SvStl::LogAndDisplay );
 			Exception.setMessage( SVMSG_SVO_88_LOADING_SCINTILLA_DLL_ERROR, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10028_LoadOfScintillaDllFailed );
 		}
 		else
@@ -691,7 +691,7 @@ namespace Seidenader { namespace SVOGui
 				msgList.push_back(SvUl_SF::Format(_T("%lf"), value));
 				id = SvOi::Tid_FormulaValidated;
 			}
-			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+			SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, id, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10223 );
 		}
 		else // Something is wrong
@@ -731,7 +731,7 @@ namespace Seidenader { namespace SVOGui
 		if( !validateAndSetEquation() )
 		{
 			// Equation must be valid or disabled
-			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+			SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_InvalidFormula, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10222 );
 			return FALSE;
 		}

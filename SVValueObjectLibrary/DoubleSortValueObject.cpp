@@ -275,7 +275,7 @@ void DoubleSortValueObject::ValidateValue( int iBucket, int iIndex, const SVStri
 	{
 		SVStringArray msgList;
 		msgList.push_back(GetName());
-		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+		SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 		Exception.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_LinkedValue_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 		Exception.Throw();
 	}

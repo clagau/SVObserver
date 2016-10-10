@@ -50,7 +50,7 @@
 #include "SVStatusLibrary\MessageManager.h"
 #include "TextDefinesSvO.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
-#include "SVStatusLibrary\MessageManagerResource.h"
+#include "SVStatusLibrary\MessageManager.h"
 #include "SVOGui\TextDefinesSvOg.h"
 #include "SVOGui\TADialogTableParameterPage.h"
 #include "SVOGui\TADialogTableDefinesPage.h"
@@ -326,7 +326,7 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 			break;
 
 		default:
-			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+			SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_CannotOpenTADlg, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10218 );
 			delete pConditionalDlg;
 			pConditionalDlg = nullptr;
@@ -393,7 +393,7 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 					if( !l_pFormulaEditor->validateAndSetEquation() )
 					{
 						// Equation must be valid or disabled
-						SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+						SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 						Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_InvalidFormula, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10219 );
 						return;
 					}
@@ -441,7 +441,7 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 				textEnum = message.getMessage().m_AdditionalTextId;
 				textList = message.getMessage().m_AdditionalTextList;
 			}
-			SvStl::MessageMgrDisplayAndNotify messageMgr(  SvStl::LogAndDisplay );
+			SvStl::MessageMgrStd messageMgr(  SvStl::LogAndDisplay );
 			INT_PTR result = messageMgr.setMessage( SVMSG_SVO_104_TA_DIALOG_CLOSING_ERROR, textEnum, textList, SvStl::SourceFileParams(StdMessageParams), 0, pTool->GetUniqueObjectID(), MB_YESNO );
 			if (IDYES == result)
 			{

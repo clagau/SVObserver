@@ -24,7 +24,7 @@
 #include "SVIPChildFrm.h"
 #include "RootObject.h"
 #include "SVMessage/SVMessage.h"
-#include "SVStatusLibrary/MessageManagerResource.h"
+#include "SVStatusLibrary/MessageManager.h"
 #include "ObjectInterfaces/ErrorNumbers.h"
 #include "TextDefinesSvO.h"
 #pragma endregion Includes
@@ -90,7 +90,7 @@ void SVResultViewClass::OnInitialUpdate()
 {
 	if( nullptr == GetIPDoc() )
 	{
-		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ResultView_InitFailed, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10197 ); 
 		return;
 	}
@@ -517,7 +517,7 @@ void SVResultViewClass::DrawItem( LPDRAWITEMSTRUCT lpDrawItemStruct )
 	}
 	else
 	{
-		SvStl::MessageMgrNoDisplay Msg( SvStl::LogOnly );
+		SvStl::MessageMgrStd Msg( SvStl::LogOnly );
 		Msg.setMessage( SVMSG_SVO_NULL_POINTER, SvOi::Tid_Unknown, SvStl::SourceFileParams(StdMessageParams) ); 
 	}
 }// end DrawItem

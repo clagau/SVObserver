@@ -538,7 +538,7 @@ SvStl::MessageContainerVector SVTaskObjectClass::validateAndSetEmmeddedValues(co
 			{
 				SVStringArray msgList;
 				msgList.push_back(SvUl_SF::Format(_T("%d"), Result));
-				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogOnly );
+				SvStl::MessageMgrStd Msg( SvStl::LogOnly );
 				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_SetEmbeddedValueFailed, msgList, SvStl::SourceFileParams(StdMessageParams) );
 				messages.push_back(Msg.getMessageContainer());
 			}
@@ -865,7 +865,7 @@ HRESULT SVTaskObjectClass::ConnectToObject( SVInObjectInfoStruct* p_psvInputInfo
 					msgList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_UnknownString));
 				}
 				// Should we really be doing this here?
-				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_CriticalUnableToConnectTo, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10203 ); 
 
 				// Try to recover old state...
@@ -1202,7 +1202,7 @@ BOOL SVTaskObjectClass::RegisterEmbeddedObjectAsClass(SVObjectClass* PEmbeddedOb
 			{
 				if (pObject->GetEmbeddedID() == REmbeddedID)
 				{
-					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_DuplicateEmbeddedId, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10204 ); 
 					return FALSE;
 				}

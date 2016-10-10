@@ -20,7 +20,7 @@
 #include "SVGlobal.h"
 #include "SVImageProcessingClass.h"
 #include "SVTool.h"
-#include "SVStatusLibrary\MessageManagerResource.h"  // Use SvStl::MessageMgrDisplayAndNotify
+#include "SVStatusLibrary\MessageManager.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
 #include "SVOMFCLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
 #pragma endregion Includes
@@ -759,7 +759,7 @@ BOOL SVImageObjectClass::CreateImageBuffer(SVImageInfoClass &rInfo, long p_Index
 		{
 			// Image does not have a Tool for a parent. Not sure if this can 
 			// happen.
-			SvStl::MessageMgrDisplayAndNotify Exception(  SvStl::LogAndDisplay );
+			SvStl::MessageMgrStd Exception(  SvStl::LogAndDisplay );
 			Exception.setMessage( hr, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), SvOi::ProgCode_5066_CreateImageBuffer);
 		}
 		else

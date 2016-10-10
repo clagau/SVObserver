@@ -75,7 +75,7 @@ unsigned long SVImageAnalyzerClass::GetInputPixelDepth()
 	SVImageClass* pImage = getInputImage();
 	if (!pImage)
 	{
-		SvStl::MessageMgrNoDisplay MesMan( SvStl::DataOnly );
+		SvStl::MessageMgrStd MesMan( SvStl::DataOnly );
 		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16110);
 		MesMan.Throw();
 	}

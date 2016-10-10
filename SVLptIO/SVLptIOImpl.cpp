@@ -1374,7 +1374,7 @@ HRESULT SVLptIOImpl::SVReadWriteLpt(unsigned long& rlValue, long prevControl, lo
 			if (0 != (nPrevControl & 0xf))
 			{
 #ifndef INITIALIZE_IO_SUBSYSTEM
-				SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+				SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 				Exception.setMessage( SVMSG_INVALID_LINE_STATE, SvOi::Tid_Lpt_WrongState, SvStl::SourceFileParams(StdMessageParams) );
 #endif
 			}

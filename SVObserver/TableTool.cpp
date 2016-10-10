@@ -75,7 +75,7 @@ BOOL TableTool::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 			bOk = false;
 			SvStl::MessageContainer message;
 			message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_TableObject_CreateFailed, SvStl::SourceFileParams(StdMessageParams) );
-			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogOnly );
+			SvStl::MessageMgrStd Msg( SvStl::LogOnly );
 			Msg.setMessage( message.getMessage() );
 			addTaskMessage( message );
 		}
@@ -141,7 +141,7 @@ HRESULT TableTool::ResetObject()
 				{
 					SVStringArray msgList;
 					msgList.push_back(SvUl_SF::Format(_T("%d"), c_maxTableColumn));
-					SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
+					SvStl::MessageMgrStd e( SvStl::LogOnly );
 					e.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_TableColumn_TooManyEquation, SvStl::SourceFileParams(StdMessageParams) );
 					status = E_FAIL;
 					DestroyFriendObject(*equation, 0);
@@ -157,7 +157,7 @@ HRESULT TableTool::ResetObject()
 		}
 		catch( const SvStl::MessageContainer& rSvE )
 		{
-			SvStl::MessageMgrDisplayAndNotify e( SvStl::LogOnly );
+			SvStl::MessageMgrStd e( SvStl::LogOnly );
 			e.setMessage( rSvE.getMessage() );
 			addTaskMessage(rSvE);
 			status = S_FALSE;

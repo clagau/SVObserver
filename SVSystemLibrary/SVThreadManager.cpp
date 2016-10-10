@@ -204,7 +204,7 @@ void SVThreadManager::setThreadError( DWORD MessageCode, LPCTSTR Message, SvStl:
 	msgList.push_back( SvUl_SF::Format( _T("0X%08X"), errorCode ));
 	msgList.push_back( SVString( Message ) );
 
-	SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+	SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 	Exception.setMessage( MessageCode, SvOi::Tid_OS_Error_Message, msgList, SourceFile, SvOi::Err_25030_Thread );
 }
 

@@ -168,7 +168,7 @@ void SVPatternAnalyzerClass::CreateResult()
 			SVResultClass* pResult = (SVLongResultClass *)resultClassInfo.Construct();
 			if (!pResult)
 			{
-				SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+				SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 				MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16199);
 				break;
 			}
@@ -177,7 +177,7 @@ void SVPatternAnalyzerClass::CreateResult()
 			SVRangeClass *pRange = pResult->GetResultRange();
 			if (!pRange)
 			{
-				SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+				SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 				MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16200);
 				break;
 			}
@@ -469,7 +469,7 @@ BOOL SVPatternAnalyzerClass::RestorePattern (CString strImageFile, SvOi::Message
 			*pErrMsgId = SvOi::Tid_PatInvalidFilename;
 		}
 
-		SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+		SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16205);
 		LastError = -SvOi::Err_16205;
 		
@@ -487,7 +487,7 @@ BOOL SVPatternAnalyzerClass::RestorePattern (CString strImageFile, SvOi::Message
 			*pErrMsgId = SvOi::Tid_PatAllocModelFailed;
 		}
 
-		SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+		SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16206);
 		LastError = -SvOi::Err_16206;
 	}
@@ -721,7 +721,7 @@ BOOL SVPatternAnalyzerClass::SetSearchParameters ()
 	}
 	catch( ... )
 	{
-		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+		SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 		Exception.setMessage( SVMSG_SVO_UNHANDLED_EXCEPTION, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
 		l_bOk = FALSE;
 	}
@@ -867,7 +867,7 @@ BOOL SVPatternAnalyzerClass::onRun (SVRunStatusClass &RRunStatus)
 			pSVImage = (SVImageClass *)getInputImage();
 			if( nullptr == pSVImage || ! pSVImage->GetImageHandle( ImageHandle ) )
 			{
-				SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+				SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 				MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16206);
 				LastError = -SvOi::Err_16206;
 				break;
@@ -1010,7 +1010,7 @@ BOOL SVPatternAnalyzerClass::onRun (SVRunStatusClass &RRunStatus)
 	}
 	catch( ... )
 	{
-		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+		SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 		Exception.setMessage( SVMSG_SVO_UNHANDLED_EXCEPTION, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
 		
 		ResetResultValues();

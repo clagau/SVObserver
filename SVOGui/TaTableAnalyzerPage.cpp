@@ -20,7 +20,7 @@
 #include "GuiCommands/DestroyChildObject.h"
 #include "GuiCommands/ConnectToObject.h"
 #include "GuiCommands/GetInputs.h"
-#include "SVStatusLibrary/MessageManagerResource.h"
+#include "SVStatusLibrary/MessageManager.h"
 #include "SVMessage/SVMessage.h"
 #include "SVObjectLibrary/SVClsids.h"
 #include "ToolSetItemSelector.h"
@@ -202,7 +202,7 @@ namespace Seidenader { namespace SVOGui {
 			HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 			if (S_OK != hr)
 			{
-				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_CreationAnalyzerFailed, SvStl::SourceFileParams(StdMessageParams) );
 			}
 
@@ -242,7 +242,7 @@ namespace Seidenader { namespace SVOGui {
 			{
 				SVStringArray msgList;
 				msgList.push_back(m_inputName);
-				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_ConnectFailed, msgList, SvStl::SourceFileParams(StdMessageParams) );
 			}
 		}
@@ -368,7 +368,7 @@ namespace Seidenader { namespace SVOGui {
 		{
 			if (0 < errorMessageList.size())
 			{
-				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 				Msg.setMessage( errorMessageList[0].getMessage() );
 			}
 			else
@@ -376,7 +376,7 @@ namespace Seidenader { namespace SVOGui {
 				//display an error if set failed.
 				SVStringArray msgList;
 				msgList.push_back(SvUl_SF::Format(_T("%d"), hrOk));
-				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_SetTableAnalyzerData, msgList, SvStl::SourceFileParams(StdMessageParams) );
 			}
 		}
@@ -605,7 +605,7 @@ namespace Seidenader { namespace SVOGui {
 				if (S_OK != hrOk)
 				{
 					SvStl::MessageContainerVector errorMessageList = commandPtr->getErrorMessages();
-					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 					Msg.setMessage( errorMessageList[0].getMessage() );
 
 					m_analyzerListBox.SetCurSel(i);

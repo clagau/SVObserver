@@ -14,7 +14,7 @@
 #include "SVOResource/resource.h"
 #include "SVFormulaEditorSheet.h"
 #include "FormulaController.h"
-#include "SVStatusLibrary\MessageManagerResource.h"
+#include "SVStatusLibrary\MessageManager.h"
 #include "TextDefinesSvOg.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
 #include "SVMessage\SVMessage.h"
@@ -110,7 +110,7 @@ namespace Seidenader { namespace SVOGui
 					if( !pFormularPage->validateAndSetEquation() )
 					{
 						// Equation must be valid or disabled
-						SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+						SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 						Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_InvalidFormula, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10224 );
 						return;
 					}

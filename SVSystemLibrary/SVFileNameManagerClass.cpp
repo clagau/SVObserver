@@ -161,7 +161,7 @@ BOOL SVFileNameManagerClass::AddItem(SVFileNameClass* svpFileName)
 			}
 			catch (std::bad_alloc& e)
 			{
-				SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+				SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 				Exception.setMessage( E_UNEXPECTED, e.what(), SvStl::SourceFileParams(StdMessageParams), SvOi::Err_15044_FileNameManagerAdd );
 			}
 		}

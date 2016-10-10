@@ -286,7 +286,7 @@ namespace Seidenader { namespace SVContainerLibrary
 		catch( const std::exception& e )
 		{
 			//We only want to log otherwise it would need MFC 
-			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+			SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 			Exception.setMessage( SVMSG_SVO_98_TREE_ITEM, e.what(), SvStl::SourceFileParams(StdMessageParams) );
 		}
 

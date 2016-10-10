@@ -60,7 +60,7 @@ BOOL TableAnalyzerTool::CreateObject( SVObjectLevelCreateStruct* pCreateStructur
 			bOk = false;
 			SvStl::MessageContainer message;
 			message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_TableObject_CreateFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
-			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogOnly );
+			SvStl::MessageMgrStd Msg( SvStl::LogOnly );
 			Msg.setMessage( message.getMessage() );
 			addTaskMessage( message );
 		}
@@ -87,7 +87,7 @@ BOOL TableAnalyzerTool::CreateObject( SVObjectLevelCreateStruct* pCreateStructur
 			bOk = false;
 			SvStl::MessageContainer message;
 			message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_TableObject_CreateFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
-			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogOnly );
+			SvStl::MessageMgrStd Msg( SvStl::LogOnly );
 			Msg.setMessage( message.getMessage() );
 			addTaskMessage( message );
 		}
@@ -97,7 +97,7 @@ BOOL TableAnalyzerTool::CreateObject( SVObjectLevelCreateStruct* pCreateStructur
 		bOk = false;
 		SvStl::MessageContainer message;
 		message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_TableObject_CreateFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
-		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogOnly );
+		SvStl::MessageMgrStd Msg( SvStl::LogOnly );
 		Msg.setMessage( message.getMessage() );
 		addTaskMessage( message );
 	}

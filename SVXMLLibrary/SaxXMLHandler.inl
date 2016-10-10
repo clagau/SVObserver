@@ -290,7 +290,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 			else
 			{
 				ASSERT(m_pCurrentNodeInRevisionTree);
-				SvStl::MessageMgrNoDisplay Exception(SvStl::LogOnly);
+				SvStl::MessageMgrStd Exception(SvStl::LogOnly);
 				Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR, SvOi::Tid_XML_InvalidPointer, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16069_INVALIDPOINTER );
 
 			}
@@ -310,7 +310,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 			}
 			else
 			{
-				SvStl::MessageMgrNoDisplay Exception(SvStl::LogOnly);
+				SvStl::MessageMgrStd Exception(SvStl::LogOnly);
 				Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR, SvOi::Tid_XML_InvalidPointer, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16070_INVALIDPOINTER );
 				ASSERT(m_pCurrentNodeInEncryptionTree);
 			}
@@ -335,7 +335,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 			if(nullptr == pSaxTreeElement ||  Elementtype !=  pSaxTreeElement->GetElementType() )
 			{
 				ASSERT(false);
-				SvStl::MessageMgrNoDisplay Exception(SvStl::LogOnly);
+				SvStl::MessageMgrStd Exception(SvStl::LogOnly);
 				Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR, SvOi::Tid_XML_InvalidPointer, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16071_INVALIDPOINTER );
 			}
 
@@ -368,7 +368,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 				default:
 					{
 						ASSERT(false);
-						SvStl::MessageMgrNoDisplay Exception(SvStl::LogOnly);
+						SvStl::MessageMgrStd Exception(SvStl::LogOnly);
 						Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR, SvOi::Tid_XML_InvalidArrayElement, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16074_InvalidArrayElement );
 						break;
 					}
@@ -398,7 +398,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 				else
 				{
 					ASSERT(false);
-					SvStl::MessageMgrNoDisplay Exception(SvStl::LogOnly);
+					SvStl::MessageMgrStd Exception(SvStl::LogOnly);
 					Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR, SvOi::Tid_XML_InvalidArrayElement, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16072_INVALID_ARRAYELEMENT );
 				}
 
@@ -424,7 +424,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 		messageList.push_back(SvUl_SF::Format(_T("%i"), column));
 		messageList.push_back(SvUl_SF::Format(_T("%i"), errorCode));
 		messageList.push_back(SvUl_SF::createSVString(pwchErrorText));
-		SvStl::MessageMgrNoDisplay Exception(SvStl::LogOnly);
+		SvStl::MessageMgrStd Exception(SvStl::LogOnly);
 		Exception.setMessage(SVMSG_SVO_83_SAX_PARSER_ERROR, SvOi::Tid_XML_Error, messageList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16063_SAXPARSER );
 		ASSERT(false);
 		return S_OK;

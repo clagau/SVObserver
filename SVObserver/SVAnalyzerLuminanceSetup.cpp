@@ -15,7 +15,6 @@
 #include "SVAnalyzerLuminance.h"
 #include "SVResult.h"
 #include "SVSetupDialogManager.h"
-#include "SVStatusLibrary\MessageManagerResource.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
 #pragma endregion Includes
@@ -93,13 +92,13 @@ void SVLuminanceAnalyzerSetupClass::OnRange()
 
 	if (nullptr == pAnalyzerResult)
 	{
-		SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+		SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16090);
 	}
 	else  if ( S_OK != SVSetupDialogManager::Instance().SetupDialog( pAnalyzerResult->GetClassID(), pAnalyzerResult->GetUniqueObjectID(), this ) )
 	{
 		
-		SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+		SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16091);
 	}
 

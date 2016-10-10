@@ -17,7 +17,7 @@
 #include "GuiCommands\ConstructAndInsertFriend.h"
 #include "GuiCommands\DestroyFriend.h"
 #include "GuiCommands\SetObjectName.h"
-#include "SVStatusLibrary\MessageManagerResource.h"
+#include "SVStatusLibrary\MessageManager.h"
 #include "SVMessage\SVMessage.h"
 #pragma endregion Includes
 
@@ -116,7 +116,7 @@ namespace Seidenader { namespace SVOGui {
 					{
 						SVStringArray msgList;
 						msgList.push_back(SvUl_SF::Format(_T("%d"), hr));
-						SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+						SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 						Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_TableColumn_RemovingFailed, msgList, SvStl::SourceFileParams(StdMessageParams) );
 					}
 					break;
@@ -153,7 +153,7 @@ namespace Seidenader { namespace SVOGui {
 		{
 			SVStringArray msgList;
 			msgList.push_back(SvUl_SF::Format(_T("%d"), hr));
-			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+			SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_TableColumn_AddingFailed, msgList, SvStl::SourceFileParams(StdMessageParams) );
 		}
 		FillGridControl();
@@ -205,7 +205,7 @@ namespace Seidenader { namespace SVOGui {
 					bAcceptChange = false;
 					SVStringArray msgList;
 					msgList.push_back(SvUl_SF::Format(_T("%d"), hr));
-					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_TableColumn_RenamingFailed, msgList, SvStl::SourceFileParams(StdMessageParams) );
 				}
 				else
@@ -218,7 +218,7 @@ namespace Seidenader { namespace SVOGui {
 				bAcceptChange = false;
 				SVStringArray msgList;
 				msgList.push_back(newName);
-				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_TableColumnName_NotUnique, msgList, SvStl::SourceFileParams(StdMessageParams) );
 			}
 		}
@@ -243,7 +243,7 @@ namespace Seidenader { namespace SVOGui {
 			SvStl::MessageContainerVector errorMessageList = commandPtr->getErrorMessages();
 			if (0 < errorMessageList.size())
 			{
-				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 				Msg.setMessage( errorMessageList[0].getMessage() );
 			}
 		}

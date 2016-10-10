@@ -259,7 +259,7 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnSetRange()
 
 			if (nullptr == pResult)
 			{
-				SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+				SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 				MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16089);
 				
 
@@ -267,7 +267,7 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnSetRange()
 			else if (S_OK != SVSetupDialogManager::Instance().SetupDialog( pResult->GetClassID(), pResult->GetUniqueObjectID(), this ))
 			{
 				
-				SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+				SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 				MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16090);
 			}
     }

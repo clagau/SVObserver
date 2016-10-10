@@ -79,7 +79,7 @@ unsigned long SVPixelAnalyzerSetupClass::init (SVPixelAnalyzerClass *apAnalyzer,
 	m_pAnalyzer = apAnalyzer;
 	if (nullptr == m_pAnalyzer)
 	{
-		SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+		SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16082);
 		ret = - SvOi::Err_16082;
 	
@@ -89,7 +89,7 @@ unsigned long SVPixelAnalyzerSetupClass::init (SVPixelAnalyzerClass *apAnalyzer,
 		m_pTool = (SVToolClass *) m_pAnalyzer->GetOwner ();
 		if (!m_pTool)
 		{
-			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16083);
 			ret = - SvOi::Err_16083;
 		}
@@ -150,7 +150,7 @@ BOOL SVPixelAnalyzerSetupClass::OnInitDialog()
 
 	if (nullptr == m_pTool)
 	{
-		SvStl::MessageMgrDisplayAndNotify  Exception( SvStl::LogAndDisplay );
+		SvStl::MessageMgrStd  Exception( SvStl::LogAndDisplay );
 		Exception.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16084);
 	}
 	else
@@ -162,7 +162,7 @@ BOOL SVPixelAnalyzerSetupClass::OnInitDialog()
 		}
 		catch (	const SvStl::MessageContainer& rContain )
 		{
-			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 			MesMan.setMessage( rContain.getMessage());
 			return TRUE;
 
@@ -311,12 +311,12 @@ void SVPixelAnalyzerSetupClass::OnPixelSetRange()
 
 	if (nullptr == pAnalyzerResult)
 	{
-		SvStl::MessageMgrDisplayAndNotify  Exception( SvStl::LogAndDisplay );
+		SvStl::MessageMgrStd  Exception( SvStl::LogAndDisplay );
 		Exception.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16085);
 	} 
 	else if (S_OK != SVSetupDialogManager::Instance().SetupDialog( pAnalyzerResult->GetClassID(), pAnalyzerResult->GetUniqueObjectID(), m_pParent) )
 	{
-		SvStl::MessageMgrDisplayAndNotify  Exception( SvStl::LogAndDisplay );
+		SvStl::MessageMgrStd  Exception( SvStl::LogAndDisplay );
 		Exception.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16086);;
 	}
 

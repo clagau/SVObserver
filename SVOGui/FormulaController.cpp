@@ -34,7 +34,7 @@
 #include "SVOGui/GlobalSelector.h"
 #include "SVOGui/PPQSelector.h"
 #include "SVOGui/ToolSetItemSelector.h"
-#include "SVStatusLibrary/MessageManagerResource.h"
+#include "SVStatusLibrary/MessageManager.h"
 #include "SVMessage/SVMessage.h"
 #pragma endregion Includes
 
@@ -100,7 +100,7 @@ namespace Seidenader { namespace SVOGui
 		{
 			SVStringArray msgList;
 			msgList.push_back(SvUl_SF::Format(_T("%d"), hr));
-			SvStl::MessageMgrStdDisplay e( SvStl::LogOnly );
+			SvStl::MessageMgrStd e( SvStl::LogOnly );
 			e.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_UnknownCommandError, SvStl::SourceFileParams(StdMessageParams) );
 			ASSERT(false);
 		}
@@ -165,7 +165,7 @@ namespace Seidenader { namespace SVOGui
 		{
 			SVStringArray msgList;
 			msgList.push_back(SvUl_SF::Format(_T("%d"), hr));
-			SvStl::MessageMgrStdDisplay e( SvStl::LogOnly );
+			SvStl::MessageMgrStd e( SvStl::LogOnly );
 			e.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_UnknownCommandError, SvStl::SourceFileParams(StdMessageParams) );
 			ASSERT(false);
 		}
@@ -281,7 +281,7 @@ namespace Seidenader { namespace SVOGui
 				{
 					SVStringArray msgList;
 					msgList.push_back(SvUl_SF::Format(_T("%d"), hr));
-					SvStl::MessageMgrStdDisplay e( SvStl::LogOnly );
+					SvStl::MessageMgrStd e( SvStl::LogOnly );
 					e.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_UnknownCommandError, SvStl::SourceFileParams(StdMessageParams) );
 					ASSERT(false);
 				}

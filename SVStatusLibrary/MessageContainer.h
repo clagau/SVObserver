@@ -10,6 +10,7 @@
 #pragma region Includes
 //Moved to precompiled header: #include <vector>
 //Moved to precompiled header: #include <iterator>
+//Moved to precompiled header: #include <boost\function.hpp>
 #include "MessageData.h"
 #include "SVUtilityLibrary/SVString.h"
 #include "SVUtilityLibrary/SVGUID.h"
@@ -17,6 +18,9 @@
 
 namespace Seidenader { namespace SVStatusLibrary
 {
+	typedef boost::function<INT_PTR ( HWND, LPCTSTR, LPCTSTR, UINT )> ShowDisplayFunctor;
+	typedef boost::function<HRESULT ( int, int, LPCTSTR )> NotifyFunctor;
+
 	class MessageContainer : public std::exception
 	{
 	#pragma region Constructor
@@ -155,6 +159,11 @@ namespace Seidenader { namespace SVStatusLibrary
 		//************************************
 		const SVGUID& getObjectId( ) const { return m_ObjectId; };
 
+		//************************************
+		//! Sets the functor objects for display and notify
+		//! \returns const reference to the object id
+		//************************************
+		void setFunctorObjects( ShowDisplayFunctor*& rpShowDisplay, NotifyFunctor*& rpNotify );
 	#pragma endregion Public Methods
 
 	#pragma region Private Methods
@@ -200,14 +209,21 @@ namespace Seidenader { namespace SVStatusLibrary
 		//! \param rSubstituteStrings <out> the reference for the substitute strings
 		//************************************
 		void setSubstituteStrings( SVStringArray& rSubstituteStrings ) const;
+
+		//************************************
+		//! Method to set the message dll instance
+		//! \returns S_OK on success
+		//************************************
+		HRESULT setMessageDll();
 	#pragma endregion Private Methods
 
 	#pragma region Member variables
 	private:
-		MessageData m_Message;				//The main message
-		Messages m_AdditionalMessages;		//List of additional messages
-		SVGUID m_ObjectId;					//The object GUID 
-		SVString m_What;					//The what formatted message
+		MessageData m_Message;				//! The main message
+		Messages m_AdditionalMessages;		//! List of additional messages
+		SVGUID m_ObjectId;					//! The object GUID 
+		SVString m_What;					//! The what formatted message
+		static HINSTANCE m_MessageDll;		//! The message dll instance as a static variable
 	#pragma endregion Member variables
 	};
 

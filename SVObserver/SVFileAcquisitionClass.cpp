@@ -22,7 +22,7 @@
 #include "SVDigitizerProcessingClass.h"
 #include "SVImageObjectClass.h"
 #include "SVImageProcessingClass.h"
-#include "SVStatusLibrary/MessageManagerResource.h"
+#include "SVStatusLibrary/MessageManager.h"
 #include "ObjectInterfaces/ErrorNumbers.h"
 #include "TextDefinesSvO.h"
 #pragma endregion Includes
@@ -257,7 +257,7 @@ HRESULT SVFileAcquisitionClass::GetCameraImageInfo(SVImageInfoClass *pImageInfo)
 
 	if ( S_OK != hrOk )
 	{
-		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Acquisition_SourceInformationFailed, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10050 ); 
 	}
 

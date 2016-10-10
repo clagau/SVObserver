@@ -346,7 +346,7 @@ HRESULT SVObjectManagerClass::GetObjectByDottedName( const SVString& rFullName, 
 
 	if( 0 == rFullName.find( SvOl::ToolSetName ) )
 	{
-		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+		SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 		Exception.setMessage( SVMSG_SVO_96_DOTTED_NAME_NOT_UNIQUE, rFullName.c_str(), SvStl::SourceFileParams(StdMessageParams), SvOi::Err_25049_DottedName );
 		ASSERT(false);
 		Result = E_FAIL;

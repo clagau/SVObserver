@@ -802,7 +802,7 @@ DWORD_PTR SVToolClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageVal
 				SVStringArray msgList;
 				msgList.push_back(GetObjectName());
 				msgList.push_back(SVString(GetCompleteObjectName()));
-				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 				Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_CreationOf2Failed, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10209 );
 
 				DwResult = SVMR_NO_SUCCESS;

@@ -16,8 +16,7 @@
 #include "SVTaskObjectList.h"
 #include "SVToolExtentClass.h"
 #include "SVImageClass.h"
-#include "SVStatusLibrary\MessageManager.h"			// SvStl::DataOnly
-#include "SVStatusLibrary\MessageManagerResource.h" // SvStl::MessageMgrDisplayAndNotify(),
+#include "SVStatusLibrary\MessageManager.h"
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 

@@ -18,7 +18,7 @@
 #include "SVOMFCLibrary/SVOINIClass.h"
 #include "SVUtilityIniClass.h"
 #include "SVObserver.h"
-#include "SVStatusLibrary/MessageManagerResource.h"
+#include "SVStatusLibrary/MessageManager.h"
 #include "ObjectInterfaces/ErrorNumbers.h"
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/GlobalPath.h"
@@ -161,7 +161,7 @@ void SVUtilitiesClass::RunUtility(SVSecurityManager* pAccess, UINT uiUtilityId)
 			SVStringArray msgList;
 			msgList.push_back(SVString(utilInfo.szUtilityName));
 			msgList.push_back(SVString(utilInfo.szCommand));
-			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+			SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_UnableStart_Utility, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10237 );
 		}
 	}

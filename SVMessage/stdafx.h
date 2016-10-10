@@ -47,4 +47,5 @@
 #include <stdio.h>
 #include <tchar.h>
 
+#include <boost\function.hpp>
 #pragma endregion Precompiled Headers

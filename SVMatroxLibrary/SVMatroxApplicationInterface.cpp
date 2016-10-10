@@ -18,7 +18,7 @@
 #include "SVMessage\SVMessage.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
-#include "SVStatusLibrary\MessageManagerResource.h"
+#include "SVStatusLibrary\MessageManager.h"
 #pragma endregion Includes
 
 static const long MATROX_FILTER_EVENT = 2622995;
@@ -134,7 +134,7 @@ void SVMatroxApplicationInterface::Log( SVMatroxStatusInformation &p_rStatusInfo
 		msgList.push_back( SvUl_SF::Format( _T("%d"), OsError ));
 		msgList.push_back( SvUl_SF::Format( _T("0X%08X"), OsError ));
 		msgList.push_back( p_rStatusInfo.GetCompleteString() );
-		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+		SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 		Exception.setMessage( MessageCode, SvOi::Tid_OS_Error_Message, msgList, SvStl::SourceFileParams(StdMessageParams), ProgramCode);
 	}
 }
@@ -488,7 +488,7 @@ void SVMatroxApplicationInterface::LocalInitialize()
 				msgList.push_back(SvUl_SF::Format(_T("%4.2f"), SV_CURRENT_MIL_VERSION));
 				msgList.push_back(SvUl_SF::Format(_T("%4.2f"), l_MilVersion));
 				
-				SvStl::MessageMgrStdDisplay Msg( SvStl::LogAndDisplay );
+				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 				Msg.setMessage( SVMSG_SVMATROXLIBRARY_GERNEAL_ERROR, SvOi::Tid_MilVersion_Error, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10249 );
 				::exit( EXIT_FAILURE );
 			}

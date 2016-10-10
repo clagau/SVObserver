@@ -80,7 +80,7 @@ void TableFillObject::setColumnValueObjects(const std::vector<TableColumnEquatio
 			}
 			else
 			{
-				SvStl::MessageMgrNoDisplay e( SvStl::DataOnly );
+				SvStl::MessageMgrStd e( SvStl::DataOnly );
 				e.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_TableObject_columnValueMapInvalid, SvStl::SourceFileParams(StdMessageParams) );
 				e.Throw();
 			}
@@ -107,7 +107,7 @@ void TableFillObject::setColumnValueObjects(const std::vector<TableColumnEquatio
 		SVGUID newGuid = getNextFreeEmbeddedColumGUID();
 		if (SV_GUID_NULL == newGuid)
 		{
-			SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
+			SvStl::MessageMgrStd e( SvStl::LogOnly );
 			e.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_TableObject_columnValue_NoFreeGUID, SvStl::SourceFileParams(StdMessageParams) );
 			e.Throw();
 		}

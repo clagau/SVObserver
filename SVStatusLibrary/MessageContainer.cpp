@@ -7,13 +7,13 @@
 
 #pragma region Includes
 #include "stdafx.h"
+//Moved to precompiled header: #include <codecvt>
+//Moved to precompiled header: #include <locale>
 #include "MessageContainer.h"
 #include "SVMessage\SVMessage.h"
 #include "SVRegistry.h"
 #include "SVObjectLibrary\GlobalConst.h"
 #include "SVUtilityLibrary\LoadDll.h"
-#include <locale>
-#include <codecvt>
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -23,9 +23,14 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
+HINSTANCE SvStl::MessageContainer::m_MessageDll( nullptr );
+
 static const TCHAR* const SvEventSource = _T("SVException");
 static const TCHAR* const SvSecuritySource =  _T("SVSecurity");
 static const TCHAR* const SvAccessSource =  _T("SVAccess");
+
+static const TCHAR* const c_ShowDisplay = _T("g_ShowDisplay");
+static const TCHAR* const c_Notify = _T("g_Notify");
 
 static const TCHAR* const DetailsToken = _T("#Details#");
 static const TCHAR* const DebugLogFormat = _T( "Exception: ErrorCode: %d\nMessage: %s\n" );
@@ -152,6 +157,9 @@ namespace Seidenader { namespace SVStatusLibrary
 
 	void MessageContainer::setMessage( const MessageData& rMessage, const GUID& rObjectId /*=SV_GUID_NULL*/, bool clearData /*= true*/ )
 	{
+		//! Make sure the dll is loaded
+		setMessageDll();
+
 		if( clearData )
 		{
 			clearMessage();
@@ -220,8 +228,8 @@ namespace Seidenader { namespace SVStatusLibrary
 		SVStringArray SubstituteStrings;
 		const TCHAR *pSubstituteString[SubstituteStringNr];
 
-		SVString DebugString = SvUl_SF::Format( DebugLogFormat, m_Message.m_MessageCode, m_Message.getAdditionalText().c_str() );
 #if defined (TRACE_THEM_ALL) || defined (TRACE_OTHER)
+		SVString DebugString = SvUl_SF::Format( DebugLogFormat, m_Message.m_MessageCode, m_Message.getAdditionalText().c_str() );
 		::OutputDebugString( DebugString.c_str() );
 #endif
 
@@ -311,80 +319,55 @@ namespace Seidenader { namespace SVStatusLibrary
 	{
 		SVString Result;
 		SVString MsgDetails;
-		SVString MessageDll;
-		LPVOID pMessage;
-		HINSTANCE hMessageDll( nullptr );
-		SVString RegKey;
-		SVStringArray SubstituteStrings;
-		const TCHAR *pSubstituteString[SubstituteStringNr];
 
-		RegKey = RegPathEventLog;
-		RegKey += getFacilityName();
+		rMessage.clear();
+		//Default result
+		Result = SvUl_SF::Format( SourceCategoryEventFormat, getFacilityName().c_str(), getCategoryName().c_str(), getEventID() );
 
-		try 
+		if (nullptr != m_MessageDll )
 		{
+			SVStringArray SubstituteStrings;
+			const TCHAR *pSubstituteString[SubstituteStringNr];
 
-			SVRegistryClass reg( RegKey.c_str());
-			rMessage.clear();
+			setSubstituteStrings( SubstituteStrings );
 
-			if (!reg.CreatedNewKey())
+			for( int i=0; i < SubstituteStringNr; i++ )
 			{
-				if (reg.GetRegistryValue( EventMsgFile, MessageDll))
+				if( i < SubstituteStrings.size() )
 				{
-					Result = SvUl_SF::Format( SourceCategoryEventFormat, getFacilityName().c_str(), getCategoryName().c_str(), getEventID() );
-
-					HRESULT retValue = SvUl::LoadDll::Instance().getDll( MessageDll.c_str(), hMessageDll );
-					if (S_OK == retValue && nullptr != hMessageDll )
-					{
-						setSubstituteStrings( SubstituteStrings );
-
-						for( int i=0; i < SubstituteStringNr; i++ )
-						{
-							if( i < SubstituteStrings.size() )
-							{
-								pSubstituteString[i] = SubstituteStrings[i].c_str();
-							}
-							else
-							{
-								pSubstituteString[i] = nullptr;
-							}
-						}
-
-						if (FormatMessage (FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_ARGUMENT_ARRAY |
-							FORMAT_MESSAGE_FROM_HMODULE,
-							(LPCVOID) hMessageDll, m_Message.m_MessageCode,
-							SvOl::LCID_USA, (LPTSTR) &pMessage, 11, (va_list *) pSubstituteString))
-						{
-							rMessage = (TCHAR *) pMessage;
-							SvUl_SF::searchAndReplace(rMessage, _T("\r\n\r\n"), _T("\r\n") );
-							SVString SearchString( _T("\r\n") );
-							SearchString += DetailsToken;
-							size_t Index = rMessage.find( SearchString.c_str() );
-							if ( -1 != Index )
-							{
-								MsgDetails = SvUl_SF::Mid( rMessage, Index +  SearchString.size() );
-								//Remove unnecessary new lines from the details
-								size_t Pos = MsgDetails.find_first_not_of(_T("\r\n"));
-								if ( -1 != Pos )
-								{
-									MsgDetails = MsgDetails.substr( Pos );
-								}
-								rMessage = rMessage.substr( 0, Index );
-							}
-						}
-						LocalFree (pMessage);
-					}
+					pSubstituteString[i] = SubstituteStrings[i].c_str();
+				}
+				else
+				{
+					pSubstituteString[i] = nullptr;
 				}
 			}
-			else
+
+			LPVOID pMessage;
+
+			if (FormatMessage (FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_ARGUMENT_ARRAY |
+				FORMAT_MESSAGE_FROM_HMODULE,
+				(LPCVOID) m_MessageDll, m_Message.m_MessageCode,
+				SvOl::LCID_USA, (LPTSTR) &pMessage, 11, (va_list *) pSubstituteString))
 			{
-				reg.DeleteKey();
+				rMessage = (TCHAR *) pMessage;
+				SvUl_SF::searchAndReplace(rMessage, _T("\r\n\r\n"), _T("\r\n") );
+				SVString SearchString( _T("\r\n") );
+				SearchString += DetailsToken;
+				size_t Index = rMessage.find( SearchString.c_str() );
+				if ( -1 != Index )
+				{
+					MsgDetails = SvUl_SF::Mid( rMessage, Index +  SearchString.size() );
+					//Remove unnecessary new lines from the details
+					size_t Pos = MsgDetails.find_first_not_of(_T("\r\n"));
+					if ( -1 != Pos )
+					{
+						MsgDetails = MsgDetails.substr( Pos );
+					}
+					rMessage = rMessage.substr( 0, Index );
+				}
 			}
-		}
-		catch(  MessageContainer& mh  )
-		{
-			UNREFERENCED_PARAMETER(mh);
-			//do nothing;
+			LocalFree (pMessage);
 		}
 
 		if (rMessage.empty())
@@ -403,6 +386,14 @@ namespace Seidenader { namespace SVStatusLibrary
 		Result += MsgDetails;
 
 		return Result;
+	}
+
+	void MessageContainer::setFunctorObjects( ShowDisplayFunctor*& rpShowDisplay, NotifyFunctor*& rpNotify )
+	{
+		setMessageDll();
+
+		rpShowDisplay = reinterpret_cast<ShowDisplayFunctor*> (::GetProcAddress( m_MessageDll, c_ShowDisplay ));
+		rpNotify = reinterpret_cast<NotifyFunctor*> (::GetProcAddress( m_MessageDll, c_Notify ));
 	}
 #pragma endregion Public Methods
 
@@ -502,6 +493,41 @@ namespace Seidenader { namespace SVStatusLibrary
 		rSubstituteStrings[6] = m_Message.m_SourceFile.m_CompileDate;
 		rSubstituteStrings[7] = m_Message.m_SourceFile.m_CompileTime;
 		rSubstituteStrings[8] = m_Message.getAdditionalText();
+	}
+
+	HRESULT MessageContainer::setMessageDll()
+	{
+		HRESULT Result( S_OK );
+
+		if( nullptr == m_MessageDll )
+		{
+			//! Note all facilities use the same message dll 
+			SVString RegKey( RegPathEventLog );
+			RegKey += getFacilityName();
+
+			try
+			{
+				SVRegistryClass reg( RegKey.c_str());
+				if (!reg.CreatedNewKey())
+				{
+					SVString MessageDll;
+					if (reg.GetRegistryValue( EventMsgFile, MessageDll))
+					{
+						Result = SvUl::LoadDll::Instance().getDll( MessageDll.c_str(), m_MessageDll );
+					}
+				}
+				else
+				{
+					reg.DeleteKey();
+				}
+			}
+			catch( const MessageContainer&  )
+			{
+				//! Do nothing otherwise this can cause infinite loop;
+			}
+		}
+
+		return Result;
 	}
 #pragma endregion Private Methods
 } /* namespace SVStatusLibrary */ } /* namespace Seidenader */

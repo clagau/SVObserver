@@ -14,7 +14,7 @@
 #include "SVDlgBitmap.h"
 #include "SVObserver\TextDefinesSvO.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
-#include "SVStatusLibrary\MessageManagerResource.h"
+#include "SVStatusLibrary\MessageManager.h"
 #include "SVMessage\SVMessage.h"
 
 #ifdef _DEBUG
@@ -294,7 +294,7 @@ namespace Seidenader
 			}
 			else
 			{
-				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_NoDeviceContext, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10233 );
 			}
 

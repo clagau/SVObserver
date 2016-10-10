@@ -16,7 +16,7 @@
 #include "EQAdjustSizePositionX.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
 #include "EQAdjustSize.h"
-#include "SVStatusLibrary\MessageManagerResource.h"
+#include "SVStatusLibrary\MessageManager.h"
 #include "SVGuiExtentUpdater.h"
 #include "TextDefinesSvO.h"
 #include "SVOMFCLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
@@ -449,7 +449,7 @@ bool SVToolAdjustmentDialogSizePage::QueryAllowExit()
 					pEQ->GetEquationText(csEqText);
 					if (csEqText.IsEmpty())
 					{
-						SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
+						SvStl::MessageMgrStd Exception( SvStl::LogAndDisplay );
 						Exception.setMessage( SVMSG_SVO_64_EMPTY_FORMULAS_ARE_NOT_ALLOWED, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16038_EmptyFormula );
 						return false;
 					}

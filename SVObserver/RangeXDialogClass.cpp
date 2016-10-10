@@ -18,8 +18,7 @@
 #include "SVRange.h"
 #include "svresult.h"
 #include "ObjectSelectorLibrary\ObjectTreeGenerator.h"
-#include "SVStatusLibrary\MessageManagerResource.h"
-#include "SVStatusLibrary\MessageContainer.h"
+#include "SVStatusLibrary\MessageManager.h"
 #include "SVOMFCLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
 #pragma endregion Includes
 
@@ -78,7 +77,7 @@ void RangeXDialogClass::OnBnClickedOk()
 		if( S_OK != hres)
 		{
 			bOK = false;
-			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+			SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 			Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, messageId, messageList, SvStl::SourceFileParams(StdMessageParams), hres); 
 		}
 	}
@@ -166,7 +165,7 @@ bool RangeXDialogClass::GetDlgData()
 	catch ( const SvStl::MessageContainer& rSvE )
 	{
 		//Now that we have caught the exception we would like to display it
-		SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
+		SvStl::MessageMgrStd Exception( SvStl::LogAndDisplay );
 		Exception.setMessage( rSvE.getMessage() );
 	}
 

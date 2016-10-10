@@ -14,6 +14,7 @@
 #pragma region Includes
 //Moved to precompiled header: #include <set>
 //Moved to precompiled header: #include <assert.h>
+#include "SVOResource/resource.h"
 #include "ObjectInterfaces/IValueObject.h"
 #include "SVUtilityLibrary/SVDPointClass.h"
 #include "SVUtilityLibrary/SVString.h"

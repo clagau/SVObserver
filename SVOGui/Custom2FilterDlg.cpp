@@ -19,7 +19,7 @@
 #include "SVUtilityLibrary/SVString.h"
 #include "SVObjectLibrary\SVClsids.h"
 #include "GuiValueHelper.h"
-#include "SVStatusLibrary\MessageManagerResource.h"
+#include "SVStatusLibrary\MessageManager.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
 #include "SVMessage\SVMessage.h"
 #pragma endregion Includes
@@ -228,7 +228,7 @@ namespace Seidenader
 			UpdateData( TRUE );
 			if( 0 == m_KernelSum )
 			{
-				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_DataInvalidNormalizationFactor, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10225 );
 			}
 			else
@@ -378,7 +378,7 @@ namespace Seidenader
 				}
 				if( 0 != message.getMessage().m_MessageCode )
 				{
-					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 					Msg.setMessage( message.getMessage() );
 				
 					//Need to restore the previous values before the import
@@ -416,7 +416,7 @@ namespace Seidenader
 				}
 				catch( ... )
 				{
-					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_ExportFailed, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10227 );
 				}
 			}
@@ -436,7 +436,7 @@ namespace Seidenader
 			}
 			catch (const SvStl::MessageContainer& rSvE)
 			{
-				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 				Msg.setMessage( rSvE.getMessage() );
 			}
 		}

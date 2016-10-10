@@ -26,7 +26,7 @@
 #include "SVInspectionProcess.h"
 #include "SVOLicenseManager/SVOLicenseManager.h"
 #include "TextDefinesSvO.h"
-#include "SVStatusLibrary/MessageManagerResource.h"
+#include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #pragma endregion Includes
 
@@ -597,7 +597,7 @@ BOOL SVBarCodeAnalyzerClass::LoadRegExpression( BOOL DisplayErrorMessage )
 
 			if( DisplayErrorMessage )
 			{
-				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, m_errId, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10038 ); 
 			}
 			return FALSE;
@@ -642,7 +642,7 @@ BOOL SVBarCodeAnalyzerClass::SaveRegExpression( BOOL DisplayErrorMessage )
 
 			if( DisplayErrorMessage )
 			{
-				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, m_errId, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10039 ); 
 			}
 			return FALSE;
@@ -667,7 +667,7 @@ DWORD_PTR SVBarCodeAnalyzerClass::processMessage(DWORD DwMessageID, DWORD_PTR Dw
 
 				if( !SilentReset && SvOi::Tid_Empty != m_errId )
 				{
-					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, m_errId, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10040 ); 
 				}
 				dwResult = SVMR_NO_SUCCESS;

@@ -22,7 +22,7 @@
 #include "SVToolSet.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
 #include "TextDefinesSvO.h"
-#include "SVStatusLibrary\MessageManagerResource.h"
+#include "SVStatusLibrary\MessageManager.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -344,7 +344,7 @@ DWORD SVStatisticsToolClass::AllocateResult (SVStatisticsFeatureEnum aFeatureInd
 		
 		if(!pResult)
 		{
-			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16207);
 			LastError = -SvOi::Err_16207;
 			break;
@@ -365,7 +365,7 @@ DWORD SVStatisticsToolClass::AllocateResult (SVStatisticsFeatureEnum aFeatureInd
 		
 		if (!pValue)
 		{
-			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16208);
 			LastError = -SvOi::Err_16208;
 			break;
@@ -384,7 +384,7 @@ DWORD SVStatisticsToolClass::AllocateResult (SVStatisticsFeatureEnum aFeatureInd
 			// And finally try to create the child object...
 			if( ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(pResult), 0 ) != SVMR_SUCCESS )
 			{
-				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_StatTool_ResultFailed, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10200 ); 
 				
 				// Remove it from the Blob Analyzer TaskObjectList ( Destruct it )
@@ -418,7 +418,7 @@ DWORD SVStatisticsToolClass::FreeResult (SVStatisticsFeatureEnum aFeatureIndex)
 		
 		if (!pResult)
 		{
-			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16208);
 			LastError = -SvOi::Err_16208;
 			break;
@@ -844,7 +844,7 @@ DWORD_PTR SVStatisticsToolClass::processMessage( DWORD DwMessageID, DWORD_PTR Dw
 
 				if( !SilentReset && 0 != m_errContainer.getMessage().m_MessageCode )
 				{
-					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 					Msg.setMessage( m_errContainer.getMessage() ); 
 				}
 				DwResult = SVMR_NO_SUCCESS;

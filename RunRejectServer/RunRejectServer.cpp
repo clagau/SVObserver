@@ -145,12 +145,12 @@ DWORD WINAPI servimg(LPVOID)
 						}
 						catch( const SvStl::MessageContainer& rExp )
 						{
-							SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
+							SvStl::MessageMgrStd e( SvStl::LogOnly );
 							e.setMessage( rExp.getMessage() );
 						}
 						catch(std::exception& rExp)
 						{
-							SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+							SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 							SVStringArray msgList;
 							msgList.push_back( rExp.what() );
 							Exception.setMessage( SVMSG_RRS_2_STD_EXCEPTION, SvOi::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams) );
@@ -159,7 +159,7 @@ DWORD WINAPI servimg(LPVOID)
 				}
 				else
 				{
-					SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+					SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 					SVStringArray msgList;
 					msgList.push_back( SVString( SvSol::SVSocketError::GetErrorText(SvSol::SVSocketError::GetLastSocketError() ) ) );
 					Exception.setMessage( SVMSG_RRS_3_GENERAL_ERROR, SvOi::Tid_SocketInvalid, msgList, SvStl::SourceFileParams(StdMessageParams) );
@@ -169,12 +169,12 @@ DWORD WINAPI servimg(LPVOID)
 	}
 	catch( const SvStl::MessageContainer& rExp )
 	{
-		SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
+		SvStl::MessageMgrStd e( SvStl::LogOnly );
 		e.setMessage( rExp.getMessage() );
 	}
 	catch (std::exception& rExp)
 	{
-		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+		SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 		SVStringArray msgList;
 		msgList.push_back( rExp.what() );
 		Exception.setMessage( SVMSG_RRS_2_STD_EXCEPTION, SvOi::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams) );
@@ -800,7 +800,7 @@ std::string GenerateResponse(const JsonCmd & cmd, const MonitorMapCopy & mlMap)
 		rsp[SVRC::cmd::err] = rExp.what();
 		rsp[SVRC::cmd::hr] = Json::Value(E_FAIL);
 
-		SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
+		SvStl::MessageMgrStd e( SvStl::LogOnly );
 		e.setMessage( rExp.getMessage() );
 	}
 	catch(std::exception& rExp)
@@ -808,7 +808,7 @@ std::string GenerateResponse(const JsonCmd & cmd, const MonitorMapCopy & mlMap)
 		rsp[SVRC::cmd::err] = rExp.what();
 		rsp[SVRC::cmd::hr] = Json::Value(E_FAIL);
 
-		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+		SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 		SVStringArray msgList;
 		msgList.push_back( rExp.what() );
 		Exception.setMessage( SVMSG_RRS_2_STD_EXCEPTION, SvOi::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams) );
@@ -945,12 +945,12 @@ void Handler<SvSol::UdpApi, UdpServerSocket>(UdpServerSocket& sok, SvSml::SVShar
 		}
 		catch( const SvStl::MessageContainer& rExp )
 		{
-			SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
+			SvStl::MessageMgrStd e( SvStl::LogOnly );
 			e.setMessage( rExp.getMessage() );
 		}
 		catch(std::exception& rExp)
 		{
-			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+			SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 			SVStringArray msgList;
 			msgList.push_back( rExp.what() );
 			Exception.setMessage( SVMSG_RRS_2_STD_EXCEPTION, SvOi::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams) );
@@ -958,7 +958,7 @@ void Handler<SvSol::UdpApi, UdpServerSocket>(UdpServerSocket& sok, SvSml::SVShar
 	}
 	else
 	{
-		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+		SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 		SVStringArray msgList;
 		msgList.push_back( SVString( SvSol::SVSocketError::GetErrorText(SvSol::SVSocketError::GetLastSocketError() ) ) );
 		Exception.setMessage( SVMSG_RRS_3_GENERAL_ERROR, SvOi::Tid_SocketInvalid, msgList, SvStl::SourceFileParams(StdMessageParams) );
@@ -1028,12 +1028,12 @@ void Handler<SvSol::TcpApi, TcpServerSocket>(TcpServerSocket& sok, SvSml::SVShar
 			}
 			catch( const SvStl::MessageContainer& rExp )
 			{
-				SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
+				SvStl::MessageMgrStd e( SvStl::LogOnly );
 				e.setMessage( rExp.getMessage() );
 			}
 			catch(std::exception & rExp)
 			{
-				SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+				SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 				SVStringArray msgList;
 				msgList.push_back( rExp.what() );
 				Exception.setMessage( SVMSG_RRS_2_STD_EXCEPTION, SvOi::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams) );
@@ -1065,12 +1065,12 @@ DWORD WINAPI servcmd(LPVOID ctrlPtr)
 	}
 	catch( const SvStl::MessageContainer& rExp )
 	{
-		SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
+		SvStl::MessageMgrStd e( SvStl::LogOnly );
 		e.setMessage( rExp.getMessage() );
 	}
 	catch(std::exception & rExp)
 	{
-		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+		SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 		SVStringArray msgList;
 		msgList.push_back( rExp.what() );
 		Exception.setMessage( SVMSG_RRS_2_STD_EXCEPTION, SvOi::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams) );
@@ -1158,7 +1158,7 @@ void StartThreads( DWORD argc, LPTSTR  *argv )
 	}
 	catch (std::exception& rExp)
 	{
-		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+		SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 		SVStringArray msgList;
 		msgList.push_back( rExp.what() );
 		Exception.setMessage( SVMSG_RRS_3_GENERAL_ERROR, SvOi::Tid_FailedtoStart, msgList, SvStl::SourceFileParams(StdMessageParams) );
@@ -1170,7 +1170,7 @@ int _tmain(int argc, _TCHAR* argv[])
 {
 	int rc = 0;
 
-	SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+	SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 	Exception.setMessage( SVMSG_RRS_0_STARTED, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
 	
 	//Function pointer for starting the threads

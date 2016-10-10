@@ -66,7 +66,7 @@
 #include "RangeClassHelper.h"
 #include "SVObjectLibrary\SVToolsetScriptTags.h"
 #include "SVIPDoc.h"
-#include "SVStatusLibrary\MessageManagerResource.h"
+#include "SVStatusLibrary\MessageManager.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
 #include "TextDefinesSvO.h"
 

@@ -182,7 +182,6 @@ echo %time%
     <ClCompile Include="EQAdjustSizePositionY.cpp" />
     <ClCompile Include="EQAdjustSizeWidth.cpp" />
     <ClCompile Include="ExtrasEngine.cpp" />
-    <ClCompile Include="MessageNotification.cpp" />
     <ClCompile Include="GlobalConstantView.cpp" />
     <ClCompile Include="ModelessMessageBox.cpp" />
     <ClCompile Include="MonitorListBasePage.cpp" />
@@ -618,7 +617,6 @@ echo %time%
     <ClInclude Include="EQAdjustSizePositionY.h" />
     <ClInclude Include="EQAdjustSizeWidth.h" />
     <ClInclude Include="ExtrasEngine.h" />
-    <ClInclude Include="MessageNotification.h" />
     <ClInclude Include="GlobalConstantView.h" />
     <ClInclude Include="ISVCancel.h" />
     <ClInclude Include="ModelessMessageBox.h" />

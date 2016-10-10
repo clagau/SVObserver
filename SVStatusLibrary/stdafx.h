@@ -50,12 +50,15 @@
 #include <winnt.h>
 
 #include <atltime.h>
+#include <concrt.h>
+#include <codecvt>
 #include <ctime>
 #include <comutil.h>			//Used by static library
 #include <direct.h>
 #include <exception>
 #include <iterator>
 #include <limits.h>
+#include <locale>
 #include <map>
 #include <set>					//Used by static library
 #include <string>				//Used by static library
@@ -64,6 +67,7 @@
 
 #include <boost\assign\list_of.hpp>
 #include <boost\assign\std\map.hpp>
+#include <boost\function.hpp>
 #include <boost\tokenizer.hpp>
 #pragma endregion Precompiled Headers
 

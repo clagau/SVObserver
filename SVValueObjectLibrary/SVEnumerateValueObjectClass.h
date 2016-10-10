@@ -14,6 +14,7 @@
 #pragma region Includes
 //Moved to precompiled header: #include <vector>
 //Moved to precompiled header: #include <utility>
+#include "SVOResource/resource.h"
 #include "SVValueObjectClassImpl.h"
 #include "SVValueObjectGlobals.h"
 #include "ObjectInterfaces\IEnumerateValueObject.h"

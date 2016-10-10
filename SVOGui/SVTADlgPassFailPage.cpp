@@ -14,7 +14,7 @@
 //Moved to precompiled header: #include <boost/assign/list_of.hpp>
 #include "SVTADlgPassFailPage.h"
 #include "SVStatusLibrary\MessageContainer.h"
-#include "SVStatusLibrary\MessageManagerResource.h"
+#include "SVStatusLibrary\MessageManager.h"
 #include "ObjectSelectorLibrary\ObjectTreeGenerator.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
 #include "SVMessage\SVMessage.h"
@@ -187,7 +187,7 @@ namespace Seidenader { namespace SVOGui
 		}
 		catch (const SvStl::MessageContainer& rSvE)
 		{
-			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+			SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 			Msg.setMessage( rSvE.getMessage() );
 			bRetVal = false;
 		}

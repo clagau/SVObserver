@@ -21,7 +21,7 @@
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
 #include "SVOGui/NoSelector.h"
 #include "SVOGui/ToolSetItemSelector.h"
-#include "SVStatusLibrary/MessageManagerResource.h"
+#include "SVStatusLibrary/MessageManager.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -226,7 +226,7 @@ void SVChildrenSetupDialogClass::OnAddButton()
 					{
 						SVStringArray msgList;
 						msgList.push_back(SVString(pObject->GetName()));
-						SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+						SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 						Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_CreationFailed, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10043 ); 
 
 						// Remove it from the Tool TaskObjectList ( Destruct it )

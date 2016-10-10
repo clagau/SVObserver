@@ -142,7 +142,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 					if (m_SharedProductStorePPQ->current_idx >= 0)
 					{
 						// log exception
-						SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+						SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 						Exception.setMessage(SVMSG_SHAREDMEMORY_READER_RELEASE_NO_READER_LOCK, SvOi::Tid_ErrorReleaseProductNoReaderLock, SvStl::SourceFileParams(StdMessageParams), SVMSG_SHAREDMEMORY_READER_RELEASE_NO_READER_LOCK );
 					}
 				}
@@ -150,7 +150,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 			catch (std::exception& e)
 			{
 				// log exception
-				SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+				SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 				Exception.setMessage(SVMSG_SHAREDMEMORY_READER_ACCESS_VIOLATION, e.what(), SvStl::SourceFileParams(StdMessageParams), SVMSG_SHAREDMEMORY_READER_ACCESS_VIOLATION );
 			}
 		}
@@ -306,7 +306,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 					if (m_SharedProductStorePPQReject->current_idx >= 0)
 					{
 						// log exception
-						SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+						SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 						Exception.setMessage(SVMSG_SHAREDMEMORY_READER_RELEASE_NO_READER_LOCK, SvOi::Tid_ErrorReleaseProductNoReaderLock, SvStl::SourceFileParams(StdMessageParams), SVMSG_SHAREDMEMORY_READER_RELEASE_NO_READER_LOCK );
 					}
 				}
@@ -314,7 +314,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 			catch (std::exception& e)
 			{
 				// log exception
-				SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+				SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 				Exception.setMessage(SVMSG_SHAREDMEMORY_READER_ACCESS_VIOLATION, e.what(), SvStl::SourceFileParams(StdMessageParams), SVMSG_SHAREDMEMORY_READER_ACCESS_VIOLATION );
 			}
 		}

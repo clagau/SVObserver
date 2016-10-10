@@ -25,7 +25,7 @@
 #include "SVObjectLibrary\GlobalConst.h"
 #include "RootObject.h"
 #include "TextDefinesSvO.h"
-#include "SVStatusLibrary\MessageManagerResource.h"
+#include "SVStatusLibrary\MessageManager.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
 #include "SVOMFCLibrary/StringEscape.h"
 #pragma endregion Includes
@@ -617,7 +617,7 @@ SvOi::EquationTestResult SVEquationClass::Test( bool DisplayErrorMessage )
 	}
 	if( DisplayErrorMessage && !ret.bPassed )
 	{
-		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 		Msg.setMessage( errContainer.getMessage() ); 
 	}
 
@@ -963,7 +963,7 @@ DWORD_PTR SVEquationClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessag
 
 				if( !SilentReset && 0 != errContainer.getMessage().m_MessageCode )
 				{
-					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 					Msg.setMessage( errContainer.getMessage() ); 
 				}
 				DwResult = SVMR_NO_SUCCESS;

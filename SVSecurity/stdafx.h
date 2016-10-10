@@ -76,4 +76,5 @@
 #include <vector>
 #include <winuser.h>
 
+#include <boost/function.hpp> //Used by static library
 #pragma endregion Precompiled Headers

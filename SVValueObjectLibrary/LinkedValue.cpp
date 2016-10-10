@@ -342,7 +342,7 @@ void LinkedValue::ValidateValue( int iBucket, int iIndex, const SVString& rValue
 			//! This means the linked object is invalid
 			SVStringArray msgList;
 			msgList.push_back( GetName() );
-			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+			SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 			Exception.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_LinkedValue_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 			Exception.Throw();
 		}
@@ -359,7 +359,7 @@ void LinkedValue::ValidateValue( int iBucket, int iIndex, const SVString& rValue
 			{
 				SVStringArray msgList;
 				msgList.push_back(GetName());
-				SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+				SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 				Exception.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_LinkedValue_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 				Exception.Throw();
 			}

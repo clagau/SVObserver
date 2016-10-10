@@ -14,7 +14,7 @@
 #include "svobserver.h"
 #include "SVRegressionFileSelectDlg.h"
 #include "SVMFCControls/SVFileDialog.h"
-#include "SVStatusLibrary/MessageManagerResource.h"
+#include "SVStatusLibrary/MessageManager.h"
 #include "ObjectInterfaces/ErrorNumbers.h"
 #include "TextDefinesSvO.h"
 #include "SVStatusLibrary/GlobalPath.h"
@@ -125,7 +125,7 @@ void CSVRegressionFileSelectDlg::OnBtnRegTestBrowseFiles()
 		{
 			if (0 != m_sRegTestFiles.Right(4).CompareNoCase(_T(".bmp")))
 			{
-				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_RegressionTest_NoBmpFileSelected, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10187 ); 
 				m_sRegTestFiles = _T("");
 			}

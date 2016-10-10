@@ -18,7 +18,7 @@
 #include "SVMFCControls\SVMaskEditor.h"
 #include "ObjectInterfaces\NameValueList.h"
 #include "SVObserver.h"
-#include "SVStatusLibrary\MessageManagerResource.h"
+#include "SVStatusLibrary\MessageManager.h"
 #include "TextDefinesSvO.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
 #include "SVOMFCLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
@@ -323,7 +323,7 @@ void SVToolAdjustmentDialogMaskPageClass::OnEditStaticMaskButton()
 			delete m_pMaskEditorCtl;
 			m_pMaskEditorCtl = nullptr;
 			
-			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+			SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_MaskPage_StartOCXFailed, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10215 );
 			return;
 		}
@@ -422,7 +422,7 @@ void SVToolAdjustmentDialogMaskPageClass::OnExportMaskButton()
 		HRESULT hr = m_maskController.ExportMask(SVString(strPathName));
 		if (!SUCCEEDED(hr))
 		{
-			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+			SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 			SVStringArray msgList;
 			msgList.push_back( SVString(strPathName) );
 			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_CannotOpenFile, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10216 );
@@ -442,7 +442,7 @@ void SVToolAdjustmentDialogMaskPageClass::OnImportMaskButton()
 		HRESULT hr = m_maskController.ImportMask(m_svfnFileName.GetFullFileName());
 		if (!SUCCEEDED(hr))
 		{
-			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+			SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 			SVStringArray msgList;
 			msgList.push_back( SVString(m_svfnFileName.GetFullFileName()) );
 			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_CannotOpenFile, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10217 );

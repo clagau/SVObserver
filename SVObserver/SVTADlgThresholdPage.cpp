@@ -26,7 +26,7 @@
 #include "SVUpperThresholdEquation.h"
 #include "SVMFCControls\SVHistogram.h"
 #include "TextDefinesSvO.h"
-#include "SVStatusLibrary\MessageManagerResource.h"
+#include "SVStatusLibrary\MessageManager.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -1146,7 +1146,7 @@ void AFXAPI DDX_SVThresholdText( CDataExchange* pDX, int nIDC, DWORD& Value )
 	{
 		if ( !GetThreshold( hWndCtrl, Value ) )
 		{
-			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+			SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Threshold_OutOfRange, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10202 ); 
 			pDX->Fail();
 		}

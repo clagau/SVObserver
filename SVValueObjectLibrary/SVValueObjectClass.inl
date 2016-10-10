@@ -12,7 +12,6 @@
 #pragma region Includes
 //Moved to precompiled header: #include <assert.h>
 #include "SVObjectLibrary/SVObjectAttributeClassHelper.h"	// solely for compile speed & dependency separation (SetObjectValue)
-#include "SVLoki/TypeManip.h"	// Loki
 #include "SVMessage/SVMessage.h"
 #pragma endregion Includes
 

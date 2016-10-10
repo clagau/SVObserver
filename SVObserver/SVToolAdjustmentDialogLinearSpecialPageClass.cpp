@@ -18,7 +18,7 @@
 #include "SVLinearToolClass.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "TextDefinesSvO.h"
-#include "SVStatusLibrary\MessageManagerResource.h"
+#include "SVStatusLibrary\MessageManager.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
 #pragma endregion Includes
 
@@ -163,7 +163,7 @@ void SVToolAdjustmentDialogLinearSpecialPageClass::OnCheckRotation()
 
 			if ( sTxt == "Vertical" )
 			{
-				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 				INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvOi::Tid_LinearSpecial_OrientationVertical, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10213, SV_GUID_NULL, MB_YESNO );
 				l_bUpdateRotation = (IDYES == result);
 
@@ -183,7 +183,7 @@ void SVToolAdjustmentDialogLinearSpecialPageClass::OnCheckRotation()
 			{
 				if ( bIsRotated )
 				{
-					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 					INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvOi::Tid_LinearSpecial_IsRotated, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10214, SV_GUID_NULL, MB_YESNO );
 					l_bUpdateRotation = (IDYES == result);
 					if( ! l_bUpdateRotation )

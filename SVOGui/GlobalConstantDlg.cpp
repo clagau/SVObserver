@@ -16,7 +16,7 @@
 #include "SVObjectLibrary/SVObjectNameInfo.h"
 #include "SVObjectLibrary/GlobalConst.h"
 #include "SVMessage/SVMessage.h"
-#include "SVStatusLibrary/MessageManagerResource.h"
+#include "SVStatusLibrary/MessageManager.h"
 #include "ObjectInterfaces/ErrorNumbers.h"
 #pragma endregion Includes
 
@@ -169,7 +169,7 @@ namespace Seidenader { namespace SVOGui
 				{
 					if( !std::regex_match( NewValue.cbegin(), NewValue.cend(), std::regex( RegExp_AllRealNumbers ) ) )
 					{
-						SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
+						SvStl::MessageMgrStd Exception( SvStl::LogAndDisplay );
 						Exception.setMessage( SVMSG_SVO_65_ENTERED_VALUE_INVALID, m_Value, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_25014_GlobalConstantNumber );
 						pDX->Fail();
 					}
@@ -194,7 +194,7 @@ namespace Seidenader { namespace SVOGui
 			{
 				if( rName == *Iter )
 				{
-					SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
+					SvStl::MessageMgrStd Exception( SvStl::LogAndDisplay );
 					Exception.setMessage( SVMSG_SVO_66_GLOBAL_NAME_INVALID, rName.c_str(), SvStl::SourceFileParams(StdMessageParams), SvOi::Err_25015_GlobalNameAlreadyUsed );
 					Failed = true;
 					break;
@@ -209,7 +209,7 @@ namespace Seidenader { namespace SVOGui
 			{
 				if( !std::regex_match( NewName.cbegin(), NewName.cend(), std::regex( RegExp_Name ) ) )
 				{
-					SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
+					SvStl::MessageMgrStd Exception( SvStl::LogAndDisplay );
 					Exception.setMessage( SVMSG_SVO_65_ENTERED_VALUE_INVALID, NewName.c_str(), SvStl::SourceFileParams(StdMessageParams), SvOi::Err_25016_GlobalNameInvalid );
 					Failed = true;
 				}

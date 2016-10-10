@@ -14,7 +14,7 @@
 #include "GuiCommands\GetAvailableObjects.h"
 #include "ObjectInterfaces\TextDefineSvOi.h"
 #include "FormulaController.h"
-#include "SVStatusLibrary\MessageManagerResource.h"
+#include "SVStatusLibrary\MessageManager.h"
 #include "SVMessage\SVMessage.h"
 #include "ObjectInterfaces\GlobalConst.h"
 #pragma endregion Includes
@@ -146,14 +146,14 @@ namespace Seidenader { namespace SVOGui {
 				SvStl::MessageContainerVector messages = m_Values.getCommitErrorList();
 				if (messages.size() > 0 && 0 != messages[0].getMessage().m_MessageCode)
 				{
-					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 					Msg.setMessage(messages[0].getMessage());
 				}
 				else
 				{
 					SVStringArray msgList;
 					msgList.push_back(SvUl_SF::Format(_T("%d"), hResult));
-					SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
+					SvStl::MessageMgrStd Exception( SvStl::LogAndDisplay );
 					Exception.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_UnknownCommitError, msgList, SvStl::SourceFileParams(StdMessageParams));
 				}
 			}
@@ -189,7 +189,7 @@ namespace Seidenader { namespace SVOGui {
 			SvStl::MessageContainerVector messages = commandPtr->getErrorMessages();
 			if (messages.size() > 0 && 0 != messages[0].getMessage().m_MessageCode)
 			{
-				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 				Msg.setMessage(messages[0].getMessage());
 			}
 		}

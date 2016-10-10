@@ -238,7 +238,7 @@ HRESULT RemoteMonitorListController::InitMonitorListInSharedMemory(size_t size)
 	HRESULT hr = rWriter.Create(rSettings, size);
 	if (S_OK != hr)
 	{
-		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+		SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 		Exception.setMessage( SVMSG_SVO_44_SHARED_MEMORY, SvOi::Tid_ErrorInitMonitorListInSharedMemory, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_15044_InitMonitorListInSharedMemory );
 	}
 	return hr;
@@ -331,7 +331,7 @@ void RemoteMonitorListController::WriteMonitorListToSharedMemory(const std::stri
 	}
 	else
 	{
-		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+		SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 		Exception.setMessage( SVMSG_SVO_44_SHARED_MEMORY, SvOi::Tid_ErrorWriteMonitorListNoSharedMemory, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_15020 );
 	}
 }

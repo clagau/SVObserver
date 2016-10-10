@@ -13,7 +13,7 @@
 #include "stdafx.h"
 #include "SVToolSetAdjustmentDialogSheet.h"
 #include "SVOGui/FormulaController.h"
-#include "SVStatusLibrary/MessageManagerResource.h"
+#include "SVStatusLibrary/MessageManager.h"
 #include "SVOGui/TextDefinesSvOg.h"
 #include "ObjectInterfaces/ErrorNumbers.h"
 #pragma endregion Includes
@@ -109,7 +109,7 @@ void SVToolSetAdjustmentDialogSheetClass::OnOK()
 	else
 	{
 		// Equation must be valid or disabled
-		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_InvalidFormula, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10220 );
 	}
 }

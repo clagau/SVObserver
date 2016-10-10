@@ -77,7 +77,7 @@ void SVOIODocClass::Dump(CDumpContext& dc) const
 
 void SVOIODocClass::Serialize(CArchive& ar)
 {
-	SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+	SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 	Exception.setMessage( E_NOTIMPL, SvOi::Tid_ErrorUsedPreviouslyForSec, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_15034 );
 }
 

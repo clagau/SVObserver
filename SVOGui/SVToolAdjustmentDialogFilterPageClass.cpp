@@ -32,7 +32,7 @@
 #include "GuiCommands/ShouldInspectionReset.h"
 #include "ObjectInterfaces/ErrorNumbers.h"
 #include "TextDefinesSvOg.h"
-#include "SVStatusLibrary/MessageManagerResource.h"
+#include "SVStatusLibrary/MessageManager.h"
 #include "SVMessage/SVMessage.h"
 #pragma endregion Includes
 
@@ -247,7 +247,7 @@ namespace Seidenader
 				HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 				if (S_OK != hr)
 				{
-					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_CreationFilterFailed, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10231 );
 				}
 

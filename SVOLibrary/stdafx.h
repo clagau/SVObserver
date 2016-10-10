@@ -63,4 +63,5 @@
 #include <vector>
 
 #include <boost/any.hpp>
+#include <boost/function.hpp> //Used by static library
 #pragma endregion Precompiled Headers

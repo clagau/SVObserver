@@ -14,7 +14,7 @@
 #include "SVLightReferenceDialog.h"
 #include "SVImageLibrary/SVLightReference.h"
 #include "SVAcquisitionClass.h"
-#include "SVStatusLibrary/MessageManagerResource.h"
+#include "SVStatusLibrary/MessageManager.h"
 #include "TextDefinesSvO.h"
 #include "ObjectInterfaces/ErrorNumbers.h"
 #pragma endregion Includes
@@ -101,7 +101,7 @@ bool SVLightReferenceDialogPropertySheetClass::CreatePages( SVVirtualCameraPtrSe
 				{
 					msgList.push_back(pCamera->GetName());
 				}
-				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_LightReference_NotAvailable, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10059 );
 				DestroyAllPages();
 				return false;

@@ -24,7 +24,7 @@
 #include "TriggerInformation/SVHardwareManifest.h"
 #include "SVOResource\ConstGlobalSvOr.h"
 #include "TextDefinesSvO.h"
-#include "SVStatusLibrary\MessageManagerResource.h"
+#include "SVStatusLibrary\MessageManager.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -270,7 +270,7 @@ void CSVOCameraDlg::OnBtnPropVc()
 						if( 1 < m_pParent->GetCameraListCount() && !pCameraObj->GetCameraFile().IsEmpty() )
 						{
 							m_bModified = TRUE;
-							SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+							SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 							INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvOi::Tid_Camera_UseQuestion, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10137, SV_GUID_NULL, MB_YESNO );
 							if (IDYES == result)
 							{

@@ -10,7 +10,7 @@
 #include "SVOResource\resource.h"
 #include "SVMessage\SVMessage.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
-#include "SVStatusLibrary\MessageManagerResource.h"
+#include "SVStatusLibrary\MessageManager.h"
 #include "SVImageLibrary\SVImageBufferHandleImage.h"
 #include "PropertyTree\PROPTREE.H"
 #include "SVTADlgTranslationResizePage.h"
@@ -130,7 +130,7 @@ BOOL SVTADlgTranslationResizePage::OnInitDialog()
 
 	if (S_OK != hr)
 	{
-		SvStl::MessageMgrDisplayAndNotify Exception(  SvStl::LogAndDisplay );
+		SvStl::MessageMgrStd Exception(  SvStl::LogAndDisplay );
 		Exception.setMessage( hr, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 5015);
 	}
 
@@ -1000,7 +1000,7 @@ HRESULT	SVTADlgTranslationResizePage::ExitTabValidation ()
 
 	if (!SUCCEEDED (message.getMessage().m_MessageCode))
 	{
-		SvStl::MessageMgrDisplayAndNotify Exception(  SvStl::LogAndDisplay );
+		SvStl::MessageMgrStd Exception(  SvStl::LogAndDisplay );
 		Exception.setMessage( message.getMessage().m_MessageCode, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), SvOi::ProgCode_5068_ValidateTabData );
 	}
 
@@ -1119,7 +1119,7 @@ HRESULT SVTADlgTranslationResizePage::ValidateCurrentTreeData (SVRPropertyItem* 
 			message.setMessage( hr, SvOi::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams) );
 		}
 
-		SvStl::MessageMgrDisplayAndNotify Exception(  SvStl::LogAndDisplay );
+		SvStl::MessageMgrStd Exception(  SvStl::LogAndDisplay );
 		Exception.setMessage( hr, message.getMessage().m_AdditionalTextId, message.getMessage().m_AdditionalTextList, SvStl::SourceFileParams(StdMessageParams), SvOi::ProgCode_5067_ValidateCurrentTreeData );
 	}
 

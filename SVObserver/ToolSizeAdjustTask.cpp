@@ -17,7 +17,7 @@
 #include "SVInspectionProcess.h" 
 #include "ObjectInterfaces\ErrorNumbers.h"
 #include "SVSVIMStateClass.h"
-#include "SVStatusLibrary\MessageManagerResource.h"
+#include "SVStatusLibrary\MessageManager.h"
 #include "TextDefinesSvO.h"
 #include "EQAdjustSize.h"
 #include "SVRunControlLibrary\SVRunControlLibrary.h"
@@ -441,7 +441,7 @@ DWORD_PTR ToolSizeAdjustTask::ProcessResetAllObject( DWORD DwMessageID, DWORD_PT
 				msgList.push_back(GetTool()->GetName());
 			}
 			SvStl::MsgTypeEnum mode = SilentReset ? SvStl::LogOnly : SvStl::LogAndDisplay;
-			SvStl::MessageMgrDisplayAndNotify Exception(mode);
+			SvStl::MessageMgrStd Exception(mode);
 			Exception.setMessage( SVMSG_SVO_58_TOOLADJUST_RESET_ERROR, messageId, msgList, SvStl::SourceFileParams(StdMessageParams), ResetStatus );
 			DwResult = SVMR_NO_SUCCESS | DwResult;
 		}

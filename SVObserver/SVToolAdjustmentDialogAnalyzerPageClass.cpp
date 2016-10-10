@@ -32,7 +32,7 @@
 #include "GuiCommands/GetCreatableObjects.h"
 #include "ObjectInterfaces/ErrorNumbers.h"
 #include "TextDefinesSvO.h"
-#include "SVStatusLibrary/MessageManagerResource.h"
+#include "SVStatusLibrary/MessageManager.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -228,7 +228,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnButtonDetails()
 	}
 	else
 	{
-		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 		Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvOi::Tid_Error_NoAnalyzerDetails, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10210 );
 	}
 }
@@ -276,7 +276,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnSelchangeCurrentAnalyzer()
 					// And finally try to create the child object...
 					if( ::SVSendMessage( m_pTool, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(m_pCurrentAnalyzer), SVMFSetDefaultInputs | SVMFResetInspection ) != SVMR_SUCCESS )
 					{
-						SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+						SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 						Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_Error_AnalyzerCreationFailed, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10211 );
 
 						// Remove it from the Tool TaskObjectList ( Destruct it )
@@ -296,7 +296,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnSelchangeCurrentAnalyzer()
 			}
 			else
 			{
-				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 				Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_Error_AnalyzerInstantiationFailed, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10212 );
 			}
 		}

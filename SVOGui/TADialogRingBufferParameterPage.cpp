@@ -15,7 +15,7 @@
 
 #include "ObjectInterfaces/ObjectDefines.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
-#include "SVStatusLibrary/MessageManagerResource.h"
+#include "SVStatusLibrary/MessageManager.h"
 #include "SVMessage/SVMessage.h"
 #include "TextDefinesSvOg.h"
 #include "GuiCommands/GetObjectName.h"
@@ -172,7 +172,7 @@ bool TADialogRingBufferParameterPage::QueryAllowExit()
 				errorMessageList = m_Values.getCommitErrorList();
 				if (0 < errorMessageList.size())
 				{
-					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 					Msg.setMessage( errorMessageList[0].getMessage() );
 				}
 			}
@@ -196,7 +196,7 @@ bool TADialogRingBufferParameterPage::QueryAllowExit()
 		}
 		else
 		{
-			SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
+			SvStl::MessageMgrStd Exception( SvStl::LogAndDisplay );
 			SVStringArray msgList;
 			msgList.push_back( SvUl_SF::Format(_T("%d"), SvOi::cRingBufferDepthMin) );
 			msgList.push_back( SvUl_SF::Format(_T("%d"), SvOi::cRingBufferDepthMax) );

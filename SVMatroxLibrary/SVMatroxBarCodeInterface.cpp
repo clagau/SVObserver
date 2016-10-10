@@ -16,7 +16,7 @@
 #include "SVMatroxImagingLibrary.h"  // has MIL includes
 #include "SVMatroxResourceMonitor.h"
 #include "SVBufferResource.h"
-#include "SVStatusLibrary\MessageManagerResource.h"
+#include "SVStatusLibrary\MessageManager.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
 #include "SVMessage\SVMessage.h"
 #pragma endregion Includes
@@ -533,28 +533,28 @@ SVMatroxBarCodeInterface::SVStatusCode SVMatroxBarCodeInterface::GetResult( cons
 					else
 					{
 						l_Code = SVMEE_STRING_TOO_LARGE;
-						SvStl::MessageMgrStdDisplay Msg( SvStl::LogAndDisplay );
+						SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 						Msg.setMessage( SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, "SVMEE_STRING_TOO_LARGE", SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10250 );
 					}
 				}
 				else
 				{
 					l_Code = SVMEE_INVALID_PARAMETER;
-					SvStl::MessageMgrStdDisplay Msg( SvStl::LogAndDisplay );
+					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 					Msg.setMessage( SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, "SVMEE_INVALID_PARAMETER", SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10251 );
 				}
 			}
 			else
 			{
 				l_Code = SVMEE_WRONG_PARAMETER;
-				SvStl::MessageMgrStdDisplay Msg( SvStl::LogAndDisplay );
+				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 				Msg.setMessage( SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, "SVMEE_WRONG_PARAMETER", SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10252 );
 			}
 		}
 		else
 		{
 			l_Code = SVMEE_INVALID_HANDLE;
-			SvStl::MessageMgrStdDisplay Msg( SvStl::LogAndDisplay );
+			SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 			Msg.setMessage( SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, "SVMEE_INVALID_HANDLE", SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10253 );
 		}
 	}
@@ -563,7 +563,7 @@ SVMatroxBarCodeInterface::SVStatusCode SVMatroxBarCodeInterface::GetResult( cons
 	{
 		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
 		SVMatroxApplicationInterface::LogMatroxException();
-		SvStl::MessageMgrStdDisplay Msg( SvStl::LogAndDisplay );
+		SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 		Msg.setMessage( SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, "Exception", SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10253 );
 	}
 #endif

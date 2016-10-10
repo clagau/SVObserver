@@ -28,7 +28,6 @@
 #include "SVImageObjectClass.h"
 #include "SVImageProcessingClass.h"
 #include "SVStatusLibrary\MessageManager.h"
-#include "SVStatusLibrary\MessageManagerResource.h"
 #include "SVSVIMStateClass.h"
 #pragma endregion Includes
 
@@ -355,12 +354,12 @@ HRESULT SVAcquisitionClass::LoadFiles(SVFileNameArrayClass &rArray)
 			}
 			if( LogOnly )
 			{
-				SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+				SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 				Exception.setMessage( SVMSG_SVO_74_LOAD_FILE, mFiles[l].GetFullFileName(), SvStl::SourceFileParams(StdMessageParams), SvOi::Err_25047_LoadFileFailed );
 			}
 			else
 			{
-				SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
+				SvStl::MessageMgrStd Exception( SvStl::LogAndDisplay );
 				if( IDYES == Exception.setMessage( SVMSG_SVO_74_LOAD_FILE, mFiles[l].GetFullFileName(), SvStl::SourceFileParams(StdMessageParams), SvOi::Err_25047_LoadFileFailed, SV_GUID_NULL, MB_YESNO ) )
 				{
 					//All other missing files will only be logged
@@ -737,7 +736,7 @@ HRESULT SVAcquisitionClass::GetNextIndex( SVDataManagerHandle &rDMHandle, SVData
 	{
 		SVStringArray msgList;
 		msgList.push_back(GetDeviceName());
-		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+		SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 		Exception.setMessage( static_cast<DWORD> (hrOk), SvOi::Tid_SVAcquisitionClass_GetNextIndex, msgList, SvStl::SourceFileParams(StdMessageParams) );
 	}
 	

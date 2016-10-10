@@ -42,7 +42,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 		if((S_OK != hr) && (S_FALSE != hr) && (RPC_E_CHANGED_MODE != hr))
 		{
 			ASSERT(false);
-			SvStl::MessageMgrNoDisplay Exception(SvStl::LogOnly);
+			SvStl::MessageMgrStd Exception(SvStl::LogOnly);
 			Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR, SvOi::Tid_Sax_ConInitializeExFailed, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16073_COINITIALIZE_ );
 		}
 		else if(S_FALSE == hr)

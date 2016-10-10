@@ -18,7 +18,7 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVObjectLibrary/GlobalConst.h"
 #include "SVObjectLibrary/SVObjectWriter.h"
-#include "SVStatusLibrary/MessageManagerResource.h"
+#include "SVStatusLibrary/MessageManager.h"
 #include "ObjectInterfaces/ErrorNumbers.h"
 #include "SVSVIMStateClass.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
@@ -622,7 +622,7 @@ void SVImageViewClass::SaveViewOrImageToDisk(bool ViewOnly, bool showOverlays)
 
 	if (nullptr == pCurrentImage)
 	{
-		SvStl::MessageMgrDisplayAndNotify NullImageWarning( SvStl::LogAndDisplay );
+		SvStl::MessageMgrStd NullImageWarning( SvStl::LogAndDisplay );
 		NullImageWarning.setMessage(SVMSG_SVO_5018_NULLIMAGE, SvOi::Tid_DisplayedImageIsUnavailable, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_30000_NullImageOnSave);
 		return;
 	}

@@ -25,7 +25,7 @@
 #include "SVArchiveHeaderEditDlg.h"
 #include "ArchiveToolHelper.h"
 #include "TextDefinesSvO.h"
-#include "SVStatusLibrary/MessageManagerResource.h"
+#include "SVStatusLibrary/MessageManager.h"
 #include "SVOResource/ConstGlobalSvOr.h"
 #pragma endregion Includes
 
@@ -98,7 +98,7 @@ bool SVTADlgArchiveResultsPage::QueryAllowExit()
 		else
 		{
 			//don't allow to exit with invalid path
-			SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
+			SvStl::MessageMgrStd Exception( SvStl::LogAndDisplay );
 			Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvOi::Tid_InvalidFileName, SvStl::SourceFileParams(StdMessageParams) );
 			return false;
 		}
@@ -113,7 +113,7 @@ bool SVTADlgArchiveResultsPage::QueryAllowExit()
 	{
 		SVStringArray msgList;
 		msgList.push_back(SVString(szDrive));
-		SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
+		SvStl::MessageMgrStd Exception( SvStl::LogAndDisplay );
 		Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvOi::Tid_InvalidDrive, msgList, SvStl::SourceFileParams(StdMessageParams) );
 
 		return false; 
@@ -129,7 +129,7 @@ bool SVTADlgArchiveResultsPage::QueryAllowExit()
 	{
 		SVStringArray msgList;
 		msgList.push_back(SVString(csArchiveFileName));
-		SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
+		SvStl::MessageMgrStd Exception( SvStl::LogAndDisplay );
 		Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvOi::Tid_AP_InvalidFile, msgList, SvStl::SourceFileParams(StdMessageParams) );
 		return false;   // Property is ready to exit.
 	}
@@ -440,7 +440,7 @@ void SVTADlgArchiveResultsPage::OnBrowse()
 		else
 		{
 			//don't allow to exit with invalid path
-			SvStl::MessageMgrDisplayAndNotify Exception( SvStl::LogAndDisplay );
+			SvStl::MessageMgrStd Exception( SvStl::LogAndDisplay );
 			Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvOi::Tid_InvalidFileName, SvStl::SourceFileParams(StdMessageParams) );
 			return;
 		}

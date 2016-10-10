@@ -175,7 +175,7 @@ HRESULT SVAccessClass::PasswordDialog(CString& strUser, CString& strPassword, LP
 					SVStringArray msgList;
 					msgList.push_back( SVString(dlg.m_strUser) );
 					msgList.push_back( SVString(Attempt) );
-					SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+					SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 					Exception.setMessage( SVMSG_SVS_ACCESS_DENIED, SvOi::Tid_Security_Access_Denied, msgList, SvStl::SourceFileParams(StdMessageParams) );
 
 					dlg.m_strUser.Empty();
@@ -192,7 +192,7 @@ HRESULT SVAccessClass::PasswordDialog(CString& strUser, CString& strPassword, LP
 				SVStringArray msgList;
 				msgList.push_back( SVString(dlg.m_strUser) );
 				msgList.push_back( SVString(Attempt) );
-				SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+				SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 				Exception.setMessage( SVMSG_SVS_ACCESS_DENIED, SvOi::Tid_Security_Access_Denied, msgList, SvStl::SourceFileParams(StdMessageParams) );
 
 				Result = SVMSG_SVS_ACCESS_DENIED;
@@ -440,7 +440,7 @@ HRESULT SVAccessClass::Validate(  long lId1 )
 
 					// Event viewer
 					// Application Log Gained Access...Category - SVAccess
-					SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+					SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 					Exception.setMessage( SVMSG_SVS_ACCESS_GRANTED, SvOi::Tid_Security_Access_Granted, msgList, SvStl::SourceFileParams(StdMessageParams) );
 
 					msgList.clear();
@@ -450,7 +450,7 @@ HRESULT SVAccessClass::Validate(  long lId1 )
 				}
 				if( l_bUserValidated )
 				{
-					SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+					SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 					Exception.setMessage( SVMSG_SVS_ACCESS_DENIED, SvOi::Tid_Security_Access_Denied, msgList, SvStl::SourceFileParams(StdMessageParams) );
 
 					l_strStatus = _T("User Does Not Have Rights to This Function");
@@ -465,7 +465,7 @@ HRESULT SVAccessClass::Validate(  long lId1 )
 		SVStringArray msgList;
 		msgList.push_back( SvStl::MessageData::convertId2AddtionalText( SvOi::Tid_Security_Disabled) );
 		
-		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+		SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 		Exception.setMessage( lId1, SvOi::Tid_Security_GainedAccess, msgList, SvStl::SourceFileParams(StdMessageParams) );
 		hr = S_OK;
 	}
@@ -656,7 +656,7 @@ HRESULT SVAccessClass::Validate(  long lId1, long lId2)
 
 					msgList.clear();
 					msgList.push_back( SVString(strTmpUser) );
-					SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+					SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 					Exception.setMessage( lId1, SvOi::Tid_Security_GainedAccess, msgList, SvStl::SourceFileParams(StdMessageParams) );
 
 					Exception.setMessage( lId2, SvOi::Tid_Security_GainedAccess, msgList, SvStl::SourceFileParams(StdMessageParams) );
@@ -670,7 +670,7 @@ HRESULT SVAccessClass::Validate(  long lId1, long lId2)
 						msgList.clear();
 						msgList.push_back( SVString(strTmpUser) );
 						msgList.push_back( SVString(strName1) );
-						SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+						SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 						Exception.setMessage( SVMSG_SVS_ACCESS_DENIED, SvOi::Tid_Security_Access_Denied, msgList, SvStl::SourceFileParams(StdMessageParams) );
 					}
 
@@ -683,7 +683,7 @@ HRESULT SVAccessClass::Validate(  long lId1, long lId2)
 	{
 		msgList.clear();
 		msgList.push_back( SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_Security_Disabled) );
-		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+		SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 		Exception.setMessage( lId1, SvOi::Tid_Security_GainedAccess, msgList, SvStl::SourceFileParams(StdMessageParams) );
 		hr = S_OK;
 	}
@@ -798,7 +798,7 @@ HRESULT SVAccessClass::Logout()
 {
 	SVStringArray msgList;
 	msgList.push_back( SVString(m_svStorage.GetCurrentUser()) );
-	SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+	SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 	Exception.setMessage( SVMSG_SVS_ACCESS_LOGGED_OUT, SvOi::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams) );
 
 	m_svStorage.ClearUser();
@@ -830,7 +830,7 @@ HRESULT SVAccessClass::Logon()
 		msgList.push_back( SVString( strTmpUser ) );
 		msgList.push_back( Attempt );
 
-		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+		SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 		Exception.setMessage( SVMSG_SVS_ACCESS_GRANTED, SvOi::Tid_Security_Access_Granted, msgList, SvStl::SourceFileParams(StdMessageParams) );
 
 		m_svStorage.SetUser( strTmpUser );

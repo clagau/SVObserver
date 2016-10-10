@@ -609,7 +609,7 @@ bool ToolSetView::ShowDuplicateNameMessage(const CString& rName) const
 {
 	SVStringArray msgList;
 	msgList.push_back(SVString(rName));
-	SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+	SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 	INT_PTR rc = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_RenameError_DuplicateName, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10221, SV_GUID_NULL, MB_RETRYCANCEL );
 	return (IDRETRY == rc);
 }

@@ -11,6 +11,7 @@
 #pragma once
 
 #pragma region Includes
+#include "SVOResource/resource.h"
 #include "SVTimerLibrary/SVClock.h"
 #include "SVInt64ValueObjectClass.h"
 #pragma endregion Includes

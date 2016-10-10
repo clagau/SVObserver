@@ -7,50 +7,74 @@
 //******************************************************************************
 
 #pragma region Constructor
-template <typename M_Container, typename M_Data, ShowDialog M_Display , Notify M_Notify>
-MessageManager<M_Container, M_Data, M_Display, M_Notify>::MessageManager( const MsgTypeEnum Type ) :
+template <typename M_Container, typename M_Data>
+MessageManager<M_Container, M_Data>::MessageManager( const MsgTypeEnum Type ) :
 m_Type( Type )
 {
+	if( DataOnly != Type)
+	{
+		Initialize();
+	}
 }
 
-template <typename M_Container, typename M_Data, ShowDialog M_Display , Notify M_Notify>
-MessageManager<M_Container, M_Data, M_Display, M_Notify>::~MessageManager()
+template <typename M_Container, typename M_Data>
+MessageManager<M_Container, M_Data>::~MessageManager()
 {
 }
 #pragma endregion Constructor
  
 #pragma region Public Methods
-template <typename M_Container, typename M_Data, ShowDialog M_Display, Notify M_Notify>
-void MessageManager<M_Container, M_Data, M_Display, M_Notify>::setType( const MsgTypeEnum Type )
+template <typename M_Container, typename M_Data>
+void MessageManager<M_Container, M_Data>::setShowDisplayFunction( ShowDisplayFunctor ShowDisplay )
+{
+	Initialize();
+	if( nullptr != m_pShowDisplay )
+	{
+		*m_pShowDisplay = ShowDisplay;
+	}
+}
+
+template <typename M_Container, typename M_Data>
+void MessageManager<M_Container, M_Data>::setNotificationFunction( NotifyFunctor Notify )
+{
+	Initialize();
+	if( nullptr != m_pNotify )
+	{
+		*m_pNotify = Notify;
+	}
+}
+
+template <typename M_Container, typename M_Data>
+void MessageManager<M_Container, M_Data>::setType( const MsgTypeEnum Type )
 {
 	m_Type = Type;
 }
 
-template <typename M_Container, typename M_Data, ShowDialog M_Display , Notify M_Notify>
-void MessageManager<M_Container, M_Data, M_Display, M_Notify>::Throw()
+template <typename M_Container, typename M_Data>
+void MessageManager<M_Container, M_Data>::Throw()
 {
-	throw M_Container; 
+	throw m_MessageHandler; 
 }
 
-template <typename M_Container, typename M_Data, ShowDialog M_Display , Notify M_Notify>
-INT_PTR MessageManager<M_Container, M_Data, M_Display, M_Notify>::Process( UINT MsgBoxType /*= MB_OK*/ )
+template <typename M_Container, typename M_Data>
+INT_PTR MessageManager<M_Container, M_Data>::Process( UINT MsgBoxType /*= MB_OK*/ )
 {
 	INT_PTR Result( IDCANCEL );
 
 	Log();
 
 	Result = Display( MsgBoxType );
-	if( nullptr != M_Display && LogAndDisplay == m_Type)
+	if( nullptr != m_pShowDisplay && !m_pShowDisplay->empty() && LogAndDisplay == m_Type)
 	{
 		//Message has bin displayed
-		M_Container.setMessageDisplayed();
+		m_MessageHandler.setMessageDisplayed();
 	}
 
 	return Result;
 }
 
-template <typename M_Container, typename M_Data, ShowDialog M_Display , Notify M_Notify>
-INT_PTR MessageManager<M_Container, M_Data, M_Display, M_Notify>::setMessage( DWORD MessageCode, LPCTSTR AdditionalText, SourceFileParams SourceFile, DWORD ProgramCode /*= 0*/, const GUID& rObjectId /*= SV_GUID_NULL*/, UINT MsgBoxType /*= MB_OK*/ )
+template <typename M_Container, typename M_Data>
+INT_PTR MessageManager<M_Container, M_Data>::setMessage( DWORD MessageCode, LPCTSTR AdditionalText, SourceFileParams SourceFile, DWORD ProgramCode /*= 0*/, const GUID& rObjectId /*= SV_GUID_NULL*/, UINT MsgBoxType /*= MB_OK*/ )
 {
 	SVStringArray textList;
 	SvOi::MessageTextEnum id = SvOi::Tid_Empty;
@@ -63,80 +87,107 @@ INT_PTR MessageManager<M_Container, M_Data, M_Display, M_Notify>::setMessage( DW
 	return setMessage( MessageCode, id, textList, SourceFile, ProgramCode, rObjectId, MsgBoxType );
 }
 
-template <typename M_Container, typename M_Data, ShowDialog M_Display , Notify M_Notify>
-INT_PTR MessageManager<M_Container, M_Data, M_Display, M_Notify>::setMessage( DWORD MessageCode, SvOi::MessageTextEnum AdditionalTextId, SourceFileParams SourceFile, DWORD ProgramCode /*= 0*/, const GUID& rObjectId /*= SV_GUID_NULL*/, UINT MsgBoxType /*= MB_OK*/)
+template <typename M_Container, typename M_Data>
+INT_PTR MessageManager<M_Container, M_Data>::setMessage( DWORD MessageCode, SvOi::MessageTextEnum AdditionalTextId, SourceFileParams SourceFile, DWORD ProgramCode /*= 0*/, const GUID& rObjectId /*= SV_GUID_NULL*/, UINT MsgBoxType /*= MB_OK*/)
 {
 	return setMessage( MessageCode, AdditionalTextId, SVStringArray(), SourceFile, ProgramCode, rObjectId, MsgBoxType );
 }
 
-template <typename M_Container, typename M_Data, ShowDialog M_Display , Notify M_Notify>
-INT_PTR MessageManager<M_Container, M_Data, M_Display, M_Notify>::setMessage( DWORD MessageCode, SvOi::MessageTextEnum AdditionalTextId, const SVStringArray& rAdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode /*= 0*/, const GUID& rObjectId /*= SV_GUID_NULL*/ , UINT MsgBoxType /*= MB_OK*/ )
+template <typename M_Container, typename M_Data>
+INT_PTR MessageManager<M_Container, M_Data>::setMessage( DWORD MessageCode, SvOi::MessageTextEnum AdditionalTextId, const SVStringArray& rAdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode /*= 0*/, const GUID& rObjectId /*= SV_GUID_NULL*/ , UINT MsgBoxType /*= MB_OK*/ )
 {
 	INT_PTR Result( IDCANCEL );
 
-	M_Container.setMessage( MessageCode, AdditionalTextId, rAdditionalTextList, SourceFile, ProgramCode, rObjectId );
+	m_MessageHandler.setMessage( MessageCode, AdditionalTextId, rAdditionalTextList, SourceFile, ProgramCode, rObjectId );
 
 	Result = Process( MsgBoxType );
 
 	return Result;
 }
 
-template <typename M_Container, typename M_Data, ShowDialog M_Display , Notify M_Notify>
-INT_PTR MessageManager<M_Container, M_Data, M_Display, M_Notify>::setMessage( const M_Data& rData, const GUID& rObjectId /*= SV_GUID_NULL*/, UINT MsgBoxType /*= MB_OK */ )
+template <typename M_Container, typename M_Data>
+INT_PTR MessageManager<M_Container, M_Data>::setMessage( const M_Data& rData, const GUID& rObjectId /*= SV_GUID_NULL*/, UINT MsgBoxType /*= MB_OK */ )
 {
 	INT_PTR Result( IDCANCEL );
 
-	M_Container.setMessage( rData, rObjectId );
+	m_MessageHandler.setMessage( rData, rObjectId );
 
 	Result = Process( MsgBoxType );
 
 	return Result;
 }
 
-template <typename M_Container, typename M_Data, ShowDialog M_Display , Notify M_Notify>
-M_Container& MessageManager<M_Container, M_Data, M_Display, M_Notify>::getMessageContainer()
+template <typename M_Container, typename M_Data>
+M_Container& MessageManager<M_Container, M_Data>::getMessageContainer()
 {
-	return M_Container; 
+	return m_MessageHandler;
 }
 #pragma endregion Public Methods
  
 #pragma region Private Methods
-template <typename M_Container, typename M_Data, ShowDialog M_Display , Notify M_Notify>
-void MessageManager<M_Container, M_Data, M_Display, M_Notify>::Log()
+template <typename M_Container, typename M_Data>
+void MessageManager<M_Container, M_Data>::Initialize()
 {
-	if( LogOnly == m_Type || LogAndDisplay == m_Type )
+	//Initialize the static members just once per instance
+	if( nullptr == m_pShowDisplay && nullptr == m_pNotify )
 	{
-		M_Container.logMessage();
+		M_Container MessageHandler;
+		MessageHandler.setFunctorObjects( m_pShowDisplay, m_pNotify );
 	}
 }
 
-template <typename M_Container, typename M_Data, ShowDialog M_Display , Notify M_Notify>
-INT_PTR MessageManager<M_Container, M_Data, M_Display, M_Notify>::Display( const UINT MsgBoxType ) const
+template <typename M_Container, typename M_Data>
+void MessageManager<M_Container, M_Data>::Log()
+{
+	if( LogOnly == m_Type || LogAndDisplay == m_Type )
+	{
+		m_MessageHandler.logMessage();
+
+		if( nullptr != m_pNotify && !m_pNotify->empty()  && LogOnly == m_Type )
+		{
+			//! Only notify log messages which are warnings or errors
+			UINT MsgSeverity( m_MessageHandler.getSeverityIcon() );
+
+			if( MB_ICONWARNING == MsgSeverity || MB_ICONERROR == MsgSeverity )
+			{
+				SVString Msg;
+				m_MessageHandler.Format( Msg );
+				int MsgCode = (0 != m_MessageHandler.getMessage().m_ProgramCode) ? m_MessageHandler.getMessage().m_ProgramCode : m_MessageHandler.getMessage().m_MessageCode;
+				(*m_pNotify)( SvStl::MsgLog, MsgCode, Msg.c_str() );
+			}
+		}
+	}
+}
+
+template <typename M_Container, typename M_Data>
+INT_PTR MessageManager<M_Container, M_Data>::Display( const UINT MsgBoxType ) const
 {
 	INT_PTR Result( IDCANCEL );
 
 	//If the message has already been displayed do not display again
-	if( nullptr != M_Display && LogAndDisplay == m_Type  && !M_Container.getMessage().m_Displayed )
+	if( nullptr != m_pShowDisplay && !m_pShowDisplay->empty() && LogAndDisplay == m_Type  && !m_MessageHandler.getMessage().m_Displayed )
 	{
 		SVString Msg;
 		SVString MsgDetails;
 		UINT Type ( MsgBoxType );
+		int MsgCode( 0 );
 
-		MsgDetails = M_Container.Format(Msg);
+		MsgDetails = m_MessageHandler.Format( Msg );
+		MsgCode = (0 != m_MessageHandler.getMessage().m_ProgramCode) ? m_MessageHandler.getMessage().m_ProgramCode : m_MessageHandler.getMessage().m_MessageCode;
 		//Message box type icon is determined by the severity of the message so set to 0 then get it from the container
 		Type &= ~MB_ICONMASK;
-		Type |= M_Container.getSeverityIcon();
+		Type |= m_MessageHandler.getSeverityIcon();
 
-		if(nullptr != M_Notify )
+		if( nullptr != m_pNotify && !m_pNotify->empty() )
 		{
-			M_Notify(SvStl::StartMsgBox, M_Container.getMessage().m_ProgramCode ,Msg.c_str() );
+			(*m_pNotify)( SvStl::StartMsgBox, MsgCode ,Msg.c_str() );
 		}
-		Result = M_Display( nullptr, Msg.c_str(), MsgDetails.c_str(), Type );
+		Result = (*m_pShowDisplay)( nullptr, Msg.c_str(), MsgDetails.c_str(), Type );
 		//Message has been displayed do not display again
-		M_Container.getMessage().m_Displayed = true;
-		if(nullptr != M_Notify )
+		m_MessageHandler.getMessage().m_Displayed = true;
+		if( nullptr != m_pNotify && !m_pNotify->empty() )
 		{
-			M_Notify(SvStl::EndMsgBox, M_Container.getMessage().m_ProgramCode ,Msg.c_str() );
+			(*m_pNotify)( SvStl::EndMsgBox, MsgCode ,Msg.c_str() );
 		}
 	}
 	

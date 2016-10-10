@@ -1109,9 +1109,6 @@
     <ClCompile Include="SVArchiveRecordsArray.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="MessageNotification.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ExtrasEngine.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -2356,9 +2353,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ArchiveMethodEnum.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MessageNotification.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ExtrasEngine.h">

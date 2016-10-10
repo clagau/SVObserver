@@ -23,7 +23,7 @@
 #include "SVResultLong.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
 #include "SVOMFCLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
-#include "SVStatusLibrary/MessageManagerResource.h"
+#include "SVStatusLibrary/MessageManager.h"
 
 #pragma endregion Includes
 
@@ -105,7 +105,7 @@ void SVLuminanceAnalyzerClass::init()
 
 	if(nullptr == pAnalyzerResult)
 	{
-		SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+		SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16092);
 	}
 	else
@@ -129,13 +129,13 @@ BOOL SVLuminanceAnalyzerClass::OnValidate ()
 	}
 	else if (msvHistResultID.empty())
 	{
-		SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+		SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16094);
 		Valid = false;	
 	}
 	else if (0 == msvplHistValues.size())
 	{
-		SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+		SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16095);
 		Valid = false;	
 	}
@@ -161,7 +161,7 @@ BOOL SVLuminanceAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateS
 
 	if (! SVImageAnalyzerClass::CreateObject( PCreateStructure ) )
 	{
-		SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+		SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16095);
 		bError = true;
 	}
@@ -170,7 +170,7 @@ BOOL SVLuminanceAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateS
 		pSVImage = getInputImage ();
 		if (nullptr == pSVImage )
 		{
-			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16096);
 			bError = true;
 		}
@@ -182,7 +182,7 @@ BOOL SVLuminanceAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateS
 		msvplHistValues.resize( msvlHistValueArraySize );
 		if (msvplHistValues.size() == 0)
 		{
-			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16097);
 			bError = true;
 		}
@@ -205,7 +205,7 @@ BOOL SVLuminanceAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateS
 
 		if (msvHistResultID.empty())
 		{
-			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16098);
 			bError = true;
 		}
@@ -281,7 +281,7 @@ BOOL SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 		{
 			SetInvalid ();            
 
-			SvStl::MessageMgrDisplayAndNotify  Ex( SvStl::LogAndDisplay );
+			SvStl::MessageMgrStd  Ex( SvStl::LogAndDisplay );
 			Ex.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16099);
 			LastError = true;
 			break;
@@ -291,7 +291,7 @@ BOOL SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 
 		if( ! pInputImage->GetImageHandle( ImageHandle ) || ImageHandle.empty() )
 		{
-			SvStl::MessageMgrDisplayAndNotify  Ex( SvStl::LogAndDisplay );
+			SvStl::MessageMgrStd  Ex( SvStl::LogAndDisplay );
 			Ex.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16100);
 			LastError = true;
 			break;
@@ -303,7 +303,7 @@ BOOL SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 
 		if( S_OK != l_Status )
 		{
-			SvStl::MessageMgrDisplayAndNotify  Ex( SvStl::LogAndDisplay );
+			SvStl::MessageMgrStd  Ex( SvStl::LogAndDisplay );
 			Ex.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16101);
 			LastError = true;
 			break;
@@ -315,7 +315,7 @@ BOOL SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 		if( l_Code != SVMEE_STATUS_OK )
 		{
 			//          35 = Invalid MIL ID, for others see milerr.h
-			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16102);
 			LastError = true;
 			break;
@@ -326,7 +326,7 @@ BOOL SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 
 		if( l_Code != SVMEE_STATUS_OK )
 		{
-			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16103);
 			LastError = true;
 			break;
@@ -341,7 +341,7 @@ BOOL SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 
 		if (lNbrPixels == 0)
 		{
-			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16104);
 			LastError = true;
 			break;
@@ -349,7 +349,7 @@ BOOL SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 
 		if ( S_OK != msvLuminanceValue.SetValue( RRunStatus.m_lResultDataIndex, (long)(sum / lNbrPixels) ) )
 		{
-			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16105);
 			LastError = true;
 			break;
@@ -362,7 +362,7 @@ BOOL SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 
 		if ( S_OK != msvCalcStdDevValue.GetValue( calcStdDev ))
 		{
-			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16106);
 			LastError = true;
 			break;
@@ -399,7 +399,7 @@ BOOL SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 				///////////////////////////////////////////////////////////////////
 				if (S_OK != msvVarianceValue.SetValue( RRunStatus.m_lResultDataIndex, value ))
 				{
-					SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+					SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 					MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16107);
 					LastError = true;
 					break;
@@ -413,7 +413,7 @@ BOOL SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 				{
 					if (value < 0)
 					{
-						SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+						SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 						MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16108);
 						LastError = true;
 						break;
@@ -426,7 +426,7 @@ BOOL SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 				///////////////////////////////////////////////////////////////////
 				if (S_OK != msvStdDevValue.SetValue( RRunStatus.m_lResultDataIndex, value ))
 				{
-					SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+					SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 					MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16109);
 					LastError = true;
 					break;

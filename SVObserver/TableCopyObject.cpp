@@ -99,14 +99,14 @@ HRESULT TableCopyObject::ResetObject()
 				}
 				catch( const SvStl::MessageContainer& rSvE )
 				{
-					SvStl::MessageMgrDisplayAndNotify e( SvStl::LogOnly );
+					SvStl::MessageMgrStd e( SvStl::LogOnly );
 					e.setMessage( rSvE.getMessage() );
 				}
 				
 			}
 			else
 			{
-				SvStl::MessageMgrDisplayAndNotify e( SvStl::LogOnly );
+				SvStl::MessageMgrStd e( SvStl::LogOnly );
 				e.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_TableObject_createColumnValueObjectFailed, SvStl::SourceFileParams(StdMessageParams) );
 				ASSERT(FALSE);
 			}

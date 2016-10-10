@@ -37,7 +37,7 @@ HRESULT SVAsyncProcedure<SVAPCSignalHandler, SVThreadSignalHandler>::Create(cons
 template<typename SVAPCSignalHandler, typename SVThreadSignalHandler>
 HRESULT SVAsyncProcedure<SVAPCSignalHandler, SVThreadSignalHandler>::Signal(void* pData)
 {
-	SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+	SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 
 	HRESULT Result = S_OK;
 

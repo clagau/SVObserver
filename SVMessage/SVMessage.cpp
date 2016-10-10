@@ -10,6 +10,7 @@
 //******************************************************************************
 
 #include "stdafx.h"
+//Moved to precompiled header: #include <boost\function.hpp>
 
 #ifdef _MANAGED
 #pragma managed(push, off)
@@ -27,8 +28,18 @@
 #define SVMESSAGE_API __declspec(dllimport)
 #endif
 
-// This is an example of an exported variable
-SVMESSAGE_API unsigned long g_LastDllMainReason=0;
+//! These functor objects must match those in MessageContainer
+typedef boost::function<INT_PTR ( HWND, LPCTSTR, LPCTSTR, UINT )> ShowDisplayFunctor;
+typedef boost::function<HRESULT ( int, int, LPCTSTR )> NotifyFunctor;
+
+extern "C"
+{
+	// This is an example of an exported variable
+	SVMESSAGE_API unsigned long g_LastDllMainReason=0;
+	//Global Show display and Notify functor objects
+	SVMESSAGE_API ShowDisplayFunctor g_ShowDisplay;
+	SVMESSAGE_API NotifyFunctor g_Notify;
+};
 
 BOOL APIENTRY DllMain( HMODULE hModule,
 	DWORD  ul_reason_for_call,

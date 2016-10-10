@@ -15,6 +15,7 @@
 #pragma warning (disable : 4244)
 
 #pragma region Includes
+#include "SVOResource/resource.h"
 #include "SVValueObjectClassImpl.h"
 #include "SVValueObjectGlobals.h"
 #pragma endregion Includes

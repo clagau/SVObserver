@@ -398,7 +398,7 @@ BOOL SVArchiveTool::CreateTextArchiveFile()
 	{
 		SVStringArray msgList;
 		msgList.push_back(SVString(csFileArchivePath));
-		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_ArchiveTool_CreateFileFailed, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10036 ); 
 		return FALSE;
 	}
@@ -569,7 +569,7 @@ BOOL SVArchiveTool::OnValidate()	// called each onRun
 					{ //should not ever get here since the path is validated above
 						SVStringArray msgList;
 						msgList.push_back(SVString(csImagePath));
-						SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+						SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 						Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_PathFileNotFound, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10037 ); 
 
 						bOk = FALSE;

@@ -49,7 +49,7 @@
 #ifdef _DEBUG_PERFORMANCE_INFO //Arvid 160212 this is helpful for debugging the creation of Performance Information
 #include "SVTimerLibrary\SVProfiler.h"
 #endif
-#include "SVStatusLibrary\MessageManagerResource.h"
+#include "SVStatusLibrary\MessageManager.h"
 #include "SVVisionProcessorHelper.h"
 #include "SVToolSet.h"
 #pragma endregion Includes
@@ -2768,7 +2768,7 @@ SVProductInfoStruct* SVPPQObject::IndexPPQ( SvTi::SVTriggerInfoStruct& p_rTrigge
 		// Recycle the exiting SVProductInfoStruct
 		if( !RecycleProductInfo( l_pLastProduct ) )
 		{
-			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+			SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 			Exception.setMessage( SVMSG_SVO_69_PPQ_INDEX_NOT_RELEASED, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
 		}
 	}
@@ -4145,14 +4145,14 @@ HRESULT SVPPQObject::ProcessTrigger( bool& p_rProcessed )
 							{
 								SVStringArray msgList;
 								msgList.push_back(e.what());
-								SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+								SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 								Exception.setMessage( SVMSG_SVO_44_SHARED_MEMORY, SvOi::Tid_ProcessTrigger, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_15026 );
 							}
 							catch (...)
 							{
 								SVStringArray msgList;
 								msgList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_Unknown));
-								SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+								SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 								Exception.setMessage( SVMSG_SVO_44_SHARED_MEMORY, SvOi::Tid_ProcessTrigger, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_15027 );
 							}
 						} // if (HasActiveMonitorList())
@@ -5251,7 +5251,7 @@ void SVPPQObject::SetRejectConditionList(const SVMonitorItemList& rRejectCondLis
 	}
 	if (bNotFound)
 	{
-		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+		SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 		Exception.setMessage( SVMSG_SVO_45_SHARED_MEMORY_SETUP_LISTS, SvOi::Tid_ErrorNotAllRejectConditionItemsFound, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_15028 );
 	}
 }
@@ -5275,14 +5275,14 @@ void SVPPQObject::ReleaseSharedMemory(const SVProductInfoStruct& rProduct)
 		{
 			SVStringArray msgList;
 			msgList.push_back(e.what());
-			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+			SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 			Exception.setMessage( SVMSG_SVO_44_SHARED_MEMORY, SvOi::Tid_ReleaseProduct, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_15029 );
 		}
 		catch (...)
 		{
 			SVStringArray msgList;
 			msgList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_Unknown));
-			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+			SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 			Exception.setMessage( SVMSG_SVO_44_SHARED_MEMORY, SvOi::Tid_ReleaseProduct, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_15030 );
 		}
 	}
@@ -5320,7 +5320,7 @@ void SVPPQObject::CommitSharedMemory(const SVProductInfoStruct& rProduct)
 				HRESULT hr = rWriter.CopyLastInspectedToReject(rSharedProduct);
 				if (S_OK != hr)
 				{
-					SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+					SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 					Exception.setMessage( SVMSG_SVO_50_SHARED_MEMORY_COPY_LASTINSPECTED_TO_REJECT, SvOi::Tid_ErrorCopyLastInspectedToReject, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_15031 );
 				}
 			}
@@ -5334,14 +5334,14 @@ void SVPPQObject::CommitSharedMemory(const SVProductInfoStruct& rProduct)
 		{
 			SVStringArray msgList;
 			msgList.push_back(e.what());
-			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+			SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 			Exception.setMessage( SVMSG_SVO_44_SHARED_MEMORY, SvOi::Tid_CommitSharedMemory, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_15032 );
 		}
 		catch (...)
 		{
 			SVStringArray msgList;
 			msgList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_Unknown));
-			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+			SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 			Exception.setMessage( SVMSG_SVO_44_SHARED_MEMORY, SvOi::Tid_CommitSharedMemory, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_15033 );
 		}
 	}

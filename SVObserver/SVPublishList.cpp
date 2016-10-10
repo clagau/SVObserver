@@ -143,7 +143,7 @@ void SVPublishListClass::Refresh(SVTaskObjectClass * pRootObject)
 			}
 			if( !found )
 			{
-				SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
+				SvStl::MessageMgrStd e( SvStl::LogOnly );
 				e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvOi::Tid_ErrorFindingPPQEntries, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_17043_ErrorFindingPPQEntries );
 				DebugBreak();
 			}

@@ -24,26 +24,23 @@ namespace Seidenader { namespace SVStatusLibrary
 			LogOnly,
 			LogAndDisplay
 		};
-		typedef INT_PTR (*ShowDialog)( HWND, LPCTSTR, LPCTSTR, UINT ); 
 
 		enum NotificationEnum
 		{
-				MsgUknown =0,	
-				StartMsgBox =1,
-				EndMsgBox =2,
-				MsgLog =3
+				MsgUknown		=0,
+				StartMsgBox		=1,
+				EndMsgBox		=2,
+				MsgLog			=3
 		};
-		typedef INT_PTR (*Notify)(NotificationEnum, int, LPCTSTR );
 	
 #pragma endregion Declarations
 
 	//************************************
 	//! This is the message manager template class
 	//! \param M_Container [in] the message data container which stores and logs the information
-	//! \param M_Struct [in] the message data structure
-	//! \param M_Display [in] the message display class
+	//! \param M_Data [in] the message data structure
 	//************************************
-	template <typename M_Container, typename M_Data, ShowDialog M_Display, Notify M_Notify >
+	template <typename M_Container, typename M_Data>
 	class MessageManager
 	{
 #pragma region Constructor
@@ -61,6 +58,18 @@ namespace Seidenader { namespace SVStatusLibrary
 
 #pragma region Public Methods
 	public:
+		//************************************
+		//! Sets the show display function
+		//! \param  [in] pointer to the display functor
+		//************************************
+		static void setShowDisplayFunction( ShowDisplayFunctor ShowDisplay );
+
+		//************************************
+		//! Sets the notification function
+		//! \param  [in] pointer to the notification function
+		//************************************
+		static void setNotificationFunction( NotifyFunctor Notify );
+
 		//************************************
 		//! Sets the message type
 		//! \param Type [in] Determines if the message is logged, or displayed and logged
@@ -134,6 +143,8 @@ namespace Seidenader { namespace SVStatusLibrary
 
 #pragma region Private Methods
 	private:
+		static void Initialize();
+
 		//************************************
 		//! Logs the message if the type is set to be logged
 		//************************************
@@ -150,8 +161,10 @@ namespace Seidenader { namespace SVStatusLibrary
 
 	#pragma region Member variables
 	private:
-		M_Container M_Container;					//! The message handler
-		MsgTypeEnum m_Type;						//! The message type
+		M_Container m_MessageHandler;				//! The message handler
+		MsgTypeEnum m_Type;							//! The message type
+		static ShowDisplayFunctor* m_pShowDisplay;
+		static NotifyFunctor* m_pNotify;
 #pragma endregion Member variables
 	};
 
@@ -160,9 +173,12 @@ namespace Seidenader { namespace SVStatusLibrary
 #pragma endregion Inline
 
 #pragma region Declarations
-	//Note the resource dependent message managers are declared in the header file MessageManagerResource.h
-	//This declares message manager no display which uses MessageContainer, MessageData and nullptr (no display method) as the template parameters
-	typedef MessageManager<MessageContainer, MessageData, nullptr, nullptr> MessageMgrNoDisplay;
+	//This declares message manager standard which uses MessageContainer, MessageData as the template parameters
+	typedef MessageManager<MessageContainer, MessageData> MessageMgrStd;
+
+	//! The static functor as pointers so that different instances ( exe dlls can still use one common functor)
+	ShowDisplayFunctor* MessageMgrStd::m_pShowDisplay( nullptr );
+	NotifyFunctor* MessageMgrStd::m_pNotify( nullptr );
 #pragma endregion Declarations
 
 } /* namespace SVStatusLibrary */ } /* namespace Seidenader */

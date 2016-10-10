@@ -16,7 +16,7 @@
 #include "SVResult.h"
 #include "SVSetupDialogManager.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
-#include "SVStatusLibrary\MessageManagerResource.h"
+#include "SVStatusLibrary\MessageManager.h"
 #include "TextDefinesSvO.h"
 #pragma endregion Includes
 
@@ -403,7 +403,7 @@ BOOL SVPatGeneralPageClass::ProcessOnKillfocus(UINT nId)
 			double	dThreshold = atof(strValue.Left(10));
 			if(dThreshold > 100 || strValue.IsEmpty())
 			{
-				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_InvalidThresholdValue, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10183 ); 
 				GetDlgItem(nId)->SetFocus();
 				((CEdit *)GetDlgItem(nId))->SetSel(0, -1);

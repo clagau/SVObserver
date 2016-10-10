@@ -10,7 +10,7 @@
 //Moved to precompiled header: #include <boost/assign/list_of.hpp>
 //Moved to precompiled header: #include <afxctl.h>
 #include "TATableSourcePage.h"
-#include "SVStatusLibrary\MessageManagerResource.h"
+#include "SVStatusLibrary\MessageManager.h"
 #include "SVMessage\SVMessage.h"
 #include "SVObjectLibrary\SVObjectSynchronousCommandTemplate.h"
 #include "GuiCommands\GetAvailableObjects.h"
@@ -103,7 +103,7 @@ namespace Seidenader { namespace SVOGui
 					SVStringArray msgList;
 					msgList.push_back(m_inputName);
 					msgList.push_back(SVString(tableName));
-					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_ConnectTableSourceFailed, msgList, SvStl::SourceFileParams(StdMessageParams) );
 				}
 			}

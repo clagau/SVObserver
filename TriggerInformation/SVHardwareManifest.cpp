@@ -11,12 +11,13 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "SVHardwareManifest.h"
 //Moved to precompiled header: #include <boost/config.hpp>
 //Moved to precompiled header: #include <boost/assign/list_of.hpp>
 //Moved to precompiled header: #include <boost/assign/list_inserter.hpp>
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <set>
+#include "SVOResource/resource.h"
+#include "SVHardwareManifest.h"
 #pragma endregion Includes
 
 static const CString SVIM_TRIGGER_SOURCE_IO_BOARD_STRING   ( _T("IO_Board_1") );

@@ -22,12 +22,12 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVSharedMemoryLibrary/SVProductFilterEnum.h"
 #include "SVUtilityLibrary/SVGUID.h"
+#include "SVStatusLibrary/MessageNotification.h"
 #include "SVStorage.h"
 #include "SVStorageResult.h"
 #include "SVVisionProcessorConstants.h"
 #include "SVDataDefinitionStruct.h"
 #include "RemoteMonitorNamedList.h"
-#include "MessageNotification.h"
 #include "SVPPQObject.h"
 #pragma endregion Includes
 
@@ -102,7 +102,7 @@ public:
 	//! \param errormessage 
 	//! \returns HRESULT
 	//************************************
-	HRESULT FireMessageNotification(SvStl::NotificationEnum type, int ErrorNumber, LPCTSTR errormessage  );
+	HRESULT FireMessageNotification( int Type, int MesssageNumber, LPCTSTR MessageText );
 	HRESULT QueryProductList( const SVString& rListName, SVNameSet& rNames ) const;
 	HRESULT QueryRejectCondList( const SVString& rListName, SVNameSet& rNames ) const;
 	HRESULT QueryFailStatusList( const SVString& rListName, SVNameSet& rNames ) const;
@@ -140,10 +140,11 @@ protected:
 
 	HRESULT GetObjectDefinition( const SVObjectClass& p_rObj, const long p_Filter, SVDataDefinitionStruct& p_rDataDef ) const;
 
-	void ThreadProcess( bool& p_WaitForEvents );
+	void ThreadProcess( bool& rWaitForEvents );
 
-	void ProcessLastModified( bool& p_WaitForEvents );
-	void NotifyModeChanged( bool& p_WaitForEvents );
+	void ProcessLastModified( bool& rWaitForEvents );
+	void ProcessNotification( bool& rWaitForEvents );
+	void NotifyModeChanged( bool& rWaitForEvents );
 
 	SVGetItemsFunctorMap m_GetItemsFunctors;
 	SVSetItemsFunctorMap m_SetItemsFunctors;
@@ -177,7 +178,7 @@ private:
 
 #pragma region Private Members
 private:   //Data
-	MessageNotification m_MessageNotification;
+	SvStl::MessageNotification m_MessageNotification;
 #pragma endregion Private Members
 };
 

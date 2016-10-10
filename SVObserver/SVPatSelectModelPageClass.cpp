@@ -24,7 +24,7 @@
 #include "SVImageLibrary\MatroxImageData.h"
 #include "SVOGui\SVColor.h"
 #include "TextDefinesSvO.h"
-#include "SVStatusLibrary\MessageManagerResource.h"
+#include "SVStatusLibrary\MessageManager.h"
 #include "SVStatusLibrary\GlobalPath.h"
 #include "SVOMFCLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
 
@@ -90,14 +90,14 @@ void SVPatModelPageClass::OnOK()
 	catch ( const SvStl::MessageContainer& rSvE )
 	{
 		//Now that we have caught the exception we would like to display it
-		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 		Msg.setMessage( rSvE.getMessage() );
 	}
 
 	m_bAllowExit = true;
 	if (!m_pPatAnalyzer->IsValidSize())
 	{
-		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 		INT_PTR result = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Pattern_Model2Large, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10184, SV_GUID_NULL, MB_YESNO ); 
 		if (IDYES == result)
 		{
@@ -149,7 +149,7 @@ BOOL SVPatModelPageClass::OnKillActive()
 	catch ( const SvStl::MessageContainer& rSvE )
 	{
 		//Now that we have caught the exception we would like to display it
-		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 		Msg.setMessage( rSvE.getMessage() );
 		return FALSE;
 	}
@@ -282,7 +282,7 @@ void SVPatModelPageClass::OnCreateModel()
 	}
 	if (SvOi::Tid_Empty != msgID)
 	{
-		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, msgID, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10246 );
 	}
 }
@@ -590,7 +590,7 @@ BOOL SVPatModelPageClass::ProcessOnKillFocus(UINT nId) //@TODO:  Change c-style 
 
 	if (SvOi::Tid_Empty != msgID)
 	{
-		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, msgID, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10247 );
 		GetDlgItem(nId)->SetFocus();
 		((CEdit *)GetDlgItem(nId))->SetSel(0, -1);

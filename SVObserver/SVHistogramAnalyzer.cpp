@@ -26,7 +26,7 @@
 #include "SVInspectionProcess.h"
 #include "SVImageProcessingClass.h"
 #include "SVResultLong.h"
-#include "SVStatusLibrary/MessageManagerResource.h"
+#include "SVStatusLibrary/MessageManager.h"
 
 const double histogram_width = 512;
 const double histogram_height = 512;
@@ -403,7 +403,7 @@ void SVHistogramAnalyzerClass::init()
 		}
 		catch (const fail_to_create &)
 		{
-			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16089);
 			
 		}
@@ -441,7 +441,7 @@ BOOL SVHistogramAnalyzerClass::OnValidate()
    {
       if (!SVImageAnalyzerClass::OnValidate())
       {
-		  SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+		  SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 		  MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16150);
 		  LastError = - SvOi::Err_16150;
 		  break;
@@ -449,7 +449,7 @@ BOOL SVHistogramAnalyzerClass::OnValidate()
 
       if (msvHistResultID.empty())
       {
-		  SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+		  SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 		  MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16151);
 		  LastError = - SvOi::Err_16151;
 		  break;
@@ -457,7 +457,7 @@ BOOL SVHistogramAnalyzerClass::OnValidate()
 
       if (0 == msvplHistValues.size())
       {
-		  SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+		  SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 		  MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16152);
 		  LastError = - SvOi::Err_16152;
 		  break;
@@ -490,7 +490,7 @@ BOOL SVHistogramAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateS
     {
         if (! SVImageAnalyzerClass::CreateObject( PCreateStructure ) )
         {
-			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16153);
 			LastError = - SvOi::Err_16153;
 			break;
@@ -499,7 +499,7 @@ BOOL SVHistogramAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateS
         pSVImage = getInputImage();
         if (!pSVImage)
         {
-			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16154);
 			LastError = - SvOi::Err_16154;
 			break;
@@ -510,7 +510,7 @@ BOOL SVHistogramAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateS
 
         if (msvplHistValues.size() == 0)
         {
-			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16155);
 			LastError = - SvOi::Err_16155;
 			break;
@@ -531,7 +531,7 @@ BOOL SVHistogramAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateS
 
 		if (msvHistResultID.empty())
 		{
-			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16156);
 			LastError = - SvOi::Err_16156;
 			break;
@@ -552,7 +552,7 @@ BOOL SVHistogramAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateS
 
 		if (S_OK != createHistogramImage())
 		{
-			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16157);
 			LastError = - SvOi::Err_16157;
 			break;
@@ -661,7 +661,7 @@ BOOL SVHistogramAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 		if( !SVImageAnalyzerClass::onRun( RRunStatus ) )
 		{
 			
-			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16158);
 			LastError = - SvOi::Err_16158;
 			break;
@@ -672,7 +672,7 @@ BOOL SVHistogramAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 		if( ! pInputImage )
 		{
 			SetInvalid();
-			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16159);
 			LastError = - SvOi::Err_16159;
 			break;
@@ -682,7 +682,7 @@ BOOL SVHistogramAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 
 		if( ! pInputImage->GetImageHandle( ImageHandle ) || ImageHandle.empty() )
 		{
-			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16160);
 			LastError = - SvOi::Err_16160;
 			break;
@@ -695,7 +695,7 @@ BOOL SVHistogramAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 
 		if( l_MilHandle.empty() )
 		{
-			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16161);
 			LastError = - SvOi::Err_16161;
 			break;
@@ -704,7 +704,7 @@ BOOL SVHistogramAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 		l_Code = l_lImageIntf.Histogram(msvHistResultID, l_MilHandle.GetBuffer() );
 		if( l_Code != SVMEE_STATUS_OK )
 		{
-			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16162);
 			LastError = - SvOi::Err_16162;
 			break;
@@ -714,7 +714,7 @@ BOOL SVHistogramAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 
 		if( l_Code != SVMEE_STATUS_OK )
 		{
-			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16163);
 			LastError = - SvOi::Err_16163;
 			break;
@@ -735,7 +735,7 @@ BOOL SVHistogramAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 		msvHistogramValue.SetArraySize(static_cast<int>(msvplHistValues.size()));	
 		if ( S_OK != msvHistogramValue.SetArrayValues( RRunStatus.m_lResultDataIndex,  msvplHistValues) )
 		{
-			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16164);
 			LastError = - SvOi::Err_16164;
 			break;
@@ -746,7 +746,7 @@ BOOL SVHistogramAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 		///////////////////////////////////////////////////////////////////
 		if (S_OK != msvRangeStartValue.SetValue( RRunStatus.m_lResultDataIndex, m_rangeStart ))
 		{
-			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16165);
 			LastError = - SvOi::Err_16165;
 			break;
@@ -757,7 +757,7 @@ BOOL SVHistogramAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 		///////////////////////////////////////////////////////////////////
 		if (S_OK != msvRangeEndValue.SetValue( RRunStatus.m_lResultDataIndex, m_rangeEnd ))
 		{
-			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16171);
 			LastError = - SvOi::Err_16171;
 			break;
@@ -768,7 +768,7 @@ BOOL SVHistogramAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 		///////////////////////////////////////////////////////////////////
 		if (S_OK != msvRangeSizeValue.SetValue( RRunStatus.m_lResultDataIndex, m_rangeEnd - m_rangeStart + 1 ))
 		{
-			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16166);
 			LastError = - SvOi::Err_16166;
 			break;
@@ -779,7 +779,7 @@ BOOL SVHistogramAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 		///////////////////////////////////////////////////////////////////
 		if (S_OK != msvScaleValue.SetValue( RRunStatus.m_lResultDataIndex, m_scale ))
 		{
-			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16167);
 			LastError = - SvOi::Err_16167;
 			break;
@@ -790,7 +790,7 @@ BOOL SVHistogramAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 		///////////////////////////////////////////////////////////////////
 		if (S_OK != msvPeakThreshold.SetValue( RRunStatus.m_lResultDataIndex, m_threshold ))
 		{
-			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16168);
 			LastError = - SvOi::Err_16168;
 			break;
@@ -801,7 +801,7 @@ BOOL SVHistogramAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 		///////////////////////////////////////////////////////////////////
 		if (S_OK != msvDefaultPeak.SetValue( RRunStatus.m_lResultDataIndex, m_default ))
 		{
-			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16169);
 			LastError = - SvOi::Err_16169;
 			break;
@@ -812,7 +812,7 @@ BOOL SVHistogramAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 		///////////////////////////////////////////////////////////////////
 		if (S_OK != msvMinPeakHeight.SetValue( RRunStatus.m_lResultDataIndex, m_minHeight ))
 		{
-			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16170);
 			LastError = - SvOi::Err_16170;
 			break;
@@ -823,7 +823,7 @@ BOOL SVHistogramAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 		///////////////////////////////////////////////////////////////////
 		if (S_OK != msvDynamicHeight.SetValue( RRunStatus.m_lResultDataIndex, m_histogram.IsDynaHeight() ))
 		{
-			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16172);
 			LastError = - SvOi::Err_16172;
 			break;
@@ -834,7 +834,7 @@ BOOL SVHistogramAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 		///////////////////////////////////////////////////////////////////
 		if (S_OK != msvAccumulateCounts.SetValue( RRunStatus.m_lResultDataIndex, m_accumulate ))
 		{
-			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16173);
 			LastError = - SvOi::Err_16173;
 			break;;
@@ -845,7 +845,7 @@ BOOL SVHistogramAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 		///////////////////////////////////////////////////////////////////
 		if (S_OK != msvFixedHeightValue.SetValue( RRunStatus.m_lResultDataIndex, m_histogram.GetFixedHeight() ))
 		{
-			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16174);
 			LastError = - SvOi::Err_16174;
 			break;
@@ -856,7 +856,7 @@ BOOL SVHistogramAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 		///////////////////////////////////////////////////////////////////
 		if (S_OK != msvValleyLowerBound.SetValue( RRunStatus.m_lResultDataIndex, m_histogram.GetValleyLow() ))
 		{
-			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16175);
 			LastError = - SvOi::Err_16175;
 			break;
@@ -867,7 +867,7 @@ BOOL SVHistogramAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 		///////////////////////////////////////////////////////////////////
 		if (S_OK != msvValleyUpperBound.SetValue( RRunStatus.m_lResultDataIndex, m_histogram.GetValleyHigh() ))
 		{
-			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16176);
 			LastError = - SvOi::Err_16176;
 			break;
@@ -878,7 +878,7 @@ BOOL SVHistogramAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 		///////////////////////////////////////////////////////////////////
 		if (S_OK != msvValleyDefault.SetValue( RRunStatus.m_lResultDataIndex, m_histogram.GetValleyDefault() ))
 		{
-			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16177);
 			LastError = - SvOi::Err_16177;
 			break;
@@ -891,7 +891,7 @@ BOOL SVHistogramAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 			///////////////////////////////////////////////////////////////////
 			if (S_OK != msvMeanValue.SetValue( RRunStatus.m_lResultDataIndex, m_histogram.mean() ))
 			{
-				SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+				SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 				MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16178);
 				LastError = - SvOi::Err_16178;
 				break;
@@ -902,7 +902,7 @@ BOOL SVHistogramAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 			///////////////////////////////////////////////////////////////////
 			if (S_OK != msvStdDevValue.SetValue( RRunStatus.m_lResultDataIndex, m_histogram.stdDev() ))
 			{
-				SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+				SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 				MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16179);
 				LastError = - SvOi::Err_16179;
 				break;
@@ -913,7 +913,7 @@ BOOL SVHistogramAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 			///////////////////////////////////////////////////////////////////
 			if (S_OK != msvPixelCountValue.SetValue( RRunStatus.m_lResultDataIndex, m_histogram.pixel_num() ))
 			{
-				SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+				SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 				MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16180);
 				LastError = - SvOi::Err_16180;
 				break;
@@ -924,7 +924,7 @@ BOOL SVHistogramAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 			///////////////////////////////////////////////////////////////////
 			if (S_OK != msvMinPixelValue.SetValue( RRunStatus.m_lResultDataIndex, m_histogram.min_pixel() ))
 			{
-				SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+				SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 				MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16181);
 				LastError = - SvOi::Err_16181;
 				break;
@@ -935,7 +935,7 @@ BOOL SVHistogramAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 			///////////////////////////////////////////////////////////////////
 			if (S_OK != msvMaxPixelValue.SetValue( RRunStatus.m_lResultDataIndex, m_histogram.max_pixel() ))
 			{
-				SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+				SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 				MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16182);
 				LastError = - SvOi::Err_16182;
 				break;
@@ -946,7 +946,7 @@ BOOL SVHistogramAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 			///////////////////////////////////////////////////////////////////
 			if (S_OK != msvHighPeak.SetValue( RRunStatus.m_lResultDataIndex, m_histogram.high_peak() ))
 			{
-				SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+				SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 				MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16183);
 				LastError = - SvOi::Err_16183;
 				break;
@@ -957,7 +957,7 @@ BOOL SVHistogramAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 			///////////////////////////////////////////////////////////////////
 			if (S_OK != msvLowPeak.SetValue( RRunStatus.m_lResultDataIndex, m_histogram.low_peak() ))
 			{
-				SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+				SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 				MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16184);
 				LastError = - SvOi::Err_16184; 
 				break;
@@ -968,7 +968,7 @@ BOOL SVHistogramAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 			///////////////////////////////////////////////////////////////////
 			if (S_OK != msvValley.SetValue( RRunStatus.m_lResultDataIndex, m_histogram.valley() ))
 			{
-				SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+				SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 				MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16185);
 				LastError = - SvOi::Err_16185;
 				break;
@@ -977,7 +977,7 @@ BOOL SVHistogramAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 
 		if (S_OK != paintHistogramImage())
 		{
-			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16186);
 			LastError = - SvOi::Err_16186;
 			break;
@@ -1013,7 +1013,7 @@ bool SVHistogramAnalyzerClass::calcHistogram()
 	{
 		if( ! pInputImage->GetImageHandle( ImageHandle ) || ImageHandle.empty() )
 		{
-			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16201);
 			LastError = true;
 
@@ -1027,7 +1027,7 @@ bool SVHistogramAnalyzerClass::calcHistogram()
 		ImageHandle->GetData( l_MilHandle );
 		if( l_MilHandle.empty() )
 		{
-			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16202);
 			LastError = true;
 		}
@@ -1038,7 +1038,7 @@ bool SVHistogramAnalyzerClass::calcHistogram()
 		l_Code = l_lImageIntf.Histogram(msvHistResultID, l_MilHandle.GetBuffer() );
 		if( l_Code != SVMEE_STATUS_OK )
 		{
-			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16203);
 			LastError = true;
 		}
@@ -1049,7 +1049,7 @@ bool SVHistogramAnalyzerClass::calcHistogram()
 		l_Code = l_lImageIntf.GetResult(msvHistResultID,  msvplHistValues );
 		if( l_Code != SVMEE_STATUS_OK )
 		{
-			SvStl::MessageMgrNoDisplay MesMan( SvStl::LogOnly );
+			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16204);
 			LastError = true;
 		}

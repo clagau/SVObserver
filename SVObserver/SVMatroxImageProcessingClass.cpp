@@ -22,7 +22,7 @@
 #include "SVGlobal.h"
 #include "SVUtilityLibrary/SVImageCopyUtility.h"
 #include "SVMatroxLibrary/SVMatroxImagingLibrary.h"  // has MIL includes
-#include "SVStatusLibrary/MessageManagerResource.h"
+#include "SVStatusLibrary/MessageManager.h"
 #include "ObjectInterfaces/ErrorNumbers.h"
 #include "TextDefinesSvO.h"
 #include "SVOGui/TextDefinesSvOg.h"
@@ -103,7 +103,7 @@ HRESULT SVMatroxImageProcessingClass::CreateImageBuffer( const SVImageInfoClass&
 	else
 	if ( S_OK != hrOk && !bDisplayedErrorMessage )
 	{
-		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_CreateBufferFailed, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10064 );
 	}
 
@@ -325,7 +325,7 @@ HRESULT SVMatroxImageProcessingClass::CreateImageChildBuffer( const SVImageInfoC
 				message.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_CreateImageChildBuffer, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10065);
 			}
 
-			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+			SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 			Msg.setMessage( message.getMessage() );
 		}
 
@@ -391,7 +391,7 @@ HRESULT SVMatroxImageProcessingClass::CreateImageChildBuffer( const SVImageInfoC
 
 	if ( S_OK != hrOk )
 	{
-		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_CreateBufferFailed, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10066 );
 	}
 
@@ -560,7 +560,7 @@ HRESULT SVMatroxImageProcessingClass::LoadImageBuffer( LPCTSTR tstrImagePathName
 
 			SVStringArray msgList;
 			msgList.push_back(SVString(strImagePathName));
-			SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+			SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_MatroxImage_UnableToFindFile, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10067 );
 			// Browse...
 			//
@@ -665,11 +665,11 @@ HRESULT SVMatroxImageProcessingClass::LoadImageBuffer( LPCTSTR tstrImagePathName
 			}
 		}
 
-		SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+		SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_UnKnownFileFormat, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10068 );
 	}
 
-	SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+	SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 	Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_FailedToLoadImage, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10069 );
 
 	return S_FALSE;
@@ -816,7 +816,7 @@ HRESULT SVMatroxImageProcessingClass::LoadImageBuffer( void* pBuffer, SVImageInf
 
 	rBufferHandle.clear();
 
-	SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+	SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 	Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_FailedToLoadImage, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10070 );
 
 	return S_FALSE;

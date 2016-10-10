@@ -45,7 +45,7 @@
 #include "TriggerInformation/SVHardwareManifest.h"
 #include "TextDefinesSvO.h"
 #include "SVOGui\GlobalConstantConflictDlg.h"
-#include "SVStatusLibrary\MessageManagerResource.h"
+#include "SVStatusLibrary\MessageManager.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
 #pragma endregion Includes
 
@@ -363,7 +363,7 @@ void CSVOConfigAssistantDlg::OnSelchangeComboAvalSys()
 			if ((SvTi::SVHardwareManifest::IsNonIOSVIM(l_ConfigurationType) && !SvTi::SVHardwareManifest::IsNonIOSVIM(CurrentSvimType)) ||
 				(!SvTi::SVHardwareManifest::IsNonIOSVIM(l_ConfigurationType) && SvTi::SVHardwareManifest::IsNonIOSVIM(CurrentSvimType)))
 			{
-				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 				INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvOi::Tid_Config_SwitchResetQuestion, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10138, SV_GUID_NULL, MB_YESNO);
 				if ( IDYES == result )
 				{
@@ -374,7 +374,7 @@ void CSVOConfigAssistantDlg::OnSelchangeComboAvalSys()
 			}
 			else
 			{
-				SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 				INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvOi::Tid_Config_SwitchInvalidQuestion, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10139, SV_GUID_NULL, MB_YESNO);
 				if ( IDYES == result )
 				{
@@ -2117,7 +2117,7 @@ BOOL CSVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 						{
 							SVStringArray msgList;
 							msgList.push_back(SvUl_SF::Format(_T("%d"), hr));
-							SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+							SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 							INT_PTR result = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Config_InspectionImportFailed, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10140);
 						}
 						pInspectionObj->ClearImportFilename();

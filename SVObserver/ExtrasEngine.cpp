@@ -17,7 +17,7 @@
 #include "SVOMFCLibrary\Utilities.h"
 #include "SVSVIMStateClass.h"
 #include "ExtrasEngine.h"
-#include "SVStatusLibrary/MessageManagerResource.h"
+#include "SVStatusLibrary/MessageManager.h"
 #include "SVTimerLibrary/SVClock.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVOMFCLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
@@ -199,7 +199,7 @@ void ExtrasEngine::ToggleEnableFbwf()
 		m_FbwfActiveChanging = (m_FbwfActive != m_IsFbwfSelected);
 	}
 
-	SvStl::MessageMgrDisplayAndNotify toggleFbwfMessage( SvStl::LogAndDisplay );
+	SvStl::MessageMgrStd toggleFbwfMessage( SvStl::LogAndDisplay );
 	toggleFbwfMessage.setMessage( (ret ? SVMSG_SVO_86_FBWF_CHANGE_ERROR : SVMSG_SVO_85_FBWF_CHANGE), msgId, msgList, SvStl::SourceFileParams(StdMessageParams) );
 
 	ReadCurrentFbwfSettings();

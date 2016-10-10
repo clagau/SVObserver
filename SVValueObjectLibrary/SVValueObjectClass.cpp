@@ -277,7 +277,7 @@ void SVValueObjectClass::ValidateValue( int iBucket, int iIndex, const SVString&
 
 	if ( S_OK != hr && SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE != hr ) //object index out of range will not throw
 	{
-		SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+		SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 		Exception.setMessage( hr, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 		Exception.Throw();
 	}
@@ -386,7 +386,7 @@ void SVValueObjectClass::ValidateValue( const _variant_t& rValue ) const
 				{
 					SVStringArray msgList;
 					msgList.push_back(SvUl_SF::Format(_T("%d"), tempHr));
-					SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+					SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 					Exception.setMessage( SVMSG_SVO_93_GENERAL_WARNING , SvOi::Tid_ValidateValue_InvalidElementInVariantArray, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 					Exception.Throw();
 				}
@@ -397,7 +397,7 @@ void SVValueObjectClass::ValidateValue( const _variant_t& rValue ) const
 		}
 		else
 		{
-			SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+			SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 			Exception.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_ValidateValue_ArraySizeInvalid, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10029_ValueObject_Parameter_WrongSize, GetUniqueObjectID() );
 			Exception.Throw();
 		}

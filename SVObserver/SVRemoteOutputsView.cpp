@@ -28,7 +28,7 @@
 #include "ObjectInterfaces\ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "TextDefinesSvO.h"
-#include "SVStatusLibrary\MessageManagerResource.h"
+#include "SVStatusLibrary\MessageManager.h"
 #pragma endregion Includes
 
 IMPLEMENT_DYNCREATE(SVRemoteOutputsView, CListView )
@@ -149,7 +149,7 @@ void SVRemoteOutputsView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 		// Get the number of PPQs
 		if( nullptr == pConfig  )
 		{
-			SvStl::MessageMgrNoDisplay e( SvStl::LogOnly );
+			SvStl::MessageMgrStd e( SvStl::LogOnly );
 			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvOi::Tid_ErrorGettingPPQCount, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_17051_ErrorGettingPPQCount );
 			DebugBreak();
 		}
@@ -561,12 +561,12 @@ void SVRemoteOutputsView::OnRemoteOutputDelete()
 				int pos = static_cast<int>(pRemoteOutput->GetInputValueObjectName().find(_T("Trigger Count") ));
 				if( bFirst && pos != SVString::npos )
 				{
-					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_RemoteOutput_TriggerCountDeleteError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10194 ); 
 				}
 				else
 				{
-					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 					INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvOi::Tid_RemoteOutput_DeletingOutput, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10195, SV_GUID_NULL, MB_YESNO ); 
 					if( IDYES == result )
 					{
@@ -593,7 +593,7 @@ void SVRemoteOutputsView::OnRemoteOutputDelete()
 					SVString strGroup = pOutputGroup->GetGroupName();
 					SVStringArray msgList;
 					msgList.push_back(strGroup);
-					SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 					INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvOi::Tid_RemoteOutput_DeletingAllOutput, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10196, SV_GUID_NULL, MB_YESNO );
 					if( IDYES == result )
 					{

@@ -13,7 +13,7 @@
 #include "stdafx.h"
 #include "SVSaveToolSetImageDialog.h"
 #include "SVOMFCLibrary/SVFileNameClass.h"
-#include "SVStatusLibrary/MessageManagerResource.h"
+#include "SVStatusLibrary/MessageManager.h"
 #include "ObjectInterfaces/ErrorNumbers.h"
 #include "TextDefinesSvOg.h"
 #include "SVMessage/SVMessage.h"
@@ -115,12 +115,12 @@ namespace Seidenader { namespace SVOGui
 					{
 						if (E_INVALIDARG == hr)
 						{
-							SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+							SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 							Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_UnKnownFileFormat, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10071 );
 						}
 						else
 						{
-							SvStl::MessageMgrDisplayAndNotify Msg( SvStl::LogAndDisplay );
+							SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 							Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_FailedToSaveImage, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10072 );
 						}
 					}

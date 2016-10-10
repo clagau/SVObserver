@@ -271,7 +271,7 @@ HRESULT SVDataManager::GetNextAvailableBufferIndex( LONGLONG alIndexArrayHandle,
 
 					SVString Message = pManagedIndexArray->GetReferenceCounts();
 
-					SvStl::MessageMgrNoDisplay Exception( SvStl::LogOnly );
+					SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 					Exception.setMessage( SVDM_1502NO_INDEXESAVAILABLE_ERROR, Message.c_str(), SvStl::SourceFileParams(StdMessageParams) );
 				}
 				else
