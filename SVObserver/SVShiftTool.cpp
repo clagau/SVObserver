@@ -300,7 +300,11 @@ BOOL SVShiftTool::onRun( SVRunStatusClass& p_rRunStatus )
 
 				if( l_Status )
 				{
-					m_OutputImage.SetTranslationOffset(l_OffsetX, l_OffsetY);
+					//[MEC][7.40][11.10.2016] this correction  was inserted with SVO1017 but for  mode==SV_SHIFT_NONE the offset is counted twice
+					if( (l_Mode == SV_SHIFT_ENUM::SV_SHIFT_REFERENCE) || (l_Mode == SV_SHIFT_ENUM::SV_SHIFT_ABSOLUTE) )
+					{
+						m_OutputImage.SetTranslationOffset(l_OffsetX, l_OffsetY);
+					}
 
 					SVMatroxImageInterface::SVStatusCode l_Code;
 
