@@ -561,9 +561,11 @@ HRESULT LinkedValue::CheckLinkedObject( const SVObjectClass* const pLinkedObject
 	else
 	{
 		//! This is important when copying tools that the value of another inspection is not used due to the GUID being valid
-		//! That is why check that the linked value an object is in the same inspection
-		bool isSameInpection = GetAncestorInterface( SVInspectionObjectType ) == pLinkedObject->GetAncestorInterface( SVInspectionObjectType );
-		if( !isSameInpection )
+		//! That is why check that the linked value of an object is in the same inspection
+		const IObjectClass* pLinkedObjectInspection =  pLinkedObject->GetAncestorInterface( SVInspectionObjectType );
+		bool isSameInpection = GetAncestorInterface( SVInspectionObjectType ) == pLinkedObjectInspection;
+		//! If linked object has no inspection (e.g. Global Constants) then we don't need to check that the inspections are the same
+		if( nullptr != pLinkedObjectInspection && !isSameInpection )
 		{
 			Result = SvOi::Err_10014_LinkedValueConnectInput_InvalidUid;
 		}
