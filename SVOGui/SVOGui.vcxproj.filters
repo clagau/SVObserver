@@ -101,9 +101,6 @@
     <ClCompile Include="SVShowDependentsDialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVGigeCameraListCtrl.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVTextEditDialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -263,9 +260,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVTextEditDialog.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVGigeCameraListCtrl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVDlgImage.h">

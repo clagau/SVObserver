@@ -1840,8 +1840,6 @@
 #define IDC_CAMERA_LIST                 15748
 #define IDC_CAMERA_MANAGER              15749
 #define IDC_FILL_BLOBS                  15750
-#define IDC_MOVE_UP                     15751
-#define IDC_MOVE_DOWN                   15752
 #define IDC_EDIT_MAX_NBR_BLOBS          15753
 #define IDC_MIN                         15754
 #define IDC_MAX                         15755
