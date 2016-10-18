@@ -30,6 +30,25 @@ const wchar_t * invalid = L"** I N V A L I D ! **";
 
 const int cp_dflt = 1252;
 
+const static wchar_t*   XML_MonitorLists = L"RemoteMonitorLists";
+const static wchar_t*   XML_MonitorList = L"RemoteMonitorList";
+const static wchar_t*   XML_Name = L"Name";
+const static wchar_t*   XML_PPQName  = L"PPQName";
+const static wchar_t*   XML_RejectQuueDepth =  	L"RejectQueueDepth";
+const static wchar_t*   XML_IsActive=	L"IsActive";
+const static wchar_t*   XML_TRUE=  L"TRUE";
+const static wchar_t*   XML_FALSE =  	L"FALSE";
+const static wchar_t*   XML_ProductValueItem = 	 L"ProductValueItem";
+const static wchar_t*   XML_Item = 	  L"Item";
+const static wchar_t*   XML_ProductImageList = 	  L"ProductImageList";
+const static wchar_t*   XML_ProductImageItem	  =  L"ProductImageItem";
+const static wchar_t*   XML_Image = L"Image";
+const static wchar_t*   XML_RejectConditionItem  = 		L"RejectConditionItem";
+const static wchar_t*   XML_FailStatusList =  L"FailStatusList";
+const static wchar_t*   XML_FailStatusItem = L"FailStatusItem";
+
+
+
 static SVToolGrouping GetToolGroupings(const SVGUID& rInspectionGuid)
 {
 	// get the document that owns this inspection
@@ -81,7 +100,7 @@ inline void SVConfigXMLPrint::PrintXMLDoc(Writer writer) const
 	wchar_t head[] = L"<?xml version=\"1.0\"?>";	
 	writer->WriteRaw(head);
 	writer->WriteStartElement(nullptr, L"Configuration", nullptr);
-	writer->WriteAttributeString(nullptr, L"Name", nullptr, SvUl::to_utf16(pApp->getConfigFileName(), cp_dflt).c_str());
+	writer->WriteAttributeString(nullptr,XML_Name, nullptr, SvUl::to_utf16(pApp->getConfigFileName(), cp_dflt).c_str());
 	writer->WriteAttributeString(nullptr, L"Path", nullptr, SvUl::to_utf16(pApp->getConfigFullFileName(), cp_dflt).c_str());
 	writer->WriteAttributeString(nullptr, L"Timestamp", nullptr, sv_xml::now().c_str());
 	writer->WriteStartElement(nullptr, L"Settings", nullptr);
@@ -131,7 +150,7 @@ inline void SVConfigXMLPrint::WriteTrigger(Writer writer, SvTi::SVTriggerObject*
 	ASSERT( nullptr != pTrigger );
 	if(nullptr == pTrigger ){ return; }
 	writer->WriteStartElement(nullptr, L"Trigger", nullptr);
-	writer->WriteAttributeString(nullptr, L"Name", nullptr, SvUl::to_utf16(pTrigger->GetName(), cp_dflt).c_str());
+	writer->WriteAttributeString(nullptr,XML_Name, nullptr, SvUl::to_utf16(pTrigger->GetName(), cp_dflt).c_str());
 	writer->WriteAttributeString(nullptr, L"DeviceName", nullptr,
 		(pTrigger->mpsvDevice)? SvUl::to_utf16(pTrigger->mpsvDevice->GetDeviceName(), cp_dflt).c_str() : L"** Device **");
 	if(pTrigger->IsSoftwareTrigger())
@@ -187,7 +206,7 @@ inline void SVConfigXMLPrint::WriteCamera(Writer writer, SVVirtualCamera* pCamer
 	if(nullptr == pCamera ){ return; }
 
 	writer->WriteStartElement(nullptr, L"Camera", nullptr);
-	writer->WriteAttributeString(nullptr, L"Name", nullptr, SvUl::to_utf16(pCamera->GetName(), cp_dflt).c_str());
+	writer->WriteAttributeString(nullptr,XML_Name, nullptr, SvUl::to_utf16(pCamera->GetName(), cp_dflt).c_str());
 	writer->WriteAttributeString(nullptr, L"DeviceName", nullptr,
 		(pCamera->mpsvDevice)? SvUl::to_utf16(pCamera->mpsvDevice->GetDeviceName(), cp_dflt).c_str() : L"** No Device **");
 	writer->WriteAttributeString(nullptr, L"AcquisitionType", nullptr,
@@ -258,7 +277,7 @@ inline void SVConfigXMLPrint::WriteFileAcq(Writer writer, SVVirtualCamera* pCame
 
 	writer->WriteStartElement(nullptr, L"FileAcquisition", nullptr);
 	writer->WriteAttributeString(nullptr, L"LoadingMode", nullptr, LoadingModeText(pCamera->GetFileLoadingMode()));
-	writer->WriteStartElement(nullptr, L"Image", nullptr);
+	writer->WriteStartElement(nullptr, XML_Image, nullptr);
 	writer->WriteAttributeString(nullptr, L"Filename", nullptr, SvUl::to_utf16(pCamera->GetImageFilename(), cp_dflt).c_str());
 	writer->WriteAttributeString(nullptr, L"Directory", nullptr, SvUl::to_utf16(pCamera->GetImageDirectoryName(), cp_dflt).c_str());
 	writer->WriteAttributeString(nullptr, L"SizeMode", nullptr, (pCamera->IsFileImageSizeEditModeFileBased())?L"Use Image Size from File":L"User Editable");
@@ -329,7 +348,7 @@ inline void SVConfigXMLPrint::WritePPQs(Writer writer) const
 
 		wchar_t buff[64];
 		writer->WriteStartElement(nullptr, L"PPQ", nullptr);
-		writer->WriteAttributeString(nullptr, L"Name", nullptr, SvUl::to_utf16(pPPQ->GetName(), cp_dflt).c_str());
+		writer->WriteAttributeString(nullptr,XML_Name, nullptr, SvUl::to_utf16(pPPQ->GetName(), cp_dflt).c_str());
 
 		SVPPQOutputModeEnum	enumPPQOutputMode;
 		long	lPPQLength  = 0;	// PPQLength
@@ -351,7 +370,7 @@ inline void SVConfigXMLPrint::WritePPQs(Writer writer) const
 		if ( nullptr != pTrigger )
 		{
 			writer->WriteStartElement(nullptr, L"Trigger", nullptr);
-			writer->WriteAttributeString(nullptr, L"Name", nullptr, SvUl::to_utf16(pTrigger->GetName(), cp_dflt).c_str());
+			writer->WriteAttributeString(nullptr,XML_Name, nullptr, SvUl::to_utf16(pTrigger->GetName(), cp_dflt).c_str());
 			writer->WriteEndElement();
 		}
 
@@ -378,7 +397,7 @@ inline void SVConfigXMLPrint::WritePPQCameras(Writer writer, SVPPQObject* pPPQ) 
 		if ( nullptr != pCamera )
 		{
 			writer->WriteStartElement(nullptr, L"Camera", nullptr);
-			writer->WriteAttributeString(nullptr, L"Name", nullptr, SvUl::to_utf16(pCamera->GetName(), cp_dflt).c_str());
+			writer->WriteAttributeString(nullptr,XML_Name, nullptr, SvUl::to_utf16(pCamera->GetName(), cp_dflt).c_str());
 			writer->WriteEndElement();
 		}
 
@@ -405,7 +424,7 @@ inline void SVConfigXMLPrint::WritePPQInspections(Writer writer, SVPPQObject* pP
 	for (InspectionMap::const_iterator it = inspections.begin(); it != inspections.end(); ++it)
 	{
 		writer->WriteStartElement(nullptr, L"Inspection", nullptr);
-		writer->WriteAttributeString(nullptr, L"Name", nullptr, SvUl::to_utf16(it->second->GetName(), cp_dflt).c_str());
+		writer->WriteAttributeString(nullptr,XML_Name, nullptr, SvUl::to_utf16(it->second->GetName(), cp_dflt).c_str());
 		writer->WriteEndElement();
 	}
 }
@@ -430,7 +449,7 @@ inline void SVConfigXMLPrint::WriteInspections(Writer writer) const
 	for (InspectionMap::const_iterator it = inspections.begin(); it != inspections.end(); ++it)
 	{
 		writer->WriteStartElement(nullptr, L"Inspection", nullptr);
-		writer->WriteAttributeString(nullptr, L"Name", nullptr, SvUl::to_utf16(it->second->GetName(), cp_dflt).c_str());
+		writer->WriteAttributeString(nullptr,XML_Name, nullptr, SvUl::to_utf16(it->second->GetName(), cp_dflt).c_str());
 		
 		writer->WriteEndElement();
 	}
@@ -469,7 +488,7 @@ inline void SVConfigXMLPrint::WriteToolSet(Writer writer, SVInspectionProcess* p
 
 	nToolNumber = 0;
 	writer->WriteStartElement(nullptr, L"InspectionProcess", nullptr);
-	writer->WriteAttributeString(nullptr, L"Name", nullptr, SvUl::to_utf16(pInspection->GetName(), cp_dflt).c_str());
+	writer->WriteAttributeString(nullptr,XML_Name, nullptr, SvUl::to_utf16(pInspection->GetName(), cp_dflt).c_str());
 	WriteObject(writer, pInspection->GetToolSet());
 	
 	writer->WriteEndElement();
@@ -674,8 +693,8 @@ inline void SVConfigXMLPrint::WriteMonitorListSection(Writer writer) const
 
 	if( nullptr != pConfig )
 	{
-		writer->WriteStartElement(nullptr, L"RemoteMonitorList", nullptr);
-		
+		writer->WriteStartElement(nullptr,XML_MonitorLists, nullptr);
+
 		const RemoteMonitorList& remoteMonitorLists = pConfig->GetRemoteMonitorList();
 
 		RemoteMonitorList::const_iterator iterMonitorList = remoteMonitorLists.begin();
@@ -683,28 +702,22 @@ inline void SVConfigXMLPrint::WriteMonitorListSection(Writer writer) const
 		{
 			const SVString& ListName = iterMonitorList->first;
 			const RemoteMonitorNamedList& monitorList = iterMonitorList->second;
+
+			writer->WriteStartElement(nullptr,XML_MonitorList, nullptr);
 			
-			//write Monitor List Name
-			writer->WriteStartElement(nullptr, L"MonitorListName", nullptr);
-			writer->WriteAttributeString(nullptr, L"Name", nullptr, SvUl::to_utf16(ListName.c_str(), cp_dflt).c_str());
-			writer->WriteEndElement();//Monitor List Name
+			//Attribute monitorlistname
+			writer->WriteAttributeString(nullptr,XML_Name, nullptr, SvUl::to_utf16(ListName.c_str(), cp_dflt).c_str());
+			
+			//Attribute  PPQname
+			writer->WriteAttributeString(nullptr, XML_PPQName, nullptr, SvUl::to_utf16(monitorList.GetPPQName().c_str(), cp_dflt).c_str());
 
-			//write out PPQ
-			writer->WriteStartElement(nullptr, L"PPQName", nullptr);
-			writer->WriteAttributeString(nullptr, L"Name", nullptr, SvUl::to_utf16(monitorList.GetPPQName().c_str(), cp_dflt).c_str());
-			writer->WriteEndElement();//PPQ
-
-			//write Queue Depth
+			//Attribute  Queue Depth
 			int Depth = monitorList.GetRejectDepthQueue();
-			writer->WriteStartElement(nullptr, L"RejectQueueDepth", nullptr);
-			writer->WriteAttributeString(nullptr, L"Value", nullptr, _itow(Depth, buff, 10));
-			writer->WriteEndElement();//queue depth
+			writer->WriteAttributeString(nullptr, XML_RejectQuueDepth, nullptr, _itow(Depth, buff, 10));
 
 			//write Active Flag 
 			bool isActive = monitorList.IsActive();
-			writer->WriteStartElement(nullptr, L"IsActive", nullptr);
-			writer->WriteAttributeString(nullptr, L"Value", nullptr, isActive? L"TRUE" :  L"FALSE" );
-			writer->WriteEndElement();
+			writer->WriteAttributeString(nullptr, XML_IsActive, nullptr, isActive? XML_TRUE :  XML_FALSE );
 
 			//write Product Value List
 			ItemCount = 0;
@@ -718,9 +731,9 @@ inline void SVConfigXMLPrint::WriteMonitorListSection(Writer writer) const
 				const SVString& objectName = RemoteMonitorListHelper::GetNameFromMonitoredObject(rObj);
 				if ( !objectName.empty() )
 				{
-					writer->WriteStartElement(nullptr, L"ProductValueItem", nullptr);
-					writer->WriteAttributeString(nullptr, L"Item", nullptr, _itow(ItemCount, buff, 10));
-					writer->WriteAttributeString(nullptr, L"Name", nullptr, SvUl::to_utf16(objectName.c_str(), cp_dflt).c_str());
+					writer->WriteStartElement(nullptr, XML_ProductValueItem, nullptr);
+					writer->WriteAttributeString(nullptr, XML_Item, nullptr, _itow(ItemCount, buff, 10));
+					writer->WriteAttributeString(nullptr,XML_Name, nullptr, SvUl::to_utf16(objectName.c_str(), cp_dflt).c_str());
 					writer->WriteEndElement();
 				}
 				vlIt++;
@@ -731,7 +744,7 @@ inline void SVConfigXMLPrint::WriteMonitorListSection(Writer writer) const
 			ItemCount = 0;
 			const MonitoredObjectList& ImageList = monitorList.GetProductImagesList();
 			MonitoredObjectList::const_iterator ilIt = ImageList.begin();
-			writer->WriteStartElement(nullptr, L"ProductImageList", nullptr);
+			writer->WriteStartElement(nullptr, XML_ProductImageList, nullptr);
 			while( ilIt != ImageList.end() )
 			{
 				ItemCount++;
@@ -739,9 +752,9 @@ inline void SVConfigXMLPrint::WriteMonitorListSection(Writer writer) const
 				const SVString& objectName = RemoteMonitorListHelper::GetNameFromMonitoredObject(rObj);
 				if ( !objectName.empty() )
 				{
-					writer->WriteStartElement(nullptr, L"ProductImageItem", nullptr);
-					writer->WriteAttributeString(nullptr, L"Image", nullptr, _itow(ItemCount, buff, 10));
-					writer->WriteAttributeString(nullptr, L"Name", nullptr, SvUl::to_utf16(objectName.c_str(), cp_dflt).c_str());
+					writer->WriteStartElement(nullptr, XML_ProductImageItem, nullptr);
+					writer->WriteAttributeString(nullptr, XML_Image, nullptr, _itow(ItemCount, buff, 10));
+					writer->WriteAttributeString(nullptr,XML_Name, nullptr, SvUl::to_utf16(objectName.c_str(), cp_dflt).c_str());
 					writer->WriteEndElement();
 				}
 				ilIt++;
@@ -760,9 +773,9 @@ inline void SVConfigXMLPrint::WriteMonitorListSection(Writer writer) const
 				const SVString& objectName = RemoteMonitorListHelper::GetNameFromMonitoredObject(rObj);
 				if ( !objectName.empty() )
 				{
-					writer->WriteStartElement(nullptr, L"RejectConditionItem", nullptr);
-					writer->WriteAttributeString(nullptr, L"Item", nullptr, _itow(ItemCount, buff, 10));
-					writer->WriteAttributeString(nullptr, L"Name", nullptr, SvUl::to_utf16(objectName.c_str(), cp_dflt).c_str());
+					writer->WriteStartElement(nullptr, XML_RejectConditionItem, nullptr);
+					writer->WriteAttributeString(nullptr,XML_Item, nullptr, _itow(ItemCount, buff, 10));
+					writer->WriteAttributeString(nullptr,XML_Name, nullptr, SvUl::to_utf16(objectName.c_str(), cp_dflt).c_str());
 					writer->WriteEndElement();
 				}
 				rlIt++;
@@ -773,7 +786,7 @@ inline void SVConfigXMLPrint::WriteMonitorListSection(Writer writer) const
 			ItemCount = 0;
 			const MonitoredObjectList& FailList = monitorList.GetFailStatusList();
 			MonitoredObjectList::const_iterator flIt = FailList.begin();
-			writer->WriteStartElement(nullptr, L"FailStatusList", nullptr);
+			writer->WriteStartElement(nullptr, XML_FailStatusList, nullptr);
 			while( flIt != FailList.end() )
 			{
 				ItemCount++;
@@ -781,9 +794,9 @@ inline void SVConfigXMLPrint::WriteMonitorListSection(Writer writer) const
 				const SVString& objectName = RemoteMonitorListHelper::GetNameFromMonitoredObject(rObj);
 				if ( !objectName.empty() )
 				{
-					writer->WriteStartElement(nullptr, L"FailStatusItem", nullptr);
-					writer->WriteAttributeString(nullptr, L"Item", nullptr, _itow(ItemCount, buff, 10));
-					writer->WriteAttributeString(nullptr, L"Name", nullptr, SvUl::to_utf16(objectName.c_str(), cp_dflt).c_str());
+					writer->WriteStartElement(nullptr, XML_FailStatusItem, nullptr);
+					writer->WriteAttributeString(nullptr, XML_Item, nullptr, _itow(ItemCount, buff, 10));
+					writer->WriteAttributeString(nullptr,XML_Name, nullptr, SvUl::to_utf16(objectName.c_str(), cp_dflt).c_str());
 					writer->WriteEndElement();
 				}
 				flIt++;
@@ -791,10 +804,11 @@ inline void SVConfigXMLPrint::WriteMonitorListSection(Writer writer) const
 			writer->WriteEndElement();
 
 			iterMonitorList++;
+
+			writer->WriteEndElement();//RemoteMonitroList
 		}
 
-
-		writer->WriteEndElement();//RemoteMonitroList
+		writer->WriteEndElement();//RemoteMonitroLists
 	}
 }
 
@@ -804,7 +818,7 @@ inline void SVConfigXMLPrint::WritePPQBar(Writer writer) const
 	writer->WriteStartElement(nullptr, L"PPQBar", nullptr);
 	SVConfigurationObject* pConfig( nullptr );
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
-	
+
 	CString	sLabel, sValue;
 	int     nFirstHeight = 0;
 	int     nLastHeight  = 0;
@@ -916,7 +930,7 @@ inline void SVConfigXMLPrint::WriteValueObject( Writer writer, SVValueObjectClas
 	if ( pObj->ObjectAttributesAllowed() & SV_PRINTABLE )
 	{
 		writer->WriteStartElement(nullptr, SvUl::to_utf16(pObj->GetClassName(), cp_dflt).c_str(), nullptr);
-		writer->WriteAttributeString(nullptr, L"Name", nullptr, SvUl::to_utf16(pObj->GetName(), cp_dflt).c_str());
+		writer->WriteAttributeString(nullptr,XML_Name, nullptr, SvUl::to_utf16(pObj->GetName(), cp_dflt).c_str());
 
 		BOOL bGotValue = FALSE;
 		CString sValue;
@@ -1030,7 +1044,7 @@ inline void SVConfigXMLPrint::WriteArchiveTool(Writer writer, SVArchiveTool * ar
 			{
 				writer->WriteStartElement(nullptr, L"Result", nullptr);
 				writer->WriteAttributeString(nullptr, L"Number", nullptr, _itow(i + 1, buff, 10));
-				writer->WriteAttributeString(nullptr, L"Name", nullptr, utf16(SVString(pRecord->GetObjectReference().GetCompleteObjectName())).c_str());
+				writer->WriteAttributeString(nullptr,XML_Name, nullptr, utf16(SVString(pRecord->GetObjectReference().GetCompleteObjectName())).c_str());
 				writer->WriteEndElement();
 			}
 		}
@@ -1045,7 +1059,7 @@ inline void SVConfigXMLPrint::WriteArchiveTool(Writer writer, SVArchiveTool * ar
 			writer->WriteAttributeString(nullptr, L"Number", nullptr, _itow(i + 1, buff, 10));
 			if (pRecord)
 			{
-				writer->WriteAttributeString(nullptr, L"Name", nullptr, utf16(SVString(pRecord->GetImageObjectName())).c_str());
+				writer->WriteAttributeString(nullptr,XML_Name, nullptr, utf16(SVString(pRecord->GetImageObjectName())).c_str());
 			}
 			else
 			{
@@ -1111,7 +1125,7 @@ inline void SVConfigXMLPrint::WriteObject( Writer writer, SVObjectClass* pObj ) 
 
 			writer->WriteStartElement(nullptr, SvUl::to_utf16(pObj->GetClassName(), cp_dflt).c_str(), nullptr);
 			std::wstring objName = SvUl::to_utf16(pObj->GetName(), cp_dflt);
-			writer->WriteAttributeString(nullptr, L"Name", nullptr, objName.c_str());
+			writer->WriteAttributeString(nullptr,XML_Name, nullptr, objName.c_str());
 			SVToolClass* pTool = dynamic_cast<SVToolClass*> (pObj);
 			if ( nullptr != pTool )
 			{
@@ -1146,7 +1160,7 @@ inline void SVConfigXMLPrint::WriteObject( Writer writer, SVObjectClass* pObj ) 
 				if (refObject.Object())
 				{
 					writer->WriteStartElement(nullptr,  L"Variable", nullptr);
-					writer->WriteAttributeString(nullptr, L"Name", nullptr, utf16(SVString(refObject.GetName())).c_str());
+					writer->WriteAttributeString(nullptr,XML_Name, nullptr, utf16(SVString(refObject.GetName())).c_str());
 					writer->WriteEndElement();
 				}
 			}
@@ -1243,7 +1257,7 @@ void SVConfigXMLPrint::WriteChildren( Writer writer, SVObjectClass* pObj ) const
 							bToolGroupActive = true;
 							writer->WriteStartElement(nullptr, L"ToolGrouping", nullptr);
 							std::wstring name = SvUl::to_utf16(it->first.c_str(), cp_dflt);
-							writer->WriteAttributeString(nullptr, L"Name", nullptr, name.c_str());
+							writer->WriteAttributeString(nullptr,XML_Name, nullptr, name.c_str());
 						}
 						break;
 
@@ -1251,7 +1265,7 @@ void SVConfigXMLPrint::WriteChildren( Writer writer, SVObjectClass* pObj ) const
 						{
 							writer->WriteStartElement(nullptr, L"EndToolGrouping", nullptr);
 							std::wstring name = SvUl::to_utf16(it->first.c_str(), cp_dflt);
-							writer->WriteAttributeString(nullptr, L"Name", nullptr, name.c_str());
+							writer->WriteAttributeString(nullptr,XML_Name, nullptr, name.c_str());
 							writer->WriteEndElement();
 							writer->WriteEndElement(); // end of start group
 							bToolGroupActive = false;
@@ -1330,7 +1344,7 @@ void SVConfigXMLPrint::WriteInputOutputList( Writer writer, SVObjectClass* pObj 
 void SVConfigXMLPrint::WriteValueObject(Writer writer, const std::wstring tag, const std::wstring lpszName, const std::wstring lpszValue) const
 {
 	writer->WriteStartElement(nullptr, tag.c_str(), nullptr);
-	writer->WriteAttributeString(nullptr, L"Name", nullptr, lpszName.c_str());
+	writer->WriteAttributeString(nullptr,XML_Name, nullptr, lpszName.c_str());
 	writer->WriteAttributeString(nullptr, L"Value", nullptr, lpszValue.c_str());
 	writer->WriteEndElement();
 }
@@ -1342,7 +1356,7 @@ void SVConfigXMLPrint::WriteIOEntryObject(Writer writer, SVIOEntryHostStructPtr 
 	std::wstring 			sValue;
 	
 	SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject( IOEntry->m_IOId );
-	writer->WriteAttributeString(nullptr, L"Name", nullptr, SvUl::to_utf16(l_pObject->GetName(), cp_dflt).c_str());
+	writer->WriteAttributeString(nullptr,XML_Name, nullptr, SvUl::to_utf16(l_pObject->GetName(), cp_dflt).c_str());
 	
 	switch (IOEntry->m_ObjectType)
 	{
@@ -1404,7 +1418,7 @@ inline void SVConfigXMLPrint::WriteGlobalConstants(Writer writer) const
 			writer->WriteStartElement(nullptr, SvUl::to_utf16( Value.c_str(), cp_dflt).c_str(), nullptr);
 			//write Global Constant Name
 			Value = pGlobalConstant->GetCompleteObjectName();
-			writer->WriteAttributeString(nullptr, L"Name", nullptr, SvUl::to_utf16( Value.c_str(), cp_dflt).c_str() );
+			writer->WriteAttributeString(nullptr,XML_Name, nullptr, SvUl::to_utf16( Value.c_str(), cp_dflt).c_str() );
 			//write Global Constant Value
 			pGlobalConstant->getValue( Value );
 			writer->WriteAttributeString(nullptr, L"Value", nullptr, SvUl::to_utf16( Value.c_str(), cp_dflt).c_str() );
@@ -1452,7 +1466,7 @@ inline HRESULT SVDeviceParamConfigXMLHelper::Visit( SVLongValueDeviceParam& para
 		}
 		if ( s.IsEmpty() )
 			s.Format("%lu%s", (unsigned long) param.GetScaledValue(), param.info.sUnits.IsEmpty() ? "" : " " + param.info.sUnits );
-		m_writer->WriteAttributeString(nullptr, L"Name", nullptr, SvUl::to_utf16(pCamFileParam->Name(), cp_dflt).c_str());
+		m_writer->WriteAttributeString(nullptr,XML_Name, nullptr, SvUl::to_utf16(pCamFileParam->Name(), cp_dflt).c_str());
 		m_writer->WriteAttributeString(nullptr, L"Value", nullptr, SvUl::to_utf16(s.GetString(), cp_dflt).c_str());
 		m_writer->WriteEndElement();
 	}
@@ -1467,7 +1481,7 @@ inline HRESULT SVDeviceParamConfigXMLHelper::Visit( SVi64ValueDeviceParam& param
 		m_writer->WriteStartElement(nullptr, L"Param", nullptr);
 		CString s;
 		s.Format("%I64d", param.iValue );
-		m_writer->WriteAttributeString(nullptr, L"Name", nullptr, SvUl::to_utf16(pCamFileParam->Name(), cp_dflt).c_str());
+		m_writer->WriteAttributeString(nullptr,XML_Name, nullptr, SvUl::to_utf16(pCamFileParam->Name(), cp_dflt).c_str());
 		m_writer->WriteAttributeString(nullptr, L"Value", nullptr, SvUl::to_utf16(s.GetString(), cp_dflt).c_str());
 		m_writer->WriteEndElement();
 	}
@@ -1492,7 +1506,7 @@ inline HRESULT SVDeviceParamConfigXMLHelper::Visit( SVBoolValueDeviceParam& para
 		}
 		if ( s.IsEmpty() )
 			s.Format("%s", param.bValue ? _T("TRUE") : _T("FALSE") );
-		m_writer->WriteAttributeString(nullptr, L"Name", nullptr, SvUl::to_utf16(pCamFileParam->Name(), cp_dflt).c_str());
+		m_writer->WriteAttributeString(nullptr,XML_Name, nullptr, SvUl::to_utf16(pCamFileParam->Name(), cp_dflt).c_str());
 		m_writer->WriteAttributeString(nullptr, L"Value", nullptr, SvUl::to_utf16(s.GetString(), cp_dflt).c_str());
 		m_writer->WriteEndElement();
 	}
@@ -1505,7 +1519,7 @@ inline HRESULT SVDeviceParamConfigXMLHelper::Visit( SVStringValueDeviceParam& pa
 	if ( pCamFileParam )
 	{
 		m_writer->WriteStartElement(nullptr, L"Param", nullptr);
-		m_writer->WriteAttributeString(nullptr, L"Name", nullptr, SvUl::to_utf16(pCamFileParam->Name(), cp_dflt).c_str());
+		m_writer->WriteAttributeString(nullptr,XML_Name, nullptr, SvUl::to_utf16(pCamFileParam->Name(), cp_dflt).c_str());
 		m_writer->WriteAttributeString(nullptr, L"Value", nullptr, SvUl::to_utf16(param.strValue.c_str(), cp_dflt).c_str());
 		m_writer->WriteEndElement();
 	}
@@ -1549,7 +1563,7 @@ inline HRESULT SVDeviceParamConfigXMLHelper::Visit( SVCameraFormatsDeviceParam& 
 		{
 			s = param.strValue.c_str();
 		}
-		m_writer->WriteAttributeString(nullptr, L"Name", nullptr, SvUl::to_utf16(pCamFileParam->Name(), cp_dflt).c_str());
+		m_writer->WriteAttributeString(nullptr,XML_Name, nullptr, SvUl::to_utf16(pCamFileParam->Name(), cp_dflt).c_str());
 		m_writer->WriteAttributeString(nullptr, L"Value", nullptr, SvUl::to_utf16(s.GetString(), cp_dflt).c_str());
 
 		if ( pFormat )
