@@ -164,7 +164,7 @@ bool TableAnalyzerTool::ValidateOfflineParameters ()
 			Result = false;
 		}
 
-		SvOi::IObjectClass* pObject = m_sourceTableObjectInfo.GetInputObjectInfo().PObject;
+		SVObjectClass* pObject = m_sourceTableObjectInfo.GetInputObjectInfo().PObject;
 		if (!m_sourceTableObjectInfo.IsConnected() || nullptr == dynamic_cast<TableObject*>(pObject))
 		{
 			SvStl::MessageContainer message;
@@ -177,6 +177,8 @@ bool TableAnalyzerTool::ValidateOfflineParameters ()
 			SvStl::MessageContainer message;
 			message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_NoValidTableConnected, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 			addTaskMessage( message );
+			
+			pObject->DisconnectObjectInput( &m_sourceTableObjectInfo );
 			m_sourceTableObjectInfo.SetInputObject(nullptr);
 			Result = false;
 		}

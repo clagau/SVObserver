@@ -156,7 +156,9 @@ bool TableLimitAnalyzer::ValidateOfflineParameters ()
 	bool Result = SVTaskObjectClass::ValidateOfflineParameters();
 	if (Result)
 	{
-		Result &= m_LimitValue.IsValid() ? true : false;
+		//@TODO[MZA][7.40][17.10.2016] This line must be uncomment yet, because the analyzer tool set this parameter invalid when another analyzer is invalid
+		//This should be fix when Onvalidate-behavior is fixed.
+		//Result &= m_LimitValue.IsValid() ? true : false;
 	}
 
 	return Result;

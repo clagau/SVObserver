@@ -606,7 +606,14 @@ namespace Seidenader { namespace SVOGui {
 				{
 					SvStl::MessageContainerVector errorMessageList = commandPtr->getErrorMessages();
 					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-					Msg.setMessage( errorMessageList[0].getMessage() );
+					if (0 < errorMessageList.size())
+					{
+						Msg.setMessage( errorMessageList[0].getMessage() );
+					}
+					else
+					{
+						Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams) );
+					}
 
 					m_analyzerListBox.SetCurSel(i);
 					m_selectedAnalyzerID = analyzerGUID;
