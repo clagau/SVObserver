@@ -76,7 +76,7 @@ namespace Seidenader { namespace SVOMFCLibrary
 	, m_gigePacketSize( 0 )
 	, m_bSingleCameraModel( false )
 	, m_forcedImageUpdateTimeInSeconds(0) // zero means no forced image update
-	, m_NAKMode(NakGeneration::Legacy)
+	, m_NAKMode(NakGeneration::Bursts)
 	,m_NAKParameter(DefaultNakParameter) 
 	{
 	}
@@ -166,7 +166,7 @@ namespace Seidenader { namespace SVOMFCLibrary
 		// Force Image Update Time (in seconds)
 		int forcedImageUpdateTime = SvimIni.GetValueInt( DisplaySectionTag, ForcedImageUpdateTimeInSecondsTag, 0 );
 		m_forcedImageUpdateTimeInSeconds = static_cast<unsigned char> (forcedImageUpdateTime);
-		m_NAKMode = static_cast<NakGeneration>( SvimIni.GetValueInt(NAKSectionTag, NAKMode, NakGeneration::Legacy));
+		m_NAKMode = static_cast<NakGeneration>( SvimIni.GetValueInt(NAKSectionTag, NAKMode, NakGeneration::Bursts));
 		m_NAKParameter = SvimIni.GetValueInt(NAKSectionTag, NAKParameter, DefaultNakParameter);	  
 		return Result;
 	}

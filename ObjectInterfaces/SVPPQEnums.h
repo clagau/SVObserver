@@ -33,7 +33,7 @@ enum SVPPQOutputModeEnum
 static const int  DefaultNakParameter = 25;
 
 //*********************************
-//! Enum for possible values of the NAKmode. The NAKmode can be set with SVIM.ini file. The defaultvalue is legacy.
+//! Enum for possible values of the NAKmode. The NAKmode can be set with SVIM.ini file. The defaultvalue is burst.
 //  The NAKmode   determines for what product the next inspection is started in the case that NAKs occurs.
 //	(without NAKS of course the oldest Product will be inspected next)
 //************************************
