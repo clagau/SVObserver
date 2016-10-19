@@ -80,6 +80,17 @@ HRESULT DoubleSortValueObject::setSortContainer(int iBucket, const ValueObjectSo
 	}
 	return result;
 }
+
+HRESULT DoubleSortValueObject::CopyValue(int iSourceBucket, int iDestBucket)
+{
+	if ((iSourceBucket >= 0 && iSourceBucket < m_iNumberOfBuckets) && (iDestBucket >= 0 && iDestBucket < m_iNumberOfBuckets))
+	{
+		m_sortContainerArray[iDestBucket] = m_sortContainerArray[iSourceBucket];
+		return __super::CopyValue(iSourceBucket, iDestBucket);
+	}
+
+	return S_FALSE;
+}
 #pragma endregion Public Methods
 
 #pragma region Protected Methods

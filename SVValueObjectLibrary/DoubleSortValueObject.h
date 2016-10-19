@@ -36,6 +36,7 @@ public:
 	const ValueObjectSortContainer& getSortContainer() const { return getSortContainer(m_iLastSetIndex); };
 	HRESULT setSortContainer(int iBucket, const ValueObjectSortContainer& sortMap);
 	HRESULT setSortContainer(const ValueObjectSortContainer& sortMap) { return setSortContainer(m_iLastSetIndex, sortMap); };
+	virtual HRESULT CopyValue(int iSourceBucket, int iDestBucket) override;
 #pragma endregion Public Methods
 
 #pragma region Protected Methods

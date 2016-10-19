@@ -156,6 +156,7 @@ namespace Seidenader { namespace SVOGui {
 			SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_TableColumn_AddingFailed, msgList, SvStl::SourceFileParams(StdMessageParams) );
 		}
+		ValidateData(); //validate the new line (this do a reset and add the column to the tableObject)
 		FillGridControl();
 	}
 
