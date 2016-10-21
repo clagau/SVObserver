@@ -396,7 +396,6 @@ void ToolSetView::OnBeginLabelEditToolSetList(NMHDR* pNMHDR, LRESULT* pResult)
 	pEdit->GetWindowText(m_csLabelSaved);
 
 	m_isLabeling = true;
-	SetCapture(); // capture mouse events - 28 Oct 1999 - frb.
 
 	*pResult = 0;
 }
@@ -468,9 +467,7 @@ void ToolSetView::OnEditLabelEnds()
 		// Cause edit control to 'end' editing.
 		SetFocus(); // Cause edit control to lose 'focus'.
 	}
-
 	m_isLabeling = false;
-	::ReleaseCapture(); // release the mouse capture
 }
 
 bool ToolSetView::EditToolGroupingComment()
