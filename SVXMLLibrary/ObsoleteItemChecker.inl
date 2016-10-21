@@ -119,12 +119,16 @@ namespace Seidenader { namespace  SVXMLLibrary
 								}
 							}
 						}
-						else
+					}
+					else if ( 0 == DataName.compare( CTAG_INSPECTION_PROCESS ) )
+					{
+						TreeType::SVBranchHandle hItemToolset;
+						if( SVNavigateTree::GetItemBranch( rTree, CTAG_TOOLSET_SET, htiDataChild, hItemToolset ) )
 						{
 							for (ObsoleteItems::const_iterator it = rItems.begin();it != rItems.end() && !bFound; ++it)
 							{
 								TreeType::SVBranchHandle node(nullptr );
-								if ( SVNavigateTree::GetItemBranch( rTree, it->m_tag.c_str(), htiSubChild, node ) )
+								if ( SVNavigateTree::GetItemBranch( rTree, it->m_tag.c_str(), hItemToolset, node ) )
 								{
 									bFound = true;
 									rErrorCode = it->m_errorNo;
