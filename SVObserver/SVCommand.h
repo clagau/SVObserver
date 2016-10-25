@@ -87,7 +87,32 @@ class ATL_NO_VTABLE CSVCommand :
 	public CProxy_ISVCommandEvents< CSVCommand >,
 	public CProxy_ISVCommandObserverEvents< CSVCommand >
 {
+
+protected:
+	//CriticalSection Singelton for use in CSVCommand
+	class CProductCriticalSection
+	{
+	public:
+		static CRITICAL_SECTION*  Get()
+		{
+			static CProductCriticalSection  instance; 
+			return &instance.m_CriticalSection;
+		}
+	
+		~CProductCriticalSection()
+		{
+			::DeleteCriticalSection( &m_CriticalSection );
+		}
+	private: 
+		CProductCriticalSection() 
+		{
+			::InitializeCriticalSection( &m_CriticalSection );
+		}
+		CRITICAL_SECTION m_CriticalSection;
+	};
+
 public:
+
 	CSVCommand();
 	virtual ~CSVCommand();
 	
@@ -561,8 +586,6 @@ private:
 	static volatile long m_lLastStreamedProduct;
     static volatile HANDLE m_hStopStreamEvent;
     static volatile HANDLE m_hStreamingThread;
-	static CRITICAL_SECTION m_hProductCritSect;
-	static bool m_bCriticalSectionInitialized;
 };// end class CSVCommand
 
 OBJECT_ENTRY_AUTO( __uuidof(SVCommand), CSVCommand ) 

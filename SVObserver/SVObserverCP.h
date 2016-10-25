@@ -168,7 +168,8 @@ protected:
 		InterfacePointerMap::iterator IterInterface( m_mapInterface.find( pUnk ) );
 		if ( m_mapInterface.end() != IterInterface )
 		{
-			pStream = dynamic_cast<IStream*> (IterInterface->second);
+			
+			pStream = reinterpret_cast<IStream*> (IterInterface->second);
 			if ( nullptr != pStream )
 			{
 				MarshaledPointerMap::iterator IterMarshaled( m_mapMarshaled.find( pUnk ) );

@@ -78,8 +78,6 @@ volatile DWORD CSVCommand::m_dwStreamDataProcessId = 0;
 volatile long CSVCommand::m_lLastStreamedProduct = -1;
 volatile HANDLE CSVCommand::m_hStopStreamEvent = nullptr;
 volatile HANDLE CSVCommand::m_hStreamingThread = nullptr;
-CRITICAL_SECTION CSVCommand::m_hProductCritSect;
-bool CSVCommand::m_bCriticalSectionInitialized = false;
 CStringList CSVCommand::m_cslInspectionNames;
 
 SVVector< SVActiveXLockStruct > CSVCommand::m_aSVActXLock;
@@ -92,19 +90,12 @@ SVVector< SVInspectionProcess* > CSVCommand::m_arInspections;
 CSVCommand::CSVCommand()
 	: m_pStream( nullptr )
 {
-	if (!m_bCriticalSectionInitialized)
-	{
-		::InitializeCriticalSection( &m_hProductCritSect );
-		m_bCriticalSectionInitialized = true;
-	}
+
 }
 
 CSVCommand::~CSVCommand()
 {
-	if( m_bCriticalSectionInitialized )
-	{
-		::DeleteCriticalSection( &m_hProductCritSect );
-	}
+
 }
 #pragma endregion Constructor
 
@@ -1579,7 +1570,7 @@ HRESULT CSVCommand::StreamingDataCallback( const SVInspectionCompleteInfoStruct&
 	if( m_bRegisteredStream )
 	{
 		// Protect the to be streamed list
-		::EnterCriticalSection( &m_hProductCritSect );
+		::EnterCriticalSection( CProductCriticalSection::Get());
 
 		// search the list for this product
 		bFound = FALSE;
@@ -1660,7 +1651,7 @@ HRESULT CSVCommand::StreamingDataCallback( const SVInspectionCompleteInfoStruct&
 		pProductData->lCallbackCount++;
 
 		// Unprotect the to be streamed list
-		::LeaveCriticalSection( &m_hProductCritSect );
+		::LeaveCriticalSection( CProductCriticalSection::Get() );
 
 		// if streaming thread is starved, temporarily boost it
 		if( m_arProductList.GetSize() > 20 )
@@ -1810,11 +1801,11 @@ DWORD WINAPI CSVCommand::SVStreamDataThread(LPVOID lpParam)
 					lProductCount = static_cast< long >( pThis->m_arProductList.GetSize() );
 					lStreamCount--;
 
-					::EnterCriticalSection( &m_hProductCritSect );
+					::EnterCriticalSection(CProductCriticalSection::Get());
 
 					pThis->m_arProductList.RemoveAt( l );
 
-					::LeaveCriticalSection( &m_hProductCritSect );
+					::LeaveCriticalSection(CProductCriticalSection::Get() );
 					delete pProductData;
 					l--;
 				} // end for
