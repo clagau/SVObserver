@@ -156,7 +156,7 @@ namespace Seidenader { namespace SVOGui {
 			SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_TableColumn_AddingFailed, msgList, SvStl::SourceFileParams(StdMessageParams) );
 		}
-		ValidateData(); //validate the new line (this do a reset and add the column to the tableObject)
+		ValidateData(); //validate the new line (this does a reset and add the column to the tableObject)
 		FillGridControl();
 	}
 
@@ -166,6 +166,7 @@ namespace Seidenader { namespace SVOGui {
 
 		if (FormulaColumn == pItem->iColumn && 0 < pItem->iRow && m_gridList.size() >= pItem->iRow)
 		{
+			ValidateData(); //validate the new line (this does a reset and add the column to the tableObject)
 			SVString strCaption = SvUl_SF::Format(_T("%s %s"), m_gridList[pItem->iRow-1].first.c_str(), _T("Formula"));
 
 			SvOg::SVFormulaEditorSheetClass dlg(m_InspectionID, m_TaskObjectID, m_gridList[pItem->iRow-1].second.ToGUID(), strCaption.c_str());
