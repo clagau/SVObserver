@@ -6290,139 +6290,37 @@ HRESULT SVObserverApp::InitializeSecurity()
 	return S_OK;
 }
 
+//@TODO [Arvid][7.40][25.10.2016] a configuration handler class should be separated out from SVObserverApp
+// this class should receive at least the following methods from SVObserverApp:
+// fileSaveAsSVX(), DetermineConfigurationSaveName(), SaveConfigurationAndRelatedFiles();
+
 void SVObserverApp::fileSaveAsSVX( CString StrSaveAsPathName, bool isAutoSave) 
 {
 	CWaitCursor wait;
 
-	BOOL bOk=TRUE;
+	bool bOk = true;
 
 	SVSVIMStateClass::AddState( SV_STATE_SAVING );
 	ResetAllIPDocModifyFlag(FALSE);
 	//
 	// Is the input parameter for save as path empty?
 	//
-	if ( !isAutoSave && StrSaveAsPathName.IsEmpty() )
+	if (!isAutoSave)// in an AutoSave the configuration name must not be changed
 	{
-		SVFileNameClass svFileName = m_ConfigFileName;
-
-		svFileName.SetFileType( SV_SVX_CONFIGURATION_FILE_TYPE );
-
-		if ( CString( getConfigPathName() ).IsEmpty() ||
-			CString( getConfigPathName() ).CompareNoCase( SvStl::GlobalPath::Inst().GetRunPath().c_str() ) == 0 )
+		if(StrSaveAsPathName.IsEmpty() )
 		{
-			svFileName.SetPathName( AfxGetApp()->GetProfileString( _T( "Settings" ), 
-				_T( "ConfigurationFilePath" ), 
-				SvStl::GlobalPath::Inst().GetRunPath().c_str() ) );
-
-			if ( CString( svFileName.GetPathName() ).CompareNoCase(SvStl::GlobalPath::Inst().GetRunPath().c_str() ) == 0 )
-			{
-				if ( ! CString( SVFileNameManagerClass::GetConfigurationPathName() ).IsEmpty() )
-				{
-					svFileName.SetPathName( SVFileNameManagerClass::GetConfigurationPathName() );
-				}
-			}
-			else
-			{
-				if (!isAutoSave)
-				{
-					CString path = svFileName.GetPathName();
-					int pos = path.ReverseFind(_T('\\'));
-					if (pos != -1)
-					{
-						path.Delete(pos, path.GetLength() - pos);
-						// check if just drive left
-						if (path[path.GetLength()-1] == _T(':'))
-						{
-							path += _T('\\');
-						}
-						svFileName.SetPathName(path);
-					}
-				}
-			}
-		}
-
-		if ( svFileName.SaveFile() )
-		{
-			if(!isAutoSave) //Arvid in an autosave the configuration name must not be changed
-			{
-				bOk = setConfigFullFileName( svFileName.GetFullFileName(), RENAME );
-				if ( bOk )
-				{
-					AfxGetApp()->WriteProfileString( _T( "Settings" ), 
-						_T( "ConfigurationFilePath" ), 
-						svFileName.GetPathName() );
-				}
-			}
+			bOk = DetermineConfigurationSaveName();
 		}
 		else
 		{
-			SVSVIMStateClass::RemoveState( SV_STATE_SAVING ); // remove the state set at the start of this method
-			/// Why is the return here? Shouldn't bOk be set to false instead ?
-			return; // what no error?
-		}
-	}// end if ( !isAutoSave && StrSaveAsPathName.IsEmpty() )
-	else
-	{
-		if(!isAutoSave) //Arvid in an AutoSave the full name of the configuration must not be changed!
-		{
-			bOk = setConfigFullFileName( StrSaveAsPathName, FALSE );
+			bOk = (setConfigFullFileName( StrSaveAsPathName, FALSE ) == TRUE);
 		}
 	}
 
 	if ( bOk && !CString( m_ConfigFileName.GetExtension() ).CompareNoCase( ".svx" ) )
 	{
-		SVConfigurationObject* pConfig( nullptr );
-		SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
-		CString csFileName = m_ConfigFileName.GetFullFileName();
-
-		if( nullptr != pConfig )
-		{
-			pConfig->ValidateRemoteMonitorList(); // sanity check
-			std::ofstream os;
-			os.open( csFileName );
-			if (os.is_open())
-			{
-				SVObjectXMLWriter writer(os);
-				pConfig->SaveConfiguration( writer );
-				os.close();
-			}
-		}
-
-		if (isAutoSave) 
-		{
-			//Arvid in an autosave some of the of the steps necessary in a normal configuration 
-			// save are skipped, 
-			// e.g. the configuration name must not be added to the LRU list
-			
-			ExtrasEngine::Instance().CopyDirectoryToTempDirectory(SvStl::GlobalPath::Inst().GetRunPath().c_str() + CString("\\"));
-			ExtrasEngine::Instance().ResetAutoSaveInformation(); //Arvid: update autosave timestamp
-		}
-		else 
-		{
-			SVFileNameManagerClass::SaveItem( &m_ConfigFileName );//Arvid: here the configuration seems to be copied from the Run directory (C:\Run)
-			SVFileNameManagerClass::SaveItems();					//Arvid: here other files required for the configuration seem to be copied from the Run directory (C:\Run)
-			SVFileNameManagerClass::RemoveUnusedFiles();
-
-			SVSVIMStateClass::RemoveState( SV_STATE_MODIFIED );
-
-			if ( bOk )
-			{
-				if ( CString( SVFileNameManagerClass::GetConfigurationPathName() ).IsEmpty() )
-				{
-					AddToRecentFileList( getConfigFullFileName() );
-				}
-				else
-				{
-						AddToRecentFileList( CString( SVFileNameManagerClass::GetConfigurationPathName() ) + 
-							"\\" + getConfigFileName() );
-				}
-				ExtrasEngine::Instance().ResetAutoSaveInformation(); //Arvid: configuration successfully saved: update autosave timestamp
-			}
-
-			( (CMDIFrameWnd*) AfxGetMainWnd() )->OnUpdateFrameTitle(TRUE);
-			// Success...
-		}
-	}// end if ( !CString( m_ConfigFileName.GetExtension() ).CompareNoCase( ".svx" ) )
+		SaveConfigurationAndRelatedFiles(isAutoSave);
+	}
 	else
 	{
 		SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
@@ -6430,6 +6328,130 @@ void SVObserverApp::fileSaveAsSVX( CString StrSaveAsPathName, bool isAutoSave)
 	}
 	SVSVIMStateClass::RemoveState( SV_STATE_SAVING );
 }
+
+
+bool SVObserverApp::DetermineConfigurationSaveName() 
+{
+	SVFileNameClass svFileName = m_ConfigFileName;
+
+	svFileName.SetFileType( SV_SVX_CONFIGURATION_FILE_TYPE );
+
+	if ( CString( getConfigPathName() ).IsEmpty() ||
+		CString( getConfigPathName() ).CompareNoCase( SvStl::GlobalPath::Inst().GetRunPath().c_str() ) == 0 )
+	{
+		svFileName.SetPathName( AfxGetApp()->GetProfileString( _T( "Settings" ), 
+			_T( "ConfigurationFilePath" ), 
+			SvStl::GlobalPath::Inst().GetRunPath().c_str() ) );
+
+		if ( CString( svFileName.GetPathName() ).CompareNoCase(SvStl::GlobalPath::Inst().GetRunPath().c_str() ) == 0 )
+		{
+			if ( ! CString( SVFileNameManagerClass::GetConfigurationPathName() ).IsEmpty() )
+			{
+				svFileName.SetPathName( SVFileNameManagerClass::GetConfigurationPathName() );
+			}
+		}
+		else
+		{
+			CString path = svFileName.GetPathName();
+			int pos = path.ReverseFind(_T('\\'));
+			if (pos != -1)
+			{
+				path.Delete(pos, path.GetLength() - pos);
+				// check if just drive left
+				if (path[path.GetLength()-1] == _T(':'))
+				{
+					path += _T('\\');
+				}
+				svFileName.SetPathName(path);
+			}
+		}
+	}
+
+	if ( svFileName.SaveFile() )
+	{
+		if (setConfigFullFileName( svFileName.GetFullFileName(), RENAME ))
+		{
+			AfxGetApp()->WriteProfileString( _T( "Settings" ), 
+				_T( "ConfigurationFilePath" ), 
+				svFileName.GetPathName() );
+		}
+		else
+		{
+			return false;
+		}
+	}
+	else
+	{
+		SVSVIMStateClass::RemoveState( SV_STATE_SAVING ); // remove the state set at the start of this method
+		return false;
+	}
+	return true;
+}
+
+
+void SVObserverApp::SaveConfigurationAndRelatedFiles(bool isAutoSave) 
+{
+	SVConfigurationObject* pConfig( nullptr );
+	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
+
+	CString csFilePath = m_ConfigFileName.GetFullFileName();
+	if(isAutoSave) 
+	{
+		ExtrasEngine::Instance().CopyDirectoryToTempDirectory(SvStl::GlobalPath::Inst().GetRunPath().c_str()); //ABX wäre CopyDirectoryToTempDirectory() nicht woanders besser aufgehoben als bei ExtrasEngine?
+		ExtrasEngine::Instance().ResetAutoSaveInformation(); //update autosave timestamp
+
+		//in an AutoSave the configuration is not to be saved into its standard directory!
+		csFilePath = SvStl::GlobalPath::Inst().GetAutoSaveTempPath(m_ConfigFileName.GetFileName()).c_str();
+	}
+
+	if( nullptr != pConfig ) 
+		//@TODO [Arvid][7.40][25.10.2016] should this not be checked much earlier within this function?
+		// If we have a null pointer here nothing can be usefully done!
+	{
+		pConfig->ValidateRemoteMonitorList(); // sanity check
+		std::ofstream os;
+		os.open( csFilePath );
+		if (os.is_open())
+		{
+			SVObjectXMLWriter writer(os);
+			pConfig->SaveConfiguration( writer );
+			os.close();
+		}
+	}
+
+	if (isAutoSave) 
+	{
+		ExtrasEngine::Instance().CopyDirectoryToTempDirectory(SvStl::GlobalPath::Inst().GetRunPath().c_str());
+	}
+	else 
+	{
+		//in an autosave some of the of the steps necessary in a normal configuration 
+		// save are skipped, 
+		// e.g. the configuration name must not be added to the LRU list
+
+		SVFileNameManagerClass::SaveItem( &m_ConfigFileName ); //Arvid: here the configuration seems to be copied from the Run directory (C:\Run)
+		SVFileNameManagerClass::SaveItems();				   //Arvid: here other files required for the configuration seem to be copied from the Run directory (C:\Run)
+		SVFileNameManagerClass::RemoveUnusedFiles();
+
+		SVSVIMStateClass::RemoveState( SV_STATE_MODIFIED );
+
+		if ( CString( SVFileNameManagerClass::GetConfigurationPathName() ).IsEmpty() )
+		{
+			AddToRecentFileList( getConfigFullFileName() );
+		}
+		else
+		{
+			AddToRecentFileList( CString( SVFileNameManagerClass::GetConfigurationPathName() ) + 
+				"\\" + getConfigFileName() );
+		}
+
+		( (CMDIFrameWnd*) AfxGetMainWnd() )->OnUpdateFrameTitle(TRUE);
+		// Success...
+	}
+	ExtrasEngine::Instance().ResetAutoSaveInformation(); //update autosave timestamp
+
+}// end if ( !CString( m_ConfigFileName.GetExtension() ).CompareNoCase( ".svx" ) )
+
 
 /////////////////////////////////////////////////////////////////////////////
 //

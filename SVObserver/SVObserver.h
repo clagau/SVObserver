@@ -306,6 +306,7 @@ public:
 	//Arvid 150610: isRegularSave is currently false only for AutoSaves
 	void fileSaveAsSVX( CString StrSaveAsPathName = _T( "" ) ,bool isAutoSave=false );
 
+
 #pragma region Encapsulation Methods
 	long getGigePacketSize() const { return m_gigePacketSize; }
 	long getOfflineCount() const { return m_OfflineCount; }
@@ -380,6 +381,10 @@ private:
 	bool AddSecurityNode( HMODULE hMessageDll, long lId );
 
 	static int FindMenuItem(CMenu* Menu, LPCTSTR MenuString);
+
+	bool DetermineConfigurationSaveName(); ///< determines the name under which a configuration is to be changed
+	void SaveConfigurationAndRelatedFiles(bool isAutoSave); ///< saves the configuration and additional files
+
 
 #pragma endregion Private Methods
 

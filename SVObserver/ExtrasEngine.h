@@ -74,12 +74,6 @@ public:
 	/// \param rSourceDir [in] the path of the directory the contents of which are to be copied
 	void CopyDirectoryToTempDirectory(const CString &rSourceDir) const ;
 
-	/// returns the full autosave temp directory path. (cf. comment to CopyDirectoryToTempDirectory())
-	CString GetTempDirectoryPath() const;
-
-	/// returns path of the autosave temp directory path relative to the main autosave directory
-	CString GetTempFolderRelPath() const;
-
 	bool IsAutoSaveRequired(){return m_AutoSaveRequired;}
 	void SetAutoSaveRequired(bool required){m_AutoSaveRequired=required;}
 

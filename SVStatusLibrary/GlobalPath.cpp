@@ -38,7 +38,12 @@ namespace Seidenader { namespace SVStatusLibrary
 	static const TCHAR* const DefaultObserverPath = _T( "C:\\SVObserver" );	
 	static const TCHAR* const DefaultSecondObserverPath = _T( "D:\\SVObserver" );	
 
-
+	///subdirectories and sub-subdirectories of DefaultSecondObserverPath 
+	static const TCHAR* const AutoSaveRelativePath = _T( "Autosave" );	
+	const TCHAR* const AutoSaveTempRelativePath = _T("Temp");///< the "temporary" autosave temp directory name
+	const TCHAR* const AutoSaveTemp1RelativePath = _T("Temp1MostRecent");///< the first autosave temp directory name
+	const TCHAR* const AutoSaveTemp2RelativePath = _T("Temp2");///< the second autosave temp directory name
+	const TCHAR* const AutoSaveTemp3RelativePath = _T("Temp3");///< the third autosave temp directory name
 
 	///TAGS 
 	static const TCHAR* const SVIMDirectorySectionTag = _T("SVIM Directories");
@@ -52,8 +57,12 @@ namespace Seidenader { namespace SVStatusLibrary
 
 
 	GlobalPath::GlobalPath():
-	m_IsInitializedIni(false),
-		m_IsInitilizedPath(false)
+		m_IsInitializedIni(false),
+		m_IsInitilizedPath(false),
+		m_AutosaveTempDirectoryName(AutoSaveTempRelativePath),
+		m_AutosaveTempDirectory1Name(AutoSaveTemp1RelativePath),
+		m_AutosaveTempDirectory2Name(AutoSaveTemp2RelativePath),
+		m_AutosaveTempDirectory3Name(AutoSaveTemp3RelativePath)
 	{
 		m_IniFolder = _T("");
 		m_SVIM_ini = _T("");
@@ -141,7 +150,6 @@ namespace Seidenader { namespace SVStatusLibrary
 		AppendFilename(filename,ret );
 
 		return ret;
-
 	}
 
 
@@ -153,6 +161,7 @@ namespace Seidenader { namespace SVStatusLibrary
 		return ret;
 	}
 
+
 	SVString GlobalPath::GetBinPath(LPCTSTR filename)
 	{
 		InitializePath();
@@ -160,6 +169,7 @@ namespace Seidenader { namespace SVStatusLibrary
 		AppendFilename(filename,ret );
 		return ret;
 	}
+
 
 	SVString GlobalPath::GetTempPath(LPCTSTR filename )
 	{
@@ -172,20 +182,34 @@ namespace Seidenader { namespace SVStatusLibrary
 
 	SVString GlobalPath::GetObserverPath(LPCTSTR filename )
 	{
-
 		InitializePath();
 		SVString ret =  m_SVObserverFolder;
 		AppendFilename(filename,ret );
 		return ret;
-
 	}
+
 
 	SVString GlobalPath::GetSecondObserverPath(LPCTSTR filename )
 	{
-
 		InitializePath();
 		SVString ret =  m_SVSecondObserverFolder;
-		AppendFilename(filename,ret );
+		AppendFilename(filename, ret);
+		return ret;
+	}
+
+
+	SVString GlobalPath::GetAutoSaveRootPath(LPCTSTR filename)
+	{
+		SVString ret =  GetSecondObserverPath(AutoSaveRelativePath);
+		AppendFilename(filename, ret);
+		return ret;
+	}
+
+
+	SVString GlobalPath::GetAutoSaveTempPath(LPCTSTR filename)
+	{
+		SVString ret =  GetAutoSaveRootPath(AutoSaveTempRelativePath);
+		AppendFilename(filename, ret);
 		return ret;
 	}
 

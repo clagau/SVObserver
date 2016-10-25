@@ -1,7 +1,7 @@
 //*****************************************************************************
 /// \copyright COPYRIGHT (c) 2015, 2015 by Seidenader Maschinenbau GmbH
 /// All Rights Reserved 
-/// \Author	Arvid: Breitenbach
+/// \Author	Arvid
 //*****************************************************************************
 /// Contains the class ExtrasEngine which contains functionality for actions
 /// chosen from the Extras Pull down in the SVObserver Main Menu
@@ -12,7 +12,7 @@
 #include "ObjectInterfaces/SVUserMessage.h"
 #include "TextDefinesSvO.h"
 #include "ObjectInterfaces/TextDefineSvOi.h"
-#include "SVObserver.h" //Arvid: needed only for one call to SVObserverApp::fileSaveAsSVX()
+#include "SVObserver.h" //needed only for one call to SVObserverApp::fileSaveAsSVX()
 #include "SVMainFrm.h"
 #include "SVOMFCLibrary\Utilities.h"
 #include "SVSVIMStateClass.h"
@@ -20,7 +20,7 @@
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVTimerLibrary/SVClock.h"
 #include "SVStatusLibrary/GlobalPath.h"
-#include "SVOMFCLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
+#include "SVOMFCLibrary/SVDeviceParams.h" //Arvid: added to avoid VS2015 compile Error
 
 #pragma endregion Includes
 
@@ -35,17 +35,8 @@ static char THIS_FILE[] = __FILE__;
 
 HINSTANCE ExtrasEngine::ms_FbwfDllInstance = nullptr;
 
-const TCHAR* const AutosaveTempDirectoryName = 
-	_T("Temp");///< the "temporary" autosave temp directory name
-const TCHAR* const AutosaveTempDirectory1Name = 
-	_T("Temp1MostRecent");///< the first autosave temp directory name
-const TCHAR* const AutosaveTempDirectory2Name = 
-	_T("Temp2");///< the second autosave temp directory name
-const TCHAR* const AutosaveTempDirectory3Name = 
-	_T("Temp3");///< the third autosave temp directory name
 const TCHAR* const FbwfCheckFunctionName= 
 	_T("FbwfIsFilterEnabled");///< the third autosave temp directory name
-
 const TCHAR* const FbwfEnableBatchName= 
 	_T("fbwf Enable for next session.bat");///< name of the batch file that enables the file based write filter after the next reboot
 const TCHAR* const FbwfDisableBatchName= 
@@ -76,7 +67,7 @@ ExtrasEngine::ExtrasEngine():m_lastAutoSaveTimestamp(0), m_AutoSaveEnabled(true)
 
 ExtrasEngine& ExtrasEngine::Instance()
 {
-	static ExtrasEngine s_theAutoSaver; ///< Arvid: the one and only AutoSaverObject (initialized to a delta time of 10 minutes (this can be changed via setDeltaTimeInMinutes()))
+	static ExtrasEngine s_theAutoSaver; ///< the one and only AutoSaverObject (initialized to a delta time of 10 minutes (this can be changed via setDeltaTimeInMinutes()))
 	return s_theAutoSaver;
 }
 
@@ -84,7 +75,7 @@ void ExtrasEngine::ExecuteAutoSaveIfAppropriate(bool always)
 {
 	if(!(IsEnabled() && IsAutoSaveRequired()))
 	{
-		return; //Arvid: not enabled by user (or configuration not modified):do nothing
+		return; //not enabled by user (or configuration not modified):do nothing
 	}
 
 	if(!IsAutoSaveTimestampOlderThanDeltaTime()) 
@@ -93,7 +84,7 @@ void ExtrasEngine::ExecuteAutoSaveIfAppropriate(bool always)
 		{
 			return; 
 		}
-	}	//Arvid: this means the last autosave was less than m_AutoSaveDeltaTime_s seconds ago and the autosave is not automatic: nothing to do!
+	}	//this means the last autosave was less than m_AutoSaveDeltaTime_s seconds ago and the autosave is not automatic: nothing to do!
 
 	CWnd *pMainFrame = TheSVObserverApp.GetMainFrame(); 
 
@@ -103,40 +94,27 @@ void ExtrasEngine::ExecuteAutoSaveIfAppropriate(bool always)
 	autosavePopupDialog.CenterWindow(pMainFrame);
 
 	autosavePopupDialog.ShowWindow(SW_SHOW);
-	autosavePopupDialog.RedrawWindow(); //Arvid: do this after ShowWindow(), otherwise no effect!
+	autosavePopupDialog.RedrawWindow(); //do this after ShowWindow(), otherwise no effect!
 
-	//Arvid: ensure that the autosave directory exists.
+	SvStl::GlobalPath& rGlobalPath = SvStl::GlobalPath::Inst();
+	//ensure that the autosave directory exists: create it step by step
+	CreateDirectory(rGlobalPath.GetSecondObserverPath().c_str(), nullptr); //this will fail if the directory already exists, but so what?
+	SVString  AutosavePath = rGlobalPath.GetAutoSaveRootPath();
+	CreateDirectory(AutosavePath.c_str(), nullptr); //this will fail if the directory already exists, but so what?
 
-	//Arvid: create the AutoSave directory step by step
+	//now move the temporary directories around (if they exist already)
 	
-	CreateDirectory(SvStl::GlobalPath::Inst().GetSecondObserverPath().c_str(), nullptr); //Arvid: this will fail if the directory already exists, but so what?
-	SVString  AutosavePath = SvStl::GlobalPath::Inst().GetSecondObserverPath(_T("Autosave\\"));
-	CreateDirectory(AutosavePath.c_str(), nullptr); //Arvid: this will fail if the directory already exists, but so what?
-	//Arvid: now move the temporary directories around (if they exist already)
-	moveContainedDirectory(AutosavePath.c_str(), AutosaveTempDirectory2Name, AutosaveTempDirectory3Name);
-	moveContainedDirectory(AutosavePath.c_str(), AutosaveTempDirectory1Name, AutosaveTempDirectory2Name);
+	moveContainedDirectory(AutosavePath.c_str(), rGlobalPath.GetAutosaveTempDirectory2Name().c_str(), rGlobalPath.GetAutosaveTempDirectory3Name().c_str());
+	moveContainedDirectory(AutosavePath.c_str(), rGlobalPath.GetAutosaveTempDirectory1Name().c_str(), rGlobalPath.GetAutosaveTempDirectory2Name().c_str());
 
-	CreateDirectory(GetTempFolderRelPath(), nullptr);
+	CreateDirectory(SvStl::GlobalPath::Inst().GetAutoSaveTempPath().c_str(), nullptr);
 
-	//Arvid: save the current configuration in the AutoSave Directory
+	//save the current configuration in the AutoSave Directory
 	TheSVObserverApp.fileSaveAsSVX(_T(""), true);
 
-	moveContainedDirectory(AutosavePath.c_str(), AutosaveTempDirectoryName, AutosaveTempDirectory1Name);
+	moveContainedDirectory(AutosavePath.c_str(), rGlobalPath.GetAutosaveTempDirectoryName().c_str(), rGlobalPath.GetAutosaveTempDirectory1Name().c_str());
 
 	autosavePopupDialog.DestroyWindow();
-}
-
-
-CString ExtrasEngine::GetTempDirectoryPath() const 
-{
-	SVString AutosavePath = SvStl::GlobalPath::Inst().GetSecondObserverPath(_T("Autosave\\"));
-	return AutosavePath.c_str() +CString(GetTempFolderRelPath())+_T("\\");
-}
-
-
-CString ExtrasEngine::GetTempFolderRelPath() const 
-{
-	return _T("\\")+CString(AutosaveTempDirectoryName);
 }
 
 
@@ -146,9 +124,10 @@ void ExtrasEngine::ResetAutoSaveInformation()
 	SetAutoSaveRequired(false);
 }
 
+
 void ExtrasEngine::CopyDirectoryToTempDirectory(const CString &rSourceDir) const 
 {
-	CopyDir(rSourceDir, GetTempDirectoryPath());
+	CopyDir(rSourceDir, SvStl::GlobalPath::Inst().GetAutoSaveTempPath().c_str());
 }
 
 

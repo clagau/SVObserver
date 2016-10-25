@@ -33,6 +33,13 @@ namespace Seidenader { namespace SVStatusLibrary
 		SVString GetLastValidPath(LPCTSTR filename = nullptr);
 		SVString GetObserverPath(LPCTSTR filename = nullptr);
 		SVString GetSecondObserverPath(LPCTSTR filename = nullptr);
+		SVString GetAutoSaveRootPath(LPCTSTR filename = nullptr);
+		SVString GetAutoSaveTempPath(LPCTSTR filename = nullptr);
+		SVString GetAutosaveTempDirectoryName(){return m_AutosaveTempDirectoryName;}
+		SVString GetAutosaveTempDirectory1Name(){return m_AutosaveTempDirectory1Name;}
+		SVString GetAutosaveTempDirectory2Name(){return m_AutosaveTempDirectory2Name;}
+		SVString GetAutosaveTempDirectory3Name(){return m_AutosaveTempDirectory3Name;}
+
 #pragma endregion public functions 
 
 	private: 
@@ -45,7 +52,7 @@ namespace Seidenader { namespace SVStatusLibrary
 #pragma region private  functions
 		void InitializeIniFolder();
 		void InitializePath();
-#pragma endregion public  functions
+#pragma endregion private  functions
 
 #pragma region private members  
 		bool m_IsInitializedIni;
@@ -55,7 +62,7 @@ namespace Seidenader { namespace SVStatusLibrary
 		SVString  m_Hardware_ini;
 		SVString  m_Utility_ini;
 
-		///Svobserver Path 
+		///SVObserver Path 
 		bool m_IsInitilizedPath;
 		SVString m_SVObserverFolder;
 		SVString m_SVSecondObserverFolder;
@@ -64,7 +71,12 @@ namespace Seidenader { namespace SVStatusLibrary
 		SVString m_SVObserverRunFolder;
 		SVString m_TempFolder;
 		SVString m_LastValidFolder;
-#pragma endregion private members  
+
+		SVString m_AutosaveTempDirectoryName;
+		SVString m_AutosaveTempDirectory1Name;
+		SVString m_AutosaveTempDirectory2Name;
+		SVString m_AutosaveTempDirectory3Name;
+#pragma endregion private members
 	};
 
 } /* namespace SVStatusLibrary */ } /* namespace Seidenader */
