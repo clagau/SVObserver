@@ -31,6 +31,9 @@
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #endif
+
+const TCHAR* const MatroxGigeDigitizer = _T("Matrox_GIGE.Dig_%d");
+
 #pragma endregion Declarations
 
 SVDigitizerProcessingClass& SVDigitizerProcessingClass::Instance()
@@ -74,7 +77,7 @@ void SVDigitizerProcessingClass::Startup()
 		{
 			if( S_OK == l_AcqPtr->Create() )
 			{
-				m_AcquisitionDevices[ l_Iter->m_DeviceName ] = l_AcqPtr;
+				m_AcquisitionDevices[ l_Iter->m_DigitizerName ] = l_AcqPtr;
 			}
 		}
 
@@ -143,85 +146,58 @@ void SVDigitizerProcessingClass::ClearDevices()
 	}
 }
 
-HRESULT SVDigitizerProcessingClass::UpdateDigitizerSubsystem( SVDigitizerLoadLibraryClass* p_pDigitizerSubsystem )
+HRESULT SVDigitizerProcessingClass::UpdateDigitizerSubsystem( SVDigitizerLoadLibraryClass* pDigitizerSubsystem )
 {
-	HRESULT l_hrOk = S_FALSE;
+	HRESULT Result = S_FALSE;
 
-	if ( nullptr != p_pDigitizerSubsystem )
+	if ( nullptr != pDigitizerSubsystem )
 	{
 		unsigned long l_ulSize = 0;
 
-		m_Subsystems.insert( p_pDigitizerSubsystem );
+		m_Subsystems.insert( pDigitizerSubsystem );
 		
-		l_hrOk = p_pDigitizerSubsystem->GetCount( &l_ulSize );
+		Result = pDigitizerSubsystem->GetCount( &l_ulSize );
 
-		for ( unsigned long i = 0; S_OK == l_hrOk && i < l_ulSize; i++ )
+		for ( unsigned long i = 0; S_OK == Result && i < l_ulSize; i++ )
 		{
-			SVString l_Name;
+			SVString AcquisitionName;
+			SVString IPAddress;
 
-			unsigned long l_ulHandle = 0;
+			unsigned long Handle = 0;
 
-			l_hrOk = p_pDigitizerSubsystem->GetHandle( &l_ulHandle, i );
+			Result = pDigitizerSubsystem->GetHandle( &Handle, i );
 
-			if ( S_OK == l_hrOk )
+			if ( S_OK == Result )
 			{
-				BSTR l_bstrName = nullptr;
+				_variant_t Value;
+				_bstr_t StringValue;
 
-				l_hrOk = p_pDigitizerSubsystem->GetName( l_ulHandle, &l_bstrName );
-
-				if ( S_OK == l_hrOk )
+				Result = pDigitizerSubsystem->GetName( Handle, StringValue.GetAddress() );
+				if( S_OK == Result )
 				{
-					l_Name = SvUl_SF::createSVString(l_bstrName);
-
-					if ( nullptr != l_bstrName )
-					{
-						::SysFreeString( l_bstrName );
-
-						l_bstrName = nullptr;
-					}
+					AcquisitionName = static_cast<LPCTSTR> (StringValue);
+				}
+				//Not all DLL's support IP address so do not place in Result value
+				if( S_OK == pDigitizerSubsystem->ParameterGetValue( Handle, SVGigeParameterIPAddress, 0, &Value ) )
+				{
+					StringValue =  Value.bstrVal;
+					IPAddress = static_cast<LPCTSTR> (StringValue);
 				}
 			}
 
-			if ( S_OK == l_hrOk )
+			if ( S_OK == Result )
 			{
-				l_hrOk = AddDigitizer( l_Name.c_str(), p_pDigitizerSubsystem, l_ulHandle );
+				SVString CameraName( SVGigeCameraManager::Instance().getCameraName( IPAddress ) );
+				if( CameraName.empty() )
+				{
+					CameraName = AcquisitionName;
+				}
+				Result = AddDigitizer( CameraName.c_str(), AcquisitionName.c_str(), pDigitizerSubsystem, Handle );
 			}
 		}
 	}
 
-	return l_hrOk;
-}
-
-HRESULT SVDigitizerProcessingClass::GetDigitizerList( CStringArray& rList ) const
-{
-	HRESULT l_Status = S_OK;
-
-	SVNameDigitizerMap::const_iterator l_Iter = m_Digitizers.begin();
-
-	while( l_Iter != m_Digitizers.end() )
-	{
-		HRESULT l_Temp = S_OK;
-
-		SVAcquisitionClassPtr l_AcqDevicePtr = l_Iter->second;
-
-		if( !( l_AcqDevicePtr.empty() ) && 0 != l_AcqDevicePtr->m_hDigitizer )
-		{
-			rList.Add( l_AcqDevicePtr->DigName() );
-		}
-		else
-		{
-			l_Temp = E_FAIL;
-		}
-
-		if( S_OK != l_Temp && S_OK == l_Status )
-		{
-			l_Status = l_Temp;
-		}
-
-		++l_Iter;
-	}
-
-	return l_Status;
+	return Result;
 }
 
 HRESULT SVDigitizerProcessingClass::GetAcquisitionDeviceList( CStringArray& rList ) const
@@ -482,109 +458,77 @@ HRESULT SVDigitizerProcessingClass::RestoreLastCameraImage()
 	return l_Status;
 }
 
-HRESULT SVDigitizerProcessingClass::AddDigitizer( LPCTSTR Name, SVDigitizerLoadLibraryClass* p_pDigitizerSubsystem, unsigned long p_Handle )
+HRESULT SVDigitizerProcessingClass::AddDigitizer( LPCTSTR Name, LPCTSTR AcquisitionName, SVDigitizerLoadLibraryClass* pDigitizerSubsystem, unsigned long p_Handle )
 {
-	HRESULT l_Status = S_OK;
+	HRESULT Result( S_OK );
+	SVString DigitizerName( Name );
+	SVString AcqName( AcquisitionName );
 
-	SVString l_FullName = Name;
-
-	l_FullName += _T( ".Ch_0" );
-
-	
-	SVNameDigitizerMap::iterator l_Iter = m_AcquisitionDevices.find( l_FullName );
+	SVNameDigitizerMap::iterator l_Iter = m_AcquisitionDevices.find( AcqName );
 
 	if( l_Iter != m_AcquisitionDevices.end() && nullptr != l_Iter->second  )
 	{
 		l_Iter->second->m_hDigitizer = p_Handle;
 
-		m_DigitizerSubsystems[ SVString( Name ) ] = p_pDigitizerSubsystem;
+		m_DigitizerSubsystems[ AcqName ] = pDigitizerSubsystem;
 
-		m_Digitizers[ SVString( Name ) ] = l_Iter->second;
+		m_Digitizers[ DigitizerName ] = l_Iter->second;
 	}
 	else
 	{
-		l_Status = E_FAIL;
+		Result = E_FAIL;
 	}
+
+	return Result;
 	
-	return l_Status;
+	return Result;
 }
 
-HRESULT SVDigitizerProcessingClass::SelectDigitizer( LPCTSTR AcquisitionName )
+HRESULT SVDigitizerProcessingClass::SetDigitizerColor( LPCTSTR DigitizerName, bool isColor )
 {
-	HRESULT Status = S_OK;
+	HRESULT Result = S_OK;
 	SVAcquisitionClassPtr pAcquisitionDevice;
-	bool SwitchDigitizer = false;
 
-	SVNameDigitizerMap::iterator Iter = m_AcquisitionDevices.find( AcquisitionName );
+	pAcquisitionDevice = GetAcquisitionDevice( DigitizerName );
 
-	if( Iter != m_AcquisitionDevices.end() && nullptr != Iter->second )
+	if( !pAcquisitionDevice.empty() )
 	{
-		pAcquisitionDevice = Iter->second;
-		if( 0 == pAcquisitionDevice->m_hDigitizer)
+		int NumberOfBands( 1 );
+		if( isColor )
 		{
-			SwitchDigitizer = true;
+			NumberOfBands = 3;
 		}
+		pAcquisitionDevice->SetNumberOfBands( NumberOfBands );
 	}
 	else
 	{
-		Status = E_FAIL;
+		Result = E_FAIL;
 	}
 
-	if( SwitchDigitizer )
-	{
-		SVString Name( AcquisitionName );
-		SVString::size_type pos = Name.rfind('.');
-		if( SVString::npos != pos )
-		{
-			SVString DigitizerName;
-			SVString PartnerAcquisitionName;
-
-			DigitizerName = Name.substr( 0, pos );
-			PartnerAcquisitionName = DigitizerName;
-			if( SVString::npos != Name.find(_T("Ch_0")) )
-			{
-				PartnerAcquisitionName += _T( ".Ch_All" );
-			}
-			else
-			{
-				PartnerAcquisitionName += _T( ".Ch_0" );
-			}
-			Iter = m_AcquisitionDevices.find( PartnerAcquisitionName );
-
-			if( Iter != m_AcquisitionDevices.end() && nullptr != Iter->second )
-			{
-				pAcquisitionDevice->m_hDigitizer = Iter->second->m_hDigitizer;
-				Iter->second->m_hDigitizer = 0;
-			}
-			m_Digitizers[ DigitizerName ] = pAcquisitionDevice;
-		}
-	}
-
-	return Status;
+	return Result;
 }
 
-SVString SVDigitizerProcessingClass::GetReOrderedCamera( LPCTSTR Name ) const
+
+SVString SVDigitizerProcessingClass::GetReOrderedCamera( const int CameraID ) const
 {
-	SVString strRet=Name;
-	// if the system is Matrox 
-	SVString::size_type pos = strRet.find("Matrox_GIGE.Dig_");
-	if( pos != SVString::npos )
+	SVString Result;
+	const SVGigeCameraStructVector& rGigeCameraOrder = SVGigeCameraManager::Instance().GetCameraOrder();
+	SVGigeCameraStructVector::const_iterator Iter( rGigeCameraOrder.begin() );
+	for(; rGigeCameraOrder.end() != Iter; ++Iter )
 	{
-		SVGigeCameraStructSet GigECamSet = TheSVGigeCameraManager.GetCameraOrder();
-		size_t index = strRet[16]-'0';
-		if( index < GigECamSet.size() )
+		if( CameraID == Iter->m_CameraID )
 		{
-			strRet[16] = '0' + GigECamSet[index].iPosition;
+			Result = SvUl_SF::Format( MatroxGigeDigitizer, Iter->m_DigitizerID );
 		}
 	}
-	return strRet;
+	return Result;
 }
 
 HRESULT SVDigitizerProcessingClass::UpdateMatroxDevices()
 {
 	HRESULT Status = S_OK;
 
-	SVGigeCameraStructSet Cameras;
+	SVGigeCameraStructVector Cameras;
 
 	SVString deviceName = _T("Matrox_GIGE.Dig_0"); // just use the first one
 
@@ -606,27 +550,30 @@ HRESULT SVDigitizerProcessingClass::UpdateMatroxDevices()
 				{
 					_variant_t Value("");
 
-					Camera.iPosition = i;
-					Camera.m_triggerchannel = Handle;
+					Camera.m_AcquisitionHandle = Handle;
 
 					if( S_OK == pLibrary->ParameterGetValue( Handle, SVGigeParameterVendorName, 0, &Value ) )
 					{
-						Camera.strVendorName = Value.bstrVal;
+						_bstr_t StringValue( Value.bstrVal );
+						Camera.m_VendorName = static_cast< LPCTSTR >( StringValue );
 					}
 
 					if( S_OK == pLibrary->ParameterGetValue( Handle, SVGigeParameterModelName, 0, &Value ) )
 					{
-						Camera.strModelName = Value.bstrVal;
+						_bstr_t StringValue( Value.bstrVal );
+						Camera.m_ModelName = static_cast< LPCTSTR >( StringValue );
 					}
 
 					if( S_OK == pLibrary->ParameterGetValue( Handle, SVGigeParameterSerialNumber, 0, &Value ) )
 					{
-						Camera.strSerialNum = Value.bstrVal;
+						_bstr_t StringValue( Value.bstrVal );
+						Camera.m_SerialNum = static_cast< LPCTSTR >( StringValue );
 					}
 
 					if( S_OK == pLibrary->ParameterGetValue( Handle, SVGigeParameterIPAddress, 0, &Value ) )
 					{
-						Camera.strIPAddress = Value.bstrVal;
+						_bstr_t StringValue( Value.bstrVal );
+						Camera.m_IPAddress = static_cast< LPCTSTR >( StringValue );
 					}
 				}
 
@@ -634,30 +581,38 @@ HRESULT SVDigitizerProcessingClass::UpdateMatroxDevices()
 			}
 		}
 	}
+	std::sort( Cameras.begin(), Cameras.end());
+	SVGigeCameraStructVector::iterator Iter( Cameras.begin() );
+	int DigitizerID( 0 );
+	for( ; Cameras.end() != Iter; ++Iter )
+	{
+		Iter->m_DigitizerID = DigitizerID;
+		DigitizerID++;
+	}
 
-	TheSVGigeCameraManager.UpdateConnectedCameras( Cameras );
-	Cameras = TheSVGigeCameraManager.GetCameraOrder();
+	SVGigeCameraManager::Instance().UpdateConnectedCameras( Cameras );
+	Cameras = SVGigeCameraManager::Instance().GetCameraOrder();
 
 	int Count = Cameras.GetSize();
 
 	for( int j = 0; j < Count; j++ )
 	{
-		SVGigeCameraStruct& Camera = Cameras.ElementAt( j );
+		SVGigeCameraStruct& rCamera = Cameras.ElementAt( j );
 
-		if( 0 != Camera.m_triggerchannel )
+		if( 0 != rCamera.m_AcquisitionHandle )
 		{
-			SVString DigitizerName = SvUl_SF::Format( _T("Matrox_GIGE.Dig_%d"), j );
+			SVString AcquisitionName = SvUl_SF::Format( MatroxGigeDigitizer, rCamera.m_DigitizerID );
 
-			SVAcquisitionClassPtr pAcquisitionDevice = GetDigitizer( DigitizerName.c_str() );
+			SVAcquisitionClassPtr pAcquisitionDevice = GetAcquisitionDevice( AcquisitionName.c_str() );
 
 			if( !( pAcquisitionDevice.empty() ) )
 			{
 				SVDeviceParamCollection DeviceParams;
 
-				pAcquisitionDevice->m_hDigitizer = Camera.m_triggerchannel;
+				pAcquisitionDevice->m_hDigitizer = rCamera.m_AcquisitionHandle;
 
-				DeviceParams.SetParameter( DeviceParamSerialNumberString, SVStringValueDeviceParam( Camera.strSerialNum ) );
-				DeviceParams.SetParameter( DeviceParamIPAddress, SVStringValueDeviceParam( Camera.strIPAddress ) );
+				DeviceParams.SetParameter( DeviceParamSerialNumberString, SVStringValueDeviceParam( rCamera.m_SerialNum.c_str() ) );
+				DeviceParams.SetParameter( DeviceParamIPAddress, SVStringValueDeviceParam( rCamera.m_IPAddress.c_str() ) );
 
 				// Set packetSize if specified via hardware.ini file
 				if (0 != TheSVObserverApp.getGigePacketSize())
@@ -672,7 +627,7 @@ HRESULT SVDigitizerProcessingClass::UpdateMatroxDevices()
 				SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 				if( nullptr != pConfig )
 				{
-					pConfig->ModifyAcquisitionDevice( pAcquisitionDevice->GetRootDeviceName(), &DeviceParams );
+					pConfig->ModifyAcquisitionDevice( pAcquisitionDevice->DeviceName(), &DeviceParams );
 				}
 			}
 		}

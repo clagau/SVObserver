@@ -826,12 +826,10 @@ CString CSVOConfigAssistantDlg::BuildTrgDig( const SvTi::SVOTriggerObj& rTrigger
 	return sDigName;
 }
 
-CString  CSVOConfigAssistantDlg::BuildDigName(const SVOCameraObj& rCameraObj, bool bIsAcqDev) const
+CString  CSVOConfigAssistantDlg::BuildDigName(const SVOCameraObj& rCameraObj) const
 {
 	CString sDigName;
 	int iDigNumber = rCameraObj.GetDigNumber();
-	int iBandNum = rCameraObj.GetBandNumber();
-	bool isColor = rCameraObj.IsColor();
 
 	if (rCameraObj.IsFileAcquisition())
 	{
@@ -848,14 +846,7 @@ CString  CSVOConfigAssistantDlg::BuildDigName(const SVOCameraObj& rCameraObj, bo
 			case SVIM_PRODUCT_X2_GD8A_COLOR:
 			case SVIM_PRODUCT_X2_GD8A_NONIO_COLOR:
 			{
-				if( !isColor )
-				{
-					sDigName.Format("%s%s%d%s%d", SVIM_BOARD_FILEACQUISITION_STRING, SVIM_DIG_NAME_STRING, iDigNumber, SVIM_CHN_NAME_STRING, iBandNum);
-				}
-				else
-				{
-					sDigName.Format("%s%s%d%s", SVIM_BOARD_FILEACQUISITION_STRING, SVIM_DIG_NAME_STRING, iDigNumber, SVIM_CHN_ALL_STRING);
-				}
+				sDigName.Format(_T("%s%s%d"), SVIM_BOARD_FILEACQUISITION_STRING, SVIM_DIG_NAME_STRING, iDigNumber);
 				break;
 			}
 
@@ -878,14 +869,7 @@ CString  CSVOConfigAssistantDlg::BuildDigName(const SVOCameraObj& rCameraObj, bo
 			case SVIM_PRODUCT_X2_GD8A_COLOR:
 			case SVIM_PRODUCT_X2_GD8A_NONIO_COLOR:
 			{
-				if( !isColor )
-				{
-					sDigName.Format("%s%s%d%s%d", SVIM_BOARD_MATROX_GIGE, SVIM_DIG_NAME_STRING, iDigNumber, SVIM_CHN_NAME_STRING, iBandNum);
-				}
-				else
-				{
-					sDigName.Format("%s%s%d%s", SVIM_BOARD_MATROX_GIGE, SVIM_DIG_NAME_STRING, iDigNumber, SVIM_CHN_ALL_STRING);
-				}
+				sDigName.Format(_T("%s%s%d"), SVIM_BOARD_MATROX_GIGE, SVIM_DIG_NAME_STRING, iDigNumber);
 				break;
 			}
 
@@ -1504,7 +1488,7 @@ BOOL CSVOConfigAssistantDlg::SendAcquisitionDataToConfiguration()
 		const SVOCameraObjPtr pCameraObj( GetCameraObject( CameraIndex ) );
 		if( nullptr != pCameraObj )
 		{
-			sDigName = BuildDigName( *pCameraObj, IsAcqDevice );
+			sDigName = BuildDigName( *pCameraObj );
 			// For File Acquisition
 			if ( pCameraObj->IsFileAcquisition())
 			{
@@ -1584,7 +1568,6 @@ BOOL CSVOConfigAssistantDlg::SendAcquisitionDataToConfiguration()
 				}
 
 				psvLight = nullptr;
-				SVDigitizerProcessingClass::Instance().SelectDigitizer( sDigName );
 				psvDevice =  SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( sDigName );
 				if ( nullptr != psvDevice )
 				{
@@ -1637,11 +1620,11 @@ BOOL CSVOConfigAssistantDlg::SendAcquisitionDataToConfiguration()
 								const SVCameraFormatsDeviceParam* pParam = svDeviceParams.Parameter( DeviceParamCameraFormats ).DerivedValue( pParam );
 								if ( pParam->SupportsColor() )
 								{
-									psvDevice->CreateLightReference(3, 0, 0);
+									psvDevice->CreateLightReference(3);
 								}
 								else
 								{
-									psvDevice->CreateLightReference(1, 0, 0);
+									psvDevice->CreateLightReference(1);
 								}
 							}
 						}
@@ -1780,7 +1763,9 @@ BOOL CSVOConfigAssistantDlg::SendCameraDataToConfiguration()
 					pCamera = new SVVirtualCamera;
 					pCamera->SetName( sKey );
 					//Zero based camera ID, note camera name is one based!
-					pCamera->setCameraID( i );
+					int CameraID = atoi( sKey.Mid( CString(SvO::cCameraFixedName).GetLength() ) );
+					CameraID--;
+					pCamera->setCameraID( CameraID );
 					bRet = nullptr != pCamera && bRet;
 					bAddCamera = TRUE;
 				}
@@ -3834,8 +3819,8 @@ HRESULT CSVOConfigAssistantDlg::CheckCamera( SVOCameraObj& rCameraObj, bool SetF
 	CString CameraName( rCameraObj.GetCameraDisplayName() );
 	RemoveFileAcquisitionMessages( CameraName );
 
-	CString sDigName = BuildDigName( rCameraObj, true );
-	SVDigitizerProcessingClass::Instance().SelectDigitizer( sDigName );
+	CString sDigName = BuildDigName( rCameraObj );
+	SVDigitizerProcessingClass::Instance().SetDigitizerColor( sDigName, rCameraObj.IsColor() );
 
 	if( rCameraObj.IsFileAcquisition())
 	{

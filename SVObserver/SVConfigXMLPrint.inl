@@ -231,7 +231,7 @@ inline void SVConfigXMLPrint::WriteHardwareAcq(Writer writer, SVVirtualCamera* p
 	SVDeviceParamCollection* pDeviceParams = nullptr;
 	SVAcquisitionClassPtr pAcqDevice;
 	if( nullptr != pCamera ){ pAcqDevice = pCamera->GetAcquisitionDevice(); }
-	if( !( pAcqDevice.empty() ) && nullptr != m_cfo && m_cfo->GetAcquisitionDevice( pAcqDevice->GetRootDeviceName(), pfnac, plrcDummy, plutDummy, pDeviceParams ))
+	if( !( pAcqDevice.empty() ) && nullptr != m_cfo && m_cfo->GetAcquisitionDevice( pAcqDevice->DeviceName(), pfnac, plrcDummy, plutDummy, pDeviceParams ))
 	{
 		writer->WriteStartElement(nullptr, L"CameraFiles", nullptr);
 		writer->WriteString(SvUl::to_utf16(pfnac->GetFileNameList(), cp_dflt).c_str());

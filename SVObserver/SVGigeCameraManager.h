@@ -22,17 +22,13 @@ public:
 
 	HRESULT Refresh();
 
-	const SVGigeCameraStructSet& GetCameraOrder() const;
+	const SVGigeCameraStructVector& GetCameraOrder() const { return m_OrderedCameras; };
+	HRESULT UpdateConnectedCameras( const SVGigeCameraStructVector& rCameraList );
 
-	const SVGigeCameraStructSet& GetOriginalCameraIniOrder() const;
-
-	HRESULT UpdateCameraOrder( const SVGigeCameraStructSet& rSVCameraList, bool ignoreHandles=false );
-	HRESULT UpdateConnectedCameras( const SVGigeCameraStructSet& rSVCameraList );
-
-	void UpdateCameraIniList();
+	SVString getCameraName( const SVString& rIPAddress ) const;
 
 protected:
-	typedef std::map< CString, SVGigeCameraStruct > SVConnectedCameraMap;
+	typedef std::map< SVString, SVString > CameraIP_NameMap;
 
 	SVGigeCameraManager();
 
@@ -42,17 +38,10 @@ protected:
 	// For a singleton object, this operator is here to warn of a invalid assignement operator.  Do not implement this operator.
 	const SVGigeCameraManager& operator=( const SVGigeCameraManager& p_rObject );
 
-	void GetCameraOrder( SVGigeCameraStructSet& rSVCameraList ) const;
-	void GetConnectedCameras( SVConnectedCameraMap& rSVCameraMap ) const;
+	void ReadCameraMapping();
 
-	HRESULT OrderCameras( SVConnectedCameraMap& rSVCameraMap );
+	SVGigeCameraStructVector m_OrderedCameras;
+	SVGigeCameraStructVector m_iniCameras;
 
-	SVGigeCameraStructSet m_OrderedCamaras;
-
-	//Hold the orginal camera order from INI
-	SVGigeCameraStructSet m_iniCameras;
-
+	CameraIP_NameMap m_CameraIPtoName;
 };
-
-#define TheSVGigeCameraManager SVGigeCameraManager::Instance()
-

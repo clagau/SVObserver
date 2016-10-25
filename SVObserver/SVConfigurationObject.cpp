@@ -1475,7 +1475,7 @@ bool SVConfigurationObject::LoadAcquisitionDevice( SVTreeType& rTree, SVString& 
 				
 					do
 					{
-						SVString FullName;
+						SVString DigitizerName;
 
 						SVAcquisitionClassPtr psvDevice;
 
@@ -1484,18 +1484,11 @@ bool SVConfigurationObject::LoadAcquisitionDevice( SVTreeType& rTree, SVString& 
 							lNumLRBands = 1;
 						}
 
-						if ( 1 < l_BandCount )
-						{
-							FullName = SvUl_SF::Format( "%s.%s.Ch_All", BoardName.c_str(), DigName.c_str() );
-						}
-						else
-						{
-							FullName = SvUl_SF::Format( "%s.%s.Ch_%d", BoardName.c_str(), DigName.c_str(), lBand );
-						}
+						DigitizerName = SvUl_SF::Format( _T("%s.%s"), BoardName.c_str(), DigName.c_str() );
 
 						if ( ! bLutDone || ! bLutCreated )
 						{
-							psvDevice = SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( FullName.c_str() );
+							psvDevice = SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( DigitizerName.c_str() );
 							bOk = nullptr != psvDevice;
 							ASSERT( bOk );
 							if ( bOk )
@@ -1516,9 +1509,8 @@ bool SVConfigurationObject::LoadAcquisitionDevice( SVTreeType& rTree, SVString& 
 								lut.Transform();
 							}
 						}
-						SVString strNewAcquisitionDeviceName = SVDigitizerProcessingClass::Instance().GetReOrderedCamera( FullName.c_str() );
-						SVDigitizerProcessingClass::Instance().SelectDigitizer( strNewAcquisitionDeviceName.c_str() );
-						psvDevice = SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( strNewAcquisitionDeviceName.c_str() );
+						SVDigitizerProcessingClass::Instance().SetDigitizerColor( DigitizerName.c_str(), l_BandCount > 1 );
+						psvDevice = SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( DigitizerName.c_str() );
 						bOk = nullptr != psvDevice;
 						if ( bOk )
 						{
@@ -1592,7 +1584,7 @@ bool SVConfigurationObject::LoadAcquisitionDevice( SVTreeType& rTree, SVString& 
 							}
 							// Get Combined parameters
 							psvDevice->GetDeviceParameters(svDeviceParams);
-							bOk = AddAcquisitionDevice( FullName.c_str(), svFileArray, svLight, lut, &svDeviceParams );
+							bOk = AddAcquisitionDevice( DigitizerName.c_str(), svFileArray, svLight, lut, &svDeviceParams );
 						}
 					}
 					while ( ++lBand < lNumLRBands );
@@ -1633,7 +1625,7 @@ bool  SVConfigurationObject::LoadCameras( SVTreeType&  rTree, long& lNumCameras,
 		{
 			_variant_t Value;
 			long lBandLink = 0;
-			CString DeviceName;
+			SVString DeviceName;
 
 			pCamera->SetName( ItemName.c_str() );
 			SVTreeType::SVBranchHandle hDataChild( nullptr );
@@ -1653,26 +1645,12 @@ bool  SVConfigurationObject::LoadCameras( SVTreeType&  rTree, long& lNumCameras,
 			{
 				_bstr_t l_String( Value );
 
+				//! We no longer need the channel information
 				DeviceName = static_cast< LPCTSTR >( l_String );
-
-				if ( DeviceName.Find( "Ch_All"  ) >  -1 )
+				SVString::size_type Pos = SVString::npos;
+				if( SVString::npos !=  (Pos = DeviceName.find( _T(".Ch_") )) )
 				{
-					lBandLink = 0;
-					pCamera->SetBandLink( lBandLink );
-				}
-				else
-				{
-					int iPos = DeviceName.Find("Ch_");
-					if (iPos > -1)
-					{
-						int iChannel = (int)(DeviceName.GetAt( iPos + 3 ) - '0');
-						ASSERT( iChannel >=0 && iChannel <= 9 );  // sanity check
-						if ( 0 <= iChannel && iChannel <= 9)
-						{
-							lBandLink = iChannel;
-							pCamera->SetBandLink( lBandLink );
-						}
-					}
+					DeviceName = SvUl_SF::Left( DeviceName, Pos );
 				}
 			}
 
@@ -1739,12 +1717,20 @@ bool  SVConfigurationObject::LoadCameras( SVTreeType&  rTree, long& lNumCameras,
 				pCamera->SetFileImageHeight(Value);
 			}
 
-			bOk = ! DeviceName.IsEmpty();
+			bOk = ! DeviceName.empty();
 
 			if ( bOk )
 			{
-				SVString strRemappedDeviceName = SVDigitizerProcessingClass::Instance().GetReOrderedCamera(DeviceName);
-				bOk = pCamera->Create( strRemappedDeviceName.c_str() ) ? true : false;
+				SVString RemappedDeviceName;
+				if( pCamera->IsFileAcquisition() )
+				{
+					RemappedDeviceName = DeviceName;
+				}
+				else
+				{
+					RemappedDeviceName = SVDigitizerProcessingClass::Instance().GetReOrderedCamera( pCamera->getCameraID() );
+				}
+				bOk = pCamera->Create( RemappedDeviceName.c_str() ) ? true : false;
 			}
 
 			if ( bOk )
@@ -2467,23 +2453,12 @@ HRESULT SVConfigurationObject::LoadFileAcquisitionConfiguration(SVTreeType& rTre
 		if( S_OK == hr )
 		{
 			// need to determine Digitizer Number and Channel
-			SVString FullName;
+			SVString DeviceName;
 
-			// Get Color versus Mono
 			const SVDeviceParam* pParam = svDeviceParams.GetParameter(DeviceParamFileAcqImageFormat);
-			_variant_t var;
-			pParam->GetValue(var);
-			if (var.lVal == SVImageFormatMono8)
-			{
-				FullName = SvUl_SF::Format( "%s.%s.Ch_0", BoardName.c_str(), DigName.c_str() );
-			}
-			else
-			{
-				FullName = SvUl_SF::Format( "%s.%s.Ch_All", BoardName.c_str(),	DigName.c_str() );
-			}
+			DeviceName = SvUl_SF::Format( _T("%s.%s"), BoardName.c_str(), DigName.c_str() );
 
-			SVDigitizerProcessingClass::Instance().SelectDigitizer( FullName.c_str() );
-			SVAcquisitionClassPtr psvDevice( SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( FullName.c_str() ) );
+			SVAcquisitionClassPtr psvDevice( SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( DeviceName.c_str() ) );
 			if ( nullptr != psvDevice )
 			{
 				SVImageInfoClass svImageInfo;
@@ -2505,8 +2480,7 @@ HRESULT SVConfigurationObject::LoadFileAcquisitionConfiguration(SVTreeType& rTre
 				psvDevice->GetImageInfo( &svImageInfo );
 				psvDevice->CreateBuffers( svImageInfo, TheSVObserverApp.GetSourceImageDepth() );
 			}
-			SVString strRemappedName = SVDigitizerProcessingClass::Instance().GetReOrderedCamera( FullName.c_str() );
-			if( !( AddAcquisitionDevice( strRemappedName.c_str(), svFileArray, svLight, lut, &svDeviceParams ) ) )
+			if( !( AddAcquisitionDevice( DeviceName.c_str(), svFileArray, svLight, lut, &svDeviceParams ) ) )
 			{
 				//This should be addressed when the new error handling is done.
 				//This is to avoid returning E_FAIL which would not be displayed but just stop loading the configuration any further
@@ -3072,8 +3046,7 @@ void SVConfigurationObject::SaveAcquisitionDevice(SVObjectXMLWriter& rWriter)  c
 
 		if ( ! csBoard.IsEmpty() )
 		{
-			int iDigIndex = csName.Find( '.', iIndex + 1 );
-			csDig = csName.Mid( iIndex + 1, iDigIndex - iIndex - 1 );
+			csDig = csName.Mid( iIndex + 1 );
 			if ( ! csDig.IsEmpty() )
 			{
 				rWriter.StartElement( csBoard );
@@ -4994,7 +4967,7 @@ HRESULT SVConfigurationObject::SetCameraItems( const SVNameStorageMap& rItems, S
 		HRESULT LoopStatus = (*l_Iter)->updateDeviceParameters(CameraParameters);
 		if(S_OK == LoopStatus)
 		{
-			CString DeviceName = (*l_Iter)->GetAcquisitionDevice()->GetRootDeviceName();
+			CString DeviceName = (*l_Iter)->GetAcquisitionDevice()->DeviceName();
 			ModifyAcquisitionDevice(DeviceName, &CameraParameters);
 			SVLightReference LightRef;
 			(*l_Iter)->GetAcquisitionDevice()->GetLightReference(LightRef);

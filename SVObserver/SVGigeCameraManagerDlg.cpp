@@ -61,7 +61,7 @@ BOOL SVGigeCameraManagerDlg::OnInitDialog()
 	m_ctlCameraList.SetColumnWidth(3, 105);
 
 	//camera list to modify
-	m_CamList = TheSVGigeCameraManager.GetCameraOrder();
+	m_CamList = SVGigeCameraManager::Instance().GetCameraOrder();
 	
 	Refresh();
 	
@@ -82,10 +82,10 @@ HRESULT SVGigeCameraManagerDlg::Refresh()
 	hCursor = ::LoadCursor(nullptr, IDC_WAIT);
 	hCursor = ::SetCursor( hCursor );
 
-	TheSVGigeCameraManager.Refresh();
+	SVGigeCameraManager::Instance().Refresh();
 	m_ctlCameraList.DeleteAllItems();
 
-	m_CamList = TheSVGigeCameraManager.GetCameraOrder();
+	m_CamList = SVGigeCameraManager::Instance().GetCameraOrder();
 	
 	int iCnt = m_ctlCameraList.GetItemCount();
 	
@@ -98,10 +98,10 @@ HRESULT SVGigeCameraManagerDlg::Refresh()
 			CString sCamNum;
 			sCamNum.Format("%d",x+1);
 			m_ctlCameraList.InsertItem(x,sCamNum);
-			CString sSerial = m_CamList[x].strSerialNum;
+			CString sSerial = m_CamList[x].m_SerialNum.c_str();
 			
-			CString sIPAddress = m_CamList[x].strIPAddress;
-			CString sModelName = m_CamList[x].strModelName;
+			CString sIPAddress = m_CamList[x].m_IPAddress.c_str();
+			CString sModelName = m_CamList[x].m_ModelName.c_str();
 
 			if ( !sIPAddress.IsEmpty() )
 			{

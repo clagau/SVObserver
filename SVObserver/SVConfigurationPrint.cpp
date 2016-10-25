@@ -1672,7 +1672,7 @@ void SVConfigurationPrint::PrintCameraSummary(CDC* pDC, CPoint& ptCurPos, int nI
 			SVDeviceParamCollection* pDeviceParams = nullptr;
 			SVAcquisitionClassPtr pAcqDevice = pCamera->GetAcquisitionDevice();
 			ASSERT( !( pAcqDevice.empty() ) );
-			BOOL bOk = pConfig->GetAcquisitionDevice( pAcqDevice->GetRootDeviceName(), pfnac, plrcDummy, plutDummy, pDeviceParams );
+			BOOL bOk = pConfig->GetAcquisitionDevice( pAcqDevice->DeviceName(), pfnac, plrcDummy, plutDummy, pDeviceParams );
 			ASSERT( bOk );
 			ASSERT( pfnac );
 			if ( bOk )

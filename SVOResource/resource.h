@@ -164,8 +164,6 @@
 #define IDS_RESULT_ADJUSTMENT_DIALOG_TITLE 10034
 #define IDS_NOT_AVAILABLE_STRING        10035
 #define IDS_TOOL_STRING                 10052
-#define IDS_BRIGHTNESS_REF              10054
-#define IDS_CONTRAST_REF                10055
 #define IDS_EDGE_A                      10056
 #define IDS_EDGE_B                      10057
 #define IDS_DELETE_CHECK_DEPENDENCIES   10095

@@ -253,7 +253,7 @@ void CSVOCameraDlg::OnBtnPropVc()
 				m_pParent->SetModified(TRUE);
 				m_pParent->ItemChanged(CAMERA_DLG,pCameraObj->GetCameraDisplayName(),ITEM_ACTION_PROP);
 				CString strDigName = m_pParent->BuildDigName( *pCameraObj );
-				SVDigitizerProcessingClass::Instance().SelectDigitizer( strDigName );
+				SVDigitizerProcessingClass::Instance().SetDigitizerColor( strDigName, pCameraObj->IsColor() );
 			}
 			else
 			{
@@ -283,7 +283,7 @@ void CSVOCameraDlg::OnBtnPropVc()
 					{
 						// when the camera file changes, load the camera file parameters into the device (so it's in sync with the Virtual Camera)
 						CString strDigName = m_pParent->BuildDigName( *pCameraObj );
-						SVDigitizerProcessingClass::Instance().SelectDigitizer( strDigName );
+						SVDigitizerProcessingClass::Instance().SetDigitizerColor( strDigName, pCameraObj->IsColor() );
 						SVAcquisitionClassPtr psvDevice( SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( strDigName ) );
 						if ( nullptr != psvDevice )
 						{

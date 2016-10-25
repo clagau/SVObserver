@@ -32,9 +32,8 @@ public:
 
 	void ClearDevices();
 
-	HRESULT UpdateDigitizerSubsystem( SVDigitizerLoadLibraryClass* p_pDigitizerSubsystem );
+	HRESULT UpdateDigitizerSubsystem( SVDigitizerLoadLibraryClass* pDigitizerSubsystem );
 
-	HRESULT GetDigitizerList( CStringArray& rList ) const;
 	HRESULT GetAcquisitionDeviceList( CStringArray& rList ) const;
 
 	bool IsValidDigitizerSubsystem( LPCTSTR digitizerName ) const;
@@ -54,13 +53,13 @@ public:
 	HRESULT RestoreLastCameraImage();
 
 	//************************************
-	//! The method is used to select the corresponding digitizer
-	//! \param AcquisitionName <in> The name of the acquisition device
+	//! The method is used to set the digitizer color settings
+	//! \param DigitizerName <in> The name of the digitizer
 	//! \returns S_OK on success
 	//************************************
-	HRESULT SelectDigitizer( LPCTSTR AcquisitionName );
+	HRESULT SetDigitizerColor( LPCTSTR DigitizerName, bool isColor );
 
-	SVString GetReOrderedCamera( LPCTSTR Name ) const;
+	SVString GetReOrderedCamera( int CameraIndex ) const;
 
 	// These two (2) methods, Startup, Shutdown, are only meant to be called by the main application class and no other
 	// They used to be protected and a friend class declaration was used, but that was a bad design as the friend was declared in another project
@@ -75,7 +74,7 @@ private:
 	typedef std::map< SVString, SVAcquisitionClassPtr > SVNameDigitizerMap;
 	typedef std::map< SVString, SVDigitizerLoadLibraryClass* > SVNameDigitizerSubsystemMap;
 
-	HRESULT AddDigitizer( LPCTSTR Name, SVDigitizerLoadLibraryClass* p_pDigitizerSubsystem, unsigned long p_Handle );
+	HRESULT AddDigitizer( LPCTSTR Name, LPCTSTR AcquisitionName, SVDigitizerLoadLibraryClass* pDigitizerSubsystem, unsigned long p_Handle );
 
 	HRESULT UpdateMatroxDevices();
 

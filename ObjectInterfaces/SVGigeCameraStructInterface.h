@@ -10,33 +10,26 @@
 //******************************************************************************
 #pragma once
 
+#pragma region Includes
+#include "SVUtilityLibrary\SVString.h"
+#pragma endregion Includes
+
 namespace Seidenader
 {
 	namespace ObjectInterfaces
 	{	
 		struct SVGigeCameraStructInterface
 		{
-			enum CameraChangeTypeEnum
-			{
-				SVUndefined,
-				SVNoChange,
-				SVNewCamera,
-				SVReplacedCamera,
-				SVCameraRemoved
-			};
-
 			SVGigeCameraStructInterface(){};
 			virtual ~SVGigeCameraStructInterface(){};
 
 			virtual bool HasSerialNumber() const=0;
-			virtual CString GetSerialNumber() const=0;
+			virtual SVString GetSerialNumber() const=0;
 			virtual bool HasModelName() const=0;
-			virtual CString GetModelName() const=0;
+			virtual SVString GetModelName() const=0;
 
 			virtual bool HasIPAddress() const=0;
-			virtual CString GetIPAddress() const=0;
-
-			CameraChangeTypeEnum eChangeType;
+			virtual SVString GetIPAddress() const=0;
 		};
 	}
 }

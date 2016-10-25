@@ -857,7 +857,7 @@ void SVIPDoc::OnAdjustLightReference()
 				( *l_Iter )->SetLightReference(*(apLRA.GetAt(i)));
 				SVLightReference lra; // get new device lra; camera Set only modifies its band(s)
 				( *l_Iter )->GetAcquisitionDevice()->GetLightReference(lra);
-				pConfig->ModifyAcquisitionDevice( ( *l_Iter )->GetAcquisitionDevice()->GetRootDeviceName(), lra );
+				pConfig->ModifyAcquisitionDevice( ( *l_Iter )->GetAcquisitionDevice()->DeviceName(), lra );
 				delete apLRA.GetAt(i);
 				delete apLRAorig.GetAt(i);
 			}
@@ -869,7 +869,7 @@ void SVIPDoc::OnAdjustLightReference()
 				( *l_Iter )->SetLightReference(*(apLRAorig.GetAt(i)));
 				SVLightReference lra; // get new device lra; camera Set only modifies its band(s)
 				( *l_Iter )->GetAcquisitionDevice()->GetLightReference(lra);
-				pConfig->ModifyAcquisitionDevice( ( *l_Iter )->GetAcquisitionDevice()->GetRootDeviceName(), lra );
+				pConfig->ModifyAcquisitionDevice( ( *l_Iter )->GetAcquisitionDevice()->DeviceName(), lra );
 				delete apLRA.GetAt(i);
 				delete apLRAorig.GetAt(i);
 			}
@@ -955,12 +955,12 @@ void SVIPDoc::OnAdjustLut()
 				SVLut lut;
 				SVAcquisitionClassPtr pDevice = (*l_Iter)->GetAcquisitionDevice();
 				pDevice->GetLut(lut);
-				pConfig->ModifyAcquisitionDevice( pDevice->GetRootDeviceName(), lut );
+				pConfig->ModifyAcquisitionDevice( pDevice->DeviceName(), lut );
 
 				// Update DeviceParameters as well...
 				SVDeviceParamCollection deviceParams;
 				pDevice->GetDeviceParameters(deviceParams);
-				pConfig->ModifyAcquisitionDevice( pDevice->GetRootDeviceName(), &deviceParams );
+				pConfig->ModifyAcquisitionDevice( pDevice->DeviceName(), &deviceParams );
 			}
 		}
 		SVSVIMStateClass::RemoveState( SV_STATE_EDITING );

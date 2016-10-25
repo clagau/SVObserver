@@ -183,7 +183,7 @@ HRESULT SVCameraImageTemplate::GetObjectValue( const SVString& p_rValueName, VAR
 {
 	HRESULT hr = S_OK;
 
-	if( p_rValueName == _T( "DigitizerID" ) )
+	if( scDigitizerIDTag == p_rValueName )
 	{
 		_variant_t l_TempVariant;
 
@@ -205,7 +205,7 @@ HRESULT SVCameraImageTemplate::SetObjectValue( const SVString& p_rValueName, con
 {
 	HRESULT hr = S_OK;
 
-	if( p_rValueName == _T( "DigitizerID" ) )
+	if( scDigitizerIDTag == p_rValueName )
 	{
 		if( p_rVariantValue.vt == VT_BSTR )
 		{
@@ -233,7 +233,7 @@ HRESULT SVCameraImageTemplate::SetObjectValue( SVObjectAttributeClass* PDataObje
 
 	SvCl::SVObjectCStringArrayClass svCStringArray;
 
-	if ( ( bOk = PDataObject->GetAttributeData( "DigitizerID", svCStringArray ) ) )
+	if ( ( bOk = PDataObject->GetAttributeData( scDigitizerIDTag, svCStringArray ) ) )
 	{
 		for( int i = 0; i < svCStringArray.GetSize(); i++ )
 		{

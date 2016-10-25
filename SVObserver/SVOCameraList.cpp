@@ -196,6 +196,15 @@ BOOL SVOCameraList::RemoveCameraFromList(CString sCameraName)
 		m_CameraList.RemoveAt(pos);
 		bRet = TRUE;
 	}
+	//Reorder the camera digitizer
+	pos = m_CameraList.begin();
+	int Digitizer(0);
+	for( ; m_CameraList.end() != pos; ++pos)
+	{
+		(*pos)->SetDigNumber( Digitizer );
+		Digitizer++;
+	}
+
 
 	return bRet;
 }

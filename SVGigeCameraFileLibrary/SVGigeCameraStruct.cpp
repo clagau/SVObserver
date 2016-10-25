@@ -21,7 +21,6 @@ static char THIS_FILE[]=__FILE__;
 SVGigeCameraStruct::SVGigeCameraStruct()
 {
 	Clear();
-	iPosition = 0;
 }
 
 SVGigeCameraStruct::SVGigeCameraStruct(const SVGigeCameraStruct &SVGigecs)
@@ -33,99 +32,85 @@ SVGigeCameraStruct::~SVGigeCameraStruct()
 {
 }
 
-const SVGigeCameraStruct& SVGigeCameraStruct::operator = (const SVGigeCameraStruct &SVGigecs)
+const SVGigeCameraStruct& SVGigeCameraStruct::operator = (const SVGigeCameraStruct& rRhs)
 {
-	if ( this != &SVGigecs )
+	if ( this != &rRhs )
 	{
-		eChangeType = SVGigecs.eChangeType;
-		iPosition = SVGigecs.iPosition;
-
-		strSerialNum = SVGigecs.strSerialNum;
-		strModelName = SVGigecs.strModelName;
-		strVendorName = SVGigecs.strVendorName;
-		strIPAddress = SVGigecs.strIPAddress;
-
-		m_triggerchannel = SVGigecs.m_triggerchannel;
+		m_SerialNum = rRhs.m_SerialNum;
+		m_ModelName = rRhs.m_ModelName;
+		m_VendorName = rRhs.m_VendorName;
+		m_IPAddress = rRhs.m_IPAddress;
+		m_CameraID = rRhs.m_CameraID;
+		m_DigitizerID = rRhs.m_DigitizerID;
+		m_AcquisitionHandle = rRhs.m_AcquisitionHandle;
 	}
 
 	return *this;
 }
 
-void SVGigeCameraStruct::SetInfo(const SVGigeCameraStruct& rhs)
-{
-	if ( this != &rhs )
-	{
-		strSerialNum = rhs.strSerialNum;
-		strModelName = rhs.strModelName;
-		strVendorName = rhs.strVendorName;
-		strIPAddress = rhs.strIPAddress;
-		m_triggerchannel = rhs.m_triggerchannel;
-	}
-}
-
 void SVGigeCameraStruct::Clear()
 {
-	strSerialNum.Empty();
-	strModelName.Empty();
-	strVendorName.Empty();
-	strIPAddress.Empty();
-	eChangeType = SVNoChange;
-	
-	m_triggerchannel = 0;
+	m_SerialNum.clear();
+	m_ModelName.clear();
+	m_VendorName.clear();
+	m_IPAddress.clear();
+	m_CameraID = 0;
+	m_DigitizerID = 0;
+	m_AcquisitionHandle = 0;
 }
 
-bool SVGigeCameraStruct::operator == (const SVGigeCameraStruct &SVGigecs) const
+bool SVGigeCameraStruct::operator == (const SVGigeCameraStruct& rRhs) const
 {
-	return strIPAddress == SVGigecs.strIPAddress;
+	return m_IPAddress == rRhs.m_IPAddress;
 }
 
-bool SVGigeCameraStruct::operator < (const SVGigeCameraStruct &SVGigecs) const
+bool SVGigeCameraStruct::operator < (const SVGigeCameraStruct& rRhs) const
 {
-	return strIPAddress < SVGigecs.strIPAddress;
+	return m_IPAddress < rRhs.m_IPAddress;
 }
 
-bool SVGigeCameraStruct::operator > (const SVGigeCameraStruct &SVGigecs) const
+bool SVGigeCameraStruct::operator > (const SVGigeCameraStruct& rRhs) const
 {
-	return strIPAddress > SVGigecs.strIPAddress;
+	return m_IPAddress > rRhs.m_IPAddress;
 }
 
 bool SVGigeCameraStruct::HasSerialNumber() const
 {
-	return !strSerialNum.IsEmpty();
+	return !m_SerialNum.empty();
 }
 
-CString SVGigeCameraStruct::GetSerialNumber() const
+SVString SVGigeCameraStruct::GetSerialNumber() const
 {
-	return strSerialNum;
+	return m_SerialNum;
 }
 
 bool SVGigeCameraStruct::HasModelName() const
 {
-	return !strModelName.IsEmpty();
+	return !m_ModelName.empty();
 }
 
-CString SVGigeCameraStruct::GetModelName() const
+SVString SVGigeCameraStruct::GetModelName() const
 {
-	return strModelName;
+	return m_ModelName;
 }
 
 bool SVGigeCameraStruct::HasVendorName() const
 {
-	return !strVendorName.IsEmpty();
+	return !m_VendorName.empty();
 }
 
-CString SVGigeCameraStruct::GetVendorName() const
+SVString SVGigeCameraStruct::GetVendorName() const
 {
-	return strVendorName;
+	return m_VendorName;
 }
 
 bool SVGigeCameraStruct::HasIPAddress() const
 {
-	return !strIPAddress.IsEmpty();
+	return !m_IPAddress.empty();
 }
 
-CString SVGigeCameraStruct::GetIPAddress() const
+SVString SVGigeCameraStruct::GetIPAddress() const
 {
-	return strIPAddress;
+	return m_IPAddress;
 }
 

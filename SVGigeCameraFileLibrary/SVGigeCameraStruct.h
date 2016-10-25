@@ -28,34 +28,34 @@ struct SVGigeCameraStruct : public SvOi::SVGigeCameraStructInterface
 	SVGigeCameraStruct();
 	virtual ~SVGigeCameraStruct();
 
-	SVGigeCameraStruct(const SVGigeCameraStruct &SVGigecs);
-	const SVGigeCameraStruct& operator= (const SVGigeCameraStruct &SVGigecs);
+	SVGigeCameraStruct(const SVGigeCameraStruct& rRhs);
+	const SVGigeCameraStruct& operator= (const SVGigeCameraStruct& rRhs);
 	
-	void SetInfo(const SVGigeCameraStruct& rhs);
 	void Clear();
 	
-	bool operator == (const SVGigeCameraStruct &SVGigecs) const;
-	bool operator < (const SVGigeCameraStruct &SVGigecs) const;
-	bool operator > (const SVGigeCameraStruct &SVGigecs) const;
+	bool operator == (const SVGigeCameraStruct& rRhs) const;
+	bool operator < (const SVGigeCameraStruct& rRhs) const;
+	bool operator > (const SVGigeCameraStruct& rRhs) const;
 
 	virtual bool HasSerialNumber() const;
-	virtual CString GetSerialNumber() const;
+	virtual SVString GetSerialNumber() const;
 	virtual bool HasModelName() const;
-	virtual CString GetModelName() const;
+	virtual SVString GetModelName() const;
 	virtual bool HasVendorName() const;
-	virtual CString GetVendorName() const;
+	virtual SVString GetVendorName() const;
 	virtual bool HasIPAddress() const;
-	virtual CString GetIPAddress() const;
+	virtual SVString GetIPAddress() const;
 
-	CString strSerialNum;
-	CString strModelName;
-	CString strVendorName;
-	CString strIPAddress;
+	SVString m_SerialNum;
+	SVString m_ModelName;
+	SVString m_VendorName;
+	SVString m_IPAddress;
 	
-	int iPosition;
-	unsigned long m_triggerchannel;
+	int m_CameraID;
+	int m_DigitizerID;
+	unsigned long m_AcquisitionHandle;
 };
 
-typedef SVVector< SVGigeCameraStruct > SVGigeCameraStructSet;
+typedef SVVector< SVGigeCameraStruct > SVGigeCameraStructVector;
 
 

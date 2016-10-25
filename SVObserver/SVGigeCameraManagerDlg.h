@@ -17,7 +17,7 @@
 class SVGigeCameraManagerDlg : public CDialog
 {
 public:
-	SVGigeCameraStructSet m_CamList;
+	SVGigeCameraStructVector m_CamList;
 	SVGigeCameraManagerDlg( CWnd* pParent = nullptr );
 	virtual ~SVGigeCameraManagerDlg();
 

@@ -24,35 +24,35 @@ public:
 	SVMatroxGigeAcquisitionClass( const SvTi::SVAcquisitionConstructParams& p_rParams );
 	virtual ~SVMatroxGigeAcquisitionClass();
 
-	virtual bool IsValid() const;
-	virtual bool IsStarted() const;
+	virtual bool IsValid() const override;
+	virtual bool IsStarted() const override;
 
-	virtual HRESULT Create( unsigned long ulSize = 15 );
-	virtual HRESULT Destroy();
+	virtual HRESULT Create( unsigned long ulSize = 15 ) override;
+	virtual HRESULT Destroy() override;
 
-	virtual HRESULT GetFileNameArraySize( long &rlSize ) const;
-	virtual HRESULT LoadFiles( SVFileNameArrayClass &rArray );
-	virtual HRESULT ReadCameraFile( const SVString& filename, SVDeviceParamCollection& rParams );
+	virtual HRESULT GetFileNameArraySize( long &rlSize ) const override;
+	virtual HRESULT LoadFiles( SVFileNameArrayClass &rArray ) override;
+	virtual HRESULT ReadCameraFile( const SVString& filename, SVDeviceParamCollection& rParams ) override;
 
-	virtual HRESULT CreateLightReference( int iBands, int iBrightness, int iContrast );
+	virtual HRESULT CreateLightReference( int iBands ) override;
 
-	virtual HRESULT GetMaxLightReferenceValue( unsigned long ulType, long &rlValue ) const;
-	virtual HRESULT GetMinLightReferenceValue( unsigned long ulType, long &rlValue ) const;
-	virtual HRESULT GetLightReferenceValueStep( unsigned long ulType, unsigned long &rulValue ) const;
+	virtual HRESULT GetMaxLightReferenceValue( unsigned long ulType, long &rlValue ) const override;
+	virtual HRESULT GetMinLightReferenceValue( unsigned long ulType, long &rlValue ) const override;
+	virtual HRESULT GetLightReferenceValueStep( unsigned long ulType, unsigned long &rulValue ) const override;
 
-	virtual HRESULT CreateLut( const SVLutInfo& info );
-	virtual HRESULT DestroyLut();
+	virtual HRESULT CreateLut( const SVLutInfo& info ) override;
+	virtual HRESULT DestroyLut() override;
 
-	virtual HRESULT GetImageInfo( SVImageInfoClass* pImageInfo ) const;
+	virtual HRESULT GetImageInfo( SVImageInfoClass* pImageInfo ) const override;
 
-	virtual bool IsValidBoard() const;
+	virtual bool IsValidBoard() const override;
 
-	virtual HRESULT SetDeviceParameters( const SVDeviceParamCollection& rDeviceParams );
+	virtual HRESULT SetDeviceParameters( const SVDeviceParamCollection& rDeviceParams ) override;
 
-	virtual HRESULT IsValidCameraFileParameters( SVDeviceParamCollection& rDeviceParams );
-	virtual void ClearDeviceIdentifier();
-	virtual HRESULT SingleGrab( SVSmartHandlePointer p_SingleGrabHandle );
-	virtual bool IsOnline() const;
+	virtual HRESULT IsValidCameraFileParameters( SVDeviceParamCollection& rDeviceParams ) override;
+	virtual void ClearDeviceIdentifier() override;
+	virtual HRESULT SingleGrab( SVSmartHandlePointer p_SingleGrabHandle ) override;
+	virtual bool IsOnline() const override;
 
 protected:
 	bool CameraMatchesCameraFile();

@@ -154,13 +154,13 @@ HRESULT SVMatroxGigeAcquisitionClass::LoadFiles(SVFileNameArrayClass& rFiles)
 			}
 
 			SVDeviceParamCollection DeviceParams(m_CameraFileDeviceParams);
-			SVGigeCameraStructSet Cameras;
-			Cameras = TheSVGigeCameraManager.GetCameraOrder();
+			SVGigeCameraStructVector Cameras;
+			Cameras = SVGigeCameraManager::Instance().GetCameraOrder();
 			if(Cameras.GetSize() > DigNumber())
 			{
 				SVGigeCameraStruct& Camera = Cameras.ElementAt( DigNumber() );
-				DeviceParams.SetParameter( DeviceParamSerialNumberString, SVStringValueDeviceParam( Camera.strSerialNum ) );
-				DeviceParams.SetParameter( DeviceParamIPAddress, SVStringValueDeviceParam( Camera.strIPAddress ) );
+				DeviceParams.SetParameter( DeviceParamSerialNumberString, SVStringValueDeviceParam( Camera.m_SerialNum.c_str() ) );
+				DeviceParams.SetParameter( DeviceParamIPAddress, SVStringValueDeviceParam( Camera.m_IPAddress.c_str() ) );
 			}
 			SetDeviceParameters( DeviceParams );
 
@@ -188,11 +188,11 @@ HRESULT SVMatroxGigeAcquisitionClass::ReadCameraFile( const SVString& rFilename,
 	return hr;
 }
 
-HRESULT SVMatroxGigeAcquisitionClass::CreateLightReference(int iBands, int iBrightness, int iContrast)
+HRESULT SVMatroxGigeAcquisitionClass::CreateLightReference( int iBands )
 {
 	ASSERT(iBands > 0);
 
-	HRESULT hr = SVAcquisitionClass::CreateLightReference( iBands, iBrightness, iContrast );
+	HRESULT hr = SVAcquisitionClass::CreateLightReference( iBands );
 	
 	if ( S_OK == hr )
 	{

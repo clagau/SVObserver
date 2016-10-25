@@ -20,34 +20,34 @@ public:
 	SVFileAcquisitionClass( const SvTi::SVAcquisitionConstructParams& p_rParams );
 	virtual ~SVFileAcquisitionClass();
 
-	virtual bool IsValid() const;
+	virtual bool IsValid() const override;
 
-	virtual HRESULT Destroy();
+	virtual HRESULT Destroy() override;
 
-	virtual HRESULT SetDeviceParameters( const SVDeviceParamCollection& rDeviceParams );
+	virtual HRESULT SetDeviceParameters( const SVDeviceParamCollection& rDeviceParams ) override;
 
-	virtual HRESULT LoadFiles( SVFileNameArrayClass &rArray);
-	virtual HRESULT UnloadFiles();
+	virtual HRESULT LoadFiles( SVFileNameArrayClass &rArray) override;
+	virtual HRESULT UnloadFiles() override;
 
-	virtual HRESULT CreateLightReference( int iBands, int iBrightness, int iContrast );
-	virtual HRESULT GetLightReference( SVLightReference& rArray ) const;
-	virtual HRESULT SetLightReference( SVLightReference& rArray, int iBand = -1 );
-	virtual HRESULT ResetLightReference();
+	virtual HRESULT CreateLightReference( int iBands ) override;
+	virtual HRESULT GetLightReference( SVLightReference& rArray ) const override;
+	virtual HRESULT SetLightReference( SVLightReference& rArray, int iBand = -1 ) override;
+	virtual HRESULT ResetLightReference() override;
 
-	virtual HRESULT CreateLightReferenceBand( int iBand, int iAttributes );
+	virtual HRESULT CreateLightReferenceBand( int iBand, int iAttributes ) override;
 
-	virtual HRESULT ResetLut();
-	virtual HRESULT GetLut( SVLut& lut );
-	virtual HRESULT SetLut( const SVLut& lut, int iBand = -1 );
-	virtual HRESULT SetLut( const SVLutBand& lutBand );
+	virtual HRESULT ResetLut() override;
+	virtual HRESULT GetLut( SVLut& lut ) override;
+	virtual HRESULT SetLut( const SVLut& lut, int iBand = -1 ) override;
+	virtual HRESULT SetLut( const SVLutBand& lutBand ) override;
 
-	virtual HRESULT GetImageInfo( SVImageInfoClass* pImageInfo ) const;
+	virtual HRESULT GetImageInfo( SVImageInfoClass* pImageInfo ) const override;
 
-	virtual bool IsValidBoard() const;
+	virtual bool IsValidBoard() const override;
 protected:
-	virtual HRESULT GetCameraImageInfo(SVImageInfoClass* pImageInfo);
+	HRESULT GetCameraImageInfo(SVImageInfoClass* pImageInfo);
 
-	virtual HRESULT GetLutImpl( SVLut& lut );
+	virtual HRESULT GetLutImpl( SVLut& lut ) override;
 
 	HRESULT DestroyLocal();
 

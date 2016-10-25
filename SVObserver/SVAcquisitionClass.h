@@ -68,7 +68,7 @@ public:
 	virtual HRESULT UnloadFiles();
 	virtual HRESULT ReadCameraFile( const SVString& filename,  SVDeviceParamCollection& rParams );
 
-	virtual HRESULT CreateLightReference( int iBands, int iBrightness, int iContrast );
+	virtual HRESULT CreateLightReference( int iBands );
 	virtual HRESULT LoadLightReference( SVLightReference& rArray );
 	virtual HRESULT GetLightReference( SVLightReference& rLR ) const;
 	virtual HRESULT SetLightReference( SVLightReference& rLR, int iBand = -1 );
@@ -91,8 +91,6 @@ public:
 	virtual SVImageObjectClassPtr GetCircleBuffer();
 	virtual long GetCircleBufferSize() const;
 
-	virtual CString GetRootDeviceName() const;
-
 	virtual HRESULT GetNextIndex( SVDataManagerHandle &rDMHandle ) const;
 	virtual HRESULT GetNextIndex( SVDataManagerHandle &rDMHandle, SVDataManagerLockTypeEnum p_LockType ) const;
 
@@ -108,6 +106,8 @@ public:
 	inline int     SetDigNumber(int i) {return miDigNumber = i;}
 	inline int     SetBandSize(int i) {return miBandSize = i;}
 	inline int     SetBandMaxSize(int i) {return miBandMaxSize = i;}
+
+	HRESULT SetNumberOfBands( int NumberOfBands );
 
 	virtual bool IsValidBoard() const;
 
@@ -206,6 +206,7 @@ private:
 
 	unsigned long mulSize;
 	bool m_ImageAquired;
+	bool m_LUTAndLRSet;
 };
 
 typedef SVSharedPtr< SVAcquisitionClass > SVAcquisitionClassPtr;

@@ -4302,8 +4302,6 @@ IDR_SV_REMOTE_COMMAND   REGISTRY                "SVRemoteCommand.rgs"
 STRINGTABLE
 BEGIN
     IDS_TOOL_STRING         "Tool"
-    IDS_BRIGHTNESS_REF      "B&rightness"
-    IDS_CONTRAST_REF        "&Contrast"
     IDS_EDGE_A              "Edge A"
     IDS_EDGE_B              "Edge B"
 END

@@ -24,17 +24,14 @@ namespace Seidenader { namespace TriggerInformation {
 	{
 		SVAcquisitionConstructParams();
 		SVAcquisitionConstructParams( const SVAcquisitionConstructParams& p_rObject );
-		SVAcquisitionConstructParams( LPCTSTR p_szDeviceName, LPCTSTR p_szDigitizerName,
-			int p_Channel, int p_DigNumber, int p_BandSize, int p_BandMaxSize,
-			const SVLutInfo& p_rLUTInfo, int p_LRBandSize, int p_LRConstrast, int p_LRBrightness );
-		SVAcquisitionConstructParams( LPCTSTR p_szDeviceName, LPCTSTR p_szDigitizerName,
-			int p_Channel, int p_DigNumber, int p_BandSize, int p_BandMaxSize );
+		SVAcquisitionConstructParams( LPCTSTR p_szDigitizerName, int p_Channel, int p_DigNumber, int p_BandSize, int p_BandMaxSize,
+			const SVLutInfo& p_rLUTInfo, int p_LRBandSize );
+		SVAcquisitionConstructParams( LPCTSTR p_szDigitizerName, int p_Channel, int p_DigNumber, int p_BandSize, int p_BandMaxSize );
 
 		virtual ~SVAcquisitionConstructParams();
 
 		const SVAcquisitionConstructParams& operator=( const SVAcquisitionConstructParams& p_rObject );
 
-		SVString m_DeviceName;
 		SVString m_DigitizerName;
 
 		int m_Channel;
@@ -47,8 +44,6 @@ namespace Seidenader { namespace TriggerInformation {
 		SVLutInfo m_LUTInfo;
 
 		int m_LRBandSize;
-		int m_LRConstrast;
-		int m_LRBrightness;
 	};
 
 	typedef std::vector< SVAcquisitionConstructParams > SVAcquisitionConstructParamsVector;

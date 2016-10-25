@@ -38,7 +38,8 @@
 #pragma endregion Declarations
 
 SVAcquisitionClass::SVAcquisitionClass( const SvTi::SVAcquisitionConstructParams& p_rParams )
-: SVODataDeviceClass( p_rParams.m_DeviceName.c_str() )
+: SVODataDeviceClass( p_rParams.m_DigitizerName.c_str() )
+,m_LUTAndLRSet( p_rParams.m_LUTAndLRSet )
 {
 	mbIsBufferCreated = false;
 	mbTempOnline = false;
@@ -54,7 +55,6 @@ SVAcquisitionClass::SVAcquisitionClass( const SvTi::SVAcquisitionConstructParams
 
 	msvImageInfo.SetExtentProperty( SVExtentPropertyPositionPoint, 0 );
 
-	SetDeviceName( p_rParams.m_DeviceName.c_str() );
 	SetDigName( p_rParams.m_DigitizerName.c_str() );
 	
 	SetDigNumber( p_rParams.m_DigNumber );
@@ -62,9 +62,9 @@ SVAcquisitionClass::SVAcquisitionClass( const SvTi::SVAcquisitionConstructParams
 	SetBandSize( p_rParams.m_BandSize );
 	SetBandMaxSize( p_rParams.m_BandMaxSize );
 	
-	if( p_rParams.m_LUTAndLRSet )
+	if( m_LUTAndLRSet )
 	{
-		CreateLightReference( p_rParams.m_LRBandSize, p_rParams.m_LRBrightness, p_rParams.m_LRConstrast );
+		CreateLightReference( p_rParams.m_LRBandSize );
 		CreateLut( p_rParams.m_LUTInfo );
 	}
 }
@@ -396,7 +396,7 @@ long SVAcquisitionClass::GetCircleBufferSize() const
 }
 
 
-HRESULT SVAcquisitionClass::CreateLightReference(int iBands, int iBrightness, int iContrast)
+HRESULT SVAcquisitionClass::CreateLightReference( int iBands )
 {
     ASSERT(iBands > 0);
 
@@ -585,11 +585,6 @@ HRESULT SVAcquisitionClass::GetFileName( long lIndex, SVFileNameClass &rFileName
 	return hrOk;
 }
 
-CString SVAcquisitionClass::GetRootDeviceName() const
-{
-	return DeviceName();
-}
-
 HRESULT SVAcquisitionClass::GetLut( SVLut& lut )
 {
 	HRESULT hr = S_FALSE;
@@ -718,6 +713,21 @@ SVLut& SVAcquisitionClass::Lut()
 bool SVAcquisitionClass::IsValidBoard() const
 {
     return false;
+}
+
+HRESULT SVAcquisitionClass::SetNumberOfBands( int NumberOfBands )
+{
+	HRESULT Result( S_OK );
+
+	SetBandMaxSize( NumberOfBands );
+	SetBandSize( NumberOfBands );
+	
+	if( m_LUTAndLRSet )
+	{
+		CreateLightReference( NumberOfBands );
+	}
+
+	return Result;
 }
 
 HRESULT SVAcquisitionClass::GetNextIndex( SVDataManagerHandle &rDMHandle ) const

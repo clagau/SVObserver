@@ -115,7 +115,7 @@ HRESULT SVVirtualCamera::RefreshObject( const SVObjectClass* const pSender, Refr
 	return Result;
 }
 
-BOOL SVVirtualCamera::Create( LPCTSTR p_szDeviceName )
+BOOL SVVirtualCamera::Create( LPCTSTR DeviceName )
 {
 	BOOL bOk = TRUE;
 
@@ -124,8 +124,8 @@ BOOL SVVirtualCamera::Create( LPCTSTR p_szDeviceName )
 		bOk = Destroy();
 	}
 
-	SVDigitizerProcessingClass::Instance().SelectDigitizer( p_szDeviceName );
-	mpsvDevice = SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( p_szDeviceName );
+	SVDigitizerProcessingClass::Instance().SetDigitizerColor( DeviceName, m_IsColor );
+	mpsvDevice = SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( DeviceName );
 
 	bOk = !( mpsvDevice.empty() ) && bOk;
 

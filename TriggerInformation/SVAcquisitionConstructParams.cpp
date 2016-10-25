@@ -15,8 +15,7 @@
 namespace Seidenader { namespace TriggerInformation {
 
 SVAcquisitionConstructParams::SVAcquisitionConstructParams()
-: m_DeviceName( _T( "" ) )
-, m_DigitizerName( _T( "" ) )
+: m_DigitizerName( _T( "" ) )
 , m_Channel( -1 )
 , m_DigNumber( -1 )
 , m_BandSize( -1 )
@@ -24,14 +23,11 @@ SVAcquisitionConstructParams::SVAcquisitionConstructParams()
 , m_LUTAndLRSet( false )
 , m_LUTInfo()
 , m_LRBandSize( -1 )
-, m_LRConstrast( -1 )
-, m_LRBrightness( -1 )
 {
 }
 
 SVAcquisitionConstructParams::SVAcquisitionConstructParams( const SVAcquisitionConstructParams& p_rObject )
-: m_DeviceName( p_rObject.m_DeviceName )
-, m_DigitizerName( p_rObject.m_DigitizerName )
+: m_DigitizerName( p_rObject.m_DigitizerName )
 , m_Channel( p_rObject.m_Channel )
 , m_DigNumber( p_rObject.m_DigNumber )
 , m_BandSize( p_rObject.m_BandSize )
@@ -39,16 +35,13 @@ SVAcquisitionConstructParams::SVAcquisitionConstructParams( const SVAcquisitionC
 , m_LUTAndLRSet( p_rObject.m_LUTAndLRSet )
 , m_LUTInfo( p_rObject.m_LUTInfo )
 , m_LRBandSize( p_rObject.m_LRBandSize )
-, m_LRConstrast( p_rObject.m_LRConstrast )
-, m_LRBrightness( p_rObject.m_LRBrightness )
 {
 }
 
-SVAcquisitionConstructParams::SVAcquisitionConstructParams( LPCTSTR p_szDeviceName, LPCTSTR p_szDigitizerName,
+SVAcquisitionConstructParams::SVAcquisitionConstructParams( LPCTSTR p_szDigitizerName,
 	int p_Channel, int p_DigNumber, int p_BandSize, int p_BandMaxSize,
-	const SVLutInfo& p_rLUTInfo, int p_LRBandSize, int p_LRConstrast, int p_LRBrightness )
-: m_DeviceName( p_szDeviceName )
-, m_DigitizerName( p_szDigitizerName )
+	const SVLutInfo& p_rLUTInfo, int p_LRBandSize )
+: m_DigitizerName( p_szDigitizerName )
 , m_Channel( p_Channel )
 , m_DigNumber( p_DigNumber )
 , m_BandSize( p_BandSize )
@@ -56,15 +49,12 @@ SVAcquisitionConstructParams::SVAcquisitionConstructParams( LPCTSTR p_szDeviceNa
 , m_LUTAndLRSet( true )
 , m_LUTInfo( p_rLUTInfo )
 , m_LRBandSize( p_LRBandSize )
-, m_LRConstrast( p_LRConstrast )
-, m_LRBrightness( p_LRBrightness )
 {
 }
 
-SVAcquisitionConstructParams::SVAcquisitionConstructParams( LPCTSTR p_szDeviceName, LPCTSTR p_szDigitizerName,
+SVAcquisitionConstructParams::SVAcquisitionConstructParams( LPCTSTR p_szDigitizerName,
 	int p_Channel, int p_DigNumber, int p_BandSize, int p_BandMaxSize )
-: m_DeviceName( p_szDeviceName )
-, m_DigitizerName( p_szDigitizerName )
+: m_DigitizerName( p_szDigitizerName )
 , m_Channel( p_Channel )
 , m_DigNumber( p_DigNumber )
 , m_BandSize( p_BandSize )
@@ -72,14 +62,11 @@ SVAcquisitionConstructParams::SVAcquisitionConstructParams( LPCTSTR p_szDeviceNa
 , m_LUTAndLRSet( false )
 , m_LUTInfo()
 , m_LRBandSize( -1 )
-, m_LRConstrast( -1 )
-, m_LRBrightness( -1 )
 {
 }
 
 SVAcquisitionConstructParams::~SVAcquisitionConstructParams()
 {
-	m_DeviceName.clear();
 	m_DigitizerName.clear();
 	m_LUTInfo.Cleanup();
 }
@@ -88,7 +75,6 @@ const SVAcquisitionConstructParams& SVAcquisitionConstructParams::operator=( con
 {
 	if( this != &p_rObject )
 	{
-		m_DeviceName = p_rObject.m_DeviceName;
 		m_DigitizerName = p_rObject.m_DigitizerName;
 		m_Channel = p_rObject.m_Channel;
 		m_DigNumber = p_rObject.m_DigNumber;
@@ -97,8 +83,6 @@ const SVAcquisitionConstructParams& SVAcquisitionConstructParams::operator=( con
 		m_LUTAndLRSet = p_rObject.m_LUTAndLRSet;
 		m_LUTInfo = p_rObject.m_LUTInfo;
 		m_LRBandSize = p_rObject.m_LRBandSize;
-		m_LRConstrast = p_rObject.m_LRConstrast;
-		m_LRBrightness = p_rObject.m_LRBrightness;
 	}
 
 	return *this;

@@ -103,7 +103,7 @@ public:
 	BOOL IsInspectionNameInList(CString sInspectionName) const;
 	BOOL IsPPQInList(CString sPPQName) const;
 
-	CString BuildDigName(const SVOCameraObj& rCameraObj, bool bIsAcqDev = false) const;
+	CString BuildDigName( const SVOCameraObj& rCameraObj ) const;
 	CString BuildTrgDig(const SvTi::SVOTriggerObj& rTriggerObj) const;
 
 	CString GetInspectionLabelFromName(CString sInspectName);

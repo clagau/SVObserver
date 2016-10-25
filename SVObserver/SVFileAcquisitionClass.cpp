@@ -111,7 +111,7 @@ HRESULT SVFileAcquisitionClass::SetLightReference( SVLightReference& rArray, int
 	return hr;
 }
 
-HRESULT SVFileAcquisitionClass::CreateLightReference(int iBands, int iBrightness, int iContrast)
+HRESULT SVFileAcquisitionClass::CreateLightReference( int iBands )
 {
 	HRESULT hrOk = S_FALSE;
 	return hrOk;

@@ -6189,7 +6189,6 @@ HRESULT SVObserverApp::ConnectCameraBuffers( const CStringArray& rCamerasToConne
 			CString sDigName = rCamerasToConnect.GetAt( i );
 			SVAcquisitionClassPtr pAcqDevice;
 
-			SVDigitizerProcessingClass::Instance().SelectDigitizer( sDigName );
 			pAcqDevice = SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( sDigName );
 			if ( nullptr != pAcqDevice )
 			{
