@@ -17,19 +17,18 @@
 #include "SVStatusLibrary\GlobalPath.h"
 #include "TextDefinesSvO.h"
 #include "SVOMFCLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
-
-
 #pragma endregion Includes
 
 #ifdef _DEBUG
 #undef THIS_FILE
 static char THIS_FILE[]=__FILE__;
 #define new DEBUG_NEW
+#endif
 
-const TCHAR* const cCammeraMapping		= _T( "Camera Mapping" );
+
+const TCHAR* const cCameraMapping		= _T( "Camera Mapping" );
 const TCHAR* const cGigeCameraCount		= _T( "GigeCameraCount" );
 
-#endif
 
 SVGigeCameraManager::SVGigeCameraManager()
 {
@@ -93,7 +92,7 @@ HRESULT SVGigeCameraManager::UpdateConnectedCameras( const SVGigeCameraStructVec
 
 void SVGigeCameraManager::ReadCameraMapping()
 {
-	int iSize = GetPrivateProfileInt( cCammeraMapping, cGigeCameraCount, 1, SvStl::GlobalPath::Inst().GetSVIMIniPath() );
+	int iSize = GetPrivateProfileInt( cCameraMapping, cGigeCameraCount, 1, SvStl::GlobalPath::Inst().GetSVIMIniPath() );
 
 	for ( int i = 0; i < iSize; i++ )
 	{
@@ -102,7 +101,7 @@ void SVGigeCameraManager::ReadCameraMapping()
 		memset(pBuffer, 0, 128 );
 
 		CameraName =  SvUl_SF::Format( _T("%s%d"), SvO::cCameraFixedName, i + 1 );
-		GetPrivateProfileString( cCammeraMapping, CameraName.c_str(), "", pBuffer, 128, SvStl::GlobalPath::Inst().GetSVIMIniPath() );
+		GetPrivateProfileString( cCameraMapping, CameraName.c_str(), "", pBuffer, 128, SvStl::GlobalPath::Inst().GetSVIMIniPath() );
 		
 		SVString IPAddress( pBuffer );
 		if( !IPAddress.empty() )
