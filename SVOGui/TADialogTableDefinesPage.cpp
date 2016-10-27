@@ -195,33 +195,42 @@ namespace Seidenader { namespace SVOGui {
 		if (NameColumn == pItem->iColumn && 0 < pItem->iRow && m_gridList.size() >= pItem->iRow)
 		{
 			SVString newName = m_Grid.GetCell(pItem->iRow, pItem->iColumn)->GetText();
-			if ( isTableNameUnique(newName) )
+			if (!newName.empty())
 			{
-				typedef GuiCmd::SetObjectName Command;
-				typedef SVSharedPtr<Command> CommandPtr;
-				CommandPtr commandPtr = new Command(m_gridList[pItem->iRow-1].second.ToGUID(), newName.c_str());
-				SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
-				HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-				if (S_OK != hr)
+				if ( isTableNameUnique(newName) )
 				{
-					bAcceptChange = false;
-					SVStringArray msgList;
-					msgList.push_back(SvUl_SF::Format(_T("%d"), hr));
-					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_TableColumn_RenamingFailed, msgList, SvStl::SourceFileParams(StdMessageParams) );
+					typedef GuiCmd::SetObjectName Command;
+					typedef SVSharedPtr<Command> CommandPtr;
+					CommandPtr commandPtr = new Command(m_gridList[pItem->iRow-1].second.ToGUID(), newName.c_str());
+					SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
+					HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+					if (S_OK != hr)
+					{
+						bAcceptChange = false;
+						SVStringArray msgList;
+						msgList.push_back(SvUl_SF::Format(_T("%d"), hr));
+						SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
+						Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_TableColumn_RenamingFailed, msgList, SvStl::SourceFileParams(StdMessageParams) );
+					}
+					else
+					{
+						m_gridList[pItem->iRow-1].first = newName;
+					}
 				}
 				else
 				{
-					m_gridList[pItem->iRow-1].first = newName;
+					bAcceptChange = false;
+					SVStringArray msgList;
+					msgList.push_back(newName);
+					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
+					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_TableColumnName_NotUnique, msgList, SvStl::SourceFileParams(StdMessageParams) );
 				}
 			}
 			else
 			{
 				bAcceptChange = false;
-				SVStringArray msgList;
-				msgList.push_back(newName);
 				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_TableColumnName_NotUnique, msgList, SvStl::SourceFileParams(StdMessageParams) );
+				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_TableColumnName_Empty, SvStl::SourceFileParams(StdMessageParams) );
 			}
 		}
 

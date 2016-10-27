@@ -162,7 +162,7 @@ namespace Seidenader { namespace SVUtilityLibrary { namespace StringFunctions
 
 	SVString& searchAndReplace( SVString& rStringValue, const SVString::traits_type::_Elem* pFromStr, const SVString::traits_type::_Elem* pToStr )
 	{
-		if (nullptr != pFromStr && nullptr != pToStr)
+		if (nullptr != pFromStr && nullptr != pToStr && 0 < strlen(pFromStr))
 		{
 			size_t pos = rStringValue.find(pFromStr);
 

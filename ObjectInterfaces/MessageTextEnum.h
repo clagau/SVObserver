@@ -372,6 +372,7 @@ namespace Seidenader { namespace ObjectInterfaces
 		Tid_ConditionalValue_Invalid,
 
 		Tid_TableColumnName_NotUnique,
+		Tid_TableColumnName_Empty,
 		Tid_TableColumn_AddingFailed,
 		Tid_TableColumn_RemovingFailed,
 		Tid_TableColumn_RenamingFailed,

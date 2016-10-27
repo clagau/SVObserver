@@ -407,6 +407,7 @@ MessageTextMap g_MessageTextMap = boost::assign::map_list_of
 	(SvOi::Tid_ConditionalValue_Invalid, _T("The conditional value of tool \"%s\" is invalid.")) 
 
 	(SvOi::Tid_TableColumnName_NotUnique, _T("The name \"%s\" is used already by another column.\nThe name must be unique."))
+	(SvOi::Tid_TableColumnName_Empty, _T("The name must not be empty."))
 	(SvOi::Tid_TableColumn_AddingFailed, _T("Adding a column failed. Error number %s."))
 	(SvOi::Tid_TableColumn_RemovingFailed, _T("Removing a column failed. Error number %s."))
 	(SvOi::Tid_TableColumn_RenamingFailed, _T("Renaming a column failed. Error number %s."))
