@@ -1226,6 +1226,7 @@ extern /*const*/ GUID EnvironmentModeIsRegressionTestUidGuid;
 extern /*const*/ GUID EnvironmentModeIsTestUidGuid;
 extern /*const*/ GUID EnvironmentModeIsEditUidGuid;
 extern /*const*/ GUID EnvironmentModeValueUidGuid;
+extern /*const*/ GUID EnvironmentModeUidGuid;
 // Unique base ID GUID for Camera variables always have 0x100 GUIDS free after the base GUID
 extern /*const*/ GUID CameraBaseSerialNumberUidGuid;
 extern /*const*/ GUID CameraBaseGainUidGuid;

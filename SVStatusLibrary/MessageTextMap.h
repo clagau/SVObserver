@@ -432,7 +432,7 @@ MessageTextMap g_MessageTextMap = boost::assign::map_list_of
 	(SvOi::Tid_ExcludeHighMustBeHigher, _T("Exclude High must be higher than Exclude Low."))
 	(SvOi::Tid_LinkedValue_ValidateStringFailed, _T("Set of parameter \"%s\" failed: Invalid object name or value type."))
 	(SvOi::Tid_ValueObject_ValidateStringFailed, _T("Set value \"%s\" to parameter \"%s\" failed: Invalid string."))
-	(SvOi::Tid_SetEmbeddedValueFailed, _T("Set a value of embedded parameter failed: %s."))
+	(SvOi::Tid_SetEmbeddedValueFailed, _T("Setting of an embedded parameter failed: [%s]"))
 	(SvOi::Tid_ValidateValue_InvalidElementInVariantArray, _T("Validate Value failed: Invalid element in VariantArray: %s"))
 	(SvOi::Tid_ValidateValue_ArraySizeInvalid, _T("Validate Value failed: Array Size must greater than zero."))
 	(SvOi::Tid_UnexpectedError, _T("An unexpected error ocurred."))

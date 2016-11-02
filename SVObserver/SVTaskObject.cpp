@@ -536,10 +536,22 @@ SvStl::MessageContainerVector SVTaskObjectClass::validateAndSetEmmeddedValues(co
 			Result = it->first->SetValue(it->second);
 			if (S_OK != Result)
 			{
-				SVStringArray msgList;
-				msgList.push_back(SvUl_SF::Format(_T("%d"), Result));
 				SvStl::MessageMgrStd Msg( SvStl::LogOnly );
-				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_SetEmbeddedValueFailed, msgList, SvStl::SourceFileParams(StdMessageParams) );
+				SVStringArray msgList;
+				SvOi::IObjectClass* pObject = dynamic_cast<SvOi::IObjectClass*> (it->first);
+				if( nullptr != pObject )
+				{
+					msgList.push_back( pObject->GetName() );
+				}
+				//! Check if general error or specific error for detailed information
+				if( E_FAIL ==  Result || S_FALSE == Result )
+				{
+					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_SetEmbeddedValueFailed, msgList, SvStl::SourceFileParams(StdMessageParams) );
+				}
+				else
+				{
+					Msg.setMessage( Result, SvOi::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams) );
+				}
 				messages.push_back(Msg.getMessageContainer());
 			}
 		}

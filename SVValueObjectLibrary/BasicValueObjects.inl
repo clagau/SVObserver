@@ -59,9 +59,16 @@ BasicValueObjects::vt_const_iterator BasicValueObjects::createValueObject( LPCTS
 
 	if( S_OK == ParsedName.ParseObjectName( DottedName ) )
 	{
+		SVString BranchName;
+
 		for( size_t i=0; i < ParsedName.m_NameArray.size(); i++ )
 		{
 			SVString Name( ParsedName.m_NameArray[i] );
+			if( !BranchName.empty() )
+			{
+				BranchName += _T(".");
+			}
+			BranchName += Name;
 
 			Iter = findChildObject( IterStart, IterEnd, Name.c_str() );
 			if( IterEnd == Iter )
@@ -81,7 +88,7 @@ BasicValueObjects::vt_const_iterator BasicValueObjects::createValueObject( LPCTS
 				}
 				pValue = new BasicValueObject( Name.c_str(), pParent, Node, ObjectType );
 				//Check if this is a dotted name with static unique GUID
-				DottedNameGuidMap::const_iterator StaticUidIter( m_StaticUniqueIDMap.find( ParsedName.GetObjectArrayName(0) ) );
+				DottedNameGuidMap::const_iterator StaticUidIter( m_StaticUniqueIDMap.find( BranchName ) );
 				if( m_StaticUniqueIDMap.end() != StaticUidIter )
 				{
 					SVObjectManagerClass::Instance().ChangeUniqueObjectID( pValue.get(), StaticUidIter->second );

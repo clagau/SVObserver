@@ -31,6 +31,7 @@ namespace Seidenader { namespace SVObjectLibrary
 	const TCHAR* const FqnEnvironmentWinKey				= _T( "Environment.Windows.Win Key" );
 	const TCHAR* const FqnEnvironmentImageUpdate		= _T( "Environment.View.Image Display Update" );
 	const TCHAR* const FqnEnvironmentResultUpdate		= _T( "Environment.View.Result Display Update" );
+	const TCHAR* const FqnEnvironmentMode				= _T( "Environment.Mode" );
 	const TCHAR* const FqnEnvironmentModeIsRun			= _T( "Environment.Mode.Is Run" );
 	const TCHAR* const FqnEnvironmentModeIsStop			= _T( "Environment.Mode.Is Stop" );
 	const TCHAR* const FqnEnvironmentModeIsRegressionTest	= _T( "Environment.Mode.Is Regression Test" );

@@ -286,6 +286,9 @@ HRESULT LinkedValue::SetValueAt( int Bucket, int Index, const CString& rValue )
 		{
 			DWORD_PTR messageReturn = ConnectInput();
 			ASSERT( SVMR_SUCCESS == messageReturn );
+			//To check that the linked value has no circular reference we do a GetValue
+			_variant_t Value;
+			Result = GetValueAt( Bucket, Index, Value.GetVARIANT() );
 		}
 	}
 	else

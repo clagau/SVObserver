@@ -34,6 +34,7 @@ const BasicValueObjects::DottedNameGuidMap BasicValueObjects::m_StaticUniqueIDMa
 	( SVString( SvOl::FqnEnvironmentWinKey ),					SVGUID( EnvironmentWinKeyUidGuid ) )
 	( SVString( SvOl::FqnEnvironmentImageUpdate ),				SVGUID( EnvironmentImageUpdateUidGuid ) )
 	( SVString( SvOl::FqnEnvironmentResultUpdate ),				SVGUID( EnvironmentResultUpdateUidGuid ) )
+	( SVString( SvOl::FqnEnvironmentMode ),						SVGUID( EnvironmentModeUidGuid ) )
 	( SVString( SvOl::FqnEnvironmentModeIsRun ),				SVGUID( EnvironmentModeIsRunUidGuid ) )
 	( SVString( SvOl::FqnEnvironmentModeIsStop ),				SVGUID( EnvironmentModeIsStopUidGuid ) )
 	( SVString( SvOl::FqnEnvironmentModeIsRegressionTest ),		SVGUID( EnvironmentModeIsRegressionTestUidGuid ) )
