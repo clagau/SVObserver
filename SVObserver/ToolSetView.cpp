@@ -57,6 +57,7 @@ ToolSetView::ToolSetView()
 : CFormView(ToolSetView::IDD)
 , m_isLabeling(false)
 , m_labelingIndex(-1)
+, m_showDuplicateNameMessage(false)
 {
 	//{{AFX_DATA_INIT(ToolSetView)
 	//}}AFX_DATA_INIT
@@ -396,6 +397,8 @@ void ToolSetView::OnBeginLabelEditToolSetList(NMHDR* pNMHDR, LRESULT* pResult)
 	pEdit->GetWindowText(m_csLabelSaved);
 
 	m_isLabeling = true;
+	
+	SetCapture(); 
 
 	*pResult = 0;
 }
@@ -468,6 +471,17 @@ void ToolSetView::OnEditLabelEnds()
 		SetFocus(); // Cause edit control to lose 'focus'.
 	}
 	m_isLabeling = false;
+	::ReleaseCapture(); 
+	if(m_showDuplicateNameMessage)
+	{
+		m_showDuplicateNameMessage = false;
+		bool bDoReEdit = ShowDuplicateNameMessage(m_duplicateName);
+		if (bDoReEdit)
+		{
+			PostMessage(WM_COMMAND, ID_EDIT_NAME);
+		}
+		m_duplicateName.empty();
+	}
 }
 
 bool ToolSetView::EditToolGroupingComment()
@@ -602,17 +616,18 @@ void ToolSetView::OnRunOnce()
 	}
 }
 
-bool ToolSetView::ShowDuplicateNameMessage(const CString& rName) const
+bool ToolSetView::ShowDuplicateNameMessage(const SVString& rName) const
 {
 	SVStringArray msgList;
-	msgList.push_back(SVString(rName));
-	SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-	INT_PTR rc = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_RenameError_DuplicateName, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10221, SV_GUID_NULL, MB_RETRYCANCEL );
-	return (IDRETRY == rc);
+	msgList.push_back(rName);
+	SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay);
+	INT_PTR res  = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_RenameError_DuplicateName, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10221, SV_GUID_NULL,MB_RETRYCANCEL );
+	return (IDRETRY == res);
 }
 
 void ToolSetView::OnEndLabelEditToolSetList(NMHDR* pNMHDR, LRESULT* pResult)
 {
+	m_showDuplicateNameMessage = false;
 	LV_DISPINFO* pDispInfo = reinterpret_cast<LV_DISPINFO*>(pNMHDR);
 
 	SVIPDoc* pCurrentDocument = GetIPDoc();
@@ -629,7 +644,6 @@ void ToolSetView::OnEndLabelEditToolSetList(NMHDR* pNMHDR, LRESULT* pResult)
 
 			// Validate the text and remove unwanted characters.
 			ValidateLabelText(newText);
-			bool bDoReEdit = false;
 			if (m_csLabelSaved != newText) // In case it was renamed to the same name as before renaming
 			{
 				if (!rGuid.empty()) // renaming a Tool
@@ -647,7 +661,8 @@ void ToolSetView::OnEndLabelEditToolSetList(NMHDR* pNMHDR, LRESULT* pResult)
 						else
 						{
 							
-							bDoReEdit = ShowDuplicateNameMessage(newText);
+							m_duplicateName = newText.GetString();
+							m_showDuplicateNameMessage = true;
 							newText = m_csLabelSaved; // reset it back to original
 						}
 					}
@@ -656,7 +671,8 @@ void ToolSetView::OnEndLabelEditToolSetList(NMHDR* pNMHDR, LRESULT* pResult)
 				{
 					if (!CheckName(newText, m_csLabelSaved.GetString()))
 					{
-						bDoReEdit = ShowDuplicateNameMessage(newText);
+						m_duplicateName = newText.GetString();
+						m_showDuplicateNameMessage = true;
 						newText = m_csLabelSaved; // reset it back to original
 					}
 				}
@@ -679,10 +695,6 @@ void ToolSetView::OnEndLabelEditToolSetList(NMHDR* pNMHDR, LRESULT* pResult)
 				pIODoc->UpdateAllViews(nullptr);
 			}
 			*pResult = true;
-			if (bDoReEdit)
-			{
-				PostMessage(WM_COMMAND, ID_EDIT_NAME);
-			}
 		}
 	}
 	else

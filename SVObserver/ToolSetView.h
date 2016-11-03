@@ -106,7 +106,7 @@ protected:
 
 private:
 #pragma region Private Methods
-	bool ShowDuplicateNameMessage(const CString& rName) const;
+	bool ShowDuplicateNameMessage(const SVString& rName) const;
 #pragma endregion Private Methods
 
 	SVToolSetListCtrl m_toolSetListCtrl;
@@ -115,5 +115,9 @@ private:
 	int m_labelingIndex;
 	CString m_csLabelSaved;    // To restore label if necessary during editing.
 	CString m_csLabelEdited;
+
+	SVString m_duplicateName;			//Store Name for DuplicatenameMessage
+	bool m_showDuplicateNameMessage; //DuplictaNameMessage is shown after edeting the name 
+
 };
 
