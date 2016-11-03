@@ -3284,10 +3284,8 @@ HRESULT SVObserverApp::DestroyConfig( BOOL AskForSavingOrClosing /* = TRUE */,
 	}
 	else
 	{
-		CStringArray saCameras;
-
-		DisconnectCameras( saCameras );
-		ConnectCameras( saCameras );
+		DisconnectCameras();
+		ConnectCameras();
 	}
 
 	return hr;
@@ -4713,14 +4711,13 @@ HRESULT SVObserverApp::DisplayCameraManager(SVIMProductEnum eProductType)
 {
 	HRESULT hr = S_OK;
 
-	CStringArray saCameras;
 	HCURSOR hCursor = nullptr;
 	hCursor = ::LoadCursor( nullptr, IDC_WAIT );
 	hCursor = ::SetCursor( hCursor );
 
 	try
 	{
-		hr = DisconnectCameras( saCameras );
+		hr = DisconnectCameras();
 	}
 	catch (...)
 	{
@@ -4748,7 +4745,7 @@ HRESULT SVObserverApp::DisplayCameraManager(SVIMProductEnum eProductType)
 	hCursor = ::LoadCursor( nullptr, IDC_WAIT );
 	hCursor = ::SetCursor( hCursor );
 
-	ConnectCameras( saCameras );
+	ConnectCameras();
 
 	::SetCursor( hCursor );
 
@@ -4815,13 +4812,13 @@ HRESULT SVObserverApp::ConnectToolsetBuffers()
 	return S_OK;
 }
 
-HRESULT SVObserverApp::DisconnectCameras( CStringArray& rDisconnectedCameras )
+HRESULT SVObserverApp::DisconnectCameras()
 {
 	HRESULT hr = S_OK;
 
 	try
 	{
-		hr = DisconnectAllCameraBuffers( rDisconnectedCameras );
+		hr = DisconnectAllCameraBuffers();
 	}
 	catch (...)
 	{
@@ -4834,7 +4831,7 @@ HRESULT SVObserverApp::DisconnectCameras( CStringArray& rDisconnectedCameras )
 	return hr;
 }
 
-HRESULT SVObserverApp::ConnectCameras( const CStringArray& rCamerasToConnect )
+HRESULT SVObserverApp::ConnectCameras()
 {
 	HRESULT hr = S_OK;
 
@@ -4842,7 +4839,7 @@ HRESULT SVObserverApp::ConnectCameras( const CStringArray& rCamerasToConnect )
 
 	try
 	{
-		hr = ConnectCameraBuffers( rCamerasToConnect );
+		hr = ConnectCameraBuffers();
 	}
 	catch (...)
 	{
@@ -4853,13 +4850,16 @@ HRESULT SVObserverApp::ConnectCameras( const CStringArray& rCamerasToConnect )
 	return hr;
 }
 
-HRESULT SVObserverApp::SendCameraParameters( const CStringArray& rCameras )
+HRESULT SVObserverApp::SendCameraParameters()
 {
 	HRESULT hr = S_OK;
 	SVConfigurationObject* pConfig( nullptr );
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-	for ( int i=0; i < rCameras.GetSize(); i++ )
+	SVStringArray Cameras;
+	SVDigitizerProcessingClass::Instance().GetAcquisitionDeviceList( Cameras );
+	SVStringArray::const_iterator Iter( Cameras.begin() );
+	for( ; Cameras.end() != Iter; ++Iter )
 	{
 		SVDeviceParamCollection* pDeviceParams = nullptr;
 
@@ -4867,10 +4867,9 @@ HRESULT SVObserverApp::SendCameraParameters( const CStringArray& rCameras )
 		SVLightReference* pDummyLight = nullptr;
 		SVLut* pDummyLut = nullptr;
 		
-		CString DigitizerName( rCameras.GetAt(i) );
-		SVAcquisitionClassPtr pDevice( SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( DigitizerName ) );
+		SVAcquisitionClassPtr pDevice( SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( Iter->c_str() ) );
 		if ( nullptr != pDevice && nullptr != pConfig &&
-			pConfig->GetAcquisitionDevice(rCameras.GetAt(i), pDummyFiles, pDummyLight, pDummyLut, pDeviceParams ) )
+			pConfig->GetAcquisitionDevice(Iter->c_str(), pDummyFiles, pDummyLight, pDummyLut, pDeviceParams ) )
 		{
 			// Check for the camera file and camera to match.
 			if( S_OK == hr )
@@ -5514,22 +5513,21 @@ void SVObserverApp::Start()
 	}
 
 	SVPPQObject* pPPQ( nullptr );
-	CStringArray saCameras;
 
 	SVDigitizerProcessingClass::Instance().StoreLastCameraImage();
 	long lSize = pConfig->GetPPQCount();
 
 	try
 	{
-		DisconnectCameras( saCameras );
-		HRESULT Result = ConnectCameras( saCameras );
+		DisconnectCameras();
+		HRESULT Result = ConnectCameras();
 		//Buffer allocation error
 		if( SVMEE_MATROX_ALLOCATION == Result )
 		{
 			SvStl::MessageContainer Exception( SVMSG_SVO_NON_PAGED_MEMORY_FULL, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_25022_NonPagedMemoryFull );
 			throw Exception;
 		}
-		Result = SendCameraParameters( saCameras );
+		Result = SendCameraParameters();
 		if( Result != S_OK )
 		{
 			SvStl::MessageContainer Exception(SVMSG_SVO_54_EMPTY, SvOi::Tid_GoOnlineFailure_SendCameraParam, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_45000);
@@ -6156,40 +6154,35 @@ LPCTSTR SVObserverApp::GetRAIDBoardName() const
 	return m_csRAIDBoardName;
 }
 
-HRESULT SVObserverApp::DisconnectAllCameraBuffers( CStringArray& rDisconnectedCameras )
+HRESULT SVObserverApp::DisconnectAllCameraBuffers()
 {
 	HRESULT hr = DisconnectToolsetBuffers();
 
 	if( S_OK == hr )
 	{
-		HRESULT l_Temp = SVDigitizerProcessingClass::Instance().GetAcquisitionDeviceList( rDisconnectedCameras );
-
 		hr = SVDigitizerProcessingClass::Instance().DestroyBuffers();
-
-		if( l_Temp != S_OK )
-		{
-			hr = l_Temp;
-		}
 	}
 
 	return hr;
 }
 
-HRESULT SVObserverApp::ConnectCameraBuffers( const CStringArray& rCamerasToConnect )
+HRESULT SVObserverApp::ConnectCameraBuffers()
 {
 	HRESULT hr = S_OK;
 
 	SVConfigurationObject* pConfig( nullptr );
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
+	SVStringArray Cameras;
+	SVDigitizerProcessingClass::Instance().GetAcquisitionDeviceList( Cameras );
 
 	if( nullptr != pConfig )
 	{
-		for ( int i=0; i < rCamerasToConnect.GetSize(); i++)
+		SVStringArray::const_iterator Iter( Cameras.begin() );
+		for( ; Cameras.end() != Iter; ++Iter )
 		{
-			CString sDigName = rCamerasToConnect.GetAt( i );
 			SVAcquisitionClassPtr pAcqDevice;
 
-			pAcqDevice = SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( sDigName );
+			pAcqDevice = SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( Iter->c_str() );
 			if ( nullptr != pAcqDevice )
 			{
 				// dummy vars
@@ -6198,7 +6191,7 @@ HRESULT SVObserverApp::ConnectCameraBuffers( const CStringArray& rCamerasToConne
 				SVLut* pLut;
 				SVDeviceParamCollection* pParams;
 
-				if ( pConfig->GetAcquisitionDevice( sDigName, pFiles, pLR, pLut, pParams ) )
+				if ( pConfig->GetAcquisitionDevice( Iter->c_str(), pFiles, pLR, pLut, pParams ) )
 				{
 					SVImageInfoClass svImageInfo;
 					pAcqDevice->GetImageInfo(&svImageInfo);

@@ -27,27 +27,29 @@ public:
 
     CString GetCameraDisplayName() const;
     CString GetCameraFile() const;
-    int GetDigNumber() const;
+	int GetDigNumber() const;
+	int GetCameraID() const;
     int GetBandNumber() const;
 	const SVDeviceParamCollection& GetCameraFileParams() const;
 	SVDeviceParamCollection& GetCameraFileParamsNonConst();
 	const SVDeviceParamCollection& GetCameraDeviceParams();
 	SVDeviceParamCollection& GetCameraDeviceParamsNonConst();
 
-    void SetCameraDisplayName(CString sCameraName);
-    void SetDigNumber(int iDigNumber);
-    void SetCameraFile(CString sFileName);
+    void SetCameraDisplayName(CString CameraName);
+	void SetDigNumber(int DigNumber);
+	void SetCameraID(int CameraID);
+    void SetCameraFile(CString FileName);
 	void SetCameraFileChanged();
 	BOOL GetCameraFileChanged();
-    void SetBandNumber(int iBandNumber);
+    void SetBandNumber(int BandNumber);
 	void SetCameraFileParams(const SVDeviceParamCollection& rParams);
 	void SetCameraDeviceParams(const SVDeviceParamCollection& rParams);
     BOOL IsCameraObjOk();
 
 	bool IsFileAcquisition() const;
-	void SetFileAcquisitionMode(bool bFileAcquisition);
+	void SetFileAcquisitionMode(bool FileAcquisition);
 	bool IsFileImageSizeEditModeFileBased() const;
-	void SetFileImageSizeEditModeFileBased(bool bScanFile);
+	void SetFileImageSizeEditModeFileBased(bool ScanFile);
 	long GetFileImageWidth() const;
 	void SetFileImageWidth(long width);
 	long GetFileImageHeight() const;
@@ -67,19 +69,19 @@ public:
 	inline bool IsColor() const { return m_IsColor; };
 
 private:  //data members
-    CString m_sCameraDisplayName; 
-    int m_iDigNumber;
-    int m_iBandNumber;
+    CString m_CameraDisplayName;
+	int m_DigNumber;
+	int m_CameraID;
+    int m_BandNumber;
     bool m_IsColor;
-    CString m_sCameraFile;
-    BOOL m_bCameraFileSet;
-	BOOL m_bCameraFileChanged;
-    BOOL m_bDigSet;
-    BOOL m_bCameraObjOk;
+    CString m_CameraFile;
+    BOOL m_CameraFileSet;
+	BOOL m_CameraFileChanged;
+    BOOL m_CameraObjOk;
 	SVDeviceParamCollection m_CameraDeviceParams;
 	SVDeviceParamCollection m_CameraFileParams;
 
-	bool m_bFileAcquisition;
+	bool m_FileAcquisition;
 	SVString m_imageFilename;
 	SVString m_imageDirectory;
 	bool m_imageSizeEditModeFileBased;

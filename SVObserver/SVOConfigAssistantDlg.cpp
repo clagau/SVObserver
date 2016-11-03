@@ -32,6 +32,7 @@
 #include "SVOInspectionObj.h"
 #include "TriggerInformation/SVOTriggerObj.h"
 #include "SVOCameraObj.h"
+#include "SVVirtualCamera.h"
 #include "SVInputObjectList.h"
 #include "SVOutputObjectList.h"
 #include "SVDigitizerProcessingClass.h"
@@ -77,8 +78,6 @@ static const CString SVIM_BOARD_FILEACQUISITION_STRING     ( _T("File") );
 static const CString SVIM_BOARD_MATROX_GIGE	( _T("Matrox_GIGE") );
 
 static const CString SVIM_DIG_NAME_STRING       ( _T(".Dig_") );
-static const CString SVIM_CHN_NAME_STRING       ( _T(".Ch_") );
-static const CString SVIM_CHN_ALL_STRING        ( _T(".Ch_All") );
 
 static const CString ERR_STR                 ( _T( "**ERROR**   " ) );
 static const CString WARNING_STR             ( _T( "**WARNING** " ) );
@@ -299,14 +298,9 @@ bool CSVOConfigAssistantDlg::IsNewConfiguration()
 	return m_bNewConfiguration == TRUE;
 }
 
-BOOL CSVOConfigAssistantDlg::AddToCameraList(CString sCameraName, int iDig)
+BOOL CSVOConfigAssistantDlg::AddToCameraList(CString CameraName, int Dig, int CameraID)
 {
-	return m_CameraList.AddCameraToList(sCameraName,iDig);
-}
-
-BOOL CSVOConfigAssistantDlg::AddToCameraList(CString sCameraName)
-{
-	return m_CameraList.AddCameraToList(sCameraName);
+	return m_CameraList.AddCameraToList(CameraName, Dig, CameraID);
 }
 
 BOOL CSVOConfigAssistantDlg::AddToInspectList(CString sExternal, CString sInternal, bool NewInspection)
@@ -544,7 +538,7 @@ void CSVOConfigAssistantDlg::CreateDefaultForSVIMDigital(int Number, LPCTSTR Tri
 	{
 		//add a camera
 		CString sCameraName = GetNextCameraName();
-		m_CameraList.AddCameraToList(sCameraName, i);
+		m_CameraList.AddCameraToList(sCameraName, i, i);
 
 		//add a trigger
 		CString sTriggerName = GetNextTriggerName(TriggerBaseName);
@@ -1488,6 +1482,11 @@ BOOL CSVOConfigAssistantDlg::SendAcquisitionDataToConfiguration()
 		const SVOCameraObjPtr pCameraObj( GetCameraObject( CameraIndex ) );
 		if( nullptr != pCameraObj )
 		{
+			int Digitizer = SVDigitizerProcessingClass::Instance().getDigitizerID( pCameraObj->GetCameraID() );
+			if( -1 != Digitizer )
+			{
+				pCameraObj->SetDigNumber( Digitizer );
+			}
 			sDigName = BuildDigName( *pCameraObj );
 			// For File Acquisition
 			if ( pCameraObj->IsFileAcquisition())
@@ -1727,7 +1726,6 @@ BOOL CSVOConfigAssistantDlg::SendCameraDataToConfiguration()
 	{
 		CString sKey;
 		CString sName;
-		CString sDevice;
 
 		for (int i = 0; i < iCamCnt; i++)
 		{
@@ -1735,7 +1733,6 @@ BOOL CSVOConfigAssistantDlg::SendCameraDataToConfiguration()
 			if( nullptr != pCameraObj )
 			{
 				sKey = pCameraObj->GetCameraDisplayName();
-				sDevice = BuildDigName( *pCameraObj );
 				lCfgCamCnt = pConfig->GetCameraCount();
 
 				for ( long l = lCfgCamCnt - 1; -1 < l; l-- )
@@ -1762,10 +1759,6 @@ BOOL CSVOConfigAssistantDlg::SendCameraDataToConfiguration()
 				{
 					pCamera = new SVVirtualCamera;
 					pCamera->SetName( sKey );
-					//Zero based camera ID, note camera name is one based!
-					int CameraID = atoi( sKey.Mid( CString(SvO::cCameraFixedName).GetLength() ) );
-					CameraID--;
-					pCamera->setCameraID( CameraID );
 					bRet = nullptr != pCamera && bRet;
 					bAddCamera = TRUE;
 				}
@@ -1773,6 +1766,12 @@ BOOL CSVOConfigAssistantDlg::SendCameraDataToConfiguration()
 				if ( nullptr != pCamera )
 				{
 					// move from editing camera object to configuration camera object
+					int Digitizer = SVDigitizerProcessingClass::Instance().getDigitizerID( pCameraObj->GetCameraID() );
+					if( -1 != Digitizer )
+					{
+						pCameraObj->SetDigNumber( Digitizer );
+					}
+					pCamera->setCameraID( pCameraObj->GetCameraID() );
 					pCamera->SetFileAcquisitionMode(pCameraObj->IsFileAcquisition());
 					pCamera->SetFileLoadingMode(pCameraObj->GetFileLoadingMode());
 					pCamera->SetImageFilename(pCameraObj->GetImageFilename());
@@ -1780,6 +1779,9 @@ BOOL CSVOConfigAssistantDlg::SendCameraDataToConfiguration()
 					pCamera->SetFileImageSizeEditModeFileBased(pCameraObj->IsFileImageSizeEditModeFileBased());
 					pCamera->SetFileImageSize(pCameraObj->GetFileImageSize());
 					pCamera->SetIsColor( pCameraObj->IsColor() );
+
+					CString sDevice;
+					sDevice = BuildDigName( *pCameraObj );
 
 					bRet = pCamera->Create( sDevice ) && bRet;
 
@@ -2603,6 +2605,7 @@ BOOL CSVOConfigAssistantDlg::GetConfigurationForExisting()
 	CString sInspectName;
 	CString sPPQName;
 	int iDigNumber;
+	int CameraID;
 	int iChannel;
 	CString sCameraFileName;
 
@@ -2625,6 +2628,7 @@ BOOL CSVOConfigAssistantDlg::GetConfigurationForExisting()
 				sDigName = pcfgCamera->mpsvDevice->DigName();
 				iDigNumber = pcfgCamera->mpsvDevice->DigNumber();
 				iChannel = pcfgCamera->mpsvDevice->Channel();
+				CameraID = pcfgCamera->getCameraID();
 
 				sCameraFileName.Empty();
 				
@@ -2643,8 +2647,8 @@ BOOL CSVOConfigAssistantDlg::GetConfigurationForExisting()
 				}
 
 				//Add Camera Name, Camera Files and Camera Device Params to tmp list in case of a cancel
-				m_CameraList.AddCameraToList(sCameraName,iDigNumber,iChannel); 
-				m_TmpCameraList.AddCameraToList(sCameraName,iDigNumber,iChannel); 
+				m_CameraList.AddCameraToList(sCameraName,iDigNumber,iChannel, CameraID); 
+				m_TmpCameraList.AddCameraToList(sCameraName,iDigNumber,iChannel, CameraID); 
 				m_CameraList.SetCameraFile(sCameraName, sCameraFileName);
 				m_TmpCameraList.SetCameraFile(sCameraName, sCameraFileName);
 
@@ -3791,7 +3795,7 @@ void CSVOConfigAssistantDlg::ConvertToDigital(SVIMProductEnum eType)
 
 	for ( StringIntMap::iterator it = l_Cameras.begin(); it != l_Cameras.end() ; ++it )
 	{
-		m_CameraList.AddCameraToList(it->first, it->second);
+		m_CameraList.AddCameraToList(it->first, it->second, it->second);
 	}
 }
 

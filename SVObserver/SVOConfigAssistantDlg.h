@@ -84,8 +84,7 @@ public:
 	void SetCurrentSystem(long lSysValue = SVIM_PRODUCT_X2_GD4A);
 	void SetConfigurationSystem(long lSysValue = SVIM_PRODUCT_X2_GD4A);
 
-	BOOL AddToCameraList(CString sCameraName, int iDig);
-	BOOL AddToCameraList(CString sCameraName);
+	BOOL AddToCameraList(CString CameraName, int Dig, int CameraID);
 	BOOL AddToTriggerList(CString sTriggerName, int iDig);
 	BOOL AddToInspectList(CString sExternal, CString sInternal, bool NewInspection);
 	BOOL AddToPPQList(CString sPPQ, CString sCamera, CString sTrigger, CString sInspection);

@@ -210,9 +210,10 @@ void CSVOCameraDlg::OnBtnDeleteVc()
 void CSVOCameraDlg::OnBtnNewVc() 
 {
 	CString sNewCamera = m_pParent->GetNextCameraName();
-    int iDig  = m_pParent->GetNextCameraNumber() - 1;
+    int Dig  = m_pParent->GetNextCameraNumber() - 1;
+	int CameraID( Dig );
     
-    m_pParent->AddToCameraList(sNewCamera,iDig);
+    m_pParent->AddToCameraList(sNewCamera,Dig, CameraID);
     SVOCameraObjPtr pObj = m_pParent->GetCameraObjectByName(sNewCamera);
 
     int iPos = m_ctlCameraList.AddString(sNewCamera);
@@ -282,6 +283,11 @@ void CSVOCameraDlg::OnBtnPropVc()
 					if ( SvTi::SVHardwareManifest::IsDigitalSVIM( m_pParent->GetProductType() ) )
 					{
 						// when the camera file changes, load the camera file parameters into the device (so it's in sync with the Virtual Camera)
+						int Digitizer = SVDigitizerProcessingClass::Instance().getDigitizerID( pCameraObj->GetCameraID() );
+						if( -1 != Digitizer )
+						{
+							pCameraObj->SetDigNumber( Digitizer );
+						}
 						CString strDigName = m_pParent->BuildDigName( *pCameraObj );
 						SVDigitizerProcessingClass::Instance().SetDigitizerColor( strDigName, pCameraObj->IsColor() );
 						SVAcquisitionClassPtr psvDevice( SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( strDigName ) );

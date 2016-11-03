@@ -54,8 +54,8 @@ void SVGigeCameraStruct::Clear()
 	m_ModelName.clear();
 	m_VendorName.clear();
 	m_IPAddress.clear();
-	m_CameraID = 0;
-	m_DigitizerID = 0;
+	m_CameraID = -1;
+	m_DigitizerID = -1;
 	m_AcquisitionHandle = 0;
 }
 

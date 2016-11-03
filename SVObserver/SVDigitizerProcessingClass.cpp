@@ -25,6 +25,7 @@
 #include "SVObserver.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVConfigurationObject.h"
+#include "TextDefinesSvO.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -187,12 +188,19 @@ HRESULT SVDigitizerProcessingClass::UpdateDigitizerSubsystem( SVDigitizerLoadLib
 
 			if ( S_OK == Result )
 			{
-				SVString CameraName( SVGigeCameraManager::Instance().getCameraName( IPAddress ) );
-				if( CameraName.empty() )
+				SVString CameraName;
+				if( AcquisitionName.find( _T( "Matrox_GIGE" ) ) == 0 )
+				{
+					CameraName =  SVGigeCameraManager::Instance().getCameraName( IPAddress );
+				}
+				else
 				{
 					CameraName = AcquisitionName;
 				}
-				Result = AddDigitizer( CameraName.c_str(), AcquisitionName.c_str(), pDigitizerSubsystem, Handle );
+				if( !CameraName.empty() )
+				{
+					Result = AddDigitizer( CameraName.c_str(), AcquisitionName.c_str(), pDigitizerSubsystem, Handle );
+				}
 			}
 		}
 	}
@@ -200,7 +208,7 @@ HRESULT SVDigitizerProcessingClass::UpdateDigitizerSubsystem( SVDigitizerLoadLib
 	return Result;
 }
 
-HRESULT SVDigitizerProcessingClass::GetAcquisitionDeviceList( CStringArray& rList ) const
+HRESULT SVDigitizerProcessingClass::GetAcquisitionDeviceList( SVStringArray& rList ) const
 {
 	HRESULT l_Status = S_OK;
 
@@ -212,7 +220,7 @@ HRESULT SVDigitizerProcessingClass::GetAcquisitionDeviceList( CStringArray& rLis
 
 		if( !( l_AcqDevicePtr.empty() ) && 0 != l_AcqDevicePtr->m_hDigitizer )
 		{
-			rList.Add( l_AcqDevicePtr->DeviceName() );
+			rList.push_back( SVString( l_AcqDevicePtr->DeviceName() ) );
 		}
 
 		++l_Iter;
@@ -302,6 +310,7 @@ HRESULT SVDigitizerProcessingClass::ConnectDevices()
 	HRESULT l_Temp = S_OK;
 
 	m_DigitizerSubsystems.clear();
+	m_Digitizers.clear();
 
 	SVDigitizerSubsystemSet::iterator l_Iter = m_Subsystems.begin();
 
@@ -480,8 +489,6 @@ HRESULT SVDigitizerProcessingClass::AddDigitizer( LPCTSTR Name, LPCTSTR Acquisit
 	}
 
 	return Result;
-	
-	return Result;
 }
 
 HRESULT SVDigitizerProcessingClass::SetDigitizerColor( LPCTSTR DigitizerName, bool isColor )
@@ -508,13 +515,12 @@ HRESULT SVDigitizerProcessingClass::SetDigitizerColor( LPCTSTR DigitizerName, bo
 	return Result;
 }
 
-
 SVString SVDigitizerProcessingClass::GetReOrderedCamera( const int CameraID ) const
 {
 	SVString Result;
 	const SVGigeCameraStructVector& rGigeCameraOrder = SVGigeCameraManager::Instance().GetCameraOrder();
 	SVGigeCameraStructVector::const_iterator Iter( rGigeCameraOrder.begin() );
-	for(; rGigeCameraOrder.end() != Iter; ++Iter )
+	for(; rGigeCameraOrder.end() != Iter && Result.empty(); ++Iter )
 	{
 		if( CameraID == Iter->m_CameraID )
 		{
@@ -523,6 +529,39 @@ SVString SVDigitizerProcessingClass::GetReOrderedCamera( const int CameraID ) co
 	}
 	return Result;
 }
+
+SVString SVDigitizerProcessingClass::GetReOrderedCamera( LPCTSTR CameraIPAddress ) const
+{
+	SVString Result;
+
+	SVString CameraName = SVGigeCameraManager::Instance().getCameraName( SVString( CameraIPAddress ) );
+	if( !CameraName.empty() )
+	{
+		//Zero based camera ID, note camera name is one based!
+		int CameraID = atoi( SvUl_SF::Mid( CameraName, SVString(SvO::cCameraFixedName).length() ).c_str() );
+		CameraID--;
+		Result = GetReOrderedCamera( CameraID );
+	}
+	return Result;
+}
+
+int SVDigitizerProcessingClass::getDigitizerID( const int CameraID ) const
+{
+	int Result( -1 );
+
+	const SVGigeCameraStructVector& rGigeCameraOrder = SVGigeCameraManager::Instance().GetCameraOrder();
+	SVGigeCameraStructVector::const_iterator Iter( rGigeCameraOrder.begin() );
+	for(; rGigeCameraOrder.end() != Iter; ++Iter )
+	{
+		if( CameraID == Iter->m_CameraID )
+		{
+			Result = Iter->m_DigitizerID;
+			break;
+		}
+	}
+	return Result;
+}
+
 
 HRESULT SVDigitizerProcessingClass::UpdateMatroxDevices()
 {
@@ -612,7 +651,9 @@ HRESULT SVDigitizerProcessingClass::UpdateMatroxDevices()
 				pAcquisitionDevice->m_hDigitizer = rCamera.m_AcquisitionHandle;
 
 				DeviceParams.SetParameter( DeviceParamSerialNumberString, SVStringValueDeviceParam( rCamera.m_SerialNum.c_str() ) );
-				DeviceParams.SetParameter( DeviceParamIPAddress, SVStringValueDeviceParam( rCamera.m_IPAddress.c_str() ) );
+				SVStringValueDeviceParam IP_Address( DeviceParamIPAddress );
+				IP_Address = rCamera.m_IPAddress.c_str();
+				DeviceParams.SetParameter( DeviceParamIPAddress, IP_Address );
 
 				// Set packetSize if specified via hardware.ini file
 				if (0 != TheSVObserverApp.getGigePacketSize())

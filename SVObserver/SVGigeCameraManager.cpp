@@ -19,16 +19,17 @@
 #include "SVOMFCLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
 #pragma endregion Includes
 
+#pragma region Declarations
 #ifdef _DEBUG
 #undef THIS_FILE
 static char THIS_FILE[]=__FILE__;
 #define new DEBUG_NEW
 #endif
 
-
+const int cDefaultCameraCount			= 4;
 const TCHAR* const cCameraMapping		= _T( "Camera Mapping" );
 const TCHAR* const cGigeCameraCount		= _T( "GigeCameraCount" );
-
+#pragma endregion Declarations
 
 SVGigeCameraManager::SVGigeCameraManager()
 {
@@ -78,7 +79,7 @@ HRESULT SVGigeCameraManager::UpdateConnectedCameras( const SVGigeCameraStructVec
 	return Result;
 }
 
-	SVString SVGigeCameraManager::getCameraName( const SVString& rIPAddress ) const
+SVString SVGigeCameraManager::getCameraName( const SVString& rIPAddress ) const
 {
 	SVString Result;
 
@@ -92,9 +93,9 @@ HRESULT SVGigeCameraManager::UpdateConnectedCameras( const SVGigeCameraStructVec
 
 void SVGigeCameraManager::ReadCameraMapping()
 {
-	int iSize = GetPrivateProfileInt( cCameraMapping, cGigeCameraCount, 1, SvStl::GlobalPath::Inst().GetSVIMIniPath() );
+	int CameraCount = GetPrivateProfileInt( cCameraMapping, cGigeCameraCount, cDefaultCameraCount, SvStl::GlobalPath::Inst().GetSVIMIniPath() );
 
-	for ( int i = 0; i < iSize; i++ )
+	for ( int i = 0; i < CameraCount; i++ )
 	{
 		SVString CameraName;
 		TCHAR pBuffer[128];
@@ -107,12 +108,12 @@ void SVGigeCameraManager::ReadCameraMapping()
 		if( !IPAddress.empty() )
 		{
 			m_CameraIPtoName[IPAddress] = CameraName;
-			SVGigeCameraStruct GigeCamera;
-
-			GigeCamera.m_IPAddress = IPAddress;
-			GigeCamera.m_CameraID = i;
-			m_iniCameras.Add( GigeCamera );
 		}
+
+		SVGigeCameraStruct GigeCamera;
+		GigeCamera.m_IPAddress = IPAddress;
+		GigeCamera.m_CameraID = i;
+		m_iniCameras.Add( GigeCamera );
 	}
 	//! After initializing set the ordered cameras to the ini settings
 	m_OrderedCameras.clear();

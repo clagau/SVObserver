@@ -33,6 +33,7 @@ namespace	// create unnamed namespace for the variables to live in
 	REGISTER_DEVICE_PARAM( DeviceParamVendorName,          DeviceParamVendorName_String,              SVStringValueDeviceParam );
 	REGISTER_DEVICE_PARAM( DeviceParamModelName,           DeviceParamModelName_String,               SVStringValueDeviceParam );
 	REGISTER_DEVICE_PARAM( DeviceParamFirmware,            DeviceParamFirmware_String,                SVStringValueDeviceParam );
+	REGISTER_DEVICE_PARAM( DeviceParamIPAddress,           DeviceParamIPAddress_String,               SVStringValueDeviceParam );
 
 	REGISTER_DEVICE_PARAM( DeviceParamSerialNumber,        DeviceParamSerialNumber_String,            SVi64ValueDeviceParam );
 	REGISTER_DEVICE_PARAM( DeviceParamSerialNumberString,  DeviceParamSerialNumberString_String,      SVStringValueDeviceParam );

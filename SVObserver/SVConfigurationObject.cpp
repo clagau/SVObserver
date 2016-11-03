@@ -1484,7 +1484,19 @@ bool SVConfigurationObject::LoadAcquisitionDevice( SVTreeType& rTree, SVString& 
 							lNumLRBands = 1;
 						}
 
-						DigitizerName = SvUl_SF::Format( _T("%s.%s"), BoardName.c_str(), DigName.c_str() );
+						//! If the IP address is saved in the configuration then determine which acquisition device has this address
+						//! Important when skipping cameras in the camera manager
+						SVStringValueDeviceParam* pParam( nullptr );
+						svDeviceParams.GetParameter( DeviceParamIPAddress, pParam );
+						if( nullptr != pParam )
+						{
+							DigitizerName = SVDigitizerProcessingClass::Instance().GetReOrderedCamera( pParam->strValue.c_str() );
+						}
+						//! If no name available then generate it the way it use to be
+						if( DigitizerName.empty() )
+						{
+							DigitizerName = SvUl_SF::Format( _T("%s.%s"), BoardName.c_str(), DigName.c_str() );
+						}
 
 						if ( ! bLutDone || ! bLutCreated )
 						{
@@ -3193,7 +3205,17 @@ void SVConfigurationObject::SaveCamera(SVObjectXMLWriter& rWriter) const
 				rWriter.WriteAttribute( CTAG_CAMERA_ID, svVariant );
 				svVariant.Clear();
 
-				svVariant.SetString( pCamera->mpsvDevice->DeviceName() );
+				//@WARNING [gra][7.40][02.11.2016] We need to add the channel for forward compatibility with version 7.30, can be removed in next version
+				SVString AcquisitionName = pCamera->mpsvDevice->DeviceName();
+				if( pCamera->IsColor() )
+				{
+					AcquisitionName += _T(".Ch_All");
+				}
+				else
+				{
+					AcquisitionName += _T(".Ch_0");
+				}
+				svVariant.SetString( AcquisitionName.c_str() );
 				rWriter.WriteAttribute( CTAG_ACQUISITION_DEVICE, svVariant );
 				svVariant.Clear();
 

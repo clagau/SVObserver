@@ -160,7 +160,9 @@ HRESULT SVMatroxGigeAcquisitionClass::LoadFiles(SVFileNameArrayClass& rFiles)
 			{
 				SVGigeCameraStruct& Camera = Cameras.ElementAt( DigNumber() );
 				DeviceParams.SetParameter( DeviceParamSerialNumberString, SVStringValueDeviceParam( Camera.m_SerialNum.c_str() ) );
-				DeviceParams.SetParameter( DeviceParamIPAddress, SVStringValueDeviceParam( Camera.m_IPAddress.c_str() ) );
+				SVStringValueDeviceParam IP_Address( DeviceParamIPAddress );
+				IP_Address = Camera.m_IPAddress.c_str();
+				DeviceParams.SetParameter( DeviceParamIPAddress, IP_Address );
 			}
 			SetDeviceParameters( DeviceParams );
 

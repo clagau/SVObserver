@@ -276,10 +276,10 @@ public:
 	HRESULT DisconnectToolsetBuffers();
 	HRESULT ConnectToolsetBuffers();
 
-	HRESULT DisconnectCameras( CStringArray& rDisconnectedCameras );
-	HRESULT ConnectCameras( const CStringArray& rCamerasToConnect );
+	HRESULT DisconnectCameras();
+	HRESULT ConnectCameras();
 
-	HRESULT SendCameraParameters( const CStringArray& rCameras );
+	HRESULT SendCameraParameters();
 
 	void SetGigePacketSizeDeviceParam(SVDeviceParamCollection* pDeviceParams);
 
@@ -356,8 +356,8 @@ protected:
 
 	LPCTSTR GetRAIDBoardName() const;
 
-	HRESULT DisconnectAllCameraBuffers( CStringArray& rDisconnectedCameras );
-	HRESULT ConnectCameraBuffers( const CStringArray& rCamerasToConnect );
+	HRESULT DisconnectAllCameraBuffers();
+	HRESULT ConnectCameraBuffers();
 	HRESULT InitializeSecurity();
 
     BOOL OpenConfigFileFromMostRecentList(int nID);

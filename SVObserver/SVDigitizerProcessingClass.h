@@ -34,7 +34,7 @@ public:
 
 	HRESULT UpdateDigitizerSubsystem( SVDigitizerLoadLibraryClass* pDigitizerSubsystem );
 
-	HRESULT GetAcquisitionDeviceList( CStringArray& rList ) const;
+	HRESULT GetAcquisitionDeviceList( SVStringArray& rList ) const;
 
 	bool IsValidDigitizerSubsystem( LPCTSTR digitizerName ) const;
 	SVDigitizerLoadLibraryClass* GetDigitizerSubsystem( LPCTSTR digitizerName ) const;
@@ -59,7 +59,26 @@ public:
 	//************************************
 	HRESULT SetDigitizerColor( LPCTSTR DigitizerName, bool isColor );
 
+	//************************************
+	//! The method is used to get the acquisition device name from the camera index
+	//! \param CameraIndex <in> camera index
+	//! \returns the acquisition name as a string
+	//************************************
 	SVString GetReOrderedCamera( int CameraIndex ) const;
+
+	//************************************
+	//! The method is used to get the acquisition device name from the IP Address
+	//! \param CameraIPAddress <in> the camera IP address
+	//! \returns the acquisition name as a string
+	//************************************
+	SVString GetReOrderedCamera( LPCTSTR CameraIPAddress ) const;
+
+	//************************************
+	//! The method is used to get the digitizer ID name from the camera index
+	//! \param CameraIndex <in> camera index
+	//! \returns the digitizer ID
+	//************************************
+	int getDigitizerID( const int CameraID ) const;
 
 	// These two (2) methods, Startup, Shutdown, are only meant to be called by the main application class and no other
 	// They used to be protected and a friend class declaration was used, but that was a bad design as the friend was declared in another project

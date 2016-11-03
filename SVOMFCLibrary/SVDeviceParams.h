@@ -175,6 +175,7 @@ LPCTSTR const DeviceParamVendorId_String        = (_T("VendorID"));
 LPCTSTR const DeviceParamVendorName_String      = (_T("VendorName"));
 LPCTSTR const DeviceParamModelName_String       = (_T("CameraModel"));
 LPCTSTR const DeviceParamFirmware_String        = (_T("Firmware"));
+LPCTSTR const DeviceParamIPAddress_String		= (_T("IPAddress"));
 
 	// physical camera params
 LPCTSTR const DeviceParamSerialNumber_String         = (_T("SerialNumber"));

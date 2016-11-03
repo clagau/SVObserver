@@ -241,6 +241,14 @@ HRESULT SVMatroxGigeCameraProxy::SetStandardCameraParameter( const SVDeviceParam
 			break;
 			#pragma endregion
 
+			#pragma region DeviceParamIPAddress
+			case DeviceParamIPAddress:
+			{
+			}
+			break;
+
+			#pragma endregion
+
 			#pragma region DeviceParamSerialNumberString
 			case DeviceParamSerialNumberString:
 				break;
