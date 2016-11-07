@@ -12,6 +12,7 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <deque>
+#include "SVUtilityLibrary/SVString.h"
 #include "SVSecurity/SVSecurityManager.h"
 #pragma endregion Includes
 
@@ -32,5 +33,7 @@ public:
 
 private:
 	BOOL ClearMenu (CMenu *pMenu);
+
+	SVString m_UtilityKey;
 };
 
