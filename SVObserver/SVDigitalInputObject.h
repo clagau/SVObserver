@@ -11,12 +11,16 @@
 
 class SVDigitalInputObject : public SVInputObject
 {
+#pragma region Constructor
 public:
 	SVDigitalInputObject( LPCSTR strObjectName );
 	SVDigitalInputObject( SVObjectClass *pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVDIGITALINPUTOBJECT );
 
 	virtual ~SVDigitalInputObject();
+#pragma endregion Constructor
 
+#pragma region Public Methods
+public:
 	virtual BOOL Create();
 	virtual BOOL Destroy();
 
@@ -32,8 +36,18 @@ public:
 
 	BOOL SetChannel( long lChannel );
 	long GetChannel() const;
+#pragma endregion Public Methods
 
+#pragma region Private Methods
 private:
+	void Init() const;
+#pragma endregion Private Methods
+
+#pragma region Member Variables
+private:
+	//! Note that these member variables are mirrored in SVIODigitalStruct
+	//! Take care that these stay synchronous
+	//@WARNING [gra][7.40][07.11.2016] Try to remove the mirrored values in SVIODigitalStruct and keep only one copy of the data
 	// Values for this digital input
 	long m_lChannel;
 	bool m_bForced;
@@ -41,4 +55,5 @@ private:
 	bool m_bLastValue;
 	bool m_bDefaultValue;
 	bool m_bForcedValue;
+#pragma endregion Member Variables
 };

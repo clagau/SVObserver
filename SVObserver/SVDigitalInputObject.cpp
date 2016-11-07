@@ -124,12 +124,22 @@ bool SVDigitalInputObject::IsInverted() const
 
 BOOL SVDigitalInputObject::SetChannel( long lChannel )
 {
-	m_lChannel = lChannel;
+	if( m_lChannel != lChannel )
+	{
+		m_lChannel = lChannel;
+		Init();
+	}
 	return TRUE;
-}// end SetChannel
+}
 
 long SVDigitalInputObject::GetChannel() const
 {
 	return m_lChannel;
 }
 
+void SVDigitalInputObject::Init() const
+{
+	SVIOConfigurationInterfaceClass::Instance().SetDigitalInputIsInverted( m_lChannel, m_bInverted );
+	SVIOConfigurationInterfaceClass::Instance().SetDigitalInputIsForced( m_lChannel, m_bForced );
+	SVIOConfigurationInterfaceClass::Instance().SetDigitalInputForcedValue( m_lChannel, m_bForcedValue );
+}
