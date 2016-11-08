@@ -1,0 +1,9 @@
+REGEDIT4
+
+[HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon]
+"DefaultUserName"="SVIMRun"
+"DefaultPassword"="SVIMRun"
+"DefaultDomainName"="SVIM0001"
+"AutoAdminLogon"="1"
+"ForceAutoLogon"="1"
+
