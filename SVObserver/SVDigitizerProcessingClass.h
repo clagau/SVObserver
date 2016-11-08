@@ -62,9 +62,10 @@ public:
 	//************************************
 	//! The method is used to get the acquisition device name from the camera index
 	//! \param CameraIndex <in> camera index
+	//! \param NewOrder <in> Use new camera order
 	//! \returns the acquisition name as a string
 	//************************************
-	SVString GetReOrderedCamera( int CameraIndex ) const;
+	SVString GetReOrderedCamera( int CameraIndex, bool NewOrder=true ) const;
 
 	//************************************
 	//! The method is used to get the acquisition device name from the IP Address

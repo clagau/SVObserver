@@ -177,6 +177,8 @@ const long SV_DEFAULT_MAX_OVERLAPPING           = 10;
 
 const long SV_DEFAULT_CURRENT_RESULT_OUTPUT_TABLE_SIZE   = 4;
 
+const int cMaximumCameras = 4;
+
 #pragma warning(disable:4308)
 
 // Default Data Type ...

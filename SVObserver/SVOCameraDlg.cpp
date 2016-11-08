@@ -284,10 +284,7 @@ void CSVOCameraDlg::OnBtnPropVc()
 					{
 						// when the camera file changes, load the camera file parameters into the device (so it's in sync with the Virtual Camera)
 						int Digitizer = SVDigitizerProcessingClass::Instance().getDigitizerID( pCameraObj->GetCameraID() );
-						if( -1 != Digitizer )
-						{
-							pCameraObj->SetDigNumber( Digitizer );
-						}
+						pCameraObj->SetDigNumber( Digitizer );
 						CString strDigName = m_pParent->BuildDigName( *pCameraObj );
 						SVDigitizerProcessingClass::Instance().SetDigitizerColor( strDigName, pCameraObj->IsColor() );
 						SVAcquisitionClassPtr psvDevice( SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( strDigName ) );

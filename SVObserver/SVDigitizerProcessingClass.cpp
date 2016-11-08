@@ -26,6 +26,7 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVConfigurationObject.h"
 #include "TextDefinesSvO.h"
+#include "SVGlobal.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -33,7 +34,7 @@
 #define new DEBUG_NEW
 #endif
 
-const TCHAR* const MatroxGigeDigitizer = _T("Matrox_GIGE.Dig_%d");
+static const TCHAR* const cMatroxGigeDigitizer = _T("Matrox_GIGE.Dig_%d");
 
 #pragma endregion Declarations
 
@@ -515,7 +516,7 @@ HRESULT SVDigitizerProcessingClass::SetDigitizerColor( LPCTSTR DigitizerName, bo
 	return Result;
 }
 
-SVString SVDigitizerProcessingClass::GetReOrderedCamera( const int CameraID ) const
+SVString SVDigitizerProcessingClass::GetReOrderedCamera( const int CameraID, bool NewOrder ) const
 {
 	SVString Result;
 	const SVGigeCameraStructVector& rGigeCameraOrder = SVGigeCameraManager::Instance().GetCameraOrder();
@@ -524,7 +525,17 @@ SVString SVDigitizerProcessingClass::GetReOrderedCamera( const int CameraID ) co
 	{
 		if( CameraID == Iter->m_CameraID )
 		{
-			Result = SvUl_SF::Format( MatroxGigeDigitizer, Iter->m_DigitizerID );
+			int DigitizerID = Iter->m_DigitizerID;
+			//! If Digitizer not set then use the camera ID offset by maximum physical cameras as default
+			if( -1 == DigitizerID )
+			{
+				DigitizerID = Iter->m_CameraID;
+				if( NewOrder )
+				{
+					DigitizerID += cMaximumCameras;
+				}
+			}
+			Result = SvUl_SF::Format( cMatroxGigeDigitizer, DigitizerID );
 		}
 	}
 	return Result;
@@ -555,7 +566,12 @@ int SVDigitizerProcessingClass::getDigitizerID( const int CameraID ) const
 	{
 		if( CameraID == Iter->m_CameraID )
 		{
+			//! If Digitizer not set then use the camera ID offset by maximum physical cameras as default
 			Result = Iter->m_DigitizerID;
+			if( -1 == Result )
+			{
+				Result = Iter->m_CameraID + cMaximumCameras;
+			}
 			break;
 		}
 	}
@@ -640,7 +656,7 @@ HRESULT SVDigitizerProcessingClass::UpdateMatroxDevices()
 
 		if( 0 != rCamera.m_AcquisitionHandle )
 		{
-			SVString AcquisitionName = SvUl_SF::Format( MatroxGigeDigitizer, rCamera.m_DigitizerID );
+			SVString AcquisitionName = SvUl_SF::Format( cMatroxGigeDigitizer, rCamera.m_DigitizerID );
 
 			SVAcquisitionClassPtr pAcquisitionDevice = GetAcquisitionDevice( AcquisitionName.c_str() );
 
