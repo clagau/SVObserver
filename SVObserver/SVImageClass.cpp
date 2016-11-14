@@ -555,19 +555,12 @@ HRESULT SVImageClass::RebuildStorage( bool p_ExcludePositionCheck )
 
 	if( m_LastReset <= m_LastUpdate )
 	{
-		HRESULT l_Temp = SVObjectAppClass::ResetObject();
-
-		if( S_OK == hr )
-		{
-			hr = l_Temp;
-		}
-
 		// One of the use cases for RebuildStorage() is, when a Tool is added 
 		// (for all embedded images).  If the embedded image is a Logical 
 		// Image, then the Parent wont be assigned yet.  The assignment 
 		// happens in OnCreate of the Tool.  Therefore the following 
 		// UpdatePosition() will return an E_FAIL.
-		l_Temp = UpdatePosition();
+		HRESULT l_Temp = UpdatePosition();
 
 		if( S_OK == hr )
 		{
@@ -1579,34 +1572,12 @@ SVImageClass* SVImageClass::GetRootImage()
 	return pRootImage;
 }
 
-DWORD_PTR SVImageClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
+bool SVImageClass::resetAllObjects( bool shouldNotifyFriends, bool silentReset )
 {
-	DWORD_PTR DwResult = SVMR_NOT_PROCESSED;
-
-	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
-
-	switch( dwPureMessageID )
-	{
-	case SVMSGID_GETFIRST_IMAGE_INFO:
-		return reinterpret_cast<DWORD_PTR>( &m_ImageInfo );
-
-	case SVMSGID_RESET_ALL_OBJECTS:
-		{
-			HRESULT l_ResetStatus = ResetObject();
-			if( S_OK != l_ResetStatus )
-			{
-				ASSERT( SUCCEEDED( l_ResetStatus ) );
-
-				DwResult = SVMR_NO_SUCCESS;
-			}
-			else
-			{
-				DwResult = SVMR_SUCCESS;
-			}
-			break;
-		}
-	}
-	return DwResult | SVObjectAppClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext );
+	bool Result = ( S_OK == ResetObject() );
+	ASSERT( Result );
+	
+	return Result && __super::resetAllObjects(shouldNotifyFriends, silentReset);
 }
 
 #ifdef _DEBUG
@@ -1815,35 +1786,6 @@ HRESULT SVImageClass::GetObjectValue( const SVString& p_rValueName, VARIANT& p_r
 		hr = SVObjectAppClass::GetObjectValue( p_rValueName, p_rVariantValue );
 	}
 
-	return hr;
-}
-
-HRESULT SVImageClass::SetObjectValue( const SVString& p_rValueName, const _variant_t& p_rVariantValue )
-{
-	HRESULT hr = S_OK;
-
-	if( p_rValueName == _T( "PixelDepth" ) )
-	{
-		m_ImageInfo.SetImageProperty( SVImagePropertyPixelDepth, p_rVariantValue );
-
-		m_LastUpdate = SVClock::GetTimeStamp();
-	}
-	else if( p_rValueName == _T( "BandNumber" ) )
-	{
-		m_ImageInfo.SetImageProperty( SVImagePropertyBandNumber, p_rVariantValue );
-
-		m_LastUpdate = SVClock::GetTimeStamp();
-	}
-	else if( p_rValueName == _T( "BandLink" ) )
-	{
-		m_ImageInfo.SetImageProperty( SVImagePropertyBandLink, p_rVariantValue );
-
-		m_LastUpdate = SVClock::GetTimeStamp();
-	}
-	else
-	{
-		hr = SVObjectAppClass::SetObjectValue( p_rValueName, p_rVariantValue );
-	}
 	return hr;
 }
 

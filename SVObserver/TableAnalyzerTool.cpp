@@ -55,7 +55,7 @@ BOOL TableAnalyzerTool::CreateObject( SVObjectLevelCreateStruct* pCreateStructur
 		m_pResultTable = new TableCopyObject(this);
 		//This task must be the first in the list.
 		Add( m_pResultTable, true );
-		if( ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(m_pResultTable), 0 ) != SVMR_SUCCESS )
+		if( !CreateChildObject(m_pResultTable) )
 		{
 			bOk = false;
 			SvStl::MessageContainer message;

@@ -38,6 +38,7 @@ public:
 
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
 	virtual void SetInvalid();
+	virtual bool resetAllObjects( bool shouldNotifyFriends, bool silentReset ) override;
 	virtual HRESULT ResetObject();
 	virtual BOOL OnValidate();
 	virtual BOOL Validate();
@@ -77,6 +78,12 @@ public:
 	void GetToolIds( SVToolIdDeque& p_rToolIds ) const;
 
 	HRESULT getResetCounts( bool& rResetCounts );
+
+	/// Return the first band 0 image from the first color tool. If there are no color Tool it return nullptr.
+	/// \returns SVImageClass*
+	SVImageClass* getBand0Image();
+
+	virtual void goingOffline() override;
 #pragma endregion Public Methods
 
 #pragma region virtual method (IToolSet)
@@ -89,12 +96,11 @@ protected:
 	virtual BOOL RunWithNewDisable( SVRunStatusClass& RRunStatus );
 
 	virtual BOOL onRun( SVRunStatusClass& RRunStatus );
-	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
 	virtual HRESULT onCollectOverlays(SVImageClass *p_Image, SVExtentMultiLineStructCArray &p_MultiLineArray );
 
-	// Sends SVM_CREATE_ALL_OBJECTS to the child object
-	// and returns the result of this message.
-	virtual DWORD_PTR createAllObjectsFromChild( SVObjectClass* pChildObject ) override;
+	virtual bool createAllObjectsFromChild( SVObjectClass& rChildObject ) override;
+
+	virtual void connectChildObject( SVTaskObjectClass& rChildObject ) override;
 #pragma endregion Protected Methods
 
 #pragma region Private Methods

@@ -36,11 +36,9 @@ public:
 // End. Sri
 
 protected:
-	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
+	virtual bool createAllObjectsFromChild( SVObjectClass& rChildObject ) override;
 
-	// Sends SVM_CREATE_ALL_OBJECTS to the child object
-	// and returns the result of this message.
-	virtual DWORD_PTR createAllObjectsFromChild( SVObjectClass* pChildObject ) override;
+	virtual void connectChildObject( SVTaskObjectClass& rChildObject ) override;
 
 protected:
 	SVResultClass* pAnalyzerResult;

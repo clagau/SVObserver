@@ -18,7 +18,7 @@
 #pragma endregion Includes
 
 SVObjectInfoStruct::SVObjectInfoStruct()
-: PObject( nullptr ), UniqueObjectID(), ObjectTypeInfo( SVInvalidObjectTypeInfo ), m_ObjectNameInfo()
+: PObject( nullptr ), UniqueObjectID(), ObjectTypeInfo(), m_ObjectNameInfo()
 {
 }
 
@@ -28,13 +28,13 @@ SVObjectInfoStruct::SVObjectInfoStruct( const SVObjectInfoStruct& O2 )
 }
 
 SVObjectInfoStruct::SVObjectInfoStruct( SVObjectClass* PO2 )
-: PObject( nullptr ), UniqueObjectID(), ObjectTypeInfo( SVInvalidObjectTypeInfo ), m_ObjectNameInfo()
+: PObject( nullptr ), UniqueObjectID(), ObjectTypeInfo(), m_ObjectNameInfo()
 {
 	SetObject( PO2 );
 }
 
 SVObjectInfoStruct::SVObjectInfoStruct( SVObjectReference ref )
-: PObject( nullptr ), UniqueObjectID(), ObjectTypeInfo( SVInvalidObjectTypeInfo ), m_ObjectNameInfo()
+: PObject( nullptr ), UniqueObjectID(), ObjectTypeInfo(), m_ObjectNameInfo()
 {
 	SetObject( ref );
 }
@@ -59,7 +59,7 @@ void SVObjectInfoStruct::clear()
 {
 	PObject = nullptr;
 	UniqueObjectID.clear();
-	ObjectTypeInfo = SVInvalidObjectTypeInfo;
+	ObjectTypeInfo = SVObjectTypeInfoStruct();
 	m_ObjectNameInfo.clear();
 }
 

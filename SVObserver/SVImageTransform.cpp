@@ -161,6 +161,13 @@ HRESULT SVImageTransformClass::ResetObject( )
 
 	return l_hrOk;
 }
+
+bool SVImageTransformClass::resetAllObjects( bool shouldNotifyFriends, bool silentReset )
+{
+	bool Result = ( S_OK == ResetObject() );
+	ASSERT( Result );
+	return( __super::resetAllObjects( shouldNotifyFriends, silentReset ) && Result );
+}
 #pragma endregion
 
 SVImageClass* SVImageTransformClass::getInputImage()
@@ -316,33 +323,6 @@ BOOL SVImageTransformClass::onRun( SVRunStatusClass& runStatus )
 	}
 
 	return bRetVal;
-}
-
-DWORD_PTR SVImageTransformClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
-{
-	DWORD_PTR DwResult = SVMR_NOT_PROCESSED;
-
-	// Try to process message by yourself...
-	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
-	switch( dwPureMessageID )
-	{
-	case SVMSGID_RESET_ALL_OBJECTS:
-		{
-			HRESULT l_ResetStatus = ResetObject();
-			if( S_OK != l_ResetStatus )
-			{
-				ASSERT( SUCCEEDED( l_ResetStatus ) );
-
-				DwResult = SVMR_NO_SUCCESS;
-			}
-			else
-			{
-				DwResult = SVMR_SUCCESS;
-			}
-			break;
-		}
-	}
-	return( SVTaskObjectClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext ) | DwResult );
 }
 
 HRESULT SVImageTransformClass::UpdateTransformData( long p_lIndex )

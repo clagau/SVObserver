@@ -23,6 +23,8 @@
 ////////////////////////////////////////////////////////////////////////////////
 // NOTE: Add new GUIDs at the bottom.
 ////////////////////////////////////////////////////////////////////////////////
+// GUID for the SVObjectImageClass
+/*const*/ GUID SVObjectImageClassGuid	= { 0xb62f5910, 0x6528, 0x11d1, { 0xF0, 0x11, 0x0, 0x0, 0xf8, 0x1e, 0xd, 0xd } };
 
 // GUID for the SVValueObjectClass
 /*const*/ GUID SVValueObjectClassGuid				= { 0x62fb5910, 0x6528, 0x11d1, { 0x96, 0x11, 0x0, 0x0, 0xf8, 0x2e, 0xd, 0xd } };

@@ -510,7 +510,7 @@ BOOL SVInspectionProcess::CreateInspection( LPCTSTR szDocName )
 
 	m_pCurrentToolset = new SVToolSetClass( true, this );
 
-	if( SVMR_SUCCESS != ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(m_pCurrentToolset), 0 ) )
+	if( !CreateChildObject(m_pCurrentToolset) )
 	{
 		return false;
 	}
@@ -585,7 +585,7 @@ BOOL SVInspectionProcess::DestroyInspection()
 
 	if( nullptr != m_pCurrentToolset )
 	{
-		::SVSendMessage(this, SVM_DESTROY_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>( m_pCurrentToolset ), 0);
+		DestroyChildObject( m_pCurrentToolset );
 	}
 
 	// Destroy Queues for input/output requests
@@ -718,7 +718,7 @@ BOOL SVInspectionProcess::CanRegressionGoOnline()
 	SetResetCounts();
 	m_svReset.AddState( SVResetStateInitializeOnReset |	SVResetStateArchiveToolCreateFiles | SVResetStateLoadFiles );
 
-	l_bOk = SVMR_SUCCESS == ::SVSendMessage( this, SVM_RESET_ALL_OBJECTS, 0, 0 );
+	l_bOk = resetAllObjects(true, false);
 
 	m_svReset.RemoveState( SVResetStateInitializeOnReset |	SVResetStateArchiveToolCreateFiles | SVResetStateLoadFiles );
 
@@ -852,7 +852,10 @@ BOOL SVInspectionProcess::GoOffline()
 
 	m_AsyncProcedure.SetPriority( THREAD_PRIORITY_NORMAL );
 
-	SVSendMessage( this, SVM_GOING_OFFLINE, 0, 0 ); // EB 2005 09 20
+	if ( nullptr != m_pCurrentToolset )
+	{
+		m_pCurrentToolset->goingOffline();
+	}
 
 	if( LastProductGet( SV_OTHER ).ProcessCount() < 1 )
 	{
@@ -1120,7 +1123,7 @@ BOOL SVInspectionProcess::RebuildInspectionInputList()
 			pValueObject->ObjectAttributesSetRef() &= SV_PUBLISHABLE;
 			pValueObject->ResetObject();
 
-			::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT, reinterpret_cast< DWORD_PTR>(pValueObject), 0 );
+			CreateChildObject(pValueObject);
 
 			pIOEntry.m_IOEntryPtr = new SVIOEntryHostStruct;
 			pIOEntry.m_IOEntryPtr->m_pValueObject = pValueObject;
@@ -1536,7 +1539,7 @@ HRESULT SVInspectionProcess::RebuildInspection()
 		}
 		else
 		{
-			if( SVMR_SUCCESS != ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(&m_rgbMainImageObject), 0 ) )
+			if( !CreateChildObject(&m_rgbMainImageObject) )
 			{
 				l_Status = E_FAIL;
 			}
@@ -1549,7 +1552,7 @@ HRESULT SVInspectionProcess::RebuildInspection()
 
 	SVObjectLevelCreateStruct createStruct;
 
-	if( SVMR_SUCCESS != ::SVSendMessage( this, SVM_CREATE_ALL_OBJECTS,reinterpret_cast<DWORD_PTR>(&createStruct), 0 ) )
+	if( createAllObjects(createStruct) )
 	{
 		l_Status = E_FAIL;
 	}
@@ -1667,298 +1670,28 @@ void SVInspectionProcess::SingleRunModeLoop( bool p_Refresh )
 	}
 }
 
-DWORD_PTR SVInspectionProcess::processMessage(DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext)
+bool SVInspectionProcess::resetAllObjects( bool shouldNotifyFriends, bool silentReset )
 {
-	DWORD_PTR DwResult = SVObjectClass::processMessage(DwMessageID, DwMessageValue, DwMessageContext);
-
-	SVInspectionLevelCreateStruct createStruct;
-
-	if (SVMR_NOT_PROCESSED == DwResult )
+	for (size_t l = 0; l < m_PPQInputs.size(); l++)
 	{
-		if( SVMSGID_CREATE_CHILD_OBJECT != ( DwMessageID & SVM_PURE_MESSAGE ) && SVMSGID_CONNECT_CHILD_OBJECT != ( DwMessageID & SVM_PURE_MESSAGE ) )
+		if( !( m_PPQInputs[ l ].empty() ) && nullptr != m_PPQInputs[l].m_IOEntryPtr->m_pValueObject )
 		{
-			for (size_t l = 0; l < m_PPQInputs.size(); l++)
-			{
-				if( !( m_PPQInputs[ l ].empty() ) )
-				{
-					if( SVMSGID_GET_OBJECT_BY_NAME == (DwMessageID & SVM_PURE_MESSAGE)  )
-					{
-						CString strName = (LPCSTR)DwMessageValue;
-						CString strInput;
-
-						strInput = GetName();
-						strInput += ".";
-						strInput += m_PPQInputs[l].m_IOEntryPtr->m_pValueObject->GetName();
-						if( strName == strInput )
-						{
-							DwResult = reinterpret_cast<DWORD_PTR>(m_PPQInputs[l].m_IOEntryPtr->m_pValueObject);
-							break;
-						}// end if
-
-					}// end SVMSGID_GET_OBJECT_BY_NAME
-					else
-					{
-						DwResult = SVSendMessage(m_PPQInputs[l].m_IOEntryPtr->m_pValueObject, DwMessageID, DwMessageValue, DwMessageContext);
-
-						if (SVMR_NOT_PROCESSED != DwResult)
-							break;
-					}// end else
-				}
-			}// end for
+			m_PPQInputs[l].m_IOEntryPtr->m_pValueObject->resetAllObjects(shouldNotifyFriends, silentReset);
+			break;
 		}
-	}// end if
+	}// end for
 
-	if( SVMR_NOT_PROCESSED  == DwResult || 
-		SVM_NOTIFY_FIRST_RESPONDING != ( DwMessageID & SVM_NOTIFY_FIRST_RESPONDING ) )
+	bool Result = ( S_OK == ResetObject() );
+	ASSERT( Result );
+
+	if ( GetToolSet() )
 	{
-		// Try to process message by yourself...
-		DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
-		switch( dwPureMessageID )
-		{
-		case SVMSGID_CREATE_CHILD_OBJECT:
-			{
-				// Send this message to the object owner to create an object.
-				// If the owner object is not created yet, it returns SVMR_NOT_PROCESSED.
-				// Otherwise the owner object sends SVM_CREATE_ALL_OBJECTS to the child object
-				// and returns the result of this message.
-				// ...use second message parameter ( DwMessageValue ) as SVObjectClass* of the child object
-				// ...returns SVMR_SUCCESS, SVMR_NO_SUCCESS or SVMR_NOT_PROCESSED
-				SVObjectClass* pChildObject = reinterpret_cast<SVObjectClass*>(DwMessageValue);
-				//@warning [MZA, 21.07.15] The DWORD_PTR DwMessageValue has to be converted via reinterpret_cast to SVObjectClass*. This is dangerous.
-				//After the reinterpret_cast to SVOjectClass*, to use a kind_of or dynamic_cast does not help for more safety, because it will not check anything.
-				//We should cleanup this and replace processMessage with other methods (see SVO-806)
-				if (nullptr != pChildObject)
-				{
-					long l_LastIndex = 1;
-					SVProductInfoStruct l_Product = LastProductGet( SV_INSPECTION );
-
-					if( !( l_Product.empty() ) )
-					{
-						SVDataManagerHandle l_Handle;
-
-						l_Product.GetResultDataIndex( l_Handle );
-
-						l_LastIndex = l_Handle.GetIndex();
-					}
-
-					// Set first object depth...
-					pChildObject->SetObjectDepthWithIndex( m_objectDepth, l_LastIndex );
-					pChildObject->SetImageDepth( m_lImageDepth );
-
-					createStruct.OwnerObjectInfo = this;
-					createStruct.InspectionObjectInfo = this;
-
-					DWORD_PTR l_Return = SVSendMessage( pChildObject, SVM_CREATE_ALL_OBJECTS, reinterpret_cast<DWORD_PTR>(&createStruct), 0 );
-
-					if( SVMFResetObject == ( DwMessageContext & SVMFResetObject ) )
-					{
-						::SVSendMessage( pChildObject, SVM_RESET_ALL_OBJECTS, 0, 0 );
-					}
-
-					if( SVMFSetDefaultInputs == ( DwMessageContext & SVMFSetDefaultInputs ) )
-					{
-						SetDefaultInputs();
-					}
-
-					if( SVMFResetInspection == ( DwMessageContext & SVMFResetInspection ) )
-					{
-						::SVSendMessage( this, SVM_RESET_ALL_OBJECTS, 0, 0 );
-					}
-
-					return l_Return;
-				}
-				else // Not a Valid Object
-				{
-					return SVMR_NO_SUCCESS;
-				}
-			}
-			break;
-
-		case SVMSGID_CONNECT_CHILD_OBJECT:
-			{
-				// Send this message to the object owner to create an object.
-				// If the owner object is not created yet, it returns SVMR_NOT_PROCESSED.
-				// Otherwise the owner object sends SVM_CREATE_ALL_OBJECTS to the child object
-				// and returns the result of this message.
-				// ...use second message parameter ( DwMessageValue ) as SVObjectClass* of the child object
-				// ...returns SVMR_SUCCESS, SVMR_NO_SUCCESS or SVMR_NOT_PROCESSED
-				SVObjectClass* pChildObject = reinterpret_cast<SVObjectClass*>(DwMessageValue);
-				//@warning [MZA, 21.07.15] The DWORD_PTR DwMessageValue has to be converted via reinterpret_cast to SVObjectClass*. This is dangerous.
-				//After the reinterpret_cast to SVOjectClass*, to use a kind_of or dynamic_cast does not help for more safety, because it will not check anything.
-				//We should cleanup this and replace processMessage with other methods (see SVO-806)
-				createStruct.OwnerObjectInfo = this;
-				createStruct.InspectionObjectInfo = this;
-
-				return SVSendMessage( pChildObject, SVM_CONNECT_ALL_OBJECTS, reinterpret_cast<DWORD_PTR>(&createStruct), 0 );
-			}
-			break;
-
-		case SVMSGID_REPLACE_OBJECT:
-			{
-				// ...use second message parameter ( DwMessageValue ) as objectID ( GUID* )
-				// ...use third message parameter ( DwMessageContext ) as SVObjectClass*
-				// ...returns SVMR_SUCCESS, SVMR_NO_SUCCESS
-				const GUID ObjectID = *( ( GUID* )DwMessageValue);
-				SVObjectClass* pMessageObject = reinterpret_cast<SVObjectClass*>(DwMessageContext);
-				if( nullptr != pMessageObject )
-				{
-					// Kill the Friends
-					// SVObjectClass can have Friends
-					pMessageObject->DestroyFriends();
-
-					// Special code for Duplicates!!
-					SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(ObjectID);
-					if (pObject)
-					{
-						if( pObject == m_pCurrentToolset )
-						{
-							m_pCurrentToolset = nullptr;
-						}
-
-						// Get the Owner
-						SVObjectInfoStruct ownerInfo = pObject->GetOwnerInfo();
-
-						SVObjectClass* pOwner = SVObjectManagerClass::Instance().GetObject(ownerInfo.UniqueObjectID);
-						if (pOwner)
-						{
-							// Ask the owner to kill the imposter!
-							if (SVMR_NO_SUCCESS == ::SVSendMessage(pOwner, SVM_DESTROY_CHILD_OBJECT,reinterpret_cast<DWORD_PTR>(pObject), 0) )
-							{
-								// must be a Friend
-								pOwner->DestroyFriends();
-							}
-						}
-					}
-
-					// Special code for Objects that allocate Friends on SetOwner()
-					pMessageObject->DestroyFriends();
-
-					if( SVObjectManagerClass::Instance().ChangeUniqueObjectID( pMessageObject, ObjectID ) )
-					{
-						SVToolSetClass* l_pToolSet( nullptr );
-
-						l_pToolSet = dynamic_cast< SVToolSetClass* >( pMessageObject );
-
-						if( nullptr != l_pToolSet )
-						{
-							if( nullptr != m_pCurrentToolset )
-							{
-								::SVSendMessage( this, SVM_DESTROY_CHILD_OBJECT,reinterpret_cast<DWORD_PTR>( m_pCurrentToolset), 0 );
-							}
-
-							m_pCurrentToolset = l_pToolSet;
-
-							m_pCurrentToolset->SetObjectOwner( this );
-
-							::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(m_pCurrentToolset), 0 );
-
-							if( nullptr != m_pToolSetConditional )
-							{
-								m_pCurrentToolset->AddFriend( m_pToolSetConditional->GetUniqueObjectID() );
-
-								::SVSendMessage( m_pCurrentToolset, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(m_pToolSetConditional), 0 );
-
-								m_pToolSetConditional = nullptr;
-							}
-						}
-						else
-						{
-							SVConditionalClass* l_pConditional( nullptr );
-
-							l_pConditional = dynamic_cast< SVConditionalClass* >( pMessageObject );
-
-							if( nullptr != l_pConditional )
-							{
-								m_pToolSetConditional = l_pConditional;
-
-								m_pToolSetConditional->SetObjectOwner( this );
-							}
-						}
-
-						return SVMR_SUCCESS;
-					}
-				}
-				return SVMR_NO_SUCCESS;
-			}
-
-		case SVMSGID_DESTROY_CHILD_OBJECT:
-			{
-				SVObjectClass* pObject = dynamic_cast< SVObjectClass* >( ( SVObjectClass* ) DwMessageValue );
-
-				if( pObject == m_pCurrentToolset )
-				{
-					m_pCurrentToolset = nullptr;
-				}
-
-				// if we have an Object
-				if( nullptr != pObject )
-				{
-					SVTaskObjectClass* l_pTaskObject( nullptr );
-
-					l_pTaskObject = dynamic_cast< SVTaskObjectClass* >( pObject );
-
-					if( nullptr != l_pTaskObject )
-					{
-						// Notify the Owner of our inputs that they are not needed anymore
-						l_pTaskObject->Disconnect();
-					}
-
-					// Close the Object
-					pObject->CloseObject();
-
-					// Destroy our Friends
-					pObject->DestroyFriends();
-
-					// Destruct it
-					delete pObject;
-
-					if( SVMFSetDefaultInputs == ( DwMessageContext & SVMFSetDefaultInputs ) )
-					{
-						SetDefaultInputs();
-					}
-
-					if( SVMFResetInspection == ( DwMessageContext & SVMFResetInspection ) )
-					{
-						::SVSendMessage( this, SVM_RESET_ALL_OBJECTS, 0, 0 );
-					}
-
-					return SVMR_SUCCESS;
-				}
-				return SVMR_NO_SUCCESS;
-			}
-
-		case SVMSGID_DISCONNECT_OBJECT_INPUT:
-			{
-				SVInObjectInfoStruct* pInObjectInfo = ( SVInObjectInfoStruct* ) DwMessageValue;
-				if( m_publishList.RemovePublishedEntry( pInObjectInfo->GetInputObjectInfo().UniqueObjectID ) )
-					DwResult =  SVMR_SUCCESS;
-				break;
-			}
-
-		case SVMSGID_RESET_ALL_OBJECTS:
-			{
-				HRESULT l_ResetStatus = ResetObject();
-				if( S_OK != l_ResetStatus )
-				{
-					ASSERT( SUCCEEDED( l_ResetStatus ) );
-
-					DwResult = SVMR_NO_SUCCESS;
-				}
-				else
-				{
-					DwResult = SVMR_SUCCESS;
-				}
-				///SVO725 avoid sending message SVM_RESET_ALL_OBJECTS twice.
-				return DwResult;
-				break;
-			}
-		}
-
-		if ( GetToolSet() )
-			return SVSendMessage( GetToolSet(), DwMessageID, DwMessageValue, DwMessageContext ) | DwResult;
+		return GetToolSet()->resetAllObjects(shouldNotifyFriends, silentReset) && Result;
 	}
-
-	return DwResult;
+	else
+	{
+		return Result;
+	}
 }
 
 BOOL SVInspectionProcess::GetChildObjectByName( LPCTSTR tszChildName, SVObjectClass** ppObject )
@@ -1974,9 +1707,7 @@ BOOL SVInspectionProcess::GetChildObjectByName( LPCTSTR tszChildName, SVObjectCl
 		CString sName = GetCompleteObjectName();
 		if ( sChildName.Left(sName.GetLength()) == sName )
 		{
-			*ppObject = reinterpret_cast<SVObjectClass*>(::SVSendMessage( this, 
-				( SVM_GET_OBJECT_BY_NAME | SVM_PARENT_TO_CHILD ) & ~SVM_NOTIFY_ONLY_THIS, 
-				reinterpret_cast<DWORD_PTR>(tszChildName), 0 ));
+			SVObjectManagerClass::Instance().GetObjectByDottedName(tszChildName, *ppObject);
 			bReturn = ( nullptr != *ppObject );
 		}
 	}
@@ -2047,7 +1778,7 @@ HRESULT SVInspectionProcess::ObserverUpdate( const SVAddTool& p_rData )
 		GetToolSet()->InsertAt( p_rData.m_Index, p_rData.m_pTool );
 
 		// And finally try to create the object...
-		if( SVMR_SUCCESS == ::SVSendMessage( GetToolSet(), SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(p_rData.m_pTool), SVMFResetObject ) ) 
+		if( GetToolSet()->CreateChildObject( p_rData.m_pTool, SVMFResetObject ) ) 
 		{
 			BuildValueObjectMap();
 
@@ -2078,39 +1809,18 @@ HRESULT SVInspectionProcess::ObserverUpdate( const SVDeleteTool& p_rData )
 	if( nullptr != p_rData.m_pTool )
 	{
 		// Delete the Tool Object
-		::SVSendMessage( GetToolSet(), SVM_DESTROY_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(p_rData.m_pTool), 0 );
+		GetToolSet()->DestroyChildObject(p_rData.m_pTool);
 
 		// Refresh Lists ( inputs,outputs,results,published )
 		SetDefaultInputs();
 
-		// Create Child closed object
-		::SVSendMessage( this, SVM_CREATE_ALL_OBJECTS, 0, 0 );
+		//@WARNING[MZA][7.50][02.11.2016] I think to call the next comment is not necessary and do nothing by deleting a tool.
+		//Create Child closed object
+		SVObjectLevelCreateStruct createStruct;
+		createAllObjects(createStruct);
 
 		// Reset all objects
-		::SVSendMessage( this, SVM_RESET_ALL_OBJECTS, 0, 0 );
-
-		BuildValueObjectMap();
-	}
-	else
-	{
-		l_Status = E_FAIL;
-	}
-
-	return l_Status;
-}
-
-HRESULT SVInspectionProcess::ObserverUpdate( const SVRenameObject& p_rData )
-{
-	HRESULT l_Status = S_OK;
-
-	SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject( p_rData.m_ObjectId );
-
-	if( nullptr != l_pObject )
-	{
-		::SVSendMessage( this, SVM_OBJECT_RENAMED,
-			reinterpret_cast <DWORD_PTR> ( static_cast <SVObjectClass*> (l_pObject) ),
-			reinterpret_cast<DWORD_PTR>( static_cast<LPCTSTR>(p_rData.m_OldName.c_str())) );
-
+		resetAllObjects(true, false);
 		BuildValueObjectMap();
 	}
 	else
@@ -2272,7 +1982,7 @@ namespace
 
 BOOL SVInspectionProcess::ProcessInputRequests( long p_DataIndex, SVResetItemEnum &p_reResetItem, SVStdMapSVToolClassPtrSVInspectionProcessResetStruct &p_rsvToolMap )
 {
-	BOOL l_bRet = TRUE;
+	bool bRet = true;
 	long l;
 
 	SVInputRequestInfoStructPtr l_pInputRequest;
@@ -2297,7 +2007,7 @@ BOOL SVInspectionProcess::ProcessInputRequests( long p_DataIndex, SVResetItemEnu
 		{
 			if( !m_InputRequests.RemoveHead( &l_pInputRequest ) )
 			{
-				l_bRet = FALSE;
+				bRet = false;
 
 				break;
 			}// end if
@@ -2575,8 +2285,8 @@ BOOL SVInspectionProcess::ProcessInputRequests( long p_DataIndex, SVResetItemEnu
 		{
 			if( SVResetItemIP == p_reResetItem )
 			{
-				l_bRet &= SVMR_SUCCESS == ::SVSendMessage( this, SVM_RESET_ALL_OBJECTS, 0, 0 );
-				l_bRet &= S_OK == m_pCurrentToolset->ClearResetCounts();
+				bRet &= resetAllObjects(true, false);
+				bRet &= S_OK == m_pCurrentToolset->ClearResetCounts();
 			}
 			else
 			{
@@ -2592,7 +2302,7 @@ BOOL SVInspectionProcess::ProcessInputRequests( long p_DataIndex, SVResetItemEnu
 						{
 							if( p_rsvToolMap[ l_psvTool ].m_svObjectSet.empty() )
 							{
-								l_bRet &= SVMR_SUCCESS == ::SVSendMessage( l_psvTool, SVM_RESET_ALL_OBJECTS, 0, 0 );
+								bRet &= l_psvTool->resetAllObjects(true, false);
 							}
 							else
 							{
@@ -2604,7 +2314,14 @@ BOOL SVInspectionProcess::ProcessInputRequests( long p_DataIndex, SVResetItemEnu
 								{
 									SVObjectClass *l_psvObject = *l_oIter;
 
-									l_bRet &= SVMR_SUCCESS == ::SVSendMessage( l_psvObject, SVM_RESET_ALL_OBJECTS, 0, 0 );
+									if (nullptr != l_psvObject)
+									{
+										bRet &= l_psvObject->resetAllObjects(true, false);
+									}
+									else
+									{
+										bRet = false;
+									}
 
 									++l_oIter;
 								}
@@ -2630,7 +2347,7 @@ BOOL SVInspectionProcess::ProcessInputRequests( long p_DataIndex, SVResetItemEnu
 		DebugBreak();
 	}
 
-	return l_bRet;
+	return bRet;
 }
 
 BOOL SVInspectionProcess::ProcessInputImageRequests( SVProductInfoStruct *p_psvProduct )
@@ -3389,7 +3106,7 @@ BOOL SVInspectionProcess::CreateObject( SVObjectLevelCreateStruct* PCreateStruct
 	createStruct.OwnerObjectInfo = this;
 	createStruct.InspectionObjectInfo	= this;
 
-	l_bOk = l_bOk && SVMR_SUCCESS == ::SVSendMessage( m_pCurrentToolset, SVM_CREATE_ALL_OBJECTS, reinterpret_cast<DWORD_PTR>(&createStruct), 0 );
+	l_bOk = l_bOk && m_pCurrentToolset->createAllObjects(createStruct);
 
 	m_isCreated = l_bOk;
 
@@ -3398,7 +3115,7 @@ BOOL SVInspectionProcess::CreateObject( SVObjectLevelCreateStruct* PCreateStruct
 
 HRESULT SVInspectionProcess::ResetObject()
 {
-	HRESULT l_hrOk = SVObjectClass::ResetObject();
+	HRESULT l_hrOk = S_OK;
 
 	if( IsColorCamera() )
 	{
@@ -3408,7 +3125,7 @@ HRESULT SVInspectionProcess::ResetObject()
 		}
 	}
 
-	if( SVMR_SUCCESS != ::SVSendMessage( m_pCurrentToolset, SVM_RESET_ALL_OBJECTS, 0, 0 ) )
+	if( nullptr == m_pCurrentToolset || !m_pCurrentToolset->resetAllObjects(true, false) )
 	{
 		l_hrOk = S_FALSE;
 	}
@@ -3737,7 +3454,7 @@ void SVInspectionProcess::SetDefaultInputs()
 		m_pCurrentToolset->GetAllInputObjects();
 	}// end if
 
-	::SVSendMessage( this, SVM_CONNECT_ALL_INPUTS, 0, 0 );
+	ConnectAllInputs();
 
 	// Setup Connections
 	if( m_pCurrentToolset )
@@ -4687,3 +4404,240 @@ void SVInspectionProcess::getToolMessages( SvStl::MessageContainerInserter& rIns
 	}
 }
 
+bool SVInspectionProcess::DisconnectObjectInput( SVInObjectInfoStruct* pObjectInInfo )
+{
+	bool Result = m_publishList.RemovePublishedEntry( pObjectInInfo->GetInputObjectInfo().UniqueObjectID );
+
+	if ( nullptr != GetToolSet())
+	{
+		return GetToolSet()->DisconnectObjectInput(pObjectInInfo);
+	}
+	return Result;
+}
+
+bool SVInspectionProcess::createAllObjects( const SVObjectLevelCreateStruct& rCreateStructure )
+{
+	bool Result = __super::createAllObjects( rCreateStructure );
+
+	if ( nullptr != GetToolSet())
+	{
+		Result &= GetToolSet()->createAllObjects(rCreateStructure);
+	}
+	return Result;
+}
+
+bool SVInspectionProcess::CreateChildObject( SVObjectClass* pChildObject, DWORD context )
+{
+	if (nullptr != pChildObject)
+	{
+		long l_LastIndex = 1;
+		SVProductInfoStruct l_Product = LastProductGet( SV_INSPECTION );
+
+		if( !( l_Product.empty() ) )
+		{
+			SVDataManagerHandle l_Handle;
+
+			l_Product.GetResultDataIndex( l_Handle );
+
+			l_LastIndex = l_Handle.GetIndex();
+		}
+
+		// Set first object depth...
+		pChildObject->SetObjectDepthWithIndex( m_objectDepth, l_LastIndex );
+		pChildObject->SetImageDepth( m_lImageDepth );
+
+		SVInspectionLevelCreateStruct createStruct;
+		createStruct.OwnerObjectInfo = this;
+		createStruct.InspectionObjectInfo = this;
+
+		bool Return = pChildObject->createAllObjects(createStruct);
+
+		if( SVMFResetObject == ( context & SVMFResetObject ) )
+		{
+			pChildObject->resetAllObjects(true, false);
+		}
+
+		if( SVMFSetDefaultInputs == ( context & SVMFSetDefaultInputs ) )
+		{
+			SetDefaultInputs();
+		}
+
+		if( SVMFResetInspection == ( context & SVMFResetInspection ) )
+		{
+			resetAllObjects(true, false);
+		}
+
+		return Return;
+	}
+	else // Not a Valid Object
+	{
+		return false;
+	}
+}
+
+void SVInspectionProcess::ConnectObject( const SVObjectLevelCreateStruct& rCreateStructure )
+{
+	__super::ConnectObject( rCreateStructure );
+
+	if ( nullptr != GetToolSet())
+	{
+		GetToolSet()->ConnectObject(rCreateStructure);
+	}
+}
+
+bool SVInspectionProcess::DestroyChildObject(SVObjectClass* pChild)
+{
+	if( pChild == m_pCurrentToolset )
+	{
+		m_pCurrentToolset = nullptr;
+	}
+
+	// if we have an Object
+	if( nullptr != pChild )
+	{
+		SVTaskObjectClass* pTaskObject = dynamic_cast< SVTaskObjectClass* >( pChild );
+
+		if( nullptr != pTaskObject )
+		{
+			// Notify the Owner of our inputs that they are not needed anymore
+			pTaskObject->Disconnect();
+		}
+
+		// Close the Object
+		pChild->CloseObject();
+
+		// Destroy our Friends
+		pChild->DestroyFriends();
+
+		// Destruct it
+		delete pChild;
+
+		return true;
+	}
+	return false;
+}
+
+SvOi::IObjectClass* SVInspectionProcess::getFirstObject(const SVObjectTypeInfoStruct& rObjectTypeInfo, bool useFriends, const SvOi::IObjectClass* pRequestor) const
+{
+	SvOi::IObjectClass* retValue = SVObjectClass::getFirstObject(rObjectTypeInfo, useFriends, pRequestor);
+
+	if ( nullptr != GetToolSet() && nullptr == retValue)
+	{
+		return GetToolSet()->getFirstObject(rObjectTypeInfo, useFriends, pRequestor);
+	}
+	return retValue;
+}
+
+void SVInspectionProcess::OnObjectRenamed(const SVObjectClass& rRenamedObject, const SVString& rOldName)
+{
+	if ( GetToolSet() )
+	{
+		GetToolSet()->OnObjectRenamed(rRenamedObject, rOldName);
+	}
+}
+
+bool SVInspectionProcess::ConnectAllInputs()
+{
+	if ( GetToolSet() )
+	{
+		return GetToolSet()->ConnectAllInputs();
+	}
+	return false;
+}
+
+bool SVInspectionProcess::replaceObject(SVObjectClass* pObject, const GUID& rNewGuid)
+{
+	if( nullptr != pObject )
+	{
+		// Kill the Friends
+		// SVObjectClass can have Friends
+		pObject->DestroyFriends();
+
+		// Special code for Duplicates!!
+		SVObjectClass* pDuplicateObject = SVObjectManagerClass::Instance().GetObject(rNewGuid);
+		if (pDuplicateObject)
+		{
+			if( pDuplicateObject == m_pCurrentToolset )
+			{
+				m_pCurrentToolset = nullptr;
+			}
+
+			// Get the Owner
+			SVObjectInfoStruct ownerInfo = pDuplicateObject->GetOwnerInfo();
+
+			SVObjectClass* pOwner = SVObjectManagerClass::Instance().GetObject(ownerInfo.UniqueObjectID);
+			if (pOwner)
+			{
+				// Ask the owner to kill the imposter!
+				bool isDestroyed = false;
+				if (this == pOwner)
+				{
+					isDestroyed = DestroyChildObject(pDuplicateObject);
+				}
+				else
+				{
+					SVTaskObjectListClass* pTaskListOwner = dynamic_cast<SVTaskObjectListClass*>(pOwner);
+					SVTaskObjectListClass* pTaskList = dynamic_cast<SVTaskObjectListClass*>(pDuplicateObject);
+					if (nullptr != pTaskListOwner)
+					{
+						isDestroyed = pTaskList->DestroyChildObject(pTaskList);
+					}
+				}
+				if (!isDestroyed)
+				{
+					// must be a Friend
+					pOwner->DestroyFriends();
+				}
+			}
+		}
+
+		// Special code for Objects that allocate Friends on SetOwner()
+		pObject->DestroyFriends();
+
+		if( SVObjectManagerClass::Instance().ChangeUniqueObjectID( pObject, rNewGuid ) )
+		{
+			SVToolSetClass* l_pToolSet( nullptr );
+
+			l_pToolSet = dynamic_cast< SVToolSetClass* >( pObject );
+
+			if( nullptr != l_pToolSet )
+			{
+				if( nullptr != m_pCurrentToolset )
+				{
+					DestroyChildObject( m_pCurrentToolset );
+				}
+
+				m_pCurrentToolset = l_pToolSet;
+
+				m_pCurrentToolset->SetObjectOwner( this );
+
+				CreateChildObject(m_pCurrentToolset);
+
+				if( nullptr != m_pToolSetConditional )
+				{
+					m_pCurrentToolset->AddFriend( m_pToolSetConditional->GetUniqueObjectID() );
+
+					m_pCurrentToolset->CreateChildObject(m_pToolSetConditional);
+
+					m_pToolSetConditional = nullptr;
+				}
+			}
+			else
+			{
+				SVConditionalClass* l_pConditional( nullptr );
+
+				l_pConditional = dynamic_cast< SVConditionalClass* >( pObject );
+
+				if( nullptr != l_pConditional )
+				{
+					m_pToolSetConditional = l_pConditional;
+
+					m_pToolSetConditional->SetObjectOwner( this );
+				}
+			}
+
+			return true;
+		}
+	}
+	return false;
+}

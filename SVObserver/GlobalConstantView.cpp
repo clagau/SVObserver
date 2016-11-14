@@ -352,9 +352,10 @@ void GlobalConstantView::editGlobalConstant( const SvOi::GlobalConstantData& rGl
 				SVInspectionProcessPtrList::iterator Iter( Inspections.begin() );
 				for( ; Inspections.end() != Iter; ++Iter )
 				{
-					::SVSendMessage( *Iter, SVM_OBJECT_RENAMED,
-						reinterpret_cast <DWORD_PTR> ( static_cast <SVObjectClass*> (pGlobalObject) ),
-						reinterpret_cast<DWORD_PTR>( static_cast<LPCTSTR>( OldName.c_str() )) );
+					if (nullptr != (*Iter) && nullptr != pGlobalObject)
+					{
+						(*Iter)->OnObjectRenamed(*pGlobalObject, OldName);
+					}
 				}
 			}
 		}

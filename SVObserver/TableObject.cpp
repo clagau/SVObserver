@@ -78,56 +78,39 @@ SVObjectClass* TableObject::getNumberOfRowObject() const
 	SVLongValueObjectClass* pObject = const_cast<SVLongValueObjectClass*>(&m_NumberOfRows);
 	return pObject; 
 }
+
+SVObjectClass* TableObject::OverwriteEmbeddedObject(const GUID& rUniqueID, const GUID& rEmbeddedID)
+{
+	//check if it is an embeddedID from an column-Value object. This will not generated automatically. Create it before it will be overwrite
+	bool isColumnValue = false;
+	for (int i=0; i < c_maxTableColumn; ++i)
+	{
+		if (TableColumnValueObjectGuid[i] == rEmbeddedID)
+		{
+			isColumnValue = true;
+		}
+	}
+	if (isColumnValue)
+	{
+		DoubleSortValueObject* pObject = nullptr;
+		// Construct new object...
+		SVObjectManagerClass::Instance().ConstructObject(DoubleSortValueObjectGuid, pObject);
+		RegisterEmbeddedObject( pObject, rEmbeddedID, _T(""), true, SVResetItemTool );
+		m_ValueList.push_back(pObject);
+	}
+
+	return __super::OverwriteEmbeddedObject(rUniqueID, rEmbeddedID);
+}
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
-DWORD_PTR TableObject::processMessage(DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext)
-{
-	DWORD_PTR DwResult = SVMR_NOT_PROCESSED;
-	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
-
-	// Try to process message by yourself...
-	// ( if necessary process here the incoming messages )
-	switch (dwPureMessageID)
-	{
-	case SVMSGID_OVERWRITE_OBJECT:
-		{
-			//check if it is an embeddedID from an column-Value object. This will not generated automatically. Create it before it will be overwrite
-			const GUID embeddedID = * ((GUID*) DwMessageContext);
-			bool isColumnValue = false;
-			for (int i=0; i < c_maxTableColumn; ++i)
-			{
-				if (TableColumnValueObjectGuid[i] == embeddedID)
-				{
-					isColumnValue = true;
-				}
-			}
-			if (isColumnValue)
-			{
-				DoubleSortValueObject* pObject = nullptr;
-				// Construct new object...
-				SVObjectManagerClass::Instance().ConstructObject(DoubleSortValueObjectGuid, pObject);
-				RegisterEmbeddedObject( pObject, embeddedID, _T(""), true, SVResetItemTool );
-				m_ValueList.push_back(pObject);
-			}
-			//Don't change DwResult, because SVTaskObjectClass will and have to process the overwrite command.
-			break;
-		}
-	}
-	if (DwResult == SVMR_NOT_PROCESSED)
-	{
-		DwResult = SVTaskObjectClass::processMessage(DwMessageID, DwMessageValue, DwMessageContext);
-	}
-	return DwResult;
-}
-
 void TableObject::createColumnObject(SVGUID embeddedID, LPCTSTR name, int arraySize)
 {
 	DoubleSortValueObject* pObject = nullptr;
 	// Construct new object...
 	SVObjectManagerClass::Instance().ConstructObject(DoubleSortValueObjectGuid, pObject);
 
-	if( ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(pObject), 0 ) == SVMR_SUCCESS )
+	if( CreateChildObject(pObject) )
 	{
 		RegisterEmbeddedObject( pObject, embeddedID, name, true, SVResetItemTool );
 		pObject->SetArraySize(arraySize);

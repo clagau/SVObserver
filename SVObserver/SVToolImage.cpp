@@ -109,7 +109,7 @@ void SVImageToolClass::init()
 
 		// Ensure input image gets connected to preceeding image output 
 		// ( SVImageArithmeticClass image output !!! )
-		::SVSendMessage( pOperatorList, SVM_CONNECT_ALL_INPUTS, 0, 0 );
+		pOperatorList->ConnectAllInputs();
 	}
 
 	ToolSizeAdjustTask::AddToFriendlist(this, true,true,false);
@@ -211,7 +211,7 @@ BOOL SVImageToolClass::SetDefaultFormulas()
 	SVObjectTypeInfoStruct lutEquationInfo;
 	lutEquationInfo.ObjectType	= SVEquationObjectType;
 	lutEquationInfo.SubType		= SVLUTEquationObjectType;
-	SVLUTEquationClass* pLUTEquation = reinterpret_cast<SVLUTEquationClass*>(::SVSendMessage( this, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&lutEquationInfo) ));
+	SVLUTEquationClass* pLUTEquation = dynamic_cast<SVLUTEquationClass*>(getFirstObject(lutEquationInfo));
 	if( pLUTEquation )
 	{
 		bRetVal = pLUTEquation->SetDefaultFormula() && bRetVal;

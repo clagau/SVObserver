@@ -124,7 +124,8 @@ HRESULT SVObjectBuilder::CreateObject(const GUID& classID, const GUID& uniqueID,
 			SVObjectManagerClass::Instance().GetObjectByIdentifier(ownerUniqueID, pOwnerObject);
 			if (pOwnerObject)
 			{
-				if (::SVSendMessage(pOwnerObject, SVM_REPLACE_OBJECT, reinterpret_cast<DWORD_PTR>(&uniqueID), reinterpret_cast<DWORD_PTR>(pObject)) != SVMR_SUCCESS)
+				// Try to replace or add object...
+				if( !pOwnerObject->replaceObject(pObject, uniqueID) )
 				{
 					ASSERT(false);
 #if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
@@ -133,7 +134,7 @@ HRESULT SVObjectBuilder::CreateObject(const GUID& classID, const GUID& uniqueID,
 					delete pObject;
 
 #if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
-					TRACE("SVObjectBuilder::CreateObject - SVM_REPLACE_OBJECT was not successfully");
+					TRACE("SVObjectBuilder::CreateObject - replaceObject was not successfully");
 #endif
 					hr = S_FALSE;
 				}
@@ -231,8 +232,7 @@ HRESULT SVObjectBuilder::CreateFriendObject(const GUID& classID, const GUID& uni
 			BOOL Result = pOwnerObject->AddFriend(friendId, rAddPreGuid);
 			if (Result)
 			{
-				
-				::SVSendMessage(pOwnerObject, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(pObject), 0);
+				pOwnerObject->CreateChildObject(pObject);
 			}
 			else
 			{
@@ -250,7 +250,7 @@ HRESULT SVObjectBuilder::CreateFriendObject(const GUID& classID, const GUID& uni
 	return hr;
 }
 
-HRESULT SVObjectBuilder::CreateEmbeddedObject(const GUID& embeddedID, const GUID& uniqueID, const SVString& name, const SVString& objectName, const GUID& ownerUniqueID)
+HRESULT SVObjectBuilder::OverwriteEmbeddedObject(const GUID& embeddedID, const GUID& uniqueID, const SVString& objectName, const GUID& ownerUniqueID)
 {
 	HRESULT hr = S_OK;
 
@@ -264,8 +264,8 @@ HRESULT SVObjectBuilder::CreateEmbeddedObject(const GUID& embeddedID, const GUID
 		
 		if(nullptr != pOwnerObject)
 		{
-
-			if (pObject = (SVObjectClass *)::SVSendMessage(pOwnerObject, SVM_OVERWRITE_OBJECT, reinterpret_cast<DWORD_PTR>(&uniqueID), reinterpret_cast<DWORD_PTR>(&embeddedID)))
+			pObject = pOwnerObject->OverwriteEmbeddedObject(uniqueID, embeddedID);
+			if (nullptr != pObject)
 			{
 				pObject->SetName(objectName.c_str());
 			}
@@ -379,7 +379,7 @@ HRESULT SVObjectBuilder::SetObjectValue(const GUID& ownerID, const GUID& objectI
 		SVObjectAttributeClass dataObject;
 		BuildDataArray(dataObject, itemName, values, dstDataType);
 
-		if (::SVSendMessage(pOwnerObject, SVM_SET_OBJECT_VALUE, reinterpret_cast<DWORD_PTR>(&objectID), reinterpret_cast<DWORD_PTR>(&dataObject)) != SVMR_SUCCESS)
+		if( S_OK != pOwnerObject->SetValuesForAnObject(objectID, &dataObject) )
 		{
 			SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_ObjectBuilder_SetObjectValueError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10248 );
@@ -398,8 +398,8 @@ HRESULT SVObjectBuilder::SetInputs(const GUID& objectID, const SVNameGuidList& g
 	if (pObject)
 	{
 		SVInputInfoListClass inputInfoList;
-		::SVSendMessage(pObject, SVM_GET_INPUT_INTERFACE, reinterpret_cast<DWORD_PTR>(&inputInfoList), 0);
-
+		pObject->GetInputInterface(inputInfoList, false );
+		
 		// reattach inputs
 		for( int i = 0; S_OK == hr && i < inputInfoList.GetSize(); i++ )
 		{

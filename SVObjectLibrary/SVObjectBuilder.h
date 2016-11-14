@@ -32,7 +32,13 @@ public:
 	/// \returns HRESULT
 	static HRESULT CreateFriendObject(const GUID& classID, const GUID& uniqueID, const SVString& objectName, const GUID& ownerUniqueID, const GUID& rAddPreGuid = SV_GUID_NULL);
 	static HRESULT DestroyFriends(const GUID& objectID);
-	static HRESULT CreateEmbeddedObject(const GUID& embeddedID, const GUID& uniqueID, const SVString& name, const SVString& objectName, const GUID& ownerUniqueID);
+	/// Search embedded object in owner and change Guid and name
+	/// \param embeddedID [in] Embedded Id of the object to overwrite
+	/// \param uniqueID [in] New Guid of the object
+	/// \param objectName [in] New name of the object
+	/// \param ownerUniqueID [in] Guid of the owner
+	/// \returns HRESULT
+	static HRESULT OverwriteEmbeddedObject(const GUID& embeddedID, const GUID& uniqueID, const SVString& objectName, const GUID& ownerUniqueID);
 	static HRESULT SetObjectValue(const GUID& ownerID, const GUID& objectID, const SVString& itemName, const _variant_t& value, SVObjectScriptDataObjectTypeEnum dstDataType);
 	static HRESULT SetObjectValue(const GUID& ownerID, const GUID& objectID, const SVString& itemName, const SVVariantList& values, SVObjectScriptDataObjectTypeEnum dstDataType);
 	static HRESULT SetInputs(const GUID& objectID, const SVGuidList& list);

@@ -219,7 +219,7 @@ bool SVTADlgArchiveImagePage::QueryAllowExit()
 	}
 	HRESULT hRet = m_pTool->ValidateArchiveTool();
 
-	SVSendMessage( m_pTool, SVM_RESET_ALL_OBJECTS, 0, 0 );
+	m_pTool->resetAllObjects(true, false);
 
 	return true;
 }

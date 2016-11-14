@@ -63,18 +63,14 @@ BOOL SVObjectAppClass::CreateObject(SVObjectLevelCreateStruct* PCreateStruct)
 // This method is here so that this class can obtain access to and hold pointers for the
 // Inspection, Tool, and/or Analyzer (via UpdateConnections)
 ////////////////////////////////////////////////////////////////////////////////////////
-HRESULT SVObjectAppClass::ConnectObject(SVObjectLevelCreateStruct* PCreateStruct)
+void SVObjectAppClass::ConnectObject(const SVObjectLevelCreateStruct& rCreateStruct)
 {
-	HRESULT l_Status = S_OK;
-
-	if( nullptr != PCreateStruct && PCreateStruct->OwnerObjectInfo.PObject != this && PCreateStruct->OwnerObjectInfo.UniqueObjectID != GetUniqueObjectID() )
+	if( rCreateStruct.OwnerObjectInfo.PObject != this && rCreateStruct.OwnerObjectInfo.UniqueObjectID != GetUniqueObjectID() )
 	{
-		UpdateConnections( PCreateStruct );
+		UpdateConnections( &rCreateStruct );
 	
-		l_Status = SVObjectClass::ConnectObject( PCreateStruct );
+		SVObjectClass::ConnectObject( rCreateStruct );
 	}
-	
-	return l_Status;	
 }
 
 SVInspectionProcess* SVObjectAppClass::GetInspection() const
@@ -93,97 +89,14 @@ SVAnalyzerClass *SVObjectAppClass::GetAnalyzer() const
 }
 
 #pragma region virtual methods (IObjectAppClass)
-DWORD_PTR SVObjectAppClass::CreateChildObject(SvOi::IObjectClass& rChildObject, DWORD context)
+bool SVObjectAppClass::CreateChildObject(SvOi::IObjectClass& rChildObject, DWORD context)
 {
 	SVObjectClass* pObject = dynamic_cast<SVObjectClass*>(&rChildObject);
 	return CreateChildObject(pObject, context);
 }
 #pragma endregion virtual methods (IObjectAppClass)
 
-DWORD_PTR SVObjectAppClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
-{
-	DWORD_PTR DwResult = SVMR_NOT_PROCESSED;
-
-	// Try to process message by yourself...
-	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
-	switch( dwPureMessageID )
-	{
-		case SVMSGID_CREATE_CHILD_OBJECT:
-		{
-			SVObjectClass* pChildObject = ( SVObjectClass* ) DwMessageValue;
-			return CreateChildObject(pChildObject, static_cast<DWORD>(DwMessageContext));
-		}
-
-		case SVMSGID_CONNECT_CHILD_OBJECT:
-		{
-			// ...use second message parameter ( DwMessageValue ) as SVObjectClass* of the child object
-			SVObjectClass* pChildObject = reinterpret_cast<SVObjectClass*>(DwMessageValue);
-
-			SVAnalyzerLevelCreateStruct createStruct;
-
-			createStruct.OwnerObjectInfo = this;
-			createStruct.AnalyzerObjectInfo = GetAnalyzer();
-			createStruct.ToolObjectInfo	= GetTool();
-			createStruct.InspectionObjectInfo	= GetInspection();
-
-			return SVSendMessage( pChildObject, SVM_CONNECT_ALL_OBJECTS, reinterpret_cast<DWORD_PTR>(&createStruct), 0 );
-		}
-	}
-
-	return( SVObjectClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext ) | DwResult );
-}
-
-void SVObjectAppClass::UpdateConnections( SVObjectLevelCreateStruct* PCreateStruct )
-{
-	m_psvAnalyzer = dynamic_cast<SVAnalyzerClass *>(this);
-
-	if( nullptr == m_psvAnalyzer )
-	{
-		SVAnalyzerLevelCreateStruct *l_psvTemp = dynamic_cast<SVAnalyzerLevelCreateStruct *>(PCreateStruct);
-
-		if( nullptr != l_psvTemp )
-		{
-			m_psvAnalyzer = dynamic_cast<SVAnalyzerClass *>(l_psvTemp->AnalyzerObjectInfo.PObject);
-		}
-	}
-	
-	m_psvTool = dynamic_cast<SVToolClass *>(this);
-
-	if( nullptr == m_psvTool )
-	{
-		SVToolLevelCreateStruct *l_psvTemp = dynamic_cast<SVToolLevelCreateStruct *>(PCreateStruct);
-
-		if( nullptr != l_psvTemp )
-		{
-			m_psvTool = dynamic_cast<SVToolClass *>(l_psvTemp->ToolObjectInfo.PObject);
-		}
-	}
-	
-	m_psvInspection = dynamic_cast<SVInspectionProcess*> (this);
-
-	if( nullptr == m_psvInspection )
-	{
-		SVInspectionLevelCreateStruct *l_psvTemp = dynamic_cast<SVInspectionLevelCreateStruct *>(PCreateStruct);
-
-		if( nullptr != l_psvTemp )
-		{
-			m_psvInspection = dynamic_cast<SVInspectionProcess*> (l_psvTemp->InspectionObjectInfo.PObject);
-		}
-	}
-}
-
-DWORD_PTR SVObjectAppClass::createAllObjectsFromChild( SVObjectClass* pChildObject )
-{
-	SVAnalyzerLevelCreateStruct createStruct;
-	createStruct.OwnerObjectInfo = this;
-	createStruct.AnalyzerObjectInfo = GetAnalyzer();
-	createStruct.ToolObjectInfo	= GetTool();
-	createStruct.InspectionObjectInfo	= GetInspection();
-
-	return SVSendMessage( pChildObject, SVM_CREATE_ALL_OBJECTS, reinterpret_cast<DWORD_PTR>(&createStruct), 0 );
-}
-
-DWORD_PTR SVObjectAppClass::CreateChildObject( SVObjectClass* pChildObject, DWORD context )
+bool SVObjectAppClass::CreateChildObject(SVObjectClass* pChildObject, DWORD context)
 {
 	if( IsCreated() && nullptr != pChildObject )
 	{
@@ -206,11 +119,11 @@ DWORD_PTR SVObjectAppClass::CreateChildObject( SVObjectClass* pChildObject, DWOR
 		pChildObject->SetObjectDepthWithIndex( m_objectDepth, l_LastIndex );
 		pChildObject->SetImageDepth( m_lImageDepth );
 
-		DWORD_PTR l_Return = createAllObjectsFromChild( pChildObject );
+		bool l_Return = createAllObjectsFromChild( *pChildObject );
 
 		if( ( context & SVMFResetObject ) == SVMFResetObject )
 		{
-			::SVSendMessage( pChildObject, SVM_RESET_ALL_OBJECTS, 0, 0 );
+			pChildObject->resetAllObjects(true, false);
 		}
 
 		if( ( context & SVMFSetDefaultInputs ) == SVMFSetDefaultInputs )
@@ -220,12 +133,62 @@ DWORD_PTR SVObjectAppClass::CreateChildObject( SVObjectClass* pChildObject, DWOR
 
 		if( ( context & SVMFResetInspection ) == SVMFResetInspection )
 		{
-			::SVSendMessage( GetInspection(), SVM_RESET_ALL_OBJECTS, 0, 0 );
+			GetInspection()->resetAllObjects(true, false);
 		}
 
 		return l_Return;
 	}
 
-	return SVMR_NOT_PROCESSED;
+	return false;
+}
+
+void SVObjectAppClass::UpdateConnections( const SVObjectLevelCreateStruct* PCreateStruct )
+{
+	m_psvAnalyzer = dynamic_cast<SVAnalyzerClass *>(this);
+
+	if( nullptr == m_psvAnalyzer )
+	{
+		const SVAnalyzerLevelCreateStruct *l_psvTemp = dynamic_cast<const SVAnalyzerLevelCreateStruct *>(PCreateStruct);
+
+		if( nullptr != l_psvTemp )
+		{
+			m_psvAnalyzer = dynamic_cast<SVAnalyzerClass *>(l_psvTemp->AnalyzerObjectInfo.PObject);
+		}
+	}
+	
+	m_psvTool = dynamic_cast<SVToolClass *>(this);
+
+	if( nullptr == m_psvTool )
+	{
+		const SVToolLevelCreateStruct *l_psvTemp = dynamic_cast<const SVToolLevelCreateStruct *>(PCreateStruct);
+
+		if( nullptr != l_psvTemp )
+		{
+			m_psvTool = dynamic_cast<SVToolClass *>(l_psvTemp->ToolObjectInfo.PObject);
+		}
+	}
+	
+	m_psvInspection = dynamic_cast<SVInspectionProcess*> (this);
+
+	if( nullptr == m_psvInspection )
+	{
+		const SVInspectionLevelCreateStruct *l_psvTemp = dynamic_cast<const SVInspectionLevelCreateStruct *>(PCreateStruct);
+
+		if( nullptr != l_psvTemp )
+		{
+			m_psvInspection = dynamic_cast<SVInspectionProcess*> (l_psvTemp->InspectionObjectInfo.PObject);
+		}
+	}
+}
+
+bool SVObjectAppClass::createAllObjectsFromChild( SVObjectClass& rChildObject )
+{
+	SVAnalyzerLevelCreateStruct createStruct;
+	createStruct.OwnerObjectInfo = this;
+	createStruct.AnalyzerObjectInfo = GetAnalyzer();
+	createStruct.ToolObjectInfo	= GetTool();
+	createStruct.InspectionObjectInfo	= GetInspection();
+
+	return rChildObject.createAllObjects(createStruct);
 }
 

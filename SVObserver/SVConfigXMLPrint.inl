@@ -992,8 +992,7 @@ inline void SVConfigXMLPrint::WriteTool(Writer writer, SVToolClass * ts) const
 			}
 		}
 
-		SVImageInfoClass* pImageInfo = reinterpret_cast <SVImageInfoClass*> ( ::SVSendMessage(pTool, SVM_GETFIRST_IMAGE_INFO, 0, 0) );
-		
+		const SVImageInfoClass* pImageInfo = pTool->getFirstImageInfo();
 		if (pImageInfo)
 		{
 			POINT l_oPoint;

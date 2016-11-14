@@ -284,8 +284,8 @@ HRESULT LinkedValue::SetValueAt( int Bucket, int Index, const CString& rValue )
 		Result = SVVariantValueObjectClass::SetValueAt( Bucket, Index, m_LinkedUid.ToString().c_str() );
 		if (S_OK == Result)
 		{
-			DWORD_PTR messageReturn = ConnectInput();
-			ASSERT( SVMR_SUCCESS == messageReturn );
+			bool messageReturn = ConnectInput();
+			ASSERT( messageReturn );
 			//To check that the linked value has no circular reference we do a GetValue
 			_variant_t Value;
 			Result = GetValueAt( Bucket, Index, Value.GetVARIANT() );
@@ -301,12 +301,13 @@ HRESULT LinkedValue::SetValueAt( int Bucket, int Index, const CString& rValue )
 	return Result;
 }
 
-void LinkedValue::DisconnectObject( const SVObjectClass* const pObject )
+bool LinkedValue::DisconnectObjectInput( SVInObjectInfoStruct* pObjectInInfo )
 {
-	if ( pObject == m_pLinkedObject )
+	if ( nullptr != pObjectInInfo && pObjectInInfo->GetInputObjectInfo().PObject == m_pLinkedObject )
 	{
 		DisconnectInput();
 	}
+	return __super::DisconnectObjectInput(pObjectInInfo);
 }
 
 void LinkedValue::UpdateLinkedName()
@@ -436,9 +437,9 @@ HRESULT LinkedValue::UpdateConnection()
 			{
 				SVVariantValueObjectClass::SetValueAt( 0, 0, m_LinkedUid.ToString().c_str() );
 			}
-			DWORD_PTR messageReturn = ConnectInput();
-			ASSERT( SVMR_SUCCESS == messageReturn );
-			if( SVMR_SUCCESS != messageReturn )
+			bool messageReturn = ConnectInput();
+			ASSERT( messageReturn );
+			if( !messageReturn )
 			{
 				Result = SvOi::Err_10015_LinkedValueConnectInput_ConnectFailed;
 			}
@@ -470,45 +471,22 @@ void LinkedValue::DisconnectInput()
 		SVInObjectInfoStruct InputConnectionInfo;
 		InputConnectionInfo.SetInputObject( m_pLinkedObject );
 		InputConnectionInfo.SetObject( this );
-		::SVSendMessage( m_pLinkedObject, SVM_DISCONNECT_OBJECT_INPUT, reinterpret_cast<DWORD_PTR> (&InputConnectionInfo), 0 );
+		m_pLinkedObject->DisconnectObjectInput(&InputConnectionInfo);
 		m_LinkedUid = SV_GUID_NULL;
 		m_pLinkedObject = nullptr;
 	}
 }
 
-DWORD_PTR LinkedValue::ConnectInput()
+bool LinkedValue::ConnectInput()
 {
+	bool Result = false;
 	SVInObjectInfoStruct InputConnectionInfo;
 	InputConnectionInfo.SetInputObject( m_pLinkedObject );
 	InputConnectionInfo.SetObject( this );
-	return ::SVSendMessage( m_pLinkedObject, SVM_CONNECT_OBJECT_INPUT, reinterpret_cast<DWORD_PTR> (&InputConnectionInfo), 0 );
-}
-
-DWORD_PTR LinkedValue::processMessage( DWORD MessageID, DWORD_PTR MessageValue, DWORD_PTR MessageContext )
-{
-	DWORD_PTR Result = SVMR_NOT_PROCESSED;
-
-	// Try to process message by yourself...
-	DWORD PureMessageID = MessageID & SVM_PURE_MESSAGE;
-	switch( PureMessageID )
+	if (nullptr != m_pLinkedObject)
 	{
-	case SVMSGID_DISCONNECT_OBJECT_INPUT:
-		{
-			SVInObjectInfoStruct* pInInfo = reinterpret_cast <SVInObjectInfoStruct*> (MessageValue);
-			DisconnectObject( pInInfo->GetInputObjectInfo().PObject );
-			Result = SVMR_SUCCESS;
-			break;
-		}
-	case SVMSGID_OBJECT_RENAMED:
-		{
-			//Get the current name of the object
-			UpdateLinkedName();
-			Result = SVMR_SUCCESS;
-			break;
-		}
+		Result = m_pLinkedObject->ConnectObjectInput(&InputConnectionInfo);
 	}
-
-	Result = SVVariantValueObjectClass::processMessage( MessageID, MessageValue, MessageContext ) | Result;
 	return Result;
 }
 

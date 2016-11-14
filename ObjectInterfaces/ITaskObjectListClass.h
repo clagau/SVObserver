@@ -44,7 +44,7 @@ namespace Seidenader
 			 /param rObject <in> object to destroy.
 			 /param context <in> set which action should done. Possible flags:  SVMFSetDefaultInputs and SVMFResetInspection
 			***********/
-			virtual DWORD_PTR DestroyChild(ITaskObject& rObject, DWORD context) = 0;
+			virtual bool DestroyChild(ITaskObject& rObject, DWORD context) = 0;
 
 			/**********
 			 The method destroys a friend object.

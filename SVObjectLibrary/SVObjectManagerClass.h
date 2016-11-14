@@ -191,6 +191,24 @@ public:
 	HRESULT RegisterSubObject( const SVGUID& rSubObjectID );
 	HRESULT UnregisterSubObject( const SVGUID& rSubObjectID );
 
+	// Return the first object which the required object type.
+	//! \param rSourceId [in] reference to the source object ID
+	/// \param rObjectTypeInfo [in] The required object type.
+	/// \returns IObjectClass* Pointer to the object, if not found nullptr.
+	SvOi::IObjectClass* getFirstObject(const SVGUID& rSourceId, const SVObjectTypeInfoStruct& rObjectTypeInfo) const;
+
+	/// Connect inputs to a object
+	/// \param rSourceId [in] reference to the source object ID
+	/// \param pObjectInInfo [in] object input info
+	/// \returns bool
+	bool ConnectObjectInput( const SVGUID& rSourceId, SVInObjectInfoStruct* pObjectInInfo );
+
+	/// Disconnect input from a object
+	/// \param rSourceId [in] reference to the source object ID
+	/// \param pObjectInInfo [in] object input info
+	/// \returns bool
+	bool DisconnectObjectInput( const SVGUID& rSourceId, SVInObjectInfoStruct* pObjectInInfo );
+
 protected:
 	typedef std::map< SVString, SVGUID > SVSubjectDataNameSubjectIDMap;
 

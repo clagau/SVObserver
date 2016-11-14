@@ -180,7 +180,7 @@ public:
 	virtual BOOL onRun( SVRunStatusClass& RRunStatus );
 	virtual BOOL OnValidate();
 
-	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
+	virtual bool resetAllObjects( bool shouldNotifyFriends, bool silentReset ) override;
 
 	virtual BOOL IsPtOverResult(CPoint point );
 	virtual	void DisplayAnalyzerResult();

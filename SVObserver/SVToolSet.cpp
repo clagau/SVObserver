@@ -13,7 +13,7 @@
 #include "SVToolSet.h"
 
 #include "SVMessage/SVMessage.h"
-#include "SVObjectLibrary/SVAnalyzerLevelCreateStruct.h"
+#include "SVObjectLibrary/SVInspectionLevelCreateStruct.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 
 #include "SVAnalyzer.h"
@@ -23,6 +23,7 @@
 #include "SVSVIMStateClass.h"
 #include "SVTool.h"
 #include "SVTimerLibrary/SVClock.h"
+#include "SVColorTool.h"
 #pragma endregion Includes
 
 SV_IMPLEMENT_CLASS( SVToolSetClass, SVToolSetClassGuid );
@@ -255,8 +256,7 @@ void SVToolSetClass::SetDefaultInputs()
 
 	// Try to get all inputs and outputs...
 	GetAllInputObjects();
-
-	::SVSendMessage( this, SVM_CONNECT_ALL_INPUTS, 0, 0 );
+	ConnectAllInputs();
 
 	// Rebuild ResultList from the toolset level
 	m_ResultList.Refresh( this );
@@ -367,6 +367,27 @@ void SVToolSetClass::GetToolIds( SVToolIdDeque& p_rToolIds ) const
 HRESULT SVToolSetClass::getResetCounts( bool& rResetCounts )
 {
 	return m_ResetCounts.GetValue( rResetCounts );
+}
+
+SVImageClass* SVToolSetClass::getBand0Image()
+{
+	for( SVTaskObjectPtrVector::const_iterator l_Iter = m_aTaskObjects.begin(); l_Iter != m_aTaskObjects.end(); ++l_Iter )
+	{
+		SVColorToolClass* colorTool = dynamic_cast<SVColorToolClass*>( *l_Iter );
+		if (nullptr != colorTool)
+		{
+			return colorTool->getBand0Image();
+		}
+	}
+	return nullptr;
+}
+
+void SVToolSetClass::goingOffline()
+{
+	for( SVTaskObjectPtrVector::const_iterator l_Iter = m_aTaskObjects.begin(); l_Iter != m_aTaskObjects.end(); ++l_Iter )
+	{
+		(*l_Iter)->goingOffline();
+	}
 }
 
 #pragma region virtual method (IToolSet)
@@ -885,12 +906,12 @@ BOOL SVToolSetClass::Validate()
 		return true;
 	}// end if
 	
-	return SVTaskObjectListClass::Validate();
+	return __super::Validate();
 }
 
 void SVToolSetClass::SetInvalid()
 {
-	SVTaskObjectListClass::SetInvalid();
+	__super::SetInvalid();
 
 	SVConditionalClass* l_pConditional = GetToolSetConditional();
 
@@ -900,11 +921,19 @@ void SVToolSetClass::SetInvalid()
 	}
 }
 
+bool SVToolSetClass::resetAllObjects( bool shouldNotifyFriends, bool silentReset )
+{
+	bool Result = ( S_OK == ResetObject() );
+	ASSERT( Result );
+
+	return( __super::resetAllObjects( shouldNotifyFriends, silentReset ) && Result );
+}
+
 HRESULT SVToolSetClass::ResetObject()
 {
 	HRESULT l_hrOk = S_OK;
 
-	if( S_OK != SVTaskObjectListClass::ResetObject() )
+	if( S_OK != __super::ResetObject() )
 	{
 		l_hrOk = S_FALSE;
 	}
@@ -988,112 +1017,13 @@ HRESULT SVToolSetClass::ClearResetCounts()
 	return l_hr;
 }
 
-DWORD_PTR SVToolSetClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
-{
-	DWORD_PTR DwResult = SVMR_NOT_PROCESSED;
-
-	SVAnalyzerLevelCreateStruct createStruct;
-
-	// Try to process message by yourself...
-	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
-	switch( dwPureMessageID )
-	{
-	case SVMSGID_RESET_ALL_OBJECTS:
-		{
-			HRESULT l_ResetStatus = ResetObject();
-			if( S_OK != l_ResetStatus )
-			{
-				ASSERT( SUCCEEDED( l_ResetStatus ) );
-
-				DwResult = SVMR_NO_SUCCESS;
-			}
-			else
-			{
-				DwResult = SVMR_SUCCESS;
-			}
-			break;
-		}
-
-	case SVMSGID_CREATE_ALL_OBJECTS:
-		{
-			if( !IsCreated() && !CreateObject( reinterpret_cast<SVObjectLevelCreateStruct*>(DwMessageValue) ) )
-			{
-				ASSERT( FALSE );
-
-				DwResult = SVMR_NO_SUCCESS;
-			}
-			else
-			{
-				DwResult = SVMR_SUCCESS;
-			}
-
-			createStruct.OwnerObjectInfo = this;
-			createStruct.AnalyzerObjectInfo = GetAnalyzer();
-			createStruct.ToolObjectInfo	= GetTool();
-			createStruct.InspectionObjectInfo	= GetInspection();
-
-			DwMessageValue = reinterpret_cast<DWORD_PTR>(&createStruct);
-
-			break;
-		}
-
-	case SVMSGID_CONNECT_ALL_OBJECTS:
-		{
-			if( S_OK != ConnectObject( reinterpret_cast<SVObjectLevelCreateStruct*>(DwMessageValue) ) )
-			{
-				ASSERT( FALSE );
-
-				DwResult = SVMR_NO_SUCCESS;
-			}
-			else
-			{
-				DwResult = SVMR_SUCCESS;
-			}
-
-			createStruct.OwnerObjectInfo = this;
-			createStruct.AnalyzerObjectInfo = GetAnalyzer();
-			createStruct.ToolObjectInfo	= GetTool();
-			createStruct.InspectionObjectInfo	= GetInspection();
-
-			DwMessageValue = reinterpret_cast<DWORD_PTR>(&createStruct);
-
-			break;
-		}
-
-	case SVMSGID_CREATE_CHILD_OBJECT:
-		{
-			// ...use second message parameter ( DwMessageValue ) as SVObjectClass* of the child object
-			// ...returns SVMR_SUCCESS, SVMR_NO_SUCCESS or SVMR_NOT_PROCESSED
-			SVObjectClass* pChildObject = reinterpret_cast<SVObjectClass*>(DwMessageValue);
-			return CreateChildObject(pChildObject, static_cast<DWORD>(DwMessageContext));
-		}
-		break;
-
-	case SVMSGID_CONNECT_CHILD_OBJECT:
-		{
-			// ...use second message parameter ( DwMessageValue ) as SVObjectClass* of the child object
-			SVObjectClass* pChildObject = reinterpret_cast<SVObjectClass*>(DwMessageValue);
-
-			SVInspectionLevelCreateStruct createStruct;
-
-			createStruct.OwnerObjectInfo        = this;
-			createStruct.InspectionObjectInfo	= GetInspection();
-
-			return SVSendMessage( pChildObject, SVM_CONNECT_ALL_OBJECTS, reinterpret_cast<DWORD_PTR>(&createStruct), 0 );
-		}
-		break;
-	}
-
-	return( SVTaskObjectListClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext ) | DwResult );
-}
-
 HRESULT SVToolSetClass::onCollectOverlays(SVImageClass *p_Image, SVExtentMultiLineStructCArray &p_MultiLineArray )
 {
 	// override TaskObjectList implementation
 	return S_FALSE;	// no overlays for toolset
 }
 
-DWORD_PTR SVToolSetClass::createAllObjectsFromChild( SVObjectClass* pChildObject )
+bool SVToolSetClass::createAllObjectsFromChild( SVObjectClass& rChildObject )
 {
 	//MZA: 5. Nov 2014: the method call SetDefaultInputs is missing in the other method
 	//do we need this method call SetDefaultInputs here?
@@ -1104,5 +1034,15 @@ DWORD_PTR SVToolSetClass::createAllObjectsFromChild( SVObjectClass* pChildObject
 	createStruct.OwnerObjectInfo        = this;
 	createStruct.InspectionObjectInfo	= GetInspection();
 
-	return SVSendMessage( pChildObject, SVM_CREATE_ALL_OBJECTS, reinterpret_cast<DWORD_PTR>(&createStruct), 0 );
+	return rChildObject.createAllObjects(createStruct);
 }
+
+void SVToolSetClass::connectChildObject( SVTaskObjectClass& rChildObject )
+{
+	SVInspectionLevelCreateStruct createStruct;
+	createStruct.OwnerObjectInfo        = this;
+	createStruct.InspectionObjectInfo	= GetInspection();
+
+	rChildObject.ConnectObject(createStruct);
+}
+

@@ -269,16 +269,6 @@ BOOL SVLinearToolClass::onRun( SVRunStatusClass& RRunStatus )
 {
 	return SVToolClass::onRun( RRunStatus );
 }
-
-DWORD_PTR SVLinearToolClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
-{
-	DWORD_PTR DwResult = SVMR_NOT_PROCESSED;
-
-	// Try to process message by yourself...
-	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
-
-	return( SVToolClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext ) | DwResult );
-}
 #pragma endregion Protected Methods
 
 #pragma region Private Methods

@@ -113,7 +113,7 @@ BOOL SVProfileEdgeMarkerAdjustmentPageClass::OnInitDialog()
 	GetInspectionData();
 
 	// Get the Image for this tool
-	SVImageInfoClass* pImageInfo = ( SVImageInfoClass* ) ::SVSendMessage( pTool, SVM_GETFIRST_IMAGE_INFO, 0, 0 );
+	const SVImageInfoClass* pImageInfo = pTool->getFirstImageInfo();
 	if( nullptr != pImageInfo )
 	{
 		SVImageClass* pImage = nullptr;

@@ -90,11 +90,11 @@ BOOL SVTADlgTranslationShiftPageClass::OnInitDialog()
 
 		// Get Evaluate Object for the X coordinate...
 		evaluateObjectInfo.SubType = SVEvaluateTranslationXObjectType;		
-		pEvaluateTranslationX = reinterpret_cast<SVEvaluateClass*>(::SVSendMessage(pTool, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&evaluateObjectInfo)));
+		pEvaluateTranslationX = dynamic_cast<SVEvaluateClass*>(pTool->getFirstObject(evaluateObjectInfo));
 		
 		// Get Evaluate Object for the Y coordinate...
 		evaluateObjectInfo.SubType = SVEvaluateTranslationYObjectType;
-		pEvaluateTranslationY = reinterpret_cast<SVEvaluateClass*>(::SVSendMessage(pTool, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&evaluateObjectInfo)));
+		pEvaluateTranslationY = dynamic_cast<SVEvaluateClass*>(pTool->getFirstObject(evaluateObjectInfo));
 
 		SVShiftTool* l_pTool = nullptr;
 

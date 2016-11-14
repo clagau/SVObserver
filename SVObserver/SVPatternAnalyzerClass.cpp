@@ -806,9 +806,12 @@ BOOL SVPatternAnalyzerClass::CreateObject(SVObjectLevelCreateStruct* pCreateStru
 		CreateResult();
 
 		// Ensure this Object's inputs get connected
-		::SVSendMessage( pAnalyzerResult, SVM_CONNECT_ALL_INPUTS, 0, 0 );
+		if (nullptr != pAnalyzerResult)
+		{
+			pAnalyzerResult->ConnectAllInputs();
+		}
 
-		::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT,reinterpret_cast<DWORD_PTR>(pAnalyzerResult), 0 );
+		CreateChildObject(pAnalyzerResult);
 	}
 
 	m_isCreated = bOk;
@@ -1021,34 +1024,16 @@ BOOL SVPatternAnalyzerClass::onRun (SVRunStatusClass &RRunStatus)
 	return TRUE;
 }
 
-DWORD_PTR SVPatternAnalyzerClass::processMessage(DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext)
+bool SVPatternAnalyzerClass::resetAllObjects( bool shouldNotifyFriends, bool silentReset )
 {
-	DWORD_PTR DwResult = SVMR_NOT_PROCESSED;
-
-	switch (DwMessageID & SVM_PURE_MESSAGE)
-	{
-	case SVMSGID_RESET_ALL_OBJECTS:
-		{
-			HRESULT l_ResetStatus = ResetObject();
-			if( S_OK != l_ResetStatus )
-			{
-				ASSERT( SUCCEEDED( l_ResetStatus ) );
-
-				DwResult = SVMR_NO_SUCCESS;
-			}
-			else
-			{
-				DwResult = SVMR_SUCCESS;
-			}
-			break;
-		}
-	}
-	return (DwResult | SVImageAnalyzerClass::processMessage(DwMessageID, DwMessageValue, DwMessageContext));
+	bool Result = ( S_OK == ResetObject() );
+	ASSERT( Result );
+	return (Result && __super::resetAllObjects(shouldNotifyFriends, silentReset));
 }
 
 HRESULT SVPatternAnalyzerClass::ResetObject()
 {
-	HRESULT l_hrOk = SVImageAnalyzerClass::ResetObject();
+	HRESULT l_hrOk = __super::ResetObject();
 
 	if ( S_OK == l_hrOk )
 	{

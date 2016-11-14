@@ -67,6 +67,8 @@ public:
 	//************************************
 	virtual BOOL OnValidate() override;
 	
+	virtual bool resetAllObjects( bool shouldNotifyFriends, bool silentReset ) override;
+
 	//************************************
 	//! Do nothing if we are in Run Mode. Otherwise set the image Extends of the tool 
 	//! \returns HRESULT
@@ -124,14 +126,13 @@ public:
 	virtual DWORD GetObjectColor() const override; 
 
 	//************************************
-	//! Called by ProcessMessagefunction in SVToolclass before ResetObject 
-	//! Functionality was moved from processMessage 
+	//! Called by resetAllObjects in SVToolclass before ResetObject 
 	//! \param DwMessageID [in]
 	//! \param DwMessageValue [in]
 	//! \param DwMessageContext [in]
 	//! \returns DWORD_PTR
 	//************************************
-	DWORD_PTR ProcessResetAllObject( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext ); 
+	bool ProcessResetAllObject( bool SilentReset ); 
 
 	bool IsFullSizeAllowed() const;
 	bool IsAdjustSizeAllowed() const;
@@ -162,7 +163,6 @@ protected:
 	//************************************
 	virtual BOOL Run( SVRunStatusClass& RRunStatus ) override;
 	
-	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext ) override;
 	//************************************
 	//! retrieves the inputmodes. Check for consistency 
 	//! \param rModeWidth [out]

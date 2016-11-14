@@ -77,7 +77,7 @@ SVExternalToolDlg::SVExternalToolDlg( const SVGUID& rInspectionID, const SVGUID&
 	SVObjectTypeInfoStruct info;
 	info.ObjectType = SVExternalToolTaskObjectType;
 
-	m_pTask = dynamic_cast<SVExternalToolTask*> ( reinterpret_cast<SVObjectClass*>(::SVSendMessage( m_pTool, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&info)) ));
+	m_pTask = dynamic_cast<SVExternalToolTask*>( m_pTool->getFirstObject( info ) );
 	ASSERT( m_pTask );
 
 	m_pCancelData = nullptr;
@@ -174,7 +174,7 @@ void SVExternalToolDlg::OnOK()
 	try
 	{
 		hr = m_pTask->Initialize();
-		if( ::SVSendMessage( m_pTask, SVM_RESET_ALL_OBJECTS, 0, 0 ) != SVMR_SUCCESS )
+		if( m_pTask->resetAllObjects(true, false) )
 		{
 			hr = S_FALSE;
 		}
@@ -389,7 +389,7 @@ void SVExternalToolDlg::InitializeDll()
 		m_strStatus.Empty();
 		UpdateData(FALSE);
 		m_pTask->Initialize( SVDllLoadLibraryCallback(this, &SVExternalToolDlg::NotifyProgress) );
-		::SVSendMessage( m_pTask, SVM_RESET_ALL_OBJECTS, 0, 0 );
+		m_pTask->resetAllObjects(true, false);
 
 
 		m_strStatus += CString(_T("DLL passes the tests.")) + CRLF;

@@ -278,7 +278,7 @@
 			//******************************************************************************
 
 			SVObjectTypeEnum	ObjectType;			// Main Type
-			long				SubType;			// Sub Type
+			long				SubType;			// Sub Type  //@TODO[MZA][7.40][10.10.2016] Why is this a long and not a SVObjectSubTypeEnum. Should be changed if there is no reason for the long.
 
 			// Embedded ID, if any.
 			GUID				EmbeddedID;

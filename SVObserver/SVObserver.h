@@ -239,7 +239,7 @@ public:
 	HRESULT SetMode( unsigned long p_lNewMode );
 	HRESULT LoadConfiguration();
 
-	HRESULT RenameObject( const SVString& p_rOldName, const SVString& p_rNewName, const SVGUID& p_rObjectId );
+	HRESULT OnObjectRenamed( const SVString& p_rOldName, const SVGUID& p_rObjectId );
 	HRESULT RebuildOutputList();
 	BOOL SetStatusText( LPCTSTR PStrStatusText );
 	void UpdatePPQBar();

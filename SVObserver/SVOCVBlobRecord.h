@@ -33,7 +33,6 @@ public:
 
 protected:
 	virtual BOOL onRun( SVRunStatusClass& RRunStatus );
-	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
 
 //Attributes
 public:

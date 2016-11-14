@@ -113,7 +113,7 @@ void SVPublishListClass::Refresh(SVTaskObjectClass * pRootObject)
 			InObjectInfo.SetInputObject( pPublishedOutObjectInfo->UniqueObjectID );
 
 			// Disconnect
-			::SVSendMessage(pPublishedOutObjectInfo->UniqueObjectID, SVM_DISCONNECT_OBJECT_INPUT, reinterpret_cast<DWORD_PTR>(&InObjectInfo), 0 );
+			SVObjectManagerClass::Instance().DisconnectObjectInput(pPublishedOutObjectInfo->UniqueObjectID, &InObjectInfo);
 
 			//if( should not be anymore published )
 			SVPublicAttributeEntryStruct* pPublicAttribute = pPublishedOutObjectInfo->PObject->GetPublicAttribute();
@@ -179,7 +179,7 @@ void SVPublishListClass::Refresh(SVTaskObjectClass * pRootObject)
 			InObjectInfo.SetInputObject( pOutObjectInfo->UniqueObjectID );
 
 			// connect to the object
-			if( SVMR_SUCCESS == ::SVSendMessage( pOutObjectInfo->PObject, SVM_CONNECT_OBJECT_INPUT, reinterpret_cast<DWORD_PTR>(&InObjectInfo), 0 ) )
+			if( pOutObjectInfo->PObject->ConnectObjectInput(&InObjectInfo) )
 			{
 				SVValueObjectClass* pValueObject = dynamic_cast< SVValueObjectClass* >( SVObjectManagerClass::Instance().GetObject( pOutObjectInfo->UniqueObjectID ) );
 				if( pValueObject )
@@ -264,7 +264,7 @@ void SVPublishListClass::Release(SVTaskObjectClass * pRootObject)
 		InObjectInfo.SetInputObject( pPublishedOutObjectInfo->UniqueObjectID );
 
 		// Disconnect
-		::SVSendMessage(pPublishedOutObjectInfo->UniqueObjectID, SVM_DISCONNECT_OBJECT_INPUT, reinterpret_cast<DWORD_PTR>(&InObjectInfo), 0 );
+		SVObjectManagerClass::Instance().DisconnectObjectInput(pPublishedOutObjectInfo->UniqueObjectID, &InObjectInfo);
 		
 		//if( should not be anymore published )
 		SVPublicAttributeEntryStruct* pPublicAttribute = pPublishedOutObjectInfo->PObject->GetPublicAttribute();
@@ -298,7 +298,7 @@ void SVPublishListClass::Release(SVTaskObjectClass * pRootObject)
 
 }// end Release
 
-BOOL SVPublishListClass::RemovePublishedEntry( const SVGUID& RGuid )
+bool SVPublishListClass::RemovePublishedEntry( const SVGUID& RGuid )
 {
 	SVPPQObject* pPPQ( nullptr );
 	SVIOEntryHostStructPtrList ppPPQEntries;
@@ -336,11 +336,11 @@ BOOL SVPublishListClass::RemovePublishedEntry( const SVGUID& RGuid )
 
 			}// end for
 
-			return TRUE;
+			return true;
 		}// end if
 
 	}// end for
 
-	return FALSE;
+	return false;
 }// end RemovePublishedEntry
 

@@ -222,12 +222,9 @@ void SVArchiveRecord::ConnectInputObject()
 		InObjectInfo.UniqueObjectID             = m_pArchiveTool->GetUniqueObjectID();
 		InObjectInfo.ObjectTypeInfo.ObjectType  = SVToolObjectType;
 		
-		DWORD_PTR rc = ::SVSendMessage( m_svObjectReference.Guid(), 
-		                            SVM_CONNECT_OBJECT_INPUT, 
-		                            reinterpret_cast <DWORD_PTR> (&InObjectInfo), 
-		                            0 );
+		bool rc = SVObjectManagerClass::Instance().ConnectObjectInput( m_svObjectReference.Guid(), &InObjectInfo );
 
-		ASSERT(rc == SVMR_SUCCESS );
+		ASSERT(rc );
 	}
 }
 
@@ -241,10 +238,7 @@ void SVArchiveRecord::DisconnectInputObject()
 		InObjectInfo.UniqueObjectID            = m_pArchiveTool->GetUniqueObjectID();
 		InObjectInfo.ObjectTypeInfo.ObjectType = SVToolObjectType;
 		
-		DWORD_PTR rc = ::SVSendMessage(	m_svObjectReference.Guid(), 
-		                            SVM_DISCONNECT_OBJECT_INPUT, 
-		                            reinterpret_cast <DWORD_PTR> (&InObjectInfo), 
-		                            0 );
+		SVObjectManagerClass::Instance().DisconnectObjectInput(m_svObjectReference.Guid(), &InObjectInfo);
 	}
 }
 

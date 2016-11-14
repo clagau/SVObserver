@@ -45,11 +45,12 @@ public:
 
 	HRESULT GetPixelDepth();
 
+	virtual bool resetAllObjects( bool shouldNotifyFriends, bool silentReset ) override;
+
 	SVBoolValueObjectClass m_svShowAllEdgeAOverlays;
 	SVBoolValueObjectClass m_svShowAllEdgeBOverlays;
 
 protected:
-	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
 	virtual HRESULT onCollectOverlays(SVImageClass *p_Image, SVExtentMultiLineStructCArray &p_MultiLineArray );
 
 	HRESULT GetProjectedExtent( long p_lIndex, long &p_rlBottom, SVImageExtentClass &p_rsvImageExtent );

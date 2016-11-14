@@ -872,7 +872,7 @@ void SVMaskShapeEditorDlg::setImages()
 	m_dialogImage.setImage( &data, tabIndex );
 	tabIndex++;
 	// Set third tab to source image
-	SVImageInfoClass* pImageInfo = reinterpret_cast < SVImageInfoClass*> (::SVSendMessage( m_pTool, SVM_GETFIRST_IMAGE_INFO, 0, 0 ) );
+	const SVImageInfoClass* pImageInfo = m_pTool->getFirstImageInfo();
 	if( nullptr != pImageInfo )
 	{
 		SVImageClass* pImage = nullptr;

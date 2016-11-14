@@ -42,7 +42,7 @@ struct SVInObjectInfoStruct : public SVObjectInfoStruct
 
 protected:
 	// Who is my input object...
-	//	To connect ( hook ) on input, send a SVM_CONNECT_OBJECT_INPUT message to
+	//	To connect ( hook ) on input, the method ConnectObjectInput to
 	//  the object that needs the input GUID! And use a pointer of this structure 
 	//	( of the input ) as a message parameter.
 	SVObjectInfoStruct m_InputObjectInfo;	// this is the Object, this Object is using

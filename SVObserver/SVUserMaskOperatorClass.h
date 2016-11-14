@@ -69,10 +69,7 @@ public:
 	virtual void Persist(SVObjectWriter& rWriter);
 
 	virtual HRESULT GetObjectValue( const SVString& p_rValueName, VARIANT& p_rVariantValue ) const;
-	virtual HRESULT SetObjectValue( const SVString& p_rValueName, const _variant_t& p_rVariantValue );
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* PDataObject );
-
-	virtual BOOL ConnectAllInputs();
 
 	SVShapeMaskHelperClass* GetShapeHelper();
 
@@ -102,6 +99,7 @@ public:
 protected:
 	virtual BOOL onRun( BOOL First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus );
 	virtual BOOL OnValidate();
+	virtual bool hasToAskFriendForConnection( const SVObjectTypeInfoStruct& rInfo, SVObjectClass*& rPOwner ) const override;
 	
 	SVImageInfoClass      m_MaskBufferInfo;
 	SVSmartHandlePointer  m_MaskBufferHandlePtr;

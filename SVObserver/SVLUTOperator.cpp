@@ -130,41 +130,23 @@ BOOL SVLUTOperatorClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructu
 	return bOk;
 }
 
-
-DWORD_PTR SVLUTOperatorClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
+bool SVLUTOperatorClass::resetAllObjects( bool shouldNotifyFriends, bool silentReset )
 {
-	DWORD_PTR DwResult = SVMR_NOT_PROCESSED;
-	// Try to process message by yourself...
-	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
-	BOOL bUseSilent = TRUE;
-	switch( dwPureMessageID )
+	bool bUseSilent = silentReset;
+	bool Result = ( S_OK == ResetObject() );
+	bool bLutActive = false;
+	m_useLUT.GetValue(bLutActive);
+
+	long lLutMode = 0;
+	m_lutMode.GetValue(lLutMode);
+
+	if (!bLutActive || (bLutActive && (lLutMode != 4)))
 	{
-		case SVMSGID_RESET_ALL_OBJECTS:
-		{
-			HRESULT ResetStatus = ResetObject();
-			if( S_OK != ResetStatus )
-			{
-				DwResult = SVMR_NO_SUCCESS;
-			}
-			else
-			{
-				DwResult = SVMR_SUCCESS;
-			}
-			bool bLutActive = false;
-			m_useLUT.GetValue(bLutActive);
-
-			long lLutMode = 0;
-			m_lutMode.GetValue(lLutMode);
-
-			if (!bLutActive || (bLutActive && (lLutMode != 4)))
-			{
-				//Set DwMessageValue to be silent if you are not using a formual
-				DwMessageValue = bUseSilent;
-			}
-			break;
-		}
+		//Set silentReset to be silent if you are not using a formula
+		bUseSilent = true;
 	}
-	return( SVTaskObjectClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext ) | DwResult );
+	//using of SVTaskObjectClass instead of __super is here wanted, because it should be avoid to call SVOperatorClass::resetAllObjects
+	return( SVTaskObjectClass::resetAllObjects( shouldNotifyFriends, bUseSilent ) && Result );
 }
 
 HRESULT SVLUTOperatorClass::ResetObject()

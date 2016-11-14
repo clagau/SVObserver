@@ -393,7 +393,7 @@ void SVExternalToolInputSelectPage::OnOK()
 				SVInObjectInfoStruct& rInfo = m_pTask->m_Data.m_aInputObjectInfo[iIndex];
 				if ( rInfo.GetInputObjectInfo().PObject )
 				{	// disconnect existing connection
-					BOOL bSuccess = (::SVSendMessage( rInfo.GetInputObjectInfo().PObject, SVM_DISCONNECT_OBJECT_INPUT, reinterpret_cast<DWORD_PTR>(&rInfo), 0 ) == SVMR_SUCCESS);
+					rInfo.GetInputObjectInfo().PObject->DisconnectObjectInput(&rInfo);
 					rInfo.SetInputObject( nullptr );
 				}
 
@@ -401,7 +401,11 @@ void SVExternalToolInputSelectPage::OnOK()
 				{
 					rValue.SetValue(iBucket, strTmp);
 					rInfo.SetInputObject( pObject );
-					BOOL bSuccess = (::SVSendMessage( rInfo.GetInputObjectInfo().PObject, SVM_CONNECT_OBJECT_INPUT, reinterpret_cast<DWORD_PTR>(&rInfo), 0 ) == SVMR_SUCCESS);
+					bool bSuccess = false;
+					if ( rInfo.GetInputObjectInfo().PObject )
+					{
+						bSuccess = rInfo.GetInputObjectInfo().PObject->ConnectObjectInput(&rInfo);
+					}
 					ASSERT( bSuccess );
 				}
 				else

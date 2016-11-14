@@ -253,62 +253,22 @@ void SVIOController::SetName( const CString& StrString )
 	}
 }
 
-DWORD_PTR SVIOController::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
+bool SVIOController::resetAllObjects( bool shouldNotifyFriends, bool silentReset )
 {
-	DWORD_PTR DwResult = SVMR_NOT_PROCESSED;
-
-	// Try to process message by yourself...
-	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
-	switch( dwPureMessageID )
-	{
-	case SVMSGID_RESET_ALL_OBJECTS:
-		{
-			HRESULT l_ResetStatus = ResetObject();
-			if( S_OK != l_ResetStatus )
-			{
-				ASSERT( SUCCEEDED( l_ResetStatus ) );
-
-				DwResult = SVMR_NO_SUCCESS;
-			}
-			else
-			{
-				DwResult = SVMR_SUCCESS;
-			}
-			break;
-		}
-	}
-
-	if( SVMR_NOT_PROCESSED == DwResult || 
-		( DwMessageID & SVM_NOTIFY_FIRST_RESPONDING ) != SVM_NOTIFY_FIRST_RESPONDING )
-	{
-		DwResult = ::SVSendMessage( m_pModuleReady->m_pValueObject, DwMessageID, DwMessageValue, DwMessageContext ) | DwResult;
-	}
-
-	if( SVMR_NOT_PROCESSED == DwResult || 
-		( DwMessageID & SVM_NOTIFY_FIRST_RESPONDING ) != SVM_NOTIFY_FIRST_RESPONDING )
-	{
-		DwResult = ::SVSendMessage( m_pRaidErrorBit->m_pValueObject, DwMessageID, DwMessageValue, DwMessageContext ) | DwResult;
-	}
-
-	if( SVMR_NOT_PROCESSED == DwResult || 
-		( DwMessageID & SVM_NOTIFY_FIRST_RESPONDING ) != SVM_NOTIFY_FIRST_RESPONDING )
-	{
-		DwResult = SVObjectClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext ) | DwResult;
-	}
-
-	return DwResult;
+	bool Result = ( S_OK == ResetObject() );
+	ASSERT( Result );
+	return Result;
 }
 
 HRESULT SVIOController::ResetObject()
 {
-	HRESULT l_hrOk = SVObjectClass::ResetObject();
+	HRESULT l_hrOk = S_OK;
 
-	if( SVMR_SUCCESS != ::SVSendMessage( m_pModuleReady->m_pValueObject, SVM_RESET_ALL_OBJECTS, 0, 0 ) )
+	if (nullptr == m_pModuleReady || nullptr == m_pModuleReady->m_pValueObject || !m_pModuleReady->m_pValueObject->resetAllObjects(true, false) )
 	{
 		l_hrOk = S_FALSE;
 	}
-
-	if( SVMR_SUCCESS != ::SVSendMessage( m_pRaidErrorBit->m_pValueObject, SVM_RESET_ALL_OBJECTS, 0, 0 ) )
+	if (nullptr == m_pRaidErrorBit || nullptr == m_pRaidErrorBit->m_pValueObject || !m_pRaidErrorBit->m_pValueObject->resetAllObjects(true, false) )
 	{
 		l_hrOk = S_FALSE;
 	}

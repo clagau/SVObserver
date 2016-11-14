@@ -42,7 +42,7 @@ public:
 	virtual void ResetName();
 	virtual void SetName( const CString& StrString );
 
-	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
+	virtual bool resetAllObjects( bool shouldNotifyFriends, bool silentReset ) override;
 
 	virtual HRESULT ResetObject();
 	virtual BOOL OnValidate();

@@ -66,7 +66,7 @@ HRESULT TableCopyObject::ResetObject()
 				{
 					SVString OldName = m_ValueList[i]->GetName();
 					m_ValueList[i]->SetName((*it)->GetName());
-					::SVSendMessage( GetInspection(), SVM_OBJECT_RENAMED, reinterpret_cast <DWORD_PTR> ( static_cast <SVObjectClass*> (m_ValueList[i].get()) ), reinterpret_cast<DWORD_PTR>( static_cast<LPCTSTR>( OldName.c_str() )) );
+					GetInspection()->OnObjectRenamed(*(m_ValueList[i].get()), OldName );
 				}
 				if ((*it)->GetArraySize() != m_ValueList[i]->GetArraySize())
 				{

@@ -135,7 +135,7 @@ BOOL SVPerspectiveWarpDlg::OnInitDialog()
 
 		SVObjectTypeInfoStruct objectInfo;
 		objectInfo.EmbeddedID = SVWarpTypeObjectGuid;
-		m_pWarpType = reinterpret_cast<SVEnumerateValueObjectClass*>(::SVSendMessage( m_pTool, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
+		m_pWarpType = dynamic_cast<SVEnumerateValueObjectClass*>(m_pTool->getFirstObject(objectInfo));
 		if( m_pWarpType )
 		{
 			
@@ -152,7 +152,7 @@ BOOL SVPerspectiveWarpDlg::OnInitDialog()
 
 		// Interpolation Mode
 		objectInfo.EmbeddedID = SVOutputInterpolationModeObjectGuid;
-		m_pInterpolationMode = reinterpret_cast<SVEnumerateValueObjectClass*>(::SVSendMessage( m_pTool, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
+		m_pInterpolationMode = dynamic_cast<SVEnumerateValueObjectClass*>(m_pTool->getFirstObject(objectInfo));
 		if( m_pInterpolationMode )
 		{
 			CString l_strEnumList;

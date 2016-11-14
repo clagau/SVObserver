@@ -189,7 +189,7 @@ public:
 
 	virtual int AddSymbol( LPCTSTR name );
 
-	virtual BOOL DisconnectToolSetSymbol( SVInObjectInfoStruct* pInObjectInfo );
+	virtual bool DisconnectObjectInput( SVInObjectInfoStruct* pInObjectInfo ) override;
 
 	virtual BOOL OnValidate();
 
@@ -202,22 +202,22 @@ public:
 
 	virtual void Persist(SVObjectWriter& rWriter);
 	virtual HRESULT GetObjectValue( const SVString& p_rValueName, VARIANT& p_rVariantValue ) const;
-	virtual HRESULT SetObjectValue( const SVString& p_rValueName, const _variant_t& p_rVariantValue );
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* PDataObject );
 
 	virtual HRESULT ResetObject();
+
+#pragma region Methods to replace processMessage
+	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const SVString& rOldName) override;
+	virtual bool resetAllObjects( bool shouldNotifyFriends, bool silentReset ) override;
+#pragma endregion Methods to replace processMessage
 
 	SVBoolValueObjectClass enabled;			// enabled flag TRUE=Enabled
 
 protected:
 	void init();
 
-	virtual BOOL renameToolSetSymbol( const SVObjectClass* pObject, LPCTSTR originalName );
-
 	virtual BOOL onRun( SVRunStatusClass& RRunStatus );
 
-	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
-	
 private:
 	SvOi::EquationTestResult lexicalScan( LPCTSTR inBuffer );		// perform lexical scan
 

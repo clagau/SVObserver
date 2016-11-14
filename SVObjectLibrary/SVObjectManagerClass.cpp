@@ -1790,6 +1790,39 @@ HRESULT SVObjectManagerClass::UnregisterSubObject( const SVGUID& rSubObjectID )
 	return hr;
 }
 
+SvOi::IObjectClass* SVObjectManagerClass::getFirstObject(const SVGUID& rSourceId, const SVObjectTypeInfoStruct& rObjectTypeInfo) const
+{
+	SvOi::IObjectClass* pRetObject = nullptr;
+	SvOi::IObjectClass* pSource = SVObjectManagerClass::Instance().GetObject( rSourceId );
+	if ( nullptr != pSource )
+	{
+		pRetObject = pSource->getFirstObject(rObjectTypeInfo);
+	}
+	return pRetObject;
+}
+
+bool SVObjectManagerClass::ConnectObjectInput( const SVGUID& rSourceId, SVInObjectInfoStruct* pObjectInInfo )
+{
+	bool Result = false;
+	SVObjectClass* pSource = SVObjectManagerClass::Instance().GetObject( rSourceId );
+	if ( nullptr != pSource )
+	{
+		Result = pSource->ConnectObjectInput(pObjectInInfo);
+	}
+	return Result;
+}
+
+bool SVObjectManagerClass::DisconnectObjectInput( const SVGUID& rSourceId, SVInObjectInfoStruct* pObjectInInfo )
+{
+	bool Result = false;
+	SVObjectClass* pSource = SVObjectManagerClass::Instance().GetObject( rSourceId );
+	if ( nullptr != pSource )
+	{
+		Result = pSource->DisconnectObjectInput(pObjectInInfo);
+	}
+	return Result;
+}
+
 #pragma region IObjectManager-function
 SvOi::IObjectClass* SvOi::getObjectByDottedName( const SVString& rFullName )
 {
@@ -1815,20 +1848,19 @@ SvOi::IObjectClass* SvOi::getObject( const SVGUID& rObjectID )
 
 SvOi::IObjectClass* SvOi::FindObject(const SVGUID& rParentID, const SVObjectTypeInfoStruct& rInfo)
 {
-	SVObjectClass* pObject = reinterpret_cast<SVObjectClass*> (::SVSendMessage(rParentID, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR> (&rInfo)));
-	return dynamic_cast<SvOi::IObjectClass*> (pObject);
+	return SVObjectManagerClass::Instance().getFirstObject(rParentID, rInfo);
 }
 
 SvOi::IValueObject* SvOi::FindValueObject(const SVGUID& rParentID, const SVObjectTypeInfoStruct& rInfo)
 {
-	SVObjectClass* pObject = reinterpret_cast<SVObjectClass *>(::SVSendMessage(rParentID, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR> (&rInfo)));
+	SvOi::IObjectClass* pObject = SvOi::FindObject(rParentID, rInfo);
 	
 	return dynamic_cast<SvOi::IValueObject*> (pObject);
 }
 
 SvOi::ISVImage* SvOi::FindImageObject(const SVGUID& rParentID, const SVObjectTypeInfoStruct& rInfo)
 {
-	SVObjectClass* pObject = reinterpret_cast<SVObjectClass*>(::SVSendMessage(rParentID, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR> (&rInfo)));
+	SvOi::IObjectClass* pObject = SvOi::FindObject(rParentID, rInfo);
 	
 	return dynamic_cast<SvOi::ISVImage*> (pObject);
 }

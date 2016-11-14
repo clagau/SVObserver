@@ -65,7 +65,7 @@ BOOL SVTADlgColorThresholdOutput::OnInitDialog()
 	objectInfo.ObjectType = SVOperatorObjectType;
 	objectInfo.SubType = SVColorThresholdObjectType;
 
-	mpThreshold = reinterpret_cast <SVColorThresholdClass*> ( ::SVSendMessage( mpTool, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&objectInfo) ) );
+	mpThreshold = dynamic_cast<SVColorThresholdClass*>(mpTool->getFirstObject(objectInfo));
 
 	if( mpThreshold )
 	{

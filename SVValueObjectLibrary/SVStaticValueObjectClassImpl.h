@@ -77,7 +77,6 @@ protected:
 	virtual HRESULT GetValueAt( int iBucket, int iIndex, T& rValue ) const;
 
 	virtual HRESULT GetObjectValue( const SVString& p_rValueName, VARIANT& p_rVariantValue ) const;
-	virtual HRESULT SetObjectValue( const SVString& p_rValueName, const _variant_t& p_rVariantValue );
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* pDataObject );
 
 	virtual HRESULT GetArrayValues(std::vector<T>& raValues) const;	// allow copy of native type

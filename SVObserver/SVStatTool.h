@@ -45,6 +45,7 @@ public:
 	virtual ~SVStatisticsToolClass();
 
 	BOOL CreateObject(SVObjectLevelCreateStruct* PCreateStruct );
+	virtual bool resetAllObjects( bool shouldNotifyFriends, bool silentReset ) override;
 	virtual HRESULT ResetObject();
 	virtual BOOL    OnValidate();
 	
@@ -69,6 +70,7 @@ public:
 	SVResultClass* GetResultObject( SVStatisticsFeatureEnum aFeatureIndex );
 
 	void UpdateTaskObjectOutputListAttributes();
+	virtual bool DisconnectObjectInput( SVInObjectInfoStruct* pObjectInInfo ) override;
 
 protected:
 	double getInputValue();
@@ -78,7 +80,6 @@ protected:
 	virtual void init( void );
 	void resetValues();
 	virtual BOOL onRun( SVRunStatusClass& RRunStatus );
-	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
 
 	void RestoreFeatureAttributes();
 

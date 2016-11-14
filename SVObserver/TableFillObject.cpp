@@ -74,7 +74,7 @@ void TableFillObject::setColumnValueObjects(const std::vector<TableColumnEquatio
 				{
 					SVString OldName = pValueObject->GetName();
 					pValueObject->SetName(objectName.c_str());
-					::SVSendMessage( GetInspection(), SVM_OBJECT_RENAMED, reinterpret_cast <DWORD_PTR> ( static_cast <SVObjectClass*> (pValueObject) ), reinterpret_cast<DWORD_PTR>( static_cast<LPCTSTR>( OldName.c_str() )) );
+					GetInspection()->OnObjectRenamed(*pValueObject, OldName );
 				}
 				pValueObject->SetArraySize(maxArray);
 			}

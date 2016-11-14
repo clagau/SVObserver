@@ -53,7 +53,6 @@ public:
 
 protected:
 	virtual BOOL onRun( SVRunStatusClass &p_rRunStatus );
-//	virtual DWORD_PTR processMessage( DWORD p_dwMessageID, DWORD_PTR p_dwMessageValue, DWORD_PTR p_dwMessageContext );
 
 private:
 	void LocalInitialize();

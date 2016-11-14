@@ -282,98 +282,6 @@ SVExternalToolTask::~SVExternalToolTask()
 	m_embeddedList.RemoveAll();
 }
 
-DWORD_PTR SVExternalToolTask::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
-{
-	DWORD_PTR dwResult = SVMR_NOT_PROCESSED;
-
-	// Try to process message by yourself...
-	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
-	switch( dwPureMessageID )
-	{
-	case SVMSGID_RESET_ALL_OBJECTS:
-		{
-			HRESULT l_ResetStatus = ResetObject();
-			if( S_OK != l_ResetStatus )
-			{
-				ASSERT( SUCCEEDED( l_ResetStatus ) );
-
-				dwResult = SVMR_NO_SUCCESS;
-			}
-			else
-			{
-				dwResult = SVMR_SUCCESS;
-			}
-			break;
-		}
-
-		// handle renaming of toolset variables
-	case SVMSGID_OBJECT_RENAMED:
-		{
-			SVObjectClass* pObject = reinterpret_cast <SVObjectClass*> (DwMessageValue); // Object with new name
-			LPCTSTR OriginalName = reinterpret_cast<LPCTSTR> (DwMessageContext);
-
-			if( renameToolSetSymbol( pObject, OriginalName ) )
-			{
-				dwResult = SVMR_SUCCESS;
-			}
-			break;
-		}
-
-	case SVMSGID_DISCONNECT_OBJECT_INPUT:
-		{
-			SVInObjectInfoStruct* pInInfo = reinterpret_cast <SVInObjectInfoStruct*> (DwMessageValue);
-			SVObjectClass* pObject = pInInfo->GetInputObjectInfo().PObject;
-			if ( SVImageClass* pImage = dynamic_cast <SVImageClass*> (pObject) )
-			{
-				// find object
-				for ( int i=0; i < SVExternalToolTaskData::NUM_INPUT_IMAGES; i++ )
-				{
-					SVInObjectInfoStruct& rInfo = m_Data.m_aInputImageInfo[i];
-					if ( rInfo.GetInputObjectInfo().PObject == pImage )
-					{
-						// replace with tool set image
-						SVToolSetClass* pToolSet = GetInspection()->GetToolSet();
-						SVObjectTypeInfoStruct imageObjectInfo;
-						imageObjectInfo.ObjectType = SVImageObjectType;
-						SVImageClass* pToolSetImage = dynamic_cast <SVImageClass*> (reinterpret_cast<SVObjectClass*>( ::SVSendMessage( pToolSet, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&imageObjectInfo) )) );
-
-						rInfo.SetInputObject( pToolSetImage );
-						DWORD_PTR bSuccess = ::SVSendMessage( rInfo.GetInputObjectInfo().PObject, SVM_CONNECT_OBJECT_INPUT, reinterpret_cast<DWORD_PTR>(&rInfo), 0 );
-						break;
-					}
-				}
-
-				dwResult = SVMR_SUCCESS;
-				break;
-			}
-			else if ( SVValueObjectClass* pValueObject = dynamic_cast <SVValueObjectClass*> (pObject) )
-			{
-				// find object
-				for ( int i=0; i < SVExternalToolTaskData::NUM_INPUT_OBJECTS; i++ )
-				{
-					SVInObjectInfoStruct& rInfo = m_Data.m_aInputObjectInfo[i];
-					if ( rInfo.GetInputObjectInfo().PObject == pValueObject )
-					{
-						rInfo.SetInputObject( nullptr );
-						DWORD_PTR bSuccess = ::SVSendMessage( rInfo.GetInputObjectInfo().PObject, SVM_CONNECT_OBJECT_INPUT, reinterpret_cast<DWORD_PTR>(&rInfo), 0 );
-
-						// set value to default
-						m_Data.m_aInputObjects[i].SetDefaultValue(m_Data.m_aInputValueDefinitions[i].vDefaultValue, true);
-						break;
-					}
-				}
-
-				dwResult = SVMR_SUCCESS;
-				break;
-			}
-			dwResult = SVMR_NO_SUCCESS;
-			break;
-		}
-	}
-	dwResult = SVTaskObjectListClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext ) | dwResult;
-	return dwResult;
-}
-
 BOOL SVExternalToolTask::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 {
 	BOOL l_bOk = false;
@@ -1309,10 +1217,7 @@ HRESULT SVExternalToolTask::SetCancelData(SVCancelData* pCancelData)
 			if( pImageInfo->IsConnected() )
 			{
 				// Send to the Object we are using
-				::SVSendMessage( pImageInfo->GetInputObjectInfo().UniqueObjectID, 
-								 SVM_DISCONNECT_OBJECT_INPUT, 
-								 reinterpret_cast<DWORD_PTR>(pImageInfo), 
-								 0 );
+				SVObjectManagerClass::Instance().DisconnectObjectInput(pImageInfo->GetInputObjectInfo().UniqueObjectID, pImageInfo );
 			}
 
 		}
@@ -1335,17 +1240,17 @@ HRESULT SVExternalToolTask::SetCancelData(SVCancelData* pCancelData)
 			SVInObjectInfoStruct* pImageInfo = &m_Data.m_aInputImageInfo[i];
 			// reconnect changed objects
 			// Connect input info to new input object...
-			DWORD_PTR dwConnectResult = ::SVSendMessage( pImageInfo->GetInputObjectInfo().UniqueObjectID, SVM_CONNECT_OBJECT_INPUT, reinterpret_cast<DWORD_PTR>(pImageInfo), 0 );
+			SVObjectManagerClass::Instance().ConnectObjectInput(pImageInfo->GetInputObjectInfo().UniqueObjectID, pImageInfo);
 		}
 
 		SVToolClass* pTool = dynamic_cast <SVToolClass*> (GetAncestor( SVToolObjectType ));
-		// Tell Tool image source has changed
-		::SVSendMessage( pTool, SVM_IMAGE_SOURCE_CHANGED, 0, 0 );
-
 		// Reset all objects again...
 		SVToolSetClass* pToolSet = dynamic_cast<SVToolSetClass*> (GetAncestor( SVToolSetObjectType ));
-		::SVSendMessage( pTool, SVM_RESET_ALL_OBJECTS, 0, 0 );
-
+		if (nullptr != pTool)
+		{
+			pTool->resetAllObjects(true, false);
+		}
+		
 		return S_OK;
 	}// end if ( pData )
 	else
@@ -1537,11 +1442,7 @@ HRESULT SVExternalToolTask::AllocateResult (int iIndex)
 		info.ObjectType = SVVariantValueObjectType;
 		info.EmbeddedID = SVValueObjectGuid;
 		
-		SVVariantValueObjectClass* pValue = 
-			dynamic_cast<SVVariantValueObjectClass*>(reinterpret_cast<SVObjectClass*>(SVSendMessage(pResult,
-			SVM_GETFIRST_OBJECT, 
-			0, 
-			reinterpret_cast<DWORD_PTR>(&info))));
+		SVVariantValueObjectClass* pValue = dynamic_cast<SVVariantValueObjectClass*>(pResult->getFirstObject(info));
 		
 		if (!pValue)
 		{
@@ -1551,14 +1452,14 @@ HRESULT SVExternalToolTask::AllocateResult (int iIndex)
 		pValue->ObjectAttributesAllowedRef() = pValue->ObjectAttributesAllowed() & ~SV_DEFAULT_ATTRIBUTES;
 		
 		// Ensure this Object's inputs get connected
-		::SVSendMessage( pResult, SVM_CONNECT_ALL_INPUTS, 0, 0 );
+		pResult->ConnectAllInputs();
 
 		// And last - Create (initialize) it
 
 		if( ! pResult->IsCreated() )
 		{
 			// And finally try to create the child object...
-			if( ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(pResult), SVMFResetObject ) != SVMR_SUCCESS )
+			if( !CreateChildObject(pResult, SVMFResetObject ) )
 			{
 				// Remove it from the TaskObjectList ( Destruct it )
 				GUID objectID = pResult->GetUniqueObjectID();
@@ -1660,55 +1561,6 @@ std::vector<SVResultClass*> SVExternalToolTask::GetResultRangeObjects()
 	}
 
 	return aObjects;
-}
-
-BOOL SVExternalToolTask::renameToolSetSymbol(const SVObjectClass* pObject, LPCTSTR originalName )
-{
-	if( nullptr != pObject )
-	{
-		SVString newPrefix;
-		SVString oldPrefix;
-
-		if( const SVInspectionProcess* pInspection = dynamic_cast<const SVInspectionProcess*> (pObject) )
-		{
-			newPrefix = pInspection->GetCompleteObjectNameToObjectType( nullptr, SVInspectionObjectType ) + _T( "." );
-		}// end if
-		else if( const BasicValueObject* pBasicValueObject = dynamic_cast<const BasicValueObject*> (pObject) )
-		{
-			newPrefix = pBasicValueObject->GetCompleteObjectNameToObjectType( nullptr, SVRootObjectType );
-		}
-		else if( const SVValueObjectClass* pValueObject = dynamic_cast<const SVValueObjectClass*> (pObject) )
-		{
-			newPrefix = pValueObject->GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType );
-		}
-		else
-		{
-			newPrefix = pObject->GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType ) + _T( "." );
-		}// end else
-		oldPrefix = newPrefix;
-		SvUl_SF::searchAndReplace( oldPrefix, pObject->GetName(), originalName );
-
-		// loop through all inputs & rename
-		// input objects
-		for( long i=0; i < m_Data.m_lNumInputValues; i++ )
-		{
-			SVInObjectInfoStruct& rInfo = m_Data.m_aInputObjectInfo[i];
-			SVObjectClass* pInputObject = rInfo.GetInputObjectInfo().PObject;
-			if( nullptr != pInputObject )
-			{
-				//Either it is the object itself changing name or the toolset
-				if ( pObject == pInputObject ||
-					(pObject == pInputObject->GetAncestor(pObject->GetObjectInfo().ObjectTypeInfo.ObjectType)) )
-				{
-					CString sValue;
-					m_Data.m_aInputObjects[i].GetValue(sValue);
-					sValue.Replace( oldPrefix.c_str(), newPrefix.c_str() );
-					m_Data.m_aInputObjects[i].SetValue(1, sValue);
-				}
-			}
-		}
-	}
-	return TRUE;
 }
 
 HRESULT SVExternalToolTask::ClearData()
@@ -1846,29 +1698,135 @@ void SVExternalToolTask::GetDLLMessageString(HRESULT hr, BSTR* bstrMessage) cons
 	m_dll.GetMessageString(hr, bstrMessage);
 }
 
+bool SVExternalToolTask::DisconnectObjectInput( SVInObjectInfoStruct* pObjectInInfo )
+{
+	bool Result(false);
+	if (nullptr != pObjectInInfo)
+	{
+		SVObjectClass* pObject = pObjectInInfo->GetInputObjectInfo().PObject;
+		if ( SVImageClass* pImage = dynamic_cast <SVImageClass*> (pObject) )
+		{
+			// find object
+			for ( int i=0; i < SVExternalToolTaskData::NUM_INPUT_IMAGES; i++ )
+			{
+				SVInObjectInfoStruct& rInfo = m_Data.m_aInputImageInfo[i];
+				if ( rInfo.GetInputObjectInfo().PObject == pImage )
+				{
+					// replace with tool set image
+					SVToolSetClass* pToolSet = GetInspection()->GetToolSet();
+					SVObjectTypeInfoStruct imageObjectInfo;
+					imageObjectInfo.ObjectType = SVImageObjectType;
+					SVImageClass* pToolSetImage = dynamic_cast <SVImageClass*> (pToolSet->getFirstObject(imageObjectInfo));
+
+					rInfo.SetInputObject( pToolSetImage );
+					rInfo.GetInputObjectInfo().PObject->ConnectObjectInput(&rInfo);
+					break;
+				}
+			}
+
+			Result = true;
+		}
+		else if ( SVValueObjectClass* pValueObject = dynamic_cast <SVValueObjectClass*> (pObject) )
+		{
+			// find object
+			for ( int i=0; i < SVExternalToolTaskData::NUM_INPUT_OBJECTS; i++ )
+			{
+				SVInObjectInfoStruct& rInfo = m_Data.m_aInputObjectInfo[i];
+				if ( rInfo.GetInputObjectInfo().PObject == pValueObject )
+				{
+					rInfo.SetInputObject( nullptr );
+					rInfo.GetInputObjectInfo().PObject->ConnectObjectInput(&rInfo);
+
+					// set value to default
+					m_Data.m_aInputObjects[i].SetDefaultValue(m_Data.m_aInputValueDefinitions[i].vDefaultValue, true);
+					break;
+				}
+			}
+
+			Result = true;
+		}
+	}
+	return __super::DisconnectObjectInput(pObjectInInfo) && Result;
+}
+
+void SVExternalToolTask::OnObjectRenamed(const SVObjectClass& rRenamedObject, const SVString& rOldName)
+{
+	SVString newPrefix;
+	SVString oldPrefix;
+
+	if( const SVInspectionProcess* pInspection = dynamic_cast<const SVInspectionProcess*> (&rRenamedObject) )
+	{
+		newPrefix = pInspection->GetCompleteObjectNameToObjectType( nullptr, SVInspectionObjectType ) + _T( "." );
+	}// end if
+	else if( const BasicValueObject* pBasicValueObject = dynamic_cast<const BasicValueObject*> (&rRenamedObject) )
+	{
+		newPrefix = pBasicValueObject->GetCompleteObjectNameToObjectType( nullptr, SVRootObjectType );
+	}
+	else if( const SVValueObjectClass* pValueObject = dynamic_cast<const SVValueObjectClass*> (&rRenamedObject) )
+	{
+		newPrefix = pValueObject->GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType );
+	}
+	else
+	{
+		newPrefix = rRenamedObject.GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType ) + _T( "." );
+	}// end else
+	oldPrefix = newPrefix;
+	SvUl_SF::searchAndReplace( oldPrefix, rRenamedObject.GetName(), rOldName.c_str() );
+
+	// loop through all inputs & rename
+	// input objects
+	for( long i=0; i < m_Data.m_lNumInputValues; i++ )
+	{
+		SVInObjectInfoStruct& rInfo = m_Data.m_aInputObjectInfo[i];
+		SVObjectClass* pInputObject = rInfo.GetInputObjectInfo().PObject;
+		if( nullptr != pInputObject )
+		{
+			//Either it is the object itself changing name or the toolset
+			if ( &rRenamedObject == pInputObject ||
+				(&rRenamedObject == pInputObject->GetAncestor(rRenamedObject.GetObjectInfo().ObjectTypeInfo.ObjectType)) )
+			{
+				CString sValue;
+				m_Data.m_aInputObjects[i].GetValue(sValue);
+				sValue.Replace( oldPrefix.c_str(), newPrefix.c_str() );
+				m_Data.m_aInputObjects[i].SetValue(1, sValue);
+			}
+		}
+	}
+
+	__super::OnObjectRenamed(rRenamedObject, rOldName);
+}
+
+bool SVExternalToolTask::resetAllObjects( bool shouldNotifyFriends, bool silentReset )
+{
+	bool Result = ( S_OK == ResetObject() );
+	ASSERT( Result );
+
+	return __super::resetAllObjects( shouldNotifyFriends, silentReset ) && Result;
+}
+
 HRESULT SVExternalToolTask::DisconnectInputsOutputs(SVObjectVector& rListOfObjects)
 {
-	return SVTaskObjectListClass::DisconnectInputsOutputs(rListOfObjects);
+	return __super::DisconnectInputsOutputs(rListOfObjects);
 }
 
 HRESULT SVExternalToolTask::HideInputsOutputs(SVObjectVector& rListOfObjects)
 {
-	return SVTaskObjectListClass::HideInputsOutputs(rListOfObjects);
+	return __super::HideInputsOutputs(rListOfObjects);
 }
 
-BOOL SVExternalToolTask::ConnectAllInputs()
+bool SVExternalToolTask::ConnectAllInputs()
 {
-	BOOL l_bRunConnect = TRUE;
+	bool l_bRunConnect = true;
 	int i( 0 );
 
 	// Check if input info is Ok for Input Images..
 	for( i = 0 ; i < m_Data.m_lNumInputImages ; i++ )
 	{
-		l_bRunConnect = FALSE;
+		l_bRunConnect = false;
 		SVInObjectInfoStruct& rInfo = m_Data.m_aInputImageInfo[i];
 		if( SV_GUID_NULL != rInfo.GetInputObjectInfo().UniqueObjectID )
 		{
-			l_bRunConnect = TRUE;
+			l_bRunConnect = true;
 			break;
 		}
 	}
@@ -1876,11 +1834,11 @@ BOOL SVExternalToolTask::ConnectAllInputs()
 	// check if input info is ok for input objects.
 	for( i = 0 ; i < m_Data.m_lNumInputValues ; i++ )
 	{
-		l_bRunConnect = FALSE;
+		l_bRunConnect = false;
 		SVInObjectInfoStruct& rInfo = m_Data.m_aInputObjectInfo[i];
 		if( SV_GUID_NULL != rInfo.GetInputObjectInfo().UniqueObjectID )
 		{
-			l_bRunConnect = TRUE;
+			l_bRunConnect = true;
 			break;
 		}
 	}
@@ -1889,7 +1847,7 @@ BOOL SVExternalToolTask::ConnectAllInputs()
 	{
 		return SVTaskObjectListClass::ConnectAllInputs();
 	}
-	return TRUE;
+	return true;
 }
 
 HRESULT SVExternalToolTask::ConnectInputImages()
@@ -1964,8 +1922,7 @@ HRESULT SVExternalToolTask::ConnectInputs()
 		{
 			if ( !rInfo.IsConnected() )
 			{
-				DWORD_PTR bSuccess = ::SVSendMessage( rInfo.GetInputObjectInfo().PObject, SVM_CONNECT_OBJECT_INPUT, reinterpret_cast<DWORD_PTR>(&rInfo), 0 );
-				if( !bSuccess )
+				if( !rInfo.GetInputObjectInfo().PObject->ConnectObjectInput(&rInfo) )
 				{
 					hr = S_FALSE;
 				}
@@ -1975,7 +1932,7 @@ HRESULT SVExternalToolTask::ConnectInputs()
 		{
 			m_Data.m_aInputObjects[i].SetDefaultValue(m_Data.m_aInputValueDefinitions[i].vDefaultValue, FALSE);
 			m_Data.m_aInputObjects[i].SetType(m_Data.m_aInputValueDefinitions[i].lVT);
-			if( ::SVSendMessage( &(m_Data.m_aInputObjects[i]), SVM_RESET_ALL_OBJECTS, 0, 0 ) != SVMR_SUCCESS	)
+			if( m_Data.m_aInputObjects[i].resetAllObjects(true, false) )
 			{
 				hr = S_FALSE;
 			}

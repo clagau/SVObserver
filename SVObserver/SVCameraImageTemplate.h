@@ -49,7 +49,6 @@ public:
 	virtual HRESULT ReconnectBuffers();
 
 	virtual HRESULT GetObjectValue( const SVString& p_rValueName, VARIANT& p_rVariantValue ) const;
-	virtual HRESULT SetObjectValue( const SVString& p_rValueName, const _variant_t& p_rVariantValue );
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* PDataObject );
 
 	virtual void Persist(SVObjectWriter& rWriter);

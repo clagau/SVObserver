@@ -140,21 +140,17 @@ public:
 	//! \returns void
 	//************************************
 	void   UpdateRange(int bucket, RangeEnum::ERange  range );
+
+#pragma region Methods to replace processMessage
+	virtual bool DisconnectObjectInput( SVInObjectInfoStruct* pObjectInInfo ) override;
+	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const SVString& rOldName) override;
+	virtual bool resetAllObjects( bool shouldNotifyFriends, bool silentReset ) override;
+#pragma endregion Methods to replace processMessage
 	
 protected:
 	virtual void init();
 	BOOL getInputValue( double& RVal );
 	BOOL onRun(SVRunStatusClass& RRunStatus);
-	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
-
-	//************************************
-	//! function is called when an object was renamed
-	//! \param pObject [in] object name 
-	//! \param originalName [in] previous name 
-	//! \returns BOOL
-	//************************************
-	virtual BOOL renameToolSetSymbol(const SVObjectClass* pObject, LPCTSTR originalName);
-
 
 	//************************************
 	//! return a reference to the range value 

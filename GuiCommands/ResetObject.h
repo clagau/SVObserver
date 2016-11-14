@@ -10,6 +10,7 @@
 #pragma region Includes
 //Moved to precompiled header: #include <boost/noncopyable.hpp>
 #include "ObjectInterfaces/ObjectDefines.h"
+#include "ObjectInterfaces/IObjectClass.h"
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVUtilityLibrary/SVString.h"
 #include "SVObjectLibrary/SVObjectLibrary.h"
@@ -30,16 +31,17 @@ namespace Seidenader
 			{
 				HRESULT hr = S_OK;
 
-				DWORD flags = SVM_RESET_ALL_OBJECTS;
-				if (!m_bNotifyFriends)
+				SvOi::IObjectClass* pObject = SvOi::getObject(m_InstanceID);
+
+				bool Result = false;
+				if (nullptr != pObject)
 				{
-					flags &= ~SVM_NOTIFY_FRIENDS;
+					Result = pObject->resetAllObjects(m_bNotifyFriends, false);
 				}
-				DWORD_PTR dwRet = ::SVSendMessage(m_InstanceID, flags, 0, 0);
-				if (SVMR_SUCCESS != dwRet)
+				if (!Result)
 				{
 					hr = E_FAIL;
-					SvOi::ITaskObject* pTask = dynamic_cast<SvOi::ITaskObject *>(SvOi::getObject(m_InstanceID));
+					SvOi::ITaskObject* pTask = dynamic_cast<SvOi::ITaskObject *>(pObject);
 					if (nullptr != pTask)
 					{
 						m_messages = pTask->getTaskMessages();

@@ -52,7 +52,7 @@ public:
 
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
 	virtual BOOL CloseObject();
-	virtual BOOL DisconnectInput(SVInObjectInfoStruct* pInObjectInfo);
+	virtual bool DisconnectObjectInput(SVInObjectInfoStruct* pInObjectInfo) override;
 
 	virtual HRESULT GetDrawInfo( SVExtentMultiLineStruct& p_rMultiLine );
 
@@ -90,6 +90,7 @@ public:
 	virtual HRESULT TranslatePointToSource( SVExtentPointStruct p_svIn, SVExtentPointStruct& p_rsvOut );
 	virtual HRESULT EnableAuxiliaryExtents( bool p_bEnable );
 
+	virtual bool resetAllObjects( bool shouldNotifyFriends, bool silentReset ) override;
 	virtual HRESULT ResetObject();
 
 	virtual HRESULT GetPropertyInfo( SVExtentPropertyEnum p_eProperty, SVExtentPropertyInfoStruct& p_rInfo ) const;
@@ -146,6 +147,8 @@ public:
 
 	SVValueObjectClass* GetToolComment();
 
+	const SVImageInfoClass* getFirstImageInfo() const;
+
 #pragma region ITool methods
 	virtual bool areAuxExtentsAvailable() const override;
 	virtual SvUl::NameGuidList getAvailableAuxSourceImages() const override;
@@ -164,13 +167,12 @@ protected:
 	virtual void removeEmbeddedExtents( bool p_DisconnectExtents = true );
 
 	virtual BOOL onRun( SVRunStatusClass& RRunStatus );
-	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
 
 	virtual HRESULT UpdateOverlayIDs( SVExtentMultiLineStruct& p_rMultiLine );
 
-	// Sends SVM_CREATE_ALL_OBJECTS to the child object
-	// and returns the result of this message.
-	virtual DWORD_PTR createAllObjectsFromChild( SVObjectClass* pChildObject ) override;
+	virtual bool createAllObjectsFromChild( SVObjectClass& rChildObject ) override;
+
+	virtual void connectChildObject( SVTaskObjectClass& rChildObject ) override;
 
 	SVToolSetClass* m_pCurrentToolSet;
 

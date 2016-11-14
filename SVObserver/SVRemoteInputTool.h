@@ -42,6 +42,10 @@ public:
 	HRESULT ClearInputObject();
 	HRESULT SetInputObject( const SVGUID& p_rObjectId );
 
+#pragma region Methods to replace processMessage
+	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const SVString& rOldName) override;
+#pragma endregion Methods to replace processMessage
+
 protected:
 	typedef SVTQueueObject< SVObjectCommandDataJsonPtr > SVCommandQueue;
 
@@ -81,7 +85,6 @@ protected:
 	typedef SVBiUniqueMap< SVDataElement, long >::type SVDataContainer;
 
 	virtual BOOL onRun( SVRunStatusClass& RRunStatus );
-	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
 
 	HRESULT ProcessCommandQueue();
 

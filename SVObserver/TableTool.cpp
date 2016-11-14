@@ -70,7 +70,7 @@ BOOL TableTool::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 	{
 		m_pTable = new TableFillObject(this);
 		Add( m_pTable );
-		if( ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(m_pTable), 0 ) != SVMR_SUCCESS )
+		if( !CreateChildObject(m_pTable) )
 		{
 			bOk = false;
 			SvStl::MessageContainer message;

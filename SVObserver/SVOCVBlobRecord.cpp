@@ -119,13 +119,3 @@ BOOL SVOCVCharacterResultClass::onRun(SVRunStatusClass& RRunStatus)
 	return bRetVal;
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// 
-////////////////////////////////////////////////////////////////////////////////
-DWORD_PTR SVOCVCharacterResultClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
-{
-	DWORD_PTR DwResult = SVMR_NOT_PROCESSED;
-
-	return( SVTaskObjectClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext ) | DwResult );
-}
-

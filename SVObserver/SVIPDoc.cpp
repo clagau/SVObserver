@@ -1377,14 +1377,14 @@ void SVIPDoc::OnEditPaste()
 			createStruct.OwnerObjectInfo = pInspection;
 			createStruct.InspectionObjectInfo = pInspection;
 
-			::SVSendMessage( pInspection, SVM_CONNECT_ALL_OBJECTS, reinterpret_cast<DWORD_PTR>(&createStruct), 0 );
-			::SVSendMessage( pInspection, SVM_CONNECT_ALL_INPUTS, 0, 0 );
+			pInspection->ConnectObject(createStruct);
+			pInspection->ConnectAllInputs();
 
 			SVObjectLevelCreateStruct createObjStruct;
 
-			::SVSendMessage( pInspection, SVM_CREATE_ALL_OBJECTS,reinterpret_cast<DWORD_PTR>(&createObjStruct), 0 );
+			pInspection->createAllObjects(createObjStruct);
 			//Reset only the inserted tool
-			::SVSendMessage( pTool, SVM_RESET_ALL_OBJECTS, TRUE, 0 );
+			pTool->resetAllObjects(true, true);
 
 			RunOnce();
 			UpdateAllViews(nullptr);
@@ -1650,8 +1650,11 @@ void SVIPDoc::OnPublishedResultImagesPicker()
 			for ( Iter = SelectedItems.begin(); Iter != SelectedItems.end(); ++Iter )
 			{
 				SVGUID ObjectGuid( Iter->getItemKey() );
-
-				SVSendMessage ( ObjectGuid, SVM_RESET_ALL_OBJECTS, 0, 0 );
+				SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject( ObjectGuid );
+				if ( nullptr != pObject )
+				{
+					pObject->resetAllObjects(true, false);
+				}
 			}
 
 			SVConfigurationObject* pConfig( nullptr );
@@ -3249,9 +3252,12 @@ void SVIPDoc::RegressionTestModeChanged()
 
 	SVSVIMStateClass::RemoveState(SV_STATE_REGRESSION);
 
-	SVSendMessage( GetInspectionProcess(), SVM_GOING_OFFLINE, 0, 0 ); // Mainly used to tell Archive Tool to shutdown
-	// @WARNING:  Pointers should be checked before they are dereferenced.
-	GetToolSet()->ResetObject();
+	SVToolSetClass* pToolSet = GetToolSet();
+	if (nullptr != pToolSet)
+	{
+		pToolSet->goingOffline(); // Mainly used to tell Archive Tool to shutdown
+		pToolSet->ResetObject();
+	}
 	RunOnce();
 }
 

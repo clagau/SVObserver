@@ -83,7 +83,7 @@ BOOL SVTADlgColorThresholdROI::OnInitDialog()
 	objectInfo.SubType = SVColorThresholdObjectType;
 
 	// Get the color threshold object
-	mpThreshold = reinterpret_cast<SVColorThresholdClass*>(::SVSendMessage( mpTool, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
+	mpThreshold = dynamic_cast<SVColorThresholdClass*>(mpTool->getFirstObject(objectInfo));
 
 	if( mpThreshold )
 	{
@@ -93,19 +93,19 @@ BOOL SVTADlgColorThresholdROI::OnInitDialog()
 
 		// Get Train Color ROI Extent Left Object...
 		extentObjectInfo.EmbeddedID = SVExtentRelativeLeftPositionObjectGuid;
-		mpExtentLeft = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( mpThreshold, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&extentObjectInfo) ));
+		mpExtentLeft = dynamic_cast<SVDoubleValueObjectClass*>(mpThreshold->getFirstObject(extentObjectInfo));
 
 		// Get Train Color ROI Extent Top Object...
 		extentObjectInfo.EmbeddedID = SVExtentRelativeTopPositionObjectGuid;
-		mpExtentTop = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( mpThreshold, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&extentObjectInfo) ));
+		mpExtentTop = dynamic_cast<SVDoubleValueObjectClass*>(mpThreshold->getFirstObject(extentObjectInfo));
 
 		// Get Train Color ROI Extent Width Object...
 		extentObjectInfo.EmbeddedID = SVExtentWidthObjectGuid;
-		mpExtentWidth = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( mpThreshold, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&extentObjectInfo) ));
+		mpExtentWidth = dynamic_cast<SVDoubleValueObjectClass*>(mpThreshold->getFirstObject(extentObjectInfo));
 
 		// Get Train Color ROI Extent Height Object...
 		extentObjectInfo.EmbeddedID = SVExtentHeightObjectGuid;
-		mpExtentHeight = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( mpThreshold, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&extentObjectInfo) ));
+		mpExtentHeight = dynamic_cast<SVDoubleValueObjectClass*>(mpThreshold->getFirstObject(extentObjectInfo));
 
 		// Initialize Extent
 		double value;

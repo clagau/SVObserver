@@ -2142,7 +2142,7 @@ BOOL CSVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 					pInspection->SetEnableAuxiliaryExtent( lEnableAuxiliaryExtent );
 					if( l_lPrevEnable && lEnableAuxiliaryExtent == 0 )
 					{
-						::SVSendMessage( pInspection, SVM_RESET_ALL_OBJECTS, 0, 0 );
+						pInspection->resetAllObjects(true, false);
 					}
 				}
 				pInspection = nullptr;
@@ -2535,17 +2535,13 @@ BOOL CSVOConfigAssistantDlg::SendDataToConfiguration()
 		{
 			if (pTmpObj->HasInspectionNameChange())
 			{
-				::SVSendMessage( pInspection,SVM_OBJECT_RENAMED,
-					reinterpret_cast<DWORD_PTR>( static_cast<SVObjectClass*>(pInspection) ), 
-					reinterpret_cast<DWORD_PTR>( static_cast<LPCTSTR>(pTmpObj->GetOrginalInspectionName())) );
+				pInspection->OnObjectRenamed(*pInspection, SVString(pTmpObj->GetOrginalInspectionName()));
 				SVPPQObject* pPPQ( nullptr );
 				SVOutputObjectList* pOutputObjList = pConfig->GetOutputObjectList();
 
 				if (nullptr != pOutputObjList)
 				{
-					::SVSendMessage( pOutputObjList, SVM_OBJECT_RENAMED,
-						reinterpret_cast<DWORD_PTR>(static_cast <SVObjectClass*> (pInspection)),
-						reinterpret_cast<DWORD_PTR>(static_cast<LPCTSTR>( pTmpObj->GetOrginalInspectionName())) );
+					pOutputObjList->OnObjectRenamed(*pInspection, SVString(pTmpObj->GetOrginalInspectionName()));
 				}
 
 				long lCount = pConfig->GetPPQCount();
@@ -2554,9 +2550,7 @@ BOOL CSVOConfigAssistantDlg::SendDataToConfiguration()
 					pPPQ = pConfig->GetPPQ(lPPQcount);
 					if (nullptr != pPPQ)
 					{
-						::SVSendMessage( pPPQ, SVM_OBJECT_RENAMED,
-							reinterpret_cast<DWORD_PTR>(static_cast<SVObjectClass*>(pInspection)),
-							reinterpret_cast<DWORD_PTR>(static_cast<LPCTSTR>( pTmpObj->GetOrginalInspectionName())) );
+						pPPQ->OnObjectRenamed(*pInspection, SVString(pTmpObj->GetOrginalInspectionName()));
 					} //if (pPPQ)
 				} //for ppqcount
 			} // if name has changed

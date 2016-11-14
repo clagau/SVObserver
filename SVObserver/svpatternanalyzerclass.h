@@ -100,13 +100,13 @@ public:
 
 	BOOL GetModelImageFileName(CString &csFileName);
 
+	virtual bool resetAllObjects( bool shouldNotifyFriends, bool silentReset ) override;
 	virtual HRESULT ResetObject();
 	bool IsValidSize();
 
 protected:
 	void CreateResult();
 
-	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
 	virtual HRESULT onCollectOverlays(SVImageClass* p_pImage, SVExtentMultiLineStructCArray& p_rMultiLineArray );
 	
 	void ResetResultValues();

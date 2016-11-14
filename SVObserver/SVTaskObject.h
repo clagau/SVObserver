@@ -52,6 +52,7 @@ public:
 
 	virtual ~SVTaskObjectClass();
 
+	virtual bool resetAllObjects( bool shouldNotifyFriends, bool silentReset ) override;
 	virtual HRESULT ResetObject();
 
 	virtual HRESULT IsInputImage( SVImageClass* p_psvImage );
@@ -69,7 +70,7 @@ public:
 
 	void ResetPrivateInputInterface();
 	
-	virtual BOOL ConnectAllInputs();
+	virtual bool ConnectAllInputs() override;
 	virtual HRESULT ConnectToObject( SVInObjectInfoStruct* p_psvInputInfo, SVObjectClass* pNewObject ); // SEJ - why is this virtual ?
 
 	virtual BOOL IsValid();
@@ -85,7 +86,7 @@ public:
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStruct );
 	virtual BOOL CloseObject();
 	virtual void Disconnect();
-	virtual BOOL DisconnectInput(SVInObjectInfoStruct* pInObjectInfo);
+	virtual bool DisconnectObjectInput(SVInObjectInfoStruct* pInObjectInfo) override;
 	virtual HRESULT GetOutputList( SVOutputInfoListClass& p_rOutputInfoList ) const;
 	virtual HRESULT DisconnectInputsOutputs(SVObjectVector& rListOfObjects);
 	virtual HRESULT HideInputsOutputs(SVObjectVector& rListOfObjects);
@@ -94,7 +95,6 @@ public:
 	virtual BOOL SetObjectDepthWithIndex( int NewObjectDepth, int NewLastSetIndex );
 	virtual BOOL SetImageDepth( long lDepth );
 
-	virtual BOOL SetEmbeddedObjectValue( const GUID& REmbeddedID, SVObjectAttributeClass* PDataObject );
 	virtual void SetInvalid();
 	virtual void SetDisabled();
 
@@ -130,6 +130,11 @@ public:
 	//************************************
 	SvStl::MessageContainer getFirstTaskMessage() const;
 
+	/// Preparing to go offline. Is used e.g. by the Archive Tool.
+	virtual void goingOffline() {};
+
+	virtual HRESULT SetValuesForAnObject( const GUID& rAimObjectID, SVObjectAttributeClass* pDataObject ) override;
+
 #pragma region virtual method (ITaskObject)
 	virtual HRESULT AddInputRequestMarker() override;
 	virtual HRESULT RunOnce(IObjectClass* pTool = nullptr) override;
@@ -143,12 +148,26 @@ public:
 	virtual SvStl::MessageContainerVector validateAndSetEmmeddedValues(const SvOi::SetValuePairVector& valueVector, bool shouldSet) override;
 #pragma endregion virtual method (ITaskObject)
 
+#pragma region Methods to replace processMessage
+	virtual SVObjectClass* OverwriteEmbeddedObject(const GUID& uniqueID, const GUID& rEmbeddedID) override;
+	virtual void GetInputInterface(SVInputInfoListClass& rInputList, bool bAlsoFriends) const override;
+	virtual void DestroyFriend(SVObjectClass* pObject) override;
+	virtual SvOi::IObjectClass* getFirstObject(const SVObjectTypeInfoStruct& rObjectTypeInfo, bool useFriends = true, const SvOi::IObjectClass* pRequestor = nullptr) const override;
+	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const SVString& rOldName) override;
+#pragma endregion Methods to replace processMessage
+
 protected:
 
 	SVInputInfoListClass m_svToolInputList;
 	long m_lLastToolInputListIndex;
 
 	virtual BOOL RegisterEmbeddedObjectAsClass( SVObjectClass* PEmbeddedObject, const GUID& REmbeddedID, LPCTSTR newObjectName );
+
+	/// This method return true if method ConnectAllObject has to ask friends to connect this input info
+	/// \param rInfo [in] input info for the connection.
+	/// \param rPOwner [in,out] The method can change the owner if required.
+	/// \returns bool
+	virtual bool hasToAskFriendForConnection( const SVObjectTypeInfoStruct& rInfo, SVObjectClass*& rPOwner ) const { return true; }
 
 public:
 	// Get the local object color...
@@ -162,7 +181,7 @@ public:
 	virtual void PersistInputs(SVObjectWriter& rWriter);
 	virtual void PersistEmbeddeds(SVObjectWriter& rWriter);
 
-	void GetPrivateInputList( SVInputInfoListClass& RInputInterface );
+	void GetPrivateInputList( SVInputInfoListClass& RInputInterface ) const;
 	HRESULT GetDependentsList( SVObjectListClass& rListOfDependents, bool bOnlyImageDependencies = false );
 
 	// the first object is the dependent, the second is the specific object being used
@@ -234,10 +253,7 @@ protected:
 	virtual BOOL onRun( SVRunStatusClass& RRunStatus );
 	virtual BOOL runFriends( SVRunStatusClass& RRunStatus );
 
-	virtual DWORD_PTR	processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
-	virtual DWORD_PTR	OutputListProcessMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
-	virtual DWORD_PTR	FriendOutputListProcessMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
-	virtual DWORD_PTR	EmbeddedOutputListProcessMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
+	virtual bool resetAllOutputListObjects( bool shouldNotifyFriends, bool silentReset );
 
 protected:
 

@@ -315,19 +315,6 @@ SVBoolValueObjectClass* SVColorToolClass::GetConvertToHSIVariable()
 	return &m_convertToHSI;
 }
 
-DWORD_PTR SVColorToolClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
-{
-	DWORD_PTR DwResult = SVMR_NOT_PROCESSED;
-	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
-
-	switch (dwPureMessageID)
-	{
-		case SVMSGID_GET_IMAGE_BAND0_OBJECT: // The only Tool that owns a Color Band 0 Image is the ColorTool
-		return reinterpret_cast<DWORD_PTR>(&m_band0Image);
-	}
-	return( SVToolClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext ) | DwResult );
-}
-
 // Set String value object for Source Image Names
 HRESULT SVColorToolClass::CollectInputImageNames( )
 {

@@ -637,88 +637,6 @@ void local_remove_items( std::vector<CString>& rVec, SVStringValueObjectClass& r
 }
 
 
-/////////////////////////////////////////////////////////////////////////////
-//
-DWORD_PTR SVArchiveTool::processMessage( DWORD dwMessageID, 
-                                     DWORD_PTR dwMessageValue, 
-                                     DWORD_PTR dwMessageContext )
-{
-	//BOOL bResult;
-	DWORD_PTR dwResult = SVMR_NOT_PROCESSED;
-	// Try to process message by yourself...
-	DWORD dwPureMessageID = dwMessageID & SVM_PURE_MESSAGE;
-	switch (dwPureMessageID)
-	{
-		case SVMSGID_GOING_ONLINE:
-		{
-			return SVMR_SUCCESS;
-		}
-		break;
-				
-		// is sent from SVObserver.cpp.
-		case SVMSGID_GOING_OFFLINE:
-		{
-			if ( m_eArchiveMethod == SVArchiveAsynchronous )
-			{
-				TheSVArchiveImageThreadClass().GoOffline();
-			}
-
-			if ( m_eArchiveMethod == SVArchiveGoOffline )
-			{
-				WriteBuffers();
-			}
-
-			//
-			// Close the text to archive file if necessary, i.e. is open.
-			//
-			if(m_fileArchive.m_hFile != CFile::hFileNull)
-			{
-				m_fileArchive.Close();
-				return SVMR_SUCCESS;
-			}
-		}
-		break;
-				
-		// This Message occurs for two scenarios
-		// 1. Some Object is using our outputs and they are no longer needed.
-		// 2. We are using some Object's outputs and the outputs are no longer available
-		case SVMSGID_DISCONNECT_OBJECT_INPUT:
-		{
-			// ...use second message parameter ( DwMessageValue ) 
-			//   as pointer to InObjectInfo ( SVInObjectInfoStruct* )
-			// ...returns SVMR_SUCCESS, SVMR_NO_SUCCESS or SVMR_NOT_PROCESSED
-			SVInObjectInfoStruct* pInObjectInfo = reinterpret_cast <SVInObjectInfoStruct*> (dwMessageValue);
-
-			std::vector<CString> vecRemovedImage  = m_arrayImagesInfoObjectsToArchive. RemoveDisconnectedObject( pInObjectInfo->GetInputObjectInfo() );
-			std::vector<CString> vecRemovedResult = m_arrayResultsInfoObjectsToArchive.RemoveDisconnectedObject( pInObjectInfo->GetInputObjectInfo() );
-
-			local_remove_items ( vecRemovedImage, m_svoArchiveImageNames );
-			local_remove_items ( vecRemovedResult, m_svoArchiveResultNames );
-
-			return SVMR_SUCCESS;
-		}
-		break;
-
-		case SVMSGID_OBJECT_RENAMED:
-		{
-			SVObjectClass* pObject = reinterpret_cast <SVObjectClass*> (dwMessageValue); // Object with new name
-			LPCTSTR orgName = ( LPCTSTR )dwMessageContext;
-
-			if( renameToolSetSymbol(pObject, orgName ) )
-			{
-				dwResult = SVMR_SUCCESS;
-			}
-		}
-		break;
-		
-		default:
-		{
-			break;
-		}
-	}	
-	return( SVToolClass::processMessage( dwMessageID, dwMessageValue, dwMessageContext ) | dwResult );
-}
-
 HRESULT SVArchiveTool::initializeOnRun()
 {
 	CString csTemp;
@@ -1211,72 +1129,6 @@ long SVArchiveTool::CalculateImageMemory( std::vector<SVImageClass*> p_apImages 
 	return lTotalMemory;
 }
 
-
-BOOL SVArchiveTool::renameToolSetSymbol( const SVObjectClass* pObject, LPCTSTR originalName )
-{
-	bool Result( false );
-	
-	if( nullptr != pObject )
-	{
-		SVString newPrefix;
-		SVString oldPrefix;
-
-		if( const SVInspectionProcess* l_pInspection = dynamic_cast<const SVInspectionProcess*> (pObject) )
-		{
-			newPrefix = l_pInspection->GetCompleteObjectNameToObjectType( nullptr, SVInspectionObjectType ) + _T( "." );
-		}// end if
-		else if( const BasicValueObject* pBasicValueObject = dynamic_cast<const BasicValueObject*> (pObject) )
-		{
-			newPrefix = pBasicValueObject->GetCompleteObjectNameToObjectType( nullptr, SVRootObjectType );
-		}
-		else if( const SVValueObjectClass* pValueObject = dynamic_cast<const SVValueObjectClass*> (pObject) )
-		{
-			newPrefix = pValueObject->GetCompleteObjectNameToObjectType( nullptr, SVInspectionObjectType );
-		}
-		else
-		{
-			newPrefix = pObject->GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType ) + _T( "." );
-		}// end else
-		oldPrefix = newPrefix;
-		SvUl_SF::searchAndReplace( oldPrefix, pObject->GetName(), originalName );
-
-		int iSize = m_svoArchiveResultNames.GetResultSize();
-		int iLastSet = m_svoArchiveResultNames.GetLastSetIndex();
-
-		for (int i = 0; i < iSize; i++ )
-		{
-			CString sName;
-			m_svoArchiveResultNames.GetValue(iLastSet,i,sName);
-
-			if ('.' == oldPrefix[oldPrefix.size()-1])
-			{	//check if part of the name (ends with '.') is to replace
-				if(sName.Replace(oldPrefix.c_str(),newPrefix.c_str()) > 0)
-				{
-					Result = true;
-				}
-			}
-			else
-			{
-				SVString indirectTmp = sName;
-				size_t pos = indirectTmp.find('[');
-				if (SVString::npos != pos)
-				{	//if array ("[x]") in the name, remove it for the check
-					indirectTmp = indirectTmp.substr(0, pos);
-				}
-				//only replace the name if it is the fully name. Do NOT replace parts of the name, because then it this a other object with similar name.
-				if (oldPrefix == indirectTmp && sName.Replace(oldPrefix.c_str(),newPrefix.c_str()) > 0)
-				{	
-					Result = true;
-				}
-			}
-			m_svoArchiveResultNames.SetValue(iLastSet,i,sName);
-			m_svoArchiveResultNames.GetValue(iLastSet,i,sName);
-		}
-	}
-
-	return Result;
-}
-
 HRESULT SVArchiveTool::ValidateArchiveTool()
 {
 	HRESULT hRet = S_OK;
@@ -1302,3 +1154,93 @@ void SVArchiveTool::getTranslatedImagePath(CString &ImagePath)
 	ImagePath = m_ImageTranslatedPath;
 }
 
+bool SVArchiveTool::DisconnectObjectInput( SVInObjectInfoStruct* pObjectInInfo )
+{
+	if (nullptr != pObjectInInfo)
+	{
+		std::vector<CString> vecRemovedImage  = m_arrayImagesInfoObjectsToArchive. RemoveDisconnectedObject( pObjectInInfo->GetInputObjectInfo() );
+		std::vector<CString> vecRemovedResult = m_arrayResultsInfoObjectsToArchive.RemoveDisconnectedObject( pObjectInInfo->GetInputObjectInfo() );
+
+		local_remove_items ( vecRemovedImage, m_svoArchiveImageNames );
+		local_remove_items ( vecRemovedResult, m_svoArchiveResultNames );
+
+		return true;
+	}
+	return false;
+}
+
+void SVArchiveTool::goingOffline()
+{
+	if ( m_eArchiveMethod == SVArchiveAsynchronous )
+	{
+		TheSVArchiveImageThreadClass().GoOffline();
+	}
+
+	if ( m_eArchiveMethod == SVArchiveGoOffline )
+	{
+		WriteBuffers();
+	}
+
+	// Close the text to archive file if necessary, i.e. is open.
+	if(m_fileArchive.m_hFile != CFile::hFileNull)
+	{
+		m_fileArchive.Close();
+	}
+}
+
+void SVArchiveTool::OnObjectRenamed( const SVObjectClass& rRenamedObject, const SVString& rOldName )
+{
+	SVString newPrefix;
+	SVString oldPrefix;
+
+	if( const SVInspectionProcess* l_pInspection = dynamic_cast<const SVInspectionProcess*> (&rRenamedObject) )
+	{
+		newPrefix = l_pInspection->GetCompleteObjectNameToObjectType( nullptr, SVInspectionObjectType ) + _T( "." );
+	}// end if
+	else if( const BasicValueObject* pBasicValueObject = dynamic_cast<const BasicValueObject*> (&rRenamedObject) )
+	{
+		newPrefix = pBasicValueObject->GetCompleteObjectNameToObjectType( nullptr, SVRootObjectType );
+	}
+	else if( const SVValueObjectClass* pValueObject = dynamic_cast<const SVValueObjectClass*> (&rRenamedObject) )
+	{
+		newPrefix = pValueObject->GetCompleteObjectNameToObjectType( nullptr, SVInspectionObjectType );
+	}
+	else
+	{
+		newPrefix = rRenamedObject.GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType ) + _T( "." );
+	}// end else
+	oldPrefix = newPrefix;
+	SvUl_SF::searchAndReplace( oldPrefix, rRenamedObject.GetName(), rOldName.c_str() );
+
+	int iSize = m_svoArchiveResultNames.GetResultSize();
+	int iLastSet = m_svoArchiveResultNames.GetLastSetIndex();
+
+	for (int i = 0; i < iSize; i++ )
+	{
+		CString sName;
+		m_svoArchiveResultNames.GetValue(iLastSet,i,sName);
+
+		if ('.' == oldPrefix[oldPrefix.size()-1])
+		{	//check if part of the name (ends with '.') is to replace
+			sName.Replace(oldPrefix.c_str(),newPrefix.c_str());
+		}
+		else
+		{
+			SVString indirectTmp = sName;
+			size_t pos = indirectTmp.find('[');
+			if (SVString::npos != pos)
+			{	//if array ("[x]") in the name, remove it for the check
+				indirectTmp = indirectTmp.substr(0, pos);
+			}
+			//only replace the name if it is the fully name. Do NOT replace parts of the name, because then it this a other object with similar name.
+			if (oldPrefix == indirectTmp)
+			{
+				sName.Replace(oldPrefix.c_str(),newPrefix.c_str());
+			}
+		}
+		m_svoArchiveResultNames.SetValue(iLastSet,i,sName);
+		m_svoArchiveResultNames.GetValue(iLastSet,i,sName);
+	}
+
+	__super::OnObjectRenamed(rRenamedObject, rOldName);
+}

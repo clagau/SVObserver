@@ -239,9 +239,9 @@ BOOL SVToolClass::CloseObject()
 	return SVTaskObjectListClass::CloseObject();
 }
 
-BOOL SVToolClass::DisconnectInput( SVInObjectInfoStruct* pInObjectInfo )
+bool SVToolClass::DisconnectObjectInput( SVInObjectInfoStruct* pInObjectInfo )
 {
-	BOOL l_Status( SVTaskObjectListClass::DisconnectInput( pInObjectInfo ) && nullptr != pInObjectInfo );
+	bool Result( SVTaskObjectListClass::DisconnectObjectInput( pInObjectInfo ) && nullptr != pInObjectInfo );
 
 	if( nullptr != pInObjectInfo )
 	{
@@ -256,7 +256,7 @@ BOOL SVToolClass::DisconnectInput( SVInObjectInfoStruct* pInObjectInfo )
 		}
 	}
 
-	return l_Status;
+	return Result;
 }
 
 bool SVToolClass::IsEnabled() const
@@ -764,109 +764,6 @@ bool SVToolClass::getConditionalResult(long p_lIndex) const
 	return value;
 }
 
-DWORD_PTR SVToolClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
-{
-	DWORD_PTR DwResult = SVMR_NOT_PROCESSED;
-	SVToolLevelCreateStruct createStruct;
-
-	// Try to process message by yourself...
-	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
-	switch( dwPureMessageID )
-	{
-	case SVMSGID_RESET_ALL_OBJECTS:
-		{
-			ToolSizeAdjustTask* pToolSizeAdjustTask = nullptr;
-			pToolSizeAdjustTask = ToolSizeAdjustTask::GetToolSizeAdjustTask( this );
-			if( nullptr != pToolSizeAdjustTask )
-			{
-				DwResult = pToolSizeAdjustTask->ProcessResetAllObject(DwMessageID,DwMessageValue, DwMessageContext);
-			}
-			HRESULT l_ResetStatus = ResetObject();
-			if( S_OK != l_ResetStatus )
-			{
-				DwResult |= SVMR_NO_SUCCESS;
-			}
-			else
-			{
-				DwResult |= SVMR_SUCCESS;
-			}
-			break;
-		}
-
-	case SVMSGID_CREATE_ALL_OBJECTS:
-		{
-			if( !IsCreated() && !CreateObject( reinterpret_cast<SVObjectLevelCreateStruct*>(DwMessageValue) ) )
-			{
-				ASSERT( FALSE );
-
-				SVStringArray msgList;
-				msgList.push_back(GetObjectName());
-				msgList.push_back(SVString(GetCompleteObjectName()));
-				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-				Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_CreationOf2Failed, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10209 );
-
-				DwResult = SVMR_NO_SUCCESS;
-			}
-			else
-			{
-				DwResult = SVMR_SUCCESS;
-			}
-
-			createStruct.OwnerObjectInfo = this;
-			createStruct.ToolObjectInfo	= this;
-			createStruct.InspectionObjectInfo	= GetInspection();
-
-			DwMessageValue = reinterpret_cast<DWORD_PTR>(&createStruct);
-
-			break;
-		}
-
-	case SVMSGID_CONNECT_ALL_OBJECTS:
-		{
-			if( S_OK != ConnectObject( reinterpret_cast<SVObjectLevelCreateStruct*>(DwMessageValue) ) )
-			{
-				ASSERT( FALSE );
-
-				DwResult = SVMR_NO_SUCCESS;
-			}
-			else
-			{
-				DwResult = SVMR_SUCCESS;
-			}
-
-			createStruct.OwnerObjectInfo = this;
-			createStruct.ToolObjectInfo	= this;
-			createStruct.InspectionObjectInfo = GetInspection();
-
-			DwMessageValue = reinterpret_cast<DWORD_PTR>(&createStruct);
-
-			break;
-		}
-
-	case SVMSGID_CREATE_CHILD_OBJECT:
-		{
-			// ...use second message parameter ( DwMessageValue ) as SVObjectClass* of the child object
-			// ...returns SVMR_SUCCESS, SVMR_NO_SUCCESS or SVMR_NOT_PROCESSED
-			SVObjectClass* pChildObject = reinterpret_cast<SVObjectClass*>(DwMessageValue);
-			return CreateChildObject(pChildObject, static_cast<DWORD>(DwMessageContext));
-		}
-	case SVMSGID_CONNECT_CHILD_OBJECT:
-		{
-			// ...use second message parameter ( DwMessageValue ) as SVObjectClass* of the child object
-			SVObjectClass* pChildObject = reinterpret_cast<SVObjectClass*>(DwMessageValue);
-
-			createStruct.OwnerObjectInfo        = this;
-			createStruct.ToolObjectInfo			= this;
-			createStruct.InspectionObjectInfo	= GetInspection();
-
-			return SVSendMessage( pChildObject, SVM_CONNECT_ALL_OBJECTS, reinterpret_cast<DWORD_PTR>(&createStruct), 0 );
-		}
-	}
-
-	DWORD_PTR Status = ( SVTaskObjectListClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext ) | DwResult );
-	return Status;
-}
-
 HRESULT SVToolClass::GetImageExtentProperty( SVExtentPropertyEnum p_eProperty, SVValueObjectClass *&p_rpsvValue )
 {
 	return m_svToolExtent.GetExtentObject( p_eProperty, p_rpsvValue );
@@ -944,11 +841,26 @@ HRESULT SVToolClass::EnableAuxiliaryExtents( bool p_bEnable )
 	return l_hr;
 }
 
+bool SVToolClass::resetAllObjects( bool shouldNotifyFriends, bool silentReset )
+{
+	bool Result = true;
+
+	ToolSizeAdjustTask* pToolSizeAdjustTask = nullptr;
+	pToolSizeAdjustTask = ToolSizeAdjustTask::GetToolSizeAdjustTask( this );
+	if( nullptr != pToolSizeAdjustTask )
+	{
+		Result = pToolSizeAdjustTask->ProcessResetAllObject(silentReset);
+	}
+	Result = ( S_OK == ResetObject() && Result );
+
+	return (__super::resetAllObjects( shouldNotifyFriends, silentReset ) && Result);
+}
+
 HRESULT SVToolClass::ResetObject()
 {
 	HRESULT l_hrOk = S_OK;
 		
-	if( S_OK != SVTaskObjectListClass::ResetObject() )
+	if( S_OK != __super::ResetObject() )
 	{
 		l_hrOk = S_FALSE;
 	}
@@ -1311,7 +1223,7 @@ HRESULT SVToolClass::SetAuxSourceImage( SVImageClass* p_psvImage )
 			GetInspection()->m_bForceOffsetUpdate = true;
 		}
 		UpdateAuxiliaryExtents(1);
-		::SVSendMessage( GetInspection(), SVM_RESET_ALL_OBJECTS, 0, 0 );
+		GetInspection()->resetAllObjects(true, false);
 	}
 
 	return l_hr;
@@ -1327,6 +1239,19 @@ HRESULT SVToolClass::IsAuxInputImage( const SVInObjectInfoStruct* p_psvInfo )
 	}
 
 	return l_hrOk;
+}
+
+const SVImageInfoClass* SVToolClass::getFirstImageInfo() const
+{
+	const SVImageInfoClass* pRetVal = nullptr;
+	SVObjectTypeInfoStruct objectInfo(SVImageObjectType);
+	SVImageClass* pImage = dynamic_cast<SVImageClass*>(getFirstObject(objectInfo, false)); 
+	if (nullptr != pImage)
+	{
+		pRetVal = &pImage->GetImageInfo();
+	}
+
+	return pRetVal;
 }
 
 #pragma region ITool methods
@@ -1390,14 +1315,24 @@ SVValueObjectClass* SVToolClass::GetToolComment()
 	return &m_svToolComment;
 }
 
-DWORD_PTR SVToolClass::createAllObjectsFromChild( SVObjectClass* pChildObject )
+bool SVToolClass::createAllObjectsFromChild( SVObjectClass& rChildObject )
 {
 	SVToolLevelCreateStruct createStruct;
 	createStruct.OwnerObjectInfo        = this;
 	createStruct.ToolObjectInfo			= this;
 	createStruct.InspectionObjectInfo	= GetInspection();
 
-	return SVSendMessage( pChildObject, SVM_CREATE_ALL_OBJECTS, reinterpret_cast<DWORD_PTR>(&createStruct), 0 );
+	return rChildObject.createAllObjects(createStruct);
+}
+
+void SVToolClass::connectChildObject( SVTaskObjectClass& rChildObject )
+{
+	SVToolLevelCreateStruct createStruct;
+	createStruct.OwnerObjectInfo        = this;
+	createStruct.ToolObjectInfo			= this;
+	createStruct.InspectionObjectInfo	= GetInspection();
+
+	rChildObject.ConnectObject(createStruct);
 }
 
 bool SVToolClass::IsAllowedLocation(const SVExtentLocationPropertyEnum Location , SVExtentDirectionsEnum Direction ) const 

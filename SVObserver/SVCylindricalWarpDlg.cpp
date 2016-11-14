@@ -143,7 +143,7 @@ BOOL SVCylindricalWarpDlg::OnInitDialog()
 		SVObjectTypeInfoStruct objectInfo;
 		// Warp Type
 		objectInfo.EmbeddedID = SVWarpTypeObjectGuid;
-		m_pWarpType = reinterpret_cast<SVEnumerateValueObjectClass*>(::SVSendMessage( m_pTool, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&objectInfo)));
+		m_pWarpType = dynamic_cast<SVEnumerateValueObjectClass*>( m_pTool->getFirstObject( objectInfo ) );
 		if( m_pWarpType )
 		{
 			CString l_strEnumList;
@@ -159,7 +159,7 @@ BOOL SVCylindricalWarpDlg::OnInitDialog()
 
 		// Interpolation Mode
 		objectInfo.EmbeddedID = SVOutputInterpolationModeObjectGuid;
-		m_pInterpolationMode = reinterpret_cast<SVEnumerateValueObjectClass*>(::SVSendMessage( m_pTool, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
+		m_pInterpolationMode = dynamic_cast<SVEnumerateValueObjectClass*>( m_pTool->getFirstObject( objectInfo ) );
 		if( m_pInterpolationMode )
 		{
 			CString l_strEnumList;
@@ -176,7 +176,7 @@ BOOL SVCylindricalWarpDlg::OnInitDialog()
 
 		// Warp Angle
 		objectInfo.EmbeddedID = SVWarpAngleObjectGuid;
-		m_pWarpAngle = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( m_pTool, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&objectInfo)) );
+		m_pWarpAngle = dynamic_cast<SVDoubleValueObjectClass*>( m_pTool->getFirstObject( objectInfo ) );
 		if( m_pWarpAngle )
 		{
 			m_pWarpAngle->GetValue( m_dWarpAngle );

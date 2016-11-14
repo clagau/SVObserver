@@ -99,15 +99,16 @@ BOOL SVValueObjectClass::CloseObject()
 	return SVObjectClass::CloseObject();
 }
 
+bool SVValueObjectClass::resetAllObjects( bool shouldNotifyFriends, bool silentReset )
+{
+	bool Result = ( S_OK == ResetObject() );
+	ASSERT( Result );
+	return Result;
+}
+
 HRESULT SVValueObjectClass::ResetObject()
 {
 	HRESULT l_hrOk = CreateBuckets();
-
-	HRESULT hr = SVObjectClass::ResetObject();
-	if ( S_OK == l_hrOk )
-	{
-		l_hrOk = hr;
-	}
 
 	return l_hrOk;
 }
@@ -130,49 +131,9 @@ HRESULT SVValueObjectClass::SetResetOptions( bool p_bResetAlways, SVResetItemEnu
 	return S_OK;
 }
 
-HRESULT SVValueObjectClass::SetObjectValue( const SVString& p_rValueName, const _variant_t& p_rVariantValue )
-{
-	return SVObjectClass::SetObjectValue( p_rValueName, p_rVariantValue );
-}
-
 HRESULT SVValueObjectClass::SetObjectValue(SVObjectAttributeClass* pDataObject)
 {
 	return SVObjectClass::SetObjectValue(pDataObject);
-}
-
-DWORD_PTR SVValueObjectClass::processMessage(DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext)
-{
-	DWORD_PTR DwResult = SVMR_NOT_PROCESSED;
-
-	// Try to process message by yourself...
-	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
-
-	switch (dwPureMessageID)
-	{
-	case SVMSGID_RESET_ALL_OBJECTS:
-		{
-			HRESULT l_ResetStatus = ResetObject();
-			if( S_OK != l_ResetStatus )
-			{
-				assert( SUCCEEDED( l_ResetStatus ) );
-
-				DwResult = SVMR_NO_SUCCESS;
-			}
-			else
-			{
-				DwResult = SVMR_SUCCESS;
-			}
-			break;
-		}
-
-	case SVMSGID_COPY_RESULT_DATA_FORWARD:
-		HRESULT hrRet = CopyLastSetValue( static_cast<int>(DwMessageValue) );
-
-		return (S_OK == hrRet) ? SVMR_SUCCESS : SVMR_NO_SUCCESS;
-		break;
-	}
-
-	return (SVObjectClass::processMessage(DwMessageID, DwMessageValue, DwMessageContext) | DwResult);
 }
 
 bool SVValueObjectClass::IsArray() const

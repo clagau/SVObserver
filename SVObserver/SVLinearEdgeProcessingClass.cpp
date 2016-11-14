@@ -1380,29 +1380,11 @@ HRESULT SVLinearEdgeProcessingClass::CalculateSubPixelEdge( double p_dStart, dou
 	return l_hrOk;
 }
 
-DWORD_PTR SVLinearEdgeProcessingClass::processMessage(DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext)
+bool SVLinearEdgeProcessingClass::resetAllObjects( bool shouldNotifyFriends, bool silentReset )
 {
-	DWORD_PTR DwResult = SVMR_NOT_PROCESSED;
+	bool Result = ( S_OK == ResetObject() );
+	ASSERT( Result );
 
-	switch (DwMessageID & SVM_PURE_MESSAGE)
-	{
-	case SVMSGID_RESET_ALL_OBJECTS:
-		{
-			HRESULT l_ResetStatus = ResetObject();
-			if( S_OK != l_ResetStatus )
-			{
-				ASSERT( SUCCEEDED( l_ResetStatus ) );
-
-				DwResult = SVMR_NO_SUCCESS;
-			}
-			else
-			{
-				DwResult = SVMR_SUCCESS;
-			}
-			break;
-		}
-	}
-
-	return (DwResult | SVTaskObjectClass::processMessage(DwMessageID, DwMessageValue, DwMessageContext));
+	return (Result && __super::resetAllObjects(shouldNotifyFriends, silentReset));
 }
 

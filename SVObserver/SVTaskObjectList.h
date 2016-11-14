@@ -80,14 +80,33 @@ public:
 
 	virtual HRESULT CollectOverlays( SVImageClass* p_Image, SVExtentMultiLineStructCArray &p_MultiLineArray );
 
+	/// The method destroys a child object. 
+	/// \param pTaskObject [in] object to destroy
+	/// \param context [in]
+	/// \returns bool true if successfully
+	bool DestroyChildObject(SVTaskObjectClass* pTaskObject, DWORD context = 0);
+
 #pragma region virtual methods (ITaskObjectListClass)
 	virtual SvUl::NameGuidList GetTaskObjectList( ) const override;
 	virtual void Delete(GUID& objectID) override;
 	virtual void InsertAt(int index, SvOi::ITaskObject& rObject, int count = 1) override;
-	virtual DWORD_PTR DestroyChild(SvOi::ITaskObject& rObject, DWORD context) override;
+	virtual bool DestroyChild(SvOi::ITaskObject& rObject, DWORD context) override;
 	virtual bool DestroyFriendObject(IObjectClass& rObject, DWORD context) override;
 	virtual SvUl::NameGuidList GetCreatableObjects(const SVObjectTypeInfoStruct& pObjectTypeInfo) const override;
 #pragma endregion virtual methods (ITaskObjectListClass)
+
+#pragma region Methods to replace processMessage
+	virtual bool createAllObjects( const SVObjectLevelCreateStruct& rCreateStructure ) override;
+	virtual void ConnectObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
+	virtual void GetInputInterface(SVInputInfoListClass& rInputList, bool bAlsoFriends) const override;
+	virtual SvOi::IObjectClass* getFirstObject(const SVObjectTypeInfoStruct& rObjectTypeInfo, bool useFriends = true, const SvOi::IObjectClass* pRequestor = nullptr) const override;
+	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const SVString& rOldName) override;
+	virtual bool ConnectAllInputs() override;
+	virtual bool replaceObject(SVObjectClass* pObject, const GUID& rNewGuid) override;
+
+	BOOL getAvailableObjects( SVClassInfoStructListClass* pList, const SVObjectTypeInfoStruct* pObjectTypeInfo ) const;
+	virtual bool resetAllObjects( bool shouldNotifyFriends, bool silentReset ) override;
+#pragma endregion Methods to replace processMessage
 #pragma endregion public methods	
 
 #pragma region protected methods
@@ -98,7 +117,6 @@ protected:
 	virtual HRESULT onCollectOverlays(SVImageClass* p_Image, SVExtentMultiLineStructCArray &p_MultiLineArray );
 
 	virtual SVObjectClass* UpdateObject( const GUID &friendGuid, SVObjectClass* p_psvObject, SVObjectClass* p_psvNewOwner );
-	BOOL getAvailableObjects( SVClassInfoStructListClass* pList, const SVObjectTypeInfoStruct* pObjectTypeInfo ) const;
 
 	// Direct Method Call
 	// NOTE:
@@ -110,31 +128,21 @@ protected:
 	virtual SVObjectPtrDeque GetPreProcessObjects() const;
 	virtual SVObjectPtrDeque GetPostProcessObjects() const;
 
-	// Called by Run()
-	// NOTE:
-	// Override this if you want to implement your own special run.
-	// Don't forget to call base class onRun() first.
-	// He will call OnValidate() for you!
-	virtual BOOL onRun( SVRunStatusClass& RRunStatus );
+	virtual bool resetAllOutputListObjects( bool shouldNotifyFriends, bool silentReset ) override;
 
-	virtual DWORD_PTR	processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
-	virtual DWORD_PTR	OutputListProcessMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
-	virtual DWORD_PTR	ChildrenOutputListProcessMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
+	/// Call method ConnectObject at the child object with a create struct defined in this method.
+	/// \param rChildObject [in] Child object
+	virtual void connectChildObject( SVTaskObjectClass& rChildObject );
 #pragma endregion protected methods	
 
 #pragma region Private Methods
 private:
-	/**********
-	  The method destroys a child object. 
-	  /param pTaskObject <in> object to destroy.
-	  /param context <in>.
-	***********/
-	DWORD_PTR DestroyChildObject(SVTaskObjectClass* pTaskObject, DWORD context);
-
 	/// The method destroy a taskObject
 	/// \param rTaskObject [in] This object will destroyed.
 	/// \param context [in] Bits define action (e.g. SVMFSetDefaultInputs = set default inputs, SVMFResetInspection = reset inspection)
 	void DestroyTaskObject(SVTaskObjectClass& rTaskObject, DWORD context);
+
+	SvOi::IObjectClass* getFirstObjectWithRequestor( const SVObjectTypeInfoStruct& rObjectTypeInfo, bool useFriends, const SvOi::IObjectClass* pRequestor ) const;
 #pragma endregion Private Methods
 	
 #pragma region Member Variables

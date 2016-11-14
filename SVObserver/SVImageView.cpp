@@ -389,7 +389,7 @@ BOOL SVImageViewClass::OnCommand( WPARAM p_wParam, LPARAM p_lParam )
 					SVObjectTypeInfoStruct l_svInfo;
 					l_svInfo.ObjectType = SVAnalyzerObjectType;
 
-					SVAnalyzerClass* l_psvAnalyzer = reinterpret_cast<SVAnalyzerClass*>(SVSendMessage( l_psvTool, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&l_svInfo)) );
+					SVAnalyzerClass* l_psvAnalyzer = dynamic_cast<SVAnalyzerClass*>(l_psvTool->getFirstObject(l_svInfo));
 					if( l_psvAnalyzer )
 					{
 						CPoint l_point;
@@ -720,7 +720,7 @@ void SVImageViewClass::OnContextMenu( CWnd* p_pWnd, CPoint p_point )
 								SVObjectTypeInfoStruct l_svInfo;
 								l_svInfo.ObjectType = SVAnalyzerObjectType;
 
-								l_psvAnalyzer = reinterpret_cast<SVAnalyzerClass*>(SVSendMessage( l_psvTool, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&l_svInfo)) );
+								l_psvAnalyzer = dynamic_cast<SVAnalyzerClass*>(l_psvTool->getFirstObject(l_svInfo));
 								if( l_psvAnalyzer )
 								{
 									l_resultFound = l_psvAnalyzer->IsPtOverResult( l_point );
@@ -997,7 +997,7 @@ void SVImageViewClass::OnRButtonDblClk( UINT p_nFlags, CPoint p_point )
 				SVObjectTypeInfoStruct l_svInfo;
 				l_svInfo.ObjectType = SVAnalyzerObjectType;
 
-				SVAnalyzerClass* l_psvAnalyzer = reinterpret_cast<SVAnalyzerClass*>(SVSendMessage( l_psvTool, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&l_svInfo)) );
+				SVAnalyzerClass* l_psvAnalyzer = dynamic_cast<SVAnalyzerClass*>(l_psvTool->getFirstObject(l_svInfo));
 				if( l_psvAnalyzer )
 				{
 				

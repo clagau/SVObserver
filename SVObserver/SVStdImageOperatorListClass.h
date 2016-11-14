@@ -43,6 +43,7 @@ public:
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
 	virtual BOOL CloseObject();
 
+	virtual bool resetAllObjects( bool shouldNotifyFriends, bool silentReset ) override;
 	virtual HRESULT ResetObject();
 
 	virtual BOOL Run( SVRunStatusClass& RRunStatus );
@@ -50,7 +51,6 @@ public:
 	virtual BOOL OnValidate();
 
 protected:
-	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
 
 	SVImageClass *getOutputImage();
 

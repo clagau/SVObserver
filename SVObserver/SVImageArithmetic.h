@@ -41,6 +41,8 @@ public:
 
 	virtual BOOL OnValidate();
 
+	virtual bool resetAllObjects( bool shouldNotifyFriends, bool silentReset ) override;
+
 protected:
 	SVBoolValueObjectClass*		getInputEnableOffsetA();
 	SVPointValueObjectClass*	getInputOffsetAPoint();
@@ -51,7 +53,6 @@ protected:
 	SVLongValueObjectClass*		getInputArithOperator();
 
 	virtual BOOL  onRun( SVRunStatusClass& RRunStatus );
-	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
 
 	void ScaleWithAveraging( SVImageClass* pInputImage, SVImageClass* pOutputImage );
 

@@ -24,6 +24,7 @@
 #include "SVObjectWriter.h"
 #include "SVObjectInfoArrayClass.h"
 #include "SVUtilityLibrary/NameGuidList.h"
+#include "SVInputInfoListClass.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -54,9 +55,6 @@ public:
 	friend class SVObjectManagerClass;	// @TODO - This needs to go - For access to m_outObjectInfo to assignUnique GUIDs on loading
 	friend class SVConfigurationObject; // @TODO - This needs to go - For access to m_outObjectInfo to assignUnique GUIDs on loading
 
-	friend DWORD_PTR SVSendMessage( SVObjectClass* PObject, DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
-	friend DWORD_PTR SVSendMessage( const GUID& RUniqueObjectID, DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
-
 	SVObjectClass();
 	SVObjectClass( LPCSTR ObjectName );
 	SVObjectClass( SVObjectClass* pOwner, int StringResourceID );
@@ -66,7 +64,10 @@ public:
 	template< typename SVObjectVisitor >
 	HRESULT Accept( SVObjectVisitor& rVisitor );
 
-	virtual HRESULT ResetObject();
+	/*
+	This method is a placeholder for the object reset functionality.  This method will be overridden by derived classes.
+	*/
+	virtual HRESULT ResetObject() { return S_OK; };
 
 	virtual void ResetPrivateInputInterface();
 
@@ -79,7 +80,7 @@ public:
 
 	virtual BOOL InitObject( SVObjectClass* pObject );
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* pCreateStructure );
-	virtual HRESULT ConnectObject( SVObjectLevelCreateStruct* pCreateStructure );
+	virtual void ConnectObject( const SVObjectLevelCreateStruct& rCreateStructure );
 	virtual BOOL CloseObject();
 	virtual BOOL IsValid();
 	virtual BOOL Validate();
@@ -88,7 +89,7 @@ public:
 	virtual BOOL SetObjectOwner( const GUID& rNewOwnerGUID );
 
 	virtual HRESULT GetObjectValue( const SVString& rValueName, VARIANT& rVariantValue ) const;
-	virtual HRESULT SetObjectValue( const SVString& rValueName, const _variant_t& rVariantValue );
+	virtual HRESULT SetValuesForAnObject( const GUID& rAimObjectID, SVObjectAttributeClass* pDataObject );
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* pDataObject );
 	virtual void SetInvalid();
 	virtual void SetDisabled();
@@ -106,8 +107,9 @@ public:
 
 	virtual HRESULT RefreshObject( const SVObjectClass* const pSender, RefreshObjectType Type );
 
-	BOOL ConnectObjectInput( SVInObjectInfoStruct* pObjectInInfo );
-	BOOL DisconnectObjectInput( SVInObjectInfoStruct* pObjectInInfo );
+	virtual bool ConnectAllInputs() { return false; };
+	bool ConnectObjectInput( SVInObjectInfoStruct* pObjectInInfo );
+	virtual bool DisconnectObjectInput( SVInObjectInfoStruct* pObjectInInfo );
 	BOOL IsObjectValid( GUID& rValidationReferenceID );
 	BOOL IsDescendantOf( SVObjectClass* pAncestorObject );
 	BOOL IsDescendantOfType( const SVObjectInfoStruct& rAncestorInfo );
@@ -124,6 +126,10 @@ public:
 	BOOL AddFriend( const GUID& rFriendGUID, const GUID& rAddPreGuid = SV_GUID_NULL );
 	BOOL RemoveFriend( const GUID& rFriendGUID );
 	void DestroyFriends();
+
+	/// Destroy a friend (Disconnect, CloseObject and Destroy his friend), but it must be a taskObject. 
+	/// \param pObject [in] object to destroy.
+	virtual void DestroyFriend(SVObjectClass* pObject) {};
 	//************************************
 	//! this function returns a pointer to the friendobject which fit the ObjectType, if any. Otherwise it returns nullptr. 
 	//! \param rObjectType [in]
@@ -178,11 +184,48 @@ public:
 	virtual bool is_Created() const override;
 	virtual SvUl::NameGuidList GetCreatableObjects(const SVObjectTypeInfoStruct& rObjectTypeInfo) const override;
 	virtual void SetName( LPCTSTR Name ) override;
+	virtual SvOi::IObjectClass* getFirstObject(const SVObjectTypeInfoStruct& rObjectTypeInfo, bool useFriends = true, const SvOi::IObjectClass* pRequestor = nullptr) const override;
+	virtual bool resetAllObjects( bool shouldNotifyFriends, bool silentReset ) override { return true; };
 #pragma endregion virtual method (IObjectClass)
 
 	const SVObjectInfoStruct& GetOwnerInfo() const;
 	const SVObjectInfoStruct& GetObjectInfo() const;
 	const SVObjectInfoArrayClass& GetFriendList() const;
+
+#pragma region Methods to replace processMessage
+	/// Call the method createObject for all children and itself.
+	/// \param rCreateStructure [in]
+	/// \returns bool
+	virtual bool createAllObjects( const SVObjectLevelCreateStruct& rCreateStructure );
+
+	/// Call this method at the object owner to create an object
+	/// \param pChildObject [in] child object to create
+	/// \param context [in]
+	/// \returns bool
+	virtual bool CreateChildObject( SVObjectClass* pChildObject, DWORD context = 0 ) { return false; };
+
+	/// Overwrite GUID of an embedded object.
+	/// \param rUniqueID [in] New Guid of the object
+	/// \param embeddedID [in] Embedded Id of the object to overwrite
+	/// \returns SVObjectClass* Pointer to the overwritten object, nullptr if not found.
+	virtual SVObjectClass* OverwriteEmbeddedObject(const GUID& rUniqueID, const GUID& rEmbeddedID);
+
+	/// Get the input list combined also from children and if required from friends.
+	/// \param inputList [in,out] Add the new input object to the end of the list.
+	/// \param bAlsoFriends [in] If true, it adds also the inputs of the friend.
+	virtual void GetInputInterface(SVInputInfoListClass& rInputList, bool bAlsoFriends) const {};
+
+	/// Will be called, if an object was renamed.
+	/// \param rRenamedObject [in] Reference to the renamed object.
+	/// \param rOldName [in] Old name of the object.
+	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const SVString& rOldName) {};
+
+	/// Replace the current object with new guids etc.
+	/// \param pObject [in,out] Object t be removed.
+	/// \param rNewGuid [in] The mew GUID of the object
+	/// \returns bool
+	virtual bool replaceObject(SVObjectClass* pObject, const GUID& rNewGuid) { return false; };
+#pragma endregion Methods to replace processMessage
 
 protected:
 	virtual SVObjectPtrDeque GetPreProcessObjects() const;
@@ -190,11 +233,14 @@ protected:
 
 	virtual SVObjectClass* UpdateObject( const GUID& rFriendGuid, SVObjectClass* pObject, SVObjectClass* pNewOwner );
 
-	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
-
 	void buildCompleteObjectName( LPTSTR CompleteName, int MaxLength );
 
 	virtual HRESULT RemoveObjectConnection( const GUID& rObjectID );
+
+	/// Call method createAllObjects for the child object with the right create struct.
+	/// \param rChildObject [in]
+	/// \returns bool
+	virtual bool createAllObjectsFromChild( SVObjectClass& rChildObject ) { return false; };
 
 public:
 

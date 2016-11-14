@@ -96,7 +96,7 @@ BOOL SVToolAdjustmentDialogSizePage::OnInitDialog()
 		SVObjectTypeInfoStruct ToolSizeAdjustTaskInfo;
 		ToolSizeAdjustTaskInfo.ObjectType = SVToolSizeAdjustTaskType;
 		
-		m_pToolSizeAdjustTask = reinterpret_cast<ToolSizeAdjustTask*>(::SVSendMessage( m_pTool, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&ToolSizeAdjustTaskInfo) ));
+		m_pToolSizeAdjustTask = dynamic_cast<ToolSizeAdjustTask*>(m_pTool->getFirstObject(ToolSizeAdjustTaskInfo));
 		if( m_pToolSizeAdjustTask )
 		{
 			for( int vType  = ToolSizeAdjustTask::TSPositionX ; vType <  ToolSizeAdjustTask::TSValuesCount; ++vType)
@@ -125,17 +125,16 @@ BOOL SVToolAdjustmentDialogSizePage::OnInitDialog()
 		evaluateObjectInfo.ObjectType = SVEquationObjectType;
 
 		evaluateObjectInfo.SubType = EQSizePositionXType;		
-		m_pEQAdjustSize[ToolSizeAdjustTask::TSPositionX] =  
-		 reinterpret_cast<EQAdjustSize*>(::SVSendMessage(m_pTool, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&evaluateObjectInfo)));
+		m_pEQAdjustSize[ToolSizeAdjustTask::TSPositionX] = dynamic_cast<EQAdjustSize*>(m_pTool->getFirstObject(evaluateObjectInfo));
 		
 		evaluateObjectInfo.SubType = EQSizePositionYType;
-		m_pEQAdjustSize[ToolSizeAdjustTask::TSPositionY]  = reinterpret_cast<EQAdjustSize*>(::SVSendMessage(m_pTool, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&evaluateObjectInfo)));
+		m_pEQAdjustSize[ToolSizeAdjustTask::TSPositionY]  = dynamic_cast<EQAdjustSize*>(m_pTool->getFirstObject(evaluateObjectInfo));
 		
 		evaluateObjectInfo.SubType = EQSizeWidthType;		
-		m_pEQAdjustSize[ToolSizeAdjustTask::TSWidth] = reinterpret_cast<EQAdjustSize*>(::SVSendMessage(m_pTool, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&evaluateObjectInfo)));
+		m_pEQAdjustSize[ToolSizeAdjustTask::TSWidth] = dynamic_cast<EQAdjustSize*>(m_pTool->getFirstObject(evaluateObjectInfo));
 		
 		evaluateObjectInfo.SubType = EQSizeHeightType;		
-		m_pEQAdjustSize[ToolSizeAdjustTask::TSHeight] = reinterpret_cast<EQAdjustSize*>(::SVSendMessage(m_pTool, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&evaluateObjectInfo)));
+		m_pEQAdjustSize[ToolSizeAdjustTask::TSHeight] = dynamic_cast<EQAdjustSize*>(m_pTool->getFirstObject(evaluateObjectInfo));
 		
 		Refresh( false );
 		UpdateData( FALSE );

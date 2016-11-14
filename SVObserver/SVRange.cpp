@@ -294,6 +294,68 @@ void   SVRangeClass::UpdateRange(int bucket, RangeEnum::ERange  range )
 	}
 }
 
+bool SVRangeClass::DisconnectObjectInput( SVInObjectInfoStruct* pObjectInInfo )
+{
+// This Message occurs for two scenarios
+// 1. Some Object is using our outputs and they are no longer needed.
+// 2. We are using some Object's outputs and the outputs are no longer available
+	m_isValidRange = false;
+	return __super::DisconnectObjectInput(pObjectInInfo);
+}
+
+void SVRangeClass::OnObjectRenamed(const SVObjectClass& rRenamedObject, const SVString& rOldName)
+{
+	SVString newPrefix;
+	SVString oldPrefix;
+	//In this case the inspection name is not part of the saved name so do not rename inspection names
+	if( const BasicValueObject* pBasicValueObject = dynamic_cast<const BasicValueObject*> (&rRenamedObject) )
+	{
+		newPrefix = pBasicValueObject->GetCompleteObjectNameToObjectType( nullptr, SVRootObjectType );
+	}
+	else if( const SVValueObjectClass* pValueObject = dynamic_cast<const SVValueObjectClass*> (&rRenamedObject) )
+	{
+		newPrefix = pValueObject->GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType );
+	}
+	else
+	{
+		newPrefix = rRenamedObject.GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType ) + _T( "." );
+	}// end else
+	oldPrefix = newPrefix;
+	SvUl_SF::searchAndReplace( oldPrefix, rRenamedObject.GetName(), rOldName.c_str() );
+
+	RangeClassHelper rangeHelper(this);
+	rangeHelper.SetRangeTaskObject();
+	rangeHelper.GetAllInspectionData();
+	if(rangeHelper.RenameIndirectValues( oldPrefix.c_str(), newPrefix.c_str() ))
+	{
+		rangeHelper.SetInspectionData();
+	}
+	__super::OnObjectRenamed(rRenamedObject, rOldName);
+}
+
+bool SVRangeClass::resetAllObjects( bool shouldNotifyFriends, bool silentReset )
+{
+	bool Result = false;
+
+	HRESULT ResetStatus = ResetObject();
+	if( S_OK != ResetStatus )
+	{
+		if(!silentReset && (ResetStatus == -SvOi::Err_16025 || ResetStatus == -SvOi::Err_16026))
+		{
+			SVStringArray msgList;
+			msgList.push_back(SVString(GetCompleteObjectNameToObjectType( nullptr, SVInspectionObjectType )));
+			SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
+			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_InvalidReference, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10186 ); 
+		}
+		Result = false;
+	}
+	else
+	{
+		Result = true;
+	}
+	return( __super::resetAllObjects( shouldNotifyFriends, silentReset ) && Result );
+}
+
 BOOL SVRangeClass::onRun(SVRunStatusClass& RRunStatus)
 {
 	BOOL ret = true;
@@ -357,99 +419,6 @@ BOOL SVRangeClass::onRun(SVRunStatusClass& RRunStatus)
 	return ret;
 }
 
-DWORD_PTR SVRangeClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
-{
-	DWORD_PTR DwResult = SVMR_NOT_PROCESSED;
-
-	// Try to process message by yourself...
-	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
-	switch (dwPureMessageID)
-	{
-	case SVMSGID_RESET_ALL_OBJECTS:
-		{
-			HRESULT ResetStatus = ResetObject();
-			if( S_OK != ResetStatus )
-			{
-				BOOL SilentReset = static_cast<BOOL> (DwMessageValue);
-				if(!SilentReset && (ResetStatus == -SvOi::Err_16025 || ResetStatus == -SvOi::Err_16026))
-				{
-					SVStringArray msgList;
-					msgList.push_back(SVString(GetCompleteObjectNameToObjectType( nullptr, SVInspectionObjectType )));
-					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_InvalidReference, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10186 ); 
-				}
-				DwResult = SVMR_NO_SUCCESS;
-			}
-			else
-			{
-				DwResult = SVMR_SUCCESS;
-			}
-			break;
-		}
-
-		// This Message occurs for two scenarios
-		// 1. Some Object is using our outputs and they are no longer needed.
-		// 2. We are using some Object's outputs and the outputs are no longer available
-	case SVMSGID_DISCONNECT_OBJECT_INPUT:
-		{
-			m_isValidRange = false;
-		}
-		break;
-
-	case SVMSGID_OBJECT_RENAMED:
-		{
-			SVObjectClass* pObject = reinterpret_cast<SVObjectClass*>(DwMessageValue); // Object with new name
-			LPCTSTR orgName = ( LPCTSTR )DwMessageContext;
-
-			if( renameToolSetSymbol(pObject, orgName ) )
-			{
-				DwResult = SVMR_SUCCESS;
-			}
-		}
-		break;
-	}
-	return( SVTaskObjectClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext ) | DwResult );
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// 
-////////////////////////////////////////////////////////////////////////////////
-BOOL SVRangeClass::renameToolSetSymbol(const SVObjectClass* pObject, LPCTSTR originalName)
-{
-	bool Result( false );
-
-	if( nullptr != pObject )
-	{
-		SVString newPrefix;
-		SVString oldPrefix;
-		//In this case the inspection name is not part of the saved name so do not rename inspection names
-		if( const BasicValueObject* pBasicValueObject = dynamic_cast<const BasicValueObject*> (pObject) )
-		{
-			newPrefix = pBasicValueObject->GetCompleteObjectNameToObjectType( nullptr, SVRootObjectType );
-		}
-		else if( const SVValueObjectClass* pValueObject = dynamic_cast<const SVValueObjectClass*> (pObject) )
-		{
-			newPrefix = pValueObject->GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType );
-		}
-		else
-		{
-			newPrefix = pObject->GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType ) + _T( "." );
-		}// end else
-		oldPrefix = newPrefix;
-		SvUl_SF::searchAndReplace( oldPrefix, pObject->GetName(), originalName );
-
-		RangeClassHelper rangeHelper(this);
-		rangeHelper.SetRangeTaskObject();
-		rangeHelper.GetAllInspectionData();
-		if(rangeHelper.RenameIndirectValues( oldPrefix.c_str(), newPrefix.c_str() ))
-		{
-			rangeHelper.SetInspectionData();
-			Result = true;
-		}
-	}
-	return Result;
-}
-
 // ISVCancel interface
 bool SVRangeClass::CanCancel()
 {
@@ -511,12 +480,7 @@ void SVRangeClass::ConnectAllInputObjects()
 				InObjectInfo.PObject                    = this;
 				InObjectInfo.UniqueObjectID             = GetUniqueObjectID();
 				InObjectInfo.ObjectTypeInfo.ObjectType  = SVRangeObjectType;
-				DWORD_PTR rc = ::SVSendMessage( m_ValueObjectReferences[i].Guid(), 
-					SVM_CONNECT_OBJECT_INPUT, 
-					reinterpret_cast<DWORD_PTR>(&InObjectInfo), 
-					0 );
-
-				m_IsConnectedInput[i] = ( rc == SVMR_SUCCESS );
+				m_IsConnectedInput[i] = SVObjectManagerClass::Instance().ConnectObjectInput( m_ValueObjectReferences[i].Guid(), &InObjectInfo );
 			}
 		}
 	}
@@ -536,11 +500,8 @@ void SVRangeClass::DisconnectAllInputObjects()
 				InObjectInfo.UniqueObjectID             = GetUniqueObjectID();
 				InObjectInfo.ObjectTypeInfo.ObjectType  = SVRangeObjectType;
 
-				DWORD_PTR rc = ::SVSendMessage(	m_ValueObjectReferences[i].Guid(), 
-					SVM_DISCONNECT_OBJECT_INPUT, 
-					reinterpret_cast<DWORD_PTR>(&InObjectInfo), 
-					0 );
-				m_IsConnectedInput[i] = (rc == SVMR_SUCCESS );
+				SVObjectManagerClass::Instance().DisconnectObjectInput(m_ValueObjectReferences[i].Guid(), &InObjectInfo);
+				m_IsConnectedInput[i] = false;
 			}
 		}
 	}

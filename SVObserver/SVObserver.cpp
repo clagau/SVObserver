@@ -3978,7 +3978,7 @@ HRESULT SVObserverApp::LoadConfiguration()
 	return l_Status;
 }
 
-HRESULT SVObserverApp::RenameObject( const SVString& p_rOldName, const SVString& p_rNewName, const SVGUID& p_rObjectId )
+HRESULT SVObserverApp::OnObjectRenamed( const SVString& p_rOldName, const SVGUID& p_rObjectId )
 {
 	HRESULT l_Status = S_OK;
 
@@ -3986,13 +3986,12 @@ HRESULT SVObserverApp::RenameObject( const SVString& p_rOldName, const SVString&
 
 	if( nullptr != l_pObject )
 	{
-		SVRenameObject l_RenameObject( p_rOldName, p_rNewName, p_rObjectId );
-
 		SVInspectionProcess* l_pInspect = l_pObject->GetInspection();
 
 		if( nullptr != l_pInspect )
 		{
-			SVObjectManagerClass::Instance().UpdateObserver( l_pInspect->GetUniqueObjectID(), l_RenameObject );
+			l_pInspect->OnObjectRenamed(*l_pObject, p_rOldName);
+			//@TODO[MZA][7.40][07.10.2016] do we need this command? l_pInspect->BuildValueObjectMap(); 
 		}
 		else
 		{
@@ -4004,7 +4003,7 @@ HRESULT SVObserverApp::RenameObject( const SVString& p_rOldName, const SVString&
 
 		if( nullptr != pConfig )
 		{
-			SVObjectManagerClass::Instance().UpdateObserver( pConfig->GetUniqueObjectID(), l_RenameObject );
+			pConfig->OnObjectRenamed(*l_pObject, p_rOldName);
 		}
 		else
 		{

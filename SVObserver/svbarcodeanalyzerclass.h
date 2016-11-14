@@ -34,7 +34,7 @@ public:
 	CString m_csStringFileName;
 
 	SVBoolValueObjectClass m_bWarnOnFailedRead;
-	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
+	virtual bool resetAllObjects( bool shouldNotifyFriends, bool silentReset ) override;
 	SVStringValueObjectClass msv_szBarCodeValue;
 	SVStringValueObjectClass msv_szRegExpressionValue;
 	SVLongValueObjectClass msv_lBarCodeType;

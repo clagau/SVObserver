@@ -59,8 +59,6 @@ public:
 	virtual BOOL SetObjectDepth( int NewObjectDepth );
 	virtual BOOL SetObjectDepthWithIndex( int NewObjectDepth, int NewLastSetIndex );
 
-	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
-
 	static long CalculateImageMemory( SVImageClass* p_pImage );
 	static long CalculateImageMemory( std::vector<SVImageClass*> p_apImages );
 
@@ -78,6 +76,11 @@ public:
 	//--to get the already translated path.
 	void getTranslatedImagePath(CString &ImagePath);
 
+#pragma region Methods to replace processMessage
+	virtual bool DisconnectObjectInput( SVInObjectInfoStruct* pObjectInInfo ) override;
+	virtual void goingOffline() override;
+	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const SVString& rOldName) override;
+#pragma endregion Methods to replace processMessage
 	//
 	// The arrays for results and images to archive.
 	//
@@ -114,8 +117,6 @@ protected:
     virtual BOOL   onRun( SVRunStatusClass& RRunStatus );
 
 	HRESULT QueueArchiveString( CString strArchiveString );
-
-	virtual BOOL renameToolSetSymbol( const SVObjectClass* pObject, LPCTSTR originalName);
 
 	//
 	// Data elements.

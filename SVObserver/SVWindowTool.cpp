@@ -174,7 +174,7 @@ BOOL SVWindowToolClass::SetDefaultFormulas()
 	SVObjectTypeInfoStruct lutEquationInfo;
 	lutEquationInfo.ObjectType	= SVEquationObjectType;
 	lutEquationInfo.SubType		= SVLUTEquationObjectType;
-	SVLUTEquationClass* pLUTEquation = reinterpret_cast<SVLUTEquationClass*>(::SVSendMessage( this, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&lutEquationInfo) ));
+	SVLUTEquationClass* pLUTEquation = dynamic_cast<SVLUTEquationClass*>(getFirstObject(lutEquationInfo));
 	if( pLUTEquation )
 	{
 		bRetVal = pLUTEquation->SetDefaultFormula() && bRetVal;

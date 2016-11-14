@@ -23,10 +23,9 @@ namespace Seidenader
 			 Call this method at the object owner to create an object.
 			 /param rChildObject <in> child object to create.
 			 /param context <in>.
-			 /return Result value SVMR_SUCCESS, SVMR_NO_SUCCESS or SVMR_NOT_PROCESSED (If the owner object is not created yet)
-			 	           DWORD_PTR is needed because return defines are UINT_PTR
+			 /return bool
 			***********/
-			virtual DWORD_PTR CreateChildObject(IObjectClass& rChildObject, DWORD context) = 0;
+			virtual bool CreateChildObject(IObjectClass& rChildObject, DWORD context) = 0;
 		};
 	}
 }

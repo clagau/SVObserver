@@ -62,7 +62,6 @@ class SVInspectionProcess :
 	public SVObjectSubmitCommandFacade,
 	public SVObserverTemplate< SVAddTool >,
 	public SVObserverTemplate< SVDeleteTool >,
-	public SVObserverTemplate< SVRenameObject >,
 	public SvOi::IInspectionProcess
 {
 	friend class SVCommandInspectionExtentUpdater; // For access to RunOnce()
@@ -82,7 +81,7 @@ public:
 	SVInspectionProcess( SVObjectClass *pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVINSPECTIONOBJECT );
 	virtual ~SVInspectionProcess();
 
-	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
+	virtual bool resetAllObjects( bool shouldNotifyFriends, bool silentReset ) override;
 	virtual BOOL GetChildObjectByName( LPCTSTR tszName, SVObjectClass** ppObject );
 
 	virtual HRESULT GetChildObject( SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index = 0 ) const override;
@@ -109,7 +108,6 @@ public:
 
 	virtual HRESULT ObserverUpdate( const SVAddTool& p_rData );
 	virtual HRESULT ObserverUpdate( const SVDeleteTool& p_rData );
-	virtual HRESULT ObserverUpdate( const SVRenameObject& p_rData );
 
 	void SetPPQIdentifier( const SVGUID& p_rPPQId );
 	const SVGUID& GetPPQIdentifier() const;
@@ -265,6 +263,19 @@ public:
 	//! \param rInserter [out] reference to an inserter iterator
 	//************************************
 	void getToolMessages( SvStl::MessageContainerInserter& rInserter ) const;
+
+	virtual bool DisconnectObjectInput( SVInObjectInfoStruct* pObjectInInfo ) override;
+
+#pragma region Methods to replace processMessage
+	virtual bool createAllObjects( const SVObjectLevelCreateStruct& rCreateStructure ) override;
+	virtual bool CreateChildObject( SVObjectClass* pChildObject, DWORD context = 0 ) override;
+	virtual void ConnectObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
+	bool DestroyChildObject(SVObjectClass* pChildcontext);
+	virtual SvOi::IObjectClass* getFirstObject(const SVObjectTypeInfoStruct& rObjectTypeInfo, bool useFriends = true, const SvOi::IObjectClass* pRequestor = nullptr) const override;
+	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const SVString& rOldName) override;
+	virtual bool ConnectAllInputs() override;
+	virtual bool replaceObject(SVObjectClass* pObject, const GUID& rNewGuid) override;
+#pragma endregion Methods to replace processMessage
 
 	SVIOEntryStructVector m_PPQInputs;
 

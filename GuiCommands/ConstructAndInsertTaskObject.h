@@ -11,6 +11,7 @@
 //Moved to precompiled header: #include <Guiddef.h>
 #include "ObjectInterfaces\IObjectManager.h"
 #include "ObjectInterfaces\ITaskObjectListClass.h"
+#include "ObjectInterfaces\IObjectAppClass.h"
 #include "ObjectInterfaces\ObjectDefines.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
 #pragma endregion Includes
@@ -45,7 +46,7 @@ namespace Seidenader
 					if( ! pObject->is_Created() )
 					{
 						// And finally try to create the child object...
-						if( SVMR_SUCCESS != pObjectApp->CreateChildObject(*pObject, SVMFResetObject ) )
+						if( !pObjectApp->CreateChildObject(*pObject, SVMFResetObject ) )
 						{
 							hr = SvOi::Err_10021_InsertTaskObject_CreateObjectFailed;
 

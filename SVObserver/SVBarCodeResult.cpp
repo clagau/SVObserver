@@ -223,29 +223,22 @@ BOOL SVBarCodeResultClass::onRun(SVRunStatusClass &RRunStatus)
 	return FALSE;
 }
 
-DWORD_PTR SVBarCodeResultClass::processMessage(DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext)
+bool SVBarCodeResultClass::resetAllObjects( bool shouldNotifyFriends, bool silentReset )
 {
-	DWORD_PTR dwResult = SVMR_NOT_PROCESSED;
+	bool Result = false;
 
-	switch (DwMessageID & SVM_PURE_MESSAGE)
+	HRESULT l_ResetStatus = ResetObject();
+	if( S_OK != l_ResetStatus )
 	{
-	case SVMSGID_RESET_ALL_OBJECTS :
-		{
-			HRESULT l_ResetStatus = ResetObject();
-			if( S_OK != l_ResetStatus )
-			{
-				ASSERT( SUCCEEDED( l_ResetStatus ) );
+		ASSERT( SUCCEEDED( l_ResetStatus ) );
 
-				dwResult = SVMR_NO_SUCCESS;
-			}
-			else
-			{
-				dwResult = SVMR_SUCCESS;
-			}
-			break;
-		}
+		Result = false;
 	}
-	return (dwResult | SVStringResultClass::processMessage(DwMessageID, DwMessageValue, DwMessageContext));
+	else
+	{
+		Result = true;
+	}
+	return Result && __super::resetAllObjects(shouldNotifyFriends, silentReset);
 }
 
 HRESULT SVBarCodeResultClass::ResetObject()

@@ -104,6 +104,19 @@ namespace Seidenader
 			Set user changeable name.
 			*/
 			virtual void SetName( LPCTSTR StrString ) = 0;
+
+			/// Return the first object which the required object type.
+			/// \param rObjectTypeInfo [in] The required object type.
+			/// \param useFriends [in] Search also in the friend list for this object. Default is true.
+			/// \param pRequestor [in]
+			/// \returns IObjectClass* Pointer to the object, if not found nullptr.
+			virtual IObjectClass* getFirstObject(const SVObjectTypeInfoStruct& rObjectTypeInfo, bool useFriends = true, const IObjectClass* pRequestor = nullptr) const = 0;
+
+			/// Reset this object and all children and required all friends.
+			/// \param shouldNotifyFriends [in] if true it reset also the friends of this object.
+			/// \param silentReset [in] if true it avoid to display messages.
+			/// \returns bool
+			virtual bool resetAllObjects(bool shouldNotifyFriends, bool silentReset) = 0;
 		};
 	}
 }

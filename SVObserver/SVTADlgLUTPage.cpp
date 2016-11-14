@@ -208,13 +208,13 @@ BOOL SVToolAdjustmentDialogLUTPageClass::OnInitDialog()
 		SVObjectTypeInfoStruct lutObjectInfo;
 		lutObjectInfo.ObjectType = SVUnaryImageOperatorObjectType;
 		lutObjectInfo.SubType	 = SVLUTOperatorObjectType;
-		m_pLUTOperator = reinterpret_cast<SVLUTOperatorClass*>(::SVSendMessage( m_pTool, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&lutObjectInfo) ));
+		m_pLUTOperator = dynamic_cast<SVLUTOperatorClass*>(m_pTool->getFirstObject(lutObjectInfo));
 		if( m_pLUTOperator )
 		{
 			// Get Use Lut Flag...
 			SVObjectTypeInfoStruct useLUTObjectInfo;
 			useLUTObjectInfo.EmbeddedID = SVUseLUTObjectGuid;
-			m_pUseLUT = reinterpret_cast<SVBoolValueObjectClass*>(::SVSendMessage( m_pLUTOperator, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&useLUTObjectInfo) ));
+			m_pUseLUT = dynamic_cast<SVBoolValueObjectClass*>(m_pLUTOperator->getFirstObject(useLUTObjectInfo));
 			if( m_pUseLUT )
 			{
 				m_pUseLUT->GetValue( m_bUseLUT );
@@ -223,7 +223,7 @@ BOOL SVToolAdjustmentDialogLUTPageClass::OnInitDialog()
 			// Get Continuous Recalc Lut Flag...
 			SVObjectTypeInfoStruct continuousRecalcLUTObjectInfo;
 			continuousRecalcLUTObjectInfo.EmbeddedID = SVContinuousRecalcLUTObjectGuid;
-			m_pContinuousRecalcLUT = reinterpret_cast<SVBoolValueObjectClass*>(::SVSendMessage( m_pLUTOperator, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&continuousRecalcLUTObjectInfo) ));
+			m_pContinuousRecalcLUT = dynamic_cast<SVBoolValueObjectClass*>(m_pLUTOperator->getFirstObject(continuousRecalcLUTObjectInfo));
 			if( m_pContinuousRecalcLUT )
 			{
 				m_pContinuousRecalcLUT->GetValue( m_bContinuousRecalcLUT );
@@ -233,11 +233,11 @@ BOOL SVToolAdjustmentDialogLUTPageClass::OnInitDialog()
 			SVObjectTypeInfoStruct lutEquationObjectInfo;
 			lutEquationObjectInfo.ObjectType = SVEquationObjectType;
 			lutEquationObjectInfo.SubType	 = SVLUTEquationObjectType;
-			m_pLUTEquation = reinterpret_cast<SVLUTEquationClass*>(::SVSendMessage( m_pLUTOperator, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&lutEquationObjectInfo) ));
+			m_pLUTEquation = dynamic_cast<SVLUTEquationClass*>(m_pLUTOperator->getFirstObject(lutEquationObjectInfo));
 			// Get Lut Mode...
 			SVObjectTypeInfoStruct lutModeObjectInfo;
 			lutModeObjectInfo.EmbeddedID = SVLUTModeObjectGuid;
-			m_pLUTMode = reinterpret_cast<SVEnumerateValueObjectClass*>(::SVSendMessage( m_pLUTOperator, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&lutModeObjectInfo) ));
+			m_pLUTMode = dynamic_cast<SVEnumerateValueObjectClass*>(m_pLUTOperator->getFirstObject(lutModeObjectInfo));
 			if( m_pLUTMode )
 			{
 				// Populate LUT Mode combo...
@@ -249,31 +249,25 @@ BOOL SVToolAdjustmentDialogLUTPageClass::OnInitDialog()
 			// Get Lut Vector...
 			SVObjectTypeInfoStruct lutVectorObjectInfo;
 			lutVectorObjectInfo.EmbeddedID = SVOutputLUTVectorObjectGuid;
-			m_pLUTVector = dynamic_cast <SVByteValueObjectClass*> 
-			                    (reinterpret_cast <SVObjectClass*>
-			                      (::SVSendMessage( m_pLUTOperator, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&lutVectorObjectInfo) ) ) );
+			m_pLUTVector = dynamic_cast <SVByteValueObjectClass*>(m_pLUTOperator->getFirstObject(lutVectorObjectInfo));
 			ASSERT( m_pLUTVector );
 
 			// Get LUT Upper Clip...
 			SVObjectTypeInfoStruct lutUpperClipObjectInfo;
 			lutUpperClipObjectInfo.EmbeddedID = SVLUTUpperClipObjectGuid;
-			m_pLUTUpperClip = dynamic_cast <SVLongValueObjectClass*>
-			                       (reinterpret_cast <SVObjectClass*>
-			                         (::SVSendMessage( m_pLUTOperator, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&lutUpperClipObjectInfo) ) ) );
+			m_pLUTUpperClip = dynamic_cast <SVLongValueObjectClass*>(m_pLUTOperator->getFirstObject(lutUpperClipObjectInfo));
 			ASSERT( m_pLUTUpperClip );
 
 			// Get LUT Lower Clip...
 			SVObjectTypeInfoStruct lutLowerClipObjectInfo;
 			lutLowerClipObjectInfo.EmbeddedID = SVLUTLowerClipObjectGuid;
-			m_pLUTLowerClip = dynamic_cast <SVLongValueObjectClass*>
-			                       (reinterpret_cast <SVObjectClass*>
-			                         (::SVSendMessage( m_pLUTOperator, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&lutLowerClipObjectInfo) ) ) );
+			m_pLUTLowerClip = dynamic_cast <SVLongValueObjectClass*>(m_pLUTOperator->getFirstObject(lutLowerClipObjectInfo));
 			ASSERT( m_pLUTLowerClip );
 
 			// Get Formula Clip Flag...
 			SVObjectTypeInfoStruct formulaClipFlagObjectInfo;
 			formulaClipFlagObjectInfo.EmbeddedID = SVLUTEquationClipFlagObjectGuid;
-			m_pIsLUTFormulaClipped = reinterpret_cast<SVBoolValueObjectClass*>(::SVSendMessage( m_pLUTOperator, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&formulaClipFlagObjectInfo) ));
+			m_pIsLUTFormulaClipped = dynamic_cast<SVBoolValueObjectClass*>(m_pLUTOperator->getFirstObject(formulaClipFlagObjectInfo));
 			if( nullptr != m_pIsLUTFormulaClipped )
 			{
 				m_pIsLUTFormulaClipped->GetValue( m_isFormulaClip );

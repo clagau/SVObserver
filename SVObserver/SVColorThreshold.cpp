@@ -189,9 +189,9 @@ BOOL SVColorThresholdClass::CreateObject( SVObjectLevelCreateStruct* PCreateStru
 				  // Create 4 Output Images and 3 Histogram Images
 				  bOk = createImages();
 				  
-				  ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT,reinterpret_cast<DWORD_PTR>(&band0HistogramImage), 0 );
-				  ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT,reinterpret_cast<DWORD_PTR>(&band1HistogramImage), 0 );
-				  ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT,reinterpret_cast<DWORD_PTR>(&band2HistogramImage), 0 );
+				  CreateChildObject(&band0HistogramImage);
+				  CreateChildObject(&band1HistogramImage);
+				  CreateChildObject(&band2HistogramImage);
 			  }
 			  catch(...)
 			  {

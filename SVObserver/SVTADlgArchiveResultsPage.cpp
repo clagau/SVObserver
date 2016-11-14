@@ -171,7 +171,7 @@ bool SVTADlgArchiveResultsPage::QueryAllowExit()
 	}
 	HRESULT hRet = m_pTool->ValidateArchiveTool();
 
-	SVSendMessage( m_pTool, SVM_RESET_ALL_OBJECTS, 0, 0 );
+	m_pTool->resetAllObjects(true, false);
 
 	// Mark the document as 'dirty' so user will be prompted to save
 	// this configuration on program exit.

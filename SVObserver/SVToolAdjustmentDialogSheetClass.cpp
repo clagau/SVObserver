@@ -126,7 +126,7 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 	SVObjectTypeInfoStruct lutObjectInfo;
 	lutObjectInfo.ObjectType = SVUnaryImageOperatorObjectType;
 	lutObjectInfo.SubType	 = SVLUTOperatorObjectType;
-	if( ::SVSendMessage( GetTool(), SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&lutObjectInfo) ) )
+	if( nullptr != GetTool()->getFirstObject(lutObjectInfo) )
 	{
 		bHasLUT = TRUE;
 	}
@@ -135,7 +135,7 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 	SVObjectTypeInfoStruct ToolSizeAdjustTaskInfo;
 	ToolSizeAdjustTaskInfo.ObjectType = SVToolSizeAdjustTaskType;
 
-	if( ::SVSendMessage( GetTool(), SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&ToolSizeAdjustTaskInfo) ) )
+	if( nullptr != GetTool()->getFirstObject(ToolSizeAdjustTaskInfo) )
 	{
 		bHasSize = true;
 	}
@@ -418,9 +418,13 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 		SVImageExtentClass oldImageExtend;
 		SVToolClass* pTool = GetTool();
 		pTool->GetImageExtent(oldImageExtend);
-		DWORD_PTR dwRet =  ::SVSendMessage( pTool, SVM_RESET_ALL_OBJECTS, 0, 0 );
+		bool resetResult = false;
+		if ( nullptr != pTool )
+		{
+			resetResult = pTool->resetAllObjects(true, false);
+		}
 		
-		if( SVMR_SUCCESS == dwRet )
+		if( resetResult )
 		{
 			SVIPDoc* pDocument = GetIPDoc();
 			if (pDocument)

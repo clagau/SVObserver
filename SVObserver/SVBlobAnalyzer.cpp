@@ -431,11 +431,7 @@ DWORD SVBlobAnalyzerClass::AllocateResult (SVBlobFeatureEnum aFeatureIndex)
 		info.ObjectType = SVDoubleValueObjectType;
 		info.EmbeddedID = SVValueObjectGuid;
 
-		SVDoubleValueObjectClass* pValue = 
-		      reinterpret_cast<SVDoubleValueObjectClass*>(SVSendMessage(pResult, 
-		                                               SVM_GETFIRST_OBJECT, 
-		                                               0, 
-		                                              reinterpret_cast<DWORD_PTR>(&info)));
+		SVDoubleValueObjectClass* pValue = dynamic_cast<SVDoubleValueObjectClass*>( getFirstObject( info ) );
 
 		if (!pValue)
 		{
@@ -448,14 +444,14 @@ DWORD SVBlobAnalyzerClass::AllocateResult (SVBlobFeatureEnum aFeatureIndex)
 		pValue->ObjectAttributesAllowedRef() = pValue->ObjectAttributesAllowed() & ~SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES;
 
 		// Ensure this Object's inputs get connected
-		::SVSendMessage( pResult, SVM_CONNECT_ALL_INPUTS, 0, 0 );
+		pResult->ConnectAllInputs();
 
 		// And last - Create (initialize) it
 
 		if( ! pResult->IsCreated() )
 		{
 			// And finally try to create the child object...
-			if( ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(pResult), 0 ) != SVMR_SUCCESS )
+			if( !CreateChildObject(pResult) )
 			{
 				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_BlobAnalyzer_ResultCreationFailed, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10041 ); 
@@ -531,12 +527,8 @@ DWORD SVBlobAnalyzerClass::AllocateBlobResult ()
 		info.ObjectType = SVLongValueObjectType;
 		info.EmbeddedID = SVValueObjectGuid;
 		
-		SVLongValueObjectClass* pValue = 
-			reinterpret_cast<SVLongValueObjectClass*>(SVSendMessage(m_pResultBlob, 
-			SVM_GETFIRST_OBJECT, 
-			0, 
-			reinterpret_cast<DWORD_PTR>(&info)));
-		
+		SVLongValueObjectClass* pValue = dynamic_cast<SVLongValueObjectClass*>( getFirstObject( info ) );
+
 		if (!pValue)
 		{		
 			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
@@ -548,14 +540,14 @@ DWORD SVBlobAnalyzerClass::AllocateBlobResult ()
 		pValue->ObjectAttributesAllowedRef() = pValue->ObjectAttributesAllowed() & ~SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES;
 		
 		// Ensure this Object's inputs get connected
-		::SVSendMessage( m_pResultBlob, SVM_CONNECT_ALL_INPUTS, 0, 0 );
+		m_pResultBlob->ConnectAllInputs();
 		
 		// And last - Create (initialize) it
 		
 		if( ! m_pResultBlob->IsCreated() )
 		{
 			// And finally try to create the child object...
-			if( ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(m_pResultBlob), 0 ) != SVMR_SUCCESS )
+			if( !CreateChildObject(m_pResultBlob) )
 			{
 				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_BlobAnalyzer_ResultCreationFailed, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10042 ); 
@@ -598,10 +590,7 @@ DWORD SVBlobAnalyzerClass::FreeResult (SVBlobFeatureEnum aFeatureIndex)
 
 		m_guidResults[ aFeatureIndex ] = SV_GUID_NULL;
 
-		SVSendMessage (this, 
-			SVM_DESTROY_CHILD_OBJECT,
-			reinterpret_cast<DWORD_PTR>(pResult),
-			SVMFSetDefaultInputs);
+		DestroyChildObject(pResult, SVMFSetDefaultInputs);
 
 		pResult = nullptr;
 	}
@@ -889,7 +878,7 @@ BOOL SVBlobAnalyzerClass::CreateObject(SVObjectLevelCreateStruct* PCreateStructu
 	{
 		if( !msvValue[i].IsCreated() )
 		{
-			::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>( msvValue + i ), 0 );
+			CreateChildObject( &msvValue[i] );
 		}
 
 		if ( msvszFeaturesEnabled[i] != _T('1') )
@@ -969,29 +958,11 @@ BOOL SVBlobAnalyzerClass::OnValidate()
 	return true;
 }
 
-DWORD_PTR SVBlobAnalyzerClass::processMessage(DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext)
+bool SVBlobAnalyzerClass::resetAllObjects( bool shouldNotifyFriends, bool silentReset )
 {
-	DWORD_PTR dwResult = SVMR_NOT_PROCESSED;
-
-	switch (DwMessageID & SVM_PURE_MESSAGE)
-	{
-	case SVMSGID_RESET_ALL_OBJECTS:
-		{
-			HRESULT l_ResetStatus = ResetObject();
-			if( S_OK != l_ResetStatus )
-			{
-				ASSERT( SUCCEEDED( l_ResetStatus ) );
-
-				dwResult = SVMR_NO_SUCCESS;
-			}
-			else
-			{
-				dwResult = SVMR_SUCCESS;
-			}
-			break;
-		}
-	}
-	return (dwResult | SVImageAnalyzerClass::processMessage(DwMessageID, DwMessageValue, DwMessageContext));
+	bool Result = ( S_OK == ResetObject() );
+	ASSERT( Result );
+	return (Result && __super::resetAllObjects( shouldNotifyFriends, silentReset ));
 }
 
 ////////////////////////////////////////////////////////////////////////////////

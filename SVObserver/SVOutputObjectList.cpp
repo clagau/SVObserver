@@ -802,73 +802,43 @@ bool SVOutputObjectList::OutputIsNotValid( SVString p_strName )
 	return l_bRet;
 }
 
-DWORD_PTR SVOutputObjectList::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
+void SVOutputObjectList::OnObjectRenamed(const SVObjectClass& rRenamedObject, const SVString& rOldName)
 {
-	DWORD_PTR DwResult = SVMR_NOT_PROCESSED;
-	// Try to process message by yourself...
-
-	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
-	switch( dwPureMessageID )
+	if( Lock() )
 	{
-		// handle renaming of toolset variables with regards to outputs
-		case SVMSGID_OBJECT_RENAMED:
+		CString strOldName = rOldName.c_str();
+		CString strTemp;
+
+		// Search the list of outputs
+		SVGuidSVOutputObjectPtrMap::iterator l_Iter = m_OutputObjects.begin();
+
+		while( l_Iter != m_OutputObjects.end() )
 		{
-			if( Lock() )
+			SVOutputObject* l_pOutput = l_Iter->second;
+
+			CString strCurName = l_pOutput->GetName();
+			strTemp.Format( "%s", strOldName );
+			int iWhere = strCurName.Find( strTemp );
+
+			if( iWhere != -1 )
 			{
-				SVObjectClass* pObject = reinterpret_cast<SVObjectClass*>(DwMessageValue);
-				CString strOldName = (LPCTSTR) DwMessageContext;
+				CString strNewName = rRenamedObject.GetName();
+				strTemp  = strCurName.Left( iWhere  );
+				strTemp += strNewName;
+				CString strRoot  = strTemp;
+				strTemp += strCurName.Mid( iWhere + strOldName.GetLength()  );
 
-				int iWhere;
-				CString strCurName;
-				CString strNewName;
-				CString strTemp;
-				CString strRoot;
-
-				// Search the list of outputs
-				if( pObject )
+				if( 0 == strcmp( strRoot, rRenamedObject.GetCompleteObjectName() ) )
 				{
-					SVGuidSVOutputObjectPtrMap::iterator l_Iter = m_OutputObjects.begin();
+					l_pOutput->SetName( strTemp );
+				}// end if
 
-					while( l_Iter != m_OutputObjects.end() )
-					{
-						SVOutputObject* l_pOutput = l_Iter->second;
+			}// end if
+			++l_Iter;
+		}// end for
 
-						strCurName = l_pOutput->GetName();
-						strTemp.Format( "%s", strOldName );
-						iWhere = strCurName.Find( strTemp );
-
-						if( iWhere != -1 )
-						{
-							strNewName = pObject->GetName();
- 							strTemp  = strCurName.Left( iWhere  );
-							strTemp += strNewName;
-							strRoot  = strTemp;
-							strTemp += strCurName.Mid( iWhere + strOldName.GetLength()  );
-
-							if( 0 == strcmp( strRoot, pObject->GetCompleteObjectName() ) )
-							{
-								l_pOutput->SetName( strTemp );
-							}// end if
-
-						}// end if
-						++l_Iter;
-					}// end for
-				}
-
-				Unlock();
-			}
-			else
-			{
-				DwResult = E_FAIL;
-			}
-
-			break;
-		}// end case
-
-	}// end switch
-
-	return( SVObjectClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext ) | DwResult );
-
+		Unlock();
+	}
 }
 
 HRESULT SVOutputObjectList::WriteDigitalOutput( SVIOEntryStruct& pIOEntry, long lDataIndex, bool p_ACK, bool p_NAK )

@@ -139,7 +139,7 @@ BOOL SVTADlgColorThresholdAdjustment::OnInitDialog()
 	objectInfo.ObjectType = SVOperatorObjectType;
 	objectInfo.SubType = SVColorThresholdObjectType;
 
-	mpThreshold = reinterpret_cast <SVColorThresholdClass*> (::SVSendMessage( mpTool, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&objectInfo) ) );
+	mpThreshold = dynamic_cast<SVColorThresholdClass*>(mpTool->getFirstObject(objectInfo));
 
 	if( mpThreshold )
 	{
@@ -149,19 +149,19 @@ BOOL SVTADlgColorThresholdAdjustment::OnInitDialog()
 
 		// Get Train Color ROI Extent Left Object...
 		extentObjectInfo.EmbeddedID = SVExtentRelativeLeftPositionObjectGuid;
-		mpExtentLeft = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( mpThreshold, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&extentObjectInfo) ));
+		mpExtentLeft = dynamic_cast<SVDoubleValueObjectClass*>(mpThreshold->getFirstObject(extentObjectInfo));
 
 		// Get Train Color ROI Extent Top Object...
 		extentObjectInfo.EmbeddedID = SVExtentRelativeTopPositionObjectGuid;
-		mpExtentTop = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( mpThreshold, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&extentObjectInfo) ));
+		mpExtentTop = dynamic_cast<SVDoubleValueObjectClass*>(mpThreshold->getFirstObject(extentObjectInfo));
 
 		// Get Train Color ROI Extent Width Object...
 		extentObjectInfo.EmbeddedID = SVExtentWidthObjectGuid;
-		mpExtentWidth = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( mpThreshold, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&extentObjectInfo) ));
+		mpExtentWidth = dynamic_cast<SVDoubleValueObjectClass*>(mpThreshold->getFirstObject(extentObjectInfo));
 
 		// Get Train Color ROI Extent Height Object...
 		extentObjectInfo.EmbeddedID = SVExtentHeightObjectGuid;
-		mpExtentHeight = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( mpThreshold, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&extentObjectInfo) ));
+		mpExtentHeight = dynamic_cast<SVDoubleValueObjectClass*>(mpThreshold->getFirstObject(extentObjectInfo));
 	}
 
 	SVImageClass* pImage = nullptr;
@@ -178,14 +178,14 @@ BOOL SVTADlgColorThresholdAdjustment::OnInitDialog()
 		objectInfo.ObjectType = SVLongValueObjectType;
 
 		objectInfo.EmbeddedID = SVBand0UpperThresholdObjectGuid;
-		mpUpperThreshold = reinterpret_cast<SVLongValueObjectClass*>(::SVSendMessage( mpThreshold, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
+		mpUpperThreshold = dynamic_cast<SVLongValueObjectClass*>(mpThreshold->getFirstObject(objectInfo));
 
 		objectInfo.EmbeddedID = SVBand0LowerThresholdObjectGuid;
-		mpLowerThreshold = reinterpret_cast<SVLongValueObjectClass*>(::SVSendMessage( mpThreshold, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
+		mpLowerThreshold = dynamic_cast<SVLongValueObjectClass*>(mpThreshold->getFirstObject(objectInfo));
 
 		objectInfo.ObjectType = SVBoolValueObjectType;
 		objectInfo.EmbeddedID = SVBand0ThresholdExcludeObjectGuid;
-		mpExclude = reinterpret_cast<SVBoolValueObjectClass*>(::SVSendMessage( mpThreshold, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
+		mpExclude = dynamic_cast<SVBoolValueObjectClass*>(mpThreshold->getFirstObject(objectInfo));
 	}
 	else if( mBandNumber == 1 )
 	{
@@ -195,14 +195,14 @@ BOOL SVTADlgColorThresholdAdjustment::OnInitDialog()
 		objectInfo.ObjectType = SVLongValueObjectType;
 
 		objectInfo.EmbeddedID = SVBand1UpperThresholdObjectGuid;
-		mpUpperThreshold = reinterpret_cast<SVLongValueObjectClass*>(::SVSendMessage( mpThreshold, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
+		mpUpperThreshold = dynamic_cast<SVLongValueObjectClass*>(mpThreshold->getFirstObject(objectInfo));
 
 		objectInfo.EmbeddedID = SVBand1LowerThresholdObjectGuid;
-		mpLowerThreshold = reinterpret_cast<SVLongValueObjectClass*>(::SVSendMessage( mpThreshold, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
+		mpLowerThreshold = dynamic_cast<SVLongValueObjectClass*>(mpThreshold->getFirstObject(objectInfo));
 
 		objectInfo.ObjectType = SVBoolValueObjectType;
 		objectInfo.EmbeddedID = SVBand1ThresholdExcludeObjectGuid;
-		mpExclude = reinterpret_cast<SVBoolValueObjectClass*>(::SVSendMessage( mpThreshold, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
+		mpExclude = dynamic_cast<SVBoolValueObjectClass*>(mpThreshold->getFirstObject(objectInfo));
 	}
 	else
 	{
@@ -212,14 +212,14 @@ BOOL SVTADlgColorThresholdAdjustment::OnInitDialog()
 		objectInfo.ObjectType = SVLongValueObjectType;
 
 		objectInfo.EmbeddedID = SVBand2UpperThresholdObjectGuid;
-		mpUpperThreshold = reinterpret_cast<SVLongValueObjectClass*>(::SVSendMessage( mpThreshold, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
+		mpUpperThreshold = dynamic_cast<SVLongValueObjectClass*>(mpThreshold->getFirstObject(objectInfo));
 
 		objectInfo.EmbeddedID = SVBand2LowerThresholdObjectGuid;
-		mpLowerThreshold = reinterpret_cast<SVLongValueObjectClass*>(::SVSendMessage( mpThreshold, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
+		mpLowerThreshold = dynamic_cast<SVLongValueObjectClass*>(mpThreshold->getFirstObject(objectInfo));
 
 		objectInfo.ObjectType = SVBoolValueObjectType;
 		objectInfo.EmbeddedID = SVBand2ThresholdExcludeObjectGuid;
-		mpExclude = reinterpret_cast<SVBoolValueObjectClass*>(::SVSendMessage( mpThreshold, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
+		mpExclude = dynamic_cast<SVBoolValueObjectClass*>(mpThreshold->getFirstObject(objectInfo));
 	}
 
 	if( pImage )
@@ -337,7 +337,7 @@ void SVTADlgColorThresholdAdjustment::updateGraphDisplay()
 	{
 		SVInspectionProcess* pInspection = mpTool->GetInspection();
 
-		::SVSendMessage( mpTool, SVM_RESET_ALL_OBJECTS, 0, 0 );
+		mpTool->resetAllObjects(true, false);
 
 		if( nullptr != pInspection )
 		{

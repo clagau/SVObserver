@@ -219,10 +219,10 @@ void SVChildrenSetupDialogClass::OnAddButton()
 					m_pParentObject->Add( pObject );
 
 					// Ensure this Object's inputs get connected
-					::SVSendMessage( pObject, SVM_CONNECT_ALL_INPUTS, 0, 0 );
+					pObject->ConnectAllInputs();
 
 					// And finally try to create the child object...
-					if( ::SVSendMessage( m_pParentObject, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(pObject), SVMFSetDefaultInputs | SVMFResetInspection ) != SVMR_SUCCESS )
+					if( !m_pParentObject->CreateChildObject(pObject, SVMFSetDefaultInputs | SVMFResetInspection ) )
 					{
 						SVStringArray msgList;
 						msgList.push_back(SVString(pObject->GetName()));
@@ -270,7 +270,7 @@ void SVChildrenSetupDialogClass::OnRemoveButton()
 				if( rc )
 				{
 					// Close, Disconnect and Delete Children...
-					::SVSendMessage( m_pParentObject, SVM_DESTROY_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(pTaskObject), SVMFSetDefaultInputs | SVMFResetInspection );
+					m_pParentObject->DestroyChildObject(pTaskObject, SVMFSetDefaultInputs | SVMFResetInspection );
 				}
 			}
 		}

@@ -245,10 +245,7 @@ SVLinearEdgeProcessingClass *SVLinearAnalyzerClass::GetEdgeA()
 	info.ObjectType = SVLinearEdgeProcessingObjectType;
 	info.SubType = SVLinearEdgeAProcessingObjectType;
 
-	l_psvEdge = reinterpret_cast<SVLinearEdgeProcessingClass *>(SVSendMessage( this, 
-																SVM_GETFIRST_OBJECT,
-																0,
-																reinterpret_cast<DWORD_PTR>(&info)));
+	l_psvEdge = dynamic_cast<SVLinearEdgeProcessingClass *>(getFirstObject(info));
 
 	return l_psvEdge;
 }
@@ -262,10 +259,7 @@ SVLinearEdgeProcessingClass *SVLinearAnalyzerClass::GetEdgeB()
 	info.ObjectType = SVLinearEdgeProcessingObjectType;
 	info.SubType = SVLinearEdgeBProcessingObjectType;
 
-	l_psvEdge = reinterpret_cast<SVLinearEdgeProcessingClass *>(SVSendMessage( this, 
-																	SVM_GETFIRST_OBJECT,
-																	0,
-																	reinterpret_cast<DWORD_PTR>(&info)));
+	l_psvEdge = dynamic_cast<SVLinearEdgeProcessingClass *>(getFirstObject(info));
 
 	return l_psvEdge;
 }
@@ -450,28 +444,10 @@ HRESULT SVLinearAnalyzerClass::onCollectOverlays(SVImageClass *p_Image,SVExtentM
 	return l_hrRet;
 }
 
-DWORD_PTR SVLinearAnalyzerClass::processMessage(DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext)
+bool SVLinearAnalyzerClass::resetAllObjects( bool shouldNotifyFriends, bool silentReset )
 {
-	DWORD_PTR DwResult = SVMR_NOT_PROCESSED;
+	bool Result = ( S_OK == ResetObject() );
+	ASSERT( Result );
 
-	switch (DwMessageID & SVM_PURE_MESSAGE)
-	{
-	case SVMSGID_RESET_ALL_OBJECTS:
-		{
-			HRESULT l_ResetStatus = ResetObject();
-			if( S_OK != l_ResetStatus )
-			{
-				ASSERT( SUCCEEDED( l_ResetStatus ) );
-
-				DwResult = SVMR_NO_SUCCESS;
-			}
-			else
-			{
-				DwResult = SVMR_SUCCESS;
-			}
-			break;
-		}
-	}
-
-	return (DwResult | SVAnalyzerClass::processMessage(DwMessageID, DwMessageValue, DwMessageContext));
+	return (Result && __super::resetAllObjects(shouldNotifyFriends, silentReset));
 }

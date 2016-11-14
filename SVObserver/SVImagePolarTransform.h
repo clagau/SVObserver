@@ -29,6 +29,8 @@ public:
 
 	virtual BOOL OnValidate();
 
+	virtual bool resetAllObjects( bool shouldNotifyFriends, bool silentReset ) override;
+
 	HRESULT ResetObject();
 
 	SVImageClass* GetOutputImage();
@@ -43,8 +45,7 @@ protected:
 	void AnglesTo360( double& p_dStart, double& p_dEnd);
 
 	virtual BOOL onRun( SVRunStatusClass& RRunStatus );
-	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
-
+	
 	SVImageClass				outputImageObject;
 	
 	// Tool's center x value, comes from mouse positioning...

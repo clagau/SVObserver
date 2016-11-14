@@ -54,9 +54,11 @@ public:
 
 	BOOL FillOutputs( SVIOEntryHostStructPtrList& p_IOEntries );
 
-	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
-
 	bool OutputIsNotValid( SVString p_strName );
+
+#pragma region Methods to replace processMessage
+	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const SVString& rOldName) override;
+#pragma endregion Methods to replace processMessage
 
 private:
 	HRESULT WriteDigitalOutput( SVIOEntryStruct& pIOEntry, long lDataIndex, bool p_ACK, bool p_NAK );

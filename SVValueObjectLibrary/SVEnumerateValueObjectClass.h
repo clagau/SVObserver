@@ -37,7 +37,6 @@ public:
 	virtual void Persist(SVObjectWriter& rWriter);
 
 	virtual HRESULT GetObjectValue( const SVString& p_rValueName, VARIANT& p_rVariantValue ) const;
-	virtual HRESULT SetObjectValue( const SVString& p_rValueName, const _variant_t& p_rVariantValue );
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* PDataObject );
 
 	BOOL GetEnumerator( LPCTSTR szEnumerator, long& lValue ) const;

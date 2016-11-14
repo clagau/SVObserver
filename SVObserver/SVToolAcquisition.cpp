@@ -97,13 +97,6 @@ bool SVAcquisitionToolClass::DoesObjectHaveExtents() const
 	return false;
 }
 
-DWORD_PTR SVAcquisitionToolClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
-{
-	DWORD_PTR DwResult = SVMR_NOT_PROCESSED;
-
-	return( SVToolClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext ) | DwResult );
-}
-
 SVStaticStringValueObjectClass* SVAcquisitionToolClass::GetInputImageNames()
 {
 	return &m_svSourceImageNames;

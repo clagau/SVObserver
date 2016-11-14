@@ -29,31 +29,27 @@ public:
 	SVObjectAppClass( LPCSTR LPSZObjectName );
 	SVObjectAppClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVOBJECTAPPCLASS );
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStruct );
-	virtual HRESULT ConnectObject( SVObjectLevelCreateStruct* PCreateStruct );
+	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStruct ) override;
+	virtual void ConnectObject( const SVObjectLevelCreateStruct& rCreateStruct ) override;
 
 	SVInspectionProcess* GetInspection() const;
 	SVToolClass* GetTool() const;
 	SVAnalyzerClass* GetAnalyzer() const;
 
 #pragma region virtual methods (IObjectAppClass)
-	virtual DWORD_PTR CreateChildObject(SvOi::IObjectClass& rChildObject, DWORD context) override;
+	virtual bool CreateChildObject(SvOi::IObjectClass& rChildObject, DWORD context) override;
 #pragma endregion virtual methods (IObjectAppClass)
 
-protected:
-	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
-
-	void UpdateConnections( SVObjectLevelCreateStruct* PCreateStruct );
-
-	// Sends SVM_CREATE_ALL_OBJECTS to the child object
-	// and returns the result of this message.
-	virtual DWORD_PTR createAllObjectsFromChild( SVObjectClass* pChildObject );
 	// Call this method at the object owner to create an object.
-	// If the owner object is not created yet, it returns SVMR_NOT_PROCESSED.
+	// If the owner object is not created yet, it returns false.
 	// Otherwise called the method createAllOBjectsFromChild
 	// and returns the result of this message.
-	// ...returns SVMR_SUCCESS, SVMR_NO_SUCCESS or SVMR_NOT_PROCESSED
-	DWORD_PTR CreateChildObject( SVObjectClass* pChildObject, DWORD context );
+	virtual bool CreateChildObject( SVObjectClass* pChildObject, DWORD context = 0 ) override;
+
+protected:
+	void UpdateConnections( const SVObjectLevelCreateStruct* PCreateStruct );
+
+	virtual bool createAllObjectsFromChild( SVObjectClass& rChildObject ) override;
 
 private:
 	SVInspectionProcess* m_psvInspection;

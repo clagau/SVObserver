@@ -96,7 +96,7 @@ HRESULT SVTaskObjectValueInterface::AddInputRequest( const SVGUID& p_rTaskId, co
 	SVObjectTypeInfoStruct objectInfo;
 	objectInfo.EmbeddedID = p_rEmbeddedId;
 
-	SVObjectClass* l_pObject = reinterpret_cast<SVObjectClass*>(::SVSendMessage( p_rTaskId, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
+	SVObjectClass* l_pObject = dynamic_cast<SVObjectClass*>(SVObjectManagerClass::Instance().getFirstObject(p_rTaskId, objectInfo));
 
 	if( nullptr != l_pObject )
 	{
@@ -113,7 +113,7 @@ HRESULT SVTaskObjectValueInterface::AddInputRequest( const SVGUID& p_rTaskId, co
 	SVObjectTypeInfoStruct objectInfo;
 	objectInfo.EmbeddedID = p_rEmbeddedId;
 
-	SVObjectClass* l_pObject = reinterpret_cast<SVObjectClass*>(::SVSendMessage( p_rTaskId, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
+	SVObjectClass* l_pObject = dynamic_cast<SVObjectClass*>(SVObjectManagerClass::Instance().getFirstObject(p_rTaskId, objectInfo));
 
 	if( nullptr != l_pObject )
 	{
@@ -213,11 +213,11 @@ HRESULT SVTaskObjectValueInterface::GetValue( const SVGUID& p_rTaskId, const SVG
 	SVObjectTypeInfoStruct objectInfo;
 	objectInfo.EmbeddedID = p_rEmbeddedId;
 
-	SVObjectClass* l_pObject = reinterpret_cast<SVObjectClass*>(::SVSendMessage( p_rTaskId, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
+	const SVObjectClass* l_pObject = dynamic_cast<const SVObjectClass*>(SVObjectManagerClass::Instance().getFirstObject(p_rTaskId, objectInfo));
 
 	if( nullptr != l_pObject )
 	{
-		SVValueObjectClass* l_pValueObject = dynamic_cast< SVValueObjectClass* >( l_pObject );
+		const SVValueObjectClass* l_pValueObject = dynamic_cast<const SVValueObjectClass* >( l_pObject );
 
 		if( nullptr != l_pValueObject )
 		{
@@ -237,24 +237,6 @@ HRESULT SVTaskObjectValueInterface::GetObjectValue( const SVGUID& p_rObjectId, c
 	if( nullptr != l_pObject )
 	{
 		l_hrOk = l_pObject->GetObjectValue( p_rValueName, p_rVariantValue );
-	}
-	else
-	{
-		l_hrOk = E_FAIL;
-	}
-
-	return l_hrOk;
-}
-
-HRESULT SVTaskObjectValueInterface::SetObjectValue( const SVGUID& p_rObjectId, const SVString& p_rValueName, const _variant_t& p_rVariantValue )
-{
-	HRESULT l_hrOk = S_OK;
-
-	SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject( p_rObjectId );
-
-	if( nullptr != l_pObject )
-	{
-		l_hrOk = l_pObject->SetObjectValue( p_rValueName, p_rVariantValue );
 	}
 	else
 	{

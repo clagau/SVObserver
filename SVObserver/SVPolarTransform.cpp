@@ -163,11 +163,3 @@ BOOL SVPolarTransformClass::OnValidate()
 	}
 	return bRetVal;
 }
-
-DWORD_PTR SVPolarTransformClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
-{
-	DWORD_PTR DwResult = SVMR_NOT_PROCESSED;
-
-	return( SVTaskObjectClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext ) | DwResult );
-}
-

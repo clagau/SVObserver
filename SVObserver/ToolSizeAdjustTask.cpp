@@ -236,6 +236,11 @@ SVToolClass* ToolSizeAdjustTask::GetTool() const
 	return dynamic_cast<SVToolClass* >(GetOwner());
 }
 
+bool ToolSizeAdjustTask::resetAllObjects( bool shouldNotifyFriends, bool silentReset )
+{
+	return true;
+}
+
 HRESULT ToolSizeAdjustTask::ResetObject()
 {
 	///Do nothing if we are in Run Mode 
@@ -417,40 +422,30 @@ HRESULT ToolSizeAdjustTask::ResetObject()
 	return hresult;
 }
 
-DWORD_PTR ToolSizeAdjustTask::ProcessResetAllObject( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext ) 
+bool ToolSizeAdjustTask::ProcessResetAllObject( bool SilentReset ) 
 {
-	DWORD_PTR DwResult = SVMR_SUCCESS;
-	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
-	if (SVMSGID_RESET_ALL_OBJECTS == dwPureMessageID)
+	bool Result = SVTaskObjectClass::resetAllObjects( true, SilentReset );
+	HRESULT ResetStatus = ResetObject();
+	if (S_OK != ResetStatus)
 	{
-		DwResult = SVTaskObjectClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext );
-		HRESULT ResetStatus = ResetObject();
-		if (S_OK != ResetStatus)
+		SetInvalid();
+		if (GetTool())
 		{
-			SetInvalid();
-			if (GetTool())
-			{
-				GetTool()->SetInvalid();
-			}
-			BOOL SilentReset = static_cast<BOOL> (DwMessageValue);
-			SvOi::MessageTextEnum messageId = SvOi::Tid_ErrorInReset;
-			SVStringArray msgList;
-			if(GetTool()->GetName())
-			{
-				messageId = SvOi::Tid_InValidNewExtents;
-				msgList.push_back(GetTool()->GetName());
-			}
-			SvStl::MsgTypeEnum mode = SilentReset ? SvStl::LogOnly : SvStl::LogAndDisplay;
-			SvStl::MessageMgrStd Exception(mode);
-			Exception.setMessage( SVMSG_SVO_58_TOOLADJUST_RESET_ERROR, messageId, msgList, SvStl::SourceFileParams(StdMessageParams), ResetStatus );
-			DwResult = SVMR_NO_SUCCESS | DwResult;
+			GetTool()->SetInvalid();
 		}
-		else
+		SvOi::MessageTextEnum messageId = SvOi::Tid_ErrorInReset;
+		SVStringArray msgList;
+		if(GetTool()->GetName())
 		{
-			DwResult = SVMR_SUCCESS| DwResult;
+			messageId = SvOi::Tid_InValidNewExtents;
+			msgList.push_back(GetTool()->GetName());
 		}
+		SvStl::MsgTypeEnum mode = SilentReset ? SvStl::LogOnly : SvStl::LogAndDisplay;
+		SvStl::MessageMgrStd Exception(mode);
+		Exception.setMessage( SVMSG_SVO_58_TOOLADJUST_RESET_ERROR, messageId, msgList, SvStl::SourceFileParams(StdMessageParams), ResetStatus );
+		Result = false;
 	}
-	return  DwResult;
+	return Result;
 }
 
 bool ToolSizeAdjustTask::IsFullSizeAllowed() const
@@ -471,16 +466,6 @@ bool ToolSizeAdjustTask::IsAdjustPositionAllowed() const
 SVEnumerateValueObjectClass* ToolSizeAdjustTask::GetInputMode(TSValues mode)
 {
 	return &m_InputModes[mode];
-}
-
-DWORD_PTR ToolSizeAdjustTask::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext ) 
-{
-	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
-	if (SVMSGID_RESET_ALL_OBJECTS == dwPureMessageID)
-	{
-		return SVMR_SUCCESS;
-	}
-	return  SVTaskObjectClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext );
 }
 
 SVDoubleValueObjectClass* ToolSizeAdjustTask::GetDResultObjects(ToolSizeAdjustTask::TSValues val) const
@@ -671,8 +656,8 @@ HRESULT ToolSizeAdjustTask::EnsureInFriendList(SVToolClass* pTool, bool AllowFul
 		pToolSizeAdjustTask = AddToFriendlist(pTool, AllowFullsize, AllowAdjustSize, AllowAdjustPosition );
 		if (nullptr != pToolSizeAdjustTask)
 		{
-			::SVSendMessage(pTool, SVM_CONNECT_ALL_INPUTS, reinterpret_cast<DWORD_PTR>(pToolSizeAdjustTask), 0);
-			::SVSendMessage(pTool, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(pToolSizeAdjustTask), 0);
+			pTool->ConnectAllInputs();
+			pTool->CreateChildObject(pToolSizeAdjustTask);
 		}
 	}
 	if (nullptr != pToolSizeAdjustTask)

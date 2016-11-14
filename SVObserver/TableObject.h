@@ -37,12 +37,12 @@ public:
 
 	const std::vector<DoubleSortValuePtr>& getValueList() const { return m_ValueList; };
 	const ValueObjectSortContainer& getSortContainer() const { return m_sortContainer; };
+
+	virtual SVObjectClass* OverwriteEmbeddedObject(const GUID& uniqueID, const GUID& rEmbeddedID) override;
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
 protected:
-	virtual DWORD_PTR	processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext ) override;
-
 	/// Create a new column value Object. If creation failed, this method throw an exception.
 	/// \param embeddedID [in] The EmbeddedId of the new object.
 	/// \param name [in] The name of the new object.

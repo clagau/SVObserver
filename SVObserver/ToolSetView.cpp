@@ -436,7 +436,7 @@ void ToolSetView::RenameItem(int item, const CString& oldName, const CString& ne
 			SVGUID toolId = m_toolSetListCtrl.getToolGuid(m_labelingIndex);
 			if (SV_GUID_NULL != toolId) // it's a Tool
 			{
-				TheSVObserverApp.RenameObject(SVString(m_csLabelSaved), SVString(m_csLabelEdited), toolId);
+				TheSVObserverApp.OnObjectRenamed(SVString(m_csLabelSaved), toolId);
 			}
 			SVIPDoc* pDoc = GetIPDoc();
 			if (pDoc)

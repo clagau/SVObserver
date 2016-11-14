@@ -64,7 +64,6 @@ public:
 protected:
 #pragma region Protected Methods
 	virtual BOOL onRun( SVRunStatusClass& RRunStatus );
-	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
 #pragma endregion Protected Methods
 
 	SVDoubleValueObjectClass m_svRotationAngle;

@@ -38,8 +38,6 @@ public:
 protected:
 	virtual void init();
 
-	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
-
 	// Embedded Objects:
 	SVMainImageClass				mainImageObject;	// Embedded
 

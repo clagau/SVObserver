@@ -86,10 +86,10 @@ public:
 	SVExternalToolTask( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SV_EXTERNAL_TOOL_TASK );
 	virtual ~SVExternalToolTask();
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
-	virtual BOOL CloseObject();
-	virtual BOOL OnValidate();
-	virtual BOOL ConnectAllInputs();
+	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
+	virtual BOOL CloseObject() override;
+	virtual BOOL OnValidate() override;
+	virtual bool ConnectAllInputs() override;
 
 	
 	HRESULT Initialize(SVDllLoadLibraryCallback fnNotify = SVDllLoadLibraryCallbackDefault() );
@@ -121,6 +121,12 @@ public:
 	HRESULT FindInvalidatedObjects(SVObjectVector& rList, const SVCancelData* pOriginalData, FindEnum eWhich );
 	void GetDLLMessageString(HRESULT hr, BSTR* bstrMessage) const;
 
+#pragma region Methods to replace processMessage
+	virtual bool DisconnectObjectInput( SVInObjectInfoStruct* pObjectInInfo ) override;
+	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const SVString& rOldName) override;
+	virtual bool resetAllObjects( bool shouldNotifyFriends, bool silentReset ) override;
+#pragma endregion Methods to replace processMessage
+
 protected:
 	HRESULT ConnectInputs();
 	HRESULT ConnectInputImages();
@@ -128,7 +134,6 @@ protected:
 	HRESULT ClearData();
 	HRESULT SetDefaultValues();
 	virtual BOOL onRun( SVRunStatusClass& RRunStatus );
-	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
 	HRESULT InspectionInputsToVariantArray();
 
 	SVImageClass* GetInputImage(int iIndex);
@@ -145,8 +150,6 @@ protected:
 	SVVariantValueObjectClass* GetResultValueObject(int iIndex);
 	SVResultClass* GetResultRangeObject(int iIndex);
 	std::vector<SVResultClass*> GetResultRangeObjects();
-
-	BOOL renameToolSetSymbol(const SVObjectClass* pObject, LPCTSTR OriginalName);
 
 	HRESULT AllocateResult (int iIndex);
 

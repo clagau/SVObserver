@@ -441,7 +441,7 @@ void SVBlobAnalyzeFeatureDialogClass::OnOK()
 	m_pIPDoc->SetModifiedFlag();
 
 	// Incase the Dimensional Data changed...
-	SVSendMessage ( m_pCurrentAnalyzer->GetInspection(), SVM_RESET_ALL_OBJECTS, 0, 0 );
+	m_pCurrentAnalyzer->GetInspection()->resetAllObjects(true, false);
 
 	// Rebuild results list/view
 	// what about published results list ?

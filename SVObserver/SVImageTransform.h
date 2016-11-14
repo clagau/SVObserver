@@ -33,6 +33,7 @@ public:
 
 	virtual BOOL OnValidate();
 	virtual HRESULT ResetObject( );
+	virtual bool resetAllObjects( bool shouldNotifyFriends, bool silentReset ) override;
 #pragma endregion
 
 	SVImageClass* getInputImage();
@@ -42,7 +43,6 @@ public:
 #pragma region Protected Methods
 protected:
 	virtual BOOL onRun( SVRunStatusClass& runStatus );
-	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
 
 	virtual HRESULT UpdateTransformData( long p_lIndex );
 #pragma endregion

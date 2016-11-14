@@ -50,11 +50,7 @@ public:
 	//************************************
 	virtual HRESULT SetValueAt( int Bucket, int Index, const CString& rValue ) override;
 
-	//************************************
-	/// Disconnect the object if it is connected to this value.
-	/// \param pObject [in] Pointer to the object to disconnect.
-	//************************************
-	void DisconnectObject( const SVObjectClass* const pObject );
+	virtual bool DisconnectObjectInput( SVInObjectInfoStruct* pObjectInInfo ) override;
 
 	//************************************
 	/// Update the linked name 
@@ -65,6 +61,10 @@ public:
 	SVStaticStringValueObjectClass& getLinkedName() { return m_LinkedName; };
 
 	bool isIndirectValue() { return ( nullptr != m_pLinkedObject ); };
+
+#pragma region Methods to replace processMessage
+	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const SVString& rOldName) override { UpdateLinkedName(); };
+#pragma endregion Methods to replace processMessage
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
@@ -87,11 +87,10 @@ private:
 
 	//************************************
 	/// Connect the input connection with a new object
-	/// \returns DWORD_PTR
+	/// \returns bool
 	//************************************
-	DWORD_PTR ConnectInput();
+	bool ConnectInput();
 
-	virtual DWORD_PTR processMessage( DWORD MessageID, DWORD_PTR MessageValue, DWORD_PTR MessageContext ) override;
 	virtual HRESULT ResetObject() override;
 
 	/// Convert a string (dotted name) to an object.

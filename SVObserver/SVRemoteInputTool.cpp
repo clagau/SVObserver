@@ -197,6 +197,13 @@ HRESULT SVRemoteInputTool::SetInputObject( const SVGUID& p_rObjectId )
 	return l_Status;
 }
 
+void SVRemoteInputTool::OnObjectRenamed(const SVObjectClass& rRenamedObject, const SVString& rOldName)
+{
+	SVInputStreamManager::Instance().EraseInputStream( GetUniqueObjectID() );
+	SVInputStreamManager::Instance().InsertInputStream( static_cast< const char* >( GetCompleteObjectName() ), GetUniqueObjectID() );
+	__super::OnObjectRenamed(rRenamedObject, rOldName);
+}
+
 SVObjectClass* SVRemoteInputTool::GetInputObject() const
 {
 	SVObjectClass* l_pObject = nullptr;
@@ -292,44 +299,7 @@ BOOL SVRemoteInputTool::onRun( SVRunStatusClass& RRunStatus )
 	return l_Status;
 }
 
-DWORD_PTR SVRemoteInputTool::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
-{
-	DWORD_PTR l_Status = SVMR_NOT_PROCESSED;
 
-	// Try to process message by yourself...
-	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
-	switch (dwPureMessageID)
-	{
-		case SVMSGID_OBJECT_RENAMED:
-		{
-			SVObjectClass* pObject = reinterpret_cast <SVObjectClass*> (DwMessageValue); // Object with new name
-			LPCTSTR orgName = ( LPCTSTR )DwMessageContext;
-
-			SVInputStreamManager::Instance().EraseInputStream( GetUniqueObjectID() );
-
-			if( S_OK == SVInputStreamManager::Instance().InsertInputStream( static_cast< const char* >( GetCompleteObjectName() ), GetUniqueObjectID() ) )
-			{
-				l_Status = SVMR_SUCCESS;
-			}
-			else
-			{
-				l_Status = SVMR_NO_SUCCESS;
-			}
-
-			return l_Status;
-
-			break;
-		}
-		default:
-		{
-			break;
-		}
-	}
-
-	l_Status = SVToolClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext ) | l_Status;
-
-	return l_Status;
-}
 
 HRESULT SVRemoteInputTool::ProcessCommandQueue()
 {

@@ -318,20 +318,6 @@ struct SVInspectionNameUpdate
 
 };
 
-struct SVRenameObject
-{
-	SVRenameObject();
-	SVRenameObject( const SVString& p_rOldName, const SVString& p_rNewName, const SVGUID& p_rObjectId );
-	SVRenameObject( const SVRenameObject& p_rObject );
-
-	virtual ~SVRenameObject();
-
-	SVString m_OldName;
-	SVString m_NewName;
-	SVGUID m_ObjectId;
-
-};
-
 struct SVAddTool
 {
 	SVAddTool();

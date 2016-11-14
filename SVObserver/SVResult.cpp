@@ -87,13 +87,6 @@ BOOL SVResultClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 	return bOk;
 }
 
-DWORD_PTR SVResultClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
-{
-	DWORD_PTR DwResult = SVMR_NOT_PROCESSED;
-
-	return( SVTaskObjectListClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext ) | DwResult );
-}
-
 BOOL SVResultClass::IsFailed()
 {
 	BOOL RVal = TRUE;
@@ -119,7 +112,7 @@ SVRangeClass* SVResultClass::GetResultRange()
 {
 	SVObjectTypeInfoStruct info;
 	info.ObjectType = SVRangeObjectType;
-	SVRangeClass* pRange = reinterpret_cast<SVRangeClass*>(SVSendMessage( this, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&info) ));
+	SVRangeClass* pRange = dynamic_cast<SVRangeClass*>(getFirstObject(info));
 	return pRange;
 }
 

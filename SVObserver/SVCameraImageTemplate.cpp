@@ -201,31 +201,6 @@ HRESULT SVCameraImageTemplate::GetObjectValue( const SVString& p_rValueName, VAR
 	return hr;
 }
 
-HRESULT SVCameraImageTemplate::SetObjectValue( const SVString& p_rValueName, const _variant_t& p_rVariantValue )
-{
-	HRESULT hr = S_OK;
-
-	if( scDigitizerIDTag == p_rValueName )
-	{
-		if( p_rVariantValue.vt == VT_BSTR )
-		{
-			digitizerObjectID = p_rVariantValue;
-
-			m_LastUpdate = SVClock::GetTimeStamp();
-		}
-		else
-		{
-			hr = E_FAIL;
-		}
-	}
-	else
-	{
-		hr = SVImageClass::SetObjectValue( p_rValueName, p_rVariantValue );
-	}
-
-	return hr;
-}
-
 HRESULT SVCameraImageTemplate::SetObjectValue( SVObjectAttributeClass* PDataObject )
 {
 	HRESULT hr = S_FALSE;

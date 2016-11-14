@@ -791,8 +791,7 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObj, CPoint& 
 					}
 				}
 
-				SVImageInfoClass* pImageInfo = reinterpret_cast <SVImageInfoClass*> ( ::SVSendMessage(pTool, SVM_GETFIRST_IMAGE_INFO, 0, 0) );
-				
+				const SVImageInfoClass* pImageInfo = pTool->getFirstImageInfo();
 				if (pImageInfo)
 				{
 					POINT l_oPoint;

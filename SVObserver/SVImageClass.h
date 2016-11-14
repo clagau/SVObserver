@@ -108,7 +108,6 @@ public:
 	virtual HRESULT LoadImage( LPCTSTR p_szFileName, SVImageIndexStruct p_svToIndex );
 
 	virtual HRESULT GetObjectValue( const SVString& p_rValueName, VARIANT& p_rVariantValue ) const;
-	virtual HRESULT SetObjectValue( const SVString& p_rValueName, const _variant_t& p_rVariantValue );
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* PDataObject );
 
 	virtual void Persist( SVObjectWriter& rWriter );
@@ -123,6 +122,7 @@ public:
 
 	void GetChildExtents( SVChildExtentDeque& p_rChildExtents ) const;
 	void SetTranslationOffset(double offsetX, double offsetY);
+	virtual bool resetAllObjects( bool shouldNotifyFriends, bool silentReset ) override;
 
 #pragma region virtual method (ISVImage)
 	virtual SVImageTypeEnum GetImageType() const override;
@@ -171,8 +171,6 @@ protected:
 	virtual HRESULT GetChildImageHandle( const GUID& p_rChildID, SVImageIndexStruct p_svBufferIndex, SVSmartHandlePointer& p_rsvBufferHandle ); //@TODO:  Change method to const?
 
 	virtual HRESULT GetImageIndex( SVDataManagerHandle& p_rHandle, const SVImageIndexStruct& rIndex ) const;
-
-	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
 
 	virtual bool Lock() const;
 	virtual bool Unlock() const;

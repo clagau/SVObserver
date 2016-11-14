@@ -61,6 +61,8 @@ public:
 	//************************************
 	long getUpperThresholdValue() const;
 
+	virtual bool resetAllObjects( bool shouldNotifyFriends, bool silentReset ) override;
+
 	SVEnumerateValueObjectClass m_svDirection;
 	SVEnumerateValueObjectClass m_svPolarisation;
 	SVEnumerateValueObjectClass m_svEdgeSelect;
@@ -93,7 +95,6 @@ public:
 	DWORD m_dwColorNumber;
 
 protected:
-	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
 	HRESULT UpdateUpperThresholdValues( long p_lIndex );
 	HRESULT UpdateLowerThresholdValues( long p_lIndex );
 	HRESULT UpdateEdgeList( long p_lIndex );

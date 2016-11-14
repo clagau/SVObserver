@@ -32,6 +32,7 @@ public:
 #pragma region Public Methods
 public:
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
+	virtual bool resetAllObjects( bool shouldNotifyFriends, bool silentReset ) override;
 	virtual HRESULT ResetObject() override;
 	virtual BOOL Validate() override;
 	virtual BOOL OnValidate() override;
@@ -41,7 +42,6 @@ public:
 protected:
 	virtual bool ValidateOfflineParameters () override;
 	virtual BOOL onRun( SVRunStatusClass& rRunStatus ) override;
-	virtual DWORD_PTR processMessage(DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext) override;
 #pragma endregion Protected Methods
 
 #pragma region Private Methods

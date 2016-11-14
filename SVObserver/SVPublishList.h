@@ -30,7 +30,7 @@ public:
 
 	void Refresh(SVTaskObjectClass* pRootObject);
 	void Release(SVTaskObjectClass* pRootObject);
-	BOOL RemovePublishedEntry( const SVGUID& RGuid );
+	bool RemovePublishedEntry( const SVGUID& RGuid );
 
 	SVInspectionProcess* m_pInspection;
 

@@ -69,7 +69,7 @@ SVToolAdjustmentDialogAnalyzerPageClass::SVToolAdjustmentDialogAnalyzerPageClass
 			SVObjectTypeInfoStruct info;
 			info.ObjectType = SVAnalyzerObjectType;
 
-			m_pCurrentAnalyzer = reinterpret_cast<SVAnalyzerClass *>(SVSendMessage( m_pTool, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&info) ));
+			m_pCurrentAnalyzer = dynamic_cast<SVAnalyzerClass *>(m_pTool->getFirstObject(info));
 		}
 	}
 }
@@ -267,14 +267,14 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnSelchangeCurrentAnalyzer()
 
 				// Ensure this Object's inputs get connected
 				// Fix to ensure Friends get connections as well
-				::SVSendMessage( m_pTool, SVM_CONNECT_ALL_INPUTS, 0, 0 );
+				m_pTool->ConnectAllInputs();
 
 				// And last - Create (initialize) it
 
 				if( ! m_pCurrentAnalyzer->IsCreated() )
 				{
 					// And finally try to create the child object...
-					if( ::SVSendMessage( m_pTool, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(m_pCurrentAnalyzer), SVMFSetDefaultInputs | SVMFResetInspection ) != SVMR_SUCCESS )
+					if( !m_pTool->CreateChildObject(m_pCurrentAnalyzer, SVMFSetDefaultInputs | SVMFResetInspection ) )
 					{
 						SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 						Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_Error_AnalyzerCreationFailed, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10211 );
@@ -343,9 +343,10 @@ void SVToolAdjustmentDialogAnalyzerPageClass::DestroyAnalyzer()
 			m_additionalAnalyzerId = SV_GUID_NULL;
 		}
 
-		::SVSendMessage( m_pTool, SVMSGID_DISCONNECT_IMAGE_OBJECT, reinterpret_cast<DWORD_PTR>(m_pCurrentAnalyzer), 0 );
+		m_pCurrentAnalyzer->DisconnectImages();
+
 		// Close, Disconnect and Delete the Object
-		::SVSendMessage( m_pTool, SVM_DESTROY_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(m_pCurrentAnalyzer), SVMFSetDefaultInputs | SVMFResetInspection );
+		m_pTool->DestroyChildObject(m_pCurrentAnalyzer, SVMFSetDefaultInputs | SVMFResetInspection );
 
 		m_pCurrentAnalyzer = nullptr;
 	}
@@ -354,7 +355,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::DestroyAnalyzer()
 BOOL SVToolAdjustmentDialogAnalyzerPageClass::setImages()
 {
 	// Get the Image for this tool
-	SVImageInfoClass* pImageInfo = reinterpret_cast<SVImageInfoClass*>( ::SVSendMessage( m_pTool, SVM_GETFIRST_IMAGE_INFO, 0, 0 ));
+	const SVImageInfoClass* pImageInfo = m_pTool->getFirstImageInfo();
 	if( pImageInfo )
 	{
 		SVImageClass* l_pImage = nullptr;
@@ -405,7 +406,8 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnResultButton()
 		SVClassInfoStructListClass	availableResults;
 		SVObjectTypeInfoStruct		resultTypeInfo;
 		resultTypeInfo.ObjectType = SVResultObjectType;
-		::SVSendMessage( m_pCurrentAnalyzer, SVM_GETAVAILABLE_OBJECTS, reinterpret_cast<DWORD_PTR>(&availableResults), reinterpret_cast<DWORD_PTR>(&resultTypeInfo) );
+		//@TODO[MZA][7.40][14.10.2016] The getAvailableObject method should be replaced by the GuiCmd::GetAvailableObjects
+		m_pCurrentAnalyzer->getAvailableObjects(&availableResults, &resultTypeInfo);
 
 		// Get Dialog Title...
 		CString strTitle;

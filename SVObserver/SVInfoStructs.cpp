@@ -1099,25 +1099,6 @@ SVInspectionNameUpdate::~SVInspectionNameUpdate()
 {
 }
 
-SVRenameObject::SVRenameObject()
-: m_OldName(), m_NewName(), m_ObjectId()
-{
-}
-
-SVRenameObject::SVRenameObject( const SVString& p_rOldName, const SVString& p_rNewName, const SVGUID& p_rObjectId )
-: m_OldName( p_rOldName ), m_NewName( p_rNewName ), m_ObjectId( p_rObjectId )
-{
-}
-
-SVRenameObject::SVRenameObject( const SVRenameObject& p_rObject )
-: m_OldName( p_rObject.m_OldName ), m_NewName( p_rObject.m_NewName ), m_ObjectId( p_rObject.m_ObjectId )
-{
-}
-
-SVRenameObject::~SVRenameObject()
-{
-}
-
 SVAddTool::SVAddTool()
 : m_pTool( nullptr ), m_Index( -1 )
 {

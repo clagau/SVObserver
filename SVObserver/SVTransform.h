@@ -35,8 +35,6 @@ protected:
 	SVDoubleValueObjectClass* getInputRotationYResult();
 	SVDoubleValueObjectClass* getInputRotationAngleResult();
 
-	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
-
 //******************************************************************************
 // Data Element(s):
 //******************************************************************************

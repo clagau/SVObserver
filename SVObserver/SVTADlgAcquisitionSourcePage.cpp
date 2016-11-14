@@ -180,7 +180,7 @@ BOOL SVToolAdjustmentDialogAcquisitionSourcePageClass::OnInitDialog()
 		SVObjectTypeInfoStruct info;
 		info.ObjectType = SVImageObjectType;
 		info.SubType    = SVMainImageObjectType;
-		pMainImage = reinterpret_cast<SVCameraImageTemplate*>(::SVSendMessage( pTool, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&info) ));
+		pMainImage = dynamic_cast<SVCameraImageTemplate*>(pTool->getFirstObject(info));
 		if( pMainImage )
 		{
 			SVInspectionProcess* pInspection = dynamic_cast< SVInspectionProcess* >( pTool->GetAncestor( SVInspectionObjectType ) );
@@ -245,7 +245,7 @@ void SVToolAdjustmentDialogAcquisitionSourcePageClass::OnSelectButton()
 		if ( S_OK == pMainImage->UpdateImage( ImageInfo ) )
 		{
 			// Reset all objects...
-			::SVSendMessage( pTool, SVM_RESET_ALL_OBJECTS, 0, 0 );
+			pTool->resetAllObjects(true, false);
 
 			refresh();
 		}
@@ -278,7 +278,10 @@ void SVToolAdjustmentDialogAcquisitionSourcePageClass::OnChannel0Check()
 			if( S_OK == pMainImage->UpdateImage( ImageInfo ) )
 			{
 				// Reset all objects...
-				::SVSendMessage( pTool, SVM_RESET_ALL_OBJECTS, 0, 0 );
+				if (nullptr != pTool)
+				{
+					pTool->resetAllObjects(true, false);
+				}
 
 				refresh();
 			}
@@ -302,7 +305,10 @@ void SVToolAdjustmentDialogAcquisitionSourcePageClass::OnChannel1Check()
 			if ( S_OK == pMainImage->UpdateImage( ImageInfo ) )
 			{
 				// Reset all objects...
-				::SVSendMessage( pTool, SVM_RESET_ALL_OBJECTS, 0, 0 );
+				if (nullptr != pTool)
+				{
+					pTool->resetAllObjects(true, false);
+				}
 
 				refresh();
 			}
@@ -326,7 +332,10 @@ void SVToolAdjustmentDialogAcquisitionSourcePageClass::OnChannel2Check()
 			if( S_OK == pMainImage->UpdateImage( ImageInfo ) )
 			{
 				// Reset all objects...
-				::SVSendMessage( pTool, SVM_RESET_ALL_OBJECTS, 0, 0 );
+				if (nullptr != pTool)
+				{
+					pTool->resetAllObjects(true, false);
+				}
 
 				refresh();
 			}
@@ -350,7 +359,10 @@ void SVToolAdjustmentDialogAcquisitionSourcePageClass::OnChannel3Check()
 			if ( S_OK == pMainImage->UpdateImage( ImageInfo ) )
 			{
 				// Reset all objects...
-				::SVSendMessage( pTool, SVM_RESET_ALL_OBJECTS, 0, 0 );
+				if (nullptr != pTool)
+				{
+					pTool->resetAllObjects(true, false);
+				}
 
 				refresh();
 			}
@@ -372,7 +384,10 @@ void SVToolAdjustmentDialogAcquisitionSourcePageClass::OnMultibandRadio()
 		if( S_OK == pMainImage->UpdateImage( ImageInfo ) )
 		{
 			// Reset all objects...
-			::SVSendMessage( pTool, SVM_RESET_ALL_OBJECTS, 0, 0 );
+			if (nullptr != pTool)
+			{
+				pTool->resetAllObjects(true, false);
+			}
 
 			CheckRadioButton( IDC_SINGLEBAND_RADIO, IDC_MULTIBAND_RADIO, IDC_MULTIBAND_RADIO );
 
@@ -403,7 +418,10 @@ void SVToolAdjustmentDialogAcquisitionSourcePageClass::OnSinglebandRadio()
 		if( S_OK == pMainImage->UpdateImage( ImageInfo ) )
 		{
 			// Reset all objects...
-			::SVSendMessage( pTool, SVM_RESET_ALL_OBJECTS, 0, 0 );
+			if (nullptr != pTool)
+			{
+				pTool->resetAllObjects(true, false);
+			}
 
 			CheckRadioButton( IDC_SINGLEBAND_RADIO, IDC_MULTIBAND_RADIO, IDC_SINGLEBAND_RADIO );
 

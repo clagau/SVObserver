@@ -652,34 +652,25 @@ BOOL SVBarCodeAnalyzerClass::SaveRegExpression( BOOL DisplayErrorMessage )
 	return TRUE;
 }
 
-DWORD_PTR SVBarCodeAnalyzerClass::processMessage(DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext)
+bool SVBarCodeAnalyzerClass::resetAllObjects( bool shouldNotifyFriends, bool silentReset )
 {
-	DWORD_PTR dwResult = 0;
+	bool Result = false;
 
-	switch (DwMessageID & SVM_PURE_MESSAGE)
+	HRESULT l_ResetStatus = ResetObject();
+	if( S_OK != l_ResetStatus )
 	{
-	case SVMSGID_RESET_ALL_OBJECTS :
+		if( !silentReset && SvOi::Tid_Empty != m_errId )
 		{
-			HRESULT l_ResetStatus = ResetObject();
-			if( S_OK != l_ResetStatus )
-			{
-				BOOL SilentReset = static_cast<BOOL> (DwMessageValue);
-
-				if( !SilentReset && SvOi::Tid_Empty != m_errId )
-				{
-					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, m_errId, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10040 ); 
-				}
-				dwResult = SVMR_NO_SUCCESS;
-			}
-			else
-			{
-				dwResult = SVMR_SUCCESS;
-			}
-			break;
+			SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
+			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, m_errId, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10040 ); 
 		}
+		Result = false;
 	}
-	return (dwResult | SVImageAnalyzerClass::processMessage(DwMessageID, DwMessageValue, DwMessageContext));
+	else
+	{
+		Result = true;
+	}
+	return Result && __super::resetAllObjects(shouldNotifyFriends, silentReset);
 }
 
 HRESULT SVBarCodeAnalyzerClass::ResetObject()

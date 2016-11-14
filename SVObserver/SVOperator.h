@@ -23,9 +23,7 @@ public:
 	SVOperatorClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVOPERATOR );
 	virtual ~SVOperatorClass();
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
-
-protected:
-	virtual DWORD_PTR processMessage(DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext);
+	virtual bool resetAllObjects( bool shouldNotifyFriends, bool silentReset ) override;
 
 private:
 	void init();

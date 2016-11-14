@@ -125,44 +125,44 @@ BOOL SVToolAdjustmentDialogRotationPageClass::OnInitDialog()
 		
 		// Get Evaluate Object for the X coordinate...
 		evaluateObjectInfo.SubType = SVEvaluateRotationXObjectType;
-		m_pEvaluateRotationX = reinterpret_cast<SVEvaluateClass*>(::SVSendMessage( m_pTool, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&evaluateObjectInfo) ));
+		m_pEvaluateRotationX = dynamic_cast<SVEvaluateClass*>(m_pTool->getFirstObject(evaluateObjectInfo));
 		if( m_pEvaluateRotationX )
 		{
 			// Get Evaluate Result Object for the X coordinate...
 			resultObjectInfo.EmbeddedID = SVOutputEvaluateRotationXResultObjectGuid;
-			m_pRotationXResult = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( m_pEvaluateRotationX, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&resultObjectInfo) ));
+			m_pRotationXResult = dynamic_cast<SVDoubleValueObjectClass*>(m_pEvaluateRotationX->getFirstObject(resultObjectInfo));
 		}
 
 		// Get Evaluate Object for the Y coordinate...
 		evaluateObjectInfo.SubType = SVEvaluateRotationYObjectType;
-		m_pEvaluateRotationY = reinterpret_cast<SVEvaluateClass*>(::SVSendMessage( m_pTool, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&evaluateObjectInfo) ));
+		m_pEvaluateRotationY = dynamic_cast<SVEvaluateClass*>(m_pTool->getFirstObject(evaluateObjectInfo));
 		if( m_pEvaluateRotationY )
 		{
 			// Get Evaluate Result Object for the Y coordinate...
 			resultObjectInfo.EmbeddedID = SVOutputEvaluateRotationYResultObjectGuid;
-			m_pRotationYResult = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( m_pEvaluateRotationY, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&resultObjectInfo) ));
+			m_pRotationYResult = dynamic_cast<SVDoubleValueObjectClass*>(m_pEvaluateRotationY->getFirstObject(resultObjectInfo));
 		}
 
 		// Get Evaluate Object for the Angle...
 		evaluateObjectInfo.SubType	   = SVEvaluateRotationAngleObjectType;
-		m_pEvaluateRotationAngle = reinterpret_cast<SVEvaluateClass*>(::SVSendMessage( m_pTool, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&evaluateObjectInfo) ));
+		m_pEvaluateRotationAngle = dynamic_cast<SVEvaluateClass*>(m_pTool->getFirstObject(evaluateObjectInfo));
 		if( m_pEvaluateRotationAngle )
 		{
 			// Get Evaluate Result Object for the Angle...
 			resultObjectInfo.EmbeddedID = SVOutputEvaluateRotationAngleResultObjectGuid;
-			m_pRotationAngleResult = reinterpret_cast<SVDoubleValueObjectClass*>(::SVSendMessage( m_pEvaluateRotationAngle, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&resultObjectInfo) ));
+			m_pRotationAngleResult = dynamic_cast<SVDoubleValueObjectClass*>(m_pEvaluateRotationAngle->getFirstObject(resultObjectInfo));
 		}
 		
 		// Get Rotation enabled...
 		SVObjectTypeInfoStruct objectInfo;
 		objectInfo.ObjectType = SVBoolValueObjectType;
 		objectInfo.EmbeddedID = SVPerformRotationObjectGuid;
-		m_pPerformRotation = reinterpret_cast<SVBoolValueObjectClass*>(::SVSendMessage( m_pTool, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
+		m_pPerformRotation = dynamic_cast<SVBoolValueObjectClass*>(m_pTool->getFirstObject(objectInfo));
 
 		// Interpolation Mode
 		objectInfo.ObjectType = SVEnumValueObjectType;
 		objectInfo.EmbeddedID = SVOutputInterpolationModeObjectGuid;
-		m_pInterpolationMode = reinterpret_cast<SVEnumerateValueObjectClass*>(::SVSendMessage( m_pTool, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
+		m_pInterpolationMode = dynamic_cast<SVEnumerateValueObjectClass*>(m_pTool->getFirstObject(objectInfo));
 		if( m_pInterpolationMode )
 		{
 			CString l_strEnumList;

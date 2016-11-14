@@ -34,8 +34,6 @@ public:
 protected:
 	virtual HRESULT UpdateImageWithExtent( unsigned long p_Index );
 
-	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
-
 	SVBoolValueObjectClass m_svPerformTranslation;
 
 private:

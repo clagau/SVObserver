@@ -14,6 +14,7 @@
 #include "SVAnalyzer.h"
 #include "SVInspectionProcess.h"
 #include "SVTool.h"
+#include "SVResult.h"
 #include "SVImageLibrary/SVImageInfoClass.h"
 #include "SVImageClass.h"
 #include "SVObjectLibrary/SVAnalyzerLevelCreateStruct.h"
@@ -79,100 +80,11 @@ SVResultClass* SVAnalyzerClass::GetResultObject()
 {
 	SVObjectTypeInfoStruct info;
 	info.ObjectType = SVResultObjectType;
-	SVResultClass* pResult = reinterpret_cast<SVResultClass*>(SVSendMessage( this, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&info) ) );
+	SVResultClass* pResult = dynamic_cast<SVResultClass*>( getFirstObject( info ) );
 	return pResult;
 }
 
-DWORD_PTR SVAnalyzerClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
-{
-	DWORD_PTR DwResult = SVMR_NOT_PROCESSED;
-
-	SVAnalyzerLevelCreateStruct createStruct;
-
-	// Try to process message by yourself...
-	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
-	switch( dwPureMessageID )
-	{
-		case SVMSGID_CREATE_ALL_OBJECTS:
-		{
-			if( !IsCreated() && !CreateObject( ( SVObjectLevelCreateStruct* ) DwMessageValue ) )
-			{
-				ASSERT( false );
-
-				DwResult = SVMR_NO_SUCCESS;
-			}
-			else
-			{
-				DwResult = SVMR_SUCCESS;
-			}
-
-			createStruct.OwnerObjectInfo        = this;
-			createStruct.AnalyzerObjectInfo		= this;
-			createStruct.ToolObjectInfo			= GetTool();
-			createStruct.InspectionObjectInfo	= GetInspection();
-
-			DwMessageValue = reinterpret_cast<DWORD_PTR>(&createStruct);
-
-			break;
-		}
-
-		case SVMSGID_CONNECT_ALL_OBJECTS:
-		{
-			if( S_OK != ConnectObject( ( SVObjectLevelCreateStruct* ) DwMessageValue ) )
-			{
-				ASSERT( false );
-
-				DwResult = SVMR_NO_SUCCESS;
-			}
-			else
-			{
-				DwResult = SVMR_SUCCESS;
-			}
-
-			createStruct.OwnerObjectInfo        = this;
-			createStruct.AnalyzerObjectInfo		= this;
-			createStruct.ToolObjectInfo			= GetTool();
-			createStruct.InspectionObjectInfo	= GetInspection();
-
-			DwMessageValue = reinterpret_cast<DWORD_PTR>(&createStruct);
-
-			break;
-		}
-
-		case SVMSGID_CREATE_CHILD_OBJECT:
-		{
-			// ...use second message parameter ( DwMessageValue ) as SVObjectClass* of the child object
-			// ...returns SVMR_SUCCESS, SVMR_NO_SUCCESS or SVMR_NOT_PROCESSED
-			SVObjectClass* pChildObject = ( SVObjectClass* ) DwMessageValue;
-			return CreateChildObject(pChildObject, static_cast<DWORD>(DwMessageContext));
-		}
-
-		case SVMSGID_CONNECT_CHILD_OBJECT:
-		{
-			// ...use second message parameter ( DwMessageValue ) as SVObjectClass* of the child object
-			SVObjectClass* pChildObject = reinterpret_cast<SVObjectClass*>(DwMessageValue);
-			//@warning [MZA, 21.07.15] The DWORD_PTR DwMessageValue has to be converted via reinterpret_cast to SVObjectClass*. This is dangerous.
-			//After the reinterpret_cast to SVOjectClass*, to use a kind_of or dynamic_cast does not help for more safety, because it will not check anything.
-			//We should cleanup this and replace processMessage with other methods (see SVO-806)
-			createStruct.OwnerObjectInfo        = this;
-			createStruct.AnalyzerObjectInfo		= this;
-			createStruct.ToolObjectInfo			= GetTool();
-			createStruct.InspectionObjectInfo	= GetInspection();
-
-			return SVSendMessage( pChildObject, SVM_CONNECT_ALL_OBJECTS, reinterpret_cast<DWORD_PTR>(&createStruct), 0 );
-		}
-
-		case SVMSGID_DISCONNECT_IMAGE_OBJECT:
-		{
-			SVAnalyzerClass * l_pAnalyzer = reinterpret_cast<SVAnalyzerClass *>(DwMessageValue);
-			l_pAnalyzer->DisconnectImages();
-			return SVMR_SUCCESS;
-		}
-	}
-	return( SVTaskObjectListClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext ) | DwResult );
-}
-
-DWORD_PTR SVAnalyzerClass::createAllObjectsFromChild( SVObjectClass* pChildObject )
+bool SVAnalyzerClass::createAllObjectsFromChild( SVObjectClass& rChildObject )
 {
 	SVAnalyzerLevelCreateStruct createStruct;
 	createStruct.OwnerObjectInfo        = this;
@@ -180,5 +92,16 @@ DWORD_PTR SVAnalyzerClass::createAllObjectsFromChild( SVObjectClass* pChildObjec
 	createStruct.ToolObjectInfo			= GetTool();
 	createStruct.InspectionObjectInfo	= GetInspection();
 	
-	return SVSendMessage( pChildObject, SVM_CREATE_ALL_OBJECTS, reinterpret_cast<DWORD_PTR>(&createStruct), 0 );
+	return rChildObject.createAllObjects(createStruct);
+}
+
+void SVAnalyzerClass::connectChildObject( SVTaskObjectClass& rChildObject )
+{
+	SVAnalyzerLevelCreateStruct createStruct;
+	createStruct.OwnerObjectInfo        = this;
+	createStruct.AnalyzerObjectInfo		= this;
+	createStruct.ToolObjectInfo			= GetTool();
+	createStruct.InspectionObjectInfo	= GetInspection();
+
+	rChildObject.ConnectObject(createStruct);
 }

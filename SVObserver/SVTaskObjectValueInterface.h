@@ -28,7 +28,6 @@ public:
 	void SetTaskObject( SVTaskObjectClass *p_psvTaskObject );
 
 	virtual HRESULT GetObjectValue( const SVGUID& p_rObjectId, const SVString& p_rValueName, VARIANT& p_rVariantValue ) const;
-	virtual HRESULT SetObjectValue( const SVGUID& p_rObjectId, const SVString& p_rValueName, const _variant_t& p_rVariantValue );
 
 	virtual HRESULT GetValue( const SVGUID& p_rTaskId, const SVGUID& p_rEmbeddedId, VARIANT& p_rValue ) const;
 

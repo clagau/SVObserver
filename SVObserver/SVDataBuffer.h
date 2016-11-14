@@ -71,7 +71,6 @@ public:
 
 protected:
 	void init();
-	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
 
 	SVDataBufferInfoClass dataInfo;
 };

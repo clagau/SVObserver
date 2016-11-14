@@ -62,7 +62,7 @@ SVStdImageOperatorListClass::~SVStdImageOperatorListClass()
 
 BOOL SVStdImageOperatorListClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 {
-	BOOL l_bOk = SVUnaryImageOperatorListClass::CreateObject( PCreateStructure );
+	BOOL l_bOk = __super::CreateObject( PCreateStructure );
 
 	// Image input must already exist, and must be created!!!
 	
@@ -87,17 +87,25 @@ BOOL SVStdImageOperatorListClass::CloseObject()
 	{
 		m_isCreated = false;
 		
-		bRetVal = SVUnaryImageOperatorListClass::CloseObject() && bRetVal;
+		bRetVal = __super::CloseObject() && bRetVal;
 	}
 
 	return bRetVal;
+}
+
+bool SVStdImageOperatorListClass::resetAllObjects( bool shouldNotifyFriends, bool silentReset )
+{
+	bool Result = ( S_OK == ResetObject() );
+	ASSERT( Result );
+
+	return( __super::resetAllObjects( shouldNotifyFriends, silentReset ) );
 }
 
 HRESULT SVStdImageOperatorListClass::ResetObject()
 {
 	HRESULT l_hrOk = outputImageObject.InitializeImage( getInputImage() );
 	
-	if ( S_OK != SVUnaryImageOperatorListClass::ResetObject() )
+	if ( S_OK != __super::ResetObject() )
 	{
 		l_hrOk = S_FALSE;
 	}
@@ -295,34 +303,6 @@ BOOL SVStdImageOperatorListClass::OnValidate()
 
 	SetInvalid();
 	return false;
-}
-
-DWORD_PTR SVStdImageOperatorListClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
-{
-	DWORD_PTR DwResult = SVMR_NOT_PROCESSED;
-
-	// Try to process message by yourself...
-	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
-	switch( dwPureMessageID )
-	{
-	case SVMSGID_RESET_ALL_OBJECTS:
-		{
-			HRESULT l_ResetStatus = ResetObject();
-			if( S_OK != l_ResetStatus )
-			{
-				ASSERT( SUCCEEDED( l_ResetStatus ) );
-
-				DwResult = SVMR_NO_SUCCESS;
-			}
-			else
-			{
-				DwResult = SVMR_SUCCESS;
-			}
-			break;
-		}
-	}
-
-	return( SVUnaryImageOperatorListClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext ) );
 }
 
 // Set String value object for Source Image Names

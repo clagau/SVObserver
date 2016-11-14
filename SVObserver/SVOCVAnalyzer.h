@@ -36,12 +36,11 @@ public:
 	virtual BOOL OnValidate();
 
 	virtual BOOL IsPtOverResult( CPoint point );
-	virtual	void DisplayAnalyzerResult();
+	virtual void DisplayAnalyzerResult();
+	virtual bool resetAllObjects( bool shouldNotifyFriends, bool silentReset ) override;
 
 protected:
 	virtual BOOL onRun( SVRunStatusClass& RRunStatus );
-
-	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
 
 private:
 	void init();

@@ -153,7 +153,7 @@ BOOL SVPolarTransformationToolClass::SetDefaultFormulas()
 	// Find image polar transform child...
 	SVObjectTypeInfoStruct objectInfo;
 	objectInfo.SubType = SVImagePolarTransformObjectType;
-	SVImagePolarTransformClass* pImagePolarTransform = reinterpret_cast<SVImagePolarTransformClass*>(::SVSendMessage( this, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&objectInfo) ));
+	SVImagePolarTransformClass* pImagePolarTransform = dynamic_cast<SVImagePolarTransformClass*>(getFirstObject(objectInfo));
 	if( pImagePolarTransform )
 	{
 		return pImagePolarTransform->SetDefaultFormulas();

@@ -34,13 +34,13 @@ public:
 
 	SVImageClass* GetRGBImage();
 	SVImageClass* GetHSIImage();
+	SVImageClass* getBand0Image() { return &m_band0Image; };
 
 	SVBoolValueObjectClass* GetConvertToHSIVariable();
 
 protected:
 	virtual HRESULT UpdateImageWithExtent( unsigned long p_Index ) override;
 	virtual BOOL onRun( SVRunStatusClass& RRunStatus ) override;
-	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext ) override;
 
 	BOOL createBandChildLayer( SVImageClass& p_rOutputImage, SVImageClass* p_pInputImage, long p_BandLink );
 

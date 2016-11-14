@@ -4909,9 +4909,7 @@ HRESULT CSVCommand::RebuildStreamingDataList()
 
 				if( S_OK == hr && nullptr != l_pInspection && !( l_NameInfo.m_NameArray.empty() ) && l_NameInfo.m_NameArray[ 0 ] == l_pInspection->GetName() )
 				{
-					pTempObject = reinterpret_cast <SVObjectClass*> (::SVSendMessage( SVObjectManagerClass::Instance().GetObject( pStreamData->m_InspectionID ),
-						( SVM_GET_OBJECT_BY_NAME | SVM_PARENT_TO_CHILD | SVM_NOTIFY_FRIENDS ) & ~SVM_NOTIFY_ONLY_THIS, 
-						reinterpret_cast <DWORD_PTR> (static_cast<LPCSTR>(l_NameInfo.GetObjectName().c_str())), 0 ) );
+					SVObjectManagerClass::Instance().GetObjectByDottedName(l_NameInfo.GetObjectName(), pTempObject);
 
 					pStreamData->pValueObject = dynamic_cast <SVValueObjectClass*> ( pTempObject );
 

@@ -8,9 +8,9 @@
 #pragma once
 #pragma region Includes
 #include "SVImageEnums.h"
-#include "IObjectAppClass.h"
 #include "IMatroxImageData.h"
 #include "SVUtilityLibrary\SVSharedPtr.h"
+#include "SVUtilityLibrary\SVString.h"
 #pragma endregion Includes
 
 namespace Seidenader

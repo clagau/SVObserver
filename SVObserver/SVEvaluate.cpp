@@ -93,10 +93,3 @@ BOOL SVEvaluateClass::onRun( SVRunStatusClass& RRunStatus )
 	}
 	return false;
 }
-
-DWORD_PTR SVEvaluateClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
-{
-	DWORD_PTR DwResult = SVMR_NOT_PROCESSED;
-
-	return( SVMathContainerClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext ) | DwResult );
-}

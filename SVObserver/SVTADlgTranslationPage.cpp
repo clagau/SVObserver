@@ -75,17 +75,17 @@ BOOL SVToolAdjustmentDialogTranslationPageClass::OnInitDialog()
 		
 		// Get Evaluate Object for the X coordinate...
 		evaluateObjectInfo.SubType = SVEvaluateTranslationXObjectType;		
-		m_pEvaluateTranslationX = reinterpret_cast<SVEvaluateClass*>(::SVSendMessage(m_pTool, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&evaluateObjectInfo)));
+		m_pEvaluateTranslationX = dynamic_cast<SVEvaluateClass*>(m_pTool->getFirstObject(evaluateObjectInfo));
 		
 		// Get Evaluate Object for the Y coordinate...
 		evaluateObjectInfo.SubType = SVEvaluateTranslationYObjectType;
-		m_pEvaluateTranslationY = reinterpret_cast<SVEvaluateClass*>(::SVSendMessage(m_pTool, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&evaluateObjectInfo)));
+		m_pEvaluateTranslationY = dynamic_cast<SVEvaluateClass*>(m_pTool->getFirstObject(evaluateObjectInfo));
 
 		// Interpolation Mode
 		SVObjectTypeInfoStruct objectInfo;
 		objectInfo.ObjectType = SVEnumValueObjectType;
 		objectInfo.EmbeddedID = SVOutputInterpolationModeObjectGuid;
-		m_pInterpolationMode = reinterpret_cast<SVEnumerateValueObjectClass*>(::SVSendMessage( m_pTool, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&objectInfo)));
+		m_pInterpolationMode = dynamic_cast<SVEnumerateValueObjectClass*>(m_pTool->getFirstObject(objectInfo));
 		if( m_pInterpolationMode )
 		{
 			CString l_strEnumList;

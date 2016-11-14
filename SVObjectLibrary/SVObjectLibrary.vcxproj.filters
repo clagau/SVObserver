@@ -47,9 +47,6 @@
     <ClCompile Include="SVObjectLevelCreateStruct.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVObjectLibrary.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVObjectListClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

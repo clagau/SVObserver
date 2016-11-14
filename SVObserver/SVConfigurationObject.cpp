@@ -2722,56 +2722,6 @@ BOOL SVConfigurationObject::DestroyConfiguration()
 	return bOk;
 }
 
-HRESULT SVConfigurationObject::ObserverUpdate( const SVRenameObject& p_rData )
-{
-	HRESULT l_Status = S_OK;
-
-	SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject( p_rData.m_ObjectId );
-
-	if( nullptr != l_pObject )
-	{
-		SVPPQObject* pPPQ( nullptr );
-		SVOutputObjectList *pOutputs = GetOutputObjectList();
-		long lPPQ;
-
-		if( nullptr != pOutputs )
-		{
-			::SVSendMessage( pOutputs, SVM_OBJECT_RENAMED,
-				reinterpret_cast<DWORD_PTR>( l_pObject ),
-				reinterpret_cast<DWORD_PTR>( static_cast<LPCTSTR>( p_rData.m_OldName.c_str() )) );
-		}
-		else
-		{
-			l_Status = E_FAIL;
-		}
-
-		long lCount = GetPPQCount();
-		for( lPPQ = 0; lPPQ < lCount; lPPQ++ )
-		{
-			pPPQ = GetPPQ( lPPQ );
-
-			if( nullptr != pPPQ )
-			{
-				::SVSendMessage( pPPQ, SVM_OBJECT_RENAMED,
-					reinterpret_cast<DWORD_PTR>( l_pObject ),
-					reinterpret_cast<DWORD_PTR>( static_cast<LPCTSTR>( p_rData.m_OldName.c_str() )));
-
-				pPPQ->RebuildOutputList();
-			}
-			else
-			{
-				l_Status = E_FAIL;
-			}
-		}
-	}
-	else
-	{
-		l_Status = E_FAIL;
-	}
-
-	return l_Status;
-}
-
 HRESULT SVConfigurationObject::GetChildObject( SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index ) const
 {
 	HRESULT l_Status = S_OK;
@@ -5105,6 +5055,28 @@ void SVConfigurationObject::updateConfTreeToNewestVersion(SVTreeType &rTree, SVT
 			}
 
 			hSubChild = rTree.getNextBranch( rToolset, hSubChild );
+		}
+	}
+}
+
+void SVConfigurationObject::OnObjectRenamed(const SVObjectClass& rRenamedObject, const SVString& rOldName)
+{
+	SVOutputObjectList *pOutputs = GetOutputObjectList();
+
+	if( nullptr != pOutputs )
+	{
+		pOutputs->OnObjectRenamed(rRenamedObject, rOldName);
+	}
+
+	long lCount = GetPPQCount();
+	for( long lPPQ = 0; lPPQ < lCount; lPPQ++ )
+	{
+		SVPPQObject* pPPQ = GetPPQ( lPPQ );
+
+		if( nullptr != pPPQ )
+		{
+			pPPQ->OnObjectRenamed(rRenamedObject, rOldName);
+			pPPQ->RebuildOutputList();
 		}
 	}
 }

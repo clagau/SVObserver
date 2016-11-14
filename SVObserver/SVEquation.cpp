@@ -62,9 +62,7 @@ void SVEquationSymbolTableClass::ClearAll()
 	for( int i = m_toolsetSymbolTable.GetSize() - 1; i >= 0; i-- )
 	{
 		SVInObjectInfoStruct* pInObjectInfo = m_toolsetSymbolTable.GetAt( i );
-		::SVSendMessage(pInObjectInfo->GetInputObjectInfo().UniqueObjectID,
-										SVM_DISCONNECT_OBJECT_INPUT, 
-										reinterpret_cast<DWORD_PTR>(pInObjectInfo), 0 );
+		SVObjectManagerClass::Instance().DisconnectObjectInput(pInObjectInfo->GetInputObjectInfo().UniqueObjectID, pInObjectInfo);
 	}
 	// Empty the ToolSet Symbol table 
 	m_toolsetSymbolTable.RemoveAll();
@@ -172,13 +170,12 @@ int SVEquationSymbolTableClass::AddSymbol(LPCTSTR name, SVObjectClass* pRequesto
 	pSymbolStruct->InObjectInfo.SetInputObject( ObjectReference->GetObjectOutputInfo().UniqueObjectID );
 
 	// Try to Connect at this point
-	DWORD_PTR rc = ::SVSendMessage(ObjectReference->GetObjectOutputInfo().UniqueObjectID, SVM_CONNECT_OBJECT_INPUT, reinterpret_cast<DWORD_PTR>(&pSymbolStruct->InObjectInfo), 0);
-	if( rc == SVMR_SUCCESS )
+	bool rc = SVObjectManagerClass::Instance().ConnectObjectInput(ObjectReference->GetObjectOutputInfo().UniqueObjectID, &pSymbolStruct->InObjectInfo);
+	if( rc )
 	{
 		pSymbolStruct->IsValid = TRUE;
 	}
-		
-	ASSERT(rc == SVMR_SUCCESS);
+	ASSERT(rc);
 	
 	symbolIndex = Add( pSymbolStruct );
 	// add it to the top
@@ -438,29 +435,6 @@ HRESULT SVEquationClass::GetObjectValue( const SVString& p_rValueName, VARIANT& 
 	return hr;
 }
 
-HRESULT SVEquationClass::SetObjectValue( const SVString& p_rValueName, const _variant_t& p_rVariantValue )
-{
-	HRESULT hr = S_OK;
-
-	if( p_rValueName == _T( "EquationBuffer" ) )
-	{
-		if( p_rVariantValue.vt == VT_BSTR )
-		{
-			equationStruct.EquationBuffer = static_cast< LPCTSTR >( _bstr_t( p_rVariantValue ) );
-		}
-		else
-		{
-			hr = E_FAIL;
-		}
-	}
-	else
-	{
-		hr = SVTaskObjectClass::SetObjectValue( p_rValueName, p_rVariantValue );
-	}
-
-	return hr;
-}
-
 void SVEquationClass::Persist( SVObjectWriter& rWriter )
 {
 	SVTaskObjectClass::Persist(rWriter);
@@ -704,11 +678,9 @@ int SVEquationClass::AddSymbol( LPCTSTR name )
 	return index;
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// Update ToolSet Symbol table - Gets called when one of our inputs goes away
-////////////////////////////////////////////////////////////////////////////////
-BOOL SVEquationClass::DisconnectToolSetSymbol( SVInObjectInfoStruct* pInObjectInfo )
+bool SVEquationClass::DisconnectObjectInput( SVInObjectInfoStruct* pInObjectInfo )
 {
+	// Update ToolSet Symbol table - Gets called when one of our inputs goes away
 	if( pInObjectInfo )
 	{
 		SVInputInfoListClass& toolSetSymbols = symbols.GetToolSetSymbolTable();
@@ -722,54 +694,12 @@ BOOL SVEquationClass::DisconnectToolSetSymbol( SVInObjectInfoStruct* pInObjectIn
 				if( pInObjectInfo->GetInputObjectInfo().UniqueObjectID == pSymbolInputObjectInfo->GetInputObjectInfo().UniqueObjectID )
 				{
 					pSymbolInputObjectInfo->SetInputObject( nullptr );
-					return TRUE;
+					break;
 				}
 			}
 		}
 	}
-	return FALSE;
-}
-
-BOOL SVEquationClass::renameToolSetSymbol( const SVObjectClass* pObject, LPCTSTR orginalName )
-{
-	bool Result( false );
-
-	if( nullptr != pObject )
-	{
-		SVString newPrefix;
-		SVString oldPrefix;
-
-		if( const SVInspectionProcess* pInspection = dynamic_cast<const SVInspectionProcess*> (pObject) )
-		{
-			newPrefix = _T( "." ) + pInspection->GetCompleteObjectNameToObjectType( nullptr, SVInspectionObjectType ) + _T( "." );
-		}// end if
-		else if( const BasicValueObject* pBasicValueObject = dynamic_cast<const BasicValueObject*> (pObject) )
-		{
-			newPrefix = _T( "\"" ) + pBasicValueObject->GetCompleteObjectNameToObjectType( nullptr, SVRootObjectType ) + _T( "\"" );
-		}
-		else if( const SVValueObjectClass* pValueObject = dynamic_cast<const SVValueObjectClass*> (pObject) )
-		{
-			newPrefix = _T( "\"" ) + pValueObject->GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType ) + _T( "\"" );
-		}
-		else
-		{
-			newPrefix = _T( "\"" ) + pObject->GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType ) + _T( "." );
-		}// end else
-		oldPrefix = newPrefix;
-		SvUl_SF::searchAndReplace( oldPrefix, pObject->GetName(), orginalName );
-
-		CString equationBuff;
-		GetEquationText( equationBuff );
-
-		// Replace all occurences
-		if( equationBuff.Replace( oldPrefix.c_str(), newPrefix.c_str() ) )
-		{
-			SetEquationText( equationBuff );
-
-			Result = true;
-		}
-	}
-	return Result;
+	return __super::DisconnectObjectInput(pInObjectInfo);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -946,65 +876,25 @@ double SVEquationClass::GetSubscriptedPropertyValue( int iSymbolIndex, int iInde
 ////////////////////////////////////////////////////////////////////////////////
 // 
 ////////////////////////////////////////////////////////////////////////////////
-DWORD_PTR SVEquationClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
+bool SVEquationClass::resetAllObjects( bool shouldNotifyFriends, bool silentReset )
 {
-	DWORD_PTR DwResult = SVMR_NOT_PROCESSED;
-	// Try to process message by yourself...
-	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
-	switch( dwPureMessageID )
+	bool Result = false;
+	HRESULT ResetStatus = ResetObject();
+	if( S_OK != ResetStatus )
 	{
-		// is sent in SVIPDoc::Validate()
-	case SVMSGID_RESET_ALL_OBJECTS:
+		if( !silentReset && 0 != errContainer.getMessage().m_MessageCode )
 		{
-			HRESULT ResetStatus = ResetObject();
-			if( S_OK != ResetStatus )
-			{
-				BOOL SilentReset = static_cast<BOOL> (DwMessageValue);
-
-				if( !SilentReset && 0 != errContainer.getMessage().m_MessageCode )
-				{
-					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-					Msg.setMessage( errContainer.getMessage() ); 
-				}
-				DwResult = SVMR_NO_SUCCESS;
-			}
-			else
-			{
-				DwResult = SVMR_SUCCESS;
-			}
-			break;
+			SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
+			Msg.setMessage( errContainer.getMessage() ); 
 		}
-
-		// This Message occurs for two scenarios
-		// 1. Some Object is using our outputs and they are no longer needed.
-		// 2. We are using some Object's outputs and the ouputs are no longer available
-	case SVMSGID_DISCONNECT_OBJECT_INPUT:
-		{
-			// ...use second message parameter ( DwMessageValue ) as pointer to InObjectInfo ( SVInObjectInfoStruct* )
-			// ...returns SVMR_SUCCESS, SVMR_NO_SUCCESS or SVMR_NOT_PROCESSED
-			SVInObjectInfoStruct* pInObjectInfo = ( SVInObjectInfoStruct* ) DwMessageValue;
-			if( DisconnectToolSetSymbol( pInObjectInfo ) )
-			{
-				DwResult = SVMR_SUCCESS;
-			}
-		}
-		break;
-
-		// handle renaming of toolset variables
-	case SVMSGID_OBJECT_RENAMED:
-		{
-			SVObjectClass* pObject = reinterpret_cast <SVObjectClass*> (DwMessageValue); // Object with new name
-			LPCTSTR orgName = ( LPCTSTR )DwMessageContext;
-
-			if( renameToolSetSymbol(pObject, orgName ) )
-			{
-				DwResult = SVMR_SUCCESS;
-			}
-		}
-		break;
+		Result = false;
+	}
+	else
+	{
+		Result = true;
 	}
 
-	return( SVTaskObjectClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext ) | DwResult );
+	return( __super::resetAllObjects( shouldNotifyFriends, silentReset) && Result );
 }
 
 HRESULT SVEquationClass::ResetObject()
@@ -1024,4 +914,38 @@ HRESULT SVEquationClass::ResetObject()
 	return l_hrOk;
 }
 
+void SVEquationClass::OnObjectRenamed(const SVObjectClass& rRenamedObject, const SVString& rOldName)
+{
+	SVString newPrefix;
+	SVString oldPrefix;
 
+	if( const SVInspectionProcess* pInspection = dynamic_cast<const SVInspectionProcess*> (&rRenamedObject) )
+	{
+		newPrefix = _T( "." ) + pInspection->GetCompleteObjectNameToObjectType( nullptr, SVInspectionObjectType ) + _T( "." );
+	}// end if
+	else if( const BasicValueObject* pBasicValueObject = dynamic_cast<const BasicValueObject*> (&rRenamedObject) )
+	{
+		newPrefix = _T( "\"" ) + pBasicValueObject->GetCompleteObjectNameToObjectType( nullptr, SVRootObjectType ) + _T( "\"" );
+	}
+	else if( const SVValueObjectClass* pValueObject = dynamic_cast<const SVValueObjectClass*> (&rRenamedObject) )
+	{
+		newPrefix = _T( "\"" ) + pValueObject->GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType ) + _T( "\"" );
+	}
+	else
+	{
+		newPrefix = _T( "\"" ) + rRenamedObject.GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType ) + _T( "." );
+	}// end else
+	oldPrefix = newPrefix;
+	SvUl_SF::searchAndReplace( oldPrefix, rRenamedObject.GetName(), rOldName.c_str() );
+
+	CString equationBuff;
+	GetEquationText( equationBuff );
+
+	// Replace all occurences
+	if( equationBuff.Replace( oldPrefix.c_str(), newPrefix.c_str() ) )
+	{
+		SetEquationText( equationBuff );
+	}
+
+	__super::OnObjectRenamed(rRenamedObject, rOldName);
+}

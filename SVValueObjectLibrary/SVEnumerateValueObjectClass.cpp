@@ -158,68 +158,6 @@ HRESULT SVEnumerateValueObjectClass::GetObjectValue( const SVString& p_rValueNam
 	return hr;
 }
 
-HRESULT SVEnumerateValueObjectClass::SetObjectValue( const SVString& p_rValueName, const _variant_t& p_rVariantValue )
-{
-	HRESULT hr = S_OK;
-
-	if( p_rValueName == _T( "Enumeration" ) )
-	{
-		if( ( p_rVariantValue.vt & VT_ARRAY ) == VT_ARRAY )
-		{
-			SVSAFEARRAY l_SafeArray( p_rVariantValue );
-
-			if( l_SafeArray.GetDim() == 2 )
-			{
-				SVEnumerateVector l_Enums;
-
-				l_Enums.resize( l_SafeArray.size() );
-
-				for( int i = 0; i < static_cast< int >( l_SafeArray.size() ); i++ )
-				{
-					SVSAFEARRAY::SVIndex l_Index( 2 );
-					_variant_t l_Value;
-
-					l_Index[ 0 ] = i;
-					l_Index[ 1 ] = 0;
-
-					if( S_OK == l_SafeArray.GetElement( l_Index, l_Value ) && VT_BSTR == l_Value.vt )
-					{
-						l_Enums[ i ].first = static_cast< LPCTSTR >( _bstr_t( l_Value ) );
-					}
-
-					l_Index[ 0 ] = i;
-					l_Index[ 1 ] = 1;
-
-					if( S_OK == l_SafeArray.GetElement( l_Index, l_Value ) )
-					{
-						l_Enums[ i ].second = l_Value;
-					}
-					else
-					{
-						l_Enums[ i ].second = 0;
-					}
-				}
-
-				SetEnumTypes( l_Enums );
-			}
-			else
-			{
-				hr = S_FALSE;
-			}
-		}
-		else
-		{
-			hr = S_FALSE;
-		}
-	}
-	else
-	{
-		hr = base::SetObjectValue( p_rValueName, p_rVariantValue );
-	}
-
-	return hr;
-}
-
 HRESULT SVEnumerateValueObjectClass::SetObjectValue( SVObjectAttributeClass* pDataObject )
 {
 	HRESULT hr = S_FALSE;

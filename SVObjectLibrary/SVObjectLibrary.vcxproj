@@ -126,7 +126,6 @@
     <ClCompile Include="SVObjectClass.cpp" />
     <ClCompile Include="SVObjectInfoStruct.cpp" />
     <ClCompile Include="SVObjectLevelCreateStruct.cpp" />
-    <ClCompile Include="SVObjectLibrary.cpp" />
     <ClCompile Include="SVObjectListClass.cpp" />
     <ClCompile Include="SVObjectManagerClass.cpp" />
     <ClCompile Include="SVObjectNameInfo.cpp" />

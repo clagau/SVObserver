@@ -32,7 +32,7 @@ public:
 	SVBarCodeResultClass(BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVBARCODEANALYZERESULT);
 	virtual ~SVBarCodeResultClass();
 
-	virtual DWORD_PTR processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
+	virtual bool resetAllObjects( bool shouldNotifyFriends, bool silentReset ) override;
 
 	HRESULT LoadMatchStringFile();
 	BOOL BuildHashTable(char *szBuffer);

@@ -85,7 +85,7 @@ struct SVFindPredicate
 	}
 };
 
-class SVConfigurationObject : public SVObjectClass,	public SVObserverTemplate< SVRenameObject >
+class SVConfigurationObject : public SVObjectClass
 {
 	SV_DECLARE_CLASS( SVConfigurationObject );
 
@@ -97,8 +97,6 @@ public:
 	virtual ~SVConfigurationObject();
 
 	virtual HRESULT GetChildObject( SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index = 0 ) const override;
-
-	virtual HRESULT ObserverUpdate( const SVRenameObject& p_rData );
 
 	unsigned long GetSVXFileVersion(SVTreeType& rTree);
 
@@ -339,6 +337,10 @@ public:
 	/// \param rToolset [in,out] The branch of the tool set which should be updated.
 	//************************************
 	static void updateConfTreeToNewestVersion(SVTreeType &rTree, SVTreeType::SVBranchHandle &rToolset);
+
+#pragma region Methods to replace processMessage
+	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const SVString& rOldName) override;
+#pragma endregion Methods to replace processMessage
 
 protected:
 	BOOL FinishIPDoc( SVInspectionProcess* pInspection );

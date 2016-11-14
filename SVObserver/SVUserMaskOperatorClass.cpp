@@ -232,7 +232,7 @@ SVShapeMaskHelperClass* SVUserMaskOperatorClass::GetShapeHelper()
 		BOOL bAddFriend = AddFriend( pShapeHelper->GetUniqueObjectID() );
 		ASSERT( bAddFriend );
 
-		if( ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(pShapeHelper), 0 ) == SVMR_SUCCESS )
+		if( CreateChildObject(pShapeHelper) )
 		{
 			pMaskHelper = pShapeHelper;
 		}
@@ -685,62 +685,6 @@ HRESULT SVUserMaskOperatorClass::GetObjectValue( const SVString& p_rValueName, V
 	return hr;
 }
 
-HRESULT SVUserMaskOperatorClass::SetObjectValue( const SVString& p_rValueName, const _variant_t& p_rVariantValue )
-{
-	HRESULT hr = S_OK;
-
-	if( p_rValueName == _T( "MaskData" ) )
-	{
-		if( ( p_rVariantValue.vt & VT_ARRAY ) == VT_ARRAY )
-		{
-			SVSAFEARRAY l_SafeArray( p_rVariantValue );
-
-			// create a buffer
-			std::vector< unsigned char > l_Buffer( l_SafeArray.size() );
-
-			for( size_t i = 0; S_OK == hr && i < l_SafeArray.size(); i++ )
-			{
-				_variant_t l_Value;
-
-				if( S_OK == l_SafeArray.GetElement( i, l_Value ) )
-				{
-					l_Buffer[ i ] = l_Value;
-				}
-				else
-				{
-					hr = E_FAIL;
-				}
-			}
-
-			if( S_OK == hr )
-			{
-				CMemFile maskStorage;
-			
-				// write the data to the memory file
-				maskStorage.Write( &( l_Buffer[ 0 ] ), static_cast<UINT>(l_Buffer.size()) );
-				maskStorage.Flush();
-				maskStorage.SeekToBegin();
-
-				// Create a CArchive to load from
-				CArchive memArchive( &maskStorage, CArchive::load );
-
-				// call SVGraphixClass::Serialize()
-				m_graphixObject.Serialize( memArchive );
-			}
-		}
-		else
-		{
-			hr = E_FAIL;
-		}
-	}
-	else
-	{
-		hr = SVUnaryImageOperatorClass::SetObjectValue( p_rValueName, p_rVariantValue );
-	}
-
-	return hr;
-}
-
 // Restoration of trivial members
 HRESULT SVUserMaskOperatorClass::SetObjectValue( SVObjectAttributeClass* PDataObject )
 {
@@ -793,110 +737,6 @@ HRESULT SVUserMaskOperatorClass::SetObjectValue( SVObjectAttributeClass* PDataOb
 
 	hr = bOk ? S_OK : S_FALSE;
 	return hr;
-}
-
-BOOL SVUserMaskOperatorClass::ConnectAllInputs()
-{
-	DWORD_PTR dwResult = SVMR_NOT_PROCESSED;
-	SVInputInfoListClass inputList;
-	
-	// Add the defaults
-	addDefaultInputObjects(TRUE, &inputList);
-	
-	// tell friends to connect...
-	for (size_t j = 0; j < m_friendList.size(); ++ j)
-	{
-		const SVObjectInfoStruct& rFriend = m_friendList[j];
-		::SVSendMessage(rFriend.UniqueObjectID, SVM_CONNECT_ALL_INPUTS, 0, 0);
-	}
-
-	// find our inputs
-	for (int i = 0; i < inputList.GetSize(); ++ i)
-	{
-		SVInObjectInfoStruct* pInInfo = inputList.GetAt(i);
-		if (pInInfo)
-		{
-			// Is not yet connected...
-			if (!pInInfo->IsConnected())
-			{
-				if( SV_GUID_NULL == pInInfo->GetInputObjectInfo().UniqueObjectID )
-				{
-					// Input Object is not set...Try to get one...
-					SVObjectTypeInfoStruct info = pInInfo->GetInputObjectInfo().ObjectTypeInfo;
-					
-					SVObjectClass* pOwner = GetOwner();
-					SVObjectClass* pRequestor = pInInfo->PObject;
-					SVObjectClass* pObject = nullptr;
-					BOOL bSuccess = false;
-					
-					if ( info.ObjectType == SVImageObjectType )
-					{
-						pOwner = GetInspection();
-					}
-					else
-					{
-						// Ask first friends...
-						for (size_t j = 0; j < m_friendList.size(); ++ j)
-						{
-							const SVObjectInfoStruct& rFriend = m_friendList[j];
-							pObject = reinterpret_cast<SVObjectClass *>(::SVSendMessage(rFriend.UniqueObjectID, SVM_GETFIRST_OBJECT, 0, reinterpret_cast<DWORD_PTR>(&info)));
-							if (pObject)
-							{
-								// Connect input ...
-								pInInfo->SetInputObject( pObject->GetUniqueObjectID() );
-								bSuccess = true;
-								break;
-							}
-						}
-					}
-					
-					// Then ask owner...
-					if (! bSuccess)
-					{
-						while (pOwner)
-						{
-							SVInspectionProcess* pInspection =  GetInspection();
-							// if color system & pOwner == SVToolSetClass
-							if (nullptr != pInspection && pInspection->IsColorCamera() && (SV_IS_KIND_OF(pOwner, SVToolSetClass)) && info.ObjectType == SVImageObjectType)
-							{
-								pObject = reinterpret_cast<SVObjectClass *>(::SVSendMessage(pOwner, SVM_GET_IMAGE_BAND0_OBJECT, reinterpret_cast<DWORD_PTR>(pRequestor), reinterpret_cast<DWORD_PTR>(&info)));
-							}
-							else
-							{
-								pObject = reinterpret_cast<SVObjectClass *>(::SVSendMessage(pOwner, SVM_GETFIRST_OBJECT, reinterpret_cast<DWORD_PTR>(pRequestor), reinterpret_cast<DWORD_PTR>(&info)));
-							}
-							if (pObject)
-							{
-								// Connect input ...
-								pInInfo->SetInputObject( pObject->GetUniqueObjectID() );
-								break;
-							}
-							else
-							{
-								pOwner = pOwner->GetOwner();
-								pRequestor = pRequestor->GetOwner();
-							}
-						}
-					}
-				}
-				
-				// Finally try to connect...
-				DWORD_PTR dwConnectResult = ::SVSendMessage(pInInfo->GetInputObjectInfo().UniqueObjectID, SVM_CONNECT_OBJECT_INPUT, reinterpret_cast<DWORD_PTR>(pInInfo), 0);
-
-				dwResult = dwConnectResult | dwResult;
-			}
-			else
-			{
-				dwResult = SVMR_SUCCESS;
-			}
-		}
-		else
-		{
-			ASSERT(0);
-			dwResult = SVMR_NO_SUCCESS;
-		}
-	}
-	return (dwResult == SVMR_SUCCESS);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1097,6 +937,17 @@ BOOL SVUserMaskOperatorClass::OnValidate()
 		}
 	}
 	return bValidate;
+}
+
+bool SVUserMaskOperatorClass::hasToAskFriendForConnection( const SVObjectTypeInfoStruct& rInfo, SVObjectClass*& rPOwner ) const
+{
+	bool Result(true);
+	if ( SVImageObjectType == rInfo.ObjectType )
+	{
+		rPOwner = GetInspection();
+		Result = false;
+	}
+	return Result;
 }
 
 #pragma region IMask

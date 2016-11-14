@@ -70,6 +70,7 @@ public:
 
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* pCreateStructure );
 	virtual BOOL CloseObject();
+	virtual bool resetAllObjects( bool shouldNotifyFriends, bool silentReset ) override;
 	virtual HRESULT ResetObject();
 
 	virtual bool ResetAlways() const;
@@ -131,7 +132,6 @@ public:
 	HRESULT GetTypeName( CString& p_rstrValue ) const;
 	HRESULT SetTypeName( const LPCTSTR p_pstrValue );
 
-	virtual HRESULT SetObjectValue( const SVString& p_rValueName, const _variant_t& p_rVariantValue );
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* pDataObject );
 
 	HRESULT CompareWithCurrentValue( const CString& rstrCompare ) const { return CompareWithCurrentValueImpl( rstrCompare ); }
@@ -173,7 +173,6 @@ protected:
 	virtual HRESULT CompareWithCurrentValueImpl( const CString& rstrCompare ) const;
 	virtual HRESULT GetNormalizedValueImpl( const CString& strValue, CString& rstrNormalized ) const { return E_NOTIMPL; }
 
-	virtual DWORD_PTR  processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext );
 	virtual HRESULT CreateBuckets();
 	void InitializeBuckets();
 	virtual int GetResultSize(int iBucket) const;

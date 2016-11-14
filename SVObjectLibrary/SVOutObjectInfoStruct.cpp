@@ -96,9 +96,7 @@ HRESULT SVOutObjectInfoStruct::DisconnectAllInputs()
 		if( SV_GUID_NULL != inObjectInfo.UniqueObjectID )
 		{
 			// Send to the Object that is using this output
-			::SVSendMessage(inObjectInfo.UniqueObjectID,
-							SVM_DISCONNECT_OBJECT_INPUT, 
-							reinterpret_cast<DWORD_PTR>(&inObjectInfo), 0 );
+			SVObjectManagerClass::Instance().DisconnectObjectInput(inObjectInfo.UniqueObjectID, &inObjectInfo);
 		}
 	}
 

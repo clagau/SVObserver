@@ -105,50 +105,6 @@ void SVFileNameValueObjectClass::Persist(SVObjectWriter& rWriter)
 	rWriter.EndElement();
 }
 
-HRESULT SVFileNameValueObjectClass::SetObjectValue( const SVString& p_rValueName, const _variant_t& p_rVariantValue )
-{
-	HRESULT hr = S_OK;
-
-	CString  csTemp;
-
-	if( p_rValueName == _T( "Default" ) )
-	{
-		if( p_rVariantValue.vt == VT_BSTR )
-		{
-			DefaultValue() = static_cast< LPCTSTR >( _bstr_t( p_rVariantValue ) );
-
-			m_svFileName.SetDefaultFullFileName( DefaultValue() );
-		}
-		else
-		{
-			hr = E_FAIL;
-		}
-	}
-	// new-style: store all array elements:
-	else if( p_rValueName == _T( "Array_Elements" ) )
-	{
-		if ( ArraySize() == 1 && p_rVariantValue.vt == VT_BSTR )
-		{
-			ScalarBucket(1) = static_cast< LPCTSTR >( _bstr_t( p_rVariantValue ) );
-
-			m_iLastSetIndex = 1;
-
-			m_svFileName.SetFullFileName(ScalarBucket(1));
-			SVFileNameManagerClass::LoadItem(&m_svFileName);
-		}
-		else
-		{
-			hr = E_FAIL;
-		}
-	}
-	else
-	{
-		hr = base::SetObjectValue( p_rValueName, p_rVariantValue );
-	}
-
-	return hr;
-}
-
 HRESULT SVFileNameValueObjectClass::SetObjectValue(SVObjectAttributeClass* pDataObject)
 {
 	HRESULT hr  = S_FALSE;

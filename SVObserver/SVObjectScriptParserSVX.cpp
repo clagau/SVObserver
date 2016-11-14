@@ -460,7 +460,7 @@ BOOL SVObjectScriptParserSVXClass::EvaluateOperandExpression( int OperandType, c
 				SVObjectClass* pObject = nullptr;
 				if( SV_GUID_NULL != rOwnerInfo.UniqueObjectID )
 				{
-					pObject = reinterpret_cast<SVObjectClass*>(::SVSendMessage( rOwnerInfo.UniqueObjectID, SVM_GET_OBJECT_BY_NAME, reinterpret_cast<DWORD_PTR>( static_cast<LPCTSTR>( rExpressionStack.GetAt( riIndex ))), 0 ));
+					SVObjectManagerClass::Instance().GetObjectByDottedName( SVString(rExpressionStack.GetAt( riIndex )), pObject);
 				}
 				if( nullptr != pObject )
 				{
@@ -1418,7 +1418,10 @@ bool SVObjectScriptParserSVXClass::ReattachInputs( SVObjectClass* pObject, SVObj
 
 	SVInputInfoListClass inputInfoList;
 
-	::SVSendMessage(pObject, SVM_GET_INPUT_INTERFACE, reinterpret_cast<DWORD_PTR>(&inputInfoList), 0 );
+	if (nullptr != pObject)
+	{
+		pObject->GetInputInterface(inputInfoList, false );
+	}
 
 	// Input List and requiredInputList must be the same size
 	// and In the same Order !!!
@@ -2199,13 +2202,7 @@ SVObjectClass* SVObjectScriptParserSVXClass::ProcessDefineObject( SVExpressionSt
 		{
 			// Send to Owner of Embedded Object
 			// Try to overwrite object...
-			if( pObject = reinterpret_cast<SVObjectClass*>( ::SVSendMessage( ownerObjectInfo.PObject, 
-			                                                  SVM_OVERWRITE_OBJECT, 
-			                                                 reinterpret_cast<DWORD_PTR>(objectOperand.Value()), 
-			                                                 reinterpret_cast<DWORD_PTR>(embeddedOperand.Value()) )) )
-			{
-			}
-
+			pObject = ownerObjectInfo.PObject->OverwriteEmbeddedObject(*reinterpret_cast<GUID*>(objectOperand.Value()), *reinterpret_cast<GUID*>(embeddedOperand.Value()));
 			ASSERT( nullptr != pObject );
 		}
 		else
@@ -2222,8 +2219,9 @@ SVObjectClass* SVObjectScriptParserSVXClass::ProcessDefineObject( SVExpressionSt
 
 		if( pObject && objectOwnerOperand.Value() )
 		{
+			GUID guid = (*reinterpret_cast<GUID*>(objectOperand.Value()));
 			// Try to replace or add object...
-			if( ::SVSendMessage( ownerObjectInfo.PObject, SVM_REPLACE_OBJECT, reinterpret_cast<DWORD_PTR>(objectOperand.Value()), reinterpret_cast<DWORD_PTR>(pObject) ) != SVMR_SUCCESS )
+			if( nullptr == ownerObjectInfo.PObject || !ownerObjectInfo.PObject->replaceObject(pObject, guid) )
 			{
 				ASSERT( FALSE );
 #if defined (TRACE_THEM_ALL) || defined (TRACE_SVXPARSER)
@@ -2233,7 +2231,7 @@ SVObjectClass* SVObjectScriptParserSVXClass::ProcessDefineObject( SVExpressionSt
 				delete pObject;
 
 #if defined (TRACE_THEM_ALL) || defined (TRACE_SVXPARSER)
-				TRACE( "after delete, SVM_REPLACE_OBJECT was not successfully" );
+				TRACE( "after delete, replaceObject was not successfully" );
 #endif
 			}
 			else
@@ -2383,7 +2381,7 @@ bool SVObjectScriptParserSVXClass::ProcessMemberAssignment( SVExpressionStack& r
 	{
 		// try to set the object's member value...
 		// Note:: Send this message to the Object's Owner
-		if( ::SVSendMessage( ownerObjectInfo.PObject, SVM_SET_OBJECT_VALUE, reinterpret_cast<DWORD_PTR>(&objectInfo.UniqueObjectID), reinterpret_cast<DWORD_PTR>(&dataObject) ) != SVMR_SUCCESS )
+		if( S_OK != ownerObjectInfo.PObject->SetValuesForAnObject(objectInfo.UniqueObjectID, &dataObject) )
 		{
 			SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 			Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ParseError_SetObjectMemberFailed, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10120 );

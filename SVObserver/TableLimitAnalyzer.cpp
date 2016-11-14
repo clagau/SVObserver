@@ -49,16 +49,23 @@ TableLimitAnalyzer::~TableLimitAnalyzer()
 #pragma region Public Methods
 BOOL TableLimitAnalyzer::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
-	BOOL l_bOk = SVTaskObjectClass::CreateObject( pCreateStructure );
+	BOOL l_bOk = __super::CreateObject( pCreateStructure );
 
 	m_LimitValue.ObjectAttributesAllowedRef() |= SV_REMOTELY_SETABLE;
 	
 	return l_bOk;
 }
 
+bool TableLimitAnalyzer::resetAllObjects( bool shouldNotifyFriends, bool silentReset )
+{
+	bool Result = ( S_OK == ResetObject() );
+	ASSERT( Result );
+	return( __super::resetAllObjects( shouldNotifyFriends, silentReset ) && Result );
+}
+
 HRESULT TableLimitAnalyzer::ResetObject()
 {
-	HRESULT status = SVTaskObjectClass::ResetObject();
+	HRESULT status = __super::ResetObject();
 
 	if (!OnValidateParameter(AllParameters))
 	{
@@ -71,7 +78,7 @@ HRESULT TableLimitAnalyzer::ResetObject()
 
 BOOL TableLimitAnalyzer::Validate()
 {
-	BOOL Result = SVTaskObjectClass::Validate();
+	BOOL Result = __super::Validate();
 
 	//if Task-validation is fail but no message in the Message-List, add one
 	if (FALSE == Result && 0 == getFirstTaskMessage().getMessage().m_MessageCode)
@@ -95,7 +102,7 @@ BOOL TableLimitAnalyzer::OnValidate()
 
 	if ( Result )
 	{
-		Result = SVTaskObjectClass::OnValidate();
+		Result = __super::OnValidate();
 		if( !Result && 0 != getFirstTaskMessage().getMessage().m_MessageCode)
 		{
 			SvStl::MessageContainer message;
@@ -123,7 +130,7 @@ BOOL TableLimitAnalyzer::OnValidate()
 #pragma region Protected Methods
 BOOL TableLimitAnalyzer::onRun( SVRunStatusClass& rRunStatus )
 {
-	BOOL returnValue = SVTaskObjectClass::onRun( rRunStatus );
+	BOOL returnValue = __super::onRun( rRunStatus );
 	
 	if (returnValue)
 	{
@@ -153,7 +160,7 @@ BOOL TableLimitAnalyzer::onRun( SVRunStatusClass& rRunStatus )
 
 bool TableLimitAnalyzer::ValidateOfflineParameters ()
 {
-	bool Result = SVTaskObjectClass::ValidateOfflineParameters();
+	bool Result = __super::ValidateOfflineParameters();
 	if (Result)
 	{
 		//@TODO[MZA][7.40][17.10.2016] This line must be uncomment yet, because the analyzer tool set this parameter invalid when another analyzer is invalid
@@ -162,32 +169,6 @@ bool TableLimitAnalyzer::ValidateOfflineParameters ()
 	}
 
 	return Result;
-}
-
-DWORD_PTR TableLimitAnalyzer::processMessage(DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext)
-{
-	DWORD_PTR DwResult = SVMR_NOT_PROCESSED;
-	// Try to process message by yourself...
-	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
-	switch( dwPureMessageID )
-	{
-	case SVMSGID_RESET_ALL_OBJECTS:
-		{
-			HRESULT l_ResetStatus = ResetObject();
-			if( S_OK != l_ResetStatus )
-			{
-				ASSERT( SUCCEEDED( l_ResetStatus ) );
-
-				DwResult = SVMR_NO_SUCCESS;
-			}
-			else
-			{
-				DwResult = SVMR_SUCCESS;
-			}
-			break;
-		}
-	}
-	return( SVTaskObjectClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext ) | DwResult );
 }
 #pragma endregion Protected Methods
 

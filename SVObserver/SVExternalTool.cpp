@@ -56,24 +56,6 @@ HRESULT SVExternalTool::UpdateImageWithExtent( unsigned long p_Index )
 	return S_OK;
 }
 
-DWORD_PTR SVExternalTool::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
-{
-	DWORD_PTR DwResult = SVMR_NOT_PROCESSED;
-	
-	// Try to process message by yourself...
-	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
-	switch( dwPureMessageID )
-	{
-		case SVMSGID_IMAGE_SOURCE_CHANGED:
-		{
-//			m_isCreated = false;
-		}
-		break;
-	}
-
-	return ( SVToolClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext ) | DwResult );
-}
-
 void SVExternalTool::Initialize()
 {
 	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVToolObjectType;

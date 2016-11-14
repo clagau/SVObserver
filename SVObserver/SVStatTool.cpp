@@ -213,9 +213,24 @@ BOOL SVStatisticsToolClass::CreateObject(SVObjectLevelCreateStruct* PCreateStruc
 	return m_isCreated;
 }
 
+bool SVStatisticsToolClass::resetAllObjects( bool shouldNotifyFriends, bool silentReset )
+{
+	bool Result = ( S_OK == ResetObject() );
+
+	if( !Result )
+	{
+		if( !silentReset && 0 != m_errContainer.getMessage().m_MessageCode )
+		{
+			SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
+			Msg.setMessage( m_errContainer.getMessage() ); 
+		}
+	}
+	return( __super::resetAllObjects( shouldNotifyFriends, silentReset ) && Result );
+}
+
 HRESULT SVStatisticsToolClass::ResetObject()
 {
-	HRESULT Result = SVToolClass::ResetObject();
+	HRESULT Result = __super::ResetObject();
 	
 	if ( S_OK == Result )
 	{
@@ -357,11 +372,7 @@ DWORD SVStatisticsToolClass::AllocateResult (SVStatisticsFeatureEnum aFeatureInd
 		info.EmbeddedID = SVValueObjectGuid;
 		
 		// Get the output of the result
-		SVDoubleValueObjectClass* pValue = 
-			reinterpret_cast<SVDoubleValueObjectClass*>(SVSendMessage(pResult, 
-			SVM_GETFIRST_OBJECT, 
-			0, 
-			reinterpret_cast<DWORD_PTR>(&info)));
+		SVDoubleValueObjectClass* pValue = dynamic_cast<SVDoubleValueObjectClass*>(pResult->getFirstObject(info));
 		
 		if (!pValue)
 		{
@@ -375,14 +386,14 @@ DWORD SVStatisticsToolClass::AllocateResult (SVStatisticsFeatureEnum aFeatureInd
 		pValue->ObjectAttributesAllowedRef() &= ( ~SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES );
 		
 		// Ensure this Object's inputs get connected
-		::SVSendMessage( pResult, SVM_CONNECT_ALL_INPUTS, 0, 0 );
+		pResult->ConnectAllInputs();
 		
 		// And last - Create (initialize) it
 		
 		if( ! pResult->IsCreated() )
 		{
 			// And finally try to create the child object...
-			if( ::SVSendMessage( this, SVM_CREATE_CHILD_OBJECT, reinterpret_cast<DWORD_PTR>(pResult), 0 ) != SVMR_SUCCESS )
+			if( !CreateChildObject(pResult) )
 			{
 				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_StatTool_ResultFailed, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10200 ); 
@@ -408,9 +419,7 @@ DWORD SVStatisticsToolClass::AllocateResult (SVStatisticsFeatureEnum aFeatureInd
 DWORD SVStatisticsToolClass::FreeResult (SVStatisticsFeatureEnum aFeatureIndex)
 {
 	SVResultClass*    pResult;
-	
 	DWORD LastError(0);
-	
 	
 	while (1)
 	{
@@ -424,14 +433,8 @@ DWORD SVStatisticsToolClass::FreeResult (SVStatisticsFeatureEnum aFeatureIndex)
 			break;
 		}
 		
-		
-		::SVSendMessage (this, 
-			SVM_DESTROY_CHILD_OBJECT,
-			reinterpret_cast<DWORD_PTR>(pResult),
-			SVMFSetDefaultInputs);
-		
+		DestroyChildObject(pResult, SVMFSetDefaultInputs);
 		pResult = nullptr;
-		
 		break;
 	}
 	
@@ -528,8 +531,7 @@ void SVStatisticsToolClass::SetVariableSelected( CString p_strName )
 	{
 		if( m_inputObjectInfo.IsConnected() && m_inputObjectInfo.GetInputObjectInfo().PObject )
 		{
-			::SVSendMessage(m_inputObjectInfo.GetInputObjectInfo().PObject,
-							SVM_DISCONNECT_OBJECT_INPUT, reinterpret_cast <DWORD_PTR> (&m_inputObjectInfo), 0 );
+			m_inputObjectInfo.GetInputObjectInfo().PObject->DisconnectObjectInput(&m_inputObjectInfo);
 		}
 	}
 
@@ -546,7 +548,7 @@ void SVStatisticsToolClass::SetVariableSelected( CString p_strName )
 			//m_inputObjectInfo.InputObjectInfo.UniqueObjectID = selectedVarGuid;
 			m_inputObjectInfo.SetInputObject( refObject );
 			
-			::SVSendMessage(refObject.Object(), SVM_CONNECT_OBJECT_INPUT, reinterpret_cast <DWORD_PTR> (&m_inputObjectInfo), 0 );
+			refObject.Object()->ConnectObjectInput(&m_inputObjectInfo);
 		}// end if( refObject.Object() )
 		msvVariableName.SetValue(1, p_strName);
 	}
@@ -563,6 +565,23 @@ void SVStatisticsToolClass::SetVariableSelected( CString p_strName )
 void SVStatisticsToolClass::UpdateTaskObjectOutputListAttributes()
 {
 	SVToolClass::UpdateTaskObjectOutputListAttributes( m_inputObjectInfo.GetInputObjectInfo().GetObjectReference(), SV_SELECTABLE_FOR_STATISTICS );
+}
+
+bool SVStatisticsToolClass::DisconnectObjectInput( SVInObjectInfoStruct* pObjectInInfo )
+{
+	if( pObjectInInfo && pObjectInInfo->GetInputObjectInfo().UniqueObjectID == m_inputObjectInfo.GetInputObjectInfo().UniqueObjectID )
+	{
+		m_inputObjectInfo.SetInputObject( nullptr );
+
+		// Check if variable still exists and is selectable for stats
+		if( !HasVariable() )
+		{
+			// Clear it since the object is gone
+			m_inputObjectInfo.SetInputObject( nullptr );
+			SetVariableSelected( _T("") );	// will this result in a recursive call to this message???
+		}
+	}
+	return __super::DisconnectObjectInput(pObjectInInfo);
 }
 
 double SVStatisticsToolClass::getInputValue()
@@ -686,7 +705,6 @@ BOOL SVStatisticsToolClass::OnValidate()
 
 	return bRetVal;
 }
-
 
 BOOL SVStatisticsToolClass::onRun( SVRunStatusClass& RRunStatus )
 {
@@ -826,57 +844,3 @@ BOOL SVStatisticsToolClass::onRun( SVRunStatusClass& RRunStatus )
 
 	return l_bOk;
 }
-
-DWORD_PTR SVStatisticsToolClass::processMessage( DWORD DwMessageID, DWORD_PTR DwMessageValue, DWORD_PTR DwMessageContext )
-{
-	DWORD_PTR DwResult = SVMR_NOT_PROCESSED;
-	// Try to process message by yourself...
-	DWORD dwPureMessageID = DwMessageID & SVM_PURE_MESSAGE;
-	switch( dwPureMessageID )
-	{
-		// is sent in SVIPDoc::Validate()
-	case SVMSGID_RESET_ALL_OBJECTS:
-		{
-			HRESULT ResetStatus = ResetObject();
-			if( S_OK != ResetStatus )
-			{
-				BOOL SilentReset = static_cast<BOOL> (DwMessageValue);
-
-				if( !SilentReset && 0 != m_errContainer.getMessage().m_MessageCode )
-				{
-					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-					Msg.setMessage( m_errContainer.getMessage() ); 
-				}
-				DwResult = SVMR_NO_SUCCESS;
-			}
-			else
-			{
-				DwResult = SVMR_SUCCESS;
-			}
-		}
-		break;
-
-	case SVMSGID_DISCONNECT_OBJECT_INPUT:
-		{
-			// ...use second message parameter ( DwMessageValue ) as pointer to InObjectInfo ( SVInObjectInfoStruct* )
-			// ...returns SVMR_SUCCESS, SVMR_NO_SUCCESS or SVMR_NOT_PROCESSED
-			SVInObjectInfoStruct* pInObjectInfo = ( SVInObjectInfoStruct* ) DwMessageValue;
-			if( pInObjectInfo && pInObjectInfo->GetInputObjectInfo().UniqueObjectID == m_inputObjectInfo.GetInputObjectInfo().UniqueObjectID )
-			{
-				m_inputObjectInfo.SetInputObject( nullptr );
-
-				// Check if variable still exists and is selectable for stats
-				if( !HasVariable() )
-				{
-					// Clear it since the object is gone
-					m_inputObjectInfo.SetInputObject( nullptr );
-					SetVariableSelected( _T("") );	// will this result in a recursive call to this message???
-				}
-				DwResult = SVMR_SUCCESS;
-			}
-		}
-		break;
-	}
-	return( SVToolClass::processMessage( DwMessageID, DwMessageValue, DwMessageContext ) | DwResult );
-}
-

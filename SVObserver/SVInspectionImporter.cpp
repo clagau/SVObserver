@@ -397,7 +397,7 @@ HRESULT LoadInspectionXml(const SVString& filename, const SVString& zipFilename,
 							// Show the Dialog
 							l_ParserProgressDialog.DoModal();
 
-							::SVSendMessage( pInspection, SVM_CONNECT_ALL_INPUTS, 0, 0 );
+							pInspection->ConnectAllInputs();
 
 							rProgress.UpdateText(_T("Parsing Complete."));
 							rProgress.UpdateProgress(++currentOp, numOperations);

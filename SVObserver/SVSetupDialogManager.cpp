@@ -53,6 +53,7 @@
 #include "RangeXDialogClass.h"
 #include "SVRange.h"
 #include "SVOMFCLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
+#include "SVToolSet.h"
 
 #pragma endregion Inlcudes
 
@@ -796,7 +797,7 @@ HRESULT SVSetupDialogManager::SVOCVAnalyzerClassSetupDialog( const SVGUID& p_rOb
 						// 16 Dec 1999 - frb (100)
 						//
 						// Reset all objects...
-						bool bOk = SVMR_SUCCESS == SVSendMessage( (SVObjectClass *) pInspection->GetToolSet(), SVM_RESET_ALL_OBJECTS, 0, 0 );
+						bool bOk = pInspection->GetToolSet()->resetAllObjects(true, false);
 						if( bOk )
 						{
 							GuiCmd::InspectionRunOncePtr l_CommandPtr = new GuiCmd::InspectionRunOnce( pInspection->GetUniqueObjectID() );

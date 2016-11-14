@@ -30,7 +30,6 @@ public:
 
 	virtual ~SVFileNameValueObjectClass();
 
-	virtual HRESULT SetObjectValue( const SVString& p_rValueName, const _variant_t& p_rVariantValue );
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* pDataObject );
 
 	virtual void Persist(SVObjectWriter& rWriter);
