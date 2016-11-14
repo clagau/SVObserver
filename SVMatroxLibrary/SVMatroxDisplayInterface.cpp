@@ -60,7 +60,7 @@ SVMatroxDisplayInterface::SVStatusCode SVMatroxDisplayInterface::Create( SVMatro
 		{
 			MIL_ID l_NewId = MdispAlloc(M_DEFAULT_HOST,
 				M_DEFAULT,		// M_AUTOMATIC new doc does not mention anything about this.
-				M_DISPLAY_SETUP,// M_DISPLAY_SETUP is a string "M_DEFAULT"
+				MIL_TEXT("M_DEFAULT"),
 				M_WINDOWED,		// M_WINDOWED | M_GDI_OVERLAY
 				M_NULL);
 

@@ -347,9 +347,7 @@ HRESULT SVMatroxGige::AddSystem(const SVString& rName, long SystemNumber)
 			if (S_OK == hr)
 			{
 				// Register camera present hook
-#if SV_CURRENT_MIL_VERSION == 0x0900
 				l_Code = SVMatroxSystemInterface::SetHookFunction(*(rSystem.m_System.get()), SVMatroxSystemHook::SVCameraPresent, SVMatroxGige::CameraPresentCallback, (void *)(l_System.m_Handle)); 
-#endif
 				if (l_Code == SVMEE_STATUS_OK)
 				{
 					hr = CreateDigitizers(rSystem);
@@ -521,9 +519,7 @@ HRESULT SVMatroxGige::DestroySystem(SVMatroxGigeSystem& rSystem)
 
 	SVMatroxSystemInterface::SVStatusCode l_Code = SVMEE_STATUS_OK;
 	// Unregister camera present hook
-#if SV_CURRENT_MIL_VERSION == 0x0900
 	l_Code = SVMatroxSystemInterface::ReleaseHookFunction(*(rSystem.m_System.get()), SVMatroxSystemHook::SVCameraPresent, SVMatroxGige::CameraPresentCallback, (void *)(rSystem.m_Handle)); 
-#endif
 	l_Code = SVMatroxSystemInterface::Destroy(*(rSystem.m_System.get()));
 	if (l_Code != SVMEE_STATUS_OK)
 	{

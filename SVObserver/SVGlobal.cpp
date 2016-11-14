@@ -85,9 +85,6 @@ double SVGetDataTypeMin( DWORD DataType )
 
 		case SV_FLOAT:
 			return 3.4E-38;
-
-		case SV_DOUBLE:
-			return 1.7E-308;
 	}
 	return 0.0;
 }
@@ -125,9 +122,6 @@ double SVGetDataTypeMax( DWORD DataType )
 
 		case SV_FLOAT:
 			return 3.4E38;
-
-		case SV_DOUBLE:
-			return 1.7E308;
 	}
 	return 0.0;
 }
@@ -158,10 +152,6 @@ double SVGetDataTypeRange( DWORD DataType )
 
 		case SV_FLOAT:
 			return 6.8E38;
-
-		case SV_DOUBLE:
-			return 1.7E308;
-			// return 3.4E308;
 	}
 	return 0.0;
 	// ( long ) pow( 2.0, ( BYTE ) ( DataType ) )

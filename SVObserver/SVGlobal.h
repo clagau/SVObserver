@@ -196,7 +196,6 @@ const DWORD SV_LONG                     = SV_SIGNED_32BIT_INT;
 const DWORD SV_64BIT_INT                = ( SV_GET_BIT_NUMBER( __int64 ) + SVBufferUnsigned );
 const DWORD SV_SIGNED_64BIT_INT         = ( SV_GET_BIT_NUMBER( __int64 ) + static_cast< DWORD >( SVBufferSigned ) );
 const DWORD SV_FLOAT                    = ( SV_GET_BIT_NUMBER( float )  + static_cast< DWORD >( SVBufferFloat ) );
-const DWORD SV_DOUBLE                   = ( SV_GET_BIT_NUMBER( double ) + static_cast< DWORD >( SVBufferDouble ) );
 
 ////////////////////////////////////////////////////////////////////////////
 // IO DLL Function Types

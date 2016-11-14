@@ -22,7 +22,6 @@ enum SVMatroxBufferTypeEnum
 	SVBufferSigned          = 0x80000000,
 	SVBufferFloat			= 0x40000000 | SVBufferSigned,
 	SVBufferUnsigned		= 0x00000000,
-	SVBufferDouble			= 0x20000000 | SVBufferSigned,
 
 	SV1BitUnsigned			= 0x000000001,
 

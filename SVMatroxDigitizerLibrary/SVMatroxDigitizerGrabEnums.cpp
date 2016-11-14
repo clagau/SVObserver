@@ -38,28 +38,3 @@ SVMatroxDigitizerGrab::SVGrabTriggerModeEnumMap SVMatroxDigitizerGrab::m_GrabTri
 (SVMatroxDigitizerGrab::SVEdgeRising,				M_EDGE_RISING)
 (SVMatroxDigitizerGrab::SVLevelHigh,				M_LEVEL_HIGH)
 (SVMatroxDigitizerGrab::SVLevelLow,					M_LEVEL_LOW);
-
-// Assign mappings for Grab Types
-// Note: this section isn't mapped correctly yet...
-SVMatroxDigitizerGrab::SVGrabEnumMap SVMatroxDigitizerGrab::m_GrabEnumConvertor = boost::assign::map_list_of<>
-(SVMatroxDigitizerGrab::SVGrabContinuousEndTrigger,		M_GRAB_CONTINUOUS_END_TRIGGER)
-(SVMatroxDigitizerGrab::SVGrabFieldNum,					M_GRAB_FIELD_NUM)
-(SVMatroxDigitizerGrab::SVGrabScale,					M_GRAB_SCALE)
-(SVMatroxDigitizerGrab::SVGrabScaleX,					M_GRAB_SCALE_X)
-(SVMatroxDigitizerGrab::SVGrabScaleY,					M_GRAB_SCALE_Y)
-(SVMatroxDigitizerGrab::SVGrabStartMode,				M_GRAB_START_MODE)
-(SVMatroxDigitizerGrab::SVGrabWindowRange,				M_GRAB_WINDOW_RANGE)
-(SVMatroxDigitizerGrab::SVGrabTriggerFormat,			M_GRAB_TRIGGER_FORMAT)
-(SVMatroxDigitizerGrab::SVGrabExposure,					M_GRAB_EXPOSURE)
-(SVMatroxDigitizerGrab::SVGrabExposureClockSource,		M_GRAB_EXPOSURE_CLOCK_SOURCE)
-(SVMatroxDigitizerGrab::SVGrabExposureFormat,			M_GRAB_EXPOSURE_FORMAT)
-(SVMatroxDigitizerGrab::SVGrabExposureMode,				M_GRAB_EXPOSURE_MODE)
-(SVMatroxDigitizerGrab::SVGrabExposureSource,			M_GRAB_EXPOSURE_SOURCE)
-(SVMatroxDigitizerGrab::SVGrabExposureTime,				M_GRAB_EXPOSURE_TIME)
-(SVMatroxDigitizerGrab::SVGrabExposureTimeDelay,		M_GRAB_EXPOSURE_TIME_DELAY)
-(SVMatroxDigitizerGrab::SVGrabExposureTriggerMode,		M_GRAB_EXPOSURE_TRIGGER_MODE)
-(SVMatroxDigitizerGrab::SVGrabExposureClockFrequency,	M_GRAB_EXPOSURE_CLOCK_FREQUENCY)
-(SVMatroxDigitizerGrab::SVGrabExposureArm,				M_GRAB_EXPOSURE_ARM)
-(SVMatroxDigitizerGrab::SVGrabExposureArmSource,		M_GRAB_EXPOSURE_ARM_SOURCE)
-(SVMatroxDigitizerGrab::SVGrabExposureArmMode,			M_GRAB_EXPOSURE_ARM_MODE);
-

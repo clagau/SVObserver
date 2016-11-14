@@ -218,7 +218,7 @@ SVMatroxSystemInterface::SVStatusCode SVMatroxSystemInterface::Set(const SVMatro
 	try
 #endif
 	{
-		long l_MatroxType = 0;
+		MatroxType l_MatroxType = 0;
 		HRESULT hr = SVMatroxSystemControl::m_convertor.ConvertEnumToMatroxType(ControlType, l_MatroxType);
 		if (S_OK == hr)
 		{

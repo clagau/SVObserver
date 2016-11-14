@@ -93,7 +93,6 @@
     <ClCompile Include="SVMatroxDigitizerHookEnums.cpp" />
     <ClCompile Include="SVMatroxDigitizerInquireEnums.cpp" />
     <ClCompile Include="SVMatroxDigitizerInterface.cpp" />
-    <ClCompile Include="SVMatroxDigitizerLightReferenceEnums.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -104,7 +103,6 @@
     <ClInclude Include="SVMatroxDigitizerHookEnums.h" />
     <ClInclude Include="SVMatroxDigitizerInquireEnums.h" />
     <ClInclude Include="SVMatroxDigitizerInterface.h" />
-    <ClInclude Include="SVMatroxDigitizerLightReferenceEnums.h" />
     <ClInclude Include="SVMatroxDigitizerRef.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

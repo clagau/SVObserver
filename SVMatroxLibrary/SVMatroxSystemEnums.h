@@ -98,7 +98,7 @@ struct SVMatroxSystemControl
 	};
 
 	// define convertor for from/to SVEnum/Matrox types
-	typedef SVMatroxEnumConvertor<SVMatroxSystemControlEnum, long> SVMatroxSystemControlEnumMap;
+	typedef SVMatroxEnumConvertor<SVMatroxSystemControlEnum, MatroxType> SVMatroxSystemControlEnumMap;
 	static SVMatroxSystemControlEnumMap m_convertor;
 };
 
@@ -233,7 +233,7 @@ struct SVMatroxSystemInquire
 									// Returns the maximum amount of time, in secs, for the Host to wait for a synchronous function to return before generating a time-out error
 	};
 	// define convertor for from/to SVEnum/Matrox types
-	typedef SVMatroxEnumConvertor< SVMatroxSystemInquireEnum, SVMatroxInt > SVMatroxSystemInquireEnumMap;
+	typedef SVMatroxEnumConvertor< SVMatroxSystemInquireEnum, MatroxType > SVMatroxSystemInquireEnumMap;
 	static SVMatroxSystemInquireEnumMap m_convertor;
 };
 
@@ -252,7 +252,7 @@ struct SVMatroxSystemHook
 		SVCameraPresent
 	};
 
-	typedef SVMatroxEnumConvertor< SVMatroxSystemHookEnum, SVMatroxInt > SVMatroxSystemHookEnumMap;
+	typedef SVMatroxEnumConvertor< SVMatroxSystemHookEnum, MatroxType > SVMatroxSystemHookEnumMap;
 	static SVMatroxSystemHookEnumMap m_convertor;
 };
 
@@ -273,7 +273,7 @@ struct SVMatroxSystemHookInfo
 		SVGigeMacAddress
 	};
 
-	typedef SVMatroxEnumConvertor< SVMatroxSystemHookInfoEnum, SVMatroxInt > SVMatroxSystemHookInfoEnumMap;
+	typedef SVMatroxEnumConvertor< SVMatroxSystemHookInfoEnum, MatroxType > SVMatroxSystemHookInfoEnumMap;
 	static SVMatroxSystemHookInfoEnumMap m_convertor;
 };
 

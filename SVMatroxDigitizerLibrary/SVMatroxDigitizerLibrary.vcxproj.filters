@@ -39,9 +39,6 @@
     <ClCompile Include="SVMatroxDigitizerInterface.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVMatroxDigitizerLightReferenceEnums.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -66,9 +63,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVMatroxDigitizerInterface.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVMatroxDigitizerLightReferenceEnums.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVMatroxDigitizerRef.h">

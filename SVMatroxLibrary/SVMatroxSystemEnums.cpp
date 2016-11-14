@@ -14,12 +14,18 @@
 //Moved to precompiled header: #include <mil.h>
 #include "SVMatroxSystemEnums.h"
 
+#if SV_DESIRED_MIL_VERSION == 0x0900
+const MIL_INT cDefaultPitchByteType = M_DEFAULT_PITCH_BYTE;
+#else
+const MIL_INT cDefaultPitchByteType = M_DEFAULT_PITCH_BYTE_MULTIPLE;
+#endif
+
 // Assign mappings for Control Types
-SVMatroxSystemControl::SVMatroxSystemControlEnumMap SVMatroxSystemControl::m_convertor = boost::assign::map_list_of<>
+SVMatroxSystemControl::SVMatroxSystemControlEnumMap SVMatroxSystemControl::m_convertor = boost::assign::map_list_of<SVMatroxSystemControlEnum, MatroxType>
 (SVMatroxSystemControl::SVAllocationOverscanSize,	M_ALLOCATION_OVERSCAN_SIZE)
 (SVMatroxSystemControl::SVBusMasterCopyFromHost,	M_BUS_MASTER_COPY_FROM_HOST)
 (SVMatroxSystemControl::SVBusMasterCopyToHost,		M_BUS_MASTER_COPY_TO_HOST)
-(SVMatroxSystemControl::SVDefaultPitchByte,			M_DEFAULT_PITCH_BYTE)
+(SVMatroxSystemControl::SVDefaultPitchByte,			cDefaultPitchByteType)
 (SVMatroxSystemControl::SVModifiedBufferHookMode,	M_MODIFIED_BUFFER_HOOK_MODE)
 //(SVMatroxSystemControl::SVProcessingSystem,			M_PROCESSING_SYSTEM)
 (SVMatroxSystemControl::SVThreadMode,				M_THREAD_MODE)
@@ -27,14 +33,14 @@ SVMatroxSystemControl::SVMatroxSystemControlEnumMap SVMatroxSystemControl::m_con
 
 // Assign mappings for Inquire Types
 // BRW - Types for map were implicit for in 32-bit, but must be explicitly specified for 64-bit.
-SVMatroxSystemInquire::SVMatroxSystemInquireEnumMap SVMatroxSystemInquire::m_convertor = boost::assign::map_list_of< SVMatroxSystemInquireEnum, SVMatroxInt >
+SVMatroxSystemInquire::SVMatroxSystemInquireEnumMap SVMatroxSystemInquire::m_convertor = boost::assign::map_list_of< SVMatroxSystemInquireEnum, MatroxType >
 (SVMatroxSystemInquire::SVAcceleratorPresent,		M_ACCELERATOR_PRESENT)
 (SVMatroxSystemInquire::SVAllocationOverscanSize,	M_ALLOCATION_OVERSCAN_SIZE)
 (SVMatroxSystemInquire::SVAsynchronousCallSupport,	M_ASYNCHRONOUS_CALL_SUPPORT)
 (SVMatroxSystemInquire::SVBoardRevision,			M_BOARD_REVISION)
 (SVMatroxSystemInquire::SVBoardType,				M_BOARD_TYPE)
 (SVMatroxSystemInquire::SVDcfSupported,				M_DCF_SUPPORTED)
-(SVMatroxSystemInquire::SVDefaultPitchByte,			M_DEFAULT_PITCH_BYTE)
+(SVMatroxSystemInquire::SVDefaultPitchByte,			cDefaultPitchByteType)
 (SVMatroxSystemInquire::SVDigitizerNum,				M_DIGITIZER_NUM)
 (SVMatroxSystemInquire::SVInitFlag,					M_INIT_FLAG)
 (SVMatroxSystemInquire::SVLocation,					M_LOCATION)
@@ -59,12 +65,12 @@ SVMatroxSystemInquire::SVMatroxSystemInquireEnumMap SVMatroxSystemInquire::m_con
 
 // Assign mappings for Hook Types
 // BRW - Types for map were implicit for in 32-bit, but must be explicitly specified for 64-bit.
-SVMatroxSystemHook::SVMatroxSystemHookEnumMap SVMatroxSystemHook::m_convertor = boost::assign::map_list_of< SVMatroxSystemHookEnum, SVMatroxInt >
+SVMatroxSystemHook::SVMatroxSystemHookEnumMap SVMatroxSystemHook::m_convertor = boost::assign::map_list_of< SVMatroxSystemHookEnum, MatroxType >
 (SVMatroxSystemHook::SVCameraPresent,				M_CAMERA_PRESENT);
 
 // Assign mappings for Hook Info Types
 // BRW - Types for map were implicit for in 32-bit, but must be explicitly specified for 64-bit.
-SVMatroxSystemHookInfo::SVMatroxSystemHookInfoEnumMap SVMatroxSystemHookInfo::m_convertor = boost::assign::map_list_of< SVMatroxSystemHookInfoEnum, SVMatroxInt >
+SVMatroxSystemHookInfo::SVMatroxSystemHookInfoEnumMap SVMatroxSystemHookInfo::m_convertor = boost::assign::map_list_of< SVMatroxSystemHookInfoEnum, MatroxType >
 (SVMatroxSystemHookInfo::SVCameraNumber,			M_NUMBER)
 (SVMatroxSystemHookInfo::SVCameraPresent,			M_CAMERA_PRESENT)
 (SVMatroxSystemHookInfo::SVGigeMacAddress,			M_GC_MAC_ADDRESS);

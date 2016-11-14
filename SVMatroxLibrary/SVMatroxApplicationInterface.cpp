@@ -480,9 +480,7 @@ void SVMatroxApplicationInterface::LocalInitialize()
 			// check version of MIL
 			MappInquire( M_VERSION, &l_MilVersion );
 
-			long l_lMilVersion = static_cast<long>(l_MilVersion * 0x100);
-
-			if ( SV_CURRENT_MIL_VERSION != l_lMilVersion )
+			if ( SV_CURRENT_MIL_VERSION != l_MilVersion )
 			{
 				SVStringArray msgList;
 				msgList.push_back(SvUl_SF::Format(_T("%4.2f"), SV_CURRENT_MIL_VERSION));

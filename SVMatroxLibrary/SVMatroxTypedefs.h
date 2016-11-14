@@ -23,7 +23,8 @@
 @SVObjectOperations None
 
 */
-typedef long long SVMatroxIdentifier;
+typedef __int64 SVMatroxIdentifier;
+typedef __int64 MatroxType;
 typedef long long SVMatroxInt;
 
 

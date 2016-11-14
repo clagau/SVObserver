@@ -80,10 +80,6 @@ long SVMatroxBufferInterface::Convert2MatroxType(SVMatroxBufferTypeEnum p_eType)
 	{
 		l_lMatroxType |= M_FLOAT;
 	}
-	if (SVBufferDouble == (SVBufferDouble & p_eType))
-	{
-		l_lMatroxType |= M_DOUBLE;
-	}
 
 	if (SV1BitUnsigned == (SV1BitUnsigned & p_eType))
 	{
@@ -468,7 +464,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Create(SVMatroxBu
 			// Calculate the absolute height
 			long lHeight = abs(pbmhInfo->biHeight);
 
-			BUFATTRTYPE lAttrib = M_PROC + M_IMAGE + M_DIB;
+			MIL_INT64 lAttrib = M_PROC + M_IMAGE + M_DIB;
 
 			// we always use 8 bit per plane
 			long type = Pixel8 + M_UNSIGNED;
@@ -981,7 +977,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Create(SVMatroxBu
 				l_BitCount = dib.dsBm.bmBitsPixel;
 				l_SizeImage = dib.dsBm.bmWidthBytes * abs(l_Height);
 			}
-			BUFATTRTYPE lAttrib = M_PROC + M_IMAGE + M_DIB;
+			MIL_INT64 lAttrib = M_PROC + M_IMAGE + M_DIB;
 
 			// we always use 8 bit per plane
 			long type = Pixel8 + M_UNSIGNED;

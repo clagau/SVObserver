@@ -115,10 +115,10 @@ private:
 		LIGHT = 1,
 	};
 
-	static long Convert2MatroxControlType(SVOcrControlEnum p_eType) ;
-	static long Convert2MatroxCreateType(SVOcrTypeEnum p_eType) ;
-	static long Convert2MatroxOperationType( SVOcrOperationEnum p_eType ) ;
-	static long Convert2MatroxResultType( SVOcrResultEnum p_eType) ;
+	static MatroxType Convert2MatroxControlType(SVOcrControlEnum p_eType) ;
+	static MatroxType Convert2MatroxCreateType(SVOcrTypeEnum p_eType) ;
+	static MatroxType Convert2MatroxOperationType( SVOcrOperationEnum p_eType ) ;
+	static MatroxType Convert2MatroxResultType( SVOcrResultEnum p_eType) ;
 
 	static HRESULT CreateTempFileName( SVString& p_rFileName );
 

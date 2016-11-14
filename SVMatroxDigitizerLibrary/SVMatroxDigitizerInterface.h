@@ -23,7 +23,6 @@
 #include "SVMatroxDigitizerHookEnums.h"
 #include "SVMatroxDigitizerFeatureEnums.h"
 #include "SVMatroxDigitizerGrabEnums.h"
-#include "SVMatroxDigitizerLightReferenceEnums.h"
 
 typedef std::map<SVString, long> SVGigeEventList;
 
@@ -36,8 +35,6 @@ public:
 	static SVStatusCode Allocate(const SVMatroxSystem& System, long DeviceNum, SVMatroxDigitizer& digitizerID);
 	static SVStatusCode Allocate(const SVMatroxSystem& System, long DeviceNum, const SVString& DataFormat, SVMatroxDigitizer& digitizerID);
 	static SVStatusCode Release(SVMatroxDigitizer& DigitizerID);
-
-	static SVStatusCode Channel(const SVMatroxDigitizer& DigitizerID, long Channel);
 
 	static SVStatusCode IsCorruptedFrame(SVMatroxIdentifier milEventID, bool& bIsCorrupted);
 	static SVStatusCode GetGrabTimeStamp(const SVMatroxDigitizer& DigitizerID, double& timestamp);
@@ -87,14 +84,9 @@ public:
 
 	// Frame
 	static SVStatusCode Get(const SVMatroxDigitizer& DigitizerID, SVMatroxDigitizerInquire::SVFrameEnum InquireType, long& Value);
-	
-	// User Bits
-	static SVStatusCode Get(const SVMatroxDigitizer& DigitizerID, SVMatroxDigitizerInquire::SVUserBitEnum InquireType, long& Value);
 
 	// Gige
-	static SVStatusCode GetGigeVersion(const SVMatroxDigitizer& DigitizerID, SVString& Value);
 	static SVStatusCode GetGigeSerialNumber(const SVMatroxDigitizer& DigitizerID, SVString& Value);
-	static SVStatusCode GetGigeSpecificInfo(const SVMatroxDigitizer& DigitizerID, SVString& Value);
 	static SVStatusCode GetGigeMACAddress(const SVMatroxDigitizer& DigitizerID, __int64& Value);
 	static SVStatusCode GetGigeIPAddress(const SVMatroxDigitizer& DigitizerID, __int64& Value);
 	static SVStatusCode ShowGigeProperties(const SVMatroxDigitizer& DigitizerID);
@@ -104,19 +96,6 @@ public:
 	static SVStatusCode Set(const SVMatroxDigitizer& DigitizerID, SVMatroxDigitizerControl::SVCameraEnum ControlType, double Value);
 
 	static SVStatusCode EnableCorruptedFrameMonitoring(const SVMatroxDigitizer& DigitizerID, bool bEnable);
-
-	static SVStatusCode Set(const SVMatroxDigitizer& DigitizerID, SVMatroxDigitizerGrab::SVGrabEnum ControlType, const _variant_t& Value);
-	static SVStatusCode Set(const SVMatroxDigitizer& DigitizerID, SVMatroxDigitizerControl::SVUserBitEnum ControlType, const _variant_t& Value);
-
-	// LUT
-	static SVStatusCode GetLutID(const SVMatroxDigitizer& DigitizerID, SVMatroxIdentifier& LutBufId);
-	static SVStatusCode GetLutNumberOfBands(const SVMatroxDigitizer& DigitizerID, long& Value);
-	static SVStatusCode GetLutBandSize(const SVMatroxDigitizer& DigitizerID, long& Value);
-	static SVStatusCode SetLut(const SVMatroxDigitizer& DigitizerID, const SVMatroxBuffer& LutBufId);
-
-	// Light Reference
-	static SVStatusCode GetReference(const SVMatroxDigitizer& DigitizerID, SVMatroxDigitizerLightReference::SVLightReferenceEnum ReferenceType, double& ReferenceLevel);
-	static SVStatusCode SetReference(const SVMatroxDigitizer& DigitizerID, SVMatroxDigitizerLightReference::SVLightReferenceEnum ReferenceType, double ReferenceLevel);
 
 	// Gige Feature Getter/Setter
 	static SVStatusCode GetFeature(const SVMatroxDigitizer& DigitizerID,
@@ -143,12 +122,6 @@ public:
 	static SVStatusCode SetGrabMode(const SVMatroxDigitizer& DigitizerID, SVMatroxDigitizerGrab::SVGrabModeEnum grabMode);
 	static SVStatusCode SetGrabTimeout(const SVMatroxDigitizer& DigitizerID, long value);
 	static SVStatusCode SetInfiniteGrabTimeout(const SVMatroxDigitizer& DigitizerID);
-
-	static SVStatusCode SetGrabTriggerMode(const SVMatroxDigitizer& DigitizerID, SVMatroxDigitizerGrab::SVGrabTriggerModeEnum grabTriggerMode);
-	static SVStatusCode SetGrabHardwareTriggerSource(const SVMatroxDigitizer& DigitizerID, long portNo);
-	static SVStatusCode SetGrabSoftwareTriggerSource(const SVMatroxDigitizer& DigitizerID);
-	static SVStatusCode FireSoftwareTrigger(const SVMatroxDigitizer& DigitizerID);
-	static SVStatusCode EnableTrigger(const SVMatroxDigitizer& DigitizerID, bool bEnable);
 
 	// helper
 	static SVStatusCode Destroy(SVMatroxDigitizer& p_rDigitizer);

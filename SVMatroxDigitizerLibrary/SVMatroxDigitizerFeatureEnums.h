@@ -32,12 +32,12 @@ struct SVMatroxDigitizerFeature
 		SVTypeInt32,				// M_TYPE_MIL_INT32
 		SVTypeDouble,				// M_TYPE_DOUBLE
 		SVTypeString,				// M_TYPE_STRING
-		SVTypeIntegerEnumeration,	// M_TYPE_INTEGER_ENUMERATION
-		SVTypeStringEnumeration,	// M_TYPE_STRING_ENUMERATION
+		SVTypeIntegerEnumeration,	// M_TYPE_INTEGER_ENUMERATION - by mil9, M_TYPE_MIL_INT32 by mil10, maybe can replaced SVTypeInt32 for MIL10
+		SVTypeStringEnumeration,	// M_TYPE_STRING_ENUMERATION - by mil9, M_TYPE_STRING by mil10, maybe can replaced by SVTypeString for MIL10
 		SVTypeBool,					// M_TYPE_BOOLEAN
 	};
 	// define convertor for from/to SVEnum/Matrox types
-	typedef SVMatroxEnumConvertor<SVFeatureTypeEnum, long> SVFeatureTypeEnumMap;
+	typedef SVMatroxEnumConvertor<SVFeatureTypeEnum, MatroxType> SVFeatureTypeEnumMap;
 	static SVFeatureTypeEnumMap m_FeatureTypeEnumConvertor;
 };
 

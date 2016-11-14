@@ -65,8 +65,7 @@ public:
 	// McodeRead
 	static SVStatusCode Execute( const SVMatroxBarCode& p_rCodeID, const SVMatroxBuffer& p_rSourceId );
 private:
-	static long Convert2MatroxType(SVBarCodeControlTypeEnum p_eType) ;
-	static long Convert2MatroxType(SVBarCodeTypesEnum p_eType) ;
-
+	static MatroxType Convert2MatroxType(SVBarCodeControlTypeEnum p_eType) ;
+	static MatroxType Convert2MatroxType(SVBarCodeTypesEnum p_eType) ;
 };
 

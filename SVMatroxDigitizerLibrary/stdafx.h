@@ -64,10 +64,7 @@
 #include <boost/multi_index/member.hpp>					//Used by static library
 #include <boost/multi_index/ordered_index.hpp>			//Used by static library
 
-#define SV_DESIRED_MIL_VERSION 0x0900
-
-#if SV_DESIRED_MIL_VERSION == 0x0900
 #define M_MIL_USE_SAFE_TYPE 0
-#endif
+
 #include <mil.h>
 #pragma endregion Precompiled Headers

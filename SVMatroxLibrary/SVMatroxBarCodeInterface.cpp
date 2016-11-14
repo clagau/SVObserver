@@ -50,9 +50,9 @@ SVMatroxBarCodeInterface::~SVMatroxBarCodeInterface()
 @SVOperationDescription This function converts the SVObserver SVBarCodeControlTypeEnum to a matrox Enum.
 
 */
-long SVMatroxBarCodeInterface::Convert2MatroxType(SVBarCodeControlTypeEnum p_eType) 
+MatroxType SVMatroxBarCodeInterface::Convert2MatroxType(SVBarCodeControlTypeEnum p_eType) 
 {
-	long l_lControlType = M_UNINITIALIZED;
+	MatroxType l_lControlType = M_UNINITIALIZED;
 	switch( p_eType )
 	{
 		case SVBCForeGroundValue:
@@ -107,7 +107,7 @@ long SVMatroxBarCodeInterface::Convert2MatroxType(SVBarCodeControlTypeEnum p_eTy
 		}
 		case SVBCThreshold:
 		{
-			l_lControlType = M_THRESHOLD;
+			l_lControlType = M_THRESHOLD_VALUE;
 			break;
 		}
 		case SVBCCodeTimeout:
@@ -168,9 +168,9 @@ long SVMatroxBarCodeInterface::Convert2MatroxType(SVBarCodeControlTypeEnum p_eTy
 
 */
 // Bar Code Types......
-long SVMatroxBarCodeInterface::Convert2MatroxType(SVBarCodeTypesEnum p_eType) 
+MatroxType SVMatroxBarCodeInterface::Convert2MatroxType(SVBarCodeTypesEnum p_eType) 
 {
-	long l_lControlType = M_UNINITIALIZED;
+	MatroxType l_lControlType = M_UNINITIALIZED;
 	switch( p_eType )
 	{
 		case SVBC412:
@@ -235,7 +235,7 @@ long SVMatroxBarCodeInterface::Convert2MatroxType(SVBarCodeTypesEnum p_eType)
 		}
 		case SVRssCode:
 		{
-			l_lControlType = M_RSSCODE;
+			l_lControlType = M_GS1_DATABAR;
 			break;
 		}
 		case SVUpcA:
@@ -283,15 +283,14 @@ SVMatroxBarCodeInterface::SVStatusCode SVMatroxBarCodeInterface::Set( const SVMa
 				// Two matrox constants..
 				if( p_eType == SVBCAdaptiveThreshold )
 				{
-					McodeControl( p_rCodeID.m_BarCodeId, M_THRESHOLD ,M_ADAPTIVE );
+					McodeControl( p_rCodeID.m_BarCodeId, M_THRESHOLD_MODE ,M_ADAPTIVE );
 				}
 				else if ( p_eType == SVBCAutoThreshold )
 				{
-					McodeControl( p_rCodeID.m_BarCodeId, M_THRESHOLD ,M_DEFAULT );
+					McodeControl( p_rCodeID.m_BarCodeId, M_THRESHOLD_MODE ,M_DEFAULT );
 				}
 				else if ( p_eType == SVBCUnEvenGrid )
 				{
-#if SV_CURRENT_MIL_VERSION == 0x0900
 					if ( p_dValue )
 					{
 						McodeControl( p_rCodeID.m_BarCodeId, M_DISTORTION, M_UNEVEN_GRID_STEP );
@@ -300,12 +299,11 @@ SVMatroxBarCodeInterface::SVStatusCode SVMatroxBarCodeInterface::Set( const SVMa
 					{
 						McodeControl( p_rCodeID.m_BarCodeId, M_DISTORTION, M_DEFAULT );
 					}
-#endif
 				}
 				else
 				{
 					// One Matrox constant and value..
-					long l_lControlType = Convert2MatroxType( p_eType );
+					MatroxType l_lControlType = Convert2MatroxType( p_eType );
 					if( l_lControlType != M_UNINITIALIZED )
 					{
 						McodeControl( p_rCodeID.m_BarCodeId, l_lControlType ,p_dValue);
@@ -376,7 +374,7 @@ SVMatroxBarCodeInterface::SVStatusCode SVMatroxBarCodeInterface::Get( const SVMa
 		{
 			if( (p_eType & SVBCStringType) != SVBCStringType )
 			{
-				MIL_INT l_lControlType = Convert2MatroxType( p_eType );
+				MatroxType l_lControlType = Convert2MatroxType( p_eType );
 				if( l_lControlType != M_UNINITIALIZED )
 				{
 					McodeInquire( p_rCodeID.m_BarCodeId, l_lControlType , &p_dValue);
@@ -453,7 +451,7 @@ SVMatroxBarCodeInterface::SVStatusCode SVMatroxBarCodeInterface::GetResult( cons
 	{
 		if( !p_rCodeID.empty() )
 		{
-			long l_lControlType = Convert2MatroxType( p_eType );
+			MatroxType l_lControlType = Convert2MatroxType( p_eType );
 			if( l_lControlType != M_UNINITIALIZED )
 			{
 				McodeGetResult( p_rCodeID.m_BarCodeId, l_lControlType , &p_rdValue);
@@ -512,7 +510,7 @@ SVMatroxBarCodeInterface::SVStatusCode SVMatroxBarCodeInterface::GetResult( cons
 		{
 			if( (p_eType & SVBCStringType) == SVBCStringType )
 			{
-				long l_lControlType = Convert2MatroxType( p_eType );
+				MatroxType l_lControlType = Convert2MatroxType( p_eType );
 				if( l_lControlType != M_UNINITIALIZED )
 				{
 					long l_lSize;
@@ -711,9 +709,6 @@ SVMatroxBarCodeInterface::SVStatusCode SVMatroxBarCodeInterface::Create( SVMatro
 
 					McodeInquire( p_FromCodeID.m_BarCodeId, M_CELL_NUMBER_X  , &l_lValue );
 					McodeControl( l_NewID, M_CELL_NUMBER_X , l_lValue );
-
-					McodeInquire( p_FromCodeID.m_BarCodeId, M_16BIT_CHARACTER  , &l_lValue );
-					McodeControl( l_NewID, M_16BIT_CHARACTER , l_lValue );
 					l_Code = SVMatroxApplicationInterface::GetFirstError();
 				}
 

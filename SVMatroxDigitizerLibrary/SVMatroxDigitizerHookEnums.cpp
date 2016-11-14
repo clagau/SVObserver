@@ -28,21 +28,21 @@ SVMatroxDigitizerHook::SVHookTypeEnumMap SVMatroxDigitizerHook::m_HookTypeEnumCo
 (SVMatroxDigitizerHook::SVGrabFrameEnd,			M_GRAB_FRAME_END)
 (SVMatroxDigitizerHook::SVGrabFrameStart,		M_GRAB_FRAME_START)
 (SVMatroxDigitizerHook::SVGrabStart,			M_GRAB_START)
+#if SV_DESIRED_MIL_VERSION == 0x0900
 (SVMatroxDigitizerHook::SVUserBitChange,		M_USER_BIT_CHANGE)
-#if SV_CURRENT_MIL_VERSION == 0x0900
+#else
+(SVMatroxDigitizerHook::SVIOChange,				M_IO_CHANGE)
+#endif
 (SVMatroxDigitizerHook::SVGigeEvent,			M_GC_EVENT)
 (SVMatroxDigitizerHook::SVLineRisingEdgeEvent,	M_LINE_RISING_EDGE)
 (SVMatroxDigitizerHook::SVLineFallingEdgeEvent,	M_LINE_FALLING_EDGE)
 (SVMatroxDigitizerHook::SVLineAnyEdgeEvent,		M_LINE_ANY_EDGE)
-#endif
 ;
 // Assign mappings for Hook Info Types
 SVMatroxDigitizerHook::SVHookInfoEnumMap SVMatroxDigitizerHook::m_HookInfoEnumConvertor = boost::assign::map_list_of< SVMatroxDigitizerHook::SVHookInfoEnum, SVMatroxIdentifier >
 (SVMatroxDigitizerHook::SVUserBit,			M_USER_BIT)
 (SVMatroxDigitizerHook::SVUserBitState,		M_USER_BIT_STATE)
 (SVMatroxDigitizerHook::SVGigeCameraTimeStamp,	M_GC_CAMERA_TIME_STAMP)
-#if SV_CURRENT_MIL_VERSION == 0x0900
 (SVMatroxDigitizerHook::SVGigeEventType,		M_GC_EVENT_TYPE)
-#endif
 ;
 

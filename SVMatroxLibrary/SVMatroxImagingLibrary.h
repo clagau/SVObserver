@@ -11,11 +11,7 @@
 
 #pragma once
 
-#define SV_DESIRED_MIL_VERSION 0x0900
-
-#if SV_DESIRED_MIL_VERSION == 0x0900
-	#define M_MIL_USE_SAFE_TYPE 0
-#endif
+#define M_MIL_USE_SAFE_TYPE 0
 
 #include <mil.h>
 
@@ -37,14 +33,14 @@
 		#undef SV_CURRENT_MIL_VERSION
 	#endif
 
-	#define SV_CURRENT_MIL_VERSION M_MIL_CURRENT_INT_VERSION
+	#define SV_CURRENT_MIL_VERSION M_MIL_CURRENT_VERSION
 #endif
 
 #ifndef SV_CURRENT_MIL_VERSION
-	#define SV_CURRENT_MIL_VERSION 0x0000
+	#define SV_CURRENT_MIL_VERSION 0.00
 #endif
 
-#if SV_CURRENT_MIL_VERSION != SV_DESIRED_MIL_VERSION
+#if M_MIL_CURRENT_INT_VERSION != SV_DESIRED_MIL_VERSION
 	#error ****** INVALID MIL VERSION : Current version does not match desired version.
 #endif
 

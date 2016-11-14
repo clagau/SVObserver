@@ -386,7 +386,7 @@ MessageTextMap g_MessageTextMap = boost::assign::map_list_of
 	(SvOi::Tid_RenameError_DuplicateName, _T("A duplicate name was found for the item being renamed\n%s"))
 	(SvOi::Tid_ErrorInReset, _T("Error in Reset"))
 	(SvOi::Tid_InValidNewExtents, _T("The new extents for the %s are not valid"))
-	(SvOi::Tid_MilVersion_Error, _T("This version of SVObserver will not run with the installed MIL library. SVObserver needs MIL %4.2f. The installed version is %4.2f"))
+	(SvOi::Tid_MilVersion_Error, _T("This version of SVObserver will not run with the installed MIL library. SVObserver needs MIL %s. The installed version is %s"))
 	(SvOi::Tid_StatToolInvalidVariable, _T("%s\nError - The Selected Variable To Monitor does not exist."))
 	(SvOi::Tid_PatModelSizeErr, _T("Invalid Model Size"))
 	(SvOi::Tid_PatInvalidFilename, _T("Not a Valid Model file"))

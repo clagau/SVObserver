@@ -20,12 +20,3 @@ SVMatroxDigitizerControl::SVCameraEnumMap SVMatroxDigitizerControl::m_CameraEnum
 (SVMatroxDigitizerControl::SVSourceOffsetY,			M_SOURCE_OFFSET_Y)
 (SVMatroxDigitizerControl::SVSourceSizeX,			M_SOURCE_SIZE_X)
 (SVMatroxDigitizerControl::SVSourceSizeY,			M_SOURCE_SIZE_Y);
-
-// Assign mappings for Control UserBit Types
-SVMatroxDigitizerControl::SVUserBitEnumMap SVMatroxDigitizerControl::m_UserBitEnumConvertor = boost::assign::map_list_of< SVMatroxDigitizerControl::SVUserBitEnum, SVMatroxIdentifier >
-(SVMatroxDigitizerControl::SVUserBitInterruptMode,	M_USER_BIT_INTERRUPT_MODE)
-(SVMatroxDigitizerControl::SVUserBitInterruptState,	M_USER_BIT_INTERRUPT_STATE)
-(SVMatroxDigitizerControl::SVUserBitMode,			M_USER_BIT_MODE)
-(SVMatroxDigitizerControl::SVUserBitValue,			M_USER_BIT_VALUE)
-(SVMatroxDigitizerControl::SVUserBitSource,			M_USER_BIT_SOURCE);
-

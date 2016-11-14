@@ -50,9 +50,9 @@ SVMatroxOcrInterface::~SVMatroxOcrInterface()
 @SVOperationDescription This function converts a SVOcrControlEnum to matrox constants.
 
 */
-long SVMatroxOcrInterface::Convert2MatroxControlType(SVOcrControlEnum p_eType) 
+MatroxType SVMatroxOcrInterface::Convert2MatroxControlType(SVOcrControlEnum p_eType) 
 {
-	long l_lControlType = 0;
+	MatroxType l_lControlType = 0;
 	switch( p_eType )
 	{
 		case SVCharCellSizeX:
@@ -252,9 +252,9 @@ long SVMatroxOcrInterface::Convert2MatroxControlType(SVOcrControlEnum p_eType)
 @SVOperationDescription This function converts a SVOcrResultEnum to matrox constants.
 
 */
-long SVMatroxOcrInterface::Convert2MatroxResultType(SVOcrResultEnum p_eType) 
+MatroxType SVMatroxOcrInterface::Convert2MatroxResultType(SVOcrResultEnum p_eType) 
 {
-	long l_lControlType = 0;
+	MatroxType l_lControlType = 0;
 	switch( p_eType )
 	{
 
@@ -365,9 +365,9 @@ long SVMatroxOcrInterface::Convert2MatroxResultType(SVOcrResultEnum p_eType)
 @SVOperationDescription This function converts a SVOcrTypeEnum to matrox constants.
 
 */
-long SVMatroxOcrInterface::Convert2MatroxCreateType( SVOcrTypeEnum p_eType ) 
+MatroxType SVMatroxOcrInterface::Convert2MatroxCreateType( SVOcrTypeEnum p_eType ) 
 {
-	long l_lCode = 0;
+	MatroxType l_lCode = 0;
 	switch( p_eType & SVBasics )
 	{
 		case SVSemiM1292:
@@ -409,9 +409,9 @@ long SVMatroxOcrInterface::Convert2MatroxCreateType( SVOcrTypeEnum p_eType )
 @SVOperationDescription This function converts a SVOcrOperationEnum to matrox constants.
 
 */
-long SVMatroxOcrInterface::Convert2MatroxOperationType( SVOcrOperationEnum p_eType ) 
+MatroxType SVMatroxOcrInterface::Convert2MatroxOperationType( SVOcrOperationEnum p_eType ) 
 {
-	long l_lCode = 0;
+	MatroxType l_lCode = 0;
 
 	// Operation Constants
 	if( (p_eType & SVOcrLoadConstraint) == SVOcrLoadConstraint)
@@ -485,7 +485,7 @@ SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::Create( SVMatroxOcr& p_
 		if( l_Code == SVMEE_STATUS_OK )
 		{
 			MIL_ID l_NewID = M_NULL;
-			long l_lCreateType = Convert2MatroxCreateType( p_rCreateStruct.m_eFontType );
+			MatroxType l_lCreateType = Convert2MatroxCreateType( p_rCreateStruct.m_eFontType );
 			if( l_lCreateType != 0 )
 			{
 				l_NewID = MocrAllocFont( M_DEFAULT_HOST, 
@@ -943,7 +943,7 @@ SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::RestoreFont( SVMatroxOc
 
 	{
 		MIL_ID l_NewId = M_NULL;
-		long l_lOperation = 0;
+		MatroxType l_lOperation = 0;
 		if( p_eOperation == SVOcrRestore)
 		{
 			l_lOperation = Convert2MatroxOperationType( p_eOperation );
@@ -1070,7 +1070,7 @@ SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::SaveFont( const SVMatro
 #endif
 
 	{
-		long l_lOperation ;
+		MatroxType l_lOperation ;
 		if( !p_rFontId.empty() )
 		{
 			l_lOperation = Convert2MatroxOperationType( p_eOperation );
@@ -1460,7 +1460,7 @@ SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::Set( const SVMatroxOcr&
 #endif
 
 	{
-		long l_lControlType = Convert2MatroxControlType( p_eControlType );
+		MatroxType l_lControlType = Convert2MatroxControlType( p_eControlType );
 		if( l_lControlType != 0 )
 		{
 			if(!p_rFontId.empty())
@@ -1514,7 +1514,7 @@ SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::Get( const SVMatroxOcr&
 #endif
 
 	{
-		long l_lControlType = Convert2MatroxControlType( p_eControlType );
+		MatroxType l_lControlType = Convert2MatroxControlType( p_eControlType );
 		if( l_lControlType != 0 )
 		{
 			if(!p_rFontId.empty())
@@ -1641,7 +1641,7 @@ SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::SetResult( const SVMatr
 #endif
 
 	{
-		long l_lControlType = Convert2MatroxControlType( p_eControlType );
+		MatroxType l_lControlType = Convert2MatroxControlType( p_eControlType );
 		if( l_lControlType != 0 )
 		{
 			if(!p_rFontId.empty())
@@ -1696,7 +1696,7 @@ SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::GetResult( const SVMatr
 #endif
 
 	{
-		long l_lControlType = Convert2MatroxResultType( p_eControlType );
+		MatroxType l_lControlType = Convert2MatroxResultType( p_eControlType );
 		if( l_lControlType != 0 )
 		{
 			if(!p_rFontId.empty())
@@ -1755,7 +1755,7 @@ SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::GetResult( const SVMatr
 #endif
 
 	{
-		long l_lControlType = Convert2MatroxResultType( p_eControlType );
+		MatroxType l_lControlType = Convert2MatroxResultType( p_eControlType );
 		if( l_lControlType != 0 )
 		{
 			if(!p_rFontId.empty())
@@ -1802,7 +1802,7 @@ SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::GetResult( const SVMatr
 #endif
 
 	{
-		long l_lControlType = Convert2MatroxResultType( InquireType );
+		MatroxType l_lControlType = Convert2MatroxResultType( InquireType );
 		if( l_lControlType != 0 )
 		{
 			if(!p_rFontId.empty())
