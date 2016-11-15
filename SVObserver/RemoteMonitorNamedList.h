@@ -30,46 +30,22 @@ struct MonitoredObject
 
 typedef std::deque<MonitoredObject> MonitoredObjectList;
 
-enum RejectQueueDepthConstraints
-{
-	MinRejectQueueDepth = 0,
-	DefaultRejectQueueDepth = 10,
-	MaxRejectQueueDepth = 50
-};
-
 class RemoteMonitorNamedList
 {
-#pragma region PrivateData
-private:
-	SVString m_name; // List Name
-	SVString m_PPQName; // PPQ Name
-	SVGUID m_PPQObjectID; // PPQ instance Guid
-	int m_rejectQueueDepth;
-	MonitoredObjectList m_productValuesList;
-	MonitoredObjectList m_productImagesList;
-	MonitoredObjectList m_rejectConditionList;
-	MonitoredObjectList m_failStatusList;
-	bool m_bActive;
-	SvSml::SVProductFilterEnum m_filter;
-#pragma endregion PrivateData
 
-#pragma region PrivateMethods
-	void ResolveGuidForPPQName();
-#pragma endregion PrivateMethods
 
 #pragma region PublicMethods
 public:
 	RemoteMonitorNamedList();
 	RemoteMonitorNamedList(const SVString& PPQName, const SVString& name);
 	RemoteMonitorNamedList(const SVString& PPQName, const SVString& name, const MonitoredObjectList& productValuesList, const MonitoredObjectList& productImagesList, const MonitoredObjectList& rejectConditionList, const MonitoredObjectList& failStatusList, int rejectDepth);
-	
+
 	const SVGUID& GetPPQObjectID() const;
 	const SVString& GetPPQName() const;
 	void SetPPQName(const SVString& PPQName); // is a blank name allowed?
 
 	const SVString& GetName() const;
 	void SetName(const SVString& name); // is a blank name allowed?
-	
 	int GetRejectDepthQueue() const;
 	void SetRejectDepthQueue(int depth);
 
@@ -90,7 +66,34 @@ public:
 
 	void SetProductFilter(SvSml::SVProductFilterEnum filter);
 	SvSml::SVProductFilterEnum GetProductFilter() const;
+	static int GetDefaultRejectQueueDepth();
+	static int GetMaxRejectQueueDepth();
 
 #pragma endregion PublicMethods
+
+#pragma region PrivateMethods
+private:
+	void ResolveGuidForPPQName();
+#pragma endregion PrivateMethods
+
+#pragma region PublicData
+public:
+	const static int MinRejectQueueDepth =1;
+#pragma endregion PublicData
+#pragma region PrivateData
+private:
+	SVString m_name; // List Name
+	SVString m_PPQName; // PPQ Name
+	SVGUID m_PPQObjectID; // PPQ instance Guid
+	int m_rejectQueueDepth;
+	MonitoredObjectList m_productValuesList;
+	MonitoredObjectList m_productImagesList;
+	MonitoredObjectList m_rejectConditionList;
+	MonitoredObjectList m_failStatusList;
+	bool m_bActive;
+	SvSml::SVProductFilterEnum m_filter;
+#pragma endregion PrivateData
+
+
 };
 

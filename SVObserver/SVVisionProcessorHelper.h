@@ -47,6 +47,16 @@ enum SVDataDefinitionListType
 	AllValuesAndAllImages			= 12,
 };
 
+struct MonitorlistPropeties
+{
+	
+	MonitorlistPropeties():RejectQueDepth(0), isActive(false)
+	{};
+	int RejectQueDepth;
+	bool isActive;
+	SVString ppqName;
+};
+
 const TCHAR StandardItems[] = _T( "StandardItems" );
 #pragma endregion Declarations
 
@@ -112,7 +122,16 @@ public:
 	HRESULT SetProductFilter( const SVString& rListName, SvSml::SVProductFilterEnum filter );
 	HRESULT GetProductFilter( const SVString& rListName, SvSml::SVProductFilterEnum& filter ) const;
 	HRESULT RegisterMonitorList( const SVString& rListName, const SVString& rPPQName, int rejectDepth, const SVNameSet& rProdList, const SVNameSet& rRejectCondList, const SVNameSet& rFailStatusList, SVNameStatusMap& rStatusOfItemsWithError );
-
+	
+	
+	//! Give the Properties of an existing Monitorlist
+	//! \param rListName [in]
+	//! \param ppqName [out]
+	//! \param RejectQueDepth [out]
+	//! \param isActive [out]
+	//! \returns HRESULT
+	HRESULT GetMonitorListProperties(const SVString& rListName, MonitorlistPropeties& properties);
+	
 	// These two (2) methods, Startup, Shutdown are only meant to be called by the main application class and no other
 	// They used to be protected and a friend class declaration was used, but that was a bad design as the friend was declares in another project
 	// So for now the restriction is made manually, just don't call these methods anywhere else, and described via this comment

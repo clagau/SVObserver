@@ -12,20 +12,25 @@
 #include "Stdafx.h"
 #include "RemoteMonitorNamedList.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
+#include "SVOMFCLibrary/SVOINIClass.h"
+#include "SVStatusLibrary/GlobalPath.h"
 #pragma endregion Includes
 
-RemoteMonitorNamedList::RemoteMonitorNamedList()
-: m_rejectQueueDepth(DefaultRejectQueueDepth)
-, m_bActive(false)
+const TCHAR* SharedMemorySectionKey = _T("SharedMemory");
+const TCHAR* DefaultRejectQeueDepthKey = _T("DefaultRejectQueueDepth");
+const TCHAR* MaxRejectQeueDepthKey = _T("MaxRejectQueueDepth");
+
+RemoteMonitorNamedList::RemoteMonitorNamedList(): m_bActive(false)
 {
+  m_rejectQueueDepth = GetDefaultRejectQueueDepth();
 }
 
 RemoteMonitorNamedList::RemoteMonitorNamedList(const SVString& PPQName, const SVString& name)
 : m_PPQName(PPQName)
 , m_name(name)
-, m_rejectQueueDepth(DefaultRejectQueueDepth)
 , m_bActive(false)
 {
+	 m_rejectQueueDepth = GetDefaultRejectQueueDepth();
 	ResolveGuidForPPQName();
 }
 
@@ -141,5 +146,32 @@ SvSml::SVProductFilterEnum RemoteMonitorNamedList::GetProductFilter() const
 void RemoteMonitorNamedList::ResolveGuidForPPQName()
 {
 	m_PPQObjectID = SVObjectManagerClass::Instance().GetObjectIdFromCompleteName(m_PPQName.c_str());
+}
+
+
+
+int  RemoteMonitorNamedList::GetDefaultRejectQueueDepth()
+{
+	static int DefaultRejectQueueDepth = -1;
+	if(DefaultRejectQueueDepth < 0)
+	{
+		SvOml::SVOINIClass reader(SvStl::GlobalPath::Inst().GetSVIMIniPath());
+		DefaultRejectQueueDepth= reader.GetValueInt(SharedMemorySectionKey, DefaultRejectQeueDepthKey, 10);
+		DefaultRejectQueueDepth  = std::max(DefaultRejectQueueDepth,RemoteMonitorNamedList::MinRejectQueueDepth);
+		DefaultRejectQueueDepth = std::min(DefaultRejectQueueDepth, GetMaxRejectQueueDepth());
+	}
+	return DefaultRejectQueueDepth;
+}
+
+int  RemoteMonitorNamedList::GetMaxRejectQueueDepth()
+{
+	static int MaxRejectQueueDepth = -1;
+	if(MaxRejectQueueDepth < 0)
+	{
+		SvOml::SVOINIClass reader(SvStl::GlobalPath::Inst().GetSVIMIniPath());
+		MaxRejectQueueDepth= reader.GetValueInt(SharedMemorySectionKey, MaxRejectQeueDepthKey, 50);
+		MaxRejectQueueDepth = std::max(MaxRejectQueueDepth, RemoteMonitorNamedList::MinRejectQueueDepth ); 
+	}
+	return MaxRejectQueueDepth;
 }
 

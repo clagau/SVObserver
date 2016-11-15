@@ -23,7 +23,8 @@
 
 namespace Seidenader { namespace SVSharedMemoryLibrary
 {
-
+//@WARNING[MEC][7.50][09.11.2016] Only One Instance of this Singelton is allowed in the system 
+//only use this singelton in the SVObserver library!
 class SVSharedMemorySingleton
 {
 public:

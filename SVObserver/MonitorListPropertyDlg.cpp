@@ -134,7 +134,7 @@ void MonitorListPropertyDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResu
 		{
 			int iDepth;
 			m_Tree.FindItem(PROP_MONITOR_LIST_DEPTH)->GetItemValue(iDepth);
-			if (iDepth >= MinRejectQueueDepth && iDepth <= MaxRejectQueueDepth)
+			if (iDepth >= RemoteMonitorNamedList::MinRejectQueueDepth && iDepth <= RemoteMonitorNamedList::GetMaxRejectQueueDepth())
 			{
 				m_MonitorListRejectQueueDepth = iDepth;
 			}

@@ -125,7 +125,7 @@ void MonitorListAddRemoveDlg::OnBnClickedAddBtn()
 			// Add to GUI
 			const CString& tmp = BuildListDisplayName(PPQName, name);
 			int iInsert = m_UsedList.AddString(tmp);
-			m_UsedList.SetItemData(iInsert, DefaultRejectQueueDepth); // default reject depth of 10
+			m_UsedList.SetItemData(iInsert,  RemoteMonitorNamedList::GetDefaultRejectQueueDepth()); 
 			m_UsedList.SetCurSel(iInsert);
 		
 			// Add it to the master list

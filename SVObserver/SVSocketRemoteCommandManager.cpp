@@ -62,8 +62,9 @@ SVRemoteCommandFunctions::SVCommandFunctionMap SVRemoteCommandFunctions::m_Async
 (SVRC::cmdName::qryFail, &SVRemoteCommandFunctions::QueryFailStatusList)
 (SVRC::cmdName::qryMonListNames, &SVRemoteCommandFunctions::QueryMonitorListNames)
 (SVRC::cmdName::getInspectionNames, &SVRemoteCommandFunctions::GetInspectionNames)
-
 (SVRC::cmdName::shutdownSVIM, &SVRemoteCommandFunctions::Shutdown)
+(SVRC::cmdName::getMonitorListProperties, &SVRemoteCommandFunctions::GetMonitorListProperties)
+(SVRC::cmdName::getMaxRejectDeptCmd, &SVRemoteCommandFunctions::GetMaxRejectDepth)
 ;
 
 bool SVRemoteCommandFunctions::IsAsyncCommand( const std::string& p_rJsonCommand )
@@ -1751,7 +1752,7 @@ HRESULT SVRemoteCommandFunctions::RegisterMonitorList( const std::string& rJsonC
 			if( jsonArg.isInt() )
 			{
 				rejectDepth = jsonArg.asInt();
-				if (MinRejectQueueDepth > rejectDepth && MaxRejectQueueDepth < rejectDepth)
+				if (RemoteMonitorNamedList::MinRejectQueueDepth > rejectDepth && RemoteMonitorNamedList::GetMaxRejectQueueDepth() < rejectDepth)
 				{
 					hr = E_INVALIDARG;
 				}
@@ -2010,6 +2011,88 @@ HRESULT SVRemoteCommandFunctions::QueryFailStatusList( const std::string& rJsonC
 
 	return hr;
 }
+
+
+
+HRESULT SVRemoteCommandFunctions::GetMonitorListProperties( const std::string& rJsonCommand, std::string& rJsonResults )
+{
+	HRESULT hr = S_OK;
+
+	std::string ListName;
+	Json::Reader Reader;
+	Json::Value JsonCmdValues;
+
+	if( Reader.parse( rJsonCommand, JsonCmdValues, false ) )
+	{
+		std::string fileName = SvStl::GlobalPath::Inst().GetTempPath(_T("GetMonitorListProperties-cmd")); 
+		WriteJsonCommandToFile(JsonCmdValues, fileName);
+
+		Json::Value JsonArguments;
+
+		if( JsonCmdValues.isObject() )
+		{
+			JsonArguments = JsonCmdValues[ SVRC::cmd::arg ];
+		}
+
+		if( JsonArguments.isObject() )
+		{
+			Json::Value JsonListName = JsonArguments[ SVRC::arg::listName ];
+
+			if( JsonListName.isString() )
+			{
+				ListName = JsonListName.asString();
+			}
+			else
+			{
+				hr = E_INVALIDARG;
+			}
+		}
+		else
+		{
+			hr = E_INVALIDARG;
+		}
+	}
+	else
+	{
+		hr = E_INVALIDARG;
+	}
+	
+	Json::Value Results(Json::objectValue);
+	if( S_OK == hr )
+	{
+		
+		MonitorlistPropeties  prop;
+		hr = SVVisionProcessorHelper::Instance().GetMonitorListProperties(ListName,prop);
+		if( S_OK == hr )
+		{
+			Results[ SVRC::result::rejectDepth] = static_cast<Json::Value::Int> (prop.RejectQueDepth);
+			Results[ SVRC::result::active] =  static_cast<Json::Value::Int>(prop.isActive);
+			Results[ SVRC::result::ppqName] =  prop.ppqName.c_str();
+		}
+	}
+	
+	
+	std::string fileName = SvStl::GlobalPath::Inst().GetTempPath(_T("GetMonitorListProperties-rsp")); 
+	WriteResultToJsonAndFile(rJsonCommand, rJsonResults, Results, fileName, hr);
+	return hr;
+}
+
+
+HRESULT SVRemoteCommandFunctions::GetMaxRejectDepth( const std::string& rJsonCommand, std::string& rJsonResults )
+{
+	HRESULT hr = S_OK;
+	std::string FileName =   SvStl::GlobalPath::Inst().GetTempPath(_T("GetMaxRejectDepth-cmd")).c_str() ;
+	WriteJsonCommandToFile(rJsonCommand, FileName);
+	
+	Json::Value Results(Json::objectValue);
+	Results[SVRC::result::maxRejectDepth] = RemoteMonitorNamedList::GetMaxRejectQueueDepth();
+	
+	FileName = SvStl::GlobalPath::Inst().GetTempPath(_T("GetMaxRejectDepth-rsp")).c_str() ; 
+	WriteResultToJsonAndFile(rJsonCommand, rJsonResults, Results, FileName, hr);
+	return hr;
+}
+
+
 
 HRESULT SVRemoteCommandFunctions::GetInspectionNames( const std::string& rJsonCommand, std::string& rJsonResults )
 {

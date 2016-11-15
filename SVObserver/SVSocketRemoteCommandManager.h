@@ -110,6 +110,8 @@ protected:
 	static HRESULT GetInspectionNames( const std::string& rJsonCommand, std::string& rJsonResults );
 	static HRESULT GetProductFilter( const std::string& rJsonCommand, std::string& rJsonResults );
 	static HRESULT SetProductFilter( const std::string& rJsonCommand, std::string& rJsonResults );
+	static HRESULT GetMonitorListProperties( const std::string& rJsonCommand, std::string& rJsonResults );
+	static HRESULT GetMaxRejectDepth( const std::string& rJsonCommand, std::string& rJsonResults );
 
 	inline static HRESULT WriteJsonCommandToFile(const Json::Value& p_rJsonValues, const std::string& p_rFileName);
 	inline static HRESULT WriteJsonCommandToFile(const std::string& p_rJsonCommand, const std::string& p_rFileName);

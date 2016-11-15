@@ -8,6 +8,7 @@
 //* .Current Version : $Revision:   1.9  $
 //* .Check In Date   : $Date:   20 Nov 2014 05:04:28  $
 //******************************************************************************
+//include file is shared between SVobserver  and SVRC Project!
 
 #pragma once
 
@@ -22,6 +23,9 @@ namespace SVRC
 		const std::string arg = "Arguments";
 		const std::string reslts = "Results";
 		const std::string notfctn = "Notification";
+		const std::string dataItems = "DataItems";
+		const std::string command = "Command";
+		const std::string response = "Response";
 	}
 
 	namespace cmdName
@@ -54,6 +58,8 @@ namespace SVRC
 		const std::string getInspectionNames = "GetInspectionNames";
 		const std::string getProductFilter = "GetProductFilter";
 		const std::string setProductFilter = "SetProductFilter";
+		const std::string getMonitorListProperties = "GetMonitorListProperties";
+		const std::string getMaxRejectDeptCmd = "GetMaxRejectQeueDepth";
 	}
 
 	namespace arg
@@ -111,6 +117,10 @@ namespace SVRC
 		const std::string destinationFileName = "destinationFileName";
 		const std::string entries = "Entries";
 		const std::string filter = "filter";
+		const std::string active = "active";
+		const std::string rejectDepth = "rejectDepth";
+		const std::string ppqName = "ppqName";
+		const std::string maxRejectDepth = "maxRejectDepth";
 	}
 
 	//Value Object
@@ -184,4 +194,3 @@ namespace SVRC
 		const std::string	MessageNotification = "MessageNotification";
 	}
 }
-

@@ -1010,6 +1010,39 @@ HRESULT SVVisionProcessorHelper::QueryFailStatusList( const SVString& rListName,
 	return hr;
 }
 
+
+HRESULT SVVisionProcessorHelper::GetMonitorListProperties(const SVString& rListName, MonitorlistPropeties& properties)
+{
+	SVConfigurationObject* pConfig = nullptr;
+
+	HRESULT hr = SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
+	if ( nullptr != pConfig )
+	{
+		const RemoteMonitorList& rList = pConfig->GetRemoteMonitorList();
+		RemoteMonitorList::const_iterator it = rList.find( rListName );
+		if ( it != rList.end() )
+		{
+			const RemoteMonitorNamedList& rNamedList = it->second;
+			properties.isActive = rNamedList.IsActive();
+			properties.RejectQueDepth = rNamedList.GetRejectDepthQueue();
+			properties.ppqName = rNamedList.GetPPQName();
+		}
+		else
+		{
+			hr = MAKE_HRESULT(SEVERITY_ERROR, FACILITY_NT_BIT, ERROR_NOT_FOUND);
+		}
+	}
+	else
+	{
+		hr = SVMSG_SVO_95_NO_CONFIGURATION_OBJECT;
+	}
+	return hr;
+
+
+
+}
+
+
 HRESULT SVVisionProcessorHelper::ActivateMonitorList( const SVString& rListName, bool bActivate )
 {
 	HRESULT hr = S_OK;
