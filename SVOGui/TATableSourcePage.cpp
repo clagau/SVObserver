@@ -16,6 +16,7 @@
 #include "GuiCommands\GetAvailableObjects.h"
 #include "GuiCommands\ConnectToObject.h"
 #include "GuiCommands\GetInputs.h"
+#include "ObjectInterfaces\TextDefineSvOi.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -75,6 +76,10 @@ namespace Seidenader { namespace SVOGui
 			{
 				m_inputName = rConnectedList.begin()->first;
 				selectedTableName = rConnectedList.begin()->second.first;
+			}
+			else
+			{	//this block should not reached, but if no input found, use default inputName and try with them to solve the problem. 
+				m_inputName = SvOi::cInputTag_SourceTable;
 			}
 		}
 

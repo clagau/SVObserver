@@ -66,7 +66,6 @@ namespace Seidenader { namespace SVObserver
 
 	const TCHAR* const cInputTag_SortColumn = _T( "SortColumn" );
 	const TCHAR* const cInputTag_ExcludeColumn = _T( "ExcludeColumn" );
-	const TCHAR* const cInputTag_SourceTable = _T( "SourceTable" );
 	const TCHAR* const cInputTag_LongResultValue = _T( "LongResultValue" );
 
 	const TCHAR* const cTrue = _T( "True" );

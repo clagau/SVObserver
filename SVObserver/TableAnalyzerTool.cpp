@@ -245,7 +245,7 @@ void TableAnalyzerTool::BuildInputObjectList ()
 	// Source Table.
 	m_sourceTableObjectInfo.SetInputObjectType( TableObjectType );
 	m_sourceTableObjectInfo.SetObject( GetObjectInfo() );
-	RegisterInputObject( &m_sourceTableObjectInfo, SvO::cInputTag_SourceTable );
+	RegisterInputObject( &m_sourceTableObjectInfo, SvOi::cInputTag_SourceTable );
 
 	addDefaultInputObjects();
 }

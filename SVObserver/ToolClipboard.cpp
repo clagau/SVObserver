@@ -529,26 +529,29 @@ HRESULT ToolClipboard::validateGuids( SVString& rXmlData, SVTreeType& rTree, int
 			//Color Tool do not use the ToolImage, for Color Tool the ToolImageId should not be changed because the ID are used also from Band0
 			if( SVColorToolClassGuid != ToolTypeGuid )
 			{
-				bool useStandardImage = true;
-				SVObjectClass* pImage = SVObjectManagerClass::Instance().GetObject( ToolImageGuid );
-				if( nullptr !=  pImage  )
+				if (GUID_NULL != ToolImageGuid)
 				{
-					SVToolClass* pTool = dynamic_cast<SVToolClass*> (pImage->GetAncestor( SVToolObjectType ));
-					if( nullptr != pTool && nullptr != m_rInspection.GetToolSet() )
+					bool useStandardImage = true;
+					SVObjectClass* pImage = SVObjectManagerClass::Instance().GetObject( ToolImageGuid );
+					if( nullptr !=  pImage  )
 					{
-						int ImageToolsetIndex = m_rInspection.GetToolSet()->GetIndex( pTool );
-						if(ImageToolsetIndex < ToolListindex && InspectionGuid == m_rInspection.GetUniqueObjectID())
+						SVToolClass* pTool = dynamic_cast<SVToolClass*> (pImage->GetAncestor( SVToolObjectType ));
+						if( nullptr != pTool && nullptr != m_rInspection.GetToolSet() )
 						{
-							useStandardImage = false;
+							int ImageToolsetIndex = m_rInspection.GetToolSet()->GetIndex( pTool );
+							if(ImageToolsetIndex < ToolListindex && InspectionGuid == m_rInspection.GetUniqueObjectID())
+							{
+								useStandardImage = false;
+							}
 						}
 					}
-				}
 
-				if( useStandardImage && nullptr != m_rInspection.GetToolSetMainImage() )
-				{
-					SVGUID DefaultImageGuid( GUID_NULL );
-					DefaultImageGuid = m_rInspection.GetToolSetMainImage()->GetUniqueObjectID();
-					SvUl_SF::searchAndReplace( rXmlData, ToolImageGuid.ToString().c_str(),  DefaultImageGuid.ToString().c_str() );
+					if( useStandardImage && nullptr != m_rInspection.GetToolSetMainImage() )
+					{
+						SVGUID DefaultImageGuid( GUID_NULL );
+						DefaultImageGuid = m_rInspection.GetToolSetMainImage()->GetUniqueObjectID();
+						SvUl_SF::searchAndReplace( rXmlData, ToolImageGuid.ToString().c_str(),  DefaultImageGuid.ToString().c_str() );
+					}
 				}
 			}
 		}
