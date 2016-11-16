@@ -891,8 +891,8 @@ HRESULT SVSetupDialogManager::SVPatternAnalyzerClassSetupDialog( const SVGUID& p
 		// Model Selection values
 		ModelPage.m_nXPos = l_pAnalyzer->m_lpatModelOriginX;
 		ModelPage.m_nYPos = l_pAnalyzer->m_lpatModelOriginY;
-		ModelPage.m_lModelWidth = l_pAnalyzer->m_lpatModelWidth;
-		ModelPage.m_lModelHeight = l_pAnalyzer->m_lpatModelHeight;
+		ModelPage.m_lModelWidth = l_pAnalyzer->getModelWidth();
+		ModelPage.m_lModelHeight = l_pAnalyzer->getModelHeidght();
 		l_pAnalyzer->GetModelImageFileName(ModelPage.m_strModelName); 
 
 		// General page

@@ -1071,6 +1071,8 @@ extern /*const*/ GUID SVpatCircularOverscanObjectGuid;
 extern /*const*/ GUID SVpatPreliminaryAcceptanceThresholdObjectGuid;
 extern /*const*/ GUID SVpatFastFindObjectGuid;
 extern /*const*/ GUID SVpatModelStepObjectGuid;
+extern /*const*/ GUID SVpatModelWidthObjectGuid;
+extern /*const*/ GUID SVpatModelHeightObjectGuid;
 extern /*const*/ GUID SVpatBeginningResolutionLevelObjectGuid;
 extern /*const*/ GUID SVpatFinalResolutionLevelObjectGuid;
 extern /*const*/ GUID SVpatAdditionalCandidatesObjectGuid;

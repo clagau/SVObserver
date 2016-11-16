@@ -81,8 +81,6 @@ SVPatternAnalyzerClass::SVPatternAnalyzerClass(BOOL BCreateDefaultTaskList, SVOb
 	m_outObjectInfo.ObjectTypeInfo.SubType = SVPatternAnalyzerObjectType;
 	m_nPatternIndex = -1;
 	
-	m_lpatModelWidth = 4;	// minimum Width
-	m_lpatModelHeight = 4;	// minimum Height
 	m_lpatModelOriginX = 0;	
 	m_lpatModelOriginY = 0;	
 
@@ -119,6 +117,8 @@ SVPatternAnalyzerClass::SVPatternAnalyzerClass(BOOL BCreateDefaultTaskList, SVOb
 	RegisterEmbeddedObject(&msv_dpatResultAngle, SVpatResultAngleObjectGuid, IDS_OBJECTNAME_PAT_RESULTANGLE, false, SVResetItemNone );
 
 	RegisterEmbeddedObject(&msv_lpatNumFoundOccurances, SVpatResultNumFoundOccurancesObjectGuid, IDS_OBJECTNAME_PAT_NBRFOUNDOCCURANCES, false, SVResetItemNone );
+	RegisterEmbeddedObject(&m_lpatModelWidth, SVpatModelWidthObjectGuid, IDS_OBJECTNAME_PAT_MODELWIDTH, false, SVResetItemOwner );
+	RegisterEmbeddedObject(&m_lpatModelHeight, SVpatModelHeightObjectGuid, IDS_OBJECTNAME_PAT_MODELHEIGHT, false, SVResetItemOwner );
 
   // Set default values for search parameters
 	SetDefaultSearchValues ();
@@ -222,6 +222,8 @@ void SVPatternAnalyzerClass::SetDefaultSearchValues()
 	msv_lpatAdditionalCandidates.SetDefaultValue(SVValueDefault, true);
 	msv_dpatCandidateSpacingXMin.SetDefaultValue(SVValueDefault, true);
 	msv_dpatCandidateSpacingYMin.SetDefaultValue(SVValueDefault, true);
+	m_lpatModelWidth.SetDefaultValue(4, false);
+	m_lpatModelHeight.SetDefaultValue(4, false);
 
 	m_vec2dPatResults.fill(0.0);
 }
@@ -231,8 +233,8 @@ void SVPatternAnalyzerClass::GetModelExtents(long& xPos, long& yPos, long& width
 	xPos = m_lpatModelOriginX;
 	yPos = m_lpatModelOriginY;
 
-	width = m_lpatModelWidth;
-	height = m_lpatModelHeight;
+	m_lpatModelWidth.GetValue(width);
+	m_lpatModelHeight.GetValue(height);
 
 	// Adjust Offsets for Circular Scan 
 	// because the result positions of the found pattern will be the inner rect
@@ -259,8 +261,8 @@ void SVPatternAnalyzerClass::SetModelExtents(long xPos, long yPos, long width, l
 	m_lpatModelOriginX = xPos;
 	m_lpatModelOriginY = yPos;
 
-	m_lpatModelWidth = width;
-	m_lpatModelHeight = height;
+	m_lpatModelWidth.SetValue(1, width);
+	m_lpatModelHeight.SetValue(1, height);
 }
 
 void SVPatternAnalyzerClass::SetCircularOverscan(bool bCircularOverscan)
@@ -280,8 +282,11 @@ BOOL SVPatternAnalyzerClass::CreateModelBuffer()
 		m_patBuffer.SetImageProperty( SVImagePropertyBandNumber, 1 );
 
 		m_patBuffer.SetExtentProperty( SVExtentPropertyPositionPoint, 0 );
-		m_patBuffer.SetExtentProperty( SVExtentPropertyWidth, m_lpatModelWidth );
-		m_patBuffer.SetExtentProperty( SVExtentPropertyHeight, m_lpatModelHeight );
+		long tmp = 0;
+		m_lpatModelWidth.GetValue(tmp);
+		m_patBuffer.SetExtentProperty( SVExtentPropertyWidth, tmp );
+		m_lpatModelHeight.GetValue(tmp);
+		m_patBuffer.SetExtentProperty( SVExtentPropertyHeight, tmp );
 
 		l_bOk = S_OK == SVImageProcessingClass::Instance().CreateImageBuffer( m_patBuffer, m_patBufferHandlePtr );
 	}
@@ -325,8 +330,11 @@ BOOL SVPatternAnalyzerClass::UpdateModelFromInputImage()
 
 		childImageInfo.SetExtentProperty( SVExtentPropertyPositionPointX, m_lpatModelOriginX );
 		childImageInfo.SetExtentProperty( SVExtentPropertyPositionPointY, m_lpatModelOriginY );
-		childImageInfo.SetExtentProperty( SVExtentPropertyWidth, m_lpatModelWidth );
-		childImageInfo.SetExtentProperty( SVExtentPropertyHeight, m_lpatModelHeight );
+		long tmp = 0;
+		m_lpatModelWidth.GetValue(tmp);
+		childImageInfo.SetExtentProperty( SVExtentPropertyWidth, tmp );
+		m_lpatModelHeight.GetValue(tmp);
+		childImageInfo.SetExtentProperty( SVExtentPropertyHeight, tmp );
 
 		HRESULT hr = SVImageProcessingClass::Instance().CreateImageChildBuffer(imageInfo, l_ImageHandle, childImageInfo, childImageHandle);
 		if (S_OK == hr && !( childImageHandle.empty() ) && !( m_patBufferHandlePtr.empty() ) )
@@ -365,11 +373,18 @@ BOOL SVPatternAnalyzerClass::UpdateModelFromBuffer()
 
 		SVMatroxPatternInterface::SVStatusCode l_Code;
 
-		l_Code = SVMatroxBufferInterface::Get( l_PatMilHandle.GetBuffer(), SVSizeX, m_lpatModelWidth );
+		long modelWidth=0;
+		long modelHeight=0;
+		l_Code = SVMatroxBufferInterface::Get( l_PatMilHandle.GetBuffer(), SVSizeX, modelWidth );
 		
 		if (l_Code == SVMEE_STATUS_OK)
 		{
-			l_Code = SVMatroxBufferInterface::Get( l_PatMilHandle.GetBuffer(), SVSizeY, m_lpatModelHeight );
+			m_lpatModelWidth.SetValue(1, modelWidth);
+			l_Code = SVMatroxBufferInterface::Get( l_PatMilHandle.GetBuffer(), SVSizeY, modelHeight );
+			if (l_Code == SVMEE_STATUS_OK)
+			{
+				m_lpatModelHeight.SetValue(1, modelHeight);
+			}
 		}
 
 		if (l_Code == SVMEE_STATUS_OK)
@@ -387,7 +402,7 @@ BOOL SVPatternAnalyzerClass::UpdateModelFromBuffer()
 			if (bCircularScan)
 			{
 				POINT pos = { 0, 0 };
-				SIZE size = { m_lpatModelWidth, m_lpatModelHeight };
+				SIZE size = { modelWidth, modelHeight };
 				RECT innerRect = SVMatroxPatternInterface::CalculateOverscanInnerRect(pos, size);
 				
 				l_Code = SVMatroxPatternInterface::Create( m_patModelHandle, 
@@ -403,7 +418,7 @@ BOOL SVPatternAnalyzerClass::UpdateModelFromBuffer()
 				l_Code = SVMatroxPatternInterface::Create( m_patModelHandle, 
 															l_PatMilHandle.GetBuffer(),
 															0, 0,
-															m_lpatModelWidth, m_lpatModelHeight );
+															modelWidth, modelHeight );
 			}
 		}
 
@@ -434,10 +449,16 @@ BOOL SVPatternAnalyzerClass::RestorePattern (CString strImageFile, SvOi::Message
 
 	if ( l_Code == SVMEE_STATUS_OK )
 	{
-		l_Code = SVMatroxBufferInterface::Get( l_ImportHandle, SVSizeX, m_lpatModelWidth );
+		long tmp=0;
+		l_Code = SVMatroxBufferInterface::Get( l_ImportHandle, SVSizeX, tmp );
 		if ( l_Code == SVMEE_STATUS_OK )
 		{
-			l_Code = SVMatroxBufferInterface::Get( l_ImportHandle, SVSizeY, m_lpatModelHeight );
+			m_lpatModelWidth.SetValue(1, tmp);
+			l_Code = SVMatroxBufferInterface::Get( l_ImportHandle, SVSizeY, tmp );
+			if (l_Code == SVMEE_STATUS_OK)
+			{
+				m_lpatModelHeight.SetValue(1, tmp);
+			}
 		}
 		if ( l_Code == SVMEE_STATUS_OK )
 		{
@@ -1112,8 +1133,10 @@ HRESULT SVPatternAnalyzerClass::onCollectOverlays(SVImageClass* p_pImage, SVExte
 
 			if (S_OK == hr)
 			{
-				long lpatModelWidth = m_lpatModelWidth;
-				long lpatModelHeight = m_lpatModelHeight;
+				long lpatModelWidth = 0;
+				long lpatModelHeight = 0;
+				m_lpatModelWidth.GetValue(lpatModelWidth);
+				m_lpatModelWidth.GetValue(lpatModelHeight);
 
 				// Check if CircularOverscan was used
 				bool bCircularScan;
@@ -1121,7 +1144,7 @@ HRESULT SVPatternAnalyzerClass::onCollectOverlays(SVImageClass* p_pImage, SVExte
 				if (bCircularScan)
 				{
 					POINT pos = { 0, 0 };
-					SIZE size = { m_lpatModelWidth, m_lpatModelHeight};
+					SIZE size = { lpatModelWidth, lpatModelHeight};
 
 					RECT rect = SVMatroxPatternInterface::CalculateOverscanInnerRect(pos, size);
 					lpatModelWidth = rect.right - rect.left;
@@ -1209,16 +1232,18 @@ BOOL SVPatternAnalyzerClass::IsPtOverResult( CPoint point )
 
 		if (S_OK == hr)
 		{
-			long lpatModelWidth = m_lpatModelWidth;
-			long lpatModelHeight = m_lpatModelHeight;
-
+			long lpatModelWidth = 0;
+			long lpatModelHeight = 0;
+			m_lpatModelWidth.GetValue(lpatModelWidth);
+			m_lpatModelWidth.GetValue(lpatModelHeight);
+			
 			// Check if CircularOverscan was used
 			bool bCircularScan;
 			msv_bpatCircularOverscan.GetValue(bCircularScan);
 			if (bCircularScan)
 			{
 				POINT pos = { 0, 0 };
-				SIZE size = { m_lpatModelWidth, m_lpatModelHeight};
+				SIZE size = { lpatModelWidth, lpatModelHeight};
 
 				RECT rect = SVMatroxPatternInterface::CalculateOverscanInnerRect(pos, size);
 				lpatModelWidth = rect.right - rect.left;
@@ -1374,7 +1399,11 @@ bool SVPatternAnalyzerClass::IsValidSize()
 
 		if ( S_OK == hrOk )
 		{
-			if( oRec.bottom < m_lpatModelHeight || oRec.right < m_lpatModelWidth )
+			long lpatModelWidth = 0;
+			long lpatModelHeight = 0;
+			m_lpatModelWidth.GetValue(lpatModelWidth);
+			m_lpatModelWidth.GetValue(lpatModelHeight);
+			if( oRec.bottom < lpatModelHeight || oRec.right < lpatModelWidth )
 			{
 				bRet = false;
 			}
@@ -1385,5 +1414,19 @@ bool SVPatternAnalyzerClass::IsValidSize()
 		bRet = false;
 	}
 	return bRet;
+}
+
+long SVPatternAnalyzerClass::getModelWidth() const 
+{ 
+	long modelWidth = 0;
+	m_lpatModelWidth.GetValue(modelWidth);
+	return modelWidth;
+}
+
+long SVPatternAnalyzerClass::getModelHeidght() const 
+{ 
+	long modelHeidght = 0;
+	m_lpatModelHeight.GetValue(modelHeidght);
+	return modelHeidght;
 }
 

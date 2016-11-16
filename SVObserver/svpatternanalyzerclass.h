@@ -104,6 +104,9 @@ public:
 	virtual HRESULT ResetObject();
 	bool IsValidSize();
 
+	long getModelWidth() const;
+	long getModelHeidght() const;
+
 protected:
 	void CreateResult();
 
@@ -117,8 +120,8 @@ protected:
 private:
 	BOOL ResetImageFile();
 
-	long m_lpatModelWidth;		// Model Width.
-	long m_lpatModelHeight;		// Model Height.
+	SVLongValueObjectClass m_lpatModelWidth;		// Model Width.
+	SVLongValueObjectClass m_lpatModelHeight;		// Model Height.
 	long m_lpatModelOriginX;	// X coordinate of search region origin with in target image.
 	long m_lpatModelOriginY;	// Y coordinate of search region origin with in target image.
 	
