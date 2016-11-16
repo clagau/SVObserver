@@ -546,10 +546,24 @@ HRESULT ToolClipboard::validateGuids( SVString& rXmlData, SVTreeType& rTree, int
 						}
 					}
 
-					if( useStandardImage && nullptr != m_rInspection.GetToolSetMainImage() )
+					if( useStandardImage )
 					{
 						SVGUID DefaultImageGuid( GUID_NULL );
-						DefaultImageGuid = m_rInspection.GetToolSetMainImage()->GetUniqueObjectID();
+						if( m_rInspection.IsColorCamera() )
+						{
+							SVObjectClass* pBand0Image = dynamic_cast<SVObjectClass*> (m_rInspection.GetToolSet()->getBand0Image());
+							if( nullptr != pBand0Image )
+							{
+								DefaultImageGuid = pBand0Image->GetUniqueObjectID();
+							}
+						}
+						else
+						{
+							if( nullptr != m_rInspection.GetToolSetMainImage() )
+							{
+								DefaultImageGuid = m_rInspection.GetToolSetMainImage()->GetUniqueObjectID();
+							}
+						}
 						SvUl_SF::searchAndReplace( rXmlData, ToolImageGuid.ToString().c_str(),  DefaultImageGuid.ToString().c_str() );
 					}
 				}
