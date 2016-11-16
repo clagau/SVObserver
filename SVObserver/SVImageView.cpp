@@ -55,6 +55,12 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
+
+
+const  LPCTSTR  RegSection = _T( "Settings" );
+const  LPCTSTR  RegKeySaveViewPath = _T( "SaveViewFilePath" );
+const LPCTSTR  DefaultPath =  _T( "C:\\Images" );  
+
 static void UpdatePaletteForLut(bool bLut, LPDIRECTDRAWSURFACE7 pSurface)
 {
 	DDPIXELFORMAT l_ddPixelFormat;
@@ -628,22 +634,34 @@ void SVImageViewClass::SaveViewOrImageToDisk(bool ViewOnly, bool showOverlays)
 	}
 
 	m_ViewOrImageFilename.SetFileType(SV_IMAGE_SOURCE_FILE_TYPE);
-
+	
+	CString csPath = AfxGetApp()->GetProfileString( RegSection,
+		RegKeySaveViewPath, 
+		DefaultPath );
+	m_ViewOrImageFilename.SetPathName(csPath);
+	
 	BOOL bResult = m_ViewOrImageFilename.SaveFile(); // Show Save File Dialog
-	CString Filepath = m_ViewOrImageFilename.GetFullFileName();
 
-	if(ViewOnly)
+	if(bResult)
 	{
-		CRect SourceRect;
-		CRect DestRect;
+		csPath = m_ViewOrImageFilename.GetPathName();
+		AfxGetApp()->WriteProfileString( RegSection, RegKeySaveViewPath, csPath );
 
-		auto Status = GetRectInfo( SourceRect, DestRect );
+		CString Filepath = m_ViewOrImageFilename.GetFullFileName();
 
-		Status = BlitToScaledSurface( SourceRect, DestRect, Filepath, showOverlays);
-	}
-	else // showOverlays is ignored for underlying images: there was no easy way to mark underlying images with overlays
-	{
-		pCurrentImage->Save(SVString(Filepath));
+		if(ViewOnly)
+		{
+			CRect SourceRect;
+			CRect DestRect;
+
+			auto Status = GetRectInfo( SourceRect, DestRect );
+
+			Status = BlitToScaledSurface( SourceRect, DestRect, Filepath, showOverlays);
+		}
+		else // showOverlays is ignored for underlying images: there was no easy way to mark underlying images with overlays
+		{
+			pCurrentImage->Save(SVString(Filepath));
+		}
 	}
 
 }
