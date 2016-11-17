@@ -241,7 +241,7 @@ void SVExternalToolDlg::OnAdd()
 	bool bFullAccess = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
 	SvMc::SVFileDialog cfd(true, bFullAccess, _T("dll"), _T(""),
 		OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
-		_T("Dynamic Link Library(*.dll)|*.dll|All Files (*.*)|*.*||"));
+		_T("All Files (*.*)|*.*|Dynamic Link Library(*.dll)|*.dll||"));
 
 	TCHAR tszPath[MAX_PATH]={0};
 	_tcscpy(tszPath, m_strLastDllPath);
