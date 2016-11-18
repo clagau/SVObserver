@@ -216,7 +216,7 @@ HRESULT SVGigeCameraFileReader::ReadParams( SVDeviceParamCollection& rParams )
 	ReadCameraFileLongParam( rParams, DeviceParamHorizontalBinning, sSection );
 	ReadCameraFileLongParam( rParams, DeviceParamVerticalBinning, sSection );
 
-		ReadCustomParams(m_Filename, rParams);
+	ReadCustomParams(m_Filename, rParams);
 	return Result;
 }
 
