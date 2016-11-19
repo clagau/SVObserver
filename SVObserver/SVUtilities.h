@@ -33,7 +33,5 @@ public:
 
 private:
 	BOOL ClearMenu (CMenu *pMenu);
-
-	SVString m_UtilityKey;
 };
 

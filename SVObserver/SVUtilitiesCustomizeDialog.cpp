@@ -12,7 +12,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVUtilitiesCustomizeDialog.h"
-#include "SVStatusLibrary/SVRegistry.h"
 #include "SVOMFCLibrary/SVFileNameClass.h"
 #include "SVObserver.h"
 #include "SVUtilityIniClass.h"
@@ -27,11 +26,6 @@
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
-
-/* Globals */
-DWORD gmdwLastId;
-CString gmszUtilityKeyStr;
-CString gmszIdValueNameStr;
 
 SVUtilitiesCustomizeDialogClass::SVUtilitiesCustomizeDialogClass(CWnd* pParent /*=nullptr*/)
 	: CDialog(SVUtilitiesCustomizeDialogClass::IDD, pParent)
@@ -78,38 +72,10 @@ BEGIN_MESSAGE_MAP(SVUtilitiesCustomizeDialogClass, CDialog)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-/////////////////////////////////////////////////////////////////////////////
-// SVUtilitiesCustomizeDialogClass message handlers
-BOOL CALLBACK LoadComboBox (CString &szKeyName, LPVOID pVoid)
-{
-	CString szKey;
-
-	szKey.Format (_T("%s\\%s"), gmszUtilityKeyStr, szKeyName);
-	SVRegistryClass reg(szKey);
-
-	reg.SetRegistryValue (gmszIdValueNameStr, gmdwLastId++);
-
-	CComboBox *pBox = (CComboBox *) pVoid;
-	pBox->AddString (szKeyName);
-
-	return TRUE;
-}
-
 BOOL SVUtilitiesCustomizeDialogClass::OnInitDialog() 
 {
 	CDialog::OnInitDialog();
 
-	mszCommandValueName = _T("Command");
-	mszArgumentsValueName = _T("Arguments");
-	mszWorkingDirectoryValueName = _T("Working Directory");
-	mszPromptValueName = _T("Prompt For Arguments");
-	mszIdValueName = _T("Menu Id");
-
-	gmszIdValueNameStr = mszIdValueName;
-	gmszUtilityKeyStr = mszUtilityKey;
-	gmdwLastId = ID_EXTRAS_UTILITIES_BASE;
-
-	SVRegistryClass reg(mszUtilityKey); // Note: mszUtilityKey MUST be set in calling routine before DoModal() is called!
 	CComboBox *pBox;
 
 	pBox = (CComboBox *) GetDlgItem (IDC_CUSTOMIZE_MENUTEXT);
@@ -134,7 +100,6 @@ BOOL SVUtilitiesCustomizeDialogClass::OnInitDialog()
 
 void SVUtilitiesCustomizeDialogClass::OnSelEndOkCustomizeMenuText() 
 {
-	CString szKey;
 	CComboBox *pBox;
 	int iCurSel;
 	SVObserverApp* pApp = (SVObserverApp *)AfxGetApp();
@@ -224,7 +189,6 @@ void SVUtilitiesCustomizeDialogClass::SetDeleteState(BOOL bEnabled)
 
 void SVUtilitiesCustomizeDialogClass::OnApply() 
 {
-	CString szKey;
 	CComboBox *pBox;
 
 	UpdateData (TRUE);
@@ -320,7 +284,6 @@ void SVUtilitiesCustomizeDialogClass::OnOK()
 
 void SVUtilitiesCustomizeDialogClass::OnCustomizeDelete() 
 {
-	CString szKey;
 	CComboBox *pBox;
 
 	SVUtilityIniClass l_Struct;
@@ -332,8 +295,6 @@ void SVUtilitiesCustomizeDialogClass::OnCustomizeDelete()
 
 	pBox = (CComboBox *) GetDlgItem (IDC_CUSTOMIZE_MENUTEXT);
 	pBox->DeleteString (pBox->FindStringExact (0, mszMenuText));
-
-	szKey.Format (_T("%s\\%s"), mszUtilityKey, mszMenuText);
 
 	CString Stanza;
 	int iUtlCnt = 0;

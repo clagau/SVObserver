@@ -22,18 +22,12 @@ class SVUtilitiesCustomizeDialogClass : public CDialog
 {
 // Construction
 public:
-	CString mszUtilityKey;
 	SVUtilitiesCustomizeDialogClass(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~SVUtilitiesCustomizeDialogClass();
 
 private:
 	void SetDeleteState (BOOL bEnabled);
 	void SetApplyState (BOOL bEnabled);
-	CString mszCommandValueName;
-	CString mszArgumentsValueName;
-	CString mszWorkingDirectoryValueName;
-	CString mszPromptValueName;
-	CString mszIdValueName;
 	UINT    muiId;
 	SVUtilitiesClass *m_pUtilityClass;
 

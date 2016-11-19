@@ -12,7 +12,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVUtilities.h"
-#include "SVStatusLibrary/SVRegistry.h"
 #include "SVUtilitiesCustomizeDialog.h"
 #include "SVUtilityArgumentDialog.h"
 #include "SVOMFCLibrary/SVOINIClass.h"
@@ -33,13 +32,12 @@ static char THIS_FILE[]=__FILE__;
 #define new DEBUG_NEW
 #endif
 
-const TCHAR* const cUtilityKey				= _T( "HKEY_CURRENT_USER\\Software\\%s\\%s\\Utilities");
 const TCHAR* const cUtilityNr				= _T("Utility%d");
 const TCHAR* const cDisplayName				= _T("DisplayName");
 const TCHAR* const cCommandName				= _T("Command");
 const TCHAR* const cArgumentsName			= _T("Arguments");
-const TCHAR* const cWorkingDirectoryName	= _T("Working Directory");
-const TCHAR* const cPromptName				= _T("Prompt For Arguments");
+const TCHAR* const cWorkingDirectoryName	= _T("WorkingDirectory");
+const TCHAR* const cPromptName				= _T("PromptForArguments");
 const TCHAR* const cMenuIDName				= _T("Menu Id");
 const TCHAR* const cGeneralName				= _T("General");
 const TCHAR* const cHighestUtilityIndex		= _T("HighestUtilityIndex");
@@ -58,7 +56,6 @@ typedef struct UtilityInfoTag
 
 SVUtilitiesClass::SVUtilitiesClass()
 {
-	m_UtilityKey = SvUl_SF::Format(cUtilityKey, AfxGetApp()->m_pszRegistryKey, AfxGetApp()->m_pszAppName );
 }
 
 SVUtilitiesClass::~SVUtilitiesClass()
@@ -67,7 +64,6 @@ SVUtilitiesClass::~SVUtilitiesClass()
 
 void SVUtilitiesClass::RunUtility(SVSecurityManager* pAccess, UINT uiUtilityId)
 {
-	SVRegistryClass reg( m_UtilityKey.c_str() );
 	UTILITYINFO utilInfo;
 	SVUtilityArgumentDialogClass dlg;
 	SVObserverApp* pApp = static_cast<SVObserverApp*> (AfxGetApp());
@@ -130,7 +126,6 @@ BOOL SVUtilitiesClass::SetupUtilities(CMenu *pMenu)
 
 	ClearMenu (pMenu);
 
-	dlg.mszUtilityKey = m_UtilityKey.c_str();
 	if ( IDOK == dlg.DoModal() )
 	{	
 		UpdateIni();
