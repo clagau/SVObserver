@@ -154,15 +154,17 @@ HRESULT SVMatroxGigeAcquisitionClass::LoadFiles(SVFileNameArrayClass& rFiles)
 			}
 
 			SVDeviceParamCollection DeviceParams(m_CameraFileDeviceParams);
-			SVGigeCameraStructVector Cameras;
-			Cameras = SVGigeCameraManager::Instance().GetCameraOrder();
-			if(Cameras.GetSize() > DigNumber())
+			const SVGigeCameraStructVector& rCameras = SVGigeCameraManager::Instance().GetCameraOrder();
+			for( SVGigeCameraStructVector::const_iterator Iter( rCameras.begin() ); rCameras.end() != Iter; ++Iter )
 			{
-				SVGigeCameraStruct& Camera = Cameras.ElementAt( DigNumber() );
-				DeviceParams.SetParameter( DeviceParamSerialNumberString, SVStringValueDeviceParam( Camera.m_SerialNum.c_str() ) );
-				SVStringValueDeviceParam IP_Address( DeviceParamIPAddress );
-				IP_Address = Camera.m_IPAddress.c_str();
-				DeviceParams.SetParameter( DeviceParamIPAddress, IP_Address );
+				if( Iter->m_DigitizerID == DigNumber() )
+				{
+					DeviceParams.SetParameter( DeviceParamSerialNumberString, SVStringValueDeviceParam( Iter->m_SerialNum.c_str() ) );
+					SVStringValueDeviceParam IP_Address( DeviceParamIPAddress );
+					IP_Address = Iter->m_IPAddress.c_str();
+					DeviceParams.SetParameter( DeviceParamIPAddress, IP_Address );
+					break;
+				}
 			}
 			SetDeviceParameters( DeviceParams );
 
