@@ -31,7 +31,7 @@ public:
 	virtual SVResultClass* GetResultObject();
 	
 // used in pattern and Blob Analyzers.
-	virtual BOOL IsPtOverResult( const POINT& point ){ return false;}
+	virtual bool IsPtOverResult( const POINT& rPoint ){ return false;}
 	virtual	void DisplayAnalyzerResult(){};
 // End. Sri
 

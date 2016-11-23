@@ -1218,7 +1218,7 @@ HRESULT SVPatternAnalyzerClass::onCollectOverlays(SVImageClass* p_pImage, SVExte
 // 	 Date		Author				Comment                                       
 //  04-12-00 	Sri				First Implementation
 ////////////////////////////////////////////////////////////////////////////////
-BOOL SVPatternAnalyzerClass::IsPtOverResult( CPoint point )
+bool SVPatternAnalyzerClass::IsPtOverResult( const POINT& rPoint )
 {
 	long lOccurances = 0;
 	msv_lpatNumFoundOccurances.GetValue(lOccurances);
@@ -1283,7 +1283,7 @@ BOOL SVPatternAnalyzerClass::IsPtOverResult( CPoint point )
 
 					l_svExtents.TranslateFromOutputSpace( l_svFigure, l_svFigure );
 
-					if( S_OK == l_svFigure.IsPointOverFigure( point ) )
+					if( S_OK == l_svFigure.IsPointOverFigure( rPoint ) )
 					{
 						m_nPatternIndex = i;
 

@@ -158,9 +158,9 @@ BOOL SVOCVAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 }
 
 
-BOOL SVOCVAnalyzerClass::IsPtOverResult( CPoint point )
+bool SVOCVAnalyzerClass::IsPtOverResult( const POINT& rPoint )
 {
-	return TRUE;
+	return true;
 }
 
 void SVOCVAnalyzerClass::DisplayAnalyzerResult()

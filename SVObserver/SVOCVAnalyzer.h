@@ -35,7 +35,7 @@ public:
 
 	virtual BOOL OnValidate();
 
-	virtual BOOL IsPtOverResult( CPoint point );
+	virtual bool IsPtOverResult( const POINT& rPoint ) override;
 	virtual void DisplayAnalyzerResult();
 	virtual bool resetAllObjects( bool shouldNotifyFriends, bool silentReset ) override;
 

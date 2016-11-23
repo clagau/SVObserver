@@ -1642,7 +1642,7 @@ DWORD SVBlobAnalyzerClass::BuildFeatureListID ()
 // 	 Date		Author				Comment                                       
 //  04-12-00	Sri				First Implementation
 ////////////////////////////////////////////////////////////////////////////////
-BOOL SVBlobAnalyzerClass::IsPtOverResult( CPoint point )
+bool SVBlobAnalyzerClass::IsPtOverResult( const POINT& rPoint )
 {
 	long l_lCurrentNbrOfBlobs = 0;
 
@@ -1677,7 +1677,7 @@ BOOL SVBlobAnalyzerClass::IsPtOverResult( CPoint point )
 				SVExtentFigureStruct l_svFigure = l_oRect;
 				l_svExtents.TranslateFromOutputSpace( l_svFigure, l_svFigure );
 
-				if( S_OK == l_svFigure.IsPointOverFigure( point ) )
+				if( S_OK == l_svFigure.IsPointOverFigure( rPoint ) )
 				{
 					m_nBlobIndex = msvlSortMap.GetAt(i); 
 

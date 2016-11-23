@@ -95,7 +95,7 @@ public:
 	void SetModelExtents(long xPos, long yPos, long width, long height);
 	void SetCircularOverscan(bool bCircularOverscan);
 
-	virtual BOOL IsPtOverResult(CPoint point);
+	virtual bool IsPtOverResult(const POINT& rPoint) override;
 	virtual	void DisplayAnalyzerResult();
 
 	BOOL GetModelImageFileName(CString &csFileName);

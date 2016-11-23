@@ -182,7 +182,7 @@ public:
 
 	virtual bool resetAllObjects( bool shouldNotifyFriends, bool silentReset ) override;
 
-	virtual BOOL IsPtOverResult(CPoint point );
+	virtual bool IsPtOverResult( const POINT& rPoint ) override;
 	virtual	void DisplayAnalyzerResult();
 
 	SVLongResultClass*           m_pResultBlob;
