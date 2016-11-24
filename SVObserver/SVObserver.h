@@ -223,7 +223,7 @@ public:
 	SVIODoc* GetIODoc() const;
 
 	BOOL Logout( BOOL BForceLogout = FALSE );
-	BOOL InitPath( LPCTSTR TStrPathName, BOOL BCreateIfNotExists = TRUE, BOOL BDeleteContents = TRUE );
+	bool InitPath( LPCTSTR PathName, bool CreateIfDoesNotExist = true, bool DeleteContents = true );
 
 	bool IsMatroxGige() const;
 

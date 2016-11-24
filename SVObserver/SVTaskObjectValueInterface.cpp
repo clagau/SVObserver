@@ -13,12 +13,11 @@
 #include "SVTaskObjectValueInterface.h"
 
 #include "SVObjectLibrary/SVObjectSynchronousCommandTemplate.h"
-
+#include "ObjectInterfaces/ErrorNumbers.h"
+#include "SVStatusLibrary/MessageManager.h"
 #include "GuiCommands/InspectionRunOnce.h"
-#include "SVInspectionProcess.h"
-#include "SVTaskObject.h"
-#include "SVTool.h"
-#include "TextDefinesSvO.h"
+#include "SVOCore/SVTaskObject.h"
+//#include "SVInspectionProcess.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -27,12 +26,12 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 SVTaskObjectValueInterface::SVTaskObjectValueInterface()
-: m_psvTaskObject( nullptr )
+: m_pTaskObject( nullptr )
 {
 }
 
-SVTaskObjectValueInterface::SVTaskObjectValueInterface( SVTaskObjectClass *p_psvTaskObject )
-: m_psvTaskObject( p_psvTaskObject )
+SVTaskObjectValueInterface::SVTaskObjectValueInterface( SVTaskObjectClass* pTaskObject )
+: m_pTaskObject( pTaskObject )
 {
 }
 
@@ -40,20 +39,20 @@ SVTaskObjectValueInterface::~SVTaskObjectValueInterface()
 {
 }
 
-void SVTaskObjectValueInterface::SetTaskObject( SVTaskObjectClass *p_psvTaskObject )
+void SVTaskObjectValueInterface::SetTaskObject( SVTaskObjectClass* pTaskObject )
 {
-	m_psvTaskObject = p_psvTaskObject;
+	m_pTaskObject = pTaskObject;
 }
 
-HRESULT SVTaskObjectValueInterface::AddInputRequest( SVValueObjectReference p_svObjectRef, LPCTSTR p_szValue )
+HRESULT SVTaskObjectValueInterface::AddInputRequest( SVValueObjectReference objectRef, LPCTSTR szValue )
 {
 	HRESULT l_hrOk = S_FALSE;
 
 	try
 	{
-		SVInspectionProcess* pInspection = m_psvTaskObject->GetInspection();
+		SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess*> (m_pTaskObject->GetInspection());
 
-		if( pInspection->AddInputRequest( p_svObjectRef, p_szValue ) )
+		if( pInspection->AddInputRequest( objectRef->GetUniqueObjectID(), szValue ) )
 		{
 			l_hrOk = S_OK;
 		}
@@ -67,15 +66,15 @@ HRESULT SVTaskObjectValueInterface::AddInputRequest( SVValueObjectReference p_sv
 	return l_hrOk;
 }
 
-HRESULT SVTaskObjectValueInterface::AddInputRequest( SVValueObjectReference p_svObjectRef, double p_dValue )
+HRESULT SVTaskObjectValueInterface::AddInputRequest( SVValueObjectReference objectRef, double dValue )
 {
 	HRESULT l_hrOk = S_FALSE;
 
 	try
 	{
-		SVInspectionProcess* pInspection = m_psvTaskObject->GetInspection();
+		SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess*> (m_pTaskObject->GetInspection());
 
-		if( pInspection->AddInputRequest( p_svObjectRef, p_dValue ) )
+		if( nullptr != pInspection && pInspection->AddInputRequest( objectRef->GetUniqueObjectID(), dValue ) )
 		{
 			l_hrOk = S_OK;
 		}
@@ -89,35 +88,35 @@ HRESULT SVTaskObjectValueInterface::AddInputRequest( SVValueObjectReference p_sv
 	return l_hrOk;
 }
 
-HRESULT SVTaskObjectValueInterface::AddInputRequest( const SVGUID& p_rTaskId, const SVGUID& p_rEmbeddedId, LPCTSTR p_szValue )
+HRESULT SVTaskObjectValueInterface::AddInputRequest( const SVGUID& rTaskId, const SVGUID& rEmbeddedId, LPCTSTR szValue )
 {
 	HRESULT l_hrOk = S_FALSE;
 
 	SVObjectTypeInfoStruct objectInfo;
-	objectInfo.EmbeddedID = p_rEmbeddedId;
+	objectInfo.EmbeddedID = rEmbeddedId;
 
-	SVObjectClass* l_pObject = dynamic_cast<SVObjectClass*>(SVObjectManagerClass::Instance().getFirstObject(p_rTaskId, objectInfo));
+	SVObjectClass* l_pObject = dynamic_cast<SVObjectClass*> (SVObjectManagerClass::Instance().getFirstObject( rTaskId, objectInfo ) );
 
 	if( nullptr != l_pObject )
 	{
-		l_hrOk = AddInputRequest( l_pObject, p_szValue );
+		l_hrOk = AddInputRequest( l_pObject, szValue );
 	}
 
 	return l_hrOk;
 }
 
-HRESULT SVTaskObjectValueInterface::AddInputRequest( const SVGUID& p_rTaskId, const SVGUID& p_rEmbeddedId, double p_dValue )
+HRESULT SVTaskObjectValueInterface::AddInputRequest( const SVGUID& rTaskId, const SVGUID& rEmbeddedId, double dValue )
 {
 	HRESULT l_hrOk = S_FALSE;
 
 	SVObjectTypeInfoStruct objectInfo;
-	objectInfo.EmbeddedID = p_rEmbeddedId;
+	objectInfo.EmbeddedID = rEmbeddedId;
 
-	SVObjectClass* l_pObject = dynamic_cast<SVObjectClass*>(SVObjectManagerClass::Instance().getFirstObject(p_rTaskId, objectInfo));
+	SVObjectClass* l_pObject = dynamic_cast<SVObjectClass*> (SVObjectManagerClass::Instance().getFirstObject( rTaskId, objectInfo ) );
 
 	if( nullptr != l_pObject )
 	{
-		l_hrOk = AddInputRequest( l_pObject, p_dValue );
+		l_hrOk = AddInputRequest( l_pObject, dValue );
 	}
 
 	return l_hrOk;
@@ -129,7 +128,7 @@ HRESULT SVTaskObjectValueInterface::AddInputRequestMarker()
 
 	try
 	{
-		SVInspectionProcess* pInspection = m_psvTaskObject->GetInspection();
+		SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess*> (m_pTaskObject->GetInspection());
 
 		if( pInspection->AddInputRequestMarker() )
 		{
@@ -145,42 +144,17 @@ HRESULT SVTaskObjectValueInterface::AddInputRequestMarker()
 	return l_hrOk;
 }
 
-HRESULT SVTaskObjectValueInterface::RunOnce( SVToolClass *p_psvTool )
+HRESULT SVTaskObjectValueInterface::RunOnce( const SVGUID& rToolID)
 {
 	HRESULT l_hrOk = S_FALSE;
 
 	try
 	{
-		SVInspectionProcess* pInspection = m_psvTaskObject->GetInspection();
-		SVGUID InspectionId( SV_GUID_NULL );
-		if(nullptr != pInspection )
-		{
-			InspectionId = pInspection->GetUniqueObjectID();
-		}
-
-		SVGUID l_ToolId;
-
-		if( nullptr != p_psvTool )
-		{
-			l_ToolId = p_psvTool->GetUniqueObjectID();
-		}
-
-		GuiCmd::InspectionRunOncePtr l_CommandPtr = new GuiCmd::InspectionRunOnce( InspectionId, l_ToolId );
-		SVObjectSynchronousCommandTemplate< GuiCmd::InspectionRunOncePtr > l_Command( InspectionId, l_CommandPtr );
+		const SVGUID& rInspectionID = m_pTaskObject->GetInspection()->GetUniqueObjectID();
+		GuiCmd::InspectionRunOncePtr l_CommandPtr = new GuiCmd::InspectionRunOnce( rInspectionID, rToolID );
+		SVObjectSynchronousCommandTemplate< GuiCmd::InspectionRunOncePtr > l_Command( rInspectionID, l_CommandPtr );
 
 		l_hrOk = l_Command.Execute( TWO_MINUTE_CMD_TIMEOUT );
-
-		if ((nullptr != p_psvTool) && (SUCCEEDED (l_hrOk) || E_FAIL == l_hrOk))
-		{
-			HRESULT	hrTemp = p_psvTool->getFirstTaskMessage().getMessage().m_MessageCode;
-
-			if (!SUCCEEDED (hrTemp))
-			{
-				// overwrite hrOk only if hrTemp contains error information.
-				l_hrOk = hrTemp;
-			}
-		}
-
 	}
 	catch( ... )
 	{
@@ -191,14 +165,14 @@ HRESULT SVTaskObjectValueInterface::RunOnce( SVToolClass *p_psvTool )
 	return l_hrOk;
 }
 
-HRESULT SVTaskObjectValueInterface::AddInputRequest( SVInputRequestStructMap p_map )
+HRESULT SVTaskObjectValueInterface::AddInputRequest( const SVInputRequestStructMap& rMap )
 {
 	HRESULT l_hrOk = S_OK;
 
-	SVInputRequestStructMap::iterator iter;
-	for ( iter = p_map.begin(); iter != p_map.end(); ++iter )
+	SVInputRequestStructMap::const_iterator iter;
+	for ( iter = rMap.begin(); iter != rMap.end(); ++iter )
 	{
-		AddInputRequest( iter->first.ref, iter->second );
+		AddInputRequest( iter->first.m_ObjectRef, iter->second.c_str() );
 	}
 
 	AddInputRequestMarker();
@@ -206,14 +180,14 @@ HRESULT SVTaskObjectValueInterface::AddInputRequest( SVInputRequestStructMap p_m
 	return l_hrOk;
 }
 
-HRESULT SVTaskObjectValueInterface::GetValue( const SVGUID& p_rTaskId, const SVGUID& p_rEmbeddedId, VARIANT& p_rValue ) const
+HRESULT SVTaskObjectValueInterface::GetValue( const SVGUID& rTaskId, const SVGUID& rEmbeddedId, VARIANT& rValue ) const
 {
 	HRESULT l_hrOk = S_FALSE;
 
 	SVObjectTypeInfoStruct objectInfo;
-	objectInfo.EmbeddedID = p_rEmbeddedId;
+	objectInfo.EmbeddedID = rEmbeddedId;
 
-	const SVObjectClass* l_pObject = dynamic_cast<const SVObjectClass*>(SVObjectManagerClass::Instance().getFirstObject(p_rTaskId, objectInfo));
+	const SVObjectClass* l_pObject = dynamic_cast<const SVObjectClass*> (SVObjectManagerClass::Instance().getFirstObject( rTaskId, objectInfo ) );
 
 	if( nullptr != l_pObject )
 	{
@@ -221,22 +195,22 @@ HRESULT SVTaskObjectValueInterface::GetValue( const SVGUID& p_rTaskId, const SVG
 
 		if( nullptr != l_pValueObject )
 		{
-			l_hrOk = l_pValueObject->GetValue( p_rValue );
+			l_hrOk = l_pValueObject->GetValue( rValue );
 		}
 	}
 
 	return l_hrOk;
 }
 
-HRESULT SVTaskObjectValueInterface::GetObjectValue( const SVGUID& p_rObjectId, const SVString& p_rValueName, VARIANT& p_rVariantValue ) const
+HRESULT SVTaskObjectValueInterface::GetObjectValue( const SVGUID& rObjectId, const SVString& rValueName, VARIANT& rVariantValue ) const
 {
 	HRESULT l_hrOk = S_OK;
 
-	SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject( p_rObjectId );
+	SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject( rObjectId );
 
 	if( nullptr != l_pObject )
 	{
-		l_hrOk = l_pObject->GetObjectValue( p_rValueName, p_rVariantValue );
+		l_hrOk = l_pObject->GetObjectValue( rValueName, rVariantValue );
 	}
 	else
 	{

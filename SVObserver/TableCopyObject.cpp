@@ -83,7 +83,7 @@ HRESULT TableCopyObject::ResetObject()
 				RemoveEmbeddedObject(pValueObject.get());
 				//Object must be deleted, before SetDefaultInputs is called.
 				pValueObject.reset();
-				GetInspection()->SetDefaultInputs();
+				dynamic_cast<SVInspectionProcess*>(GetInspection())->SetDefaultInputs();
 			}
 		}
 		
@@ -120,7 +120,7 @@ HRESULT TableCopyObject::ResetObject()
 			m_ValueList.pop_back();
 			RemoveEmbeddedObject(pObject.get());
 		}
-		GetInspection()->SetDefaultInputs();
+		dynamic_cast<SVInspectionProcess*>(GetInspection())->SetDefaultInputs();
 	}
 
 	HRESULT hr = TableObject::ResetObject();

@@ -64,7 +64,7 @@ HRESULT SVArchiveRecordsArray::InitializeObjects(SVArchiveTool* p_pToolArchive, 
 	HRESULT hr = S_OK;
 	ASSERT( nullptr != m_pArchiveTool );
 	ClearArray();
-	SVInspectionProcess* pInspection = m_pArchiveTool->GetInspection();
+	SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess *>(m_pArchiveTool->GetInspection());
 	ASSERT( pInspection );
 
 	int iSize = p_svoObjects.GetResultSize();

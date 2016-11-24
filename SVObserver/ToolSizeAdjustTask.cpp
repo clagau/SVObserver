@@ -142,9 +142,14 @@ BOOL ToolSizeAdjustTask::OnValidate()
 int ToolSizeAdjustTask::GetIndex()
 {
 	int index = 1;
-	if (GetTool() && GetTool()->GetInspection())
+	SVToolClass* pTool = GetTool();
+	if (pTool)
 	{
-		index = GetTool()->GetInspection()->GetResultDataIndex();
+		SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(pTool->GetInspection());
+		if (pInspection)
+		{
+			index = pInspection->GetResultDataIndex();
+		}
 	}
 	return index;
 }

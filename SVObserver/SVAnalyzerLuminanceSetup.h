@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVTaskObjectInterfaceClass.h"
+#include "SVTaskObjectValueInterface.h"
 #pragma endregion Includes
 
 class SVLuminanceAnalyzerClass;
@@ -20,12 +20,12 @@ class SVLuminanceAnalyzerClass;
 /////////////////////////////////////////////////////////////////////////////
 // SVLuminanceAnalyzerSetupClass dialog
 
-class SVLuminanceAnalyzerSetupClass : public CDialog, public SVTaskObjectInterfaceClass
+class SVLuminanceAnalyzerSetupClass : public CDialog, public SVTaskObjectValueInterface
 {
 public:
 	SVLuminanceAnalyzerClass* m_pAnalyzer;
 
-	virtual HRESULT SetInspectionData();
+	HRESULT SetInspectionData();
 
 protected:
 	// Construction

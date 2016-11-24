@@ -11,7 +11,7 @@
 
 #pragma once
 #pragma region Includes
-#include "SVTaskObjectList.h"
+#include "SVOCore/SVTaskObjectList.h"
 #pragma endregion Includes
 
 class SVResultClass;

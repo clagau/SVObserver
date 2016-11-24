@@ -9,9 +9,10 @@
 //* .Check In Date   : $Date:   23 Apr 2013 09:40:50  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVBarCodeBuffer.h"
-
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

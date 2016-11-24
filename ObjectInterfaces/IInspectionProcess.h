@@ -51,6 +51,26 @@ namespace Seidenader
 			virtual void SetEnableAuxiliaryExtent(long enabled) = 0;
 
 			virtual HRESULT RunOnce(ITaskObject* pTask) = 0;
+
+			/***********
+			This method gets the last product index
+			***********/
+			virtual long GetLastIndex() const = 0;
+
+			/***********
+			This method gets whether the inspection has a color camera
+			***********/
+			virtual bool IsColorCamera() const = 0;
+
+			/***********
+			This method adds an input request
+			***********/
+			virtual bool AddInputRequest( const SVGUID& rGuid, const _variant_t& rValue ) = 0;
+
+			/***********
+			This method adds an input request marker
+			***********/
+			virtual bool AddInputRequestMarker() = 0;
 		};
 	}
 }

@@ -8,6 +8,7 @@
 #include "SVImageAnalyzerClass.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "ObjectInterfaces/ErrorNumbers.h"
+#include "SVOCore/SVImageClass.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG

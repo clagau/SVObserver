@@ -11,7 +11,7 @@
 #include "ArchiveMethodEnum.h"
 #include "SVDataManagerLibrary/DataManager.h"
 #include "SVTool.h"
-#include "SVImageObjectClass.h"
+#include "SVOCore/SVImageObjectClass.h"
 #pragma endregion Includes
 
 

@@ -18,8 +18,10 @@
 #include "SVUtilityLibrary/SVSharedPtr.h"
 #include "SVUtilityLibrary/SVUtilityGlobals.h"
 #include "SVIPProductStruct.h"
-#include "SVInfoStructs.h"
+#include "SVOCore/SVCameraInfoStruct.h"
 #pragma endregion Includes
+
+class SVInspectionProcess;
 
 struct SVCommandInspectionCollectImageData
 {
@@ -42,7 +44,7 @@ struct SVCommandInspectionCollectImageData
 protected:
 	HRESULT UpdateResults( SVInspectionProcess* p_pInspection, SVIPResultData& p_rResultData );
 
-	HRESULT UpdateBuffer( const SVGUID& p_rImageId, SVStdMapSVVirtualCameraPtrSVCameraInfoStruct& p_rsvCameraInfos,
+	HRESULT UpdateBuffer( const SVGUID& p_rImageId, SVGuidSVCameraInfoStructMap& p_rsvCameraInfos,
 		SVImageIndexStruct p_svResultImageIndex, long p_ResultDataIndex, 
 		SVByteVector& p_rImageDIB, SVExtentMultiLineStructCArray& p_rMultiLineArray );
 

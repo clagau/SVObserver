@@ -20,7 +20,7 @@
 #include "SVOGui/NoSelector.h"
 #include "SVOGui/ToolSetItemSelector.h"
 #include "SVIPDoc.h"
-#include "SVImageClass.h"
+#include "SVOCore/SVImageClass.h"
 #include "SVInspectionProcess.h"
 #include "SVMemoryManager.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
@@ -277,7 +277,7 @@ BOOL SVTADlgArchiveImagePage::OnInitDialog()
 	//
 	// Get a pointer to the toolset
 	//
-	SVToolSetClass* pToolSet = m_pTool->GetInspection()->GetToolSet();
+	SVToolSetClass* pToolSet = dynamic_cast<SVInspectionProcess*>(m_pTool->GetInspection())->GetToolSet();
 
 	DWORD dwTemp=0;
     m_pTool->m_dwArchiveMaxImagesCount.GetValue( dwTemp );
@@ -399,7 +399,7 @@ void SVTADlgArchiveImagePage::BuildImageList()
 {
 	SVObjectTypeInfoStruct  info;
 
-	SVToolSetClass* pToolSet = m_pTool->GetInspection()->GetToolSet();
+	SVToolSetClass* pToolSet = dynamic_cast<SVInspectionProcess*>(m_pTool->GetInspection())->GetToolSet();
 
 	BOOL lDone = FALSE;
 

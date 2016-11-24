@@ -23,12 +23,19 @@ BEGIN_MESSAGE_MAP(SVTADlgColorThresholdBasePage, CPropertyPage)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-SVTADlgColorThresholdBasePage::SVTADlgColorThresholdBasePage(UINT nIDTemplate) : CPropertyPage(nIDTemplate)
+SVTADlgColorThresholdBasePage::SVTADlgColorThresholdBasePage(UINT nIDTemplate) 
+: CPropertyPage(nIDTemplate)
+, m_pSheet(nullptr)
+, m_pTool(nullptr)
+, m_pThreshold(nullptr)
+, m_pExtentLeft(nullptr)
+, m_pExtentTop(nullptr)
+, m_pExtentWidth(nullptr)
+, m_pExtentHeight(nullptr)
 {
 	//{{AFX_DATA_INIT(SVTADlgColorThresholdBasePage)
 	//}}AFX_DATA_INIT
-	m_pSheet = nullptr;
-	mpTool = nullptr;
+	
 }
 
 SVTADlgColorThresholdBasePage::~SVTADlgColorThresholdBasePage()
@@ -57,7 +64,7 @@ BOOL SVTADlgColorThresholdBasePage::OnInitDialog()
 
 	m_svDlgImage.SetFigureEditor( m_pSheet->m_pFigureEditor );
 	
-	mpTool = m_pSheet->GetTool();
+	m_pTool = m_pSheet->GetTool();
 	
 	m_cbZoom.SetItemData( m_cbZoom.AddString(_T("Fit to Window")), 0 );
 	m_cbZoom.SetItemData( m_cbZoom.AddString(AsString(100)+_T("%")), 100 );
@@ -88,8 +95,6 @@ BOOL SVTADlgColorThresholdBasePage::OnSetActive()
 	
 	return CPropertyPage::OnSetActive();
 }
-
-
 
 void SVTADlgColorThresholdBasePage::OnSelchangeComboZoom() 
 {

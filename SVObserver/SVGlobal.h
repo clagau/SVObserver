@@ -36,8 +36,7 @@ enum SV_THRESHOLD_SELECTION_ENUM
 	SV_USE_MIN_PLUS_OFFSET        = 3,
 };
 
-const LPCSTR g_strThresholdSelectionEnums = 
-				_T( "Selectable=0,Max - % Dif=1,Max - Offset=1,Min + Offset=2" );
+const TCHAR* const cThresholdSelectionEnums = _T( "Selectable=0,Max - % Dif=1,Max - Offset=1,Min + Offset=2" );
 
 enum SV_EDGECONTROL_POLARISATION_ENUM
 {
@@ -48,8 +47,7 @@ enum SV_EDGECONTROL_POLARISATION_ENUM
 };// end SV_EDGECONTROL_POLARISATION_ENUM
 
 // Add String for SVEnumerateValueObjectClass
-const LPCSTR g_strPolarisationEnums = 
-				_T( "Any=3,Negative=2,Positive=1" );
+const TCHAR* const cPolarisationEnums = _T( "Any=3,Negative=2,Positive=1" );
 
 enum SV_EDGECONTROL_EDGESELECT_ENUM
 {
@@ -60,10 +58,7 @@ enum SV_EDGECONTROL_EDGESELECT_ENUM
 };// end SV_EDGECONTROL_EDGESELECT_ENUM
 
 // Add String for SVEnumerateValueObjectClass
-const LPCSTR g_strEdgeSelectEnums = 
-				_T( "First=32768,Last=8192,This=4096" );
-
-
+const TCHAR* const cEdgeSelectEnums = _T( "First=32768,Last=8192,This=4096" );
 
 enum SV_EDGECONTROL_POSITION_ENUM
 {
@@ -75,8 +70,7 @@ enum SV_EDGECONTROL_POSITION_ENUM
 };// end SV_EDGECONTROL_POSITION_ENUM
 
 // Add String for SVEnumerateValueObjectClass
-const LPCSTR g_strPositionEnums = 
-				_T( "Start=128,Center=64,End=32,Offset=16" );
+const TCHAR* const cPositionEnums = _T( "Start=128,Center=64,End=32,Offset=16" );
 
 enum SV_EDGECONTROL_DIRECTION_ENUM
 {
@@ -86,8 +80,7 @@ enum SV_EDGECONTROL_DIRECTION_ENUM
 };// end SV_EDGECONTROL_DIRECTION_ENUM
 
 // Add String for SVEnumerateValueObjectClass
-const LPCSTR g_strDirectionEnums = 
-				_T( "Undefined=0,Tail to Head=512,Head to Tail=256" );
+const TCHAR* const cDirectionEnums = _T( "Undefined=0,Tail to Head=512,Head to Tail=256" );
 
 enum SVGetPathInfo
 {
@@ -134,50 +127,6 @@ const CString SV_TSTR_DOLLAR                ( _T( "$" ) );
 const CString SV_TSTR_SPACE                 ( _T( " " ) );
 const CString SV_TSTR_NEWLINE               ( _T( "\n" ) );
 const CString SV_TSTR_TAB                   ( _T( "\t" ) );
-
-const long SV_DEFAULT_TOOL_UPPER_TRESH              = 255L;
-const long SV_DEFAULT_TOOL_LOWER_TRESH              = 40L;
-const BOOL SV_DEFAULT_TOOL_TRESH_ACTIVATE           = TRUE;
-const BOOL SV_DEFAULT_TOOL_UPPER_TRESH_ACTIVATE     = TRUE;
-const BOOL SV_DEFAULT_TOOL_LOWER_TRESH_ACTIVATE	    = TRUE;			 
-
-// Default view color settings...
-const COLORREF SV_DEFAULT_RESULT_VIEW_BACKGROUND_COLOR      = RGB( 240, 255, 255 );
-const COLORREF SV_DEFAULT_IMAGE_VIEW_BACKGROUND_COLOR       = RGB( 250, 255, 250 );
-
-// Default image settings...
-const long SV_DEFAULT_IMAGE_DEPTH            =   8L;
-const long SV_DEFAULT_CAMERA_IMAGE_WIDTH     = 640L;
-const long SV_DEFAULT_CAMERA_IMAGE_HEIGHT    = 480L;
-const long SV_DEFAULT_IMAGE_VIEW_WIDTH       = SV_DEFAULT_CAMERA_IMAGE_WIDTH;
-const long SV_DEFAULT_IMAGE_VIEW_HEIGHT      = SV_DEFAULT_CAMERA_IMAGE_HEIGHT;
-const long SV_DEFAULT_TOOL_SET_VIEW_WIDTH    = 200L;
-const long SV_DEFAULT_TOOL_SET_VIEW_HEIGHT   = 400L;
-const long SV_DEFAULT_RESULT_VIEW_WIDTH      = 840L;
-const long SV_DEFAULT_RESULT_VIEW_HEIGHT     = 200L;
-const long SV_DEFAULT_FILTER_USER_ARRAY_SIZE = ( ( SV_DEFAULT_CAMERA_IMAGE_WIDTH ) * ( SV_DEFAULT_CAMERA_IMAGE_HEIGHT ) );
-
-// Default tool extents
-const long SV_DEFAULT_WINDOWTOOL_LEFT   =  10L;
-const long SV_DEFAULT_WINDOWTOOL_TOP    =  10L;
-const long SV_DEFAULT_WINDOWTOOL_WIDTH  = 100L;
-const long SV_DEFAULT_WINDOWTOOL_HEIGHT = 100L;
-const double SV_DEFAULT_WINDOWTOOL_WIDTHSCALEFACTOR  = 1.0;
-const double SV_DEFAULT_WINDOWTOOL_HEIGHTSCALEFACTOR = 1.0;
-
-const long SV_DEFAULT_POLARTRANSFORM_CENTER_X     = 200L;
-const long SV_DEFAULT_POLARTRANSFORM_CENTER_Y     =  50L;
-const long SV_DEFAULT_POLARTRANSFORM_START_RADIUS = 200L;
-const long SV_DEFAULT_POLARTRANSFORM_END_RADIUS   = 100L;
-const long SV_DEFAULT_POLARTRANSFORM_START_ANGLE  = 210L;
-const long SV_DEFAULT_POLARTRANSFORM_END_ANGLE    = 330L;
-
-// Acquisition Overlapping
-const long SV_DEFAULT_MAX_OVERLAPPING           = 10;
-
-const long SV_DEFAULT_CURRENT_RESULT_OUTPUT_TABLE_SIZE   = 4;
-
-const int cMaximumCameras = 4;
 
 #pragma warning(disable:4308)
 
@@ -274,27 +223,6 @@ double SVGetDataTypeMax( DWORD DataType );
 // .Description : 
 ////////////////////////////////////////////////////////////////////////////////
 double SVGetDataTypeRange( DWORD DataType );
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : SVCheckPathDir
-// -----------------------------------------------------------------------------
-// .Description : 
-////////////////////////////////////////////////////////////////////////////////
-BOOL SVCheckPathDir( LPCTSTR TStrPathName, BOOL BCreateIfNotExists );
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : SVDeleteFiles
-// -----------------------------------------------------------------------------
-// .Description : 
-////////////////////////////////////////////////////////////////////////////////
-BOOL SVDeleteFiles( LPCTSTR TStrPathName, BOOL BIncludeSubDirectories );
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : SVFileExists
-// -----------------------------------------------------------------------------
-// .Description : 
-////////////////////////////////////////////////////////////////////////////////
-BOOL SVFileExists( LPCTSTR TStrFilePath );
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : SVGetPathInformation

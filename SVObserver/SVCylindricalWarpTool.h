@@ -13,7 +13,7 @@
 
 #pragma region Includes
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
-#include "SVImageClass.h"
+#include "SVOCore/SVImageClass.h"
 #include "SVTool.h"
 #pragma endregion Includes
 

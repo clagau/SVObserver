@@ -10,7 +10,9 @@
 //******************************************************************************
 
 #pragma once
-#include "SVTaskObjectInterfaceClass.h"
+#pragma region Includes
+#include "SVTaskObjectValueInterface.h"
+#pragma endregion Includes
 
 class SVToolAdjustmentDialogSheetClass;
 class SVToolClass;
@@ -19,7 +21,7 @@ class SVToolClass;
 
 // SVToolAdjustmentDialogCommentPageClass dialog
 
-class SVToolAdjustmentDialogCommentPageClass : public CPropertyPage, public SVTaskObjectInterfaceClass
+class SVToolAdjustmentDialogCommentPageClass : public CPropertyPage, public SVTaskObjectValueInterface
 {
 //	DECLARE_DYNAMIC(SVToolAdjustmentDialogCommentPageClass)
 //******************************************************************************
@@ -34,7 +36,7 @@ public:
 public:
 	virtual ~SVToolAdjustmentDialogCommentPageClass();
 
-	virtual HRESULT SetInspectionData();
+	HRESULT SetInspectionData();
 
 
 // Dialog Data

@@ -13,6 +13,7 @@
 #pragma region Includes
 #include "SVUnaryImageOperatorClass.h"
 #include "SVMatroxLibrary/SVMatroxBuffer.h"
+#include "SVImageLibrary/SVImageBufferHandleInterface.h"
 #pragma endregion Includes
 
 class SVLUTOperatorClass : public SVUnaryImageOperatorClass

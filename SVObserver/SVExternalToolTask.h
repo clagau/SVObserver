@@ -17,8 +17,8 @@
 #pragma region Includes
 #include "SVContainerLibrary/SVVector.h"
 #include "SVHBitmapUtilitiesLibrary/SVHBitmapUtilities.h"
-#include "SVTaskObject.h"
-#include "SVImageClass.h"
+#include "SVOCore/SVTaskObject.h"
+#include "SVOCore/SVImageClass.h"
 #include "SVVariantResultClass.h"
 #include "ISVCancel.h"
 #include "SVDllToolLoadLibraryClass.h"

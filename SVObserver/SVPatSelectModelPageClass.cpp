@@ -17,13 +17,15 @@
 #include "SVPatternAnalyzerClass.h"
 #include "SVPatAnalyzeSetupDlgSheet.h"
 #include "SVTool.h"
-#include "SVImageProcessingClass.h"
-#include "SVImageClass.h"
+#include "SVOCore/SVImageProcessingClass.h"
+#include "SVOCore/SVImageClass.h"
 #include "SVOMFCLibrary\SVGraphix.h"
 #include "SVOMFCLibrary\DisplayHelper.h"
+#include "SVOMFCLibrary/SVOMFCLibraryGlobals.h"
 #include "SVImageLibrary\MatroxImageData.h"
 #include "SVOGui\SVColor.h"
 #include "TextDefinesSvO.h"
+#include "ObjectInterfaces\ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVStatusLibrary\GlobalPath.h"
 #include "SVOMFCLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
@@ -509,7 +511,7 @@ void SVPatModelPageClass::InitializeData()
 	SVImageExtentClass l_svExtents;
 	RECT l_oRect;
 
-	m_pPatAnalyzer->GetTool()->GetImageExtent( l_svExtents );
+	dynamic_cast<SVToolClass*>(m_pPatAnalyzer->GetTool())->GetImageExtent( l_svExtents );
 	l_svExtents.GetOutputRectangle( l_oRect );
 
 	// Get Source Image Extents

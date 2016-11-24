@@ -30,7 +30,6 @@
 #include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVOutputObjectList.h"
 #include "SVOGui/SVTextEditDialog.h"
-#include "SVTaskObjectValueInterface.h"
 #include "SVShiftTool.h"
 #include "SVShiftToolUtility.h"
 #include "TextDefinesSvO.h"
@@ -550,8 +549,9 @@ void ToolSetView::OnSelectToolComment()
 						{
 							// Set 
 							SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
-							pToolSet->GetInspection()->AddInputRequest(pSelectedTool->GetToolComment(), static_cast<LPCTSTR>( Dlg.getText() ));
-							pToolSet->GetInspection()->AddInputRequestMarker();
+							SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(pToolSet->GetInspection());
+							pInspection->AddInputRequest(pSelectedTool->GetToolComment(), static_cast<LPCTSTR>( Dlg.getText() ));
+							pInspection->AddInputRequestMarker();
 
 							pCurrentDocument->RunOnce(pSelectedTool);
 						}

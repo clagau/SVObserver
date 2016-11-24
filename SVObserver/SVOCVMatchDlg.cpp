@@ -77,7 +77,7 @@ HRESULT SVOCVMatchDlg::SetInspectionData()
 
 		if( S_OK == l_hrOk )
 		{
-			l_hrOk = RunOnce( pOCVAnalyzerResult->GetTool() );
+			l_hrOk = RunOnce( pOCVAnalyzerResult->GetTool()->GetUniqueObjectID() );
 		}
 	}
 

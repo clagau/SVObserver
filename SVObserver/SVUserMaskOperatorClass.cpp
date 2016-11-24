@@ -18,7 +18,7 @@
 #include "SVObjectLibrary/SVObjectAttributeClass.h"
 #include "SVObjectLibrary/SVToolsetScriptTags.h"
 #include "SVTool.h"
-#include "SVImageProcessingClass.h"
+#include "SVOCore/SVImageProcessingClass.h"
 #include "SVGlobal.h" // For ConvertToHex
 #include "SVInspectionProcess.h"
 #include "SVObserver.h"
@@ -380,91 +380,98 @@ HRESULT SVUserMaskOperatorClass::BuildMaskLines( SVExtentMultiLineStruct& p_Mult
 		SVImageBufferHandleImage l_MilHandle;
 		m_MaskBufferHandlePtr->GetData( l_MilHandle );
 
-		GetTool()->GetImageExtent( l_svExtents );
-
-		RECT l_rec;
-
-		HRESULT l_hr = m_MaskBufferInfo.GetOutputRectangle( l_rec );
-		// User Mask draw with lines 
-
-		
-		SVMatroxBufferInterface::SVStatusCode l_Code;
-		
-		LPVOID pSrcHostBuffer = nullptr;
-		l_Code = SVMatroxBufferInterface::GetHostAddress( &pSrcHostBuffer, l_MilHandle.GetBuffer() );
-		long l_lSrcBytes;
-		l_Code = SVMatroxBufferInterface::Get( l_MilHandle.GetBuffer(), SVPitchByte, l_lSrcBytes );
-		unsigned char* pSrcLine = ( unsigned char* )pSrcHostBuffer;
-
-		long l_lSkip = 1;
-		
-		SVExtentPointStruct l_svPoint;
-		SVExtentLineStruct l_Line;
-		l_Line.m_svPointArray.Add( l_svPoint );
-		l_Line.m_svPointArray.Add( l_svPoint );
-
-		l_Line.m_dwColor = RGB( 0, 255, 255 );
-
-		for( int l_iRow = 0 ; l_iRow < l_rec.bottom ; l_iRow += l_lSkip )
+		SVToolClass* pTool = dynamic_cast<SVToolClass*>(GetTool());
+		if (pTool)
 		{
-			SVExtentPointStruct l_svStartPoint;
+			pTool->GetImageExtent( l_svExtents );
 
-			bool l_bDrewLastPixel = false;
+			RECT l_rec;
 
-			for( int l_iCol = 0 ; l_iCol < l_rec.right ; l_iCol++ )
+			HRESULT l_hr = m_MaskBufferInfo.GetOutputRectangle( l_rec );
+			// User Mask draw with lines 
+
+			SVMatroxBufferInterface::SVStatusCode l_Code;
+		
+			LPVOID pSrcHostBuffer = nullptr;
+			l_Code = SVMatroxBufferInterface::GetHostAddress( &pSrcHostBuffer, l_MilHandle.GetBuffer() );
+			long l_lSrcBytes;
+			l_Code = SVMatroxBufferInterface::Get( l_MilHandle.GetBuffer(), SVPitchByte, l_lSrcBytes );
+			unsigned char* pSrcLine = ( unsigned char* )pSrcHostBuffer;
+
+			long l_lSkip = 1;
+		
+			SVExtentPointStruct l_svPoint;
+			SVExtentLineStruct l_Line;
+			l_Line.m_svPointArray.Add( l_svPoint );
+			l_Line.m_svPointArray.Add( l_svPoint );
+
+			l_Line.m_dwColor = RGB( 0, 255, 255 );
+
+			for( int l_iRow = 0 ; l_iRow < l_rec.bottom ; l_iRow += l_lSkip )
 			{
-				switch( l_eCriteria )
+				SVExtentPointStruct l_svStartPoint;
+
+				bool l_bDrewLastPixel = false;
+
+				for( int l_iCol = 0 ; l_iCol < l_rec.right ; l_iCol++ )
 				{
-					case  SVNonBlackPixels :
+					switch( l_eCriteria )
 					{
-						if( pSrcLine[l_iCol] != 0 ) 
+						case  SVNonBlackPixels :
 						{
-							if( ! l_bDrewLastPixel )
+							if( pSrcLine[l_iCol] != 0 ) 
 							{
-								l_bDrewLastPixel = true;
-								l_svStartPoint.m_dPositionX = l_iCol;
-								l_svStartPoint.m_dPositionY = l_iRow;
-								l_svExtents.TranslateFromOutputSpace( l_svStartPoint, l_svStartPoint );
+								if( ! l_bDrewLastPixel )
+								{
+									l_bDrewLastPixel = true;
+									l_svStartPoint.m_dPositionX = l_iCol;
+									l_svStartPoint.m_dPositionY = l_iRow;
+									l_svExtents.TranslateFromOutputSpace( l_svStartPoint, l_svStartPoint );
+								}
 							}
-						}
-						else if( l_bDrewLastPixel )
-						{
-							l_bDrewLastPixel = false;
-							AddLine( l_iCol, l_iRow, l_svStartPoint, l_svExtents, l_Line, p_MultiLine  );
-						}
-						break;
-					}
-					case SVNonWhitePixels :
-					{
-						if( pSrcLine[l_iCol] != 255 )
-						{							
-							if( ! l_bDrewLastPixel )
+							else if( l_bDrewLastPixel )
 							{
-								l_bDrewLastPixel = true;
-								l_svStartPoint.m_dPositionX = l_iCol;
-								l_svStartPoint.m_dPositionY = l_iRow;
-								l_svExtents.TranslateFromOutputSpace( l_svStartPoint, l_svStartPoint );
+								l_bDrewLastPixel = false;
+								AddLine( l_iCol, l_iRow, l_svStartPoint, l_svExtents, l_Line, p_MultiLine  );
 							}
+							break;
 						}
-						else if( l_bDrewLastPixel ) 
+						case SVNonWhitePixels :
 						{
-							l_bDrewLastPixel = false;
-							AddLine( l_iCol, l_iRow, l_svStartPoint, l_svExtents, l_Line, p_MultiLine  );
+							if( pSrcLine[l_iCol] != 255 )
+							{							
+								if( ! l_bDrewLastPixel )
+								{
+									l_bDrewLastPixel = true;
+									l_svStartPoint.m_dPositionX = l_iCol;
+									l_svStartPoint.m_dPositionY = l_iRow;
+									l_svExtents.TranslateFromOutputSpace( l_svStartPoint, l_svStartPoint );
+								}
+							}
+							else if( l_bDrewLastPixel ) 
+							{
+								l_bDrewLastPixel = false;
+								AddLine( l_iCol, l_iRow, l_svStartPoint, l_svExtents, l_Line, p_MultiLine  );
+							}
+							break;
 						}
-						break;
 					}
+				}//for( int l_iCol = 0 ; l_iCol < l_rec.right ; l_iCol++ )
+
+				if( l_bDrewLastPixel )  // Finish the last line if the pixels were the same to the end.
+				{
+					AddLine( l_rec.right-1, l_iRow, l_svStartPoint, l_svExtents, l_Line, p_MultiLine );
 				}
-			}//for( int l_iCol = 0 ; l_iCol < l_rec.right ; l_iCol++ )
 
-			if( l_bDrewLastPixel )  // Finish the last line if the pixels were the same to the end.
-			{
-				AddLine( l_rec.right-1, l_iRow, l_svStartPoint, l_svExtents, l_Line, p_MultiLine );
-			}
+				pSrcLine += l_lSrcBytes*l_lSkip;
+			}//for( int l_iRow = 0 ; l_iRow < l_rec.bottom ; l_iRow += l_lSkip )
 
-			pSrcLine += l_lSrcBytes*l_lSkip;
-		}//for( int l_iRow = 0 ; l_iRow < l_rec.bottom ; l_iRow += l_lSkip )
-
-		p_MultiLine.m_Color = RGB( 0, 255, 255 );
+			p_MultiLine.m_Color = RGB( 0, 255, 255 );
+		}
+		else
+		{
+			l_hr = E_POINTER;
+		}
 	}
 
 	return l_hr;
@@ -499,7 +506,7 @@ HRESULT SVUserMaskOperatorClass::CreateLocalImageBuffer()
 		{
 			m_MaskBufferInfo = l_MaskBufferInfo;
 			l_hrOk = DestroyLocalImageBuffer();
-			l_hrOk = SVImageProcessingClass::Instance().CreateImageBuffer( m_MaskBufferInfo, m_MaskBufferHandlePtr );
+			l_hrOk = SVImageProcessingClass::CreateImageBuffer( m_MaskBufferInfo, m_MaskBufferHandlePtr );
 		}
 
 		if( S_OK == l_hrOk )
@@ -531,7 +538,7 @@ HRESULT SVUserMaskOperatorClass::DestroyLocalImageBuffer()
 ////////////////////////////////////////////////////////////////////////////////
 BOOL SVUserMaskOperatorClass::Refresh()
 {
-	SVInspectionProcess* pInspection = GetInspection();
+	SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(GetInspection());
 
 	if( nullptr != pInspection )
 	{
@@ -547,11 +554,11 @@ BOOL SVUserMaskOperatorClass::Refresh()
 		{
 			// Init buffer to 0...
 			// &&&
-			if ( S_OK == SVImageProcessingClass::Instance().InitBuffer( m_MaskBufferHandlePtr ) )
+			if ( S_OK == SVImageProcessingClass::InitBuffer( m_MaskBufferHandlePtr ) )
 			{
 				HDC dc;
 				// Get DC...
-				dc = SVImageProcessingClass::Instance().CreateBufferDC( m_MaskBufferInfo, m_MaskBufferHandlePtr );
+				dc = SVImageProcessingClass::CreateBufferDC( m_MaskBufferInfo, m_MaskBufferHandlePtr );
 				if(dc != (HDC)0)        // && dc != (HDC)-1)
 				{
 					// Draw mask...
@@ -582,7 +589,7 @@ BOOL SVUserMaskOperatorClass::Refresh()
 	#endif //_DEBUG
 
 					// Release DC...
-					return S_OK == SVImageProcessingClass::Instance().DestroyBufferDC( m_MaskBufferHandlePtr, dc );
+					return S_OK == SVImageProcessingClass::DestroyBufferDC( m_MaskBufferHandlePtr, dc );
 				}// end if(dc != (HDC)0) 
 			}// end if ( S_OK == TheSVObserverApp.mpsvImaging->InitBuffer( m_MaskBufferHandle ) )
 		}// end else if not shape

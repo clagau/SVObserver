@@ -13,7 +13,7 @@
 
 #pragma region Includes
 #include "SVStdImageOperatorListClass.h"
-#include "SVDataBuffer.h"
+#include "SVOCore/SVDataBuffer.h"
 #pragma endregion Includes
 
 class SVLinearImageOperatorListClass : public SVStdImageOperatorListClass 

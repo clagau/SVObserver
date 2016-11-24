@@ -113,7 +113,7 @@ HRESULT SVToolAdjustmentDialogTransformationLearnPageClass::SetInspectionData()
 
 		if( S_OK == l_hrOk )
 		{
-			l_hrOk = RunOnce( pTool );
+			l_hrOk = RunOnce( pTool->GetUniqueObjectID() );
 		}
 
 		UpdateData( FALSE );

@@ -345,14 +345,14 @@ DWORD SVStatisticsToolClass::AllocateResult (SVStatisticsFeatureEnum aFeatureInd
 		
 		// Declare Input Interface of Result...
 		interfaceInfo.EmbeddedID = msvValue [aFeatureIndex].GetEmbeddedID();
-		resultClassInfo.DesiredInputInterface.Add( interfaceInfo );
+		resultClassInfo.m_DesiredInputInterface.Add( interfaceInfo );
 		
-		resultClassInfo.ObjectTypeInfo.ObjectType = SVResultObjectType;
-		resultClassInfo.ObjectTypeInfo.SubType	= SVResultDoubleObjectType;
-		resultClassInfo.ClassId = SVDoubleResultClassGuid;
-		resultClassInfo.ClassName.LoadString( IDS_OBJECTNAME_RESULT );
+		resultClassInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
+		resultClassInfo.m_ObjectTypeInfo.SubType	= SVResultDoubleObjectType;
+		resultClassInfo.m_ClassId = SVDoubleResultClassGuid;
+		resultClassInfo.m_ClassName = SvUl_SF::LoadString( IDS_OBJECTNAME_RESULT );
 		strTitle = msvValue [aFeatureIndex].GetName(); //.LoadString( IDS_CLASSNAME_RESULT_DOUBLE );
-		resultClassInfo.ClassName += SV_TSTR_SPACE + strTitle;
+		resultClassInfo.m_ClassName += SV_TSTR_SPACE + strTitle;
 		
 		// Construct the result class
 		pResult = (SVDoubleResultClass *) resultClassInfo.Construct();

@@ -15,7 +15,7 @@
 #include "SVImageLibrary/SVExtentEnums.h"
 #include "SVImageLibrary/SVImageExtentClass.h"
 #include "SVTimerLibrary/SVClock.h"
-#include "SVExtentPropertiesInfoStruct.h"
+#include "SVOCore/SVExtentPropertiesInfoStruct.h"
 #pragma endregion Includes
 
 class SVValueObjectClass;

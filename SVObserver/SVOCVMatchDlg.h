@@ -11,12 +11,14 @@
 
 #pragma once
 
-#include "SVTaskObjectInterfaceClass.h"
+#pragma region Includes
+#include "SVTaskObjectValueInterface.h"
+#pragma endregion Includes
 
 /////////////////////////////////////////////////////////////////////////////
 // SVOCVMatchDlg dialog
 
-class SVOCVMatchDlg : public CPropertyPage, public SVTaskObjectInterfaceClass
+class SVOCVMatchDlg : public CPropertyPage, public SVTaskObjectValueInterface
 {
 	DECLARE_DYNCREATE(SVOCVMatchDlg)
 
@@ -25,7 +27,7 @@ public:
 	SVOCVMatchDlg();
 	virtual ~SVOCVMatchDlg();
 
-	virtual HRESULT SetInspectionData();
+	HRESULT SetInspectionData();
 
 // Dialog Data
 	//{{AFX_DATA(SVOCVMatchDlg)

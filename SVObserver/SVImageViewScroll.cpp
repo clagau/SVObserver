@@ -15,7 +15,7 @@
 #include "SVImageViewScroll.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVObjectLibrary/SVObjectWriter.h"
-#include "SVGlobal.h"
+#include "ObjectInterfaces/GlobalConst.h"
 #include "SVImageView.h"
 #include "SVSVIMStateClass.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
@@ -53,7 +53,7 @@ SVImageViewScroll::SVImageViewScroll()
 
 	m_oOldScrollPoint = CPoint( 0, 0 );
 	m_oOldMaxScrollPoint = CPoint( 0, 0 );
-	m_hWindowBackgroundColor = ::CreateSolidBrush( SV_DEFAULT_IMAGE_VIEW_BACKGROUND_COLOR );
+	m_hWindowBackgroundColor = ::CreateSolidBrush( SvOi::cDefaultImageViewBackgroundColor );
 	m_SizeTotal = CSize( 0, 0 );
 }
 

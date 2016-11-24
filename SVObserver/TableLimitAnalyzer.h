@@ -9,7 +9,7 @@
 
 #pragma region Includes
 #include "SVObjectLibrary\SVObjectLibrary.h"
-#include "SVTaskObject.h"
+#include "SVOCore/SVTaskObject.h"
 #include "SVValueObjectLibrary\LinkedValue.h"
 #pragma endregion Includes
 

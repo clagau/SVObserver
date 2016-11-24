@@ -13,8 +13,8 @@
 #include "stdafx.h"
 #include "SVLUTOperator.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
-#include "SVImageClass.h"
-#include "SVImageProcessingClass.h" 
+#include "SVOCore/SVImageClass.h"
+#include "SVOCore/SVImageProcessingClass.h"
 #include "SVLUTEquation.h"
 #include "SVOMFCLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
 

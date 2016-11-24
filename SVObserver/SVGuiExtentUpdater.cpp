@@ -11,6 +11,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
+#include "SVOCore/SVTaskObject.h"
 #include "SVGuiExtentUpdater.h"
 #include "SVInspectionProcess.h"
 #include "SVTool.h"
@@ -26,7 +27,7 @@ HRESULT SVGuiExtentUpdater::SetImageExtent(SVTaskObjectClass* pTaskObject, const
 	HRESULT status = SvOi::Err_10001_SetImageExtent_InvalidParameter;
 	if ( nullptr != pTaskObject )
 	{
-		SVInspectionProcess* pInspection = pTaskObject->GetInspection();
+		SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(pTaskObject->GetInspection());
 		if ( nullptr != pInspection )
 		{
 			SVCommandInspectionSetImageExtentPtr commandPtr = new SVCommandInspectionExtentUpdater( pInspection->GetUniqueObjectID(), pTaskObject->GetUniqueObjectID(), ExtentUpdaterMode_SetImageExtent, &rExtents );
@@ -46,7 +47,7 @@ HRESULT SVGuiExtentUpdater::SetImageExtentToParent(SVTaskObjectClass* pTaskObjec
 
 	if ( nullptr != pTaskObject )
 	{
-		SVInspectionProcess* pInspection = pTaskObject->GetInspection();
+		SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(pTaskObject->GetInspection());
 		if ( nullptr != pInspection )
 		{
 			SVCommandInspectionSetImageExtentPtr commandPtr = new SVCommandInspectionExtentUpdater( pInspection->GetUniqueObjectID(), pTaskObject->GetUniqueObjectID(), ExtentUpdaterMode_SetImageExtentToParent);
@@ -67,7 +68,7 @@ HRESULT SVGuiExtentUpdater::SetImageExtentToFit(SVTaskObjectClass* pTaskObject, 
 
 	if ( nullptr != pTaskObject )
 	{
-		SVInspectionProcess* pInspection = pTaskObject->GetInspection();
+		SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(pTaskObject->GetInspection());
 		if ( nullptr != pInspection )
 		{
 			SVCommandInspectionSetImageExtentPtr commandPtr = new SVCommandInspectionExtentUpdater( pInspection->GetUniqueObjectID(), pTaskObject->GetUniqueObjectID(), ExtentUpdaterMode_SetImageExtentToFit, &rExtents );
@@ -88,7 +89,7 @@ HRESULT SVGuiExtentUpdater::ForwardSizeAndPosition(SVTaskObjectClass* pTaskObjec
 
 	if ( nullptr != pTaskObject )
 	{
-		SVInspectionProcess* pInspection = pTaskObject->GetInspection();
+		SVObjectClass* pInspection( pTaskObject->GetInspection() );
 		if ( nullptr != pInspection )
 		{
 			SVCommandInspectionSetImageExtentPtr commandPtr = new SVCommandInspectionExtentUpdater( pInspection->GetUniqueObjectID(), pTaskObject->GetUniqueObjectID(), ExtentUpdaterMode_ForwardExtent);

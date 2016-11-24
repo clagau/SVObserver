@@ -154,16 +154,16 @@ HRESULT SVValueObjectClass::SetArraySize(int iSize)
 
 	if( m_iArraySize <= 1 )
 	{
-		if( m_strTypeName.Find( _T(" Array") ) != -1 )
+		if( SVString::npos != m_TypeName.find( _T(" Array") ) )
 		{
-			m_strTypeName = m_strTypeName.Left( m_strTypeName.GetLength() - 6 );
+			m_TypeName = SvUl_SF::Left( m_TypeName, m_TypeName.size() - 6 );
 		}
 	}
 	else
 	{
-		if( m_strTypeName.Find( _T(" Array") ) == -1 )
+		if( SVString::npos == m_TypeName.find( _T(" Array") ) )
 		{
-			m_strTypeName += _T(" Array") ;
+			m_TypeName += _T(" Array") ;
 		}
 	}
 
@@ -244,16 +244,9 @@ void SVValueObjectClass::ValidateValue( int iBucket, int iIndex, const SVString&
 	}
 }
 
-HRESULT SVValueObjectClass::GetTypeName( CString& p_rstrValue )const 
+HRESULT SVValueObjectClass::SetTypeName( LPCTSTR TypeName )
 {
-	p_rstrValue = m_strTypeName;	
-
-	return S_OK;
-}
-
-HRESULT SVValueObjectClass::SetTypeName( LPCTSTR p_pstrValue )
-{
-	m_strTypeName = p_pstrValue;	
+	m_TypeName = TypeName;	
 
 	return S_OK;
 }

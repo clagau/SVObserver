@@ -14,9 +14,9 @@
 #include "SVTADlgThresholdPage.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVAutoThresholdEquation.h"
-#include "SVDataBuffer.h"
+#include "SVOCore/SVDataBuffer.h"
 #include "SvOGui/SVFormulaEditorSheet.h"
-#include "SVImageProcessingClass.h"
+#include "SVOCore/SVImageProcessingClass.h"
 #include "SVIPDoc.h"
 #include "SVLowerThresholdEquation.h"
 #include "SVObserver.h"
@@ -200,7 +200,7 @@ HRESULT SVToolAdjustmentDialogThresholdPageClass::SetInspectionData()
 			}
 		}
 		m_pCurrentThreshold->saveHistogram = true;
-		l_hrOk = RunOnce( m_pTool );
+		l_hrOk = RunOnce( m_pTool->GetUniqueObjectID() );
 		const SVMatroxLongArray & l_val = m_pCurrentThreshold->GetHistogramValues();
 		m_histogram.SetPixelCounts(l_val.begin(), l_val.end());
 		m_histogram.PostMessage(ID_BOUND_CHANGE, 1, m_lowerThreshold.GetPos());
@@ -270,7 +270,7 @@ void SVToolAdjustmentDialogThresholdPageClass::initThreshold()
 			svData.Length = MaxValues;
 			svData.Type = SVDataBufferInfoClass::SVHistResult;
 			svData.HBuffer.milResult = histResultID;
-			if ( S_OK == SVImageProcessingClass::Instance().CreateDataBuffer( &svData ) )
+			if ( S_OK == SVImageProcessingClass::CreateDataBuffer( &svData ) )
 			{
 				histResultID = svData.HBuffer.milResult;
 			}

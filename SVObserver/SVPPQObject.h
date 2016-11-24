@@ -388,7 +388,7 @@ protected:
 	//************************************
 	HRESULT ProcessCameraResponse( const SVCameraQueueElement& p_rElement );
 
-	HRESULT BuildCameraInfos( SVStdMapSVVirtualCameraPtrSVCameraInfoStruct& p_rCameraInfos ) const;
+	HRESULT BuildCameraInfos( SVGuidSVCameraInfoStructMap& p_rCameraInfos ) const;
 
 	mutable SVAsyncProcedure< SVAPCSignalHandler, SVThreadProcessHandler > m_AsyncProcedure;
 

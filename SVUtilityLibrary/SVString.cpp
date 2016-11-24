@@ -16,8 +16,10 @@
 //Moved to precompiled header: #include <sstream>
 //Moved to precompiled header: #include <boost\algorithm\string\case_conv.hpp>
 #include "SVString.h"
+#include "LoadDll.h"
 #pragma endregion Includes
 
+static const long cBufferSize = 1024;
 
 namespace Seidenader { namespace SVUtilityLibrary { namespace StringFunctions
 {
@@ -235,5 +237,22 @@ namespace Seidenader { namespace SVUtilityLibrary { namespace StringFunctions
 		}
 		return true;
 	}
-}}}
+	
+	SVString LoadString( UINT ResourceID )
+	{
+		SVString Result;
 
+		HINSTANCE ResourceInstance( nullptr );
+		LoadDll::Instance().getDll( SVOResourceDll, ResourceInstance );
+		if( nullptr != ResourceInstance )
+		{
+			TCHAR ResourceString[cBufferSize];
+			if( 0 < ::LoadString(ResourceInstance, ResourceID, ResourceString, cBufferSize ) )
+			{
+				Result = ResourceString;
+			}
+		}
+
+		return Result;
+	}
+} /* namespace StringFunctions */ } /* namespace SVUtilityLibrary */ } /* namespace Seidenader */

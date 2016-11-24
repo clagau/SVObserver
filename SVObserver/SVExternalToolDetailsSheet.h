@@ -18,6 +18,7 @@
 
 class SVExternalToolTask;
 class SVExternalToolDlg;
+class SVIPDoc;
 
 class SVExternalToolDetailsSheet : public CPropertySheet, public ISVCancel//, public SVPropertySheetCancelImpl
 {

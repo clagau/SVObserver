@@ -77,9 +77,6 @@
     <ClCompile Include="SVBarCodeAttributesDialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVBarCodeBuffer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVBarCodeDataMatrixDialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -111,9 +108,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVChildrenSetupDialog.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVClassInfoStruct.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVColorThreshold.cpp">
@@ -245,22 +239,7 @@
     <ClCompile Include="SVImageArithmetic.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVImageChildStruct.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVImageClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVImageListClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVImageObjectClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVImagePolarTransform.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVImageProcessingClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVImageTransform.cpp">
@@ -398,9 +377,6 @@
     <ClCompile Include="SVMatroxGigeCameraProxy.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVMatroxImageProcessingClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVMemoryManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -408,9 +384,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVMultiDocTemplate.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVObjectAppClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVObjectCommandDataJson.cpp">
@@ -741,21 +714,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVTADlgTranslationShiftPage.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVTaskObject.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVTaskObjectInterfaceClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVTaskObjectInterfaceInputRequestStruct.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVTaskObjectList.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVTaskObjectValueInterface.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVThickeningFilter.cpp">
@@ -1154,9 +1112,6 @@
     <ClCompile Include="SVEvaluateEndAngleClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVDataBuffer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVStdImageOperatorListClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -1196,10 +1151,13 @@
     <ClCompile Include="TableLimitAnalyzer.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVImageBuffer.cpp">
+    <ClCompile Include="SVImageAnalyzerClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVImageAnalyzerClass.cpp">
+    <ClCompile Include="SVTaskObjectInterfaceInputRequestStruct.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVTaskObjectValueInterface.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1260,9 +1218,6 @@
     <ClInclude Include="SVBarCodeAttributesDialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVBarCodeBuffer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVBarCodeDataMatrixDialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1294,9 +1249,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVChildrenSetupDialog.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVClassInfoStruct.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVColorThreshold.h">
@@ -1419,9 +1371,6 @@
     <ClInclude Include="SVGlobal.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVGlobalHandles.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVGuiExtentUpdater.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1437,25 +1386,7 @@
     <ClInclude Include="SVImageArithmetic.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVImageBuffer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVImageChildStruct.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVImageClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVImageListClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVImageObjectClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVImagePolarTransform.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVImageProcessingClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVImageTransform.h">
@@ -1608,9 +1539,6 @@
     <ClInclude Include="SVMatroxGigeCameraProxy.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVMatroxImageProcessingClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVMemoryManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1618,9 +1546,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVMultiDocTemplate.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVObjectAppClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVObjectCommandDataJson.h">
@@ -1968,21 +1893,6 @@
     <ClInclude Include="SVTADlgTranslationShiftPage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVTaskObject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVTaskObjectInterfaceClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVTaskObjectInterfaceInputRequestStruct.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVTaskObjectList.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVTaskObjectValueInterface.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVThickeningFilter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -2208,9 +2118,6 @@
     <ClInclude Include="SVConditional.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVExtentPropertiesInfoStruct.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="RemoteCommand.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -2403,9 +2310,6 @@
     <ClInclude Include="SVEvaluateRotationAngleClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVDataBuffer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVStdImageOperatorListClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -2451,6 +2355,12 @@
     <ClInclude Include="SVImageAnalyzerClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SVTaskObjectInterfaceInputRequestStruct.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVTaskObjectValueInterface.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="SVDLLToolLoadLibraryClass.inl">
@@ -2466,9 +2376,6 @@
       <Filter>Header Files</Filter>
     </None>
     <None Include="SVOutputObjectList.inl">
-      <Filter>Header Files</Filter>
-    </None>
-    <None Include="SVTaskObjectInterfaceInputRequestStruct.inl">
       <Filter>Header Files</Filter>
     </None>
     <None Include="SVToolExtentClass.inl">
@@ -2571,6 +2478,9 @@
       <Filter>Header Files</Filter>
     </None>
     <None Include="RootObject.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="SVTaskObjectInterfaceInputRequestStruct.inl">
       <Filter>Header Files</Filter>
     </None>
   </ItemGroup>

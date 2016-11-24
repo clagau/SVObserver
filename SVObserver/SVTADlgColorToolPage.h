@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVTaskObjectInterfaceClass.h"
+#include "SVTaskObjectValueInterface.h"
 //TODO: MZA(10.Nov 2014): Move this files to SVOGui project and then remove folder from include and Namespace add-on add PictureDisplay declaration.
 #include "SVOGui/PictureDisplay.h"
 #pragma endregion Includes
@@ -24,13 +24,13 @@ class SVBoolValueObjectClass;
 /////////////////////////////////////////////////////////////////////////////
 // SVTADlgColorToolPage dialog
 
-class SVTADlgColorToolPageClass : public CPropertyPage, public SVTaskObjectInterfaceClass
+class SVTADlgColorToolPageClass : public CPropertyPage, public SVTaskObjectValueInterface
 {
 public:
 	SVTADlgColorToolPageClass( const SVGUID& rInspectionID, const SVGUID& rTaskObjectID );
 	virtual ~SVTADlgColorToolPageClass();
 
-	virtual HRESULT SetInspectionData() override;
+	HRESULT SetInspectionData();
 
 // Overrides
 	// ClassWizard generate virtual function overrides

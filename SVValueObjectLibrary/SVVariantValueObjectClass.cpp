@@ -729,7 +729,7 @@ void SVVariantValueObjectClass::LocalInitialize()
 	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVVariantValueObjectType;
 	DefaultValue().Clear();
 
-	m_strTypeName = "Variant";
+	SetTypeName( _T("Variant") );
 
 	InitializeBuckets();
 }

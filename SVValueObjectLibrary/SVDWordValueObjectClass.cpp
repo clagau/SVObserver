@@ -190,10 +190,10 @@ void SVDWordValueObjectClass::LocalInitialize()
 	DefaultValue() = 0;
 	if ( m_sLegacyScriptDefaultName.IsEmpty() )
 	{
-		m_sLegacyScriptDefaultName = "dwDefault";
-		m_sLegacyScriptArrayName = "pDwArray";
+		m_sLegacyScriptDefaultName = _T("dwDefault");
+		m_sLegacyScriptArrayName = _T("pDwArray");
 	}
-	m_strTypeName = "Integer32Hex";
+	SetTypeName( _T("Integer32Hex") );
 	InitializeBuckets();
 
 	SetOutputFormat(OutputFormat_hex);

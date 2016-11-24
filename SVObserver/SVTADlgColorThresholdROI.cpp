@@ -76,16 +76,16 @@ BOOL SVTADlgColorThresholdROI::OnInitDialog()
 {
 	SVTADlgColorThresholdBasePage::OnInitDialog();
 
-	SetTaskObject( mpTool );
+	SetTaskObject( m_pTool );
 
 	SVObjectTypeInfoStruct objectInfo;
 	objectInfo.ObjectType = SVOperatorObjectType;
 	objectInfo.SubType = SVColorThresholdObjectType;
 
 	// Get the color threshold object
-	mpThreshold = dynamic_cast<SVColorThresholdClass*>(mpTool->getFirstObject(objectInfo));
+	m_pThreshold = dynamic_cast<SVColorThresholdClass*> (m_pTool->getFirstObject(objectInfo));
 
-	if( mpThreshold )
+	if( m_pThreshold )
 	{
 		// Get Train Color Extent Variables
 		SVObjectTypeInfoStruct extentObjectInfo;
@@ -93,35 +93,35 @@ BOOL SVTADlgColorThresholdROI::OnInitDialog()
 
 		// Get Train Color ROI Extent Left Object...
 		extentObjectInfo.EmbeddedID = SVExtentRelativeLeftPositionObjectGuid;
-		mpExtentLeft = dynamic_cast<SVDoubleValueObjectClass*>(mpThreshold->getFirstObject(extentObjectInfo));
+		m_pExtentLeft = dynamic_cast<SVDoubleValueObjectClass*> (m_pThreshold->getFirstObject(extentObjectInfo));
 
 		// Get Train Color ROI Extent Top Object...
 		extentObjectInfo.EmbeddedID = SVExtentRelativeTopPositionObjectGuid;
-		mpExtentTop = dynamic_cast<SVDoubleValueObjectClass*>(mpThreshold->getFirstObject(extentObjectInfo));
+		m_pExtentTop = dynamic_cast<SVDoubleValueObjectClass*> (m_pThreshold->getFirstObject(extentObjectInfo));
 
 		// Get Train Color ROI Extent Width Object...
 		extentObjectInfo.EmbeddedID = SVExtentWidthObjectGuid;
-		mpExtentWidth = dynamic_cast<SVDoubleValueObjectClass*>(mpThreshold->getFirstObject(extentObjectInfo));
+		m_pExtentWidth = dynamic_cast<SVDoubleValueObjectClass*> (m_pThreshold->getFirstObject(extentObjectInfo));
 
 		// Get Train Color ROI Extent Height Object...
 		extentObjectInfo.EmbeddedID = SVExtentHeightObjectGuid;
-		mpExtentHeight = dynamic_cast<SVDoubleValueObjectClass*>(mpThreshold->getFirstObject(extentObjectInfo));
+		m_pExtentHeight = dynamic_cast<SVDoubleValueObjectClass*> (m_pThreshold->getFirstObject(extentObjectInfo));
 
 		// Initialize Extent
 		double value;
-		mpExtentLeft->GetValue( value );
+		m_pExtentLeft->GetValue( value );
 		m_pSheet->m_rectROI.left = (long)(value);
 
-		mpExtentTop->GetValue( value );
+		m_pExtentTop->GetValue( value );
 		m_pSheet->m_rectROI.top = (long)(value);
 
-		mpExtentWidth->GetValue( value );
+		m_pExtentWidth->GetValue( value );
 		m_pSheet->m_rectROI.right = (long)(value) + m_pSheet->m_rectROI.left;
 
-		mpExtentHeight->GetValue( value );
+		m_pExtentHeight->GetValue( value );
 		m_pSheet->m_rectROI.bottom = (long)(value) + m_pSheet->m_rectROI.top;
 
-		SVImageClass* pImage = mpTool->GetRGBImage();
+		SVImageClass* pImage = m_pTool->GetRGBImage();
 
 		if( pImage )
 		{
@@ -207,21 +207,21 @@ void SVTADlgColorThresholdROI::UpdateToolFigure()
 
 HRESULT SVTADlgColorThresholdROI::SetInspectionData()
 {
-	HRESULT l_hrOk = AddInputRequest( mpExtentLeft, m_pSheet->m_rectROI.left );
+	HRESULT l_hrOk = AddInputRequest( m_pExtentLeft, m_pSheet->m_rectROI.left );
 
 	if( S_OK == l_hrOk )
 	{
-		l_hrOk = AddInputRequest( mpExtentTop, m_pSheet->m_rectROI.top );
+		l_hrOk = AddInputRequest( m_pExtentTop, m_pSheet->m_rectROI.top );
 	}
 
 	if( S_OK == l_hrOk )
 	{
-		l_hrOk = AddInputRequest( mpExtentWidth, m_pSheet->m_rectROI.Width() );
+		l_hrOk = AddInputRequest( m_pExtentWidth, m_pSheet->m_rectROI.Width() );
 	}
 
 	if( S_OK == l_hrOk )
 	{
-		l_hrOk = AddInputRequest( mpExtentHeight, m_pSheet->m_rectROI.Height() );
+		l_hrOk = AddInputRequest( m_pExtentHeight, m_pSheet->m_rectROI.Height() );
 	}
 
 	if( S_OK == l_hrOk )
@@ -231,7 +231,7 @@ HRESULT SVTADlgColorThresholdROI::SetInspectionData()
 
 	if( S_OK == l_hrOk )
 	{
-		l_hrOk = RunOnce( mpTool );
+		l_hrOk = RunOnce( m_pTool->GetUniqueObjectID() );
 	}
 
 	return l_hrOk;

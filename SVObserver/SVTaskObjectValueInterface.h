@@ -16,20 +16,19 @@
 #pragma endregion Includes
 
 class SVTaskObjectClass;
-class SVToolClass;
 
 class SVTaskObjectValueInterface
 {
 public:
 	SVTaskObjectValueInterface();
-	SVTaskObjectValueInterface( SVTaskObjectClass *p_psvTaskObject );
+	SVTaskObjectValueInterface( SVTaskObjectClass* pTaskObject );
 	virtual ~SVTaskObjectValueInterface();
 
-	void SetTaskObject( SVTaskObjectClass *p_psvTaskObject );
+	void SetTaskObject( SVTaskObjectClass* pTaskObject );
 
 	virtual HRESULT GetObjectValue( const SVGUID& p_rObjectId, const SVString& p_rValueName, VARIANT& p_rVariantValue ) const;
 
-	virtual HRESULT GetValue( const SVGUID& p_rTaskId, const SVGUID& p_rEmbeddedId, VARIANT& p_rValue ) const;
+	virtual HRESULT GetValue( const SVGUID& rTaskId, const SVGUID& rEmbeddedId, VARIANT& rValue ) const;
 
 	template <class InIterator>
 	HRESULT AddInputRequest(SVValueObjectReference ObjectRef, InIterator begin, InIterator end)
@@ -51,15 +50,15 @@ public:
 		return Result;
 	}
 
-	virtual HRESULT AddInputRequest( SVInputRequestStructMap p_map );
-	virtual HRESULT AddInputRequest( SVValueObjectReference p_svObjectRef, LPCTSTR p_szValue );
-	virtual HRESULT AddInputRequest( SVValueObjectReference p_svObjectRef, double p_dValue );
-	virtual HRESULT AddInputRequest( const SVGUID& p_rTaskId, const SVGUID& p_rEmbeddedId, LPCTSTR p_szValue );
-	virtual HRESULT AddInputRequest( const SVGUID& p_rTaskId, const SVGUID& p_rEmbeddedId, double p_dValue );
+	virtual HRESULT AddInputRequest( const SVInputRequestStructMap& map );
+	virtual HRESULT AddInputRequest( SVValueObjectReference objectRef, LPCTSTR szValue );
+	virtual HRESULT AddInputRequest( SVValueObjectReference objectRef, double dValue );
+	virtual HRESULT AddInputRequest( const SVGUID& rTaskId, const SVGUID& rEmbeddedId, LPCTSTR szValue );
+	virtual HRESULT AddInputRequest( const SVGUID& rTaskId, const SVGUID& rEmbeddedId, double dValue );
 	virtual HRESULT AddInputRequestMarker();
-	virtual HRESULT RunOnce( SVToolClass *p_psvTool = nullptr );
+	virtual HRESULT RunOnce( const SVGUID& rToolId );
 
 private:
-	SVTaskObjectClass *m_psvTaskObject;
+	SVTaskObjectClass* m_pTaskObject;
 };
 

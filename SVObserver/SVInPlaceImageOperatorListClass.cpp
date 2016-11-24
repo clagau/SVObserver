@@ -11,11 +11,10 @@
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVObjectLibrary/SVAnalyzerLevelCreateStruct.h"
 
-#include "SVImageClass.h"
-#include "SVImageProcessingClass.h"
+#include "SVOCore/SVImageClass.h"
+#include "SVOCore/SVImageProcessingClass.h"
 #include "SVUnaryImageOperatorClass.h"
 #include "SVTool.h"
-#include "SVMatroxImageProcessingClass.h"
 #include "SVOMFCLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
 
 #pragma endregion Includes

@@ -13,6 +13,7 @@
 
 #pragma region Includes
 #include "SVFilterClass.h"
+#include "SVImageLibrary/SVImageBufferHandleInterface.h"
 #include "SVMatroxLibrary/SVMatroxBuffer.h"
 #pragma endregion Includes
 

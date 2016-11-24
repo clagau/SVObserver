@@ -10,6 +10,8 @@
 #include "ITaskObject.h"
 #pragma endregion Includes
 
+struct SVOutObjectInfoStruct;
+
 namespace Seidenader
 {
 	namespace ObjectInterfaces
@@ -52,6 +54,12 @@ namespace Seidenader
 			 /param context <in> set which action should done. Possible flags:  SVMFSetDefaultInputs and SVMFResetInspection
 			***********/
 			virtual bool DestroyFriendObject(IObjectClass& rObject, DWORD context) = 0;
+
+			/**********
+			 This method removes he connection to the output objject.
+			 /param pOutObject <in> object to disconnect.
+			***********/
+			virtual void RemoveOutputObject( SVOutObjectInfoStruct* pOutObject ) = 0;
 		};
 	}
 }

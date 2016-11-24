@@ -7,6 +7,7 @@
 
 #pragma once
 #pragma region Includes
+#include "IObjectClass.h"
 #include "SVUtilityLibrary\SVGUID.h"
 #pragma endregion Includes
 
@@ -22,9 +23,15 @@ namespace Seidenader
 
 			/**********
 			 The method determines if it is previous to another in the list.
-			 \param rToolID <out>: tool id
+			 \param rToolID <in>: tool id
 			***********/
 			virtual bool IsToolPreviousToSelected( const SVGUID& rToolID ) const = 0;
+
+			/**********
+			 The method retrieves the band 0 of a color tool else nullptr
+			 \return Pointer to the Band0 image object
+			***********/
+			virtual IObjectClass* getBand0Image() const = 0;
 		};
 	}
 }

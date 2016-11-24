@@ -25,8 +25,8 @@
 #include "SVDigitizerProcessingClass.h"
 #include "SVSystemLibrary/SVFileNameManagerClass.h"
 #include "SVGlobal.h"
-#include "SVImageObjectClass.h"
-#include "SVImageProcessingClass.h"
+#include "SVOCore/SVImageObjectClass.h"
+#include "SVOCore/SVImageProcessingClass.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVSVIMStateClass.h"
 #pragma endregion Includes

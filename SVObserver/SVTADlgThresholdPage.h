@@ -12,7 +12,7 @@
 #pragma once
 #pragma region Includes
 #include "SVMFCControls\SVEditNumbers.h"
-#include "SVTaskObjectInterfaceClass.h"
+#include "SVTaskObjectValueInterface.h"
 #include "SVMFCControls\SVHistogram.h"
 //TODO: MZA(10.Nov 2014): Move this files to SVOGui project and then remove folder from include and Namespace add-on add PictureDisplay declaration.
 #include "SVOGui/PictureDisplay.h"
@@ -32,7 +32,7 @@ BOOL GetThreshold( HWND hWnd, DWORD& Value );
 void SetThreshold( CWnd* pWnd, DWORD Value );
 void SetThreshold( HWND hWnd, DWORD Value );
 
-class SVToolAdjustmentDialogThresholdPageClass : public CPropertyPage, public SVTaskObjectInterfaceClass
+class SVToolAdjustmentDialogThresholdPageClass : public CPropertyPage, public SVTaskObjectValueInterface
 {
 	//******************************************************************************
 	// Class Wizard Generated Message Map Entries:
@@ -71,7 +71,7 @@ public:
 	SVToolAdjustmentDialogThresholdPageClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* pParent);
 	virtual ~SVToolAdjustmentDialogThresholdPageClass();
 
-	virtual HRESULT SetInspectionData() override;
+	HRESULT SetInspectionData();
 
 	//************************************
 	// Method:    setImages

@@ -445,153 +445,6 @@ HRESULT SVInspectionInfoStruct::GetNextAvailableIndexes( SVDataManagerLockTypeEn
 	return l_Status;
 }
 
-SVCameraInfoStruct::SVCameraInfoStruct()
-:	pCamera( nullptr ),
-	m_SourceImageDMIndexHandle(),
-	m_StartFrameTimeStamp( 0 ),
-	m_EndFrameTimeStamp( 0 ),
-	m_CallbackTimeStamp( 0 )
-{
-}
-
-SVCameraInfoStruct::SVCameraInfoStruct( const SVCameraInfoStruct &p_rsvData )
-:	pCamera( nullptr ),
-	m_SourceImageDMIndexHandle(),
-	m_StartFrameTimeStamp( 0 ),
-	m_EndFrameTimeStamp( 0 ),
-	m_CallbackTimeStamp( 0 )
-{
-	Assign( p_rsvData, p_rsvData.m_SourceImageDMIndexHandle.GetLockType() );
-}
-
-SVCameraInfoStruct::~SVCameraInfoStruct()
-{
-	Reset();
-}
-
-const SVCameraInfoStruct &SVCameraInfoStruct::operator=( const SVCameraInfoStruct &p_rsvData )
-{
-	if( this != &p_rsvData )
-	{
-		pCamera = p_rsvData.pCamera;
-		m_StartFrameTimeStamp = p_rsvData.m_StartFrameTimeStamp;
-		m_EndFrameTimeStamp = p_rsvData.m_EndFrameTimeStamp;
-		m_CallbackTimeStamp = p_rsvData.m_CallbackTimeStamp;
-
-		m_SourceImageDMIndexHandle.Assign( p_rsvData.m_SourceImageDMIndexHandle, p_rsvData.m_SourceImageDMIndexHandle.GetLockType() );
-	}
-	
-	return *this;
-}
-
-HRESULT SVCameraInfoStruct::Assign( const SVCameraInfoStruct &p_rsvData, SVDataManagerLockTypeEnum p_LockType )
-{
-	HRESULT l_Status = S_OK;
-
-	if( this != &p_rsvData )
-	{
-		pCamera = p_rsvData.pCamera;
-		m_StartFrameTimeStamp = p_rsvData.m_StartFrameTimeStamp;
-		m_EndFrameTimeStamp = p_rsvData.m_EndFrameTimeStamp;
-		m_CallbackTimeStamp = p_rsvData.m_CallbackTimeStamp;
-
-		l_Status = m_SourceImageDMIndexHandle.Assign( p_rsvData.m_SourceImageDMIndexHandle, p_LockType );
-
-		if( m_SourceImageDMIndexHandle.GetIndex() != p_rsvData.m_SourceImageDMIndexHandle.GetIndex() )
-		{
-			l_Status = E_FAIL;
-		}
-	}
-	
-	return l_Status;
-}
-
-HRESULT SVCameraInfoStruct::Assign( SVClock::SVTimeStamp p_StartFrameTS, SVClock::SVTimeStamp p_EndFrameTS, const SVDataManagerHandle& p_rIndexHandle, SVDataManagerLockTypeEnum p_LockType )
-{
-	HRESULT l_Status = S_OK;
-
-	assert( m_SourceImageDMIndexHandle.GetIndex() < 0 || ( 0 <= m_SourceImageDMIndexHandle.GetIndex() && 0 <= p_rIndexHandle.GetIndex() ) );
-
-	m_StartFrameTimeStamp = p_StartFrameTS;
-	m_EndFrameTimeStamp = p_EndFrameTS;
-
-	m_CallbackTimeStamp = SVClock::GetTimeStamp();
-
-	l_Status = m_SourceImageDMIndexHandle.Assign( p_rIndexHandle, p_LockType );
-
-	if( m_SourceImageDMIndexHandle.GetIndex() != p_rIndexHandle.GetIndex() )
-	{
-		l_Status = E_FAIL;
-	}
-
-	return l_Status;
-}
-
-
-void SVCameraInfoStruct::Reset()
-{
-	pCamera = nullptr;
-	m_StartFrameTimeStamp = 0;
-	m_EndFrameTimeStamp = 0;
-	// *** // ***
-	// For Debugging Only
-	m_CallbackTimeStamp	= 0;
-	// *** // ***
-
-	ClearIndexes();
-}// end Reset
-
-void SVCameraInfoStruct::ClearInfo()
-{
-	m_StartFrameTimeStamp = 0;
-	m_EndFrameTimeStamp = 0;
-	// *** // ***
-	// For Debugging Only
-	m_CallbackTimeStamp	= 0;
-	// *** // ***
-
-	ClearIndexes();
-}
-
-void SVCameraInfoStruct::ClearCameraInfo()
-{
-	m_StartFrameTimeStamp = 0;
-	m_EndFrameTimeStamp = 0;
-
-	ClearIndexes();
-}// end Init
-
-void SVCameraInfoStruct::ClearIndexes()
-{
-	m_SourceImageDMIndexHandle.clear();
-}
-
-HRESULT SVCameraInfoStruct::GetNextAvailableIndexes( SVDataManagerLockTypeEnum p_LockType )
-{
-	HRESULT l_Status = S_OK;
-
-	if( nullptr != pCamera )
-	{
-		pCamera->ReserveNextImageHandleIndex( m_SourceImageDMIndexHandle, p_LockType );
-	}
-	else
-	{
-		l_Status = E_FAIL;
-	}
-
-	return l_Status;
-}
-
-long SVCameraInfoStruct::GetIndex() const
-{
-	return m_SourceImageDMIndexHandle.GetIndex();
-}
-
-const SVDataManagerHandle& SVCameraInfoStruct::GetSourceImageDMIndexHandle() const
-{
-	return m_SourceImageDMIndexHandle;
-}
-
 SVProductInfoStruct::SVProductInfoStruct()
 : m_ProductActive( 0 )
 , m_lastInspectedSlot(-1)
@@ -689,8 +542,8 @@ HRESULT SVProductInfoStruct::Assign( const SVProductInfoStruct &p_rsvData, SVDat
 
 		m_lastInspectedSlot = p_rsvData.m_lastInspectedSlot;
 
-		SVStdMapSVVirtualCameraPtrSVCameraInfoStruct::iterator l_Iter;
-		SVStdMapSVVirtualCameraPtrSVCameraInfoStruct::const_iterator l_RightIter;
+		SVGuidSVCameraInfoStructMap::iterator l_Iter;
+		SVGuidSVCameraInfoStructMap::const_iterator l_RightIter;
 
 		l_Iter = m_svCameraInfos.begin();
 
@@ -771,7 +624,7 @@ void SVProductInfoStruct::InitProductInfo()
 	oPPQInfo.InitPPQInfo();
 	oTriggerInfo.Init();
 	
-	SVStdMapSVVirtualCameraPtrSVCameraInfoStruct::iterator l_svCameraIter = m_svCameraInfos.begin();
+	SVGuidSVCameraInfoStructMap::iterator l_svCameraIter = m_svCameraInfos.begin();
 
 	while( l_svCameraIter != m_svCameraInfos.end() )
 	{
@@ -809,7 +662,7 @@ void SVProductInfoStruct::Reset()
 	oPPQInfo.Reset();
 	oTriggerInfo.Reset();
 	
-	SVStdMapSVVirtualCameraPtrSVCameraInfoStruct::iterator l_svCameraIter = m_svCameraInfos.begin();
+	SVGuidSVCameraInfoStructMap::iterator l_svCameraIter = m_svCameraInfos.begin();
 
 	while( l_svCameraIter != m_svCameraInfos.end() )
 	{
@@ -832,7 +685,7 @@ void SVProductInfoStruct::ClearIndexes()
 {
 	oPPQInfo.ClearIndexes();
 
-	SVStdMapSVVirtualCameraPtrSVCameraInfoStruct::iterator l_svCameraIter = m_svCameraInfos.begin();
+	SVGuidSVCameraInfoStructMap::iterator l_svCameraIter = m_svCameraInfos.begin();
 
 	while( l_svCameraIter != m_svCameraInfos.end() )
 	{
@@ -855,18 +708,15 @@ HRESULT SVProductInfoStruct::GetNextAvailableIndexes( SVDataManagerLockTypeEnum 
 {
 	HRESULT l_Status = oPPQInfo.GetNextAvailableIndexes( p_LockType );
 
-	SVStdMapSVVirtualCameraPtrSVCameraInfoStruct::iterator l_svCameraIter = m_svCameraInfos.begin();
+	SVGuidSVCameraInfoStructMap::iterator CameraIter( m_svCameraInfos.begin() );
 
-	while( l_svCameraIter != m_svCameraInfos.end() )
+	for( ;m_svCameraInfos.end() != CameraIter; ++CameraIter )
 	{
-		HRESULT l_Temp = l_svCameraIter->second.GetNextAvailableIndexes( p_LockType );
-
+		HRESULT l_Temp = CameraIter->second.GetNextAvailableIndexes( p_LockType );
 		if( S_OK == l_Status )
 		{
 			l_Status = l_Temp;
 		}
-
-		++l_svCameraIter;
 	}
 
 	SVGUIDSVInspectionInfoStructMap::iterator l_svInspectionIter = m_svInspectionInfos.begin();
@@ -898,25 +748,30 @@ bool SVProductInfoStruct::IsAlive() const
 	return l_Status;
 }
 
-void SVProductInfoStruct::DumpIndexInfo( SVString& p_rData )
+void SVProductInfoStruct::DumpIndexInfo( SVString& rData )
 {
-	p_rData = SvUl_SF::Format( _T( "TriggerCount=%ld-DataComplete=%s-ResultDataIndex=%ld-PublishedImageIndex=%ld" ),
+	rData = SvUl_SF::Format( _T( "TriggerCount=%ld-DataComplete=%s-ResultDataIndex=%ld-PublishedImageIndex=%ld" ),
 		ProcessCount(),
 		( bDataComplete ) ? _T( "T" ) : _T( "F" ),
 		oPPQInfo.m_ResultDataDMIndexHandle.GetIndex(), 
 		oPPQInfo.m_ResultImagePublishedDMIndexHandle.GetIndex() );
 
-	SVStdMapSVVirtualCameraPtrSVCameraInfoStruct::const_iterator l_CamIter = m_svCameraInfos.begin();
+	SVGuidSVCameraInfoStructMap::const_iterator CamIter = m_svCameraInfos.begin();
 
-	while( l_CamIter != m_svCameraInfos.end() )
+	for( ; CamIter != m_svCameraInfos.end(); ++CamIter )
 	{
-		SVString l_Temp = SvUl_SF::Format( _T( " : %s-Index=%ld" ), 
-			( nullptr != l_CamIter->first ) ? l_CamIter->first->GetName() : _T( "(null)" ), 
-			l_CamIter->second.GetIndex() );
+		if( SV_GUID_NULL != CamIter->first )
+		{
+			SVString CameraName( _T( "(null)" ) );
 
-		p_rData += l_Temp;
+			SvOi::IObjectClass* pCamera =  SvOi::getObject( CamIter->first );
+			if( nullptr != pCamera )
+			{
+				CameraName = pCamera->GetName();
+			}
 
-		++l_CamIter;
+			rData += SvUl_SF::Format( _T( " : %s-Index=%ld" ), CameraName.c_str(), CamIter->second.GetIndex() );
+		}
 	}
 
 	SVGUIDSVInspectionInfoStructMap::const_iterator l_InspectIter = m_svInspectionInfos.begin();
@@ -928,7 +783,7 @@ void SVProductInfoStruct::DumpIndexInfo( SVString& p_rData )
 			l_InspectIter->second.oInspectedState,
 			l_InspectIter->second.m_ResultImageDMIndexHandle.GetIndex() );
 
-		p_rData += l_Temp;
+		rData += l_Temp;
 
 		++l_InspectIter;
 	}

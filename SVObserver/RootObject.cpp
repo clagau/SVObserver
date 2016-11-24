@@ -20,6 +20,7 @@
 #include "SVObjectLibrary\GlobalConst.h"
 #include "SVMessage\SVMessage.h"
 #include "SVStatusLibrary\MessageManager.h"
+#include "ObjectInterfaces\IRootObject.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
 #include "ObjectSelectorLibrary/SelectorItemVector.h"
 #pragma endregion Includes
@@ -300,5 +301,17 @@ SvOi::ISelectorItemVectorPtr SvOi::getRootChildSelectorList( LPCTSTR Path, UINT 
 
 	return Result;
 }
+
+void SvOi::addRootChildObjects(SVOutputInfoListClass& rList)
+{
+	BasicValueObjects::ValueVector list;
+
+	RootObject::getRootChildObjectList( list, _T(""), 0 );
+	for (auto iter = list.begin(); iter != list.end(); ++iter) 
+	{
+		rList.Add( &((*iter)->GetObjectOutputInfo()) );
+	}
+}
+
 #pragma endregion IRootObject-function
 

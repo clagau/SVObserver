@@ -64,58 +64,58 @@ void SVWindowToolClass::BuildAvailableAnalyzerList ()
 	SVClassInfoStruct analyzerClassInfo;
 
 	// Add the Blob analyzer
-	analyzerClassInfo.ObjectTypeInfo.ObjectType = SVAnalyzerObjectType;
-	analyzerClassInfo.ObjectTypeInfo.SubType = SVBlobAnalyzerObjectType;
-	analyzerClassInfo.ClassId = SVBlobAnalyzerClassGuid;
-	analyzerClassInfo.ClassName.LoadString( IDS_CLASSNAME_SVBLOBANALYZER );
+	analyzerClassInfo.m_ObjectTypeInfo.ObjectType = SVAnalyzerObjectType;
+	analyzerClassInfo.m_ObjectTypeInfo.SubType = SVBlobAnalyzerObjectType;
+	analyzerClassInfo.m_ClassId = SVBlobAnalyzerClassGuid;
+	analyzerClassInfo.m_ClassName = SvUl_SF::LoadString( IDS_CLASSNAME_SVBLOBANALYZER );
 	m_availableChildren.Add( analyzerClassInfo );
 
 	// Add the White Pixel Analyzer
-	analyzerClassInfo.ObjectTypeInfo.ObjectType = SVAnalyzerObjectType;
-	analyzerClassInfo.ObjectTypeInfo.SubType = SVPixelAnalyzerObjectType;
-	analyzerClassInfo.ClassId = SVPixelAnalyzerClassGuid;
-	analyzerClassInfo.ClassName.LoadString( IDS_CLASSNAME_SVPIXELANALYZER );
+	analyzerClassInfo.m_ObjectTypeInfo.ObjectType = SVAnalyzerObjectType;
+	analyzerClassInfo.m_ObjectTypeInfo.SubType = SVPixelAnalyzerObjectType;
+	analyzerClassInfo.m_ClassId = SVPixelAnalyzerClassGuid;
+	analyzerClassInfo.m_ClassName = SvUl_SF::LoadString( IDS_CLASSNAME_SVPIXELANALYZER );
 	m_availableChildren.Add(analyzerClassInfo);
 
 	// Add the Luminance Analyzer
-	analyzerClassInfo.ObjectTypeInfo.ObjectType = SVAnalyzerObjectType;
-	analyzerClassInfo.ObjectTypeInfo.SubType = SVLuminanceAnalyzerObjectType;
-	analyzerClassInfo.ClassId = SVLuminanceAnalyzerClassGuid;
-	analyzerClassInfo.ClassName.LoadString( IDS_CLASSNAME_SVLUMINANCEANALYZER );
+	analyzerClassInfo.m_ObjectTypeInfo.ObjectType = SVAnalyzerObjectType;
+	analyzerClassInfo.m_ObjectTypeInfo.SubType = SVLuminanceAnalyzerObjectType;
+	analyzerClassInfo.m_ClassId = SVLuminanceAnalyzerClassGuid;
+	analyzerClassInfo.m_ClassName = SvUl_SF::LoadString( IDS_CLASSNAME_SVLUMINANCEANALYZER );
 	m_availableChildren.Add(analyzerClassInfo);
 
 	// Add the Histogram Analyzer
-	analyzerClassInfo.ObjectTypeInfo.ObjectType = SVAnalyzerObjectType;
-	analyzerClassInfo.ObjectTypeInfo.SubType = SVHistogramAnalyzerObjectType;
-	analyzerClassInfo.ClassId = SVHistogramAnalyzerClassGuid;
-	analyzerClassInfo.ClassName.LoadString( IDS_CLASSNAME_SVHISTOGRAMANALYZER );
+	analyzerClassInfo.m_ObjectTypeInfo.ObjectType = SVAnalyzerObjectType;
+	analyzerClassInfo.m_ObjectTypeInfo.SubType = SVHistogramAnalyzerObjectType;
+	analyzerClassInfo.m_ClassId = SVHistogramAnalyzerClassGuid;
+	analyzerClassInfo.m_ClassName = SvUl_SF::LoadString( IDS_CLASSNAME_SVHISTOGRAMANALYZER );
 	m_availableChildren.Add(analyzerClassInfo);
 
 	// Sri 04-12-00
 	// Add the Pattern Analyzer	
-	analyzerClassInfo.ObjectTypeInfo.ObjectType = SVAnalyzerObjectType;
-	analyzerClassInfo.ObjectTypeInfo.SubType = SVPatternAnalyzerObjectType;
-	analyzerClassInfo.ClassId = SVPatternAnalyzerClassGuid;
-	analyzerClassInfo.ClassName.LoadString( IDS_CLASSNAME_SVPATTERNANALYZER );
+	analyzerClassInfo.m_ObjectTypeInfo.ObjectType = SVAnalyzerObjectType;
+	analyzerClassInfo.m_ObjectTypeInfo.SubType = SVPatternAnalyzerObjectType;
+	analyzerClassInfo.m_ClassId = SVPatternAnalyzerClassGuid;
+	analyzerClassInfo.m_ClassName = SvUl_SF::LoadString( IDS_CLASSNAME_SVPATTERNANALYZER );
 	m_availableChildren.Add(analyzerClassInfo);
 
 	if ( TheSVOLicenseManager().HasMatroxIdentificationLicense() )
 	{
 		// Add the BarCode Analyzer
-		analyzerClassInfo.ObjectTypeInfo.ObjectType = SVAnalyzerObjectType;
-		analyzerClassInfo.ObjectTypeInfo.SubType = SVBarCodeAnalyzerObjectType;
-		analyzerClassInfo.ClassId = SVBarCodeAnalyzerClassGuid;
-		analyzerClassInfo.ClassName.LoadString( IDS_CLASSNAME_SVBARCODEANALYZER );
+		analyzerClassInfo.m_ObjectTypeInfo.ObjectType = SVAnalyzerObjectType;
+		analyzerClassInfo.m_ObjectTypeInfo.SubType = SVBarCodeAnalyzerObjectType;
+		analyzerClassInfo.m_ClassId = SVBarCodeAnalyzerClassGuid;
+		analyzerClassInfo.m_ClassName = SvUl_SF::LoadString( IDS_CLASSNAME_SVBARCODEANALYZER );
 		m_availableChildren.Add(analyzerClassInfo);
 	}
 
 	if ( TheSVOLicenseManager().HasMatroxIdentificationLicense() )
 	{
 		// Add the Matrox OCV Analyzer	
-		analyzerClassInfo.ObjectTypeInfo.ObjectType = SVAnalyzerObjectType;
-		analyzerClassInfo.ObjectTypeInfo.SubType = SVOCVAnalyzerObjectType;
-		analyzerClassInfo.ClassId = SVOCVAnalyzerClassGuid;
-		analyzerClassInfo.ClassName.LoadString( IDS_CLASSNAME_SVOCVANALYZER );
+		analyzerClassInfo.m_ObjectTypeInfo.ObjectType = SVAnalyzerObjectType;
+		analyzerClassInfo.m_ObjectTypeInfo.SubType = SVOCVAnalyzerObjectType;
+		analyzerClassInfo.m_ClassId = SVOCVAnalyzerClassGuid;
+		analyzerClassInfo.m_ClassName = SvUl_SF::LoadString( IDS_CLASSNAME_SVOCVANALYZER );
 		m_availableChildren.Add(analyzerClassInfo);
 	}
 }

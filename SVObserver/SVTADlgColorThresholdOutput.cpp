@@ -58,18 +58,18 @@ BOOL SVTADlgColorThresholdOutput::OnInitDialog()
 
 	ASSERT( m_pSheet );
 
-	mpTool = m_pSheet->GetTool();
+	m_pTool = m_pSheet->GetTool();
 
 	// Get the color threshold object
 	SVObjectTypeInfoStruct objectInfo;
 	objectInfo.ObjectType = SVOperatorObjectType;
 	objectInfo.SubType = SVColorThresholdObjectType;
 
-	mpThreshold = dynamic_cast<SVColorThresholdClass*>(mpTool->getFirstObject(objectInfo));
+	m_pThreshold = dynamic_cast<SVColorThresholdClass*> (m_pTool->getFirstObject(objectInfo));
 
-	if( mpThreshold )
+	if( m_pThreshold )
 	{
-		SVImageClass* pImage = mpThreshold->GetOutputImage();
+		SVImageClass* pImage = m_pThreshold->GetOutputImage();
 
 		if( pImage )
 		{

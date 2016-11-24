@@ -15,7 +15,7 @@
 #include "SVStatusLibrary/MessageContainer.h"
 #include "SVMainImageClass.h"
 #include "SVResultList.h"
-#include "SVTaskObjectList.h"
+#include "SVOCore/SVTaskObjectList.h"
 #pragma region Includes
 
 class SVConditionalClass;
@@ -79,16 +79,14 @@ public:
 
 	HRESULT getResetCounts( bool& rResetCounts );
 
-	/// Return the first band 0 image from the first color tool. If there are no color Tool it return nullptr.
-	/// \returns SVImageClass*
-	SVImageClass* getBand0Image();
-
 	virtual void goingOffline() override;
-#pragma endregion Public Methods
-
 #pragma region virtual method (IToolSet)
 	virtual bool IsToolPreviousToSelected( const SVGUID& rToolID ) const override;
+	/// Return the first band 0 image from the first color tool. If there are no color Tool it return nullptr.
+	/// \returns SvOi::IObjectClass*
+	virtual SvOi::IObjectClass* getBand0Image() const override;
 #pragma endregion virtual method (IToolSet)
+#pragma endregion Public Methods
 
 #pragma region Protected Methods
 protected:

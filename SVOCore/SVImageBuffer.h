@@ -13,6 +13,7 @@
 #pragma region Includes
 #include "SVImageLibrary/SVExtentMultiLineStruct.h"
 #include "SVImageLibrary/SVExtentPointStruct.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 struct SVOverlayFigureStruct
@@ -76,7 +77,7 @@ struct SVOverlayStruct
 	{
 		lFigureSize = 0;
 		pOverlays = nullptr;
-		oTextColor = 0;
+		m_TextColor = 0;
 	}
 	
 	SVOverlayStruct(const SVExtentMultiLineStruct& p_MultiLineStruct)
@@ -111,9 +112,9 @@ struct SVOverlayStruct
 	{
 		Clear();
 
-		oTextColor = p_rStruct.m_Color;
-		oTextPoint = p_rStruct.m_StringPoint.operator POINT();
-		strText = p_rStruct.m_csString;
+		m_TextColor = p_rStruct.m_Color;
+		m_TextPoint = p_rStruct.m_StringPoint.operator POINT();
+		m_Text = p_rStruct.m_csString;
 		
 		lFigureSize = static_cast< long >( p_rStruct.m_svLineArray.GetSize() );
 
@@ -128,9 +129,9 @@ struct SVOverlayStruct
 		return *this;
 	}
 
-	COLORREF oTextColor;
-	POINT oTextPoint;
-	CString strText;
+	COLORREF m_TextColor;
+	POINT m_TextPoint;
+	SVString m_Text;
 
 	long lFigureSize;
 	SVOverlayFigureStruct *pOverlays;
@@ -141,30 +142,29 @@ class SVImageOverlayClass
 public:
 	// Construction section
 	SVImageOverlayClass();
-	SVImageOverlayClass( const SVImageOverlayClass& rhs );
-	SVImageOverlayClass(const SVExtentMultiLineStructCArray& p_MultiLineArrayStruct);
+	SVImageOverlayClass( const SVImageOverlayClass& rRhs );
+	SVImageOverlayClass(const SVExtentMultiLineStructCArray& rMultiLineArrayStruct);
 	~SVImageOverlayClass();
 
-	const SVImageOverlayClass& operator = ( const SVImageOverlayClass& rhs );
-	const SVImageOverlayClass& operator = ( const SVExtentMultiLineStructCArray& p_rMultiLineArrayStruct );
+	const SVImageOverlayClass& operator = ( const SVImageOverlayClass& rRhs );
+	const SVImageOverlayClass& operator = ( const SVExtentMultiLineStructCArray& rMultiLineArrayStruct );
 
 	// General and header section
-	long GetBufferSize() const;
-	BOOL GetBufferSize( long &lSize ) const;
-	BOOL GetBuffer( BYTE *&pBuffer );
+	long GetBufferSize() const { return m_lBufferSize; };
+	BYTE* GetBuffer() { return m_pBuffer; };
 
 	// Overlay section
-	BOOL GetOverlayCount( long &lCount ) const;
-	BOOL GetOverlayFigureAt( long &lIndex, SVOverlayStruct &oOverlay );
+	long GetOverlayCount() const;
+	BOOL GetOverlayFigureAt( long Index, SVOverlayStruct& rOverlay );
 
 	// General and header section
-	BOOL SetBufferSize( long lSize, bool bClearBuffer = true );
+	BOOL SetBufferSize( long Size, bool ClearBuffer = true );
 
 	// Overlay section
-	BOOL SetOverlayCount( long &lCount );
-	BOOL SetOverlayFigureAt( long &lIndex, SVOverlayStruct &oOverlay );
+	BOOL SetOverlayCount( long Count );
+	BOOL SetOverlayFigureAt( long Index, SVOverlayStruct& rOverlay );
 
-	BOOL CalculateSize( long &lSize );
+	long CalculateSize();
 
 	void Clear();
 

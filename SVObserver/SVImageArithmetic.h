@@ -12,8 +12,8 @@
 #pragma once
 
 #pragma region Includes
-#include "SVTaskObject.h"
-#include "SVImageClass.h"
+#include "SVOCore/SVTaskObject.h"
+#include "SVOCore/SVImageClass.h"
 #include "ObjectInterfaces\ImageArthimeticOperators.h"
 #pragma endregion Includes
 

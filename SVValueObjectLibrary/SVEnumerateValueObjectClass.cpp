@@ -637,7 +637,7 @@ void SVEnumerateValueObjectClass::LocalInitialize()
 {
 	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVEnumValueObjectType;
 
-	m_strTypeName = "Enumeration";
+	SetTypeName( _T("Enumeration") );
 
 	InitializeBuckets();
 }

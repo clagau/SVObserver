@@ -14,19 +14,19 @@
 #pragma region Includes
 #include "SVEnumerateCombo.h"
 #include "SVValueObjectLibrary/SVValueObject.h"
-#include "SVTaskObjectInterfaceClass.h"
+#include "SVTaskObjectValueInterface.h"
 #pragma endregion Includes
 
 class SVToolAdjustmentDialogSheetClass;
 
-class SVCylindricalWarpDlg : public CPropertyPage, public SVTaskObjectInterfaceClass
+class SVCylindricalWarpDlg : public CPropertyPage, public SVTaskObjectValueInterface
 {
 public:
 	long m_lLastWarpType;
 
 	SVCylindricalWarpDlg( const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* Parent, int id = IDD );
 	virtual ~SVCylindricalWarpDlg();
-	virtual HRESULT SetInspectionData() override;
+	HRESULT SetInspectionData();
 
 // Dialog Data
 	//{{AFX_DATA(SVCylindricalWarpDlg)

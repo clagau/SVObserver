@@ -13,9 +13,9 @@
 
 #pragma region Includes
 #include "ObjectInterfaces\ITool.h"
-#include "SVTaskObjectList.h"
+#include "SVOCore/SVTaskObjectList.h"
 #include "SVToolExtentClass.h"
-#include "SVImageClass.h"
+#include "SVOCore/SVImageClass.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
@@ -81,7 +81,6 @@ public:
 	virtual HRESULT GetFilteredImageExtentPropertyList( SVExtentPropertyListType& p_rPropertyList );
 
 	const SVImageClass* GetToolImage() const;
-	void SetToolImage( SVImageClass* p_pExtentImage );
 
 	void SetAlwaysUpdate( bool p_bAlwaysUpdate );
 
@@ -154,6 +153,7 @@ public:
 	virtual SvUl::NameGuidList getAvailableAuxSourceImages() const override;
 	virtual SvUl::NameGuidPair getAuxSourceImage() const override;
 	virtual HRESULT setAuxSourceImage(const SVGUID& rObjectID) override;
+	virtual void SetToolImage( const SVGUID& rObjectID ) override;
 #pragma endregion ITool methods
 
 protected:

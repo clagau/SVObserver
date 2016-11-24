@@ -8,8 +8,8 @@
 #pragma region Inlcudes
 //Moved to precompiled header: #include <deque>
 //Moved to precompiled header: #include <vector>
-#include "SVImageClass.h"
-#include "SVImageListClass.h"
+#include "SVOCore/SVImageClass.h"
+#include "SVOCore/SVImageListClass.h"
 #include "SVMatroxLibrary\SVMatroxBuffer.h"
 #include "SVMemoryManager.h"
 #pragma endregion Includes

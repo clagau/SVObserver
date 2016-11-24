@@ -57,6 +57,7 @@
 #include <comdef.h>
 #include <comutil.h>
 #include <deque>
+#include <direct.h>
 #include <iostream>
 #include <guiddef.h>
 #include <limits>

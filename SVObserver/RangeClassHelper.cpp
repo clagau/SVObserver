@@ -20,7 +20,7 @@
 #include "SVInspectionProcess.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
 #include "SVUtilityLibrary\SVString.h"
-#include "SVTaskObjectList.h"
+#include "SVOCore/SVTaskObjectList.h"
 #include "ObjectSelectorLibrary\ObjectTreeGenerator.h"
 #include "SVObjectLibrary\GlobalConst.h"
 #include "SVToolSet.h"
@@ -28,7 +28,6 @@
 #include "SVPPQObject.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "TextDefinesSvO.h"
-#include "RootObject.h"
 #include "SVOGui/GlobalSelector.h"
 #include "SVOGui/NoSelector.h"
 #include "SVOGui/ToolSetItemSelector.h"
@@ -184,7 +183,7 @@ HRESULT RangeClassHelper::CheckInternalData(SvOi::MessageTextEnum &messageId, SV
 	CString InspectionName;
 	if( nullptr != m_pRange)
 	{
-		SVInspectionProcess* pInspection =  m_pRange->GetInspection();
+		SVInspectionProcess* pInspection =  dynamic_cast<SVInspectionProcess*>(m_pRange->GetInspection());
 		if( nullptr != pInspection )
 		{
 			InspectionName = pInspection->GetName();
@@ -372,7 +371,7 @@ HRESULT RangeClassHelper::SetInspectionData()
 		}
 		else
 		{
-			hr = RunOnce( m_pRange->GetTool() );
+			hr = RunOnce( m_pRange->GetTool()->GetUniqueObjectID() );
 		}
 
 		if( S_OK != hr )
@@ -508,7 +507,7 @@ bool RangeClassHelper::FillObjectSelector()
 	bool bRetVal = false;
 	if (nullptr != m_pRange)
 	{
-		SVInspectionProcess* pInspectionProcess = m_pRange->GetInspection();
+		SVInspectionProcess* pInspectionProcess = dynamic_cast<SVInspectionProcess*>(m_pRange->GetInspection());
 		if (nullptr != pInspectionProcess)
 		{
 			SVTaskObjectListClass* pTaskObjectList = dynamic_cast<SVTaskObjectListClass*>(pInspectionProcess->GetToolSet());

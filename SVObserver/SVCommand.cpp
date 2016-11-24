@@ -40,11 +40,11 @@
 #include "SVResultView.h"
 #include "SVSVIMStateClass.h"
 #include "SVToolSet.h"
-#include "SVImageBuffer.h"	//SVImageOverlayClass
+#include "SVOCore/SVImageBuffer.h"	//SVImageOverlayClass
 #include "SVConfigurationPrint.h"
 #include "SVConfigurationObject.h"
 #include "SVInspectionProcess.h"
-#include "SVImageProcessingClass.h"
+#include "SVOCore/SVImageProcessingClass.h"
 #include "SVInputObjectList.h"
 #include "SVStreamCommandFactory.h"
 #include "SVInputStreamManager.h"
@@ -1156,9 +1156,8 @@ STDMETHODIMP CSVCommand::SVGetImageList(SAFEARRAY* psaNames, long lCompression, 
 						hr = SafeArrayPutElement(*ppsaProcCounts, &l, (void*) &lProcessCount);
 
 						BYTE* pBytes = nullptr;
-						long lSize;
-						l_OverlayClass.GetBufferSize( lSize );
-						l_OverlayClass.GetBuffer( pBytes );
+						long lSize = l_OverlayClass.GetBufferSize();
+						pBytes = l_OverlayClass.GetBuffer();
 
 						BSTR bstrOverlay = ::SysAllocStringByteLen( nullptr, lSize );
 						memcpy( bstrOverlay, pBytes, lSize );
@@ -2275,13 +2274,13 @@ STDMETHODIMP CSVCommand::SVGetProductImageList(long lProcessCount, SAFEARRAY* ps
 		}
 
 		// Verify that the values are still alive on the PPQ (it has a TriggerCount that matches the specified ProcessCount)
-		SVProductInfoStruct l_ProductInfo;
+		SVProductInfoStruct ProductInfo;
 
 		SVPPQObject* pPPQ = dynamic_cast< SVPPQObject* >( SVObjectManagerClass::Instance().GetObject( l_PPQId ) );
 
 		if ( nullptr != pPPQ )
 		{
-			if( S_OK == pPPQ->GetProduct( l_ProductInfo, lProcessCount ) )
+			if( S_OK == pPPQ->GetProduct( ProductInfo, lProcessCount ) )
 			{
 				// Product is still valid; 
 				// Build the output images from the result data index in the product and the source images by name  (?)
@@ -2300,7 +2299,7 @@ STDMETHODIMP CSVCommand::SVGetProductImageList(long lProcessCount, SAFEARRAY* ps
 							BSTR bstrImage = nullptr;
 
 							// this works for Source Images (SVMainImageClass) and Published Result images
-							SVImageIndexStruct svIndex( pImage->GetSourceImageIndex( &l_ProductInfo ) );
+							SVImageIndexStruct svIndex( pImage->GetSourceImageIndex( &ProductInfo.oPPQInfo.m_ResultImagePublishedDMIndexHandle, ProductInfo.m_svCameraInfos ) );
 
 							// put image in return array
 							BSTR bstrTemp = nullptr;
@@ -2515,7 +2514,7 @@ HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo, SVSmartHandlePoin
 
 			oChildInfo.SetImageProperty( SVImagePropertyBandNumber, 1 );
 
-			HRESULT hrImage = SVImageProcessingClass::Instance().CreateImageBuffer( oChildInfo, oChildHandle );
+			HRESULT hrImage = SVImageProcessingClass::CreateImageBuffer( oChildInfo, oChildHandle );
 
 			SVImageBufferHandleImage l_ChildMilBuffer;
 
@@ -2533,7 +2532,7 @@ HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo, SVSmartHandlePoin
 		{
 			bDestroyHandle = TRUE;
 
-			HRESULT hrImage = SVImageProcessingClass::Instance().CreateImageBuffer( oChildInfo, oChildHandle );
+			HRESULT hrImage = SVImageProcessingClass::CreateImageBuffer( oChildInfo, oChildHandle );
 
 			SVImageBufferHandleImage l_ChildMilBuffer;
 
@@ -2638,7 +2637,7 @@ HRESULT CSVCommand::SafeImageToBSTR( SVImageClass *p_pImage, SVImageIndexStruct 
 
 		SVSmartHandlePointer oChildHandle;
 
-		SVImageProcessingClass::Instance().CreateImageBuffer( oChildInfo, oChildHandle );
+		SVImageProcessingClass::CreateImageBuffer( oChildInfo, oChildHandle );
 
 		if( SV_IS_KIND_OF( p_pImage, SVRGBMainImageClass ) )
 		{
@@ -3168,7 +3167,7 @@ HRESULT CSVCommand::SVSetImageList(SAFEARRAY *psaNames, SAFEARRAY *psaImages, SA
 
 				l_ImageInfo = l_pImageObject->GetImageInfo();
 
-				if ( S_OK == SVImageProcessingClass::Instance().LoadImageBuffer( (void*)bstrImage, 
+				if ( S_OK == SVImageProcessingClass::LoadImageBuffer( (void*)bstrImage, 
 					pInRequest->m_ImageInfo, 
 					pInRequest->m_ImageHandlePtr, 
 					l_ImageInfo ) )
@@ -3467,20 +3466,20 @@ HRESULT CSVCommand::SVLockImage(long p_lProcessCount, long p_lIndex, BSTR p_bsNa
 
 			if( nullptr != pPPQ )
 			{
-				SVProductInfoStruct l_ProductInfo;
+				SVProductInfoStruct ProductInfo;
 
-				if( S_OK == pPPQ->GetProduct( l_ProductInfo, p_lProcessCount ) )
+				if( S_OK == pPPQ->GetProduct( ProductInfo, p_lProcessCount ) )
 				{
 					SVaxls.strName = CString(p_bsName);
 					SVaxls.lProcessCount = p_lProcessCount;
-					if( SVCameraImageTemplate* pMainImage = dynamic_cast< SVCameraImageTemplate* >( pImage ) )
+					if( SVCameraImageTemplate* pMainImage = dynamic_cast<SVCameraImageTemplate*>( pImage ) )
 					{
-						l_svImageIndex = pMainImage->GetSourceImageIndex( &l_ProductInfo );
+						l_svImageIndex = pMainImage->GetSourceImageIndex( &ProductInfo.oPPQInfo.m_ResultImagePublishedDMIndexHandle, ProductInfo.m_svCameraInfos );
 						l_DMImageIndexHandle.Assign( l_svImageIndex.m_CameraDMIndexHandle, SV_DCOM );
 					}
 					else if ( pImage->ObjectAttributesSet() & SV_PUBLISH_RESULT_IMAGE )
 					{
-						l_svImageIndex = pImage->GetSourceImageIndex( &l_ProductInfo );
+						l_svImageIndex = pImage->GetSourceImageIndex( &ProductInfo.oPPQInfo.m_ResultImagePublishedDMIndexHandle, ProductInfo.m_svCameraInfos );
 						l_DMImageIndexHandle.Assign( l_svImageIndex.m_PublishedResultDMIndexHandle, SV_DCOM );
 					}
 					else	// locking not supported on regular images
@@ -3523,7 +3522,7 @@ HRESULT CSVCommand::SVLockImage(long p_lProcessCount, long p_lIndex, BSTR p_bsNa
 
 				SVImageInfoClass l_ImageInfo = l_svImageInfo;
 
-				if ( S_OK == SVImageProcessingClass::Instance().CreateImageBuffer( l_ImageInfo, SVaxls.m_ImageHandlePtr ) && !( SVaxls.m_ImageHandlePtr.empty() ) )
+				if ( S_OK == SVImageProcessingClass::CreateImageBuffer( l_ImageInfo, SVaxls.m_ImageHandlePtr ) && !( SVaxls.m_ImageHandlePtr.empty() ) )
 				{
 					SVImageBufferHandleImage l_AxlsMilBuffer;
 					SVaxls.m_ImageHandlePtr->GetData( l_AxlsMilBuffer );
@@ -3753,7 +3752,7 @@ SVMatroxBuffer CSVCommand::CreateImageFromBSTR( BSTR bstrImage )
 		oTempInfo.SetImageProperty( SVImagePropertyBandNumber, 3 );
 	}// end if
 
-	if( S_OK != SVImageProcessingClass::Instance().CreateImageBuffer( oTempInfo, oTempHandle ) || oTempHandle.empty() )
+	if( S_OK != SVImageProcessingClass::CreateImageBuffer( oTempInfo, oTempHandle ) || oTempHandle.empty() )
 	{
 		return l_ImageBuf;
 	}
@@ -5117,9 +5116,7 @@ STDMETHODIMP CSVCommand::SVGetTransferValueDefinitionList(BSTR bstrInspectionNam
 			l_Index[1] = 2;
 			l_vTmp.Clear();
 			l_vTmp.ChangeType(VT_BSTR);
-			CString l_strTmp;
-			l_pSelectedObjects[i]->GetTypeName(l_strTmp);
-			l_vTmp = l_strTmp;
+			l_vTmp = l_pSelectedObjects[i]->GetTypeName().c_str();
 			hr = ::SafeArrayPutElement( l_psaData, l_Index, &l_vTmp );
 
 			// Enumeration List.
@@ -5276,7 +5273,7 @@ STDMETHODIMP CSVCommand::SVGetTransferImageDefinitionList(BSTR bstrInspectionNam
 
 			// Fully Qualified Source Image Name
 			CString l_strNames;
-			SVToolClass* l_pTool = objectList[i]->GetTool();
+			SVToolClass* l_pTool = dynamic_cast<SVToolClass*>(objectList[i]->GetTool());
 			l_Index[1] = 3;
 			l_vTmp.Clear();
 			if( l_pTool )

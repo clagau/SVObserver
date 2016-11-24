@@ -220,7 +220,7 @@ BOOL SVTADlgArchiveResultsPage::OnInitDialog()
 	CDWordArray dwaIndex;
 	int iIndex=0;
 	
-	SVToolSetClass* pToolSet = m_pTool->GetInspection()->GetToolSet();
+	SVToolSetClass* pToolSet = dynamic_cast<SVInspectionProcess*>(m_pTool->GetInspection())->GetToolSet();
 
 	// Get the list of already existing selected results to archive
 	// from the archive tool.

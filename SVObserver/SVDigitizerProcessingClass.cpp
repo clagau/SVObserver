@@ -26,7 +26,7 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVConfigurationObject.h"
 #include "TextDefinesSvO.h"
-#include "SVGlobal.h"
+#include "ObjectInterfaces/GlobalConst.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -532,7 +532,7 @@ SVString SVDigitizerProcessingClass::GetReOrderedCamera( const int CameraID, boo
 				DigitizerID = Iter->m_CameraID;
 				if( NewOrder )
 				{
-					DigitizerID += cMaximumCameras;
+					DigitizerID += SvOi::cMaximumCameras;
 				}
 			}
 			Result = SvUl_SF::Format( cMatroxGigeDigitizer, DigitizerID );
@@ -570,7 +570,7 @@ int SVDigitizerProcessingClass::getDigitizerID( const int CameraID ) const
 			Result = Iter->m_DigitizerID;
 			if( -1 == Result )
 			{
-				Result = Iter->m_CameraID + cMaximumCameras;
+				Result = Iter->m_CameraID + SvOi::cMaximumCameras;
 			}
 			break;
 		}

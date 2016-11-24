@@ -9,6 +9,7 @@
 
 #pragma region Includes
 #include "SVUnaryImageOperatorList.h"
+#include "SVOCore/SVImageClass.h"
 #pragma endregion Includes
 
 ////////////////////////////////////////////////////////////////////////////////

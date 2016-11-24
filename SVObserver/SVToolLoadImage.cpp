@@ -14,8 +14,8 @@
 #include "SVHBitmapUtilitiesLibrary\SVImageFormatEnum.h"
 #include "SVToolLoadImage.h"
 #include "SVAnalyzer.h"
-#include "SVGlobal.h" // For SVFileExists
-#include "SVImageProcessingClass.h"
+#include "SVUtilityLibrary/SVUtilityGlobals.h"
+#include "SVOCore/SVImageProcessingClass.h"
 #include "SVInspectionProcess.h"
 #include "SVToolSet.h"
 #include "ToolSizeAdjustTask.h"

@@ -17,19 +17,19 @@
 
 #pragma region Includes
 #include "SVEnumerateCombo.h"
-#include "SVTaskObjectInterfaceClass.h"
+#include "SVTaskObjectValueInterface.h"
 #pragma endregion Includes
 
 class SVToolAdjustmentDialogSheetClass;
 class SVToolClass;
 class SVEvaluateClass;
 
-class SVToolAdjustmentDialogPolarTransformPageClass : public CPropertyPage, public SVTaskObjectInterfaceClass
+class SVToolAdjustmentDialogPolarTransformPageClass : public CPropertyPage, public SVTaskObjectValueInterface
 {
 public:
 	SVToolAdjustmentDialogPolarTransformPageClass( const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* Parent );
 	virtual ~SVToolAdjustmentDialogPolarTransformPageClass();
-	virtual HRESULT SetInspectionData() override;
+	HRESULT SetInspectionData();
 
 	// ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(SVToolAdjustmentDialogPolarTransformPageClass)

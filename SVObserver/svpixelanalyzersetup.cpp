@@ -61,7 +61,7 @@ HRESULT SVPixelAnalyzerSetupClass::SetInspectionData()
 
 		if( S_OK == l_hrOk )
 		{
-			l_hrOk = RunOnce( m_pAnalyzer->GetTool() );
+			l_hrOk = RunOnce( m_pAnalyzer->GetTool()->GetUniqueObjectID() );
 		}
 
 		UpdateData( FALSE );
@@ -70,8 +70,7 @@ HRESULT SVPixelAnalyzerSetupClass::SetInspectionData()
 	return l_hrOk;
 }
 
-unsigned long SVPixelAnalyzerSetupClass::init (SVPixelAnalyzerClass *apAnalyzer, 
-                                               CWnd* apParent)
+unsigned long SVPixelAnalyzerSetupClass::init (SVPixelAnalyzerClass *apAnalyzer, CWnd* apParent)
 {
     SVObjectTypeInfoStruct  pixelAnalyzerToolInfo;
 	unsigned long ret(0);

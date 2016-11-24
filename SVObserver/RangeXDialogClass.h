@@ -13,7 +13,7 @@
 #include "afxwin.h"
 #include "SVContainerLibrary/SVVector.h"
 #include "ISVCancel.h"
-#include "SVTaskObjectList.h"
+#include "SVOCore/SVTaskObjectList.h"
 #include "RangeClassHelper.h"
 
 class SVRangeClass;

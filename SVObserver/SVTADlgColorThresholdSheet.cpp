@@ -93,9 +93,9 @@ void SVTADlgColorThresholdSheet::AddTabs()
 		mSheetBand2.m_psp.pszTitle = _T("Blue Threshold Adjustment");
 	}
 
-	mSheetBand0.mBandNumber = 0;
-	mSheetBand1.mBandNumber = 1;
-	mSheetBand2.mBandNumber = 2;
+	mSheetBand0.m_BandNumber = 0;
+	mSheetBand1.m_BandNumber = 1;
+	mSheetBand2.m_BandNumber = 2;
 
 	AddPage( &mSheetROI );	
 	AddPage( &mSheetBand0 );	

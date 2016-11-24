@@ -9,12 +9,14 @@
 //* .Check In Date   : $Date:   09 Aug 2013 12:00:16  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVMaxMinusMinFilterClass.h"
-#include "SVImageProcessingClass.h"
+#include "SVOCore/SVImageProcessingClass.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVOMFCLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
-
+#include "SVOCore/SVImageClass.h"
+#pragma endregion Includes
 
 SV_IMPLEMENT_CLASS( SVMaxMinusMinFilterClass, SVMaxMinusMinFilterClassGuid )
 
@@ -70,7 +72,7 @@ HRESULT SVMaxMinusMinFilterClass::ResetObject()
 		mProcBufferInfo.SetOwnerImage( SV_GUID_NULL );
 		mProcBufferInfo.SetOwner( SV_GUID_NULL );
 
-		l_hrOk = SVImageProcessingClass::Instance().CreateImageBuffer( mProcBufferInfo, m_ProcBufferHandlePtr );
+		l_hrOk = SVImageProcessingClass::CreateImageBuffer( mProcBufferInfo, m_ProcBufferHandlePtr );
 	}
 
 	m_isCreated = S_OK == l_hrOk;

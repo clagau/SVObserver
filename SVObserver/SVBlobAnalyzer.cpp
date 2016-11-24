@@ -404,14 +404,14 @@ DWORD SVBlobAnalyzerClass::AllocateResult (SVBlobFeatureEnum aFeatureIndex)
 
 		// Declare Input Interface of Result...
 		interfaceInfo.EmbeddedID = msvValue[aFeatureIndex].GetEmbeddedID();
-		resultClassInfo.DesiredInputInterface.Add( interfaceInfo );
+		resultClassInfo.m_DesiredInputInterface.Add( interfaceInfo );
 
-		resultClassInfo.ObjectTypeInfo.ObjectType = SVResultObjectType;
-		resultClassInfo.ObjectTypeInfo.SubType	= SVResultDoubleObjectType;
-		resultClassInfo.ClassId = SVDoubleResultClassGuid;
-		resultClassInfo.ClassName.LoadString( IDS_OBJECTNAME_RESULT );
+		resultClassInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
+		resultClassInfo.m_ObjectTypeInfo.SubType	= SVResultDoubleObjectType;
+		resultClassInfo.m_ClassId = SVDoubleResultClassGuid;
+		resultClassInfo.m_ClassName = SvUl_SF::LoadString( IDS_OBJECTNAME_RESULT );
 		strTitle = msvValue[aFeatureIndex].GetName(); //.LoadString( IDS_CLASSNAME_RESULT_DOUBLE );
-		resultClassInfo.ClassName += SV_TSTR_SPACE + strTitle;
+		resultClassInfo.m_ClassName += SV_TSTR_SPACE + strTitle;
 
 		// Construct the result class
 		pResult = (SVDoubleResultClass *) resultClassInfo.Construct();
@@ -501,14 +501,14 @@ DWORD SVBlobAnalyzerClass::AllocateBlobResult ()
 		
 		// Declare Input Interface of Result...
 		interfaceInfo.EmbeddedID = m_lvoNumberOfBlobsFound.GetEmbeddedID();
-		resultClassInfo.DesiredInputInterface.Add( interfaceInfo );
+		resultClassInfo.m_DesiredInputInterface.Add( interfaceInfo );
 		
-		resultClassInfo.ObjectTypeInfo.ObjectType = SVResultObjectType;
-		resultClassInfo.ObjectTypeInfo.SubType	= SVResultLongObjectType;
-		resultClassInfo.ClassId = SVLongResultClassGuid;
-		resultClassInfo.ClassName.LoadString( IDS_OBJECTNAME_RESULT );
+		resultClassInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
+		resultClassInfo.m_ObjectTypeInfo.SubType	= SVResultLongObjectType;
+		resultClassInfo.m_ClassId = SVLongResultClassGuid;
+		resultClassInfo.m_ClassName = SvUl_SF::LoadString( IDS_OBJECTNAME_RESULT );
 		strTitle = m_lvoNumberOfBlobsFound.GetName();
-		resultClassInfo.ClassName += SV_TSTR_SPACE + strTitle;
+		resultClassInfo.m_ClassName += SV_TSTR_SPACE + strTitle;
 		
 		// Construct the result class
 		m_pResultBlob = (SVLongResultClass *) resultClassInfo.Construct();
@@ -757,7 +757,7 @@ BOOL SVBlobAnalyzerClass::CreateObject(SVObjectLevelCreateStruct* PCreateStructu
 			msvValue[iFeature].SetArraySize( m_lMaxBlobDataArraySize );	// no longer sample size (max number of blobs found)
 		}
 		
-		GetInspection()->SetDefaultInputs();
+		dynamic_cast<SVInspectionProcess*>(GetInspection())->SetDefaultInputs();
 
 		l_Code = SVMatroxBlobInterface::Create( msvResultBufferID );
 		
@@ -916,11 +916,11 @@ DWORD SVBlobAnalyzerClass::EnableFeature (SVBlobFeatureEnum aIndex)
 
 	RegisterEmbeddedObject( &msvValue[aIndex], *BlobFeatureConstants[aIndex].pEmbeddedID, BlobFeatureConstants[aIndex].NewStringResourceID, false, SVResetItemNone );
 	
-	GetInspection()->SetDefaultInputs();
+	dynamic_cast<SVInspectionProcess*>(GetInspection())->SetDefaultInputs();
 	
 	AllocateResult (aIndex);
 
-	GetInspection()->SetDefaultInputs();
+	dynamic_cast<SVInspectionProcess*>(GetInspection())->SetDefaultInputs();
 	if ( !(SV_CENTER_X_SOURCE == aIndex || SV_CENTER_Y_SOURCE == aIndex) )
 	{
 		BuildFeatureListID();
@@ -939,7 +939,7 @@ DWORD SVBlobAnalyzerClass::DisableFeature(SVBlobFeatureEnum aIndex)
 	}
 	hideEmbeddedObject (msvValue[aIndex]);
 	RemoveEmbeddedObject (&msvValue[aIndex]);
-	GetInspection()->SetDefaultInputs();
+	dynamic_cast<SVInspectionProcess*>(GetInspection())->SetDefaultInputs();
 
 	BuildFeatureListID();
 
@@ -1652,36 +1652,40 @@ bool SVBlobAnalyzerClass::IsPtOverResult( const POINT& rPoint )
 		(0 != l_lCurrentNbrOfBlobs))
 	{
 		SVImageExtentClass l_svExtents;
-		HRESULT hr = GetTool()->GetImageExtent( l_svExtents );
-
-		if (S_OK == hr )
+		SVToolClass* pTool = dynamic_cast<SVToolClass*>(GetTool());
+		if (pTool)
 		{
-			double* pxMax = &(m_vec2dBlobResults[SV_BOXX_MAX][0]);
-			double* pxMin = &(m_vec2dBlobResults[SV_BOXX_MIN][0]);
-			double* pyMax = &(m_vec2dBlobResults[SV_BOXY_MAX][0]);
-			double* pyMin = &(m_vec2dBlobResults[SV_BOXY_MIN][0]);
+			HRESULT hr = pTool->GetImageExtent( l_svExtents );
 
-			int iMapSize = static_cast< int >( msvlSortMap.GetSize() );
-			
-			for (int i = 0; i < (int)l_lCurrentNbrOfBlobs && i < iMapSize ; i++)
+			if (S_OK == hr )
 			{
-				RECT l_oRect;
+				double* pxMax = &(m_vec2dBlobResults[SV_BOXX_MAX][0]);
+				double* pxMin = &(m_vec2dBlobResults[SV_BOXX_MIN][0]);
+				double* pyMax = &(m_vec2dBlobResults[SV_BOXY_MAX][0]);
+				double* pyMin = &(m_vec2dBlobResults[SV_BOXY_MIN][0]);
 
-				long l = msvlSortMap.GetAt(i);
+				int iMapSize = static_cast< int >( msvlSortMap.GetSize() );
+			
+				for (int i = 0; i < (int)l_lCurrentNbrOfBlobs && i < iMapSize ; i++)
+				{
+					RECT l_oRect;
 
-				l_oRect.top = static_cast<long>(pyMin[l]);
-				l_oRect.left = static_cast<long>(pxMin[l]);
-				l_oRect.bottom = static_cast<long>(pyMax[l]);
-				l_oRect.right = static_cast<long>(pxMax[l]);
+					long l = msvlSortMap.GetAt(i);
+
+					l_oRect.top = static_cast<long>(pyMin[l]);
+					l_oRect.left = static_cast<long>(pxMin[l]);
+					l_oRect.bottom = static_cast<long>(pyMax[l]);
+					l_oRect.right = static_cast<long>(pxMax[l]);
 				
-				SVExtentFigureStruct l_svFigure = l_oRect;
-				l_svExtents.TranslateFromOutputSpace( l_svFigure, l_svFigure );
+					SVExtentFigureStruct l_svFigure = l_oRect;
+					l_svExtents.TranslateFromOutputSpace( l_svFigure, l_svFigure );
 
 				if( S_OK == l_svFigure.IsPointOverFigure( rPoint ) )
-				{
-					m_nBlobIndex = msvlSortMap.GetAt(i); 
+					{
+						m_nBlobIndex = msvlSortMap.GetAt(i); 
 
-					break;
+						break;
+					}
 				}
 			}
 		}
@@ -1765,7 +1769,8 @@ HRESULT SVBlobAnalyzerClass::ResetObject()
 HRESULT SVBlobAnalyzerClass::onCollectOverlays(SVImageClass* p_pImage, SVExtentMultiLineStructCArray& p_rMultiLineArray )
 {
 	// only if ToolSet/Tool was not Disabled
-	if (GetTool()->WasEnabled())
+	SVToolClass* pTool = dynamic_cast<SVToolClass*>(GetTool());
+	if (pTool && pTool->WasEnabled())
 	{
 		long l_lCurrentNbrOfBlobs = 0;
 		m_lvoNumberOfBlobsFound.GetValue( l_lCurrentNbrOfBlobs );
@@ -1773,7 +1778,7 @@ HRESULT SVBlobAnalyzerClass::onCollectOverlays(SVImageClass* p_pImage, SVExtentM
 		if ( l_lCurrentNbrOfBlobs > 0 )
 		{
 			SVImageExtentClass l_svExtents;
-			GetTool()->GetImageExtent(l_svExtents);
+			pTool->GetImageExtent(l_svExtents);
 
 			// if running only show N Blob Figures according to the specified
 			// MaxBlobDataArraySize variable

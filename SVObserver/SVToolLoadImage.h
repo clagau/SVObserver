@@ -12,7 +12,7 @@
 #pragma once
 
 #include "SVTool.h"
-#include "SVImageClass.h"
+#include "SVOCore/SVImageClass.h"
 
 class SVLoadImageToolClass : public SVToolClass, public AllowResizeToParent
 {

@@ -25,7 +25,7 @@
 #include "SVLowerThresholdEquation.h"
 #include "SVUnaryImageOperatorList.h"
 #include "SVUpperThresholdEquation.h"
-#include "SVImageProcessingClass.h"
+#include "SVOCore/SVImageProcessingClass.h"
 #include "SVToolSet.h"
 #include "SVTool.h"
 #include "SVMaskShape.h"

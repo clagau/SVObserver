@@ -197,7 +197,7 @@ void SVPointValueObjectClass::LocalInitialize()
 	}	
 	ObjectAttributesAllowedRef() = SV_VIEWABLE | SV_ARCHIVABLE | SV_EMBEDABLE | SV_PRINTABLE | SV_DD_VALUE;
 
-	m_strTypeName = "Point";
+	SetTypeName( _T("Point") );
 	InitializeBuckets();
 }
 

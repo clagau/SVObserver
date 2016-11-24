@@ -17,7 +17,7 @@
 
 #include "SVAcquisitionClass.h"
 #include "SVConfigurationObject.h"
-#include "SVImageObjectClass.h"
+#include "SVOCore/SVImageObjectClass.h"
 #include "SVInspectionProcess.h"
 #include "SVObserver.h"
 

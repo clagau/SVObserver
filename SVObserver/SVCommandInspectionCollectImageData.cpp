@@ -13,7 +13,7 @@
 #include "stdafx.h"
 #include "SVCommandInspectionCollectImageData.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVImageProcessingClass.h"
+#include "SVOCore/SVImageProcessingClass.h"
 #include "SVInspectionProcess.h"
 #include "SVResultList.h"
 #include "SVToolSet.h"
@@ -54,7 +54,7 @@ HRESULT SVCommandInspectionCollectImageData::Execute()
 		SVProductInfoStruct l_Product = pInspection->LastProductGet( SV_DISPLAY );
 
 		SVInspectionInfoStruct& l_rIPInfo = l_Product.m_svInspectionInfos[ GetInspectionId() ];
-		SVStdMapSVVirtualCameraPtrSVCameraInfoStruct& l_rCameraInfos = l_Product.m_svCameraInfos;
+		SVGuidSVCameraInfoStructMap& l_rCameraInfos = l_Product.m_svCameraInfos;
 		SVDataManagerHandle l_Handle = l_Product.oPPQInfo.m_ResultDataDMIndexHandle;
 		long l_ResultDataIndex = l_Handle.GetIndex();
 		SVImageIndexStruct l_ResultImageIndex;
@@ -163,7 +163,7 @@ HRESULT SVCommandInspectionCollectImageData::UpdateResults( SVInspectionProcess*
 	return hRet;
 }
 
-HRESULT SVCommandInspectionCollectImageData::UpdateBuffer(const SVGUID& p_rImageId, SVStdMapSVVirtualCameraPtrSVCameraInfoStruct& p_rsvCameraInfos,
+HRESULT SVCommandInspectionCollectImageData::UpdateBuffer(const SVGUID& p_rImageId, SVGuidSVCameraInfoStructMap& p_rsvCameraInfos,
 										 SVImageIndexStruct p_svResultImageIndex, long p_ResultDataIndex,
 										 SVByteVector& p_rImageDIB, SVExtentMultiLineStructCArray& p_rMultiLineArray)
 {
@@ -187,9 +187,9 @@ HRESULT SVCommandInspectionCollectImageData::UpdateBuffer(const SVGUID& p_rImage
 
 		if( nullptr != l_psvMainImage )
 		{
-			SVStdMapSVVirtualCameraPtrSVCameraInfoStruct::const_iterator l_svIter;
+			SVGuidSVCameraInfoStructMap::const_iterator l_svIter;
 
-			l_svIter = p_rsvCameraInfos.find( l_psvMainImage->GetCamera() );
+			l_svIter = p_rsvCameraInfos.find( l_psvMainImage->GetCamera()->GetUniqueObjectID() );
 
 			if( l_svIter != p_rsvCameraInfos.end() )
 			{
@@ -208,7 +208,7 @@ HRESULT SVCommandInspectionCollectImageData::UpdateBuffer(const SVGUID& p_rImage
 			// Special check for Color Tool's RGBMainImage which is HSI
 			if( SV_IS_KIND_OF( l_pImage, SVRGBMainImageClass ) )
 			{
-				l_Status = SVImageProcessingClass::Instance().ConvertImageBuffer( p_rImageDIB, l_ImageBuffer, SVImageHLSToRGB );
+				l_Status = SVImageProcessingClass::ConvertImageBuffer( p_rImageDIB, l_ImageBuffer, SVImageHLSToRGB );
 			}
 			else
 			{
@@ -220,11 +220,11 @@ HRESULT SVCommandInspectionCollectImageData::UpdateBuffer(const SVGUID& p_rImage
 
 				if( l_Info == l_ImageBuffer->GetBitmapInfo() )
 				{
-					l_Status = SVImageProcessingClass::Instance().CopyImageBuffer( p_rImageDIB, l_ImageBuffer );
+					l_Status = SVImageProcessingClass::CopyImageBuffer( p_rImageDIB, l_ImageBuffer );
 				}
 				else
 				{
-					l_Status = SVImageProcessingClass::Instance().CopyImageBuffer( p_rImageDIB, l_Info, l_ImageBuffer );
+					l_Status = SVImageProcessingClass::CopyImageBuffer( p_rImageDIB, l_Info, l_ImageBuffer );
 				}
 			}
 		}
@@ -237,7 +237,7 @@ HRESULT SVCommandInspectionCollectImageData::UpdateBuffer(const SVGUID& p_rImage
 		{
 			if( nullptr != l_pImage->GetInspection() )
 			{
-				l_pImage->GetInspection()->CollectOverlays( l_pImage, p_rMultiLineArray );
+				dynamic_cast<SVInspectionProcess*>(l_pImage->GetInspection())->CollectOverlays( l_pImage, p_rMultiLineArray );
 			}
 			else
 			{

@@ -123,6 +123,8 @@ public:
 								const SVOverscanOptions::SVOverscanOptionsEnum overscan,
 								const SVPerformanceOptions::SVPerformanceOptionsEnum performance);
 		
+	static SVMatroxFileTypeEnum getFileType( LPCTSTR FileExt );
+
 private:
 	static long Convert2MatroxType( SVImageOperationTypeEnum p_eDisp) ;
 	static long Convert2MatroxType( SVImageWaterShedEnum p_eType) ;
@@ -130,6 +132,5 @@ private:
 	static long Convert2MatroxType(SVConditionEnum p_eControlType) ;
 
 	static void AdaptiveThreshold( unsigned char* input, unsigned char* bin, int width, int height, int stride, float interval );
-
 };
 

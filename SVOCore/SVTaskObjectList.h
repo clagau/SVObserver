@@ -84,7 +84,7 @@ public:
 	/// \param pTaskObject [in] object to destroy
 	/// \param context [in]
 	/// \returns bool true if successfully
-	bool DestroyChildObject(SVTaskObjectClass* pTaskObject, DWORD context = 0);
+	bool DestroyChildObject( SVTaskObjectClass* pTaskObject, DWORD context = 0 );
 
 #pragma region virtual methods (ITaskObjectListClass)
 	virtual SvUl::NameGuidList GetTaskObjectList( ) const override;

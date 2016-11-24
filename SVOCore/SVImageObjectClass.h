@@ -26,7 +26,7 @@
 class SVImageObjectClass
 {
 public:
-	typedef SVSharedPtr< SVImageObjectClass > SVImageObjectParentPtr;
+	typedef SVSharedPtr< SVImageObjectClass > SVImageObjectClassPtr;
 
 	SVImageObjectClass();
 	virtual ~SVImageObjectClass();
@@ -37,8 +37,8 @@ public:
 	unsigned long size() const;
 	void resize( unsigned long p_NewSize );
 
-	SVImageObjectParentPtr GetParentImageObject() const;
-	void SetParentImageObject( SVImageObjectParentPtr p_ParentPtr );
+	SVImageObjectClassPtr GetParentImageObject() const;
+	void SetParentImageObject( SVImageObjectClassPtr p_ParentPtr );
 
 	const SVImageInfoClass& GetImageInfo() const;
 	void SetImageInfo( const SVImageInfoClass& p_rImageInfo );
@@ -48,21 +48,21 @@ public:
 	HRESULT ResetObject();
 	HRESULT UpdateTimeStamp();
 
-	BOOL Clear( long lIndex, unsigned long ulValue = 0 );
-	BOOL Clear( unsigned long ulValue = 0 );
-	BOOL ClearAll( unsigned long ulValue = 0 );
+	bool Clear( long lIndex, unsigned long ulValue = 0 );
+	bool Clear( unsigned long ulValue = 0 );
+	bool ClearAll( unsigned long ulValue = 0 );
 
-	BOOL GetCurrentIndex( SVDataManagerHandle& rDMIndexHandle ) const;
-	BOOL GetCurrentIndex( SVDataManagerHandle& rDMIndexHandle, SVDataManagerLockTypeEnum p_LockType ) const;
+	bool GetCurrentIndex( SVDataManagerHandle& rDMIndexHandle ) const;
+	bool GetCurrentIndex( SVDataManagerHandle& rDMIndexHandle, SVDataManagerLockTypeEnum p_LockType ) const;
 
-	BOOL SetCurrentIndex( const SVDataManagerHandle& rDMIndexHandle );
-	BOOL SetCurrentIndex( const SVDataManagerHandle& rDMIndexHandle, SVDataManagerLockTypeEnum p_LockType );
+	bool SetCurrentIndex( const SVDataManagerHandle& rDMIndexHandle );
+	bool SetCurrentIndex( const SVDataManagerHandle& rDMIndexHandle, SVDataManagerLockTypeEnum p_LockType );
 	
-	BOOL CopyValue( const SVDataManagerHandle& p_FromDMIndexHandle, const SVDataManagerHandle& p_ToDMIndexHandle );
-	BOOL CopyValue( const SVDataManagerHandle& p_ToDMIndexHandle );
+	bool CopyValue( const SVDataManagerHandle& p_FromDMIndexHandle, const SVDataManagerHandle& p_ToDMIndexHandle );
+	bool CopyValue( const SVDataManagerHandle& p_ToDMIndexHandle );
 
-	BOOL GetImageHandle( long lIndex, SVSmartHandlePointer& p_rValuePtr ) const;
-	BOOL GetImageHandle( SVSmartHandlePointer& p_rValuePtr ) const;
+	bool GetImageHandle( long lIndex, SVSmartHandlePointer& p_rValuePtr ) const;
+	bool GetImageHandle( SVSmartHandlePointer& p_rValuePtr ) const;
 
 	HRESULT LoadImageFullSize( LPCTSTR p_szFileName, SVImageExtentClass& p_rNewExtent );
 	HRESULT LoadImage( LPCTSTR p_szFileName, SVDataManagerHandle& p_rToDMIndexHandle, bool p_bRestore=false );
@@ -84,10 +84,10 @@ protected:
 	struct SVImageObjectElement
 	{
 		SVImageObjectElement();
-		SVImageObjectElement( size_t p_MasterIndex, SVImageObjectParentPtr p_ParentPtr, SVSmartHandlePointer p_ImageHandle );
+		SVImageObjectElement( size_t p_MasterIndex, SVImageObjectClassPtr p_ParentPtr, SVSmartHandlePointer p_ImageHandle );
 
 		size_t m_MasterIndex;
-		SVImageObjectParentPtr m_ParentPtr;
+		SVImageObjectClassPtr m_ParentPtr;
 		SVSmartHandlePointer m_ImageHandle;
 
 	private:
@@ -105,28 +105,37 @@ protected:
 	typedef std::set< long > SVImageIndexSet;
 	typedef std::map< long, SVImageObjectElementPtr > SVImageHandleMap;
 
-	BOOL CreateBufferArrays();
-	BOOL DestroyBufferArrays();
+	bool CreateBufferArrays();
+	bool DestroyBufferArrays();
 
-	BOOL CreateImageBuffer( SVImageInfoClass &rInfo, long p_Index, SVImageObjectElementPtr& p_Handle );
-	BOOL CreateImageChildBuffer( const SVImageInfoClass &rParentInfo, SVSmartHandlePointer pParentHandle, 
+	bool CreateImageBuffer( SVImageInfoClass &rInfo, long p_Index, SVImageObjectElementPtr& p_Handle );
+	bool CreateImageChildBuffer( const SVImageInfoClass &rParentInfo, SVSmartHandlePointer pParentHandle, 
 	                             SVImageInfoClass &rChildInfo, long p_Index, SVImageObjectElementPtr& p_Handle );
-	BOOL DestroyImageBuffer( SVImageObjectElementPtr& p_Handle );
+	bool DestroyImageBuffer( SVImageObjectElementPtr& p_Handle );
 
-	BOOL GetArrayImageHandle( long lIndex, SVSmartHandlePointer& rHandle ) const;
+	bool GetArrayImageHandle( long lIndex, SVSmartHandlePointer& rHandle ) const;
 
-	BOOL CreateImageHandleArray( long lSize );
-	BOOL DestroyImageHandleArray();
+	bool CreateImageHandleArray( long lSize );
+	bool DestroyImageHandleArray();
 
 	HRESULT GetMasterIndex( size_t p_Index, size_t& p_rMasterIndex ) const;
-	BOOL LockIndex( long lIndex, long lHandleIndex );
-	BOOL LockIndex( long lIndex );
-	BOOL UnlockIndex( long lIndex );
+	bool LockIndex( long lIndex, long lHandleIndex );
+	bool LockIndex( long lIndex );
+	bool UnlockIndex( long lIndex );
 	
 	HRESULT AddImageHandleToPool( long p_Index );
 
-	BOOL DestroyLocal();
+	bool DestroyLocal();
+
+
 	
+private:
+	// Do not implement
+	SVImageObjectClass( const SVImageObjectClass& p_rObject );
+
+	// Do not implement
+	const SVImageObjectClass& operator=( const SVImageObjectClass& p_rObject );
+
 	SVClock::SVTimeStamp m_LastUpdate;
 	SVClock::SVTimeStamp m_LastReset;
 
@@ -136,21 +145,14 @@ protected:
 
 	SVImageInfoClass m_ImageInfo;
 
-//- m_ParentImagePtr - If this is not Empty, then the image object must be a 
-//- Matrox child buffer.
-	SVImageObjectParentPtr m_ParentImagePtr;
+	//- m_ParentImagePtr - If this is not Empty, then the image object must be a 
+	//- Matrox child buffer.
+	SVImageObjectClassPtr m_ParentImagePtr;
 
 	SVImageHandleMap m_MasterImageHandles;
 
 	SVImageIndexSet m_ImageIndexPool;
 	SVImageHandlePtrVector m_ImageHandleArray;
-	
-private:
-	// Do not implement
-	SVImageObjectClass( const SVImageObjectClass& p_rObject );
-
-	// Do not implement
-	const SVImageObjectClass& operator=( const SVImageObjectClass& p_rObject );
 };
 
 typedef SVSharedPtr< SVImageObjectClass > SVImageObjectClassPtr;

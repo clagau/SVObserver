@@ -113,7 +113,7 @@ void SVMaskShapeEditorDlg::CheckPoint()
 void SVMaskShapeEditorDlg::Revert()
 {
 	AddInputRequest(m_cancelData);
-	RunOnce(m_pTool);
+	RunOnce(m_pTool->GetUniqueObjectID());
 }
 
 long SVMaskShapeEditorDlg::getSelectedTab() // BRW - This method should be const.
@@ -167,7 +167,7 @@ HRESULT SVMaskShapeEditorDlg::SetInspectionData()
 	}
 
 	AddInputRequest( mapData );
-	RunOnce( m_pMask->GetTool() );
+	RunOnce( m_pMask->GetTool()->GetUniqueObjectID() );
 
 	return S_OK;
 }
@@ -194,7 +194,7 @@ BOOL SVMaskShapeEditorDlg::OnInitDialog()
 	ASSERT( nullptr != m_pTool );
 	ASSERT( nullptr != m_pMask );
 
-	// SVTaskObjectInterfaceClass requirement
+	// SVTaskObjectValueInterface requirement
 	SetTaskObject( m_pTool );
 
 	bool l_bAutoResize = m_pMask->GetShapeHelper()->IsAutoResize();

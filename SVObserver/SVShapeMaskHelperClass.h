@@ -12,9 +12,10 @@
 #pragma once
 
 #pragma region Includes
-#include "SVTaskObject.h"
+#include "SVOCore/SVTaskObject.h"
 #include "ISVCancel.h"
 #include "SVMaskShape.h"
+#include "SVImageLibrary/SVImageBufferHandleInterface.h"
 #pragma endregion Includes
 
 struct SVMaskShapeCancelData : public SVCancelData

@@ -15,7 +15,7 @@
 #include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
 #include "SVValueObjectLibrary/SVDoubleValueObjectClass.h"
 #include "SVValueObjectLibrary/SVEnumerateValueObjectClass.h"
-#include "SVImageClass.h"
+#include "SVOCore/SVImageClass.h"
 #include "SVTool.h"
 #pragma endregion Includes
 

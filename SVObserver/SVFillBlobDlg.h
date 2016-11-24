@@ -14,18 +14,17 @@
 #pragma region Includes
 #include "SVEnumerateCombo.h"
 #include "SVValueObjectLibrary/SVValueObject.h"
-
-#include "SVTaskObjectInterfaceClass.h"
+#include "SVTaskObjectValueInterface.h"
 #pragma endregion Includes
 
 class SVToolClass;
 
-class SVFillBlobDlg : public CDialog, public SVTaskObjectInterfaceClass
+class SVFillBlobDlg : public CDialog, public SVTaskObjectValueInterface
 {
 public:
 	SVFillBlobDlg(SVToolClass* pTool, CWnd* pParent = nullptr);   // standard constructor
 	virtual ~SVFillBlobDlg();
-	virtual HRESULT SetInspectionData();
+	HRESULT SetInspectionData();
 
 // Dialog Data
 	//{{AFX_DATA(SVFillBlobDlg)

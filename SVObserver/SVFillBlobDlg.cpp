@@ -13,7 +13,7 @@
 #include "stdafx.h"
 #include "svobserver.h"
 #include "SVFillBlobDlg.h"
-#include "SVTaskObject.h"
+#include "SVOCore/SVTaskObject.h"
 #include "SVTool.h"
 #include "SVOMFCLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
 
@@ -80,7 +80,7 @@ HRESULT SVFillBlobDlg::SetInspectionData()
 
 		if( S_OK == l_hrOk )
 		{
-			l_hrOk = RunOnce( m_pTool );
+			l_hrOk = RunOnce( m_pTool->GetUniqueObjectID() );
 		}
 	}
 

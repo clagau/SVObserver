@@ -284,9 +284,7 @@ SVImageClass* SVColorToolClass::GetRGBImage()
 {
 	SVImageClass* pImage = nullptr;
 
-	// Ask the Document for this directly...
-
-	SVInspectionProcess* pInspection = GetInspection();
+	SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(GetInspection());
 	if( nullptr != pInspection )
 	{
 		pImage = pInspection->GetRGBMainImage();
@@ -299,9 +297,7 @@ SVImageClass* SVColorToolClass::GetHSIImage()
 {
 	SVImageClass* pImage = nullptr;
 
-	// Ask the Document for this directly...
-
-	SVInspectionProcess* pInspection = GetInspection();
+	SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(GetInspection());
 	if( nullptr != pInspection )
 	{
 		pImage = pInspection->GetHSIMainImage();

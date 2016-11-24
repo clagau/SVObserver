@@ -298,7 +298,7 @@ void DoubleSortValueObject::ValidateValue( int iBucket, int iIndex, const SVStri
 void DoubleSortValueObject::LocalInitialize()
 {
 	m_outObjectInfo.ObjectTypeInfo.ObjectType = DoubleSortValueObjectType;
-	m_strTypeName = "Decimal";
+	SetTypeName( _T("Decimal") );
 	m_bLegacyVectorObjectCompatibility = false;
 }
 #pragma endregion Private Methods

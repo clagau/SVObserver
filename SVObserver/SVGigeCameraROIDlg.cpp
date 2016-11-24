@@ -13,7 +13,7 @@
 #include "stdafx.h"
 #include "SVGigeCameraROIDlg.h"
 #include "SVAcquisitionClass.h"
-#include "SVImageProcessingClass.h"
+#include "SVOCore/SVImageProcessingClass.h"
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
 #include "SVOMFCLibrary/SVStringValueDeviceParam.h"
 #include "SVOMFCLibrary/DisplayHelper.h"
@@ -189,7 +189,7 @@ BOOL SVGigeCameraROIDlg::OnInitDialog()
 
 	if( m_pImageHandle.empty() )
 	{
-		SVImageProcessingClass::Instance().CreateImageBuffer( m_ImageInfo, m_pImageHandle );
+		SVImageProcessingClass::CreateImageBuffer( m_ImageInfo, m_pImageHandle );
 	}
 
 	// Set the Image
@@ -561,7 +561,7 @@ void SVGigeCameraROIDlg::UpdateImageDisplay()
 	m_ImageInfo.SetExtentProperty(SVExtentPropertyWidth, GetScaledMaxWidth());
 	m_ImageInfo.SetExtentProperty(SVExtentPropertyHeight, GetScaledMaxHeight());
 
-	SVImageProcessingClass::Instance().CreateImageBuffer( m_ImageInfo, m_pImageHandle );
+	SVImageProcessingClass::CreateImageBuffer( m_ImageInfo, m_pImageHandle );
 
 	OnTakePicture();
 

@@ -12,11 +12,10 @@
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVObjectLibrary/SVAnalyzerLevelCreateStruct.h"
 
-#include "SVImageClass.h"
-#include "SVImageProcessingClass.h"
+#include "SVOCore/SVImageClass.h"
+#include "SVOCore/SVImageProcessingClass.h"
 #include "SVUnaryImageOperatorClass.h"
 #include "SVTool.h"
-#include "SVMatroxImageProcessingClass.h"
 #include "SVOMFCLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
 
 #pragma endregion Includes
@@ -118,8 +117,8 @@ HRESULT SVStdImageOperatorListClass::ResetObject()
 	{
 		SVImageInfoClass imageInfo = pImage->GetImageInfo();
 		imageInfo.setDibBufferFlag(false);
-		SVMatroxImageProcessingClass::Instance().CreateImageBuffer(imageInfo, m_milTmpImageObjectInfo1);
-		SVMatroxImageProcessingClass::Instance().CreateImageBuffer(imageInfo, m_milTmpImageObjectInfo2);
+		SVImageProcessingClass::CreateImageBuffer(imageInfo, m_milTmpImageObjectInfo1);
+		SVImageProcessingClass::CreateImageBuffer(imageInfo, m_milTmpImageObjectInfo2);
 	}
 
 	return l_hrOk;
@@ -183,9 +182,10 @@ BOOL SVStdImageOperatorListClass::Run( SVRunStatusClass& RRunStatus )
 				// The old image type 'S' provided also a child layer in his derived image info!!!
 				
 				// Use the Child layer on Input Image as our input image
-				if( nullptr != GetTool() && pOutputImage->GetLastResetTimeStamp() <= pInputImage->GetLastResetTimeStamp() )
+				SVToolClass* pTool = dynamic_cast<SVToolClass*>(GetTool());
+				if( pTool && pOutputImage->GetLastResetTimeStamp() <= pInputImage->GetLastResetTimeStamp() )
 				{
-					GetTool()->UpdateImageWithExtent( RRunStatus.m_lResultDataIndex );
+					pTool->UpdateImageWithExtent( RRunStatus.m_lResultDataIndex );
 				}
 
 				pOutputImage->GetParentImageHandle( input );
@@ -198,7 +198,7 @@ BOOL SVStdImageOperatorListClass::Run( SVRunStatusClass& RRunStatus )
 
 			if( input.empty() )
 			{
-				SVImageProcessingClass::Instance().InitBuffer( output );
+				SVImageProcessingClass::InitBuffer( output );
 
 				input = output;
 			}

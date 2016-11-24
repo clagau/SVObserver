@@ -14,7 +14,7 @@
 #pragma region Includes
 #include "SVMFCControls\SVEditNumbers.h"
 #include "SVValueBaseNormalizerClass.h"
-#include "SVTaskObjectInterfaceClass.h"
+#include "SVTaskObjectValueInterface.h"
 #pragma endregion Includes
 
 class SVIPDoc;
@@ -25,7 +25,7 @@ class SVDWordValueObjectClass;
 class SVEnumerateValueObjectClass;
 class SVDoubleValueObjectClass;
 
-class SVEdgeMarkerAdjustmentPageClass : public CPropertyPage, public SVTaskObjectInterfaceClass
+class SVEdgeMarkerAdjustmentPageClass : public CPropertyPage, public SVTaskObjectValueInterface
 {
 	DECLARE_DYNCREATE(SVEdgeMarkerAdjustmentPageClass)
 

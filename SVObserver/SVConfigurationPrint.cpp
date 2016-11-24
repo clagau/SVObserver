@@ -31,7 +31,7 @@
 
 #include "SVValueObjectLibrary/SVValueObject.h"
 #include "SVEquation.h"
-#include "SVImageClass.h"
+#include "SVOCore/SVImageClass.h"
 #include "SVObserver.h"
 #include "SVTool.h"
 #include "SVToolSet.h"

@@ -13,7 +13,7 @@
 
 #pragma region Includes
 #include "SVTool.h"
-#include "SVImageClass.h"
+#include "SVOCore/SVImageClass.h"
 #pragma endregion Includes
 
 #pragma region Declarations

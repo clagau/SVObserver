@@ -26,7 +26,7 @@
 #include "SVToolSet.h"
 #include "SVPPQObject.h"
 #include "SVTool.h"
-#include "SVImageProcessingClass.h"
+#include "SVOCore/SVImageProcessingClass.h"
 #include "SVConditional.h"
 #include "SVSVIMStateClass.h"
 #include "SVCommandStreamManager.h"
@@ -931,9 +931,9 @@ BOOL SVInspectionProcess::CanProcess( SVProductInfoStruct *pProduct )
 
 				if( nullptr != pCamera )
 				{
-					SVStdMapSVVirtualCameraPtrSVCameraInfoStruct::iterator l_Iter;
+					SVGuidSVCameraInfoStructMap::iterator l_Iter;
 
-					l_Iter = pProduct->m_svCameraInfos.find( pCamera );
+					l_Iter = pProduct->m_svCameraInfos.find( pCamera->GetUniqueObjectID() );
 
 					if( l_Iter != pProduct->m_svCameraInfos.end() )
 					{
@@ -985,9 +985,9 @@ HRESULT SVInspectionProcess::StartProcess( SVProductInfoStruct *pProduct )
 
 				if( nullptr != pCamera )
 				{
-					SVStdMapSVVirtualCameraPtrSVCameraInfoStruct::iterator l_Iter;
+					SVGuidSVCameraInfoStructMap::iterator l_Iter;
 
-					l_Iter = pProduct->m_svCameraInfos.find( pCamera );
+					l_Iter = pProduct->m_svCameraInfos.find( pCamera->GetUniqueObjectID() );
 
 					if( l_Iter != pProduct->m_svCameraInfos.end() )
 					{
@@ -1176,30 +1176,25 @@ BOOL SVInspectionProcess::RebuildInspectionInputList()
 	return TRUE;
 }
 
-BOOL SVInspectionProcess::AddInputRequest( SVValueObjectReference p_svObjectRef, const _variant_t& p_rValue )
+bool SVInspectionProcess::AddInputRequest( const SVValueObjectReference& rObjectRef, const _variant_t& rValue )
 {
-	BOOL l_bOk = FALSE;
+	bool Result( false );
 
 	try
 	{
-		SVInputRequestInfoStructPtr l_pInRequest = new SVInputRequestInfoStruct( p_svObjectRef, p_rValue );
+		SVInputRequestInfoStructPtr pInRequest = new SVInputRequestInfoStruct( rObjectRef, rValue );
 
 		//add request to inspection process
-		l_bOk = AddInputRequest( l_pInRequest );
+		Result = AddInputRequest( pInRequest );
 	}
 	catch( ... ) // @WARNING:  bad practice catching ...
 	{
 	}
 
-	return l_bOk;
+	return Result;
 }
 
-BOOL SVInspectionProcess::AddInputRequestMarker()
-{
-	return AddInputRequest( nullptr, SvO::SVTOOLPARAMETERLIST_MARKER );
-}
-
-BOOL SVInspectionProcess::AddInputRequest( SVInputRequestInfoStructPtr p_pInRequest )
+bool SVInspectionProcess::AddInputRequest( SVInputRequestInfoStructPtr p_pInRequest )
 {
 	if( !m_InputRequests.Lock() )
 	{
@@ -1217,8 +1212,8 @@ BOOL SVInspectionProcess::AddInputRequest( SVInputRequestInfoStructPtr p_pInRequ
 			DebugBreak();
 		}
 
-		return FALSE;
-	}// end if
+		return false;
+	}
 
 
 	SVString l_StringValue;
@@ -1240,8 +1235,8 @@ BOOL SVInspectionProcess::AddInputRequest( SVInputRequestInfoStructPtr p_pInRequ
 		DebugBreak();
 	}
 
-	return TRUE;
-}// end AddInputRequest
+	return true;
+}
 
 HRESULT SVInspectionProcess::AddInputImageRequest( SVImageClass* p_psvImage, BSTR& p_rbstrValue )
 {
@@ -1259,7 +1254,7 @@ HRESULT SVInspectionProcess::AddInputImageRequest( SVImageClass* p_psvImage, BST
 			{
 				SVCameraImageTemplate* l_psvMainImage = dynamic_cast< SVCameraImageTemplate* >( p_psvImage );
 
-				l_Status = SVImageProcessingClass::Instance().LoadImageBuffer( (void*)p_rbstrValue, 
+				l_Status = SVImageProcessingClass::LoadImageBuffer( (void*)p_rbstrValue, 
 					l_pInRequest->m_ImageInfo, l_pInRequest->m_ImageHandlePtr, l_ImageInfo );
 
 				l_pInRequest->m_bUsingCameraName = nullptr != l_psvMainImage;
@@ -1313,7 +1308,7 @@ HRESULT SVInspectionProcess::AddInputImageFileNameRequest( SVImageClass* p_psvIm
 
 			SVCameraImageTemplate* l_psvMainImage = dynamic_cast< SVCameraImageTemplate* >( p_psvImage );
 
-			l_Status = SVImageProcessingClass::Instance().LoadImageBuffer( p_rImageFileName.c_str(), 
+			l_Status = SVImageProcessingClass::LoadImageBuffer( p_rImageFileName.c_str(), 
 				l_pInRequest->m_ImageInfo, l_pInRequest->m_ImageHandlePtr, false );
 
 			l_pInRequest->m_bUsingCameraName = nullptr != l_psvMainImage;
@@ -2408,9 +2403,9 @@ BOOL SVInspectionProcess::ProcessInputImageRequests( SVProductInfoStruct *p_psvP
 
 					if( SVMainImageClass* l_psvMainImage = dynamic_cast< SVMainImageClass* >( l_psvImage ) )
 					{
-						SVStdMapSVVirtualCameraPtrSVCameraInfoStruct::iterator l_svIter;
+						SVGuidSVCameraInfoStructMap::iterator l_svIter;
 
-						l_svIter = p_psvProduct->m_svCameraInfos.find( l_psvMainImage->GetCamera() );
+						l_svIter = p_psvProduct->m_svCameraInfos.find( l_psvMainImage->GetCamera()->GetUniqueObjectID() );
 
 						if( l_svIter != p_psvProduct->m_svCameraInfos.end() )
 						{
@@ -2644,7 +2639,7 @@ HRESULT SVInspectionProcess::AddInputImageRequestByCameraName(CString sCameraNam
 	{
 		l_pInRequest->m_bUsingCameraName = true;
 		l_pInRequest->m_strObjectName = sCameraName;
-		SVImageProcessingClass::Instance().LoadImageBuffer(sFileName,l_pInRequest->m_ImageInfo,l_pInRequest->m_ImageHandlePtr,FALSE);
+		SVImageProcessingClass::LoadImageBuffer(sFileName,l_pInRequest->m_ImageInfo,l_pInRequest->m_ImageHandlePtr,FALSE);
 
 		AddInputImageRequest(l_pInRequest);
 	}
@@ -2692,32 +2687,35 @@ HRESULT SVInspectionProcess::LastProductUpdate( SVProductInfoStruct *p_psvProduc
 
 HRESULT SVInspectionProcess::LastProductCopySourceImagesTo( SVProductInfoStruct *p_psvProduct )
 {
-	HRESULT l_hrOk = S_OK;
+	HRESULT Result = S_OK;
 
 	if( nullptr != p_psvProduct )
 	{
 		SVProductInfoStruct l_Product = LastProductGet( SV_OTHER );
 
-		SVStdMapSVVirtualCameraPtrSVCameraInfoStruct::iterator l_svIter;
-		SVStdMapSVVirtualCameraPtrSVCameraInfoStruct::iterator l_svLastIter;
+		SVGuidSVCameraInfoStructMap::iterator Iter( p_psvProduct->m_svCameraInfos.begin() );
 
-		for( l_svIter = p_psvProduct->m_svCameraInfos.begin(); 
-			l_svIter != p_psvProduct->m_svCameraInfos.end(); ++l_svIter )
+		for( ; Iter != p_psvProduct->m_svCameraInfos.end(); ++Iter )
 		{
-			l_svLastIter = l_Product.m_svCameraInfos.find( l_svIter->first );
+			SVGuidSVCameraInfoStructMap::iterator LastIter( l_Product.m_svCameraInfos.find( Iter->first ) );
 
-			if( l_svLastIter != l_Product.m_svCameraInfos.end() )
+			if( LastIter != l_Product.m_svCameraInfos.end() )
 			{
-				if( l_svIter->first->CopyValue( l_svLastIter->second.GetSourceImageDMIndexHandle(), 
-					l_svIter->second.GetSourceImageDMIndexHandle() ) )
+				BOOL Copied( false );
+				SVVirtualCamera* pCamera( dynamic_cast<SVVirtualCamera*> (SvOi::getObject( Iter->first )) );
+				if( nullptr != pCamera )
 				{
-					l_hrOk = S_FALSE;
+					Copied = pCamera->CopyValue( LastIter->second.GetSourceImageDMIndexHandle(), Iter->second.GetSourceImageDMIndexHandle() );
+				}
+				if( !Copied )
+				{
+					Result = E_FAIL;
 				}
 			}
 		}
 	}
 
-	return l_hrOk;
+	return Result;
 }
 
 HRESULT SVInspectionProcess::LastProductNotify()
@@ -2733,23 +2731,28 @@ HRESULT SVInspectionProcess::LastProductNotify()
 
 HRESULT SVInspectionProcess::SetSourceImagesTo( SVProductInfoStruct *p_psvProduct )
 {
-	HRESULT l_hrOk = S_OK;
+	HRESULT Result( S_OK );
 
 	if( nullptr != p_psvProduct )
 	{
-		SVStdMapSVVirtualCameraPtrSVCameraInfoStruct::iterator l_svIter;
+		SVGuidSVCameraInfoStructMap::iterator Iter( p_psvProduct->m_svCameraInfos.begin() );
 
-		for( l_svIter = p_psvProduct->m_svCameraInfos.begin(); 
-			l_svIter != p_psvProduct->m_svCameraInfos.end(); ++l_svIter )
+		for( ; Iter != p_psvProduct->m_svCameraInfos.end(); ++Iter )
 		{
-			if( ! l_svIter->first->ReserveImageHandleIndex( l_svIter->second.GetSourceImageDMIndexHandle() ) )
+			bool IndexReserved( false );
+			SVVirtualCamera* pCamera( dynamic_cast<SVVirtualCamera*> (SvOi::getObject( Iter->first )) );
+			if( nullptr != pCamera )
 			{
-				l_hrOk = S_FALSE;
+				IndexReserved = pCamera->ReserveImageHandleIndex( Iter->second.GetSourceImageDMIndexHandle() );
+			}
+			if( !IndexReserved )
+			{
+				Result = E_FAIL;
 			}
 		}
 	}
 
-	return l_hrOk;
+	return Result;
 }
 
 HRESULT SVInspectionProcess::RestoreCameraImages()
@@ -3163,20 +3166,20 @@ int SVInspectionProcess::UpdateMainImagesByProduct( SVProductInfoStruct* p_psvPr
 
 			if( nullptr != pCamera )
 			{
-				SVStdMapSVVirtualCameraPtrSVCameraInfoStruct::iterator l_Iter;
+				SVGuidSVCameraInfoStructMap::const_iterator Iter;
 
-				l_Iter = p_psvProduct->m_svCameraInfos.find( pCamera );
+				Iter = p_psvProduct->m_svCameraInfos.find( pCamera->GetUniqueObjectID() );
 
-				if( l_Iter != p_psvProduct->m_svCameraInfos.end() )
+				if( Iter != p_psvProduct->m_svCameraInfos.end() )
 				{
-					if( l_Iter->second.GetIndex() < 0 )
+					if( Iter->second.GetIndex() < 0 )
 					{
 						Result = SvOi::Err_25043_InvalidSourceIndex;
 					}
 
 					SVImageIndexStruct l_svIndex;
 
-					l_svIndex.m_CameraDMIndexHandle.Assign( l_Iter->second.GetSourceImageDMIndexHandle(), SV_INSPECTION );
+					l_svIndex.m_CameraDMIndexHandle.Assign( Iter->second.GetSourceImageDMIndexHandle(), SV_INSPECTION );
 
 					if( !( l_pImage->SetImageHandleIndex( l_svIndex ) ) )
 					{
@@ -3738,97 +3741,6 @@ HRESULT SVInspectionProcess::UnregisterSubObject( SVImageClass* p_pImageObject )
 	return l_Status;
 }
 
-HRESULT SVInspectionProcess::RegisterSubObjects( SVTaskObjectClass *p_psvOwner, SVObjectClassPtrArray &p_rsvEmbeddedList )
-{
-	HRESULT l_hrOk = UnregisterSubObjects( p_psvOwner );
-
-	if( S_OK == l_hrOk )
-	{
-		long l_lSize = p_rsvEmbeddedList.GetSize();
-
-		for ( long l = 0; l < l_lSize; l++ )
-		{
-			SVValueObjectClass *l_psvValueObject = dynamic_cast<SVValueObjectClass *>( p_rsvEmbeddedList[ l ] );
-
-			if( nullptr != l_psvValueObject )
-			{
-				m_svValueObjectSet.insert( l_psvValueObject );
-				m_mapValueObjects.insert( SVValueObjectMap::value_type( l_psvValueObject->GetCompleteObjectName(), l_psvValueObject ) );
-			}
-			else
-			{
-				SVImageClass *l_psvImageObject = dynamic_cast<SVImageClass *>( p_rsvEmbeddedList[ l ] );
-
-				if( nullptr != l_psvImageObject )
-				{
-					SVCameraImageTemplate* l_pCameraImage = dynamic_cast< SVCameraImageTemplate* >( l_psvImageObject );
-
-					if( nullptr != l_pCameraImage )
-					{
-						m_CameraImages.insert( l_pCameraImage );
-					}
-					else
-					{
-						m_svImageObjectSet.insert( l_psvImageObject );
-					}
-				}
-			}
-		}
-	}
-
-	return l_hrOk;
-}
-
-HRESULT SVInspectionProcess::UnregisterSubObjects( SVTaskObjectClass *p_psvOwner )
-{
-	HRESULT l_hrOk = S_OK;
-
-	SVValueObjectClassPtrSet::iterator l_oValueIter = m_svValueObjectSet.begin();
-
-	while( l_oValueIter != m_svValueObjectSet.end() )
-	{
-		if( nullptr == *l_oValueIter || (*l_oValueIter)->GetOwner() == p_psvOwner )
-		{
-			m_mapValueObjects.get< to >().erase( *l_oValueIter );
-			l_oValueIter = m_svValueObjectSet.erase( l_oValueIter );
-		}
-		else
-		{
-			++l_oValueIter;
-		}
-	}
-
-	SVImageClassPtrSet::iterator l_oImageIter = m_svImageObjectSet.begin();
-
-	while( l_oImageIter != m_svImageObjectSet.end() )
-	{
-		if( nullptr == *l_oImageIter || (*l_oImageIter)->GetOwner() == p_psvOwner )
-		{
-			l_oImageIter = m_svImageObjectSet.erase( l_oImageIter );
-		}
-		else
-		{
-			++l_oImageIter;
-		}
-	}
-
-	SVCameraImagePtrSet::iterator l_oCameraIter = m_CameraImages.begin();
-
-	while( l_oCameraIter != m_CameraImages.end() )
-	{
-		if( nullptr == *l_oCameraIter || (*l_oCameraIter)->GetOwner() == p_psvOwner )
-		{
-			l_oCameraIter = m_CameraImages.erase( l_oCameraIter );
-		}
-		else
-		{
-			++l_oCameraIter;
-		}
-	}
-
-	return l_hrOk;
-}
-
 void SVInspectionProcess::SetToolsetImage( CString sToolsetImage )
 {
 	m_ToolSetCameraName = sToolsetImage;
@@ -3983,7 +3895,7 @@ void SVInspectionProcess::FillSharedData(long sharedSlotIndex, SvSml::SVSharedDa
 				if (SV_IS_KIND_OF(pImage, SVRGBMainImageClass))
 				{
 					// this will make a copy...
-					SVImageProcessingClass::Instance().CreateImageBuffer(pImage->GetImageInfo(), imageHandlePtr);
+					SVImageProcessingClass::CreateImageBuffer(pImage->GetImageInfo(), imageHandlePtr);
 					pImage->SafeImageConvertToHandle(imageHandlePtr, SVImageHLSToRGB);
 				}
 				else
@@ -4001,7 +3913,7 @@ void SVInspectionProcess::FillSharedData(long sharedSlotIndex, SvSml::SVSharedDa
 					SVString name = imageIter->first.c_str();
 					SvSml::SVSharedImage::BuildImageFileName(m_SecondPtrImageFileName, m_SecondPtrImageFileNameLen, name.c_str(), sharedSlotIndex, false, SVFileBitmap);
 					// Write Image to disk
-					HRESULT hr = SVImageProcessingClass::Instance().SaveImageBuffer(m_BufferImageFileName, SVFileBitmap, imageHandlePtr);
+					HRESULT hr = SVImageProcessingClass::SaveImageBuffer(m_BufferImageFileName, SVFileBitmap, imageHandlePtr);
 					if(S_OK != hr)
 					{
 						SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
@@ -4185,9 +4097,7 @@ SvOi::ISelectorItemVectorPtr SVInspectionProcess::GetPPQSelectorList( const UINT
 			InsertItem.setItemKey( rObjectRef->GetUniqueObjectID().ToVARIANT() );
 			if ( const SVValueObjectClass* pValueObject = dynamic_cast<const SVValueObjectClass*> (rObjectRef.Object()) )
 			{
-				CString typeName;
-				pValueObject->GetTypeName( typeName );
-				InsertItem.setItemTypeName( typeName );
+				InsertItem.setItemTypeName( pValueObject->GetTypeName().c_str() );
 			}
 			else if( const BasicValueObject* pBasicObject = dynamic_cast<const BasicValueObject*> (rObjectRef.Object()) )
 			{
@@ -4240,9 +4150,7 @@ SvOi::ISelectorItemVectorPtr SVInspectionProcess::GetPPQSelectorList( const UINT
 				InsertItem.setItemKey( ObjectRef->GetUniqueObjectID().ToVARIANT() );
 				if ( const SVValueObjectClass* pValueObject = dynamic_cast<const SVValueObjectClass*> (pObject) )
 				{
-					CString typeName;
-					pValueObject->GetTypeName( typeName );
-					InsertItem.setItemTypeName( typeName );
+					InsertItem.setItemTypeName( pValueObject->GetTypeName().c_str() );
 				}
 
 				pSelectorList->push_back( InsertItem );
@@ -4261,6 +4169,33 @@ SvOi::ITaskObject* SVInspectionProcess::GetToolSetInterface() const
 HRESULT SVInspectionProcess::RunOnce(SvOi::ITaskObject* pTask)
 {
 	return RunOnce(dynamic_cast<SVToolClass *>(pTask)) ? S_OK : E_FAIL;
+}
+
+long SVInspectionProcess::GetLastIndex() const
+{
+	long lastIndex = 0;
+	SVProductInfoStruct l_Product = LastProductGet( SV_INSPECTION );
+
+	if( !( l_Product.empty() ) )
+	{
+		SVDataManagerHandle l_Handle;
+		l_Product.GetResultDataIndex( l_Handle );
+		lastIndex = l_Handle.GetIndex();
+	}
+	return lastIndex;
+}
+
+bool SVInspectionProcess::AddInputRequest( const SVGUID& rGuid, const _variant_t& rValue )
+{
+	SVValueObjectReference ObjectRef( SVObjectManagerClass::Instance().GetObject( rGuid ) );
+	bool Result = AddInputRequest( ObjectRef, rValue );
+
+	return Result;
+}
+
+bool SVInspectionProcess::AddInputRequestMarker()
+{
+	return AddInputRequest( nullptr, SvO::SVTOOLPARAMETERLIST_MARKER );
 }
 #pragma endregion IInspectionProcess methods
 

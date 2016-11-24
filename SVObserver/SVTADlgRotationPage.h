@@ -11,7 +11,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVTaskObjectInterfaceClass.h"
+#include "SVTaskObjectValueInterface.h"
 #include "SVEnumerateCombo.h"
 #pragma endregion
 
@@ -23,7 +23,7 @@ class SVDoubleValueObjectClass;
 class SVBoolValueObjectClass;
 #pragma endregion;
 
-class SVToolAdjustmentDialogRotationPageClass : public CPropertyPage, public SVTaskObjectInterfaceClass
+class SVToolAdjustmentDialogRotationPageClass : public CPropertyPage, public SVTaskObjectValueInterface
 {
 public:
 	SVToolAdjustmentDialogRotationPageClass( const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* Parent );
@@ -51,7 +51,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 #pragma endregion MFC Methods
 
-	virtual HRESULT SetInspectionData() override;
+	HRESULT SetInspectionData();
 	void refresh();
 #pragma endregion
 

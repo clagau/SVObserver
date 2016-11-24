@@ -12,7 +12,7 @@
 #include "stdafx.h"
 #include "SVGigeCameraManager.h"
 
-#include "SVImageProcessingClass.h"
+#include "SVOCore/SVImageProcessingClass.h"
 #include "SVDigitizerProcessingClass.h"
 #include "SVStatusLibrary\GlobalPath.h"
 #include "TextDefinesSvO.h"

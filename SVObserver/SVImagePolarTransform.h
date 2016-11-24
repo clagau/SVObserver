@@ -11,8 +11,8 @@
 #pragma once
 
 #pragma region Includes
-#include "SVImageClass.h"
 #include "SVPolarTransform.h"
+#include "SVOCore/SVImageClass.h"
 #pragma endregion Includes
 
 class SVImagePolarTransformClass : public SVPolarTransformClass

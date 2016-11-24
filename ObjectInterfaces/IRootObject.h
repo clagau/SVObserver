@@ -10,7 +10,8 @@
 
 #pragma region Includes
 #include "ISelectorItemVector.h"
-#include "SVUtilityLibrary\SVString.h"
+#include "SVUtilityLibrary/SVString.h"
+#include "SVObjectLibrary/SVOutputInfoListClass.h"
 #pragma endregion Includes
 
 namespace Seidenader
@@ -32,6 +33,12 @@ namespace Seidenader
 		/// \return rObjectNameList [out] The returned object name list.
 		//************************************
 		ISelectorItemVectorPtr getRootChildSelectorList( LPCTSTR Path = _T(""), UINT AttributesAllowedFilter = 0 );
+
+		//************************************
+		/// Add the Root child objects
+		/// \param rList [in] SVOutputInfoListClass to receive objects from the root tree
+		//************************************
+		void addRootChildObjects(SVOutputInfoListClass& rList);
 	}
 }
 

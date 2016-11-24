@@ -24,4 +24,9 @@ bool SvOi::isOkToEdit()
 {
 	return TheSVObserverApp.OkToEdit();
 }
+
+long SvOi::GetSourceImageDepth()
+{
+	return TheSVObserverApp.GetSourceImageDepth();
+}
 #pragma endregion implementation of methods from ISVOApp_Helper

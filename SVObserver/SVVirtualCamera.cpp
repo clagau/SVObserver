@@ -493,28 +493,25 @@ HRESULT SVVirtualCamera::GetLut( SVLut& lut ) const
 	return hr;
 }
 
-HRESULT SVVirtualCamera::GetSourceImageIndex( SVDataManagerHandle& p_rHandle, const SVProductInfoStruct& p_rProduct ) const
+HRESULT SVVirtualCamera::GetSourceImageIndex( SVDataManagerHandle* pHandle, const SVGuidSVCameraInfoStructMap& rGuidCameraMap ) const
 {
-	HRESULT l_Status( S_OK );
+	HRESULT Result( E_FAIL );
 
-	SVDataManagerHandle	l_DMIndex;
-
-	SVStdMapSVVirtualCameraPtrSVCameraInfoStruct::const_iterator l_svIter;
-
-	l_svIter = p_rProduct.m_svCameraInfos.find( const_cast< SVVirtualCamera* >( this ) );
-
-	if( l_svIter != p_rProduct.m_svCameraInfos.end() )
+	if( nullptr != pHandle )
 	{
-		l_Status = p_rHandle.Assign( l_svIter->second.GetSourceImageDMIndexHandle(), l_svIter->second.GetSourceImageDMIndexHandle().GetLockType() );
-	}
-	else
-	{
-		p_rHandle.clear();
+		SVGuidSVCameraInfoStructMap::const_iterator Iter( rGuidCameraMap.find( GetUniqueObjectID() ) );
 
-		l_Status = E_FAIL;
+		if( rGuidCameraMap.end() != Iter   )
+		{
+			Result = pHandle->Assign( Iter->second.GetSourceImageDMIndexHandle(), Iter->second.GetSourceImageDMIndexHandle().GetLockType() );
+		}
+		else
+		{
+			pHandle->clear();
+		}
 	}
 
-	return l_Status;
+	return Result;
 }
 
 HRESULT SVVirtualCamera::ReserveNextImageHandleIndex( SVDataManagerHandle& p_rDMIndexHandle, SVDataManagerLockTypeEnum p_LockType ) const
@@ -548,32 +545,32 @@ HRESULT SVVirtualCamera::ReserveNextImageHandleIndex( SVDataManagerHandle& p_rDM
 	return l_Status;
 }
 
-BOOL SVVirtualCamera::ReserveImageHandleIndex( const SVDataManagerHandle& p_rDMIndexHandle ) const
+bool SVVirtualCamera::ReserveImageHandleIndex( const SVDataManagerHandle& p_rDMIndexHandle ) const
 {
-	BOOL bOk = nullptr != mpsvDevice;
+	bool Result = (nullptr != mpsvDevice);
 
-	if( bOk )
+	if( Result )
 	{
 		if( -1 < p_rDMIndexHandle.GetIndex() )
 		{
-			bOk = mpsvDevice->GetCircleBuffer()->SetCurrentIndex( p_rDMIndexHandle );
+			Result = mpsvDevice->GetCircleBuffer()->SetCurrentIndex( p_rDMIndexHandle );
 		}
 	}
 
-	return bOk;
+	return Result;
 }
 
-BOOL SVVirtualCamera::CopyValue( const SVDataManagerHandle& p_From, const SVDataManagerHandle& p_To )
+bool SVVirtualCamera::CopyValue( const SVDataManagerHandle& p_From, const SVDataManagerHandle& p_To )
 {
-	BOOL l_bOk = false;
+	bool Result( false );
 
 	SVImageObjectClassPtr imagePtr = mpsvDevice->GetCircleBuffer();
 	if (!imagePtr.empty())
 	{
-		l_bOk = imagePtr->CopyValue( p_From, p_To );
+		Result = imagePtr->CopyValue( p_From, p_To );
 	}
 
-	return l_bOk;
+	return Result;
 }
 
 void SVVirtualCamera::DumpDMInfo( LPCTSTR p_szName ) const

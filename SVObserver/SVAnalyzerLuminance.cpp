@@ -17,9 +17,9 @@
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
 
 #include "SVAnalyzerLuminanceSetup.h"
-#include "SVDataBuffer.h"
-#include "SVImageClass.h"
-#include "SVImageProcessingClass.h"
+#include "SVOCore/SVDataBuffer.h"
+#include "SVOCore/SVImageClass.h"
+#include "SVOCore/SVImageProcessingClass.h"
 #include "SVResultLong.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
 #include "SVOMFCLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
@@ -198,7 +198,7 @@ BOOL SVLuminanceAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateS
 		svData.Length = msvlHistValueArraySize;
 		svData.Type = SVDataBufferInfoClass::SVHistResult;
 		svData.HBuffer.milResult = msvHistResultID;
-		if ( S_OK == SVImageProcessingClass::Instance().CreateDataBuffer( &svData ) )
+		if ( S_OK == SVImageProcessingClass::CreateDataBuffer( &svData ) )
 		{
 			msvHistResultID = svData.HBuffer.milResult;
 		}

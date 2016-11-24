@@ -68,6 +68,7 @@
 #include "SVIPDoc.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
+#include "ObjectInterfaces\GlobalConst.h"
 #include "TextDefinesSvO.h"
 
 #pragma endregion Includes
@@ -1497,9 +1498,9 @@ bool SVConfigurationObject::LoadAcquisitionDevice( SVTreeType& rTree, SVString& 
 						if( DigitizerName.empty() && !DigName.empty() )
 						{
 							int CameraID = atoi( SvUl_SF::Mid( DigName, SVString(_T("Dig_")).length() ).c_str() );
-							if( cMaximumCameras <= CameraID )
+							if( SvOi::cMaximumCameras <= CameraID )
 							{
-								CameraID -= cMaximumCameras;
+								CameraID -= SvOi::cMaximumCameras;
 							}
 							//! Determine which camera ordering to use
 							bool newOrder = m_ulVersion >= SVO_Version7_40;

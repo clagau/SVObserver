@@ -4,7 +4,7 @@
 //******************************************************************************
 //* .Module Name     : SVRangeClassHelper
 //* .File Name       : $Workfile:   RangeClassHelper.h  $
-//* .Description     : Helper class for the SVRangeClass.  Implements the interface SVTaskObjectInterfaceClass.
+//* .Description     : Helper class for the SVRangeClass.  Implements the interface 
 //*                    Contains variables for range values.
 //*                    Allows the RangeClass to get, set, and check the values.
 //* ----------------------------------------------------------------------------
@@ -15,8 +15,8 @@
 #pragma once
 
 #pragma region Includes
-#include "SVTaskObjectInterfaceClass.h"
-#include "SVTaskObjectList.h"
+#include "SVTaskObjectValueInterface.h"
+#include "SVOCore/SVTaskObjectList.h"
 #include "ObjectInterfaces\RangeEnum.h"
 #include "ObjectInterfaces\MessageTextEnum.h"
 #pragma endregion Includes
@@ -26,7 +26,7 @@ class SVRangeClass;
 class SVIPDoc;
 #pragma endregion Declarations
 
-class RangeClassHelper : public SVTaskObjectInterfaceClass
+class RangeClassHelper : public SVTaskObjectValueInterface
 {
 #pragma region Constructor
 public:
@@ -36,10 +36,10 @@ public:
 
 #pragma region Public Methods
 	//************************************
-	// Description:  implements interface of SVTaskObjectInterfaceClass Set internal value to m_pRange
+	// Description:  sets the inspection data
 	// Returns:  HRESULT:  S_OK if successful
 	//************************************
-	virtual HRESULT SetInspectionData();
+	HRESULT SetInspectionData();
 
 	//************************************
 	// Description:  Get internal value Data From m_pRange 

@@ -13,7 +13,6 @@
 
 #pragma region Includes
 #include "SVMFCControls\svmaskeditor.h"
-#include "SVClassInfoStruct.h"
 //TODO: MZA(10.Nov 2014): Move this files to SVOGui project and then remove folder from include and Namespace add-on add PictureDisplay declaration.
 #include "SVOGui\PictureDisplay.h"
 #include "SVMFCControls\AvailableObjectListComboBox.h"

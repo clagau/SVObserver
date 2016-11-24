@@ -27,8 +27,7 @@
 #include "SVDirectX.h"
 #include "SVDisplayImageSelect.h"
 #include "SVDrawObject.h"
-#include "SVGlobal.h"
-#include "SVImageProcessingClass.h"
+#include "SVOCore/SVImageProcessingClass.h"
 #include "SVImageViewScroll.h"
 #include "SVIPDoc.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
@@ -44,6 +43,7 @@
 #include "SVGuiExtentUpdater.h"
 #include "TextDefinesSvO.h"
 #include "SVStatusLibrary/GlobalPath.h"
+#include "ObjectInterfaces/GlobalConst.h"
 
 #pragma endregion Includes
 
@@ -188,7 +188,7 @@ void SVImageViewClass::Initialize()
 
 	m_isPicked = FALSE;
 
-	m_hWindowBackgroundColor = ::CreateSolidBrush( SV_DEFAULT_IMAGE_VIEW_BACKGROUND_COLOR );
+	m_hWindowBackgroundColor = ::CreateSolidBrush( SvOi::cDefaultImageViewBackgroundColor );
 }
 
 SVImageViewClass::~SVImageViewClass()

@@ -18,11 +18,12 @@
 //Moved to precompiled header: #include <vector>
 #include "SVObjectLibrary\SVObjectClass.h"
 #include "SVUtilityLibrary\SVString.h"
+#include "ObjectInterfaces/IBasicValueObject.h"
 #pragma endregion Includes
 
 class SVDeviceParam;
 
-class BasicValueObject : public SVObjectClass
+class BasicValueObject : public SVObjectClass, public SvOi::IBasicValueObject
 {
 public:
 #pragma region Constructor
@@ -109,7 +110,7 @@ public:
 	//! The method gets the type name of the value
 	//! \returns type name
 	//************************************
-	SVString getTypeName() const;
+	virtual SVString getTypeName() const override;
 
 	//************************************
 	//! The method updates the corresponding device parameter

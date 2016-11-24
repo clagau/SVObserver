@@ -139,7 +139,7 @@ HRESULT SVRemoteInputTool::ProcessNotifyData( SVObjectCommandDataJsonPtr& p_rDat
 		}
 		else if( l_Command == _T( "QueryDataItems" ) )
 		{
-			SVInspectionProcess* pInspection = GetInspection();
+			SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(GetInspection());
 
 			if( nullptr != pInspection )
 			{

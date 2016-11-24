@@ -45,13 +45,13 @@ SVLongResultClass::SVLongResultClass( BOOL BCreateDefaultTaskList, SVObjectClass
 	// Declare Input Interface of the SVRangeClass...
 	interfaceInfo.ObjectType = SVLongValueObjectType;
 	interfaceInfo.EmbeddedID = SVValueObjectGuid;
-	rangeClassInfo.DesiredInputInterface.Add( interfaceInfo );
+	rangeClassInfo.m_DesiredInputInterface.Add( interfaceInfo );
 
 	// Describe the SVRangeClass ...
-	rangeClassInfo.ObjectTypeInfo.ObjectType = SVRangeObjectType;
-	rangeClassInfo.ObjectTypeInfo.SubType	= 0;
-	rangeClassInfo.ClassId = SVRangeClassGuid;
-	rangeClassInfo.ClassName.LoadString( IDS_CLASSNAME_SVRANGE );
+	rangeClassInfo.m_ObjectTypeInfo.ObjectType = SVRangeObjectType;
+	rangeClassInfo.m_ObjectTypeInfo.SubType	= 0;
+	rangeClassInfo.m_ClassId = SVRangeClassGuid;
+	rangeClassInfo.m_ClassName = SvUl_SF::LoadString( IDS_CLASSNAME_SVRANGE );
 
 	// Construct it
 	SVRangeClass* pRange = (SVRangeClass* )rangeClassInfo.Construct(); 

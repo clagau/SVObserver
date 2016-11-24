@@ -109,7 +109,7 @@ BOOL SVProfileEdgeMarkerAdjustmentPageClass::OnInitDialog()
 
 	SVToolClass* pTool = dynamic_cast<SVToolClass*>( m_pCurrentAnalyzer->GetOwner() );
 
-	RunOnce( pTool );
+	RunOnce( pTool->GetUniqueObjectID() );
 	GetInspectionData();
 
 	// Get the Image for this tool

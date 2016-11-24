@@ -17,7 +17,7 @@
 #include "SVEquationLibrary/SVEquationBase.h"
 #include "SVEquationLibrary/SVEquationLex.h"
 #include "SVEquationLibrary/SVEquationYacc.h"
-#include "SVTaskObject.h"
+#include "SVOCore/SVTaskObject.h"
 #include "SVStatusLibrary/MessageContainer.h"
 #pragma endregion Includes
 

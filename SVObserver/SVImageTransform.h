@@ -12,7 +12,7 @@
 
 #pragma region Includes
 #include "SVTransform.h"
-#include "SVImageClass.h"
+#include "SVOCore/SVImageClass.h"
 #pragma endregion Includes
 
 class SVImageTransformClass : public SVTransformClass

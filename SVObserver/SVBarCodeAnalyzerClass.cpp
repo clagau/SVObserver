@@ -19,10 +19,10 @@
 
 #include "SVBarCodeResult.h"   
 #include "SVBarCodeProperties.h"
-#include "SVBarCodeBuffer.h"
+#include "SVOCore/SVBarCodeBuffer.h"
 #include "SVBarCodeResult.h"
-#include "SVImageProcessingClass.h"
-#include "SVImageClass.h"
+#include "SVOCore/SVImageProcessingClass.h"
+#include "SVOCore/SVImageClass.h"
 #include "SVInspectionProcess.h"
 #include "SVOLicenseManager/SVOLicenseManager.h"
 #include "TextDefinesSvO.h"
@@ -159,7 +159,7 @@ BOOL SVBarCodeAnalyzerClass::InitMil ()
 		long l_lTmpType;
 		msv_lBarCodeType.GetValue( l_lTmpType );
 		svData.m_lCodeType = static_cast<SVBarCodeTypesEnum>( l_lTmpType );
-		if ( S_OK == SVImageProcessingClass::Instance().CreateBarCodeBuffer( &svData ) )
+		if ( S_OK == SVImageProcessingClass::CreateBarCodeBuffer( &svData ) )
 		{
 			
 			SVMatroxBarCodeInterface::SVStatusCode l_Code;

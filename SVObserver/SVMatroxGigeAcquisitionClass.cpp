@@ -22,10 +22,10 @@
 #include "SVGigeCameraParametersLibrary/SVGigeEnums.h"
 #include "SVMatroxGigeCameraProxy.h"
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
-#include "SVImageObjectClass.h"
+#include "SVOCore/SVImageObjectClass.h"
 #include "SVObserver.h"
 #include "SVDigitizerProcessingClass.h"
-#include "SVImageProcessingClass.h"
+#include "SVOCore/SVImageProcessingClass.h"
 #include "SVGigeCameraFileLibrary/SVGigeCameraStruct.h"
 #include "SVGigeCameraManager.h"
 #pragma endregion Includes

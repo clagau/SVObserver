@@ -14,7 +14,7 @@
 #pragma region Includes
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
 #include "SVOMFCLibrary/SVFileNameClass.h"
-#include "SVImageObjectClass.h"
+#include "SVOCore/SVImageObjectClass.h"
 #pragma endregion Includes
 
 class SVImageClass;

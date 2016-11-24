@@ -14,7 +14,7 @@
 #include "SVPublishList.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVDigitalOutputObject.h"
-#include "SVTaskObject.h"
+#include "SVOCore/SVTaskObject.h"
 #include "SVOutputObjectList.h"
 #include "SVInfoStructs.h"
 #include "SVObserver.h"

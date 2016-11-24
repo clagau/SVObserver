@@ -119,7 +119,7 @@ HRESULT SVLuminanceAnalyzerSetupClass::SetInspectionData()
 	
 	if( S_OK == l_hrOk )
 	{
-		l_hrOk = RunOnce( m_pAnalyzer->GetTool() );
+		l_hrOk = RunOnce( m_pAnalyzer->GetTool()->GetUniqueObjectID() );
 	}
 
 	return l_hrOk;

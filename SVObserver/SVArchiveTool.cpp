@@ -21,8 +21,8 @@
 #include "SVTimerLibrary/SVClock.h"
 #include "SVSystemLibrary/SVFileNameManagerClass.h"
 #include "SVGlobal.h"
-#include "SVImageClass.h"
-#include "SVImageListClass.h"
+#include "SVOCore/SVImageClass.h"
+#include "SVOCore/SVImageListClass.h"
 #include "SVInspectionProcess.h"
 #include "SVMemoryManager.h"
 #include "SVSVIMStateClass.h"
@@ -280,7 +280,8 @@ HRESULT SVArchiveTool::ResetObject()
 		m_arrayResultsInfoObjectsToArchive.ConvertStringToGuids( this, (LPCTSTR) csTemp );
 	}
 
-	if ( nullptr != GetInspection() && GetInspection()->IsResetStateSet( SVResetStateArchiveToolCreateFiles ) )
+	SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(GetInspection());
+	if ( pInspection && pInspection->IsResetStateSet( SVResetStateArchiveToolCreateFiles ) )
 	{
 		HRESULT hrInitialize = initializeOnRun();
 		m_bInitializedForRun = S_OK == hrInitialize;
@@ -712,7 +713,8 @@ HRESULT SVArchiveTool::initializeOnRun()
 		return S_OK;
 	}
 
-	if ( GetInspection()->IsResetStateSet( SVResetStateArchiveToolCreateFiles ) )	// If going online
+	SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(GetInspection());
+	if ( pInspection && pInspection->IsResetStateSet( SVResetStateArchiveToolCreateFiles ) )	// If going online
 	{
 		//
 		// Create and open the results to text Archive file.
@@ -837,7 +839,7 @@ HRESULT SVArchiveTool::QueueArchiveString( CString strArchiveString )
 //
 void SVArchiveTool::UpdateTaskObjectOutputList()
 {
-	SVToolSetClass* pToolSet = GetInspection()->GetToolSet();
+	SVToolSetClass* pToolSet = dynamic_cast<SVInspectionProcess*>(GetInspection())->GetToolSet();
 	ASSERT( pToolSet );
 	SVOutputInfoListClass l_ToolSetOutputList;
 	SVObjectReferenceVector vecObjects;
@@ -886,7 +888,7 @@ void SVArchiveTool::RebuildResultsArchiveList()
 	// Now iterate the output list and build a list for the archive tool.
 	// Get a pointer to the toolset
 	//
-	SVToolSetClass* pToolSet = GetInspection()->GetToolSet();
+	SVToolSetClass* pToolSet = dynamic_cast<SVInspectionProcess*>(GetInspection())->GetToolSet();
 
 	SVOutputInfoListClass l_ToolSetOutputList;
 

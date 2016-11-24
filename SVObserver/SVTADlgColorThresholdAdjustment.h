@@ -14,7 +14,7 @@
 #pragma region Includes
 #include "SVTADlgColorThresholdBasePage.h"
 #include "SVValueBaseNormalizerClass.h"
-#include "SVTaskObjectInterfaceClass.h"
+#include "SVTaskObjectValueInterface.h"
 #pragma endregion Includes
 
 class SVIPDoc;
@@ -26,7 +26,7 @@ class SVBoolValueObjectClass;
 /////////////////////////////////////////////////////////////////////////////
 // SVTADlgColorThresholdAdjustment dialog
 
-class SVTADlgColorThresholdAdjustment : public SVTADlgColorThresholdBasePage, public SVTaskObjectInterfaceClass
+class SVTADlgColorThresholdAdjustment : public SVTADlgColorThresholdBasePage, public SVTaskObjectValueInterface
 {
 	DECLARE_DYNCREATE(SVTADlgColorThresholdAdjustment)
 
@@ -35,7 +35,7 @@ public:
 	SVTADlgColorThresholdAdjustment();
 	virtual ~SVTADlgColorThresholdAdjustment();
 
-	virtual HRESULT SetInspectionData();
+	HRESULT SetInspectionData();
 
 // Dialog Data
 	//{{AFX_DATA(SVTADlgColorThresholdAdjustment)
@@ -81,14 +81,14 @@ protected:
 	void RefreshProperties();
 
 public:
-	int mBandNumber;
+	int m_BandNumber;
 
 protected:
-	SVIPDoc*                mpCurrentDocument;
-	SVColorThresholdClass*  mpThreshold;
-	SVLongValueObjectClass* mpUpperThreshold;
-	SVLongValueObjectClass* mpLowerThreshold;
-	SVBoolValueObjectClass* mpExclude;
+	SVIPDoc*                m_pCurrentDocument;
+	SVColorThresholdClass*  m_pThreshold;
+	SVLongValueObjectClass* m_pUpperThreshold;
+	SVLongValueObjectClass* m_pLowerThreshold;
+	SVBoolValueObjectClass* m_pExclude;
 
 	SVValueBaseNormalizerClass m_Normalizer;
 };

@@ -17,16 +17,16 @@
 #include "SVAdjustToolSizePositionDlg.h"
 #include "SVObjectLibrary/SVObjectSynchronousCommandTemplate.h"
 #include "svobserver.h"
-#include "SVTaskObject.h"
+#include "SVOCore/SVTaskObject.h"
 #include "SVInspectionProcess.h"
 #include "SVGuiExtentUpdater.h"
-#include "SVImageListClass.h"
+#include "SVOCore/SVImageListClass.h"
 #include "SVTool.h"
 #include "SVOMFCLibrary/SVOMFCLibraryGlobals.h"
 #include "SVSVIMStateClass.h"
 #include "SVOResource/ConstGlobalSvOr.h"
 #include "SVLinearToolClass.h"
-#include "SVExtentPropertiesInfoStruct.h"
+#include "SVOCore/SVExtentPropertiesInfoStruct.h"
 #include "SVMainFrm.h"
 #include "ToolSizeAdjustTask.h"
 #include "GuiCommands/InspectionRunOnce.h"
@@ -538,26 +538,22 @@ void SVAdjustToolSizePositionDlg::FillTreeFromExtents( SVRPropertyItem* pRoot, b
 	}//end for( iter = map.begin(); iter != map.end(); iter++ )
 }
 
-
-
 bool SVAdjustToolSizePositionDlg::UsePropagate()
 {
 	
 	SVInspectionProcess *pInspection(nullptr);
-	SVToolClass *pTool = dynamic_cast<SVToolClass*> (m_pToolTask) ;
+	SVToolClass *pTool = dynamic_cast<SVToolClass*> (m_pToolTask);
 	int count(0);
-	if(nullptr != pTool)
+	if (nullptr != pTool)
 	{
-		pInspection = pTool->GetInspection();
+		pInspection = dynamic_cast<SVInspectionProcess*>(pTool->GetInspection());
 	}
-	if(nullptr != pInspection)
+	if (nullptr != pInspection)
 	{
 		pInspection->LoopOverTools( (SVInspectionProcess::pToolFunc) ToolSizeAdjustTask::UseSizeAdjust, count); 
 	}	
 	return (count > 0);
 }
-
-
 
 bool SVAdjustToolSizePositionDlg::IsFullSizeAllowed()
 {
@@ -606,7 +602,8 @@ bool SVAdjustToolSizePositionDlg::IsFullSize()
 
 	m_pToolTask->GetImageExtent(m_svExtents);
 	SVImageExtentClass l_ParentExtent;
-	if( S_OK == m_pToolTask->GetTool()->GetParentExtent( l_ParentExtent ) )
+	SVToolClass* pTool = dynamic_cast<SVToolClass*>(m_pToolTask->GetTool());
+	if(pTool && S_OK == pTool->GetParentExtent( l_ParentExtent ) )
 	{
 		long l_lParentWidth=0;
 		long l_lParentHeight=0;

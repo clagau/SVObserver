@@ -243,7 +243,7 @@ HRESULT SVBlobAnalyzeFeatureDialogClass::SetInspectionData()
 
 		if( S_OK == l_hrOk )
 		{
-			l_hrOk = RunOnce( m_pCurrentAnalyzer->GetTool() );
+			l_hrOk = RunOnce( m_pCurrentAnalyzer->GetTool()->GetUniqueObjectID() );
 		}
 	}
 

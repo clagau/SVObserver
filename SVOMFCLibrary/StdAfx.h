@@ -40,6 +40,8 @@
 #define _SECURE_SCL 0
 #endif
 
+#pragma warning( disable: 4482 )
+
 //************************************
 //! Precompiled headers section
 //************************************

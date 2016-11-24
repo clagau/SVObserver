@@ -15,7 +15,7 @@
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVArchiveImageThreadClass.h"
 #include "SVOMFCLibrary/SVOMFCLibraryGlobals.h"
-#include "SVImageObjectClass.h"
+#include "SVOCore/SVImageObjectClass.h"
 #include "SVOMFCLibrary/SVFileNameClass.h"
 #include "TextDefinesSvO.h"
 #pragma endregion Includes

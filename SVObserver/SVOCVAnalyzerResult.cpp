@@ -11,13 +11,13 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "SVImageProcessingClass.h"
+#include "SVOCore/SVImageProcessingClass.h"
 #include "SVMessage/SVMessage.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
 #include "SVRunControlLibrary/SVRunControlLibrary.h"
-#include "SVGlobal.h"
-#include "SVImageClass.h"
+#include "SVUtilityLibrary/SVUtilityGlobals.h"
+#include "SVOCore/SVImageClass.h"
 #include "SVOCVAnalyzer.h"
 #include "SVOCVAnalyzerResult.h"
 #include "SVTool.h"
@@ -1520,48 +1520,44 @@ HRESULT SVOCVAnalyzeResultClass::onCollectOverlays(SVImageClass* p_pImage, SVExt
 {
 	HRESULT l_hr = S_OK;
 
-	if (GetTool()->WasEnabled())
+	SVToolClass* pTool = dynamic_cast<SVToolClass*>(GetTool());
+	if (pTool && pTool->WasEnabled())
 	{
 		long lLeft, lTop, lWidth, lHeight;
 
 		if( m_lCurrentFoundStringLength )
 		{
 			SVImageExtentClass l_svExtents;
-			SVToolClass* pTool = GetTool();
+			pTool->GetImageExtent( l_svExtents);
 
-			if( pTool )
+			for( long i = 0; i < m_lCurrentFoundStringLength; i++ )
 			{
-				pTool->GetImageExtent( l_svExtents);
+				SVExtentFigureStruct l_svFigure;
 
-				for( long i = 0; i < m_lCurrentFoundStringLength; i++ )
-				{
-					SVExtentFigureStruct l_svFigure;
+				SVOCVCharacterResultClass *pResult = arrayOCVCharacterResults.GetAt( i );
 
-					SVOCVCharacterResultClass *pResult = arrayOCVCharacterResults.GetAt( i );
+				pResult->m_dvoOverlayLeft.GetValue( lLeft );
+				pResult->m_dvoOverlayTop.GetValue( lTop );
+				pResult->m_dvoOverlayWidth.GetValue( lWidth );
+				pResult->m_dvoOverlayHeight.GetValue( lHeight );
 
-					pResult->m_dvoOverlayLeft.GetValue( lLeft );
-					pResult->m_dvoOverlayTop.GetValue( lTop );
-					pResult->m_dvoOverlayWidth.GetValue( lWidth );
-					pResult->m_dvoOverlayHeight.GetValue( lHeight );
+				CRect l_oRect(lLeft, lTop, lLeft + lWidth, lTop + lHeight);
 
-					CRect l_oRect(lLeft, lTop, lLeft + lWidth, lTop + lHeight);
+				l_svFigure = l_oRect;
 
-					l_svFigure = l_oRect;
+				l_svExtents.TranslateFromOutputSpace( l_svFigure, l_svFigure);
 
-					l_svExtents.TranslateFromOutputSpace( l_svFigure, l_svFigure);
+				SVExtentMultiLineStruct l_multiLine;
 
-					SVExtentMultiLineStruct l_multiLine;
-
-					l_multiLine.m_Color = SV_DEFAULT_SUB_FUNCTION_COLOR_1;
+				l_multiLine.m_Color = SV_DEFAULT_SUB_FUNCTION_COLOR_1;
 					
-					l_multiLine.AssignExtentFigure( l_svFigure, SV_DEFAULT_SUB_FUNCTION_COLOR_1 );
+				l_multiLine.AssignExtentFigure( l_svFigure, SV_DEFAULT_SUB_FUNCTION_COLOR_1 );
 
-					UpdateOverlayIDs( l_multiLine );
+				UpdateOverlayIDs( l_multiLine );
 
-					p_rMultiLineArray.Add( l_multiLine );
+				p_rMultiLineArray.Add( l_multiLine );
 
-				}// end for
-			}
+			}// end for
 		}
 	}
 

@@ -9,7 +9,7 @@
 #include "StdAfx.h"
 #include "RingBufferTool.h"
 #include "SVAnalyzer.h"
-#include "SVMatroxImageProcessingClass.h"
+#include "SVOCore/SVImageProcessingClass.h"
 #include "SVImageLibrary\SVImageBufferHandleImage.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
@@ -122,7 +122,7 @@ HRESULT RingBufferTool::ResetObject()
 				for (int i=0; i<ringBufferDepth; i++)
 				{
 					SVSmartHandlePointer imageHandle;
-					SVMatroxImageProcessingClass::Instance().CreateImageBuffer(imageInfo, imageHandle);
+					SVImageProcessingClass::CreateImageBuffer(imageInfo, imageHandle);
 					m_ringBuffer[i] = imageHandle;
 				}
 			}

@@ -71,14 +71,14 @@ void SVMathToolClass::init(void)
 
 	// Declare Input Interface of Math Equation Result...
 	interfaceInfo.EmbeddedID = SVMathEquationResultObjectGuid;
-	resultClassInfo.DesiredInputInterface.Add( interfaceInfo );
+	resultClassInfo.m_DesiredInputInterface.Add( interfaceInfo );
 
-	resultClassInfo.ObjectTypeInfo.ObjectType = SVResultObjectType;
-	resultClassInfo.ObjectTypeInfo.SubType	= SVResultDoubleObjectType;
-	resultClassInfo.ClassId = SVDoubleResultClassGuid;
-	resultClassInfo.ClassName.LoadString( IDS_OBJECTNAME_RESULT );
+	resultClassInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
+	resultClassInfo.m_ObjectTypeInfo.SubType	= SVResultDoubleObjectType;
+	resultClassInfo.m_ClassId = SVDoubleResultClassGuid;
+	resultClassInfo.m_ClassName = SvUl_SF::LoadString( IDS_OBJECTNAME_RESULT );
 	strTitle.LoadString( IDS_CLASSNAME_RESULT_DOUBLE );
-	resultClassInfo.ClassName += SV_TSTR_SPACE + strTitle;
+	resultClassInfo.m_ClassName += SV_TSTR_SPACE + strTitle;
 
 	// Construct the result
 	SVDoubleResultClass* pResult = ( SVDoubleResultClass * )resultClassInfo.Construct();

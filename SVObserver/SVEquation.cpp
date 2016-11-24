@@ -97,13 +97,13 @@ int SVEquationSymbolTableClass::FindSymbol( LPCTSTR name )
 
 void SVEquationSymbolTableClass::Init(SVObjectClass* pRequestor)
 {
-	SVInspectionProcess *pInspection(nullptr);
+	SVObjectClass* pInspection( nullptr );
 	SVObjectAppClass* pAppClass = dynamic_cast<SVObjectAppClass*>(pRequestor);
 	if( nullptr != pAppClass )
 	{
-		pInspection = 	pAppClass->GetInspection();
+		pInspection = pAppClass->GetInspection();
 	}
-	if( pInspection )
+	if( nullptr != pInspection )
 	{
 		m_InspectionName = pInspection->GetName();
 		m_InspectionName += "."; 

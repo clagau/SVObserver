@@ -97,7 +97,7 @@ void TableFillObject::setColumnValueObjects(const std::vector<TableColumnEquatio
 			RemoveEmbeddedObject(pValueObject.get());
 			//Object must be deleted, before SetDefaultInputs is called.
 			pValueObject.reset();
-			GetInspection()->SetDefaultInputs();
+			dynamic_cast<SVInspectionProcess*>(GetInspection())->SetDefaultInputs();
 		}
 	}
 

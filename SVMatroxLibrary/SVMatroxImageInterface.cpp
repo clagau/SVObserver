@@ -18,7 +18,7 @@
 #include "SVCommandLibrary/SVCommandDataHolder.h"
 #include "SVCommandLibrary/SVCommandDataValue.h"
 #include "SVMessage/SVMessage.h"
-
+#include "SVUtilityLibrary/SVString.h"
 #include "SVMatroxBufferInterface.h"
 #include "SVMatroxCommandDataImage.h"
 #include "SVMatroxImagingLibrary.h"  // has MIL includes
@@ -2318,3 +2318,24 @@ void SVMatroxImageInterface::AdaptiveThreshold(unsigned char* input, unsigned ch
 	delete [] integralImg;
 }
 
+SVMatroxFileTypeEnum SVMatroxImageInterface::getFileType( LPCTSTR FileExt )
+{
+	SVMatroxFileTypeEnum Result( SVFileUnknown );
+
+	SVString strExtension( FileExt );
+
+	if( SvUl_SF::CompareNoCase( strExtension, SVString( _T( ".mim" )) ) == 0 )
+	{
+		Result = SVFileMIL;
+	}
+	if( SvUl_SF::CompareNoCase( strExtension, SVString( _T( ".tif" )) ) == 0 )
+	{
+		Result = SVFileTiff;
+	}
+	if( SvUl_SF::CompareNoCase( strExtension, SVString( _T( ".bmp" )) ) == 0 )
+	{
+		Result = SVFileBitmap;
+	}
+
+	return Result;
+}

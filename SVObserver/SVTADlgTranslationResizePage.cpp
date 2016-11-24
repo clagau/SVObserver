@@ -17,7 +17,7 @@
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "SVGuiExtentUpdater.h"
 #include "ResizeTool.h"
-#include "SVGlobal.h"
+#include "ObjectInterfaces/GlobalConst.h"
 #pragma endregion Includes
 
 #pragma region Properry Tree Items Enum
@@ -738,7 +738,7 @@ HRESULT SVTADlgTranslationResizePage::SetInspectionData()
 				// old values were also invalid.  Currently this can happen 
 				// with corruption or with Remote Access putting in an 
 				// invalid value.
-				newHeightScaleFactor = SV_DEFAULT_WINDOWTOOL_HEIGHTSCALEFACTOR;
+				newHeightScaleFactor = SvOi::cDefaultWindowToolHeightScaleFactor;
 			}
 
 			editItem->SetItemValue(newHeightScaleFactor);
@@ -767,7 +767,7 @@ HRESULT SVTADlgTranslationResizePage::SetInspectionData()
 				// old values were also invalid.  Currently this can happen 
 				// with corruption or with Remote Access putting in an 
 				// invalid value.
-				newWidthScaleFactor = SV_DEFAULT_WINDOWTOOL_WIDTHSCALEFACTOR;
+				newWidthScaleFactor = SvOi::cDefaultWindowToolWidthScaleFactor;
 			}
 			editItem->SetItemValue(newWidthScaleFactor);
 		}
@@ -914,7 +914,7 @@ HRESULT SVTADlgTranslationResizePage::SetInspectionData()
 
 	if ((true == extentChanged) || (true == embeddedChanged))
 	{
-		hr2 = RunOnce(m_pTool);
+		hr2 = RunOnce(m_pTool->GetUniqueObjectID());
 		if (S_FALSE == hr2)
 		{
 			hr2 = SVMSG_SVO_5066_CATCHRUNONCESFALSE;
@@ -985,7 +985,7 @@ HRESULT	SVTADlgTranslationResizePage::ExitTabValidation ()
 
 	if (SUCCEEDED (message.getMessage().m_MessageCode))
 	{
-		HRESULT hr = RunOnce(m_pTool);
+		HRESULT hr = RunOnce(m_pTool->GetUniqueObjectID());
 		SvStl::MessageContainer tmpMessage = m_pTool->getFirstTaskMessage();
 		if (hr == tmpMessage.getMessage().m_MessageCode)
 		{

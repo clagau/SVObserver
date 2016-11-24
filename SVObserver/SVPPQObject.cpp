@@ -17,7 +17,6 @@
 //Moved to precompiled header: #include <limits>
 //Moved to precompiled header: #include <boost/bind.hpp>
 
-
 #include "SVPPQObject.h"
 #include "SVDataManagerLibrary/DataManager.h"
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
@@ -505,7 +504,7 @@ BOOL SVPPQObject::Create()
 	// Create a set of ProductInfoStructs to use
 	if( !m_qAvailableProductInfos.Create() ) { return FALSE; }
 
-	SVStdMapSVVirtualCameraPtrSVCameraInfoStruct l_CameraInfos;
+	SVGuidSVCameraInfoStructMap l_CameraInfos;
 
 	BuildCameraInfos( l_CameraInfos );
 
@@ -635,7 +634,7 @@ BOOL SVPPQObject::Rebuild()
 		m_ppPPQPositions.SetProductAt( i, nullptr );
 	}
 
-	SVStdMapSVVirtualCameraPtrSVCameraInfoStruct l_CameraInfos;
+	SVGuidSVCameraInfoStructMap l_CameraInfos;
 
 	BuildCameraInfos( l_CameraInfos );
 
@@ -1174,7 +1173,7 @@ BOOL SVPPQObject::RebuildProductInfoStructs()
 {
 	BOOL l_bOk = TRUE;
 
-	SVStdMapSVVirtualCameraPtrSVCameraInfoStruct l_CameraInfos;
+	SVGuidSVCameraInfoStructMap l_CameraInfos;
 
 	BuildCameraInfos( l_CameraInfos );
 
@@ -3349,15 +3348,11 @@ bool SVPPQObject::SetProductComplete( SVProductInfoStruct& p_rProduct )
 
 	if( ! bMaintainImages )
 	{
-		SVStdMapSVVirtualCameraPtrSVCameraInfoStruct::iterator l_svIter;
+		SVGuidSVCameraInfoStructMap::iterator Iter( p_rProduct.m_svCameraInfos.begin() );
 
-		l_svIter = p_rProduct.m_svCameraInfos.begin();
-
-		while( l_svIter != p_rProduct.m_svCameraInfos.end() )
+		for( ; p_rProduct.m_svCameraInfos.end() != Iter; ++Iter )
 		{
-			l_svIter->second.ClearCameraInfo();
-
-			++l_svIter;
+			Iter->second.ClearCameraInfo();
 		}
 
 		p_rProduct.oPPQInfo.m_ResultImagePublishedDMIndexHandle.clear();
@@ -3393,15 +3388,11 @@ bool SVPPQObject::SetProductIncomplete( SVProductInfoStruct& p_rProduct )
 {
 	bool l_Status = true;
 
-	SVStdMapSVVirtualCameraPtrSVCameraInfoStruct::iterator l_svIter;
+	SVGuidSVCameraInfoStructMap::iterator Iter( p_rProduct.m_svCameraInfos.begin() );
 
-	l_svIter = p_rProduct.m_svCameraInfos.begin();
-
-	while( l_svIter != p_rProduct.m_svCameraInfos.end() )
+	for( ;Iter != p_rProduct.m_svCameraInfos.end(); ++Iter )
 	{
-		l_svIter->second.ClearCameraInfo();
-
-		++l_svIter;
+		Iter->second.ClearCameraInfo();
 	}
 
 	p_rProduct.oPPQInfo.m_ResultImagePublishedDMIndexHandle.clear();
@@ -3508,13 +3499,14 @@ HRESULT SVPPQObject::ProcessCameraResponse( const SVCameraQueueElement& p_rEleme
 
 		if( nullptr != l_pProduct )
 		{
-			SVStdMapSVVirtualCameraPtrSVCameraInfoStruct::iterator l_svIter1;
+			SVGuidSVCameraInfoStructMap::iterator IterCamera;
 
-			l_svIter1 = l_pProduct->m_svCameraInfos.find( p_rElement.m_pCamera );
+			IterCamera = l_pProduct->m_svCameraInfos.find( p_rElement.m_pCamera->GetUniqueObjectID() );
 
-			if( l_svIter1 != l_pProduct->m_svCameraInfos.end() )
+			if( IterCamera != l_pProduct->m_svCameraInfos.end() )
 			{
-				SVClock::SVTimeStamp	priorCameraSF = l_svIter1->second.m_StartFrameTimeStamp;
+
+				SVClock::SVTimeStamp	priorCameraSF = IterCamera->second.m_StartFrameTimeStamp;
 				long					productComplete = l_pProduct->bDataComplete;
 
 				// Attempting to make sure we don't have the previous trigger 
@@ -3530,17 +3522,17 @@ HRESULT SVPPQObject::ProcessCameraResponse( const SVCameraQueueElement& p_rEleme
 
 					if( p_rElement.m_Data.IsComplete() )
 					{
-						l_svIter1->second.Assign( l_StartTick, iEF, p_rElement.m_Data.mDMHandle, SV_PPQ );
+						IterCamera->second.Assign( l_StartTick, iEF, p_rElement.m_Data.mDMHandle, SV_PPQ );
 					}
 					else
 					{
-						l_svIter1->second.ClearInfo();
+						IterCamera->second.ClearInfo();
 					}
 
 					l_pProduct->m_ProductState += _T( "|" );
 					l_pProduct->m_ProductState += p_rElement.m_pCamera->GetName();
 
-					if( l_svIter1->second.GetIndex() < 0 )
+					if( IterCamera->second.GetIndex() < 0 )
 					{
 						l_pProduct->m_ProductState += _T( "=NAK" );
 
@@ -3566,15 +3558,15 @@ HRESULT SVPPQObject::ProcessCameraResponse( const SVCameraQueueElement& p_rEleme
 
 						if( nullptr != l_pAcqProduct )
 						{
-							SVStdMapSVVirtualCameraPtrSVCameraInfoStruct::iterator l_Iter = l_pAcqProduct->m_svCameraInfos.find( p_rElement.m_pCamera );
+							SVGuidSVCameraInfoStructMap::iterator IterCamera2( l_pAcqProduct->m_svCameraInfos.find( p_rElement.m_pCamera->GetUniqueObjectID() ) );
 
-							if( l_Iter != l_pAcqProduct->m_svCameraInfos.end()  )
+							if( IterCamera2 != l_pAcqProduct->m_svCameraInfos.end()  )
 							{
-								if( l_Iter->second.m_CallbackTimeStamp != 0 )
+								if( IterCamera2->second.m_CallbackTimeStamp != 0 )
 								{
 									break;
 								}
-								l_Iter->second.m_CallbackTimeStamp = SVClock::GetTimeStamp();
+								IterCamera2->second.m_CallbackTimeStamp = SVClock::GetTimeStamp();
 							}
 #ifdef EnableTracking
 							SVString l_Title = p_rElement.m_pCamera->GetName();
@@ -3589,7 +3581,7 @@ HRESULT SVPPQObject::ProcessCameraResponse( const SVCameraQueueElement& p_rEleme
 						}
 					}
 
-					l_svIter1->second.m_CallbackTimeStamp  = SVClock::GetTimeStamp();
+					IterCamera->second.m_CallbackTimeStamp  = SVClock::GetTimeStamp();
 
 					if( m_oCamerasQueue.AddTail( l_pProduct->ProcessCount() ) )
 					{
@@ -3631,22 +3623,21 @@ HRESULT SVPPQObject::ProcessCameraResponse( const SVCameraQueueElement& p_rEleme
 	return l_Status;
 }
 
-HRESULT SVPPQObject::BuildCameraInfos( SVStdMapSVVirtualCameraPtrSVCameraInfoStruct& p_rCameraInfos ) const
+HRESULT SVPPQObject::BuildCameraInfos( SVGuidSVCameraInfoStructMap& p_rCameraInfos ) const
 {
 	HRESULT l_Status = S_OK;
 
 	p_rCameraInfos.clear();
 
-	SVCameraInfoMap::const_iterator l_Iter = m_Cameras.begin();
+	SVCameraInfoMap::const_iterator Iter(  m_Cameras.begin() );
 
-	while( l_Iter != m_Cameras.end() )
+	for( ; m_Cameras.end() != Iter; ++Iter )
 	{
-		if( -1 != l_Iter->second.m_CameraPPQIndex )
+		if( -1 != Iter->second.m_CameraPPQIndex )
 		{
-			p_rCameraInfos[ l_Iter->first ].pCamera = l_Iter->first;
+			const SVGUID& rCameraID( Iter->first->GetUniqueObjectID() );
+			p_rCameraInfos[ rCameraID ].setCamera( rCameraID, boost::bind(&SVVirtualCamera::ReserveNextImageHandleIndex, Iter->first, _1, _2) );
 		}
-
-		++l_Iter;
 	}
 
 	return l_Status;
@@ -4537,10 +4528,10 @@ HRESULT SVPPQObject::ProcessCameraInputs( bool& p_rProcessed )
 
 		if( p_rProcessed )
 		{
-			SVProductInfoStruct* l_pProduct = nullptr;
+			SVProductInfoStruct* pProduct = nullptr;
 			long l_PPQIndex = static_cast<long>(m_ppPPQPositions.size());
 
-			while( 0 < m_oCamerasQueue.GetCount() && nullptr == l_pProduct )
+			while( 0 < m_oCamerasQueue.GetCount() && nullptr == pProduct )
 			{
 				long l_ProcessCount = 0;
 
@@ -4550,8 +4541,8 @@ HRESULT SVPPQObject::ProcessCameraInputs( bool& p_rProcessed )
 
 					if( 0 <= l_PPQIndex && l_PPQIndex < static_cast< long >( m_ppPPQPositions.size() ) )
 					{
-						l_pProduct = m_ppPPQPositions.GetProductAt( l_PPQIndex );
-						triggerCount = l_pProduct->oTriggerInfo.lTriggerCount;
+						pProduct = m_ppPPQPositions.GetProductAt( l_PPQIndex );
+						triggerCount = pProduct->oTriggerInfo.lTriggerCount;
 					}
 				}
 				else
@@ -4561,26 +4552,24 @@ HRESULT SVPPQObject::ProcessCameraInputs( bool& p_rProcessed )
 				}
 			}
 
-			p_rProcessed = ( nullptr != l_pProduct );
+			p_rProcessed = ( nullptr != pProduct );
 
 			if( p_rProcessed )
 			{
-				if( !( l_pProduct->bFinishAcquisition ) )
+				if( !( pProduct->bFinishAcquisition ) )
 				{
-					l_pProduct->bFinishAcquisition = true;
+					pProduct->bFinishAcquisition = true;
 
-					SVStdMapSVVirtualCameraPtrSVCameraInfoStruct::iterator l_Iter = l_pProduct->m_svCameraInfos.begin();
+					SVGuidSVCameraInfoStructMap::const_iterator Iter( pProduct->m_svCameraInfos.begin() );
 
-					while( l_Iter != l_pProduct->m_svCameraInfos.end() )
+					for( ;pProduct->m_svCameraInfos.end() != Iter; ++Iter )
 					{
-						l_pProduct->bFinishAcquisition &= ( l_Iter->second.GetIndex() != -1 );
-
-						++l_Iter;
+						pProduct->bFinishAcquisition &= ( Iter->second.GetIndex() != -1 );
 					}
 				}
 
 				// Doesn't necessarilly have the correct Trigger Count yet.
-				tmpProcessCount = l_pProduct->ProcessCount ();
+				tmpProcessCount = pProduct->ProcessCount ();
 				m_oNotifyInspectionsSet.insert( tmpProcessCount );
 			} // if( p_rProcessed )
 		} // if( p_rProcessed ) - if camera queue > 0

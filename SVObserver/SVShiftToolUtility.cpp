@@ -43,7 +43,7 @@ void SVShiftToolUtility::SetToolNormalize(SVShiftTool* pShiftTool)
 
 	if( S_OK == l_hrOk )
 	{
-		l_hrOk = l_Interface.RunOnce();
+		l_hrOk = l_Interface.RunOnce(pShiftTool->GetUniqueObjectID());
 	}
 }
 
@@ -106,7 +106,7 @@ void SVShiftToolUtility::SetToolSetReference(SVShiftTool *pShiftTool)
 
 	if( S_OK == l_hrOk )
 	{
-		l_hrOk = l_Interface.RunOnce();
+		l_hrOk = l_Interface.RunOnce(pShiftTool->GetUniqueObjectID());
 	}
 }
 

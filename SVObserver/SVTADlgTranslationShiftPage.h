@@ -13,7 +13,7 @@
 
 #pragma region Includes
 #include "SVEnumerateCombo.h"
-#include "SVTaskObjectInterfaceClass.h"
+#include "SVTaskObjectValueInterface.h"
 #include "PropertyTree/PropTree.h"
 #pragma endregion Includes
 
@@ -34,7 +34,7 @@ enum SVShiftResultEnum
 	PROP_SHIFT_RESULT_LEFT	= 105,
 };
 
-class SVTADlgTranslationShiftPageClass : public CPropertyPage, public SVTaskObjectInterfaceClass
+class SVTADlgTranslationShiftPageClass : public CPropertyPage, public SVTaskObjectValueInterface
 {
 //	DECLARE_DYNAMIC(SVTADlgTranslationShiftPage)
 
@@ -42,7 +42,7 @@ public:
 	SVTADlgTranslationShiftPageClass( const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* Parent );
 	virtual ~SVTADlgTranslationShiftPageClass();
 
-	virtual HRESULT SetInspectionData() override;
+	HRESULT SetInspectionData();
 
 // Dialog Data
 	enum { IDD = IDD_TA_TRANSLATION_SHIFT_DIALOG };

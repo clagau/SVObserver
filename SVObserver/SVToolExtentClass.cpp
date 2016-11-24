@@ -14,7 +14,7 @@
 //Moved to precompiled header: #include <boost/config.hpp>
 //Moved to precompiled header: #include <boost/assign.hpp>
 #include "SVToolExtentClass.h"
-#include "SVImageClass.h"
+#include "SVOCore/SVImageClass.h"
 #include "SVInspectionProcess.h"
 #include "SVTool.h"
 #include "SVValueObjectLibrary/SVValueObject.h"
@@ -186,7 +186,7 @@ HRESULT SVToolExtentClass::UpdateImageWithExtent( unsigned long p_ulIndex, SVToo
 				{
 					l_Status = GetImageExtent( l_Extent );
 
-					SVInspectionProcess* pInspection = m_psvToolImage->GetInspection();
+					SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(m_psvToolImage->GetInspection());
 
 					if ( nullptr != pInspection && pInspection->IsResetStateSet( SVResetAutoMoveAndResize ) )
 					{
@@ -254,9 +254,13 @@ HRESULT SVToolExtentClass::UpdateImageWithExtent( unsigned long p_ulIndex, SVToo
 
 			if( S_OK == l_Status )
 			{
-				if( nullptr != m_psvTool && nullptr != m_psvTool->GetInspection() )
+				if( nullptr != m_psvTool )
 				{
-					m_psvTool->GetInspection()->m_bForceOffsetUpdate = true;
+					SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(m_psvTool->GetInspection());
+					if (pInspection)
+					{
+						pInspection->m_bForceOffsetUpdate = true;
+					}
 				}
 
 				if( S_OK == l_Status )
@@ -659,7 +663,7 @@ HRESULT SVToolExtentClass::UpdateOffsetDataToImage( SVExtentOffsetStruct& p_rsvO
 
 		if( nullptr != l_psvImageParent )
 		{
-			SVToolClass* l_psvToolParent = l_psvImageParent->GetTool();
+			SVToolClass* l_psvToolParent = dynamic_cast<SVToolClass*>(l_psvImageParent->GetTool());
 
 			if( l_psvImageParent != p_svToolImage && l_psvImageParent != m_psvToolImage && 
 				nullptr != l_psvToolParent && l_psvToolParent != m_psvTool )
@@ -740,7 +744,7 @@ HRESULT SVToolExtentClass::UpdateOffsetData( bool p_bForceUpdate )
 
 				if( nullptr != l_psvImageParent )
 				{
-					SVToolClass* l_psvToolParent = l_psvImageParent->GetTool();
+					SVToolClass* l_psvToolParent = dynamic_cast<SVToolClass*>(l_psvImageParent->GetTool());
 
 					if( nullptr != l_psvToolParent && l_psvToolParent != m_psvTool )
 					{
@@ -856,7 +860,7 @@ HRESULT SVToolExtentClass::TranslatePointToSource( SVExtentPointStruct p_svIn, S
 
 						if( nullptr != l_psvImageParent )
 						{
-							SVToolClass* l_psvToolParent = l_psvImageParent->GetTool();
+							SVToolClass* l_psvToolParent = dynamic_cast<SVToolClass*>(l_psvImageParent->GetTool());
 
 							if( nullptr != l_psvToolParent )
 							{

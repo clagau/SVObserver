@@ -18,13 +18,14 @@
 #include "SVOGui/PictureDisplay.h"
 #include "PropertyTree/PropTree.h"
 #include "ISVCancel.h"
-#include "SVTaskObjectInterfaceClass.h"
+#include "SVTaskObjectValueInterface.h"
 #include "SVUtilityLibrary\SVGUID.h"
 #pragma endregion Includes
 
 class SVUserMaskOperatorClass;
+class SVToolClass;
 
-class SVMaskShapeEditorDlg : public CDialog, public ISVCancel2, public SVTaskObjectInterfaceClass
+class SVMaskShapeEditorDlg : public CDialog, public ISVCancel2, public SVTaskObjectValueInterface
 {
 #pragma region Construction
 public:
@@ -61,7 +62,7 @@ protected:
 	virtual HRESULT GetCancelData(SVInputRequestStructMap& rMap);
 
 	// SVTaskObjectInterfaceClass
-	virtual HRESULT SetInspectionData();
+	HRESULT SetInspectionData();
 
 #pragma region AFX Methods
 	// ClassWizard generated virtual function overrides

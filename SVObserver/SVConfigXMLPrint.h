@@ -32,7 +32,7 @@
 
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVEquation.h"
-#include "SVImageClass.h"
+#include "SVOCore/SVImageClass.h"
 #include "SVTool.h"
 #include "SVToolSet.h"
 #include "SVInputObjectList.h"

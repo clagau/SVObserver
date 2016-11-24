@@ -14,6 +14,7 @@
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
 #include "SVImageAnalyzerClass.h"
 #include "SVMFCControls\SVHistogram.h"
+#include "SVOCore/SVImageClass.h"
 #pragma endregion Includes
 
 class SVHistogramAnalyzerClass : public SVImageAnalyzerClass

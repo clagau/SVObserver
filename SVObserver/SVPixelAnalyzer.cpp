@@ -16,11 +16,13 @@
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
 
-#include "SVDataBuffer.h"
-#include "SVImageClass.h"
-#include "SVImageProcessingClass.h"
+#include "SVOCore/SVDataBuffer.h"
+#include "SVOCore/SVImageClass.h"
+#include "SVOCore/SVImageProcessingClass.h"
 #include "SVPixelAnalyzerSetup.h" // Required by SVPixelAnalyzerSetupClass
 #include "SVResultLong.h"   // Required by SVLongResultClass
+#include "ObjectInterfaces\ErrorNumbers.h"
+#include "SVStatusLibrary/MessageManager.h"
 #include "SVOMFCLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
 
 #pragma endregion Includes
@@ -139,7 +141,7 @@ BOOL SVPixelAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateStruc
 		svData.Length = m_svlHistValueArraySize;
 		svData.Type = SVDataBufferInfoClass::SVHistResult;
 		svData.HBuffer.milResult = m_histResultID;
-		if ( S_OK == SVImageProcessingClass::Instance().CreateDataBuffer( &svData ) )
+		if ( S_OK == SVImageProcessingClass::CreateDataBuffer( &svData ) )
 		{
 			m_histResultID = svData.HBuffer.milResult;
 		}

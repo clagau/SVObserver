@@ -3,7 +3,7 @@
   <ImportGroup Label="PropertySheets" />
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup>
-    <IncludePath>C:\Program Files\boost_1_61_0;C:\Program Files\tcl_5.3.1;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Program Files\Matrox Imaging\mil\include;C:\Program Files\boost_1_61_0;C:\Program Files\tcl_5.3.1;$(IncludePath)</IncludePath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>

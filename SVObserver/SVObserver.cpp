@@ -77,7 +77,7 @@
 #include "SVIOLibrary\SVIOParameterEnum.h"
 #include "SoftwareTriggerDlg.h"
 
-#include "SVGlobal.h"
+#include "ObjectInterfaces/GlobalConst.h"
 
 #include "SVIOController.h"
 
@@ -2191,18 +2191,18 @@ BOOL SVObserverApp::InitInstance()
 	m_lSouceImageDepth = GetProfileInt(_T( "Settings" ),_T( "Source Image Depth" ), -1 );
 	if ( m_lSouceImageDepth == -1 )
 	{
-		WriteProfileInt(_T( "Settings" ),_T( "Source Image Depth" ), 15 );
+		WriteProfileInt(_T( "Settings" ),_T( "Source Image Depth" ), SvOi::cDefaultSourceImageDepth );
 
-		m_lSouceImageDepth = 15;
+		m_lSouceImageDepth = SvOi::cDefaultSourceImageDepth;
 	}
 
 	// Get SourceImageDepth
 	m_lResultImageDepth = GetProfileInt(_T( "Settings" ),_T( "Result Image Depth" ), -1 );
 	if ( m_lResultImageDepth == -1 )
 	{
-		WriteProfileInt(_T( "Settings" ),_T( "Result Image Depth" ), 5 );
+		WriteProfileInt(_T( "Settings" ),_T( "Result Image Depth" ), SvOi::cDefaultResultImageDepth );
 
-		m_lResultImageDepth = 5;
+		m_lResultImageDepth = SvOi::cDefaultResultImageDepth;
 	}
 
 	// Get LogDataManager
@@ -3345,17 +3345,17 @@ BOOL SVObserverApp::Logout( BOOL BForceLogout )
 // -----------------------------------------------------------------------------
 // .Description : 
 ////////////////////////////////////////////////////////////////////////////////
-BOOL SVObserverApp::InitPath( LPCTSTR TStrPathName, BOOL BCreateIfNotExists /*= TRUE*/, BOOL BDeleteContents /*= TRUE*/ )
+bool SVObserverApp::InitPath( LPCTSTR PathName, bool CreateIfDoesNotExist /*= true*/, bool DeleteContents /*= true*/ )
 {
-	if( TStrPathName )
+	if( nullptr != PathName )
 	{
-		if( SVCheckPathDir( TStrPathName, BCreateIfNotExists ) )
+		if( SVCheckPathDir( PathName, CreateIfDoesNotExist ) )
 		{
-			if( BDeleteContents )
+			if( DeleteContents )
 			{
 				// Get Delete Directory...
 				CString strDelName;
-				SVGetPathInformation( strDelName, TStrPathName, SVDRIVE | SVDIR );
+				SVGetPathInformation( strDelName, PathName, SVDRIVE | SVDIR );
 
 				// Be sure that this is not the boot, system or windows directory...
 				TCHAR dirBuf[ _MAX_PATH ];
@@ -3986,7 +3986,7 @@ HRESULT SVObserverApp::OnObjectRenamed( const SVString& p_rOldName, const SVGUID
 
 	if( nullptr != l_pObject )
 	{
-		SVInspectionProcess* l_pInspect = l_pObject->GetInspection();
+		SVObjectClass* l_pInspect = l_pObject->GetInspection();
 
 		if( nullptr != l_pInspect )
 		{

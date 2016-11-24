@@ -14,12 +14,13 @@
 #pragma region Includes
 #include "SVEnumerateCombo.h"
 #include "SVValueObjectLibrary/SVValueObject.h"
-#include "SVTaskObjectInterfaceClass.h"
+#include "SVTaskObjectValueInterface.h"
 #pragma endregion Includes
 
 class SVToolAdjustmentDialogSheetClass;
+class SVToolClass;
 
-class SVPerspectiveWarpDlg : public CPropertyPage, public SVTaskObjectInterfaceClass
+class SVPerspectiveWarpDlg : public CPropertyPage, public SVTaskObjectValueInterface
 {
 // Construction
 public:
@@ -27,7 +28,7 @@ public:
 	SVPerspectiveWarpDlg( const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* Parent, int id = IDD );
 	virtual ~SVPerspectiveWarpDlg();
 
-	virtual HRESULT SetInspectionData() override;
+	HRESULT SetInspectionData();
 
 // Dialog Data
 	//{{AFX_DATA(SVPerspectiveWarpDlg)

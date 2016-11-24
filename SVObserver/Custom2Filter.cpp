@@ -13,7 +13,7 @@
 #include "stdafx.h"
 #include "Custom2Filter.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
-#include "SVImageProcessingClass.h"
+#include "SVOCore/SVImageProcessingClass.h"
 #include "ObjectInterfaces/ICustom2Filter.h"
 #include "SVOMFCLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
 #pragma endregion Includes

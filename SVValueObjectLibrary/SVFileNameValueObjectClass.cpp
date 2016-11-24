@@ -285,7 +285,7 @@ void SVFileNameValueObjectClass::LocalInitialize()
 	
 	ObjectAttributesAllowedRef() = SV_VIEWABLE | SV_PUBLISHABLE | SV_ARCHIVABLE | SV_EMBEDABLE | SV_PRINTABLE | SV_DD_VALUE;
 
-	m_strTypeName = "FileName";
+	SetTypeName( _T("FileName") );
 	
 	InitializeBuckets();
 

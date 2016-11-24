@@ -207,7 +207,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnButtonDetails()
 
 		if( nullptr != m_pTool )
 		{
-			SVInspectionProcess* pInspection( m_pTool->GetInspection() );
+			SVObjectClass* pInspection( m_pTool->GetInspection() );
 			ASSERT( nullptr != pInspection );
 			
 			if(nullptr != pInspection )
@@ -309,7 +309,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnSelchangeCurrentAnalyzer()
 
 	if( nullptr != m_pTool )
 	{
-		SVInspectionProcess* pInspection( m_pTool->GetInspection() );
+		SVObjectClass* pInspection( m_pTool->GetInspection() );
 		ASSERT(nullptr != pInspection);
 
 		if(nullptr != pInspection )
@@ -446,7 +446,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnPublishButton()
 	if( nullptr == m_pCurrentAnalyzer || nullptr == m_pTool ) { return; }
 
 
-	SVInspectionProcess* pInspection = m_pTool->GetInspection();
+	SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(m_pTool->GetInspection());
 	if( nullptr == pInspection ) { return; }
 
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSetAttributes );

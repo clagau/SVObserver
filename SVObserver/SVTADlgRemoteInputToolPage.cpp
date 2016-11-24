@@ -19,7 +19,6 @@
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "SVToolset.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
-#include "RootObject.h"
 #include "SVOGui/GlobalSelector.h"
 #include "SVOGui/NoSelector.h"
 #include "SVOGui/ToolSetItemSelector.h"

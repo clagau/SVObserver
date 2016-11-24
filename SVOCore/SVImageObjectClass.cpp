@@ -17,11 +17,12 @@
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
 #include "SVTimerLibrary/SVClock.h"
 #include "SVOMFCLibrary/SVFileNameClass.h"
-#include "SVGlobal.h"
+#include "SVUtilityLibrary/SVUtilityGlobals.h"
 #include "SVImageProcessingClass.h"
-#include "SVTool.h"
-#include "SVStatusLibrary\MessageManager.h"
-#include "ObjectInterfaces\ErrorNumbers.h"
+#include "SVTaskObject.h"
+#include "SVMessage/SVMessage.h"
+#include "SVStatusLibrary/MessageManager.h"
+#include "ObjectInterfaces/ErrorNumbers.h"
 #include "SVOMFCLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
 #pragma endregion Includes
 
@@ -68,12 +69,12 @@ void SVImageObjectClass::resize( unsigned long p_NewSize )
 	}
 }
 
-SVImageObjectClass::SVImageObjectParentPtr SVImageObjectClass::GetParentImageObject() const
+SVImageObjectClass::SVImageObjectClassPtr SVImageObjectClass::GetParentImageObject() const
 {
 	return m_ParentImagePtr;
 }
 
-void SVImageObjectClass::SetParentImageObject( SVImageObjectParentPtr p_ParentPtr )
+void SVImageObjectClass::SetParentImageObject( SVImageObjectClassPtr p_ParentPtr )
 {
 	if( m_ParentImagePtr != p_ParentPtr )
 	{
@@ -130,94 +131,94 @@ HRESULT SVImageObjectClass::UpdateTimeStamp()
 	return l_hrOk;
 }
 
-BOOL SVImageObjectClass::Clear( long lIndex, unsigned long ulValue )
+bool SVImageObjectClass::Clear( long lIndex, unsigned long ulValue )
 {
-	BOOL bOk = true;
+	bool Result( true );
 	
 	SVSmartHandlePointer ImageHandle;
 
-	bOk = bOk && GetImageHandle( lIndex, ImageHandle );
-	bOk = bOk && ( S_OK == SVImageProcessingClass::Instance().InitBuffer( ImageHandle, ulValue ) );
+	Result = Result && GetImageHandle( lIndex, ImageHandle );
+	Result = Result && ( S_OK == SVImageProcessingClass::InitBuffer( ImageHandle, ulValue ) );
 	
-	return bOk;
+	return Result;
 }
 
-BOOL SVImageObjectClass::Clear( unsigned long ulValue )
+bool SVImageObjectClass::Clear( unsigned long ulValue )
 {
-	BOOL bOk = FALSE;
+	bool Result( false );
 	
-	bOk = Clear( m_CurrentDMIndexHandle.GetIndex(), ulValue );
+	Result = Clear( m_CurrentDMIndexHandle.GetIndex(), ulValue );
 	
-	return bOk;
+	return Result;
 }
 
-BOOL SVImageObjectClass::ClearAll( unsigned long ulValue )
+bool SVImageObjectClass::ClearAll( unsigned long ulValue )
 {
-	BOOL bOk = true;
+	bool Result( true );
 	
 	long lSize = static_cast< long >( m_ImageHandleArray.size() );
 	
-	for ( long l = 0; bOk && l < lSize; l++ )
+	for ( long l = 0; Result && l < lSize; l++ )
 	{
-		bOk = Clear( l, ulValue );
+		Result = Clear( l, ulValue );
 	}
 	
-	return bOk;
+	return Result;
 }
 
-BOOL SVImageObjectClass::GetCurrentIndex( SVDataManagerHandle& rDMIndexHandle ) const
+bool SVImageObjectClass::GetCurrentIndex( SVDataManagerHandle& rDMIndexHandle ) const
 {
-	BOOL bOk = TRUE;
+	bool Result( true );
 	
 	rDMIndexHandle.Assign( m_CurrentDMIndexHandle, m_CurrentDMIndexHandle.GetLockType() );
 
-	return bOk;
+	return Result;
 }
 
-BOOL SVImageObjectClass::GetCurrentIndex( SVDataManagerHandle& rDMIndexHandle, SVDataManagerLockTypeEnum p_LockType ) const
+bool SVImageObjectClass::GetCurrentIndex( SVDataManagerHandle& rDMIndexHandle, SVDataManagerLockTypeEnum p_LockType ) const
 {
-	BOOL bOk = TRUE;
+	bool Result( true );
 	
 	rDMIndexHandle.Assign( m_CurrentDMIndexHandle, p_LockType );
 
-	return bOk;
+	return Result;
 }
 
-BOOL SVImageObjectClass::SetCurrentIndex( const SVDataManagerHandle& rDMIndexHandle )
+bool SVImageObjectClass::SetCurrentIndex( const SVDataManagerHandle& rDMIndexHandle )
 {
 	return SetCurrentIndex( rDMIndexHandle, rDMIndexHandle.GetLockType() );
 }
 
-BOOL SVImageObjectClass::SetCurrentIndex( const SVDataManagerHandle& rDMIndexHandle, SVDataManagerLockTypeEnum p_LockType )
+bool SVImageObjectClass::SetCurrentIndex( const SVDataManagerHandle& rDMIndexHandle, SVDataManagerLockTypeEnum p_LockType )
 {
-	BOOL bOk = true;
+	bool Result( true );
 
 	if( -1 != rDMIndexHandle.GetIndex() )
 	{
-		bOk &= UnlockIndex( rDMIndexHandle.GetIndex() );
-		bOk &= LockIndex( rDMIndexHandle.GetIndex() );
+		Result &= UnlockIndex( rDMIndexHandle.GetIndex() );
+		Result &= LockIndex( rDMIndexHandle.GetIndex() );
 
-		if( bOk && m_ParentImagePtr.empty() )
+		if( Result && m_ParentImagePtr.empty() )
 		{
 			SVMatroxImageInterface::SVStatusCode l_Code;
 
 			SVSmartHandlePointer l_svOutBuffer;
 			
-			bOk = GetImageHandle( rDMIndexHandle.GetIndex(), l_svOutBuffer ) && !( l_svOutBuffer.empty() );
+			Result = GetImageHandle( rDMIndexHandle.GetIndex(), l_svOutBuffer ) && !( l_svOutBuffer.empty() );
 
-			if( bOk )
+			if( Result )
 			{
 				SVImageBufferHandleImage l_MilHandle;
 				l_svOutBuffer->GetData( l_MilHandle );
 
 				l_Code = SVMatroxBufferInterface::ClearBuffer( l_MilHandle.GetBuffer(), 0.0 );
 				
-				bOk = l_Code == SVMEE_STATUS_OK;
+				Result = l_Code == SVMEE_STATUS_OK;
 			}
 		}
 	}
 
-	if ( bOk )
+	if ( Result )
 	{
 		m_CurrentDMIndexHandle.Assign( rDMIndexHandle, p_LockType );
 	}
@@ -226,35 +227,35 @@ BOOL SVImageObjectClass::SetCurrentIndex( const SVDataManagerHandle& rDMIndexHan
 		m_CurrentDMIndexHandle.clear();
 	}
 	
-	if( bOk && 0 <= m_CurrentDMIndexHandle.GetIndex() && m_CurrentDMIndexHandle.GetIndex() < static_cast< long >( m_ImageHandleArray.size() ) )
+	if( Result && 0 <= m_CurrentDMIndexHandle.GetIndex() && m_CurrentDMIndexHandle.GetIndex() < static_cast< long >( m_ImageHandleArray.size() ) )
 	{
-		bOk = !( m_ImageHandleArray[ m_CurrentDMIndexHandle.GetIndex() ].empty() );
+		Result = !( m_ImageHandleArray[ m_CurrentDMIndexHandle.GetIndex() ].empty() );
 
-		assert( bOk );
+		assert( Result );
 	}
 
-	return bOk;
+	return Result;
 }
 
-BOOL SVImageObjectClass::CopyValue( const SVDataManagerHandle& p_FromDMIndexHandle, 
+bool SVImageObjectClass::CopyValue( const SVDataManagerHandle& p_FromDMIndexHandle, 
 									const SVDataManagerHandle& p_ToDMIndexHandle )
 {
-	BOOL bOk = TRUE;
+	bool Result( true );
 	
 	if ( m_ParentImagePtr.empty() )
 	{
 		long l_FromIndex = p_FromDMIndexHandle.GetIndex();
 		long l_ToIndex = p_ToDMIndexHandle.GetIndex();
 
-		bOk = l_FromIndex == l_ToIndex;
+		Result = l_FromIndex == l_ToIndex;
 	
-		if( !bOk )
+		if( !Result )
 		{
 			if( 0 <= l_ToIndex && l_ToIndex < static_cast< long >( m_ImageHandleArray.size() ) )
 			{
-				bOk = UnlockIndex( l_ToIndex );
+				Result = UnlockIndex( l_ToIndex );
 
-				if( bOk )
+				if( Result )
 				{
 					if( 0 <= l_FromIndex && l_FromIndex < static_cast< long >( m_ImageHandleArray.size() ) )
 					{
@@ -264,11 +265,11 @@ BOOL SVImageObjectClass::CopyValue( const SVDataManagerHandle& p_FromDMIndexHand
 			}
 			else
 			{
-				bOk = p_ToDMIndexHandle.GetIndex() == -1;
+				Result = p_ToDMIndexHandle.GetIndex() == -1;
 			}
 		}
 
-		if( bOk )
+		if( Result )
 		{
 			m_CurrentDMIndexHandle.Assign( p_ToDMIndexHandle, p_ToDMIndexHandle.GetLockType() );
 		}
@@ -281,55 +282,55 @@ BOOL SVImageObjectClass::CopyValue( const SVDataManagerHandle& p_FromDMIndexHand
 		{
 			if( m_ImageHandleArray[ m_CurrentDMIndexHandle.GetIndex() ].empty() )
 			{
-				bOk = SetCurrentIndex( m_CurrentDMIndexHandle );
+				Result = SetCurrentIndex( m_CurrentDMIndexHandle );
 			}
 
-			assert( bOk );
+			assert( Result );
 		}
 	}			
 	else
 	{
-		bOk &= SetCurrentIndex( p_ToDMIndexHandle );
+		Result &= SetCurrentIndex( p_ToDMIndexHandle );
 	}
 
 	if( 0 <= m_CurrentDMIndexHandle.GetIndex() && m_CurrentDMIndexHandle.GetIndex() < static_cast< long >( m_ImageHandleArray.size() ) )
 	{
-		bOk &= !( m_ImageHandleArray[ m_CurrentDMIndexHandle.GetIndex() ].empty() );
+		Result &= !( m_ImageHandleArray[ m_CurrentDMIndexHandle.GetIndex() ].empty() );
 
-		assert( bOk );
+		assert( Result );
 	}
 
-	return bOk;
+	return Result;
 }
 
-BOOL SVImageObjectClass::CopyValue( const SVDataManagerHandle& p_ToDMIndexHandle )
+bool SVImageObjectClass::CopyValue( const SVDataManagerHandle& p_ToDMIndexHandle )
 {
 	return CopyValue( m_CurrentDMIndexHandle, p_ToDMIndexHandle );
 }
 
-BOOL SVImageObjectClass::GetImageHandle( long lIndex, SVSmartHandlePointer& p_rValuePtr ) const
+bool SVImageObjectClass::GetImageHandle( long lIndex, SVSmartHandlePointer& p_rValuePtr ) const
 {
-	BOOL bOk = true;
+	bool Result( true );
 	
-	bOk = bOk && ( 0 <= lIndex );
-	bOk = bOk && ( lIndex < static_cast< long >( m_ImageHandleArray.size() ) );
-	bOk = bOk && !( m_ImageHandleArray[ lIndex ].empty() );
+	Result = Result && ( 0 <= lIndex );
+	Result = Result && ( lIndex < static_cast< long >( m_ImageHandleArray.size() ) );
+	Result = Result && !( m_ImageHandleArray[ lIndex ].empty() );
 	
 	p_rValuePtr.clear();
 
-	if( bOk )
+	if( Result )
 	{
 		p_rValuePtr = m_ImageHandleArray[ lIndex ]->m_ImageHandle;
 	}
 
-	bOk = ! p_rValuePtr.empty();
+	Result = ! p_rValuePtr.empty();
 	
-	return bOk;
+	return Result;
 }
 
-BOOL SVImageObjectClass::GetImageHandle( SVSmartHandlePointer& p_rValuePtr ) const
+bool SVImageObjectClass::GetImageHandle( SVSmartHandlePointer& p_rValuePtr ) const
 {
-	BOOL bOk = true;
+	bool Result( true );
 
 	long l_Index = m_CurrentDMIndexHandle.GetIndex();
 
@@ -338,9 +339,9 @@ BOOL SVImageObjectClass::GetImageHandle( SVSmartHandlePointer& p_rValuePtr ) con
 		l_Index = 0;
 	}
 
-	bOk = GetImageHandle( l_Index, p_rValuePtr );
+	Result = GetImageHandle( l_Index, p_rValuePtr );
 
-	return bOk;
+	return Result;
 }
 
 HRESULT SVImageObjectClass::LoadImageFullSize( LPCTSTR p_szFileName, SVImageExtentClass& p_rNewExtent  )
@@ -376,18 +377,7 @@ HRESULT SVImageObjectClass::LoadImage( LPCTSTR p_szFileName, SVDataManagerHandle
 			{
 				SVFileNameClass	svfncImageFile(p_szFileName);
 				
-				SVMatroxFileTypeEnum fileformatID = SVFileUnknown;
-				
-				CString strExtension = svfncImageFile.GetExtension();
-				
-				if( strExtension.CompareNoCase(_T( ".mim" )) == 0 )
-					fileformatID = SVFileMIL;
-				
-				if( strExtension.CompareNoCase(_T( ".tif" )) == 0 )
-					fileformatID = SVFileTiff;
-				
-				if( strExtension.CompareNoCase(_T( ".bmp" )) == 0 )
-					fileformatID = SVFileBitmap;
+				SVMatroxFileTypeEnum fileformatID = SVMatroxImageInterface::getFileType( svfncImageFile.GetExtension() );
 				
 				if( fileformatID != -1 && ::SVFileExists( p_szFileName ) )
 				{
@@ -439,19 +429,9 @@ HRESULT SVImageObjectClass::GetImageExtentFromFile( LPCTSTR pFileName, SVImageEx
 	if( 0 < strlen( pFileName ) )
 	{
 		SVFileNameClass	svfncImageFile(pFileName);
-		SVMatroxFileTypeEnum fileformatID = SVFileUnknown;
-		CString strExtension = svfncImageFile.GetExtension();
+		SVMatroxFileTypeEnum fileformatID = SVMatroxImageInterface::getFileType( svfncImageFile.GetExtension() );
 
-		if( strExtension.CompareNoCase(_T( ".mim" )) == 0 )
-			fileformatID = SVFileMIL;
-
-		if( strExtension.CompareNoCase(_T( ".tif" )) == 0 )
-			fileformatID = SVFileTiff;
-
-		if( strExtension.CompareNoCase(_T( ".bmp" )) == 0 )
-			fileformatID = SVFileBitmap;
-
-		if( fileformatID != -1 && ::SVFileExists( pFileName ) )
+		if( fileformatID != SVFileUnknown && ::SVFileExists( pFileName ) )
 		{
 
 			SVString strFile(pFileName);
@@ -536,7 +516,7 @@ HRESULT SVImageObjectClass::CopyToBSTR( BSTR &p_rbstrData )
 	}
 	else
 	{
-		l_Status = SVImageProcessingClass::Instance().CreateImageBuffer( m_ImageInfo, l_svCopyHandle );
+		l_Status = SVImageProcessingClass::CreateImageBuffer( m_ImageInfo, l_svCopyHandle );
 
 		if( S_OK == l_Status )
 		{
@@ -633,7 +613,7 @@ HRESULT SVImageObjectClass::CopyFromBSTR( BSTR p_Image )
 	{
 		SVImageInfoClass l_Info = m_ImageInfo;
 
-		l_Status = SVImageProcessingClass::Instance().LoadImageBuffer( (void*)p_Image, l_Info, l_Handle, m_ImageInfo );
+		l_Status = SVImageProcessingClass::LoadImageBuffer( (void*)p_Image, l_Info, l_Handle, m_ImageInfo );
 	}
 	else
 	{
@@ -654,15 +634,15 @@ SVImageObjectClass::SVImageObjectElement::SVImageObjectElement()
 {
 }
 
-SVImageObjectClass::SVImageObjectElement::SVImageObjectElement( size_t p_MasterIndex, SVImageObjectParentPtr p_ParentPtr, SVSmartHandlePointer p_ImageHandle )
+SVImageObjectClass::SVImageObjectElement::SVImageObjectElement( size_t p_MasterIndex, SVImageObjectClassPtr p_ParentPtr, SVSmartHandlePointer p_ImageHandle )
 : m_MasterIndex( p_MasterIndex ), m_ParentPtr( p_ParentPtr ), m_ImageHandle( p_ImageHandle )
 {
 }
 
-BOOL SVImageObjectClass::CreateBufferArrays()
+bool SVImageObjectClass::CreateBufferArrays()
 {
-	BOOL bOk = true;
-	BOOL l_ValidExtents = true;
+	bool Result( true );
+	bool l_ValidExtents = true;
 
 	DestroyBufferArrays();
 
@@ -680,31 +660,31 @@ BOOL SVImageObjectClass::CreateBufferArrays()
 		}
 	}
 
-	if( l_ValidExtents && bOk )
+	if( l_ValidExtents && Result )
 	{
 		if( m_HandleCount < 1 )
 		{
 			m_HandleCount = 1;
 		}
 
-		bOk = CreateImageHandleArray( m_HandleCount );
+		Result = CreateImageHandleArray( m_HandleCount );
 
-		if( bOk )
+		if( Result )
 		{
 			// JMS - This block is used to initialize non-embedded image objects
 
-			for( long i = m_HandleCount - 1; bOk && 0 <= i; --i )
+			for( long i = m_HandleCount - 1; Result && 0 <= i; --i )
 			{
-				bOk &= UnlockIndex( i );
-				bOk &= LockIndex( i );
+				Result &= UnlockIndex( i );
+				Result &= LockIndex( i );
 
-				if( bOk && m_ParentImagePtr.empty() )
+				if( Result && m_ParentImagePtr.empty() )
 				{
 					SVSmartHandlePointer l_svOutBuffer;
 					
-					bOk = GetImageHandle( i, l_svOutBuffer );
+					Result = GetImageHandle( i, l_svOutBuffer );
 
-					if( bOk )
+					if( Result )
 					{
 						SVImageBufferHandleImage l_MilHandle;
 						l_svOutBuffer->GetData( l_MilHandle );
@@ -713,7 +693,7 @@ BOOL SVImageObjectClass::CreateBufferArrays()
 
 						l_Code = SVMatroxBufferInterface::ClearBuffer( l_MilHandle.GetBuffer(), 0.0 );
 
-						bOk = l_Code == SVMEE_STATUS_OK;
+						Result = l_Code == SVMEE_STATUS_OK;
 					}
 				}
 			}
@@ -722,22 +702,22 @@ BOOL SVImageObjectClass::CreateBufferArrays()
 
 	if( 0 <= m_CurrentDMIndexHandle.GetIndex() && m_CurrentDMIndexHandle.GetIndex() < static_cast< long >( m_ImageHandleArray.size() ) )
 	{
-		bOk &= !( m_ImageHandleArray[ m_CurrentDMIndexHandle.GetIndex() ].empty() );
+		Result &= !( m_ImageHandleArray[ m_CurrentDMIndexHandle.GetIndex() ].empty() );
 	}
 
-	return bOk;
+	return Result;
 }
 
-BOOL SVImageObjectClass::DestroyBufferArrays()
+bool SVImageObjectClass::DestroyBufferArrays()
 {
-	BOOL bOk = DestroyImageHandleArray();
+	bool Result = DestroyImageHandleArray();
 
-	return bOk;
+	return Result;
 }
 
-BOOL SVImageObjectClass::CreateImageBuffer(SVImageInfoClass &rInfo, long p_Index, SVImageObjectElementPtr& p_Handle )
+bool SVImageObjectClass::CreateImageBuffer(SVImageInfoClass &rInfo, long p_Index, SVImageObjectElementPtr& p_Handle )
 {
-	BOOL bOk = true;
+	bool Result( true );
 	HRESULT hr = S_OK;
 	
 	DestroyImageBuffer( p_Handle );
@@ -745,7 +725,7 @@ BOOL SVImageObjectClass::CreateImageBuffer(SVImageInfoClass &rInfo, long p_Index
 	SVImageObjectElementPtr l_IndexHandle;
 	SVSmartHandlePointer l_Handle;
 
-	hr = SVImageProcessingClass::Instance().CreateImageBuffer( rInfo, l_Handle );
+	hr = SVImageProcessingClass::CreateImageBuffer( rInfo, l_Handle );
 	if (S_FALSE == hr)
 	{
 		hr = SVMSG_SVO_5065_COULDNOTCREATEIMAGEBUFFER;
@@ -753,9 +733,9 @@ BOOL SVImageObjectClass::CreateImageBuffer(SVImageInfoClass &rInfo, long p_Index
 	else
 	if (SVMSG_SVO_5067_IMAGEALLOCATIONFAILED == hr)
 	{
-		SVToolClass*	parentTool = static_cast <SVToolClass*> (rInfo.GetOwner());
+		SVTaskObjectClass*	pParentTask = dynamic_cast <SVTaskObjectClass*> (rInfo.GetOwner());
 
-		if (nullptr == parentTool)
+		if ( nullptr == pParentTask || SVToolObjectType != pParentTask->GetObjectType() )
 		{
 			// Image does not have a Tool for a parent. Not sure if this can 
 			// happen.
@@ -766,64 +746,64 @@ BOOL SVImageObjectClass::CreateImageBuffer(SVImageInfoClass &rInfo, long p_Index
 		{
 			SvStl::MessageContainer message;
 			message.setMessage( hr, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
-			parentTool->addTaskMessage( message );
+			pParentTask->addTaskMessage( message );
 		}
 	}
 
-	bOk = !( l_Handle.empty() ) && SUCCEEDED (hr);
+	Result = !( l_Handle.empty() ) && SUCCEEDED (hr);
 
-	if( bOk )
+	if( Result )
 	{
-		p_Handle = new SVImageObjectElement( p_Index, SVImageObjectParentPtr(), l_Handle );
+		p_Handle = new SVImageObjectElement( p_Index, SVImageObjectClassPtr(), l_Handle );
 
-		bOk = !( p_Handle.empty() );
+		Result = !( p_Handle.empty() );
 	}
 	else
 	{
 		p_Handle.clear();
 	}
 	
-	return bOk;
+	return Result;
 }
 
-BOOL SVImageObjectClass::CreateImageChildBuffer(const SVImageInfoClass& rParentInfo, 
+bool SVImageObjectClass::CreateImageChildBuffer(const SVImageInfoClass& rParentInfo, 
                                                 SVSmartHandlePointer pParentHandle, 
                                                 SVImageInfoClass& rChildInfo, 
                                                 long p_Index, SVImageObjectElementPtr& p_Handle)
 {
-	BOOL bOk = true;
+	bool Result( true );
 	
 	DestroyImageBuffer( p_Handle );
 
-	bOk = !( pParentHandle.empty() );
+	Result = !( pParentHandle.empty() );
 
 	SVSmartHandlePointer l_Handle;
 	SVImageBufferHandleImage l_MilHandle;
 
-	if( bOk )
+	if( Result )
 	{
-		SVImageProcessingClass::Instance().CreateImageChildBuffer( rParentInfo, pParentHandle, rChildInfo, l_Handle );
+		SVImageProcessingClass::CreateImageChildBuffer( rParentInfo, pParentHandle, rChildInfo, l_Handle );
 
-		bOk = !( l_Handle.empty() );
+		Result = !( l_Handle.empty() );
 	}
 
-	if( bOk )
+	if( Result )
 	{
 		p_Handle = new SVImageObjectElement( p_Index, m_ParentImagePtr, l_Handle );
 
-		bOk = !( p_Handle.empty() );
+		Result = !( p_Handle.empty() );
 	}
 	else	
 	{
 		p_Handle.clear();
 	}
 
-	return bOk;
+	return Result;
 }
 
-BOOL SVImageObjectClass::DestroyImageBuffer(SVImageObjectElementPtr& pHandle)
+bool SVImageObjectClass::DestroyImageBuffer(SVImageObjectElementPtr& pHandle)
 {
-	BOOL bOk = true;
+	bool Result( true );
 	
 	if( !( pHandle.empty() ) )
 	{
@@ -832,18 +812,18 @@ BOOL SVImageObjectClass::DestroyImageBuffer(SVImageObjectElementPtr& pHandle)
 		m_ImageIndexPool.erase( l_Index );
 	}
 	
-	return bOk;
+	return Result;
 }
 
-BOOL SVImageObjectClass::GetArrayImageHandle( long lIndex, SVSmartHandlePointer& rHandle ) const
+bool SVImageObjectClass::GetArrayImageHandle( long lIndex, SVSmartHandlePointer& rHandle ) const
 {
 	SVImageHandleMap::const_iterator l_Iter( m_MasterImageHandles.find( lIndex ) );
 
-	BOOL bOk = l_Iter != m_MasterImageHandles.end();
+	bool Result = l_Iter != m_MasterImageHandles.end();
 
-	bOk = bOk && !( l_Iter->second.empty() );
+	Result = Result && !( l_Iter->second.empty() );
 	
-	if ( bOk )
+	if ( Result )
 	{
 		rHandle = l_Iter->second->m_ImageHandle;
 	}
@@ -852,20 +832,20 @@ BOOL SVImageObjectClass::GetArrayImageHandle( long lIndex, SVSmartHandlePointer&
 		rHandle.clear();
 	}
 
-	bOk = ! rHandle.empty();
+	Result = ! rHandle.empty();
 	
-	return bOk;
+	return Result;
 }
 
-BOOL SVImageObjectClass::CreateImageHandleArray( long lSize ) 
+bool SVImageObjectClass::CreateImageHandleArray( long lSize ) 
 {
-	BOOL bOk = true;
+	bool Result( true );
 
 	DestroyImageHandleArray();
 
 	m_ImageHandleArray.resize( lSize );
 
-	for ( long l = 0; bOk && l < lSize; l++ )
+	for ( long l = 0; Result && l < lSize; l++ )
 	{
 		SVImageObjectElementPtr p_Handle;
 
@@ -873,19 +853,19 @@ BOOL SVImageObjectClass::CreateImageHandleArray( long lSize )
 		{
 			SVSmartHandlePointer l_ParentHandlePtr;
 			
-			bOk = m_ParentImagePtr->GetArrayImageHandle( l, l_ParentHandlePtr );
+			Result = m_ParentImagePtr->GetArrayImageHandle( l, l_ParentHandlePtr );
 
-			if( bOk )
+			if( Result )
 			{
-				bOk = CreateImageChildBuffer( m_ParentImagePtr->GetImageInfo(), l_ParentHandlePtr, m_ImageInfo, l, p_Handle );
+				Result = CreateImageChildBuffer( m_ParentImagePtr->GetImageInfo(), l_ParentHandlePtr, m_ImageInfo, l, p_Handle );
 			}
 		}
 		else
 		{
-			bOk = CreateImageBuffer( m_ImageInfo, l, p_Handle );
+			Result = CreateImageBuffer( m_ImageInfo, l, p_Handle );
 		}
 
-		if( bOk )
+		if( Result )
 		{
 			m_MasterImageHandles[ l ] = p_Handle;
 
@@ -895,7 +875,7 @@ BOOL SVImageObjectClass::CreateImageHandleArray( long lSize )
 		}
 	}
 
-	if ( bOk )
+	if ( Result )
 	{
 		SVDataManagerHandle l_DMIndexHandle = m_CurrentDMIndexHandle;
 
@@ -904,27 +884,27 @@ BOOL SVImageObjectClass::CreateImageHandleArray( long lSize )
 			m_ParentImagePtr->GetCurrentIndex( l_DMIndexHandle );
 		}
 
-		bOk = SetCurrentIndex( l_DMIndexHandle );
+		Result = SetCurrentIndex( l_DMIndexHandle );
 	}
 
-	if( ! bOk )
+	if( ! Result )
 	{
 		DestroyImageHandleArray();
 	}
 
 	if( 0 <= m_CurrentDMIndexHandle.GetIndex() && m_CurrentDMIndexHandle.GetIndex() < static_cast< long >( m_ImageHandleArray.size() ) )
 	{
-		bOk &= !( m_ImageHandleArray[ m_CurrentDMIndexHandle.GetIndex() ].empty() );
+		Result &= !( m_ImageHandleArray[ m_CurrentDMIndexHandle.GetIndex() ].empty() );
 
-		assert( bOk );
+		assert( Result );
 	}
 
-	return bOk;
+	return Result;
 }
 
-BOOL SVImageObjectClass::DestroyImageHandleArray()
+bool SVImageObjectClass::DestroyImageHandleArray()
 {
-	BOOL bOk = TRUE;
+	bool Result( true );
 	
 	m_CurrentDMIndexHandle.clear();
 	m_ImageHandleArray.clear();
@@ -934,7 +914,7 @@ BOOL SVImageObjectClass::DestroyImageHandleArray()
 	m_LastReset = 0;
 	m_LastUpdate = 0;
 
-	return bOk;
+	return Result;
 }
 
 HRESULT SVImageObjectClass::GetMasterIndex( size_t p_Index, size_t& p_rMasterIndex ) const
@@ -964,9 +944,9 @@ HRESULT SVImageObjectClass::GetMasterIndex( size_t p_Index, size_t& p_rMasterInd
 	return l_Status;
 }
 
-BOOL SVImageObjectClass::LockIndex(long lIndex, long lHandleIndex )
+bool SVImageObjectClass::LockIndex(long lIndex, long lHandleIndex )
 {
-	BOOL bOk = ( -1 <= lIndex && lIndex < static_cast< long >( m_ImageHandleArray.size() ) );
+	bool Result = ( -1 <= lIndex && lIndex < static_cast< long >( m_ImageHandleArray.size() ) );
 	
 	if( 0 <= lIndex && lIndex < static_cast< long >( m_ImageHandleArray.size() ) )
 	{
@@ -991,19 +971,19 @@ BOOL SVImageObjectClass::LockIndex(long lIndex, long lHandleIndex )
 	}
 	else
 	{
-		bOk = lHandleIndex == -1;
+		Result = lHandleIndex == -1;
 	}
 	
-	return bOk;
+	return Result;
 }
 
-BOOL SVImageObjectClass::LockIndex(long lIndex)
+bool SVImageObjectClass::LockIndex(long lIndex)
 {
-	BOOL bOk = TRUE;
+	bool Result( true );
 	
 	if ( m_ParentImagePtr.empty() )
 	{
-		bOk = ( -1 <= lIndex && lIndex < static_cast< long >( m_ImageHandleArray.size() ) );
+		Result = ( -1 <= lIndex && lIndex < static_cast< long >( m_ImageHandleArray.size() ) );
 		
 		if( 0 <= lIndex && lIndex < static_cast< long >( m_ImageHandleArray.size() ) )
 		{
@@ -1030,27 +1010,27 @@ BOOL SVImageObjectClass::LockIndex(long lIndex)
 	}
 	else
 	{
-		bOk = !( m_ParentImagePtr.empty() );
+		Result = !( m_ParentImagePtr.empty() );
 
-		if( bOk )
+		if( Result )
 		{
 			size_t l_MasterIndex = 0;
 
-			bOk = ( S_OK == m_ParentImagePtr->GetMasterIndex( lIndex, l_MasterIndex ) );
+			Result = ( S_OK == m_ParentImagePtr->GetMasterIndex( lIndex, l_MasterIndex ) );
 
-			if( bOk )
+			if( Result )
 			{
-				bOk = LockIndex( lIndex, static_cast<long>(l_MasterIndex ));
+				Result = LockIndex( lIndex, static_cast<long>(l_MasterIndex ));
 			}
 		}
 	}
 	
-	return bOk;
+	return Result;
 }
 
-BOOL SVImageObjectClass::UnlockIndex(long lIndex)
+bool SVImageObjectClass::UnlockIndex(long lIndex)
 {
-	BOOL bOk = ( -1 <= lIndex && lIndex < static_cast< long >( m_ImageHandleArray.size() ) );
+	bool Result = ( -1 <= lIndex && lIndex < static_cast< long >( m_ImageHandleArray.size() ) );
 
 	if( 0 <= lIndex && lIndex < static_cast< long >( m_ImageHandleArray.size() ) )
 	{
@@ -1067,7 +1047,7 @@ BOOL SVImageObjectClass::UnlockIndex(long lIndex)
 		}
 	}
 	
-	return bOk;
+	return Result;
 }
 
 HRESULT SVImageObjectClass::AddImageHandleToPool( long p_Index )
@@ -1079,10 +1059,10 @@ HRESULT SVImageObjectClass::AddImageHandleToPool( long p_Index )
 	return l_Status;
 }
 
-BOOL SVImageObjectClass::DestroyLocal()
+bool SVImageObjectClass::DestroyLocal()
 {
-	BOOL bOk = DestroyBufferArrays();
+	bool Result = DestroyBufferArrays();
 
-	return bOk;
+	return Result;
 }
 

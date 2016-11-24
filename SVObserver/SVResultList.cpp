@@ -78,7 +78,7 @@ void SVResultListClass::Refresh(SVTaskObjectClass* pRootObject)
 		m_results.Add( pResult );
 	}
 	
-	m_ResultViewReferences.RebuildReferenceVector(m_pToolSet->GetInspection());
+	m_ResultViewReferences.RebuildReferenceVector(dynamic_cast<SVInspectionProcess*>(m_pToolSet->GetInspection()));
 }
 
 SVClock::SVTimeStamp SVResultListClass::getUpdateTimeStamp()
@@ -97,7 +97,7 @@ bool SVResultListClass::LoadViewedVariables(ResultViewReferences::SVTreeType& rT
 	SVInspectionProcess* pInspec(nullptr);
 	if (m_pToolSet)
 	{
-		pInspec = m_pToolSet->GetInspection();
+		pInspec = dynamic_cast<SVInspectionProcess*>(m_pToolSet->GetInspection());
 	}
 	
 	bool SevenOneCfg(false);

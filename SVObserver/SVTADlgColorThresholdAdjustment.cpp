@@ -39,16 +39,14 @@ BEGIN_MESSAGE_MAP(SVTADlgColorThresholdAdjustment, SVTADlgColorThresholdBasePage
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-SVTADlgColorThresholdAdjustment::SVTADlgColorThresholdAdjustment() : SVTADlgColorThresholdBasePage(SVTADlgColorThresholdAdjustment::IDD)
+SVTADlgColorThresholdAdjustment::SVTADlgColorThresholdAdjustment() 
+: SVTADlgColorThresholdBasePage(SVTADlgColorThresholdAdjustment::IDD)
+, m_pUpperThreshold(nullptr)
+, m_pLowerThreshold(nullptr)
+, m_pExclude(nullptr)
+, m_pCurrentDocument(nullptr)
+, m_BandNumber(0)
 {
-	mpUpperThreshold = nullptr;
-	mpLowerThreshold = nullptr;
-	mpExclude = nullptr;
-	mpCurrentDocument = nullptr;
-	mpTool = nullptr;
-	mpThreshold = nullptr;
-	mBandNumber = 0;
-
 	//{{AFX_DATA_INIT(SVTADlgColorThresholdAdjustment)
 	StrUpper = _T("");
 	StrLower = _T("");
@@ -62,36 +60,36 @@ SVTADlgColorThresholdAdjustment::~SVTADlgColorThresholdAdjustment()
 
 HRESULT SVTADlgColorThresholdAdjustment::SetInspectionData()
 {
-	HRESULT l_hrOk = AddInputRequest( mpLowerThreshold, m_lowerThreshold );
+	HRESULT l_hrOk = AddInputRequest( m_pLowerThreshold, m_lowerThreshold );
 
 	if( S_OK == l_hrOk )
 	{
-		l_hrOk = AddInputRequest( mpUpperThreshold, m_upperThreshold );
+		l_hrOk = AddInputRequest( m_pUpperThreshold, m_upperThreshold );
 	}
 
 	if( S_OK == l_hrOk )
 	{
-		l_hrOk = AddInputRequest( mpExclude, m_exclude );
+		l_hrOk = AddInputRequest( m_pExclude, m_exclude );
 	}
 
 	if( S_OK == l_hrOk )
 	{
-		l_hrOk = AddInputRequest( mpExtentLeft, m_pSheet->m_rectROI.left );
+		l_hrOk = AddInputRequest( m_pExtentLeft, m_pSheet->m_rectROI.left );
 	}
 
 	if( S_OK == l_hrOk )
 	{
-		l_hrOk = AddInputRequest( mpExtentTop, m_pSheet->m_rectROI.top );
+		l_hrOk = AddInputRequest( m_pExtentTop, m_pSheet->m_rectROI.top );
 	}
 
 	if( S_OK == l_hrOk )
 	{
-		l_hrOk = AddInputRequest( mpExtentWidth, m_pSheet->m_rectROI.Width() );
+		l_hrOk = AddInputRequest( m_pExtentWidth, m_pSheet->m_rectROI.Width() );
 	}
 
 	if( S_OK == l_hrOk )
 	{
-		l_hrOk = AddInputRequest( mpExtentHeight, m_pSheet->m_rectROI.Height() );
+		l_hrOk = AddInputRequest( m_pExtentHeight, m_pSheet->m_rectROI.Height() );
 	}
 
 	if( S_OK == l_hrOk )
@@ -101,7 +99,7 @@ HRESULT SVTADlgColorThresholdAdjustment::SetInspectionData()
 
 	if( S_OK == l_hrOk )
 	{
-		l_hrOk = RunOnce( mpTool );
+		l_hrOk = RunOnce( m_pTool->GetUniqueObjectID() );
 	}
 
 	return l_hrOk;
@@ -130,18 +128,18 @@ BOOL SVTADlgColorThresholdAdjustment::OnInitDialog()
 	
 	ASSERT( m_pSheet );
 
-	mpTool = m_pSheet->GetTool();
+	m_pTool = m_pSheet->GetTool();
 
-	SetTaskObject( mpTool );
+	SetTaskObject( m_pTool );
 
 	// Get the color threshold object
 	SVObjectTypeInfoStruct objectInfo;
 	objectInfo.ObjectType = SVOperatorObjectType;
 	objectInfo.SubType = SVColorThresholdObjectType;
 
-	mpThreshold = dynamic_cast<SVColorThresholdClass*>(mpTool->getFirstObject(objectInfo));
+	m_pThreshold = dynamic_cast<SVColorThresholdClass*> (m_pTool->getFirstObject(objectInfo));
 
-	if( mpThreshold )
+	if( m_pThreshold )
 	{
 		// Get Train Color Extent Variables
 		SVObjectTypeInfoStruct extentObjectInfo;
@@ -149,19 +147,19 @@ BOOL SVTADlgColorThresholdAdjustment::OnInitDialog()
 
 		// Get Train Color ROI Extent Left Object...
 		extentObjectInfo.EmbeddedID = SVExtentRelativeLeftPositionObjectGuid;
-		mpExtentLeft = dynamic_cast<SVDoubleValueObjectClass*>(mpThreshold->getFirstObject(extentObjectInfo));
+		m_pExtentLeft = dynamic_cast<SVDoubleValueObjectClass*> (m_pThreshold->getFirstObject(extentObjectInfo));
 
 		// Get Train Color ROI Extent Top Object...
 		extentObjectInfo.EmbeddedID = SVExtentRelativeTopPositionObjectGuid;
-		mpExtentTop = dynamic_cast<SVDoubleValueObjectClass*>(mpThreshold->getFirstObject(extentObjectInfo));
+		m_pExtentTop = dynamic_cast<SVDoubleValueObjectClass*> (m_pThreshold->getFirstObject(extentObjectInfo));
 
 		// Get Train Color ROI Extent Width Object...
 		extentObjectInfo.EmbeddedID = SVExtentWidthObjectGuid;
-		mpExtentWidth = dynamic_cast<SVDoubleValueObjectClass*>(mpThreshold->getFirstObject(extentObjectInfo));
+		m_pExtentWidth = dynamic_cast<SVDoubleValueObjectClass*> (m_pThreshold->getFirstObject(extentObjectInfo));
 
 		// Get Train Color ROI Extent Height Object...
 		extentObjectInfo.EmbeddedID = SVExtentHeightObjectGuid;
-		mpExtentHeight = dynamic_cast<SVDoubleValueObjectClass*>(mpThreshold->getFirstObject(extentObjectInfo));
+		m_pExtentHeight = dynamic_cast<SVDoubleValueObjectClass*> (m_pThreshold->getFirstObject(extentObjectInfo));
 	}
 
 	SVImageClass* pImage = nullptr;
@@ -169,57 +167,57 @@ BOOL SVTADlgColorThresholdAdjustment::OnInitDialog()
 	// Get the Threshold variables
 	objectInfo.SubType = SVNotSetSubObjectType;
 
-	if( mBandNumber == 0 )
+	if( 0 == m_BandNumber )
 	{
 		// Get the Image to Display
-		pImage = mpThreshold->GetBand0OutputImage();
+		pImage = m_pThreshold->GetBand0OutputImage();
 
 		// Get the threshold variables
 		objectInfo.ObjectType = SVLongValueObjectType;
 
 		objectInfo.EmbeddedID = SVBand0UpperThresholdObjectGuid;
-		mpUpperThreshold = dynamic_cast<SVLongValueObjectClass*>(mpThreshold->getFirstObject(objectInfo));
+		m_pUpperThreshold = dynamic_cast<SVLongValueObjectClass*> (m_pThreshold->getFirstObject(objectInfo));
 
 		objectInfo.EmbeddedID = SVBand0LowerThresholdObjectGuid;
-		mpLowerThreshold = dynamic_cast<SVLongValueObjectClass*>(mpThreshold->getFirstObject(objectInfo));
+		m_pLowerThreshold = dynamic_cast<SVLongValueObjectClass*> (m_pThreshold->getFirstObject(objectInfo));
 
 		objectInfo.ObjectType = SVBoolValueObjectType;
 		objectInfo.EmbeddedID = SVBand0ThresholdExcludeObjectGuid;
-		mpExclude = dynamic_cast<SVBoolValueObjectClass*>(mpThreshold->getFirstObject(objectInfo));
+		m_pExclude = dynamic_cast<SVBoolValueObjectClass*> (m_pThreshold->getFirstObject(objectInfo));
 	}
-	else if( mBandNumber == 1 )
+	else if( 1 == m_BandNumber )
 	{
-		pImage = mpThreshold->GetBand1OutputImage();
+		pImage = m_pThreshold->GetBand1OutputImage();
 		
 		// Get the threshold variables
 		objectInfo.ObjectType = SVLongValueObjectType;
 
 		objectInfo.EmbeddedID = SVBand1UpperThresholdObjectGuid;
-		mpUpperThreshold = dynamic_cast<SVLongValueObjectClass*>(mpThreshold->getFirstObject(objectInfo));
+		m_pUpperThreshold = dynamic_cast<SVLongValueObjectClass*> (m_pThreshold->getFirstObject(objectInfo));
 
 		objectInfo.EmbeddedID = SVBand1LowerThresholdObjectGuid;
-		mpLowerThreshold = dynamic_cast<SVLongValueObjectClass*>(mpThreshold->getFirstObject(objectInfo));
+		m_pLowerThreshold = dynamic_cast<SVLongValueObjectClass*> (m_pThreshold->getFirstObject(objectInfo));
 
 		objectInfo.ObjectType = SVBoolValueObjectType;
 		objectInfo.EmbeddedID = SVBand1ThresholdExcludeObjectGuid;
-		mpExclude = dynamic_cast<SVBoolValueObjectClass*>(mpThreshold->getFirstObject(objectInfo));
+		m_pExclude = dynamic_cast<SVBoolValueObjectClass*> (m_pThreshold->getFirstObject(objectInfo));
 	}
 	else
 	{
-		pImage = mpThreshold->GetBand2OutputImage();
+		pImage = m_pThreshold->GetBand2OutputImage();
 		
 		// Get the threshold variables
 		objectInfo.ObjectType = SVLongValueObjectType;
 
 		objectInfo.EmbeddedID = SVBand2UpperThresholdObjectGuid;
-		mpUpperThreshold = dynamic_cast<SVLongValueObjectClass*>(mpThreshold->getFirstObject(objectInfo));
+		m_pUpperThreshold = dynamic_cast<SVLongValueObjectClass*> (m_pThreshold->getFirstObject(objectInfo));
 
 		objectInfo.EmbeddedID = SVBand2LowerThresholdObjectGuid;
-		mpLowerThreshold = dynamic_cast<SVLongValueObjectClass*>(mpThreshold->getFirstObject(objectInfo));
+		m_pLowerThreshold = dynamic_cast<SVLongValueObjectClass*> (m_pThreshold->getFirstObject(objectInfo));
 
 		objectInfo.ObjectType = SVBoolValueObjectType;
 		objectInfo.EmbeddedID = SVBand2ThresholdExcludeObjectGuid;
-		mpExclude = dynamic_cast<SVBoolValueObjectClass*>(mpThreshold->getFirstObject(objectInfo));
+		m_pExclude = dynamic_cast<SVBoolValueObjectClass*> (m_pThreshold->getFirstObject(objectInfo));
 	}
 
 	if( pImage )
@@ -233,7 +231,7 @@ BOOL SVTADlgColorThresholdAdjustment::OnInitDialog()
 
 		// Get the Threshold bars from the SVColorThresholdClass
 		// Note: Do this first
-		SVDrawObjectListClass* pThresholdBarsFigure = mpThreshold->GetThresholdBarsFigure( mBandNumber );
+		SVDrawObjectListClass* pThresholdBarsFigure = m_pThreshold->GetThresholdBarsFigure( m_BandNumber );
 		//m_svDlgImage.AddPoints( pThresholdBarsFigure );
 		m_svDlgImage.AddOverlayPoints( pThresholdBarsFigure, options );
 
@@ -242,7 +240,7 @@ BOOL SVTADlgColorThresholdAdjustment::OnInitDialog()
 		options.sizeROI = m_pSheet->m_rectROI.Size();
 		options.bNormalizeY_ROI = true;
 		options.bScaleY = false;
-		SVDrawObjectClass* pGraphFigure = mpThreshold->GetGraphFigure( mBandNumber );
+		SVDrawObjectClass* pGraphFigure = m_pThreshold->GetGraphFigure( m_BandNumber );
 		//m_svDlgImage.AddPoints( *pGraphFigure, SVGraphScale );
 		m_svDlgImage.AddOverlayPoints( *pGraphFigure, options );
 
@@ -260,17 +258,17 @@ BOOL SVTADlgColorThresholdAdjustment::OnInitDialog()
 void SVTADlgColorThresholdAdjustment::getThresholdParams()
 {
 	// Update DDX variables
-	if( mpUpperThreshold && mpLowerThreshold && mpExclude )
+	if( m_pUpperThreshold && m_pLowerThreshold && m_pExclude )
 	{
 		long value;
 	
-		mpLowerThreshold->GetValue( value );
+		m_pLowerThreshold->GetValue( value );
 		m_lowerThreshold = (unsigned char)value;
 
-		mpUpperThreshold->GetValue( value );
+		m_pUpperThreshold->GetValue( value );
 		m_upperThreshold = (unsigned char)value;
 
-		mpExclude->GetValue( m_exclude );
+		m_pExclude->GetValue( m_exclude );
 
 		UpdateData( FALSE );
 	}
@@ -278,7 +276,7 @@ void SVTADlgColorThresholdAdjustment::getThresholdParams()
 
 void SVTADlgColorThresholdAdjustment::setThresholdParams()
 {
-	if( mpUpperThreshold && mpLowerThreshold && mpExclude )
+	if( m_pUpperThreshold && m_pLowerThreshold && m_pExclude )
 	{
 		// Set the Values
 		SetInspectionData();
@@ -298,7 +296,7 @@ void SVTADlgColorThresholdAdjustment::updateControls()
 
 void SVTADlgColorThresholdAdjustment::setInitialValues()
 {
-	if( mpUpperThreshold && mpLowerThreshold && mpExclude )
+	if( m_pUpperThreshold && m_pLowerThreshold && m_pExclude )
 	{
 		getThresholdParams();
 
@@ -333,11 +331,11 @@ void SVTADlgColorThresholdAdjustment::setScrollPos( CSliderCtrl* pSliderCtrl, in
 
 void SVTADlgColorThresholdAdjustment::updateGraphDisplay()
 {
-	if( nullptr != mpTool )
+	if( nullptr != m_pTool )
 	{
-		SVInspectionProcess* pInspection = mpTool->GetInspection();
+		SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(m_pTool->GetInspection());
 
-		mpTool->resetAllObjects(true, false);
+		m_pTool->resetAllObjects(true, false);
 
 		if( nullptr != pInspection )
 		{
@@ -356,7 +354,7 @@ void SVTADlgColorThresholdAdjustment::updateGraphDisplay()
 
 		// Get the Threshold bars from the SVColorThresholdClass
 		// Note: Do this first
-		SVDrawObjectListClass* pThresholdBarsFigure = mpThreshold->GetThresholdBarsFigure( mBandNumber );
+		SVDrawObjectListClass* pThresholdBarsFigure = m_pThreshold->GetThresholdBarsFigure( m_BandNumber );
 		m_svDlgImage.AddOverlayPoints( pThresholdBarsFigure, options );
 
 		// Get the Graph Figure from the SVColorThresholdClass
@@ -364,7 +362,7 @@ void SVTADlgColorThresholdAdjustment::updateGraphDisplay()
 		options.sizeROI = m_pSheet->m_rectROI.Size();
 		options.bNormalizeY_ROI = true;
 		options.bScaleY = false;
-		SVDrawObjectClass* pGraphFigure = mpThreshold->GetGraphFigure( mBandNumber );
+		SVDrawObjectClass* pGraphFigure = m_pThreshold->GetGraphFigure( m_BandNumber );
 		//m_svDlgImage.AddPoints( *pGraphFigure, SVGraphScale );
 		m_svDlgImage.AddOverlayPoints( *pGraphFigure, options );
 
@@ -384,7 +382,7 @@ void SVTADlgColorThresholdAdjustment::OnExcludeColorThreshold()
 
 void SVTADlgColorThresholdAdjustment::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar) 
 {
-	if( mpUpperThreshold && mpLowerThreshold )
+	if( m_pUpperThreshold && m_pLowerThreshold )
 	{
 		UpdateData( TRUE ); // get data of dialog	
 	

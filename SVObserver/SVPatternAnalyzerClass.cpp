@@ -17,8 +17,8 @@
 #include "SVRunControlLibrary/SVRunControlLibrary.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVGlobal.h"
-#include "SVImageClass.h"
-#include "SVImageProcessingClass.h"
+#include "SVOCore/SVImageClass.h"
+#include "SVOCore/SVImageProcessingClass.h"
 #include "SVInspectionProcess.h"
 #include "SVPatAnalyzeSetupDlgSheet.h"
 #include "SVPatAdvancedPageClass.h"
@@ -153,14 +153,14 @@ void SVPatternAnalyzerClass::CreateResult()
 		CString	strTitle;
 
 		interfaceInfo.EmbeddedID = SVpatResultNumFoundOccurancesObjectGuid;
-		resultClassInfo.DesiredInputInterface.Add( interfaceInfo );
+		resultClassInfo.m_DesiredInputInterface.Add( interfaceInfo );
 
-		resultClassInfo.ObjectTypeInfo.ObjectType = SVResultObjectType;
-		resultClassInfo.ObjectTypeInfo.SubType	= SVResultLongObjectType;
-		resultClassInfo.ClassId = SVLongResultClassGuid;
-		resultClassInfo.ClassName.LoadString( IDS_OBJECTNAME_RESULT );
+		resultClassInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
+		resultClassInfo.m_ObjectTypeInfo.SubType	= SVResultLongObjectType;
+		resultClassInfo.m_ClassId = SVLongResultClassGuid;
+		resultClassInfo.m_ClassName = SvUl_SF::LoadString( IDS_OBJECTNAME_RESULT );
 		strTitle.LoadString( IDS_OBJECTNAME_PAT_NBRFOUNDOCCURANCES );
-		resultClassInfo.ClassName += SV_TSTR_SPACE + strTitle;
+		resultClassInfo.m_ClassName += SV_TSTR_SPACE + strTitle;
 
 		while (1)
 		{
@@ -288,7 +288,7 @@ BOOL SVPatternAnalyzerClass::CreateModelBuffer()
 		m_lpatModelHeight.GetValue(tmp);
 		m_patBuffer.SetExtentProperty( SVExtentPropertyHeight, tmp );
 
-		l_bOk = S_OK == SVImageProcessingClass::Instance().CreateImageBuffer( m_patBuffer, m_patBufferHandlePtr );
+		l_bOk = S_OK == SVImageProcessingClass::CreateImageBuffer( m_patBuffer, m_patBufferHandlePtr );
 	}
 	return l_bOk;
 }
@@ -336,7 +336,7 @@ BOOL SVPatternAnalyzerClass::UpdateModelFromInputImage()
 		m_lpatModelHeight.GetValue(tmp);
 		childImageInfo.SetExtentProperty( SVExtentPropertyHeight, tmp );
 
-		HRESULT hr = SVImageProcessingClass::Instance().CreateImageChildBuffer(imageInfo, l_ImageHandle, childImageInfo, childImageHandle);
+		HRESULT hr = SVImageProcessingClass::CreateImageChildBuffer(imageInfo, l_ImageHandle, childImageInfo, childImageHandle);
 		if (S_OK == hr && !( childImageHandle.empty() ) && !( m_patBufferHandlePtr.empty() ) )
 		{
 			SVImageBufferHandleImage l_ChildMilHandle;
@@ -384,7 +384,7 @@ BOOL SVPatternAnalyzerClass::UpdateModelFromBuffer()
 			if (l_Code == SVMEE_STATUS_OK)
 			{
 				m_lpatModelHeight.SetValue(1, modelHeight);
-			}
+		}
 		}
 
 		if (l_Code == SVMEE_STATUS_OK)
@@ -458,7 +458,7 @@ BOOL SVPatternAnalyzerClass::RestorePattern (CString strImageFile, SvOi::Message
 			if (l_Code == SVMEE_STATUS_OK)
 			{
 				m_lpatModelHeight.SetValue(1, tmp);
-			}
+		}
 		}
 		if ( l_Code == SVMEE_STATUS_OK )
 		{
@@ -1058,7 +1058,7 @@ HRESULT SVPatternAnalyzerClass::ResetObject()
 
 	if ( S_OK == l_hrOk )
 	{
-		SVInspectionProcess* pInspection = GetInspection();
+		SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(GetInspection());
 
 		// Insures that the Pattern will be reloaded when going online.
 		if ( nullptr != pInspection && pInspection->IsResetStateSet( SVResetStateLoadFiles ) )
@@ -1121,7 +1121,8 @@ HRESULT SVPatternAnalyzerClass::ResetObject()
 HRESULT SVPatternAnalyzerClass::onCollectOverlays(SVImageClass* p_pImage, SVExtentMultiLineStructCArray& p_rMultiLineArray )
 {
 	// only if ToolSet/Tool was not Disabled
-	if (GetTool()->WasEnabled())
+	SVToolClass* pTool = dynamic_cast<SVToolClass*>(GetTool());
+	if (pTool && pTool->WasEnabled())
 	{
 		long lOccurances;
 		msv_lpatNumFoundOccurances.GetValue(lOccurances);
@@ -1129,7 +1130,7 @@ HRESULT SVPatternAnalyzerClass::onCollectOverlays(SVImageClass* p_pImage, SVExte
 		if (lOccurances > 0)
 		{
 			SVImageExtentClass l_svExtents;
-			HRESULT hr = GetTool()->GetImageExtent( l_svExtents );
+			HRESULT hr = pTool->GetImageExtent( l_svExtents );
 
 			if (S_OK == hr)
 			{
@@ -1228,66 +1229,70 @@ bool SVPatternAnalyzerClass::IsPtOverResult( const POINT& rPoint )
 	if (lOccurances > 0)
 	{
 		SVImageExtentClass l_svExtents;
-		HRESULT hr = GetTool()->GetImageExtent( l_svExtents );
-
-		if (S_OK == hr)
+		SVToolClass* pTool = dynamic_cast<SVToolClass*>(GetTool());
+		if (pTool)
 		{
+			HRESULT hr = pTool->GetImageExtent( l_svExtents );
+
+			if (S_OK == hr)
+			{
 			long lpatModelWidth = 0;
 			long lpatModelHeight = 0;
 			m_lpatModelWidth.GetValue(lpatModelWidth);
 			m_lpatModelWidth.GetValue(lpatModelHeight);
 			
-			// Check if CircularOverscan was used
-			bool bCircularScan;
-			msv_bpatCircularOverscan.GetValue(bCircularScan);
-			if (bCircularScan)
-			{
-				POINT pos = { 0, 0 };
+				// Check if CircularOverscan was used
+				bool bCircularScan;
+				msv_bpatCircularOverscan.GetValue(bCircularScan);
+				if (bCircularScan)
+				{
+					POINT pos = { 0, 0 };
 				SIZE size = { lpatModelWidth, lpatModelHeight};
 
-				RECT rect = SVMatroxPatternInterface::CalculateOverscanInnerRect(pos, size);
-				lpatModelWidth = rect.right - rect.left;
-				lpatModelHeight = rect.bottom - rect.top;
-			}
+					RECT rect = SVMatroxPatternInterface::CalculateOverscanInnerRect(pos, size);
+					lpatModelWidth = rect.right - rect.left;
+					lpatModelHeight = rect.bottom - rect.top;
+				}
 
-			BOOL bAngleMode;
-			msv_bpatSearchAngleMode.GetValue(bAngleMode); 
+				BOOL bAngleMode;
+				msv_bpatSearchAngleMode.GetValue(bAngleMode); 
 
-			// Add the Poly line Draw Object to the SVDrawObjectList
-			bool bError = false;
-			for (int i = 0; !bError && i < (int)lOccurances; i++)
-			{
-				double dResultXPos = 0.0;
-				double dResultYPos = 0.0;
-				double dResultAngle = 0.0;
-
-				msv_dpatResultX.GetValue(msv_dpatResultX.GetLastSetIndex(), i, dResultXPos);
-				msv_dpatResultY.GetValue(msv_dpatResultY.GetLastSetIndex(), i, dResultYPos);
-				msv_dpatResultAngle.GetValue(msv_dpatResultAngle.GetLastSetIndex(), i, dResultAngle);
-
-				bError = dResultXPos < 0.0 || dResultYPos < 0.0	||dResultAngle < 0.0;
-
-				if ( !bError )
+				// Add the Poly line Draw Object to the SVDrawObjectList
+				bool bError = false;
+				for (int i = 0; !bError && i < (int)lOccurances; i++)
 				{
-					SVExtentFigureStruct l_svFigure;
-					SVImageExtentClass l_svPatternExtents;
+					double dResultXPos = 0.0;
+					double dResultYPos = 0.0;
+					double dResultAngle = 0.0;
 
-					l_svPatternExtents.SetTranslation( SVExtentTranslationFlippedRotate );
-					l_svPatternExtents.SetExtentProperty( SVExtentPropertyPositionPointX, dResultXPos );
-					l_svPatternExtents.SetExtentProperty( SVExtentPropertyPositionPointY, dResultYPos );
-					l_svPatternExtents.SetExtentProperty( SVExtentPropertyWidth, lpatModelWidth );
-					l_svPatternExtents.SetExtentProperty( SVExtentPropertyHeight, lpatModelHeight );
-					l_svPatternExtents.SetExtentProperty( SVExtentPropertyRotationAngle, dResultAngle );
-					l_svPatternExtents.UpdateData();
-					l_svPatternExtents.GetFigure( l_svFigure );
+					msv_dpatResultX.GetValue(msv_dpatResultX.GetLastSetIndex(), i, dResultXPos);
+					msv_dpatResultY.GetValue(msv_dpatResultY.GetLastSetIndex(), i, dResultYPos);
+					msv_dpatResultAngle.GetValue(msv_dpatResultAngle.GetLastSetIndex(), i, dResultAngle);
 
-					l_svExtents.TranslateFromOutputSpace( l_svFigure, l_svFigure );
+					bError = dResultXPos < 0.0 || dResultYPos < 0.0	||dResultAngle < 0.0;
+
+					if ( !bError )
+					{
+						SVExtentFigureStruct l_svFigure;
+						SVImageExtentClass l_svPatternExtents;
+
+						l_svPatternExtents.SetTranslation( SVExtentTranslationFlippedRotate );
+						l_svPatternExtents.SetExtentProperty( SVExtentPropertyPositionPointX, dResultXPos );
+						l_svPatternExtents.SetExtentProperty( SVExtentPropertyPositionPointY, dResultYPos );
+						l_svPatternExtents.SetExtentProperty( SVExtentPropertyWidth, lpatModelWidth );
+						l_svPatternExtents.SetExtentProperty( SVExtentPropertyHeight, lpatModelHeight );
+						l_svPatternExtents.SetExtentProperty( SVExtentPropertyRotationAngle, dResultAngle );
+						l_svPatternExtents.UpdateData();
+						l_svPatternExtents.GetFigure( l_svFigure );
+
+						l_svExtents.TranslateFromOutputSpace( l_svFigure, l_svFigure );
 
 					if( S_OK == l_svFigure.IsPointOverFigure( rPoint ) )
-					{
-						m_nPatternIndex = i;
+						{
+							m_nPatternIndex = i;
 
-						break;
+							break;
+						}
 					}
 				}
 			}
@@ -1392,7 +1397,8 @@ bool SVPatternAnalyzerClass::IsValidSize()
 	bool bRet = true;
 	SVImageExtentClass svExtents;
 
-	if ( nullptr != GetTool() && S_OK == GetTool()->GetImageExtent( svExtents ) )
+	SVToolClass* pTool = dynamic_cast<SVToolClass*>(GetTool());
+	if ( pTool && S_OK == pTool->GetImageExtent( svExtents ) )
 	{
 		RECT oRec;
 		HRESULT hrOk = svExtents.GetOutputRectangle( oRec );

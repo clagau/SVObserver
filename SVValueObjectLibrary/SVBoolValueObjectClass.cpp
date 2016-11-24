@@ -242,7 +242,7 @@ void SVBoolValueObjectClass::LocalInitialize()
 		m_sLegacyScriptDefaultName = "bDefault";
 		m_sLegacyScriptArrayName = "pBArray";
 	}
-	m_strTypeName = "Bool";
+	SetTypeName( _T("Bool") );
 
 	InitializeBuckets();
 }

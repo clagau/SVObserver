@@ -210,7 +210,7 @@ void SVByteValueObjectClass::LocalInitialize()
 		m_sLegacyScriptDefaultName = "bDefault";
 		m_sLegacyScriptArrayName = "pBArray";
 	}
-	m_strTypeName = "Integer8";
+	SetTypeName( _T("Integer8") );
 	InitializeBuckets();
 
 	SetOutputFormat(OutputFormat_hex);

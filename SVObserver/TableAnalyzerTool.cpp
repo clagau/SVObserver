@@ -203,24 +203,24 @@ void TableAnalyzerTool::LocalInitialize ()
 	SVClassInfoStruct analyzerClassInfo;
 
 	// Add the Sort Analyzer
-	analyzerClassInfo.ObjectTypeInfo.ObjectType = TableAnalyzerType;
-	analyzerClassInfo.ObjectTypeInfo.SubType = TableAnalyzerSortType;
-	analyzerClassInfo.ClassId = TableAnaylzerSortGuid;
-	analyzerClassInfo.ClassName.LoadString( IDS_CLASSNAME_TABLEANALYZER_SORT );
+	analyzerClassInfo.m_ObjectTypeInfo.ObjectType = TableAnalyzerType;
+	analyzerClassInfo.m_ObjectTypeInfo.SubType = TableAnalyzerSortType;
+	analyzerClassInfo.m_ClassId = TableAnaylzerSortGuid;
+	analyzerClassInfo.m_ClassName = SvUl_SF::LoadString( IDS_CLASSNAME_TABLEANALYZER_SORT );
 	m_availableChildren.Add( analyzerClassInfo );
 
 	// Add the Exclude Analyzer
-	analyzerClassInfo.ObjectTypeInfo.ObjectType = TableAnalyzerType;
-	analyzerClassInfo.ObjectTypeInfo.SubType = TableAnalyzerExcludeType;
-	analyzerClassInfo.ClassId = TableAnaylzerExcludeGuid;
-	analyzerClassInfo.ClassName.LoadString( IDS_CLASSNAME_TABLEANALYZER_EXCLUDE );
+	analyzerClassInfo.m_ObjectTypeInfo.ObjectType = TableAnalyzerType;
+	analyzerClassInfo.m_ObjectTypeInfo.SubType = TableAnalyzerExcludeType;
+	analyzerClassInfo.m_ClassId = TableAnaylzerExcludeGuid;
+	analyzerClassInfo.m_ClassName = SvUl_SF::LoadString( IDS_CLASSNAME_TABLEANALYZER_EXCLUDE );
 	m_availableChildren.Add( analyzerClassInfo );
 
 	// Add the Limit Analyzer
-	analyzerClassInfo.ObjectTypeInfo.ObjectType = TableAnalyzerType;
-	analyzerClassInfo.ObjectTypeInfo.SubType = TableAnalyzerLimitType;
-	analyzerClassInfo.ClassId = TableAnaylzerLimitGuid;
-	analyzerClassInfo.ClassName.LoadString( IDS_CLASSNAME_TABLEANALYZER_LIMIT );
+	analyzerClassInfo.m_ObjectTypeInfo.ObjectType = TableAnalyzerType;
+	analyzerClassInfo.m_ObjectTypeInfo.SubType = TableAnalyzerLimitType;
+	analyzerClassInfo.m_ClassId = TableAnaylzerLimitGuid;
+	analyzerClassInfo.m_ClassName = SvUl_SF::LoadString( IDS_CLASSNAME_TABLEANALYZER_LIMIT );
 	m_availableChildren.Add( analyzerClassInfo );
 
 	// Setup the result
@@ -229,12 +229,12 @@ void TableAnalyzerTool::LocalInitialize ()
 	SVObjectTypeInfoStruct interfaceInfo;
 	// Declare Input Interface
 	interfaceInfo.EmbeddedID = TableObject_NumberOfRowsGuid;
-	resultClassInfo.ObjectTypeInfo.ObjectType = SVResultObjectType;
-	resultClassInfo.ObjectTypeInfo.SubType = SVResultLongObjectType;
-	resultClassInfo.ClassId = SVLongResultClassGuid;
-	resultClassInfo.ClassName.LoadString( IDS_OBJECTNAME_TABLEOBJECT_NUMBEROFROWS );
+	resultClassInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
+	resultClassInfo.m_ObjectTypeInfo.SubType = SVResultLongObjectType;
+	resultClassInfo.m_ClassId = SVLongResultClassGuid;
+	resultClassInfo.m_ClassName = SvUl_SF::LoadString( IDS_OBJECTNAME_TABLEOBJECT_NUMBEROFROWS );
 	strTitle.LoadString( IDS_OBJECTNAME_RESULT );
-	resultClassInfo.ClassName += SV_TSTR_SPACE + strTitle;
+	resultClassInfo.m_ClassName += SV_TSTR_SPACE + strTitle;
 	// Construct the result
 	SVLongResultClass* pResult = ( SVLongResultClass * )resultClassInfo.Construct();
 	Add( pResult );

@@ -9,12 +9,14 @@
 //* .Check In Date   : $Date:   15 May 2014 13:45:42  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVObjectAppClass.h"
-#include "SVAnalyzer.h"
 #include "SVObjectLibrary/SVAnalyzerLevelCreateStruct.h"
-#include "SVInspectionProcess.h"
-#include "SVTool.h"
+#include "SVObjectLibrary/SVClsids.h"
+#include "SVObjectLibrary/SVObjectManagerClass.h"
+#include "ObjectInterfaces/IInspectionProcess.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -25,15 +27,15 @@ static char THIS_FILE[] = __FILE__;
 SV_IMPLEMENT_CLASS( SVObjectAppClass, SVObjectAppClassGuid )
 
 SVObjectAppClass::SVObjectAppClass(LPCSTR ObjectName)
-				  :SVObjectClass(ObjectName) 
+: SVObjectClass(ObjectName) 
 {
 	m_psvInspection = nullptr;
 	m_psvTool = nullptr;
 	m_psvAnalyzer = nullptr;
 }
 
-SVObjectAppClass::SVObjectAppClass(SVObjectClass* POwner, int StringResourceID)
-: SVObjectClass( POwner, StringResourceID ) 
+SVObjectAppClass::SVObjectAppClass(SVObjectClass* pOwner, int StringResourceID)
+: SVObjectClass( pOwner, StringResourceID ) 
 {
 	m_psvInspection = nullptr;
 	m_psvTool = nullptr;
@@ -48,11 +50,11 @@ SVObjectAppClass::~SVObjectAppClass()
 // This method is here so that this class can obtain access to and hold pointers for the
 // Inspection, Tool, and/or Analyzer (via UpdateConnections)
 ////////////////////////////////////////////////////////////////////////////////////////
-BOOL SVObjectAppClass::CreateObject(SVObjectLevelCreateStruct* PCreateStruct)
+BOOL SVObjectAppClass::CreateObject(SVObjectLevelCreateStruct* pCreateStruct)
 {
-	UpdateConnections( PCreateStruct );
+	UpdateConnections( pCreateStruct );
 	
-	BOOL l_bOk = SVObjectClass::CreateObject( PCreateStruct );
+	BOOL l_bOk = SVObjectClass::CreateObject( pCreateStruct );
 	
 	m_isCreated = l_bOk;
 	
@@ -68,22 +70,21 @@ void SVObjectAppClass::ConnectObject(const SVObjectLevelCreateStruct& rCreateStr
 	if( rCreateStruct.OwnerObjectInfo.PObject != this && rCreateStruct.OwnerObjectInfo.UniqueObjectID != GetUniqueObjectID() )
 	{
 		UpdateConnections( &rCreateStruct );
-	
+
 		SVObjectClass::ConnectObject( rCreateStruct );
 	}
 }
-
-SVInspectionProcess* SVObjectAppClass::GetInspection() const
+SVObjectClass* SVObjectAppClass::GetInspection() const
 {
 	return m_psvInspection;
 }
 
-SVToolClass *SVObjectAppClass::GetTool() const
+SVObjectClass* SVObjectAppClass::GetTool() const
 {
 	return m_psvTool;
 }
 
-SVAnalyzerClass *SVObjectAppClass::GetAnalyzer() const
+SVObjectClass* SVObjectAppClass::GetAnalyzer() const
 {
 	return m_psvAnalyzer;
 }
@@ -96,87 +97,88 @@ bool SVObjectAppClass::CreateChildObject(SvOi::IObjectClass& rChildObject, DWORD
 }
 #pragma endregion virtual methods (IObjectAppClass)
 
-bool SVObjectAppClass::CreateChildObject(SVObjectClass* pChildObject, DWORD context)
+bool SVObjectAppClass::CreateChildObject( SVObjectClass* pChildObject, DWORD context )
 {
 	if( IsCreated() && nullptr != pChildObject )
 	{
-		long l_LastIndex = 1;
-		SVInspectionProcess* pInspection = GetInspection();
+		long l_LastIndex = 0;
+		SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess*> (GetInspection());
 
 		if( nullptr != pInspection )
 		{
-			SVProductInfoStruct l_Product = pInspection->LastProductGet( SV_INSPECTION );
-
-			if( !( l_Product.empty() ) )
-			{
-				SVDataManagerHandle l_Handle;
-				l_Product.GetResultDataIndex( l_Handle );
-				l_LastIndex = l_Handle.GetIndex();
-			}
+			l_LastIndex = pInspection->GetLastIndex();
 		}
 
 		// Set first object depth...
 		pChildObject->SetObjectDepthWithIndex( m_objectDepth, l_LastIndex );
 		pChildObject->SetImageDepth( m_lImageDepth );
 
-		bool l_Return = createAllObjectsFromChild( *pChildObject );
+		bool Result = createAllObjectsFromChild( *pChildObject );
 
-		if( ( context & SVMFResetObject ) == SVMFResetObject )
+		if( SVMFResetObject == ( context & SVMFResetObject ) )
 		{
 			pChildObject->resetAllObjects(true, false);
 		}
 
-		if( ( context & SVMFSetDefaultInputs ) == SVMFSetDefaultInputs )
+		if( SVMFSetDefaultInputs == ( context & SVMFSetDefaultInputs ) )
 		{
-			GetInspection()->SetDefaultInputs();
+			pInspection->SetDefaultInputs();
 		}
 
-		if( ( context & SVMFResetInspection ) == SVMFResetInspection )
+		if( SVMFResetInspection == ( context & SVMFResetInspection ) )
 		{
 			GetInspection()->resetAllObjects(true, false);
 		}
 
-		return l_Return;
+		return Result;
 	}
 
 	return false;
 }
 
-void SVObjectAppClass::UpdateConnections( const SVObjectLevelCreateStruct* PCreateStruct )
+void SVObjectAppClass::UpdateConnections( const SVObjectLevelCreateStruct* pCreateStruct )
 {
-	m_psvAnalyzer = dynamic_cast<SVAnalyzerClass *>(this);
+	const SVObjectInfoStruct& rInfo = GetObjectInfo();
 
-	if( nullptr == m_psvAnalyzer )
+	if( SVAnalyzerObjectType == rInfo.ObjectTypeInfo.ObjectType )
 	{
-		const SVAnalyzerLevelCreateStruct *l_psvTemp = dynamic_cast<const SVAnalyzerLevelCreateStruct *>(PCreateStruct);
+		m_psvAnalyzer = this;
+	}
+	else
+	{
+		const SVAnalyzerLevelCreateStruct* l_psvTemp = dynamic_cast<const SVAnalyzerLevelCreateStruct *>(pCreateStruct);
 
 		if( nullptr != l_psvTemp )
 		{
-			m_psvAnalyzer = dynamic_cast<SVAnalyzerClass *>(l_psvTemp->AnalyzerObjectInfo.PObject);
+			m_psvAnalyzer = l_psvTemp->AnalyzerObjectInfo.PObject;
 		}
 	}
-	
-	m_psvTool = dynamic_cast<SVToolClass *>(this);
 
-	if( nullptr == m_psvTool )
+	if( SVToolObjectType == rInfo.ObjectTypeInfo.ObjectType )
 	{
-		const SVToolLevelCreateStruct *l_psvTemp = dynamic_cast<const SVToolLevelCreateStruct *>(PCreateStruct);
+		m_psvTool = this;
+	}
+	else
+	{
+		const SVToolLevelCreateStruct* l_psvTemp = dynamic_cast<const SVToolLevelCreateStruct *>(pCreateStruct);
 
 		if( nullptr != l_psvTemp )
 		{
-			m_psvTool = dynamic_cast<SVToolClass *>(l_psvTemp->ToolObjectInfo.PObject);
+			m_psvTool = l_psvTemp->ToolObjectInfo.PObject;
 		}
 	}
-	
-	m_psvInspection = dynamic_cast<SVInspectionProcess*> (this);
 
-	if( nullptr == m_psvInspection )
+	if( SVInspectionObjectType == rInfo.ObjectTypeInfo.ObjectType )
 	{
-		const SVInspectionLevelCreateStruct *l_psvTemp = dynamic_cast<const SVInspectionLevelCreateStruct *>(PCreateStruct);
+		m_psvInspection = this;
+	}
+	else
+	{
+		const SVInspectionLevelCreateStruct* l_psvTemp = dynamic_cast<const SVInspectionLevelCreateStruct *>(pCreateStruct);
 
 		if( nullptr != l_psvTemp )
 		{
-			m_psvInspection = dynamic_cast<SVInspectionProcess*> (l_psvTemp->InspectionObjectInfo.PObject);
+			m_psvInspection = l_psvTemp->InspectionObjectInfo.PObject;
 		}
 	}
 }
@@ -191,4 +193,5 @@ bool SVObjectAppClass::createAllObjectsFromChild( SVObjectClass& rChildObject )
 
 	return rChildObject.createAllObjects(createStruct);
 }
+
 

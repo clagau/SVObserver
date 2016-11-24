@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVTaskObjectInterfaceClass.h"
+#include "SVTaskObjectValueInterface.h"
 #pragma endregion Includes
 
 class SVPixelAnalyzerClass;
@@ -21,14 +21,14 @@ class SVToolClass;
 /////////////////////////////////////////////////////////////////////////////
 // SVPixelAnalyzerSetupClass dialog
 
-class SVPixelAnalyzerSetupClass : public CDialog, public SVTaskObjectInterfaceClass
+class SVPixelAnalyzerSetupClass : public CDialog, public SVTaskObjectValueInterface
 {
 // Construction
 public:
 	SVPixelAnalyzerSetupClass(SVPixelAnalyzerClass * apAnalyzer,
                               CWnd* pParent = nullptr);   // standard constructor
 	virtual ~SVPixelAnalyzerSetupClass();
-	virtual HRESULT SetInspectionData();
+	HRESULT SetInspectionData();
 
 // Dialog Data
 	//{{AFX_DATA(SVPixelAnalyzerSetupClass)

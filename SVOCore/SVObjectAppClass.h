@@ -14,11 +14,8 @@
 #pragma region Includes
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "ObjectInterfaces/IObjectAppClass.h"
+#include "SVOResource/resource.h"
 #pragma endregion Includes
-
-class SVInspectionProcess;
-class SVToolClass;
-class SVAnalyzerClass;
 
 class SVObjectAppClass : public SVObjectClass, public SvOi::IObjectAppClass
 {
@@ -27,14 +24,14 @@ class SVObjectAppClass : public SVObjectClass, public SvOi::IObjectAppClass
 public:
 	virtual ~SVObjectAppClass();
 	SVObjectAppClass( LPCSTR LPSZObjectName );
-	SVObjectAppClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVOBJECTAPPCLASS );
+	SVObjectAppClass( SVObjectClass* pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVOBJECTAPPCLASS );
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStruct ) override;
+	virtual BOOL CreateObject( SVObjectLevelCreateStruct* pCreateStruct ) override;
 	virtual void ConnectObject( const SVObjectLevelCreateStruct& rCreateStruct ) override;
 
-	SVInspectionProcess* GetInspection() const;
-	SVToolClass* GetTool() const;
-	SVAnalyzerClass* GetAnalyzer() const;
+	SVObjectClass* GetInspection() const;
+	SVObjectClass* GetTool() const;
+	SVObjectClass* GetAnalyzer() const;
 
 #pragma region virtual methods (IObjectAppClass)
 	virtual bool CreateChildObject(SvOi::IObjectClass& rChildObject, DWORD context) override;
@@ -52,8 +49,8 @@ protected:
 	virtual bool createAllObjectsFromChild( SVObjectClass& rChildObject ) override;
 
 private:
-	SVInspectionProcess* m_psvInspection;
-	SVToolClass* m_psvTool;
-	SVAnalyzerClass* m_psvAnalyzer;
+	SVObjectClass* m_psvInspection;
+	SVObjectClass* m_psvTool;
+	SVObjectClass* m_psvAnalyzer;
 };
 

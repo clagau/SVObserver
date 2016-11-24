@@ -21,6 +21,12 @@ namespace Seidenader
 		/// \returns bool
 		//************************************
 		bool isOkToEdit();
+
+		//************************************
+		/// Return the source image depth
+		/// \returns long
+		//************************************
+		long GetSourceImageDepth();
 	}
 }
 

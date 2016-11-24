@@ -151,9 +151,9 @@ void SVInt64ValueObjectClass::LocalInitialize()
 {
 	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVInt64ValueObjectType;
 	DefaultValue() = 0;
-	m_sLegacyScriptDefaultName = "Default";
-	m_sLegacyScriptArrayName = "Array";
-	m_strTypeName = "Integer64";
+	m_sLegacyScriptDefaultName = _T("Default");
+	m_sLegacyScriptArrayName = _T("Array");
+	SetTypeName( _T("Integer64") );
 
 	InitializeBuckets();
 }

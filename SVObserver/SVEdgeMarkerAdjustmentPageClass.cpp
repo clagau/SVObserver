@@ -481,7 +481,7 @@ HRESULT SVEdgeMarkerAdjustmentPageClass::SetInspectionData()
 
 		if( S_OK == l_hrOk )
 		{
-			l_hrOk = RunOnce( m_pCurrentAnalyzer->GetTool() );
+			l_hrOk = RunOnce( m_pCurrentAnalyzer->GetTool()->GetUniqueObjectID() );
 		}
 
 		if( S_OK != GetInspectionData() )

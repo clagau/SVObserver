@@ -156,7 +156,7 @@ HRESULT SVToolAdjustmentDialogLUTPageClass::SetInspectionData()
 
 		if( S_OK == l_hrOk )
 		{
-			l_hrOk = RunOnce( m_pTool );
+			l_hrOk = RunOnce( m_pTool->GetUniqueObjectID() );
 		}
 
 		UpdateData( FALSE );

@@ -103,6 +103,7 @@
 			// Image Subtypes:		
 			SVMainImageObjectType						= 0x00000001,
 			SVRGBMainImageObjectType					= 0x00000002,
+			SVCameraImageTemplateObjectType				= 0x00000003,
 
 			// System Subtypes:
 			SVMatroxSystemObjectType					= 0x00000005,

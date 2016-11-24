@@ -21,10 +21,10 @@
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 
-#include "SVDataBuffer.h"
-#include "SVImageClass.h"
+#include "SVOCore/SVDataBuffer.h"
+#include "SVOCore/SVImageClass.h"
 #include "SVInspectionProcess.h"
-#include "SVImageProcessingClass.h"
+#include "SVOCore/SVImageProcessingClass.h"
 #include "SVResultLong.h"
 #include "SVStatusLibrary/MessageManager.h"
 
@@ -416,11 +416,11 @@ void SVHistogramAnalyzerClass::AddResult(const std::pair<GUID, DWORD> & p)
 	SVLongResultClass * pAnalyzerResult;
 
 	l_ifceInfo.EmbeddedID = p.first;
-	l_resultInfo.DesiredInputInterface.Add( l_ifceInfo );
-	l_resultInfo.ObjectTypeInfo.ObjectType = SVResultObjectType;
-	l_resultInfo.ObjectTypeInfo.SubType	= SVResultLongObjectType;
-	l_resultInfo.ClassId = SVLongResultClassGuid;
-	l_resultInfo.ClassName.LoadString(p.second);
+	l_resultInfo.m_DesiredInputInterface.Add( l_ifceInfo );
+	l_resultInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
+	l_resultInfo.m_ObjectTypeInfo.SubType	= SVResultLongObjectType;
+	l_resultInfo.m_ClassId = SVLongResultClassGuid;
+	l_resultInfo.m_ClassName = SvUl_SF::LoadString(p.second);
 
 	pAnalyzerResult = dynamic_cast<SVLongResultClass *>(l_resultInfo.Construct());
 
@@ -524,7 +524,7 @@ BOOL SVHistogramAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateS
 		svData.Length = msvlHistValueArraySize;
 		svData.Type = SVDataBufferInfoClass::SVHistResult;
 		svData.HBuffer.milResult = msvHistResultID;
-		if ( S_OK == SVImageProcessingClass::Instance().CreateDataBuffer( &svData )  )
+		if ( S_OK == SVImageProcessingClass::CreateDataBuffer( &svData )  )
 		{
 			msvHistResultID = svData.HBuffer.milResult;
 		}
@@ -598,7 +598,7 @@ BOOL SVHistogramAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateS
 
 void SVHistogramAnalyzerClass::DisconnectImages()
 {
-   GetInspection()->RemoveImage(&m_histogramImage);
+   dynamic_cast<SVInspectionProcess*>(GetInspection())->RemoveImage(&m_histogramImage);
 }
 
 BOOL SVHistogramAnalyzerClass::CloseObject()

@@ -846,8 +846,7 @@ HRESULT SVVisionProcessorHelper::GetObjectDefinition( const SVObjectClass& p_rOb
 		//If null we assume its an image
 		if( nullptr != l_pValueObject)
 		{
-			l_pValueObject->GetTypeName(l_String);
-			p_rDataDef.m_Type = l_String;
+			p_rDataDef.m_Type = l_pValueObject->GetTypeName();
 		}
 		else
 		{
@@ -892,7 +891,7 @@ HRESULT SVVisionProcessorHelper::GetObjectDefinition( const SVObjectClass& p_rOb
 			const SVImageClass* l_pImage = dynamic_cast<const SVImageClass*> (&p_rObj);
 			if(nullptr != l_pImage)
 			{
-				SVToolClass* l_pTool = l_pImage->GetTool();
+				SVToolClass* l_pTool = dynamic_cast<SVToolClass*>(l_pImage->GetTool());
 				if( nullptr != l_pTool )
 				{
 					SVStaticStringValueObjectClass* l_pSourceNames = l_pTool->GetInputImageNames();

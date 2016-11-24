@@ -46,7 +46,7 @@ SVMainImageClass::~SVMainImageClass()
 
 BOOL SVMainImageClass::SetImageHandleIndex( SVImageIndexStruct svIndex )
 {
-	BOOL bOk = TRUE;
+	bool Result( true );
 
 	m_CurrentIndex = svIndex;
 
@@ -56,13 +56,13 @@ BOOL SVMainImageClass::SetImageHandleIndex( SVImageIndexStruct svIndex )
 	{
 		if( nullptr != l_Iter->second.m_pImageHandles )
 		{
-			bOk &= l_Iter->second.m_pImageHandles->SetCurrentIndex( svIndex.m_CameraDMIndexHandle );
+			Result &= l_Iter->second.m_pImageHandles->SetCurrentIndex( svIndex.m_CameraDMIndexHandle );
 		}
 
 		++l_Iter;
 	}
 	
-	return bOk;
+	return Result;
 }
 
 BOOL SVMainImageClass::CopyImageTo( SVImageIndexStruct svIndex )

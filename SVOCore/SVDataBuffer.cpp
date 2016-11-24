@@ -13,8 +13,8 @@
 #include "stdafx.h"
 #include "SVImageProcessingClass.h"
 #include "SVDataBuffer.h"
+#include "SVObjectLibrary/SVClsIds.h"
 #include "SVOMFCLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
-
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -23,27 +23,30 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-SVDataBufferInfoClass::SVDataBufferInfoClass()
-: POwnerTool(nullptr)
-, Length(0L)
-, Type(0L)
+SVDataBufferInfoClass::SVDataBufferInfoClass() : 
+ pOwnerTool( nullptr )
+,Length(0L)
+,Type(0L)
 {
 }
 
-SVDataBufferInfoClass::SVDataBufferInfoClass( const SVDataBufferInfoClass& S2 )
+SVDataBufferInfoClass::SVDataBufferInfoClass( const SVDataBufferInfoClass& rRhs )
 {
-	POwnerTool	= S2.POwnerTool;
-	Length		= S2.Length;
-	Type		= S2.Type;
-	HBuffer		= S2.HBuffer;
+	pOwnerTool	= rRhs.pOwnerTool;
+	Length		= rRhs.Length;
+	Type		= rRhs.Type;
+	HBuffer		= rRhs.HBuffer;
 }
 
-SVDataBufferInfoClass SVDataBufferInfoClass::operator=( SVDataBufferInfoClass& S2 )
+SVDataBufferInfoClass SVDataBufferInfoClass::operator=( SVDataBufferInfoClass& rRhs )
 {
-	POwnerTool	= S2.POwnerTool;
-	Length		= S2.Length;
-	Type		= S2.Type;
-	HBuffer		= S2.HBuffer;
+	if( &rRhs != this )
+	{
+		pOwnerTool	= rRhs.pOwnerTool;
+		Length		= rRhs.Length;
+		Type		= rRhs.Type;
+		HBuffer		= rRhs.HBuffer;
+	}
 
 	return ( *this );
 }
@@ -72,12 +75,11 @@ BOOL SVDataBufferClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructur
 
 	if( SVObjectAppClass::CreateObject( PCreateStructure ) )
 	{
-		if( dataInfo.Type != 0 && 0 < dataInfo.Length )
+		if( m_DataInfo.Type != 0 && 0 < m_DataInfo.Length )
 		{
-			dataInfo.POwnerTool = GetTool();
-
+			m_DataInfo.pOwnerTool = GetTool();
 			// Create data buffer...
-			bOk = S_OK == SVImageProcessingClass::Instance().CreateDataBuffer(&dataInfo);
+			bOk = S_OK == SVImageProcessingClass::CreateDataBuffer(&m_DataInfo);
 		}
 	}
 	m_isCreated = bOk;
@@ -89,22 +91,23 @@ BOOL SVDataBufferClass::CloseObject()
 {
 	BOOL rc = SVObjectAppClass::CloseObject();
 
-	rc = (S_OK == SVImageProcessingClass::Instance().DestroyDataBuffer( &dataInfo ) ) && rc;
+	rc = (S_OK == SVImageProcessingClass::DestroyDataBuffer( &m_DataInfo ) ) && rc;
 
 	return rc;
 }
 
 BOOL SVDataBufferClass::Resize( int NewLength )
 {
-	return S_OK == SVImageProcessingClass::Instance().ResizeDataBuffer( &dataInfo, NewLength );
+	return S_OK == SVImageProcessingClass::ResizeDataBuffer( &m_DataInfo, NewLength );
 }
 
 SVDataBufferInfoClass& SVDataBufferClass::GetDataBufferInfo()
 {
-	return dataInfo;
+	return m_DataInfo;
 }
 
 SVDataBufferHandleStruct& SVDataBufferClass::GetDataBufferHandle()
 {
-	return dataInfo.HBuffer;
+	return m_DataInfo.HBuffer;
 }
+

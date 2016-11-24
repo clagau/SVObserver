@@ -10,10 +10,11 @@
 //******************************************************************************
 #pragma once
 #pragma region Includes
-#include "SVTaskObject.h"
 #include "SVImageLibrary/SVImageExtentClass.h"
 #include "SVCommandInspectionExtentUpdater.h"
 #pragma endregion Includes
+
+class SVTaskObjectClass;
 
 class SVGuiExtentUpdater
 {
@@ -29,7 +30,7 @@ public:
 	//! \param ForwardSize [in]
 	//! \returns HRESULT
 	//************************************
-	static HRESULT ForwardSizeAndPosition(SVTaskObjectClass* p_pTaskObject, SVCommandExtentResetModeEnum resetMode  ) ;
+	static HRESULT ForwardSizeAndPosition(SVTaskObjectClass* pTaskObject, SVCommandExtentResetModeEnum resetMode  ) ;
 
 private:
 	static const int TIMEOUT_FOR_SYNCHRONOUS_EXECUTE_IN_MS = 120000;

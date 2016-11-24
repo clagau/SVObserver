@@ -245,7 +245,7 @@ HRESULT SVSetupDialogManager::SVBarCodeAnalyzerClassSetupDialog( const SVGUID& p
 	
 	SVInspectionProcess* pInspection( nullptr );
 	
-	if( nullptr != l_pAnalyzer && nullptr != (pInspection = l_pAnalyzer->GetInspection()) )
+	if( nullptr != l_pAnalyzer && nullptr != (pInspection = dynamic_cast<SVInspectionProcess*>(l_pAnalyzer->GetInspection())) )
 	{
 		SVIPDoc* pIPDoc = TheSVObserverApp.GetIPDoc( pInspection->GetUniqueObjectID() );
 
@@ -327,8 +327,6 @@ HRESULT SVSetupDialogManager::SVBarCodeAnalyzerClassSetupDialog( const SVGUID& p
 				
 			try
 			{
-				SVToolClass *l_psvTool = l_pAnalyzer->GetTool();
-
 				pInspection->AddInputRequest( &l_pAnalyzer->msv_lBarCodeType, dlgProp.m_dlgBarCodeGeneral.GetBarCodeType() );
 				pInspection->AddInputRequest( &l_pAnalyzer->msv_dSpeed, dlgProp.m_dlgBarCodeGeneral.GetBarCodeSearchSpeed() );
 				pInspection->AddInputRequest( &l_pAnalyzer->msv_dOrientation, dlgProp.m_dlgBarCodeGeneral.GetOrientation() );
@@ -363,9 +361,10 @@ HRESULT SVSetupDialogManager::SVBarCodeAnalyzerClassSetupDialog( const SVGUID& p
 
 				SVGUID l_ToolId;
 
-				if( nullptr != l_psvTool )
+				SVObjectClass* pTool = l_pAnalyzer->GetTool();
+				if( nullptr != pTool )
 				{
-					l_ToolId = l_psvTool->GetUniqueObjectID();
+					l_ToolId = pTool->GetUniqueObjectID();
 				}
 
 				GuiCmd::InspectionRunOncePtr l_CommandPtr = new GuiCmd::InspectionRunOnce( pInspection->GetUniqueObjectID(), l_ToolId );
@@ -403,7 +402,7 @@ HRESULT SVSetupDialogManager::SVBlobAnalyzerClassSetupDialog( const SVGUID& p_rO
 			{
 				l_pIPDoc->SetModifiedFlag();
 
-				SVBlobAnalyzeFeatureDialogClass dlg( l_pAnalyzer->GetTool(), l_pAnalyzer, l_pIPDoc, PParentWnd );
+				SVBlobAnalyzeFeatureDialogClass dlg( dynamic_cast<SVToolClass*>(l_pAnalyzer->GetTool()), l_pAnalyzer, l_pIPDoc, PParentWnd );
 
 				if ( IDOK == dlg.DoModal() )
 				{
@@ -451,7 +450,7 @@ HRESULT SVSetupDialogManager::SVColorToolClassSetupDialog( const SVGUID& p_rObje
 		// Get Complete Name up to the tool level...
 		strTitle = l_pTool->GetCompleteObjectNameToObjectType( nullptr, SVToolObjectType ) + _T( " " ) + strTitle;
 
-		SVInspectionProcess* pInspection = l_pTool->GetInspection();
+		SVObjectClass* pInspection( l_pTool->GetInspection() );
 		
 		if( nullptr != pInspection )
 		{
@@ -552,7 +551,7 @@ HRESULT SVSetupDialogManager::SVLinearAnalyzerClassSetupDialog( const SVGUID& p_
 	
 	SVInspectionProcess* pInspection( nullptr );
 
-	if( nullptr != l_pAnalyzer && nullptr != (pInspection = l_pAnalyzer->GetInspection()) )
+	if( nullptr != l_pAnalyzer && nullptr != (pInspection = dynamic_cast<SVInspectionProcess*>(l_pAnalyzer->GetInspection())) )
 	{
 		CString strTitle;
 		strTitle.LoadString( IDS_ADJUSTMENT_STRING );
@@ -686,20 +685,18 @@ HRESULT SVSetupDialogManager::SVLinearAnalyzerClassSetupDialog( const SVGUID& p_
 			{
 				if( nullptr != l_pAnalyzer->m_svShowAllEdgeAOverlays.GetOwner() )
 				{
-					l_pAnalyzer->GetInspection()->AddInputRequest( &l_pAnalyzer->m_svShowAllEdgeAOverlays, l_bShowA );
+					pInspection->AddInputRequest( &l_pAnalyzer->m_svShowAllEdgeAOverlays, l_bShowA );
 				}
 
 				if( nullptr != l_pAnalyzer->m_svShowAllEdgeBOverlays.GetOwner() )
 				{
-					l_pAnalyzer->GetInspection()->AddInputRequest( &l_pAnalyzer->m_svShowAllEdgeBOverlays, l_bShowB );
+					pInspection->AddInputRequest( &l_pAnalyzer->m_svShowAllEdgeBOverlays, l_bShowB );
 				}
 
-				l_pAnalyzer->GetInspection()->AddInputRequestMarker();
-
-				SVToolClass* pTool = l_pAnalyzer->GetTool();
+				pInspection->AddInputRequestMarker();
 
 				SVGUID l_ToolId;
-
+				SVObjectClass* pTool = l_pAnalyzer->GetTool();
 				if( nullptr != pTool )
 				{
 					l_ToolId = pTool->GetUniqueObjectID();
@@ -767,7 +764,7 @@ HRESULT SVSetupDialogManager::SVOCVAnalyzerClassSetupDialog( const SVGUID& p_rOb
 	if( nullptr != l_pAnalyzer )
 	{
 		SVOCVAnalyzeResultClass* pOCVResult = ( SVOCVAnalyzeResultClass* ) l_pAnalyzer->GetResultObject();
-		SVInspectionProcess* pInspection = l_pAnalyzer->GetInspection();
+		SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(l_pAnalyzer->GetInspection());
 		
 		if( nullptr != pOCVResult && nullptr != pInspection )
 		{
@@ -871,7 +868,7 @@ HRESULT SVSetupDialogManager::SVPatternAnalyzerClassSetupDialog( const SVGUID& p
 	
 	SVInspectionProcess* pInspection( nullptr );
 
-	if( nullptr != l_pAnalyzer && nullptr != (pInspection = l_pAnalyzer->GetInspection()) )
+	if( nullptr != l_pAnalyzer && nullptr != (pInspection = dynamic_cast<SVInspectionProcess*>(l_pAnalyzer->GetInspection())) )
 	{
 		double dParam;
 		long lParam;
@@ -1007,10 +1004,8 @@ HRESULT SVSetupDialogManager::SVPatternAnalyzerClassSetupDialog( const SVGUID& p
 
 				pInspection->AddInputRequestMarker();
 
-				SVToolClass* pTool = l_pAnalyzer->GetTool();
-
 				SVGUID l_ToolId;
-
+				SVObjectClass* pTool = l_pAnalyzer->GetTool();
 				if( nullptr != pTool )
 				{
 					l_ToolId = pTool->GetUniqueObjectID();

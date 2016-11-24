@@ -225,10 +225,10 @@ void SVDoubleValueObjectClass::LocalInitialize()
 	DefaultValue() = 0.0;
 	if ( m_sLegacyScriptDefaultName.IsEmpty() )
 	{
-		m_sLegacyScriptDefaultName = "dDefault";
-		m_sLegacyScriptArrayName = "pDArray";
+		m_sLegacyScriptDefaultName = _T("dDefault");
+		m_sLegacyScriptArrayName = _T("pDArray");
 	}
-	m_strTypeName = "Decimal";
+	SetTypeName( _T("Decimal") );
 	InitializeBuckets();
 }
 

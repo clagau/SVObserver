@@ -12,10 +12,11 @@
 #include "stdafx.h"
 #include "SVLinearEdgeProcessingClass.h"
 #include "SVRunControlLibrary/SVRunControlLibrary.h"
-#include "SVGlobal.h"
-#include "SVImageClass.h"
+#include "ObjectInterfaces/GlobalConst.h"
+#include "SVOCore/SVImageClass.h"
 #include "SVTool.h"
 #include "SVAnalyzer.h"
+#include "SVGlobal.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -56,10 +57,10 @@ SVLinearEdgeProcessingClass::SVLinearEdgeProcessingClass( SVObjectClass* POwner,
 	m_dwMaxThreshold = 0;
 	m_dwColorNumber = 0;
 
-	m_svDirection.SetEnumTypes( g_strDirectionEnums );
-	m_svPolarisation.SetEnumTypes( g_strPolarisationEnums );
-	m_svEdgeSelect.SetEnumTypes( g_strEdgeSelectEnums );
-	m_svPosition.SetEnumTypes( g_strPositionEnums );
+	m_svDirection.SetEnumTypes( cDirectionEnums );
+	m_svPolarisation.SetEnumTypes( cPolarisationEnums );
+	m_svEdgeSelect.SetEnumTypes( cEdgeSelectEnums );
+	m_svPosition.SetEnumTypes( cPositionEnums );
 
 	m_svDirection.SetDefaultValue(SV_HEAD_TO_TAIL_DIRECTION,TRUE);
 	m_svPolarisation.SetDefaultValue(SV_ANY_POLARISATION,TRUE);
@@ -74,7 +75,7 @@ SVLinearEdgeProcessingClass::SVLinearEdgeProcessingClass( SVObjectClass* POwner,
 	m_svUseLowerThresholdMaxMinusPercentDiff.SetDefaultValue(FALSE,TRUE);
 	m_svUseLowerThresholdMaxMinusOffset.SetDefaultValue(FALSE,TRUE);
 	m_svUseLowerThresholdMinPlusOffset.SetDefaultValue(FALSE,TRUE);
-	m_svLowerThresholdValue.SetDefaultValue(SV_DEFAULT_TOOL_LOWER_TRESH,TRUE);
+	m_svLowerThresholdValue.SetDefaultValue(SvOi::cDefaultToolLowerThreshold,TRUE);
 	m_svLowerMaxMinusPercentDiffValue.SetDefaultValue(0,TRUE);
 	m_svLowerMaxMinusOffsetValue.SetDefaultValue(0,TRUE);
 	m_svLowerMinPlusOffsetValue.SetDefaultValue(0,TRUE);
@@ -83,7 +84,7 @@ SVLinearEdgeProcessingClass::SVLinearEdgeProcessingClass( SVObjectClass* POwner,
 	m_svUseUpperThresholdMaxMinusPercentDiff.SetDefaultValue(FALSE,TRUE);
 	m_svUseUpperThresholdMaxMinusOffset.SetDefaultValue(FALSE,TRUE);
 	m_svUseUpperThresholdMinPlusOffset.SetDefaultValue(FALSE,TRUE);
-	m_svUpperThresholdValue.SetDefaultValue(SV_DEFAULT_TOOL_UPPER_TRESH,TRUE);
+	m_svUpperThresholdValue.SetDefaultValue(SvOi::cDefaultToolUpperThreshold,TRUE);
 	m_svUpperMaxMinusPercentDiffValue.SetDefaultValue(0,TRUE);
 	m_svUpperMaxMinusOffsetValue.SetDefaultValue(0,TRUE);
 	m_svUpperMinPlusOffsetValue.SetDefaultValue(0,TRUE);
@@ -487,8 +488,9 @@ HRESULT SVLinearEdgeProcessingClass::GetPointFromDistance( double p_dDistance, S
 
 	HRESULT l_hrOk = p_rsvPoint.Initialize();
 
-	if( nullptr == GetAnalyzer() ||
-		S_OK != GetAnalyzer()->GetImageExtent( l_svExtents ) ||
+	SVAnalyzerClass* pAnalyzer = dynamic_cast<SVAnalyzerClass*>(GetAnalyzer());
+	if( nullptr == pAnalyzer ||
+		S_OK != pAnalyzer->GetImageExtent( l_svExtents ) ||
 		S_OK != l_svExtents.GetOutputRectangle( l_oRect ) )
 	{
 		l_hrOk = S_FALSE;
@@ -513,8 +515,9 @@ HRESULT SVLinearEdgeProcessingClass::GetEdgeOverlayFromDistance( double p_dDista
 
 	HRESULT l_hrOk = p_rsvLine.Initialize();
 
-	if( nullptr == GetAnalyzer() ||
-		S_OK != GetAnalyzer()->GetImageExtent( l_svExtents ) ||
+	SVAnalyzerClass* pAnalyzer = dynamic_cast<SVAnalyzerClass*>(GetAnalyzer());
+	if( nullptr == pAnalyzer ||
+		S_OK != pAnalyzer->GetImageExtent( l_svExtents ) ||
 		S_OK != l_svExtents.GetOutputRectangle( l_oRect ) )
 	{
 		l_hrOk = S_FALSE;
@@ -555,8 +558,9 @@ HRESULT SVLinearEdgeProcessingClass::GetOutputEdgePoint( SVExtentPointStruct &p_
 
 	HRESULT l_hrOk = p_rsvPoint.Initialize();
 
-	if( nullptr == GetAnalyzer() ||
-		S_OK != GetAnalyzer()->GetImageExtent( l_svExtents ) ||
+	SVAnalyzerClass* pAnalyzer = dynamic_cast<SVAnalyzerClass*>(GetAnalyzer());
+	if( nullptr == pAnalyzer ||
+		S_OK != pAnalyzer->GetImageExtent( l_svExtents ) ||
 		S_OK != l_svExtents.GetOutputRectangle( l_oRect ) ||
 		( S_OK != m_svLowerThresholdValue.GetValue( l_ulLower ) ) ||
 		( S_OK != m_svUpperThresholdValue.GetValue( l_ulUpper ) ) )
@@ -590,9 +594,10 @@ HRESULT SVLinearEdgeProcessingClass::GetThresholdBarsOverlay( SVExtentMultiLineS
 	unsigned long l_ulLower = 0;
 
 	HRESULT l_hrOk = p_rsvMiltiLine.Initialize();
-		
-	if( nullptr == GetAnalyzer() ||
-		S_OK != GetAnalyzer()->GetImageExtent( l_svExtents ) ||
+
+	SVAnalyzerClass* pAnalyzer = dynamic_cast<SVAnalyzerClass*>(GetAnalyzer());
+	if( nullptr == pAnalyzer ||
+		S_OK != pAnalyzer->GetImageExtent( l_svExtents ) ||
 		S_OK != l_svExtents.GetOutputRectangle( l_oRect ) ||
 		( S_OK != m_svLowerThresholdValue.GetValue( l_ulLower ) ) ||
 		( S_OK != m_svUpperThresholdValue.GetValue( l_ulUpper ) ) )
@@ -660,9 +665,10 @@ HRESULT SVLinearEdgeProcessingClass::GetHistogramOverlay( SVExtentLineStruct &p_
 	std::vector<double> l_svData;
 
 	HRESULT l_hrOk = p_rsvLine.Initialize();
-		
-	if( nullptr == GetAnalyzer() ||
-		S_OK != GetAnalyzer()->GetImageExtent( l_svExtents ) ||
+
+	SVAnalyzerClass* pAnalyzer = dynamic_cast<SVAnalyzerClass*>(GetAnalyzer());
+	if( nullptr == pAnalyzer ||
+		S_OK != pAnalyzer->GetImageExtent( l_svExtents ) ||
 		S_OK != l_svExtents.GetOutputRectangle( l_oRect ) ||
 		nullptr == GetInputLinearData()  ||
 		(S_OK != GetInputLinearData()->GetValues( l_svData )) )
@@ -702,9 +708,10 @@ HRESULT SVLinearEdgeProcessingClass::GetEdgesOverlay( SVExtentMultiLineStruct &p
 	HRESULT l_hrOk = p_rsvMiltiLine.Initialize();
 
 	std::vector<double> l_svEdges;
-	
-	if( nullptr == GetAnalyzer() ||
-		S_OK != GetAnalyzer()->GetImageExtent( l_svExtents ) ||
+
+	SVAnalyzerClass* pAnalyzer = dynamic_cast<SVAnalyzerClass*>(GetAnalyzer());
+	if( nullptr == pAnalyzer ||
+		S_OK != pAnalyzer->GetImageExtent( l_svExtents ) ||
 		S_OK != l_svExtents.GetOutputRectangle( l_oRect ) ||
 		 ( S_OK != m_svLinearEdges.GetValues( l_svEdges ) ) )
 	{
@@ -775,8 +782,9 @@ HRESULT SVLinearEdgeProcessingClass::GetSelectedEdgeOverlay( SVExtentLineStruct 
 
 	HRESULT l_hrOk = p_rsvLine.Initialize();
 
-	if( nullptr == GetAnalyzer() ||
-		S_OK != GetAnalyzer()->GetImageExtent( l_svExtents ) ||
+	SVAnalyzerClass* pAnalyzer = dynamic_cast<SVAnalyzerClass*>(GetAnalyzer());
+	if( nullptr == pAnalyzer ||
+		S_OK != pAnalyzer->GetImageExtent( l_svExtents ) ||
 		S_OK != l_svExtents.GetOutputRectangle( l_oRect ) ||
 		S_OK != GetOutputEdgeDistance( l_dDistance ) )
 	{

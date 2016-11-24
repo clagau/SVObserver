@@ -11,6 +11,7 @@
 #include "IObjectClass.h"
 #include "IValueObject.h"
 #include "ISelectorItemVector.h"
+#include "SVInterfaceList.h"
 #include "SVObjectTypeInfoStruct.h"
 #include "DependencyList.h"
 #include "SVStatusLibrary\MessageContainer.h"
@@ -28,17 +29,6 @@ namespace Seidenader
 		{
 		public:
 			virtual ~ITaskObject() {}
-
-			/**********
-				The method add a input request marker to the IP.
-			***********/
-			virtual HRESULT AddInputRequestMarker() = 0;
-
-			/**********
-				The method start the run of the inspection (or a specified tool) once.
-				/param pTool <in> Tool object which should run. If empty it use the whole inspection.
-			***********/
-			virtual HRESULT RunOnce(IObjectClass* pTool = nullptr) = 0;
 
 			//************************************
 			/// Return the output list of this task object, filtered by functor.
@@ -90,6 +80,14 @@ namespace Seidenader
 			/// \param shouldSet [in] If true, value will be set if validation was successfully.
 			/// \returns SvStl::MessageContainerVector A list of error messages. This list is empty if all validations and set was successfully.
 			virtual SvStl::MessageContainerVector validateAndSetEmmeddedValues(const SetValuePairVector& valueVector, bool shouldSet) = 0;
+
+			// Resolve desired inputs, called on Construction from Class Factory
+			/// \param rDesiredInputs [in] List of desired inputs.
+			virtual void ResolveDesiredInputs(const SvOi::SVInterfaceList& rDesiredInputs) = 0;
+
+			// get the first task error message (usually from validation or run once)
+			// This is temporary, in the future all the TaskObject error messages will be retrieved
+			virtual SvStl::MessageContainer getFirstTaskMessage() const = 0;
 		};
 	}
 }

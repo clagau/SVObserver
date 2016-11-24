@@ -16,7 +16,7 @@
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
 #include "SVObjectLibrary/SVAnalyzerLevelCreateStruct.h"
 
-#include "SVGlobal.h"
+#include "ObjectInterfaces/GlobalConst.h"
 #include "SVTool.h"
 #include "SVTransformationTool.h"
 
@@ -75,8 +75,8 @@ SVImageTransformClass::SVImageTransformClass( SVObjectClass* POwner, int StringR
 	// Set Embedded defaults
 	m_useExtentsOnly.SetDefaultValue( FALSE, TRUE );
 
-	m_extentWidth.SetDefaultValue( SV_DEFAULT_WINDOWTOOL_WIDTH, TRUE );
-	m_extentHeight.SetDefaultValue( SV_DEFAULT_WINDOWTOOL_HEIGHT, TRUE );
+	m_extentWidth.SetDefaultValue( SvOi::cDefaultWindowToolWidth, TRUE );
+	m_extentHeight.SetDefaultValue( SvOi::cDefaultWindowToolHeight, TRUE );
 
 	m_outputImageObject.InitializeImage( SVImageTypePhysical );
 
@@ -96,15 +96,16 @@ BOOL SVImageTransformClass::CreateObject( SVObjectLevelCreateStruct* PCreateStru
 {
 	BOOL l_bOk = SVTransformClass::CreateObject( PCreateStructure );
 
-	l_bOk = l_bOk && nullptr != GetTool();
+	SVToolClass* pTool = dynamic_cast<SVToolClass*>(GetTool());
+	l_bOk = l_bOk && nullptr != pTool;
 
-	l_bOk = l_bOk && S_OK == GetTool()->SetImageExtentProperty( SVExtentPropertyWidth, &m_extentWidth );
-	l_bOk = l_bOk && S_OK == GetTool()->SetImageExtentProperty( SVExtentPropertyHeight, &m_extentHeight );
-	l_bOk = l_bOk && S_OK == GetTool()->SetImageExtentProperty( SVExtentPropertyTranslationOffsetX, &m_extentDisplacementX );
-	l_bOk = l_bOk && S_OK == GetTool()->SetImageExtentProperty( SVExtentPropertyTranslationOffsetY, &m_extentDisplacementY );
-	l_bOk = l_bOk && S_OK == GetTool()->SetImageExtentProperty( SVExtentPropertyPositionPointX, &m_extentSourceX );
-	l_bOk = l_bOk && S_OK == GetTool()->SetImageExtentProperty( SVExtentPropertyPositionPointY, &m_extentSourceY );
-	l_bOk = l_bOk && S_OK == GetTool()->SetImageExtentProperty( SVExtentPropertyRotationAngle, &m_extentRotationAngle );
+	l_bOk = l_bOk && S_OK == pTool->SetImageExtentProperty( SVExtentPropertyWidth, &m_extentWidth );
+	l_bOk = l_bOk && S_OK == pTool->SetImageExtentProperty( SVExtentPropertyHeight, &m_extentHeight );
+	l_bOk = l_bOk && S_OK == pTool->SetImageExtentProperty( SVExtentPropertyTranslationOffsetX, &m_extentDisplacementX );
+	l_bOk = l_bOk && S_OK == pTool->SetImageExtentProperty( SVExtentPropertyTranslationOffsetY, &m_extentDisplacementY );
+	l_bOk = l_bOk && S_OK == pTool->SetImageExtentProperty( SVExtentPropertyPositionPointX, &m_extentSourceX );
+	l_bOk = l_bOk && S_OK == pTool->SetImageExtentProperty( SVExtentPropertyPositionPointY, &m_extentSourceY );
+	l_bOk = l_bOk && S_OK == pTool->SetImageExtentProperty( SVExtentPropertyRotationAngle, &m_extentRotationAngle );
 
 	l_bOk = l_bOk && S_OK == UpdateTransformData( 1 );
 
@@ -330,7 +331,7 @@ HRESULT SVImageTransformClass::UpdateTransformData( long p_lIndex )
 	HRESULT l_hrOk = S_OK;
 
 	SVImageClass* l_psvInputImage = getInputImage();
-	SVToolClass* l_psvTool = GetTool();
+	SVToolClass* l_psvTool = dynamic_cast<SVToolClass*>(GetTool());
 
 	if( nullptr != l_psvInputImage && nullptr != l_psvTool )
 	{

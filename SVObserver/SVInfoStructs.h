@@ -22,6 +22,7 @@
 #include "SVDataManagerLibrary/SVDataManagerHandle.h"
 #include "SVImageLibrary/SVImageInfoClass.h"
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
+#include "SVOCore/SVCameraInfoStruct.h"
 #include "SVRunControlLibrary/SVImageIndexStruct.h"
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVUtilityLibrary/SVSharedPtr.h"
@@ -147,46 +148,6 @@ struct SVPPQInfoStruct
 	SVIOEntryStructVector m_InputData;
 };
 
-
-struct SVCameraInfoStruct 
-{
-	SVCameraInfoStruct();
-	SVCameraInfoStruct( const SVCameraInfoStruct &p_rsvData );
-	virtual ~SVCameraInfoStruct();
-
-	const SVCameraInfoStruct &operator=( const SVCameraInfoStruct &p_rsvData );
-
-	HRESULT Assign( const SVCameraInfoStruct& p_rsvObject, SVDataManagerLockTypeEnum p_LockType );
-	HRESULT Assign( SVClock::SVTimeStamp p_StartFrameTS, SVClock::SVTimeStamp p_EndFrameTS, const SVDataManagerHandle& p_rIndexHandle, SVDataManagerLockTypeEnum p_LockType );
-
-	void Reset();
-	void ClearInfo();
-	void ClearCameraInfo();
-
-	HRESULT GetNextAvailableIndexes( SVDataManagerLockTypeEnum p_LockType );
-
-	long GetIndex() const;
-
-	const SVDataManagerHandle& GetSourceImageDMIndexHandle() const;
-
-	SVVirtualCamera* pCamera;
-
-	SVClock::SVTimeStamp m_StartFrameTimeStamp;
-	SVClock::SVTimeStamp m_EndFrameTimeStamp;
-	SVClock::SVTimeStamp m_CallbackTimeStamp;
-
-protected:
-	void ClearIndexes();
-
-	SVDataManagerHandle m_SourceImageDMIndexHandle;
-
-};
-
-typedef std::vector< SVCameraInfoStruct > SVStdVectorSVCameraInfoStruct;
-typedef std::map< SVVirtualCamera*, SVCameraInfoStruct > SVStdMapSVVirtualCameraPtrSVCameraInfoStruct;
-typedef std::map< GUID, SVCameraInfoStruct > SVGUIDSVCameraInfoStructMap;
-
-
 struct SVInspectionInfoStruct 
 {
 	SVInspectionInfoStruct();
@@ -277,7 +238,7 @@ struct SVProductInfoStruct
 	SVOutputsInfoStruct oOutputsInfo;
 	SVPPQInfoStruct oPPQInfo;
 
-	SVStdMapSVVirtualCameraPtrSVCameraInfoStruct m_svCameraInfos;
+	SVGuidSVCameraInfoStructMap m_svCameraInfos;
 	SVGUIDSVInspectionInfoStructMap	m_svInspectionInfos;
 	long m_lastInspectedSlot; // Shared Memory
 

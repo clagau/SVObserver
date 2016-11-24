@@ -16,14 +16,6 @@
 #include "SVGlobalHandles.h"
 #pragma endregion Includes
 
-class SVToolClass;
-class SVIPDoc;
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : SVDataBufferInfoClass 
-// -----------------------------------------------------------------------------
-// .Description : 
-////////////////////////////////////////////////////////////////////////////////
 class SVDataBufferInfoClass
 {
 public:
@@ -31,7 +23,7 @@ public:
 	SVDataBufferInfoClass( const SVDataBufferInfoClass& S2 );
 	SVDataBufferInfoClass operator=( SVDataBufferInfoClass& S2 );
 
-	SVToolClass*				POwnerTool;
+	SVObjectClass				*pOwnerTool;
 	long						Length;
 	DWORD						Type;
 	SVDataBufferHandleStruct	HBuffer;
@@ -59,7 +51,7 @@ class SVDataBufferClass : public SVObjectAppClass
 	SV_DECLARE_CLASS( SVDataBufferClass );
 
 public:
-	SVDataBufferClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVDATABUFFER );
+	SVDataBufferClass( SVObjectClass* pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVDATABUFFER );
 	virtual ~SVDataBufferClass();
 
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
@@ -72,5 +64,5 @@ public:
 protected:
 	void init();
 
-	SVDataBufferInfoClass dataInfo;
+	SVDataBufferInfoClass m_DataInfo;
 };

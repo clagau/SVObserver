@@ -24,7 +24,7 @@
 #include "SVGlobal.h"
 #include "SVInspectionProcess.h"
 #include "SVRange.h"
-#include "SVTaskObject.h"
+#include "SVOCore/SVTaskObject.h"
 #include "SVTool.h"
 #include "SVToolSet.h"
 #include "SVValueObjectLibrary/BasicValueObject.h"
@@ -476,7 +476,6 @@ HRESULT SVExternalToolTask::Initialize(	SVDllLoadLibraryCallback fnNotify )
 			m_Data.m_aInputValueDefinitions.resize(m_Data.m_lNumInputValues);
 
 			SVObjectClass* pObject = nullptr;
-			SVInspectionProcess* pInspection = GetInspection();
 
 			for ( i = 0 ; i < m_Data.m_lNumInputValues ; i++)
 			{
@@ -689,10 +688,10 @@ HRESULT SVExternalToolTask::Initialize(	SVDllLoadLibraryCallback fnNotify )
 	if( S_OK == hr )
 	{
 		SVImageClass* l_psvOutput = GetResultImage( 0 );
-
-		if( nullptr != GetTool() && nullptr != l_psvOutput )
+		SVToolClass* pTool = dynamic_cast<SVToolClass*>(GetTool());
+		if( nullptr != pTool && nullptr != l_psvOutput )
 		{
-			hr = GetTool()->UpdateOffsetData( l_psvOutput );
+			hr = pTool->UpdateOffsetData( l_psvOutput );
 		}
 	}
 
@@ -1245,7 +1244,6 @@ HRESULT SVExternalToolTask::SetCancelData(SVCancelData* pCancelData)
 
 		SVToolClass* pTool = dynamic_cast <SVToolClass*> (GetAncestor( SVToolObjectType ));
 		// Reset all objects again...
-		SVToolSetClass* pToolSet = dynamic_cast<SVToolSetClass*> (GetAncestor( SVToolSetObjectType ));
 		if (nullptr != pTool)
 		{
 			pTool->resetAllObjects(true, false);
@@ -1419,14 +1417,14 @@ HRESULT SVExternalToolTask::AllocateResult (int iIndex)
 		
 		// Declare Input Interface of Result...
 		interfaceInfo.EmbeddedID = m_Data.m_aResultObjects[iIndex].GetEmbeddedID();
-		resultClassInfo.DesiredInputInterface.Add( interfaceInfo );
+		resultClassInfo.m_DesiredInputInterface.Add( interfaceInfo );
 		
-		resultClassInfo.ObjectTypeInfo.ObjectType = SVResultObjectType;
-		resultClassInfo.ObjectTypeInfo.SubType	= SVResultVariantObjectType;
-		resultClassInfo.ClassId = SVVariantResultClassGuid;
-		resultClassInfo.ClassName = _T("Range");
+		resultClassInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
+		resultClassInfo.m_ObjectTypeInfo.SubType	= SVResultVariantObjectType;
+		resultClassInfo.m_ClassId = SVVariantResultClassGuid;
+		resultClassInfo.m_ClassName = _T("Range");
 		strTitle = m_Data.m_aResultObjects [iIndex].GetName(); 
-		resultClassInfo.ClassName += SV_TSTR_SPACE + strTitle;
+		resultClassInfo.m_ClassName += SV_TSTR_SPACE + strTitle;
 		
 		// Construct the result class
 		pResult = dynamic_cast< SVVariantResultClass *> (resultClassInfo.Construct());
@@ -1713,10 +1711,11 @@ bool SVExternalToolTask::DisconnectObjectInput( SVInObjectInfoStruct* pObjectInI
 				if ( rInfo.GetInputObjectInfo().PObject == pImage )
 				{
 					// replace with tool set image
-					SVToolSetClass* pToolSet = GetInspection()->GetToolSet();
+					SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*> (GetInspection());
+					SVToolSetClass* pToolSet = (nullptr != pInspection) ? pInspection->GetToolSet() : nullptr;
 					SVObjectTypeInfoStruct imageObjectInfo;
 					imageObjectInfo.ObjectType = SVImageObjectType;
-					SVImageClass* pToolSetImage = dynamic_cast <SVImageClass*> (pToolSet->getFirstObject(imageObjectInfo));
+					SVImageClass* pToolSetImage = (nullptr != pToolSet) ? dynamic_cast <SVImageClass*> (pToolSet->getFirstObject(imageObjectInfo)) : nullptr;
 
 					rInfo.SetInputObject( pToolSetImage );
 					rInfo.GetInputObjectInfo().PObject->ConnectObjectInput(&rInfo);

@@ -45,11 +45,11 @@ BOOL SVLinearImageOperatorListClass::CreateObject( SVObjectLevelCreateStruct* PC
 	SVDataBufferInfoClass& rBufferInfo = m_svProfileResultData.GetDataBufferInfo();
 	rBufferInfo.Type = SVDataBufferInfoClass::SVProjectResult;
 
-	BOOL m_bUseRotation = TRUE;
+	BOOL UseRotation = TRUE;
 
 	if( nullptr != getUseRotationAngle() &&
-		  ( S_OK == getUseRotationAngle()->GetValue( m_bUseRotation ) ) &&
-			! m_bUseRotation )
+		  ( S_OK == getUseRotationAngle()->GetValue( UseRotation ) ) &&
+			! UseRotation )
 	{
 		outputImageObject.InitializeImage( SVImageTypeLogicalAndPhysical );
 	}
@@ -79,11 +79,11 @@ BOOL SVLinearImageOperatorListClass::CloseObject()
 
 HRESULT SVLinearImageOperatorListClass::ResetObject()
 {
-	BOOL m_bUseRotation = TRUE;
+	BOOL UseRotation = TRUE;
 
 	if( nullptr != getUseRotationAngle() &&
-		  ( S_OK == getUseRotationAngle()->GetValue( m_bUseRotation ) ) &&
-			! m_bUseRotation )
+		  ( S_OK == getUseRotationAngle()->GetValue( UseRotation ) ) &&
+			! UseRotation )
 	{
 		outputImageObject.InitializeImage( SVImageTypeLogicalAndPhysical );
 	}
@@ -124,15 +124,16 @@ BOOL SVLinearImageOperatorListClass::Run( SVRunStatusClass& RRunStatus )
 	SVSmartHandlePointer input;
 	SVImageExtentClass l_svImageExtent;
 
-	BOOL m_bUseRotation = TRUE;
+	BOOL UseRotation = true;
 
-	BOOL bRetVal = S_OK == GetTool()->GetImageExtent( l_svImageExtent );
+	SVToolClass* pTool  = dynamic_cast<SVToolClass*>(GetTool());
+	BOOL bRetVal = (pTool && S_OK == pTool->GetImageExtent( l_svImageExtent ));
 
-	bRetVal = bRetVal && nullptr != getUseRotationAngle() && ( S_OK == getUseRotationAngle()->GetValue( m_bUseRotation ) );
+	bRetVal = bRetVal && nullptr != getUseRotationAngle() && ( S_OK == getUseRotationAngle()->GetValue( UseRotation ) );
 	
 	SVMatroxImageInterface::SVStatusCode l_Code = SVMEE_STATUS_OK;
 
-	if( m_bUseRotation )
+	if( UseRotation )
 	{
 		SVRunStatusClass ChildRunStatus;
 		ChildRunStatus.m_lResultDataIndex  = RRunStatus.m_lResultDataIndex;
@@ -386,8 +387,9 @@ HRESULT SVLinearImageOperatorListClass::UpdateLineExtentData()
 	RECT l_oRect;
 
 	// This is the new Absolute Extent of the Image
-	if ( nullptr != GetTool() && nullptr != pProjAngle &&
-			 S_OK == GetTool()->GetImageExtent( l_svExtents ) &&
+	SVToolClass* pTool = dynamic_cast<SVToolClass*>(GetTool());
+	if ( nullptr != pTool && nullptr != pProjAngle &&
+			 S_OK == pTool->GetImageExtent( l_svExtents ) &&
 			 S_OK == l_svExtents.GetOutputRectangle( l_oRect ) &&
 			 ( S_OK == pProjAngle->GetValue( projAngle ) ) )
 	{

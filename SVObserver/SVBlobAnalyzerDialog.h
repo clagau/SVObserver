@@ -13,12 +13,13 @@
 
 #pragma region Includes
 #include "SVBlobAnalyzer.h"
-#include "SVTaskObjectInterfaceClass.h"
+#include "SVTaskObjectValueInterface.h"
 #pragma endregion Includes
 
 class SVToolClass;
+class SVIPDoc;
 
-class SVBlobAnalyzeFeatureDialogClass : public CDialog, public SVTaskObjectInterfaceClass
+class SVBlobAnalyzeFeatureDialogClass : public CDialog, public SVTaskObjectValueInterface
 {
 public:
 protected:
@@ -54,7 +55,7 @@ public:
 // Standard destructor
 	virtual ~SVBlobAnalyzeFeatureDialogClass();
 
-	virtual HRESULT SetInspectionData();
+	HRESULT SetInspectionData();
 
 	void EnableButtons();
 

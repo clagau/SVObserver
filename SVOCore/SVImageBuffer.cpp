@@ -10,7 +10,7 @@
 //******************************************************************************
 
 #include "stdafx.h"
-#include "SVImageBuffer.h"	//SVImageOverlayClass
+#include "SVImageBuffer.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -39,17 +39,19 @@ static char THIS_FILE[]=__FILE__;
 #define IMAGEBUFFER_LASTOVERLAYFIGURE(a)		( (BYTE*) ( IMAGEBUFFER_OVERLAYFIGURESX( IMAGEBUFFER_LASTOVERLAY(a), (IMAGEBUFFER_OVERLAYFIGURESCOUNT( IMAGEBUFFER_LASTOVERLAY(a) ) - 1) ) ) )
 #define IMAGEBUFFER_CALCBUFFERSIZE(a)			( ( (long) ( IMAGEBUFFER_LASTOVERLAYFIGURE(a) - a ) ) + 8 + IMAGEBUFFER_OVERLAYFIGUREPOINTSCOUNT(IMAGEBUFFER_LASTOVERLAYFIGURE(a) ) * sizeof( POINT ) )
 
+static const long cDefaultCalculatedSize = 8;
+
 // Construction section
 SVImageOverlayClass::SVImageOverlayClass()
 {
 	Init();
 }// end ctor
 
-SVImageOverlayClass::SVImageOverlayClass(const SVExtentMultiLineStructCArray& p_MultiLineArrayStruct)
+SVImageOverlayClass::SVImageOverlayClass(const SVExtentMultiLineStructCArray& rMultiLineArrayStruct)
 {
 	Init();
 
-	*this = p_MultiLineArrayStruct;
+	*this = rMultiLineArrayStruct;
 }
 
 void SVImageOverlayClass::Init()
@@ -58,27 +60,27 @@ void SVImageOverlayClass::Init()
 	m_pBuffer		= nullptr;
 }
 
-SVImageOverlayClass::SVImageOverlayClass( const SVImageOverlayClass& rhs )
+SVImageOverlayClass::SVImageOverlayClass( const SVImageOverlayClass& rRhs )
 {
 	Init();
-	*this = rhs;
+	*this = rRhs;
 }
 
-const SVImageOverlayClass& SVImageOverlayClass::operator = ( const SVImageOverlayClass& rhs )
+const SVImageOverlayClass& SVImageOverlayClass::operator = ( const SVImageOverlayClass& rRhs )
 {
-	SetBufferSize( rhs.GetBufferSize(), false );
+	SetBufferSize( rRhs.GetBufferSize(), false );
 
-	memcpy( m_pBuffer, rhs.m_pBuffer, GetBufferSize() );
+	memcpy( m_pBuffer, rRhs.m_pBuffer, GetBufferSize() );
 
 	return *this;
 }
 
-const SVImageOverlayClass& SVImageOverlayClass::operator = (const SVExtentMultiLineStructCArray& p_MultiLineArrayStruct)
+const SVImageOverlayClass& SVImageOverlayClass::operator = (const SVExtentMultiLineStructCArray& rMultiLineArrayStruct)
 {
 	Clear();
 
 	long l_Size = 131072;	// WHY THIS MAGIC NUMBER???
-	long l_BufferCount = p_MultiLineArrayStruct.GetSize();
+	long l_BufferCount = rMultiLineArrayStruct.GetSize();
 	SetBufferSize(l_Size);
 	SetOverlayCount(l_BufferCount);
 	// fill in the overlaystruct
@@ -86,8 +88,8 @@ const SVImageOverlayClass& SVImageOverlayClass::operator = (const SVExtentMultiL
 
 	for ( long l = 0; l < l_BufferCount; l++ )
 	{
-		SVOverlayStruct oOverlayStruct( p_MultiLineArrayStruct.GetAt((int)l) );
-		SetOverlayFigureAt(l,oOverlayStruct);
+		SVOverlayStruct OverlayStruct( rMultiLineArrayStruct.GetAt( static_cast<int> (l) ) );
+		SetOverlayFigureAt(l, OverlayStruct);
 	}
 	return *this;
 }
@@ -97,18 +99,15 @@ SVImageOverlayClass::~SVImageOverlayClass()
 	Clear();
 }// end dtor
 
-BOOL SVImageOverlayClass::CalculateSize( long &lSize )
+long SVImageOverlayClass::CalculateSize()
 {
+	long Result( cDefaultCalculatedSize );
 	if( IMAGEBUFFER_OVERLAYCOUNT( m_pBuffer ) )
 	{
-		lSize = IMAGEBUFFER_CALCBUFFERSIZE( m_pBuffer );
-	}// end if
-	else
-	{
-		lSize = 8;
-	}// end else
+		Result = IMAGEBUFFER_CALCBUFFERSIZE( m_pBuffer );
+	}
 
-	return TRUE;
+	return Result;
 }// end CalculateSize
 
 /////////////////////////////////////////////////////////////////////
@@ -117,62 +116,42 @@ BOOL SVImageOverlayClass::CalculateSize( long &lSize )
 // *************************************************************** //
 /////////////////////////////////////////////////////////////////////
 
-// General and header section
-BOOL SVImageOverlayClass::GetBufferSize( long &lSize ) const
+// Overlay section
+long SVImageOverlayClass::GetOverlayCount() const
 {
-	lSize = m_lBufferSize;
+	long Result = IMAGEBUFFER_OVERLAYCOUNT( m_pBuffer );
 
-	return TRUE;
-}// end GetBufferSize
-
-long SVImageOverlayClass::GetBufferSize() const
-{
-	return m_lBufferSize;
+	return Result;
 }
 
-BOOL SVImageOverlayClass::GetBuffer( BYTE *&pBuffer )
-{
-	pBuffer = m_pBuffer;
-
-	return TRUE;
-}// end GetBuffer
-
-// Overlay section
-BOOL SVImageOverlayClass::GetOverlayCount( long &lCount ) const
-{
-	lCount = IMAGEBUFFER_OVERLAYCOUNT( m_pBuffer );
-
-	return TRUE;
-}// end GetOverlayCount
-
-BOOL SVImageOverlayClass::GetOverlayFigureAt( long &lIndex, SVOverlayStruct &oOverlay )
+BOOL SVImageOverlayClass::GetOverlayFigureAt( long Index, SVOverlayStruct& rOverlay )
 {
 	long l;
 	BYTE *pOverlayBytes;
 	BYTE *pFigureBytes;
 
-	pOverlayBytes = IMAGEBUFFER_OVERLAYX( m_pBuffer, lIndex );
+	pOverlayBytes = IMAGEBUFFER_OVERLAYX( m_pBuffer, Index );
 
-	oOverlay.oTextColor = IMAGEBUFFER_OVERLAYTEXTCOLOR( pOverlayBytes );
-	oOverlay.oTextPoint = IMAGEBUFFER_OVERLAYTEXTPOINT( pOverlayBytes );
-	oOverlay.strText	= IMAGEBUFFER_OVERLAYTEXT( pOverlayBytes );
-	oOverlay.strText	= oOverlay.strText.Left( IMAGEBUFFER_OVERLAYTEXTSIZE( pOverlayBytes ) );
+	rOverlay.m_TextColor = IMAGEBUFFER_OVERLAYTEXTCOLOR( pOverlayBytes );
+	rOverlay.m_TextPoint = IMAGEBUFFER_OVERLAYTEXTPOINT( pOverlayBytes );
+	rOverlay.m_Text	= IMAGEBUFFER_OVERLAYTEXT( pOverlayBytes );
+	rOverlay.m_Text	= SvUl_SF::Left( rOverlay.m_Text,  IMAGEBUFFER_OVERLAYTEXTSIZE( pOverlayBytes ) );
 
-	oOverlay.lFigureSize = IMAGEBUFFER_OVERLAYFIGURESCOUNT( pOverlayBytes );
-	oOverlay.pOverlays = nullptr;
+	rOverlay.lFigureSize = IMAGEBUFFER_OVERLAYFIGURESCOUNT( pOverlayBytes );
+	rOverlay.pOverlays = nullptr;
 
-	if( oOverlay.lFigureSize )
-		oOverlay.pOverlays = new SVOverlayFigureStruct[oOverlay.lFigureSize];
+	if( rOverlay.lFigureSize )
+		rOverlay.pOverlays = new SVOverlayFigureStruct[rOverlay.lFigureSize];
 
-	for( l = 0; l < oOverlay.lFigureSize; l++ )
+	for( l = 0; l < rOverlay.lFigureSize; l++ )
 	{
 		pFigureBytes = IMAGEBUFFER_OVERLAYFIGURESX( pOverlayBytes, l );
 
-		oOverlay.pOverlays[l].oFigureColor = IMAGEBUFFER_OVERLAYFIGURECOLOR( pFigureBytes );
-		oOverlay.pOverlays[l].lFigureSize = IMAGEBUFFER_OVERLAYFIGUREPOINTSCOUNT( pFigureBytes );
-		oOverlay.pOverlays[l].pFigurePoints = new POINT[oOverlay.pOverlays[l].lFigureSize];
+		rOverlay.pOverlays[l].oFigureColor = IMAGEBUFFER_OVERLAYFIGURECOLOR( pFigureBytes );
+		rOverlay.pOverlays[l].lFigureSize = IMAGEBUFFER_OVERLAYFIGUREPOINTSCOUNT( pFigureBytes );
+		rOverlay.pOverlays[l].pFigurePoints = new POINT[rOverlay.pOverlays[l].lFigureSize];
 
-		memcpy( oOverlay.pOverlays[l].pFigurePoints, IMAGEBUFFER_OVERLAYFIGUREPOINTS( pFigureBytes ), sizeof( POINT ) * oOverlay.pOverlays[l].lFigureSize );
+		memcpy( rOverlay.pOverlays[l].pFigurePoints, IMAGEBUFFER_OVERLAYFIGUREPOINTS( pFigureBytes ), sizeof( POINT ) * rOverlay.pOverlays[l].lFigureSize );
 	}// end for
 
 	return TRUE;
@@ -185,26 +164,32 @@ BOOL SVImageOverlayClass::GetOverlayFigureAt( long &lIndex, SVOverlayStruct &oOv
 /////////////////////////////////////////////////////////////////////
 
 // General and header section
-BOOL SVImageOverlayClass::SetBufferSize( long lSize, bool bClearBuffer )
+BOOL SVImageOverlayClass::SetBufferSize( long Size, bool ClearBuffer )
 {
-	if ( lSize > 0 )
+	if ( Size > 0 )
 	{
-		if ( lSize != m_lBufferSize )
+		if ( Size != m_lBufferSize )
 		{
 			BYTE *pBuffer;
 
-			pBuffer = new BYTE[lSize];
-			if ( bClearBuffer )
-				memset( pBuffer, 0, lSize );
+			pBuffer = new BYTE[Size];
+			if ( ClearBuffer )
+			{
+				memset( pBuffer, 0, Size );
+			}
 
 			if( m_pBuffer )
-				memcpy( pBuffer, m_pBuffer, __min( m_lBufferSize, lSize ) );
+			{
+				memcpy( pBuffer, m_pBuffer, __min( m_lBufferSize, Size ) );
+			}
 
-			if ( m_pBuffer )
+			if ( nullptr != m_pBuffer )
+			{
 				delete [] m_pBuffer;
+			}
 			
 			m_pBuffer = pBuffer;
-			m_lBufferSize = lSize;
+			m_lBufferSize = Size;
 		}
 
 		IMAGEBUFFER_BUFFERSIZE( m_pBuffer ) = m_lBufferSize;
@@ -219,14 +204,14 @@ BOOL SVImageOverlayClass::SetBufferSize( long lSize, bool bClearBuffer )
 }// end SetBufferSize
 
 // Overlay section
-BOOL SVImageOverlayClass::SetOverlayCount( long &lCount )
+BOOL SVImageOverlayClass::SetOverlayCount( long Count )
 {
-	IMAGEBUFFER_OVERLAYCOUNT( m_pBuffer ) = lCount;
+	IMAGEBUFFER_OVERLAYCOUNT( m_pBuffer ) = Count;
 
 	return TRUE;
 }// end SetOverlayCount
 
-BOOL SVImageOverlayClass::SetOverlayFigureAt( long &lIndex, SVOverlayStruct& roOverlay )
+BOOL SVImageOverlayClass::SetOverlayFigureAt( long Index, SVOverlayStruct& rOverlay )
 {
 	long lSize1;
 	long lSize2;
@@ -234,39 +219,47 @@ BOOL SVImageOverlayClass::SetOverlayFigureAt( long &lIndex, SVOverlayStruct& roO
 	BYTE *pOverlayBytes;
 	BYTE *pFigureBytes;
 
-	if( lIndex == 0 )
-		IMAGEBUFFER_OVERLAYOFFSETX( m_pBuffer, lIndex ) = 4 * IMAGEBUFFER_OVERLAYCOUNT( m_pBuffer );
+	if( Index == 0 )
+	{
+		IMAGEBUFFER_OVERLAYOFFSETX( m_pBuffer, Index ) = 4 * IMAGEBUFFER_OVERLAYCOUNT( m_pBuffer );
+	}
 		
-	pOverlayBytes = IMAGEBUFFER_OVERLAYX( m_pBuffer, lIndex );
+	pOverlayBytes = IMAGEBUFFER_OVERLAYX( m_pBuffer, Index );
 
-	IMAGEBUFFER_OVERLAYTEXTCOLOR( pOverlayBytes ) = roOverlay.oTextColor;
-	IMAGEBUFFER_OVERLAYTEXTPOINT( pOverlayBytes ) = roOverlay.oTextPoint;
-	IMAGEBUFFER_OVERLAYTEXTSIZE( pOverlayBytes ) = roOverlay.strText.GetLength();
-	memcpy( IMAGEBUFFER_OVERLAYTEXT( pOverlayBytes ), (LPCTSTR) roOverlay.strText, roOverlay.strText.GetLength() );
+	IMAGEBUFFER_OVERLAYTEXTCOLOR( pOverlayBytes ) = rOverlay.m_TextColor;
+	IMAGEBUFFER_OVERLAYTEXTPOINT( pOverlayBytes ) = rOverlay.m_TextPoint;
+	IMAGEBUFFER_OVERLAYTEXTSIZE( pOverlayBytes ) = static_cast<long> (rOverlay.m_Text.size());
+	memcpy( IMAGEBUFFER_OVERLAYTEXT( pOverlayBytes ), rOverlay.m_Text.c_str(), static_cast<long> (rOverlay.m_Text.size()) );
 
-	IMAGEBUFFER_OVERLAYFIGURESCOUNT( pOverlayBytes )  = roOverlay.lFigureSize;
+	IMAGEBUFFER_OVERLAYFIGURESCOUNT( pOverlayBytes )  = rOverlay.lFigureSize;
 
-	lSize1 = 20 + roOverlay.strText.GetLength();
-	for( l = 0; l < roOverlay.lFigureSize; l++ )
+	lSize1 = 20 + static_cast<long> (rOverlay.m_Text.size());
+	for( l = 0; l < rOverlay.lFigureSize; l++ )
 	{
 		if( l == 0 )
+		{
 			IMAGEBUFFER_OVERLAYFIGURESOFFSETX( pOverlayBytes, l ) = 4 * IMAGEBUFFER_OVERLAYFIGURESCOUNT( pOverlayBytes );
+		}
 
 		pFigureBytes = IMAGEBUFFER_OVERLAYFIGURESX( pOverlayBytes, l );
 
-		IMAGEBUFFER_OVERLAYFIGURECOLOR( pFigureBytes ) = roOverlay.pOverlays[l].oFigureColor;
-		IMAGEBUFFER_OVERLAYFIGUREPOINTSCOUNT( pFigureBytes ) = roOverlay.pOverlays[l].lFigureSize;
-		memcpy( IMAGEBUFFER_OVERLAYFIGUREPOINTS( pFigureBytes ), roOverlay.pOverlays[l].pFigurePoints, sizeof( POINT ) * roOverlay.pOverlays[l].lFigureSize );
+		IMAGEBUFFER_OVERLAYFIGURECOLOR( pFigureBytes ) = rOverlay.pOverlays[l].oFigureColor;
+		IMAGEBUFFER_OVERLAYFIGUREPOINTSCOUNT( pFigureBytes ) = rOverlay.pOverlays[l].lFigureSize;
+		memcpy( IMAGEBUFFER_OVERLAYFIGUREPOINTS( pFigureBytes ), rOverlay.pOverlays[l].pFigurePoints, sizeof( POINT ) * rOverlay.pOverlays[l].lFigureSize );
 
-		lSize2 = 8 + ( sizeof( POINT ) * roOverlay.pOverlays[l].lFigureSize );
+		lSize2 = 8 + ( sizeof( POINT ) * rOverlay.pOverlays[l].lFigureSize );
 		lSize1 += lSize2 + 4;
 
-		if( l < roOverlay.lFigureSize - 1 )
+		if( l < rOverlay.lFigureSize - 1 )
+		{
 			IMAGEBUFFER_OVERLAYFIGURESOFFSETX( pOverlayBytes, (l + 1) ) = lSize2 + IMAGEBUFFER_OVERLAYFIGURESOFFSETX( pOverlayBytes, l );
+		}
 	}// end for
 
-	if( lIndex < IMAGEBUFFER_OVERLAYCOUNT( m_pBuffer ) - 1 )
-		IMAGEBUFFER_OVERLAYOFFSETX( m_pBuffer, (lIndex + 1) ) = lSize1 + IMAGEBUFFER_OVERLAYOFFSETX( m_pBuffer, lIndex );
+	if( Index < IMAGEBUFFER_OVERLAYCOUNT( m_pBuffer ) - 1 )
+	{
+		IMAGEBUFFER_OVERLAYOFFSETX( m_pBuffer, (Index + 1) ) = lSize1 + IMAGEBUFFER_OVERLAYOFFSETX( m_pBuffer, Index );
+	}
 
 	return TRUE;
 }// end SetOverlayFigureAt

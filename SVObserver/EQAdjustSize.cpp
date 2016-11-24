@@ -8,7 +8,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "EQAdjustSize.h"
-#include "SVTaskObject.h"
+#include "SVOCore/SVTaskObject.h"
 #include "SVEquationLibrary\SVEquationLex.h"
 #include "SVRunControlLibrary\SVRunControlLibrary.h"
 #pragma endregion Includes

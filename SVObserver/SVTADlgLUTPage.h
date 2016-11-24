@@ -14,7 +14,7 @@
 #pragma region Includes
 #include "SVEnumerateCombo.h"
 #include "SVOMFCLibrary/SVDlgGraph.h"
-#include "SVTaskObjectInterfaceClass.h"
+#include "SVTaskObjectValueInterface.h"
 #include "SVMFCControls/CLabel.h"
 #pragma endregion Includes
 
@@ -25,7 +25,7 @@ class SVToolClass;
 class SVLUTEquationClass;
 #pragma endregion Declarations
 
-class SVToolAdjustmentDialogLUTPageClass : public CPropertyPage, public SVTaskObjectInterfaceClass
+class SVToolAdjustmentDialogLUTPageClass : public CPropertyPage, public SVTaskObjectValueInterface
 {
 #pragma region Constructor
 public:
@@ -35,7 +35,7 @@ public:
 
 #pragma region Public Methods
 public:
-	virtual HRESULT SetInspectionData();
+	HRESULT SetInspectionData();
 	SVByteValueObjectClass*	getLUTVector() { return m_pLUTVector; };
 #pragma endregion Public Methods
 

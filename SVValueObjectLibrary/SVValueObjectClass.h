@@ -129,8 +129,8 @@ public:
 
 	HRESULT GetValues( int iBucket, std::vector< double >&  rValue ) const  { return GetArrayValues(iBucket, rValue); }
 
-	HRESULT GetTypeName( CString& p_rstrValue ) const;
-	HRESULT SetTypeName( const LPCTSTR p_pstrValue );
+	const SVString& GetTypeName() const { return m_TypeName; };
+	HRESULT SetTypeName( LPCTSTR TypeName );
 
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* pDataObject );
 
@@ -196,7 +196,6 @@ protected:
 	bool m_bLegacyVectorObjectCompatibility;
 
 	void swap( SVValueObjectClass& rhs );
-	CString m_strTypeName;
 
 	bool m_bResetAlways;
 	SVResetItemEnum m_eResetItem;
@@ -205,6 +204,8 @@ protected:
 
 private:
 	void Initialize();
+
+	SVString m_TypeName;
 
 	friend class SVValueObjectReference;	// direct access for speed (VC6 lack of good optimization)
 };

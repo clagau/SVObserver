@@ -16,14 +16,12 @@
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
 #include "SVUtilityLibrary/SVGUID.h"
 
-#include "SVImageClass.h"
-#include "SVImageObjectClass.h"
+#include "SVOCore/SVImageClass.h"
+#include "SVOCore/SVImageObjectClass.h"
 #pragma endregion Includes
 
 class SVInspectionProcess;
 class SVVirtualCamera;
-
-struct SVProductInfoStruct;
 
 class SVCameraImageTemplate : public SVImageClass 
 {
@@ -55,7 +53,7 @@ public:
 
 	virtual BOOL ResetImageIndex();
 
-	virtual SVImageIndexStruct GetSourceImageIndex( SVProductInfoStruct* pProduct );
+	virtual SVImageIndexStruct GetSourceImageIndex( SVDataManagerHandle* pHandle, const SVGuidSVCameraInfoStructMap& rGuidCameraMap );
 	virtual BOOL GetImageHandleIndex( SVImageIndexStruct& rlIndex ) const;
 
 	virtual HRESULT RestoreMainImage( SVInspectionProcess* p_psvInspection );

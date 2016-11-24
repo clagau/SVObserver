@@ -12,7 +12,8 @@
 #pragma once
 
 #pragma region Includes
-#include "SVTaskObjectList.h"
+#include "SVOCore/SVTaskObjectList.h"
+#include "SVImageLibrary/SVImageBufferHandleInterface.h"
 #pragma endregion Includes
 
 class SVImageClass;

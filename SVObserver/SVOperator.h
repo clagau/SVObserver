@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVTaskObject.h"
+#include "SVOCore/SVTaskObject.h"
 #pragma endregion Includes
 
 class SVOperatorClass : public SVTaskObjectClass

@@ -12,27 +12,29 @@
 
 #pragma region Includes
 #include "SVValueObjectLibrary/SVValueObjectReference.h"
+#include "SVUtilityLibrary/SVString.h"
+#include "SVUtilityLibrary/SVGUID.h"
 #pragma endregion Includes
 
 struct SVTaskObjectInterfaceInputRequestStruct
 {
-	SVValueObjectReference ref;
-	GUID guid;
-	CString strName;
+	SVValueObjectReference m_ObjectRef;
+	SVGUID m_Guid;
+	SVString m_Name;
 
 	SVTaskObjectInterfaceInputRequestStruct();
-	SVTaskObjectInterfaceInputRequestStruct( const SVValueObjectReference& p_ref, GUID p_guid, const CString& p_strName );
-	SVTaskObjectInterfaceInputRequestStruct( const SVValueObjectReference& p_ref );
-	SVTaskObjectInterfaceInputRequestStruct( GUID p_guid );
-	SVTaskObjectInterfaceInputRequestStruct( const CString& p_strName );
+	SVTaskObjectInterfaceInputRequestStruct( const SVValueObjectReference& rObjectRef, const SVGUID& rGuid, const SVString& rName );
+	SVTaskObjectInterfaceInputRequestStruct( const SVValueObjectReference& rObjectRef );
+	SVTaskObjectInterfaceInputRequestStruct( const SVGUID& rGuid );
+	SVTaskObjectInterfaceInputRequestStruct( const SVString& rName );
 
-	bool operator < ( const SVTaskObjectInterfaceInputRequestStruct& rhs ) const;
+	bool operator < ( const SVTaskObjectInterfaceInputRequestStruct& rRhs ) const;
 };
 
-struct SVInputRequestStructMap : public std::map <SVTaskObjectInterfaceInputRequestStruct, CString>
+struct SVInputRequestStructMap : public std::map <SVTaskObjectInterfaceInputRequestStruct, SVString>
 {
-	HRESULT Add( SVValueObjectClass* p_pValueObject );
-	HRESULT Add( SVValueObjectReference p_refValueObject );
+	HRESULT Add( SVValueObjectClass* pValueObject );
+	HRESULT Add( const SVValueObjectReference& rObjectRef );
 };
 
 #include "SVTaskObjectInterfaceInputRequestStruct.inl"

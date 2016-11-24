@@ -28,6 +28,7 @@ SVCameraImageTemplate::SVCameraImageTemplate( LPCSTR ObjectName )
 , m_CurrentIndex()
 {
 	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVImageObjectType;
+	m_outObjectInfo.ObjectTypeInfo.SubType = SVCameraImageTemplateObjectType;
 
 	// SVMainImageClass is not a result image.
 	// We need to remove the PUBLISH attribute.
@@ -41,6 +42,7 @@ SVCameraImageTemplate::SVCameraImageTemplate( SVObjectClass* POwner, int StringR
 , m_CurrentIndex()
 {
 	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVImageObjectType;
+	m_outObjectInfo.ObjectTypeInfo.SubType = SVCameraImageTemplateObjectType;
 
 	// SVMainImageClass is not a result image.
 	// We need to remove the PUBLISH attribute.
@@ -251,13 +253,13 @@ GUID SVCameraImageTemplate::GetDigitizerID()
 	return digitizerObjectID.ToGUID();
 }
 
-SVImageIndexStruct SVCameraImageTemplate::GetSourceImageIndex( SVProductInfoStruct* pProduct )
+SVImageIndexStruct SVCameraImageTemplate::GetSourceImageIndex( SVDataManagerHandle* pHandle, const SVGuidSVCameraInfoStructMap& rGuidCameraMap )
 {
 	SVImageIndexStruct svIndex;
 
-	if ( nullptr != mpCamera && nullptr != pProduct )
+	if ( nullptr != mpCamera )
 	{
-		 mpCamera->GetSourceImageIndex( svIndex.m_CameraDMIndexHandle, *pProduct );
+		 mpCamera->GetSourceImageIndex( &svIndex.m_CameraDMIndexHandle, rGuidCameraMap );
 	}
 
 	return svIndex;
@@ -345,7 +347,7 @@ HRESULT SVCameraImageTemplate::RebuildCameraImage()
 
 	if( ( nullptr == pCamera ) || ( nullptr != pOwner && pOwner->GetObjectType() == SVToolSetObjectType ) )
 	{
-		SVInspectionProcess* pInspection  = GetInspection();
+		SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(GetInspection());
 
 		if( nullptr != pInspection )
 		{
@@ -382,7 +384,7 @@ HRESULT SVCameraImageTemplate::RebuildCameraImage()
 				}
 			}
 
-			SVInspectionProcess* pInspection = GetInspection();
+			SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(GetInspection());
 
 			if( nullptr != pInspection )
 			{

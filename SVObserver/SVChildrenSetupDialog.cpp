@@ -12,8 +12,8 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVChildrenSetupDialog.h"
-#include "SVClassInfoStruct.h"
-#include "SVTaskObjectList.h"
+#include "SVOCore/SVClassInfoStruct.h"
+#include "SVOCore/SVTaskObjectList.h"
 #include "SVInspectionProcess.h"
 #include "SVIPDoc.h"
 #include "SVOGui/SVShowDependentsDialog.h"
@@ -116,10 +116,10 @@ void SVChildrenSetupDialogClass::redrawLists()
 			// Make simple name comparison...
 			LVFINDINFO findInfo;
 			findInfo.flags = LVFI_STRING;
-			findInfo.psz   = rChildrenInfo.ClassName;
+			findInfo.psz   = rChildrenInfo.m_ClassName.c_str();
 			if( m_AllowMultipleChildrenInstances || m_ChildrenListCtrl.FindItem( &findInfo ) < 0 )
 			{
-				m_AvailableChildrenListCtrl.SetItemData( m_AvailableChildrenListCtrl.InsertItem( 0, rChildrenInfo.ClassName ), static_cast<DWORD_PTR>(i) );
+				m_AvailableChildrenListCtrl.SetItemData( m_AvailableChildrenListCtrl.InsertItem( 0, rChildrenInfo.m_ClassName.c_str() ), static_cast<DWORD_PTR>(i) );
 			}
 		}
 

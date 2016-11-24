@@ -184,7 +184,7 @@ void SVLongValueObjectClass::LocalInitialize()
 		m_sLegacyScriptDefaultName = "lDefault";
 		m_sLegacyScriptArrayName = "pLArray";
 	}
-	m_strTypeName = "Integer32";
+	SetTypeName( _T("Integer32") );
 	InitializeBuckets();
 }
 

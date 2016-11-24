@@ -26,7 +26,7 @@
 #include "SVImageArchive.h"
 #include "SVImageViewScroll.h"
 #include "SVImageView.h"
-#include "SVImageProcessingClass.h"
+#include "SVOCore/SVImageProcessingClass.h"
 #include "SVIPChildFrm.h"
 #include "SVLightReferenceDialog.h"
 #include "SVLutDlg.h"
@@ -86,7 +86,6 @@
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
 #include "SVObjectLibrary/GlobalConst.h"
 #include "SVContainerLibrary/ObjectSelectorItem.h"
-#include "RootObject.h"
 #include "ToolClipboard.h"
 #include "ExtrasEngine.h"
 #include "TextDefinesSvO.h"
@@ -261,11 +260,9 @@ void SVIPDoc::init()
 
 	TheSVObserverApp.setCurrentDocument( this );
 
-	//
 	// Default result height and tool set view width.
-	//
-	m_nHeightResultView = SV_DEFAULT_RESULT_VIEW_HEIGHT;
-	m_nWidthToolSetView = SV_DEFAULT_TOOL_SET_VIEW_WIDTH;
+	m_nWidthToolSetView = SvOi::cDefaultToolsetViewWidth;
+	m_nHeightResultView = SvOi::cDefaultToolsetViewHeight;
 
 	m_bAllowRefresh = false;
 	m_bRegressionTestRunning = false;

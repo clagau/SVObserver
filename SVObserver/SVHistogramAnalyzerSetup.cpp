@@ -126,7 +126,7 @@ END_MESSAGE_MAP()
 
 HRESULT SVHistogramAnalyzerSetupClass::SetInspectionData()
 {
-	return RunOnce( m_pAnalyzer->GetTool() );
+	return RunOnce( m_pAnalyzer->GetTool()->GetUniqueObjectID() );
 }
 
 int SVHistogramAnalyzerSetupClass::OnCreate(LPCREATESTRUCT lpCreateStruct)

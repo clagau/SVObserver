@@ -33,7 +33,8 @@
 #include "SVSystemLibrary/SVCriticalSection.h"
 #include "SVUtilityLibrary/SVGUID.h"
 
-#include "SVImageBuffer.h" //SVImageOverlayClass; used for getting overlay data for the ActiveX
+#include "SVOCore/SVTaskObject.h" // For SVImageClassPtrSet
+#include "SVOCore/SVImageBuffer.h" //SVImageOverlayClass; used for getting overlay data for the ActiveX
 #include "SVInfoStructs.h"
 #include "SVInspectionProcessResetStruct.h"
 #include "SVPublishList.h"
@@ -48,7 +49,6 @@
 class SVCameraImageTemplate;
 class SVConditionalClass;
 class SVDisplayObject;
-class SVIPDoc;
 class SVPPQObject;
 class SVToolSetClass;
 class SVTaskObjectClass;
@@ -101,9 +101,6 @@ public:
 	virtual HRESULT RegisterSubObject( SVObjectClass* pObject );
 	virtual HRESULT UnregisterSubObject( SVObjectClass* pObject );
 
-	virtual HRESULT RegisterSubObjects( SVTaskObjectClass *p_psvOwner, SVObjectClassPtrArray &p_rsvEmbeddedList );
-	virtual HRESULT UnregisterSubObjects( SVTaskObjectClass *p_psvOwner );
-
 	virtual BOOL Run( SVRunStatusClass& RRunStatus );
 
 	virtual HRESULT ObserverUpdate( const SVAddTool& p_rData );
@@ -119,6 +116,9 @@ public:
 	virtual SvOi::ISelectorItemVectorPtr GetPPQSelectorList( const UINT Attribute ) const override;
 	virtual SvOi::ITaskObject* GetToolSetInterface() const override;
 	virtual HRESULT RunOnce(SvOi::ITaskObject* pTask) override;
+	virtual long GetLastIndex() const  override;
+	virtual bool AddInputRequest( const SVGUID& ObjectRef, const _variant_t& rValue ) override;
+	virtual bool AddInputRequestMarker() override;
 #pragma endregion virtual method (IInspectionProcess)
 
 	bool IsCameraInInspection( const CString& p_rName ) const;
@@ -142,8 +142,7 @@ public:
 	
 	BOOL RemoveCamera(CString sCameraName);
 	
-	BOOL AddInputRequest( SVValueObjectReference p_svObjectRef, const _variant_t& p_rValue );
-	BOOL AddInputRequestMarker();
+	bool AddInputRequest( const SVValueObjectReference& rObjectRef, const _variant_t& rValue );
 
 	HRESULT AddInputImageRequest( SVImageClass* p_psvImage, BSTR& p_rbstrValue );
 	HRESULT AddInputImageFileNameRequest( SVImageClass* p_psvImage, const SVString& p_rFileName );
@@ -198,7 +197,7 @@ public:
 	BOOL IsColorInspectionDocument() const;
 
 	int UpdateMainImagesByProduct( SVProductInfoStruct* p_psvProduct );
-	bool IsColorCamera() const;
+	virtual bool IsColorCamera() const override;
 
 	LPCTSTR GetToolsetImage();
 	void SetToolsetImage( CString sToolsetImage );
@@ -371,7 +370,7 @@ protected:
 	HRESULT GetInspectionImage( const CString& p_strName, SVImageClass*& p_rRefObject );
 	HRESULT GetInspectionObject( const CString& p_strName, SVObjectReference& p_rRefObject );
 
-	BOOL AddInputRequest( SVInputRequestInfoStructPtr p_pInRequest );
+	bool AddInputRequest( SVInputRequestInfoStructPtr p_pInRequest );
 
 	BOOL RemoveAllInputRequests();
 

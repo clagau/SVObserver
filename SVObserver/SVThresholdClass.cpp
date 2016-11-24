@@ -12,13 +12,13 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVThresholdClass.h"
-#include "SVGlobal.h" // for SV_DEFAULT_TOOL...
+#include "ObjectInterfaces/GlobalConst.h"
 #include "SVUpperThresholdEquation.h"
 #include "SVLowerThresholdEquation.h"
 #include "SVAutoThresholdEquation.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
-#include "SVDataBuffer.h"
-#include "SVImageProcessingClass.h"
+#include "SVOCore/SVDataBuffer.h"
+#include "SVOCore/SVImageProcessingClass.h"
 #include "SVTool.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVOMFCLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
@@ -60,11 +60,11 @@ void SVThresholdClass::init()
 	RegisterEmbeddedObject( &m_useExternalUT, SVUseExternalUTObjectGuid, IDS_OBJECTNAME_USE_EXTERN_UT, false, SVResetItemOwner );
 
 	// Set Embedded defaults
-	m_upperThresh.SetDefaultValue( SV_DEFAULT_TOOL_UPPER_TRESH, TRUE );
-	m_lowerThresh.SetDefaultValue( SV_DEFAULT_TOOL_LOWER_TRESH, TRUE );
-	m_threshActivate.SetDefaultValue( SV_DEFAULT_TOOL_TRESH_ACTIVATE, FALSE );
-	m_upperThreshActivate.SetDefaultValue( SV_DEFAULT_TOOL_UPPER_TRESH_ACTIVATE, TRUE );
-	m_lowerThreshActivate.SetDefaultValue( SV_DEFAULT_TOOL_LOWER_TRESH_ACTIVATE, TRUE );
+	m_upperThresh.SetDefaultValue( SvOi::cDefaultToolUpperThreshold, TRUE );
+	m_lowerThresh.SetDefaultValue( SvOi::cDefaultToolLowerThreshold, TRUE );
+	m_threshActivate.SetDefaultValue( SvOi::cDefaultToolThresholdActivate, FALSE );
+	m_upperThreshActivate.SetDefaultValue( SvOi::cDefaultToolUpperThresholdActivate, TRUE );
+	m_lowerThreshActivate.SetDefaultValue( SvOi::cDefaultToolLowerThresholdActivate, TRUE );
 
 	m_useExternalATM.SetDefaultValue( FALSE, TRUE );
 	m_useExternalLT.SetDefaultValue( FALSE, TRUE );
@@ -495,12 +495,12 @@ HRESULT SVThresholdClass::Rebuild()
 
 		if( !m_histResultID.empty() )
 		{
-			l_hrOk = SVImageProcessingClass::Instance().DestroyDataBuffer( &svData );
+			l_hrOk = SVImageProcessingClass::DestroyDataBuffer( &svData );
 		}
 
 		if ( S_OK == l_hrOk )
 		{
-			l_hrOk = SVImageProcessingClass::Instance().CreateDataBuffer( &svData );
+			l_hrOk = SVImageProcessingClass::CreateDataBuffer( &svData );
 		}
 
 		if ( S_OK == l_hrOk )
@@ -521,7 +521,8 @@ HRESULT SVThresholdClass::Rebuild()
 			double l_dWidth = 0.0;
 			double l_dHeight = 0.0;
 
-			if ( S_OK == GetTool()->GetImageExtent( l_svExtents ) &&
+			SVToolClass* pTool = dynamic_cast<SVToolClass*>(GetTool());
+			if ( pTool && S_OK == pTool->GetImageExtent( l_svExtents ) &&
 				S_OK == l_svExtents.GetExtentProperty( SVExtentPropertyOutputWidth, l_dWidth ) &&
 				S_OK == l_svExtents.GetExtentProperty( SVExtentPropertyOutputHeight, l_dHeight ) )
 			{

@@ -215,7 +215,7 @@ HRESULT SVToolAdjustmentDialogSizePage::SetInspectionData()
 
 		if( S_OK == hresult )
 		{
-			hresult = RunOnce( m_pTool );
+			hresult = RunOnce( m_pTool->GetUniqueObjectID() );
 		}
 		UpdateData( false );
 	}

@@ -18,7 +18,7 @@
 
 #include "SVAnalyzer.h"
 #include "SVConditional.h"
-#include "SVImageListClass.h"
+#include "SVOCore/SVImageListClass.h"
 #include "SVInspectionProcess.h"
 #include "SVSVIMStateClass.h"
 #include "SVTool.h"
@@ -369,19 +369,6 @@ HRESULT SVToolSetClass::getResetCounts( bool& rResetCounts )
 	return m_ResetCounts.GetValue( rResetCounts );
 }
 
-SVImageClass* SVToolSetClass::getBand0Image()
-{
-	for( SVTaskObjectPtrVector::const_iterator l_Iter = m_aTaskObjects.begin(); l_Iter != m_aTaskObjects.end(); ++l_Iter )
-	{
-		SVColorToolClass* colorTool = dynamic_cast<SVColorToolClass*>( *l_Iter );
-		if (nullptr != colorTool)
-		{
-			return colorTool->getBand0Image();
-		}
-	}
-	return nullptr;
-}
-
 void SVToolSetClass::goingOffline()
 {
 	for( SVTaskObjectPtrVector::const_iterator l_Iter = m_aTaskObjects.begin(); l_Iter != m_aTaskObjects.end(); ++l_Iter )
@@ -403,6 +390,22 @@ bool SVToolSetClass::IsToolPreviousToSelected( const SVGUID& p_rToolID ) const
 	}
 
 	return l_Status;
+}
+
+SvOi::IObjectClass* SVToolSetClass::getBand0Image() const
+{
+	SvOi::IObjectClass* pResult( nullptr );
+
+	for( SVTaskObjectPtrVector::const_iterator Iter( m_aTaskObjects.begin() ); Iter != m_aTaskObjects.end(); ++Iter )
+	{
+		SVColorToolClass* pColorTool = dynamic_cast<SVColorToolClass*>( *Iter );
+		if (nullptr != pColorTool)
+		{
+			pResult = dynamic_cast<SvOi::IObjectClass*> (pColorTool->getBand0Image());
+			return pResult;
+		}
+	}
+	return pResult;
 }
 #pragma endregion virtual method (IToolSet)
 
@@ -475,7 +478,7 @@ BOOL SVToolSetClass::Run( SVRunStatusClass& RRunStatus )
 	BOOL bIsValid = FALSE;
 	BOOL bDisabled = FALSE;
 
-	if( !GetInspection()->GetNewDisableMethod() )
+	if( !dynamic_cast<SVInspectionProcess*>(GetInspection())->GetNewDisableMethod() )
 	{
 		SVRunStatusClass ToolRunStatus;
 
@@ -976,7 +979,7 @@ HRESULT SVToolSetClass::ResetCounts()
 
 	try
 	{
-		SVInspectionProcess* pInspection = GetInspection();
+		SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(GetInspection());
 
 		//add request to inspection process
 		if( nullptr != pInspection && pInspection->AddInputRequest( &m_ResetCounts, _T( "true" ) ) )

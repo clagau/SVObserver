@@ -17,7 +17,7 @@
 
 #include "SVMatroxLibrary\SVMatroxBuffer.h"
 #include "SVTool.h"
-#include "SVImageObjectClass.h"
+#include "SVOCore/SVImageObjectClass.h"
 
 #include "ArchiveMethodEnum.h"
 #include "ArchiveToolHelper.h"

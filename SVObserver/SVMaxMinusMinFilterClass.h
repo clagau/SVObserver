@@ -12,6 +12,8 @@
 
 #pragma region Includes
 #include "SVFilterClass.h"
+#include "SVImageLibrary/SVImageBufferHandleInterface.h"
+#include "SVImageLibrary/SVImageInfoClass.h"
 #pragma endregion Includes
 
 class SVMaxMinusMinFilterClass : public SVFilterClass

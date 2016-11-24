@@ -171,7 +171,7 @@ void SVCharValueObjectClass::LocalInitialize()
 		m_sLegacyScriptDefaultName = "bDefault";
 		m_sLegacyScriptArrayName = "pBArray";
 	}
-	m_strTypeName = "Char";
+	SetTypeName( _T("Char") );
 	InitializeBuckets();
 }
 

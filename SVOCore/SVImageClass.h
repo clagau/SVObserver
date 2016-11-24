@@ -24,15 +24,8 @@
 #include "SVImageChildStruct.h"
 #include "SVImageObjectClass.h"
 #include "SVObjectAppClass.h"
+#include "SVCameraInfoStruct.h"
 #pragma endregion Includes
-
-class SVExtentClass;
-class SVIPDoc;
-class SVImageOverlayClass;
-class SVToolClass;
-class SVVirtualCamera;
-
-struct SVProductInfoStruct;
 
 typedef SVVector< long > SVImageChildIndexCArray;
 
@@ -115,13 +108,14 @@ public:
 
 	virtual BOOL OnValidate(); //@TODO:  Change method to const?
 
-	virtual SVImageIndexStruct GetSourceImageIndex( SVProductInfoStruct* pProduct );
+	virtual SVImageIndexStruct GetSourceImageIndex( SVDataManagerHandle* pHandle, const SVGuidSVCameraInfoStructMap& rGuidCameraMap );
 
 	SVImageClass* GetRootImage(); //@TODO:  Change method to const?
 	HRESULT TranslateFromOutputSpaceToImage(SVImageClass* p_pImage, SVExtentPointStruct p_InPt, SVExtentPointStruct& p_OutPt); //@TODO:  Change method to const?
 
 	void GetChildExtents( SVChildExtentDeque& p_rChildExtents ) const;
 	void SetTranslationOffset(double offsetX, double offsetY);
+
 	virtual bool resetAllObjects( bool shouldNotifyFriends, bool silentReset ) override;
 
 #pragma region virtual method (ISVImage)
@@ -199,8 +193,6 @@ private:
 };
 
 typedef SVVector <SVImageClass*, SVImageClass*> SVImageClassArray;
-
-typedef std::set<SVImageClass *> SVImageClassPtrSet;
 
 class SVRGBImageClass : public SVImageClass
 {

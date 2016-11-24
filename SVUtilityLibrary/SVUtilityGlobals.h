@@ -38,4 +38,9 @@ void KeepPrevError( HRESULT& p_rhrPrev, HRESULT p_hrNew );
 HRESULT KeepPrevErrorReturnPrev( HRESULT& p_rhrPrev, HRESULT p_hrNew );
 HRESULT KeepPrevErrorReturnNew( HRESULT& p_rhrPrev, HRESULT p_hrNew );
 
+bool SVCheckPathDir( LPCTSTR PathName, bool CreateIfDoesNotExist );
+
+bool SVDeleteFiles( LPCTSTR PathName, bool IncludeSubDirectories );
+
+bool SVFileExists( LPCTSTR FilePath );
 

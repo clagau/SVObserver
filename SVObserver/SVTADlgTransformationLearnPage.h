@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVTaskObjectInterfaceClass.h"
+#include "SVTaskObjectValueInterface.h"
 #pragma endregion Includes
 
 class SVToolAdjustmentDialogSheetClass;
@@ -22,13 +22,13 @@ class SVBoolValueObjectClass;
 class SVEvaluateClass;
 class SVDoubleValueObjectClass;
 
-class SVToolAdjustmentDialogTransformationLearnPageClass : public CPropertyPage, public SVTaskObjectInterfaceClass
+class SVToolAdjustmentDialogTransformationLearnPageClass : public CPropertyPage, public SVTaskObjectValueInterface
 {
 // Construction
 public:
 	SVToolAdjustmentDialogTransformationLearnPageClass( const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* Parent );
 	virtual ~SVToolAdjustmentDialogTransformationLearnPageClass();
-	virtual HRESULT SetInspectionData() override;
+	HRESULT SetInspectionData();
 
 //******************************************************************************
 // Operator(s):

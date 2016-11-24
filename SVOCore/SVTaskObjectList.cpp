@@ -14,15 +14,14 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVTaskObjectList.h"
+#include "SVObjectLibrary/SVClsIds.h"
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVObjectLibrary/SVAnalyzerLevelCreateStruct.h"
 #include "ObjectInterfaces/SVObjectTypeInfoStruct.h"
 #include "SVTimerLibrary/SVClock.h"
 #include "SVImageLibrary/SVImageInfoClass.h"
-#include "SVInspectionProcess.h"
-#include "SVAnalyzer.h"
-#include "SVTool.h"
+#include "ObjectInterfaces/IInspectionProcess.h"
 #include "SVOMFCLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
 #pragma endregion
 
@@ -266,7 +265,7 @@ BOOL SVTaskObjectListClass::OnValidate()
 
 BOOL SVTaskObjectListClass::CloseObject()
 {
-	BOOL retVal = TRUE;
+	BOOL Result( true );
 
 	// Close our children
 	for (int i = 0; i < m_aTaskObjects.GetSize(); i++)
@@ -274,13 +273,13 @@ BOOL SVTaskObjectListClass::CloseObject()
 		SVTaskObjectClass* pTaskObject = m_aTaskObjects.GetAt(i);
 		if (pTaskObject)
 		{
-			retVal = pTaskObject->CloseObject() && retVal;
+			Result = pTaskObject->CloseObject() && Result;
 		}
 	}
 	// Close ourself and our friends
-	retVal = SVTaskObjectClass::CloseObject() && retVal;
+	Result = SVTaskObjectClass::CloseObject() && Result;
 
-	return retVal;
+	return Result;
 }
 
 HRESULT SVTaskObjectListClass::GetChildObject( SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index ) const
@@ -397,12 +396,13 @@ int SVTaskObjectListClass::Add(SVTaskObjectClass* pTaskObject, bool atBegin)
 
 HRESULT SVTaskObjectListClass::RemoveChild( SVTaskObjectClass* pChildObject )
 {
-	HRESULT hr = S_OK;
+	HRESULT Result( S_OK );
+
 	if ( !DestroyChildObject(pChildObject, SVMFSetDefaultInputs) )
 	{
-		hr = S_FALSE;
+		Result = S_FALSE;
 	}
-	return hr;
+	return Result;
 }
 
 // Should be overridden and must be called in derived classes...
@@ -488,25 +488,23 @@ void SVTaskObjectListClass::SetDisabled()
 
 const SVString SVTaskObjectListClass::checkName( LPCTSTR ToolName ) const
 {
-	CString name( ToolName );
-	CString objectName;
-	CString tmp;
+	SVString objectName;
 	SVString newName( ToolName );
 
-	int num = 0;
-	for (int i = 0; i < m_aTaskObjects.GetSize(); i++)
+	int ToolIndex( 0 );
+	for( int i = 0; i < m_aTaskObjects.GetSize(); i++ )
 	{
 		SVObjectClass* pObject = m_aTaskObjects.GetAt(i);
-		if (pObject)
+		if( nullptr != pObject )
 		{
 			objectName = pObject->GetName();
-			if (! objectName.Find(name))
+			if ( SVString::npos != objectName.find( ToolName ))
 			{
 				// see if the name ends in a number
 				int lastNum;
 				bool digit = false;
 
-				for (int i = objectName.GetLength() - 1; i >= 0; i--)
+				for (int i = static_cast<int> (objectName.size()) - 1; i >= 0; i--)
 				{
 					if (isdigit(objectName[i]))
 					{
@@ -518,8 +516,8 @@ const SVString SVTaskObjectListClass::checkName( LPCTSTR ToolName ) const
 						if (digit)
 						{	
 							// convert to a number
-							CString numStr = objectName.Right((objectName.GetLength() - 1) - i);
-							lastNum = atoi(numStr);
+							SVString numStr = SvUl_SF::Right( objectName, (objectName.size() - 1) - i);
+							lastNum = atoi(numStr.c_str());
 						}
 						break;
 					}
@@ -527,20 +525,19 @@ const SVString SVTaskObjectListClass::checkName( LPCTSTR ToolName ) const
 
 				if (digit)
 				{
-					num = std::max(num, lastNum + 1);
+					ToolIndex = std::max(ToolIndex, lastNum + 1);
 				}
 				else
 				{
-					num = std::max(num, 1);
+					ToolIndex = std::max(ToolIndex, 1);
 				}
 			}
 		}
 	}
 	// Set the name
-	if (num)
+	if( 0 != ToolIndex )
 	{
-		tmp.Format("%d", num);
-		newName = name + tmp;
+		newName = SvUl_SF::Format( _T("%s%d"), ToolName, ToolIndex );
 	}
 
 	return newName;
@@ -570,7 +567,7 @@ HRESULT SVTaskObjectListClass::CollectOverlays( SVImageClass* p_Image, SVExtentM
 	return hrRet;
 }
 
-bool SVTaskObjectListClass::DestroyChildObject(SVTaskObjectClass* pTaskObject, DWORD context)
+bool SVTaskObjectListClass::DestroyChildObject( SVTaskObjectClass* pTaskObject, DWORD context )
 {
 	// Kill the Object
 	if (nullptr != pTaskObject)
@@ -685,7 +682,7 @@ bool SVTaskObjectListClass::DestroyFriendObject(SvOi::IObjectClass& rObject, DWO
 		delete(&rObject);
 	}
 
-	SVInspectionProcess* pInspection = GetInspection();
+	SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess*> (GetInspection());
 	if( nullptr != pInspection )
 	{
 		if( SVMFSetDefaultInputs == ( context & SVMFSetDefaultInputs ) )
@@ -695,7 +692,7 @@ bool SVTaskObjectListClass::DestroyFriendObject(SvOi::IObjectClass& rObject, DWO
 
 		if( SVMFResetInspection == ( context & SVMFResetInspection ) )
 		{
-			pInspection->resetAllObjects(true, false);
+			GetInspection()->resetAllObjects(true, false);
 		}
 	}
 
@@ -709,12 +706,12 @@ SvUl::NameGuidList SVTaskObjectListClass::GetCreatableObjects(const SVObjectType
 	for (int i = 0; i < m_availableChildren.GetSize(); i++)
 	{
 		SVClassInfoStruct classInfo = m_availableChildren.GetAt(i);
-		if (classInfo.ObjectTypeInfo.ObjectType == pObjectTypeInfo.ObjectType &&
+		if (classInfo.m_ObjectTypeInfo.ObjectType == pObjectTypeInfo.ObjectType &&
 			(pObjectTypeInfo.SubType == SVNotSetSubObjectType ||
-			classInfo.ObjectTypeInfo.SubType == pObjectTypeInfo.SubType) 
+			classInfo.m_ObjectTypeInfo.SubType == pObjectTypeInfo.SubType) 
 			)
 		{
-			list.push_back(std::make_pair(classInfo.ClassName, classInfo.ClassId));
+			list.push_back(std::make_pair(classInfo.m_ClassName, classInfo.m_ClassId));
 		}
 	}
 	return list;
@@ -904,7 +901,6 @@ bool SVTaskObjectListClass::replaceObject(SVObjectClass* pObject, const GUID& rN
 }
 #pragma endregion public methods
 
-
 #pragma region protected methods
 // .Title       : DeleteAt
 // -----------------------------------------------------------------------------
@@ -941,13 +937,13 @@ void SVTaskObjectListClass::DeleteAt(int Index, int Count /*= 1*/)
 		Count = m_aTaskObjects.GetSize() - Index; 
 	}
 	
-	SVTaskObjectClass* pTaskObject;
+	SVTaskObjectClass* pTaskObject( nullptr );
 	for (int i = Index + Count - 1; i >= Index; -- i)
 	{
 		pTaskObject = m_aTaskObjects.GetAt(i);
 		if (pTaskObject)
 		{
-			DestroyChildObject(pTaskObject);
+			DestroyChildObject( pTaskObject );
 		}
 	}
 }
@@ -1005,9 +1001,9 @@ BOOL SVTaskObjectListClass::getAvailableObjects(SVClassInfoStructListClass* pLis
 	for (int i = 0; i < m_availableChildren.GetSize(); i++)
 	{
 		SVClassInfoStruct classInfo = m_availableChildren.GetAt(i);
-		if (classInfo.ObjectTypeInfo.ObjectType == pObjectTypeInfo->ObjectType &&
+		if (classInfo.m_ObjectTypeInfo.ObjectType == pObjectTypeInfo->ObjectType &&
 			(pObjectTypeInfo->SubType == SVNotSetSubObjectType ||
-			classInfo.ObjectTypeInfo.SubType == pObjectTypeInfo->SubType) 
+			classInfo.m_ObjectTypeInfo.SubType == pObjectTypeInfo->SubType) 
 			)
 		{
 			pList->Add(classInfo);
@@ -1086,14 +1082,14 @@ BOOL SVTaskObjectListClass::Run(SVRunStatusClass& RRunStatus)
 
 SVTaskObjectListClass::SVObjectPtrDeque SVTaskObjectListClass::GetPreProcessObjects() const
 {
-	SVObjectPtrDeque l_Objects = __super::GetPreProcessObjects();
+	SVObjectPtrDeque Objects = __super::GetPreProcessObjects();
 
-	return l_Objects;
+	return Objects;
 }
 
 SVTaskObjectListClass::SVObjectPtrDeque SVTaskObjectListClass::GetPostProcessObjects() const
 {
-	SVObjectPtrDeque l_Objects = __super::GetPostProcessObjects();
+	SVObjectPtrDeque Objects = __super::GetPostProcessObjects();
 
 	SVTaskObjectPtrVector::const_iterator l_Iter;
 
@@ -1103,11 +1099,11 @@ SVTaskObjectListClass::SVObjectPtrDeque SVTaskObjectListClass::GetPostProcessObj
 
 		if( nullptr != l_pTask )
 		{
-			l_Objects.push_back( l_pTask );
+			Objects.push_back( l_pTask );
 		}
 	}
 
-	return l_Objects;
+	return Objects;
 }
 
 bool SVTaskObjectListClass::resetAllObjects( bool shouldNotifyFriends, bool silentReset )
@@ -1157,7 +1153,7 @@ void SVTaskObjectListClass::DestroyTaskObject(SVTaskObjectClass& rTaskObject, DW
 	// Remove it from the SVTaskObjectList ( Destruct it )
 	Delete(objectID);
 
-	SVInspectionProcess* pInspection = GetInspection();
+	SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess*>(GetInspection());
 	if( nullptr != pInspection )
 	{
 		if( SVMFSetDefaultInputs == ( context & SVMFSetDefaultInputs ) )
@@ -1167,7 +1163,7 @@ void SVTaskObjectListClass::DestroyTaskObject(SVTaskObjectClass& rTaskObject, DW
 
 		if( SVMFResetInspection == ( context & SVMFResetInspection ) )
 		{
-			pInspection->resetAllObjects(true, false);
+			GetInspection()->resetAllObjects( true, false );
 		}
 	}
 }
@@ -1230,5 +1226,4 @@ SvOi::IObjectClass* SVTaskObjectListClass::getFirstObjectWithRequestor( const SV
 	}
 	return retObject;
 }
-
 #pragma endregion Private Methods

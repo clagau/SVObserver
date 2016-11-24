@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVTaskObjectInterfaceClass.h"
+#include "SVTaskObjectValueInterface.h"
 #include "SVMFCControls\SVHistogram.h"
 #include "afxwin.h"
 #include "afxcmn.h"
@@ -40,13 +40,13 @@ private:
 
 // SVHistogramAnalyzerSetup dialog
 
-class SVHistogramAnalyzerSetupClass : public CDialog, public SVTaskObjectInterfaceClass
+class SVHistogramAnalyzerSetupClass : public CDialog, public SVTaskObjectValueInterface
 {
 //	DECLARE_DYNAMIC(SVHistogramAnalyzerSetupClass)
 public:
 	SVHistogramAnalyzerClass* m_pAnalyzer;
 
-	virtual HRESULT SetInspectionData();
+	HRESULT SetInspectionData();
 	void Refresh();
 
 protected:

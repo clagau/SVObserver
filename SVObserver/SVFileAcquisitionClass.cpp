@@ -20,8 +20,8 @@
 #include "SVOMFCLibrary/SVDeviceParams.h"
 
 #include "SVDigitizerProcessingClass.h"
-#include "SVImageObjectClass.h"
-#include "SVImageProcessingClass.h"
+#include "SVOCore/SVImageObjectClass.h"
+#include "SVOCore/SVImageProcessingClass.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "ObjectInterfaces/ErrorNumbers.h"
 #include "TextDefinesSvO.h"

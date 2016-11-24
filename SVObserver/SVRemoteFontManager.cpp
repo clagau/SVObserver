@@ -15,8 +15,9 @@
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
 #include "SVImageLibrary/SVImageInfoClass.h"
 #include "SVTimerLibrary/SVClock.h"
-#include "SVImageProcessingClass.h"
+#include "SVOCore/SVImageProcessingClass.h"
 #include "SVObserver.h"
+#include "SVSystemLibrary/SVThreadManager.h"
 #include "SVOMFCLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
 
 
@@ -618,7 +619,7 @@ bool SVRemoteFontManager::GetFontCharImage( long p_lFontIdentifier, SVMatroxOcr 
 	ImageInfo.SetImageProperty(SVImagePropertyBandNumber,1 );
 	ImageInfo.SetImageProperty(SVImagePropertyPixelDepth,  SV8BitUnsigned );
 
-	hrRet = SVImageProcessingClass::Instance().CreateImageBuffer( ImageInfo, ImageBufferHandle );
+	hrRet = SVImageProcessingClass::CreateImageBuffer( ImageInfo, ImageBufferHandle );
 
 	if( !( ImageBufferHandle.empty() ) )
 	{

@@ -13,8 +13,8 @@
 #include "SVObjectLibrary/SVObjectLibrary.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
-#include "SVImageProcessingClass.h"
-#include "SVTaskObjectList.h"
+#include "SVOCore/SVImageProcessingClass.h"
+#include "SVOCore/SVTaskObjectList.h"
 #include "SVToolSet.h"
 #include "SVTool.h"
 #include "SVWaterShedFilter.h" //Arvid added to avoid VS2015 compile Error

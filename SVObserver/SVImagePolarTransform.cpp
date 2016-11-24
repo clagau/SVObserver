@@ -22,8 +22,8 @@
 #include "SVEvaluateStartAngleClass.h"
 #include "SVEvaluateEndAngleClass.h"
 #include "SVEquation.h"
-#include "SVGlobal.h" // Default Coordinates
-#include "SVImageProcessingClass.h"
+#include "ObjectInterfaces/GlobalConst.h"
+#include "SVOCore/SVImageProcessingClass.h"
 #include "SVPolarTransformationTool.h"
 #include "SVOMFCLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
 
@@ -114,12 +114,12 @@ SVImagePolarTransformClass::SVImagePolarTransformClass( SVObjectClass* POwner, i
 
 	// Set Embedded defaults
 	interpolationMode.SetDefaultValue( SVNearestNeighOverScanEnable, TRUE );	// Refer to MIL...
-	centerX.SetDefaultValue( ( double ) SV_DEFAULT_POLARTRANSFORM_CENTER_X, TRUE );
-	centerY.SetDefaultValue( ( double ) SV_DEFAULT_POLARTRANSFORM_CENTER_Y, TRUE );
-	startRadius.SetDefaultValue( ( double ) SV_DEFAULT_POLARTRANSFORM_START_RADIUS, TRUE );
-	endRadius.SetDefaultValue( ( double ) SV_DEFAULT_POLARTRANSFORM_END_RADIUS, TRUE );
-	startAngle.SetDefaultValue( ( double ) SV_DEFAULT_POLARTRANSFORM_START_ANGLE, TRUE );
-	endAngle.SetDefaultValue( ( double ) SV_DEFAULT_POLARTRANSFORM_END_ANGLE, TRUE );
+	centerX.SetDefaultValue( ( double ) SvOi::cDefaultPolarTransformCenterX, TRUE );
+	centerY.SetDefaultValue( ( double ) SvOi::cDefaultPolarTransformCenterY, TRUE );
+	startRadius.SetDefaultValue( ( double ) SvOi::cDefaultPolarTransformStartRadius, TRUE );
+	endRadius.SetDefaultValue( ( double ) SvOi::cDefaultPolarTransformEndRadius, TRUE );
+	startAngle.SetDefaultValue( ( double ) SvOi::cDefaultPolarTransformStartAngle, TRUE );
+	endAngle.SetDefaultValue( ( double ) SvOi::cDefaultPolarTransformEndAngle, TRUE );
 
 	outputImageObject.InitializeImage( SVImageTypePhysical );
 
@@ -138,15 +138,15 @@ SVImagePolarTransformClass::~SVImagePolarTransformClass()
 BOOL SVImagePolarTransformClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 {
 	BOOL l_bOk = SVPolarTransformClass::CreateObject( PCreateStructure );
+	SVToolClass* pTool = dynamic_cast<SVToolClass*>(GetTool());
+	l_bOk = l_bOk && nullptr != pTool;
 
-	l_bOk = l_bOk && nullptr != GetTool();
-
-	l_bOk = l_bOk && S_OK == GetTool()->SetImageExtentProperty( SVExtentPropertyPositionPointX, &centerX );
-	l_bOk = l_bOk && S_OK == GetTool()->SetImageExtentProperty( SVExtentPropertyPositionPointY, &centerY );
-	l_bOk = l_bOk && S_OK == GetTool()->SetImageExtentProperty( SVExtentPropertyInnerRadius, &endRadius );
-	l_bOk = l_bOk && S_OK == GetTool()->SetImageExtentProperty( SVExtentPropertyOuterRadius, &startRadius );
-	l_bOk = l_bOk && S_OK == GetTool()->SetImageExtentProperty( SVExtentPropertyStartAngle, &startAngle );
-	l_bOk = l_bOk && S_OK == GetTool()->SetImageExtentProperty( SVExtentPropertyEndAngle, &endAngle );
+	l_bOk = l_bOk && S_OK == pTool->SetImageExtentProperty( SVExtentPropertyPositionPointX, &centerX );
+	l_bOk = l_bOk && S_OK == pTool->SetImageExtentProperty( SVExtentPropertyPositionPointY, &centerY );
+	l_bOk = l_bOk && S_OK == pTool->SetImageExtentProperty( SVExtentPropertyInnerRadius, &endRadius );
+	l_bOk = l_bOk && S_OK == pTool->SetImageExtentProperty( SVExtentPropertyOuterRadius, &startRadius );
+	l_bOk = l_bOk && S_OK == pTool->SetImageExtentProperty( SVExtentPropertyStartAngle, &startAngle );
+	l_bOk = l_bOk && S_OK == pTool->SetImageExtentProperty( SVExtentPropertyEndAngle, &endAngle );
 
 	l_bOk &= S_OK == ( outputImageObject.InitializeImage( getInputImage() ) );
 
@@ -159,7 +159,6 @@ BOOL SVImagePolarTransformClass::CreateObject( SVObjectLevelCreateStruct* PCreat
 	endAngle.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_REMOTELY_SETABLE | SV_EXTENT_OBJECT | SV_SETABLE_ONLINE;
 	interpolationMode.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
 	useFormulaInput.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
-
 
 	SetCalculatedPrintableFlags();
 
@@ -621,10 +620,11 @@ BOOL SVImagePolarTransformClass::onRun( SVRunStatusClass& RRunStatus )
 	{
 		SVImageExtentClass l_svExtents;
 
-    SVSmartHandlePointer l_svInputHandle;
-    SVSmartHandlePointer l_svOutputHandle;
+		SVSmartHandlePointer l_svInputHandle;
+		SVSmartHandlePointer l_svOutputHandle;
 
-		l_bOk = l_bOk && (nullptr != GetTool()) && (S_OK == GetTool()->GetImageExtent( l_svExtents ));
+		SVToolClass* pTool = dynamic_cast<SVToolClass*>(GetTool());
+		l_bOk = l_bOk && (nullptr != pTool) && (S_OK == pTool->GetImageExtent( l_svExtents ));
 
 		l_bOk = l_bOk && outputImageObject.SetImageHandleIndex( RRunStatus.Images );
 

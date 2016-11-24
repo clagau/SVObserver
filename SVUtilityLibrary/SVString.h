@@ -136,8 +136,14 @@ namespace Seidenader { namespace SVUtilityLibrary { namespace StringFunctions {
 
 	template bool Convert2Number(const SVString& rStringValue, double&, bool);
 	template bool Convert2Number(const SVString& rStringValue, long&, bool);
-}}}
+
+	//************************************
+	/// Load the string from the resource dll
+	/// \param ResourceID [in] The resource ID to load from the resource dll
+	/// \returns SVString Created string with the loaded string
+	//************************************
+	SVString LoadString( UINT ResourceID );
+} /* namespace StringFunctions */ } /* namespace SVUtilityLibrary */ } /* namespace Seidenader */
 
 namespace SvUl = Seidenader::SVUtilityLibrary;
 namespace SvUl_SF = Seidenader::SVUtilityLibrary::StringFunctions;
-

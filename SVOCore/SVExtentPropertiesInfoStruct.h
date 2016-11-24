@@ -9,7 +9,6 @@
 //* .Check In Date   : $Date:   23 Apr 2013 10:30:12  $
 //******************************************************************************
 
-
 #pragma once
 
 struct SVExtentPropertyInfoStruct

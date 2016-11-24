@@ -96,6 +96,6 @@ HRESULT SVTimerValueObjectClass::GetValueAt( int iBucket, int iIndex, VARIANT& r
 void SVTimerValueObjectClass::LocalInitialize()
 {
 	m_Start = SVClock::GetTimeStamp();
-	m_strTypeName = "Timer";
+	SetTypeName( _T("Timer") );
 }
 

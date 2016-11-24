@@ -78,13 +78,13 @@ public:
 	HRESULT SetLut( const SVLut& lut );
 	HRESULT GetLut( SVLut& lut ) const;
 
-	HRESULT GetSourceImageIndex( SVDataManagerHandle& p_rHandle, const SVProductInfoStruct& p_rProduct ) const;
+	HRESULT GetSourceImageIndex( SVDataManagerHandle* pHandle, const SVGuidSVCameraInfoStructMap& rGuidCameraMap ) const;
 	virtual HRESULT GetChildObject( SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index = 0 ) const override;
 
 	HRESULT ReserveNextImageHandleIndex( SVDataManagerHandle& p_rDMIndexHandle, SVDataManagerLockTypeEnum p_LockType = SV_ACQUISITION ) const;
-	virtual BOOL ReserveImageHandleIndex( const SVDataManagerHandle& p_rDMIndexHandle ) const;
+	bool ReserveImageHandleIndex( const SVDataManagerHandle& p_rDMIndexHandle ) const;
 
-	virtual BOOL CopyValue( const SVDataManagerHandle& p_From, const SVDataManagerHandle& p_To );
+	bool CopyValue( const SVDataManagerHandle& p_From, const SVDataManagerHandle& p_To );
 
 	void DumpDMInfo( LPCTSTR p_szName ) const;
 

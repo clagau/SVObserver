@@ -13,36 +13,29 @@
 
 #pragma region Includes
 #include "SVContainerLibrary/SVVector.h"
-#include "ObjectInterfaces/SVObjectTypeInfoStruct.h"
+#include "ObjectInterfaces/SVInterfaceList.h"
+#include "SVUtilityLibrary/SVString.h"
+#include "SVUtilityLibrary/SVGUID.h"
 #pragma endregion Includes
 
 class SVObjectClass;
 
-class SVInterfaceListClass : public SVVector< SVObjectTypeInfoStruct >
-{
-public:
-	SVInterfaceListClass();
-	SVInterfaceListClass( const SVInterfaceListClass& RIn );
-	virtual ~SVInterfaceListClass();
-	SVInterfaceListClass operator=( const SVInterfaceListClass& RIn );
-};
-
 struct SVClassInfoStruct
 {
 	SVClassInfoStruct();
-	SVClassInfoStruct( const SVClassInfoStruct& RClassInfo );
+	SVClassInfoStruct( const SVClassInfoStruct& rRhs );
 	virtual ~SVClassInfoStruct();
-	SVClassInfoStruct operator=( const SVClassInfoStruct& RClassInfo );
+	SVClassInfoStruct operator=( const SVClassInfoStruct& rRhs );
 
 	// Construct Object and set given ClassName...
 	SVObjectClass* Construct();
 
-	SVObjectTypeInfoStruct	ObjectTypeInfo;
-	CString					ClassName;
-	GUID					ClassId;
+	SVObjectTypeInfoStruct m_ObjectTypeInfo;
+	SVString m_ClassName;
+	SVGUID m_ClassId;
 
 	// Must be in the same order, like the class defines its input interface!!!
-	SVInterfaceListClass	DesiredInputInterface;
+	SvOi::SVInterfaceList m_DesiredInputInterface;
 };
 
 class SVClassInfoStructListClass : public SVVector< SVClassInfoStruct >
@@ -53,7 +46,7 @@ public:
 
 #pragma region public methods
 public:
-	virtual int Find( const GUID& ClassID ); 
+	virtual int Find( const SVGUID& rGuid );
 
 #pragma endregion public methods
 };

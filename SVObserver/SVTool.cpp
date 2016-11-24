@@ -18,7 +18,7 @@
 #include "SVUtilityLibrary/SetBits.h"
 #include "SVAnalyzer.h"
 #include "SVConditional.h"
-#include "SVGlobal.h"
+#include "ObjectInterfaces/GlobalConst.h"
 #include "SVInspectionProcess.h"
 #include "SVToolImage.h"
 #include "SVToolSet.h"
@@ -127,14 +127,14 @@ void SVToolClass::init()
 	/////////////////////////////////////////////////////////////////////////
 	// Set Default values for Shadowed Extents
 	/////////////////////////////////////////////////////////////////////////
-	extentLeft.SetDefaultValue( SV_DEFAULT_WINDOWTOOL_LEFT, TRUE );
-	extentTop.SetDefaultValue( SV_DEFAULT_WINDOWTOOL_TOP, TRUE );
-	extentRight.SetDefaultValue( SV_DEFAULT_WINDOWTOOL_LEFT + SV_DEFAULT_WINDOWTOOL_WIDTH, TRUE );
-	extentBottom.SetDefaultValue( SV_DEFAULT_WINDOWTOOL_TOP + SV_DEFAULT_WINDOWTOOL_HEIGHT, TRUE );
-	extentWidth.SetDefaultValue( SV_DEFAULT_WINDOWTOOL_WIDTH, TRUE );
-	extentHeight.SetDefaultValue( SV_DEFAULT_WINDOWTOOL_HEIGHT, TRUE );
-	extentWidthScaleFactor.SetDefaultValue( SV_DEFAULT_WINDOWTOOL_WIDTHSCALEFACTOR, TRUE );
-	extentHeightScaleFactor.SetDefaultValue( SV_DEFAULT_WINDOWTOOL_HEIGHTSCALEFACTOR, TRUE );
+	extentLeft.SetDefaultValue( SvOi::cDefaultWindowToolLeft, TRUE );
+	extentTop.SetDefaultValue( SvOi::cDefaultWindowToolTop, TRUE );
+	extentRight.SetDefaultValue( SvOi::cDefaultWindowToolLeft + SvOi::cDefaultWindowToolWidth, TRUE );
+	extentBottom.SetDefaultValue( SvOi::cDefaultWindowToolTop + SvOi::cDefaultWindowToolHeight, TRUE );
+	extentWidth.SetDefaultValue( SvOi::cDefaultWindowToolWidth, TRUE );
+	extentHeight.SetDefaultValue( SvOi::cDefaultWindowToolHeight, TRUE );
+	extentWidthScaleFactor.SetDefaultValue( SvOi::cDefaultWindowToolWidthScaleFactor, TRUE );
+	extentHeightScaleFactor.SetDefaultValue( SvOi::cDefaultWindowToolHeightScaleFactor, TRUE );
 
 	drawToolFlag.SetEnumTypes( IDS_TOOLDRAW_ENUMOBJECT_LIST );
 	drawToolFlag.SetDefaultValue( ( const long ) 0, TRUE ); // 0 Should be show tool 'Always'
@@ -181,7 +181,7 @@ BOOL SVToolClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 		{
 			bOk = TRUE;
 
-			m_pCurrentToolSet = GetInspection()->GetToolSet();
+			m_pCurrentToolSet = dynamic_cast<SVInspectionProcess*>(GetInspection())->GetToolSet();
 		}
 	}
 
@@ -354,11 +354,11 @@ BOOL SVToolClass::OnValidate()
 
 void SVToolClass::UpdateAuxiliaryExtents(long resultDataIndex)
 {
-	if( GetInspection()->GetEnableAuxiliaryExtent() )
+	if( dynamic_cast<SVInspectionProcess*>(GetInspection())->GetEnableAuxiliaryExtent() )
 	{
 		BOOL l_bUpdateSourceExtents = false;
 
-		bool l_bForceOffsetReset = GetInspection()->m_bForceOffsetUpdate;
+		bool l_bForceOffsetReset = dynamic_cast<SVInspectionProcess*>(GetInspection())->m_bForceOffsetUpdate;
 
 		m_svToolExtent.UpdateOffsetData( l_bForceOffsetReset );
 
@@ -407,7 +407,7 @@ BOOL SVToolClass::Run( SVRunStatusClass& RRunStatus )
 
 	ToolTime.Start();
 
-	if( !GetInspection()->GetNewDisableMethod() )
+	if( !dynamic_cast<SVInspectionProcess*>(GetInspection())->GetNewDisableMethod() )
 	{
 		// First Set the old stuff forward for the counts
 		m_isObjectValid.GetValue( bIsValid );
@@ -519,7 +519,7 @@ BOOL SVToolClass::Run( SVRunStatusClass& RRunStatus )
 	}// end else
 
 	//
-	if( GetInspection()->GetEnableAuxiliaryExtent() )
+	if( dynamic_cast<SVInspectionProcess*>(GetInspection())->GetEnableAuxiliaryExtent() )
 	{
 		UpdateAuxiliaryExtents(RRunStatus.m_lResultDataIndex);
 	}
@@ -781,9 +781,10 @@ HRESULT SVToolClass::GetRootOffsetData( SVExtentOffsetStruct& p_rsvOffsetData )
 
 HRESULT SVToolClass::UpdateOffsetData( SVImageClass* p_svToolImage )
 {
-	if( nullptr != GetInspection() )
+	SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(GetInspection());
+	if( nullptr != pInspection  )
 	{
-		GetInspection()->m_bForceOffsetUpdate = true;
+		pInspection->m_bForceOffsetUpdate = true;
 	}
 
 	return m_svToolExtent.UpdateOffsetData( true, p_svToolImage );
@@ -866,9 +867,10 @@ HRESULT SVToolClass::ResetObject()
 	}
 
 	bool l_bReset = false;
-	if ( nullptr != GetInspection() && 
-		 nullptr != GetInspection()->GetToolSet() && 
-		 ( S_OK == GetInspection()->GetToolSet()->getResetCounts( l_bReset ) ) &&
+	SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(GetInspection());
+	if ( nullptr != pInspection && 
+		 nullptr != pInspection->GetToolSet() && 
+		 ( S_OK == pInspection->GetToolSet()->getResetCounts( l_bReset ) ) &&
 		 l_bReset )
 	{
 		// Reset Counter...
@@ -888,7 +890,7 @@ HRESULT SVToolClass::ResetObject()
 	// Auxiliary Extents
 	double l_dValue = 0;
 	
-	if( GetInspection()->GetEnableAuxiliaryExtent() )
+	if( dynamic_cast<SVInspectionProcess*>(GetInspection())->GetEnableAuxiliaryExtent() )
 	{
 		m_svUpdateAuxiliaryExtents.ObjectAttributesAllowedRef() |=  SV_VIEWABLE 
 			| SV_ARCHIVABLE
@@ -951,11 +953,6 @@ void SVToolClass::UpdateBottomAndRight()
 const SVImageClass* SVToolClass::GetToolImage() const
 {
 	return m_svToolExtent.GetToolImage();
-}
-
-void SVToolClass::SetToolImage( SVImageClass* p_pExtentImage )
-{
-	m_svToolExtent.SetToolImage( p_pExtentImage );
 }
 
 void SVToolClass::SetAlwaysUpdate( bool p_bAlwaysUpdate )
@@ -1118,7 +1115,7 @@ HRESULT SVToolClass::CollectOverlays( SVImageClass *p_Image, SVExtentMultiLineSt
 
 void SVToolClass::UpdateTaskObjectOutputListAttributes( SVObjectReference refTarget, UINT uAttributes )
 {
-	SVToolSetClass* pToolSet = GetInspection()->GetToolSet();
+	SVToolSetClass* pToolSet = dynamic_cast<SVInspectionProcess*>(GetInspection())->GetToolSet();
 	ASSERT( pToolSet );
 	SVOutputInfoListClass l_ToolSetOutputList;
 	SVObjectReferenceVector vecObjects;
@@ -1161,7 +1158,7 @@ HRESULT SVToolClass::GetSourceImages( SVImageListClass* p_psvImageList ) const
 		l_psvImageParent = m_svToolExtent.GetToolImage()->GetParentImage();
 		if( nullptr != l_psvImageParent )
 		{
-			 l_psvTool = l_psvImageParent->GetTool(); //dynamic_cast<SVToolClass*>( l_psvImageParent->GetTool() );
+			 l_psvTool = dynamic_cast<SVToolClass*>( l_psvImageParent->GetTool() );
 
 			 if( nullptr != l_psvTool && l_psvTool != this )
 			 {
@@ -1218,9 +1215,10 @@ HRESULT SVToolClass::SetAuxSourceImage( SVImageClass* p_psvImage )
 
 		m_svToolExtent.SetSelectedImage( GetAuxSourceImage() );
 
-		if ( nullptr != GetInspection() )
+		SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(GetInspection());
+		if ( nullptr != pInspection )
 		{
-			GetInspection()->m_bForceOffsetUpdate = true;
+			pInspection->m_bForceOffsetUpdate = true;
 		}
 		UpdateAuxiliaryExtents(1);
 		GetInspection()->resetAllObjects(true, false);
@@ -1258,9 +1256,9 @@ const SVImageInfoClass* SVToolClass::getFirstImageInfo() const
 bool SVToolClass::areAuxExtentsAvailable() const
 {
 	bool bRetVal = true;
-	// check inspection, not gauge tool, and has image input!
+	// check inspection, and has image input!
 	if (nullptr == GetToolImage() || 
-		0 == GetInspection()->GetEnableAuxiliaryExtent())
+		0 == dynamic_cast<SVInspectionProcess*>(GetInspection())->GetEnableAuxiliaryExtent())
 	{
 		bRetVal = false;
 	}
@@ -1296,12 +1294,18 @@ SvUl::NameGuidPair SVToolClass::getAuxSourceImage() const
 HRESULT SVToolClass::setAuxSourceImage(const SVGUID& rObjectID)
 {
 	HRESULT hr = E_POINTER;
-	SVImageClass* pImage = dynamic_cast<SVImageClass *>(SvOi::getObject(rObjectID));
-	if (pImage)
+	SVImageClass* pImage = dynamic_cast<SVImageClass*> (SvOi::getObject(rObjectID));
+	if( nullptr != pImage )
 	{
-		hr = SetAuxSourceImage(pImage);
+		hr = SetAuxSourceImage( pImage );
 	}
 	return hr;
+}
+
+void SVToolClass::SetToolImage( const SVGUID& rObjectID )
+{
+	SVImageClass* pImage = dynamic_cast<SVImageClass*> (SvOi::getObject(rObjectID));
+	m_svToolExtent.SetToolImage( pImage );
 }
 #pragma endregion ITool methods
 

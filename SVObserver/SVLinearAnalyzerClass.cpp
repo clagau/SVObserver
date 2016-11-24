@@ -14,7 +14,7 @@
 #include "SVGlobal.h"
 #include "SVInspectionProcess.h"
 #include "SVLinearEdgeAProcessingClass.h"
-#include "SVImageClass.h"
+#include "SVOCore/SVImageClass.h"
 #include "SVTool.h"
 
 #ifdef _DEBUG
@@ -183,12 +183,13 @@ HRESULT SVLinearAnalyzerClass::GetImageExtent( SVImageExtentClass &p_rsvImageExt
 
 	HRESULT l_hrOk = p_rsvImageExtent.Initialize();
 
-	if( nullptr == GetTool() || 
+	SVToolClass* pTool = dynamic_cast<SVToolClass*>(GetTool());
+	if( nullptr == pTool || 
 		  nullptr == GetInputUseRotationAngle() ||
 	    ( S_OK != GetInputUseRotationAngle()->GetValue( l_bUseRotation ) ) ||
 		  nullptr == GetInputProfileOrientation() ||
 	    ( S_OK != GetInputProfileOrientation()->GetValue( l_dAngle ) ) ||
-			S_OK != GetTool()->GetImageExtent( l_svExtents ) ||
+			S_OK != pTool->GetImageExtent( l_svExtents ) ||
 			S_OK != l_svExtents.GetExtentProperty( SVExtentPropertyOutputWidth, l_lWidth ) ||
 			S_OK != l_svExtents.GetExtentProperty( SVExtentPropertyOutputHeight, l_lHeight ) )
 	{
@@ -324,10 +325,10 @@ HRESULT SVLinearAnalyzerClass::onCollectOverlays(SVImageClass *p_Image,SVExtentM
 	SVImageExtentClass l_svAnalyzerExtents;
 	BOOL l_bOk = TRUE;
 
-	l_bOk = l_bOk && nullptr != GetTool() && S_OK == GetTool()->GetImageExtent( l_svToolExtents );
+	SVToolClass* pTool = dynamic_cast<SVToolClass*>(GetTool());
+	l_bOk = l_bOk && nullptr != pTool && S_OK == pTool->GetImageExtent( l_svToolExtents );
 	l_bOk = l_bOk && S_OK == GetImageExtent( l_svAnalyzerExtents );
 	
-
 	if ( S_OK == l_svAnalyzerExtents.GetFigure(l_svFigure) )
 	{
 		COLORREF l_Color = 0;

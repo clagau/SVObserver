@@ -68,10 +68,10 @@ SVLinearEdgeBProcessingClass::SVLinearEdgeBProcessingClass( SVObjectClass* POwne
 
 	RegisterEmbeddedObject(&m_svLinearEdges, SVLinearEdgesClassGuid, IDS_CLASSNAME_SVLINEAREDGESCLASS, false, SVResetItemNone );
 
-	m_svDirection.SetEnumTypes( g_strDirectionEnums );
-	m_svPolarisation.SetEnumTypes( g_strPolarisationEnums );
-	m_svEdgeSelect.SetEnumTypes( g_strEdgeSelectEnums );
-	m_svPosition.SetEnumTypes( g_strPositionEnums );
+	m_svDirection.SetEnumTypes( cDirectionEnums );
+	m_svPolarisation.SetEnumTypes( cPolarisationEnums );
+	m_svEdgeSelect.SetEnumTypes( cEdgeSelectEnums );
+	m_svPosition.SetEnumTypes( cPositionEnums );
 
 	// Set default inputs and outputs
 	addDefaultInputObjects();

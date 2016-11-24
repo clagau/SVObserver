@@ -13,7 +13,7 @@
 #include "stdafx.h"
 #include "SVLinearLinePixelCountingAnalyzer.h"
 #include "SVGlobal.h"
-#include "SVImageClass.h"
+#include "SVOCore/SVImageClass.h"
 #include "SVLinearEdgeAProcessingClass.h"
 #pragma endregion Includes
 
@@ -64,29 +64,29 @@ void SVLinearPixelCountingLineAnalyzerClass::init()
 
 	// Declare Input Interface of Black Pixel Count Result...
 	interfaceInfo.EmbeddedID = SVBlackPixelObjectGuid;
-	resultClassInfo.DesiredInputInterface.Add( interfaceInfo );
+	resultClassInfo.m_DesiredInputInterface.Add( interfaceInfo );
 
 	// Add the Black Pixel Count Result...
-	resultClassInfo.ObjectTypeInfo.ObjectType = SVResultObjectType;
-	resultClassInfo.ObjectTypeInfo.SubType	= SVResultLongObjectType;
-	resultClassInfo.ClassId = SVLongResultClassGuid;
-	resultClassInfo.ClassName.LoadString( IDS_OBJECTNAME_BLACKPIXELCOUNT );
+	resultClassInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
+	resultClassInfo.m_ObjectTypeInfo.SubType	= SVResultLongObjectType;
+	resultClassInfo.m_ClassId = SVLongResultClassGuid;
+	resultClassInfo.m_ClassName = SvUl_SF::LoadString( IDS_OBJECTNAME_BLACKPIXELCOUNT );
 	strTitle.LoadString( IDS_RESULT_STRING );
-	resultClassInfo.ClassName += SV_TSTR_SPACE + strTitle;
+	resultClassInfo.m_ClassName += SV_TSTR_SPACE + strTitle;
 	m_availableChildren.Add( resultClassInfo );
 
 	// Declare Input Interface of White Pixel Count Result...
-	resultClassInfo.DesiredInputInterface.RemoveAll();
+	resultClassInfo.m_DesiredInputInterface.RemoveAll();
 	interfaceInfo.EmbeddedID = SVWhitePixelObjectGuid;
-	resultClassInfo.DesiredInputInterface.Add( interfaceInfo );
+	resultClassInfo.m_DesiredInputInterface.Add( interfaceInfo );
 
 	// Add the White Pixel Count Result...
-	resultClassInfo.ObjectTypeInfo.ObjectType = SVResultObjectType;
-	resultClassInfo.ObjectTypeInfo.SubType	= SVResultLongObjectType;
-	resultClassInfo.ClassId = SVLongResultClassGuid;
-	resultClassInfo.ClassName.LoadString( IDS_OBJECTNAME_WHITEPIXELCOUNT );
+	resultClassInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
+	resultClassInfo.m_ObjectTypeInfo.SubType	= SVResultLongObjectType;
+	resultClassInfo.m_ClassId = SVLongResultClassGuid;
+	resultClassInfo.m_ClassName = SvUl_SF::LoadString( IDS_OBJECTNAME_WHITEPIXELCOUNT );
 	strTitle.LoadString( IDS_RESULT_STRING );
-	resultClassInfo.ClassName += SV_TSTR_SPACE + strTitle;
+	resultClassInfo.m_ClassName += SV_TSTR_SPACE + strTitle;
 	m_availableChildren.Add( resultClassInfo );
 }
 

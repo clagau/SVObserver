@@ -11,6 +11,7 @@
 #pragma once
 #pragma region Includes
 #include "SVFilterClass.h"
+#include "SVImageLibrary/SVImageBufferHandleInterface.h"
 #pragma region Includes
 
 class SVLaplacianEdge2FilterClass : public SVFilterClass

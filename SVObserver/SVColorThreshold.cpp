@@ -18,9 +18,9 @@
 #include "SVRunControlLibrary/SVRunControlLibrary.h"
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
 
-#include "SVDataBuffer.h"
-#include "SVGlobal.h"
-#include "SVImageProcessingClass.h"
+#include "SVOCore/SVDataBuffer.h"
+#include "ObjectInterfaces/GlobalConst.h"
+#include "SVOCore/SVImageProcessingClass.h"
 #include "SVTool.h"
 #include "SVOMFCLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
 
@@ -91,23 +91,22 @@ void SVColorThresholdClass::init()
 	RegisterEmbeddedObject( &extentHeight, SVExtentHeightObjectGuid, IDS_OBJECTNAME_EXTENT_HEIGHT, false, SVResetItemOwner, _T("Extent Height") );
 
 	// Set Embedded defaults
-	band0UpperThreshold.SetDefaultValue( SV_DEFAULT_TOOL_UPPER_TRESH, TRUE );
-	band0LowerThreshold.SetDefaultValue( SV_DEFAULT_TOOL_LOWER_TRESH, TRUE );
+	band0UpperThreshold.SetDefaultValue( SvOi::cDefaultToolUpperThreshold, TRUE );
+	band0LowerThreshold.SetDefaultValue( SvOi::cDefaultToolLowerThreshold, TRUE );
 	band0ThresholdExclude.SetDefaultValue( FALSE, TRUE );
 
-	band1UpperThreshold.SetDefaultValue( SV_DEFAULT_TOOL_UPPER_TRESH, TRUE );
-	band1LowerThreshold.SetDefaultValue( SV_DEFAULT_TOOL_LOWER_TRESH, TRUE );
+	band1UpperThreshold.SetDefaultValue( SvOi::cDefaultToolUpperThreshold, TRUE );
+	band1LowerThreshold.SetDefaultValue( SvOi::cDefaultToolLowerThreshold, TRUE );
 	band1ThresholdExclude.SetDefaultValue( FALSE, TRUE );
 
-	band2UpperThreshold.SetDefaultValue( SV_DEFAULT_TOOL_UPPER_TRESH, TRUE );
-	band2LowerThreshold.SetDefaultValue( SV_DEFAULT_TOOL_LOWER_TRESH, TRUE );
+	band2UpperThreshold.SetDefaultValue( SvOi::cDefaultToolUpperThreshold, TRUE );
+	band2LowerThreshold.SetDefaultValue( SvOi::cDefaultToolLowerThreshold, TRUE );
 	band2ThresholdExclude.SetDefaultValue( FALSE, TRUE );
 		
-	extentLeft.SetDefaultValue( SV_DEFAULT_WINDOWTOOL_LEFT, TRUE );
-	extentTop.SetDefaultValue( SV_DEFAULT_WINDOWTOOL_TOP, TRUE );
-	extentWidth.SetDefaultValue( SV_DEFAULT_WINDOWTOOL_WIDTH, TRUE );
-	extentHeight.SetDefaultValue( SV_DEFAULT_WINDOWTOOL_HEIGHT, TRUE );
-
+	extentLeft.SetDefaultValue( SvOi::cDefaultWindowToolLeft, TRUE );
+	extentTop.SetDefaultValue( SvOi::cDefaultWindowToolTop, TRUE );
+	extentWidth.SetDefaultValue( SvOi::cDefaultWindowToolWidth, TRUE );
+	extentHeight.SetDefaultValue( SvOi::cDefaultWindowToolHeight, TRUE );
 	
 	histValueArraySize = 0;
 	pixelNumber		   = 0;
@@ -172,7 +171,7 @@ BOOL SVColorThresholdClass::CreateObject( SVObjectLevelCreateStruct* PCreateStru
 		  svData.Length = histValueArraySize;
 		  svData.Type = SVDataBufferInfoClass::SVHistResult;
 		  svData.HBuffer.milResult = histResultID;
-		  if ( S_OK == SVImageProcessingClass::Instance().CreateDataBuffer( &svData )  )
+		  if ( S_OK == SVImageProcessingClass::CreateDataBuffer( &svData )  )
 		  {
 			  histResultID = svData.HBuffer.milResult;
 		  }

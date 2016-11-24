@@ -13,39 +13,39 @@
 
 inline SVTaskObjectInterfaceInputRequestStruct::SVTaskObjectInterfaceInputRequestStruct()
 {
-	guid = SV_GUID_NULL;
+	m_Guid = SV_GUID_NULL;
 }
 
-inline SVTaskObjectInterfaceInputRequestStruct::SVTaskObjectInterfaceInputRequestStruct( const SVValueObjectReference& p_ref, GUID p_guid, const CString& p_strName )
+inline SVTaskObjectInterfaceInputRequestStruct::SVTaskObjectInterfaceInputRequestStruct( const SVValueObjectReference& rObjectRef, const SVGUID& rGuid, const SVString& rName )
 {
-	ref = p_ref;
-	guid = p_guid;
-	strName = p_strName;
+	m_ObjectRef = rObjectRef;
+	m_Guid = rGuid;
+	m_Name = rName;
 }
 
-inline SVTaskObjectInterfaceInputRequestStruct::SVTaskObjectInterfaceInputRequestStruct( const SVValueObjectReference& p_ref )
+inline SVTaskObjectInterfaceInputRequestStruct::SVTaskObjectInterfaceInputRequestStruct( const SVValueObjectReference& rObjectRef )
 {
-	ref = p_ref;
-	if ( ref.Object() )
+	m_ObjectRef = rObjectRef;
+	if ( m_ObjectRef.Object() )
 	{
-		guid = ref.Guid();
-		strName = ref.GetCompleteObjectName();
+		m_Guid = m_ObjectRef.Guid();
+		m_Name = m_ObjectRef.GetCompleteObjectName();
 	}
 }
 
 inline bool SVTaskObjectInterfaceInputRequestStruct::operator < ( const SVTaskObjectInterfaceInputRequestStruct& rhs ) const
 {
-	if ( ref.Object() && rhs.ref.Object() )
+	if ( m_ObjectRef.Object() && rhs.m_ObjectRef.Object() )
 	{
-		return ref < rhs.ref;
+		return m_ObjectRef < rhs.m_ObjectRef;
 	}
-	else if ( SV_GUID_NULL != guid && SV_GUID_NULL != rhs.guid )
+	else if ( SV_GUID_NULL != m_Guid && SV_GUID_NULL != rhs.m_Guid )
 	{
-		return guid < rhs.guid;
+		return m_Guid < rhs.m_Guid;
 	}
 	else
 	{
-		return strName < rhs.strName;
+		return m_Name < rhs.m_Name;
 	}
 }
 

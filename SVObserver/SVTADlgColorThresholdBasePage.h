@@ -52,14 +52,14 @@ public:
 // Implementation
 public:
 	SVTADlgColorThresholdSheet* m_pSheet;
-protected:
 
-	SVColorToolClass*         mpTool;
-	SVColorThresholdClass*    mpThreshold;
-	SVDoubleValueObjectClass* mpExtentLeft;
-	SVDoubleValueObjectClass* mpExtentTop;
-	SVDoubleValueObjectClass* mpExtentWidth;
-	SVDoubleValueObjectClass* mpExtentHeight;
+protected:
+	SVColorToolClass*         m_pTool;
+	SVColorThresholdClass*    m_pThreshold;
+	SVDoubleValueObjectClass* m_pExtentLeft;
+	SVDoubleValueObjectClass* m_pExtentTop;
+	SVDoubleValueObjectClass* m_pExtentWidth;
+	SVDoubleValueObjectClass* m_pExtentHeight;
 
 	// Generated message map functions
 	//{{AFX_MSG(SVTADlgColorThresholdBasePage)

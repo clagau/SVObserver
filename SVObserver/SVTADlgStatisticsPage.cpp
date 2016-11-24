@@ -279,7 +279,7 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnPublishButton()
 {
 	if( nullptr == m_pTool ) { return; }
 
-	SVInspectionProcess* pInspection = m_pTool->GetInspection();
+	SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(m_pTool->GetInspection());
 	if( nullptr == pInspection ) { return; }
 
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSetAttributes );
@@ -317,7 +317,7 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnBtnObjectPicker()
 {
 	if( nullptr == m_pTool || nullptr == m_pToolSet ) { return; }
 
-	SVInspectionProcess* pInspection = m_pTool->GetInspection();
+	SVObjectClass* pInspection( m_pTool->GetInspection() );
 	if( nullptr == pInspection ) { return; }
 
 	m_pTool->UpdateTaskObjectOutputListAttributes();

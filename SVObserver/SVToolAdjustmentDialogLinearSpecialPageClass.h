@@ -13,18 +13,18 @@
 
 #pragma region Includes
 #include "SVEnumerateCombo.h"
-#include "SVTaskObjectInterfaceClass.h"
+#include "SVTaskObjectValueInterface.h"
 #pragma endregion Includes
 
 class SVToolAdjustmentDialogSheetClass;
 
-class SVToolAdjustmentDialogLinearSpecialPageClass : public CPropertyPage, public SVTaskObjectInterfaceClass
+class SVToolAdjustmentDialogLinearSpecialPageClass : public CPropertyPage, public SVTaskObjectValueInterface
 {
 public:
 	SVToolAdjustmentDialogLinearSpecialPageClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* PParent = nullptr);
 	virtual ~SVToolAdjustmentDialogLinearSpecialPageClass();
 
-	virtual HRESULT SetInspectionData() override;
+	HRESULT SetInspectionData();
 
 // Dialog Data
 	//{{AFX_DATA(SVToolAdjustmentDialogLinearSpecialPageClass)

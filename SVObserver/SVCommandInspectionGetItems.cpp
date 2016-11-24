@@ -16,7 +16,7 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVUtilityLibrary/SVSAFEARRAY.h"
 
-#include "SVImageProcessingClass.h"
+#include "SVOCore/SVImageProcessingClass.h"
 #include "SVInfoStructs.h"
 #include "SVInspectionProcess.h"
 #include "SVValueObjectLibrary/SVValueObjectReference.h"
@@ -136,7 +136,7 @@ HRESULT SVCommandInspectionGetItems::UpdateResultsWithImageData(const SVString& 
 
 			if (!(TempHandlePtr.empty()))
 			{
-				SVImageProcessingClass::Instance().CreateImageBuffer(TempHandlePtr, SVImageHLSToRGB, ImageHandlePtr);
+				SVImageProcessingClass::CreateImageBuffer(TempHandlePtr, SVImageHLSToRGB, ImageHandlePtr);
 			}
 		}
 		else
@@ -148,7 +148,7 @@ HRESULT SVCommandInspectionGetItems::UpdateResultsWithImageData(const SVString& 
 		{
 			SVString FileName = SvUl_SF::Format(_T("V:\\%ld-%s.bmp"), TriggerCount, pImage->GetUniqueObjectID().ToString().c_str());
 
-			GetStatus = SVImageProcessingClass::Instance().SaveImageBuffer(FileName.c_str(),SVMatroxFileTypeEnum::SVFileBitmap , ImageHandlePtr);
+			GetStatus = SVImageProcessingClass::SaveImageBuffer(FileName.c_str(),SVMatroxFileTypeEnum::SVFileBitmap , ImageHandlePtr);
 
 			if (S_OK == GetStatus)
 			{

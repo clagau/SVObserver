@@ -14,8 +14,7 @@
 #pragma region Includes
 #include "SVContainerLibrary/SVVector.h"
 #include "ISVCancel.h"
-#include "SVTaskObjectInterfaceClass.h"
-#include "SVTaskObjectList.h"
+#include "SVOCore/SVTaskObjectList.h"
 #pragma endregion Includes
 
 class SVRangeClass;

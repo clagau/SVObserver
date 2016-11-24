@@ -10,11 +10,13 @@
 //******************************************************************************
 #pragma once
 
-#include "SVTaskObjectInterfaceClass.h"
+#pragma region Includes
+#include "SVTaskObjectValueInterface.h"
+#pragma endregion Includes
 
 /////////////////////////////////////////////////////////////////////////////
 // SVOCVGeneralDlg dialog
-class SVOCVGeneralDlg : public CPropertyPage, public SVTaskObjectInterfaceClass
+class SVOCVGeneralDlg : public CPropertyPage, public SVTaskObjectValueInterface
 {
 	DECLARE_DYNCREATE(SVOCVGeneralDlg)
 
@@ -23,7 +25,7 @@ public:
 	SVOCVGeneralDlg();
 	virtual ~SVOCVGeneralDlg();
 
-	virtual HRESULT SetInspectionData();
+	HRESULT SetInspectionData();
 
 // Dialog Data
 	//{{AFX_DATA(SVOCVGeneralDlg)

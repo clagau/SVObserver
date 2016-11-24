@@ -758,6 +758,7 @@ Json::Value DispatchCommand<SvSol::UdpApi>(const JsonCmd & cmd, const MonitorMap
 			}
 			catch( const SvStl::MessageContainer& rExp )
 			{
+				UNREFERENCED_PARAMETER(rExp);
 #if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 				::OutputDebugStringA(rExp.what());
 #endif
