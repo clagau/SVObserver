@@ -167,7 +167,7 @@ void ExtrasEngine::ToggleEnableFbwf()
 	}
 
 	CString BatchfilePath;
-	BatchfilePath.Format("\"%s%s\"",SvStl::GlobalPath::Inst().GetBinPath().c_str(),RequiredBatchFileName);
+	BatchfilePath.Format("\"%s\\%s\"",SvStl::GlobalPath::Inst().GetBinPath().c_str(),RequiredBatchFileName);
 	auto ret = system(BatchfilePath);
 	if(ret)
 	{
