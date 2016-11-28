@@ -507,6 +507,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SVOCore", "SVOCore\SVOCore.
 		{5796BBF7-F64D-4B14-816E-B9012A52A225} = {5796BBF7-F64D-4B14-816E-B9012A52A225}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "InitializeIOSubsystem", "InitializeIOSubsystem\InitializeIOSubsystem.vcxproj", "{9A917A51-8598-4B21-B7F8-11DD1D62AD03}"
+	ProjectSection(ProjectDependencies) = postProject
+		{1E640802-4CA8-4BA7-A9A3-71A15D829080} = {1E640802-4CA8-4BA7-A9A3-71A15D829080}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -1001,6 +1006,14 @@ Global
 		{DCBB3468-F35F-4455-912D-854D2CC7D599}.Unicode Debug|x64.Build.0 = Debug|x64
 		{DCBB3468-F35F-4455-912D-854D2CC7D599}.Unicode Release|x64.ActiveCfg = Release|x64
 		{DCBB3468-F35F-4455-912D-854D2CC7D599}.Unicode Release|x64.Build.0 = Release|x64
+		{9A917A51-8598-4B21-B7F8-11DD1D62AD03}.Debug|x64.ActiveCfg = Debug|x64
+		{9A917A51-8598-4B21-B7F8-11DD1D62AD03}.Debug|x64.Build.0 = Debug|x64
+		{9A917A51-8598-4B21-B7F8-11DD1D62AD03}.Release|x64.ActiveCfg = Release|x64
+		{9A917A51-8598-4B21-B7F8-11DD1D62AD03}.Release|x64.Build.0 = Release|x64
+		{9A917A51-8598-4B21-B7F8-11DD1D62AD03}.Unicode Debug|x64.ActiveCfg = Debug|x64
+		{9A917A51-8598-4B21-B7F8-11DD1D62AD03}.Unicode Debug|x64.Build.0 = Debug|x64
+		{9A917A51-8598-4B21-B7F8-11DD1D62AD03}.Unicode Release|x64.ActiveCfg = Release|x64
+		{9A917A51-8598-4B21-B7F8-11DD1D62AD03}.Unicode Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
