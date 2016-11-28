@@ -516,7 +516,7 @@ HRESULT SVDigitizerProcessingClass::SetDigitizerColor( LPCTSTR DigitizerName, bo
 	return Result;
 }
 
-SVString SVDigitizerProcessingClass::GetReOrderedCamera( const int CameraID, bool NewOrder ) const
+SVString SVDigitizerProcessingClass::GetReOrderedCamera( const int CameraID ) const
 {
 	SVString Result;
 	const SVGigeCameraStructVector& rGigeCameraOrder = SVGigeCameraManager::Instance().GetCameraOrder();
@@ -529,11 +529,7 @@ SVString SVDigitizerProcessingClass::GetReOrderedCamera( const int CameraID, boo
 			//! If Digitizer not set then use the camera ID offset by maximum physical cameras as default
 			if( -1 == DigitizerID )
 			{
-				DigitizerID = Iter->m_CameraID;
-				if( NewOrder )
-				{
-					DigitizerID += SvOi::cMaximumCameras;
-				}
+				DigitizerID = Iter->m_CameraID + SvOi::cMaximumCameras;
 			}
 			Result = SvUl_SF::Format( cMatroxGigeDigitizer, DigitizerID );
 		}

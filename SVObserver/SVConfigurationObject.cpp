@@ -82,7 +82,6 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 typedef std::deque< SVVirtualCamera* > SVVirtualCameraPtrList;
-static const unsigned long SVO_Version7_40 = 0x72800;
 
 SV_IMPLEMENT_CLASS( SVConfigurationObject, SVConfigurationObjectGuid );
 #pragma endregion Declarations
@@ -1502,9 +1501,7 @@ bool SVConfigurationObject::LoadAcquisitionDevice( SVTreeType& rTree, SVString& 
 							{
 								CameraID -= SvOi::cMaximumCameras;
 							}
-							//! Determine which camera ordering to use
-							bool newOrder = m_ulVersion >= SVO_Version7_40;
-							DigitizerName = SVDigitizerProcessingClass::Instance().GetReOrderedCamera( CameraID, newOrder );
+							DigitizerName = SVDigitizerProcessingClass::Instance().GetReOrderedCamera( CameraID );
 						}
 
 						if ( ! bLutDone || ! bLutCreated )
@@ -1749,9 +1746,7 @@ bool  SVConfigurationObject::LoadCameras( SVTreeType&  rTree, long& lNumCameras,
 				}
 				else
 				{
-					//! Determine which camera ordering to use
-					bool newOrder = m_ulVersion >= SVO_Version7_40;
-					RemappedDeviceName = SVDigitizerProcessingClass::Instance().GetReOrderedCamera( pCamera->getCameraID(), newOrder );
+					RemappedDeviceName = SVDigitizerProcessingClass::Instance().GetReOrderedCamera( pCamera->getCameraID() );
 				}
 				bOk = pCamera->Create( RemappedDeviceName.c_str() ) ? true : false;
 			}
