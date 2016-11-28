@@ -1678,15 +1678,7 @@ bool SVInspectionProcess::resetAllObjects( bool shouldNotifyFriends, bool silent
 
 	bool Result = ( S_OK == ResetObject() );
 	ASSERT( Result );
-
-	if ( GetToolSet() )
-	{
-		return GetToolSet()->resetAllObjects(shouldNotifyFriends, silentReset) && Result;
-	}
-	else
-	{
-		return Result;
-	}
+	return Result;
 }
 
 BOOL SVInspectionProcess::GetChildObjectByName( LPCTSTR tszChildName, SVObjectClass** ppObject )
