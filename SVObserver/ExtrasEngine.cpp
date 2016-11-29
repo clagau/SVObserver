@@ -127,7 +127,7 @@ void ExtrasEngine::ResetAutoSaveInformation()
 
 void ExtrasEngine::CopyDirectoryToTempDirectory(const CString &rSourceDir) const 
 {
-	CopyDir(rSourceDir, SvStl::GlobalPath::Inst().GetAutoSaveTempPath().c_str());
+	CopyFilesInDirectory(rSourceDir, SvStl::GlobalPath::Inst().GetAutoSaveTempPath().c_str());
 }
 
 

@@ -86,41 +86,33 @@ DWORD GetLastSystemErrorText(CString & szMsg)
 	return dwError;
 }
 
-BOOL CopyDir(LPCTSTR szOrigPath, LPCTSTR szNewPath)
+
+bool CopyFilesInDirectory(LPCTSTR sourceDirectory, LPCTSTR destinationDirectory)
 {
+	CreateDirPath(destinationDirectory);
 
-	CString			csFileToFind;
-	CString			csNewFile;
-	CString			csFile;
-	CFileFind		cffFinder;
-	BOOL			blReturn = TRUE;
+	CString SearchPattern = sourceDirectory + CString(_T("\\*.*"));
 
-	//create the temp folder
-	CreateDirPath(szNewPath);
-
-	csFileToFind	= szOrigPath;
-	csFileToFind += _T("*.*");
-
-	BOOL bWorking = cffFinder.FindFile ( csFileToFind );
+	CFileFind		Finder;
+	BOOL bWorking = Finder.FindFile ( SearchPattern );
 
 	while ( bWorking )
-		{
-		bWorking = cffFinder.FindNextFile ( );
+	{
+		bWorking = Finder.FindNextFile ( );
 
-		// If file is directory ...
-		if ( !cffFinder.IsDirectory ( ) )
+		// copy only files, not directories ...
+		if ( !Finder.IsDirectory ( ) )
+		{
+			CString SourceFilepath = Finder.GetFilePath ( );
+			CString DestinationFilepath = destinationDirectory + CString(_T("\\")) + Finder.GetFileName();
+			if(!CopyFile(SourceFilepath,DestinationFilepath,TRUE))
 			{
-			csFile = (LPCTSTR) cffFinder.GetFilePath ( );
-			csNewFile = szNewPath + cffFinder.GetFileName();
-			if(!CopyFile(csFile,csNewFile,TRUE))
-				{
-				blReturn = FALSE;
-				break;
-				}
+				return false;
 			}
 		}
+	}
 
-	return blReturn;
+	return true;
 }
 
 

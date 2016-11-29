@@ -17,7 +17,7 @@
 BOOL CreateDirPath(CString szPath);
 HRESULT GetSystemErrorText(DWORD dwError, CString & szMsg); ///< also in SVDriveInitDlg.cpp
 DWORD GetLastSystemErrorText(CString & szMsg); ///< also in SVDriveInitDlg.cpp
-BOOL CopyDir(LPCTSTR szOrigPath, LPCTSTR szNewPath);
+bool CopyFilesInDirectory(LPCTSTR sourceDirectory, LPCTSTR destinationDirectory); ///< non-recursively copies all files in sourceDirectory to destinationDirectory
 
 //************************************
 /// moves (renames) one directory within its containing directory 
