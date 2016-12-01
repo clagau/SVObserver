@@ -20,18 +20,37 @@ dskcache.exe -w -p
 #stop-service $MTXsrvName
 restart-service $MTXsrvName
 
+$var = Get-WmiObject -class Win32_processor | ft NumberOfCores
 
-
-# format the V:\ drive
-imdisk -a -s 6G -m V: -p "/fs:ntfs /q /y"
-if ($LastExitCode -ne 0) {
-  echo "Could not format imdisk for V-drive"
-  write-eventlog -logname Application -source SVException -eventID 13  -entrytype Warning -message "Could not format imdisk for V-drive"  -Category 0
+# Get the WMI class Win32_PhysicalMemory and total the capacity of all installed memory modules
+[long]$memory = 0
+Get-WmiObject -Class Win32_PhysicalMemory | ForEach-Object -Process { $memory += $_.Capacity }
+$memory = $memory / 1GB
+if ($memory -gt 12){
+  # format the V:\ drive 6GB
+  imdisk -a -s 6G -m V: -p "/fs:ntfs /q /y"
+  if ($LastExitCode -ne 0) {
+    echo "Could not format imdisk for V-drive"
+    write-eventlog -logname Application -source SVException -eventID 13  -entrytype Warning -message "Could not format imdisk for V-drive 6GB"  -Category 0
+  }
+} else {
+  # format the V:\ drive 100MB
+  write-eventlog -logname Application -source SVException -eventID 13 -entrytype Information -message "Local RAM is low. V-Drive will be initialized with 100MB only"  -Category 0
+  imdisk -a -s 100M -m V: -p "/fs:ntfs /q /y"
+  if ($LastExitCode -ne 0) {
+    echo "Could not format imdisk for V-drive"
+    write-eventlog -logname Application -source SVException -eventID 13  -entrytype Warning -message "Could not format imdisk for V-drive 100MB"  -Category 0
+  }
 }
+
+# Wait 10 Seconds
+Start-Sleep -s 10
 
 # On a good run through InitializeIOSubsystem takes 13 seconds on both 
 C:\SVObserver\bin\InitializeIOSubsystem.exe
-# disable write cache and prove protect
+
+# Wait 10 Seconds
+Start-Sleep -s 10
 
 
 # Check the screen bit depth and set it to 16bit
@@ -49,6 +68,7 @@ restart-service $RRSsrvName
 
 $MTXservicePrior = Get-Service $MTXsrvName 
 $RRSservicePrior = Get-Service $RRSsrvName 
+
 # make a loop until V-drive is ready and Matrox service is started
 do{
   $waitLoop++
