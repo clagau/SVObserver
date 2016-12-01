@@ -45,13 +45,21 @@ echo getting service information ...
 net start > c:\temp\log\services.log
 echo getting INI files ...
 copy c:\SVObserver\bin\*.ini c:\Temp\log
+echo getting InitializeIOSubsystem Log ...
+copy "C:\SVObserver\InitializeIOSubsystem Log.txt" c:\temp\log
+echo getting Last Configuration ...
+md c:\temp\log\run
+copy C:\RUN\*.* c:\temp\log\run
+echo getting Images ...
+md c:\temp\log\images
+copy "D:\Application\Archive Images\Transfer\"*.* c:\temp\log\images
 echo getting dump files ...
 copy C:\SVObserver\DrWatson\*.* c:\Temp\log
-D:\Utilities\7-Zip64\7z.exe a -t7z c:\Temp\LogfileArchive%date:~-4,4%%date:~-10,2%%date:~-7,2%_%time:~1,1%%time:~3,2%%time:~6,2%.7z c:\Temp\log\*.*
+D:\Utilities\7-Zip64\7z.exe a -t7z D:\Application\LogfileArchive%date:~-4,4%%date:~-10,2%%date:~-7,2%_%time:~1,1%%time:~3,2%%time:~6,2%.7z c:\Temp\log\*.*
 del c:\Temp\log /S /Q
 echo ......................................................................
 echo Archive completed
-echo Please copy log archive from c:\Temp\LogfileArchive%date:~-4,4%%date:~-10,2%%date:~-7,2%_%time:~1,1%%time:~3,2%%time:~6,2%.7z
+echo Please copy log archive from D:\Application\LogfileArchive%date:~-4,4%%date:~-10,2%%date:~-7,2%_%time:~1,1%%time:~3,2%%time:~6,2%.7z
 echo Hit a key to close this window
-start /B "C:\Windows\system32\explorer.exe" "c:\temp"
+start /B "C:\Windows\system32\explorer.exe" "D:\Application"
 pause
