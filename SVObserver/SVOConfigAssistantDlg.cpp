@@ -3781,7 +3781,7 @@ void CSVOConfigAssistantDlg::ConvertToDigital(SVIMProductEnum eType)
 		const SVOCameraObjPtr pCameraObj( m_CameraList.GetCameraObjectByPosition(i) );
 		if( nullptr != pCameraObj )
 		{
-			l_Cameras[pCameraObj->GetCameraDisplayName()] = pCameraObj->GetDigNumber();
+			l_Cameras[pCameraObj->GetCameraDisplayName()] = pCameraObj->GetCameraID();
 		}
 	}
 
