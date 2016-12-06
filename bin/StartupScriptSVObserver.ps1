@@ -17,9 +17,6 @@ c:\SVObserver\bin\SVRemoveKeyboards.exe
 dskcache.exe -w -p
 
 
-#stop-service $MTXsrvName
-restart-service $MTXsrvName
-
 $var = Get-WmiObject -class Win32_processor | ft NumberOfCores
 
 # Get the WMI class Win32_PhysicalMemory and total the capacity of all installed memory modules
@@ -33,6 +30,12 @@ if ($memory -gt 12){
     echo "Could not format imdisk for V-drive"
     write-eventlog -logname Application -source SVException -eventID 13  -entrytype Warning -message "Could not format imdisk for V-drive 6GB"  -Category 0
   }
+  # Wait 5 Seconds
+  Start-Sleep -s 5
+  # On a good run through InitializeIOSubsystem takes 13 seconds on both 
+  C:\SVObserver\bin\InitializeIOSubsystem.exe
+  # Wait 5 Seconds
+  Start-Sleep -s 5
 } else {
   # format the V:\ drive 100MB
   write-eventlog -logname Application -source SVException -eventID 13 -entrytype Information -message "Local RAM is low. V-Drive will be initialized with 100MB only"  -Category 0
@@ -43,14 +46,7 @@ if ($memory -gt 12){
   }
 }
 
-# Wait 10 Seconds
-Start-Sleep -s 10
 
-# On a good run through InitializeIOSubsystem takes 13 seconds on both 
-C:\SVObserver\bin\InitializeIOSubsystem.exe
-
-# Wait 10 Seconds
-Start-Sleep -s 10
 
 
 # Check the screen bit depth and set it to 16bit
@@ -62,6 +58,13 @@ if ($LastExitCode -ne 0) {
 } else {
   echo "No display chnage"
 }
+
+# Wait 10 Seconds
+Start-Sleep -s 10
+#stop-service $MTXsrvName
+restart-service $MTXsrvName
+# Wait 10 Seconds
+Start-Sleep -s 10
 
 #stop-service $RRSsrvName
 restart-service $RRSsrvName
