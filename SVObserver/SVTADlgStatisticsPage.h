@@ -28,8 +28,8 @@ public:
 
 	void UpdateStatisticsParameters();
 	void OnOK();
-	virtual BOOL OnSetActive();
-	virtual BOOL OnKillActive();
+	virtual BOOL OnSetActive() override;
+	virtual BOOL OnKillActive() override;
 
 protected:
 	void getParameters();
@@ -37,7 +37,7 @@ protected:
 
 protected:
 	//{{AFX_MSG(SVToolAdjustmentDialogStatisticsPageClass)
-	virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog() override;
 	afx_msg void OnButtonAdd();
 	afx_msg void OnButtonRemove();
 	afx_msg void OnSetRange();
@@ -49,7 +49,7 @@ protected:
 
 	//{{AFX_VIRTUAL(SVToolAdjustmentDialogStatisticsPageClass)
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);
+	virtual void DoDataExchange(CDataExchange* pDX) override;
 	//}}AFX_VIRTUAL
 
 public:

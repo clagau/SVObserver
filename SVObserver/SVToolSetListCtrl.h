@@ -51,10 +51,10 @@ public:
 	SVToolSetListCtrl();
 	virtual ~SVToolSetListCtrl();
 
-	virtual BOOL PreTranslateMessage(MSG* pMsg);
+	virtual BOOL PreTranslateMessage(MSG* pMsg) override;
 
-	virtual void Rebuild();
-	virtual void RebuildImages();
+	void Rebuild();
+	void RebuildImages();
 
 	void SetSingleSelect();
 	void setObjectIds(const SVGUID& toolsetId, const SVGUID& inspectionId);

@@ -27,17 +27,17 @@ public:
 	SVLongValueDeviceParam(SVDeviceParamEnum typeEnum);
 	SVLongValueDeviceParam(const SVLongValueDeviceParam& rhs);
 	virtual ~SVLongValueDeviceParam();
-	virtual SVClonable* CloneImpl() const;
+	virtual SVClonable* CloneImpl() const override;
 
 	// automatic conversions
 	SVLongValueDeviceParam(long rhs);	// not const long& so that we get automatic conversion from other integral types for free
 	operator long() const;
 	SVLongValueDeviceParam& operator=(long lVal);
 	SVLongValueDeviceParam& operator=(const SVLongValueDeviceParam& rhs);
-	virtual HRESULT GetValue(VARIANT& rv) const;
-	virtual HRESULT SetValue(const VARIANT& rv);
+	virtual HRESULT GetValue(VARIANT& rv) const override;
+	virtual HRESULT SetValue(const VARIANT& rv) override;
 
-	virtual HRESULT SetMetadata(const SVDeviceParam* pParam);
+	virtual HRESULT SetMetadata(const SVDeviceParam* pParam) override;
 	long lValue;
 
 	TDeviceParamInfo<long> info;

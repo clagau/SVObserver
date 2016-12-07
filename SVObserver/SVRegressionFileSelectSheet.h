@@ -31,7 +31,7 @@ public:
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CSVRegressionFileSelectSheet)
 	public:
-	virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog() override;
 	//}}AFX_VIRTUAL
 	void OnOK();
 

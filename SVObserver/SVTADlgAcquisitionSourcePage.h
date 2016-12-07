@@ -39,7 +39,7 @@ public:
 
 protected:
 	//{{AFX_MSG(SVToolAdjustmentDialogAcquisitionSourcePageClass)
-	virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog() override;
 	afx_msg void OnSelectButton();
 	afx_msg void OnSelchangedAvailableDigitizersTree(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnChannel0Check();
@@ -53,7 +53,7 @@ protected:
 
 	//{{AFX_VIRTUAL(SVToolAdjustmentDialogAcquisitionSourcePageClass)
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
 

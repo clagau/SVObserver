@@ -31,46 +31,46 @@ public:
 
 	virtual ~SVCameraImageTemplate();
 
-	virtual HRESULT UpdateCameraImage( LPCTSTR p_szCameraName );
-	virtual HRESULT UpdateCameraImage( const SVGUID& p_CameraID );
+	HRESULT UpdateCameraImage( LPCTSTR p_szCameraName );
+	HRESULT UpdateCameraImage( const SVGUID& p_CameraID );
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStruct );
-	virtual BOOL SetImageDepth( long lDepth );
+	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStruct ) override;
+	virtual BOOL SetImageDepth( long lDepth ) override;
 
-	virtual HRESULT ResetObject();
+	virtual HRESULT ResetObject() override;
 
-	virtual GUID GetDigitizerID();
-	virtual SVVirtualCamera* GetCamera() const;
-	virtual SVString GetCameraName() const;
+	GUID GetDigitizerID();
+	SVVirtualCamera* GetCamera() const;
+	SVString GetCameraName() const;
 
-	virtual HRESULT DisconnectBuffers();
-	virtual HRESULT ReconnectBuffers();
+	HRESULT DisconnectBuffers();
+	HRESULT ReconnectBuffers();
 
-	virtual HRESULT GetObjectValue( const SVString& p_rValueName, VARIANT& p_rVariantValue ) const;
-	virtual HRESULT SetObjectValue( SVObjectAttributeClass* PDataObject );
+	virtual HRESULT GetObjectValue( const SVString& p_rValueName, VARIANT& p_rVariantValue ) const override;
+	virtual HRESULT SetObjectValue( SVObjectAttributeClass* PDataObject ) override;
 
-	virtual void Persist(SVObjectWriter& rWriter);
+	virtual void Persist(SVObjectWriter& rWriter) override;
 
-	virtual BOOL ResetImageIndex();
+	BOOL ResetImageIndex();
 
-	virtual SVImageIndexStruct GetSourceImageIndex( SVDataManagerHandle* pHandle, const SVGuidSVCameraInfoStructMap& rGuidCameraMap );
-	virtual BOOL GetImageHandleIndex( SVImageIndexStruct& rlIndex ) const;
+	virtual SVImageIndexStruct GetSourceImageIndex( SVDataManagerHandle* pHandle, const SVGuidSVCameraInfoStructMap& rGuidCameraMap ) override;
+	virtual BOOL GetImageHandleIndex( SVImageIndexStruct& rlIndex ) const override;
 
-	virtual HRESULT RestoreMainImage( SVInspectionProcess* p_psvInspection );
+	HRESULT RestoreMainImage( SVInspectionProcess* p_psvInspection );
 
 protected:
 	virtual BOOL CreateBuffers( const SVImageInfoClass& p_rImageInfo, SVImageObjectClassPtr p_ImageArrayPtr ) = 0;
 
-	virtual BOOL DestroyImage();
+	virtual BOOL DestroyImage() override;
 
-	virtual HRESULT GetImageIndex( SVDataManagerHandle& p_rHandle, const SVImageIndexStruct& rIndex ) const;
+	virtual HRESULT GetImageIndex( SVDataManagerHandle& p_rHandle, const SVImageIndexStruct& rIndex ) const override;
 
-	virtual SVImageObjectClassPtr GetCameraBufferArrayPtr() const;
+	SVImageObjectClassPtr GetCameraBufferArrayPtr() const;
 
-	virtual HRESULT RegisterAsSubObject();
-	virtual HRESULT UnregisterAsSubObject();
+	virtual HRESULT RegisterAsSubObject() override;
+	virtual HRESULT UnregisterAsSubObject() override;
 
-	virtual HRESULT RebuildCameraImage();
+	HRESULT RebuildCameraImage();
 
 	SVVirtualCamera* mpCamera;
 	SVGUID digitizerObjectID;

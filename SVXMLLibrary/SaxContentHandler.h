@@ -27,26 +27,26 @@ namespace Seidenader { namespace  SVXMLLibrary
 
 	#pragma region Public Methods
 	public:
-		virtual long __stdcall QueryInterface(const struct _GUID &, void **);
-		virtual unsigned long STDMETHODCALLTYPE AddRef(void);
-		virtual unsigned long STDMETHODCALLTYPE Release(void);
+		virtual long __stdcall QueryInterface(const struct _GUID &, void **) override;
+		virtual unsigned long STDMETHODCALLTYPE AddRef(void) override;
+		virtual unsigned long STDMETHODCALLTYPE Release(void) override;
 			
 		virtual HRESULT STDMETHODCALLTYPE putDocumentLocator( 
-			/* [in] */ ISAXLocator *pLocator);
+			/* [in] */ ISAXLocator *pLocator) override;
 			
-		virtual HRESULT STDMETHODCALLTYPE startDocument( void);
+		virtual HRESULT STDMETHODCALLTYPE startDocument( void) override;
 			
-		virtual HRESULT STDMETHODCALLTYPE endDocument( void);
+		virtual HRESULT STDMETHODCALLTYPE endDocument( void) override;
 			
 		virtual HRESULT STDMETHODCALLTYPE startPrefixMapping( 
 			/* [in] */ const wchar_t *pwchPrefix,
 			/* [in] */ int cchPrefix,
 			/* [in] */ const wchar_t *pwchUri,
-			/* [in] */ int cchUri);
+			/* [in] */ int cchUri) override;
 
 		virtual HRESULT STDMETHODCALLTYPE endPrefixMapping( 
 			/* [in] */ const wchar_t *pwchPrefix,
-			/* [in] */ int cchPrefix) ;
+			/* [in] */ int cchPrefix) override;
 
 		virtual HRESULT STDMETHODCALLTYPE startElement( 
 			/* [in] */ const wchar_t *pwchNamespaceUri,
@@ -55,7 +55,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 			/* [in] */ int cchLocalName,
 			/* [in] */ const wchar_t *pwchQName,
 			/* [in] */ int cchQName,
-			/* [in] */ ISAXAttributes *pAttributes);
+			/* [in] */ ISAXAttributes *pAttributes) override;
 
 		virtual HRESULT STDMETHODCALLTYPE endElement( 
 			/* [in] */ const wchar_t *pwchNamespaceUri,
@@ -63,25 +63,25 @@ namespace Seidenader { namespace  SVXMLLibrary
 			/* [in] */ const wchar_t *pwchLocalName,
 			/* [in] */ int cchLocalName,
 			/* [in] */ const wchar_t *pwchQName,
-			/* [in] */ int cchQName);
+			/* [in] */ int cchQName) override;
 
 		virtual HRESULT STDMETHODCALLTYPE characters( 
 			/* [in] */ const wchar_t *pwchChars,
-			/* [in] */ int cchChars);
+			/* [in] */ int cchChars) override;
 
 		virtual HRESULT STDMETHODCALLTYPE ignorableWhitespace( 
 			/* [in] */ const wchar_t *pwchChars,
-			/* [in] */ int cchChars);
+			/* [in] */ int cchChars) override;
 
 		virtual HRESULT STDMETHODCALLTYPE processingInstruction( 
 			/* [in] */ const wchar_t *pwchTarget,
 			/* [in] */ int cchTarget,
 			/* [in] */ const wchar_t *pwchData,
-			/* [in] */ int cchData);
+			/* [in] */ int cchData) override;
 
 		virtual HRESULT STDMETHODCALLTYPE skippedEntity( 
 			/* [in] */ const wchar_t *pwchName,
-			/* [in] */ int cchName);
+			/* [in] */ int cchName) override;
 
 		//************************************
 		//! Set the ElementHandler 

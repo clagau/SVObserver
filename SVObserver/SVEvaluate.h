@@ -23,13 +23,13 @@ public:
 	SVEvaluateClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVEVALUATE );
 	virtual ~SVEvaluateClass();
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
-	virtual BOOL CloseObject();
+	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
+	virtual BOOL CloseObject() override;
 
 protected:
 	SVDoubleValueObjectClass*		getOutputMathResult();
 
-	virtual BOOL  onRun( SVRunStatusClass& RRunStatus );
+	virtual BOOL  onRun( SVRunStatusClass& RRunStatus ) override;
 
 protected:
 	// Embedded Object: ( Outputs )

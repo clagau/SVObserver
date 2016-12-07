@@ -41,9 +41,9 @@ class SVShapeMaskHelperClass : public SVTaskObjectClass, public ISVCancel, publi
 public:
 	SVShapeMaskHelperClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SHAPE_MASK_HELPER );
 	virtual ~SVShapeMaskHelperClass();
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
-	virtual HRESULT ResetObject();
-	virtual BOOL onRun( BOOL First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus );
+	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
+	virtual HRESULT ResetObject() override;
+	BOOL onRun( BOOL First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus );
 
 	HRESULT Refresh();
 
@@ -65,12 +65,12 @@ public:
 	HRESULT SetAutoResize( bool bAutoResize );
 
 	// ISVCancel
-	virtual bool CanCancel();
-	virtual HRESULT GetCancelData(SVCancelData*& rpData);
-	virtual HRESULT SetCancelData(SVCancelData* pData);
+	virtual bool CanCancel() override;
+	virtual HRESULT GetCancelData(SVCancelData*& rpData) override;
+	virtual HRESULT SetCancelData(SVCancelData* pData) override;
 
 	// ISVCancel2
-	virtual HRESULT GetCancelData(SVInputRequestStructMap& rData);
+	virtual HRESULT GetCancelData(SVInputRequestStructMap& rData) override;
 
 protected:
 	SVMaskShapeCancelData        m_Data;

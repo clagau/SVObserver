@@ -69,7 +69,7 @@ protected:
 	// Description: Rebuilds the Kernel values required for the filter
 	// Return: True on success
 	//************************************
-	virtual BOOL RebuildKernel();
+	BOOL RebuildKernel();
 
 	//************************************
 	// Description: This method is called when the mode is set to run
@@ -79,13 +79,13 @@ protected:
 	// Parameter: RRunStatus <in> The status of the run mode
 	// Return: True on success
 	//************************************
-	virtual BOOL onRun( BOOL First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus );
+	virtual BOOL onRun( BOOL First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus ) override;
 
 	//************************************
 	// Description: This method is called to validate the kernel values
 	// Return: True on success
 	//************************************
-	virtual BOOL OnValidate();
+	virtual BOOL OnValidate() override;
 #pragma endregion Protected Methods
 
 private:

@@ -31,14 +31,14 @@ class SVDrawObjectClass
 public:
 	SVDrawObjectClass();
 	SVDrawObjectClass( const SVDrawObjectClass &p_rsvObject );
-	virtual ~SVDrawObjectClass();
+	~SVDrawObjectClass();
 
 	const SVDrawObjectClass &operator=( const SVDrawObjectClass &p_rsvObject );
 
-	virtual void AddExtentLineData( SVExtentLineStruct p_svLine, int PenStyle = PS_SOLID );
+	void AddExtentLineData( SVExtentLineStruct p_svLine, int PenStyle = PS_SOLID );
 
-	virtual BOOL Draw( SVDrawContext* PDrawContext );
-	virtual BOOL DrawHatch( SVDrawContext* PDrawContext, int& LastY );
+	BOOL Draw( SVDrawContext* PDrawContext );
+	BOOL DrawHatch( SVDrawContext* PDrawContext, int& LastY );
 
 	// If BUseThisPen == FALSE, the current selected Pen 
 	// of the DC will be used to Draw.
@@ -87,19 +87,19 @@ class SVDrawObjectListClass
 public:
 	SVDrawObjectListClass() {m_bDrawFigureHatched = false;};
 	
-	virtual ~SVDrawObjectListClass() {};
+	~SVDrawObjectListClass() {};
 
-	virtual void Add( SVDrawObjectListClass &p_rsvObject )
+	void Add( SVDrawObjectListClass &p_rsvObject )
 	{
 		m_svDrawObjectArray.Append( p_rsvObject.m_svDrawObjectArray );
 	};
 
-	virtual void Add( SVDrawObjectClass &p_rsvObject )
+	void Add( SVDrawObjectClass &p_rsvObject )
 	{
 		m_svDrawObjectArray.Add( p_rsvObject );// only adds SVDrawObjectClass data and does not add array data
 	};
 
-	virtual void AddExtentMultiLineData( SVExtentMultiLineStruct p_svMultiLine, bool p_bDoNotUseLineColor = false )
+	void AddExtentMultiLineData( SVExtentMultiLineStruct p_svMultiLine, bool p_bDoNotUseLineColor = false )
 	{
 		long l_lCount = static_cast< long >( p_svMultiLine.m_svLineArray.GetSize() );
 
@@ -118,7 +118,7 @@ public:
 		}
 	};
 
-	virtual void AddExtentMultiLineData( SVExtentMultiLineStruct p_svMultiLine, int PenStyle )
+	void AddExtentMultiLineData( SVExtentMultiLineStruct p_svMultiLine, int PenStyle )
 	{
 		long l_lCount = static_cast< long >( p_svMultiLine.m_svLineArray.GetSize() );
 
@@ -132,7 +132,7 @@ public:
 		}
 	};
 
-	virtual BOOL Draw( SVDrawContext* PDrawContext )
+	BOOL Draw( SVDrawContext* PDrawContext )
 	{
 		BOOL RetVal = TRUE;
 
@@ -171,7 +171,7 @@ public:
 		return static_cast< int >( m_svDrawObjectArray.GetSize() );
 	}
 
-	virtual SVDrawObjectClass GetAt( int i ) const
+	SVDrawObjectClass GetAt( int i ) const
 	{
 		return m_svDrawObjectArray.GetAt( i );
 	}

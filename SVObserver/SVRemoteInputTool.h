@@ -31,12 +31,12 @@ public:
 	SVRemoteInputTool( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVREMOTEINPUTTOOL );
 	virtual ~SVRemoteInputTool();
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
-	virtual BOOL CloseObject();
+	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
+	virtual BOOL CloseObject() override;
 
-	virtual BOOL OnValidate();
+	virtual BOOL OnValidate() override;
 
-	virtual HRESULT ProcessNotifyData( SVObjectCommandDataJsonPtr& p_rDataPtr );
+	virtual HRESULT ProcessNotifyData( SVObjectCommandDataJsonPtr& p_rDataPtr ) override;
 
 	SVObjectClass* GetInputObject() const;
 	HRESULT ClearInputObject();
@@ -56,7 +56,7 @@ protected:
 
 		virtual ~SVCommandQueueElement();
 
-		virtual HRESULT Execute();
+		virtual HRESULT Execute() override;
 
 	private:
 		SVCommandQueueElement();
@@ -84,7 +84,7 @@ protected:
 
 	typedef SVBiUniqueMap< SVDataElement, long >::type SVDataContainer;
 
-	virtual BOOL onRun( SVRunStatusClass& RRunStatus );
+	virtual BOOL onRun( SVRunStatusClass& RRunStatus ) override;
 
 	HRESULT ProcessCommandQueue();
 

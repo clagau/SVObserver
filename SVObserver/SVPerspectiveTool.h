@@ -29,19 +29,19 @@ public:
 												int p_iStringResourceID = IDS_CLASSNAME_SVPERSPECTIVETOOL );
 	virtual ~SVPerspectiveToolClass();
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct *p_pCreateStructure );
-	virtual BOOL CloseObject();
+	virtual BOOL CreateObject( SVObjectLevelCreateStruct *p_pCreateStructure ) override;
+	virtual BOOL CloseObject() override;
 
-	virtual HRESULT ResetObject();
+	virtual HRESULT ResetObject() override;
 
-	virtual BOOL OnValidate();
+	virtual BOOL OnValidate() override;
 
 	SVImageClass *GetInputImage();
 
-	virtual HRESULT IsInputImage( SVImageClass *p_psvImage );
-	virtual SVTaskObjectClass* GetObjectAtPoint( const SVExtentPointStruct &p_rsvPoint );
+	virtual HRESULT IsInputImage( SVImageClass *p_psvImage ) override;
+	virtual SVTaskObjectClass* GetObjectAtPoint( const SVExtentPointStruct &p_rsvPoint ) override;
 	virtual bool DoesObjectHaveExtents() const override;
-	virtual HRESULT SetImageExtent( unsigned long p_ulIndex, SVImageExtentClass p_svImageExtent );
+	virtual HRESULT SetImageExtent( unsigned long p_ulIndex, SVImageExtentClass p_svImageExtent ) override;
 
 	enum WarpType
 	{
@@ -56,7 +56,7 @@ public:
 
 protected:
 	HRESULT UpdateOutputImageExtents();
-	virtual BOOL onRun( SVRunStatusClass &p_rRunStatus );
+	virtual BOOL onRun( SVRunStatusClass &p_rRunStatus ) override;
 
 private:
 	void LocalInitialize();

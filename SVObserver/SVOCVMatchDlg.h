@@ -45,9 +45,9 @@ public:
 	// ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(SVOCVMatchDlg)
 	public:
-	virtual BOOL OnKillActive();
+	virtual BOOL OnKillActive() override;
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
 // Implementation
@@ -60,7 +60,7 @@ public:
 protected:
 	// Generated message map functions
 	//{{AFX_MSG(SVOCVMatchDlg)
-	virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog() override;
 	afx_msg void OnFontBrowseCmd();
 	afx_msg void OnUseMatchString();
 	afx_msg void OnUseMatchFile();

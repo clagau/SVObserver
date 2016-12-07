@@ -20,14 +20,14 @@ struct SVExtentMultiLineStruct
 {
 	SVExtentMultiLineStruct();
 	SVExtentMultiLineStruct( const SVExtentMultiLineStruct &p_rsvValue );
-	virtual ~SVExtentMultiLineStruct();
+	~SVExtentMultiLineStruct();
 
 	const SVExtentMultiLineStruct &operator=( const SVExtentMultiLineStruct &p_rsvValue );
 
 	void Assign( SVExtentFigureStruct &p_rsvValue, COLORREF p_Color = 0 );
 	void AssignExtentFigure( SVExtentFigureStruct &p_rsvValue, COLORREF p_Color = 0 );
 
-	virtual HRESULT Initialize();
+	HRESULT Initialize();
 
 	SVGUID m_InspectionID;
 	SVGUID m_ToolID;

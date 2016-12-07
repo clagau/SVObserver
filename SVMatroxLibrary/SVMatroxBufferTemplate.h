@@ -21,13 +21,13 @@ public:
 
 	virtual ~SVMatroxBufferTemplate();
 
-	virtual bool empty() const;
+	virtual bool empty() const override;
 
 protected:
 	SVMatroxBufferTemplate();
 	SVMatroxBufferTemplate( SVMatroxIdentifier p_Identifier, const SVString& p_rCreatorName );
 
-	virtual SVMatroxIdentifier GetIdentifier() const;
+	virtual SVMatroxIdentifier GetIdentifier() const override;
 
 	SVMatroxIdentifier m_StartIdentifier;
 	SVMatroxIdentifier m_Identifier;

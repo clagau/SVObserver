@@ -25,12 +25,12 @@ public:
 
 	virtual ~SVMathToolClass();
 
-	BOOL CreateObject(SVObjectLevelCreateStruct* PCreateStruct );
+	virtual BOOL CreateObject(SVObjectLevelCreateStruct* PCreateStruct ) override;
 
-	virtual BOOL OnValidate();
+	virtual BOOL OnValidate() override;
 
-protected:
-	virtual void init(void);
+private:
+	void init(void);
 
 	SVMathEquationClass* pMathEquation;
 };

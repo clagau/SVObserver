@@ -42,13 +42,13 @@ public:
 	SVArrayValueHolder<T,D>(const SVArrayValueHolderBase& rhs);
 	virtual ~SVArrayValueHolder<T,D>() {}
 	const type& operator = (const type&);
-	virtual bool IsArray() const;
+	virtual bool IsArray() const override;
 
 	array_type m_array;
 	default_type m_default;
 protected:
-	virtual SVArrayValueHolderBase* Clone() const;
-	virtual const SVArrayValueHolderBase& Assign(const SVArrayValueHolderBase& rhs);
+	virtual SVArrayValueHolderBase* Clone() const override;
+	virtual const SVArrayValueHolderBase& Assign(const SVArrayValueHolderBase& rhs) override;
 };
 
 inline const SVArrayValueHolderBase& SVArrayValueHolderBase::operator = (const SVArrayValueHolderBase& rhs)

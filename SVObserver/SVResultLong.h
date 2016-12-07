@@ -24,15 +24,15 @@ public:
 	virtual ~SVLongResultClass();
 
 public:
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
-	virtual BOOL CloseObject();
+	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
+	virtual BOOL CloseObject() override;
 
-	virtual BOOL OnValidate();
+	virtual BOOL OnValidate() override;
 
 	const GUID & GetInputEmbeddedID() const;
 
 protected:
-	virtual BOOL onRun( SVRunStatusClass& RRunStatus );
+	virtual BOOL onRun( SVRunStatusClass& RRunStatus ) override;
 
 	SVLongValueObjectClass* getInputLong();
 

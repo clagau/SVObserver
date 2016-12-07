@@ -36,12 +36,12 @@ public:
 
 	virtual ~SVToolSetClass();
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
-	virtual void SetInvalid();
+	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
+	virtual void SetInvalid() override;
 	virtual bool resetAllObjects( bool shouldNotifyFriends, bool silentReset ) override;
-	virtual HRESULT ResetObject();
-	virtual BOOL OnValidate();
-	virtual BOOL Validate();
+	virtual HRESULT ResetObject() override;
+	virtual BOOL OnValidate() override;
+	virtual BOOL Validate() override;
 
 	void Destroy();
 
@@ -90,11 +90,11 @@ public:
 
 #pragma region Protected Methods
 protected:
-	virtual BOOL Run( SVRunStatusClass& RRunStatus );
-	virtual BOOL RunWithNewDisable( SVRunStatusClass& RRunStatus );
+	virtual BOOL Run( SVRunStatusClass& RRunStatus ) override;
+	BOOL RunWithNewDisable( SVRunStatusClass& RRunStatus );
 
-	virtual BOOL onRun( SVRunStatusClass& RRunStatus );
-	virtual HRESULT onCollectOverlays(SVImageClass *p_Image, SVExtentMultiLineStructCArray &p_MultiLineArray );
+	virtual BOOL onRun( SVRunStatusClass& RRunStatus ) override;
+	virtual HRESULT onCollectOverlays(SVImageClass *p_Image, SVExtentMultiLineStructCArray &p_MultiLineArray ) override;
 
 	virtual bool createAllObjectsFromChild( SVObjectClass& rChildObject ) override;
 

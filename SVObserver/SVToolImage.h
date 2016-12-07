@@ -22,28 +22,29 @@ public:
 	SVImageToolClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVIMAGETOOL );
 	virtual ~SVImageToolClass();
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
+	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
 
-	virtual SVTaskObjectClass *GetObjectAtPoint( const SVExtentPointStruct &p_rsvPoint );
+	virtual SVTaskObjectClass *GetObjectAtPoint( const SVExtentPointStruct &p_rsvPoint ) override;
 	virtual bool DoesObjectHaveExtents() const override;
-	virtual HRESULT SetImageExtent( unsigned long p_ulIndex, SVImageExtentClass p_svImageExtent );
+	virtual HRESULT SetImageExtent( unsigned long p_ulIndex, SVImageExtentClass p_svImageExtent ) override;
 
-	virtual BOOL SetDefaultFormulas();
+	virtual BOOL SetDefaultFormulas() override;
 
-	virtual HRESULT ResetObject();
+	virtual HRESULT ResetObject() override;
 
 	virtual SVStaticStringValueObjectClass* GetInputImageNames() override;
 
-	virtual HRESULT SetImageExtentToParent( unsigned long p_ulIndex );
+	virtual HRESULT SetImageExtentToParent( unsigned long p_ulIndex ) override;
 
 	virtual BOOL IsValid() override;
 
 protected:
-	virtual BOOL onRun( SVRunStatusClass& RRunStatus );
+	virtual BOOL onRun( SVRunStatusClass& RRunStatus ) override;
 
-	virtual HRESULT UpdateTranslation();
+	HRESULT UpdateTranslation();
 
-	virtual void init();
+private:
+	void init();
 
 	SVBoolValueObjectClass		outputEnableOffsetA;
 	SVPointValueObjectClass		outputOffsetAPoint;

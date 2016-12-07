@@ -31,7 +31,7 @@ public:
 	const SVCharValueObjectClass& operator = ( const SVCharValueObjectClass& rhs );
 
 	virtual ~SVCharValueObjectClass();
-	virtual void Persist(SVObjectWriter& rWriter);
+	virtual void Persist(SVObjectWriter& rWriter) override;
 
 	IMPLEMENT_VALUE_OBJECT_GET_SET()
 

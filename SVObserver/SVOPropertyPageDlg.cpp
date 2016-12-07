@@ -68,19 +68,19 @@ public:
 	}
 	virtual ~SVCameraDeviceImageFormatUpdater() {}
 
-	virtual void SetXOffset(long xOffset) 
+	virtual void SetXOffset(long xOffset) override
 	{ 
 		m_pFormatsParam->options[ m_strName ].m_lHPos = xOffset; 
 	}
-	virtual void SetYOffset(long yOffset) 
+	virtual void SetYOffset(long yOffset) override
 	{ 
 		m_pFormatsParam->options[ m_strName ].m_lVPos = yOffset; 
 	}
-	virtual void SetWidth(long width) 
+	virtual void SetWidth(long width) override
 	{  
 		m_pFormatsParam->options[ m_strName ].m_lWidth = width; 
 	}
-	virtual void SetHeight(long height) 
+	virtual void SetHeight(long height) override
 	{ 
 		m_pFormatsParam->options[ m_strName ].m_lHeight = height; 
 	}

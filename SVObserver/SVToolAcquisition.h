@@ -26,17 +26,17 @@ public:
 
 	virtual ~SVAcquisitionToolClass();
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
-	virtual HRESULT ResetObject();
+	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
+	virtual HRESULT ResetObject() override;
 
-	virtual BOOL OnValidate();
+	virtual BOOL OnValidate() override;
 
 	virtual bool DoesObjectHaveExtents() const override;
 
 	virtual SVStaticStringValueObjectClass* GetInputImageNames( ) override;
 
 protected:
-	virtual void init();
+	void init();
 
 	// Embedded Objects:
 	SVMainImageClass				mainImageObject;	// Embedded

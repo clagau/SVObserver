@@ -37,8 +37,6 @@ public:
 
 	void SetData( const SVCommandDataHolder& p_rData );
 
-	virtual void FinalRelease();
-
 	STDMETHOD (GetDataInformation)( VARIANT* p_pInformation );
 
 	STDMETHOD (GetDataType)( BSTR p_Name, long* p_pDataType );

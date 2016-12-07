@@ -48,8 +48,8 @@ namespace Seidenader { namespace SVOGui
 	private:
 		DECLARE_MESSAGE_MAP()
 
-		virtual void DoDataExchange(CDataExchange* pDX);
-		virtual BOOL OnInitDialog();
+		virtual void DoDataExchange(CDataExchange* pDX) override;
+		virtual BOOL OnInitDialog() override;
 	#pragma region Private Methods
 
 	#pragma region Member variables

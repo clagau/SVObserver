@@ -45,14 +45,14 @@ private:
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(SVUtilitiesCustomizeDialogClass)
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
 // Implementation
 protected:
 	// Generated message map functions
 	//{{AFX_MSG(SVUtilitiesCustomizeDialogClass)
-	virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog() override;
 	afx_msg void OnSelEndOkCustomizeMenuText();
 	afx_msg void OnEditChangeCustomizeMenuText();
 	afx_msg void OnChangeCustomizeCommand();
@@ -60,7 +60,7 @@ protected:
 	afx_msg void OnChangeCustomizeWorkingDirectory();
 	afx_msg void OnCustomizePromptForArguments();
 	afx_msg void OnApply();
-	virtual void OnOK();
+	virtual void OnOK() override;
 	afx_msg void OnCustomizeDelete();
 	afx_msg void OnCustomizeCommandSelect();
 	afx_msg void OnCustomizeDirectorySelect();

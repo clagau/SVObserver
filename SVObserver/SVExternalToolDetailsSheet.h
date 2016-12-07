@@ -32,9 +32,9 @@ public:
 	SVIPDoc* GetIPDoc() const;
 
 	// ISVCancel
-	virtual bool CanCancel();
-	virtual HRESULT GetCancelData(SVCancelData*& rpData);
-	virtual HRESULT SetCancelData(SVCancelData* pData);
+	virtual bool CanCancel() override;
+	virtual HRESULT GetCancelData(SVCancelData*& rpData) override;
+	virtual HRESULT SetCancelData(SVCancelData* pData) override;
 
 // Attributes
 public:
@@ -48,7 +48,7 @@ public:
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(SVExternalToolDetailsSheet)
 	public:
-	virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog() override;
 	//}}AFX_VIRTUAL
 	void OnOK();
 

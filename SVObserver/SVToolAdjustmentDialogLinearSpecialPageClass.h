@@ -37,7 +37,7 @@ public:
 	// ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(SVToolAdjustmentDialogLinearSpecialPageClass)
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
 protected:
 	SVToolAdjustmentDialogSheetClass*	m_pParentDialog;
@@ -46,7 +46,7 @@ protected:
 protected:
 	// Generated message map functions
 	//{{AFX_MSG(SVToolAdjustmentDialogLinearSpecialPageClass)
-	virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog() override;
 	afx_msg void OnSelchangeComboProfileOrientation();
 	afx_msg void OnCheckRotation();
 	//}}AFX_MSG

@@ -44,7 +44,7 @@ public:
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(SVLuminanceAnalyzerSetupClass)
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
 // Implementation
@@ -52,9 +52,9 @@ protected:
 
 	// Generated message map functions
 	//{{AFX_MSG(SVLuminanceAnalyzerSetupClass)
-	virtual void OnOK();
-	virtual BOOL OnInitDialog();
-	virtual void OnCancel();
+	virtual void OnOK() override;
+	virtual BOOL OnInitDialog() override;
+	virtual void OnCancel() override;
 	afx_msg void OnRange();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()

@@ -1261,7 +1261,7 @@ HRESULT SVInspectionProcess::AddInputImageRequest( SVImageClass* p_psvImage, BST
 
 				if( l_pInRequest->m_bUsingCameraName )
 				{
-					l_pInRequest->m_strObjectName = l_psvMainImage->GetCamera()->GetName();
+					l_pInRequest->m_strObjectName = l_psvMainImage->GetCameraName().c_str();
 				}
 				else
 				{
@@ -1315,7 +1315,7 @@ HRESULT SVInspectionProcess::AddInputImageFileNameRequest( SVImageClass* p_psvIm
 
 			if( l_pInRequest->m_bUsingCameraName )
 			{
-				l_pInRequest->m_strObjectName = l_psvMainImage->GetCamera()->GetName();
+				l_pInRequest->m_strObjectName = l_psvMainImage->GetCameraName().c_str();
 			}
 			else
 			{
@@ -3586,7 +3586,7 @@ void SVInspectionProcess::ResetName()
 	SVObjectManagerClass::Instance().UpdateObservers( SVString( SvO::cInspectionProcessTag ), GetUniqueObjectID(), l_Data );
 }
 
-void SVInspectionProcess::SetName( const CString& StrString )
+void SVInspectionProcess::SetName( LPCTSTR StrString )
 {
 	SVObjectClass::SetName( StrString );
 

@@ -29,7 +29,7 @@ namespace Seidenader
 
 			//{{AFX_VIRTUAL(ObjectsListBox)
 		protected:
-			virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
+			virtual BOOL PreCreateWindow(CREATESTRUCT& cs) override;
 			//}}AFX_VIRTUAL
 		protected:
 			//{{AFX_MSG(ObjectsListBox)

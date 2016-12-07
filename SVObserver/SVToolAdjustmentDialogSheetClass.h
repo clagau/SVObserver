@@ -24,7 +24,7 @@ class SVToolAdjustmentDialogSheetClass : public CPropertySheet
 
 	//{{AFX_VIRTUAL(SVToolAdjustmentDialogSheetClass)
 public:
-	virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog() override;
 	//}}AFX_VIRTUAL
 
 	//{{AFX_MSG(SVToolAdjustmentDialogSheetClass)

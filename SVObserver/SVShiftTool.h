@@ -41,14 +41,14 @@ public:
 #pragma endregion Constructor
 
 #pragma region Public Methods
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
-	virtual HRESULT ResetObject();
+	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
+	virtual HRESULT ResetObject() override;
 
-	virtual HRESULT SetImageExtentToParent( unsigned long p_ulIndex );
+	virtual HRESULT SetImageExtentToParent( unsigned long p_ulIndex ) override;
 	virtual SVStaticStringValueObjectClass* GetInputImageNames() override;
 
-	virtual HRESULT IsInputImage( SVImageClass *p_psvImage );
-	virtual SVTaskObjectClass* GetObjectAtPoint( const SVExtentPointStruct &p_rPoint );
+	virtual HRESULT IsInputImage( SVImageClass *p_psvImage ) override;
+	virtual SVTaskObjectClass* GetObjectAtPoint( const SVExtentPointStruct &p_rPoint ) override;
 	virtual bool DoesObjectHaveExtents() const override;
 	virtual BOOL IsValid() override;
 	//************************************
@@ -60,8 +60,8 @@ public:
 
 protected:
 #pragma region Protected Methods
-	virtual BOOL onRun( SVRunStatusClass &p_rRunStatus );
-	virtual BOOL OnValidate();
+	virtual BOOL onRun( SVRunStatusClass &p_rRunStatus ) override;
+	virtual BOOL OnValidate() override;
 	SVImageClass* GetImageInput() const;
 	SVDoubleValueObjectClass* GetTranslationXInput() const;
 	SVDoubleValueObjectClass* GetTranslationYInput() const;

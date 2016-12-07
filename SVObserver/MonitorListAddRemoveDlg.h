@@ -30,7 +30,7 @@ public:
 	afx_msg void OnBnClickedAddBtn();
 	afx_msg void OnBnClickedRemoveBtn();
 	afx_msg void OnBnClickedOk();
-	virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog() override;
 	afx_msg void OnBnClickedBtnProperties();
 
 // Dialog Data
@@ -39,7 +39,7 @@ public:
 
 #pragma region Protected Methods
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 
 	void UpdateUsedList(const CString& PPQName, const NameDepthPairList& rList);
 

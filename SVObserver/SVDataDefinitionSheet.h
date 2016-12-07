@@ -34,9 +34,9 @@ public:
 #pragma region Public Methods
 public:
 	// ISVCancel
-	virtual bool CanCancel();
-	virtual HRESULT GetCancelData(SVCancelData*& rpData);
-	virtual HRESULT SetCancelData(SVCancelData* pData);
+	virtual bool CanCancel() override;
+	virtual HRESULT GetCancelData(SVCancelData*& rpData) override;
+	virtual HRESULT SetCancelData(SVCancelData* pData) override;
 #pragma endregion Public Methods
 
 #pragma region Private Methods
@@ -45,7 +45,7 @@ private:
 
 	HRESULT CreatePages();
 	void DestroyPages();
-	virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog() override;
 	void OnOK();
 
 	void initSelectedList( SvOsl::SelectorItemVector* pList, UINT Attribute );

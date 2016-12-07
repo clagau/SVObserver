@@ -22,26 +22,24 @@ public:
 	SVWindowToolClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVWINDOWTOOL );
 	virtual ~SVWindowToolClass();
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
-	virtual HRESULT ResetObject();
+	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
+	virtual HRESULT ResetObject() override;
 	virtual BOOL IsValid() override;
 
-	virtual BOOL SetDefaultFormulas();
+	virtual BOOL SetDefaultFormulas() override;
 
-	virtual HRESULT SetImageExtent( unsigned long p_ulIndex, SVImageExtentClass p_svImageExtent );
-	virtual HRESULT SetImageExtentToParent( unsigned long p_ulIndex );
-	virtual HRESULT SetImageExtentToFit( unsigned long p_ulIndex, SVImageExtentClass p_svImageExtent );
+	virtual HRESULT SetImageExtent( unsigned long p_ulIndex, SVImageExtentClass p_svImageExtent ) override;
+	virtual HRESULT SetImageExtentToParent( unsigned long p_ulIndex ) override;
+	virtual HRESULT SetImageExtentToFit( unsigned long p_ulIndex, SVImageExtentClass p_svImageExtent ) override;
 
-	virtual SVTaskObjectClass *GetObjectAtPoint( const SVExtentPointStruct &p_rsvPoint );
+	virtual SVTaskObjectClass *GetObjectAtPoint( const SVExtentPointStruct &p_rsvPoint ) override;
 	virtual bool DoesObjectHaveExtents() const override;
 
 protected:
-	virtual BOOL onRun( SVRunStatusClass& RRunStatus );
-
-//	base class should be called from derived class.
-	virtual void init();
+	virtual BOOL onRun( SVRunStatusClass& RRunStatus ) override;
 
 private:
+	void init();
 	void BuildEmbeddedObjectList ();
 	void BuildAvailableAnalyzerList ();
 	void AddUnaryImageOperatorListAsChild ();

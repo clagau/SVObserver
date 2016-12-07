@@ -48,9 +48,9 @@ public:
 #pragma endregion Constructor
 
 #pragma region Public Methods
-	virtual BOOL GetImageInfo( SVImageInfoClass *pImageInfo );
+	BOOL GetImageInfo( SVImageInfoClass *pImageInfo );
 
-	virtual long GetImageDepth() const;
+	virtual long GetImageDepth() const override;
 
 	//************************************
 	//! This method is used to synchronize parameters mirrored in the object manager
@@ -58,7 +58,7 @@ public:
 	//! \param Type <in> the refresh type pre or post
 	//! \param S_OK on success
 	//************************************
-	virtual HRESULT RefreshObject( const SVObjectClass* const pSender, RefreshObjectType Type );
+	virtual HRESULT RefreshObject( const SVObjectClass* const pSender, RefreshObjectType Type ) override;
 
 	BOOL Create( LPCTSTR p_szDeviceName );
 	BOOL Destroy();
@@ -140,7 +140,7 @@ protected:
 #pragma region Protected Methods
 	static HRESULT CALLBACK SVImageCallback( void *pvOwner, void *pvCaller, void *pvResponse );
 
-	virtual void FinishProcess( SVODataResponseClass *pResponse );
+	void FinishProcess( SVODataResponseClass *pResponse );
 #pragma endregion Protected Methods
 
 private:

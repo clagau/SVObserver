@@ -28,18 +28,18 @@ private:
 	void init();
 
 public:
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
-	virtual BOOL CloseObject();
+	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
+	virtual BOOL CloseObject() override;
 
 	virtual bool resetAllObjects( bool shouldNotifyFriends, bool silentReset ) override;
-	virtual HRESULT ResetObject();
+	virtual HRESULT ResetObject() override;
 
 	BOOL RecalcLUT( SVRunStatusClass& RRunStatus );
 
-	virtual BOOL OnValidate();
+	virtual BOOL OnValidate() override;
 
 protected:
-	virtual BOOL onRun( BOOL First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus );
+	virtual BOOL onRun( BOOL First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus ) override;
 	SVByteValueObjectClass* getInputLUTVectorResult();
 
 protected:

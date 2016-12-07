@@ -983,7 +983,7 @@ HRESULT SVImageClass::GetChildImageInfo( const GUID& p_rChildID, SVImageInfoClas
 Updated method to use GetParentImage() method which validates the Parent Image pointer attribute.
 The Parent Image attribute should not be used unless it is validated first.
 */
-HRESULT SVImageClass::GetChildImageHandle( const GUID& p_rChildID, SVSmartHandlePointer& p_rsvBufferHandle )
+HRESULT SVImageClass::GetChildImageHandle( const GUID& p_rChildID, SVSmartHandlePointer& p_rsvBufferHandle ) const
 {
 	HRESULT l_hrOk = S_FALSE;
 
@@ -1016,7 +1016,7 @@ HRESULT SVImageClass::GetChildImageHandle( const GUID& p_rChildID, SVSmartHandle
 	}
 	else
 	{
-		SVGuidImageChildMap::iterator l_Iter = m_ChildArrays.find( p_rChildID );
+		SVGuidImageChildMap::const_iterator l_Iter = m_ChildArrays.find( p_rChildID );
 
 		if( l_Iter != m_ChildArrays.end() )
 		{
@@ -1043,7 +1043,7 @@ HRESULT SVImageClass::GetChildImageHandle( const GUID& p_rChildID, SVSmartHandle
 Updated method to use GetParentImage() method which validates the Parent Image pointer attribute.
 The Parent Image attribute should not be used unless it is validated first.
 */
-HRESULT SVImageClass::GetChildImageHandle( const GUID& p_rChildID, SVImageIndexStruct p_svBufferIndex, SVSmartHandlePointer &p_rsvBufferHandle )
+HRESULT SVImageClass::GetChildImageHandle( const GUID& p_rChildID, SVImageIndexStruct p_svBufferIndex, SVSmartHandlePointer &p_rsvBufferHandle ) const
 {
 	HRESULT l_hrOk = S_FALSE;
 
@@ -1076,7 +1076,7 @@ HRESULT SVImageClass::GetChildImageHandle( const GUID& p_rChildID, SVImageIndexS
 	}
 	else
 	{
-		SVGuidImageChildMap::iterator l_Iter = m_ChildArrays.find( p_rChildID );
+		SVGuidImageChildMap::const_iterator l_Iter = m_ChildArrays.find( p_rChildID );
 
 		if( l_Iter != m_ChildArrays.end() )
 		{

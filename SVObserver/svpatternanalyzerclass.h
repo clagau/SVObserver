@@ -28,11 +28,11 @@ public:
 	SVPatternAnalyzerClass (BOOL BCreateDefaultTaskList = TRUE, SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVPATTERNANALYZER);
 
 	virtual	~SVPatternAnalyzerClass();
-	virtual	BOOL CloseObject();
+	virtual	BOOL CloseObject() override;
 	
-	virtual BOOL CreateObject(SVObjectLevelCreateStruct* PCreateStructure);
-	virtual BOOL OnValidate();
-	virtual BOOL onRun(SVRunStatusClass &RRunStatus);
+	virtual BOOL CreateObject(SVObjectLevelCreateStruct* PCreateStructure) override;
+	virtual BOOL OnValidate() override;
+	virtual BOOL onRun(SVRunStatusClass &RRunStatus) override;
 
 	SVImageInfoClass m_patBuffer;	// Model Image Buffer
 	SVImageInfoClass m_patModel;	// Model Identifier.
@@ -96,12 +96,12 @@ public:
 	void SetCircularOverscan(bool bCircularOverscan);
 
 	virtual bool IsPtOverResult(const POINT& rPoint) override;
-	virtual	void DisplayAnalyzerResult();
+	virtual	void DisplayAnalyzerResult() override;
 
 	BOOL GetModelImageFileName(CString &csFileName);
 
 	virtual bool resetAllObjects( bool shouldNotifyFriends, bool silentReset ) override;
-	virtual HRESULT ResetObject();
+	virtual HRESULT ResetObject() override;
 	bool IsValidSize();
 
 	long getModelWidth() const;
@@ -110,7 +110,7 @@ public:
 protected:
 	void CreateResult();
 
-	virtual HRESULT onCollectOverlays(SVImageClass* p_pImage, SVExtentMultiLineStructCArray& p_rMultiLineArray );
+	virtual HRESULT onCollectOverlays(SVImageClass* p_pImage, SVExtentMultiLineStructCArray& p_rMultiLineArray ) override;
 	
 	void ResetResultValues();
 	void ResizeResultValues(int nNum);

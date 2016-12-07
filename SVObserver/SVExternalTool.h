@@ -22,17 +22,17 @@ public:
 	SVExternalTool( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SV_EXTERNAL_TOOL );
 	virtual ~SVExternalTool();
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
+	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
 
-	virtual SVTaskObjectClass *GetObjectAtPoint( const SVExtentPointStruct &p_rsvPoint );
+	virtual SVTaskObjectClass *GetObjectAtPoint( const SVExtentPointStruct &p_rsvPoint ) override;
 
-	virtual HRESULT GetImageExtent( SVImageExtentClass &p_rsvImageExtent );
-	virtual HRESULT GetImageExtent( unsigned long p_ulIndex, SVImageExtentClass &p_rsvImageExtent );
+	virtual HRESULT GetImageExtent( SVImageExtentClass &p_rsvImageExtent ) override;
+	virtual HRESULT GetImageExtent( unsigned long p_ulIndex, SVImageExtentClass &p_rsvImageExtent ) override;
 
 	virtual SVStaticStringValueObjectClass* GetInputImageNames() override;
 
 protected:
-	virtual HRESULT UpdateImageWithExtent( unsigned long p_Index );
+	virtual HRESULT UpdateImageWithExtent( unsigned long p_Index ) override;
 
 	SVBoolValueObjectClass m_svPerformTranslation;
 

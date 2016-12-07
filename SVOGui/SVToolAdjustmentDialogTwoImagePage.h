@@ -45,7 +45,7 @@ namespace Seidenader
 		//******************************************************************************
 			//{{AFX_VIRTUAL(SVToolAdjustmentDialogTwoImagePageClass)
 			protected:
-			virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV
+			virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV
 			//}}AFX_VIRTUAL
 
 		//******************************************************************************
@@ -54,7 +54,7 @@ namespace Seidenader
 			// Generated message map functions
 		protected:
 			//{{AFX_MSG(SVToolAdjustmentDialogTwoImagePageClass)
-			virtual BOOL OnInitDialog();
+			virtual BOOL OnInitDialog() override;
 			afx_msg void OnSelchangeCombo1();
 			afx_msg void OnSelChangeCombo2();
 			afx_msg void OnSelchangeOperatorCombo();

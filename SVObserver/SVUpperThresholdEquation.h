@@ -22,13 +22,13 @@ public:
 	SVUpperThresholdEquationClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVUPPERTHRESHOLDEQUATION );
 	virtual ~SVUpperThresholdEquationClass();
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
+	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
 
-	virtual BOOL OnValidate();
+	virtual BOOL OnValidate() override;
 
 protected:
 	void init();
-	virtual BOOL onRun( SVRunStatusClass& RRunStatus );
+	virtual BOOL onRun( SVRunStatusClass& RRunStatus ) override;
 
 protected:
 	SVDoubleValueObjectClass		result;			// resultant value

@@ -40,11 +40,6 @@ void SVRemoteCommandData::SetData( const SVCommandDataHolder& p_rData )
 	m_Data = p_rData;
 }
 
-void SVRemoteCommandData::FinalRelease()
-{
-	m_Data.clear();
-}
-
 STDMETHODIMP SVRemoteCommandData::GetDataInformation( VARIANT* p_pInformation )
 {
 	HRESULT l_Status = S_OK;

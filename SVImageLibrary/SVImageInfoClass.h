@@ -25,38 +25,38 @@ public:
 	SVImageInfoClass( const SVImageInfoClass& p_rsvValue );
 	SVImageInfoClass( const BITMAPINFOHEADER& p_rBitmapHeader );
 
-	virtual ~SVImageInfoClass();
+	~SVImageInfoClass();
 
 	const SVImageInfoClass &operator=( const SVImageInfoClass& p_rsvValue );
 	const SVImageInfoClass &operator=( const BITMAPINFOHEADER& p_rBitmapHeader );
 
-	virtual HRESULT Initialize();
+	HRESULT Initialize();
 
-	virtual SVImagePropertiesClass GetImageProperties() const;
-	virtual HRESULT SetImageProperties( SVImagePropertiesClass p_svImageProperties );
+	SVImagePropertiesClass GetImageProperties() const;
+	HRESULT SetImageProperties( SVImagePropertiesClass p_svImageProperties );
 
-	virtual SVImageExtentClass GetExtents() const;
-	virtual HRESULT SetExtents( SVImageExtentClass p_svExtents );
+	SVImageExtentClass GetExtents() const;
+	HRESULT SetExtents( SVImageExtentClass p_svExtents );
 
-	virtual SVExtentTranslationEnum GetTranslation();
-	virtual HRESULT SetTranslation( SVExtentTranslationEnum p_eTranslation );
+	SVExtentTranslationEnum GetTranslation();
+	HRESULT SetTranslation( SVExtentTranslationEnum p_eTranslation );
 
-	virtual HRESULT GetImageProperty( SVImagePropertyEnum p_eDefinition, int &p_riValue ) const;
-	virtual HRESULT GetImageProperty( SVImagePropertyEnum p_eDefinition, long &p_rlValue ) const;
-	virtual HRESULT SetImageProperty( SVImagePropertyEnum p_eDefinition, long p_lValue );
+	HRESULT GetImageProperty( SVImagePropertyEnum p_eDefinition, int &p_riValue ) const;
+	HRESULT GetImageProperty( SVImagePropertyEnum p_eDefinition, long &p_rlValue ) const;
+	HRESULT SetImageProperty( SVImagePropertyEnum p_eDefinition, long p_lValue );
 
-	virtual HRESULT GetExtentProperty( SVExtentPropertyEnum p_eProperty, long &p_rlValue ) const;
-	virtual HRESULT GetExtentProperty( SVExtentPropertyEnum p_eProperty, double &p_rdValue ) const;
-	virtual HRESULT GetExtentProperty( SVExtentPropertyEnum p_eProperty, POINT &p_roValue ) const;
-	virtual HRESULT GetExtentProperty( SVExtentPropertyEnum p_eProperty, SVExtentPointStruct &p_rsvValue ) const;
-	virtual HRESULT SetExtentProperty( SVExtentPropertyEnum p_eProperty, double p_dValue );
-	virtual HRESULT SetExtentProperty( SVExtentPropertyEnum p_eProperty, SVExtentPointStruct p_svValue );
+	HRESULT GetExtentProperty( SVExtentPropertyEnum p_eProperty, long &p_rlValue ) const;
+	HRESULT GetExtentProperty( SVExtentPropertyEnum p_eProperty, double &p_rdValue ) const;
+	HRESULT GetExtentProperty( SVExtentPropertyEnum p_eProperty, POINT &p_roValue ) const;
+	HRESULT GetExtentProperty( SVExtentPropertyEnum p_eProperty, SVExtentPointStruct &p_rsvValue ) const;
+	HRESULT SetExtentProperty( SVExtentPropertyEnum p_eProperty, double p_dValue );
+	HRESULT SetExtentProperty( SVExtentPropertyEnum p_eProperty, SVExtentPointStruct p_svValue );
 
-	virtual HRESULT GetImageExtentsToFit( SVImageExtentClass p_svInExtent, SVImageExtentClass &p_rsvOutExtent );
+	HRESULT GetImageExtentsToFit( SVImageExtentClass p_svInExtent, SVImageExtentClass &p_rsvOutExtent );
 
-	virtual HRESULT GetOutputRectangle( RECT &p_roRect ) const;
+	HRESULT GetOutputRectangle( RECT &p_roRect ) const;
 
-	virtual HRESULT GetFigure( SVExtentFigureStruct &p_rsvFigure );
+	HRESULT GetFigure( SVExtentFigureStruct &p_rsvFigure );
 
 	long GetBufferSize();
 

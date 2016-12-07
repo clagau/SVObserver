@@ -83,8 +83,8 @@ namespace Seidenader { namespace SVOMFCLibrary
 	#pragma region Private Methods
 		DECLARE_MESSAGE_MAP()
 
-		virtual void DoDataExchange(CDataExchange* pDX);
-		virtual BOOL OnInitDialog();
+		virtual void DoDataExchange(CDataExchange* pDX) override;
+		virtual BOOL OnInitDialog() override;
 		afx_msg void OnPaint();
 		afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
 		afx_msg void OnBnClickedButton( UINT nID );

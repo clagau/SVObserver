@@ -24,7 +24,7 @@ class SVThreadInfoDlg : public CDialog
 public:
 	SVThreadInfoDlg(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~SVThreadInfoDlg();
-	virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog() override;
 	void UpdateThreadInfo( SVThreadAttribute eAttribute);
 
 
@@ -42,7 +42,7 @@ protected:
 	afx_msg void OnBnClickedSave();
 	afx_msg void OnEnableCheck();
 #pragma endregion
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 #pragma endregion
 
 

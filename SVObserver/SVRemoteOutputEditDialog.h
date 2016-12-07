@@ -32,12 +32,12 @@ class SVRemoteOutputEditDialog : public CDialog
 	CComboBox m_ValueObjectNameCombo;
 
 protected:
-	virtual BOOL OnInitDialog();
-	virtual void OnCancel();
-	virtual void OnOK();
-	virtual void DoDataExchange(CDataExchange* pDX);
+	virtual BOOL OnInitDialog() override;
+	virtual void OnCancel() override;
+	virtual void OnOK() override;
+	virtual void DoDataExchange(CDataExchange* pDX) override;
 	afx_msg void OnCbnSelchangeValueObjectNameCombo();
-	virtual BOOL PreTranslateMessage(MSG* pMsg);
+	virtual BOOL PreTranslateMessage(MSG* pMsg) override;
 
 	DECLARE_MESSAGE_MAP()
 

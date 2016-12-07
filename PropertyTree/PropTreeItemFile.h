@@ -61,26 +61,26 @@ public:
 // Attributes
 public:
 	// The attribute area needs drawing
-	virtual void DrawAttribute(CDC* pDC, const RECT& rc);
+	virtual void DrawAttribute(CDC* pDC, const RECT& rc) override;
 
 	// Retrieve the item's attribute value
-	virtual bool GetItemValue(CString& strVal);
-    virtual bool GetItemValue(VARIANT& vtVal);
+	virtual bool GetItemValue(CString& strVal) override;
+	virtual bool GetItemValue(VARIANT& vtVal) override;
 
 	// Set the item's attribute value
-	virtual bool SetItemValue(LPCTSTR lpszVal);
+	virtual bool SetItemValue(LPCTSTR lpszVal) override;
 
 	// @cmember Called when attribute area has changed size.
-	virtual void OnMove();
+	virtual void OnMove() override;
 
 	// @cmember Called when the item needs to refresh its data.
-	virtual void OnRefresh();
+	virtual void OnRefresh() override;
 
 	// @cmember Called when the item needs to commit its changes.
-	virtual void OnCommit();
+	virtual void OnCommit() override;
 
 	// @cmember Called to activate the item.
-	virtual void OnActivate();
+	virtual void OnActivate() override;
 
 // Operations
 public:

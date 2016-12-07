@@ -30,7 +30,7 @@ namespace Seidenader
 			SVRankingFilterDlg(const SVGUID& rInspectionID, const SVGUID& rFilterID, CWnd* pParent = nullptr);   // standard constructor
 			virtual ~SVRankingFilterDlg();
 
-			virtual HRESULT SetInspectionData();
+			HRESULT SetInspectionData();
 			void EnableCells();
 
 			// Dialog Data
@@ -49,14 +49,14 @@ namespace Seidenader
 			// ClassWizard generated virtual function overrides
 			//{{AFX_VIRTUAL(SVRankingFilterDlg)
 		protected:
-			virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+			virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 			//}}AFX_VIRTUAL
 
 			// Generated message map functions
 			//{{AFX_MSG(SVRankingFilterDlg)
 		protected:
-			virtual BOOL OnInitDialog();
-			virtual void OnOK();
+			virtual BOOL OnInitDialog() override;
+			virtual void OnOK() override;
 			afx_msg void OnSelchangeRankingWidth();
 			afx_msg void OnSelchangeRankingHeight();
 			afx_msg void OnSelchangeRankingRank();

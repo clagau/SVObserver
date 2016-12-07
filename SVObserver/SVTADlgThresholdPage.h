@@ -39,7 +39,7 @@ class SVToolAdjustmentDialogThresholdPageClass : public CPropertyPage, public SV
 	//******************************************************************************
 	// Generated message map functions
 	//{{AFX_MSG(SVToolAdjustmentDialogThresholdPageClass)
-	virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog() override;
 	afx_msg void OnChangeUpperEdit();
 	afx_msg void OnChangeLowerEdit();
 	afx_msg void OnUpperActivateCheck();
@@ -88,10 +88,10 @@ public:
 	//******************************************************************************
 	//{{AFX_VIRTUAL(SVToolAdjustmentDialogThresholdPageClass)
 public:
-	virtual BOOL OnSetActive();
+	virtual BOOL OnSetActive() override;
 
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV
 	//}}AFX_VIRTUAL
 
 	//******************************************************************************

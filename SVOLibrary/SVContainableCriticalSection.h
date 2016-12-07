@@ -34,9 +34,9 @@ public:
 	void swap( SVContainableCriticalSection& rhs );
 
 	// SVSyncObject
-	virtual HRESULT Unlock();
-	virtual HRESULT Lock();
-	virtual HRESULT Lock(DWORD dwTimeout);
+	virtual HRESULT Unlock() override;
+	virtual HRESULT Lock() override;
+	virtual HRESULT Lock(DWORD dwTimeout) override;
 
 	CRITICAL_SECTION* m_pCritSec;
 	DWORD             m_dwSpinCount;

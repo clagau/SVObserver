@@ -32,7 +32,7 @@ public:
 	virtual ~MonitorListBasePage();
 
 	// ISVPropertyPageDialog
-	virtual bool QueryAllowExit();
+	virtual bool QueryAllowExit() override;
 
 	const SvUl::NameSelectionList& GetNameSelectionList() const;
 
@@ -53,10 +53,10 @@ public:
 	// ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(MonitorListBasePage)
 	public:
-	virtual BOOL OnSetActive();
-	virtual BOOL OnKillActive();
+	virtual BOOL OnSetActive() override;
+	virtual BOOL OnKillActive() override;
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
 #pragma region Protected
@@ -64,7 +64,7 @@ public:
 protected:
 	// Generated message map functions
 	//{{AFX_MSG(MonitorListBasePage)
-	virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog() override;
 	afx_msg void OnSelchangeListSelected_Base();
 	afx_msg void OnBtnRemove();
 	afx_msg void OnBtnRemoveAll();

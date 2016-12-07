@@ -42,8 +42,8 @@ public:
 protected:
 	DECLARE_MESSAGE_MAP()
 
-	virtual void DoDataExchange(CDataExchange* pDX);
-	virtual BOOL OnInitDialog();
+	virtual void DoDataExchange(CDataExchange* pDX) override;
+	virtual BOOL OnInitDialog() override;
 
 	afx_msg void OnDblClickListSelected(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnSelectObjects();

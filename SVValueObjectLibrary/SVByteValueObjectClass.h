@@ -36,8 +36,8 @@ public:
 	const SVByteValueObjectClass& operator = ( const SVByteValueObjectClass& rhs );
 
 	virtual ~SVByteValueObjectClass();
-	virtual void Persist(SVObjectWriter& rWriter);
-	virtual HRESULT SetObjectValue( SVObjectAttributeClass* pDataObject );	// for compat loading legacy SVByteVectorObjectClass
+	virtual void Persist(SVObjectWriter& rWriter) override;
+	virtual HRESULT SetObjectValue( SVObjectAttributeClass* pDataObject ) override;	// for compat loading legacy SVByteVectorObjectClass
 
 	virtual HRESULT SetOutputFormat(OutputFormat outputFormat) override;
 

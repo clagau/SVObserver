@@ -18,19 +18,19 @@ class SVExtentDimensionsClass
 public:
 	SVExtentDimensionsClass();
 	SVExtentDimensionsClass( const SVExtentDimensionsClass &p_rsvValue );
-	virtual ~SVExtentDimensionsClass();
+	~SVExtentDimensionsClass();
 
 	const SVExtentDimensionsClass &operator=( const SVExtentDimensionsClass &p_rsvValue );
 
-	virtual HRESULT Initialize();
+	HRESULT Initialize();
 
-	virtual HRESULT DisableExtentProperty( SVExtentPropertyEnum p_eProperty );
+	HRESULT DisableExtentProperty( SVExtentPropertyEnum p_eProperty );
 	bool IsEnabled( SVExtentPropertyEnum p_eProperty ) const;
 
-	virtual HRESULT GetExtentProperty( SVExtentPropertyEnum p_eProperty, long &p_rlValue ) const;
-	virtual HRESULT GetExtentProperty( SVExtentPropertyEnum p_eProperty, double &p_rdValue ) const;
+	HRESULT GetExtentProperty( SVExtentPropertyEnum p_eProperty, long &p_rlValue ) const;
+	HRESULT GetExtentProperty( SVExtentPropertyEnum p_eProperty, double &p_rdValue ) const;
 
-	virtual HRESULT SetExtentProperty( SVExtentPropertyEnum p_eProperty, double p_dValue );
+	HRESULT SetExtentProperty( SVExtentPropertyEnum p_eProperty, double p_dValue );
 
 	bool operator==( const SVExtentDimensionsClass &p_rsvValue ) const;
 	bool operator!=( const SVExtentDimensionsClass &p_rsvValue ) const;

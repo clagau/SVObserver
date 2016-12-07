@@ -31,11 +31,11 @@ public:
 
 	void GetSelectedTrigger(CString& name, int& id) const;
 
-	virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog() override;
 	afx_msg void OnBnClickedOk();
 
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	DECLARE_MESSAGE_MAP()
 
 private:

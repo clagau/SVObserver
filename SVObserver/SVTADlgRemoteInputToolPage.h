@@ -24,14 +24,14 @@ class SVTADlgRemoteInputToolPage : public CPropertyPage
 {
 	// Generated message map functions
 	public:
-	virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog() override;
 	afx_msg void OnBnClickedClearInputButton();
 	afx_msg void OnBnClickedSelectInputButton();
 	DECLARE_MESSAGE_MAP()
 
 	// ClassWizard generated virtual function overrides
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);
+	virtual void DoDataExchange(CDataExchange* pDX) override;
 
 public:
 	enum { IDD = IDD_TA_REMOTE_INPUT_PAGE };

@@ -26,9 +26,9 @@ public:
 #pragma region Public Methods
 public:
 	// ISVPropertyPageDialog
-	virtual bool QueryAllowExit();
-	virtual BOOL OnSetActive();
-	virtual BOOL OnKillActive();
+	virtual bool QueryAllowExit() override;
+	virtual BOOL OnSetActive() override;
+	virtual BOOL OnKillActive() override;
 
 	const SvOsl::SelectorItemVector& getList() const { return m_List; };
 	UINT getAttributeFilter() const { return m_AttributeFilter; };
@@ -39,8 +39,8 @@ public:
 private:
 	DECLARE_MESSAGE_MAP()
 
-	virtual void DoDataExchange(CDataExchange* pDX);
-	virtual BOOL OnInitDialog();
+	virtual void DoDataExchange(CDataExchange* pDX) override;
+	virtual BOOL OnInitDialog() override;
 
 	afx_msg void OnDblClickListSelected(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void OnSelectObjects();

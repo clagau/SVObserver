@@ -18,11 +18,11 @@ class SVAboutDialogClass : public CDialog
 {
 protected:
 	//{{AFX_MSG(SVAboutDialogClass)
-	virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog() override;
 	//}}AFX_MSG
 
 	//{{AFX_VIRTUAL(SVAboutDialogClass)
-	virtual void DoDataExchange(CDataExchange* pDX);
+	virtual void DoDataExchange(CDataExchange* pDX) override;
 	//}}AFX_VIRTUAL
 
 	//{{AFX_DATA(SVAboutDialogClass)

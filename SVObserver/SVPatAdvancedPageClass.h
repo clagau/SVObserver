@@ -68,11 +68,11 @@ public:
 	// ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(SVPatAdvancedPageClass)
 	public:
-	virtual void OnCancel();
-	virtual void OnOK();
-	virtual BOOL OnKillActive();
+	virtual void OnCancel() override;
+	virtual void OnOK() override;
+	virtual BOOL OnKillActive() override;
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
 // Implementation
@@ -108,7 +108,7 @@ protected:
 	// Generated message map functions
 	//{{AFX_MSG(SVPatAdvancedPageClass)
 	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
-	virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog() override;
 	afx_msg void OnAcceptanceThresholdAutoClicked();
 	afx_msg void OnAdditionalCandidatesAutoClicked();
 	afx_msg void OnCandidateSpacingXMinAutoClicked();

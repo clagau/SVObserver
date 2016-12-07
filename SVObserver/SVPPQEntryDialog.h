@@ -53,10 +53,10 @@ class SVPPQEntryDialogCameraPageClass : public CPropertyPage
 protected:
 	// Generated message map functions
 	//{{AFX_MSG(SVPPQEntryDialogCameraPageClass)
-	virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog() override;
 	afx_msg void OnAddButton();
 	afx_msg void OnRemoveButton();
-	virtual void OnOK();
+	virtual void OnOK() override;
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
@@ -70,9 +70,9 @@ public:
 	// ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(SVPPQEntryDialogCameraPageClass)
 	public:
-	virtual BOOL OnApply();
+	virtual BOOL OnApply() override;
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
 
@@ -116,7 +116,7 @@ protected:
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(SVPPQEntryDialogPropertySheetClass)
 	public:
-	virtual INT_PTR DoModal();
+	virtual INT_PTR DoModal() override;
 	//}}AFX_VIRTUAL
 	BOOL OkToAdd();
 

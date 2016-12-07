@@ -30,7 +30,7 @@ public:
 
 	virtual ~SVPointValueObjectClass();
 
-	virtual void Persist(SVObjectWriter& rWriter);
+	virtual void Persist(SVObjectWriter& rWriter) override;
 
 	HRESULT GetDefaultValue( POINT& rPoint ) const;
 

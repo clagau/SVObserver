@@ -26,12 +26,12 @@ public:
 
 	void DoModal();
 
-	virtual HRESULT Start();
+	virtual HRESULT Start() override;
 	void Cancel();
 	void Complete();
 
-	virtual HRESULT UpdateProgress(unsigned long p_Current, unsigned long p_Total);
-	virtual HRESULT UpdateText(LPCTSTR text);
+	virtual HRESULT UpdateProgress(unsigned long p_Current, unsigned long p_Total) override;
+	virtual HRESULT UpdateText(LPCTSTR text) override;
 
 	HRESULT GetStatus() const;
 

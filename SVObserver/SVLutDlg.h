@@ -40,7 +40,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 // Class Wizard Generated Virtual Function(s):
-	virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog() override;
 	//{{AFX_VIRTUAL(SVLutDlg)
 	//}}AFX_VIRTUAL
 };
@@ -57,7 +57,7 @@ public:
 	// ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(SVLutDlgPage)
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
 	
 public:
@@ -114,7 +114,7 @@ protected:
 
 	// Generated message map functions
 	//{{AFX_MSG(SVLutDlgPage)
-	virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog() override;
 	afx_msg void OnActivateCheck();
 	afx_msg void OnSelchangeLutModeCombo();
 	afx_msg void OnContinuousRecalcCheck();

@@ -64,8 +64,8 @@ protected:
 	//{{AFX_VIRTUAL(CModelessMsgBox)
 	public:
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	virtual void PostNcDestroy();
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
+	virtual void PostNcDestroy() override;
 	//}}AFX_VIRTUAL
 
 // Implementation
@@ -73,9 +73,9 @@ protected:
 
 	// Generated message map functions
 	//{{AFX_MSG(CModelessMsgBox)
-	virtual BOOL OnInitDialog();
-	virtual void OnOK();
-	virtual void OnCancel();
+	virtual BOOL OnInitDialog() override;
+	virtual void OnOK() override;
+	virtual void OnCancel() override;
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()

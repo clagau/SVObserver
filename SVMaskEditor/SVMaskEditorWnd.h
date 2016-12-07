@@ -35,7 +35,7 @@ public:
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(SVMaskEditorWndClass)
 	public:
-	virtual void OnFinalRelease();
+	virtual void OnFinalRelease() override;
 	//}}AFX_VIRTUAL
     void OnPaintBckGrnd();
 

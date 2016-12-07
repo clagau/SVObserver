@@ -31,7 +31,7 @@ public:
 	const SVDWordValueObjectClass& operator = ( const SVDWordValueObjectClass& rhs );
 
 	virtual ~SVDWordValueObjectClass();
-	virtual void Persist(SVObjectWriter& rWriter);
+	virtual void Persist(SVObjectWriter& rWriter) override;
 
 	virtual HRESULT SetOutputFormat(OutputFormat outputFormat) override;
 

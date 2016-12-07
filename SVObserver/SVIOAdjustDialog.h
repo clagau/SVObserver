@@ -30,8 +30,8 @@ class SVIOAdjustDialogClass : public CDialog
 	afx_msg void OnCombineACKRadio();
 	afx_msg void OnCombineNAKRadio();
 	afx_msg void OnCombineCheck();
-	virtual void OnOK();
-	virtual BOOL OnInitDialog();
+	virtual void OnOK() override;
+	virtual BOOL OnInitDialog() override;
 	afx_msg void OnSelChangeIOCombo();
 	//}}AFX_MSG
 	
@@ -43,7 +43,7 @@ public:
 
 	//{{AFX_VIRTUAL(SVIOAdjustDialogClass)
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV-Unterstützung
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV-Unterstützung
 	//}}AFX_VIRTUAL
 
 public:

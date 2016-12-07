@@ -60,42 +60,42 @@ namespace Seidenader { namespace GridCtrlLibrary
 	public:
 		void operator=(const CGridCell& cell);
 
-		virtual void  SetText(LPCTSTR szText)        { m_strText = szText;  }                       
-		virtual void  SetImage(int nImage)           { m_nImage = nImage;   }                        
-		virtual void  SetData(LPARAM lParam)         { m_lParam = lParam;   }      
-		virtual void  SetGrid(CGridCtrl* pGrid)      { m_pGrid = pGrid;     }                          
+		virtual void  SetText(LPCTSTR szText) override        { m_strText = szText;  }                       
+		virtual void  SetImage(int nImage) override           { m_nImage = nImage;   }                        
+		virtual void  SetData(LPARAM lParam) override         { m_lParam = lParam;   }      
+		virtual void  SetGrid(CGridCtrl* pGrid) override      { m_pGrid = pGrid;     }                          
 		// virtual void SetState(const DWORD nState);  -  use base class version   
-		virtual void  SetFormat(DWORD nFormat)       { m_nFormat = nFormat; }                      
-		virtual void  SetTextClr(COLORREF clr)       { m_crFgClr = clr;     }                          
-		virtual void  SetBackClr(COLORREF clr)       { m_crBkClr = clr;     }                          
-		virtual void  SetFont(const LOGFONT* plf);
-		virtual void  SetMargin(UINT nMargin)        { m_nMargin = nMargin; }
-		virtual CWnd* GetEditWnd() const             { return m_pEditWnd;   }
-		virtual void  SetCoords(int /*nRow*/, int /*nCol*/) {}  // don't need to know the row and
+		virtual void  SetFormat(DWORD nFormat) override       { m_nFormat = nFormat; }                      
+		virtual void  SetTextClr(COLORREF clr) override       { m_crFgClr = clr;     }                          
+		virtual void  SetBackClr(COLORREF clr) override       { m_crBkClr = clr;     }                          
+		virtual void  SetFont(const LOGFONT* plf) override;
+		virtual void  SetMargin(UINT nMargin) override        { m_nMargin = nMargin; }
+		virtual CWnd* GetEditWnd() const override             { return m_pEditWnd;   }
+		virtual void  SetCoords(int /*nRow*/, int /*nCol*/) override {}  // don't need to know the row and
 																// column for base implementation
 
-		virtual LPCTSTR     GetText() const             { return (m_strText.IsEmpty())? _T("") : LPCTSTR(m_strText); }
-		virtual int         GetImage() const            { return m_nImage;  }
-		virtual LPARAM      GetData() const             { return m_lParam;  }
-		virtual CGridCtrl*  GetGrid() const	            { return m_pGrid;   }
+		virtual LPCTSTR     GetText() const override             { return (m_strText.IsEmpty())? _T("") : LPCTSTR(m_strText); }
+		virtual int         GetImage() const override            { return m_nImage;  }
+		virtual LPARAM      GetData() const override             { return m_lParam;  }
+		virtual CGridCtrl*  GetGrid() const override	            { return m_pGrid;   }
 		// virtual DWORD    GetState() const - use base class
-		virtual DWORD       GetFormat() const;
-		virtual COLORREF    GetTextClr() const          { return m_crFgClr; } // TODO: change to use default cell
-		virtual COLORREF    GetBackClr() const          { return m_crBkClr; }
-		virtual LOGFONT*    GetFont() const;
-		virtual CFont*      GetFontObject() const;
-		virtual UINT        GetMargin() const;
+		virtual DWORD       GetFormat() const override;
+		virtual COLORREF    GetTextClr() const override          { return m_crFgClr; } // TODO: change to use default cell
+		virtual COLORREF    GetBackClr() const override          { return m_crBkClr; }
+		virtual LOGFONT*    GetFont() const override;
+		virtual CFont*      GetFontObject() const override;
+		virtual UINT        GetMargin() const override;
 
-		virtual BOOL        IsEditing() const           { return m_bEditing; }
-		virtual BOOL        IsDefaultFont() const       { return (nullptr == m_plfFont); }
-		virtual void        Reset();
+		virtual BOOL        IsEditing() const override           { return m_bEditing; }
+		virtual BOOL        IsDefaultFont() const override       { return (nullptr == m_plfFont); }
+		virtual void        Reset() override;
 
 	// editing cells
 	public:
-		virtual BOOL Edit(int nRow, int nCol, CRect rect, CPoint point, UINT nID, UINT nChar);
-		virtual void EndEdit();
+		virtual BOOL Edit(int nRow, int nCol, CRect rect, CPoint point, UINT nID, UINT nChar) override;
+		virtual void EndEdit() override;
 	protected:
-		virtual void OnEndEdit();
+		virtual void OnEndEdit() override;
 
 	protected:
 		CString    m_strText;      // Cell text (or binary data if you wish...)

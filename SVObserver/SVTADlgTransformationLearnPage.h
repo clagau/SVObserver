@@ -37,9 +37,9 @@ public:
 	// ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(SVToolAdjustmentDialogTransformationLearnPageClass)
 	public:
-	virtual BOOL OnSetActive();
+	virtual BOOL OnSetActive() override;
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
 	
 protected:
@@ -49,7 +49,7 @@ protected:
 
 	// Generated message map functions
 	//{{AFX_MSG(SVToolAdjustmentDialogTransformationLearnPageClass)
-	virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog() override;
 	afx_msg void OnLearnButton();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()

@@ -24,7 +24,7 @@ public:
 	SVInt64ValueObjectClass( LPCTSTR ObjectName);
 	SVInt64ValueObjectClass( SVObjectClass* pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVINT64VALUEOBJECT );
 	const SVInt64ValueObjectClass& operator = (const SVInt64ValueObjectClass& rhs);
-	virtual void Persist(SVObjectWriter& rWriter);
+	virtual void Persist(SVObjectWriter& rWriter) override;
 
 	virtual ~SVInt64ValueObjectClass();
 

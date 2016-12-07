@@ -29,21 +29,21 @@ public:
 	unsigned long __stdcall Release();
 
 	virtual HRESULT STDMETHODCALLTYPE putDocumentLocator( 
-		/* [in] */ MSXML2::ISAXLocator* pLocator);
+		/* [in] */ MSXML2::ISAXLocator* pLocator) override;
 
-	virtual HRESULT STDMETHODCALLTYPE startDocument();
+	virtual HRESULT STDMETHODCALLTYPE startDocument() override;
 
-	virtual HRESULT STDMETHODCALLTYPE endDocument();
+	virtual HRESULT STDMETHODCALLTYPE endDocument() override;
 
 	virtual HRESULT STDMETHODCALLTYPE startPrefixMapping( 
 		/* [in] */ unsigned short* pwchPrefix,
 		/* [in] */ int cchPrefix,
 		/* [in] */ unsigned short* pwchUri,
-		/* [in] */ int cchUri);
+		/* [in] */ int cchUri) override;
         
 	virtual HRESULT STDMETHODCALLTYPE endPrefixMapping( 
 		/* [in] */ unsigned short* pwchPrefix,
-		/* [in] */ int cchPrefix);
+		/* [in] */ int cchPrefix) override;
 
 	virtual HRESULT STDMETHODCALLTYPE startElement( 
 		/* [in] */ unsigned short* pwchNamespaceUri,
@@ -52,7 +52,7 @@ public:
 		/* [in] */ int cchLocalName,
 		/* [in] */ unsigned short* pwchRawName,
 		/* [in] */ int cchRawName,
-		/* [in] */ MSXML2::ISAXAttributes* pAttributes);
+		/* [in] */ MSXML2::ISAXAttributes* pAttributes) override;
 
 	virtual HRESULT STDMETHODCALLTYPE endElement( 
 		/* [in] */ unsigned short* pwchNamespaceUri,
@@ -60,24 +60,24 @@ public:
 		/* [in] */ unsigned short* pwchLocalName,
 		/* [in] */ int cchLocalName,
 		/* [in] */ unsigned short* pwchRawName,
-		/* [in] */ int cchRawName);
+		/* [in] */ int cchRawName) override;
 
     virtual HRESULT STDMETHODCALLTYPE characters( 
         /* [in] */ unsigned short* pwchChars,
-        /* [in] */ int cchChars);
+        /* [in] */ int cchChars) override;
     
     virtual HRESULT STDMETHODCALLTYPE ignorableWhitespace( 
         /* [in] */ unsigned short* pwchChars,
-        /* [in] */ int cchChars);
+        /* [in] */ int cchChars) override;
     
     virtual HRESULT STDMETHODCALLTYPE processingInstruction( 
         /* [in] */ unsigned short* pwchTarget,
         /* [in] */ int cchTarget,
         /* [in] */ unsigned short* pwchData,
-        /* [in] */ int cchData);
+        /* [in] */ int cchData) override;
     
     virtual HRESULT STDMETHODCALLTYPE skippedEntity( 
         /* [in] */ unsigned short* pwchName,
-        /* [in] */ int cchName);
+        /* [in] */ int cchName) override;
 };
 

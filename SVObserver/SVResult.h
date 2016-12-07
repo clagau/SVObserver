@@ -45,12 +45,12 @@ public:
 
 	virtual ~SVResultClass();
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
+	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
 
 	// ISVCancel interface
-	virtual bool CanCancel();
-	virtual HRESULT GetCancelData(SVCancelData*& rpData);
-	virtual HRESULT SetCancelData(SVCancelData* pData);
+	virtual bool CanCancel() override;
+	virtual HRESULT GetCancelData(SVCancelData*& rpData) override;
+	virtual HRESULT SetCancelData(SVCancelData* pData) override;
 
 	BOOL IsFailed();
 	BOOL IsWarned();
@@ -58,10 +58,9 @@ public:
 
 	// derived class overrides...
 
-	virtual SVRangeClass* GetResultRange();
-	virtual CRect Draw( HDC DC, CRect R );
+	SVRangeClass* GetResultRange();
 
-	virtual BOOL Run(SVRunStatusClass& RRunStatus);
+	virtual BOOL Run(SVRunStatusClass& RRunStatus) override;
 	
 	
 	// Only valid for single input Results that can use the inputObjectInfo 
@@ -70,7 +69,7 @@ public:
 
 
 protected:
-	virtual BOOL onRun( SVRunStatusClass& RRunStatus );
+	virtual BOOL onRun( SVRunStatusClass& RRunStatus ) override;
 
 	void init();
 

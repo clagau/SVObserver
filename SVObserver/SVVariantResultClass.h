@@ -22,13 +22,13 @@ public:
 	virtual ~SVVariantResultClass();
 	SV_DECLARE_CLASS( SVVariantResultClass );
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
-	virtual BOOL CloseObject();
-	virtual BOOL OnValidate();
+	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
+	virtual BOOL CloseObject() override;
+	virtual BOOL OnValidate() override;
 
 protected:
 	SVValueObjectClass* GetInputValue();
-	virtual BOOL onRun( SVRunStatusClass& RRunStatus );
+	virtual BOOL onRun( SVRunStatusClass& RRunStatus ) override;
 
 protected:
 	// Input

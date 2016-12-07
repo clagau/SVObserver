@@ -54,13 +54,13 @@ namespace Seidenader { namespace GridCtrlLibrary
 
 	// editing cells
 	public:
-		virtual BOOL  Edit(int nRow, int nCol, CRect rect, CPoint point, UINT nID, UINT nChar);
-		virtual CWnd* GetEditWnd() const;
-		virtual void  EndEdit();
+		virtual BOOL  Edit(int nRow, int nCol, CRect rect, CPoint point, UINT nID, UINT nChar) override;
+		virtual CWnd* GetEditWnd() const override;
+		virtual void  EndEdit() override;
 
 	// Operations
 	public:
-		virtual CSize GetCellExtent(CDC* pDC);
+		virtual CSize GetCellExtent(CDC* pDC) override;
 
 	// CGridCellCombo specific calls
 	public:
@@ -69,7 +69,7 @@ namespace Seidenader { namespace GridCtrlLibrary
 		DWORD GetStyle()                        { return m_dwStyle;    }
 
 	protected:
-		virtual BOOL Draw(CDC* pDC, int nRow, int nCol, CRect rect, BOOL bEraseBkgnd = TRUE);
+		virtual BOOL Draw(CDC* pDC, int nRow, int nCol, CRect rect, BOOL bEraseBkgnd = TRUE) override;
 
 		CStringArray m_Strings;
 		DWORD        m_dwStyle;
@@ -95,7 +95,7 @@ namespace Seidenader { namespace GridCtrlLibrary
 		// Overrides
 		// ClassWizard generated virtual function overrides
 		//{{AFX_VIRTUAL(CComboEdit)
-		virtual BOOL PreTranslateMessage(MSG* pMsg);
+		virtual BOOL PreTranslateMessage(MSG* pMsg) override;
 		//}}AFX_VIRTUAL
 
 		// Implementation
@@ -143,7 +143,7 @@ namespace Seidenader { namespace GridCtrlLibrary
 		// ClassWizard generated virtual function overrides
 		//{{AFX_VIRTUAL(CInPlaceList)
 	protected:
-		virtual void PostNcDestroy();
+		virtual void PostNcDestroy() override;
 		//}}AFX_VIRTUAL
 
 		// Implementation

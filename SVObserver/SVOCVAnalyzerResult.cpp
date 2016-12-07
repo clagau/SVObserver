@@ -348,37 +348,37 @@ void SVOCVAnalyzeResultClass::GetOCVResultString( CString & csResult )
 //
 //
 //
-CRect SVOCVAnalyzeResultClass::Draw( HDC DC, CRect R )
-{
-	CString text;
-	
-	::SetTextColor( DC, SV_DEFAULT_TEXT_COLOR ); 
-
-	text = _T("OCV Analyzer Owner TBD");         // 16 Jul 1999 - frb.
-
-	::TextOut( DC, R.left, R.top, text, text.GetLength() );
-	R.top += SV_DEFAULT_TEXT_HEIGHT;
-
-	text = _T( "Match String:" );
-	::TextOut( DC, R.left, R.top, text, text.GetLength() );
-	CString csResult;
-	m_svoMatchString.GetValue( csResult );
-	text.Format( _T( "%s" ), (LPCTSTR)csResult );
-	::TextOut( DC, R.left + 100, R.top, text, text.GetLength() );
-	R.top += SV_DEFAULT_TEXT_HEIGHT + 2;
-
-    DWORD dwColor = GetObjectColor();
-	::SetTextColor(DC,dwColor);
-
-	text = _T( "OCV String:" );
-	::TextOut( DC, R.left, R.top, text, text.GetLength() );
-	m_svoFoundString.GetValue( csResult );
-	text.Format( _T( "%s" ), (LPCTSTR)csResult );
-	::TextOut( DC, R.left + 100, R.top, text, text.GetLength() );
-	R.top += SV_DEFAULT_TEXT_HEIGHT + 2;
-
-	return R;
-}
+//CRect SVOCVAnalyzeResultClass::Draw( HDC DC, CRect R )
+//{
+//	CString text;
+//	
+//	::SetTextColor( DC, SV_DEFAULT_TEXT_COLOR ); 
+//
+//	text = _T("OCV Analyzer Owner TBD");         // 16 Jul 1999 - frb.
+//
+//	::TextOut( DC, R.left, R.top, text, text.GetLength() );
+//	R.top += SV_DEFAULT_TEXT_HEIGHT;
+//
+//	text = _T( "Match String:" );
+//	::TextOut( DC, R.left, R.top, text, text.GetLength() );
+//	CString csResult;
+//	m_svoMatchString.GetValue( csResult );
+//	text.Format( _T( "%s" ), (LPCTSTR)csResult );
+//	::TextOut( DC, R.left + 100, R.top, text, text.GetLength() );
+//	R.top += SV_DEFAULT_TEXT_HEIGHT + 2;
+//
+//    DWORD dwColor = GetObjectColor();
+//	::SetTextColor(DC,dwColor);
+//
+//	text = _T( "OCV String:" );
+//	::TextOut( DC, R.left, R.top, text, text.GetLength() );
+//	m_svoFoundString.GetValue( csResult );
+//	text.Format( _T( "%s" ), (LPCTSTR)csResult );
+//	::TextOut( DC, R.left + 100, R.top, text, text.GetLength() );
+//	R.top += SV_DEFAULT_TEXT_HEIGHT + 2;
+//
+//	return R;
+//}
 
 
 ////////////////////////////////////////////////////////////////////////////////

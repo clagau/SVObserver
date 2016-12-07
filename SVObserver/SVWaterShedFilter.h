@@ -24,7 +24,7 @@ public:
 	SVWatershedFilterClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVWATERSHEDFILTER );
 	virtual ~SVWatershedFilterClass();
 	
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
+	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
 
 #pragma region virtual method (IFilter)
 	virtual bool shouldResetInspection() const override { return true; }
@@ -34,8 +34,8 @@ private:
 	void init();
 
 protected:
-	virtual BOOL onRun( BOOL First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus );
-	virtual BOOL OnValidate();
+	virtual BOOL onRun( BOOL First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus ) override;
+	virtual BOOL OnValidate() override;
 	
 private:
 	SVInObjectInfoStruct m_MarkerImageInfo;

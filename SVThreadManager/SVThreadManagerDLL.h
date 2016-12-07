@@ -28,7 +28,7 @@ class CSVThreadManagerApp : public CWinApp
 public:
 	CSVThreadManagerApp();
 	virtual ~CSVThreadManagerApp();
-	virtual BOOL InitInstance();
+	virtual BOOL InitInstance() override;
 
 	DECLARE_MESSAGE_MAP()
 #pragma endregion

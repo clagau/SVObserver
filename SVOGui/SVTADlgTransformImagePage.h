@@ -29,8 +29,8 @@ namespace Seidenader
 
 			//{{AFX_VIRTUAL(SVToolAdjustmentDialogTransformImagePageClass)
 		protected:
-			virtual BOOL OnInitDialog();
-			virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV
+			virtual BOOL OnInitDialog() override;
+			virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV
 			//}}AFX_VIRTUAL
 
 			//{{AFX_MSG(SVToolAdjustmentDialogTransformImagePageClass)

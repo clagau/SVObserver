@@ -28,8 +28,8 @@ public:
 
 	virtual ~SVStringValueObjectClass();
 
-	virtual HRESULT SetObjectValue( SVObjectAttributeClass* pDataObject );
-	virtual void Persist(SVObjectWriter& rWriter);
+	virtual HRESULT SetObjectValue( SVObjectAttributeClass* pDataObject ) override;
+	virtual void Persist(SVObjectWriter& rWriter) override;
 
 //	IMPLEMENT_VALUE_OBJECT_GET_SET()
 	template <typename FROMTYPE>
@@ -44,10 +44,10 @@ public:
 	template <typename TOTYPE>
 	__forceinline HRESULT GetValue(int iBucket, int iIndex, TOTYPE& rValue) const { return GetValueAt(iBucket, iIndex, rValue); }
 
-	virtual HRESULT SetValueAtConvert( int iBucket, int iIndex, const CString& value ) { return SetValueAt(iBucket, iIndex, value); }
-	virtual HRESULT SetValueAtConvert( int iBucket, int iIndex, double value ) { return S_FALSE; } //SetValueAt(iBucket, iIndex, value); }
-	virtual HRESULT SetValueAtConvert( int iBucket, int iIndex, long value ) { return S_FALSE; } //return SetValueAt(iBucket, iIndex, value); }
-	virtual HRESULT SetValueAtConvert( int iBucket, int iIndex, int value ) { return S_FALSE; } //SetValueAt(iBucket, iIndex, value); }
+	virtual HRESULT SetValueAtConvert( int iBucket, int iIndex, const CString& value ) override { return SetValueAt(iBucket, iIndex, value); }
+	virtual HRESULT SetValueAtConvert( int iBucket, int iIndex, double value ) override { return S_FALSE; } //SetValueAt(iBucket, iIndex, value); }
+	virtual HRESULT SetValueAtConvert( int iBucket, int iIndex, long value ) override { return S_FALSE; } //return SetValueAt(iBucket, iIndex, value); }
+	virtual HRESULT SetValueAtConvert( int iBucket, int iIndex, int value ) override { return S_FALSE; } //SetValueAt(iBucket, iIndex, value); }
 
 	__forceinline  HRESULT SetValueAt( int iBucket, int iIndex, value_type value ) {return base::SetValueAt(iBucket, iIndex, value); }
 	__forceinline  HRESULT GetValueAt( int iBucket, int iIndex, value_type& rValue ) const {return base::GetValueAt(iBucket, iIndex, rValue); }

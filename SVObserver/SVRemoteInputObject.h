@@ -22,10 +22,10 @@ public:
 
 	virtual ~SVRemoteInputObject();
 
-	virtual BOOL Create();
-	virtual BOOL Destroy();
+	virtual BOOL Create() override;
+	virtual BOOL Destroy() override;
 
-	virtual HRESULT Read( _variant_t& p_rValue );
+	virtual HRESULT Read( _variant_t& p_rValue ) override;
 
 	BOOL Lock();
 	BOOL Unlock();

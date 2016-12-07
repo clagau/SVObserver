@@ -17,11 +17,11 @@ public:
 
 	virtual ~SVDigitalOutputObject();
 
-	virtual BOOL Create();
-	virtual BOOL Destroy();
+	virtual BOOL Create() override;
+	virtual BOOL Destroy() override;
 
-	virtual HRESULT Write( const _variant_t& p_rValue );
-	virtual HRESULT Reset();
+	virtual HRESULT Write( const _variant_t& p_rValue ) override;
+	virtual HRESULT Reset() override;
 
 	BOOL Force( bool bForce, bool bForcedValue );
 	BOOL Invert( bool bInvert );

@@ -72,8 +72,8 @@ namespace Seidenader
 			// ClassWizard generated virtual function overrides
 			//{{AFX_VIRTUAL(SVFormulaEditorPageClass)
 		protected:
-			virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-			virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
+			virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
+			virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam) override;
 			//}}AFX_VIRTUAL
 
 			// Generated message map functions
@@ -82,11 +82,11 @@ namespace Seidenader
 			afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
 			afx_msg void OnAddLocalVariableButton();
 			afx_msg void OnAddConstantButton();
-			virtual BOOL OnInitDialog();
+			virtual BOOL OnInitDialog() override;
 			afx_msg void OnLocalVariableSelect();
 			afx_msg void OnDisable();
 			afx_msg void OnEquationFieldChanged(NMHDR* pNotifyStruct, LRESULT* plResult);
-			virtual BOOL OnKillActive( );
+			virtual BOOL OnKillActive( ) override;
 			//}}AFX_MSG
 			DECLARE_MESSAGE_MAP()
 

@@ -22,12 +22,12 @@ public:
 	SVLowerThresholdEquationClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVLOWERTHRESHOLDEQUATION );
 	virtual ~SVLowerThresholdEquationClass();
 
-	virtual BOOL OnValidate();
+	virtual BOOL OnValidate() override;
 
 protected:
-	BOOL CreateObject(SVObjectLevelCreateStruct *PCreateStruct);
+	virtual BOOL CreateObject(SVObjectLevelCreateStruct *PCreateStruct) override;
 	void init();
-	virtual BOOL onRun( SVRunStatusClass& RRunStatus );
+	virtual BOOL onRun( SVRunStatusClass& RRunStatus ) override;
 
 protected:
 	SVDoubleValueObjectClass		result;			// resultant value

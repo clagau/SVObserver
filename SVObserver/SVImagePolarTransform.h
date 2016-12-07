@@ -23,11 +23,11 @@ public:
 	SVImagePolarTransformClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVIMAGEPOLARTRANSFORM );
 	virtual ~SVImagePolarTransformClass();
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
+	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
 
-	virtual HRESULT IsInputImage( SVImageClass *p_psvImage );
+	virtual HRESULT IsInputImage( SVImageClass *p_psvImage ) override;
 
-	virtual BOOL OnValidate();
+	virtual BOOL OnValidate() override;
 
 	virtual bool resetAllObjects( bool shouldNotifyFriends, bool silentReset ) override;
 
@@ -44,7 +44,7 @@ protected:
 	void correctAngles( double& RDStartAngle, double& RDEndAngle );
 	void AnglesTo360( double& p_dStart, double& p_dEnd);
 
-	virtual BOOL onRun( SVRunStatusClass& RRunStatus );
+	virtual BOOL onRun( SVRunStatusClass& RRunStatus ) override;
 	
 	SVImageClass				outputImageObject;
 	

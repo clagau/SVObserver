@@ -22,17 +22,11 @@ class SVOFileConfigDlg;
 
 class SVOFileConfigApp : public CWinApp
 {
-	COleTemplateServer m_server;
-
 protected:
 	DECLARE_SERIAL( SVOFileConfigApp )
 
 public:
 	SVOFileConfigDlg *pdlg;
-	SvXml::SVXMLCTreeCtrl::SVBranchHandle m_Inspection;
-	unsigned long ulVersion;
-	virtual void LoadIODoc( LPCTSTR szFileName );
-	virtual void LoadIPDoc( LPCTSTR szFileName );
 	SVOFileConfigApp();
 	virtual ~SVOFileConfigApp();
 
@@ -40,8 +34,8 @@ public:
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(SVOFileConfigApp)
 	public:
-	virtual BOOL InitInstance();
-	virtual void Serialize(CArchive& ar);
+	virtual BOOL InitInstance() override;
+	virtual void Serialize(CArchive& ar) override;
 	//}}AFX_VIRTUAL
 
 // Implementation

@@ -191,7 +191,7 @@ public:
 	//{{AFX_VIRTUAL(CSVOConfigAssistantDlg)
 	protected:
 
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
 // Implementation
@@ -204,9 +204,9 @@ protected:
 
 	// Generated message map functions
 	//{{AFX_MSG(CSVOConfigAssistantDlg)
-	virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog() override;
 	afx_msg void OnSelchangeComboAvalSys();
-	virtual void OnOK();
+	virtual void OnOK() override;
 	afx_msg void OnDblclkLstErrList();
 	afx_msg void OnChangeEditConfigurationName();
 	afx_msg void OnHelpButton();

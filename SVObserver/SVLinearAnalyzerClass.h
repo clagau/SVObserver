@@ -28,15 +28,15 @@ public:
 	SVLinearAnalyzerClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVLINEARANALYZER );
 	virtual ~SVLinearAnalyzerClass();
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
+	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
 
-	virtual HRESULT ResetObject();
+	virtual HRESULT ResetObject() override;
 
-	virtual BOOL OnValidate();
+	virtual BOOL OnValidate() override;
 
 	virtual HRESULT GetSelectedEdgeOverlays( SVExtentMultiLineStruct &p_MultiLine );
 
-	virtual HRESULT GetImageExtent( SVImageExtentClass &p_rsvImageExtent );
+	virtual HRESULT GetImageExtent( SVImageExtentClass &p_rsvImageExtent ) override;
 
 	SVLinearEdgeProcessingClass *GetEdgeA();
 	SVLinearEdgeProcessingClass *GetEdgeB();
@@ -51,7 +51,7 @@ public:
 	SVBoolValueObjectClass m_svShowAllEdgeBOverlays;
 
 protected:
-	virtual HRESULT onCollectOverlays(SVImageClass *p_Image, SVExtentMultiLineStructCArray &p_MultiLineArray );
+	virtual HRESULT onCollectOverlays(SVImageClass *p_Image, SVExtentMultiLineStructCArray &p_MultiLineArray ) override;
 
 	HRESULT GetProjectedExtent( long p_lIndex, long &p_rlBottom, SVImageExtentClass &p_rsvImageExtent );
 

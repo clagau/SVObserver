@@ -49,7 +49,7 @@ public:
 	// ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(CSVRegressionFileSelectDlg)
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
 // Implementation
@@ -57,7 +57,7 @@ protected:
 	// Generated message map functions
 	//{{AFX_MSG(CSVRegressionFileSelectDlg)
 	afx_msg void OnBtnRegTestBrowseFiles();
-	virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog() override;
 	afx_msg void OnRadioRegList();
 	afx_msg void OnRadioRegNone();
 	afx_msg void OnRadioRegSingle();

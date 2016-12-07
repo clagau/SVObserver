@@ -22,21 +22,21 @@ public:
 	SVStringValueDeviceParam(SVDeviceParamEnum typeEnum);
 	SVStringValueDeviceParam(const SVStringValueDeviceParam& rhs);
 	virtual ~SVStringValueDeviceParam();
-	virtual SVClonable* CloneImpl() const;
+	virtual SVClonable* CloneImpl() const override;
 
 	// automatic conversions
 	SVStringValueDeviceParam(const CString& rhs);
 	operator CString() const;
 	SVStringValueDeviceParam& operator=(const SVStringValueDeviceParam& rhs);
 	SVStringValueDeviceParam& operator=(const SVString& sVal);
-	virtual HRESULT GetValue(VARIANT& rv) const;
-	virtual HRESULT SetValue(const VARIANT& rv);
+	virtual HRESULT GetValue(VARIANT& rv) const override;
+	virtual HRESULT SetValue(const VARIANT& rv) override;
 
 	SVString strValue;
 
 	TDeviceParamInfo<SVString> info;
 	
-	virtual HRESULT SetMetadata(const SVDeviceParam* pParam );
+	virtual HRESULT SetMetadata(const SVDeviceParam* pParam ) override;
 
 	typedef TDeviceParamInfo<SVString>::OptionType  OptionType;
 	typedef TDeviceParamInfo<SVString>::OptionsType OptionsType;

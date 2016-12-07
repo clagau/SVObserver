@@ -21,7 +21,7 @@ public:
 
 	virtual ~SVObjectThreadCommandTemplate();
 
-	virtual HRESULT Execute();
+	virtual HRESULT Execute() override;
 
 private:
 	SVCommandPtr m_CommandPtr;

@@ -31,7 +31,7 @@ namespace Seidenader
 			// Generated message map functions
 		protected:
 			//{{AFX_MSG(SVToolAdjustmentDialogFilterPageClass)
-			virtual BOOL OnInitDialog();
+			virtual BOOL OnInitDialog() override;
 			afx_msg void OnButtonProperties();
 			afx_msg void OnButtonClearAll();
 			afx_msg void OnButtonDeleteCurrentFilter();
@@ -61,7 +61,7 @@ namespace Seidenader
 			//******************************************************************************
 			//{{AFX_VIRTUAL(SVToolAdjustmentDialogFilterPageClass)
 		protected:
-			virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV-Unterstützung
+			virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV-Unterstützung
 			//}}AFX_VIRTUAL
 
 			//************************************
@@ -70,7 +70,7 @@ namespace Seidenader
 			// Access:    public 
 			// Returns:   BOOL 
 			//************************************
-			virtual BOOL OnSetActive();
+			virtual BOOL OnSetActive() override;
 
 			//******************************************************************************
 			// Class Wizard Generated Dialog Data:

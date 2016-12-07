@@ -134,13 +134,13 @@ public:
 
 	virtual ~yyFlexLexer();
 
-	void yy_switch_to_buffer( struct yy_buffer_state* new_buffer );
-	struct yy_buffer_state* yy_create_buffer( std::istream* s, int size );
-	void yy_delete_buffer( struct yy_buffer_state* b );
-	void yyrestart( std::istream* s );
+	virtual void yy_switch_to_buffer( struct yy_buffer_state* new_buffer ) override;
+	virtual struct yy_buffer_state* yy_create_buffer( std::istream* s, int size ) override;
+	virtual void yy_delete_buffer( struct yy_buffer_state* b ) override;
+	virtual void yyrestart( std::istream* s ) override;
 
-	virtual int yylex();
-	virtual void switch_streams( std::istream* new_in, std::ostream* new_out );
+	virtual int yylex() override;
+	virtual void switch_streams( std::istream* new_in, std::ostream* new_out ) override;
 
 protected:
 	virtual int LexerInput( char* buf, int max_size );

@@ -29,26 +29,26 @@ public:
 	SVRangeClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVRANGE );
 	virtual ~SVRangeClass();
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
+	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
 
 	//************************************
 	// Description:  call InitReferencesAndInputs and base class
 	// Returns:  HRESULT:  S_OK if successful
 	//************************************
-	virtual HRESULT ResetObject();
+	virtual HRESULT ResetObject() override;
 
 	//************************************
 	// Description:  Disconnect Inputs and call base class 
 	// Returns:  BOOL:  TRUE if succesful
 	//************************************
-	virtual BOOL CloseObject();
+	virtual BOOL CloseObject() override;
 
 	BOOL OnValidate();
 
 	// ISVCancel interface
-	virtual bool CanCancel();
-	virtual HRESULT GetCancelData(SVCancelData*& rpData);
-	virtual HRESULT SetCancelData(SVCancelData* pData);
+	virtual bool CanCancel() override;
+	virtual HRESULT GetCancelData(SVCancelData*& rpData) override;
+	virtual HRESULT SetCancelData(SVCancelData* pData) override;
 
 	//************************************
 	// Description:  Recalculate Reference Object for indirect range Variables.
@@ -148,7 +148,7 @@ public:
 #pragma endregion Methods to replace processMessage
 	
 protected:
-	virtual void init();
+	void init();
 	BOOL getInputValue( double& RVal );
 	BOOL onRun(SVRunStatusClass& RRunStatus);
 

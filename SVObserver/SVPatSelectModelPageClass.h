@@ -66,13 +66,13 @@ protected:
 #pragma region AFX Virtual Methods
 	// ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(SVPatModelPageClass)
-	virtual void OnCancel();
-	virtual void OnOK();
-	virtual BOOL OnApply();
-	virtual BOOL OnSetActive();
-	virtual BOOL OnKillActive();
-	virtual BOOL OnInitDialog();
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual void OnCancel() override;
+	virtual void OnOK() override;
+	virtual BOOL OnApply() override;
+	virtual BOOL OnSetActive() override;
+	virtual BOOL OnKillActive() override;
+	virtual BOOL OnInitDialog() override;
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
 #pragma endregion AFX Virtual Methods
 

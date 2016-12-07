@@ -37,7 +37,7 @@ namespace Seidenader { namespace SVOResource
 			The method is the entry point of the application
 			\return true on success
 		***********/
-		virtual BOOL InitInstance();
+		virtual BOOL InitInstance() override;
 	#pragma endregion Public Methods
 	};
 } /*namespace SVOResource*/ } /*namespace Seidenader*/

@@ -23,8 +23,8 @@ class SVPPQEntryDialogDigInPageClass : public CPropertyPage
 
 	//{{AFX_MSG(SVPPQEntryDialogDigInPageClass)
 	protected:
-	virtual BOOL OnInitDialog();
-	virtual void OnOK();
+	virtual BOOL OnInitDialog() override;
+	virtual void OnOK() override;
 	afx_msg void OnAddButton();
 	afx_msg void OnRemoveButton();
 	//}}AFX_MSG
@@ -32,9 +32,9 @@ class SVPPQEntryDialogDigInPageClass : public CPropertyPage
 
 	//{{AFX_VIRTUAL(SVPPQEntryDialogDigInPageClass)
 	public:
-	virtual BOOL OnApply();
+	virtual BOOL OnApply() override;
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);
+	virtual void DoDataExchange(CDataExchange* pDX) override;
 	//}}AFX_VIRTUAL
 
 	//{{AFX_DATA(SVPPQEntryDialogDigInPageClass)

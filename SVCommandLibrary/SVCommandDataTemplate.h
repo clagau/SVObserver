@@ -26,8 +26,8 @@ public:
 
 	virtual ~SVCommandDataTemplate();
 
-	virtual HRESULT GetData( SVArgType& p_rData ) const;
-	virtual HRESULT SetData( const SVDataType& p_rData );
+	virtual HRESULT GetData( SVArgType& p_rData ) const override;
+	virtual HRESULT SetData( const SVDataType& p_rData ) override;
 
 protected:
 	SVDataType m_Data;

@@ -56,7 +56,7 @@ public:
 	HRESULT AddOverlayPoints( SVDrawObjectClass& rsvDrawObject, SVDlgImageOverlayOptions options );
 
 protected:
-	virtual void OnPaintOverlay(CPaintDC& dc);
+	virtual void OnPaintOverlay(CPaintDC& dc) override;
 	//{{AFX_MSG(SVDlgImageEditor)
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	afx_msg BOOL OnSetCursor(CWnd* pWnd, UINT nHitTest, UINT message);
@@ -67,7 +67,7 @@ protected:
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
-	virtual void OnSetZoom();
+	virtual void OnSetZoom() override;
 
 
 	LPCTSTR GetPickCursor( UINT nHitTest );

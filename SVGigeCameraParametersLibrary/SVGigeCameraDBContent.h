@@ -115,8 +115,8 @@ public:
     SVGigeCameraDBContent();
     virtual ~SVGigeCameraDBContent();
         
-	virtual HRESULT STDMETHODCALLTYPE startElement(unsigned short* pwchNamespaceUri, int cchNamespaceUri, unsigned short* pwchLocalName, int cchLocalName, unsigned short* pwchRawName, int cchRawName, MSXML2::ISAXAttributes* pAttributes);
-    virtual HRESULT STDMETHODCALLTYPE endElement(unsigned short* pwchNamespaceUri, int cchNamespaceUri, unsigned short* pwchLocalName, int cchLocalName, unsigned short* pwchRawName, int cchRawName);
+	virtual HRESULT STDMETHODCALLTYPE startElement(unsigned short* pwchNamespaceUri, int cchNamespaceUri, unsigned short* pwchLocalName, int cchLocalName, unsigned short* pwchRawName, int cchRawName, MSXML2::ISAXAttributes* pAttributes) override;
+	virtual HRESULT STDMETHODCALLTYPE endElement(unsigned short* pwchNamespaceUri, int cchNamespaceUri, unsigned short* pwchLocalName, int cchLocalName, unsigned short* pwchRawName, int cchRawName) override;
 	
 	void ReportError(wchar_t* pErrorMsg, HRESULT erorCode);
 

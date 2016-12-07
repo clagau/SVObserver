@@ -22,17 +22,17 @@ public:
 	SVLUTEquationClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVLUTEQUATION );
 	virtual ~SVLUTEquationClass();
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
+	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
 
-	virtual HRESULT ResetObject();
+	virtual HRESULT ResetObject() override;
 
-	virtual BOOL OnValidate();
+	virtual BOOL OnValidate() override;
 
 	BOOL SetDefaultFormula();
 
 protected:
 	void init();
-	virtual BOOL onRun( SVRunStatusClass& RRunStatus );
+	virtual BOOL onRun( SVRunStatusClass& RRunStatus ) override;
 
 //******************************************************************************
 // Data Element(s):

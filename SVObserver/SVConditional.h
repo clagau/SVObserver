@@ -26,10 +26,10 @@ public:
 	SVConditionalClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVCONDITIONAL );
 	virtual ~SVConditionalClass();
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
+	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
 
-	virtual BOOL OnValidate();
-	virtual BOOL onRun( SVRunStatusClass& RRunStatus );	
+	virtual BOOL OnValidate() override;
+	virtual BOOL onRun( SVRunStatusClass& RRunStatus ) override;
 
 protected:
 	void init();

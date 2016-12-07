@@ -21,10 +21,10 @@ public:
 
 #pragma region Public Methods
 public:
-	virtual BOOL Create();
-	virtual BOOL Destroy();
+	virtual BOOL Create() override;
+	virtual BOOL Destroy() override;
 
-	virtual HRESULT Read( _variant_t& p_rValue );
+	virtual HRESULT Read( _variant_t& p_rValue ) override;
 
 	BOOL Force( bool bForce, bool bForcedValue );
 	BOOL Invert( bool bInvert );

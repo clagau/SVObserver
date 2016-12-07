@@ -43,7 +43,7 @@ public:
 	enum { IDD = IDD_ADD_REMOVE_REMOTE_OUTPUT_DLG };
 
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 
 	int StringPosition( CStringVec l_astrArray, CString l_strValue );
 	void UpdateUsedList();
@@ -65,7 +65,7 @@ public:
 	afx_msg void OnBnClickedAddBtn();
 	afx_msg void OnBnClickedRemoveBtn();
 	afx_msg void OnBnClickedOk();
-	virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog() override;
 private:
 	int m_lOutputGroupCount;
 	CString NextAvailableGroupName();

@@ -42,14 +42,14 @@ namespace Seidenader { namespace GridCtrlLibrary
 		CGridCellDateTime();
 		CGridCellDateTime(DWORD dwStyle);
 		virtual ~CGridCellDateTime();
-		virtual CSize GetCellExtent(CDC* pDC);
+		virtual CSize GetCellExtent(CDC* pDC) override;
 
 		// editing cells
 	public:
 		void Init(DWORD dwStyle);
-		virtual BOOL  Edit(int nRow, int nCol, CRect rect, CPoint point, UINT nID, UINT nChar);
-		virtual CWnd* GetEditWnd() const;
-		virtual void  EndEdit();
+		virtual BOOL  Edit(int nRow, int nCol, CRect rect, CPoint point, UINT nID, UINT nChar) override;
+		virtual CWnd* GetEditWnd() const override;
+		virtual void  EndEdit() override;
 
 
 		CTime* GetTime() {return &m_cTime;};
@@ -73,7 +73,7 @@ namespace Seidenader { namespace GridCtrlLibrary
 		// ClassWizard generated virtual function overrides
 		//{{AFX_VIRTUAL(CInPlaceList)
 		protected:
-		virtual void PostNcDestroy();
+		virtual void PostNcDestroy() override;
 		//}}AFX_VIRTUAL
 
 	// Implementation

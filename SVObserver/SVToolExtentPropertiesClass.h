@@ -24,18 +24,18 @@ class SVToolExtentPropertiesClass
 {
 public:
 	SVToolExtentPropertiesClass();
-	virtual ~SVToolExtentPropertiesClass();
+	~SVToolExtentPropertiesClass();
 
-	virtual HRESULT Initialize();
+	HRESULT Initialize();
 
-	virtual HRESULT GetProperties( SVImageExtentClass &p_rsvExtents ) const;
-	virtual HRESULT GetProperties( unsigned long p_ulIndex, SVImageExtentClass &p_rsvExtents ) const;
+	HRESULT GetProperties( SVImageExtentClass &p_rsvExtents ) const;
+	HRESULT GetProperties( unsigned long p_ulIndex, SVImageExtentClass &p_rsvExtents ) const;
 
-	virtual HRESULT GetExtentObject( SVExtentPropertyEnum p_eProperty, SVValueObjectClass *&p_rpsvValue ) const;
-	virtual HRESULT SetExtentObject( SVExtentPropertyEnum p_eProperty, SVValueObjectClass *p_psvValue );
+	HRESULT GetExtentObject( SVExtentPropertyEnum p_eProperty, SVValueObjectClass *&p_rpsvValue ) const;
+	HRESULT SetExtentObject( SVExtentPropertyEnum p_eProperty, SVValueObjectClass *p_psvValue );
 
-	virtual HRESULT GetPropertyInfo( SVExtentPropertyEnum p_eProperty, SVExtentPropertyInfoStruct& p_rInfo ) const;
-	virtual HRESULT SetPropertyInfo( SVExtentPropertyEnum p_eProperty, const SVExtentPropertyInfoStruct& p_rInfo );
+	HRESULT GetPropertyInfo( SVExtentPropertyEnum p_eProperty, SVExtentPropertyInfoStruct& p_rInfo ) const;
+	HRESULT SetPropertyInfo( SVExtentPropertyEnum p_eProperty, const SVExtentPropertyInfoStruct& p_rInfo );
 
 private:
 	struct SVExtentPropertyInfoStructImpl

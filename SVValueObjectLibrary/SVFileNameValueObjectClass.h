@@ -30,9 +30,9 @@ public:
 
 	virtual ~SVFileNameValueObjectClass();
 
-	virtual HRESULT SetObjectValue( SVObjectAttributeClass* pDataObject );
+	virtual HRESULT SetObjectValue( SVObjectAttributeClass* pDataObject ) override;
 
-	virtual void Persist(SVObjectWriter& rWriter);
+	virtual void Persist(SVObjectWriter& rWriter) override;
 
 	HRESULT SetDefaultValue( LPCTSTR value, bool BResetAll );
 
@@ -49,10 +49,10 @@ public:
 	template <typename TOTYPE>
 	__forceinline HRESULT GetValue(int iBucket, int iIndex, TOTYPE& rValue) const { return GetValueAt(iBucket, iIndex, rValue); }
 
-	virtual HRESULT SetValueAtConvert( int iBucket, int iIndex, const CString& value ) { return SetValueAt(iBucket, iIndex, value); }
-	virtual HRESULT SetValueAtConvert( int iBucket, int iIndex, double value ) { return S_FALSE; }
-	virtual HRESULT SetValueAtConvert( int iBucket, int iIndex, long value ) { return S_FALSE; }
-	virtual HRESULT SetValueAtConvert( int iBucket, int iIndex, int value ) { return S_FALSE; }
+	virtual HRESULT SetValueAtConvert( int iBucket, int iIndex, const CString& value ) override { return SetValueAt(iBucket, iIndex, value); }
+	virtual HRESULT SetValueAtConvert( int iBucket, int iIndex, double value ) override { return S_FALSE; }
+	virtual HRESULT SetValueAtConvert( int iBucket, int iIndex, long value ) override { return S_FALSE; }
+	virtual HRESULT SetValueAtConvert( int iBucket, int iIndex, int value ) override { return S_FALSE; }
 	
 protected:
 	virtual HRESULT SetValueAt( int iBucket, int iIndex, const CString& value );

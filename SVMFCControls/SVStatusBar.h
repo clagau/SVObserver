@@ -33,7 +33,7 @@ public:
 	virtual ~SVStatusBar();
 	// sets information for the file based write filter
 	void SetFbwfInfo(UINT PaneIndex,bool FbwfAvailable, bool FbwfActive, bool FbwfChanging);
-	virtual void DrawItem( LPDRAWITEMSTRUCT lpDrawItemStruct );
+	virtual void DrawItem( LPDRAWITEMSTRUCT lpDrawItemStruct ) override;
 	COLORREF m_lModeBKColor;
 	COLORREF m_lModeForeColor;
 	COLORREF m_lErrorBKColor;

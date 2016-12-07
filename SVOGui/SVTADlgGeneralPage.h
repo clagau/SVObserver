@@ -35,7 +35,7 @@ namespace Seidenader
 
 		protected:
 			//{{AFX_MSG(SVToolAdjustmentDialogGeneralPageClass)
-			virtual BOOL OnInitDialog();
+			virtual BOOL OnInitDialog() override;
 			afx_msg void OnSelchangeDrawToolCombo();
 			afx_msg void OnUpdateAuxiliaryExtents();
 			afx_msg void OnSelchangeSourceImageCombo();
@@ -45,9 +45,9 @@ namespace Seidenader
 
 			//{{AFX_VIRTUAL(SVToolAdjustmentDialogGeneralPageClass)
 			public:
-			virtual BOOL OnSetActive();
+			virtual BOOL OnSetActive() override;
 			protected:
-			virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+			virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 			//}}AFX_VIRTUAL
 
 			void refresh();

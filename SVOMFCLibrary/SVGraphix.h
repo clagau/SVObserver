@@ -215,7 +215,7 @@ public:
 	{
 	}
 
-	virtual void Draw( HDC HDeviceContext )
+	virtual void Draw( HDC HDeviceContext ) override
 	{
 		// Draw...
 		for( int i = 0; i < pointArray.GetSize(); ++ i )
@@ -242,7 +242,7 @@ public:
 	{
 	}
 
-	virtual void Draw( HDC HDeviceContext )
+	virtual void Draw( HDC HDeviceContext ) override
 	{
 		if( pointArray.GetSize() >= maxPointCount )
 		{
@@ -275,7 +275,7 @@ public:
 	{
 	}
 
-	virtual void Draw( HDC HDeviceContext )
+	virtual void Draw( HDC HDeviceContext ) override
 	{
 		if( pointArray.GetSize() >= maxPointCount )
 		{
@@ -312,7 +312,7 @@ public:
 	{
 	}
 
-	virtual void Draw( HDC HDeviceContext )
+	virtual void Draw( HDC HDeviceContext ) override
 	{
 		if( pointArray.GetSize() >= maxPointCount )
 		{
@@ -345,7 +345,7 @@ public:
 	{
 	}
 
-	virtual void Draw( HDC HDeviceContext )
+	virtual void Draw( HDC HDeviceContext ) override
 	{
 		if( pointArray.GetSize() >= maxPointCount )
 		{
@@ -378,7 +378,7 @@ public:
 	{
 	}
 
-	virtual void Draw( HDC HDeviceContext )
+	virtual void Draw( HDC HDeviceContext ) override
 	{
 		HPEN   hOldPen   = ( HPEN ) ::SelectObject( HDeviceContext, hPen );
 		HBRUSH hOldBrush = ( HBRUSH ) ::SelectObject( HDeviceContext, hBrush );
@@ -408,7 +408,7 @@ public:
 	{
 	}
 
-	virtual void Draw( HDC HDeviceContext )
+	virtual void Draw( HDC HDeviceContext ) override
 	{
 		HPEN   hOldPen   = ( HPEN ) ::SelectObject( HDeviceContext, hPen );
 
@@ -436,7 +436,7 @@ public:
 	{
 	}
 
-	virtual void Draw( HDC HDeviceContext )
+	virtual void Draw( HDC HDeviceContext ) override
 	{
 		if( pointArray.GetSize() >= maxPointCount )
 		{

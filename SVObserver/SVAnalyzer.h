@@ -24,15 +24,15 @@ public:
 	SVAnalyzerClass( BOOL BCreateDefaultTaskList = false, SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVANALYZER );
 	virtual ~SVAnalyzerClass();
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
-	virtual BOOL CloseObject();
+	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
+	virtual BOOL CloseObject() override;
 	virtual void DisconnectImages() {};
 
 	virtual SVResultClass* GetResultObject();
 	
 // used in pattern and Blob Analyzers.
 	virtual bool IsPtOverResult( const POINT& rPoint ){ return false;}
-	virtual	void DisplayAnalyzerResult(){};
+	virtual void DisplayAnalyzerResult(){};
 // End. Sri
 
 protected:

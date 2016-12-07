@@ -49,9 +49,9 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 	#pragma region Protected Methods
 		DECLARE_MESSAGE_MAP()
 
-		virtual void DoDataExchange(CDataExchange* pDX);
-		virtual BOOL OnInitDialog();
-		virtual BOOL OnSetActive( );
+		virtual void DoDataExchange(CDataExchange* pDX) override;
+		virtual BOOL OnInitDialog() override;
+		virtual BOOL OnSetActive( ) override;
 		afx_msg void OnSize(UINT nType, int cx, int cy);
 		afx_msg void OnGridClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/);
 		afx_msg void OnGridRClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/);

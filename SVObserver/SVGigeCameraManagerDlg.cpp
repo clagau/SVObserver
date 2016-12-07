@@ -11,7 +11,6 @@
 
 #include "stdafx.h"
 #include "SVGigeCameraManagerDlg.h"
-#include "ObjectInterfaces/SVGigeCameraStructInterface.h"
 #include "SVOMFCLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
 
 

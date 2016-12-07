@@ -28,8 +28,8 @@ public:
 
 	virtual ~SVVariantValueObjectClass();
 
-	virtual HRESULT SetObjectValue( SVObjectAttributeClass* pDataObject );
-	virtual void Persist(SVObjectWriter& rWriter);
+	virtual HRESULT SetObjectValue( SVObjectAttributeClass* pDataObject ) override;
+	virtual void Persist(SVObjectWriter& rWriter) override;
 
 	BOOL SetType( int vt );
 	HRESULT SetValueKeepType( int iBucket, LPCTSTR value ) {return SetValueKeepType(iBucket, 0, value);}

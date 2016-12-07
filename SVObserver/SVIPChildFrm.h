@@ -34,14 +34,14 @@ protected:
 	SVIPSplitterFrame();	// constructor
 	virtual ~SVIPSplitterFrame();
 
-	virtual BOOL OnCreateClient( LPCREATESTRUCT lpcs, CCreateContext* PContext );
+	virtual BOOL OnCreateClient( LPCREATESTRUCT lpcs, CCreateContext* PContext ) override;
 
 public:
 	void SetDefaultPaneSizes( RECT &BoundingRect );
 
 	//{{AFX_VIRTUAL(SVIPSplitterFrame)
 	public:
-	virtual BOOL PreCreateWindow( CREATESTRUCT& cs );
+	virtual BOOL PreCreateWindow( CREATESTRUCT& cs ) override;
 	//}}AFX_VIRTUAL
 
 	void SetViewSize( CWnd *l_pView, CSize &p_rViewSize );

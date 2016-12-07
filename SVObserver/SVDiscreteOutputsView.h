@@ -30,18 +30,18 @@ class SVDiscreteOutputsView : public CListView
 
 	//{{AFX_VIRTUAL(SVDiscreteOutputsView)
 public:
-	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
-	virtual BOOL Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext = nullptr);
+	virtual BOOL PreCreateWindow(CREATESTRUCT& cs) override;
+	virtual BOOL Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext = nullptr) override;
 
 protected:
-	virtual void OnInitialUpdate(); // das erste mal nach der Konstruktion aufgerufen
-	virtual void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint);
+	virtual void OnInitialUpdate() override; // das erste mal nach der Konstruktion aufgerufen
+	virtual void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint) override;
 	//}}AFX_VIRTUAL
 
 public:
 	#ifdef _DEBUG
-		virtual void AssertValid() const;
-		virtual void Dump(CDumpContext& dc) const;
+		virtual void AssertValid() const override;
+		virtual void Dump(CDumpContext& dc) const override;
 	#endif
 
 	virtual ~SVDiscreteOutputsView();

@@ -19,14 +19,14 @@ public:
 	SVDisplayImageBufferClass();
 	virtual ~SVDisplayImageBufferClass();
 
-	virtual bool empty() const;
-	virtual void clear();
+	virtual bool empty() const override;
+	virtual void clear() override;
 
-	virtual SVPOINT GetPositionPoint() const;
-	virtual SVBitmapInfo GetBitmapInfo() const;
-	virtual unsigned char* GetBufferAddress() const;
+	virtual SVPOINT GetPositionPoint() const override;
+	virtual SVBitmapInfo GetBitmapInfo() const override;
+	virtual unsigned char* GetBufferAddress() const override;
 
-	virtual HRESULT GetData( SVImageBufferHandleData& p_rData ) const;
+	virtual HRESULT GetData( SVImageBufferHandleData& p_rData ) const override;
 
 	bool UpdateDisplayBufferInfo( long bufWidth, long bufHeight, int iFormat );
 	bool DestroyDisplayBuffer();

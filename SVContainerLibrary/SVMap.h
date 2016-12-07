@@ -30,7 +30,7 @@ public:
 	SVMap( const SVMap& p_rObject );
 	SVMap( const SVMapBase& p_rObject );
 
-	virtual ~SVMap();
+	~SVMap();
 
 	operator SVMapBase const & () const;
 	operator SVMapBase & ();
@@ -38,50 +38,50 @@ public:
 	const SVMap& operator=( const SVMap& p_rObject );
 	const SVMap& operator=( const SVMapBase& p_rObject );
 
-	virtual bool empty() const;
+	bool empty() const;
 
-	virtual void clear();
+	void clear();
 
-	virtual size_type size() const;
+	size_type size() const;
 
-	virtual iterator begin();
-	virtual const_iterator begin() const;
+	iterator begin();
+	const_iterator begin() const;
 
-	virtual iterator end();
-	virtual const_iterator end() const;
+	iterator end();
+	const_iterator end() const;
 
-	virtual iterator find( const key_type& p_rKey );
-	virtual const_iterator find( const key_type& p_rKey ) const;
+	iterator find( const key_type& p_rKey );
+	const_iterator find( const key_type& p_rKey ) const;
 
-	virtual SVIteratorBoolPair insert( const value_type& p_rKeyValuePair );
-	virtual SVIteratorBoolPair insert( const key_type& p_rKey, const mapped_type& p_rValue );
+	SVIteratorBoolPair insert( const value_type& p_rKeyValuePair );
+	SVIteratorBoolPair insert( const key_type& p_rKey, const mapped_type& p_rValue );
 
 	template< class InputIterator >
 	void insert( InputIterator p_First, InputIterator p_Last );
 
-	virtual size_type erase( const key_type& p_rKey );
-	virtual iterator erase( iterator p_Where );
+	size_type erase( const key_type& p_rKey );
+	iterator erase( iterator p_Where );
 
 
 	// MFC Style Operators
-	virtual bool IsEmpty() const;
+	bool IsEmpty() const;
 
-	virtual int GetCount() const;
-	virtual int GetSize() const;
+	int GetCount() const;
+	int GetSize() const;
 
-	virtual iterator GetStartPosition() const;
+	iterator GetStartPosition() const;
 
-	virtual void GetNextAssoc( iterator& rNextPosition, key_type& rKey, mapped_type& rValue ) const;
+	void GetNextAssoc( iterator& rNextPosition, key_type& rKey, mapped_type& rValue ) const;
 
-	virtual bool Lookup( const key_type& key, mapped_type& rValue ) const;
+	bool Lookup( const key_type& key, mapped_type& rValue ) const;
 
-	virtual void SetAt( const key_type& key, mapped_type& newElement );
+	void SetAt( const key_type& key, mapped_type& newElement );
 
-	virtual mapped_type& operator[]( const key_type& key );
+	mapped_type& operator[]( const key_type& key );
 
-	virtual void RemoveKey( const key_type& key );
+	void RemoveKey( const key_type& key );
 
-	virtual void RemoveAll();
+	void RemoveAll();
 
 protected:
 	SVMapBase m_Map;

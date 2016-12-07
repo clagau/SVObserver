@@ -565,8 +565,8 @@ protected:
 
     static DWORD WINAPI SVStreamDataThread(LPVOID lpParam);
 
-	virtual HRESULT StoreEventObserver( DWORD dwCookie, CComPtr< CSVCommand > p_pObserver );
-	virtual HRESULT ReleaseEventObserver( DWORD dwCookie, CComPtr< CSVCommand > p_pObserver );
+	virtual HRESULT StoreEventObserver( DWORD dwCookie, CComPtr< CSVCommand > p_pObserver ) override;
+	virtual HRESULT ReleaseEventObserver( DWORD dwCookie, CComPtr< CSVCommand > p_pObserver ) override;
 
 	HRESULT StreamingDataCallback( const SVInspectionCompleteInfoStruct& p_rData );
 	HRESULT RebuildStreamingDataList();

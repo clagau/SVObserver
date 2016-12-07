@@ -49,7 +49,7 @@ public:
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(SVPixelAnalyzerSetupClass)
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
 // Implementation
@@ -84,14 +84,14 @@ protected:
 
 	// Generated message map functions
 	//{{AFX_MSG(SVPixelAnalyzerSetupClass)
-	virtual void OnOK();
-	virtual BOOL OnInitDialog();
+	virtual void OnOK() override;
+	virtual BOOL OnInitDialog() override;
 	afx_msg void OnWhiteRad();
 	afx_msg void OnBlackRad();
 	afx_msg void OnOtherRad();
 	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 	afx_msg void OnChangeGrayscaleEdt();
-	virtual void OnCancel();
+	virtual void OnCancel() override;
 	afx_msg void OnPixelSetRange();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()

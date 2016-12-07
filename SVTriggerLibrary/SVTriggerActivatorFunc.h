@@ -36,7 +36,7 @@ public:
 
 	virtual ~SVTriggerActivatorFunc() {}
 
-	virtual HRESULT operator()(unsigned long handle) const
+	virtual HRESULT operator()(unsigned long handle) const override
 	{
 		HRESULT hr = S_FALSE;
 		if (m_pObject && m_func)

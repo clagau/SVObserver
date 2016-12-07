@@ -19,22 +19,22 @@ class SVExtentPositionClass
 public:
 	SVExtentPositionClass();
 	SVExtentPositionClass( const SVExtentPositionClass &p_rsvValue );
-	virtual ~SVExtentPositionClass();
+	~SVExtentPositionClass();
 
 	const SVExtentPositionClass &operator=( const SVExtentPositionClass &p_rsvValue );
 
-	virtual HRESULT Initialize();
+	HRESULT Initialize();
 
-	virtual HRESULT DisableExtentProperty( SVExtentPropertyEnum p_eProperty );
+	HRESULT DisableExtentProperty( SVExtentPropertyEnum p_eProperty );
 	bool IsEnabled( SVExtentPropertyEnum p_eProperty ) const;
 
-	virtual HRESULT GetExtentProperty( SVExtentPropertyEnum p_eProperty, long &p_rlValue ) const;
-	virtual HRESULT GetExtentProperty( SVExtentPropertyEnum p_eProperty, double &p_rdValue ) const;
-	virtual HRESULT GetExtentProperty( SVExtentPropertyEnum p_eProperty, POINT &p_roValue ) const;
-	virtual HRESULT GetExtentProperty( SVExtentPropertyEnum p_eProperty, SVExtentPointStruct &p_rsvValue ) const;
+	HRESULT GetExtentProperty( SVExtentPropertyEnum p_eProperty, long &p_rlValue ) const;
+	HRESULT GetExtentProperty( SVExtentPropertyEnum p_eProperty, double &p_rdValue ) const;
+	HRESULT GetExtentProperty( SVExtentPropertyEnum p_eProperty, POINT &p_roValue ) const;
+	HRESULT GetExtentProperty( SVExtentPropertyEnum p_eProperty, SVExtentPointStruct &p_rsvValue ) const;
 
-	virtual HRESULT SetExtentProperty( SVExtentPropertyEnum p_eProperty, double p_dValue );
-	virtual HRESULT SetExtentProperty( SVExtentPropertyEnum p_eProperty, SVExtentPointStruct p_svValue );
+	HRESULT SetExtentProperty( SVExtentPropertyEnum p_eProperty, double p_dValue );
+	HRESULT SetExtentProperty( SVExtentPropertyEnum p_eProperty, SVExtentPointStruct p_svValue );
 
 	bool operator==( const SVExtentPositionClass &p_rsvValue ) const;
 	bool operator!=( const SVExtentPositionClass &p_rsvValue ) const;

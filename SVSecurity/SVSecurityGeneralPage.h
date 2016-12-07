@@ -31,7 +31,7 @@ public:
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(SVSecurityGeneralPage)
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
 protected:
@@ -42,7 +42,7 @@ protected:
 	afx_msg void OnUserMgrBtn();
 	afx_msg void OnEventViewerBtn();
 	afx_msg void OnLoginBtn();
-	virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog() override;
 	afx_msg void OnNoSecurityBtn();
 	afx_msg void OnTraditionalSecurityBtn();
 	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);

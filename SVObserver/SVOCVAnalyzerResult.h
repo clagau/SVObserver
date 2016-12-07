@@ -34,10 +34,10 @@ public:
 
 	virtual ~SVOCVAnalyzeResultClass();
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
-	virtual BOOL CloseObject();
-	virtual CRect Draw( HDC DC, CRect R );
-	virtual BOOL OnValidate();
+	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
+	virtual BOOL CloseObject() override;
+	//virtual CRect Draw( HDC DC, CRect R ) override;
+	virtual BOOL OnValidate() override;
 
 	void GetOCVResultString( CString & csResult );
 	
@@ -53,11 +53,11 @@ public:
 	SVImageClass* getInputImage();
 
 	virtual bool resetAllObjects( bool shouldNotifyFriends, bool silentReset ) override;
-	virtual HRESULT ResetObject();
+	virtual HRESULT ResetObject() override;
 
 protected:
-	virtual BOOL onRun( SVRunStatusClass& RRunStatus );
-	virtual HRESULT onCollectOverlays(SVImageClass* p_pImage, SVExtentMultiLineStructCArray& p_rMultiLineArray );
+	virtual BOOL onRun( SVRunStatusClass& RRunStatus ) override;
+	virtual HRESULT onCollectOverlays(SVImageClass* p_pImage, SVExtentMultiLineStructCArray& p_rMultiLineArray ) override;
 
 private:
 	void clearAll();

@@ -107,7 +107,7 @@ protected:
 
 	// Generierte Nachrichtenzuordnungsfunktionen
 	//{{AFX_MSG(SVEdgeMarkerAdjustmentPageClass)
-	virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog() override;
 	afx_msg void OnDirectionHeadToTailRadio();
 	afx_msg void OnDirectionTailToHeadRadio();
 	afx_msg void OnEdgeSelectFirstRadio();
@@ -132,10 +132,10 @@ protected:
 	// Der Klassen-Assistent generiert virtuelle Funktionsüberschreibungen
 	//{{AFX_VIRTUAL(SVEdgeMarkerAdjustmentPageClass)
 	public:
-	virtual void OnCancel();
-	virtual BOOL OnSetActive();
+	virtual void OnCancel() override;
+	virtual BOOL OnSetActive() override;
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV-Unterstützung
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV-Unterstützung
 	//}}AFX_VIRTUAL
 
 };

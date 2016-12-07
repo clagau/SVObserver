@@ -50,10 +50,10 @@ class SVROIFigureEditor : public SVFigureEditor
 public:
 	SVROIFigureEditor();
 	virtual ~SVROIFigureEditor();
-	virtual HRESULT PaintOverlay( CDC& dc, CRect rectViewport, CRect rectDisplay );
+	virtual HRESULT PaintOverlay( CDC& dc, CRect rectViewport, CRect rectDisplay ) override;
 
 	// provide an interface to the underlying shape object
-	virtual CRect GetRect();	// in SVFigureEditor
+	virtual CRect GetRect() override;	// in SVFigureEditor
 	void  SetRect( const CRect& rect );
 
 	HRESULT SetImageInfo( const SVImageInfoClass& svImageInfo );
@@ -62,12 +62,12 @@ public:
 	CRect GetParentImageRect();
 
 protected:
-	virtual HRESULT MouseMove(UINT nFlags, CPoint point);
-	virtual CSize GetSizeImpl();
-	virtual CPoint GetReferencePoint();
-	virtual CSize GetHotSpotSize();
+	virtual HRESULT MouseMove(UINT nFlags, CPoint point) override;
+	virtual CSize GetSizeImpl() override;
+	virtual CPoint GetReferencePoint() override;
+	virtual CSize GetHotSpotSize() override;
 
-	virtual SVHitTestStruct HitTest( CPoint point );	// for cursor display
+	virtual SVHitTestStruct HitTest( CPoint point ) override;	// for cursor display
 
 	CSize CalculateDeltaPos(CPoint point);
 

@@ -26,21 +26,21 @@ public:
 
 	virtual ~SVMainImageClass();
 
-	virtual BOOL SetImageHandleIndex( SVImageIndexStruct lIndex );
+	virtual BOOL SetImageHandleIndex( SVImageIndexStruct lIndex ) override;
 
-	virtual BOOL CopyImageTo( SVImageIndexStruct lIndex );
+	virtual BOOL CopyImageTo( SVImageIndexStruct lIndex ) override;
 
-	virtual BOOL GetImageHandle( SVSmartHandlePointer& p_rHandlePtr );
-	virtual BOOL GetImageHandle( SVImageIndexStruct svIndex, SVSmartHandlePointer& rHandle );
+	virtual BOOL GetImageHandle( SVSmartHandlePointer& p_rHandlePtr ) override;
+	virtual BOOL GetImageHandle( SVImageIndexStruct svIndex, SVSmartHandlePointer& rHandle ) override;
 
-	virtual BOOL OnValidate();
+	virtual BOOL OnValidate() override;
 
-	virtual const SVClock::SVTimeStamp& GetLastResetTimeStamp() const;
+	virtual const SVClock::SVTimeStamp& GetLastResetTimeStamp() const override;
 	
 protected:
-	virtual BOOL CreateBuffers( const SVImageInfoClass& p_rImageInfo, SVImageObjectClassPtr p_ImageArrayPtr );
+	virtual BOOL CreateBuffers( const SVImageInfoClass& p_rImageInfo, SVImageObjectClassPtr p_ImageArrayPtr ) override;
 
-	virtual SVImageObjectClassPtr GetBufferArrayPtr() const;
+	virtual SVImageObjectClassPtr GetBufferArrayPtr() const override;
 
 private:
 	void init();

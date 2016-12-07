@@ -34,14 +34,14 @@ namespace Seidenader
 			void refresh();
 
 			//{{AFX_MSG(SVToolAdjustmentDialogImagePageClass)
-			virtual BOOL OnInitDialog();
+			virtual BOOL OnInitDialog() override;
 			afx_msg void OnSelchangeCombo1();
 			//}}AFX_MSG
 
 			DECLARE_MESSAGE_MAP()
 
 			//{{AFX_VIRTUAL(SVToolAdjustmentDialogImagePageClass)
-			virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV
+			virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV
 			//}}AFX_VIRTUAL
 
 			//{{AFX_DATA(SVToolAdjustmentDialogImagePageClass)

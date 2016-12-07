@@ -32,14 +32,14 @@ public:
 
 #pragma region Protected
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnLvnItemchangedStringListEdit(NMHDR *pNMHDR, LRESULT *pResult);
 
 	DECLARE_MESSAGE_MAP()
 
-	virtual BOOL OnInitDialog();
-	virtual void OnOK();
+	virtual BOOL OnInitDialog() override;
+	virtual void OnOK() override;
 	void HeaderListChangeSize(int cx, int cy);
 	void DisplaySelectedText( );
 #pragma endregion

@@ -28,7 +28,7 @@ public:
 	SVList( const SVList& p_rObject );
 	SVList( const SVListBase& p_rObject );
 
-	virtual ~SVList();
+	~SVList();
 
 	operator SVListBase const & () const;
 	operator SVListBase & ();
@@ -47,38 +47,38 @@ public:
 
 	// Attributes (head and tail)
 	// count of elements
-	virtual INT_PTR GetCount() const;
-	virtual BOOL IsEmpty() const;
+	INT_PTR GetCount() const;
+	BOOL IsEmpty() const;
 
 	// add before head or after tail
-	virtual iterator AddHead( SVArgType newElement );
-	virtual iterator AddTail( SVArgType newElement );
+	iterator AddHead( SVArgType newElement );
+	iterator AddTail( SVArgType newElement );
 
 	// add another list of elements before head or after tail
-	virtual void AddTail( SVList* pNewList );
+	void AddTail( SVList* pNewList );
 
 	// remove all elements
-	virtual void RemoveAll();
+	void RemoveAll();
 
 	// getting/modifying an element at a given position
-	virtual void SetAt( iterator pos, SVArgType newElement );
-	virtual void RemoveAt( iterator& position );
+	void SetAt( iterator pos, SVArgType newElement );
+	void RemoveAt( iterator& position );
 
-	virtual iterator NotFound();
+	iterator NotFound();
 
 	// helper functions (note: O(n) speed)
 	// defaults to starting at the HEAD, returns Position equal to NotFound() if not found
-	virtual iterator Find( SVArgType searchValue ) const;
-	virtual iterator FindIndex( int nIndex ) const;
+	iterator Find( SVArgType searchValue ) const;
+	iterator FindIndex( int nIndex ) const;
 
 	// iteration
-	virtual iterator GetHeadPosition() const;
-	virtual SVType& GetNext( iterator& rPosition ); // return *Position++
-	virtual const SVType& GetNext( iterator& rPosition ) const; // return *Position++
+	iterator GetHeadPosition() const;
+	SVType& GetNext( iterator& rPosition ); // return *Position++
+	const SVType& GetNext( iterator& rPosition ) const; // return *Position++
 
 	// getting/modifying an element at a given position
-	virtual SVType& GetAt( iterator position );
-	virtual const SVType& GetAt( const_iterator position ) const;
+	SVType& GetAt( iterator position );
+	const SVType& GetAt( const_iterator position ) const;
 
 protected:
 	SVListBase m_List;

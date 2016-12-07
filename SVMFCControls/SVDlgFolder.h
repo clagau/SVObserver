@@ -27,7 +27,7 @@ namespace Seidenader
 			virtual ~SVDlgFolder();
 			void InitDlgFolder(LPCTSTR csTextOKButton, LPCTSTR csTextCaptionBar);
 
-			virtual void OnInitDone();
+			virtual void OnInitDone() override;
 			CString GetPathName() const;
 			void SetSelectedPath(LPCTSTR path);
 
@@ -36,7 +36,7 @@ namespace Seidenader
 			static WNDPROC m_wndProc;
 
 		protected:
-			virtual void OnFolderChange();
+			virtual void OnFolderChange() override;
 
 			//{{AFX_MSG(SVDlgFolder)
 			//}}AFX_MSG

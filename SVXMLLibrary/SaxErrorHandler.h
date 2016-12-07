@@ -26,24 +26,24 @@ namespace Seidenader { namespace  SVXMLLibrary
 
 	#pragma region Public Methods
 	public:
-		virtual long STDMETHODCALLTYPE          QueryInterface(const struct _GUID &,void ** );
-		virtual unsigned long STDMETHODCALLTYPE AddRef(void);
-		virtual unsigned long STDMETHODCALLTYPE Release(void);
+		virtual long STDMETHODCALLTYPE          QueryInterface(const struct _GUID &,void ** ) override;
+		virtual unsigned long STDMETHODCALLTYPE AddRef(void) override;
+		virtual unsigned long STDMETHODCALLTYPE Release(void) override;
 
 		virtual HRESULT STDMETHODCALLTYPE error( 
 			/* [in] */ ISAXLocator *pLocator,
 			/* [in] */ const wchar_t *pwchErrorMessage,
-			/* [in] */ HRESULT hrErrorCode);
+			/* [in] */ HRESULT hrErrorCode) override;
 
 		virtual HRESULT STDMETHODCALLTYPE fatalError( 
 			/* [in] */ ISAXLocator *pLocator,
 			/* [in] */ const wchar_t *pwchErrorMessage,
-			/* [in] */ HRESULT hrErrorCode);
+			/* [in] */ HRESULT hrErrorCode) override;
 
 		virtual HRESULT STDMETHODCALLTYPE ignorableWarning( 
 			/* [in] */ ISAXLocator *pLocator,
 			/* [in] */ const wchar_t *pwchErrorMessage,
-			/* [in] */ HRESULT hrErrorCode);
+			/* [in] */ HRESULT hrErrorCode) override;
 			
 		//************************************
 		//! / Attach/XML events handler.

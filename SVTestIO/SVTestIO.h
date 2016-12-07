@@ -27,8 +27,8 @@ public:
 
 // Overrides
 public:
-	virtual BOOL InitInstance();
-	virtual BOOL ExitInstance();
+	virtual BOOL InitInstance() override;
+	virtual BOOL ExitInstance() override;
 
 	SVTestIODlg* m_pTestIODlg;
 

@@ -144,13 +144,13 @@ private:
 	//! \param pOwner <in> pointer to the parent object
 	//! \returns true on success
 	//************************************
-	virtual BOOL Create( SVObjectClass* pOwner );
+	BOOL Create( SVObjectClass* pOwner );
 
 	//************************************
 	//! The method destroys the value object
 	//! \returns true on success
 	//************************************
-	virtual BOOL Destroy();
+	BOOL Destroy();
 
 	//************************************
 	//! The method locks the value object for writing
@@ -170,7 +170,7 @@ private:
 	//! \param Type <in> what type of refresh pre or post
 	//! \returns S_OK on success
 	//************************************
-	virtual HRESULT RefreshObject( const SVObjectClass* const pSender, RefreshObjectType Type );
+	virtual HRESULT RefreshObject( const SVObjectClass* const pSender, RefreshObjectType Type ) override;
 
 	//************************************
 	//! The method refreshes the object owner

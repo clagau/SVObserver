@@ -64,7 +64,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 		//! \param depth [in]
 		//! \returns HRESULT
 		//************************************
-		virtual HRESULT  OnStartElement(const wchar_t  *pwchNamespaceUri, int cchNamespaceUri, const wchar_t *pwchName,  int cchName,ISAXAttributes *pAttributes,int depth ) ;
+		virtual HRESULT  OnStartElement(const wchar_t  *pwchNamespaceUri, int cchNamespaceUri, const wchar_t *pwchName,  int cchName,ISAXAttributes *pAttributes,int depth ) override;
 
 		//************************************
 		//! Callback function is called for an XML data. One Line of data leads to several function calls 
@@ -73,7 +73,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 		//! \param depth [in]
 		//! \returns HRESULT
 		//************************************
-		virtual HRESULT  OnElementData(const wchar_t *pwchData,  int cchData, int depth) ;
+		virtual HRESULT  OnElementData(const wchar_t *pwchData,  int cchData, int depth) override;
 
 		//************************************
 		//! Callback function is called when an XML Elements end
@@ -84,7 +84,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 		//! \param depth [in]
 		//! \returns HRESULT
 		//************************************
-		virtual HRESULT  OnEndElement(const wchar_t  *pwchNamespaceUri, int cchNamespaceUri,const wchar_t *pwchName,  int cchName, int depth );
+		virtual HRESULT  OnEndElement(const wchar_t  *pwchNamespaceUri, int cchNamespaceUri,const wchar_t *pwchName,  int cchName, int depth ) override;
 
 		//************************************
 		//! Callback Function when the saxparser locates  an error
@@ -95,7 +95,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 		//! \param fatal [in] true if the error is fatal 
 		//! returns HRESULT S_OK or E_FAIL if the parse operation should be aborted. 
 		//************************************
-		virtual HRESULT  OnXMLError(int line, int column, const wchar_t *pwchErrorText, unsigned long errorCode, bool fatal );
+		virtual HRESULT  OnXMLError(int line, int column, const wchar_t *pwchErrorText, unsigned long errorCode, bool fatal ) override;
 
 		//************************************
 		//! Set the startnode for the data tree

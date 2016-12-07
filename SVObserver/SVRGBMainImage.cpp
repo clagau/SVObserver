@@ -115,18 +115,6 @@ BOOL SVRGBMainImageClass::GetCameraImageHandle( SVSmartHandlePointer& p_rHandleP
 	return bOk;
 }
 
-BOOL SVRGBMainImageClass::GetCameraImageHandle( SVImageIndexStruct svIndex, SVSmartHandlePointer& rHandle )
-{
-	BOOL bOk = nullptr != GetCameraBufferArrayPtr();
-	
-	if ( bOk )
-	{
-		bOk = GetCameraBufferArrayPtr()->GetImageHandle( svIndex.m_CameraDMIndexHandle.GetIndex(), rHandle );
-	}
-	
-	return bOk;
-}
-
 BOOL SVRGBMainImageClass::UpdateBuffer()
 {
 	BOOL bOk = TRUE;

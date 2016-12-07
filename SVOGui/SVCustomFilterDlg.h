@@ -32,7 +32,7 @@ namespace Seidenader
 
 		protected:
 
-			virtual HRESULT SetInspectionData();
+			HRESULT SetInspectionData();
 			void EnableCells();
 
 			// Dialog Data
@@ -52,15 +52,15 @@ namespace Seidenader
 			// ClassWizard generated virtual function overrides
 			//{{AFX_VIRTUAL(SVCustomFilterDlg)
 		protected:
-			virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+			virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 			//}}AFX_VIRTUAL
 
 			// Generated message map functions
 			//{{AFX_MSG(SVCustomFilterDlg)
 		protected:
-			virtual BOOL OnInitDialog();
-			virtual void OnOK();
-			virtual void OnCancel();
+			virtual BOOL OnInitDialog() override;
+			virtual void OnOK() override;
+			virtual void OnCancel() override;
 			afx_msg void OnSelchangeKernelWidth();
 			afx_msg void OnSelchangeKernelHeight();
 			//}}AFX_MSG

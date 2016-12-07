@@ -22,19 +22,19 @@ public:
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(SVOIPDocClass)
 	public:
-	virtual void Serialize(CArchive& ar);   // overridden for document i/o
-	virtual BOOL OnOpenDocument(LPCTSTR lpszPathName);
+	virtual void Serialize(CArchive& ar) override;   // overridden for document i/o
+	virtual BOOL OnOpenDocument(LPCTSTR lpszPathName) override;
 	protected:
-	virtual BOOL OnNewDocument();
-	virtual COleServerItem* OnGetEmbeddedItem();
+	virtual BOOL OnNewDocument() override;
+	virtual COleServerItem* OnGetEmbeddedItem() override;
 	//}}AFX_VIRTUAL
 
 public:
 	virtual ~SVOIPDocClass();
 
 #ifdef _DEBUG
-	virtual void AssertValid() const;
-	virtual void Dump(CDumpContext& dc) const;
+	virtual void AssertValid() const override;
+	virtual void Dump(CDumpContext& dc) const override;
 #endif
 
 protected:

@@ -28,14 +28,14 @@ namespace Seidenader
 
 			//{{AFX_VIRTUAL(SVSaveToolSetImageDialogClass)
 			protected:
-			virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+			virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 			//}}AFX_VIRTUAL
 
 		protected:
 			// Generated message map functions
 			//{{AFX_MSG(SVSaveToolSetImageDialogClass)
 			afx_msg void OnSaveButton();
-			virtual BOOL OnInitDialog();
+			virtual BOOL OnInitDialog() override;
 			afx_msg void OnSelchangeAvailableImagesCombo();
 			//}}AFX_MSG
 			DECLARE_MESSAGE_MAP()

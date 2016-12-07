@@ -146,8 +146,8 @@ public:
 	virtual ~SVMaskShapeRectangle();
 
 protected:
-	virtual HRESULT Render( CDC& dc, COLORREF rgbShape, COLORREF );
-	virtual HRESULT RenderOutline( CDC& dc, CRect rectViewport, CRect rectDisplay, COLORREF rgb );
+	virtual HRESULT Render( CDC& dc, COLORREF rgbShape, COLORREF ) override;
+	virtual HRESULT RenderOutline( CDC& dc, CRect rectViewport, CRect rectDisplay, COLORREF rgb ) override;
 };
 
 class SVMaskShapeOval : public SVMaskShape
@@ -157,8 +157,8 @@ public:
 	virtual ~SVMaskShapeOval();
 
 protected:
-	virtual HRESULT Render( CDC& dc, COLORREF rgbShape, COLORREF );
-	virtual HRESULT RenderOutline( CDC& dc, CRect rectViewport, CRect rectDisplay, COLORREF rgb );
+	virtual HRESULT Render( CDC& dc, COLORREF rgbShape, COLORREF ) override;
+	virtual HRESULT RenderOutline( CDC& dc, CRect rectViewport, CRect rectDisplay, COLORREF rgb ) override;
 };
 
 class SVMaskShapeSymmetricTrapezoid : public SVMaskShape
@@ -176,9 +176,9 @@ public:
 		HorizontalAxisRight  = 90,
 	};
 protected:
-	virtual HRESULT Render( CDC& dc, COLORREF rgbShape, COLORREF );
-	virtual HRESULT RenderOutline( CDC& dc, CRect rectViewport, CRect rectDisplay, COLORREF rgb );
-	virtual HRESULT ValidateProperties(MapType& rmapProperties);
+	virtual HRESULT Render( CDC& dc, COLORREF rgbShape, COLORREF ) override;
+	virtual HRESULT RenderOutline( CDC& dc, CRect rectViewport, CRect rectDisplay, COLORREF rgb ) override;
+	virtual HRESULT ValidateProperties(MapType& rmapProperties) override;
 private:
 	HRESULT GetPoints(std::vector<POINT>& rvecPoints);
 };
@@ -191,8 +191,8 @@ public:
 
 	// the doughnut is the only shape so far that cares about the rgbBackground
 protected:
-	virtual HRESULT Render( CDC& dc, COLORREF rgbShape, COLORREF rgbBackground );
-	virtual HRESULT RenderOutline( CDC& dc, CRect rectViewport, CRect rectDisplay, COLORREF rgb );
-	virtual HRESULT ValidateProperties(MapType& rmapProperties); //@TODO:  Change method to const?
+	virtual HRESULT Render( CDC& dc, COLORREF rgbShape, COLORREF rgbBackground ) override;
+	virtual HRESULT RenderOutline( CDC& dc, CRect rectViewport, CRect rectDisplay, COLORREF rgb ) override;
+	virtual HRESULT ValidateProperties(MapType& rmapProperties) override; //@TODO:  Change method to const?
 };
 

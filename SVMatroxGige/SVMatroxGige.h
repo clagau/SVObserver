@@ -30,65 +30,65 @@ class SVMatroxGige
 {
 public:
 	SVMatroxGige();
-	virtual ~SVMatroxGige();
+	~SVMatroxGige();
 
-	virtual HRESULT Open();
-	virtual HRESULT Close();
+	HRESULT Open();
+	HRESULT Close();
 
-	virtual HRESULT Create();
-	virtual HRESULT Destroy( bool p_bClose = false );
+	HRESULT Create();
+	HRESULT Destroy( bool p_bClose = false );
 	
-//	virtual HRESULT BufferIsLocked( unsigned long p_ulIndex, bool& p_rbIsLocked );
-//	virtual HRESULT BufferLock( unsigned long p_ulIndex );
-//	virtual HRESULT BufferUnlock( unsigned long p_ulIndex );
+//	HRESULT BufferIsLocked( unsigned long p_ulIndex, bool& p_rbIsLocked );
+//	HRESULT BufferLock( unsigned long p_ulIndex );
+//	HRESULT BufferUnlock( unsigned long p_ulIndex );
 
-	virtual HRESULT CameraGetCount( unsigned long& p_rulCount );
-	virtual HRESULT CameraGetName( unsigned long p_Handle, BSTR& p_rbstrName );
-	virtual HRESULT CameraGetHeight( unsigned long p_Handle, unsigned long& p_rulHeight );
-	virtual HRESULT CameraGetWidth( unsigned long p_Handle, unsigned long& p_rulWidth );
-	virtual HRESULT CameraGetFormat( unsigned long p_Handle, int& p_riFormat );
-	virtual HRESULT CameraGetParameterList( unsigned long p_Handle, VARIANT* p_pvarValue );
-	virtual HRESULT CameraGetParameterName( unsigned long p_Handle, int p_iParameterID, BSTR* p_pBstrName );
-	virtual HRESULT CameraGetParameter( unsigned long p_Handle, int p_iParameterID, int* p_piParameterIDType, VARIANT* p_pvarValue );
-	virtual HRESULT CameraSetParameter( unsigned long p_Handle, int p_iParameterID, int p_iParameterIDType, VARIANT* p_pvarValue );
-	virtual HRESULT CameraBufferCreateAll( unsigned long p_Handle, unsigned long p_ulCount );
-	virtual HRESULT CameraBufferUnlockAll( unsigned long p_Handle );
-	virtual HRESULT CameraBufferDestroyAll( unsigned long p_Handle );
-	virtual HRESULT CameraRegisterBufferInterface( unsigned long p_Handle, SVAcquisitionBufferInterface* p_pInterface );
-	virtual HRESULT CameraUnregisterBufferInterface( unsigned long p_Handle );
-	virtual HRESULT CameraStart( unsigned long p_Handle );
-	virtual HRESULT CameraStop( unsigned long p_Handle );
+	HRESULT CameraGetCount( unsigned long& p_rulCount );
+	HRESULT CameraGetName( unsigned long p_Handle, BSTR& p_rbstrName );
+	HRESULT CameraGetHeight( unsigned long p_Handle, unsigned long& p_rulHeight );
+	HRESULT CameraGetWidth( unsigned long p_Handle, unsigned long& p_rulWidth );
+	HRESULT CameraGetFormat( unsigned long p_Handle, int& p_riFormat );
+	HRESULT CameraGetParameterList( unsigned long p_Handle, VARIANT* p_pvarValue );
+	HRESULT CameraGetParameterName( unsigned long p_Handle, int p_iParameterID, BSTR* p_pBstrName );
+	HRESULT CameraGetParameter( unsigned long p_Handle, int p_iParameterID, int* p_piParameterIDType, VARIANT* p_pvarValue );
+	HRESULT CameraSetParameter( unsigned long p_Handle, int p_iParameterID, int p_iParameterIDType, VARIANT* p_pvarValue );
+	HRESULT CameraBufferCreateAll( unsigned long p_Handle, unsigned long p_ulCount );
+	HRESULT CameraBufferUnlockAll( unsigned long p_Handle );
+	HRESULT CameraBufferDestroyAll( unsigned long p_Handle );
+	HRESULT CameraRegisterBufferInterface( unsigned long p_Handle, SVAcquisitionBufferInterface* p_pInterface );
+	HRESULT CameraUnregisterBufferInterface( unsigned long p_Handle );
+	HRESULT CameraStart( unsigned long p_Handle );
+	HRESULT CameraStop( unsigned long p_Handle );
 
-	virtual HRESULT CameraLoadFiles(unsigned long p_Handle, SAFEARRAY* p_psaFileNames);
+	HRESULT CameraLoadFiles(unsigned long p_Handle, SAFEARRAY* p_psaFileNames);
 
-	virtual HRESULT InternalTriggerEnable( unsigned long p_Handle );
-	virtual HRESULT InternalTrigger( unsigned long p_Handle );
-	virtual HRESULT RegisterInternalTriggerCallback( unsigned long p_Handle, const SvTh::TriggerDispatcher& rDispatcher );
-	virtual HRESULT UnregisterInternalTriggerCallback( unsigned long p_Handle, const SvTh::TriggerDispatcher& rDispatcher );
-	virtual HRESULT UnregisterAllInternalTriggerCallbacks( unsigned long p_Handle );
+	HRESULT InternalTriggerEnable( unsigned long p_Handle );
+	HRESULT InternalTrigger( unsigned long p_Handle );
+	HRESULT RegisterInternalTriggerCallback( unsigned long p_Handle, const SvTh::TriggerDispatcher& rDispatcher );
+	HRESULT UnregisterInternalTriggerCallback( unsigned long p_Handle, const SvTh::TriggerDispatcher& rDispatcher );
+	HRESULT UnregisterAllInternalTriggerCallbacks( unsigned long p_Handle );
 
-	virtual void ScanForCameras();
+	void ScanForCameras();
 
 	// convert ordinal to handle
 	unsigned long GetDigitizerHandle(unsigned long index) const;
 
 	// Trigger stuff...
-	virtual HRESULT TriggerGetCount(unsigned long& p_ulCount);
+	HRESULT TriggerGetCount(unsigned long& p_ulCount);
 	
 	// convert ordinal to handle
 	unsigned long TriggerGetHandle(unsigned long p_ulIndex);
 
-	virtual HRESULT TriggerGetName(unsigned long triggerchannel, BSTR& p_rbstrName);
-	virtual HRESULT TriggerRegisterCallback(unsigned long triggerchannel, const SvTh::TriggerDispatcher &rDispatcher);
-	virtual HRESULT TriggerUnregisterCallback(unsigned long triggerchannel, const SvTh::TriggerDispatcher &rDispatcher);
-	virtual HRESULT TriggerUnregisterAllCallbacks(unsigned long triggerchannel);
-	virtual HRESULT TriggerStart(unsigned long triggerchannel);
-	virtual HRESULT TriggerStop(unsigned long triggerchannel);
+	HRESULT TriggerGetName(unsigned long triggerchannel, BSTR& p_rbstrName);
+	HRESULT TriggerRegisterCallback(unsigned long triggerchannel, const SvTh::TriggerDispatcher &rDispatcher);
+	HRESULT TriggerUnregisterCallback(unsigned long triggerchannel, const SvTh::TriggerDispatcher &rDispatcher);
+	HRESULT TriggerUnregisterAllCallbacks(unsigned long triggerchannel);
+	HRESULT TriggerStart(unsigned long triggerchannel);
+	HRESULT TriggerStop(unsigned long triggerchannel);
 
-	virtual HRESULT TriggerGetParameterCount( unsigned long triggerchannel, unsigned long *p_pulCount );
-	virtual HRESULT TriggerGetParameterName( unsigned long triggerchannel, unsigned long p_ulIndex, BSTR *p_pbstrName );
-	virtual HRESULT TriggerGetParameterValue( unsigned long triggerchannel, unsigned long p_ulIndex, VARIANT *p_pvarValue );
-	virtual HRESULT TriggerSetParameterValue( unsigned long triggerchannel, unsigned long p_ulIndex, VARIANT *p_pvarValue );
+	HRESULT TriggerGetParameterCount( unsigned long triggerchannel, unsigned long *p_pulCount );
+	HRESULT TriggerGetParameterName( unsigned long triggerchannel, unsigned long p_ulIndex, BSTR *p_pbstrName );
+	HRESULT TriggerGetParameterValue( unsigned long triggerchannel, unsigned long p_ulIndex, VARIANT *p_pvarValue );
+	HRESULT TriggerSetParameterValue( unsigned long triggerchannel, unsigned long p_ulIndex, VARIANT *p_pvarValue );
 
 private:
 	long m_lRefCount;

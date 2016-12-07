@@ -28,8 +28,8 @@ public:
 	BOOL Start();
 	BOOL Stop(long lIndex);
 
-	virtual HRESULT GetValueAt(int nBucket, int iIndex, CString& rstrValue) const;
-	virtual HRESULT GetValueAt( int iBucket, int iIndex, VARIANT& rValue ) const;
+	virtual HRESULT GetValueAt(int nBucket, int iIndex, CString& rstrValue) const override;
+	virtual HRESULT GetValueAt( int iBucket, int iIndex, VARIANT& rValue ) const override;
 
 private:
 	void LocalInitialize();

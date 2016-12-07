@@ -27,8 +27,8 @@ public:
 	virtual ~MonitorListValuesPage();
 
 	// ISVPropertyPageDialog
-	virtual bool QueryAllowExit();
-	virtual void OnOK();
+	virtual bool QueryAllowExit() override;
+	virtual void OnOK() override;
 
 // Dialog Data
 	//{{AFX_DATA(MonitorListValuesPage)
@@ -41,20 +41,20 @@ public:
 	// ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(MonitorListValuesPage)
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
 // Implementation
 protected:
 	// Generated message map functions
 	//{{AFX_MSG(MonitorListValuesPage)
-	virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog() override;
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
-	virtual void OnSelchangeListSelected();
+	virtual void OnSelchangeListSelected() override;
 
-	virtual void InitPage();
+	virtual void InitPage() override;
 	bool m_bAllowWholeArray;
 #pragma endregion Protected
 };

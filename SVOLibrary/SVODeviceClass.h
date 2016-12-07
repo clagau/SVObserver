@@ -61,7 +61,7 @@ public:
 	virtual HRESULT Pulse();
 
 	LPCTSTR GetDeviceName() const;
-	virtual void SetDeviceName( LPCTSTR p_szName );
+	void SetDeviceName( LPCTSTR p_szName );
 
 	virtual HRESULT Notify( SVOResponseClass& p_rResponse );
 

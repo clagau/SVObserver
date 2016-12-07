@@ -173,7 +173,7 @@ public:
 	SVEquationClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVEQUATION );
 	virtual ~SVEquationClass();
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
+	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
 	
 	BOOL HasCondition();
 
@@ -187,24 +187,24 @@ public:
 	virtual double GetYACCResult() const override;
 #pragma endregion IEquation
 
-	virtual int AddSymbol( LPCTSTR name );
+	virtual int AddSymbol( LPCTSTR name ) override;
 
 	virtual bool DisconnectObjectInput( SVInObjectInfoStruct* pInObjectInfo ) override;
 
-	virtual BOOL OnValidate();
+	virtual BOOL OnValidate() override;
 
-	virtual double GetPropertyValue( int iSymbolIndex );
-	virtual double GetSubscriptedPropertyValue( int iSymbolIndex, int iIndex, double dDefault );
-	virtual double GetSubscriptedPropertyValue( int iSymbolIndex, int iIndex );
-	virtual HRESULT GetArrayValues( int iSymbolIndex, std::vector< double >& values );
+	virtual double GetPropertyValue( int iSymbolIndex ) override;
+	virtual double GetSubscriptedPropertyValue( int iSymbolIndex, int iIndex, double dDefault ) override;
+	virtual double GetSubscriptedPropertyValue( int iSymbolIndex, int iIndex ) override;
+	virtual HRESULT GetArrayValues( int iSymbolIndex, std::vector< double >& values ) override;
 
 	BOOL IsEnabled();
 
-	virtual void Persist(SVObjectWriter& rWriter);
-	virtual HRESULT GetObjectValue( const SVString& p_rValueName, VARIANT& p_rVariantValue ) const;
-	virtual HRESULT SetObjectValue( SVObjectAttributeClass* PDataObject );
+	virtual void Persist(SVObjectWriter& rWriter) override;
+	virtual HRESULT GetObjectValue( const SVString& p_rValueName, VARIANT& p_rVariantValue ) const override;
+	virtual HRESULT SetObjectValue( SVObjectAttributeClass* PDataObject ) override;
 
-	virtual HRESULT ResetObject();
+	virtual HRESULT ResetObject() override;
 
 #pragma region Methods to replace processMessage
 	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const SVString& rOldName) override;
@@ -216,7 +216,7 @@ public:
 protected:
 	void init();
 
-	virtual BOOL onRun( SVRunStatusClass& RRunStatus );
+	virtual BOOL onRun( SVRunStatusClass& RRunStatus ) override;
 
 private:
 	SvOi::EquationTestResult lexicalScan( LPCTSTR inBuffer );		// perform lexical scan

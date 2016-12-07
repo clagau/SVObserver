@@ -22,12 +22,12 @@ public:
 	SVMathEquationClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVMATHEQUATION );
 	virtual ~SVMathEquationClass();
 
-	virtual BOOL OnValidate();
+	virtual BOOL OnValidate() override;
 
 protected:
 	void init();
-	virtual BOOL CreateObject(SVObjectLevelCreateStruct *PCreateStruct);
-	virtual BOOL onRun( SVRunStatusClass& RRunStatus );
+	virtual BOOL CreateObject(SVObjectLevelCreateStruct *PCreateStruct) override;
+	virtual BOOL onRun( SVRunStatusClass& RRunStatus ) override;
 
 protected:
 	SVDoubleValueObjectClass result;			// resultant value

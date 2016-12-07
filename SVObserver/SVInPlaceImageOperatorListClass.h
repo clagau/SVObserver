@@ -38,10 +38,10 @@ public:
 	SVInPlaceImageOperatorListClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVINPLACEIMAGEOPERATORLIST );
 	virtual ~SVInPlaceImageOperatorListClass();
 
-	virtual HRESULT IsInputImage( SVImageClass *p_psvImage );
+	virtual HRESULT IsInputImage( SVImageClass *p_psvImage ) override;
 
-	virtual BOOL OnValidate();
-	virtual BOOL Run( SVRunStatusClass& RRunStatus );
+	virtual BOOL OnValidate() override;
+	virtual BOOL Run( SVRunStatusClass& RRunStatus ) override;
 
 private:
 	void init();

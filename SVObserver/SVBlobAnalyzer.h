@@ -148,9 +148,9 @@ public:
 	virtual SvOi::NameValueList getFeatureList(bool isSelected) const override;
 #pragma endregion IEnumerateValueObject
 
-	virtual BOOL CloseObject();
+	virtual BOOL CloseObject() override;
 
-	virtual BOOL CreateObject(SVObjectLevelCreateStruct* PCreateStructure);
+	virtual BOOL CreateObject(SVObjectLevelCreateStruct* PCreateStructure) override;
 	HRESULT ResetObject();
 
 	DWORD BuildFeatureListID ();
@@ -177,13 +177,13 @@ public:
 	SVResultClass* GetResultObject(SVBlobFeatureEnum aFeatureIndex);
 	SVLongResultClass* GetBlobResultObject();
 
-	virtual BOOL onRun( SVRunStatusClass& RRunStatus );
-	virtual BOOL OnValidate();
+	virtual BOOL onRun( SVRunStatusClass& RRunStatus ) override;
+	virtual BOOL OnValidate() override;
 
 	virtual bool resetAllObjects( bool shouldNotifyFriends, bool silentReset ) override;
 
 	virtual bool IsPtOverResult( const POINT& rPoint ) override;
-	virtual	void DisplayAnalyzerResult();
+	virtual	void DisplayAnalyzerResult() override;
 
 	SVLongResultClass*           m_pResultBlob;
 
@@ -244,8 +244,7 @@ public:
 	SVEnumerateValueObjectClass  m_evoBlobType;
 
 protected:
-	virtual void init();
-	virtual HRESULT onCollectOverlays(SVImageClass* p_pImage, SVExtentMultiLineStructCArray& p_rMultiLineArray );
+	virtual HRESULT onCollectOverlays(SVImageClass* p_pImage, SVExtentMultiLineStructCArray& p_rMultiLineArray ) override;
 
 /*- MapQuickSort () ----------------------------------------------------------*/
 /*- This should not be called directly, but through SortBlobs () -------------*/
@@ -257,9 +256,10 @@ protected:
 	                    BOOL       abAscending);
 
 
-	virtual void addDefaultInputObjects( BOOL BCallBaseClass = false, SVInputInfoListClass* PInputListToFill = nullptr );
+	virtual void addDefaultInputObjects( BOOL BCallBaseClass = false, SVInputInfoListClass* PInputListToFill = nullptr ) override;
 
 private:
+	void init();
 	void CreateArray();
 
 	static const int m_defaultResultNumberOfBlobsLowFail = 0;

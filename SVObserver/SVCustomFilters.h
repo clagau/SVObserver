@@ -29,9 +29,9 @@ public:
 	SVCustomFilterClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVCUSTOMFILTER );
 	virtual ~SVCustomFilterClass();
 	
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
+	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
 
-	virtual HRESULT ResetObject();
+	virtual HRESULT ResetObject() override;
 
 #pragma region virtual method (IFilter)
 	virtual bool shouldResetInspection() const override { return true; }
@@ -41,10 +41,10 @@ private:
 	void init();
 
 protected:
-	virtual BOOL RebuildKernel();
+	BOOL RebuildKernel();
 
-	virtual BOOL onRun( BOOL First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus );
-	virtual BOOL OnValidate();
+	virtual BOOL onRun( BOOL First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus ) override;
+	virtual BOOL OnValidate() override;
 
 private:
 	SVMatroxBuffer m_milKernel;

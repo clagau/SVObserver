@@ -25,15 +25,15 @@ public:
 	SVThresholdClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVTHRESHOLD );
 	virtual ~SVThresholdClass();
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
-	virtual BOOL CloseObject();
+	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
+	virtual BOOL CloseObject() override;
 
-	virtual HRESULT ResetObject();
+	virtual HRESULT ResetObject() override;
 
 	SVBoolValueObjectClass& GetThresholdActivateAttribute();
 
-	virtual HRESULT Rebuild();
-	virtual BOOL OnValidate();
+	HRESULT Rebuild();
+	virtual BOOL OnValidate() override;
 
 	const SVMatroxLongArray & GetHistogramValues() const
 	{
@@ -41,7 +41,7 @@ public:
 	}
 
 protected:
-	virtual BOOL onRun( BOOL First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus );
+	virtual BOOL onRun( BOOL First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus ) override;
 
 	SVDoubleValueObjectClass* getExternalUT();
 	SVDoubleValueObjectClass* getExternalLT();

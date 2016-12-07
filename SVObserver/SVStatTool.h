@@ -44,10 +44,10 @@ public:
 	SVStatisticsToolClass( BOOL BCreateDefaultTaskList=FALSE, SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVSTATISTICSTOOL );
 	virtual ~SVStatisticsToolClass();
 
-	BOOL CreateObject(SVObjectLevelCreateStruct* PCreateStruct );
+	virtual BOOL CreateObject(SVObjectLevelCreateStruct* PCreateStruct ) override;
 	virtual bool resetAllObjects( bool shouldNotifyFriends, bool silentReset ) override;
-	virtual HRESULT ResetObject();
-	virtual BOOL    OnValidate();
+	virtual HRESULT ResetObject() override;
+	virtual BOOL    OnValidate() override;
 	
 	BOOL HasVariable();
 	BOOL Test();
@@ -77,9 +77,9 @@ protected:
 	double getNumberOfSamples();
 	double calculateVariance( double aNumberOfSamples, double aAverageValue );
 
-	virtual void init( void );
+	void init( void );
 	void resetValues();
-	virtual BOOL onRun( SVRunStatusClass& RRunStatus );
+	virtual BOOL onRun( SVRunStatusClass& RRunStatus ) override;
 
 	void RestoreFeatureAttributes();
 

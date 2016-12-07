@@ -39,10 +39,10 @@ namespace Seidenader
 
 			BOOL SetColor(COLORREF rgb, BOOL bRedraw=TRUE);
 
-			virtual BOOL SetPoints( const SvCl::SVObjectByteArrayClass& RByteVec );
-			virtual BOOL SetPoints( const SvCl::SVObjectLongArrayClass& RLongVec );
-			virtual BOOL SetPoints( const SvCl::SVObjectDoubleArrayClass& RDoubleVec );
-			virtual BOOL SetPoints( const SvCl::SVObjectPointArrayClass& RPointVec );
+			BOOL SetPoints( const SvCl::SVObjectByteArrayClass& RByteVec );
+			BOOL SetPoints( const SvCl::SVObjectLongArrayClass& RLongVec );
+			BOOL SetPoints( const SvCl::SVObjectDoubleArrayClass& RDoubleVec );
+			BOOL SetPoints( const SvCl::SVObjectPointArrayClass& RPointVec );
 
 			BOOL SetMousePointProcFunc( SVProcMousePointFunc PFunc, LPVOID PUserData );	
 			void SetNormalizeMode( SVNormalizeModeEnum NormalizeMode );

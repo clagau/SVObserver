@@ -61,7 +61,7 @@ class SVCameraPage : public CPropertyPage
 	// ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(SVCameraPage)
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
 	protected:
@@ -72,7 +72,7 @@ class SVCameraPage : public CPropertyPage
 	afx_msg void OnDetailsButtonClick();
 	afx_msg void OnProperitiesButtonClick();
 	afx_msg void OnStartStopButtonClick();
-	virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog() override;
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 

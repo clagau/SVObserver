@@ -41,15 +41,15 @@ public:
 	SVStdImageOperatorListClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVSTDIMAGEOPERATORLIST );
 	virtual ~SVStdImageOperatorListClass();
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
-	virtual BOOL CloseObject();
+	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
+	virtual BOOL CloseObject() override;
 
 	virtual bool resetAllObjects( bool shouldNotifyFriends, bool silentReset ) override;
-	virtual HRESULT ResetObject();
+	virtual HRESULT ResetObject() override;
 
-	virtual BOOL Run( SVRunStatusClass& RRunStatus );
+	virtual BOOL Run( SVRunStatusClass& RRunStatus ) override;
 
-	virtual BOOL OnValidate();
+	virtual BOOL OnValidate() override;
 
 protected:
 

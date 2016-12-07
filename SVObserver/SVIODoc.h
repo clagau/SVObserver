@@ -36,17 +36,17 @@ public:
 	DECLARE_MESSAGE_MAP()
 
 	//{{AFX_VIRTUAL(SVIODoc)
-	public:
-	virtual BOOL OnNewDocument();
-	virtual void SetPathName(LPCTSTR lpszPathName, BOOL bAddToMRU = TRUE);
-	virtual void OnCloseDocument();
-	virtual BOOL CanCloseFrame(CFrameWnd* pFrame);
-	virtual void SetTitle(LPCTSTR lpszTitle);
-	virtual BOOL OnOpenDocument(LPCTSTR lpszPathName);
-	virtual BOOL OnSaveDocument(LPCTSTR lpszPathName);
-	virtual CFile* GetFile( LPCTSTR lpszFileName, UINT nOpenFlags, CFileException* pError );
+public:
+	virtual BOOL OnNewDocument() override;
+	virtual void SetPathName(LPCTSTR lpszPathName, BOOL bAddToMRU = TRUE) override;
+	virtual void OnCloseDocument() override;
+	virtual BOOL CanCloseFrame(CFrameWnd* pFrame) override;
+	virtual void SetTitle(LPCTSTR lpszTitle) override;
+	virtual BOOL OnOpenDocument(LPCTSTR lpszPathName) override;
+	virtual BOOL OnSaveDocument(LPCTSTR lpszPathName) override;
+	virtual CFile* GetFile( LPCTSTR lpszFileName, UINT nOpenFlags, CFileException* pError ) override;
 	protected:
-	virtual BOOL SaveModified();
+	virtual BOOL SaveModified() override;
 	//}}AFX_VIRTUAL
 
 public:

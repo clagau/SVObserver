@@ -64,10 +64,10 @@ protected:
 #pragma region Virtual
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(SVGigeCameraROIDlg)
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	virtual BOOL OnInitDialog();
-	virtual void OnOK();
-	virtual void OnCancel();
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
+	virtual BOOL OnInitDialog() override;
+	virtual void OnOK() override;
+	virtual void OnCancel() override;
 	//}}AFX_VIRTUAL
 #pragma endregion Virtual
 	// Generated message map functions

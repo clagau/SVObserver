@@ -277,8 +277,8 @@ public:
 	}
 	virtual ~CPrintingDialog() { }
 	
-	virtual BOOL OnInitDialog();
-	virtual void OnCancel();
+	virtual BOOL OnInitDialog() override;
+	virtual void OnCancel() override;
 };
 
 

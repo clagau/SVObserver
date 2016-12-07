@@ -64,13 +64,13 @@ protected:
 	HRESULT UpdateLightReferenceAttributes( const SVDeviceParamWrapper& rwParam );
 	HRESULT UpdateLightReferenceAttributes( int iBand, const SVLongValueDeviceParam* pParam );
 
-	virtual HRESULT SetStandardCameraParameter( const SVDeviceParamWrapper& rwParam );	// for parameters that are settable through MIL (all standard DCAM params)
+	virtual HRESULT SetStandardCameraParameter( const SVDeviceParamWrapper& rwParam ) override;	// for parameters that are settable through MIL (all standard DCAM params)
 
-	virtual HRESULT SetLightReferenceImpl( SVLightReference& rLR );
-	virtual HRESULT GetLutImpl( SVLut& lut );
-	virtual HRESULT SetLutImpl( const SVLut& lut );
+	virtual HRESULT SetLightReferenceImpl( SVLightReference& rLR ) override;
+	virtual HRESULT GetLutImpl( SVLut& lut ) override;
+	virtual HRESULT SetLutImpl( const SVLut& lut ) override;
 
-	virtual HRESULT StartDigitizer();
+	virtual HRESULT StartDigitizer() override;
 
 	HRESULT GetCameraImageInfo(SVImageInfoClass &pImageInfo);
 	HRESULT DestroyLocal();

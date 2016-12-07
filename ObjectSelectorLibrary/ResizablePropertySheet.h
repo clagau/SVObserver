@@ -37,7 +37,7 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 
 	public:
 	#pragma region Public Methods
-		virtual BOOL OnInitDialog();
+		virtual BOOL OnInitDialog() override;
 		INT_PTR DoModal();
 		// Returns the size/position of the page
 		void GetPageRect(RECT *pRect);
@@ -46,7 +46,7 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 	protected:
 	#pragma region Protected Methods
 
-		virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam);
+		virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam) override;
 		static int CALLBACK ResizePropSheetCallback(HWND hWnd, UINT message, LPARAM lParam);
 		//{{AFX_MSG(CResizablePropertySheet)
 		afx_msg void OnSize(UINT nType, int cx, int cy);

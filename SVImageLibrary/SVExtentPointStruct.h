@@ -19,12 +19,12 @@ struct SVExtentPointStruct
 	SVExtentPointStruct( const SVExtentPointStruct &p_rsvValue );
 	SVExtentPointStruct( const POINT &p_roValue );
 	SVExtentPointStruct( double l_dValueX, double l_dValueY );
-	virtual ~SVExtentPointStruct();
+	~SVExtentPointStruct();
 
 	const SVExtentPointStruct &operator=( const SVExtentPointStruct &p_rsvValue );
 	const SVExtentPointStruct &operator=( const POINT &p_roValue );
 
-	virtual HRESULT Initialize();
+	HRESULT Initialize();
 
 	bool operator==( const SVExtentPointStruct &p_rsvValue ) const;
 	bool operator!=( const SVExtentPointStruct &p_rsvValue ) const;

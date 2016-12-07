@@ -42,7 +42,7 @@ private:
 
 
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 
 	DECLARE_MESSAGE_MAP()
 public:
@@ -56,7 +56,7 @@ public:
 
 	void ToggleInput(unsigned int inputchannel);
 
-	virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog() override;
 
 	CStatic m_input[c_upperBoundForInputChannel];
 	long m_lInputs;
@@ -72,6 +72,6 @@ public:
 	void OnTriggerButtonClicked( UINT nID );
 
 protected:
-	virtual void OnCancel();
+	virtual void OnCancel() override;
 };
 

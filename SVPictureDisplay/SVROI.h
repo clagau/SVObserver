@@ -40,7 +40,7 @@ public:
 	virtual ~CSVROI();
 #pragma endregion Constructor
 
-	virtual void OnFinalRelease();
+	virtual void OnFinalRelease() override;
 
 	static CSVROI* GetCppObjectFromDispatchPointer(LPDISPATCH lpDispatch);
 

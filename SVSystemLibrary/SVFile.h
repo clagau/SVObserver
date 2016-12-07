@@ -40,20 +40,20 @@ public:
 
 	SVFile();
 
-	virtual ~SVFile();
+	~SVFile();
 
-	virtual bool IsOpen() const;
+	bool IsOpen() const;
 
-	virtual HRESULT Open( const char* p_szFileName, UINT p_OpenFlags );
-	virtual void Close();
+	HRESULT Open( const char* p_szFileName, UINT p_OpenFlags );
+	void Close();
 
-	virtual UINT Read( void* lpBuf, UINT nCount );
-	virtual HRESULT ReadContents( SVByteVector& p_rContents );
+	UINT Read( void* lpBuf, UINT nCount );
+	HRESULT ReadContents( SVByteVector& p_rContents );
 
-	virtual HRESULT Write( const void* lpBuf, UINT nCount );
-	virtual HRESULT WriteContents( const SVByteVector& p_rContents );
+	HRESULT Write( const void* lpBuf, UINT nCount );
+	HRESULT WriteContents( const SVByteVector& p_rContents );
 
-	virtual ULONGLONG GetLength() const;
+	ULONGLONG GetLength() const;
 
 	ULONGLONG SeekToEnd();
 

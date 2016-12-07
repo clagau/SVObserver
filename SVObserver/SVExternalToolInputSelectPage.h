@@ -41,9 +41,9 @@ public:
 	// ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(SVExternalToolInputSelectPage)
 	public:
-	virtual void OnOK();
+	virtual void OnOK() override;
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
 // Implementation
@@ -66,7 +66,7 @@ protected:
 
 	// Generated message map functions
 	//{{AFX_MSG(SVExternalToolInputSelectPage)
-	virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog() override;
 	//}}AFX_MSG
 
 	afx_msg void OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult);

@@ -116,11 +116,6 @@ SVRangeClass* SVResultClass::GetResultRange()
 	return pRange;
 }
 
-CRect SVResultClass::Draw( HDC DC, CRect R )
-{
-	return R;
-}
-
 BOOL SVResultClass::Run( SVRunStatusClass& RRunStatus )
 {
 	SVValueObjectClass* pValue = getInput();

@@ -27,7 +27,7 @@ public:
 #pragma region Constructor
     CSVROIList();
     virtual ~CSVROIList();
-    virtual void OnFinalRelease();
+    virtual void OnFinalRelease() override;
 #pragma endregion Constructor
 
     static CSVROIList* GetCppObjectFromDispatchPointer(LPDISPATCH lpDispatch);

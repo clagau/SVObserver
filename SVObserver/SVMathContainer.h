@@ -26,9 +26,9 @@ public:
 	SVMathContainerClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVMATHCONTAINER );
 	virtual ~SVMathContainerClass();
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
-	virtual BOOL CloseObject();
-	virtual BOOL OnValidate();
+	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
+	virtual BOOL CloseObject() override;
+	virtual BOOL OnValidate() override;
 
 protected:
 	SVDoubleValueObjectClass*	getInputMathResult();

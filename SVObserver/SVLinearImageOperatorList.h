@@ -24,13 +24,13 @@ public:
 	SVLinearImageOperatorListClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVLINEARIMAGEOPERATORLIST );
 	virtual ~SVLinearImageOperatorListClass();
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
-	virtual BOOL CloseObject();
+	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
+	virtual BOOL CloseObject() override;
 
-	virtual HRESULT ResetObject();
+	virtual HRESULT ResetObject() override;
 
-	virtual BOOL OnValidate();
-	virtual BOOL Run( SVRunStatusClass& RRunStatus );
+	virtual BOOL OnValidate() override;
+	virtual BOOL Run( SVRunStatusClass& RRunStatus ) override;
 
 protected:
 	SVBoolValueObjectClass *getUseRotationAngle();

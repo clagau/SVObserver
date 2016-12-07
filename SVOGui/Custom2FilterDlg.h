@@ -63,16 +63,16 @@ namespace Seidenader
 			// Description: Sets the kernel values for the inspection
 			// Return: S_OK on success
 			//************************************
-			virtual HRESULT SetInspectionData();
+			HRESULT SetInspectionData();
 #pragma endregion Public Methods
 
 		protected:
 #pragma region Protected Methods
 			DECLARE_MESSAGE_MAP()
 
-			virtual void DoDataExchange(CDataExchange* pDX);
-			virtual BOOL OnInitDialog();
-			virtual BOOL PreTranslateMessage(MSG* pMsg);
+			virtual void DoDataExchange(CDataExchange* pDX) override;
+			virtual BOOL OnInitDialog() override;
+			virtual BOOL PreTranslateMessage(MSG* pMsg) override;
 
 			afx_msg void OnCbnSelchangeKernelWidth();
 			afx_msg void OnCbnSelchangeKernelHeight();

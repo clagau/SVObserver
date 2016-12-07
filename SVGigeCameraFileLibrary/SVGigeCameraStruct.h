@@ -12,7 +12,7 @@
 
 #pragma region Includes
 #include "SVContainerLibrary/SVVector.h"
-#include "ObjectInterfaces/SVGigeCameraStructInterface.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 /**
@@ -23,10 +23,10 @@
 @SVObjectOperations This operator presents operations to store, clear, and compare Gige camera data.
 
 */
-struct SVGigeCameraStruct : public SvOi::SVGigeCameraStructInterface
+struct SVGigeCameraStruct
 {
 	SVGigeCameraStruct();
-	virtual ~SVGigeCameraStruct();
+	~SVGigeCameraStruct();
 
 	SVGigeCameraStruct(const SVGigeCameraStruct& rRhs);
 	const SVGigeCameraStruct& operator= (const SVGigeCameraStruct& rRhs);
@@ -37,14 +37,14 @@ struct SVGigeCameraStruct : public SvOi::SVGigeCameraStructInterface
 	bool operator < (const SVGigeCameraStruct& rRhs) const;
 	bool operator > (const SVGigeCameraStruct& rRhs) const;
 
-	virtual bool HasSerialNumber() const;
-	virtual SVString GetSerialNumber() const;
-	virtual bool HasModelName() const;
-	virtual SVString GetModelName() const;
-	virtual bool HasVendorName() const;
-	virtual SVString GetVendorName() const;
-	virtual bool HasIPAddress() const;
-	virtual SVString GetIPAddress() const;
+	bool HasSerialNumber() const;
+	SVString GetSerialNumber() const;
+	bool HasModelName() const;
+	SVString GetModelName() const;
+	bool HasVendorName() const;
+	SVString GetVendorName() const;
+	bool HasIPAddress() const;
+	SVString GetIPAddress() const;
 
 	SVString m_SerialNum;
 	SVString m_ModelName;

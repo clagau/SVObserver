@@ -53,7 +53,7 @@ public:
 	virtual ~SVTaskObjectClass();
 
 	virtual bool resetAllObjects( bool shouldNotifyFriends, bool silentReset ) override;
-	virtual HRESULT ResetObject();
+	virtual HRESULT ResetObject() override;
 
 	virtual HRESULT IsInputImage( SVImageClass* p_psvImage );
 
@@ -66,43 +66,42 @@ public:
 	virtual HRESULT GetFilteredImageExtentPropertyList( SVExtentPropertyListType& p_rPropertyList );
 	virtual HRESULT GetPropertyInfo( SVExtentPropertyEnum p_eProperty, SVExtentPropertyInfoStruct& p_rInfo ) const;
 
-	virtual HRESULT GetOutputRectangle( RECT& l_roRect );
 
 	void ResetPrivateInputInterface();
 	
 	virtual bool ConnectAllInputs() override;
-	virtual HRESULT ConnectToObject( SVInObjectInfoStruct* p_psvInputInfo, SVObjectClass* pNewObject );
+	HRESULT ConnectToObject( SVInObjectInfoStruct* p_psvInputInfo, SVObjectClass* pNewObject );
 
-	virtual BOOL IsValid();
+	virtual BOOL IsValid() override;
 
 	// Routing Version of Validate
 	// Validates Local Scope and all owned objects
-	virtual BOOL Validate();
+	virtual BOOL Validate() override;
 
 	// Non Routing Version of Validate
 	// validates only Local Scope
-	virtual BOOL OnValidate();
+	virtual BOOL OnValidate() override;
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStruct );
-	virtual BOOL CloseObject();
-	virtual void Disconnect();
+	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStruct ) override;
+	virtual BOOL CloseObject() override;
+	void Disconnect();
 	virtual bool DisconnectObjectInput(SVInObjectInfoStruct* pInObjectInfo) override;
 	virtual HRESULT GetOutputList( SVOutputInfoListClass& p_rOutputInfoList ) const;
 	virtual HRESULT DisconnectInputsOutputs(SVObjectVector& rListOfObjects);
 	virtual HRESULT HideInputsOutputs(SVObjectVector& rListOfObjects);
 
-	virtual BOOL SetObjectDepth( int NewObjectDepth );
-	virtual BOOL SetObjectDepthWithIndex( int NewObjectDepth, int NewLastSetIndex );
-	virtual BOOL SetImageDepth( long lDepth );
+	virtual BOOL SetObjectDepth( int NewObjectDepth ) override;
+	virtual BOOL SetObjectDepthWithIndex( int NewObjectDepth, int NewLastSetIndex ) override;
+	virtual BOOL SetImageDepth( long lDepth ) override;
 
-	virtual void SetInvalid();
-	virtual void SetDisabled();
+	virtual void SetInvalid() override;
+	virtual void SetDisabled() override;
 
-	virtual BOOL RegisterEmbeddedObject( SVImageClass* pEmbeddedObject, const GUID& rGuidEmbeddedID, int StringResourceID );
-	virtual BOOL RegisterEmbeddedObject( SVImageClass* pEmbeddedObject, const GUID& rGuidEmbeddedID, LPCTSTR newString );
-	virtual BOOL RegisterEmbeddedObject( SVValueObjectClass* pEmbeddedObject, const GUID& rGuidEmbeddedID, int StringResourceID, bool p_bResetAlways, SVResetItemEnum p_eRequiredReset, LPCTSTR p_pszTypeName = nullptr );
-	virtual BOOL RegisterEmbeddedObject( SVValueObjectClass* pEmbeddedObject, const GUID& rGuidEmbeddedID, LPCTSTR strName, bool p_bResetAlways, SVResetItemEnum p_eRequiredReset, LPCTSTR p_pszTypeName = nullptr );
-	virtual BOOL RegisterInputObject( SVInObjectInfoStruct* PInObjectInfo, const SVString& p_rInputName );
+	BOOL RegisterEmbeddedObject( SVImageClass* pEmbeddedObject, const GUID& rGuidEmbeddedID, int StringResourceID );
+	BOOL RegisterEmbeddedObject( SVImageClass* pEmbeddedObject, const GUID& rGuidEmbeddedID, LPCTSTR newString );
+	BOOL RegisterEmbeddedObject( SVValueObjectClass* pEmbeddedObject, const GUID& rGuidEmbeddedID, int StringResourceID, bool p_bResetAlways, SVResetItemEnum p_eRequiredReset, LPCTSTR p_pszTypeName = nullptr );
+	BOOL RegisterEmbeddedObject( SVValueObjectClass* pEmbeddedObject, const GUID& rGuidEmbeddedID, LPCTSTR strName, bool p_bResetAlways, SVResetItemEnum p_eRequiredReset, LPCTSTR p_pszTypeName = nullptr );
+	BOOL RegisterInputObject( SVInObjectInfoStruct* PInObjectInfo, const SVString& p_rInputName );
 
 	HRESULT GetOutputListFiltered(std::vector<SVValueObjectReference>& rvecObjects, UINT uiAttributes = SV_NO_ATTRIBUTES, bool bAND = true ); /* true means AND, false means OR */
 
@@ -158,7 +157,7 @@ protected:
 	SVInputInfoListClass m_svToolInputList;
 	long m_lLastToolInputListIndex;
 
-	virtual BOOL RegisterEmbeddedObjectAsClass( SVObjectClass* PEmbeddedObject, const GUID& REmbeddedID, LPCTSTR newObjectName );
+	BOOL RegisterEmbeddedObjectAsClass( SVObjectClass* PEmbeddedObject, const GUID& REmbeddedID, LPCTSTR newObjectName );
 
 	/// This method return true if method ConnectAllObject has to ask friends to connect this input info
 	/// \param rInfo [in] input info for the connection.
@@ -171,12 +170,12 @@ public:
 	virtual DWORD GetObjectColor() const override;
 	// Get the local object state...
 	virtual DWORD GetObjectState() const override;
-	virtual void GetInputObjects( SVInputInfoListClass& RInputObjectList );
+	void GetInputObjects( SVInputInfoListClass& RInputObjectList );
 	virtual void GetAllInputObjects();
-	virtual void Persist(SVObjectWriter& writer);
-	virtual void PersistFriends(SVObjectWriter& rWriter);
-	virtual void PersistInputs(SVObjectWriter& rWriter);
-	virtual void PersistEmbeddeds(SVObjectWriter& rWriter);
+	virtual void Persist(SVObjectWriter& writer) override;
+	void PersistFriends(SVObjectWriter& rWriter);
+	void PersistInputs(SVObjectWriter& rWriter);
+	void PersistEmbeddeds(SVObjectWriter& rWriter);
 
 	void GetPrivateInputList( SVInputInfoListClass& RInputInterface ) const;
 	HRESULT GetDependentsList( SVObjectListClass& rListOfDependents, bool bOnlyImageDependencies = false );
@@ -187,16 +186,16 @@ public:
 
 	HRESULT GetImageList( SVImageListClass& p_rImageList, UINT uiAttributes = SV_NO_ATTRIBUTES, bool bAND = true );
 
-	virtual HRESULT RegisterSubObject( SVObjectClass* pObject );
-	virtual HRESULT UnregisterSubObject( SVObjectClass* pObject );
+	virtual HRESULT RegisterSubObject( SVObjectClass* pObject ) override;
+	virtual HRESULT UnregisterSubObject( SVObjectClass* pObject ) override;
 
 	virtual HRESULT CollectOverlays( SVImageClass* p_Image, SVExtentMultiLineStructCArray &p_MultiLineArray );
 
-	virtual void AddEmbeddedObject( SVObjectClass* PObject );
-	virtual void RemoveEmbeddedObject( SVObjectClass* pObjectToRemove);
-	virtual SVValueObjectClass* GetEmbeddedValueObject( GUID classguid );
+	void AddEmbeddedObject( SVObjectClass* PObject );
+	void RemoveEmbeddedObject( SVObjectClass* pObjectToRemove);
+	SVValueObjectClass* GetEmbeddedValueObject( GUID classguid );
 
-	virtual HRESULT ResetObjectInputs();
+	virtual HRESULT ResetObjectInputs() override;
 
 protected:
 	/// Validate the Parameter of this object and call depending of the level the sub methods.
@@ -223,21 +222,21 @@ protected:
 
 	virtual HRESULT GetDrawInfo( SVExtentMultiLineStruct& p_rMultiLine );
 	virtual HRESULT UpdateOverlayIDs( SVExtentMultiLineStruct& p_rMultiLine );
-	virtual HRESULT UpdateOverlayColor( SVExtentMultiLineStruct& p_rMultiLine );
-	virtual HRESULT UpdateOverlayName( SVExtentMultiLineStruct& p_rMultiLine, const SVImageExtentClass& p_pImageExtents );
+	HRESULT UpdateOverlayColor( SVExtentMultiLineStruct& p_rMultiLine );
+	HRESULT UpdateOverlayName( SVExtentMultiLineStruct& p_rMultiLine, const SVImageExtentClass& p_pImageExtents );
 	virtual HRESULT onCollectOverlays( SVImageClass* p_Image, SVExtentMultiLineStructCArray& p_MultiLineArray );
 
-	virtual SVObjectPtrDeque GetPreProcessObjects() const;
-	virtual SVObjectPtrDeque GetPostProcessObjects() const;
+	virtual SVObjectPtrDeque GetPreProcessObjects() const override;
+	virtual SVObjectPtrDeque GetPostProcessObjects() const override;
 
 	virtual void addDefaultInputObjects( BOOL BCallBaseClass = FALSE, SVInputInfoListClass* PInputListToFill = nullptr );
 
-	virtual void hideEmbeddedObject( SVObjectClass& RObjectToHide );
+	void hideEmbeddedObject( SVObjectClass& RObjectToHide );
 
-	virtual HRESULT RegisterSubObject( SVValueObjectClass* p_pValueObject );
-	virtual HRESULT RegisterSubObject( SVImageClass* p_pImageObject );
-	virtual HRESULT UnregisterSubObject( SVValueObjectClass* p_pValueObject );
-	virtual HRESULT UnregisterSubObject( SVImageClass* p_pImageObject );
+	HRESULT RegisterSubObject( SVValueObjectClass* p_pValueObject );
+	HRESULT RegisterSubObject( SVImageClass* p_pImageObject );
+	HRESULT UnregisterSubObject( SVValueObjectClass* p_pValueObject );
+	HRESULT UnregisterSubObject( SVImageClass* p_pImageObject );
 
 	// Called by Run()
 	// NOTE:
@@ -245,7 +244,7 @@ protected:
 	// Don't forget to call base class onRun() first.
 	// He will call OnValidate() for you!
 	virtual BOOL onRun( SVRunStatusClass& RRunStatus );
-	virtual BOOL runFriends( SVRunStatusClass& RRunStatus );
+	BOOL runFriends( SVRunStatusClass& RRunStatus );
 
 	virtual bool resetAllOutputListObjects( bool shouldNotifyFriends, bool silentReset );
 

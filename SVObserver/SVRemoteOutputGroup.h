@@ -39,8 +39,8 @@ public:
 
 	virtual ~SVRemoteOutputGroup();
 
-	virtual HRESULT ProcessNotifyData( SVObjectCommandDataJsonPtr& p_rDataPtr );
-	virtual HRESULT ObserverUpdate( const SVProductInfoStruct& p_rData );
+	virtual HRESULT ProcessNotifyData( SVObjectCommandDataJsonPtr& p_rDataPtr ) override;
+	virtual HRESULT ObserverUpdate( const SVProductInfoStruct& p_rData ) override;
 
 	BOOL Destroy();
 	BOOL Create();

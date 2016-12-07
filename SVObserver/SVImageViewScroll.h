@@ -26,12 +26,12 @@ class SVImageViewScroll : public CScrollView
 
 	//{{AFX_VIRTUAL(SVImageViewScroll)
 	public:
-	virtual void OnInitialUpdate();
-	virtual BOOL Create(LPCTSTR LPSZClassName, LPCTSTR LPSZWindowName, DWORD DWStyle, const RECT& Rect, CWnd* PParentWnd, UINT NID, CCreateContext* PContext = nullptr);
-	virtual void OnDraw(CDC* pDC);
+	virtual void OnInitialUpdate() override;
+	virtual BOOL Create(LPCTSTR LPSZClassName, LPCTSTR LPSZWindowName, DWORD DWStyle, const RECT& Rect, CWnd* PParentWnd, UINT NID, CCreateContext* PContext = nullptr) override;
+	virtual void OnDraw(CDC* pDC) override;
 	protected:
-	virtual void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint);
-	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
+	virtual void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint) override;
+	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam) override;
 	//}}AFX_VIRTUAL
 
 public:

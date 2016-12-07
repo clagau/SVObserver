@@ -19,7 +19,7 @@ public:
 	SVTestGigeAcquisitionSubsystem();
 	virtual ~SVTestGigeAcquisitionSubsystem();
 
-	virtual SVTestAcquisitionClass* GetAcquisitionDevice( long selectedCamera );
+	virtual SVTestAcquisitionClass* GetAcquisitionDevice( long selectedCamera ) override;
 
 };
 

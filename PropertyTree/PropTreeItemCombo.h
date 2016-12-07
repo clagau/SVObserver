@@ -42,7 +42,7 @@ public:
 // Attributes
 public:
 	// The attribute area needs drawing
-	virtual void DrawAttribute(CDC* pDC, const RECT& rc);
+	virtual void DrawAttribute(CDC* pDC, const RECT& rc) override;
 
 	// Retrieve the item's attribute value
 	virtual bool GetItemValue( long& l_Value ) override;
@@ -115,7 +115,7 @@ protected:
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 
-	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult );
+	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult ) override;
 	void StoreItemData();
 
 	void DisplayButton();

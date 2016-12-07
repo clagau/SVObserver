@@ -31,9 +31,9 @@ public:
 // Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(SVFileAcquisitionDeviceApp)
-	public:
-	virtual BOOL InitInstance();
-	virtual int ExitInstance();
+public:
+	virtual BOOL InitInstance() override;
+	virtual int ExitInstance() override;
 	//}}AFX_VIRTUAL
 
 	//{{AFX_MSG(SVFileAcquisitionDeviceApp)

@@ -58,9 +58,9 @@ namespace Seidenader { namespace GridCtrlLibrary
 			// ClassWizard generated virtual function overrides
 			//{{AFX_VIRTUAL(CInPlaceEdit)
 		public:
-		virtual BOOL PreTranslateMessage(MSG* pMsg);
+		virtual BOOL PreTranslateMessage(MSG* pMsg) override;
 		protected:
-		virtual void PostNcDestroy();
+		virtual void PostNcDestroy() override;
 		//}}AFX_VIRTUAL
  
 	// Implementation

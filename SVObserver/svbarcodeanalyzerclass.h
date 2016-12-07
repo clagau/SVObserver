@@ -69,19 +69,19 @@ public:
 
 	void CloseMil();
 	BOOL InitMil();
-	virtual BOOL CreateObject(SVObjectLevelCreateStruct* PCreateStructure);
-	virtual BOOL OnValidate();
+	virtual BOOL CreateObject(SVObjectLevelCreateStruct* PCreateStructure) override;
+	virtual BOOL OnValidate() override;
 
 	SVResultClass* GetResultObject();
 	
-	virtual BOOL CloseObject();
+	virtual BOOL CloseObject() override;
 
-	virtual HRESULT ResetObject();
+	virtual HRESULT ResetObject() override;
 	static bool CharIsControl(TCHAR p_Char);
 
 protected:
 	void init();
-	virtual BOOL onRun(SVRunStatusClass &RRunStatus);
+	virtual BOOL onRun(SVRunStatusClass &RRunStatus) override;
 
 private:
 	BOOL SaveRegExpression( BOOL DisplayErrorMessage = TRUE );

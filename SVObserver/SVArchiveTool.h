@@ -39,8 +39,8 @@ public:
 	    );
 	virtual ~SVArchiveTool();
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
-	virtual HRESULT ResetObject();
+	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
+	virtual HRESULT ResetObject() override;
 	void UpdateTaskObjectOutputList();
 	void RebuildResultsArchiveList();
 	void AddImageToArray(SVImageClass* pImage);
@@ -54,10 +54,10 @@ public:
 	BOOL SetFileArchive( LPCTSTR lpszName );
 	BOOL SetImageArchivePath( LPCTSTR lpszName );
 
-	virtual BOOL Validate();
-	virtual BOOL OnValidate();
-	virtual BOOL SetObjectDepth( int NewObjectDepth );
-	virtual BOOL SetObjectDepthWithIndex( int NewObjectDepth, int NewLastSetIndex );
+	virtual BOOL Validate() override;
+	virtual BOOL OnValidate() override;
+	virtual BOOL SetObjectDepth( int NewObjectDepth ) override;
+	virtual BOOL SetObjectDepthWithIndex( int NewObjectDepth, int NewLastSetIndex ) override;
 
 	static long CalculateImageMemory( SVImageClass* p_pImage );
 	static long CalculateImageMemory( std::vector<SVImageClass*> p_apImages );
@@ -114,7 +114,7 @@ protected:
 	void PutSelectedObjectGuidsIntoObjectScript(
 		CString& RStrScript, CString& RStrAliasTable, int Indent );
 
-    virtual BOOL   onRun( SVRunStatusClass& RRunStatus );
+    virtual BOOL   onRun( SVRunStatusClass& RRunStatus ) override;
 
 	HRESULT QueueArchiveString( CString strArchiveString );
 

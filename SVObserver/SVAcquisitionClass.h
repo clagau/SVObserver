@@ -45,22 +45,20 @@ public:
 	SVAcquisitionClass( const SvTi::SVAcquisitionConstructParams& p_rParams );
 	virtual ~SVAcquisitionClass();
 
-	virtual bool IsValid() const;  // SVODataDeviceClass Override
-	virtual bool IsStarted() const;  // SVODataDeviceClass Override
+	virtual bool IsValid() const override;  // SVODataDeviceClass Override
+	virtual bool IsStarted() const override;  // SVODataDeviceClass Override
 
-	virtual void ClearDevice();  // SVODataDeviceClass Override
+	virtual void ClearDevice() override;  // SVODataDeviceClass Override
 
-	virtual HRESULT Create( unsigned long ulSize = 50 );  // SVODataDeviceClass Override
-	virtual HRESULT Destroy();  // SVODataDeviceClass Override
+	virtual HRESULT Create( unsigned long ulSize = 50 ) override;  // SVODataDeviceClass Override
+	virtual HRESULT Destroy() override;  // SVODataDeviceClass Override
 
-	virtual HRESULT Start();  // SVODataDeviceClass Override
-	virtual HRESULT Stop();  // SVODataDeviceClass Override
-	virtual HRESULT Reset();  // SVODataDeviceClass Override
+	virtual HRESULT Start() override;  // SVODataDeviceClass Override
+	virtual HRESULT Stop() override;  // SVODataDeviceClass Override
+	virtual HRESULT Reset() override;  // SVODataDeviceClass Override
 
-	virtual HRESULT AllocDigitizer( SVDeviceParamCollection& rDevice );
-
-	virtual HRESULT CreateBuffers( SVImageInfoClass IInfo, unsigned long ulSize );
-	virtual HRESULT DestroyBuffers();
+	HRESULT CreateBuffers( SVImageInfoClass IInfo, unsigned long ulSize );
+	HRESULT DestroyBuffers();
 
 	virtual HRESULT GetFileNameArraySize( long &rlSize ) const;
 	virtual HRESULT GetFileName( long lIndex, SVFileNameClass &rFileName ) const;
@@ -88,11 +86,11 @@ public:
 
 	virtual HRESULT GetImageInfo( SVImageInfoClass* pImageInfo ) const;
 
-	virtual SVImageObjectClassPtr GetCircleBuffer();
-	virtual long GetCircleBufferSize() const;
+	SVImageObjectClassPtr GetCircleBuffer();
+	long GetCircleBufferSize() const;
 
-	virtual HRESULT GetNextIndex( SVDataManagerHandle &rDMHandle ) const;
-	virtual HRESULT GetNextIndex( SVDataManagerHandle &rDMHandle, SVDataManagerLockTypeEnum p_LockType ) const;
+	HRESULT GetNextIndex( SVDataManagerHandle &rDMHandle ) const;
+	HRESULT GetNextIndex( SVDataManagerHandle &rDMHandle, SVDataManagerLockTypeEnum p_LockType ) const;
 
 	inline CString DeviceName() const { return mDeviceName.c_str(); }
 	inline CString DigName() const { return mcsDigName; }
@@ -111,18 +109,15 @@ public:
 
 	virtual bool IsValidBoard() const;
 
-	virtual bool IsColor() const { return (miBandSize > 1) ; };
+	bool IsColor() const { return (miBandSize > 1) ; };
 
-	virtual HRESULT GetDeviceParameters( SVDeviceParamCollection& rDeviceParams );
+	HRESULT GetDeviceParameters( SVDeviceParamCollection& rDeviceParams );
 	virtual HRESULT SetDeviceParameters( const SVDeviceParamCollection& rDeviceParams );
 
 	virtual HRESULT IsValidCameraFileParameters( SVDeviceParamCollection& rDeviceParams );
 	virtual HRESULT GetCameraFileParameters( SVDeviceParamCollection& rDeviceParams );
 
 	HRESULT GetHardwareDeviceCapabilities( SVDeviceParamCollection& rDeviceParams );
-
-	// called on creation
-	virtual HRESULT SetHardwareDeviceCapabilities( const SVDeviceParamCollection& rDeviceParams );
 
 	// called from SVImageBoardProcessingClass::DisconnectDevices
 	virtual void ClearDeviceIdentifier();
@@ -132,26 +127,24 @@ public:
 	virtual HRESULT SingleGrab( SVSmartHandlePointer p_SingleGrabHandle );
 
 	// temp hack
-	virtual SVOCallbackPtr GetCallbackFunction(const CString& sType) const {return nullptr;}
+	virtual SVOCallbackPtr GetCallbackFunction(const CString& sType) const override {return nullptr;}
 
-	virtual BOOL GetCurrentIndex( SVDataManagerHandle& rDMIndexHandle ) const;
-	virtual BOOL GetCurrentIndex( SVDataManagerHandle& rDMIndexHandle, SVDataManagerLockTypeEnum p_LockType ) const;
 	virtual BOOL SetCurrentIndex( const SVDataManagerHandle& rDMIndexHandle );
 	virtual BOOL SetCurrentIndex( const SVDataManagerHandle& rDMIndexHandle, SVDataManagerLockTypeEnum p_LockType );
 	
 	void DumpDMInfo( LPCTSTR p_szName ) const;
 
-	virtual SVClock::SVTimeStamp GetTimeStamp() const;
+	virtual SVClock::SVTimeStamp GetTimeStamp() const override;
 
-	virtual unsigned long GetBufferWidth() const;
-	virtual unsigned long GetBufferHeight() const;
-	virtual int GetBufferFormat() const;
+	virtual unsigned long GetBufferWidth() const override;
+	virtual unsigned long GetBufferHeight() const override;
+	virtual int GetBufferFormat() const override;
 
-	virtual HRESULT GetNextBuffer( SVImageBufferInterface& p_rBuffer );
-	virtual HRESULT UpdateWithCompletedBuffer( const SVImageBufferInterface& p_rBuffer );
+	virtual HRESULT GetNextBuffer( SVImageBufferInterface& p_rBuffer ) override;
+	virtual HRESULT UpdateWithCompletedBuffer( const SVImageBufferInterface& p_rBuffer ) override;
 
-	virtual HRESULT StoreLastImage();
-	virtual HRESULT RestoreLastImage();
+	HRESULT StoreLastImage();
+	HRESULT RestoreLastImage();
 
 	SVHANDLE m_hDigitizer;
 	BSTR m_LastImage;
@@ -161,17 +154,13 @@ protected:
 
 	friend class SVMatroxGigeCameraProxy;		// to access these protected functions
 
-	virtual HRESULT WriteCameraRegister( unsigned long ulAddress, unsigned long ulValue );
-	virtual HRESULT ReadCameraRegister( unsigned long ulAddress, unsigned long& rulValue );
-	virtual HRESULT WriteCameraRegisterBlock( unsigned long ulAddress, unsigned long ulCount, unsigned long* paulValue );
-	virtual HRESULT ReadCameraRegisterBlock( unsigned long ulAddress, unsigned long ulCount, unsigned long* paulValue );
 	virtual HRESULT SetStandardCameraParameter( const SVDeviceParamWrapper& rwParam );	// for parameters that are settable through MIL (all standard DCAM params)
 
 	virtual bool IsOnline() const;
-	virtual bool IsBufferCreated() const { return mbIsBufferCreated; };
+	bool IsBufferCreated() const { return mbIsBufferCreated; };
 
 	virtual HRESULT SetLightReferenceImpl( SVLightReference& rLR );
-	virtual SVDeviceParamCollection& HardwareCapabilities();
+	SVDeviceParamCollection& HardwareCapabilities();
 	virtual HRESULT GetLutImpl( SVLut& lut );
 	virtual HRESULT SetLutImpl( const SVLut& lut );
 

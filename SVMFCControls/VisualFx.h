@@ -121,9 +121,9 @@ protected:
   // Create a tab window
   virtual BOOL Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, 
                       DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, 
-                      UINT nID=AFX_IDW_PANE_FIRST, CCreateContext *pContext = nullptr);
+                      UINT nID=AFX_IDW_PANE_FIRST, CCreateContext *pContext = nullptr) override;
   // Resize tabs
-  virtual void ResizeTab(int cx = -1, int cy = -1);
+  void ResizeTab(int cx = -1, int cy = -1);
   // Create pane
   virtual TTabItem *CreatePane(LPCTSTR lpszLabel, CRuntimeClass *pViewClass, 
                                 CCreateContext *pContext);

@@ -23,11 +23,11 @@ public:
 	SVMultiDocTemplateClass( UINT NIDResource, CRuntimeClass* PDocClass, CRuntimeClass* PFrameClass, CRuntimeClass* PViewClass );
 	virtual ~SVMultiDocTemplateClass();
 
-	virtual void SetDefaultTitle( CDocument* PDocument );
+	virtual void SetDefaultTitle( CDocument* PDocument ) override;
 
 #ifdef _DEBUG
-	virtual void Dump(CDumpContext&) const;
-	virtual void AssertValid() const;
+	virtual void Dump(CDumpContext&) const override;
+	virtual void AssertValid() const override;
 #endif //_DEBUG
 };
 

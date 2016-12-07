@@ -17,9 +17,9 @@ public:
 	SVImageAnalyzerClass( LPCSTR ObjectName /* = "Empty Analyzer" */ );
 	SVImageAnalyzerClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVIMAGEANALYZER );
 	virtual ~SVImageAnalyzerClass();
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
-	virtual BOOL CloseObject();
-	virtual BOOL OnValidate();
+	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
+	virtual BOOL CloseObject() override;
+	virtual BOOL OnValidate() override;
 
 /*- GetInputPixelDepth () --------------------------------------------------*/
 /*- If successful, this function will return the pixel depth of the         */

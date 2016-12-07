@@ -39,7 +39,7 @@ public:
 	virtual void WriteAttribute(LPCTSTR pName, const SVVariantList& rValues) override;
 
 	virtual void StartElement(LPCTSTR pName) override;
-	virtual void EndElement();
+	virtual void EndElement() override;
 	virtual void ElementAttribute(LPCTSTR pAttrName, const variant_t& value) override;
 };
 

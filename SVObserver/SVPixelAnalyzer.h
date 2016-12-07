@@ -32,10 +32,10 @@ public:
                          int StringResourceID = IDS_CLASSNAME_SVPIXELANALYZER );
 
 	virtual ~SVPixelAnalyzerClass();
-	virtual BOOL CloseObject();
+	virtual BOOL CloseObject() override;
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
-	virtual BOOL OnValidate();
+	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
+	virtual BOOL OnValidate() override;
 
 private:
 	void init();
@@ -49,7 +49,7 @@ public:
 	SVByteValueObjectClass m_pixelCountColor;
 
 protected:
-	virtual BOOL onRun(SVRunStatusClass &RRunStatus);
+	virtual BOOL onRun(SVRunStatusClass &RRunStatus) override;
 
 	SVMatroxImageResult		m_histResultID;
 	SVMatroxLongArray		m_alHistValues;

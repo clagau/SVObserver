@@ -47,10 +47,10 @@ public:
 	// ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(CSVOProPosQueDlg)
 	public:
-	virtual BOOL OnKillActive();
-	virtual BOOL OnSetActive();
+	virtual BOOL OnKillActive() override;
+	virtual BOOL OnSetActive() override;
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
 // Implementation
@@ -66,7 +66,7 @@ protected:
 	afx_msg void OnBtnRemoveVc();
 	afx_msg void OnBtnRemoveVi();
 	afx_msg void OnBtnRemoveVt();
-	virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog() override;
 	afx_msg void OnSelchangeLstPpqList();
 	afx_msg void OnDblclkLstPpqList();
 	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);

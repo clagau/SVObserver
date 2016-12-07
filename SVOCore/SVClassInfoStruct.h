@@ -46,7 +46,7 @@ public:
 
 #pragma region public methods
 public:
-	virtual int Find( const SVGUID& rGuid );
+	int Find( const SVGUID& rGuid );
 
 #pragma endregion public methods
 };

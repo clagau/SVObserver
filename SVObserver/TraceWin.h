@@ -47,7 +47,7 @@ class CFileTrace : public CFile {
 	DECLARE_DYNAMIC(CFileTrace)
 	CFileTrace() { m_strFileName = _T("Mfx File Tracer"); }
 	static BOOL autoInit;
-	virtual void Write(const void* lpBuf, UINT nCount);
+	virtual void Write(const void* lpBuf, UINT nCount) override;
 public:
 	static  BOOL Init();	
 };

@@ -30,8 +30,8 @@ public:
 
 	const SVCommandAttributesTemplate& operator=( const SVCommandAttributesTemplate& p_rObject );
 
-	virtual HRESULT GetAttributes( SVAttributeCollection& p_rAttributes ) const;
-	virtual HRESULT SetAttributes( const SVAttributeCollection& p_rAttributes );
+	virtual HRESULT GetAttributes( SVAttributeCollection& p_rAttributes ) const override;
+	virtual HRESULT SetAttributes( const SVAttributeCollection& p_rAttributes ) override;
 
 protected:
 	SVAttributeCollection m_Attributes;

@@ -30,12 +30,12 @@ public:
 	                            int p_iStringResourceID = IDS_CLASSNAME_SVCYLINDRICALTOOL );
 	virtual ~SVCylindricalWarpToolClass();
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* p_pCreateStructure );
-	virtual BOOL CloseObject();
+	virtual BOOL CreateObject( SVObjectLevelCreateStruct* p_pCreateStructure ) override;
+	virtual BOOL CloseObject() override;
 
-	virtual HRESULT ResetObject();
+	virtual HRESULT ResetObject() override;
 
-	virtual BOOL OnValidate();
+	virtual BOOL OnValidate() override;
 
 	SVImageClass* GetInputImage();
 	HRESULT ValidateAngle(double &p_dWarpAngle );
@@ -52,7 +52,7 @@ public:
 	virtual SVStaticStringValueObjectClass* GetInputImageNames() override;
 
 protected:
-	virtual BOOL onRun( SVRunStatusClass &p_rRunStatus );
+	virtual BOOL onRun( SVRunStatusClass &p_rRunStatus ) override;
 
 private:
 	void LocalInitialize();

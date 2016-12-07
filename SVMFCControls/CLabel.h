@@ -30,27 +30,27 @@ public:
 
 	CLabel();
 	virtual ~CLabel();
-	virtual CLabel& SetBkColor(COLORREF crBkgnd, COLORREF crBkgndHigh = 0, BackFillMode mode = Normal);
-	virtual CLabel& SetTextColor(COLORREF crText);
-	virtual CLabel& SetText(const CString& strText);
-	virtual CLabel& SetFontBold(BOOL bBold);
-	virtual CLabel& SetFontName(const CString& strFont, BYTE byCharSet = ANSI_CHARSET);
-	virtual CLabel& SetFontUnderline(BOOL bSet);
-	virtual CLabel& SetFontItalic(BOOL bSet);
-	virtual CLabel& SetFontSize(int nSize);
-	virtual CLabel& SetSunken(BOOL bSet);
-	virtual CLabel& SetBorder(BOOL bSet);
-	virtual CLabel& SetTransparent(BOOL bSet);
-	virtual CLabel& FlashText(BOOL bActivate);
-	virtual CLabel& FlashBackground(BOOL bActivate);
-	virtual CLabel& SetLink(BOOL bLink,BOOL bNotifyParent);
-	virtual CLabel& SetLinkCursor(HCURSOR hCursor);
-	virtual CLabel& SetFont3D(BOOL bSet,Type3D type=Raised);
-	virtual CLabel& SetRotationAngle(UINT nAngle,BOOL bRotation);
-	virtual CLabel& SetText3DHiliteColor(COLORREF cr3DHiliteColor);
-	virtual CLabel& SetFont(LOGFONT lf);
-	virtual CLabel& SetMailLink(BOOL bEnable, BOOL bNotifyParent);
-	virtual CLabel& SetHyperLink(const CString& sLink);
+	CLabel& SetBkColor(COLORREF crBkgnd, COLORREF crBkgndHigh = 0, BackFillMode mode = Normal);
+	CLabel& SetTextColor(COLORREF crText);
+	CLabel& SetText(const CString& strText);
+	CLabel& SetFontBold(BOOL bBold);
+	CLabel& SetFontName(const CString& strFont, BYTE byCharSet = ANSI_CHARSET);
+	CLabel& SetFontUnderline(BOOL bSet);
+	CLabel& SetFontItalic(BOOL bSet);
+	CLabel& SetFontSize(int nSize);
+	CLabel& SetSunken(BOOL bSet);
+	CLabel& SetBorder(BOOL bSet);
+	CLabel& SetTransparent(BOOL bSet);
+	CLabel& FlashText(BOOL bActivate);
+	CLabel& FlashBackground(BOOL bActivate);
+	CLabel& SetLink(BOOL bLink,BOOL bNotifyParent);
+	CLabel& SetLinkCursor(HCURSOR hCursor);
+	CLabel& SetFont3D(BOOL bSet,Type3D type=Raised);
+	CLabel& SetRotationAngle(UINT nAngle,BOOL bRotation);
+	CLabel& SetText3DHiliteColor(COLORREF cr3DHiliteColor);
+	CLabel& SetFont(LOGFONT lf);
+	CLabel& SetMailLink(BOOL bEnable, BOOL bNotifyParent);
+	CLabel& SetHyperLink(const CString& sLink);
 
 // Attributes
 protected:
@@ -83,8 +83,8 @@ protected:
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(CLabel)
 protected:
-	virtual void PreSubclassWindow();
-	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
+	virtual void PreSubclassWindow() override;
+	virtual BOOL PreCreateWindow(CREATESTRUCT& cs) override;
 	//}}AFX_VIRTUAL
 
 	// Generated message map functions

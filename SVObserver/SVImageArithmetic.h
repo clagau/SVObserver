@@ -28,18 +28,18 @@ public:
 	SVImageArithmeticClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVIMAGEARITHMETIC );
 	virtual ~SVImageArithmeticClass();
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
-	virtual BOOL CloseObject();
+	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
+	virtual BOOL CloseObject() override;
 
-	virtual HRESULT ResetObject();
+	virtual HRESULT ResetObject() override;
 
-	virtual HRESULT IsInputImage( SVImageClass *p_psvImage );
+	virtual HRESULT IsInputImage( SVImageClass *p_psvImage ) override;
 
 	SVImageClass* getInputImageA();
 	SVImageClass* getInputImageB();
 	SVImageClass* getOutputImage();
 
-	virtual BOOL OnValidate();
+	virtual BOOL OnValidate() override;
 
 	virtual bool resetAllObjects( bool shouldNotifyFriends, bool silentReset ) override;
 
@@ -52,7 +52,7 @@ protected:
 	
 	SVLongValueObjectClass*		getInputArithOperator();
 
-	virtual BOOL  onRun( SVRunStatusClass& RRunStatus );
+	virtual BOOL  onRun( SVRunStatusClass& RRunStatus ) override;
 
 	void ScaleWithAveraging( SVImageClass* pInputImage, SVImageClass* pOutputImage );
 

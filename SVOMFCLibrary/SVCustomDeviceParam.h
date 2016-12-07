@@ -44,10 +44,10 @@ public:
 	SVCustomDeviceParam(const SVCustomDeviceParam& rhs);
 
 	virtual ~SVCustomDeviceParam();
-	virtual SVClonable* CloneImpl() const;
+	virtual SVClonable* CloneImpl() const override;
 	SVCustomDeviceParam& operator=(const SVCustomDeviceParam& rhs);
 
-	virtual HRESULT SetMetadata(const SVDeviceParam* pParam);
+	virtual HRESULT SetMetadata(const SVDeviceParam* pParam) override;
 
 	HRESULT GetValue(VARIANT& rv) const;
 	HRESULT SetValue(const VARIANT& rv);

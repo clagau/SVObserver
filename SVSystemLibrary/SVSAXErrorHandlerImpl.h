@@ -34,17 +34,17 @@ public:
 	virtual HRESULT STDMETHODCALLTYPE error( 
 		/* [in] */ MSXML2::ISAXLocator* pLocator,
 		/* [in] */ unsigned short* pwchErrorMessage,
-		/* [in] */ HRESULT errCode);
+		/* [in] */ HRESULT errCode) override;
 
 	virtual HRESULT STDMETHODCALLTYPE fatalError( 
 		/* [in] */ MSXML2::ISAXLocator* pLocator,
 		/* [in] */ unsigned short* pwchErrorMessage,
-		/* [in] */ HRESULT errCode);
+		/* [in] */ HRESULT errCode) override;
 
 	virtual HRESULT STDMETHODCALLTYPE ignorableWarning( 
 		/* [in] */ MSXML2::ISAXLocator* pLocator,
 		/* [in] */ unsigned short* pwchErrorMessage,
-		/* [in] */ HRESULT errCode);
+		/* [in] */ HRESULT errCode) override;
 };
 
 #include "SVSAXErrorHandlerImpl.inl"

@@ -82,29 +82,29 @@ public:
 	virtual ~SVInspectionProcess();
 
 	virtual bool resetAllObjects( bool shouldNotifyFriends, bool silentReset ) override;
-	virtual BOOL GetChildObjectByName( LPCTSTR tszName, SVObjectClass** ppObject );
+	virtual BOOL GetChildObjectByName( LPCTSTR tszName, SVObjectClass** ppObject ) override;
 
 	virtual HRESULT GetChildObject( SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index = 0 ) const override;
 	
-	virtual BOOL SetObjectDepth( int NewObjectDepth );
-	virtual BOOL SetObjectDepthWithIndex( int NewObjectDepth, int NewLastSetIndex );
-	virtual BOOL SetImageDepth( long lDepth );
+	virtual BOOL SetObjectDepth( int NewObjectDepth ) override;
+	virtual BOOL SetObjectDepthWithIndex( int NewObjectDepth, int NewLastSetIndex ) override;
+	virtual BOOL SetImageDepth( long lDepth ) override;
 
-	virtual void ResetName();
-	virtual void SetName( const CString& StrString );
+	virtual void ResetName() override;
+	virtual void SetName( LPCTSTR StrString ) override;
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStruct );
-	virtual HRESULT ResetObject();
-	virtual BOOL OnValidate();
-	virtual BOOL Validate();
+	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStruct ) override;
+	virtual HRESULT ResetObject() override;
+	virtual BOOL OnValidate() override;
+	virtual BOOL Validate() override;
 
-	virtual HRESULT RegisterSubObject( SVObjectClass* pObject );
-	virtual HRESULT UnregisterSubObject( SVObjectClass* pObject );
+	virtual HRESULT RegisterSubObject( SVObjectClass* pObject ) override;
+	virtual HRESULT UnregisterSubObject( SVObjectClass* pObject ) override;
 
-	virtual BOOL Run( SVRunStatusClass& RRunStatus );
+	BOOL Run( SVRunStatusClass& RRunStatus );
 
-	virtual HRESULT ObserverUpdate( const SVAddTool& p_rData );
-	virtual HRESULT ObserverUpdate( const SVDeleteTool& p_rData );
+	virtual HRESULT ObserverUpdate( const SVAddTool& p_rData ) override;
+	virtual HRESULT ObserverUpdate( const SVDeleteTool& p_rData ) override;
 
 	void SetPPQIdentifier( const SVGUID& p_rPPQId );
 	const SVGUID& GetPPQIdentifier() const;
@@ -218,7 +218,7 @@ public:
 	HRESULT RemoveImage(SVImageClass* pImage);
 
 	void UpdateSharedMemoryFilters( const SVMonitorList& p_rMonitorList );
-	virtual void Persist(SVObjectWriter& rWriter);
+	virtual void Persist(SVObjectWriter& rWriter) override;
 
 	long GetResultDataIndex() const;
 
@@ -242,7 +242,7 @@ public:
 	//************************************
 	bool IsDisabledPPQVariable(SVValueObjectClass* pValueObject);
 	
-	virtual DWORD GetObjectColor() const;
+	virtual DWORD GetObjectColor() const override;
 
 	//************************************
 	//! calls pf for all object in Inspection 
@@ -345,17 +345,17 @@ protected:
 	typedef SVTQueueObject< SVInputImageRequestInfoStructPtr > SVInputImageRequestQueue;
 	typedef SVTQueueObject< SVProductInfoStruct > SVProductQueue;
 	
-	virtual HRESULT SubmitCommand( const SVCommandTemplatePtr& p_rCommandPtr );
+	virtual HRESULT SubmitCommand( const SVCommandTemplatePtr& p_rCommandPtr ) override;
 
-	virtual SVObjectPtrDeque GetPreProcessObjects() const;
-	virtual SVObjectPtrDeque GetPostProcessObjects() const;
+	virtual SVObjectPtrDeque GetPreProcessObjects() const override;
+	virtual SVObjectPtrDeque GetPostProcessObjects() const override;
 
-	virtual SVObjectClass* UpdateObject( const GUID &friendGuid, SVObjectClass *p_psvObject, SVObjectClass *p_psvNewOwner );
+	virtual SVObjectClass* UpdateObject( const GUID &friendGuid, SVObjectClass *p_psvObject, SVObjectClass *p_psvNewOwner ) override;
 
-	virtual HRESULT RegisterSubObject( SVValueObjectClass* p_pValueObject );
-	virtual HRESULT RegisterSubObject( SVImageClass* p_pImageObject );
-	virtual HRESULT UnregisterSubObject( SVValueObjectClass* p_pValueObject );
-	virtual HRESULT UnregisterSubObject( SVImageClass* p_pImageObject );
+	HRESULT RegisterSubObject( SVValueObjectClass* p_pValueObject );
+	HRESULT RegisterSubObject( SVImageClass* p_pImageObject );
+	HRESULT UnregisterSubObject( SVValueObjectClass* p_pValueObject );
+	HRESULT UnregisterSubObject( SVImageClass* p_pImageObject );
 
 	BOOL RunOnce( SVToolClass* p_psvTool = nullptr );
 	BOOL RunInspection( long lResultDataIndex, SVImageIndexStruct svResultImageIndex, SVProductInfoStruct *pProduct, bool p_UpdateCounts = true );

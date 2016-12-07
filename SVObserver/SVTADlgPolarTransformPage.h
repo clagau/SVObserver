@@ -34,7 +34,7 @@ public:
 	// ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(SVToolAdjustmentDialogPolarTransformPageClass)
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
 	
 protected:
@@ -42,7 +42,7 @@ protected:
 
 	// Generated message map functions
 	//{{AFX_MSG(SVToolAdjustmentDialogPolarTransformPageClass)
-	virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog() override;
 	afx_msg void OnCenterXFormulaButton();
 	afx_msg void OnCenterYFormulaButton();
 	afx_msg void OnStartRadiusFormulaButton();

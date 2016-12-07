@@ -25,7 +25,7 @@ public:
 	SVCommandConcreteFactoryTemplate( SVCommandExecuteFunctor p_ExecuteFunctor );
 	virtual ~SVCommandConcreteFactoryTemplate();
 
-	virtual SVCommandTemplatePtr CreateCommand() const;
+	virtual SVCommandTemplatePtr CreateCommand() const override;
 
 protected:
 	SVCommandExecuteFunctor m_ExecuteFunctor;

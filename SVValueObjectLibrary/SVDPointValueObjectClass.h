@@ -29,9 +29,9 @@ public:
 
 	virtual ~SVDPointValueObjectClass();
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* pCreateStructure );
-	virtual HRESULT SetObjectValue( SVObjectAttributeClass* PDataObject );
-	virtual void Persist(SVObjectWriter& rWriter);
+	virtual BOOL CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
+	virtual HRESULT SetObjectValue( SVObjectAttributeClass* PDataObject ) override;
+	virtual void Persist(SVObjectWriter& rWriter) override;
 
 	HRESULT GetDefaultValue( POINT& rPoint ) const;
 	HRESULT SetDefaultValue( const POINT& Point, bool bResetAll );

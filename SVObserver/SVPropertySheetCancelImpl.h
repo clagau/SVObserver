@@ -19,8 +19,8 @@ class SVPropertySheetCancelImpl : public ISVCancel
 {
 public:
 	virtual ~SVPropertySheetCancelImpl();
-	virtual bool CanCancel();
-	virtual HRESULT GetCancelData(SVCancelData*& ppData);
-	virtual HRESULT SetCancelData(SVCancelData* pData);
+	virtual bool CanCancel() override;
+	virtual HRESULT GetCancelData(SVCancelData*& ppData) override;
+	virtual HRESULT SetCancelData(SVCancelData* pData) override;
 };
 

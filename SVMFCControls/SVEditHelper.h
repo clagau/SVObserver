@@ -42,7 +42,7 @@ namespace Seidenader
 
 			DECLARE_MESSAGE_MAP()
 		public:
-			virtual BOOL PreTranslateMessage(MSG* pMsg);
+			virtual BOOL PreTranslateMessage(MSG* pMsg) override;
 		};
 	} //SVMFCControls
 } //Seidenader

@@ -26,13 +26,13 @@ namespace Seidenader { namespace TriggerHandling {
 		virtual ~SVTriggerClass();
 
 		virtual HRESULT RegisterCallback( SVOCallbackPtr pCallback, 
-										  void *pvOwner, void *pvCaller );
+										  void *pvOwner, void *pvCaller ) override;
 		virtual HRESULT UnregisterCallback( SVOCallbackPtr pCallback,
-											void *pvOwner, void *pvCaller );
-		virtual HRESULT UnregisterAllCallbacks();
+											void *pvOwner, void *pvCaller ) override;
+		virtual HRESULT UnregisterAllCallbacks() override;
 
-		virtual HRESULT Start();
-		virtual HRESULT Stop();
+		virtual HRESULT Start() override;
+		virtual HRESULT Stop() override;
 
 		virtual HRESULT EnableInternalTrigger();
 

@@ -27,7 +27,7 @@ public:
 	const SVLongValueObjectClass& operator = (const SVLongValueObjectClass& rhs);
 
 	virtual ~SVLongValueObjectClass();
-	virtual void Persist( SVObjectWriter& rWriter);
+	virtual void Persist( SVObjectWriter& rWriter) override;
 
 	IMPLEMENT_VALUE_OBJECT_GET_SET()
 

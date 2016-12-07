@@ -55,98 +55,98 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 		//! The method gets the name of the item
 		//! \return the name of the item
 		//************************************
-		virtual const SVString& getName() const { return m_Name; };
+		virtual const SVString& getName() const override { return m_Name; };
 
 		//************************************
 		//! The method sets the name of the item
 		//! \param rName <in> string name of the item
 		//************************************
-		virtual void setName( LPCTSTR Name ) { m_Name = Name; };
+		virtual void setName( LPCTSTR Name ) override { m_Name = Name; };
 
 		//************************************
 		//! The method gets the location of the item
 		//! \return the location of the item
 		//************************************
-		virtual const SVString& getLocation() const { return m_Location; };
+		virtual const SVString& getLocation() const override { return m_Location; };
 
 		//************************************
 		//! The method sets the location of the item
 		//! \param rLocation <in> location of the item as a string
 		//************************************
-		virtual void setLocation( LPCTSTR Location ) { m_Location = Location; };
+		virtual void setLocation( LPCTSTR Location ) override { m_Location = Location; };
 
 		//************************************
 		//! The method gets the display location of the item
 		//! \return the display location of the item
 		//************************************
-		virtual const SVString& getDisplayLocation() const { return m_DisplayLocation; };
+		virtual const SVString& getDisplayLocation() const override { return m_DisplayLocation; };
 
 		//************************************
 		//! The method sets the location of the item
 		//! \param rDisplayLocation <in> display location of the item as a string
 		//************************************
-		virtual void setDisplayLocation( LPCTSTR DisplayLocation ) { m_DisplayLocation = DisplayLocation; };
+		virtual void setDisplayLocation( LPCTSTR DisplayLocation ) override { m_DisplayLocation = DisplayLocation; };
 
 		//************************************
 		//! The method gets the name of the item type
 		//! \return the type of the item as a string
 		//************************************
-		virtual const SVString& getItemTypeName() const { return m_ItemTypeName; };
+		virtual const SVString& getItemTypeName() const override { return m_ItemTypeName; };
 
 		//************************************
 		//! The method sets the name of the item type
 		//! \param rItemType <in> string indicating the item's type
 		//************************************
-		virtual void setItemTypeName( LPCTSTR ItemTypeName ) { m_ItemTypeName = ItemTypeName; };
+		virtual void setItemTypeName( LPCTSTR ItemTypeName ) override { m_ItemTypeName = ItemTypeName; };
 
 		//************************************
 		//! The method gets the item key (unique identifier)
 		//! \return the item key as a variant
 		//************************************
-		virtual const _variant_t& getItemKey() const {return m_ItemKey; };
+		virtual const _variant_t& getItemKey() const override {return m_ItemKey; };
 
 		//************************************
 		//! The method sets the item key (unique identifier) 
 		//! \param rItemKey <in> a reference to the key for the item
 		//************************************
-		virtual void setItemKey( const _variant_t& rItemKey ) { m_ItemKey = rItemKey; };
+		virtual void setItemKey( const _variant_t& rItemKey ) override { m_ItemKey = rItemKey; };
 
 		//************************************
 		//! The method returns the selected state the state
 		//! \return the checked state
 		//************************************
-		virtual bool isSelected() const { return m_Selected; };
+		virtual bool isSelected() const override { return m_Selected; };
 
 		//************************************
 		//! The method sets the selected state
 		//! \param Selected <in> the selected state to set the item to
 		//************************************
-		virtual void setSelected( bool Selected ) { m_Selected = Selected; };
+		virtual void setSelected( bool Selected ) override { m_Selected = Selected; };
 
 		//************************************
 		//! The method gets the array index
 		//! \return the array index
 		//************************************
-		virtual int getArrayIndex() const { return m_ArrayIndex; };
+		virtual int getArrayIndex() const override { return m_ArrayIndex; };
 
 		//************************************
 		//! The method sets the array index
 		//! \param rIndex <in> the array index
 		//************************************
-		virtual void setArrayIndex( int Index );
+		virtual void setArrayIndex( int Index ) override;
 
 		//************************************
 		//! The method checks if the item is an array
 		//! \param isArray <in> true if item is an array
 		//! \return True if the item is an array
 		//************************************
-		virtual void setArray(bool isArray ) { m_Array = isArray; };
+		virtual void setArray(bool isArray ) override { m_Array = isArray; };
 
 		//************************************
 		//! The method checks if the item is an array
 		//! \return True if the item is an array
 		//************************************
-		virtual bool isArray() const { return m_Array; };
+		virtual bool isArray() const override { return m_Array; };
 	#pragma endregion Public Methods
 
 	#pragma region Member Variables

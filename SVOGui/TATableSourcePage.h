@@ -40,11 +40,11 @@ namespace Seidenader { namespace SVOGui {
 		DECLARE_MESSAGE_MAP()
 
 		//{{AFX_VIRTUAL(TaTableSourcePage)
-		virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV
+		virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV
 		//}}AFX_VIRTUAL
 
 		//{{AFX_MSG(TaTableSourcePage)
-		virtual BOOL OnInitDialog();
+		virtual BOOL OnInitDialog() override;
 		afx_msg void OnSelchangeCombo1();
 		//}}AFX_MSG
 #pragma endregion Protected Methods

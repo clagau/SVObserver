@@ -30,9 +30,9 @@ protected:
 	//{{AFX_MSG(SVChildrenSetupDialogClass)
 	afx_msg void OnAddButton();
 	afx_msg void OnRemoveButton();
-	virtual BOOL OnInitDialog();
-	virtual void OnCancel();
-	virtual void OnOK();
+	virtual BOOL OnInitDialog() override;
+	virtual void OnCancel() override;
+	virtual void OnOK() override;
 	afx_msg void OnSetupButton();
 	afx_msg void OnPublishButton();
 	afx_msg void OnItemChangedChildrenList(NMHDR* pNMHDR, LRESULT* pResult);
@@ -47,7 +47,7 @@ protected:
 
 	//{{AFX_VIRTUAL(SVChildrenSetupDialogClass)
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV-Unterstützung
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV-Unterstützung
 	//}}AFX_VIRTUAL
 
 //******************************************************************************

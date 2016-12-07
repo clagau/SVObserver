@@ -22,18 +22,17 @@ public:
 
 	virtual ~SVRGBMainImageClass();
 
-	virtual HRESULT ResetObject();
+	virtual HRESULT ResetObject() override;
 
-	virtual BOOL SetImageHandleIndex( SVImageIndexStruct svIndex );
+	virtual BOOL SetImageHandleIndex( SVImageIndexStruct svIndex ) override;
 
-	virtual BOOL CopyImageTo( SVImageIndexStruct svIndex );
+	virtual BOOL CopyImageTo( SVImageIndexStruct svIndex ) override;
 
 protected:
-	virtual BOOL CreateBuffers( const SVImageInfoClass& p_rImageInfo, SVImageObjectClassPtr p_ImageArrayPtr );
+	virtual BOOL CreateBuffers( const SVImageInfoClass& p_rImageInfo, SVImageObjectClassPtr p_ImageArrayPtr ) override;
 
-	virtual BOOL GetCameraImageHandle( SVSmartHandlePointer& p_rHandlePtr );
-	virtual BOOL GetCameraImageHandle( SVImageIndexStruct svIndex, SVSmartHandlePointer& rHandle );
+	BOOL GetCameraImageHandle( SVSmartHandlePointer& p_rHandlePtr );
 
-	virtual BOOL UpdateBuffer();
+	BOOL UpdateBuffer();
 };
 

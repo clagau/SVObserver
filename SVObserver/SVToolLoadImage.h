@@ -23,32 +23,32 @@ public:
 
 	virtual ~SVLoadImageToolClass();
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
-	virtual BOOL CloseObject();
+	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
+	virtual BOOL CloseObject() override;
 
-	virtual HRESULT ResetObject();
+	virtual HRESULT ResetObject() override;
 
-	virtual HRESULT IsInputImage( SVImageClass *p_psvImage );
-	virtual SVTaskObjectClass *GetObjectAtPoint( const SVExtentPointStruct &p_rsvPoint );
+	virtual HRESULT IsInputImage( SVImageClass *p_psvImage ) override;
+	virtual SVTaskObjectClass *GetObjectAtPoint( const SVExtentPointStruct &p_rsvPoint ) override;
 	virtual bool DoesObjectHaveExtents() const override;
-	virtual HRESULT SetImageExtent( unsigned long p_ulIndex, SVImageExtentClass p_svImageExtent );
+	virtual HRESULT SetImageExtent( unsigned long p_ulIndex, SVImageExtentClass p_svImageExtent ) override;
 
-	virtual BOOL OnValidate();
+	virtual BOOL OnValidate() override;
 
-	virtual HRESULT SetImageExtentToParent( unsigned long p_ulIndex );
+	virtual HRESULT SetImageExtentToParent( unsigned long p_ulIndex ) override;
 	//************************************
 	//! Get the ImageExtents from the Image file 
 	//! \param rExtent [out]
 	//! \returns HRESULT S_OK if no error occurs
 	//************************************
-	HRESULT GetParentExtent( SVImageExtentClass& rExtent) const;
+	virtual HRESULT GetParentExtent( SVImageExtentClass& rExtent) const override;
 	
 	virtual BOOL IsValid() override;
 
 protected:
 	void init();
 
-	virtual BOOL onRun( SVRunStatusClass& RRunStatus );
+	virtual BOOL onRun( SVRunStatusClass& RRunStatus ) override;
 
 	// Embedded Objects:
 

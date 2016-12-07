@@ -142,8 +142,8 @@ public:
 	BOOL mbInitImagesByName; // @WARNING:  bad practice making members public
 
 	#ifdef _DEBUG
-		virtual void AssertValid() const;
-		virtual void Dump(CDumpContext& dc) const;
+		virtual void AssertValid() const override;
+		virtual void Dump(CDumpContext& dc) const override;
 	#endif
 
 	//{{AFX_MSG(SVIPDoc)
@@ -218,18 +218,18 @@ public:
 	//! \returns void
 	//************************************
 	void OpenToolAdjustmentDialog(int tab); 
-	virtual BOOL OnNewDocument();
-	virtual BOOL CanCloseFrame(CFrameWnd* pFrame);
-	virtual void OnCloseDocument();
-	virtual void SetTitle(LPCTSTR lpszTitle);
-	virtual void SetPathName(LPCTSTR lpszPathName, BOOL bAddToMRU = TRUE);
-	virtual BOOL OnOpenDocument(LPCTSTR lpszPathName);
-	virtual BOOL OnSaveDocument(LPCTSTR lpszPathName);
-	virtual CFile* GetFile( LPCTSTR lpszFileName, UINT nOpenFlags, CFileException* pError );
-	virtual void SetModifiedFlag(BOOL bModified = TRUE);
+	virtual BOOL OnNewDocument() override;
+	virtual BOOL CanCloseFrame(CFrameWnd* pFrame) override;
+	virtual void OnCloseDocument() override;
+	virtual void SetTitle(LPCTSTR lpszTitle) override;
+	virtual void SetPathName(LPCTSTR lpszPathName, BOOL bAddToMRU = TRUE) override;
+	virtual BOOL OnOpenDocument(LPCTSTR lpszPathName) override;
+	virtual BOOL OnSaveDocument(LPCTSTR lpszPathName) override;
+	virtual CFile* GetFile( LPCTSTR lpszFileName, UINT nOpenFlags, CFileException* pError ) override;
+	virtual void SetModifiedFlag(BOOL bModified = TRUE) override;
 
 protected:
-	virtual BOOL SaveModified();
+	virtual BOOL SaveModified() override;
 	//}}AFX_VIRTUAL
 
 	static DWORD WINAPI SVRegressionTestRunThread( LPVOID lpParam );

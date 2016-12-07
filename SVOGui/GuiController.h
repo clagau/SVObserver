@@ -28,7 +28,7 @@ namespace Seidenader
 			GuiController(const Model& rModel) : m_Data(rModel) {}
 			virtual ~GuiController() {}
 
-			virtual HRESULT Init()
+			HRESULT Init()
 			{
 				return GetValues(m_Data);
 			}

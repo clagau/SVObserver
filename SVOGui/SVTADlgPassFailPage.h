@@ -41,7 +41,7 @@ namespace Seidenader
 
 			//{{AFX_VIRTUAL(SVToolAdjustmentDialogPassFailPageClass)
 		protected:
-			virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV-Unterstützung
+			virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV-Unterstützung
 			virtual BOOL OnInitDialog() override;
 			virtual BOOL OnSetActive() override;
 			virtual BOOL OnKillActive() override;

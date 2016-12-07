@@ -153,29 +153,6 @@ bool SVTestAcquisitionClass::CameraMatchesCameraFile()
 	return bRetVal;
 }
 	
-HRESULT SVTestAcquisitionClass::WriteCameraRegister( unsigned long ulAddress, unsigned long ulValue )
-{
-	HRESULT hr = E_NOTIMPL;
-	return hr;
-}
-
-HRESULT SVTestAcquisitionClass::ReadCameraRegister( unsigned long ulAddress, unsigned long& rulValue )
-{
-	HRESULT hr = E_NOTIMPL;
-	return hr;
-}
-
-HRESULT SVTestAcquisitionClass::WriteCameraRegisterBlock( unsigned long ulAddress, unsigned long ulCount, unsigned long* paulValue )
-{
-	HRESULT hr = E_NOTIMPL;
-	return hr;
-}
-
-HRESULT SVTestAcquisitionClass::ReadCameraRegisterBlock( unsigned long ulAddress, unsigned long ulCount, unsigned long* paulValue )
-{
-	HRESULT hr = E_NOTIMPL;
-	return hr;
-}
 
 HRESULT SVTestAcquisitionClass::SetStandardCameraParameter( const SVDeviceParamWrapper& rw )
 {

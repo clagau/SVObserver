@@ -27,8 +27,8 @@ protected:
 	SVRemoteOutputsView();           // protected constructor used by dynamic creation
 	virtual ~SVRemoteOutputsView();
 	DECLARE_MESSAGE_MAP()
-	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
-	virtual void OnUpdate(CView* /*pSender*/, LPARAM /*lHint*/, CObject* /*pHint*/);
+	virtual BOOL PreCreateWindow(CREATESTRUCT& cs) override;
+	virtual void OnUpdate(CView* /*pSender*/, LPARAM /*lHint*/, CObject* /*pHint*/) override;
 	HRESULT RemoteOutputGroupNameAtItem( CString& p_rstrGroupName, int p_iItem );
 	bool EditOutput(int p_iWhere);
 	bool AddOutput(int p_iWhere);
@@ -46,14 +46,14 @@ public:
 	int m_CurrentItem;
 
 #ifdef _DEBUG
-	virtual void AssertValid() const;
-	virtual void Dump(CDumpContext& dc) const;
+	virtual void AssertValid() const override;
+	virtual void Dump(CDumpContext& dc) const override;
 #endif
 
 	SVIODoc* m_pDocument;
 	SVIODoc* GetDocument();
 
-	virtual BOOL PreTranslateMessage(MSG* pMsg);
+	virtual BOOL PreTranslateMessage(MSG* pMsg) override;
 
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);

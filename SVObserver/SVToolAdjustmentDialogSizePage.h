@@ -52,7 +52,7 @@ public:
 
 
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	void Refresh( bool bSave = true );
 	void OnSelchangeCombo(ToolSizeAdjustTask::TSValues  mode);
 	void OnBnClickedButtonFormula(ToolSizeAdjustTask::TSValues  mode);

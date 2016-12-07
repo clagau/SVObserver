@@ -56,7 +56,7 @@ protected:
 	//! \param cs <in> create structure
 	//! \returns True on success
 	//************************************
-	virtual BOOL PreCreateWindow( CREATESTRUCT& cs );
+	virtual BOOL PreCreateWindow( CREATESTRUCT& cs ) override;
 
 	//************************************
 	//! The method is called to update the view
@@ -64,14 +64,14 @@ protected:
 	//! \param lHint <in> information to the modifications
 	//! \param pHint <in> object with information to the modifications
 	//************************************
-	virtual void OnUpdate( CView* pSender, LPARAM lHint, CObject* pHint );
+	virtual void OnUpdate( CView* pSender, LPARAM lHint, CObject* pHint ) override;
 #pragma endregion Protected
 
 #pragma region Private
 private:
 #ifdef _DEBUG
-	virtual void AssertValid() const;
-	virtual void Dump( CDumpContext& dc ) const;
+	virtual void AssertValid() const override;
+	virtual void Dump( CDumpContext& dc ) const override;
 #endif
 
 	//************************************
@@ -134,7 +134,7 @@ private:
 	//************************************
 	bool checkAllDependencies( BasicValueObject* pObject, bool ConfirmDelete ) const;
 
-	virtual BOOL PreTranslateMessage( MSG* pMsg );
+	virtual BOOL PreTranslateMessage( MSG* pMsg ) override;
 	afx_msg int OnCreate( LPCREATESTRUCT lpCreateStruct );
 	afx_msg void OnLButtonDblClk( UINT nFlags, CPoint point );
 	afx_msg void OnContextMenu( CWnd* pWnd, CPoint point );

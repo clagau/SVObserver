@@ -77,7 +77,7 @@ public:
 	//! \param Type <in> the type of refresh
 	//! \return SOK on success
 	//************************************
-	virtual HRESULT RefreshObject( const SVObjectClass* const pSender, RefreshObjectType Type );
+	 virtual HRESULT RefreshObject( const SVObjectClass* const pSender, RefreshObjectType Type ) override;
 
 	//************************************
 	//! The static method gets a root child object value

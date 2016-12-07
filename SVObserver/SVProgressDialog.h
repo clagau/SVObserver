@@ -41,7 +41,7 @@ public:
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(SVProgressDialog)
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
 	
@@ -49,9 +49,9 @@ public:
 protected:
 	// Generated message map functions
 	//{{AFX_MSG(SVProgressDialog)
-	virtual void OnCancel();
-	virtual void OnOK();
-	virtual BOOL OnInitDialog();
+	virtual void OnCancel() override;
+	virtual void OnOK() override;
+	virtual BOOL OnInitDialog() override;
 	//}}AFX_MSG
 	afx_msg LRESULT OnUpdateProgress( WPARAM wParam, LPARAM lParam);
 	afx_msg LRESULT OnUpdateText(WPARAM wParam, LPARAM lParam);

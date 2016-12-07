@@ -21,7 +21,7 @@ struct SVExtentFigureStruct
 	SVExtentFigureStruct();
 	SVExtentFigureStruct( const SVExtentFigureStruct &p_rsvValue );
 	SVExtentFigureStruct( RECT p_oRect );
-	virtual ~SVExtentFigureStruct();
+	~SVExtentFigureStruct();
 
 	const SVExtentFigureStruct& operator = ( const SVExtentFigureStruct &p_rsvValue );
 	const SVExtentFigureStruct& operator = ( RECT p_oRect );
@@ -29,7 +29,7 @@ struct SVExtentFigureStruct
 	const SVExtentFigureStruct& operator += ( const SVExtentPointStruct& p_rsvOffset );
 	const SVExtentFigureStruct& operator -= ( const SVExtentPointStruct& p_rsvOffset );
 
-	virtual HRESULT Initialize();
+	HRESULT Initialize();
 
 	HRESULT IsPointOverFigure( const SVExtentPointStruct& p_rPoint ) const;
 

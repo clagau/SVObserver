@@ -31,9 +31,9 @@ namespace Seidenader
 
 			// Operations
 		public:
-			virtual BOOL GetCheckState(	HTREEITEM hItem	);
+			BOOL GetCheckState(	HTREEITEM hItem	);
 
-			virtual BOOL SetCheckState(	HTREEITEM hItem, BOOL fCheck );
+			BOOL SetCheckState(	HTREEITEM hItem, BOOL fCheck );
 
 			// Overrides
 			// ClassWizard generated virtual function overrides

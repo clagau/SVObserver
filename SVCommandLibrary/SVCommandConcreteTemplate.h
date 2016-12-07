@@ -37,7 +37,7 @@ public:
 	SVCommandConcreteTemplate( SVCommandExecuteFunctor p_ExecuteFunctor );
 	virtual ~SVCommandConcreteTemplate();
 
-	virtual HRESULT Execute();
+	virtual HRESULT Execute() override;
 
 protected:
 	SVCommandExecuteFunctor m_ExecuteFunctor;

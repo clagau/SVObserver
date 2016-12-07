@@ -52,7 +52,7 @@ public:
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(SVExternalToolDlg)
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
 // Implementation
@@ -79,8 +79,8 @@ protected:
 
 	// Generated message map functions
 	//{{AFX_MSG(SVExternalToolDlg)
-	virtual BOOL OnInitDialog();
-	virtual void OnOK();
+	virtual BOOL OnInitDialog() override;
+	virtual void OnOK() override;
 	afx_msg void OnDetails();
 	afx_msg void OnDeleteAll();
 	afx_msg void OnDelete();
@@ -90,6 +90,6 @@ protected:
 	//}}AFX_MSG
     afx_msg LRESULT OnUpdateStatus(WPARAM, LPARAM);
 	DECLARE_MESSAGE_MAP()
-	virtual BOOL PreTranslateMessage(MSG* pMsg);
+	virtual BOOL PreTranslateMessage(MSG* pMsg) override;
 };
 

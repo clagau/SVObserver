@@ -101,7 +101,7 @@ protected:
 	// Parameter: void
 	// Returns:   void
 	//************************************
-	virtual void ZoomChanged();
+	virtual void ZoomChanged() override;
 #pragma endregion Protected Methods
 
 #pragma region Member variables

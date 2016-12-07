@@ -35,7 +35,7 @@ class SVToolAdjustmentDialogAnalyzerPageClass : public CPropertyPage
 protected:
 	//{{AFX_MSG(SVToolAdjustmentDialogAnalyzerPageClass)
 	afx_msg void OnButtonDetails();
-	virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog() override;
 	afx_msg void OnSelchangeCurrentAnalyzer();
 	afx_msg void OnResultButton();
 	afx_msg void OnPublishButton();
@@ -63,7 +63,7 @@ protected:
 	//******************************************************************************
 	//{{AFX_VIRTUAL(SVToolAdjustmentDialogAnalyzerPageClass)
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV
 	//}}AFX_VIRTUAL
 	//************************************
 	// Method:    OnSetActive
@@ -71,7 +71,7 @@ protected:
 	// Access:    public 
 	// Returns:   BOOL 
 	//************************************
-	virtual BOOL OnSetActive();
+	virtual BOOL OnSetActive() override;
 
 	//******************************************************************************
 	// Class Wizard Generated Dialog Data:

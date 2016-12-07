@@ -57,7 +57,7 @@ public:
 	void SetNAKMode(NakGeneration  NAKMode, int NAKPar);
 	virtual HRESULT GetChildObject( SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index = 0 ) const override;
 	
-	virtual HRESULT ObserverUpdate( const SVInspectionCompleteInfoStruct& p_rData );
+	virtual HRESULT ObserverUpdate( const SVInspectionCompleteInfoStruct& p_rData ) override;
 
 	BOOL Create();
 	BOOL Rebuild();

@@ -41,9 +41,9 @@ class SVObjectClass;
 					OutputDebugString( SVGUID( XCLASSID ).ToString().c_str() ); \
 					OutputDebugString( _T( "\n" ) ); \
 				} \
-				virtual SVGUID GetClassID() { return XCLASSID; } \
-				virtual SVObjectClass* Construct() { return new ( XCLASSNAME ); } \
-				virtual LPCTSTR GetClassName()	{ return #XCLASSNAME; } \
+				virtual SVGUID GetClassID() override { return XCLASSID; } \
+				virtual SVObjectClass* Construct() override { return new ( XCLASSNAME ); } \
+				virtual LPCTSTR GetClassName() override { return #XCLASSNAME; } \
 		};	\
 		XCLASSNAME##RegisterClass The##XCLASSNAME##Register; \
 		SVGUID XCLASSNAME::GetClassID() { return XCLASSID; } \

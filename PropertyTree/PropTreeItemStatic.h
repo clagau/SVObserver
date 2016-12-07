@@ -38,14 +38,14 @@ public:
 
 public:
 	// The attribute area needs drawing
-	virtual void DrawAttribute(CDC* pDC, const RECT& rc);
+	virtual void DrawAttribute(CDC* pDC, const RECT& rc) override;
 
 	// Retrieve the item's attribute value (in this case the CString)
-	virtual bool GetItemValue(CString& strVal);
+	virtual bool GetItemValue(CString& strVal) override;
     //virtual bool GetItemValue(VARIANT& vtVal);
 
 	// Set the item's attribute value
-	virtual bool SetItemValue(LPCTSTR lpszVal);
+	virtual bool SetItemValue(LPCTSTR lpszVal) override;
 
 protected:
 	CString		m_sAttribute;

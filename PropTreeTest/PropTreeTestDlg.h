@@ -24,7 +24,7 @@ public:
 	enum { IDD = IDD_PROPTREETEST_DIALOG };
 
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX) override;	// DDX/DDV support
 	void AddItemEdit( CString p_Name, CString p_Value, UINT p_ID );
 	void AddItemCombo( CString p_Name, CString p_Value, UINT p_ID );
 	void SetupTrigger();
@@ -35,7 +35,7 @@ protected:
 	SVRPropTree m_Tree;
 
 	// Generated message map functions
-	virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog() override;
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()

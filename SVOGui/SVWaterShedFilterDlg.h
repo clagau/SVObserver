@@ -28,7 +28,7 @@ namespace Seidenader
 			SVWatershedFilterDlg(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, const SVGUID& rFilterID, CWnd* pParent = nullptr);   // standard constructor
 			virtual ~SVWatershedFilterDlg();
 
-			virtual HRESULT SetInspectionData();
+			HRESULT SetInspectionData();
 
 			// Dialog Data
 			//{{AFX_DATA(SVWatershedFilterDlg)
@@ -49,15 +49,15 @@ namespace Seidenader
 			// ClassWizard generated virtual function overrides
 			//{{AFX_VIRTUAL(SVWatershedFilterDlg)
 		protected:
-			virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+			virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 			//}}AFX_VIRTUAL
 
 		protected:
 			// Generated message map functions
 			//{{AFX_MSG(SVWatershedFilterDlg)
-			virtual BOOL OnInitDialog();
-			virtual void OnOK();
-			virtual void OnCancel();
+			virtual BOOL OnInitDialog() override;
+			virtual void OnOK() override;
+			virtual void OnCancel() override;
 			afx_msg void OnSETVarRadio();
 			afx_msg void OnSelchangeSourceImageCombo();
 			//}}AFX_MSG

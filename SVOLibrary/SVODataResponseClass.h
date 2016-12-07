@@ -26,27 +26,27 @@ public:
 	SVODataResponseClass();
 	SVODataResponseClass(const SVODataResponseClass &rRequest);
 
-	virtual ~SVODataResponseClass();
+	~SVODataResponseClass();
 
-	virtual HRESULT Reset();
+	HRESULT Reset();
 
-	virtual bool IsValid() const;
-	virtual bool IsComplete() const;
+	bool IsValid() const;
+	bool IsComplete() const;
 
-	virtual HRESULT GetIsValid( bool &rbIsValid ) const;
-	virtual HRESULT SetIsValid( bool bIsValid );
+	HRESULT GetIsValid( bool &rbIsValid ) const;
+	HRESULT SetIsValid( bool bIsValid );
 
-	virtual HRESULT GetIsComplete( bool &rbIsComplete ) const;
-	virtual HRESULT SetIsComplete( bool bIsComplete );
+	HRESULT GetIsComplete( bool &rbIsComplete ) const;
+	HRESULT SetIsComplete( bool bIsComplete );
 
-	virtual HRESULT GetOwner( void **pvOwner ) const;
-	virtual HRESULT SetOwner( void *pvOwner );
+	HRESULT GetOwner( void **pvOwner ) const;
+	HRESULT SetOwner( void *pvOwner );
 
-	virtual HRESULT GetStartTick( SVClock::SVTimeStamp& p_rTick ) const;
-	virtual HRESULT SetStartTick( const SVClock::SVTimeStamp& p_rTick );
+	HRESULT GetStartTick( SVClock::SVTimeStamp& p_rTick ) const;
+	HRESULT SetStartTick( const SVClock::SVTimeStamp& p_rTick );
 
-	virtual HRESULT GetEndTick( SVClock::SVTimeStamp& p_rTick ) const;
-	virtual HRESULT SetEndTick( const SVClock::SVTimeStamp& p_rTick );
+	HRESULT GetEndTick( SVClock::SVTimeStamp& p_rTick ) const;
+	HRESULT SetEndTick( const SVClock::SVTimeStamp& p_rTick );
 
 
 

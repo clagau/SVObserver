@@ -18,11 +18,11 @@ struct SVExtentLineStruct
 {
 	SVExtentLineStruct();
 	SVExtentLineStruct( const SVExtentLineStruct &p_rsvValue );
-	virtual ~SVExtentLineStruct();
+	~SVExtentLineStruct();
 
 	const SVExtentLineStruct &operator=( const SVExtentLineStruct &p_rsvValue );
 
-	virtual HRESULT Initialize();
+	HRESULT Initialize();
 
 	SVExtentPointStructCArray m_svPointArray;
 	COLORREF m_dwColor;

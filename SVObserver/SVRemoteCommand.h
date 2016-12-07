@@ -34,8 +34,6 @@ public:
 	SVRemoteCommand();
 	virtual ~SVRemoteCommand();
 
-	virtual void FinalRelease();
-
 	void SetCommand( SVCommandTemplatePtr p_Command );
 
 	STDMETHOD (GetCommandType)(long* p_CommandType);

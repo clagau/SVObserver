@@ -23,6 +23,6 @@ public:
 
 	virtual ~SVCameraDataInputObject();
 
-	virtual HRESULT Read(_variant_t& p_rValue);
+	virtual HRESULT Read(_variant_t& p_rValue) override;
 };
 

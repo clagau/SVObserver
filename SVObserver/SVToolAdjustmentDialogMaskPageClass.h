@@ -47,7 +47,7 @@ protected:
 
 	// Generated message map functions
 	//{{AFX_MSG(SVToolAdjustmentDialogMaskPageClass)
-	virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog() override;
 	afx_msg void OnEditStaticMaskButton();
 	afx_msg void OnEditShapeMaskButton();
 	afx_msg void OnExportMaskButton();
@@ -67,8 +67,8 @@ protected:
 
 	//{{AFX_VIRTUAL(SVToolAdjustmentDialogMaskPageClass)
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV
-	virtual BOOL OnSetActive();
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV
+	virtual BOOL OnSetActive() override;
 	//}}AFX_VIRTUAL
 
 	//{{AFX_DATA(SVToolAdjustmentDialogMaskPageClass)

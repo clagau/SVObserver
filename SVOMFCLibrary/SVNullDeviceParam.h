@@ -22,7 +22,7 @@ public:
 	SVNullDeviceParam(SVDeviceParamEnum typeEnum);
 	SVNullDeviceParam(const SVNullDeviceParam& rhs);
 	virtual ~SVNullDeviceParam();
-	virtual SVClonable* CloneImpl() const;
+	virtual SVClonable* CloneImpl() const override;
 	SVNullDeviceParam& operator=(const SVNullDeviceParam& rhs);
 
 	static SVDeviceParam* CreateNew() { return new SVNullDeviceParam; }

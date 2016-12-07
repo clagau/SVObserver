@@ -44,7 +44,6 @@ END_MESSAGE_MAP()
 // SVOFileConfigApp construction
 
 SVOFileConfigApp::SVOFileConfigApp()
-: m_Inspection( NULL )
 {
 	// TODO: add construction code here,
 	// Place all significant initialization in InitInstance
@@ -122,37 +121,5 @@ BOOL SVOFileConfigApp::InitInstance()
 void SVOFileConfigApp::Serialize(CArchive& ar) 
 {
 	CWinApp::Serialize( ar );
-}
-
-void SVOFileConfigApp::LoadIODoc(LPCTSTR szFileName)
-{
-	CDocTemplate* pDocTemplate = NULL;
-	POSITION pos = GetFirstDocTemplatePosition();
-	if( pos )
-	{
-		pDocTemplate = GetNextDocTemplate( pos );
-		if( pDocTemplate )
-		{
-		   pDocTemplate->OpenDocumentFile( szFileName, FALSE ) ;
-		}
-	}
-}
-
-void SVOFileConfigApp::LoadIPDoc(LPCTSTR szFileName)
-{
-	CDocTemplate* pDocTemplate = NULL;
-	POSITION pos = GetFirstDocTemplatePosition();
-	if( pos )
-	{
-		pDocTemplate = GetNextDocTemplate( pos );
-		if( pDocTemplate )
-		{
-			pDocTemplate = GetNextDocTemplate( pos );
-			if( pDocTemplate )
-			{
-			  pDocTemplate->OpenDocumentFile( szFileName, FALSE ) ;
-			}
-		}
-	}
 }
 

@@ -25,12 +25,12 @@ public:
 protected:
 // Generated message map functions
 	//{{AFX_MSG(SVBlobAnalyzeFeatureDialogClass)
-	virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog() override;
 	afx_msg void OnButtonAdd();
 	afx_msg void OnButtonRemove();
 	afx_msg void OnButtonSetRange();
-	virtual void OnOK();
-	virtual void OnCancel();
+	virtual void OnOK() override;
+	virtual void OnCancel() override;
 	afx_msg void OnSetSortBtn();
 	afx_msg void OnAscending();
 	afx_msg void OnDestroy();
@@ -64,7 +64,7 @@ private:
 
 	//{{AFX_VIRTUAL(SVBlobAnalyzeFeatureDialogClass)
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV-Unterstützung
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV-Unterstützung
 	//}}AFX_VIRTUAL
 
 	//{{AFX_DATA(SVBlobAnalyzeFeatureDialogClass)

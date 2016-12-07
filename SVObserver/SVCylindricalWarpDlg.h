@@ -40,7 +40,7 @@ public:
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(SVCylindricalWarpDlg)
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
 // Implementation
@@ -54,7 +54,7 @@ protected:
 	SVToolAdjustmentDialogSheetClass*	m_pParentDialog;
 	// Generated message map functions
 	//{{AFX_MSG(SVCylindricalWarpDlg)
-	virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog() override;
 	afx_msg void OnSelchangeOrientationCombo();
 	afx_msg void OnDestroy();
 	afx_msg void OnSelchangeInterpolationModeCombo();

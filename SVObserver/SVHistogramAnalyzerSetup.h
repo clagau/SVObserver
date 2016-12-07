@@ -62,7 +62,7 @@ public:
 	enum { IDD = IDD_HISTOGRAM_ANALYZER_SETUP };
 
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 
 	DECLARE_MESSAGE_MAP()
 public:
@@ -103,7 +103,7 @@ public:
 	static const LPCTSTR c_255sz;
 	static const int c_zero = 0;
 	static const int c_255  = 255;
-	virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog() override;
 	SVSquare m_firstSquare;
 	SVSquare m_secondSquare;
 	SVSquare m_valleySquare;

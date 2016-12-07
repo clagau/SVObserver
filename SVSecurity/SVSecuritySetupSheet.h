@@ -55,12 +55,12 @@ public:
 	//{{AFX_VIRTUAL(SVSecuritySetupSheet)
 	public:
 	
-	virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog() override;
 	
-	virtual INT_PTR DoModal();
+	virtual INT_PTR DoModal() override;
 	protected:
 	
-	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam);
+	virtual BOOL OnCommand(WPARAM wParam, LPARAM lParam) override;
 	//}}AFX_VIRTUAL
 
 // Implementation

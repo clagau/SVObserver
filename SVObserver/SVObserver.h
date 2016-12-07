@@ -189,12 +189,12 @@ public:
 #pragma region AFX_VIRTUAL Methods
 	//{{AFX_VIRTUAL(SVObserverApp)
 	public:
-	virtual BOOL InitInstance();
-	virtual BOOL OnIdle(LONG lCount);
-	virtual CDocument* OpenDocumentFile(LPCTSTR FileName);
-	virtual void Serialize(CArchive& ar);
-	virtual int ExitInstance();
-	virtual int Run();
+	virtual BOOL InitInstance() override;
+	virtual BOOL OnIdle(LONG lCount) override;
+	virtual CDocument* OpenDocumentFile(LPCTSTR FileName) override;
+	virtual void Serialize(CArchive& ar) override;
+	virtual int ExitInstance() override;
+	virtual int Run() override;
 	//}}AFX_VIRTUAL
 #pragma endregion AFX_VIRTUAL Methods
 
@@ -203,11 +203,9 @@ public:
 
 public:
 	
-#pragma region virtual
-	virtual HRESULT OpenSVXFile( LPCTSTR PathName );
-	virtual SVIODoc* NewSVIODoc( LPCTSTR DocName, SVIOController& Controller );	
-	virtual SVIPDoc* NewSVIPDoc( LPCTSTR DocName, SVInspectionProcess& Inspection );
-#pragma endregion virtual
+	HRESULT OpenSVXFile( LPCTSTR PathName );
+	SVIODoc* NewSVIODoc( LPCTSTR DocName, SVIOController& Controller );	
+	SVIPDoc* NewSVIPDoc( LPCTSTR DocName, SVInspectionProcess& Inspection );
 
 	HRESULT  LoadConfiguration( unsigned long& ulSVOConfigVersion, BSTR bstrFileName, SVTreeType& p_rTree);
 

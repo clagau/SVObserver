@@ -25,16 +25,16 @@ namespace Seidenader { namespace TriggerHandling {
 		SVSoftwareTriggerClass(LPCTSTR deviceName);
 		virtual ~SVSoftwareTriggerClass();
 
-		virtual HRESULT RegisterCallback( SVOCallbackPtr pCallback, void *pvOwner, void *pvCaller );
-		virtual HRESULT UnregisterCallback( SVOCallbackPtr pCallback, void *pvOwner, void *pvCaller );
+		virtual HRESULT RegisterCallback( SVOCallbackPtr pCallback, void *pvOwner, void *pvCaller ) override;
+		virtual HRESULT UnregisterCallback( SVOCallbackPtr pCallback, void *pvOwner, void *pvCaller ) override;
 	
 		static HRESULT CALLBACK TriggerCallback(TriggerParameters triggerparams);
 		static HRESULT CALLBACK TriggerCompleteCallback(TriggerParameters triggerparams);
 
-		virtual void RegisterAcquistionInitiator( SVAcquisitionInitiator& rFunc); 
+		void RegisterAcquistionInitiator( SVAcquisitionInitiator& rFunc); 
 
-		virtual HRESULT EnableInternalTrigger();
-		virtual HRESULT FireAcquisitionTrigger();
+		virtual HRESULT EnableInternalTrigger() override;
+		HRESULT FireAcquisitionTrigger();
 	};
 
 } /* namespace TriggerHandling */ } /* namespace Seidenader */

@@ -21,23 +21,23 @@ struct SVImageBufferInterface
 	SVImageBufferInterface();
 	SVImageBufferInterface( const SVImageBufferInterface& p_rObject );
 	SVImageBufferInterface( SVSmartHandlePointer p_ImageHandle, const SVDataManagerHandle& p_rIndexHandle );
-	virtual ~SVImageBufferInterface();
+	~SVImageBufferInterface();
 
 	const SVImageBufferInterface& operator=( const SVImageBufferInterface& p_rObject );
 
-	virtual void clear();
+	void clear();
 
-	virtual HRESULT Assign( SVSmartHandlePointer p_ImageHandle, const SVDataManagerHandle& p_rIndexHandle );
+	HRESULT Assign( SVSmartHandlePointer p_ImageHandle, const SVDataManagerHandle& p_rIndexHandle );
 
-	virtual unsigned char* GetBufferAddress() const;
+	unsigned char* GetBufferAddress() const;
 
-	virtual const SVClock::SVTimeStamp& GetStartFrameTimeStamp() const;
-	virtual void SetStartFrameTimeStamp();
-	virtual void SetStartFrameTimeStamp( const SVClock::SVTimeStamp& p_rTimeStamp );
+	const SVClock::SVTimeStamp& GetStartFrameTimeStamp() const;
+	void SetStartFrameTimeStamp();
+	void SetStartFrameTimeStamp( const SVClock::SVTimeStamp& p_rTimeStamp );
 
-	virtual const SVClock::SVTimeStamp& GetEndFrameTimeStamp() const;
-	virtual void SetEndFrameTimeStamp();
-	virtual void SetEndFrameTimeStamp( const SVClock::SVTimeStamp& p_rTimeStamp );
+	const SVClock::SVTimeStamp& GetEndFrameTimeStamp() const;
+	void SetEndFrameTimeStamp();
+	void SetEndFrameTimeStamp( const SVClock::SVTimeStamp& p_rTimeStamp );
 
 	SVSmartHandlePointer m_ImageHandle;
 	SVDataManagerHandle m_IndexHandle;

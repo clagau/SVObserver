@@ -39,15 +39,15 @@ namespace Seidenader { namespace GridCtrlLibrary
 		CGridURLCell();
 		virtual ~CGridURLCell();
 
-		virtual BOOL     Draw(CDC* pDC, int nRow, int nCol, CRect rect, BOOL bEraseBkgnd = TRUE);
-		virtual BOOL     Edit(int nRow, int nCol, CRect rect, CPoint point, UINT nID, UINT nChar);
-		virtual LPCTSTR  GetTipText() { return nullptr; }
+		virtual BOOL     Draw(CDC* pDC, int nRow, int nCol, CRect rect, BOOL bEraseBkgnd = TRUE) override;
+		virtual BOOL     Edit(int nRow, int nCol, CRect rect, CPoint point, UINT nID, UINT nChar) override;
+		virtual LPCTSTR  GetTipText() const override { return nullptr; }
 		void SetAutoLaunchUrl(BOOL bLaunch = TRUE) { m_bLaunchUrl = bLaunch;	}
 		BOOL GetAutoLaunchUrl() { return m_bLaunchUrl;	}
 
 	protected:
-		virtual BOOL OnSetCursor();
-		virtual void OnClick(CPoint PointCellRelative);
+		virtual BOOL OnSetCursor() override;
+		virtual void OnClick(CPoint PointCellRelative) override;
 
 		BOOL HasUrl(CString str);
 		BOOL OverURL(CPoint& pt, CString& strURL);

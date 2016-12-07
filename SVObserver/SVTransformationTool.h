@@ -22,18 +22,18 @@ public:
 	SVTransformationToolClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVTRANSFORMATIONTOOL );
 	virtual ~SVTransformationToolClass();
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
-	virtual HRESULT ResetObject();
+	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
+	virtual HRESULT ResetObject() override;
 
-	virtual SVTaskObjectClass *GetObjectAtPoint( const SVExtentPointStruct &p_rsvPoint );
+	virtual SVTaskObjectClass *GetObjectAtPoint( const SVExtentPointStruct &p_rsvPoint ) override;
 	virtual bool DoesObjectHaveExtents() const override;
 
-	virtual HRESULT IsInputImage( SVImageClass *p_psvImage );
+	virtual HRESULT IsInputImage( SVImageClass *p_psvImage ) override;
 
 	virtual SVStaticStringValueObjectClass* GetInputImageNames() override;
 
 protected:
-	virtual HRESULT UpdateImageWithExtent( unsigned long p_Index );
+	virtual HRESULT UpdateImageWithExtent( unsigned long p_Index ) override;
 
 private:
 	// NOTE:

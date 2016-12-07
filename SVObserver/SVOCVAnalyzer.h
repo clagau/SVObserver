@@ -27,20 +27,20 @@ public:
 
 	virtual ~SVOCVAnalyzerClass();
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
+	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
 
-	virtual HRESULT ResetObject();
+	virtual HRESULT ResetObject() override;
 
 	SVResultClass* GetResultObject();
 
-	virtual BOOL OnValidate();
+	virtual BOOL OnValidate() override;
 
 	virtual bool IsPtOverResult( const POINT& rPoint ) override;
-	virtual void DisplayAnalyzerResult();
+	virtual void DisplayAnalyzerResult() override;
 	virtual bool resetAllObjects( bool shouldNotifyFriends, bool silentReset ) override;
 
 protected:
-	virtual BOOL onRun( SVRunStatusClass& RRunStatus );
+	virtual BOOL onRun( SVRunStatusClass& RRunStatus ) override;
 
 private:
 	void init();

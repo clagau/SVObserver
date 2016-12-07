@@ -493,26 +493,6 @@ HRESULT SVAcquisitionClass::GetLightReferenceValueStep( unsigned long ulType, un
 	return hrOk;
 }
 
-HRESULT SVAcquisitionClass::WriteCameraRegister( unsigned long ulAddress, unsigned long ulValue )
-{
-	return E_NOTIMPL;
-}
-
-HRESULT SVAcquisitionClass::ReadCameraRegister( unsigned long ulAddress, unsigned long& rulValue )
-{
-	return E_NOTIMPL;
-}
-
-HRESULT SVAcquisitionClass::WriteCameraRegisterBlock( unsigned long ulAddress, unsigned long ulCount, unsigned long* paulValue )
-{
-	return E_NOTIMPL;
-}
-
-HRESULT SVAcquisitionClass::ReadCameraRegisterBlock( unsigned long ulAddress, unsigned long ulCount, unsigned long* paulValue )
-{
-	return E_NOTIMPL;
-}
-
 HRESULT SVAcquisitionClass::SetStandardCameraParameter( const SVDeviceParamWrapper& rwParam )
 {
 	return E_NOTIMPL;
@@ -797,12 +777,6 @@ HRESULT SVAcquisitionClass::GetHardwareDeviceCapabilities( SVDeviceParamCollecti
 	return S_OK;
 }
 
-HRESULT SVAcquisitionClass::SetHardwareDeviceCapabilities( const SVDeviceParamCollection& rDeviceParams )
-{
-	ASSERT(false);
-	return S_FALSE;	// derived class needs to implement this function
-}
-
 SVDeviceParamCollection& SVAcquisitionClass::HardwareCapabilities()
 {
 	return m_DeviceParams;
@@ -844,38 +818,9 @@ HRESULT SVAcquisitionClass::SingleGrab( SVSmartHandlePointer p_SingleGrabHandle 
 	return l_Status;
 }
 
-HRESULT SVAcquisitionClass::AllocDigitizer( SVDeviceParamCollection& rDevice )
-{
-	return E_NOTIMPL;
-}
-
 // do nothing, just a stub
 void SVAcquisitionClass::ClearDeviceIdentifier()
 {
-}
-
-BOOL SVAcquisitionClass::GetCurrentIndex( SVDataManagerHandle& rDMIndexHandle ) const
-{
-	BOOL l_Status = !( m_AcquisitionBuffersPtr.empty() );
-
-	if( l_Status )
-	{
-		l_Status = m_AcquisitionBuffersPtr->GetCurrentIndex( rDMIndexHandle );
-	}
-
-	return l_Status;
-}
-
-BOOL SVAcquisitionClass::GetCurrentIndex( SVDataManagerHandle& rDMIndexHandle, SVDataManagerLockTypeEnum p_LockType ) const
-{
-	BOOL l_Status = !( m_AcquisitionBuffersPtr.empty() );
-
-	if( l_Status )
-	{
-		l_Status = m_AcquisitionBuffersPtr->GetCurrentIndex( rDMIndexHandle, p_LockType );
-	}
-
-	return l_Status;
 }
 
 BOOL SVAcquisitionClass::SetCurrentIndex( const SVDataManagerHandle& rDMIndexHandle )

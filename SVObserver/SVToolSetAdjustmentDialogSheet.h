@@ -41,7 +41,7 @@ public:
 	virtual ~SVToolSetAdjustmentDialogSheetClass();
 
 protected:
-	virtual void init( SVConditionalClass& rCondition );
+	void init( SVConditionalClass& rCondition );
 	void addPages();
 
     afx_msg void OnOK();
@@ -52,7 +52,7 @@ protected:
 //******************************************************************************
 	//{{AFX_VIRTUAL(SVToolSetAdjustmentDialogSheetClass)
 	public:
-	virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog() override;
 	//}}AFX_VIRTUAL
 
 //******************************************************************************

@@ -36,22 +36,22 @@ public:
 	void AppendInputObjects();
 	void RemoveOutputObject( SVOutObjectInfoStruct* pOutObject );
 
-	virtual void GetAllInputObjects();
-	virtual void Persist(SVObjectWriter& writer);
+	virtual void GetAllInputObjects() override;
+	virtual void Persist(SVObjectWriter& writer) override;
 
-	virtual SVTaskObjectClass* GetObjectAtPoint( const SVExtentPointStruct &p_rsvPoint );
+	virtual SVTaskObjectClass* GetObjectAtPoint( const SVExtentPointStruct &p_rsvPoint ) override;
 
-	virtual HRESULT IsInputImage( SVImageClass* p_psvImage );
+	virtual HRESULT IsInputImage( SVImageClass* p_psvImage ) override;
 
 	// Routing Version of Validate
 	// Validates Local Scope and all owned objects
-	virtual BOOL Validate();
+	virtual BOOL Validate() override;
 
 	// Non Routing Version of Validate
 	// validates only Local Scope
-	virtual BOOL OnValidate();
+	virtual BOOL OnValidate() override;
 
-	virtual BOOL CloseObject();
+	virtual BOOL CloseObject() override;
 
 	virtual HRESULT GetChildObject( SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index = 0 ) const override;
 
@@ -69,16 +69,16 @@ public:
 	int Add( SVTaskObjectClass* pTaskObject, bool atBegin = false );
 	HRESULT RemoveChild( SVTaskObjectClass* pChildObject );	
 
-	virtual BOOL SetObjectDepth( int NewObjectDepth );
-	virtual BOOL SetObjectDepthWithIndex( int NewObjectDepth, int NewLastSetIndex );
-	virtual BOOL SetImageDepth( long lDepth );
+	virtual BOOL SetObjectDepth( int NewObjectDepth ) override;
+	virtual BOOL SetObjectDepthWithIndex( int NewObjectDepth, int NewLastSetIndex ) override;
+	virtual BOOL SetImageDepth( long lDepth ) override;
 
-	virtual void SetInvalid();
-	virtual void SetDisabled();
+	virtual void SetInvalid() override;
+	virtual void SetDisabled() override;
 
 	const SVString checkName( LPCTSTR ToolName ) const;
 
-	virtual HRESULT CollectOverlays( SVImageClass* p_Image, SVExtentMultiLineStructCArray &p_MultiLineArray );
+	virtual HRESULT CollectOverlays( SVImageClass* p_Image, SVExtentMultiLineStructCArray &p_MultiLineArray ) override;
 
 	/// The method destroys a child object. 
 	/// \param pTaskObject [in] object to destroy
@@ -111,22 +111,22 @@ public:
 
 #pragma region protected methods
 protected:
-	virtual void DeleteAt( int Index, int Count = 1 );
+	void DeleteAt( int Index, int Count = 1 );
 	void DeleteAll();
 
-	virtual HRESULT onCollectOverlays(SVImageClass* p_Image, SVExtentMultiLineStructCArray &p_MultiLineArray );
+	virtual HRESULT onCollectOverlays(SVImageClass* p_Image, SVExtentMultiLineStructCArray &p_MultiLineArray ) override;
 
-	virtual SVObjectClass* UpdateObject( const GUID &friendGuid, SVObjectClass* p_psvObject, SVObjectClass* p_psvNewOwner );
+	virtual SVObjectClass* UpdateObject( const GUID &friendGuid, SVObjectClass* p_psvObject, SVObjectClass* p_psvNewOwner ) override;
 
 	// Direct Method Call
 	// NOTE:
 	// Use onRun() to implement your special updating!
 	// Override this only if you have to reroute the call!
 	// NEVER call base class Run()! 
-	virtual BOOL Run( SVRunStatusClass& RRunStatus );
+	virtual BOOL Run( SVRunStatusClass& RRunStatus ) override;
 
-	virtual SVObjectPtrDeque GetPreProcessObjects() const;
-	virtual SVObjectPtrDeque GetPostProcessObjects() const;
+	virtual SVObjectPtrDeque GetPreProcessObjects() const override;
+	virtual SVObjectPtrDeque GetPostProcessObjects() const override;
 
 	virtual bool resetAllOutputListObjects( bool shouldNotifyFriends, bool silentReset ) override;
 

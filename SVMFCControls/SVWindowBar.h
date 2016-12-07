@@ -34,9 +34,9 @@ namespace Seidenader
 			SVWindowBarClass();
 			virtual ~SVWindowBarClass();
 			virtual BOOL Create( CWnd* pParentWnd, DWORD dwStyle, UINT nID );
-			virtual void OnUpdateCmdUI( CFrameWnd* pTarget, BOOL bDisableIfNoHndler );
-			virtual CSize CalcFixedLayout( BOOL bStretch, BOOL bHorz );
-			virtual CSize CalcDynamicLayout( int nLength, DWORD dwMode );
+			virtual void OnUpdateCmdUI( CFrameWnd* pTarget, BOOL bDisableIfNoHndler ) override;
+			virtual CSize CalcFixedLayout( BOOL bStretch, BOOL bHorz ) override;
+			virtual CSize CalcDynamicLayout( int nLength, DWORD dwMode ) override;
 
 			//******************************************************************************
 			// Class Wizard Generated Virtual Function(s):
@@ -45,9 +45,9 @@ namespace Seidenader
 			// Vom Klassen-Assistenten generierte virtuelle Funktionsüberschreibungen
 			//{{AFX_VIRTUAL(SVWindowBarClass)
 		public:
-			virtual BOOL Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext = nullptr);
+			virtual BOOL Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext = nullptr) override;
 		protected:
-			virtual void CalcWindowRect(LPRECT lpClientRect, UINT nAdjustType = adjustBorder);
+			virtual void CalcWindowRect(LPRECT lpClientRect, UINT nAdjustType = adjustBorder) override;
 			//}}AFX_VIRTUAL
 
 

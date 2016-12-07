@@ -27,7 +27,7 @@ public:
 	SVMatroxBuffer& GetBuffer();
 
 protected:
-	virtual HRESULT SetHandleData( const SVImageBufferHandleStruct& p_rObject );
+	virtual HRESULT SetHandleData( const SVImageBufferHandleStruct& p_rObject ) override;
 
 	SVMatroxBuffer m_Buffer;
 

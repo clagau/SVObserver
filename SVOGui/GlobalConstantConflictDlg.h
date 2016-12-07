@@ -34,9 +34,9 @@ namespace Seidenader { namespace SVOGui
 	protected:
 		DECLARE_MESSAGE_MAP()
 
-		virtual void DoDataExchange(CDataExchange* pDX);
+		virtual void DoDataExchange(CDataExchange* pDX) override;
 		afx_msg void OnGridClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/);
-		virtual BOOL OnInitDialog();
+		virtual BOOL OnInitDialog() override;
 
 		void LoadGlobalData();
 		void setGridGlobalData(const SvOi::GlobalConstantData& rGlobalData, int RowIndex, int& rColumnIndex );

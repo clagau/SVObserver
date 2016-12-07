@@ -45,7 +45,7 @@ public:
 	enum { IDD = IDD_RANGE_X_DIALOG };
 
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV-Unterstützung
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV-Unterstützung
 
 	DECLARE_MESSAGE_MAP()
 public:
@@ -58,7 +58,7 @@ public:
 
 	afx_msg void OnBnClickedOk();
 	afx_msg void OnBnClickedCancel();
-	virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog() override;
 	afx_msg void OnBnClickedFailHighIndirect();
 	afx_msg void OnBnClickedWarnlHighIndirect();
 	afx_msg void OnBnClickedWarnLowIndirect();

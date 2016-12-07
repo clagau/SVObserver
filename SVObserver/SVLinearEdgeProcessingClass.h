@@ -22,12 +22,12 @@ public:
 	SVLinearEdgeProcessingClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVLINEAREDGEPROCESSING );
 	virtual ~SVLinearEdgeProcessingClass();
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct *PCreateStructure);
+	virtual BOOL CreateObject( SVObjectLevelCreateStruct *PCreateStructure) override;
 
-	virtual HRESULT ResetObject();
+	virtual HRESULT ResetObject() override;
 
-	virtual BOOL OnValidate();
-	virtual BOOL onRun( SVRunStatusClass &p_rsvRunStatus );
+	virtual BOOL OnValidate() override;
+	virtual BOOL onRun( SVRunStatusClass &p_rsvRunStatus ) override;
 
 	SVImageClass*             GetInputImage();
 	SVDoubleValueObjectClass* GetInputMinThreshold();

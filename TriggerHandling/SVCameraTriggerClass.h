@@ -28,18 +28,18 @@ namespace Seidenader { namespace TriggerHandling {
 
 		void SetSoftwareTriggerDevice(SVSoftwareTriggerClass* pSoftwareTrigger);
 
-		virtual HRESULT Destroy();
+		virtual HRESULT Destroy() override;
 
-		virtual HRESULT Start();
-		virtual HRESULT Stop();
+		virtual HRESULT Start() override;
+		virtual HRESULT Stop() override;
 
 		// for Software Trigger Emulation
 		void RegisterAcquistionInitiator(SVAcquisitionInitiator& rFunc);
-		virtual HRESULT EnableInternalTrigger();
+		virtual HRESULT EnableInternalTrigger() override;
 		HRESULT FireAcquisitionTrigger();
 
-		virtual HRESULT RegisterCallback(SVOCallbackPtr pCallback, void *pvOwner, void *pvCaller);
-		virtual HRESULT UnregisterCallback(SVOCallbackPtr pCallback, void *pvOwner, void *pvCaller);
+		virtual HRESULT RegisterCallback(SVOCallbackPtr pCallback, void *pvOwner, void *pvCaller) override;
+		virtual HRESULT UnregisterCallback(SVOCallbackPtr pCallback, void *pvOwner, void *pvCaller) override;
 	
 		static HRESULT CALLBACK SoftwareTriggerCompleteCallback(void *p_pvOwner, void *p_pvData, void * p_pvResponse);
 		static HRESULT CALLBACK TriggerCallback(TriggerParameters triggerparams);

@@ -37,26 +37,26 @@ public:
 
 	BOOL CheckExistence( int Index = -1 );
 
-	virtual int GetSize() const;
+	int GetSize() const;
 
-	virtual SVOutObjectInfoStruct* GetAt( int p_iIndex );
+	SVOutObjectInfoStruct* GetAt( int p_iIndex );
 
-	virtual int  Add( SVOutObjectInfoStruct* );
-	virtual void InsertAt( int nIndex, SVOutObjectInfoStruct* POutObjectInfo );
-	virtual SVOutObjectInfoStruct*& ElementAt( int p_iIndex );
+	int  Add( SVOutObjectInfoStruct* );
+	void InsertAt( int nIndex, SVOutObjectInfoStruct* POutObjectInfo );
+	SVOutObjectInfoStruct*& ElementAt( int p_iIndex );
 
-	virtual void RemoveAt( int nIndex );
-	virtual void RemoveAll();
+	void RemoveAt( int nIndex );
+	void RemoveAll();
 
 	// for those that don't care about arrays (e.g. Publish List):
-	virtual void GetSetAttributesList( UINT uAttributeMask, SVOutputInfoListClass* pFillList );
-	virtual void GetAllowedAttributesList( UINT uAttributeMask, SVOutputInfoListClass* pFillList );	// same for all elements of an array; array version unnecessary
+	void GetSetAttributesList( UINT uAttributeMask, SVOutputInfoListClass* pFillList );
+	void GetAllowedAttributesList( UINT uAttributeMask, SVOutputInfoListClass* pFillList );	// same for all elements of an array; array version unnecessary
 
 	// for those that do care about arrays (e.g. Results List):
-	virtual void GetSetAttributesList( UINT uAttributeMask, SVObjectReferenceVector&  rvecObjects );
-	virtual void GetObjectReferenceList( SVObjectReferenceVector&  rvecObjects );
+	void GetSetAttributesList( UINT uAttributeMask, SVObjectReferenceVector&  rvecObjects );
+	void GetObjectReferenceList( SVObjectReferenceVector&  rvecObjects );
 
-	virtual bool HasDependents();
+	bool HasDependents();
 
 protected:
 	SVOutObjectInfoStructPtrArray m_svObjectArray;

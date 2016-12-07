@@ -19,13 +19,13 @@ class SVEnvironmentSettingsDialogClass : public CDialog
 {
 	//{{AFX_VIRTUAL(SVEnvironmentSettingsDialogClass)
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV-Unterstützung
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV-Unterstützung
 	//}}AFX_VIRTUAL
 
 	protected:
 	//{{AFX_MSG(SVEnvironmentSettingsDialogClass)
-	virtual BOOL OnInitDialog();
-	virtual void OnOK();
+	virtual BOOL OnInitDialog() override;
+	virtual void OnOK() override;
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 

@@ -33,7 +33,7 @@ public:
 	};
 
 	SVToolExtentClass();
-	virtual ~SVToolExtentClass();
+	~SVToolExtentClass();
 
 	inline HRESULT Initialize();
 
@@ -59,20 +59,20 @@ public:
 
 	HRESULT UpdateImageWithExtent( unsigned long p_ulIndex, SVToolExtentTypeEnum p_ToolExtentType );
 
-	virtual SVExtentTranslationEnum GetTranslation();
-	virtual HRESULT SetTranslation( SVExtentTranslationEnum p_eTranslation );
-	virtual HRESULT SetTranslation( SVExtentTranslationEnum p_eTranslation, long p_DataIndex );
+	SVExtentTranslationEnum GetTranslation();
+	HRESULT SetTranslation( SVExtentTranslationEnum p_eTranslation );
+	HRESULT SetTranslation( SVExtentTranslationEnum p_eTranslation, long p_DataIndex );
 
-	virtual HRESULT GetExtentShape( SVExtentPropertyEnum p_eProperty, SVExtentShapeEnum &p_reValue ) const;
+	HRESULT GetExtentShape( SVExtentPropertyEnum p_eProperty, SVExtentShapeEnum &p_reValue ) const;
 
-	virtual HRESULT GetExtentObject( SVExtentPropertyEnum p_eProperty, SVValueObjectClass *&p_rpsvValue ) const;
-	virtual HRESULT SetExtentObject( SVExtentPropertyEnum p_eProperty, SVValueObjectClass *p_psvValue );
+	HRESULT GetExtentObject( SVExtentPropertyEnum p_eProperty, SVValueObjectClass *&p_rpsvValue ) const;
+	HRESULT SetExtentObject( SVExtentPropertyEnum p_eProperty, SVValueObjectClass *p_psvValue );
 
-	virtual HRESULT GetExtentValue( SVExtentPropertyEnum p_eProperty, VARIANT& p_rValue ) const;
-	virtual HRESULT SetExtentValue( SVExtentPropertyEnum p_eProperty, long p_DataIndex, const _variant_t& p_rValue );
+	HRESULT GetExtentValue( SVExtentPropertyEnum p_eProperty, VARIANT& p_rValue ) const;
+	HRESULT SetExtentValue( SVExtentPropertyEnum p_eProperty, long p_DataIndex, const _variant_t& p_rValue );
 
-	virtual HRESULT GetExtentPropertyInfo( SVExtentPropertyEnum p_eProperty, SVExtentPropertyInfoStruct& p_rInfo ) const;
-	virtual HRESULT SetExtentPropertyInfo( SVExtentPropertyEnum p_eProperty, const SVExtentPropertyInfoStruct& p_rInfo );
+	HRESULT GetExtentPropertyInfo( SVExtentPropertyEnum p_eProperty, SVExtentPropertyInfoStruct& p_rInfo ) const;
+	HRESULT SetExtentPropertyInfo( SVExtentPropertyEnum p_eProperty, const SVExtentPropertyInfoStruct& p_rInfo );
 
 	
 //- GetImageExtent -----------------------------------------------------------
@@ -80,11 +80,11 @@ public:
 //- and the SVImageExtentClass.  This function appears to attempt to translate  
 //- between the two.  Translating and copying from the SVToolExtentClass based 
 //- structure into the SVImageExtentClass based structure. -------------------
-	virtual HRESULT GetImageExtent( SVImageExtentClass &p_rsvImageExtent )const ;
+	HRESULT GetImageExtent( SVImageExtentClass &p_rsvImageExtent )const ;
 
-	virtual HRESULT GetImageExtent( unsigned long p_ulIndex, SVImageExtentClass &p_rsvImageExtent ) const;
-	virtual HRESULT SetImageExtent( unsigned long p_ulIndex, SVImageExtentClass p_svImageExtent );
-	virtual HRESULT GetFilteredImageExtentPropertyList( SVExtentPropertyListType& p_rPropertyList );
+	HRESULT GetImageExtent( unsigned long p_ulIndex, SVImageExtentClass &p_rsvImageExtent ) const;
+	HRESULT SetImageExtent( unsigned long p_ulIndex, SVImageExtentClass p_svImageExtent );
+	HRESULT GetFilteredImageExtentPropertyList( SVExtentPropertyListType& p_rPropertyList );
 
 	// ******* Begin Source Extent Data
 	// *
@@ -93,14 +93,14 @@ public:
 	// *
 	// *******
 
-	virtual HRESULT GetRootOffsetData( SVExtentOffsetStruct& p_rsvOffsetData );
-	virtual HRESULT GetSelectedOffsetData( SVExtentOffsetStruct& p_rsvOffsetData );
-	virtual HRESULT UpdateOffsetDataToImage( SVExtentOffsetStruct& p_rsvOffsetData, SVImageClass* p_svToolImage );
-	virtual HRESULT UpdateOffsetData( bool p_bForceUpdate );
-	virtual HRESULT UpdateOffsetData( bool p_bForceUpdate, SVImageClass* p_svToolImage );
-	virtual HRESULT TranslatePointToSource( SVExtentPointStruct p_svIn, SVExtentPointStruct& p_rsvOut );
-	virtual HRESULT TranslatePositionPointToSource( SVExtentPointStruct& p_rsvOut );
-	virtual HRESULT GetAuxiliaryDrawTypeString( CString& p_strDrawType );
+	HRESULT GetRootOffsetData( SVExtentOffsetStruct& p_rsvOffsetData );
+	HRESULT GetSelectedOffsetData( SVExtentOffsetStruct& p_rsvOffsetData );
+	HRESULT UpdateOffsetDataToImage( SVExtentOffsetStruct& p_rsvOffsetData, SVImageClass* p_svToolImage );
+	HRESULT UpdateOffsetData( bool p_bForceUpdate );
+	HRESULT UpdateOffsetData( bool p_bForceUpdate, SVImageClass* p_svToolImage );
+	HRESULT TranslatePointToSource( SVExtentPointStruct p_svIn, SVExtentPointStruct& p_rsvOut );
+	HRESULT TranslatePositionPointToSource( SVExtentPointStruct& p_rsvOut );
+	HRESULT GetAuxiliaryDrawTypeString( CString& p_strDrawType );
 
 	// ******* End Source Extent Data
 

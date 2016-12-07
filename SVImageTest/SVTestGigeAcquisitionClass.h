@@ -25,17 +25,17 @@ public:
 	SVTestGigeAcquisitionClass(SVTestAcquisitionSubsystem& p_rSubsystem, unsigned long p_hDigitizer);
 	virtual ~SVTestGigeAcquisitionClass();
 
-	virtual HRESULT ReadCameraFile( const SVString&);
+	virtual HRESULT ReadCameraFile( const SVString&) override;
 
-	virtual HRESULT IsValidCameraFileParameters( SVDeviceParamCollection& rDeviceParams );
-	virtual bool CameraMatchesCameraFile();
+	virtual HRESULT IsValidCameraFileParameters( SVDeviceParamCollection& rDeviceParams ) override;
+	virtual bool CameraMatchesCameraFile() override;
 	
-	virtual HRESULT SetDeviceParameters( const SVDeviceParamCollection& rDeviceParams );
-	virtual HRESULT InitializeDevice( const SVDeviceParamCollection& rDeviceParams );
+	virtual HRESULT SetDeviceParameters( const SVDeviceParamCollection& rDeviceParams ) override;
+	virtual HRESULT InitializeDevice( const SVDeviceParamCollection& rDeviceParams ) override;
 
-	virtual HRESULT SetStandardCameraParameter( const SVDeviceParamWrapper& rw );
+	virtual HRESULT SetStandardCameraParameter( const SVDeviceParamWrapper& rw ) override;
 
-	virtual bool StartAcquire(SVCameraPage& p_rDisplay);
-	virtual void StopAcquire();
+	virtual bool StartAcquire(SVCameraPage& p_rDisplay) override;
+	virtual void StopAcquire() override;
 };
 

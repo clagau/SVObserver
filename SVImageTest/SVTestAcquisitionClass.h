@@ -31,34 +31,30 @@ public:
 	SVTestAcquisitionClass( SVTestAcquisitionSubsystem& p_rSubsystem, unsigned long p_hDigitizer );
 	virtual ~SVTestAcquisitionClass();
 
-	virtual SVClock::SVTimeStamp GetTimeStamp() const;
+	virtual SVClock::SVTimeStamp GetTimeStamp() const override;
 	
-	virtual unsigned long GetBufferWidth() const;
-	virtual unsigned long GetBufferHeight() const;
-	virtual int GetBufferFormat() const;
+	virtual unsigned long GetBufferWidth() const override;
+	virtual unsigned long GetBufferHeight() const override;
+	virtual int GetBufferFormat() const override;
 
-	virtual HRESULT GetNextBuffer( SVImageBufferInterface& p_rBuffer );
-	virtual HRESULT UpdateWithCompletedBuffer( const SVImageBufferInterface& p_rBuffer );
+	virtual HRESULT GetNextBuffer( SVImageBufferInterface& p_rBuffer ) override;
+	virtual HRESULT UpdateWithCompletedBuffer( const SVImageBufferInterface& p_rBuffer ) override;
 
 	virtual HRESULT ReadCameraFile( const SVString& rFilename );
 
-	virtual HRESULT GetDeviceParameters( SVDeviceParamCollection& rDeviceParams );
+	HRESULT GetDeviceParameters( SVDeviceParamCollection& rDeviceParams );
 	virtual HRESULT SetDeviceParameters( const SVDeviceParamCollection& rDeviceParams );
 
 	virtual HRESULT IsValidCameraFileParameters( SVDeviceParamCollection& rDeviceParams );
-	virtual HRESULT GetCameraFileParameters( SVDeviceParamCollection& rDeviceParams );
+	HRESULT GetCameraFileParameters( SVDeviceParamCollection& rDeviceParams );
 
 	virtual bool CameraMatchesCameraFile();
 	
-	virtual HRESULT WriteCameraRegister( unsigned long ulAddress, unsigned long ulValue );
-	virtual HRESULT ReadCameraRegister( unsigned long ulAddress, unsigned long& rulValue );
-	virtual HRESULT WriteCameraRegisterBlock( unsigned long ulAddress, unsigned long ulCount, unsigned long* paulValue );
-	virtual HRESULT ReadCameraRegisterBlock( unsigned long ulAddress, unsigned long ulCount, unsigned long* paulValue );
 	virtual HRESULT SetStandardCameraParameter( const SVDeviceParamWrapper& rw );
 
 	virtual HRESULT InitializeDevice( const SVDeviceParamCollection& rParams );
 	
-	virtual bool IsOnline();
+	bool IsOnline();
 	virtual bool StartAcquire(SVCameraPage& p_rDisplay);
 	virtual void StopAcquire();
 	

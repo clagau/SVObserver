@@ -49,12 +49,12 @@ namespace Seidenader { namespace SVOGui
 
 		//{{AFX_VIRTUAL(SVToolAdjustmentDialogFilterPageClass)
 	protected:
-		virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV-Unterstützung
+		virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV-Unterstützung
 		//}}AFX_VIRTUAL
 	protected:
 		//{{AFX_MSG(SVToolAdjustmentDialogFilterPageClass)
-		virtual BOOL OnInitDialog();
-		virtual BOOL OnKillActive( );
+		virtual BOOL OnInitDialog() override;
+		virtual BOOL OnKillActive( ) override;
 		//afx_msg void OnButtonBufferDepth();
 		afx_msg void OnButtonImageIndex( UINT nID );
 		//}}AFX_MSG

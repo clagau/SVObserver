@@ -23,7 +23,7 @@ class SVPPQEntryDialogRemotePageClass : public CPropertyPage
 
 	//{{AFX_MSG(SVPPQEntryDialogRemotePageClass)
 	protected:
-	virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog() override;
 	afx_msg void OnAddButton();
 	afx_msg void OnRemoveButton();
 	//}}AFX_MSG
@@ -31,10 +31,10 @@ class SVPPQEntryDialogRemotePageClass : public CPropertyPage
 
 	//{{AFX_VIRTUAL(SVPPQEntryDialogRemotePageClass)
 	public:
-	virtual void OnOK();
-	virtual BOOL OnApply();
+	virtual void OnOK() override;
+	virtual BOOL OnApply() override;
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
 	//{{AFX_DATA(SVPPQEntryDialogRemotePageClass)

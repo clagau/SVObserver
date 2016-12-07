@@ -552,35 +552,6 @@ namespace Seidenader { namespace SVXMLLibrary
 		return Result;
 	}
 
-	HRESULT SVXMLMaterialsTree::replaceName( const SVBranchHandle pParent, const _variant_t& rSearchName, const _variant_t& rReplaceName )
-	{
-		HRESULT Result( S_OK );
-		SVLeafHandle pLeaf;
-
-		pLeaf =  getFirstLeaf( pParent );
-		while( isValidLeaf( pParent, pLeaf ) )
-		{
-			_variant_t Value;
-			getLeafData( pLeaf, Value );
-			if( Value == rSearchName )
-			{
-				Value = rReplaceName;
-				setLeafData( pLeaf, Value );
-			}
-
-			pLeaf = getNextLeaf( pParent, pLeaf);
-		}
-
-		SVBranchHandle pBranch( getFirstBranch( pParent ) );
-		while( isValidBranch( pBranch ) )
-		{
-			replaceName( pBranch, rSearchName, rReplaceName );
-			pBranch = getNextBranch( pParent, pBranch );
-		}
-
-		return Result;
-	}
-
 	HRESULT SVXMLMaterialsTree::getLeafValues( const SVBranchHandle pParent, const SVString& rSearchName, SVStringSet& rLeafValues )
 	{
 		HRESULT Result( S_OK );

@@ -22,18 +22,18 @@ namespace Seidenader
 
 			virtual ~SVListCtrl();
 			//override this to set the color for current cell
-			virtual COLORREF GetCellRGB(void);
+			COLORREF GetCellRGB(void);
 			//called before from within OnlButtonDown and OnDblclk, but before anything happens, return TRUE to continue, FALSE to say not selecting the item
-			virtual BOOL OnItemLButtonDown(LVHITTESTINFO& ht);
+			BOOL OnItemLButtonDown(LVHITTESTINFO& ht);
 			//override this to activate any control when lButtonDown in a cell, called from within OnLButtonDown
-			virtual void OnControlLButtonDown(UINT nFlags, CPoint point, LVHITTESTINFO& ht);
+			void OnControlLButtonDown(UINT nFlags, CPoint point, LVHITTESTINFO& ht);
 
 			//{{AFX_VIRTUAL(SVListCtrl)
 		public:
-			virtual BOOL PreTranslateMessage(MSG* pMsg);
+			virtual BOOL PreTranslateMessage(MSG* pMsg) override;
 		protected:
-			virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
-			virtual void PreSubclassWindow();
+			virtual BOOL PreCreateWindow(CREATESTRUCT& cs) override;
+			virtual void PreSubclassWindow() override;
 			//}}AFX_VIRTUAL
 
 		protected:
@@ -63,8 +63,8 @@ namespace Seidenader
 			int IndexToOrder(int iIndex);
 
 			// Editing
-			virtual void  OnEditItem(int iItem, int iSubItem, CPoint point, UINT nChar);
-			virtual void  OnEndEditItem(LPLVITEM plvItem);
+			void  OnEditItem(int iItem, int iSubItem, CPoint point, UINT nChar);
+			void  OnEndEditItem(LPLVITEM plvItem);
 
 		private:
 			void RepaintSelectedItems();

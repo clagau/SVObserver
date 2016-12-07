@@ -28,7 +28,7 @@ namespace Seidenader
 			DECLARE_MESSAGE_MAP()
 
 			//{{AFX_VIRTUAL(SVSliderCtrl)
-			virtual BOOL PreTranslateMessage(MSG* pMsg);
+			virtual BOOL PreTranslateMessage(MSG* pMsg) override;
 			//}}AFX_VIRTUAL
 #pragma endregion Protected
 #pragma region Private

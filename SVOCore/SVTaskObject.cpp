@@ -830,11 +830,6 @@ HRESULT SVTaskObjectClass::GetPropertyInfo( SVExtentPropertyEnum p_eProperty, SV
 	return S_FALSE;
 }
 
-HRESULT SVTaskObjectClass::GetOutputRectangle( RECT &l_roRect )
-{
-	return S_FALSE;
-}
-
 // Must and will be called if ObjectID of this object has been changed.
 // ( Refer to SVObjectManagerClass::ChangeUniqueObjectID() )
 void SVTaskObjectClass::ResetPrivateInputInterface()

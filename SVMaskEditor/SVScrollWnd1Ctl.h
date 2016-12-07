@@ -23,10 +23,10 @@ public:
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(SVScrollWnd1Ctrl)
 	public:
-	virtual void OnDraw(CDC* pdc, const CRect& rcBounds, const CRect& rcInvalid);
-	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
-	virtual void DoPropExchange(CPropExchange* pPX);
-	virtual void OnResetState();
+	virtual void OnDraw(CDC* pdc, const CRect& rcBounds, const CRect& rcInvalid) override;
+	virtual BOOL PreCreateWindow(CREATESTRUCT& cs) override;
+	virtual void DoPropExchange(CPropExchange* pPX) override;
+	virtual void OnResetState() override;
 	//}}AFX_VIRTUAL
 
 // Implementation

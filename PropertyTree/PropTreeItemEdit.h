@@ -48,49 +48,49 @@ public:
 // Attributes
 public:
 	// The attribute area needs drawing
-	virtual void DrawAttribute(CDC* pDC, const RECT& rc);
+	virtual void DrawAttribute(CDC* pDC, const RECT& rc) override;
 
 	// Retrieve the item's attribute type
-	virtual int GetItemType(void);
+	virtual int GetItemType(void) override;
 
 	// Retrieve the item's attribute value
-	virtual bool GetItemValue(BYTE& pbVal);
-	virtual bool GetItemValue(short& piVal);
-	virtual bool GetItemValue(USHORT& puiVal);
-	virtual bool GetItemValue(long& plVal);
-	virtual bool GetItemValue(ULONG& pulVal);
-	virtual bool GetItemValue(int& pintVal);
-	virtual bool GetItemValue(UINT& puintVal);
-	virtual bool GetItemValue(float& pfltVal);
-	virtual bool GetItemValue(double& pdblVal);
-	virtual bool GetItemValue(CString& lpszVal);
-    virtual bool GetItemValue(VARIANT& vtVal);
-	virtual bool GetItemValue(bool& bVal);
+	virtual bool GetItemValue(BYTE& pbVal) override;
+	virtual bool GetItemValue(short& piVal) override;
+	virtual bool GetItemValue(USHORT& puiVal) override;
+	virtual bool GetItemValue(long& plVal) override;
+	virtual bool GetItemValue(ULONG& pulVal) override;
+	virtual bool GetItemValue(int& pintVal) override;
+	virtual bool GetItemValue(UINT& puintVal) override;
+	virtual bool GetItemValue(float& pfltVal) override;
+	virtual bool GetItemValue(double& pdblVal) override;
+	virtual bool GetItemValue(CString& lpszVal) override;
+	virtual bool GetItemValue(VARIANT& vtVal) override;
+	virtual bool GetItemValue(bool& bVal) override;
 
 	// Set the item's attribute value
-	virtual bool SetItemValue(const BYTE bVal);
-	virtual bool SetItemValue(const short iVal);
-	virtual bool SetItemValue(const USHORT uiVal);
-	virtual bool SetItemValue(const long lVal);
-	virtual bool SetItemValue(const ULONG ulVal);
-	virtual bool SetItemValue(const int intVal);
-	virtual bool SetItemValue(const UINT uintVal);
-	virtual bool SetItemValue(const float fltVal);
-	virtual bool SetItemValue(const double dblVal);
-	virtual bool SetItemValue(LPCTSTR pstrVal);
-	virtual bool SetItemValue(const bool bVal);
+	virtual bool SetItemValue(const BYTE bVal) override;
+	virtual bool SetItemValue(const short iVal) override;
+	virtual bool SetItemValue(const USHORT uiVal) override;
+	virtual bool SetItemValue(const long lVal) override;
+	virtual bool SetItemValue(const ULONG ulVal) override;
+	virtual bool SetItemValue(const int intVal) override;
+	virtual bool SetItemValue(const UINT uintVal) override;
+	virtual bool SetItemValue(const float fltVal) override;
+	virtual bool SetItemValue(const double dblVal) override;
+	virtual bool SetItemValue(LPCTSTR pstrVal) override;
+	virtual bool SetItemValue(const bool bVal) override;
 
 	// Set the item's attribute reference
-	virtual bool SetItemValuePtr(BYTE& bVal);
-	virtual bool SetItemValuePtr(short& iVal);
-	virtual bool SetItemValuePtr(USHORT& puiVal);
-	virtual bool SetItemValuePtr(long& plVal);
-	virtual bool SetItemValuePtr(ULONG& pulVal);
-	virtual bool SetItemValuePtr(int& pintVal);
-	virtual bool SetItemValuePtr(UINT& puintVal);
-	virtual bool SetItemValuePtr(float& pfltVal);
-	virtual bool SetItemValuePtr(double& pdblVal);
-	virtual bool SetItemValuePtr(CString& strVal);
+	virtual bool SetItemValuePtr(BYTE& bVal) override;
+	virtual bool SetItemValuePtr(short& iVal) override;
+	virtual bool SetItemValuePtr(USHORT& puiVal) override;
+	virtual bool SetItemValuePtr(long& plVal) override;
+	virtual bool SetItemValuePtr(ULONG& pulVal) override;
+	virtual bool SetItemValuePtr(int& pintVal) override;
+	virtual bool SetItemValuePtr(UINT& puintVal) override;
+	virtual bool SetItemValuePtr(float& pfltVal) override;
+	virtual bool SetItemValuePtr(double& pdblVal) override;
+	virtual bool SetItemValuePtr(CString& strVal) override;
 
 	// @cmember Called when attribute area has changed size.
 	virtual void OnMove() override;
@@ -143,7 +143,7 @@ protected:
 	afx_msg void OnEnable(BOOL bEnable);
 	afx_msg void OnSize(UINT nType, int cx, int cy);
 
-	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult );
+	virtual BOOL OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResult ) override;
 	void ButtonClicked();
 	void DisplayButton();
 

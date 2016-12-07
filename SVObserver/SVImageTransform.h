@@ -28,11 +28,11 @@ public:
 #pragma region Public Methods
 public:
 #pragma region virtual
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
-	virtual HRESULT IsInputImage( SVImageClass *p_psvImage );
+	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
+	virtual HRESULT IsInputImage( SVImageClass *p_psvImage ) override;
 
-	virtual BOOL OnValidate();
-	virtual HRESULT ResetObject( );
+	virtual BOOL OnValidate() override;
+	virtual HRESULT ResetObject( ) override;
 	virtual bool resetAllObjects( bool shouldNotifyFriends, bool silentReset ) override;
 #pragma endregion
 
@@ -42,9 +42,9 @@ public:
 
 #pragma region Protected Methods
 protected:
-	virtual BOOL onRun( SVRunStatusClass& runStatus );
+	virtual BOOL onRun( SVRunStatusClass& runStatus ) override;
 
-	virtual HRESULT UpdateTransformData( long p_lIndex );
+	HRESULT UpdateTransformData( long p_lIndex );
 #pragma endregion
 
 #pragma region Private Methods

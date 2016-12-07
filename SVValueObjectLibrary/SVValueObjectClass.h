@@ -68,17 +68,17 @@ public:
 public:
 	virtual ~SVValueObjectClass();
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* pCreateStructure );
-	virtual BOOL CloseObject();
+	virtual BOOL CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
+	virtual BOOL CloseObject() override;
 	virtual bool resetAllObjects( bool shouldNotifyFriends, bool silentReset ) override;
-	virtual HRESULT ResetObject();
+	virtual HRESULT ResetObject() override;
 
-	virtual bool ResetAlways() const;
-	virtual SVResetItemEnum ResetItem() const;
-	virtual HRESULT SetResetOptions( bool p_bResetAlways, SVResetItemEnum p_eResetItem );
+	bool ResetAlways() const;
+	SVResetItemEnum ResetItem() const;
+	HRESULT SetResetOptions( bool p_bResetAlways, SVResetItemEnum p_eResetItem );
 
-	virtual bool IsArray() const;
-	virtual int GetArraySize() const;
+	virtual bool IsArray() const override;
+	virtual int GetArraySize() const override;
 	virtual HRESULT SetArraySize(int iSize);
 
 	HRESULT GetResultSize(int iBucket, int& riResultSize) const;

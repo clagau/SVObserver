@@ -29,11 +29,6 @@ SVRemoteCommand::~SVRemoteCommand()
 	m_Command.clear();
 }
 
-void SVRemoteCommand::FinalRelease()
-{
-	m_Command.clear();
-}
-
 void SVRemoteCommand::SetCommand( SVCommandTemplatePtr p_Command )
 {
 	m_Command = p_Command;

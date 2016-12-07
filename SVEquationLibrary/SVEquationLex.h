@@ -48,16 +48,16 @@ public:
 	SVEquationLexClass();
 	virtual ~SVEquationLexClass();
 
-	virtual struct yy_buffer_state* yy_scan_buffer( char *base, yy_size_t size );
-	virtual struct yy_buffer_state* yy_scan_bytes( const char *bytes, int len );
-	virtual struct yy_buffer_state* yy_scan_string( const char *yy_str );
+	struct yy_buffer_state* yy_scan_buffer( char *base, yy_size_t size );
+	struct yy_buffer_state* yy_scan_bytes( const char *bytes, int len );
+	struct yy_buffer_state* yy_scan_string( const char *yy_str );
 
-	virtual void LexerError( const char *msg );
+	virtual void LexerError( const char *msg ) override;
 
-	virtual int yylex();
+	virtual int yylex() override;
 
 protected:
-	virtual int addSymbol( const char* name );
+	int addSymbol( const char* name );
 
 public:
 	int lex_err;

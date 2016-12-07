@@ -28,13 +28,13 @@ public:
 	enum { IDD = IDD_INITIALIZEIOSUBSYSTEM_DIALOG };
 
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX) override;	// DDX/DDV support
 // Implementation
 protected:
 	HICON m_hIcon;
 
 	// Generated message map functions
-	virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog() override;
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
@@ -48,8 +48,8 @@ public:
 	bool m_bToggle;
 
 protected:
-	virtual void OnCancel();
-	virtual void OnOK();
+	virtual void OnCancel() override;
+	virtual void OnOK() override;
 	std::vector<CString> m_strLog;
 	time_t m_TimeElapse;
 	time_t m_StartTime;
@@ -68,5 +68,5 @@ protected:
 public:
 	afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
 	afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
-	virtual BOOL PreTranslateMessage(MSG* pMsg);
+	virtual BOOL PreTranslateMessage(MSG* pMsg) override;
 };

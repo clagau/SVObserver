@@ -30,10 +30,10 @@ public:
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(SVMaskEditorCtrl)
 	public:
-	virtual void OnDraw(CDC* pdc, const CRect& rcBounds, const CRect& rcInvalid);
-	virtual void DoPropExchange(CPropExchange* pPX);
-	virtual void OnResetState();
-	virtual DWORD GetControlFlags();
+	virtual void OnDraw(CDC* pdc, const CRect& rcBounds, const CRect& rcInvalid) override;
+	virtual void DoPropExchange(CPropExchange* pPX) override;
+	virtual void OnResetState() override;
+	virtual DWORD GetControlFlags() override;
 	//}}AFX_VIRTUAL
 
 // Implementation

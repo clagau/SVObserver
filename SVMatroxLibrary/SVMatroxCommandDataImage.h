@@ -28,8 +28,8 @@ public:
 
 	virtual ~SVMatroxCommandDataImage();
 
-	virtual HRESULT GetData( SVByteVector& p_rData ) const;
-	virtual HRESULT SetData( const SVByteVector& p_rData );
+	virtual HRESULT GetData( SVByteVector& p_rData ) const override;
+	virtual HRESULT SetData( const SVByteVector& p_rData ) override;
 
 protected:
 	static HRESULT Convert( HBITMAP hBitmap, SVMatroxBuffer& rImage );

@@ -46,13 +46,13 @@ public:
 	SVUnaryImageOperatorListClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = nullptr , int StringResourceID = IDS_CLASSNAME_SVUNARYIMAGEOPERATORLIST );
 	virtual ~SVUnaryImageOperatorListClass();
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
-	virtual BOOL CloseObject();
+	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
+	virtual BOOL CloseObject() override;
 
-	virtual HRESULT IsInputImage( SVImageClass *p_psvImage );
+	virtual HRESULT IsInputImage( SVImageClass *p_psvImage ) override;
 
 	SVImageClass* getInputImage();
-	virtual BOOL OnValidate();
+	virtual BOOL OnValidate() override;
 
 private:
 	void init();

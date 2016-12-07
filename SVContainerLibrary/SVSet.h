@@ -36,7 +36,7 @@ public:
 	SVSet( const SVSet& p_rObject );
 	SVSet( const SVSetBase& p_rObject );
 
-	virtual ~SVSet();
+	~SVSet();
 
 	operator SVSetBase const & () const;
 	operator SVSetBase & ();
@@ -65,14 +65,14 @@ public:
 	inline iterator erase( iterator p_Iter ) { return m_Set.erase( p_Iter ); }
 
 	// TSet Methods
-	virtual INT_PTR GetSize() const;
+	INT_PTR GetSize() const;
 
-	virtual INT_PTR Add( key_type newElement );
-	virtual void Remove( key_type newElement );
+	INT_PTR Add( key_type newElement );
+	void Remove( key_type newElement );
 
-	virtual key_type& GetAt( INT_PTR nIndex );
+	key_type& GetAt( INT_PTR nIndex );
 
-	virtual INT_PTR Find( key_type searchValue ) const;
+	INT_PTR Find( key_type searchValue ) const;
 
 protected:
 	SVSetBase m_Set;

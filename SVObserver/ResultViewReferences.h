@@ -47,7 +47,7 @@ public:
 	//************************************
 	// Description:  Destructor for the ResultViewReferences class.
 	//************************************
-	virtual ~ResultViewReferences();
+	~ResultViewReferences();
 #pragma endregion Constructor
 
 #pragma region Public Methods
@@ -56,7 +56,7 @@ public:
 	// Parameter:  rWriter:  
 	// Returns:  bool:  
 	//************************************
-	virtual bool Save(SVObjectWriter& rWriter);
+	bool Save(SVObjectWriter& rWriter);
 
 	//************************************
 	// Description:  Load GUIDs and references from the configuration file.
@@ -65,7 +65,7 @@ public:
 	// Parameter:  tagname tagname in cfgfile 
 	// Returns:  bool: return true if the tagnane was found in the cfg file   
 	//************************************
-	virtual bool Load( SVTreeType& rTree, SVTreeType::SVBranchHandle hParent, LPCTSTR tagname = nullptr );
+	bool Load( SVTreeType& rTree, SVTreeType::SVBranchHandle hParent, LPCTSTR tagname = nullptr );
 
 	
 	//************************************
@@ -73,14 +73,14 @@ public:
 	//! \param pInspection [in] if not null the References will be checked if the are  a Disabled PPQVariables
 	//! \returns void
 	//************************************
-	virtual void RebuildReferenceVector(SVInspectionProcess* pInspection = nullptr);
+	void RebuildReferenceVector(SVInspectionProcess* pInspection = nullptr);
 
 	//************************************
 	// Description:  Build SVResultDefinitionDeque from the reference vector.  (Defines the list of viewed variables.)
 	// Parameter:  rDefinitions <out>:  object containing data from the class's variables.
 	// Returns:  S_OK if no error occurs   
 	//************************************
-	virtual HRESULT GetResultDefinitions( SVResultDefinitionDeque& rDefinitions ) const; 
+	HRESULT GetResultDefinitions( SVResultDefinitionDeque& rDefinitions ) const; 
 
 	//************************************
 	// Description:  Build SVIPResultData from the reference vector.  (Get the values of the variables.)
@@ -88,7 +88,7 @@ public:
 	// Parameter:  getColor <in>:  true (default) if the color for the item in the result view should be fetched.
 	// Returns: S_OK if no error occurs   
 	//************************************
-	virtual HRESULT GetResultData( SVIPResultData& rResultData) const; 
+	HRESULT GetResultData( SVIPResultData& rResultData) const; 
 
 	
 
@@ -122,7 +122,7 @@ public:
 	/// \param reference to the SVObjectRefernce
 	/// \return boolean true=viewable, false=not viewable
 	//************************************
-	virtual bool IsViewable(const SVObjectReference& objectRef) const;
+	bool IsViewable(const SVObjectReference& objectRef) const;
 
 	//************************************
 	//! To read deprecated Configuration gets all variable from tooloutputlist with  with attribute IsView

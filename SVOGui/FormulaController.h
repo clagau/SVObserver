@@ -58,7 +58,7 @@ namespace Seidenader
 			/// \return return the position of the failure. If the validation is successful, the value will be "validateSuccessful". If the reset of the object failed the value will be "resetFailed", but the string will be set (if bSetValue == true).
 			//**********
 			virtual int ValidateEquation(const SVString &equationString, double& result, bool bSetValue) const override;
-			virtual HRESULT SetDefaultInputs();
+			virtual HRESULT SetDefaultInputs() override;
 		#pragma endregion Virtual Methods (IFormulaController)
 		#pragma endregion Public Methods
 

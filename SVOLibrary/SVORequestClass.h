@@ -27,35 +27,35 @@ public:
 	SVORequestClass();
 	SVORequestClass(const SVORequestClass &rRequest);
 
-	virtual ~SVORequestClass();
+	~SVORequestClass();
 
 	const SVORequestClass &operator=(const SVORequestClass &rRequest);
 
-	virtual HRESULT Reset();
+	HRESULT Reset();
 
-	virtual bool IsValid() const;
-	virtual bool IsComplete() const;
+	bool IsValid() const;
+	bool IsComplete() const;
 
-	virtual HRESULT GetIsValid( bool &rbIsValid ) const;
-	virtual HRESULT SetIsValid( bool bIsValid );
+	HRESULT GetIsValid( bool &rbIsValid ) const;
+	HRESULT SetIsValid( bool bIsValid );
 
-	virtual HRESULT GetIsComplete( bool &rbIsComplete );
-	virtual HRESULT SetIsComplete( bool bIsComplete );
+	HRESULT GetIsComplete( bool &rbIsComplete );
+	HRESULT SetIsComplete( bool bIsComplete );
 
-	virtual HRESULT GetOwner( void **pvOwner );
-	virtual HRESULT SetOwner( void *pvOwner );
+	HRESULT GetOwner( void **pvOwner );
+	HRESULT SetOwner( void *pvOwner );
 
-	virtual HRESULT GetParent( void **pvParent );
-	virtual HRESULT SetParent( void *pvParent );
+	HRESULT GetParent( void **pvParent );
+	HRESULT SetParent( void *pvParent );
 
-	virtual HRESULT GetExtraData( void **ppvResponse );
-	virtual HRESULT SetExtraData( void *pResponse );
+	HRESULT GetExtraData( void **ppvResponse );
+	HRESULT SetExtraData( void *pResponse );
 
-	virtual HRESULT GetStartTick( SVClock::SVTimeStamp& p_rTick );
-	virtual HRESULT SetStartTick( const SVClock::SVTimeStamp& p_rTick );
+	HRESULT GetStartTick( SVClock::SVTimeStamp& p_rTick );
+	HRESULT SetStartTick( const SVClock::SVTimeStamp& p_rTick );
 
-	virtual HRESULT GetResponse( SVOResponseClass& p_rResponse );
-	virtual HRESULT SetResponse( SVOResponseClass p_rResponse );
+	HRESULT GetResponse( SVOResponseClass& p_rResponse );
+	HRESULT SetResponse( SVOResponseClass p_rResponse );
 
 	//This attribute holds the Data Manager index of the associated data element.
 	SVDataManagerHandle mDMHandle;

@@ -103,12 +103,12 @@ public:
 
 	//{{AFX_VIRTUAL( SVImageViewClass )
 	public:
-	virtual BOOL Create( LPCTSTR p_className, LPCTSTR p_windowName, DWORD p_style, const RECT& p_rect, CWnd* p_pParentWnd, UINT p_NID, CCreateContext* p_pContext = nullptr );
-	virtual void OnInitialUpdate();
-	virtual BOOL OnCommand( WPARAM p_wParam, LPARAM p_lParam );
+	virtual BOOL Create( LPCTSTR p_className, LPCTSTR p_windowName, DWORD p_style, const RECT& p_rect, CWnd* p_pParentWnd, UINT p_NID, CCreateContext* p_pContext = nullptr ) override;
+	virtual void OnInitialUpdate() override;
+	virtual BOOL OnCommand( WPARAM p_wParam, LPARAM p_lParam ) override;
 	protected:
-	virtual void OnDraw( CDC* p_pDC );
-	virtual void OnUpdate( CView* p_pSender, LPARAM p_lHint, CObject* p_pHint );
+	virtual void OnDraw( CDC* p_pDC ) override;
+	virtual void OnUpdate( CView* p_pSender, LPARAM p_lHint, CObject* p_pHint ) override;
 	//}}AFX_VIRTUAL
 
 public:
@@ -190,8 +190,8 @@ protected:
 	HRESULT GetToolExtents(SVImageExtentClass& p_svToolExtents);
 
 #ifdef _DEBUG
-	virtual void AssertValid() const;
-	virtual void Dump( CDumpContext& p_dc ) const;
+	virtual void AssertValid() const override;
+	virtual void Dump( CDumpContext& p_dc ) const override;
 #endif
 
 	SVBitmapInfo GetBitmapInfo() const;

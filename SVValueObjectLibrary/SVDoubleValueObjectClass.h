@@ -27,9 +27,9 @@ public:
 	const SVDoubleValueObjectClass& operator = (const SVDoubleValueObjectClass& rhs);
 
 	virtual ~SVDoubleValueObjectClass();
-	virtual void Persist(SVObjectWriter& rWriter);
+	virtual void Persist(SVObjectWriter& rWriter) override;
 
-	virtual HRESULT SetObjectValue( SVObjectAttributeClass* pDataObject );	// for compat loading legacy SVDoubleVectorObjectClass
+	virtual HRESULT SetObjectValue( SVObjectAttributeClass* pDataObject ) override;	// for compat loading legacy SVDoubleVectorObjectClass
 
 	IMPLEMENT_VALUE_OBJECT_GET_SET()
 

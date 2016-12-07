@@ -33,11 +33,11 @@ public:
 	SVDisplayObject( SVObjectClass *pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVDISPLAYOBJECT );
 	virtual ~SVDisplayObject();
 
-	virtual HRESULT ObserverUpdate( const SVInspectionCompleteInfoStruct& p_rData );
-	virtual HRESULT ObserverUpdate( const SVInspectionNameUpdate& p_rData );
-	virtual HRESULT ObserverUpdate( const SVRemoveImages& p_rData );
-	virtual HRESULT ObserverUpdate( const SVRemoveValues& p_rData );
-	virtual HRESULT ObserverUpdate( const SVRemoveSubjectStruct& p_rData );
+	virtual HRESULT ObserverUpdate( const SVInspectionCompleteInfoStruct& p_rData ) override;
+	virtual HRESULT ObserverUpdate( const SVInspectionNameUpdate& p_rData ) override;
+	virtual HRESULT ObserverUpdate( const SVRemoveImages& p_rData ) override;
+	virtual HRESULT ObserverUpdate( const SVRemoveValues& p_rData ) override;
+	virtual HRESULT ObserverUpdate( const SVRemoveSubjectStruct& p_rData ) override;
 
 	void SetInspectionID( const SVGUID& p_rInspectionID, SVIPDoc* pDoc );
 

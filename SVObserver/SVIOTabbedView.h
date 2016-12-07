@@ -36,7 +36,7 @@ protected:
 	DECLARE_MESSAGE_MAP()
 public:
 	TVisualFramework m_Framework;
-	virtual BOOL OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext);
+	virtual BOOL OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext) override;
 	CWnd* GetActivePane(int* /*pRow*/, int* /*pCol*/);
 
 	afx_msg void OnDestroy();

@@ -32,13 +32,13 @@ public:
 #pragma endregion Constructor
 
 #pragma region Public Methods
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
-	virtual BOOL CloseObject();
+	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
+	virtual BOOL CloseObject() override;
 
-	virtual HRESULT ResetObject();
+	virtual HRESULT ResetObject() override;
 
-	virtual HRESULT SetImageExtentToParent( unsigned long p_ulIndex );
-	virtual SVTaskObjectClass *GetObjectAtPoint( const SVExtentPointStruct &p_rsvPoint );
+	virtual HRESULT SetImageExtentToParent( unsigned long p_ulIndex ) override;
+	virtual SVTaskObjectClass *GetObjectAtPoint( const SVExtentPointStruct &p_rsvPoint ) override;
 	virtual bool DoesObjectHaveExtents() const override;
 
 	CString GetProfileOrientation();
@@ -63,7 +63,7 @@ public:
 
 protected:
 #pragma region Protected Methods
-	virtual BOOL onRun( SVRunStatusClass& RRunStatus );
+	virtual BOOL onRun( SVRunStatusClass& RRunStatus ) override;
 #pragma endregion Protected Methods
 
 	SVDoubleValueObjectClass m_svRotationAngle;
@@ -72,7 +72,7 @@ protected:
 
 private:
 #pragma region Private Methods
-	virtual void init();
+	void init();
 #pragma endregion Private Methods
 
 #pragma region Member Variables

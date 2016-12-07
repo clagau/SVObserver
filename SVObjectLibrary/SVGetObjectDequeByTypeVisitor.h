@@ -24,7 +24,7 @@ public:
 	SVGetObjectDequeByTypeVisitor( const SVObjectTypeInfoStruct& p_rObjectInfo );
 	virtual ~SVGetObjectDequeByTypeVisitor();
 
-	virtual HRESULT VisitElement( SVObjectClass& p_rElement );
+	HRESULT VisitElement( SVObjectClass& p_rElement );
 
 	const SVObjectPtrDeque& GetObjects() const;
 

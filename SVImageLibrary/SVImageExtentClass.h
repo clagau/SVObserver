@@ -40,73 +40,73 @@ class SVImageExtentClass
 public:
 	SVImageExtentClass();
 	SVImageExtentClass( const SVImageExtentClass &p_rsvValue );
-	virtual ~SVImageExtentClass();
+	~SVImageExtentClass();
 
 	const SVImageExtentClass &operator=( const SVImageExtentClass &p_rsvValue );
 
-	virtual HRESULT Initialize();
+	HRESULT Initialize();
 
-	virtual SVExtentTranslationEnum GetTranslation() const;
-	virtual HRESULT SetTranslation( SVExtentTranslationEnum p_eTranslation );
+	SVExtentTranslationEnum GetTranslation() const;
+	HRESULT SetTranslation( SVExtentTranslationEnum p_eTranslation );
 
-	virtual const SVExtentDimensionsClass& GetDimensions() const;
-	virtual HRESULT SetDimensions( SVExtentDimensionsClass p_svDimensions );
+	const SVExtentDimensionsClass& GetDimensions() const;
+	HRESULT SetDimensions( SVExtentDimensionsClass p_svDimensions );
 
-	virtual const SVExtentPositionClass &GetPosition() const;
-	virtual HRESULT SetPosition( SVExtentPositionClass p_svPosition );
+	const SVExtentPositionClass &GetPosition() const;
+	HRESULT SetPosition( SVExtentPositionClass p_svPosition );
 
-	virtual HRESULT ClearOldProperties();
+	HRESULT ClearOldProperties();
 
-	virtual HRESULT DisableExtentProperty( SVExtentPropertyEnum p_eProperty );
+	HRESULT DisableExtentProperty( SVExtentPropertyEnum p_eProperty );
 
-	virtual HRESULT GetExtentProperty( SVExtentPropertyEnum p_eProperty, long &p_rlValue ) const;
-	virtual HRESULT GetExtentProperty( SVExtentPropertyEnum p_eProperty, double &p_rdValue ) const;
-	virtual HRESULT GetExtentProperty( SVExtentPropertyEnum p_eProperty, POINT &p_roValue ) const;
-	virtual HRESULT GetExtentProperty( SVExtentPropertyEnum p_eProperty, SVExtentPointStruct &p_rsvValue ) const;
-	virtual HRESULT GetExtentPropertyList( SVExtentPropertyEnum p_eWhichProperties, SVExtentPropertyListType& p_rPropertyList ) const;
-	virtual HRESULT GetExtentPropertyList( SVExtentPropertyEnum p_eWhichProperties, SVExtentPropertyMapType& p_rPropertyMap ) const;
+	HRESULT GetExtentProperty( SVExtentPropertyEnum p_eProperty, long &p_rlValue ) const;
+	HRESULT GetExtentProperty( SVExtentPropertyEnum p_eProperty, double &p_rdValue ) const;
+	HRESULT GetExtentProperty( SVExtentPropertyEnum p_eProperty, POINT &p_roValue ) const;
+	HRESULT GetExtentProperty( SVExtentPropertyEnum p_eProperty, SVExtentPointStruct &p_rsvValue ) const;
+	HRESULT GetExtentPropertyList( SVExtentPropertyEnum p_eWhichProperties, SVExtentPropertyListType& p_rPropertyList ) const;
+	HRESULT GetExtentPropertyList( SVExtentPropertyEnum p_eWhichProperties, SVExtentPropertyMapType& p_rPropertyMap ) const;
 	static CString GetExtentPropertyName( SVExtentPropertyEnum p_eProperty );
 
-	virtual HRESULT SetExtentProperty( SVExtentPropertyEnum p_eProperty, double p_dValue );
-	virtual HRESULT SetExtentProperty( SVExtentPropertyEnum p_eProperty, SVExtentPointStruct p_svValue );
+	HRESULT SetExtentProperty( SVExtentPropertyEnum p_eProperty, double p_dValue );
+	HRESULT SetExtentProperty( SVExtentPropertyEnum p_eProperty, SVExtentPointStruct p_svValue );
 
-	virtual HRESULT UpdateData();
+	HRESULT UpdateData();
 
-	virtual HRESULT GetFigure( SVExtentFigureStruct &p_rsvFigure ) const;
+	HRESULT GetFigure( SVExtentFigureStruct &p_rsvFigure ) const;
 
-	virtual SVExtentLocationPropertyEnum GetLocationPropertyAt( SVExtentPointStruct p_svPoint );
+	SVExtentLocationPropertyEnum GetLocationPropertyAt( SVExtentPointStruct p_svPoint );
 
-	virtual HRESULT Update( SVExtentLocationPropertyEnum p_eLocation, SVExtentPointStruct p_svStart, SVExtentPointStruct p_svEnd );
-	virtual HRESULT UpdateFromOutputSpace( SVExtentLocationPropertyEnum p_eLocation, long p_lX, long p_lY );
+	HRESULT Update( SVExtentLocationPropertyEnum p_eLocation, SVExtentPointStruct p_svStart, SVExtentPointStruct p_svEnd );
+	HRESULT UpdateFromOutputSpace( SVExtentLocationPropertyEnum p_eLocation, long p_lX, long p_lY );
 
 	/// GetRectangle  
 	///  Retrieves the rect values for the input/parent image that is 
 	///  referenced by the current Extents.
-	virtual HRESULT GetRectangle( RECT &p_roRect ) const;
+	HRESULT GetRectangle( RECT &p_roRect ) const;
 
 	/// GetOutputRectangle  
 	///  Retrieves the rect values for the output image that is referenced by 
 	///  the current Extents.  The translation value is used in determining 
 	///  these dimensions.
-	virtual HRESULT GetOutputRectangle( RECT &p_roRect ) const;
+	HRESULT GetOutputRectangle( RECT &p_roRect ) const;
 	
 	/// GetLogicalRectangle  
 	///  Retrieves the rect values based on the ROI of the current extents.
-	virtual HRESULT GetLogicalRectangle( RECT &p_roRect ) const;
+	HRESULT GetLogicalRectangle( RECT &p_roRect ) const;
 
-	virtual HRESULT TranslateToOutputSpace( SVExtentPointStruct p_svValue, SVExtentPointStruct &p_rsvResult );
+	HRESULT TranslateToOutputSpace( SVExtentPointStruct p_svValue, SVExtentPointStruct &p_rsvResult );
 
-	virtual HRESULT TranslateFromOutputSpace( SVExtentPointStruct p_svValue, SVExtentPointStruct &p_rsvResult ) const;
-	virtual HRESULT TranslateFromOutputSpace( SVExtentFigureStruct p_svValue, SVExtentFigureStruct &p_rsvResult ) const;
-	virtual HRESULT TranslateFromOutputSpace( SVExtentLineStruct p_svValue, SVExtentLineStruct &p_rsvResult ) const;
-	virtual HRESULT TranslateFromOutputSpace( SVExtentMultiLineStruct p_svValue, SVExtentMultiLineStruct &p_rsvResult ) const;
+	HRESULT TranslateFromOutputSpace( SVExtentPointStruct p_svValue, SVExtentPointStruct &p_rsvResult ) const;
+	HRESULT TranslateFromOutputSpace( SVExtentFigureStruct p_svValue, SVExtentFigureStruct &p_rsvResult ) const;
+	HRESULT TranslateFromOutputSpace( SVExtentLineStruct p_svValue, SVExtentLineStruct &p_rsvResult ) const;
+	HRESULT TranslateFromOutputSpace( SVExtentMultiLineStruct p_svValue, SVExtentMultiLineStruct &p_rsvResult ) const;
 
-	virtual HRESULT TranslateLineFromOutputSpace( SVExtentPointStruct p_svRadiusPoint, SVExtentPointStruct p_svRotatePoint, double p_dLineAngle, SVExtentPointStruct p_svValue, SVExtentPointStruct &p_rsvResult ) const;
+	HRESULT TranslateLineFromOutputSpace( SVExtentPointStruct p_svRadiusPoint, SVExtentPointStruct p_svRotatePoint, double p_dLineAngle, SVExtentPointStruct p_svValue, SVExtentPointStruct &p_rsvResult ) const;
 
-	virtual HRESULT ValidateAgainstOutputSpace( const SVImageExtentClass &p_rsvValue ) const;
+	HRESULT ValidateAgainstOutputSpace( const SVImageExtentClass &p_rsvValue ) const;
 
-	virtual HRESULT GetTitlePoint(POINT &p_ptTitlePoint) const;
-	virtual HRESULT GetTitlePoint(SVExtentPointStruct &p_svTitlePoint) const;
+	HRESULT GetTitlePoint(POINT &p_ptTitlePoint) const;
+	HRESULT GetTitlePoint(SVExtentPointStruct &p_svTitlePoint) const;
 
 	bool IsEqualExcludePosition( const SVImageExtentClass &p_rsvValue ) const;
 	bool IsPositionEqual( const SVImageExtentClass &p_rsvValue ) const;
@@ -114,19 +114,19 @@ public:
 	bool operator==( const SVImageExtentClass &p_rsvValue ) const;
 	bool operator!=( const SVImageExtentClass &p_rsvValue ) const;
 
-	virtual HRESULT UpdateSourceOffset( SVExtentOffsetStruct& p_rsvOffsetData );
+	HRESULT UpdateSourceOffset( SVExtentOffsetStruct& p_rsvOffsetData );
 
 protected:
-	virtual HRESULT UpdateLine( SVExtentLocationPropertyEnum p_eLocation, SVExtentPointStruct p_svStart, SVExtentPointStruct p_svEnd );
-	virtual HRESULT UpdatePolar( SVExtentLocationPropertyEnum p_eLocation, SVExtentPointStruct p_svStart, SVExtentPointStruct p_svEnd );
-	virtual HRESULT UpdatePolarFromOutputSpace( SVExtentLocationPropertyEnum p_eLocation, long p_dX, long p_dY );
-	virtual HRESULT UpdateHorizontalPerspective( SVExtentLocationPropertyEnum p_eLocation, SVExtentPointStruct p_svStart, SVExtentPointStruct p_svEnd );
-	virtual HRESULT UpdateVerticalPerspective( SVExtentLocationPropertyEnum p_eLocation, SVExtentPointStruct p_svStart, SVExtentPointStruct p_svEnd );
+	HRESULT UpdateLine( SVExtentLocationPropertyEnum p_eLocation, SVExtentPointStruct p_svStart, SVExtentPointStruct p_svEnd );
+	HRESULT UpdatePolar( SVExtentLocationPropertyEnum p_eLocation, SVExtentPointStruct p_svStart, SVExtentPointStruct p_svEnd );
+	HRESULT UpdatePolarFromOutputSpace( SVExtentLocationPropertyEnum p_eLocation, long p_dX, long p_dY );
+	HRESULT UpdateHorizontalPerspective( SVExtentLocationPropertyEnum p_eLocation, SVExtentPointStruct p_svStart, SVExtentPointStruct p_svEnd );
+	HRESULT UpdateVerticalPerspective( SVExtentLocationPropertyEnum p_eLocation, SVExtentPointStruct p_svStart, SVExtentPointStruct p_svEnd );
 
-	virtual HRESULT ClearOutputData();
+	HRESULT ClearOutputData();
 
-	virtual HRESULT BuildOutputDimensions();
-	virtual HRESULT BuildFigure();
+	HRESULT BuildOutputDimensions();
+	HRESULT BuildFigure();
 
 private:
 	/// TranslateToLocalSpace

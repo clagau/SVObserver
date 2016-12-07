@@ -62,13 +62,13 @@ public:
 
 	virtual        ~SVHistogramAnalyzerClass();
 
-	virtual BOOL   CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
+	virtual BOOL   CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
 
-	virtual BOOL   CloseObject();
+	virtual BOOL   CloseObject() override;
 
    SVResultClass* GetResultObject(const GUID & guid);
    
-	virtual BOOL   OnValidate ();
+	virtual BOOL   OnValidate () override;
 
 	HRESULT createHistogramImage();
 
@@ -90,7 +90,7 @@ private:
 	std::map<GUID, GUID> m_resultGuids;
 
 protected:
-   virtual BOOL   onRun( SVRunStatusClass& RRunStatus );
+   virtual BOOL   onRun( SVRunStatusClass& RRunStatus ) override;
 
 	SVMatroxImageResult msvHistResultID;
 	SVMatroxLongArray   msvplHistValues;

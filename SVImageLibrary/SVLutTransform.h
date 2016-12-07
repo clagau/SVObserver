@@ -129,8 +129,8 @@ class SVLutTransformOperationNormal : public SVLutTransformOperation
 public:
 	virtual ~SVLutTransformOperationNormal() {}
 private:
-	virtual HRESULT Transform(SVLutTransform& transform, SVLutBand& data, const SVLutTransformParameters& param) {return transform.Transform(*this, data, param);}
-	virtual SVLutTransformOperation* Clone() const {return new SVLutTransformOperationNormal;}
+	virtual HRESULT Transform(SVLutTransform& transform, SVLutBand& data, const SVLutTransformParameters& param) override {return transform.Transform(*this, data, param);}
+	virtual SVLutTransformOperation* Clone() const override {return new SVLutTransformOperationNormal;}
 };
 
 class SVLutTransformOperationInvert : public SVLutTransformOperation
@@ -138,8 +138,8 @@ class SVLutTransformOperationInvert : public SVLutTransformOperation
 public:
 	virtual ~SVLutTransformOperationInvert() {}
 private:
-	virtual HRESULT Transform(SVLutTransform& transform, SVLutBand& data, const SVLutTransformParameters& param) {return transform.Transform(*this, data, param);}
-	virtual SVLutTransformOperation* Clone() const {return new SVLutTransformOperationInvert;}
+	virtual HRESULT Transform(SVLutTransform& transform, SVLutBand& data, const SVLutTransformParameters& param) override {return transform.Transform(*this, data, param);}
+	virtual SVLutTransformOperation* Clone() const override {return new SVLutTransformOperationInvert;}
 };
 
 class SVLutTransformOperationSign : public SVLutTransformOperation
@@ -147,8 +147,8 @@ class SVLutTransformOperationSign : public SVLutTransformOperation
 public:
 	virtual ~SVLutTransformOperationSign() {}
 private:
-	virtual HRESULT Transform(SVLutTransform& transform, SVLutBand& data, const SVLutTransformParameters& param) {return transform.Transform(*this, data, param);}
-	virtual SVLutTransformOperation* Clone() const {return new SVLutTransformOperationSign;}
+	virtual HRESULT Transform(SVLutTransform& transform, SVLutBand& data, const SVLutTransformParameters& param) override {return transform.Transform(*this, data, param);}
+	virtual SVLutTransformOperation* Clone() const override {return new SVLutTransformOperationSign;}
 };
 
 class SVLutTransformOperationClip : public SVLutTransformOperation
@@ -156,8 +156,8 @@ class SVLutTransformOperationClip : public SVLutTransformOperation
 public:
 	virtual ~SVLutTransformOperationClip() {}
 private:
-	virtual HRESULT Transform(SVLutTransform& transform, SVLutBand& data, const SVLutTransformParameters& param) {return transform.Transform(*this, data, param);}
-	virtual SVLutTransformOperation* Clone() const {return new SVLutTransformOperationClip;}
+	virtual HRESULT Transform(SVLutTransform& transform, SVLutBand& data, const SVLutTransformParameters& param) override {return transform.Transform(*this, data, param);}
+	virtual SVLutTransformOperation* Clone() const override {return new SVLutTransformOperationClip;}
 };
 
 class SVLutTransformOperationFreeform : public SVLutTransformOperation
@@ -165,8 +165,8 @@ class SVLutTransformOperationFreeform : public SVLutTransformOperation
 public:
 	virtual ~SVLutTransformOperationFreeform() {}
 private:
-	virtual HRESULT Transform(SVLutTransform& transform, SVLutBand& data, const SVLutTransformParameters& param) {return transform.Transform(*this, data, param);}
-	virtual SVLutTransformOperation* Clone() const {return new SVLutTransformOperationFreeform;}
+	virtual HRESULT Transform(SVLutTransform& transform, SVLutBand& data, const SVLutTransformParameters& param) override {return transform.Transform(*this, data, param);}
+	virtual SVLutTransformOperation* Clone() const override {return new SVLutTransformOperationFreeform;}
 };
 
 class SVLutTransformOperationTwoKnee : public SVLutTransformOperation
@@ -174,8 +174,8 @@ class SVLutTransformOperationTwoKnee : public SVLutTransformOperation
 public:
 	virtual ~SVLutTransformOperationTwoKnee() {}
 private:
-	virtual HRESULT Transform(SVLutTransform& transform, SVLutBand& data, const SVLutTransformParameters& param) {return transform.Transform(*this, data, param);}
-	virtual SVLutTransformOperation* Clone() const {return new SVLutTransformOperationTwoKnee;}
+	virtual HRESULT Transform(SVLutTransform& transform, SVLutBand& data, const SVLutTransformParameters& param) override {return transform.Transform(*this, data, param);}
+	virtual SVLutTransformOperation* Clone() const override {return new SVLutTransformOperationTwoKnee;}
 };
 
 class SVDefaultLutTransform : public SVLutTransform
@@ -185,11 +185,11 @@ public:
 	SVDefaultLutTransform(const SVLutTransformOperation& rType) : SVLutTransform(rType) {}
 	SVDefaultLutTransform(const SVDefaultLutTransform& rhs) : SVLutTransform(rhs) {}
 	virtual ~SVDefaultLutTransform() {}
-	virtual SVLutTransform* Clone() const {return new SVDefaultLutTransform(*this);}
-	virtual HRESULT Transform(SVLutTransformOperationNormal& t, SVLutBand& data, const SVLutTransformParameters& param);
-	virtual HRESULT Transform(SVLutTransformOperationInvert& t, SVLutBand& data, const SVLutTransformParameters& param);
-	virtual HRESULT Transform(SVLutTransformOperationSign& t, SVLutBand& data, const SVLutTransformParameters& param);
-	virtual HRESULT Transform(SVLutTransformOperationClip& t, SVLutBand& data, const SVLutTransformParameters& param);
-	virtual HRESULT Transform(SVLutTransformOperationFreeform& t, SVLutBand& data, const SVLutTransformParameters& param);
-	virtual HRESULT Transform(SVLutTransformOperationTwoKnee& t, SVLutBand& data, const SVLutTransformParameters& param);
+	virtual SVLutTransform* Clone() const override {return new SVDefaultLutTransform(*this);}
+	virtual HRESULT Transform(SVLutTransformOperationNormal& t, SVLutBand& data, const SVLutTransformParameters& param) override;
+	virtual HRESULT Transform(SVLutTransformOperationInvert& t, SVLutBand& data, const SVLutTransformParameters& param) override;
+	virtual HRESULT Transform(SVLutTransformOperationSign& t, SVLutBand& data, const SVLutTransformParameters& param) override;
+	virtual HRESULT Transform(SVLutTransformOperationClip& t, SVLutBand& data, const SVLutTransformParameters& param) override;
+	virtual HRESULT Transform(SVLutTransformOperationFreeform& t, SVLutBand& data, const SVLutTransformParameters& param) override;
+	virtual HRESULT Transform(SVLutTransformOperationTwoKnee& t, SVLutBand& data, const SVLutTransformParameters& param) override;
 };

@@ -133,8 +133,3 @@ COleServerItem* SVOIPDocClass::OnGetEmbeddedItem()
 	return nullptr;
 }
 
-void SVOIPDocClass::CloseDocument()
-{
-	OnFileClose();
-}
-

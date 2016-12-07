@@ -33,11 +33,11 @@ public:
 
 	virtual ~SVEnumerateValueObjectClass();
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* pCreateStructure );
-	virtual void Persist(SVObjectWriter& rWriter);
+	virtual BOOL CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
+	virtual void Persist(SVObjectWriter& rWriter) override;
 
-	virtual HRESULT GetObjectValue( const SVString& p_rValueName, VARIANT& p_rVariantValue ) const;
-	virtual HRESULT SetObjectValue( SVObjectAttributeClass* PDataObject );
+	virtual HRESULT GetObjectValue( const SVString& p_rValueName, VARIANT& p_rVariantValue ) const override;
+	virtual HRESULT SetObjectValue( SVObjectAttributeClass* PDataObject ) override;
 
 	BOOL GetEnumerator( LPCTSTR szEnumerator, long& lValue ) const;
 	BOOL GetEnumeratorName( long lValue, CString& rEnumerator ) const;
@@ -77,8 +77,8 @@ protected:
 
 	virtual void ValidateValue( int iBucket, int iIndex, const SVString& rValue ) const override;
 	
-	virtual HRESULT CompareWithCurrentValueImpl( const CString& rstrCompare ) const;
-	virtual HRESULT GetNormalizedValueImpl( const CString& strValue, CString& rstrNormalized ) const;
+	virtual HRESULT CompareWithCurrentValueImpl( const CString& rstrCompare ) const override;
+	virtual HRESULT GetNormalizedValueImpl( const CString& strValue, CString& rstrNormalized ) const override;
 
 private:
 	void LocalInitialize();

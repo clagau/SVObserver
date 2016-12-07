@@ -57,14 +57,14 @@ namespace Seidenader { namespace GridCtrlLibrary
 		BOOL GetCheck();
 
 	// Operations
-		virtual CSize GetCellExtent(CDC* pDC);
-		virtual void OnClick( CPoint PointCellRelative);
-		virtual BOOL GetTextRect( LPRECT pRect);
+		virtual CSize GetCellExtent(CDC* pDC) override;
+		virtual void OnClick( CPoint PointCellRelative) override;
+		virtual BOOL GetTextRect( LPRECT pRect) override;
 
 	protected:
 		CRect GetCheckPlacement();
 
-		virtual BOOL Draw(CDC* pDC, int nRow, int nCol, CRect rect, BOOL bEraseBkgnd = TRUE);
+		virtual BOOL Draw(CDC* pDC, int nRow, int nCol, CRect rect, BOOL bEraseBkgnd = TRUE) override;
 
 	protected:
 		BOOL  m_bChecked;

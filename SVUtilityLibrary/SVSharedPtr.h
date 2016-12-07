@@ -49,9 +49,9 @@ public:
 #endif
 	}
 
-	virtual bool empty() const { return nullptr == get(); }
+	bool empty() const { return nullptr == get(); }
 
-	virtual void clear() { reset(); }
+	void clear() { reset(); }
 
 	SVSharedPtr& operator=(const SVSharedPtr& rRefPtr) 
 	{

@@ -43,9 +43,9 @@ public:
 	enum { IDD = IDD_TA_COMMENT_DIALOG };
 
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 
-	BOOL OnInitDialog() ;
+	virtual BOOL OnInitDialog() override;
 
 	DECLARE_MESSAGE_MAP()
 

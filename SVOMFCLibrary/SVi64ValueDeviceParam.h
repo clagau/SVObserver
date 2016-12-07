@@ -22,15 +22,15 @@ public:
 	SVi64ValueDeviceParam(SVDeviceParamEnum typeEnum);
 	SVi64ValueDeviceParam(const SVi64ValueDeviceParam& rhs);
 	virtual ~SVi64ValueDeviceParam();
-	virtual SVClonable* CloneImpl() const;
+	virtual SVClonable* CloneImpl() const override;
 
 	// automatic conversions
 	SVi64ValueDeviceParam(const __int64& rhs);
 	SVi64ValueDeviceParam(const LARGE_INTEGER& rhs);
 	operator __int64() const;
 	SVi64ValueDeviceParam& operator=(const SVi64ValueDeviceParam& rhs);
-	virtual HRESULT GetValue(VARIANT& rv) const;
-	virtual HRESULT SetValue(const VARIANT& rv);
+	virtual HRESULT GetValue(VARIANT& rv) const override;
+	virtual HRESULT SetValue(const VARIANT& rv) override;
 
 	__int64 iValue;
 
@@ -38,7 +38,7 @@ public:
 	typedef TDeviceOption<__int64> OptionType;
 	typedef std::vector<OptionType> OptionsType;
 
-	virtual HRESULT SetMetadata(const SVDeviceParam* pParam);
+	virtual HRESULT SetMetadata(const SVDeviceParam* pParam) override;
 
 	typedef TDeviceParamInfo<__int64>::OptionType  OptionType;
 	typedef TDeviceParamInfo<__int64>::OptionsType OptionsType;

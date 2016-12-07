@@ -69,7 +69,7 @@ namespace Seidenader { namespace SVStatusLibrary
 		inline const MessageData& getMessage() const { return m_Message; };
 		inline const Messages& getAdditionalMessages() const { return m_AdditionalMessages; };
 		//! The what method has to return a value of type char*
-		inline virtual const char* what() const;
+		virtual const char* what() const override;
 
 		//************************************
 		//! This is the method to return the What message

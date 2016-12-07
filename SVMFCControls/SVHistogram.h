@@ -79,7 +79,7 @@ namespace Seidenader { namespace SVMFCControls {
 		// Paint the bitmap off screen
 		void PaintBitmap();
 		BOOL RegisterWindowClass();
-		virtual void DoDataExchange(CDataExchange* pDX);
+		virtual void DoDataExchange(CDataExchange* pDX) override;
 	public:
 		void DrawBound(CPaintDC & dc, int pos, COLORREF color);
 		void DrawBounds(CPaintDC & dc);

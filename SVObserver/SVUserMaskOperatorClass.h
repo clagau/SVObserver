@@ -56,40 +56,40 @@ public:
 	SVUserMaskOperatorClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVUSERMASKOPERATOR );
 	virtual ~SVUserMaskOperatorClass();
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
-	virtual BOOL CloseObject();
-	virtual HRESULT ResetObject();
+	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
+	virtual BOOL CloseObject() override;
+	virtual HRESULT ResetObject() override;
 
-	virtual HRESULT IsInputImage( SVImageClass *p_psvImage );
-	virtual HRESULT onCollectOverlays(SVImageClass *p_Image, SVExtentMultiLineStructCArray& p_rMultiLineArray );
+	virtual HRESULT IsInputImage( SVImageClass *p_psvImage ) override;
+	virtual HRESULT onCollectOverlays(SVImageClass *p_Image, SVExtentMultiLineStructCArray& p_rMultiLineArray ) override;
 
 	BOOL Refresh();
 	HRESULT GetFillProperties( SVMaskFillPropertiesStruct& rsvFillStruct );
 
 	SVImageClass* getMaskInputImage();
 
-	virtual void Persist(SVObjectWriter& rWriter);
+	virtual void Persist(SVObjectWriter& rWriter) override;
 
-	virtual HRESULT GetObjectValue( const SVString& p_rValueName, VARIANT& p_rVariantValue ) const;
-	virtual HRESULT SetObjectValue( SVObjectAttributeClass* PDataObject );
+	virtual HRESULT GetObjectValue( const SVString& p_rValueName, VARIANT& p_rVariantValue ) const override;
+	virtual HRESULT SetObjectValue( SVObjectAttributeClass* PDataObject ) override;
 
 	SVShapeMaskHelperClass* GetShapeHelper();
 
 #pragma region IMask
-	virtual SvOi::MatroxImageSmartHandlePtr GetReferenceImage() const;
-	virtual SvOi::MatroxImageSmartHandlePtr GetMaskImage() const;
-	virtual HRESULT Import(const SVString& filename);
-	virtual HRESULT Export(const SVString& filename);
-	virtual HGLOBAL GetMaskData() const;
-	virtual bool SetMaskData(HGLOBAL hGlobal);
+	virtual SvOi::MatroxImageSmartHandlePtr GetReferenceImage() const override;
+	virtual SvOi::MatroxImageSmartHandlePtr GetMaskImage() const override;
+	virtual HRESULT Import(const SVString& filename) override;
+	virtual HRESULT Export(const SVString& filename) override;
+	virtual HGLOBAL GetMaskData() const override;
+	virtual bool SetMaskData(HGLOBAL hGlobal) override;
 #pragma endregion IMask
 // ISVCancel
-	virtual bool CanCancel();
-	virtual HRESULT GetCancelData(SVCancelData*& rpData);
-	virtual HRESULT SetCancelData(SVCancelData* pData);
+	virtual bool CanCancel() override;
+	virtual HRESULT GetCancelData(SVCancelData*& rpData) override;
+	virtual HRESULT SetCancelData(SVCancelData* pData) override;
 
 	// ISVCancel2
-	virtual HRESULT GetCancelData(SVInputRequestStructMap& rMap);
+	virtual HRESULT GetCancelData(SVInputRequestStructMap& rMap) override;
 
 	enum SVDrawCriteriaEnum 
 	{
@@ -99,8 +99,8 @@ public:
 	};
 
 protected:
-	virtual BOOL onRun( BOOL First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus );
-	virtual BOOL OnValidate();
+	virtual BOOL onRun( BOOL First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus ) override;
+	virtual BOOL OnValidate() override;
 	virtual bool hasToAskFriendForConnection( const SVObjectTypeInfoStruct& rInfo, SVObjectClass*& rPOwner ) const override;
 	
 	SVImageInfoClass      m_MaskBufferInfo;

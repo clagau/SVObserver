@@ -18,18 +18,18 @@ class SVImagePropertiesClass
 public:
 	SVImagePropertiesClass();
 	SVImagePropertiesClass( const SVImagePropertiesClass &p_rsvValue );
-	virtual ~SVImagePropertiesClass();
+	~SVImagePropertiesClass();
 
 	const SVImagePropertiesClass &operator=( const SVImagePropertiesClass &p_rsvValue );
 
-	virtual HRESULT Initialize();
+	HRESULT Initialize();
 
-	virtual HRESULT DisableImageProperty( SVImagePropertyEnum p_eProperty );
+	HRESULT DisableImageProperty( SVImagePropertyEnum p_eProperty );
 
-	virtual HRESULT GetImageProperty( SVImagePropertyEnum p_eProperty, int &p_riValue ) const;
-	virtual HRESULT GetImageProperty( SVImagePropertyEnum p_eProperty, long &p_rlValue ) const;
+	HRESULT GetImageProperty( SVImagePropertyEnum p_eProperty, int &p_riValue ) const;
+	HRESULT GetImageProperty( SVImagePropertyEnum p_eProperty, long &p_rlValue ) const;
 
-	virtual HRESULT SetImageProperty( SVImagePropertyEnum p_eProperty, long p_lValue );
+	HRESULT SetImageProperty( SVImagePropertyEnum p_eProperty, long p_lValue );
 
 	bool operator==( const SVImagePropertiesClass &p_rsvValue ) const;
 	bool operator!=( const SVImagePropertiesClass &p_rsvValue ) const;

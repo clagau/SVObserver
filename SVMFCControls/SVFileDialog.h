@@ -28,7 +28,7 @@ namespace Seidenader
 			// ClassWizard generated virtual function overrides
 			//{{AFX_VIRTUAL(CNewWnd)
 		protected:
-			virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam);
+			virtual LRESULT WindowProc(UINT message, WPARAM wParam, LPARAM lParam) override;
 			//}}AFX_VIRTUAL
 
 			// Generated message map functions
@@ -56,7 +56,7 @@ namespace Seidenader
 			//{{AFX_MSG(SVFileDialog)
 			// NOTE - the ClassWizard will add and remove member functions here.
 			//}}AFX_MSG
-			virtual void OnFolderChange();
+			virtual void OnFolderChange() override;
 
 			CNewWnd m_oWnd1; // View containing Explorer window to intercept WM_COMMAND
 			bool m_bFullAccess;

@@ -19,15 +19,15 @@ public:
 	SVBoolValueDeviceParam();
 	SVBoolValueDeviceParam(SVDeviceParamEnum typeEnum);
 	SVBoolValueDeviceParam( const SVBoolValueDeviceParam& rhs );
-	virtual SVClonable* CloneImpl() const;
+	virtual SVClonable* CloneImpl() const override;
 
 	// automatic conversions
 	SVBoolValueDeviceParam(bool rhs);	// not const bool& so that we get automatic conversion from other integral types for free
 	operator bool() const;
 	SVBoolValueDeviceParam& operator=(const SVBoolValueDeviceParam& rhs);
 	SVBoolValueDeviceParam& operator=(bool bVal);
-	virtual HRESULT GetValue(VARIANT& rv) const;
-	virtual HRESULT SetValue(const VARIANT& rv);
+	virtual HRESULT GetValue(VARIANT& rv) const override;
+	virtual HRESULT SetValue(const VARIANT& rv) override;
 
 	bool bValue;
 
@@ -35,7 +35,7 @@ public:
 	typedef TDeviceOption<bool> OptionType;
 	typedef std::vector<OptionType> OptionsType;
 	
-	virtual HRESULT SetMetadata(const SVDeviceParam* pParam);
+	virtual HRESULT SetMetadata(const SVDeviceParam* pParam) override;
 
 	typedef TDeviceParamInfo<bool>::OptionType  OptionType;
 	typedef TDeviceParamInfo<bool>::OptionsType OptionsType;

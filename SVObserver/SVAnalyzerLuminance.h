@@ -26,16 +26,16 @@ public:
 
 	virtual ~SVLuminanceAnalyzerClass();
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
+	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
 
 /*- CloseObject () ------------------------------------------*/
 /*- This function should only be called from the destructor  */
 /*- and from derived functions CloseObject () functions. ----*/
-	virtual BOOL  CloseObject();
+	virtual BOOL  CloseObject() override;
 
     SVResultClass* GetResultObject();
    
-	virtual BOOL OnValidate();
+	virtual BOOL OnValidate() override;
 
 public:
 	long msvlHistValueArraySize;
@@ -53,9 +53,9 @@ private:
 /*- End of USED BY CONSTRUCTORS. ----------------------------*/
 
 protected:
-	virtual double calculateVariance( double aNumberOfSamples, double aAverageValue, double aAccumulatedSquares );
+	double calculateVariance( double aNumberOfSamples, double aAverageValue, double aAccumulatedSquares );
 
-   virtual BOOL onRun( SVRunStatusClass& RRunStatus );
+   virtual BOOL onRun( SVRunStatusClass& RRunStatus ) override;
 
 /*- USED BY onRun () ------------------------------------------*/
 /*- These values are only used by the Run () function, and   */

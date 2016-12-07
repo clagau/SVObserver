@@ -22,7 +22,7 @@ public:
 	SVParamListDeviceParam(SVDeviceParamEnum typeEnum);
 	SVParamListDeviceParam(const SVParamListDeviceParam& rhs);
 	virtual ~SVParamListDeviceParam();
-	virtual SVClonable* CloneImpl() const;
+	virtual SVClonable* CloneImpl() const override;
 
 	std::map <SVDeviceParamEnum, SVDeviceParamWrapper> mapParameters;
 

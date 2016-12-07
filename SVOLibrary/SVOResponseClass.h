@@ -16,37 +16,37 @@
 #include "SVDataManagerLibrary/SVDataManagerHandle.h"
 #include "SVTimerLibrary/SVClock.h"
 
-class SVOResponseClass  
+class SVOResponseClass  //@TODO[Arvid] this is similar to SVODataResponseClass: combine or derive?
 {
 public:
 	SVOResponseClass();
 	SVOResponseClass(const SVOResponseClass &rResponse);
-	virtual ~SVOResponseClass();
+	~SVOResponseClass();
 
 	const SVOResponseClass &operator=(const SVOResponseClass &rResponse);
 
-	virtual HRESULT Reset();
+	HRESULT Reset();
 
-	virtual bool IsValid() const;
-	virtual bool IsComplete() const;
+	bool IsValid() const;
+	bool IsComplete() const;
 
-	virtual HRESULT GetIsValid( bool &rbIsValid ) const;
-	virtual HRESULT SetIsValid( bool bIsValid );
+	HRESULT GetIsValid( bool &rbIsValid ) const;
+	HRESULT SetIsValid( bool bIsValid );
 
-	virtual HRESULT GetIsComplete( bool &rbIsComplete );
-	virtual HRESULT SetIsComplete( bool bIsComplete );
+	HRESULT GetIsComplete( bool &rbIsComplete );
+	HRESULT SetIsComplete( bool bIsComplete );
 
-	virtual HRESULT GetOwner( void **pvOwner );
-	virtual HRESULT SetOwner( void *pvOwner );
+	HRESULT GetOwner( void **pvOwner );
+	HRESULT SetOwner( void *pvOwner );
 
-	virtual HRESULT GetStartTick( SVClock::SVTimeStamp& p_rTick );
-	virtual HRESULT SetStartTick( const SVClock::SVTimeStamp& p_rTick );
+	HRESULT GetStartTick( SVClock::SVTimeStamp& p_rTick );
+	HRESULT SetStartTick( const SVClock::SVTimeStamp& p_rTick );
 
-	virtual HRESULT GetEndTick( SVClock::SVTimeStamp& p_rTick );
-	virtual HRESULT SetEndTick( const SVClock::SVTimeStamp& p_rTick );
+	HRESULT GetEndTick( SVClock::SVTimeStamp& p_rTick );
+	HRESULT SetEndTick( const SVClock::SVTimeStamp& p_rTick );
 
-	virtual HRESULT GetExtraData( boost::any& p_rExtraData );
-	virtual HRESULT SetExtraData( const boost::any& p_rExtraData );
+	HRESULT GetExtraData( boost::any& p_rExtraData );
+	HRESULT SetExtraData( const boost::any& p_rExtraData );
 
 	//This attribute holds the Data Manager index of the associated data element.
 	SVDataManagerHandle mDMHandle;

@@ -33,7 +33,7 @@ public:
 	// Vom Klassen-Assistenten generierte virtuelle Funktionsüberschreibungen
 	//{{AFX_VIRTUAL(SVLightReferenceDialogPropertySheetClass)
 	//}}AFX_VIRTUAL
-	virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog() override;
 
 protected:
 	int miNumPages;
@@ -74,12 +74,12 @@ public:
 	// Der Klassen-Assistent generiert virtuelle Funktionsüberschreibungen
 	//{{AFX_VIRTUAL(SVLightReferenceDialogPropertyPageClass)
 	public:
-	virtual void OnOK();
-	virtual BOOL OnSetActive();
-	virtual void OnReset();
-	virtual BOOL OnKillActive();
+	virtual void OnOK() override;
+	virtual BOOL OnSetActive() override;
+	virtual void OnReset() override;
+	virtual BOOL OnKillActive() override;
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV-Unterstützung
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV-Unterstützung
 	//}}AFX_VIRTUAL
 
 protected:
@@ -100,7 +100,7 @@ protected:
 
 	// Generierte Nachrichtenzuordnungsfunktionen
 	//{{AFX_MSG(SVLightReferenceDialogPropertyPageClass)
-	virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog() override;
 	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 	afx_msg void OnChannel0();
 	afx_msg void OnChannel1();

@@ -17,12 +17,12 @@ struct SVExtentSizeStruct
 	SVExtentSizeStruct( const SVExtentSizeStruct& p_rsvValue );
 	SVExtentSizeStruct( const SIZE& p_roValue );
 	SVExtentSizeStruct( double p_dCX, double p_dCY );
-	virtual ~SVExtentSizeStruct();
+	~SVExtentSizeStruct();
 
 	const SVExtentSizeStruct& operator = ( const SVExtentSizeStruct& p_rsvValue );
 	const SVExtentSizeStruct& operator = ( const SIZE& p_roValue );
 
-	virtual HRESULT Initialize();
+	HRESULT Initialize();
 
 	bool operator == ( const SVExtentSizeStruct& p_rsvValue ) const;
 	bool operator != ( const SVExtentSizeStruct& p_rsvValue ) const;

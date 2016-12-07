@@ -32,6 +32,6 @@ public:
 	virtual ~SVTimerCallbackImpl() {}
 	
 	void Bind(T* pObj, MemFunc func) { m_func = func; m_pObj = pObj; }
-	virtual void Notify(const SVString& listenerTag) { if (m_pObj) m_func(m_pObj, listenerTag); }
+	virtual void Notify(const SVString& listenerTag) override { if (m_pObj) m_func(m_pObj, listenerTag); }
 };
 

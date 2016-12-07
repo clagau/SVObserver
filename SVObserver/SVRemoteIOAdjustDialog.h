@@ -27,9 +27,9 @@ public:
 	void GetIOValue( _variant_t& p_rValue ) const;
 
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	virtual BOOL OnInitDialog();
-	virtual void OnOK();
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
+	virtual BOOL OnInitDialog() override;
+	virtual void OnOK() override;
 	DECLARE_MESSAGE_MAP()
 
 	CStatic m_IOName;

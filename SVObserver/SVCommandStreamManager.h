@@ -54,7 +54,7 @@ protected:
 
 		SVInspectionObserver( SVObserverFunction p_Function ) : m_Function( p_Function ) {}
 
-		virtual HRESULT ObserverUpdate( const SVInspectionCompleteInfoStruct& p_rData )
+		virtual HRESULT ObserverUpdate( const SVInspectionCompleteInfoStruct& p_rData ) override
 		{
 			HRESULT l_Status = S_OK;
 

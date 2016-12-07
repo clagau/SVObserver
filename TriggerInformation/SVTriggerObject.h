@@ -50,7 +50,7 @@ namespace Seidenader { namespace TriggerInformation {
 		BOOL RegisterFinishProcess( void *pOwner, LPSVFINISHPROC pFunc );
 		BOOL UnregisterFinishProcess( void *pOwner );
 
-		virtual void FinishProcess( SVOResponseClass *pResponse );
+		void FinishProcess( SVOResponseClass *pResponse );
 
 		HRESULT EnableInternalTrigger();
 		bool IsSoftwareTrigger() const;

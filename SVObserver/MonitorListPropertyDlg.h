@@ -51,8 +51,8 @@ protected:
 
 // ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(MonitorListPropertyDlg)
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	virtual BOOL OnInitDialog();
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
+	virtual BOOL OnInitDialog() override;
 	//}}AFX_VIRTUAL
 
 	afx_msg void OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult);

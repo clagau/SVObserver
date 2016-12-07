@@ -26,7 +26,7 @@ public:
 
 	const SVCommandResultsTemplate& operator=( const SVCommandResultsTemplate& p_rObject );
 
-	virtual HRESULT GetResults( SVResultCollection& p_rResults ) const;
+	virtual HRESULT GetResults( SVResultCollection& p_rResults ) const override;
 
 protected:
 	SVResultCollection m_Results;

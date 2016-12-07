@@ -19,11 +19,11 @@
 class SVDirectX
 {
 public:
-	virtual ~SVDirectX();
+	~SVDirectX();
 	static SVDirectX& Instance();
 
 	bool empty() const;
-	virtual void clear();
+	void clear();
 
 	HRESULT Initialize();
 

@@ -32,7 +32,7 @@ namespace Seidenader
 			// ClassWizard generated virtual function overrides
 			//{{AFX_VIRTUAL(SVFormulaEditorSheetClass)
 			public:
-			virtual BOOL OnInitDialog();
+			virtual BOOL OnInitDialog() override;
 			//}}AFX_VIRTUAL
 
 		protected:

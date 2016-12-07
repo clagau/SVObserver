@@ -29,7 +29,7 @@ namespace Seidenader
 			SVThinningFilterDlg(const SVGUID& rInspectionID, const SVGUID& rFilterID, CWnd* pParent = nullptr);   // standard constructor
 			virtual ~SVThinningFilterDlg();
 
-			virtual HRESULT SetInspectionData();
+			HRESULT SetInspectionData();
 
 			// Dialog Data
 			//{{AFX_DATA(SVThinningFilterDlg)
@@ -43,16 +43,16 @@ namespace Seidenader
 			// ClassWizard generated virtual function overrides
 			//{{AFX_VIRTUAL(SVThinningFilterDlg)
 		protected:
-			virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+			virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 			//}}AFX_VIRTUAL
 
 		protected:
 
 			// Generated message map functions
 			//{{AFX_MSG(SVThinningFilterDlg)
-			virtual BOOL OnInitDialog();
-			virtual void OnOK();
-			virtual void OnCancel();
+			virtual BOOL OnInitDialog() override;
+			virtual void OnOK() override;
+			virtual void OnCancel() override;
 			//}}AFX_MSG
 			DECLARE_MESSAGE_MAP()
 

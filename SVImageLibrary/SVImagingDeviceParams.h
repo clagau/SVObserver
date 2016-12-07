@@ -31,7 +31,7 @@ public:
 	SVLutDeviceParam(const SVLutDeviceParam& rhs);
 	virtual ~SVLutDeviceParam();
 
-	virtual SVClonable* CloneImpl() const;
+	virtual SVClonable* CloneImpl() const override;
 	SVLutDeviceParam& operator = (const SVLutDeviceParam& rhs);
 
 	SVLut lut;
@@ -54,7 +54,7 @@ public:
 	SVLightReferenceDeviceParam( const SVLightReferenceDeviceParam& rhs);
 	virtual ~SVLightReferenceDeviceParam();
 
-	virtual SVClonable* CloneImpl() const;
+	virtual SVClonable* CloneImpl() const override;
 	SVLightReferenceDeviceParam& operator = (const SVLightReferenceDeviceParam& rhs);
 
 	SVLightReference lr;
@@ -77,14 +77,14 @@ public:
 	SVCameraFormatsDeviceParam(const SVCameraFormatsDeviceParam& rhs);
 	virtual ~SVCameraFormatsDeviceParam();
 
-	virtual SVClonable* CloneImpl() const;
+	virtual SVClonable* CloneImpl() const override;
 	const SVCameraFormatsDeviceParam& operator=(const SVCameraFormatsDeviceParam& rhs);
 	bool SupportsColor() const;
 
 	typedef std::map<SVString, SVCameraFormat> OptionsType;
 	OptionsType options;
 
-	virtual HRESULT SetMetadata(const SVDeviceParam* pParam);
+	virtual HRESULT SetMetadata(const SVDeviceParam* pParam) override;
 
 	static SVDeviceParam* CreateNew() { return new SVCameraFormatsDeviceParam; }
 	DEFINE_VISITABLE()

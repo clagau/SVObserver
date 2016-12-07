@@ -243,7 +243,7 @@ void SVIOController::ResetName()
 	}
 }
 
-void SVIOController::SetName( const CString& StrString )
+void SVIOController::SetName( LPCTSTR StrString )
 {
 	SVObjectClass::SetName( StrString );
 

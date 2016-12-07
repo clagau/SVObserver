@@ -145,21 +145,21 @@ public:
 	LRESULT InvalidateStatusBar( WPARAM wParam, LPARAM lParam );
 	LRESULT Shutdown( WPARAM wParam, LPARAM lParam );
 
-	virtual void OnUpdateFrameTitle( BOOL bAddToTitle );
+	virtual void OnUpdateFrameTitle( BOOL bAddToTitle ) override;
 	void UpdateFrameTitleForDocument( LPCTSTR lpszDocName );
 
 	// MFC 1.0 backward compatible CreateClient hook (called by OnCreateClient)
-	virtual BOOL CreateClient(LPCREATESTRUCT lpCreateStruct, CMenu* pWindowMenu);
+	virtual BOOL CreateClient(LPCREATESTRUCT lpCreateStruct, CMenu* pWindowMenu) override;
 
 
 	CSVRegressionRunDlg *m_pregTestDlg;
 
 	//{{AFX_VIRTUAL(SVMainFrame)
 public:
-	virtual BOOL PreCreateWindow(CREATESTRUCT& cs);
-	virtual BOOL Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext = nullptr);
+	virtual BOOL PreCreateWindow(CREATESTRUCT& cs) override;
+	virtual BOOL Create(LPCTSTR lpszClassName, LPCTSTR lpszWindowName, DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT nID, CCreateContext* pContext = nullptr) override;
 protected:
-	virtual BOOL OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext);
+	virtual BOOL OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext) override;
 	//}}AFX_VIRTUAL
 
 	afx_msg void OnActivateApp(BOOL bActive, DWORD dwThreadID);
@@ -173,8 +173,8 @@ private:
 public:
 
 #ifdef _DEBUG
-	virtual void AssertValid() const;
-	virtual void Dump(CDumpContext& dc) const;
+	virtual void AssertValid() const override;
+	virtual void Dump(CDumpContext& dc) const override;
 #endif
 
 //******************************************************************************

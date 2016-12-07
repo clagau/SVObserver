@@ -19,7 +19,7 @@ namespace Seidenader
 				LPCTSTR lpszWindowName, DWORD dwStyle,
 				const RECT& rect,
 				CWnd* pParentWnd, UINT nID,
-				CCreateContext* pContext = nullptr)
+				CCreateContext* pContext = nullptr) override
 			{ return CreateControl(GetClsid(), lpszWindowName, dwStyle, rect, pParentWnd, nID); }
 
 			BOOL Create(LPCTSTR lpszWindowName, DWORD dwStyle,

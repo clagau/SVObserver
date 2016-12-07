@@ -282,8 +282,8 @@ public:
 	SVObjectScriptParserSVXClass(unsigned long parserHandle,SVSharedPtr<CString> pScript, const GUID& OwnerGuid, SVObjectClass* pOwnerObject, CWnd* pWnd);
 	virtual ~SVObjectScriptParserSVXClass();
 
-	virtual size_t GetTotal() const;
-	virtual HRESULT DoParse();
+	virtual size_t GetTotal() const override;
+	virtual HRESULT DoParse() override;
 	
 protected:
 	LPCTSTR Parse( SVObjectClass* POwner, LPCTSTR TStrParseString, SVObjectScriptAliasListClass* PExternalAliasTable = nullptr );

@@ -24,9 +24,9 @@ public:
 	enum { IDD = IDD_SOFTWARETRIGGER_SETUP_DLG };
 
 protected:
-	virtual BOOL OnInitDialog();
-	virtual void OnOK();
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual BOOL OnInitDialog() override;
+	virtual void OnOK() override;
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 
 	DECLARE_MESSAGE_MAP()
 public:

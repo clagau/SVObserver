@@ -93,8 +93,8 @@ public:
 
 	
 	HRESULT Initialize(SVDllLoadLibraryCallback fnNotify = SVDllLoadLibraryCallbackDefault() );
-	virtual HRESULT DisconnectInputsOutputs(SVObjectVector& rListOfObjects);
-	virtual HRESULT HideInputsOutputs(SVObjectVector& rListOfObjects);
+	virtual HRESULT DisconnectInputsOutputs(SVObjectVector& rListOfObjects) override;
+	virtual HRESULT HideInputsOutputs(SVObjectVector& rListOfObjects) override;
 
 	HRESULT SetPathName(const CString& strPath);
 	HRESULT SetDependencies( const SVDependenyNames astrPath );
@@ -103,15 +103,15 @@ public:
 	HRESULT GetInputValueDefinitions( InputValueDefinitionStructArray& raInputValueDefinitions );
 
 	// ISVCancel interface
-	virtual bool CanCancel();
-	virtual HRESULT GetCancelData(SVCancelData*& rpData);
-	virtual HRESULT SetCancelData(SVCancelData* pData);
+	virtual bool CanCancel() override;
+	virtual HRESULT GetCancelData(SVCancelData*& rpData) override;
+	virtual HRESULT SetCancelData(SVCancelData* pData) override;
 
 	HRESULT GetImageInfo(const SVImageDefinitionStruct* pDefinitionStruct, SVImageInfoClass& rInfo);
 	HRESULT GetImageDefinitionStruct( SVImageDefinitionStruct& rImageDef, const SVImageInfoClass& rInfo);
 
 	void SetAllAttributes();
-	virtual HRESULT ResetObject();
+	virtual HRESULT ResetObject() override;
 	enum FindEnum
 	{
 		FIND_IMAGES = 1,
@@ -133,7 +133,7 @@ protected:
 	HRESULT Uninitialize();
 	HRESULT ClearData();
 	HRESULT SetDefaultValues();
-	virtual BOOL onRun( SVRunStatusClass& RRunStatus );
+	virtual BOOL onRun( SVRunStatusClass& RRunStatus ) override;
 	HRESULT InspectionInputsToVariantArray();
 
 	SVImageClass* GetInputImage(int iIndex);

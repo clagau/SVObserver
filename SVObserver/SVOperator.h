@@ -22,7 +22,7 @@ class SVOperatorClass : public SVTaskObjectClass
 public:
 	SVOperatorClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVOPERATOR );
 	virtual ~SVOperatorClass();
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure );
+	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
 	virtual bool resetAllObjects( bool shouldNotifyFriends, bool silentReset ) override;
 
 private:

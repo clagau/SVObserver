@@ -133,7 +133,7 @@ public:
 protected:
 #pragma region Protected Methods
 	void OnTcnSelChangeTab(NMHDR *pNMHDR, LRESULT *pResult);
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 #pragma endregion Protected Methods
 	DECLARE_MESSAGE_MAP()
 

@@ -48,17 +48,17 @@ public:
 	// ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(SVSecuritySetupPage)
 	public:
-	virtual BOOL OnApply();
-	virtual void OnOK();
+	virtual BOOL OnApply() override;
+	virtual void OnOK() override;
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
 // Implementation
 protected:
 	// Generated message map functions
 	//{{AFX_MSG(SVSecuritySetupPage)
-	virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog() override;
 	afx_msg void OnSelchangeNetGroups();
 	afx_msg void OnSelchangedAccessTree(NMHDR* pNMHDR, LRESULT* pResult);
 	afx_msg void OnKillfocusGroupEdit();

@@ -83,7 +83,7 @@ public:
 	enum { IDD = IDD_TRIGGER_PERIOD_DLG };
 
 protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	void SetTriggerPeriod(int val);
 	bool EditOK();
 
@@ -136,7 +136,7 @@ private:
 	CBrush * m_brush;
 
 public:
-	virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog() override;
 };
 
 // SVSpinGroup inline implementation

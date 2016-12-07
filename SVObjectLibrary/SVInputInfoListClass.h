@@ -26,11 +26,10 @@ public:
 
 	BOOL CheckExistence( int Index = -1 );
 
-	virtual int Add( SVInObjectInfoStruct* );
-	virtual void InsertAt( int nIndex, SVInObjectInfoStruct* PInObjectInfo );
+	int Add( SVInObjectInfoStruct* );
+	void InsertAt( int nIndex, SVInObjectInfoStruct* PInObjectInfo );
 
 protected:
-	virtual bool checkDuplicates( SVInObjectInfoStruct* PInObjectInfo );
-
+	bool checkDuplicates( SVInObjectInfoStruct* PInObjectInfo );
 };
 

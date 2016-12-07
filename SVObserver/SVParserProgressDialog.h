@@ -84,7 +84,7 @@ protected:
 
 	// Generated message map functions
 	//{{AFX_MSG(SVParserProgressDialog)
-	virtual BOOL OnInitDialog();
+	virtual BOOL OnInitDialog() override;
 	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 	//}}AFX_MSG
 	afx_msg LRESULT OnUpdateProgress( WPARAM wParam, LPARAM lParam);

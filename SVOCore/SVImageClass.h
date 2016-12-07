@@ -41,47 +41,47 @@ public:
 	SVImageClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVIMAGE );
 	virtual ~SVImageClass();
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStruct );
-	virtual BOOL CloseObject();
+	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStruct ) override;
+	virtual BOOL CloseObject() override;
 
-	virtual SVImageClass* GetParentImage() const;
-	virtual const GUID& GetParentImageID() const;
-	virtual const SVImageInfoClass& GetImageInfo() const; //@TODO: Change the logic so that this is never needed outside this class
+	SVImageClass* GetParentImage() const;
+	const GUID& GetParentImageID() const;
+	const SVImageInfoClass& GetImageInfo() const; //@TODO: Change the logic so that this is never needed outside this class
 
-	virtual HRESULT InitializeImage( SVImageTypeEnum p_ImageType );
-	virtual HRESULT InitializeImage( SVImageClass* p_pParentImage );
-	virtual HRESULT InitializeImage( const GUID& p_rParentID );
-	virtual HRESULT InitializeImage( const GUID& p_rParentID, const SVImageInfoClass& p_rImageInfo );
+	HRESULT InitializeImage( SVImageTypeEnum p_ImageType );
+	HRESULT InitializeImage( SVImageClass* p_pParentImage );
+	HRESULT InitializeImage( const GUID& p_rParentID );
+	HRESULT InitializeImage( const GUID& p_rParentID, const SVImageInfoClass& p_rImageInfo );
 
 	//@WARNING [Jim][8 July 2015] - Look into and evaluate this behavior.
 	//-  This UpdateImage function calls RebuildStorage() which calls 
 	//-  UpdateFromParentInformation() which overwrites the extents I just 
 	//-  sent in anyhow????
-	virtual HRESULT UpdateImage( const SVImageExtentClass& p_rExtent, bool p_ExcludePositionCheck = false );
-	virtual HRESULT UpdateImage( const SVImageInfoClass& p_rImageInfo );
-	virtual HRESULT UpdateImage( const GUID& p_rParentID );
-	virtual HRESULT UpdateImage( const GUID& p_rParentID, const SVImageExtentClass& p_rExtent );
-	virtual HRESULT UpdateImage( const GUID& p_rParentID, const SVImageInfoClass& p_rImageInfo );
-	virtual HRESULT UpdateImage( SVImageTypeEnum p_ImageType );
-	virtual HRESULT UpdateImage( SVImageTypeEnum p_ImageType, const SVImageInfoClass& p_rImageInfo );
-	virtual HRESULT UpdateImage( SVImageTypeEnum p_ImageType, const GUID& p_rParentID );
-	virtual HRESULT UpdateImage( SVImageTypeEnum p_ImageType, const GUID& p_rParentID, const SVImageInfoClass& p_rImageInfo );
+	HRESULT UpdateImage( const SVImageExtentClass& p_rExtent, bool p_ExcludePositionCheck = false );
+	HRESULT UpdateImage( const SVImageInfoClass& p_rImageInfo );
+	HRESULT UpdateImage( const GUID& p_rParentID );
+	HRESULT UpdateImage( const GUID& p_rParentID, const SVImageExtentClass& p_rExtent );
+	HRESULT UpdateImage( const GUID& p_rParentID, const SVImageInfoClass& p_rImageInfo );
+	HRESULT UpdateImage( SVImageTypeEnum p_ImageType );
+	HRESULT UpdateImage( SVImageTypeEnum p_ImageType, const SVImageInfoClass& p_rImageInfo );
+	HRESULT UpdateImage( SVImageTypeEnum p_ImageType, const GUID& p_rParentID );
+	HRESULT UpdateImage( SVImageTypeEnum p_ImageType, const GUID& p_rParentID, const SVImageInfoClass& p_rImageInfo );
 
 	virtual BOOL SetImageDepth( long lDepth );
 
 	virtual const SVClock::SVTimeStamp& GetLastResetTimeStamp() const;
 	
-	virtual HRESULT ResetObject();
+	virtual HRESULT ResetObject() override;
 
-	virtual SVImageExtentClass GetImageExtents();
-	virtual HRESULT GetImageExtentsToFit( SVImageExtentClass p_svInExtent, SVImageExtentClass &p_rsvOutExtent );
+	SVImageExtentClass GetImageExtents();
+	HRESULT GetImageExtentsToFit( SVImageExtentClass p_svInExtent, SVImageExtentClass &p_rsvOutExtent );
 
-	virtual HRESULT ValidateAgainstParentExtents( SVImageExtentClass& p_rsvExtent );
-	virtual HRESULT ValidateAgainstOutputExtents( const SVImageExtentClass& p_rsvExtent );
-	virtual HRESULT ValidateAgainstChildrenExtents( SVImageExtentClass& p_rsvExtent );
+	HRESULT ValidateAgainstParentExtents( SVImageExtentClass& p_rsvExtent );
+	HRESULT ValidateAgainstOutputExtents( const SVImageExtentClass& p_rsvExtent );
+	HRESULT ValidateAgainstChildrenExtents( SVImageExtentClass& p_rsvExtent );
 
-	virtual HRESULT GetParentImageHandle( SVSmartHandlePointer& p_rsvBufferHandle ); //@TODO:  Change method to const?
-	virtual HRESULT GetParentImageHandle( SVImageIndexStruct p_svBufferIndex, SVSmartHandlePointer& p_rsvBufferHandle ); //@TODO:  Change method to const?
+	HRESULT GetParentImageHandle( SVSmartHandlePointer& p_rsvBufferHandle ); //@TODO:  Change method to const?
+	HRESULT GetParentImageHandle( SVImageIndexStruct p_svBufferIndex, SVSmartHandlePointer& p_rsvBufferHandle ); //@TODO:  Change method to const?
 
 	// Need to deal with source and result image buckets
 	virtual BOOL GetImageHandleIndex( SVImageIndexStruct& rsvIndex ) const;
@@ -92,21 +92,21 @@ public:
 	virtual BOOL GetImageHandle( SVSmartHandlePointer& p_rHandlePtr ); //@TODO:  Change method to const?
 	virtual BOOL GetImageHandle( SVImageIndexStruct svIndex, SVSmartHandlePointer& rHandle );
 
-	virtual BOOL SafeImageCopyToHandle     ( SVSmartHandlePointer& p_rHandle );
-	virtual BOOL SafeImageCopyToHandle     ( SVImageIndexStruct p_svFromIndex, SVSmartHandlePointer& p_rHandle );
-	virtual BOOL SafeImageConvertToHandle  ( SVSmartHandlePointer& p_rHandle, SVImageOperationTypeEnum p_lConversionType );
-	virtual BOOL SafeImageConvertToHandle  ( SVImageIndexStruct p_svFromIndex, SVSmartHandlePointer& p_rHandle, SVImageOperationTypeEnum p_lConversionType );
+	BOOL SafeImageCopyToHandle     ( SVSmartHandlePointer& p_rHandle );
+	BOOL SafeImageCopyToHandle     ( SVImageIndexStruct p_svFromIndex, SVSmartHandlePointer& p_rHandle );
+	BOOL SafeImageConvertToHandle  ( SVSmartHandlePointer& p_rHandle, SVImageOperationTypeEnum p_lConversionType );
+	BOOL SafeImageConvertToHandle  ( SVImageIndexStruct p_svFromIndex, SVSmartHandlePointer& p_rHandle, SVImageOperationTypeEnum p_lConversionType );
 
-	virtual HRESULT LoadImageFullSize( LPCTSTR p_szFileName, SVImageExtentClass& p_rNewExtent );
-	virtual HRESULT LoadImage( LPCTSTR p_szFileName, SVImageIndexStruct p_svToIndex );
+	HRESULT LoadImageFullSize( LPCTSTR p_szFileName, SVImageExtentClass& p_rNewExtent );
+	HRESULT LoadImage( LPCTSTR p_szFileName, SVImageIndexStruct p_svToIndex );
 
-	virtual HRESULT GetObjectValue( const SVString& p_rValueName, VARIANT& p_rVariantValue ) const;
-	virtual HRESULT SetObjectValue( SVObjectAttributeClass* PDataObject );
+	virtual HRESULT GetObjectValue( const SVString& p_rValueName, VARIANT& p_rVariantValue ) const override;
+	virtual HRESULT SetObjectValue( SVObjectAttributeClass* PDataObject ) override;
 
-	virtual void Persist( SVObjectWriter& rWriter );
-	virtual void PersistImageAttributes( SVObjectWriter& rWriter );
+	virtual void Persist( SVObjectWriter& rWriter ) override;
+	void PersistImageAttributes( SVObjectWriter& rWriter );
 
-	virtual BOOL OnValidate(); //@TODO:  Change method to const?
+	virtual BOOL OnValidate() override; //@TODO:  Change method to const?
 
 	virtual SVImageIndexStruct GetSourceImageIndex( SVDataManagerHandle* pHandle, const SVGuidSVCameraInfoStructMap& rGuidCameraMap );
 
@@ -137,37 +137,37 @@ protected:
 
 	//- UpdateFromParentInformation () ---------------------------------------
 	//- This function will update the Tool Image to itself.
-	virtual HRESULT UpdateFromParentInformation();
-	virtual HRESULT UpdateFromToolInformation();
+	HRESULT UpdateFromParentInformation();
+	HRESULT UpdateFromToolInformation();
 
-	virtual HRESULT ClearParentConnection();
+	HRESULT ClearParentConnection();
 
-	virtual HRESULT RemoveObjectConnection( const GUID& p_rObjectID );
+	virtual HRESULT RemoveObjectConnection( const GUID& p_rObjectID ) override;
 
 	virtual SVImageObjectClassPtr GetBufferArrayPtr() const;
 
-	virtual HRESULT IsValidChild( const GUID& p_rChildID, SVImageInfoClass p_svImageInfo ) const;
-	virtual HRESULT UpdateChild( const GUID& p_rChildID, SVImageInfoClass p_svImageInfo );
-	virtual HRESULT RemoveChild( const GUID& p_rChildID );
+	HRESULT IsValidChild( const GUID& p_rChildID, SVImageInfoClass p_svImageInfo ) const;
+	HRESULT UpdateChild( const GUID& p_rChildID, SVImageInfoClass p_svImageInfo );
+	HRESULT RemoveChild( const GUID& p_rChildID );
 
-	virtual HRESULT UpdatePosition();
+	HRESULT UpdatePosition();
 
-	virtual HRESULT UpdateChildren();
-	virtual HRESULT RemoveChildren();
+	HRESULT UpdateChildren();
+	HRESULT RemoveChildren();
 
-	virtual HRESULT UpdateChildBuffers( SVImageObjectClassPtr p_psvChildBuffers, const SVImageInfoClass& p_rImageInfo );
+	HRESULT UpdateChildBuffers( SVImageObjectClassPtr p_psvChildBuffers, const SVImageInfoClass& p_rImageInfo );
 
-	virtual HRESULT UpdateBufferArrays( bool p_ExcludePositionCheck = false );
+	HRESULT UpdateBufferArrays( bool p_ExcludePositionCheck = false );
 
-	virtual HRESULT GetChildImageInfo( const GUID& p_rChildID, SVImageInfoClass& p_rImageInfo ) const;
+	HRESULT GetChildImageInfo( const GUID& p_rChildID, SVImageInfoClass& p_rImageInfo ) const;
 
-	virtual HRESULT GetChildImageHandle( const GUID& p_rChildID, SVSmartHandlePointer& p_rsvBufferHandle ); //@TODO:  Change method to const?
-	virtual HRESULT GetChildImageHandle( const GUID& p_rChildID, SVImageIndexStruct p_svBufferIndex, SVSmartHandlePointer& p_rsvBufferHandle ); //@TODO:  Change method to const?
+	HRESULT GetChildImageHandle( const GUID& p_rChildID, SVSmartHandlePointer& p_rsvBufferHandle ) const;
+	HRESULT GetChildImageHandle( const GUID& p_rChildID, SVImageIndexStruct p_svBufferIndex, SVSmartHandlePointer& p_rsvBufferHandle ) const;
 
 	virtual HRESULT GetImageIndex( SVDataManagerHandle& p_rHandle, const SVImageIndexStruct& rIndex ) const;
 
-	virtual bool Lock() const;
-	virtual bool Unlock() const;
+	bool Lock() const;
+	bool Unlock() const;
 
 	virtual HRESULT RegisterAsSubObject();
 	virtual HRESULT UnregisterAsSubObject();

@@ -32,7 +32,7 @@ public:
 	const SVBoolValueObjectClass& operator = (const SVBoolValueObjectClass& rhs);
 
 	virtual ~SVBoolValueObjectClass();
-	virtual void Persist(SVObjectWriter& rWriter);
+	virtual void Persist(SVObjectWriter& rWriter) override;
 
 	HRESULT GetValidTypes( SVValidTypesVector& p_astrTypes ) const;
 
@@ -52,8 +52,8 @@ protected:
 
 	virtual void ValidateValue( int iBucket, int iIndex, const SVString& rValue ) const override;
 
-	virtual HRESULT CompareWithCurrentValueImpl( const CString& rstrCompare ) const;
-	virtual HRESULT GetNormalizedValueImpl( const CString& strValue, CString& rstrNormalized ) const;
+	virtual HRESULT CompareWithCurrentValueImpl( const CString& rstrCompare ) const override;
+	virtual HRESULT GetNormalizedValueImpl( const CString& strValue, CString& rstrNormalized ) const override;
 
 private:
 	void LocalInitialize();

@@ -45,9 +45,9 @@ public:
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(SVMaskEditorDialogClass)
 	public:
-	virtual void OnFinalRelease();
+	virtual void OnFinalRelease() override;
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
 // Implementation
@@ -55,9 +55,9 @@ protected:
 
 	// Generated message map functions
 	//{{AFX_MSG(SVMaskEditorDialogClass)
-	virtual BOOL OnInitDialog();
-	virtual void OnCancel();
-	virtual void OnOK();
+	virtual BOOL OnInitDialog() override;
+	virtual void OnCancel() override;
+	virtual void OnOK() override;
 	afx_msg void OnZoomInButton();
 	afx_msg void OnZoomOutButton();
 	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);

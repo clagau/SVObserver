@@ -59,7 +59,7 @@ public:
 #pragma region Protected Methods
 protected:
 	// ISVCancel2
-	virtual HRESULT GetCancelData(SVInputRequestStructMap& rMap);
+	virtual HRESULT GetCancelData(SVInputRequestStructMap& rMap) override;
 
 	// SVTaskObjectInterfaceClass
 	HRESULT SetInspectionData();
@@ -67,9 +67,9 @@ protected:
 #pragma region AFX Methods
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(SVMaskShapeEditorDlg)
-	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
-	virtual BOOL OnInitDialog();
-	virtual void OnOK();
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
+	virtual BOOL OnInitDialog() override;
+	virtual void OnOK() override;
 	//}}AFX_VIRTUAL
 
 	// Generated message map functions

@@ -61,7 +61,7 @@ public:
 
 
 	LPCTSTR GetDeviceName() const;
-	virtual void SetDeviceName( LPCTSTR p_szName );
+	void SetDeviceName( LPCTSTR p_szName );
 
 protected:
 	typedef SVTQueueObject< SVODataResponseClass > SVDataResponseQueue;

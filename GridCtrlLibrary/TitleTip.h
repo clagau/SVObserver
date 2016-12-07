@@ -48,7 +48,7 @@ namespace Seidenader { namespace GridCtrlLibrary
 	public:
 		CTitleTip();
 		virtual ~CTitleTip();
-		virtual BOOL Create( CWnd *pParentWnd);
+		virtual BOOL Create( CWnd *pParentWnd) override;
 
 	// Attributes
 	public:
@@ -67,8 +67,8 @@ namespace Seidenader { namespace GridCtrlLibrary
 		// ClassWizard generated virtual function overrides
 		//{{AFX_VIRTUAL(CTitleTip)
 		public:
-		virtual BOOL PreTranslateMessage(MSG* pMsg);
-		virtual BOOL DestroyWindow();
+		virtual BOOL PreTranslateMessage(MSG* pMsg) override;
+		virtual BOOL DestroyWindow() override;
 		//}}AFX_VIRTUAL
 
 	// Implementation

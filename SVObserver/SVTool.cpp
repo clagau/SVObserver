@@ -764,11 +764,6 @@ bool SVToolClass::getConditionalResult(long p_lIndex) const
 	return value;
 }
 
-HRESULT SVToolClass::GetImageExtentProperty( SVExtentPropertyEnum p_eProperty, SVValueObjectClass *&p_rpsvValue )
-{
-	return m_svToolExtent.GetExtentObject( p_eProperty, p_rpsvValue );
-}
-
 HRESULT SVToolClass::SetImageExtentProperty( SVExtentPropertyEnum p_eProperty, SVValueObjectClass *p_psvValue )
 {
 	return m_svToolExtent.SetExtentObject( p_eProperty, p_psvValue );

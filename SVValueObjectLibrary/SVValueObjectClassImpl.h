@@ -38,10 +38,10 @@ public:
 	const this_type& operator = (const this_type& rhs);
 	void swap( SVValueObjectClassImpl<T>& rhs );	// provide an efficient swap; derived classes with extra data should redefine.
 
-	virtual BOOL      SetObjectDepth ( int iNewObjectDepth );
-	virtual BOOL SetObjectDepthWithIndex( int NewObjectDepth, int NewLastSetIndex );
-	virtual HRESULT SetArraySize   ( int iSize );
-	virtual HRESULT CopyValue      ( int src, int dest );
+	virtual BOOL      SetObjectDepth ( int iNewObjectDepth ) override;
+	virtual BOOL SetObjectDepthWithIndex( int NewObjectDepth, int NewLastSetIndex ) override;
+	virtual HRESULT SetArraySize   ( int iSize ) override;
+	virtual HRESULT CopyValue      ( int src, int dest ) override;
 	
 	HRESULT SetDefaultValue( const T& value, bool bResetAll );
 	HRESULT GetDefaultValue( T& rValue ) const;
@@ -71,12 +71,12 @@ protected:
 	SVValueObjectClassImpl(LPCTSTR lpszObjectName) : SVValueObjectClass(lpszObjectName) {Init();}
 	SVValueObjectClassImpl(SVObjectClass* pOwner, int StringResourceID) : SVValueObjectClass(pOwner, StringResourceID) {Init();}
 
-	virtual HRESULT CreateBuckets();
+	virtual HRESULT CreateBuckets() override;
 	virtual HRESULT SetValueAt( int iBucket, int iIndex, T value );
 	virtual HRESULT GetValueAt( int iBucket, int iIndex, T& rValue ) const;
 
-	virtual HRESULT GetObjectValue( const SVString& p_rValueName, VARIANT& p_rVariantValue ) const;
-	virtual HRESULT SetObjectValue( SVObjectAttributeClass* pDataObject );
+	virtual HRESULT GetObjectValue( const SVString& p_rValueName, VARIANT& p_rVariantValue ) const override;
+	virtual HRESULT SetObjectValue( SVObjectAttributeClass* pDataObject ) override;
 
 	virtual HRESULT GetArrayValues(std::vector<T>& raValues) const;	// allow copy of native type
 	virtual HRESULT GetArrayValues(int iBucket, std::vector<T>& raValues) const;	// allow copy of native type
