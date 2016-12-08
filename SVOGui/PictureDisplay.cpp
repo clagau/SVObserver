@@ -157,7 +157,17 @@ namespace Seidenader
 			return CDSVPictureDisplay::EditOverlay(Tab, handle, ParameterList, ParameterValues);
 		}
 
-		SCODE PictureDisplay::EditOverlay( long Tab, long handle, LongParamMap ParMap )
+		SCODE PictureDisplay::EditOverlay( long Tab, long handle, const LongParamMap& ParMap )
+		{
+			COleSafeArray saPar, saVal;
+			SvOml::DisplayHelper::CreateSafeArrayFromMap( ParMap, saPar, saVal );
+			SCODE retValue = CDSVPictureDisplay::EditOverlay( Tab, handle, static_cast< LPVARIANT >( saPar ), static_cast< LPVARIANT >( saVal ) );
+			saPar.Destroy();
+			saVal.Destroy();
+			return retValue;
+		}
+
+		SCODE PictureDisplay::EditOverlay( long Tab, long handle, const VariantParamMap& ParMap )
 		{
 			COleSafeArray saPar, saVal;
 			SvOml::DisplayHelper::CreateSafeArrayFromMap( ParMap, saPar, saVal );

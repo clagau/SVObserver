@@ -80,9 +80,6 @@ SVPatternAnalyzerClass::SVPatternAnalyzerClass(BOOL BCreateDefaultTaskList, SVOb
 {
 	m_outObjectInfo.ObjectTypeInfo.SubType = SVPatternAnalyzerObjectType;
 	m_nPatternIndex = -1;
-	
-	m_lpatModelOriginX = 0;	
-	m_lpatModelOriginY = 0;	
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject(&msv_dpatAcceptanceThreshold, SVpatAcceptThresholdObjectGuid, IDS_OBJECTNAME_PAT_ACCEPTTHRESHOLD, false, SVResetItemOwner );
@@ -119,6 +116,8 @@ SVPatternAnalyzerClass::SVPatternAnalyzerClass(BOOL BCreateDefaultTaskList, SVOb
 	RegisterEmbeddedObject(&msv_lpatNumFoundOccurances, SVpatResultNumFoundOccurancesObjectGuid, IDS_OBJECTNAME_PAT_NBRFOUNDOCCURANCES, false, SVResetItemNone );
 	RegisterEmbeddedObject(&m_lpatModelWidth, SVpatModelWidthObjectGuid, IDS_OBJECTNAME_PAT_MODELWIDTH, false, SVResetItemOwner );
 	RegisterEmbeddedObject(&m_lpatModelHeight, SVpatModelHeightObjectGuid, IDS_OBJECTNAME_PAT_MODELHEIGHT, false, SVResetItemOwner );
+	RegisterEmbeddedObject(&m_lpatModelCenterX, SVpatModelCenterXObjectGuid, IDS_OBJECTNAME_PAT_MODELCENTERX, false, SVResetItemOwner );
+	RegisterEmbeddedObject(&m_lpatModelCenterY, SVpatModelCenterYObjectGuid, IDS_OBJECTNAME_PAT_MODELCENTERY, false, SVResetItemOwner );
 
   // Set default values for search parameters
 	SetDefaultSearchValues ();
@@ -128,6 +127,8 @@ SVPatternAnalyzerClass::SVPatternAnalyzerClass(BOOL BCreateDefaultTaskList, SVOb
 	msv_dpatResultX.SetDefaultValue (0.0, TRUE);
 	msv_dpatResultY.SetDefaultValue (0.0, TRUE);
 	msv_dpatResultAngle.SetDefaultValue (0.0, TRUE);
+	m_lpatModelCenterX.SetDefaultValue(0, true);
+	m_lpatModelCenterY.SetDefaultValue(0, true);
 
 	// Setup the result
 	pAnalyzerResult = nullptr;
@@ -222,89 +223,33 @@ void SVPatternAnalyzerClass::SetDefaultSearchValues()
 	msv_lpatAdditionalCandidates.SetDefaultValue(SVValueDefault, true);
 	msv_dpatCandidateSpacingXMin.SetDefaultValue(SVValueDefault, true);
 	msv_dpatCandidateSpacingYMin.SetDefaultValue(SVValueDefault, true);
-	m_lpatModelWidth.SetDefaultValue(4, false);
-	m_lpatModelHeight.SetDefaultValue(4, false);
+	m_lpatModelWidth.SetDefaultValue(4, true);
+	m_lpatModelHeight.SetDefaultValue(4, true);
 
 	m_vec2dPatResults.fill(0.0);
 }
 
-void SVPatternAnalyzerClass::GetModelExtents(long& xPos, long& yPos, long& width, long& height)
+bool SVPatternAnalyzerClass::CreateModelBuffer()
 {
-	xPos = m_lpatModelOriginX;
-	yPos = m_lpatModelOriginY;
-
-	m_lpatModelWidth.GetValue(width);
-	m_lpatModelHeight.GetValue(height);
-
-	// Adjust Offsets for Circular Scan 
-	// because the result positions of the found pattern will be the inner rect
-	bool bCircularScan;
-	msv_bpatCircularOverscan.GetValue(1, bCircularScan);
-	if (bCircularScan)
-	{
-		CRect rect(xPos, xPos, xPos + width, yPos + height);
-		CRect innerRect = SVMatroxPatternInterface::CalculateOverscanInnerRect(CPoint(rect.left, rect.top), CSize(rect.Width(), rect.Height()));
-
-		xPos -= ((rect.Width() - innerRect.Width()) / 2);
-		yPos -= ((rect.Height() - innerRect.Height()) / 2);
-
-		if (xPos < 0)
-			xPos = 0;
-
-		if (yPos < 0)
-			yPos = 0;
-	}
-}
-
-void SVPatternAnalyzerClass::SetModelExtents(long xPos, long yPos, long width, long height)
-{
-	m_lpatModelOriginX = xPos;
-	m_lpatModelOriginY = yPos;
-
-	m_lpatModelWidth.SetValue(1, width);
-	m_lpatModelHeight.SetValue(1, height);
-}
-
-void SVPatternAnalyzerClass::SetCircularOverscan(bool bCircularOverscan)
-{
-	// Set Circular Overscan
-	msv_bpatCircularOverscan.SetValue(1, bCircularOverscan);
-}
-
-BOOL SVPatternAnalyzerClass::CreateModelBuffer()
-{
-	BOOL l_bOk = DestroyModelBuffer();
-
-	if ( l_bOk )
-	{
-		// Allocate Buffer for storing the Model Image
-		m_patBuffer.SetImageProperty( SVImagePropertyPixelDepth, SV8BitUnsigned );
-		m_patBuffer.SetImageProperty( SVImagePropertyBandNumber, 1 );
-
-		m_patBuffer.SetExtentProperty( SVExtentPropertyPositionPoint, 0 );
-		long tmp = 0;
-		m_lpatModelWidth.GetValue(tmp);
-		m_patBuffer.SetExtentProperty( SVExtentPropertyWidth, tmp );
-		m_lpatModelHeight.GetValue(tmp);
-		m_patBuffer.SetExtentProperty( SVExtentPropertyHeight, tmp );
-
-		l_bOk = S_OK == SVImageProcessingClass::CreateImageBuffer( m_patBuffer, m_patBufferHandlePtr );
-	}
-	return l_bOk;
-}
-
-BOOL SVPatternAnalyzerClass::DestroyModelBuffer()
-{
-	BOOL l_bOk = TRUE;
-
 	m_patBufferHandlePtr.clear();
 
-	return l_bOk;
+	// Allocate Buffer for storing the Model Image
+	m_patBuffer.SetImageProperty( SVImagePropertyPixelDepth, SV8BitUnsigned );
+	m_patBuffer.SetImageProperty( SVImagePropertyBandNumber, 1 );
+
+	m_patBuffer.SetExtentProperty( SVExtentPropertyPositionPoint, 0 );
+	long tmp = 0;
+	m_lpatModelWidth.GetValue(tmp);
+	m_patBuffer.SetExtentProperty( SVExtentPropertyWidth, tmp );
+	m_lpatModelHeight.GetValue(tmp);
+	m_patBuffer.SetExtentProperty( SVExtentPropertyHeight, tmp );
+
+	return (S_OK == SVImageProcessingClass::CreateImageBuffer( m_patBuffer, m_patBufferHandlePtr ));
 }
 
-BOOL SVPatternAnalyzerClass::UpdateModelFromInputImage()
+bool SVPatternAnalyzerClass::UpdateModelFromInputImage(long modelPosX, long modelPosY)
 {
-	BOOL l_bOk = false;
+	bool bOk = false;
 
 	SVImageClass *l_pInputImage = getInputImage();
 
@@ -328,8 +273,8 @@ BOOL SVPatternAnalyzerClass::UpdateModelFromInputImage()
 		childImageInfo.SetImageProperty( SVImagePropertyPixelDepth, SV8BitUnsigned );
 		childImageInfo.SetImageProperty( SVImagePropertyBandNumber, 1 );
 
-		childImageInfo.SetExtentProperty( SVExtentPropertyPositionPointX, m_lpatModelOriginX );
-		childImageInfo.SetExtentProperty( SVExtentPropertyPositionPointY, m_lpatModelOriginY );
+		childImageInfo.SetExtentProperty( SVExtentPropertyPositionPointX, modelPosX );
+		childImageInfo.SetExtentProperty( SVExtentPropertyPositionPointY, modelPosY );
 		long tmp = 0;
 		m_lpatModelWidth.GetValue(tmp);
 		childImageInfo.SetExtentProperty( SVExtentPropertyWidth, tmp );
@@ -352,19 +297,19 @@ BOOL SVPatternAnalyzerClass::UpdateModelFromInputImage()
 			childImageHandle.clear();
 			
 			// Create the Model Pattern
-			l_bOk = UpdateModelFromBuffer();
+			bOk = UpdateModelFromBuffer();
 		}
 		else
 		{
-			l_bOk = false;
+			bOk = false;
 		}
 	}
-	return l_bOk;
+	return bOk;
 }
 
-BOOL SVPatternAnalyzerClass::UpdateModelFromBuffer()
+bool SVPatternAnalyzerClass::UpdateModelFromBuffer()
 {
-	BOOL l_bOk = FALSE;
+	bool bOk = false;
 
 	if ( !m_patBufferHandlePtr.empty() )
 	{
@@ -422,9 +367,9 @@ BOOL SVPatternAnalyzerClass::UpdateModelFromBuffer()
 			}
 		}
 
-		l_bOk = (!m_patModelHandle.empty() && l_Code == SVMEE_STATUS_OK);
+		bOk = (!m_patModelHandle.empty() && l_Code == SVMEE_STATUS_OK);
 	}
-	return l_bOk;
+	return bOk;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -437,10 +382,10 @@ BOOL SVPatternAnalyzerClass::UpdateModelFromBuffer()
 // 	 Date		Author				Comment                                       
 //  04-12-00 	Sri				First Implementation
 ////////////////////////////////////////////////////////////////////////////////
-BOOL SVPatternAnalyzerClass::RestorePattern (CString strImageFile, SvOi::MessageTextEnum *pErrMsgId)
+bool SVPatternAnalyzerClass::RestorePattern (CString strImageFile, SvOi::MessageTextEnum *pErrMsgId)
 {
 	DWORD LastError(0);
-	BOOL bOk = FALSE;
+	bool bOk = false;
 
 	SVMatroxBuffer l_ImportHandle;
 	SVString l_strImageFile = strImageFile;
@@ -534,9 +479,9 @@ BOOL SVPatternAnalyzerClass::RestorePattern (CString strImageFile, SvOi::Message
 // 	 Date		Author				Comment                                       
 //  04-12-00 	Sri				First Implementation
 ////////////////////////////////////////////////////////////////////////////////
-BOOL SVPatternAnalyzerClass::SetSearchParameters ()
+bool SVPatternAnalyzerClass::SetSearchParameters ()
 {
-	BOOL l_bOk = TRUE;
+	bool bOk = true;
 
 	try
 	{
@@ -568,7 +513,7 @@ BOOL SVPatternAnalyzerClass::SetSearchParameters ()
 			{
 				ResizeResultValues((int)lParam);
 				
-				if(l_bOk && !m_patResultHandle.empty() )
+				if(bOk && !m_patResultHandle.empty() )
 				{
 					l_Code = SVMatroxPatternInterface::Destroy( m_patResultHandle );
 				}
@@ -580,7 +525,11 @@ BOOL SVPatternAnalyzerClass::SetSearchParameters ()
 
 				if( l_Code == SVMEE_STATUS_OK )
 				{
-					l_Code = SVMatroxPatternInterface::SetCenter( m_patModelHandle, 0, 0 );
+					long centerX = 0;
+					long centerY = 0;
+					m_lpatModelCenterX.GetValue(centerX);
+					m_lpatModelCenterY.GetValue(centerY);
+					l_Code = SVMatroxPatternInterface::SetCenter( m_patModelHandle, centerX, centerY );
 
 					if( l_Code == SVMEE_STATUS_OK )
 					{
@@ -722,12 +671,12 @@ BOOL SVPatternAnalyzerClass::SetSearchParameters ()
 							l_Code = SVMatroxPatternInterface::PreProcModel( m_patModelHandle, ImageBufId );
 							if( l_Code == SVMEE_STATUS_OK )
 							{
-								l_Code = SVMatroxPatternInterface::Execute( m_patResultHandle, ImageBufId, m_patModelHandle );
+								l_Code = executePatternAndSetResults( ImageBufId );
 							}
 						}
 						else
 						{
-							l_bOk = FALSE;
+							bOk = false;
 						}
 					}
 				}
@@ -735,7 +684,7 @@ BOOL SVPatternAnalyzerClass::SetSearchParameters ()
 			// check if one of the matrox calls failed
 			if( l_Code != SVMEE_STATUS_OK )
 			{
-				l_bOk = FALSE;
+				bOk = false;
 			}
 		}
 // getInputImage failed
@@ -744,9 +693,9 @@ BOOL SVPatternAnalyzerClass::SetSearchParameters ()
 	{
 		SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 		Exception.setMessage( SVMSG_SVO_UNHANDLED_EXCEPTION, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
-		l_bOk = FALSE;
+		bOk = false;
 	}
-	return l_bOk;
+	return bOk;
 }
 
 void SVPatternAnalyzerClass::CloseMIL ()
@@ -761,7 +710,7 @@ void SVPatternAnalyzerClass::CloseMIL ()
 	{
 		l_Code = SVMatroxPatternInterface::Destroy( m_patResultHandle );
 	}
-	DestroyModelBuffer();
+	m_patBufferHandlePtr.clear();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -905,113 +854,7 @@ BOOL SVPatternAnalyzerClass::onRun (SVRunStatusClass &RRunStatus)
 
 			ImageBufId = l_MilHandle.GetBuffer();
 			
-			l_Code = SVMatroxPatternInterface::Execute( m_patResultHandle, ImageBufId, m_patModelHandle );
-			if( l_Code == SVMEE_STATUS_OK )
-			{
-				m_lpatModelOriginX = 0L; 
-				m_lpatModelOriginY = 0L; 
-				
-				long lOccurances = 0; 
-				l_Code = SVMatroxPatternInterface::GetNumber( m_patResultHandle, lOccurances );
-				if( l_Code == SVMEE_STATUS_OK )
-				{
-					msv_lpatNumFoundOccurances.SetValue(RRunStatus.m_lResultDataIndex, lOccurances);
-
-					if( lOccurances > 0 )
-					{
-						msv_dpatResultMatchScore.SetResultSize( RRunStatus.m_lResultDataIndex, lOccurances );
-						msv_dpatResultAngle.SetResultSize( RRunStatus.m_lResultDataIndex, lOccurances );
-						msv_dpatResultX.SetResultSize( RRunStatus.m_lResultDataIndex, lOccurances );
-						msv_dpatResultY.SetResultSize( RRunStatus.m_lResultDataIndex, lOccurances );
-
-						//
-						vector2d<double>::row_type& matchArray = m_vec2dPatResults[SV_PATTERN_RESULT_MATCHSCORE];
-						matchArray.resize( lOccurances );
-						
-						double* pdResultMatchScore = &(matchArray[0]);
-						// SEJ - not sure if this is neccessary
-						memset( pdResultMatchScore, 0L, sizeof( double ) * matchArray.size() );
-
-						//
-						vector2d<double>::row_type& angleArray = m_vec2dPatResults[SV_PATTERN_RESULT_ANGLE];
-						angleArray.resize( lOccurances );
-
-						double* pdResultAngle = &(angleArray[0]);
-						// SEJ - not sure if this is neccessary
-						memset( pdResultAngle, 0L, sizeof( double ) * angleArray.size() );
-
-						//
-						vector2d<double>::row_type& xPosArray = m_vec2dPatResults[SV_PATTERN_RESULT_XPOS];
-						xPosArray.resize( lOccurances );
-						
-						double* pdResultXPos = &(xPosArray[0]);
-						// SEJ - not sure if this is neccessary
-						memset( pdResultXPos, 0L, sizeof( double ) * xPosArray.size() );
-
-						//
-						vector2d<double>::row_type& yPosArray = m_vec2dPatResults[SV_PATTERN_RESULT_YPOS];
-						yPosArray.resize( lOccurances );
-						
-						// SEJ - not sure if this is neccessary
-						double* pdResultYPos = &(yPosArray[0]);
-						memset( pdResultYPos, 0L, sizeof( double ) * yPosArray.size() );
-										
-						// Get the X & Y coordinates, match score and angle of the result image
-						l_Code = SVMatroxPatternInterface::GetResult( m_patResultHandle, SVPatPosX, pdResultXPos );
-						if( l_Code == SVMEE_STATUS_OK )
-						{
-							l_Code = SVMatroxPatternInterface::GetResult( m_patResultHandle, SVPatPosY, pdResultYPos );
-						}
-						if( l_Code == SVMEE_STATUS_OK )
-						{
-							l_Code = SVMatroxPatternInterface::GetResult( m_patResultHandle, SVPatScore, pdResultMatchScore );
-						}
-						if( l_Code == SVMEE_STATUS_OK )
-						{
-							BOOL bAngleMode;
-							msv_bpatSearchAngleMode.GetValue(bAngleMode); 
-							if (bAngleMode)
-							{
-								l_Code = SVMatroxPatternInterface::GetResult( m_patResultHandle, SVPatAngle, pdResultAngle );
-							}
-						
-							if( l_Code == SVMEE_STATUS_OK )
-							{
-								// populate results values
-								for (int i = 0; i < lOccurances; i++)
-								{
-									msv_dpatResultMatchScore.SetValue( RRunStatus.m_lResultDataIndex, i, ((double)((int)(pdResultMatchScore[i] * 10.0)) / 10.0));
-									if (bAngleMode)
-									{
-										if (pdResultAngle[i] < 0.0)
-										{
-											pdResultAngle[i] = 0.0;
-										}
-									
-										msv_dpatResultAngle.SetValue( RRunStatus.m_lResultDataIndex, i, ((double)((int)(pdResultAngle[i] * 10.0)) / 10.0));
-									}
-									else
-									{
-										msv_dpatResultAngle.SetValue( RRunStatus.m_lResultDataIndex, i, 0.0 );
-									}
-
-									msv_dpatResultX.SetValue( RRunStatus.m_lResultDataIndex, i, pdResultXPos[i]);
-									msv_dpatResultY.SetValue( RRunStatus.m_lResultDataIndex, i, pdResultYPos[i]);
-								}
-							
-								// Get the Closest matching patterns Origin. This value will be used to display the model in the 
-								// Pattern Analyzer Setup dialog
-								m_lpatModelOriginX = static_cast<long>(pdResultXPos[0]);
-								m_lpatModelOriginY = static_cast<long>(pdResultYPos[0]);
-							}
-						}
-					}
-					else
-					{
-						ResetResultValues();
-					}
-				}
-			}
+			l_Code = executePatternAndSetResults(ImageBufId, RRunStatus.m_lResultDataIndex);
 
 			// check if one of the matrox calls failed
 			if( l_Code != SVMEE_STATUS_OK )
@@ -1086,7 +929,11 @@ HRESULT SVPatternAnalyzerClass::ResetObject()
 					SetDefaultSearchValues();
 					
 					SVMatroxPatternInterface::SVStatusCode l_Code;
-					l_Code = SVMatroxPatternInterface::SetCenter( m_patModelHandle, 0, 0 );
+					long centerX = 0;
+					long centerY = 0;
+					m_lpatModelCenterX.GetValue(centerX);
+					m_lpatModelCenterY.GetValue(centerY);
+					l_Code = SVMatroxPatternInterface::SetCenter( m_patModelHandle, centerX, centerY );
 
 					if (l_Code != SVMEE_STATUS_OK)
 					{
@@ -1127,82 +974,21 @@ HRESULT SVPatternAnalyzerClass::onCollectOverlays(SVImageClass* p_pImage, SVExte
 		long lOccurances;
 		msv_lpatNumFoundOccurances.GetValue(lOccurances);
 
-		if (lOccurances > 0)
+		// If Run mode or test mode, show only one occurance (the best match)
+		if ( SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) && lOccurances > 0 )
 		{
-			SVImageExtentClass l_svExtents;
-			HRESULT hr = pTool->GetImageExtent( l_svExtents );
+			lOccurances = 1;
+		}
 
-			if (S_OK == hr)
-			{
-				long lpatModelWidth = 0;
-				long lpatModelHeight = 0;
-				m_lpatModelWidth.GetValue(lpatModelWidth);
-				m_lpatModelWidth.GetValue(lpatModelHeight);
+		std::vector<SVExtentFigureStruct> figureList = GetResultExtentFigureList(lOccurances);
 
-				// Check if CircularOverscan was used
-				bool bCircularScan;
-				msv_bpatCircularOverscan.GetValue(bCircularScan);
-				if (bCircularScan)
-				{
-					POINT pos = { 0, 0 };
-					SIZE size = { lpatModelWidth, lpatModelHeight};
-
-					RECT rect = SVMatroxPatternInterface::CalculateOverscanInnerRect(pos, size);
-					lpatModelWidth = rect.right - rect.left;
-					lpatModelHeight = rect.bottom - rect.top;
-				}
-
-				// If Run mode or test mode, show only one occurance (the best match)
-				if ( SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) )
-				{
-					lOccurances = 1;
-				}
-					
-				BOOL bAngleMode;
-				msv_bpatSearchAngleMode.GetValue( bAngleMode); 
-
-				// 
-				bool bError = false;
-				for (int i = 0; !bError && i < (int)lOccurances; i++)
-				{
-					double dResultXPos = 0.0;
-					double dResultYPos = 0.0;
-					double dResultAngle = 0.0;
-
-					msv_dpatResultX.GetValue(msv_dpatResultX.GetLastSetIndex(), i, dResultXPos);
-					msv_dpatResultY.GetValue(msv_dpatResultY.GetLastSetIndex(), i, dResultYPos);
-					msv_dpatResultAngle.GetValue(msv_dpatResultAngle.GetLastSetIndex(), i, dResultAngle);
-
-					bError = dResultXPos < 0.0 || dResultYPos < 0.0	|| dResultAngle < 0.0;
-
-					if ( !bError )
-					{
-						SVExtentFigureStruct l_svFigure;
-						SVImageExtentClass l_svPatternExtents;
-
-						l_svPatternExtents.SetTranslation( SVExtentTranslationFlippedRotate );
-						l_svPatternExtents.SetExtentProperty( SVExtentPropertyPositionPointX, dResultXPos );
-						l_svPatternExtents.SetExtentProperty( SVExtentPropertyPositionPointY, dResultYPos );
-						l_svPatternExtents.SetExtentProperty( SVExtentPropertyWidth, lpatModelWidth );
-						l_svPatternExtents.SetExtentProperty( SVExtentPropertyHeight, lpatModelHeight );
-						l_svPatternExtents.SetExtentProperty( SVExtentPropertyRotationAngle, dResultAngle );
-						l_svPatternExtents.UpdateData();
-						l_svPatternExtents.GetFigure( l_svFigure );
-
-						l_svExtents.TranslateFromOutputSpace( l_svFigure, l_svFigure );
-				
-						SVExtentMultiLineStruct l_multiLine;
-
-						l_multiLine.m_Color = SV_DEFAULT_SUB_FUNCTION_COLOR_1;
-						
-						l_multiLine.AssignExtentFigure( l_svFigure, SV_DEFAULT_SUB_FUNCTION_COLOR_1 );
-
-						UpdateOverlayIDs( l_multiLine );
-
-						p_rMultiLineArray.Add( l_multiLine );
-					}
-				}
-			}
+		for (int i=0; i < figureList.size(); i++)
+		{
+			SVExtentMultiLineStruct l_multiLine;
+			l_multiLine.m_Color = SV_DEFAULT_SUB_FUNCTION_COLOR_1;
+			l_multiLine.AssignExtentFigure( figureList[i], SV_DEFAULT_SUB_FUNCTION_COLOR_1 );
+			UpdateOverlayIDs( l_multiLine );
+			p_rMultiLineArray.Add( l_multiLine );
 		}
 	}
 	return S_OK;
@@ -1226,80 +1012,18 @@ bool SVPatternAnalyzerClass::IsPtOverResult( const POINT& rPoint )
 
 	m_nPatternIndex = -1;
 
-	if (lOccurances > 0)
+	std::vector<SVExtentFigureStruct> figureList = GetResultExtentFigureList(lOccurances);
+
+	for (int i=0; i < figureList.size(); i++)
 	{
-		SVImageExtentClass l_svExtents;
-		SVToolClass* pTool = dynamic_cast<SVToolClass*>(GetTool());
-		if (pTool)
+		if( S_OK == figureList[i].IsPointOverFigure( rPoint ) )
 		{
-			HRESULT hr = pTool->GetImageExtent( l_svExtents );
-
-			if (S_OK == hr)
-			{
-			long lpatModelWidth = 0;
-			long lpatModelHeight = 0;
-			m_lpatModelWidth.GetValue(lpatModelWidth);
-			m_lpatModelWidth.GetValue(lpatModelHeight);
-			
-				// Check if CircularOverscan was used
-				bool bCircularScan;
-				msv_bpatCircularOverscan.GetValue(bCircularScan);
-				if (bCircularScan)
-				{
-					POINT pos = { 0, 0 };
-				SIZE size = { lpatModelWidth, lpatModelHeight};
-
-					RECT rect = SVMatroxPatternInterface::CalculateOverscanInnerRect(pos, size);
-					lpatModelWidth = rect.right - rect.left;
-					lpatModelHeight = rect.bottom - rect.top;
-				}
-
-				BOOL bAngleMode;
-				msv_bpatSearchAngleMode.GetValue(bAngleMode); 
-
-				// Add the Poly line Draw Object to the SVDrawObjectList
-				bool bError = false;
-				for (int i = 0; !bError && i < (int)lOccurances; i++)
-				{
-					double dResultXPos = 0.0;
-					double dResultYPos = 0.0;
-					double dResultAngle = 0.0;
-
-					msv_dpatResultX.GetValue(msv_dpatResultX.GetLastSetIndex(), i, dResultXPos);
-					msv_dpatResultY.GetValue(msv_dpatResultY.GetLastSetIndex(), i, dResultYPos);
-					msv_dpatResultAngle.GetValue(msv_dpatResultAngle.GetLastSetIndex(), i, dResultAngle);
-
-					bError = dResultXPos < 0.0 || dResultYPos < 0.0	||dResultAngle < 0.0;
-
-					if ( !bError )
-					{
-						SVExtentFigureStruct l_svFigure;
-						SVImageExtentClass l_svPatternExtents;
-
-						l_svPatternExtents.SetTranslation( SVExtentTranslationFlippedRotate );
-						l_svPatternExtents.SetExtentProperty( SVExtentPropertyPositionPointX, dResultXPos );
-						l_svPatternExtents.SetExtentProperty( SVExtentPropertyPositionPointY, dResultYPos );
-						l_svPatternExtents.SetExtentProperty( SVExtentPropertyWidth, lpatModelWidth );
-						l_svPatternExtents.SetExtentProperty( SVExtentPropertyHeight, lpatModelHeight );
-						l_svPatternExtents.SetExtentProperty( SVExtentPropertyRotationAngle, dResultAngle );
-						l_svPatternExtents.UpdateData();
-						l_svPatternExtents.GetFigure( l_svFigure );
-
-						l_svExtents.TranslateFromOutputSpace( l_svFigure, l_svFigure );
-
-					if( S_OK == l_svFigure.IsPointOverFigure( rPoint ) )
-						{
-							m_nPatternIndex = i;
-
-							break;
-						}
-					}
-				}
-			}
+			m_nPatternIndex = i;
+			return true;
 		}
 	}
 
-	return (m_nPatternIndex != -1);
+	return false;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1364,11 +1088,11 @@ void SVPatternAnalyzerClass::ResizeResultValues(int nNum)
 	m_vec2dPatResults.resize( SV_NUMBER_OF_PATTERN_RESULTS, nNum );
 }
 
-BOOL SVPatternAnalyzerClass::ResetImageFile()
+bool SVPatternAnalyzerClass::ResetImageFile()
 {
 	CString	strFile;
 	
-	BOOL bOk = ( S_OK == msv_szModelImageFile.GetValue( strFile ) );
+	bool bOk = ( S_OK == msv_szModelImageFile.GetValue( strFile ) );
 	
 	if ( bOk )
 	{
@@ -1387,11 +1111,6 @@ BOOL SVPatternAnalyzerClass::ResetImageFile()
 	return bOk;
 }
 
-BOOL SVPatternAnalyzerClass::GetModelImageFileName( CString &csFileName )
-{
-	return ( S_OK == msv_szModelImageFile.GetValue( csFileName ) );
-}
-
 bool SVPatternAnalyzerClass::IsValidSize()
 {
 	bool bRet = true;
@@ -1408,7 +1127,7 @@ bool SVPatternAnalyzerClass::IsValidSize()
 			long lpatModelWidth = 0;
 			long lpatModelHeight = 0;
 			m_lpatModelWidth.GetValue(lpatModelWidth);
-			m_lpatModelWidth.GetValue(lpatModelHeight);
+			m_lpatModelHeight.GetValue(lpatModelHeight);
 			if( oRec.bottom < lpatModelHeight || oRec.right < lpatModelWidth )
 			{
 				bRet = false;
@@ -1422,17 +1141,187 @@ bool SVPatternAnalyzerClass::IsValidSize()
 	return bRet;
 }
 
-long SVPatternAnalyzerClass::getModelWidth() const 
-{ 
-	long modelWidth = 0;
-	m_lpatModelWidth.GetValue(modelWidth);
-	return modelWidth;
+std::vector<SVExtentFigureStruct> SVPatternAnalyzerClass::GetResultExtentFigureList( long lOccurances )
+{
+	std::vector<SVExtentFigureStruct> retList;
+	if (lOccurances > 0)
+	{
+		SVImageExtentClass l_svExtents;
+		SVToolClass* pTool = dynamic_cast<SVToolClass*>(GetTool());
+		if (pTool)
+		{
+			HRESULT hr = pTool->GetImageExtent( l_svExtents );
+
+			if (S_OK == hr)
+			{
+				long lpatModelWidth = 0;
+				long lpatModelHeight = 0;
+				m_lpatModelWidth.GetValue(lpatModelWidth);
+				m_lpatModelHeight.GetValue(lpatModelHeight);
+
+				// Check if CircularOverscan was used
+				bool bCircularScan;
+				msv_bpatCircularOverscan.GetValue(bCircularScan);
+				if (bCircularScan)
+				{
+					POINT pos = { 0, 0 };
+					SIZE size = { lpatModelWidth, lpatModelHeight};
+
+					RECT rect = SVMatroxPatternInterface::CalculateOverscanInnerRect(pos, size);
+					lpatModelWidth = rect.right - rect.left;
+					lpatModelHeight = rect.bottom - rect.top;
+				}
+
+				BOOL bAngleMode;
+				msv_bpatSearchAngleMode.GetValue(bAngleMode); 
+
+				long centerX = 0;
+				long centerY = 0;
+				m_lpatModelCenterX.GetValue(centerX);
+				m_lpatModelCenterY.GetValue(centerY);
+
+				// Add the Poly line Draw Object to the SVDrawObjectList
+				bool bError = false;
+				for (int i = 0; !bError && i < (int)lOccurances; i++)
+				{
+					double dResultXPos = 0;
+					double dResultYPos = 0;
+					double dResultAngle = 0.0;
+
+					msv_dpatResultX.GetValue(msv_dpatResultX.GetLastSetIndex(), i, dResultXPos);
+					msv_dpatResultY.GetValue(msv_dpatResultY.GetLastSetIndex(), i, dResultYPos);
+					msv_dpatResultAngle.GetValue(msv_dpatResultAngle.GetLastSetIndex(), i, dResultAngle);
+					SVExtentPointStruct moveVector = SVRotatePoint(SVExtentPointStruct(0, 0), SVExtentPointStruct(centerX, centerY), -dResultAngle);
+					dResultXPos -= moveVector.m_dPositionX;
+					dResultYPos -= moveVector.m_dPositionY;
+					bError = dResultXPos < 0.0 || dResultYPos < 0.0	||dResultAngle < 0.0;
+
+					if ( !bError )
+					{
+						SVExtentFigureStruct l_svFigure;
+						SVImageExtentClass l_svPatternExtents;
+
+						l_svPatternExtents.SetTranslation( SVExtentTranslationFlippedRotate );
+						l_svPatternExtents.SetExtentProperty( SVExtentPropertyPositionPointX, dResultXPos );
+						l_svPatternExtents.SetExtentProperty( SVExtentPropertyPositionPointY, dResultYPos );
+						l_svPatternExtents.SetExtentProperty( SVExtentPropertyWidth, lpatModelWidth );
+						l_svPatternExtents.SetExtentProperty( SVExtentPropertyHeight, lpatModelHeight );
+						l_svPatternExtents.SetExtentProperty( SVExtentPropertyRotationAngle, dResultAngle );
+						l_svPatternExtents.UpdateData();
+						l_svPatternExtents.GetFigure( l_svFigure );
+
+						l_svExtents.TranslateFromOutputSpace( l_svFigure, l_svFigure );
+
+						retList.push_back(l_svFigure);
+					}
+				}
+			}
+		}
+	}
+	return retList;
 }
 
-long SVPatternAnalyzerClass::getModelHeidght() const 
-{ 
-	long modelHeidght = 0;
-	m_lpatModelHeight.GetValue(modelHeidght);
-	return modelHeidght;
+SVMatroxPatternInterface::SVStatusCode SVPatternAnalyzerClass::executePatternAndSetResults( SVMatroxBuffer ImageBufId, long index )
+{
+	SVMatroxPatternInterface::SVStatusCode  statusCode = SVMatroxPatternInterface::Execute( m_patResultHandle, ImageBufId, m_patModelHandle );
+	if( statusCode == SVMEE_STATUS_OK )
+	{
+		long lOccurances = 0; 
+		statusCode = SVMatroxPatternInterface::GetNumber( m_patResultHandle, lOccurances );
+		if( statusCode == SVMEE_STATUS_OK )
+		{
+			msv_lpatNumFoundOccurances.SetValue(index, lOccurances);
+
+			if( lOccurances > 0 )
+			{
+				msv_dpatResultMatchScore.SetResultSize( index, lOccurances );
+				msv_dpatResultAngle.SetResultSize( index, lOccurances );
+				msv_dpatResultX.SetResultSize( index, lOccurances );
+				msv_dpatResultY.SetResultSize( index, lOccurances );
+
+				//
+				vector2d<double>::row_type& matchArray = m_vec2dPatResults[SV_PATTERN_RESULT_MATCHSCORE];
+				matchArray.resize( lOccurances );
+
+				double* pdResultMatchScore = &(matchArray[0]);
+				// SEJ - not sure if this is neccessary
+				memset( pdResultMatchScore, 0L, sizeof( double ) * matchArray.size() );
+
+				//
+				vector2d<double>::row_type& angleArray = m_vec2dPatResults[SV_PATTERN_RESULT_ANGLE];
+				angleArray.resize( lOccurances );
+
+				double* pdResultAngle = &(angleArray[0]);
+				// SEJ - not sure if this is neccessary
+				memset( pdResultAngle, 0L, sizeof( double ) * angleArray.size() );
+
+				//
+				vector2d<double>::row_type& xPosArray = m_vec2dPatResults[SV_PATTERN_RESULT_XPOS];
+				xPosArray.resize( lOccurances );
+
+				double* pdResultXPos = &(xPosArray[0]);
+				// SEJ - not sure if this is neccessary
+				memset( pdResultXPos, 0L, sizeof( double ) * xPosArray.size() );
+
+				//
+				vector2d<double>::row_type& yPosArray = m_vec2dPatResults[SV_PATTERN_RESULT_YPOS];
+				yPosArray.resize( lOccurances );
+
+				// SEJ - not sure if this is neccessary
+				double* pdResultYPos = &(yPosArray[0]);
+				memset( pdResultYPos, 0L, sizeof( double ) * yPosArray.size() );
+
+				// Get the X & Y coordinates, match score and angle of the result image
+				statusCode = SVMatroxPatternInterface::GetResult( m_patResultHandle, SVPatPosX, pdResultXPos );
+				if( statusCode == SVMEE_STATUS_OK )
+				{
+					statusCode = SVMatroxPatternInterface::GetResult( m_patResultHandle, SVPatPosY, pdResultYPos );
+				}
+				if( statusCode == SVMEE_STATUS_OK )
+				{
+					statusCode = SVMatroxPatternInterface::GetResult( m_patResultHandle, SVPatScore, pdResultMatchScore );
+				}
+				if( statusCode == SVMEE_STATUS_OK )
+				{
+					BOOL bAngleMode;
+					msv_bpatSearchAngleMode.GetValue(bAngleMode); 
+					if (bAngleMode)
+					{
+						statusCode = SVMatroxPatternInterface::GetResult( m_patResultHandle, SVPatAngle, pdResultAngle );
+					}
+
+					if( statusCode == SVMEE_STATUS_OK )
+					{
+						// populate results values
+						for (int i = 0; i < lOccurances; i++)
+						{
+							msv_dpatResultMatchScore.SetValue( index, i, ((double)((int)(pdResultMatchScore[i] * 10.0)) / 10.0));
+							if (bAngleMode)
+							{
+								if (pdResultAngle[i] < 0.0)
+								{
+									pdResultAngle[i] = 0.0;
+								}
+
+								msv_dpatResultAngle.SetValue( index, i, ((double)((int)(pdResultAngle[i] * 10.0)) / 10.0));
+							}
+							else
+							{
+								msv_dpatResultAngle.SetValue( index, i, 0.0 );
+							}
+
+							msv_dpatResultX.SetValue( index, i, pdResultXPos[i]);
+							msv_dpatResultY.SetValue( index, i, pdResultYPos[i]);
+						}
+					}
+				}
+			}
+			else
+			{
+				ResetResultValues();
+			}
+		}
+	}	
+	return statusCode;
 }
 

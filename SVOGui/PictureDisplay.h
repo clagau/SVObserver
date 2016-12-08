@@ -107,49 +107,29 @@ namespace Seidenader
 			//************************************
 			SCODE AddOverlay( long Tab, VARIANT* ParameterList, VARIANT* ParameterValues, long* pHandle );
 
-			//************************************
-			// Method:    AddOverlay
-			// Description: Add a overlay to a image tab
-			// Access:    public
-			// Returns:   SCODE return an error code.
-			// Parameter: long Tab: handle to the tab
-			// Parameter: LongParamMap Parmap: Parameter map for the overlay.
-			// Parameter: long * pHandle: Return the handle to the overlay.
-			//************************************
+			/// Add a overlay to a image tab
+			/// \param Tab [in] handle to the tab
+			/// \param ParMap [in] Parameter map for the overlay
+			/// \param pHandle [out] Return the handle to the overlay.
+			/// \returns SCODE return an error code.
 			SCODE AddOverlay( long Tab, const LongParamMap& ParMap, long* pHandle );
-
-			//************************************
-			// Method:    AddOverlay
-			// Description: Add a overlay to a image tab
-			// Returns:   SCODE return an error code.
-			// Parameter: long Tab: handle to the tab
-			// Parameter: const VariantParamMap& Parmap: Parameter map for the overlay.
-			// Parameter: long * pHandle: Return the handle to the overlay.
-			//************************************
 			SCODE AddOverlay( long Tab, const VariantParamMap& ParMap, long* pHandle );
 
-			//************************************
-			// Method:    EditShape
-			// Description: Edit a existing overlay.
-			// Access:    public
-			// Returns:   SCODE return an error code.
-			// Parameter: long Tab: handle to the tab
-			// Parameter: long handle: handle to the overlay
-			// Parameter: VARIANT* ParameterList: list of the parameter names
-			// Parameter: VARIANT* ParameterValues: list of the parameter values (same order than ParameterList)
-			//************************************
+			/// Edit a existing overlay.
+			/// \param Tab [in] handle to the tab
+			/// \param handle [in] handle to the overlay
+			/// \param ParameterList [in] list of the parameter names
+			/// \param ParameterValues [in] list of the parameter values (same order than ParameterList)
+			/// \returns SCODE
 			SCODE EditOverlay( long Tab, long handle, VARIANT* ParameterList, VARIANT* ParameterValues );
 
-			//************************************
-			// Method:    EditShape
-			// Description: Edit a existing overlay.
-			// Access:    public
-			// Returns:   SCODE return an error code.
-			// Parameter: long Tab: handle to the tab
-			// Parameter: long handle: handle to the overlay
-			// Parameter: LongParamMap Parmap: Parameter map for the overlay.
-			//************************************
-			SCODE EditOverlay( long Tab, long handle, LongParamMap ParMap );
+			/// Edit a existing overlay
+			/// \param Tab [in] handle to the tab
+			/// \param handle [in] handle to the overlay
+			/// \param ParMap [in] Parameter map for the overlay
+			/// \returns SCODE return an error code
+			SCODE EditOverlay( long Tab, long handle, const LongParamMap& ParMap );
+			SCODE EditOverlay( long Tab, long handle, const VariantParamMap& ParMap );
 #pragma endregion Public Methods
 		};
 	}

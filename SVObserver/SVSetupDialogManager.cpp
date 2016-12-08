@@ -54,7 +54,6 @@
 #include "SVRange.h"
 #include "SVOMFCLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
 #include "SVToolSet.h"
-
 #pragma endregion Inlcudes
 
 SVSetupDialogManager& SVSetupDialogManager::Instance()
@@ -863,7 +862,6 @@ HRESULT SVSetupDialogManager::SVPixelAnalyzerClassSetupDialog( const SVGUID& p_r
 HRESULT SVSetupDialogManager::SVPatternAnalyzerClassSetupDialog( const SVGUID& p_rObjectId, CWnd* pParentWnd )
 {
 	HRESULT l_Status = S_OK;
-
 	SVPatternAnalyzerClass* l_pAnalyzer = dynamic_cast< SVPatternAnalyzerClass* >( SVObjectManagerClass::Instance().GetObject( p_rObjectId ) );
 	
 	SVInspectionProcess* pInspection( nullptr );
@@ -881,17 +879,10 @@ HRESULT SVSetupDialogManager::SVPatternAnalyzerClassSetupDialog( const SVGUID& p
 
 		SetupDlgSheet.m_psh.dwFlags |= PSH_NOAPPLYNOW;
 		// Pages on this sheet
-		SVPatModelPageClass ModelPage;
+		SVPatModelPageClass ModelPage(l_pAnalyzer->GetInspection()->GetUniqueObjectID(), l_pAnalyzer->GetUniqueObjectID());
 		SVPatGeneralPageClass GeneralPage;
 		SVPatAdvancedPageClass AdvancedPage;
 		
-		// Model Selection values
-		ModelPage.m_nXPos = l_pAnalyzer->m_lpatModelOriginX;
-		ModelPage.m_nYPos = l_pAnalyzer->m_lpatModelOriginY;
-		ModelPage.m_lModelWidth = l_pAnalyzer->getModelWidth();
-		ModelPage.m_lModelHeight = l_pAnalyzer->getModelHeidght();
-		l_pAnalyzer->GetModelImageFileName(ModelPage.m_strModelName); 
-
 		// General page
 		l_pAnalyzer->msv_lpatMaxOccurances.GetValue(lParam); 
 		GeneralPage.m_nOccurances = (int)lParam;
@@ -935,12 +926,8 @@ HRESULT SVSetupDialogManager::SVPatternAnalyzerClassSetupDialog( const SVGUID& p
 		double l_dInterpMode = 0;
 		l_pAnalyzer->msv_dpatAngleInterpolation.GetValue(l_dInterpMode);
 		GeneralPage.m_dInterpolationMode = static_cast<SVImageOperationTypeEnum>( static_cast<long>(l_dInterpMode) );
-		
-		ModelPage.m_pPatAnalyzer = l_pAnalyzer;
-		GeneralPage.m_pPatAnalyzer = l_pAnalyzer;
 
-		l_pAnalyzer->msv_bpatCircularOverscan.GetValue(ModelPage.m_bCircularOverscan);
-		l_pAnalyzer->msv_szModelImageFile.GetValue( ModelPage.m_strModelName );
+		GeneralPage.m_pPatAnalyzer = l_pAnalyzer;
 
 		// get Values for Advanced page
 		l_pAnalyzer->msv_dpatPreliminaryAcceptanceThreshold.GetValue(AdvancedPage.m_dPreliminaryAcceptanceThreshold);
@@ -963,10 +950,6 @@ HRESULT SVSetupDialogManager::SVPatternAnalyzerClassSetupDialog( const SVGUID& p
 
 			try
 			{
-				// Do Model Page
-				pInspection->AddInputRequest( &( l_pAnalyzer->msv_szModelImageFile ), static_cast< LPCTSTR >( ModelPage.m_strModelName ) );
-				pInspection->AddInputRequest( &( l_pAnalyzer->msv_bpatCircularOverscan ), ModelPage.m_bCircularOverscan );
-
 				// Do General Page
 				pInspection->AddInputRequest( &( l_pAnalyzer->msv_lpatMaxOccurances ), GeneralPage.m_nOccurances );
 				pInspection->AddInputRequest( &( l_pAnalyzer->msv_dpatAcceptanceThreshold ), GeneralPage.m_lAcceptance );

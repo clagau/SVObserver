@@ -29,7 +29,7 @@
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVStatusLibrary\GlobalPath.h"
 #include "SVOMFCLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
-
+#include "SVOGui/GuiValueHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -41,32 +41,52 @@ static const int SVMinModelWidth = 4;
 static const int SVMinModelHeight = 4;
 static const int SVMinModelWidthWithCircular = 25;
 static const int SVMinModelHeightWithCircular = 25;
+static const int ToolImageTab = 0;
+static const int ModelImageTab = 1;
 
-IMPLEMENT_DYNCREATE(SVPatModelPageClass, CPropertyPage)
+static const std::string ModelWidthTag("Model Width");
+static const std::string ModelHeightTag("Model Height");
+static const std::string ModelCenterXTag("Model CenterX");
+static const std::string ModelCenterYTag("Model CenterY");
+static const std::string ModelImageFileTag("Model ImageFileName");
+static const std::string UseCircularOverscanTag("Use Circular Overscan");
+static const std::string ResultXTag("ResultX");
+static const std::string ResultYTag("ResultY");
+static const std::string ResultAngleTag("ResultAngle");
+static const std::string ResultSizeTag("ResultSize");
 #pragma endregion Declarations
 
 #pragma region Constructor
-SVPatModelPageClass::SVPatModelPageClass()
+SVPatModelPageClass::SVPatModelPageClass(const SVGUID& rInspectionID, const SVGUID& rAnalyzerID)
 : CPropertyPage(SVPatModelPageClass::IDD)
+, m_rInspectionID(rInspectionID)
+, m_rAnalyzerID(rAnalyzerID)
+, m_strModelName( _T("") )
+, m_sourceImageWidth( 100 )
+, m_sourceImageHeight( 100 )
+, m_handleToModelOverlayObject( -1 )
+, m_handleToCircleOverlayObject( -1 )
+, m_handleToSquareOverlayObject( -1 )
+, m_handleToCircleOverlayObject2( -1 )
+, m_handleToSquareOverlayObject2( -1 )
+, m_handleToModelCenterOverlay(-1)
+, m_nXPos( 0 )
+, m_nYPos( 0 )
+, m_lModelWidth( m_sourceImageWidth/2 )
+, m_lModelHeight( m_sourceImageHeight/2 )
+, m_values(SvOg::BoundValues(rInspectionID, rAnalyzerID, boost::assign::map_list_of
+(ModelWidthTag, SVpatModelWidthObjectGuid)
+(ModelHeightTag, SVpatModelHeightObjectGuid)
+(ModelCenterXTag, SVpatModelCenterXObjectGuid)
+(ModelCenterYTag, SVpatModelCenterYObjectGuid)
+(UseCircularOverscanTag, SVpatCircularOverscanObjectGuid)
+(ModelImageFileTag, SVpatModelImageFileGuid)
+(ResultXTag, SVpatResultXObjectGuid)
+(ResultYTag, SVpatResultYObjectGuid)
+(ResultAngleTag, SVpatResultAngleObjectGuid)
+(ResultSizeTag, SVpatResultNumFoundOccurancesObjectGuid)))
 {
-	//{{AFX_DATA_INIT(SVPatModelPageClass)
-	m_strModelName = _T(""); // @TODO:  Move assignments to the constructor initialization list.
-	//}}AFX_DATA_INIT
-	m_nMaxX = 100;
-	m_nMaxY = 100;
-
-	m_sourceImageWidth = 100;
-	m_sourceImageHeight = 100;
-	m_handleToModelOverlayObject = -1;
-	m_handleToCircleOverlayObject = -1;
-	m_handleToSquareOverlayObject = -1;
-	m_handleToCircleOverlayObject2 = -1;
-	m_handleToSquareOverlayObject2 = -1;
-
-	m_nXPos = 0;
-	m_nYPos = 0;
-	m_lModelWidth = m_sourceImageWidth/2;
-	m_lModelHeight = m_sourceImageHeight/2;
+	m_pPatAnalyzer = dynamic_cast<SVPatternAnalyzerClass*>(SVObjectManagerClass::Instance().GetObject(m_rAnalyzerID));
 }
 
 SVPatModelPageClass::~SVPatModelPageClass()
@@ -169,7 +189,7 @@ BOOL SVPatModelPageClass::OnInitDialog()
 	CPropertyPage::OnInitDialog();
 
 	m_pSheet = static_cast< SVPatAnalyzeSetupDlgSheet* >( GetParent() );
-
+	
 	///////////////////////////////////////////////////////////////////////
 	// Create Property box
 	CRect rect;
@@ -203,6 +223,8 @@ void SVPatModelPageClass::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_PAT_CIRCULAR_OVERSCAN, m_CircularOverscanCheckbox);
 	DDX_Check(pDX, IDC_PAT_CIRCULAR_OVERSCAN, m_bCircularOverscan);
 	DDX_Text(pDX, IDC_PAT1_FILE_NAME, m_strModelName);
+	DDX_Text(pDX, IDC_PAT_MODELCENTERX, m_CenterX);
+	DDX_Text(pDX, IDC_PAT_MODELCENTERY, m_CenterY);
 	DDX_Control(pDX, IDC_DIALOGIMAGE, m_dialogImage);
 	//}}AFX_DATA_MAP
 }
@@ -225,17 +247,19 @@ void SVPatModelPageClass::OnCreateModel()
 
 	if ( nullptr != m_pPatAnalyzer && GetModelFile( FALSE ) ) // @TODO:  Explain the "FALSE".
 	{
-		m_pPatAnalyzer->SetModelExtents(static_cast<long>(m_nXPos), static_cast<long>(m_nYPos), m_lModelWidth, m_lModelHeight);
-		m_pPatAnalyzer->SetCircularOverscan((m_bCircularOverscan) ? true : false);
+		//Model Width and Height will normally set by Analyzer himself, depending of ModelImage-size.
+		//But here this values must be set, because from this values the new ModelImage will be created.
+		m_values.Set(ModelWidthTag, m_lModelWidth);
+		m_values.Set(ModelHeightTag, m_lModelHeight);
+		m_values.Commit();
+		SetValuesToAnalyzer();
 
-		// Need to check if region is large enough to accommodate Overscan
-
-		if( m_pPatAnalyzer->UpdateModelFromInputImage() )
+		if( m_pPatAnalyzer->UpdateModelFromInputImage(m_nXPos, m_nYPos) )
 		{
 			SVMatroxBufferInterface::SVStatusCode l_Code;
 
 			// Set the Search parameters
-			BOOL bOk = m_pPatAnalyzer->SetSearchParameters() && !( m_pPatAnalyzer->m_patBufferHandlePtr.empty() );
+			bool bOk = m_pPatAnalyzer->SetSearchParameters() && !( m_pPatAnalyzer->m_patBufferHandlePtr.empty() );
 			if (bOk)
 			{
 				SVFileNameClass svFileName( m_strModelName );
@@ -306,18 +330,14 @@ void SVPatModelPageClass::OnKillFileName()
 
 void SVPatModelPageClass::OnCircularOverscanClicked()
 {
-	// Get Previous State
-	BOOL bOverscanState = m_bCircularOverscan;
 	UpdateData(true);
-
-	// Check State Change
-	if (bOverscanState != m_bCircularOverscan)
-	{
-		m_pPatAnalyzer->SetCircularOverscan((m_bCircularOverscan) ? true : false);
-		// Set Search Parameters (not current ones, but mostly what we started with before invocation of this setup dialog
-		m_pPatAnalyzer->SetSearchParameters();
-	}
 	setOverlay();
+}
+
+void SVPatModelPageClass::OnKillModelCenter()
+{
+	UpdateData(true);
+	setModelCenterOverlay();
 }
 
 void SVPatModelPageClass::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
@@ -398,38 +418,72 @@ BEGIN_MESSAGE_MAP(SVPatModelPageClass, CPropertyPage)
 	ON_BN_CLICKED(IDC_PAT1_CREATE_MODEL, OnCreateModel)
 	ON_BN_CLICKED(IDC_PAT_CIRCULAR_OVERSCAN, OnCircularOverscanClicked)
 	ON_EN_KILLFOCUS(IDC_PAT1_FILE_NAME, OnKillFileName)
+	ON_EN_KILLFOCUS(IDC_PAT_MODELCENTERX, OnKillModelCenter)
+	ON_EN_KILLFOCUS(IDC_PAT_MODELCENTERY, OnKillModelCenter)
 	ON_NOTIFY(PTN_ITEMCHANGED, IDC_PROPERTIES, OnItemChanged)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
 BEGIN_EVENTSINK_MAP(SVPatModelPageClass, CDialog)
 	ON_EVENT(SVPatModelPageClass, IDC_DIALOGIMAGE, 8, SVPatModelPageClass::ObjectChangedExDialogImage, VTS_I4 VTS_I4 VTS_PVARIANT VTS_PVARIANT)
+	ON_EVENT(SVPatModelPageClass, IDC_DIALOGIMAGE, 9, SVPatModelPageClass::TabChangeDialogImage, VTS_I4)
 END_EVENTSINK_MAP()
 #pragma endregion AFX MSG
 
 void SVPatModelPageClass::ObjectChangedExDialogImage(long Tab, long Handle, VARIANT* ParameterList, VARIANT* ParameterValue)
 {
-	////////////////////////////////////////////////////////
-	// SET SHAPE PROPERTIES
-	VariantParamMap ParaMap;
-	int count = SvOml::DisplayHelper::FillParameterMap(ParaMap, ParameterList, ParameterValue);
-
-	if( ParaMap.end() != ParaMap.find(CDSVPictureDisplay::P_X1) && VT_I4 == ParaMap[CDSVPictureDisplay::P_X1].vt &&
-		ParaMap.end() != ParaMap.find(CDSVPictureDisplay::P_X2) && VT_I4 == ParaMap[CDSVPictureDisplay::P_X2].vt &&
-		ParaMap.end() != ParaMap.find(CDSVPictureDisplay::P_Y1) && VT_I4 == ParaMap[CDSVPictureDisplay::P_Y1].vt &&
-		ParaMap.end() != ParaMap.find(CDSVPictureDisplay::P_Y2) && VT_I4 == ParaMap[CDSVPictureDisplay::P_Y2].vt)
+	if (ToolImageTab == Tab && m_handleToModelOverlayObject == Handle)
 	{
-		m_lModelWidth = ParaMap[CDSVPictureDisplay::P_X2].lVal - ParaMap[CDSVPictureDisplay::P_X1].lVal;
-		m_lModelHeight = ParaMap[CDSVPictureDisplay::P_Y2].lVal - ParaMap[CDSVPictureDisplay::P_Y1].lVal;
-		m_nXPos = ParaMap[CDSVPictureDisplay::P_X1].lVal;
-		m_nYPos = ParaMap[CDSVPictureDisplay::P_Y1].lVal;
+		////////////////////////////////////////////////////////
+		// SET SHAPE PROPERTIES
+		VariantParamMap ParaMap;
+		int count = SvOml::DisplayHelper::FillParameterMap(ParaMap, ParameterList, ParameterValue);
 
-		setCircularOverscanCheckboxState();
+		if( ParaMap.end() != ParaMap.find(CDSVPictureDisplay::P_X1) && VT_I4 == ParaMap[CDSVPictureDisplay::P_X1].vt &&
+			ParaMap.end() != ParaMap.find(CDSVPictureDisplay::P_X2) && VT_I4 == ParaMap[CDSVPictureDisplay::P_X2].vt &&
+			ParaMap.end() != ParaMap.find(CDSVPictureDisplay::P_Y1) && VT_I4 == ParaMap[CDSVPictureDisplay::P_Y1].vt &&
+			ParaMap.end() != ParaMap.find(CDSVPictureDisplay::P_Y2) && VT_I4 == ParaMap[CDSVPictureDisplay::P_Y2].vt)
+		{
+			m_lModelWidth = ParaMap[CDSVPictureDisplay::P_X2].lVal - ParaMap[CDSVPictureDisplay::P_X1].lVal;
+			m_lModelHeight = ParaMap[CDSVPictureDisplay::P_Y2].lVal - ParaMap[CDSVPictureDisplay::P_Y1].lVal;
+			m_nXPos = ParaMap[CDSVPictureDisplay::P_X1].lVal;
+			m_nYPos = ParaMap[CDSVPictureDisplay::P_Y1].lVal;
+
+			setCircularOverscanCheckboxState();
+		}
+
+		RefreshProperties();
 	}
+	else if (ModelImageTab == Tab && m_handleToModelCenterOverlay == Handle)
+	{
+		VariantParamMap ParaMap;
+		int count = SvOml::DisplayHelper::FillParameterMap(ParaMap, ParameterList, ParameterValue);
 
-	RefreshProperties();
+		if( ParaMap.end() != ParaMap.find(CDSVPictureDisplay::P_ARRAY_XY) && VT_ARRAY == (ParaMap[CDSVPictureDisplay::P_ARRAY_XY].vt & VT_ARRAY) 
+			&& (VT_I4 == (ParaMap[CDSVPictureDisplay::P_ARRAY_XY].vt & VT_I4) ))
+		{
+			const _variant_t& ValueArray = ParaMap[CDSVPictureDisplay::P_ARRAY_XY];
+			long length = ValueArray.parray->rgsabound[0].cElements;
+			if (6 <= length)
+			{
+				void* data = nullptr;
+				SafeArrayAccessData(ValueArray.parray, &data);
+				long* dataLong = reinterpret_cast< long* >( data );
+				m_CenterX = dataLong[4];
+				m_CenterY = dataLong[5];
+				SafeArrayAccessData(ValueArray.parray, &data);
+			}
+		}
+		UpdateData(false);
+	}
 	setOverlay();
 }
+
+void SVPatModelPageClass::TabChangeDialogImage(long Tab)
+{
+	m_dialogImage.SetBoundaryCheck(ModelImageTab != Tab);
+}
+
 #pragma endregion Protected Methods
 
 #pragma region Private Methods
@@ -440,6 +494,8 @@ void SVPatModelPageClass::ValidateModelParameters()
 	ValidateModelWidth();
 	ValidateModelHeight();
 	ValidateModelFilename();
+
+	SetValuesToAnalyzer();
 }
 
 void SVPatModelPageClass::ValidateModelWidth()
@@ -518,9 +574,43 @@ void SVPatModelPageClass::InitializeData()
 	m_sourceImageWidth = l_oRect.right - l_oRect.left;
 	m_sourceImageHeight = l_oRect.bottom - l_oRect.top;
 	
-	long xPos;
-	long yPos;
-	m_pPatAnalyzer->GetModelExtents(xPos, yPos, m_lModelWidth, m_lModelHeight);
+	// Model Selection values
+	m_values.Init();
+	m_lModelWidth = m_values.Get<long>(ModelWidthTag);
+	m_lModelHeight = m_values.Get<long>(ModelHeightTag);
+	m_CenterX = m_values.Get<long>(ModelCenterXTag);
+	m_CenterY = m_values.Get<long>(ModelCenterYTag);
+	m_strModelName = m_values.Get<CString>(ModelImageFileTag); 
+	m_bCircularOverscan = m_values.Get<bool>(UseCircularOverscanTag);
+	int resultSize = m_values.Get<bool>(ResultSizeTag);
+	m_nXPos = 0;
+	m_nYPos = 0;
+	if (0 < resultSize)
+	{
+		double dPosX = 0;
+		double dPoxY = 0;
+		std::vector<double> ResultXArray = SvOg::ConvertVariantSafeArrayToVector<double>(m_values.Get<_variant_t>(ResultXTag));
+		if (0 < ResultXArray.size())
+		{
+			dPosX = ResultXArray[0];
+		}
+
+		std::vector<double> ResultYArray = SvOg::ConvertVariantSafeArrayToVector<double>(m_values.Get<_variant_t>(ResultYTag));
+		if (0 < ResultYArray.size())
+		{
+			dPoxY = ResultYArray[0];
+		}
+
+		double angle = 0;
+		std::vector<double> ResultAngleArray = SvOg::ConvertVariantSafeArrayToVector<double>(m_values.Get<_variant_t>(ResultAngleTag));
+		if (0 < ResultAngleArray.size())
+		{
+			angle = ResultAngleArray[0];
+			SVExtentPointStruct moveVector = SVRotatePoint(SVExtentPointStruct(0, 0), SVExtentPointStruct(m_CenterX, m_CenterY), -angle);
+			m_nXPos = static_cast<int>(dPosX - moveVector.m_dPositionX);
+			m_nYPos = static_cast<int>(dPoxY - moveVector.m_dPositionY);
+		}
+	}
 
 	if(l_oRect.bottom < m_lModelHeight)
 	{
@@ -533,26 +623,23 @@ void SVPatModelPageClass::InitializeData()
 	}
 
 	// Initialize the Slider for X origin
-	m_nXPos = static_cast<int>(xPos);
-	m_nMaxX = static_cast< int >( l_oRect.right - m_lModelWidth );
+	int nMaxX = l_oRect.right - m_lModelWidth;
 
-	if(m_nXPos > m_nMaxX)
+	if(m_nXPos > nMaxX)
 	{
-		m_nXPos = m_nMaxX;
+		m_nXPos = nMaxX;
 	}
 
 	// Initialize the Slider for Y origin
-	m_nYPos = static_cast<int>(yPos);
-	m_nMaxY = static_cast< int >( l_oRect.bottom - m_lModelHeight );
+	int nMaxY = l_oRect.bottom - m_lModelHeight;
 
-	if(m_nYPos > m_nMaxY)
+	if(m_nYPos > nMaxY)
 	{
-		m_nYPos = m_nMaxY;
+		m_nYPos = nMaxY;
 	}
 
-	m_pPatAnalyzer->GetModelImageFileName( m_strModelName );
-	setCircularOverscanCheckboxState();
 	UpdateData(false);
+	setCircularOverscanCheckboxState();
 }
 
 BOOL SVPatModelPageClass::ProcessOnKillFocus(UINT nId) //@TODO:  Change c-style casts in this method to _cast.
@@ -608,19 +695,11 @@ SvOi::MessageTextEnum SVPatModelPageClass::RestoreModelFromFile()
 	UpdateData( true );
 
 	// set analyzer values
-	// Set circular overscan State
-	m_pPatAnalyzer->SetCircularOverscan((m_bCircularOverscan) ? true : false);
+	SetValuesToAnalyzer();
 
 	if ( m_pPatAnalyzer->RestorePattern( m_strModelName, &msgId ) )
 	{
-		// save the offsets
-		POINT pos = { m_nXPos, m_nYPos };
-
 		InitializeData();
-
-		// restore the offsets
-		m_nXPos = pos.x;
-		m_nYPos = pos.y;
 		RefreshProperties();
 		UpdateData(false);
 	}
@@ -783,9 +862,9 @@ void SVPatModelPageClass::setImages()
 {
 	if ( nullptr != m_pPatAnalyzer )
 	{
-		m_dialogImage.setImage( m_pPatAnalyzer->getInputImage(), 0 );
+		m_dialogImage.setImage( m_pPatAnalyzer->getInputImage(), ToolImageTab );
 		MatroxImageData data(m_pPatAnalyzer->m_patBufferHandlePtr);
-		m_dialogImage.setImage( &data, 1 );
+		m_dialogImage.setImage( &data, ModelImageTab );
 	}
 	
 	setOverlay();
@@ -802,17 +881,17 @@ void SVPatModelPageClass::setOverlay()
 	Parmap[CDSVPictureDisplay::P_Y2] = m_nYPos + m_lModelHeight;
 	Parmap[CDSVPictureDisplay::P_Color] = SVColor::Green;
 	Parmap[CDSVPictureDisplay::P_SelectedColor] = SVColor::Green;
-	Parmap[CDSVPictureDisplay::P_AllowEdit] = 7;
+	Parmap[CDSVPictureDisplay::P_AllowEdit] = CDSVPictureDisplay::AllowResizeAndMove;
 
 	if ( -1 < m_handleToModelOverlayObject )
 	{
-		m_dialogImage.EditOverlay(0, m_handleToModelOverlayObject, Parmap);
+		m_dialogImage.EditOverlay(ToolImageTab, m_handleToModelOverlayObject, Parmap);
 	}
 	else
 	{
-		m_dialogImage.AddOverlay(0, Parmap, &m_handleToModelOverlayObject);
+		m_dialogImage.AddOverlay(ToolImageTab, Parmap, &m_handleToModelOverlayObject);
 	}
-	m_dialogImage.SetEditAllow(0, m_handleToModelOverlayObject, 7);
+	m_dialogImage.SetEditAllow(ToolImageTab, m_handleToModelOverlayObject, 7);
 
 	if (m_bCircularOverscan)
 	{
@@ -823,25 +902,27 @@ void SVPatModelPageClass::setOverlay()
 	{
 		if (m_handleToCircleOverlayObject != -1)
 		{
-			m_dialogImage.RemoveOverlay(0, m_handleToCircleOverlayObject);
+			m_dialogImage.RemoveOverlay(ToolImageTab, m_handleToCircleOverlayObject);
 			m_handleToCircleOverlayObject = -1;
 		}
 		if (m_handleToCircleOverlayObject2 != -1)
 		{
-			m_dialogImage.RemoveOverlay(1, m_handleToCircleOverlayObject2);
+			m_dialogImage.RemoveOverlay(ModelImageTab, m_handleToCircleOverlayObject2);
 			m_handleToCircleOverlayObject2 = -1;
 		}
 		if (m_handleToSquareOverlayObject != -1)
 		{
-			m_dialogImage.RemoveOverlay(0, m_handleToSquareOverlayObject);
+			m_dialogImage.RemoveOverlay(ToolImageTab, m_handleToSquareOverlayObject);
 			m_handleToSquareOverlayObject = -1;
 		}
 		if (m_handleToSquareOverlayObject2 != -1)
 		{
-			m_dialogImage.RemoveOverlay(1, m_handleToSquareOverlayObject2);
+			m_dialogImage.RemoveOverlay(ModelImageTab, m_handleToSquareOverlayObject2);
 			m_handleToSquareOverlayObject2 = -1;
 		}
 	}
+
+	setModelCenterOverlay();
 }
 
 void SVPatModelPageClass::setCircularToolOverlay()
@@ -849,7 +930,7 @@ void SVPatModelPageClass::setCircularToolOverlay()
 	LongParamMap Parmap;
 	Parmap[CDSVPictureDisplay::P_Color] = SVColor::Green;
 	Parmap[CDSVPictureDisplay::P_SelectedColor] = SVColor::Green;
-	Parmap[CDSVPictureDisplay::P_AllowEdit] = 0;
+	Parmap[CDSVPictureDisplay::P_AllowEdit] = CDSVPictureDisplay::AllowNone;
 	CRect innerRect = SVMatroxPatternInterface::CalculateOverscanInnerRect(CPoint(m_nXPos, m_nYPos), CSize(m_lModelWidth, m_lModelHeight));
 	CRect outerRect = SVMatroxPatternInterface::CalculateOverscanOuterRect(CPoint(innerRect.left, innerRect.top), innerRect.Size() );
 	//Circle overlay
@@ -860,11 +941,11 @@ void SVPatModelPageClass::setCircularToolOverlay()
 	Parmap[CDSVPictureDisplay::P_Y2] = outerRect.bottom;
 	if ( -1 < m_handleToCircleOverlayObject )
 	{
-		m_dialogImage.EditOverlay(0, m_handleToCircleOverlayObject, Parmap);
+		m_dialogImage.EditOverlay(ToolImageTab, m_handleToCircleOverlayObject, Parmap);
 	}
 	else
 	{
-		m_dialogImage.AddOverlay(0, Parmap, &m_handleToCircleOverlayObject);
+		m_dialogImage.AddOverlay(ToolImageTab, Parmap, &m_handleToCircleOverlayObject);
 	}
 
 	//Square overlay
@@ -875,11 +956,11 @@ void SVPatModelPageClass::setCircularToolOverlay()
 	Parmap[CDSVPictureDisplay::P_Y2] = innerRect.bottom;
 	if ( -1 < m_handleToSquareOverlayObject )
 	{
-		m_dialogImage.EditOverlay(0, m_handleToSquareOverlayObject, Parmap);
+		m_dialogImage.EditOverlay(ToolImageTab, m_handleToSquareOverlayObject, Parmap);
 	}
 	else
 	{
-		m_dialogImage.AddOverlay(0, Parmap, &m_handleToSquareOverlayObject);
+		m_dialogImage.AddOverlay(ToolImageTab, Parmap, &m_handleToSquareOverlayObject);
 	}
 }
 
@@ -895,7 +976,7 @@ void SVPatModelPageClass::setCircularModelOverlay()
 		LongParamMap Parmap;
 		Parmap[CDSVPictureDisplay::P_Color] = SVColor::Green;
 		Parmap[CDSVPictureDisplay::P_SelectedColor] = SVColor::Green;
-		Parmap[CDSVPictureDisplay::P_AllowEdit] = 0;
+		Parmap[CDSVPictureDisplay::P_AllowEdit] = CDSVPictureDisplay::AllowNone;
 		//Circle overlay
 		Parmap[CDSVPictureDisplay::P_Type] = CDSVPictureDisplay::EllipseROI;
 		Parmap[CDSVPictureDisplay::P_X1] = outerRect.left;
@@ -905,11 +986,11 @@ void SVPatModelPageClass::setCircularModelOverlay()
 
 		if ( -1 < m_handleToCircleOverlayObject2 )
 		{
-			m_dialogImage.EditOverlay(1, m_handleToCircleOverlayObject2, Parmap);
+			m_dialogImage.EditOverlay(ModelImageTab, m_handleToCircleOverlayObject2, Parmap);
 		}
 		else
 		{
-			m_dialogImage.AddOverlay(1, Parmap, &m_handleToCircleOverlayObject2);
+			m_dialogImage.AddOverlay(ModelImageTab, Parmap, &m_handleToCircleOverlayObject2);
 		}
 
 		//Square overlay
@@ -920,13 +1001,50 @@ void SVPatModelPageClass::setCircularModelOverlay()
 		Parmap[CDSVPictureDisplay::P_Y2] = innerRect.bottom;
 		if ( -1 < m_handleToSquareOverlayObject2 )
 		{
-			m_dialogImage.EditOverlay(1, m_handleToSquareOverlayObject2, Parmap);
+			m_dialogImage.EditOverlay(ModelImageTab, m_handleToSquareOverlayObject2, Parmap);
 		}
 		else
 		{
-			m_dialogImage.AddOverlay(1, Parmap, &m_handleToSquareOverlayObject2);
+			m_dialogImage.AddOverlay(ModelImageTab, Parmap, &m_handleToSquareOverlayObject2);
 		}
 	}  //if (!m_pPatAnalyzer->m_patBufferHandlePtr->empty())
+}
+
+void SVPatModelPageClass::setModelCenterOverlay()
+{
+	static const int pointCount = 10;
+	int points[pointCount];
+	points[0] = m_CenterX;
+	points[1] = 0;
+	points[2] = m_CenterX;
+	points[3] = m_lModelHeight;
+	points[4] = m_CenterX;
+	points[5] = m_CenterY;
+	points[6] = 0;
+	points[7] = m_CenterY;
+	points[8] = m_lModelWidth;
+	points[9] = m_CenterY;
+
+
+	COleSafeArray arraySafe;
+	arraySafe.CreateOneDim(VT_I4, pointCount, points);
+	std::map<long,_variant_t> ParMap;
+	ParMap[CDSVPictureDisplay::P_Type ] = static_cast<long>(CDSVPictureDisplay::GraphROI);
+	ParMap[CDSVPictureDisplay::P_SubType_X ] = static_cast<long>(CDSVPictureDisplay::ImageArea_NoScale);
+	ParMap[CDSVPictureDisplay::P_SubType_Y ] = static_cast<long>(CDSVPictureDisplay::ImageArea_NoScale);
+	ParMap[CDSVPictureDisplay::P_Color] = SVColor::LightMagenta;
+	ParMap[CDSVPictureDisplay::P_SelectedColor] = SVColor::LightMagenta;
+	ParMap[CDSVPictureDisplay::P_AllowEdit] = CDSVPictureDisplay::AllowMove;
+	ParMap[CDSVPictureDisplay::P_ARRAY_XY] = arraySafe;
+
+	if ( -1 < m_handleToModelCenterOverlay )
+	{
+		m_dialogImage.EditOverlay(ModelImageTab, m_handleToModelCenterOverlay, ParMap);
+	}
+	else
+	{
+		m_dialogImage.AddOverlay(ModelImageTab, ParMap, &m_handleToModelCenterOverlay);
+	}
 }
 
 void SVPatModelPageClass::setCircularOverscanCheckboxState()
@@ -941,5 +1059,15 @@ void SVPatModelPageClass::setCircularOverscanCheckboxState()
 	}
 	UpdateData(FALSE);
 }
+
+void SVPatModelPageClass::SetValuesToAnalyzer()
+{
+	m_values.Set(ModelImageFileTag, m_strModelName);
+	m_values.Set(UseCircularOverscanTag, m_bCircularOverscan);
+	m_values.Set(ModelCenterXTag, m_CenterX);
+	m_values.Set(ModelCenterYTag, m_CenterY);
+	m_values.Commit();
+}
+
 #pragma endregion Private Methods
 

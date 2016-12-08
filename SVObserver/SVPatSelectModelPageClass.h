@@ -16,6 +16,8 @@
 //TODO: MZA(10.Nov 2014): Move this files to SVOGui project and then remove folder from include and Namespace add-on add PictureDisplay declaration.
 #include "SVOGui/PictureDisplay.h"
 #include "ObjectInterfaces/MessageTextEnum.h"
+#include "SVOGui/ValuesAccessor.h"
+#include "SVOGui/GuiController.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -28,37 +30,16 @@ class SVPatAnalyzeSetupDlgSheet;
 
 class SVPatModelPageClass : public CPropertyPage
 {
-	DECLARE_DYNCREATE(SVPatModelPageClass)
-
-// Construction
 #pragma region Constructor
 public:
-	SVPatModelPageClass();
+	SVPatModelPageClass(const SVGUID& rInspectionID, const SVGUID& rAnalyzerID);
 	virtual ~SVPatModelPageClass();
 #pragma endregion Constructor
 
-#pragma region Public Members
-public:
-	//@HACK: These Member Variables are used outside this class.  It should be changed to make them private.
 // Dialog Data
 	//{{AFX_DATA(SVPatModelPageClass)
 	enum { IDD = IDD_PAT_SETUP_MODEL };
-	CButton m_CircularOverscanCheckbox;
-	SvOg::PictureDisplay m_dialogImage;
-	CString	m_strModelName;
-	BOOL m_bCircularOverscan;
-	SVRPropTree          m_Tree;
 	//}}AFX_DATA
-
-	int		m_nXPos;
-	int		m_nYPos;
-	long	m_lModelWidth;
-	long	m_lModelHeight;
-	int m_nMaxX;
-	int m_nMaxY;
-	
-	SVPatternAnalyzerClass* m_pPatAnalyzer;
-#pragma endregion Public Members
 
 #pragma region Protected Methods
 protected:
@@ -83,6 +64,7 @@ protected:
 	afx_msg void OnCreateModel();
 	afx_msg void OnKillFileName();
 	afx_msg void OnCircularOverscanClicked();
+	afx_msg void OnKillModelCenter();
 	afx_msg void OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult);
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
@@ -96,6 +78,10 @@ protected:
 	// Description: Event-methods, called if overlay-object is changed. Set the new values to the mask properties.
 	//************************************
 	void ObjectChangedExDialogImage(long Tab, long Handle, VARIANT* ParameterList, VARIANT* ParameterValue);
+	
+	/// Event-methods, called if tab-selection is changed. Set the properties for this tab.
+	/// \param Tab [in] Tab handle.
+	void TabChangeDialogImage(long Tab);
 #pragma endregion Protected Methods
 
 #pragma region Private Methods
@@ -117,7 +103,7 @@ private:
 	void setOverlay();
 	void setCircularToolOverlay();
 	void setCircularModelOverlay();
-	bool m_bAllowExit;
+	void setModelCenterOverlay();
 	//************************************
 	// Method:    setCircularOverscanCheckboxState
 	// Description: Enable or Disable the checkbox if the height and width large enough or not.
@@ -125,6 +111,9 @@ private:
 	// Returns:   void
 	//************************************
 	void setCircularOverscanCheckboxState();
+
+	/// Set the values from the GUI to the analyzer (business logic)
+	void SetValuesToAnalyzer();
 #pragma endregion Private Methods
 
 #pragma region Member Variables
@@ -137,7 +126,23 @@ private:
 		ModelOriginY_Property
 	} Model_Property_Enums;
 
+	bool m_bAllowExit;
 	SVPatAnalyzeSetupDlgSheet* m_pSheet;
+
+	CButton m_CircularOverscanCheckbox;
+	SvOg::PictureDisplay m_dialogImage;
+	CString	m_strModelName;
+	BOOL m_bCircularOverscan;
+	SVRPropTree          m_Tree;
+
+	int	m_nXPos;
+	int	m_nYPos;
+	long	m_lModelWidth;
+	long	m_lModelHeight;
+	long m_CenterX;
+	long m_CenterY;
+
+	SVPatternAnalyzerClass* m_pPatAnalyzer;
 
 	long m_sourceImageWidth;
 	long m_sourceImageHeight;
@@ -148,6 +153,13 @@ private:
 	long m_handleToSquareOverlayObject;
 	long m_handleToCircleOverlayObject2;
 	long m_handleToSquareOverlayObject2;
+	long m_handleToModelCenterOverlay;
+
+	const SVGUID& m_rInspectionID;
+	const SVGUID& m_rAnalyzerID;
+	typedef SvOg::ValuesAccessor<SvOg::BoundValues> ValueCommand;
+	typedef SvOg::GuiController<ValueCommand, ValueCommand::value_type> Controller;
+	Controller m_values;
 #pragma endregion Member Variables
 };
 

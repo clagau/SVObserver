@@ -27,22 +27,30 @@ namespace Seidenader
 		std::vector<T> ConvertVariantSafeArrayToVector(const _variant_t& var)
 		{
 			std::vector<T> vec;
-			if ((var.vt & VT_ARRAY) && var.parray)
+			if (var.vt & VT_ARRAY)
 			{
-				long lBound;
-				long uBound;
-				SafeArrayGetLBound(var.parray, 1, &lBound);
-				SafeArrayGetUBound(var.parray, 1, &uBound);
-				long count = uBound - lBound + 1;  // bounds are inclusive
+				if (var.parray)
+				{
+					long lBound;
+					long uBound;
+					SafeArrayGetLBound(var.parray, 1, &lBound);
+					SafeArrayGetUBound(var.parray, 1, &uBound);
+					long count = uBound - lBound + 1;  // bounds are inclusive
 
-				T* raw;
-				SafeArrayAccessData(var.parray, reinterpret_cast<void**>(&raw));
+					T* raw;
+					SafeArrayAccessData(var.parray, reinterpret_cast<void**>(&raw));
 
-				// assign to an existing vector
-				vec.assign(raw, raw + count);
+					// assign to an existing vector
+					vec.assign(raw, raw + count);
 
-				// When no longer need "raw".
-				SafeArrayUnaccessData(var.parray);
+					// When no longer need "raw".
+					SafeArrayUnaccessData(var.parray);
+				}
+			}
+			else
+			{
+				T value = static_cast<T>(var);
+				vec.push_back(value);
 			}
 			return vec;
 		}

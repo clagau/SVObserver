@@ -1273,6 +1273,8 @@
 #define IDS_WARN_LOW                    14572
 #define IDS_IS_LESS_THAN                14573
 #define IDS_ISANINVALID_REFERENCE       14574
+#define IDS_OBJECTNAME_PAT_MODELCENTERX 14575
+#define IDS_OBJECTNAME_PAT_MODELCENTERY 14576
 #define IDC_LEARN_BUTTON                15001
 #define IDC_RANGE                       15003
 #define IDC_PQ_TAB                      15010
@@ -1642,6 +1644,8 @@
 #define IDC_PAT_ANGULAR_ACCURACY        15493
 #define IDC_PAT1_FILE_NAME              15495
 #define IDC_PAT1_FILE_BUTTON            15496
+#define IDC_PAT_MODELCENTERX            15497
+#define IDC_PAT_MODELCENTERY            15498
 #define IDC_PAT1_CREATE_MODEL           15503
 #define IDC_PAT_M_SCORE                 15504
 #define IDC_PAT_POS_ACCURACY            15505
