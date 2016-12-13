@@ -3,6 +3,7 @@ echo Collect logging information
 echo clean up folder ...
 del c:\Temp\log /S /Q
 md c:\temp\log
+set logFile=LogfileArchive%date:~-4,4%%date:~-10,2%%date:~-7,2%_%time:~1,1%%time:~3,2%%time:~6,2%.7z
 echo getting MIL info  ...
 call "C:\Program Files\Matrox Imaging\Tools\MILInfo.exe" -f
 wevtutil epl Application c:\temp\log\ApplicationLog.evtx
@@ -52,14 +53,14 @@ md c:\temp\log\run
 copy C:\RUN\*.* c:\temp\log\run
 echo getting Images ...
 md c:\temp\log\images
-copy "D:\Application\Archive Images\Transfer\"*.* c:\temp\log\images
+xcopy "D:\Application\Archive Images\Transfer\*.*" c:\temp\log\images /S
 echo getting dump files ...
 copy C:\SVObserver\DrWatson\*.* c:\Temp\log
-D:\Utilities\7-Zip64\7z.exe a -t7z D:\Application\LogfileArchive%date:~-4,4%%date:~-10,2%%date:~-7,2%_%time:~1,1%%time:~3,2%%time:~6,2%.7z c:\Temp\log\*.*
+D:\Utilities\7-Zip64\7z.exe a -t7z -r D:\Application\%logFile% c:\Temp\log\*.*
 del c:\Temp\log /S /Q
 echo ......................................................................
 echo Archive completed
-echo Please copy log archive from D:\Application\LogfileArchive%date:~-4,4%%date:~-10,2%%date:~-7,2%_%time:~1,1%%time:~3,2%%time:~6,2%.7z
+echo Please copy log archive from D:\Application\%logFile%
 echo Hit a key to close this window
 start /B "C:\Windows\system32\explorer.exe" "D:\Application"
 pause
