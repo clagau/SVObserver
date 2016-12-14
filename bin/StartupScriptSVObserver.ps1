@@ -4,17 +4,22 @@ $waitLoop=0
 $maxLoop=30
 $WaitTimeMs=500
 
-write-eventlog -logname Application -source SVException -eventID 13 -entrytype Information -message "Starting SVObserver powershell script" -Category 0
+$cmdout = get-WmiObject win32_networkadapterconfiguration -Filter "Description=""Intel(R) PRO/1000 MT Desktop Adapter""" | select-object -expand IPAddress
+write-eventlog -logname Application -source SVException -eventID 13 -entrytype Information -message "... Starting SVObserver powershell script. $env:computername - $cmdout" -Category 0
+echo $cmdout.IPAddress
 
-imdisk -d -m V:
+$cmdout = imdisk -d -m V:
 if ($LastExitCode -ne 0) {
   echo "Could not create empty V-Drive via imdisk"
-  write-eventlog -logname Application -source SVException -eventID 13  -entrytype Warning -message "Could not create empty V-Drive via imdisk"  -Category 0
+  write-eventlog -logname Application -source SVException -eventID 13  -entrytype Warning -message "Could not create empty V-Drive via imdisk. $cmdout"  -Category 0
 }
 
 c:\SVObserver\bin\SVRemoveKeyboards.exe
 
 dskcache.exe -w -p
+
+#stop-service $MTXsrvName
+restart-service $MTXsrvName
 
 
 $var = Get-WmiObject -class Win32_processor | ft NumberOfCores
@@ -25,10 +30,10 @@ Get-WmiObject -Class Win32_PhysicalMemory | ForEach-Object -Process { $memory +=
 $memory = $memory / 1GB
 if ($memory -gt 12){
   # format the V:\ drive 6GB
-  imdisk -a -s 6G -m V: -p "/fs:ntfs /q /y"
+  $cmdout = imdisk -a -s 6G -m V: -p "/fs:ntfs /q /y"
   if ($LastExitCode -ne 0) {
     echo "Could not format imdisk for V-drive"
-    write-eventlog -logname Application -source SVException -eventID 13  -entrytype Warning -message "Could not format imdisk for V-drive 6GB"  -Category 0
+    write-eventlog -logname Application -source SVException -eventID 13  -entrytype Warning -message "Could not format imdisk for V-drive 6GB. $cmdout"  -Category 0
   }
   # Wait 5 Seconds
   Start-Sleep -s 5
@@ -38,11 +43,11 @@ if ($memory -gt 12){
   Start-Sleep -s 5
 } else {
   # format the V:\ drive 100MB
-  write-eventlog -logname Application -source SVException -eventID 13 -entrytype Information -message "Local RAM is low. V-Drive will be initialized with 100MB only"  -Category 0
-  imdisk -a -s 100M -m V: -p "/fs:ntfs /q /y"
+  write-eventlog -logname Application -source SVException -eventID 13 -entrytype Information -message "Local RAM is low ($memory). V-Drive will be initialized with 100MB only"  -Category 0
+  $cmdout = imdisk -a -s 100M -m V: -p "/fs:ntfs /q /y"
   if ($LastExitCode -ne 0) {
     echo "Could not format imdisk for V-drive"
-    write-eventlog -logname Application -source SVException -eventID 13  -entrytype Warning -message "Could not format imdisk for V-drive 100MB"  -Category 0
+    write-eventlog -logname Application -source SVException -eventID 13  -entrytype Warning -message "Could not format imdisk for V-drive 100MB. $cmdout"  -Category 0
   }
 }
 
@@ -50,21 +55,16 @@ if ($memory -gt 12){
 
 
 # Check the screen bit depth and set it to 16bit
-C:\SVObserver\bin\qres.exe /S | find "16 bits"
+$cmdout = C:\SVObserver\bin\qres.exe /S | find "16 bits"
 if ($LastExitCode -ne 0) {
   echo "Display changed to 16bit"
-  write-eventlog -logname Application -source SVException -eventID 13 -entrytype Information -message "The V-drive could not be initialized in time"  -Category 0
+  write-eventlog -logname Application -source SVException -eventID 13 -entrytype Information -message "The display has been changed to 16bit. $cmdout"  -Category 0
   & C:\SVObserver\bin\qres.exe /c:16
 } else {
   echo "No display chnage"
 }
 
-# Wait 10 Seconds
-Start-Sleep -s 10
-#stop-service $MTXsrvName
-restart-service $MTXsrvName
-# Wait 10 Seconds
-Start-Sleep -s 10
+
 
 #stop-service $RRSsrvName
 restart-service $RRSsrvName
