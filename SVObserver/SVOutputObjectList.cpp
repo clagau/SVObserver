@@ -391,6 +391,7 @@ BOOL SVOutputObjectList::ResetOutputs( SVIOEntryHostStructPtrList& p_IOEntries )
 
 BOOL SVOutputObjectList::WriteOutput( SVIOEntryStruct pIOEntry, long lDataIndex, bool p_ACK, bool p_NAK )
 {
+	bool Result( false );
 	_variant_t l_Variant;
 	CString strValue;
 
@@ -402,7 +403,7 @@ BOOL SVOutputObjectList::WriteOutput( SVIOEntryStruct pIOEntry, long lDataIndex,
 		{
 			if( pIOEntry.m_IOEntryPtr->m_ObjectType == IO_DIGITAL_OUTPUT )
 			{
-				WriteDigitalOutput( pIOEntry, lDataIndex, p_ACK, p_NAK );
+				Result = (S_OK == WriteDigitalOutput( pIOEntry, lDataIndex, p_ACK, p_NAK ));
 			}// end if
 			else if( pIOEntry.m_IOEntryPtr->m_ObjectType == IO_REMOTE_OUTPUT )
 			{
@@ -424,21 +425,21 @@ BOOL SVOutputObjectList::WriteOutput( SVIOEntryStruct pIOEntry, long lDataIndex,
 					pIOEntry.m_IOEntryPtr->m_pValueObject->GetValue( lDataIndex, l_Variant );
 				}
 
-				pOutput->Write( &l_Variant );
+				Result = ( S_OK ==  pOutput->Write( &l_Variant ) );
 			}// end else if
 
 		}// end if
 
 		Unlock();
 
-		return TRUE;
 	}// end if
 
-	return FALSE;
+	return Result;
 }// end WriteOutput
 
 BOOL SVOutputObjectList::WriteOutput( SVIOEntryHostStructPtr pIOEntry, long lDataIndex, bool p_ACK, bool p_NAK )
 {
+	bool Result( false );
 	_variant_t l_Variant;
 	CString strValue;
 
@@ -455,7 +456,7 @@ BOOL SVOutputObjectList::WriteOutput( SVIOEntryHostStructPtr pIOEntry, long lDat
 				l_Entry.m_EntryValid = true;
 				l_Entry.m_IOEntryPtr = pIOEntry;
 
-				WriteDigitalOutput( l_Entry, lDataIndex, p_ACK, p_NAK );
+				Result = (S_OK == WriteDigitalOutput( l_Entry, lDataIndex, p_ACK, p_NAK ));
 			}// end if
 			else if( pIOEntry->m_ObjectType == IO_REMOTE_OUTPUT )
 			{
@@ -477,17 +478,16 @@ BOOL SVOutputObjectList::WriteOutput( SVIOEntryHostStructPtr pIOEntry, long lDat
 					pIOEntry->m_pValueObject->GetValue( lDataIndex, l_Variant );
 				}
 
-				pOutput->Write( &l_Variant );
+				Result = (S_OK == pOutput->Write( &l_Variant ));
 			}// end else if
 
 		}// end if
 
 		Unlock();
 
-		return TRUE;
 	}// end if
 
-	return FALSE;
+	return Result;
 }// end WriteOutput
 
 BOOL SVOutputObjectList::WriteOutputValue( SVIOEntryHostStructPtr pIOEntry, const _variant_t& p_rValue )
@@ -843,11 +843,11 @@ void SVOutputObjectList::OnObjectRenamed(const SVObjectClass& rRenamedObject, co
 
 HRESULT SVOutputObjectList::WriteDigitalOutput( SVIOEntryStruct& pIOEntry, long lDataIndex, bool p_ACK, bool p_NAK )
 {
-	HRESULT l_Status = S_OK;
+	HRESULT Result = S_OK;
 
 	SVDigitalOutputObject* pOutput = nullptr;
 
-	l_Status = GetOutput( pIOEntry.m_IOEntryPtr->m_IOId, pOutput );
+	Result = GetOutput( pIOEntry.m_IOEntryPtr->m_IOId, pOutput );
 
 	if( nullptr != pOutput )
 	{
@@ -902,10 +902,10 @@ HRESULT SVOutputObjectList::WriteDigitalOutput( SVIOEntryStruct& pIOEntry, long 
 			bValue = ( dValue != 0.0 );
 		}
 
-		pOutput->Write( bValue );
+		Result = pOutput->Write( bValue );
 	}
 
-	return l_Status;
+	return Result;
 }
 
 void SVOutputObjectList::ClearOutputList()

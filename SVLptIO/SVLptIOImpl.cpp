@@ -6,7 +6,6 @@
 //******************************************************************************
 
 #pragma region Includes
-//#define INITIALIZE_IO_SUBSYSTEM // for InitializeIOSubsystem Application
 #include "stdafx.h"
 //Moved to precompiled header: #include <fstream>
 //Moved to precompiled header: #include <time.h>
@@ -17,14 +16,12 @@
 #include "SVLptIOImpl.h"
 #include "SVIOLibrary\SVIOParameterEnum.h"
 #include "SVTimerLibrary\SVClock.h"
-
-#ifndef INITIALIZE_IO_SUBSYSTEM
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVMessage\SVMessage.h"
-#endif
 #pragma endregion Includes
 
 static const int RETRY = 2;
+static const int cOneSecond = 1000;
 
 // ******* Timeout for I/O board Acknowledge microseconds.
 static const int BOARD_SELECT_ACK_TIMEOUT  = 16000; // 16 millisecs
@@ -100,7 +97,7 @@ HRESULT SVLptIOImpl::Initialize(bool bInit)
 	
 		if (!IsActive())
 		{
-			hr = S_FALSE;
+			hr = E_FAIL;
 		}
 		else
 		{
@@ -109,11 +106,18 @@ HRESULT SVLptIOImpl::Initialize(bool bInit)
 			hr = IsBidirectionalSupported(bBiDirectional);
 			if (S_OK == hr && !bBiDirectional)
 			{
-				hr = S_FALSE;
+				hr = E_FAIL;
 			}
 		}
 		if (S_OK == hr)
 		{
+			if (S_OK != WriteUnlockString())
+			{
+				SvStl::MessageMgrStd Exception( SvStl::LogOnly );
+				Exception.setMessage( SVMSG_LPTIO_INITIALIZATION_FAILED, SvOi::Tid_Empty , SvStl::SourceFileParams(StdMessageParams) );
+				return SVMSG_LPTIO_INITIALIZATION_FAILED;
+			}
+
 			// Initialize previous Output States
 			for (int i = 0; i < SVNumOutputPorts; i++)
 			{
@@ -129,20 +133,22 @@ HRESULT SVLptIOImpl::Initialize(bool bInit)
 				time_t timeVal;
 				time(&timeVal);
 				unsigned long lTime = static_cast<unsigned long>(timeVal);
-				SetRTC(lTime);	// 5 command 
-
-		//		SetLogValue(0xF3);
-				// Unlock I/O Board
-				if (S_OK != WriteUnlockString())
-				{
-					WriteUnlockString();
-				}
+				SetRTC(lTime);
 
 				// The Rabbit board version is read here.
 				for (int i = 0;i < RETRY; i++)
 				{
-					if (S_OK == GetBoardVersion(m_lBoardVersion)) // 5 commands
+					if (S_OK == GetBoardVersion(m_lBoardVersion))
+					{
 						break;
+					}
+				}
+				//! Board Version 0 means invalid version
+				if( 0 == m_lBoardVersion )
+				{
+					SvStl::MessageMgrStd Exception( SvStl::LogOnly );
+					Exception.setMessage( SVMSG_IO_BOARD_VERSION, SvUl_SF::Format( _T("%d"), m_lBoardVersion).c_str() , SvStl::SourceFileParams(StdMessageParams) );
+					return SVMSG_IO_BOARD_VERSION;
 				}
 				// Tom says he's not sure what these numbers represent...
 				if (0x1010101 == m_lBoardVersion || 0x7f7f7f7f == m_lBoardVersion)
@@ -183,7 +189,9 @@ HRESULT SVLptIOImpl::Initialize(bool bInit)
 		{
 			if (S_OK != WriteLockString())
 			{
-				WriteLockString();
+				SvStl::MessageMgrStd Exception( SvStl::LogOnly );
+				Exception.setMessage( SVMSG_LPTIO_INITIALIZATION_FAILED, SvOi::Tid_Empty , SvStl::SourceFileParams(StdMessageParams) );
+				return SVMSG_LPTIO_INITIALIZATION_FAILED;
 			}
 
 			// Block the IRQ
@@ -242,6 +250,7 @@ HRESULT SVLptIOImpl::SetOutputValue(unsigned long val)
 {
 	// This function will only write the SVIMs 16 outputs
 	HRESULT hr = S_OK;
+
 	for (int i = 0; i < RETRY; i++)
 	{
 		unsigned long data = val & 0xff;
@@ -322,7 +331,8 @@ HRESULT SVLptIOImpl::GetBoardVersion(long& rlVer)
 HRESULT SVLptIOImpl::GetInputBit(unsigned long bitNum, bool& rBitVal)
 {
 	HRESULT hr = S_OK;
-	unsigned long lValue=0;//Arvid 150108 added a default value to avoid Cppcheck warning
+	unsigned long lValue=0;
+
 	if (bitNum < 8)
 	{
 		SVReadWriteLpt(lValue, SVControlReadDigitalInputs, bitNum);
@@ -1266,7 +1276,6 @@ HRESULT SVLptIOImpl::GetLockState(bool& bLocked)
 HRESULT SVLptIOImpl::WriteUnlockString()
 {
 	HRESULT hr = S_OK;
-#ifndef INITIALIZE_IO_SUBSYSTEM
 	unsigned long lCommand = 0;
 	LPCSTR pString = "Unlock";
 	
@@ -1289,20 +1298,24 @@ HRESULT SVLptIOImpl::WriteUnlockString()
 		if (S_OK == hr)	// Check if IO is actually unlocked
 		{
 			hr = GetLockState(bLocked);
-			if (false == bLocked)
+			if( bLocked )
+			{
+				Sleep( cOneSecond );
+			}
+			else
 			{
 				break;
 			}
 		}
 		Retry--;
 	}
-#endif
+
 	return hr;
 }
 
 // WriteLockString 
 // Sends a command 0x55 to the Parallel board
-// to enable the outputs.
+// to disable the outputs.
 HRESULT SVLptIOImpl::WriteLockString()
 {
 	HRESULT hr = S_OK;
@@ -1329,9 +1342,13 @@ HRESULT SVLptIOImpl::WriteLockString()
 		if (S_OK == hr)
 		{
 			hr = GetLockState(bLocked);
-			if (true == bLocked)
+			if( bLocked )
 			{
 				break;
+			}
+			else
+			{
+				Sleep( cOneSecond );
 			}
 		}
 		Retry--;
@@ -1373,10 +1390,8 @@ HRESULT SVLptIOImpl::SVReadWriteLpt(unsigned long& rlValue, long prevControl, lo
 		{
 			if (0 != (nPrevControl & 0xf))
 			{
-#ifndef INITIALIZE_IO_SUBSYSTEM
 				SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 				Exception.setMessage( SVMSG_INVALID_LINE_STATE, SvOi::Tid_Lpt_WrongState, SvStl::SourceFileParams(StdMessageParams) );
-#endif
 			}
 			// Get Value of control port interrupt Bit 
 			unsigned char nVal = SVControlEnableInterrupt;

@@ -315,7 +315,7 @@ HRESULT SVIOController::SetModuleReady( bool p_Value )
 
 		if( nullptr == pOutputList || !pOutputList->WriteOutput( m_pModuleReady, 1, true, false ) )
 		{
-			l_Status = S_FALSE; // JMS ERROR - Cannot write to module ready output.
+			l_Status = E_FAIL;
 		}
 	}// end if
 
