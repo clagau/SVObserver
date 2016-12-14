@@ -50,7 +50,7 @@ echo getting InitializeIOSubsystem Log ...
 copy "C:\SVObserver\InitializeIOSubsystem Log.txt" c:\temp\log
 echo getting Last Configuration ...
 md c:\temp\log\run
-copy C:\RUN\*.* c:\temp\log\run
+xcopy C:\RUN\*.* c:\temp\log\run /s
 echo getting Images ...
 md c:\temp\log\images
 xcopy "D:\Application\Archive Images\Transfer\*.*" c:\temp\log\images /S
@@ -58,9 +58,13 @@ echo getting dump files ...
 copy C:\SVObserver\DrWatson\*.* c:\Temp\log
 D:\Utilities\7-Zip64\7z.exe a -t7z -r D:\Application\%logFile% c:\Temp\log\*.*
 del c:\Temp\log /S /Q
+echo Paremeter %1
+if "%1"=="HIDE" goto finish
 echo ......................................................................
 echo Archive completed
 echo Please copy log archive from D:\Application\%logFile%
 echo Hit a key to close this window
 start /B "C:\Windows\system32\explorer.exe" "D:\Application"
 pause
+:finish
+exit
