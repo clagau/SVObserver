@@ -133,6 +133,8 @@ namespace	// create unnamed namespace for the variables to live in
 
 	REGISTER_DEVICE_PARAM( DeviceParamHorizontalBinning,	DeviceParamHorizontalBinning_String, 		SVLongValueDeviceParam );
 	REGISTER_DEVICE_PARAM( DeviceParamVerticalBinning,		DeviceParamVerticalBinning_String, 			SVLongValueDeviceParam );
+
+	REGISTER_DEVICE_PARAM( DeviceParamCameraDefaultSettings,DeviceParamCameraDefaultSettings_String,	SVStringValueDeviceParam );
 }// end unnamed namespace
 
 // these conversion routines can be moved to another file

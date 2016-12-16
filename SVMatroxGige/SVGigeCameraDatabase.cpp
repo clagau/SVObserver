@@ -54,6 +54,7 @@ const SVGigeCameraDatabase::SVGigeEnumToString SVGigeCameraDatabase::m_enumToStr
 ( SVGigeParameterIPAddress,					L"IP Address" )
 ( SVGigeParameterHorizontalBinning,			L"Horizontal Binning" )
 ( SVGigeParameterVerticalBinning,			L"Vertical Binning" )
+( SVGigeParameterCameraDefaultSettings,		L"Camera Default Settings" )
 ;
 
 SVGigeCameraDatabase::SVGigeCameraDatabase()

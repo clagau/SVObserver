@@ -947,6 +947,28 @@ const SVGigeDeviceParameterMap& SVGigeStandardCameraFeatures::GetStandardFeature
 			)
 		)
 	)
+
+	///////////////////////////////////////////////////////////////////////
+	// Camera Default Settings
+	///////////////////////////////////////////////////////////////////////
+	( SVGigeParameterCameraDefaultSettings,
+		SVGigeDeviceParameterStruct
+		(
+			SVString( _T("Default Settings") ), VT_BSTR,
+			SVGigeParameterAccessor
+			(
+				SVGigeFeature
+				( _T("UserSetDefaultSelector"), SVMatroxDigitizerFeature::SVTypeStringEnumeration,
+					SVGigeFeature::Supported, SVGigeFeature::ReadWrite,
+					SVGigeFeatureSelector( ),
+					(  boost::assign::map_list_of<SVString, SVString>
+						( _T("Enable"), _T("Default") )
+						( _T("Disable"), _T("UserSet1") )
+					)
+				)
+			)
+		)
+	)
 	;
 
 	return features;

@@ -173,6 +173,7 @@ HRESULT SVGigeCameraFileReader::ReadParams( SVDeviceParamCollection& rParams )
 	sSection = scSETTINGS;
 
 	ReadCameraFileCameraFormatsParam( rParams, DeviceParamCameraFormats, sSection );
+	ReadCameraFileStringParam( rParams, DeviceParamCameraDefaultSettings, sSection );
 	ReadCameraFileLongParam( rParams, DeviceParamNumCameraBuffers, sSection );
 	ReadCameraFileLutParam( rParams, DeviceParamLut, sSection );
 

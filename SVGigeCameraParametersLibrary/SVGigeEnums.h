@@ -62,6 +62,7 @@ enum SVGigeParameterEnum
 	SVGigeParameterSerialNumber,			// 102 - Read Only parameter
 	SVGigeParameterFeatureOverrides,		// 103 - Internal use only
 	SVGigeParameterIPAddress,				// 104 - Read Only parameter
+	SVGigeParameterCameraDefaultSettings,	// 105
 
 	SVGigeParameterCustomBase = 200,		// 200 - Starting Point for Custom Parameters
 	SVGigeParameterCustom1 = SVGigeParameterCustomBase,

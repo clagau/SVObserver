@@ -86,6 +86,7 @@ static DeviceParamToGigeParamAssoc DeviceParamEnumToGigeParamEnum = boost::assig
 (DeviceParamGigeCustom30, SVGigeParameterCustom30)
 (DeviceParamHorizontalBinning, SVGigeParameterHorizontalBinning)
 (DeviceParamVerticalBinning, SVGigeParameterVerticalBinning)
+(DeviceParamCameraDefaultSettings, SVGigeParameterCameraDefaultSettings)
 ;
 
 SVTestGigeCameraProxy::SVTestGigeCameraProxy()
@@ -246,6 +247,27 @@ HRESULT SVTestGigeCameraProxy::SetStandardCameraParameter( const SVDeviceParamWr
 			// Wouldn't it be nice if the SVDeviceParams had a read/write attribute!
 			case DeviceParamSerialNumberString:
 				break;
+			#pragma endregion
+
+			#pragma region DeviceParamCameraDefaultSettings
+			case DeviceParamCameraDefaultSettings:
+			{
+				const SVStringValueDeviceParam* pParam = rw.DerivedValue( pParam );
+				if ( pParam )
+				{
+					//! First check to see if already set as this setting takes a long time
+					if( S_OK == pDigitizer->ParameterGetValue( hDigitizer, SVGigeParameterCameraDefaultSettings, 0, &l_oValue ) )
+					{
+						_bstr_t StringValue( l_oValue.bstrVal );
+						if( pParam->strValue != static_cast<LPCTSTR> (StringValue) )
+						{
+							l_oValue = pParam->strValue.c_str();
+							hr = pDigitizer->ParameterSetValue( hDigitizer, SVGigeParameterCameraDefaultSettings, 0, &l_oValue );
+						}
+					}
+				}
+				break;
+			}
 			#pragma endregion
 
 			#pragma region DeviceParamShutter

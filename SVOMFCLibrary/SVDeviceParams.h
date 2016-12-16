@@ -52,6 +52,7 @@ enum SVDeviceParamEnum	// do not change exitsing param numbers!
 	DeviceParamModelName            = 105,
 	DeviceParamFirmware             = 106,
 	DeviceParamIPAddress			= 107,  //new for MIL 9.0 - used for GigE cameras
+	DeviceParamCameraDefaultSettings= 108,  //Place this in the front so that it is done first
 
 	// FileAcquistion params
 	DeviceParamFileAcqImageFileName = 200,
@@ -281,6 +282,8 @@ LPCTSTR const DeviceParamGigePacketSize_String		= (_T("PacketSize"));
 
 LPCTSTR const DeviceParamHorizontalBinning_String	= (_T("HorizontalBinning"));
 LPCTSTR const DeviceParamVerticalBinning_String		= (_T("VerticalBinning"));
+
+LPCTSTR const DeviceParamCameraDefaultSettings_String= (_T("DefaultSettings"));
 
 template<typename TYPE> struct TDeviceOption	// used for discrete selectable values
 {
