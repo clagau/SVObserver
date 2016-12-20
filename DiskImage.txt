@@ -1,0 +1,72 @@
+NOTABLE SVOBSERVER CHANGES:
+
+Compatible Changes:
+
+- New table tool
+- New table analyzer tool
+- Default activation of monitor list for RRS 
+- Hex values in result picker
+- Power (POW) operator in math dialog
+
+Incompatible Changes:
+
+- User intervention if change in camera mapping
+- Area default setting at the blob analyzer
+- Removal of gage and profile tool support
+- Removal of 32bit components
+- Removal of conditional history
+- Camera IP addresses are always fixed and cannot be changed by the user.
+
+Fixed Bugs:
+
+- RRS data and performance problems fixed
+- Autosave problems fixed
+- Digital Input problems fixed
+- Monitor List view problems fixed
+
+
+NOTABLE SVIM IMAGE CHANGES:
+
+- New Model Number 93 51 22 13 prepared
+- SVIM.INI changes for fixed camera ip address
+- Additional event log entry for SVIM changes
+- Folder with example images
+- New packet size in Hardware.ini
+- Matrox non-paged memory size increased
+- "Safely Remove Hardware" updated
+- License check timeout for MIL activated
+- Documentation for SVIM network port usage updated
+- New SVRC version 7.40
+- Camera files updated
+
+
+SOFTWARE VERSIONS:
+
+Seidenader Vision Inc. SVObserver version 7.40
+
+SVRC Version 7.40
+SIAC Version 7.35
+
+SVLpt version 7.0.0.0 (11)
+
+Matrox Imaging Library version 9.0 R2
+Matrox 9.00 Processing Pack 2
+Matrox Update M900U56B7
+Matrox Update M900U20B02 
+Matrox Update M900U33B04 
+Matrox Update M900U45B1072 
+Matrox Update M900U53B06
+Matrox Update M900U49B18 
+Matrox Update M900U32B19 
+Matrox Update M900U52B32
+Matrox Update M900U70B03
+Matrox Engineering Fix M900R2EF68B04
+Matrox Engineering Fix M900R2EF38B01
+Matrox Engineering Fix M900R2EF116B01
+Matrox Engineering Fix M900R2EF104B04
+
+Microsoft Internet Explorer version 8.0
+
+Microsoft PosReady 7
+
+Microsoft XML Parser 6
