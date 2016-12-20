@@ -21,12 +21,18 @@
     <ClCompile Include="SVOLicenseManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SVLicenseMgrModelessDlg.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVOLicenseManager.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVLicenseMgrModelessDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

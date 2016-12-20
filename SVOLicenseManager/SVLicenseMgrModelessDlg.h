@@ -11,7 +11,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVOLicenseManager\SVOLicenseManager.h"
+#include "SVOLicenseManager.h"
 #include "SVOResource\resource.h"
 #pragma endregion Includes
 

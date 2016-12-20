@@ -275,9 +275,6 @@
     <ClCompile Include="SVIODoc.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVIOEntryHostStruct.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVIOTabbedView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -843,9 +840,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVIPDocInfoImporter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVLicenseMgrModelessDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVGigeCameraROIDlg.cpp">
@@ -1426,9 +1420,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVIODoc.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVIOEntryHostStruct.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVIOTabbedView.h">
@@ -2032,9 +2023,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVInspectionImporter.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVLicenseMgrModelessDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVGigeCameraROIDlg.h">

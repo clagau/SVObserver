@@ -48,7 +48,7 @@
 //! Precompiled headers section
 //************************************
 #pragma region Precompiled Headers
-#include <afx.h>
+#include <afx.h> 
 #include <afxwin.h>
 #include <afxcmn.h>
 #include <afxpriv.h>
@@ -59,7 +59,9 @@
 #include <afxext.h>         // MFC extensions
 
 #include <algorithm>
+
 #include <comutil.h>		//Used by static library
+#include <concrt.h>
 #include <ctime>			//Used by static library
 #include <deque>
 #include <iterator>

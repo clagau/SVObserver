@@ -15,7 +15,7 @@
 //Moved to precompiled header: #include <boost/function.hpp>
 
 #include "SVOMFCLibrary/SVDataItemManagerTemplate.h"
-#include "SVIOEntryHostStruct.h"
+#include "SVLibrary/SVIOEntryHostStruct.h"
 #include "SVInfoStructs.h"
 #pragma endregion Includes
 

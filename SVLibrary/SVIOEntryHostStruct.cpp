@@ -1,5 +1,5 @@
 //******************************************************************************
-//* COPYRIGHT (c) 2011 by Seidenader Vission, Inc.
+//* COPYRIGHT (c) 2011 by Seidenader Vision, Inc.
 //* All Rights Reserved
 //******************************************************************************
 //* .Module Name     : SVIOEntryHostStruct
@@ -10,6 +10,12 @@
 //******************************************************************************
 
 #include "stdafx.h"
+
+#undef SV_HIDDEN //@TODO[Arvid][7.50][20.12.2016] this had to be added when this source file was moved to SVLibrary 
+//					to avoid problems with lmserver.h where SV_HIDDEN is #def'd as 1
+//					however, in ObjectInterfaces\ObjectDefines.h,  const UINT SV_HIDDEN = 0x00000800;
+//					if (when, hopefully) this file is removed from SVLibrary, this #undef should be removed again
+
 #include "SVIOEntryHostStruct.h"
 #include "SVValueObjectLibrary/SVValueObjectClass.h"
 

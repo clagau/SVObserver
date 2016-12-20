@@ -109,6 +109,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="SVBStr.cpp" />
+    <ClCompile Include="SVIOEntryHostStruct.cpp" />
     <ClCompile Include="SVPackedFile.cpp" />
     <ClCompile Include="SVWinUtility.cpp" />
   </ItemGroup>
@@ -117,6 +118,7 @@
     <ClInclude Include="SecuredObject.h" />
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="SVBStr.h" />
+    <ClInclude Include="SVIOEntryHostStruct.h" />
     <ClInclude Include="SVPackedFile.h" />
     <ClInclude Include="SVReferenceCountingTemplate.h" />
     <ClInclude Include="SVVisitor.h" />

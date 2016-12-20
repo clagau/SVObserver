@@ -13,7 +13,7 @@
 
 #pragma region Includes
 #include "SVOMFCLibrary/SVDataItemManagerTemplate.h"
-#include "SVIOEntryHostStruct.h"
+#include "SVLibrary/SVIOEntryHostStruct.h"
 #pragma endregion Includes
 
 class SVIODoc;

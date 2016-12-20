@@ -12,9 +12,9 @@
 
 #pragma region Includes
 #include "SVObjectLibrary/SVObjectClass.h"
-#include "SVValueObjectLibrary/SVDoubleValueObjectClass.h"//@TODO Arvid: remove backreferences as soon as Skip has finished moving the value objects out of SVObserver
-#include "SVValueObjectLibrary/SVBoolValueObjectClass.h"//@TODO Arvid: remove backreferences as soon as Skip has finished moving the value objects out of SVObserver
-#include "SVObserver/SVIOEntryHostStruct.h"//@TODO Arvid: remove backreferences as soon as Skip has finished moving the value objects out of SVObserver
+#include "SVValueObjectLibrary/SVDoubleValueObjectClass.h"
+#include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
+#include "SVLibrary/SVIOEntryHostStruct.h"
 #pragma endregion Includes
 
 namespace Seidenader { namespace TriggerHandling {

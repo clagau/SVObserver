@@ -16,7 +16,7 @@
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVMatroxLibrary/SVMatroxLicenseInterface.h"
-#include "SVObserver/SVLicenseMgrModelessDlg.h"
+#include "SVLicenseMgrModelessDlg.h"
 #pragma endregion Includes
 
 SVOLicenseManager& SVOLicenseManager::Instance()

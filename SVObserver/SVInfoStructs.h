@@ -26,7 +26,7 @@
 #include "SVRunControlLibrary/SVImageIndexStruct.h"
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVUtilityLibrary/SVSharedPtr.h"
-#include "SVIOEntryHostStruct.h"
+#include "SVLibrary/SVIOEntryHostStruct.h"
 #include "SVValueObjectLibrary/SVValueObjectReference.h"
 #include "SVRunControlLibrary/ProductWorkloadInformation.h" 
 #include "TriggerInformation/SVTriggerObject.h"
