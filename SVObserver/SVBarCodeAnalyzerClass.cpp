@@ -18,9 +18,8 @@
 #include "SVOMFCLibrary/SVOINIClass.h"
 
 #include "SVBarCodeResult.h"   
-#include "SVBarCodeProperties.h"
+#include "SVLibrary/SVBarCodeProperties.h"
 #include "SVOCore/SVBarCodeBuffer.h"
-#include "SVBarCodeResult.h"
 #include "SVOCore/SVImageProcessingClass.h"
 #include "SVOCore/SVImageClass.h"
 #include "SVInspectionProcess.h"

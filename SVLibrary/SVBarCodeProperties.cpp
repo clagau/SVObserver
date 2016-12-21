@@ -10,6 +10,7 @@
 //******************************************************************************
 
 #include "stdafx.h"
+
 #include "SVBarCodeProperties.h"
 
 #ifdef _DEBUG

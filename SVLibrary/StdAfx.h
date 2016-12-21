@@ -65,7 +65,6 @@
 #include <ctime>			//Used by static library
 #include <deque>
 #include <iterator>
-#include <lm.h>
 #include <map>				//Used by static library
 #include <set>				//Used by static library
 #include <shlwapi.h>
@@ -74,4 +73,9 @@
 #include <vector>
 
 #include <boost\function.hpp> //Used by static library
+
+#include <boost/multi_index_container.hpp> //needed for barcode dialogs
+#include <boost/multi_index/member.hpp>
+#include <boost/multi_index/ordered_index.hpp>
+
 #pragma endregion Precompiled Headers

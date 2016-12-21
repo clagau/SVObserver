@@ -11,6 +11,9 @@
 
 #pragma region Includes
 #include "stdafx.h"
+
+#include "SVOResource\resource.h"
+
 #include "SVBarCodeStringMatchDialog.h"
 #include "SVOMFCLibrary/SVFileNameClass.h"
 #pragma endregion Includes

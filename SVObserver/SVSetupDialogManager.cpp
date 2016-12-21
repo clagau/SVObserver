@@ -21,7 +21,7 @@
 #include "SVAnalyzerLuminance.h"
 #include "SVAnalyzerLuminanceSetup.h"
 #include "SVBarCodeAnalyzerClass.h"
-#include "SVBarCodeProperties.h"
+#include "SVLibrary/SVBarCodeProperties.h"
 #include "SVBarCodeResult.h"
 #include "SVBlobAnalyzer.h"
 #include "SVBlobAnalyzerDialog.h"

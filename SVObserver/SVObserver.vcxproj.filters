@@ -71,25 +71,7 @@
     <ClCompile Include="SVAutoThresholdEquation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVBarCodeAnalyzerClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVBarCodeAttributesDialog.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVBarCodeDataMatrixDialog.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVBarcodeGeneralDialog.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVBarCodeProperties.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVBarCodeResult.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVBarcodeStringMatchDialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVBlobAnalyzer.cpp">
@@ -1154,6 +1136,9 @@
     <ClCompile Include="SVTaskObjectValueInterface.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SVBarCodeAnalyzerClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="SVObserver.odl">
@@ -1209,22 +1194,7 @@
     <ClInclude Include="SVBarCodeAnalyzerClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVBarCodeAttributesDialog.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVBarCodeDataMatrixDialog.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVBarcodeGeneralDialog.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVBarCodeProperties.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVBarCodeResult.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVBarcodeStringMatchDialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVBlobAnalyzer.h">

@@ -220,6 +220,7 @@ echo %time%
     <ClCompile Include="SVArchiveImageThreadClass.cpp" />
     <ClCompile Include="SVArchiveRecord.cpp" />
     <ClCompile Include="SVArchiveRecordsArray.cpp" />
+    <ClCompile Include="SVBarCodeAnalyzerClass.cpp" />
     <ClCompile Include="SVBinaryOperatorClass.cpp" />
     <ClCompile Include="SVCameraDataInputObject.cpp" />
     <ClCompile Include="SVClosingFilterClass.cpp" />
@@ -297,13 +298,7 @@ echo %time%
     <ClCompile Include="SVArchiveTool.cpp" />
     <ClCompile Include="SVArchiveWritingDlg.cpp" />
     <ClCompile Include="SVAutoThresholdEquation.cpp" />
-    <ClCompile Include="SVBarCodeAnalyzerClass.cpp" />
-    <ClCompile Include="SVBarCodeAttributesDialog.cpp" />
-    <ClCompile Include="SVBarCodeDataMatrixDialog.cpp" />
-    <ClCompile Include="SVBarcodeGeneralDialog.cpp" />
-    <ClCompile Include="SVBarCodeProperties.cpp" />
     <ClCompile Include="SVBarCodeResult.cpp" />
-    <ClCompile Include="SVBarcodeStringMatchDialog.cpp" />
     <ClCompile Include="SVBlobAnalyzer.cpp" />
     <ClCompile Include="SVBlobAnalyzerDialog.cpp" />
     <ClCompile Include="SVBlobAnalyzerResultDlg.cpp" />
@@ -721,12 +716,7 @@ echo %time%
     <ClInclude Include="SVArchiveWritingDlg.h" />
     <ClInclude Include="SVAutoThresholdEquation.h" />
     <ClInclude Include="SVBarCodeAnalyzerClass.h" />
-    <ClInclude Include="SVBarCodeAttributesDialog.h" />
-    <ClInclude Include="SVBarCodeDataMatrixDialog.h" />
-    <ClInclude Include="SVBarcodeGeneralDialog.h" />
-    <ClInclude Include="SVBarCodeProperties.h" />
     <ClInclude Include="SVBarCodeResult.h" />
-    <ClInclude Include="SVBarcodeStringMatchDialog.h" />
     <ClInclude Include="SVBlobAnalyzer.h" />
     <ClInclude Include="SVBlobAnalyzerDialog.h" />
     <ClInclude Include="SVBlobAnalyzerResultDlg.h" />

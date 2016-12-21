@@ -103,11 +103,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Intersect.cpp" />
-    <ClCompile Include="SecuredObject.cpp" />
     <ClCompile Include="StdAfx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="SVBarCodeAttributesDialog.cpp" />
+    <ClCompile Include="SVBarCodeDataMatrixDialog.cpp" />
+    <ClCompile Include="svbarcodegeneraldialog.cpp" />
+    <ClCompile Include="SVBarCodeProperties.cpp" />
+    <ClCompile Include="svbarcodestringmatchdialog.cpp" />
     <ClCompile Include="SVBStr.cpp" />
     <ClCompile Include="SVIOEntryHostStruct.cpp" />
     <ClCompile Include="SVPackedFile.cpp" />
@@ -115,8 +119,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Intersect.h" />
-    <ClInclude Include="SecuredObject.h" />
     <ClInclude Include="StdAfx.h" />
+    <ClInclude Include="SVBarCodeAttributesDialog.h" />
+    <ClInclude Include="SVBarCodeDataMatrixDialog.h" />
+    <ClInclude Include="svbarcodegeneraldialog.h" />
+    <ClInclude Include="SVBarCodeProperties.h" />
+    <ClInclude Include="svbarcodestringmatchdialog.h" />
     <ClInclude Include="SVBStr.h" />
     <ClInclude Include="SVIOEntryHostStruct.h" />
     <ClInclude Include="SVPackedFile.h" />

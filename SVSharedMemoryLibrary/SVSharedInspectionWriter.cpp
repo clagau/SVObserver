@@ -12,7 +12,7 @@
 #include "stdafx.h"
 #include "SVSharedInspectionWriter.h"
 #include "SVSharedConfiguration.h"
-#include "..\SVUtilityLibrary\SVString.h"
+#include "SVUtilityLibrary\SVString.h"
 #pragma endregion Includes
 
 namespace Seidenader { namespace SVSharedMemoryLibrary
