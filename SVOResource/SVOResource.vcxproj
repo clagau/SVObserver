@@ -226,6 +226,7 @@
     <ResourceCompile Include="SVOResource.rc" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\AutoBuild\AutoBuild.h" />
     <ClInclude Include="ConstGlobalSvOr.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="SVOResource.h" />

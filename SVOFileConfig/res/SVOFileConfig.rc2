@@ -31,12 +31,13 @@ BEGIN
     BEGIN
         BLOCK "040904B0"
         BEGIN
-            VALUE "FileDescription", "SVOFileConfig MFC Application"
+            VALUE "CompanyName", "Seidenader Maschinenbau GmbH, Muenchen, Germany"
+            VALUE "FileDescription", "SVOFileConfig Application"
             VALUE "FileVersion", STRFILEVER
             VALUE "InternalName", "SVOFileConfig"
-            VALUE "LegalCopyright", "Copyright (C) 2002"
-            VALUE "OriginalFilename", "SVOFileConfig.EXE"
-            VALUE "ProductName", "SVOFileConfig Application"
+            VALUE "LegalCopyright", "Copyright (C)"
+            VALUE "OriginalFilename", "SVOFileConfig.exe"
+            VALUE "ProductName", "SVObserver"
             VALUE "ProductVersion", STRPRODUCTVER
         END
     END

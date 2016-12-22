@@ -112,6 +112,7 @@
     <None Include="res\PropTreeTest.rc2" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\AutoBuild\AutoBuild.h" />
     <ClInclude Include="PropTreeTest.h" />
     <ClInclude Include="PropTreeTestDlg.h" />
     <ClInclude Include="Resource.h" />

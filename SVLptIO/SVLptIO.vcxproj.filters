@@ -30,6 +30,9 @@
     <ClInclude Include="SVLptIOImpl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\AutoBuild\AutoBuild.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Source Files">
@@ -43,9 +46,11 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <None Include="res\SVLptIO.rc2" />
     <None Include="SVLptIO.def">
       <Filter>Source Files</Filter>
+    </None>
+    <None Include="res\SVLptIO.rc2">
+      <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>

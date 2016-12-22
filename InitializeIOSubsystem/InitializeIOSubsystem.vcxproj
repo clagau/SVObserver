@@ -114,6 +114,7 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\AutoBuild\AutoBuild.h" />
     <ClInclude Include="InitializeIOSubsystem.h" />
     <ClInclude Include="InitializeIOSubsystemDlg.h" />
     <ClInclude Include="Resource.h" />
@@ -125,6 +126,12 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="InitializeIOSubsystem.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SVIOLibrary\SVIOLibrary.vcxproj">
+      <Project>{1e640802-4ca8-4ba7-a9a3-71a15d829080}</Project>
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

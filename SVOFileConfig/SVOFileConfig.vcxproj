@@ -159,6 +159,7 @@
     <ResourceCompile Include="SVOFileConfig.rc" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\AutoBuild\AutoBuild.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="SVOFileConfig.h" />

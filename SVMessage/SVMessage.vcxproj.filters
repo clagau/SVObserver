@@ -29,9 +29,12 @@
     <ClInclude Include="SVMessage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\AutoBuild\AutoBuild.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="$(IntDir)SVMessage.rc">
+    <ResourceCompile Include="SVMessage2.rc">
       <Filter>Resource Files</Filter>
     </ResourceCompile>
   </ItemGroup>

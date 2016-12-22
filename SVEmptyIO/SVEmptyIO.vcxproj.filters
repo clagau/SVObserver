@@ -46,6 +46,9 @@
     <ClInclude Include="SVEmptyIOExports.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\AutoBuild\AutoBuild.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SVEmptyIO.rc">

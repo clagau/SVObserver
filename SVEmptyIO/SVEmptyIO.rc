@@ -56,45 +56,6 @@ END
 
 #endif    // APSTUDIO_INVOKED
 
-
-/////////////////////////////////////////////////////////////////////////////
-//
-// Version
-//
-
-VS_VERSION_INFO VERSIONINFO
- FILEVERSION 1,1,0,1
- PRODUCTVERSION 1,1,0,1
- FILEFLAGSMASK 0x3fL
-#ifdef _DEBUG
- FILEFLAGS 0x1L
-#else
- FILEFLAGS 0x0L
-#endif
- FILEOS 0x4L
- FILETYPE 0x2L
- FILESUBTYPE 0x0L
-BEGIN
-    BLOCK "StringFileInfo"
-    BEGIN
-        BLOCK "040904e4"
-        BEGIN
-            VALUE "CompanyName", "Seidenader Vision, Inc."
-            VALUE "FileDescription", "Empty Device Adapter"
-            VALUE "FileVersion", "1.1.0.1"
-            VALUE "InternalName", "SVEmptyIO.dll"
-            VALUE "LegalCopyright", "(c) Seidenader Vision, Inc.  All rights reserved."
-            VALUE "OriginalFilename", "SVEmptyIO.dll"
-            VALUE "ProductName", "SVObserver"
-            VALUE "ProductVersion", "1.1.0.1"
-        END
-    END
-    BLOCK "VarFileInfo"
-    BEGIN
-        VALUE "Translation", 0x409, 1252
-    END
-END
-
 #endif    // English (U.S.) resources
 /////////////////////////////////////////////////////////////////////////////
 

@@ -1,11 +1,10 @@
 //
-// SVSecurity.RC2 - resources Microsoft Visual C++ does not edit directly
+// SVPictureDisplay.RC2 - resources Microsoft Visual C++ does not edit directly
 //
 
 #ifdef APSTUDIO_INVOKED
-	#error this file is not editable by Microsoft Visual C++
+#error this file is not editable by Microsoft Visual C++
 #endif //APSTUDIO_INVOKED
-
 
 #include "..\AutoBuild\AutoBuild.h"
 
@@ -32,11 +31,11 @@ BEGIN
         BLOCK "040904b0"
         BEGIN
             VALUE "CompanyName", "Seidenader Maschinenbau GmbH, Muenchen, Germany"
-            VALUE "FileDescription", "SVSecurity DLL"
+            VALUE "FileDescription", "SVPictureDisplay ActiveX Control Module"
             VALUE "FileVersion", STRFILEVER
-            VALUE "InternalName", "SVSecurity"
+            VALUE "InternalName", "SVPictureDisplay.ocx"
             VALUE "LegalCopyright", "Copyright (C)"
-            VALUE "OriginalFilename", "SVSecurity.dll"
+            VALUE "OriginalFilename", "SVPictureDisplay.ocx"
             VALUE "ProductName", "SVObserver"
             VALUE "ProductVersion", STRPRODUCTVER
         END

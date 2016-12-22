@@ -150,6 +150,7 @@
     <ClCompile Include="TextObject.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="res\SVPictureDisplay.rc2" />
     <None Include="SVPictureDisplay.def" />
     <None Include="res\SaveIcon.ico" />
     <None Include="SVPictureDisplayCtrl.bmp" />
@@ -165,8 +166,8 @@
     </Midl>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\AutoBuild\AutoBuild.h" />
     <ClInclude Include="ArrowObject.h" />
-    <ClInclude Include="AutoBuild.h" />
     <ClInclude Include="Doughnut.h" />
     <ClInclude Include="DrawObject.h" />
     <ClInclude Include="EllipseObject.h" />

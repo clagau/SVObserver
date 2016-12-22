@@ -57,11 +57,15 @@
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <AdditionalIncludeDirectories>..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
     </Link>
+    <ResourceCompile>
+      <ResourceOutputFileName>$(IntDir)%(Filename).res</ResourceOutputFileName>
+    </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -76,6 +80,7 @@
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <AdditionalIncludeDirectories>..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -87,6 +92,9 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
     </Link>
+    <ResourceCompile>
+      <ResourceOutputFileName>$(IntDir)%(Filename).res</ResourceOutputFileName>
+    </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -96,11 +104,12 @@
     <ClCompile Include="SVMessage.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\AutoBuild\AutoBuild.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SVMessage.h" />
   </ItemGroup>
   <ItemGroup>
-    <ResourceCompile Include="$(IntDir)SVMessage.rc" />
+    <ResourceCompile Include="SVMessage2.rc" />
   </ItemGroup>
   <ItemGroup>
     <CustomBuild Include="SVMessage.mc">
@@ -109,6 +118,8 @@ del "$(IntDir)*.bin"
 echo mc -uUv -h "$(IntDir)\" -r "$(IntDir)\" %(Filename).mc
 mc -uUv -h "$(IntDir)\" -r "$(IntDir)\" %(Filename).mc
 Call CopyIfDifferent.bat "$(IntDir)%(Filename).h" %(Filename).h
+Call CopyIfDifferent.bat "$(IntDir)%(Filename).rc" %(Filename).rc
+Call CopyIfDifferent.bat "$(IntDir)%USEnglish.bin" USEnglish.bin
 </Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">%(AdditionalInputs)</AdditionalInputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(IntDir)USEnglish.bin;$(IntDir)%(Filename).h;$(IntDir)%(Filename).rc;%(Outputs)</Outputs>
@@ -117,6 +128,8 @@ del "$(IntDir)*.bin"
 echo mc -uUv -h "$(IntDir)\" -r "$(IntDir)\" %(Filename).mc
 mc -uUv -h "$(IntDir)\" -r "$(IntDir)\" %(Filename).mc
 Call CopyIfDifferent.bat "$(IntDir)%(Filename).h" %(Filename).h
+Call CopyIfDifferent.bat "$(IntDir)%(Filename).rc" %(Filename).rc
+Call CopyIfDifferent.bat "$(IntDir)%USEnglish.bin" USEnglish.bin
 </Command>
       <AdditionalInputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(AdditionalInputs)</AdditionalInputs>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(IntDir)USEnglish.bin;$(IntDir)%(Filename).h;$(IntDir)%(Filename).rc;%(Outputs)</Outputs>

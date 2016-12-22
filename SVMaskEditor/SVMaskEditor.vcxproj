@@ -167,6 +167,7 @@
     <ClCompile Include="SVScrollWnd1Ppg.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="res\SVMaskEditor.rc2" />
     <None Include="SVMaskEditor.def" />
     <None Include="res\bitmap1.bmp" />
     <None Include="res\ellipse_.ico" />
@@ -205,6 +206,7 @@
       </Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|x64'">%(Outputs)</Outputs>
     </CustomBuild>
+    <ClInclude Include="..\AutoBuild\AutoBuild.h" />
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="SVMaskEditor.h" />
     <ClInclude Include="SVMaskEditorCtl.h" />

@@ -23,21 +23,20 @@ VS_VERSION_INFO VERSIONINFO
  FILEFLAGS 0x0L
 #endif
  FILEOS 0x4L
- FILETYPE 0x1L
+ FILETYPE 0x2L
  FILESUBTYPE 0x0L
 BEGIN
     BLOCK "StringFileInfo"
     BEGIN
         BLOCK "040904b0"
         BEGIN
-            VALUE "CompanyName", "Seidenader Vision GmbH, Muenchen, Germany - Seidenader Vision Inc., Harrisburg, PA, USA"
-            VALUE "FileDescription", "SVObserver Vision Application"
+            VALUE "CompanyName", "Seidenader Maschinenbau GmbH, Muenchen, Germany"
+            VALUE "FileDescription", "SVOResource DLL"
             VALUE "FileVersion", STRFILEVER
-            VALUE "InternalName", "SVObserver"
-            VALUE "LegalCopyright", "Seidenader Maschinenbau GmbH"
-            VALUE "LegalTrademarks", "SVObserver"
-            VALUE "OriginalFilename", "SVObserver.EXE"
-            VALUE "ProductName", "SVObserver Application"
+            VALUE "InternalName", "SVOResource"
+            VALUE "LegalCopyright", "Copyright (C)"
+            VALUE "OriginalFilename", "SVOResource.dll"
+            VALUE "ProductName", "SVObserver"
             VALUE "ProductVersion", STRPRODUCTVER
         END
     END

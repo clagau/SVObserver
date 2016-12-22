@@ -93,5 +93,8 @@
     <ClInclude Include="SVSecurityStorage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\AutoBuild\AutoBuild.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

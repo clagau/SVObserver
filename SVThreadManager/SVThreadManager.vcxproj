@@ -114,6 +114,7 @@
     <ClCompile Include="SVThreadManagerImpl.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\AutoBuild\AutoBuild.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SVThreadAttribute.h" />
