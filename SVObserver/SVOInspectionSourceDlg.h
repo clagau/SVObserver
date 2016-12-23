@@ -10,7 +10,7 @@
 //******************************************************************************
 #pragma once
 
-#include "SVOMFCLibrary/SVDataItemManagerTemplate.h"
+#include "SVLibrary/SVDataItemManagerTemplate.h"
 
 #define INTERNAL_INSPECTION_NAME "Inspection_"
 

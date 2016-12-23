@@ -19,7 +19,7 @@
 #include "SVImageLibrary/SVLut.h"
 #include "SVOLibrary/SVODataDeviceClass.h"
 #include "SVOLibrary/SVODeviceClass.h"
-#include "SVOMFCLibrary/SVDeviceParamCollection.h"
+#include "CameraLibrary/SVDeviceParamCollection.h"
 #include "SVUtilityLibrary/SVSharedPtr.h"
 #include "TriggerInformation/SVAcquisitionConstructParams.h"
 

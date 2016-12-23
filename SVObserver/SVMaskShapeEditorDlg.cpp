@@ -20,12 +20,12 @@
 #include "SVObserver.h"
 #include "SVTool.h"
 #include "SVIPDoc.h"
-#include "SVOMFCLibrary/stringmunge.h"
+#include "SVLibrary/Stringmunge.h"
 #include "SVLibrary/SVWinUtility.h"	// for SVYieldPaintMessages
 #include "SVUserMaskOperatorClass.h"
-#include "SVOMFCLibrary/DisplayHelper.h"
+#include "SVOGui/DisplayHelper.h"
 #include "SVImageLibrary/MatroxImageData.h"
-#include "SVOGui\SVColor.h"
+#include "SVOGui/SVColor.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -542,7 +542,7 @@ void SVMaskShapeEditorDlg::ObjectChangedExDialogImage(long Tab, long Handle, VAR
 	////////////////////////////////////////////////////////
 	// SET SHAPE PROPERTIES
 	VariantParamMap ParaMap;
-	int count = SvOml::DisplayHelper::FillParameterMap(ParaMap, ParameterList, ParameterValue);
+	int count = SvOg::DisplayHelper::FillParameterMap(ParaMap, ParameterList, ParameterValue);
 
 	SVMaskShape* pShape = m_mapShapes[ m_eShapeType ];
 	SVMaskShape::MapType mapProperties;
@@ -943,7 +943,7 @@ void SVMaskShapeEditorDlg::setShapeType(SVShapeMaskHelperClass::ShapeTypeEnum sh
 		}
 
 		COleSafeArray saPar, saVal;
-		SvOml::DisplayHelper::CreateSafeArrayFromMap( ParMap, saPar, saVal );
+		SvOg::DisplayHelper::CreateSafeArrayFromMap( ParMap, saPar, saVal );
 
 		for (int i = 0; i < m_numberOfTabs; i++)
 		{
@@ -1021,7 +1021,7 @@ void SVMaskShapeEditorDlg::resetShapeOverlay()
 	}
 
 	COleSafeArray saPar, saVal;
-	SvOml::DisplayHelper::CreateSafeArrayFromMap( ParMap, saPar, saVal );
+	SvOg::DisplayHelper::CreateSafeArrayFromMap( ParMap, saPar, saVal );
 	for (int i = 0; i < m_numberOfTabs; i++)
 	{
 		m_dialogImage.EditOverlay( i, m_handleToActiveObjects[i], static_cast< LPVARIANT >( saPar ), static_cast< LPVARIANT >( saVal ) );

@@ -16,7 +16,7 @@
 #include "SVOResource\resource.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace SVOMFCLibrary
+namespace Seidenader { namespace SVLibrary
 {
 	#pragma region Declarations
 	const int MaxButtons = 3;
@@ -134,7 +134,7 @@ namespace Seidenader { namespace SVOMFCLibrary
 		UINT m_Type;									//The message box type
 	#pragma endregion Member variables
 	};
-} /* namespace SVOMFCLibrary */ } /* namespace Seidenader */
+} /* namespace SVLibrary */ } /* namespace Seidenader */
 
-namespace SvOml = Seidenader::SVOMFCLibrary;
+namespace SvLib = Seidenader::SVLibrary;
 

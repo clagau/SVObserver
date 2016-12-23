@@ -19,7 +19,7 @@
 
 namespace Seidenader
 {
-	namespace SVOMFCLibrary
+	namespace SVMFCControls
 	{
 		class SVEditControlWithHelp : public CEdit
 		{
@@ -82,5 +82,5 @@ namespace Seidenader
 	}
 }
 
-namespace SvOml = Seidenader::SVOMFCLibrary;
+namespace SvMc = Seidenader::SVMFCControls;
 

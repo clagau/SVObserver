@@ -14,13 +14,13 @@
 #include "ObjectInterfaces/TextDefineSvOi.h"
 #include "SVObserver.h" //needed only for one call to SVObserverApp::fileSaveAsSVX()
 #include "SVMainFrm.h"
-#include "SVOMFCLibrary\Utilities.h"
+#include "SVLibrary/DirectoryUtilities.h"
 #include "SVSVIMStateClass.h"
 #include "ExtrasEngine.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVTimerLibrary/SVClock.h"
 #include "SVStatusLibrary/GlobalPath.h"
-#include "SVOMFCLibrary/SVDeviceParams.h" //Arvid: added to avoid VS2015 compile Error
+#include "CameraLibrary/SVDeviceParams.h" //Arvid: added to avoid VS2015 compile Error
 
 #pragma endregion Includes
 
@@ -31,7 +31,6 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
-
 
 HINSTANCE ExtrasEngine::ms_FbwfDllInstance = nullptr;
 

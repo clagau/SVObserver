@@ -13,7 +13,7 @@
 
 //Moved to precompiled header: #include <vector>
 #include "SVContainerLibrary/SVVector.h"
-#include "SVOMFCLibrary/SVOMFCLibraryGlobals.h"
+#include "SVUtilityLibrary/SVUtilityGlobals.h"
 #include "SVLutTransform.h"
 
 enum SVLutFormatEnum

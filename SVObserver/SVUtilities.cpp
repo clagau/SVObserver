@@ -14,14 +14,14 @@
 #include "SVUtilities.h"
 #include "SVUtilitiesCustomizeDialog.h"
 #include "SVUtilityArgumentDialog.h"
-#include "SVOMFCLibrary/SVOINIClass.h"
+#include "SVLibrary/SVOIniClass.h"
 #include "SVUtilityIniClass.h"
 #include "SVObserver.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "ObjectInterfaces/ErrorNumbers.h"
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/GlobalPath.h"
-#include "SVOMFCLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
+#include "CameraLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
 
 #pragma endregion Includes
 
@@ -184,7 +184,7 @@ CMenu *SVUtilitiesClass::FindSubMenuByName(CMenu *pMenu, CString &szName)
 BOOL SVUtilitiesClass::LoadMenuFromINI(CMenu *pMenu)
 {
 	BOOL bRet = true;
-	SvOml::SVOINIClass UtilityIni( SvStl::GlobalPath::Inst().GetSVUtilityIniPath() );
+	SvLib::SVOINIClass UtilityIni( SvStl::GlobalPath::Inst().GetSVUtilityIniPath() );
 	int l_iHighestIndex =0;
 	int iId = ID_EXTRAS_UTILITIES_BASE;
 
@@ -247,7 +247,7 @@ BOOL SVUtilitiesClass::CleanupIni()
 	CString Stanza;
 	SVObserverApp* pApp = static_cast<SVObserverApp*> (AfxGetApp());
 	CString csIniFile = SvStl::GlobalPath::Inst().GetSVUtilityIniPath() ;
-	SvOml::SVOINIClass UtilityIni( static_cast<LPCTSTR> (csIniFile) );
+	SvLib::SVOINIClass UtilityIni( static_cast<LPCTSTR> (csIniFile) );
 
 	CStdioFile file;
 
@@ -357,7 +357,7 @@ BOOL SVUtilitiesClass::UpdateIni()
 	SVUtilityIniClass l_Struct;
 	std::map<UINT,SVUtilityIniClass>::iterator iter;
 	SVObserverApp* pApp = static_cast<SVObserverApp*> (AfxGetApp());
-	SvOml::SVOINIClass UtilityIni( SvStl::GlobalPath::Inst().GetSVUtilityIniPath() );
+	SvLib::SVOINIClass UtilityIni( SvStl::GlobalPath::Inst().GetSVUtilityIniPath() );
 
 	int iMapSize = static_cast<int>(pApp->m_UtilityMenu.size());
 

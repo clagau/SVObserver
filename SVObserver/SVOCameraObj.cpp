@@ -11,10 +11,10 @@
 
 #include "stdafx.h"
 #include "SVOCameraObj.h"
-#include "SVOMFCLibrary/SVFileAcquisitionLoadingModeEnum.h"
-#include "SVOMFCLibrary/SVDeviceParams.h"
-#include "SVOMFCLibrary/SVLongValueDeviceParam.h"
-#include "SVOMFCLibrary/SVStringValueDeviceParam.h"
+#include "SVFileAcquisitionDevice/SVFileAcquisitionLoadingModeEnum.h"
+#include "CameraLibrary/SVDeviceParams.h"
+#include "CameraLibrary/SVLongValueDeviceParam.h"
+#include "CameraLibrary/SVStringValueDeviceParam.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE

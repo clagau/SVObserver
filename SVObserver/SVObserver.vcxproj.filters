@@ -953,9 +953,6 @@
     <ClCompile Include="ZoomToolBar.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="ZoomHelperEx.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="RangeClassHelper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -2128,9 +2125,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ZoomToolBar.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ZoomHelperEx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="RemoteMonitorListHelper.h">

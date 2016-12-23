@@ -113,6 +113,7 @@
     <ClCompile Include="AuxiliaryExtentsController.cpp" />
     <ClCompile Include="CDSVPictureDisplay.cpp" />
     <ClCompile Include="Custom2FilterDlg.cpp" />
+    <ClCompile Include="Displayhelper.cpp" />
     <ClCompile Include="FormulaController.cpp" />
     <ClCompile Include="GlobalConstantConflictDlg.cpp" />
     <ClCompile Include="GlobalConstantDlg.cpp" />
@@ -150,8 +151,11 @@
     <ClCompile Include="TADialogTableParameterPage.cpp" />
     <ClCompile Include="TaTableAnalyzerPage.cpp" />
     <ClCompile Include="TATableSourcePage.cpp" />
+    <ClCompile Include="ZoomHelper.cpp" />
+    <ClCompile Include="ZoomHelperEx.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="DisplayHelper.h" />
     <ClInclude Include="GuiValueHelper.h" />
     <ClInclude Include="AuxiliaryExtentsController.h" />
     <ClInclude Include="BoundValue.h" />
@@ -203,6 +207,8 @@
     <ClInclude Include="TextDefinesSvOg.h" />
     <ClInclude Include="ToolSetItemSelector.h" />
     <ClInclude Include="ValuesAccessor.h" />
+    <ClInclude Include="ZoomHelper.h" />
+    <ClInclude Include="ZoomHelperEx.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="ObjectSelectorController.inl" />

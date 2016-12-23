@@ -1089,11 +1089,11 @@ HRESULT SVArchiveTool::WriteBuffers()
 		catch (CException* e)
 		{
 			e->Delete();
-			hr = SV_FALSE;
+			hr = E_FAIL;
 		} 
 		catch (...)
 		{
-			hr = SV_FALSE;
+			hr = E_FAIL;
 		}
 	}
 

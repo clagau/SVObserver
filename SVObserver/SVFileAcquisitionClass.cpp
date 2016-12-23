@@ -17,7 +17,7 @@
 #include "SVImageLibrary/SVDigitizerLoadLibraryClass.h"
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
-#include "SVOMFCLibrary/SVDeviceParams.h"
+#include "CameraLibrary/SVDeviceParams.h"
 
 #include "SVDigitizerProcessingClass.h"
 #include "SVOCore/SVImageObjectClass.h"

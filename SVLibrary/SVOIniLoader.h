@@ -16,7 +16,7 @@
 
 #pragma endregion Includes
 
-namespace Seidenader { namespace SVOMFCLibrary
+namespace Seidenader { namespace SVLibrary
 {
 	#pragma region Declarations
 	const int MaxTriggers = 4;
@@ -83,7 +83,7 @@ namespace Seidenader { namespace SVOMFCLibrary
 		NakGeneration m_NAKMode;
 		int m_NAKParameter; 
 	};
-} /* namespace SVOMFCLibrary */ } /* namespace Seidenader */
+} /* namespace SVLibrary */ } /* namespace Seidenader */
 
-namespace SvOml = Seidenader::SVOMFCLibrary;
+namespace SvLib = Seidenader::SVLibrary;
 

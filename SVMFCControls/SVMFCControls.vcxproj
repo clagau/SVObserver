@@ -116,6 +116,8 @@
     <ClCompile Include="ObjectsListBox.cpp" />
     <ClCompile Include="SVBitmap.cpp" />
     <ClCompile Include="SVDlgBitmap.cpp" />
+    <ClCompile Include="SVDlgGraph.cpp" />
+    <ClCompile Include="SVEditControlWithHelp.cpp" />
     <ClCompile Include="SVHistogram.cpp" />
     <ClCompile Include="SVOSelectItemListDlg.cpp" />
     <ClCompile Include="SVSlideBar.cpp" />
@@ -154,6 +156,8 @@
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="SVBitmap.h" />
     <ClInclude Include="SVDlgBitmap.H" />
+    <ClInclude Include="SVDlgGraph.h" />
+    <ClInclude Include="SVEditControlWithHelp.h" />
     <ClInclude Include="SVHistogram.h" />
     <ClInclude Include="SVHistogramLabels.h" />
     <ClInclude Include="SVOSelectItemListDlg.h" />

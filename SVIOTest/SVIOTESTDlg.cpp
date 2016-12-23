@@ -18,7 +18,7 @@
 #include "SVIOLibrary/SVIOParameterEnum.h"
 #include "SVTriggerSetupDlgClass.h"
 #include "SVSoftwareTriggerSetupDlg.h"
-#include "SVOMFCLibrary/SVOINIClass.h"
+#include "SVLibrary/SVOIniClass.h"
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #pragma endregion Includes
@@ -239,7 +239,7 @@ BOOL CSVIOTESTDlg::OnInitDialog()
 	m_lTrigInverts = 0;
 
 	// Read Information from hardware.ini about the board options...
-	SvOml::SVOINIClass HardwareIni( SvStl::GlobalPath::Inst().GetHardwareIniPath() );
+	SvLib::SVOINIClass HardwareIni( SvStl::GlobalPath::Inst().GetHardwareIniPath() );
 	SVString Value;
 
 	Value = HardwareIni.GetValueString( _T("IO Board"), _T("10"), _T("Entech X1") );

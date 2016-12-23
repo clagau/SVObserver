@@ -12,7 +12,7 @@
 #include "SVToolGrouping.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
-#include "SVOMFCLibrary/StringEscape.h"
+#include "SVLibrary/StringEscape.h"
 #include "SVMessage/SVMessage.h"
 
 #pragma endregion Includes
@@ -522,7 +522,7 @@ HRESULT SVToolGrouping::SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHan
 						if (SVNavigateTree::GetItem(rTree, CTAG_STARTGROUP_COMMENT, htiSubChild, svValue))
 						{
 							CString tmp(static_cast<LPCTSTR>(static_cast<_bstr_t>(svValue)));
-							SvOml::RemoveEscapedSpecialCharacters(tmp, true);
+							SvLib::RemoveEscapedSpecialCharacters(tmp, true);
 							startGroupComment = static_cast<LPCTSTR>(tmp);
 						}
 						if (SVNavigateTree::GetItem(rTree, CTAG_ENDGROUP, htiSubChild, svValue))
@@ -531,7 +531,7 @@ HRESULT SVToolGrouping::SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHan
 							if (SVNavigateTree::GetItem(rTree, CTAG_ENDGROUP_COMMENT, htiSubChild, svValue))
 							{
 								CString tmp(static_cast<LPCTSTR>(static_cast<_bstr_t>(svValue)));
-								SvOml::RemoveEscapedSpecialCharacters(tmp, true);
+								SvLib::RemoveEscapedSpecialCharacters(tmp, true);
 								endGroupComment = static_cast<LPCTSTR>(tmp);
 							}
 						}
@@ -649,7 +649,7 @@ bool SVToolGrouping::GetParameters(SVObjectWriter& rWriter)
 				rWriter.WriteAttribute(CTAG_STARTGROUP, value);
 
 				CString tmp(it->second.m_comment.c_str());
-				SvOml::AddEscapeSpecialCharacters(tmp, true);
+				SvLib::AddEscapeSpecialCharacters(tmp, true);
 				_bstr_t comment(tmp);
 				_variant_t commentValue(comment);
 				rWriter.WriteAttribute(CTAG_STARTGROUP_COMMENT, commentValue);
@@ -670,7 +670,7 @@ bool SVToolGrouping::GetParameters(SVObjectWriter& rWriter)
 				rWriter.WriteAttribute(CTAG_ENDGROUP, value);
 
 				CString tmp(it->second.m_comment.c_str());
-				SvOml::AddEscapeSpecialCharacters(tmp, true);
+				SvLib::AddEscapeSpecialCharacters(tmp, true);
 				_bstr_t comment(tmp);
 				_variant_t commentValue(comment);
 				rWriter.WriteAttribute(CTAG_ENDGROUP_COMMENT, commentValue);

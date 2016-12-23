@@ -12,10 +12,10 @@
 #pragma once
 
 #pragma region Includes
-#include "SVOMFCLibrary/SVOMFCLibraryGlobals.h"
+#include "SVLibrary/StringHelper.h"
+#include "SVUtilityLibrary/SVUtilityGlobals.h"
 #include "TriggerHandling/TriggerBasics.h"
-#include "SVOMFCLibrary/SVOMFCLibrary.h"
-#include "SVOMFCLibrary/SVDeviceParamCollection.h"
+#include "CameraLibrary/SVDeviceParamCollection.h"
 #include "SVAcquisitionBufferInterface.h"
 #pragma endregion Includes
 

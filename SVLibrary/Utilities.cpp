@@ -8,12 +8,12 @@
 // * .Current Version : $Revision:   1.0  $
 // * .Check In Date   : $Date:   18 Apr 2013 18:10:12  $
 // ******************************************************************************
-//Utilities.h moved from SVCmnLib to SVOMFCLibrary 
+//DirectoryUtilities.h moved from SVCmnLib to SVLibrary 
 
 #include "stdafx.h"
 //Moved to precompiled header: #include <direct.h>
 //Moved to precompiled header: #include <tchar.h>
-#include "utilities.h"
+#include "DirectoryUtilities.h"
 
 
 BOOL CreateDirPath(CString szPath)

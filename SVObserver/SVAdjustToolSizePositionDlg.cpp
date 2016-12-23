@@ -22,7 +22,6 @@
 #include "SVGuiExtentUpdater.h"
 #include "SVOCore/SVImageListClass.h"
 #include "SVTool.h"
-#include "SVOMFCLibrary/SVOMFCLibraryGlobals.h"
 #include "SVSVIMStateClass.h"
 #include "SVOResource/ConstGlobalSvOr.h"
 #include "SVLinearToolClass.h"
@@ -59,6 +58,16 @@ BEGIN_MESSAGE_MAP(SVAdjustToolSizePositionDlg, CDialog)
 END_MESSAGE_MAP()
 
 IMPLEMENT_DYNAMIC(SVAdjustToolSizePositionDlg, CDialog)
+
+inline bool ApproxEqual(float f1, float f2)
+{
+	return (fabs(f1 - f2) < FLT_EPSILON);
+}
+
+inline bool ApproxEqual(double d1, double d2)
+{
+	return (fabs(d1 - d2) < DBL_EPSILON);
+}
 
 #pragma region Constructor
 SVAdjustToolSizePositionDlg::SVAdjustToolSizePositionDlg(LPCTSTR pCaption, CWnd* pParentWnd, SVTaskObjectClass* pToolTask)

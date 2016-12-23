@@ -15,7 +15,7 @@
 #include "SVSystemLibrary/SVFileNameArrayClass.h"
 #include "SVImageLibrary/SVLightReference.h"
 #include "SVImageLibrary/SVLut.h"
-#include "SVOMFCLibrary/SVDeviceParamCollection.h"
+#include "CameraLibrary/SVDeviceParamCollection.h"
 #pragma endregion Includes
 
 struct SVConfigurationAcquisitionDeviceInfoStruct

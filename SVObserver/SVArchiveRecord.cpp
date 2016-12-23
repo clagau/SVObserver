@@ -14,9 +14,8 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVArchiveImageThreadClass.h"
-#include "SVOMFCLibrary/SVOMFCLibraryGlobals.h"
 #include "SVOCore/SVImageObjectClass.h"
-#include "SVOMFCLibrary/SVFileNameClass.h"
+#include "SVLibrary/SVFileNameClass.h"
 #include "TextDefinesSvO.h"
 #pragma endregion Includes
 
@@ -447,11 +446,11 @@ HRESULT SVArchiveRecord::WriteImage( )
 					}
 					catch (CException& )
 					{
-						hr = SV_FALSE;
+						hr = E_FAIL;
 					}
 					catch (...)
 					{
-						hr = SV_FALSE;
+						hr = E_FAIL;
 					}
 				}
 				else	// SVArchiveGoOffline or SVArchiveAsynchronous
@@ -481,11 +480,11 @@ HRESULT SVArchiveRecord::WriteImage( )
 		}
 		catch (CException& )
 		{
-			hr = SV_FALSE;
+			hr = E_FAIL;
 		}
 		catch (...)
 		{
-			hr = SV_FALSE;
+			hr = E_FAIL;
 		}
 	}// end if ( bOk )
 

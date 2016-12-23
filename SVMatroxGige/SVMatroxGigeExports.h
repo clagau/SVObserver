@@ -11,7 +11,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVOMFCLibrary/SVDeviceParamCollection.h"
+#include "CameraLibrary/SVDeviceParamCollection.h"
 #include "TriggerHandling/TriggerBasics.h"
 #pragma endregion Includes
 

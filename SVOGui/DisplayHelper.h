@@ -20,7 +20,7 @@
 
 namespace Seidenader
 {
-	namespace SVOMFCLibrary
+	namespace SVOGui
 	{
 		class DisplayHelper
 		{
@@ -60,6 +60,6 @@ namespace Seidenader
 #pragma endregion Public Methods
 		};
 	}//namespace Seidenader
-}//namespace SVOMFCLibrary
+}//namespace SVOGui
 
-namespace SvOml = Seidenader::SVOMFCLibrary;
+namespace SvOg = Seidenader::SVOGui;

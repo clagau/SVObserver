@@ -44,6 +44,24 @@
     <ClCompile Include="svbarcodestringmatchdialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SVOIniLoader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DisplayMessageBox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Utilities.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StringEscape.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="StringMunge.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVFileNameClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Intersect.h">
@@ -85,9 +103,42 @@
     <ClInclude Include="svbarcodestringmatchdialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SVOINIClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVOIniLoader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVDataItemManagerTemplate.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DisplayMessageBox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StringEscape.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StringMunge.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVFileNameClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="StringHelper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DirectoryUtilities.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="SVReferenceCountingTemplate.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="SVOINIClass.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="SVDataItemManagerTemplate.inl">
       <Filter>Header Files</Filter>
     </None>
   </ItemGroup>

@@ -16,7 +16,7 @@
 #include "SVObjectLibrary\SVClsids.h"
 #include "SVObjectLibrary\SVToolsetScriptTags.h"
 #include "SVObjectLibrary/SVObjectAttributeClass.h"
-#include "SVOMFCLibrary/StringEscape.h"
+#include "SVLibrary/StringEscape.h"
 #pragma endregion Includes
 
 namespace	// only for this file
@@ -74,7 +74,7 @@ void SVStaticStringValueObjectClass::Persist(SVObjectWriter& rWriter)
 	// Get the Data Values (Member Info, Values)
 	// Check for DoubleQuotes in variable
 	CString tmp = DefaultValue();
-	SvOml::AddEscapeSpecialCharacters(tmp, true);
+	SvLib::AddEscapeSpecialCharacters(tmp, true);
 	
 	_variant_t value;
 	value.SetString(tmp);
@@ -91,7 +91,7 @@ void SVStaticStringValueObjectClass::Persist(SVObjectWriter& rWriter)
 	for (int i = 0; i < m_iArraySize; i++)
 	{
 		tmp = Element(0, i); 
-		SvOml::AddEscapeSpecialCharacters(tmp, true);
+		SvLib::AddEscapeSpecialCharacters(tmp, true);
 		value.SetString(tmp);
 		list.push_back(value);
 		value.Clear();
@@ -119,13 +119,13 @@ HRESULT  SVStaticStringValueObjectClass::SetObjectValue(SVObjectAttributeClass* 
 			DefaultValue() = svArray[i];
 			
 			// Remove any escapes
-			SvOml::RemoveEscapedSpecialCharacters(DefaultValue(), true);
+			SvLib::RemoveEscapedSpecialCharacters(DefaultValue(), true);
 		}
 	}
 	else if ( bOk = pDataObject->GetAttributeData(BUCKET_TAG_LOAD, l_Buckets, DefaultValue() ) )
 	{
 		// Remove any escapes
-		SvOml::RemoveEscapedSpecialCharacters(l_Buckets[0][0], true);
+		SvLib::RemoveEscapedSpecialCharacters(l_Buckets[0][0], true);
 
 		if ( ArraySize() == 1 )
 		{
@@ -146,7 +146,7 @@ HRESULT  SVStaticStringValueObjectClass::SetObjectValue(SVObjectAttributeClass* 
 		for (size_t i = 0; i < l_Array.size(); i++)
 		{
 			// Remove any escapes
-			SvOml::RemoveEscapedSpecialCharacters(l_Array[i], true);
+			SvLib::RemoveEscapedSpecialCharacters(l_Array[i], true);
 		}
 
 		SetArraySize( static_cast<int>(l_Array.size()) );
@@ -167,13 +167,13 @@ HRESULT  SVStaticStringValueObjectClass::SetObjectValue(SVObjectAttributeClass* 
 			DefaultValue() = svArray[i];
 			
 			// Remove any escapes
-			SvOml::RemoveEscapedSpecialCharacters(DefaultValue(), true);
+			SvLib::RemoveEscapedSpecialCharacters(DefaultValue(), true);
 		}
 	}
 	else if ( bOk = pDataObject->GetAttributeData("StrArray", l_Buckets, DefaultValue() ) )
 	{
 		// Remove any escapes
-		SvOml::RemoveEscapedSpecialCharacters(l_Buckets[0][0], true);
+		SvLib::RemoveEscapedSpecialCharacters(l_Buckets[0][0], true);
 
 		if ( ArraySize() == 1 )
 		{

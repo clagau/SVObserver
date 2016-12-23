@@ -13,7 +13,7 @@
 
 #pragma region Includes
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
-#include "SVOMFCLibrary/SVFileNameClass.h"
+#include "SVLibrary/SVFileNameClass.h"
 #include "SVOCore/SVImageObjectClass.h"
 #pragma endregion Includes
 

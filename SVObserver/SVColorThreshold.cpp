@@ -22,7 +22,7 @@
 #include "ObjectInterfaces/GlobalConst.h"
 #include "SVOCore/SVImageProcessingClass.h"
 #include "SVTool.h"
-#include "SVOMFCLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
+#include "CameraLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

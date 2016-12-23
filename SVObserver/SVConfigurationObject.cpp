@@ -24,10 +24,10 @@
 #include "SVUtilityLibrary/SVSAFEARRAY.h"
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
-#include "SVOMFCLibrary/SVDeviceParams.h"
-#include "SVOMFCLibrary/SVBoolValueDeviceParam.h"
-#include "SVOMFCLibrary/StringMunge.h"
-#include "SVOMFCLibrary/StringEscape.h"
+#include "CameraLibrary/SVDeviceParams.h"
+#include "CameraLibrary/SVBoolValueDeviceParam.h"
+#include "SVLibrary/StringMunge.h"
+#include "SVLibrary/StringEscape.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVTimerLibrary/SVClock.h"
 #include "SVTriggerLibrary/SVTriggerEnums.h"
@@ -3546,7 +3546,7 @@ void SVConfigurationObject::SaveGlobalConstants( SVObjectXMLWriter &rWriter ) co
 
 		CString Description( (*Iter)->getDescription() );
 		//This is needed to remove any CR LF in the description
-		SvOml::AddEscapeSpecialCharacters( Description, true );
+		SvLib::AddEscapeSpecialCharacters( Description, true );
 		Value.SetString( Description );
 		rWriter.WriteAttribute( CTAG_DESCRIPTION, Value );
 		Value.Clear();
@@ -5345,7 +5345,7 @@ HRESULT SVConfigurationObject::LoadGlobalConstants( SVTreeType& rTree )
 				{
 					Description = Value.bstrVal;
 					//This is needed to insert any CR LF in the description which were replaced while saving
-					SvOml::RemoveEscapedSpecialCharacters( Description, true );
+					SvLib::RemoveEscapedSpecialCharacters( Description, true );
 				}
 				else
 				{

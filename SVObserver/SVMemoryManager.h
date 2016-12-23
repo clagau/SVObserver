@@ -15,7 +15,7 @@
 //Moved to precompiled header: #include <string>
 //Moved to precompiled header: #include <map>
 #include "SVOLibrary/SVContainableCriticalSection.h"
-#include "SVOMFCLibrary/SVTemplate.h"	// for singleton
+#include "CameraLibrary/SVTemplate.h"	// for singleton
 #include "SVMessage/SVMessage.h"
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes

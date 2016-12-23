@@ -13,8 +13,8 @@
 
 //Moved to precompiled header: #include <iostream>
 #include "SVUtilityLibrary/SVString.h"
-#include "SVOMFCLibrary/SVDeviceParams.h"
-#include "SVOMFCLibrary/SVLongValueDeviceParam.h"
+#include "CameraLibrary/SVDeviceParams.h"
+#include "CameraLibrary/SVLongValueDeviceParam.h"
 
 class SVGigeCameraFileReader
 {

@@ -16,14 +16,14 @@
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
 #include "SVTimerLibrary/SVClock.h"
-#include "SVOMFCLibrary/SVFileNameClass.h"
+#include "SVLibrary/SVFileNameClass.h"
 #include "SVUtilityLibrary/SVUtilityGlobals.h"
 #include "SVImageProcessingClass.h"
 #include "SVTaskObject.h"
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "ObjectInterfaces/ErrorNumbers.h"
-#include "SVOMFCLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
+#include "CameraLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
 #pragma endregion Includes
 
 SVImageObjectClass::SVImageObjectClass()

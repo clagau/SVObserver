@@ -6,7 +6,7 @@
 #include "stdafx.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace SVOMFCLibrary
+namespace Seidenader { namespace SVLibrary
 {
 	typedef std::pair<CString, CString> StringPair;
 	typedef std::map<int, StringPair > IntStringPairMap;
@@ -133,4 +133,4 @@ namespace Seidenader { namespace SVOMFCLibrary
 		}
 		return bRemoved;
 	}
-} /*SVOMFCLibrary*/ } /*Seidenader*/
+} /*SVLibrary*/ } /*Seidenader*/

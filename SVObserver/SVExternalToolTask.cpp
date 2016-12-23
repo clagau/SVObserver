@@ -16,7 +16,7 @@
 #include "SVImageLibrary\SVImageBufferHandleImage.h"
 #include "SVObjectLibrary\SVAnalyzerLevelCreateStruct.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
-#include "SVOMFCLibrary\SVOINIClass.h"
+#include "SVLibrary\SVOINIClass.h"
 #include "SVStatusLibrary\MessageContainer.h"
 #include "SVObjectLibrary\SVGetObjectDequeByTypeVisitor.h"
 #include "SVUtilityLibrary/SetBits.h"
@@ -124,7 +124,7 @@ SVExternalToolTask::SVExternalToolTask( SVObjectClass* POwner, int StringResourc
 
 	m_hrInitialized = S_FALSE;
 
-	SvOml::SVOINIClass m_SvimIni(SvStl::GlobalPath::Inst().GetSVIMIniPath());
+	SvLib::SVOINIClass m_SvimIni(SvStl::GlobalPath::Inst().GetSVIMIniPath());
 
 	m_bUseImageCopies = m_SvimIni.GetValueInt(_T("External Tool"), _T("UseImageCopy"), TRUE) != FALSE;
 

@@ -15,7 +15,7 @@
 #include "SVPictureDisplay.h"
 #include "SVPictureDisplayCtrl.h"
 #include "SVPictureDisplayPropPage.h"
-#include "SVOMFCLibrary/Displayhelper.h"
+#include "SVOGui/Displayhelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -535,7 +535,7 @@ void SVPictureDisplayCtrl::ObjectMovedEx( LONG tab, LONG handle )
 	if(S_OK == hres && 0 < size)
 	{
 		COleSafeArray saPar, saVal;
-		SvOml::DisplayHelper::CreateSafeArrayFromMap(ParameterMap, saPar, saVal);
+		SvOg::DisplayHelper::CreateSafeArrayFromMap(ParameterMap, saPar, saVal);
 
 		ObjectMovedEx(tab, handle, static_cast< LPVARIANT >( saPar ), static_cast< LPVARIANT >( saVal ) );
 	}
@@ -550,7 +550,7 @@ void SVPictureDisplayCtrl::ObjectChangedEx(LONG tab, LONG handle)
 	if(S_OK == hres && 0 < size)
 	{
 		COleSafeArray saPar, saVal;
-		SvOml::DisplayHelper::CreateSafeArrayFromMap(ParameterMap, saPar, saVal);
+		SvOg::DisplayHelper::CreateSafeArrayFromMap(ParameterMap, saPar, saVal);
 
 		ObjectChangedEx( tab, handle, static_cast< LPVARIANT >( saPar ), static_cast< LPVARIANT >( saVal ) );
 	}
@@ -584,7 +584,7 @@ SCODE SVPictureDisplayCtrl::AddOverlay(LONG lTab, VARIANT* ParameterList, VARIAN
 {
 	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 	VariantParamMap ParameterMap;
-	int size = SvOml::DisplayHelper::FillParameterMap(ParameterMap, ParameterList, ParameterValue);
+	int size = SvOg::DisplayHelper::FillParameterMap(ParameterMap, ParameterList, ParameterValue);
 	if( size <= 0)
 	{
 		return E_FAIL;
@@ -602,7 +602,7 @@ SCODE SVPictureDisplayCtrl::AddOverlayToGroup(LONG lGroup, LONG lTab, VARIANT* P
 {
 	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 	VariantParamMap ParameterMap;
-	int size = SvOml::DisplayHelper::FillParameterMap(ParameterMap, ParameterList, ParameterValue);
+	int size = SvOg::DisplayHelper::FillParameterMap(ParameterMap, ParameterList, ParameterValue);
 	if( size <= 0)
 	{
 		return E_FAIL;
@@ -621,7 +621,7 @@ SCODE SVPictureDisplayCtrl::EditOverlay(LONG Tab, LONG Handle, VARIANT* pParamet
 	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 
 	VariantParamMap ParameterMap;
-	int size = SvOml::DisplayHelper::FillParameterMap(ParameterMap, pParameterList, pParameterValue);
+	int size = SvOg::DisplayHelper::FillParameterMap(ParameterMap, pParameterList, pParameterValue);
 	if( size <= 0)
 	{
 		return E_FAIL;

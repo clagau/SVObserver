@@ -11,7 +11,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "SVOMFCLibrary\SVDeviceParams.h"
+#include "CameraLibrary\SVDeviceParams.h"
 #include "resource.h"
 #include "SVTestAcquisitionClass.h"
 #include "SVTestAcquisitionSubsystem.h"

@@ -11,7 +11,7 @@
 
 #include "stdafx.h"
 #include "SVGigeCameraParamValidateClass.h"
-#include "SVOMFCLibrary/SVLongValueDeviceParam.h"
+#include "CameraLibrary/SVLongValueDeviceParam.h"
 
 SVGigeCameraParamValidateClass::SVGigeCameraParamValidateClass()
 {

@@ -14,10 +14,10 @@
 #pragma region Includes
 #include "SVImageLibrary/SVImageInfoClass.h"
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
-#include "SVOMFCLibrary/SVDeviceParam.h"
-#include "SVOMFCLibrary/SVDeviceParams.h"
-#include "SVOMFCLibrary/SVCustomDeviceParam.h"
-#include "SVOMFCLibrary/SVLongValueDeviceParam.h"
+#include "CameraLibrary/SVDeviceParam.h"
+#include "CameraLibrary/SVDeviceParams.h"
+#include "CameraLibrary/SVCustomDeviceParam.h"
+#include "CameraLibrary/SVLongValueDeviceParam.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
 #include "SVAcquisitionClass.h"
 //TODO: MZA(10.Nov 2014): Move this files to SVOGui project and then remove folder from include and Namespace add-on add PictureDisplay declaration.

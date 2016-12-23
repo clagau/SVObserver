@@ -11,7 +11,6 @@
 
 #include "stdafx.h"
 #include "SVUserMaskOperatorClass.h"
-#include "SVOMFCLibrary/SVOMFCLibraryGlobals.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVImageLibrary/MatroxImageData.h"
 #include "SVUtilityLibrary/SetBits.h"
@@ -269,7 +268,7 @@ HRESULT SVUserMaskOperatorClass::GetCancelData(SVCancelData*& p_rpData)
 // ISVCancel
 HRESULT SVUserMaskOperatorClass::SetCancelData(SVCancelData* p_pData)
 {
-	HRESULT hr = SV_FALSE;
+	HRESULT hr = E_FAIL;
 	SVMaskOperatorCancelData* pData = dynamic_cast <SVMaskOperatorCancelData*> (p_pData);
 	ASSERT( pData );
 	if ( pData )

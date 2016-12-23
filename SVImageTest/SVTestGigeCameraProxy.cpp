@@ -20,12 +20,12 @@
 //Moved to precompiled header: #include <boost/algorithm/string.hpp>
 #include "SVTestGigeCameraProxy.h"
 #include "SVGigeCameraParametersLibrary/SVGigeEnums.h"
-#include "SVOMFCLibrary/SVDeviceParams.h"
-#include "SVOMFCLibrary/SVStringValueDeviceParam.h"
-#include "SVOMFCLibrary/SVLongValueDeviceParam.h"
-#include "SVOMFCLibrary/SVBoolValueDeviceParam.h"
-#include "SVOMFCLibrary/SVStringValueDeviceParam.h"
-#include "SVOMFCLibrary/SVCustomDeviceParam.h"
+#include "CameraLibrary/SVDeviceParams.h"
+#include "CameraLibrary/SVStringValueDeviceParam.h"
+#include "CameraLibrary/SVLongValueDeviceParam.h"
+#include "CameraLibrary/SVBoolValueDeviceParam.h"
+#include "CameraLibrary/SVStringValueDeviceParam.h"
+#include "CameraLibrary/SVCustomDeviceParam.h"
 #include "SVImageLibrary/SVDigitizerLoadLibraryClass.h"
 #include "SVTestAcquisitionClass.h"
 #pragma warning (pop)
@@ -400,7 +400,7 @@ HRESULT SVTestGigeCameraProxy::SetStandardCameraParameter( const SVDeviceParamWr
 				}
 				else
 				{
-					hr = SV_FALSE;
+					hr = E_FAIL;
 				}
 				break;
 			}

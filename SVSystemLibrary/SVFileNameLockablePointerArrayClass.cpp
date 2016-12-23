@@ -12,7 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVFileNameLockablePointerArrayClass.h"
-#include "SVOMFCLibrary/SVFileNameClass.h"
+#include "SVLibrary/SVFileNameClass.h"
 #pragma endregion Includes
 
 SVFileNameLockablePointerArrayClass::SVFileNameLockablePointerArrayClass()

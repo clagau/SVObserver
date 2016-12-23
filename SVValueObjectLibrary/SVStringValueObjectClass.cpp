@@ -16,7 +16,7 @@
 #include "SVObjectLibrary\SVClsids.h"
 #include "SVObjectLibrary\SVToolsetScriptTags.h"
 #include "SVObjectLibrary/SVObjectAttributeClass.h"
-#include "SVOMFCLibrary/StringEscape.h"
+#include "SVLibrary/StringEscape.h"
 #pragma endregion Includes
 
 namespace	// only for this file
@@ -74,7 +74,7 @@ void SVStringValueObjectClass::Persist(SVObjectWriter& rWriter)
 	// Get the Data Values (Member Info, Values)
 	// Check for DoubleQuotes in variable
 	CString tmp = DefaultValue();
-	SvOml::AddEscapeSpecialCharacters(tmp, true);
+	SvLib::AddEscapeSpecialCharacters(tmp, true);
 	
 	_variant_t value;
 	value.SetString(tmp);
@@ -91,7 +91,7 @@ void SVStringValueObjectClass::Persist(SVObjectWriter& rWriter)
 	for (int i = 0; i < m_iArraySize; i++)
 	{
 		tmp = Element(m_iLastSetIndex, i); 
-		SvOml::AddEscapeSpecialCharacters(tmp, true);
+		SvLib::AddEscapeSpecialCharacters(tmp, true);
 		value.SetString(tmp);
 		list.push_back(value);
 		value.Clear();
@@ -119,7 +119,7 @@ HRESULT  SVStringValueObjectClass::SetObjectValue(SVObjectAttributeClass* pDataO
 			DefaultValue() = svArray[i];
 			
 			// Remove any escapes
-			SvOml::RemoveEscapedSpecialCharacters(DefaultValue(), true);
+			SvLib::RemoveEscapedSpecialCharacters(DefaultValue(), true);
 		}
 	}
 	else if ( bOk = pDataObject->GetAttributeData(BUCKET_TAG_LOAD, l_Buckets, DefaultValue() ) )
@@ -127,7 +127,7 @@ HRESULT  SVStringValueObjectClass::SetObjectValue(SVObjectAttributeClass* pDataO
 		for (size_t i = 0; i < l_Buckets.size(); i++)
 		{
 			// Remove any escapes
-			SvOml::RemoveEscapedSpecialCharacters(l_Buckets[i][0], true);
+			SvLib::RemoveEscapedSpecialCharacters(l_Buckets[i][0], true);
 		}
 
 		if ( ArraySize() == 1 )
@@ -150,7 +150,7 @@ HRESULT  SVStringValueObjectClass::SetObjectValue(SVObjectAttributeClass* pDataO
 		for (size_t i = 0; i < l_Array.size(); i++)
 		{
 			// Remove any escapes
-			SvOml::RemoveEscapedSpecialCharacters(l_Array[i], true);
+			SvLib::RemoveEscapedSpecialCharacters(l_Array[i], true);
 		}
 
 		SetArraySize( static_cast<int>(l_Array.size()) );
@@ -171,7 +171,7 @@ HRESULT  SVStringValueObjectClass::SetObjectValue(SVObjectAttributeClass* pDataO
 			DefaultValue() = svArray[i];
 			
 			// Remove any escapes
-			SvOml::RemoveEscapedSpecialCharacters(DefaultValue(), true);
+			SvLib::RemoveEscapedSpecialCharacters(DefaultValue(), true);
 		}
 	}
 	else if ( bOk = pDataObject->GetAttributeData("StrArray", l_Buckets, DefaultValue() ) )
@@ -179,7 +179,7 @@ HRESULT  SVStringValueObjectClass::SetObjectValue(SVObjectAttributeClass* pDataO
 		for (size_t i = 0; i < l_Buckets.size(); i++)
 		{
 			// Remove any escapes
-			SvOml::RemoveEscapedSpecialCharacters(l_Buckets[i][0], true);
+			SvLib::RemoveEscapedSpecialCharacters(l_Buckets[i][0], true);
 		}
 
 		if ( ArraySize() == 1 )

@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVOMFCLibrary/SVDataItemManagerTemplate.h"
+#include "SVLibrary/SVDataItemManagerTemplate.h"
 #include "SVLibrary/SVIOEntryHostStruct.h"
 #pragma endregion Includes
 

@@ -23,7 +23,7 @@
 #include "SVUtilityLibrary/SVString.h"
 #include "SVAcquisitionClass.h"
 #include "SVValueObjectLibrary/BasicValueObjects.h"
-#include "SVOMFCLibrary/SVLongValueDeviceParam.h"
+#include "CameraLibrary/SVLongValueDeviceParam.h"
 #pragma endregion Includes
 
 #pragma region Declarations

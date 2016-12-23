@@ -19,7 +19,7 @@
 #include "SVInspectionProcess.h"
 #include "SVSVIMStateClass.h"
 #include "SVTool.h"
-#include "SVOMFCLibrary\DisplayHelper.h"
+#include "SVOGui/DisplayHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations

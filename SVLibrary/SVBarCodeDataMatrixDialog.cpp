@@ -11,6 +11,7 @@
 #pragma region Includes
 #include "stdafx.h"
 
+
 #include "SVBarCodeDataMatrixDialog.h"
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
 #pragma endregion Includes

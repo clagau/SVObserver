@@ -13,7 +13,7 @@
 
 #include "SVUtilityLibrary/SVString.h"
 #include "SVHBitmapUtilitiesLibrary/SVImageFormatEnum.h"
-#include "SVOMFCLibrary/SVFileAcquisitionLoadingModeEnum.h"
+#include "SVFileAcquisitionDevice/SVFileAcquisitionLoadingModeEnum.h"
 
 struct SVFileCameraStruct
 {

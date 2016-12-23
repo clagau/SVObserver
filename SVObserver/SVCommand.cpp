@@ -19,7 +19,7 @@
 #include "SVObserver_i.h"
 #include "SVCommand.h"
 
-#include "SVOMFCLibrary/Utilities.h"
+#include "SVLibrary/DirectoryUtilities.h"
 #include "SVDataManagerLibrary/DataManager.h"
 #include "SVFileSystemLibrary/SVFileSystemCommandFactory.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"

@@ -20,10 +20,11 @@
 //Moved to precompiled header: #include <boost/algorithm/string.hpp>
 #include "SVGigeCameraFileReader.h"
 #include "SVMessage/SVMessage.h"
-#include "SVOMFCLibrary/SVBoolValueDeviceParam.h"
-#include "SVOMFCLibrary/SVLongValueDeviceParam.h"
-#include "SVOMFCLibrary/SVStringValueDeviceParam.h"
-#include "SVOMFCLibrary/SVi64ValueDeviceParam.h"
+
+#include "CameraLibrary/SVBoolValueDeviceParam.h"
+#include "CameraLibrary/SVLongValueDeviceParam.h"
+#include "CameraLibrary/SVStringValueDeviceParam.h"
+#include "CameraLibrary/SVi64ValueDeviceParam.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #include "SVCustomParameterBuilder.h"
@@ -82,6 +83,39 @@ static const int MAX_STRING_BUFFER = 128;
 
 // For Custom params
 static LPCTSTR scValue = _T("Value");
+
+inline DWORD ROL(DWORD& rdwValue, BYTE byNumBitsToShift = 1)
+{
+	DWORD dwMask = (1 << byNumBitsToShift) - 1;
+	dwMask <<= (8*sizeof(DWORD) - byNumBitsToShift);
+	DWORD dwMoveBits = rdwValue & dwMask;
+	rdwValue <<= byNumBitsToShift;
+	dwMoveBits >>= (8*sizeof(DWORD) - byNumBitsToShift);
+	rdwValue |= dwMoveBits;
+	return rdwValue;
+}
+
+inline WORD ROL(WORD& rwValue, BYTE byNumBitsToShift = 1)
+{
+	WORD wMask = (1 << byNumBitsToShift) - 1;
+	wMask <<= (8*sizeof(WORD) - byNumBitsToShift);
+	WORD wMoveBits = rwValue & wMask;
+	rwValue <<= byNumBitsToShift;
+	wMoveBits >>= (8*sizeof(WORD) - byNumBitsToShift);
+	rwValue |= wMoveBits;
+	return rwValue;
+}
+
+inline BYTE ROL(BYTE& rbyValue, BYTE byNumBitsToShift = 1)
+{
+	BYTE byMask = (1 << byNumBitsToShift) - 1;
+	byMask <<= (8 - byNumBitsToShift);
+	BYTE byMoveBits = rbyValue & byMask;
+	rbyValue <<= byNumBitsToShift;
+	byMoveBits >>= (8 - byNumBitsToShift);
+	rbyValue |= byMoveBits;
+	return rbyValue;
+}
 
 static SVMaterialsTree::iterator GetBaseNode(SVMaterialsTree& rTree, const std::string& key)
 {

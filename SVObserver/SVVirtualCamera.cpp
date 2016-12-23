@@ -15,7 +15,7 @@
 
 #include "SVVirtualCamera.h"
 #include "SVDigitizerProcessingClass.h"
-#include "SVOMFCLibrary/SVDeviceParams.h"
+#include "CameraLibrary/SVDeviceParams.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVObjectLibrary/GlobalConst.h"
 #include "SVObjectLibrary/SVClsids.h"

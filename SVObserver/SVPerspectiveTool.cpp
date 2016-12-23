@@ -15,7 +15,7 @@
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
 #include "SVImageLibrary/SVImageExtentClass.h"
 #include "SVOCore/SVImageProcessingClass.h"
-#include "SVOMFCLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
+#include "CameraLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
 
 
 SV_IMPLEMENT_CLASS( SVPerspectiveToolClass, SVPerspectiveToolClassGuid )

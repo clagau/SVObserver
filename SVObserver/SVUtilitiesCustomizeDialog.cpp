@@ -12,12 +12,12 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVUtilitiesCustomizeDialog.h"
-#include "SVOMFCLibrary/SVFileNameClass.h"
+#include "SVLibrary/SVFileNameClass.h"
 #include "SVObserver.h"
 #include "SVUtilityIniClass.h"
-#include "SVOMFCLibrary/SVOINIClass.h"
+#include "SVLibrary/SVOIniClass.h"
 #include "SVStatusLibrary/GlobalPath.h"
-#include "SVOMFCLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
+#include "CameraLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
 
 #pragma endregion Includes
 
@@ -251,7 +251,7 @@ void SVUtilitiesCustomizeDialogClass::OnApply()
 			//add new utility to map
 			pApp->m_UtilityMenu[uintVal+1] = l_Struct;
 
-			SvOml::SVOINIClass UtilityIni( SvStl::GlobalPath::Inst().GetSVUtilityIniPath() );
+			SvLib::SVOINIClass UtilityIni( SvStl::GlobalPath::Inst().GetSVUtilityIniPath() );
 
 			int iCnt = UtilityIni.GetValueInt("General","HighestUtilityIndex",0);
 			iCnt++;
@@ -289,7 +289,7 @@ void SVUtilitiesCustomizeDialogClass::OnCustomizeDelete()
 	SVUtilityIniClass l_Struct;
 	std::map<UINT,SVUtilityIniClass>::iterator iter;
 	SVObserverApp* pApp = (SVObserverApp *)AfxGetApp();
-	SvOml::SVOINIClass UtilityIni( SvStl::GlobalPath::Inst().GetSVUtilityIniPath() );
+	SvLib::SVOINIClass UtilityIni( SvStl::GlobalPath::Inst().GetSVUtilityIniPath() );
 
 	UpdateData (TRUE);
 

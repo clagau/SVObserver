@@ -15,9 +15,9 @@
 
 #include "SVObjectLibrary\SVObjectLevelCreateStruct.h"
 #include "SVUtilityLibrary\SVSAFEARRAY.h"
-#include "SVOMFCLibrary\SVBoolValueDeviceParam.h"
-#include "SVOMFCLibrary\SVLongValueDeviceParam.h"
-#include "SVOMFCLibrary\SVStringValueDeviceParam.h"
+#include "CameraLibrary\SVBoolValueDeviceParam.h"
+#include "CameraLibrary\SVLongValueDeviceParam.h"
+#include "CameraLibrary\SVStringValueDeviceParam.h"
 #pragma endregion Includes
 
 #pragma region Declarations

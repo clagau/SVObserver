@@ -14,7 +14,7 @@
 //Moved to precompiled header: #include <boost/config.hpp>
 //Moved to precompiled header: #include <boost/assign/list_of.hpp>
 #include "SVCustomParameterBuilder.h"
-#include "SVOMFCLibrary/SVDeviceParams.h"
+#include "CameraLibrary/SVDeviceParams.h"
 #include "SVUtilityLibrary/SVString.h"
 
 // For Custom params

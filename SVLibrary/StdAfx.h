@@ -64,6 +64,8 @@
 #include <concrt.h>
 #include <ctime>			//Used by static library
 #include <deque>
+#include <direct.h>
+#include <io.h>
 #include <iterator>
 #include <map>				//Used by static library
 #include <set>				//Used by static library

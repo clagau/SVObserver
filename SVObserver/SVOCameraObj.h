@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVOMFCLibrary\SVDeviceParamCollection.h"
+#include "CameraLibrary\SVDeviceParamCollection.h"
 #include "SVUtilityLibrary\SVString.h"
 #include "SVUtilityLibrary\SVSharedPtr.h"
 #pragma endregion Includes

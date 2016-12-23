@@ -12,7 +12,7 @@
 #include "Stdafx.h"
 #include "RemoteMonitorNamedList.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVOMFCLibrary/SVOINIClass.h"
+#include "SVLibrary/SVOIniClass.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #pragma endregion Includes
 
@@ -155,7 +155,7 @@ int  RemoteMonitorNamedList::GetDefaultRejectQueueDepth()
 	static int DefaultRejectQueueDepth = -1;
 	if(DefaultRejectQueueDepth < 0)
 	{
-		SvOml::SVOINIClass reader(SvStl::GlobalPath::Inst().GetSVIMIniPath());
+		SvLib::SVOINIClass reader(SvStl::GlobalPath::Inst().GetSVIMIniPath());
 		DefaultRejectQueueDepth= reader.GetValueInt(SharedMemorySectionKey, DefaultRejectQeueDepthKey, 10);
 		DefaultRejectQueueDepth  = std::max(DefaultRejectQueueDepth,RemoteMonitorNamedList::MinRejectQueueDepth);
 		DefaultRejectQueueDepth = std::min(DefaultRejectQueueDepth, GetMaxRejectQueueDepth());
@@ -168,7 +168,7 @@ int  RemoteMonitorNamedList::GetMaxRejectQueueDepth()
 	static int MaxRejectQueueDepth = -1;
 	if(MaxRejectQueueDepth < 0)
 	{
-		SvOml::SVOINIClass reader(SvStl::GlobalPath::Inst().GetSVIMIniPath());
+		SvLib::SVOINIClass reader(SvStl::GlobalPath::Inst().GetSVIMIniPath());
 		MaxRejectQueueDepth= reader.GetValueInt(SharedMemorySectionKey, MaxRejectQeueDepthKey, 50);
 		MaxRejectQueueDepth = std::max(MaxRejectQueueDepth, RemoteMonitorNamedList::MinRejectQueueDepth ); 
 	}

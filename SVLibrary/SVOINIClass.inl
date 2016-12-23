@@ -9,7 +9,7 @@
 // * .Check In Date   : $Date:   25 Apr 2013 13:08:38  $
 // ******************************************************************************
 
-namespace Seidenader { namespace SVOMFCLibrary
+namespace Seidenader { namespace SVLibrary
 {
 
 	inline SVOINIClass::SVOINIClass( LPCTSTR FileName ) :
@@ -67,5 +67,5 @@ namespace Seidenader { namespace SVOMFCLibrary
 
 		return Result;
 	}
-} /* namespace SVOMFCLibrary */ } /* namespace Seidenader */
+} /* namespace SVLibrary */ } /* namespace Seidenader */
 

@@ -13,7 +13,7 @@
 
 #pragma region Includes
 #include "SVContainerLibrary/SVList.h"
-#include "SVOMFCLibrary/SVDeviceParamCollection.h"
+#include "CameraLibrary/SVDeviceParamCollection.h"
 #include "SVOCameraObj.h"
 #pragma endregion Includes
 

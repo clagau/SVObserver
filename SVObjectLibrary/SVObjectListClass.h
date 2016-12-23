@@ -13,7 +13,7 @@
 
 #pragma region Includes
 #include "SVContainerLibrary/SVVector.h"
-#include "SVOMFCLibrary/SVTemplate.h"
+#include "CameraLibrary/SVTemplate.h"
 #include "SVObjectInfoStruct.h"
 #pragma endregion Includes
 

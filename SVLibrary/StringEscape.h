@@ -4,7 +4,7 @@
 //*****************************************************************************
 #pragma once
 
-namespace Seidenader { namespace SVOMFCLibrary
+namespace Seidenader { namespace SVLibrary
 {
 	////////////////////////////////////////////////////////////////////////////////
 	// Places escape character before double quotes in a String
@@ -15,6 +15,6 @@ namespace Seidenader { namespace SVOMFCLibrary
 	// Removes any escape characters before double quotes in a String
 	////////////////////////////////////////////////////////////////////////////////
 	bool RemoveEscapedSpecialCharacters( CString& rString, bool bConvertCtrl );
-} /*SVOMFCLibrary*/ } /*Seidenader*/
+} /*SVLibrary*/ } /*Seidenader*/
 
-namespace SvOml = Seidenader::SVOMFCLibrary;
+namespace SvLib = Seidenader::SVLibrary;

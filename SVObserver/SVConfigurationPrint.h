@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVOMFCLibrary/SVFileNameClass.h"
+#include "SVLibrary/SVFileNameClass.h"
 #include "SVInfoStructs.h"
 #pragma endregion Includes
 

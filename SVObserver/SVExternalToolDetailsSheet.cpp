@@ -20,7 +20,7 @@
 #include "SVExternalToolInputSelectPage.h"
 #include "SVExternalToolResultPage.h"
 #include "SVExternalToolDlg.h"
-#include "SVOMFCLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
+#include "CameraLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
 
 
 #ifdef _DEBUG

@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include "SVOMFCLibrary/SVDeviceParams.h"
+#include "CameraLibrary/SVDeviceParams.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
 
 class SVGigeCameraParamValidateClass  

@@ -17,7 +17,7 @@
 #include "SVObjectLibrary/SVToolsetScriptTags.h"
 #include "SVObjectLibrary/SVObjectAttributeClass.h"
 #include "SVSystemLibrary/SVFileNameManagerClass.h"
-#include "SVOMFCLibrary/StringEscape.h"
+#include "SVLibrary/StringEscape.h"
 #pragma endregion Includes
 
 namespace	// only for this file
@@ -121,7 +121,7 @@ HRESULT SVFileNameValueObjectClass::SetObjectValue(SVObjectAttributeClass* pData
 		{
 			DefaultValue() = svArray[i];
 			
-			SvOml::RemoveEscapedSpecialCharacters(DefaultValue(), false);
+			SvLib::RemoveEscapedSpecialCharacters(DefaultValue(), false);
 		}
 		
 		GetDefaultValue(csTemp);
@@ -131,7 +131,7 @@ HRESULT SVFileNameValueObjectClass::SetObjectValue(SVObjectAttributeClass* pData
 	{
 		for (size_t i = 0; i < l_Buckets.size(); i++)
 		{
-			SvOml::RemoveEscapedSpecialCharacters(l_Buckets[i][0], false);
+			SvLib::RemoveEscapedSpecialCharacters(l_Buckets[i][0], false);
 		}
 
 		if ( ArraySize() == 1 )
@@ -157,7 +157,7 @@ HRESULT SVFileNameValueObjectClass::SetObjectValue(SVObjectAttributeClass* pData
 		for (size_t i = 0; i < l_Array.size(); i++)
 		{
 			// Remove any escapes
-			SvOml::RemoveEscapedSpecialCharacters(l_Array[i], false);
+			SvLib::RemoveEscapedSpecialCharacters(l_Array[i], false);
 		}
 
 		SetArraySize( static_cast<int>(l_Array.size()) );
@@ -182,7 +182,7 @@ HRESULT SVFileNameValueObjectClass::SetObjectValue(SVObjectAttributeClass* pData
 			DefaultValue() = svArray[i];
 			
 			// Remove any escapes
-			SvOml::RemoveEscapedSpecialCharacters(DefaultValue(), false);
+			SvLib::RemoveEscapedSpecialCharacters(DefaultValue(), false);
 		}
 		
 		GetDefaultValue(csTemp);
@@ -193,7 +193,7 @@ HRESULT SVFileNameValueObjectClass::SetObjectValue(SVObjectAttributeClass* pData
 		for (size_t i = 0; i < l_Buckets.size(); i++)
 		{
 			// Remove any escapes
-			SvOml::RemoveEscapedSpecialCharacters(l_Buckets[i][0], false);
+			SvLib::RemoveEscapedSpecialCharacters(l_Buckets[i][0], false);
 		}
 		
 		if ( ArraySize() == 1 )

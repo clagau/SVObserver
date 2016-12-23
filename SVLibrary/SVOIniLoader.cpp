@@ -68,7 +68,7 @@ static const TCHAR* const FileAcquisitionDeviceFilename = _T("SVFileAcquisitionD
 static const TCHAR* const SoftwareTriggerDeviceFilename = _T("SVSoftwareTriggerDevice.DLL");
 #pragma endregion Declarations
 
-namespace Seidenader { namespace SVOMFCLibrary
+namespace Seidenader { namespace SVLibrary
 {
 	SVOIniLoader::SVOIniLoader() 
 	: m_bUseCorrectListRecursion( false )
@@ -417,4 +417,4 @@ int  SVOIniLoader::GetNAKPar() const
 
 
 
-} /* namespace SVOMFCLibrary */ } /* namespace Seidenader */
+} /* namespace SVLibrary */ } /* namespace Seidenader */

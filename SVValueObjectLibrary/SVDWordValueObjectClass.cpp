@@ -15,7 +15,7 @@
 #include "SVDWordValueObjectClass.h"
 #include "SVObjectLibrary\SVClsids.h"
 #include "SVObjectLibrary\SVToolsetScriptTags.h"
-#include "SVOMFCLibrary/StringMunge.h"
+#include "SVLibrary/StringMunge.h"
 #include "SVStatusLibrary/MessageManager.h"
 #pragma endregion Includes
 

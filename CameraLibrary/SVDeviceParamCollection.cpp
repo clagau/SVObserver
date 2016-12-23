@@ -18,7 +18,6 @@
 #include "SVDeviceParamCollection.h"
 #include "SVDeviceParams.h"
 #include "SVCustomDeviceParam.h"
-#include "SVOMFCLibraryGlobals.h"
 
 SVDeviceParamIndexer::SVDeviceParamIndexer(const SVDeviceParamMap& map) : m_mapIndexed(map)
 {
@@ -94,7 +93,7 @@ HRESULT SVDeviceParamCollection::CreateParameter( SVDeviceParamEnum e, const VAR
 			return pParam->SetValue( rv );
 		}
 	}
-	return SV_FALSE;
+	return E_FAIL;
 }
 
 HRESULT SVDeviceParamCollection::SetParameterDefaults()

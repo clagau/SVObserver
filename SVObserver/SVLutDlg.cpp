@@ -234,7 +234,7 @@ BOOL SVLutDlgPage::OnInitDialog()
 		CWnd* pWnd = nullptr;
 
 		// Set Normalize Mode of Graph Control...
-		m_LUTGraph.SetNormalizeMode( SvOml::SVNormalizeXYMinMax );
+		m_LUTGraph.SetNormalizeMode( SvMc::SVNormalizeXYMinMax );
 		m_LUTGraph.SetXYMinMax(0, 0, m_Lut.Info().BandSize()-1, m_lMaxLutValue);
 
 		if ( 3 == m_iBandWidth )

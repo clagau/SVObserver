@@ -11,7 +11,7 @@
 #pragma region Includes
 #include "StdAfx.h"
 //Moved to precompiled header: #include <map>
-#include "SVOMFCLibrary\SVDeviceParams.h"
+#include "CameraLibrary\SVDeviceParams.h"
 #include "SVMatroxGige.h"
 #include "SVMatroxLibrary/SVMatroxImagingLibrary.h" // for SV_CURRENT_MIL_VERSION define
 #include "SVMatroxLibrary/SVMatroxApplicationInterface.h"

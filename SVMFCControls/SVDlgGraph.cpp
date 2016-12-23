@@ -26,7 +26,7 @@ static char THIS_FILE[] = __FILE__;
 
 namespace Seidenader
 {
-	namespace SVOMFCLibrary
+	namespace SVMFCControls
 	{
 		SVDlgGraphClass::SVDlgGraphClass()
 		{
@@ -301,6 +301,6 @@ namespace Seidenader
 			m_lXMax = lXMax;
 			m_lYMax = lYMax;
 		}
-	} //SVOMFCLibrary
+	} //SVMFCControls
 } //Seidenader
 

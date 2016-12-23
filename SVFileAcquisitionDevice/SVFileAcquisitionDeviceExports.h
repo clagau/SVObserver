@@ -12,7 +12,7 @@
 #pragma once
 
 //Moved to precompiled header: #include <comdef.h>
-#include "SVOMFCLibrary/SVDeviceParamCollection.h"
+#include "CameraLibrary/SVDeviceParamCollection.h"
 
 
 class SVAcquisitionBufferInterface;

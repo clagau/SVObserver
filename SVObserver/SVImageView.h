@@ -19,8 +19,8 @@
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #include "SVUtilityLibrary/SVWinHandle.h"
 #include "SVInfoStructs.h"
-#include "SVOMFCLibrary\ZoomHelper.h"
-#include "ZoomHelperEx.h"
+#include "SVOGui/ZoomHelper.h"
+#include "SVOGui/ZoomHelperEx.h"
 #pragma endregion Includes
 
 struct IDirectDrawSurface7;

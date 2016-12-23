@@ -15,7 +15,7 @@
 #include "SVInt64ValueObjectClass.h"
 #include "SVObjectLibrary\SVClsids.h"
 #include "SVObjectLibrary/SVToolsetScriptTags.h"
-#include "SVOMFCLibrary/StringMunge.h"
+#include "SVLibrary/StringMunge.h"
 #pragma endregion Includes
 
 namespace	// only for this file

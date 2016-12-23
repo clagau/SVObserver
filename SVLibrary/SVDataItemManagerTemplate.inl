@@ -12,8 +12,6 @@
 #ifndef SVDATAITEMMANAGERTEMPLATE_INL
 #define SVDATAITEMMANAGERTEMPLATE_INL
 
-#include "SVDataItemManagerTemplate.h"
-
 template< typename SVItemData, typename SVIndexType >
 SVDataItemManagerTemplate< SVItemData, SVIndexType >::SVDataItemManagerTemplate()
 : m_GetFunctor(), m_SetFunctor(), m_LastUsedIdentifier( 0 ), m_Items()

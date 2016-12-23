@@ -66,7 +66,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SVDataManagerLibrary.lib;SVFileSystemLibrary.lib;SVHBitmapUtilitiesLibrary.lib;SVImageLibrary.lib;SVOMFCLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib;SVTriggerLibrary.lib;SVUtilityLibrary.lib;TriggerHandling.lib;Rpcrt4.lib</AdditionalDependencies>
+      <AdditionalDependencies>SVDataManagerLibrary.lib;SVFileSystemLibrary.lib;SVHBitmapUtilitiesLibrary.lib;SVImageLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib;SVTriggerLibrary.lib;SVUtilityLibrary.lib;TriggerHandling.lib;Rpcrt4.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -94,7 +94,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>SVDataManagerLibrary.lib;SVFileSystemLibrary.lib;SVHBitmapUtilitiesLibrary.lib;SVImageLibrary.lib;SVOMFCLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib;SVTriggerLibrary.lib;SVUtilityLibrary.lib;TriggerHandling.lib;Rpcrt4.lib</AdditionalDependencies>
+      <AdditionalDependencies>SVDataManagerLibrary.lib;SVFileSystemLibrary.lib;SVHBitmapUtilitiesLibrary.lib;SVImageLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib;SVTriggerLibrary.lib;SVUtilityLibrary.lib;TriggerHandling.lib;Rpcrt4.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -124,6 +124,7 @@
     <ClInclude Include="SVFileAcquisitionDeviceApp.h" />
     <ClInclude Include="SVFileAcquisitionDeviceExports.h" />
     <ClInclude Include="SVFileAcquisitionDeviceParamEnum.h" />
+    <ClInclude Include="SVFileAcquisitionLoadingModeEnum.h" />
     <ClInclude Include="SVFileCamera.h" />
     <ClInclude Include="SVFileCameraStruct.h" />
   </ItemGroup>

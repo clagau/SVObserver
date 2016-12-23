@@ -23,7 +23,7 @@
 #include "SVResultLong.h"   // Required by SVLongResultClass
 #include "ObjectInterfaces\ErrorNumbers.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "SVOMFCLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
+#include "CameraLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
 
 #pragma endregion Includes
 

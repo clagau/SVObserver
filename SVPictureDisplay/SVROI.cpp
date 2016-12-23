@@ -12,7 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVROI.h"
-#include "SVOMFCLibrary\DisplayHelper.h"
+#include "SVOGui/DisplayHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -93,7 +93,7 @@ HRESULT CSVROI::SetOverlay(VARIANT* pParameterList, VARIANT* pParameterValue, LO
 	AFX_MANAGE_STATE(AfxGetStaticModuleState());
 
 	m_Parent = 0;
-	SvOml::DisplayHelper::FillParameterMap(m_ParameterMap, pParameterList, pParameterValue);
+	SvOg::DisplayHelper::FillParameterMap(m_ParameterMap, pParameterList, pParameterValue);
 
 	return S_OK;
 }

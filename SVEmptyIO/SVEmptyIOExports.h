@@ -12,7 +12,7 @@
 #pragma once
 
 #include "TriggerHandling/TriggerBasics.h"
-#include "SVOMFCLibrary/SVDeviceParamCollection.h"
+#include "CameraLibrary/SVDeviceParamCollection.h"
 
 class SVAcquisitionBufferInterface;
 

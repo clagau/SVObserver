@@ -16,14 +16,14 @@
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
 #include "SVBarCodeBuffer.h"
 #include "SVDataBuffer.h"
-#include "SVOMFCLibrary/SVFileNameClass.h"
+#include "SVLibrary/SVFileNameClass.h"
 #include "SVUtilityLibrary/SVUtilityGlobals.h"
 #include "SVUtilityLibrary/SVImageCopyUtility.h"
 #include "SVMatroxLibrary/SVMatroxImagingLibrary.h"  // has MIL includes
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "ObjectInterfaces/ErrorNumbers.h"
-#include "SVOMFCLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
+#include "CameraLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
 
 HRESULT SVImageProcessingClass::CreateImageBuffer( const SVImageInfoClass& rInfo, SVSmartHandlePointer& rHandle )
 {

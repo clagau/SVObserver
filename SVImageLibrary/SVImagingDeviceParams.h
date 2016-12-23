@@ -17,8 +17,8 @@
 #include "SVLightReference.h"
 #include "SVCameraFormat.h"
 
-#include "SVOMFCLibrary/SVDeviceParams.h"
-#include "SVOMFCLibrary/SVStringValueDeviceParam.h"
+#include "CameraLibrary/SVDeviceParams.h"
+#include "CameraLibrary/SVStringValueDeviceParam.h"
 #pragma endregion Includes
 
 // for now, still need to update the enum in SVDeviceParams.h

@@ -12,7 +12,7 @@
 #include "StdAfx.h"
 #include "SVEmptyIOExports.h"
 #include "SVHBitmapUtilitiesLibrary\SVImageFormatEnum.h"
-#include "SVOMFCLibrary/SVDeviceParams.h"
+#include "CameraLibrary/SVDeviceParams.h"
 
 HRESULT WINAPI SVCreate()
 {

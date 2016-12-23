@@ -12,9 +12,11 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "ZoomHelperEx.h"
-#include "SVOMFCLibrary\ZoomHelper.h"
+#include "ZoomHelper.h"
 //Moved to precompiled header: #include <algorithm>
 #pragma endregion Includes
+
+#undef min //@WARNING[Arvid][7.50][22.12.2016] this is necessary for using std::min later
 
 int ZoomHelperEx::s_InstanceCount = 0;
 double ZoomHelperEx::m_scaleFactor[ ZoomHelperEx::s_scaleCount ] = {0};

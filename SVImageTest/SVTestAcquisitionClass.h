@@ -12,7 +12,7 @@
 #pragma once
 
 
-#include "SVOMFCLibrary/SVDeviceParamCollection.h"
+#include "CameraLibrary/SVDeviceParamCollection.h"
 #include "SVImageLibrary/SVAcquisitionBufferInterface.h"
 #include "SVTimerLibrary/SVClock.h"
 

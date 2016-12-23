@@ -19,7 +19,7 @@
 #include "resource.h"		// main symbols
 
 #include "SVTestAcquisitionSubsystem.h"
-#include "SVOMFCLibrary/SVOIniLoader.h"
+#include "SVLibrary/SVOIniLoader.h"
 #pragma endregion Includes
 
 class CSVImageTestApp : public CWinApp
@@ -28,7 +28,7 @@ public:
 	CSVImageTestApp();
 	virtual ~CSVImageTestApp();
 
-	SvOml::SVOIniLoader m_iniLoader;
+	SvLib::SVOIniLoader m_iniLoader;
 	SVString m_svimIniFile;
 	SVString m_hardwareIniFile;
 	SVString m_oemIniFile;

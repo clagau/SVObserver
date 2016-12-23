@@ -17,7 +17,7 @@
 #include "SVSecurity/SVSecurityManager.h"
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
-#include "SVOMFCLibrary/SVFileNameClass.h"
+#include "SVLibrary/SVFileNameClass.h"
 #include "SVRemoteFontManager.h"
 #include "SVOIntelRAIDStatusClass.h"
 #include "SVUtilityIniClass.h"

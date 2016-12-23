@@ -14,9 +14,9 @@
 #include "SVFileAcquisitionDeviceExports.h"
 #include "SVFileAcquisitionDeviceParamEnum.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
-#include "SVOMFCLibrary/SVDeviceParams.h"
-#include "SVOMFCLibrary/SVLongValueDeviceParam.h"
-#include "SVOMFCLibrary/SVStringValueDeviceParam.h"
+#include "CameraLibrary/SVDeviceParams.h"
+#include "CameraLibrary/SVLongValueDeviceParam.h"
+#include "CameraLibrary/SVStringValueDeviceParam.h"
 
 // General Export Functions
 

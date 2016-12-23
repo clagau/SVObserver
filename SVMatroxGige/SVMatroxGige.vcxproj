@@ -81,7 +81,7 @@
       <ModuleDefinitionFile>.\SVMatroxGige.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>SVDataManagerLibrary.lib;SVGigeCameraParametersLibrary.lib;SVImageLibrary.lib;SVMatroxDigitizerLibrary.lib;SVMatroxLibrary.lib;SVOLibrary.lib;SVOMFCLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib;SVTriggerLibrary.lib;SVUtilityLibrary.lib;TriggerHandling.lib;Rpcrt4.lib</AdditionalDependencies>
+      <AdditionalDependencies>CameraLibrary.lib;SVDataManagerLibrary.lib;SVGigeCameraParametersLibrary.lib;SVImageLibrary.lib;SVMatroxDigitizerLibrary.lib;SVMatroxLibrary.lib;SVOLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib;SVTriggerLibrary.lib;SVUtilityLibrary.lib;TriggerHandling.lib;Rpcrt4.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(OutDir);C:\Program Files\Matrox Imaging\mil\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <Bscmake>
@@ -132,7 +132,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
-      <AdditionalDependencies>SVDataManagerLibrary.lib;SVGigeCameraParametersLibrary.lib;SVImageLibrary.lib;SVMatroxDigitizerLibrary.lib;SVMatroxLibrary.lib;SVOLibrary.lib;SVOMFCLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib;SVTriggerLibrary.lib;SVUtilityLibrary.lib;TriggerHandling.lib;Rpcrt4.lib</AdditionalDependencies>
+      <AdditionalDependencies>SVDataManagerLibrary.lib;SVGigeCameraParametersLibrary.lib;SVImageLibrary.lib;SVMatroxDigitizerLibrary.lib;SVMatroxLibrary.lib;SVOLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib;SVTriggerLibrary.lib;SVUtilityLibrary.lib;TriggerHandling.lib;Rpcrt4.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(OutDir);C:\Program Files\Matrox Imaging\mil\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <Bscmake>

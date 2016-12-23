@@ -92,6 +92,7 @@
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SVClock.h" />
+    <ClInclude Include="SVFunctionProfiler.h" />
     <ClInclude Include="SVMMTimer.h" />
     <ClInclude Include="SVMMTimerEventHandler.h" />
     <ClInclude Include="SVProfiler.h" />

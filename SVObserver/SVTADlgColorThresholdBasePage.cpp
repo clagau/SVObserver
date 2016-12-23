@@ -11,9 +11,9 @@
 
 #include "stdafx.h"
 #include "SVTADlgColorThresholdBasePage.h"
-#include "SVOMFCLibrary/SVOMFCLibraryGlobals.h"
+#include "SVLibrary/StringHelper.h"
 #include "SVTADlgColorThresholdSheet.h"
-#include "SVOMFCLibrary/stringmunge.h"
+#include "SVLibrary/Stringmunge.h"
 
 IMPLEMENT_DYNCREATE(SVTADlgColorThresholdBasePage, CPropertyPage)
 

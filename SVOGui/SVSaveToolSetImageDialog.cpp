@@ -12,7 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVSaveToolSetImageDialog.h"
-#include "SVOMFCLibrary/SVFileNameClass.h"
+#include "SVLibrary/SVFileNameClass.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "ObjectInterfaces/ErrorNumbers.h"
 #include "TextDefinesSvOg.h"

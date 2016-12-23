@@ -16,7 +16,7 @@
 #include "SVPPQBar.h"
 #include "SVMFCControls\SVStatusBar.h"
 #include "ZoomToolBar.h"
-#include "ZoomHelperEx.h"
+#include "SVOGui/ZoomHelperEx.h"
 #pragma endregion Includes
 
 #pragma region Declarations

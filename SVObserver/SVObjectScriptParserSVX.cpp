@@ -18,11 +18,11 @@
 #include "SVObjectLibrary/SVObjectAttributeClass.h"
 #include "ObjectInterfaces/SVUserMessage.h"
 #include "SVBarCodeAnalyzerClass.h"
-#include "SVOMFCLibrary/SVFunctionProfiler.h"
+#include "SVTimerLibrary/SVFunctionProfiler.h"
 #include "SVObjectLibrary/GlobalConst.h"
 #include "ObjectInterfaces/ErrorNumbers.h"
 #include "TextDefinesSvO.h"
-#include "SVOMFCLibrary/SVDeviceParams.h"
+#include "CameraLibrary/SVDeviceParams.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG

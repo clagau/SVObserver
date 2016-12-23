@@ -11,7 +11,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "SVOMFCLibrary\SVDeviceParams.h"
+#include "CameraLibrary\SVDeviceParams.h"
 #include "SVImageTest.h"
 #include "SVMatroxLibrary/SVMatroxApplicationInterface.h"
 #include "SVImageTestDlg.h"
@@ -19,6 +19,8 @@
 #include "SVTestGigeAcquisitionSubsystem.h"
 #include "SVUnloadDeviceDialog.h"
 #include "SVStatusLibrary/GlobalPath.h"
+#include "ObjectInterfaces/TextDefineSvOi.h"
+
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -32,11 +34,11 @@ CWnd g_ImageTestDesktopWindow;
 bool IsGigeDigitizer(LPCTSTR p_productName)
 {
 	CString l_productName = p_productName;
-	bool l_bOk = ( 0 == l_productName.CompareNoCase(SVO_PRODUCT_KONTRON_X2_GD1A ) ||
-					0 == l_productName.CompareNoCase( SVO_PRODUCT_KONTRON_X2_GD2A ) ||
-					0 == l_productName.CompareNoCase( SVO_PRODUCT_KONTRON_X2_GD4A ) ||
-					0 == l_productName.CompareNoCase( SVO_PRODUCT_KONTRON_X2_GD8A ) ||
-					0 == l_productName.CompareNoCase( SVO_PRODUCT_KONTRON_X2_GD8A_NONIO ) ) ? true : false;
+	bool l_bOk = ( 0 == l_productName.CompareNoCase(SvOi::SVO_PRODUCT_KONTRON_X2_GD1A ) ||
+					0 == l_productName.CompareNoCase( SvOi::SVO_PRODUCT_KONTRON_X2_GD2A ) ||
+					0 == l_productName.CompareNoCase( SvOi::SVO_PRODUCT_KONTRON_X2_GD4A ) ||
+					0 == l_productName.CompareNoCase( SvOi::SVO_PRODUCT_KONTRON_X2_GD8A ) ||
+					0 == l_productName.CompareNoCase( SvOi::SVO_PRODUCT_KONTRON_X2_GD8A_NONIO ) ) ? true : false;
 
 	return l_bOk;
 }

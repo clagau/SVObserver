@@ -17,7 +17,7 @@
 //Moved to precompiled header: #include <assert.h>
 //Moved to precompiled header: #include <exception>
 #include "SVFileNameManagerClass.h"
-#include "SVOMFCLibrary/SVFileNameClass.h"
+#include "SVLibrary/SVFileNameClass.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "ObjectInterfaces/ErrorNumbers.h"
 #include "SVStatusLibrary/MessageManager.h"

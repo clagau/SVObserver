@@ -12,7 +12,7 @@
 #include "stdafx.h"
 #include "SVExtentFigureStruct.h"
 #include "SVLibrary/Intersect.h"
-#include "SVOMFCLibrary/SVOMFCLibraryGlobals.h"
+#include "SVUtilityLibrary/SVUtilityGlobals.h"
 
 SVExtentFigureStruct::SVExtentFigureStruct()
 {
@@ -134,7 +134,7 @@ const SVExtentFigureStruct& SVExtentFigureStruct::operator = ( RECT p_oRect )
 
 HRESULT SVExtentFigureStruct::GetRect(RECT& p_rRect) const
 {
-	HRESULT hr = (m_eShape == SVExtentShapeRectangle) ? S_OK : SV_FALSE;
+	HRESULT hr = (m_eShape == SVExtentShapeRectangle) ? S_OK : E_FAIL;
 	if ( S_OK == hr )
 	{
 		p_rRect.top = (long) m_svTopLeft.m_dPositionY;

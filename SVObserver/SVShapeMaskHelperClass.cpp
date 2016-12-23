@@ -11,7 +11,7 @@
 
 #include "stdafx.h"
 #include "SVShapeMaskHelperClass.h"
-#include "SVOMFCLibrary/SVOMFCLibraryGlobals.h"
+#include "SVLibrary/StringHelper.h"
 #include "SVUserMaskOperatorClass.h"
 //Moved to precompiled header: #include <algorithm>
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
@@ -427,7 +427,7 @@ HRESULT SVShapeMaskHelperClass::GetCancelData(SVCancelData*& p_rpData)
 // ISVCancel
 HRESULT SVShapeMaskHelperClass::SetCancelData(SVCancelData* p_pData)
 {
-	HRESULT hr = SV_FALSE;
+	HRESULT hr = E_FAIL;
 
 	SVMaskShapeCancelData* pData = dynamic_cast <SVMaskShapeCancelData*> (p_pData);
 	ASSERT( pData );

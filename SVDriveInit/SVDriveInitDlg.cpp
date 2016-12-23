@@ -18,7 +18,7 @@
 //Moved to precompiled header: #include <iostream>
 //Moved to precompiled header: #include <string>
 
-#include "SVOMFCLibrary\SVOIniLoader.h"
+#include "SVLibrary\SVOINILoader.h"
 #include "SVDriveInitDlg.h"
 #include "cpassdlg.h"
 #include "SVStatusLibrary\GlobalPath.h"
@@ -398,7 +398,7 @@ void SVDriveInitDlg::OnOK()
 
 bool SVDriveInitDlg::IsValidModelNumber() const
 {
-	SvOml::SVOIniLoader iniLoader;
+	SvLib::SVOIniLoader iniLoader;
 	bool bValid(true);
 
 	CString Model;

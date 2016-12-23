@@ -24,7 +24,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-namespace Seidenader { namespace SVOMFCLibrary
+namespace Seidenader { namespace SVLibrary
 {
 	static const int Button1 = 0;
 	static const int Button2 = 1;
@@ -403,4 +403,4 @@ namespace Seidenader { namespace SVOMFCLibrary
 	}
 	#pragma endregion Private Methods
 
-} /* namespace SVOMFCLibrary */ } /* namespace Seidenader */
+} /* namespace SVLibrary */ } /* namespace Seidenader */

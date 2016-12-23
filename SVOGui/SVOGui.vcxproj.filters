@@ -122,6 +122,15 @@
     <ClCompile Include="ObjectSelectorController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Displayhelper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ZoomHelper.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ZoomHelperEx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StdAfx.h">
@@ -278,6 +287,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ObjectSelectorController.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DisplayHelper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ZoomHelper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ZoomHelperEx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -17,12 +17,12 @@
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
 #include "SVLibrary\SVPackedFile.h"
 #include "SVObjectLibrary\SVObjectSynchronousCommandTemplate.h"
-#include "SVOMFCLibrary\SVDeviceParam.h"
-#include "SVOMFCLibrary\SVDeviceParams.h"
-#include "SVOMFCLibrary\SVLongValueDeviceParam.h"
-#include "SVOMFCLibrary\SVOINIClass.h"
-#include "SVOMFCLibrary\SVOIniLoader.h"
-#include "SVOMFCLibrary/DisplayMessageBox.h"
+#include "CameraLibrary\SVDeviceParam.h"
+#include "CameraLibrary\SVDeviceParams.h"
+#include "CameraLibrary\SVLongValueDeviceParam.h"
+#include "SVLibrary\DisplayMessageBox.h"
+#include "SVLibrary\SVOINIClass.h"
+#include "SVLibrary\SVOINILoader.h"
 #include "SVTimerLibrary\SVClock.h"
 #include "SVUtilityLibrary\SVGUID.h"
 #include "SVMessage\SVMessage.h"
@@ -110,6 +110,7 @@
 #include "SVUtilityLibrary\LoadDll.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
+#include "ObjectInterfaces\TextDefineSvOi.h"
 #include "TextDefinesSvO.h"
 #include "SVXMLLibrary\SVObjectXMLWriter.h"
 #include "SVStatusLibrary\MessageContainer.h"
@@ -2072,7 +2073,7 @@ BOOL SVObserverApp::InitInstance()
 		exit(-SvOi::Err_10009_LoadOfResourceDllFailed);
 	}
 
-	SvStl::MessageMgrStd::setShowDisplayFunction( boost::bind( &SvOml::DisplayMessageBox::showDialog, _1, _2, _3, _4 ) );
+	SvStl::MessageMgrStd::setShowDisplayFunction( boost::bind( &SvLib::DisplayMessageBox::showDialog, _1, _2, _3, _4 ) );
 
 	// load File based write filter DLL. SVObserver will function normally (except for FBWF functionally, of course) if "fbwflib.dll" is not found
 	SvUl::LoadDll::Instance().getDll( SvO::FbwfDllName, ExtrasEngine::ms_FbwfDllInstance);
@@ -2183,7 +2184,7 @@ BOOL SVObserverApp::InitInstance()
 
 	LoadStdProfileSettings( 7 );  // Standard-INI-Dateioptionen einlesen (einschlieﬂlich MRU)
 
-	SvOml::SVOINIClass SvimIni( SvStl::GlobalPath::Inst().GetSVIMIniPath() );
+	SvLib::SVOINIClass SvimIni( SvStl::GlobalPath::Inst().GetSVIMIniPath() );
 
 	ValidateMRUList();
 
@@ -3392,10 +3393,10 @@ bool SVObserverApp::IsMatroxGige() const
 {
 	bool l_bOk = false;
 
-	l_bOk = (m_csProductName.CompareNoCase( SVO_PRODUCT_KONTRON_X2_GD2A ) == 0
-		|| m_csProductName.CompareNoCase( SVO_PRODUCT_KONTRON_X2_GD4A ) == 0
-		|| m_csProductName.CompareNoCase( SVO_PRODUCT_KONTRON_X2_GD8A ) == 0
-		|| m_csProductName.CompareNoCase( SVO_PRODUCT_KONTRON_X2_GD8A_NONIO ) == 0
+	l_bOk = (m_csProductName.CompareNoCase( SvOi::SVO_PRODUCT_KONTRON_X2_GD2A ) == 0
+		|| m_csProductName.CompareNoCase( SvOi::SVO_PRODUCT_KONTRON_X2_GD4A ) == 0
+		|| m_csProductName.CompareNoCase( SvOi::SVO_PRODUCT_KONTRON_X2_GD8A ) == 0
+		|| m_csProductName.CompareNoCase( SvOi::SVO_PRODUCT_KONTRON_X2_GD8A_NONIO ) == 0
 		);
 
 	return l_bOk;
@@ -3464,23 +3465,23 @@ SVIMProductEnum SVObserverApp::GetSVIMType() const
 {
 	SVIMProductEnum eType = SVIM_PRODUCT_TYPE_UNKNOWN;
 
-	if (0 == m_csProductName.CompareNoCase(SVO_PRODUCT_KONTRON_X2_GD1A))
+	if (0 == m_csProductName.CompareNoCase(SvOi::SVO_PRODUCT_KONTRON_X2_GD1A))
 	{
 		eType = SVIM_PRODUCT_X2_GD1A;
 	}
-	else if (0 == m_csProductName.CompareNoCase(SVO_PRODUCT_KONTRON_X2_GD2A))
+	else if (0 == m_csProductName.CompareNoCase(SvOi::SVO_PRODUCT_KONTRON_X2_GD2A))
 	{
 		eType = SVIM_PRODUCT_X2_GD2A;
 	}
-	else if (0 == m_csProductName.CompareNoCase(SVO_PRODUCT_KONTRON_X2_GD4A))
+	else if (0 == m_csProductName.CompareNoCase(SvOi::SVO_PRODUCT_KONTRON_X2_GD4A))
 	{
 		eType = SVIM_PRODUCT_X2_GD4A;
 	}
-	else if (0 == m_csProductName.CompareNoCase(SVO_PRODUCT_KONTRON_X2_GD8A))
+	else if (0 == m_csProductName.CompareNoCase(SvOi::SVO_PRODUCT_KONTRON_X2_GD8A))
 	{
 		eType = SVIM_PRODUCT_X2_GD8A;
 	}
-	else if (0 == m_csProductName.CompareNoCase(SVO_PRODUCT_KONTRON_X2_GD8A_NONIO))
+	else if (0 == m_csProductName.CompareNoCase(SvOi::SVO_PRODUCT_KONTRON_X2_GD8A_NONIO))
 	{
 		eType = SVIM_PRODUCT_X2_GD8A_NONIO;
 	}
@@ -4822,7 +4823,7 @@ HRESULT SVObserverApp::DisconnectCameras()
 	catch (...)
 	{
 		ASSERT(FALSE);
-		hr = SV_FALSE;
+		hr = E_FAIL;
 	}
 
 	SVDigitizerProcessingClass::Instance().DisconnectDevices();
@@ -4843,7 +4844,7 @@ HRESULT SVObserverApp::ConnectCameras()
 	catch (...)
 	{
 		ASSERT(FALSE);
-		hr = SV_FALSE;
+		hr = E_FAIL;
 	}
 
 	return hr;
@@ -5730,7 +5731,7 @@ void SVObserverApp::Start()
 
 HRESULT SVObserverApp::INILoad()
 {
-	SvOml::SVOIniLoader IniLoader;
+	SvLib::SVOIniLoader IniLoader;
 
 	TCHAR l_szSystemDir[ MAX_PATH + 1 ];
 	CString l_csSystemDir;
@@ -5798,7 +5799,7 @@ HRESULT SVObserverApp::INILoad()
 		// Get GIGE packet Size
 		m_gigePacketSize = IniLoader.m_gigePacketSize;
 
-		for ( int i = 0; i < SvOml::MaxTriggers; i++ )
+		for ( int i = 0; i < SvLib::MaxTriggers; i++ )
 		{
 			bool Value( false );
 			Value = (0 == SvUl_SF::CompareNoCase( IniLoader.m_TriggerEdge[i], SVString( _T("R") ) ) );

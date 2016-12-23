@@ -11,7 +11,7 @@
 
 #pragma region Includes
 #include "SVMessage\SVMessage.h"
-#include "SVOMFCLibrary\SVOMFCLibraryGlobals.h"
+#include "SVLibrary/StringHelper.h"
 #include "SVStatusLibrary\MessageManager.h"
 #pragma endregion Includes
 

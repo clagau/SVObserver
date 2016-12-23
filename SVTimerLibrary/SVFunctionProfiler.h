@@ -13,7 +13,7 @@
 
 //Moved to precompiled header: #include <iostream>
 //Moved to precompiled header: #include <map>
-#include "SVTimerLibrary/SVClock.h"
+#include "SVClock.h"
 
 /* // this class is meant to be used like this:
 void MyClass::MyFunction()

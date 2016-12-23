@@ -12,14 +12,14 @@
 #pragma region includes
 #include "stdafx.h"
 #include "RemoteCommand.h"
-#include "SVOMFCLibrary/SVFileNameClass.h"
+#include "SVLibrary/SVFileNameClass.h"
 #include "SVObserver.h"
 #include "ObjectInterfaces/SVUserMessage.h"
 #include "SVSVIMStateClass.h"
 #include "SVGlobal.h"
 #include "ObjectInterfaces/SVIMCommand.h"
 #include "SVStatusLibrary/GlobalPath.h"
-#include "SVOMFCLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
+#include "CameraLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
 #pragma endregion includes
 
 #pragma region Global functions

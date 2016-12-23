@@ -12,8 +12,6 @@
 #include "stdafx.h"
 #include "SVMainImageClass.h"
 
-#include "SVOMFCLibrary/SVOMFCLibraryGlobals.h"
-
 #include "SVAcquisitionClass.h"
 #include "SVConfigurationObject.h"
 #include "SVObserver.h"

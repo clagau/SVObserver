@@ -75,6 +75,9 @@
     <ClInclude Include="SVFileCameraStruct.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SVFileAcquisitionLoadingModeEnum.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="..\AutoBuild\AutoBuild.h">
       <Filter>Header Files</Filter>
     </ClInclude>

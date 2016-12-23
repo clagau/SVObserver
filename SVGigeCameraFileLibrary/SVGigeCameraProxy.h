@@ -9,7 +9,7 @@
 //* .Check In Date   : $Date:   22 Apr 2013 09:43:34  $
 //******************************************************************************
 
-#include "SVOMFCLibrary/SVDeviceParams.h"
+#include "CameraLibrary/SVDeviceParams.h"
 
 class SVDigitizerLoadLibraryClass;
 

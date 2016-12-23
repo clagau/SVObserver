@@ -14,7 +14,7 @@
 #include "SVObjectLibrary\SVClsids.h"
 #include "SVObjectLibrary\SVToolsetScriptTags.h"
 #include "SVObjectLibrary/SVObjectAttributeClass.h"
-#include "SVOMFCLibrary/StringEscape.h"
+#include "SVLibrary/StringEscape.h"
 #include "SVObjectLibrary/GlobalConst.h"
 #pragma endregion Includes
 
@@ -155,7 +155,7 @@ HRESULT SVVariantValueObjectClass::SetObjectValue(SVObjectAttributeClass* pDataO
 			if( l_rvt.vt == VT_BSTR )
 			{
 				CString strTmp ( l_rvt.bstrVal );
-				if ( SvOml::RemoveEscapedSpecialCharacters(strTmp, true) )
+				if ( SvLib::RemoveEscapedSpecialCharacters(strTmp, true) )
 				{
 					l_rvt = strTmp;
 				}
@@ -188,7 +188,7 @@ HRESULT SVVariantValueObjectClass::SetObjectValue(SVObjectAttributeClass* pDataO
 			if( l_rvt.vt == VT_BSTR )
 			{
 				CString strTmp ( l_rvt.bstrVal );
-				if ( SvOml::RemoveEscapedSpecialCharacters( strTmp, true ) )
+				if ( SvLib::RemoveEscapedSpecialCharacters( strTmp, true ) )
 				{
 					l_rvt = strTmp;
 				}
@@ -672,7 +672,7 @@ CString SVVariantValueObjectClass::ToString(const VARIANT& rvt, bool bScript )
 			if ( bScript )
 			{
 				CString s(rvt.bstrVal);
-				SvOml::AddEscapeSpecialCharacters( s, true );
+				SvLib::AddEscapeSpecialCharacters( s, true );
 				CString sTemp1;
 				sTemp1.Format(_T("\"%s\""), s);
 				sTemp.Format(_T("%d, %s"), vt.vt, sTemp1);

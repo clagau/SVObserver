@@ -19,7 +19,7 @@
 #include "SVTool.h"
 #include "SVWaterShedFilter.h" //Arvid added to avoid VS2015 compile Error
 #include "ObjectInterfaces/TextDefineSvOi.h"
-#include "SVOMFCLibrary/SVDeviceParams.h"
+#include "CameraLibrary/SVDeviceParams.h"
 
 #pragma endregion Includes
 

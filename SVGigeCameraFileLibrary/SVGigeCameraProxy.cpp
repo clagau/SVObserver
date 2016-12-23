@@ -13,9 +13,9 @@
 #include "SVGigeCameraProxy.h"
 #include "SVImageLibrary/SVDigitizerLoadLibraryClass.h"
 #include "SVGigeCameraFileReader.h"
-#include "SVOMFCLibrary/SVBoolValueDeviceParam.h"
-#include "SVOMFCLibrary/SVLongValueDeviceParam.h"
-#include "SVOMFCLibrary/SVStringValueDeviceParam.h"
+#include "CameraLibrary/SVBoolValueDeviceParam.h"
+#include "CameraLibrary/SVLongValueDeviceParam.h"
+#include "CameraLibrary/SVStringValueDeviceParam.h"
 
 SVGigeCameraProxy::SVGigeCameraProxy()
 { 

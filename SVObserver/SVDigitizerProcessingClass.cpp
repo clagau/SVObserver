@@ -16,7 +16,7 @@
 #include "SVGigeCameraParametersLibrary/SVGigeEnums.h"
 #include "SVImageLibrary/SVDigitizerLoadLibraryClass.h"
 #include "SVImageLibrary/SVLut.h"
-#include "SVOMFCLibrary/SVi64ValueDeviceParam.h"
+#include "CameraLibrary/SVi64ValueDeviceParam.h"
 #include "SVFileAcquisitionClass.h"
 #include "TriggerInformation/SVHardwareManifest.h"
 #include "SVMatroxGigeAcquisitionClass.h"

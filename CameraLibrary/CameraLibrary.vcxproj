@@ -11,19 +11,18 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{88204352-9BA7-43F1-ABAB-C75A485171E3}</ProjectGuid>
-    <RootNamespace>SVOMFCLibrary</RootNamespace>
-    <Keyword>MFCProj</Keyword>
+    <ProjectGuid>{EFFD70CB-3879-4A2F-99FE-B9A96BE8E55A}</ProjectGuid>
+    <RootNamespace>CameraLibrary</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
-    <UseOfMfc>Static</UseOfMfc>
     <CharacterSet>NotSet</CharacterSet>
+    <WholeProgramOptimization>false</WholeProgramOptimization>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
-    <UseOfMfc>Static</UseOfMfc>
     <CharacterSet>NotSet</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
@@ -49,129 +48,70 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>_WIN64;_DEBUG;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_WIN64;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>false</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <RuntimeTypeInfo>true</RuntimeTypeInfo>
       <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
-      <SuppressStartupBanner>true</SuppressStartupBanner>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
-    <ResourceCompile>
-      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <Culture>0x0409</Culture>
-    </ResourceCompile>
     <Lib>
-      <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalDependencies>
-      </AdditionalDependencies>
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
-    <Bscmake>
-      <SuppressStartupBanner>true</SuppressStartupBanner>
-    </Bscmake>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
+      <AdditionalIncludeDirectories>..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>NDEBUG;_WIN64;_LIB;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>MaxSpeed</Optimization>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
-      <AdditionalIncludeDirectories>..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>NDEBUG;_WIN64;_WINDOWS;_USRDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <StringPooling>false</StringPooling>
-      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <FunctionLevelLinking>false</FunctionLevelLinking>
-      <RuntimeTypeInfo>true</RuntimeTypeInfo>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
-      <WarningLevel>Level3</WarningLevel>
-      <SuppressStartupBanner>true</SuppressStartupBanner>
-      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
       <WholeProgramOptimization>false</WholeProgramOptimization>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
     </ClCompile>
-    <ResourceCompile>
-      <PreprocessorDefinitions>%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <Culture>0x0409</Culture>
-    </ResourceCompile>
     <Lib>
-      <SuppressStartupBanner>true</SuppressStartupBanner>
-      <AdditionalDependencies>
-      </AdditionalDependencies>
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
-    <Bscmake>
-      <SuppressStartupBanner>true</SuppressStartupBanner>
-    </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="StringEscape.cpp" />
-    <ClCompile Include="SVDlgGraph.cpp" />
-    <ClCompile Include="SVEditControlWithHelp.cpp" />
-    <ClCompile Include="DisplayHelper.cpp" />
-    <ClCompile Include="DisplayMessageBox.cpp" />
-    <ClCompile Include="Regexp.cpp" />
-    <ClCompile Include="StdAfx.cpp">
+    <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="StringMunge.cpp" />
     <ClCompile Include="SVBoolValueDeviceParam.cpp" />
     <ClCompile Include="SVCustomDeviceParam.cpp" />
     <ClCompile Include="SVDeviceParam.cpp" />
     <ClCompile Include="SVDeviceParamCollection.cpp" />
     <ClCompile Include="SVDeviceParams.cpp" />
-    <ClCompile Include="SVFileNameClass.cpp" />
     <ClCompile Include="SVGraphix.cpp" />
     <ClCompile Include="SVi64ValueDeviceParam.cpp" />
     <ClCompile Include="SVLongValueDeviceParam.cpp" />
     <ClCompile Include="SVNullDeviceParam.cpp" />
-    <ClCompile Include="SVOIniLoader.cpp" />
     <ClCompile Include="SVParamListDeviceParam.cpp" />
     <ClCompile Include="SVStringValueDeviceParam.cpp" />
-    <ClCompile Include="Utilities.cpp" />
-    <ClCompile Include="ZoomHelper.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="StringEscape.h" />
-    <ClInclude Include="SVDlgGraph.h" />
-    <ClInclude Include="SVEditControlWithHelp.h" />
-    <ClInclude Include="DisplayHelper.h" />
-    <ClInclude Include="DisplayMessageBox.h" />
-    <ClInclude Include="Regexp.h" />
-    <ClInclude Include="StdAfx.h" />
-    <ClInclude Include="StringMunge.h" />
+    <ClInclude Include="Stdafx.h" />
     <ClInclude Include="SVBoolValueDeviceParam.h" />
+    <ClInclude Include="SVCallbackListClass.h" />
     <ClInclude Include="SVCustomDeviceParam.h" />
-    <ClInclude Include="SVDataItemManagerTemplate.h" />
     <ClInclude Include="SVDeviceParam.h" />
     <ClInclude Include="SVDeviceParamCollection.h" />
     <ClInclude Include="SVDeviceParams.h" />
-    <ClInclude Include="SVFileAcquisitionLoadingModeEnum.h" />
-    <ClInclude Include="SVFileNameClass.h" />
-    <ClInclude Include="SVFunctionProfiler.h" />
     <ClInclude Include="SVGraphix.h" />
     <ClInclude Include="SVi64ValueDeviceParam.h" />
     <ClInclude Include="SVLongValueDeviceParam.h" />
     <ClInclude Include="SVNullDeviceParam.h" />
-    <ClInclude Include="SVOINIClass.h" />
-    <ClInclude Include="SVOIniLoader.h" />
-    <ClInclude Include="SVOMFCLibrary.h" />
-    <ClInclude Include="SVOMFCLibraryGlobals.h" />
     <ClInclude Include="SVParamListDeviceParam.h" />
     <ClInclude Include="SVStringValueDeviceParam.h" />
     <ClInclude Include="SVTemplate.h" />
-    <ClInclude Include="Utilities.h" />
-    <ClInclude Include="ZoomHelper.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="SVDataItemManagerTemplate.inl" />
-    <None Include="SVOINIClass.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -22,11 +22,11 @@
 #include "SVMatroxGigeCameraProxy.h"
 #include "SVGigeCameraParametersLibrary/SVGigeEnums.h"
 #include "SVMessage/SVMessage.h"
-#include "SVOMFCLibrary/SVDeviceParams.h"
-#include "SVOMFCLibrary/SVStringValueDeviceParam.h"
-#include "SVOMFCLibrary/SVLongValueDeviceParam.h"
-#include "SVOMFCLibrary/SVBoolValueDeviceParam.h"
-#include "SVOMFCLibrary/SVCustomDeviceParam.h"
+#include "CameraLibrary/SVDeviceParams.h"
+#include "CameraLibrary/SVStringValueDeviceParam.h"
+#include "CameraLibrary/SVLongValueDeviceParam.h"
+#include "CameraLibrary/SVBoolValueDeviceParam.h"
+#include "CameraLibrary/SVCustomDeviceParam.h"
 #include "SVImageLibrary/SVDigitizerLoadLibraryClass.h"
 #include "SVMatroxGigeAcquisitionClass.h"
 #include "ObjectInterfaces/ErrorNumbers.h"
@@ -406,7 +406,7 @@ HRESULT SVMatroxGigeCameraProxy::SetStandardCameraParameter( const SVDeviceParam
 				}
 				else
 				{
-					hr = SV_FALSE;
+					hr = E_FAIL;
 				}
 				break;
 			}

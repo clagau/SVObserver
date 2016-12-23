@@ -25,7 +25,7 @@
 #include "ObjectInterfaces/GlobalConst.h"
 #include "SVOCore/SVImageProcessingClass.h"
 #include "SVPolarTransformationTool.h"
-#include "SVOMFCLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
+#include "CameraLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
 
 #pragma endregion Includes
 

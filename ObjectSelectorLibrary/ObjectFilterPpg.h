@@ -16,7 +16,7 @@
 #include "SVOResource\resource.h"
 #include "SVContainerLibrary/ObjectTreeItems.h"
 #include "GridCtrlLibrary\GridCtrl.h"
-#include "SVOMFCLibrary\SVEditControlWithHelp.h"
+#include "SVMFCControls\SVEditControlWithHelp.h"
 #include "DlgItemResizer.h"
 #pragma endregion Includes
 
@@ -31,7 +31,7 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 
 	#pragma region Constructor
 		//**********
-		// Descripion:  The preferred constructor
+		// Description:  The preferred constructor
 		// Parameter:  treeContainer <in>:  reference to the tree to display
 		// Parameter:  title <in>: const string for page title
 		// Parameter:  singleSelect <in>:  true for single selection mode (default).  Multi-select otherwise.
@@ -39,7 +39,7 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 		ObjectFilterPpg( SvCl::ObjectTreeItems& treeContainer, LPCTSTR title, bool singleSelect = true );
 
 		//**********
-		// Descripion:  The virtual destructor
+		// Description:  The virtual destructor
 		//***********
 		virtual ~ObjectFilterPpg();
 
@@ -110,8 +110,8 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 		bool m_SingleSelect;							//True when the Object Selector is in single selection mode
 		SVString m_CheckedLocation;						//The currently checked location (only used for SingleSelection)
 		int m_CheckedRow;								//The currently chacked row (only used for SingleSelection)
-		SvOml::SVEditControlWithHelp m_FilterNameControl; //Control to filter objects based on their names
-		SvOml::SVEditControlWithHelp m_FilterLocationControl; //Control to filter objects based on their locations
+		SvMc::SVEditControlWithHelp m_FilterNameControl; //Control to filter objects based on their names
+		SvMc::SVEditControlWithHelp m_FilterLocationControl; //Control to filter objects based on their locations
 		CComboBox m_checkedControl;						//Control to filter objects based on the states of their checkboxes
 		CComboBox m_TypeControl;						//Control to filter objects based on their types
 	#pragma endregion Member Variables

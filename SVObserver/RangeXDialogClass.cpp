@@ -19,7 +19,7 @@
 #include "svresult.h"
 #include "ObjectSelectorLibrary\ObjectTreeGenerator.h"
 #include "SVStatusLibrary\MessageManager.h"
-#include "SVOMFCLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
+#include "CameraLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
 #pragma endregion Includes
 
 #pragma region Declarations

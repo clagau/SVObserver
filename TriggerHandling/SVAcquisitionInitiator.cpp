@@ -10,7 +10,7 @@
 //******************************************************************************
 
 #include "stdafx.h"
-#include "SVOMFCLibrary/SVDeviceParams.h"
+#include "CameraLibrary/SVDeviceParams.h"
 #include "SVImageLibrary/SVDigitizerLoadLibraryClass.h"
 #include "SVAcquisitionInitiator.h"
 

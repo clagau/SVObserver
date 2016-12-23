@@ -15,7 +15,7 @@
 #include "SVBarCodeAnalyzerClass.h"
 
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
-#include "SVOMFCLibrary/SVOINIClass.h"
+#include "SVLibrary/SVOIniClass.h"
 
 #include "SVBarCodeResult.h"   
 #include "SVLibrary/SVBarCodeProperties.h"
@@ -123,7 +123,7 @@ void SVBarCodeAnalyzerClass::init()
 	msv_RawData.SetArraySize(256);
 
 	//set MIL Timeout default to be what is in the INI file...
-	SvOml::SVOINIClass l_SvimIni(SvStl::GlobalPath::Inst().GetSVIMIniPath());
+	SvLib::SVOINIClass l_SvimIni(SvStl::GlobalPath::Inst().GetSVIMIniPath());
 
 	int l_mTimeout = l_SvimIni.GetValueInt(_T("SVIM Information"), _T("MILBarcodeTimeout"),20);
 

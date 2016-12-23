@@ -15,7 +15,7 @@
 
 namespace Seidenader
 {
-	namespace SVOMFCLibrary
+	namespace SVMFCControls
 	{
 		// Use this to define a function which is called,
 		// while somebody pushes the left mouse button.
@@ -87,8 +87,8 @@ namespace Seidenader
 
 			SVNormalizeModeEnum normalizeMode;
 		};
-	} //SVOMFCLibrary
+	} //SVMFCControls
 } //Seidenader
 
-namespace SvOml = Seidenader::SVOMFCLibrary;
+namespace SvMc = Seidenader::SVMFCControls;
 

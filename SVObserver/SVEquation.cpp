@@ -27,7 +27,7 @@
 #include "TextDefinesSvO.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
-#include "SVOMFCLibrary/StringEscape.h"
+#include "SVLibrary/StringEscape.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -442,7 +442,7 @@ void SVEquationClass::Persist( SVObjectWriter& rWriter )
 	// Get the Data Values (Member Info, Values)
 	CString tmp = equationStruct.EquationBuffer;
 	
-	SvOml::AddEscapeSpecialCharacters( tmp, true );
+	SvLib::AddEscapeSpecialCharacters( tmp, true );
 
 	_variant_t value;
 	value.SetString(tmp);
@@ -466,7 +466,7 @@ HRESULT SVEquationClass::SetObjectValue( SVObjectAttributeClass* PDataObject )
 		{
 			equationStruct.EquationBuffer = svCStringArray.GetAt( i );
 
-			SvOml::RemoveEscapedSpecialCharacters( equationStruct.EquationBuffer, true );
+			SvLib::RemoveEscapedSpecialCharacters( equationStruct.EquationBuffer, true );
 		}
 	}
 	else

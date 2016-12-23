@@ -198,7 +198,7 @@ BOOL SVToolAdjustmentDialogLUTPageClass::OnInitDialog()
 		m_yAxisLabel.SetRotationAngle( 90, true );
 
 		// Set Normalize Mode of Graph Control...
-		m_LUTGraph.SetNormalizeMode( SvOml::SVNormalize2D );
+		m_LUTGraph.SetNormalizeMode( SvMc::SVNormalize2D );
 
 		// Set Clip Slider Data...
 		m_upperSlider.SetRange( 0, 255 );

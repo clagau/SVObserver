@@ -19,7 +19,7 @@
 #include "SVColor.h"
 //for image copy
 #include "SVMatroxLibrary\SVMatroxBufferInterface.h"
-#include "SVOMFCLibrary\DisplayHelper.h"
+#include "SVOGui\DisplayHelper.h"
 #include "ObjectInterfaces\ISVImage.h"
 #include "ObjectInterfaces\IMatroxImageData.h"
 
@@ -135,7 +135,7 @@ namespace Seidenader
 		SCODE PictureDisplay::AddOverlay( long Tab, const LongParamMap& ParMap, long* pHandle )
 		{
 			COleSafeArray saPar, saVal;
-			SvOml::DisplayHelper::CreateSafeArrayFromMap( ParMap, saPar, saVal );
+			SvOg::DisplayHelper::CreateSafeArrayFromMap( ParMap, saPar, saVal );
 			SCODE retValue = CDSVPictureDisplay::AddOverlay( Tab, static_cast< LPVARIANT >( saPar ), static_cast< LPVARIANT >( saVal ), pHandle );
 			saPar.Destroy();
 			saVal.Destroy();
@@ -145,7 +145,7 @@ namespace Seidenader
 		SCODE PictureDisplay::AddOverlay( long Tab, const VariantParamMap& ParMap, long* pHandle )
 		{
 			COleSafeArray saPar, saVal;
-			SvOml::DisplayHelper::CreateSafeArrayFromMap( ParMap, saPar, saVal );
+			SvOg::DisplayHelper::CreateSafeArrayFromMap( ParMap, saPar, saVal );
 			SCODE retValue = CDSVPictureDisplay::AddOverlay( Tab, static_cast< LPVARIANT >( saPar ), static_cast< LPVARIANT >( saVal ), pHandle );
 			saPar.Destroy();
 			saVal.Destroy();
@@ -160,7 +160,7 @@ namespace Seidenader
 		SCODE PictureDisplay::EditOverlay( long Tab, long handle, const LongParamMap& ParMap )
 		{
 			COleSafeArray saPar, saVal;
-			SvOml::DisplayHelper::CreateSafeArrayFromMap( ParMap, saPar, saVal );
+			SvOg::DisplayHelper::CreateSafeArrayFromMap( ParMap, saPar, saVal );
 			SCODE retValue = CDSVPictureDisplay::EditOverlay( Tab, handle, static_cast< LPVARIANT >( saPar ), static_cast< LPVARIANT >( saVal ) );
 			saPar.Destroy();
 			saVal.Destroy();
@@ -170,7 +170,7 @@ namespace Seidenader
 		SCODE PictureDisplay::EditOverlay( long Tab, long handle, const VariantParamMap& ParMap )
 		{
 			COleSafeArray saPar, saVal;
-			SvOml::DisplayHelper::CreateSafeArrayFromMap( ParMap, saPar, saVal );
+			SvOg::DisplayHelper::CreateSafeArrayFromMap( ParMap, saPar, saVal );
 			SCODE retValue = CDSVPictureDisplay::EditOverlay( Tab, handle, static_cast< LPVARIANT >( saPar ), static_cast< LPVARIANT >( saVal ) );
 			saPar.Destroy();
 			saVal.Destroy();

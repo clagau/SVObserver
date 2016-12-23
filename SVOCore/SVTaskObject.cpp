@@ -17,7 +17,7 @@
 #include "SVObjectLibrary/SVAnalyzerLevelCreateStruct.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVObjectLibrary/SVObjectAttributeClass.h"
-#include "SVOMFCLibrary/SVTemplate.h"
+#include "CameraLibrary/SVTemplate.h"
 #include "SVUtilityLibrary/SetBits.h"
 #include "SVRunControlLibrary/SVRunControlLibrary.h"
 #include "SVStatusLibrary/MessageManager.h"

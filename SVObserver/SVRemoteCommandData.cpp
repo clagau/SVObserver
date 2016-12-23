@@ -21,7 +21,7 @@
 #include "SVCommandLibrary/SVCommandDataImage.h"
 #include "SVCommandLibrary/SVCommandDataValue.h"
 #include "SVUtilityLibrary/SVSAFEARRAY.h"
-#include "SVOMFCLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
+#include "CameraLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
 
 #pragma endregion Includes
 

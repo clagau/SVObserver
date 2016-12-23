@@ -15,7 +15,7 @@
 #include "SVOResource\resource.h"
 
 #include "SVBarCodeStringMatchDialog.h"
-#include "SVOMFCLibrary/SVFileNameClass.h"
+#include "SVLibrary/SVFileNameClass.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG

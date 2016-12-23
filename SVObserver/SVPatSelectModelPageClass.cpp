@@ -19,16 +19,16 @@
 #include "SVTool.h"
 #include "SVOCore/SVImageProcessingClass.h"
 #include "SVOCore/SVImageClass.h"
-#include "SVOMFCLibrary\SVGraphix.h"
-#include "SVOMFCLibrary\DisplayHelper.h"
-#include "SVOMFCLibrary/SVOMFCLibraryGlobals.h"
+#include "CameraLibrary\SVGraphix.h"
+#include "SVOGui/DisplayHelper.h"
+#include "SVLibrary/StringHelper.h"
 #include "SVImageLibrary\MatroxImageData.h"
 #include "SVOGui\SVColor.h"
 #include "TextDefinesSvO.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVStatusLibrary\GlobalPath.h"
-#include "SVOMFCLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
+#include "CameraLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
 #include "SVOGui/GuiValueHelper.h"
 #pragma endregion Includes
 
@@ -437,7 +437,7 @@ void SVPatModelPageClass::ObjectChangedExDialogImage(long Tab, long Handle, VARI
 		////////////////////////////////////////////////////////
 		// SET SHAPE PROPERTIES
 		VariantParamMap ParaMap;
-		int count = SvOml::DisplayHelper::FillParameterMap(ParaMap, ParameterList, ParameterValue);
+		int count = SvOg::DisplayHelper::FillParameterMap(ParaMap, ParameterList, ParameterValue);
 
 		if( ParaMap.end() != ParaMap.find(CDSVPictureDisplay::P_X1) && VT_I4 == ParaMap[CDSVPictureDisplay::P_X1].vt &&
 			ParaMap.end() != ParaMap.find(CDSVPictureDisplay::P_X2) && VT_I4 == ParaMap[CDSVPictureDisplay::P_X2].vt &&
@@ -457,7 +457,7 @@ void SVPatModelPageClass::ObjectChangedExDialogImage(long Tab, long Handle, VARI
 	else if (ModelImageTab == Tab && m_handleToModelCenterOverlay == Handle)
 	{
 		VariantParamMap ParaMap;
-		int count = SvOml::DisplayHelper::FillParameterMap(ParaMap, ParameterList, ParameterValue);
+		int count = SvOg::DisplayHelper::FillParameterMap(ParaMap, ParameterList, ParameterValue);
 
 		if( ParaMap.end() != ParaMap.find(CDSVPictureDisplay::P_ARRAY_XY) && VT_ARRAY == (ParaMap[CDSVPictureDisplay::P_ARRAY_XY].vt & VT_ARRAY) 
 			&& (VT_I4 == (ParaMap[CDSVPictureDisplay::P_ARRAY_XY].vt & VT_I4) ))

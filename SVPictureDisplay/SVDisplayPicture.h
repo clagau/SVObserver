@@ -14,7 +14,7 @@
 #pragma region Includes
 #include "SVPictureDisplayIdl.h"
 #include "DrawObject.h"
-#include "SVOMFCLibrary\ZoomHelper.h"
+#include "SVOGui/ZoomHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations

@@ -12,7 +12,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVObjectClass.h"
-#include "SVOMFCLibrary/SVOMFCLibraryGlobals.h"
 #include "SVRunControlLibrary/SVRunControlLibrary.h"
 #include "SVSystemLibrary/SVAutoLockAndReleaseTemplate.h"
 #include "SVUtilityLibrary/SVSAFEARRAY.h"
