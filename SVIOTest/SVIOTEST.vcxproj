@@ -125,7 +125,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
-      <AdditionalDependencies>SVIOLibrary.lib;SVStatusLibrary.lib;SVTimerLibrary.lib;SVUtilityLibrary.lib;TriggerHandling.lib;TriggerInformation.lib</AdditionalDependencies>
+      <AdditionalDependencies>CameraLibrary.lib;SVIOLibrary.lib;SVLibrary.lib;SVStatusLibrary.lib;SVTimerLibrary.lib;SVUtilityLibrary.lib;TriggerHandling.lib;TriggerInformation.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <Bscmake>
