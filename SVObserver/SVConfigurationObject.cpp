@@ -1644,20 +1644,10 @@ bool  SVConfigurationObject::LoadCameras( SVTreeType&  rTree, long& lNumCameras,
 			_variant_t Value;
 			long lBandLink = 0;
 			SVString DeviceName;
+			int CameraID = -1;
 
 			pCamera->SetName( ItemName.c_str() );
 			SVTreeType::SVBranchHandle hDataChild( nullptr );
-
-			//If camera ID is not available then set it to the camera number
-			if( SVNavigateTree::GetItem( rTree, CTAG_CAMERA_ID, hSubChild, Value ) )
-			{
-				pCamera->setCameraID( Value );
-			}
-			else
-			{
-				//Zero based camera ID, note camera name is one based!
-				pCamera->setCameraID( lNumCameras - 1 );
-			}
 
 			if( SVNavigateTree::GetItem( rTree, CTAG_ACQUISITION_DEVICE, hSubChild, Value ) )
 			{
@@ -1670,6 +1660,24 @@ bool  SVConfigurationObject::LoadCameras( SVTreeType&  rTree, long& lNumCameras,
 				{
 					DeviceName = SvUl_SF::Left( DeviceName, Pos );
 				}
+				if( SVString::npos !=  (Pos = DeviceName.find( _T("Dig_") )) )
+				{
+					CameraID = atoi( SvUl_SF::Mid( DeviceName, Pos + SVString(_T("Dig_")).length() ).c_str() );
+					if( SvOi::cMaximumCameras <= CameraID )
+					{
+						CameraID -= SvOi::cMaximumCameras;
+					}
+				}
+			}
+
+			//If camera ID is not available then set it to the Device name Digitizer number
+			if( SVNavigateTree::GetItem( rTree, CTAG_CAMERA_ID, hSubChild, Value ) )
+			{
+				pCamera->setCameraID( Value );
+			}
+			else if( -1 != CameraID )
+			{
+				pCamera->setCameraID( CameraID );
 			}
 
 			if( SVNavigateTree::GetItem( rTree, CTAG_UNIQUE_REFERENCE_ID, hSubChild, Value ) )
