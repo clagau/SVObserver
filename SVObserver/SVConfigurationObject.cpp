@@ -5344,7 +5344,6 @@ HRESULT SVConfigurationObject::LoadGlobalConstants( SVTreeType& rTree )
 
 			if ( S_OK == Result )
 			{
-				//
 				if ( SVNavigateTree::GetItem( rTree, scUniqueReferenceIDTag, hChild, Value ) )
 				{
 					UniqueID = Value.bstrVal;
@@ -5379,6 +5378,8 @@ HRESULT SVConfigurationObject::LoadGlobalConstants( SVTreeType& rTree )
 						//Set the unique GUID id for the global constant that was saved
 						SVObjectManagerClass::Instance().ChangeUniqueObjectID( pValue.get(), UniqueID );
 						pValue->setDescription( Description );
+						//All Global constants can be remotely settable
+						pValue->ObjectAttributesAllowedRef() |= SV_REMOTELY_SETABLE;
 						// If type string then remove Selectable for Equation flag.
 						if( VT_BSTR == Value.vt )
 						{
