@@ -118,6 +118,7 @@
 #include "SVXMLLibrary\ObsoleteItemChecker.h"
 #include "SVObjectLibrary\GlobalConst.h"
 #include "SVMatroxLibrary\SVMatroxSystemInterface.h"
+
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -136,6 +137,7 @@ static const double	cNormalNonPageMemoryUsage = 80.0;		 //Value as a percentage 
 extern bool g_bUseCorrectListRecursion;
 #pragma endregion Declarations
 
+
 enum PortNumbers: uint16_t
 { 
 	InputStreamPortNumber = 32100,
@@ -143,6 +145,7 @@ enum PortNumbers: uint16_t
 	FailStatusStreamPortNumber = 28969,
 	RemoteCommandsPortNumber = 28960
 };
+
 
 /**
 @SVObjectName SVObserver COM Module

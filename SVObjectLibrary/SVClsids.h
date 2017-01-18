@@ -269,7 +269,7 @@ extern /*const*/ GUID SVStatVarianceObjectGuid;
 extern /*const*/ GUID SVStatTestValueObjectGuid;
 extern /*const*/ GUID SVStatNbrOfOccurancesObjectGuid;
 extern /*const*/ GUID SVStatPercentOfOccurancesObjectGuid;
-extern /*const*/ GUID SVStatEnabledFeaturesObjectGuid;
+extern /*const*/ GUID	SVStatEnabledFeaturesObjectGuid;
 extern /*const*/ GUID SVStatVariableToMonitorObjectGuid;
 extern /*const*/ GUID SVStatVariableNameToMonitorObjectGuid;
 
@@ -278,9 +278,6 @@ extern /*const*/ GUID SVOperatorClassGuid;
 
 // GUID for the SVBinaryOperatorClass
 extern /*const*/ GUID SVBinaryOperatorClassGuid;
-
-// GUID for the SVUnaryOperatorClass
-extern /*const*/ GUID SVUnaryOperatorClassGuid;
 
 // GUID for the SVUnaryImageOperatorClass
 extern /*const*/ GUID SVUnaryImageOperatorClassGuid;

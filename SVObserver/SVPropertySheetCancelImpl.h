@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "ISVCancel.h"
+#include "SVLibrary/ISVCancel.h"
 #pragma endregion Includes
 
 class SVPropertySheetCancelImpl : public ISVCancel

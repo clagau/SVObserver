@@ -59,9 +59,6 @@
     <ClInclude Include="SVBoolValueDeviceParam.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVCallbackListClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVCustomDeviceParam.h">
       <Filter>Header Files</Filter>
     </ClInclude>

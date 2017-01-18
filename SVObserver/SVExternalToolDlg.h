@@ -12,7 +12,7 @@
 
 #pragma region Includes
 #include "SVOCore/SVTaskObject.h"
-#include "ISVCancel.h"
+#include "SVLibrary/ISVCancel.h"
 #include "SVOGui\ISVPropertyPageDialog.h"
 #include "SVMFCControls/SVActiveDisableButton.h"
 #pragma endregion Includes

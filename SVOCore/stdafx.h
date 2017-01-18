@@ -47,6 +47,7 @@
 #include <list>
 #include <map>
 #include <ppl.h>
+#include <sequential_tree.h>
 #include <set>
 #include <string>
 #include <tchar.h>
@@ -54,9 +55,13 @@
 #include <vector>
 #include <comdef.h>
 
+#include <boost/any.hpp>
+
 #include <boost/bind.hpp>
 #include <boost/config.hpp>
 #include <boost/function.hpp>
+#define BOOST_DATE_TIME_NO_LIB
+
 #include <boost/multi_index_container.hpp>				//Used by static library
 #include <boost/multi_index/member.hpp>					//Used by static library
 #include <boost/multi_index/ordered_index.hpp>			//Used by static library

@@ -1309,6 +1309,21 @@ SVStaticStringValueObjectClass* SVToolClass::GetInputImageNames( )
 	return nullptr;
 }
 
+
+bool SVToolClass::SetFirstInputImageName( LPCTSTR FirstName )
+{
+	SVStaticStringValueObjectClass* lstrVO = GetInputImageNames();
+
+	if( lstrVO )
+	{
+		lstrVO->SetValue( 0/*Static value, this parameter will not used*/, FirstName);
+		return true;
+	}
+	return false;
+}
+
+
+
 SVValueObjectClass* SVToolClass::GetToolComment()
 {
 	return &m_svToolComment;

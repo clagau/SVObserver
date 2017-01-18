@@ -16,7 +16,7 @@
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <vector>
 
-#include "SVLibrary/SVVisitor.h"
+#include "SVLoki/SVVisitor.h"
 #include "SVTemplate.h"
 #include "SVDeviceParam.h"
 #include "SVUtilityLibrary/SVString.h"

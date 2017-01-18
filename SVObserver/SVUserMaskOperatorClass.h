@@ -13,11 +13,11 @@
 
 #pragma region Includes
 #include "ObjectInterfaces\IMask.h"
-#include "SVUnaryImageOperatorClass.h"
+#include "SVOCore/SVUnaryImageOperatorClass.h"
 #include "CameraLibrary\SVGraphix.h"
 #include "SVImageLibrary/SVImageInfoClass.h"
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
-#include "ISVCancel.h"
+#include "SVLibrary/ISVCancel.h"
 #pragma endregion Includes
 
 class SVShapeMaskHelperClass;

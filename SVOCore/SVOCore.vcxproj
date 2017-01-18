@@ -95,9 +95,14 @@
     <ClInclude Include="SVImageListClass.h" />
     <ClInclude Include="SVImageObjectClass.h" />
     <ClInclude Include="SVImageProcessingClass.h" />
+    <ClInclude Include="SVInPlaceImageOperatorListClass.h" />
     <ClInclude Include="SVObjectAppClass.h" />
+    <ClInclude Include="SVOperator.h" />
+    <ClInclude Include="SVStdImageOperatorListClass.h" />
     <ClInclude Include="SVTaskObject.h" />
     <ClInclude Include="SVTaskObjectList.h" />
+    <ClInclude Include="SVUnaryImageOperatorClass.h" />
+    <ClInclude Include="SVUnaryImageOperatorList.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
@@ -115,9 +120,14 @@
     <ClCompile Include="SVImageListClass.cpp" />
     <ClCompile Include="SVImageObjectClass.cpp" />
     <ClCompile Include="SVImageProcessingClass.cpp" />
+    <ClCompile Include="SVInPlaceImageOperatorListClass.cpp" />
     <ClCompile Include="SVObjectAppClass.cpp" />
+    <ClCompile Include="SVOperator.cpp" />
+    <ClCompile Include="SVStdImageOperatorListClass.cpp" />
     <ClCompile Include="SVTaskObject.cpp" />
     <ClCompile Include="SVTaskObjectList.cpp" />
+    <ClCompile Include="SVUnaryImageOperatorClass.cpp" />
+    <ClCompile Include="SVUnaryImageOperatorList.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

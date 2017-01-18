@@ -1,0 +1,141 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Custom2Filter.cpp" />
+    <ClCompile Include="stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="SVClosingFilterClass.cpp" />
+    <ClCompile Include="SVCustomFilters.cpp" />
+    <ClCompile Include="SVDilationFilterClass.cpp" />
+    <ClCompile Include="SVEdgeDetect2FilterClass.cpp" />
+    <ClCompile Include="SVEdgeDetectFilterClass.cpp" />
+    <ClCompile Include="SVErosionFilterClass.cpp" />
+    <ClCompile Include="SVFilterClass.cpp" />
+    <ClCompile Include="SVHorizEdgeFilterClass.cpp" />
+    <ClCompile Include="SVLaplacianEdge2FilterClass.cpp" />
+    <ClCompile Include="SVLaplacianEdgeFilterClass.cpp" />
+    <ClCompile Include="SVMaxMinusMinFilterClass.cpp" />
+    <ClCompile Include="SVOpeningFilterClass.cpp" />
+    <ClCompile Include="SVRankingFilters.cpp" />
+    <ClCompile Include="SVSharpen2FilterClass.cpp" />
+    <ClCompile Include="SVSharpenFilterClass.cpp" />
+    <ClCompile Include="SVSkeletonFilter.cpp" />
+    <ClCompile Include="SVSmoothFilterClass.cpp" />
+    <ClCompile Include="SVThickeningFilter.cpp" />
+    <ClCompile Include="SVThinningFilter.cpp" />
+    <ClCompile Include="SVVertEdgeFilterClass.cpp" />
+    <ClCompile Include="SVWaterShedFilter.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Custom2Filter.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="SVClosingFilterClass.h" />
+    <ClInclude Include="SVCustomFilters.h" />
+    <ClInclude Include="SVDilationFilterClass.h" />
+    <ClInclude Include="SVEdgeDetect2FilterClass.h" />
+    <ClInclude Include="SVEdgeDetectFilterClass.h" />
+    <ClInclude Include="SVErosionFilterClass.h" />
+    <ClInclude Include="SVFilterClass.h" />
+    <ClInclude Include="SVHorizEdgeFilterClass.h" />
+    <ClInclude Include="SVLaplacianEdge2FilterClass.h" />
+    <ClInclude Include="SVLaplacianEdgeFilterClass.h" />
+    <ClInclude Include="SVMaxMinusMinFilterClass.h" />
+    <ClInclude Include="SVOpeningFilterClass.h" />
+    <ClInclude Include="SVRankingFilters.h" />
+    <ClInclude Include="SVSharpen2FilterClass.h" />
+    <ClInclude Include="SVSharpenFilterClass.h" />
+    <ClInclude Include="SVSkeletonFilter.h" />
+    <ClInclude Include="SVSmoothFilterClass.h" />
+    <ClInclude Include="SVThickeningFilter.h" />
+    <ClInclude Include="SVThinningFilter.h" />
+    <ClInclude Include="SVVertEdgeFilterClass.h" />
+    <ClInclude Include="SVWaterShedFilter.h" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{F854F11D-EDDB-4795-996A-D9FD0C795744}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>SVOCore</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>NotSet</CharacterSet>
+    <WholeProgramOptimization>false</WholeProgramOptimization>
+    <UseOfMfc>Static</UseOfMfc>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>NotSet</CharacterSet>
+    <UseOfMfc>Static</UseOfMfc>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\SVOGlobalProperties.props" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\SVOGlobalProperties.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.40219.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)$(Configuration)\$(Platform)\bin\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">$(SolutionDir)$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)$(Configuration)\$(Platform)\bin\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|x64'">$(SolutionDir)$(Configuration)\$(Platform)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_WIN64;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Lib>
+      <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>NDEBUG;_WIN64;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <Optimization>MaxSpeed</Optimization>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <WholeProgramOptimization>false</WholeProgramOptimization>
+      <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+    </ClCompile>
+    <Lib>
+      <AdditionalLibraryDirectories>$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

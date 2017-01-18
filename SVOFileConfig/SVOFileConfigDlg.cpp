@@ -142,7 +142,7 @@ void SVOFileConfigDlg::OnSelchangedTree1(NMHDR* pNMHDR, LRESULT* pResult)
 
 			int iIndex = -1;
 
-			if ( svvData.vt & SVArrayType )
+			if ( svvData.vt & VT_ARRAY )
 			{
 				SVSAFEARRAY svArray( svvData );
 				long lSize( static_cast<long>(svArray.size()) );

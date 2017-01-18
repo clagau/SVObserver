@@ -120,12 +120,15 @@
     <ClCompile Include="SVIOEntryHostStruct.cpp" />
     <ClCompile Include="SVOIniLoader.cpp" />
     <ClCompile Include="SVPackedFile.cpp" />
+    <ClCompile Include="SVTaskObjectInterfaceInputRequestStruct.cpp" />
+    <ClCompile Include="SVTaskObjectValueInterface.cpp" />
     <ClCompile Include="SVWinUtility.cpp" />
     <ClCompile Include="Utilities.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DisplayMessageBox.h" />
     <ClInclude Include="Intersect.h" />
+    <ClInclude Include="ISVCancel.h" />
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="StringEscape.h" />
     <ClInclude Include="StringMunge.h" />
@@ -142,15 +145,15 @@
     <ClInclude Include="SVOIniLoader.h" />
     <ClInclude Include="StringHelper.h" />
     <ClInclude Include="SVPackedFile.h" />
-    <ClInclude Include="SVReferenceCountingTemplate.h" />
-    <ClInclude Include="SVVisitor.h" />
+    <ClInclude Include="SVTaskObjectInterfaceInputRequestStruct.h" />
+    <ClInclude Include="SVTaskObjectValueInterface.h" />
     <ClInclude Include="SVWinUtility.h" />
     <ClInclude Include="DirectoryUtilities.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="SVDataItemManagerTemplate.inl" />
     <None Include="SVOINIClass.inl" />
-    <None Include="SVReferenceCountingTemplate.inl" />
+    <None Include="SVTaskObjectInterfaceInputRequestStruct.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

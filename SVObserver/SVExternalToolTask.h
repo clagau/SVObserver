@@ -20,7 +20,7 @@
 #include "SVOCore/SVTaskObject.h"
 #include "SVOCore/SVImageClass.h"
 #include "SVVariantResultClass.h"
-#include "ISVCancel.h"
+#include "SVLibrary/ISVCancel.h"
 #include "SVDllToolLoadLibraryClass.h"
 #include "PropertyTree/SVRPropTreeState.h"
 #include "SVMatroxLibrary/SVMatroxTypedefs.h"

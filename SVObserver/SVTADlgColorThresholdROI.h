@@ -13,7 +13,7 @@
 
 #pragma region Includes
 #include "SVTADlgColorThresholdBasePage.h"
-#include "SVTaskObjectValueInterface.h"
+#include "SVLibrary/SVTaskObjectValueInterface.h"
 #pragma endregion Includes
 
 /////////////////////////////////////////////////////////////////////////////

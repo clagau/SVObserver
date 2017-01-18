@@ -13,7 +13,7 @@
 
 #pragma region Includes
 #include "SVBlobAnalyzer.h"
-#include "SVTaskObjectValueInterface.h"
+#include "SVLibrary/SVTaskObjectValueInterface.h"
 #pragma endregion Includes
 
 class SVToolClass;

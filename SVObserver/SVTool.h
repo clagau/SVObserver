@@ -113,8 +113,10 @@ public:
 
 	// Set String value object for Source Image Names
 	virtual SVStaticStringValueObjectClass* GetInputImageNames( );
+	virtual bool SetFirstInputImageName( LPCTSTR FirstName) override;
 
-	virtual HRESULT UpdateImageWithExtent( unsigned long p_Index );
+
+	virtual HRESULT UpdateImageWithExtent( unsigned long p_Index ) override;
 	virtual HRESULT GetParentExtent( SVImageExtentClass& p_rParent ) const;
 
 	//************************************

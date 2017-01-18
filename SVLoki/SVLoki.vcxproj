@@ -94,6 +94,7 @@
     <ClInclude Include="SmartPtr.h" />
     <ClInclude Include="static_check.h" />
     <ClInclude Include="StdAfx.h" />
+    <ClInclude Include="SVVisitor.h" />
     <ClInclude Include="Threads.h" />
     <ClInclude Include="Tuple.h" />
     <ClInclude Include="Typelist.h" />

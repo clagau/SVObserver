@@ -17,7 +17,7 @@
 #include "SVLUTEquation.h"
 #include "SVLUTOperator.h"
 #include "SVObserver.h"
-#include "SVStdImageOperatorListClass.h"
+#include "SVOCore/SVStdImageOperatorListClass.h"
 #include "SVOLicenseManager/SVOLicenseManager.h"
 #include "SVThresholdClass.h"
 #include "SVUserMaskOperatorClass.h"

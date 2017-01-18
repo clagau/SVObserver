@@ -26,6 +26,9 @@ namespace Seidenader
 			virtual SvUl::NameGuidPair getAuxSourceImage() const = 0;
 			virtual HRESULT setAuxSourceImage(const SVGUID& rObjectID) = 0;
 			virtual void SetToolImage( const SVGUID& rObjectID ) = 0;
+			virtual HRESULT UpdateImageWithExtent( unsigned long p_Index ) = 0;
+			virtual bool SetFirstInputImageName( LPCTSTR FirstName) = 0;
+
 		};
 	}
 }

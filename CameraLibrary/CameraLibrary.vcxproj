@@ -100,7 +100,6 @@
   <ItemGroup>
     <ClInclude Include="Stdafx.h" />
     <ClInclude Include="SVBoolValueDeviceParam.h" />
-    <ClInclude Include="SVCallbackListClass.h" />
     <ClInclude Include="SVCustomDeviceParam.h" />
     <ClInclude Include="SVDeviceParam.h" />
     <ClInclude Include="SVDeviceParamCollection.h" />

@@ -13,7 +13,7 @@
 #include "SVOCVDialog.h"
 #include "SVIPDoc.h"
 #include "SVTool.h"
-#include "SVUnaryImageOperatorList.h"
+#include "SVOCore/SVUnaryImageOperatorList.h"
 #include "SVOCVAnalyzerResult.h"
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
 #pragma endregion Includes

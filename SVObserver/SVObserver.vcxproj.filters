@@ -110,9 +110,6 @@
     <ClCompile Include="SVConfigurationPrint.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVCustomFilters.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVCylindricalWarpDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -440,9 +437,6 @@
     <ClCompile Include="SVOIPViewClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVOperator.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVOPPQList.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -539,9 +533,6 @@
     <ClCompile Include="SVRange.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVRankingFilters.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVRegressionExitDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -632,9 +623,6 @@
     <ClCompile Include="SVShiftToolUtility.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVSkeletonFilter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVStartWindow.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -695,12 +683,6 @@
     <ClCompile Include="SVTADlgTranslationShiftPage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVThickeningFilter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVThinningFilter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVTool.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -725,12 +707,6 @@
     <ClCompile Include="SVTADlgArchiveResultsPage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVToolExtentClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVToolExtentPropertiesClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVToolImage.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -750,9 +726,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVTransformationTool.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVUnaryImageOperatorList.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVUpperThresholdEquation.cpp">
@@ -777,9 +750,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVVirtualCamera.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVWaterShedFilter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVWindowTool.cpp">
@@ -830,64 +800,13 @@
     <ClCompile Include="SVBinaryOperatorClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVClosingFilterClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVDilationFilterClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVEdgeDetect2FilterClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVEdgeDetectFilterClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVErosionFilterClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVFilterClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVHorizEdgeFilterClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVLaplacianEdge2FilterClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVLaplacianEdgeFilterClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVMaxMinusMinFilterClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVOpeningFilterClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVShapeMaskHelperClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVSharpen2FilterClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVSharpenFilterClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVSmoothFilterClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVThresholdClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVUnaryImageOperatorClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVUnaryOperatorClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVUserMaskOperatorClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVVertEdgeFilterClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVDLLToolLoadLibraryClass.cpp">
@@ -960,9 +879,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="FramedSplitterWnd.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Custom2Filter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ToolClipboard.cpp">
@@ -1085,12 +1001,6 @@
     <ClCompile Include="SVEvaluateEndAngleClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVStdImageOperatorListClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVInPlaceImageOperatorListClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVDigitalInputObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -1127,13 +1037,16 @@
     <ClCompile Include="SVImageAnalyzerClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVTaskObjectInterfaceInputRequestStruct.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVTaskObjectValueInterface.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVBarCodeAnalyzerClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVToolExtentClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVToolExtentPropertiesClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DummyFilter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1231,9 +1144,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVConfigurationTreeWriter.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVCustomFilters.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVCylindricalWarpDlg.h">
@@ -1584,9 +1494,6 @@
     <ClInclude Include="SVOIPViewClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVOperator.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVOPPQList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1686,9 +1593,6 @@
     <ClInclude Include="SVRange.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVRankingFilters.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVRegressionExitDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1785,9 +1689,6 @@
     <ClInclude Include="SVShiftToolUtility.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVSkeletonFilter.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVStartWindow.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1851,15 +1752,6 @@
     <ClInclude Include="SVTADlgTranslationShiftPage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVThickeningFilter.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVThinningFilter.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVTool.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVToolAcquisition.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1881,12 +1773,6 @@
     <ClInclude Include="SVTADlgArchiveResultsPage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVToolExtentClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVToolExtentPropertiesClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVToolImage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1906,9 +1792,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVTransformationTool.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVUnaryImageOperatorList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVUpperThresholdEquation.h">
@@ -1933,9 +1816,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVVirtualCamera.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVWaterShedFilter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVWindowTool.h">
@@ -1998,70 +1878,16 @@
     <ClInclude Include="SVConfigXMLPrint.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ISVCancel.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVBinaryOperatorClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVClosingFilterClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVDilationFilterClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVEdgeDetect2FilterClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVEdgeDetectFilterClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVErosionFilterClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVFilterClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVHorizEdgeFilterClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVLaplacianEdge2FilterClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVLaplacianEdgeFilterClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVMaxMinusMinFilterClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVOpeningFilterClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVShapeMaskHelperClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVSharpen2FilterClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVSharpenFilterClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVSmoothFilterClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVThresholdClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVUnaryImageOperatorClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVUnaryOperatorClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVUserMaskOperatorClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVVertEdgeFilterClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVArchiveHeaderEditDlg.h">
@@ -2137,9 +1963,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="FramedSplitterWnd.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Custom2Filter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ToolClipboard.h">
@@ -2262,12 +2085,6 @@
     <ClInclude Include="SVEvaluateRotationAngleClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVStdImageOperatorListClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVInPlaceImageOperatorListClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVDigitalInputObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -2307,10 +2124,13 @@
     <ClInclude Include="SVImageAnalyzerClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVTaskObjectInterfaceInputRequestStruct.h">
+    <ClInclude Include="SVTool.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVTaskObjectValueInterface.h">
+    <ClInclude Include="SVToolExtentClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVToolExtentPropertiesClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -2328,9 +2148,6 @@
       <Filter>Header Files</Filter>
     </None>
     <None Include="SVOutputObjectList.inl">
-      <Filter>Header Files</Filter>
-    </None>
-    <None Include="SVToolExtentClass.inl">
       <Filter>Header Files</Filter>
     </None>
     <None Include="hlp\AfxCore.rtf">
@@ -2432,7 +2249,7 @@
     <None Include="RootObject.inl">
       <Filter>Header Files</Filter>
     </None>
-    <None Include="SVTaskObjectInterfaceInputRequestStruct.inl">
+    <None Include="SVToolExtentClass.inl">
       <Filter>Header Files</Filter>
     </None>
   </ItemGroup>

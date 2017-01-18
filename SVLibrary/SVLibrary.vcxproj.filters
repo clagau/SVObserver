@@ -62,6 +62,12 @@
     <ClCompile Include="SVFileNameClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SVTaskObjectInterfaceInputRequestStruct.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVTaskObjectValueInterface.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Intersect.h">
@@ -74,12 +80,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVPackedFile.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVReferenceCountingTemplate.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVVisitor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVWinUtility.h">
@@ -130,15 +130,24 @@
     <ClInclude Include="DirectoryUtilities.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ISVCancel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVTaskObjectInterfaceInputRequestStruct.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVTaskObjectValueInterface.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="SVReferenceCountingTemplate.inl">
-      <Filter>Header Files</Filter>
-    </None>
     <None Include="SVOINIClass.inl">
       <Filter>Header Files</Filter>
     </None>
     <None Include="SVDataItemManagerTemplate.inl">
+      <Filter>Header Files</Filter>
+    </None>
+    <None Include="SVTaskObjectInterfaceInputRequestStruct.inl">
       <Filter>Header Files</Filter>
     </None>
   </ItemGroup>

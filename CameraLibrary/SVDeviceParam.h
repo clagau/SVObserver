@@ -13,7 +13,7 @@
 
 #pragma warning( disable: 4786 )	// identifier truncation 255 chars
 
-#include "SVLibrary/SVVisitor.h"
+#include "SVLoki/SVVisitor.h"
 #include "SVTemplate.h"
 #include "SVUtilityLibrary/SVString.h"
 

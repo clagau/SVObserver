@@ -15,7 +15,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVTaskObjectValueInterface.h"
+#include "SVLibrary/SVTaskObjectValueInterface.h"
 #include "SVOCore/SVTaskObjectList.h"
 #include "ObjectInterfaces\RangeEnum.h"
 #include "ObjectInterfaces\MessageTextEnum.h"

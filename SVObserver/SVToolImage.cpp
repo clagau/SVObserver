@@ -15,7 +15,7 @@
 #include "SVAnalyzer.h"
 #include "SVImageArithmetic.h"
 #include "SVInspectionProcess.h"
-#include "SVInplaceImageOperatorListClass.h"
+#include "SVOCore/SVInplaceImageOperatorListClass.h"
 #include "SVLUTEquation.h"
 #include "SVLUTOperator.h"
 #include "SVThresholdClass.h"

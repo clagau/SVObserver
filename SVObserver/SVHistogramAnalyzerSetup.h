@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVTaskObjectValueInterface.h"
+#include "SVLibrary/SVTaskObjectValueInterface.h"
 #include "SVMFCControls\SVHistogram.h"
 #include "afxwin.h"
 #include "afxcmn.h"

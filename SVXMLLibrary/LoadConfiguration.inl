@@ -12,8 +12,6 @@
 #pragma once
 
 #pragma region Includes
-#include "SVOLibrary/SVOLibrary.h"
-
 
 #include "ObjectInterfaces\ErrorNumbers.h"
 #include  "SaxXMLHandler.h"

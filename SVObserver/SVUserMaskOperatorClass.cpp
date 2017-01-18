@@ -23,7 +23,7 @@
 #include "SVObserver.h"
 #include "SVToolSet.h"
 #include "SVShapeMaskHelperClass.h"
-#include "SVUnaryImageOperatorList.h"
+#include "SVOCore/SVUnaryImageOperatorList.h"
 
 SV_IMPLEMENT_CLASS( SVUserMaskOperatorClass, SVUserMaskOperatorClassGuid )
 

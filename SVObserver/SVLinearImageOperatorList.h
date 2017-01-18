@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVStdImageOperatorListClass.h"
+#include "SVOCore/SVStdImageOperatorListClass.h"
 #include "SVOCore/SVDataBuffer.h"
 #pragma endregion Includes
 
