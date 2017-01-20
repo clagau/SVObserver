@@ -14,7 +14,7 @@
 
 namespace Seidenader { namespace SVSocketLibrary
 {
-	inline std::string addr2s(const sockaddr_in & addr)
+	inline std::basic_string<TCHAR> addr2s(const sockaddr_in & addr)
 	{
 		std::ostringstream os;
 		os << static_cast< short >( addr.sin_addr.S_un.S_un_b.s_b1 ) << '.' <<
@@ -102,13 +102,13 @@ namespace Seidenader { namespace SVSocketLibrary
 	}
 
 	template<typename API>
-	inline std::string SVSocket<API>::state()const
+	inline std::basic_string<TCHAR> SVSocket<API>::state()const
 	{
-		return std::string( m_hasOwner ? " owner" : "" ) + ( IsValidSocket() ? "" : " invalid" );
+		return std::basic_string<TCHAR>( m_hasOwner ? " owner" : "" ) + ( IsValidSocket() ? "" : " invalid" );
 	}
 
 	template<typename API>
-	inline std::string SVSocket<API>::Log(const std::string & msg, bool full) const
+	inline std::basic_string<TCHAR> SVSocket<API>::Log(const std::basic_string<TCHAR> & msg, bool full) const
 	{
 	//#ifdef LOG_ENABLED
 		static int tick = 0;
@@ -167,7 +167,7 @@ namespace Seidenader { namespace SVSocketLibrary
 	template<typename API>
 	inline Err SVSocket<API>::Bind(const TCHAR* hostAddr, unsigned short portNo)
 	{
-		std::string msg = "bind: ";
+		std::basic_string<TCHAR> msg = "bind: ";
 		Err error = SVSocketError::Success;
 		if (IsValidSocket())
 		{
@@ -342,7 +342,7 @@ namespace Seidenader { namespace SVSocketLibrary
 	}
 
 	template<typename API>
-	inline Err SVSocket<API>::Write(const std::string& data, bool hasHeader)
+	inline Err SVSocket<API>::Write(const std::basic_string<TCHAR>& data, bool hasHeader)
 	{
 		return Write( reinterpret_cast< const unsigned char* >( data.c_str() ), static_cast< int >( data.length() ), hasHeader);
 	}
@@ -685,7 +685,7 @@ namespace Seidenader { namespace SVSocketLibrary
 	}
 
 	template<typename API>
-	inline SVSocketError::ErrorEnum SVSocket<API>::Send( const std::string& data )
+	inline SVSocketError::ErrorEnum SVSocket<API>::Send( const std::basic_string<TCHAR>& data )
 	{
 		SVSocketError::ErrorEnum retVal = SVSocketError::Success;
 		int status = API::send( m_socket, data.c_str(), static_cast< int >( data.size() ), 0 );

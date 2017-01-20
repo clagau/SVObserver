@@ -1011,7 +1011,7 @@ HRESULT SVMatroxGigeCameraProxy::IsValidCameraFileParameters( SVDeviceParamColle
 
 					if ( sHardwareModel != _T("") && sModel != _T("") && sHardwareModel.CompareNoCase(sModel) != 0 )
 					{
-						SVStringArray msgList;
+						SVStringVector msgList;
 						msgList.push_back(SVString(sModel));
 						msgList.push_back(SVString(sHardwareModel));
 						SvStl::MessageMgrStd Exception(SvStl::DataOnly);
@@ -1022,7 +1022,7 @@ HRESULT SVMatroxGigeCameraProxy::IsValidCameraFileParameters( SVDeviceParamColle
 			}
 			else
 			{
-				SVStringArray msgList;
+				SVStringVector msgList;
 				msgList.push_back(venderName);
 				msgList.push_back(venderNameHardware);
 				SvStl::MessageMgrStd Exception(SvStl::DataOnly);

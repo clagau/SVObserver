@@ -43,7 +43,7 @@ SVOCameraObj::~SVOCameraObj()
 
 }
 
-CString SVOCameraObj::GetCameraDisplayName() const
+const SVString& SVOCameraObj::GetCameraDisplayName() const
 {
     return m_CameraDisplayName;
 }
@@ -58,9 +58,9 @@ int SVOCameraObj::GetCameraID() const
 	return m_CameraID;
 }
 
-void SVOCameraObj::SetCameraDisplayName(CString CameraName)
+void SVOCameraObj::SetCameraDisplayName(const SVString& rCameraName)
 {
-    m_CameraDisplayName = CameraName;
+    m_CameraDisplayName = rCameraName;
 }
 
 void SVOCameraObj::SetDigNumber(int DigNumber)
@@ -73,10 +73,10 @@ void SVOCameraObj::SetCameraID(int CameraID)
 	m_CameraID = CameraID;
 }
 
-void SVOCameraObj::SetCameraFile(CString sFileName)
+void SVOCameraObj::SetCameraFile(const SVString& rFileName)
 {
-    m_CameraFile = sFileName;
-    if (!m_CameraFile.IsEmpty())
+    m_CameraFile = rFileName;
+    if (!m_CameraFile.empty())
     {
         m_CameraFileSet = TRUE;
     }
@@ -99,7 +99,7 @@ BOOL SVOCameraObj::GetCameraFileChanged()
     return m_CameraFileChanged;
 }
 
-CString SVOCameraObj::GetCameraFile() const
+const SVString& SVOCameraObj::GetCameraFile() const
 {
     return m_CameraFile;
 }
@@ -114,11 +114,11 @@ BOOL SVOCameraObj::IsCameraObjOk()
 	{
 		if (m_CameraFileSet)
 		{
-			m_CameraObjOk = TRUE;
+			m_CameraObjOk = true;
 		}
 		else
 		{
-			m_CameraObjOk = FALSE;
+			m_CameraObjOk = false;
 		}
 	}
     return m_CameraObjOk;
@@ -264,24 +264,24 @@ void SVOCameraObj::SetFileImageSize(const SIZE& size)
 	m_fileImageSize = size;
 }
 
-LPCTSTR SVOCameraObj::GetImageFilename() const
+const SVString& SVOCameraObj::GetImageFilename() const
 {
-	return m_imageFilename.c_str();
+	return m_imageFilename;
 }
 
-void SVOCameraObj::SetImageFilename(const SVString& filename)
+void SVOCameraObj::SetImageFilename(const SVString& rFilename)
 {
-	m_imageFilename = filename;
+	m_imageFilename = rFilename;
 }
 
-LPCTSTR SVOCameraObj::GetImageDirectoryName() const
+const SVString& SVOCameraObj::GetImageDirectoryName() const
 {
-	return m_imageDirectory.c_str();
+	return m_imageDirectory;
 }
 
-void SVOCameraObj::SetImageDirectoryName(const SVString& directoryName)
+void SVOCameraObj::SetImageDirectoryName(const SVString& rPathName)
 {
-	m_imageDirectory = directoryName;
+	m_imageDirectory = rPathName;
 }
 
 long SVOCameraObj::GetFileLoadingMode() const
@@ -301,8 +301,7 @@ bool SVOCameraObj::IsSoftwareTriggerSupported() const
 	if (!IsFileAcquisition())
 	{
 		// - check if camera file has been assigned
-		CString camFile = GetCameraFile();
-		if (!camFile.IsEmpty())
+		if( !GetCameraFile().empty() )
 		{
 			const SVDeviceParamCollection& rCameraFileParams = GetCameraFileParams();
 			
@@ -344,8 +343,7 @@ bool SVOCameraObj::IsCameraLineInputSupported() const
 	if (!IsFileAcquisition())
 	{
 		// - check if camera file has been assigned
-		CString camFile = GetCameraFile();
-		if (!camFile.IsEmpty())
+		if( !GetCameraFile().empty() )
 		{
 			const SVDeviceParamCollection& rCameraFileParams = GetCameraFileParams();
 			

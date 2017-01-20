@@ -15,6 +15,7 @@
 #include "ObjectInterfaces/ICustom2Filter.h"
 #include "SVXMLLibrary/SaxXMLHandler.h"
 #include "CameraLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 #pragma region local helper function
@@ -26,9 +27,8 @@
 //************************************
 void writeElement( SVObjectXMLWriter& rXmlWriter, UINT ResourceID, variant_t Value )
 {
-	CString Label;
-	Label.LoadString( ResourceID );
-	rXmlWriter.WriteAttribute( Label, Value);
+	SVString Label = SvUl_SF::LoadSVString( ResourceID );
+	rXmlWriter.WriteAttribute( Label.c_str(), Value);
 }
 
 //************************************
@@ -42,9 +42,8 @@ variant_t readElement( SvXml::SVXMLMaterialsTree& rTree, const SvXml::SVXMLMater
 {
 	variant_t Value;
 
-	CString Label;
-	Label.LoadString( ResourceID );
-	if( !SVNavigateTree::GetItem( rTree, Label, rBranch, Value ) )
+	SVString Label = SvUl_SF::LoadSVString( ResourceID );
+	if( !SVNavigateTree::GetItem( rTree, Label.c_str(), rBranch, Value ) )
 	{
 		Value.Clear();
 	}
@@ -71,11 +70,10 @@ bool readCustom2FilterBranch( SvXml::SVXMLMaterialsTree& rTree,
 	SvOi::ICustom2Filter::LongArray &kernelArray)
 {
 	SvXml::SVXMLMaterialsTree::SVBranchHandle Branch;
-	CString Label;
 	bool Result(false);
 
-	Label.LoadString( IDS_CLASSNAME_CUSTOM2FILTER );
-	if ( SVNavigateTree::GetItemBranch( rTree, Label, nullptr, Branch ) )
+	SVString Label = SvUl_SF::LoadSVString( IDS_CLASSNAME_CUSTOM2FILTER );
+	if ( SVNavigateTree::GetItemBranch( rTree, Label.c_str(), nullptr, Branch ) )
 	{
 		_variant_t Value;
 
@@ -85,9 +83,9 @@ bool readCustom2FilterBranch( SvXml::SVXMLMaterialsTree& rTree,
 		absoluteValue = readElement( rTree, Branch, IDS_OBJECTNAME_CUSTOMFILTER_ABSOLUTE );
 		clippingEnabled = readElement( rTree, Branch, IDS_OBJECTNAME_CUSTOMFILTER_CLIPPING );
 
-		Label.LoadString( IDS_OBJECTNAME_CUSTOMFILTER_KERNELCELL );
+		Label = SvUl_SF::LoadSVString( IDS_OBJECTNAME_CUSTOMFILTER_KERNELCELL );
 		SVTreeType::SVBranchHandle Elements = nullptr;
-		if ( SVNavigateTree::GetItemBranch( rTree, Label, Branch, Elements ) )
+		if ( SVNavigateTree::GetItemBranch( rTree, Label.c_str(), Branch, Elements ) )
 		{
 			SVTreeType::SVLeafHandle Leaf;
 
@@ -144,9 +142,8 @@ void SvOi::exportCustom2Filter(const SVString &filePath,
 		XmlWriter.StartElement( CTAG_ENVIRONMENT  );
 		XmlWriter.WriteAttribute( CTAG_VERSION_NUMBER, Value );
 		XmlWriter.EndElement();
-		CString Label;
-		Label.LoadString( IDS_CLASSNAME_CUSTOM2FILTER );
-		XmlWriter.StartElement( Label );
+		SVString Label = SvUl_SF::LoadSVString( IDS_CLASSNAME_CUSTOM2FILTER );
+		XmlWriter.StartElement( Label.c_str() );
 
 		writeElement( XmlWriter, IDS_OBJECTNAME_CUSTOMFILTER_KERNELWIDTH, kernelWidth );
 		writeElement( XmlWriter, IDS_OBJECTNAME_CUSTOMFILTER_KERNELHEIGHT, kernelHeight );
@@ -154,8 +151,8 @@ void SvOi::exportCustom2Filter(const SVString &filePath,
 		writeElement( XmlWriter, IDS_OBJECTNAME_CUSTOMFILTER_ABSOLUTE, absoluteValue );
 		writeElement( XmlWriter, IDS_OBJECTNAME_CUSTOMFILTER_CLIPPING, clippingEnabled );
 
-		Label.LoadString( IDS_OBJECTNAME_CUSTOMFILTER_KERNELCELL );
-		XmlWriter.StartElement( Label );
+		Label = SvUl_SF::LoadSVString( IDS_OBJECTNAME_CUSTOMFILTER_KERNELCELL );
+		XmlWriter.StartElement( Label.c_str() );
 		SVVariantList KernelArray;
 		ICustom2Filter::LongArray::const_iterator Iter( kernelIteratorBegin );
 		while( kernelIteratorEnd != Iter )

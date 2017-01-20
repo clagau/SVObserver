@@ -51,7 +51,7 @@ namespace Seidenader { namespace SVSocketLibrary
 			regrex e = boost::xpressive::sregex::compile("\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}\\.\\d{1,3}");
 			match sMatchIP;
 
-			std::string ipAddr = hostAddr;
+			std::basic_string<TCHAR> ipAddr = hostAddr;
 			if ( !boost::xpressive::regex_match(ipAddr, sMatchIP, e) )
 			{
 				hostent* pHost = gethostbyname(hostAddr);

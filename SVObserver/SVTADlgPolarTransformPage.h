@@ -63,12 +63,12 @@ public:
 	enum { IDD = IDD_TA_POLARTRANSFORM_DIALOG };
 	SVEnumerateComboClass	m_AngularMethodCombo;
 	SVEnumerateComboClass	interpolationComboCtrl;
-	CString	StrCenterXValue;
-	CString	StrCenterYValue;
-	CString	StrStartRadiusValue;
-	CString	StrEndRadiusValue;
-	CString	StrStartAngleValue;
-	CString	StrEndAngleValue;
+	CString	m_CenterXValue;
+	CString	m_CenterYValue;
+	CString	m_StartRadiusValue;
+	CString	m_StrEndRadiusValue;
+	CString	m_StartAngleValue;
+	CString	m_EndAngleValue;
 	BOOL	bUseFormula;
 	//}}AFX_DATA
 

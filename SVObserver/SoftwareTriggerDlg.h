@@ -10,11 +10,15 @@
 //******************************************************************************
 
 #pragma once
+
+#pragma region Includes
 //Moved to precompiled header: #include <limits>
 //Moved to precompiled header: #include <boost/function.hpp>
 //Moved to precompiled header: #include <boost/bind.hpp>
 #include "SVMFCControls/SVKnobControl.h"
 #include "TriggerInformation/SVTriggerObject.h"
+#include "SVUtilityLibrary/SVString.h"
+#pragma endregion Includes
 
 // SoftwareTriggerDlg dialog
 namespace sv
@@ -34,12 +38,12 @@ public:
 	{
 	}
 	int GetSoftwareTriggerPeriod() { if( !m_paused){m_period = m_pTrigger->GetSoftwareTriggerPeriod();} return m_period; }
-	CString GetName() const { return m_pTrigger->GetName(); }
+	SVString GetName() const { return SVString( m_pTrigger->GetName() ); }
 	void SetSoftwareTriggerPeriod(long period, bool setTimer = false) { m_period = period; if (!m_paused) m_pTrigger->SetSoftwareTriggerPeriod(period, setTimer); }
 	SvTi::SVTriggerObject* GetTrigger() { return m_pTrigger; }
 	void Pause() { m_paused = true; m_period = GetSoftwareTriggerPeriod(); m_pTrigger->SetSoftwareTriggerPeriod(INT_MAX, true); }
 	void Continue() { if (m_paused) { m_paused = false; m_pTrigger->SetSoftwareTriggerPeriod(m_period, true); } }
-	CString ButtonText() const { return m_paused?_T("Continue"):_T("Pause"); }
+	SVString ButtonText() const { return m_paused ? SVString(_T("Continue")) : SVString(_T("Pause")); }
 	bool Toggle() { if (m_paused) Continue(); else Pause(); return m_paused; }
 	bool Paused() const { return m_paused;  }
 
@@ -86,6 +90,7 @@ protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	void SetTriggerPeriod(int val);
 	bool EditOK();
+	void SetFrequency( int Value );
 
 	DECLARE_MESSAGE_MAP()
 public:
@@ -132,8 +137,8 @@ private:
 	CStatic				m_ppmLabel;
 	CButton				m_pauseBtn;
 
-	SVSpinGroup * m_spins;
-	CBrush * m_brush;
+	SVSpinGroup*		m_pSpins;
+	CBrush*				m_pBrush;
 
 public:
 	virtual BOOL OnInitDialog() override;
@@ -180,10 +185,10 @@ inline bool SVSpinGroup::SetValue(int val)
 {
 	int carry = val/m_limit;
 	m_value = val%m_limit;
-	CString str;
-	str.Format(_T("%d"), m_value);
+	
+	SVString Text = SvUl_SF::Format(_T("%d"), m_value);
 	m_spin.SetPos(m_value);
-	m_edit.SetWindowText(str);
+	m_edit.SetWindowText( Text.c_str() );
 	if (m_value || carry)
 	{
 		Show();
@@ -241,9 +246,8 @@ inline bool SVSpinGroup::Increment(int val)
 		m_next->Increment(1);
 	}
 
-	CString str;
-	str.Format(_T("%d"), m_value);
-	m_edit.SetWindowText(str);
+	SVString Text = SvUl_SF::Format(_T("%d"), m_value);
+	m_edit.SetWindowText( Text.c_str() );
 	return true;
 }
 

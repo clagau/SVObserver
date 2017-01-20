@@ -25,38 +25,35 @@ END_MESSAGE_MAP()
 
 SVLicenseMgrModelessDlg& SVLicenseMgrModelessDlg::Instance()
 {
-	static SVLicenseMgrModelessDlg l_Object;
+	static SVLicenseMgrModelessDlg Object;
 
-	return l_Object;
+	return Object;
 }
 
 SVLicenseMgrModelessDlg::SVLicenseMgrModelessDlg(): CDialog(SVLicenseMgrModelessDlg::IDD, nullptr), m_hEvent(nullptr)
 {
 }
 
-void SVLicenseMgrModelessDlg::Init(const CString& s,const SVGuidSet& p_sList, HANDLE p_hEvent)
+void SVLicenseMgrModelessDlg::Init(const SVString& rMsg,const SVGuidSet& rList, HANDLE hEvent)
 {
-	m_sMsg = s;
+	m_Msg = rMsg;
+	m_sList = rList;
 
-	DuplicateHandle( GetCurrentProcess(), p_hEvent,
-		GetCurrentProcess(), &m_hEvent,
-		0, FALSE, DUPLICATE_SAME_ACCESS );
-
-	m_sList = p_sList;
+	DuplicateHandle( GetCurrentProcess(), hEvent, GetCurrentProcess(), &m_hEvent, 0, FALSE, DUPLICATE_SAME_ACCESS );
 }
 
-void SVLicenseMgrModelessDlg::Show(const CString& s,const SVGuidSet& p_sList, HANDLE p_hEvent)
+void SVLicenseMgrModelessDlg::Show(const SVString& rMsg,const SVGuidSet& rList, HANDLE hEvent)
 {
-	SVLicenseMgrModelessDlg& l_rDlg = SVLicenseMgrModelessDlg::Instance();
-	l_rDlg.Init(s,p_sList,p_hEvent);
-	l_rDlg.Create(SVLicenseMgrModelessDlg::IDD, nullptr);
+	SVLicenseMgrModelessDlg& rDlg = SVLicenseMgrModelessDlg::Instance();
+	rDlg.Init( rMsg, rList, hEvent);
+	rDlg.Create(SVLicenseMgrModelessDlg::IDD, nullptr);
 }
 
 void SVLicenseMgrModelessDlg::Destroy()
 {
-	SVLicenseMgrModelessDlg& l_rDlg = SVLicenseMgrModelessDlg::Instance();
+	SVLicenseMgrModelessDlg& rDlg = SVLicenseMgrModelessDlg::Instance();
 
-	l_rDlg.DestroyWindow();
+	rDlg.DestroyWindow();
 }
 
 
@@ -86,7 +83,7 @@ void SVLicenseMgrModelessDlg::CleanUp()
 		m_hEvent = nullptr;
 	}
 
-	m_sMsg.Empty();
+	m_Msg.clear();
 }
 
 // SVLicenseMgrModelessDlg message handlers
@@ -110,7 +107,7 @@ BOOL SVLicenseMgrModelessDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 	
-	GetDlgItem(IDC_STATIC_TITLE)->SetWindowText(m_sMsg);
+	GetDlgItem(IDC_STATIC_TITLE)->SetWindowText(m_Msg.c_str());
 
 	//fill ListControl with items in m_dList
 	SVGuidSet::iterator l_Iter = m_sList.begin();
@@ -118,9 +115,9 @@ BOOL SVLicenseMgrModelessDlg::OnInitDialog()
 	while ( l_Iter != m_sList.end() )
 	{
 		SVObjectClass* pObj = SVObjectManagerClass::Instance().GetObject( *l_Iter );
-		if ( pObj )
+		if ( nullptr != pObj )
 		{
-			m_ctlErrorList.AddString(pObj->GetCompleteObjectName());
+			m_ctlErrorList.AddString( pObj->GetCompleteName().c_str() );
 		}
 		++l_Iter;
 	}

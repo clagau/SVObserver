@@ -40,10 +40,10 @@ void SVTriggerSelectionDlg::PopulateSelectionList()
 	}
 }
 
-void SVTriggerSelectionDlg::GetSelectedTrigger(CString& name, int& id) const
+void SVTriggerSelectionDlg::GetSelectedTrigger(SVString& rName, int& rID) const
 {
-	name = m_selectedTriggerName;
-	id = m_selectedTriggerID;
+	rName = m_selectedTriggerName;
+	rID = m_selectedTriggerID;
 }
 
 BEGIN_MESSAGE_MAP(SVTriggerSelectionDlg, CDialog)

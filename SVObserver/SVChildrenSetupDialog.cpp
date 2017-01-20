@@ -88,9 +88,8 @@ void SVChildrenSetupDialogClass::redrawLists()
 		{
 			if( m_pParentObject->GetSize() <= 0 )
 			{
-				CString strEmpty;
-				strEmpty.LoadString( IDS_EMPTY_STRING );
-				m_ChildrenListCtrl.SetItemData( m_ChildrenListCtrl.InsertItem( 0, strEmpty ), 0 );
+				SVString Empty = SvUl_SF::LoadSVString( IDS_EMPTY_STRING );
+				m_ChildrenListCtrl.SetItemData( m_ChildrenListCtrl.InsertItem( 0, Empty.c_str() ), 0 );
 			}
 			else
 			{
@@ -179,7 +178,7 @@ BOOL SVChildrenSetupDialogClass::OnInitDialog()
 		m_ChildrenListCtrl.GetClientRect( &rect );
 		m_ChildrenListCtrl.InsertColumn( 0, _T( "" ), LVCFMT_LEFT, rect.Width(), -1 );
 
-		if( !StrTitle.IsEmpty() ) { SetWindowText( StrTitle ); }
+		if( !m_Title.empty() ) { SetWindowText( m_Title.c_str() ); }
 
 		// Refresh...
 		redrawLists();
@@ -224,7 +223,7 @@ void SVChildrenSetupDialogClass::OnAddButton()
 					// And finally try to create the child object...
 					if( !m_pParentObject->CreateChildObject(pObject, SVMFSetDefaultInputs | SVMFResetInspection ) )
 					{
-						SVStringArray msgList;
+						SVStringVector msgList;
 						msgList.push_back(SVString(pObject->GetName()));
 						SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 						Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_CreationFailed, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10043 ); 
@@ -321,18 +320,15 @@ void SVChildrenSetupDialogClass::OnPublishButton()
 	if( nullptr == m_pParentObject || nullptr == m_pParentOwner ) { return; }
 
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSetAttributes );
-	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, SVString(m_pParentOwner->GetCompleteObjectName()), SVString( _T("") ) );
+	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, SVString(m_pParentOwner->GetCompleteName()), SVString( _T("") ) );
 
 	SvOsl::SelectorOptions BuildOptions( m_pDocument->GetInspectionID(), SV_PUBLISHABLE, m_pParentObject->GetUniqueObjectID() );
 	SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::NoSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<>>( BuildOptions );
 
-	CString Title;
-	CString PublishableResults;
-	CString Filter;
-	PublishableResults.LoadString( IDS_PUBLISHABLE_RESULTS );
-	Title.Format( _T("%s - %s"), PublishableResults, m_pParentOwner->GetName() );
-	Filter.LoadString( IDS_FILTER );
-	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title, PublishableResults, Filter, this );
+	SVString PublishableResults = SvUl_SF::LoadSVString( IDS_PUBLISHABLE_RESULTS );
+	SVString Title = SvUl_SF::Format( _T("%s - %s"), PublishableResults.c_str(), m_pParentOwner->GetName() );
+	SVString Filter = SvUl_SF::LoadSVString( IDS_FILTER );
+	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title.c_str(), PublishableResults.c_str(), Filter.c_str(), this );
 
 	if( IDOK == Result )
 	{
@@ -360,10 +356,9 @@ void SVChildrenSetupDialogClass::OnItemChangedChildrenList(NMHDR* pNMHDR, LRESUL
 		//
 		// Check for 'empty' string as item string.
 		//
-		CString csItemText = m_ChildrenListCtrl.GetItemText(0,0);
-		CString strEmpty;
-		strEmpty.LoadString( IDS_EMPTY_STRING );
-		if(csItemText == strEmpty)
+		SVString ItemText = m_ChildrenListCtrl.GetItemText(0,0);
+		SVString Empty = SvUl_SF::LoadSVString( IDS_EMPTY_STRING );
+		if( ItemText == Empty )
 		{
 			bValidSelection = false;
 		}

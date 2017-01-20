@@ -50,6 +50,10 @@
 #include <comdef.h>
 
 #include <map>				//Used by static library
+#include <set>				//Used by static library
+#include <string>			//Used by static library
+#include <tchar.h>			//Used by static library
+#include <vector>			//Used by static library
 #pragma endregion Precompiled Headers
 
 

@@ -65,6 +65,7 @@
 #include <sequential_tree.h>
 #include <sstream>
 #include <string>
+#include <tchar.h>				//Used by static library
 #include <typeinfo>
 
 

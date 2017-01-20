@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   01 Dec 2014 12:16:00  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <boost/bind.hpp>
@@ -24,6 +25,8 @@
 #include "SVTriggerLibrary/SVTriggerCallbackFunc.h"
 #include "SVTriggerLibrary/SVTriggerEnums.h"
 #include "SVTimerLibrary/SVClock.h"
+#include "SVUtilityLibrary/SVString.h"
+#pragma endregion Includes
 
 static const long MaxFileCameras = 12;
 

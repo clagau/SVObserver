@@ -20,6 +20,7 @@
 
 #include "SVTestAcquisitionSubsystem.h"
 #include "SVLibrary/SVOIniLoader.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 class CSVImageTestApp : public CWinApp

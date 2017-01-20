@@ -66,11 +66,11 @@ void SVDigitizerProcessingClass::Startup()
 	{
 		SVAcquisitionClassPtr l_AcqPtr;
 
-		if( l_Iter->m_DigitizerName.find( _T( "Matrox_GIGE" ) ) == 0 )
+		if( 0 == l_Iter->m_DigitizerName.find( _T( "Matrox_GIGE" ) ) )
 		{
 			l_AcqPtr = new SVMatroxGigeAcquisitionClass( *l_Iter );
 		}
-		else if( l_Iter->m_DigitizerName.find( _T( "File" ) ) == 0 )
+		else if( 0 == l_Iter->m_DigitizerName.find( _T( "File" ) ) )
 		{
 			l_AcqPtr = new SVFileAcquisitionClass( *l_Iter );
 		}
@@ -172,25 +172,24 @@ HRESULT SVDigitizerProcessingClass::UpdateDigitizerSubsystem( SVDigitizerLoadLib
 			if ( S_OK == Result )
 			{
 				_variant_t Value;
-				_bstr_t StringValue;
+				_bstr_t bString;
 
-				Result = pDigitizerSubsystem->GetName( Handle, StringValue.GetAddress() );
+				Result = pDigitizerSubsystem->GetName( Handle, bString.GetAddress() );
 				if( S_OK == Result )
 				{
-					AcquisitionName = static_cast<LPCTSTR> (StringValue);
+					AcquisitionName = SvUl_SF::createSVString( bString );
 				}
 				//Not all DLL's support IP address so do not place in Result value
 				if( S_OK == pDigitizerSubsystem->ParameterGetValue( Handle, SVGigeParameterIPAddress, 0, &Value ) )
 				{
-					StringValue =  Value.bstrVal;
-					IPAddress = static_cast<LPCTSTR> (StringValue);
+					IPAddress = SvUl_SF::createSVString( Value );
 				}
 			}
 
 			if ( S_OK == Result )
 			{
 				SVString CameraName;
-				if( AcquisitionName.find( _T( "Matrox_GIGE" ) ) == 0 )
+				if( 0 == AcquisitionName.find( _T( "Matrox_GIGE" ) ) )
 				{
 					CameraName =  SVGigeCameraManager::Instance().getCameraName( IPAddress );
 				}
@@ -209,7 +208,7 @@ HRESULT SVDigitizerProcessingClass::UpdateDigitizerSubsystem( SVDigitizerLoadLib
 	return Result;
 }
 
-HRESULT SVDigitizerProcessingClass::GetAcquisitionDeviceList( SVStringArray& rList ) const
+HRESULT SVDigitizerProcessingClass::GetAcquisitionDeviceList( SVStringVector& rList ) const
 {
 	HRESULT l_Status = S_OK;
 
@@ -680,7 +679,7 @@ HRESULT SVDigitizerProcessingClass::UpdateMatroxDevices()
 				SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 				if( nullptr != pConfig )
 				{
-					pConfig->ModifyAcquisitionDevice( pAcquisitionDevice->DeviceName(), &DeviceParams );
+					pConfig->ModifyAcquisitionDevice( pAcquisitionDevice->DeviceName().c_str(), &DeviceParams );
 				}
 			}
 		}

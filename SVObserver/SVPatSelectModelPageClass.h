@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "PropertyTree/PropTree.h"
+#include "SVRPropertyTree/SVRPropTree.h"
 //TODO: MZA(10.Nov 2014): Move this files to SVOGui project and then remove folder from include and Namespace add-on add PictureDisplay declaration.
 #include "SVOGui/PictureDisplay.h"
 #include "ObjectInterfaces/MessageTextEnum.h"

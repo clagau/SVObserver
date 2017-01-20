@@ -11,8 +11,8 @@
 #pragma once
 
 #pragma region Includes
-//Moved to precompiled header: #include <string>
 //Moved to precompiled header: #include <fstream>
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 namespace Seidenader { namespace SVSharedMemoryLibrary
@@ -20,19 +20,19 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 	class SVSharedConfiguration
 	{
 	public:
-		static const std::string GetSharedDrive();
-		static const std::string GetControlShareName();
-		static const std::string GetShareName();
-		static const std::string GetLastInspectedName();
-		static const std::string GetRejectsName();
-		static const std::string GetPPQName();
-		static const std::string GetPPQRejectsName();
-		static const std::string GetMonitorListName();
+		static const SVString GetSharedDrive();
+		static const SVString GetControlShareName();
+		static const SVString GetShareName();
+		static const SVString GetLastInspectedName();
+		static const SVString GetRejectsName();
+		static const SVString GetPPQName();
+		static const SVString GetPPQRejectsName();
+		static const SVString GetMonitorListName();
 
-		static const std::string GetSharedMemoryDirectoryName();
-		static const std::string GetImageDirectoryName();
-		static const std::string GetRejectImageDirectoryName();
-		static void Log(const std::string& msg);
+		static const SVString GetSharedMemoryDirectoryName();
+		static const SVString GetImageDirectoryName();
+		static const SVString GetRejectImageDirectoryName();
+		static void Log(const SVString& msg);
 
 		static HRESULT SharedResourcesOk();
 		static void EnsureShareDirectoryExists();
@@ -42,10 +42,10 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 	private:
 		SVSharedConfiguration();
 		~SVSharedConfiguration();
-		static inline const std::string LogFilename() 
+		static inline const SVString LogFilename() 
 		{ 
 			char buf[40] = {0};
-			return std::string(GetSharedDrive() + "\\Temp\\") + _itoa(::GetCurrentProcessId(), buf, 16) + "log.txt";
+			return SVString(GetSharedDrive() + "\\Temp\\") + _itoa(::GetCurrentProcessId(), buf, 16) + "log.txt";
 		}
 		static bool SharedDriveSizeOk();
 	};

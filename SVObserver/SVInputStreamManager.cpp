@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 10:58:20  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 //Moved to precompiled header: #include <boost/bind.hpp>
 #include "SVInputStreamManager.h"
@@ -18,8 +19,9 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVSystemLibrary/SVAutoLockAndReleaseTemplate.h"
 #include "SVUtilityLibrary/SVSAFEARRAY.h"
-
+#include "SVUtilityLibrary/SVString.h"
 #include "SVObjectCommandDataJson.h"
+#pragma endregion Includes
 
 SVInputStreamManager& SVInputStreamManager::Instance()
 {

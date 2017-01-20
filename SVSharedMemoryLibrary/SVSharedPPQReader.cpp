@@ -18,7 +18,7 @@
 
 namespace Seidenader { namespace SVSharedMemoryLibrary
 {
-	typedef std::map<std::string, InspectionReaderPtr> Readers;
+	typedef std::map<SVString, InspectionReaderPtr> Readers;
 
 	SVSharedPPQReader::SVSharedPPQReader()
 	: m_DataSharedMemPtr(nullptr), m_SharedProductStorePPQ(nullptr), m_SharedProductStorePPQReject(nullptr), m_ShareName(""), m_isOpen(false)
@@ -30,7 +30,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		Close();
 	}
 
-	bool SVSharedPPQReader::Open(const std::string& name)
+	bool SVSharedPPQReader::Open(const SVString& name)
 	{
 		bool retVal = false;
 		try
@@ -96,7 +96,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		std::for_each(inspections.begin(), inspections.end(), 
 			[&readers, ret](const SVSharedInspectionPair& pair)
 		{
-			std::string name = pair.first.c_str();
+			SVString name = pair.first.c_str();
 			if (readers.find(name.c_str()) == readers.end())
 			{
 				InspectionReaderPtr reader(new SVSharedInspectionReader());
@@ -256,12 +256,12 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 			if (readers.find(pair.first.c_str()) == readers.end())
 			{
 				InspectionReaderPtr reader(new SVSharedInspectionReader());
-				std::string name = std::string(pair.first.c_str());
+				SVString name = SVString(pair.first.c_str());
 				reader->Open(name.substr(0, name.find_first_of('.')));
 				readers.insert(Readers::value_type(pair.first.c_str(), reader));
 			}
-			typedef std::map<const std::string, InspectionDataPtr> InspValueType;
-			ret->inspections[std::string(pair.first.c_str())] = InspectionDataPtr(
+			typedef std::map<const SVString, InspectionDataPtr> InspValueType;
+			ret->inspections[SVString(pair.first.c_str())] = InspectionDataPtr(
 				&(readers[pair.first.c_str()])->GetRejectSlot(ret->product.InspectionSlotIndex(pair.first.c_str()))
 				);
 		}
@@ -320,7 +320,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		}
 	}
 
-	FailStatusMap SVSharedPPQReader::GetFailStatus(const std::vector<std::string>& names) const
+	FailStatusMap SVSharedPPQReader::GetFailStatus(const SVStringVector& names) const
 	{
 		FailStatusMap ret;
 		const SVSharedPPQReader& reader = *this;
@@ -336,7 +336,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 				Values& values = ret[trig];
 				values.reserve(names.size());
 				std::for_each(names.begin(), names.end(), //init values with fail status names/triggers
-					[&values, trig, pp](const std::string& name)
+					[&values, trig, pp](const SVString& name)
 				{
 					Value val = pp->find(name);
 					if (!val.empty())
@@ -353,11 +353,11 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 	}
 
 	// This method is only called from GetFailStatus
-	Value SVProductBundle::find(const std::string& name) const
+	Value SVProductBundle::find(const SVString& name) const
 	{
 		Value val;
 		// find the Inspection Share for this item
-		std::string inspectionName = name.substr(0, name.find_first_of('.'));
+		SVString inspectionName = name.substr(0, name.find_first_of('.'));
 		InspectionDataPtrMap::const_iterator it = std::find_if(inspections.begin(), inspections.end(),
 			[&inspectionName](const InspectionDataPtrMap::value_type& entry)
 		{

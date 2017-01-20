@@ -115,24 +115,22 @@ HRESULT GlobalRCGetMode( unsigned long* p_plMode )
 }
 
 // Global functions for SVFocusNT Remote Commands
-BOOL GlobalRCGetConfigurationName( char* pszConfigName )
+SVString GlobalRCGetConfigurationName()
 {
-	BOOL bOk = FALSE;
+	SVString Result;
 
 	SVFileNameClass svFileName;
 
-	svFileName.SetFullFileName( ( ( SVObserverApp* )AfxGetApp() )->getConfigFullFileName() );
+	svFileName.SetFullFileName( ( ( SVObserverApp* )AfxGetApp() )->getConfigFullFileName().c_str() );
 
-	if ( !CString( svFileName.GetFileNameOnly() ).IsEmpty() )
+	if ( !svFileName.GetFileNameOnly().empty() )
 	{
 		svFileName.SetPathName( SvStl::GlobalPath::Inst().GetRunPath().c_str());
 
-		strcpy( pszConfigName, svFileName.GetFullFileName() );
-
-		bOk = TRUE;
+		Result = svFileName.GetFullFileName();
 	}
 
-	return bOk;
+	return Result;
 }
 
 BOOL GlobalRCSaveConfiguration()
@@ -141,22 +139,20 @@ BOOL GlobalRCSaveConfiguration()
 	return TRUE;
 }
 
-BOOL GlobalRCOpenConfiguration( char* pszConfigName )
+BOOL GlobalRCOpenConfiguration( LPCTSTR ConfigName )
 {
-	CString szConfigName(pszConfigName);
-
-	SVRCSetSVCPathName(szConfigName);
+	SVRCSetSVCPathName( ConfigName );
 
 	TCHAR szDrive[_MAX_DRIVE];
 	TCHAR szDir[_MAX_DIR];
 	TCHAR szFile[_MAX_FNAME];
 	TCHAR szExt[_MAX_EXT];
-	CString sComp;
+	SVString Extension;
 
-	_tsplitpath( pszConfigName, szDrive, szDir, szFile, szExt );
-	sComp = szExt;
+	_tsplitpath( ConfigName, szDrive, szDir, szFile, szExt );
+	Extension = szExt;
 
-	if (sComp.CompareNoCase(_T(".svx"))==0)
+	if( 0 == SvUl_SF::CompareNoCase( Extension, _T(".svx") ) )
 	{
 		SendMessage (AfxGetApp()->m_pMainWnd->m_hWnd, WM_COMMAND, MAKEWPARAM (ID_RC_OPEN_CURRENT_SVX, 0), 0);
 	}

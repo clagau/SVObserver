@@ -139,8 +139,8 @@ void SelectedObjectsPage::ReadSelectedObjects()
 {
 	m_ItemsSelected.DeleteAllItems();
 
-	CString strPrefix = m_InspectionName.c_str();
-	strPrefix += _T(".Tool Set.");
+	SVString Prefix = m_InspectionName;
+	Prefix += _T(".Tool Set.");
 
 	int Index = 0;
 	SvOsl::SelectorItemVector::const_iterator Iter;
@@ -148,7 +148,7 @@ void SelectedObjectsPage::ReadSelectedObjects()
 	{
 		SVString Name;
 		Name = Iter->getLocation();
-		SvUl_SF::searchAndReplace( Name, strPrefix, _T("") );
+		SvUl_SF::searchAndReplace( Name, Prefix.c_str(), _T("") );
 
 		m_ItemsSelected.InsertItem(LVIF_STATE | LVIF_TEXT,
 									Index,
@@ -197,9 +197,8 @@ void SelectedObjectsPage::ShowObjectSelector()
 	SvOsl::ObjectTreeGenerator::Instance().setCheckItems( CheckItems );
 
 	SVString Title = SvUl_SF::Format( _T("%s - %s"), m_strCaption, InspectionName.c_str() );
-	CString Filter;
-	Filter.LoadString( IDS_FILTER );
-	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title.c_str(), m_strCaption, Filter, this );
+	SVString Filter = SvUl_SF::LoadSVString( IDS_FILTER );
+	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title.c_str(), m_strCaption, Filter.c_str(), this );
 
 	if( IDOK == Result )
 	{

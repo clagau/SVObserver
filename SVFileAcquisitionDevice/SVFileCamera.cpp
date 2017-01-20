@@ -362,7 +362,7 @@ void SVFileCamera::OnAPCEvent( ULONG_PTR data )
 	else
 	{
 		// add to event log
-		SVStringArray msgList;
+		SVStringVector msgList;
 		SvOi::MessageTextEnum id = SvOi::Tid_Empty;
 		if (filename.empty())
 		{

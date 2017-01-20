@@ -26,6 +26,7 @@
 #include "SVImageLibrary/SVImageExtentClass.h"
 #include "SVImageListClass.h"
 #include "SVExtentPropertiesInfoStruct.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 class SVImageClass;

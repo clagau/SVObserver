@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   27 Aug 2014 01:24:38  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 
 #undef SV_HIDDEN //@TODO[Arvid][7.50][20.12.2016] this had to be added when this source file was moved to SVLibrary 
@@ -18,6 +19,8 @@
 
 #include "SVIOEntryHostStruct.h"
 #include "SVValueObjectLibrary/SVValueObjectClass.h"
+#include "SVUtilityLibrary/SVString.h"
+#pragma endregion Includes
 
 SVIOEntryHostStruct::SVIOEntryHostStruct()
 : m_Enabled( false )
@@ -59,8 +62,8 @@ bool SVIOEntryHostStruct::PtrGreater( SVIOEntryHostStructPtr elem1, SVIOEntryHos
 	{
 		if( ( nullptr != elem1->m_pValueObject ) && ( nullptr != elem2->m_pValueObject ) )
 		{
-			SVString Name1 = elem1->m_pValueObject->GetCompleteObjectName();
-			SVString Name2 = elem2->m_pValueObject->GetCompleteObjectName();
+			SVString Name1 = elem1->m_pValueObject->GetCompleteName();
+			SVString Name2 = elem2->m_pValueObject->GetCompleteName();
 
 			//We assume the name is a dotted name and only the last part of the name may have a number
 

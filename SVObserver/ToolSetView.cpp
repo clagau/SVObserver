@@ -331,8 +331,8 @@ void ToolSetView::OnRightClickToolSetList(NMHDR* pNMHDR, LRESULT* pResult)
 				{
 					l_bMenuLoaded = l_menu.LoadMenu(IDR_TOOL_LIST_CONTEXT_MENU1);
 					// Remove Tool Comment menu item if Group is Not Selected 
-					CString name = m_toolSetListCtrl.GetItemText(info.m_listIndex, 0);
-					if (m_toolSetListCtrl.IsEndListDelimiter(name) || m_toolSetListCtrl.IsEmptyStringPlaceHolder(name))
+					SVString Name = m_toolSetListCtrl.GetItemText(info.m_listIndex, 0);
+					if (m_toolSetListCtrl.IsEndListDelimiter( Name ) || m_toolSetListCtrl.IsEmptyStringPlaceHolder( Name ))
 					{
 						l_menu.RemoveMenu(ID_SELECTTOOL_TOOLCOMMENT, MF_BYCOMMAND);
 					}
@@ -393,8 +393,9 @@ void ToolSetView::OnBeginLabelEditToolSetList(NMHDR* pNMHDR, LRESULT* pResult)
 	// Save the current 'label' in case it needs to be restored.
 	CEdit* pEdit = m_toolSetListCtrl.GetEditControl();
 	ASSERT_VALID(pEdit);
-	pEdit->GetWindowText(m_csLabelSaved);
-
+	CString Text;
+	pEdit->GetWindowText( Text );
+	m_LabelSaved = Text;
 	m_isLabeling = true;
 	
 	SetCapture(); 
@@ -404,44 +405,38 @@ void ToolSetView::OnBeginLabelEditToolSetList(NMHDR* pNMHDR, LRESULT* pResult)
 
 /////////////////////////////////////////////////////////////////////////////
 // Validate label text and remove unwanted characters.
-void ToolSetView::ValidateLabelText(CString& newText)
+void ToolSetView::ValidateLabelText( SVString& rNewText )
 {
 	// strip leading and trailing spaces
-	newText.Trim();
+	 SvUl_SF::Trim( rNewText );
 
-	SVString newName( newText );
+	SvUl_SF::RemoveCharacters( rNewText, SvO::SVEXCLUDECHARS_TOOL_IP_NAME );
 
-	SvUl_SF::RemoveCharacters( newName, SvO::SVEXCLUDECHARS_TOOL_IP_NAME );
-
-	if( 0 < newName.size() )
+	if( rNewText.empty() )
 	{
-		newText = newName.c_str();
-	}
-	else
-	{
-		ASSERT(m_csLabelSaved.GetLength() > 0);
-		newText = m_csLabelSaved;
+		assert( m_LabelSaved.size() > 0);
+		rNewText = m_LabelSaved;
 	}
 }
 
-void ToolSetView::RenameItem(int item, const CString& oldName, const CString& newName)
+void ToolSetView::RenameItem(int item, const SVString& rOldName, const SVString& rNewName )
 {
 	// check if it's a group or a tool
 	if (m_labelingIndex >= 0 && m_labelingIndex < m_toolSetListCtrl.GetItemCount())
 	{
-		CString name = m_toolSetListCtrl.GetItemText(m_labelingIndex, 0);
-		if (!m_toolSetListCtrl.IsEndListDelimiter(name) && !m_toolSetListCtrl.IsEmptyStringPlaceHolder(name))
+		SVString Name = m_toolSetListCtrl.GetItemText(m_labelingIndex, 0);
+		if ( !m_toolSetListCtrl.IsEndListDelimiter( Name ) && !m_toolSetListCtrl.IsEmptyStringPlaceHolder( Name ) )
 		{
 			SVGUID toolId = m_toolSetListCtrl.getToolGuid(m_labelingIndex);
 			if (SV_GUID_NULL != toolId) // it's a Tool
 			{
-				TheSVObserverApp.OnObjectRenamed(SVString(m_csLabelSaved), toolId);
+				TheSVObserverApp.OnObjectRenamed(SVString(m_LabelSaved), toolId);
 			}
 			SVIPDoc* pDoc = GetIPDoc();
 			if (pDoc)
 			{
 				SVToolGrouping& rGroupings = pDoc->GetToolGroupings();
-				rGroupings.RenameItem(static_cast<LPCTSTR>(oldName), static_cast<LPCTSTR>(newName));
+				rGroupings.RenameItem( rOldName, rNewName );
 			}
 		}
 	}
@@ -452,16 +447,16 @@ void ToolSetView::OnEditLabelEnds()
 	// Update the text in the list control item.
 	if (m_labelingIndex >= 0 && m_labelingIndex < m_toolSetListCtrl.GetItemCount()) 
 	{
-		BOOL bResult = m_toolSetListCtrl.SetItemText(m_labelingIndex, 0, m_csLabelEdited);
+		BOOL bResult = m_toolSetListCtrl.SetItemText( m_labelingIndex, 0, m_LabelEdited.c_str() );
 		ASSERT(bResult);
 
 		// Cause a redraw.
 		m_toolSetListCtrl.Update(m_labelingIndex);
 
 		// Broadcast message that the tool name changed if necessary.
-		if (m_csLabelEdited != m_csLabelSaved)
+		if (m_LabelEdited != m_LabelSaved)
 		{
-			RenameItem(m_labelingIndex, m_csLabelSaved, m_csLabelEdited);
+			RenameItem(m_labelingIndex, m_LabelSaved, m_LabelEdited);
 		}
 	}
 	if (m_isLabeling)
@@ -487,21 +482,21 @@ bool ToolSetView::EditToolGroupingComment()
 {
 	bool bRetVal  = false;
 	const ToolListSelectionInfo& info = m_toolSetListCtrl.GetToolListSelectionInfo();
-	if (!m_toolSetListCtrl.IsEndListDelimiter(info.m_selection) && 
-		!m_toolSetListCtrl.IsEmptyStringPlaceHolder(info.m_selection))
+	if (!m_toolSetListCtrl.IsEndListDelimiter(info.m_Selection) && 
+		!m_toolSetListCtrl.IsEmptyStringPlaceHolder(info.m_Selection))
 	{
 		SVIPDoc* pDoc = GetIPDoc();
 		if (pDoc)
 		{
 			SVToolGrouping& rGroupings = pDoc->GetToolGroupings();
-			if (rGroupings.IsStartTag(info.m_selection.GetString()) || rGroupings.IsEndTag(info.m_selection.GetString()))
+			if( rGroupings.IsStartTag(info.m_Selection) || rGroupings.IsEndTag(info.m_Selection) )
 			{
 				bRetVal = true;
-				SvOg::SVTextEditDialog dlg( rGroupings.GetComment(info.m_selection.GetString()).c_str() );
+				SvOg::SVTextEditDialog dlg( rGroupings.GetComment(info.m_Selection).c_str() );
 				INT_PTR rc = dlg.DoModal();
 				if (IDOK == rc)
 				{
-					rGroupings.SetComment(info.m_selection.GetString(), dlg.getText().GetString());
+					rGroupings.SetComment(info.m_Selection, dlg.getText().GetString());
 				}
 			}
 		}
@@ -537,13 +532,13 @@ void ToolSetView::OnSelectToolComment()
 				if (nullptr != pSelectedTool)
 				{
 					// Get the tool comment...
-					CString csToolComment;
+					SVString ToolComment;
 					SVValueObjectClass* l_pVo = pSelectedTool->GetToolComment(); 
 					// bring up tool comment edit.
-					HRESULT hr = l_pVo->GetValue(csToolComment);
+					HRESULT hr = l_pVo->GetValue(ToolComment);
 					if (S_OK == hr )
 					{
-						SvOg::SVTextEditDialog Dlg( csToolComment );
+						SvOg::SVTextEditDialog Dlg( ToolComment.c_str() );
 						INT_PTR Result = Dlg.DoModal();
 						if( IDOK == Result )
 						{
@@ -618,7 +613,7 @@ void ToolSetView::OnRunOnce()
 
 bool ToolSetView::ShowDuplicateNameMessage(const SVString& rName) const
 {
-	SVStringArray msgList;
+	SVStringVector msgList;
 	msgList.push_back(rName);
 	SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay);
 	INT_PTR res  = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_RenameError_DuplicateName, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10221, SV_GUID_NULL,MB_RETRYCANCEL );
@@ -639,12 +634,13 @@ void ToolSetView::OnEndLabelEditToolSetList(NMHDR* pNMHDR, LRESULT* pResult)
 		CEdit* pEdit = m_toolSetListCtrl.GetEditControl();
 		if (nullptr != pEdit)
 		{
-			CString newText;
-			pEdit->GetWindowText(newText);
+			CString Text;
+			pEdit->GetWindowText(Text);
+			SVString NewText( Text );
 
 			// Validate the text and remove unwanted characters.
-			ValidateLabelText(newText);
-			if (m_csLabelSaved != newText) // In case it was renamed to the same name as before renaming
+			ValidateLabelText(NewText);
+			if (m_LabelSaved != NewText) // In case it was renamed to the same name as before renaming
 			{
 				if (!rGuid.empty()) // renaming a Tool
 				{
@@ -653,33 +649,33 @@ void ToolSetView::OnEndLabelEditToolSetList(NMHDR* pNMHDR, LRESULT* pResult)
 					if (nullptr != pToolSet && nullptr != pTool)
 					{
 						// Check for duplicate name and show message if Duplicate
-						bool bNameOk = CheckName(newText, m_csLabelSaved.GetString());
+						bool bNameOk = CheckName( NewText, m_LabelSaved.c_str() );
 						if (bNameOk)
 						{
-							pTool->SetName(newText);
+							pTool->SetName(NewText.c_str());
 						}
 						else
 						{
 							
-							m_duplicateName = newText.GetString();
+							m_duplicateName = NewText;
 							m_showDuplicateNameMessage = true;
-							newText = m_csLabelSaved; // reset it back to original
+							NewText = m_LabelSaved; // reset it back to original
 						}
 					}
 				}
 				else // renaming a Group label
 				{
-					if (!CheckName(newText, m_csLabelSaved.GetString()))
+					if (!CheckName(NewText, m_LabelSaved.c_str()))
 					{
-						m_duplicateName = newText.GetString();
+						m_duplicateName = NewText;
 						m_showDuplicateNameMessage = true;
-						newText = m_csLabelSaved; // reset it back to original
+						NewText = m_LabelSaved; // reset it back to original
 					}
 				}
 			}
 
 			// Save the edited and validated label for the callback message handler.
-			m_csLabelEdited = newText;
+			m_LabelEdited = NewText;
 
 			// Post call back message for OnEditLabelEnds();
 			PostMessage(WM_COMMAND, ID_EDIT_LABEL_ENDS);
@@ -856,16 +852,16 @@ void ToolSetView::OnSetFocus(CWnd* pOldWnd)
 	}
 }
 
-void ToolSetView::HandleExpandCollapse(const CString& name, bool bCollapse)
+void ToolSetView::HandleExpandCollapse(const SVString& rName, bool bCollapse)
 {
 	SVIPDoc* pDoc = GetIPDoc();
 	if (nullptr != pDoc)
 	{
 		SVToolGrouping& rGroupings = pDoc->GetToolGroupings();
-		bool bState = rGroupings.IsCollapsed(name.GetString());
+		bool bState = rGroupings.IsCollapsed( rName.c_str() );
 		if (bState != bCollapse)
 		{
-			rGroupings.Collapse(name.GetString(), bCollapse);
+			rGroupings.Collapse( rName.c_str(), bCollapse);
 			OnUpdate(this, ExpandCollapseHint, nullptr);
 		}
 	}
@@ -882,10 +878,10 @@ void ToolSetView::ToggleExpandCollapse(int item)
 		lvItem.iSubItem = 0;
 		SVToolGrouping& rGroupings = pDoc->GetToolGroupings();
 		m_toolSetListCtrl.GetItem(&lvItem);
-		CString name = m_toolSetListCtrl.GetItemText(item, 0);
+		SVString Name = m_toolSetListCtrl.GetItemText(item, 0);
 
-		bool bState = rGroupings.IsCollapsed(name.GetString());
-		if (rGroupings.Collapse(name.GetString(), bState ? false : true))
+		bool bState = rGroupings.IsCollapsed( Name.c_str() );
+		if (rGroupings.Collapse( Name.c_str(), bState ? false : true))
 		{
 			OnUpdate(this, ExpandCollapseHint, nullptr);
 		}
@@ -898,22 +894,22 @@ bool ToolSetView::IsEndToolGroupAllowed() const
 	SVIPDoc* pDoc = GetIPDoc();
 	if (nullptr != pDoc)
 	{
-		CString itemName;
 		int item = -1;
+		SVString itemName;
 		// If there is a unmatched Start Group before the insertion point, End Group is allowed
 		POSITION pos = m_toolSetListCtrl.GetFirstSelectedItemPosition();
 		if (0 != pos)
 		{
 			item = m_toolSetListCtrl.GetNextSelectedItem(pos);
 			itemName = m_toolSetListCtrl.GetItemText(item, 0);
-			if (m_toolSetListCtrl.IsEndListDelimiter(itemName))
+			if (m_toolSetListCtrl.IsEndListDelimiter( itemName ) )
 			{
-				itemName.Empty();
+				itemName.clear();
 			}
 		}
 		const SVToolGrouping& rGroupings = pDoc->GetToolGroupings();
-		const SVString& name = rGroupings.FindCandidateStartGroup(static_cast<LPCTSTR>(itemName));
-		if (!name.empty())
+		const SVString& rName = rGroupings.FindCandidateStartGroup(itemName);
+		if (!rName.empty())
 		{
 			bRetVal = true;
 		}
@@ -952,14 +948,14 @@ bool ToolSetView::enterSelectedEntry()
 	}
 }
 
-bool ToolSetView::CheckName(const CString& name , LPCTSTR pExclude) const
+bool ToolSetView::CheckName(const SVString& rName , LPCTSTR pExclude) const
 {
 	bool bNameOk = true;
 	SVIPDoc* pDoc = GetIPDoc();
 	if (nullptr != pDoc)
 	{
 		const SVToolGrouping& rGroupings = pDoc->GetToolGroupings();
-		bNameOk = rGroupings.IsNameUnique(static_cast<LPCTSTR>(name),pExclude );
+		bNameOk = rGroupings.IsNameUnique( rName, pExclude );
 	}
 	return bNameOk;
 }

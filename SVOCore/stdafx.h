@@ -33,9 +33,8 @@
 //************************************
 #pragma region Precompiled Headers
 #include "targetver.h"
-#include <afx.h>
-#include <afxwin.h>
-#include <afxdisp.h>
+#include <Windows.h>
+
 #include <algorithm>
 #include <concrt.h>
 #include <ctime>

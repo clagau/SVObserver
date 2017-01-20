@@ -8,9 +8,12 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   23 Apr 2013 09:48:56  $
 //******************************************************************************
+
+#pragma region Includes
 #include "stdafx.h"
 #include "SVObjectLibrary\SVClsIds.h"
 #include "SVCameraTriggerData.h"
+#pragma endregion Includes
 
 namespace Seidenader { namespace TriggerHandling {
 
@@ -52,11 +55,10 @@ namespace Seidenader { namespace TriggerHandling {
 	void SVCameraTriggerData::init()
 	{
 		// Setup Embedded Objects
-		CString strName;
-		strName.LoadString(IDS_OBJECTNAME_CAMERA_TRIGGER_TIMESTAMP);
-		m_timestamp.SetObjectEmbedded(SVCameraTriggerTimestampGuid, this, strName);
-		strName.LoadString(IDS_OBJECTNAME_CAMERA_TRIGGER_LINEINSTATE);
-		m_lineInState.SetObjectEmbedded(SVCameraTriggerLineInStateGuid, this, strName);
+		SVString Name = SvUl_SF::LoadSVString( IDS_OBJECTNAME_CAMERA_TRIGGER_TIMESTAMP );
+		m_timestamp.SetObjectEmbedded(SVCameraTriggerTimestampGuid, this, Name.c_str() );
+		Name = SvUl_SF::LoadSVString( IDS_OBJECTNAME_CAMERA_TRIGGER_LINEINSTATE );
+		m_lineInState.SetObjectEmbedded(SVCameraTriggerLineInStateGuid, this, Name.c_str());
 	/* For Camera based Triggering
 		RegisterEmbeddedObject(&m_timestamp, SVCameraTriggerTimestampGuid, IDS_OBJECTNAME_CAMERA_TRIGGER_TIMESTAMP, false, SVResetItemNone);
 		RegisterEmbeddedObject(&m_lineInState, SVCameraTriggerLineInStateGuid, IDS_OBJECTNAME_CAMERA_TRIGGER_LINEINSTATE, false, SVResetItemNone);

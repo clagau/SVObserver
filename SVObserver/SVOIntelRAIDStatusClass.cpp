@@ -9,6 +9,7 @@
 // * .Check In Date   : $Date:   23 Oct 2014 08:44:32  $
 // ******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 //Moved to precompiled header: #include <memory>
 #include "SVOIntelRAIDStatusClass.h"
@@ -16,9 +17,10 @@
 #include "SVStatusLibrary/SVEventLogClass.h"
 #include "SVSVIMStateClass.h"
 #include "SVStatusLibrary/GlobalPath.h"
+#pragma endregion Includes
 
 SVOIntelRAIDStatusClass::SVOIntelRAIDStatusClass()
-	:m_hCheckEvent( nullptr ), m_csRaidStatus(), m_csErrorStatus()
+	:m_hCheckEvent( nullptr ), m_RaidStatus(), m_ErrorStatus()
 {
 	m_hCheckEvent = ::CreateEvent( nullptr, true, false, nullptr );
 }
@@ -44,17 +46,15 @@ HRESULT SVOIntelRAIDStatusClass::UpdateStatus()
 			{
 				l_svOk = CheckStatus();
 
-				if( ! m_csRaidStatus.IsEmpty() )
+				if( !m_RaidStatus.empty() )
 				{
 					if( ::SetEvent( m_hCheckEvent ) )
 					{
-						CString l_csMessage;
-
-						l_csMessage.Format( "The RAID system is not reporting a functional status.\n\n"
+						SVString Message = SvUl_SF::Format( _T("The RAID system is not reporting a functional status.\n\n"
 							"STATUS : %s\n\n"
-							"Please contact your support representive for assistance.", m_csRaidStatus );
+							"Please contact your support representative for assistance."), m_RaidStatus );
 
-						ModelessMessageBox( l_csMessage, m_hCheckEvent );
+						ModelessMessageBox( Message, m_hCheckEvent );
 					}
 					else
 					{
@@ -91,8 +91,8 @@ HRESULT SVOIntelRAIDStatusClass::CheckStatus()
 	unsigned long l_ulItem = 0;
 	long lType = 0;
 
-	m_csRaidStatus.Empty();
-	m_csErrorStatus.Empty();
+	m_RaidStatus.clear();
+	m_ErrorStatus.clear();
 
 	HRESULT l_svOk = l_psvLog->Open( _T("Application") );
 
@@ -114,32 +114,31 @@ HRESULT SVOIntelRAIDStatusClass::CheckStatus()
 			{
 				l_ulItem = 1;
 
-				while( S_OK == l_svOk && l_ulItem <= l_ulCount  && m_csRaidStatus.IsEmpty() )
+				while( S_OK == l_svOk && l_ulItem <= l_ulCount  && m_RaidStatus.empty() )
 				{	// Look for event source "IAANTMon"
-					if( CString( l_svRecord.GetSourceName() ).CompareNoCase( _T("IAANTMon") ) == 0 )
+					if( 0 == SvUl_SF::CompareNoCase( SVString(l_svRecord.GetSourceName()), SVString(_T("IAANTMon")) ) )
 					{
 						lType = 1;
-						LPCTSTR l_szString = l_svRecord.GetFirstString();
-						CString l_strTmp = l_szString;
+						SVStringVector StatusStrings;
+						CString StatusString = l_svRecord.GetFirstString();
 						int pos = 0;
-						std::vector<CString> l_Strings;
 						// Parse lines in text string.
-						CString strTmp = l_strTmp.Tokenize(_T("\n"), pos );
+						CString strTmp = StatusString.Tokenize(_T("\n"), pos );
 						while( !strTmp.IsEmpty() )
 						{	// parse all lines that contain the word status.
 							if( strTmp.Find(_T("Status")) > -1 )
 							{
-								l_Strings.push_back(strTmp );
+								StatusStrings.push_back( SVString(strTmp) );
 							}
-							strTmp = l_strTmp.Tokenize( _T("\n"), pos );
+							strTmp = strTmp.Tokenize( _T("\n"), pos );
 						}
 
-						if( l_Strings.size() > 0 )
+						if( StatusStrings.size() > 0 )
 						{	// first status string.
-							m_csRaidStatus = l_Strings[0];
-							if( l_Strings.size() > 1) // if more than 1 status string.
+							m_RaidStatus = StatusStrings[0];
+							if( StatusStrings.size() > 1) // if more than 1 status string.
 							{   // overwrite with second status string.
-								m_csRaidStatus = l_Strings[1];
+								m_RaidStatus = StatusStrings[1];
 							}
 						}
 					}
@@ -159,7 +158,7 @@ HRESULT SVOIntelRAIDStatusClass::CheckStatus()
 							l_szString = l_svRecord.GetNextString();
 						}
 
-						m_csRaidStatus = l_csStatus;
+						m_RaidStatus = l_csStatus;
 					}
 
 					l_svOk = l_psvLog->ReadPrevious( l_svRecord );
@@ -172,13 +171,13 @@ HRESULT SVOIntelRAIDStatusClass::CheckStatus()
 
 	if( S_OK != l_svOk )
 	{
-		m_csErrorStatus.Format( _T("Error Reading Event Log (Item = %lu - ErrorCode = %lu)"), l_ulItem, l_svOk );
+		m_ErrorStatus = SvUl_SF::Format( _T("Error Reading Event Log (Item = %lu - ErrorCode = %lu)"), l_ulItem, l_svOk );
 
 		FILE* l_pFile = ::fopen(  SvStl::GlobalPath::Inst().GetObserverPath(_T("LastEventReadError.txt")).c_str() , _T("w") );
 
 		if( nullptr != l_pFile )
 		{
-			::fprintf( l_pFile,_T("%s\n"), m_csErrorStatus );
+			::fprintf( l_pFile,_T("%s\n"), m_ErrorStatus.c_str() );
 
 			::fclose( l_pFile );
 
@@ -186,7 +185,7 @@ HRESULT SVOIntelRAIDStatusClass::CheckStatus()
 		}
 	}
 
-	if( m_csRaidStatus.IsEmpty() )
+	if( m_RaidStatus.empty() )
 	{
 		SVSVIMStateClass::RemoveState( SV_STATE_RAID_FAILURE );
 	}
@@ -194,9 +193,9 @@ HRESULT SVOIntelRAIDStatusClass::CheckStatus()
 	{
 		if( lType == 1 )
 		{	// If we find Normal then assume good.
-			if( m_csRaidStatus.Find( _T("Normal") ) != -1 )
+			if( SVString::npos != m_RaidStatus.find( _T("Normal") ) )
 			{
-				m_csRaidStatus.Empty();
+				m_RaidStatus.clear();
 
 				SVSVIMStateClass::RemoveState( SV_STATE_RAID_FAILURE );
 			}
@@ -207,10 +206,10 @@ HRESULT SVOIntelRAIDStatusClass::CheckStatus()
 		}
 		if( lType == 2 )
 		{	// If we do not find Degraded or rebuilding... then assume good.
-			if( (m_csRaidStatus.Find( _T("Degraded") ) == -1) &&
-				(m_csRaidStatus.Find( _T("Rebuilding in progress")) == -1))
+			if( SVString::npos == m_RaidStatus.find( _T("Degraded") ) &&
+				SVString::npos == m_RaidStatus.find( _T("Rebuilding in progress")) )
 			{
-				m_csRaidStatus.Empty();
+				m_RaidStatus.clear();
 
 				SVSVIMStateClass::RemoveState( SV_STATE_RAID_FAILURE );
 			}
@@ -224,14 +223,14 @@ HRESULT SVOIntelRAIDStatusClass::CheckStatus()
 	return l_svOk;
 }
 
-const CString& SVOIntelRAIDStatusClass::GetRaidStatus()
+const SVString& SVOIntelRAIDStatusClass::GetRaidStatus()
 {
-	return m_csRaidStatus;
+	return m_RaidStatus;
 }
 
-const CString& SVOIntelRAIDStatusClass::GetErrorStatus()
+const SVString& SVOIntelRAIDStatusClass::GetErrorStatus()
 {
-	return m_csErrorStatus;
+	return m_ErrorStatus;
 }
 
 const HANDLE SVOIntelRAIDStatusClass::GetCheckEvent()

@@ -9,11 +9,21 @@
 //* .Check In Date   : $Date:   15 May 2014 09:42:24  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVOutObjectInfoStruct.h"
 #include "SVObjectLibrary.h"
 #include "SVObjectClass.h"
 #include "SVObjectManagerClass.h"
+#include "SVUtilityLibrary/SVString.h"
+#pragma endregion Includes
+
+#pragma region Declarations
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+#endif
+#pragma endregion Declarations
 
 SVOutObjectInfoStruct::SVOutObjectInfoStruct()
 : SVObjectInfoStruct(), UserInfoList(), m_CriticalSectionPtr()
@@ -117,8 +127,8 @@ HRESULT SVOutObjectInfoStruct::GetDependentsList( SVObjectClass* p_psvObject, SV
 		{
 			if( rInInfo.CheckExistence() )
 			{
-				CString strTempName;
-				CString strName = p_psvObject->GetCompleteObjectNameToObjectType( nullptr, SVToolObjectType ) + _T( "." );
+				SVString strTempName;
+				SVString strName = p_psvObject->GetCompleteObjectNameToObjectType( nullptr, SVToolObjectType ) + _T( "." );
 
 				// Who is using
 				strTempName = rInInfo.PObject->GetCompleteObjectNameToObjectType( nullptr, SVToolObjectType );
@@ -126,7 +136,7 @@ HRESULT SVOutObjectInfoStruct::GetDependentsList( SVObjectClass* p_psvObject, SV
 				// exclude ourself or our children and the document (published)
 				SVObjectInfoStruct objectTypeInfo = rInInfo.PObject->GetObjectInfo();
 
-				if( strTempName.Find( strName ) == -1 && 
+				if( SVString::npos == strTempName.find( strName ) && 
 					objectTypeInfo.ObjectTypeInfo.ObjectType != SVInspectionObjectType )
 				{
 					SVObjectPair pair;

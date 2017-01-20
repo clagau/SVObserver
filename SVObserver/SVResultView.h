@@ -16,6 +16,7 @@
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #include "SVResultList.h"
 #include "SVIPResultData.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -76,7 +77,7 @@ protected:
 
 	SVResultViewClass();
 
-	CString CalcProcessesPerSecond( double p_LastTriggerDistance );
+	SVString CalcProcessesPerSecond( double p_LastTriggerDistance );
 
 	void addColumnHeadings();
 	void addItems();
@@ -85,11 +86,11 @@ protected:
 	SVResultDefinitionDeque m_ResultDefinitions;
 	SVIPResultData m_ResultData;
 
-	CRect clientExtent;
-	CRect rect;
-	double oldValue;
-	double oldEndTime;
-	BOOL columnWidthSet;
+	CRect m_ClientExtent;
+	CRect m_Rect;
+	double m_OldValue;
+	double m_OldEndTime;
+	BOOL m_ColumnWidthSet;
 };
 
 ////////////////////////////////////////////////////////////////////////////////

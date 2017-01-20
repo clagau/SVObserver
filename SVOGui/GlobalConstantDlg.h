@@ -43,7 +43,7 @@ namespace Seidenader { namespace SVOGui
 		//! Method to set a list of existing names already used
 		//! \param rNames [in] reference to list of names
 		//************************************
-		void setExistingNames( const SVStringArray& rNames );
+		void setExistingNames( const SVStringVector& rNames );
 	#pragma endregion Public Methods
 
 	#pragma region Private Methods
@@ -61,8 +61,8 @@ namespace Seidenader { namespace SVOGui
 	#pragma region Member variables
 	private:
 		SvOi::GlobalConstantData& m_rData;					//Reference to the global constant data
-		SVStringArray			m_ExistingNames;			//List of existing global constant names
-		CString					m_Branch;					//The branch in which the global resides 
+		SVStringVector			m_ExistingNames;			//List of existing global constant names
+		SVString				m_Branch;					//The branch in which the global resides 
 		CString					m_Name;						//The global constant name
 		CComboBox				m_Type;						//The global constant type
 		CString					m_Description;				//The global constant description

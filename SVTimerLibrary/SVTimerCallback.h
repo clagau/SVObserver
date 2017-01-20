@@ -10,7 +10,10 @@
 //******************************************************************************
 #pragma once
 
+#pragma region Includes
 #include "SVUtilityLibrary/SVString.h"
+#pragma endregion Includes
+
 class SVTimerCallback
 {
 public:

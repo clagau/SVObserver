@@ -22,6 +22,7 @@
 #include "SVObjectCommandDataJson.h"
 #include "SVRemoteOutputObject.h"
 #include "SVXMLLibrary\SVObjectXMLWriter.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 class SVRemoteOutputGroup : 
@@ -32,9 +33,7 @@ class SVRemoteOutputGroup :
 public:
 	SV_DECLARE_CLASS( SVRemoteOutputGroup );
 
-	typedef std::vector< SVString > VecStringArray;
-
-	SVRemoteOutputGroup( LPCSTR ObjectName );
+	SVRemoteOutputGroup( LPCTSTR ObjectName );
 	SVRemoteOutputGroup( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVREMOTEOUTPUTGROUP);
 
 	virtual ~SVRemoteOutputGroup();
@@ -91,6 +90,6 @@ private:
 	const SVRemoteOutputGroup& operator=(const SVRemoteOutputGroup& p_rControl );
 };
 
-typedef std::map<CString, SVRemoteOutputGroup* > SVRemoteOutputGroupMap;
+typedef std::map<SVString, SVRemoteOutputGroup* > SVRemoteOutputGroupMap;
 
 

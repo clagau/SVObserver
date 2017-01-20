@@ -14,6 +14,7 @@
 #pragma region Includes
 #include "SVContainerLibrary/SVVector.h"
 #include "SVLibrary/SVFileNameClass.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 //This class is inheirated from the CArray class.  This class 

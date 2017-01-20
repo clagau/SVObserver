@@ -16,6 +16,7 @@
 #include "SVOResource\resource.h"
 #include "SVContainerLibrary/ObjectSelectorItem.h"
 #include "SVContainerLibrary/ObjectTreeItems.h"
+#include "SVUtilityLibrary/SVString.h"
 #include "DlgItemResizer.h"
 #include "NodeTreeCtrl.h"
 #include "LeafTreeCtrl.h"
@@ -104,7 +105,7 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 		LeafTreeCtrl m_LeafTree;						//The leaf tree control
 		CImageList m_StateImageList;					//The state image list
 		CImageList m_ImageList;							//The image list
-		CString m_HighlightedNode;						//The currently highlighted node location
+		SVString m_HighlightedNode;						//The currently highlighted node location
 		int m_HelpID;									//The help id used to identify the property page
 	#pragma endregion Member Variables
 	};

@@ -16,6 +16,7 @@
 #include "SVMatroxDigitizerLibrary/SVMatroxDigitizerInterface.h"
 #include "SVMatroxDigitizerLibrary/SVMatroxDigitizer.h"
 #include "SVMatroxDigitizerLibrary/SVMatroxDigitizerFeatureEnums.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 // This Method uses the default Setter and getter

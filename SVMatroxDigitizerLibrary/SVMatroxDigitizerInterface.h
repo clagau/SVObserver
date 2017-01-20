@@ -11,8 +11,10 @@
 
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <comdef.h>
+#include "SVUtilityLibrary/SVString.h"
 #include "SVMatroxLibrary/SVMatroxStatusInformation.h"
 #include "SVMatroxLibrary/SVMatroxSystem.h"
 #include "SVMatroxLibrary/SVMatroxBuffer.h"
@@ -23,6 +25,7 @@
 #include "SVMatroxDigitizerHookEnums.h"
 #include "SVMatroxDigitizerFeatureEnums.h"
 #include "SVMatroxDigitizerGrabEnums.h"
+#pragma endregion Includes
 
 typedef std::map<SVString, long> SVGigeEventList;
 

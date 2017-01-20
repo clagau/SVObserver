@@ -28,9 +28,9 @@
 //	useful.
 
 #include "stdafx.h"
-#include "PropTree.h"
+#include "SVRPropTree.h"
 
-#include "PropTreeItem.h"
+#include "SVRPropTreeItem.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // drawing helper functions
@@ -78,8 +78,6 @@ static void _DrawExpand(HDC hdc, LONG x, LONG y, bool bExpand, bool bFill)
 
 SVRPropertyItem::SVRPropertyItem() :
 	m_pProp(nullptr),
-	m_sLabel(_T("")),
-	m_sInfo(_T("")),
 	m_loc(0,0),
 	m_rc(0,0,0,0),
 	m_nCtrlID(0),
@@ -160,16 +158,22 @@ bool SVRPropertyItem::CanShrink()
 void SVRPropertyItem::Select(bool bSelect)
 {
 	if (bSelect)
+	{
 		m_dwState |= ItemSelected;
+	}
 	else
+	{
 		m_dwState &= ~ItemSelected;
+	}
 }
 
 
 void SVRPropertyItem::Expand(bool bExpand)
 {
 	if (bExpand)
+	{
 		m_dwState |= ItemExpanded;
+	}
 	else
 	{
 		if ( m_bCanShrink )
@@ -178,17 +182,23 @@ void SVRPropertyItem::Expand(bool bExpand)
 		}
 	}
 
-	if ( m_pProp )
+	if( nullptr != m_pProp )
+	{
 		m_pProp->RefreshItems(this);
+	}
 }
 
 
 void SVRPropertyItem::Check(bool bCheck)
 {
 	if (bCheck)
+	{
 		m_dwState |= ItemChecked;
+	}
 	else
+	{
 		m_dwState &= ~ItemChecked;
+	}
 }
 
 void SVRPropertyItem::SetCanShrink(bool bShrink)
@@ -204,18 +214,26 @@ void SVRPropertyItem::SetCanShrink(bool bShrink)
 void SVRPropertyItem::ReadOnly(bool bReadOnly)
 {
 	if (bReadOnly)
+	{
 		m_dwState |= ItemReadOnly;
+	}
 	else
+	{
 		m_dwState &= ~ItemReadOnly;
+	}
 }
 
 
 void SVRPropertyItem::HideItem(bool bHide)
 {
 	if (bHide)
+	{
 		m_dwState |= ItemHidden;
+	}
 	else
+	{
 		m_dwState &= ~ItemHidden;
+	}
 }
 
 
@@ -228,9 +246,13 @@ bool SVRPropertyItem::IsCheckBox()
 void SVRPropertyItem::HasCheckBox(bool bCheckbox)
 {
 	if (bCheckbox)
+	{
 		m_dwState |= ItemCheckbox;
+	}
 	else
+	{
 		m_dwState &= ~ItemCheckbox;
+	}
 }
 
 
@@ -278,7 +300,7 @@ LONG SVRPropertyItem::GetTotalHeight()
 
 void SVRPropertyItem::SetLabelText(LPCTSTR sLabel)
 {
-	m_sLabel = sLabel;
+	m_Label = sLabel;
 }
 
 
@@ -288,19 +310,19 @@ void SVRPropertyItem::SetLabelText(LPCTSTR sLabel)
 
 LPCTSTR SVRPropertyItem::GetLabelText()
 {
-	return m_sLabel;
+	return m_Label.c_str();
 }
 
 
 void SVRPropertyItem::SetInfoText(LPCTSTR sInfo)
 {
-	m_sInfo = sInfo;
+	m_Info = sInfo;
 }
 
 
 LPCTSTR SVRPropertyItem::GetInfoText()
 {
-	return m_sInfo;
+	return m_Info.c_str();
 }
 
 
@@ -509,9 +531,13 @@ LONG SVRPropertyItem::UpdatePosition( const RECT& rc, LONG x, LONG y )
 	nCol = m_pProp->GetOrigin().x;
 
 	if (IsRootLevel())
+	{
 		drc.SetRect(pt.x + m_pProp->PROPTREEITEM_EXPANDCOLUMN, pt.y, rc.right, pt.y + nTotal);
+	}
 	else
+	{
 		drc.SetRect(pt.x + m_pProp->PROPTREEITEM_EXPANDCOLUMN, pt.y, nCol, pt.y + nTotal);
+	}
 
 	// calc/draw expand box position
 	if (GetChild())
@@ -525,7 +551,9 @@ LONG SVRPropertyItem::UpdatePosition( const RECT& rc, LONG x, LONG y )
 		ir.OffsetRect(0, -m_pProp->GetOrigin().y);
 	}
 	else
+	{
 		m_rcExpand.SetRectEmpty();
+	}
 
 	// calc/draw check box position
 	if (IsCheckBox())
@@ -541,7 +569,9 @@ LONG SVRPropertyItem::UpdatePosition( const RECT& rc, LONG x, LONG y )
 		m_rcCheckbox = ir;
 	}
 	else
+	{
 		m_rcCheckbox.SetRectEmpty();
+	}
 
 	// calc label position
 	ir = drc;
@@ -552,7 +582,7 @@ LONG SVRPropertyItem::UpdatePosition( const RECT& rc, LONG x, LONG y )
 		OffsetRect(&ir, m_pProp->PROPTREEITEM_CHECKBOX + m_pProp->PROPTREEITEM_SPACE * 2, 0);
 
 	// draw label
-	if (!m_sLabel.IsEmpty())
+	if (!m_Label.empty())
 	{
 		// draw the text highlighted if selected
 		if (IsSelected() && CanHighlight())
@@ -608,7 +638,9 @@ LONG SVRPropertyItem::DrawItem(CDC* pDC, const RECT& rc, LONG x, LONG y)
 
 
 	if(!IsRootLevel() && IsHidden())
+	{
 		return 0;
+	}
 
 
 	COLORREF rgbOldFore = pDC->SetTextColor( m_rgbForeColor );
@@ -641,9 +673,13 @@ LONG SVRPropertyItem::DrawItem(CDC* pDC, const RECT& rc, LONG x, LONG y)
 	nCol = m_pProp->GetOrigin().x;
 
 	if (IsRootLevel())
+	{
 		drc.SetRect(pt.x + m_pProp->PROPTREEITEM_EXPANDCOLUMN, pt.y, rc.right, pt.y + nTotal);
+	}
 	else
+	{
 		drc.SetRect(pt.x + m_pProp->PROPTREEITEM_EXPANDCOLUMN, pt.y, nCol, pt.y + nTotal);
+	}
 
 	pDC->FillSolidRect(&drc, m_rgbBackColor);
 
@@ -670,7 +706,9 @@ LONG SVRPropertyItem::DrawItem(CDC* pDC, const RECT& rc, LONG x, LONG y)
 			_DrawExpand(pDC->m_hDC, ir.left, ir.top, IsExpanded(), !IsRootLevel());
 	}
 	else
+	{
 		m_rcExpand.SetRectEmpty();
+	}
 
 	// calc/draw check box position
 	if (IsCheckBox())
@@ -686,7 +724,9 @@ LONG SVRPropertyItem::DrawItem(CDC* pDC, const RECT& rc, LONG x, LONG y)
 		m_rcCheckbox = ir;
 	}
 	else
+	{
 		m_rcCheckbox.SetRectEmpty();
+	}
 
 	HRGN hRgn = nullptr;
 
@@ -703,13 +743,17 @@ LONG SVRPropertyItem::DrawItem(CDC* pDC, const RECT& rc, LONG x, LONG y)
 
 	// offset the label text if item has a check box
 	if (bCheck)
+	{
 		OffsetRect(&ir, m_pProp->PROPTREEITEM_CHECKBOX + m_pProp->PROPTREEITEM_SPACE * 2, 0);
+	}
 
 	// draw label
-	if (!m_sLabel.IsEmpty())
+	if (!m_Label.empty())
 	{
 		if (IsRootLevel())
+		{
 			l_pOldFont = pDC->SelectObject(SVRPropTree::GetBoldFont());
+		}
 		else
 		{
 			l_pOldFont = pDC->SelectObject(IsBold() ? SVRPropTree::GetBoldFont() : SVRPropTree::GetNormalFont());
@@ -718,7 +762,7 @@ LONG SVRPropertyItem::DrawItem(CDC* pDC, const RECT& rc, LONG x, LONG y)
 		pDC->SetTextColor( m_rgbForeColor );
 		//pDC->SetTextColor(GetSysColor(COLOR_BTNTEXT));
 		pDC->SetBkMode(TRANSPARENT);
-		pDC->DrawText(m_sLabel, &ir, DT_SINGLELINE|DT_VCENTER|DT_CALCRECT);
+		pDC->DrawText(m_Label.c_str(), &ir, DT_SINGLELINE|DT_VCENTER|DT_CALCRECT);
 
 		// draw the text highlighted if selected
 		if (IsSelected() && CanHighlight())
@@ -740,9 +784,11 @@ LONG SVRPropertyItem::DrawItem(CDC* pDC, const RECT& rc, LONG x, LONG y)
 
 		// check if we need to draw the text as disabled
 		if (!m_pProp->IsWindowEnabled())
+		{
 			pDC->SetTextColor(GetSysColor(COLOR_GRAYTEXT));
+		}
 
-		pDC->DrawText(m_sLabel, &ir, DT_SINGLELINE|DT_VCENTER);
+		pDC->DrawText(m_Label.c_str(), &ir, DT_SINGLELINE|DT_VCENTER);
 
 //JAB110508
 		pDC->SelectObject(l_pOldFont);
@@ -909,7 +955,7 @@ bool SVRPropertyItem::GetItemValue(double& /*dblVal*/)
 }
 
 
-bool SVRPropertyItem::GetItemValue(CString& /*strVal*/)
+bool SVRPropertyItem::GetItemValue(SVString& /*strVal*/)
 {
 	ASSERT(0);
 	return false;
@@ -1063,7 +1109,7 @@ bool SVRPropertyItem::SetItemValuePtr(double& /*dblVal*/)
 }
 
 
-bool SVRPropertyItem::SetItemValuePtr(CString& /*strSrc*/)
+bool SVRPropertyItem::SetItemValuePtr(SVString& /*strSrc*/)
 {
 	ASSERT(0);
 	return false;

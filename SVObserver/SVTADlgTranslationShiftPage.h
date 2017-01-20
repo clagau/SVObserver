@@ -14,7 +14,7 @@
 #pragma region Includes
 #include "SVEnumerateCombo.h"
 #include "SVLibrary/SVTaskObjectValueInterface.h"
-#include "PropertyTree/PropTree.h"
+#include "SVRPropertyTree/SVRPropTree.h"
 #pragma endregion Includes
 
 class SVToolAdjustmentDialogSheetClass;
@@ -78,8 +78,8 @@ public:
 	afx_msg void OnBnClickedPerformTranslation();
 	afx_msg void OnBnClickedTranslationXFormulaButton();
 	afx_msg void OnBnClickedTranslationYFormulaButton();
-	CString StrTranslationXValue;
-	CString StrTranslationYValue;
+	CString m_TranslationXValue;
+	CString m_TranslationYValue;
 	SVEnumerateComboClass m_ctlShiftModeCombo;
 
 public:

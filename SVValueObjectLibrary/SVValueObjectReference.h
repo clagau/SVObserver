@@ -12,6 +12,7 @@
 
 #pragma region Includes
 #include "SVUtilityLibrary/SVUtilityGlobals.h"
+#include "SVUtilityLibrary/SVString.h"
 #include "SVObjectLibrary/SVObjectReference.h"
 #include "SVValueObject.h"
 #pragma endregion Includes
@@ -22,7 +23,7 @@ public:
 	typedef SVCheckedObjectReference<SVValueObjectClass> base;
 	// forwarding constructors...
 	SVValueObjectReference() : base() {}
-	SVValueObjectReference( SVObjectClass* pObject, long lArrayIndex, CString strDefaultValue = CString() ) : base(pObject, lArrayIndex, strDefaultValue) {}
+	SVValueObjectReference( SVObjectClass* pObject, long lArrayIndex, SVString strDefaultValue = SVString() ) : base(pObject, lArrayIndex, strDefaultValue) {}
 	SVValueObjectReference( SVObjectClass* pObject, const SVObjectNameInfo& p_rNameInfo) : base(pObject, p_rNameInfo) {}
 	SVValueObjectReference( SVObjectClass* pObject ) : base(pObject) {}
 	SVValueObjectReference( const SVObjectReference& rhs ) : base(rhs) {}
@@ -56,7 +57,7 @@ public:
 	/// Return the value array as string semicolon-separated.
 	/// \param rValue [out] The return value.
 	/// \returns HRESULT
-	HRESULT GetValues(CString& rValue) const
+	HRESULT GetValues(SVString& rValue) const
 	{
 		return (static_cast<SVValueObjectClass*>(m_pObject))->GetValues(rValue);
 	}

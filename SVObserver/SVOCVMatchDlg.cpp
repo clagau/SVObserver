@@ -15,6 +15,7 @@
 #include "SVOCVMatchDlg.h"
 #include "SVOCVAnalyzerResult.h"
 #include "SVStatusLibrary\GlobalPath.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -121,8 +122,11 @@ BOOL SVOCVMatchDlg::OnInitDialog()
 	
 	SetTaskObject( pOCVAnalyzerResult );
 
-	pOCVAnalyzerResult->m_fnvoMatchStringFileName.GetValue( m_MatchFilename );
-	pOCVAnalyzerResult->m_svoMatchString.GetValue( m_MatchString );
+	SVString Value;
+	pOCVAnalyzerResult->m_fnvoMatchStringFileName.GetValue( Value );
+	m_MatchFilename = Value.c_str();
+	pOCVAnalyzerResult->m_svoMatchString.GetValue( Value );
+	m_MatchString = Value.c_str();
 	pOCVAnalyzerResult->m_bvoUseMatchFile.GetValue( bUseMatchFile );
 	pOCVAnalyzerResult->m_bvoPerformOCR.GetValue( bPerformOCR );
 	m_nRadioOperation = bPerformOCR ? 0 : 1;
@@ -190,11 +194,11 @@ void SVOCVMatchDlg::OnFontBrowseCmd()
 	//
 	// Try to read the current image file path name from registry...
 	//
-	CString csPath = AfxGetApp()->GetProfileString(	_T("Settings"),
+	CString Path = AfxGetApp()->GetProfileString(	_T("Settings"),
 	                                                _T("OCVMatchStringFilePath"),
 	                                                SvStl::GlobalPath::Inst().GetRunPath().c_str());
 
-	svfncFileName.SetDefaultPathName( csPath );
+	svfncFileName.SetDefaultPathName( SVString(Path) );
 
 	UpdateData( TRUE );
 
@@ -204,9 +208,9 @@ void SVOCVMatchDlg::OnFontBrowseCmd()
 	{
 		AfxGetApp()->WriteProfileString( _T( "Settings" ),
 		                                 _T( "OCVMatchStringFilePath" ),
-										 svfncFileName.GetPathName() );
+										 svfncFileName.GetPathName().c_str() );
 
-		m_MatchFilename = svfncFileName.GetFullFileName();
+		m_MatchFilename = svfncFileName.GetFullFileName().c_str();
 
 		UpdateData( FALSE );
 	}

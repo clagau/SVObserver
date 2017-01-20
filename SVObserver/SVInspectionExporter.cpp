@@ -26,7 +26,7 @@
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVObjectLibrary/SVToolsetScriptTags.h"
 #include "SVUtilityLibrary/ZipHelper.h"
-#include "SVLibrary/StringEscape.h"
+#include "SVUtilityLibrary/SVStringConversions.h"
 #include "SVInspectionProcess.h"
 #include "SVPPQObject.h"
 #include "SVObserver.h"
@@ -118,16 +118,16 @@ static void WriteGlobalConstants(SVObjectXMLWriter& rWriter, SVObjectClass* pObj
 			pGlobalConstant = dynamic_cast<BasicValueObject*> (PairIter->second);
 			if( nullptr != pGlobalConstant )
 			{
-				rWriter.StartElement( pGlobalConstant->GetCompleteObjectName() );
+				rWriter.StartElement( pGlobalConstant->GetCompleteName().c_str() );
 
 				Value.Clear();
 				pGlobalConstant->getValue( Value );
 				rWriter.WriteAttribute( CTAG_VALUE, Value );
 				Value.Clear();
-				CString Description( pGlobalConstant->getDescription() );
+				SVString Description( pGlobalConstant->getDescription() );
 				//This is needed to remove any CR LF in the description
-				SvLib::AddEscapeSpecialCharacters( Description, true );
-				Value.SetString( Description );
+				SvUl::AddEscapeSpecialCharacters( Description, true );
+				Value.SetString( Description.c_str() );
 				rWriter.WriteAttribute( CTAG_DESCRIPTION, Value );
 
 				rWriter.EndElement();

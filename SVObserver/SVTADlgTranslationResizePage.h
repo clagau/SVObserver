@@ -11,7 +11,7 @@
 
 #pragma region Includes
 #include "SVLibrary/SVTaskObjectValueInterface.h"
-#include "PropertyTree/PROPTREE.H"
+#include "SVRPropertyTree/SVRPropTree.h"
 #include "SVOGui/PictureDisplay.h"
 #include "SVOGui\ISVPropertyPageDialog.h"  // for QueryAllowExit()
 #pragma endregion Includes

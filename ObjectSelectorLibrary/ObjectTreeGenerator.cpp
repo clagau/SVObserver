@@ -161,8 +161,7 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 			BracketPos = Location.rfind( _T("[") );
 			if( SVString::npos !=  BracketPos)
 			{
-				SVString::size_type DotPos( SVString::npos );
-				DotPos = Location.rfind( _T("."), BracketPos );
+				size_t DotPos = Location.rfind( _T("."), BracketPos );
 				if( SVString::npos !=  DotPos)
 				{
 					SVString Name = Location.substr(DotPos, BracketPos - DotPos);
@@ -406,7 +405,7 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 
 	SVString ObjectTreeGenerator::getFilteredLocation( const TranslateMap& rFilters, const SVString& rLocation ) const
 	{
-		std::string rFilterLocation(rLocation.c_str());
+		SVString rFilterLocation( rLocation.c_str() );
 		bool bFound = false;
 
 		for (TranslateMap::const_iterator Iter = rFilters.begin(); rFilters.end() != Iter && !bFound; ++Iter)

@@ -9,6 +9,8 @@
 //* .Check In Date   : $Date:   01 Oct 2013 06:14:50  $
 //******************************************************************************
 #pragma once
+
+#pragma region Includes
 //Moved to precompiled header: #include <vector>
 //Moved to precompiled header: #include <set>
 //Moved to precompiled header: #include <iterator>
@@ -25,6 +27,7 @@
 #include "SVSystemLibrary/SVAsyncProcedure.h"
 #include "SVTimerLibrary/SVClock.h"
 #include "SVUtilityLibrary/SVString.h"
+#pragma endregion Includes
 
 class SVAcquisitionBufferInterface;
 

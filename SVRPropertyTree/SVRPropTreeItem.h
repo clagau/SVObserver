@@ -140,7 +140,7 @@ public:
 	virtual bool GetItemValue(UINT& uintVal);
 	virtual bool GetItemValue(float& fltVal);
 	virtual bool GetItemValue(double& dblVal);
-	virtual bool GetItemValue(CString& strVal);
+	virtual bool GetItemValue(SVString& strVal);
     virtual bool GetItemValue(VARIANT& vtVal);
 
 	// Set the item's attribute value
@@ -166,7 +166,7 @@ public:
 	virtual bool SetItemValuePtr(UINT& uintVal);
 	virtual bool SetItemValuePtr(float& fltVal);
 	virtual bool SetItemValuePtr(double& dblVal);
-	virtual bool SetItemValuePtr(CString& strVal);
+	virtual bool SetItemValuePtr(SVString& strVal);
 
 	// Called when attribute area has changed size
 	virtual void OnMove();
@@ -213,10 +213,10 @@ protected:
 	SVRPropTree*	m_pProp;
 
 	// TreeItem label name
-	CString			m_sLabel;
+	SVString			m_Label;
 
 	// Descriptive info text
-	CString			m_sInfo;
+	SVString			m_Info;
 
 	// TreeItem location
 	CPoint			m_loc;

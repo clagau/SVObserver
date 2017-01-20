@@ -182,7 +182,7 @@ SVLut& Lut(SVDeviceParamWrapper& w)
 		w = SVLutDeviceParam(); 
 		p = w.DerivedValue(p);
 	} 
-	ASSERT(p); 
+	assert(p); 
 	return const_cast<SVLutDeviceParam*>(p)->lut;
 }
 
@@ -194,7 +194,7 @@ SVLightReference& LR(SVDeviceParamWrapper& w)
 		w = SVLightReferenceDeviceParam(); 
 		p = w.DerivedValue(p);
 	} 
-	ASSERT(p); 
+	assert(p); 
 	return const_cast<SVLightReferenceDeviceParam*>(p)->lr;
 }
 

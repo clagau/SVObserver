@@ -40,8 +40,8 @@ SVIOAdjustDialogClass::SVIOAdjustDialogClass(CWnd* pParent /*=nullptr*/)
 , m_Items( boost::bind( &( CComboBox::GetItemData ), &IOCombo, _1 ), boost::bind( &( CComboBox::SetItemData ), &IOCombo, _1, _2 ) )
 {
 	//{{AFX_DATA_INIT(SVIOAdjustDialogClass)
-	StrIOName = _T("");
-	StrIOValue = _T("");
+	IOName = _T("");
+	IOValue = _T("");
 	IsForced = FALSE;
 	IsInverted = FALSE;
 	IsForcedTrue = FALSE;
@@ -65,7 +65,7 @@ void SVIOAdjustDialogClass::DoDataExchange(CDataExchange* pDX)
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(SVIOAdjustDialogClass)
 	DDX_Control(pDX, IDC_IONAME_COMBO, IOCombo);
-	DDX_Text(pDX, IDC_VALUE_STATIC, StrIOValue);
+	DDX_Text(pDX, IDC_VALUE_STATIC, IOValue);
 	DDX_Check(pDX, IDC_FORCE_CHECK, IsForced);
 	DDX_Check(pDX, IDC_INVERT_CHECK, IsInverted);
 	DDX_Check(pDX, IDC_FORCE_1_RADIO, IsForcedTrue);
@@ -189,7 +189,7 @@ BOOL SVIOAdjustDialogClass::OnInitDialog()
 
 			if( ( pIOEntry->m_IOId.empty() ) &&  SV_IS_KIND_OF( pIOEntry->m_pValueObject, SVBoolValueObjectClass ) )
 			{
-				nIndex = IOCombo.AddString( pIOEntry->m_pValueObject->GetCompleteObjectName() );
+				nIndex = IOCombo.AddString( pIOEntry->m_pValueObject->GetCompleteName().c_str() );
 				m_Items.SetItemData( nIndex, pIOEntry );
 			}// end if
 		}// end if
@@ -201,7 +201,7 @@ BOOL SVIOAdjustDialogClass::OnInitDialog()
 				pIOEntry = pConfig->GetRaidErrorBit();
 				if( ( pIOEntry->m_IOId.empty() ) && SV_IS_KIND_OF( pIOEntry->m_pValueObject, SVBoolValueObjectClass ) )
 				{
-					nIndex = IOCombo.AddString( pIOEntry->m_pValueObject->GetCompleteObjectName() );
+					nIndex = IOCombo.AddString( pIOEntry->m_pValueObject->GetCompleteName().c_str() );
 					m_Items.SetItemData( nIndex, pIOEntry );
 				}// end if
 			}
@@ -234,7 +234,7 @@ BOOL SVIOAdjustDialogClass::OnInitDialog()
 				if( ( pIOEntry->m_IOId.empty() ) && SV_IS_KIND_OF( pIOEntry->m_pValueObject, SVBoolValueObjectClass ) &&
 					pIOEntry->m_ObjectType == IO_DIGITAL_OUTPUT )
 				{
-					nIndex = IOCombo.AddString( pIOEntry->m_pValueObject->GetCompleteObjectName() );
+					nIndex = IOCombo.AddString( pIOEntry->m_pValueObject->GetCompleteName().c_str() );
 					m_Items.SetItemData( nIndex, pIOEntry );
 				}// end if
 			}// end for

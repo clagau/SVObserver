@@ -19,7 +19,6 @@
 
 #include "SVInspectionProcess.h"
 #include "SVBlobAnalyzerDialog.h"
-#include "SVGlobal.h"
 #include "SVObjectLibrary\SVGetObjectDequeByTypeVisitor.h"
 #include "SVResultDouble.h"
 #include "SVResultLong.h"
@@ -28,6 +27,8 @@
 #include "SVSVIMStateClass.h"
 #include "TextDefinesSvO.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
+#include "ObjectInterfaces\TextDefineSvOi.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 struct SVBlobFeatureConstants BlobFeatureConstants[]=
@@ -387,7 +388,6 @@ BOOL SVBlobAnalyzerClass::CloseObject ()
 DWORD SVBlobAnalyzerClass::AllocateResult (SVBlobFeatureEnum aFeatureIndex)
 {
 	SVClassInfoStruct       resultClassInfo;
-	CString                 strTitle;
 	SVObjectTypeInfoStruct  interfaceInfo;
 
 	SVDoubleResultClass*    pResult(nullptr);
@@ -409,9 +409,9 @@ DWORD SVBlobAnalyzerClass::AllocateResult (SVBlobFeatureEnum aFeatureIndex)
 		resultClassInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
 		resultClassInfo.m_ObjectTypeInfo.SubType	= SVResultDoubleObjectType;
 		resultClassInfo.m_ClassId = SVDoubleResultClassGuid;
-		resultClassInfo.m_ClassName = SvUl_SF::LoadString( IDS_OBJECTNAME_RESULT );
-		strTitle = msvValue[aFeatureIndex].GetName(); //.LoadString( IDS_CLASSNAME_RESULT_DOUBLE );
-		resultClassInfo.m_ClassName += SV_TSTR_SPACE + strTitle;
+		resultClassInfo.m_ClassName = SvUl_SF::LoadSVString( IDS_OBJECTNAME_RESULT );
+		SVString Title = msvValue[aFeatureIndex].GetName();
+		resultClassInfo.m_ClassName += _T(" ") + Title;
 
 		// Construct the result class
 		pResult = (SVDoubleResultClass *) resultClassInfo.Construct();
@@ -488,7 +488,6 @@ DWORD SVBlobAnalyzerClass::AllocateResult (SVBlobFeatureEnum aFeatureIndex)
 DWORD SVBlobAnalyzerClass::AllocateBlobResult ()
 {
 	SVClassInfoStruct       resultClassInfo;
-	CString                 strTitle;
 	SVObjectTypeInfoStruct  interfaceInfo;
 
 //    SVDoubleResultClass*    pResult;
@@ -506,9 +505,9 @@ DWORD SVBlobAnalyzerClass::AllocateBlobResult ()
 		resultClassInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
 		resultClassInfo.m_ObjectTypeInfo.SubType	= SVResultLongObjectType;
 		resultClassInfo.m_ClassId = SVLongResultClassGuid;
-		resultClassInfo.m_ClassName = SvUl_SF::LoadString( IDS_OBJECTNAME_RESULT );
-		strTitle = m_lvoNumberOfBlobsFound.GetName();
-		resultClassInfo.m_ClassName += SV_TSTR_SPACE + strTitle;
+		resultClassInfo.m_ClassName = SvUl_SF::LoadSVString( IDS_OBJECTNAME_RESULT );
+		SVString Title = m_lvoNumberOfBlobsFound.GetName();
+		resultClassInfo.m_ClassName += _T(" ") + Title;
 		
 		// Construct the result class
 		m_pResultBlob = (SVLongResultClass *) resultClassInfo.Construct();
@@ -702,7 +701,7 @@ SVLongResultClass* SVBlobAnalyzerClass::GetBlobResultObject()
 //
 BOOL SVBlobAnalyzerClass::CreateObject(SVObjectLevelCreateStruct* PCreateStructure)
 {
-	CString             tempString;
+	SVString            tempString;
 	SVBlobFeatureEnum   i(SV_AREA);
 	double              deflt(0.0);
 	DWORD				LastError(0);
@@ -726,14 +725,14 @@ BOOL SVBlobAnalyzerClass::CreateObject(SVObjectLevelCreateStruct* PCreateStructu
 		//
 		msvPersistantFeaturesEnabled.GetValue ( tempString );
 
-		if ( tempString.GetLength() < SV_TOPOF_LIST )
+		if ( SV_TOPOF_LIST > static_cast<int> (tempString.size()) )
 		{
-			tempString += "00";
+			tempString += _T("00");
 			long l_lTempIndex = msvPersistantFeaturesEnabled.GetLastSetIndex();
 			msvPersistantFeaturesEnabled.SetValue(l_lTempIndex,tempString);
 		}
 		
-		_tcscpy (msvszFeaturesEnabled, tempString);
+		_tcscpy (msvszFeaturesEnabled, tempString.c_str());
 		
 		m_lvoBlobSampleSize.GetValue( m_lBlobSampleSize );
 		m_lvoMaxBlobDataArraySize.GetValue( m_lMaxBlobDataArraySize );

@@ -29,9 +29,11 @@
 
 #pragma once
 
-#include "PropTreeItem.h"
-#include "VariantObj.h"
+#pragma region Includes
+#include "SVUtilityLibrary/SVString.h"
+#include "SVRPropTreeItem.h"
 #include "SVNotifyButton.h"
+#pragma endregion Includes
 
 #define MSG_TO_PARENT WM_USER+10
 
@@ -63,7 +65,7 @@ public:
 	virtual bool GetItemValue(UINT& puintVal) override;
 	virtual bool GetItemValue(float& pfltVal) override;
 	virtual bool GetItemValue(double& pdblVal) override;
-	virtual bool GetItemValue(CString& lpszVal) override;
+	virtual bool GetItemValue(SVString& rVal) override;
 	virtual bool GetItemValue(VARIANT& vtVal) override;
 	virtual bool GetItemValue(bool& bVal) override;
 
@@ -77,7 +79,7 @@ public:
 	virtual bool SetItemValue(const UINT uintVal) override;
 	virtual bool SetItemValue(const float fltVal) override;
 	virtual bool SetItemValue(const double dblVal) override;
-	virtual bool SetItemValue(LPCTSTR pstrVal) override;
+	virtual bool SetItemValue(LPCTSTR pVal) override;
 	virtual bool SetItemValue(const bool bVal) override;
 
 	// Set the item's attribute reference
@@ -90,7 +92,7 @@ public:
 	virtual bool SetItemValuePtr(UINT& puintVal) override;
 	virtual bool SetItemValuePtr(float& pfltVal) override;
 	virtual bool SetItemValuePtr(double& pdblVal) override;
-	virtual bool SetItemValuePtr(CString& strVal) override;
+	virtual bool SetItemValuePtr(SVString& rVal) override;
 
 	// @cmember Called when attribute area has changed size.
 	virtual void OnMove() override;
@@ -110,13 +112,13 @@ public:
 	//(Will be set a new focus, OnKillFocus will be fired automatically.)
 	virtual void OnLossFocus() override;
 
-	void SetButtonText( const CString& sText );
+	void SetButtonText( LPCTSTR Text );
 
 protected:
-	CVariantObj	m_vtData;
-	CString*    m_pstr;
-	CString     m_strPrevious;
-	CString     m_strButtonText;
+	_variant_t	m_vtData;
+	SVString*   m_pValue;
+	SVString    m_Previous;
+	SVString    m_ButtonText;
 
 // Operations
 public:

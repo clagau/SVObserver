@@ -22,7 +22,7 @@
 #include "TextDefinesSvO.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
 #include "CameraLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
-
+#include "SVUtilityLibrary/SVStringConversions.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -86,13 +86,13 @@ SVToolAdjustmentDialogMaskPageClass::SVToolAdjustmentDialogMaskPageClass(const S
 	m_pThis = this;
 
    // Set SVFileNameClass for Import & Export functions.
-   CString strDefExt(TheSVObserverApp.GetStringResource(IDS_FULL_MASKFILE_EXTENSION));
-   CString strFilter(TheSVObserverApp.GetStringResource(IDS_MASKFILE_DIALOG_FILTER));
+   SVString DefaultExtension(SvUl_SF::LoadSVString(IDS_FULL_MASKFILE_EXTENSION));
+   SVString Filter(SvUl_SF::LoadSVString(IDS_MASKFILE_DIALOG_FILTER));
 
-   m_svfnFileName.SetDefaultFileExtension(strDefExt);
+   m_svfnFileName.SetDefaultFileExtension(DefaultExtension.c_str());
    m_svfnFileName.SetFileSaveFlags(OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT);
    m_svfnFileName.SetFileSelectFlags(OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT);
-   m_svfnFileName.SetFileExtensionFilterList(strFilter);
+   m_svfnFileName.SetFileExtensionFilterList(Filter.c_str());
 
 	//{{AFX_DATA_INIT(SVToolAdjustmentDialogMaskPageClass)
 	m_bActivateMask = false;
@@ -146,7 +146,7 @@ void SVToolAdjustmentDialogMaskPageClass::GetData()
 {
 	m_bActivateMask = m_Values.Get<bool>(EnabledTag);
 	long lColor = m_Values.Get<long>(FillColorTag);
-	m_sFillColor = AsString(lColor);
+	m_sFillColor = SvUl::AsString(lColor).c_str();
 
 	m_iMaskType = m_Values.Get<int>(MaskTypeTag);
 
@@ -411,20 +411,19 @@ void SVToolAdjustmentDialogMaskPageClass::OnExportMaskButton()
 	// Use SVFileNameClass for browsing
 	if (m_svfnFileName.SaveFile())
 	{
-		CString strExt = TheSVObserverApp.GetStringResource(IDS_FULL_MASKFILE_EXTENSION);
+		SVString Extension = SvUl_SF::LoadSVString(IDS_FULL_MASKFILE_EXTENSION);
 
-		if (m_svfnFileName.GetExtension() != strExt)
+		if (m_svfnFileName.GetExtension() != Extension)
 		{
-			m_svfnFileName.SetExtension(strExt);
+			m_svfnFileName.SetExtension(Extension.c_str());
 		}
-		CString strPathName = m_svfnFileName.GetFullFileName();
 
-		HRESULT hr = m_maskController.ExportMask(SVString(strPathName));
+		HRESULT hr = m_maskController.ExportMask( m_svfnFileName.GetFullFileName() );
 		if (!SUCCEEDED(hr))
 		{
 			SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-			SVStringArray msgList;
-			msgList.push_back( SVString(strPathName) );
+			SVStringVector msgList;
+			msgList.push_back( m_svfnFileName.GetFullFileName() );
 			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_CannotOpenFile, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10216 );
 		}
 	}
@@ -443,7 +442,7 @@ void SVToolAdjustmentDialogMaskPageClass::OnImportMaskButton()
 		if (!SUCCEEDED(hr))
 		{
 			SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-			SVStringArray msgList;
+			SVStringVector msgList;
 			msgList.push_back( SVString(m_svfnFileName.GetFullFileName()) );
 			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_CannotOpenFile, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10217 );
 		}
@@ -595,11 +594,11 @@ void SVToolAdjustmentDialogMaskPageClass::OnButtonFillColorMore()
 	{
 		COLORREF rgb = dlg.GetColor();
 		long selectedColor = static_cast<long>(GetRValue(rgb));
-		m_sFillColor = AsString(selectedColor);
+		m_sFillColor = SvUl::AsString(selectedColor).c_str();
 	}
 	else
 	{
-		m_sFillColor = AsString(lOriginalVal);
+		m_sFillColor = SvUl::AsString(lOriginalVal).c_str();
 	}
 
 	UpdateData(false);

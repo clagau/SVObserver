@@ -18,6 +18,7 @@
 #include "SVSystemLibrary/SVCriticalSection.h"
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVUtilityLibrary/SVSharedPtr.h"
+#include "SVUtilityLibrary/SVString.h"
 #include "SVObjectReference.h"
 #include "SVObserverNotificationFunctor.h"
 #include "SVObjectClass.h"
@@ -273,7 +274,7 @@ protected:
 	SVGUID GetSubjectID( const SVString& rSubjectDataName, SVCookieEntryStructPtr pCookieEntry ) const;
 
 	SVUniqueObjectEntryStructPtr getUniqueObjectEntry( const SVGUID& rGuid ) const;
-	SVUniqueObjectEntryStructPtr getUniqueObjectEntry( const CString& rName ) const;
+	SVUniqueObjectEntryStructPtr getUniqueObjectEntry( const SVString& rName ) const;
 
 	HRESULT DetachSubjects( long Cookie );
 	HRESULT DetachSubjects( const SVGUID& rObserverID );

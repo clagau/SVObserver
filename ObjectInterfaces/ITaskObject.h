@@ -16,6 +16,7 @@
 #include "DependencyList.h"
 #include "SVStatusLibrary\MessageContainer.h"
 #include "SVUtilityLibrary\NameGuidList.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 namespace Seidenader

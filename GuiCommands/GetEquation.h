@@ -34,7 +34,7 @@ namespace Seidenader
 				SvOi::IEquation* pEquation = dynamic_cast<SvOi::IEquation *>(SvOi::getObject(m_InstanceID));
 				if (pEquation)
 				{
-					pEquation->GetEquationText(m_Equation);
+					m_Equation = pEquation->GetEquationText();
 				}
 				else
 				{

@@ -27,7 +27,7 @@ IMPLEMENT_DYNAMIC(SVRemoteOutputEditDialog, CDialog)
 
 SVRemoteOutputEditDialog::SVRemoteOutputEditDialog(CWnd* pParent /*=nullptr*/)
 : CDialog(SVRemoteOutputEditDialog::IDD, pParent)
-, m_strValueObjectSourceName(_T("Invalid"))
+, m_ValueObjectSourceName(_T("Invalid"))
 , m_Items( boost::bind( &( CComboBox::GetItemData ), &m_ValueObjectNameCombo, _1 ) , boost::bind( &( CComboBox::SetItemData ), &m_ValueObjectNameCombo, _1, _2 ) )
 {
 	m_TriggerCount = new SVIOEntryHostStruct;
@@ -63,7 +63,7 @@ BOOL SVRemoteOutputEditDialog::OnInitDialog()
 	SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObjectA( m_InputObjectGUID );
 	if( l_pObject )
 	{
-		m_strValueObjectSourceName = l_pObject->GetCompleteObjectName();
+		m_ValueObjectSourceName = l_pObject->GetCompleteName().c_str();
 	}
 
 	SVConfigurationObject* pConfig( nullptr );
@@ -76,7 +76,7 @@ BOOL SVRemoteOutputEditDialog::OnInitDialog()
 		DebugBreak();
 	}
 
-	SVRemoteOutputGroup* l_pRemoteGroup = pConfig->GetRemoteOutputGroup( m_strGroupName );
+	SVRemoteOutputGroup* l_pRemoteGroup = pConfig->GetRemoteOutputGroup( m_GroupName );
 	long lPPQSize = pConfig->GetPPQCount();
 	for( int k = 0; k < lPPQSize; k++ )
 	{
@@ -104,8 +104,7 @@ BOOL SVRemoteOutputEditDialog::OnInitDialog()
 
 			// Put the Trigger Count in the list.
 			SVValueObjectClass* l_pCurrentObject = &pPPQ->m_voTriggerCount;
-			CString l_strName = l_pCurrentObject->GetCompleteObjectName();
-			int iIndex = m_ValueObjectNameCombo.AddString( l_strName );
+			int iIndex = m_ValueObjectNameCombo.AddString( l_pCurrentObject->GetCompleteName().c_str() );
 			m_TriggerCount->m_pValueObject = l_pCurrentObject;
 			m_TriggerCount->m_DeleteValueObject = false;
 			m_Items.SetItemData( iIndex, m_TriggerCount );
@@ -122,10 +121,9 @@ BOOL SVRemoteOutputEditDialog::OnInitDialog()
 
 				if( !( pIOEntry.empty() ) )
 				{
-					if( ( nullptr != pIOEntry->m_pValueObject ) 
-						&& ( pIOEntry->m_pValueObject->GetCompleteObjectName().Find( _T( "PPQ" ) ) == -1 ) )
+					if( nullptr != pIOEntry->m_pValueObject && SVString::npos == pIOEntry->m_pValueObject->GetCompleteName().find( _T( "PPQ" ) ) )
 					{
-						iIndex = m_ValueObjectNameCombo.AddString( pIOEntry->m_pValueObject->GetCompleteObjectName() );
+						iIndex = m_ValueObjectNameCombo.AddString( pIOEntry->m_pValueObject->GetCompleteName().c_str() );
 						m_Items.SetItemData( iIndex, pIOEntry );
 					}
 
@@ -202,8 +200,9 @@ void SVRemoteOutputEditDialog::UpdateValueObjectFromCombo()
 
 		if( !( l_pIOEntry.empty() ) && ( nullptr != l_pIOEntry->m_pValueObject ) )
 		{
-			CString l_strName;
-			m_ValueObjectNameCombo.GetLBText( l_iSel, m_strValueObjectSourceName );
+			CString Name;
+			m_ValueObjectNameCombo.GetLBText( l_iSel, Name  );
+			m_ValueObjectSourceName = Name;
 			m_InputObjectGUID = l_pIOEntry->m_pValueObject->GetUniqueObjectID();
 		}
 	}

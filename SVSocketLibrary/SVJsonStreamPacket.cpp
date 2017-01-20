@@ -20,10 +20,10 @@ namespace Seidenader { namespace SVSocketLibrary
 	{
 	}
 
-	void SVJsonStreamPacket::Add(const std::string& data)
+	void SVJsonStreamPacket::Add(const std::basic_string<TCHAR>& data)
 	{
 		// match opening/closing braces
-		for (std::string::const_iterator it = data.begin();it != data.end();++it)
+		for (std::basic_string<TCHAR>::const_iterator it = data.begin();it != data.end();++it)
 		{
 			if ((*it) == '{')
 			{
@@ -80,14 +80,14 @@ namespace Seidenader { namespace SVSocketLibrary
 
 	void SVJsonStreamPacket::Clear()
 	{
-		m_packet.str(std::string());
+		m_packet.str(std::basic_string<TCHAR>());
 		m_packet.clear();
 	
 		// copy from overflow buffer
 		if (m_pending.length() > 0)
 		{
 			// match opening/closing braces
-			for (std::string::iterator it = m_pending.begin();it != m_pending.end();++it)
+			for (std::basic_string<TCHAR>::iterator it = m_pending.begin();it != m_pending.end();++it)
 			{
 				if ((*it) == '{')
 				{
@@ -119,7 +119,7 @@ namespace Seidenader { namespace SVSocketLibrary
 
 	void SVJsonStreamPacket::Reset()
 	{
-		m_packet.str(std::string());
+		m_packet.str(std::basic_string<TCHAR>());
 		m_packet.clear();
 		m_pending.clear();
 		m_count = 0;

@@ -59,7 +59,7 @@ namespace Seidenader { namespace SVSocketLibrary
 		Err error;
 		if (SVSocketError::Success != (error = PeekFrom(buf, bufsz, bufsz, *addr_in, len)))
 		{
-			std::string msg = "accept: ";
+			std::basic_string<TCHAR> msg = "accept: ";
 			Log(msg + SVSocketError::GetErrorText(error), true);
 			return InvalidSock;
 		}

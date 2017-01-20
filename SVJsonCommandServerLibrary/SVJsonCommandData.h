@@ -12,14 +12,14 @@
 #pragma once
 
 #pragma region Includes
-//Moved to precompiled header: #include <string>
+#include "SVUtilityLibrary/SVString.h"
 #include "SVUtilityLibrary/SVSharedPtr.h"
 #pragma endregion Includes
 
 struct SVJsonCommandData
 {
 	SVJsonCommandData();
-	SVJsonCommandData( const SVJsonCommandData& p_rObject );
+	SVJsonCommandData( const SVJsonCommandData& rObject );
 
 	virtual ~SVJsonCommandData();
 
@@ -27,17 +27,18 @@ struct SVJsonCommandData
 	void clear();
 
 	HRESULT NotifyRequestComplete() const;
-	HRESULT WaitForRequest( DWORD p_TimeoutInMilliseconds ) const;
+	HRESULT WaitForRequest( DWORD TimeoutInMilliseconds ) const;
 
-	const std::string& GetJsonCommand() const;
-	HRESULT SetJsonCommand( const std::string& p_rCommand );
-
-	std::string m_JsonResults;
+	const SVString& GetJsonCommand() const { return m_JsonCommand; };
+	// Note this returns the SVString object to write to the value
+	SVString& GetJsonResultsObject() { return m_JsonResults; };
+	HRESULT SetJsonCommand( const SVString& rCommand );
 
 private:
-	HRESULT GetWaitHandle( HANDLE& p_rHandle ) const;
+	HRESULT GetWaitHandle( HANDLE& rHandle ) const;
 
-	std::string m_JsonCommand;
+	SVString m_JsonCommand;
+	SVString m_JsonResults;
 
 	HANDLE m_WaitHandle;
 

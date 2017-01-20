@@ -29,8 +29,8 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-const CString SVGigeCameraFileDefExt = ".ogc";
-const CString SVGigeCameraFileFilter = "Digitizer Files (*.ogc)|*.ogc||";
+static const TCHAR* const cGigeCameraFileDefExt = _T(".ogc");
+static const TCHAR* const cGigeCameraFileFilter = _T("Digitizer Files (*.ogc)|*.ogc||");
 
 const static int AcqImageBufferCnt = 10;
 
@@ -85,13 +85,13 @@ HRESULT SVCameraPage::GetNextBuffer( SVImageBufferInterface& p_rBuffer )
 
 HRESULT SVCameraPage::UpdateWithCompletedBuffer( const SVImageBufferInterface& p_rBuffer )
 {
-	CString l_csCount;
+	SVString Count;
 
-	l_csCount.Format( "%d", m_lStartCount );
-	m_StartFrameCount.SetWindowText( l_csCount );
+	Count = SvUl_SF::Format( _T("%d"), m_lStartCount );
+	m_StartFrameCount.SetWindowText( Count.c_str() );
 
-	l_csCount.Format( "%d", m_lEndCount );
-	m_EndFrameCount.SetWindowText( l_csCount );
+	Count = SvUl_SF::Format( _T("%d"), m_lEndCount );
+	m_EndFrameCount.SetWindowText( Count.c_str() );
 
 	m_CameraImage.Invalidate();
 
@@ -130,33 +130,33 @@ void SVCameraPage::OnAdvancedButtonClick()
 
 void SVCameraPage::OnCameraFileBrowseButtonClick()
 {
-	CString cameraFileFilter;
-	CString cameraFileDefaultExt;
+	SVString cameraFileFilter;
+	SVString cameraFileDefaultExt;
 
 	CSVImageTestApp* pApp = (CSVImageTestApp *)AfxGetApp();
 	// check for Gige...
-	if (pApp->IsGigeSystem())
+	if( nullptr != pApp && pApp->IsGigeSystem())
 	{
-		cameraFileFilter = SVGigeCameraFileFilter;
-		cameraFileDefaultExt = SVGigeCameraFileDefExt;
+		cameraFileFilter = cGigeCameraFileFilter;
+		cameraFileDefaultExt = cGigeCameraFileDefExt;
 	}
 
 	CFileDialog dlg( true, 
-						cameraFileDefaultExt,
-						m_csFileName, 
+						cameraFileDefaultExt.c_str(),
+						m_FileName.c_str(), 
 						OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER | OFN_NOCHANGEDIR,
-						cameraFileFilter,
+						cameraFileFilter.c_str(),
 						nullptr );
 
-	dlg.m_ofn.lpstrTitle = "Select Camera File";
-	dlg.m_ofn.lpstrInitialDir = "C:\\CAM";
+	dlg.m_ofn.lpstrTitle = _T("Select Camera File");
+	dlg.m_ofn.lpstrInitialDir = _T("C:\\CAM");
 
 	if ( dlg.DoModal() == IDOK )
 	{
-		m_csFileName = dlg.GetPathName();
+		m_FileName = dlg.GetPathName();
 
 		LoadSVCameraFiles();
-		m_CameraFileName.SetWindowText( m_csFileName );
+		m_CameraFileName.SetWindowText( m_FileName.c_str() );
 
 		// Reset Camera Image
 		CreateCameraImage();
@@ -216,7 +216,7 @@ BOOL SVCameraPage::OnInitDialog()
 SVCameraPage::SVCameraPage()
 : CPropertyPage(SVCameraPage::IDD),
 	m_pAcquisition( nullptr ),
-	m_csFileName(),
+	m_FileName(),
 	m_lSelectedCamera( -1L ),
 	m_lStartCount( 0L ),
 	m_lEndCount( 0L ),
@@ -290,7 +290,7 @@ void SVCameraPage::LoadSVCameraFiles()
 {
 	if (m_pAcquisition)
 	{
-		HRESULT hr = m_pAcquisition->ReadCameraFile(SVString(m_csFileName));
+		HRESULT hr = m_pAcquisition->ReadCameraFile(SVString(m_FileName));
 
 		if (S_OK == hr)
 		{

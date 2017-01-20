@@ -19,7 +19,7 @@ namespace Seidenader
 		{
 		public:
 			virtual ~IEquation() {}
-			virtual void GetEquationText(SVString& text) const = 0;
+			virtual const SVString& GetEquationText() const = 0;
 			virtual void SetEquationText(const SVString& text) = 0;
 			virtual EquationTestResult Test(bool DisplayErrorMessage = true) = 0;
 			virtual double GetYACCResult() const = 0;

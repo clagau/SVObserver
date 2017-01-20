@@ -163,10 +163,10 @@ HRESULT SVRangeClass::InitReferencesAndInputs()
 	HRESULT hResult = S_OK;
 	DisconnectAllInputObjects();
 	SVValueObjectReference emptyRef;
-	CString csValueIndirect;
-	CString InspectionName;
+	SVString ValueIndirect;
+	SVString InspectionName;
 
-	if(GetInspection())
+	if( nullptr != GetInspection() )
 	{
 		InspectionName = GetInspection()->GetName();
 	}
@@ -174,23 +174,23 @@ HRESULT SVRangeClass::InitReferencesAndInputs()
 
 	for(int i = 0; i < RangeEnum::ER_COUNT; i++)
 	{
-		csValueIndirect.Empty();
+		ValueIndirect.clear();
 		m_ValueObjectReferences[i] = emptyRef;
 		m_ValueIndirect[i].ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-		m_ValueIndirect[i].GetValue(csValueIndirect);
-		if(!csValueIndirect.IsEmpty())
+		m_ValueIndirect[i].GetValue( ValueIndirect );
+		if( !ValueIndirect.empty() )
 		{
-			CString dottedName;
+			SVString dottedName;
 			//If the tool set name is at the start then add the inspection name at the beginning
-			if( 0 == csValueIndirect.Find(ToolSetName) )
+			if( 0 == ValueIndirect.find(ToolSetName) )
 			{
-				dottedName = InspectionName + csValueIndirect;
+				dottedName = InspectionName + ValueIndirect;
 			}
 			else
 			{
-				dottedName = csValueIndirect;
+				dottedName = ValueIndirect;
 			}
-			if(!SetReference(dottedName,m_ValueObjectReferences[i] ))
+			if(!SetReference( dottedName.c_str(), m_ValueObjectReferences[i] ))
 			{
 				hResult = -SvOi::Err_16025; //invalid Reference;
 			}
@@ -342,7 +342,7 @@ bool SVRangeClass::resetAllObjects( bool shouldNotifyFriends, bool silentReset )
 	{
 		if(!silentReset && (ResetStatus == -SvOi::Err_16025 || ResetStatus == -SvOi::Err_16026))
 		{
-			SVStringArray msgList;
+			SVStringVector msgList;
 			msgList.push_back(SVString(GetCompleteObjectNameToObjectType( nullptr, SVInspectionObjectType )));
 			SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_InvalidReference, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10186 ); 
@@ -507,18 +507,18 @@ void SVRangeClass::DisconnectAllInputObjects()
 	}
 }
 
-HRESULT SVRangeClass::GetIndirectValue(RangeEnum::ERange ra, CString &ref)
+HRESULT SVRangeClass::GetIndirectValue(RangeEnum::ERange ra, SVString& rValue )
 {
-	return m_ValueIndirect[ra].GetValue(ref);
+	return m_ValueIndirect[ra].GetValue( rValue );
 };
 
 bool SVRangeClass::HasIndirectValue(RangeEnum::ERange ra)
 {
 	bool res = false;
-	CString cs;
-	if(S_OK == GetIndirectValue(ra, cs))
+	SVString Temp;
+	if(S_OK == GetIndirectValue(ra, Temp))
 	{
-		res = !cs.IsEmpty();
+		res = !Temp.empty();
 	}
 
 	return res;

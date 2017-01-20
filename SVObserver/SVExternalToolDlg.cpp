@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   18 Sep 2014 13:39:12  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "svobserver.h"
 #include "SVExternalToolDlg.h"
@@ -24,6 +25,8 @@
 #include "SVLoki\Functor.h"
 #include "SVStatusLibrary\MessageContainer.h"
 #include "SVStatusLibrary\GlobalPath.h"
+#include "SVUtilityLibrary/SVString.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -31,7 +34,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-const CString CRLF (_T("\r\n"));
+static const TCHAR* const cCRLF (_T("\r\n"));
 
 enum {WM_UPDATE_STATUS = WM_APP + 100};
 
@@ -125,8 +128,10 @@ void SVExternalToolDlg::DoDataExchange(CDataExchange* pDX)
 
 BOOL SVExternalToolDlg::OnInitDialog() 
 {
+	SVString Value;
 	// stuff the value before base OnInitDialog
-	m_pTask->m_Data.m_voDllPath.GetValue(m_strDLLPath);
+	m_pTask->m_Data.m_voDllPath.GetValue( Value );
+	m_strDLLPath = Value.c_str();
 
 	CPropertyPage::OnInitDialog();	// create button and list box windows
 
@@ -144,11 +149,11 @@ BOOL SVExternalToolDlg::OnInitDialog()
 	int iDependentsSize = static_cast< int >( m_pTask->m_Data.m_aDllDependencies.size() );
 	for( int i = 0 ; i < iDependentsSize ; i++)
 	{
-		CString strTmp;
-		m_pTask->m_Data.m_aDllDependencies[i].GetValue(strTmp);
-		if( !strTmp.IsEmpty() )
+		SVString Temp;
+		m_pTask->m_Data.m_aDllDependencies[i].GetValue( Temp );
+		if( !Temp.empty() )
 		{
-			m_lbDependentList.AddString(strTmp);
+			m_lbDependentList.AddString( Temp.c_str() );
 		}
 	}
 	
@@ -164,7 +169,7 @@ void SVExternalToolDlg::OnOK()
 	UpdateData();
 
 	// set dll path
-	m_pTask->m_Data.m_voDllPath.SetValue(1, m_strDLLPath);
+	m_pTask->m_Data.m_voDllPath.SetValue( 1, SVString(m_strDLLPath) );
 
 
 	// Copy DLL Dependents from listbox to Task Class FileNameValueObject List...
@@ -251,8 +256,7 @@ void SVExternalToolDlg::OnAdd()
 	if( cfd.DoModal() == IDOK)
 	{
 		// Extract File Name
-		CString strFileName = cfd.GetPathName();
-		m_strLastDllPath = strFileName;
+		m_strLastDllPath = cfd.GetPathName();
 		int iFind = m_strLastDllPath.ReverseFind(_T('\\'));
 		if (iFind >= 0)
 		{
@@ -261,8 +265,7 @@ void SVExternalToolDlg::OnAdd()
 		AfxGetApp()->WriteProfileString(_T("Settings"), _T("Last External Tool Dll Path"), m_strLastDllPath);
 
 		// Check for already existing DLL Paths
-		if( LB_ERR == m_lbDependentList.FindString( 0, cfd.GetPathName() ) && 
-			LB_ERR == m_lbDependentList.FindString(0, strFileName) )
+		if( LB_ERR == m_lbDependentList.FindString( 0, cfd.GetPathName() )  )
 		{
 			m_lbDependentList.AddString( cfd.GetPathName() );
 		}
@@ -285,8 +288,7 @@ void SVExternalToolDlg::OnBrowse()
 	
 	if( cfd.DoModal() == IDOK)
 	{
-		CString strFileName = cfd.GetPathName();
-		m_strLastDllPath = strFileName;
+		m_strLastDllPath = cfd.GetPathName();
 		int iFind = m_strLastDllPath.ReverseFind(_T('\\'));
 		if (iFind >= 0)
 		{
@@ -297,13 +299,14 @@ void SVExternalToolDlg::OnBrowse()
 		m_strDLLPath = cfd.GetPathName();
 		UpdateData(FALSE);
 
-		m_pTask->m_Data.m_voDllPath.SetValue(1, m_strDLLPath);
+		m_pTask->m_Data.m_voDllPath.SetValue(1, SVString(m_strDLLPath) );
 
 		HRESULT hr;
 		hr = m_pTask->ClearData();
 		hr = m_pTask->SetDefaultValues();
 
-		m_strStatus = _T("Dll needs to be tested.") + CRLF;
+		m_strStatus = _T("Dll needs to be tested.");
+		m_strStatus += cCRLF;
 		UpdateData(FALSE);
 
 		m_btnDetails.EnableWindow(FALSE);	// force the user to press Test which will call Initialize
@@ -350,26 +353,26 @@ void SVExternalToolDlg::SetDependencies()
 	for ( i = 0 ; i < ilbSize ; i++ )
 	{
 		//SVFileNameValueObjectClass svDependent;
-		CString strTmp;
-		m_lbDependentList.GetText(i, strTmp);
-		m_pTask->m_Data.m_aDllDependencies[i].SetDefaultValue( strTmp , TRUE);
-		m_pTask->m_Data.m_aDllDependencies[i].SetValue( 1, strTmp );
+		CString Temp;
+		m_lbDependentList.GetText(i, Temp);
+		m_pTask->m_Data.m_aDllDependencies[i].SetDefaultValue( Temp, true );
+		m_pTask->m_Data.m_aDllDependencies[i].SetValue( 1, SVString(Temp) );
 	}
 
 	m_pTask->SetAllAttributes();	// update dependency attributes
 }
 
-bool SVExternalToolDlg::EnableDetailTip(  bool bEnable, const CString& rstrTip)
+bool SVExternalToolDlg::EnableDetailTip(  bool bEnable, LPCTSTR Tip)
 {
 	bool bLastState = m_bToolTipEnabled;
 
 	if( m_bToolTipEnabled && bEnable )
 	{
-		m_ToolTip.UpdateTipText(rstrTip, &m_btnDetails);
+		m_ToolTip.UpdateTipText( Tip, &m_btnDetails );
 	}
 	else if( !m_bToolTipEnabled && bEnable )
 	{
-		m_ToolTip.AddTool( &m_btnDetails, rstrTip ); 
+		m_ToolTip.AddTool( &m_btnDetails, Tip ); 
 	}
 	else if( m_bToolTipEnabled && !bEnable )
 	{
@@ -392,7 +395,8 @@ void SVExternalToolDlg::InitializeDll()
 		m_pTask->resetAllObjects(true, false);
 
 
-		m_strStatus += CString(_T("DLL passes the tests.")) + CRLF;
+		m_strStatus += _T("DLL passes the tests.");
+		m_strStatus += cCRLF;
 		UpdateData(FALSE);
 		m_StatusEdit.SetSel( m_strStatus.GetLength(), m_strStatus.GetLength());
 
@@ -404,19 +408,20 @@ void SVExternalToolDlg::InitializeDll()
 	{
 		// display all sub-errors in box
 		UpdateData(TRUE);
-		m_strStatus +=  _T("DLL did not pass.") + CRLF;
+		m_strStatus += _T("DLL did not pass.");
+		m_strStatus += cCRLF;
 
 		if ( !e.getMessage().getAdditionalText().empty() )
 		{
 			m_strStatus += e.getMessage().getAdditionalText().c_str();
-			m_strStatus += CRLF;
+			m_strStatus += cCRLF;
 		}
 		const SvStl::Messages& AdditionalMessages( e.getAdditionalMessages() );
 		SvStl::Messages::const_iterator iter;
 		for (iter = AdditionalMessages.begin(); iter != AdditionalMessages.end(); ++iter)
 		{
 			m_strStatus += iter->getAdditionalText().c_str();
-			m_strStatus += CRLF;
+			m_strStatus += cCRLF;
 		}
 		UpdateData(FALSE);
 
@@ -435,11 +440,12 @@ BOOL SVExternalToolDlg::PreTranslateMessage(MSG* pMsg)
 	return CDialog::PreTranslateMessage(pMsg);
 }
 
-void SVExternalToolDlg::NotifyProgress(const CString& rstrMessage)
+void SVExternalToolDlg::NotifyProgress( LPCTSTR Message )
 {
 	UpdateData();
 
-	m_strStatus += rstrMessage + CRLF;
+	m_strStatus += Message;
+	m_strStatus += cCRLF;
 
 	UpdateData(FALSE);
 	YieldPaintMessages(GetSafeHwnd());
@@ -462,15 +468,15 @@ bool SVExternalToolDlg::ShowDependentsDlg()
 		SVObjectVector list;
 		m_pTask->FindInvalidatedObjects( list, m_pCancelData, SVExternalToolTask::FIND_ALL_OBJECTS );
 
-		CString DisplayText;
-		CString Name( m_pTask->GetName() );
-		DisplayText.Format( IDS_CHANGE_DLL_EXTERNAL_TOOL, Name, Name, Name, Name);
+		SVString DisplayText = SvUl_SF::LoadSVString( IDS_CHANGE_DLL_EXTERNAL_TOOL );
+		SVString Name( m_pTask->GetName() );
+		DisplayText = SvUl_SF::Format( DisplayText.c_str() , Name.c_str(), Name.c_str(), Name.c_str(), Name.c_str() );
 
 		SVObjectPairVector DependencyList;
 
 		m_pTask->GetDependentsList( list, DependencyList );
 
-		SvOg::SVShowDependentsDialog Dlg( DependencyList, DisplayText );
+		SvOg::SVShowDependentsDialog Dlg( DependencyList, DisplayText.c_str() );
 
 		Result = ( IDOK == Dlg.DoModal() );
 	}
@@ -524,15 +530,17 @@ HRESULT SVExternalToolDlg::RestoreOriginalData()
 	InitializeDll();
 
 	// update display
-	m_pTask->m_Data.m_voDllPath.GetValue(m_strDLLPath);
+	SVString Value;
+	m_pTask->m_Data.m_voDllPath.GetValue( Value );
+	m_strDLLPath = Value.c_str();
 	int iDependentsSize = static_cast< int >( m_pTask->m_Data.m_aDllDependencies.size() );
 	for( i = 0 ; i < iDependentsSize ; i++)
 	{
-		CString strTmp;
-		m_pTask->m_Data.m_aDllDependencies[i].GetValue(strTmp);
-		if( !strTmp.IsEmpty() )
+		SVString Temp;
+		m_pTask->m_Data.m_aDllDependencies[i].GetValue(Temp);
+		if( !Temp.empty() )
 		{
-			m_lbDependentList.AddString(strTmp);
+			m_lbDependentList.AddString( Temp.c_str() );
 		}
 	}
 	UpdateData(FALSE);

@@ -26,7 +26,7 @@ class MonitorListImagesPage : public MonitorListBasePage
 
 #pragma region Public
 public:
-	MonitorListImagesPage(const SvUl::NameSelectionList& rList, MonitorListSheet* pParentSheet, const CString& szCaption, int id = IDD);
+	MonitorListImagesPage(const SvUl::NameSelectionList& rList, MonitorListSheet* pParentSheet, LPCTSTR Caption, int id = IDD);
 	virtual ~MonitorListImagesPage();
 
 	// ISVPropertyPageDialog

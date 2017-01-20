@@ -13,6 +13,7 @@
 
 #pragma region Includes
 #include "DisplayPicture.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 class SVCameraPage;
@@ -89,7 +90,7 @@ public:
 	afx_msg void OnDestroy();
 
 	SVTestAcquisitionClass* m_pAcquisition;
-	CString m_csFileName;
+	SVString m_FileName;
 	long m_lSelectedCamera;
 	long m_lStartCount;
 	long m_lEndCount;

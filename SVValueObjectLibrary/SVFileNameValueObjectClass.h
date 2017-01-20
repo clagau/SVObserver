@@ -14,11 +14,12 @@
 #pragma region Includes
 #include "SVOResource/resource.h"
 #include "SVLibrary/SVFileNameClass.h"
+#include "SVUtilityLibrary/SVString.h"
 #include "SVValueObjectClassImpl.h"
 #include "SVValueObjectGlobals.h"
 #pragma endregion Includes
 
-class SVFileNameValueObjectClass : public SVValueObjectClassImpl <CString>  
+class SVFileNameValueObjectClass : public SVValueObjectClassImpl <SVString>  
 {
 	SV_DECLARE_CLASS( SVFileNameValueObjectClass );
 
@@ -38,9 +39,9 @@ public:
 
 //	IMPLEMENT_VALUE_OBJECT_GET_SET_NO_T()
 	template <typename FROMTYPE>
-	__forceinline HRESULT SetValue(int iBucket, FROMTYPE value) { return SetValueAt(iBucket, 0, value); }
+	__forceinline HRESULT SetValue(int iBucket, FROMTYPE Value) { return SetValueAt(iBucket, 0, Value); }
 	template <typename FROMTYPE>
-	__forceinline HRESULT SetValue(int iBucket, int iIndex, FROMTYPE value) { return SetValueAt(iBucket, iIndex, value); }
+	__forceinline HRESULT SetValue(int iBucket, int iIndex, FROMTYPE Value) { return SetValueAt(iBucket, iIndex, Value); }
 	
 	template <typename TOTYPE>
 	__forceinline HRESULT GetValue(TOTYPE& rValue) const { return GetValueAt(m_iLastSetIndex, 0, rValue); }
@@ -49,18 +50,18 @@ public:
 	template <typename TOTYPE>
 	__forceinline HRESULT GetValue(int iBucket, int iIndex, TOTYPE& rValue) const { return GetValueAt(iBucket, iIndex, rValue); }
 
-	virtual HRESULT SetValueAtConvert( int iBucket, int iIndex, const CString& value ) override { return SetValueAt(iBucket, iIndex, value); }
+	virtual HRESULT SetValueAtConvert( int iBucket, int iIndex, const SVString& rValue ) override { return SetValueAt(iBucket, iIndex, rValue); }
 	virtual HRESULT SetValueAtConvert( int iBucket, int iIndex, double value ) override { return S_FALSE; }
 	virtual HRESULT SetValueAtConvert( int iBucket, int iIndex, long value ) override { return S_FALSE; }
 	virtual HRESULT SetValueAtConvert( int iBucket, int iIndex, int value ) override { return S_FALSE; }
 	
 protected:
-	virtual HRESULT SetValueAt( int iBucket, int iIndex, const CString& value );
+	virtual HRESULT SetValueAt( int iBucket, int iIndex, const SVString& rValue );
 	virtual HRESULT SetValueAt( int iBucket, int iIndex, const VARIANT& rValue );
 
 	virtual HRESULT GetValueAt( int iBucket, int iIndex, VARIANT& rValue ) const;
 	virtual HRESULT GetValueAt( int iBucket, int iIndex, double& rValue ) const;
-	virtual HRESULT GetValueAt( int iBucket, int iIndex, CString& rValue ) const {return base::GetValueAt(iBucket, iIndex, rValue);}
+	virtual HRESULT GetValueAt( int iBucket, int iIndex, SVString& rValue ) const {return base::GetValueAt(iBucket, iIndex, rValue);}
 
 private:
 	void LocalInitialize();

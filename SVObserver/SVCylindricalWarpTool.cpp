@@ -11,14 +11,15 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVCylindricalWarpTool.h"
-
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVImageLibrary/SVImageExtentClass.h"
-
 #include "SVOCore/SVImageProcessingClass.h"
 #include "CameraLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
-
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
+
+static const TCHAR* const CYLINDRICAL_WARP_TYPE_HORIZONTAL = _T("Horizontal Warp");
+static const TCHAR* const CYLINDRICAL_WARP_TYPE_VERTICAL = _T("Vertical Warp");
 
 SV_IMPLEMENT_CLASS( SVCylindricalWarpToolClass, SVCylindricalWarpToolClassGuid )
 
@@ -79,33 +80,32 @@ void SVCylindricalWarpToolClass::LocalInitialize()
 
 	// Set Default Warp Method to Use Horizontal
 	RegisterEmbeddedObject( &m_svWarpType, SVWarpTypeObjectGuid, IDS_OBJECTNAME_WARPTYPE, false, SVResetItemTool );
-	CString strEnumTypes;
-	strEnumTypes.Format("%s=%d,%s=%d", CYLINDRICAL_WARP_TYPE_HORIZONTAL, WarpTypeHorizontal,
+	SVString EnumTypes = SvUl_SF::Format( _T("%s=%d,%s=%d"), CYLINDRICAL_WARP_TYPE_HORIZONTAL, WarpTypeHorizontal,
 	                                   CYLINDRICAL_WARP_TYPE_VERTICAL, WarpTypeVertical);
-	m_svWarpType.SetEnumTypes( strEnumTypes );
+	m_svWarpType.SetEnumTypes( EnumTypes.c_str() );
 	m_svWarpType.SetDefaultValue( CYLINDRICAL_WARP_TYPE_HORIZONTAL, TRUE );
 	m_svWarpType.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
 
 	// Set Default Interpolation Mode to use Nearest Neighbor
-	CString strMode;
-	CString strPrepare;
-	strEnumTypes.Empty();
+	SVString Mode;
+	SVString Text;
+	EnumTypes.clear();
 
 	// M_NEAREST_NEIGHBOR 
-	strMode.LoadString( IDS_NEAREST_NEIGHBOR_STRING );
-	strPrepare.Format( _T( "%s=%d," ), strMode, SVNearestNeighbor); // M_NEAREST_NEIGHBOR);
-	strEnumTypes += strPrepare;
+	Mode = SvUl_SF::LoadSVString( IDS_NEAREST_NEIGHBOR_STRING );
+	Text = SvUl_SF::Format( _T( "%s=%d," ), Mode.c_str(), SVNearestNeighbor); // M_NEAREST_NEIGHBOR);
+	EnumTypes += Text;
 	// M_BILINEAR
-	strMode.LoadString( IDS_BILINEAR_STRING );
-	strPrepare.Format( _T( "%s=%d," ), strMode, SVBilinear);		// M_BILINEAR );
-	strEnumTypes += strPrepare;
+	Mode = SvUl_SF::LoadSVString( IDS_BILINEAR_STRING );
+	Text = SvUl_SF::Format( _T( "%s=%d," ), Mode.c_str(), SVBilinear);		// M_BILINEAR );
+	EnumTypes += Text;
 	// M_BICUBIC
-	strMode.LoadString( IDS_BICUBIC_STRING );
-	strPrepare.Format( _T( "%s=%d," ), strMode, SVBiCubic);			// M_BICUBIC );
-	strEnumTypes += strPrepare;
+	Mode = SvUl_SF::LoadSVString( IDS_BICUBIC_STRING );
+	Text = SvUl_SF::Format( _T( "%s=%d," ), Mode.c_str(), SVBiCubic);			// M_BICUBIC );
+	EnumTypes += Text;
 
 	// And now set enum types...
-	m_svInterpolationMode.SetEnumTypes( strEnumTypes );
+	m_svInterpolationMode.SetEnumTypes( EnumTypes.c_str() );
 	m_svInterpolationMode.SetDefaultValue( SVNearestNeighbor, TRUE );	// Refer to MIL...
 	RegisterEmbeddedObject( &m_svInterpolationMode, SVOutputInterpolationModeObjectGuid, IDS_OBJECTNAME_INTERPOLATION_MODE, false, SVResetItemNone );
 
@@ -294,7 +294,7 @@ HRESULT SVCylindricalWarpToolClass::ResetObject()
 	if (nullptr != inputImage)
 	{
 		//Set input name to source image name to display it in result picker
-		m_svSourceImageName.SetValue( 0/*Static value, this parameter will not used*/, inputImage->GetCompleteObjectName() );
+		m_svSourceImageName.SetValue( 0/*Static value, this parameter will not used*/, SVString( inputImage->GetCompleteName() ) );
 	}
 
 	UpdateImageWithExtent( 1 );
@@ -387,9 +387,6 @@ BOOL SVCylindricalWarpToolClass::onRun( SVRunStatusClass& p_rRunStatus )
 
 				if ( l_Code != SVMEE_STATUS_OK )
 				{
-					
-					SVMatroxStatusInformation l_info;
-					CString l_sErrorStr;
 					l_bOk = FALSE;
 				}
 			}

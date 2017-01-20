@@ -11,10 +11,11 @@
 
 #pragma region Includes
 #include "stdafx.h"
+//Moved to precompiled header: #include <algorithm>
 #include "SVPackedFile.h"
 #include "SVMessage\SVMessage.h"
 #include "SVStatusLibrary\MessageManager.h"
-//Moved to precompiled header: #include <algorithm>
+
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -24,7 +25,15 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-BOOL SVPackedFile::PackFiles( const CString& szFile, const CString& szPackedFile )
+SVPackedFile::SVPackedFile()
+{
+}
+
+SVPackedFile::~SVPackedFile()
+{
+}
+
+BOOL SVPackedFile::PackFiles( LPCTSTR Files, LPCTSTR PackedFileName )
 {
 	CFileException FileException;
 	SvStl::MessageMgrStd Exception( SvStl::DataOnly );
@@ -33,13 +42,13 @@ BOOL SVPackedFile::PackFiles( const CString& szFile, const CString& szPackedFile
 	WIN32_FIND_DATAW FindData;
 	DWORD dwPackedFileVersion = SV_PACKEDFILE_VERSION;
 	CFile PackedFile, SourceFile;
-	CString szSourceFile, szWildCard, szPath;
+	SVString SourceFileName, WildCard, Path;
 	BYTE Buffer[1024];
 	UINT CountRead, NumFiles = 0, PathLen;
 
 	USES_CONVERSION;
 
-	if (!(PackedFile.Open (szPackedFile, CFile::shareDenyNone | CFile::modeCreate | CFile::modeWrite | CFile::typeBinary, &FileException)))
+	if (!(PackedFile.Open (PackedFileName, CFile::shareDenyNone | CFile::modeCreate | CFile::modeWrite | CFile::typeBinary, &FileException)))
 	{
 		FileException.GetErrorMessage (szMessage, sizeof (szMessage));
 		Exception.setMessage( SVMSG_LIB_PACKFILE_IO_ERROR, szMessage, SvStl::SourceFileParams(StdMessageParams) );
@@ -58,35 +67,35 @@ BOOL SVPackedFile::PackFiles( const CString& szFile, const CString& szPackedFile
 		Exception.Throw();
 	}
 
-	_tsplitpath (szFile, szDrive, szDir, szFName, szExt);
-	szWildCard = szDrive;
-	szWildCard += szDir;
-	szWildCard += _T("*.*");
+	_tsplitpath (Files, szDrive, szDir, szFName, szExt);
+	WildCard = szDrive;
+	WildCard += szDir;
+	WildCard += _T("*.*");
 
-	hFindFile = FindFirstFileW (T2W((TCHAR *)(LPCTSTR)szWildCard), &FindData);
+	hFindFile = FindFirstFileW ( T2W( WildCard.c_str() ), &FindData);
 	if (hFindFile == INVALID_HANDLE_VALUE)
 	{
 		PackedFile.Close ();
 		return FALSE;
 	}
 
-	szPath = szDrive;
-	szPath += szDir;
+	Path = szDrive;
+	Path += szDir;
 	do
 	{
 		if (!(FindData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY))
 		{
-			_tsplitpath (W2T((WCHAR *)(FindData.cFileName)), szDrive, szDir, szFName, szExt);
+			_tsplitpath ( W2T( FindData.cFileName ), szDrive, szDir, szFName, szExt);
 			if (_tcscmp (szExt, _T(".svf")))
 			{
-				szSourceFile = szPath;
-				szSourceFile += W2T((WCHAR *)(FindData.cFileName));
+				SourceFileName = Path;
+				SourceFileName += W2T( FindData.cFileName );
 				try
 				{
 					PackedFile.Write (&FindData, sizeof (WIN32_FIND_DATAW));
-					PathLen = (szPath.GetLength() * sizeof (WCHAR)) + sizeof (WCHAR);
+					PathLen = (static_cast<UINT> (Path.size()+1)) * sizeof (WCHAR);
 					PackedFile.Write (&PathLen, sizeof (PathLen));
-					PackedFile.Write (T2W((TCHAR *)(LPCTSTR)szPath), PathLen);
+					PackedFile.Write (Path.c_str(), PathLen);
 				}
 				catch (CFileException* pe)
 				{
@@ -98,7 +107,7 @@ BOOL SVPackedFile::PackFiles( const CString& szFile, const CString& szPackedFile
 					Exception.Throw();
 				}
 
-				if (SourceFile.Open (szSourceFile, CFile::shareDenyNone | CFile::modeRead | CFile::typeBinary, &FileException))
+				if (SourceFile.Open (SourceFileName.c_str(), CFile::shareDenyNone | CFile::modeRead | CFile::typeBinary, &FileException))
 				{
 					try
 					{
@@ -129,7 +138,7 @@ BOOL SVPackedFile::PackFiles( const CString& szFile, const CString& szPackedFile
 				}
 			}
 		}
-	} while (FindNextFileW (hFindFile, &FindData));
+	} while (FindNextFileW(hFindFile, &FindData));
 
 	PackedFile.Close();
 	FindClose (hFindFile);
@@ -137,14 +146,14 @@ BOOL SVPackedFile::PackFiles( const CString& szFile, const CString& szPackedFile
 	return (BOOL) NumFiles;
 }
 
-BOOL SVPackedFile::UnPackFiles( const CString& szPackedFile, const CString& szUnPackDir )
+BOOL SVPackedFile::UnPackFiles( LPCTSTR PackedFileName, LPCTSTR UnPackDir /* = nullpt*/ )
 {
 	WIN32_FIND_DATAW FindData;
 	CFile PackedFile, SourceFile;
 	CFileException FileException;
 	DWORD dwPackedFileVersion;
 	TCHAR szMessage[80];
-	CString szPath;
+	SVString Path;
 	SvStl::MessageMgrStd Exception( SvStl::DataOnly );
 	UINT CountRead, PathLen, BytesRead;
 	BYTE Buffer[_MAX_PATH * sizeof (TCHAR)];
@@ -152,9 +161,9 @@ BOOL SVPackedFile::UnPackFiles( const CString& szPackedFile, const CString& szUn
 
 	USES_CONVERSION;
 
-	m_configFilePath.Empty();
+	m_configFilePath.clear();
 
-	if (PackedFile.Open (szPackedFile, CFile::shareDenyNone | CFile::modeRead | CFile::typeBinary, &FileException))
+	if (PackedFile.Open (PackedFileName, CFile::shareDenyNone | CFile::modeRead | CFile::typeBinary, &FileException))
 	{
 		try
 		{
@@ -162,30 +171,30 @@ BOOL SVPackedFile::UnPackFiles( const CString& szPackedFile, const CString& szUn
 			{
 				switch (dwPackedFileVersion)
 				{
-					case 1 :
+					case SV_PACKEDFILE_VERSION :
 						while (sizeof (WIN32_FIND_DATAW) == (CountRead = PackedFile.Read (&FindData, sizeof (WIN32_FIND_DATAW))))
 						{
 							PackedFile.Read (&PathLen, sizeof (PathLen));
 							memset (Buffer, 0, _MAX_PATH * sizeof (TCHAR));
 							PackedFile.Read (Buffer, PathLen);
-							if(szUnPackDir.IsEmpty())
-								{
-							szPath.Format (_T("%s%s"), W2T((WCHAR*)Buffer), W2T((WCHAR*)(FindData.cFileName)));
-								}
-							else
-								{
-								szPath.Format (_T("%s\\%s"), szUnPackDir, W2T((WCHAR*)(FindData.cFileName)));
-								}
-
-							_tsplitpath (szPath, szDrive, szDir, szFName, szExt);
-							if( _tcscmp(szExt, _T(".svx")) == 0 )
+							if( nullptr == UnPackDir )
 							{
-								m_configFilePath = szPath;
+								Path = SvUl_SF::Format (_T("%s%s"), W2T(reinterpret_cast<wchar_t*> (Buffer) ), W2T( FindData.cFileName));
+							}
+							else
+							{
+								Path = SvUl_SF::Format (_T("%s\\%s"), UnPackDir, W2T( FindData.cFileName));
 							}
 
-							CreateDirectoryW ((WCHAR *) Buffer, nullptr);
+							_tsplitpath (Path.c_str(), szDrive, szDir, szFName, szExt);
+							if( _tcscmp(szExt, _T(".svx")) == 0 )
+							{
+								m_configFilePath = Path;
+							}
 
-							if (SourceFile.Open (szPath, CFile::shareDenyNone | CFile::modeCreate | CFile::modeWrite | CFile::typeBinary, &FileException))
+							CreateDirectoryW (reinterpret_cast<wchar_t*> (Buffer), nullptr);
+
+							if (SourceFile.Open (Path.c_str(), CFile::shareDenyNone | CFile::modeCreate | CFile::modeWrite | CFile::typeBinary, &FileException))
 							{
 								for ( ; FindData.nFileSizeHigh; --FindData.nFileSizeHigh)
 								{
@@ -237,18 +246,5 @@ BOOL SVPackedFile::UnPackFiles( const CString& szPackedFile, const CString& szUn
 	}
 
 	return FALSE;
-}
-
-SVPackedFile::SVPackedFile()
-{
-}
-
-SVPackedFile::~SVPackedFile()
-{
-}
-
-const CString& SVPackedFile::getConfigFilePath() const
-{
-	return m_configFilePath;
 }
 

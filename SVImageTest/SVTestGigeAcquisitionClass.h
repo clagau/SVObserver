@@ -13,6 +13,7 @@
 
 #include "SVTestAcquisitionClass.h"
 #include "SVTestGigeCameraProxy.h"
+#include "SVUtilityLibrary/SVString.h"
 
 class SVTestGigeAcquisitionClass : public SVTestAcquisitionClass
 {

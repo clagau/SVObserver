@@ -15,6 +15,7 @@
 #include "SVToolLoadImage.h"
 #include "SVAnalyzer.h"
 #include "SVUtilityLibrary/SVUtilityGlobals.h"
+#include "SVUtilityLibrary\SVString.h"
 #include "SVOCore/SVImageProcessingClass.h"
 #include "SVInspectionProcess.h"
 #include "SVToolSet.h"
@@ -122,10 +123,10 @@ BOOL SVLoadImageToolClass::OnValidate ()
 {
 	if (SVToolClass::OnValidate ())
 	{
-		CString strPathName;
-		m_currentPathName.GetValue( strPathName );
+		SVString PathName;
+		m_currentPathName.GetValue( PathName );
 		
-		if( ::SVFileExists((LPCTSTR)strPathName) ) // No can do! || strPathName.IsEmpty())
+		if( ::SVFileExists( PathName.c_str() ) )
 		{
 			return true;
 		}
@@ -140,7 +141,7 @@ BOOL SVLoadImageToolClass::onRun( SVRunStatusClass& RRunStatus )
 	if( SVToolClass::onRun( RRunStatus ) )
 	{
 		BOOL bReload = false;
-		CString strImagePathName;
+		SVString ImagePathName;
 
 		if( S_OK != m_continuousReload.GetValue( bReload ) )
 		{
@@ -149,7 +150,7 @@ BOOL SVLoadImageToolClass::onRun( SVRunStatusClass& RRunStatus )
 			return false;
 		}
 		
-		if( S_OK != m_currentPathName.GetValue( strImagePathName ) )
+		if( S_OK != m_currentPathName.GetValue( ImagePathName ) )
 		{
 			RRunStatus.SetInvalid();
 			SetInvalid();
@@ -158,7 +159,7 @@ BOOL SVLoadImageToolClass::onRun( SVRunStatusClass& RRunStatus )
 
 		if( bReload || m_bResetFileImage)
 		{
-			if( S_OK != m_fileImage.LoadImage( strImagePathName, RRunStatus.Images ) )
+			if( S_OK != m_fileImage.LoadImage( ImagePathName.c_str(), RRunStatus.Images ) )
 			{
 				RRunStatus.SetInvalid();
 				SetInvalid();
@@ -266,14 +267,14 @@ HRESULT SVLoadImageToolClass::SetImageExtent( unsigned long p_ulIndex, SVImageEx
 HRESULT SVLoadImageToolClass::GetParentExtent( SVImageExtentClass& rParentExtent ) const
 {
 	HRESULT hr = S_OK;
-	CString strImagePathName;
+	SVString ImagePathName;
 	if( S_OK == hr )
 	{
-		hr = m_currentPathName.GetValue( strImagePathName );
+		hr = m_currentPathName.GetValue( ImagePathName );
 	}
 	if( S_OK == hr )
 	{
-		hr = SVImageObjectClass::GetImageExtentFromFile(strImagePathName,rParentExtent);
+		hr = SVImageObjectClass::GetImageExtentFromFile( ImagePathName.c_str(), rParentExtent );
 	}
 	return hr;
 }
@@ -282,16 +283,16 @@ HRESULT SVLoadImageToolClass::SetImageExtentToParent(unsigned long p_ulIndex )
 {
 	HRESULT l_hrOk = S_OK;
 	SVImageExtentClass l_NewExtent;
-	CString strImagePathName;
+	SVString ImagePathName;
 
 	if( S_OK == l_hrOk )
 	{
-		l_hrOk = m_currentPathName.GetValue( strImagePathName );
+		l_hrOk = m_currentPathName.GetValue( ImagePathName );
 	}
 
 	if( S_OK == l_hrOk )
 	{
-		l_hrOk = m_fileImage.LoadImageFullSize( strImagePathName, l_NewExtent);
+		l_hrOk = m_fileImage.LoadImageFullSize( ImagePathName.c_str(), l_NewExtent);
 	}
 		
 	if( S_OK == l_hrOk )

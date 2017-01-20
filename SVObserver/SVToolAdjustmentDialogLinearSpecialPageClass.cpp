@@ -20,6 +20,7 @@
 #include "TextDefinesSvO.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -124,8 +125,8 @@ BOOL SVToolAdjustmentDialogLinearSpecialPageClass::OnInitDialog()
 		}
 		else
 		{	
-			CString sVal = pTool->GetProfileOrientation();
-			m_ctlProfileOrientation.SelectString(-1,sVal);
+			SVString Value = pTool->GetProfileOrientation();
+			m_ctlProfileOrientation.SelectString( -1, Value.c_str() );
 		}
 
 		
@@ -156,12 +157,10 @@ void SVToolAdjustmentDialogLinearSpecialPageClass::OnCheckRotation()
 		
 		if ( l_bValue ) //true
 		{
-			CString sTxt;
-
+			CString Text;
 			//turning on Rotation.
-			m_ctlProfileOrientation.GetWindowText(sTxt);
-
-			if ( sTxt == "Vertical" )
+			m_ctlProfileOrientation.GetWindowText(Text);
+			if ( _T("Vertical") == Text  )
 			{
 				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 				INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvOi::Tid_LinearSpecial_OrientationVertical, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10213, SV_GUID_NULL, MB_YESNO );
@@ -175,11 +174,10 @@ void SVToolAdjustmentDialogLinearSpecialPageClass::OnCheckRotation()
 		}
 		else
 		{
-			CString sTxt;
+			CString Text;
+			m_ctlProfileOrientation.GetWindowText(Text);
 
-			m_ctlProfileOrientation.GetWindowText(sTxt);
-
-			if ( sTxt == "Horizontal" )
+			if ( "Horizontal" == Text )
 			{
 				if ( bIsRotated )
 				{
@@ -203,7 +201,7 @@ void SVToolAdjustmentDialogLinearSpecialPageClass::OnCheckRotation()
 
 		//true - turn off combo
 		m_ctlProfileOrientation.EnableWindow( ! l_bValue );
-		m_ctlProfileOrientation.SelectString( -1, pTool->GetProfileOrientation() );
+		m_ctlProfileOrientation.SelectString( -1, pTool->GetProfileOrientation().c_str() );
 
 	}//if pTool
 }

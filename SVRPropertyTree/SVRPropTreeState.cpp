@@ -27,15 +27,15 @@ SVRPropTreeState::~SVRPropTreeState()
 }
 
 
-SVRPropTreeState::SVRPropTreeState( const SVRPropTreeState& rhs )
+SVRPropTreeState::SVRPropTreeState( const SVRPropTreeState& rRhs )
 {
-	m_State = rhs.m_State;
+	m_State = rRhs.m_State;
 }
 
-const SVRPropTreeState& SVRPropTreeState::operator = ( const SVRPropTreeState& rhs )
+const SVRPropTreeState& SVRPropTreeState::operator = ( const SVRPropTreeState& rRhs )
 {
 	m_State.clear();
-	m_State = rhs.m_State;
+	m_State = rRhs.m_State;
 	return *this;
 }
 

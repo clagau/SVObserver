@@ -28,7 +28,7 @@ class MonitorListBasePage : public CPropertyPage, public SvOg::ISVPropertyPageDi
 
 #pragma region Public
 public:
-	MonitorListBasePage(const SvUl::NameSelectionList& rList, MonitorListSheet* pParentSheet, const CString& szCaption, int id);
+	MonitorListBasePage(const SvUl::NameSelectionList& rList, MonitorListSheet* pParentSheet, LPCTSTR Caption, int id);
 	virtual ~MonitorListBasePage();
 
 	// ISVPropertyPageDialog

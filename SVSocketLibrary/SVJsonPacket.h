@@ -19,16 +19,16 @@ namespace Seidenader { namespace SVSocketLibrary
 	class SVJsonPacket
 	{
 	private:
-		std::string m_packet;
-		std::string m_pending;
+		std::basic_string<TCHAR> m_packet;
+		std::basic_string<TCHAR> m_pending;
 		int m_count;
 
 	public:
 		SVJsonPacket();
-		void Add(const std::string& data);
+		void Add(const std::basic_string<TCHAR>& data);
 		bool IsComplete() const;
 		bool IsValid() const;
-		const std::string& GetJsonData() const;
+		const std::basic_string<TCHAR>& GetJsonData() const;
 		void Clear();
 		void Reset();
 	};

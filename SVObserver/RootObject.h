@@ -17,6 +17,7 @@
 #include "SVObjectLibrary\SVObjectClass.h"
 #include "RootChildren.h"
 #include "SVConfigurationObject.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 class RootObject : public SVObjectClass
@@ -118,7 +119,7 @@ public:
 	//! \param Path <in> the path of object to return. Default = "", means all objects.
 	//! \param AttributesAllowedFilter <in> These flags indicate which attributes must be set for the objects to be returned. For each flag, 1 means "must be set", and 0 mean "don't care".  Default = 0, means all objects.
 	//************************************
-	static void getRootChildNameList( SVStringArray& rObjectNameList, LPCTSTR Path = _T(""), UINT AttributesAllowedFilter = 0 );
+	static void getRootChildNameList( SVStringVector& rObjectNameList, LPCTSTR Path = _T(""), UINT AttributesAllowedFilter = 0 );
 
 	//************************************
 	//! The static method deletes a root child value object

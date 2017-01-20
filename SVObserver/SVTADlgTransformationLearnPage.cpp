@@ -18,6 +18,7 @@
 #include "SVIPDoc.h"
 #include "SVTool.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -30,16 +31,16 @@ SVToolAdjustmentDialogTransformationLearnPageClass::SVToolAdjustmentDialogTransf
 : CPropertyPage(SVToolAdjustmentDialogTransformationLearnPageClass::IDD)
 {
 	//{{AFX_DATA_INIT(SVToolAdjustmentDialogTransformationLearnPageClass)
-	StrTranslationXValue = _T("");
-	StrTranslationYValue = _T("");
-	StrRotationXValue = _T("");
-	StrRotationYValue = _T("");
-	StrRotationAngleValue = _T("");
-	StrLearnedTranslationXValue = _T("");
-	StrLearnedTranslationYValue = _T("");
-	StrLearnedRotationXValue = _T("");
-	StrLearnedRotationYValue = _T("");
-	StrLearnedRotationAngleValue = _T("");
+	m_TranslationXValue = _T("");
+	m_TranslationYValue = _T("");
+	m_RotationXValue = _T("");
+	m_RotationYValue = _T("");
+	m_RotationAngleValue = _T("");
+	m_LearnedTranslationXValue = _T("");
+	m_LearnedTranslationYValue = _T("");
+	m_LearnedRotationXValue = _T("");
+	m_LearnedRotationYValue = _T("");
+	m_LearnedRotationAngleValue = _T("");
 	//}}AFX_DATA_INIT
 
 	pParentDialog	= Parent;
@@ -172,11 +173,11 @@ void SVToolAdjustmentDialogTransformationLearnPageClass::refresh()
 				pRotationAngleResult->GetValue( m_rotationAngleValue );
 		}
 
-		StrTranslationXValue.Format( _T( "%lf" ), m_translationXValue );
-		StrTranslationYValue.Format( _T( "%lf" ), m_translationYValue );
-		StrRotationXValue.Format( _T( "%lf" ), m_rotationXValue );
-		StrRotationYValue.Format( _T( "%lf" ), m_rotationYValue );
-		StrRotationAngleValue.Format( _T( "%lf" ), m_rotationAngleValue );
+		m_TranslationXValue.Format( _T( "%lf" ), m_translationXValue );
+		m_TranslationYValue.Format( _T( "%lf" ), m_translationYValue );
+		m_RotationXValue.Format( _T( "%lf" ), m_rotationXValue );
+		m_RotationYValue.Format( _T( "%lf" ), m_rotationYValue );
+		m_RotationAngleValue.Format( _T( "%lf" ), m_rotationAngleValue );
 		
 		UpdateData( FALSE ); // set data to dialog
 	}
@@ -187,16 +188,16 @@ void SVToolAdjustmentDialogTransformationLearnPageClass::DoDataExchange(CDataExc
 {
 	CPropertyPage::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(SVToolAdjustmentDialogTransformationLearnPageClass)
-	DDX_Text(pDX, IDC_TRANSLATION_X_EDIT, StrTranslationXValue);
-	DDX_Text(pDX, IDC_TRANSLATION_Y_EDIT, StrTranslationYValue);
-	DDX_Text(pDX, IDC_ROTATION_X_EDIT, StrRotationXValue);
-	DDX_Text(pDX, IDC_ROTATION_Y_EDIT, StrRotationYValue);
-	DDX_Text(pDX, IDC_ROTATION_ANGLE_EDIT, StrRotationAngleValue);
-	DDX_Text(pDX, IDC_LEARNED_TRANSLATION_X_EDIT, StrLearnedTranslationXValue);
-	DDX_Text(pDX, IDC_LEARNED_TRANSLATION_Y_EDIT, StrLearnedTranslationYValue);
-	DDX_Text(pDX, IDC_LEARNED_ROTATION_X_EDIT, StrLearnedRotationXValue);
-	DDX_Text(pDX, IDC_LEARNED_ROTATION_Y_EDIT, StrLearnedRotationYValue);
-	DDX_Text(pDX, IDC_LEARNED_ROTATION_ANGLE_EDIT, StrLearnedRotationAngleValue);
+	DDX_Text(pDX, IDC_TRANSLATION_X_EDIT, m_TranslationXValue);
+	DDX_Text(pDX, IDC_TRANSLATION_Y_EDIT, m_TranslationYValue);
+	DDX_Text(pDX, IDC_ROTATION_X_EDIT, m_RotationXValue);
+	DDX_Text(pDX, IDC_ROTATION_Y_EDIT, m_RotationYValue);
+	DDX_Text(pDX, IDC_ROTATION_ANGLE_EDIT, m_RotationAngleValue);
+	DDX_Text(pDX, IDC_LEARNED_TRANSLATION_X_EDIT, m_LearnedTranslationXValue);
+	DDX_Text(pDX, IDC_LEARNED_TRANSLATION_Y_EDIT, m_LearnedTranslationYValue);
+	DDX_Text(pDX, IDC_LEARNED_ROTATION_X_EDIT, m_LearnedRotationXValue);
+	DDX_Text(pDX, IDC_LEARNED_ROTATION_Y_EDIT, m_LearnedRotationYValue);
+	DDX_Text(pDX, IDC_LEARNED_ROTATION_ANGLE_EDIT, m_LearnedRotationAngleValue);
 	//}}AFX_DATA_MAP
 }
 
@@ -386,35 +387,61 @@ void SVToolAdjustmentDialogTransformationLearnPageClass::OnLearnButton()
 
 void SVToolAdjustmentDialogTransformationLearnPageClass::refreshLearnedValues()
 {
+	SVString Value;
 	// refresh Learned Translation X settings...
 	if( pLearnedTranslationX )
-		pLearnedTranslationX->GetValue(	StrLearnedTranslationXValue );
+	{
+		pLearnedTranslationX->GetValue(	Value );
+		m_LearnedTranslationXValue = Value.c_str();
+	}
 	else
-		StrLearnedTranslationXValue = _T( "" );
+	{
+		m_LearnedTranslationXValue = _T("");
+	}
 	
 	// refresh Learned Translation Y settings...
 	if( pLearnedTranslationY )
-		pLearnedTranslationY->GetValue(	StrLearnedTranslationYValue );
+	{
+		pLearnedTranslationY->GetValue(	Value );
+		m_LearnedTranslationYValue = Value.c_str();
+	}
 	else
-		StrLearnedTranslationYValue = _T( "" );
+	{
+		m_LearnedTranslationYValue = _T("");
+	}
 
 	// refresh Learned Rotation X settings...
 	if( pLearnedRotationX )
-		pLearnedRotationX->GetValue( StrLearnedRotationXValue );
+	{
+		pLearnedRotationX->GetValue( Value );
+		m_LearnedRotationXValue = Value.c_str();
+	}
 	else
-		StrLearnedRotationXValue = _T( "" );
+	{
+		m_LearnedRotationXValue = _T("");
+	}
 	
 	// refresh Learned Rotation Y settings...
 	if( pLearnedRotationY )
-		pLearnedRotationY->GetValue( StrLearnedRotationYValue );
+	{
+		pLearnedRotationY->GetValue( Value );
+		m_LearnedRotationYValue = Value.c_str();
+	}
 	else
-		StrLearnedRotationYValue = _T( "" );
+	{
+		m_LearnedRotationYValue = _T("");
+	}
 
 	// refresh Learned Rotation Angle settings...
 	if( pLearnedRotationAngle )
-		pLearnedRotationAngle->GetValue( StrLearnedRotationAngleValue );
+	{
+		pLearnedRotationAngle->GetValue( Value );
+		m_LearnedRotationAngleValue = Value.c_str();
+	}
 	else
-		StrLearnedRotationAngleValue = _T( "" );
+	{
+		m_LearnedRotationAngleValue = _T("");
+	}
 
 	UpdateData( FALSE );
 }

@@ -26,7 +26,7 @@ namespace Seidenader
 		private:
 			GUID m_embeddedID; // maybe use SVObjectTypeInfo instead ?
 			GUID m_instanceID;
-			SVObjectTypeInfoStruct m_ownerInfo; // to access an object within the heirarchy owned at a certain level
+			SVObjectTypeInfoStruct m_ownerInfo; // to access an object within the hierarchy owned at a certain level
 			mutable boost::any m_value;
 			bool m_bReadOnly;
 			mutable bool m_bModified;

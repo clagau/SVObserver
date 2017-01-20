@@ -15,6 +15,7 @@
 #include "SVImageTest.h"
 #include "SVCameraPropDlgClass.h"
 #include "SVImageLibrary/SVDigitizerLoadLibraryClass.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -101,46 +102,46 @@ BOOL SVCameraPropDlgClass::OnInitDialog()
 				{
 					m_psvDigitizers->ParameterGetValue( m_triggerchannel, l_iParameterID, &l_iParameterTypeID, &l_varValue );
 
-					CString l_csName;
+					SVString Name;
 
-					l_csName = l_bstrName;
+					Name = SvUl_SF::createSVString( _bstr_t(l_bstrName) );
 
-					l_iIndex = m_svListCtrl.InsertItem( l_iIndex + 1, l_csName );
+					l_iIndex = m_svListCtrl.InsertItem( l_iIndex + 1, Name.c_str() );
 					
 					if ( l_iIndex > -1 )
 					{
-						CString l_csData;
+						SVString Data;
 
 						switch( l_varValue.vt )
 						{
 							case VT_I4:
 							{
-								l_csData.Format( "%d", l_varValue.lVal );
+								Data = SvUl_SF::Format( _T("%d"), l_varValue.lVal );
 								break;
 							}
 							case VT_UI4:
 							{
-								l_csData.Format( "0x%04X", l_varValue.ulVal );
+								Data = SvUl_SF::Format( _T("0x%04X"), l_varValue.ulVal );
 								break;
 							}
 							case VT_R4:
 							{
-								l_csData.Format( "%f", l_varValue.fltVal );
+								Data = SvUl_SF::Format( _T("%f"), l_varValue.fltVal );
 								break;
 							}
 							case VT_R8:
 							{
-								l_csData.Format( "%lf", l_varValue.dblVal );
+								Data = SvUl_SF::Format( _T("%lf"), l_varValue.dblVal );
 								break;
 							}
 							case VT_BSTR:
 							{
-								l_csData = l_varValue.bstrVal;
+								Data = SvUl_SF::createSVString( _bstr_t( l_varValue.bstrVal) );
 								break;
 							}
 						}
 
-						m_svListCtrl.SetItemText( l_iIndex, 1, l_csData );
+						m_svListCtrl.SetItemText( l_iIndex, 1, Data.c_str() );
 						m_svListCtrl.SetItemData( l_iIndex, l_iParameterID );
 					}
 
@@ -174,7 +175,7 @@ void SVCameraPropDlgClass::OnOK()
 
 	for( int i = 0; i < l_iCount; i++ )
 	{
-		CString l_csData = m_svListCtrl.GetItemText( i, 1 );
+		SVString Data = m_svListCtrl.GetItemText( i, 1 );
 		long l_lParameterID = static_cast<long>(m_svListCtrl.GetItemData( i ));
 		long l_lParameterTypeID = 0;
 
@@ -183,7 +184,7 @@ void SVCameraPropDlgClass::OnOK()
 		::VariantInit( &l_varValue );
 
 		l_varValue.vt = VT_UI4;
-		l_varValue.lVal = atol( l_csData );
+		l_varValue.lVal = atol( Data.c_str() );
 
 		m_psvDigitizers->ParameterSetValue( m_triggerchannel, l_lParameterID, l_lParameterTypeID, &l_varValue );
 	}

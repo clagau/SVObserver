@@ -18,6 +18,7 @@
 #include "SVTool.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "SVTransformationTool.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion
 
 #ifdef _DEBUG
@@ -40,8 +41,8 @@ SVToolAdjustmentDialogTranslationPageClass::SVToolAdjustmentDialogTranslationPag
 : CPropertyPage(SVToolAdjustmentDialogTranslationPageClass::IDD)
 {
 	//{{AFX_DATA_INIT(SVToolAdjustmentDialogTranslationPageClass)
-	m_strTranslationXValue = _T("");
-	m_strTranslationYValue = _T("");
+	m_TranslationXValue = _T("");
+	m_TranslationYValue = _T("");
 	m_performTranslation = FALSE;
 	//}}AFX_DATA_INIT
 	
@@ -88,14 +89,14 @@ BOOL SVToolAdjustmentDialogTranslationPageClass::OnInitDialog()
 		m_pInterpolationMode = dynamic_cast<SVEnumerateValueObjectClass*>(m_pTool->getFirstObject(objectInfo));
 		if( m_pInterpolationMode )
 		{
-			CString l_strEnumList;
+			SVString EnumList;
 
-			m_pInterpolationMode->GetEnumTypes( l_strEnumList );
-			m_cbInterpolation.SetEnumTypes( l_strEnumList );
+			m_pInterpolationMode->GetEnumTypes( EnumList );
+			m_cbInterpolation.SetEnumTypes( EnumList.c_str() );
 
-			CString strEnum;
-			m_pInterpolationMode->GetValue( strEnum );
-			m_cbInterpolation.SelectString( -1, strEnum );
+			SVString EnumString;
+			m_pInterpolationMode->GetValue( EnumString );
+			m_cbInterpolation.SelectString( -1, EnumString.c_str() );
 		}
 
 		SVTransformationToolClass* l_pTool = nullptr;
@@ -136,8 +137,8 @@ void SVToolAdjustmentDialogTranslationPageClass::DoDataExchange(CDataExchange* p
 	CPropertyPage::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(SVToolAdjustmentDialogTranslationPageClass)
 	DDX_Control(pDX, IDC_INTERPOLATION_MODE_COMBO, m_cbInterpolation);
-	DDX_Text(pDX, IDC_TRANSLATION_X_EDIT, m_strTranslationXValue);
-	DDX_Text(pDX, IDC_TRANSLATION_Y_EDIT, m_strTranslationYValue);
+	DDX_Text(pDX, IDC_TRANSLATION_X_EDIT, m_TranslationXValue);
+	DDX_Text(pDX, IDC_TRANSLATION_Y_EDIT, m_TranslationYValue);
 	DDX_Check(pDX, IDC_PERFORM_TRANSLATION, m_performTranslation);
 	//}}AFX_DATA_MAP
 }
@@ -146,9 +147,9 @@ BOOL SVToolAdjustmentDialogTranslationPageClass::OnSetActive()
 {
 	if( m_pInterpolationMode )
 	{
-		CString strEnum;
-		m_pInterpolationMode->GetValue( strEnum );
-		m_cbInterpolation.SelectString( -1, strEnum );
+		SVString EnumString;
+		m_pInterpolationMode->GetValue( EnumString );
+		m_cbInterpolation.SelectString( -1, EnumString.c_str() );
 	}
 
 	return CPropertyPage::OnSetActive();
@@ -158,13 +159,13 @@ void SVToolAdjustmentDialogTranslationPageClass::OnXFormulaButton()
 {
 	if (m_pEvaluateTranslationX)
 	{
-		CString strCaption = m_pEvaluateTranslationX->GetName();
-		strCaption += _T(" Formula");
+		SVString Caption = m_pEvaluateTranslationX->GetName();
+		Caption += _T(" Formula");
 
 		const GUID& rInspectionID = m_pParentDialog->GetInspectionID();
 		const GUID& rObjectID = m_pParentDialog->GetToolID();
 		SVObjectTypeInfoStruct info(SVMathContainerObjectType, SVEvaluateTranslationXObjectType);
-		SvOg::SVFormulaEditorSheetClass dlg(rInspectionID, rObjectID, info, strCaption);
+		SvOg::SVFormulaEditorSheetClass dlg(rInspectionID, rObjectID, info, Caption.c_str());
 		dlg.DoModal();
 		
 		refresh();
@@ -175,13 +176,13 @@ void SVToolAdjustmentDialogTranslationPageClass::OnYFormulaButton()
 {
 	if (m_pEvaluateTranslationY)
 	{
-		CString strCaption = m_pEvaluateTranslationY->GetName();
-		strCaption += _T(" Formula");
+		SVString Caption = m_pEvaluateTranslationY->GetName();
+		Caption += _T(" Formula");
 
 		const GUID& rInspectionID = m_pParentDialog->GetInspectionID();
 		const GUID& rObjectID = m_pParentDialog->GetToolID();
 		SVObjectTypeInfoStruct info(SVMathContainerObjectType, SVEvaluateTranslationYObjectType);
-		SvOg::SVFormulaEditorSheetClass dlg(rInspectionID, rObjectID, info, strCaption);
+		SvOg::SVFormulaEditorSheetClass dlg(rInspectionID, rObjectID, info, Caption.c_str());
 		dlg.DoModal();
 		
 		refresh();
@@ -251,20 +252,20 @@ void SVToolAdjustmentDialogTranslationPageClass::refresh()
 
 		if( S_OK == GetValue( m_pTool->GetUniqueObjectID(), SVOutputEvaluateTranslationXResultObjectGuid, l_Variant.GetVARIANT() ) )
 		{
-			m_strTranslationXValue = static_cast< LPCTSTR >( _bstr_t( l_Variant ) );
+			m_TranslationXValue = static_cast< LPCTSTR >( _bstr_t( l_Variant ) );
 		}
 		else
 		{
-			m_strTranslationXValue = _T("");
+			m_TranslationXValue = _T("");
 		}
 		
 		if( S_OK == GetValue( m_pTool->GetUniqueObjectID(), SVOutputEvaluateTranslationYResultObjectGuid, l_Variant.GetVARIANT() ) )
 		{
-			m_strTranslationYValue = static_cast< LPCTSTR >( _bstr_t( l_Variant ) );
+			m_TranslationYValue = static_cast< LPCTSTR >( _bstr_t( l_Variant ) );
 		}
 		else
 		{
-			m_strTranslationYValue = _T("");
+			m_TranslationYValue = _T("");
 		}
 		
 		UpdateData(FALSE); // set data to dialog

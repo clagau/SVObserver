@@ -24,7 +24,7 @@ namespace Seidenader { namespace SVSocketLibrary
 		static const Socket_t InvalidSock = INVALID_SOCKET;
 		static const int sokType = SOCK_STREAM;
 		static const int proto = IPPROTO_TCP;
-		static const std::string ApiName() { return "tcp"; }
+		static const std::basic_string<TCHAR> ApiName() { return _T("tcp"); }
 		static void CreateOptions(Socket_t s) {}
 		static const char tick = 't';
 		static const size_t buffer_size = 64*1024;
@@ -39,7 +39,7 @@ namespace Seidenader { namespace SVSocketLibrary
 		static const Socket_t InvalidSock = INVALID_SOCKET;
 		static const int sokType = SOCK_DGRAM;
 		static const int proto = IPPROTO_UDP;
-		static const std::string ApiName() { return "udp"; }
+		static const std::basic_string<TCHAR> ApiName() { return _T("udp"); }
 		static void CreateOptions(Socket_t s) {}
 		static const char tick = 'u';
 		static const size_t buffer_size = 1450;

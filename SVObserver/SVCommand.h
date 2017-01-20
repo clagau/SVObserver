@@ -16,6 +16,7 @@
 #include "SVRunControlLibrary/SVImageIndexStruct.h"
 #include "SVActiveXLockStruct.h"	// Added by ClassView
 #include "SVInfoStructs.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 class SVValueObjectClass;
@@ -34,7 +35,7 @@ struct StreamDataStruct
 {
     SVValueObjectClass *pValueObject;
 	SVGUID m_InspectionID;
-    CString strValueName;
+    SVString strValueName;
 	long arrayIndex;
 
 	StreamDataStruct()
@@ -44,13 +45,13 @@ struct StreamDataStruct
 struct PacketDataStruct
 {
     SVValueObjectClass *pValueObject;
-	CString strValue;
+	SVString strValue;
 	long lState;
 
 	PacketDataStruct()
 	{
 		pValueObject = nullptr;
-		strValue.Empty();
+		strValue.clear();
 		lState = PRODUCT_NOT_INSPECTED;
 	}// end ctor
 };
@@ -574,11 +575,11 @@ protected:
     IStream *m_pStream;
 
 private:
-	static SVVector< SVActiveXLockStruct > m_aSVActXLock;
-	static SVVector< StreamDataStruct* > m_arStreamList;
-	static SVVector< ProductDataStruct* > m_arProductList;
-	static SVVector< SVInspectionProcess* > m_arInspections;
-	static CStringList m_cslInspectionNames;
+	static SVVector<SVActiveXLockStruct> m_aSVActXLock;
+	static SVVector<StreamDataStruct*> m_arStreamList;
+	static SVVector<ProductDataStruct*> m_arProductList;
+	static SVVector<SVInspectionProcess*> m_arInspections;
+	static SVStringVector m_InspectionNames;
 
     static volatile BOOL m_bRunStreamData;
     static volatile BOOL m_bRegisteredStream;

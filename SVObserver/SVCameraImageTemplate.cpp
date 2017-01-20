@@ -9,17 +9,17 @@
 //* .Check In Date   : $Date:   01 Oct 2013 12:16:26  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVCameraImageTemplate.h"
-
 #include "SVObjectLibrary/SVObjectAttributeClass.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-
 #include "SVGlobal.h"
 #include "SVInspectionProcess.h"
 #include "SVVirtualCamera.h"
 #include "SVObjectLibrary\SVToolsetScriptTags.h"
 #include "SVUtilityLibrary/SetBits.h"
+#pragma endregion Includes
 
 SVCameraImageTemplate::SVCameraImageTemplate( LPCSTR ObjectName )
 : SVImageClass( ObjectName )
@@ -208,14 +208,14 @@ HRESULT SVCameraImageTemplate::SetObjectValue( SVObjectAttributeClass* PDataObje
 	HRESULT hr = S_FALSE;
 	BOOL bOk = FALSE;
 
-	SvCl::SVObjectCStringArrayClass svCStringArray;
+	SvCl::SVObjectSVStringArrayClass ClassIDList;
 
-	if ( ( bOk = PDataObject->GetAttributeData( scDigitizerIDTag, svCStringArray ) ) )
+	if ( ( bOk = PDataObject->GetAttributeData( scDigitizerIDTag, ClassIDList ) ) )
 	{
-		for( int i = 0; i < svCStringArray.GetSize(); i++ )
+		for( int i = 0; i < ClassIDList.GetSize(); i++ )
 		{
 			// convert the guidStr to a Guid
-			AfxGetClassIDFromString( svCStringArray[i], &( digitizerObjectID.ToGUID() ) );
+			AfxGetClassIDFromString( ClassIDList[i].c_str(), &( digitizerObjectID.ToGUID() ) );
 		}
 	}
 	else

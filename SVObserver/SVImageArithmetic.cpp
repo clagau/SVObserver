@@ -495,19 +495,14 @@ HRESULT SVImageArithmeticClass::CollectInputImageNames( )
 		SVStaticStringValueObjectClass* imageNames = pTool->GetInputImageNames();
 		if( l_pInputImage && nullptr != imageNames )
 		{
-			CString l_strName = l_pInputImage->GetCompleteObjectName();
-
-			imageNames->SetValue( 0/*Static value, this parameter will not used*/, 0, l_strName );
-
+			imageNames->SetValue( 0/*Static value, this parameter will not used*/, 0, l_pInputImage->GetCompleteName() );
 			l_hr = S_OK;
 		}
 
 		l_pInputImage = getInputImageB();
 		if( l_pInputImage && nullptr != imageNames)
 		{
-			CString l_strName = l_pInputImage->GetCompleteObjectName();
-
-			imageNames->SetValue( 0/*Static value, this parameter will not used*/, 1, l_strName );
+			imageNames->SetValue( 0/*Static value, this parameter will not used*/, 1, l_pInputImage->GetCompleteName() );
 		}
 	}
 	return l_hr;

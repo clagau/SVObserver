@@ -13,7 +13,6 @@
 #pragma region Includes
 #include "ObjectInterfaces/SVPPQEnums.h"
 #include "SVUtilityLibrary/SVString.h"
-
 #pragma endregion Includes
 
 namespace Seidenader { namespace SVLibrary

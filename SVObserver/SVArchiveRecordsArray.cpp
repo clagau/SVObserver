@@ -70,19 +70,19 @@ HRESULT SVArchiveRecordsArray::InitializeObjects(SVArchiveTool* p_pToolArchive, 
 	int iSize = p_svoObjects.GetResultSize();
 	for ( int i = 0; i < iSize; i++ )
 	{
-		CString sName;
+		SVString sName;
 		long l_lIndex = p_svoObjects.GetLastSetIndex();
 		p_svoObjects.GetValue( l_lIndex, i, sName );
-		if ( !sName.IsEmpty() )
+		if ( !sName.empty() )
 		{
 			SVArchiveRecord* pArchiveRecord = new SVArchiveRecord;
 			SVObjectReference ref;
-			int iPos = sName.Find('.',0);
-			if( iPos > -1)	// This assumes that the first part of the dotted name is the inspection.
+			size_t Pos = sName.find('.');
+			if( SVString::npos != Pos )	// This assumes that the first part of the dotted name is the inspection.
 			{				// Build the object name with the current inspection name.
-				CString sNewName = p_pToolArchive->GetInspection()->GetName();
-				sNewName += sName.Mid(iPos); 
-				HRESULT hrGetObject = SVObjectManagerClass::Instance().GetObjectByDottedName( static_cast< LPCTSTR >( sNewName ), ref );
+				SVString sNewName = p_pToolArchive->GetInspection()->GetName();
+				sNewName += SvUl_SF::Mid( sName, Pos );
+				HRESULT hrGetObject = SVObjectManagerClass::Instance().GetObjectByDottedName( sNewName.c_str(), ref );
 				if( S_OK == hrGetObject )
 				{
 					/// names in m_svoArchiveResultNames are zero based!!!
@@ -103,7 +103,7 @@ HRESULT SVArchiveRecordsArray::InitializeObjects(SVArchiveTool* p_pToolArchive, 
 			if ( nullptr == ref.Object() )
 			{
 #if defined (TRACE_THEM_ALL) || defined (TRACE_ARCHIVE)
-				TRACE( _T( "SVArchiveRecordsArray::InitializeObjects-ToolName=%s-ObjectName=%s\n" ), m_pArchiveTool->GetCompleteObjectName(), sName );
+				TRACE( _T( "SVArchiveRecordsArray::InitializeObjects-ToolName=%s-ObjectName=%s\n" ), m_pArchiveTool->GetCompleteName(), sName );
 #endif
 			}
 			else
@@ -116,44 +116,41 @@ HRESULT SVArchiveRecordsArray::InitializeObjects(SVArchiveTool* p_pToolArchive, 
 	return hr;
 }
 
-void SVArchiveRecordsArray::ConvertStringToGuids( SVArchiveTool * pToolArchive,
-                                                  LPCTSTR pszStrValue )
+void SVArchiveRecordsArray::ConvertStringToGuids( SVArchiveTool * pToolArchive, LPCTSTR Value )
 {
 	ClearArray();
 	
-	CString csTemp = pszStrValue;
+	SVString Text = Value;
 	
-	BOOL bDone = FALSE;
+	BOOL bDone = false;
 	while (!bDone)
 	{
-		CString csGuid;
-		int nIndex = csTemp.Find((TCHAR)'\n',0);
-		if (nIndex > -1)
+		SVString GuidText;
+		size_t Pos = Text.find( _T('\n') );
+		if( SVString::npos != Pos )
 		{
-			csGuid = csTemp.Left(nIndex);
+			GuidText = SvUl_SF::Left( Text, Pos );
 		}
 		else
 		{
-			csGuid = csTemp;
-			bDone = TRUE;             // we are done 
+			GuidText = Text;
+			bDone = true;             // we are done 
 		}
 		//
 		// Adjust for next iteration.
 		//
-		csTemp = csTemp.Right(csTemp.GetLength() - nIndex -1);
+		Text = SvUl_SF::Right( Text, Text.size() - Pos -1 );
 		
 		//
 		// Convert string guid to guid structure
 		//
-		GUID objectGuid;
-		// convert the guidStr to a Guid
-		AfxGetClassIDFromString(csGuid, &objectGuid);
-		
+		SVGUID objectGuid( _bstr_t(GuidText.c_str()) );
+	
 		//
 		// The image record has a dotted name that needs to be 
 		// associated with a pointer to an image later.
 		//
-		if ( SV_GUID_NULL != objectGuid && csGuid.GetLength())
+		if ( SV_GUID_NULL != objectGuid && !GuidText.empty())
 		{
 			SVArchiveRecord* pArchiveRecord = new SVArchiveRecord;
 			SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject( objectGuid );
@@ -163,9 +160,9 @@ void SVArchiveRecordsArray::ConvertStringToGuids( SVArchiveTool * pToolArchive,
 	}
 }
 
-std::vector<CString> SVArchiveRecordsArray::RemoveDisconnectedObject( const SVObjectInfoStruct& p_rInfoObject )
+SVStringVector SVArchiveRecordsArray::RemoveDisconnectedObject( const SVObjectInfoStruct& p_rInfoObject )
 {
-	std::vector<CString> vecRemoved;
+	SVStringVector Result;
 
 	// Effective STL Item 9 p46: forward iteration / erase
 	int nCount = static_cast< int >( m_vecRecords.size() );
@@ -177,7 +174,7 @@ std::vector<CString> SVArchiveRecordsArray::RemoveDisconnectedObject( const SVOb
 		{
 			if( p_rInfoObject.UniqueObjectID == pImageRecord->m_svObjectReference.Guid() )
 			{
-				vecRemoved.push_back( pImageRecord->m_svObjectReference.GetCompleteObjectName() );
+				Result.push_back( pImageRecord->m_svObjectReference.GetCompleteName() );
 				delete pImageRecord;
 				iter = m_vecRecords.erase(iter);
 			}
@@ -188,7 +185,7 @@ std::vector<CString> SVArchiveRecordsArray::RemoveDisconnectedObject( const SVOb
 		}
 	}
 
-	return vecRemoved;
+	return Result;
 }
 
 
@@ -292,7 +289,7 @@ int SVArchiveRecordsArray::ValidateResultsObjects()
 
 			SVValueObjectReference voref( pResultRecord->m_svObjectReference );
 
-			CString sTemp;
+			SVString sTemp;
 			if ( voref.GetValue(0, sTemp) != SVMSG_SVO_33_OBJECT_INDEX_INVALID )
 			{
 				bRecordOK = true;
@@ -314,11 +311,9 @@ int SVArchiveRecordsArray::ValidateResultsObjects()
 	return static_cast< int >( m_vecRecords.size() );
 }
 
-/////////////////////////////////////////////////////////////////////////////
-//
-CString SVArchiveRecordsArray::BuildResultsArchiveString()
+SVString SVArchiveRecordsArray::BuildResultsArchiveString()
 {
-	CString csArchive;
+	SVString Result;
 	
 	BOOL bFirst = TRUE;	
 	int nCount = static_cast< int >( m_vecRecords.size() );
@@ -335,9 +330,9 @@ CString SVArchiveRecordsArray::BuildResultsArchiveString()
 
 		if ( voref.Object() )
 		{
-			CString csTemp;
+			SVString Temp;
 
-			HRESULT hr = voref.GetValue( csTemp );
+			HRESULT hr = voref.GetValue( Temp );
 			if ( S_OK == hr || SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE == hr )
 			{
 				if ( bFirst )
@@ -346,18 +341,15 @@ CString SVArchiveRecordsArray::BuildResultsArchiveString()
 				}
 				else
 				{
-					csArchive += _T(", ");
+					Result += _T(", ");
 				}
 
-			//
-			// Get a string to write to the archive file.
-			//
-			csArchive += csTemp;
+				Result += Temp;
+			}
 		}
 	}
-	}
 
-	return csArchive;
+	return Result;
 }
 
 void SVArchiveRecordsArray::DisconnectAllResultObjects()

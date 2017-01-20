@@ -47,11 +47,11 @@ SVAccessClass::SVAccessClass()
 	NET_API_STATUS ns = NetWkstaUserGetInfo( nullptr, 1, (LPBYTE*)&pInfo );
 	if( ns == NERR_Success )
 	{
-		m_strLogonServer = W2A( ( LPWSTR )pInfo->wkui1_logon_server);
+		m_LogonServer = W2A( ( LPWSTR )pInfo->wkui1_logon_server);
 	}
 	else
 	{
-		m_strLogonServer = _T("."); // local computer
+		m_LogonServer = _T("."); // local computer
 	}
 
 	init();
@@ -106,28 +106,27 @@ void SVAccessClass::ResetTime()
 // This Change function changes a garbled string so it can be used.  The purpose of this function
 // is to be able to have a hidden string that will not be human readable if the executable is 
 // examined with a debugger.
-CString SVAccessClass::Change( CString p_strIn )
+SVString SVAccessClass::Change( const SVString& rSource )
 {
-	CString l_strNew = p_strIn;
-	int len = p_strIn.GetLength();
+	SVString Result( rSource );
 	int l_seed = 12;
-	for( int i = 0 ; i < len ; i++ )
+	for( size_t i = 0 ; i < Result.size() ; i++ )
 	{
-		TCHAR l_Temp = l_strNew[ i ];
+		TCHAR l_Temp = Result[ i ];
 		l_Temp ^= l_seed;
-		l_strNew.SetAt( i, l_Temp );
+		Result.at(i) = l_Temp;
 		l_seed += 3;
 	}
-	return l_strNew;
+	return Result;
 }
 
 // This function checks for the master password which is extracted from the user and password.
-bool SVAccessClass::IsMasterPassword( CString p_rstrUser, CString p_rstrPW )
+bool SVAccessClass::IsMasterPassword( LPCTSTR User, LPCTSTR PW )
 {
-	p_rstrPW.MakeLower();
-	p_rstrUser.MakeLower();
+	SVString LowerPW = SvUl_SF::MakeLower( SVString(PW) );
+	SVString LowerUser = SvUl_SF::MakeLower( SVString(User) );
 
-	if( p_rstrPW == Change(_T("ga}vszrRK"))  && p_rstrUser.Find(Change(_T("y`"))) >= 0)
+	if( LowerPW == Change(_T("ga}vszrRK"))  && SVString::npos != LowerUser.find(Change(_T("y`"))) )
 	{
 		return true;
 	}
@@ -139,17 +138,17 @@ bool SVAccessClass::IsMasterPassword( CString p_rstrUser, CString p_rstrPW )
 // S_OK is returned if successful. and the strUser and strPassword strings are filled.
 // The standard SVResearch users that are intended for administration are blocked from being able
 // to logon.  They are SVActiveX, SVIMRun, SVFocusNT, and SVAdmin.
-HRESULT SVAccessClass::PasswordDialog(CString& strUser, CString& strPassword, LPCTSTR Attempt, LPCTSTR p_strStatus)
+HRESULT SVAccessClass::PasswordDialog(SVString& rUser, SVString& rPassword, LPCTSTR Attempt, LPCTSTR Status)
 {
 	HRESULT Result = S_FALSE;
 
 
-	SVPasswordDlg dlg;
-	dlg.m_strStatus = p_strStatus;
-	//dlg.m_strUser = strUser;  // Jim does not want to default the User name
+	SVPasswordDlg dlg( Status );
 	if( dlg.DoModal() == IDOK )
 	{
-		if( IsMasterPassword( dlg.m_strUser, dlg.m_strPassword ) )
+		SVString NewUser( dlg.getUser() );
+		SVString NewPassword( dlg.getPassword() );
+		if( IsMasterPassword( NewUser.c_str(), NewPassword.c_str() ) )
 		{
 			Result =  S_OK;
 		}
@@ -157,29 +156,24 @@ HRESULT SVAccessClass::PasswordDialog(CString& strUser, CString& strPassword, LP
 		{
 			HANDLE phToken = nullptr;
 
-			if( LogonUserA(  static_cast<LPCSTR> (dlg.m_strUser),
-				static_cast<LPCSTR> (m_strLogonServer), 
-				static_cast<LPCSTR> (dlg.m_strPassword), 
-				LOGON32_LOGON_NETWORK,
-				LOGON32_PROVIDER_DEFAULT,
-				&phToken) )
+			if( LogonUserA(  NewUser.c_str(),	m_LogonServer.c_str(), NewPassword.c_str(), LOGON32_LOGON_NETWORK, LOGON32_PROVIDER_DEFAULT, &phToken) )
 			{
 				CloseHandle( phToken);
 
 				// Hard Coded Deny logging On Priviledged SVResearch Users.
-				if( dlg.m_strUser.CompareNoCase( _T("SVActiveX")) == 0 ||
-					dlg.m_strUser.CompareNoCase( _T("SVIMRun")) == 0 ||
-					dlg.m_strUser.CompareNoCase( _T("SVFocusNT")) == 0 || 
-					dlg.m_strUser.CompareNoCase( _T("SVAdmin")) == 0) 
+				if( SvUl_SF::CompareNoCase( NewUser, _T("SVActiveX")) == 0 ||
+					SvUl_SF::CompareNoCase( NewUser, _T("SVIMRun")) == 0 ||
+					SvUl_SF::CompareNoCase( NewUser, _T("SVFocusNT")) == 0 || 
+					SvUl_SF::CompareNoCase( NewUser, _T("SVAdmin")) == 0) 
 				{
-					SVStringArray msgList;
-					msgList.push_back( SVString(dlg.m_strUser) );
+					SVStringVector msgList;
+					msgList.push_back( NewUser );
 					msgList.push_back( SVString(Attempt) );
 					SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 					Exception.setMessage( SVMSG_SVS_ACCESS_DENIED, SvOi::Tid_Security_Access_Denied, msgList, SvStl::SourceFileParams(StdMessageParams) );
 
-					dlg.m_strUser.Empty();
-					dlg.m_strPassword.Empty();
+					NewUser.clear();
+					NewPassword.clear();
 					Result = SVMSG_SVS_ACCESS_DENIED;
 				}
 				else
@@ -189,8 +183,8 @@ HRESULT SVAccessClass::PasswordDialog(CString& strUser, CString& strPassword, LP
 			}
 			else
 			{
-				SVStringArray msgList;
-				msgList.push_back( SVString(dlg.m_strUser) );
+				SVStringVector msgList;
+				msgList.push_back( dlg.getUser() );
 				msgList.push_back( SVString(Attempt) );
 				SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 				Exception.setMessage( SVMSG_SVS_ACCESS_DENIED, SvOi::Tid_Security_Access_Denied, msgList, SvStl::SourceFileParams(StdMessageParams) );
@@ -198,32 +192,34 @@ HRESULT SVAccessClass::PasswordDialog(CString& strUser, CString& strPassword, LP
 				Result = SVMSG_SVS_ACCESS_DENIED;
 			}
 		}
-		strUser = dlg.m_strUser;
-		strPassword = dlg.m_strPassword;
+		rUser = NewUser;
+		rPassword = NewPassword;
 	}
 	return Result;
 }
 
 // This function checks to see if a user is a member of the given NT Groups
-// p_strGroups is either a single group or a list of groups seperated by commas.
+// NTGroups is either a single group or a list of groups separated by commas.
 // The function returns true if the user is a member of at least one of the groups.
 // The function will also return true if the group is set to the special string Everybody.
-bool SVAccessClass::IsUserAMember( const CString& p_strUser, const CString& p_strGroups )
+bool SVAccessClass::IsUserAMember( const SVString& rUser, const SVString& rNTGroups )
 {
 	// Checks to see if the user is a member of at least one of the groups in strGroups
 	// strGroups is a comma seperated list of groups.
 	USES_CONVERSION;
-	bool l_bRet = false;
+	bool Result = false;
 
 	LPLOCALGROUP_USERS_INFO_0 pBuf = nullptr;
 	LPLOCALGROUP_USERS_INFO_0 pTmpBuf = nullptr;
 	DWORD entriesread = 0;
 	DWORD totalentries = 0;
-	if( p_strGroups.Compare(_T("Everybody") ) == 0 )
+	if( _T("Everybody") == rNTGroups )
+	{
 		return true;
+	}
 
-	#ifdef _UNICODE
-		NET_API_STATUS nas = NetUserGetLocalGroups(  m_strLogonServer,
+#ifdef _UNICODE
+		NET_API_STATUS nas = NetUserGetLocalGroups(  m_LogonServer,
 													 p_strUser,
 													 0,
 													 LG_INCLUDE_INDIRECT,
@@ -231,45 +227,51 @@ bool SVAccessClass::IsUserAMember( const CString& p_strUser, const CString& p_st
 													-1,
 													&entriesread,
 													&totalentries);
-	#else
-		NET_API_STATUS nas = NetUserGetLocalGroups(  A2W( m_strLogonServer ),
-													 A2W( p_strUser ),
+#else
+		NET_API_STATUS nas = NetUserGetLocalGroups(  A2W( m_LogonServer.c_str() ),
+													 A2W( rUser.c_str() ),
 													 0,
 													 LG_INCLUDE_INDIRECT,
 													(LPBYTE*) &pBuf,
 													(DWORD) -1,
 													&entriesread,
 													&totalentries);
-	#endif
+#endif
 
 	if( nas == NERR_Success && nullptr != ( pTmpBuf = pBuf) )
 	{
-		for( DWORD i = 0 ; i< entriesread && !l_bRet; i++ )
+		for( DWORD i = 0 ; i< entriesread && !Result; i++ )
 		{
-			CString sGroup = pTmpBuf->lgrui0_name;
+#ifdef _UNICODE
+			SVString sGroup = pTmpBuf->lgrui0_name;
+#else
+			SVString sGroup = W2A( pTmpBuf->lgrui0_name );
+#endif
 			// Compare multiple groups
-			int nStart = -1, nFinish;
+			size_t Start = -1;
+			size_t Finish = -1;
 			do
 			{
-				nFinish = p_strGroups.Find(_T(','), ++nStart);
-				if (nFinish == -1)
-					nFinish = p_strGroups.GetLength();
-
-				if (p_strGroups.Mid(nStart, (nFinish-nStart)) == sGroup)
+				Finish = rNTGroups.find(_T(','), ++Start);
+				if( SVString::npos == Finish )
 				{
-					l_bRet = true;
+					Finish = rNTGroups.size();
+				}
+
+				if (rNTGroups.substr( Start, Finish-Start) == sGroup)
+				{
+					Result = true;
 					break;
 				}
-				nStart = nFinish;
+				Start = Finish;
 			}
-			while (nStart < p_strGroups.GetLength());
+			while( Start < rNTGroups.size());
 			
-			// 
 			pTmpBuf++;
 		}
 	}
 	NetApiBufferFree( pBuf );
-	return l_bRet;
+	return Result;
 }
 
 // This function is used to determine whether or not to display menu items.
@@ -297,17 +299,17 @@ bool SVAccessClass::IsDisplayable(long lId)
 		}
 		else
 		{
-			CString strGroups;
-			HRESULT hr = GetNTGroup( lId, strGroups );
+			SVString NTGroup;
+			HRESULT hr = GetNTGroup( lId, NTGroup );
 			if( S_OK != hr )
 			{
 				// Default Group if failure occurs.
-				strGroups = _T("Administrators");
+				NTGroup = _T("Administrators");
 			}
 
-			if( strGroups.Compare( _T( "Everybody" ) ) != 0)
+			if( NTGroup != _T("Everybody") )
 			{
-				l_bRet = IsUserAMember( this->GetCurrentUser() , strGroups );
+				l_bRet = IsUserAMember( GetCurrentUser() , NTGroup );
 			}
 		}
 	}
@@ -332,12 +334,12 @@ bool SVAccessClass::IsCurrentUserValidated(long lId)
 	}
 	else
 	{
-		CString strGroups;
-		HRESULT hr = GetNTGroup( lId, strGroups );
+		SVString NTGroup;
+		HRESULT hr = GetNTGroup( lId, NTGroup );
 
-		if( strGroups.Compare( _T( "Everybody" ) ) != 0)
+		if( NTGroup != _T("Everybody") )
 		{
-			l_bRet = IsUserAMember( GetCurrentUser() , strGroups );
+			l_bRet = IsUserAMember( GetCurrentUser() , NTGroup );
 		}
 		else
 		{
@@ -356,87 +358,81 @@ HRESULT SVAccessClass::Validate(  long lId1 )
 {
 	USES_CONVERSION;
 
-
-
 	HRESULT hr = S_FALSE;
-	CString l_strStatus;
+	SVString Status;
 
-	CString strGroups1;
-	CString strName1;
-	BOOL l_bForce1 = TRUE;
+	SVString NTGroup;
+	SVString Name;
+	bool Force = TRUE;
 
 
 	SVAccessPointNode* pNode = m_svStorage.FindByID( lId1 );
 	if( pNode )
 	{
-		strGroups1 = pNode->m_strNTGroup;
-		strName1 = pNode->m_strName;
-		l_bForce1 = pNode->m_bForcePrompt;
+		NTGroup = pNode->m_NTGroup;
+		Name = pNode->m_Name;
+		Force = pNode->m_bForcePrompt;
 	}
 	else
 	{
-		return S_FALSE;
+		return E_FAIL;
 	}
 
-	l_strStatus = _T("Access - ") + strName1;
+	Status = _T("Access - ") + Name;
 
 	
-	if( strGroups1.Compare( _T( "Everybody" ) ) != 0 )
+	if( NTGroup != _T( "Everybody" ) )
 	{
-		CString strTmpUser = m_svStorage.GetCurrentUser();
-		CString strTmpPW = m_svStorage.GetCurrentPassword();
+		SVString TmpUser = m_svStorage.GetCurrentUser();
+		SVString TmpPW = m_svStorage.GetCurrentPassword();
 
-		BOOL bPromptForPassword = l_bForce1 ;
-		bool l_bTryLogOn = true;
-		bool l_bUserValidated;
+		BOOL bPromptForPassword = Force ;
+		bool TryLogOn = true;
+		bool UserValidated;
 
-		while( l_bTryLogOn )
+		while( TryLogOn )
 		{
-			l_bUserValidated = false;
-			if( !m_svStorage.GetUseLogon() || TimeExpired() || bPromptForPassword || strTmpUser.IsEmpty() )
+			UserValidated = false;
+			if( !m_svStorage.GetUseLogon() || TimeExpired() || bPromptForPassword || TmpUser.empty() )
 			{
 				// Call Log Screen
-				hr = PasswordDialog( strTmpUser, strTmpPW, strName1, l_strStatus);
+				hr = PasswordDialog( TmpUser, TmpPW, Name.c_str(), Status.c_str());
 				if( hr == S_FALSE )
 				{
-					l_bTryLogOn = false;
+					TryLogOn = false;
 					break;
 				}
 				if( hr == SVMSG_SVS_ACCESS_DENIED )
 				{
-					l_strStatus = _T("Invalid User or Password");
+					Status = _T("Invalid User or Password");
 				}
 				if( S_OK == hr )
 				{
-					if( IsMasterPassword( strTmpUser, strTmpPW ) )
+					if( IsMasterPassword( TmpUser.c_str(), TmpPW.c_str() ) )
 					{
 						return S_OK;
 					}
 				}
-				l_bUserValidated = true;
+				UserValidated = true;
 			}
 
 			HANDLE phToken = nullptr;
 			// Group 
 			// UserValidated prevents the extra call to logonUser
-			if( (S_OK == hr && l_bUserValidated) || LogonUserA( ( LPSTR )( LPCSTR )strTmpUser,
-				( LPSTR ) ( LPCTSTR )m_strLogonServer,
-				( LPSTR ) ( LPCTSTR )strTmpPW, 
-				LOGON32_LOGON_NETWORK,
-				LOGON32_PROVIDER_DEFAULT,
-				&phToken) )
+			if( (S_OK == hr && UserValidated) || LogonUser( TmpUser.c_str(), m_LogonServer.c_str(), TmpPW.c_str(), 
+				LOGON32_LOGON_NETWORK, LOGON32_PROVIDER_DEFAULT, &phToken) )
 			{
 				CloseHandle( phToken);
 
-				SVStringArray msgList;
-				msgList.push_back( SVString( strTmpUser ) );
-				msgList.push_back( SVString( strName1 ) );
+				SVStringVector msgList;
+				msgList.push_back( TmpUser );
+				msgList.push_back( Name );
 				
-				if( IsUserAMember( strTmpUser, strGroups1 )  )
+				if( IsUserAMember( TmpUser, NTGroup )  )
 				{
 					ResetTime();
 					hr = S_OK;
-					l_bTryLogOn = false;
+					TryLogOn = false;
 
 					// Event viewer
 					// Application Log Gained Access...Category - SVAccess
@@ -444,25 +440,25 @@ HRESULT SVAccessClass::Validate(  long lId1 )
 					Exception.setMessage( SVMSG_SVS_ACCESS_GRANTED, SvOi::Tid_Security_Access_Granted, msgList, SvStl::SourceFileParams(StdMessageParams) );
 
 					msgList.clear();
-					msgList.push_back( SVString( strTmpUser ) );
+					msgList.push_back( TmpUser );
 					Exception.setMessage( lId1, SvOi::Tid_Security_GainedAccess, msgList, SvStl::SourceFileParams(StdMessageParams) );
 					break;
 				}
-				if( l_bUserValidated )
+				if( UserValidated )
 				{
 					SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 					Exception.setMessage( SVMSG_SVS_ACCESS_DENIED, SvOi::Tid_Security_Access_Denied, msgList, SvStl::SourceFileParams(StdMessageParams) );
 
-					l_strStatus = _T("User Does Not Have Rights to This Function");
+					Status = _T("User Does Not Have Rights to This Function");
 				}
 			}
-			bPromptForPassword = TRUE;  // If user failed, then set bPromptForPassword so we call the password dialog
+			bPromptForPassword = true;  // If user failed, then set bPromptForPassword so we call the password dialog
 		}
 
 	}
 	else
 	{
-		SVStringArray msgList;
+		SVStringVector msgList;
 		msgList.push_back( SvStl::MessageData::convertId2AddtionalText( SvOi::Tid_Security_Disabled) );
 		
 		SvStl::MessageMgrStd Exception( SvStl::LogOnly );
@@ -486,19 +482,17 @@ enum ValidateState
 // user can enter his credentials.
 HRESULT SVAccessClass::Validate(  long lId1, long lId2)
 {
-	USES_CONVERSION;
-
 	HRESULT hr = S_FALSE;
-	CString l_strStatus;
+	SVString Status;
 	SvOi::MessageTextEnum msgId = SvOi::Tid_Empty;
-	SVStringArray msgList;
+	SVStringVector msgList;
 
-	CString strGroups1;
-	CString strName1;
-	CString strGroups2;
-	CString strName2;
-	BOOL l_bForce1 = TRUE;
-	BOOL l_bForce2 = TRUE;
+	SVString NTGroup1;
+	SVString Name1;
+	SVString NTGroup2;
+	SVString Name2;
+	bool Force1 = true;
+	bool Force2 = true;
 	bool l_bGroup1Validated = IsCurrentUserValidated( lId1 );
 	bool l_bGroup2Validated = IsCurrentUserValidated( lId2 );
 
@@ -506,50 +500,50 @@ HRESULT SVAccessClass::Validate(  long lId1, long lId2)
 	SVAccessPointNode* pNode = m_svStorage.FindByID( lId1 );
 	if( pNode )
 	{
-		strGroups1 = pNode->m_strNTGroup;
-		strName1 = pNode->m_strName;
-		l_bForce1 = pNode->m_bForcePrompt;
+		NTGroup1 = pNode->m_NTGroup;
+		Name1 = pNode->m_Name;
+		Force1 = pNode->m_bForcePrompt;
 	}
 	else
 	{
-		return S_FALSE;
+		return E_FAIL;
 	}
 
 	pNode = m_svStorage.FindByID( lId2 );
 	if( pNode )
 	{
-		strGroups2 = pNode->m_strNTGroup;
-		strName2 = pNode->m_strName;
-		l_bForce2 = pNode->m_bForcePrompt;
+		NTGroup2 = pNode->m_NTGroup;
+		Name2 = pNode->m_Name;
+		Force2 = pNode->m_bForcePrompt;
 	}
 	else
 	{
-		return S_FALSE;
+		return E_FAIL;
 	}
 
 
 	// Setup Status Description String.
 	if( l_bGroup1Validated && !l_bGroup2Validated )
 	{
-		l_strStatus = _T("Access - ") + strName2;
+		Status = _T("Access - ") + Name2;
 	}
 	else if( !l_bGroup1Validated && l_bGroup2Validated )
 	{
-		l_strStatus = _T("Access - ") + strName1;
+		Status = _T("Access - ") + Name1;
 	}
 	else if( !l_bGroup1Validated && !l_bGroup2Validated )
 	{
-		l_strStatus = _T("Access - ") + strName1 + _T(" , ") + strName2;
+		Status = _T("Access - ") + Name1 + _T(" , ") + Name2;
 	}
 
 	
-	if( (strGroups1.Compare( _T( "Everybody" ) ) != 0) || 
-		(strGroups2.Compare( _T( "Everybody" ) ) != 0) )
+	if( (NTGroup1 != _T( "Everybody" )) || 
+		(NTGroup2 != _T( "Everybody" )) )
 	{
-		CString strTmpUser = m_svStorage.GetCurrentUser();
-		CString strTmpPW = m_svStorage.GetCurrentPassword();
+		SVString TmpUser = m_svStorage.GetCurrentUser();
+		SVString TmpPW = m_svStorage.GetCurrentPassword();
 
-		BOOL bPromptForPassword = l_bForce1 || l_bForce2;
+		bool bPromptForPassword = Force1 || Force2;
 		bool l_bTryLogOn = true;
 		bool l_bUserValidated = false;
 		long l_lState = l_bGroup1Validated + l_bGroup2Validated*2;
@@ -557,12 +551,12 @@ HRESULT SVAccessClass::Validate(  long lId1, long lId2)
 
 		while( l_bTryLogOn )
 		{
-			if( !m_svStorage.GetUseLogon() || TimeExpired() || bPromptForPassword || strTmpUser.IsEmpty() )
+			if( !m_svStorage.GetUseLogon() || TimeExpired() || bPromptForPassword || TmpUser.empty() )
 			{
 				// *** Status Text for Logon Dialog
 				if( (l_lLastState == l_lState) && l_bUserValidated)
 				{
-					l_strStatus = _T("User Does Not Have Rights to This Function");
+					Status = _T("User Does Not Have Rights to This Function");
 					msgId = SvOi::Tid_Security_UserNoRights;
 					msgList.clear();
 				}
@@ -572,8 +566,8 @@ HRESULT SVAccessClass::Validate(  long lId1, long lId2)
 					{
 						case 0:
 						{
-							CString tmpString = strName1 + _T(" , ") + strName2;
-							l_strStatus = _T("Access - ") + tmpString;
+							SVString tmpString = Name1 + _T(" , ") + Name2;
+							Status = _T("Access - ") + tmpString;
 							msgId = SvOi::Tid_Security_Access;
 							msgList.clear();
 							msgList.push_back(SVString(tmpString));
@@ -581,18 +575,18 @@ HRESULT SVAccessClass::Validate(  long lId1, long lId2)
 						}
 						case 1:
 						{
-							l_strStatus = _T("Access - ") + strName2;
+							Status = _T("Access - ") + Name2;
 							msgId = SvOi::Tid_Security_Access;
 							msgList.clear();
-							msgList.push_back(SVString(strName2));
+							msgList.push_back(SVString(Name2));
 							break;
 						}
 						case 2:
 						{
-							l_strStatus = _T("Access - ") + strName1;
+							Status = _T("Access - ") + Name1;
 							msgId = SvOi::Tid_Security_Access;
 							msgList.clear();
-							msgList.push_back(SVString(strName1));
+							msgList.push_back(SVString(Name1));
 							break;
 						}
 					}
@@ -603,7 +597,7 @@ HRESULT SVAccessClass::Validate(  long lId1, long lId2)
 
 				SVString Attempt = SvStl::MessageTextGenerator::Instance().getText(msgId, msgList);
 				// Call Log in Dialog
-				hr = PasswordDialog( strTmpUser, strTmpPW, Attempt.c_str(), l_strStatus);
+				hr = PasswordDialog( TmpUser, TmpPW, Attempt.c_str(), Status.c_str());
 				if( hr == S_FALSE )
 				{
 					l_bTryLogOn = false;
@@ -611,11 +605,11 @@ HRESULT SVAccessClass::Validate(  long lId1, long lId2)
 				}
 				if( hr == SVMSG_SVS_ACCESS_DENIED )
 				{
-					l_strStatus = _T("Invalid User or Password");
+					Status = _T("Invalid User or Password");
 				}
 				if( S_OK == hr )
 				{
-					if( IsMasterPassword( strTmpUser, strTmpPW ) )
+					if( IsMasterPassword( TmpUser.c_str(), TmpPW.c_str() ) )
 					{
 						return S_OK;
 					}
@@ -627,21 +621,17 @@ HRESULT SVAccessClass::Validate(  long lId1, long lId2)
 			HANDLE phToken = nullptr;
 			// Group 
 			// UserValidated prevents the extra call to logonUser
-			if( ( S_OK == hr && l_bUserValidated) || LogonUserA( ( LPSTR ) ( LPCTSTR )strTmpUser,
-				( LPSTR ) ( LPCTSTR )m_strLogonServer,
-				( LPSTR ) ( LPCTSTR )strTmpPW, 
-				LOGON32_LOGON_NETWORK,
-				LOGON32_PROVIDER_DEFAULT,
-				&phToken) )
+			if( ( S_OK == hr && l_bUserValidated) || LogonUser( TmpUser.c_str(), m_LogonServer.c_str(), TmpPW.c_str(), 
+				LOGON32_LOGON_NETWORK, LOGON32_PROVIDER_DEFAULT, &phToken) )
 			{
 				CloseHandle( phToken);
 
-				if( IsUserAMember( strTmpUser, strGroups1 ) )
+				if( IsUserAMember( TmpUser, NTGroup1 ) )
 				{
 					l_bGroup1Validated = true;
 				}
 
-				if( IsUserAMember( strTmpUser, strGroups2 ) )
+				if( IsUserAMember( TmpUser, NTGroup2 ) )
 				{
 					l_bGroup2Validated = true;
 				}
@@ -655,7 +645,7 @@ HRESULT SVAccessClass::Validate(  long lId1, long lId2)
 					l_bTryLogOn = false;
 
 					msgList.clear();
-					msgList.push_back( SVString(strTmpUser) );
+					msgList.push_back( TmpUser );
 					SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 					Exception.setMessage( lId1, SvOi::Tid_Security_GainedAccess, msgList, SvStl::SourceFileParams(StdMessageParams) );
 
@@ -668,15 +658,15 @@ HRESULT SVAccessClass::Validate(  long lId1, long lId2)
 					if( l_lState != l_lLastState )
 					{
 						msgList.clear();
-						msgList.push_back( SVString(strTmpUser) );
-						msgList.push_back( SVString(strName1) );
+						msgList.push_back( TmpUser );
+						msgList.push_back( Name1 );
 						SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 						Exception.setMessage( SVMSG_SVS_ACCESS_DENIED, SvOi::Tid_Security_Access_Denied, msgList, SvStl::SourceFileParams(StdMessageParams) );
 					}
 
 				}
 			}
-			bPromptForPassword = TRUE;  // If user failed, then set bPromptForPassword so we call the password dialog
+			bPromptForPassword = true;  // If user failed, then set bPromptForPassword so we call the password dialog
 		}
 	}
 	else
@@ -721,7 +711,7 @@ bool SVAccessClass::IsChangable( long lID )
 
 // This function returns the group or list of groups for 
 // the node associated with the given ID.
-HRESULT SVAccessClass::GetNTGroup( long lID, CString& rstrGroup )
+HRESULT SVAccessClass::GetNTGroup( long lID, SVString& rGroup )
 {
 	HRESULT hr = S_FALSE;
 	SVAccessPointNode* pNode = m_svStorage.FindByID( lID );
@@ -730,7 +720,7 @@ HRESULT SVAccessClass::GetNTGroup( long lID, CString& rstrGroup )
 	{
 		if( pNode )
 		{
-			rstrGroup = pNode->m_strNTGroup;
+			rGroup = pNode->m_NTGroup;
 			hr = S_OK;
 		}
 	}
@@ -796,8 +786,8 @@ HRESULT SVAccessClass::SetUseLogon(bool bUse)
 // Logout clears the current user and password.
 HRESULT SVAccessClass::Logout()
 {
-	SVStringArray msgList;
-	msgList.push_back( SVString(m_svStorage.GetCurrentUser()) );
+	SVStringVector msgList;
+	msgList.push_back( m_svStorage.GetCurrentUser() );
 	SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 	Exception.setMessage( SVMSG_SVS_ACCESS_LOGGED_OUT, SvOi::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams) );
 
@@ -811,30 +801,30 @@ HRESULT SVAccessClass::Logout()
 // and passord are stored in a temperary location.
 HRESULT SVAccessClass::Logon()
 {
-	CString strTmpUser, strTmpPW;
+	SVString TmpUser;
+	SVString TmpPW;
 
-	strTmpUser = m_svStorage.GetCurrentUser();
+	TmpUser = m_svStorage.GetCurrentUser();
 
 	HRESULT hr;
-	CString l_strStatus;
+	SVString Status;
 	SVString Attempt = SvStl::MessageTextGenerator::Instance().getText(SvOi::Tid_Security_Login);
-	while( (hr = PasswordDialog( strTmpUser, strTmpPW, Attempt.c_str(), l_strStatus )) 
-		== SVMSG_SVS_ACCESS_DENIED )
+	while( (hr = PasswordDialog( TmpUser, TmpPW, Attempt.c_str(), Status.c_str() )) == SVMSG_SVS_ACCESS_DENIED )
 	{
-		l_strStatus = _T("Invalid User or Password");
+		Status = _T("Invalid User or Password");
 	}
 
 	if( S_OK == hr )
 	{
-		SVStringArray msgList;
-		msgList.push_back( SVString( strTmpUser ) );
+		SVStringVector msgList;
+		msgList.push_back( SVString( TmpUser ) );
 		msgList.push_back( Attempt );
 
 		SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 		Exception.setMessage( SVMSG_SVS_ACCESS_GRANTED, SvOi::Tid_Security_Access_Granted, msgList, SvStl::SourceFileParams(StdMessageParams) );
 
-		m_svStorage.SetUser( strTmpUser );
-		m_svStorage.SetPW( strTmpPW );
+		m_svStorage.SetUser( TmpUser.c_str() );
+		m_svStorage.SetPW( TmpPW.c_str() );
 		ResetTime();
 	}
 	else
@@ -850,7 +840,7 @@ HRESULT SVAccessClass::Logon()
 // to a file defined in the security storage class.
 HRESULT SVAccessClass::Save()
 {
-	return m_svStorage.Save(m_strFileName.c_str());
+	return m_svStorage.Save( m_FileName.c_str() );
 }
 
 // This function calls the security setup dialog
@@ -879,13 +869,13 @@ int SVAccessClass::SetupDialog()
 }
 
 // GetCurrentUser returns the current logged on user.
-CString SVAccessClass::GetCurrentUser()
+const SVString& SVAccessClass::GetCurrentUser()
 {
 	return m_svStorage.GetCurrentUser();
 }
 
 // This function returns the current logged on password.
-CString SVAccessClass::GetCurrentPassword()
+const SVString& SVAccessClass::GetCurrentPassword()
 {
 	return m_svStorage.GetCurrentPassword();
 }
@@ -898,7 +888,7 @@ HRESULT SVAccessClass::SetNTGroup( long lID, LPCTSTR strGroup )
 	{
 		if( !pNode->m_bDataCannotChange )
 		{
-			pNode->m_strNTGroup = strGroup;
+			pNode->m_NTGroup = strGroup;
 			hr = S_OK;
 		}
 		else
@@ -907,317 +897,116 @@ HRESULT SVAccessClass::SetNTGroup( long lID, LPCTSTR strGroup )
 	return hr;
 }
 
-// Ansii Functions...
-// Load loads the security system from the storage class
-//
-HRESULT SVAccessClass::Load( const char* const pFileName)
+// Loads the security system from the storage class
+HRESULT SVAccessClass::Load( LPCTSTR FileName)
 {
-	USES_CONVERSION;
+	HRESULT Result( E_FAIL );
 
-	HRESULT l_hrOk = S_FALSE;
+	m_FileName = FileName;
+	Result =  m_svStorage.Load( m_FileName.c_str() );
 
-	#ifdef _UNICODE
-		m_strFileName = A2W( pFileName );
-		l_hrOk =  m_svStorage.Load( m_strFileName.c_str() );
-	#else
-		m_strFileName = pFileName;
-		l_hrOk =  m_svStorage.Load( pFileName );
-	#endif
-
-	return l_hrOk;
+	return Result;
 }
 
 // Adds a new security node.
-HRESULT SVAccessClass::Add( long lID, const char* const sName, const char* const sNTGroup, bool bForcePrompt )
+HRESULT SVAccessClass::Add( long lID, LPCTSTR Name, LPCTSTR NTGroup /*=nullptr*/, bool ForcePrompt /*=false*/ )
 {
-	USES_CONVERSION;
-
-	HRESULT l_hrOk = S_FALSE;
-
-	#ifdef _UNICODE
-		l_hrOk = m_svStorage.Add( lID, A2W( sName ), A2W( sNTGroup ), bForcePrompt );
-	#else
-		l_hrOk = m_svStorage.Add( lID, sName, sNTGroup, bForcePrompt );
-	#endif
-
-	return l_hrOk;
+	return m_svStorage.Add( lID, Name, NTGroup, ForcePrompt );
 }
 
-// Adds a new security node with default empty group and default forced prompt.
-HRESULT SVAccessClass::Add( long lID, const char* const sName)
-{
-	USES_CONVERSION;
-
-	HRESULT l_hrOk = S_FALSE;
-
-	#ifdef _UNICODE
-		l_hrOk = m_svStorage.Add( lID, A2W( sName ));
-	#else
-		l_hrOk = m_svStorage.Add( lID, sName );
-	#endif
-
-	return l_hrOk;
-}
-
-
-// Wide char / Unicode Functions...
-HRESULT SVAccessClass::Load(const wchar_t* const pFileName)
-{
-	USES_CONVERSION;
-
-	HRESULT l_hrOk = S_FALSE;
-
-	#ifdef _UNICODE
-		m_strFileName = pFileName;
-		l_hrOk = m_svStorage.Load(pFileName);
-	#else
-		m_strFileName = W2A(pFileName) ;
-		l_hrOk = m_svStorage.Load( m_strFileName.c_str());
-	#endif
-
-	return l_hrOk;
-}
-
-// Adds a new security node.
-HRESULT SVAccessClass::Add( long lID, const wchar_t* const sName, const wchar_t* const sNTGroup, bool bForcePrompt )
-{
-	USES_CONVERSION;
-
-	HRESULT l_hrOk = S_FALSE;
-
-	#ifdef _UNICODE
-		l_hrOk = m_svStorage.Add( lID, sName, sNTGroup, bForcePrompt );
-	#else
-		l_hrOk = m_svStorage.Add( lID, W2A( sName ), W2A( sNTGroup ), bForcePrompt );
-	#endif
-
-	return l_hrOk;
-}
-
-// Adds a new security node with default empty group and default forced prompt.
-HRESULT SVAccessClass::Add( long lID, const wchar_t* const sName)
-{
-	USES_CONVERSION;
-
-	HRESULT l_hrOk = S_FALSE;
-
-	#ifdef _UNICODE
-		l_hrOk = m_svStorage.Add( lID, sName );
-	#else
-		l_hrOk = m_svStorage.Add( lID, W2A( sName ) );
-	#endif
-
-	return l_hrOk;
-}
-
-// CreateProcess - ansii version spawns a process.
-// The intent was to create a process with the security priveledges of the current 
+// CreateProcess
+// The intent was to create a process with the security privileges of the current 
 // SVObserver user.
-HRESULT SVAccessClass::CreateProcess( const char* const strAppName, const char* const strPath, const char* const strCommand )
+HRESULT SVAccessClass::CreateProcess( LPCTSTR AppName, const LPCTSTR Path, LPCTSTR Command )
 {
-	USES_CONVERSION;
+	HRESULT Result( S_OK );
+	SVString WorkingDirectory;
 
-	HRESULT l_hrOk = S_FALSE;
-
-	#ifdef _UNICODE
-		l_hrOk = CreateProcess( strAppName, strPath, strCommand );
-	#else
-		l_hrOk = CreateProcess( A2W( strAppName ), A2W( strPath ), A2W( strCommand) );
-	#endif
-
-	return l_hrOk;
-}
-
-// CreateProcess - wide char version.
-HRESULT SVAccessClass::CreateProcess( const wchar_t* const p_wstrAppName, const wchar_t* const p_wstrPath, const wchar_t* const p_wstrCommand )
-{
-	HRESULT l_hr = S_OK;
-
-	// Set Startup structure for process
-	STARTUPINFOW Startup;
-	PROCESS_INFORMATION processInfo;
-	wchar_t wstrArgs[256];
-	wchar_t wstrAppPathName[_MAX_PATH];
-	wchar_t wstrDirPath[_MAX_DIR];
-
-	memset(wstrArgs, 0, sizeof(wstrArgs));
-	memset(wstrAppPathName, 0, sizeof(wstrAppPathName));
-	memset(wstrDirPath, 0, sizeof(wstrDirPath));
-	memset(&Startup, 0, sizeof(Startup));
-	memset(&processInfo, 0, sizeof(processInfo));
-
-	Startup.cb = sizeof(Startup);
-	Startup.dwFlags = STARTF_USESHOWWINDOW;
-	Startup.wShowWindow = SW_SHOWDEFAULT;
-	Startup.lpDesktop = nullptr;  // will create an invisible desktop for this user
-	Startup.lpReserved = nullptr;
-	Startup.lpReserved2 = nullptr;
-	Startup.lpTitle = nullptr;
-//	GetStartupInfoW(&Startup);
-
-	wcscpy( wstrAppPathName, p_wstrAppName );        // Start with the supplied app name
-	wcscpy( wstrDirPath, p_wstrPath );               // Start with supplied path
-
-	// Check if file path is valid
-	int l_handle;
-	if((l_handle = _wopen( wstrAppPathName, _O_RDONLY )) < 0 )
+	if( 0 != ::_access( AppName, 0) )
 	{
 		// Check if path plus the File is valid
-		wcscpy( wstrAppPathName, p_wstrPath );
-		int l_iLen = static_cast<int>(wcslen( p_wstrPath ));
-		if( l_iLen > 0 )                          // Check if the last charactor is a backslash
+		WorkingDirectory =  Path;
+		if( !WorkingDirectory.empty() )
 		{                                         // if not then append a backslash.
-			if( wstrAppPathName[l_iLen - 1] != L'\\' )
+			if( '\\' != WorkingDirectory[WorkingDirectory.size()-1] )
 			{
-				wcscat( wstrAppPathName, L"\\" );   
+				WorkingDirectory += _T("\\");   
 			}
 		}
-		wcscat( wstrAppPathName, p_wstrAppName );     // Add the appName to the appPathName
-		if((l_handle = _wopen( wstrAppPathName, _O_RDONLY)) < 0 )
+		WorkingDirectory += AppName;
+		if( 0 != ::_access( WorkingDirectory.c_str(), 0) )
 		{
 			// Search the System PATH variable for the app Name
-			_wsearchenv( p_wstrAppName, L"PATH", wstrAppPathName );
-			if( wstrAppPathName[0] == 0 )          // So try the Environment PATH
+			TCHAR AppPathName[_MAX_PATH];
+			::_searchenv( AppName, _T("PATH"), AppPathName );
+			if( 0 != AppPathName[0] )
 			{
-				return S_FALSE;
+				WorkingDirectory = AppPathName;
 			}
 			else
-			{                                     // We found the correct path
-				wcscpy( wstrDirPath, wstrAppPathName );
-				int iLen = static_cast<int>(wcslen( wstrDirPath ));
-				for( int i = iLen ; i > -1; i-- )// get rid of the name
-				{                                 // so we only have the directory
-					if( wstrDirPath[i] == '\\' )  // path portion.
-					{
-						wstrDirPath[i] = 0;
-						break;
-					}
-				}
+			{
+				return E_FAIL;
 			}
-		}
-		else
-		{
-			_close( l_handle );
 		}
 	}
 	else
-	{                                             // We found the correct path
-		_close( l_handle );
-		wcscpy( wstrDirPath, wstrAppPathName );
-		int iLen = static_cast<int>(wcslen( wstrDirPath ));
-		for( int i = iLen ; i > -1; i-- )        // get rid of the name
-		{                                         // so we only have the directory
-			if( wstrDirPath[i] == '\\' )          // path portion.
-			{
-				wstrDirPath[i] = 0;
-				break;
-			}
-		}
-	}
-
-
-	CString l_strGroup;
-	l_hr = GetNTGroup( SECURITY_POINT_EXTRAS_MENU_UTILITIES_RUN, l_strGroup );
-	if( S_OK == l_hr )
 	{
-		// WINSHELLAPI HINSTANCE APIENTRY ShellExecuteW(HWND hwnd, LPCWSTR lpOperation, LPCWSTR lpFile, LPCWSTR lpParameters, LPCWSTR lpDirectory, INT nShowCmd);
-		// Old way with out User/PW
-		if( l_strGroup.CompareNoCase(_T("Everybody")) == 0 || true )  // Disable CreateProcessWithLogon method of launching
+		WorkingDirectory = AppName;
+	}
+	//Remove the app name from the working directory
+	size_t Pos = WorkingDirectory.rfind( '\\' );
+	if( SVString::npos != Pos )
+	{
+		WorkingDirectory = SvUl_SF::Left(WorkingDirectory, Pos);
+	}
+
+	SVString NTGroup;
+	Result = GetNTGroup( SECURITY_POINT_EXTRAS_MENU_UTILITIES_RUN, NTGroup );
+	if( S_OK == Result )
+	{
+
+		if (33 >  reinterpret_cast<LONGLONG> (ShellExecute (HWND_DESKTOP, _T("open"), AppName, Command, WorkingDirectory.c_str(), SW_SHOWNORMAL)) )
 		{
-			if (33 >  reinterpret_cast<LONGLONG> (ShellExecuteW (HWND_DESKTOP,
-										  L"open",
-										  p_wstrAppName,
-										  p_wstrCommand,
-										  wstrDirPath,
-										  SW_SHOWNORMAL)))
-			{
-			  CString msg;
-#ifdef _UNICODE
-			  msg.Format (_T("Unable to start %s\n(%s).\n\nCheck Utility Properties."),
-						  p_wstrAppName,
-						  p_wstrCommand);
-#else
-			  msg.Format (_T("Unable to start %s\n(%s).\n\nCheck Utility Properties."),
-						  CW2A(p_wstrAppName),
-						  CW2A(p_wstrCommand));
-			  ::MessageBox (HWND_DESKTOP, msg, _T("Failure"), MB_OK);
-#endif
-			}
-		}
-		else
-		{
-			wcscpy(wstrArgs, p_wstrAppName);
-			wcscat(wstrArgs, L" ");
-			wcscat(wstrArgs, p_wstrCommand);
-
-			// Convert local members to Wide charactors
-			CA2W l_pwcCurrentUser(m_svStorage.GetCurrentUser().operator LPCTSTR());
-			CA2W l_pwcLogonServer( m_strLogonServer.operator LPCTSTR() );
-			CA2W l_pwcPassword( m_svStorage.GetCurrentPassword().operator LPCTSTR());
-
-			long lError;
-
-			lError = CreateProcessWithLogonW( l_pwcCurrentUser,   // User
-				l_pwcLogonServer,                                 // Domain
-				l_pwcPassword,                                    // Password
-				LOGON_WITH_PROFILE,                               // Logon Flags
-				wstrAppPathName,                                  // Application
-				wstrArgs,                                         // Command line
-				CREATE_DEFAULT_ERROR_MODE|CREATE_NEW_CONSOLE|CREATE_NEW_PROCESS_GROUP|NORMAL_PRIORITY_CLASS,	// Creation Flags 
-				nullptr,                                          // Environment
-				wstrDirPath,                                      // Current Directory
-				&Startup,                                         // StartupInfo
-				&processInfo);                                    // processInfo
-
-			if( lError == 0 )
-			{
-				CString strErr;
-				DWORD dwErr = GetLastError();
-				strErr.Format( _T("Return - %08x Last Error %08x"), lError, dwErr);
-				AfxMessageBox( strErr );
-				l_hr = -3012;
-			}
-			else
-			{
-				CloseHandle( processInfo.hProcess );
-				CloseHandle( processInfo.hThread );
-				l_hr = S_OK;
-			}
+			Result = E_FAIL;
 		}
 	}
-	return l_hr;
+	return Result;
 }
 
 // SVIsSecured 
 // The only way a given node is not secured, is if it is found, does not have the forced prompt selected, and has its group set to everybody.  Otherwise it is secured by default.
 bool SVAccessClass::SVIsSecured( long lId )
 {
-	bool l_bRet = true;
-	BOOL l_bForced = true;
+	bool Result( true );
+	BOOL Forced = true;
 
-	if( S_OK == GetForcedPrompt( lId, l_bForced ) && ! l_bForced )
+	if( S_OK == GetForcedPrompt( lId, Forced ) && ! Forced )
 	{
-		CString l_strGroups;
+		SVString NTGroup;
 
-		HRESULT hr = GetNTGroup( lId, l_strGroups );
+		HRESULT hr = GetNTGroup( lId, NTGroup );
 		if( S_OK == hr )
 		{
-			if( 0 == l_strGroups.CompareNoCase( _T( "Everybody" ) ) )
+			if( NTGroup == _T("Everybody") )
 			{
-				l_bRet = false;
+				Result = false;
 			}
 		}
 	}
 
-	return l_bRet;
+	return Result;
 }
 
 // This function simply returns true if there is a current user
 bool SVAccessClass::IsLoggedOn()
 {
-	if( GetCurrentUser().IsEmpty() )
+	if( GetCurrentUser().empty() )
+	{
 		return false;
+	}
 	else
+	{
 		return true;
+	}
 }
 

@@ -258,7 +258,7 @@ void SVImageViewClass::AttachToImage( const SVGUID& p_rImageId )
 		if( nullptr != l_pImage )
 		{
 			m_ImageId = l_pImage->GetUniqueObjectID();
-			m_imageName = l_pImage->GetCompleteObjectName();
+			m_imageName = l_pImage->GetCompleteName();
 
 			GetIPDoc()->RegisterImage( m_ImageId, this );
 
@@ -285,31 +285,31 @@ void SVImageViewClass::AttachToImage( const SVGUID& p_rImageId )
 void SVImageViewClass::AttachToImage( LPCTSTR p_imageName )
 {
 	SVGUID l_ImageId;
-	BOOL l_attach = FALSE;
+	bool Attach( false );
 
-	CString l_imageName = p_imageName;
+	SVString l_imageName = p_imageName;
 
-	if( l_imageName.IsEmpty() )
+	if( l_imageName.empty() )
 	{
 		l_imageName = m_imageName;
 	}
 
-	if( ! l_imageName.IsEmpty() )
+	if( ! l_imageName.empty() )
 	{
 		SVImageClass* l_psvImage = nullptr;
 
-		l_psvImage = GetImageByName( l_imageName );
+		l_psvImage = GetImageByName( l_imageName.c_str() );
 
 		if( nullptr != l_psvImage )
 		{
 			l_ImageId = l_psvImage->GetUniqueObjectID();
-			l_attach = TRUE;
+			Attach = true;
 		}
 
 		m_imageName = l_imageName;
 	}
 
-	if( l_attach )
+	if( Attach )
 	{
 		AttachToImage( l_ImageId );
 	}
@@ -330,7 +330,7 @@ void SVImageViewClass::DetachFromImage()
 
 	SetImageRect( CRect( 0, 0, 0, 0 ) );
 
-	m_imageName.Empty();
+	m_imageName.clear();
 	m_ImageId.clear();
 	m_ImageDIB.clear();
 	m_OverlayData.clear();
@@ -455,7 +455,7 @@ BOOL SVImageViewClass::OnCommand( WPARAM p_wParam, LPARAM p_lParam )
 
 			//------ Warp tool hands back a SVPolarTransformObjectType. Sub type 1792.
 			//------ Window tool, Luminance hands back a SVImageObjectType. Sub type 0.
-			CString DlgName; //used for the Adjust Tool Size and Position dialog
+			SVString DlgName; //used for the Adjust Tool Size and Position dialog
 
 			switch( l_svTypeInfo.ObjectType )
 			{
@@ -465,9 +465,9 @@ BOOL SVImageViewClass::OnCommand( WPARAM p_wParam, LPARAM p_lParam )
 					{
 						case SVImagePolarTransformObjectType: // 1792
 						{
-							DlgName.Format("Adjust Tool Size and Position - %s",l_psvTool->GetName());
+							DlgName = SvUl_SF::Format( _T("Adjust Tool Size and Position - %s"), l_psvTool->GetName() );
 
-							SVAdjustToolSizePositionDlg dlg(DlgName, this, m_psvObject );
+							SVAdjustToolSizePositionDlg dlg(DlgName.c_str(), this, m_psvObject );
 							dlg.DoModal();
 							break;
 						}
@@ -490,13 +490,13 @@ BOOL SVImageViewClass::OnCommand( WPARAM p_wParam, LPARAM p_lParam )
 						{
 							if( SV_IS_KIND_OF( l_psvTool, SVLoadImageToolClass ) )
 							{
-								DlgName.Format("Adjust Tool Size and Position - %s",l_psvTool->GetName());
-								SVAdjustToolSizePositionDlg dlg( DlgName, this, m_psvObject );
+								DlgName = SvUl_SF::Format( _T("Adjust Tool Size and Position - %s"), l_psvTool->GetName() );
+								SVAdjustToolSizePositionDlg dlg( DlgName.c_str(), this, m_psvObject );
 								dlg.DoModal();
 							}
 							else
 							{
-								SVAdjustToolSizePositionDlg dlg( DlgName, this, m_psvObject );
+								SVAdjustToolSizePositionDlg dlg( DlgName.c_str(), this, m_psvObject );
 								dlg.DoModal();
 							}
 
@@ -519,8 +519,8 @@ BOOL SVImageViewClass::OnCommand( WPARAM p_wParam, LPARAM p_lParam )
 
 				case SVToolObjectType:
 				{
-					DlgName.Format("Adjust Tool Size and Position - %s",l_psvTool->GetName());
-					SVAdjustToolSizePositionDlg dlg( DlgName, this, m_psvObject );
+					DlgName = SvUl_SF::Format( _T("Adjust Tool Size and Position - %s"), l_psvTool->GetName() );
+					SVAdjustToolSizePositionDlg dlg( DlgName.c_str(), this, m_psvObject );
 					dlg.DoModal();
 					break;
 				}
@@ -635,19 +635,15 @@ void SVImageViewClass::SaveViewOrImageToDisk(bool ViewOnly, bool showOverlays)
 
 	m_ViewOrImageFilename.SetFileType(SV_IMAGE_SOURCE_FILE_TYPE);
 	
-	CString csPath = AfxGetApp()->GetProfileString( RegSection,
-		RegKeySaveViewPath, 
-		DefaultPath );
-	m_ViewOrImageFilename.SetPathName(csPath);
+	SVString Path = AfxGetApp()->GetProfileString( RegSection, RegKeySaveViewPath, DefaultPath );
+	m_ViewOrImageFilename.SetPathName( Path.c_str() );
 	
 	BOOL bResult = m_ViewOrImageFilename.SaveFile(); // Show Save File Dialog
 
 	if(bResult)
 	{
-		csPath = m_ViewOrImageFilename.GetPathName();
-		AfxGetApp()->WriteProfileString( RegSection, RegKeySaveViewPath, csPath );
-
-		CString Filepath = m_ViewOrImageFilename.GetFullFileName();
+		Path = m_ViewOrImageFilename.GetPathName().c_str();
+		AfxGetApp()->WriteProfileString( RegSection, RegKeySaveViewPath, Path.c_str() );
 
 		if(ViewOnly)
 		{
@@ -656,11 +652,11 @@ void SVImageViewClass::SaveViewOrImageToDisk(bool ViewOnly, bool showOverlays)
 
 			auto Status = GetRectInfo( SourceRect, DestRect );
 
-			Status = BlitToScaledSurface( SourceRect, DestRect, Filepath, showOverlays);
+			Status = BlitToScaledSurface( SourceRect, DestRect, m_ViewOrImageFilename.GetFullFileName().c_str(), showOverlays);
 		}
 		else // showOverlays is ignored for underlying images: there was no easy way to mark underlying images with overlays
 		{
-			pCurrentImage->Save(SVString(Filepath));
+			pCurrentImage->Save(m_ViewOrImageFilename.GetFullFileName());
 		}
 	}
 
@@ -812,14 +808,14 @@ SVImageClass* SVImageViewClass::GetImage()
 	return dynamic_cast< SVImageClass* >( SVObjectManagerClass::Instance().GetObject( m_ImageId.ToGUID() ) );
 }
 
-SVImageClass* SVImageViewClass::GetImageByName( CString& p_imageName ) const
+SVImageClass* SVImageViewClass::GetImageByName( LPCTSTR ImageName ) const
 {
 	SVImageClass* l_pImage = nullptr;
 	SVIPDoc* l_pDocument = GetIPDoc();
 
 	if( nullptr != l_pDocument )
 	{
-		l_pImage = l_pDocument->GetImageByName( p_imageName );
+		l_pImage = l_pDocument->GetImageByName( ImageName );
 	}
 	return l_pImage;
 }
@@ -971,9 +967,8 @@ void SVImageViewClass::OnLButtonDblClk( UINT p_nFlags, CPoint p_point )
 		// Compensate for Scaling of Displayed Image
 		TransformFromViewSpace( l_point );
 
-		CString l_text;
-		l_text.Format( " X: %d, Y: %d ", l_point.x, l_point.y );
-		TheSVObserverApp.SetStatusText( l_text );
+		SVString Text = SvUl_SF::Format( _T(" X: %d, Y: %d "), l_point.x, l_point.y );
+		TheSVObserverApp.SetStatusText( Text.c_str() );
 
 		if( !( m_ImageId.empty() ) && nullptr != l_psvIPDoc )
 		{
@@ -1002,9 +997,8 @@ void SVImageViewClass::OnRButtonDblClk( UINT p_nFlags, CPoint p_point )
 		// Compensate for Scaling of Displayed Image
 		TransformFromViewSpace( l_point );
 		
-		CString l_text;
-		l_text.Format( " X: %d, Y: %d ", l_point.x, l_point.y );
-		TheSVObserverApp.SetStatusText( l_text );
+		SVString Text = SvUl_SF::Format( _T(" X: %d, Y: %d "), l_point.x, l_point.y );
+		TheSVObserverApp.SetStatusText( Text.c_str() );
 		
 		if( nullptr != l_psvIPDoc && !( m_ImageId.empty() ) )
 		{
@@ -1040,7 +1034,7 @@ void SVImageViewClass::OnLButtonDown( UINT p_nFlags, CPoint p_point )
 	{
 		if( !( m_ImageId.empty() ) )
 		{
-			CString l_text;
+			SVString Text;
 			CPoint l_point = p_point;
 
 			// Compensate for Scaling of Displayed Image
@@ -1062,11 +1056,11 @@ void SVImageViewClass::OnLButtonDown( UINT p_nFlags, CPoint p_point )
 					S_OK == l_svExtents.GetExtentProperty( SVExtentPropertyWidth, l_width ) &&
 					S_OK == l_svExtents.GetExtentProperty( SVExtentPropertyHeight, l_height ) )
 				{
-					l_text.Format( " X: %d, Y: %d    cX: %d, cY: %d ", l_tempPoint.x, l_tempPoint.y, l_width, l_height );
+					Text = SvUl_SF::Format( _T(" X: %d, Y: %d    cX: %d, cY: %d "), l_tempPoint.x, l_tempPoint.y, l_width, l_height );
 				}
 				else
 				{
-					l_text.Format( " Col: %d, Row: %d ", p_point.x, p_point.y );
+					Text = SvUl_SF::Format( _T(" Col: %d, Row: %d "), p_point.x, p_point.y );
 				}
 
 				m_lastMouseMovePoint = p_point;
@@ -1075,10 +1069,10 @@ void SVImageViewClass::OnLButtonDown( UINT p_nFlags, CPoint p_point )
 			}
 			else
 			{
-				l_text.Format( " Col: %d, Row: %d ", p_point.x, p_point.y );
+				Text = SvUl_SF::Format( _T(" Col: %d, Row: %d "), p_point.x, p_point.y );
 			}
 
-			TheSVObserverApp.SetStatusText( l_text );
+			TheSVObserverApp.SetStatusText( Text.c_str() );
 		}
 
 		CWnd::OnLButtonDown( p_nFlags, p_point );
@@ -1090,8 +1084,6 @@ void SVImageViewClass::OnMouseMove( UINT nFlags, CPoint point )
 	if( !SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) &&
 		TheSVObserverApp.OkToEdit() )
 	{
-		CString l_text;
-
 		CPoint l_point = point;
 		CPoint l_clientPoint = point;
 		CPoint l_screenPoint = point;
@@ -1118,7 +1110,7 @@ void SVImageViewClass::OnMouseMove( UINT nFlags, CPoint point )
 		TransformFromViewSpace( l_point );
 
 		// Status Text: Mouse Pos and Color
-		l_text.Format( " Col: %d, Row: %d    RGB: %u/%u/%u ", l_point.x, l_point.y, redValue, greenValue, blueValue ); 
+		SVString Text = SvUl_SF::Format( _T(" Col: %d, Row: %d    RGB: %u/%u/%u "), l_point.x, l_point.y, redValue, greenValue, blueValue ); 
 
 		HICON l_hCursor = nullptr;
 
@@ -1164,8 +1156,7 @@ void SVImageViewClass::OnMouseMove( UINT nFlags, CPoint point )
 						l_svExtents.GetExtentProperty( SVExtentPropertyHeight, l_height );
 
 						// Status Text: Mouse Pos and Tool Extent
-						l_text.Format( " Col: %d, Row: %d    X: %d, Y: %d    cX: %d, cY: %d ", 
-							l_point.x, l_point.y, l_left, l_top, l_width, l_height );
+						Text = SvUl_SF::Format( _T(" Col: %d, Row: %d    X: %d, Y: %d    cX: %d, cY: %d "), l_point.x, l_point.y, l_left, l_top, l_width, l_height );
 					}
 				}
 			}
@@ -1187,7 +1178,7 @@ void SVImageViewClass::OnMouseMove( UINT nFlags, CPoint point )
 		}
 		SetCursor( l_hCursor );
 		
-		TheSVObserverApp.SetStatusText( l_text );
+		TheSVObserverApp.SetStatusText( Text.c_str() );
 
 		CWnd::OnMouseMove( nFlags, point );
 	}
@@ -1208,9 +1199,8 @@ void SVImageViewClass::OnLButtonUp( UINT p_nFlags, CPoint p_point )
 
 	ReleaseCapture();
 
-	CString l_text;
-	l_text.Format( " Col: %d, Row: %d ", p_point.x, p_point.y );
-	TheSVObserverApp.SetStatusText( l_text );
+	SVString Text = SvUl_SF::Format( _T(" Col: %d, Row: %d "), p_point.x, p_point.y );
+	TheSVObserverApp.SetStatusText( Text.c_str() );
 
 	CWnd::OnLButtonUp( p_nFlags, p_point );
 
@@ -1587,7 +1577,7 @@ void SVImageViewClass::DrawOverlay( SVDrawContext* PDrawContext, const SVExtentM
 
 		COLORREF color = p_rMultiLine.m_Color;
 		POINT titlePoint = p_rMultiLine.m_StringPoint;
-		CString strTitle = p_rMultiLine.m_csString;
+		SVString Title = p_rMultiLine.m_csString;
 
 		SVGUID l_SelectedID;
 
@@ -1601,7 +1591,7 @@ void SVImageViewClass::DrawOverlay( SVDrawContext* PDrawContext, const SVExtentM
 
 		PDrawContext->Transform( &titlePoint, &titlePoint, 1 );
 
-		::TextOut( PDrawContext->DC, titlePoint.x, titlePoint.y, strTitle, strTitle.GetLength() );
+		::TextOut( PDrawContext->DC, titlePoint.x, titlePoint.y, Title.c_str(), static_cast<int> (Title.size()) );
 
 		int l_PenStyle = PS_SOLID;
 
@@ -1868,7 +1858,7 @@ BOOL SVImageViewClass::GetParameters(SVObjectWriter& rWriter)
 
 	if( nullptr != l_pImage )
 	{
-		l_svVariant = l_pImage->GetCompleteObjectNameToObjectType( nullptr, SVInspectionObjectType );
+		l_svVariant.SetString( l_pImage->GetCompleteObjectNameToObjectType( nullptr, SVInspectionObjectType ).c_str() );
 		rWriter.WriteAttribute(CTAG_IMAGE_NAME, l_svVariant);
 		l_svVariant.Clear();
 	}
@@ -2293,7 +2283,7 @@ void SVImageViewClass::OnZoomSliderMoved()
 	SetZoom( EZoomValue, val );
 }
 
-HRESULT SVImageViewClass::BlitToScaledSurface( CRect& p_rSourceRect, CRect& p_rDestRect, CString Filepath, bool showOverlays)
+HRESULT SVImageViewClass::BlitToScaledSurface( CRect& p_rSourceRect, CRect& p_rDestRect, LPCTSTR Filepath, bool showOverlays)
 {
 	HRESULT l_Status = S_OK;
 
@@ -2338,7 +2328,7 @@ HRESULT SVImageViewClass::BlitToScaledSurface( CRect& p_rSourceRect, CRect& p_rD
 				UpdateOverlays( scaledDC, p_rSourceRect.left, p_rSourceRect.top );
 			}
 
-			if (Filepath != "")
+			if( nullptr != Filepath )
 			{
 				CreateBmpFileFromHdc(Filepath,scaledDC,l_ScaledRect);
 			}

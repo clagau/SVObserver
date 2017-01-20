@@ -14,11 +14,12 @@
 #pragma region Includes
 #include "SVSystemLibrary/SVObserverEnums.h"
 #include "CameraLibrary/SVDeviceParamCollection.h"
-#include "PropertyTree/PropTree.h"
+#include "SVRPropertyTree/SVRPropTree.h"
 #include "SVOCameraObj.h"
 #include "SVOInspectionObj.h"
 #include "SVOPPQObj.h"
 #include "TriggerInformation/SVOTriggerObj.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 // defines for the dlgs
@@ -40,11 +41,6 @@ enum
 	PPQ_MODE_TIME_DELAY                 = 1,
 	PPQ_MODE_TIME_DATA_COMPLETE         = 2,
 };
-
-const CString PPQ_NEXT_TRG_STR                    ( _T("NextTrigger") );
-const CString PPQ_TIME_DELAY_STR                  ( _T("TimeDelay") );
-const CString PPQ_TIME_DATA_COMPLETE              ( _T("TimeDelayDataCompletion") );
-const CString PPQ_EXTENDED_TIME_DELAY             ( _T("ExtendedTimeDelay") );
 
 //defines for the properties for each dlg
 enum PROPERTY_PAGE_PROPERTY
@@ -150,11 +146,11 @@ private: //data members
 	CMapStringToPtr	*m_pMap;
 	int				m_nID;
     SVIMProductEnum m_eProduct;
-	CString m_InitialCameraFileName;
+	SVString m_InitialCameraFileName;
 
     void CameraAdvancedHideItems();
     void PPQHideItems();
-    void SetTitle(CString sName);
+    void SetTitle( LPCTSTR Name );
 
 	void SetupCamera();
 	void SetupAdvancedCamera();

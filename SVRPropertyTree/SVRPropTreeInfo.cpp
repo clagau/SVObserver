@@ -28,9 +28,9 @@
 //	useful.
 
 #include "stdafx.h"
-#include "PropTree.h"
+#include "SVRPropTree.h"
 //#include "Resource.h"
-#include "PropTreeInfo.h"
+#include "SVRPropTreeInfo.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -68,15 +68,15 @@ void SVRPropertyInfo::SetPropOwner(SVRPropTree* pProp)
 void SVRPropertyInfo::OnPaint() 
 {
 	CPaintDC dc(this);
-	CRect rc;
+	CRect ClientRect;
 
-	GetClientRect(rc);
+	GetClientRect(ClientRect);
 
 	dc.SelectObject(GetSysColorBrush(COLOR_BTNFACE));
-	dc.PatBlt(rc.left, rc.top, rc.Width(), rc.Height(), PATCOPY);
+	dc.PatBlt(ClientRect.left, ClientRect.top, ClientRect.Width(), ClientRect.Height(), PATCOPY);
 
-	dc.DrawEdge(&rc, BDR_SUNKENOUTER, BF_RECT);
-	rc.DeflateRect(4, 4);
+	dc.DrawEdge(&ClientRect, BDR_SUNKENOUTER, BF_RECT);
+	ClientRect.DeflateRect(4, 4);
 
 	ASSERT(nullptr != m_pProp);
 
@@ -90,30 +90,38 @@ void SVRPropertyInfo::OnPaint()
 	dc.SetBkMode(TRANSPARENT);
 	dc.SelectObject(m_pProp->GetBoldFont());
 
-	CString txt;
+	SVString Text;
 
-	if (!pItem)
-		txt = _T("No Item Selected.");
+	if( nullptr != pItem)
+	{
+		Text = pItem->GetLabelText();
+	}
 	else
-		txt = pItem->GetLabelText();
+	{
+		Text = _T("No Item Selected.");
+	}
 
-	CRect ir;
-	ir = rc;
+	CRect DrawRect;
+	DrawRect = ClientRect;
 
 	// draw label
-	dc.DrawText(txt, &ir, DT_SINGLELINE|DT_CALCRECT);
-	dc.DrawText(txt, &ir, DT_SINGLELINE);
+	dc.DrawText( Text.c_str(), &DrawRect, DT_SINGLELINE|DT_CALCRECT );
+	dc.DrawText( Text.c_str(), &DrawRect, DT_SINGLELINE );
 
-	ir.top = ir.bottom;
-	ir.bottom = rc.bottom;
-	ir.right = rc.right;
+	DrawRect.top = DrawRect.bottom;
+	DrawRect.bottom = ClientRect.bottom;
+	DrawRect.right = ClientRect.right;
 
-	if (pItem)
-		txt = pItem->GetInfoText();
+	if(nullptr != pItem)
+	{
+		Text = pItem->GetInfoText();
+	}
 	else
-		txt = _T("Select an item to see its description");
+	{
+		Text = _T("Select an item to see its description");
+	}
 
 	dc.SelectObject(m_pProp->GetNormalFont());
-	dc.DrawText(txt, &ir, DT_WORDBREAK);
+	dc.DrawText(Text.c_str(), &DrawRect, DT_WORDBREAK);
 }
 

@@ -85,10 +85,10 @@ BOOL SVToolSetAdjustmentDialogSheetClass::OnInitDialog()
 	// Remove Close Button
 	ModifyStyle( WS_SYSMENU, 0, SWP_FRAMECHANGED );
 
-	CString l_Temp = _T( "ToolSet Adjustment: " );
-	l_Temp += m_formulaPage->GetOwnerName();
+	CString Text( _T( "ToolSet Adjustment: " ) );
+	Text += m_formulaPage->GetOwnerName().c_str();
 
-	SetWindowText( l_Temp );
+	SetWindowText( Text );
 		
 	return bResult;
 }

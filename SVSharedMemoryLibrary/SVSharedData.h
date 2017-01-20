@@ -14,6 +14,7 @@
 //Moved to precompiled header: #include <memory>
 #include "SVSharedImageContainer.h"
 #include "SVSharedValueContainer.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 namespace Seidenader { namespace SVSharedMemoryLibrary
@@ -32,7 +33,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 
 		const SVSharedData& operator=( const SVSharedData& rData );
 
-		SVValue FindValue(const std::string& name) const;
+		SVValue FindValue(const SVString& name) const;
 	};
 
 	typedef boost::interprocess::allocator< SVSharedData, segment_manager_t > SVSharedDataAllocator;

@@ -29,7 +29,7 @@ public:
 // Dialog Data
 	enum { IDD = IDD_TRIGGER_SELECTION_DLG };
 
-	void GetSelectedTrigger(CString& name, int& id) const;
+	void GetSelectedTrigger(SVString& rName, int& rID) const;
 
 	virtual BOOL OnInitDialog() override;
 	afx_msg void OnBnClickedOk();

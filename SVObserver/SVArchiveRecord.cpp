@@ -35,16 +35,10 @@ SVArchiveRecord::SVArchiveRecord()
 	m_eArchiveMethod = SVArchiveInvalidMethod;
 	m_lImageSize = 0;
 
-	BSTR bstrName;
-	CString strName;
-
+	_bstr_t bName( _T( "Archive Record Image Pool" ) );
 	// Create a managed index for the input circle buffer
-	strName = _T( "Archive Record Image Pool" );
-	bstrName = strName.AllocSysString();
 
-	TheSVDataManager.CreateManagedIndexArray( m_pImageCircleBuffer, bstrName, 1 );
-
-	::SysFreeString( bstrName );
+	TheSVDataManager.CreateManagedIndexArray( m_pImageCircleBuffer, bName.Detach(), 1 );
 
 	TheSVDataManager.GetNextAvailableBufferIndex( m_pImageCircleBuffer, SV_ARCHIVE, m_LastIndexHandle );
 }
@@ -85,18 +79,18 @@ void SVArchiveRecord::InitArchiveRecord( SVArchiveTool* p_pToolArchive, SVObject
 void SVArchiveRecord::BuildFileName()
 {
 	ASSERT(m_svObjectReference.Object());
-	m_csFileNameImage = m_csImageObjectName = m_svObjectReference.Object()->GetCompleteObjectName();
-	m_csFileNameImage.Replace( ".", "_" );
+	m_FileNameImage = m_ImageObjectName = m_svObjectReference.Object()->GetCompleteName();
+	SvUl_SF::searchAndReplace( m_FileNameImage,  _T("."), _T("_") );
 }
 
-HRESULT SVArchiveRecord::BuildArchiveImageFilePath(CString& rcsPath)
+HRESULT SVArchiveRecord::BuildArchiveImageFilePath(SVString& rImageFile)
 {
 	HRESULT	hr;
 
 	DWORD		dwMaxImages;
 	DWORD		dwStopAtMaxCount;
 
-	CString	csPathRoot;
+	SVString PathRoot;
 	
 	hr = 0;
 	dwMaxImages = 0;
@@ -107,7 +101,7 @@ HRESULT SVArchiveRecord::BuildArchiveImageFilePath(CString& rcsPath)
 	//
 	do
 	{
-		ASSERT(m_csFileNameImage.GetLength() > 0);
+		ASSERT(0 < m_FileNameImage.size());
 
 		ASSERT(m_pArchiveTool);
 
@@ -128,8 +122,7 @@ HRESULT SVArchiveRecord::BuildArchiveImageFilePath(CString& rcsPath)
 		//
 		// Insert the image count as part of the image file name.
 		//
-		CString csImageNameCountAndExtension;
-		csImageNameCountAndExtension.Format( _T("%s__%06.6ld.bmp"), m_csFileNameImage, m_lCountImages);
+		SVString FileName = SvUl_SF::Format( _T("%s__%06.6ld.bmp"), m_FileNameImage.c_str(), m_lCountImages);
 
 		m_lLastIndex = m_lCountImages;
 		m_lMaxIndex = std::max( m_lMaxIndex, m_lLastIndex );
@@ -140,21 +133,21 @@ HRESULT SVArchiveRecord::BuildArchiveImageFilePath(CString& rcsPath)
 
 		if(m_pArchiveTool->isImagePathUsingKeywords())
 		{
-			m_pArchiveTool->getTranslatedImagePath(csPathRoot);
+			m_pArchiveTool->getTranslatedImagePath(PathRoot);
 		}
 		else
 		{
-			if (!m_pArchiveTool->GetImageArchivePath (csPathRoot))
+			if (!m_pArchiveTool->GetImageArchivePath (PathRoot))
 			{
 				hr = -1903;
 				break;
 			}
 		}
 
-		svFileName.SetPathName( csPathRoot );
-		svFileName.SetFileName( csImageNameCountAndExtension );
+		svFileName.SetPathName( PathRoot.c_str() );
+		svFileName.SetFileName( FileName.c_str() );
 
-		rcsPath = svFileName.GetFullFileName();
+		rImageFile = svFileName.GetFullFileName();
 
 		if (   m_eArchiveMethod == SVArchiveAsynchronous
 			|| m_eArchiveMethod == SVArchiveGoOffline )
@@ -167,7 +160,7 @@ HRESULT SVArchiveRecord::BuildArchiveImageFilePath(CString& rcsPath)
 
 			TheSVDataManager.GetNextAvailableBufferIndex( m_pImageCircleBuffer, SV_ARCHIVE, m_LastIndexHandle );
 
-			m_aFileNames[ m_lLastIndex ] = SVFileNameIndexHandlePair( rcsPath, m_LastIndexHandle );
+			m_aFileNames[ m_lLastIndex ] = SVFileNameIndexHandlePair( rImageFile, m_LastIndexHandle );
 		}
 
 	} while (false);	// end do
@@ -241,7 +234,7 @@ void SVArchiveRecord::DisconnectInputObject()
 	}
 }
 
-HRESULT SVArchiveRecord::QueueImage( SVMatroxBuffer& buf, CString strFileName )
+HRESULT SVArchiveRecord::QueueImage( SVMatroxBuffer& buf, const SVString& rFileName )
 {
 	ASSERT( !buf.empty() );
 	HRESULT hr = S_OK;
@@ -249,7 +242,7 @@ HRESULT SVArchiveRecord::QueueImage( SVMatroxBuffer& buf, CString strFileName )
 	if ( m_eArchiveMethod == SVArchiveAsynchronous )
 	{
 		// the QueueImage function will copy the buffer, so pass in the original here
-		SVArchiveImageThreadClass::BufferInfo info( buf, strFileName, m_lImageSize, m_ImageInfo, this );
+		SVArchiveImageThreadClass::BufferInfo info( buf, rFileName, m_lImageSize, m_ImageInfo, this );
 		TheSVArchiveImageThreadClass().QueueImage( info );
 	}
 	else
@@ -305,16 +298,9 @@ HRESULT SVArchiveRecord::AllocateBuffers( long lBufferSize )
 		info.setDibBufferFlag(false);
 		m_ImageInfo = info;
 
-		BSTR bstrName;
-		CString strName;
+		_bstr_t bName( _T( "Archive Record Image Pool" ) );
 
-		// Create a managed index for the input circle buffer
-		strName = _T( "Archive Record Image Pool" );
-		bstrName = strName.AllocSysString();
-
-		TheSVDataManager.CreateManagedIndexArray( m_pImageCircleBuffer, bstrName, lBufferSize + 1 );
-
-		::SysFreeString( bstrName );
+		TheSVDataManager.CreateManagedIndexArray( m_pImageCircleBuffer, bName.Detach(), lBufferSize + 1 );
 
 		TheSVDataManager.GetNextAvailableBufferIndex( m_pImageCircleBuffer, SV_ARCHIVE, m_LastIndexHandle );
 
@@ -416,12 +402,12 @@ HRESULT SVArchiveRecord::WriteImage( )
 			ImageHandle->GetData( l_MilBuffer );
 
 			SVMatroxBuffer milBuffer = l_MilBuffer.GetBuffer();
-			CString csPathImageFile;
+			SVString ImageFile;
 
 			//
 			// Write the MIL image to a file in BMP form.
 			//
-			hr = BuildArchiveImageFilePath( csPathImageFile );
+			hr = BuildArchiveImageFilePath( ImageFile );
 			if (hr & 0xc000)
 			{
 				bOk = FALSE;
@@ -437,10 +423,9 @@ HRESULT SVArchiveRecord::WriteImage( )
 				{
 					try
 					{
-						SVString l_strPathImageFile = csPathImageFile;
 
 						l_Code = SVMatroxBufferInterface::Export(milBuffer, 
-							l_strPathImageFile, 
+							ImageFile, 
 							SVFileBitmap );
 
 					}
@@ -455,7 +440,7 @@ HRESULT SVArchiveRecord::WriteImage( )
 				}
 				else	// SVArchiveGoOffline or SVArchiveAsynchronous
 				{
-					QueueImage( milBuffer, csPathImageFile );
+					QueueImage( milBuffer, ImageFile );
 				}
 			}
 		}
@@ -464,18 +449,17 @@ HRESULT SVArchiveRecord::WriteImage( )
 
 	return hr;
 }
-/*static*/HRESULT SVArchiveRecord::WriteImage( SVMatroxBuffer& milBuffer, CString sFileName )
+/*static*/HRESULT SVArchiveRecord::WriteImage( SVMatroxBuffer& milBuffer, const SVString& rFileName )
 {
 	HRESULT hr = S_OK;
 	
 	SVMatroxBufferInterface::SVStatusCode l_Code;
-	SVString l_strPath = sFileName;
 
 	if ( !milBuffer.empty() )
 	{
 		try
 		{
-			l_Code = SVMatroxBufferInterface::Export( milBuffer, l_strPath, SVFileBitmap);
+			l_Code = SVMatroxBufferInterface::Export( milBuffer, rFileName, SVFileBitmap);
 
 		}
 		catch (CException& )

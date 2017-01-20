@@ -14,6 +14,7 @@
 //Moved to precompiled header: #include <boost/assign/list_of.hpp>
 #include "SVTADlgFileImageSourcePage.h"
 #include "SVObjectLibrary/SVClsids.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -35,7 +36,7 @@ namespace Seidenader { namespace SVOGui
 		(ContinuousReloadTag, SVContinuousReloadObjectGuid)))
 	{
 		//{{AFX_DATA_INIT(SVToolAdjustmentDialogFileImageSourcePageClass)
-		m_StrPathName = _T("");
+		m_PathName = _T("");
 		m_BContinuousReload = FALSE;
 		//}}AFX_DATA_INIT
 	}
@@ -64,7 +65,7 @@ namespace Seidenader { namespace SVOGui
 
 	void SVToolAdjustmentDialogFileImageSourcePageClass::GetData()
 	{
-		m_StrPathName = m_Values.Get<CString>(PathNameTag);
+		m_PathName = m_Values.Get<CString>(PathNameTag);
 		m_BContinuousReload = m_Values.Get<bool>(ContinuousReloadTag);
 		UpdateData(false); // Set data to dialog
 	}
@@ -74,10 +75,10 @@ namespace Seidenader { namespace SVOGui
 		UpdateData(true); // get data from dialog
 		// We want to Show C:\RUN instead of C:\Images or whatever directory was used to select the image
 		// So don't use the bound field
-		CString name = m_svfncImageSourceFile.GetFullFileName();
+		CString name = m_svfncImageSourceFile.GetFullFileName().c_str();
 		if (!name.IsEmpty())
 		{
-			m_Values.Set<CString>(PathNameTag, name); 
+			m_Values.Set<CString>(PathNameTag, name);
 		}
 		m_Values.Set<bool>(ContinuousReloadTag, m_BContinuousReload  ? true : false);
 	}
@@ -87,7 +88,7 @@ namespace Seidenader { namespace SVOGui
 		CPropertyPage::DoDataExchange(pDX);
 		//{{AFX_DATA_MAP(SVToolAdjustmentDialogFileImageSourcePageClass)
 		DDX_Control(pDX, IDC_IMAGE, m_imageCtrl);
-		DDX_Text(pDX, IDC_IMAGE_SOURCE_EDIT, m_StrPathName);
+		DDX_Text(pDX, IDC_IMAGE_SOURCE_EDIT, m_PathName);
 		DDX_Check(pDX, IDC_RELOAD_CHECK, m_BContinuousReload);
 		//}}AFX_DATA_MAP
 	}
@@ -127,17 +128,17 @@ namespace Seidenader { namespace SVOGui
 		UpdateData(true);
 	
 		// Try to read the current image file path name from registry...
-		CString csPath = AfxGetApp()->GetProfileString(	_T("Settings"),_T( "ImagesFilePath" ), _T("C:\\Images"));
+		SVString Path = AfxGetApp()->GetProfileString(	_T("Settings"),_T( "ImagesFilePath" ), _T("C:\\Images"));
 		
-		m_svfncImageSourceFile.SetPathName(csPath);
+		m_svfncImageSourceFile.SetPathName(Path.c_str());
 		m_svfncImageSourceFile.SetFileType(SV_IMAGE_SOURCE_FILE_TYPE);
 		if (m_svfncImageSourceFile.SelectFile())
 		{
 			// Save the directory selected from..
-			csPath = m_svfncImageSourceFile.GetPathName();
+			Path = m_svfncImageSourceFile.GetPathName();
 			
 			// Write this path name back to registry...to initialize registry.
-			AfxGetApp()->WriteProfileString(_T("Settings"), _T("ImagesFilePath"), csPath);
+			AfxGetApp()->WriteProfileString(_T("Settings"), _T("ImagesFilePath"), Path.c_str());
 
 			refresh();
 		}

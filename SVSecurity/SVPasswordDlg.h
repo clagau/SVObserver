@@ -14,30 +14,24 @@
 class SVPasswordDlg : public CDialog
 {
 public:
-	SVPasswordDlg(CWnd* pParent = nullptr);   // standard constructor
+	SVPasswordDlg(LPCTSTR Stsus, CWnd* pParent = nullptr);
 	virtual ~SVPasswordDlg();
-
-	//{{AFX_DATA(SVPasswordDlg)
 	enum { IDD = IDD_PASSWORD_DLG };
-	CString	m_strPassword;
-	CString	m_strUser;
-	CString	m_strStatus;
-	//}}AFX_DATA
 
-	// ClassWizard generated virtual function overrides
-	//{{AFX_VIRTUAL(SVPasswordDlg)
-	protected:
-	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
-	//}}AFX_VIRTUAL
-
+	LPCTSTR getPassword() { return m_Password; };
+	LPCTSTR getUser() { return m_User; };
 protected:
 
-	// Generated message map functions
-	//{{AFX_MSG(SVPasswordDlg)
+	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	virtual BOOL OnInitDialog() override;
 	afx_msg void OnHelp();
 	afx_msg BOOL OnHelpInfo(HELPINFO* pHelpInfo);
-	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
+
+private:
+	CString	m_Password;
+	CString	m_User;
+	CString	m_Status;
+
 };
 

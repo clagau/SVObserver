@@ -19,10 +19,7 @@
 #include "SVStatusLibrary/MessageManager.h"
 #include "TextDefinesSvO.h"
 #include "ObjectInterfaces/ErrorNumbers.h"
-#pragma endregion Includes
-
-
-
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -63,12 +60,10 @@ bool SVLutDlg::Create( SVVirtualCameraPtrSet& setCameras, SVLutMap& raLut )
 
 			if( !( pAcqDevice.empty() ) && raLut.find( pCamera->GetUniqueObjectID() ) != raLut.end() && 0 < raLut[pCamera->GetUniqueObjectID()].NumBands() )
 			{
-				CString sCaption;
-
-				sCaption.Format("%s (Dig_%d.Ch_%d)", pCamera->GetName(), pAcqDevice->DigNumber(), pAcqDevice->Channel());
+				SVString Caption = SvUl_SF::Format("%s (Dig_%d.Ch_%d)", pCamera->GetName(), pAcqDevice->DigNumber(), pAcqDevice->Channel());
 
 				SVLutDlgPage* pPage;
-				pPage = new SVLutDlgPage(this, sCaption);
+				pPage = new SVLutDlgPage( this, Caption.c_str() );
 				pPage->m_Lut = raLut[ pCamera->GetUniqueObjectID() ];
 				pPage->m_pCamera = pCamera;
 				AddPage(pPage);
@@ -137,13 +132,13 @@ BEGIN_MESSAGE_MAP(SVLutDlgPage, CPropertyPage)
 	ON_MESSAGE( SV_REFRESH_DIALOG, OnGraphRefresh )
 END_MESSAGE_MAP()
 
-SVLutDlgPage::SVLutDlgPage( SVLutDlg* pParent, const CString& sCaption )
+SVLutDlgPage::SVLutDlgPage( SVLutDlg* pParent, LPCTSTR Caption )
 : CPropertyPage(SVLutDlgPage::IDD)
 , m_pCamera(nullptr)
 {
 	//{{AFX_DATA_INIT(SVLutDlgPage)
-	m_strUpperClipValue = _T("");
-	m_strLowerClipValue = _T("");
+	m_UpperClipValue = _T("");
+	m_LowerClipValue = _T("");
 	m_bUseLUT = TRUE;
 	m_bContinuousRecalcLUT = FALSE;
 	m_iBand = -1;
@@ -151,14 +146,14 @@ SVLutDlgPage::SVLutDlgPage( SVLutDlg* pParent, const CString& sCaption )
 	m_iX2 = 0;
 	m_iY1 = 0;
 	m_iY2 = 0;
-	m_sRangeXMax = _T("");
-	m_sRangeYMax = _T("");
-	m_sRangeXYMax = _T("");
+	m_RangeXMax = _T("");
+	m_RangeYMax = _T("");
+	m_RangeXYMax = _T("");
 	//}}AFX_DATA_INIT
 
 	m_pParentDialog	= pParent;
 
-    m_strCaption = sCaption;
+    m_strCaption = Caption;
     m_psp.pszTitle = m_strCaption;
     m_psp.dwFlags |= PSP_USETITLE;
 }
@@ -175,17 +170,17 @@ void SVLutDlgPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_LOWER_SLIDER, m_LowerSlider);
 	DDX_Control(pDX, IDC_LUT_GRAPH, m_LUTGraph);
 	DDX_Control(pDX, IDC_LUT_MODE_COMBO, m_LutModeCombo);
-	DDX_Text(pDX, IDC_UPPER_EDIT, m_strUpperClipValue);
-	DDX_Text(pDX, IDC_LOWER_EDIT, m_strLowerClipValue);
+	DDX_Text(pDX, IDC_UPPER_EDIT, m_UpperClipValue);
+	DDX_Text(pDX, IDC_LOWER_EDIT, m_LowerClipValue);
 	DDX_Check(pDX, IDC_ACTIVATE_CHECK, m_bUseLUT);
 	DDX_Radio(pDX, IDC_COLOR_BAND_RED, m_iBand);
 	DDX_Text(pDX, IDC_X1, m_iX1);
 	DDX_Text(pDX, IDC_X2, m_iX2);
 	DDX_Text(pDX, IDC_Y1, m_iY1);
 	DDX_Text(pDX, IDC_Y2, m_iY2);
-	DDX_Text(pDX, IDC_STATIC_RANGE_X_MAX, m_sRangeXMax);
-	DDX_Text(pDX, IDC_STATIC_RANGE_Y_MAX, m_sRangeYMax);
-	DDX_Text(pDX, IDC_STATIC_RANGE_XY_MAX, m_sRangeXYMax);
+	DDX_Text(pDX, IDC_STATIC_RANGE_X_MAX, m_RangeXMax);
+	DDX_Text(pDX, IDC_STATIC_RANGE_Y_MAX, m_RangeYMax);
+	DDX_Text(pDX, IDC_STATIC_RANGE_XY_MAX, m_RangeXYMax);
 	//}}AFX_DATA_MAP
 }
 
@@ -219,9 +214,9 @@ BOOL SVLutDlgPage::OnInitDialog()
 		m_lMaxLutValue = uiMaxValue;
 	}
 
-	m_sRangeYMax.Format("(0, %d)", m_lMaxLutValue);
-	m_sRangeXMax.Format("(%d, 0)", m_Lut.Info().BandSize()-1);
-	m_sRangeXYMax.Format("(%d, %d)", m_Lut.Info().BandSize()-1, m_lMaxLutValue);
+	m_RangeYMax.Format("(0, %d)", m_lMaxLutValue);
+	m_RangeXMax.Format("(%d, 0)", m_Lut.Info().BandSize()-1);
+	m_RangeXYMax.Format("(%d, %d)", m_Lut.Info().BandSize()-1, m_lMaxLutValue);
 
 	CPropertyPage::OnInitDialog();
 
@@ -303,16 +298,16 @@ BOOL SVLutDlgPage::OnInitDialog()
 		for (int i = 0; i  < m_mapOperations.GetTypes().GetSize(); i++)
 		{
 			const SVLutTransformOperationMap::SVLutTransformTypeInfo& rType = m_mapOperations.GetTypes()[i];
-			if (rType.pType)
+			if (rType.m_pType)
 			{
-				int iPos = m_LutModeCombo.AddString( rType.sType );
+				int iPos = m_LutModeCombo.AddString( rType.m_Type.c_str() );
 				m_LutModeCombo.SetItemData( iPos, i );
 				if (m_Lut.Info().GetTransformOperation())
 				{
-					if (typeid(*rType.pType) == typeid(*m_Lut.Info().GetTransformOperation()))
+					if (typeid(*rType.m_pType) == typeid(*m_Lut.Info().GetTransformOperation()))
 					{
 						m_LutModeCombo.SetCurSel(iPos);
-						m_eLutMode = rType.eType;
+						m_eLutMode = rType.m_eType;
 					}
 				}
 			}
@@ -439,7 +434,7 @@ void SVLutDlgPage::Refresh()
 		if( true /*pLUTMode*/ )
 		{
 			// refresh lut mode combo settings...
-			CString strMode;
+			SVString Mode;
 			const SVLutTransformOperation* pOperation = nullptr;
 			if (-1 == m_iCurrentBand)
 			{
@@ -455,13 +450,13 @@ void SVLutDlgPage::Refresh()
 				const SVLutTransformOperationMap::SVLutTransformTypeInfo* pInfo = m_mapOperations.GetInfo(pOperation);
 				if (pInfo)
 				{
-					strMode = pInfo->sType;
-					m_eLutMode = pInfo->eType;
+					Mode = pInfo->m_Type;
+					m_eLutMode = pInfo->m_eType;
 				}
 			}
 
 			// Set cur sel in combo box...
-			m_LutModeCombo.SelectString( -1, strMode );
+			m_LutModeCombo.SelectString( -1, Mode.c_str() );
 
 			// Show or hide Controls depending on LUT Mode...
 			switch( m_eLutMode )
@@ -486,10 +481,10 @@ void SVLutDlgPage::Refresh()
 
 					SVLutTransformParameters param;
 					m_Lut(iBand).Info().GetTransformParameters(param);
-					if (2 == param.GetSize() )
+					if (2 == param.size() )
 					{
-						iMin = param.GetAt(0);
-						iMax = param.GetAt(1);
+						iMin = param[0];
+						iMax = param[1];
 					}
 					else
 					{
@@ -501,12 +496,12 @@ void SVLutDlgPage::Refresh()
 					}
 					
 					long lUpperClip = iMax;
-					m_strUpperClipValue.Format( _T( "%d" ), lUpperClip );
+					m_UpperClipValue.Format( _T( "%d" ), lUpperClip );
 					m_UpperSlider.SetPos( ( int ) -lUpperClip );
 
 					// Refresh lower clip...
 					long lLowerClip = iMin;
-					m_strLowerClipValue.Format( _T( "%d" ), lLowerClip );
+					m_LowerClipValue.Format( _T( "%d" ), lLowerClip );
 					m_LowerSlider.SetPos( ( int ) -lLowerClip );
 
 					// Deactivate Mouse Proc Func of SVDlgGraph Control...
@@ -535,12 +530,12 @@ void SVLutDlgPage::Refresh()
 					int iBand = m_iCurrentBand != -1 ? m_iCurrentBand : 0;
 					SVLutTransformParameters param;
 					m_Lut(iBand).Info().GetTransformParameters(param);
-					if (param.GetSize() > 4)
+					if( 4 < param.size() )
 					{
-						m_iX1 = param.GetAt(0);
-						m_iY1 = param.GetAt(1);
-						m_iX2 = param.GetAt(2);
-						m_iY2 = param.GetAt(3);
+						m_iX1 = param[0];
+						m_iY1 = param[1];
+						m_iX2 = param[2];
+						m_iY2 = param[3];
 					}
 
 					ShowControls(false, m_eLutMode );
@@ -693,13 +688,13 @@ void SVLutDlgPage::OnSelchangeLutModeCombo()
 		const SVLutTransformOperationMap::SVLutTransformTypeInfo& rType = m_mapOperations.GetTypes()[lValue];
 		if (-1 == m_iCurrentBand)
 		{
-			m_Lut.SetTransformOperation(*rType.pType);
+			m_Lut.SetTransformOperation(*rType.m_pType);
 		}
 		else
 		{
-			m_Lut(m_iCurrentBand).SetTransformOperation(*rType.pType);
+			m_Lut(m_iCurrentBand).SetTransformOperation(*rType.m_pType);
 		}
-		m_eLutMode = rType.eType;
+		m_eLutMode = rType.m_eType;
 
 		m_ptLastMousePos = m_ptNoLastMousePos;
 
@@ -708,23 +703,23 @@ void SVLutDlgPage::OnSelchangeLutModeCombo()
 		switch (m_eLutMode)
 		{
 			case LutTransformTypeClip:
-				if (atoi(m_strLowerClipValue) != 0 || atoi(m_strUpperClipValue) != 0)
+				if (atoi(m_LowerClipValue) != 0 || atoi(m_UpperClipValue) != 0)
 				{
-					param.Add(atoi(m_strLowerClipValue));
-					param.Add(atoi(m_strUpperClipValue));
+					param.push_back( atoi(m_LowerClipValue) );
+					param.push_back( atoi(m_UpperClipValue) );
 				}
 				else
 				{
-					param.Add(0);
-					param.Add(m_lMaxLutValue);
+					param.push_back( 0 );
+					param.push_back( m_lMaxLutValue );
 				}
 				break;
 			case LutTransformTypeTwoKnee:
-				param.Add(m_iX1);
-				param.Add(m_iY1);
-				param.Add(m_iX2);
-				param.Add(m_iY2);
-				param.Add(m_lMaxLutValue);
+				param.push_back( m_iX1 );
+				param.push_back( m_iY1 );
+				param.push_back( m_iX2 );
+				param.push_back( m_iY2 );
+				param.push_back( m_lMaxLutValue );
 			default:
 				break;
 		}
@@ -820,8 +815,8 @@ void SVLutDlgPage::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 		}
 
 		SVLutTransformParameters param;
-		param.Add(lLowerClip);
-		param.Add(lUpperClip);
+		param.push_back( lLowerClip );
+		param.push_back( lUpperClip );
 		SetLutParameters(param);
 		Refresh();
 	}
@@ -836,8 +831,8 @@ void SVLutDlgPage::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
 		}
 
 		SVLutTransformParameters param;
-		param.Add(lLowerClip);
-		param.Add(lUpperClip);
+		param.push_back( lLowerClip );
+		param.push_back( lUpperClip );
 		SetLutParameters(param);
 		Refresh();
 	}
@@ -969,11 +964,11 @@ void SVLutDlgPage::OnChangeKnee()
 {
 	UpdateData();
 	SVLutTransformParameters param;
-	param.Add(m_iX1);
-	param.Add(m_iY1);
-	param.Add(m_iX2);
-	param.Add(m_iY2);
-	param.Add(m_lMaxLutValue);
+	param.push_back( m_iX1 );
+	param.push_back( m_iY1 );
+	param.push_back( m_iX2 );
+	param.push_back( m_iY2 );
+	param.push_back( m_lMaxLutValue );
 	SetLutParameters(param);
 	Refresh();
 }

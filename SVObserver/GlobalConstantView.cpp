@@ -127,7 +127,7 @@ void GlobalConstantView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHint 
 		BasicValueObjects::ValueVector::const_iterator Iter( GlobalObjects.begin() );
 		while( GlobalObjects.end() != Iter && !Iter->empty() )
 		{
-			SVString Name( (*Iter)->GetCompleteObjectName() );
+			SVString Name( (*Iter)->GetCompleteName() );
 			SvUl_SF::MakeUpper(Name);
 			m_DataList.push_back( std::make_pair( Name,  *Iter ) );
 			++Iter;
@@ -171,7 +171,7 @@ bool GlobalConstantView::editItem( int Item )
 	SvOi::GlobalConstantData GlobalData;
 	SvOg::GlobalConstantDlg GlobalDlg( GlobalData, this );
 
-	SVStringArray GlobalConstantList;
+	SVStringVector GlobalConstantList;
 	RootObject::getRootChildNameList( GlobalConstantList, SvOl::FqnGlobal );
 	GlobalDlg.setExistingNames( GlobalConstantList );
 
@@ -191,7 +191,7 @@ bool GlobalConstantView::editItem( int Item )
 			{
 				pObject->getValue( GlobalData.m_Value );
 				GlobalData.m_Guid = pObject->GetUniqueObjectID();
-				GlobalData.m_DottedName = pObject->GetCompleteObjectName();
+				GlobalData.m_DottedName = pObject->GetCompleteName();
 				GlobalData.m_Description = pObject->getDescription();
 			}
 		}
@@ -242,7 +242,7 @@ bool GlobalConstantView::deleteItem( int Item )
 			{
 				if( checkAllDependencies( pObject, true ) )
 				{
-					if( S_OK ==  RootObject::deleteRootChildValue( pObject->GetCompleteObjectName() ) )
+					if( S_OK ==  RootObject::deleteRootChildValue( pObject->GetCompleteName().c_str() ) )
 					{
 						SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
 						Result = true;
@@ -337,7 +337,7 @@ void GlobalConstantView::editGlobalConstant( const SvOi::GlobalConstantData& rGl
 	pGlobalObject = dynamic_cast<BasicValueObject*> ( SVObjectManagerClass::Instance().GetObject( rGlobalData.m_Guid ) );
 	if( nullptr != pGlobalObject )
 	{
-		if( rGlobalData.m_DottedName != SVString( pGlobalObject->GetCompleteObjectName() ) )
+		if( rGlobalData.m_DottedName != SVString( pGlobalObject->GetCompleteName() ) )
 		{
 			SVObjectNameInfo ParseName;
 			SVString OldName( pGlobalObject->GetName() );
@@ -422,12 +422,12 @@ bool GlobalConstantView::checkAllDependencies( BasicValueObject* pObject, bool C
 
 	if( nullptr != pConfig )
 	{
-		CString DisplayText;
-		CString Name( pObject->GetName() );
+		SVString DisplayText = SvUl_SF::LoadSVString(IDS_DELETE_CHECK_DEPENDENCIES);
+		SVString Name( pObject->GetName() );
 		SVObjectVector ObjectCheckList;
 		SVObjectPairVector DependencyList;
 
-		DisplayText.Format( IDS_DELETE_CHECK_DEPENDENCIES, Name, Name, Name, Name );
+		DisplayText = SvUl_SF::Format( DisplayText.c_str(), Name.c_str(), Name.c_str(), Name.c_str(), Name.c_str() );
 
 		ObjectCheckList.push_back( pObject );
 		SVInspectionProcessPtrList Inspections;
@@ -470,7 +470,7 @@ bool GlobalConstantView::checkAllDependencies( BasicValueObject* pObject, bool C
 			Type =  SvOg::SVShowDependentsDialog::DeleteConfirmWithIP_Name;
 		}
 
-		SvOg::SVShowDependentsDialog DependentsDialog( DependencyList, DisplayText, Type );
+		SvOg::SVShowDependentsDialog DependentsDialog( DependencyList, DisplayText.c_str(), Type );
 
 		if( IDCANCEL == DependentsDialog.DoModal() )
 		{

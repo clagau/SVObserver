@@ -33,15 +33,15 @@ public:
 // Dialog Data
 	//{{AFX_DATA(SVPixelAnalyzerSetupClass)
 	enum { IDD = IDD_PIXEL_ANALYZER_DIALOG };
-	CSliderCtrl	msvGrayscaleSld;
-	CButton	msvOtherRad;
-	CButton	msvWhiteRad;
-	CButton	msvBlackRad;
-	CEdit	msvGrayScaleEdt;
-	long	msvGrayscaleToCount;
-	CString	msvHighGrayscaleValue;
-	CString	msvLowGrayscaleValue;
-	int		msvGrayscaleSliderValue;
+	CSliderCtrl	m_GrayscaleSld;
+	CButton	m_OtherRad;
+	CButton	m_WhiteRad;
+	CButton	m_BlackRad;
+	CEdit	m_GrayScaleEdt;
+	long	m_GrayscaleToCount;
+	CString	m_HighGrayscaleValue;
+	CString	m_LowGrayscaleValue;
+	int		m_GrayscaleSliderValue;
 	//}}AFX_DATA
 
 

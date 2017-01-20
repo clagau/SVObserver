@@ -16,7 +16,7 @@
 
 namespace Seidenader { namespace SVSharedMemoryLibrary
 {
-	const std::string g_shName = "MonitorListStore";
+	const SVString g_shName = "MonitorListStore";
 
 	SVMonitorListReader::SVMonitorListReader(): m_store(nullptr), m_isOpen(false)
 	{
@@ -82,7 +82,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		return m_isOpen && nullptr != m_store;
 	}
 
-	const SVSharedMonitorList & SVMonitorListReader::operator[](const std::string & listName) const
+	const SVSharedMonitorList & SVMonitorListReader::operator[](const SVString & listName) const
 	{
 		SVSharedConfiguration::Log("SVMonitorListReader::operator[]");
 		if (!IsOpen())
@@ -92,7 +92,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		return (*m_store)[listName];
 	}
 
-	const std::vector<std::string> SVMonitorListReader::GetListNames() const
+	const SVStringVector SVMonitorListReader::GetListNames() const
 	{
 		SVSharedConfiguration::Log("SVMonitorListReader::GetListNames");
 		if (!IsOpen())
@@ -102,7 +102,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		return m_store->GetListNames();
 	}
 
-	bool SVMonitorListReader::HasList(const std::string & name) const
+	bool SVMonitorListReader::HasList(const SVString & name) const
 	{
 		SVSharedConfiguration::Log("SVMonitorListReader::HasList");
 		if (!IsOpen())

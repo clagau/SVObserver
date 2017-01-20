@@ -14,7 +14,6 @@
 //Moved to precompiled header: #include <fstream>
 #include "SVJsonUtilities.h"
 #include "SVUtilityLibrary/SVSAFEARRAY.h"
-#include "SVUtilityLibrary/SVString.h"
 #include "SVUtilityLibrary/SVStringConversions.h"
 #pragma endregion Includes
 
@@ -201,11 +200,11 @@ HRESULT SVJsonUtilities::ConvertVariantToJsonValue( const _variant_t& p_rVariant
 	return l_Status;
 }
 
-HRESULT SVJsonUtilities::GetTempFileNameUsingPrefixAndExt( std::string& p_rTempFileName, const std::string& p_rPrefix, const std::string& p_rExt )
+HRESULT SVJsonUtilities::GetTempFileNameUsingPrefixAndExt( SVString& rTempFileName, const SVString& rPrefix, const SVString& rExt )
 {
 	HRESULT l_Status = S_OK;
 
-	p_rTempFileName.clear();
+	rTempFileName.clear();
 
 	SVString l_TempString;
 	__int64 l_TimeStamp = 0;
@@ -214,15 +213,15 @@ HRESULT SVJsonUtilities::GetTempFileNameUsingPrefixAndExt( std::string& p_rTempF
 
 	l_TempString = SvUl_SF::Format( "%I64d", l_TimeStamp );
 
-	p_rTempFileName += p_rPrefix;
-	p_rTempFileName += "-";
-	p_rTempFileName += l_TempString.c_str();
-	p_rTempFileName += p_rExt;
+	rTempFileName += rPrefix;
+	rTempFileName += "-";
+	rTempFileName += l_TempString.c_str();
+	rTempFileName += rExt;
 
 	return l_Status;
 }
 
-HRESULT SVJsonUtilities::WriteJsonValueToFile( const Json::Value& p_rJsonValue, const std::string& p_rFileName )
+HRESULT SVJsonUtilities::WriteJsonValueToFile( const Json::Value& p_rJsonValue, const SVString& p_rFileName )
 {
 	HRESULT l_Status = S_OK;
 

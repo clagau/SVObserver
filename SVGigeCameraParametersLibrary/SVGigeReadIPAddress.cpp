@@ -11,6 +11,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVGigeReadIPAddress.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 HRESULT SVGigeReadIPAddress::operator()(SVMatroxDigitizerRef Digitizer, const SVGigeFeature& rFeature, _variant_t& rValue) const

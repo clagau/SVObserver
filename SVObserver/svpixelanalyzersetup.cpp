@@ -33,10 +33,10 @@ SVPixelAnalyzerSetupClass::SVPixelAnalyzerSetupClass(SVPixelAnalyzerClass* apAna
 	: CDialog(SVPixelAnalyzerSetupClass::IDD, pParent)
 {
 	//{{AFX_DATA_INIT(SVPixelAnalyzerSetupClass)
-	msvGrayscaleToCount = 0;
-	msvHighGrayscaleValue = _T("");
-	msvLowGrayscaleValue = _T("");
-	msvGrayscaleSliderValue = 0;
+	m_GrayscaleToCount = 0;
+	m_HighGrayscaleValue = _T("");
+	m_LowGrayscaleValue = _T("");
+	m_GrayscaleSliderValue = 0;
 	//}}AFX_DATA_INIT
 
     init (apAnalyzer, pParent);
@@ -52,7 +52,7 @@ HRESULT SVPixelAnalyzerSetupClass::SetInspectionData()
 
 	if( nullptr != m_pAnalyzer )
 	{
-		l_hrOk = AddInputRequest( &( m_pAnalyzer->m_pixelCountColor ), msvGrayscaleToCount );
+		l_hrOk = AddInputRequest( &( m_pAnalyzer->m_pixelCountColor ), m_GrayscaleToCount );
 
 		if( S_OK == l_hrOk )
 		{
@@ -101,15 +101,15 @@ void SVPixelAnalyzerSetupClass::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(SVPixelAnalyzerSetupClass)
-	DDX_Control(pDX, IDC_GRAYSCALE_SLD, msvGrayscaleSld);
-	DDX_Control(pDX, IDC_OTHER_RAD, msvOtherRad);
-	DDX_Control(pDX, IDC_WHITE_RAD, msvWhiteRad);
-	DDX_Control(pDX, IDC_BLACK_RAD, msvBlackRad);
-	DDX_Control(pDX, IDC_GRAYSCALE_EDT, msvGrayScaleEdt);
-	DDX_Text(pDX, IDC_GRAYSCALE_EDT, msvGrayscaleToCount);
-	DDX_Text(pDX, IDC_HIGHGRAYSCALE, msvHighGrayscaleValue);
-	DDX_Text(pDX, IDC_LOWGRAYSCALE, msvLowGrayscaleValue);
-	DDX_Slider(pDX, IDC_GRAYSCALE_SLD, msvGrayscaleSliderValue);
+	DDX_Control(pDX, IDC_GRAYSCALE_SLD, m_GrayscaleSld);
+	DDX_Control(pDX, IDC_OTHER_RAD, m_OtherRad);
+	DDX_Control(pDX, IDC_WHITE_RAD, m_WhiteRad);
+	DDX_Control(pDX, IDC_BLACK_RAD, m_BlackRad);
+	DDX_Control(pDX, IDC_GRAYSCALE_EDT, m_GrayScaleEdt);
+	DDX_Text(pDX, IDC_GRAYSCALE_EDT, m_GrayscaleToCount);
+	DDX_Text(pDX, IDC_HIGHGRAYSCALE, m_HighGrayscaleValue);
+	DDX_Text(pDX, IDC_LOWGRAYSCALE, m_LowGrayscaleValue);
+	DDX_Slider(pDX, IDC_GRAYSCALE_SLD, m_GrayscaleSliderValue);
 	//}}AFX_DATA_MAP
 }
 
@@ -166,8 +166,8 @@ BOOL SVPixelAnalyzerSetupClass::OnInitDialog()
 			return TRUE;
 
 		}
-		msvHighGrayscaleValue.Format (_T("%d"), msvulMaxGrayscale);
-		msvLowGrayscaleValue.Format (_T("%d"), msvulMinGrayscale);
+		m_HighGrayscaleValue.Format (_T("%d"), msvulMaxGrayscale);
+		m_LowGrayscaleValue.Format (_T("%d"), msvulMinGrayscale);
 
 		m_pAnalyzer->m_pixelCountColor.GetValue(byGrayscale);
 
@@ -186,8 +186,8 @@ BOOL SVPixelAnalyzerSetupClass::OnInitDialog()
 
 			}
 
-			msvGrayscaleSld.SetRangeMin (-((long)msvulMaxGrayscale), FALSE);
-			msvGrayscaleSld.SetRangeMax (-((long)msvulMinGrayscale), FALSE);
+			m_GrayscaleSld.SetRangeMin (-((long)msvulMaxGrayscale), FALSE);
+			m_GrayscaleSld.SetRangeMax (-((long)msvulMinGrayscale), FALSE);
 			UpdateData (FALSE);
 	}
 	return TRUE;  // return TRUE unless you set the focus to a control
@@ -197,11 +197,11 @@ BOOL SVPixelAnalyzerSetupClass::OnInitDialog()
 unsigned long SVPixelAnalyzerSetupClass::SetBlack ()
 {
 	unsigned long ret(0);
-	msvWhiteRad.SetCheck(BST_UNCHECKED);
-	msvBlackRad.SetCheck (BST_CHECKED);
-	msvOtherRad.SetCheck(BST_UNCHECKED);
-	msvGrayscaleSld.EnableWindow (FALSE);
-	msvGrayScaleEdt.EnableWindow (FALSE);
+	m_WhiteRad.SetCheck(BST_UNCHECKED);
+	m_BlackRad.SetCheck (BST_CHECKED);
+	m_OtherRad.SetCheck(BST_UNCHECKED);
+	m_GrayscaleSld.EnableWindow (FALSE);
+	m_GrayScaleEdt.EnableWindow (FALSE);
 
 	SetGrayscale (msvulMinGrayscale);
 
@@ -212,11 +212,11 @@ unsigned long SVPixelAnalyzerSetupClass::SetBlack ()
 unsigned long SVPixelAnalyzerSetupClass::SetWhite ()
 {
 	unsigned long ret(0);
-	msvWhiteRad.SetCheck(BST_CHECKED);
-	msvBlackRad.SetCheck (BST_UNCHECKED);
-	msvOtherRad.SetCheck(BST_UNCHECKED);
-	msvGrayscaleSld.EnableWindow (FALSE);
-	msvGrayScaleEdt.EnableWindow (FALSE);
+	m_WhiteRad.SetCheck(BST_CHECKED);
+	m_BlackRad.SetCheck (BST_UNCHECKED);
+	m_OtherRad.SetCheck(BST_UNCHECKED);
+	m_GrayscaleSld.EnableWindow (FALSE);
+	m_GrayScaleEdt.EnableWindow (FALSE);
 
 	SetGrayscale (msvulMaxGrayscale);
 
@@ -229,11 +229,11 @@ unsigned long SVPixelAnalyzerSetupClass::SetWhite ()
 unsigned long SVPixelAnalyzerSetupClass::SetOther (long alGrayscale)
 {
 	unsigned long ret(0);
-	msvWhiteRad.SetCheck(BST_UNCHECKED);
-	msvBlackRad.SetCheck (BST_UNCHECKED);
-	msvOtherRad.SetCheck(BST_CHECKED);
-	msvGrayscaleSld.EnableWindow (TRUE);
-	msvGrayScaleEdt.EnableWindow (TRUE);
+	m_WhiteRad.SetCheck(BST_UNCHECKED);
+	m_BlackRad.SetCheck (BST_UNCHECKED);
+	m_OtherRad.SetCheck(BST_CHECKED);
+	m_GrayscaleSld.EnableWindow (TRUE);
+	m_GrayScaleEdt.EnableWindow (TRUE);
 
 	SetGrayscale (alGrayscale);
 	return ret;
@@ -243,8 +243,8 @@ unsigned long SVPixelAnalyzerSetupClass::SetOther (long alGrayscale)
 unsigned long SVPixelAnalyzerSetupClass::SetGrayscale (long alGrayscale)
 {
 	unsigned long ret(0);
-	msvGrayscaleToCount = alGrayscale;
-	msvGrayscaleSliderValue = -alGrayscale;
+	m_GrayscaleToCount = alGrayscale;
+	m_GrayscaleSliderValue = -alGrayscale;
 	SetInspectionData();
 	return ret;
 	
@@ -280,7 +280,7 @@ void SVPixelAnalyzerSetupClass::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* p
 	CDialog::OnVScroll(nSBCode, nPos, pScrollBar);
 
 	UpdateData (TRUE);
-	SetGrayscale (-msvGrayscaleSliderValue);
+	SetGrayscale (-m_GrayscaleSliderValue);
 }
 
 void SVPixelAnalyzerSetupClass::OnChangeGrayscaleEdt() 
@@ -291,7 +291,7 @@ void SVPixelAnalyzerSetupClass::OnChangeGrayscaleEdt()
 	// with the ENM_CHANGE flag ORed into the mask.
 	
 	UpdateData (TRUE);
-	SetGrayscale (msvGrayscaleToCount);
+	SetGrayscale (m_GrayscaleToCount);
 	
 }
 

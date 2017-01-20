@@ -16,6 +16,7 @@
 #include "SVValueObjectLibrary/SVValueObject.h"
 #include "SVClassInfoStruct.h"
 #include "SVTaskObject.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 class SVTaskObjectListClass : public SVTaskObjectClass, public SvOi::ITaskObjectListClass

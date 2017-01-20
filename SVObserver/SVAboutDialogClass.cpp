@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 09:23:14  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVAboutDialogClass.h"
 #include "SVGlobal.h"
@@ -18,6 +19,8 @@
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "CameraLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
+#include "SVUtilityLibrary/SVString.h"
+#pragma endregion Includes
 
 
 //******************************************************************************
@@ -63,12 +66,12 @@ BOOL SVAboutDialogClass::OnInitDialog()
 		CString appTitle;
 		appTitle.LoadString(AFX_IDS_APP_TITLE);
 
-		CString strVersion = appTitle;
+		CString Version = appTitle;
 		
-		strVersion += _T( " " );
-		strVersion += SvSyl::SVVersionInfo::GetVersion().c_str();
+		Version += _T( " " );
+		Version += SvSyl::SVVersionInfo::GetVersion().c_str();
 
-		pWnd->SetWindowText( strVersion );
+		pWnd->SetWindowText( Version );
 	}
 	
 	LoadOEMInfo();
@@ -88,7 +91,7 @@ void SVAboutDialogClass::LoadOEMInfo()
 	
 
 	SVString logoFileName = SvStl::GlobalPath::Inst().GetBinPath(_T("OEM\\logo.bmp")); 
-	if( 0 == ::_access(logoFileName.c_str()  , 0 ) )
+	if( 0 == ::_access( logoFileName.c_str(), 0 ) )
 	{
 		logoBmp = (HBITMAP) ::LoadImage( nullptr, 
 								logoFileName.c_str(),

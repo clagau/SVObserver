@@ -30,6 +30,7 @@
 #include "TriggerHandling/SVCameraTriggerData.h"
 #include "SVValueObjectLibrary/BasicValueObjects.h"
 #include "SVMonitorList.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -136,8 +137,8 @@ public:
 	BOOL GetAvailableInputs( SVIOEntryHostStructPtrList& p_IOEntries ) const;
 	BOOL GetAllInputs( SVIOEntryHostStructPtrList& p_IOEntries ) const;
 	BOOL AddDefaultInputs();
-	BOOL AddToAvailableInputs(SVIOObjectType eType, CString strName );
-	SVIOEntryHostStructPtr GetInput( const SVString& name ) const;
+	BOOL AddToAvailableInputs(SVIOObjectType eType, const SVString& rName );
+	SVIOEntryHostStructPtr GetInput( const SVString& rName ) const;
 
 	void AddCameraDataInputs(SVIOEntryHostStructPtrList& list);
 	void RemoveCameraDataInputs(SVIOEntryHostStructPtrList& list);

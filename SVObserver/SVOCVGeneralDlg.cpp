@@ -19,6 +19,7 @@
 #include "SVStatusLibrary/MessageManager.h"
 #include "ObjectInterfaces/ErrorNumbers.h"
 #include "SVStatusLibrary/GlobalPath.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -115,9 +116,13 @@ BOOL SVOCVGeneralDlg::OnInitDialog()
 	
 	SetTaskObject( pOCVAnalyzerResult );
 
-	pOCVAnalyzerResult->m_fnvoFontFileName.GetValue( m_fontFilename );
-	pOCVAnalyzerResult->m_fnvoConstraintsFileName.GetValue( m_constraintsFilename );
-	pOCVAnalyzerResult->m_fnvoControlsFileName.GetValue( m_controlsFilename );
+	SVString Value;
+	pOCVAnalyzerResult->m_fnvoFontFileName.GetValue( Value );
+	m_fontFilename = Value.c_str();
+	pOCVAnalyzerResult->m_fnvoConstraintsFileName.GetValue( Value );
+	m_constraintsFilename = Value.c_str();
+	pOCVAnalyzerResult->m_fnvoControlsFileName.GetValue( Value );
+	m_controlsFilename = Value.c_str();
 	
 	UpdateData (FALSE);
 	
@@ -135,29 +140,27 @@ void SVOCVGeneralDlg::OnFontBrowseCmd()
 	//
 	// Try to read the current image file path name from registry...
 	//
-	CString csPath = AfxGetApp()->GetProfileString(	_T( "Settings" ),
+	CString Path = AfxGetApp()->GetProfileString(	_T( "Settings" ),
 	                                                _T( "WitFontFilePath" ),
 	                                                SvStl::GlobalPath::Inst().GetRunPath().c_str() );
 
-	svfncFileName.SetDefaultPathName( csPath );
+	svfncFileName.SetDefaultPathName( SVString(Path) );
 
 	UpdateData( TRUE );
 
 	svfncFileName.SetFullFileName( m_fontFilename );
 	if ( svfncFileName.SelectFile() )
 	{
-		CString csTemp = svfncFileName.GetFullFileName();
-		if ( csTemp.IsEmpty() )
+		if ( svfncFileName.GetFullFileName().empty() )
 		{
 			SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_NoFontFileSpec, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10171 ); 
 		}
 		else
 		{
-			csTemp = svfncFileName.GetExtension();
-			if ( csTemp.CompareNoCase( _T( ".mfo" ) ) != 0 )
+			if( 0 != SvUl_SF::CompareNoCase( svfncFileName.GetExtension(), SVString( _T(".mfo") ) ) )
 			{
-				SVStringArray msgList;
+				SVStringVector msgList;
 				msgList.push_back(svfncFileName.GetFullFileName());
 				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_FontNotMfoExt, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10172 ); 
@@ -168,23 +171,23 @@ void SVOCVGeneralDlg::OnFontBrowseCmd()
 				// Check for the existance of the font trained file.
 				//
 				CFileStatus rStatus;
-				if ( !CFile::GetStatus( svfncFileName.GetFullFileName(), rStatus ) )
+				if ( !CFile::GetStatus( svfncFileName.GetFullFileName().c_str(), rStatus ) )
 				{
-					SVStringArray msgList;
+					SVStringVector msgList;
 					msgList.push_back(svfncFileName.GetFullFileName());
 					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_FontFileNotExist, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10173 ); 
 				}
 				else if ( rStatus.m_size <= 0 )
 				{
-					SVStringArray msgList;
+					SVStringVector msgList;
 					msgList.push_back(svfncFileName.GetFullFileName());
 					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_FontFileEmpty, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10174 );
 				}
 				else
 				{
-					m_fontFilename = svfncFileName.GetFullFileName();
+					m_fontFilename = svfncFileName.GetFullFileName().c_str();
 
 					UpdateData( FALSE );
 				}
@@ -203,29 +206,27 @@ void SVOCVGeneralDlg::OnConstraintsBrowseCmd()
 	//
 	// Try to read the current image file path name from registry...
 	//
-	CString csPath = AfxGetApp()->GetProfileString(	_T( "Settings" ),
+	CString Path = AfxGetApp()->GetProfileString(	_T( "Settings" ),
 	                                                _T( "WitFontFilePath" ),
 	                                                SvStl::GlobalPath::Inst().GetRunPath().c_str() );
 
-	svfncFileName.SetDefaultPathName( csPath );
+	svfncFileName.SetDefaultPathName( SVString(Path) );
 
 	UpdateData( TRUE );
 
 	svfncFileName.SetFullFileName( m_fontFilename );
 	if ( svfncFileName.SelectFile() )
 	{
-		CString csTemp = svfncFileName.GetFullFileName();
-		if ( csTemp.IsEmpty() )
+		if ( svfncFileName.GetFullFileName().empty() )
 		{
 			SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_NoFontConstraintsFileSpec, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10175 ); 
 		}
 		else
 		{
-			csTemp = svfncFileName.GetExtension();
-			if ( csTemp.CompareNoCase( _T( ".mfo" ) ) != 0 )
+			if ( 0 != SvUl_SF::CompareNoCase( svfncFileName.GetExtension(), SVString( _T(".mfo") ) )  )
 			{
-				SVStringArray msgList;
+				SVStringVector msgList;
 				msgList.push_back(svfncFileName.GetFullFileName());
 				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_FontConstraintsRequiredMfoExt, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10176 ); 
@@ -236,23 +237,23 @@ void SVOCVGeneralDlg::OnConstraintsBrowseCmd()
 				// Check for the existance of the font trained file.
 				//
 				CFileStatus rStatus;
-				if ( !CFile::GetStatus( svfncFileName.GetFullFileName(), rStatus ) )
+				if ( !CFile::GetStatus( svfncFileName.GetFullFileName().c_str(), rStatus ) )
 				{
-					SVStringArray msgList;
+					SVStringVector msgList;
 					msgList.push_back(svfncFileName.GetFullFileName() );
 					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_FontConstraintsFileNotExist, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10177 ); 
 				}
 				else if ( rStatus.m_size <= 0 )
 				{
-					SVStringArray msgList;
+					SVStringVector msgList;
 					msgList.push_back(svfncFileName.GetFullFileName() );
 					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_FontConstraintsFileEmpty, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10178 ); 
 				}
 				else
 				{
-					m_constraintsFilename = svfncFileName.GetFullFileName();
+					m_constraintsFilename = svfncFileName.GetFullFileName().c_str();
 
 					UpdateData( FALSE );
 				}
@@ -272,29 +273,27 @@ void SVOCVGeneralDlg::OnControlsBrowseCmd()
 	//
 	// Try to read the current image file path name from registry...
 	//
-	CString csPath = AfxGetApp()->GetProfileString(	_T( "Settings" ),
+	CString Path = AfxGetApp()->GetProfileString(	_T( "Settings" ),
 	                                                _T( "WitFontFilePath" ),
 	                                                SvStl::GlobalPath::Inst().GetRunPath().c_str() );
 
-	svfncFileName.SetDefaultPathName( csPath );
+	svfncFileName.SetDefaultPathName( SVString(Path) );
 
 	UpdateData( TRUE );
 
 	svfncFileName.SetFullFileName( m_fontFilename );
 	if ( svfncFileName.SelectFile() )
 	{
-		CString csTemp = svfncFileName.GetFullFileName();
-		if ( csTemp.IsEmpty() )
+		if ( svfncFileName.GetFullFileName().empty() )
 		{
 			SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_NoFontControlsFileSpec, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10179 ); 
 		}
 		else
 		{
-			csTemp = svfncFileName.GetExtension();
-			if ( csTemp.CompareNoCase( _T( ".mfo" ) ) != 0 )
+			if( 0 != SvUl_SF::CompareNoCase( svfncFileName.GetExtension(), SVString( _T(".mfo") ) ) )
 			{
-				SVStringArray msgList;
+				SVStringVector msgList;
 				msgList.push_back( svfncFileName.GetFullFileName() );
 				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_FontControlsRequiredMfoExt, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10180 ); 
@@ -305,23 +304,23 @@ void SVOCVGeneralDlg::OnControlsBrowseCmd()
 				// Check for the existance of the font trained file.
 				//
 				CFileStatus rStatus;
-				if ( !CFile::GetStatus( svfncFileName.GetFullFileName(), rStatus ) )
+				if ( !CFile::GetStatus( svfncFileName.GetFullFileName().c_str(), rStatus ) )
 				{
-					SVStringArray msgList;
+					SVStringVector msgList;
 					msgList.push_back( svfncFileName.GetFullFileName() );
 					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_FontControlsFileNotExist, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10181 ); 
 				}
 				else if ( rStatus.m_size <= 0 )
 				{
-					SVStringArray msgList;
+					SVStringVector msgList;
 					msgList.push_back( svfncFileName.GetFullFileName() );
 					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_FontControlsFileEmpty, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10182 ); 
 				}
 				else
 				{
-					m_controlsFilename = svfncFileName.GetFullFileName();
+					m_controlsFilename = svfncFileName.GetFullFileName().c_str();
 
 					UpdateData( FALSE );
 				}

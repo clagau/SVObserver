@@ -16,7 +16,13 @@
 #include "MonitorListPropertyDlg.h"
 #pragma endregion Includes
 
-//#define ALLOW_ONLY_ONE_MONITOR_LIST
+BEGIN_MESSAGE_MAP(MonitorListAddRemoveDlg, CDialog)
+	ON_BN_CLICKED(IDC_ADD_BTN, &MonitorListAddRemoveDlg::OnBnClickedAddBtn)
+	ON_BN_CLICKED(IDC_REMOVE_BTN, &MonitorListAddRemoveDlg::OnBnClickedRemoveBtn)
+	ON_BN_CLICKED(IDOK, &MonitorListAddRemoveDlg::OnBnClickedOk)
+	ON_BN_CLICKED(IDC_BTN_PROPERTIES, &MonitorListAddRemoveDlg::OnBnClickedBtnProperties)
+	ON_LBN_DBLCLK(IDC_USED_LIST, OnDblClickUsedList)
+END_MESSAGE_MAP()
 
 IMPLEMENT_DYNAMIC(MonitorListAddRemoveDlg, CDialog)
 
@@ -31,58 +37,6 @@ MonitorListAddRemoveDlg::~MonitorListAddRemoveDlg()
 {
 }
 
-const RemoteMonitorList& MonitorListAddRemoveDlg::GetRemoteMonitorList() const
-{
-	return m_MonitorList;
-}
-
-void MonitorListAddRemoveDlg::ReplaceList(const CString& oldName, const CString& newName)
-{
-	RemoteMonitorList:: iterator it = m_MonitorList.find(SVString(oldName));
-	if (it != m_MonitorList.end())
-	{
-		RemoteMonitorNamedList namedList = it->second;
-		namedList.SetName(SVString(newName));
-		m_MonitorList.erase(it);
-		m_MonitorList.insert(std::make_pair(newName, namedList));
-	}
-}
-
-CString MonitorListAddRemoveDlg::BuildListDisplayName(const CString& PPQName, const CString& name) const
-{
-	CString tmp;
-	tmp.Format(_T("%s(%s)"), name, PPQName); // Append PPQ name
-	return tmp;
-}
-
-CString MonitorListAddRemoveDlg::GetListNameFromDisplayName(const CString& name) const
-{
-	CString listName;
-	// Get the the PPQname from the end of the Name
-	int sPos = name.ReverseFind(_T('('));
-	if (sPos != -1)
-	{
-		listName = name.Left(sPos);
-	}
-	return listName;
-}
-
-CString MonitorListAddRemoveDlg::GetPPQName(const CString& name) const
-{
-	CString ppqName;
-	// Get the the PPQname from the end of the Name
-	int sPos = name.ReverseFind(_T('('));
-	if (sPos != -1)
-	{
-		int ePos = name.ReverseFind(_T(')'));
-		if (ePos != -1)
-		{
-			ppqName = name.Mid(sPos+1, (ePos - sPos) - 1);
-		}
-	}
-	return ppqName;
-}
-
 void MonitorListAddRemoveDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
@@ -93,15 +47,52 @@ void MonitorListAddRemoveDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_BTN_PROPERTIES, m_PropertiesButton);
 }
 
-BEGIN_MESSAGE_MAP(MonitorListAddRemoveDlg, CDialog)
-	ON_BN_CLICKED(IDC_ADD_BTN, &MonitorListAddRemoveDlg::OnBnClickedAddBtn)
-	ON_BN_CLICKED(IDC_REMOVE_BTN, &MonitorListAddRemoveDlg::OnBnClickedRemoveBtn)
-	ON_BN_CLICKED(IDOK, &MonitorListAddRemoveDlg::OnBnClickedOk)
-	ON_BN_CLICKED(IDC_BTN_PROPERTIES, &MonitorListAddRemoveDlg::OnBnClickedBtnProperties)
-	ON_LBN_DBLCLK(IDC_USED_LIST, OnDblClickUsedList)
-END_MESSAGE_MAP()
+const RemoteMonitorList& MonitorListAddRemoveDlg::GetRemoteMonitorList() const
+{
+	return m_MonitorList;
+}
 
-// MonitorListAddRemoveDlg message handlers
+void MonitorListAddRemoveDlg::ReplaceList( const SVString& rOldName, const SVString& rNewName )
+{
+	RemoteMonitorList:: iterator it = m_MonitorList.find(rOldName);
+	if (it != m_MonitorList.end())
+	{
+		RemoteMonitorNamedList namedList = it->second;
+		namedList.SetName(rNewName);
+		m_MonitorList.erase(it);
+		m_MonitorList.insert(std::make_pair(rNewName, namedList));
+	}
+}
+
+SVString MonitorListAddRemoveDlg::BuildListDisplayName(LPCTSTR PPQName, LPCTSTR Name) const
+{
+	return SvUl_SF::Format(_T("%s(%s)"), Name, PPQName); // Append PPQ name
+}
+
+SVString MonitorListAddRemoveDlg::GetListNameFromDisplayName(LPCTSTR Name) const
+{
+	// Get the the PPQname from the end of the Name
+	SVString DisplayName(Name);
+	size_t Pos = DisplayName.rfind(_T('('));
+	if( SVString::npos != Pos )
+	{
+		return SvUl_SF::Left( DisplayName, Pos);
+	}
+	return SVString();
+}
+
+SVString MonitorListAddRemoveDlg::GetPPQName( LPCTSTR Name ) const
+{
+	// Get the the PPQname from the end of the Name
+	SVString DisplayName(Name);
+	size_t startPos = DisplayName.rfind(_T('('));
+	size_t endPos = DisplayName.rfind(_T(')'));
+	if( SVString::npos != startPos && SVString::npos != endPos )
+	{
+		return DisplayName.substr( startPos+1, (endPos - startPos) - 1);
+	}
+	return SVString();
+}
 
 void MonitorListAddRemoveDlg::OnDblClickUsedList()
 {
@@ -119,17 +110,17 @@ void MonitorListAddRemoveDlg::OnBnClickedAddBtn()
 	{
 		CString PPQName;
 		m_AvailableList.GetText(lAddSel, PPQName);
-		const CString& name = NextAvailableListName();
-		if (!name.IsEmpty())
+		SVString Name = NextAvailableListName();
+		if (!Name.empty())
 		{
 			// Add to GUI
-			const CString& tmp = BuildListDisplayName(PPQName, name);
-			int iInsert = m_UsedList.AddString(tmp);
+			SVString DisplayName = BuildListDisplayName(PPQName, Name.c_str());
+			int iInsert = m_UsedList.AddString( DisplayName.c_str() );
 			m_UsedList.SetItemData(iInsert,  RemoteMonitorNamedList::GetDefaultRejectQueueDepth()); 
 			m_UsedList.SetCurSel(iInsert);
 		
 			// Add it to the master list
-			m_MonitorList.insert(std::make_pair(name, RemoteMonitorNamedList(SVString(PPQName), SVString(name))));
+			m_MonitorList.insert(std::make_pair(Name, RemoteMonitorNamedList(SVString(PPQName), Name)));
 
 			// Update Buttons
 			if (m_UsedList.GetCount() > 0)
@@ -141,30 +132,26 @@ void MonitorListAddRemoveDlg::OnBnClickedAddBtn()
 	}
 }
 
-CString MonitorListAddRemoveDlg::NextAvailableListName() const
+SVString MonitorListAddRemoveDlg::NextAvailableListName() const
 {
-	CString newName;
-	int num = 1;
-	CString strSet = _T("1234567890");
-	
 	typedef std::set<int> IDSet;
 	IDSet ids;
 	// look for the next available number
 	for (int i = 0;i < m_UsedList.GetCount();i++)
 	{
-		CString name;
-		m_UsedList.GetText(i, name);
+		CString Temp;
+		m_UsedList.GetText(i, Temp);
 		// parse out PPQ ID (PPQ_N)
-		name = GetListNameFromDisplayName(name);
-		int iFirst = name.FindOneOf(strSet);
-		if (-1 != iFirst)
+		SVString Name = GetListNameFromDisplayName(Temp);
+		size_t Pos = Name.find_first_of(_T("1234567890"));
+		if( SVString::npos != Pos )
 		{
-			CString strTmp = name.Mid(iFirst).SpanIncluding(strSet);
-			int iTmp = atol(strTmp);
+			int iTmp = atoi( SvUl_SF::Mid(Name, Pos).c_str() );
 			ids.insert(iTmp);
 		}
 	}
 
+	int num( 1 );
 	// Get next highest number
 	IDSet::const_reverse_iterator it = ids.rbegin();
 	if (it != ids.rend())
@@ -172,8 +159,7 @@ CString MonitorListAddRemoveDlg::NextAvailableListName() const
         num = (*it) + 1;
     }
 	    
-    newName.Format( _T("MonitorList%d"), num );
-	return newName;
+    return SvUl_SF::Format( _T("MonitorList%d"), num );
 }
 
 void MonitorListAddRemoveDlg::OnBnClickedRemoveBtn()
@@ -181,14 +167,13 @@ void MonitorListAddRemoveDlg::OnBnClickedRemoveBtn()
 	int lRemoveSel = m_UsedList.GetCurSel();
 	if (lRemoveSel > LB_ERR)
 	{
-		CString strDelete;
-		m_UsedList.GetText(lRemoveSel, strDelete);
+		CString DeleteName;
+		m_UsedList.GetText(lRemoveSel, DeleteName);
 		m_UsedList.DeleteString(lRemoveSel);
 
 		// remove from master list
 		// parse out PPQ ID (PPQ_N)
-		const SVString& name = SVString(GetListNameFromDisplayName(strDelete));
-		RemoteMonitorList::iterator it = m_MonitorList.find(name);
+		RemoteMonitorList::iterator it = m_MonitorList.find( GetListNameFromDisplayName( DeleteName ) );
 		if (it != m_MonitorList.end())
 		{
 			m_MonitorList.erase(it);
@@ -231,12 +216,12 @@ BOOL MonitorListAddRemoveDlg::OnInitDialog()
 	// EXCEPTION: OCX Property Pages should return FALSE
 }
 
-void MonitorListAddRemoveDlg::UpdateUsedList(const CString& PPQName, const NameDepthPairList& rList)
+void MonitorListAddRemoveDlg::UpdateUsedList(LPCTSTR PPQName, const NameDepthPairList& rList)
 {
 	for (NameDepthPairList::const_iterator it = rList.begin();it != rList.end();++it)
 	{
-		const CString& displayName = BuildListDisplayName(PPQName, it->first.c_str());
-		int index = m_UsedList.AddString(displayName);
+		SVString DisplayName = BuildListDisplayName(PPQName, it->first.c_str());
+		int index = m_UsedList.AddString( DisplayName.c_str() );
 		m_UsedList.SetItemData(index, it->second); // set the reject depth
 	}
 	//select first item in list
@@ -251,21 +236,21 @@ void MonitorListAddRemoveDlg::OnBnClickedBtnProperties()
 	int iPos = m_UsedList.GetCurSel();
 	if (iPos != LB_ERR)
 	{
-		CString sTmpName;
-		m_UsedList.GetText(iPos,sTmpName);
+		CString Name;
+		m_UsedList.GetText(iPos, Name);
 
-		CString sName = GetListNameFromDisplayName(sTmpName);
-		CString sPPQ = GetPPQName(sTmpName);
+		SVString DisplayName = GetListNameFromDisplayName( Name );
+		SVString PPQName = GetPPQName( Name );
 	
-		MonitorListPropertyDlg propDlg(m_MonitorList, sName);
+		MonitorListPropertyDlg propDlg(m_MonitorList, DisplayName.c_str());
 		if (IDOK == propDlg.DoModal() )
 		{
-			CString sNewName = propDlg.GetMonitorListName();
+			SVString sNewName = propDlg.GetMonitorListName();
 			int depth = propDlg.GetMonitorListRejectQueueDepth();
-			if (sNewName != sName)
+			if (sNewName != DisplayName)
 			{
 				m_UsedList.DeleteString(iPos);
-				m_UsedList.InsertString(iPos, BuildListDisplayName(sPPQ, sNewName));
+				m_UsedList.InsertString(iPos, BuildListDisplayName(PPQName.c_str(), sNewName.c_str()).c_str() );
 			}
 			m_UsedList.SetItemData(iPos, depth);
 		}

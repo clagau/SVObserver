@@ -12,13 +12,13 @@
 #include "stdafx.h"
 #include "SVActiveXLockStruct.h"
 
-SVActiveXLockStruct::SVActiveXLockStruct()
-: strName( _T( "" ) ), lProcessCount( -1 ), m_ImageHandlePtr()
+SVActiveXLockStruct::SVActiveXLockStruct() :
+m_ProcessCount( -1 ), m_ImageHandlePtr()
 {
 }
 
-SVActiveXLockStruct::SVActiveXLockStruct( const SVActiveXLockStruct &rvalue )
-: strName( rvalue.strName ), lProcessCount( rvalue.lProcessCount ), m_ImageHandlePtr( rvalue.m_ImageHandlePtr )
+SVActiveXLockStruct::SVActiveXLockStruct( const SVActiveXLockStruct &rValue )
+: m_Name( rValue.m_Name ), m_ProcessCount( rValue.m_ProcessCount ), m_ImageHandlePtr( rValue.m_ImageHandlePtr )
 {
 }
 
@@ -31,8 +31,8 @@ const SVActiveXLockStruct& SVActiveXLockStruct::operator =(const SVActiveXLockSt
 {
 	if( this != &rvalue )
 	{
-		strName = rvalue.strName;
-		lProcessCount = rvalue.lProcessCount;
+		m_Name = rvalue.m_Name;
+		m_ProcessCount = rvalue.m_ProcessCount;
 		m_ImageHandlePtr = rvalue.m_ImageHandlePtr;
 	}
 
@@ -41,16 +41,17 @@ const SVActiveXLockStruct& SVActiveXLockStruct::operator =(const SVActiveXLockSt
 
 void SVActiveXLockStruct::clear()
 {
-	strName.Empty();
-	lProcessCount = -1;
+	m_Name.clear();
+	m_ProcessCount = -1;
 	m_ImageHandlePtr.clear();
 }
 
 BOOL SVActiveXLockStruct::Valid()
 {
-	if ( strName.IsEmpty() || m_ImageHandlePtr.empty() || m_ImageHandlePtr->empty() )
-		return FALSE;
-	else
-		return TRUE;
+	if ( m_Name.empty() || m_ImageHandlePtr.empty() || m_ImageHandlePtr->empty() )
+	{
+		return false;
+	}
+	return true;
 }
 

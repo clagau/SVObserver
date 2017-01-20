@@ -13,6 +13,7 @@
 #pragma region Includes
 #include "SVSharedControl.h"
 #include "SVSharedConfiguration.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 namespace Seidenader { namespace SVSharedMemoryLibrary
@@ -21,7 +22,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 	{
 		typedef std::shared_ptr< boost::interprocess::managed_shared_memory > managed_shared_memory_shared_ptr;
 		SVShareControl* m_ctrl;
-		const std::string m_shareName;
+		const SVString m_shareName;
 		managed_shared_memory_shared_ptr shm;
 		long m_count;
 		long m_filterChangeCount;

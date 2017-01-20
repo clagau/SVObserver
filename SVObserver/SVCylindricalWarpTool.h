@@ -17,8 +17,6 @@
 #include "SVTool.h"
 #pragma endregion Includes
 
-const CString CYLINDRICAL_WARP_TYPE_HORIZONTAL = _T("Horizontal Warp");
-const CString CYLINDRICAL_WARP_TYPE_VERTICAL = _T("Vertical Warp");
 
 class SVCylindricalWarpToolClass : public SVToolClass  
 {

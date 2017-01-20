@@ -17,6 +17,7 @@
 #include "ObjectInterfaces/ErrorNumbers.h"
 #include "TextDefinesSvOg.h"
 #include "SVMessage/SVMessage.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -96,21 +97,20 @@ namespace Seidenader { namespace SVOGui
 			{
 				SVFileNameClass	svfncImageFile;
 			
-				CString csPathPlusFileName = _T("");
-				CString csPath = AfxGetApp()->GetProfileString(	_T("Settings"), _T("ImagesFilePath"), _T("C:\\Images"));	// Default
+				SVString Path = AfxGetApp()->GetProfileString(	_T("Settings"), _T("ImagesFilePath"), _T("C:\\Images"));	// Default
 			
 				svfncImageFile.SetFileType(SV_IMAGE_SOURCE_FILE_TYPE);
-				svfncImageFile.SetPathName(csPath);
+				svfncImageFile.SetPathName( Path.c_str() );
 			
 				BOOL bResult = svfncImageFile.SaveFile(); // Show Save File Dialog
 			
 				if (bResult)
 				{
-					csPath = svfncImageFile.GetPathName();
-					AfxGetApp()->WriteProfileString(_T("Settings"), _T("ImagesFilePath"), csPath);
+					Path = svfncImageFile.GetPathName();
+					AfxGetApp()->WriteProfileString(_T("Settings"), _T("ImagesFilePath"), Path.c_str());
 				
-					csPathPlusFileName = svfncImageFile.GetFullFileName();
-					HRESULT hr = m_ImageController.SaveImage(SVString(imageName), SVString(csPathPlusFileName));
+					SVString PathFileName = svfncImageFile.GetFullFileName();
+					HRESULT hr = m_ImageController.SaveImage(SVString(imageName), PathFileName);
 					if (S_OK != hr)
 					{
 						if (E_INVALIDARG == hr)
@@ -136,10 +136,10 @@ namespace Seidenader { namespace SVOGui
 		// Display current selected image...
 		if (index != CB_ERR)
 		{
-			CString name;
-			m_availableImagesComboCtrl.GetLBText(index, name);
+			CString Name;
+			m_availableImagesComboCtrl.GetLBText(index, Name);
 		
-			IPictureDisp* pImage = m_ImageController.GetImage(SVString(name));
+			IPictureDisp* pImage = m_ImageController.GetImage( SVString(Name) );
 			m_currentSelectedImageCtrl.setImage(pImage);
 			m_currentSelectedImageCtrl.Refresh();
 		}

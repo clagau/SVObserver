@@ -251,7 +251,7 @@ void SVIPDoc::SetInspectionID( const SVGUID& p_InspectionID )
 
 void SVIPDoc::init()
 {
-	SVFileNameManagerClass::AddItem( &msvFileName );
+	SVFileNameManagerClass::Instance().AddItem( &msvFileName );
 
 	mbRegressionSingleStep = FALSE;
 	mbInitImagesByName = FALSE;
@@ -280,7 +280,7 @@ SVIPDoc::~SVIPDoc()
 
 	m_oDisplay.Destroy();
 
-	SVFileNameManagerClass::RemoveItem( &msvFileName );
+	SVFileNameManagerClass::Instance().RemoveItem( &msvFileName );
 
 	ClearRegressionTestStructures();
 
@@ -441,7 +441,7 @@ BOOL SVIPDoc::AddTool(SVToolClass* pTool)
 			SVToolSetClass* pToolSet = GetToolSet();
 
 			const ToolListSelectionInfo& info = pView->GetToolListSelectionInfo();
-			int toolListIndex = GetToolToInsertBefore(info.m_selection, info.m_listIndex);
+			int toolListIndex = GetToolToInsertBefore(info.m_Selection, info.m_listIndex);
 
 			// A Color Tool must always be first on a RGB Color System.
 			// There can be multiple Color Tools on a RGB Color System, one of them must be first.
@@ -468,7 +468,7 @@ BOOL SVIPDoc::AddTool(SVToolClass* pTool)
 
 			if (S_OK == SVObjectManagerClass::Instance().UpdateObserver(GetInspectionID(), l_AddTool))
 			{
-				m_toolGroupings.AddTool(pTool->GetName(), static_cast<LPCTSTR>(info.m_selection));
+				m_toolGroupings.AddTool( pTool->GetName(), info.m_Selection );
 
 				// Refresh all views...
 				UpdateAllViews(nullptr);
@@ -495,16 +495,16 @@ bool SVIPDoc::AddToolGrouping(bool bStartGroup)
 		const ToolListSelectionInfo& rInfo = pView->GetToolListSelectionInfo();
 		if (bStartGroup)
 		{
-			m_toolGroupings.AddGroup(m_toolGroupings.GetDefaultName(), static_cast<LPCTSTR>(rInfo.m_selection));
+			m_toolGroupings.AddGroup( m_toolGroupings.GetDefaultName(), rInfo.m_Selection );
 		}
 		else
 		{
 			// Get Group Name
-			CString group = m_toolGroupings.FindGroup(static_cast<LPCTSTR>(rInfo.m_selection)).c_str();
-			if (!group.IsEmpty())
+			SVString GroupName = m_toolGroupings.FindGroup( rInfo.m_Selection );
+			if( !GroupName.empty() )
 			{
 				// check if has end already ?
-				m_toolGroupings.AddEndGroup(static_cast<LPCTSTR>(group), static_cast<LPCTSTR>(rInfo.m_selection));
+				m_toolGroupings.AddEndGroup( GroupName.c_str(), rInfo.m_Selection );
 			}
 		}
 
@@ -531,13 +531,13 @@ void SVIPDoc::SetPathName( LPCTSTR LPSZPathName, BOOL bAddToMRU )
 	{
 		msvFileName.SetFullFileName( LPSZPathName );
 
-		SVFileNameManagerClass::LoadItem( &msvFileName );
+		SVFileNameManagerClass::Instance().LoadItem( &msvFileName );
 
 		SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
 	}
 
 	// Never Add To MRU !!!
-	CDocument::SetPathName( msvFileName.GetFullFileName(), FALSE );
+	CDocument::SetPathName( msvFileName.GetFullFileName().c_str(), FALSE );
 }
 
 CView* SVIPDoc::getView() const
@@ -708,7 +708,7 @@ void SVIPDoc::OnCloseDocument()
 	if( this )
 	{
 		// Do not save unsaved IPDoc without updating config
-		if( CString( TheSVObserverApp.getConfigFullFileName() ).IsEmpty() && 
+		if( TheSVObserverApp.getConfigFullFileName().empty() && 
 			!SVSVIMStateClass::CheckState( SV_STATE_CANCELING ) )
 		{
 			TheSVObserverApp.OnFileSaveConfig();
@@ -805,7 +805,7 @@ void SVIPDoc::OnAdjustLightReference()
 	// Show extreme LUT: black --> blue, white --> green...
 	GetImageView()->ShowExtremeLUT();
 
-	SVLightReferenceDialogPropertySheetClass dlg( CString( _T( "Light Reference Adjustment - [" ) + GetTitle() + _T( "]" ) ));
+	SVLightReferenceDialogPropertySheetClass dlg( SVString( _T( "Light Reference Adjustment - [") + GetTitle() + _T("]") ).c_str() );
 
 	// obtain copies of the arrays to set if IDOK
 	SVLightReferenceArray apLRA;
@@ -854,7 +854,7 @@ void SVIPDoc::OnAdjustLightReference()
 				( *l_Iter )->SetLightReference(*(apLRA.GetAt(i)));
 				SVLightReference lra; // get new device lra; camera Set only modifies its band(s)
 				( *l_Iter )->GetAcquisitionDevice()->GetLightReference(lra);
-				pConfig->ModifyAcquisitionDevice( ( *l_Iter )->GetAcquisitionDevice()->DeviceName(), lra );
+				pConfig->ModifyAcquisitionDevice( ( *l_Iter )->GetAcquisitionDevice()->DeviceName().c_str(), lra );
 				delete apLRA.GetAt(i);
 				delete apLRAorig.GetAt(i);
 			}
@@ -866,7 +866,7 @@ void SVIPDoc::OnAdjustLightReference()
 				( *l_Iter )->SetLightReference(*(apLRAorig.GetAt(i)));
 				SVLightReference lra; // get new device lra; camera Set only modifies its band(s)
 				( *l_Iter )->GetAcquisitionDevice()->GetLightReference(lra);
-				pConfig->ModifyAcquisitionDevice( ( *l_Iter )->GetAcquisitionDevice()->DeviceName(), lra );
+				pConfig->ModifyAcquisitionDevice( ( *l_Iter )->GetAcquisitionDevice()->DeviceName().c_str(), lra );
 				delete apLRA.GetAt(i);
 				delete apLRAorig.GetAt(i);
 			}
@@ -895,7 +895,7 @@ void SVIPDoc::OnAdjustLut()
 	// Show extreme LUT: black --> blue, white --> green...
 	GetImageView()->ShowExtremeLUT();
 
-	SVLutDlg dlg( CString( _T( "LUT Adjustment - [" ) + GetTitle() + _T( "]" ) ));
+	SVLutDlg dlg( SVString( _T("LUT Adjustment - [") + GetTitle() + _T("]") ).c_str() );
 
 	// obtain copies of the luts to set if IDOK / IDCANCEL
 	SVLutDlg::SVLutMap aLut;
@@ -952,12 +952,12 @@ void SVIPDoc::OnAdjustLut()
 				SVLut lut;
 				SVAcquisitionClassPtr pDevice = (*l_Iter)->GetAcquisitionDevice();
 				pDevice->GetLut(lut);
-				pConfig->ModifyAcquisitionDevice( pDevice->DeviceName(), lut );
+				pConfig->ModifyAcquisitionDevice( pDevice->DeviceName().c_str(), lut );
 
 				// Update DeviceParameters as well...
 				SVDeviceParamCollection deviceParams;
 				pDevice->GetDeviceParameters(deviceParams);
-				pConfig->ModifyAcquisitionDevice( pDevice->DeviceName(), &deviceParams );
+				pConfig->ModifyAcquisitionDevice( pDevice->DeviceName().c_str(), &deviceParams );
 			}
 		}
 		SVSVIMStateClass::RemoveState( SV_STATE_EDITING );
@@ -1218,13 +1218,13 @@ void SVIPDoc::OnEditDelete()
 			SVTaskObjectClass* pTaskObject = dynamic_cast<SVTaskObjectClass *>(SVObjectManagerClass::Instance().GetObject(rGuid));
 			if (pTaskObject)
 			{
-				int index = GetSelectedToolIndex(rInfo.m_selection);
+				int index = GetSelectedToolIndex(rInfo.m_Selection);
 
 				HRESULT hr = DeleteTool(pTaskObject);
 
 				if (S_OK == hr)
 				{
-					m_toolGroupings.RemoveTool(static_cast<LPCTSTR>(rInfo.m_selection));
+					m_toolGroupings.RemoveTool( rInfo.m_Selection );
 
 					// Current behavior is to select the previous tool
 					// Select the previous tool or group (item) in the list ?
@@ -1260,7 +1260,7 @@ void SVIPDoc::OnEditDelete()
 		{
 			int index = rInfo.m_listIndex;
 			index--;
-			m_toolGroupings.RemoveGroup(static_cast<LPCTSTR>(rInfo.m_selection));
+			m_toolGroupings.RemoveGroup( rInfo.m_Selection );
 
 			pToolSetView->getListCtrl().SaveScrollPos();
 			pToolSetView->getListCtrl().Rebuild();
@@ -1347,7 +1347,7 @@ void SVIPDoc::OnEditPaste()
 		ToolSetView* pView = GetToolSetView();
 
 		const ToolListSelectionInfo& info = pView->GetToolListSelectionInfo();
-		int ToolListIndex = GetToolToInsertBefore(info.m_selection, info.m_listIndex);
+		int ToolListIndex = GetToolToInsertBefore(info.m_Selection, info.m_listIndex);
 		Clipboard.readFromClipboard( ToolListIndex, ToolGuid );
 
 		SVObjectClass* pObject( SVObjectManagerClass::Instance().GetObject( ToolGuid ) );
@@ -1364,7 +1364,7 @@ void SVIPDoc::OnEditPaste()
 			//If this is the first tool then it has already been inserted otherwise the name is unique
 			if( m_toolGroupings.IsNameUnique( pTool->GetName() ))
 			{
-				m_toolGroupings.AddTool( pTool->GetName(), static_cast<LPCTSTR>(info.m_selection) );
+				m_toolGroupings.AddTool( pTool->GetName(), info.m_Selection );
 			}
 
 			pTool->SetObjectDepthWithIndex( pInspection->GetObjectDepth(), 1 );
@@ -1526,13 +1526,10 @@ void SVIPDoc::OnResultsPicker()
 			const SVObjectReferenceVector& rSelectedObjects( pResultList->GetSelectedObjects() );
 			SvOsl::ObjectTreeGenerator::Instance().setCheckItems( rSelectedObjects, InspectionName );
 
-			CString Title;
-			CString ResultPicker;
-			CString Filter;
-			ResultPicker.LoadString( IDS_RESULT_PICKER ); 
-			Title.Format( _T("%s - %s"), ResultPicker, InspectionName.c_str() );
-			Filter.LoadString( IDS_FILTER );
-			INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title, ResultPicker, Filter );
+			SVString ResultPicker = SvUl_SF::LoadSVString( IDS_RESULT_PICKER );
+			SVString Title = SvUl_SF::Format( _T("%s - %s"), ResultPicker.c_str(), InspectionName.c_str() );
+			SVString Filter = SvUl_SF::LoadSVString( IDS_FILTER );
+			INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title.c_str(), ResultPicker.c_str(), Filter.c_str() );
 
 			if( IDOK == Result )
 			{
@@ -1570,13 +1567,10 @@ void SVIPDoc::OnPublishedResultsPicker()
 		SvOsl::SelectorOptions BuildOptions( GetInspectionID(), SV_PUBLISHABLE );
 		SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::NoSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<>>( BuildOptions );
 
-		CString Title;
-		CString PublishableResults;
-		CString Filter;
-		PublishableResults.LoadString( IDS_PUBLISHABLE_RESULTS );
-		Title.Format( _T("%s - %s"), PublishableResults, InspectionName.c_str() );
-		Filter.LoadString( IDS_FILTER );
-		INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title,PublishableResults, Filter );
+		SVString PublishableResults = SvUl_SF::LoadSVString( IDS_PUBLISHABLE_RESULTS );
+		SVString Title = SvUl_SF::Format( _T("%s - %s"), PublishableResults.c_str(), InspectionName.c_str() );
+		SVString Filter = SvUl_SF::LoadSVString( IDS_FILTER );
+		INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title.c_str(), PublishableResults.c_str(), Filter.c_str() );
 
 		if( IDOK == Result )
 		{
@@ -1621,21 +1615,17 @@ void SVIPDoc::OnPublishedResultImagesPicker()
 
 		SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSetAttributes );
 
-		CString csRootName;
-		csRootName.LoadString(IDS_CLASSNAME_ROOTOBJECT);
-		SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, SVString(csRootName), SVString( _T("") ) );
+		SVString RootName = SvUl_SF::LoadSVString( IDS_CLASSNAME_ROOTOBJECT );
+		SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, RootName, SVString( _T("") ) );
 
 		SvOsl::SelectorOptions BuildOptions( GetInspectionID(), SV_PUBLISH_RESULT_IMAGE );
 		SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::NoSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<>>( BuildOptions );
 
-		CString Title;
-		CString PublishedResult;
-		CString Filter;
-		PublishedResult.LoadString( IDS_PUBLISHABLE_RESULT_IMAGES );
-		Title.Format( _T("%s - %s"), PublishedResult, InspectionName.c_str() );
-		Filter.LoadString( IDS_FILTER );
+		SVString PublishableImages = SvUl_SF::LoadSVString( IDS_PUBLISHABLE_RESULT_IMAGES );
+		SVString Title = SvUl_SF::Format( _T("%s - %s"), PublishableImages.c_str(), InspectionName.c_str() );
+		SVString Filter = SvUl_SF::LoadSVString( IDS_FILTER );
 		
-		INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title, PublishedResult, Filter );
+		INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title.c_str(), PublishableImages.c_str(), Filter.c_str() );
 
 		if( IDOK == Result )
 		{
@@ -1871,23 +1861,21 @@ void SVIPDoc::InitMenu()
 {
 	// Load Utilities Menu
 	SVUtilitiesClass util;
-	CWnd *pWindow;
-	CMenu *pMenu;
-	CString szMenuText;
+	CWnd *pWindow( nullptr );
+	CMenu *pMenu( nullptr );
 
 	pWindow = AfxGetMainWnd();
-	if( pWindow )
+	if( nullptr != pWindow )
 	{
 		// Load and init Utility Menu
 		pMenu = pWindow->GetMenu();
-		szMenuText = _T("&Utilities");
-		if (pMenu = util.FindSubMenuByName(pMenu, szMenuText)) { util.LoadMenu(pMenu); }
+		if (pMenu = util.FindSubMenuByName(pMenu, _T("&Utilities") ) ) { util.LoadMenu(pMenu); }
 
 		// Load and init Tool Set Draw Menu
 		int pos = 0;
 		pMenu = ::SVFindMenuByCommand( pWindow->GetMenu(), ID_VIEW_TOOLSETDRAW, TRUE, pos );
 		SVToolSetClass* pSet = GetToolSet();
-		if( pMenu && pSet )
+		if( nullptr != pMenu && nullptr != pSet )
 		{
 			SVEnumerateValueObjectClass* pEnum = pSet->GetDrawFlagObject();
 			CMenu myPopUp;
@@ -1896,15 +1884,15 @@ void SVIPDoc::InitMenu()
 				// Populate pop up with enumerations of tool set draw flag...
 				UINT uiCommand = ID_VIEW_TOOLSETDRAW_POP_BASE;
 				int it = pEnum->GetFirstEnumTypePos();
-				CString strEnum;
+				SVString strEnum;
 				long lEnum = 0L;
 				while( pEnum->GetNextEnumType( it, strEnum, lEnum ) )
 				{
-					myPopUp.AppendMenu( MF_STRING, uiCommand++, strEnum );
+					myPopUp.AppendMenu( MF_STRING, uiCommand++, strEnum.c_str() );
 				}
 
 				// Get current name of ID_VIEW_TOOLSETDRAW menu...
-				CString strMenu =_T( "Display" );
+				CString strMenu =_T("Display");
 				pMenu->GetMenuString( pos, strMenu, MF_BYPOSITION );
 
 				// Transfer pop up...
@@ -1996,11 +1984,10 @@ void SVIPDoc::OnChangeToolSetDrawFlag( UINT nId )
 			if( pEnum && pMenu )
 			{
 				// Get correlated enumerator...
-				CString strEnum;
-				pMenu->GetMenuString( pos, strEnum, MF_BYPOSITION );
-
+				CString Temp;
+				pMenu->GetMenuString( pos, Temp, MF_BYPOSITION );
 				// Set Flag...
-				pEnum->SetValue( 1, strEnum );
+				pEnum->SetValue( 1, SVString(Temp) );
 
 				// Update Menu...
 				pMenu->CheckMenuRadioItem( 0, pMenu->GetMenuItemCount() - 1, pos, MF_BYPOSITION );
@@ -2090,11 +2077,11 @@ BOOL SVIPDoc::OnOpenDocument(LPCTSTR lpszPathName)
 
 	if ( bOk )
 	{
-		bOk = SVFileNameManagerClass::LoadItem( &msvFileName );
+		bOk = SVFileNameManagerClass::Instance().LoadItem( &msvFileName );
 
 		if ( bOk )
 		{
-			bOk = CDocument::OnOpenDocument( msvFileName.GetFullFileName() );
+			bOk = CDocument::OnOpenDocument( msvFileName.GetFullFileName().c_str() );
 		}
 	}
 
@@ -2105,27 +2092,27 @@ BOOL SVIPDoc::OnSaveDocument(LPCTSTR lpszPathName)
 {
 	BOOL bOk = msvFileName.SetFullFileName( lpszPathName );
 
-	if ( bOk && CString( msvFileName.GetPathName() ).CompareNoCase( SVFileNameManagerClass::GetRunPathName() ) != 0 )
+	if( bOk && 0 != SvUl_SF::CompareNoCase( msvFileName.GetPathName(), SVFileNameManagerClass::Instance().GetRunPathName() ) )
 	{
-		bOk = msvFileName.SetPathName( SVFileNameManagerClass::GetRunPathName() );
+		bOk = msvFileName.SetPathName( SVFileNameManagerClass::Instance().GetRunPathName().c_str() );
 	}
 
-	if ( bOk && CString( msvFileName.GetExtension() ).CompareNoCase( ".ipd" ) != 0 )
+	if( bOk && 0 != SvUl_SF::CompareNoCase( msvFileName.GetExtension(), SVString( _T(".ipd") ) ) )
 	{
-		bOk = msvFileName.SetExtension( ".ipd" );
+		bOk = msvFileName.SetExtension( _T(".ipd") );
 	}
 
 	if ( bOk )
 	{
-		bOk = CDocument::OnSaveDocument( msvFileName.GetFullFileName() );
+		bOk = CDocument::OnSaveDocument( msvFileName.GetFullFileName().c_str() );
 
 		if ( bOk )
 		{
-			bOk = SVFileNameManagerClass::SaveItem( &msvFileName );
+			bOk = SVFileNameManagerClass::Instance().SaveItem( &msvFileName );
 
 			if ( bOk )
 			{
-				CDocument::SetPathName( msvFileName.GetFullFileName(), FALSE );
+				CDocument::SetPathName( msvFileName.GetFullFileName().c_str(), FALSE );
 			}
 		}
 	}
@@ -2149,11 +2136,6 @@ BOOL SVIPDoc::IsColorInspectionDocument() const
 
 BOOL SVIPDoc::GetParameters(SVObjectWriter& rWriter)
 {
-	BOOL bOk = FALSE;
-
-	CString csScript;
-	CString csAlias;
-
 	_variant_t svVariant;
 
 	SVInspectionProcess* pInspection( GetInspectionProcess() );
@@ -2169,7 +2151,7 @@ BOOL SVIPDoc::GetParameters(SVObjectWriter& rWriter)
 
 	SaveViewedVariables(rWriter);
 
-	return bOk;
+	return true;
 }
 
 void SVIPDoc::SaveViewedVariables(SVObjectWriter& rWriter)
@@ -2272,8 +2254,7 @@ void SVIPDoc::SaveViewPlacements(SVObjectWriter& rWriter)
 			SVIPSplitterFrame* pFrame = dynamic_cast< SVIPSplitterFrame* >( pWndSplitter2->GetParent() );
 
 			CRuntimeClass* pClass = pFrame->GetRuntimeClass();
-			CString csClass = pClass->m_lpszClassName;
-			ASSERT(csClass == _T("SVIPSplitterFrame"));
+			assert( _T("SVIPSplitterFrame") == SVString(pClass->m_lpszClassName)  );
 
 			if (pFrame &&pFrame->GetSafeHwnd())
 			{
@@ -2480,8 +2461,7 @@ BOOL SVIPDoc::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiPa
 					SVIPSplitterFrame* pFrame = dynamic_cast< SVIPSplitterFrame* >( pWndSplitter2->GetParent() );
 
 					CRuntimeClass* pClass = pFrame->GetRuntimeClass();
-					CString csClass = pClass->m_lpszClassName;
-					ASSERT( csClass == _T( "SVIPSplitterFrame" ) );
+					assert( _T("SVIPSplitterFrame") == SVString(pClass->m_lpszClassName) );
 
 					if( pFrame && pFrame->GetSafeHwnd() )
 					{
@@ -2817,20 +2797,19 @@ HRESULT SVIPDoc::DeleteTool(SVTaskObjectClass* pTaskObject)
 
 void SVIPDoc::OnEditAdjustToolPosition()
 {
-	SVToolClass* l_pTool = dynamic_cast< SVToolClass* >( SVObjectManagerClass::Instance().GetObject( GetSelectedToolID() ) );
+	SVToolClass* pTool = dynamic_cast< SVToolClass* >( SVObjectManagerClass::Instance().GetObject( GetSelectedToolID() ) );
 
-	if( l_pTool )
+	if( nullptr != pTool )
 	{
-		SVObjectInfoStruct info = l_pTool->GetObjectInfo();
+		SVObjectInfoStruct info = pTool->GetObjectInfo();
 		SVObjectTypeInfoStruct typeInfo = info.ObjectTypeInfo;
 		//------ Warp tool hands back a SVPolarTransformObjectType. Sub type 1792.
 		//------ Window tool, Luminance hands back a SVImageObjectType. Sub type 0.
 		if( SVImageViewClass* pImageView = GetImageView() )
 		{
 			SVSVIMStateClass::AddState( SV_STATE_EDITING );
-			CString DlgName;
-			DlgName.Format("Adjust Tool Size and Position - %s",l_pTool->GetName());
-			SVAdjustToolSizePositionDlg dlg(DlgName, dynamic_cast< CWnd* >( this->GetMDIChild() ), l_pTool );
+			SVString DlgName = SvUl_SF::Format( _T("Adjust Tool Size and Position - %s"), pTool->GetName() );
+			SVAdjustToolSizePositionDlg dlg( DlgName.c_str(), dynamic_cast< CWnd* >( this->GetMDIChild() ), pTool );
 			dlg.DoModal();
 			SVSVIMStateClass::RemoveState( SV_STATE_EDITING );
 		}
@@ -2997,7 +2976,7 @@ DWORD WINAPI SVIPDoc::SVRegressionTestRunThread( LPVOID lpParam )
 				l_iNumSingleFile++;
 			}
 
-			ptmpRunFileStruct->csCameraName = ptmpRegTestStruct->csCamera;
+			ptmpRunFileStruct->CameraName = ptmpRegTestStruct->Camera;
 			switch (pIPDoc->m_regtestRunMode)
 			{
 			case RegModePlay:
@@ -3062,7 +3041,7 @@ DWORD WINAPI SVIPDoc::SVRegressionTestRunThread( LPVOID lpParam )
 						}
 					}
 
-					ptmpRunFileStruct->csFileName = *ptmpRegTestStruct->stdIteratorCurrent;
+					ptmpRunFileStruct->FileName = *ptmpRegTestStruct->stdIteratorCurrent;
 					break;
 				}
 			case RegModeSingleStepForward:
@@ -3076,7 +3055,7 @@ DWORD WINAPI SVIPDoc::SVRegressionTestRunThread( LPVOID lpParam )
 					{
 						ptmpRegTestStruct->stdIteratorCurrent = ptmpRegTestStruct->stdVectorFile.begin();
 					}
-					ptmpRunFileStruct->csFileName = *ptmpRegTestStruct->stdIteratorCurrent;
+					ptmpRunFileStruct->FileName = *ptmpRegTestStruct->stdIteratorCurrent;
 					bDisplayFile = TRUE;
 					break;
 				}
@@ -3099,7 +3078,7 @@ DWORD WINAPI SVIPDoc::SVRegressionTestRunThread( LPVOID lpParam )
 						ptmpRegTestStruct->stdIteratorCurrent = ptmpRegTestStruct->stdVectorFile.end() - 1;
 					}
 
-					ptmpRunFileStruct->csFileName = *ptmpRegTestStruct->stdIteratorCurrent;
+					ptmpRunFileStruct->FileName = *ptmpRegTestStruct->stdIteratorCurrent;
 					bDisplayFile = TRUE;
 
 					break;
@@ -3107,14 +3086,14 @@ DWORD WINAPI SVIPDoc::SVRegressionTestRunThread( LPVOID lpParam )
 			case RegModeBackToBeginningPlay:
 				{
 					ptmpRegTestStruct->stdIteratorCurrent = ptmpRegTestStruct->stdIteratorStart;
-					ptmpRunFileStruct->csFileName = *ptmpRegTestStruct->stdIteratorCurrent;
+					ptmpRunFileStruct->FileName = *ptmpRegTestStruct->stdIteratorCurrent;
 					bDisplayFile = TRUE;
 					break;
 				}
 			case RegModeBackToBeginningStop:
 				{
 					ptmpRegTestStruct->stdIteratorCurrent = ptmpRegTestStruct->stdIteratorStart;
-					ptmpRunFileStruct->csFileName = *ptmpRegTestStruct->stdIteratorCurrent;
+					ptmpRunFileStruct->FileName = *ptmpRegTestStruct->stdIteratorCurrent;
 					bDisplayFile = TRUE;
 					break;
 				}
@@ -3148,7 +3127,7 @@ DWORD WINAPI SVIPDoc::SVRegressionTestRunThread( LPVOID lpParam )
 
 				if( nullptr != pIPDoc->GetInspectionProcess() )
 				{
-					pIPDoc->GetInspectionProcess()->AddInputImageRequestByCameraName(ptmpRunFileStruct->csCameraName,ptmpRunFileStruct->csFileName);
+					pIPDoc->GetInspectionProcess()->AddInputImageRequestByCameraName(ptmpRunFileStruct->CameraName,ptmpRunFileStruct->FileName);
 				}
 				else
 				{
@@ -3306,18 +3285,18 @@ bool SVIPDoc::IsToolPreviousToSelected( const SVGUID& p_rToolID ) const
 	return l_Status;
 }
 
-CString SVIPDoc::GetCompleteToolSetName() const
+SVString SVIPDoc::GetCompleteToolSetName() const
 {
-	CString l_Name;
+	SVString Result;
 
 	SVToolSetClass* l_pToolSet = GetToolSet();
 
 	if( nullptr != l_pToolSet )
 	{
-		l_Name = l_pToolSet->GetCompleteObjectNameToObjectType( nullptr, SVToolObjectType );
+		Result = l_pToolSet->GetCompleteObjectNameToObjectType( nullptr, SVToolObjectType );
 	}
 
-	return l_Name;
+	return Result;
 }
 
 const SVToolGrouping& SVIPDoc::GetToolGroupings() const
@@ -3372,9 +3351,9 @@ void SVIPDoc::OnEditDataDefinitionLists()
 		SVSVIMStateClass::AddState(SV_STATE_EDITING);
 		SVString inspectionName = pInspection->GetName();
 		const SVGUID& inspectionID = pInspection->GetUniqueObjectID();
-		CString strTitle = _T("Data Definition Lists - ");
-		strTitle += inspectionName.c_str();
-		SVDataDefinitionSheet sheet(this, strTitle, inspectionName, inspectionID);
+		SVString Title = _T("Data Definition Lists - ");
+		Title += inspectionName;
+		SVDataDefinitionSheet sheet(this, Title.c_str(), inspectionName, inspectionID);
 
 		//remove apply button
 		sheet.m_psh.dwFlags |= PSH_NOAPPLYNOW;
@@ -3858,7 +3837,7 @@ HRESULT SVIPDoc::UpdateExtentsToFit( SVTaskObjectClass* p_pTask, const SVImageEx
 	return l_Status;
 }
 
-SVImageClass* SVIPDoc::GetImageByName( CString& p_imageName ) const
+SVImageClass* SVIPDoc::GetImageByName( LPCTSTR ImageName ) const
 {
 	SVImageClass* l_pImage = nullptr;
 	SVInspectionProcess* pInspection = GetInspectionProcess();
@@ -3867,7 +3846,7 @@ SVImageClass* SVIPDoc::GetImageByName( CString& p_imageName ) const
 	{
 		if( IsColorInspectionDocument() && nullptr != pInspection->GetHSIMainImage() )
 		{
-			if( p_imageName == pInspection->GetHSIMainImage()->GetCompleteObjectName() )
+			if( ImageName == pInspection->GetHSIMainImage()->GetCompleteName() )
 			{
 				l_pImage = pInspection->GetHSIMainImage();
 			}
@@ -3875,7 +3854,7 @@ SVImageClass* SVIPDoc::GetImageByName( CString& p_imageName ) const
 
 		if( nullptr == l_pImage )
 		{
-			SVObjectManagerClass::Instance().GetObjectByDottedName( static_cast< LPCTSTR >( p_imageName ), l_pImage );
+			SVObjectManagerClass::Instance().GetObjectByDottedName( ImageName, l_pImage );
 		}
 	}
 
@@ -3920,7 +3899,7 @@ BOOL SVIPDoc::RunOnce( SVToolClass* p_pTool )
 	return l_Status;
 }
 
-int SVIPDoc::GetSelectedToolIndex(const CString& toolName) const
+int SVIPDoc::GetSelectedToolIndex( const SVString& rToolName ) const
 {
 	int toolListIndex = 0;
 	const SVToolSetClass* pToolSet = GetToolSet();
@@ -3932,7 +3911,7 @@ int SVIPDoc::GetSelectedToolIndex(const CString& toolName) const
 		for (int i = 0; i < pToolSet->GetSize() && !bFound; i++)
 		{
 			SVTaskObjectClass* pTool = pToolSet->GetAt(i);
-			if (nullptr != pTool && pTool->GetName() == toolName)
+			if (nullptr != pTool && pTool->GetName() == rToolName)
 			{
 				toolListIndex = i;
 				bFound = true;
@@ -3942,7 +3921,7 @@ int SVIPDoc::GetSelectedToolIndex(const CString& toolName) const
 	return toolListIndex;
 }
 
-int SVIPDoc::GetToolToInsertBefore(const CString& name, int listIndex) const
+int SVIPDoc::GetToolToInsertBefore(const SVString& rName, int listIndex) const
 {
 	int toolListIndex = 0;
 
@@ -3950,17 +3929,17 @@ int SVIPDoc::GetToolToInsertBefore(const CString& name, int listIndex) const
 	if (pToolSet)
 	{
 		toolListIndex = pToolSet->GetSize();
-		if (!name.IsEmpty())
+		if( !rName.empty() )
 		{
 			bool bFound = false;
-			CString toolName = m_toolGroupings.GetToolToInsertBefore(static_cast<LPCTSTR>(name)).c_str();
-			if (!toolName.IsEmpty())
+			SVString ToolName = m_toolGroupings.GetToolToInsertBefore( rName );
+			if (!ToolName.empty())
 			{
 				// FindTool by Name in SVTaskObjectList
 				for (int i = 0;i < pToolSet->GetSize() && !bFound;i++)
 				{
 					const SVTaskObjectClass* pTool = pToolSet->GetAt(i);
-					if (pTool && pTool->GetName() == toolName)
+					if (pTool && pTool->GetName() == ToolName)
 					{
 						toolListIndex = i;
 						bFound = true;

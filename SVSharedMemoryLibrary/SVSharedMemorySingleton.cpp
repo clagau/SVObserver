@@ -55,21 +55,21 @@ void SVSharedMemorySingleton::CheckDirectories()
 		//if (S_OK == SvSml::SVSharedConfiguration::SharedResourcesOk()) // Check if drive exists and enough space
 		if (SVSharedConfiguration::SharedDriveExists()) // just check that the drive exists
 		{
-			const std::string& sharedMemoryDirectory = SVSharedConfiguration::GetSharedMemoryDirectoryName();
+			const SVString& sharedMemoryDirectory = SVSharedConfiguration::GetSharedMemoryDirectoryName();
 			DWORD res = GetFileAttributes(sharedMemoryDirectory.c_str());
 			if (res == INVALID_FILE_ATTRIBUTES)
 			{
 				// Create the directory
 				CreateDirectory(sharedMemoryDirectory.c_str(), nullptr);
 			}
-			const std::string& imageFileDirectory = SVSharedConfiguration::GetImageDirectoryName();
+			const SVString& imageFileDirectory = SVSharedConfiguration::GetImageDirectoryName();
 			res = GetFileAttributes(imageFileDirectory.c_str());
 			if (res == INVALID_FILE_ATTRIBUTES)
 			{
 				// Create the directory
 				CreateDirectory(imageFileDirectory.c_str(), nullptr);
 			}
-			const std::string& rejectImageFileDirectory = SVSharedConfiguration::GetRejectImageDirectoryName();
+			const SVString& rejectImageFileDirectory = SVSharedConfiguration::GetRejectImageDirectoryName();
 			res = GetFileAttributes(rejectImageFileDirectory.c_str());
 			if (res == INVALID_FILE_ATTRIBUTES)
 			{
@@ -92,8 +92,8 @@ static size_t CalcPPQSharedMemorySize(const SVString& rName, const SvSml::Inspec
 	for (SvSml::InspectionWriterCreationInfos::const_iterator it = rCreationInfos.begin(); it != rCreationInfos.end();++it)
 	{
 	
-		std::string name = it->inspectionID.first;
-		std::string shareName = name + "." + SVSharedConfiguration::GetShareName();
+		SVString name = it->inspectionID.first;
+		SVString shareName = name + "." + SVSharedConfiguration::GetShareName();
 		size += shareName.length() + name.length() + sizeof(SvSml::SVSharedInspection);
 	}
 	size += static_cast<size_t>(static_cast<double>(size) * TwentyPercent);
@@ -147,7 +147,7 @@ SvSml::SVSharedInspectionWriter& SVSharedMemorySingleton::GetInspectionWriter(co
 	throw std::exception("SharedInspectionWriter Not Found");
 }
 
-std::string SVSharedMemorySingleton::GetInspectionShareName(const SVGUID& rPPQGuid, const SVGUID& rGuid)
+SVString SVSharedMemorySingleton::GetInspectionShareName(const SVGUID& rPPQGuid, const SVGUID& rGuid)
 {
 	SVPPQSharedMemoryMap::iterator it = m_PPQSharedMemory.find(rPPQGuid);
 	if (it != m_PPQSharedMemory.end())

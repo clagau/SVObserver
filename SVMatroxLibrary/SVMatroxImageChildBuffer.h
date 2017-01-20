@@ -11,7 +11,10 @@
 
 #pragma once
 
+#pragma region Includes
+#include "SVUtilityLibrary/SVString.h"
 #include "SVMatroxBufferTemplate.h"
+#pragma endregion Includes
 
 class SVMatroxImageChildBuffer : public SVMatroxBufferTemplate
 {

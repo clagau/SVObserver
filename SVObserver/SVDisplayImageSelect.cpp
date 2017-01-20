@@ -77,8 +77,6 @@ BOOL SVDisplayImageSelect::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 	
-	CString szImageName;
-	
     if( m_pDoc )
 	{
 		int index = m_ImageSelectList.AddString( _T("[None]") );
@@ -101,15 +99,14 @@ BOOL SVDisplayImageSelect::OnInitDialog()
 
 			if ( nullptr != pImage && !(pImage->ObjectAttributesAllowed() & SV_HIDDEN) )
 			{
-				szImageName = pImage->GetCompleteObjectName();
-				index = m_ImageSelectList.AddString( szImageName );
+				index = m_ImageSelectList.AddString( pImage->GetCompleteName().c_str() );
 				m_ImageSelectList.SetItemData( index, reinterpret_cast<DWORD_PTR>(pImage) );
 			}
 		}// end while
 
 		if( nullptr != m_pCurrentImage )
 		{
-			m_ImageSelectList.SelectString( -1, m_pCurrentImage->GetCompleteObjectName() );
+			m_ImageSelectList.SelectString( -1, m_pCurrentImage->GetCompleteName().c_str() );
 		}
 		else
 		{

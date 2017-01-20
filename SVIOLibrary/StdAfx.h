@@ -44,9 +44,7 @@
 //! Precompiled headers section
 //************************************
 #pragma region Precompiled Headers
-#include <afx.h>
-#include <afxwin.h>
-#include <afxtempl.h>
+#include <Windows.h>
 
 #include <vector>							//Used by static library
 #pragma endregion Precompiled Headers

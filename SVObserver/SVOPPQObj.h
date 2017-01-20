@@ -30,22 +30,22 @@ public:
 
 	SVOPPQObj& operator=(const SVOPPQObj &source);
 
-	void SetPPQName(CString sPPQName);
-	CString GetPPQName();
+	void SetPPQName(LPCTSTR PPQName);
+	const SVString& GetPPQName();
 
-	void AttachTriggerToPPQ(CString sTriggerName);
+	void AttachTriggerToPPQ(LPCTSTR TriggerName);
 	void DetachTriggerFromPPQ();
-	CString GetAttachedTriggerName() const;
+	const SVString& GetAttachedTriggerName() const;
 
-	BOOL AttachCameraToPPQ(CString sCameraName);
-	BOOL DetachCameraFromPPQ(CString sCameraName);
+	BOOL AttachCameraToPPQ(LPCTSTR CameraName);
+	BOOL DetachCameraFromPPQ(LPCTSTR CameraName);
 	int GetAttachedCameraCount() const;
-	CString GetAttachedCamera(int ipos) const;
+	SVString GetAttachedCamera(int ipos) const;
 
-	BOOL AttachInspectionToPPQ(CString sInspectName);
-	BOOL DetachInspectionFromPPQ(CString sInspectName);
+	BOOL AttachInspectionToPPQ(LPCTSTR InspectName);
+	BOOL DetachInspectionFromPPQ(LPCTSTR InspectName);
 	int GetAttachedInspectionCount();
-	CString GetAttachedInspection(int iPos);
+	SVString GetAttachedInspection(int iPos);
 
 	//also have methods for properties
 	void SetPPQMode(int iMode);
@@ -75,10 +75,10 @@ public:
 	void ClearImportedInputList();
 
 private:
-	CString m_sPPQName;
-	CString m_sAttachedTrigger;
-	CStringList m_slAttachedCameraList;
-	CStringList m_slAttachedInspectList;
+	SVString m_PPQName;
+	SVString m_AttachedTrigger;
+	SVStringVector m_AttachedCameraList;
+	SVStringVector m_AttachedInspectList;
 
 	//properties
 	int m_iPPQMode;

@@ -9,9 +9,11 @@
 //* .Check In Date   : $Date:   25 Apr 2013 19:39:08  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVUtilityGlobals.h"
 #include "SVString.h"
+#pragma endregion Includes
 
 HRESULT SafeArrayGetElementNoCopy(SAFEARRAY* psa, long* rgIndices, void* pv)
 // Does a blind copy of the requested element.

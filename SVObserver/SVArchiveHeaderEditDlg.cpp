@@ -9,12 +9,15 @@
 //* .Check In Date   : $Date:   09 Dec 2013 11:34:40  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVObserver.h"
 #include "SVArchiveHeaderEditDlg.h"
 #include "afxdialogex.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "CameraLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
+#include "SVUtilityLibrary/SVString.h"
+#pragma endregion Includes
 
 // SVArchiveHeaderEditDlg dialog
 
@@ -120,14 +123,13 @@ BOOL SVArchiveHeaderEditDlg::OnInitDialog()
 	int iItem = 0;
 	for(StringPairVect::const_iterator l_it = m_Strings.begin() ; l_it != m_Strings.end() ; ++l_it)
 	{
-		_bstr_t bstGUID( static_cast<LPCTSTR> (l_it->first) );
+		_bstr_t bstGUID( l_it->first.c_str() );
 		SVGUID ObjGUID( bstGUID );
 		SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject(ObjGUID);
 		if( l_pObject )
 		{
-			CString strObjectName = l_pObject->GetCompleteObjectName();
-			m_HeaderListCtrl.InsertItem(iItem, strObjectName );
-			m_HeaderListCtrl.SetItemText( iItem++, 1, l_it->second);
+			m_HeaderListCtrl.InsertItem(iItem, l_pObject->GetCompleteName().c_str() );
+			m_HeaderListCtrl.SetItemText( iItem++, 1, l_it->second.c_str());
 		}
 	}
 
@@ -147,8 +149,8 @@ void SVArchiveHeaderEditDlg::OnOK()
 		int index = 0;
 		for( StringPairVect::iterator it = m_Strings.begin() ; it != m_Strings.end(); ++it )
 		{
-			CString strText = m_HeaderListCtrl.GetItemText(index,1);
-			it->second = strText;
+			SVString Text = m_HeaderListCtrl.GetItemText(index,1);
+			it->second = Text;
 			index++;
 		}
 	}
@@ -219,7 +221,7 @@ void SVArchiveHeaderEditDlg::DisplaySelectedText(  )
 	}
 	if( m_HeaderListCtrl.GetItemCount() > 0 )
 	{
-		CString strTmp = m_HeaderListCtrl.GetItemText(iSel,0);
+		SVString DisplayText = m_HeaderListCtrl.GetItemText(iSel,0);
 		// get position of ok button
 		CRect OkRec;
 		CRect ListRec;
@@ -236,7 +238,7 @@ void SVArchiveHeaderEditDlg::DisplaySelectedText(  )
 		CDC* dc = GetDC();
 		CFont* pFont = pText->GetFont();
 		CFont* pOldFont = dc->SelectObject( pFont);
-		CSize textSize = dc->GetTextExtent(strTmp);
+		CSize textSize = dc->GetTextExtent(DisplayText.c_str());
 		dc->SelectObject( pOldFont);
 
 		CRect StaticRec;
@@ -244,14 +246,13 @@ void SVArchiveHeaderEditDlg::DisplaySelectedText(  )
 		pText->SetWindowPos( nullptr, 0, 0, newWidth, StaticRec.Height(), SWP_NOZORDER | SWP_NOMOVE | SWP_NOREPOSITION);
 		if( textSize.cx < newWidth )
 		{   // the string will fit.
-			pText->SetWindowText( strTmp );
+			pText->SetWindowText( DisplayText.c_str() );
 		}
 		else
 		{	// The string does not fit so we display a part of it.
-			int newLength = static_cast<int>( strTmp.GetLength() * (double)newWidth /textSize.cx);
-			CString strNewString;
-			strNewString.Format( _T("%s..."), strTmp.Left(newLength-3));
-			pText->SetWindowText( strNewString );
+			int newLength = static_cast<int>( DisplayText.size() * (double)newWidth /textSize.cx);
+			SVString NewString = SvUl_SF::Format( _T("%s..."), SvUl_SF::Left( DisplayText, newLength-3).c_str() );
+			pText->SetWindowText( NewString.c_str() );
 		}
 	}
 }

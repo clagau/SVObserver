@@ -14,6 +14,7 @@
 #include "SVMatroxLibrary/SVMatroxEnums.h"
 #include "SVRankingFilterDlg.h"
 #include "SVObjectLibrary/SVClsids.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -176,17 +177,17 @@ namespace Seidenader
 	{
 		CDialog::OnInitDialog();
 		
-		CString strTemp;
+		SVString Temp;
 		
 		m_Values.Init();
 		
 		m_lRankingWidth = m_Values.Get<long>(WidthTag);
-		strTemp.Format( "%d", m_lRankingWidth );
-		m_ctlRankingWidth.SelectString( -1, strTemp );
+		Temp = SvUl_SF::Format( "%d", m_lRankingWidth );
+		m_ctlRankingWidth.SelectString( -1, Temp.c_str() );
 
 		m_lRankingHeight = m_Values.Get<long>(HeidghtTag);
-		strTemp.Format( "%d", m_lRankingHeight );
-		m_ctlRankingHeight.SelectString( -1, strTemp );
+		Temp = SvUl_SF::Format( "%d", m_lRankingHeight );
+		m_ctlRankingHeight.SelectString( -1, Temp.c_str() );
 
 		m_lRankingRank = m_Values.Get<long>(RankValueTag);
 		m_ctlRankingRank.SetCurSel(m_lRankingRank);
@@ -247,11 +248,7 @@ namespace Seidenader
 
 	void SVRankingFilterDlg::EnableCells()
 	{
-		CString strName;
-		CString strTemp;
-		long j( 0 );
-
-		for( j = 0; j < 7; j++ )
+		for(long j = 0; j < 7; j++ )
 		{
 			for( long k = 0; k < 7; k++ )
 			{
@@ -259,14 +256,14 @@ namespace Seidenader
 					k - ( ( 7 - m_lRankingHeight ) / 2 ) < m_lRankingHeight && k - ( ( 7 - m_lRankingHeight ) / 2 ) >= 0 )
 
 				{
-					strName.Format( _T( "Cell %d" ), ( k - ( ( 7 - m_lRankingHeight ) / 2 ) ) * m_lRankingWidth + ( j - ( ( 7 - m_lRankingWidth  ) / 2 ) ) + 1 );
-					GetDlgItem( IDC_STATIC_CELL1 + k * 7 + j )->SetWindowText( strName );
+					SVString Name;
+					Name = SvUl_SF::Format( _T( "Cell %d" ), ( k - ( ( 7 - m_lRankingHeight ) / 2 ) ) * m_lRankingWidth + ( j - ( ( 7 - m_lRankingWidth  ) / 2 ) ) + 1 );
+					GetDlgItem( IDC_STATIC_CELL1 + k * 7 + j )->SetWindowText( Name.c_str() );
 					GetDlgItem( IDC_CELL1 + k * 7 + j )->EnableWindow( TRUE );
 				}// end if
 				else
 				{
-					strName.Format( _T( "N/A" ) );
-					GetDlgItem( IDC_STATIC_CELL1 + k * 7 + j )->SetWindowText( strName );
+					GetDlgItem( IDC_STATIC_CELL1 + k * 7 + j )->SetWindowText( _T( "N/A" ) );
 					GetDlgItem( IDC_CELL1 + k * 7 + j )->EnableWindow( FALSE );
 				}// end else
 
@@ -277,21 +274,20 @@ namespace Seidenader
 		m_ctlRankingRank.ResetContent();
 		m_ctlRankingRank.SetItemData( m_ctlRankingRank.AddString( _T( "MEDIAN" ) ), SVValueMedian );
 
-		for( j = 0; j < m_lRankingWidth * m_lRankingHeight; j++ )
+		for(long j = 0; j < m_lRankingWidth * m_lRankingHeight; j++ )
 		{
-			strTemp.Format( "%02d", j + 1 );
-			m_ctlRankingRank.SetItemData( m_ctlRankingRank.AddString( strTemp ), j + 1 );
-		}// end for
+			SVString Temp = SvUl_SF::Format( _T("%02d"), j + 1 );
+			m_ctlRankingRank.SetItemData( m_ctlRankingRank.AddString( Temp.c_str() ), j + 1 );
+		}
 
 		if( SVValueMedian == m_lRankingRank )
 		{
-			strTemp.Format( "MEDIAN" );
-			m_ctlRankingRank.SelectString( -1, strTemp );
+			m_ctlRankingRank.SelectString( -1, _T("MEDIAN") );
 		}// end if
 		else
 		{
-			strTemp.Format( "%02d", m_lRankingRank );
-			m_ctlRankingRank.SelectString( -1, strTemp );
+			SVString Temp = SvUl_SF::Format( "%02d", m_lRankingRank );
+			m_ctlRankingRank.SelectString( -1, Temp.c_str() );
 		}// end else
 
 	}// end EnableCells

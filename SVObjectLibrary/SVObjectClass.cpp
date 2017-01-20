@@ -27,7 +27,8 @@
 
 #pragma region Declarations
 #ifdef _DEBUG
-#define new DEBUG_NEW
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
@@ -36,7 +37,7 @@ SV_IMPLEMENT_CLASS( SVObjectClass, SV_GUID_NULL )
 //This is the default constructor for this object.  This constructor initializes the name objects, clears all owner information, and calls the init method.
 SVObjectClass::SVObjectClass()
 {
-	m_Name = m_ObjectName = _T( "Base Class: SVResearch Base Object" );
+	m_Name = m_ObjectName = _T("Base Class: SVResearch Base Object");
 	m_resourceID = 0;
 	SetObjectOwner( nullptr );
 
@@ -46,10 +47,10 @@ SVObjectClass::SVObjectClass()
 /*
 This constructor initializes the name objects from the provided parameter, clears all owner information, and calls the init method.
 */
-SVObjectClass::SVObjectClass( LPCSTR ObjectName )
+SVObjectClass::SVObjectClass( LPCTSTR ObjectName )
 {
 	m_Name = ObjectName;
-	m_ObjectName	= ObjectName;
+	m_ObjectName = ObjectName;
 	m_resourceID = 0;
 
 	init();
@@ -60,7 +61,7 @@ This constructor initializes the name objects from the provided parameter, sets 
 */
 SVObjectClass::SVObjectClass( SVObjectClass* pOwner /* = nullptr */, int StringResourceID /* = IDS_CLASSNAME_SVOBJECT */ )
 {
-	m_ObjectName.LoadString( StringResourceID );
+	m_ObjectName = SvUl_SF::LoadSVString( StringResourceID );
 	m_Name = m_ObjectName;
 	m_resourceID = StringResourceID;
 	SetObjectOwner( pOwner );
@@ -231,7 +232,7 @@ BOOL SVObjectClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 		}
 		else
 		{
-			ASSERT(false);
+			assert(false);
 		}
 	}
 
@@ -366,7 +367,7 @@ BOOL SVObjectClass::Validate()
 {
 	BOOL l_bOk = OnValidate();
 
-	ASSERT( l_bOk );
+	assert( l_bOk );
 
 	return l_bOk;
 }
@@ -395,13 +396,26 @@ This method return the object name.  This name is changeable by the user.
 */
 LPCTSTR SVObjectClass::GetName() const
 {
-	return static_cast<LPCTSTR> (m_Name);
+	return m_Name.c_str();
 }
 
-SVString SVObjectClass::GetCompleteName() const 
+SVString SVObjectClass::GetCompleteName() const
 {
-	CString name = GetCompleteObjectName();
-	return SVString( static_cast<LPCTSTR> (name) );
+	SVString Result;
+
+	if( nullptr != m_ownerObjectInfo.PObject && m_ownerObjectInfo.PObject != this )
+	{
+		Result = m_ownerObjectInfo.PObject->GetCompleteName();
+	}
+
+	if( 0 < Result.size() )
+	{
+		Result += _T(".");
+	}
+
+	Result += GetName();
+
+	return Result;
 }
 
 HRESULT SVObjectClass::GetCompleteNameToType(SVObjectTypeEnum objectType, SVString& rName) const
@@ -506,7 +520,7 @@ This method return the internal object name.  This name is not changeable by the
 */
 LPCTSTR SVObjectClass::GetObjectName() const
 {
-	return m_ObjectName;
+	return m_ObjectName.c_str();
 }
 
 /*
@@ -526,7 +540,7 @@ BOOL SVObjectClass::SetObjectOwner( SVObjectClass* pNewOwner )
 	// Check if object exists...
 	if( nullptr != pNewOwner )
 	{
-		ASSERT(pNewOwner != this); // can't own yourself...
+		assert(pNewOwner != this); // can't own yourself...
 
 		//First disconnect the previous owner
 		if( SV_GUID_NULL != m_ownerObjectInfo.UniqueObjectID )
@@ -623,7 +637,7 @@ HRESULT SVObjectClass::SetValuesForAnObject( const GUID& rAimObjectID, SVObjectA
 	}
 	else
 	{
-		ASSERT(FALSE);
+		assert(false);
 		return E_FAIL;
 	} 
 }
@@ -639,33 +653,30 @@ HRESULT SVObjectClass::SetObjectValue( SVObjectAttributeClass* pDataObject )
 	if( nullptr != pDataObject )
 	{
 		SvCl::SVObjectDWordArrayClass svDWordArray;
-		SvCl::SVObjectCStringArrayClass svCStringArray;
+		SvCl::SVObjectSVStringArrayClass StringArray;
 
-		if ( ( bOk = pDataObject->GetAttributeData( "DataLinkID", svCStringArray ) ) )
+		if ( ( bOk = pDataObject->GetAttributeData( _T("DataLinkID"), StringArray ) ) )
 		{
 			; // Do nothing as it's obsolete
 		}
-		else if ( ( bOk = pDataObject->GetAttributeData( "Friend", svCStringArray ) ) )
+		else if ( ( bOk = pDataObject->GetAttributeData( _T("Friend"), StringArray ) ) )
 		{
-			for( int i = 0; i < svCStringArray.GetSize(); i++ )
+			for( int i = 0; i < StringArray.GetSize(); i++ )
 			{
-				GUID friendGuid;
+				SVGUID friendGuid( _bstr_t( StringArray[i].c_str() ) );
 
-				// convert the guidStr to a Guid
-				AfxGetClassIDFromString( svCStringArray[i], &friendGuid );
-				
 				// call AddFriend
 				AddFriend( friendGuid );
 			}
 		}
-		else if ( ( bOk = pDataObject->GetAttributeData( "AttributesAllowed", svDWordArray ) ) )
+		else if ( ( bOk = pDataObject->GetAttributeData( _T("AttributesAllowed"), svDWordArray ) ) )
 		{
 			for( int i = 0; i < svDWordArray.GetSize(); i++ )
 			{
 				m_ObjectAttributesAllowed = svDWordArray[i];
 			}
 		}
-		else if ( ( bOk = pDataObject->GetAttributeData( "AttributesSet", svDWordArray ) ) )
+		else if ( ( bOk = pDataObject->GetAttributeData( _T("AttributesSet"), svDWordArray ) ) )
 		{
 			int iSize = svDWordArray.GetSize();
 			{
@@ -749,7 +760,7 @@ BOOL SVObjectClass::AddFriend( const GUID& rFriendGUID, const GUID& rAddPreGuid 
 			{
 				SVObjectClass* l_psvNewObject = l_psvOwner->UpdateObject( rFriendGUID, pNewFriend, this );
 
-				ASSERT( nullptr != l_psvNewObject );
+				assert( nullptr != l_psvNewObject );
 
 				newFriendInfo = l_psvNewObject;
 			}
@@ -890,7 +901,7 @@ Get user changeable name length.
 */
 int SVObjectClass::GetNameLength() const
 {
-	return m_Name.GetLength();
+	return static_cast<int> (m_Name.size());
 }
 
 /*
@@ -898,37 +909,7 @@ Get the length in Byte of the NOT user changeable object instance name.
 */
 int SVObjectClass::GetObjectNameLength() const
 {
-	return m_ObjectName.GetLength();
-}
-
-/*
-Get the complete object name, beginning from highest owner level.
-*/
-CString SVObjectClass::GetCompleteObjectName() const
-{
-	CString StrCompleteName;
-
-	GetCompleteObjectName( StrCompleteName );
-
-	return StrCompleteName;
-}
-
-/*
-Get the complete object name, beginning from highest owner level.
-*/
-void SVObjectClass::GetCompleteObjectName( CString& rString ) const
-{
-	if( nullptr != m_ownerObjectInfo.PObject && m_ownerObjectInfo.PObject != this )
-	{
-		m_ownerObjectInfo.PObject->GetCompleteObjectName( rString );
-	}
-
-	if( rString.GetLength() > 0 )
-	{
-		rString += _T(".");
-	}
-
-	rString += GetName();
+	return static_cast<int> (m_ObjectName.size());
 }
 
 /*
@@ -936,31 +917,31 @@ Get the complete object name including selected SVObjectTypeEnum value.
 */
 SVString SVObjectClass::GetObjectNameToObjectType(LPCSTR CompleteName, SVObjectTypeEnum objectTypeToInclude) const
 {
-	return SVString(GetCompleteObjectNameToObjectType(CompleteName, objectTypeToInclude).GetString());
+	return GetCompleteObjectNameToObjectType(CompleteName, objectTypeToInclude);
 }
 
 /*
 Get the complete object name including selected SVObjectTypeEnum value.
 */
-CString SVObjectClass::GetCompleteObjectNameToObjectType( LPCSTR CompleteName, SVObjectTypeEnum objectTypeToInclude ) const
+SVString SVObjectClass::GetCompleteObjectNameToObjectType( LPCSTR CompleteName, SVObjectTypeEnum objectTypeToInclude ) const
 {
-	CString Result;
-	const CString name = GetName();
+	SVString Result;
+	const SVString Name = GetName();
 
 	if( CompleteName )
 	{
-		if (0 >= strlen(name))
+		if (0 == Name.size() )
 		{
-			Result.Format( _T( "%s" ), CompleteName );
+			Result = CompleteName;
 		}
 		else
 		{
-			Result.Format( _T( "%s.%s" ), name.GetString(), CompleteName );
+			Result = SvUl_SF::Format( _T( "%s.%s" ), Name.c_str(), CompleteName );
 		}
 	}
 	else
 	{
-		Result = name;
+		Result = Name;
 	}
 
 	//
@@ -971,47 +952,10 @@ CString SVObjectClass::GetCompleteObjectNameToObjectType( LPCSTR CompleteName, S
 	{
 		if( nullptr != m_ownerObjectInfo.PObject && m_ownerObjectInfo.PObject != this )
 		{
-			Result = m_ownerObjectInfo.PObject->GetCompleteObjectNameToObjectType( Result, objectTypeToInclude );
+			Result = m_ownerObjectInfo.PObject->GetCompleteObjectNameToObjectType( Result.c_str(), objectTypeToInclude );
 		}
 	}
 	return Result;
-}
-
-/*
-Get the complete object name, beginning from highest owner level.
-*/
-LPTSTR SVObjectClass::GetCompleteObjectName2( LPCTSTR CompleteName ) const
-{
-	int Length = 0;
-	if( CompleteName )
-	{
-		Length += static_cast<int>(_tcslen( CompleteName ) + 2);
-	}
-	Length += GetNameLength() + 2;
-
-	if( nullptr != m_ownerObjectInfo.PObject && m_ownerObjectInfo.PObject != this )
-	{
-		Length = m_ownerObjectInfo.PObject->GetCompleteObjectNameLength( Length );
-	}
-	TCHAR* pName = new TCHAR[ Length + 1 ];
-	if( pName )
-	{
-		pName[ 0 ] = _TCHAR( '\0' );
-		if( nullptr != m_ownerObjectInfo.PObject )
-		{
-			m_ownerObjectInfo.PObject->buildCompleteObjectName( pName, Length );
-		}
-		// Append this name...
-		_tcsncat( pName, GetName(), min( Length - ( int ) _tcslen( pName ), GetNameLength() ) );
-
-		// Append postfix...
-		if( CompleteName )
-		{
-			_tcsncat( pName, _T( "." ), min( Length - _tcslen( pName ), 1 ) );
-			_tcsncat( pName, CompleteName, min( Length - _tcslen( pName ), _tcslen( CompleteName ) ) );
-		}
-	}
-	return pName;
 }
 
 /*
@@ -1027,11 +971,11 @@ bool SVObjectClass::createAllObjects(const SVObjectLevelCreateStruct& rCreateStr
 	SVObjectLevelCreateStruct* createStruct = const_cast<SVObjectLevelCreateStruct*>(&rCreateStructure);
 	if( !IsCreated() && !CreateObject( createStruct ) )
 	{
-		ASSERT( false );
+		assert( false );
 
-		SVStringArray msgList;
-		msgList.push_back(GetObjectName());
-		msgList.push_back(SVString(GetCompleteObjectName()));
+		SVStringVector msgList;
+		msgList.push_back( GetName() );
+		msgList.push_back( GetCompleteName() );
 		SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_CreationOf2Failed, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10209 );
 
@@ -1051,36 +995,9 @@ SVObjectClass* SVObjectClass::OverwriteEmbeddedObject(const GUID& rUniqueID, con
 	return nullptr;
 }
 
-/*
-Get the complete object name, beginning from highest owner level.
-*/
-void SVObjectClass::buildCompleteObjectName( LPTSTR CompleteName, int MaxLength )
-{
-	if( nullptr != m_ownerObjectInfo.PObject && m_ownerObjectInfo.PObject != this )
-	{
-		m_ownerObjectInfo.PObject->buildCompleteObjectName( CompleteName, MaxLength );
-	}
-	_tcsncat( CompleteName, GetName(), min( MaxLength - ( int ) _tcslen( CompleteName ), GetNameLength() ) );	
-	_tcsncat( CompleteName, _T( "." ), min( MaxLength - ( int ) _tcslen( CompleteName ), 1 ) );
-}
-
 HRESULT SVObjectClass::RemoveObjectConnection( const GUID& rObjectID )
 {
 	return S_OK;
-}
-
-/*
-This method gets the length of the complete object name length.
-*/
-int SVObjectClass::GetCompleteObjectNameLength( int Length ) const
-{
-	Length += GetNameLength() + 1;
-
-	if( nullptr != m_ownerObjectInfo.PObject && m_ownerObjectInfo.PObject != this )
-	{
-		Length = m_ownerObjectInfo.PObject->GetCompleteObjectNameLength( Length );
-	}
-	return Length;
 }
 
 void SVObjectClass::Persist( SVObjectWriter& rWriter )
@@ -1128,20 +1045,21 @@ void SVObjectClass::PersistAttributes( SVObjectWriter& rWriter )
 }
 
 /*
-This method walks the object hierichary to find a child object.
+This method walks the object hierarchy to find a child object.
 */
 BOOL SVObjectClass::GetChildObjectByName( LPCTSTR tszChildName, SVObjectClass** ppObject )
 {
-	ASSERT( nullptr != ppObject );
+	assert( nullptr != ppObject );
 	bool bReturn = false;
 
 	if ( nullptr != ppObject )
 	{
 		*ppObject = nullptr;
 
-		CString sChildName = tszChildName;
-		CString sName = GetCompleteObjectName();
-		if ( sChildName.Left(sName.GetLength()) == sName )
+		SVString ChildName = tszChildName;
+		SVString Name = GetCompleteName();
+
+		if( SvUl_SF::Left( ChildName, Name.size() ) == Name )
 		{
 			SVObjectManagerClass::Instance().GetObjectByDottedName(tszChildName, *ppObject);
 			bReturn = ( nullptr != *ppObject );
@@ -1218,7 +1136,7 @@ This method sets attributes of this object.
 */
 UINT& SVObjectClass::ObjectAttributesSetRef(int Index)
 {
-	ASSERT( (long)m_ObjectAttributesSet.size() > (long)Index );
+	assert( (long)m_ObjectAttributesSet.size() > (long)Index );
 	return m_ObjectAttributesSet.at(Index);
 }
 

@@ -13,7 +13,6 @@
 
 #pragma region Declarations
 #ifdef _DEBUG
-#define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
@@ -30,7 +29,7 @@ namespace Seidenader { namespace SVStatusLibrary
 	{
 	}
 
-	MessageData::MessageData( DWORD MessageCode, SvOi::MessageTextEnum AdditionalTextId, const SVStringArray& rAdditionalTextList ) :
+	MessageData::MessageData( DWORD MessageCode, SvOi::MessageTextEnum AdditionalTextId, const SVStringVector& rAdditionalTextList ) :
 	m_Logged( false )
 	, m_Displayed( false )
 	, m_MessageCode( MessageCode )

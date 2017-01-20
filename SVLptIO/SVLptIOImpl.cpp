@@ -18,6 +18,7 @@
 #include "SVTimerLibrary\SVClock.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVMessage\SVMessage.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 static const int RETRY = 2;

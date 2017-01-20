@@ -41,7 +41,7 @@ CSVRegressionFileSelectDlg::CSVRegressionFileSelectDlg(LPCTSTR lptstrDialogName)
 	
 	//{{AFX_DATA_INIT(CSVRegressionFileSelectDlg)
 	m_iSelectFileRadio = 2;
-	m_sRegTestFiles = _T("");
+	m_RegTestFiles = _T("");
 	//}}AFX_DATA_INIT
 	m_strCaption = lptstrDialogName;
 	m_psp.pszTitle = m_strCaption;
@@ -58,7 +58,7 @@ void CSVRegressionFileSelectDlg::DoDataExchange(CDataExchange* pDX)
 	//{{AFX_DATA_MAP(CSVRegressionFileSelectDlg)
 	DDX_Control(pDX, IDC_BTN_REG_TEST_BROWSE_FILES, m_btnBrowseFiles);
 	DDX_Radio(pDX, IDC_RADIO_REG_LIST, m_iSelectFileRadio);
-	DDX_Text(pDX, IDC_EDIT_REG_SELECTED_FILES, m_sRegTestFiles);
+	DDX_Text(pDX, IDC_EDIT_REG_SELECTED_FILES, m_RegTestFiles);
 	//}}AFX_DATA_MAP
 }
 
@@ -77,7 +77,7 @@ END_MESSAGE_MAP()
 
 void CSVRegressionFileSelectDlg::SetDlgTitle( LPCTSTR lpszTitle )
 {
-	m_sDialogName = lpszTitle;
+	m_DialogName = lpszTitle;
 }
 
 void CSVRegressionFileSelectDlg::OnBtnRegTestBrowseFiles() 
@@ -92,23 +92,20 @@ void CSVRegressionFileSelectDlg::OnBtnRegTestBrowseFiles()
 		CameraNumber = CameraNumber %  MaxNumberCameraEntries; 
 	}
 	//get last regression path for this camera from registry...
-	CString sFilePath;
-	CString KeyName;
-	KeyName.Format(_T("LastPath_%i"), CameraNumber);
-	m_sRegistryPath = AfxGetApp()->GetProfileString(_T("RegressionTest"), KeyName.GetString(), SvStl::GlobalPath::Inst().GetTempPath().c_str());
+	SVString KeyName = SvUl_SF::Format( _T("LastPath_%i"), CameraNumber);
+	m_RegistryPath = AfxGetApp()->GetProfileString(_T("RegressionTest"), KeyName.c_str(), SvStl::GlobalPath::Inst().GetTempPath().c_str());
 
-	CString	csFileExtensionFilterList = _T("BMP's (*.bmp)|*.bmp||");
-	static TCHAR szFilter[] = _T("BMP Files (*.bmp)|*.bmp|Image Files (*.bmp)|*.bmp||");
+	static TCHAR Filter[] = _T("BMP Files (*.bmp)|*.bmp|Image Files (*.bmp)|*.bmp||");
 	bool bFullAccess = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
-	SvMc::SVFileDialog dlg(true, bFullAccess, nullptr, nullptr, 0, szFilter, nullptr);
+	SvMc::SVFileDialog dlg(true, bFullAccess, nullptr, nullptr, 0, Filter, nullptr);
 	dlg.m_ofn.lpstrTitle = _T("Select File");
 
 	TCHAR FileName[PathBufferLen];
-	_tcscpy_s(FileName,PathBufferLen,m_sRegTestFiles.GetString()); 
-	if ( m_sRegTestFiles.IsEmpty() )
+	_tcscpy_s(FileName,PathBufferLen,m_RegTestFiles.GetString()); 
+	if ( m_RegTestFiles.IsEmpty() )
 	{
 		//nothing has been set... use what is in the registry
-		dlg.m_ofn.lpstrInitialDir = m_sRegistryPath.operator LPCTSTR();
+		dlg.m_ofn.lpstrInitialDir = m_RegistryPath.c_str();
 	}
 	else
 	{
@@ -120,22 +117,22 @@ void CSVRegressionFileSelectDlg::OnBtnRegTestBrowseFiles()
 
 	if ( dlg.DoModal() == IDOK)
 	{
-		m_sRegTestFiles = dlg.GetPathName(); 
-		if ( !m_sRegTestFiles.IsEmpty() )
+		m_RegTestFiles = dlg.GetPathName(); 
+		if ( !m_RegTestFiles.IsEmpty() )
 		{
-			if (0 != m_sRegTestFiles.Right(4).CompareNoCase(_T(".bmp")))
+			if (0 != m_RegTestFiles.Right(4).CompareNoCase(_T(".bmp")))
 			{
 				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_RegressionTest_NoBmpFileSelected, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10187 ); 
-				m_sRegTestFiles = _T("");
+				m_RegTestFiles = _T("");
 			}
 
-			int iPos = m_sRegTestFiles.ReverseFind(_T('\\'));
+			int iPos = m_RegTestFiles.ReverseFind(_T('\\'));
 			if(iPos != -1)
 			{
 				//only write out registry entry if the path is not empty.
-				CString sTmpDirName = m_sRegTestFiles.Left(iPos);
-				AfxGetApp()->WriteProfileString(_T("RegressionTest"),  KeyName.GetString(), sTmpDirName);
+				CString sTmpDirName = m_RegTestFiles.Left(iPos);
+				AfxGetApp()->WriteProfileString(_T("RegressionTest"),  KeyName.c_str(), sTmpDirName);
 			}
 		}
 	}
@@ -162,7 +159,7 @@ RegressionFileEnum CSVRegressionFileSelectDlg::GetFileSelectType()
 
 CString CSVRegressionFileSelectDlg::GetSelectedFile()
 {
-	return m_sRegTestFiles;
+	return m_RegTestFiles;
 }
 
 CString CSVRegressionFileSelectDlg::GetPageName()
@@ -189,11 +186,11 @@ void CSVRegressionFileSelectDlg::OnRadioRegSingle()
 }
 
 
-void CSVRegressionFileSelectDlg::SetRegressionData(RegressionTestStruct *p_pDataStruct)
+void CSVRegressionFileSelectDlg::SetRegressionData(RegressionTestStruct *pDataStruct)
 {
 	//set data from the struct...
-	m_iSelectFileRadio = p_pDataStruct->iFileMethod;
-	m_sRegTestFiles = p_pDataStruct->csFirstFile;
+	m_iSelectFileRadio = pDataStruct->iFileMethod;
+	m_RegTestFiles = pDataStruct->FirstFile.c_str();
 
 	UpdateData(FALSE);
 }

@@ -11,6 +11,7 @@
 
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <comdef.h>
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <vector>
@@ -18,6 +19,8 @@
 #include "TriggerHandling/IODeviceBase.h"
 #include "SVContainerLibrary/SVBidirectionalMap.h"
 #include "SVSystemLibrary/SVCriticalSection.h"
+#include "SVUtilityLibrary/SVString.h"
+#pragma endregion Includes
 
 ///////////////////////////////////////////////////////////////////////
 //

@@ -15,6 +15,7 @@
 #pragma region Includes
 #include "SVOResource\resource.h"
 #include "SVContainerLibrary/ObjectTreeItems.h"
+#include "SVUtilityLibrary/SVString.h"
 #include "GridCtrlLibrary\GridCtrl.h"
 #include "SVMFCControls\SVEditControlWithHelp.h"
 #include "DlgItemResizer.h"

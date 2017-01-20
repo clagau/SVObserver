@@ -37,15 +37,13 @@ const long SV_IT_DOES_NOT = S_FALSE;
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-SVSecurityStorage::SVSecurityStorage()
+SVSecurityStorage::SVSecurityStorage() :
+  m_lCurrentIndex( 0 )
+, m_lCurrentData( 0 )
+, m_bAutoEdit( false )
+, m_bUseLogon( false )
+, m_lTimeout( 0 )
 {
-	m_lCurrentIndex = 0;
-	m_lCurrentData = 0;
-	m_bAutoEdit = false;
-	m_bUseLogon = false;
-	m_lTimeout = 0;
-	m_strCurrentPW = _T("");
-	m_strCurrentUser = _T("");
 }
 
 SVSecurityStorage::~SVSecurityStorage()
@@ -53,11 +51,11 @@ SVSecurityStorage::~SVSecurityStorage()
 
 }
 
-HRESULT SVSecurityStorage::Add( long lID, LPCTSTR sName, LPCTSTR sNTGroup, bool bForcePrompt )
+HRESULT SVSecurityStorage::Add( long lID, LPCTSTR Name, LPCTSTR NTGroup /*=nullptr*/, bool ForcePrompt /*=false*/ )
 {
 	try
 	{
-		m_aNodes.push_back( SVAccessPointNode( lID, sName, sNTGroup, bForcePrompt ) );
+		m_aNodes.push_back( SVAccessPointNode( lID, Name, NTGroup, ForcePrompt ) );
 	}
 	catch(...)
 	{
@@ -65,20 +63,6 @@ HRESULT SVSecurityStorage::Add( long lID, LPCTSTR sName, LPCTSTR sNTGroup, bool 
 	}
 	return S_OK;
 }
-
-HRESULT SVSecurityStorage::Add( long lID, LPCTSTR sName)
-{
-	try
-	{
-		m_aNodes.push_back( SVAccessPointNode( lID, sName));
-	}
-	catch(...)
-	{
-		return -3015;
-	}
-	return S_OK;
-}
-
 
 // Find by Id starts at the root of the tree.
 SVAccessPointNode* SVSecurityStorage::FindByID( long lId )
@@ -94,32 +78,32 @@ SVAccessPointNode* SVSecurityStorage::FindByID( long lId )
 
 void SVSecurityStorage::SetUser( LPCTSTR strUser )
 {
-	m_strCurrentUser = strUser;
+	m_CurrentUser = strUser;
 }
 
 void SVSecurityStorage::ClearUser( )
 {
-	m_strCurrentUser.Empty();
+	m_CurrentUser.clear();
 }
 
 void SVSecurityStorage::SetPW( LPCTSTR strPW )
 {
-	m_strCurrentPW = strPW;
+	m_CurrentPW = strPW;
 }
 
 void SVSecurityStorage::ClearPW( )
 {
-	m_strCurrentPW.Empty();
+	m_CurrentPW.clear();
 }
 
-CString SVSecurityStorage::GetCurrentUser() const
+const SVString& SVSecurityStorage::GetCurrentUser() const
 {
-	return m_strCurrentUser;
+	return m_CurrentUser;
 }
 
-CString SVSecurityStorage::GetCurrentPassword() const
+const SVString& SVSecurityStorage::GetCurrentPassword() const
 {
-	return m_strCurrentPW;
+	return m_CurrentPW;
 }
 
 
@@ -257,10 +241,10 @@ HRESULT SVSecurityStorage::GetMaterialsTree( SVMaterialsTree::SVTreeContainer& r
 			pMaterial = new SVMaterialData( _variant_t( GetUserTimeout() ) );
 			rTree.insert( SVMaterialsTree::SVTreeElement( SVString( _T("Logon Timeout") ), pMaterial ) );
 			pMaterial.clear();
-			pMaterial = new SVMaterialData( _variant_t( GetCurrentUser() ) );
+			pMaterial = new SVMaterialData( _variant_t( GetCurrentUser().c_str() ) );
 			rTree.insert( SVMaterialsTree::SVTreeElement( SVString( _T("Current User") ), pMaterial ) );
 			pMaterial.clear();
-			pMaterial = new SVMaterialData( _variant_t( GetCurrentPassword() ) );
+			pMaterial = new SVMaterialData( _variant_t( GetCurrentPassword().c_str() ) );
 			rTree.insert( SVMaterialsTree::SVTreeElement( SVString( _T("Current PW") ), pMaterial ) );
 			pMaterial.clear();
 			pMaterial = new SVMaterialData( _variant_t( GetAutoEdit() ) );
@@ -275,7 +259,7 @@ HRESULT SVSecurityStorage::GetMaterialsTree( SVMaterialsTree::SVTreeContainer& r
 			{
 				if( !l_NodeIter->m_bHasData )
 				{
-					SVString l_Name( l_NodeIter->m_strName );
+					SVString l_Name( l_NodeIter->m_Name );
 					SVMaterialsTree::SVTreeElement Element( l_Name, SVMaterialDataPtr(nullptr) );
 					SVMaterialsTree::iterator l_Iter( rTree.insert( Element ) );
 
@@ -304,7 +288,7 @@ HRESULT SVSecurityStorage::GetChildMaterialsTree( SVMaterialsTree::SVTreeContain
 		SVMaterialsTree::SVTreeContainer* pNode( nullptr );
 		if( S_OK == l_Status )
 		{
-			SVString l_Name( p_rNodeIter->m_strName );
+			SVString l_Name( p_rNodeIter->m_Name );
 			SVMaterialsTree::SVTreeElement Element( l_Name, SVMaterialDataPtr(nullptr) );
 			SVMaterialsTree::iterator Iter( rTree.insert( Element ) );
 
@@ -324,7 +308,7 @@ HRESULT SVSecurityStorage::GetChildMaterialsTree( SVMaterialsTree::SVTreeContain
 			pMaterial =new SVMaterialData( _variant_t( p_rNodeIter->m_bForcePrompt ) );
 			pNode->insert( SVMaterialsTree::SVTreeElement( SVString( _T("Force Prompt") ), pMaterial ) );
 			pMaterial.clear();
-			pMaterial = new SVMaterialData( _variant_t( p_rNodeIter->m_strNTGroup ) );
+			pMaterial = new SVMaterialData( _variant_t( p_rNodeIter->m_NTGroup.c_str() ) );
 			pNode->insert( SVMaterialsTree::SVTreeElement( SVString( _T("NT Group") ), pMaterial ) );
 			pMaterial.clear();
 			pMaterial = new SVMaterialData( _variant_t( p_rNodeIter->m_lID ) );
@@ -395,7 +379,7 @@ HRESULT SVSecurityStorage::ProcessChild( SVAccessPointNodeVectorArray& p_rNewArr
 		{
 			SVAccessPointNode l_Node;
 
-			l_Node.m_strName = l_Name.c_str();
+			l_Node.m_Name = l_Name.c_str();
 
 			p_rNewArray.push_back( l_Node );
 		}
@@ -446,14 +430,14 @@ HRESULT SVSecurityStorage::ProcessRoot( const SVMaterialsTree::SVTreeContainer& 
 	if( S_OK == SVMaterialsTree::getData( rTree, SVString( _T("Current User") ), MaterialData ) )
 	{
 		Value = MaterialData;
-		m_strCurrentUser = Value;
+		m_CurrentUser = SvUl_SF::createSVString( Value );
 	}
 
 	MaterialData.clear();
 	if( S_OK == SVMaterialsTree::getData( rTree, SVString( _T("Current PW") ), MaterialData ) )
 	{
 		Value = MaterialData;
-		m_strCurrentPW = Value;
+		m_CurrentPW = SvUl_SF::createSVString( Value );
 	}
 
 	MaterialData.clear();

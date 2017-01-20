@@ -29,94 +29,92 @@ static char THIS_FILE[]=__FILE__;
 
 SVImageArchiveClass::SVImageArchiveClass()
 {
-  CString szStartFileName = _T("");
-  Init (szStartFileName);
+	Init( SVString(_T("")) );
 }
 
-SVImageArchiveClass::SVImageArchiveClass(CString &szStartFileName)
+SVImageArchiveClass::SVImageArchiveClass(const SVString& rFileName)
 {
-  Init (szStartFileName);
+	Init( rFileName );
 }
 
-void SVImageArchiveClass::Init (CString &szStartFileName)
+void SVImageArchiveClass::Init( const SVString& rFileName )
 {
-  SetImageArchiveFileTemplate (szStartFileName);
-  mszCurrentFileName.Empty ();
-  mszImageArchivePath = CString( TheSVObserverApp.getConfigPathName() ) + "\\" + 
-	                      CString( TheSVObserverApp.getConfigFileNameOnly() );
-  if ( mszImageArchivePath.IsEmpty () || mszImageArchivePath.Right(1) != _T("\\") )
-  {
-    mszImageArchivePath += (TCHAR)'\\';
-  }
-  mszImageArchivePath += _T("Image Archive\\");
-  mdwFileNumber = 1L;
+	SetImageArchiveFileTemplate(rFileName);
+	m_CurrentFileName.clear();
+	m_ImageArchivePath = SVString( TheSVObserverApp.getConfigPathName() ) + "\\";
+	m_ImageArchivePath += TheSVObserverApp.getConfigFileNameOnly();
+	if ( m_ImageArchivePath.empty() || SvUl_SF::Right( m_ImageArchivePath, 1) != _T("\\") )
+	{
+		m_ImageArchivePath += _T('\\');
+	}
+	m_ImageArchivePath += _T("Image Archive\\");
+	m_FileNumber = 1L;
 }
 
 SVImageArchiveClass::~SVImageArchiveClass()
 {
-
 }
 
-BOOL SVImageArchiveClass::SetImageArchiveFileTemplate(CString &szTemplate)
+BOOL SVImageArchiveClass::SetImageArchiveFileTemplate( const SVString& rTemplate )
 {
-  mszArchiveFileTemplate = szTemplate;
-  mszArchiveFileTemplate.Replace(_T('.'), _T('_'));
-  return TRUE;
+	m_ArchiveFileTemplate = rTemplate;
+	SvUl_SF::searchAndReplace( m_ArchiveFileTemplate, _T("."), _T("_") );
+	return true;
 }
 
-BOOL SVImageArchiveClass::SetImageArchivePath(CString &szPath)
+BOOL SVImageArchiveClass::SetImageArchivePath( const SVString& rPath )
 {
-  mszImageArchivePath = szPath;
-  if (mszImageArchivePath.IsEmpty () || mszImageArchivePath.Right(1) != _T("\\"))
-    mszImageArchivePath += _T("\\");
-  return TRUE;
+	m_ImageArchivePath = rPath;
+	if ( m_ImageArchivePath.empty() || SvUl_SF::Right( m_ImageArchivePath, 1) != _T("\\") )
+	{
+		m_ImageArchivePath += _T('\\');
+	}
+	return true;
 }
 
 DWORD SVImageArchiveClass::ResetFileNumber()
 {
-  DWORD dwFileNumber;
+	DWORD dwFileNumber;
 
-  dwFileNumber = mdwFileNumber;
-  mdwFileNumber = 1L;
-  mszCurrentFileName.Empty ();
-  return dwFileNumber;
+	dwFileNumber = m_FileNumber;
+	m_FileNumber = 1L;
+	m_CurrentFileName.clear();
+	return dwFileNumber;
 }
 
 DWORD SVImageArchiveClass::NextFileName()
 {
-  CString szFormatString;
+	SVString FormatString;
 
-  szFormatString = mszArchiveFileTemplate;
-  szFormatString += _T("__%06.6d.bmp");
-  mszCurrentFileName.Format(szFormatString, mdwFileNumber);
-  return mdwFileNumber++;
+	FormatString = m_ArchiveFileTemplate;
+	FormatString += _T("__%06.6d.bmp");
+	m_CurrentFileName = SvUl_SF::Format(FormatString.c_str(), m_FileNumber);
+	return m_FileNumber++;
 }
 
 BOOL SVImageArchiveClass::LoadImageArchiveFile( SVSmartHandlePointer p_HandlePtr )
 {
 	SVFileNameClass svFileName;
-	CString szFileName;
-	SVString sFileName;
+	SVString FileName;
 	HCURSOR hCursor;
 	
 	SVMatroxBufferInterface::SVStatusCode l_Code;
 	
 	NextFileName ();
 	
-	svFileName.SetPathName( mszImageArchivePath );
-	svFileName.SetFileName( mszCurrentFileName );
+	svFileName.SetPathName( m_ImageArchivePath.c_str() );
+	svFileName.SetFileName( m_CurrentFileName.c_str() );
 	
-	szFileName = svFileName.GetFullFileName();
+	FileName = svFileName.GetFullFileName();
 	
-	if (ImageArchiveFileExists (szFileName) && !( p_HandlePtr.empty() ) )
+	if( ImageArchiveFileExists(FileName) && !p_HandlePtr.empty() )
 	{
 		hCursor = SetCursor (LoadCursor(nullptr, IDC_WAIT));
-		sFileName = szFileName;
 
 		SVImageBufferHandleImage l_MilHandle;
 		p_HandlePtr->GetData( l_MilHandle );
 
-		l_Code = SVMatroxBufferInterface::Import(l_MilHandle.GetBuffer(), sFileName, SVFileBitmap, false );
+		l_Code = SVMatroxBufferInterface::Import(l_MilHandle.GetBuffer(), FileName, SVFileBitmap, false );
 		SetCursor (hCursor);
 		if( l_Code == SVMEE_STATUS_OK )
 		{
@@ -129,16 +127,16 @@ BOOL SVImageArchiveClass::LoadImageArchiveFile( SVSmartHandlePointer p_HandlePtr
 
 BOOL SVImageArchiveClass::LoadImageArchiveFile(SVImageClass *pImage)
 {
-  BOOL bOk = FALSE;
+	BOOL bOk = FALSE;
 
-  SVSmartHandlePointer l_ImageHandlePtr;
+	SVSmartHandlePointer l_ImageHandlePtr;
 
-  if ( pImage->GetImageHandle( l_ImageHandlePtr ) )
-  {
-    bOk = LoadImageArchiveFile( l_ImageHandlePtr );
-  }
+	if( pImage->GetImageHandle( l_ImageHandlePtr ) )
+	{
+		bOk = LoadImageArchiveFile( l_ImageHandlePtr );
+	}
 
-  return bOk;
+	return bOk;
 }
 
 
@@ -181,17 +179,8 @@ BOOL SVImageArchiveClass::LoadImageArchiveFile( SVImageObjectClassPtr p_Acquisit
 	return bRetValue;
 }
 
-BOOL SVImageArchiveClass::ImageArchiveFileExists(CString &szFileName)
+BOOL SVImageArchiveClass::ImageArchiveFileExists( const SVString &rFileName)
 {
-  CFile fFile;
-
-  if (!fFile.Open ((LPCTSTR) szFileName,
-                  CFile::modeRead | CFile::typeBinary,
-                  (CFileException *) nullptr))
-  {
-    return FALSE;
-  }
-  fFile.Close();
-  return TRUE;
+	return (0 == ::_access( rFileName.c_str(), 0 ) );
 }
 

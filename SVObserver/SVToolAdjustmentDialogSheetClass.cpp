@@ -439,7 +439,7 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 		{
 			SvStl::MessageContainer message = pTool->getFirstTaskMessage();
 			SvOi::MessageTextEnum textEnum = SvOi::Tid_Empty;
-			SVStringArray textList; 
+			SVStringVector textList; 
 			if (0 != message.getMessage().m_MessageCode)
 			{
 				textEnum = message.getMessage().m_AdditionalTextId;

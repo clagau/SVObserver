@@ -57,11 +57,11 @@ SVResultViewClass::SVResultViewClass()
 : CListView()
 {
 	CRect r( 0, 0, 0, 0 );
-	rect = r;
-	oldValue = 0.0;
-	oldEndTime = 0.0;
+	m_Rect = r;
+	m_OldValue = 0.0;
+	m_OldEndTime = 0.0;
 
-	columnWidthSet = FALSE;
+	m_ColumnWidthSet = FALSE;
 }
 
 SVResultViewClass::~SVResultViewClass()
@@ -141,10 +141,10 @@ void SVResultViewClass::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHint )
 
 		for( i = 0; i < static_cast< int >( m_ResultDefinitions.size() ); ++i )
 		{
-			CString l_Name;
-			CString l_NameToType;
-			CString l_ItemIndex;
-			CString l_Value;
+			SVString Name;
+			SVString NameToType;
+			SVString ItemIndex;
+			SVString Value;
 
 			SVIPResultItemDefinition& l_rDef = m_ResultDefinitions[ i ];
 
@@ -160,40 +160,40 @@ void SVResultViewClass::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHint )
 				{
 					if (0 <= l_rDef.GetIndex())
 					{
-						l_Name.Format( "%s[%d]", l_pObject->GetName(),  l_rDef.GetIndex() +1 );
+						Name = SvUl_SF::Format( _T("%s[%d]"), l_pObject->GetName(),  l_rDef.GetIndex() +1 );
 					}
 					else
 					{
-						l_Name.Format( "%s[]", l_pObject->GetName() );
+						Name = SvUl_SF::Format( _T("%s[]"), l_pObject->GetName() );
 					}
 				}
 				else
 				{
-					l_Name = l_pObject->GetName();
+					Name = l_pObject->GetName();
 				}
-				l_NameToType = l_pObject->GetCompleteObjectNameToObjectType( nullptr, SVToolObjectType );
+				NameToType = l_pObject->GetCompleteObjectNameToObjectType( nullptr, SVToolObjectType );
 			}
 
-			l_ItemIndex.Format( _T( "%d" ),i );
+			ItemIndex = SvUl_SF::Format( _T( "%d" ), i );
 
 			SVIPResultData::SVResultDataMap::const_iterator l_Iter = m_ResultData.m_ResultData.find( l_rDef );
 
 			if( l_Iter != m_ResultData.m_ResultData.end() )
 			{
-				l_Value = l_Iter->second.GetValue().c_str();
+				Value = l_Iter->second.GetValue().c_str();
 				l_Color = l_Iter->second.GetColor();
 
 				if( l_Iter->second.IsIOTypePresent() )
 				{
-					l_ItemIndex.Empty();
+					ItemIndex.clear();
 
 					if( l_Iter->second.GetIOType() == IO_DIGITAL_INPUT )
 					{
-						l_NameToType.LoadString( IDS_OBJECTNAME_DIGITAL_INPUT );
+						NameToType = SvUl_SF::LoadSVString( IDS_OBJECTNAME_DIGITAL_INPUT );
 					}
 					else if( l_Iter->second.GetIOType() == IO_REMOTE_INPUT )
 					{
-						l_NameToType.LoadString( IDS_OBJECTNAME_REMOTE_INPUT );
+						NameToType = SvUl_SF::LoadSVString( IDS_OBJECTNAME_REMOTE_INPUT );
 					}
 				}
 			}
@@ -202,65 +202,65 @@ void SVResultViewClass::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHint )
 			{
 				if( listCtrl.GetItemCount() <= i )
 				{
-					listCtrl.InsertItem( i, l_Name );
-					listCtrl.SetItemText( i, 2, l_NameToType );
-					listCtrl.SetItemText( i, 3, l_ItemIndex );
+					listCtrl.InsertItem( i, Name.c_str() );
+					listCtrl.SetItemText( i, 2, NameToType.c_str() );
+					listCtrl.SetItemText( i, 3, ItemIndex.c_str() );
 				}
 				else
 				{
-					CString l_TempName = listCtrl.GetItemText( i, 0 );
+					SVString TempName = listCtrl.GetItemText( i, 0 );
 
-					if( l_TempName != l_Name )
+					if( TempName != Name )
 					{
-						listCtrl.SetItemText( i, 0, l_Name );
-						listCtrl.SetItemText( i, 2, l_NameToType );
+						listCtrl.SetItemText( i, 0, Name.c_str() );
+						listCtrl.SetItemText( i, 2, NameToType.c_str()	 );
 					}
 				}
 			}
 
-			listCtrl.SetItemText( i, 1, l_Value );
+			listCtrl.SetItemText( i, 1, Value.c_str() );
 			listCtrl.SetItemData( i, l_Color );
 		}
 
-		CString strTemp;
+		SVString Temp;
 
 		if( bRedrawDefinitions && (listCtrl.GetItemCount() <= i) )
 		{
 			// Add the Toolset Time
-			strTemp = _T( "Toolset Time" );
-			listCtrl.InsertItem( i, strTemp );
+			Temp = _T( "Toolset Time" );
+			listCtrl.InsertItem( i, Temp.c_str() );
 		}
 
 		if( bRedrawDefinitions && (listCtrl.GetItemCount() <= ( i + 1 )) )
 		{
 			// Add the Toolset Complete Process per Second
-			strTemp = _T( "Complete Processes per Second" );
-			listCtrl.InsertItem( i + 1, strTemp );
+			Temp = _T( "Complete Processes per Second" );
+			listCtrl.InsertItem( i + 1, Temp.c_str() );
 		}
 
 		// Get ToolSet Time
 		if( m_ResultData.m_ToolSetAvgTime < 0.0 && m_ResultData.m_ToolSetEndTime < 0.0 )
 		{
-			strTemp.Empty();
+			Temp.clear();
 		}
 		else
 		{
-			strTemp.Format( _T( "%.3f ms ( %.3f ms )" ), m_ResultData.m_ToolSetEndTime * 1000, m_ResultData.m_ToolSetAvgTime * 1000 );
+			Temp = SvUl_SF::Format( _T( "%.3f ms ( %.3f ms )" ), m_ResultData.m_ToolSetEndTime * 1000, m_ResultData.m_ToolSetAvgTime * 1000 );
 		}
 
-		CString csPrev = listCtrl.GetItemText( i, 1 );
-		if( csPrev != strTemp )
+		SVString Prev = listCtrl.GetItemText( i, 1 );
+		if( Prev != Temp )
 		{
-			listCtrl.SetItemText( i, 1, strTemp );
+			listCtrl.SetItemText( i, 1, Temp.c_str() );
 		}
 
 		// Get ToolSet complete processes per second
-		strTemp = CalcProcessesPerSecond( m_ResultData.m_TriggerDistance );
+		Temp = CalcProcessesPerSecond( m_ResultData.m_TriggerDistance );
 
-		csPrev = listCtrl.GetItemText( i+1 , 1 );
-		if( csPrev != strTemp )
+		Prev = listCtrl.GetItemText( i+1 , 1 );
+		if( Prev != Temp )
 		{
-			listCtrl.SetItemText( i + 1, 1, strTemp );
+			listCtrl.SetItemText( i + 1, 1, Temp.c_str() );
 		}
 
 		if(bRedrawDefinitions)
@@ -269,18 +269,18 @@ void SVResultViewClass::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHint )
 			listCtrl.SetItemData( i, l_Color );     // toolset time
 			listCtrl.SetItemData( i + 1, l_Color ); // processes/sec
 
-			strTemp = l_pIPDoc->GetCompleteToolSetName();
-			listCtrl.SetItemText( i, 2, strTemp );     // toolset time
-			listCtrl.SetItemText( i + 1, 2, strTemp ); // processes/sec
+			Temp = l_pIPDoc->GetCompleteToolSetName();
+			listCtrl.SetItemText( i, 2, Temp.c_str() );     // toolset time
+			listCtrl.SetItemText( i + 1, 2, Temp.c_str() ); // processes/sec
 		}
 
 		listCtrl.SetRedraw( true );
 	}
 }
 
-CString SVResultViewClass::CalcProcessesPerSecond( double p_LastTriggerDistance )
+SVString SVResultViewClass::CalcProcessesPerSecond( double p_LastTriggerDistance )
 {
-	CString timeStr;
+	SVString Result;
 	double dTime;
 
 	// complete processes per second
@@ -288,10 +288,10 @@ CString SVResultViewClass::CalcProcessesPerSecond( double p_LastTriggerDistance 
 
 	if ( dTime != 0.0 )
 	{
-		timeStr.Format( _T( "%.3f / sec (%.3f / min)" ), 1.0 / dTime, 1.0 / dTime * 60.0 );
+		Result = SvUl_SF::Format( _T( "%.3f / sec (%.3f / min)" ), 1.0 / dTime, 1.0 / dTime * 60.0 );
 	}// end if
 
-	return timeStr;
+	return Result;
 }// end CalcProcessesPerSecond
 
 BOOL SVResultViewClass::Create( LPCTSTR LPSZClassName, LPCTSTR LPSZWindowName, DWORD DwStyle, const RECT& Rect, CWnd* PParentWnd, UINT NID, CCreateContext* PContext )
@@ -304,23 +304,22 @@ BOOL SVResultViewClass::Create( LPCTSTR LPSZClassName, LPCTSTR LPSZWindowName, D
 
 void SVResultViewClass::addColumnHeadings()
 {
-	CString columnName;
 	CListCtrl& listCtrl = GetListCtrl();
 
 	// load the Column names
 	for( int i = 0; i < SV_NUMBER_RESULTVIEW_COLUMNS; i++ )
 	{
-		columnName.LoadString(IDS_RESULTVIEW_COLUMN_NAME0 + i );
-		listCtrl.InsertColumn( i, columnName, LVCFMT_LEFT, LVSCW_AUTOSIZE, i );
+		SVString ColumnName = SvUl_SF::LoadSVString(IDS_RESULTVIEW_COLUMN_NAME0 + i );
+		listCtrl.InsertColumn( i, ColumnName.c_str(), LVCFMT_LEFT, LVSCW_AUTOSIZE, i );
 	}
-	columnWidthSet = FALSE;
+	m_ColumnWidthSet = false;
 }
 
 void SVResultViewClass::setColumnWidths()
 {
 	CListCtrl& listCtrl = GetListCtrl();
 
-	if (!columnWidthSet )
+	if (!m_ColumnWidthSet )
 	{
 		CRect viewRect;
 		listCtrl.GetClientRect( viewRect );
@@ -339,7 +338,7 @@ void SVResultViewClass::setColumnWidths()
 
 		listCtrl.SetColumnWidth(SV_NUMBER_RESULTVIEW_COLUMNS - 1,LVSCW_AUTOSIZE_USEHEADER);
 
-		columnWidthSet = TRUE;
+		m_ColumnWidthSet = TRUE;
 	}
 }
 
@@ -405,7 +404,7 @@ void SVResultViewClass::DrawItem( LPDRAWITEMSTRUCT lpDrawItemStruct )
 		listCtrl.GetItemRect( nItem, rcLabel, LVIR_LABEL );
 		listCtrl.GetItemRect( nItem, rcIcon, LVIR_ICON );
 		CRect rcCol( rcBounds );
-		CString sLabel = listCtrl.GetItemText( nItem, 0 );
+		SVString Label = listCtrl.GetItemText( nItem, 0 );
 		DWORD_PTR dwColor = listCtrl.GetItemData( nItem );
 
 		// Labels are offset by a certain amount
@@ -415,11 +414,13 @@ void SVResultViewClass::DrawItem( LPDRAWITEMSTRUCT lpDrawItemStruct )
 		CRect rcWnd;
 		int nExt;
 
-		nExt = pDC->GetOutputTextExtent( sLabel ).cx + offset;
+		nExt = pDC->GetOutputTextExtent( Label.c_str() ).cx + offset;
 		rcHighlight = rcLabel;
 
 		if( rcLabel.left + nExt < rcLabel.right )
+		{
 			rcHighlight.right = rcLabel.left + nExt;
+		}
 
 		GetClientRect( &rcWnd );
 		rcHighlight = rcBounds;
@@ -443,8 +444,7 @@ void SVResultViewClass::DrawItem( LPDRAWITEMSTRUCT lpDrawItemStruct )
 			pImageList = listCtrl.GetImageList( LVSIL_STATE );
 			if( pImageList )
 			{
-				pImageList->Draw( pDC, nImage,
-					CPoint( rcCol.left, rcCol.top ), ILD_TRANSPARENT );
+				pImageList->Draw( pDC, nImage, CPoint( rcCol.left, rcCol.top ), ILD_TRANSPARENT );
 			}
 		}
 		// Draw normal and overlay icon
@@ -452,21 +452,19 @@ void SVResultViewClass::DrawItem( LPDRAWITEMSTRUCT lpDrawItemStruct )
 		if( pImageList )
 		{
 			UINT nOvlImageMask=lvi.state & LVIS_OVERLAYMASK;
-			pImageList->Draw( pDC, lvi.iImage, CPoint( rcIcon.left, rcIcon.top ),
-				( bHighlight ? ILD_BLEND50 : 0 ) | ILD_TRANSPARENT | nOvlImageMask );
+			pImageList->Draw( pDC, lvi.iImage, CPoint( rcIcon.left, rcIcon.top ), ( bHighlight ? ILD_BLEND50 : 0 ) | ILD_TRANSPARENT | nOvlImageMask );
 		}
 		// Draw item label - Column 0
 		rcLabel.left += offset/2;
 		rcLabel.right -= offset;
-		pDC->DrawText( sLabel, -1, rcLabel, DT_LEFT | DT_SINGLELINE | DT_NOPREFIX | DT_NOCLIP 
+		pDC->DrawText( Label.c_str(), -1, rcLabel, DT_LEFT | DT_SINGLELINE | DT_NOPREFIX | DT_NOCLIP 
 			| DT_VCENTER | DT_END_ELLIPSIS);
 	
 		// Draw labels for remaining columns
 		LV_COLUMN lvc;
 		lvc.mask = LVCF_FMT | LVCF_WIDTH;
 	
-		rcBounds.right = rcHighlight.right > rcBounds.right ? rcHighlight.right :
-			rcBounds.right;
+		rcBounds.right = rcHighlight.right > rcBounds.right ? rcHighlight.right : rcBounds.right;
 		rgn.CreateRectRgnIndirect( &rcBounds );
 		pDC->SelectClipRgn( &rgn );
 		for(int nColumn = 1; listCtrl.GetColumn( nColumn, &lvc ); nColumn++)
@@ -474,9 +472,11 @@ void SVResultViewClass::DrawItem( LPDRAWITEMSTRUCT lpDrawItemStruct )
 			rcCol.left = rcCol.right;
 			rcCol.right += lvc.cx;
 
-			sLabel = listCtrl.GetItemText( nItem, nColumn );
-			if( sLabel.GetLength() == 0 )
+			Label = listCtrl.GetItemText( nItem, nColumn );
+			if( Label.empty() )
+			{
 				continue;
+			}
 
 			// Get the text justification
 			UINT nJustify = DT_LEFT;
@@ -506,7 +506,7 @@ void SVResultViewClass::DrawItem( LPDRAWITEMSTRUCT lpDrawItemStruct )
 				rcLabel.left += (h + 4);
 			}
 
-			pDC->DrawText(sLabel, -1, rcLabel, nJustify | DT_SINGLELINE | 
+			pDC->DrawText(Label.c_str(), -1, rcLabel, nJustify | DT_SINGLELINE | 
 				DT_NOPREFIX | DT_VCENTER | DT_END_ELLIPSIS);
 		}
 		// Draw focus rectangle if item has focus
@@ -574,7 +574,6 @@ BOOL SVResultViewClass::GetParameters(SVObjectWriter& rWriter)
 	CRect l_cRect;
 	GetWindowRect( l_cRect );
 
-	CString strFreezeScript;
 	_variant_t svVariant;
 
 	svVariant = l_cRect.Height();

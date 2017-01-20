@@ -96,7 +96,7 @@ BOOL SVUnaryImageOperatorClass::Run( BOOL First, SVSmartHandlePointer RInputImag
 ////////////////////////////////////////////////////////////////////////////////
 BOOL SVUnaryImageOperatorClass::onRun( BOOL First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus )
 {
-	ASSERT(0);
+	assert(0);
 	return false;
 }
 

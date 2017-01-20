@@ -18,7 +18,7 @@
 #include "SVSVIMStateClass.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "CameraLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
-
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 // SVThreadInfoDlg dialog
@@ -166,11 +166,11 @@ void SVThreadInfoDlg::UpdateThreadInfo( SVThreadAttribute eAttribute)
 	pRoot->Expand();
 
 }
-void SVThreadInfoDlg::InsertComboThreadItem( SVRPropertyItem* pRoot, CString name, unsigned int Affinity, unsigned int nID )
+void SVThreadInfoDlg::InsertComboThreadItem( SVRPropertyItem* pRoot, LPCTSTR Name, unsigned int Affinity, unsigned int nID )
 {
 	SVRPropertyItemCombo* pCombo = (SVRPropertyItemCombo*)(m_ThreadList.InsertItem( new SVRPropertyItemCombo(), pRoot ));
 	pCombo->SetCtrlID( nID );
-	pCombo->SetLabelText( name );
+	pCombo->SetLabelText( Name );
 	pCombo->SetInfoText(_T("This Item sets which processor pipe to run in."));
 	pCombo->CreateComboBox();
 
@@ -191,16 +191,16 @@ void SVThreadInfoDlg::AddComboAffinitys( SVRPropertyItemCombo* pCombo, AffinityB
 {
 	for( AffinityBitList::const_iterator it = affinitys.begin() ; it != affinitys.end() ; ++it )
 	{
-		CString strName;
+		SVString Name;
 		if( *it > 0 )
 		{
-			strName.Format( _T("%d"), *it);
+			Name = SvUl_SF::Format( _T("%d"), *it);
 		}
 		else
 		{
-			strName = _T("Not Set");
+			Name = _T("Not Set");
 		}
-		int iInsIndex = pCombo->AddString( strName );
+		int iInsIndex = pCombo->AddString( Name.c_str() );
 		pCombo->SetItemData( iInsIndex, *it );
 	}
 }
@@ -238,12 +238,12 @@ bool SVThreadInfoDlg::FindName( SVRPropertyItem* pRoot, LPCTSTR Name )
 	return bRet;
 }
 
-void SVThreadInfoDlg::InsertThreadItem( SVRPropertyItem* pRoot, CString name, int Affinity, unsigned int nID )
+void SVThreadInfoDlg::InsertThreadItem( SVRPropertyItem* pRoot, LPCTSTR Name, int Affinity, unsigned int nID )
 {
 	SVRPropertyItemEdit* pEdit = (SVRPropertyItemEdit*)(m_ThreadList.InsertItem( new SVRPropertyItemEdit(), pRoot ));
 
 	pEdit->SetCtrlID( nID );
-	pEdit->SetLabelText( name );
+	pEdit->SetLabelText( Name );
 	pEdit->SetInfoText(_T("These Items are read only"));
 	if( Affinity != 0 )
 	{
@@ -270,12 +270,12 @@ void SVThreadInfoDlg::OnItemButtonClick(NMHDR* pNotifyStruct, LRESULT* plResult)
 		if ( pItem->GetCtrlID() >= PROP_THREADS_BASE )
 		{
 			UINT i = pItem->GetCtrlID() - PROP_THREADS_BASE;
-			CString strTmp = pItem->GetLabelText();
+			SVString Text = pItem->GetLabelText();
 			long lValue;
 			pItem->GetItemValue( lValue );
-			if( SVThreadManager::Instance().IsAllowed( strTmp, SVAffinityEditAllowed ) )
+			if( SVThreadManager::Instance().IsAllowed( Text.c_str(), SVAffinityEditAllowed ) )
 			{
-				SVThreadManager::Instance().SetAffinity( strTmp, lValue );
+				SVThreadManager::Instance().SetAffinity( Text.c_str(), lValue );
 				SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
 			}
 		}
@@ -294,8 +294,7 @@ void SVThreadInfoDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
 		SVRPropertyItem* pItem = reinterpret_cast<SVRPropertyItem*>(pNMPropTree->pItem);
 		long lValue;
 		pItem->GetItemValue(lValue);
-		CString strTmp = pItem->GetLabelText();
-		SVThreadManager::Instance().SetAffinity( strTmp, lValue );
+		SVThreadManager::Instance().SetAffinity( pItem->GetLabelText(), lValue );
 		SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
 	}
 	int i = 0;
@@ -311,9 +310,8 @@ void SVThreadInfoDlg::OnBnClickedSave()
 		file.WriteString("Name,Affinity\n");
 		for( std::list<SVThreadSetup>::const_iterator it = tList.begin() ; it != tList.end() ; ++it)
 		{
-			CString strTmp;
-			strTmp.Format( "%s,%d\n",it->m_strName.c_str(), it->m_lAffinity );
-			file.WriteString( strTmp );
+			SVString Text = SvUl_SF::Format( _T("%s,%d\n"),it->m_strName.c_str(), it->m_lAffinity );
+			file.WriteString( Text.c_str() );
 		}
 		file.Close();
 	}

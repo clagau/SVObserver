@@ -21,63 +21,63 @@
 
 namespace Seidenader { namespace SVSharedMemoryLibrary
 {
-	const std::string SVSharedConfiguration::GetControlShareName()
+	const SVString SVSharedConfiguration::GetControlShareName()
 	{
 		return "ControlSegment";
 	}
 
-	const std::string SVSharedConfiguration::GetShareName()
+	const SVString SVSharedConfiguration::GetShareName()
 	{
 		return "SVSharedMemory";
 	}
 
-	const std::string SVSharedConfiguration::GetLastInspectedName()
+	const SVString SVSharedConfiguration::GetLastInspectedName()
 	{
 		return "last_inspected";
 	}
 
-	const std::string SVSharedConfiguration::GetRejectsName()
+	const SVString SVSharedConfiguration::GetRejectsName()
 	{
 		return "rejects";
 	}
 
-	const std::string SVSharedConfiguration::GetPPQName()
+	const SVString SVSharedConfiguration::GetPPQName()
 	{
 		return "PPQs";
 	}
 
-	const std::string SVSharedConfiguration::GetPPQRejectsName()
+	const SVString SVSharedConfiguration::GetPPQRejectsName()
 	{
 		return "PPQrejects";
 	}
 
-	const std::string SVSharedConfiguration::GetMonitorListName()
+	const SVString SVSharedConfiguration::GetMonitorListName()
 	{
 		return "monitor_list";
 	}
 
-	const std::string SVSharedConfiguration::GetSharedMemoryDirectoryName()
+	const SVString SVSharedConfiguration::GetSharedMemoryDirectoryName()
 	{
 		return GetSharedDrive() + "\\boost_interprocess"; //BOOST_INTERPROCESS_SHARED_DIR_PATH;
 	}
 
-	const std::string SVSharedConfiguration::GetImageDirectoryName()
+	const SVString SVSharedConfiguration::GetImageDirectoryName()
 	{
 		return GetSharedDrive() + "\\Images";
 	}
 
-	const std::string SVSharedConfiguration::GetRejectImageDirectoryName()
+	const SVString SVSharedConfiguration::GetRejectImageDirectoryName()
 	{
 		return GetSharedDrive() + "\\RejectImages";
 	}
 
 	// return only the Drive letter (do not append the root dir "\\")
-	const std::string SVSharedConfiguration::GetSharedDrive()
+	const SVString SVSharedConfiguration::GetSharedDrive()
 	{
 		return "V:";
 	}
 
-	void SVSharedConfiguration::Log(const std::string & msg)
+	void SVSharedConfiguration::Log(const SVString & msg)
 	{
 	#ifdef ENABLE_LOG
 		static std::ofstream os;
@@ -88,7 +88,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		char buf[10] = {0};
 		_itoa(::GetCurrentThreadId(), buf, 16);
 		std::time_t tt = ::std::time(0);
-		os << std::string(std::asctime(std::localtime(&tt))) + " " + std::string(buf) + ":\t " + msg << std::endl;
+		os << SVString(std::asctime(std::localtime(&tt))) + " " + SVString(buf) + ":\t " + msg << std::endl;
 	#endif
 	}
 
@@ -101,7 +101,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 	{
 		bool bRetVal = false;
 		// Get Drive Size
-		std::string volName = "\\\\.\\";
+		SVString volName = "\\\\.\\";
 		volName += GetSharedDrive();
 		HANDLE hDevice = CreateFileA(volName.c_str(),    // drive to open
 							GENERIC_READ,                // no access to the drive
@@ -195,7 +195,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 	{
 		if (SVSharedConfiguration::SharedDriveExists())
 		{
-			const std::string& sharedMemoryDirectory = SVSharedConfiguration::GetSharedMemoryDirectoryName();
+			const SVString& sharedMemoryDirectory = SVSharedConfiguration::GetSharedMemoryDirectoryName();
 			DWORD res = GetFileAttributes(sharedMemoryDirectory.c_str());
 			if (res == INVALID_FILE_ATTRIBUTES)
 			{
@@ -207,7 +207,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 
 	bool SVSharedConfiguration::ControlFileExits()
 	{
-		std::string fname;
+		SVString fname;
 		//MEC with the comment out code the function returns always 0 ?
 		//boost::interprocess::ipcdetail::get_shared_dir_root(fname);
 		fname =  GetSharedMemoryDirectoryName();

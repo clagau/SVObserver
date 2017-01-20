@@ -14,9 +14,10 @@
 #pragma region Includes
 #include "SVUtilityLibrary/SVWinHandle.h"
 #include "SVImageLibrary/SVImageExtentClass.h"
-#include "PropertyTree/PropTree.h"
+#include "SVRPropertyTree/SVRPropTree.h"
 #include "SVMFCControls\SVUpDownButton.h"
 #include "SVObjectLibrary\SVObjectClass.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -155,7 +156,7 @@ private:
 	SVWinHandle<HICON> m_icoArrowClockwise;
 	SVWinHandle<HICON> m_icoArrowCounterclockwise;
 	SvMc::SVUpDownButton* m_pButton;
-	CString m_sTitle;
+	SVString m_Title;
 #pragma endregion Member variables
 };	// end class SVAdjustToolSizePositionDlg
 

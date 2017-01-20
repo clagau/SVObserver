@@ -12,6 +12,13 @@
 #include "stdafx.h"
 #include "SVInObjectInfoStruct.h"
 
+#pragma region Declarations
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+#endif
+#pragma endregion Declarations
+
 SVInObjectInfoStruct::SVInObjectInfoStruct()
 : SVObjectInfoStruct(), m_InputObjectInfo(), m_IsConnected( false ), m_InputName()
 {
@@ -66,7 +73,7 @@ void SVInObjectInfoStruct::SetInputObjectType( const SVObjectTypeInfoStruct& p_r
 
 void SVInObjectInfoStruct::SetInputObject( const SVString& p_rName )
 {
-	if( p_rName != static_cast< LPCTSTR >( m_InputObjectInfo.GetObjectReference().GetCompleteObjectName() ) )
+	if( p_rName != m_InputObjectInfo.GetObjectReference().GetCompleteName() )
 	{
 		m_IsConnected = false;
 		m_InputObjectInfo.SetObject( p_rName );

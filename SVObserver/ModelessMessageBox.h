@@ -11,6 +11,10 @@
 
 #pragma once
 
+#pragma region Includes
+#include "SVUtilityLibrary/SVString.h"
+#pragma endregion Includes
+
 class CModelessMsgBox;
 #define ModelessMessageBox(s,e)	{CModelessMsgBox* pBox = new CModelessMsgBox((s),(e)); pBox->Create(CModelessMsgBox::IDD, nullptr);}
 
@@ -43,12 +47,12 @@ class CModelessMsgBox : public CDialog
 {
 // Construction
 public:
-	CModelessMsgBox(const CString& sMsg, HANDLE p_hEvent);   // standard constructor
+	CModelessMsgBox(const SVString& rMsg, HANDLE p_hEvent);   // standard constructor
 	virtual ~CModelessMsgBox();
 
 
 protected:
-	CString m_sMsg;
+	SVString m_Msg;
 	HANDLE m_hEvent;
 
 public:

@@ -27,7 +27,7 @@ public:
 	typedef typename SVItemDataMap::key_type key_type;
 	typedef typename SVItemDataMap::size_type size_type;
 
-	SVDataItemManagerTemplate( SVGetItemDataFunctor p_GetFunctor, SVSetItemDataFunctor p_SetFunctor );
+	SVDataItemManagerTemplate( SVGetItemDataFunctor GetFunctor, SVSetItemDataFunctor SetFunctor );
 	SVDataItemManagerTemplate( const SVDataItemManagerTemplate& p_rObject );
 	virtual ~SVDataItemManagerTemplate();
 
@@ -56,7 +56,6 @@ protected:
 
 	unsigned long m_LastUsedIdentifier;
 	SVItemDataMap m_Items;
-
 };
 
 #include "SVDataItemManagerTemplate.inl"

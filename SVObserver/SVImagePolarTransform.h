@@ -13,7 +13,10 @@
 #pragma region Includes
 #include "SVPolarTransform.h"
 #include "SVOCore/SVImageClass.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
+
+class SVEquationClass;
 
 class SVImagePolarTransformClass : public SVPolarTransformClass
 {
@@ -43,6 +46,8 @@ protected:
 	void NewCorrectAngles( double& RDStartAngle, double& RDEndAngle );
 	void correctAngles( double& RDStartAngle, double& RDEndAngle );
 	void AnglesTo360( double& p_dStart, double& p_dEnd);
+
+	bool SetDefaultEquation( SVEquationClass* pEquation, const SVString& rName );
 
 	virtual BOOL onRun( SVRunStatusClass& RRunStatus ) override;
 	

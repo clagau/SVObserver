@@ -2790,8 +2790,8 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Import(SVMatroxBu
 @SVOperationDescription This function exports a data buffer to a file, in the specified output file format. 
 
 */
-SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Export(const SVMatroxBuffer& p_rBuf, 
-																	  const SVString& p_rFileName, 
+SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Export(const SVMatroxBuffer& rBuffer, 
+																	  const SVString& rFileName, 
 																	  SVMatroxFileTypeEnum p_eFileType)
 {
 	long l_lFileFormat = 0;
@@ -2808,11 +2808,11 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Export(const SVMa
 	try
 #endif
 	{
-		if (!p_rBuf.empty())
+		if (!rBuffer.empty())
 		{
-			MbufExport(const_cast<MIL_TEXT_CHAR*>(p_rFileName.c_str()), 
+			MbufExport(rFileName.c_str(), 
 				l_lFileFormat,
-				p_rBuf.GetIdentifier());
+				rBuffer.GetIdentifier());
 
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 		}

@@ -191,9 +191,8 @@ BOOL SVVirtualCamera::GoOnline()
 		AfxGetApp()->WriteProfileInt(_T("Debug"), _T("LogTSFEF"), bLog );
 		if ( bLog )
 		{
-			CString sName;
-			sName.Format(_T("%s\\TSFEF_%s.log"), SvStl::GlobalPath::Inst().GetTempPath().c_str(), mpsvDevice->DeviceName() + _T("_vc"));
-			m_LogFile.Open(sName, CFile::modeCreate | CFile::modeWrite | CFile::shareDenyWrite );
+			SVString Name = SvUl_SF::Format(_T("%s\\TSFEF_%s.log"), SvStl::GlobalPath::Inst().GetTempPath().c_str(), SVString(mpsvDevice->DeviceName() + _T("_vc")).c_str());
+			m_LogFile.Open( Name.c_str(), CFile::modeCreate | CFile::modeWrite | CFile::shareDenyWrite );
 		}
 	}
 
@@ -673,7 +672,7 @@ HRESULT SVVirtualCamera::RegisterTriggerRelay(SVIOTriggerLoadLibraryClass* trigg
 			SvTh::SVAcquisitionInitiator  acqInitiator;
 
 			// need the digitizer name here ...
-			SVDigitizerLoadLibraryClass* pAcqDLL = SVDigitizerProcessingClass::Instance().GetDigitizerSubsystem(pAcq->DigName());
+			SVDigitizerLoadLibraryClass* pAcqDLL = SVDigitizerProcessingClass::Instance().GetDigitizerSubsystem(pAcq->DigName().c_str());
 
 			if (pAcqDLL)
 			{

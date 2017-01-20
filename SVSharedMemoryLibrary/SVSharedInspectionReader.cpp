@@ -33,7 +33,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		Close();
 	}
 
-	bool SVSharedInspectionReader::Open(const std::string& name)
+	bool SVSharedInspectionReader::Open(const SVString& name)
 	{
 		bool bRetVal = false;
 		try

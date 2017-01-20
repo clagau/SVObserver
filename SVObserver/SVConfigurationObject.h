@@ -32,6 +32,7 @@
 #include "SVStorageResult.h"
 #include "RemoteMonitorList.h"
 #include "SVXMLLibrary\SVObjectXMLWriter.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 
@@ -68,9 +69,7 @@ struct SVFindPredicate
 	SVFindPredicate( SVTreeType& rTree, const SVString& p_rName ) : m_rTree( rTree ), m_Name( p_rName ) {}
 	SVFindPredicate( SVTreeType& rTree, int StringResourceID ) : m_rTree( rTree ) 
 	{
-		CString tmp;
-		tmp.Format(StringResourceID);
-		m_Name = tmp;
+		m_Name = SvUl_SF::LoadSVString(StringResourceID);
 	}
 
 	bool operator()( const SVTreeType::SVBranchHandle& p_rRight ) const
@@ -90,7 +89,7 @@ class SVConfigurationObject : public SVObjectClass
 	SV_DECLARE_CLASS( SVConfigurationObject );
 
 public:
-	typedef SVMap< CString, SVConfigurationAcquisitionDeviceInfoStruct* > SVAcquisitionDeviceMap;
+	typedef SVMap<SVString, SVConfigurationAcquisitionDeviceInfoStruct*> SVAcquisitionDeviceMap;
 
 	SVConfigurationObject( LPCSTR ObjectName );
 	SVConfigurationObject( SVObjectClass* pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVCONFIGURATIONOBJECT );
@@ -208,8 +207,8 @@ public:
 							   SVDeviceParamCollection*& rpDeviceParams ) const;
 	SVAcquisitionDeviceMap::iterator GetAcquisitionDeviceStartPosition() const;
 	SVAcquisitionDeviceMap::iterator GetAcquisitionDeviceEndPosition();
-	void GetAcquisitionDeviceNextAssoc( SVAcquisitionDeviceMap::iterator& rNextPosition, CString& rKey ) const;
-	void GetAcquisitionDeviceNextAssoc( SVAcquisitionDeviceMap::iterator& rNextPosition, CString& rKey, 
+	void GetAcquisitionDeviceNextAssoc( SVAcquisitionDeviceMap::iterator& rNextPosition, SVString& rKey ) const;
+	void GetAcquisitionDeviceNextAssoc( SVAcquisitionDeviceMap::iterator& rNextPosition, SVString& rKey, 
 	                                    SVFileNameArrayClass*& pFiles,
                                         SVLightReference*& pLight,
 										SVLut*& rpLut,
@@ -251,7 +250,7 @@ public:
 	void SetProductType( SVIMProductEnum eProductType );
 	bool IsConfigurationLoaded() const;
 	void SetConfigurationLoaded();
-	bool RenameOutputListInspectionNames(CString& NewInspectionName, CString& OldInspectionName);
+	bool RenameOutputListInspectionNames(LPCTSTR NewInspectionName, LPCTSTR OldInspectionName);
 	
 	unsigned long GetFileVersion() const;
 
@@ -269,14 +268,14 @@ public:
 	size_t GetRemoteOutputGroupCount() const;
 	void SetupRemoteOutput();
 	HRESULT ClearRemoteOutputUnUsedData();
-	HRESULT GetRemoteOutputGroupNames( std::vector<CString>& p_astrPPQs ) const;
-	SVRemoteOutputGroup* GetRemoteOutputGroup( const CString& p_strRemoteGroupID ) const;
-	size_t GetRemoteOutputGroupItemCount( const CString& p_strRemoteGroupID ) const;
-	HRESULT GetRemoteOutputItem( const CString& p_strRemoteGroupId, long l_lIndex, SVRemoteOutputObject*& p_rItem ) const;
-	SVRemoteOutputObject* GetFirstRemoteOutputObject( const CString& p_strRemoteGroupId ) const;
-	HRESULT AddRemoteOutputItem( const CString& p_strRemoteGroupId, SVRemoteOutputObject*& p_pNewOutput, GUID p_InputObjectID, const CString p_strPPQ );
-	HRESULT DeleteRemoteOutput( const CString& p_strRemoteGroupId );
-	HRESULT DeleteRemoteOutputEntry( const CString& p_strRemoteGroupId, SVRemoteOutputObject* p_pOutputObject);
+	HRESULT GetRemoteOutputGroupNames( SVStringVector& rPPQs ) const;
+	SVRemoteOutputGroup* GetRemoteOutputGroup( const SVString& rRemoteGroupID ) const;
+	size_t GetRemoteOutputGroupItemCount( const SVString& rRemoteGroupID ) const;
+	HRESULT GetRemoteOutputItem( const SVString& rRemoteGroupID, long l_lIndex, SVRemoteOutputObject*& p_rItem ) const;
+	SVRemoteOutputObject* GetFirstRemoteOutputObject( const SVString& rRemoteGroupID ) const;
+	HRESULT AddRemoteOutputItem( const SVString& rRemoteGroupID, SVRemoteOutputObject*& p_pNewOutput, GUID p_InputObjectID, const SVString& rPPQ );
+	HRESULT DeleteRemoteOutput( const SVString& rRemoteGroupID );
+	HRESULT DeleteRemoteOutputEntry( const SVString& rRemoteGroupID, SVRemoteOutputObject* p_pOutputObject);
 	HRESULT RemoteOutputValidateInputs();
 
 	HRESULT AddImportedRemoteInput(SVPPQObject* p_pPPQ, const SVString& name, long ppqPosition, long index, const _variant_t& p_Value);

@@ -22,6 +22,7 @@
 #include "SVShiftToolUtility.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -36,8 +37,8 @@ enum {IDC_SHIFT_VALUE_TRUE = 100};
 #pragma region Constructor
 SVTADlgTranslationShiftPageClass::SVTADlgTranslationShiftPageClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* Parent)
 : CPropertyPage(SVTADlgTranslationShiftPageClass::IDD)
-, StrTranslationXValue(_T(""))
-, StrTranslationYValue(_T(""))
+, m_TranslationXValue(_T(""))
+, m_TranslationYValue(_T(""))
 , pParentDialog( Parent )
 , pTool( nullptr ) // This needs to change
 , pEvaluateTranslationY( nullptr ) // This needs to change
@@ -53,8 +54,8 @@ SVTADlgTranslationShiftPageClass::~SVTADlgTranslationShiftPageClass()
 void SVTADlgTranslationShiftPageClass::DoDataExchange(CDataExchange* pDX)
 {
 	CPropertyPage::DoDataExchange(pDX);
-	DDX_Text(pDX, IDC_TRANSLATIONX_EDIT, StrTranslationXValue);
-	DDX_Text(pDX, IDC_TRANSLATIONY_EDIT, StrTranslationYValue);
+	DDX_Text(pDX, IDC_TRANSLATIONX_EDIT, m_TranslationXValue);
+	DDX_Text(pDX, IDC_TRANSLATIONY_EDIT, m_TranslationYValue);
 	DDX_Control(pDX, IDC_COMBO_SHIFT_MODE, m_ctlShiftModeCombo);
 	DDX_Control(pDX, IDC_TRANSLATION_X_FORMULA_BUTTON, m_btnFormulaX);
 	DDX_Control(pDX, IDC_TRANSLATION_Y_FORMULA_BUTTON, m_btnFormulaY);
@@ -101,14 +102,14 @@ BOOL SVTADlgTranslationShiftPageClass::OnInitDialog()
 		pParentDialog->GetToolByType( l_pTool );
 
 		m_pvoShiftMode = &l_pTool->m_evoShiftMode;
-		CString svShiftEnumTypes;
+		
+		SVString EnumTypes;
+		m_pvoShiftMode->GetEnumTypes( EnumTypes );
+		m_ctlShiftModeCombo.SetEnumTypes( EnumTypes.c_str() );
 
-		m_pvoShiftMode->GetEnumTypes(svShiftEnumTypes);
-		m_ctlShiftModeCombo.SetEnumTypes(svShiftEnumTypes);
-
-		CString svCurrentShiftType;
-		m_pvoShiftMode->GetValue(svCurrentShiftType);
-		m_ctlShiftModeCombo.SelectString(-1,svCurrentShiftType);
+		SVString ShiftType;
+		m_pvoShiftMode->GetValue( ShiftType );
+		m_ctlShiftModeCombo.SelectString( -1, ShiftType.c_str() );
 
 		m_lShiftType = m_ctlShiftModeCombo.GetCurSel();
 
@@ -200,20 +201,20 @@ void SVTADlgTranslationShiftPageClass::refresh()
 
 		if( S_OK == GetValue( pTool->GetUniqueObjectID(), SVTranslationXObjectGuid, l_Variant.GetVARIANT() ) )
 		{
-			StrTranslationXValue = static_cast< LPCTSTR >( _bstr_t( l_Variant ) );
+			m_TranslationXValue = static_cast< LPCTSTR >( _bstr_t( l_Variant ) );
 		}
 		else
 		{
-			StrTranslationXValue = _T("");
+			m_TranslationXValue = _T("");
 		}
 		
 		if( S_OK == GetValue( pTool->GetUniqueObjectID(), SVTranslationYObjectGuid, l_Variant.GetVARIANT() ) )
 		{
-			StrTranslationYValue = static_cast< LPCTSTR >( _bstr_t( l_Variant ) );
+			m_TranslationYValue = static_cast< LPCTSTR >( _bstr_t( l_Variant ) );
 		}
 		else
 		{
-			StrTranslationYValue = _T("");
+			m_TranslationYValue = _T("");
 		}
 		UpdateData(FALSE); // set data to dialog
 	}
@@ -248,13 +249,13 @@ void SVTADlgTranslationShiftPageClass::OnBnClickedTranslationXFormulaButton()
 {
 	if (pEvaluateTranslationX)
 	{
-		CString strCaption = pEvaluateTranslationX->GetName();
-		strCaption += _T(" Formula");
+		SVString Caption = pEvaluateTranslationX->GetName();
+		Caption += _T(" Formula");
 
 		const GUID& rInspectionID = pParentDialog->GetInspectionID();
 		const GUID& rObjectID = pParentDialog->GetToolID();
 		SVObjectTypeInfoStruct info(SVMathContainerObjectType, SVEvaluateTranslationXObjectType);
-		SvOg::SVFormulaEditorSheetClass dlg(rInspectionID, rObjectID, info, strCaption);
+		SvOg::SVFormulaEditorSheetClass dlg(rInspectionID, rObjectID, info, Caption.c_str());
 		dlg.DoModal();
 		
 		refresh();
@@ -265,13 +266,13 @@ void SVTADlgTranslationShiftPageClass::OnBnClickedTranslationYFormulaButton()
 {
 	if (pEvaluateTranslationY)
 	{
-		CString strCaption = pEvaluateTranslationY->GetName();
-		strCaption += _T(" Formula");
+		SVString Caption = pEvaluateTranslationY->GetName();
+		Caption += _T(" Formula");
 
 		const GUID& rInspectionID = pParentDialog->GetInspectionID();
 		const GUID& rObjectID = pParentDialog->GetToolID();
 		SVObjectTypeInfoStruct info(SVMathContainerObjectType, SVEvaluateTranslationYObjectType);
-		SvOg::SVFormulaEditorSheetClass dlg(rInspectionID, rObjectID, info, strCaption);
+		SvOg::SVFormulaEditorSheetClass dlg(rInspectionID, rObjectID, info, Caption.c_str());
 		dlg.DoModal();
 		
 		refresh();
@@ -343,8 +344,6 @@ void SVTADlgTranslationShiftPageClass::SetupShiftPropertyTree()
 	SVRPropertyItem* pRoot = m_Tree.InsertItem(new SVRPropertyItem());
 	SVRPropertyItemStatic* pPropItem;
 
-	CString sValue;
-
 	if (pRoot)
 	{
 		pRoot->SetCanShrink(false);
@@ -401,7 +400,6 @@ void SVTADlgTranslationShiftPageClass::FillShiftProperties()
 {
 	SVRPropertyItemStatic* pPropItem = nullptr;
 	_variant_t l_Variant;
-	CString sVal;
 
 	//get each value and put into property tree
 

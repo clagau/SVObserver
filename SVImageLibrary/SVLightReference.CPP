@@ -183,7 +183,7 @@ SVLightReference::~SVLightReference()
 BOOL SVLightReference::Create( int iNewSize )
 {
 	// Rosco removed this to prevent annoying assert dialogs even though eric told him not to.
-    // ASSERT (iNewSize > 0);
+    // assert (iNewSize > 0);
 
 	BOOL bOk = FALSE;
 
@@ -260,7 +260,7 @@ bool SVLightReference::SetBandData(const SVLightReference& rhs, unsigned int uiB
     }
 	else
 	{
-		ASSERT(FALSE);
+		assert(false);
 	}
 
     return bResult;

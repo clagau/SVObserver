@@ -80,7 +80,7 @@ bool SVJsonCommandServerSocket::HasClient() const
 	return m_client.IsValidSocket();
 }
 
-bool SVJsonCommandServerSocket::Write(const std::string& data)
+bool SVJsonCommandServerSocket::Write(const SVString& rData)
 {
 	bool bRetVal = false;
 
@@ -92,7 +92,7 @@ bool SVJsonCommandServerSocket::Write(const std::string& data)
 
 		if( bRetVal )
 		{
-			m_WriteQueue.push_back( data );
+			m_WriteQueue.push_back( rData );
 		}
 		else
 		{
@@ -111,15 +111,15 @@ void SVJsonCommandServerSocket::OnAccept()
 	}
 }
 
-void SVJsonCommandServerSocket::OnDataReceived(const std::string& data)
+void SVJsonCommandServerSocket::OnDataReceived(const SVString& rData)
 {
 	if (!m_dataReceivedFunc.empty())
 	{
-		m_dataReceivedFunc(data);
+		m_dataReceivedFunc(rData);
 	}
 }
 
-void CALLBACK SVJsonCommandServerSocket::OnAPCEvent( ULONG_PTR data )
+void CALLBACK SVJsonCommandServerSocket::OnAPCEvent( ULONG_PTR pData )
 {
 }
 
@@ -219,13 +219,13 @@ void SVJsonCommandServerSocket::ThreadProcessHandler(bool& bWaitEvents)
 
 						if( l_Auto.Assign( &m_WriteQueueLock ) )
 						{
-							std::string l_Data = m_WriteQueue.front();
+							SVString Data = m_WriteQueue.front();
 
 							m_WriteQueue.pop_front();
 
-							if( !( l_Data.empty() ) )
+							if( !( Data.empty() ) )
 							{
-								SvSol::SVSocketError::ErrorEnum error = m_client.Send( l_Data ); // Use Send instead of Write for JSON.
+								SvSol::SVSocketError::ErrorEnum error = m_client.Send( Data ); // Use Send instead of Write for JSON.
 
 								l_Sleep = ( SvSol::SVSocketError::Success != error );
 								if( l_Sleep )

@@ -25,8 +25,8 @@ public:
     SVOCameraObj& operator =(const SVOCameraObj &source);
     SVOCameraObj* operator =(const SVOCameraObj *source);
 
-    CString GetCameraDisplayName() const;
-    CString GetCameraFile() const;
+    const SVString& GetCameraDisplayName() const;
+    const SVString& GetCameraFile() const;
 	int GetDigNumber() const;
 	int GetCameraID() const;
     int GetBandNumber() const;
@@ -35,10 +35,10 @@ public:
 	const SVDeviceParamCollection& GetCameraDeviceParams();
 	SVDeviceParamCollection& GetCameraDeviceParamsNonConst();
 
-    void SetCameraDisplayName(CString CameraName);
+    void SetCameraDisplayName(const SVString& rCameraName);
 	void SetDigNumber(int DigNumber);
 	void SetCameraID(int CameraID);
-    void SetCameraFile(CString FileName);
+    void SetCameraFile(const SVString& rFileName);
 	void SetCameraFileChanged();
 	BOOL GetCameraFileChanged();
     void SetBandNumber(int BandNumber);
@@ -56,10 +56,10 @@ public:
 	void SetFileImageHeight(long height);
 	const SIZE& GetFileImageSize() const;
 	void SetFileImageSize(const SIZE& size);
-	LPCTSTR GetImageFilename() const;
-	void SetImageFilename(const SVString& filename);
-	LPCTSTR GetImageDirectoryName() const;
-	void SetImageDirectoryName(const SVString& directoryName);
+	const SVString& GetImageFilename() const;
+	void SetImageFilename(const SVString& rFilename);
+	const SVString& GetImageDirectoryName() const;
+	void SetImageDirectoryName(const SVString& rPathName);
 	long GetFileLoadingMode() const;
 	void SetFileLoadingMode(long mode);
 	bool IsSoftwareTriggerSupported() const;
@@ -69,12 +69,12 @@ public:
 	inline bool IsColor() const { return m_IsColor; };
 
 private:  //data members
-    CString m_CameraDisplayName;
+    SVString m_CameraDisplayName;
 	int m_DigNumber;
 	int m_CameraID;
     int m_BandNumber;
     bool m_IsColor;
-    CString m_CameraFile;
+    SVString m_CameraFile;
     BOOL m_CameraFileSet;
 	BOOL m_CameraFileChanged;
     BOOL m_CameraObjOk;

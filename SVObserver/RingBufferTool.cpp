@@ -14,6 +14,7 @@
 #include "ObjectInterfaces\ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "TextDefinesSvO.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -104,7 +105,7 @@ HRESULT RingBufferTool::ResetObject()
 		if (nullptr != inputImage)
 		{
 			//Set input name to source image name to display it in result picker
-			m_svSourceImageName.SetValue(0/*Static value, this parameter will not used*/, inputImage->GetCompleteObjectName() );
+			m_svSourceImageName.SetValue(0/*Static value, this parameter will not used*/, SVString(inputImage->GetCompleteName()) );
 
 			SVImageInfoClass imageInfo = inputImage->GetImageInfo();
 
@@ -150,7 +151,7 @@ BOOL RingBufferTool::OnValidate()
 	{
 		bValid = false;
 		SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-		SVStringArray msgList;
+		SVStringVector msgList;
 		msgList.push_back(SvUl_SF::Format("%d", SvOi::cRingBufferDepthMin));
 		msgList.push_back(SvUl_SF::Format("%d", SvOi::cRingBufferDepthMax));
 		msgList.push_back(SvUl_SF::Format("%d", ringBufferDepth));
@@ -314,10 +315,9 @@ void RingBufferTool::BuildEmbeddedObjectList ()
 		vtTemp.lVal = cDefaultIndexValue[i];
 		m_ImageIndexManager[i].SetDefaultValue( vtTemp, true );
 
-		CString ObjectName;
-		ObjectName.LoadString( RingbufferIndexNames[i] );
+		SVString ObjectName = SvUl_SF::LoadSVString( RingbufferIndexNames[i] );
 		ObjectName +=  SvO::cLinkName;
-		RegisterEmbeddedObject( &m_ImageIndexManager[i].getLinkedName(), RingBufferLink_IndexGuid[i], ObjectName, false, SVResetItemNone );
+		RegisterEmbeddedObject( &m_ImageIndexManager[i].getLinkedName(), RingBufferLink_IndexGuid[i], ObjectName.c_str(), false, SVResetItemNone );
 		m_ImageIndexManager[i].getLinkedName().SetDefaultValue( _T(""), false );
 
 		RegisterEmbeddedObject( &m_OutputImages[i], aSVVariantResultImageObjectGuid[i], ImageNames[i] );

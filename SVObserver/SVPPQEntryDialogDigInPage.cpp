@@ -39,11 +39,11 @@ IMPLEMENT_DYNCREATE(SVPPQEntryDialogDigInPageClass, CPropertyPage)
 
 SVPPQEntryDialogDigInPageClass::SVPPQEntryDialogDigInPageClass()
 : CPropertyPage(SVPPQEntryDialogDigInPageClass::IDD)
-, m_AvailableItems( boost::bind( &( CListBox::GetItemData ), &availableInputListCtrl, _1 ) , boost::bind( &( CListBox::SetItemData ), &availableInputListCtrl, _1, _2 ) )
-, m_SelectedItems( boost::bind( &( CListBox::GetItemData ), &selectedInputListCtrl, _1 ) , boost::bind( &( CListBox::SetItemData ), &selectedInputListCtrl, _1, _2 ) )
+, m_AvailableItems( boost::bind( &( CListBox::GetItemData ), &m_AvailableInputCtrl, _1 ) , boost::bind( &( CListBox::SetItemData ), &m_AvailableInputCtrl, _1, _2 ) )
+, m_SelectedItems( boost::bind( &( CListBox::GetItemData ), &m_SelectedInputCtrl, _1 ) , boost::bind( &( CListBox::SetItemData ), &m_SelectedInputCtrl, _1, _2 ) )
 {
 	//{{AFX_DATA_INIT(SVPPQEntryDialogDigInPageClass)
-	StrCurPos = _T("");
+	m_CurrentPos = _T("");
 	//}}AFX_DATA_INIT
 	m_bIsTaken = FALSE;
 }
@@ -56,9 +56,9 @@ void SVPPQEntryDialogDigInPageClass::DoDataExchange(CDataExchange* pDX)
 {
 	CPropertyPage::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(SVPPQEntryDialogDigInPageClass)
-	DDX_Control(pDX, IDC_SELECTED_LIST, selectedInputListCtrl);
-	DDX_Control(pDX, IDC_AVAILABLE_LIST, availableInputListCtrl);
-	DDX_Text(pDX, IDC_CURRENT_POSITION, StrCurPos);
+	DDX_Control(pDX, IDC_SELECTED_LIST, m_SelectedInputCtrl);
+	DDX_Control(pDX, IDC_AVAILABLE_LIST, m_AvailableInputCtrl);
+	DDX_Text(pDX, IDC_CURRENT_POSITION, m_CurrentPos);
 	//}}AFX_DATA_MAP
 }
 
@@ -106,7 +106,7 @@ BOOL SVPPQEntryDialogDigInPageClass::OnInitDialog()
 		{
 			SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject( pIOEntry->m_IOId );
 
-			nIndex = selectedInputListCtrl.AddString( l_pObject->GetName() );
+			nIndex = m_SelectedInputCtrl.AddString( l_pObject->GetName() );
 			m_SelectedItems.SetItemData( nIndex, pIOEntry );
 		}// end if
 
@@ -115,13 +115,13 @@ BOOL SVPPQEntryDialogDigInPageClass::OnInitDialog()
 		{
 			SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject( pIOEntry->m_IOId );
 
-			nIndex = availableInputListCtrl.AddString( l_pObject->GetName() );
+			nIndex = m_AvailableInputCtrl.AddString( l_pObject->GetName() );
 			m_AvailableItems.SetItemData( nIndex, pIOEntry );
 		}// end if
 
 	}// end for
 
-	StrCurPos.Format( "Current PPQ\r\nPosition : %d", m_pSheet->m_lCurrentPosition + 1 );
+	m_CurrentPos.Format( "Current PPQ\r\nPosition : %d", m_pSheet->m_lCurrentPosition + 1 );
 
 	GetDlgItem(IDC_ADD_BUTTON)->EnableWindow(m_pSheet->OkToAdd());
 
@@ -136,7 +136,7 @@ void SVPPQEntryDialogDigInPageClass::OnAddButton()
 	ASSERT( m_pSheet );
 	UpdateData( TRUE );
 
-	int index = availableInputListCtrl.GetCurSel();
+	int index = m_AvailableInputCtrl.GetCurSel();
 	if( m_pSheet && index >= 0 )
 	{
 		SVIOEntryHostStructPtr pIOEntry;
@@ -148,13 +148,13 @@ void SVPPQEntryDialogDigInPageClass::OnAddButton()
 		}
 
 		m_AvailableItems.ClearItemData( index );
-		availableInputListCtrl.DeleteString( index );
+		m_AvailableInputCtrl.DeleteString( index );
 
 		if( !( pIOEntry.empty() ) )
 		{
 			SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject( pIOEntry->m_IOId );
 
-			index = selectedInputListCtrl.AddString( l_pObject->GetName() );
+			index = m_SelectedInputCtrl.AddString( l_pObject->GetName() );
 			m_SelectedItems.SetItemData( index, pIOEntry );
 		}
 	}
@@ -167,7 +167,7 @@ void SVPPQEntryDialogDigInPageClass::OnRemoveButton()
 	ASSERT( m_pSheet );
 	UpdateData( TRUE );
 
-	int index = selectedInputListCtrl.GetCurSel();
+	int index = m_SelectedInputCtrl.GetCurSel();
 	if( m_pSheet && index >= 0 )
 	{
 		SVIOEntryHostStructPtr pIOEntry;
@@ -179,13 +179,13 @@ void SVPPQEntryDialogDigInPageClass::OnRemoveButton()
 		}
 
 		m_SelectedItems.ClearItemData( index );
-		selectedInputListCtrl.DeleteString( index );
+		m_SelectedInputCtrl.DeleteString( index );
 
 		if( !( pIOEntry.empty() ) )
 		{
 			SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject( pIOEntry->m_IOId );
 
-			index = availableInputListCtrl.AddString( l_pObject->GetName() );
+			index = m_AvailableInputCtrl.AddString( l_pObject->GetName() );
 			m_AvailableItems.SetItemData( index, pIOEntry );
 		}
 	}
@@ -198,10 +198,10 @@ void SVPPQEntryDialogDigInPageClass::OnOK()
 	UpdateData( TRUE );
 	ASSERT( m_pSheet );
 
-	m_bIsTaken = ( selectedInputListCtrl.GetCount() > 0 );
+	m_bIsTaken = ( m_SelectedInputCtrl.GetCount() > 0 );
 
 	// Check selected input list ( remove deselected items )...
-	for( int k = selectedInputListCtrl.GetCount() - 1; k >= 0; -- k )
+	for( int k = m_SelectedInputCtrl.GetCount() - 1; k >= 0; -- k )
 	{
 		SVIOEntryHostStructPtr pIOEntry;
 		SVDataItemManager::iterator l_Iter = m_SelectedItems.GetItemData( k );
@@ -212,7 +212,7 @@ void SVPPQEntryDialogDigInPageClass::OnOK()
 		}
 
 		m_SelectedItems.ClearItemData( k );
-		selectedInputListCtrl.DeleteString( k );
+		m_SelectedInputCtrl.DeleteString( k );
 
 		if( !( pIOEntry.empty() ) )
 		{
@@ -222,7 +222,7 @@ void SVPPQEntryDialogDigInPageClass::OnOK()
 	}
 	
 	// And now add new items...( remainder in selected list box control )
-	for( int i = availableInputListCtrl.GetCount() - 1; i >= 0;  -- i )
+	for( int i = m_AvailableInputCtrl.GetCount() - 1; i >= 0;  -- i )
 	{
 		SVIOEntryHostStructPtr pIOEntry;
 		SVDataItemManager::iterator l_Iter = m_AvailableItems.GetItemData( i );
@@ -233,7 +233,7 @@ void SVPPQEntryDialogDigInPageClass::OnOK()
 		}
 
 		m_AvailableItems.ClearItemData( i );
-		availableInputListCtrl.DeleteString( i );
+		m_AvailableInputCtrl.DeleteString( i );
 
 		if( !( pIOEntry.empty() ) )
 		{
@@ -250,7 +250,7 @@ void SVPPQEntryDialogDigInPageClass::OnOK()
 BOOL SVPPQEntryDialogDigInPageClass::OnApply() 
 {
 	// Set is taken flag...
-	m_bIsTaken = ( selectedInputListCtrl.GetCount() > 0 );
+	m_bIsTaken = ( m_SelectedInputCtrl.GetCount() > 0 );
 	
 	return CPropertyPage::OnApply();
 }

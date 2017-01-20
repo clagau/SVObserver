@@ -35,15 +35,14 @@ enum MonitorListViewUpdateHints
 	RemoveNodeHint = 3
 };
 
-static const CString scPPQ = _T("PPQ");
-static const CString scITEM = _T("Item");
-static const CString scIsActivated =  _T("Is Activated");
-static const CString scPRODUCTITEMLIST = _T("ProductItemList");
-static const CString scREJECTCONDITIONLIST = _T("RejectConditionList");
-static const CString scFAILSTATUSLIST = _T("FailStatusList");
-static const CString scVALUES = _T("Values");
-static const CString scIMAGES = _T("Images");
-
+static const TCHAR* const cPPQ = _T("PPQ");
+static const TCHAR* const cItem = _T("Item");
+static const TCHAR* const cIsActivated =  _T("Is Activated");
+static const TCHAR* const cProductITemList = _T("ProductItemList");
+static const TCHAR* const cRejectConditionList = _T("RejectConditionList");
+static const TCHAR* const cFailStatusList = _T("FailStatusList");
+static const TCHAR* const cValues = _T("Values");
+static const TCHAR* const cImages = _T("Images");
 
 static SVString GetItemName(CListCtrl& rCtrl, int item)
 {
@@ -142,7 +141,7 @@ static int AddFailStatusList(CListCtrl& rCtrl, const MonitoredObjectList& values
 	// Insert FailStatusList tag
 	int curPos = rCtrl.InsertItem(&lvItem);
 	
-	rCtrl.SetItemText(curPos, 0, scFAILSTATUSLIST);
+	rCtrl.SetItemText(curPos, 0, cFailStatusList);
 
 	if (!bCollapse)
 	{
@@ -153,7 +152,7 @@ static int AddFailStatusList(CListCtrl& rCtrl, const MonitoredObjectList& values
 		lvItem.lParam = FailStatusValuesNode;
 
 		curPos = rCtrl.InsertItem(&lvItem);
-		rCtrl.SetItemText(curPos, 0, scVALUES);
+		rCtrl.SetItemText(curPos, 0, cValues);
 
 		if (!bValuesCollapse)
 		{
@@ -182,7 +181,7 @@ static int AddRejectConditionList(CListCtrl& rCtrl, const MonitoredObjectList& v
 	// Insert RejectConditionList tag
 	int curPos = rCtrl.InsertItem(&lvItem);
 
-	rCtrl.SetItemText(curPos, 0, scREJECTCONDITIONLIST);
+	rCtrl.SetItemText(curPos, 0, cRejectConditionList);
 
 	if (!bCollapse)
 	{
@@ -192,7 +191,7 @@ static int AddRejectConditionList(CListCtrl& rCtrl, const MonitoredObjectList& v
 		lvItem.iImage = 2 + bValuesCollapse;
 		lvItem.lParam = RejectConditionValuesNode;
 		curPos = rCtrl.InsertItem(&lvItem);
-		rCtrl.SetItemText(curPos, 0, scVALUES);
+		rCtrl.SetItemText(curPos, 0, cValues);
 
 		if (!bValuesCollapse)
 		{
@@ -220,7 +219,7 @@ static int AddProductItemList(CListCtrl& rCtrl, const MonitoredObjectList& value
 	lvItem.lParam = ProductItemListNode;
 
 	int curPos = rCtrl.InsertItem(&lvItem); 
-	rCtrl.SetItemText(curPos, 0, scPRODUCTITEMLIST);
+	rCtrl.SetItemText(curPos, 0, cProductITemList);
 
 	if (!bCollapse)
 	{
@@ -234,7 +233,7 @@ static int AddProductItemList(CListCtrl& rCtrl, const MonitoredObjectList& value
 		lvItem.lParam = ProductItemValuesNode;
 
 		curPos = rCtrl.InsertItem(&lvItem);
-		rCtrl.SetItemText(curPos, 0, scVALUES);
+		rCtrl.SetItemText(curPos, 0, cValues);
 
 		if (!bValuesCollapse)
 		{
@@ -253,7 +252,7 @@ static int AddProductItemList(CListCtrl& rCtrl, const MonitoredObjectList& value
 
 		curPos = rCtrl.InsertItem(&lvItem);
 		
-		rCtrl.SetItemText(curPos, 0, scIMAGES);
+		rCtrl.SetItemText(curPos, 0, cImages);
 
 		if (!bImagesCollapse)
 		{
@@ -491,9 +490,9 @@ int MonitorListView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 	m_rCtrl.SetImageList(&ImageList, LVSIL_SMALL);
 
 	// insert columns
-	m_rCtrl.InsertColumn(0, scITEM, LVCFMT_LEFT, -1, -1);
-	m_rCtrl.InsertColumn(1, scPPQ, LVCFMT_LEFT, -1, -1);
-	m_rCtrl.InsertColumn(2, scIsActivated, LVCFMT_LEFT, -1, -1);
+	m_rCtrl.InsertColumn(0, cItem, LVCFMT_LEFT, -1, -1);
+	m_rCtrl.InsertColumn(1, cPPQ, LVCFMT_LEFT, -1, -1);
+	m_rCtrl.InsertColumn(2, cIsActivated, LVCFMT_LEFT, -1, -1);
 	
 	m_rCtrl.SetColumnWidth(0, 500);
 	m_rCtrl.SetColumnWidth(1, 125);

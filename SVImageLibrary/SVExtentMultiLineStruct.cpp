@@ -9,10 +9,12 @@
 //* .Check In Date   : $Date:   12 Jun 2014 13:46:04  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 //Moved to precompiled header: #include <math.h>
 #include "SVExtentMultiLineStruct.h"
 #include "SVImageExtentClass.h"
+#pragma endregion Includes
 
 //////////////////////////////////////////////////////////////////////
 // Construction/Destruction
@@ -78,7 +80,7 @@ const SVExtentMultiLineStruct &SVExtentMultiLineStruct::operator=( const SVExten
 		m_Color = p_rsvValue.m_Color;
 
 		m_StringPoint = p_rsvValue.m_StringPoint;
-		m_csString = (LPCTSTR)(p_rsvValue.m_csString);
+		m_csString = p_rsvValue.m_csString;
 
 		m_svLineArray.Copy(p_rsvValue.m_svLineArray);
 	}	
@@ -566,7 +568,7 @@ HRESULT SVExtentMultiLineStruct::Initialize()
 
 	m_Color = 0;
 
-	m_csString.Empty();
+	m_csString.clear();
 
 	m_svLineArray.RemoveAll();
 

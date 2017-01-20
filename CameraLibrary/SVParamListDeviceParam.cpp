@@ -24,9 +24,9 @@ SVParamListDeviceParam::SVParamListDeviceParam(SVDeviceParamEnum typeEnum)
 	m_eDataType = DeviceDataTypeComplex;
 }
 
-SVParamListDeviceParam::SVParamListDeviceParam(const SVParamListDeviceParam& rhs) 
-: SVDeviceParam(rhs)
-, mapParameters(rhs.mapParameters)
+SVParamListDeviceParam::SVParamListDeviceParam(const SVParamListDeviceParam& rRhs) 
+: SVDeviceParam(rRhs)
+, mapParameters(rRhs.mapParameters)
 {
 	m_eDataType = DeviceDataTypeComplex;
 }

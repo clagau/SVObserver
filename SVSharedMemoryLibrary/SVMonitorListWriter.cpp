@@ -16,7 +16,7 @@
 
 namespace Seidenader { namespace SVSharedMemoryLibrary
 {
-	const std::string g_shName = "MonitorListStore.";
+	const SVString g_shName = "MonitorListStore.";
 
 	SVMonitorListWriter::SVMonitorListWriter()
 	: m_lists(nullptr)
@@ -112,7 +112,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		return l_result;
 	}
 
-	void SVMonitorListWriter::AddList(const std::string & listName, const std::string & ppqName, int rejectDepth, bool isActive )
+	void SVMonitorListWriter::AddList(const SVString & listName, const SVString & ppqName, int rejectDepth, bool isActive )
 	{
 		SVSharedConfiguration::Log("SVMonitorListWriter::AddList");
 		if (!m_lists)
@@ -127,7 +127,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		m_lists->Add(list);
 	}
 
-	void SVMonitorListWriter::FillList(const std::string & listName, listType type, const std::vector<std::string> & list)
+	void SVMonitorListWriter::FillList(const SVString & listName, listType type, const SVStringVector & list)
 	{
 		SVSharedConfiguration::Log("SVMonitorListWriter::FillList");
 		if (!m_lists)
@@ -152,7 +152,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		}
 	}
 
-	void SVMonitorListWriter::SetProductFilter(const std::string & listName, SVProductFilterEnum filter)
+	void SVMonitorListWriter::SetProductFilter(const SVString & listName, SVProductFilterEnum filter)
 	{
 		SVSharedConfiguration::Log("SVMonitorListWriter::SetProductFilter");
 		if (!m_lists)

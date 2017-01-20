@@ -26,24 +26,24 @@ public:
 	SVOPPQList();
 	virtual ~SVOPPQList();
 
-    BOOL AddPPQToList(CString sPPQName);
-    BOOL RemovePPQFromList(CString sPPQName);
+    BOOL AddPPQToList(LPCTSTR PPQName);
+    BOOL RemovePPQFromList(LPCTSTR PPQName);
 
-    BOOL AttachCameraToPPQ(CString sPPQName, CString sCamera);
-    BOOL AttachInspectToPPQ(CString sPPQName, CString sInspect);
-    BOOL AttachTriggerToPPQ(CString sPPQName, CString sTrigger);
+    BOOL AttachCameraToPPQ(LPCTSTR PPQName, LPCTSTR Camera);
+    BOOL AttachInspectToPPQ(LPCTSTR PPQName, LPCTSTR Inspect);
+    BOOL AttachTriggerToPPQ(LPCTSTR PPQName, LPCTSTR Trigger);
 
     int GetPPQListCount() const;
-    SVOPPQObjPtr GetPPQObjectByName(CString sPPQName);
+    SVOPPQObjPtr GetPPQObjectByName(LPCTSTR PPQName);
 	SVOPPQObjPtr GetPPQObjectByPosition(int iPos);
 	const SVOPPQObjPtr GetPPQObjectByPosition(int iPos) const;
-    BOOL IsPPQInList(CString sPPQName) const;
+    BOOL IsPPQInList(LPCTSTR PPQName) const;
     void ResetContent();
     
 private:
 	SVPPQList m_PPQList;
     
-	iterator FindPPQPosition(CString sPPQName);
+	iterator FindPPQPosition(LPCTSTR PPQName);
 
 };
 

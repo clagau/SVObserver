@@ -7,7 +7,7 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <boost/assign.hpp>
-#include "SVUtilityLibrary\SVString.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -65,7 +65,7 @@ public:
 	/// this function will check the existence of the drive
 	/// \returns bool – true if valid
 	//************************************
-	static bool ValidateDrive(LPCTSTR szFilePath, CString& szDrv);
+	static bool ValidateDrive(LPCTSTR szFilePath, SVString& rDrive);
 #pragma endregion Public Methods
 
 private:

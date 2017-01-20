@@ -13,6 +13,13 @@
 #include "SVGetObjectDequeByTypeVisitor.h"
 #include "SVObjectLibrary/SVObjectClass.h"
 
+#pragma region Declarations
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+#endif
+#pragma endregion Declarations
+
 SVGetObjectDequeByTypeVisitor::SVGetObjectDequeByTypeVisitor( const SVObjectTypeInfoStruct& p_rObjectInfo )
 : m_ObjectInfo( p_rObjectInfo ), m_Objects()
 {

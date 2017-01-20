@@ -12,6 +12,7 @@
 #include "stdafx.h"
 #include "SVBlobAnalyzerResultDlg.h"
 #include "SVBlobAnalyzer.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 /////////////////////////////////////////////////////////////////////////////
@@ -50,19 +51,15 @@ BOOL SVBlobAnalyzerResultDlg::OnInitDialog()
 	CDialog::OnInitDialog();
 	
 	m_ResultList.SetTabStops(80);
-	CString	strItem;
 
-	for (SVBlobFeatureEnum i = SV_AREA; 
-	i < SV_TOPOF_LIST; 
-	i = (SVBlobFeatureEnum)(i + 1))
+	for( SVBlobFeatureEnum i = SV_AREA; i < SV_TOPOF_LIST; i = (SVBlobFeatureEnum)(i + 1))
 	{	
 		if (m_pBlobAnalyzer->msvszFeaturesEnabled [i] == _T('1'))
 		{
 			double* pData = &(m_pBlobAnalyzer->m_vec2dBlobResults[i][0]);
 			
-			strItem.Format("%s\t%5.1f", m_pBlobAnalyzer->msvValue[i].GetName(),
-				pData[m_pBlobAnalyzer->m_nBlobIndex]);
-			m_ResultList.AddString(strItem.Left(100));
+			SVString Item = SvUl_SF::Format( _T("%s\t%5.1f"), m_pBlobAnalyzer->msvValue[i].GetName(), pData[m_pBlobAnalyzer->m_nBlobIndex]);
+			m_ResultList.AddString( SvUl_SF::Left(Item, 100).c_str() );
 		}
 	}
 	return TRUE;  // return TRUE unless you set the focus to a control

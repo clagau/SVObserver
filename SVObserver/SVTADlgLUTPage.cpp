@@ -19,6 +19,7 @@
 #include "SVTool.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "ObjectInterfaces/SVUserMessage.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -241,9 +242,9 @@ BOOL SVToolAdjustmentDialogLUTPageClass::OnInitDialog()
 			if( m_pLUTMode )
 			{
 				// Populate LUT Mode combo...
-				CString strEnumList;
-				m_pLUTMode->GetEnumTypes( strEnumList );
-				m_LUTModeCombo.SetEnumTypes( strEnumList );
+				SVString EnumList;
+				m_pLUTMode->GetEnumTypes( EnumList );
+				m_LUTModeCombo.SetEnumTypes( EnumList.c_str() );
 			}
 
 			// Get Lut Vector...
@@ -323,17 +324,14 @@ void SVToolAdjustmentDialogLUTPageClass::OnLUTFormulaButton()
 {
 	if( m_pLUTEquation )
 	{
-		CString l_Temp;
-		l_Temp.LoadString( IDS_FORMULA_STRING );
+		SVString Text = SvUl_SF::LoadSVString( IDS_FORMULA_STRING );
 
-		CString strCaption;
-		strCaption = m_pLUTEquation->GetName();
-		strCaption += _T( " " );
-		strCaption += l_Temp;
+		SVString Caption = m_pLUTEquation->GetName();
+		Caption += _T( " " )+ Text;
 
 		const GUID& rObjectID = m_pLUTOperator->GetUniqueObjectID();
 		SVObjectTypeInfoStruct info(SVEquationObjectType, SVLUTEquationObjectType);
-		SvOg::SVFormulaEditorSheetClass dlg( m_InspectionID, rObjectID, info, strCaption );
+		SvOg::SVFormulaEditorSheetClass dlg( m_InspectionID, rObjectID, info, Caption.c_str() );
 
 		dlg.DoModal();
 
@@ -485,11 +483,11 @@ void SVToolAdjustmentDialogLUTPageClass::refresh( bool p_bSave /*= true*/ )
 		if( nullptr != m_pLUTMode )
 		{
 			// refresh lut mode combo settings...
-			CString strEnum;
-			if( S_OK == m_pLUTMode->GetValue( strEnum ) )
+			SVString EnumString;
+			if( S_OK == m_pLUTMode->GetValue( EnumString ) )
 			{
 				// Set cur sel in combo box...
-				m_LUTModeCombo.SelectString( -1, strEnum );
+				m_LUTModeCombo.SelectString( -1, EnumString.c_str() );
 			}
 
 			// Show or hide Controls depending on LUT Mode...

@@ -66,16 +66,16 @@ SVString ArchiveToolHelper::TranslatePath(const SVString& sPath)
 	return sReturnPath;
 }
 
- bool ArchiveToolHelper::ValidateDrive(LPCTSTR szFilePath, CString& szDrv)
+ bool ArchiveToolHelper::ValidateDrive(LPCTSTR szFilePath, SVString& rDrive)
 {
 	TCHAR szDrive[_MAX_DRIVE], szDir[_MAX_DIR], szFName[_MAX_FNAME], szExt[_MAX_EXT];
 
 	//Get the drive text
 	_tsplitpath(szFilePath, szDrive, szDir, szFName, szExt);
 
-	if (szDrv)
+	if(rDrive.empty())
 	{
-		szDrv = szDrive;
+		rDrive = szDrive;
 	}
 	return ( _access( szDrive, 0 ) ) ? false : true;
 }

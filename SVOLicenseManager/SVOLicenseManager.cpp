@@ -125,8 +125,6 @@ void SVOLicenseManager::ShowLicenseManagerErrors()
 	{
 		m_hCheckEvent = ::CreateEvent( nullptr, true, false, nullptr );
 
-		CString sTmp = "The following tools are invalid because no Matrox Identification License was found";
-
 		if ( nullptr != m_hCheckEvent )
 		{
 			switch( ::WaitForSingleObject( m_hCheckEvent, 0 ) )
@@ -135,7 +133,8 @@ void SVOLicenseManager::ShowLicenseManagerErrors()
 				{
 					if( ::SetEvent( m_hCheckEvent ) )
 					{
-						SVLicenseMgrModelessDlg::Show(sTmp,m_svErrorList,m_hCheckEvent);
+						SVString Temp( _T("The following tools are invalid because no Matrox Identification License was found") );
+						SVLicenseMgrModelessDlg::Show( Temp, m_svErrorList, m_hCheckEvent );
 					}
 				}
 				case WAIT_OBJECT_0:

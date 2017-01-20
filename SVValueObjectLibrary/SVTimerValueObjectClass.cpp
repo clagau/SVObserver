@@ -15,16 +15,12 @@
 #include "SVObjectLibrary/SVClsids.h"
 #pragma endregion Includes
 
-namespace	// only for this file
-{
-	const CString DEFAULT_TAG_SAVE(_T(".Default"));
-	const CString BUCKET_TAG_SAVE(_T(".Array"));	// for backwards compatibility
-	const CString ARRAY_TAG_SAVE(_T(".Array_Elements"));	// new style; one bucket, all array values
-
-	const CString DEFAULT_TAG_LOAD(_T("Default"));
-	const CString BUCKET_TAG_LOAD(_T("Array"));	// for backwards compatibility
-	const CString ARRAY_TAG_LOAD(_T("Array_Elements"));	// new style; one bucket, all array values
-}	// end file scope namespace
+#pragma region Declarations
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+#endif
+#pragma endregion Declarations
 
 SV_IMPLEMENT_CLASS(SVTimerValueObjectClass, SVTimerValueObjectClassGuid);
 
@@ -62,14 +58,14 @@ BOOL SVTimerValueObjectClass::Stop(long lIndex)
 	return S_OK == SetValue(lIndex, l_Value);
 }
 
-HRESULT SVTimerValueObjectClass::GetValueAt(int iBucket, int iIndex, CString& rstrValue) const
+HRESULT SVTimerValueObjectClass::GetValueAt(int iBucket, int iIndex, SVString& rValue) const
 {
 	__int64 value=0;
 
 	HRESULT hr = base::GetValueAt(iBucket, iIndex, value);
 	//if ( S_OK == hr ) //@WARNING - log an error ?
 	{
-		rstrValue.Format("%I64u (µs)", value);
+		rValue = SvUl_SF::Format(_T("%I64u (µs)"), value);
 	}
 	return hr;
 }

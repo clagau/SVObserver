@@ -13,6 +13,7 @@
 //Moved to precompiled header: #include <boost/assign/list_of.hpp> 
 #include "SVCustomFilterDlg.h"
 #include "SVObjectLibrary/SVClsids.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -186,16 +187,16 @@ namespace Seidenader
 	{
 		CDialog::OnInitDialog();
 
-		CString strTemp;
+		SVString Temp;
 
 		m_Values.Init();
 		m_lKernelWidth = m_Values.Get<long>(WidthTag);
-		strTemp.Format( "%d", m_lKernelWidth );
-		m_ctlKernelWidth.SelectString( -1, strTemp );
+		Temp = SvUl_SF::Format( "%d", m_lKernelWidth );
+		m_ctlKernelWidth.SelectString( -1, Temp.c_str() );
 
 		m_lKernelHeight = m_Values.Get<long>(HeidghtTag);
-		strTemp.Format( "%d", m_lKernelHeight );
-		m_ctlKernelHeight.SelectString( -1, strTemp );
+		Temp = SvUl_SF::Format( "%d", m_lKernelHeight );
+		m_ctlKernelHeight.SelectString( -1, Temp.c_str() );
 
 		EnableCells();
 
@@ -246,8 +247,6 @@ namespace Seidenader
 
 	void SVCustomFilterDlg::EnableCells()
 	{
-		CString strName;
-
 		for( long j = 0; j < 7; j++ )
 		{
 			for( long k = 0; k < 7; k++ )
@@ -256,14 +255,14 @@ namespace Seidenader
 					k - ( ( 7 - m_lKernelHeight ) / 2 ) < m_lKernelHeight && k - ( ( 7 - m_lKernelHeight ) / 2 ) >= 0 )
 
 				{
-					strName.Format( _T( "Cell %d" ), ( k - ( ( 7 - m_lKernelHeight ) / 2 ) ) * m_lKernelWidth + ( j - ( ( 7 - m_lKernelWidth  ) / 2 ) ) + 1 );
-					GetDlgItem( IDC_STATIC_CELL1 + k * 7 + j )->SetWindowText( strName );
+					SVString Name;
+					Name = SvUl_SF::Format( _T( "Cell %d" ), ( k - ( ( 7 - m_lKernelHeight ) / 2 ) ) * m_lKernelWidth + ( j - ( ( 7 - m_lKernelWidth  ) / 2 ) ) + 1 );
+					GetDlgItem( IDC_STATIC_CELL1 + k * 7 + j )->SetWindowText( Name.c_str() );
 					GetDlgItem( IDC_CELL1 + k * 7 + j )->EnableWindow( TRUE );
 				}// end if
 				else
 				{
-					strName.Format( _T( "N/A" ) );
-					GetDlgItem( IDC_STATIC_CELL1 + k * 7 + j )->SetWindowText( strName );
+					GetDlgItem( IDC_STATIC_CELL1 + k * 7 + j )->SetWindowText( _T( "N/A" ) );
 					GetDlgItem( IDC_CELL1 + k * 7 + j )->EnableWindow( FALSE );
 				}// end else
 

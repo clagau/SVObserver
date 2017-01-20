@@ -600,8 +600,6 @@ void SVUserMaskOperatorClass::Persist( SVObjectWriter& rWriter )
 {
 	SVTaskObjectClass::Persist(rWriter);
 	
-	CString tmp;
-
 	// Add Script of SVGraphixClass as a hex string
 	// Prepare Archive...
 	CMemFile maskStorage;
@@ -624,16 +622,15 @@ void SVUserMaskOperatorClass::Persist( SVObjectWriter& rWriter )
 	// get the data
 	maskStorage.Read( pBuff, len );
 
-	CString hexMaskDataStr;
+	SVString hexMaskDataStr;
 
 	// Convert to hex String
 	::SVConvertToHexString( len, pBuff, hexMaskDataStr );
 
 	delete [] pBuff;
 
-	tmp.Format( "%s", hexMaskDataStr );
 	_variant_t value;
-	value.SetString(tmp);
+	value.SetString(hexMaskDataStr.c_str());
 	rWriter.WriteAttribute(scMaskDataTag, value);
 	value.Clear();
 }
@@ -697,26 +694,24 @@ HRESULT SVUserMaskOperatorClass::SetObjectValue( SVObjectAttributeClass* PDataOb
 	HRESULT hr = S_FALSE;
 	BOOL bOk = FALSE;
 	
-	SvCl::SVObjectCStringArrayClass svCStringArray;
+	SvCl::SVObjectSVStringArrayClass StringArray;
 	SvCl::SVObjectLongArrayClass svLongArray;
 
-	if ( ( bOk = PDataObject->GetAttributeData( "MaskOperator", svLongArray ) ) )
+	if ( ( bOk = PDataObject->GetAttributeData( _T("MaskOperator"), svLongArray ) ) )
 	{
 		for( int i = 0; i < svLongArray.GetSize(); i++ )
 		{
 			m_Data.evoCurrentMaskOperator.SetValue( 1, svLongArray[i] );
 		}
 	}
-	else if ( ( bOk = PDataObject->GetAttributeData( "MaskData", svCStringArray ) ) )
+	else if ( ( bOk = PDataObject->GetAttributeData( _T("MaskData"), StringArray ) ) )
 	{
 		DWORD len;
 		LPBYTE pBuff;
-		for( int i = 0; i < svCStringArray.GetSize(); i++ )
+		for( int i = 0; i < StringArray.GetSize(); i++ )
 		{
-			CString hexMaskDataStr = svCStringArray[i];
-			
 			// Get the data back to binary
-			if( ::SVConvertFromHexString( len, &pBuff, hexMaskDataStr ) )
+			if( ::SVConvertFromHexString( len, &pBuff, StringArray[i] ) )
 			{
 				CMemFile maskStorage;
 			

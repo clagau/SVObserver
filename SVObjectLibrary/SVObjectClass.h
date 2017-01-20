@@ -16,6 +16,7 @@
 
 #include "ObjectInterfaces/IObjectClass.h"
 #include "SVUtilityLibrary/SVGUID.h"
+#include "SVUtilityLibrary/SVString.h"
 
 #include "SVObjectInfoStruct.h"
 #include "SVObjectLibrary.h"
@@ -56,7 +57,7 @@ public:
 	friend class SVConfigurationObject; // @TODO - This needs to go - For access to m_outObjectInfo to assignUnique GUIDs on loading
 
 	SVObjectClass();
-	SVObjectClass( LPCSTR ObjectName );
+	SVObjectClass( LPCTSTR ObjectName );
 	SVObjectClass( SVObjectClass* pOwner, int StringResourceID );
 
 	virtual ~SVObjectClass();
@@ -148,12 +149,8 @@ public:
 	int GetNameLength() const;
 	LPCTSTR GetObjectName() const;
 	int GetObjectNameLength() const;
-	CString GetCompleteObjectName() const;
-	void GetCompleteObjectName( CString& rString ) const;
 
-	CString GetCompleteObjectNameToObjectType( LPCSTR CompleteName = nullptr, SVObjectTypeEnum objectTypeToInclude = SVToolSetObjectType ) const;
-	LPTSTR GetCompleteObjectName2( LPCTSTR CompleteName = nullptr ) const;
-	int GetCompleteObjectNameLength( int Length ) const;
+	SVString GetCompleteObjectNameToObjectType( LPCTSTR CompleteName = nullptr, SVObjectTypeEnum objectTypeToInclude = SVToolSetObjectType ) const;
 	SVObjectClass* GetOwner() const;
 	SVOutObjectInfoStruct& GetObjectOutputInfo();
 	
@@ -233,8 +230,6 @@ protected:
 
 	virtual SVObjectClass* UpdateObject( const GUID& rFriendGuid, SVObjectClass* pObject, SVObjectClass* pNewOwner );
 
-	void buildCompleteObjectName( LPTSTR CompleteName, int MaxLength );
-
 	virtual HRESULT RemoveObjectConnection( const GUID& rObjectID );
 
 	/// Call method createAllObjects for the child object with the right create struct.
@@ -277,16 +272,12 @@ protected:
 	//Output table
 	SVPublicAttributeEntryStruct m_publicAttribute;
 
-	//user given name
-	CString m_Name;
-
 private:
 	void init();
 
-	//String resource ID, of NOT user changeable name.
-	int m_resourceID;
-	//NOT user changeable name
-	CString m_ObjectName;
+	int m_resourceID;		//String resource ID, of NOT user changeable name.
+	SVString m_ObjectName;	//NOT user changeable name
+	SVString m_Name;			//user given name
 };
 
 #pragma region Declarations

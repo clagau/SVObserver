@@ -45,7 +45,7 @@
 //! Precompiled headers section
 //************************************
 #pragma region Precompiled Headers
-#include <afxwin.h>
+#include <Windows.h>
 
 #include <assert.h>
 #include <algorithm>

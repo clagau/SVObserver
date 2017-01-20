@@ -16,6 +16,7 @@
 #include "SVValueObjectLibrary/SVValueObject.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #include "SVXMLLibrary\SVObjectXMLWriter.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 class SVRemoteOutputObject : public SVObjectClass

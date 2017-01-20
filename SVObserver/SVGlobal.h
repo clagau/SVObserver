@@ -16,11 +16,11 @@
 //Moved to precompiled header: #include <vector>
 #include "SVMessage/SVMessage.h"
 #include "SVMatroxLibrary\SVMatroxEnums.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
-typedef std::pair<CString, CString> StrStrPair;
-typedef std::map<int, StrStrPair > IntStrPairMap;
-typedef std::vector<StrStrPair> StringPairVect;
+typedef std::map<int, SVStringPair > IntStrPairMap;
+typedef std::vector<SVStringPair> StringPairVect;
 
 class SVObserverApp;
 class SVDataManager;
@@ -120,13 +120,6 @@ enum SVGetPathInfo
 ////////////////////////////////////////////////////////////////////////////////
 //	Global Application Defines
 ////////////////////////////////////////////////////////////////////////////////
-
-// Predefined TCHAR String Constants...
-const CString SV_TSTR_COMMA                 ( _T( ", " ) );
-const CString SV_TSTR_DOLLAR                ( _T( "$" ) );
-const CString SV_TSTR_SPACE                 ( _T( " " ) );
-const CString SV_TSTR_NEWLINE               ( _T( "\n" ) );
-const CString SV_TSTR_TAB                   ( _T( "\t" ) );
 
 #pragma warning(disable:4308)
 
@@ -229,28 +222,28 @@ double SVGetDataTypeRange( DWORD DataType );
 // -----------------------------------------------------------------------------
 // .Description : Uses SVGetPathInfo enumeration...
 ////////////////////////////////////////////////////////////////////////////////
-BOOL SVGetPathInformation( CString& RStrOutput, LPCTSTR TStrFileInputPath, DWORD DwMask );
+BOOL SVGetPathInformation( SVString& rOutput, LPCTSTR TStrFileInputPath, DWORD DwMask );
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : SVGetVersionString
 // -----------------------------------------------------------------------------
 // .Description : Use this function to convert an SVObserver Version to a string.
 ////////////////////////////////////////////////////////////////////////////////
-BOOL SVGetVersionString( CString& RSTRCurrentVersion, DWORD dwVersion );
+BOOL SVGetVersionString( SVString& rCurrentVersion, DWORD dwVersion );
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : SVConvertToHexString
 // -----------------------------------------------------------------------------
 // .Description : Convert hex binary data to a hex Dump String
 ////////////////////////////////////////////////////////////////////////////////
-void SVConvertToHexString( DWORD len, LPBYTE buff, CString& hexString );
+void SVConvertToHexString( DWORD len, LPBYTE buff, SVString& rHexString );
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : SVConvertFromHexString
 // -----------------------------------------------------------------------------
 // .Description : Convert hex Dump String to hex binary data
 ////////////////////////////////////////////////////////////////////////////////
-BOOL SVConvertFromHexString( DWORD &len, LPBYTE *buff, CString& hexString );
+BOOL SVConvertFromHexString( DWORD &len, LPBYTE *buff, const SVString& rHexString );
 
 CMenu* SVFindMenuByCommand( CMenu *pMenu, int nID, BOOL bIncludeSubMenues, int& rMenuPos );
 CMenu* SVFindMenuByName( CMenu *pMenu, LPCTSTR szMenuString, BOOL bIncludeSubMenues, int& rMenuPos );

@@ -15,6 +15,7 @@
 #include "ValuesAccessor.h"
 #include "GuiController.h"
 #include "ImageController.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 namespace Seidenader

@@ -13,15 +13,21 @@
 #include "SVDLLToolDefinitionStructs.h"
 
 
-InputValueDefinitionStruct::InputValueDefinitionStruct( )
+InputValueDefinitionStruct::InputValueDefinitionStruct( ) :
+  m_VT( VT_EMPTY)
+, m_bDisplayName( nullptr )
+, m_bGroup( nullptr )
+, m_bHelpText( nullptr )
 {
-	Init();
 }
 
-InputValueDefinitionStruct::InputValueDefinitionStruct(const InputValueDefinitionStruct& rhs )
+InputValueDefinitionStruct::InputValueDefinitionStruct(const InputValueDefinitionStruct& rRhs ) :
+  m_VT( VT_EMPTY)
+, m_bDisplayName( nullptr )
+, m_bGroup( nullptr )
+, m_bHelpText( nullptr )
 {
-	Init();
-	*this = rhs;
+	*this = rRhs;
 }
 
 InputValueDefinitionStruct::~InputValueDefinitionStruct( )
@@ -29,51 +35,51 @@ InputValueDefinitionStruct::~InputValueDefinitionStruct( )
 	Clear();
 }
 
-const InputValueDefinitionStruct& InputValueDefinitionStruct::operator = (const InputValueDefinitionStruct& rhs )
+const InputValueDefinitionStruct& InputValueDefinitionStruct::operator = (const InputValueDefinitionStruct& rRhs )
 {
 
-	if( this != &rhs )
+	if( this != &rRhs )
 	{
 		Clear();
-		lVT  = rhs.lVT;
-		vDefaultValue = rhs.vDefaultValue;
-		bstrDisplayName = CString(rhs.bstrDisplayName).AllocSysString();
-		bstrHelpText = CString (rhs.bstrHelpText).AllocSysString();
-		bstrGroup = CString (rhs.bstrGroup).AllocSysString();
+		m_VT  = rRhs.m_VT;
+		m_DefaultValue = rRhs.m_DefaultValue;
+		m_bDisplayName = _bstr_t(rRhs.m_bDisplayName).copy();
+		m_bGroup = _bstr_t(rRhs.m_bGroup).copy();
+		m_bHelpText = _bstr_t(rRhs.m_bHelpText).copy();
 	}
 	return *this;
 }
 
 void InputValueDefinitionStruct::Clear( )
 {
-	lVT  = VT_EMPTY;
-	vDefaultValue.Clear();
-	if(bstrDisplayName)
-		::SysFreeString(bstrDisplayName);
-	if(bstrHelpText )
-		::SysFreeString(bstrHelpText);
-	if(bstrGroup )
-		::SysFreeString(bstrGroup);
-	Init();
+	m_VT  = VT_EMPTY;
+	m_DefaultValue.Clear();
+	if( nullptr != m_bDisplayName )
+	{
+		::SysFreeString( m_bDisplayName );
+		m_bDisplayName = nullptr;
+	}
+	if( nullptr != m_bGroup )
+	{
+		::SysFreeString( m_bGroup );
+		m_bGroup = nullptr;
+	}
+	if( nullptr != m_bHelpText )
+	{
+		::SysFreeString( m_bHelpText );
+		m_bHelpText = nullptr;
+	}
 }
 
-void InputValueDefinitionStruct::Init( )
-{
-	lVT = VT_EMPTY;
-	bstrDisplayName = nullptr;
-	bstrHelpText = nullptr;
-	bstrGroup = nullptr;
-}
-
-bool InputValueDefinitionStruct::operator == (const InputValueDefinitionStruct& rhs)
+bool InputValueDefinitionStruct::operator == (const InputValueDefinitionStruct& rRhs)
 {
 	bool bEqual = true;
 	
-	bEqual = bEqual && (lVT == rhs.lVT);
-	bEqual = bEqual && (0 == wcscmp( bstrDisplayName, rhs.bstrDisplayName ));
-	bEqual = bEqual && (0 == wcscmp( bstrHelpText, rhs.bstrHelpText ));
-	bEqual = bEqual && (0 == wcscmp( bstrGroup, rhs.bstrGroup ));
-	bEqual = bEqual && (vDefaultValue == rhs.vDefaultValue);
+	bEqual = bEqual && ( m_VT == rRhs.m_VT );
+	bEqual = bEqual && ( _bstr_t(m_bDisplayName) == _bstr_t(rRhs.m_bDisplayName) );
+	bEqual = bEqual && ( _bstr_t(m_bGroup) == _bstr_t(rRhs.m_bGroup) );
+	bEqual = bEqual && ( _bstr_t(m_bHelpText) == _bstr_t(rRhs.m_bHelpText) );
+	bEqual = bEqual && ( _bstr_t(m_DefaultValue) == _bstr_t(rRhs.m_DefaultValue) );
 
 	return bEqual;
 }
@@ -81,16 +87,17 @@ bool InputValueDefinitionStruct::operator == (const InputValueDefinitionStruct& 
 
 
 // ResultValueDefinitionStruct
-ResultValueDefinitionStruct::ResultValueDefinitionStruct( )
+ResultValueDefinitionStruct::ResultValueDefinitionStruct( ) :
+  m_VT( VT_EMPTY)
+, m_bDisplayName( nullptr )
 {
-	Init();
 }
 
-
-ResultValueDefinitionStruct::ResultValueDefinitionStruct(const ResultValueDefinitionStruct& rhs )
+ResultValueDefinitionStruct::ResultValueDefinitionStruct(const ResultValueDefinitionStruct& rRhs ) :
+  m_VT( VT_EMPTY)
+, m_bDisplayName( nullptr )
 {
-	Init();
-	*this = rhs;
+	*this = rRhs;
 }
 
 ResultValueDefinitionStruct::~ResultValueDefinitionStruct( )
@@ -98,29 +105,25 @@ ResultValueDefinitionStruct::~ResultValueDefinitionStruct( )
 	Clear();
 }
 
-const ResultValueDefinitionStruct& ResultValueDefinitionStruct::operator = (const ResultValueDefinitionStruct& rhs )
+const ResultValueDefinitionStruct& ResultValueDefinitionStruct::operator = (const ResultValueDefinitionStruct& rRhs )
 {
 
-	if( this != &rhs )
+	if( this != &rRhs )
 	{
 		Clear();
-		lVT  = rhs.lVT;
-		bstrDisplayName = CString(rhs.bstrDisplayName).AllocSysString();
+		m_VT  = rRhs.m_VT;
+		m_bDisplayName = _bstr_t(rRhs.m_bDisplayName).copy();
 	}
 	return *this;
 }
 
 void ResultValueDefinitionStruct::Clear( )
 {
-	lVT  = VT_EMPTY;
-	if(bstrDisplayName)
-		::SysFreeString(bstrDisplayName);
-
-}
-
-void ResultValueDefinitionStruct::Init( )
-{
-	lVT = VT_EMPTY;
-	bstrDisplayName = nullptr;
+	m_VT  = VT_EMPTY;
+	if( nullptr != m_bDisplayName )
+	{
+		::SysFreeString( m_bDisplayName );
+		m_bDisplayName = nullptr;
+	}
 }
 

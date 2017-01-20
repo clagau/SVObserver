@@ -12,7 +12,7 @@
 #include "SVToolGrouping.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
-#include "SVLibrary/StringEscape.h"
+#include "SVUtilityLibrary/SVStringConversions.h"
 #include "SVMessage/SVMessage.h"
 
 #pragma endregion Includes
@@ -510,7 +510,7 @@ HRESULT SVToolGrouping::SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHan
 				// Read the Group data
 				if (SVNavigateTree::GetItem(rTree, CTAG_STARTGROUP, htiSubChild, svValue))
 				{
-					SVString groupName = static_cast<LPCTSTR>(static_cast<_bstr_t>(svValue));
+					SVString groupName = SvUl_SF::createSVString( svValue );
 					SVString endGroupName;
 					SVString startGroupComment;
 					SVString endGroupComment;
@@ -521,18 +521,16 @@ HRESULT SVToolGrouping::SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHan
 
 						if (SVNavigateTree::GetItem(rTree, CTAG_STARTGROUP_COMMENT, htiSubChild, svValue))
 						{
-							CString tmp(static_cast<LPCTSTR>(static_cast<_bstr_t>(svValue)));
-							SvLib::RemoveEscapedSpecialCharacters(tmp, true);
-							startGroupComment = static_cast<LPCTSTR>(tmp);
+							startGroupComment = SvUl_SF::createSVString( svValue );
+							SvUl::RemoveEscapedSpecialCharacters(startGroupComment, true);
 						}
 						if (SVNavigateTree::GetItem(rTree, CTAG_ENDGROUP, htiSubChild, svValue))
 						{
-							endGroupName = static_cast<LPCTSTR>(static_cast<_bstr_t>(svValue));
+							endGroupName = SvUl_SF::createSVString( svValue );
 							if (SVNavigateTree::GetItem(rTree, CTAG_ENDGROUP_COMMENT, htiSubChild, svValue))
 							{
-								CString tmp(static_cast<LPCTSTR>(static_cast<_bstr_t>(svValue)));
-								SvLib::RemoveEscapedSpecialCharacters(tmp, true);
-								endGroupComment = static_cast<LPCTSTR>(tmp);
+								endGroupComment = SvUl_SF::createSVString( svValue );
+								SvUl::RemoveEscapedSpecialCharacters(endGroupComment, true);
 							}
 						}
 						groupings.m_list.insert(groupings.m_list.end(), std::make_pair(groupName, ToolGroupData(ToolGroupData::StartOfGroup, groupName, endGroupName, bCollapsed)));
@@ -648,10 +646,9 @@ bool SVToolGrouping::GetParameters(SVObjectWriter& rWriter)
 				_variant_t value(name);
 				rWriter.WriteAttribute(CTAG_STARTGROUP, value);
 
-				CString tmp(it->second.m_comment.c_str());
-				SvLib::AddEscapeSpecialCharacters(tmp, true);
-				_bstr_t comment(tmp);
-				_variant_t commentValue(comment);
+				SVString tmp( it->second.m_comment );
+				SvUl::AddEscapeSpecialCharacters(tmp, true);
+				_variant_t commentValue( tmp.c_str() );
 				rWriter.WriteAttribute(CTAG_STARTGROUP_COMMENT, commentValue);
 				
 				_variant_t collapsedValue(it->second.m_bCollapsed);
@@ -669,10 +666,9 @@ bool SVToolGrouping::GetParameters(SVObjectWriter& rWriter)
 				_variant_t value(name);
 				rWriter.WriteAttribute(CTAG_ENDGROUP, value);
 
-				CString tmp(it->second.m_comment.c_str());
-				SvLib::AddEscapeSpecialCharacters(tmp, true);
-				_bstr_t comment(tmp);
-				_variant_t commentValue(comment);
+				SVString tmp( it->second.m_comment );
+				SvUl::AddEscapeSpecialCharacters(tmp, true);
+				_variant_t commentValue( tmp.c_str() );
 				rWriter.WriteAttribute(CTAG_ENDGROUP_COMMENT, commentValue);
 
 				if (bGroupActive)

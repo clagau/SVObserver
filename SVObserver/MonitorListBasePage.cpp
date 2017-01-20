@@ -35,7 +35,7 @@ BEGIN_MESSAGE_MAP(MonitorListBasePage, CPropertyPage)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-MonitorListBasePage::MonitorListBasePage(const SvUl::NameSelectionList& rList, MonitorListSheet* pParent, const CString& szCaption, int id)
+MonitorListBasePage::MonitorListBasePage(const SvUl::NameSelectionList& rList, MonitorListSheet* pParent, LPCTSTR Caption, int id)
 : CPropertyPage(id)
 , m_pSheet(pParent)
 , m_nameList(rList)
@@ -43,7 +43,7 @@ MonitorListBasePage::MonitorListBasePage(const SvUl::NameSelectionList& rList, M
 {
 	//{{AFX_DATA_INIT(MonitorListBasePage)
 	//}}AFX_DATA_INIT
-	m_strCaption = szCaption;
+	m_strCaption = Caption;
 	m_psp.pszTitle = m_strCaption;
 	m_psp.dwFlags |= PSP_USETITLE;
 }
@@ -67,7 +67,6 @@ void MonitorListBasePage::ShowSelectionText()
 	int index = m_lbSelected.GetCurSel();
 	if (index != LB_ERR)
 	{
-		CString name;
 		m_lbSelected.GetText(index, m_selectedItemText);
 		UpdateData(false);
 	}

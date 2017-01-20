@@ -13,7 +13,6 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <deque>
-//Moved to precompiled header: #include <string>
 #include "SVString.h"
 #pragma endregion Includes
 
@@ -21,19 +20,19 @@ class SVDottedName
 {
 public:
 #pragma region Declarations
-	typedef std::deque<std::string> NameList;
+	typedef std::deque<SVString> NameList;
 	typedef NameList::const_iterator const_iterator;
 	typedef NameList::const_reverse_iterator const_reverse_iterator;
 #pragma endregion Declarations
 
 #pragma region Constructor
-	SVDottedName(const std::string& name);
+	SVDottedName(const SVString& name);
 	~SVDottedName();
 #pragma endregion Constructor
 
 #pragma region Public Methods
 	size_t size() const;
-	const std::string& operator[](size_t index) const;
+	const SVString& operator[](size_t index) const;
 	const_iterator begin() const;
 	const_iterator end() const;
 	const_reverse_iterator rbegin() const;
@@ -42,7 +41,7 @@ public:
 
 #pragma region Member Variables
 private:
-	std::string m_name;
+	SVString m_name;
 	NameList m_nameTokens;
 #pragma endregion Member Variables
 };

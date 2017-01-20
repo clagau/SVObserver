@@ -73,12 +73,11 @@
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>SVStatusLibrary.lib;SVTimerLibrary.lib;SVUtilityLibrary.lib;Advapi32.lib;TriggerHandling.lib;Nafxcwd.lib;Libcmtd.lib;Rpcrt4.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SVStatusLibrary.lib;SVTimerLibrary.lib;SVUtilityLibrary.lib;Advapi32.lib;TriggerHandling.lib;Rpcrt4.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <ModuleDefinitionFile>.\SVLptIO.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>.\Lpt\x64;$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <IgnoreSpecificDefaultLibraries>Nafxcwd.lib;Libcmtd.lib;</IgnoreSpecificDefaultLibraries>
     </Link>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
@@ -117,7 +116,7 @@ if not exist "$(OutDir)SVLpt.dll" copy "$(MSBuildProjectDirectory)\Lpt\x64\SVLpt
       <Culture>0x0409</Culture>
     </ResourceCompile>
     <Link>
-      <AdditionalDependencies>SVStatusLibrary.lib;SVTimerLibrary.lib;SVUtilityLibrary.lib;TriggerHandling.lib;Nafxcw.lib;Libcmt.lib;Advapi32.lib;Nafxcw.lib;Libcmt.lib;Rpcrt4.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>SVStatusLibrary.lib;SVTimerLibrary.lib;SVUtilityLibrary.lib;TriggerHandling.lib;Advapi32.lib;Rpcrt4.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <SuppressStartupBanner>true</SuppressStartupBanner>
       <ModuleDefinitionFile>.\SVLptIO.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -129,7 +128,6 @@ if not exist "$(OutDir)SVLpt.dll" copy "$(MSBuildProjectDirectory)\Lpt\x64\SVLpt
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
       <AdditionalLibraryDirectories>.\Lpt\x64;$(OutDir);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <IgnoreSpecificDefaultLibraries>Nafxcw.lib;Libcmt.lib;</IgnoreSpecificDefaultLibraries>
     </Link>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>

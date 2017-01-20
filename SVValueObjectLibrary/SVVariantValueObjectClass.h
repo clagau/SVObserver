@@ -12,6 +12,7 @@
 
 #pragma region Includes
 #include "SVOResource/resource.h"
+#include "SVUtilityLibrary/SVString.h"
 #include "SVValueObjectClassImpl.h"
 #include "SVValueObjectGlobals.h"
 #pragma endregion Includes
@@ -41,12 +42,12 @@ public:
 	IMPLEMENT_VALUE_OBJECT_GET_SET_NO_T()
 
 protected:
-	virtual HRESULT SetValueAt( int iBucket, int iIndex, const CString& value );
-	virtual HRESULT SetValueAt( int iBucket, int iIndex, BOOL value );
-	virtual HRESULT SetValueAt( int iBucket, int iIndex, BYTE value );
-	virtual HRESULT SetValueAt( int iBucket, int iIndex, DWORD value );
-	virtual HRESULT SetValueAt( int iBucket, int iIndex, long value );
-	virtual HRESULT SetValueAt( int iBucket, int iIndex, double value );
+	virtual HRESULT SetValueAt( int iBucket, int iIndex, const SVString& rValue );
+	virtual HRESULT SetValueAt( int iBucket, int iIndex, BOOL Value );
+	virtual HRESULT SetValueAt( int iBucket, int iIndex, BYTE Value );
+	virtual HRESULT SetValueAt( int iBucket, int iIndex, DWORD Value );
+	virtual HRESULT SetValueAt( int iBucket, int iIndex, long Value );
+	virtual HRESULT SetValueAt( int iBucket, int iIndex, double Value );
 	virtual HRESULT SetValueAt( int iBucket, int iIndex, const VARIANT& rValue );
 
 	virtual HRESULT GetValueAt( int iBucket, int iIndex, VARIANT& rValue ) const;
@@ -55,9 +56,9 @@ protected:
 	virtual HRESULT GetValueAt( int iBucket, int iIndex, long& rValue ) const;
 	virtual HRESULT GetValueAt( int iBucket, int iIndex, BOOL& rValue ) const;
 	virtual HRESULT GetValueAt( int iBucket, int iIndex, double& rValue ) const;
-	virtual HRESULT GetValueAt( int iBucket, int iIndex, CString& rValue ) const;
+	virtual HRESULT GetValueAt( int iBucket, int iIndex, SVString& rValue ) const;
 
-	static CString ToString(const VARIANT& rvt, bool bScript = false );
+	static SVString ToString(const VARIANT& rvt, bool bScript = false );
 
 private:
 	void LocalInitialize();

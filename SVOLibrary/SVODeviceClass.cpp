@@ -28,7 +28,7 @@ SVODeviceClass::SVODeviceClass()
 }
 
 SVODeviceClass::SVODeviceClass(LPCTSTR deviceName)
-: mDeviceName(deviceName), 
+: m_DeviceName(deviceName), 
 	mbIsCreated(false),  
 	mbIsValid(false), 
 	mbIsStarted(false),
@@ -316,7 +316,7 @@ HRESULT SVODeviceClass::Start()
 
 	if ( mbIsValid )
 	{
-		hrOk = m_Thread.Create( &SVODeviceClass::APCProc, SVProcessFunctorImpl( this ), mDeviceName.c_str(), SVAffinityAcq );
+		hrOk = m_Thread.Create( &SVODeviceClass::APCProc, SVProcessFunctorImpl( this ), m_DeviceName.c_str(), SVAffinityAcq );
 
 		if( S_OK == hrOk )
 		{
@@ -469,12 +469,12 @@ HRESULT SVODeviceClass::Notify( SVOResponseClass& p_rResponse )
 
 LPCTSTR SVODeviceClass::GetDeviceName() const
 {
-	return mDeviceName.c_str(); 
+	return m_DeviceName.c_str(); 
 }
 
 void SVODeviceClass::SetDeviceName( LPCTSTR p_szName )
 {
-	mDeviceName = p_szName;
+	m_DeviceName = p_szName;
 }
 
 /*

@@ -9,14 +9,14 @@
 //* .Check In Date   : $Date:   23 Apr 2013 13:14:54  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
-
 #include "SVOTriggerObj.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #undef THIS_FILE
 static char THIS_FILE[]=__FILE__;
-#define new DEBUG_NEW
 #endif
 
 namespace Seidenader { namespace TriggerInformation {
@@ -67,7 +67,7 @@ namespace Seidenader { namespace TriggerInformation {
 
 	bool SVOTriggerObj::IsAcquisitionTrigger() const
 	{
-		bool bRet = (m_sTriggerDisplayName.find(SvTh::CameraTriggerName) == 0);
+		bool bRet = ( 0 ==m_sTriggerDisplayName.find(SvTh::CameraTriggerName) );
 		return bRet;
 	}
 

@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   30 May 2014 10:47:10  $
 //******************************************************************************
 
+#pragma region Includes 
 #include "stdafx.h"
 //Moved to precompiled header: #include <winuser.h>
 #include "resource.h"
@@ -16,6 +17,8 @@
 #include "SVAccessClass.h"
 #include "SVSecuritySetupSheet.h"
 #include "SVSecurity.h"
+#include "SVUtilityLibrary\SVString.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -39,7 +42,7 @@ SVSecuritySetupPage::SVSecuritySetupPage(UINT nIDTemplate, UINT nIDCaption)
 	m_bForcePrompt = FALSE;
 	m_bLogOnMode = FALSE;
 	m_lTimeout = 0;
-	m_strGroup = _T("");
+	m_Group = _T("");
 	//}}AFX_DATA_INIT
 
 }
@@ -57,7 +60,7 @@ void SVSecuritySetupPage::DoDataExchange(CDataExchange* pDX)
 	DDX_Check(pDX, IDC_FORCE_PROMPT, m_bForcePrompt);
 	DDX_Check(pDX, IDC_LOG_MODE, m_bLogOnMode);
 	DDX_Text(pDX, IDC_TIMEOUT_MINUTES, m_lTimeout);
-	DDX_Text(pDX, IDC_GROUP_EDIT, m_strGroup);
+	DDX_Text(pDX, IDC_GROUP_EDIT, m_Group);
 	//}}AFX_DATA_MAP
 }
 
@@ -114,29 +117,21 @@ void SVSecuritySetupPage::BuildTree( long& p_NodeIndex, HTREEITEM hParent, bool 
 
 	while( p_NodeIndex < static_cast< long >( svStore.m_aNodes.size() ) )
 	{
-		TV_INSERTSTRUCT     curTreeItem;
-
 		// Get the name from tree
-		CString strName( svStore.m_aNodes[ p_NodeIndex ].m_strName );
-		bool l_HasData( svStore.m_aNodes[ p_NodeIndex ].m_bHasData );
+		SVString Name( svStore.m_aNodes[ p_NodeIndex ].m_Name );
+		bool HasData( svStore.m_aNodes[ p_NodeIndex ].m_bHasData );
 
-		if( ! p_Root && ! l_HasData )
+		if( ! p_Root && ! HasData )
 		{
 			break;
 		}
 
-		curTreeItem.hParent = hParent;
-		curTreeItem.hInsertAfter = TVI_LAST;
-		curTreeItem.item.iImage = 0;
-		curTreeItem.item.iSelectedImage = 0;
-		curTreeItem.item.pszText =  ( LPTSTR ) strName.operator LPCTSTR();  // Node Name
-		curTreeItem.item.mask = TVIF_TEXT;
-		hItem = m_AccessPointTree.InsertItem( &curTreeItem );
+		hItem = m_AccessPointTree.InsertItem( TVIF_TEXT, Name.c_str(), 0, 0, 0, 0, 0, hParent, TVI_LAST );
 		m_AccessPointTree.SetItemData( hItem, p_NodeIndex );
 
 		++p_NodeIndex;
 
-		if( p_Root && ! l_HasData )
+		if( p_Root && ! HasData )
 		{
 			BuildTree( p_NodeIndex, hItem, false );
 		}
@@ -146,7 +141,7 @@ void SVSecuritySetupPage::BuildTree( long& p_NodeIndex, HTREEITEM hParent, bool 
 void SVSecuritySetupPage::OnSelchangeNetGroups() 
 {
 	int	count = 0;
-	CString	group;
+	CString	Group;
 	UpdateData();
 
 	SVSecurityStorage& svStore = m_pAccess->m_svStorage;
@@ -158,11 +153,11 @@ void SVSecuritySetupPage::OnSelchangeNetGroups()
 		SVAccessPointNode& Node = svStore.m_aNodes[ iNodeIndex ];
 		if( Node.m_bHasData && !Node.m_bDataCannotChange)
 		{
-			m_lbNetGroups.GetText(m_lbNetGroups.GetCurSel(), group );
-			bool bSelectEverybody = (group.Compare(_T("Everybody")) == 0) ;
-			if( m_strGroup.IsEmpty() || bSelectEverybody || m_strGroup.Compare(_T("Everybody"))==0 )
+			m_lbNetGroups.GetText(m_lbNetGroups.GetCurSel(), Group );
+			bool bSelectEverybody = (Group.Compare(_T("Everybody")) == 0) ;
+			if( m_Group.IsEmpty() || bSelectEverybody || m_Group.Compare(_T("Everybody"))==0 )
 			{
-				m_strGroup = group;
+				m_Group = Group;
 				if( bSelectEverybody )
 				{
 					Node.m_bForcePrompt = false;
@@ -171,9 +166,9 @@ void SVSecuritySetupPage::OnSelchangeNetGroups()
 			}
 			else
 			{
-				if( m_strGroup.Find( group ) == -1)
+				if( m_Group.Find( Group ) == -1)
 				{
-					m_strGroup += _T(",") + group;
+					m_Group += _T(",") + Group;
 				}
 			}
 			UpdateData(FALSE);
@@ -215,35 +210,6 @@ void SVSecuritySetupPage::SetGroups(CString groups)
 	}
 }
 
-CString SVSecuritySetupPage::GetGroups(void)
-{
-	CString	groups;
-	int count = m_lbNetGroups.GetCount();
-
-	if (count > 0)
-	{
-		for (int i=0; i<count; i++)
-		{
-			CString	group;
-			if (m_lbNetGroups.GetSel(i))
-			{
-				m_lbNetGroups.GetText(i, group);
-				if (!groups.IsEmpty())
-					groups += _T(",");
-				groups += group;
-			}
-		}
-	}
-
-	if (groups.Find(_T("Everybody")) != -1)
-	{
-		groups = _T("Everybody");
-		SetGroups(groups);
-	}
-
-	return groups;
-}
-
 BOOL SVSecuritySetupPage::OnApply() 
 {
 	return CPropertyPage::OnApply();
@@ -266,7 +232,7 @@ void SVSecuritySetupPage::OnSelchangedAccessTree(NMHDR* pNMHDR, LRESULT* pResult
 			GetDlgItem( IDC_FORCE_PROMPT )->EnableWindow( FALSE );
 			GetDlgItem( IDC_GROUP_EDIT )->EnableWindow( FALSE );
 			m_bForcePrompt = FALSE;
-			m_strGroup.Empty();
+			m_Group.Empty();
 		}
 		else
 		{
@@ -281,14 +247,14 @@ void SVSecuritySetupPage::OnSelchangedAccessTree(NMHDR* pNMHDR, LRESULT* pResult
 				GetDlgItem( IDC_GROUP_EDIT )->EnableWindow( TRUE );
 			}
 			m_bForcePrompt = Node.m_bForcePrompt ;
-			m_strGroup = Node.m_strNTGroup;
+			m_Group = Node.m_NTGroup.c_str();
 		}
 
 		UpdateData(FALSE);
 	}
 
 	*pResult = 0;
-	SetGroups( m_strGroup );
+	SetGroups( m_Group );
 }
 
 void SVSecuritySetupPage::OnOK() 
@@ -324,10 +290,10 @@ void SVSecuritySetupPage::SetData()
 		UpdateData();
 		if( Node.m_bHasData )
 		{
-			bool bEverybody = m_strGroup.Compare(_T("Everybody")) == 0;
+			bool bEverybody = m_Group.Compare(_T("Everybody")) == 0;
 			m_bForcePrompt &= !bEverybody;
 			Node.m_bForcePrompt = m_bForcePrompt ? true : false ;
-			Node.m_strNTGroup = m_strGroup ;
+			Node.m_NTGroup = m_Group ;
 			UpdateData(FALSE);
 		}
 	}
@@ -342,7 +308,7 @@ void SVSecuritySetupPage::OnClearGrp()
 		SVAccessPointNode Node = m_pAccess->m_svStorage.m_aNodes[iIndex];
 		if( Node.m_bHasData && !Node.m_bDataCannotChange )
 		{
-			m_strGroup.Empty();
+			m_Group.Empty();
 			UpdateData(FALSE);
 			SetData();
 		}

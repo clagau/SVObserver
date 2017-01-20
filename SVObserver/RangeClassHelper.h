@@ -19,6 +19,7 @@
 #include "SVOCore/SVTaskObjectList.h"
 #include "ObjectInterfaces\RangeEnum.h"
 #include "ObjectInterfaces\MessageTextEnum.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -60,7 +61,7 @@ public:
 	/// \param messageList [out] additionalText to message text
 	/// \returns HRESULT S_OK if successful
 	//************************************
-	HRESULT CheckInternalData(SvOi::MessageTextEnum &messageId, SVStringArray &messageList) const;
+	HRESULT CheckInternalData(SvOi::MessageTextEnum &messageId, SVStringVector &messageList) const;
 
 	//************************************
 	// Description:  Set the data
@@ -79,9 +80,9 @@ public:
 	//************************************
 	// Description: Get the range value string from the RangeObject could be a numeric value or an indirect object
 	// Parameter:  ra <in>:  the enum value of the object
-	// Returns:  CString   with the value 
+	// Returns:  SVString   with the value 
 	//************************************
-	CString GetStringFromRange( RangeEnum::ERange ra ) const;
+	SVString GetStringFromRange( RangeEnum::ERange ra ) const;
 
 	//************************************
 	// Description:  get the Owner name of the Range Object 
@@ -145,7 +146,7 @@ public:
 	// Parameter:  status <out>:  the reason why it is not allowed
 	// Returns:  bool:  if true the value can be set
 	//************************************
-	static bool IsAllowedToSet(const SVObjectClass& ref, const CString& value, bool bOnline, HRESULT& hres);
+	static bool IsAllowedToSet(const SVObjectClass& ref, const SVString& rValue, bool bOnline, HRESULT& hres);
 #pragma endregion Public Methods
 
 #pragma region Private Methods
@@ -155,7 +156,7 @@ public:
 	/// \param directValue [in,out] The direct value
 	/// \returns SVString the value as string.
 	//************************************
-	SVString GetValueString(const CString& indirectString, double directValue);
+	SVString GetValueString(const SVString& indirectString, double directValue);
 
 	//************************************
 	/// Checks the indirect reference string if it is valid
@@ -163,14 +164,14 @@ public:
 	/// \param rIndirectString [in] reference top the indirect string
 	/// \returns true if valid
 	//************************************
-	bool isValidReference( const CString& rInspectionName, const CString& rIndirectString ) const;
+	bool isValidReference( const SVString& rInspectionName, const SVString& rIndirectString ) const;
 
 	/// Change the indirect names, if necessary
 	/// \param rIndirectString [in,out] reference to the indirect name. It will be changed if necessary
 	/// \param oldPefix [in] old  name
 	/// \param newPrefix [in] new name
 	/// \returns bool
-	bool RenameIndirectValue(CString& rIndirectString, LPCTSTR oldPefix, LPCTSTR newPrefix);
+	bool RenameIndirectValue(SVString& rIndirectString, LPCTSTR oldPefix, LPCTSTR newPrefix);
 #pragma endregion Private Methods
 
 #pragma region Member variables
@@ -180,10 +181,10 @@ private:
 	double m_WarnHigh;
 	double m_WarnLow;
 	double m_FailLow;
-	CString m_FailHighIndirect;
-	CString m_WarnHighIndirect;
-	CString m_WarnLowIndirect;
-	CString m_FailLowIndirect;
+	SVString m_FailHighIndirect;
+	SVString m_WarnHighIndirect;
+	SVString m_WarnLowIndirect;
+	SVString m_FailLowIndirect;
 #pragma endregion Member variables
 };
 

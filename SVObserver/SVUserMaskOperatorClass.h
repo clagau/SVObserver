@@ -18,6 +18,7 @@
 #include "SVImageLibrary/SVImageInfoClass.h"
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
 #include "SVLibrary/ISVCancel.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 class SVShapeMaskHelperClass;

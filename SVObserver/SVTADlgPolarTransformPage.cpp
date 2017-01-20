@@ -17,6 +17,7 @@
 #include "SVIPDoc.h"
 #include "SVTool.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -29,12 +30,12 @@ SVToolAdjustmentDialogPolarTransformPageClass::SVToolAdjustmentDialogPolarTransf
 : CPropertyPage(SVToolAdjustmentDialogPolarTransformPageClass::IDD)
 {
 	//{{AFX_DATA_INIT(SVToolAdjustmentDialogPolarTransformPageClass)
-	StrCenterXValue = _T("");
-	StrCenterYValue = _T("");
-	StrStartRadiusValue = _T("");
-	StrEndRadiusValue = _T("");
-	StrStartAngleValue = _T("");
-	StrEndAngleValue = _T("");
+	m_CenterXValue = _T("");
+	m_CenterYValue = _T("");
+	m_StartRadiusValue = _T("");
+	m_StrEndRadiusValue = _T("");
+	m_StartAngleValue = _T("");
+	m_EndAngleValue = _T("");
 	bUseFormula = FALSE;
 	//}}AFX_DATA_INIT
 
@@ -141,80 +142,87 @@ void SVToolAdjustmentDialogPolarTransformPageClass::refresh()
 		}
 		if( m_pAngleMethod )
 		{
-			CString strEnum;
-			m_pAngleMethod->GetValue( strEnum );
-			m_AngularMethodCombo.SelectString( -1, strEnum );
+			SVString EnumString;
+			m_pAngleMethod->GetValue( EnumString );
+			m_AngularMethodCombo.SelectString( -1, EnumString.c_str() );
 		}
 
 		// refresh interpolation mode combo settings...
 		if( pInterpolationMode )
 		{
-			CString strEnum;
-			if( S_OK == pInterpolationMode->GetValue( strEnum ) )
+			SVString EnumString;
+			if( S_OK == pInterpolationMode->GetValue( EnumString ) )
 			{
 				// Set cur sel in combo box...
-				interpolationComboCtrl.SelectString( -1, strEnum );
+				interpolationComboCtrl.SelectString( -1, EnumString.c_str() );
 			}
 		}
 
+		SVString Value;
 		// refresh CenterX settings...
 		if( pCenterXResult )
 		{
-			pCenterXResult->GetValue( StrCenterXValue );
+			pCenterXResult->GetValue( Value );
+			m_CenterXValue = Value.c_str();
 		}
 		else
 		{
-			StrCenterXValue = _T( "" );
+			m_CenterXValue = _T( "" );
 		}
 
 		// refresh CenterY settings...
 		if( pCenterYResult )
 		{
-			pCenterYResult->GetValue( StrCenterYValue );
+			pCenterYResult->GetValue( Value );
+			m_CenterYValue = Value.c_str();
 		}
 		else
 		{
-			StrCenterYValue = _T( "" );
+			m_CenterYValue = _T( "" );
 		}
 		
 		// refresh StartRadius settings...
 		if( pStartRadiusResult )
 		{
-			pStartRadiusResult->GetValue( StrStartRadiusValue );
+			pStartRadiusResult->GetValue( Value );
+			m_StartRadiusValue = Value.c_str();
 		}
 		else
 		{
-			StrStartRadiusValue = _T( "" );
+			m_StartRadiusValue = _T( "" );
 		}
 
 		// refresh EndRadius settings...
 		if( pEndRadiusResult )
 		{
-			pEndRadiusResult->GetValue( StrEndRadiusValue );
+			pEndRadiusResult->GetValue( Value );
+			m_StrEndRadiusValue = Value.c_str();
 		}
 		else
 		{
-			StrEndRadiusValue = _T( "" );
+			m_StrEndRadiusValue = _T( "" );
 		}
 
 		// refresh StartAngle settings...
 		if( pStartAngleResult )
 		{
-			pStartAngleResult->GetValue( StrStartAngleValue );
+			pStartAngleResult->GetValue( Value );
+			m_StartAngleValue = Value.c_str();
 		}
 		else
 		{
-			StrStartAngleValue = _T( "" );
+			m_StartAngleValue = _T( "" );
 		}
 
 		// refresh EndAngle settings...
 		if( pEndAngleResult )
 		{
-			pEndAngleResult->GetValue( StrEndAngleValue );
+			pEndAngleResult->GetValue( Value );
+			m_EndAngleValue = Value.c_str();
 		}
 		else
 		{
-			StrEndAngleValue = _T( "" );
+			m_EndAngleValue = _T( "" );
 		}
 
 		UpdateData( FALSE ); // set data to dialog
@@ -228,12 +236,12 @@ void SVToolAdjustmentDialogPolarTransformPageClass::DoDataExchange(CDataExchange
 	//{{AFX_DATA_MAP(SVToolAdjustmentDialogPolarTransformPageClass)
 	DDX_Control(pDX, IDC_ANGULAR_METHOD, m_AngularMethodCombo);
 	DDX_Control(pDX, IDC_INTERPOLATION_MODE_COMBO, interpolationComboCtrl);
-	DDX_Text(pDX, IDC_CENTER_X_EDIT, StrCenterXValue);
-	DDX_Text(pDX, IDC_CENTER_Y_EDIT, StrCenterYValue);
-	DDX_Text(pDX, IDC_START_RADIUS_EDIT, StrStartRadiusValue);
-	DDX_Text(pDX, IDC_END_RADIUS_EDIT, StrEndRadiusValue);
-	DDX_Text(pDX, IDC_START_ANGLE_EDIT, StrStartAngleValue);
-	DDX_Text(pDX, IDC_END_ANGLE_EDIT, StrEndAngleValue);
+	DDX_Text(pDX, IDC_CENTER_X_EDIT, m_CenterXValue);
+	DDX_Text(pDX, IDC_CENTER_Y_EDIT, m_CenterYValue);
+	DDX_Text(pDX, IDC_START_RADIUS_EDIT, m_StartRadiusValue);
+	DDX_Text(pDX, IDC_END_RADIUS_EDIT, m_StrEndRadiusValue);
+	DDX_Text(pDX, IDC_START_ANGLE_EDIT, m_StartAngleValue);
+	DDX_Text(pDX, IDC_END_ANGLE_EDIT, m_EndAngleValue);
 	DDX_Check(pDX, IDC_USE_FORMULA_CHECK, bUseFormula);
 	//}}AFX_DATA_MAP
 }
@@ -346,9 +354,9 @@ BOOL SVToolAdjustmentDialogPolarTransformPageClass::OnInitDialog()
 		m_pAngleMethod = dynamic_cast<SVEnumerateValueObjectClass*>(pTool->getFirstObject(objectInfo));
 		if( m_pAngleMethod )
 		{
-			CString l_strEnumList;
-			m_pAngleMethod->GetEnumTypes( l_strEnumList );
-			m_AngularMethodCombo.SetEnumTypes( l_strEnumList );
+			SVString EnumList;
+			m_pAngleMethod->GetEnumTypes( EnumList );
+			m_AngularMethodCombo.SetEnumTypes( EnumList.c_str() );
 		}
 
 		// Get Interpolation Mode...
@@ -357,9 +365,9 @@ BOOL SVToolAdjustmentDialogPolarTransformPageClass::OnInitDialog()
 		if( pInterpolationMode )
 		{
 			// Populate Interpolation Mode combo...
-			CString strEnumList;
-			pInterpolationMode->GetEnumTypes( strEnumList );
-			interpolationComboCtrl.SetEnumTypes( strEnumList );
+			SVString EnumList;
+			pInterpolationMode->GetEnumTypes( EnumList );
+			interpolationComboCtrl.SetEnumTypes( EnumList.c_str() );
 		}
 		
 
@@ -393,18 +401,14 @@ void SVToolAdjustmentDialogPolarTransformPageClass::OnCenterXFormulaButton()
 {
 	if( pEvaluateCenterX )
 	{
-		CString l_Temp;
-		l_Temp.LoadString( IDS_FORMULA_STRING );
-
-		CString strCaption;
-		strCaption = pEvaluateCenterX->GetName();
-		strCaption += _T( " " );
-		strCaption += l_Temp;
+		SVString Text = SvUl_SF::LoadSVString( IDS_FORMULA_STRING );
+		SVString Caption = pEvaluateCenterX->GetName();
+		Caption += _T( " " ) +Text;
 
 		const GUID& rInspectionID = pParentDialog->GetInspectionID();
 		const GUID& rObjectID = pParentDialog->GetToolID();
 		SVObjectTypeInfoStruct info(SVMathContainerObjectType, SVEvaluateCenterXObjectType);
-		SvOg::SVFormulaEditorSheetClass dlg( rInspectionID, rObjectID, info, strCaption );
+		SvOg::SVFormulaEditorSheetClass dlg( rInspectionID, rObjectID, info, Caption.c_str() );
 		dlg.DoModal();
 
 		refresh();
@@ -415,18 +419,14 @@ void SVToolAdjustmentDialogPolarTransformPageClass::OnCenterYFormulaButton()
 {
 	if( pEvaluateCenterY )
 	{
-		CString l_Temp;
-		l_Temp.LoadString( IDS_FORMULA_STRING );
-
-		CString strCaption;
-		strCaption = pEvaluateCenterY->GetName();
-		strCaption += _T( " " );
-		strCaption += l_Temp;
+		SVString Text = SvUl_SF::LoadSVString( IDS_FORMULA_STRING );
+		SVString Caption = pEvaluateCenterY->GetName();
+		Caption += _T( " " ) +Text;
 
 		const GUID& rInspectionID = pParentDialog->GetInspectionID();
 		const GUID& rObjectID = pParentDialog->GetToolID();
 		SVObjectTypeInfoStruct info(SVMathContainerObjectType, SVEvaluateCenterYObjectType);
-		SvOg::SVFormulaEditorSheetClass dlg( rInspectionID, rObjectID, info, strCaption );
+		SvOg::SVFormulaEditorSheetClass dlg( rInspectionID, rObjectID, info, Caption.c_str() );
 		dlg.DoModal();
 
 		refresh();
@@ -437,18 +437,14 @@ void SVToolAdjustmentDialogPolarTransformPageClass::OnStartRadiusFormulaButton()
 {
 	if( pEvaluateStartRadius )
 	{
-		CString l_Temp;
-		l_Temp.LoadString( IDS_FORMULA_STRING );
-
-		CString strCaption;
-		strCaption = pEvaluateStartRadius->GetName();
-		strCaption += _T( " " );
-		strCaption += l_Temp;
+		SVString Text = SvUl_SF::LoadSVString( IDS_FORMULA_STRING );
+		SVString Caption = pEvaluateStartRadius->GetName();
+		Caption += _T( " " ) +Text;
 
 		const GUID& rInspectionID = pParentDialog->GetInspectionID();
 		const GUID& rObjectID = pParentDialog->GetToolID();
 		SVObjectTypeInfoStruct info(SVMathContainerObjectType, SVEvaluateStartRadiusObjectType);
-		SvOg::SVFormulaEditorSheetClass dlg( rInspectionID, rObjectID, info, strCaption );
+		SvOg::SVFormulaEditorSheetClass dlg( rInspectionID, rObjectID, info, Caption.c_str() );
 		dlg.DoModal();
 
 		refresh();
@@ -459,18 +455,14 @@ void SVToolAdjustmentDialogPolarTransformPageClass::OnEndRadiusFormulaButton()
 {
 	if( pEvaluateEndRadius )
 	{
-		CString l_Temp;
-		l_Temp.LoadString( IDS_FORMULA_STRING );
-
-		CString strCaption;
-		strCaption = pEvaluateEndRadius->GetName();
-		strCaption += _T( " " );
-		strCaption += l_Temp;
+		SVString Text = SvUl_SF::LoadSVString( IDS_FORMULA_STRING );
+		SVString Caption = pEvaluateEndRadius->GetName();
+		Caption += _T( " " ) +Text;
 
 		const GUID& rInspectionID = pParentDialog->GetInspectionID();
 		const GUID& rObjectID = pParentDialog->GetToolID();
 		SVObjectTypeInfoStruct info(SVMathContainerObjectType, SVEvaluateEndRadiusObjectType);
-		SvOg::SVFormulaEditorSheetClass dlg( rInspectionID, rObjectID, info, strCaption );
+		SvOg::SVFormulaEditorSheetClass dlg( rInspectionID, rObjectID, info, Caption.c_str() );
 		dlg.DoModal();
 
 		refresh();
@@ -481,18 +473,14 @@ void SVToolAdjustmentDialogPolarTransformPageClass::OnStartAngleFormulaButton()
 {
 	if( pEvaluateStartAngle )
 	{
-		CString l_Temp;
-		l_Temp.LoadString( IDS_FORMULA_STRING );
-
-		CString strCaption;
-		strCaption = pEvaluateStartAngle->GetName();
-		strCaption += _T( " " );
-		strCaption += l_Temp;
+		SVString Text = SvUl_SF::LoadSVString( IDS_FORMULA_STRING );
+		SVString Caption = pEvaluateStartAngle->GetName();
+		Caption += _T( " " ) +Text;
 
 		const GUID& rInspectionID = pParentDialog->GetInspectionID();
 		const GUID& rObjectID = pParentDialog->GetToolID();
 		SVObjectTypeInfoStruct info(SVMathContainerObjectType, SVEvaluateStartAngleObjectType);
-		SvOg::SVFormulaEditorSheetClass dlg( rInspectionID, rObjectID, info, strCaption );
+		SvOg::SVFormulaEditorSheetClass dlg( rInspectionID, rObjectID, info, Caption.c_str() );
 		dlg.DoModal();
 
 		refresh();
@@ -503,18 +491,14 @@ void SVToolAdjustmentDialogPolarTransformPageClass::OnEndAngleFormulaButton()
 {
 	if( pEvaluateEndAngle )
 	{
-		CString l_Temp;
-		l_Temp.LoadString( IDS_FORMULA_STRING );
-
-		CString strCaption;
-		strCaption = pEvaluateEndAngle->GetName();
-		strCaption += _T( " " );
-		strCaption += l_Temp;
+		SVString Text = SvUl_SF::LoadSVString( IDS_FORMULA_STRING );
+		SVString Caption = pEvaluateEndAngle->GetName();
+		Caption += _T( " " ) +Text;
 
 		const GUID& rInspectionID = pParentDialog->GetInspectionID();
 		const GUID& rObjectID = pParentDialog->GetToolID();
 		SVObjectTypeInfoStruct info(SVMathContainerObjectType, SVEvaluateEndAngleObjectType);
-		SvOg::SVFormulaEditorSheetClass dlg( rInspectionID, rObjectID, info, strCaption );
+		SvOg::SVFormulaEditorSheetClass dlg( rInspectionID, rObjectID, info, Caption.c_str() );
 		dlg.DoModal();
 
 		refresh();

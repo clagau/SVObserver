@@ -30,9 +30,9 @@ public:
 // Dialog Data
 	//{{AFX_DATA(SVOCVGeneralDlg)
 	enum { IDD = IDD_OCV_GENERAL_DIALOG };
-	CString	m_fontFilename;
-	CString	m_constraintsFilename;
-	CString	m_controlsFilename;
+	CString m_fontFilename;
+	CString m_constraintsFilename;
+	CString m_controlsFilename;
 	//}}AFX_DATA
 
 

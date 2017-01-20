@@ -10,6 +10,7 @@
 #pragma region Includes
 //Moved to precompiled header: #include <boost/circular_buffer.hpp>
 #include "SVObjectLibrary\SVObjectLibrary.h"
+#include "SVUtilityLibrary\SVString.h"
 #include "SVDoubleValueObjectClass.h"
 #pragma endregion Includes
 
@@ -48,7 +49,7 @@ protected:
 	/// \returns int Result size
 	virtual int GetResultSize(int iBucket) const override { return static_cast<int>(getSortContainer(iBucket).size()); };
 
-	virtual HRESULT SetValueAt( int iBucket, int iIndex, const CString& value ) override;
+	virtual HRESULT SetValueAt( int iBucket, int iIndex, const SVString& rValue ) override;
 	virtual HRESULT SetValueAt( int iBucket, int iIndex, const VARIANT& rValue ) override;
 	virtual HRESULT SetValueAt( int iBucket, int iIndex, int value ) override;
 	virtual HRESULT SetValueAt( int iBucket, int iIndex, long value ) override;
@@ -57,7 +58,7 @@ protected:
 	virtual HRESULT GetValueAt( int iBucket, int iIndex, double& rValue ) const override;
 	virtual HRESULT GetValueAt( int iBucket, int iIndex, long& rValue ) const override;
 	virtual HRESULT GetValueAt( int iBucket, int iIndex, DWORD& rValue ) const override;
-	virtual HRESULT GetValueAt( int iBucket, int iIndex, CString& rValue ) const override;
+	virtual HRESULT GetValueAt( int iBucket, int iIndex, SVString& rValue ) const override;
 	virtual HRESULT GetValueAt( int iBucket, int iIndex, VARIANT& rValue ) const override;
 
 	virtual HRESULT GetArrayValues(int iBucket, std::vector<double>& raValues) const override;

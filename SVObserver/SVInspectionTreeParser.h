@@ -13,6 +13,7 @@
 #pragma region Includes
 #include "SVObjectScriptParserBase.h"
 #include "SVObjectLibrary/SVObjectScriptEnums.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 class SVObjectClass;

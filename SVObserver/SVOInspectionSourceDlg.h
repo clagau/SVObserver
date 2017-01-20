@@ -11,6 +11,7 @@
 #pragma once
 
 #include "SVLibrary/SVDataItemManagerTemplate.h"
+#include "SVUtilityLibrary\SVString.h"
 
 #define INTERNAL_INSPECTION_NAME "Inspection_"
 
@@ -32,7 +33,7 @@ public:
 // Dialog Data  
 	//{{AFX_DATA(CSVOInspectionSourceDlg)
 	enum { IDD = IDD_DLG_PROPPAGE_AA_INSPECTION };
-	CListBox	m_ctlIPDlist;
+	CListBox m_ctlIPDlist;
 	CEdit	m_ctlInspectionEdt;
 	CButton	m_ctlPropVIbtn;
 	CButton	m_ctlNewVIbtn;
@@ -75,7 +76,7 @@ protected:
 
 private:
 	void ClearList();
-    CString GetNextInspectionDisplayName(CString sLabeName);
+    SVString GetNextInspectionDisplayName( const SVString& rLabeName );
 
     void LoadInspectionFileNameList(); 
     void LoadVInspectionList();
@@ -88,11 +89,9 @@ private:
     int m_iCursel;
     int m_iEditingSel;
 
-	typedef SVDataItemManagerTemplate< CString > SVDataItemManager;
+	typedef SVDataItemManagerTemplate<SVString> SVDataItemManager;
 
 	SVDataItemManager m_Items;
-
-
 };
 
 //{{AFX_INSERT_LOCATION}}

@@ -393,7 +393,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 		{
 			return S_OK;
 		}
-		SVStringArray messageList;
+		SVStringVector messageList;
 		messageList.push_back(SvUl_SF::Format(_T("%i"), line));
 		messageList.push_back(SvUl_SF::Format(_T("%i"), column));
 		messageList.push_back(SvUl_SF::Format(_T("%i"), errorCode));

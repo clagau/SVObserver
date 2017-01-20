@@ -12,6 +12,7 @@
 #include "stdafx.h"
 #include "SVPPQBar.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
+#include "SVUtilityLibrary/SVString.h"
 #include "SVObserver.h"
 #include "SVConfigurationObject.h"
 #include "SVMessage/SVMessage.h"
@@ -166,9 +167,8 @@ BOOL SVPPQBarClass::BuildButtons()
 		if( nullptr != pPPQ )
 		{
 			TC_ITEM tabCtrlItem;
-			CString l_Name = pPPQ->GetCompleteObjectName();
 			tabCtrlItem.mask = TCIF_TEXT | TCIF_PARAM;
-			tabCtrlItem.pszText = const_cast< LPSTR >( l_Name.GetString() );
+			tabCtrlItem.pszText = const_cast< LPSTR >( pPPQ->GetCompleteName().c_str() );
 			tabCtrlItem.lParam	= reinterpret_cast<DWORD_PTR>(pPPQ);
 			pqTabCtrl.InsertItem( tabIndex++, &tabCtrlItem );
 		}// end if
@@ -368,13 +368,12 @@ BOOL SVPPQWindowClass::BuildButtons( SVPPQObject* pSelectedPPQ )
 		for( int i = 0; i < lPPQLength + 1; ++ i )
 		{
 			CButton* pButton = new CButton();
-			CString strCaption;
-			strCaption.Format( "%d", i + 1 );
+			SVString Caption = SvUl_SF::Format( _T("%d"), i + 1 );
 			DWORD dwStyle = WS_CHILD | WS_VISIBLE | WS_GROUP | WS_TABSTOP;
 			buttonList.Add( pButton );
 			if( i != lPPQLength )
 			{
-				pButton->Create( strCaption, dwStyle, rect, this, i + 50 );
+				pButton->Create( Caption.c_str(), dwStyle, rect, this, i + 50 );
 			}
 			
 			else
@@ -404,9 +403,8 @@ BOOL SVPPQWindowClass::BuildButtons( SVPPQObject* pSelectedPPQ )
 
 				if( lPosition >= 0 && lPosition < buttonList.GetSize() && buttonList.GetAt( lPosition ) )
 				{
-					CString strCaption;
-					strCaption.Format( "*%d*", lPosition + 1 );
-					buttonList.GetAt( lPosition )->SetWindowText( strCaption );
+					SVString Caption = SvUl_SF::Format( _T("*%d*"),lPosition + 1 );
+					buttonList.GetAt( lPosition )->SetWindowText( Caption.c_str() );
 				}// end if
 			}
 
@@ -419,9 +417,8 @@ BOOL SVPPQWindowClass::BuildButtons( SVPPQObject* pSelectedPPQ )
 			int pos = lPosition;
 			if( pos >= 0 && pos < buttonList.GetSize() && buttonList.GetAt( pos ) )
 			{
-				CString strCaption;
-				strCaption.Format( "*%d*", pos + 1 );
-				buttonList.GetAt( pos )->SetWindowText( strCaption );
+				SVString Caption = SvUl_SF::Format( _T("*%d*"), pos + 1 );
+				buttonList.GetAt( pos )->SetWindowText( Caption.c_str() );
 			}// end if
 
 		}// end for
@@ -475,9 +472,7 @@ BOOL SVPPQWindowClass::OnCmdMsg( UINT nID, int nCode, void* pExtra, AFX_CMDHANDL
 
 			int pos = nID - 50;
 	
-			CString strCaption = _T( "PPQ Entry Dialog" );
-			
-			SVPPQEntryDialogPropertySheetClass dlg( strCaption );
+			SVPPQEntryDialogPropertySheetClass dlg( _T( "PPQ Entry Dialog" ) );
 			dlg.m_pPPQ				= m_pPPQ;
 			dlg.m_lCurrentPosition	= pos;
 			//remove Apply button
@@ -500,9 +495,8 @@ BOOL SVPPQWindowClass::OnCmdMsg( UINT nID, int nCode, void* pExtra, AFX_CMDHANDL
 			    {
 				    if( dlg.m_bIsTaken )
 				    {
-					    CString strCaption;
-					    strCaption.Format( "*%d*", pos + 1 );
-					    buttonList.GetAt( pos )->SetWindowText( strCaption );
+						SVString Caption = SvUl_SF::Format( _T("*%d*"), pos + 1 );
+					    buttonList.GetAt( pos )->SetWindowText( Caption.c_str() );
 
 					    HICON hIc = AfxGetApp()->LoadIcon( IDI_ICON_CAMERA );
 					    if( hIc )
@@ -525,9 +519,8 @@ BOOL SVPPQWindowClass::OnCmdMsg( UINT nID, int nCode, void* pExtra, AFX_CMDHANDL
 		else
 		{
 			// Access during Test or Run Mode denied!
-			CString message;
-			message.LoadString( IDS_USER_INFORMATION_NO_ACCESS_DURING_TEST_RUN_MODE );
-			TheSVObserverApp.SetStatusText( message );
+			SVString Msg  = SvUl_SF::LoadSVString( IDS_USER_INFORMATION_NO_ACCESS_DURING_TEST_RUN_MODE );
+			TheSVObserverApp.SetStatusText( Msg.c_str() );
 			MessageBeep( 0xffffffff );
 		}
 	}

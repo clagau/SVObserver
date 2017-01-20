@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   07 Aug 2014 09:28:48  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 //Moved to precompiled header: #include <cmath>
 #include "SVPatternAnalyzerClass.h"
@@ -29,6 +30,8 @@
 #include "SVResultLong.h"
 #include "SVSVIMStateClass.h"
 #include "SVTool.h"
+#include "SVUtilityLibrary/SVString.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -151,7 +154,6 @@ void SVPatternAnalyzerClass::CreateResult()
 		// Declare Input Interface of Result...
 		SVClassInfoStruct resultClassInfo;
 		SVObjectTypeInfoStruct interfaceInfo;
-		CString	strTitle;
 
 		interfaceInfo.EmbeddedID = SVpatResultNumFoundOccurancesObjectGuid;
 		resultClassInfo.m_DesiredInputInterface.Add( interfaceInfo );
@@ -159,9 +161,9 @@ void SVPatternAnalyzerClass::CreateResult()
 		resultClassInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
 		resultClassInfo.m_ObjectTypeInfo.SubType	= SVResultLongObjectType;
 		resultClassInfo.m_ClassId = SVLongResultClassGuid;
-		resultClassInfo.m_ClassName = SvUl_SF::LoadString( IDS_OBJECTNAME_RESULT );
-		strTitle.LoadString( IDS_OBJECTNAME_PAT_NBRFOUNDOCCURANCES );
-		resultClassInfo.m_ClassName += SV_TSTR_SPACE + strTitle;
+		resultClassInfo.m_ClassName = SvUl_SF::LoadSVString( IDS_OBJECTNAME_RESULT );
+		SVString Title = SvUl_SF::LoadSVString( IDS_OBJECTNAME_PAT_NBRFOUNDOCCURANCES );
+		resultClassInfo.m_ClassName += _T(" ") + Title;
 
 		while (1)
 		{
@@ -372,25 +374,14 @@ bool SVPatternAnalyzerClass::UpdateModelFromBuffer()
 	return bOk;
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : RestorePattern
-// -----------------------------------------------------------------------------
-// .Description : Restore a model from a model file, which is actually an image file.
-//              : Import the Image, then create a Model consisting of the entire image.
-//				: 
-////////////////////////////////////////////////////////////////////////////////
-// 	 Date		Author				Comment                                       
-//  04-12-00 	Sri				First Implementation
-////////////////////////////////////////////////////////////////////////////////
-bool SVPatternAnalyzerClass::RestorePattern (CString strImageFile, SvOi::MessageTextEnum *pErrMsgId)
+bool SVPatternAnalyzerClass::RestorePattern (const SVString& rImageFile, SvOi::MessageTextEnum *pErrMsgId)
 {
 	DWORD LastError(0);
 	bool bOk = false;
 
 	SVMatroxBuffer l_ImportHandle;
-	SVString l_strImageFile = strImageFile;
 
-	SVMatroxBufferInterface::SVStatusCode l_Code = SVMatroxBufferInterface::Import( l_ImportHandle, l_strImageFile, SVFileBitmap, true );
+	SVMatroxBufferInterface::SVStatusCode l_Code = SVMatroxBufferInterface::Import( l_ImportHandle, rImageFile, SVFileBitmap, true );
 
 	if ( l_Code == SVMEE_STATUS_OK )
 	{
@@ -464,7 +455,7 @@ bool SVPatternAnalyzerClass::RestorePattern (CString strImageFile, SvOi::Message
 
 	if ( bOk )
 	{
-		bOk = ( S_OK == msv_szModelImageFile.SetValue( 1, strImageFile ) );
+		bOk = ( S_OK == msv_szModelImageFile.SetValue( 1, rImageFile ) );
 	}
 	return bOk;
 }	
@@ -492,7 +483,6 @@ bool SVPatternAnalyzerClass::SetSearchParameters ()
 			double	dParam;
 			long	lParam;
 			BOOL	bParam;
-			CString	strValue;
 
 			msv_lpatMaxOccurances.GetValue(lParam);
 
@@ -913,11 +903,11 @@ HRESULT SVPatternAnalyzerClass::ResetObject()
 		{
 			// Check whether there is a valid model file available.
 			// If so, restore the model from the file.
-			CString	strFile;
+			SVString FileName;
 
-			if( S_OK == msv_szModelImageFile.GetValue( strFile ) )
+			if( S_OK == msv_szModelImageFile.GetValue( FileName ) )
 			{
-				if( !strFile.IsEmpty() )
+				if( !FileName.empty() )
 				{
 					if( !ResetImageFile() )
 					{
@@ -1046,7 +1036,7 @@ void SVPatternAnalyzerClass::DisplayAnalyzerResult()
 		return;
 
 	SVPatResultDlgClass	resultDlg;
-	CString strValue;
+	SVString Value;
 	
 	BOOL bValue;
 	msv_bpatSearchAngleMode.GetValue(bValue);
@@ -1055,24 +1045,24 @@ void SVPatternAnalyzerClass::DisplayAnalyzerResult()
 	msv_dpatResultAngle.GetValue(msv_dpatResultAngle.GetLastSetIndex(), m_nPatternIndex, dResultAngle);
 	if(bValue && dResultAngle > 0.0)
 	{
-		strValue.Format("%3.1lf", dResultAngle);
-		resultDlg.m_strAngle = strValue;
+		Value= SvUl_SF::Format(_T("%3.1lf"), dResultAngle);
+		resultDlg.m_strAngle = Value.c_str();
 	}
 
 	double dMatchScore;
 	msv_dpatResultMatchScore.GetValue(msv_dpatResultMatchScore.GetLastSetIndex(), m_nPatternIndex, dMatchScore);
-	strValue.Format("%3.1lf", dMatchScore);
-	resultDlg.m_strScore = strValue;
+	Value = SvUl_SF::Format(_T("%3.1lf"), dMatchScore);
+	resultDlg.m_strScore = Value.c_str();
 
 	double dResultXPos;
 	msv_dpatResultX.GetValue(msv_dpatResultX.GetLastSetIndex(), m_nPatternIndex, dResultXPos);
-	strValue.Format("%4.1lf", dResultXPos);
-	resultDlg.m_strXPos = strValue;
+	Value = SvUl_SF::Format(_T("%4.1lf"), dResultXPos);
+	resultDlg.m_strXPos = Value.c_str();
 
 	double dResultYPos;
 	msv_dpatResultY.GetValue(msv_dpatResultY.GetLastSetIndex(), m_nPatternIndex, dResultYPos);
-	strValue.Format("%4.1lf", dResultYPos);
-	resultDlg.m_strYPos = strValue;
+	Value = SvUl_SF::Format(_T("%4.1lf"), dResultYPos);
+	resultDlg.m_strYPos = Value.c_str();
 	
 	resultDlg.DoModal();
 }
@@ -1090,15 +1080,15 @@ void SVPatternAnalyzerClass::ResizeResultValues(int nNum)
 
 bool SVPatternAnalyzerClass::ResetImageFile()
 {
-	CString	strFile;
+	SVString	FileName;
 	
-	bool bOk = ( S_OK == msv_szModelImageFile.GetValue( strFile ) );
+	bool bOk = ( S_OK == msv_szModelImageFile.GetValue( FileName ) );
 	
 	if ( bOk )
 	{
-		if ( ! strFile.IsEmpty() )
+		if ( !FileName.empty() )
 		{
-			bOk = RestorePattern( strFile );
+			bOk = RestorePattern( FileName );
 		}
 		else
 		{

@@ -17,13 +17,11 @@
 #include "SVUnaryImageOperatorClass.h"
 #include "ObjectInterfaces/ITool.h"
 #include "SVObjectLibrary/SVClsids.h"
-
 #include "CameraLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
-
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
-#define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
@@ -97,7 +95,7 @@ BOOL SVStdImageOperatorListClass::CloseObject()
 bool SVStdImageOperatorListClass::resetAllObjects( bool shouldNotifyFriends, bool silentReset )
 {
 	bool Result = ( S_OK == ResetObject() );
-	ASSERT( Result );
+	assert( Result );
 
 	return( __super::resetAllObjects( shouldNotifyFriends, silentReset ) );
 }
@@ -316,9 +314,9 @@ HRESULT SVStdImageOperatorListClass::CollectInputImageNames()
 	SvOi::ITool* pTool = dynamic_cast<SvOi::ITool *>(GetTool());
 	if( pInputImage && pTool )
 	{
-		CString strName = pInputImage->GetCompleteObjectName();
+		SVString Name = pInputImage->GetCompleteName();
 
-		if( pTool->SetFirstInputImageName(strName))
+		if( pTool->SetFirstInputImageName( Name.c_str() ) )
 		{
 			hr = S_OK;
 		}

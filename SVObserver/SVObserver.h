@@ -23,8 +23,9 @@
 #include "SVUtilityIniClass.h"
 #include "SVIOTabbedView.h"
 #include "SVSystemLibrary/SVObserverEnums.h"
-#pragma endregion Includes
 #include "Objectinterfaces/SVPPQEnums.h"
+#include "SVUtilityLibrary/SVString.h"
+#pragma endregion Includes
 
 #pragma region Declarations
 class SVConfigurationObject;
@@ -209,10 +210,10 @@ public:
 
 	HRESULT  LoadConfiguration( unsigned long& ulSVOConfigVersion, BSTR bstrFileName, SVTreeType& p_rTree);
 
-	CString GetConfigurationName() const;
+	SVString GetConfigurationName() const;
 	
-	HRESULT LoadPackedConfiguration( const CString& p_rPackedFileName );
-	HRESULT SavePackedConfiguration( const CString& p_rPackedFileName );
+	HRESULT LoadPackedConfiguration( const SVString& p_rPackedFileName );
+	HRESULT SavePackedConfiguration( const SVString& p_rPackedFileName );
 
 	SVMainFrame* GetMainFrame() const;
 	HRESULT CanCloseMainFrame();
@@ -232,8 +233,8 @@ public:
 	void ValidateMRUList();
 
 	void ResetAllCounts();
-	bool AddMenuItem(HMENU hTargetMenu, const CString& itemText, UINT itemID);
-	bool RemoveMenu(HMENU hTargetMenu,  const CString& itemText);
+	bool AddMenuItem(HMENU hTargetMenu, const SVString& itemText, UINT itemID);
+	bool RemoveMenu(HMENU hTargetMenu,  const SVString& itemText);
 	HRESULT SetMode( unsigned long p_lNewMode );
 	HRESULT LoadConfiguration();
 
@@ -242,16 +243,15 @@ public:
 	BOOL SetStatusText( LPCTSTR PStrStatusText );
 	void UpdatePPQBar();
 
-	LPCTSTR getConfigFileNameOnly() const;
-	LPCTSTR getConfigPathName() const;
-	LPCTSTR getConfigFileName() const;
-	LPCTSTR getConfigFullFileName() const;
+	const SVString& getConfigFileNameOnly() const;
+	const SVString& getConfigPathName() const;
+	const SVString& getConfigFileName() const;
+	const SVString& getConfigFullFileName() const;
 	BOOL setConfigFullFileName(LPCTSTR csFullFileName, DWORD bLoadFile = TRUE);
 
 	SVIPDoc* GetIPDoc( const SVGUID& rInspectionID ) const;
 	SVIPDoc* GetIPDoc( LPCTSTR StrIPDocPathName ) const;
 	BOOL AlreadyExistsIPDocTitle( LPCTSTR StrIPDocTitle );
-	CString GetStringResource( int ResourceID ) const;
 
 	BOOL ShowConfigurationAssistant( int Page = 3, BOOL bFileNewConfiguration = FALSE );
 
@@ -283,7 +283,7 @@ public:
 
 	HRESULT SetModeEdit( bool p_bState );
 	void SetTestMode(bool p_bNoSecurity = false);
-	HRESULT GetTriggersAndCounts( CString& p_strTrigCnts ) const;
+	HRESULT GetTriggersAndCounts( SVString& rTriggerCounts ) const;
 
 	void RefreshAllIPDocuments();
 	void RunAllIPDocuments();
@@ -298,11 +298,11 @@ public:
 	void ShowIOTab( DWORD p_dwID );
 	void UpdateRemoteInputTabs();
 
-	HRESULT CheckDrive(const CString& p_strDrive) const;
+	HRESULT CheckDrive(const SVString& p_strDrive) const;
 	//Arvid 150202: made this public because it is needed by ExtrasEngine
 	//Arvid 150206: added parameter resetModifiedState so the main Modify flag is not changed when called during auto save
 	//Arvid 150610: isRegularSave is currently false only for AutoSaves
-	void fileSaveAsSVX( CString StrSaveAsPathName = _T( "" ) ,bool isAutoSave=false );
+	void fileSaveAsSVX( SVString StrSaveAsPathName = _T( "" ) ,bool isAutoSave=false );
 
 
 #pragma region Encapsulation Methods
@@ -346,13 +346,13 @@ protected:
 	HRESULT LoadDigitalDLL();
 	HRESULT CloseDigitalDLL();
 
-	LPCTSTR GetTriggerBoardName() const;
-	LPCTSTR GetSoftwareTriggerBoardName() const;
-	LPCTSTR GetAcquisitionBoardName() const;
-	LPCTSTR GetFileAcquisitionBoardName() const;
-	LPCTSTR GetDigitalBoardName() const;
+	const SVString& GetTriggerBoardName() const;
+	const SVString& GetSoftwareTriggerBoardName() const;
+	const SVString& GetAcquisitionBoardName() const;
+	const SVString& GetFileAcquisitionBoardName() const;
+	const SVString& GetDigitalBoardName() const;
 
-	LPCTSTR GetRAIDBoardName() const;
+	const SVString& GetRAIDBoardName() const;
 
 	HRESULT DisconnectAllCameraBuffers();
 	HRESULT ConnectCameraBuffers();
@@ -375,7 +375,7 @@ private:
 	BOOL InitATL();
 	void StopRegression();
 
-	bool AddSecurityNode(HMODULE hMessageDll, long lId, CString sNTGroup, bool bForcePrompt = false);
+	bool AddSecurityNode(HMODULE hMessageDll, long lId, LPCTSTR NTGroup, bool bForcePrompt = false);
 	bool AddSecurityNode( HMODULE hMessageDll, long lId );
 
 	static int FindMenuItem(CMenu* Menu, LPCTSTR MenuString);
@@ -428,10 +428,10 @@ private:
 	//  which SVObserver is now loading
 	DWORD m_LoadingVersion;
 
-	CString m_csDigitizerDLL;
+	SVString m_DigitizerDLL;
 	SVDigitizerLoadLibraryClass m_svDLLDigitizers;
 
-	CString m_csFileAcquisitionDLL;
+	SVString m_FileAcquisitionDLL;
 	SVDigitizerLoadLibraryClass m_svDLLFileAcquisition;
 
 	SVIOTriggerLoadLibraryClass m_svDLLTriggers;
@@ -443,12 +443,12 @@ private:
 	// The Standard Configuration Execution Directory
 	// PN -> Path Name
 	LPCTSTR m_ConfigExePNVariableName;
-	CString m_ConfigExePNVariableValue;
+	SVString m_ConfigExePNVariableValue;
 
 	// The Standard Last Valid Configuration Directory
 	// PN -> Path Name
 	LPCTSTR m_LastValidConfigPNVariableName;
-	CString m_LastValidConfigPNVariableValue;
+	SVString m_LastValidConfigPNVariableValue;
 
 	long m_lSouceImageDepth;
 	long m_lResultImageDepth;
@@ -464,33 +464,33 @@ private:
 
 	mutable SVFileNameClass m_ConfigFileName;	// JMS - Added for File Management
 
-	CString m_csProductName;
+	SVString m_ProductName;
 
-	CString m_csProcessor;
-	CString m_csFrameGrabber;
-	CString m_csIOBoard;
-	CString m_csOptions;
+	SVString m_Processor;
+	SVString m_FrameGrabber;
+	SVString m_IOBoard;
+	SVString m_Options;
 
-	CString m_csTrigger;
+	SVString m_Trigger;
 
-	CString m_csTriggerDLL;
-	CString m_csSoftwareTriggerDLL;
-	CString m_csAcquisitionTriggerDLL;
-	CString m_csDigitalDLL;
-	CString m_csDigitalOption;			// TRB - Added to have a parameter to send to Rabbit Board.
+	SVString m_TriggerDLL;
+	SVString m_SoftwareTriggerDLL;
+	SVString m_AcquisitionTriggerDLL;
+	SVString m_DigitalDLL;
+	SVString m_DigitalOption;			// TRB - Added to have a parameter to send to Rabbit Board.
 
 
-	CString m_csReloadTriggerDLL;
-	CString m_csReloadAcquisitionDLL;
-	CString m_csReloadDigitalDLL;
+	SVString m_ReloadTriggerDLL;
+	SVString m_ReloadAcquisitionDLL;
+	SVString m_ReloadDigitalDLL;
 
-	CString m_csProcessorBoardName;
-	CString m_csTriggerBoardName;
-	CString m_csAcquisitionBoardName;
-	CString m_csFileAcquisitionBoardName;
-	CString m_csDigitalBoardName;
+	SVString m_ProcessorBoardName;
+	SVString m_TriggerBoardName;
+	SVString m_AcquisitionBoardName;
+	SVString m_FileAcquisitionBoardName;
+	SVString m_DigitalBoardName;
 
-	CString m_csRAIDBoardName;
+	SVString m_RAIDBoardName;
 
 	HRESULT m_hrHardwareFailure;
 

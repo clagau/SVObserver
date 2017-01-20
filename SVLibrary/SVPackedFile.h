@@ -12,24 +12,28 @@
 
 #define SV_PACKEDFILE_VERSION 1
 
+#pragma region Includes
+#include "SVUtilityLibrary/SVString.h"
+#pragma endregion Includes
+
 class SVPackedFile 
 {
 public:
-	const CString& getConfigFilePath() const;
-	//Adds the file(s) specified by szFile to the packed file 
-	//specified by szPackedFile. The szFile parameter may 
-	//specify one file or may contain wildcard characters to 
-	//specify multiple files.
-	BOOL PackFiles( const CString& szFile, const CString& szPackedFile );
-
-	//Extracts the files contained in szPackedFile.
-	BOOL UnPackFiles( const CString& szPackedFile, const CString& szUnPackDir = _T("") );
-
 	SVPackedFile();
 
 	virtual ~SVPackedFile();
 
+	const SVString& getConfigFilePath() const { return m_configFilePath; };
+	//Adds the file(s) specified by szFile to the packed file 
+	//specified by PackedFileName. The szFile parameter may 
+	//specify one file or may contain wildcard characters to 
+	//specify multiple files.
+	BOOL PackFiles( LPCTSTR Files, LPCTSTR PackedFileName );
+
+	//Extracts the files contained in szPackedFile.
+	BOOL UnPackFiles( LPCTSTR PackedFileName, LPCTSTR UnPackDir = nullptr );
+
 private:
-	CString m_configFilePath;
+	SVString m_configFilePath;
 };
 

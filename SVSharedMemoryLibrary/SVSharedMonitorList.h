@@ -13,6 +13,7 @@
 #pragma region Includes
 #include "SVShared.h"
 #include "SVProductFilterEnum.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 namespace Seidenader { namespace SVSharedMemoryLibrary
@@ -52,9 +53,9 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		int GetRejectDepth() const { return m_rejectDepth; }
 		SVProductFilterEnum GetProductFilter() const { return m_filter; }
 
-		void SetProductItems(const std::vector<std::string> & items);
-		void SetRejectCond(const std::vector<std::string> & items);
-		void SetFailStatus(const std::vector<std::string> & items);
+		void SetProductItems(const SVStringVector & items);
+		void SetRejectCond(const SVStringVector & items);
+		void SetFailStatus(const SVStringVector & items);
 
 		void_allocator m_allocator;
 
@@ -62,7 +63,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		void Deactivate() { m_active = false; }
 		// for writer's use
 
-		void SetNames(const std::string & list, const std::string & ppq)
+		void SetNames(const SVString & list, const SVString & ppq)
 		{
 			m_name = char_string(list.c_str(), m_allocator);
 			m_ppq = char_string(ppq.c_str(), m_allocator);

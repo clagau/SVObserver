@@ -14,10 +14,11 @@
 #pragma region Includes
 //Moved to precompiled header: #include <map>
 #include "SVOResource/resource.h"
-#include "SVOGui\ImageController.h"
+#include "ImageController.h"
 //TODO: MZA(10.Nov 2014): Move this files to SVOGui project and then remove folder from include and Namespace add-on add PictureDisplay declaration.
-#include "SVOGui/PictureDisplay.h"
-#include "PropertyTree\PropTree.h"
+#include "PictureDisplay.h"
+#include "SVRPropertyTree/SVRPropTree.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 namespace Seidenader

@@ -13,22 +13,18 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <map>
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 class SVRPropTreeState  
 {
 public:
 
-	struct SVRPropTreeItemState
-	{
-		bool bExpanded;
-	};
-	typedef SVRPropTreeItemState ItemType;
-	typedef std::map < CString, ItemType > MapType;
+	typedef std::map < SVString, bool > MapStringTreeState;
 
 	SVRPropTreeState();
 	virtual ~SVRPropTreeState();
-	SVRPropTreeState( const SVRPropTreeState& rhs );
-	const SVRPropTreeState& operator = ( const SVRPropTreeState& rhs );
-	MapType m_State;
+	SVRPropTreeState( const SVRPropTreeState& rRhs );
+	const SVRPropTreeState& operator = ( const SVRPropTreeState& rRhs );
+	MapStringTreeState m_State;
 };

@@ -99,7 +99,6 @@ BOOL SVCameraFilePropertyPageDlg::OnInitDialog()
 	SVRPropertyItemEdit*    pEdit = nullptr;
 	bool                    bResult = false;
 	
-	CString	rKey;
 	
 	pRoot = m_Tree.InsertItem(new SVRPropertyItem());
 	if (pRoot)
@@ -121,11 +120,15 @@ BOOL SVCameraFilePropertyPageDlg::OnInitDialog()
 			const SVDeviceParamWrapper& rCamDeviceParam = rCameraDeviceParams.Parameter( *iter );
 
 			if ( !rCamFileParam.IsValid() || !rCamDeviceParam.IsValid() )
+			{
 				continue;
+			}
 			
 			const int iDetailLevel = 0;
 			if ( rCamFileParam->DetailLevel() > iDetailLevel )
+			{
 				continue;
+			}
 			
 			switch ( rCamFileParam->DataType() )
 			{
@@ -141,14 +144,14 @@ BOOL SVCameraFilePropertyPageDlg::OnInitDialog()
 						break;
 					
 					pCombo->SetCtrlID( PROP_CAMERA_FILE_BASE + rCamFileParam->Type() );
-					CString sLabel = rCamFileParam->VisualName();
+					SVString Label = rCamFileParam->VisualName();
 					
-					if ( sLabel == _T("") )
+					if ( Label.empty() )
 					{
-						sLabel = rCamFileParam->Name();
+						Label = rCamFileParam->Name();
 					}
-					pCombo->SetLabelText( sLabel );
-					pCombo->SetInfoText( CString(rCamFileParam->Description()) );
+					pCombo->SetLabelText( Label.c_str() );
+					pCombo->SetInfoText( rCamFileParam->Description() );
 					pCombo->CreateComboBox();
 				}
 				break;
@@ -167,22 +170,21 @@ BOOL SVCameraFilePropertyPageDlg::OnInitDialog()
 							break;
 						
 						pCombo->SetCtrlID( PROP_CAMERA_FILE_BASE + rCamFileParam->Type() );
-						CString sLabel = rCamFileParam->VisualName();
-						if ( sLabel == _T("") )
+						SVString Label = rCamFileParam->VisualName();
+						if ( Label.empty() )
 						{
-							sLabel = rCamFileParam->Name();
+							Label = rCamFileParam->Name();
 						}
-						pCombo->SetLabelText( sLabel );
-						pCombo->SetInfoText( CString(rCamFileParam->Description()) );
+						pCombo->SetLabelText( Label.c_str() );
+						pCombo->SetInfoText( rCamFileParam->Description() );
 						pCombo->CreateComboBox();
 						
 						SVLongValueDeviceParam::OptionsType::const_iterator iterOption;
 						for (iterOption = pCamFileParam->info.options.begin(); iterOption != pCamFileParam->info.options.end(); ++iterOption)
 						{
-							CString sText = iterOption->strDescription.c_str();
 							int iPos;
-							iPos = pCombo->AddString( sText );
-							pCombo->SetItemData( iPos, iterOption->value );
+							iPos = pCombo->AddString( iterOption->m_Description.c_str() );
+							pCombo->SetItemData( iPos, iterOption->m_Value );
 						}
 						if ( pCamFileParam->info.options.size() == 1 )
 						{
@@ -199,16 +201,16 @@ BOOL SVCameraFilePropertyPageDlg::OnInitDialog()
 							break;
 						
 						pEdit->SetCtrlID( PROP_CAMERA_FILE_BASE + rCamFileParam->Type() );
-						CString sLabel = rCamFileParam->VisualName();
-						if ( sLabel == _T("") )
+						SVString Label = rCamFileParam->VisualName();
+						if( Label.empty() )
 						{
-							sLabel = rCamFileParam->Name();
+							Label = rCamFileParam->Name();
 						}
-						sLabel = sLabel + " (" + pCamDeviceParam->info.sUnits + ")";
-						pEdit->SetLabelText( sLabel );
-						CString sDescription = CString(rCamFileParam->Description());
-						sDescription += CString(_T("   Min = ")) + AsString(pCamFileParam->GetScaledMin() ) + CString(_T(", Max = ")) + AsString( pCamFileParam->GetScaledMax() ) + CString(_T("; default = ")) + AsString((long )ceil( pCamFileParam->lValue * pCamFileParam->info.multiplier) );
-						pEdit->SetInfoText( sDescription );
+						Label = SvUl_SF::Format( _T("%s (%s)"), Label.c_str(), pCamDeviceParam->info.sUnits.c_str() );
+						pEdit->SetLabelText( Label.c_str() );
+						SVString Description = SvUl_SF::Format( _T("%s   Min = %d, Max = %d; default = %d"), rCamFileParam->Description(), pCamFileParam->GetScaledMin(), pCamFileParam->GetScaledMax(), static_cast<long> (ceil( pCamFileParam->lValue * pCamFileParam->info.multiplier)) );
+
+						pEdit->SetInfoText( Description.c_str() );
 						
 						pEdit->SetItemValue( pCamDeviceParam->GetScaledValue() );
 					}
@@ -228,10 +230,9 @@ BOOL SVCameraFilePropertyPageDlg::OnInitDialog()
 					SVBoolValueDeviceParam::OptionsType::const_iterator iterOption;
 					for (iterOption = pCamFileParam->info.options.begin(); iterOption != pCamFileParam->info.options.end(); ++iterOption)
 					{
-						CString sText = iterOption->strDescription.c_str();
 						int iPos;
-						iPos = pCombo->AddString( sText );
-						pCombo->SetItemData( iPos, (LPARAM) iterOption->value );
+						iPos = pCombo->AddString( iterOption->m_Description.c_str() );
+						pCombo->SetItemData( iPos, (LPARAM) iterOption->m_Value );
 					}
 					if ( pCamFileParam->info.options.size() == 1 )
 					{
@@ -258,14 +259,14 @@ BOOL SVCameraFilePropertyPageDlg::OnInitDialog()
 									break;
 								
 								pCombo->SetCtrlID( PROP_CAMERA_FILE_BASE + rCamFileParam->Type() );
-								CString sLabel = rCamFileParam->VisualName();
+								SVString Label = rCamFileParam->VisualName();
 								
-								if ( sLabel == _T("") )
+								if ( Label.empty() )
 								{
-									sLabel = rCamFileParam->Name();
+									Label = rCamFileParam->Name();
 								}
-								pCombo->SetLabelText( sLabel );
-								pCombo->SetInfoText( CString(rCamFileParam->Description()) );
+								pCombo->SetLabelText( Label.c_str() );
+								pCombo->SetInfoText( rCamFileParam->Description() );
 								pCombo->SetButtonText("ROI");
 								pCombo->CreateComboBox();
 						
@@ -277,9 +278,8 @@ BOOL SVCameraFilePropertyPageDlg::OnInitDialog()
 								{
 									if ( iterOption->second.m_bColor == bColorSystem )	// if camera format matches product
 									{
-										CString sText = iterOption->second.m_strDescription.c_str();
 										int iPos;
-										iPos = pCombo->AddString( sText );
+										iPos = pCombo->AddString( iterOption->second.m_strDescription.c_str() );
 										pCombo->SetItemData( iPos, reinterpret_cast<DWORD_PTR>(&(iterOption->second)) );
 										if ( pCamDeviceParam->strValue == iterOption->second.m_strName )
 										{
@@ -309,14 +309,14 @@ BOOL SVCameraFilePropertyPageDlg::OnInitDialog()
 									break;
 								
 								pCombo->SetCtrlID( PROP_CAMERA_FILE_BASE + rCamFileParam->Type() );
-								CString sLabel = rCamFileParam->VisualName();
+								SVString Label = rCamFileParam->VisualName();
 								
-								if ( sLabel == _T("") )
+								if ( Label.empty() )
 								{
-									sLabel = rCamFileParam->Name();
+									Label = rCamFileParam->Name();
 								}
-								pCombo->SetLabelText( sLabel );
-								pCombo->SetInfoText( CString(rCamFileParam->Description()) );
+								pCombo->SetLabelText( Label.c_str() );
+								pCombo->SetInfoText( rCamFileParam->Description() );
 								pCombo->CreateComboBox();
 								
 								SVStringValueDeviceParam::OptionsType::const_iterator iterOption;
@@ -324,12 +324,11 @@ BOOL SVCameraFilePropertyPageDlg::OnInitDialog()
 								int iOptionIndex=0;
 								for (iterOption = pCamFileParam->info.options.begin(); iterOption != pCamFileParam->info.options.end(); ++iterOption)
 								{
-									CString sText = iterOption->strDescription.c_str();
 									int iPos;
-									iPos = pCombo->AddString( sText );
+									iPos = pCombo->AddString( iterOption->m_Description.c_str() );
 									++iOption;
 
-									if ( iterOption->value == pCamDeviceParam->strValue )
+									if ( iterOption->m_Value == pCamDeviceParam->strValue )
 									{
 										iOptionIndex = iOption;
 									}
@@ -646,10 +645,10 @@ void SVCameraFilePropertyPageDlg::CameraAdvancedHideItems()
 	} 
 }
 
-void SVCameraFilePropertyPageDlg::SetTitle(CString sName)
+void SVCameraFilePropertyPageDlg::SetTitle(SVString Name)
 {
-    CString sTmp = _T("Property Settings  -  ") + sName;
-    SetWindowText(sTmp);
+    SVString Tmp = _T("Property Settings  -  ") + Name;
+    SetWindowText(Tmp.c_str());
 }
 
 const SVDeviceParamCollection& SVCameraFilePropertyPageDlg::GetCameraFileParams()

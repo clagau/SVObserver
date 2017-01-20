@@ -46,6 +46,13 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
+const TCHAR* const PPQ_NEXT_TRG_STR = _T("NextTrigger");
+const TCHAR* const PPQ_TIME_DELAY_STR = _T("TimeDelay");
+const TCHAR* const PPQ_TIME_DATA_COMPLETE = _T("TimeDelayDataCompletion");
+const TCHAR* const PPQ_EXTENDED_TIME_DELAY =_T("ExtendedTimeDelay");
+const TCHAR* const cGigeCameraFileFilter = _T("Camera Files (*.ogc)|*.ogc||");
+
+
 class SVCameraDeviceImageFormatUpdater : public ISVCameraDeviceImageFormatUpdater
 {
 private:
@@ -108,8 +115,6 @@ public:
 	}
 };
 
-const CString SVGigeCameraFileFilter = _T("Camera Files (*.ogc)|*.ogc||");
-
 enum {IDC_PROPERTYTREE = 100};
 
 BEGIN_MESSAGE_MAP(CSVOPropertyPageDlg, CDialog)
@@ -145,10 +150,10 @@ void CSVOPropertyPageDlg::DoDataExchange(CDataExchange* pDX)
 
 void CSVOPropertyPageDlg::SetupCamera()
 {
-	SetTitle(m_CameraObj.GetCameraDisplayName());
+	SetTitle( m_CameraObj.GetCameraDisplayName().c_str() );
 	if( !m_CameraObj.IsFileAcquisition() )
 	{
-		if( (m_CameraObj.GetCameraFile().GetLength() > 0) )
+		if( 0 < m_CameraObj.GetCameraFile().size() )
 		{
 			GetDlgItem( IDOK)->SetWindowText( _T("Reset"));
 			m_InitialCameraFileName = m_CameraObj.GetCameraFile();
@@ -168,17 +173,17 @@ void CSVOPropertyPageDlg::SetupCamera()
 		FileName.SetFileType(SV_CAMERA_FILE_TYPE);
 
 		// There is only GigE at this time
-		LPCTSTR fileFilter = SVGigeCameraFileFilter;
+		LPCTSTR fileFilter = cGigeCameraFileFilter;
 		
 		bool bFullAccess = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
 		SVRPropertyItemFile* pFile = (SVRPropertyItemFile*)m_Tree.InsertItem(new SVRPropertyItemFile(bFullAccess, SVR_FILE,
-				fileFilter, FileName.GetDefaultPathName(), TRUE), pRoot);
+				fileFilter, FileName.GetDefaultPathName().c_str(), TRUE), pRoot);
 		if (pFile)
 		{
 			pFile->SetCtrlID(PROP_AD_FILE_NAME);
-			pFile->SetLabelText(_T("Camera Filename"));
-			pFile->SetInfoText(_T("Select camera file for the currently selected Camera."));
-			pFile->SetItemValue(m_CameraObj.GetCameraFile());
+			pFile->SetLabelText( _T("Camera Filename") );
+			pFile->SetInfoText( _T("Select camera file for the currently selected Camera.") );
+			pFile->SetItemValue( m_CameraObj.GetCameraFile().c_str() );
 		}
 		
 		// Show or Hide Real/File camera props
@@ -250,35 +255,35 @@ void CSVOPropertyPageDlg::SetupFileCamera(SVRPropertyItem* pRoot)
 	
 	bool bFullAccess = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
 	SVRPropertyItemFile* pFile = (SVRPropertyItemFile*)m_Tree.InsertItem(new SVRPropertyItemFile(bFullAccess, SVR_FILE,
-									fileFilter, FileName.GetDefaultPathName(), true), pRoot);
+									fileFilter, FileName.GetDefaultPathName().c_str(), true), pRoot);
 	if (pFile)
 	{
 		pFile->SetCtrlID(PROP_FILECAMERA_FILENAME);
 		pFile->SetLabelText(_T("Image Filename"));
 		pFile->SetInfoText(_T("Select the image file for the currently selected Camera."));
-		pFile->SetItemValue(m_CameraObj.GetImageFilename());
+		pFile->SetItemValue( m_CameraObj.GetImageFilename().c_str() );
 	}
 
 	pFile = (SVRPropertyItemFile*)m_Tree.InsertItem(new SVRPropertyItemFile(bFullAccess, SVR_FOLDER | SVR_TRAILINGSLASH,
-									nullptr, FileName.GetDefaultPathName(), true), pRoot);
+									nullptr, FileName.GetDefaultPathName().c_str(), true), pRoot);
 	if (pFile)
 	{
 		pFile->SetCtrlID(PROP_FILECAMERA_DIRECTORY);
 		pFile->SetLabelText(_T("Image Directory"));
 		pFile->SetInfoText(_T("Select the directory to load the image files from, for the currently selected Camera."));
-		SVString dirName = m_CameraObj.GetImageDirectoryName();
-		if (dirName.empty())
+		SVString PathName = m_CameraObj.GetImageDirectoryName();
+		if( PathName.empty() )
 		{
-			dirName = FileName.GetDefaultPathName();
-			m_CameraObj.SetImageDirectoryName(dirName);
+			PathName = FileName.GetDefaultPathName();
+			m_CameraObj.SetImageDirectoryName( PathName );
 		}
-		pFile->SetItemValue(dirName.c_str());
+		pFile->SetItemValue( PathName.c_str() );
 	}
 }
 
 void CSVOPropertyPageDlg::SetupAdvancedFileCamera(SVRPropertyItem* pRoot)
 {
-	SetTitle(m_CameraObj.GetCameraDisplayName());
+	SetTitle( m_CameraObj.GetCameraDisplayName().c_str() );
 
 	SVRPropertyItemCombo* pCombo = (SVRPropertyItemCombo*)m_Tree.InsertItem(new SVRPropertyItemCombo(), pRoot);
 	if (pCombo)
@@ -318,7 +323,7 @@ void CSVOPropertyPageDlg::SetupAdvancedFileCamera(SVRPropertyItem* pRoot)
 void CSVOPropertyPageDlg::SetupAdvancedCamera()
 {
 	ASSERT( nullptr != m_pAssistant );
-	SetTitle(m_CameraObj.GetCameraDisplayName());
+	SetTitle( m_CameraObj.GetCameraDisplayName().c_str() );
 	SVRPropertyItem* pRoot = m_Tree.InsertItem(new SVRPropertyItem());
 	if (pRoot)
 	{
@@ -406,10 +411,9 @@ void CSVOPropertyPageDlg::SetupAdvancedCamera()
 					pCombo->SetInfoText(_T("Enter the digitizer number the camera is attached to."));
 					pCombo->CreateComboBox();
 
-					CString str;
 					int num = m_CameraObj.GetDigNumber();
-					str.Format("%d", num);
-					int iPos = pCombo->AddString(str);
+					SVString Text = SvUl_SF::Format( _T("%d"), num );
+					int iPos = pCombo->AddString( Text.c_str() );
 					pCombo->SetItemData(iPos, num);
 					pCombo->SetItemValue(num);
 				}// end if (pCombo)
@@ -436,19 +440,20 @@ void CSVOPropertyPageDlg::SetupCameraDeviceParam(SVRPropertyItem* pRoot, const S
 					if (pCombo)
 					{
 						pCombo->SetCtrlID( PROP_CAMERA_FILE_BASE + pCamFileParam->Type() );
-						CString sLabel = pCamFileParam->VisualName();
-						if ( sLabel == _T("") )
-							sLabel = pCamFileParam->Name();
-						pCombo->SetLabelText( sLabel );
-						pCombo->SetInfoText( CString(pCamFileParam->Description()) );
+						SVString Label = pCamFileParam->VisualName();
+						if( Label.empty() )
+						{
+							Label = pCamFileParam->Name();
+						}
+						pCombo->SetLabelText( Label.c_str() );
+						pCombo->SetInfoText( pCamFileParam->Description() );
 						pCombo->CreateComboBox();
 						
 						SVLongValueDeviceParam::OptionsType::const_iterator iterOption;
 						for (iterOption = pCamFileParam->info.options.begin(); iterOption != pCamFileParam->info.options.end(); ++iterOption)
 						{
-							CString sText = iterOption->strDescription.c_str();
-							int iPos = pCombo->AddString( sText );
-							pCombo->SetItemData( iPos, iterOption->value );
+							int iPos = pCombo->AddString( iterOption->m_Description.c_str() );
+							pCombo->SetItemData( iPos, iterOption->m_Value );
 						}
 						if ( pCamFileParam->info.options.size() == 1 )
 						{
@@ -464,15 +469,17 @@ void CSVOPropertyPageDlg::SetupCameraDeviceParam(SVRPropertyItem* pRoot, const S
 					if (pEdit)
 					{
 						pEdit->SetCtrlID( PROP_CAMERA_FILE_BASE + pCamFileParam->Type() );
-						CString sLabel = pCamFileParam->VisualName();
-						if ( sLabel == _T("") )
-							sLabel = pCamFileParam->Name();
-						sLabel = sLabel + " (" + pCamDeviceParam->info.sUnits + ")";
-						pEdit->SetLabelText( sLabel );
-						CString sDescription = CString(pCamFileParam->Description());
-						sDescription += CString(_T("   Min = ")) + AsString(pCamFileParam->GetScaledMin() ) + CString(_T(", Max = ")) + AsString( pCamFileParam->GetScaledMax() ) + CString(_T("; default = ")) + AsString((long )ceil( pCamFileParam->lValue * pCamFileParam->info.multiplier) );
-						pEdit->SetInfoText( sDescription );
-										
+						
+						SVString Label = pCamFileParam->VisualName();
+						if( Label.empty() )
+						{
+							Label = pCamFileParam->Name();
+						}
+						Label = SvUl_SF::Format( _T("%s (%s)"), Label.c_str(), pCamDeviceParam->info.sUnits.c_str() );
+						pEdit->SetLabelText( Label.c_str() );
+						SVString Description = SvUl_SF::Format( _T("%s   Min = %d, Max = %d; default = %d"), pCamFileParam->Description(), pCamFileParam->GetScaledMin(), pCamFileParam->GetScaledMax(), static_cast<long> (ceil( pCamFileParam->lValue * pCamFileParam->info.multiplier)) );
+						pEdit->SetInfoText( Description.c_str() );
+
 						pEdit->SetItemValue( pCamDeviceParam->GetScaledValue() );
 					}
 				}
@@ -487,19 +494,20 @@ void CSVOPropertyPageDlg::SetupCameraDeviceParam(SVRPropertyItem* pRoot, const S
 				if (pCombo)
 				{
 					pCombo->SetCtrlID( PROP_CAMERA_FILE_BASE + pCamFileParam->Type() );
-					CString sLabel = pCamFileParam->VisualName();
-					if ( sLabel == _T("") )
-						sLabel = pCamFileParam->Name();
-					pCombo->SetLabelText( sLabel );
-					pCombo->SetInfoText( CString(pCamFileParam->Description()) );
+					SVString Label = pCamFileParam->VisualName();
+					if( Label.empty() )
+					{
+						Label = pCamFileParam->Name();
+					}
+					pCombo->SetLabelText( Label.c_str() );
+					pCombo->SetInfoText( pCamFileParam->Description() );
 					pCombo->CreateComboBox();
 					
 					SVBoolValueDeviceParam::OptionsType::const_iterator iterOption;
 					for (iterOption = pCamFileParam->info.options.begin(); iterOption != pCamFileParam->info.options.end(); ++iterOption)
 					{
-						CString sText = iterOption->strDescription.c_str();
-						int iPos = pCombo->AddString( sText );
-						pCombo->SetItemData( iPos, (LPARAM) iterOption->value );
+						int iPos = pCombo->AddString( iterOption->m_Description.c_str() );
+						pCombo->SetItemData( iPos, (LPARAM) iterOption->m_Value );
 					}
 					if ( pCamFileParam->info.options.size() == 1 )
 					{
@@ -523,11 +531,13 @@ void CSVOPropertyPageDlg::SetupCameraDeviceParam(SVRPropertyItem* pRoot, const S
 							if (pCombo)
 							{
 								pCombo->SetCtrlID( PROP_CAMERA_FILE_BASE + pCamFileParam->Type() );
-								CString sLabel = pCamFileParam->VisualName();
-								if ( sLabel == _T("") )
-									sLabel = pCamFileParam->Name();
-								pCombo->SetLabelText( sLabel );
-								pCombo->SetInfoText( CString(pCamFileParam->Description()) );
+								SVString Label = pCamFileParam->VisualName();
+								if( Label.empty() )
+								{
+									Label = pCamFileParam->Name();
+								}
+								pCombo->SetLabelText( Label.c_str() );
+								pCombo->SetInfoText( pCamFileParam->Description() );
 								pCombo->SetButtonText("ROI");
 								pCombo->CreateComboBox();
 									
@@ -537,8 +547,7 @@ void CSVOPropertyPageDlg::SetupCameraDeviceParam(SVRPropertyItem* pRoot, const S
 								{
 									if ( iterOption->second.m_bColor == ColorCamera )
 									{
-										CString sText = iterOption->second.m_strDescription.c_str();
-										int iPos = pCombo->AddString( sText );
+										int iPos = pCombo->AddString( iterOption->second.m_strDescription.c_str() );
 										pCombo->SetItemData( iPos, reinterpret_cast<DWORD_PTR>(&(iterOption->second)) );
 										if ( pCamDeviceParam->strValue == iterOption->second.m_strName )
 										{
@@ -566,11 +575,13 @@ void CSVOPropertyPageDlg::SetupCameraDeviceParam(SVRPropertyItem* pRoot, const S
 							if (pCombo)
 							{
 								pCombo->SetCtrlID( PROP_CAMERA_FILE_BASE + pCamFileParam->Type() );
-								CString sLabel = pCamFileParam->VisualName();
-								if ( sLabel == _T("") )
-									sLabel = pCamFileParam->Name();
-								pCombo->SetLabelText( sLabel );
-								pCombo->SetInfoText( CString(pCamFileParam->Description()) );
+								SVString Label = pCamFileParam->VisualName();
+								if ( Label.empty() )
+								{
+									Label = pCamFileParam->Name();
+								}
+								pCombo->SetLabelText( Label.c_str() );
+								pCombo->SetInfoText( pCamFileParam->Description() );
 								pCombo->CreateComboBox();
 										
 								SVStringValueDeviceParam::OptionsType::const_iterator iterOption;
@@ -578,11 +589,10 @@ void CSVOPropertyPageDlg::SetupCameraDeviceParam(SVRPropertyItem* pRoot, const S
 								int iOptionIndex = 0;
 								for (iterOption = pCamFileParam->info.options.begin(); iterOption != pCamFileParam->info.options.end(); ++iterOption)
 								{
-									CString sText = iterOption->strDescription.c_str();
 									int iPos;
-									iPos = pCombo->AddString( sText );
+									iPos = pCombo->AddString( iterOption->m_Description.c_str() );
 									++iOption;
-									if ( iterOption->value == pCamDeviceParam->strValue )
+									if ( iterOption->m_Value == pCamDeviceParam->strValue )
 										iOptionIndex = iOption;
 									pCombo->SetItemData( iPos, iOption );
 								}
@@ -703,7 +713,7 @@ void CSVOPropertyPageDlg::SetImageSizeEditAttributes()
 
 void CSVOPropertyPageDlg::SetupInspection()
 {
-	SetTitle(m_InspectionObj.GetInspectionName());
+	SetTitle( m_InspectionObj.GetInspectionName().c_str() );
 			
 	SVRPropertyItem* pRoot = m_Tree.InsertItem(new SVRPropertyItem());
 	if (pRoot)
@@ -722,7 +732,6 @@ void CSVOPropertyPageDlg::SetupInspection()
 			pCombo->CreateComboBox(CBS_DROPDOWNLIST);
 			// enter the Cameras available on the PPQ that this inspection is attached to...
 			
-			CString strName;
 			long lSize;
 			long l;
 			
@@ -731,12 +740,12 @@ void CSVOPropertyPageDlg::SetupInspection()
 				lSize = m_PPQObj.GetAttachedCameraCount();
 				for( l = 0; l < lSize; l++ )
 				{
-					strName = m_PPQObj.GetAttachedCamera( l );
-					iInsIndex = pCombo->AddString( strName );
+					SVString CameraName = m_PPQObj.GetAttachedCamera( l );
+					iInsIndex = pCombo->AddString( CameraName.c_str() );
 					pCombo->SetItemData( iInsIndex, l );
 				}// end for
 				
-				long lWhere = pCombo->SelectString( -1, m_InspectionObj.GetToolsetImage() );
+				long lWhere = pCombo->SelectString( -1, m_InspectionObj.GetToolsetImage().c_str() );
 				bool bResult = pCombo->SetItemValue( pCombo->GetItemData( lWhere ) );
 			}// end if
 			else
@@ -760,7 +769,7 @@ void CSVOPropertyPageDlg::SetupInspection()
 			iInsIndex = pCombo->AddString( _T( "Method 2" ) );
 			pCombo->SetItemData( iInsIndex, 1 );
 			
-			long lWhere = pCombo->SelectString( -1, m_InspectionObj.GetNewDisableMethod() );
+			long lWhere = pCombo->SelectString( -1, m_InspectionObj.GetNewDisableMethod().c_str() );
 			bool bResult = pCombo->SetItemValue( pCombo->GetItemData( lWhere ) );
 		}// end if
 
@@ -784,7 +793,7 @@ void CSVOPropertyPageDlg::SetupInspection()
 
 void CSVOPropertyPageDlg::SetupTrigger()
 {
-	SetTitle(CString(m_TriggerObj.GetTriggerDisplayName()));
+	SetTitle( m_TriggerObj.GetTriggerDisplayName() );
 	SVRPropertyItem* pRoot = m_Tree.InsertItem(new SVRPropertyItem());
 	if (pRoot)
 	{
@@ -817,7 +826,7 @@ void CSVOPropertyPageDlg::SetupTrigger()
 
 void CSVOPropertyPageDlg::SetupAdvancedTrigger()
 {
-	SetTitle(CString(m_TriggerObj.GetTriggerDisplayName()));
+	SetTitle( m_TriggerObj.GetTriggerDisplayName() );
 	SVRPropertyItem* pRoot = m_Tree.InsertItem(new SVRPropertyItem());
 	if (pRoot)
 	{
@@ -830,9 +839,8 @@ void CSVOPropertyPageDlg::SetupAdvancedTrigger()
 		{
 			pEdit->SetCtrlID(PROP_ADV_TRIGGER_PERIOD);
 			pEdit->SetLabelText(_T("Timer Period"));
-			CString txt;
-			txt.Format(_T("Enter the period for the Software Trigger, in milliseconds (minimum %d milliseconds)."), SvTh::MinTimerPeriod);
-			pEdit->SetInfoText(txt);
+			SVString Text = SvUl_SF::Format( _T("Enter the period for the Software Trigger, in milliseconds (minimum %d milliseconds)."), SvTh::MinTimerPeriod);
+			pEdit->SetInfoText( Text.c_str() );
 			
 			pEdit->SetItemValue(m_TriggerObj.GetTimerPeriod());
 		}
@@ -843,7 +851,7 @@ void CSVOPropertyPageDlg::SetupAdvancedTrigger()
 
 void CSVOPropertyPageDlg::SetupPPQ()
 {
-	SetTitle(m_PPQObj.GetPPQName());
+	SetTitle( m_PPQObj.GetPPQName().c_str() );
 	SVRPropertyItem* pRoot = m_Tree.InsertItem(new SVRPropertyItem());
 	if (pRoot)
 	{
@@ -905,27 +913,27 @@ void CSVOPropertyPageDlg::SetupPPQ()
 		//PPQLength
 		SVRPropertyItemEdit* pEdit = (SVRPropertyItemEdit*)m_Tree.InsertItem(new SVRPropertyItemEdit(), pRoot);
 		int iMode = m_PPQObj.GetPPQMode();
-		CString sInfoTxt;
+		SVString InfoTxt;
 		switch (iMode)
 		{
 		case 0: //next trigger
 			{   
-				sInfoTxt = _T("Next Trigger Mode - in this mode the PPQ length must be 2 or greater.");
+				InfoTxt = _T("Next Trigger Mode - in this mode the PPQ length must be 2 or greater.");
 				break;
 			}
 		case 1: //time delay
 			{
-				sInfoTxt = _T("Time Delay Mode - in this mode the PPQ length must be 1.");
+				InfoTxt = _T("Time Delay Mode - in this mode the PPQ length must be 1.");
 				break;
 			}
 		case 2: //time delay data complete
 			{
-				sInfoTxt = _T("Time Delay && Data Completion Mode - in this mode the PPQ length must be 1.");
+				InfoTxt = _T("Time Delay && Data Completion Mode - in this mode the PPQ length must be 1.");
 				break;
 			}
 		case 3: //extended time delay
 			{
-				sInfoTxt = _T("Extended Time Delay Mode - in this mode the PPQ length must be 1 or greater.");
+				InfoTxt = _T("Extended Time Delay Mode - in this mode the PPQ length must be 1 or greater.");
 				break;
 			}
 		default:
@@ -938,7 +946,7 @@ void CSVOPropertyPageDlg::SetupPPQ()
 		{
 			pEdit->SetCtrlID(PROP_PPQ_LENGTH);
 			pEdit->SetLabelText(_T("Length"));
-			pEdit->SetInfoText(sInfoTxt);
+			pEdit->SetInfoText( InfoTxt.c_str() );
 			if (m_PPQObj.GetPPQMode() == 0)
 			{
 				if (m_PPQObj.GetPPQLength() < 2)
@@ -977,13 +985,12 @@ void CSVOPropertyPageDlg::SetupPPQ()
 		pCombo = (SVRPropertyItemCombo*)m_Tree.InsertItem(new SVRPropertyItemCombo(), pRoot);
 		if ( pCombo )
 		{
-			CString sInfoString;
-			sInfoString.Format("Enabling this option will maintain source images and published result images "
+			SVString InfoString = SvUl_SF::Format( _T("Enabling this option will maintain source images and published result images "
 				"throughout the length of the PPQ. Because of this, "
-				"the PPQ Length can not be > %d",TheSVObserverApp.GetMaxPPQLength()); //GetSourceImageDepth() - 2 );
+				"the PPQ Length can not be > %d"),TheSVObserverApp.GetMaxPPQLength()); //GetSourceImageDepth() - 2 );
 			pCombo->SetCtrlID(PROP_PPQ_MAINTAIN_SRC_IMG);
 			pCombo->SetLabelText(_T("Maintain Published Images"));
-			pCombo->SetInfoText(sInfoString);
+			pCombo->SetInfoText( InfoString.c_str() );
 			pCombo->CreateComboBoxBool();
 			pCombo->SetItemValue(m_PPQObj.GetMaintainSourceImageProperty());
 		}
@@ -1004,12 +1011,11 @@ void CSVOPropertyPageDlg::SetupPPQ()
 		pCombo = (SVRPropertyItemCombo*)m_Tree.InsertItem(new SVRPropertyItemCombo(), pRoot);
 		if ( pCombo )
 		{
-			CString sInfoString;
-			sInfoString = _T("Condition to evaluate to determine if Outputs will be written. "
+			SVString InfoString = _T("Condition to evaluate to determine if Outputs will be written. "
 				             "If set to Always, no evaluation is performed and the Outputs are always written.");
 			pCombo->SetCtrlID(PROP_PPQ_CONDITIONAL_OUTPUT);
 			pCombo->SetLabelText(_T("Conditional Output"));
-			pCombo->SetInfoText(sInfoString);
+			pCombo->SetInfoText( InfoString.c_str() );
 			pCombo->CreateComboBox(CBS_DROPDOWNLIST);
 			int nIndex = pCombo->AddString(PPQ_CONDITIONAL_OUTPUT_ALWAYS);
 			pCombo->SetItemData(nIndex, nIndex);
@@ -1067,8 +1073,6 @@ BOOL CSVOPropertyPageDlg::OnInitDialog()
 	
 	m_Tree.SetColumn( (long) ( rc.Width() * 0.30 ) );
 
-	CString	rKey;
-	
 	switch(m_nID)
 	{
 		case VIRTUAL_CAMERA_DLG:
@@ -1284,18 +1288,15 @@ void CSVOPropertyPageDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
 										int l_Index = l_pCombo->GetCurSel();
 										if( -1 < l_Index )
 										{
-											CString l_Desc;
-
-											l_pCombo->GetLBText( l_Index, l_Desc );
+											CString Description;
+											l_pCombo->GetLBText( l_Index, Description );
 
 											SVStringValueDeviceParam::OptionsType::const_iterator iterOption;
 											for (iterOption = pParam->info.options.begin(); iterOption != pParam->info.options.end(); ++iterOption)
 											{
-												CString sText = iterOption->strDescription.c_str();
-
-												if( l_Desc == sText )
+												if( Description.GetString() == iterOption->m_Description )
 												{
-													pParam->strValue = iterOption->value;
+													pParam->strValue = iterOption->m_Value;
 													break;
 												}
 											}
@@ -1337,18 +1338,22 @@ void CSVOPropertyPageDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
 			{
 				case PROP_AD_FILE_NAME:
 				{
-					CString sFileName;
-					m_Tree.FindItem(PROP_AD_FILE_NAME)->GetItemValue(sFileName);
-					sFileName.TrimLeft();
-					sFileName.TrimRight();
-					m_CameraObj.SetCameraFile(sFileName);
+					SVString FileName;
+					m_Tree.FindItem(PROP_AD_FILE_NAME)->GetItemValue( FileName );
+					SvUl_SF::TrimLeft( FileName );
+					SvUl_SF::TrimRight( FileName );
+					m_CameraObj.SetCameraFile( FileName );
 					m_CameraObj.SetCameraFileChanged();
-					if( m_CameraObj.GetCameraFileChanged()  && m_InitialCameraFileName.Compare( m_CameraObj.GetCameraFile()) != 0 )
+					if( m_CameraObj.GetCameraFileChanged()  && m_InitialCameraFileName != m_CameraObj.GetCameraFile() )
+					{
 						GetDlgItem(IDOK)->SetWindowText(_T("OK"));
+					}
 					else
 					{
-						if( m_InitialCameraFileName.GetLength() > 0 )
+						if( 0 < m_InitialCameraFileName.size() )
+						{
 							GetDlgItem(IDOK)->SetWindowText(_T("Reset"));
+						}
 					}
 					break;
 				}
@@ -1385,9 +1390,9 @@ void CSVOPropertyPageDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
 
 				case PROP_FILECAMERA_FILENAME:
 				{
-					CString filename;
-					m_Tree.FindItem(ctrlID)->GetItemValue(filename);
-					m_CameraObj.SetImageFilename(SVString(filename));
+					SVString FileName;
+					m_Tree.FindItem(ctrlID)->GetItemValue( FileName );
+					m_CameraObj.SetImageFilename( FileName );
 					UpdateFileImageSize();
 					GetDlgItem(IDOK)->SetWindowText(_T("OK"));
 					break;
@@ -1395,9 +1400,9 @@ void CSVOPropertyPageDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
 
 				case PROP_FILECAMERA_DIRECTORY:
 				{
-					CString directory;
-					m_Tree.FindItem(ctrlID)->GetItemValue(directory);
-					m_CameraObj.SetImageDirectoryName(SVString(directory));
+					SVString Path;
+					m_Tree.FindItem(ctrlID)->GetItemValue( Path);
+					m_CameraObj.SetImageDirectoryName( Path );
 					UpdateFileImageSize();
 					break;
 				}
@@ -1484,41 +1489,41 @@ void CSVOPropertyPageDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
 
 				case PROP_INS_TOOLSET_IMAGE:
 				{
-					CString sImage;
 					SVRPropertyItemCombo* pCombo = (SVRPropertyItemCombo*) m_Tree.FindItem( PROP_INS_TOOLSET_IMAGE );
 					
+					CString ImageName;
 					long lIndex = pCombo->GetCurSel();
 					if( lIndex != LB_ERR )
-						pCombo->GetLBText( lIndex, sImage );
-					m_InspectionObj.SetToolsetImage( sImage );
+					{
+						pCombo->GetLBText( lIndex, ImageName );
+					}
+					m_InspectionObj.SetToolsetImage( ImageName );
 					break;
 				}
 
 				case PROP_INS_NEW_DISABLE_METHOD:
 				{
-					CString sDisable;
-					long lIndex;
-					SVRPropertyItemCombo* pCombo;
-
-					pCombo = (SVRPropertyItemCombo*) m_Tree.FindItem( PROP_INS_NEW_DISABLE_METHOD );
-					lIndex = pCombo->GetCurSel();
+					SVRPropertyItemCombo* pCombo = (SVRPropertyItemCombo*) m_Tree.FindItem( PROP_INS_NEW_DISABLE_METHOD );
+					CString DisableMethod;
+					long lIndex = pCombo->GetCurSel();
 					if( lIndex != LB_ERR )
-						pCombo->GetLBText( lIndex, sDisable );
-					m_InspectionObj.SetNewDisableMethod( sDisable );
+					{
+						pCombo->GetLBText( lIndex, DisableMethod );
+					}
+					m_InspectionObj.SetNewDisableMethod( DisableMethod );
 					break;
 				}
 
 				case PROP_INS_ENABLE_AUX_EXTENT:
 				{
-					CString sEnable;
-					long lIndex;
-					SVRPropertyItemCombo* pCombo;
-
-					pCombo = (SVRPropertyItemCombo*) m_Tree.FindItem( PROP_INS_ENABLE_AUX_EXTENT );
-					lIndex = pCombo->GetCurSel();
+					SVRPropertyItemCombo* pCombo = (SVRPropertyItemCombo*) m_Tree.FindItem( PROP_INS_ENABLE_AUX_EXTENT );
+					CString Enable;
+					long lIndex = pCombo->GetCurSel();
 					if( lIndex != LB_ERR )
-						pCombo->GetLBText( lIndex, sEnable );
-					m_InspectionObj.SetEnableAuxiliaryExtent( sEnable == _T("True") );
+					{
+						pCombo->GetLBText( lIndex, Enable );
+					}
+					m_InspectionObj.SetEnableAuxiliaryExtent( Enable == _T("True") );
 					break;
 				}
 
@@ -1601,7 +1606,6 @@ void CSVOPropertyPageDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
 				case PROP_PPQ_LENGTH:
 				{
 					long lPPQMode;
-					CString sTxt;
 					int iLen;
 					m_Tree.FindItem(PROP_PPQ_LENGTH)->GetItemValue(iLen);
 					m_Tree.FindItem(PROP_PPQ_MODE)->GetItemValue(lPPQMode);
@@ -1875,17 +1879,16 @@ HRESULT CSVOPropertyPageDlg::AdjustCameraImageFormat( LPCTSTR sSelectedFormat, S
 
 	bool bHaveImage = false;
 	bool bChangedAcqFormat = false;
-	CString sCurrentFormat;
 	SVImageInfoClass l_ImageInfo;
 
-	CString sDeviceName = m_pAssistant->BuildDigName( m_CameraObj );
+	SVString DeviceName = m_pAssistant->BuildDigName( m_CameraObj );
 	SVConfigurationObject* pConfig( nullptr );
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 	SVInspectionProcessArray aInspections;
 	SVDeviceParamCollection l_CurrentParams;
 
-	SVAcquisitionClassPtr pDevice( SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( sDeviceName ) );
+	SVAcquisitionClassPtr pDevice( SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( DeviceName.c_str() ) );
 	
 	if( nullptr != pDevice )
 	{
@@ -1896,9 +1899,7 @@ HRESULT CSVOPropertyPageDlg::AdjustCameraImageFormat( LPCTSTR sSelectedFormat, S
 			SVFileNameArrayClass svFiles;
 			SVFileNameClass svFile;
 
-			CString sCameraFileName = m_CameraObj.GetCameraFile();
-
-			svFile.SetFullFileName(sCameraFileName);
+			svFile.SetFullFileName( m_CameraObj.GetCameraFile().c_str() );
 
 			svFiles.Add(svFile);
 
@@ -2117,10 +2118,11 @@ void CSVOPropertyPageDlg::SetProductType(SVIMProductEnum eType)
     m_eProduct = eType;
 }
 
-void CSVOPropertyPageDlg::SetTitle(CString sName)
+void CSVOPropertyPageDlg::SetTitle( LPCTSTR Name )
 {
-    CString sTmp = _T("Property Settings  -  ")+sName;
-    SetWindowText(sTmp);
+    SVString Label = _T("Property Settings  -  ");
+	Label += Name;
+    SetWindowText( Label.c_str() );
 }
 
 void CSVOPropertyPageDlg::SetConfigAssistantDlg(CSVOConfigAssistantDlg* pAssistant)

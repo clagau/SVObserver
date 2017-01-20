@@ -12,6 +12,7 @@
 
 #pragma region Includes
 #include "SVOResource/resource.h"
+#include "SVUtilityLibrary/SVString.h"
 #include "SVTimerLibrary/SVClock.h"
 #include "SVInt64ValueObjectClass.h"
 #pragma endregion Includes
@@ -28,7 +29,7 @@ public:
 	BOOL Start();
 	BOOL Stop(long lIndex);
 
-	virtual HRESULT GetValueAt(int nBucket, int iIndex, CString& rstrValue) const override;
+	virtual HRESULT GetValueAt(int nBucket, int iIndex, SVString& rstrValue) const override;
 	virtual HRESULT GetValueAt( int iBucket, int iIndex, VARIANT& rValue ) const override;
 
 private:

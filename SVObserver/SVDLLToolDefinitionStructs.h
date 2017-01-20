@@ -18,11 +18,11 @@
 #pragma pack (push, 1)
 struct InputValueDefinitionStruct
 {
-	long lVT;
-	BSTR bstrDisplayName;
-	BSTR bstrHelpText;
-	BSTR bstrGroup;
-	_variant_t vDefaultValue;
+	long m_VT;
+	BSTR m_bDisplayName;
+	BSTR m_bHelpText;
+	BSTR m_bGroup;
+	_variant_t m_DefaultValue;
 public:
 	InputValueDefinitionStruct( );
 	~InputValueDefinitionStruct( );
@@ -31,7 +31,6 @@ public:
 	bool operator == (const InputValueDefinitionStruct& rhs);
 private:
 	void Clear();
-	void Init();
 };
 #pragma pack (pop)
 
@@ -41,8 +40,8 @@ typedef std::vector<InputValueDefinitionStruct> InputValueDefinitionStructArray;
 #pragma pack (push, 1)
 struct ResultValueDefinitionStruct
 {
-	long lVT;
-	BSTR bstrDisplayName;	// not used at this time
+	long m_VT;
+	BSTR m_bDisplayName;	// not used at this time
 public:
 	ResultValueDefinitionStruct( );
 	~ResultValueDefinitionStruct( );
@@ -50,7 +49,6 @@ public:
 	const ResultValueDefinitionStruct& operator = (const ResultValueDefinitionStruct& rhs );
 private:
 	void Clear();
-	void Init();
 };
 #pragma pack (pop)
 

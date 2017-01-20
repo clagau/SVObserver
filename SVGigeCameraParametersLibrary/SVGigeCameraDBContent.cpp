@@ -22,6 +22,7 @@
 #include "SVGigeEmptySetter.h"
 #include "SVUtilityLibrary/SVSharedPtr.h"
 #include "SVUtilityLibrary/StringToEnum.h"
+#include "SVUtilityLibrary/SVStringConversions.h"
 #include "SVGigeCameraDBContent.h"
 #pragma endregion Includes
 
@@ -168,13 +169,6 @@ static FeatureAccessStringEnumMap FeatureAccessStringEnums = boost::assign::map_
 (L"ReadWrite",	SVGigeFeature::ReadWrite)
 ;
 
-// String Conversion
-static SVString WideToAnsi(wchar_t* wideStr)
-{
-	USES_CONVERSION;
-	return SVString(W2CA(wideStr));
-}
-
 SVGigeCameraDBContent::SVGigeCameraDBContent()
 : m_errorCode(S_OK), m_GigeParameterEnum(SVGigeParameterFeatureOverrides)
 {
@@ -284,7 +278,7 @@ HRESULT SVGigeCameraDBContent::endElement(unsigned short* pwchNamespaceUri, int 
 void SVGigeCameraDBContent::ReportError(wchar_t* pErrorMsg, HRESULT errorCode)
 {
 	m_errorCode = errorCode;
-	m_errorText = WideToAnsi(pErrorMsg);
+	m_errorText = SvUl::to_utf8( std::wstring(pErrorMsg));
 }
 
 // Get XML Attributes for SVGigeParameter
@@ -329,7 +323,7 @@ void SVGigeCameraDBContent::GetGigeDeviceParameterStructAttributes(MSXML2::ISAXA
 
 		if (wcsncmp(name, L"DeviceParameterName", nameSize) == 0)
 		{
-			m_GigeDeviceParameterInfo.m_GigeDeviceParameterName = WideToAnsi(value);
+			m_GigeDeviceParameterInfo.m_GigeDeviceParameterName = SvUl::to_utf8( _bstr_t(value) );
 		}
 		else if (wcsncmp(name, L"DeviceParameterType", nameSize) == 0)
 		{
@@ -356,11 +350,11 @@ void SVGigeCameraDBContent::GetGigeAccessorAttributes(MSXML2::ISAXAttributes* pA
 		// Lookup Attribute
 		if (wcsncmp(name, L"Getter", nameSize) == 0)
 		{
-			m_GigeDeviceParameterInfo.m_GigeFeatureAccessor.m_accessor.m_getterName = WideToAnsi(value);
+			m_GigeDeviceParameterInfo.m_GigeFeatureAccessor.m_accessor.m_getterName = SvUl::to_utf8( _bstr_t(value) );
 		}
 		else if (wcsncmp(name, L"Setter", nameSize) == 0)
 		{
-			m_GigeDeviceParameterInfo.m_GigeFeatureAccessor.m_accessor.m_setterName = WideToAnsi(value);
+			m_GigeDeviceParameterInfo.m_GigeFeatureAccessor.m_accessor.m_setterName = SvUl::to_utf8( _bstr_t(value) );
 		}
 	}
 }
@@ -381,7 +375,7 @@ void SVGigeCameraDBContent::GetGigeFeatureAttributes(MSXML2::ISAXAttributes* pAt
 
 		if (wcsncmp(name, L"FeatureName", nameSize) == 0)
 		{
-			m_GigeDeviceParameterInfo.m_GigeFeatureAccessor.m_feature.m_GigeFeatureName = WideToAnsi(value);
+			m_GigeDeviceParameterInfo.m_GigeFeatureAccessor.m_feature.m_GigeFeatureName = SvUl::to_utf8( _bstr_t(value) );
 		}
 		else if (wcsncmp(name, L"FeatureType", nameSize) == 0)
 		{
@@ -431,11 +425,11 @@ void SVGigeCameraDBContent::GetGigeFeatureSelectorAttributes(MSXML2::ISAXAttribu
 
 		if (wcsncmp(name, L"SelectorName", nameSize) == 0)
 		{
-			gigeFeatureSelectorInfo.m_GigeFeatureSelectorName = WideToAnsi(value);
+			gigeFeatureSelectorInfo.m_GigeFeatureSelectorName = SvUl::to_utf8( _bstr_t(value) );
 		}
 		else if (wcsncmp(name, L"SelectorValue", nameSize) == 0)
 		{
-			gigeFeatureSelectorInfo.m_GigeFeatureSelectorValue = WideToAnsi(value);
+			gigeFeatureSelectorInfo.m_GigeFeatureSelectorValue = SvUl::to_utf8( _bstr_t(value) );
 		}
 	}
 	// Set Feature Selector
@@ -461,11 +455,11 @@ void SVGigeCameraDBContent::GetGigeFeatureStringEnumAttributes(MSXML2::ISAXAttri
 
 		if (wcsncmp(name, L"SVDeviceParamString", nameSize) == 0)
 		{
-			deviceParamString = WideToAnsi(value);
+			deviceParamString = SvUl::to_utf8( _bstr_t(value) );
 		}
 		else if (wcsncmp(name, L"SVGigeFeatureString", nameSize) == 0)
 		{
-			gigeFeatureString = WideToAnsi(value);
+			gigeFeatureString = SvUl::to_utf8( _bstr_t(value) );
 		}
 	}
 	if (!deviceParamString.empty() && !gigeFeatureString.empty())

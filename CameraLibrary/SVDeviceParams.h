@@ -16,6 +16,7 @@
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <algorithm>
 #include "SVDeviceParamCollection.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 class SVDeviceParamStructTestCases
@@ -287,27 +288,27 @@ LPCTSTR const DeviceParamCameraDefaultSettings_String= (_T("DefaultSettings"));
 
 template<typename TYPE> struct TDeviceOption	// used for discrete selectable values
 {
-	TYPE value;
-	SVString strDescription;
-	TDeviceOption(){};
-	TDeviceOption(TYPE t) {value = t;}
-	TDeviceOption(TYPE t, SVString s) {value = t; strDescription = s;}
-	operator TYPE() const {return value;}
+	TYPE m_Value;
+	SVString m_Description;
+	TDeviceOption() {};
+	TDeviceOption(const TYPE& rValue) { value = rValue; };
+	TDeviceOption(const TYPE& rValue, const SVString& rDescription) { m_Value = rValue; m_Description = rDescription; };
+	operator TYPE() const { return m_Value; };
 };
 
 template<typename OptionType>
 class OptionDescMatch
 {
 private:
-	SVString m_description;
+	const SVString& m_rDescription;
 
 public:
-	OptionDescMatch(SVString description)
-	: m_description(description) {}
+	OptionDescMatch(const SVString& rDescription)
+		: m_rDescription(rDescription) {}
 
 	bool operator()(const OptionType& option) const
 	{
-		return option.strDescription == m_description;
+		return option.m_Description == m_rDescription;
 	}
 };
 
@@ -315,16 +316,16 @@ template <typename ValueType, typename OptionType, typename EvalFunc>
 class OptionValueMatch
 {
 private:
-	ValueType m_value;
-	EvalFunc m_evalFunc;
+	const ValueType& m_rValue;
+	const EvalFunc& m_rEvalFunc;
 
 public:
-	OptionValueMatch(const EvalFunc& evalFunc, const ValueType& value)
-	: m_evalFunc(evalFunc), m_value(value) {}
+	OptionValueMatch(const EvalFunc& evalFunc, const ValueType& rValue)
+		: m_rEvalFunc(evalFunc), m_rValue(rValue) {}
 
 	bool operator()(const OptionType& option) const
 	{
-		return m_evalFunc(option, m_value);
+		return m_rEvalFunc(option, m_rValue);
 	}
 };
 
@@ -370,7 +371,7 @@ template<> struct TDeviceParamInfo<long>
 	long offset;
 	double multiplier;
 	double unit_divisor;
-	CString sUnits;
+	SVString sUnits;
 	typedef TDeviceOption<long>     OptionType;
 	typedef std::vector<OptionType> OptionsType;
 	OptionsType options;
@@ -397,7 +398,7 @@ template<> struct TDeviceParamInfo<__int64>
 	__int64 max;
 	__int64 offset;
 	double multiplier;
-	CString sUnits;
+	SVString sUnits;
 	typedef TDeviceOption<__int64>     OptionType;
 	typedef std::vector<OptionType> OptionsType;
 	OptionsType options;
@@ -428,4 +429,3 @@ HRESULT FromVariant( long& rlValue, const VARIANT& rv );
 HRESULT FromVariant( __int64& riValue, const VARIANT& rv );
 HRESULT FromVariant( bool& rlValue, const VARIANT& rv );
 HRESULT FromVariant( SVString& rlValue, const VARIANT& rv );
-HRESULT FromVariant( CString& rlValue, const VARIANT& rv );

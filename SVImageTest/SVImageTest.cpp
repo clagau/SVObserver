@@ -31,14 +31,14 @@ static char THIS_FILE[] = __FILE__;
 
 CWnd g_ImageTestDesktopWindow;
 
-bool IsGigeDigitizer(LPCTSTR p_productName)
+bool IsGigeDigitizer(LPCTSTR ProductName)
 {
-	CString l_productName = p_productName;
-	bool l_bOk = ( 0 == l_productName.CompareNoCase(SvOi::SVO_PRODUCT_KONTRON_X2_GD1A ) ||
-					0 == l_productName.CompareNoCase( SvOi::SVO_PRODUCT_KONTRON_X2_GD2A ) ||
-					0 == l_productName.CompareNoCase( SvOi::SVO_PRODUCT_KONTRON_X2_GD4A ) ||
-					0 == l_productName.CompareNoCase( SvOi::SVO_PRODUCT_KONTRON_X2_GD8A ) ||
-					0 == l_productName.CompareNoCase( SvOi::SVO_PRODUCT_KONTRON_X2_GD8A_NONIO ) ) ? true : false;
+	SVString Name = ProductName;
+	bool l_bOk = ( 0 == SvUl_SF::CompareNoCase( Name, SVString( SvOi::SVO_PRODUCT_KONTRON_X2_GD1A ) ) ||
+					0 == SvUl_SF::CompareNoCase( Name, SVString( SvOi::SVO_PRODUCT_KONTRON_X2_GD2A ) ) ||
+					0 == SvUl_SF::CompareNoCase( Name, SVString( SvOi::SVO_PRODUCT_KONTRON_X2_GD4A ) ) ||
+					0 == SvUl_SF::CompareNoCase( Name, SVString( SvOi::SVO_PRODUCT_KONTRON_X2_GD8A ) ) ||
+					0 == SvUl_SF::CompareNoCase( Name, SVString( SvOi::SVO_PRODUCT_KONTRON_X2_GD8A_NONIO ) ) ) ? true : false;
 
 	return l_bOk;
 }

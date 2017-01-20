@@ -118,7 +118,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 	}
 
 	// Create
-	HRESULT SVSharedPPQWriter::Create( const std::string& name, const InspectionWriterCreationInfos& inspections, const SVSharedMemorySettings& rSettings, const long ProductSlots, const long RejectSlots, size_t size )
+	HRESULT SVSharedPPQWriter::Create( const SVString& name, const InspectionWriterCreationInfos& inspections, const SVSharedMemorySettings& rSettings, const long ProductSlots, const long RejectSlots, size_t size )
 	{
 		HRESULT l_result = S_OK;
 
@@ -211,7 +211,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		m_ShareName.clear();
 	}
 
-	SVSharedInspectionWriter& SVSharedPPQWriter::operator[](const std::string& shareName)
+	SVSharedInspectionWriter& SVSharedPPQWriter::operator[](const SVString& shareName)
 	{
 		InspectionWriters::iterator it = std::find_if(m_writers.begin(), m_writers.end(), 
 			[&shareName](SVSharedInspectionWriter& iw)->bool 

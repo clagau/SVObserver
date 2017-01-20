@@ -15,6 +15,7 @@
 //Moved to precompiled header: #include <boost/utility.hpp>
 #include "SVSharedLastInspectedCache.h"
 #include "SVSharedRejectCache.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 namespace Seidenader { namespace SVSharedMemoryLibrary
@@ -28,7 +29,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		SVSharedInspectionReader();
 		~SVSharedInspectionReader();
 
-		bool Open(const std::string& name);
+		bool Open(const SVString& name);
 		void Close();
 		bool IsOpen() const;
 
@@ -42,7 +43,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		SVSharedLastInspectedCache* sh;
 		SVSharedRejectCache* rsh;
 
-		std::string m_ShareName;
+		SVString m_ShareName;
 	};
 
 	typedef std::shared_ptr<SVSharedInspectionReader> InspectionReaderPtr;

@@ -47,9 +47,10 @@
 //! Precompiled headers section
 //************************************
 #pragma region Precompiled Headers
-#include <afx.h>
-#include <afxwin.h>
-#include <afxtempl.h>
+#include <Windows.h>
+//#include <afx.h>
+//#include <afxwin.h>
+//#include <afxtempl.h>
 
 #include <concrt.h>			//Used by static library
 #include <comutil.h>		//Used by static library

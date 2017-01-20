@@ -30,14 +30,14 @@ namespace Seidenader { namespace SVOGui {
 #pragma region Public Methods
 	public:
 		// Show the object selector and return the selection. 
-		/// \param name [in,out] In: Defined which item should selected at begin. 
+		/// \param rName [in,out] In: Defined which item should selected at begin. 
 		///                     Out: If selector closed with OK-button, the selection will returned.
 		/// \param Title [in] The title of the object selector.
 		/// \param pParent [in] The parent control
 		/// \param rInstanceId [in] 
 		/// \returns bool True if selector was closed by OK-button.
 		template <typename ToolsetSelector>
-		bool Show(CString& name, const CString& Title, CWnd* pParent, const SVGUID& rInstanceId = SV_GUID_NULL );
+		bool Show( SVString& rName, const SVString& rTitle, CWnd* pParent, const SVGUID& rInstanceId = SV_GUID_NULL );
 #pragma endregion Public Methods
 
 #pragma endregion Private Methods

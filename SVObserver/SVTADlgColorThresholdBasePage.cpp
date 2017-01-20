@@ -11,9 +11,7 @@
 
 #include "stdafx.h"
 #include "SVTADlgColorThresholdBasePage.h"
-#include "SVLibrary/StringHelper.h"
 #include "SVTADlgColorThresholdSheet.h"
-#include "SVLibrary/Stringmunge.h"
 
 IMPLEMENT_DYNCREATE(SVTADlgColorThresholdBasePage, CPropertyPage)
 
@@ -67,9 +65,9 @@ BOOL SVTADlgColorThresholdBasePage::OnInitDialog()
 	m_pTool = m_pSheet->GetTool();
 	
 	m_cbZoom.SetItemData( m_cbZoom.AddString(_T("Fit to Window")), 0 );
-	m_cbZoom.SetItemData( m_cbZoom.AddString(AsString(100)+_T("%")), 100 );
-	m_cbZoom.SetItemData( m_cbZoom.AddString(AsString(200)+_T("%")), 200 );
-	m_cbZoom.SetItemData( m_cbZoom.AddString(AsString(400)+_T("%")), 400 );
+	m_cbZoom.SetItemData( m_cbZoom.AddString(_T("100%")), 100 );
+	m_cbZoom.SetItemData( m_cbZoom.AddString(_T("200%")), 200 );
+	m_cbZoom.SetItemData( m_cbZoom.AddString(_T("400%")), 400 );
 	m_cbZoom.SetCurSel(0);
 	
 	return TRUE;  // return TRUE unless you set the focus to a control

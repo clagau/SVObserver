@@ -51,6 +51,7 @@ namespace Seidenader { namespace SVOGui
 	};
 
 	const int c_offsetXForCursorToolbar = 340;
+	const TCHAR* const cQuote = _T("\"");
 
 	BEGIN_MESSAGE_MAP(SVFormulaEditorPageClass, CPropertyPage)
 		//{{AFX_MSG_MAP(SVFormulaEditorPageClass)
@@ -69,9 +70,9 @@ namespace Seidenader { namespace SVOGui
 	, m_FormulaController( controller )
 	, m_isConditionalPage( isDisableCheckboxesVisible )
 	, m_disableExtentionID( disableExtentionID )
-	, m_StrConstantValue( _T( "" ) )
+	, m_ConstantValue( _T( "" ) )
 	, m_constantType( 0 )
-	, m_strToolsetOutputVariable( _T( "" ) )
+	, m_ToolsetOutputVariable( _T( "" ) )
 	, m_equationDisabled( false )
 	, m_ownerDisabled( false )
 	{
@@ -87,9 +88,9 @@ namespace Seidenader { namespace SVOGui
 		m_FormulaController->SetDefaultInputs();
 	}
 
-	CString SVFormulaEditorPageClass::GetOwnerName() const
+	SVString SVFormulaEditorPageClass::GetOwnerName() const
 	{
-		return m_FormulaController->GetOwnerName().c_str();
+		return m_FormulaController->GetOwnerName();
 	}
 
 	void SVFormulaEditorPageClass::DoDataExchange(CDataExchange* pDX)
@@ -105,9 +106,9 @@ namespace Seidenader { namespace SVOGui
 	DDX_Control(pDX, IDC_BINARY, m_binaryRadioButton);
 	DDX_Control(pDX, IDC_DISABLE_EQUATION, m_DisableEquationCtrl);
 	DDX_Control(pDX, IDC_DISABLE_TOOL, m_DisableToolCtrl);
-	DDX_Text(pDX, IDC_CONSTANT_EDIT, m_StrConstantValue);
+	DDX_Text(pDX, IDC_CONSTANT_EDIT, m_ConstantValue);
 	DDX_Radio(pDX, IDC_DECIMAL, m_constantType);
-	DDX_Text(pDX, IDC_LOCAL_VARIABLE_EDIT_CTRL, m_strToolsetOutputVariable);
+	DDX_Text(pDX, IDC_LOCAL_VARIABLE_EDIT_CTRL, m_ToolsetOutputVariable);
 	DDX_Check(pDX, IDC_DISABLE_EQUATION, m_equationDisabled);
 	DDX_Check(pDX, IDC_DISABLE_TOOL, m_ownerDisabled);
 	//}}AFX_DATA_MAP
@@ -139,12 +140,8 @@ namespace Seidenader { namespace SVOGui
 
 		createToolbars();
 
-		// BRW - What is this doing?
-		CString s, s2;
-		s.LoadString(IDS_DISABLE_STRING);
-		s2.LoadString(m_disableExtentionID);
-		s = s + " " + s2;
-		GetDlgItem(IDC_DISABLE_TOOL)->SetWindowText((LPCTSTR)s);
+		SVString DisableText = SvUl_SF::LoadSVString( IDS_DISABLE_STRING ) + _T(" ") + SvUl_SF::LoadSVString( m_disableExtentionID );
+		GetDlgItem(IDC_DISABLE_TOOL)->SetWindowText( DisableText.c_str() );
 
 		setEquationText();
 
@@ -347,16 +344,15 @@ namespace Seidenader { namespace SVOGui
 		enableUndoButton();
 	}
 
-	CString SVFormulaEditorPageClass::getEquationText() const
+	SVString SVFormulaEditorPageClass::getEquationText() const
 	{
-		CString equationText;
-
+		std::vector<TCHAR> equationText;
+		equationText.resize(SV_EQUATION_BUFFER_SIZE, 0);
 		if( nullptr != m_EditWnd.GetSafeHwnd() )
 		{
-			equationText.GetBufferSetLength(SV_EQUATION_BUFFER_SIZE);
-			m_EditWnd.SendMessage( SCI_GETTEXT, SV_EQUATION_BUFFER_SIZE, reinterpret_cast<LPARAM>( equationText.GetBuffer() ) );
+			m_EditWnd.SendMessage( SCI_GETTEXT, SV_EQUATION_BUFFER_SIZE, reinterpret_cast<LPARAM>( &equationText[0] ) );
 		}
-		return equationText;
+		return SVString(&equationText[0]);
 	}
 
 	void SVFormulaEditorPageClass::setEquationText()
@@ -388,61 +384,55 @@ namespace Seidenader { namespace SVOGui
 
 		SVString InspectionName = m_FormulaController->GetInspectionName();
 	
-		CString tmp;
-		tmp.LoadString(IDS_CLASSNAME_ROOTOBJECT);
+		SVString Filter = SvUl_SF::LoadSVString( IDS_CLASSNAME_ROOTOBJECT );
 
 		SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::TypeSingleObject );
 		SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
-		SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, SVString(tmp), SVString( _T("") ) );
+		SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, Filter, SVString( _T("") ) );
 		SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterOutput, SvOl::FqnPPQVariables, SVString( _T("") ) );
 
 		// Insert the Names of the objects selecteable for an Equation
 		m_FormulaController->BuildSelectableItems();
 
 		SVStringSet Items;
-		Items.insert( SVString(m_strToolsetOutputVariable) );
+		Items.insert( SVString(m_ToolsetOutputVariable) );
 		SvOsl::ObjectTreeGenerator::Instance().setCheckItems( Items );
 
-		CString Title;
-		CString ToolsetOutput;
-		CString Filter;
-		ToolsetOutput.LoadString( IDS_SELECT_TOOLSET_OUTPUT );
-		Title.Format( _T("%s - %s"), ToolsetOutput, InspectionName.c_str() );
-		Filter.LoadString( IDS_FILTER );
+		SVString ToolsetOutput = SvUl_SF::LoadSVString( IDS_SELECT_TOOLSET_OUTPUT );
+		Filter = SvUl_SF::LoadSVString( IDS_FILTER );
+		SVString Title = SvUl_SF::Format( _T("%s - %s"), ToolsetOutput.c_str(), InspectionName.c_str() );
 
-		INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title, ToolsetOutput, Filter, this );
+		INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title.c_str(), ToolsetOutput.c_str(), Filter.c_str(), this );
 
 		if( IDOK == Result )
 		{
-			m_strToolsetOutputVariable = SvOsl::ObjectTreeGenerator::Instance().getSingleObjectResult().getDisplayLocation().c_str();
-			UpdateData( FALSE );
+			m_ToolsetOutputVariable = SvOsl::ObjectTreeGenerator::Instance().getSingleObjectResult().getDisplayLocation().c_str();
+			UpdateData( false );
 		}
 	}
 
 	void SVFormulaEditorPageClass::OnAddLocalVariableButton() 
 	{
-		UpdateData( TRUE );
+		UpdateData( true );
 
-		const CString QUOTE = _T("\"");
 
 		// Get Current Variable name
-		if( !m_strToolsetOutputVariable.IsEmpty() )
+		if( !m_ToolsetOutputVariable.IsEmpty() )
 		{
-			if ( m_strToolsetOutputVariable.Right(1) == _T("]") )	// array
+			if ( m_ToolsetOutputVariable.Right(1) == _T("]") )	// array
 			{
-				int iArrayIndexPos = m_strToolsetOutputVariable.ReverseFind( _T('[') );
-				CString sRootName = m_strToolsetOutputVariable.Left( iArrayIndexPos );
-				CString sIndex = m_strToolsetOutputVariable.Mid( iArrayIndexPos );
-				sIndex = sIndex.Mid( 1, sIndex.GetLength() - 2 );	// strip off [ ]
-				//CString sName = QUOTE + sRootName + QUOTE + _T("[ ") + sIndex + _T(" {-1} ]");
-				CString sName = QUOTE + sRootName + QUOTE + _T("[ ") + sIndex + _T(" ]");
-				insertIntoEditor( sName );
+				int iArrayIndexPos = m_ToolsetOutputVariable.ReverseFind( _T('[') );
+				SVString RootName = m_ToolsetOutputVariable.Left( iArrayIndexPos );
+				SVString Index = m_ToolsetOutputVariable.Mid( iArrayIndexPos );
+				Index = Index.substr( 1, Index.size() - 2 );	// strip off [ ]
+				SVString Name = cQuote + RootName + cQuote + _T("[ ") + Index + _T(" ]");
+				insertIntoEditor( Name.c_str() );
 			}
 			else
 			{
 				// Variables are delimited by double qoutes
-				CString sName = QUOTE + m_strToolsetOutputVariable + QUOTE;
-				insertIntoEditor( sName );
+				SVString Name = cQuote + m_ToolsetOutputVariable + cQuote;
+				insertIntoEditor( Name.c_str() );
 			}
 		}
 	}
@@ -451,25 +441,25 @@ namespace Seidenader { namespace SVOGui
 	{
 		UpdateData( TRUE );
 
-		if ( ! m_StrConstantValue.IsEmpty () )
+		if ( ! m_ConstantValue.IsEmpty () )
 		{
-			CString TempString = m_StrConstantValue;
+			SVString TempString = m_ConstantValue;
 
 			switch ( m_constantType )
 			{
 			case SV_FORMULA_BINARY_CONSTANT_TYPE:
-				TempString += "b";
+				TempString += _T("b");
 				break;
 
 			case SV_FORMULA_HEXADECIMAL_CONSTANT_TYPE:
-				TempString += "h";
+				TempString += _T("h");
 				break;
 
 			default:
 				//Do nothing.
 				break;
 			}
-			insertIntoEditor( ( LPCTSTR )TempString );
+			insertIntoEditor( TempString.c_str() );
 		}
 	}
 
@@ -655,12 +645,12 @@ namespace Seidenader { namespace SVOGui
 	{
 		if( GetSafeHwnd() )
 		{
-			CString equationText = getEquationText();
+			SVString equationText = getEquationText();
 
 			UpdateData( TRUE ); // Update the variables
 
 			double value = 0;
-			const int result = m_FormulaController->ValidateEquation( SVString(equationText), value, true );
+			const int result = m_FormulaController->ValidateEquation( equationText, value, true );
 			enableUndoButton();
 			//@Info (MZA): result also true if resetFailed, because the fail of reset of the object maybe happen by a other page.
 			//By leaving the sheet it will reset objects and check if it works
@@ -678,9 +668,8 @@ namespace Seidenader { namespace SVOGui
 		const int result = m_FormulaController->ValidateEquation( equationText, value, false );
 		if( result == SvOi::IFormulaController::validateSuccessful )
 		{
-			CString tmp;
 			SvOi::MessageTextEnum id = SvOi::Tid_Empty;
-			SVStringArray msgList;
+			SVStringVector msgList;
 			if (m_isConditionalPage)
 			{
 				msgList.push_back(SvStl::MessageData::convertId2AddtionalText(( value ) ? SvOi::Tid_True : SvOi::Tid_False));
@@ -751,15 +740,15 @@ namespace Seidenader { namespace SVOGui
 
 	void SVFormulaEditorPageClass::enableUndoButton()
 	{
-		CString equationText("");
+		std::vector<TCHAR> equationText;
+		equationText.resize(SV_EQUATION_BUFFER_SIZE, 0);
 
 		if( nullptr != m_EditWnd.GetSafeHwnd() )
 		{
-			equationText.GetBufferSetLength(SV_EQUATION_BUFFER_SIZE);
-			m_EditWnd.SendMessage( SCI_GETTEXT, SV_EQUATION_BUFFER_SIZE, reinterpret_cast<LPARAM>( equationText.GetBuffer() ) );
+			m_EditWnd.SendMessage( SCI_GETTEXT, SV_EQUATION_BUFFER_SIZE, reinterpret_cast<LPARAM>( &equationText[0] ) );
 		}
 
-		if (equationText == m_FormulaController->GetEquationText().c_str() )
+		if(&equationText[0] == m_FormulaController->GetEquationText() )
 		{
 			m_validateBar.EnableButton(ID_FORMULA_UNDO, false);
 		}

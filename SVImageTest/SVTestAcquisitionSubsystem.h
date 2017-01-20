@@ -25,7 +25,7 @@ public:
 	SVTestAcquisitionSubsystem();
 	virtual ~SVTestAcquisitionSubsystem();
 
-	bool Create(const CString& sDLLname);
+	bool Create( LPCTSTR DLLname );
 	void Destroy();
 
 	virtual SVTestAcquisitionClass* GetAcquisitionDevice( long selectedCamera );

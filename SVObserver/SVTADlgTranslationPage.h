@@ -60,8 +60,8 @@ protected:
 public:
 	enum { IDD = IDD_TA_TRANSLATION_DIALOG };
 	SVEnumerateComboClass	m_cbInterpolation;
-	CString	m_strTranslationXValue;
-	CString	m_strTranslationYValue;
+	CString	m_TranslationXValue;
+	CString	m_TranslationYValue;
 	BOOL	m_performTranslation;
 	//}}AFX_DATA
 #pragma endregion Data Elements

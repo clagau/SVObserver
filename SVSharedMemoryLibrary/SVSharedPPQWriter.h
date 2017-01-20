@@ -15,11 +15,12 @@
 #include "SVSharedMonitorList.h"
 #include "SVSharedMemorySettings.h"
 #include "SVSharedInspectionWriter.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 namespace Seidenader { namespace SVSharedMemoryLibrary
 {
-	typedef std::pair<std::string, GUID> InspectionID;
+	typedef std::pair<SVString, GUID> InspectionID;
 	struct InspectionWriterCreationInfo
 	{
 		InspectionID inspectionID;
@@ -39,7 +40,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		SVSharedPPQWriter();
 		~SVSharedPPQWriter();
 
-		HRESULT Create( const std::string& name, const InspectionWriterCreationInfos& inspections, const SVSharedMemorySettings& p_rSettings, const long ProoductSlots, const long RejectSlots, size_t size );
+		HRESULT Create( const SVString& name, const InspectionWriterCreationInfos& inspections, const SVSharedMemorySettings& p_rSettings, const long ProoductSlots, const long RejectSlots, size_t size );
 		void Destroy();
 
 		SVSharedProduct& RequestNextProductSlot(long& idx);
@@ -49,7 +50,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		SVSharedProduct& RequestNextRejectSlot(long& idx);
 		void ReleaseReject(SVSharedProduct& product);
 
-		SVSharedInspectionWriter& operator[](const std::string& shareName);
+		SVSharedInspectionWriter& operator[](const SVString& shareName);
 		SVSharedInspectionWriter& operator[](const GUID& guid);
 
 		HRESULT CopyLastInspectedToReject(const SVSharedProduct& rProduct);
@@ -63,7 +64,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 
 		SVSharedProductStore* sh; // product queue
 		SVSharedProductStore* rsh; // reject queue
-		std::string m_ShareName;
+		SVString m_ShareName;
 		InspectionWriters m_writers;
 
 		typedef std::shared_ptr< boost::interprocess::managed_shared_memory > managed_shared_memory_shared_ptr;

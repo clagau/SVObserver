@@ -66,7 +66,7 @@ const SVLutInfo& SVLutInfo::operator = (const SVLutInfo& rhs)
 
 void SVLutInfo::CopyNoTransform(const SVLutInfo& rhs)
 {
-	ASSERT( this != &rhs );
+	assert( this != &rhs );
 	if (this != &rhs)
 	{
 		muiFormat = rhs.muiFormat;
@@ -177,20 +177,20 @@ bool SVLutInfo::GetTransformParameters(SVLutTransformParameters& rParam) const
 bool SVLutInfo::GetTransformParameters(SAFEARRAY*& rpsaParam) const
 {
 	bool bRet = false;
-	ASSERT( nullptr == rpsaParam );	// must clean up and set to nullptr before calling
+	assert( nullptr == rpsaParam );	// must clean up and set to nullptr before calling
 	if ( mpTransform && nullptr == rpsaParam )
 	{
 		SVLutTransformParameters param;
 		bRet = mpTransform->GetParameters(param);
 		SAFEARRAYBOUND saBounds[1];
 		saBounds[0].lLbound = 0;
-		saBounds[0].cElements = static_cast< ULONG >( param.GetSize() );
+		saBounds[0].cElements = static_cast<ULONG> ( param.size() );
 		rpsaParam = ::SafeArrayCreate( VT_I4, 1, saBounds);
 		if (nullptr != rpsaParam)
 		{
-			for (long l=0; l < param.GetSize(); l++)
+			for (long l=0; l < static_cast<long> (param.size()); l++)
 			{
-				long lVal = param.GetAt(l);
+				long lVal = param.at(l);
 				::SafeArrayPutElement(rpsaParam, &l, (void*) &lVal);
 			}
 			bRet = true;
@@ -215,7 +215,7 @@ SVLutBand::~SVLutBand()
 
 const SVLutBand& SVLutBand::operator = ( const SVLutBand& rhs )
 {
-	ASSERT( this != &rhs );
+	assert( this != &rhs );
 	if ( this != &rhs )
 	{
 		mulBand = rhs.mulBand;
@@ -228,7 +228,7 @@ const SVLutBand& SVLutBand::operator = ( const SVLutBand& rhs )
 
 void SVLutBand::CopyNoTransform( const SVLutBand& rhs )
 {
-	ASSERT( this != &rhs );
+	assert( this != &rhs );
 	if ( this != &rhs )
 	{
 		mulBand = rhs.mulBand;
@@ -240,8 +240,8 @@ void SVLutBand::CopyNoTransform( const SVLutBand& rhs )
 bool SVLutBand::CopyBandData(const SVLutBand& lutband)
 {
 	bool bRet = false;
-	ASSERT( mulBand == lutband.Band() );
-	ASSERT( mInfo.BandSize() == lutband.Info().BandSize() );
+	assert( mulBand == lutband.Band() );
+	assert( mInfo.BandSize() == lutband.Info().BandSize() );
 	if ( mulBand == lutband.Band() && mInfo.BandSize() == lutband.Info().BandSize() )
 	{
 		maTable = lutband.maTable;
@@ -329,18 +329,18 @@ bool SVLutBand::SetTransformOperation(const SVLutTransformOperation& pType)
 bool SVLutBand::SetBandData(SAFEARRAY* psaBandData)
 {
 	bool bRet=false;
-	ASSERT( nullptr != psaBandData );	// must be valid SAFEARRAY
+	assert( nullptr != psaBandData );	// must be valid SAFEARRAY
 	if (nullptr != psaBandData)
 	{
 		VARTYPE vt;
 		::SafeArrayGetVartype(psaBandData, &vt);
-		ASSERT( VT_I4 == vt || VT_UI4 == vt );
+		assert( VT_I4 == vt || VT_UI4 == vt );
 		if ( VT_I4 == vt || VT_UI4 == vt )
 		{
 			long lSize;
 			::SafeArrayGetUBound(psaBandData, 1, &lSize);
 			lSize++;
-			ASSERT( lSize == maTable.size() );	// size must match!
+			assert( lSize == maTable.size() );	// size must match!
 			if ( lSize == maTable.size() )
 			{
 				long lBegin;
@@ -365,7 +365,7 @@ bool SVLutBand::SetBandData(SAFEARRAY* psaBandData)
 bool SVLutBand::GetBandData(SAFEARRAY*& rpsaBandData) const
 {
 	bool bRet = false;
-	ASSERT( nullptr == rpsaBandData );	// must clean up and set to nullptr before calling
+	assert( nullptr == rpsaBandData );	// must clean up and set to nullptr before calling
 	if (nullptr == rpsaBandData)
 	{
 		SAFEARRAYBOUND saBounds[1];
@@ -447,7 +447,7 @@ void SVLut::CopyNoTransform( const SVLut& rhs )
 {
 	if ( this != &rhs )
 	{
-		ASSERT( rhs.mInfo.Bands() == rhs.maBands.size() );
+		assert( rhs.mInfo.Bands() == rhs.maBands.size() );
 		mInfo.CopyNoTransform( rhs.mInfo );
 		if ( maBands.size() != rhs.maBands.size() )
 		{
@@ -464,7 +464,7 @@ void SVLut::CopyNoTransform( const SVLut& rhs )
 
 bool SVLut::CopyBandData(const SVLutBand& lutband)
 {
-	ASSERT( lutband.Band() >= 0 && lutband.Band() < mInfo.Bands() );
+	assert( lutband.Band() >= 0 && lutband.Band() < mInfo.Bands() );
 	if ( lutband.Band() >= 0 && lutband.Band() < mInfo.Bands() )
 	{
 		maBands[ lutband.Band() ].CopyBandData(lutband);
@@ -491,7 +491,7 @@ bool SVLut::CopyBandData(const SVLut& lut, int iBand)
 		}
 		else
 		{
-			ASSERT( static_cast< unsigned long >( iBand ) < maBands.size() && iBand >= 0);
+			assert( static_cast< unsigned long >( iBand ) < maBands.size() && iBand >= 0);
 			if ( static_cast< unsigned long >( iBand ) < maBands.size() && iBand >= 0)
 			{
 				maBands[iBand].CopyBandData(lut(iBand));
@@ -588,7 +588,7 @@ bool SVLut::SetTransform(const SVLutTransform& rTransform)
 	bool bRet = nullptr == mInfo.GetTransform();
 	if ( bRet )
 	{
-		ASSERT( mInfo.Bands() == maBands.size() );
+		assert( mInfo.Bands() == maBands.size() );
 		for (UINT i=0; i<mInfo.Bands(); i++)
 		{
 			bRet = bRet && maBands[i].mInfo.SetTransform(rTransform);
@@ -611,11 +611,11 @@ bool SVLut::SetTransformOperation(const SVLutTransformOperation& pType)
 bool SVLut::SetBandData(SAFEARRAY* psaBands)
 {
 	bool bRet=false;
-	ASSERT( nullptr != psaBands );	// must be valid SAFEARRAY
+	assert( nullptr != psaBands );	// must be valid SAFEARRAY
 	if (nullptr != psaBands)
 	{
 		UINT uiDims = ::SafeArrayGetDim(psaBands);
-		ASSERT( uiDims <= 2 );
+		assert( uiDims <= 2 );
 		if ( uiDims <= 2 )
 		{
 			ULONG lNumBands;
@@ -624,12 +624,12 @@ bool SVLut::SetBandData(SAFEARRAY* psaBands)
 			::SafeArrayGetUBound(psaBands, 2, &lBandUBound);
 			lNumBands = lBandUBound - lBandLBound + 1;
 
-			ASSERT( lNumBands == mInfo.Bands() );
+			assert( lNumBands == mInfo.Bands() );
 			if ( lNumBands == mInfo.Bands() )
 			{
 				VARTYPE vt;
 				::SafeArrayGetVartype(psaBands, &vt);
-				ASSERT( VT_I4 == vt || VT_UI4 == vt );
+				assert( VT_I4 == vt || VT_UI4 == vt );
 				if ( VT_I4 == vt || VT_UI4 == vt )
 				{
 					ULONG lBandSize;
@@ -638,7 +638,7 @@ bool SVLut::SetBandData(SAFEARRAY* psaBands)
 					::SafeArrayGetUBound(psaBands, 1, &lBandSizeUBound);
 					lBandSize = lBandSizeUBound - lBandSizeLBound + 1;
 
-					ASSERT( lBandSize == mInfo.BandSize() );	// size must match!
+					assert( lBandSize == mInfo.BandSize() );	// size must match!
 					if ( lBandSize == mInfo.BandSize() )
 					{
 						long alDimIndex[2];
@@ -670,7 +670,7 @@ bool SVLut::SetBandData(SAFEARRAY* psaBands)
 bool SVLut::GetBandData(SAFEARRAY*& rpsaBands) const
 {
 	bool bRet = false;
-	ASSERT( nullptr == rpsaBands);	// must clean up and set to nullptr before calling
+	assert( nullptr == rpsaBands);	// must clean up and set to nullptr before calling
 	if( nullptr == rpsaBands && 0 < mInfo.BandSize() && 0 < mInfo.Bands() )
 	{
 		SAFEARRAYBOUND saBounds[2];
@@ -725,14 +725,14 @@ SVLutTestCases::SVLutTestCases()
 #if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 	if (lut.Info().IsNullHandle())
 	{
-		TRACE("Problem with IsNullHandle - false positive\n");
+		::OutputDebugString("Problem with IsNullHandle - false positive\n");
 	}
 #endif
 
 #if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 	if (! info.IsNullHandle() )
 	{
-		TRACE("Problem with IsNullHandle - false negative\n");
+		::OutputDebugString("Problem with IsNullHandle - false negative\n");
 	}
 #endif
 

@@ -175,34 +175,34 @@ BOOL SVBarCodeResultClass::onRun(SVRunStatusClass &RRunStatus)
 
     if (pValue->IsValid())
     {
-			BOOL bLoad = FALSE;
+		BOOL bLoad = FALSE;
 
-      CString szInputString;
-      pValue->GetValue(szInputString);
+		SVString InputString;
+		pValue->GetValue(InputString);
  
-			msv_bUseMatchStringFile.GetValue( bLoad );
-      if ( bLoad )
-      {
-				long lLine = CheckStringInTable( szInputString );
-				msv_lMatchStringLine.SetValue( RRunStatus.m_lResultDataIndex, lLine );
-				if ( 0 < lLine )
-				{
-	        RRunStatus.SetPassed();
-				}
-				else
-				{
-					RRunStatus.SetFailed();
-				}
-      }
-      else
-      {
-				CString szRegExpression;
+		msv_bUseMatchStringFile.GetValue( bLoad );
+		if ( bLoad )
+		{
+			long lLine = CheckStringInTable( InputString );
+			msv_lMatchStringLine.SetValue( RRunStatus.m_lResultDataIndex, lLine );
+			if ( 0 < lLine )
+			{
+				RRunStatus.SetPassed();
+			}
+			else
+			{
+				RRunStatus.SetFailed();
+			}
+		}
+		else
+		{
+			SVString RegExpression;
 
-				SVStringValueObjectClass* pRegExp = getRegExpression();
+			SVStringValueObjectClass* pRegExp = getRegExpression();
 
-		    pRegExp->GetValue(szRegExpression);
+		    pRegExp->GetValue(RegExpression);
 
-				if (szRegExpression.IsEmpty() || !szInputString.Compare((LPCTSTR) szRegExpression))
+				if (RegExpression.empty() || !InputString.compare(RegExpression))
 				{
 					RRunStatus.SetPassed();
 				}
@@ -270,14 +270,14 @@ HRESULT SVBarCodeResultClass::LoadMatchStringFile()
 	msv_bUseMatchStringFile.GetValue( bLoad );
 	if ( bLoad )
 	{
-		CString csFileName;
+		SVString FileName;
 		CFile matchFile;
 
 		// Check to see if the file exists..
 		//
-		msv_szMatchStringFileName.GetValue( csFileName );
+		msv_szMatchStringFileName.GetValue( FileName );
 
-		bOk = ! csFileName.IsEmpty() && SVFileExists( csFileName );
+		bOk = ! FileName.empty() && SVFileExists( FileName.c_str() );
 		if ( bOk )
 		{
 			//
@@ -285,7 +285,7 @@ HRESULT SVBarCodeResultClass::LoadMatchStringFile()
 			//
 			try
 			{
-				bOk = matchFile.Open( csFileName, CFile::modeRead | CFile::shareDenyNone);
+				bOk = matchFile.Open( FileName.c_str(), CFile::modeRead | CFile::shareDenyNone);
 				if ( bOk )
 				{
 					unsigned long ulLength = static_cast<unsigned long>(matchFile.GetLength());
@@ -455,18 +455,17 @@ void SVBarCodeResultClass::InsertValueToTable(short nValue, int nIndex)
    }
 }
 
-int SVBarCodeResultClass::CheckStringInTable(CString MatchString)
+int SVBarCodeResultClass::CheckStringInTable( const SVString& rMatchString )
 {
    int nReturnIndex = -1;
-//   m_dFactor = ((double)(m_lHighValue - m_lLowValue)) / (double)m_nTotalCount;
 
    long  lIndexValue = 0;
-   int   nCharCount = MatchString.GetLength();
+   size_t nCharCount = rMatchString.size();
 
-   for (int i = 0; i < nCharCount; i++)
+   for( size_t i = 0; i < nCharCount; i++ )
    {
-      int   nValue = MatchString.GetAt(i) - 0x20;
-      lIndexValue += nValue * nValue * (i + 1);
+      int nValue = rMatchString[i] - 0x20;
+      lIndexValue += nValue * nValue * static_cast<int> (i + 1);
    }
 
 // if Index value is out of range, definitely there won't be a match in the file.
@@ -477,9 +476,9 @@ int SVBarCodeResultClass::CheckStringInTable(CString MatchString)
 
       while(m_pIndexTable[nActualIndex] != 0) 
       {
-         char *pData = m_pDataArr[m_pIndexTable[nActualIndex] - 1];
+         TCHAR *pData = m_pDataArr[m_pIndexTable[nActualIndex] - 1];
 
-         if(MatchString  == (CString)pData)
+         if(rMatchString  == pData)
          {
             nReturnIndex = m_pIndexTable[nActualIndex];
             break;
@@ -488,7 +487,9 @@ int SVBarCodeResultClass::CheckStringInTable(CString MatchString)
 
 // if we reach the end of the hash table, start from the begining( starting from 3rd position) 
          if(nActualIndex >= m_nTotalCount * 10 )
+		 {
             nActualIndex = 2;
+		 }
       }
    }
 

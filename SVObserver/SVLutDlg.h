@@ -23,7 +23,7 @@ public:
 	typedef std::map< SVGUID, SVLut > SVLutMap;
 
 //	DECLARE_DYNAMIC(SVLutDlg)
-	SVLutDlg(LPCTSTR pszCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
+	SVLutDlg(LPCTSTR Caption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
 	virtual ~SVLutDlg();
 
 	bool Create( SVVirtualCameraPtrSet& setCameras, SVLutMap& raLut );
@@ -49,7 +49,7 @@ class SVLutDlgPage : public CPropertyPage
 {
 // Construction
 public:
-	SVLutDlgPage( SVLutDlg* Parent, const CString& sCaption);
+	SVLutDlgPage( SVLutDlg* Parent, LPCTSTR Caption);
 	virtual ~SVLutDlgPage();
 
 // Operator(s):
@@ -71,8 +71,8 @@ public:
 	CSliderCtrl	m_LowerSlider;
 	SvMc::SVDlgGraphClass m_LUTGraph;
 	SVEnumerateComboClass m_LutModeCombo;
-	CString	m_strUpperClipValue;
-	CString	m_strLowerClipValue;
+	CString	m_UpperClipValue;
+	CString	m_LowerClipValue;
 	BOOL m_bUseLUT;
 	BOOL m_bContinuousRecalcLUT;
 	int	m_iBand;
@@ -80,9 +80,9 @@ public:
 	int	m_iX2;
 	int	m_iY1;
 	int	m_iY2;
-	CString	m_sRangeXMax;
-	CString	m_sRangeYMax;
-	CString	m_sRangeXYMax;
+	CString	m_RangeXMax;
+	CString	m_RangeYMax;
+	CString	m_RangeXYMax;
 	//}}AFX_DATA
 
 	static BOOL CALLBACK GraphMousePointCallback( POINT Point, LPVOID pThis_ );

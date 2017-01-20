@@ -22,11 +22,11 @@ SVThreadManagerImpl gThreadManager;
 HRESULT WINAPI SVGetThreadInfo( BSTR* bstrInfo)
 {
 	HRESULT hr = S_OK;
-	std::list<std::string> threadList;
+	std::list<std::basic_string<TCHAR>> threadList;
 	hr = gThreadManager.GetThreadInfo(threadList);
 
-	std::string str;
-	for( std::list<std::string>::const_iterator it = threadList.begin() ; it != threadList.end() ; ++it)
+	std::basic_string<TCHAR> str;
+	for( std::list<std::basic_string<TCHAR>>::const_iterator it = threadList.begin() ; it != threadList.end() ; ++it)
 	{
 		str.append(*it);
 		str.append( "\n");
@@ -44,7 +44,7 @@ HRESULT WINAPI SVGetThreadInfoFilter( BSTR* bstrInfo, SVThreadAttribute eFilter 
 	HRESULT hr = gThreadManager.GetThreadInfo(InfoList, eFilter);
 	if( S_OK == hr )
 	{
-		std::string strTmp;
+		std::basic_string<TCHAR> strTmp;
 		for( SVThreadManagerImpl::ThreadList::const_iterator it = InfoList.begin() ; it != InfoList.end() ; ++it)
 		{
 			char line[256];

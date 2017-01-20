@@ -20,6 +20,7 @@
 #include "SVOResource\ConstGlobalSvOr.h"
 #include "TextDefinesSvO.h"
 #pragma endregion Includes
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -27,7 +28,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-static const CString scCameraTriggerTag = _T("CameraTrigger_");
+static const TCHAR* const cCameraTriggerTag = _T("CameraTrigger_");
 
 CSVOTriggerDeviceDlg::CSVOTriggerDeviceDlg(CWnd* pParent /*=nullptr*/)
 : CPropertyPage(CSVOTriggerDeviceDlg::IDD)
@@ -83,7 +84,7 @@ BOOL CSVOTriggerDeviceDlg::OnInitDialog()
 
 void CSVOTriggerDeviceDlg::SetupList()
 {
-	typedef std::map<long, CString> SortedTriggerList;
+	typedef std::map<long, SVString> SortedTriggerList;
 	SortedTriggerList sortedList;
 
     m_ctlTriggerList.ResetContent();
@@ -95,12 +96,12 @@ void CSVOTriggerDeviceDlg::SetupList()
         pTriggerObj = m_pParent->GetTriggerObject(i);
 		if( nullptr != pTriggerObj )
 		{
-			sortedList.insert(std::make_pair(pTriggerObj->GetTriggerDigNumber(), pTriggerObj->GetTriggerDisplayName()));
+			sortedList.insert(std::make_pair(pTriggerObj->GetTriggerDigNumber(), SVString( pTriggerObj->GetTriggerDisplayName() ) ) );
 		}
     }
 	for (SortedTriggerList::const_iterator it = sortedList.begin();it != sortedList.end();++it)
 	{
-		int iPos = m_ctlTriggerList.AddString(it->second);
+		int iPos = m_ctlTriggerList.AddString(it->second.c_str());
         m_ctlTriggerList.SetItemData(iPos, it->first);
 	}
 
@@ -137,7 +138,7 @@ void CSVOTriggerDeviceDlg::GetNextAvailableTriggerList(SVTriggerNameIdList& rLis
 	}
 	if (m_pParent->IsValidCamera(id) && m_pParent->IsDigitalSystem())
 	{
-		name = m_pParent->GetNextTriggerName(scCameraTriggerTag);
+		name = m_pParent->GetNextTriggerName(cCameraTriggerTag);
 		rList.insert(std::make_pair(name, id));
 	}
 }
@@ -146,7 +147,7 @@ void CSVOTriggerDeviceDlg::OnBtnNewTrig()
 {
 	SVTriggerNameIdList list;
 	GetNextAvailableTriggerList(list);
-	CString triggerName;
+	SVString TriggerName;
 	int iDig = -1;
 	if (list.size() > 1)
 	{
@@ -154,16 +155,16 @@ void CSVOTriggerDeviceDlg::OnBtnNewTrig()
 
 		if ( dlg.DoModal() == IDOK )
 		{
-			dlg.GetSelectedTrigger(triggerName, iDig);
+			dlg.GetSelectedTrigger(TriggerName, iDig);
 		}
 	}
 	else if (list.size())
 	{
 		SVTriggerNameIdList::const_iterator it = list.begin();
-		triggerName = it->first.c_str();
+		TriggerName = it->first;
 		iDig = it->second;
 	}
-	if (!triggerName.IsEmpty())
+	if (!TriggerName.empty())
 	{
 		// find higher iDig
 		int pos = -1;
@@ -177,14 +178,14 @@ void CSVOTriggerDeviceDlg::OnBtnNewTrig()
 		}
 		
 		// Insert @
-		int iPos = m_ctlTriggerList.InsertString(pos, triggerName);
+		int iPos = m_ctlTriggerList.InsertString(pos, TriggerName.c_str());
 
-		m_pParent->AddToTriggerList(triggerName, iDig);
+		m_pParent->AddToTriggerList(TriggerName.c_str(), iDig);
 		m_ctlTriggerList.SetCurSel(iPos); //select new Trigger
 		m_ctlTriggerList.SetItemData(iPos, iDig);
 
 		m_pParent->SetModified(true);
-		m_pParent->ItemChanged(TRIGGER_DLG, triggerName, ITEM_ACTION_NEW);
+		m_pParent->ItemChanged(TRIGGER_DLG, TriggerName.c_str(), ITEM_ACTION_NEW);
 	}
 	if ( m_ctlTriggerList.GetCount() >= m_pParent->GetAllowedNumberOfDigs(true) )
 	{
@@ -195,16 +196,16 @@ void CSVOTriggerDeviceDlg::OnBtnNewTrig()
 
 void CSVOTriggerDeviceDlg::OnBtnDeleteTrig() 
 {
-	CString sTrigger;
+	CString TriggerName;
     int iPos = m_ctlTriggerList.GetCurSel();
 
     if (iPos != LB_ERR)
     {
-        m_ctlTriggerList.GetText(iPos,sTrigger);
+        m_ctlTriggerList.GetText(iPos, TriggerName);
         m_ctlTriggerList.DeleteString(iPos);
-        m_pParent->RemoveTriggerFromList(sTrigger);
+        m_pParent->RemoveTriggerFromList( TriggerName );
         m_pParent->SetModified(TRUE);
-        m_pParent->ItemChanged(TRIGGER_DLG,sTrigger,ITEM_ACTION_DELETE);
+        m_pParent->ItemChanged( TRIGGER_DLG, TriggerName, ITEM_ACTION_DELETE);
     }
 
     if (iPos > 0)
@@ -229,10 +230,9 @@ void CSVOTriggerDeviceDlg::OnBtnPropTrig()
     int iCurSel = m_ctlTriggerList.GetCurSel();
 	if (iCurSel != LB_ERR)
 	{
-		CString sTxt;
-		CString sLabel;
-		m_ctlTriggerList.GetText(iCurSel,sTxt);
-		SvTi::SVOTriggerObjPtr pTriggerObj = m_pParent->GetTriggerObjectByName(sTxt);
+		CString TriggerName;
+		m_ctlTriggerList.GetText(iCurSel,TriggerName);
+		SvTi::SVOTriggerObjPtr pTriggerObj = m_pParent->GetTriggerObjectByName(TriggerName);
 		if( nullptr != pTriggerObj )
 		{
 			CSVOPropertyPageDlg oDlg;
@@ -246,7 +246,7 @@ void CSVOTriggerDeviceDlg::OnBtnPropTrig()
 				*pTriggerObj = rTmpObj;
 				m_pParent->SetModified(TRUE);
 				EnablePropertyEdit(iCurSel);
-				m_pParent->ItemChanged(TRIGGER_DLG, sTxt, ITEM_ACTION_PROP);
+				m_pParent->ItemChanged(TRIGGER_DLG, TriggerName, ITEM_ACTION_PROP);
 			}
 		}
 	}
@@ -255,12 +255,12 @@ void CSVOTriggerDeviceDlg::OnBtnPropTrig()
 void CSVOTriggerDeviceDlg::OnBtnAdvanced() 
 {
     int iCurSel = m_ctlTriggerList.GetCurSel();
-    CString sTxt;
-    CString sLabel;
-    if ( iCurSel != LB_ERR )
+
+	if ( iCurSel != LB_ERR )
     {
-        m_ctlTriggerList.GetText(iCurSel,sTxt);
-		SvTi::SVOTriggerObjPtr pTriggerObj = m_pParent->GetTriggerObjectByName(sTxt);
+		CString TriggerName;
+        m_ctlTriggerList.GetText(iCurSel,TriggerName);
+		SvTi::SVOTriggerObjPtr pTriggerObj = m_pParent->GetTriggerObjectByName(TriggerName);
 		if( nullptr != pTriggerObj )
 		{
 			CSVOPropertyPageDlg oDlg;
@@ -308,9 +308,9 @@ void CSVOTriggerDeviceDlg::EnablePropertyEdit(int iSelection)
 	EnablePropertyButton(true);
 
 	// check for advanced properties
-	CString sTxt;
-	m_ctlTriggerList.GetText(iSelection, sTxt);
-    SvTi::SVOTriggerObjPtr pTriggerObj = m_pParent->GetTriggerObjectByName(sTxt);
+	CString TriggerName;
+	m_ctlTriggerList.GetText(iSelection, TriggerName);
+    SvTi::SVOTriggerObjPtr pTriggerObj = m_pParent->GetTriggerObjectByName(TriggerName);
 	if( nullptr != pTriggerObj && pTriggerObj->IsSoftwareTrigger())
 	{
 		EnableAdvancedPropertyButton(true);

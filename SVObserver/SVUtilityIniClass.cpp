@@ -28,31 +28,31 @@ static char THIS_FILE[]=__FILE__;
 
 SVUtilityIniClass::SVUtilityIniClass()
 {
-	m_csDisplayName = "";
-	m_csCommand = "";
-	m_csWorkingDirectory = "";
-	m_csArguments = "";
-	m_csPromptForArguments = "";
+	m_DisplayName = "";
+	m_Command = "";
+	m_WorkingDirectory = "";
+	m_Arguments = "";
+	m_PromptForArguments = "";
 }
 
 SVUtilityIniClass::~SVUtilityIniClass()
 {
 
 }
-SVUtilityIniClass::SVUtilityIniClass( const SVUtilityIniClass& p_rObject )
+SVUtilityIniClass::SVUtilityIniClass( const SVUtilityIniClass& rRhs )
 {
-	*this = p_rObject;
+	*this = rRhs;
 }
 
-const SVUtilityIniClass& SVUtilityIniClass::operator =( const SVUtilityIniClass& p_rObject )
+const SVUtilityIniClass& SVUtilityIniClass::operator =( const SVUtilityIniClass& rRhs )
 {
-	if ( &p_rObject != this ) 
+	if ( &rRhs != this ) 
 	{
-		m_csDisplayName = p_rObject.m_csDisplayName;
-		m_csCommand = p_rObject.m_csCommand;
-		m_csWorkingDirectory = p_rObject.m_csWorkingDirectory;
-		m_csArguments = p_rObject.m_csArguments;
-		m_csPromptForArguments = p_rObject.m_csPromptForArguments;
+		m_DisplayName = rRhs.m_DisplayName;
+		m_Command = rRhs.m_Command;
+		m_WorkingDirectory = rRhs.m_WorkingDirectory;
+		m_Arguments = rRhs.m_Arguments;
+		m_PromptForArguments = rRhs.m_PromptForArguments;
 	}
 
 	return *this;

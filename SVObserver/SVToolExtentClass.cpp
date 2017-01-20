@@ -711,7 +711,7 @@ HRESULT SVToolExtentClass::UpdateOffsetDataToImage( SVExtentOffsetStruct& p_rsvO
 
 					if( nullptr != l_psvImageParent )
 					{
-						l_svOffsetData.m_csImageName = l_psvImageParent->GetCompleteObjectName();
+						l_svOffsetData.m_csImageName = l_psvImageParent->GetCompleteName();
 					}
 				}
 			}
@@ -754,14 +754,14 @@ HRESULT SVToolExtentClass::UpdateOffsetData( bool p_bForceUpdate )
 					{
 						l_svOffsetData.m_psvRootImage = l_psvImageParent;
 						l_svOffsetData.m_psvImage = l_psvImageParent;
-						l_svOffsetData.m_csImageName = l_psvImageParent->GetCompleteObjectName();
+						l_svOffsetData.m_csImageName = l_psvImageParent->GetCompleteName();
 					}
 				}
 				else
 				{
 					l_svOffsetData.m_psvRootImage = m_psvToolImage;
 					l_svOffsetData.m_psvImage = m_psvToolImage;
-					l_svOffsetData.m_csImageName = m_psvToolImage->GetCompleteObjectName();
+					l_svOffsetData.m_csImageName = m_psvToolImage->GetCompleteName();
 				}
 
 				if( S_OK == l_svOk )
@@ -921,125 +921,125 @@ HRESULT SVToolExtentClass::TranslatePositionPointToSource( SVExtentPointStruct& 
 	return l_svOk;
 }
 
-HRESULT SVToolExtentClass::GetAuxiliaryDrawTypeString( CString& p_strDrawType )
+SVString SVToolExtentClass::GetAuxiliaryDrawTypeString() const
 {
-	HRESULT l_hrOk = S_OK;
+	SVString Result;
 
 	// SVExtentTranslationEnum
 	switch( m_eTranslation )
 	{
 		case SVExtentTranslationUnknown:
 		{
-			p_strDrawType = _T("Translation Unknown");
+			Result = _T("Translation Unknown");
 			break;
 		}
 		case SVExtentTranslationNone:
 		{
-			p_strDrawType = _T("Translation None");
+			Result = _T("Translation None");
 			break;
 		}
 		case SVExtentTranslationShift:
 		{
-			p_strDrawType = _T("Translation Shift");
+			Result = _T("Translation Shift");
 			break;
 		}
 		case SVExtentTranslationRotate:
 		{
-			p_strDrawType = _T("Translation Rotate");
+			Result = _T("Translation Rotate");
 			break;
 		}
 		case SVExtentTranslationFlippedRotate:
 		{
-			p_strDrawType = _T("Translation Flipped Rotate");
+			Result = _T("Translation Flipped Rotate");
 			break;
 		}
 		case SVExtentTranslationProfile:
 		{
-			p_strDrawType = _T("Translation Profile");
+			Result = _T("Translation Profile");
 			break;
 		}
 		case SVExtentTranslationProfileShift:
 		{
-			p_strDrawType = _T("Translation Profile Shift");
+			Result = _T("Translation Profile Shift");
 			break;
 		}
 		case SVExtentTranslationTransformShift:
 		{
-			p_strDrawType = _T("Translation Transform Shift");
+			Result = _T("Translation Transform Shift");
 			break;
 		}
 		case SVExtentTranslationTransformRotate:
 		{
-			p_strDrawType = _T("Translation Transform Rotate");
+			Result = _T("Translation Transform Rotate");
 			break;
 		}
 		case SVExtentTranslationPolarUnwrap:
 		{
-			p_strDrawType = _T("Translation Polar Unwrap");
+			Result = _T("Translation Polar Unwrap");
 			break;
 		}
 		case SVExtentTranslationLine:
 		{
-			p_strDrawType = _T("Translation Line");
+			Result = _T("Translation Line");
 			break;
 		}
 		case SVExtentTranslationDoubleHeight:
 		{
-			p_strDrawType = _T("Translation Double Height");
+			Result = _T("Translation Double Height");
 			break;
 		}
 		case SVExtentTranslationResize:
-			{
-				p_strDrawType = _T("Translation Resize");
-				break;
-			}
+		{
+			Result = _T("Translation Resize");
+			break;
+		}
 		case SVExtentTranslationFlipVertical:
 		{
-			p_strDrawType = _T("Translation Flip Vertical");
+			Result = _T("Translation Flip Vertical");
 			break;
 		}
 		case SVExtentTranslationFlipHorizontal:
 		{
-			p_strDrawType = _T("Translation Flip Horizontal");
+			Result = _T("Translation Flip Horizontal");
 			break;
 		}
 		case SVExtentTranslationFigureShift:
 		{
-			p_strDrawType = _T("Translation Figure Shift");
+			Result = _T("Translation Figure Shift");
 			break;
 		}
 		case SVExtentTranslationLinear:
 		{
-			p_strDrawType = _T("Translation Linear");
+			Result = _T("Translation Linear");
 			break;
 		}
 		case SVExtentTranslationCylindricalWarpH:
 		{
-			p_strDrawType = _T("Translation Cylindrical Warp Horizontal");
+			Result = _T("Translation Cylindrical Warp Horizontal");
 			break;
 		}
 		case SVExtentTranslationCylindricalWarpV:
 		{
-			p_strDrawType = _T("Translation Cylindrical Warp Vertical");
+			Result = _T("Translation Cylindrical Warp Vertical");
 			break;
 		}
 		case SVExtentTranslationHorizontalPerspective:
 		{
-			p_strDrawType = _T("Translation Horizontal Perspective");
+			Result = _T("Translation Horizontal Perspective");
 			break;
 		}
 		case SVExtentTranslationVerticalPerspective:
 		{
-			p_strDrawType = _T("Translation Vertical Perspective");
+			Result = _T("Translation Vertical Perspective");
 			break;
 		}
 		default:
 		{
-			p_strDrawType = _T("Translation Unknown");
+			Result = _T("Translation Unknown");
 			break;
 		}
 	}
-	return l_hrOk;
+	return Result;
 }
 
 HRESULT SVToolExtentClass::GetExtentPropertyInfo( SVExtentPropertyEnum p_eProperty, SVExtentPropertyInfoStruct& p_rInfo ) const

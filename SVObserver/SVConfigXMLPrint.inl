@@ -231,7 +231,7 @@ inline void SVConfigXMLPrint::WriteHardwareAcq(Writer writer, SVVirtualCamera* p
 	SVDeviceParamCollection* pDeviceParams = nullptr;
 	SVAcquisitionClassPtr pAcqDevice;
 	if( nullptr != pCamera ){ pAcqDevice = pCamera->GetAcquisitionDevice(); }
-	if( !( pAcqDevice.empty() ) && nullptr != m_cfo && m_cfo->GetAcquisitionDevice( pAcqDevice->DeviceName(), pfnac, plrcDummy, plutDummy, pDeviceParams ))
+	if( !( pAcqDevice.empty() ) && nullptr != m_cfo && m_cfo->GetAcquisitionDevice( pAcqDevice->DeviceName().c_str(), pfnac, plrcDummy, plutDummy, pDeviceParams ))
 	{
 		writer->WriteStartElement(nullptr, L"CameraFiles", nullptr);
 		writer->WriteString(SvUl::to_utf16(pfnac->GetFileNameList(), cp_dflt).c_str());
@@ -506,7 +506,6 @@ inline void SVConfigXMLPrint::WriteIOSection(Writer writer) const
 
 inline void SVConfigXMLPrint::WriteResultIO(Writer writer) const
 {
-	CString				label, value;
 	int					nFirstHeight = 0;
 	int					nLastHeight  = 0;
 	long				lSize        = 0;
@@ -594,7 +593,6 @@ inline void SVConfigXMLPrint::WriteResultIO(Writer writer) const
 
 inline void SVConfigXMLPrint::WriteModuleIO(Writer writer) const
 {
-	CString				label, value;
 	int					nFirstHeight = 0;
 	int					nLastHeight = 0;
 	long				lSize = 0;
@@ -684,7 +682,6 @@ inline void SVConfigXMLPrint::WriteModuleIO(Writer writer) const
 
 inline void SVConfigXMLPrint::WriteMonitorListSection(Writer writer) const
 {
-	CString sLabel, sValue;
 	wchar_t buff[64];
 	int ItemCount = 0;
 
@@ -819,7 +816,6 @@ inline void SVConfigXMLPrint::WritePPQBar(Writer writer) const
 	SVConfigurationObject* pConfig( nullptr );
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-	CString	sLabel, sValue;
 	int     nFirstHeight = 0;
 	int     nLastHeight  = 0;
 	wchar_t buff[64];
@@ -933,25 +929,25 @@ inline void SVConfigXMLPrint::WriteValueObject( Writer writer, SVValueObjectClas
 		writer->WriteAttributeString(nullptr,XML_Name, nullptr, SvUl::to_utf16(pObj->GetName(), cp_dflt).c_str());
 
 		BOOL bGotValue = FALSE;
-		CString sValue;
+		SVString sValue;
 		if ( SVDWordValueObjectClass* pdwValueObject = dynamic_cast <SVDWordValueObjectClass*> ( pObj ) )
 		{
 			DWORD dwValue=0;
 			bGotValue = (S_OK == pdwValueObject->GetValue( dwValue ) );
-			sValue = AsString( dwValue );
+			sValue = SvUl::AsString( dwValue );
 		}
 		else
 		{
 			bGotValue = (S_OK == pObj->GetValue( sValue ));
 		}
 
-		if ( !bGotValue || sValue.IsEmpty())
+		if ( !bGotValue || sValue.empty())
 		{
 			writer->WriteAttributeString(nullptr, L"Value", nullptr, invalid);
 		}
 		else
 		{
-			writer->WriteAttributeString(nullptr, L"Value", nullptr, SvUl::to_utf16(sValue.GetBuffer(), cp_dflt).c_str());
+			writer->WriteAttributeString(nullptr, L"Value", nullptr, SvUl::to_utf16(sValue, cp_dflt).c_str());
 		}
 
 		writer->WriteEndElement();
@@ -963,7 +959,6 @@ inline void SVConfigXMLPrint::WriteTool(Writer writer, SVToolClass * ts) const
 	wchar_t buff[64];
 	if (ts)
 	{
-	    SVObserverApp* pApp = dynamic_cast <SVObserverApp*> (AfxGetApp());
 		SVInputInfoListClass    toolInputList;
 		SVImageClass*           pCurrentSourceImage = nullptr;
 		SVInObjectInfoStruct*   pImageInputInfo = nullptr;
@@ -982,7 +977,7 @@ inline void SVConfigXMLPrint::WriteTool(Writer writer, SVToolClass * ts) const
 				{
 					pCurrentSourceImage = dynamic_cast <SVImageClass*> (l_psvImageInfo->GetInputObjectInfo().PObject);
 
-					WriteValueObject(writer, L"Property",  utf16(SVString(pApp->GetStringResource(IDS_IMAGE_SOURCE_STRING))), SvUl::to_utf16(pCurrentSourceImage->GetCompleteObjectNameToObjectType().GetBuffer(), cp_dflt).c_str());
+					WriteValueObject(writer, L"Property",  utf16(SvUl_SF::LoadSVString(IDS_IMAGE_SOURCE_STRING)), SvUl::to_utf16(pCurrentSourceImage->GetCompleteObjectNameToObjectType().c_str(), cp_dflt).c_str());
 				}
 			}
 			else
@@ -1008,17 +1003,17 @@ inline void SVConfigXMLPrint::WriteTool(Writer writer, SVToolClass * ts) const
 				 S_OK == pImageInfo->GetExtentProperty( SVExtentPropertyWidth, l_lWidth ) &&
 				 S_OK == pImageInfo->GetExtentProperty( SVExtentPropertyHeight, l_lHeight ) )
 			{
-				sLabel = SVString(pApp->GetStringResource(IDS_TOOL_LENGTH_STRING));
+				sLabel = SvUl_SF::LoadSVString(IDS_TOOL_LENGTH_STRING);
 				WriteValueObject(writer,  L"Property", utf16(sLabel), _itow(l_lWidth, buff, 10));
 				
-				sLabel = pApp->GetStringResource(IDS_TOOL_HEIGHT_STRING);
+				sLabel = SvUl_SF::LoadSVString(IDS_TOOL_HEIGHT_STRING);
 				WriteValueObject(writer,  L"Property", utf16(sLabel), _itow(l_lHeight, buff, 10));
 				
-				sLabel = pApp->GetStringResource(IDS_ABSOLUTE_POS_STRING);
+				sLabel = SvUl_SF::LoadSVString(IDS_ABSOLUTE_POS_STRING);
 				sValue = SvUl_SF::Format("(%d, %d)", l_oPoint.x, l_oPoint.y);
 				WriteValueObject(writer,  L"Property", utf16(sLabel), utf16(sValue));
 				
-				sLabel = pApp->GetStringResource(IDS_RELATIVE_POS_STRING);
+				sLabel = SvUl_SF::LoadSVString(IDS_RELATIVE_POS_STRING);
 				sValue = SvUl_SF::Format("(%d, %d)", l_oOutputPoint.x, l_oOutputPoint.y);
 				WriteValueObject(writer,  L"Property", utf16(sLabel), utf16(sValue));
 			}
@@ -1043,7 +1038,7 @@ inline void SVConfigXMLPrint::WriteArchiveTool(Writer writer, SVArchiveTool * ar
 			{
 				writer->WriteStartElement(nullptr, L"Result", nullptr);
 				writer->WriteAttributeString(nullptr, L"Number", nullptr, _itow(i + 1, buff, 10));
-				writer->WriteAttributeString(nullptr,XML_Name, nullptr, utf16(SVString(pRecord->GetObjectReference().GetCompleteObjectName())).c_str());
+				writer->WriteAttributeString(nullptr,XML_Name, nullptr, utf16(pRecord->GetObjectReference().GetCompleteName()).c_str());
 				writer->WriteEndElement();
 			}
 		}
@@ -1076,9 +1071,9 @@ inline void SVConfigXMLPrint::WriteObject( Writer writer, SVObjectClass* pObj ) 
     int      nFirstHeight   = 0;
     int      nLastHeight    = 0;
 	
-	CString	sLabel, sValue;
-    CString  strType   = pObj->GetObjectName();
-    CString  strName   = pObj->GetName();
+	SVString sLabel, sValue;
+    SVString  strType   = pObj->GetObjectName();
+    SVString  strName   = pObj->GetName();
 	wchar_t buff[64];
 	
     GUID     guidObjID = pObj->GetClassID();
@@ -1136,9 +1131,9 @@ inline void SVConfigXMLPrint::WriteObject( Writer writer, SVObjectClass* pObj ) 
 			}
 			
 			// If the object type is different from the name, print the type.
-			if (strName != strType && !strType.IsEmpty())
+			if (strName != strType && !strType.empty())
 			{
-				writer->WriteAttributeString(nullptr, L"Type", nullptr, SvUl::to_utf16(strType.GetBuffer(), cp_dflt).c_str());
+				writer->WriteAttributeString(nullptr, L"Type", nullptr, SvUl::to_utf16(strType, cp_dflt).c_str());
 			}
 			
 			// Print the tool length, width, extends, etc here.
@@ -1159,7 +1154,7 @@ inline void SVConfigXMLPrint::WriteObject( Writer writer, SVObjectClass* pObj ) 
 				if (refObject.Object())
 				{
 					writer->WriteStartElement(nullptr,  L"Variable", nullptr);
-					writer->WriteAttributeString(nullptr,XML_Name, nullptr, utf16(SVString(refObject.GetName())).c_str());
+					writer->WriteAttributeString(nullptr,XML_Name, nullptr, utf16(refObject.GetName()).c_str());
 					writer->WriteEndElement();
 				}
 			}
@@ -1171,7 +1166,7 @@ inline void SVConfigXMLPrint::WriteObject( Writer writer, SVObjectClass* pObj ) 
 					SVImageClass* pImage = maskObj->getMaskInputImage();
 					if (nullptr != pImage)
 					{
-						WriteValueObject(writer, L"Property",  utf16(SVString(pApp->GetStringResource(IDS_IMAGE_SOURCE_STRING))), SvUl::to_utf16(pImage->GetCompleteObjectName().GetBuffer(), cp_dflt).c_str());
+						WriteValueObject(writer, L"Property",  utf16(SvUl_SF::LoadSVString(IDS_IMAGE_SOURCE_STRING)), SvUl::to_utf16(pImage->GetCompleteName().c_str(), cp_dflt).c_str());
 					}
 				}
 			}
@@ -1180,17 +1175,17 @@ inline void SVConfigXMLPrint::WriteObject( Writer writer, SVObjectClass* pObj ) 
 			{
 				if (SV_IS_KIND_OF(pBlobResult->GetOwner(),SVBlobAnalyzerClass))
 				{  
-					sLabel = pApp->GetStringResource(IDS_BLOB_FEATURE_DEFAULT_VALUE) + _T(":");
+					sLabel = SvUl_SF::LoadSVString(IDS_BLOB_FEATURE_DEFAULT_VALUE) + _T(":");
 					SVDoubleValueObjectClass* pDoubleValueObj = pBlobResult->getInputDouble();
 					if ( pDoubleValueObj )
 					{
 						double dVal;
 						HRESULT hr = pDoubleValueObj->GetDefaultValue(dVal);
-						sValue.Format(_T("%lf"),dVal);
+						sValue = SvUl_SF::Format(_T("%lf"), dVal);
 						//ptCurPos.x   = (nIndentLevel + 1) * m_shortTabPixels;
 						//PrintValueObject(pDC, ptCurPos, utf16(sLabel), utf16(sValue));
 
-						WriteValueObject(writer, L"Property", utf16(SVString(sLabel)), utf16(SVString(sValue)));
+						WriteValueObject(writer, L"Property", utf16( sLabel ), utf16( sValue));
 
 					}
 				}
@@ -1200,12 +1195,14 @@ inline void SVConfigXMLPrint::WriteObject( Writer writer, SVObjectClass* pObj ) 
 			{
 				if ( SVEquationClass* pEquation = dynamic_cast <SVEquationClass*> (pObj) )
 				{
-					pEquation->GetEquationText(sValue);
+					sValue = pEquation->GetEquationText();
 		
 					// Write the equation text.
-					if (sLabel.IsEmpty())
+					if (sLabel.empty())
+					{
 						sLabel = _T("EquationText");
-					WriteValueObject(writer, L"Equation", utf16(SVString(sLabel)), utf16(SVString(sValue)));
+					}
+					WriteValueObject(writer, L"Equation", utf16( sLabel ), utf16( sValue ));
 				}
 				WriteInputOutputList(writer, pObj);
 			} 
@@ -1416,7 +1413,7 @@ inline void SVConfigXMLPrint::WriteGlobalConstants(Writer writer) const
 			Value = SvUl_SF::Format( L"GlobalConstant%d", ++Index );
 			writer->WriteStartElement(nullptr, SvUl::to_utf16( Value.c_str(), cp_dflt).c_str(), nullptr);
 			//write Global Constant Name
-			Value = pGlobalConstant->GetCompleteObjectName();
+			Value = pGlobalConstant->GetCompleteName();
 			writer->WriteAttributeString(nullptr,XML_Name, nullptr, SvUl::to_utf16( Value.c_str(), cp_dflt).c_str() );
 			//write Global Constant Value
 			pGlobalConstant->getValue( Value );
@@ -1453,20 +1450,22 @@ inline HRESULT SVDeviceParamConfigXMLHelper::Visit( SVLongValueDeviceParam& para
 	if ( pCamFileParam )
 	{
 		m_writer->WriteStartElement(nullptr, L"Param", nullptr);
-		CString s;
+		SVString Value;
 		if ( pCamFileParam->info.options.size() > 0 )
 		{
 			SVLongValueDeviceParam::OptionsType::const_iterator iterOption;
 			iterOption = std::find( pCamFileParam->info.options.begin(), pCamFileParam->info.options.end(), param.lValue );
 			if ( iterOption != pCamFileParam->info.options.end() )
 			{
-				s = iterOption->strDescription.c_str();
+				Value = iterOption->m_Description;
 			}
 		}
-		if ( s.IsEmpty() )
-			s.Format("%lu%s", (unsigned long) param.GetScaledValue(), param.info.sUnits.IsEmpty() ? "" : " " + param.info.sUnits );
+		if ( Value.empty() )
+		{
+			Value = SvUl_SF::Format( _T("%lu%s"), static_cast<unsigned long> (param.GetScaledValue()), param.info.sUnits.empty() ? _T("") : SVString(_T(" ") + param.info.sUnits).c_str() );
+		}
 		m_writer->WriteAttributeString(nullptr,XML_Name, nullptr, SvUl::to_utf16(pCamFileParam->Name(), cp_dflt).c_str());
-		m_writer->WriteAttributeString(nullptr, L"Value", nullptr, SvUl::to_utf16(s.GetString(), cp_dflt).c_str());
+		m_writer->WriteAttributeString(nullptr, L"Value", nullptr, SvUl::to_utf16(Value, cp_dflt).c_str());
 		m_writer->WriteEndElement();
 	}
 	return S_OK;
@@ -1478,10 +1477,9 @@ inline HRESULT SVDeviceParamConfigXMLHelper::Visit( SVi64ValueDeviceParam& param
 	if ( pCamFileParam )
 	{
 		m_writer->WriteStartElement(nullptr, L"Param", nullptr);
-		CString s;
-		s.Format("%I64d", param.iValue );
+		SVString Text = SvUl_SF::Format("%I64d", param.iValue );
 		m_writer->WriteAttributeString(nullptr,XML_Name, nullptr, SvUl::to_utf16(pCamFileParam->Name(), cp_dflt).c_str());
-		m_writer->WriteAttributeString(nullptr, L"Value", nullptr, SvUl::to_utf16(s.GetString(), cp_dflt).c_str());
+		m_writer->WriteAttributeString(nullptr, L"Value", nullptr, SvUl::to_utf16(Text, cp_dflt).c_str());
 		m_writer->WriteEndElement();
 	}
 	return S_OK;
@@ -1493,20 +1491,22 @@ inline HRESULT SVDeviceParamConfigXMLHelper::Visit( SVBoolValueDeviceParam& para
 	if ( pCamFileParam )
 	{
 		m_writer->WriteStartElement(nullptr, L"Param", nullptr);
-		CString s;
+		SVString Value;
 		if ( pCamFileParam->info.options.size() > 0 )
 		{
 			SVBoolValueDeviceParam::OptionsType::const_iterator iterOption;
 			iterOption = std::find( pCamFileParam->info.options.begin(), pCamFileParam->info.options.end(), param.bValue );
 			if ( iterOption != pCamFileParam->info.options.end() )
 			{
-				s = iterOption->strDescription.c_str();
+				Value = iterOption->m_Description.c_str();
 			}
 		}
-		if ( s.IsEmpty() )
-			s.Format("%s", param.bValue ? _T("TRUE") : _T("FALSE") );
+		if ( Value.empty() )
+		{
+			Value = param.bValue ? _T("TRUE") : _T("FALSE");
+		}
 		m_writer->WriteAttributeString(nullptr,XML_Name, nullptr, SvUl::to_utf16(pCamFileParam->Name(), cp_dflt).c_str());
-		m_writer->WriteAttributeString(nullptr, L"Value", nullptr, SvUl::to_utf16(s.GetString(), cp_dflt).c_str());
+		m_writer->WriteAttributeString(nullptr, L"Value", nullptr, SvUl::to_utf16(Value, cp_dflt).c_str());
 		m_writer->WriteEndElement();
 	}
 	return S_OK;
@@ -1546,7 +1546,7 @@ inline HRESULT SVDeviceParamConfigXMLHelper::Visit( SVCameraFormatsDeviceParam& 
 	if ( pCamFileParam )
 	{
 		m_writer->WriteStartElement(nullptr, L"Param", nullptr);
-		CString s;
+		SVString Value;
 		SVCameraFormat* pFormat = nullptr;
 		if ( param.options.size() > 0 )
 		{
@@ -1554,23 +1554,23 @@ inline HRESULT SVDeviceParamConfigXMLHelper::Visit( SVCameraFormatsDeviceParam& 
 			const SVCameraFormat& rCamFileFormat = pCamFileParam->options.find( param.strValue )->second;
 			if ( rCamFileFormat.m_strName == param.strValue )
 			{
-				s = rCamFileFormat.m_strDescription.c_str();
+				Value = rCamFileFormat.m_strDescription;
 				pFormat = &rFormat;
 			}
 		}
-		if ( s.IsEmpty() )
+		if ( Value.empty() )
 		{
-			s = param.strValue.c_str();
+			Value = param.strValue;
 		}
 		m_writer->WriteAttributeString(nullptr,XML_Name, nullptr, SvUl::to_utf16(pCamFileParam->Name(), cp_dflt).c_str());
-		m_writer->WriteAttributeString(nullptr, L"Value", nullptr, SvUl::to_utf16(s.GetString(), cp_dflt).c_str());
+		m_writer->WriteAttributeString(nullptr, L"Value", nullptr, SvUl::to_utf16(Value.c_str(), cp_dflt).c_str());
 
-		if ( pFormat )
+		if ( nullptr != pFormat )
 		{
-			m_writer->WriteAttributeString(nullptr, L"Left", nullptr, SvUl::to_utf16(AsString(pFormat->m_lHPos).GetString(), cp_dflt).c_str());
-			m_writer->WriteAttributeString(nullptr, L"Top", nullptr, SvUl::to_utf16(AsString(pFormat->m_lVPos).GetString(), cp_dflt).c_str());
-			m_writer->WriteAttributeString(nullptr, L"Width", nullptr, SvUl::to_utf16(AsString(pFormat->m_lWidth).GetString(), cp_dflt).c_str());
-			m_writer->WriteAttributeString(nullptr, L"Height", nullptr, SvUl::to_utf16(AsString(pFormat->m_lHeight).GetString(), cp_dflt).c_str());
+			m_writer->WriteAttributeString(nullptr, L"Left", nullptr, SvUl::to_utf16(SvUl::AsString(pFormat->m_lHPos).c_str(), cp_dflt).c_str());
+			m_writer->WriteAttributeString(nullptr, L"Top", nullptr, SvUl::to_utf16(SvUl::AsString(pFormat->m_lVPos).c_str(), cp_dflt).c_str());
+			m_writer->WriteAttributeString(nullptr, L"Width", nullptr, SvUl::to_utf16(SvUl::AsString(pFormat->m_lWidth).c_str(), cp_dflt).c_str());
+			m_writer->WriteAttributeString(nullptr, L"Height", nullptr, SvUl::to_utf16(SvUl::AsString(pFormat->m_lHeight).c_str(), cp_dflt).c_str());
 		}
 		m_writer->WriteEndElement();
 	}

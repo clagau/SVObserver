@@ -167,7 +167,7 @@ void SVToolSetListCtrl::Rebuild()
 	}
 }
 
-int SVToolSetListCtrl::InsertStartGroup(int itemNo, const CString& startName, bool bCollapsed)
+int SVToolSetListCtrl::InsertStartGroup(int itemNo, const SVString& rStartName, bool bCollapsed)
 {
 	int index = itemNo;
 	int img = (bCollapsed) ? m_expandState : m_collapseState;
@@ -179,18 +179,18 @@ int SVToolSetListCtrl::InsertStartGroup(int itemNo, const CString& startName, bo
 	item.iImage = img;
 	item.iIndent = 0;
 	item.lParam = -1;  //no Tool entry
-	index = InsertItem(&item);
-	SetItemText(index, 0, startName);
+	index = InsertItem( &item );
+	SetItemText( index, 0, rStartName.c_str() );
 
 	index++;
 
 	return index;
 }
 
-int SVToolSetListCtrl::InsertEndGroup(int itemNo, const CString& endName, bool bCollapsed)
+int SVToolSetListCtrl::InsertEndGroup(int itemNo, const SVString& rEndName, bool bCollapsed)
 {
 	int index = itemNo;
-	if (!endName.IsEmpty() && !bCollapsed)
+	if (!rEndName.empty() && !bCollapsed)
 	{
 		LVITEM item;
 		memset(&item, 0, sizeof(item));
@@ -200,8 +200,8 @@ int SVToolSetListCtrl::InsertEndGroup(int itemNo, const CString& endName, bool b
 		item.iIndent = 1;
 		item.lParam = -1; //no Tool entry
 		item.iImage = m_iNone;
-		index = InsertItem(&item);
-		SetItemText(index, 0, endName);
+		index = InsertItem( &item );
+		SetItemText( index, 0, rEndName.c_str() );
 	}
 	index++;
 
@@ -254,8 +254,7 @@ void SVToolSetListCtrl::AddEndDelimiter()
 
 void SVToolSetListCtrl::InsertEmptyString(int itemNo)
 {
-	CString strEmpty;
-	strEmpty.LoadString(IDS_EMPTY_STRING);
+	SVString Empty = SvUl_SF::LoadSVString(IDS_EMPTY_STRING);
 	LVITEM item;
 	memset(&item, 0, sizeof(item));
 	item.mask = LVIF_IMAGE | LVIF_INDENT | LVIF_PARAM;
@@ -265,19 +264,18 @@ void SVToolSetListCtrl::InsertEmptyString(int itemNo)
 	item.iIndent = 0;
 	item.lParam = -1; //no Tool entry
 	int index = InsertItem(&item);
-	SetItemText(index, 0, strEmpty);
+	SetItemText(index, 0, Empty.c_str());
 }
 
-bool SVToolSetListCtrl::IsEndListDelimiter(const CString& text) const
+bool SVToolSetListCtrl::IsEndListDelimiter( const SVString& rName ) const
 {
-	return (text == SvO::EndListDelimiter);
+	return (rName == SvO::EndListDelimiter);
 }
 
-bool SVToolSetListCtrl::IsEmptyStringPlaceHolder(const CString& text) const
+bool SVToolSetListCtrl::IsEmptyStringPlaceHolder( const SVString& rName ) const
 {
-	CString emptyString;
-	emptyString.LoadString(nullptr, IDS_EMPTY_STRING);
-	return (text == emptyString);
+	SVString EmptyString = SvUl_SF::LoadSVString(IDS_EMPTY_STRING);
+	return (rName == EmptyString);
 }
 
 bool SVToolSetListCtrl::IsStartGrouping(int index, bool& bState) const
@@ -286,9 +284,9 @@ bool SVToolSetListCtrl::IsStartGrouping(int index, bool& bState) const
 	const ToolSetView* pView = GetView();
 	if (pView)
 	{
-		CString name = GetItemText(index, 0);
+		SVString Name = GetItemText(index, 0);
 		const SVToolGrouping& groups = pView->GetToolGroupings();
-		bRetVal = groups.IsStartTag(name.GetString(), bState);
+		bRetVal = groups.IsStartTag(Name.c_str(), bState);
 	}
 	return bRetVal;
 }
@@ -467,8 +465,8 @@ bool SVToolSetListCtrl::AllowedToEdit() const
 	int index = GetNextItem(-1, LVNI_SELECTED);
 	if (index != -1)
 	{
-		CString text = GetItemText(index, 0);
-		if (!IsEndListDelimiter(text) && !IsEmptyStringPlaceHolder(text))
+		SVString Text = GetItemText(index, 0);
+		if (!IsEndListDelimiter( Text ) && !IsEmptyStringPlaceHolder( Text ))
 		{
 			bRetVal = true;
 		}
@@ -506,17 +504,17 @@ void SVToolSetListCtrl::SetSelectedTool(const SVGUID& rGuid)
 
 ToolListSelectionInfo SVToolSetListCtrl::GetToolListSelectionInfo() const
 {
-	CString itemText; 
+	SVString itemText; 
 	int listIndex = GetNextItem(-1, LVNI_SELECTED);
 	if (-1 != listIndex)
 	{
 		itemText = GetItemText(listIndex, 0);
 	}
-	if (IsEndListDelimiter(itemText) || IsEmptyStringPlaceHolder(itemText))
+	if (IsEndListDelimiter( itemText ) || IsEmptyStringPlaceHolder( itemText ))
 	{
-		itemText.Empty();
+		itemText.clear();
 	}
-	return ToolListSelectionInfo(listIndex, itemText);
+	return ToolListSelectionInfo( listIndex, itemText );
 }
 
 void SVToolSetListCtrl::GetSelectedItemScreenPosition(POINT& rPoint) const
@@ -620,12 +618,12 @@ void SVToolSetListCtrl::CollapseItem(int item)
 	lvItem.iSubItem = 0;
 
 	GetItem(&lvItem);
-	CString name = GetItemText(item, 0);
+	SVString Name = GetItemText(item, 0);
 	// Send to View...
 	ToolSetView* pView = GetView();
 	if (pView)
 	{
-		pView->HandleExpandCollapse(name, true);
+		pView->HandleExpandCollapse( Name, true );
 	}
 }
 
@@ -637,12 +635,12 @@ void SVToolSetListCtrl::ExpandItem(int item)
 	lvItem.iSubItem = 0;
 
 	GetItem(&lvItem);
-	CString name = GetItemText(item, 0);
+	SVString Name = GetItemText(item, 0);
 	// Send to View...
 	ToolSetView* pView = GetView();
 	if (pView)
 	{
-		pView->HandleExpandCollapse(name, false);
+		pView->HandleExpandCollapse( Name, false );
 	}
 }
 

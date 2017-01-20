@@ -9,12 +9,14 @@
 //* .Check In Date   : $Date:   16 Sep 2014 09:36:06  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVToolAdjustmentDialogCommentPageClass.h"
 
 #include "SVTool.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
-
+#include "SVUtilityLibrary/SVString.h"
+#pragma endregion Includes
 
 // SVToolAdjustmentDialogCommentPageClass dialog
 
@@ -55,9 +57,9 @@ BOOL SVToolAdjustmentDialogCommentPageClass::OnInitDialog()
 		SVValueObjectClass* l_psvComment = pTool->GetToolComment();
 		if( l_psvComment )
 		{
-			CString l_strValue;
-			l_psvComment->GetValue( l_strValue );
-			m_strComment = l_strValue;
+			SVString Value;
+			l_psvComment->GetValue( Value );
+			m_strComment = Value.c_str();
 		}
 		UpdateData(FALSE);
 	}

@@ -25,7 +25,7 @@ struct SVThreadSetup
 	long m_lPriority;
 	long m_lAffinity;
 	// Threads will be setup based on thread name or partial thread name.
-	std::string m_strName; // Thread name
+	std::basic_string<TCHAR> m_strName; // Thread name
 	HANDLE m_hThread;
 };
 
@@ -40,7 +40,7 @@ public:
 
 	// GetThreadInfo will create a list of information about each thread.
 	// the list will be a comma seperated list of number, name, priority, Affinity
-	HRESULT GetThreadInfo( std::list<std::string>& p_rStrList);
+	HRESULT GetThreadInfo( std::list<std::basic_string<TCHAR>>& p_rStrList);
 
 	// Gets a list of SVThreadSetup filtered by Attribute.
 	HRESULT GetThreadInfo( ThreadList& rSetupList, SVThreadAttribute eFilter );

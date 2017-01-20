@@ -15,7 +15,7 @@
 
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
 #include "SVUtilityLibrary/SVGUID.h"
-
+#include "SVUtilityLibrary/SVString.h"
 #include "SVOCore/SVImageClass.h"
 #include "SVOCore/SVImageObjectClass.h"
 #pragma endregion Includes

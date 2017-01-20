@@ -15,6 +15,7 @@
 #include "SVAcquisitionClass.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
 #include "SVMatroxGigeCameraProxy.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 

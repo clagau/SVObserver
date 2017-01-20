@@ -16,9 +16,6 @@
 #include "SVTool.h"
 #pragma endregion Includes
 
-const CString PERSPECTIVE_WARP_TYPE_HORIZONTAL = _T("Horizontal Warp");
-const CString PERSPECTIVE_WARP_TYPE_VERTICAL = _T("Vertical Warp");
-
 class SVPerspectiveToolClass : public SVToolClass
 {
 	SV_DECLARE_CLASS( SVPerspectiveToolClass );

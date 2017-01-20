@@ -21,7 +21,7 @@
 #include "TextDefinesSvO.h"
 #include "ObjectInterfaces/ErrorNumbers.h"
 #include "CameraLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
-
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 IMPLEMENT_DYNAMIC(SVSquare, CStatic)
@@ -332,9 +332,8 @@ void SVHistogramAnalyzerSetupClass::OnEnKillfocusDistThreshold()
 
 void SVHistogramAnalyzerSetupClass::OnEnKillfocusHeightThreshold()
 {
-	CString str;
-	str.Format(_T("%3.2f"), m_histogram.GetMinHeight());
-	SetDlgItemText(IDC_HEIGHT_THRESHOLD,str);
+	SVString Text = SvUl_SF::Format( _T("%3.2f"), m_histogram.GetMinHeight() );
+	SetDlgItemText( IDC_HEIGHT_THRESHOLD, Text.c_str() );
 }
 
 void SVHistogramAnalyzerSetupClass::OnEnKillfocusLowclip()
@@ -354,9 +353,8 @@ void SVHistogramAnalyzerSetupClass::OnEnKillfocusDefaultPeak()
 
 void SVHistogramAnalyzerSetupClass::OnEnKillfocusFixededit()
 {
-	CString str;
-	str.Format(_T("%3.2f"), m_histogram.GetFixedHeight());
-	SetDlgItemText(IDC_FIXEDEDIT, str);
+	SVString Text = SvUl_SF::Format( _T("%3.2f"), m_histogram.GetFixedHeight() );
+	SetDlgItemText( IDC_FIXEDEDIT, Text.c_str() );
 }
 
 void SVHistogramAnalyzerSetupClass::OnEnKillfocusLowValley()
@@ -383,28 +381,25 @@ void SVHistogramAnalyzerSetupClass::Refresh()
 {
 	m_histogram.CalcStats();
 	m_histogram.ForceRepaint();
-	CString str;
-	str.Format(_T("%3.2f"), m_histogram.mean());
-	SetDlgItemText(IDC_MEAN, str);
-	str.Format(_T("%3.2f"), m_histogram.stdDev());
-	SetDlgItemText(IDC_STDDEV, str);
-	str.Format(_T("%d"), m_histogram.min_pixel());
-	SetDlgItemText(IDC_MIN, str);
-	str.Format(_T("%d"), m_histogram.max_pixel());
-	SetDlgItemText(IDC_MAX, str);
-	str.Format(_T("%d"), m_histogram.pixel_num());
-	SetDlgItemText(IDC_COUNT, str);
-	str.Format(_T("%d"), m_histogram.bin_count());
-	SetDlgItemText(IDC_GRAYS, str);
-	int val = m_histogram.low_peak();
-	str.Format(_T("%d"), val);
-	SetDlgItemText(IDC_LOWPEAK, str);
-	val = m_histogram.high_peak();
-	str.Format(_T("%d"), val);
-	SetDlgItemText(IDC_HIGHPEAK, str);
-	val = m_histogram.valley();
-	str.Format(_T("%d"), val);
-	SetDlgItemText(IDC_VALLEY, str);
+	SVString Text;
+	Text = SvUl_SF::Format( _T("%3.2f"), m_histogram.mean() );
+	SetDlgItemText( IDC_MEAN, Text.c_str() );
+	Text = SvUl_SF::Format( _T("%3.2f"), m_histogram.stdDev() );
+	SetDlgItemText( IDC_STDDEV, Text.c_str() );
+	Text = SvUl_SF::Format( _T("%d"), m_histogram.min_pixel() );
+	SetDlgItemText( IDC_MIN, Text.c_str() );
+	Text = SvUl_SF::Format( _T("%d"), m_histogram.max_pixel() );
+	SetDlgItemText( IDC_MAX, Text.c_str() );
+	Text = SvUl_SF::Format( _T("%d"), m_histogram.pixel_num() );
+	SetDlgItemText( IDC_COUNT, Text.c_str() );
+	Text = SvUl_SF::Format( _T("%d"), m_histogram.bin_count() );
+	SetDlgItemText( IDC_GRAYS, Text.c_str() );
+	Text = SvUl_SF::Format( _T("%d"), m_histogram.low_peak() );
+	SetDlgItemText( IDC_LOWPEAK, Text.c_str() );
+	Text = SvUl_SF::Format( _T("%d"), m_histogram.high_peak() );
+	SetDlgItemText( IDC_HIGHPEAK, Text.c_str() );
+	Text = SvUl_SF::Format( _T("%d"), m_histogram.valley() );
+	SetDlgItemText( IDC_VALLEY, Text.c_str() );
 	Invalidate(0);
 }
 
@@ -428,13 +423,12 @@ BOOL SVHistogramAnalyzerSetupClass::OnInitDialog()
 	SetDlgItemInt(IDC_HIGH_VALLEY, m_histogram.GetValleyHigh(), FALSE);
 	SetDlgItemInt(IDC_DEFAULT_VALLEY, m_histogram.GetValleyDefault(), FALSE);
 
-	CString str;
-	str.Format(_T("%3.2f"), m_histogram.GetMinHeight());
-	SetDlgItemText(IDC_HEIGHT_THRESHOLD, str);
+	SVString Text = SvUl_SF::Format( _T("%3.2f"), m_histogram.GetMinHeight() );
+	SetDlgItemText( IDC_HEIGHT_THRESHOLD, Text.c_str() );
 	l_chk = (m_histogram.GetHeightOption() == histogram::dynamic)?IDC_RADIODYNAMIC:IDC_RADIOFIXED;
-	CheckRadioButton(IDC_RADIODYNAMIC, IDC_RADIOFIXED, l_chk);
-	str.Format(_T("%3.2f"), m_histogram.GetFixedHeight());
-	SetDlgItemText(IDC_FIXEDEDIT, str);
+	CheckRadioButton( IDC_RADIODYNAMIC, IDC_RADIOFIXED, l_chk );
+	Text = SvUl_SF::Format( _T("%3.2f"), m_histogram.GetFixedHeight() );
+	SetDlgItemText( IDC_FIXEDEDIT, Text.c_str() );
 
 	return TRUE;  // return TRUE unless you set the focus to a control
 }

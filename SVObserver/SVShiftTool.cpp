@@ -17,6 +17,7 @@
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "ToolSizeAdjustTask.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -95,7 +96,7 @@ HRESULT SVShiftTool::ResetObject()
 		l_ParentGuid = l_pInputImage->GetUniqueObjectID();
 
 		//Set input name to source image name to display it in result picker
-		m_SourceImageName.SetValue( 0/*Static value, this parameter will not used*/, l_pInputImage->GetCompleteObjectName() );
+		m_SourceImageName.SetValue( 0/*Static value, this parameter will not used*/, SVString( l_pInputImage->GetCompleteName() ) );
 	}
 
 	m_OutputImage.UpdateImage( l_ParentGuid );

@@ -56,13 +56,12 @@
 //! Precompiled headers section
 //************************************
 #pragma region Precompiled Headers
-#include <afx.h>
-#include <afxwin.h>         // MFC-Kern- und -Standardkomponenten
+#include <Windows.h>
 
 #include <comdef.h>
 #include <concrt.h>
 #include <cstdlib>
-
+#include <tchar.h>				//Used by static library
 
 #include <boost/any.hpp>
 #include <boost/assign.hpp>
@@ -72,7 +71,7 @@
 #include <boost/config.hpp>
 #define BOOST_DATE_TIME_NO_LIB
 #include <boost/date_time.hpp>
-#include <boost/function.hpp> //Used by static library
+#include <boost/function.hpp>	//Used by static library
 #include <boost/utility.hpp>
 #pragma endregion Precompiled Headers
 

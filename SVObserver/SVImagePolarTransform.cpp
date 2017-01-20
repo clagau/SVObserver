@@ -59,57 +59,50 @@ SVImagePolarTransformClass::SVImagePolarTransformClass( SVObjectClass* POwner, i
 	RegisterEmbeddedObject( &outputImageObject, SVOutputImageObjectGuid, IDS_OBJECTNAME_IMAGE1 );
 	
 	// Prepare known interpolation types...
-	CString strEnable;
-	strEnable.LoadString( IDS_ENABLE_STRING );
+	SVString Enable = SvUl_SF::LoadSVString( IDS_ENABLE_STRING );
+	SVString Disable = SvUl_SF::LoadSVString( IDS_DISABLE_STRING );
+	SVString Overscan = SvUl_SF::LoadSVString( IDS_OVERSCAN_STRING );
+	SVString OverscanClear = SvUl_SF::LoadSVString( IDS_OVERSCAN_CLEAR_STRING );
 
-	CString strDisable;
-	strDisable.LoadString( IDS_DISABLE_STRING );
-
-	CString strOverscan;
-	strOverscan.LoadString( IDS_OVERSCAN_STRING );
-
-	CString strOverscanClear;
-	strOverscanClear.LoadString( IDS_OVERSCAN_CLEAR_STRING );
-
-	CString strMode;
-	CString strPrepare;
-	CString strEnumTypes;
+	SVString Mode;
+	SVString Text;
+	SVString EnumTypes;
 
 	// M_NEAREST_NEIGHBOR + M_OVERSCAN_ENABLE
-	strMode.LoadString( IDS_NEAREST_NEIGHBOR_STRING );
-	strPrepare.Format( _T( "%s+%s %s=%d," ), strMode, strOverscan, strEnable, SVNearestNeighOverScanEnable ); // M_NEAREST_NEIGHBOR + M_OVERSCAN_ENABLE );
-	strEnumTypes += strPrepare;
+	Mode = SvUl_SF::LoadSVString( IDS_NEAREST_NEIGHBOR_STRING );
+	Text = SvUl_SF::Format( _T("%s+%s %s=%d,"), Mode.c_str(), Overscan.c_str(), Enable.c_str(), SVNearestNeighOverScanEnable ); // M_NEAREST_NEIGHBOR + M_OVERSCAN_ENABLE );
+	EnumTypes += Text;
 	// M_NEAREST_NEIGHBOR + M_OVERSCAN_DISABLE
-	strPrepare.Format( _T( "%s+%s %s=%d," ), strMode, strOverscan, strDisable, SVNearestNeighOverScanDisable ); // M_NEAREST_NEIGHBOR + M_OVERSCAN_DISABLE );
-	strEnumTypes += strPrepare;
+	Text = SvUl_SF::Format( _T("%s+%s %s=%d,"), Mode.c_str(), Overscan.c_str(), Disable.c_str(), SVNearestNeighOverScanDisable ); // M_NEAREST_NEIGHBOR + M_OVERSCAN_DISABLE );
+	EnumTypes += Text;
 	// M_NEAREST_NEIGHBOR + M_OVERSCAN_CLEAR
-	strPrepare.Format( _T( "%s+%s=%d," ), strMode, strOverscanClear, SVNearestNeighOverScanClear ); // M_NEAREST_NEIGHBOR + M_OVERSCAN_CLEAR );
-	strEnumTypes += strPrepare;
+	Text = SvUl_SF::Format( _T("%s+%s=%d,"), Mode.c_str(), OverscanClear.c_str(), SVNearestNeighOverScanClear ); // M_NEAREST_NEIGHBOR + M_OVERSCAN_CLEAR );
+	EnumTypes += Text;
 
 	// M_BILINEAR + M_OVERSCAN_ENABLE
-	strMode.LoadString( IDS_BILINEAR_STRING );
-	strPrepare.Format( _T( "%s+%s %s=%d," ), strMode, strOverscan, strEnable, SVBilinearOverScanEnable ); // M_BILINEAR + M_OVERSCAN_ENABLE );
-	strEnumTypes += strPrepare;
+	Mode = SvUl_SF::LoadSVString( IDS_BILINEAR_STRING );
+	Text = SvUl_SF::Format( _T("%s+%s %s=%d,"), Mode.c_str(), Overscan.c_str(), Enable.c_str(), SVBilinearOverScanEnable ); // M_BILINEAR + M_OVERSCAN_ENABLE );
+	EnumTypes += Text;
 	// M_BILINEAR + M_OVERSCAN_DISABLE
-	strPrepare.Format( _T( "%s+%s %s=%d," ), strMode, strOverscan, strDisable, SVBilinearOverScanClear ); // M_BILINEAR + M_OVERSCAN_DISABLE );
-	strEnumTypes += strPrepare;
+	Text = SvUl_SF::Format( _T("%s+%s %s=%d,"), Mode.c_str(), Overscan.c_str(), Disable.c_str(), SVBilinearOverScanClear ); // M_BILINEAR + M_OVERSCAN_DISABLE );
+	EnumTypes += Text;
 	// M_BILINEAR + M_OVERSCAN_CLEAR
-	strPrepare.Format( _T( "%s+%s=%d," ), strMode, strOverscanClear, SVBilinearOverScanClear ); // M_BILINEAR + M_OVERSCAN_CLEAR );
-	strEnumTypes += strPrepare;
+	Text = SvUl_SF::Format( _T("%s+%s=%d,"), Mode.c_str(), OverscanClear.c_str(), SVBilinearOverScanClear ); // M_BILINEAR + M_OVERSCAN_CLEAR );
+	EnumTypes += Text;
 
 	// M_BICUBIC + M_OVERSCAN_ENABLE
-	strMode.LoadString( IDS_BICUBIC_STRING );
-	strPrepare.Format( _T( "%s+%s %s=%d," ), strMode, strOverscan, strEnable, SVBiCubicOverScanEnable ); // M_BICUBIC + M_OVERSCAN_ENABLE );
-	strEnumTypes += strPrepare;
+	Mode = SvUl_SF::LoadSVString( IDS_BICUBIC_STRING );
+	Text = SvUl_SF::Format( _T("%s+%s %s=%d,"), Mode.c_str(), Overscan.c_str(), Enable.c_str(), SVBiCubicOverScanEnable ); // M_BICUBIC + M_OVERSCAN_ENABLE );
+	EnumTypes += Text;
 	// M_BICUBIC + M_OVERSCAN_DISABLE
-	strPrepare.Format( _T( "%s+%s %s=%d," ), strMode, strOverscan, strDisable, SVBiCubicOverScanDisable ); // M_BICUBIC + M_OVERSCAN_DISABLE );
-	strEnumTypes += strPrepare;
+	Text = SvUl_SF::Format( _T("%s+%s %s=%d,"), Mode.c_str(), Overscan.c_str(), Disable.c_str(), SVBiCubicOverScanDisable ); // M_BICUBIC + M_OVERSCAN_DISABLE );
+	EnumTypes += Text;
 	// M_BICUBIC + M_OVERSCAN_CLEAR
-	strPrepare.Format( _T( "%s+%s=%d," ), strMode, strOverscanClear, SVBiCubicOverScanClear ); // M_BICUBIC + M_OVERSCAN_CLEAR );
-	strEnumTypes += strPrepare;
+	Text = SvUl_SF::Format( _T("%s+%s=%d,"), Mode.c_str(), OverscanClear.c_str(), SVBiCubicOverScanClear ); // M_BICUBIC + M_OVERSCAN_CLEAR );
+	EnumTypes += Text;
 
 	// And now set enum types...
-	interpolationMode.SetEnumTypes( strEnumTypes );
+	interpolationMode.SetEnumTypes( EnumTypes.c_str() );
 
 
 	// Set Embedded defaults
@@ -199,213 +192,139 @@ SVImageClass* SVImagePolarTransformClass::GetOutputImage()
 // So this should be called if the user adds a new blank polar
 // unwrap tool for easier handling. If he wants he can then  
 // change the formulas.
-// Another possibilty to call this function is in the setup
+// Another possibility to call this function is in the setup
 // dialog, if a kind of reset formula button exists.
 BOOL SVImagePolarTransformClass::SetDefaultFormulas()
 {
-	BOOL bRetVal = TRUE;
+	BOOL bRetVal = true;
 	BOOL bOk;
-	CString strEmpty;
 	SVObjectTypeInfoStruct objectInfo;
 	SVObjectTypeInfoStruct equationObjectInfo;
 	equationObjectInfo.ObjectType = SVEquationObjectType;
 	equationObjectInfo.SubType    = SVMathEquationObjectType;
 	
 	// Find the evaluation center x object...
-	bOk = FALSE;
+	bOk = false;
 	objectInfo.SubType = SVEvaluateCenterXObjectType;
 	SVEvaluateCenterXClass* pEvaluateCenterX = dynamic_cast<SVEvaluateCenterXClass*>( GetTool()->getFirstObject(objectInfo) );
 	if( pEvaluateCenterX )
 	{
 		// Find equation object...
 		SVEquationClass* pEquation = dynamic_cast<SVEquationClass*>(pEvaluateCenterX->getFirstObject(equationObjectInfo));
-		if( pEquation )
-		{
-			// Get current name of embedded CenterX...
-			CString strName = centerX.GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType );
-			if( ! strName.IsEmpty() )
-			{
-				// Set equation in quotes...
-				CString strEquation;
-				strEquation.Format( _T( "\"%s\"" ), strName );
-
-				// Set equation...
-				pEquation->SetEquationText( strEquation );
-				// Update symbol table and test...
-				if( ! ( bOk = pEquation->Test().bPassed ) )
-				{
-					// something is wrong...
-					pEquation->SetEquationText( strEmpty );
-				}
-			}
-		}
+		SVString Name = centerX.GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType );
+		bOk = SetDefaultEquation( pEquation, Name );
 	}
 	if( ! bOk )
-		bRetVal = FALSE;
+	{
+		bRetVal = false;
+	}
 
 	// Find the evaluation center y object...
-	bOk = FALSE;
+	bOk = false;
 	objectInfo.SubType = SVEvaluateCenterYObjectType;
 	SVEvaluateCenterYClass* pEvaluateCenterY = dynamic_cast<SVEvaluateCenterYClass*>(GetTool()->getFirstObject(objectInfo));
 	if( pEvaluateCenterY )
 	{
 		// Find equation object...
 		SVEquationClass* pEquation = dynamic_cast<SVEquationClass*>(pEvaluateCenterY->getFirstObject(equationObjectInfo));
-		if( pEquation )
-		{
-			// Get current name of embedded CenterY...
-			CString strName = centerY.GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType );
-			if( ! strName.IsEmpty() )
-			{
-				// Set equation in quotes...
-				CString strEquation;
-				strEquation.Format( _T( "\"%s\"" ), strName );
-
-				// Set equation...
-				pEquation->SetEquationText( strEquation );
-				// Update symbol table and test...
-				if( ! ( bOk = pEquation->Test().bPassed ) )
-				{
-					// something is wrong...
-					pEquation->SetEquationText( strEmpty );
-				}
-			}
-		}
+		SVString Name = centerY.GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType );
+		bOk = SetDefaultEquation( pEquation, Name );
 	}
 	if( ! bOk )
-		bRetVal = FALSE;
+	{
+		bRetVal = false;
+	}
 
 	// Find the evaluation start radius object...
-	bOk = FALSE;
+	bOk = false;
 	objectInfo.SubType = SVEvaluateStartRadiusObjectType;
 	SVEvaluateStartRadiusClass* pEvaluateStartRadius = dynamic_cast<SVEvaluateStartRadiusClass*>(GetTool()->getFirstObject(objectInfo));
 	if( pEvaluateStartRadius )
 	{
 		// Find equation object...
 		SVEquationClass* pEquation = dynamic_cast<SVEquationClass*>(pEvaluateStartRadius->getFirstObject(equationObjectInfo));
-		if( pEquation )
-		{
-			// Get current name of embedded StartRadius...
-			CString strName = startRadius.GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType );
-			if( ! strName.IsEmpty() )
-			{
-				// Set equation in quotes...
-				CString strEquation;
-				strEquation.Format( _T( "\"%s\"" ), strName );
-
-				// Set equation...
-				pEquation->SetEquationText( strEquation );
-				// Update symbol table and test...
-				if( ! ( bOk = pEquation->Test().bPassed ) )
-				{
-					// something is wrong...
-					pEquation->SetEquationText( strEmpty );
-				}
-			}
-		}
+		SVString Name = startRadius.GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType );
+		bOk = SetDefaultEquation( pEquation, Name );
 	}
 	if( ! bOk )
-		bRetVal = FALSE;
+	{
+		bRetVal = false;
+	}
 
 	// Find the evaluation end radius object...
-	bOk = FALSE;
+	bOk = false;
 	objectInfo.SubType = SVEvaluateEndRadiusObjectType;
 	SVEvaluateEndRadiusClass* pEvaluateEndRadius = dynamic_cast<SVEvaluateEndRadiusClass*>(GetTool()->getFirstObject(objectInfo));
 	if( pEvaluateEndRadius )
 	{
 		// Find equation object...
 		SVEquationClass* pEquation = dynamic_cast<SVEquationClass*>(pEvaluateEndRadius->getFirstObject(equationObjectInfo));
-		if( pEquation )
-		{
-			// Get current name of embedded EndRadius...
-			CString strName = endRadius.GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType );
-			if( ! strName.IsEmpty() )
-			{
-				// Set equation in quotes...
-				CString strEquation;
-				strEquation.Format( _T( "\"%s\"" ), strName );
-
-				// Set equation...
-				pEquation->SetEquationText( strEquation );
-				// Update symbol table and test...
-				if( ! ( bOk = pEquation->Test().bPassed ) )
-				{
-					// something is wrong...
-					pEquation->SetEquationText( strEmpty );
-				}
-			}
-		}
+		SVString Name = endRadius.GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType );
+		bOk = SetDefaultEquation( pEquation, Name );
 	}
 	if( ! bOk )
-		bRetVal = FALSE;
+	{
+		bRetVal = false;
+	}
 
 	// Find the evaluation start angle object...
-	bOk = FALSE;
+	bOk = false;
 	objectInfo.SubType = SVEvaluateStartAngleObjectType;
 	SVEvaluateStartAngleClass* pEvaluateStartAngle = dynamic_cast<SVEvaluateStartAngleClass*>(GetTool()->getFirstObject(objectInfo));
 	if( pEvaluateStartAngle )
 	{
 		// Find equation object...
 		SVEquationClass* pEquation = dynamic_cast<SVEquationClass*>(pEvaluateStartAngle->getFirstObject(equationObjectInfo));
-		if( pEquation )
-		{
-			// Get current name of embedded StartAngle...
-			CString strName = startAngle.GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType );
-			if( ! strName.IsEmpty() )
-			{
-				// Set equation in quotes...
-				CString strEquation;
-				strEquation.Format( _T( "\"%s\"" ), strName );
-
-				// Set equation...
-				pEquation->SetEquationText( strEquation );
-				// Update symbol table and test...
-				if( ! ( bOk = pEquation->Test().bPassed ) )
-				{
-					// something is wrong...
-					pEquation->SetEquationText( strEmpty );
-				}
-			}
-		}
+		SVString Name = startAngle.GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType );
+		bOk = SetDefaultEquation( pEquation, Name );
 	}
 	if( ! bOk )
-		bRetVal = FALSE;
+	{
+		bRetVal = false;
+	}
 
 	// Find the evaluation end angle object...
-	bOk = FALSE;
+	bOk = false;
 	objectInfo.SubType = SVEvaluateEndAngleObjectType;
 	SVEvaluateEndAngleClass* pEvaluateEndAngle = dynamic_cast<SVEvaluateEndAngleClass*>(GetTool()->getFirstObject(objectInfo));
 	if( pEvaluateEndAngle )
 	{
 		// Find equation object...
 		SVEquationClass* pEquation = dynamic_cast<SVEquationClass*>(pEvaluateEndAngle->getFirstObject(equationObjectInfo));
-		if( pEquation )
-		{
-			// Get current name of embedded EndAngle...
-			CString strName = endAngle.GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType );
-			if( ! strName.IsEmpty() )
-			{
-				// Set equation in quotes...
-				CString strEquation;
-				strEquation.Format( _T( "\"%s\"" ), strName );
-
-				// Set equation...
-				pEquation->SetEquationText( strEquation );
-				// Update symbol table and test...
-				if( ! ( bOk = pEquation->Test().bPassed ) )
-				{
-					// something is wrong...
-					pEquation->SetEquationText( strEmpty );
-				}
-			}
-		}
+		SVString Name = endAngle.GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType );
+		bOk = SetDefaultEquation( pEquation, Name );
 	}
 	if( ! bOk )
-		bRetVal = FALSE;
-
+	{
+		bRetVal = false;
+	}
 
 	return bRetVal;
 }
+
+bool SVImagePolarTransformClass::SetDefaultEquation( SVEquationClass* pEquation, const SVString& rName )
+{
+	bool Result( false );
+
+	if( nullptr != pEquation )
+	{
+		// Get current name of embedded CenterX...
+		if( ! rName.empty() )
+		{
+			// Set equation...
+			pEquation->SetEquationText( SvUl_SF::Format( _T( "\"%s\"" ), rName.c_str() ) );
+			// Update symbol table and test...
+			if( ! ( Result = pEquation->Test().bPassed ) )
+			{
+				// something is wrong...
+				pEquation->SetEquationText( SVString() );
+			}
+		}
+	}
+
+	return Result;
+}
+
 
 // New Correct start and end angle...
 // ]-360.0...360.0[
@@ -846,9 +765,9 @@ HRESULT SVImagePolarTransformClass::CollectInputImageNames()
 	SVPolarTransformationToolClass* l_pTool = dynamic_cast<SVPolarTransformationToolClass*>(GetTool());
 	if( l_pInputImage && l_pTool )
 	{
-		CString l_strName = l_pInputImage->GetCompleteObjectName();
+		SVString Name = l_pInputImage->GetCompleteName();
 
-		l_pTool->m_svSourceImageNames.SetValue( 0, l_strName );
+		l_pTool->m_svSourceImageNames.SetValue( 0, Name );
 
 		l_hr = S_OK;
 	}

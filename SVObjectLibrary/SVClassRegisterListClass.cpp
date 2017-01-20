@@ -12,16 +12,17 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVClassRegisterListClass.h"
-
 #include "SVClassRegisterClass.h"
 #include "SVObjectClass.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
+#pragma region Declarations
 #ifdef _DEBUG
-#define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
+#pragma endregion Declarations
 
 SVClassRegisterListClass& SVClassRegisterListClass::Instance()
 {
@@ -74,19 +75,19 @@ void SVClassRegisterListClass::Add( SVClassRegisterClass* pClass )
 		#ifdef _DEBUG
 			else
 			{
-				CString tmp;
+				SVString Temp;
 				SVGUID guid = pClass->GetClassID();
 
-				tmp.Format( "Duplicate Class encountered\n ClassName: %s\n ClassID: %s", pClass->GetClassName(), guid.ToString().c_str() );
-
-				ASSERT(false);//( tmp );
+				Temp = SvUl_SF::Format( _T("Duplicate Class encountered\n ClassName: %s\n ClassID: %s"), pClass->GetClassName(), guid.ToString().c_str() );
+				::OutputDebugString( Temp.c_str() );
+				assert(false);
 			}
 		#endif
 	}
 	#ifdef _DEBUG
 	else
 	{
-		ASSERT(false);//("Invalid Class encountered\n");
+		assert(false);//("Invalid Class encountered\n");
 	}
 	#endif
 }

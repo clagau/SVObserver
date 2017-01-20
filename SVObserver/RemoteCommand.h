@@ -10,15 +10,18 @@
 //******************************************************************************
 
 #pragma once
+#pragma region Includes
+#include "SVUtilityLibrary/SVString.h"
+#pragma endregion Includes
 
 extern BOOL GlobalRCGoOnline();
 extern BOOL GlobalRCGoOffline();
 extern BOOL GlobalRCGetState( DWORD* pdwSVIMState );
 extern HRESULT GlobalRCSetMode( unsigned long lSVIMNewMode );
 extern HRESULT GlobalRCGetMode( unsigned long* p_plMode );
-extern BOOL GlobalRCGetConfigurationName( char* pszConfigName );
+extern SVString GlobalRCGetConfigurationName();
 extern BOOL GlobalRCSaveConfiguration();
-extern BOOL GlobalRCOpenConfiguration( char* pszConfigName );
+extern BOOL GlobalRCOpenConfiguration( LPCTSTR ConfigName );
 extern BOOL GlobalRCCloseAndCleanConfiguration();
 extern BOOL GlobalRCCloseConfiguration();
 

@@ -11,6 +11,8 @@
 
 #pragma once
 
+#include "SVUtilityLibrary/SVString.h"
+
 enum RegressionFileEnum
 {
 	RegFileList = 0, //For a listing of files
@@ -20,20 +22,20 @@ enum RegressionFileEnum
 
 struct RegressionTestStruct
 {
-	CString csCamera;
-	CString csFirstFile;
-	CString csFileMask;
+	SVString Camera;
+	SVString FirstFile;
+	SVString FileMask;
 	RegressionFileEnum iFileMethod; 
-	std::vector<CString> stdVectorFile;
-	std::vector<CString>::iterator stdIteratorStart;
-	std::vector<CString>::iterator stdIteratorCurrent;
+	SVStringVector stdVectorFile;
+	SVStringVector::iterator stdIteratorStart;
+	SVStringVector::iterator stdIteratorCurrent;
 	bool bDone;
 };
 
 struct RegressionRunFileStruct
 {
-	CString csCameraName;
-	CString csFileName;
+	SVString CameraName;
+	SVString FileName;
 };
 
 enum RegressionRunModeEnum

@@ -1698,9 +1698,6 @@
     <ClInclude Include="SVStreamCommandFactory.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVSubscriberProviderInterfaces.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVSVIMStateClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>

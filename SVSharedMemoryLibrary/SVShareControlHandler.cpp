@@ -22,7 +22,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 	, m_ctrl(nullptr)
 	{
 		SVSharedConfiguration::Log("ControlHandler::Constructor");
-		const std::string segmentName = SVSharedConfiguration::GetControlShareName();
+		const SVString segmentName = SVSharedConfiguration::GetControlShareName();
 		try
 		{
 			SVSharedConfiguration::EnsureShareDirectoryExists();
@@ -64,7 +64,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 			shm.reset();
 			try
 			{
-			const std::string segmentName = SVSharedConfiguration::GetControlShareName();
+			const SVString segmentName = SVSharedConfiguration::GetControlShareName();
 			boost::interprocess::shared_memory_object::remove(segmentName.c_str());
 			}
 			catch (boost::interprocess::interprocess_exception& e)

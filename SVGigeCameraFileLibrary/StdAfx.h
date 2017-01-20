@@ -47,8 +47,6 @@
 #pragma region Precompiled Headers
 #include <afx.h>
 #include <afxwin.h>
-#include <oleauto.h>
-#include <afxtempl.h>
 
 #include <comdef.h>
 #include <comutil.h>		//Used by static library

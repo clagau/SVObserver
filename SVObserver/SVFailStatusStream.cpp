@@ -153,7 +153,7 @@ HRESULT SVFailStatusStream::BuildJsonStream(const SVProductInfoStruct& rData, SV
 							}
 						}
 
-						elementObject[SVRC::vo::name] = static_cast<LPCTSTR>(pValue->GetCompleteObjectName());
+						elementObject[SVRC::vo::name] = pValue->GetCompleteName().c_str();
 						elementObject[SVRC::vo::array] = arrayObject;
 						elementObject[SVRC::vo::count] = triggerCount;
 						elementObject[SVRC::vo::status] = tempStatus;

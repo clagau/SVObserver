@@ -11,9 +11,10 @@
 
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <comdef.h>
-
 #include "SVString.h"
+#pragma endregion Includes
 
 /**
 @SVObjectName Point

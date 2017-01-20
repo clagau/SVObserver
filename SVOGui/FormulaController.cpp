@@ -30,10 +30,10 @@
 #include "SVObjectLibrary\SVClsIds.h"
 #include "ObjectSelectorLibrary\ObjectTreeGenerator.h"
 #include "SVObjectLibrary\SVObjectSynchronousCommandTemplate.h"
-#include "SVOGui/BoundValue.h"
-#include "SVOGui/GlobalSelector.h"
-#include "SVOGui/PPQSelector.h"
-#include "SVOGui/ToolSetItemSelector.h"
+#include "BoundValue.h"
+#include "GlobalSelector.h"
+#include "PPQSelector.h"
+#include "ToolSetItemSelector.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVMessage/SVMessage.h"
 #pragma endregion Includes
@@ -98,7 +98,7 @@ namespace Seidenader { namespace SVOGui
 		}
 		else
 		{
-			SVStringArray msgList;
+			SVStringVector msgList;
 			msgList.push_back(SvUl_SF::Format(_T("%d"), hr));
 			SvStl::MessageMgrStd e( SvStl::LogOnly );
 			e.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_UnknownCommandError, SvStl::SourceFileParams(StdMessageParams) );
@@ -163,7 +163,7 @@ namespace Seidenader { namespace SVOGui
 		}
 		else
 		{
-			SVStringArray msgList;
+			SVStringVector msgList;
 			msgList.push_back(SvUl_SF::Format(_T("%d"), hr));
 			SvStl::MessageMgrStd e( SvStl::LogOnly );
 			e.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_UnknownCommandError, SvStl::SourceFileParams(StdMessageParams) );
@@ -279,7 +279,7 @@ namespace Seidenader { namespace SVOGui
 				}
 				else
 				{
-					SVStringArray msgList;
+					SVStringVector msgList;
 					msgList.push_back(SvUl_SF::Format(_T("%d"), hr));
 					SvStl::MessageMgrStd e( SvStl::LogOnly );
 					e.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_UnknownCommandError, SvStl::SourceFileParams(StdMessageParams) );

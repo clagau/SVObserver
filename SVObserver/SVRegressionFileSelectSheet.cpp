@@ -70,19 +70,16 @@ void CSVRegressionFileSelectSheet::CreatePages(CList<RegressionTestStruct*,Regre
 {
 	m_pRegressionList = RegessionList;
 	
-	//svImageManager->GetSize(lNumberOfCameras);
-	
-
 	SVVirtualCameraPtrSet::iterator iter;
 
-	CString sPrevName = "Blank";
+	SVString PrevName( _T("Blank") );
 	for ( iter = CameraList.begin(); iter != CameraList.end(); ++iter )
 	{
-		if ( sPrevName.CompareNoCase( (*iter)->GetName() ) != 0 )
+		if ( 0 != SvUl_SF::CompareNoCase( PrevName, SVString((*iter)->GetName()) ) )
 		{
 			CSVRegressionFileSelectDlg *pPage = new CSVRegressionFileSelectDlg((*iter)->GetName());
 			AddPage(pPage);
-			sPrevName = (*iter)->GetName();
+			PrevName = (*iter)->GetName();
 		}
 	}
 	
@@ -115,9 +112,9 @@ void CSVRegressionFileSelectSheet::OnOK()
 			if ( pPage->GetFileSelectType() != RegNone )
 			{
 				pStruct->iFileMethod = pPage->GetFileSelectType();
-				pStruct->csCamera = pPage->GetPageName();
-				pStruct->csFirstFile = pPage->GetSelectedFile();
-				pStruct->csFileMask = MakeFileNameMask(pStruct->csFirstFile);
+				pStruct->Camera = pPage->GetPageName();
+				pStruct->FirstFile = pPage->GetSelectedFile();
+				pStruct->FileMask = MakeFileNameMask(pStruct->FirstFile );
 				pStruct->bDone = false;
 				m_pRegressionList->AddTail(pStruct);
 			}
@@ -232,25 +229,25 @@ void CSVRegressionFileSelectSheet::OnOK()
 	EndDialog(IDOK);
 }
 
-CString CSVRegressionFileSelectSheet::MakeFileNameMask(CString csFileName)
+SVString CSVRegressionFileSelectSheet::MakeFileNameMask( const SVString& rFileName )
 {
-	CString sTempName(_T(""));
-	int iFileNameLength = csFileName.GetLength();
+	SVString Result;
+	size_t FileNameLength = rFileName.size();
 
 	//check to see if last 4 chars = .bmp 
-	if ( csFileName.Right(4).CompareNoCase(".bmp") == 0 )
+	if( 0 == SvUl_SF::CompareNoCase( SvUl_SF::Right(rFileName, 4), SVString( _T(".bmp") ) ) )
 	{
-		sTempName = csFileName.Left(iFileNameLength-4);
+		Result = SvUl_SF::Left( rFileName, FileNameLength - 4 );
 	
-		int iPos = sTempName.ReverseFind('_');
-		if ( iPos > -1 )
+		size_t Pos = Result.rfind('_');
+		if ( SVString::npos != Pos )
 		{
-			sTempName = csFileName.Left(iPos+1);
-			sTempName = sTempName +"*.bmp";
+			Result = SvUl_SF::Left( rFileName, Pos+1 );
+			Result = Result + _T("*.bmp");
 		}
 	}
 
-	return sTempName;
+	return Result;
 }
 	
 RegressionFileSelectCode CSVRegressionFileSelectSheet::ValidateList()
@@ -275,18 +272,16 @@ RegressionFileSelectCode CSVRegressionFileSelectSheet::ValidateList()
 			if ( pStruct->iFileMethod == RegSingleFile )
 			{
 				//check to see if a selection has been made...
-				if ( pStruct->csFirstFile.IsEmpty() )
+				if ( pStruct->FirstFile.empty() )
 				{
 					return SelectionInvalid;
 				}
 				else 
 				{
 					//check to make sure name is a file that exists
-					CFile TempFile;
-					if ( TempFile.Open(pStruct->csFirstFile,CFile::modeRead) )
+					if ( 0 == ::_access( pStruct->FirstFile.c_str(), 0 ) )
 					{
 						l_lTotalNumFiles++;
-						TempFile.Close();
 					}
 					else
 					{
@@ -298,10 +293,9 @@ RegressionFileSelectCode CSVRegressionFileSelectSheet::ValidateList()
 
 			if ( pStruct->iFileMethod == RegFileList )
 			{
-				if (!pStruct->csFileMask.IsEmpty())
+				if( !pStruct->FileMask.empty() )
 				{
-					CString sFullName;
-					long lNmbFiles = GetNumberOfFilesMatchingMask(pStruct->csFileMask);
+					long lNmbFiles = GetNumberOfFilesMatchingMask(pStruct->FileMask);
 					l_lTotalNumFiles += lNmbFiles;
 
 					if ( 0  < lNmbFiles )
@@ -353,12 +347,12 @@ RegressionFileSelectCode CSVRegressionFileSelectSheet::ValidateList()
 	return l_ReturnCode;
 }
 
-long CSVRegressionFileSelectSheet::GetNumberOfFilesMatchingMask(CString sMask)
+long CSVRegressionFileSelectSheet::GetNumberOfFilesMatchingMask(const SVString& rMask)
 {
 	long lNumCount = 0;
 	CFileFind fileFinder;
 
-	BOOL bFound = fileFinder.FindFile(sMask);
+	BOOL bFound = fileFinder.FindFile(rMask.c_str());
 
 	while ( bFound )
 	{
@@ -401,10 +395,10 @@ void CSVRegressionFileSelectSheet::FillFileList()
 
 			if ( pStruct->iFileMethod == RegSingleFile )
 			{
-				pStruct->stdVectorFile.push_back(pStruct->csFirstFile);
-				std::vector<CString>::iterator iter;
+				pStruct->stdVectorFile.push_back(pStruct->FirstFile);
+				SVStringVector::iterator iter;
 
-				iter = std::find(pStruct->stdVectorFile.begin(),pStruct->stdVectorFile.end(),pStruct->csFirstFile);
+				iter = std::find(pStruct->stdVectorFile.begin(),pStruct->stdVectorFile.end(),pStruct->FirstFile);
 
 				//set the structs starting and current position to the start
 				pStruct->stdIteratorStart = iter;
@@ -413,18 +407,18 @@ void CSVRegressionFileSelectSheet::FillFileList()
 				continue;
 			}
 
-			BOOL bFound = fileFinder.FindFile(pStruct->csFileMask);
+			BOOL bFound = fileFinder.FindFile(pStruct->FileMask.c_str());
 
 			while ( bFound )
 			{
 				bFound = fileFinder.FindNextFile();
-				pStruct->stdVectorFile.push_back(fileFinder.GetFilePath());
+				pStruct->stdVectorFile.push_back( SVString(fileFinder.GetFilePath()) );
 			}
 			std::sort(pStruct->stdVectorFile.begin(),pStruct->stdVectorFile.end());
 			//find the starting position
-			std::vector<CString>::iterator iter;
+			SVStringVector::iterator iter;
 
-			iter = std::find(pStruct->stdVectorFile.begin(),pStruct->stdVectorFile.end(),pStruct->csFirstFile);
+			iter = std::find(pStruct->stdVectorFile.begin(),pStruct->stdVectorFile.end(),pStruct->FirstFile);
 
 			//set the structs starting and current position to the start
 			pStruct->stdIteratorStart = iter;
@@ -439,7 +433,6 @@ BOOL CSVRegressionFileSelectSheet::OnInitDialog()
 {
 	BOOL bResult = CPropertySheet::OnInitDialog();
 	RegressionTestStruct *pTmpStruct;
-	CString sTmpName;
 
 	int iPageCnt = GetPageCount();
 
@@ -448,8 +441,6 @@ BOOL CSVRegressionFileSelectSheet::OnInitDialog()
 		SetActivePage(i);
 	}
 	SetActivePage(0);
-
-
 
 	CSVRegressionFileSelectDlg *pPage;
 	int iRegListCnt = static_cast<int>(m_pRegressionList->GetCount());
@@ -460,7 +451,7 @@ BOOL CSVRegressionFileSelectSheet::OnInitDialog()
 			pPage = (CSVRegressionFileSelectDlg*)GetPage(l_iCount);
 			if ( pPage )
 			{
-				sTmpName = pPage->GetPageName();
+				SVString TmpName = pPage->GetPageName();
 				
 				bool l_bFound = false;
 				for ( int iPos = 0; iPos <= iRegListCnt && !l_bFound; iPos++ )
@@ -469,15 +460,15 @@ BOOL CSVRegressionFileSelectSheet::OnInitDialog()
 					if ( pos )
 					{
 						pTmpStruct = m_pRegressionList->GetAt(pos);
-						if ( pTmpStruct->csCamera == sTmpName )
+						if ( pTmpStruct->Camera == TmpName )
 						{
 							pPage->SetRegressionData(pTmpStruct);
 							l_bFound = true;
-						} // if pTmpSturct->csCamera
-					} //if pos
-				} // for int iPos
-			} //if (pPage)
-		}//for iCnt
+						}
+					}
+				}
+			}
+		}
 	}
 
 	return bResult;

@@ -26,13 +26,11 @@
 #include "SVUtilityLibrary\SVGUID.h"
 #pragma endregion Includes
 
-typedef std::set<SVString> SVObjectAttributeFilterSet;
-
-static SVObjectAttributeFilterSet g_ObjectAttributeFilter = boost::assign::list_of< SVString >
-(static_cast< LPCTSTR >( scObjectNameTag ))
-(static_cast< LPCTSTR >( scClassIDTag))
-(static_cast< LPCTSTR >( scUniqueReferenceIDTag))
-(static_cast< LPCTSTR >( scEmbeddedIDTag))
+static SVStringSet g_ObjectAttributeFilter = boost::assign::list_of< SVString >
+( SVString(scObjectNameTag) )
+( SVString(scClassIDTag) )
+( SVString(scUniqueReferenceIDTag) )
+( SVString(scEmbeddedIDTag) )
 ;
 
 // The attribute object type table is needed to convert string type to point or double point type.

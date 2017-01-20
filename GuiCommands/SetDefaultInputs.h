@@ -13,7 +13,6 @@
 #include "ObjectInterfaces/IObjectClass.h"
 #include "ObjectInterfaces/IObjectManager.h"
 #include "SVUtilityLibrary/SVGUID.h"
-#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 namespace Seidenader

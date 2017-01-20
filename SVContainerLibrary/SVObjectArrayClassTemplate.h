@@ -14,6 +14,7 @@
 #pragma region Includes
 //Moved to precompiled header: #include <comdef.h>
 #include "SVVector.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 namespace Seidenader { namespace SVContainerLibrary
@@ -76,7 +77,7 @@ namespace Seidenader { namespace SVContainerLibrary
 	typedef SVObjectArrayClassTemplate<DWORD> SVObjectDWordArrayClass;
 	typedef SVObjectArrayClassTemplate<__int64> SVObjectInt64ArrayClass;
 	typedef SVObjectArrayClassTemplate< _variant_t > SVObjectVariantArrayClass;
-	typedef SVObjectArrayClassTemplate<CString> SVObjectCStringArrayClass;
+	typedef SVObjectArrayClassTemplate<SVString> SVObjectSVStringArrayClass;
 } /*SVContainerLibrary*/ } /*Seidenader*/
 
 namespace SvCl = Seidenader::SVContainerLibrary;

@@ -54,7 +54,6 @@ void SVLinearEdgePositionLineAnalyzerClass::init()
 
 	// Populate the available result list
 	SVClassInfoStruct resultClassInfo;
-	CString strTitle;
 	SVObjectTypeInfoStruct interfaceInfo;
 
 	// Declare Input Interface of Sub-pixel Edge Result...
@@ -66,18 +65,18 @@ void SVLinearEdgePositionLineAnalyzerClass::init()
 	resultClassInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
 	resultClassInfo.m_ObjectTypeInfo.SubType	= SVResultDPointXObjectType;
 	resultClassInfo.m_ClassId = SVDPointXResultClassGuid;
-	resultClassInfo.m_ClassName = SvUl_SF::LoadString( IDS_OBJECTNAME_DPEDGE );
-	strTitle.LoadString( IDS_CLASSNAME_RESULT_POINT_X );
-	resultClassInfo.m_ClassName += SV_TSTR_SPACE + strTitle;
+	resultClassInfo.m_ClassName = SvUl_SF::LoadSVString( IDS_OBJECTNAME_DPEDGE );
+	SVString Title = SvUl_SF::LoadSVString( IDS_CLASSNAME_RESULT_POINT_X );
+	resultClassInfo.m_ClassName += _T(" ") + Title;
 	m_availableChildren.Add( resultClassInfo );
 
 	// Add the Sub-pixel Edge Y Result...
 	resultClassInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
 	resultClassInfo.m_ObjectTypeInfo.SubType	= SVResultDPointYObjectType;
 	resultClassInfo.m_ClassId = SVDPointYResultClassGuid;
-	resultClassInfo.m_ClassName = SvUl_SF::LoadString( IDS_OBJECTNAME_DPEDGE );
-	strTitle.LoadString( IDS_CLASSNAME_RESULT_POINT_Y );
-	resultClassInfo.m_ClassName += SV_TSTR_SPACE + strTitle;
+	resultClassInfo.m_ClassName = SvUl_SF::LoadSVString( IDS_OBJECTNAME_DPEDGE );
+	Title = SvUl_SF::LoadSVString( IDS_CLASSNAME_RESULT_POINT_Y );
+	resultClassInfo.m_ClassName += _T(" ") + Title;
 	m_availableChildren.Add( resultClassInfo );
 
 	resultClassInfo.m_DesiredInputInterface.RemoveAll();
@@ -88,9 +87,9 @@ void SVLinearEdgePositionLineAnalyzerClass::init()
 	resultClassInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
 	resultClassInfo.m_ObjectTypeInfo.SubType	= SVResultDoubleObjectType;
 	resultClassInfo.m_ClassId = SVDoubleResultClassGuid;
-	resultClassInfo.m_ClassName = SvUl_SF::LoadString( IDS_OBJECTNAME_LINEAR_DISTANCE_EDGE_A );
-	strTitle.LoadString( IDS_OBJECTNAME_LINEAR_DISTANCE_EDGE_A_RESULT );
-	resultClassInfo.m_ClassName += SV_TSTR_SPACE + strTitle;
+	resultClassInfo.m_ClassName = SvUl_SF::LoadSVString( IDS_OBJECTNAME_LINEAR_DISTANCE_EDGE_A );
+	Title = SvUl_SF::LoadSVString( IDS_OBJECTNAME_LINEAR_DISTANCE_EDGE_A_RESULT );
+	resultClassInfo.m_ClassName += _T(" ") + Title;
 	m_availableChildren.Add( resultClassInfo );
 
 	// Set default inputs and outputs

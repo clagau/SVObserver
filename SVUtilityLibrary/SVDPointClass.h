@@ -11,7 +11,9 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVString.h"
+#pragma endregion Includes
 
 /**
 @SVObjectName Double Point

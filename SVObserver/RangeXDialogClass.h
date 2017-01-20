@@ -10,11 +10,14 @@
 //* .Check In Date   : $Date:   19 Dec 2014 13:53:40  $
 //******************************************************************************
 #pragma once
-#include "afxwin.h"
+
+#pragma region Includes
 #include "SVContainerLibrary/SVVector.h"
 #include "SVLibrary/ISVCancel.h"
 #include "SVOCore/SVTaskObjectList.h"
 #include "RangeClassHelper.h"
+#include "SVUtilityLibrary/SVString.h"
+#pragma endregion Includes
 
 class SVRangeClass;
 class RangeClassHelper;
@@ -54,7 +57,7 @@ public:
 	// Parameter:  name<in/out>:  previous and new name of object
 	// Returns:   bool:  true if a new object was selected
 	//************************************
-	bool ShowObjectSelector(CString& name);
+	bool ShowObjectSelector(SVString& rName);
 
 	afx_msg void OnBnClickedOk();
 	afx_msg void OnBnClickedCancel();

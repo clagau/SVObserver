@@ -16,6 +16,7 @@
 #include "SVObjectLibrary/SVObjectWriter.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #include "SVTimerLibrary/SVClock.h"
+#include "SVUtilityLibrary/SVString.h"
 #include "ResultViewItemDef.h"
 #pragma endregion Includes
 
@@ -153,7 +154,7 @@ protected:
 #pragma endregion Protected Methods
 
 #pragma region Member Variables
-	CString m_TagName; // Branch name in the config file
+	SVString m_TagName; // Branch name in the config file
 	SVObjectReferenceVector m_ReferenceVector;
 	std::list<ResultViewItemDef> m_ResultViewItemDefList;
 	SVClock::SVTimeStamp m_LastUpdateTimeStamp; // Most recent time when m_ReferenceVector changed.

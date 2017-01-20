@@ -18,12 +18,11 @@
 #include "SVMatroxLibrary\SVMatroxBuffer.h"
 #include "SVTool.h"
 #include "SVOCore/SVImageObjectClass.h"
-
+#include "SVUtilityLibrary/SVString.h"
 #include "ArchiveMethodEnum.h"
 #include "ArchiveToolHelper.h"
 #include "SVArchiveRecord.h"
 #include "SVArchiveRecordsArray.h"
-
 #pragma endregion Includes
 
 class SVImageListClass;
@@ -49,8 +48,8 @@ public:
 
 	BOOL CheckForUniqueArchiveFilePath(LPCTSTR pszArchiveFilePathToTest);
 
-	BOOL GetFileArchive( CString& rcsName );
-	BOOL GetImageArchivePath( CString& rcsName );
+	BOOL GetFileArchive( SVString& rName );
+	BOOL GetImageArchivePath( SVString& rName );
 	BOOL SetFileArchive( LPCTSTR lpszName );
 	BOOL SetImageArchivePath( LPCTSTR lpszName );
 
@@ -74,7 +73,7 @@ public:
 
 	//--GetTranslatedImagePath -Called from SVArchiveRecord::BuildArchiveImageFilePath
 	//--to get the already translated path.
-	void getTranslatedImagePath(CString &ImagePath);
+	void getTranslatedImagePath(SVString& rImagePath);
 
 #pragma region Methods to replace processMessage
 	virtual bool DisconnectObjectInput( SVInObjectInfoStruct* pObjectInInfo ) override;
@@ -111,12 +110,9 @@ public:
 protected:
 	SV_DECLARE_CLASS( SVArchiveTool )
 
-	void PutSelectedObjectGuidsIntoObjectScript(
-		CString& RStrScript, CString& RStrAliasTable, int Indent );
+    virtual BOOL onRun( SVRunStatusClass& RRunStatus ) override;
 
-    virtual BOOL   onRun( SVRunStatusClass& RRunStatus ) override;
-
-	HRESULT QueueArchiveString( CString strArchiveString );
+	HRESULT QueueArchiveString( const SVString& rArchiveString );
 
 	//
 	// Data elements.
@@ -131,7 +127,7 @@ protected:
     //
     BOOL m_bInitializedForRun;
 
-	std::vector<CString> m_aArchiveStringBuffer;
+	SVStringVector m_ArchiveStringBuffer;
 
 private:
 	void initializeArchiveTool();
@@ -146,7 +142,7 @@ private:
 	//--will be true if the hard drive has less than 100 MG of free space
 	//--if images are selected for archive.
 	bool m_bDriveError;
-	CString m_ImageTranslatedPath;
+	SVString m_ImageTranslatedPath;
 	bool m_ArchiveImagePathUsingKW;
 };
 

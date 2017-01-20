@@ -28,8 +28,8 @@
 //	useful.
 
 #include "stdafx.h"
-#include "proptree.h"
-#include "PropTreeItemFile.h"
+#include "SVRPropTree.h"
+#include "SVRPropTreeItemFile.h"
 #include "SVMFCControls/SVDlgFolder.h"
 #include "SVMFCControls/SVFileDialog.h"
 
@@ -71,11 +71,11 @@ void SVRPropertyItemFile::ResetControl()
 // SVRPropertyItemFile
 
 SVRPropertyItemFile::SVRPropertyItemFile(bool bFullAccess, DWORD dwFlags, LPCTSTR lpszVal, LPCTSTR sInitialDir, BOOL bSetDir) 
-: m_sAttribute(_T(""))
-, m_sFilter(_T("Text Files (*.txt)|*.txt|All Files (*.*)|*.*||"))
+: m_Attribute(_T(""))
+, m_Filter(_T("Text Files (*.txt)|*.txt|All Files (*.*)|*.*||"))
 , m_bFullAccess(bFullAccess)
 {
-    m_sInitialDir = sInitialDir;
+    m_InitialDir = sInitialDir;
     m_bInitialDirSet = bSetDir;
     Initialize();
     SetItemType(dwFlags,lpszVal);
@@ -107,7 +107,7 @@ END_MESSAGE_MAP()
 /////////////////////////////////////////////////////////////////////////////
 // SVRPropertyItemFile message handlers
 
-void SVRPropertyItemFile::DrawAttribute(CDC* pDC, const RECT& rc)
+void SVRPropertyItemFile::DrawAttribute(CDC* pDC, const RECT& rRect)
 {
 	ASSERT(nullptr != m_pProp);
 	CFont*	l_pOldFont;
@@ -116,8 +116,8 @@ void SVRPropertyItemFile::DrawAttribute(CDC* pDC, const RECT& rc)
 	pDC->SetTextColor(RGB(0,0,0));
 	pDC->SetBkMode(TRANSPARENT);
 
-	CRect r = rc;
-	pDC->DrawText(m_sAttribute, r, DT_SINGLELINE|DT_VCENTER|DT_PATH_ELLIPSIS);
+	CRect DrawRect( rRect );
+	pDC->DrawText( m_Attribute.c_str(), DrawRect, DT_SINGLELINE|DT_VCENTER|DT_PATH_ELLIPSIS );
 	
 //JAB110508	
 	pDC->SelectObject(l_pOldFont);
@@ -135,7 +135,7 @@ void SVRPropertyItemFile::OnRefresh()
 {
 	if (IsWindow(m_hWnd))
 	{
-		SetWindowText(m_sAttribute);
+		SetWindowText(m_Attribute.c_str());
 	}
 }
 
@@ -144,7 +144,9 @@ void SVRPropertyItemFile::OnCommit()
 	// hide edit control
 	ShowWindow(SW_HIDE);
 
-	GetWindowText(m_sAttribute);
+	CString Text;
+	GetWindowText( Text );
+	m_Attribute = Text;
 }
 
 void SVRPropertyItemFile::OnActivate()
@@ -191,11 +193,15 @@ void SVRPropertyItemFile::ButtonClicked()
 void SVRPropertyItemFile::DrawButton(int nButtonState)
 {
 	if (!IsWindow(m_hWnd) || !IsWindowVisible())
+	{
 		return;
+	}
 	
 	// if the control is disabled, ensure the button is drawn disabled
 	if (GetStyle() & WS_DISABLED)
+	{
 		nButtonState = BTN_DISABLED;
+	}
 	
 	// Draw the button in the specified state (Up, Down, or Disabled)
 	CWindowDC DC(this);		// get the DC for drawing
@@ -246,7 +252,9 @@ void SVRPropertyItemFile::DrawButton(int nButtonState)
 			DC.SelectObject ((CFont*) nullptr);
 		}
 		else
-			ASSERT(FALSE);	// Invalid nButtonState
+		{
+			assert( false );	// Invalid nButtonState
+		}
 	}
 	DC.SelectObject(pOldBrush);
 	theBrush.DeleteObject();
@@ -297,26 +305,30 @@ bool SVRPropertyItemFile::SVRBrowseForFolder()
 {
 	bool bReturnValue = false;
 	
-	CString szPath = m_sAttribute;
+	SVString Path = m_Attribute;
 	// remove the trailing slash if present (SHBrowseForFolder() does not like it)
-	int len = szPath.GetLength() - 1;
-	if (len != 2 && szPath[len] == _T('\\'))
-		szPath.Delete(len);
+	size_t Pos = Path.size() - 1;
+	if (Pos != 2 && Path[Pos] == _T('\\'))
+	{
+		Path.erase( Pos );
+	}
 
-	SvMc::SVDlgFolder dlg(m_bFullAccess, szPath);
+	SvMc::SVDlgFolder dlg(m_bFullAccess, Path.c_str());
 	dlg.InitDlgFolder(_T("OK"), _T("Select Folder"));
 
 	INT_PTR rc = dlg.DoModal();
 	if (IDOK == rc)
 	{
-		CString path = dlg.GetPathName();
+		SVString Path = dlg.GetPathName();
 		if (m_bTrailingSlash)				// add a trailing slash if it is not already there
 		{
-			int len = path.GetLength();
-			if (path[len - 1] != _T('\\'))
-				path += _T("\\");
+			size_t Pos = Path.size();
+			if( Path[Pos - 1] != _T('\\'))
+			{
+				Path += _T("\\");
+			}
 		}
-		SetWindowText(path);		// update edit control
+		SetWindowText( Path.c_str() );		// update edit control
 		bReturnValue = true;
 	}
 	
@@ -331,29 +343,25 @@ bool SVRPropertyItemFile::SVROpenFile()
 	bool bReturnValue = false;
 	bool bDirectory   = true;			// assume user of this class has set the initial directory
 
-	SvMc::SVFileDialog dlg(true, m_bFullAccess, nullptr, nullptr, OFN_HIDEREADONLY | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR, m_sFilter, this);
+	SvMc::SVFileDialog dlg(true, m_bFullAccess, nullptr, nullptr, OFN_HIDEREADONLY | OFN_FILEMUSTEXIST | OFN_NOCHANGEDIR, m_Filter.c_str(), this);
 
 	dlg.m_ofn.lpstrTitle = _T("Select File");
 	TCHAR lpstrDirectory[_MAX_PATH] = _T("");
 	if (nullptr == dlg.m_ofn.lpstrInitialDir)
 	{
 		bDirectory = false;				// directory in edit control
-		_tcscpy(lpstrDirectory, GetPathName());
+		_tcscpy(lpstrDirectory, GetPathName().c_str() );
 		dlg.m_ofn.lpstrInitialDir = lpstrDirectory;
 	}
     if (m_bInitialDirSet)
     {
-        dlg.m_ofn.lpstrInitialDir = m_sInitialDir;
+        dlg.m_ofn.lpstrInitialDir = m_InitialDir.c_str();
     }
 
 	if (IDOK == dlg.DoModal())			// Start the FileDialog
 	{									// user clicked OK, enter files selected into edit control
-		CString szFileSeperator;
-		szFileSeperator = _T(";");
-		ASSERT(szFileSeperator.GetLength() == 1);	// must be one character only
-		szFileSeperator += _T(" ");
-		CString szPath = dlg.GetPathName();
-		SetWindowText(szPath);
+		SVString Path = dlg.GetPathName();
+		SetWindowText( Path.c_str() );
 		bReturnValue = true;
 	}
 	
@@ -363,24 +371,30 @@ bool SVRPropertyItemFile::SVROpenFile()
 	return bReturnValue;
 }
 
-CString SVRPropertyItemFile::GetPathName(void)
+SVString SVRPropertyItemFile::GetPathName()
 {
 	TCHAR lpstrReturnString[_MAX_PATH];
-	CString str = m_sAttribute;
+	SVString Value = m_Attribute;
 
-	int pos = str.ReverseFind(_T('\\'));
-	if (pos > 1)
+	size_t Pos = Value.rfind(_T('\\'));
+	if( SVString::npos != Pos )
 	{
-		if (str.GetAt(pos-1) == _T(':'))
-			str = str.Left(pos+1);
+		if(Value.at(Pos-1) == _T(':'))
+		{
+			Value = SvUl_SF::Left( Value, Pos+1 );
+		}
 		else
-			str = str.Left(pos);
+		{
+			Value = SvUl_SF::Left( Value, Pos );
+		}
 	}
 	else
-		str.Empty();
+	{
+		Value.clear();
+	}
 
-	_tfullpath(lpstrReturnString, str, _MAX_PATH);	// get absolute path from any relative paths
-	return (CString)lpstrReturnString;
+	_tfullpath(lpstrReturnString, Value.c_str(), _MAX_PATH);	// get absolute path from any relative paths
+	return SVString( lpstrReturnString );
 }
 
 BOOL SVRPropertyItemFile::OnChange() 
@@ -550,10 +564,10 @@ bool SVRPropertyItemFile::SetItemType(DWORD dwFlags, LPCTSTR sFilter /*=nullptr*
 	m_bButtonLeft    = (dwFlags & SVR_BUTTONLEFT) ? true : false;
 	m_bFindFolder    = (dwFlags & SVR_FOLDER) ? true : false;
 	m_bTrailingSlash = (dwFlags & SVR_TRAILINGSLASH) ? true : false;
-	m_sFilter        = _T("Text Files (*.txt)|*.txt|All Files (*.*)|*.*||");
+	m_Filter        = _T("Text Files (*.txt)|*.txt|All Files (*.*)|*.*||");
 
 	if (sFilter)
-		m_sFilter = sFilter;
+		m_Filter = sFilter;
 
 	if (m_bFindFolder)
 	{
@@ -566,23 +580,24 @@ bool SVRPropertyItemFile::SetItemType(DWORD dwFlags, LPCTSTR sFilter /*=nullptr*
 	return true;
 }
 
-bool SVRPropertyItemFile::GetItemValue(CString& strVal)
+bool SVRPropertyItemFile::GetItemValue(SVString& rVal)
 {
-	strVal = m_sAttribute;
+	rVal = m_Attribute;
 	return true;
 }
 
 bool SVRPropertyItemFile::GetItemValue(VARIANT& vtVal)
 {
 	VariantClear(&vtVal);
-    V_VT(&vtVal) = VT_BSTR;
-    V_BSTR(&vtVal) = m_sAttribute.AllocSysString();
+	_variant_t	Value;
+	Value.SetString( m_Attribute.c_str() );
+	vtVal = Value.Detach();
 	return true;
 }
 
-bool SVRPropertyItemFile::SetItemValue(LPCTSTR lpszVal)
+bool SVRPropertyItemFile::SetItemValue(LPCTSTR pVal)
 {
-	m_sAttribute = lpszVal;
+	m_Attribute = pVal;
 	return true;
 }
 

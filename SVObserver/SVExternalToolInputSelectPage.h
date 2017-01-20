@@ -11,7 +11,8 @@
 #pragma once
 
 #pragma region Includes
-#include "PropertyTree/PropTree.h"
+#include "SVRPropertyTree/SVRPropTree.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 class SVExternalToolDetailsSheet;
@@ -25,11 +26,11 @@ class SVExternalToolInputSelectPage : public CPropertyPage
 
 // Construction
 public:
-	SVExternalToolInputSelectPage(const CString& sTitle, SVExternalToolDetailsSheet* pParent = nullptr, int id = IDD );
+	SVExternalToolInputSelectPage( LPCTSTR Title, SVExternalToolDetailsSheet* pParent = nullptr, int id = IDD );
 	virtual ~SVExternalToolInputSelectPage();
 
-	CString							m_sGroupName;
-	bool							m_bTabbed;
+	SVString	m_sGroupName;
+	bool		m_bTabbed;
 
 // Dialog Data
 	//{{AFX_DATA(SVExternalToolInputSelectPage)
@@ -48,7 +49,7 @@ public:
 
 // Implementation
 protected:
-	int SelectObject(CString& rsSelectedName, SVRPropertyItem* pItem);
+	int SelectObject( SVString& rSelectedName, SVRPropertyItem* pItem );
 	SVObjectClass* FindObject(SVRPropertyItem* pItem);
 	HRESULT ValidateItem(SVRPropertyItem* pItem);
 	int GetItemIndex(SVRPropertyItem* pItem);

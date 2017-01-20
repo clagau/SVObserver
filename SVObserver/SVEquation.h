@@ -19,6 +19,7 @@
 #include "SVEquationLibrary/SVEquationYacc.h"
 #include "SVOCore/SVTaskObject.h"
 #include "SVStatusLibrary/MessageContainer.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 /**
@@ -48,7 +49,7 @@ struct SVEquationSymbolStruct
 {
 	SVEquationSymbolTypeEnum Type;
 	SVInObjectInfoStruct	InObjectInfo;
-	CString	Name;
+	SVString Name;
 	BOOL IsValid;
 
 	SVEquationSymbolStruct()
@@ -100,13 +101,11 @@ public:
 	
 protected:
 	SVInputInfoListClass m_toolsetSymbolTable;		// The symbol table for the ToolSet Variables in the equation
-	CString m_InspectionName;
+	SVString m_InspectionName;
 
-	CString  m_ToolSetName;
-	CString m_DIOInputName;
-	CString  m_RemoteInputName;
-	
-
+	SVString  m_ToolSetName;
+	SVString m_DIOInputName;
+	SVString  m_RemoteInputName;
 };
 
 /**
@@ -141,7 +140,7 @@ class SVEquationClass : public SVTaskObjectClass, public SVEquationBase, public 
 	{
 		SVEquationStruct ()
 		{
-			EquationBuffer.Empty();
+			EquationBuffer.clear();
 			StartPos = 0;
 			EndPos = 0;
 		};
@@ -154,17 +153,17 @@ class SVEquationClass : public SVTaskObjectClass, public SVEquationBase, public 
 			return (*this);
 		};
 
-		void GetEquationText(CString &text) const
+		const SVString& GetEquationText() const
 		{
-			text = EquationBuffer;	
+			return EquationBuffer;
 		};
 
-		void SetEquationText(const CString& text)
+		void SetEquationText(const SVString& rText)
 		{
-			EquationBuffer = text;
+			EquationBuffer = rText;
 		};
 
-		CString EquationBuffer;
+		SVString EquationBuffer;
 		int StartPos;
 		int EndPos;
 	};
@@ -177,11 +176,8 @@ public:
 	
 	BOOL HasCondition();
 
-	void GetEquationText(CString& text) const;
-	void SetEquationText(const CString& text);
-
 #pragma region IEquation
-	virtual void GetEquationText(SVString& text) const override;
+	virtual const SVString& GetEquationText() const override;
 	virtual void SetEquationText(const SVString& text) override;
 	virtual SvOi::EquationTestResult Test( bool DisplayErrorMessage = true ) override;
 	virtual double GetYACCResult() const override;

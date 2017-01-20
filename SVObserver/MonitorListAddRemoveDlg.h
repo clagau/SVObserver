@@ -13,6 +13,7 @@
 #pragma region Includes
 #include "afxwin.h"
 #include "RemoteMonitorList.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 class MonitorListAddRemoveDlg : public CDialog
@@ -41,7 +42,7 @@ public:
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 
-	void UpdateUsedList(const CString& PPQName, const NameDepthPairList& rList);
+	void UpdateUsedList( LPCTSTR PPQName, const NameDepthPairList& rList );
 
 	DECLARE_MESSAGE_MAP()
 #pragma endregion Protected Methods
@@ -56,11 +57,11 @@ private:
 	CButton m_AddButton;
 	CButton m_PropertiesButton;
 
-	void ReplaceList(const CString& oldName, const CString& newName);
-	CString BuildListDisplayName(const CString& PPQName, const CString& name) const;
-	CString GetListNameFromDisplayName(const CString& name) const;
-	CString GetPPQName(const CString& name) const;
-	CString NextAvailableListName() const;
+	void ReplaceList( const SVString& rOldName, const SVString& rNewName );
+	SVString BuildListDisplayName( LPCTSTR PPQName, LPCTSTR Name ) const;
+	SVString GetListNameFromDisplayName( LPCTSTR Name ) const;
+	SVString GetPPQName( LPCTSTR Name ) const;
+	SVString NextAvailableListName() const;
 #pragma region Private Members
 };
 

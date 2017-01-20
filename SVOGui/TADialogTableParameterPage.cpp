@@ -151,7 +151,7 @@ namespace Seidenader { namespace SVOGui {
 				}
 				else
 				{
-					SVStringArray msgList;
+					SVStringVector msgList;
 					msgList.push_back(SvUl_SF::Format(_T("%d"), hResult));
 					SvStl::MessageMgrStd Exception( SvStl::LogAndDisplay );
 					Exception.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_UnknownCommitError, msgList, SvStl::SourceFileParams(StdMessageParams));

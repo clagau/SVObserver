@@ -72,7 +72,7 @@ void RangeXDialogClass::OnBnClickedOk()
 	if(bOK)
 	{
 		SvOi::MessageTextEnum messageId;
-		SVStringArray messageList;
+		SVStringVector messageList;
 		HRESULT hres = m_RangeClassHelper.CheckInternalData(messageId, messageList);
 		if( S_OK != hres)
 		{
@@ -112,8 +112,8 @@ BOOL RangeXDialogClass::OnInitDialog()
 
 	SetDlgData();
 
-	CString title = m_RangeClassHelper.GetOwnerName();
-	SetWindowText( title );
+	SVString Title = m_RangeClassHelper.GetOwnerName();
+	SetWindowText( Title.c_str() );
 
 	// Ensure the title is readable
 	CRect rect;
@@ -122,7 +122,7 @@ BOOL RangeXDialogClass::OnInitDialog()
 	CDC* pDC = GetDC();
 	if(nullptr != pDC )
 	{
-		size = pDC->GetTextExtent(title);
+		size = pDC->GetTextExtent( Title.c_str() );
 		ReleaseDC(pDC);
 	}
 
@@ -147,20 +147,20 @@ void RangeXDialogClass::SetDlgData()
 
 bool RangeXDialogClass::GetDlgData()
 {
-	bool res = false;
-	CString csText;
+	bool Result = false;
 
 	try
 	{
-		m_EditFailHigh.GetWindowText(csText);
-		m_RangeClassHelper.SetInternalData(SvOi::Tid_FailHigh, csText);
-		m_EditWarnHigh.GetWindowText(csText);
-		m_RangeClassHelper.SetInternalData(SvOi::Tid_WarnHigh, csText);
-		m_EditFailLow.GetWindowText(csText);
-		m_RangeClassHelper.SetInternalData(SvOi::Tid_FailLow, csText);
-		m_EditWarnLow.GetWindowText(csText);
-		m_RangeClassHelper.SetInternalData(SvOi::Tid_WarnLow, csText);
-		res = true;
+		CString Text;
+		m_EditFailHigh.GetWindowText(Text);
+		m_RangeClassHelper.SetInternalData(SvOi::Tid_FailHigh, Text);
+		m_EditWarnHigh.GetWindowText(Text);
+		m_RangeClassHelper.SetInternalData(SvOi::Tid_WarnHigh, Text);
+		m_EditFailLow.GetWindowText(Text);
+		m_RangeClassHelper.SetInternalData(SvOi::Tid_FailLow, Text);
+		m_EditWarnLow.GetWindowText(Text);
+		m_RangeClassHelper.SetInternalData(SvOi::Tid_WarnLow, Text);
+		Result = true;
 	}
 	catch ( const SvStl::MessageContainer& rSvE )
 	{
@@ -169,10 +169,10 @@ bool RangeXDialogClass::GetDlgData()
 		Exception.setMessage( rSvE.getMessage() );
 	}
 
-	return res;
+	return Result;
 }
 
-bool RangeXDialogClass::ShowObjectSelector(CString& name)
+bool RangeXDialogClass::ShowObjectSelector( SVString& rName)
 {
 	bool retValue = m_RangeClassHelper.FillObjectSelector();
 
@@ -181,28 +181,25 @@ bool RangeXDialogClass::ShowObjectSelector(CString& name)
 		return retValue;
 	}
 
-	if(name.GetLength() > 0)
+	if( 0 < rName.size() )
 	{
 		SVStringSet nameSet;
-		nameSet.insert(SVString(name));
+		nameSet.insert( rName );
 		SvOsl::ObjectTreeGenerator::Instance().setCheckItems(nameSet);
 	}
 
-	HINSTANCE resHandle = AfxGetResourceHandle();
-	CString Title = m_RangeClassHelper.GetOwnerName();
+	SVString Title = m_RangeClassHelper.GetOwnerName();
 	Title += _T(": ");
-	Title += RangeEnum::ERange2String(resHandle, m_LastSelected).c_str();
+	Title += RangeEnum::ERange2String(m_LastSelected).c_str();
 
-	CString mainTabTitle;
-	mainTabTitle.LoadString( IDS_SELECT_TOOLSET_OUTPUT );
-	CString FilterTab;
-	FilterTab.LoadString( IDS_FILTER );
+	SVString mainTabTitle = SvUl_SF::LoadSVString( IDS_SELECT_TOOLSET_OUTPUT );
+	SVString FilterTab = SvUl_SF::LoadSVString( IDS_FILTER );
 
-	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title, mainTabTitle, FilterTab, this );
+	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title.c_str(), mainTabTitle.c_str(), FilterTab.c_str(), this );
 
 	if( IDOK == Result )
 	{
-		name = SvOsl::ObjectTreeGenerator::Instance().getSingleObjectResult().getLocation().c_str();
+		rName = SvOsl::ObjectTreeGenerator::Instance().getSingleObjectResult().getLocation();
 		return true;
 	}
 
@@ -213,44 +210,48 @@ bool RangeXDialogClass::ShowObjectSelector(CString& name)
 void RangeXDialogClass::OnBnClickedFailHighIndirect()
 {
 	m_LastSelected = RangeEnum::ER_FailHigh;
-	CString csText;
-	m_EditFailHigh.GetWindowText(csText); // @TODO:  Should check to see if GetWindowText worked before using the value it returned.
-	if (ShowObjectSelector(csText))
+	CString Text;
+	m_EditFailHigh.GetWindowText(Text);
+	SVString Name( Text );
+	if (ShowObjectSelector(Name))
 	{
-		m_EditFailHigh.SetWindowText(csText);
+		m_EditFailHigh.SetWindowText(Name.c_str());
 	}
 }
 
 void RangeXDialogClass::OnBnClickedWarnlHighIndirect()
 {
 	m_LastSelected = RangeEnum::ER_WarnHigh;
-	CString csText;
-	m_EditWarnHigh.GetWindowText(csText);
-	if (ShowObjectSelector(csText) )
+	CString Text;
+	m_EditWarnHigh.GetWindowText(Text);
+	SVString Name( Text );
+	if (ShowObjectSelector(Name))
 	{
-		m_EditWarnHigh.SetWindowText(csText);
+		m_EditWarnHigh.SetWindowText(Name.c_str());
 	}
 }
 
 void RangeXDialogClass::OnBnClickedWarnLowIndirect()
 {
 	m_LastSelected = RangeEnum::ER_WarnLow;
-	CString csText;
-	m_EditWarnLow.GetWindowText(csText);
-	if (ShowObjectSelector(csText) )
+	CString Text;
+	m_EditWarnLow.GetWindowText(Text);
+	SVString Name( Text );
+	if (ShowObjectSelector(Name))
 	{
-		m_EditWarnLow.SetWindowText(csText);
+		m_EditWarnLow.SetWindowText(Name.c_str());
 	}
 }
 
 void RangeXDialogClass::OnBnClickedFailedLowIndirect()
 {
 	m_LastSelected = RangeEnum::ER_FailLow;
-	CString csText;
-	m_EditFailLow.GetWindowText(csText);
-	if (ShowObjectSelector(csText) )
+	CString Text;
+	m_EditFailLow.GetWindowText(Text);
+	SVString Name( Text );
+	if (ShowObjectSelector(Name))
 	{
-		m_EditFailLow.SetWindowText(csText);
+		m_EditFailLow.SetWindowText(Name.c_str());
 	}
 }
 

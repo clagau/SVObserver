@@ -449,7 +449,7 @@ BOOL SVBarCodeGeneralDialog::OnInitDialog()
 	m_StringFormatCombo.ResetContent();
 	for( int i = 0 ; i < static_cast< int >( m_EnumVect.size() ); i++ )
 	{
-		m_StringFormatCombo.InsertString( i, m_EnumVect[i].first );
+		m_StringFormatCombo.InsertString( i, m_EnumVect[i].first.c_str() );
 	}
 	m_StringFormatCombo.SetCurSel( m_lStringFormat );
 

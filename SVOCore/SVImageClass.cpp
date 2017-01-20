@@ -35,7 +35,6 @@
 #pragma endregion Includes
 
 #ifdef _DEBUG
-#define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
@@ -204,17 +203,17 @@ BOOL SVImageClass::DestroyImage()
 	{
 		bOk = Lock();
 
-		ASSERT( bOk );
+		assert( bOk );
 
 		if ( bOk )
 		{
 			bOk = ( S_OK == ClearParentConnection() );
 
-			ASSERT( bOk );
+			assert( bOk );
 
 			bOk = S_OK == RemoveChildren() && bOk;
 
-			ASSERT( bOk );
+			assert( bOk );
 
 			if( !( m_BufferArrayPtr.empty() ) )
 			{
@@ -227,7 +226,7 @@ BOOL SVImageClass::DestroyImage()
 
 			bOk = Unlock() && bOk;
 
-			ASSERT( bOk );
+			assert( bOk );
 		}
 
 		if ( ! bOk )
@@ -776,7 +775,7 @@ HRESULT SVImageClass::IsValidChild( const GUID& p_rChildID, SVImageInfoClass p_s
 	{
 		SVImageClass* l_pParentImage = GetParentImage();
 
-		ASSERT( nullptr != l_pParentImage );
+		assert( nullptr != l_pParentImage );
 
 		if( nullptr != l_pParentImage && l_pParentImage != this )
 		{
@@ -833,7 +832,7 @@ HRESULT SVImageClass::UpdateChild( const GUID& p_rChildID, SVImageInfoClass p_sv
 		{
 			SVImageClass* l_pParentImage = GetParentImage();
 
-			ASSERT( nullptr != l_pParentImage );
+			assert( nullptr != l_pParentImage );
 
 			if( nullptr != l_pParentImage && l_pParentImage != this )
 			{
@@ -1540,7 +1539,7 @@ HRESULT SVImageClass::LoadImage( LPCTSTR p_szFileName, SVImageIndexStruct p_svTo
 				++l_Iter;
 			}
 
-			ASSERT( Status );
+			assert( Status );
 			if ( S_OK == l_hrOk )
 			{
 				l_hrOk = Status ? S_OK : S_FALSE;
@@ -1572,7 +1571,7 @@ SVImageClass* SVImageClass::GetRootImage()
 bool SVImageClass::resetAllObjects( bool shouldNotifyFriends, bool silentReset )
 {
 	bool Result = ( S_OK == ResetObject() );
-	ASSERT( Result );
+	assert( Result );
 
 	return Result && __super::resetAllObjects(shouldNotifyFriends, silentReset);
 }
@@ -1626,7 +1625,7 @@ bool SVImageClass::Unlock() const
 #ifdef _DEBUG
 	DWORD dwThreadId = ::GetCurrentThreadId();
 	//! Double casting required to avoid warnings from 64 to 32 bit conversion
-	ASSERT( dwThreadId == static_cast<DWORD> (reinterpret_cast<LONGLONG> (m_hCriticalSection.OwningThread)) );
+	assert( dwThreadId == static_cast<DWORD> (reinterpret_cast<LONGLONG> (m_hCriticalSection.OwningThread)) );
 #endif
 
 	try
@@ -1636,7 +1635,7 @@ bool SVImageClass::Unlock() const
 		if ( dwThreadId == static_cast<DWORD> (reinterpret_cast<LONGLONG> (m_hCriticalSection.OwningThread)) )
 		{
 			long lRecursionCount = f_mapCritSec[dwThreadId];
-			//ASSERT( lRecursionCount == m_hCriticalSection.RecursionCount );
+			//assert( lRecursionCount == m_hCriticalSection.RecursionCount );
 		}
 		f_mapCritSec[dwThreadId]--;
 
@@ -1651,10 +1650,10 @@ bool SVImageClass::Unlock() const
 	catch ( ... )
 	{
 		l_bOk = false;
-		ASSERT( l_bOk == true );
+		assert( l_bOk == true );
 	}
 
-	ASSERT( l_bOk == true );
+	assert( l_bOk == true );
 
 	return l_bOk;
 }
@@ -1930,7 +1929,7 @@ SVImageIndexStruct SVImageClass::GetSourceImageIndex( SVDataManagerHandle* pHand
 	if( SV_PUBLISH_RESULT_IMAGE == (ObjectAttributesSet() & SV_PUBLISH_RESULT_IMAGE) )
 	{
 		SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess*> (GetInspection());
-		ASSERT( nullptr != pInspection );
+		assert( nullptr != pInspection );
 		if ( nullptr != pHandle && nullptr != pInspection )
 		{
 			svIndex.m_PublishedResultDMIndexHandle.Assign( *pHandle, pHandle->GetLockType() );
@@ -2169,7 +2168,7 @@ HRESULT SVImageClass::UpdateBufferArrays( bool p_ExcludePositionCheck )
 
 					if (SVMSG_SVO_5067_IMAGEALLOCATIONFAILED == l_Status)
 					{
-						SVStringArray msgList;
+						SVStringVector msgList;
 						msgList.push_back(GetCompleteName());
 						currentMessage.setMessage( currentMessage.getMessage().m_MessageCode, SvOi::Tid_Default, msgList,  SvStl::SourceFileParams(StdMessageParams) );
 						pParentTask->addTaskMessage( currentMessage );

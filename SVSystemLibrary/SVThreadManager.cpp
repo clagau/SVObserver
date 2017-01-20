@@ -9,12 +9,15 @@
 //* .Check In Date   : $Date:   17 Dec 2014 09:34:06  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "sstream"
 #include "SVThreadManager.h"
 #include "SVMessage\SVMessage.h"
 #include "SVStatusLibrary\GlobalPath.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
+#include "SVUtilityLibrary/SVString.h"
+#pragma endregion Includes
 
 SVThreadManager& SVThreadManager::Instance()
 {
@@ -199,7 +202,7 @@ BOOL SVThreadManager::IsThreadManagerInstalled() const
 void SVThreadManager::setThreadError( DWORD MessageCode, LPCTSTR Message, SvStl::SourceFileParams SourceFile )
 {
 	DWORD errorCode = GetLastError();
-	SVStringArray msgList;
+	SVStringVector msgList;
 	msgList.push_back( SvUl_SF::Format( _T("%d"), errorCode ));
 	msgList.push_back( SvUl_SF::Format( _T("0X%08X"), errorCode ));
 	msgList.push_back( SVString( Message ) );

@@ -15,6 +15,7 @@
 #pragma region Includes
 //Moved to precompiled header: #include <set>
 #include "SVContainerLibrary/ObjectTreeItems.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 namespace Seidenader { namespace ObjectSelectorLibrary

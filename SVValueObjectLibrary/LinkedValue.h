@@ -9,10 +9,10 @@
 
 #pragma region Includes
 #include "SVObjectLibrary\SVInObjectInfoStruct.h"
+#include "SVUtilityLibrary\SVString.h"
 #include "SVStaticStringValueObjectClass.h"
 #include "SVVariantValueObjectClass.h"
 #pragma endregion Includes
-
 
 #pragma region Declarations
 #pragma endregion Declarations
@@ -37,7 +37,7 @@ public:
 	/// \returns S_OK if successful
 	//************************************
 	virtual HRESULT GetValueAt( int Bucket, int Index, VARIANT& rValue ) const override;
-	virtual HRESULT GetValueAt( int Bucket, int Index, CString& rValue ) const override;
+	virtual HRESULT GetValueAt( int Bucket, int Index, SVString& rValue ) const override;
 	virtual HRESULT GetValueAt( int Bucket, int Index, BOOL& rValue ) const override;
 	virtual HRESULT GetValueAt( int Bucket, int Index, double& rValue ) const override;
 	virtual HRESULT GetValueAt( int Bucket, int Index, long& rValue ) const override;
@@ -48,7 +48,7 @@ public:
 	/// Set the value. If string a valid dotted name of a value object, it connect it to the linked object.
 	/// \returns HRESULT S_OK, if set was OK.
 	//************************************
-	virtual HRESULT SetValueAt( int Bucket, int Index, const CString& rValue ) override;
+	virtual HRESULT SetValueAt( int Bucket, int Index, const SVString& rValue ) override;
 
 	virtual bool DisconnectObjectInput( SVInObjectInfoStruct* pObjectInInfo ) override;
 

@@ -7,7 +7,7 @@
 #pragma once
 
 #pragma region Includes
-//Moved to precompiled header: #include <string>
+#include "SVUtilityLibrary\SVString.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -52,8 +52,8 @@ namespace Seidenader { namespace SVStatusLibrary
 
 #pragma region privat member 
 		bool        m_IsParsed;
-		std::string m_iniDirectory;
-		std::string m_startDirectory;
+		SVString m_iniDirectory;
+		SVString m_startDirectory;
 #pragma endregion privat member 
 	};
 

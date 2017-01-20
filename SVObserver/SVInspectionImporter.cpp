@@ -35,7 +35,7 @@
 #include "SVXMLLibrary/SaxXMLHandler.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVXMLLibrary/SaxExtractPropertiesHandler.h"
-#include "SVLibrary/StringEscape.h"
+#include "SVUtilityLibrary/SVStringConversions.h"
 #pragma endregion Includes
 
 static LPCTSTR scImportNewExt = _T(".new.xml");
@@ -163,18 +163,18 @@ static bool ImportPPQInputs(SVTreeType& rTree, Insertor insertor)
 				
 				long l_PPQPosition = -1;
 				_variant_t svValue;
-				CString strType;
+				SVString Type;
 				long l_Index;
 
 				bOk = SVNavigateTree::GetItem(rTree, CTAG_IO_TYPE, htiDataChild, svValue);
 				if (bOk)
 				{
-					strType = static_cast<LPCTSTR>(static_cast<_bstr_t>(svValue));
+					Type = SvUl_SF::createSVString( svValue );
 				}
 				bOk = SVNavigateTree::GetItem(rTree, CTAG_ITEM_NAME, htiDataChild, svValue);
 				if (bOk)
 				{
-					DataName = SvUl_SF::createSVString(svValue);
+					DataName = SvUl_SF::createSVString( svValue );
 				}
 				bOk = SVNavigateTree::GetItem(rTree, CTAG_PPQ_POSITION, htiDataChild, svValue);
 				if (bOk)
@@ -184,12 +184,12 @@ static bool ImportPPQInputs(SVTreeType& rTree, Insertor insertor)
 				if (l_PPQPosition >= 0)
 				{
 					// This means it is a Digital input
-					if( _T("Digital") == strType )
+					if( _T("Digital") == Type )
 					{
 						insertor = boost::any(SVImportedInput(DataName, l_PPQPosition));
 					}
 					// This means it is a Digital input
-					else if (_T("Remote") == strType)
+					else if( _T("Remote") == Type )
 					{								
 						_variant_t l_Variant = 0.0;
 
@@ -241,10 +241,9 @@ static bool importGlobalConstants( SVTreeType& rTree, SvOi::GlobalConstantDataSe
 			Result = SVNavigateTree::GetItem( rTree, CTAG_DESCRIPTION, hItemChild, Value );
 			if( Result )
 			{
-				CString Description;
-				Description = Value.bstrVal;
+				SVString Description = SvUl_SF::createSVString( Value.bstrVal );
 				//This is needed to insert any CR LF in the description which were replaced while saving
-				SvLib::RemoveEscapedSpecialCharacters( Description, true );
+				SvUl::RemoveEscapedSpecialCharacters( Description, true );
 				GlobalData.m_Description = Description;
 			}
 			rImportedGlobals.insert( GlobalData );
@@ -268,7 +267,7 @@ static void checkGlobalConstants( const SvOi::GlobalConstantDataSet& rImportedGl
 	{
 		SvOi::GlobalConstantData GlobalData;
 		//Important here we intensionally do not fill the m_Guid value
-		GlobalData.m_DottedName = (*Iter)->GetCompleteObjectName();
+		GlobalData.m_DottedName = (*Iter)->GetCompleteName();
 		(*Iter)->getValue( GlobalData.m_Value );
 		GlobalData.m_Description = (*Iter)->getDescription();
 		CurrentGlobals.insert( GlobalData );
@@ -304,7 +303,7 @@ static void checkGlobalConstants( const SvOi::GlobalConstantDataSet& rImportedGl
 			SvOi::GlobalConstantData GlobalData;
 
 			GlobalData.m_Guid = pGlobalConstant->GetUniqueObjectID();
-			GlobalData.m_DottedName = pGlobalConstant->GetCompleteObjectName();
+			GlobalData.m_DottedName = pGlobalConstant->GetCompleteName();
 			pGlobalConstant->getValue( GlobalData.m_Value );
 			//Default is that the current Global Constant is selected
 			GlobalData.m_Selected = true;

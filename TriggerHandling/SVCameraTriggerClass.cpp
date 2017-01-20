@@ -9,11 +9,14 @@
 //* .Check In Date   : $Date:   23 Apr 2013 09:50:18  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVCameraTriggerClass.h"
 #include "SVCameraTriggerData.h"
 #include "TriggerBasics.h"
 #include "SVIOLibrary/SVIOTriggerLoadLibraryClass.h"
+#include "SVUtilityLibrary/SVString.h"
+#pragma endregion Includes
 
 namespace Seidenader { namespace TriggerHandling {
 

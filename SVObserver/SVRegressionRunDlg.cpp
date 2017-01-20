@@ -20,6 +20,7 @@
 #include "SVRegressionFileSelectDlg.h"
 #include "SVRegressionFileSelectSheet.h"
 #include "SVRegressionExitDlg.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -396,8 +397,8 @@ LRESULT  CSVRegressionRunDlg::SetNextFiles(WPARAM wParam, LPARAM lParam)
 
 	int iCount = static_cast<int>(RegressionFileList->GetCount());
 
-	int iMaxStringSize = 0;
-	CString sTmpString;
+	size_t MaxStringSize = 0;
+	SVString Text;
 
 	bool bIsListUsed = false;
 	if ( m_lstCameraImages.GetCount() > 0 )
@@ -405,30 +406,30 @@ LRESULT  CSVRegressionRunDlg::SetNextFiles(WPARAM wParam, LPARAM lParam)
 		bIsListUsed = true;
 	}
 
-	for ( int i = 0; i <= iCount-1; i++ )
+	for( int i = 0; i <= iCount-1; i++ )
 	{
 		POSITION pos = RegressionFileList->FindIndex(i);
 		if ( pos )
 		{
 			int iVal;
-			RegressionRunFileStruct *pTmpStruct = RegressionFileList->GetAt(pos);
-			CString sTmp = pTmpStruct->csCameraName + " : "+ pTmpStruct->csFileName;
+			RegressionRunFileStruct *pRegressionFile = RegressionFileList->GetAt(pos);
+			SVString Name = pRegressionFile->CameraName + " : "+ pRegressionFile->FileName;
 
-			if ( iMaxStringSize == 0 )
+			if ( MaxStringSize == 0 )
 			{
-				iMaxStringSize = sTmp.GetLength();
-				sTmpString = sTmp;
+				MaxStringSize = Name.size();
+				Text = Name;
 			}
 			else
 			{
-				if ( iMaxStringSize < sTmp.GetLength() )
+				if ( MaxStringSize < Name.size() )
 				{
-					iMaxStringSize = sTmp.GetLength();
-					sTmpString = sTmp;
+					MaxStringSize = Name.size();
+					Text = Name;
 				}
 			}
 
-			iVal = m_lstCameraImages.AddString(sTmp);
+			iVal = m_lstCameraImages.AddString( Name.c_str() );
 		}
 	}
 
@@ -444,7 +445,7 @@ LRESULT  CSVRegressionRunDlg::SetNextFiles(WPARAM wParam, LPARAM lParam)
 	CClientDC dc(this);
 	CSize Extent;
 
-	Extent = dc.GetTextExtent(sTmpString, static_cast<int>(_tcslen(sTmpString)));
+	Extent = dc.GetTextExtent(Text.c_str(), static_cast<int> (Text.size()));
 
 	Extent.cx += 3 * ::GetSystemMetrics(SM_CXBORDER);
 

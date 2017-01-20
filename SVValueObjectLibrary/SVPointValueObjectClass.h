@@ -13,6 +13,7 @@
 
 #pragma region Includes
 #include "SVOResource/resource.h"
+#include "SVUtilityLibrary/SVString.h"
 #include "SVUtilityLibrary/SVPOINT.h"
 #include "SVValueObjectClassImpl.h"
 #include "SVValueObjectGlobals.h"
@@ -37,13 +38,13 @@ public:
 	IMPLEMENT_VALUE_OBJECT_GET_SET()
 
 protected:
-	virtual HRESULT SetValueAt( int iBucket, int iIndex, const CString& value );
-	virtual HRESULT SetValueAt( int iBucket, int iIndex, POINT value );
-	virtual HRESULT SetValueAt( int iBucket, int iIndex, double value );
+	virtual HRESULT SetValueAt( int iBucket, int iIndex, const SVString& rValue );
+	virtual HRESULT SetValueAt( int iBucket, int iIndex, POINT Value );
+	virtual HRESULT SetValueAt( int iBucket, int iIndex, double Value );
 
 	virtual HRESULT GetValueAt( int iBucket, int iIndex, POINT& rPoint ) const;
 	virtual HRESULT GetValueAt( int iBucket, int iIndex, double& rValue ) const;
-	virtual HRESULT GetValueAt( int iBucket, int iIndex, CString& rValue ) const;
+	virtual HRESULT GetValueAt( int iBucket, int iIndex, SVString& rValue ) const;
 	virtual HRESULT GetValueAt( int iBucket, int iIndex, VARIANT& rValue ) const;
 
 	virtual void ValidateValue( int iBucket, int iIndex, const SVString& rValue ) const override;
@@ -54,6 +55,6 @@ private:
 	/// Convert a string in a SVPOINT. Throw an exception if the string isn't convertible into a SVPOINT
 	/// \param strValue [in] The input string
 	/// \returns char Return value.
-	SVPOINT convertString2Point(const CString& rValue ) const;
+	SVPOINT convertString2Point(const SVString& rValue ) const;
 };
 

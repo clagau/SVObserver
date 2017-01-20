@@ -15,20 +15,16 @@
 #include "SVByteValueObjectClass.h"
 #include "SVObjectLibrary\SVToolsetScriptTags.h"
 #include "SVObjectLibrary\SVClsids.h"
-#include "SVLibrary/StringMunge.h"
 #include "SVStatusLibrary/MessageManager.h"
+#include "ObjectInterfaces/TextDefineSvOi.h"
 #pragma endregion Includes
 
-namespace	// only for this file
-{
-	const CString DEFAULT_TAG_SAVE(_T(".Default"));
-	const CString BUCKET_TAG_SAVE(_T(".Array"));	// for backwards compatibility
-	const CString ARRAY_TAG_SAVE(_T(".Array_Elements"));	// new style; one bucket, all array values
-
-	const CString DEFAULT_TAG_LOAD(_T("Default"));
-	const CString BUCKET_TAG_LOAD(_T("Array"));	// for backwards compatibility
-	const CString ARRAY_TAG_LOAD(_T("Array_Elements"));	// new style; one bucket, all array values
-}	// end file scope namespace
+#pragma region Declarations
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+#endif
+#pragma endregion Declarations
 
 SV_IMPLEMENT_CLASS(SVByteValueObjectClass, SVByteValueObjectClassGuid);
 
@@ -103,7 +99,7 @@ HRESULT SVByteValueObjectClass::SetObjectValue( SVObjectAttributeClass* pDataObj
 	if ( m_bLegacyVectorObjectCompatibility )
 	{
 		if (   SVObjectAttributeClassHelper::GetAttributeData(pDataObject, "pArray", svArray)
-			|| SVObjectAttributeClassHelper::GetAttributeData(pDataObject, BUCKET_TAG_LOAD, svArray) )
+			|| SVObjectAttributeClassHelper::GetAttributeData(pDataObject, SvOi::cBucketTag, svArray) )
 		{
 			SetArraySize( static_cast< int >( svArray.size() ) );
 			hr = SetArrayValues(1, svArray.begin(), svArray.end());
@@ -143,7 +139,7 @@ HRESULT SVByteValueObjectClass::SetValueAt( int iBucket, int iIndex, const VARIA
 	return S_FALSE;
 }
 
-HRESULT SVByteValueObjectClass::SetValueAt( int iBucket, int iIndex, const CString& strValue )
+HRESULT SVByteValueObjectClass::SetValueAt( int iBucket, int iIndex, const SVString& strValue )
 {
 	try
 	{
@@ -175,12 +171,12 @@ HRESULT SVByteValueObjectClass::GetValueAt( int iBucket, int iIndex, VARIANT& rv
 	return hr;
 }
 
-HRESULT SVByteValueObjectClass::GetValueAt( int iBucket, int iIndex, CString& rstrValue) const
+HRESULT SVByteValueObjectClass::GetValueAt( int iBucket, int iIndex, SVString& rValue) const
 {
 	BYTE value=0;
 
 	HRESULT hr = base::GetValueAt(iBucket, iIndex, value);
-	rstrValue.Format(m_outFormat.c_str(), value);
+	rValue = SvUl_SF::Format( m_outFormat.c_str(), value );
 
 	return hr;
 }
@@ -205,10 +201,10 @@ void SVByteValueObjectClass::LocalInitialize()
 {
 	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVByteValueObjectType;
 	DefaultValue() = 0;
-	if ( m_sLegacyScriptDefaultName.IsEmpty() )
+	if ( m_sLegacyScriptDefaultName.empty() )
 	{
-		m_sLegacyScriptDefaultName = "bDefault";
-		m_sLegacyScriptArrayName = "pBArray";
+		m_sLegacyScriptDefaultName = _T("bDefault");
+		m_sLegacyScriptArrayName = _T("pBArray");
 	}
 	SetTypeName( _T("Integer8") );
 	InitializeBuckets();
@@ -216,26 +212,29 @@ void SVByteValueObjectClass::LocalInitialize()
 	SetOutputFormat(OutputFormat_hex);
 }
 
-BYTE SVByteValueObjectClass::convertString2Byte(const CString& rValue ) const
+BYTE SVByteValueObjectClass::convertString2Byte(const SVString& rValue ) const
 {
-	CString strDigits( rValue );
-	StringMunge::KeepChars( &strDigits, _T("0123456789 .xXabcdefABCDEF") );
-	if ( strDigits == rValue )
+	SVString Digits = SvUl_SF::ValidateString( rValue, _T("0123456789 .xXabcdefABCDEF") );
+	if ( Digits == rValue )
 	{
-		strDigits.MakeLower();
+		Digits == SvUl_SF::MakeLower( Digits );
 		TCHAR* p = nullptr;
 		DWORD ulValue;
-		if ( strDigits.Find(_T('x')) != -1  )
-			ulValue = _tcstoul(strDigits, &p, 16);
+		if ( SVString::npos != Digits.find( 'x' ) )
+		{
+			ulValue = _tcstoul( Digits.c_str(), &p, 16 );
+		}
 		else
-			ulValue = _tcstoul(strDigits, &p, 10);
+		{
+			ulValue = _tcstoul( Digits.c_str(), &p, 10 );
+		}
 
 		if ( ulValue <= 255 )
 		{
 			return static_cast <BYTE> (ulValue);
 		}
 	}
-	SVStringArray msgList;
+	SVStringVector msgList;
 	msgList.push_back(SVString(rValue));
 	msgList.push_back(GetName());
 	SvStl::MessageMgrStd Exception( SvStl::LogOnly );

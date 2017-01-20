@@ -188,7 +188,7 @@ public:
 	SVLongResultClass*           m_pResultBlob;
 
 /*- ENABLED FEATURES ----------------------------------------------------------*/
-/*- Since the CString member of the SVStringValueObject can not be directly    */
+/*- Since the SVString member of the SVStringValueObject can not be directly    */
 /*- accessed, the msvszFeaturesEnabled string acts at a workspace for          */
 /*- manipulating the enabled features configuration.                           */
 /*- msvPersistantFeaturesEnabled is required to preserve the values during     */

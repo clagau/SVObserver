@@ -55,7 +55,7 @@ BOOL SVRemoteInputTool::CreateObject( SVObjectLevelCreateStruct* PCreateStructur
 {
 	BOOL l_Status = SVToolClass::CreateObject( PCreateStructure );
 
-	l_Status &= ( S_OK == SVInputStreamManager::Instance().InsertInputStream( static_cast< const char* >( GetCompleteObjectName() ), GetUniqueObjectID() ) );
+	l_Status &= ( S_OK == SVInputStreamManager::Instance().InsertInputStream( GetCompleteName().c_str(), GetUniqueObjectID() ) );
 
 	m_isCreated = l_Status;
 
@@ -200,7 +200,7 @@ HRESULT SVRemoteInputTool::SetInputObject( const SVGUID& p_rObjectId )
 void SVRemoteInputTool::OnObjectRenamed(const SVObjectClass& rRenamedObject, const SVString& rOldName)
 {
 	SVInputStreamManager::Instance().EraseInputStream( GetUniqueObjectID() );
-	SVInputStreamManager::Instance().InsertInputStream( static_cast< const char* >( GetCompleteObjectName() ), GetUniqueObjectID() );
+	SVInputStreamManager::Instance().InsertInputStream( GetCompleteName().c_str(), GetUniqueObjectID() );
 	__super::OnObjectRenamed(rRenamedObject, rOldName);
 }
 
@@ -220,8 +220,8 @@ BOOL SVRemoteInputTool::onRun( SVRunStatusClass& RRunStatus )
 {
 	BOOL l_Status = SVToolClass::onRun( RRunStatus );
 
-	CString l_MatchString;
-	CString l_MatchedString;
+	SVString MatchString;
+	SVString MatchedString;
 	long l_MatchedStringId = 0;
 	long l_Identifier = 0;
 
@@ -237,7 +237,7 @@ BOOL SVRemoteInputTool::onRun( SVRunStatusClass& RRunStatus )
 		{
 			if( l_Status )
 			{
-				l_Status = ( S_OK == pValueObject->GetValue( l_MatchString ) );
+				l_Status = ( S_OK == pValueObject->GetValue( MatchString ) );
 			}
 		}
 
@@ -246,9 +246,7 @@ BOOL SVRemoteInputTool::onRun( SVRunStatusClass& RRunStatus )
 		{
 			if( l_Status )
 			{
-				SVString Value;
-				l_Status = ( S_OK == pBasicValueObject->getValue( Value ) );
-				l_MatchString = Value.c_str();
+				l_Status = ( S_OK == pBasicValueObject->getValue( MatchString ) );
 			}
 		}
 
@@ -257,7 +255,7 @@ BOOL SVRemoteInputTool::onRun( SVRunStatusClass& RRunStatus )
 
 	if( l_Status )
 	{
-		SVDataContainer::index_iterator< from >::type l_Iter = m_Elements.get< from >().find( SVDataElement( static_cast< const char* >( l_MatchString ) ) );
+		SVDataContainer::index_iterator< from >::type l_Iter = m_Elements.get< from >().find( SVDataElement( MatchString ) );
 
 		if( l_Iter != m_Elements.get< from >().end() )
 		{
@@ -265,13 +263,13 @@ BOOL SVRemoteInputTool::onRun( SVRunStatusClass& RRunStatus )
 
 			l_Identifier = l_Iter->second;
 
-			l_MatchedString = l_Iter->first.m_ElementData.c_str();
+			MatchedString = l_Iter->first.m_ElementData;
 			l_MatchedStringId = l_Iter->first.m_ElementIdentifier;
 		}
 	}
 
 	m_MatchedValueId.SetValue( RRunStatus.m_lResultDataIndex, l_MatchedStringId );
-	m_MatchedValue.SetValue( RRunStatus.m_lResultDataIndex, l_MatchedString );
+	m_MatchedValue.SetValue( RRunStatus.m_lResultDataIndex, MatchedString );
 
 	if( l_Status && ( l_Identifier != 0 ) )
 	{

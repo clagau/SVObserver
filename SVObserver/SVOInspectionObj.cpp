@@ -25,7 +25,7 @@ static char THIS_FILE[]=__FILE__;
 SVOInspectionObj::SVOInspectionObj() :
 	m_NameChanged( false )
 ,	m_NewInspection( false )
-,	m_sNewDisableMethod( _T( "Method 1" ) )
+,	m_NewDisableMethod( _T( "Method 1" ) )
 ,	m_Color( false )
 ,	m_ShowAuxExtent( true )
 {
@@ -35,44 +35,44 @@ SVOInspectionObj::~SVOInspectionObj()
 {
 }
 
-CString SVOInspectionObj::GetInspectionLabelName() const
+const SVString& SVOInspectionObj::GetInspectionLabelName() const
 {
-    return m_sLabelName;
+    return m_LabelName;
 }
 
-void SVOInspectionObj::SetInspectionLabelName(CString sLabel)
+void SVOInspectionObj::SetInspectionLabelName(LPCTSTR Label)
 {
-    m_sLabelName = sLabel;
+    m_LabelName = Label;
 }
 
-CString SVOInspectionObj::GetInspectionName() const
+const SVString& SVOInspectionObj::GetInspectionName() const
 {
-    return m_sInspectionName;
+    return m_InspectionName;
 }
 
-void SVOInspectionObj::SetInspectionName(CString sInspection)
+void SVOInspectionObj::SetInspectionName(LPCTSTR Inspection)
 {
-    m_sInspectionName = sInspection;
+    m_InspectionName = Inspection;
 }
 
-CString SVOInspectionObj::GetToolsetImage() const
+const SVString& SVOInspectionObj::GetToolsetImage() const
 {
-    return m_sToolsetImage; 
+    return m_ToolsetImage; 
 }
 
-void SVOInspectionObj::SetToolsetImage(CString sImage)
+void SVOInspectionObj::SetToolsetImage(LPCTSTR Image)
 {
-    m_sToolsetImage = sImage;
+    m_ToolsetImage = Image;
 } 
 
-CString SVOInspectionObj::GetNewDisableMethod() const
+const SVString& SVOInspectionObj::GetNewDisableMethod() const
 {
-    return m_sNewDisableMethod;
+    return m_NewDisableMethod;
 }
 
-void SVOInspectionObj::SetNewDisableMethod(CString sDisable)
+void SVOInspectionObj::SetNewDisableMethod(LPCTSTR Disable)
 {
-    m_sNewDisableMethod = sDisable;
+    m_NewDisableMethod = Disable;
 } 
 
 bool SVOInspectionObj::GetShowAuxExtent() const
@@ -100,20 +100,20 @@ bool SVOInspectionObj::HasInspectionNameChange() const
     return m_NameChanged;
 }
 
-CString SVOInspectionObj::GetOrginalInspectionName() const
+const SVString& SVOInspectionObj::GetOrginalInspectionName() const
 {
-    return m_sOrginalName;
+    return m_OrginalName;
 }
 
-void SVOInspectionObj::RenameInspection(CString sNewName)
+void SVOInspectionObj::RenameInspection(LPCTSTR NewName)
 {
     if (!m_NameChanged)
     {
         //only change once...
         m_NameChanged = true;
-        m_sOrginalName = m_sInspectionName;
+        m_OrginalName = m_InspectionName;
     }
-    m_sInspectionName = sNewName;
+    m_InspectionName = NewName;
 }
 
 bool SVOInspectionObj::IsNewInspection() const
@@ -126,19 +126,19 @@ void SVOInspectionObj::SetNewInspection()
     m_NewInspection = true;
 }
 
-const CString& SVOInspectionObj::GetImportFilename() const
+const SVString& SVOInspectionObj::GetImportFilename() const
 {
 	return m_ImportFilename;
 }
 
-void SVOInspectionObj::SetImportFilename(const CString& filename)
+void SVOInspectionObj::SetImportFilename(LPCTSTR Filename)
 {
-	m_ImportFilename = filename;
+	m_ImportFilename = Filename;
 }
 
 void SVOInspectionObj::ClearImportFilename()
 {
-	m_ImportFilename.Empty();
+	m_ImportFilename.clear();
 }
 
 bool SVOInspectionObj::IsColor() const

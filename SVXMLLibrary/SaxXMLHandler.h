@@ -22,6 +22,7 @@
 #include "ObjectInterfaces/ErrorNumbers.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVMessage/SVMessage.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 namespace Seidenader { namespace  SVXMLLibrary

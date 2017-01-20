@@ -20,8 +20,7 @@ namespace Seidenader
 		public:
 			static void IsFieldValid(SvOi::MessageTextEnum fieldName, const SVString& value);
 
-			static void Validate(HINSTANCE resHandle,
-							const SVString& InspectionName, 
+			static void Validate( const SVString& InspectionName, 
 							const SVString& FailHighIndirectValue, 
 							const SVString& FailLowIndirectValue, 
 							const SVString& WarnHighIndirectValue, 

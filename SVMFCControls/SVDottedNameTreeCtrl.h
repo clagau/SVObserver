@@ -25,8 +25,8 @@ namespace Seidenader
 
 			// Attributes
 		public:
-			BOOL		AddItem( CString StrDottedItemName, DWORD_PTR DwItemValue = 0, BOOL BExpand = true );
-			HTREEITEM	GetItem( CString StrDottedItemName );
+			BOOL		AddItem( LPCTSTR DottedName, DWORD_PTR DwItemValue = 0, BOOL BExpand = true );
+			HTREEITEM	GetItem( LPCTSTR DottedName );
 			DWORD_PTR	GetSelectedItemValue();
 
 			// Operations

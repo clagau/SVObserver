@@ -94,23 +94,18 @@ HRESULT SVGigeCameraManagerDlg::Refresh()
 	{
 		if( x < m_CamList.GetSize() )
 		{
-			CString sCamNum;
-			sCamNum.Format("%d",x+1);
-			m_ctlCameraList.InsertItem(x,sCamNum);
-			CString sSerial = m_CamList[x].m_SerialNum.c_str();
-			
-			CString sIPAddress = m_CamList[x].m_IPAddress.c_str();
-			CString sModelName = m_CamList[x].m_ModelName.c_str();
+			SVString CameraNumber = SvUl_SF::Format("%d",x+1);
+			m_ctlCameraList.InsertItem( x, CameraNumber.c_str() );
 
-			if ( !sIPAddress.IsEmpty() )
+			if( !m_CamList[x].m_IPAddress.empty() )
 			{
-				m_ctlCameraList.SetItemText(x, 1, sIPAddress);
-				m_ctlCameraList.SetItemText(x, 2, sSerial);
-				m_ctlCameraList.SetItemText(x, 3, sModelName);
+				m_ctlCameraList.SetItemText( x, 1, m_CamList[x].m_IPAddress.c_str() );
+				m_ctlCameraList.SetItemText( x, 2, m_CamList[x].m_SerialNum.c_str() );
+				m_ctlCameraList.SetItemText( x, 3, m_CamList[x].m_ModelName.c_str() );
 			}
 			else
 			{
-				m_ctlCameraList.SetItemText(x, 1, _T("<no device>"));
+				m_ctlCameraList.SetItemText( x, 1, _T("<no device>") );
 			}
 			m_ctlCameraList.SetItemData(x, (reinterpret_cast<DWORD_PTR>(&m_CamList[x])));
 		}

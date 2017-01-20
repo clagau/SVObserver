@@ -53,7 +53,7 @@ namespace Seidenader { namespace TriggerInformation {
 				{
 					l_pTrigger = new SvTh::SVSoftwareTriggerClass( l_Iter->m_Name.c_str() );
 				}
-				else if( l_Iter->m_Name.find( _T( "IO_Board" ) ) == 0 )
+				else if( 0 == l_Iter->m_Name.find( _T( "IO_Board" ) ) )
 				{
 					l_pTrigger = new SvTh::SVTriggerClass( l_Iter->m_Name.c_str() );
 				}

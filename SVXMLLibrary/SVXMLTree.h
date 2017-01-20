@@ -14,6 +14,7 @@
 #pragma region Includes
 //Moved to precompiled header: #include <vector>
 #include "comutil.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 /**
 @SVObjectName XML Tree Base
@@ -137,7 +138,7 @@ namespace Seidenader { namespace SVXMLLibrary
 		//! \param pBranch [in] handle to the branch
 		//! \returns the branch name
 		//************************************
-		virtual std::string	getBranchName( const SVBranchHandle pBranch ) const = 0;
+		virtual SVString getBranchName( const SVBranchHandle pBranch ) const = 0;
 
 		//************************************
 		//! Method to determine if the branch has child leaves
@@ -199,7 +200,7 @@ namespace Seidenader { namespace SVXMLLibrary
 		//! \param pLeaf [in] handle to the leaf
 		//! \returns the leaf name
 		//************************************
-		virtual std::string	getLeafName( const SVLeafHandle pLeaf ) const = 0;
+		virtual SVString getLeafName( const SVLeafHandle pLeaf ) const = 0;
 
 		//************************************
 		//! Method to get the leaf data

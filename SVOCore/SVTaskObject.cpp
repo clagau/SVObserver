@@ -35,7 +35,6 @@
 
 #pragma region Declarations
 #ifdef _DEBUG
-#define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
@@ -361,7 +360,7 @@ SvOi::ISelectorItemVectorPtr SVTaskObjectClass::GetSelectorList(SvOi::IsObjectIn
 			{
 				SvOsl::SelectorItem InsertItem;
 				
-				InsertItem.setName( ObjectRef.GetName() );
+				InsertItem.setName( ObjectRef.GetName().c_str() );
 				InsertItem.setItemKey( ObjectRef->GetUniqueObjectID().ToVARIANT() );
 				if ( const SVValueObjectClass* pValueObject = dynamic_cast<const SVValueObjectClass*> (ObjectRef.Object()) )
 				{
@@ -378,7 +377,7 @@ SvOi::ISelectorItemVectorPtr SVTaskObjectClass::GetSelectorList(SvOi::IsObjectIn
 					{
 						ObjectRef.SetEntireArray();
 						UINT AttributesSet = ObjectRef.ObjectAttributesSet();
-						InsertItem.setLocation( ObjectRef.GetCompleteOneBasedObjectName() );
+						InsertItem.setLocation( ObjectRef.GetCompleteOneBasedObjectName().c_str() );
 						InsertItem.setArrayIndex( -1 );
 						InsertItem.setArray( true );
 						InsertItem.setSelected( (AttributesSet & Attribute) == Attribute );
@@ -393,7 +392,7 @@ SvOi::ISelectorItemVectorPtr SVTaskObjectClass::GetSelectorList(SvOi::IsObjectIn
 						{
 							ObjectRef.SetArrayIndex( i );
 							UINT AttributesSet = ObjectRef.ObjectAttributesSet();
-							InsertItem.setLocation( ObjectRef.GetCompleteOneBasedObjectName() );
+							InsertItem.setLocation( ObjectRef.GetCompleteOneBasedObjectName().c_str() );
 							InsertItem.setArrayIndex( i );
 							InsertItem.setSelected( (AttributesSet & Attribute) == Attribute );
 							pSelectorList->push_back( InsertItem );
@@ -403,7 +402,7 @@ SvOi::ISelectorItemVectorPtr SVTaskObjectClass::GetSelectorList(SvOi::IsObjectIn
 				else
 				{
 					UINT AttributesSet = ObjectRef.ObjectAttributesSet();
-					InsertItem.setLocation( ObjectRef.GetCompleteOneBasedObjectName() );
+					InsertItem.setLocation( ObjectRef.GetCompleteOneBasedObjectName().c_str() );
 					InsertItem.setSelected( (AttributesSet & Attribute) == Attribute );
 					pSelectorList->push_back( InsertItem );
 				}
@@ -429,7 +428,7 @@ SvOi::DependencyList SVTaskObjectClass::GetDependents(bool bImagesOnly, SVObject
 	{
 		std::for_each(v.begin(), v.end(), [&dependents, &nameToObjectType](const SVObjectPair& item)->void
 		{
-			SvOi::Relation rel(item.first->GetCompleteObjectNameToObjectType(nullptr, nameToObjectType), 
+			SVStringPair rel(item.first->GetCompleteObjectNameToObjectType(nullptr, nameToObjectType), 
 								item.second->GetCompleteObjectNameToObjectType(nullptr, nameToObjectType));
 			dependents.push_back(rel);
 		}
@@ -543,7 +542,7 @@ SvStl::MessageContainerVector SVTaskObjectClass::validateAndSetEmmeddedValues(co
 			if (S_OK != Result)
 			{
 				SvStl::MessageMgrStd Msg( SvStl::LogOnly );
-				SVStringArray msgList;
+				SVStringVector msgList;
 				SvOi::IObjectClass* pObject = dynamic_cast<SvOi::IObjectClass*> (it->first);
 				if( nullptr != pObject )
 				{
@@ -848,7 +847,7 @@ void SVTaskObjectClass::ResetPrivateInputInterface()
 			     SVNotSetObjectType == info.ObjectType &&
 			     SVNotSetSubObjectType == info.SubType )
 			{
-				//ASSERT( FALSE );
+				//assert( false );
 			}
 
 			pInInfo->SetObject( l_rsvInfo );
@@ -860,7 +859,7 @@ void SVTaskObjectClass::ResetPrivateInputInterface()
 			     SVNotSetObjectType == info.ObjectType &&
 			     SVNotSetSubObjectType == info.SubType )
 			{
-				//ASSERT( FALSE );
+				//assert( false );
 			}
 		}
 	}
@@ -1042,7 +1041,7 @@ HRESULT SVTaskObjectClass::ConnectToObject( SVInObjectInfoStruct* p_psvInputInfo
 			if( !pNewObject->ConnectObjectInput( p_psvInputInfo) )
 			{
 				// Unable to connect to new input object....
-				SVStringArray msgList;
+				SVStringVector msgList;
 				if( pNewObject )
 				{
 					msgList.push_back(pNewObject->GetName());
@@ -1105,12 +1104,12 @@ BOOL SVTaskObjectClass::CreateObject(SVObjectLevelCreateStruct* PCreateStruct)
 		{
 			Result = CreateChildObject(pFriend) && Result;
 
-			ASSERT(Result);
+			assert( Result );
 		}
 		else
 		{
-			ASSERT(0);
 			Result = false;
+			assert( Result );
 		}
 	}
 
@@ -1123,7 +1122,7 @@ BOOL SVTaskObjectClass::CreateObject(SVObjectLevelCreateStruct* PCreateStruct)
 		{
 			Result = CreateChildObject(pObject) && Result;
 
-			ASSERT(Result);
+			assert(Result);
 		}
 	}
 
@@ -1170,7 +1169,7 @@ BOOL SVTaskObjectClass::Validate()
 		{
 			BOOL l_bTemp = pObject->Validate();
 
-			ASSERT( l_bTemp );
+			assert( l_bTemp );
 
 			retVal &= l_bTemp;
 		}
@@ -1205,7 +1204,7 @@ BOOL SVTaskObjectClass::OnValidate()
 		SetInvalid();
 	}
 
-	ASSERT( l_bOk );
+	assert( l_bOk );
 
 	return l_bOk;
 }
@@ -1308,7 +1307,7 @@ void SVTaskObjectClass::addDefaultInputObjects(BOOL BCallBaseClass, SVInputInfoL
 			     SVNotSetObjectType == info.ObjectType &&
 			     SVNotSetSubObjectType == info.SubType )
 			{
-				//ASSERT( FALSE );
+				//assert( false );
 			}
 
 			if (PInputListToFill)
@@ -1325,7 +1324,7 @@ void SVTaskObjectClass::addDefaultInputObjects(BOOL BCallBaseClass, SVInputInfoL
 
 BOOL SVTaskObjectClass::RegisterEmbeddedObject(SVImageClass* pEmbeddedObject, const GUID& rGuidEmbeddedID, int StringResourceID)
 {
-	SVString Name = SvUl_SF::LoadString( StringResourceID );
+	SVString Name = SvUl_SF::LoadSVString( StringResourceID );
 	return RegisterEmbeddedObject( pEmbeddedObject, rGuidEmbeddedID, Name.c_str() );
 }
 
@@ -1349,7 +1348,7 @@ BOOL SVTaskObjectClass::RegisterEmbeddedObject(SVImageClass* pEmbeddedObject, co
 //
 BOOL SVTaskObjectClass::RegisterEmbeddedObject( SVValueObjectClass* pEmbeddedObject, const GUID& rGuidEmbeddedID, int StringResourceID, bool ResetAlways, SVResetItemEnum RequiredReset, LPCTSTR TypeName )
 {
-	SVString Name = SvUl_SF::LoadString( StringResourceID );
+	SVString Name = SvUl_SF::LoadSVString( StringResourceID );
 	return RegisterEmbeddedObject( pEmbeddedObject, rGuidEmbeddedID, Name.c_str(), ResetAlways, RequiredReset, TypeName);
 }
 
@@ -1372,8 +1371,8 @@ BOOL SVTaskObjectClass::RegisterEmbeddedObject( SVValueObjectClass* pEmbeddedObj
 
 BOOL SVTaskObjectClass::RegisterEmbeddedObjectAsClass(SVObjectClass* pEmbeddedObject, const GUID& rGuidEmbeddedID, LPCTSTR ObjectName)
 {
-	ASSERT(pEmbeddedObject);
-	if (pEmbeddedObject)
+	assert( nullptr != pEmbeddedObject);
+	if( nullptr != pEmbeddedObject)
 	{
 		for (int i = 0; i < m_embeddedList.GetSize(); i++)
 		{
@@ -1834,7 +1833,7 @@ bool SVTaskObjectClass::DisconnectObjectInput(SVInObjectInfoStruct* pInObjectInf
 // Use this only for real embedded objects.
 void SVTaskObjectClass::AddEmbeddedObject(SVObjectClass* PObject)
 {
-	ASSERT(nullptr != PObject);
+	assert(nullptr != PObject);
 	
 	// Add to Owner's List of Embedded Objects
 	m_embeddedList.Add(PObject);
@@ -1965,7 +1964,7 @@ bool SVTaskObjectClass::resetAllOutputListObjects( bool shouldNotifyFriends, boo
 
 HRESULT SVTaskObjectClass::GetDependentsList( SVObjectPairVector& rListOfDependents, bool bOnlyImageDependencies )
 {
-	ASSERT( rListOfDependents.size() == 0 );	// should be clear before calling
+	assert( rListOfDependents.size() == 0 );	// should be clear before calling
 	int itemNo = 0;
 
 	// Check for Dependents
@@ -2017,7 +2016,7 @@ HRESULT SVTaskObjectClass::GetDependentsList( const SVObjectVector& rListOfObjec
 				pOutput = l_OutputInfoList.GetAt( i );
 			}
 
-			ASSERT( pOutput );	// if this asserts, the object is not on this object's output list
+			assert( nullptr != pOutput );	// if this asserts, the object is not on this object's output list
 			if( pOutput && pOutput->PObject == *iter)
 			{
 				pOutput->GetDependentsList( this, rListOfDependents );
@@ -2064,7 +2063,7 @@ HRESULT SVTaskObjectClass::GetImageList( SVImageListClass& p_rImageList, UINT ui
 
 HRESULT SVTaskObjectClass::GetDependentsList( SVObjectListClass& rListOfDependents, bool bOnlyImageDependencies )
 {
-	ASSERT( rListOfDependents.GetSize() == 0 );	// should be clear before calling
+	assert( rListOfDependents.GetSize() == 0 );	// should be clear before calling
 	SVObjectPairVector list;
 	HRESULT hr = GetDependentsList( list, bOnlyImageDependencies );
 	SVObjectPairVector::iterator iter;

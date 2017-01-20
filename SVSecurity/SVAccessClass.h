@@ -12,10 +12,10 @@
 #pragma once
 
 #pragma region Includes 
-//Moved to precompiled header: #include <string>
 #include "SVAccessPointNode.h"
 #include "SVSecurityStorage.h"
 #include "ObjectInterfaces\MessageTextEnum.h"
+#include "SVUtilityLibrary\SVString.h"
 #pragma endregion Includes
 
 class SVAccessClass
@@ -34,16 +34,9 @@ public:
 	int SetupDialog();
 	HRESULT Logon();
 	HRESULT Logout();
-	// Ansii functions
-	HRESULT Load(const char* const pFileName);
-	HRESULT CreateProcess( const char* const strAppName, const char* const strPath, const char* const strCommand  );
-	HRESULT Add( long lID, const char* const sName, const char* const sGroup , bool bForcePrompt = false );
-	HRESULT Add( long lID, const char* const sName );
-	// Wide char / Unicode functions
-	HRESULT Load(const wchar_t* const pFileName);
-	HRESULT CreateProcess( const wchar_t* const strAppName, const wchar_t* const strPath, const wchar_t* const strCommand  );
-	HRESULT Add( long lID, const wchar_t* const sName, const wchar_t* const sGroup , bool bForcePrompt = false );
-	HRESULT Add( long lID, const wchar_t* const sName );
+	HRESULT Load(LPCTSTR FileName);
+	HRESULT CreateProcess( LPCTSTR AppName, LPCTSTR Path, LPCTSTR Command  );
+	HRESULT Add( long lID, LPCTSTR Name, LPCTSTR NTGroup = nullptr , bool bForcePrompt = false );
 
 	HRESULT ProtectData( long lID );
 	bool GetUseLogon();
@@ -51,19 +44,17 @@ public:
 protected:
 	// Use these functions to setup access
 	HRESULT Save();
-	HRESULT SetNTGroup( long lID, LPCTSTR strGroup );
-	HRESULT SetForcedPrompt( long lID, BOOL bForce );
-	HRESULT GetNTGroup( long lID, CString& rstrGroup );
-	HRESULT GetForcedPrompt( long lID, BOOL& rbForce );
+	HRESULT SetNTGroup( long lID, LPCTSTR NTGroup );
+	HRESULT SetForcedPrompt( long lID, BOOL Force );
+	HRESULT GetNTGroup( long lID, SVString& rNTGroup );
+	HRESULT GetForcedPrompt( long lID, BOOL& rForce );
 	bool IsChangable( long lID );
 	long GetUserTimeout();
 	HRESULT SetUseLogon(bool bUse);
 	HRESULT SetUserTimeout(long lTime);
-	HRESULT PasswordDialog(CString& strUser, CString& strPassword, LPCTSTR Attempt, LPCTSTR p_strStatus);
-	bool IsUserAMember( const CString& p_strUser, const CString& p_strGroups );
+	HRESULT PasswordDialog(SVString& rUser, SVString& strPassword, LPCTSTR Attempt, LPCTSTR p_strStatus);
+	bool IsUserAMember( const SVString& rUser, const SVString& p_strGroups );
 	bool IsCurrentUserValidated(long lId);
-
-	std::string m_strFileName;
 
 	void init();
 	void ResetTime();
@@ -71,8 +62,8 @@ protected:
 
 public:
 	bool IsLoggedOn();
-	CString GetCurrentUser();
-	CString GetCurrentPassword();
+	const SVString& GetCurrentUser();
+	const SVString& GetCurrentPassword();
 
 	// **** Construction Destruction
 	SVAccessClass();
@@ -80,18 +71,18 @@ public:
 
 
 protected:
-	CString Change( CString p_strIn );
-	bool IsMasterPassword( CString p_rstrUser, CString p_rstrPW );
+	SVString Change( const SVString& rSource );
+	bool IsMasterPassword( LPCTSTR User, LPCTSTR PW );
 	// Global settings
 
 	// Time keeping
 	time_t m_lTimeStamp;
 
 	// Auto Log
-	CString m_strLogonServer;
+	SVString m_LogonServer;
+	SVString m_FileName;
 
 	// Keep track of current data
 	SVSecurityStorage m_svStorage;
-
 };
 

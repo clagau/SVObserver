@@ -40,7 +40,7 @@ const SVImageDefinitionStruct& SVImageDefinitionStruct::operator = (const SVImag
 		lHeight = rhs.lHeight;
 		lWidth = rhs.lWidth;
 		eImageFormat = rhs.eImageFormat;
-		bstrDisplayName = SysAllocString(rhs.bstrDisplayName);
+		bstrDisplayName = ::SysAllocString(rhs.bstrDisplayName);
 	}
 	return *this;
 }

@@ -15,15 +15,15 @@
 #pragma warning (disable : 4290)
 
 #pragma region Includes
-#include "SVContainerLibrary/SVVector.h"
 #include "SVHBitmapUtilitiesLibrary/SVHBitmapUtilities.h"
 #include "SVOCore/SVTaskObject.h"
 #include "SVOCore/SVImageClass.h"
 #include "SVVariantResultClass.h"
 #include "SVLibrary/ISVCancel.h"
 #include "SVDllToolLoadLibraryClass.h"
-#include "PropertyTree/SVRPropTreeState.h"
+#include "SVRPropertyTree/SVRPropTreeState.h"
 #include "SVMatroxLibrary/SVMatroxTypedefs.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 class SVToolClass;
@@ -81,8 +81,6 @@ class SVExternalToolTask : public SVTaskObjectListClass, public ISVCancel
 	SV_DECLARE_CLASS( SVExternalToolTask )
 
 public:
-	typedef SVVector< CString > SVDependenyNames;
-
 	SVExternalToolTask( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SV_EXTERNAL_TOOL_TASK );
 	virtual ~SVExternalToolTask();
 
@@ -96,8 +94,8 @@ public:
 	virtual HRESULT DisconnectInputsOutputs(SVObjectVector& rListOfObjects) override;
 	virtual HRESULT HideInputsOutputs(SVObjectVector& rListOfObjects) override;
 
-	HRESULT SetPathName(const CString& strPath);
-	HRESULT SetDependencies( const SVDependenyNames astrPath );
+	HRESULT SetPathName( const SVString& rPath );
+	HRESULT SetDependencies( const SVStringVector& rDependencies );
 	HRESULT GetResultImageDefinitions( SVImageDefinitionStructArray& raResultImageDefinitions );
 	HRESULT GetResultValueDefinitions ( ResultValueDefinitionStructArray& raResultValueDefinitions );
 	HRESULT GetInputValueDefinitions( InputValueDefinitionStructArray& raInputValueDefinitions );

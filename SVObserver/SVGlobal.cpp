@@ -157,7 +157,7 @@ double SVGetDataTypeRange( DWORD DataType )
 	// ( long ) pow( 2.0, ( BYTE ) ( DataType ) )
 }
 
-BOOL SVGetPathInformation( CString& RStrOutput, LPCTSTR TStrFileInputPath, DWORD DwMask )
+BOOL SVGetPathInformation( SVString& rOutput, LPCTSTR TStrFileInputPath, DWORD DwMask )
 {
 	// Only for MFC-Threads!
 
@@ -194,118 +194,107 @@ BOOL SVGetPathInformation( CString& RStrOutput, LPCTSTR TStrFileInputPath, DWORD
 		if( ( DwMask & ( ( DWORD ) SVEXT ) ) == ( ( DWORD ) SVEXT ) )
 			_tcscat( tStrPathOut, ext );
 
-		RStrOutput = tStrPathOut;
+		rOutput = tStrPathOut;
 		return TRUE;
 	}
 	return FALSE;
 }
 
-BOOL SVGetVersionString( CString& RSTRCurrentVersion, DWORD dwVersion )
+BOOL SVGetVersionString( SVString& rCurrentVersion, DWORD dwVersion )
 {
 	int subVersion   = ( int ) LOBYTE( LOWORD( dwVersion ) );
-	CString strBeta;
+	SVString Beta;
 
 	//
 	// 0x000300ff is v3.00 release build.
 	//
 	if( subVersion != 0  && subVersion != 0xff )
 	{
-		strBeta.Format( _T( " Beta %d" ), subVersion );
+		Beta = SvUl_SF::Format( _T( " Beta %d" ), subVersion );
 	}
 
-#ifdef _DEBUG999
-	//	__DATE__ or __TIMESTAMP__
-#pragma message(__TIMESTAMP__)
-	CString s;
-	s.Format(_T(" [%s]"),__TIMESTAMP__);
-	strBeta += s;
-#endif //_DEBUG
-
-	RSTRCurrentVersion.Format( _T( "Version %u.%2.2u%s" ), 
+	rCurrentVersion = SvUl_SF::Format( _T( "Version %u.%2.2u%s" ), 
 	                            LOBYTE( HIWORD( dwVersion ) ), 
 	                            HIBYTE( LOWORD( dwVersion ) ), 
-	                            strBeta );
+	                            Beta.c_str() );
 
 #ifdef _DEBUG
-	RSTRCurrentVersion += _T("d");        // For debug builds.
+	rCurrentVersion += _T("d");        // For debug builds.
 #endif
 	return TRUE;
 }
 
 // Convert Hex Data to a Hex Dumop String
 // Len of the data is first in the String
-void SVConvertToHexString( DWORD len, LPBYTE buff, CString& hexString )
+void SVConvertToHexString( DWORD len, LPBYTE buff, SVString& rHexString )
 {
-	CString tmpStr;
-
 	// put len in string first
-	hexString.Format( _T( "0x%08x" ), len );
+	rHexString = SvUl_SF::Format( _T( "0x%08x" ), len );
 
 	for( DWORD i = 0; i < len; i++ )
 	{
-		tmpStr.Format( _T( ",0x%02x" ), buff[i] );
-		hexString += tmpStr;
+		SVString Text = SvUl_SF::Format( _T( ",0x%02x" ), buff[i] );
+		rHexString += Text;
 	}
 }
 
 // Convert Hex Dump String to hex binary data
 // Sets len of the hex binary data
 // Note: Allocates buffer so caller must delete it
-BOOL SVConvertFromHexString( DWORD &len, LPBYTE *buff, CString& hexString )
+BOOL SVConvertFromHexString( DWORD &len, LPBYTE *buff, const SVString& rHexString )
 {
-	CString tmpStr;
 	*buff = nullptr;
 	len = 0;
 
 	// get length first
-	int index = hexString.Find( _T( "," ) );
+	size_t Index = rHexString.find( _T(",") );
 
 	// index should be at position 10
-	if( index == 10 )
+	if( Index == 10 )
 	{
-		tmpStr = hexString.Left( index );
+		SVString Text = SvUl_SF::Left( rHexString, Index );
 
 		// Convert to hex
-		_stscanf_s( tmpStr, _T( "%x" ), &len );
+		_stscanf_s( Text.c_str(), _T("%x"), &len );
 
 		// Allocate buffer
 		*buff = new BYTE[ len ];
 		memset( *buff, '\0', len );
 
-		int startIndex = index + 1;
-		int l_iSize = hexString.GetLength();
+		size_t startIndex = Index + 1;
+		size_t HexSize = rHexString.size();
 
 		for( DWORD i = 0;i < len;i++ )
 		{
-			index = -1;
+			Index = SVString::npos;
 			
-			if ( startIndex < l_iSize )
+			if ( startIndex < HexSize )
 			{
-			index = hexString.Find( _T( "," ), startIndex );
+				Index = rHexString.find( _T(","), startIndex );
 			}
 
-			if (index != -1 )
+			if( SVString::npos != Index )
 			{
 				// get Hex BYTE String Data
-				tmpStr = hexString.Mid( startIndex, ( index - startIndex ) );
+				Text = rHexString.substr( startIndex, ( Index - startIndex ) );
 
 				// convert to hex BYTE
 				BYTE hexByte;
 				DWORD value;
-				_stscanf_s( tmpStr, _T( "%x" ), &value );
+				_stscanf_s( Text.c_str(), _T("%x"), &value );
 				hexByte = static_cast<unsigned char>(value);
 
 				(*buff)[i] = hexByte;
 
 				// set next index
-				startIndex = index + 1;
+				startIndex = Index + 1;
 			}
 			else
 				break;
 		}
-		return TRUE;
+		return true;
 	}
-	return FALSE;
+	return false;
 }
 
 
@@ -351,17 +340,17 @@ CMenu* SVFindMenuByCommand( CMenu *pMenu, int nID, BOOL bIncludeSubMenues, int& 
 // .Description : Returns 'parent' menu and position of searched menu, if any.
 //				: Otherwise nullptr.
 ////////////////////////////////////////////////////////////////////////////////
-CMenu* SVFindMenuByName( CMenu *pMenu, LPCTSTR szMenuString, BOOL bIncludeSubMenues, int& rMenuPos )
+CMenu* SVFindMenuByName( CMenu *pMenu, LPCTSTR MenuString, BOOL bIncludeSubMenues, int& rMenuPos )
 {
 	CMenu* pRetMenu = nullptr;
-	if( pMenu && szMenuString )
+	if( pMenu && MenuString )
 	{
 		int count = pMenu->GetMenuItemCount();
 		for( int i = 0; i < count && ! pRetMenu; ++ i )
 		{
 			CString strMenu;
 			pMenu->GetMenuString( i, strMenu, MF_BYPOSITION );
-			if( strMenu.CompareNoCase( szMenuString ) )
+			if( strMenu.CompareNoCase( MenuString ) )
 			{
 				// Not found...
 
@@ -369,7 +358,7 @@ CMenu* SVFindMenuByName( CMenu *pMenu, LPCTSTR szMenuString, BOOL bIncludeSubMen
 				{
 					// Check Sub Menu...
 					CMenu* pSubMenu = pMenu->GetSubMenu( i );
-					pRetMenu = ::SVFindMenuByName( pSubMenu, szMenuString, bIncludeSubMenues, rMenuPos );
+					pRetMenu = ::SVFindMenuByName( pSubMenu, MenuString, bIncludeSubMenues, rMenuPos );
 				}
 			}
 			else
@@ -389,17 +378,17 @@ CMenu* SVFindMenuByName( CMenu *pMenu, LPCTSTR szMenuString, BOOL bIncludeSubMen
 // .Description : Returns pointer to sub menu which is searched for, if any.
 //				: Otherwise nullptr.
 ////////////////////////////////////////////////////////////////////////////////
-CMenu* SVFindSubMenuByName( CMenu *pMenu, LPCTSTR szMenuString, BOOL bIncludeSubMenues )
+CMenu* SVFindSubMenuByName( CMenu *pMenu, LPCTSTR MenuString, BOOL bIncludeSubMenues )
 {
 	CMenu* pRetMenu = nullptr;
-	if( pMenu && szMenuString )
+	if( pMenu && MenuString )
 	{
 		int count = pMenu->GetMenuItemCount();
 		for( int i = 0; i < count && ! pRetMenu; ++ i )
 		{
 			CString strMenu;
 			pMenu->GetMenuString( i, strMenu, MF_BYPOSITION );
-			if( strMenu.CompareNoCase( szMenuString ) )
+			if( strMenu.CompareNoCase( MenuString ) )
 			{
 				// Not found...
 
@@ -407,7 +396,7 @@ CMenu* SVFindSubMenuByName( CMenu *pMenu, LPCTSTR szMenuString, BOOL bIncludeSub
 				{
 					// Check Sub Menu...
 					CMenu* pSubMenu = pMenu->GetSubMenu( i );
-					pRetMenu = ::SVFindSubMenuByName( pSubMenu, szMenuString, bIncludeSubMenues );
+					pRetMenu = ::SVFindSubMenuByName( pSubMenu, MenuString, bIncludeSubMenues );
 				}
 			}
 			else

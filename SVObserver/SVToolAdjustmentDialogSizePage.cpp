@@ -20,7 +20,7 @@
 #include "SVGuiExtentUpdater.h"
 #include "TextDefinesSvO.h"
 #include "CameraLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
-
+#include "SVUtilityLibrary\SVString.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -101,12 +101,12 @@ BOOL SVToolAdjustmentDialogSizePage::OnInitDialog()
 		{
 			for( int vType  = ToolSizeAdjustTask::TSPositionX ; vType <  ToolSizeAdjustTask::TSValuesCount; ++vType)
 			{
-				CString csMode;
+				SVString Mode;
 				SVEnumerateValueObjectClass* pValue = m_pToolSizeAdjustTask->GetInputMode(static_cast<ToolSizeAdjustTask::TSValues>(vType));
 				if (pValue)
 				{
-					pValue->GetEnumTypes(csMode);
-					m_ComboBox[vType].SetEnumTypes(csMode);
+					pValue->GetEnumTypes(Mode);
+					m_ComboBox[vType].SetEnumTypes(Mode.c_str());
 					if (false == m_pToolSizeAdjustTask->IsFullSizeAllowed())
 					{
 						///Remove Fullsize from combobox
@@ -444,9 +444,7 @@ bool SVToolAdjustmentDialogSizePage::QueryAllowExit()
 				EQAdjustSize* pEQ = GetEvaluateObject( static_cast<ToolSizeAdjustTask::TSValues>(vType));
 				if (nullptr != pEQ)
 				{
-					CString csEqText;
-					pEQ->GetEquationText(csEqText);
-					if (csEqText.IsEmpty())
+					if( pEQ->GetEquationText().empty() )
 					{
 						SvStl::MessageMgrStd Exception( SvStl::LogAndDisplay );
 						Exception.setMessage( SVMSG_SVO_64_EMPTY_FORMULAS_ARE_NOT_ALLOWED, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16038_EmptyFormula );

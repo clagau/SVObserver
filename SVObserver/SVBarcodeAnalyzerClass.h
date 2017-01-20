@@ -14,6 +14,7 @@
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
 #include "SVImageAnalyzerClass.h"
 #include "ObjectInterfaces/MessageTextEnum.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 enum 
@@ -30,8 +31,8 @@ class SVBarCodeAnalyzerClass : public SVImageAnalyzerClass
 	SV_DECLARE_CLASS (SVBarCodeAnalyzerClass);
 
 public:
-	CString m_csRegExpressionValue;
-	CString m_csStringFileName;
+	SVString m_RegExpressionValue;
+	SVString m_StringFileName;
 
 	SVBoolValueObjectClass m_bWarnOnFailedRead;
 	virtual bool resetAllObjects( bool shouldNotifyFriends, bool silentReset ) override;

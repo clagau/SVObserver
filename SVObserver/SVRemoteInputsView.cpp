@@ -27,6 +27,7 @@
 #include "ObjectInterfaces\ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "TextDefinesSvO.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 IMPLEMENT_DYNCREATE(SVRemoteInputsView, CListView)
@@ -105,7 +106,6 @@ void SVRemoteInputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHint 
 
 		m_Items.clear();
 
-		CString strItem;
 		long lSize;
 		int j;
 		SVInputObjectList* pInputList = nullptr;
@@ -139,9 +139,9 @@ void SVRemoteInputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHint 
 		// Find each remote input
 		for( j = 0; j < lSize; j++ )
 		{
-			strItem.Format( _T( "Remote Input %d" ), h + 1 );
+			SVString Item = SvUl_SF::Format( _T( "Remote Input %d" ), h + 1 );
 
-			BOOL bFound = FALSE;
+			bool bFound = false;
 
 			//items are in a map, so they are not ordered.  loop thru each item to find correct remote input
 			for ( int i = 0; (i < lSize && !bFound); i++ )
@@ -156,7 +156,7 @@ void SVRemoteInputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHint 
 
 				if( !pRemInput ) { continue; }
 
-				if ( strItem == pRemInput->GetName() ) { bFound = TRUE; }
+				if ( Item == pRemInput->GetName() ) { bFound = true; }
 			}
 
 			if ( bFound )
@@ -164,7 +164,7 @@ void SVRemoteInputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHint 
 				// First column: Result I/O
 				//strItem.Format( _T( "Remote Input %d" ), h + 1 );
 				GetListCtrl().InsertItem( LVIF_IMAGE | LVIF_TEXT | LVIF_STATE,
-					h , strItem,
+					h , Item.c_str(),
 					INDEXTOSTATEIMAGEMASK( 1 ),	// state
 					LVIS_STATEIMAGEMASK,		// stateMask
 					1, 0 );						// Set item data to Nothing
@@ -239,15 +239,14 @@ void SVRemoteInputsView::OnLButtonDblClk( UINT nFlags, CPoint point )
 				SVRemoteInputObject* pRemoteInput = dynamic_cast< SVRemoteInputObject* >( l_pObject );
 				if( pRemoteInput )
 				{
-					CString l_Name;
 					_variant_t l_Value;
 					SVRemoteIOAdjustDialog dlg;
 
-					l_Name = GetListCtrl().GetItemText( item, 1 );
+					SVString Name = GetListCtrl().GetItemText( item, 1 );
 
 					pRemoteInput->GetCache( l_Value );
 
-					dlg.SetIOName( l_Name );
+					dlg.SetIOName( Name.c_str() );
 					dlg.SetIOValue( l_Value );
 
 					SVSVIMStateClass::AddState( SV_STATE_EDITING );

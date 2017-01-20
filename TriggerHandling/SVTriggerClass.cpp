@@ -9,12 +9,14 @@
 //* .Check In Date   : $Date:   24 Apr 2013 12:27:56  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 //Moved to precompiled header: #include <fstream>
 
 #include "TriggerHandling/TriggerBasics.h"
 #include "SVTriggerClass.h"
-
+#include "SVUtilityLibrary/SVString.h"
+#pragma endregion Includes
 
 namespace Seidenader { namespace TriggerHandling {
 	HRESULT CALLBACK TriggerCallbackSvtc(SvTh::TriggerParameters triggerparams)
@@ -35,11 +37,9 @@ namespace Seidenader { namespace TriggerHandling {
 			HRESULT hr = pDevice->Notify( l_Response );
 
 			#ifdef SV_LOG_STATUS_INFO
-				SVString l_String;
+				SVString Text.Format( _T( "FinishProcess %s - HR = 0x%X" ), pDevice->GetDeviceName(), hr );
 
-				l_String.Format( _T( "FinishProcess %s - HR = 0x%X" ), pDevice->GetDeviceName(), hr );
-
-				pDevice->m_StatusLog.push_back( l_String );
+				pDevice->m_StatusLog.push_back( Text );
 			#endif
 		}
 

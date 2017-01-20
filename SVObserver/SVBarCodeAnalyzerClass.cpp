@@ -115,9 +115,9 @@ void SVBarCodeAnalyzerClass::init()
 
 	// To support special DMCs May 2008.
 	// Use ~ to simulate non printable characters...
-	CString l_strFormatEnum;
-	l_strFormatEnum.Format(_T("Remove GS1 Control Characters=%d,Translate GS1 Control Characters=%d,Replace GS1 Control Characters=%d"),SVBCStringFormatRemoveCharacters,SVBCStringFormatTranslateCharacters,SVBCStringFormatReplaceCharacters );
-	msv_eStringFormat.SetEnumTypes( l_strFormatEnum );
+	SVString FormatEnum = SvUl_SF::Format(_T("Remove GS1 Control Characters=%d,Translate GS1 Control Characters=%d,Replace GS1 Control Characters=%d"), 
+											SVBCStringFormatRemoveCharacters, SVBCStringFormatTranslateCharacters, SVBCStringFormatReplaceCharacters );
+	msv_eStringFormat.SetEnumTypes( FormatEnum.c_str() );
 	msv_eStringFormat.SetDefaultValue( SVBCStringFormatRemoveCharacters, true );
 	msv_lThresholdType.SetDefaultValue( 0, true ); // Default Normal thresholding
 	msv_RawData.SetArraySize(256);
@@ -386,7 +386,7 @@ BOOL SVBarCodeAnalyzerClass::onRun (SVRunStatusClass &RRunStatus)
 {
 	long lMilResult;
 	SVImageClass *pInputImage;
-	CString szBarCodeValue;
+	SVString BarCodeValue;
 	long cbBarCodeValue;
 
 	if ( m_bHasLicenseError )
@@ -396,8 +396,8 @@ BOOL SVBarCodeAnalyzerClass::onRun (SVRunStatusClass &RRunStatus)
 		return FALSE;
 	}
 	
-	szBarCodeValue.Empty(); // clear previous value
-	msv_szBarCodeValue.SetValue( RRunStatus.m_lResultDataIndex, szBarCodeValue );
+	BarCodeValue.clear(); // clear previous value
+	msv_szBarCodeValue.SetValue( RRunStatus.m_lResultDataIndex, BarCodeValue );
 	
 	if (SVImageAnalyzerClass::onRun (RRunStatus))
 	{
@@ -493,12 +493,11 @@ BOOL SVBarCodeAnalyzerClass::onRun (SVRunStatusClass &RRunStatus)
 								{
 									if( CharIsControl(l_strBarCodeValue[i]) )
 									{
-										CString l_strTmp;
-										l_strTmp.Format(_T("%03d"),l_strBarCodeValue[i]);
+										SVString Temp = SvUl_SF::Format(_T("%03d"),l_strBarCodeValue[i]);
 										l_strTranslated[j++] = '\\';
-										l_strTranslated[j++] = l_strTmp[0];
-										l_strTranslated[j++] = l_strTmp[1];
-										l_strTranslated[j++] = l_strTmp[2];
+										l_strTranslated[j++] = Temp[0];
+										l_strTranslated[j++] = Temp[1];
+										l_strTranslated[j++] = Temp[2];
 									}
 									else if ( l_strBarCodeValue[i] == '\\' )
 									{
@@ -567,23 +566,21 @@ BOOL SVBarCodeAnalyzerClass::LoadRegExpression( BOOL DisplayErrorMessage )
 	{
 		TRY
 		{
-			CString szFileName;
+			SVString FileName;
 			DWORD dwFileLen;
-			CString szRegExp;
-			LPTSTR lpRegExp;
+			SVString RegExp;
 
-			msv_szStringFileName.GetValue(szFileName);
-			CFile fRegExp (szFileName, CFile::modeRead);
+			msv_szStringFileName.GetValue(FileName);
+			CFile fRegExp (FileName.c_str(), CFile::modeRead);
 
 			dwFileLen = static_cast<DWORD>(fRegExp.GetLength());
-			lpRegExp = szRegExp.GetBuffer(dwFileLen);
-			fRegExp.Read(lpRegExp, dwFileLen);
-			szRegExp.ReleaseBuffer(dwFileLen);
-			msv_szRegExpressionValue.SetValue(1, szRegExp);
+			RegExp.resize(dwFileLen +1);
+			fRegExp.Read( &RegExp[0], dwFileLen);
+			msv_szRegExpressionValue.SetValue(1, RegExp);
 			fRegExp.Close();
 
-			msv_szRegExpressionValue.GetValue(m_csRegExpressionValue);
-		    msv_szStringFileName.GetValue(m_csStringFileName);
+			msv_szRegExpressionValue.GetValue(m_RegExpressionValue);
+		    msv_szStringFileName.GetValue(m_StringFileName);
 
 			return TRUE;
 		}
@@ -616,22 +613,22 @@ BOOL SVBarCodeAnalyzerClass::SaveRegExpression( BOOL DisplayErrorMessage )
 	{
 		TRY
 		{
-			CString szFileName;
+			SVString FileName;
 			DWORD dwFileLen;
-			CString szRegExp;
+			SVString RegExp;
 			
-			msv_szRegExpressionValue.GetValue(szRegExp);
-			msv_szStringFileName.GetValue(szFileName);
+			msv_szRegExpressionValue.GetValue(RegExp);
+			msv_szStringFileName.GetValue(FileName);
 			
-			CFile fRegExp( szFileName, CFile::modeCreate | CFile::modeWrite | CFile::shareDenyNone );
+			CFile fRegExp( FileName.c_str(), CFile::modeCreate | CFile::modeWrite | CFile::shareDenyNone );
 			
-			dwFileLen = szRegExp.GetLength();
-			fRegExp.Write( szRegExp, dwFileLen );
+			dwFileLen = static_cast<DWORD> ( RegExp.size() );
+			fRegExp.Write( RegExp.c_str(), dwFileLen );
 			
 			fRegExp.Close();
 
-			msv_szRegExpressionValue.GetValue(m_csRegExpressionValue);
-			msv_szStringFileName.GetValue(m_csStringFileName);
+			msv_szRegExpressionValue.GetValue(m_RegExpressionValue);
+			msv_szStringFileName.GetValue(m_StringFileName);
 
 			return TRUE;
 		}
@@ -681,13 +678,12 @@ HRESULT SVBarCodeAnalyzerClass::ResetObject()
 	{
 		if ( InitMil() )
 		{
-			CString m_csTempRegExpressionValue;
-			CString m_csTempStringFileName;
+			SVString TempRegExpressionValue;
+			SVString TempStringFileName;
 
-		if( ( S_OK == msv_szRegExpressionValue.GetValue( m_csTempRegExpressionValue )  &&
-					0 != m_csTempRegExpressionValue.Compare( m_csRegExpressionValue )  ) ||
-			( S_OK == msv_szStringFileName.GetValue( m_csTempStringFileName )  &&
-					0 != m_csTempStringFileName.Compare( m_csStringFileName )  ) )
+			msv_szRegExpressionValue.GetValue( TempRegExpressionValue );
+			msv_szStringFileName.GetValue( TempStringFileName );
+			if( TempRegExpressionValue != m_RegExpressionValue || TempStringFileName != m_StringFileName )
 			{
 				if( ! SaveRegExpression( FALSE ) )
 				{

@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   08 May 2013 16:44:14  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 //Moved to precompiled header: #include <fstream>
 #include "TriggerHandling/TriggerBasics.h"
@@ -16,6 +17,8 @@
 #include "SVTriggerObject.h"
 #include "TriggerHandling/SVTriggerConstants.h"
 #include "SVTriggerLibrary/SVTriggerEnums.h"
+#include "SVUtilityLibrary/SVString.h"
+#pragma endregion Includes
 
 namespace Seidenader { namespace TriggerInformation {
 	HRESULT CALLBACK SVOTriggerObjectCallbackPtr( void *pvOwner, void *pvCaller, void *pvResponse )
@@ -26,7 +29,7 @@ namespace Seidenader { namespace TriggerInformation {
 		SVOResponseClass* pResponse = reinterpret_cast< SVOResponseClass* >( pvResponse );	
 
 		//Only do an assert check so that in release mode no check is made
-		ASSERT( nullptr != pTrigger && nullptr != pResponse );
+		assert( nullptr != pTrigger && nullptr != pResponse );
 
 		pTrigger->FinishProcess( pResponse );
 
@@ -276,7 +279,7 @@ namespace Seidenader { namespace TriggerInformation {
 		if (mpsvDevice)
 		{
 			SVString name = mpsvDevice->GetDeviceName();
-			bRet = (name.find(SvTh::CameraTriggerName) == 0);
+			bRet = (0 == name.find(SvTh::CameraTriggerName) );
 		}
 		return bRet;
 	}

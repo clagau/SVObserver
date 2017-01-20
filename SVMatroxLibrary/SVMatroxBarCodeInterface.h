@@ -11,12 +11,15 @@
 
 #pragma once
 
+#pragma region Includes
+#include "SVUtilityLibrary\SVString.h"
 #include "SVMatroxEnums.h"
 #include "SVMatroxBuffer.h"
 #include "SVMatroxApplicationInterface.h"
 #include "SVMatroxBarCode.h"
 #include "SVMatroxBuffer.h"
 
+#pragma endregion Includes
 
 /**
 @SVObjectName Matrox Bar Code Interface

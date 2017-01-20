@@ -15,6 +15,7 @@
 #include "ObjectInterfaces/IObjectClass.h"
 #include "SVSystemLibrary/SVCriticalSection.h"
 #include "SVUtilityLibrary/SVGUID.h"
+#include "SVUtilityLibrary/SVString.h"
 #include "ObjectInterfaces/SVObjectTypeInfoStruct.h"
 #include "SVObjectReference.h"
 #pragma endregion

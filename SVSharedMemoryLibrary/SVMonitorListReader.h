@@ -13,6 +13,7 @@
 #pragma region Includes
 #include "SVMonitorListStore.h"
 #include "SVSharedMemorySettings.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 namespace Seidenader { namespace SVSharedMemoryLibrary
@@ -21,7 +22,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 	{
 		typedef std::shared_ptr<boost::interprocess::managed_shared_memory> DataSharedMemPtr;
 		bool m_isOpen;
-		std::string m_ShareName;
+		SVString m_ShareName;
 		const SVMonitorListStore* m_store;
 		DataSharedMemPtr shm;
 
@@ -32,10 +33,10 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		bool Open();
 		void Close();
 		bool IsOpen() const;
-		bool HasList(const std::string& name) const;
+		bool HasList(const SVString& name) const;
 
-		const SVSharedMonitorList& operator[](const std::string& listName) const;
-		const std::vector<std::string> GetListNames() const;
+		const SVSharedMonitorList& operator[](const SVString& listName) const;
+		const SVStringVector GetListNames() const;
 	};
 } /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
 

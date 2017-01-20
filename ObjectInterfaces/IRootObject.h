@@ -24,7 +24,7 @@ namespace Seidenader
 		/// \param Path [in] Path of the root child desired. Default = "", this means all objects.
 		/// \param AttributesAllowedFilter [in] Filter of the environment which are wanted. Default = 0, this means all objects.
 		//************************************
-		void getRootChildNameList( SVStringArray& rObjectNameList, LPCTSTR Path = _T(""), UINT AttributesAllowedFilter = 0 );
+		void getRootChildNameList( SVStringVector& rObjectNameList, LPCTSTR Path = _T(""), UINT AttributesAllowedFilter = 0 );
 
 		//************************************
 		/// Get the Root child selector list from a path and specified filter.

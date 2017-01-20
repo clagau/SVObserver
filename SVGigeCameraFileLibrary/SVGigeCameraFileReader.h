@@ -29,8 +29,6 @@ public:
 
 
 private:
-	unsigned short GetChecksum(std::istream& rFile);
-	
 	HRESULT ReadCustomParams(const SVString& filename, SVDeviceParamCollection& rParams);
 
 	HRESULT ReadCameraFileStringParam( SVDeviceParamCollection& rParams, SVDeviceParamEnum e, const SVString& sSection );

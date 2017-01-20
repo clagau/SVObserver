@@ -14,7 +14,6 @@
 #pragma warning (disable : 4996)
 //Moved to precompiled header: #include <deque>
 //Moved to precompiled header: #include <map>
-//Moved to precompiled header: #include <string>
 //Moved to precompiled header: #include <boost/config.hpp>
 //Moved to precompiled header: #include <boost/assign/list_of.hpp>
 //Moved to precompiled header: #include <boost/algorithm/string.hpp>
@@ -26,6 +25,7 @@
 #include "CameraLibrary/SVBoolValueDeviceParam.h"
 #include "CameraLibrary/SVStringValueDeviceParam.h"
 #include "CameraLibrary/SVCustomDeviceParam.h"
+#include "SVUtilityLibrary/SVString.h"
 #include "SVImageLibrary/SVDigitizerLoadLibraryClass.h"
 #include "SVTestAcquisitionClass.h"
 #pragma warning (pop)
@@ -992,9 +992,9 @@ HRESULT SVTestGigeCameraProxy::SetCameraFormatParameters(unsigned long hDigitize
 		}
 	}
 
-	typedef std::deque<std::string> split_container_type;
+	typedef std::deque<SVString> split_container_type;
 	split_container_type splitContainer;
-	boost::algorithm::split(splitContainer, std::string(rcf.m_strName.c_str()), boost::algorithm::is_any_of("_X"), boost::algorithm::token_compress_on);
+	boost::algorithm::split(splitContainer, rcf.m_strName, boost::algorithm::is_any_of( _T("_X") ), boost::algorithm::token_compress_on);
 	if (splitContainer.size() > 3)
 	{
 		l_oValue = splitContainer[3].c_str();
@@ -1046,11 +1046,11 @@ HRESULT SVTestGigeCameraProxy::IsValidCameraFileParameters( SVDeviceParamCollect
 				if( rDeviceParams.ParameterExists( DeviceParamModelName ) &&
 					S_OK == pDigitizer->ParameterGetValue( hDigitizer, SVGigeParameterModelName, 0, &l_oValue ) )
 				{
-					CString sHardwareModel( l_oValue.bstrVal );
+					SVString HardwareModel = SvUl_SF::createSVString( _bstr_t( l_oValue.bstrVal ) );
 
-					CString sModel = StringValue(rDeviceParams.Parameter( DeviceParamModelName )).c_str();
+					const SVString& rModel = StringValue( rDeviceParams.Parameter( DeviceParamModelName ) );
 
-					if ( sHardwareModel != _T("") && sModel != _T("") && sHardwareModel.CompareNoCase(sModel) != 0 )
+					if ( !HardwareModel.empty() && !rModel.empty() && SvUl_SF::CompareNoCase( HardwareModel, rModel) != 0 )
 					{
 						l_hrOk = S_FALSE;
 					}

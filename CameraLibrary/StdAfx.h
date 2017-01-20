@@ -52,6 +52,7 @@
 #include <afxtempl.h>
 #include <afxwin.h>
 
+#include <assert.h>
 #include <algorithm>
 #include <cmath>
 #include <comutil.h>

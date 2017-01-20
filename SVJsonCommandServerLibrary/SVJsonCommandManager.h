@@ -17,6 +17,7 @@
 //Moved to precompiled header: #include <boost/function.hpp>
 #include "SVSystemLibrary/SVAsyncProcedure.h"
 #include "SVUtilityLibrary/SVGUID.h"
+#include "SVUtilityLibrary/SVString.h"
 #include "SVJsonCommandData.h"
 #include "SVJsonCommandServer.h"
 #pragma endregion Includes
@@ -29,9 +30,9 @@ public:
 
 	virtual ~SVJsonCommandManager();
 
-	HRESULT ProcessJsonCommand( const std::string& p_rJsonCommand, std::string& p_rJsonResults );
+	HRESULT ProcessJsonCommand( const SVString& rJsonCommand, SVString& rJsonResults );
 
-	HRESULT ProcessJsonNotification( const std::string& p_rJsonNotification );
+	HRESULT ProcessJsonNotification( const SVString& rJsonNotification );
 
 	// These two (2) methods, Startup, Shutdown are only meant to be called by the main application class and no other
 	// They used to be protected and a friend class declaration was used, but that was a bad design as the friend was declared in another project
@@ -45,7 +46,7 @@ protected:
 
 	static void CALLBACK APCThreadProcess( DWORD_PTR dwParam );
 
-	HRESULT ProcessAsyncJsonCommand( const std::string& p_rJsonCommand, std::string& p_rJsonResults );
+	HRESULT ProcessAsyncJsonCommand( const SVString& rJsonCommand, SVString& rJsonResults );
 
 	void ThreadProcess( bool& p_WaitForEvents );
 
@@ -58,8 +59,8 @@ protected:
 
 private:
 	SVJsonCommandManager();
-	SVJsonCommandManager( const SVJsonCommandManager& p_rObject );
-	SVJsonCommandManager& operator=( const SVJsonCommandManager& p_rObject );
+	SVJsonCommandManager( const SVJsonCommandManager& rObject );
+	SVJsonCommandManager& operator=( const SVJsonCommandManager& rObject );
 };
 
 #include "SVJsonCommandManager.inl"

@@ -27,6 +27,7 @@
 #include "SVIPResultData.h"
 #include "SVValueObjectLibrary/SVValueObject.h"
 #include "SVToolGrouping.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -126,13 +127,13 @@ public:
 
 	bool IsToolPreviousToSelected( const SVGUID& p_rToolID ) const;
 
-	CString GetCompleteToolSetName() const;
+	SVString GetCompleteToolSetName() const;
 	SVString CheckName( const SVString& rToolName ) const;
 
 	const SVToolGrouping& GetToolGroupings() const;
 	SVToolGrouping& GetToolGroupings();
-	int GetSelectedToolIndex(const CString& toolName) const;
-	int GetToolToInsertBefore(const CString& name, int listIndex) const;
+	int GetSelectedToolIndex(const SVString& rToolName) const;
+	int GetToolToInsertBefore(const SVString& rName, int listIndex) const;
 
 	CList< RegressionTestStruct*, RegressionTestStruct* > m_listRegCameras; // @WARNING:  bad practice making members public
 
@@ -303,7 +304,7 @@ protected:
 
 	HRESULT UpdateExtents( SVTaskObjectClass* p_pTask, const SVImageExtentClass& p_rExtents );
 	HRESULT UpdateExtentsToFit( SVTaskObjectClass* p_pTask, const SVImageExtentClass& p_rExtents );
-	SVImageClass* GetImageByName( CString& p_imageName ) const;
+	SVImageClass* GetImageByName( LPCTSTR ImageName ) const;
 
 	//************************************
 	//! return true if the last  values from GetResultDefinitions are not longer valid. 

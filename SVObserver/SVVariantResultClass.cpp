@@ -9,10 +9,12 @@
 //* .Check In Date   : $Date:   23 Apr 2013 16:19:20  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVVariantResultClass.h"
-
 #include "SVRange.h"
+#include "SVUtilityLibrary\SVString.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #undef THIS_FILE
@@ -62,7 +64,7 @@ SVVariantResultClass::SVVariantResultClass( BOOL BCreateDefaultTaskList , SVObje
 	rangeClassInfo.m_ObjectTypeInfo.ObjectType = SVRangeObjectType;
 	rangeClassInfo.m_ObjectTypeInfo.SubType	= 0;
 	rangeClassInfo.m_ClassId = SVRangeClassGuid;
-	rangeClassInfo.m_ClassName = SvUl_SF::LoadString( IDS_CLASSNAME_SVRANGE );
+	rangeClassInfo.m_ClassName = SvUl_SF::LoadSVString( IDS_CLASSNAME_SVRANGE );
 
 	// Construct it
 	SVRangeClass* pRange = dynamic_cast<SVRangeClass*> (rangeClassInfo.Construct()); 

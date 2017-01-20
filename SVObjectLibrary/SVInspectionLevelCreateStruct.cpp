@@ -12,6 +12,13 @@
 #include "stdafx.h"
 #include "SVInspectionLevelCreateStruct.h"
 
+#pragma region Declarations
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+#endif
+#pragma endregion Declarations
+
 SVInspectionLevelCreateStruct::SVInspectionLevelCreateStruct()
 						 :SVObjectLevelCreateStruct()
 {

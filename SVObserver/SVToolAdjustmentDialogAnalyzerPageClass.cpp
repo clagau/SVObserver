@@ -33,6 +33,7 @@
 #include "ObjectInterfaces/ErrorNumbers.h"
 #include "TextDefinesSvO.h"
 #include "SVStatusLibrary/MessageManager.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -410,10 +411,9 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnResultButton()
 		m_pCurrentAnalyzer->getAvailableObjects(&availableResults, &resultTypeInfo);
 
 		// Get Dialog Title...
-		CString strTitle;
-		strTitle.LoadString( IDS_RESULT_ADJUSTMENT_DIALOG_TITLE );
+		SVString Title = SvUl_SF::LoadSVString( IDS_RESULT_ADJUSTMENT_DIALOG_TITLE );
 		// Get Complete Name up to the tool level...
-		strTitle = m_pCurrentAnalyzer->GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType ) + SV_TSTR_SPACE + strTitle;
+		Title = m_pCurrentAnalyzer->GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType ) + _T(" ") + Title;
 
 		SVIPDoc* l_pIPDoc = nullptr;
 
@@ -428,7 +428,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnResultButton()
 		dlg.m_AllowMultipleChildrenInstances = FALSE;
 		dlg.m_pParentObject					= m_pCurrentAnalyzer;
 		dlg.m_pAvailableChildrenList		= &availableResults;
-		dlg.StrTitle						= strTitle;
+		dlg.m_Title							= Title;
 
 		// Save Guid
 		GUID analyzerGuid = m_pCurrentAnalyzer->GetUniqueObjectID();
@@ -450,19 +450,16 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnPublishButton()
 	if( nullptr == pInspection ) { return; }
 
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSetAttributes );
-	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, SVString(m_pTool->GetCompleteObjectName()), SVString( _T("") ) );
+	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, SVString(m_pTool->GetCompleteName()), SVString( _T("") ) );
 
 	SvOsl::SelectorOptions BuildOptions( pInspection->GetUniqueObjectID(), SV_PUBLISHABLE, m_pCurrentAnalyzer->GetUniqueObjectID() );
 	SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::NoSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<>>( BuildOptions );
 
-	CString Title;
-	CString PublishableResults;
-	CString Filter;
-	PublishableResults.LoadString( IDS_PUBLISHABLE_RESULTS );
-	Title.Format( _T("%s - %s"), PublishableResults, m_pTool->GetName() );
-	Filter.LoadString( IDS_FILTER );
+	SVString PublishableResults = SvUl_SF::LoadSVString( IDS_PUBLISHABLE_RESULTS );
+	SVString Title = SvUl_SF::Format( _T("%s - %s"), PublishableResults.c_str(), m_pTool->GetName() );
+	SVString Filter = SvUl_SF::LoadSVString( IDS_FILTER );
 
-	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title, PublishableResults, Filter, this );
+	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title.c_str(), PublishableResults.c_str(), Filter.c_str(), this );
 
 	if( IDOK == Result )
 	{

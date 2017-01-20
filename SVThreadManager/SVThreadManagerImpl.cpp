@@ -49,7 +49,7 @@ SVThreadManagerImpl& SVThreadManagerImpl::Instance()
 	return l_mgr;
 }
 
-HRESULT SVThreadManagerImpl::GetThreadInfo( std::list<std::string>& p_rStrList)
+HRESULT SVThreadManagerImpl::GetThreadInfo( std::list<std::basic_string<TCHAR>>& p_rStrList)
 {
 	HRESULT hr = S_OK;
 	p_rStrList.clear();
@@ -119,7 +119,7 @@ HRESULT SVThreadManagerImpl::IsAllowed( LPCTSTR strName,  SVThreadAttribute eAtt
 HRESULT SVThreadManagerImpl::Add( HANDLE hThread, LPCTSTR strName, SVThreadAttribute eAttrib )
 {
 	HRESULT hr = S_OK;
-	std::string Name(strName);
+	std::basic_string<TCHAR> Name(strName);
 	SVThreadSetup newThread;
 	ThreadList::iterator it = m_threads.begin();
 	for(  ; it != m_threads.end() ; ++it )
@@ -216,7 +216,7 @@ HRESULT SVThreadManagerImpl::Clear( )
 HRESULT SVThreadManagerImpl::Setup( LPCTSTR strName, long Affinity )
 {
 	HRESULT hr = S_OK;
-	std::string Name(strName);
+	std::basic_string<TCHAR> Name(strName);
 
 
 	SVThreadSetup newThread;

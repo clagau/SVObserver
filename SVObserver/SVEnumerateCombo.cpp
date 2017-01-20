@@ -12,6 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVEnumerateCombo.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -38,13 +39,13 @@ BOOL SVEnumerateComboClass::SetEnumTypes( LPCTSTR szEnumList )
 		ResetContent();
 
 		// Populate Combo box...
-		CString strEnum;
+		SVString strEnum;
 		long lValue = 0L;
 		int it = enumObject.GetFirstEnumTypePos();
 		while( enumObject.GetNextEnumType( it, strEnum, lValue ) )
 		{
 			// Add enumerator to combo list...
-			int index = AddString( strEnum );
+			int index = AddString( strEnum.c_str() );
 			if( index >= 0 )
 			{
 				SetItemData( index, ( DWORD ) lValue );

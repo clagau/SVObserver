@@ -22,15 +22,9 @@ static char THIS_FILE[] = __FILE__;
 
 extern CSVSecurityApp theApp;
 
-SVPasswordDlg::SVPasswordDlg(CWnd* pParent /*=nullptr*/)
-	: CDialog(SVPasswordDlg::IDD, pParent)
+SVPasswordDlg::SVPasswordDlg( LPCTSTR Status, CWnd* pParent /*=nullptr*/) : CDialog(SVPasswordDlg::IDD, pParent)
+, m_Status( Status)
 {
-	//{{AFX_DATA_INIT(SVPasswordDlg)
-	m_strPassword = _T("");
-	m_strUser = _T("");
-	m_strStatus = _T("");
-	//}}AFX_DATA_INIT
-
 }
 
 SVPasswordDlg::~SVPasswordDlg()
@@ -41,9 +35,9 @@ void SVPasswordDlg::DoDataExchange(CDataExchange* pDX)
 {
 	CDialog::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(SVPasswordDlg)
-	DDX_Text(pDX, IDC_PASSWORD_EDIT, m_strPassword);
-	DDX_Text(pDX, IDC_USER_NAME_EDIT, m_strUser);
-	DDX_Text(pDX, IDC_STATUS, m_strStatus);
+	DDX_Text(pDX, IDC_PASSWORD_EDIT, m_Password);
+	DDX_Text(pDX, IDC_USER_NAME_EDIT, m_User);
+	DDX_Text(pDX, IDC_STATUS, m_Status);
 	//}}AFX_DATA_MAP
 }
 

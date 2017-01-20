@@ -22,12 +22,12 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-const SVBarCodeAttributesDialog::SVBarCodeErrorCorrectionEncodingStruct* SVBarCodeAttributesDialog::SVBarCodeEccEncArray::GetInfoByMil(long lMil)
+const SVBarCodeAttributesDialog::SVBarCodeErrorCorrectionEncodingStruct* SVBarCodeAttributesDialog::SVBarCodeEccEncArray::GetInfoByMil(long Mil)
 {
 	SVBarCodeAttributesDialog::SVBarCodeErrorCorrectionEncodingStruct* pInfo = nullptr;
 	for ( int i = 0; i < GetSize(); i++ )
 	{
-		if ( ElementAt(i).lMil == lMil )
+		if ( ElementAt(i).m_Mil == Mil )
 		{
 			pInfo = &(ElementAt(i));
 			break;
@@ -240,12 +240,12 @@ void SVBarCodeAttributesDialog::InitSelections(long lBarCodeType)
 	std::vector<long>::iterator iter;
 	for ( iter = m_mapBarCodeEcc[ lBarCodeType ].begin(); iter != m_mapBarCodeEcc[ lBarCodeType ].end(); ++iter )
 	{
-		iIndex = pErrCorrectionBox->AddString( m_aMilEcc.GetInfoByMil( *iter )->strName );
+		iIndex = pErrCorrectionBox->AddString( m_aMilEcc.GetInfoByMil( *iter )->m_Name.c_str() );
 		pErrCorrectionBox->SetItemData( iIndex, *iter );
 	}
 	for ( iter = m_mapBarCodeEnc[ lBarCodeType ].begin(); iter != m_mapBarCodeEnc[ lBarCodeType ].end(); ++iter )
 	{
-		iIndex = pEncodingBox->AddString( m_aMilEnc.GetInfoByMil( *iter )->strName );
+		iIndex = pEncodingBox->AddString( m_aMilEnc.GetInfoByMil( *iter )->m_Name.c_str() );
 		pEncodingBox->SetItemData( iIndex, *iter );
 	}
 	

@@ -11,19 +11,16 @@
 
 #pragma once
 
-#define _ATL_CSTRING_EXPLICIT_CONSTRUCTORS      // some CString constructors will be explicit
-
 #define NOMINMAX			// Exclude min/max macros
+
+#define _WINSOCKAPI_    // stops windows.h including winsock.h
 
 //************************************
 //! Precompiled headers section
 //************************************
 #pragma region Precompiled Headers
 #include "targetver.h"
-#include <stdio.h>
-#include <tchar.h>
-#include <atlbase.h>
-#include <atlstr.h>
+#include <Windows.h>
 #include <atlenc.h>
 
 #include <algorithm>
@@ -35,10 +32,11 @@
 #include <process.h>
 #include <signal.h>
 #include <Psapi.h>
+#include <stdio.h>
 #include <set>				//Used by static library
 #include <sstream>			//Used by static library
 #include <string>
-#include <tchar.h>			//Used by static library
+#include <tchar.h>
 #include <tlhelp32.h>
 #include <utility>
 #include <vector>

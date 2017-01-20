@@ -50,16 +50,10 @@
     <ClCompile Include="DisplayMessageBox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Utilities.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="StringEscape.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="StringMunge.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVFileNameClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DirectoryUtilities.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVTaskObjectInterfaceInputRequestStruct.cpp">
@@ -115,16 +109,7 @@
     <ClInclude Include="DisplayMessageBox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="StringEscape.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="StringMunge.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVFileNameClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="StringHelper.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DirectoryUtilities.h">

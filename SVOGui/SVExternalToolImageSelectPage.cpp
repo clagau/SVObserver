@@ -170,8 +170,7 @@ namespace Seidenader { namespace SVOGui
 		int i = 0;
 		for (SvUl::InputNameGuidPairList::const_iterator it = images.begin();it != images.end();++it)
 		{
-			CString strTmp;
-			strTmp.Format("Image %02d", i + 1);
+			SVString Temp = SvUl_SF::Format( _T("Image %02d"), i + 1);
 
 			SVRPropertyItemCombo* pCombo = static_cast<SVRPropertyItemCombo *>(m_Tree.InsertItem(new SVRPropertyItemCombo(), pRoot));
 
@@ -179,7 +178,7 @@ namespace Seidenader { namespace SVOGui
 			{
 				UINT ctrlID = static_cast<UINT>(i++);
 				pCombo->SetCtrlID(ctrlID);
-				pCombo->SetLabelText(strTmp);
+				pCombo->SetLabelText( Temp.c_str() );
 				pCombo->CreateComboBox();
 				int curSel = 0;
 				for (SvUl::NameGuidList::const_iterator availIt = availImages.begin();availIt != availImages.end();++availIt)
@@ -196,7 +195,7 @@ namespace Seidenader { namespace SVOGui
 
 				m_imageInputList.insert(std::make_pair(ctrlID, it->first));
 			}
-			m_ImageDisplay.AddTab(strTmp);
+			m_ImageDisplay.AddTab( Temp.c_str() );
 		}
 		pRoot->Expand();
 	}

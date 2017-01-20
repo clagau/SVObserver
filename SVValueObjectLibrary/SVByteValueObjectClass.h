@@ -16,6 +16,7 @@
 
 #pragma region Includes
 #include "SVOResource/resource.h"
+#include "SVUtilityLibrary/SVString.h"
 #include "SVValueObjectClassImpl.h"
 #include "SVValueObjectGlobals.h"
 #pragma endregion Includes
@@ -45,10 +46,10 @@ public:
 
 protected:
 	virtual HRESULT SetValueAt( int iBucket, int iIndex, const VARIANT& vtValue );
-	virtual HRESULT SetValueAt( int iBucket, int iIndex, const CString& value );
+	virtual HRESULT SetValueAt( int iBucket, int iIndex, const SVString& value );
 
 	virtual HRESULT GetValueAt( int iBucket, int iIndex, double& rValue ) const;
-	virtual HRESULT GetValueAt( int iBucket, int iIndex, CString& rValue ) const;
+	virtual HRESULT GetValueAt( int iBucket, int iIndex, SVString& rValue ) const;
 	virtual HRESULT GetValueAt( int iBucket, int iIndex, VARIANT& rValue ) const;
 
 	virtual void ValidateValue( int iBucket, int iIndex, const SVString& rValue ) const override;
@@ -59,8 +60,7 @@ private:
 	/// Convert a string in a byte. Throw an exception if the string isn't convertible into a byte
 	/// \param strValue [in] The input string
 	/// \returns BYTE Return value.
-	BYTE convertString2Byte(const CString& rValue ) const;
+	BYTE convertString2Byte(const SVString& rValue ) const;
 };
 
 #pragma warning (pop)
-

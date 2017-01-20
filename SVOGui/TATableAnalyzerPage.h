@@ -12,6 +12,7 @@
 #include "SVMFCControls\AvailableObjectListComboBox.h"
 #include "SVMFCControls\ObjectsListBox.h"
 #include "SVUtilityLibrary\NameGuidList.h"
+#include "SVUtilityLibrary/SVString.h"
 #include "ValuesAccessor.h"
 #include "GuiController.h"
 #include "ObjectSelectorController.h"
@@ -43,6 +44,7 @@ namespace Seidenader { namespace SVOGui {
 	protected:
 		DECLARE_MESSAGE_MAP()
 
+		virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV
 		virtual BOOL OnInitDialog() override;
 		void OnButtonClearAll();
 		void OnButtonDeleteCurrentAnalyzer();
@@ -53,7 +55,6 @@ namespace Seidenader { namespace SVOGui {
 		void OnButtonClickExcludeLow();
 		void OnButtonClickLimitValue();
 
-		virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV
 		virtual BOOL OnKillActive() override;
 
 		HRESULT SetInspectionData();

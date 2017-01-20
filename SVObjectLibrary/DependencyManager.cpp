@@ -11,10 +11,8 @@
 #include "DependencyManager.h"
 #pragma endregion Includes
 
-
 #pragma region Declarations
 #ifdef _DEBUG
-#define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif

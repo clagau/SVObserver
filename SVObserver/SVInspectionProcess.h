@@ -32,7 +32,7 @@
 #include "SVSharedMemoryLibrary/SVSharedInspectionWriter.h"
 #include "SVSystemLibrary/SVCriticalSection.h"
 #include "SVUtilityLibrary/SVGUID.h"
-
+#include "SVUtilityLibrary/SVString.h"
 #include "SVOCore/SVTaskObject.h" // For SVImageClassPtrSet
 #include "SVOCore/SVImageBuffer.h" //SVImageOverlayClass; used for getting overlay data for the ActiveX
 #include "SVInfoStructs.h"
@@ -68,7 +68,7 @@ class SVInspectionProcess :
 	SV_DECLARE_CLASS( SVInspectionProcess );
 
 public:
-	typedef SVBiUniqueMap< CString, SVValueObjectClass* >::type SVValueObjectMap;
+	typedef SVBiUniqueMap< SVString, SVValueObjectClass* >::type SVValueObjectMap;
 	typedef SVTQueueObject< SVOutputRequestInfoStruct > SVOutputRequestQueue;
 	typedef SVVector< SVPPQObject* > SVPPQObjectPtrVector;
 	//************************************
@@ -121,7 +121,7 @@ public:
 	virtual bool AddInputRequestMarker() override;
 #pragma endregion virtual method (IInspectionProcess)
 
-	bool IsCameraInInspection( const CString& p_rName ) const;
+	bool IsCameraInInspection( const SVString& rCameraName ) const;
 
 	bool IsResetStateSet( unsigned long p_State ) const;
 	void AddResetState( unsigned long p_State );
@@ -140,14 +140,14 @@ public:
 
 	BOOL RebuildInspectionInputList();
 	
-	BOOL RemoveCamera(CString sCameraName);
+	BOOL RemoveCamera( const SVString& rCameraName );
 	
 	bool AddInputRequest( const SVValueObjectReference& rObjectRef, const _variant_t& rValue );
 
 	HRESULT AddInputImageRequest( SVImageClass* p_psvImage, BSTR& p_rbstrValue );
 	HRESULT AddInputImageFileNameRequest( SVImageClass* p_psvImage, const SVString& p_rFileName );
 	HRESULT AddInputImageRequest( SVInputImageRequestInfoStructPtr p_InRequestPtr );
-	HRESULT AddInputImageRequestByCameraName(CString sCameraName, CString sFileName);
+	HRESULT AddInputImageRequestByCameraName( const SVString& rCameraName, const SVString& rFileName);
 
 	//************************************
 	//! Checks if the configuration has conditional history attributes and resets them as they are deprectaed
@@ -200,7 +200,7 @@ public:
 	virtual bool IsColorCamera() const override;
 
 	LPCTSTR GetToolsetImage();
-	void SetToolsetImage( CString sToolsetImage );
+	void SetToolsetImage( const SVString& rToolsetImage );
 
 	SVCameraImageTemplate* GetToolSetMainImage();
 
@@ -213,7 +213,7 @@ public:
 
 	HRESULT AddSharedCamera( SVVirtualCamera* pCamera );
 
-	HRESULT GetMainImages( const CString& p_rCameraName, SVCameraImagePtrSet& p_rMainImages ) const;
+	HRESULT GetMainImages( const SVString& rCameraName, SVCameraImagePtrSet& rMainImages ) const;
 
 	HRESULT RemoveImage(SVImageClass* pImage);
 
@@ -280,7 +280,7 @@ public:
 
 	bool m_bForceOffsetUpdate; // Force Global Extent data to update
 
-	CStringArray m_arViewedInputNames;
+	SVStringVector& getViewedInputNames() { return m_arViewedInputNames; };
 	 
 protected:
 	typedef std::map< SVString, SVValueObjectReference > SVFilterValueMap;
@@ -366,9 +366,9 @@ protected:
 
 	HRESULT BuildValueObjectMap();
 
-	HRESULT GetInspectionValueObject( const CString& p_strName, SVValueObjectReference& p_rRefObject );
-	HRESULT GetInspectionImage( const CString& p_strName, SVImageClass*& p_rRefObject );
-	HRESULT GetInspectionObject( const CString& p_strName, SVObjectReference& p_rRefObject );
+	HRESULT GetInspectionValueObject( LPCTSTR Name, SVValueObjectReference& p_rRefObject );
+	HRESULT GetInspectionImage( LPCTSTR Name, SVImageClass*& p_rRefObject );
+	HRESULT GetInspectionObject( LPCTSTR Name, SVObjectReference& p_rRefObject );
 
 	bool AddInputRequest( SVInputRequestInfoStructPtr p_pInRequest );
 
@@ -387,7 +387,7 @@ protected:
 	HRESULT RestoreCameraImages();
 
 	template<typename T>
-	HRESULT SetObjectArrayValues(SVValueObjectReference & object, int bucket, const CString & values, bool & reset);
+	HRESULT SetObjectArrayValues(SVValueObjectReference & object, int bucket, const SVString& rValues, bool & reset);
 
 	void SingleRunModeLoop( bool p_Refresh = false );
 
@@ -442,8 +442,8 @@ protected:
 	SVValueObjectClassPtrSet m_svValueObjectSet;
 	SVImageClassPtrSet m_svImageObjectSet;
 
-	CString m_ToolSetCameraName;
-	CString m_DeviceName;
+	SVString m_ToolSetCameraName;
+	SVString m_DeviceName;
 
 #ifdef EnableTracking
 	SVInspectionTracking m_InspectionTracking;
@@ -475,76 +475,78 @@ private:
 	TCHAR m_BufferImageFileName[BUFFER_IMAGE_FILENAME_LEN]; 	//< Buffer holds the full path of a Image
 	TCHAR* m_SecondPtrImageFileName;  //<pointer to Filename after the path 
 	int	   m_SecondPtrImageFileNameLen; //len 
+	SVStringVector m_arViewedInputNames;
 };
 
 typedef SVVector< SVInspectionProcess* > SVInspectionProcessArray;
 
 namespace SVDetail
 {
-	typedef std::string String;
-
 	template<typename T>
 	struct ValueObjectTraits
 	{
 		typedef T value_type;
 		typedef SVValueObjectClassImpl<T> object_type;
-		inline static bool validate(const String &) { return true; }
+		inline static bool validate(const SVString &rString) { return true; }
 	};
 
 	template<>
 	struct ValueObjectTraits<CFile>
 	{
-		typedef CString value_type;
-		typedef SVValueObjectClassImpl<CString> object_type;
-		inline static bool validate(const String & str)
+		typedef SVString value_type;
+		typedef SVValueObjectClassImpl<SVString> object_type;
+		inline static bool validate(const SVString& rString)
 		{
 			CFileStatus rStatus;
-			return CFile::GetStatus( str.c_str(), rStatus ) != 0 && 0L <= rStatus.m_size;
+			return CFile::GetStatus( rString.c_str(), rStatus ) != 0 && 0L <= rStatus.m_size;
 		}
 	};
 
 	template<typename T>
-	inline T str2int(const String & str)
+	inline T str2int(const SVString& rString)
 	{
-		int base = (str[0] == '0' && toupper(str[1]) == 'X')?16:10;
-		return static_cast<T>(_tcstol(str.c_str(), nullptr, base));
-	}
-
-	template<typename T>
-	inline T str2(const String & str)
-	{
-		if (boost::is_integral<T>::value)
-			return str2int<T>(str);
-		else
-			return boost::lexical_cast<T>(str);
+		int base = (rString[0] == '0' && toupper(rString[1]) == 'X')?16:10;
+		return static_cast<T>(_tcstol(rString.c_str(), nullptr, base));
 	}
 
 	template<>
-	inline CString str2<CString>(const String & str)
+	inline SVString str2int(const SVString& rString)
 	{
-		return str.c_str();
+		int base = (rString[0] == '0' && toupper(rString[1]) == 'X')?16:10;
+		SVString Result = SvUl_SF::Format( _T("%d"), _tcstol(rString.c_str(), nullptr, base) );
+		return Result;
 	}
 
-	typedef boost::function<bool (const String &)> Validator;
+	template<typename T>
+	inline T str2(const SVString& rString)
+	{
+		if (boost::is_integral<T>::value)
+		{
+			return str2int<T>(rString);
+		}
+		else
+		{
+			return boost::lexical_cast<T>(rString);
+		}
+	}
+
+	typedef boost::function<bool (const SVString& rString)> Validator;
 }
 
 template<typename T>
-inline HRESULT Parse(std::vector<T> & vec, const CString & values, SVDetail::Validator validate)
+inline HRESULT Parse(std::vector<T> & vec, const SVString& rValues, SVDetail::Validator validate)
 {
 	const TCHAR * escape = _T("\\");
 	const TCHAR * separator = _T(",");
 	const TCHAR * quote = _T("`\'");
-	if (values.IsEmpty())
+	if( rValues.empty())
 	{
 		return S_FALSE;
 	}
-	typedef SVDetail::String String;
-	typedef String::const_iterator Iter;
 	typedef boost::escaped_list_separator<TCHAR> Sep;
-	typedef boost::tokenizer<Sep, Iter, String> Tokenizer;
-	String str = values;
+	typedef boost::tokenizer<Sep, SVString::const_iterator, SVString> Tokenizer;
 	Sep sep(escape, separator, quote);
-	Tokenizer tok(str, sep);
+	Tokenizer tok(rValues, sep);
 	try
 	{
 		for (Tokenizer::iterator it = tok.begin(); it != tok.end(); ++it)
@@ -567,17 +569,17 @@ inline HRESULT Parse(std::vector<T> & vec, const CString & values, SVDetail::Val
 }
 
 template<typename T>
-inline HRESULT SVInspectionProcess::SetObjectArrayValues(SVValueObjectReference & object, int bucket, const CString & values, bool & reset)
+inline HRESULT SVInspectionProcess::SetObjectArrayValues(SVValueObjectReference & object, int bucket, const SVString& rValues, bool & reset)
 {
 	ASSERT(object->IsCreated() && object->IsValid() && object->IsArray() && object.IsEntireArray());
 	typedef typename SVDetail::ValueObjectTraits<T> Traits;
 	typedef typename SVDetail::ValueObjectTraits<T>::value_type Type;
 	typedef typename SVDetail::ValueObjectTraits<T>::object_type ObjectType;
 	std::vector<Type> vec;
-	ObjectType * vo = dynamic_cast<ObjectType *>(object.Object());
-	if (vo)
+	ObjectType* pObjectType = dynamic_cast<ObjectType *>(object.Object());
+	if( nullptr != pObjectType )
 	{
-		HRESULT hr = Parse(vec, values, Traits::validate);
+		HRESULT hr = Parse(vec, rValues, Traits::validate);
 		if (S_OK == hr)
 		{
 			hr = object.SetArrayValues(1, vec);

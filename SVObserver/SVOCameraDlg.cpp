@@ -25,6 +25,7 @@
 #include "SVOResource\ConstGlobalSvOr.h"
 #include "TextDefinesSvO.h"
 #include "SVStatusLibrary\MessageManager.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -116,7 +117,7 @@ void CSVOCameraDlg::OnUpdateAdvancedBtn( CCmdUI* pCmdUI )
 			{
 				if ( SvTi::SVHardwareManifest::IsDigitalSVIM( m_pParent->GetProductType() ) )
 				{
-					if( pCameraObj->GetCameraFile().IsEmpty() )
+					if( pCameraObj->GetCameraFile().empty() )
 					{
 						Enabled = false;
 					}
@@ -157,9 +158,9 @@ void CSVOCameraDlg::OnBtnAdvanced()
 			m_pParent->SetModified(TRUE);
 			if (pCameraObj->IsFileAcquisition())
 			{
-				m_pParent->ItemChanged(CAMERA_DLG,pCameraObj->GetCameraDisplayName(),ITEM_ACTION_PROP);
+				m_pParent->ItemChanged(CAMERA_DLG, pCameraObj->GetCameraDisplayName().c_str(), ITEM_ACTION_PROP);
 			}
-			m_pParent->ItemChanged(CAMERA_DLG,pCameraObj->GetCameraDisplayName(),ITEM_ACTION_SAVE);
+			m_pParent->ItemChanged(CAMERA_DLG, pCameraObj->GetCameraDisplayName().c_str(), ITEM_ACTION_SAVE);
 		}	
 	}
 }
@@ -169,28 +170,26 @@ void CSVOCameraDlg::OnBtnDeleteVc()
 	int iCursel = m_ctlCameraList.GetCurSel();
     if (iCursel != LB_ERR)
     {
-        CString sTxt;
-        m_ctlCameraList.GetText(iCursel,sTxt);
+        CString CameraName;
+        m_ctlCameraList.GetText(iCursel,CameraName);
         m_ctlCameraList.DeleteString(iCursel);
-        m_pParent->RemoveCameraFromList(sTxt);
+        m_pParent->RemoveCameraFromList(CameraName);
 
 		SVOInspectionObjPtr pInspectionObj( nullptr );
-		CString sInspect;
 		long lSize;
-		long l;
 
 		lSize = m_pParent->GetInspectionListCount();
-		for( l = 0; l < lSize; l++ )
+		for(long l = 0; l < lSize; l++ )
 		{
 			pInspectionObj = m_pParent->GetInspectionObject( l );
-			if( nullptr != pInspectionObj && sTxt == pInspectionObj->GetToolsetImage() )
+			if( nullptr != pInspectionObj && CameraName.GetString() == pInspectionObj->GetToolsetImage() )
 			{
 				pInspectionObj->SetToolsetImage( _T("") );
 			}
 		}
 
         m_pParent->SetModified(TRUE);
-        m_pParent->ItemChanged(CAMERA_DLG,sTxt,ITEM_ACTION_DELETE);
+        m_pParent->ItemChanged(CAMERA_DLG,CameraName,ITEM_ACTION_DELETE);
     }
     if (iCursel > 0)
     {
@@ -209,32 +208,32 @@ void CSVOCameraDlg::OnBtnDeleteVc()
 
 void CSVOCameraDlg::OnBtnNewVc() 
 {
-	CString sNewCamera = m_pParent->GetNextCameraName();
+	SVString NewCamera = m_pParent->GetNextCameraName();
     int Dig  = m_pParent->GetNextCameraNumber() - 1;
 	int CameraID( Dig );
     
-    m_pParent->AddToCameraList(sNewCamera,Dig, CameraID);
-    SVOCameraObjPtr pObj = m_pParent->GetCameraObjectByName(sNewCamera);
+    m_pParent->AddToCameraList( NewCamera.c_str(), Dig, CameraID);
+    SVOCameraObjPtr pObj = m_pParent->GetCameraObjectByName( NewCamera.c_str() );
 
-    int iPos = m_ctlCameraList.AddString(sNewCamera);
+    int iPos = m_ctlCameraList.AddString( NewCamera.c_str() );
     m_ctlCameraList.SetCurSel(iPos);
-    m_pParent->SetModified(TRUE);
-    m_pParent->ItemChanged(CAMERA_DLG,sNewCamera,ITEM_ACTION_NEW);
+    m_pParent->SetModified(true);
+    m_pParent->ItemChanged( CAMERA_DLG, NewCamera.c_str(), ITEM_ACTION_NEW);
 
     if ( m_ctlCameraList.GetCount() >= m_pParent->GetAllowedNumberOfDigs() )
     {
-        m_btnNew.EnableWindow(FALSE);
+        m_btnNew.EnableWindow(false);
     }	
 }
 
 void CSVOCameraDlg::OnBtnPropVc() 
 {
     int iCurSel = m_ctlCameraList.GetCurSel();
-    CString sTxt;
+    CString CameraName;
     if (iCurSel != LB_ERR)
     {
-        m_ctlCameraList.GetText(iCurSel,sTxt);
-        SVOCameraObjPtr pCameraObj = m_pParent->GetCameraObjectByName(sTxt);
+        m_ctlCameraList.GetText(iCurSel, CameraName);
+        SVOCameraObjPtr pCameraObj = m_pParent->GetCameraObjectByName( CameraName );
 		if( nullptr == pCameraObj )
 		{
 			ASSERT(FALSE);
@@ -251,31 +250,31 @@ void CSVOCameraDlg::OnBtnPropVc()
 			if (rTmpObj.IsFileAcquisition())
 			{
 				*pCameraObj = rTmpObj;
-				m_pParent->SetModified(TRUE);
-				m_pParent->ItemChanged(CAMERA_DLG,pCameraObj->GetCameraDisplayName(),ITEM_ACTION_PROP);
-				CString strDigName = m_pParent->BuildDigName( *pCameraObj );
-				SVDigitizerProcessingClass::Instance().SetDigitizerColor( strDigName, pCameraObj->IsColor() );
+				m_pParent->SetModified(true);
+				m_pParent->ItemChanged(CAMERA_DLG, pCameraObj->GetCameraDisplayName().c_str(), ITEM_ACTION_PROP);
+				SVString DigName = m_pParent->BuildDigName( *pCameraObj );
+				SVDigitizerProcessingClass::Instance().SetDigitizerColor( DigName.c_str(), pCameraObj->IsColor() );
 			}
 			else
 			{
-				if (pCameraObj->IsFileAcquisition() || !rTmpObj.GetCameraFile().IsEmpty() || pCameraObj->IsColor() != rTmpObj.IsColor() )
+				if (pCameraObj->IsFileAcquisition() || !rTmpObj.GetCameraFile().empty() || pCameraObj->IsColor() != rTmpObj.IsColor() )
 				{
 					*pCameraObj = rTmpObj;
-					m_pParent->SetModified(TRUE);
-					m_pParent->ItemChanged(CAMERA_DLG,pCameraObj->GetCameraDisplayName(),ITEM_ACTION_PROP);
-					m_btnAdvancedProp.EnableWindow(FALSE);
+					m_pParent->SetModified(true);
+					m_pParent->ItemChanged( CAMERA_DLG, pCameraObj->GetCameraDisplayName().c_str(), ITEM_ACTION_PROP);
+					m_btnAdvancedProp.EnableWindow(false);
 				
 					if ( (m_bNewConfig) && (!m_bModified) )
 					{
 						//When more than one camera and the camera file is not empty ask if the same setting for all cameras
-						if( 1 < m_pParent->GetCameraListCount() && !pCameraObj->GetCameraFile().IsEmpty() )
+						if( 1 < m_pParent->GetCameraListCount() && !pCameraObj->GetCameraFile().empty() )
 						{
-							m_bModified = TRUE;
+							m_bModified = true;
 							SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 							INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvOi::Tid_Camera_UseQuestion, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10137, SV_GUID_NULL, MB_YESNO );
 							if (IDYES == result)
 							{
-								SetCameraPropForAll(pCameraObj->GetCameraDisplayName());
+								SetCameraPropForAll(pCameraObj->GetCameraDisplayName().c_str());
 							}
 						}
 					}
@@ -285,15 +284,14 @@ void CSVOCameraDlg::OnBtnPropVc()
 						// when the camera file changes, load the camera file parameters into the device (so it's in sync with the Virtual Camera)
 						int Digitizer = SVDigitizerProcessingClass::Instance().getDigitizerID( pCameraObj->GetCameraID() );
 						pCameraObj->SetDigNumber( Digitizer );
-						CString strDigName = m_pParent->BuildDigName( *pCameraObj );
-						SVDigitizerProcessingClass::Instance().SetDigitizerColor( strDigName, pCameraObj->IsColor() );
-						SVAcquisitionClassPtr psvDevice( SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( strDigName ) );
+						SVString DigName = m_pParent->BuildDigName( *pCameraObj );
+						SVDigitizerProcessingClass::Instance().SetDigitizerColor( DigName.c_str(), pCameraObj->IsColor() );
+						SVAcquisitionClassPtr psvDevice( SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( DigName.c_str() ) );
 						if ( nullptr != psvDevice )
 						{
 							SVFileNameArrayClass svFiles;
 							SVFileNameClass svFile;
-							CString strFileName = pCameraObj->GetCameraFile();
-							svFile.SetFullFileName( strFileName );
+							svFile.SetFullFileName( pCameraObj->GetCameraFile().c_str() );
 							svFiles.Add( svFile );
 							psvDevice->LoadFiles( svFiles );
 						}
@@ -314,7 +312,7 @@ void CSVOCameraDlg::SetupList()
     for (int i = 0; i < iCamCnt; i++)
     {
         pObj = m_pParent->GetCameraObject(i);
-        int iPos = m_ctlCameraList.AddString(pObj->GetCameraDisplayName());
+        int iPos = m_ctlCameraList.AddString( pObj->GetCameraDisplayName().c_str() );
         m_ctlCameraList.SetItemData(iPos,pObj->GetDigNumber());
     }
     m_ctlCameraList.SetCurSel(0); // set to top of lsit...
@@ -334,27 +332,27 @@ void CSVOCameraDlg::OnDblclkLstCamera()
 	OnBtnPropVc();	
 }
 
-void CSVOCameraDlg::SetCameraPropForAll(CString sCurrentCamera)
+void CSVOCameraDlg::SetCameraPropForAll( LPCTSTR CurrentCamera )
 {
     int iCamCnt = m_pParent->GetCameraListCount();
     SVOCameraObjPtr pObj;
-    CString sFileName;
+    SVString FileName;
 	bool isColorCamera( false );
 
-    pObj = m_pParent->GetCameraObjectByName(sCurrentCamera);
-    sFileName = pObj->GetCameraFile();
+    pObj = m_pParent->GetCameraObjectByName( CurrentCamera );
+    FileName = pObj->GetCameraFile();
 	isColorCamera = pObj->IsColor();
 
     for (int i = 0; i < iCamCnt; i++)
     {
         pObj = m_pParent->GetCameraObject(i);
 
-        if (sCurrentCamera != pObj->GetCameraDisplayName())
+        if ( CurrentCamera != pObj->GetCameraDisplayName() )
         {
-            pObj->SetCameraFile(sFileName);
+            pObj->SetCameraFile( FileName );
 			pObj->SetIsColor( isColorCamera );
 			pObj->SetCameraFileChanged();
-            m_pParent->ItemChanged(CAMERA_DLG,pObj->GetCameraDisplayName(),ITEM_ACTION_PROP);
+            m_pParent->ItemChanged( CAMERA_DLG, pObj->GetCameraDisplayName().c_str(), ITEM_ACTION_PROP);
         }
     }
 }

@@ -55,7 +55,7 @@ SVDPointXResultClass::SVDPointXResultClass( BOOL BCreateDefaultTaskList, SVObjec
 	rangeClassInfo.m_ObjectTypeInfo.ObjectType = SVRangeObjectType;
 	rangeClassInfo.m_ObjectTypeInfo.SubType	= 0;
 	rangeClassInfo.m_ClassId = SVRangeClassGuid;
-	rangeClassInfo.m_ClassName = SvUl_SF::LoadString( IDS_CLASSNAME_SVRANGE );
+	rangeClassInfo.m_ClassName = SvUl_SF::LoadSVString( IDS_CLASSNAME_SVRANGE );
 
 	// Construct it
 	SVRangeClass* pRange = (SVRangeClass* )rangeClassInfo.Construct(); 

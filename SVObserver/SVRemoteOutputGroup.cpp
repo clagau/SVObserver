@@ -31,7 +31,7 @@
 
 SV_IMPLEMENT_CLASS( SVRemoteOutputGroup, SVRemoteOutputGroupGUID );
 
-SVRemoteOutputGroup::SVRemoteOutputGroup( LPCSTR ObjectName )
+SVRemoteOutputGroup::SVRemoteOutputGroup( LPCTSTR ObjectName )
 : SVObjectClass( ObjectName )
 , m_StreamDataItems( 0 )
 {
@@ -250,7 +250,7 @@ HRESULT SVRemoteOutputGroup::ObserverUpdate( const SVProductInfoStruct& p_rData 
 								}
 							}
 
-							l_ElementObject[ SVRC::vo::name ] = static_cast< LPCTSTR >( l_pValue->GetCompleteObjectName() );
+							l_ElementObject[ SVRC::vo::name ] = l_pValue->GetCompleteName().c_str();
 							l_ElementObject[ SVRC::vo::array ] = l_ArrayObject;
 							l_ElementObject[ SVRC::vo::count ] = l_TriggerCount;
 							l_ElementObject[ SVRC::vo::status ] = l_TempStatus;
@@ -357,9 +357,8 @@ BOOL SVRemoteOutputGroup::GetParameters( SVObjectXMLWriter& rWriter ) const
 	// Remote Outputs 
 	for( size_t i = 0 ; i < m_RemoteOutputs.size(); i++ )
 	{
-		CString l_strBranch;
-		l_strBranch.Format( "%s_%d",CTAG_REMOTE_OUTPUT_ENTRY, i + 1 );
-		rWriter.StartElement( l_strBranch );
+		SVString Branch = SvUl_SF::Format( _T("%s_%d"), CTAG_REMOTE_OUTPUT_ENTRY, i + 1 );
+		rWriter.StartElement( Branch.c_str() );
 		m_RemoteOutputs[i]->GetParameters( rWriter );
 		rWriter.EndElement();
 	}
@@ -410,9 +409,8 @@ BOOL SVRemoteOutputGroup::SetParameters( SVTreeType& p_rTree, SVTreeType::SVBran
 		while( l_bTmp )
 		{
 			SVTreeType::SVBranchHandle htiBranch = nullptr;
-			CString l_strEntry;
-			l_strEntry.Format( "%s_%d", CTAG_REMOTE_OUTPUT_ENTRY, ++l_lEntryNum );
-			l_bTmp = SVNavigateTree::GetItemBranch( p_rTree, l_strEntry, htiParent, htiBranch );
+			SVString Entry = SvUl_SF::Format( _T("%s_%d"), CTAG_REMOTE_OUTPUT_ENTRY, ++l_lEntryNum );
+			l_bTmp = SVNavigateTree::GetItemBranch( p_rTree, Entry.c_str(), htiParent, htiBranch );
 			if ( l_bTmp )
 			{
 				l_TmpOutput = new SVRemoteOutputObject;
@@ -596,7 +594,7 @@ SVString SVRemoteOutputGroup::GetPPQName() const
 
 		if( nullptr != l_pSubject )
 		{
-			l_SubjectName = l_pSubject->GetCompleteObjectName();
+			l_SubjectName = l_pSubject->GetCompleteName();
 		}
 	}
 	else
@@ -605,7 +603,7 @@ SVString SVRemoteOutputGroup::GetPPQName() const
 
 		if( nullptr != l_pSubject  )
 		{
-			l_SubjectName = l_pSubject->GetCompleteObjectName();
+			l_SubjectName = l_pSubject->GetCompleteName();
 			HRESULT l_hr = SVObjectManagerClass::Instance().AttachObserver( SVString( SvO::cPPQObjectTag ), m_PPQObjectId, GetUniqueObjectID() );
 		}
 	}

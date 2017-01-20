@@ -21,12 +21,12 @@ namespace Seidenader { namespace SVSocketLibrary
 	{
 	private:
 		std::stringstream m_packet;
-		std::string m_pending;
+		std::basic_string<TCHAR> m_pending;
 		int m_count;
 
 	public:
 		SVJsonStreamPacket();
-		void Add(const std::string& data);
+		void Add(const std::basic_string<TCHAR>& data);
 		bool IsComplete() const;
 		bool IsValid() const;
 		std::istream& GetJsonDataStream();

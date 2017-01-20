@@ -12,13 +12,11 @@
 #pragma region Includes
 #include "stdafx.h"
 //Moved to precompiled header: #include <set>
-#include "SVUtilityLibrary/SVString.h"
 #include "SVOTriggerList.h"
 #pragma endregion Includes
 
 #pragma region Declarations
 #ifdef _DEBUG
-#define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif

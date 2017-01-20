@@ -108,8 +108,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="StringEscape.cpp" />
-    <ClCompile Include="StringMunge.cpp" />
     <ClCompile Include="SVBarCodeAttributesDialog.cpp" />
     <ClCompile Include="SVBarCodeDataMatrixDialog.cpp" />
     <ClCompile Include="svbarcodegeneraldialog.cpp" />
@@ -123,15 +121,13 @@
     <ClCompile Include="SVTaskObjectInterfaceInputRequestStruct.cpp" />
     <ClCompile Include="SVTaskObjectValueInterface.cpp" />
     <ClCompile Include="SVWinUtility.cpp" />
-    <ClCompile Include="Utilities.cpp" />
+    <ClCompile Include="DirectoryUtilities.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DisplayMessageBox.h" />
     <ClInclude Include="Intersect.h" />
     <ClInclude Include="ISVCancel.h" />
     <ClInclude Include="StdAfx.h" />
-    <ClInclude Include="StringEscape.h" />
-    <ClInclude Include="StringMunge.h" />
     <ClInclude Include="SVBarCodeAttributesDialog.h" />
     <ClInclude Include="SVBarCodeDataMatrixDialog.h" />
     <ClInclude Include="svbarcodegeneraldialog.h" />
@@ -143,7 +139,6 @@
     <ClInclude Include="SVIOEntryHostStruct.h" />
     <ClInclude Include="SVOINIClass.h" />
     <ClInclude Include="SVOIniLoader.h" />
-    <ClInclude Include="StringHelper.h" />
     <ClInclude Include="SVPackedFile.h" />
     <ClInclude Include="SVTaskObjectInterfaceInputRequestStruct.h" />
     <ClInclude Include="SVTaskObjectValueInterface.h" />

@@ -46,7 +46,7 @@ namespace Seidenader
 				{
 					SVString oldString;
 					//save old string
-					pEquation->GetEquationText(oldString);
+					oldString = pEquation->GetEquationText();
 					pEquation->SetEquationText(m_equation);
 
 					SvOi::EquationTestResult testResult = pEquation->Test();

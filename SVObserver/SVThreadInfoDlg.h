@@ -11,7 +11,7 @@
 #pragma once
 #pragma region Includes
 #include "afxcmn.h"
-#include "PropertyTree\PROPTREE.H"
+#include "SVRPropertyTree/SVRPropTree.h"
 #include "SVSystemLibrary\SVThreadManager.h"
 #pragma endregion
 
@@ -48,8 +48,8 @@ protected:
 
 #pragma region Private
 private:
-	void InsertComboThreadItem( SVRPropertyItem* pRoot, CString name, unsigned int Affinity, unsigned int nID );
-	void InsertThreadItem( SVRPropertyItem* pRoot, CString name, int Affinity, unsigned int nID );
+	void InsertComboThreadItem( SVRPropertyItem* pRoot, LPCTSTR Name, unsigned int Affinity, unsigned int nID );
+	void InsertThreadItem( SVRPropertyItem* pRoot, LPCTSTR Name, int Affinity, unsigned int nID );
 	void AddComboAffinitys( SVRPropertyItemCombo* pCombo, AffinityBitList& affinitys );
 	bool FindName( SVRPropertyItem* pRoot, LPCTSTR Name );
 

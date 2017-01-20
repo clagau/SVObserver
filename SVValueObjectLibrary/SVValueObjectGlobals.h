@@ -11,6 +11,10 @@
 
 #pragma once
 
+#pragma region Includes
+#include "SVUtilityLibrary/SVString.h"
+#pragma endregion Includes
+
 #define IMPLEMENT_VALUE_OBJECT_GET_SET_NO_T() \
 	template <typename FROMTYPE>\
 		__forceinline HRESULT SetValue(int iBucket, FROMTYPE value) { return SetValueAt(iBucket, 0, value); }\
@@ -23,7 +27,7 @@
 		__forceinline HRESULT GetValue(int iBucket, TOTYPE& rValue) const { return GetValueAt(iBucket, 0, rValue); }\
 	template <typename TOTYPE>\
 		__forceinline HRESULT GetValue(int iBucket, int iIndex, TOTYPE& rValue) const { return GetValueAt(iBucket, iIndex, rValue); }\
-	virtual HRESULT SetValueAtConvert( int iBucket, int iIndex, const CString& value ) { return SetValueAt(iBucket, iIndex, value);}\
+	virtual HRESULT SetValueAtConvert( int iBucket, int iIndex, const SVString& value ) { return SetValueAt(iBucket, iIndex, value);}\
 	virtual HRESULT SetValueAtConvert( int iBucket, int iIndex, double value ) { return SetValueAt(iBucket, iIndex, value);}\
 	virtual HRESULT SetValueAtConvert( int iBucket, int iIndex, long value ) { return SetValueAt(iBucket, iIndex, value);}\
 	virtual HRESULT SetValueAtConvert( int iBucket, int iIndex, int value ) { return SetValueAt(iBucket, iIndex, value);}\
@@ -39,7 +43,7 @@
 // example of usage:
 //
 // bool value = GetValue<bool>(m_voBoolValueObject);
-// CString value = GetValue<CString>(m_voBoolValueObject);
+// SVString value = GetValue<SVString>(m_voBoolValueObject);
 //
 // bool bBucketValue = GetValue<bool>(m_voBoolValueObject, iBucket);
 
@@ -48,7 +52,7 @@ inline VALUETYPE GetValue( VALUEOBJECTCLASS& valueobject )
 {
 	VALUETYPE value;
 	BOOL bOk = ( S_OK == valueobject.GetValue( value ) );
-	ASSERT( bOk );
+	assert( bOk );
 	return value;
 }
 
@@ -57,7 +61,7 @@ inline VALUETYPE GetValue( VALUEOBJECTCLASS& valueobject, int iBucket )
 {
 	VALUETYPE value;
 	BOOL bOk = valueobject.GetValue( iBucket, value );
-	ASSERT( bOk );
+	assert( bOk );
 	return value;
 }
 
@@ -66,7 +70,7 @@ inline VALUETYPE GetValue( VALUEOBJECTCLASS& valueobject, int iBucket, int iInde
 {
 	VALUETYPE value;
 	BOOL bOk = valueobject.GetValue( iBucket, iIndex, value );
-	ASSERT( bOk );
+	assert( bOk );
 	return value;
 }
 

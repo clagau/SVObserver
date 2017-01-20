@@ -13,6 +13,7 @@
 #pragma region Includes
 #include "SVShared.h"
 #include "SVSharedInspections.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 namespace Seidenader { namespace SVSharedMemoryLibrary
@@ -22,7 +23,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		mutable volatile long m_Flags;
 		volatile long m_TriggerCount;
 		SVSharedInspectionMap m_Inspections;
-		long InspectionSlotIndex(const std::string& inspectionShareName) const;
+		long InspectionSlotIndex(const SVString& inspectionShareName) const;
 		void_allocator m_Allocator;
 
 		SVSharedProduct(const void_allocator& rAlloc);

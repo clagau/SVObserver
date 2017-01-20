@@ -27,8 +27,8 @@ BEGIN_MESSAGE_MAP(MonitorListValuesPage, MonitorListBasePage)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
-MonitorListValuesPage::MonitorListValuesPage(const SvUl::NameSelectionList& rList, bool bWholeArray, MonitorListSheet* pParent, const CString& szCaption, int id)
-: MonitorListBasePage(rList, pParent, szCaption, id)
+MonitorListValuesPage::MonitorListValuesPage(const SvUl::NameSelectionList& rList, bool bWholeArray, MonitorListSheet* pParent, LPCTSTR Caption, int id)
+: MonitorListBasePage(rList, pParent, Caption, id)
 , m_bAllowWholeArray(bWholeArray)
 {
 	//{{AFX_DATA_INIT(MonitorListValuesPage)

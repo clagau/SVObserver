@@ -10,9 +10,9 @@
 // ******************************************************************************
 
 #include "stdafx.h"
-#include "PropTree.h"
+#include "SVRPropTree.h"
 //#include "Resource.h"
-#include "PropTreeCtrl.h"
+#include "SVRPropTreeCtrl.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

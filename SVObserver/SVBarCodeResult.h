@@ -13,6 +13,7 @@
 
 #pragma region Includes
 #include "SVResultString.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 #define  BC_MAX_ENTREES       10000  // Max number of lines allowed in the match file
@@ -38,7 +39,7 @@ public:
 	BOOL BuildHashTable(char *szBuffer);
 	void InsertValueToTable(short nValue, int index);
 
-	int CheckStringInTable(CString MatchString);
+	int CheckStringInTable( const SVString& rMatchString );
 
 	SVBoolValueObjectClass msv_bUseSingleMatchString;
 	SVBoolValueObjectClass msv_bUseMatchStringFile;
@@ -53,10 +54,10 @@ protected:
 
 	long     m_lTotalBytes;
 	int      m_nTotalCount;
-	char     *m_pBuffer;
+	TCHAR*   m_pBuffer;
 	long     m_lLowValue;
 	long     m_lHighValue;
-	char     *m_pDataArr[BC_MAX_ENTREES];
-	short    *m_pIndexTable;
+	TCHAR*   m_pDataArr[BC_MAX_ENTREES];
+	short*   m_pIndexTable;
 	double   m_dFactor;
 };

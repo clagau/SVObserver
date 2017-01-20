@@ -67,7 +67,8 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 		CPropertyPage::DoDataExchange(pDX);
 		DDX_Control(pDX, IDC_TREE_NODES, m_NodeTree);
 		DDX_Control(pDX, IDC_TREE_VALUES, m_LeafTree);
-		DDX_Text(pDX, IDC_HIGHLIGHTED_NODE, m_HighlightedNode);
+		//This is ok when SVString is only being read, input from the dialog would be lost
+		DDX_Text(pDX, IDC_HIGHLIGHTED_NODE, CString(m_HighlightedNode.c_str()));
 	}
 
 	BOOL ObjectSelectorPpg::OnInitDialog()

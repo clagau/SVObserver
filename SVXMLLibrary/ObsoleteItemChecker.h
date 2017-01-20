@@ -11,17 +11,18 @@
 #include "SVConfigurationTags.h"
 #include "ObjectInterfaces/ErrorNumbers.h"
 #include "SVXmlLibrary/SVNavigateTree.h"
+#include "SVUtilityLibrary/SVString.h"
 #include "SVUtilityLibrary/SVStringConversions.h"
 #pragma endregion Includes
 
 namespace Seidenader { namespace  SVXMLLibrary
 {
 	template<typename TreeType>
-	static HRESULT HasObsoleteItem(TreeType& rTree, CString& rItemType, int& errorCode);
+	static HRESULT HasObsoleteItem(TreeType& rTree, SVString& rItemType, int& errorCode);
 	
 	
 	template< typename SVTreeType >
-	HRESULT CheckObsoleteItems( SVTreeType& rTree, const unsigned long& ulSVOConfigVersion, CString& rItemType, int& errorCode );
+	HRESULT CheckObsoleteItems( SVTreeType& rTree, const unsigned long& ulSVOConfigVersion, SVString& rItemType, int& errorCode );
 	
 } /* namespace SVXMLLibrary */ } /* namespace Seidenader */
 

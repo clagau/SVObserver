@@ -12,6 +12,7 @@
 #include "SVOCore/SVImageListClass.h"
 #include "SVMatroxLibrary\SVMatroxBuffer.h"
 #include "SVMemoryManager.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 class SVArchiveTool;
@@ -24,7 +25,7 @@ public:
 	{
 		// passed into the thread class
 		SVMatroxBuffer id;
-		CString strFilename;
+		SVString m_FileName;
 		long lBufferSize;
 		SVImageInfoClass info;
 		SVArchiveRecord* pRecord;
@@ -35,11 +36,11 @@ public:
 
 		BufferInfo() : lBufferSize(0), m_Timestamp(0), pRecord(nullptr), pImageObject(nullptr) {}
 		BufferInfo( const BufferInfo& rhs )
-			: id(rhs.id), strFilename(rhs.strFilename), lBufferSize(rhs.lBufferSize), m_Timestamp(rhs.m_Timestamp), info(rhs.info), pImageObject(rhs.pImageObject), pRecord(rhs.pRecord) {}
-		BufferInfo( SVMatroxBuffer p_id, CString p_strFilename, long p_lBufferSize, SVImageInfoClass p_info, SVArchiveRecord* p_pRecord )
-			: id(p_id), strFilename(p_strFilename), lBufferSize(p_lBufferSize), info(p_info), pRecord(p_pRecord) {}
+			: id(rhs.id), m_FileName(rhs.m_FileName), lBufferSize(rhs.lBufferSize), m_Timestamp(rhs.m_Timestamp), info(rhs.info), pImageObject(rhs.pImageObject), pRecord(rhs.pRecord) {}
+		BufferInfo( SVMatroxBuffer p_id, const SVString& rFileName, long p_lBufferSize, SVImageInfoClass p_info, SVArchiveRecord* p_pRecord )
+			: id(p_id), m_FileName(rFileName), lBufferSize(p_lBufferSize), info(p_info), pRecord(p_pRecord) {}
 		const BufferInfo& operator = ( const BufferInfo& rhs )
-			{ if ( this != &rhs ) {id = rhs.id; strFilename = rhs.strFilename; lBufferSize = rhs.lBufferSize; m_Timestamp = rhs.m_Timestamp; info = rhs.info; pImageObject = rhs.pImageObject; pRecord = rhs.pRecord; } return *this; }
+			{ if ( this != &rhs ) {id = rhs.id; m_FileName = rhs.m_FileName; lBufferSize = rhs.lBufferSize; m_Timestamp = rhs.m_Timestamp; info = rhs.info; pImageObject = rhs.pImageObject; pRecord = rhs.pRecord; } return *this; }
 	};
 
 #pragma region Constructor

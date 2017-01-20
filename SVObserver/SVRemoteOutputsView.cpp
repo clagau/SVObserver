@@ -139,7 +139,6 @@ void SVRemoteOutputsView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 		// First clean up list view
 		GetListCtrl().DeleteAllItems();
 		
-		CString strItem;
 		long lPPQSize = 0;
 		int j = 0;
 		int k = 1;
@@ -166,38 +165,36 @@ void SVRemoteOutputsView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 		DWORD maxOutput = 0;
 		// Get the DLL List...
 
-		std::vector<CString> l_astrGroupNames;
-		pConfig->GetRemoteOutputGroupNames( l_astrGroupNames );
+		SVStringVector GroupNames;
+		pConfig->GetRemoteOutputGroupNames( GroupNames );
 
 		// This is a Hack! this should be called from a different area when objects change.
 		pConfig->RemoteOutputValidateInputs();
 
-		std::vector<CString>::iterator l_it;
+		SVStringVector::const_iterator Iter;
 
-		for( l_it = l_astrGroupNames.begin() ; l_it != l_astrGroupNames.end() ; ++l_it )
+		for( Iter = GroupNames.begin() ; Iter != GroupNames.end() ; ++Iter )
 		{
-			CString l_strGroupName = *l_it;
+			const SVString& rGroupName = *Iter;
 
-			int lSize = static_cast<int>(pConfig->GetRemoteOutputGroupItemCount( l_strGroupName ));
+			int lSize = static_cast<int>(pConfig->GetRemoteOutputGroupItemCount( rGroupName ));
 			if( lSize == 0 )
 			{
 				continue;
 			}
 
-			SVRemoteOutputGroup* l_pControl = pConfig->GetRemoteOutputGroup( l_strGroupName );
+			SVRemoteOutputGroup* l_pControl = pConfig->GetRemoteOutputGroup( rGroupName );
 			if( nullptr == l_pControl )
 			{
 				continue;
 			}
 
-			SVGroupStateMap::const_iterator l_Iter = m_GroupStates.find( l_strGroupName );
+			SVGroupStateMap::const_iterator l_Iter = m_GroupStates.find( rGroupName );
 
 			bool l_bCollapse = ( l_Iter != m_GroupStates.end() ) && ( l_Iter->second );
 
-			strItem.Format( _T( "%s" ),l_strGroupName );
-
 			int ipos = GetListCtrl().InsertItem( LVIF_IMAGE | LVIF_TEXT | LVIF_STATE, 
-				k, strItem, 
+				k, rGroupName.c_str(), 
 				INDEXTOSTATEIMAGEMASK( 1 ),	// state
 				LVIS_STATEIMAGEMASK,		// stateMask
 				2 + l_bCollapse,			// Image
@@ -215,7 +212,7 @@ void SVRemoteOutputsView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 				for( j = 0; j < lSize; j++ )
 				{
 					SVRemoteOutputObject* l_pOutput = nullptr;
-					HRESULT l_hr = pConfig->GetRemoteOutputItem( l_strGroupName, j, l_pOutput);
+					HRESULT l_hr = pConfig->GetRemoteOutputItem( rGroupName, j, l_pOutput);
 
 					if( nullptr == l_pOutput )
 					{
@@ -223,11 +220,11 @@ void SVRemoteOutputsView::OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint)
 					}
 
 					// First column: Result I/O
-					CString l_strName = l_pOutput->GetInputValueObjectName().c_str();
+					SVString Name = l_pOutput->GetInputValueObjectName();
 
 					// Column: Description "Value Object Name"
 					GetListCtrl().InsertItem( LVIF_IMAGE | LVIF_TEXT | LVIF_STATE, 
-						lInsertedEntry + iCurrentPPQ + k, l_strName, 
+						lInsertedEntry + iCurrentPPQ + k, Name.c_str(), 
 						INDEXTOSTATEIMAGEMASK( 2 ),	// state
 						LVIS_STATEIMAGEMASK,		// stateMask
 						1,
@@ -312,8 +309,8 @@ BOOL SVRemoteOutputsView::PreTranslateMessage(MSG* pMsg)
 				else
 				if( VK_INSERT == pMsg->wParam )
 				{
-					CString l_strGroupName;
-					if( S_OK == RemoteOutputGroupNameAtItem( l_strGroupName, l_item )  )
+					SVString GroupName;
+					if( S_OK == RemoteOutputGroupNameAtItem( GroupName, l_item )  )
 					{
 						// New Entry...
 						SVSVIMStateClass::AddState( SV_STATE_EDITING );
@@ -331,8 +328,8 @@ BOOL SVRemoteOutputsView::PreTranslateMessage(MSG* pMsg)
 				else
 				if( VK_RETURN == pMsg->wParam )
 				{
-					CString l_strGroupName;
-					if( S_OK == RemoteOutputGroupNameAtItem( l_strGroupName, l_item )  )
+					SVString GroupName;
+					if( S_OK == RemoteOutputGroupNameAtItem( GroupName, l_item )  )
 					{
 						// New Entry...
 						SVSVIMStateClass::AddState( SV_STATE_EDITING );
@@ -407,7 +404,7 @@ BOOL SVRemoteOutputsView::PreTranslateMessage(MSG* pMsg)
 	return l_bRet;
 }
 
-HRESULT SVRemoteOutputsView::RemoteOutputGroupNameAtItem( CString& p_rstrGroupName, int p_iItem )
+HRESULT SVRemoteOutputsView::RemoteOutputGroupNameAtItem( SVString& rGroupName, int p_iItem )
 {
 	HRESULT l_hr = S_FALSE;
 	for( int i = p_iItem ; i > -1 ; i-- )
@@ -417,7 +414,7 @@ HRESULT SVRemoteOutputsView::RemoteOutputGroupNameAtItem( CString& p_rstrGroupNa
 		SVRemoteOutputObject* l_pOutput = dynamic_cast<SVRemoteOutputObject*>(reinterpret_cast<SVObjectClass*>(pdwItemData));
 		if( nullptr != l_pOutput )
 		{
-			p_rstrGroupName = l_pOutput->GetGroupID().c_str();
+			rGroupName = l_pOutput->GetGroupID();
 			l_hr = S_OK;
 			break;
 		}
@@ -426,7 +423,7 @@ HRESULT SVRemoteOutputsView::RemoteOutputGroupNameAtItem( CString& p_rstrGroupNa
 			SVRemoteOutputGroup* l_pGroup = dynamic_cast<SVRemoteOutputGroup*>(reinterpret_cast<SVObjectClass*>(pdwItemData));
 			if( nullptr != l_pGroup )
 			{
-				p_rstrGroupName = l_pGroup->GetGroupName().c_str();
+				rGroupName = l_pGroup->GetGroupName();
 				l_hr = S_OK;
 				break;
 			}
@@ -515,7 +512,7 @@ void SVRemoteOutputsView::OnContextMenu(CWnd* /*pWnd*/, CPoint point )
 				{
 					l_pPrevOutput=dynamic_cast<SVRemoteOutputObject*>(reinterpret_cast<SVObjectClass*>(GetListCtrl().GetItemData( m_CurrentItem-1 )));
 				}
-				int pos = static_cast<int>(l_pOutput->GetInputValueObjectName().find( _T("Trigger Count") ));
+				size_t pos = l_pOutput->GetInputValueObjectName().find( _T("Trigger Count") );
 				if( pos != SVString::npos && (nullptr == l_pPrevOutput) ) // If the name is trigger count
 				{
 					pPopup = m_ContextMenuItemNoDelete.GetSubMenu(0);
@@ -554,11 +551,10 @@ void SVRemoteOutputsView::OnRemoteOutputDelete()
 			SVRemoteOutputObject* pRemoteOutput = dynamic_cast<SVRemoteOutputObject*>( reinterpret_cast<SVObjectClass*>(GetListCtrl().GetItemData( l_item )));
 			if( nullptr != pRemoteOutput && nullptr != pConfig )
 			{
-				// The user clicked on an output
-				CString l_strRemoteGroup = pRemoteOutput->GetGroupID().c_str();// GetInputValueObjectName();
+				SVString RemoteGroup = pRemoteOutput->GetGroupID();
 
-				bool bFirst = (pConfig->GetFirstRemoteOutputObject( l_strRemoteGroup ) == pRemoteOutput); 
-				int pos = static_cast<int>(pRemoteOutput->GetInputValueObjectName().find(_T("Trigger Count") ));
+				bool bFirst = (pConfig->GetFirstRemoteOutputObject( RemoteGroup ) == pRemoteOutput); 
+				size_t pos = pRemoteOutput->GetInputValueObjectName().find(_T("Trigger Count") );
 				if( bFirst && pos != SVString::npos )
 				{
 					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
@@ -570,7 +566,7 @@ void SVRemoteOutputsView::OnRemoteOutputDelete()
 					INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvOi::Tid_RemoteOutput_DeletingOutput, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10195, SV_GUID_NULL, MB_YESNO ); 
 					if( IDYES == result )
 					{
-						pConfig->DeleteRemoteOutputEntry( l_strRemoteGroup, pRemoteOutput );
+						pConfig->DeleteRemoteOutputEntry( RemoteGroup, pRemoteOutput );
 						SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
 						OnUpdate( nullptr, 0, nullptr );
 						if( l_item >= GetListCtrl().GetItemCount() )
@@ -591,7 +587,7 @@ void SVRemoteOutputsView::OnRemoteOutputDelete()
 				if( pOutputGroup )
 				{
 					SVString strGroup = pOutputGroup->GetGroupName();
-					SVStringArray msgList;
+					SVStringVector msgList;
 					msgList.push_back(strGroup);
 					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 					INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvOi::Tid_RemoteOutput_DeletingAllOutput, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10196, SV_GUID_NULL, MB_YESNO );
@@ -626,16 +622,16 @@ bool SVRemoteOutputsView::AddOutput(int p_iWhere)
 	bool l_bRet = false;
 
 	// New Entry...
+	SVString RemoteGroup;
 	SVRemoteOutputEditDialog dlg;
-	CString l_strGroup;
 
-	if( S_OK == RemoteOutputGroupNameAtItem( l_strGroup, p_iWhere ) )
+	if( S_OK == RemoteOutputGroupNameAtItem( RemoteGroup, p_iWhere ) )
 	{
 		SVConfigurationObject* pConfig( nullptr );
 		SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 		SVRemoteOutputGroup* pGroupParameters( nullptr );
-		if( nullptr != pConfig ){ pGroupParameters = pConfig->GetRemoteOutputGroup(l_strGroup); }
+		if( nullptr != pConfig ){ pGroupParameters = pConfig->GetRemoteOutputGroup(RemoteGroup); }
 
 		SVPPQObject* pPPQ( nullptr );
 		SVString PPQName;
@@ -648,12 +644,12 @@ bool SVRemoteOutputsView::AddOutput(int p_iWhere)
 			if( nullptr != pPPQ )
 			{ 
 				dlg.m_InputObjectGUID = pPPQ->m_voTriggerCount.GetUniqueObjectID();
-				dlg.m_strGroupName = l_strGroup;
+				dlg.m_GroupName = RemoteGroup;
 
 				if( dlg.DoModal() == IDOK )
 				{
 					SVRemoteOutputObject* l_pNewOutput = nullptr;
-					pConfig->AddRemoteOutputItem(l_strGroup, 
+					pConfig->AddRemoteOutputItem(RemoteGroup, 
 						l_pNewOutput, 
 						dlg.m_InputObjectGUID,
 						PPQName.c_str());
@@ -687,12 +683,12 @@ bool SVRemoteOutputsView::EditOutput(int p_iWhere)
 		SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 		// The User clicked on the Item
-		dlg.m_strGroupName = pRemoteOutput->GetGroupID().c_str();
-		dlg.m_strValueObjectSourceName = pRemoteOutput->GetInputValueObjectName().c_str();
+		dlg.m_GroupName = pRemoteOutput->GetGroupID();
+		dlg.m_ValueObjectSourceName = pRemoteOutput->GetInputValueObjectName();
 		pRemoteOutput->GetInputValueObjectGUID( dlg.m_InputObjectGUID ); 
 
 		// if this is the first (Trigger Count) item in the list then gray out the object.
-		if(nullptr != pConfig && pConfig->GetFirstRemoteOutputObject( dlg.m_strGroupName ) == pRemoteOutput )
+		if(nullptr != pConfig && pConfig->GetFirstRemoteOutputObject( dlg.m_GroupName ) == pRemoteOutput )
 		{
 			return l_bRet;
 		}
@@ -703,7 +699,7 @@ bool SVRemoteOutputsView::EditOutput(int p_iWhere)
 		case IDOK:
 		{
 			pRemoteOutput->SetInputObjectId( dlg.m_InputObjectGUID );
-			pRemoteOutput->SetGroupID( SVString(dlg.m_strGroupName) );
+			pRemoteOutput->SetGroupID( dlg.m_GroupName );
 			l_bRet = true;
 			break;
 		}

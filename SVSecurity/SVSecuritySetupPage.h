@@ -36,10 +36,8 @@ public:
 	BOOL	m_bForcePrompt;
 	BOOL	m_bLogOnMode;
 	long	m_lTimeout;
-	CString	m_strGroup;
+	CString	m_Group;
 	//}}AFX_DATA
-	
-	CString	m_strApp;
 	
 	int		m_nParent;
 	
@@ -73,19 +71,16 @@ protected:
 
 	int GetNodeIndexFromTree();
 
-	CString GetGroups(void);
-	
+
 	void  SetGroups(CString groups);
 	
-	void  ResetGroups(void);
+	void  ResetGroups();
 
 
 protected:	
 	
 	SVSecuritySetupSheet*   pPropSheet;
 	SVAccessClass*          m_pAccess;
-	
-//	SVDlgTemplate		DlgTemplate;
 };
 
 

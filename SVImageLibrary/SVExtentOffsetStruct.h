@@ -11,7 +11,10 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVExtentPointStruct.h"
+#include "SVUtilityLibrary/SVString.h"
+#pragma endregion Includes
 
 class SVImageClass;
 
@@ -50,7 +53,7 @@ struct SVExtentOffsetStruct
 		m_psvRootImage = nullptr;
 		m_psvImage = nullptr;
 
-		m_csImageName.Empty();
+		m_csImageName.clear();
 
 		m_bIsLinear = true;
 		m_bAlwaysUpdate = false;
@@ -66,7 +69,7 @@ struct SVExtentOffsetStruct
 	SVImageClass *m_psvRootImage;
 	SVImageClass *m_psvImage;
 
-	CString m_csImageName;
+	SVString m_csImageName;
 
 	bool m_bIsLinear;
 	bool m_bAlwaysUpdate;

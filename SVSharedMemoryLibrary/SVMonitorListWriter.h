@@ -14,6 +14,7 @@
 #include "SVMonitorListStore.h"
 #include "SVSharedMemorySettings.h"
 #include "SVProductFilterEnum.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 namespace Seidenader { namespace SVSharedMemoryLibrary
@@ -22,7 +23,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 
 	class SVMonitorListWriter
 	{
-		std::string m_ShareName;
+		SVString m_ShareName;
 		SVMonitorListStore* m_lists;
 		void Init();
 
@@ -35,9 +36,9 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		// returns S_OK on success
 		/////////////////////////////////////////////////////////////////////////////////
 		HRESULT Create(const SVSharedMemorySettings& settings, size_t requiredSize);
-		void AddList(const std::string& listName, const std::string& ppqName, int rejectDepth, bool isActive);
-		void FillList(const std::string& listName, listType type, const std::vector<std::string>& list);
-		void SetProductFilter(const std::string& listName, SVProductFilterEnum filter);
+		void AddList(const SVString& listName, const SVString& ppqName, int rejectDepth, bool isActive);
+		void FillList(const SVString& listName, listType type, const SVStringVector& list);
+		void SetProductFilter(const SVString& listName, SVProductFilterEnum filter);
 
 		void Release();
 

@@ -54,13 +54,13 @@
     <ClCompile Include="LoadDll.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVStringLoader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVHistogramBase.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVMetrics.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVStringConversions.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -147,9 +147,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="LoadDll.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVStringLoader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="NaturalStringCompare.h">

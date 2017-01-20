@@ -30,16 +30,16 @@ public:
     SVOCameraList& operator=(const SVOCameraList &source);
     SVOCameraList* operator=(const SVOCameraList *source);
 
-    BOOL AddCameraToList(CString CameraName, int Dig, int CameraID);
-    BOOL AddCameraToList(CString CameraName, int Dig, int iBands, int CameraID);
-    BOOL SetCameraFile(CString CameraName, CString FileName);
-	BOOL SetCameraDeviceParams( CString CameraName, const SVDeviceParamCollection& rCameraDeviceParams, const SVDeviceParamCollection& rCameraFileParams );
-    BOOL RemoveCameraFromList(CString CameraName);
+    BOOL AddCameraToList( LPCTSTR CameraName, int Dig, int CameraID );
+    BOOL AddCameraToList( LPCTSTR CameraName, int Dig, int iBands, int CameraID );
+    BOOL SetCameraFile( LPCTSTR CameraName, LPCTSTR FileName );
+	BOOL SetCameraDeviceParams( LPCTSTR CameraName, const SVDeviceParamCollection& rCameraDeviceParams, const SVDeviceParamCollection& rCameraFileParams );
+    BOOL RemoveCameraFromList( LPCTSTR CameraName );
 
-    SVOCameraObjPtr GetCameraObjectByName(CString CameraName);
+    SVOCameraObjPtr GetCameraObjectByName( LPCTSTR CameraName );
     SVOCameraObjPtr GetCameraObjectByPosition(int iPos);
 	const SVOCameraObjPtr GetCameraObjectByPosition(int iPos) const;
-    BOOL IsCameraInList(CString CameraName) const;
+    BOOL IsCameraInList( LPCTSTR CameraName ) const;
 
     void ResetContent();
 
@@ -48,6 +48,6 @@ public:
 private:
 	SVCameraList m_CameraList;
     
-	iterator FindCameraPosition( CString CameraName );
+	iterator FindCameraPosition( LPCTSTR CameraName );
 };
 

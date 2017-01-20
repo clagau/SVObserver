@@ -98,94 +98,65 @@ HRESULT SVSecurityManager::SVLogout()
 		return S_FALSE;
 }
 
-// Ansi char functions....
-HRESULT SVSecurityManager::SVLoad(const char* const pFileName)
+HRESULT SVSecurityManager::SVLoad( LPCTSTR FileName )
 {
-	if( m_pSVAccess )
-		return m_pSVAccess->Load( pFileName );
-	else
-		return S_FALSE;
+	if( nullptr != m_pSVAccess )
+	{
+		return m_pSVAccess->Load( FileName );
+	}
+	
+	return E_FAIL;
 }
 
-HRESULT SVSecurityManager::SVCreateProcess( const char* const strAppName, const char* const strPath, const char* const strCommand  )
+HRESULT SVSecurityManager::SVCreateProcess( LPCTSTR AppName, LPCTSTR Path, LPCTSTR Command  )
 {
-	if( m_pSVAccess )
-		return m_pSVAccess->CreateProcess( strAppName, strPath, strCommand );
-	else
-		return S_FALSE;
+	if( nullptr != m_pSVAccess )
+	{
+		return m_pSVAccess->CreateProcess( AppName, Path, Command );
+	}
+
+	return E_FAIL;
 }
 
-HRESULT SVSecurityManager::SVAdd( long lID, const char* const sName, const char* const sGroup , bool bForcePrompt )
+HRESULT SVSecurityManager::SVAdd( long lID, LPCTSTR Name, LPCTSTR NTGroup /*= nullptr*/, bool ForcePrompt /*= false*/ )
 {
-	if( m_pSVAccess )
-		return m_pSVAccess->Add( lID, sName, sGroup, bForcePrompt);
-	else
-		return S_FALSE;
-}
+	if( nullptr != m_pSVAccess )
+	{
+		return m_pSVAccess->Add( lID, Name, NTGroup, ForcePrompt);
+	}
 
-HRESULT SVSecurityManager::SVAdd( long lID, const char* const sName )
-{
-	if( m_pSVAccess )
-		return m_pSVAccess->Add( lID, sName);
-	else
-		return S_FALSE;
-}
-// Wide / Unicode functions...
-HRESULT SVSecurityManager::SVLoad(const wchar_t* const pFileName)
-{
-	if( m_pSVAccess )
-		return m_pSVAccess->Load( pFileName );
-	else
-		return S_FALSE;
-}
-
-HRESULT SVSecurityManager::SVCreateProcess( const wchar_t* const strAppName, const wchar_t* const strPath, const wchar_t* const strCommand  )
-{
-	if( m_pSVAccess )
-		return m_pSVAccess->CreateProcess( strAppName, strPath, strCommand );
-	else
-		return S_FALSE;
-}
-
-HRESULT SVSecurityManager::SVAdd( long lID, const wchar_t* const sName, const wchar_t* const sGroup , bool bForcePrompt )
-{
-	if( m_pSVAccess )
-		return m_pSVAccess->Add( lID, sName, sGroup, bForcePrompt);
-	else
-		return S_FALSE;
-}
-
-HRESULT SVSecurityManager::SVAdd( long lID, const wchar_t* const sName )
-{
-	if( m_pSVAccess )
-		return m_pSVAccess->Add( lID, sName);
-	else
-		return S_FALSE;
+	return E_FAIL;
 }
 
 HRESULT SVSecurityManager::SVProtectData( long lID )
 {
-	if( m_pSVAccess )
+	if( nullptr != m_pSVAccess )
+	{
 		return m_pSVAccess->ProtectData( lID );
-	else
-		return S_FALSE;
+	}
+
+	return E_FAIL;
 }
 
 bool SVSecurityManager::SVGetUseLogon()
 {
-	if( m_pSVAccess )
+	if( nullptr != m_pSVAccess )
+	{
 		return m_pSVAccess->GetUseLogon();
-	else
-		return S_FALSE;
+	}
+
+	return false;
 }
 
 
 bool SVSecurityManager::SVIsLoggedOn()
 {
-	if( m_pSVAccess )
+	if( nullptr != m_pSVAccess )
+	{
 		return m_pSVAccess->IsLoggedOn();
-	else
-		return S_FALSE;
+	}
+
+	return false;
 }
 
 HRESULT SVSecurityManager::SVGetUser( BSTR& p_rbstrUser )
@@ -193,17 +164,13 @@ HRESULT SVSecurityManager::SVGetUser( BSTR& p_rbstrUser )
 	HRESULT l_hr = S_OK;
 
 
-	if( m_pSVAccess )
+	if( nullptr != m_pSVAccess )
 	{
 		if( !m_pSVAccess->TimeExpired() )
 		{
-			CString l_cstrCurrentUser;
-
-			l_cstrCurrentUser = m_pSVAccess->GetCurrentUser();
-
-			if( !l_cstrCurrentUser.IsEmpty() )
+			if( !m_pSVAccess->GetCurrentUser().empty() )
 			{
-				p_rbstrUser = l_cstrCurrentUser.AllocSysString ();
+				p_rbstrUser = _bstr_t( m_pSVAccess->GetCurrentUser().c_str() ) ;
 			}
 		}
 	}

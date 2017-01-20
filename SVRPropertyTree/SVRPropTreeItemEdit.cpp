@@ -28,8 +28,8 @@
 //	useful.
 
 #include "stdafx.h"
-#include "proptree.h"
-#include "PropTreeItemEdit.h"
+#include "SVRPropTree.h"
+#include "SVRPropTreeItemEdit.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -55,11 +55,11 @@ END_MESSAGE_MAP()
 
 
 SVRPropertyItemEdit::SVRPropertyItemEdit() :
-	m_pstr(nullptr)
+	m_pValue(nullptr)
 {
 	// Initialize all variables
 	m_bShowButton      = false;
-	m_strButtonText = _T("...");
+	m_ButtonText = _T("...");
 	m_bKillFocusWorkaround = false;
 }
 
@@ -69,7 +69,7 @@ SVRPropertyItemEdit::~SVRPropertyItemEdit()
 }
 
 
-void SVRPropertyItemEdit::DrawAttribute(CDC* pDC, const RECT& rc)
+void SVRPropertyItemEdit::DrawAttribute(CDC* pDC, const RECT& rRect)
 {
 	ASSERT(nullptr != m_pProp);
 
@@ -78,10 +78,9 @@ void SVRPropertyItemEdit::DrawAttribute(CDC* pDC, const RECT& rc)
 	//pDC->SetTextColor(RGB(0,0,0));
 	pDC->SetBkMode(TRANSPARENT);
 
-	CRect r = rc;
-	CString str;
-	m_vtData.toString(str);
-	pDC->DrawText(str, r, DT_SINGLELINE|DT_VCENTER);
+	CRect DrawRect( rRect );
+	SVString Text = SvUl_SF::createSVString( m_vtData );
+	pDC->DrawText(Text.c_str(), DrawRect, DT_SINGLELINE|DT_VCENTER);
 }
 
 
@@ -250,9 +249,8 @@ void SVRPropertyItemEdit::OnRefresh()
 {
 	if (IsWindow(m_hWnd))
 	{
-		CString str;
-		m_vtData.toString(str);
-		SetWindowText(str);
+		SVString Text = SvUl_SF::createSVString( m_vtData );
+		SetWindowText( Text.c_str() );
 	}
 }
 
@@ -262,20 +260,22 @@ void SVRPropertyItemEdit::OnCommit()
 	// hide edit control
 	ShowWindow(SW_HIDE);
 
-	CString	str;
-	GetWindowText(str);
-	m_vtData.toString(m_strPrevious);
-	m_vtData.fromString(str);
-	if (m_pstr)
-		*m_pstr = str;
+	CString	Text;
+	GetWindowText( Text );
+	m_Previous = SvUl_SF::createSVString( m_vtData );
+	m_vtData.SetString( Text );
+	if( nullptr != m_pValue )
+	{
+		*m_pValue = SVString( Text );
+	}
 }
 
 void SVRPropertyItemEdit::OnUndoCommit()
 {
-	m_vtData.fromString(m_strPrevious);
-	if (m_pstr)
+	m_vtData.SetString(m_Previous.c_str());
+	if(nullptr != m_pValue)
 	{
-		*m_pstr = m_strPrevious;
+		*m_pValue = m_Previous;
 	}
 }
 
@@ -298,7 +298,7 @@ void SVRPropertyItemEdit::OnActivate()
 		if (m_bShowButton)
 		{
 			CDC* pDC = m_btnDots.GetDC();
-			CSize size = pDC->GetTextExtent(m_strButtonText);
+			CSize size = pDC->GetTextExtent( m_ButtonText.c_str(), static_cast<int> (m_ButtonText.size()) );
 			iButtonWidth = size.cx + g_buttonSpace;
 			m_btnDots.ReleaseDC(pDC);
 		}
@@ -322,7 +322,7 @@ BOOL SVRPropertyItemEdit::CreateEdit(DWORD dwStyle)
 	if ( bRet )
 	{
 		m_btnDots.Create("", WS_CHILD, CRect(0,0,0,0), m_pProp->GetCtrlParent(), 32000-GetCtrlID());
-		m_btnDots.SetWindowText(m_strButtonText);
+		m_btnDots.SetWindowText(m_ButtonText.c_str());
 		m_btnDots.SetOwner( this );
 
 		SendMessage(WM_SETFONT, (WPARAM)m_pProp->GetNormalFont()->m_hObject);
@@ -335,7 +335,7 @@ BOOL SVRPropertyItemEdit::CreateEdit(DWORD dwStyle)
 void SVRPropertyItemEdit::DisplayButton()
 {
 	CDC* pDC = m_btnDots.GetDC();
-	CSize size = pDC->GetTextExtent(m_strButtonText);
+	CSize size = pDC->GetTextExtent( m_ButtonText.c_str(), static_cast<int> (m_ButtonText.size()) );
 	m_btnDots.ReleaseDC(pDC);
 
 	int iButtonWidth = size.cx + g_buttonSpace;
@@ -378,9 +378,9 @@ BOOL SVRPropertyItemEdit::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResul
 	return bResult;
 }
 
-void SVRPropertyItemEdit::SetButtonText( const CString& sText )
+void SVRPropertyItemEdit::SetButtonText( LPCTSTR Text )
 {
-	m_strButtonText = sText;
+	m_ButtonText = Text;
 }
 
 
@@ -541,11 +541,11 @@ bool SVRPropertyItemEdit::GetItemValue(double& dblVal)
 }
 
 
-bool SVRPropertyItemEdit::GetItemValue(CString& str)
+bool SVRPropertyItemEdit::GetItemValue(SVString& rVal)
 {
 	try
 	{
-		m_vtData.toString(str);
+		rVal = SvUl_SF::createSVString( m_vtData );
 	}
 	catch(_com_error e)
 	{
@@ -698,12 +698,12 @@ bool SVRPropertyItemEdit::SetItemValue(const double dblVal)
 }
 
 
-bool SVRPropertyItemEdit::SetItemValue(LPCTSTR strSrc)
+bool SVRPropertyItemEdit::SetItemValue(LPCTSTR Val)
 {
 	try
 	{
-		m_vtData = strSrc;
-		m_pstr   = nullptr;
+		m_vtData.SetString( Val );
+		m_pValue   = nullptr;
 	}
 	catch(_com_error e)
 	{
@@ -734,7 +734,9 @@ bool SVRPropertyItemEdit::SetItemValuePtr(BYTE& bVal)
 {
 	try
 	{
-		m_vtData.AttachRef(&bVal);
+		m_vtData.Clear();
+		m_vtData.ChangeType( VT_UI1 | VT_BYREF );
+		m_vtData.pbVal = &bVal;
 	}
 	catch(_com_error e)
 	{
@@ -749,7 +751,9 @@ bool SVRPropertyItemEdit::SetItemValuePtr(short& iVal)
 {
 	try
 	{
-		m_vtData.AttachRef(&iVal);
+		m_vtData.Clear();
+		m_vtData.ChangeType( VT_I2 | VT_BYREF );
+		m_vtData.piVal = &iVal;
 	}
 	catch(_com_error e)
 	{
@@ -764,7 +768,9 @@ bool SVRPropertyItemEdit::SetItemValuePtr(USHORT& uiVal)
 {
 	try
 	{
-		m_vtData.AttachRef(&uiVal);
+		m_vtData.Clear();
+		m_vtData.ChangeType( VT_UI2 | VT_BYREF );
+		m_vtData.puiVal = &uiVal;
 	}
 	catch(_com_error e)
 	{
@@ -779,7 +785,9 @@ bool SVRPropertyItemEdit::SetItemValuePtr(long& lVal)
 {
 	try
 	{
-		m_vtData.AttachRef(&lVal);
+		m_vtData.Clear();
+		m_vtData.ChangeType( VT_I4 | VT_BYREF );
+		m_vtData.plVal = &lVal;
 	}
 	catch(_com_error e)
 	{
@@ -794,7 +802,9 @@ bool SVRPropertyItemEdit::SetItemValuePtr(ULONG& ulVal)
 {
 	try
 	{
-		m_vtData.AttachRef(&ulVal);
+		m_vtData.Clear();
+		m_vtData.ChangeType( VT_UI4 | VT_BYREF );
+		m_vtData.pulVal = &ulVal;
 	}
 	catch(_com_error e)
 	{
@@ -809,7 +819,9 @@ bool SVRPropertyItemEdit::SetItemValuePtr(int& intVal)
 {
 	try
 	{
-		m_vtData.AttachRef(&intVal);
+		m_vtData.Clear();
+		m_vtData.ChangeType( VT_INT | VT_BYREF );
+		m_vtData.pintVal = &intVal;
 	}
 	catch(_com_error e)
 	{
@@ -824,7 +836,9 @@ bool SVRPropertyItemEdit::SetItemValuePtr(UINT& uintVal)
 {
 	try
 	{
-		m_vtData.AttachRef(&uintVal);
+		m_vtData.Clear();
+		m_vtData.ChangeType( VT_UINT | VT_BYREF );
+		m_vtData.puintVal = &uintVal;
 	}
 	catch(_com_error e)
 	{
@@ -839,7 +853,9 @@ bool SVRPropertyItemEdit::SetItemValuePtr(float& fltVal)
 {
 	try
 	{
-		m_vtData.AttachRef(&fltVal);
+		m_vtData.Clear();
+		m_vtData.ChangeType( VT_R4 | VT_BYREF );
+		m_vtData.pfltVal = &fltVal;
 	}
 	catch(_com_error e)
 	{
@@ -854,7 +870,9 @@ bool SVRPropertyItemEdit::SetItemValuePtr(double& dblVal)
 {
 	try
 	{
-		m_vtData.AttachRef(&dblVal);
+		m_vtData.Clear();
+		m_vtData.ChangeType( VT_R8 | VT_BYREF );
+		m_vtData.pdblVal = &dblVal;
 	}
 	catch(_com_error e)
 	{
@@ -865,12 +883,12 @@ bool SVRPropertyItemEdit::SetItemValuePtr(double& dblVal)
 }
 
 
-bool SVRPropertyItemEdit::SetItemValuePtr(CString& strVal)
+bool SVRPropertyItemEdit::SetItemValuePtr(SVString& rVal)
 {
 	try
 	{
-		m_vtData = strVal;
-		m_pstr   = &strVal;
+		m_vtData.SetString( rVal.c_str() );
+		m_pValue = &rVal;
 	}
 	catch(_com_error e)
 	{

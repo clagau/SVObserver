@@ -45,6 +45,7 @@
 #include "SVIPChildFrm.h" 
 #include "ExtrasEngine.h"
 #include "SVStatusLibrary/GlobalPath.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -53,6 +54,9 @@
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
+
+static const TCHAR* const cMatroxNoLicense = _T("No Matrox License");
+static const TCHAR* const cGigeNoLicense = _T("No GigE License");
 #pragma endregion Declarations
 
 IMPLEMENT_DYNAMIC(SVMainFrame, CMDIFrameWnd)
@@ -414,7 +418,7 @@ void SVMainFrame::UpdateFrameTitleForDocument( LPCTSTR lpszDocName )
 		if( SVSVIMStateClass::CheckState( SV_STATE_READY | SV_STATE_RUNNING ) )
 		{
 			lstrcat( szText, _T( " - " ) );
-			lstrcat( szText, TheSVObserverApp.getConfigFileName() );
+			lstrcat( szText, TheSVObserverApp.getConfigFileName().c_str() );
 		}
 
 		// get name of currently active view
@@ -650,7 +654,7 @@ void SVMainFrame::OnUpdateStatusInfo( CCmdUI *pCmdUI )
 		}
 		case ID_INDICATOR_MODE:  // Status Bar Mode
 		{
-			CString l_strMode = _T("Mode: ");
+			SVString Mode = _T("Mode: ");
 			unsigned long l_lMode = 0;
 			GlobalRCGetMode( &l_lMode );
 			switch( l_lMode )
@@ -665,59 +669,59 @@ void SVMainFrame::OnUpdateStatusInfo( CCmdUI *pCmdUI )
 				{
 					m_wndStatusBar.m_lModeBKColor = RGB( 100, 255, 100 );
 					m_wndStatusBar.m_lModeForeColor = RGB( 0, 0, 0 );
-					l_strMode += _T("Run ");
+					Mode += _T("Run ");
 					break;
 				}
 				case SVIM_MODE_OFFLINE:
 				{
 					m_wndStatusBar.m_lModeBKColor = RGB( 255, 128, 128 );
 					m_wndStatusBar.m_lModeForeColor = RGB( 0, 0, 0 );
-					l_strMode += _T("Stop ");
+					Mode += _T("Stop ");
 					break;
 				}
 				case SVIM_MODE_REGRESSION:
 				{
 					m_wndStatusBar.m_lModeBKColor = RGB( 255, 0, 255 );
 					m_wndStatusBar.m_lModeForeColor = RGB( 0, 0, 0 );
-					l_strMode += _T("Regression ");
+					Mode += _T("Regression ");
 					break;
 				}
 				case SVIM_MODE_TEST:
 				{
 					m_wndStatusBar.m_lModeBKColor = RGB( 0, 0, 200 );
 					m_wndStatusBar.m_lModeForeColor = RGB( 255, 255, 255 );
-					l_strMode += _T("Test ");
+					Mode += _T("Test ");
 					break;
 				}
 				case SVIM_MODE_EDIT:
 				{
 					m_wndStatusBar.m_lModeBKColor = RGB( 255, 255, 75 );
 					m_wndStatusBar.m_lModeForeColor = RGB( 0, 0, 0 );
-					l_strMode += _T("Edit ");
+					Mode += _T("Edit ");
 					break;
 				}
 				case SVIM_MODE_CHANGING:
 				{
 					m_wndStatusBar.m_lModeBKColor = RGB( 255, 255, 255 );
 					m_wndStatusBar.m_lModeForeColor = RGB( 0, 0, 0 );
-					l_strMode += _T("Changing ");
+					Mode += _T("Changing ");
 					break;
 				}
 				default:
 				{
-					l_strMode += _T("Undefined");
+					Mode += _T("Undefined");
 				}
 			}
 
-			m_wndStatusBar.m_strModeText = l_strMode;
+			m_wndStatusBar.m_strModeText = Mode.c_str();
 
 			pCmdUI->Enable();
 
 			CClientDC DC( nullptr );
-			int l_Width = DC.GetTextExtent( l_strMode ).cx - ( l_strMode.GetLength() * 2 );
+			int l_Width = DC.GetTextExtent( Mode.c_str() ).cx - static_cast<int> ( Mode.size() * 2 );
 
 			m_wndStatusBar.SetPaneInfo( pCmdUI->m_nIndex, ID_INDICATOR_MODE, 0, l_Width );
-			pCtrl->SetText( l_strMode, pCmdUI->m_nIndex, SBT_OWNERDRAW );
+			pCtrl->SetText( Mode.c_str(), pCmdUI->m_nIndex, SBT_OWNERDRAW );
 
 			break;
 		}
@@ -725,26 +729,24 @@ void SVMainFrame::OnUpdateStatusInfo( CCmdUI *pCmdUI )
 		{
 			bool l_bMatroxError = false;
 			bool l_bGigeError = false;
-			CString l_strError = "";
-			CString l_strMatroxError ="No Matrox License";
-			CString l_strGigeError = "No GigE License";
+			SVString Error;
 
 			if ( !TheSVOLicenseManager().HasMatroxLicense() )
 			{
 				l_bMatroxError = true;
-				l_strError += l_strMatroxError;
+				Error += cMatroxNoLicense;
 			}
 			else
 			{
 				if ( !TheSVOLicenseManager().HasMatroxGigELicense() && TheSVObserverApp.IsMatroxGige() )
 				{
-					l_strError = l_strGigeError;
+					Error = cGigeNoLicense;
 				}
 			}
 
 			if ( (l_bMatroxError) || (l_bGigeError) )
 			{
-				m_wndStatusBar.m_strErrorText = l_strError;
+				m_wndStatusBar.m_strErrorText = Error.c_str();
 
 				pCmdUI->Enable();
 
@@ -760,15 +762,15 @@ void SVMainFrame::OnUpdateStatusInfo( CCmdUI *pCmdUI )
 				}
 
 				CClientDC DC(nullptr);
-				int lWidth = DC.GetTextExtent( l_strError ).cx - ( l_strError.GetLength() *2 ) +20;
+				int lWidth = DC.GetTextExtent( Error.c_str() ).cx - static_cast<int> ( Error.size() *2 ) + 20;
 				m_wndStatusBar.SetPaneInfo( pCmdUI->m_nIndex, ID_INDICATOR_GIGE_LICENSE_ERROR, 0, lWidth );
-				pCtrl->SetText( l_strError, pCmdUI->m_nIndex, SBT_OWNERDRAW );
+				pCtrl->SetText( Error.c_str(), pCmdUI->m_nIndex, SBT_OWNERDRAW );
 
 			}
 			else
 			{
 				m_wndStatusBar.SetPaneInfo( pCmdUI->m_nIndex,ID_INDICATOR_GIGE_LICENSE_ERROR,SBPS_DISABLED ,0);
-				pCtrl->SetText( l_strError, pCmdUI->m_nIndex, SBT_OWNERDRAW );
+				pCtrl->SetText( Error.c_str(), pCmdUI->m_nIndex, SBT_OWNERDRAW );
 			}
 			break;
 		}
@@ -942,7 +944,7 @@ HRESULT SVMainFrame::ParseToolsetScripts( SVTreeType& p_rTree )
 		;
 		while( S_OK == l_Status && nullptr != htiSubChild )
 		{
-			SVSharedPtr<CString> pToolsetScript = new CString;
+			SVSharedPtr<SVString> pToolsetScript = new SVString;
 			SVGUID ownerGuid;
 
 			SVInspectionProcess* pInspect( nullptr );
@@ -993,24 +995,23 @@ HRESULT SVMainFrame::ParseToolsetScripts( SVTreeType& p_rTree )
 				{
 					if( SVNavigateTree::GetItem( p_rTree, CTAG_TOOLSET_SCRIPT, htiSVIPDoc, svVariant ) )
 					{
-						CString newString;
-						newString.LoadString(IDS_OBJECTNAME_PAT_DELTAPOS);
+						SVString NewString = SvUl_SF::LoadSVString( IDS_OBJECTNAME_PAT_DELTAPOS );
 
-						SVString l_String = SvUl_SF::createSVString( svVariant );
+						SVString ToolsetScript = SvUl_SF::createSVString( svVariant );
 
 						// Pre-Parse Typo fix.
 						// This peice of code fixes the Angel to Angle typo.
-						SvUl_SF::searchAndReplace( l_String, _T("Axis Secondary Angel"), _T("Axis Secondary Angle") );
+						SvUl_SF::searchAndReplace( ToolsetScript, _T("Axis Secondary Angel"), _T("Axis Secondary Angle") );
 
 						// Pre-Parse Typo fix number two.
 						// This peice of code fixes the Principle to Principal typo.
-						SvUl_SF::searchAndReplace( l_String, _T("Axis Principle Angle"), _T("Axis Principal Angle") );
+						SvUl_SF::searchAndReplace( ToolsetScript, _T("Axis Principle Angle"), _T("Axis Principal Angle") );
 
 						// Pre-Parse Type fix number three.
 						// This piece of code changes "Angle delta Positive" to "Angle Delta Positive".
-						SvUl_SF::searchAndReplace( l_String, _T("Angle delta Positive"), static_cast< LPCTSTR >( newString ) );
+						SvUl_SF::searchAndReplace( ToolsetScript, _T("Angle delta Positive"), NewString.c_str() );
 
-						*pToolsetScript = l_String.c_str();
+						*pToolsetScript = ToolsetScript;
 					}
 					else if( nullptr == hItemToolset )
 					{
@@ -1318,13 +1319,12 @@ LRESULT SVMainFrame::OnDisplayChange(WPARAM p_p1, LPARAM p_p2)
 		{
 			if( WAIT_TIMEOUT == WaitForSingleObject( m_hDisplayChangedEvent, 0 ) )
 			{
-				CString l_csMessage;
-				l_csMessage.Format( "\n\n\nThe display color settings on the system have changed.\n"
-					"Images may not display correctly until this configuration is reopened." );
-				HANDLE l_hMessage = ::CreateEvent( nullptr, true, false, nullptr );
-				::SetEvent( l_hMessage );
-				ModelessMessageBox( l_csMessage, l_hMessage );
-				::CloseHandle(l_hMessage);
+				SVString Message = SvUl_SF::Format( _T("\n\n\nThe display color settings on the system have changed.\n"
+					"Images may not display correctly until this configuration is reopened.") );
+				HANDLE hMessage = ::CreateEvent( nullptr, true, false, nullptr );
+				::SetEvent( hMessage );
+				ModelessMessageBox( Message, hMessage );
+				::CloseHandle(hMessage);
 			}
 			::SetEvent( m_hDisplayChangedEvent );
 		}

@@ -133,8 +133,7 @@ void SVPublishListClass::Refresh(SVTaskObjectClass * pRootObject)
 				for( lPPQ = 0, found = false; lPPQ < lPPQSize; lPPQ++ )
 				{
 					pIOEntry = ppPPQEntries[lPPQ];
-					if( 0 == strcmp( pIOEntry->m_pValueObject->GetCompleteObjectName(), 
-									 pPublishedOutObjectInfo->PObject->GetCompleteObjectName() ) )
+					if( pIOEntry->m_pValueObject->GetCompleteName() == pPublishedOutObjectInfo->PObject->GetCompleteName() )
 					{
 						pPPQ->RemoveOutput( pIOEntry );
 						found = true;
@@ -185,11 +184,10 @@ void SVPublishListClass::Refresh(SVTaskObjectClass * pRootObject)
 				if( pValueObject )
 				{
 					SVDigitalOutputObject* pDigital( nullptr );
-					CString strName = pValueObject->GetCompleteObjectName();
 
 					if( nullptr != pConfig ){ pOutputList = pConfig->GetOutputObjectList( ); }
 
-					if( nullptr != pOutputList ){ pOutputList->GetOutput( strName, pDigital ); }
+					if( nullptr != pOutputList ){ pOutputList->GetOutput( pValueObject->GetCompleteName().c_str(), pDigital ); }
 
 					// Add Outputs to the PPQ
 					SVIOEntryHostStructPtr pIOEntry;
@@ -284,8 +282,7 @@ void SVPublishListClass::Release(SVTaskObjectClass * pRootObject)
 			for( lPPQ = 0, found = false; lPPQ < lPPQSize; lPPQ++ )
 			{
 				pIOEntry = ppPPQEntries[lPPQ];
-				if( 0 == strcmp( pIOEntry->m_pValueObject->GetCompleteObjectName(), 
-								 pPublishedOutObjectInfo->PObject->GetCompleteObjectName() ) )
+				if( pIOEntry->m_pValueObject->GetCompleteName() == pPublishedOutObjectInfo->PObject->GetCompleteName() )
 				{
 					pPPQ->RemoveOutput( pIOEntry );
 					found = true;
@@ -327,8 +324,7 @@ bool SVPublishListClass::RemovePublishedEntry( const SVGUID& RGuid )
 			for( lPPQ = 0, found = false; lPPQ < lPPQSize; lPPQ++ )
 			{
 				pIOEntry = ppPPQEntries[lPPQ];
-				if( 0 == strcmp( pIOEntry->m_pValueObject->GetCompleteObjectName(), 
-								 pPublishedOutObjectInfo->PObject->GetCompleteObjectName() ) )
+				if( pIOEntry->m_pValueObject->GetCompleteName() == pPublishedOutObjectInfo->PObject->GetCompleteName() )
 				{
 					pPPQ->RemoveOutput( pIOEntry );
 					found = true;

@@ -13,6 +13,7 @@
 #pragma region Includes
 #include "SVShared.h"
 #include "SVMatroxLibrary\SVMatroxSimpleEnums.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 namespace Seidenader { namespace SVSharedMemoryLibrary
@@ -28,9 +29,9 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 	
 		SVSharedImage(const SVSharedImage& rData);
 		const SVSharedImage& operator=(const SVSharedImage& rData);
-		void SetName(const std::string& NameName);
-		void SetFileName(const std::string& Filename);
-		void SetData(const std::string& Filename, int Status);
+		void SetName(const SVString& NameName);
+		void SetFileName(const SVString& Filename);
+		void SetData(const SVString& Filename, int Status);
 		
 		//! Build a filename 
 		//! \param filename [in,out] filename

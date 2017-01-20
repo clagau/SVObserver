@@ -30,27 +30,27 @@ SVJsonCommandManager< SVCommandProcessor >::~SVJsonCommandManager()
 }
 
 template< typename SVCommandProcessor >
-HRESULT SVJsonCommandManager< SVCommandProcessor >::ProcessJsonCommand( const std::string& p_rJsonCommand, std::string& p_rJsonResults )
+HRESULT SVJsonCommandManager< SVCommandProcessor >::ProcessJsonCommand( const SVString& rJsonCommand, SVString& rJsonResults )
 {
 	HRESULT l_Status = S_OK;
 
-	if( SVCommandProcessor::IsAsyncCommand( p_rJsonCommand ) )
+	if( SVCommandProcessor::IsAsyncCommand( rJsonCommand ) )
 	{
-		l_Status = ProcessAsyncJsonCommand( p_rJsonCommand, p_rJsonResults );
+		l_Status = ProcessAsyncJsonCommand( rJsonCommand, rJsonResults );
 	}
 	else
 	{
-		l_Status = SVCommandProcessor::ProcessCommand( p_rJsonCommand, p_rJsonResults );
+		l_Status = SVCommandProcessor::ProcessCommand( rJsonCommand, rJsonResults );
 	}
 	return l_Status;
 }
 
 template< typename SVCommandProcessor >
-HRESULT SVJsonCommandManager< SVCommandProcessor >::ProcessJsonNotification( const std::string& p_rJsonNotification )
+HRESULT SVJsonCommandManager< SVCommandProcessor >::ProcessJsonNotification( const SVString& rJsonNotification )
 {
 	HRESULT l_Status = S_OK;
 
-	l_Status = m_SocketServer.WriteJson( p_rJsonNotification );
+	l_Status = m_SocketServer.WriteJson( rJsonNotification );
 
 	return l_Status;
 }
@@ -76,19 +76,19 @@ void CALLBACK SVJsonCommandManager< SVCommandProcessor >::APCThreadProcess( DWOR
 }
 
 template< typename SVCommandProcessor >
-HRESULT SVJsonCommandManager< SVCommandProcessor >::ProcessAsyncJsonCommand( const std::string& p_rJsonCommand, std::string& p_rJsonResults )
+HRESULT SVJsonCommandManager< SVCommandProcessor >::ProcessAsyncJsonCommand( const SVString& rJsonCommand, SVString& rJsonResults )
 {
 	HRESULT l_Status = S_OK;
 
 	if( ::InterlockedExchange( &m_ProcessingAsyncCommand, 1 ) == 0 )
 	{
-		if( !( p_rJsonCommand.empty() ) )
+		if( !( rJsonCommand.empty() ) )
 		{
 			m_JsonCommandDataPtr = new SVJsonCommandData();
 
 			if( !( m_JsonCommandDataPtr.empty() ) )
 			{
-				l_Status = m_JsonCommandDataPtr->SetJsonCommand( p_rJsonCommand );
+				l_Status = m_JsonCommandDataPtr->SetJsonCommand( rJsonCommand );
 
 				if( S_OK == l_Status )
 				{
@@ -101,7 +101,7 @@ HRESULT SVJsonCommandManager< SVCommandProcessor >::ProcessAsyncJsonCommand( con
 
 					if( S_OK == l_Status )
 					{
-						p_rJsonResults = m_JsonCommandDataPtr->m_JsonResults;
+						rJsonResults = m_JsonCommandDataPtr->GetJsonResultsObject();
 					}
 				}
 			}
@@ -124,7 +124,7 @@ HRESULT SVJsonCommandManager< SVCommandProcessor >::ProcessAsyncJsonCommand( con
 	}
 	if (S_OK != l_Status)
 	{
-		SVCommandProcessor::BuildErrorResponse(p_rJsonCommand, p_rJsonResults, l_Status);
+		SVCommandProcessor::BuildErrorResponse(rJsonCommand, rJsonResults, l_Status);
 	}
 	return l_Status;
 }
@@ -136,7 +136,7 @@ void SVJsonCommandManager< SVCommandProcessor >::ThreadProcess( bool& p_WaitForE
 
 	if( ( m_ProcessingAsyncCommand == 1 ) && !( l_CommandDataPtr.empty() ) )
 	{
-		SVCommandProcessor::ProcessAsyncCommand( l_CommandDataPtr->GetJsonCommand(), l_CommandDataPtr->m_JsonResults );
+		SVCommandProcessor::ProcessAsyncCommand( l_CommandDataPtr->GetJsonCommand(), l_CommandDataPtr->GetJsonResultsObject() );
 
 		l_CommandDataPtr->NotifyRequestComplete();
 	}

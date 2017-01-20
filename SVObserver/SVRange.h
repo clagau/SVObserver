@@ -15,6 +15,7 @@
 #include "SVOCore/SVTaskObject.h"
 #include "SVLibrary/ISVCancel.h"
 #include "ObjectInterfaces\RangeEnum.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -81,7 +82,7 @@ public:
 	// Parameter:  ref <out>:  the returned indirect value string
 	// Returns:  HRESULT:  S_OK if successful
 	//************************************
-	HRESULT GetIndirectValue(RangeEnum::ERange ra, CString& ref);
+	HRESULT GetIndirectValue( RangeEnum::ERange ra, SVString& rValue );
 
 	//************************************
 	// Description:  True if an indirect value exist.

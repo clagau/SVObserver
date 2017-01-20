@@ -16,19 +16,16 @@
 #include "SVObjectLibrary\SVClsids.h"
 #include "SVObjectLibrary\SVToolsetScriptTags.h"
 #include "SVObjectLibrary/SVObjectAttributeClass.h"
-#include "SVLibrary/StringEscape.h"
+#include "SVUtilityLibrary/SVStringConversions.h"
 #pragma endregion Includes
 
-namespace	// only for this file
-{
-	const CString DEFAULT_TAG_SAVE(_T(".Default"));
-	const CString BUCKET_TAG_SAVE(_T(".Array"));	// for backwards compatibility
-	const CString ARRAY_TAG_SAVE(_T(".Array_Elements"));	// new style; one bucket, all array values
+#pragma region Declarations
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+#endif
+#pragma endregion Declarations
 
-	const CString DEFAULT_TAG_LOAD(_T("Default"));
-	const CString BUCKET_TAG_LOAD(_T("Array"));	// for backwards compatibility
-	const CString ARRAY_TAG_LOAD(_T("Array_Elements"));	// new style; one bucket, all array values
-}	// end file scope namespace
 
 SV_IMPLEMENT_CLASS(SVStaticStringValueObjectClass, SVStaticStringValueObjectClassGuid);
 
@@ -73,11 +70,11 @@ void SVStaticStringValueObjectClass::Persist(SVObjectWriter& rWriter)
 
 	// Get the Data Values (Member Info, Values)
 	// Check for DoubleQuotes in variable
-	CString tmp = DefaultValue();
-	SvLib::AddEscapeSpecialCharacters(tmp, true);
+	SVString tmp = DefaultValue();
+	SvUl::AddEscapeSpecialCharacters(tmp, true);
 	
 	_variant_t value;
-	value.SetString(tmp);
+	value.SetString(tmp.c_str());
 	rWriter.WriteAttribute(scDefaultTag, value);
 	value.Clear();
 
@@ -91,8 +88,8 @@ void SVStaticStringValueObjectClass::Persist(SVObjectWriter& rWriter)
 	for (int i = 0; i < m_iArraySize; i++)
 	{
 		tmp = Element(0, i); 
-		SvLib::AddEscapeSpecialCharacters(tmp, true);
-		value.SetString(tmp);
+		SvUl::AddEscapeSpecialCharacters(tmp, true);
+		value.SetString(tmp.c_str());
 		list.push_back(value);
 		value.Clear();
 	}
@@ -107,25 +104,25 @@ HRESULT  SVStaticStringValueObjectClass::SetObjectValue(SVObjectAttributeClass* 
 	HRESULT hr = S_FALSE;
 	BOOL bOk = FALSE;
 	
-	CString  csTemp;
-	SvCl::SVObjectCStringArrayClass svArray;
-	bucket_type l_Buckets(BucketsNoAssert());
+	SVString  csTemp;
+	SvCl::SVObjectSVStringArrayClass svArray;
+	bucket_type l_Buckets(BucketNoAssert());
 	array_type l_Array;
 	
-	if ( bOk = pDataObject->GetAttributeData(DEFAULT_TAG_LOAD, svArray) )
+	if ( bOk = pDataObject->GetAttributeData(SvOi::cDefaultTag, svArray) )
 	{
 		for (int i = 0; i < svArray.GetSize(); i++)
 		{
 			DefaultValue() = svArray[i];
 			
 			// Remove any escapes
-			SvLib::RemoveEscapedSpecialCharacters(DefaultValue(), true);
+			SvUl::RemoveEscapedSpecialCharacters(DefaultValue(), true);
 		}
 	}
-	else if ( bOk = pDataObject->GetAttributeData(BUCKET_TAG_LOAD, l_Buckets, DefaultValue() ) )
+	else if ( bOk = pDataObject->GetAttributeData(SvOi::cBucketTag, l_Buckets, DefaultValue() ) )
 	{
 		// Remove any escapes
-		SvLib::RemoveEscapedSpecialCharacters(l_Buckets[0][0], true);
+		SvUl::RemoveEscapedSpecialCharacters(l_Buckets[0][0], true);
 
 		if ( ArraySize() == 1 )
 		{
@@ -141,12 +138,12 @@ HRESULT  SVStaticStringValueObjectClass::SetObjectValue(SVObjectAttributeClass* 
 		}
 	}
 	// new-style: store all array elements:
-	else if ( bOk = pDataObject->GetArrayData(ARRAY_TAG_LOAD, l_Array, DefaultValue() ) )
+	else if ( bOk = pDataObject->GetArrayData(SvOi::cArrayTag, l_Array, DefaultValue() ) )
 	{
 		for (size_t i = 0; i < l_Array.size(); i++)
 		{
 			// Remove any escapes
-			SvLib::RemoveEscapedSpecialCharacters(l_Array[i], true);
+			SvUl::RemoveEscapedSpecialCharacters(l_Array[i], true);
 		}
 
 		SetArraySize( static_cast<int>(l_Array.size()) );
@@ -167,13 +164,13 @@ HRESULT  SVStaticStringValueObjectClass::SetObjectValue(SVObjectAttributeClass* 
 			DefaultValue() = svArray[i];
 			
 			// Remove any escapes
-			SvLib::RemoveEscapedSpecialCharacters(DefaultValue(), true);
+			SvUl::RemoveEscapedSpecialCharacters(DefaultValue(), true);
 		}
 	}
 	else if ( bOk = pDataObject->GetAttributeData("StrArray", l_Buckets, DefaultValue() ) )
 	{
 		// Remove any escapes
-		SvLib::RemoveEscapedSpecialCharacters(l_Buckets[0][0], true);
+		SvUl::RemoveEscapedSpecialCharacters(l_Buckets[0][0], true);
 
 		if ( ArraySize() == 1 )
 		{
@@ -198,52 +195,52 @@ HRESULT  SVStaticStringValueObjectClass::SetObjectValue(SVObjectAttributeClass* 
 	return hr;
 }
 
-HRESULT SVStaticStringValueObjectClass::SetValueAt( int iBucket, int iIndex, const VARIANT& rvtValue )
+HRESULT SVStaticStringValueObjectClass::SetValueAt( int iBucket, int iIndex, const VARIANT& rValue )
 {
-	if ( VT_BSTR == rvtValue.vt )
+	if ( VT_BSTR == rValue.vt )
 	{
-		return base::SetValueAt(iBucket, iIndex, CString(rvtValue.bstrVal));
+		return base::SetValueAt(iBucket, iIndex, SvUl_SF::createSVString( _bstr_t(rValue.bstrVal) ));
 	}
 	assert(false);
 	return S_FALSE;
 }
 
-HRESULT SVStaticStringValueObjectClass::GetValueAt( int iBucket, int iIndex, long& rlValue) const
+HRESULT SVStaticStringValueObjectClass::GetValueAt( int iBucket, int iIndex, long& rValue) const
 {
-	CString strValue;
+	SVString Value;
 
-	HRESULT hr =  base::GetValueAt( iBucket, iIndex, strValue );
-	rlValue = atoi( strValue );
+	HRESULT hr =  base::GetValueAt( iBucket, iIndex, Value );
+	rValue = atoi( Value.c_str() );
 
 	return hr;
 }
 
-HRESULT SVStaticStringValueObjectClass::GetValueAt( int iBucket, int iIndex, double& rdValue) const
+HRESULT SVStaticStringValueObjectClass::GetValueAt( int iBucket, int iIndex, double& rValue) const
 {
-	CString strValue;
+	SVString Value;
 
-	HRESULT hr = base::GetValueAt( iBucket, iIndex, strValue );
-	rdValue = atof( strValue );
+	HRESULT hr = base::GetValueAt( iBucket, iIndex, Value );
+	rValue = atof( Value.c_str() );
 
 	return hr;
 }
 
-HRESULT SVStaticStringValueObjectClass::GetValueAt( int iBucket, int iIndex, VARIANT& rvtValue ) const
+HRESULT SVStaticStringValueObjectClass::GetValueAt( int iBucket, int iIndex, VARIANT& rValue ) const
 {
-	CString strVal;
+	SVString Value;
 
 	_variant_t l_Temp;
-	l_Temp.Attach( rvtValue );
-	HRESULT hr = base::GetValueAt( iBucket, iIndex, strVal );
+	l_Temp.Attach( rValue );
+	HRESULT hr = base::GetValueAt( iBucket, iIndex, Value );
 	if( S_OK == hr )
 	{
-		l_Temp = strVal;
+		l_Temp = Value.c_str();
 	}
 	else
 	{
 		l_Temp.Clear();
 	}
-	rvtValue = l_Temp.Detach();
+	rValue = l_Temp.Detach();
 
 	return hr;
 }

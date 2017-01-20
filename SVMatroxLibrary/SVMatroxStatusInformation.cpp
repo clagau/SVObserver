@@ -11,8 +11,6 @@
 
 #include "stdafx.h"
 #include "SVMatroxStatusInformation.h"
-
-#include "SVUtilityLibrary/SVString.h"
 #include "SVMatroxImagingLibrary.h"
 #include "SVMatroxErrorEnum.h"
 

@@ -132,14 +132,16 @@ BOOL SVParserProgressDialog::AddParser( unsigned long parserHandle, SVObjectScri
 		StaticSharedPtr pStaticTextCtrl = nullptr;
 
 		// Get Progress Control name...
-		CString text;
+		SVString Temp;
 		if( pParser->GetOwnerObject() )
-			text = pParser->GetOwnerObject()->GetName();
+		{
+			Temp = pParser->GetOwnerObject()->GetName();
+		}
 
 		if( SVInspectionProcess* pInspection = dynamic_cast< SVInspectionProcess* >( pParser->GetOwnerObject() ) )
 		{
 			// Get the Document Name...
-			text = pInspection->GetName();
+			Temp = pInspection->GetName();
 		}
 
 		// Add to Total Size
@@ -158,7 +160,7 @@ BOOL SVParserProgressDialog::AddParser( unsigned long parserHandle, SVObjectScri
 		parserControl.pParser			= pParser;
 		parserControl.pProgressCtrl		= pProgressCtrl;
 		parserControl.pStaticTextCtrl	= pStaticTextCtrl;
-		parserControl.Text = text;	
+		parserControl.Text = Temp;	
 		m_parserControlList.insert( std::make_pair(parserHandle, parserControl) );
 	}
 	return rc;
@@ -382,7 +384,7 @@ void SVParserProgressDialog::SetProgressLocations()
 		SVParserProgressControlStruct& l_rParserControl = it->second;
 
 		// Get Progress Control name...
-		CString text( l_rParserControl.Text );
+		SVString Temp( l_rParserControl.Text );
 		ProgressCtrlSharedPtr pProgressCtrl = nullptr;
 		StaticSharedPtr pStaticTextCtrl = nullptr;
 
@@ -469,7 +471,7 @@ void SVParserProgressDialog::SetProgressLocations()
 
 		// Create a new static text control
 		pStaticTextCtrl = new CStatic();
-		pStaticTextCtrl->Create( text, WS_VISIBLE | WS_CHILD, textRect, this );
+		pStaticTextCtrl->Create( Temp.c_str(), WS_VISIBLE | WS_CHILD, textRect, this );
 
 		// Set the Font
 		CFont* pFont = GetFont();
@@ -498,7 +500,7 @@ BOOL SVParserProgressDialog::OnInitDialog()
 	if( m_parserControlList.size() )
 	{
 		SVParserProgressControlStruct& parserControl = m_parserControlList.begin()->second;
-		m_staticTextCtrl.SetWindowText( parserControl.Text );
+		m_staticTextCtrl.SetWindowText( parserControl.Text.c_str() );
 
 		SetProgressLocations();
 

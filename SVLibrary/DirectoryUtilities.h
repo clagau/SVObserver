@@ -14,9 +14,7 @@
 //Moved to precompiled header: #include <errno.h>
 //DirectoryUtilities.h moved from SVCmnLib to SVLibrary 
 
-BOOL CreateDirPath(CString szPath);
-HRESULT GetSystemErrorText(DWORD dwError, CString & szMsg); ///< also in SVDriveInitDlg.cpp
-DWORD GetLastSystemErrorText(CString & szMsg); ///< also in SVDriveInitDlg.cpp
+BOOL CreateDirPath( LPCTSTR Path);
 bool CopyFilesInDirectory(LPCTSTR sourceDirectory, LPCTSTR destinationDirectory); ///< non-recursively copies all files in sourceDirectory to destinationDirectory
 
 //************************************
@@ -25,12 +23,12 @@ bool CopyFilesInDirectory(LPCTSTR sourceDirectory, LPCTSTR destinationDirectory)
 /// \param sourceDirectory [in] old name of the directory to be moved 
 /// \param destinationDirectory [in] new name of the directory to be moved 
 //************************************
-void moveContainedDirectory(const CString &containingDirectoryPath,const CString &sourceDirectory,const CString &destinationDirectory);
+void moveContainedDirectory( LPCTSTR containingDirectoryPath, LPCTSTR sourceDirectory, LPCTSTR destinationDirectory );
 
 
 //************************************
 /// removes a directory and all its content
-/// \param path [in] path of the directory to be removed
+/// \param Path [in] path of the directory to be removed
 //************************************
-void deleteTree(const CString &path);
+void deleteTree( LPCTSTR Path);
 

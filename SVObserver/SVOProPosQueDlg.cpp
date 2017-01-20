@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   15 May 2014 11:25:46  $
 // ******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVOProPosQueDlg.h"
 #include "SVOConfigAssistantDlg.h"
@@ -19,6 +20,8 @@
 #include "SVOInspectionObj.h"
 #include "TriggerInformation/SVOTriggerObj.h"
 #include "SVOResource\ConstGlobalSvOr.h"
+#include "SVUtilityLibrary/SVString.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -87,28 +90,28 @@ END_MESSAGE_MAP()
 void CSVOProPosQueDlg::OnBtnAddVc() 
 {
     int iCnt = m_pParent->GetCameraListCount();
-    CString sCameraName;
     SVOCameraObjPtr pCameraObj;
     SVOPPQObjPtr pPPQObj( nullptr );
-    CString sPPQ;
     int iPPQ = m_ctlPPQList.GetCurSel();
 
     if ( iPPQ != LB_ERR)
     {
-
+		CString PPQName;
 		SvMc::CSVOSelectItemListDlg Dlg;
         
-		m_ctlPPQList.GetText(iPPQ,sPPQ);
-        pPPQObj = m_pParent->GetPPQObjectByName(sPPQ);
+		m_ctlPPQList.GetText(iPPQ,PPQName);
+        pPPQObj = m_pParent->GetPPQObjectByName( PPQName);
 
         for (int i = 0; i < iCnt; i++)
         {
             pCameraObj = m_pParent->GetCameraObject(i);
-            if ( m_ctlVCList.FindStringExact(-1,pCameraObj->GetCameraDisplayName()) == LB_ERR )
-                Dlg.AddListBoxItem(pCameraObj->GetCameraDisplayName());
+            if ( m_ctlVCList.FindStringExact(-1,pCameraObj->GetCameraDisplayName().c_str()) == LB_ERR )
+			{
+                Dlg.AddListBoxItem(pCameraObj->GetCameraDisplayName().c_str());
+			}
         }
 
-        Dlg.SetDisplayName("Attach Camera");
+        Dlg.SetDisplayName(_T("Attach Camera"));
         if( IDOK == Dlg.DoModal() )
         {
             if (!Dlg.m_sSelectItemListValue.IsEmpty())
@@ -118,7 +121,7 @@ void CSVOProPosQueDlg::OnBtnAddVc()
                     m_ctlVCList.AddString(Dlg.m_sSelectItemListValue);
                     pPPQObj->AttachCameraToPPQ(Dlg.m_sSelectItemListValue);
                     m_pParent->SetModified(TRUE);
-                    m_pParent->ItemChanged(PPQ_DLG,sPPQ,ITEM_PPQ_ADD_CAM);
+                    m_pParent->ItemChanged(PPQ_DLG,PPQName,ITEM_PPQ_ADD_CAM);
                 }
             }
         }
@@ -128,13 +131,8 @@ void CSVOProPosQueDlg::OnBtnAddVc()
 void CSVOProPosQueDlg::OnBtnAddVi() 
 {
     int iCnt = m_pParent->GetInspectionListCount();
-    CString sInsname;
     SVOInspectionObjPtr pInspectionObj( nullptr );
 	SVOPPQObjPtr pPPQObj( nullptr );
-    CString sPPQ;
-
-    CString sInspectName;
-    CString sInspectLabel;
 
     int iPPQ = m_ctlPPQList.GetCurSel();
 
@@ -142,20 +140,23 @@ void CSVOProPosQueDlg::OnBtnAddVi()
     {
 		SvMc::CSVOSelectItemListDlg Dlg;
         
-		m_ctlPPQList.GetText(iPPQ,sPPQ);
-        pPPQObj = m_pParent->GetPPQObjectByName(sPPQ);
+		CString PPQName;
+		SVString InspectName;
+		SVString InspectLabel;
+		m_ctlPPQList.GetText(iPPQ, PPQName);
+        pPPQObj = m_pParent->GetPPQObjectByName( PPQName );
 
         for (int i = 0; i < iCnt; i++)
         {
             pInspectionObj = m_pParent->GetInspectionObject(i);
 			if( nullptr != pInspectionObj )
 			{
-	            sInspectName = pInspectionObj->GetInspectionName();
-		        sInspectLabel = pInspectionObj->GetInspectionLabelName();
+	            InspectName = pInspectionObj->GetInspectionName();
+		        InspectLabel = pInspectionObj->GetInspectionLabelName();
 			}
-            if ( !m_pParent->IsInspectUsed(sInspectLabel) )
+            if ( !m_pParent->IsInspectUsed(InspectLabel.c_str()) )
             {
-                Dlg.AddListBoxItem(sInspectName);
+                Dlg.AddListBoxItem(InspectName.c_str());
             }
         }
 
@@ -168,12 +169,12 @@ void CSVOProPosQueDlg::OnBtnAddVi()
                 if (m_ctlVIPList.FindStringExact(-1, Dlg.m_sSelectItemListValue) == LB_ERR)
                 {
                     m_ctlVIPList.AddString( Dlg.m_sSelectItemListValue );
-                    m_pParent->AddUsedInspect(m_pParent->GetInspectionLabelFromName( Dlg.m_sSelectItemListValue ));
+                    m_pParent->AddUsedInspect(m_pParent->GetInspectionLabelFromName( Dlg.m_sSelectItemListValue ).c_str());
                 
-                    pPPQObj->AttachInspectionToPPQ(m_pParent->GetInspectionLabelFromName( Dlg.m_sSelectItemListValue ));
+                    pPPQObj->AttachInspectionToPPQ(m_pParent->GetInspectionLabelFromName( Dlg.m_sSelectItemListValue ).c_str());
                     m_pParent->SetModified(TRUE);
-                    m_pParent->ItemChanged(PPQ_DLG, Dlg.m_sSelectItemListValue,ITEM_PPQ_ADD_INS);
-                    m_pParent->ItemChanged(PPQ_DLG,pPPQObj->GetPPQName(),ITEM_PPQ_ATTACH_INS);
+                    m_pParent->ItemChanged(PPQ_DLG, Dlg.m_sSelectItemListValue, ITEM_PPQ_ADD_INS);
+                    m_pParent->ItemChanged(PPQ_DLG, pPPQObj->GetPPQName().c_str(), ITEM_PPQ_ATTACH_INS);
                 }
             }
         }
@@ -183,15 +184,14 @@ void CSVOProPosQueDlg::OnBtnAddVi()
 void CSVOProPosQueDlg::OnBtnAddVt() 
 {
     int iTrigCount = m_pParent->GetTriggerListCount();
-    CString sTriggerName;
     SvTi::SVOTriggerObjPtr pTriggerObj( nullptr );
 	SVOPPQObjPtr pPPQObj( nullptr );
-    CString sPPQ;
     int iPPQ = m_ctlPPQList.GetCurSel();
 
     if ( iPPQ != LB_ERR )
     {       
-        CString sCurrentTrig;
+		CString sPPQ;
+		CString sCurrentTrig;
 		SvMc::CSVOSelectItemListDlg Dlg;
 
         m_ctlPPQList.GetText(iPPQ,sPPQ);
@@ -202,15 +202,15 @@ void CSVOProPosQueDlg::OnBtnAddVt()
 
         for (int i = 0; i < iTrigCount; i++)
         {
-			sTriggerName.Empty();
+			SVString TriggerName;
             pTriggerObj = m_pParent->GetTriggerObject(i);
 			if( nullptr != pTriggerObj )
 			{
-				sTriggerName = pTriggerObj->GetTriggerDisplayName();
+				TriggerName = pTriggerObj->GetTriggerDisplayName();
 			}
-            if (!m_pParent->IsTriggerUsed(sTriggerName))
+            if (!m_pParent->IsTriggerUsed( TriggerName.c_str() ))
             {
-                Dlg.AddListBoxItem(sTriggerName);
+                Dlg.AddListBoxItem( TriggerName.c_str() );
             }
         }
 
@@ -219,14 +219,14 @@ void CSVOProPosQueDlg::OnBtnAddVt()
         {
             if (!Dlg.m_sSelectItemListValue.IsEmpty())
             {
-                CString sNewTrig = Dlg.m_sSelectItemListValue;
-                m_ctlVTEdit.SetWindowText(sNewTrig);
+                SVString NewTrigger = Dlg.m_sSelectItemListValue;
+                m_ctlVTEdit.SetWindowText( NewTrigger.c_str() );
                 pPPQObj->DetachTriggerFromPPQ();
-                pPPQObj->AttachTriggerToPPQ(sNewTrig);
-                m_pParent->AddUsedTrigger(sNewTrig);
-                if (!sNewTrig.IsEmpty())
+                pPPQObj->AttachTriggerToPPQ( NewTrigger.c_str() );
+                m_pParent->AddUsedTrigger( NewTrigger.c_str() );
+                if (!NewTrigger.empty())
                 {
-                    if (sNewTrig != sCurrentTrig)
+                    if( NewTrigger != sCurrentTrig.GetString() )
                     {//find position of sCurrenTrig in list and remove it...
                         m_pParent->RemoveUsedTrigger(sCurrentTrig);
                         m_pParent->SetModified(TRUE);
@@ -243,24 +243,23 @@ void CSVOProPosQueDlg::OnBtnAddVt()
 void CSVOProPosQueDlg::OnBtnDeletePpq() 
 {
     int iCurSel = m_ctlPPQList.GetCurSel();
-    CString sPPQ;
 	SVOPPQObjPtr pPPQObj( nullptr );
 
     if (iCurSel != LB_ERR)
     {
-        m_ctlPPQList.GetText(iCurSel,sPPQ);
-        pPPQObj = m_pParent->GetPPQObjectByName(sPPQ); 
+		CString PPQName;
+        m_ctlPPQList.GetText(iCurSel, PPQName);
+        pPPQObj = m_pParent->GetPPQObjectByName( PPQName ); 
          
         int iInsCnt = pPPQObj->GetAttachedInspectionCount();
 
         for (int i = 0; i < iInsCnt; i++)
         {
-            CString sInsName = pPPQObj->GetAttachedInspection(i);
-            m_pParent->ItemChanged(PPQ_DLG,m_pParent->GetInspectionNameFromLabel(sInsName),ITEM_PPQ_DEL_INS);
+            SVString InspectionName = pPPQObj->GetAttachedInspection(i);
+            m_pParent->ItemChanged(PPQ_DLG, m_pParent->GetInspectionNameFromLabel(InspectionName.c_str()).c_str(), ITEM_PPQ_DEL_INS);
         }
 
-
-        m_pParent->RemovePPQFromList(sPPQ);
+        m_pParent->RemovePPQFromList( PPQName );
         m_ctlPPQList.DeleteString(iCurSel);
 
         if (iCurSel > 0)
@@ -273,20 +272,20 @@ void CSVOProPosQueDlg::OnBtnDeletePpq()
         }
         OnSelchangeLstPpqList();
         m_pParent->SetModified(TRUE);
-        m_pParent->ItemChanged(PPQ_DLG,sPPQ,ITEM_ACTION_DELETE);
+        m_pParent->ItemChanged(PPQ_DLG, PPQName, ITEM_ACTION_DELETE);
     }
 }
 
 void CSVOProPosQueDlg::OnBtnNewPpq() 
 {
-    CString sNewPPQ = m_pParent->GetNextPPQName();
-    m_pParent->AddToPPQList(sNewPPQ);
-    int iPos = m_ctlPPQList.AddString(sNewPPQ);
+    SVString NewPPQ = m_pParent->GetNextPPQName();
+    m_pParent->AddToPPQList( NewPPQ.c_str() );
+    int iPos = m_ctlPPQList.AddString( NewPPQ.c_str() );
     m_ctlPPQList.SetCurSel(iPos);
     m_pParent->SetModified(TRUE);
     OnSelchangeLstPpqList();
     m_pParent->SetModified(TRUE);
-    m_pParent->ItemChanged(PPQ_DLG,sNewPPQ,ITEM_ACTION_NEW);
+    m_pParent->ItemChanged( PPQ_DLG, NewPPQ.c_str(), ITEM_ACTION_NEW);
 }
 
 void CSVOProPosQueDlg::OnBtnPropPpq() 
@@ -295,9 +294,9 @@ void CSVOProPosQueDlg::OnBtnPropPpq()
     int iCurSel = m_ctlPPQList.GetCurSel();
     if ( iCurSel != LB_ERR )
     {
-        CString sTxt;
-        m_ctlPPQList.GetText(iCurSel,sTxt);
-        SVOPPQObjPtr pPPQObj = m_pParent->GetPPQObjectByName(sTxt);
+        CString PPQName;
+        m_ctlPPQList.GetText(iCurSel,PPQName);
+        SVOPPQObjPtr pPPQObj = m_pParent->GetPPQObjectByName(PPQName);
 		if( nullptr != pPPQObj )
 		{
 			l_bSrcImgProp = pPPQObj->GetMaintainSourceImageProperty();
@@ -315,10 +314,10 @@ void CSVOProPosQueDlg::OnBtnPropPpq()
 				if ( l_bSrcImgProp != pPPQObj->GetMaintainSourceImageProperty() )
 				{
 					// property value changed 
-					m_pParent->ItemChanged( PPQ_DLG, sTxt, ITEM_PPQ_PROP_SRC_IMG );
+					m_pParent->ItemChanged( PPQ_DLG, PPQName, ITEM_PPQ_PROP_SRC_IMG );
 				}
 				//send down general message that properties have changed
-				m_pParent->ItemChanged( PPQ_DLG, sTxt, ITEM_ACTION_PROP );
+				m_pParent->ItemChanged( PPQ_DLG, PPQName, ITEM_ACTION_PROP );
 	        }
 		}
     }
@@ -330,35 +329,35 @@ void CSVOProPosQueDlg::OnBtnRemoveVc()
 	SVOPPQObjPtr pPPQObj( nullptr );
     int iCurPPQ = m_ctlPPQList.GetCurSel();
     int iCurCam = m_ctlVCList.GetCurSel();
-    CString sPPQ;
-    CString sCam;
 
     if (iCurCam != LB_ERR)
     {
-        m_ctlPPQList.GetText(iCurPPQ,sPPQ);
-        m_ctlVCList.GetText(iCurCam,sCam);
-        pPPQObj = m_pParent->GetPPQObjectByName(sPPQ);
-        pPPQObj->DetachCameraFromPPQ(sCam);
+		CString PPQName;
+		CString CameraName;
+        m_ctlPPQList.GetText( iCurPPQ, PPQName );
+        m_ctlVCList.GetText( iCurCam, CameraName );
+        pPPQObj = m_pParent->GetPPQObjectByName( PPQName );
+        pPPQObj->DetachCameraFromPPQ( CameraName );
         m_ctlVCList.DeleteString(iCurCam);
 
-		CString sInspect;
+		SVString InspectionName;
 		long lSize;
 		long l;
 
 		lSize = pPPQObj->GetAttachedInspectionCount();
 		for( l = 0; l < lSize; l++ )
 		{
-			sInspect = pPPQObj->GetAttachedInspection( l );
-			pInspectionObj = m_pParent->GetInspectionObjectByName( sInspect );
-			if( nullptr != pInspectionObj && sCam == pInspectionObj->GetToolsetImage() )
+			InspectionName = pPPQObj->GetAttachedInspection( l );
+			pInspectionObj = m_pParent->GetInspectionObjectByName( InspectionName.c_str() );
+			if( nullptr != pInspectionObj && CameraName == pInspectionObj->GetToolsetImage().c_str() )
 			{
 				pInspectionObj->SetToolsetImage( _T("") );
 			}// end if
 
 		}// end for
 
-        m_pParent->SetModified(TRUE);
-        m_pParent->ItemChanged(PPQ_DLG,sPPQ,ITEM_PPQ_DEL_CAM);
+        m_pParent->SetModified( true );
+        m_pParent->ItemChanged( PPQ_DLG, PPQName, ITEM_PPQ_DEL_CAM);
 
     }// end if
 }
@@ -367,39 +366,38 @@ void CSVOProPosQueDlg::OnBtnRemoveVi()
 {
 	SVOPPQObjPtr pPPQObj( nullptr );
     int iCurPPQ = m_ctlPPQList.GetCurSel();
-    CString sPPQName;
     int iCurIns = m_ctlVIPList.GetCurSel();
-    CString sInsName;
 
     if (iCurIns != LB_ERR)
     {
-        m_ctlVIPList.GetText(iCurIns,sInsName);
-        m_ctlPPQList.GetText(iCurPPQ,sPPQName);
+		CString PPQName;
+		CString InspectorName;
+		m_ctlVIPList.GetText( iCurIns, InspectorName );
+        m_ctlPPQList.GetText( iCurPPQ, PPQName );
         m_ctlVIPList.DeleteString(iCurIns);
-        pPPQObj = m_pParent->GetPPQObjectByName(sPPQName);
-        pPPQObj->DetachInspectionFromPPQ(m_pParent->GetInspectionLabelFromName(sInsName));
-        m_pParent->RemoveUsedInspect(m_pParent->GetInspectionLabelFromName(sInsName));
-        m_pParent->SetModified(TRUE);
-        m_pParent->ItemChanged(PPQ_DLG,sInsName,ITEM_PPQ_DEL_INS);
+        pPPQObj = m_pParent->GetPPQObjectByName( PPQName );
+        pPPQObj->DetachInspectionFromPPQ(m_pParent->GetInspectionLabelFromName( InspectorName ).c_str());
+        m_pParent->RemoveUsedInspect(m_pParent->GetInspectionLabelFromName( InspectorName ).c_str());
+        m_pParent->SetModified( true );
+        m_pParent->ItemChanged( PPQ_DLG, InspectorName, ITEM_PPQ_DEL_INS);
         if ( pPPQObj->GetAttachedInspectionCount() < 1 )
         {
-            m_pParent->ItemChanged(PPQ_DLG,sPPQName,ITEM_PPQ_DETACH_INS);
+            m_pParent->ItemChanged(PPQ_DLG,PPQName,ITEM_PPQ_DETACH_INS);
         }
-
     }
 }
 
 void CSVOProPosQueDlg::OnBtnRemoveVt() 
 {
-    CString sCurrent;
-    CString sCurPPQ;
 	SVOPPQObjPtr pPPQObj( nullptr );
     int iCurPPQ = m_ctlPPQList.GetCurSel();
 
     if ( iCurPPQ != LB_ERR )
     {        
-        m_ctlPPQList.GetText(iCurPPQ,sCurPPQ);
-        pPPQObj = m_pParent->GetPPQObjectByName(sCurPPQ);
+		CString sCurrent;
+		CString PPQName;
+        m_ctlPPQList.GetText( iCurPPQ, PPQName );
+        pPPQObj = m_pParent->GetPPQObjectByName( PPQName );
 
         m_ctlVTEdit.GetWindowText(sCurrent);
         if (!sCurrent.IsEmpty())
@@ -407,10 +405,10 @@ void CSVOProPosQueDlg::OnBtnRemoveVt()
             m_pParent->RemoveUsedTrigger(sCurrent);
             m_ctlVTEdit.SetWindowText(_T(""));
             pPPQObj->DetachTriggerFromPPQ();
-            m_pParent->SetModified(TRUE);
-            m_pParent->ItemChanged(PPQ_DLG,sCurPPQ,ITEM_PPQ_DEL_TRG);
-			m_ctlAddVTbtn.EnableWindow(TRUE);
-			m_ctlRemoveVTbtn.EnableWindow(FALSE);
+            m_pParent->SetModified( true );
+            m_pParent->ItemChanged( PPQ_DLG, PPQName, ITEM_PPQ_DEL_TRG );
+			m_ctlAddVTbtn.EnableWindow( true );
+			m_ctlRemoveVTbtn.EnableWindow( false );
         }
     }
 }
@@ -446,7 +444,6 @@ BOOL CSVOProPosQueDlg::OnInitDialog()
 void CSVOProPosQueDlg::OnSelchangeLstPpqList() 
 {
     int iCursel = m_ctlPPQList.GetCurSel();
-    CString sPPQLabel;
 	SVOPPQObjPtr pPPQObj( nullptr );
     m_ctlVIPList.ResetContent();
     m_ctlVCList.ResetContent();
@@ -454,44 +451,45 @@ void CSVOProPosQueDlg::OnSelchangeLstPpqList()
 
     if (iCursel != LB_ERR)
     {
-        m_ctlPPQList.GetText(iCursel,sPPQLabel);
-        pPPQObj = m_pParent->GetPPQObjectByName(sPPQLabel);
+		CString PPQName;
+        m_ctlPPQList.GetText(iCursel, PPQName);
+        pPPQObj = m_pParent->GetPPQObjectByName( PPQName );
 
         int iCam = pPPQObj->GetAttachedCameraCount();
         int iIns = pPPQObj->GetAttachedInspectionCount();
 
         for (int iC = 0; iC < iCam; iC++)
         {
-			const CString CameraName( pPPQObj->GetAttachedCamera(iC) );
-            if (m_pParent->IsCameraInList(CameraName))
+			SVString CameraName( pPPQObj->GetAttachedCamera(iC) );
+            if (m_pParent->IsCameraInList( CameraName.c_str() ))
             {
-                m_ctlVCList.AddString(CameraName);
+                m_ctlVCList.AddString( CameraName.c_str() );
             }
             else
             {
-                pPPQObj->DetachCameraFromPPQ(CameraName);
+                pPPQObj->DetachCameraFromPPQ( CameraName.c_str() );
             }
         }
         m_ctlVCList.SetCurSel(0);
 
         for (int iI = 0; iI < iIns; iI++)
         {
-			const CString InspectionName( pPPQObj->GetAttachedInspection(iI) );
-            if (m_pParent->IsInspectionInList( InspectionName ))
+			SVString InspectionName( pPPQObj->GetAttachedInspection(iI) );
+            if (m_pParent->IsInspectionInList( InspectionName.c_str() ))
             {
-                m_ctlVIPList.AddString(m_pParent->GetInspectionNameFromLabel( InspectionName ));
+                m_ctlVIPList.AddString(m_pParent->GetInspectionNameFromLabel( InspectionName.c_str() ).c_str());
             }
             else
             {
-                pPPQObj->DetachInspectionFromPPQ( pPPQObj->GetAttachedInspection(iI) );
+                pPPQObj->DetachInspectionFromPPQ( pPPQObj->GetAttachedInspection(iI).c_str() );
             }
         }
         m_ctlVIPList.SetCurSel(0);
 
-		const CString TriggerName( pPPQObj->GetAttachedTriggerName() );
-        if (m_pParent->IsTriggerInList( TriggerName ))
+		const SVString& rTriggerName( pPPQObj->GetAttachedTriggerName() );
+        if (m_pParent->IsTriggerInList( rTriggerName.c_str() ))
         {
-            m_ctlVTEdit.SetWindowText( TriggerName );
+            m_ctlVTEdit.SetWindowText( rTriggerName.c_str() );
 			m_ctlAddVTbtn.EnableWindow(FALSE);
 			m_ctlRemoveVTbtn.EnableWindow(TRUE);
         }
@@ -519,7 +517,7 @@ void CSVOProPosQueDlg::SetupList()
     for (int i = 0; i < iCount; i++)
     {
         pPPQObj = m_pParent->GetPPQObject(i);
-        m_ctlPPQList.AddString(pPPQObj->GetPPQName());
+        m_ctlPPQList.AddString( pPPQObj->GetPPQName().c_str() );
     }
      
     m_bIsListSetup = TRUE;

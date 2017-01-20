@@ -71,8 +71,8 @@ public:
 	/// Used for copying the contents of sourceDir to the Autosave temp directory path.
 	/// Since this path (in keeping with the somewhat unfortunate specification for SVO-168)
 	/// does not always exist care must be exercised in using this function
-	/// \param rSourceDir [in] the path of the directory the contents of which are to be copied
-	void CopyDirectoryToTempDirectory(const CString &rSourceDir) const ;
+	/// \param SourceDir [in] the path of the directory the contents of which are to be copied
+	void CopyDirectoryToTempDirectory( LPCTSTR SourceDir) const ;
 
 	bool IsAutoSaveRequired(){return m_AutoSaveRequired;}
 	void SetAutoSaveRequired(bool required){m_AutoSaveRequired=required;}
@@ -97,8 +97,6 @@ public:
 private:
 	static const int ms_defaultDeltaTimeInMinutes=10;///< the minimum (for most purposes) autosave interval in seconds, m_AutoSaveDeltaTime_s is derived from it
 	
-	static const CString ms_ObserverPath;         
-
 	FbwfIsFilterEnabledPtr m_pfnFbwfIsFilterEnabled; ///< the function pointer modelled on FbwfIsFilterEnabled() in fbwfapi.h
 	double m_AutoSaveDeltaTime_s; ///< the minimum (for most purposes) autosave interval in seconds
 	time_t  m_lastAutoSaveTimestamp; ///< when was the latest automatic configuration backup done?

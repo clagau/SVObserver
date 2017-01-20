@@ -28,6 +28,7 @@
 #include "ObjectInterfaces\ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "TextDefinesSvO.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -140,7 +141,6 @@ void SVDiscreteOutputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHi
 
 		m_Items.clear();
 
-		CString strItem;
 		long lSize;
 		int j;
 		int i;
@@ -175,9 +175,9 @@ void SVDiscreteOutputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHi
 		for( i = 0; i < static_cast<int>(maxOutput); ++i )
 		{
 			// First column: Result I/O
-			strItem.Format( _T( "Digital Output %d" ), i + 1 );
+			SVString Item = SvUl_SF::Format( _T( "Digital Output %d" ), i + 1 );
 			GetListCtrl().InsertItem( LVIF_IMAGE | LVIF_TEXT | LVIF_STATE, 
-				i, strItem, 
+				i, Item.c_str(), 
 				INDEXTOSTATEIMAGEMASK( 2 ),	// state
 				LVIS_STATEIMAGEMASK,		// stateMask
 				1, 0 );						// Set item data to nothing
@@ -199,13 +199,13 @@ void SVDiscreteOutputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHi
 					// Column: Force
 					if( pDigOutput->IsForced() )
 					{
-						strItem.Format( _T( "%d" ), pDigOutput->GetForcedValue() ? 1 : 0 );
-						GetListCtrl().SetItemText( i, 2, strItem );
+						Item = SvUl_SF::Format( _T( "%d" ), pDigOutput->GetForcedValue() ? 1 : 0 );
+						GetListCtrl().SetItemText( i, 2, Item.c_str() );
 					}// end if
 
 					// Column: Inverted
-					strItem.Format( _T( "%s" ), pDigOutput->IsInverted() ? _T( "1" ) : _T( "" ) );
-					GetListCtrl().SetItemText( i, 3, strItem );
+					Item = pDigOutput->IsInverted() ? _T( "1" ) : _T( "" );
+					GetListCtrl().SetItemText( i, 3, Item.c_str() );
 
 					continue;
 				}// end if
@@ -228,13 +228,13 @@ void SVDiscreteOutputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHi
 					// Column: Force
 					if( pDigOutput->IsForced() )
 					{
-						strItem.Format( _T( "%d" ), pDigOutput->GetForcedValue() ? 1 : 0 );
-						GetListCtrl().SetItemText( i, 2, strItem );
+						Item = SvUl_SF::Format( _T( "%d" ), pDigOutput->GetForcedValue() ? 1 : 0 );
+						GetListCtrl().SetItemText( i, 2, Item.c_str() );
 					}// end if
 
 					// Column: Inverted
-					strItem.Format( _T( "%s" ), pDigOutput->IsInverted() ? _T( "1" ) : _T( "" ) );
-					GetListCtrl().SetItemText( i, 3, strItem );
+					Item = pDigOutput->IsInverted() ? _T( "1" ) : _T( "" );
+					GetListCtrl().SetItemText( i, 3, Item.c_str() );
 
 					continue;
 				}// end if
@@ -282,13 +282,13 @@ void SVDiscreteOutputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHi
 						// Column: Force
 						if( pDigOutput->IsForced() )
 						{
-							strItem.Format( _T( "%d" ), pDigOutput->GetForcedValue() ? 1 : 0 );
-							GetListCtrl().SetItemText( i, 2, strItem );
+							Item = SvUl_SF::Format( _T( "%d" ), pDigOutput->GetForcedValue() ? 1 : 0 );
+							GetListCtrl().SetItemText( i, 2, Item.c_str() );
 						}// end if
 
 						// Column: Inverted
-						strItem.Format( _T( "%s" ), pDigOutput->IsInverted() ? _T( "1" ) : _T( "" ) );
-						GetListCtrl().SetItemText( i, 3, strItem );
+						Item = pDigOutput->IsInverted() ? _T( "1" ) : _T( "" );
+						GetListCtrl().SetItemText( i, 3, Item.c_str() );
 
 						break;
 					}// end if
@@ -303,7 +303,6 @@ void SVDiscreteOutputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHi
 
 void SVDiscreteOutputsView::OnLButtonDblClk( UINT nFlags, CPoint point ) 
 {
-	CString strName;
 	SVIOEntryHostStructPtr pIOEntry;
 	SVOutputObjectList *pOutputList( nullptr );
 	SVDigitalOutputObject *pDigOutput ( nullptr );
@@ -340,12 +339,10 @@ void SVDiscreteOutputsView::OnLButtonDblClk( UINT nFlags, CPoint point )
 			}
 			else
 			{
-				strName = _T( "" );
-
 				pDigOutput = new SVDigitalOutputObject;
 
 				pDigOutput->SetChannel( item );
-				pDigOutput->SetName( strName );
+				pDigOutput->SetName( _T("") );
 				pDigOutput->Force( FALSE, FALSE );
 				pDigOutput->Invert( TRUE );
 
@@ -353,9 +350,9 @@ void SVDiscreteOutputsView::OnLButtonDblClk( UINT nFlags, CPoint point )
 
 			if( nullptr != pDigOutput )
 			{
-				dlg.StrIOName = _T( "Result " ) + GetListCtrl().GetItemText( item, 0 );
-				dlg.StrIOName += _T( ", " ) + GetListCtrl().GetItemText( item, 1 );
-				dlg.StrIOValue.Format( "%d", pDigOutput->GetValue() ? 1 : 0 );
+				dlg.IOName = _T( "Result " ) + GetListCtrl().GetItemText( item, 0 );
+				dlg.IOName += _T( ", " ) + GetListCtrl().GetItemText( item, 1 );
+				dlg.IOValue.Format( "%d", pDigOutput->GetValue() ? 1 : 0 );
 				dlg.m_pIOEntry   = pIOEntry;
 				dlg.m_pDigOutput = pDigOutput;
 				dlg.m_bInputMode = FALSE;
@@ -414,7 +411,7 @@ void SVDiscreteOutputsView::OnLButtonDblClk( UINT nFlags, CPoint point )
 							else
 							{
 								dlg.m_pIOEntry->m_Enabled = TRUE;
-								dlg.m_pDigOutput->SetName( dlg.m_pIOEntry->m_pValueObject->GetCompleteObjectName() );
+								dlg.m_pDigOutput->SetName( dlg.m_pIOEntry->m_pValueObject->GetCompleteName().c_str() );
 								if( pIOEntry.empty() )
 								{
 									pOutputList->AttachOutput( pDigOutput );
@@ -470,8 +467,8 @@ void SVDiscreteOutputsView::OnLButtonDblClk( UINT nFlags, CPoint point )
 			}
 			else
 			{
-				dlg.StrIOName	= _T( "" );
-				dlg.StrIOValue.Format( "%d", 0 );
+				dlg.IOName	= _T( "" );
+				dlg.IOValue.Format( "%d", 0 );
 
 				switch( dlg.DoModal() )
 				{

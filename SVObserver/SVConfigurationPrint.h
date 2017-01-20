@@ -14,6 +14,7 @@
 #pragma region Includes
 #include "SVLibrary/SVFileNameClass.h"
 #include "SVInfoStructs.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -48,7 +49,6 @@ public:
 #pragma endregion Constructor
 	
     void DoPrintConfig();
-    void printConfigToStringBuffer(CString& rsBuffer);
     void printConfigToStringBuffer(SVString& rsBuffer);
 #pragma endregion Public Methods
 	
@@ -74,7 +74,7 @@ protected:
 	void PrintObject(CDC* pDC, SVObjectClass* pObj, CPoint& ptCurPos, int nIndentLevel);
 
 	int  PrintString(CDC* pDC, CPoint& ptCurPos, LPCTSTR lpszStr);
-	void PrintValueObject(CDC* pDC, CPoint& ptCurPos, LPCTSTR lpszName, LPCTSTR lpszValue);
+	void PrintValueObject(CDC* pDC, CPoint& ptCurPos, LPCTSTR Name, LPCTSTR Value);
 
 	void PrintCameraSummary(CDC* pDC, CPoint& ptCurPos, int nIndentLevel);
 	void PrintTriggerSummary(CDC* pDC, CPoint& ptCurPos, int nIndentLevel);
@@ -135,10 +135,6 @@ protected:
 	SVFileNameClass m_svfnFileName;    // SES 11-Jan-2001
 
 	bool m_isPrintToStringBuffer;
-	CString* m_psBuffer;
+	SVString* m_pBuffer;
 #pragma endregion Member Variables
 };
-
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-

@@ -11,18 +11,17 @@
 #pragma once
 
 #pragma region Includes
+#include "SVUtilityLibrary/SVString.h"
 #include "SVImageLibrary/SVLut.h"
 #include "SVImageLibrary/SVLightReference.h"
-
 #include "SVTriggerLibrary/SVInternalTrigger.h"
 #include "TriggerHandling/AcquisitionTriggers.h"
-#pragma endregion Includes
-
 #include "SVMatroxGigeExports.h"
 #include "SVMatroxGigeDigitizer.h"
 #include "SVMatroxGigeSystem.h"
 #include "SVMatroxGigeSystemList.h" 
 #include "SVMatroxGigeCameraParamTracker.h"
+#pragma endregion Includes
 
 class SVAcquisitionBufferInterface;
 

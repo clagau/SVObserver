@@ -8,6 +8,7 @@
 #pragma region Includes
 #include "SVValueObjectLibrary/SVStringValueObjectClass.h"
 #include "ArchiveMethodEnum.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 class SVArchiveTool;
@@ -28,7 +29,7 @@ public:
 	void ConvertStringToGuids( SVArchiveTool* pToolArchive, LPCTSTR pszStrValue );	// FOR BACKWARD COMPATIBILITY
 	HRESULT InitializeObjects(SVArchiveTool* pToolArchive, SVStringValueObjectClass& svoObjects );	// use array capability of string vo
 
-	std::vector<CString> RemoveDisconnectedObject(const SVObjectInfoStruct& p_rInfoObject);
+	SVStringVector RemoveDisconnectedObject(const SVObjectInfoStruct& p_rInfoObject);
 	void ValidateImageObjects();
 
 	HRESULT AllocateBuffers( long lBufferSize );
@@ -37,7 +38,7 @@ public:
 	HRESULT WriteImageQueue();
 
 	int ValidateResultsObjects();
-	CString BuildResultsArchiveString();
+	SVString BuildResultsArchiveString();
 	void DisconnectAllResultObjects();
 
 	int GetSize();

@@ -38,12 +38,12 @@ public:
 	bool m_bColor;
 
 	SVCameraFormat();
-	SVCameraFormat( const SVCameraFormat& rhs );
-	const SVCameraFormat& operator = ( const SVCameraFormat& rhs );
-	void AssignUserChangableValues( const SVCameraFormat& rhs );
-	void AssignConstantValues( const SVCameraFormat& rhs );
+	SVCameraFormat( const SVCameraFormat& rRhs );
+	const SVCameraFormat& operator = ( const SVCameraFormat& rRhs );
+	void AssignUserChangableValues( const SVCameraFormat& rRhs );
+	void AssignConstantValues( const SVCameraFormat& rRhs );
 
-	HRESULT ParseAndAssignCameraFormat( const CString& sCameraFormat );
+	HRESULT ParseAndAssignCameraFormat( const SVString& rCameraFormat );
 
 private:
 	void init();

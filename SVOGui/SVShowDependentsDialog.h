@@ -14,6 +14,7 @@
 #include "SVOResource/resource.h"
 #include "SVObjectLibrary\SVOutObjectInfoStruct.h"
 #include "ObjectInterfaces\DependencyList.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 namespace Seidenader

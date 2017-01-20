@@ -71,9 +71,9 @@ inline long SVObjectReference::ArrayIndex() const
 	return Index;
 }
 
-inline CString SVObjectReference::DefaultValue() const
+inline SVString SVObjectReference::DefaultValue() const
 {
-	return m_NameInfo.GetDefaultValue().c_str();
+	return m_NameInfo.GetDefaultValue();
 }
 
 inline bool SVObjectReference::IsEntireArray() const
@@ -139,7 +139,7 @@ inline SVCheckedObjectReference<T>::SVCheckedObjectReference( const SVCheckedObj
 }
 
 template <class T>
-inline SVCheckedObjectReference<T>::SVCheckedObjectReference( SVObjectClass* pObject, long lArrayIndex, CString strDefaultValue )
+inline SVCheckedObjectReference<T>::SVCheckedObjectReference( SVObjectClass* pObject, long lArrayIndex, SVString strDefaultValue )
 {
 	m_pObject = dynamic_cast <T*> (pObject);
 	if ( m_pObject )
@@ -147,12 +147,12 @@ inline SVCheckedObjectReference<T>::SVCheckedObjectReference( SVObjectClass* pOb
 		m_Guid = m_pObject->GetUniqueObjectID();
 		if( nullptr != m_pObject )
 		{
-			m_NameInfo.ParseObjectName( static_cast< LPCTSTR >( m_pObject->GetCompleteObjectName() ) );
+			m_NameInfo.ParseObjectName( m_pObject->GetCompleteName() );
 		}
 		m_NameInfo.SetIsIndexPresent(true);
 		m_NameInfo.SetIndex( SvUl_SF::Format(_T("%d"), lArrayIndex ) );
 		m_NameInfo.SetIsDefaultValuePresent(true);
-		m_NameInfo.SetDefaultValue( static_cast< LPCTSTR >( strDefaultValue ));
+		m_NameInfo.SetDefaultValue( strDefaultValue );
 
 		m_IsArray = true;
 		m_ArrayIndex = lArrayIndex;
@@ -165,7 +165,7 @@ inline SVCheckedObjectReference<T>::SVCheckedObjectReference( SVObjectClass* pOb
 }
 
 template <class T>
-inline SVCheckedObjectReference<T>::SVCheckedObjectReference( T* pObject, long lArrayIndex, CString strDefaultValue )
+inline SVCheckedObjectReference<T>::SVCheckedObjectReference( T* pObject, long lArrayIndex, SVString strDefaultValue )
 {
 	m_pObject = pObject;	// no dynamic_cast
 	if ( m_pObject )
@@ -173,7 +173,7 @@ inline SVCheckedObjectReference<T>::SVCheckedObjectReference( T* pObject, long l
 		m_Guid = m_pObject->GetUniqueObjectID();
 		if( nullptr != m_pObject )
 		{
-			m_NameInfo.ParseObjectName( static_cast< LPCTSTR >( m_pObject->GetCompleteObjectName() ) );
+			m_NameInfo.ParseObjectName( static_cast< LPCTSTR >( m_pObject->GetCompleteName() ) );
 		}
 		m_NameInfo.SetIsIndexPresent(true);
 		m_NameInfo.m_Index = _variant_t( lArrayIndex );

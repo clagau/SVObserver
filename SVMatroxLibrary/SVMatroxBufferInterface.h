@@ -10,9 +10,11 @@
 // ******************************************************************************
 
 #pragma once
+
 #pragma region Includes
 #include "SVUtilityLibrary/SVPOINT.h"
 #include "SVUtilityLibrary/SVBitmapInfo.h"
+#include "SVUtilityLibrary\SVString.h"
 #include "SVUtilityLibrary/SVUtilityGlobals.h"
 #include "SVMatroxBuffer.h"
 #include "SVMatroxDisplayBuffer.h"
@@ -155,8 +157,8 @@ public:
 	static SVStatusCode ClearBuffer( SVMatroxDisplay& p_rBuffer, double p_dColor );
 
 	// ***** Inport / Export *********
-	static SVStatusCode Import(SVMatroxBuffer& p_rBuf, const SVString& p_rFileName, SVMatroxFileTypeEnum p_eFileType, bool p_bRestore= false );
-	static SVStatusCode Export(const SVMatroxBuffer& p_rBuf, const SVString& p_rFileName, SVMatroxFileTypeEnum p_eFileType );
+	static SVStatusCode Import(SVMatroxBuffer& p_rBuf, const SVString& rFileName, SVMatroxFileTypeEnum p_eFileType, bool p_bRestore= false );
+	static SVStatusCode Export(const SVMatroxBuffer& p_rBuf, const SVString& rFileName, SVMatroxFileTypeEnum p_eFileType );
 
 	//************************************
 	//! Get  the Dimension  from the Imagefile 

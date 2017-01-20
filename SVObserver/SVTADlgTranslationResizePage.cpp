@@ -12,12 +12,13 @@
 #include "ObjectInterfaces\ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVImageLibrary\SVImageBufferHandleImage.h"
-#include "PropertyTree\PROPTREE.H"
+#include "SVRPropertyTree/SVRPropTree.h"
 #include "SVTADlgTranslationResizePage.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "SVGuiExtentUpdater.h"
 #include "ResizeTool.h"
 #include "ObjectInterfaces/GlobalConst.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 #pragma region Properry Tree Items Enum
@@ -305,24 +306,24 @@ HRESULT SVTADlgTranslationResizePage::AddInterpolationMode(SVRPropertyItem* pGro
 		comboItem->CreateComboBox();
 
 		SVEnumerateValueObjectClass* interpolationMode = m_pTool->getInterpolationMode ();
-		CString	enumeratorName;
+		SVString enumeratorName;
 
-		interpolationMode->GetEnumeratorName(SVInterpolationModeOptions::InterpolationModeAuto, enumeratorName);
-		long insertedIndex = comboItem->AddString(enumeratorName);
+		interpolationMode->GetEnumeratorName( SVInterpolationModeOptions::InterpolationModeAuto, enumeratorName );
+		long insertedIndex = comboItem->AddString( enumeratorName.c_str() );
 		comboItem->SetItemData(insertedIndex, SVInterpolationModeOptions::InterpolationModeAuto);
 
 		// Average will only work with values less than 1.  
 		// Auto will already use Average for values less than 1.
-		interpolationMode->GetEnumeratorName(SVInterpolationModeOptions::InterpolationModeBicubic, enumeratorName);
-		insertedIndex = comboItem->AddString(enumeratorName);
+		interpolationMode->GetEnumeratorName( SVInterpolationModeOptions::InterpolationModeBicubic, enumeratorName );
+		insertedIndex = comboItem->AddString( enumeratorName.c_str() );
 		comboItem->SetItemData(insertedIndex, SVInterpolationModeOptions::InterpolationModeBicubic);
 
-		interpolationMode->GetEnumeratorName(SVInterpolationModeOptions::InterpolationModeBilinear, enumeratorName);
-		insertedIndex = comboItem->AddString(enumeratorName);
+		interpolationMode->GetEnumeratorName( SVInterpolationModeOptions::InterpolationModeBilinear, enumeratorName );
+		insertedIndex = comboItem->AddString( enumeratorName.c_str() );
 		comboItem->SetItemData(insertedIndex, SVInterpolationModeOptions::InterpolationModeBilinear);
 
-		interpolationMode->GetEnumeratorName(SVInterpolationModeOptions::InterpolationModeNearestNeighbor, enumeratorName);
-		insertedIndex = comboItem->AddString(enumeratorName);
+		interpolationMode->GetEnumeratorName( SVInterpolationModeOptions::InterpolationModeNearestNeighbor, enumeratorName );
+		insertedIndex = comboItem->AddString( enumeratorName.c_str() );
 		comboItem->SetItemData(insertedIndex, SVInterpolationModeOptions::InterpolationModeNearestNeighbor);
 
 		comboItem->SetItemValue(SVInterpolationModeOptions::InterpolationModeAuto); // Currently selected value.
@@ -347,14 +348,14 @@ HRESULT SVTADlgTranslationResizePage::AddOverScan(SVRPropertyItem* pGroupItem)
 		comboItem->CreateComboBox();
 
 		SVEnumerateValueObjectClass* overscan = m_pTool->getOverscan ();
-		CString	enumeratorName;
+		SVString enumeratorName;
 
-		overscan->GetEnumeratorName(SVOverscanOptions::OverscanEnable, enumeratorName);
-		long insertedIndex = comboItem->AddString(enumeratorName);
+		overscan->GetEnumeratorName( SVOverscanOptions::OverscanEnable, enumeratorName );
+		long insertedIndex = comboItem->AddString( enumeratorName.c_str() );
 		comboItem->SetItemData (insertedIndex, SVOverscanOptions::OverscanEnable);
 
-		overscan->GetEnumeratorName(SVOverscanOptions::OverscanDisable, enumeratorName);
-		insertedIndex = comboItem->AddString(enumeratorName);
+		overscan->GetEnumeratorName( SVOverscanOptions::OverscanDisable, enumeratorName );
+		insertedIndex = comboItem->AddString( enumeratorName.c_str() );
 		comboItem->SetItemData (insertedIndex, SVOverscanOptions::OverscanDisable);
 
 		comboItem->SetItemValue (SVOverscanOptions::OverscanEnable); // Currently selected value.
@@ -379,14 +380,14 @@ HRESULT SVTADlgTranslationResizePage::AddPerformance(SVRPropertyItem* pGroupItem
 		comboItem->CreateComboBox();
 
 		SVEnumerateValueObjectClass* performance = m_pTool->getPerformance ();
-		CString	enumeratorName;
+		SVString enumeratorName;
 
-		performance->GetEnumeratorName(SVPerformanceOptions::PerformanceFast, enumeratorName);
-		long insertedIndex = comboItem->AddString(enumeratorName);
+		performance->GetEnumeratorName( SVPerformanceOptions::PerformanceFast, enumeratorName );
+		long insertedIndex = comboItem->AddString( enumeratorName.c_str() );
 		comboItem->SetItemData (insertedIndex, SVPerformanceOptions::PerformanceFast);
 
-		performance->GetEnumeratorName(SVPerformanceOptions::PerformancePresice, enumeratorName);
-		insertedIndex = comboItem->AddString(enumeratorName);
+		performance->GetEnumeratorName( SVPerformanceOptions::PerformancePresice, enumeratorName );
+		insertedIndex = comboItem->AddString( enumeratorName.c_str() );
 		comboItem->SetItemData (insertedIndex, SVPerformanceOptions::PerformancePresice);
 
 		comboItem->SetItemValue (SVPerformanceOptions::PerformancePresice); // Currently selected value.
@@ -538,23 +539,23 @@ void SVTADlgTranslationResizePage::UpdateInputImageInfo(long newInputROIWidth, l
 {
 	SVRPropertyItemStatic* staticItem = static_cast <SVRPropertyItemStatic*> (m_Tree.FindItem(IDC_INPUTLISTTREE_ROIHEIGHT));
 	
-	CString	stringValue;
-	staticItem->GetItemValue(stringValue);
-	long oldInputROIHeight = atol (stringValue);
+	SVString Value;
+	staticItem->GetItemValue( Value );
+	long oldInputROIHeight = atol( Value.c_str() );
 	if (newInputROIHeight != oldInputROIHeight)
 	{
-		stringValue.Format ("%d", newInputROIHeight);
-		staticItem->SetItemValue( stringValue );
+		Value = SvUl_SF::Format( _T("%d"), newInputROIHeight);
+		staticItem->SetItemValue( Value.c_str() );
 	}
 
 	staticItem = static_cast <SVRPropertyItemStatic*> (m_Tree.FindItem(IDC_INPUTLISTTREE_ROIWIDTH));
 
-	staticItem->GetItemValue(stringValue);
-	long oldInputROIWidth = atol (stringValue);
+	staticItem->GetItemValue(Value);
+	long oldInputROIWidth = atol ( Value.c_str() );
 	if (newInputROIWidth != oldInputROIWidth)
 	{
-		stringValue.Format ("%d", newInputROIWidth);
-		staticItem->SetItemValue( stringValue );
+		Value = SvUl_SF::Format( _T("%d"), newInputROIWidth);
+		staticItem->SetItemValue( Value.c_str() );
 	}
 }
 
@@ -562,23 +563,23 @@ void SVTADlgTranslationResizePage::UpdateOutputImageInfo(long newOutputWidth, lo
 {
 	SVRPropertyItemStatic* staticItem = static_cast <SVRPropertyItemStatic*> (m_Tree.FindItem(IDC_INPUTLISTTREE_OUTPUTHEIGHT));
 
-	CString	stringValue;
-	staticItem->GetItemValue(stringValue);
-	long oldOutputHeight = atol (stringValue);
+	SVString Value;
+	staticItem->GetItemValue( Value );
+	long oldOutputHeight = atol( Value.c_str() );
 	if (newOutputHeight != oldOutputHeight)
 	{
-		stringValue.Format ("%d", newOutputHeight);
-		staticItem->SetItemValue( stringValue );
+		Value = SvUl_SF::Format( _T("%d"), newOutputHeight );
+		staticItem->SetItemValue( Value.c_str() );
 	}
 
 	staticItem = static_cast <SVRPropertyItemStatic*> (m_Tree.FindItem(IDC_INPUTLISTTREE_OUTPUTWIDTH));
 
-	staticItem->GetItemValue(stringValue);
-	long oldOutputWidth = atol (stringValue);
+	staticItem->GetItemValue( Value );
+	long oldOutputWidth = atol( Value.c_str() );
 	if (newOutputWidth != oldOutputWidth)
 	{
-		stringValue.Format ("%d", newOutputWidth);
-		staticItem->SetItemValue( stringValue );
+		Value = SvUl_SF::Format( _T("%d"), newOutputWidth);
+		staticItem->SetItemValue( Value.c_str() );
 	}
 }
 
@@ -1114,7 +1115,7 @@ HRESULT SVTADlgTranslationResizePage::ValidateCurrentTreeData (SVRPropertyItem* 
 				hr = SVMSG_SVO_5070_IMAGEALLOCATIONFAILED;
 			}
 
-			SVStringArray msgList;
+			SVStringVector msgList;
 			msgList.push_back(item->GetLabelText());
 			message.setMessage( hr, SvOi::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams) );
 		}

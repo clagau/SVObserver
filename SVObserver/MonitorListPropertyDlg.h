@@ -13,7 +13,8 @@
 
 #pragma region Includes
 #include "afxwin.h"
-#include "PropertyTree/PropTree.h"
+#include "SVRPropertyTree/SVRPropTree.h"
+#include "SVUtilityLibrary/SVString.h"
 #include "RemoteMonitorList.h"
 #pragma endregion Includes
 
@@ -35,10 +36,10 @@ class MonitorListPropertyDlg : public CDialog
 
 #pragma region Public
 public:
-	MonitorListPropertyDlg(RemoteMonitorList& MonitorList, CString sName, CWnd* pParent = nullptr);   // standard constructor
+	MonitorListPropertyDlg(RemoteMonitorList& MonitorList, LPCTSTR Name, CWnd* pParent = nullptr);   // standard constructor
 	virtual ~MonitorListPropertyDlg();
 
-	CString GetMonitorListName() const;
+	const SVString& GetMonitorListName() const;
 	int GetMonitorListRejectQueueDepth() const;
 	bool GetIsMonitorListActive() const;
 // Dialog Data
@@ -65,14 +66,14 @@ protected:
 
 #pragma region Private
 	RemoteMonitorList& m_MonitorList;
-	CString m_MonitorListName;	// original Monitor List name
-	CString m_DisplayName;		// current valid Monitor List name (starts out as original Monitor List name)
+	SVString m_MonitorListName;	// original Monitor List name
+	SVString m_DisplayName;		// current valid Monitor List name (starts out as original Monitor List name)
 	int m_MonitorListRejectQueueDepth;
-	CString m_sPPQ;
+	SVString m_sPPQ;
 	bool m_IsMonitorListActive;
 	void SetupMonitorListProperties();
-	bool IsValidListName(const CString& name, const CString& originalName) const;
-	void ValidateLabelText(CString& newText) const;
+	bool IsValidListName(const SVString& rName, const SVString& rOriginalName) const;
+	SVString ValidateLabelText(const SVString& rNewText) const;
 
 #pragma endregion Private
 };

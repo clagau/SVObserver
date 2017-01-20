@@ -27,6 +27,7 @@
 #include "SVMFCControls\SVHistogram.h"
 #include "TextDefinesSvO.h"
 #include "SVStatusLibrary\MessageManager.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -988,12 +989,12 @@ void SVToolAdjustmentDialogThresholdPageClass::OnUTFormulaButton()
 	SVUpperThresholdEquationClass* pEquation = dynamic_cast<SVUpperThresholdEquationClass*>(m_pCurrentThreshold->getFirstObject(info));
 	if (pEquation)
 	{
-		CString strCaption = pEquation->GetName();
-		strCaption += _T(" Formula");
+		SVString Caption = pEquation->GetName();
+		Caption += _T(" Formula");
 
 		const GUID& rInspectionID = m_pParentDialog->GetInspectionID();
 		const GUID& rObjectID = m_pCurrentThreshold->GetUniqueObjectID();
-		SvOg::SVFormulaEditorSheetClass dlg(rInspectionID, rObjectID, info, strCaption);
+		SvOg::SVFormulaEditorSheetClass dlg(rInspectionID, rObjectID, info, Caption.c_str());
 		dlg.DoModal();
 
 		long l_lResult = static_cast<long>(pEquation->GetYACCResult());
@@ -1039,12 +1040,12 @@ void SVToolAdjustmentDialogThresholdPageClass::OnATMFormulaButton()
 	SVAutoThresholdEquationClass* pEquation = dynamic_cast<SVAutoThresholdEquationClass*>(m_pCurrentThreshold->getFirstObject(info));
 	if (pEquation)
 	{
-		CString strCaption = pEquation->GetName();
-		strCaption += _T(" Formula");
+		SVString Caption = pEquation->GetName();
+		Caption += _T(" Formula");
 
 		const GUID& rInspectionID = m_pParentDialog->GetInspectionID();
 		const GUID& rObjectID = m_pCurrentThreshold->GetUniqueObjectID();
-		SvOg::SVFormulaEditorSheetClass dlg(rInspectionID, rObjectID, info, strCaption);
+		SvOg::SVFormulaEditorSheetClass dlg(rInspectionID, rObjectID, info, Caption.c_str());
 		dlg.DoModal();
 
 		initThreshold();
@@ -1059,12 +1060,12 @@ void SVToolAdjustmentDialogThresholdPageClass::OnLTFormulaButton()
 	SVLowerThresholdEquationClass* pEquation = dynamic_cast<SVLowerThresholdEquationClass*>(m_pCurrentThreshold->getFirstObject(info));
 	if (pEquation)
 	{
-		CString strCaption = pEquation->GetName();
-		strCaption += _T(" Formula");
+		SVString Caption = pEquation->GetName();
+		Caption += _T(" Formula");
 
 		const GUID& rInspectionID = m_pParentDialog->GetInspectionID();
 		const GUID& rObjectID = m_pCurrentThreshold->GetUniqueObjectID();
-		SvOg::SVFormulaEditorSheetClass dlg(rInspectionID, rObjectID, info, strCaption);
+		SvOg::SVFormulaEditorSheetClass dlg(rInspectionID, rObjectID, info, Caption.c_str());
 		dlg.DoModal();
 
 		long l_lResult = static_cast<long>(pEquation->GetYACCResult());
@@ -1195,8 +1196,7 @@ void SetThreshold( CWnd* pWnd, DWORD Value )
 
 void SetThreshold( HWND hWnd, DWORD Value )
 {
-	CString str;
-	str.Format(_T("%lu"), Value);
-	::SetWindowText( hWnd, str.GetBufferSetLength(20) );
+	SVString Text = SvUl_SF::Format(_T("%lu"), Value);
+	::SetWindowText( hWnd, Text.c_str() );
 }
 

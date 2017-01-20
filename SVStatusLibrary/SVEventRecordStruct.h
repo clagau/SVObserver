@@ -11,7 +11,9 @@
 
 #pragma once
 
-//Moved to precompiled header: #include <string>
+#pragma region Includes
+#include "SVUtilityLibrary\SVString.h"
+#pragma endregion Includes
 
 static const unsigned long SV_EVENT_RECORD_STRUCT_RECORD_SIZE = 0x0008000;
 
@@ -30,7 +32,7 @@ struct SVEventRecordStruct
 	LPCTSTR GetFirstString();
 	LPCTSTR GetNextString();
 	LPCTSTR GetType();
-	std::string GetDateTime();
+	SVString GetDateTime();
 
 private:
 	HRESULT LocalInitialize(unsigned long p_ulSize);
@@ -44,6 +46,6 @@ private:
 	LPCTSTR m_szSourceName;
 	LPCTSTR m_szComputerName;
 
-  LPCTSTR m_szCurrentString;
+	LPCTSTR m_szCurrentString;
 	unsigned long m_ulStringIndex;
 };

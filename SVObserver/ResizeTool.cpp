@@ -10,6 +10,7 @@
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "ToolSizeAdjustTask.h"
 #include "TextDefinesSvO.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 
@@ -338,7 +339,7 @@ HRESULT ResizeTool::ResetObject()
 		if (nullptr != inputImage)
 		{
 			//Set input name to source image name to display it in result picker
-			m_svSourceImageName.SetValue( 0/*Static value, this parameter will not used*/, inputImage->GetCompleteObjectName() );
+			m_svSourceImageName.SetValue( 0/*Static value, this parameter will not used*/, SVString( inputImage->GetCompleteName() ) );
 		}
 		else
 		{
@@ -549,7 +550,7 @@ HRESULT ResizeTool::ValidateScaleFactor(const double value)
 	{
 		hr = SVMSG_SVO_5061_SFOUTSIDERANGE;
 		SvStl::MessageContainer message;
-		SVStringArray msgList;
+		SVStringVector msgList;
 		msgList.push_back(SvUl_SF::Format(_T("%d"), value));
 		message.setMessage( SVMSG_SVO_5061_SFOUTSIDERANGE, SvOi::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams) );
 		addTaskMessage( message );

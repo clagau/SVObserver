@@ -92,8 +92,8 @@ public:
 	#pragma endregion IValueObject
 	
 	// NVI pattern : public interface
-	HRESULT SetValue( int iBucket, LPCTSTR value )					{ return SetValueAtConvert(iBucket, 0, value); }
-	HRESULT SetValue( int iBucket, int iIndex, LPCTSTR value )		{ return SetValueAtConvert(iBucket, iIndex, value); }
+	HRESULT SetValue( int iBucket, LPCTSTR value )					{ return SetValueAtConvert(iBucket, 0, SVString(value) ); }
+	HRESULT SetValue( int iBucket, int iIndex, LPCTSTR value )		{ return SetValueAtConvert(iBucket, iIndex, SVString(value) ); }
 	HRESULT SetValue( int iBucket, double& value )					{ return SetValueAtConvert(iBucket, 0, value); }
 	HRESULT SetValue( int iBucket, int iIndex, double& value )		{ return SetValueAtConvert(iBucket, iIndex, value); }
 	HRESULT SetValue( int iBucket, long& value )					{ return SetValueAtConvert(iBucket, 0, value); }
@@ -106,21 +106,21 @@ public:
 	HRESULT SetValue( int iBucket, int iIndex, const int& value )	{ return SetValueAtConvert(iBucket, iIndex, value); }
 
 	HRESULT GetValue( double&  rValue ) const { return GetValueAt(m_iLastSetIndex, 0, rValue); }
-	HRESULT GetValue( CString& rValue ) const { return GetValueAt(m_iLastSetIndex, 0, rValue); }
+	HRESULT GetValue( SVString& rValue ) const { return GetValueAt(m_iLastSetIndex, 0, rValue); }
 	HRESULT GetValue( VARIANT& rValue ) const{ return GetValueAt(m_iLastSetIndex, 0, rValue); }
 
 	HRESULT GetValue( int iBucket, double&  rValue ) const  { return GetValueAt(iBucket, 0, rValue); }
-	HRESULT GetValue( int iBucket, CString& rValue ) const  { return GetValueAt(iBucket, 0, rValue); }
+	HRESULT GetValue( int iBucket, SVString& rValue ) const  { return GetValueAt(iBucket, 0, rValue); }
 	HRESULT GetValue( int iBucket, VARIANT& rValue ) const  { return GetValueAt(iBucket, 0, rValue); }
 
 	HRESULT GetValue( int iBucket, int iIndex, double&  rValue ) const  { return GetValueAt(iBucket, iIndex, rValue); }
-	HRESULT GetValue( int iBucket, int iIndex, CString& rValue ) const  { return GetValueAt(iBucket, iIndex, rValue); }
+	HRESULT GetValue( int iBucket, int iIndex, SVString& rValue ) const  { return GetValueAt(iBucket, iIndex, rValue); }
 	HRESULT GetValue( int iBucket, int iIndex, VARIANT& rValue ) const  { return GetValueAt(iBucket, iIndex, rValue); }
 
 	/// Get the value array of the last used bucket as string (semicolon-separated).
 	/// \param rValue [out] The return string.
 	/// \returns HRESULT
-	HRESULT GetValues( CString&  rValue ) const  { return GetArrayValues(m_iLastSetIndex, rValue); }
+	HRESULT GetValues( SVString& rValue ) const  { return GetArrayValues(m_iLastSetIndex, rValue); }
 	HRESULT GetValues( VARIANT& rValue ) const  { return GetArrayValuesAsVariant(m_iLastSetIndex, rValue); }
 	HRESULT GetValues( std::vector< _variant_t >&  rValue ) const  { return GetArrayValuesAsVariantVector(m_iLastSetIndex, rValue); }
 
@@ -134,8 +134,8 @@ public:
 
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* pDataObject );
 
-	HRESULT CompareWithCurrentValue( const CString& rstrCompare ) const { return CompareWithCurrentValueImpl( rstrCompare ); }
-	HRESULT GetNormalizedValue( const CString& strValue, CString& rstrNormalized ) const { return GetNormalizedValueImpl( strValue, rstrNormalized ); }
+	HRESULT CompareWithCurrentValue( const SVString& rCompare ) const { return CompareWithCurrentValueImpl( rCompare ); }
+	HRESULT GetNormalizedValue( const SVString& rValue, SVString& rNormalized ) const { return GetNormalizedValueImpl( rValue, rNormalized ); }
 
 	virtual HRESULT CopyValue( int iSourceBucket, int iDestBucket ) { assert(0); return S_FALSE; }
 	HRESULT CopyLastSetValue( int iDestBucket )    { return CopyValue(m_iLastSetIndex, iDestBucket); }
@@ -148,13 +148,13 @@ public:
 
 protected:
 	// use the NonVirtual Interface pattern (NVI; C++ Coding Standards # 39, Sutter & Alexandrescu)
-	virtual HRESULT SetValueAtConvert( int iBucket, int iIndex, const CString& value ) = 0;
+	virtual HRESULT SetValueAtConvert( int iBucket, int iIndex, const SVString& rValue ) = 0;
 	virtual HRESULT SetValueAtConvert( int iBucket, int iIndex, double value ) = 0;
 	virtual HRESULT SetValueAtConvert( int iBucket, int iIndex, long value ) = 0;
 	virtual HRESULT SetValueAtConvert( int iBucket, int iIndex, int value ) = 0;
 
 	virtual HRESULT GetValueAt( int iBucket, int iIndex, double&  rValue ) const = 0;
-	virtual HRESULT GetValueAt( int iBucket, int iIndex, CString& rValue ) const = 0;
+	virtual HRESULT GetValueAt( int iBucket, int iIndex, SVString& rValue ) const = 0;
 	virtual HRESULT GetValueAt( int iBucket, int iIndex, VARIANT& rValue ) const = 0;
 
 	virtual HRESULT GetArrayValues( int iBucket, std::vector< double >&  rValue ) const = 0;
@@ -162,7 +162,7 @@ protected:
 	/// \param iBucket [in] The bucket of the value.
 	/// \param rValue [out] The return string.
 	/// \returns HRESULT
-	virtual HRESULT GetArrayValues( int iBucket, CString& rValue ) const = 0;
+	virtual HRESULT GetArrayValues( int iBucket, SVString& rValue ) const = 0;
 	virtual HRESULT GetArrayValuesAsVariant( int iBucket, VARIANT&  rValue ) const = 0;
 	virtual HRESULT GetArrayValuesAsVariantVector( int iBucket, std::vector< _variant_t >&  rValue ) const = 0;
 
@@ -170,8 +170,8 @@ protected:
 	// eventually all derived classes should implement this
 	// this should replace the functionality currently in SVInspectionProcess::ProcessInputRequests
 	// where it tries to determine if there is a difference between the new and old value.
-	virtual HRESULT CompareWithCurrentValueImpl( const CString& rstrCompare ) const;
-	virtual HRESULT GetNormalizedValueImpl( const CString& strValue, CString& rstrNormalized ) const { return E_NOTIMPL; }
+	virtual HRESULT CompareWithCurrentValueImpl( const SVString& rCompare ) const;
+	virtual HRESULT GetNormalizedValueImpl( const SVString& rValue, SVString& rNormalized ) const { return E_NOTIMPL; }
 
 	virtual HRESULT CreateBuckets();
 	void InitializeBuckets();

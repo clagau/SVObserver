@@ -110,29 +110,29 @@ HRESULT CALLBACK SVFinishCameraCallback( void *pOwner, void *pCaller, void *pRes
 
 void logWorkloadInformation(const ProductWorkloadInformation &pwi, LPCSTR heading)
 {
-	CString infostring;
-	infostring.Format(_T("!\t.%7.1lf: %s:\n"), SvTl::GetRelTimeStamp(), heading);
-	::OutputDebugString(infostring);
-	infostring.Format(_T("!\t\ttt = %7.1lf, pst = %7.1lf, ct = %7.1lf, "), 
+	SVString infostring;
+	infostring = SvUl_SF::Format(_T("!\t.%7.1lf: %s:\n"), SvTl::GetRelTimeStamp(), heading);
+	::OutputDebugString(infostring.c_str());
+	infostring = SvUl_SF::(_T("!\t\ttt = %7.1lf, pst = %7.1lf, ct = %7.1lf, "), 
 		pwi.m_TriggerTime - SvTl::getReferenceTime(),
 		pwi.m_ProcessingStartTime - SvTl::getReferenceTime(), 
 		pwi.m_CompletionTime - SvTl::getReferenceTime());
-	::OutputDebugString(infostring);
-	infostring.Format(_T("TtoCo = %7.1lf, TtoSt = %7.1lf\n"),
+	::OutputDebugString(infostring.c_str());
+	infostring = SvUl_SF::(_T("TtoCo = %7.1lf, TtoSt = %7.1lf\n"),
 		pwi.TriggerToCompletionInMilliseconds(), 
 		
 		pwi.TriggerToStartInMilliseconds());
-	::OutputDebugString(infostring);
-	infostring.Format(_T("!\trd\ttt = %.0lf, pst = %.0lf, ct = %.0lf, "), 
+	::OutputDebugString(infostring.c_str());
+	infostring = SvUl_SF::(_T("!\trd\ttt = %.0lf, pst = %.0lf, ct = %.0lf, "), 
 		pwi.m_TriggerTime,
 		pwi.m_ProcessingStartTime, 
 		pwi.m_CompletionTime);
-	::OutputDebugString(infostring);
-	infostring.Format(_T("pst-tt = %7.1lf, ct-tt = %7.1lf, ct-pst= %7.1lf\n"), 
+	::OutputDebugString(infostring.c_str());
+	infostring = SvUl_SF::(_T("pst-tt = %7.1lf, ct-tt = %7.1lf, ct-pst= %7.1lf\n"), 
 		pwi.m_ProcessingStartTime- pwi.m_TriggerTime,
 		pwi.m_CompletionTime- pwi.m_TriggerTime,
 		pwi.m_CompletionTime- pwi.m_ProcessingStartTime);
-	::OutputDebugString(infostring);
+	::OutputDebugString(infostring.c_str());
 }
 
 #endif
@@ -468,8 +468,7 @@ HRESULT SVPPQObject::ObserverUpdate( const SVInspectionCompleteInfoStruct& p_rDa
 
 BOOL SVPPQObject::Create()
 {
-	BSTR bstrName;
-	CString strName;
+	_bstr_t bName;
 	HRESULT hr;
 	int i;
 	int iSize;
@@ -477,18 +476,14 @@ BOOL SVPPQObject::Create()
 	// Return if already created
 	if( m_isCreated ) { return false; }
 
-	strName = _T( "PPQ Result Data" );
-	bstrName = strName.AllocSysString();
+	bName = _T( "PPQ Result Data" );
 
-	hr = TheSVDataManager.CreateManagedIndexArray( m_pResultDataCircleBuffer, bstrName, GetPPQLength() + g_lPPQExtraBufferSize );
-	::SysFreeString( bstrName );
+	hr = TheSVDataManager.CreateManagedIndexArray( m_pResultDataCircleBuffer, bName, GetPPQLength() + g_lPPQExtraBufferSize );
 	if( S_OK != hr ) { return FALSE; }
 
-	strName = _T( "PPQ Result Image Published" );
-	bstrName = strName.AllocSysString();
+	bName = _T( "PPQ Result Image Published" );
 
-	hr = TheSVDataManager.CreateManagedIndexArray( m_pResultImagePublishedCircleBuffer, bstrName, TheSVObserverApp.GetSourceImageDepth() );
-	::SysFreeString( bstrName );
+	hr = TheSVDataManager.CreateManagedIndexArray( m_pResultImagePublishedCircleBuffer, bName, TheSVObserverApp.GetSourceImageDepth() );
 	if( S_OK != hr ) { return FALSE; }
 
 	for( i = 0; i < static_cast< long >( m_ppPPQPositions.size() ); ++i )
@@ -594,8 +589,7 @@ BOOL SVPPQObject::Create()
 BOOL SVPPQObject::Rebuild()
 {
 	int j;
-	BSTR bstrName;
-	CString strName;
+	_bstr_t bName;
 	HRESULT hr;
 	int i;
 	int iSize;
@@ -613,18 +607,14 @@ BOOL SVPPQObject::Rebuild()
 	m_pMasterProductInfos = nullptr;
 
 	// Create new data manager buffers of new size
-	strName = _T( "PPQ Result Data" );
-	bstrName = strName.AllocSysString();
+	bName = _T( "PPQ Result Data" );
 
-	hr = TheSVDataManager.CreateManagedIndexArray( m_pResultDataCircleBuffer, bstrName, GetPPQLength() + g_lPPQExtraBufferSize );
-	::SysFreeString( bstrName );
+	hr = TheSVDataManager.CreateManagedIndexArray( m_pResultDataCircleBuffer, bName, GetPPQLength() + g_lPPQExtraBufferSize );
 	if( S_OK != hr ) { return FALSE; }
 
-	strName = _T( "PPQ Result Image Published" );
-	bstrName = strName.AllocSysString();
+	bName = _T( "PPQ Result Image Published" );
 
-	hr = TheSVDataManager.CreateManagedIndexArray( m_pResultImagePublishedCircleBuffer, bstrName, TheSVObserverApp.GetSourceImageDepth() );
-	::SysFreeString( bstrName );
+	hr = TheSVDataManager.CreateManagedIndexArray( m_pResultImagePublishedCircleBuffer, bName, TheSVObserverApp.GetSourceImageDepth() );
 	if( S_OK != hr ) { return FALSE; }
 
 	for( i = 0; i < static_cast< long >( m_ppPPQPositions.size() ); ++i )
@@ -1215,8 +1205,8 @@ void SVPPQObject::PrepareGoOnline()
 
 	if( ! m_pTrigger->CanGoOnline() )
 	{
-		SVStringArray msgList;
-		msgList.push_back(SVString(m_pTrigger->GetCompleteObjectName()));
+		SVStringVector msgList;
+		msgList.push_back(m_pTrigger->GetCompleteName());
 
 		SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_CanGoOnlineFailure_Trigger, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10185 );
 		throw Msg;
@@ -1226,8 +1216,8 @@ void SVPPQObject::PrepareGoOnline()
 	{
 		if ( ! ( l_svIter->second.m_CameraPPQIndex >= 0 && l_svIter->first->CanGoOnline() ) )
 		{
-			SVStringArray msgList;
-			msgList.push_back(SVString(l_svIter->first->GetCompleteObjectName()));
+			SVStringVector msgList;
+			msgList.push_back(l_svIter->first->GetCompleteName());
 
 			SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_CanGoOnlineFailure_Acquisition, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10185 );
 			throw Msg;
@@ -1267,7 +1257,7 @@ void SVPPQObject::PrepareGoOnline()
 
 			if( S_OK != hRTemp )
 			{
-				SVStringArray msgList;
+				SVStringVector msgList;
 				msgList.push_back(SvUl_SF::Format(_T("%X"), hRTemp));
 				SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_GoOnlineFailure_RecycleProduct, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10185 );
 				throw Msg;
@@ -1286,7 +1276,7 @@ void SVPPQObject::PrepareGoOnline()
 		if ( ! m_arInspections[i]->CanGoOnline() )
 		{
 			SvOi::MessageTextEnum messageId = SvOi::Tid_Empty;
-			SVStringArray msgList;
+			SVStringVector msgList;
 			bool bShowToolError = false;
 
 			//@TODO[gra][7.40][25.05.2016]: This should at a later stage show all the tool errors not only the first error
@@ -1304,7 +1294,7 @@ void SVPPQObject::PrepareGoOnline()
 			if (!bShowToolError)
 			{
 				messageId = SvOi::Tid_CanGoOnlineFailure_Inspection;
-				msgList.push_back(SVString(m_arInspections[i]->GetCompleteObjectName()));
+				msgList.push_back(m_arInspections[i]->GetCompleteName());
 			}
 			SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, messageId, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10185 );
 			throw Msg;
@@ -1327,7 +1317,7 @@ void SVPPQObject::PrepareGoOnline()
 			SetMonitorList(ActiveMonitorList(false, RejectDepthAndMonitorList()));
 			SvSml::SVSharedMemorySingleton::Instance().ErasePPQSharedMemory(GetUniqueObjectID());
 
-			SVStringArray msgList;
+			SVStringVector msgList;
 			msgList.push_back(GetName());
 			SvStl::MessageContainer Exception( SVMSG_SVO_46_SHARED_MEMORY_DISK_SPACE, SvOi::Tid_ErrorNotEnoughDiskSpace, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_15025 );
 			throw Exception;
@@ -1346,7 +1336,7 @@ void SVPPQObject::PrepareGoOnline()
 
 void SVPPQObject::GoOnline()
 {
-	CString sFailureObjectName;
+	SVString FailureObjectName;
 
 #ifdef EnableTracking
 	m_PPQTracking.clear();
@@ -1400,7 +1390,7 @@ void SVPPQObject::GoOnline()
 	{
 		if ( ! m_arInspections[i]->GoOnline() )
 		{
-			sFailureObjectName = m_arInspections[i]->GetCompleteObjectName();
+			FailureObjectName = m_arInspections[i]->GetCompleteName();
 			bInspGoOnline = false;
 			break;
 		}
@@ -1414,8 +1404,8 @@ void SVPPQObject::GoOnline()
 			m_arInspections[i]->GoOffline();
 		}// end for
 
-		SVStringArray msgList;
-		msgList.push_back(SVString(sFailureObjectName));
+		SVStringVector msgList;
+		msgList.push_back( FailureObjectName );
 
 		SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_GoOnlineFailure_Inspection, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10185 );
 		throw Msg;
@@ -1427,7 +1417,7 @@ void SVPPQObject::GoOnline()
 		HRESULT hr = m_pTrigger->EnableInternalTrigger();
 		if (S_OK != hr)
 		{
-			SVStringArray msgList;
+			SVStringVector msgList;
 			msgList.push_back(SvUl_SF::Format(_T("%X"), hr));
 
 			SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_GoOnlineFailure_InternalTrigger, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10185 );
@@ -1441,7 +1431,7 @@ void SVPPQObject::GoOnline()
 	{
 		if ( ! l_svIter->first->GoOnline() )
 		{
-			sFailureObjectName = l_svIter->first->GetCompleteObjectName();
+			FailureObjectName = l_svIter->first->GetCompleteName();
 
 			bCameraGoOnline = false;
 			break;
@@ -1461,8 +1451,8 @@ void SVPPQObject::GoOnline()
 			m_arInspections[i]->GoOffline();
 		}// end for
 
-		SVStringArray msgList;
-		msgList.push_back(SVString(sFailureObjectName));
+		SVStringVector msgList;
+		msgList.push_back(FailureObjectName);
 
 		SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_GoOnlineFailure_Acquisition, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10185 );
 		throw Msg;
@@ -1470,7 +1460,7 @@ void SVPPQObject::GoOnline()
 
 	if( ! m_pTrigger->GoOnline() )
 	{
-		sFailureObjectName = m_pTrigger->GetCompleteObjectName();
+		FailureObjectName = m_pTrigger->GetCompleteName();
 		m_pTrigger->GoOffline();
 
 		SVCameraInfoMap::iterator l_svIter;
@@ -1486,8 +1476,8 @@ void SVPPQObject::GoOnline()
 			m_arInspections[i]->GoOffline();
 		}// end for
 
-		SVStringArray msgList;
-		msgList.push_back(SVString(sFailureObjectName));
+		SVStringVector msgList;
+		msgList.push_back(FailureObjectName);
 
 		SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_GoOnlineFailure_Trigger, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10185 );
 		throw Msg;
@@ -1759,24 +1749,24 @@ BOOL SVPPQObject::RemoveInput( SVIOEntryHostStructPtr pInput )
 {
 	BOOL l_Status = false;
 
-	CString strName;
+	SVString strName;
 
 	if( pInput->m_pValueObject )
 	{
-		strName = pInput->m_pValueObject->GetCompleteObjectName();
+		strName = pInput->m_pValueObject->GetCompleteName();
 	}
 	else if( !( pInput->m_IOId.empty() ) )
 	{
 		SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject( pInput->m_IOId );
 
-		strName = l_pObject->GetCompleteObjectName();
+		strName = l_pObject->GetCompleteName();
 	}
 
 	SVIOEntryHostStructPtrList::iterator l_Iter = m_AllInputs.begin();
 
 	while( l_Iter != m_AllInputs.end() )
 	{
-		l_Status = ( strName == ( *l_Iter )->m_pValueObject->GetCompleteObjectName() );
+		l_Status = ( strName == ( *l_Iter )->m_pValueObject->GetCompleteName() );
 
 		if( l_Status )
 		{
@@ -1934,7 +1924,7 @@ static bool CompareNameWithIOEntry(SVIOEntryHostStructPtr ioEntry, const SVStrin
 	bool bRetVal = false;
 	if (ioEntry && ioEntry->m_pValueObject)
 	{
-		bRetVal = ( SVString( ioEntry->m_pValueObject->GetName() ) == name);
+		bRetVal = ( ioEntry->m_pValueObject->GetName() == name);
 	}
 	return bRetVal; 
 }
@@ -1944,7 +1934,7 @@ static bool CompareCompleteNameWithIOEntry(SVIOEntryHostStructPtr ioEntry, const
 	bool bRetVal = false;
 	if (ioEntry && ioEntry->m_pValueObject)
 	{
-		bRetVal = ( SVString( ioEntry->m_pValueObject->GetCompleteObjectName() ) == name);
+		bRetVal = ( ioEntry->m_pValueObject->GetCompleteName() == name);
 	}
 	return bRetVal; 
 }
@@ -2009,12 +1999,12 @@ void SVPPQObject::SetDefaultConditionalOutput()
 
 bool SVPPQObject::HasCameraDataInputForConditionalOutput() const
 {
-	return (m_conditionalOutputName.find(_T("Camera")) != SVString::npos);
+	return (SVString::npos != m_conditionalOutputName.find(_T("Camera")) );
 }
 
 bool SVPPQObject::HasDigitalInputForConditionalOutput() const
 {
-	return (m_conditionalOutputName.find(_T("DIO")) != SVString::npos);
+	return (SVString::npos != m_conditionalOutputName.find(_T("DIO")) );
 }
 
 // AddToAvailableInputs searches the m_AllInputs by name. If it does not exist,
@@ -2022,7 +2012,7 @@ bool SVPPQObject::HasDigitalInputForConditionalOutput() const
 // IO_REMOTE_INPUT and IO_DIGITAL_INPUT.
 // A variant value object is created for the remote input.
 // A Boolean value object is created for the digital input.
-BOOL SVPPQObject::AddToAvailableInputs(SVIOObjectType eType, CString strName )
+BOOL SVPPQObject::AddToAvailableInputs(SVIOObjectType eType, const SVString& rName )
 {
 	bool bFound = false;
 	BOOL bRet = FALSE;
@@ -2031,7 +2021,7 @@ BOOL SVPPQObject::AddToAvailableInputs(SVIOObjectType eType, CString strName )
 	for(size_t k = 0 ; k < m_AllInputs.size(); k++ )
 	{
 		SVIOEntryHostStructPtr pOldInput = m_AllInputs[k];
-		if( 0 == strcmp( strName, pOldInput->m_pValueObject->GetName() ) )
+		if( rName ==  pOldInput->m_pValueObject->GetName() )
 		{
 			bFound = true;
 			break;
@@ -2052,7 +2042,7 @@ BOOL SVPPQObject::AddToAvailableInputs(SVIOObjectType eType, CString strName )
 			pObject = new SVBoolValueObjectClass();
 		}
 
-		pObject->SetName( strName );
+		pObject->SetName( rName.c_str() );
 		pObject->SetObjectDepth( GetPPQLength() + g_lPPQExtraBufferSize );
 		pObject->ResetObject();
 
@@ -2073,7 +2063,6 @@ BOOL SVPPQObject::AddToAvailableInputs(SVIOObjectType eType, CString strName )
 // m_AllInputs appears to be the available input list.
 BOOL SVPPQObject::AddDefaultInputs()
 {
-	CString strName;
 	unsigned long ulCount = 0;
 	unsigned long l;
 
@@ -2082,8 +2071,8 @@ BOOL SVPPQObject::AddDefaultInputs()
 	// Create all the default Digital Inputs
 	for( l = 0; l < ulCount; l++ )
 	{
-		strName.Format( "DIO.Input%d", l + 1 );
-		AddToAvailableInputs(IO_DIGITAL_INPUT, strName );
+		SVString Name = SvUl_SF::Format( _T("DIO.Input%d"), l + 1 );
+		AddToAvailableInputs( IO_DIGITAL_INPUT, Name );
 	}// end for
 
 	SVConfigurationObject* pConfig( nullptr );
@@ -2097,8 +2086,8 @@ BOOL SVPPQObject::AddDefaultInputs()
 	// Create all the default Remote Inputs
 	for( l = 0; l < static_cast<unsigned long>(lCount); l++ )
 	{
-		strName.Format( "Remote Input %d", l + 1 );
-		AddToAvailableInputs(IO_REMOTE_INPUT, strName);
+		SVString Name = SvUl_SF::Format( _T("Remote Input %d"), l + 1 );
+		AddToAvailableInputs( IO_REMOTE_INPUT, Name );
 	}// end for
 
 	return TRUE;
@@ -2151,26 +2140,27 @@ BOOL SVPPQObject::RemoveOutput( SVIOEntryHostStructPtr pOutput )
 		m_voOutputState.SetObjectOwner(this);
 	}
 
-	CString strName;
+	SVString Name;
 
-	strName.Empty();
 	if( pOutput->m_pValueObject )
-		strName = pOutput->m_pValueObject->GetCompleteObjectName();
+	{
+		Name = pOutput->m_pValueObject->GetCompleteName();
+	}
 	else if( !( pOutput->m_IOId.empty() ) )
 	{
 		SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject( pOutput->m_IOId );
 
-		strName = l_pObject->GetCompleteObjectName();
+		Name = l_pObject->GetCompleteName();
 	}
 
 	SVIOEntryHostStructPtrList::iterator l_Iter = m_AllOutputs.begin();
 
 	while( l_Iter != m_AllOutputs.end() )
 	{
-		CString l_csPPQName;
-		l_csPPQName = ( *l_Iter )->m_pValueObject->GetCompleteObjectName();
+		SVString PPQName;
+		PPQName = ( *l_Iter )->m_pValueObject->GetCompleteName();
 
-		l_Status = ( strName == l_csPPQName );
+		l_Status = ( Name == PPQName );
 
 		if( l_Status )
 		{
@@ -2426,8 +2416,8 @@ BOOL SVPPQObject::RebuildOutputList()
 	SVIOEntryHostStructPtrList ppNewOutputs;
 	SVIOEntryHostStructPtr pOldOutput;
 	SVIOEntryHostStructPtr pNewOutput;
-	CString l_csOldName;
-	CString l_csNewName;
+	SVString OldName;
+	SVString NewName;
 	size_t iOld;
 	size_t iNew;
 	size_t lNewSize;
@@ -2454,14 +2444,13 @@ BOOL SVPPQObject::RebuildOutputList()
 
 				SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject( pNewOutput->m_IOId );
 
-				l_csNewName = l_pObject->GetCompleteObjectName();
-				l_csOldName = pOldOutput->m_pValueObject->GetCompleteObjectName();
+				NewName = l_pObject->GetCompleteName();
+				OldName = pOldOutput->m_pValueObject->GetCompleteName();
 
-				if ( pNewOutput->m_ObjectType == pOldOutput->m_ObjectType &&
-					l_csNewName == l_csOldName )
+				if ( pNewOutput->m_ObjectType == pOldOutput->m_ObjectType && NewName == OldName )
 				{
 					// Copy information to new Output object
-					l_pObject->SetName( l_csOldName );
+					l_pObject->SetName( OldName.c_str() );
 
 					pNewOutput->m_DeleteValueObject = false;
 					pNewOutput->m_pValueObject = pOldOutput->m_pValueObject;
@@ -2473,24 +2462,24 @@ BOOL SVPPQObject::RebuildOutputList()
 					pOldOutput->m_pValueObject->ResetObject();
 
 					// Check for prefix of PPQ for these special signals...
-					if( l_csNewName.Find( _T("PPQ_")) == 0 )
+					if( 0 == NewName.find( _T("PPQ_")) )
 					{
 						// Disable Trigger Toggle since it is not written with the outputs
-						if( l_csNewName.Find( _T( "Trigger Toggle" ) ) >= 0 )
+						if( SVString::npos != NewName.find( _T( "Trigger Toggle" ) ) )
 						{
 							m_pTriggerToggle = pNewOutput;
 							pNewOutput->m_Enabled = FALSE;
 						}// end if
 
 						// Find Output Toggle now to make it quicker later
-						if( l_csNewName.Find( _T( "Output Toggle" ) ) >= 0 )
+						if( SVString::npos != NewName.find( _T( "Output Toggle" ) ) )
 						{
 							m_pOutputToggle = pNewOutput;
 							pNewOutput->m_Enabled = FALSE;
 						}// end if
 
 						// Find Data Valid now to make it quicker later
-						if( l_csNewName.Find( _T( "Data Valid" ) ) >= 0 )
+						if( SVString::npos != NewName.find( _T( "Data Valid" ) ) )
 						{
 							m_pDataValid = pNewOutput;
 							pNewOutput->m_Enabled = FALSE;
@@ -2513,16 +2502,16 @@ BOOL SVPPQObject::AddDefaultOutputs()
 {
 	// Setup PPQ variables that are available as outputs
 	SVIOEntryHostStructPtr pIOEntry;
-	CString strName;
+	SVString Name;
 	BOOL	bFound;
 	size_t	l;
 
-	strName = _T( "Not Inspected" );
+	Name = _T( "Not Inspected" );
 	for( l = 0, bFound = FALSE; !bFound && l < m_AllOutputs.size(); l++ )
 	{
 		pIOEntry = m_AllOutputs[l];
 
-		if( 0 == strcmp( strName, pIOEntry->m_pValueObject->GetName() ) )
+		if( Name == pIOEntry->m_pValueObject->GetName() )
 		{
 			bFound = TRUE;
 			break;
@@ -2794,7 +2783,6 @@ SVProductInfoStruct* SVPPQObject::IndexPPQ( SvTi::SVTriggerInfoStruct& p_rTrigge
 BOOL SVPPQObject::InitializeProduct( SVProductInfoStruct* p_pNewProduct, const SVVariantBoolVector& p_rInputValues )
 {
 	HRESULT hr;
-	CString strDisplay;
 
 	// Now we need to get the IO ready for this Product. Make sure that all locks are set
 	// and that all indexes are set correctly
@@ -2915,9 +2903,8 @@ HRESULT SVPPQObject::NotifyInspections( long p_Offset )
 HRESULT SVPPQObject::StartInspection( const SVGUID& p_rInspectionID )
 {
 #ifdef _DEBUG_PERFORMANCE_INFO //Arvid 160212 this is helpful for debugging the creation of Performance Information
-	CString infostring;
-	infostring.Format(_T("!\t.%7.1lf: SVPPQObject::StartInspection(%s)\n"),SvTl::GetRelTimeStamp(),p_rInspectionID.ToString().c_str());
-	::OutputDebugString(infostring);
+	SVString infostring = SvUl_SF::Format(_T("!\t.%7.1lf: SVPPQObject::StartInspection(%s)\n"),SvTl::GetRelTimeStamp(),p_rInspectionID.ToString().c_str());
+	::OutputDebugString(infostring.c_str());
 #endif
 
 	HRESULT l_Status = S_OK;
@@ -3016,10 +3003,8 @@ HRESULT SVPPQObject::StartInspection( const SVGUID& p_rInspectionID )
 		l_pProduct->m_WorkloadInfo.m_ProcessingStartTime = SVClock::GetTimeStamp(); //ProductWorkloadInformation may be incorrect if there are several inspections per product
 #ifdef _DEBUG_PERFORMANCE_INFO //Arvid 160212 this is helpful for debugging the creation of Performance Information
 
-		CString infostring;
-		infostring.Format(_T("set m_ProcessingStartTime, trID = %ld"),l_pProduct->ProcessCount());
-
-		logWorkloadInformation(l_pProduct->m_WorkloadInfo,infostring);
+		SVString infostring = SvUl_SF::Format(_T("set m_ProcessingStartTime, trID = %ld"),l_pProduct->ProcessCount());
+		logWorkloadInformation(l_pProduct->m_WorkloadInfo,infostring.c_str());
 #endif
 
 		l_Status = l_pProduct->m_svInspectionInfos[ p_rInspectionID ].pInspection->StartProcess( l_pProduct );
@@ -3052,8 +3037,6 @@ HRESULT SVPPQObject::StartInspection( const SVGUID& p_rInspectionID )
 
 BOOL SVPPQObject::StartOutputs( SVProductInfoStruct* p_pProduct )
 {
-	CString strDisplay;
-
 	if( p_pProduct )
 	{
 		p_pProduct->oOutputsInfo.m_BeginProcess = SVClock::GetTimeStamp();
@@ -3307,10 +3290,8 @@ bool SVPPQObject::SetProductComplete( long p_PPQIndex )
 		pProduct->m_WorkloadInfo.m_TriggerTime = pProduct->oTriggerInfo.m_BeginProcess;
 
 #ifdef _DEBUG_PERFORMANCE_INFO //Arvid 160212 this is helpful for debugging the creation of Performance Information
-		CString infostring;
-		infostring.Format(_T("SVPPQObject::SetProductComplete(@ppq: %d) >> m_CompletionTime\n\t\t(oTriggerInfo.m_BeginProcess -> m_TriggerTime)"),
-			p_PPQIndex);
-		logWorkloadInformation(pProduct->m_WorkloadInfo,infostring);
+		SVString infostring = SvUl_SF::Format(_T("SVPPQObject::SetProductComplete(@ppq: %d) >> m_CompletionTime\n\t\t(oTriggerInfo.m_BeginProcess -> m_TriggerTime)"), p_PPQIndex);
+		logWorkloadInformation(pProduct->m_WorkloadInfo,infostring.c_str());
 #endif
 
 		m_MostRecentWorkLoadInfo = pProduct->GetWorkloadInformation();
@@ -4134,14 +4115,14 @@ HRESULT SVPPQObject::ProcessTrigger( bool& p_rProcessed )
 							}
 							catch (const std::exception& e)
 							{
-								SVStringArray msgList;
+								SVStringVector msgList;
 								msgList.push_back(e.what());
 								SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 								Exception.setMessage( SVMSG_SVO_44_SHARED_MEMORY, SvOi::Tid_ProcessTrigger, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_15026 );
 							}
 							catch (...)
 							{
-								SVStringArray msgList;
+								SVStringVector msgList;
 								msgList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_Unknown));
 								SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 								Exception.setMessage( SVMSG_SVO_44_SHARED_MEMORY, SvOi::Tid_ProcessTrigger, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_15027 );
@@ -5262,14 +5243,14 @@ void SVPPQObject::ReleaseSharedMemory(const SVProductInfoStruct& rProduct)
 		}
 		catch (const std::exception& e)
 		{
-			SVStringArray msgList;
+			SVStringVector msgList;
 			msgList.push_back(e.what());
 			SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 			Exception.setMessage( SVMSG_SVO_44_SHARED_MEMORY, SvOi::Tid_ReleaseProduct, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_15029 );
 		}
 		catch (...)
 		{
-			SVStringArray msgList;
+			SVStringVector msgList;
 			msgList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_Unknown));
 			SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 			Exception.setMessage( SVMSG_SVO_44_SHARED_MEMORY, SvOi::Tid_ReleaseProduct, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_15030 );
@@ -5321,14 +5302,14 @@ void SVPPQObject::CommitSharedMemory(const SVProductInfoStruct& rProduct)
 }
 		catch (const std::exception& e)
 		{
-			SVStringArray msgList;
+			SVStringVector msgList;
 			msgList.push_back(e.what());
 			SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 			Exception.setMessage( SVMSG_SVO_44_SHARED_MEMORY, SvOi::Tid_CommitSharedMemory, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_15032 );
 		}
 		catch (...)
 		{
-			SVStringArray msgList;
+			SVStringVector msgList;
 			msgList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_Unknown));
 			SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 			Exception.setMessage( SVMSG_SVO_44_SHARED_MEMORY, SvOi::Tid_CommitSharedMemory, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_15033 );

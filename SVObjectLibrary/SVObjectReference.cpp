@@ -25,7 +25,7 @@ SVObjectReference::SVObjectReference( SVObjectClass* pObject ):
 	
 }
 
-SVObjectReference::SVObjectReference( SVObjectClass* pObject, long lArrayIndex, CString strDefaultValue ):
+SVObjectReference::SVObjectReference( SVObjectClass* pObject, long lArrayIndex, SVString strDefaultValue ):
 	m_ArrayIndex(lArrayIndex),  
 	m_IsArray(true)
 {
@@ -33,12 +33,12 @@ SVObjectReference::SVObjectReference( SVObjectClass* pObject, long lArrayIndex, 
 	m_Guid = m_pObject ? m_pObject->GetUniqueObjectID() : SV_GUID_NULL;
 	if( nullptr != m_pObject )
 	{
-		m_NameInfo.ParseObjectName( m_NameInfo, static_cast< LPCTSTR >( m_pObject->GetCompleteObjectName() ) );
+		m_NameInfo.ParseObjectName( m_NameInfo, m_pObject->GetCompleteName().c_str() );
 	}
 	m_NameInfo.SetIsIndexPresent(true);
 	m_NameInfo.SetIndex( SvUl_SF::Format(_T("%d"), lArrayIndex ));
 	m_NameInfo.SetIsDefaultValuePresent(true);
-	m_NameInfo.SetDefaultValue(static_cast< LPCTSTR >( strDefaultValue ));
+	m_NameInfo.SetDefaultValue( strDefaultValue );
 	
 
 }
@@ -69,59 +69,64 @@ void SVObjectReference::SetArrayIndex( long lArrayIndex )
 	m_NameInfo.SetIndex( SvUl_SF::Format(_T("%d"), lArrayIndex ) );
 }
 
-CString SVObjectReference::GetName() const
+SVString SVObjectReference::GetName() const
 {
-	CString strName;
-	if ( m_pObject )
+	SVString Result;
+	
+	if ( nullptr != m_pObject )
 	{
-		strName = m_pObject->GetName();
-		strName += GetZeroBasedIndexString();
+		Result = m_pObject->GetName();
+		Result += GetZeroBasedIndexString();
 	}
-	return strName;
+	return Result;
 }
 
-CString SVObjectReference::GetCompleteObjectName() const
+SVString SVObjectReference::GetCompleteName() const
 {
-	CString strName;
-	if ( m_pObject )
+	SVString Result;
+
+	if ( nullptr != m_pObject )
 	{
-		strName = m_pObject->GetCompleteObjectName();
-		strName += GetZeroBasedIndexString();
+		Result = m_pObject->GetCompleteName();
+		Result += GetZeroBasedIndexString();
 	}
-	return strName;
+	return Result;
 }
 
-CString SVObjectReference::GetCompleteObjectNameToObjectType( LPCSTR lpszCompleteName, SVObjectTypeEnum objectTypeToInclude ) const
+SVString SVObjectReference::GetCompleteObjectNameToObjectType( LPCTSTR lpszCompleteName, SVObjectTypeEnum objectTypeToInclude ) const
 {
-	CString strName;
-	if ( m_pObject )
+	SVString Result;
+
+	if ( nullptr != m_pObject )
 	{
-		strName = m_pObject->GetCompleteObjectNameToObjectType(lpszCompleteName, objectTypeToInclude);
-		strName += GetZeroBasedIndexString();
+		Result = m_pObject->GetCompleteObjectNameToObjectType(lpszCompleteName, objectTypeToInclude);
+		Result += GetZeroBasedIndexString();
 	}
-	return strName;
+	return Result;
 }
 
-CString SVObjectReference::GetOneBasedName() const
+SVString SVObjectReference::GetOneBasedName() const
 {
-	CString strName;
-	if ( m_pObject )
+	SVString Result;
+
+	if ( nullptr != m_pObject )
 	{
-		strName = m_pObject->GetName();
-		strName += GetOneBasedIndexString();
+		Result = m_pObject->GetName();
+		Result += GetOneBasedIndexString();
 	}
-	return strName;
+	return Result;
 }
 
-CString SVObjectReference::GetCompleteOneBasedObjectName() const
+SVString SVObjectReference::GetCompleteOneBasedObjectName() const
 {
-	CString strName;
-	if ( m_pObject )
+	SVString Result;
+
+	if ( nullptr != m_pObject )
 	{
-		strName = m_pObject->GetCompleteObjectName();
-		strName += GetOneBasedIndexString();
+		Result = m_pObject->GetCompleteName();
+		Result += GetOneBasedIndexString();
 	}
-	return strName;
+	return Result;
 }
 
 const SVObjectNameInfo& SVObjectReference::GetObjectNameInfo() const
@@ -129,38 +134,40 @@ const SVObjectNameInfo& SVObjectReference::GetObjectNameInfo() const
 	return m_NameInfo;
 }
 
-CString SVObjectReference::GetZeroBasedIndexString() const
+SVString SVObjectReference::GetZeroBasedIndexString() const
 {
-	CString s;
+	SVString Result;
+
 	if( m_IsArray)
 	{
 		if ( m_ArrayIndex >= 0 )
 		{
-			s.Format(_T("[%d]"), m_ArrayIndex );
+			Result = SvUl_SF::Format(_T("[%d]"), m_ArrayIndex );
 		}
 		else
 		{
-			s = _T("[ ]");
+			Result = _T("[ ]");
 		}
 	}
-	return s;
+	return Result;
 }
 
-CString SVObjectReference::GetOneBasedIndexString() const
+SVString SVObjectReference::GetOneBasedIndexString() const
 {
-	CString s;
+	SVString Result;
+
 	if( m_IsArray)
 	{
 		if (  m_ArrayIndex >= 0 )
 		{
-			s.Format(_T("[%d]"), m_ArrayIndex + 1);
+			Result = SvUl_SF::Format(_T("[%d]"), m_ArrayIndex + 1);
 		}
 		else
 		{
-			s = _T("[ ]");
+			Result = _T("[ ]");
 		}
 	}
-	return s;
+	return Result;
 }
 
 const SVString& SVObjectReference::GetIndex() const
@@ -171,25 +178,25 @@ const SVString& SVObjectReference::GetIndex() const
 
 const UINT SVObjectReference::ObjectAttributesAllowed() const
 {
-	ASSERT( nullptr != m_pObject );
+	assert( nullptr != m_pObject );
 	return m_pObject->ObjectAttributesAllowed();
 }
 
 const UINT SVObjectReference::ObjectAttributesSet() const
 {
-	ASSERT( nullptr != m_pObject );
+	assert( nullptr != m_pObject );
 	return m_pObject->ObjectAttributesSet(m_ArrayIndex >= 0 ? m_ArrayIndex : 0  );
 }
 
 UINT& SVObjectReference::ObjectAttributesAllowedRef()
 {
-	ASSERT( nullptr != m_pObject );
+	assert( nullptr != m_pObject );
 	return m_pObject->ObjectAttributesAllowedRef();
 }
 
 UINT& SVObjectReference::ObjectAttributesSetRef()
 {
-	ASSERT( nullptr != m_pObject );
+	assert( nullptr != m_pObject );
 	return m_pObject->ObjectAttributesSetRef(m_ArrayIndex >= 0 ? m_ArrayIndex : 0 );
 }
 

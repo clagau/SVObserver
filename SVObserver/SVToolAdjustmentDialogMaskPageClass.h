@@ -23,6 +23,7 @@
 #include "SVOGui\GuiController.h"
 #include "SVOGui\MaskController.h"
 #include "SVUtilityLibrary\SVGUID.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 class SVToolAdjustmentDialogMaskPageClass : public CPropertyPage

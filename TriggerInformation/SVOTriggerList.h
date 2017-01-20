@@ -13,6 +13,7 @@
 
 #pragma region Includes
 #include "SVContainerLibrary\SVList.h"
+#include "SVUtilityLibrary/SVString.h"
 #include "SVOTriggerObj.h"
 #pragma endregion Includes
 

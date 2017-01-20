@@ -13,6 +13,7 @@
 
 #include "SVRegressionTestStruct.h"
 #include "SVRegressionFileSelectSheet.h"
+#include "SVUtilityLibrary/SVString.h"
 
 /////////////////////////////////////////////////////////////////////////////
 // CSVRegressionFileSelectDlg dialog
@@ -30,7 +31,6 @@ public:
 
 	RegressionFileEnum GetFileSelectType();
 	CString GetSelectedFile();
-	CString GetFilePath();
 	CString GetPageName();
 	void SetRegressionData(RegressionTestStruct *p_pDataStruct);
 
@@ -41,7 +41,7 @@ public:
 	enum { IDD = IDD_PROPPAGE_REGRESSION_FILESELECT };
 	CButton	m_btnBrowseFiles;
 	int		m_iSelectFileRadio;
-	CString	m_sRegTestFiles;
+	CString	m_RegTestFiles;
 	//}}AFX_DATA
 
 
@@ -65,10 +65,9 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 private:
-	CString m_sDialogName;
-	CString m_sFilePath;
     CSVRegressionFileSelectSheet *m_pParent;
-	CString m_sRegistryPath;
+	SVString m_DialogName;
+	SVString m_RegistryPath;
 };
 
 //{{AFX_INSERT_LOCATION}}

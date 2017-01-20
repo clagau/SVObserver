@@ -56,8 +56,8 @@ public:
 	//{{AFX_DATA(SVIOAdjustDialogClass)
 	enum { IDD = IDD_IOADJUST_DIALOG };
 	CComboBox	IOCombo;
-	CString		StrIOName;
-	CString		StrIOValue;
+	CString		IOName;
+	CString		IOValue;
 	BOOL		IsForced;
 	BOOL		IsInverted;
 	BOOL		IsForcedTrue;

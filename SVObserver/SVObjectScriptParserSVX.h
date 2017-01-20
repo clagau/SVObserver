@@ -15,6 +15,7 @@
 #include "SVObjectScriptParser.h"
 #include "SVObjectLibrary/SVObjectScriptEnums.h"
 #include "SVObjectLibrary/SVObjectClass.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 
@@ -279,7 +280,7 @@ typedef SVVector< SVObjectScriptDataTypeKeywordStruct > SVDataTypeKeywordTable;
 class SVObjectScriptParserSVXClass : public SVObjectScriptParserBase
 {
 public:
-	SVObjectScriptParserSVXClass(unsigned long parserHandle,SVSharedPtr<CString> pScript, const GUID& OwnerGuid, SVObjectClass* pOwnerObject, CWnd* pWnd);
+	SVObjectScriptParserSVXClass(unsigned long parserHandle,SVSharedPtr<SVString> pScript, const GUID& OwnerGuid, SVObjectClass* pOwnerObject, CWnd* pWnd);
 	virtual ~SVObjectScriptParserSVXClass();
 
 	virtual size_t GetTotal() const override;
@@ -328,7 +329,7 @@ protected:
 	SVKeywordTable			m_KeywordTable;
 	SVDataTypeKeywordTable	m_DataTypeKeywordTable;
 
-	SVSharedPtr<CString> m_pParseString; // 
+	SVSharedPtr<SVString> m_pParseString; // 
 };	// end SVObjectScriptParserSVXClass
 
 struct SVObjectScriptInputObjectTokenStruct

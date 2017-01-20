@@ -10,6 +10,7 @@
 //******************************************************************************
 
 #include "stdafx.h"
+//Moved to precompiled header: #include <algorithm>
 #include "SVOPPQObj.h"
 #include "SVPPQConstants.h"
 
@@ -24,8 +25,8 @@ static char THIS_FILE[]=__FILE__;
 //////////////////////////////////////////////////////////////////////
 
 SVOPPQObj::SVOPPQObj()
-: m_sPPQName(_T(""))
-, m_sAttachedTrigger(_T(""))
+: m_PPQName(_T(""))
+, m_AttachedTrigger(_T(""))
 , m_iPPQMode(0)
 , m_lPPQLength(2)
 , m_lPPQOutputResetDelay(0)
@@ -38,121 +39,132 @@ SVOPPQObj::SVOPPQObj()
 
 SVOPPQObj::~SVOPPQObj()
 {
-	m_slAttachedCameraList.RemoveAll();
-	m_slAttachedCameraList.RemoveAll();
+	m_AttachedCameraList.clear();
+	m_AttachedCameraList.clear();
 }
 
-void SVOPPQObj::SetPPQName(CString sPPQName)
+void SVOPPQObj::SetPPQName(LPCTSTR PPQName)
 {
-	m_sPPQName = sPPQName;
+	m_PPQName = PPQName;
 }
 
-CString SVOPPQObj::GetPPQName()
+const SVString& SVOPPQObj::GetPPQName()
 {
-	return m_sPPQName;
+	return m_PPQName;
 }
 
-void SVOPPQObj::AttachTriggerToPPQ(CString sTriggerName)
+void SVOPPQObj::AttachTriggerToPPQ( LPCTSTR TriggerName )
 {
-	m_sAttachedTrigger = sTriggerName;
+	m_AttachedTrigger = TriggerName;
 }
 
 void SVOPPQObj::DetachTriggerFromPPQ()
 {
-	m_sAttachedTrigger = "";
+	m_AttachedTrigger.clear();
 }
 
-CString SVOPPQObj::GetAttachedTriggerName() const
+const SVString& SVOPPQObj::GetAttachedTriggerName() const
 {
-	return m_sAttachedTrigger;
+	return m_AttachedTrigger;
 }
 
-BOOL SVOPPQObj::AttachCameraToPPQ(CString sCameraName)
+BOOL SVOPPQObj::AttachCameraToPPQ( LPCTSTR CameraName )
 {
-	BOOL bRet = false;
+	bool Result( false );
 	//check to see if it is already in list
 	//if not add camera to list
-	if (nullptr == m_slAttachedCameraList.Find(sCameraName) )
+	SVString AttachedCamera( CameraName );
+	SVStringVector::const_iterator Iter = std::find( m_AttachedCameraList.begin(), m_AttachedCameraList.end(), AttachedCamera );
+	if( m_AttachedCameraList.end() == Iter )
 	{ 
-		m_slAttachedCameraList.AddTail(sCameraName);
-		bRet = true;
+		m_AttachedCameraList.push_back( AttachedCamera );
+		Result = true;
 	}
-	return bRet;
+	return Result;
 }
 
-BOOL SVOPPQObj::DetachCameraFromPPQ(CString sCameraName)
+BOOL SVOPPQObj::DetachCameraFromPPQ(LPCTSTR CameraName)
 {
-	BOOL bRet = false;
+	bool Result( false );
 	
-	if (!m_slAttachedCameraList.IsEmpty())
+	if (!m_AttachedCameraList.empty())
 	{
-		POSITION pos = m_slAttachedCameraList.Find(sCameraName);
-		if (nullptr != pos)
+		SVString AttachedCamera( CameraName );
+		SVStringVector::const_iterator Iter = std::find( m_AttachedCameraList.begin(), m_AttachedCameraList.end(), AttachedCamera );
+		if( m_AttachedCameraList.end() != Iter)
 		{ //camera is in list.  now delete
-			m_slAttachedCameraList.RemoveAt(pos);
-			bRet = true;
+			m_AttachedCameraList.erase(Iter);
+			Result = true;
 		}
 	}
-	return bRet;
+
+	return Result;
 }
 
 int SVOPPQObj::GetAttachedCameraCount() const
 {
-	return static_cast<int>(m_slAttachedCameraList.GetCount());
+	return static_cast<int> (m_AttachedCameraList.size());
 }
 
-CString SVOPPQObj::GetAttachedCamera(int iPos) const
+SVString SVOPPQObj::GetAttachedCamera(int iPos) const
 {
-	CString sReturnStr = "";
-	POSITION pos = m_slAttachedCameraList.FindIndex(iPos);
+	SVStringVector::const_iterator Iter = m_AttachedCameraList.begin() + iPos;
 	
-	if (nullptr != pos)
+	if( m_AttachedCameraList.end() != Iter )
 	{
-		sReturnStr = m_slAttachedCameraList.GetAt(pos);
+		return *Iter;
 	}
-	return sReturnStr;
+
+	return SVString();
 }
 
-BOOL SVOPPQObj::AttachInspectionToPPQ(CString sInspectName)
+BOOL SVOPPQObj::AttachInspectionToPPQ(LPCTSTR InspectName)
 {
-	BOOL bRet = false;
+	bool Result( false );
 	
-	if (nullptr == m_slAttachedInspectList.Find(sInspectName))
-	{
-		//was not found, add to list
-		m_slAttachedInspectList.AddTail(sInspectName);
-		bRet = true;
+	SVString AttachedInspection( InspectName );
+	SVStringVector::const_iterator Iter = std::find( m_AttachedInspectList.begin(), m_AttachedInspectList.end(), AttachedInspection );
+	if( m_AttachedInspectList.end() == Iter )
+	{ 
+		m_AttachedInspectList.push_back( AttachedInspection );
+		Result = true;
 	}
-	return bRet;
+	return Result;
 }
 
-BOOL SVOPPQObj::DetachInspectionFromPPQ(CString sInspectName)
+BOOL SVOPPQObj::DetachInspectionFromPPQ(LPCTSTR InspectName)
 {
-	BOOL bRet = false;
+	bool Result( false );
 	
-	if (!m_slAttachedInspectList.IsEmpty())
+	if (!m_AttachedCameraList.empty())
 	{
-		POSITION pos = m_slAttachedInspectList.Find(sInspectName);
-		
-		if (nullptr != pos)
-		{
-			m_slAttachedInspectList.RemoveAt(pos);
-			bRet = true;
+		SVString AttachedInspection( InspectName );
+		SVStringVector::const_iterator Iter = std::find( m_AttachedInspectList.begin(), m_AttachedInspectList.end(), AttachedInspection );
+		if( m_AttachedInspectList.end() != Iter)
+		{ //camera is in list.  now delete
+			m_AttachedInspectList.erase( Iter );
+			Result = true;
 		}
 	}
-	return bRet;
+
+	return Result;
 }
 
 int SVOPPQObj::GetAttachedInspectionCount()
 {
-	return static_cast<int>(m_slAttachedInspectList.GetCount());
+	return static_cast<int> (m_AttachedInspectList.size());
 }
 
-CString SVOPPQObj::GetAttachedInspection(int iPos)
+SVString SVOPPQObj::GetAttachedInspection(int iPos)
 {
-	POSITION pos = m_slAttachedInspectList.FindIndex(iPos);
-	
-	return m_slAttachedInspectList.GetAt(pos);
+	SVStringVector::const_iterator Iter = m_AttachedInspectList.begin() + iPos;
+
+	if( m_AttachedInspectList.end() != Iter )
+	{
+		return *Iter;
+	}
+
+	return SVString();
 }
 
 //property methods
@@ -196,27 +208,25 @@ long SVOPPQObj::GetPPQOutputDelayTime() const
 	return m_lPPQOutputDelayTime;
 }
 
-SVOPPQObj &SVOPPQObj::operator =(const SVOPPQObj &source)
+SVOPPQObj &SVOPPQObj::operator =(const SVOPPQObj &rRhs)
 {
-	if (this != &source)
+	if (this != &rRhs)
 	{
-		m_sPPQName = source.m_sPPQName;
-		m_sAttachedTrigger = source.m_sAttachedTrigger;
-		m_slAttachedCameraList.RemoveAll();
-		//The MFC method AddHead only excepts a CStringList pointer that is why const_cast is necessary!
-		m_slAttachedCameraList.AddHead( const_cast<CStringList*> (&source.m_slAttachedCameraList) );
-		m_slAttachedInspectList.RemoveAll();
-		//The MFC method AddHead only excepts a CStringList pointer that is why const_cast is necessary!
-		m_slAttachedInspectList.AddHead( const_cast<CStringList*> (&source.m_slAttachedInspectList) );
-		m_iPPQMode = source.m_iPPQMode;
-		m_lPPQLength = source.m_lPPQLength;
-		m_lPPQOutputResetDelay = source.m_lPPQOutputResetDelay;
-		m_lPPQOutputDelayTime = source.m_lPPQOutputDelayTime;
-		m_bMaintainSrcImg = source.m_bMaintainSrcImg;
-		m_lInspectionTimeout = source.m_lInspectionTimeout;
-		m_conditionalOutputName = source.m_conditionalOutputName;
-		m_availableInputs = source.m_availableInputs;
-		m_importedInputList = source.m_importedInputList;
+		m_PPQName = rRhs.m_PPQName;
+		m_AttachedTrigger = rRhs.m_AttachedTrigger;
+		m_AttachedCameraList.clear();
+		m_AttachedCameraList = rRhs.m_AttachedCameraList;
+		m_AttachedInspectList.clear();
+		m_AttachedInspectList = rRhs.m_AttachedInspectList;
+		m_iPPQMode = rRhs.m_iPPQMode;
+		m_lPPQLength = rRhs.m_lPPQLength;
+		m_lPPQOutputResetDelay = rRhs.m_lPPQOutputResetDelay;
+		m_lPPQOutputDelayTime = rRhs.m_lPPQOutputDelayTime;
+		m_bMaintainSrcImg = rRhs.m_bMaintainSrcImg;
+		m_lInspectionTimeout = rRhs.m_lInspectionTimeout;
+		m_conditionalOutputName = rRhs.m_conditionalOutputName;
+		m_availableInputs = rRhs.m_availableInputs;
+		m_importedInputList = rRhs.m_importedInputList;
 	}
 	return (*this);
 }
@@ -263,7 +273,7 @@ const SVString& SVOPPQObj::GetConditionalOutputName() const
 
 bool SVOPPQObj::IsConditionalOutputCameraInput() const
 {
-	return (m_conditionalOutputName.find("Camera") == 0);
+	return ( 0 == m_conditionalOutputName.find("Camera") );
 }
 
 void SVOPPQObj::RemoveCameraInputConditionalOutput()

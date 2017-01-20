@@ -67,7 +67,7 @@ namespace Seidenader
 			//{{AFX_DATA(SVToolAdjustmentDialogFileImageSourcePageClass)
 			enum { IDD = IDD_TA_FILE_IMAGE_DIALOG };
 			SvOg::PictureDisplay m_imageCtrl;
-			CString	m_StrPathName;
+			CString	m_PathName;
 			BOOL m_BContinuousReload;
 			//}}AFX_DATA
 		#pragma endregion Member variables

@@ -33,11 +33,11 @@ SVToolAdjustmentDialogAcquisitionSourcePageClass::SVToolAdjustmentDialogAcquisit
 : CPropertyPage(SVToolAdjustmentDialogAcquisitionSourcePageClass::IDD)
 {
 	//{{AFX_DATA_INIT(SVToolAdjustmentDialogAcquisitionSourcePageClass)
-	StrSelectedDigitizer = _T("");
-	bChannel0 = FALSE;
-	bChannel1 = FALSE;
-	bChannel2 = FALSE;
-	bChannel3 = FALSE;
+	m_SelectedDigitizer = _T("");
+	m_Channel0 = FALSE;
+	m_Channel1 = FALSE;
+	m_Channel2 = FALSE;
+	m_Channel3 = FALSE;
 	//}}AFX_DATA_INIT
 
 	pSheet		= PSheet;
@@ -79,7 +79,7 @@ void SVToolAdjustmentDialogAcquisitionSourcePageClass::refresh()
 	}
 
 	// Set to defaults...
-	StrSelectedDigitizer.Empty();
+	m_SelectedDigitizer.Empty();
 	availableBandNum  = 0;
 	availableBandLink = -1;
 
@@ -92,7 +92,7 @@ void SVToolAdjustmentDialogAcquisitionSourcePageClass::refresh()
 		if ( nullptr != pMainImage->GetCamera() )
 		{
 			// Get current selected Digitizer Name...
-			StrSelectedDigitizer = pMainImage->GetCamera()->GetCompleteObjectName();
+			m_SelectedDigitizer = pMainImage->GetCamera()->GetCompleteName().c_str();
 
 			pMainImage->GetCamera()->mpsvDevice->GetImageInfo( &oImageInfo );
 
@@ -111,10 +111,10 @@ void SVToolAdjustmentDialogAcquisitionSourcePageClass::refresh()
 		ImageInfo.GetImageProperty( SVImagePropertyBandLink, bandLink );
 
 		// Set up channel states...
-		bChannel0 = ( bandLink == 0 || ( bColor && bandNum > 1 ) );
-		bChannel1 = ( bandLink == 1 || ( bColor && bandNum > 1 ) );
-		bChannel2 = ( bandLink == 2 || ( bColor && bandNum > 2 ) );
-		bChannel3 = ( bandLink == 3 || ( bColor && bandNum > 3 ) );
+		m_Channel0 = ( bandLink == 0 || ( bColor && bandNum > 1 ) );
+		m_Channel1 = ( bandLink == 1 || ( bColor && bandNum > 1 ) );
+		m_Channel2 = ( bandLink == 2 || ( bColor && bandNum > 2 ) );
+		m_Channel3 = ( bandLink == 3 || ( bColor && bandNum > 3 ) );
 	}
 
 	// Check Channel Checkboxes enabled state...
@@ -142,11 +142,11 @@ void SVToolAdjustmentDialogAcquisitionSourcePageClass::DoDataExchange(CDataExcha
 	CPropertyPage::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(SVToolAdjustmentDialogAcquisitionSourcePageClass)
 	DDX_Control(pDX, IDC_AVAILABLE_DIGITIZERS_TREE, availableDigitizerTreeCtrl);
-	DDX_Text(pDX, IDC_SELECTED_EDIT, StrSelectedDigitizer);
-	DDX_Check(pDX, IDC_CHANNEL0_CHECK, bChannel0);
-	DDX_Check(pDX, IDC_CHANNEL1_CHECK, bChannel1);
-	DDX_Check(pDX, IDC_CHANNEL2_CHECK, bChannel2);
-	DDX_Check(pDX, IDC_CHANNEL3_CHECK, bChannel3);
+	DDX_Text(pDX, IDC_SELECTED_EDIT, m_SelectedDigitizer);
+	DDX_Check(pDX, IDC_CHANNEL0_CHECK, m_Channel0);
+	DDX_Check(pDX, IDC_CHANNEL1_CHECK, m_Channel1);
+	DDX_Check(pDX, IDC_CHANNEL2_CHECK, m_Channel2);
+	DDX_Check(pDX, IDC_CHANNEL3_CHECK, m_Channel3);
 	//}}AFX_DATA_MAP
 }
 
@@ -199,7 +199,7 @@ BOOL SVToolAdjustmentDialogAcquisitionSourcePageClass::OnInitDialog()
 				{
 					if( nullptr != ( *l_Iter ) && nullptr != ( *l_Iter )->mpsvDevice )
 					{
-						availableDigitizerTreeCtrl.AddItem( ( *l_Iter )->GetCompleteObjectName(), reinterpret_cast<DWORD_PTR>(*l_Iter) );
+						availableDigitizerTreeCtrl.AddItem( ( *l_Iter )->GetCompleteName().c_str(), reinterpret_cast<DWORD_PTR>(*l_Iter) );
 					}
 
 					++l_Iter;
@@ -268,7 +268,7 @@ void SVToolAdjustmentDialogAcquisitionSourcePageClass::OnChannel0Check()
 
 	if( pMainImage && availableBandNum > 0 )
 	{
-		if( bChannel0 )
+		if( m_Channel0 )
 		{
 			SVImageInfoClass ImageInfo = pMainImage->GetImageInfo();
 
@@ -295,7 +295,7 @@ void SVToolAdjustmentDialogAcquisitionSourcePageClass::OnChannel1Check()
 
 	if( pMainImage && availableBandNum > 1 )
 	{
-		if( bChannel1 )
+		if( m_Channel1 )
 		{
 			SVImageInfoClass ImageInfo = pMainImage->GetImageInfo();
 
@@ -322,7 +322,7 @@ void SVToolAdjustmentDialogAcquisitionSourcePageClass::OnChannel2Check()
 
 	if( pMainImage && availableBandNum > 2 )
 	{
-		if( bChannel2 )
+		if( m_Channel2 )
 		{
 			SVImageInfoClass ImageInfo = pMainImage->GetImageInfo();
 
@@ -349,7 +349,7 @@ void SVToolAdjustmentDialogAcquisitionSourcePageClass::OnChannel3Check()
 
 	if( pMainImage && availableBandNum > 3 )
 	{
-		if( bChannel3 )
+		if( m_Channel3 )
 		{
 			SVImageInfoClass ImageInfo = pMainImage->GetImageInfo();
 

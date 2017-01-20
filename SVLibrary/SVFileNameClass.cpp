@@ -76,29 +76,29 @@ DWORD SVFileNameClass::GetFileType() const
 	return m_FileType;
 }
 
-LPCTSTR SVFileNameClass::GetPathName() const
+const SVString& SVFileNameClass::GetPathName() const
 {
-	return m_PathName.c_str();
+	return m_PathName;
 }
 
-LPCTSTR SVFileNameClass::GetFileName() const
+const SVString& SVFileNameClass::GetFileName() const
 {
 	m_FileName = m_FileNameOnly + m_Extension;
 
-	return m_FileName.c_str();
+	return m_FileName;
 }
 
-LPCTSTR SVFileNameClass::GetFileNameOnly() const
+const SVString& SVFileNameClass::GetFileNameOnly() const
 {
-	return m_FileNameOnly.c_str();
+	return m_FileNameOnly;
 }
 
-LPCTSTR SVFileNameClass::GetExtension() const
+const SVString& SVFileNameClass::GetExtension() const
 {
-	return m_Extension.c_str();
+	return m_Extension;
 }
 
-LPCTSTR SVFileNameClass::GetFullFileName() const
+const SVString& SVFileNameClass::GetFullFileName() const
 {
 	m_FullFileName.clear();
 	
@@ -109,32 +109,32 @@ LPCTSTR SVFileNameClass::GetFullFileName() const
 		m_FullFileName = m_PathName + "\\" + m_FullFileName;
 	}
 
-	return m_FullFileName.c_str();
+	return m_FullFileName;
 }
 
-LPCTSTR SVFileNameClass::GetFileSelectDialogTitle() const
+const SVString& SVFileNameClass::GetFileSelectDialogTitle() const
 {
-	return m_FileSelectDialogTitle.c_str();
+	return m_FileSelectDialogTitle;
 }
 
-LPCTSTR SVFileNameClass::GetFileSaveDialogTitle() const
+const SVString& SVFileNameClass::GetFileSaveDialogTitle() const
 {
-	return m_FileSaveDialogTitle.c_str();
+	return m_FileSaveDialogTitle;
 }
 
-LPCTSTR SVFileNameClass::GetDefaultPathName() const
+const SVString& SVFileNameClass::GetDefaultPathName() const
 {
-	return m_DefaultPathName.c_str();
+	return m_DefaultPathName;
 }
 
-LPCTSTR SVFileNameClass::GetDefaultFileName() const
+const SVString& SVFileNameClass::GetDefaultFileName() const
 {
-	return m_DefaultFileName.c_str();
+	return m_DefaultFileName;
 }
 
-LPCTSTR SVFileNameClass::GetDefaultFileExtension() const
+const SVString& SVFileNameClass::GetDefaultFileExtension() const
 {
-	return m_DefaultFileExtension.c_str();
+	return m_DefaultFileExtension;
 }
 
 DWORD SVFileNameClass::GetFileSelectFlags() const
@@ -147,9 +147,9 @@ DWORD SVFileNameClass::GetFileSaveFlags() const
 	return m_FileSaveFlags;
 }
 
-LPCTSTR SVFileNameClass::GetFileExtensionFilterList() const
+const SVString& SVFileNameClass::GetFileExtensionFilterList() const
 {
-	return m_FileExtensionFilterList.c_str();
+	return m_FileExtensionFilterList;
 }
 
 BOOL SVFileNameClass::SetFileType(DWORD dwFileType)
@@ -435,20 +435,20 @@ BOOL SVFileNameClass::SetFileSaveDialogTitle(LPCTSTR szTitle)
 	return true;
 }
 
-BOOL SVFileNameClass::SetDefaultFullFileName(LPCTSTR szFullName)
+BOOL SVFileNameClass::SetDefaultFullFileName(LPCTSTR FullName)
 {
 	SVString sFullName;
 
-	if (szFullName)
+	if( nullptr != FullName)
 	{
-		sFullName = szFullName;
+		sFullName = FullName;
 	}
 
-	if ( sFullName.empty() )
+	if( sFullName.empty() )
 	{
-		SetDefaultPathName( nullptr );
-		SetDefaultFileName( nullptr );
-		SetDefaultFileExtension( nullptr );
+		SetDefaultPathName( SVString() );
+		SetDefaultFileName( SVString() );
+		SetDefaultFileExtension( SVString() );
 	}
 	else
 	{
@@ -464,19 +464,19 @@ BOOL SVFileNameClass::SetDefaultFullFileName(LPCTSTR szFullName)
 		sPathName = drive;
 		sPathName += dir;
 
-		SetDefaultFileName( fname );
-		SetDefaultFileExtension( ext );
-		SetDefaultPathName( sPathName.c_str() );
+		SetDefaultFileName( SVString(fname) );
+		SetDefaultFileExtension( SVString(ext) );
+		SetDefaultPathName( sPathName );
 	}
 
 	return true;
 }
 
-BOOL SVFileNameClass::SetDefaultPathName(LPCTSTR szPathName)
+BOOL SVFileNameClass::SetDefaultPathName(const SVString& rPath)
 {
-	if (szPathName)
+	if( !rPath.empty() )
 	{
-		m_DefaultPathName = szPathName;
+		m_DefaultPathName = rPath;
 
 		SvUl_SF::searchAndReplace(m_DefaultPathName, "/", "\\");
 		SvUl_SF::TrimRight(m_DefaultPathName, "\\" );
@@ -488,29 +488,17 @@ BOOL SVFileNameClass::SetDefaultPathName(LPCTSTR szPathName)
 	return true;
 }
 
-BOOL SVFileNameClass::SetDefaultFileName(LPCTSTR szName)
+BOOL SVFileNameClass::SetDefaultFileName(const SVString& rName)
 {
-	if (szName)
-	{
-		m_DefaultFileName = szName;
-	}
-	else
-	{
-		m_DefaultFileName.clear();
-	}
+	m_DefaultFileName = rName;
+
 	return true;
 }
 
-BOOL SVFileNameClass::SetDefaultFileExtension(LPCTSTR szExtension)
+BOOL SVFileNameClass::SetDefaultFileExtension(const SVString& rExtension)
 {
-	if (szExtension)
-	{
-		m_DefaultFileExtension = szExtension;
-	}
-	else
-	{
-		m_DefaultFileExtension.clear();
-	}
+	m_DefaultFileExtension = rExtension;
+
 	return true;
 }
 
@@ -528,16 +516,10 @@ BOOL SVFileNameClass::SetFileSaveFlags(DWORD dwFlags)
 	return true;
 }
 
-BOOL SVFileNameClass::SetFileExtensionFilterList(LPCTSTR szFilter)
+BOOL SVFileNameClass::SetFileExtensionFilterList(const SVString& rFilter)
 {
-	if (szFilter)
-	{
-		m_FileExtensionFilterList = szFilter;
-	}
-	else
-	{
-		m_FileExtensionFilterList .clear();
-	}
+	m_FileExtensionFilterList = rFilter;
+
 	return true;
 }
 
@@ -568,17 +550,17 @@ BOOL SVFileNameClass::SelectFile()
 {
 	BOOL bOk = false;
 
-	if ( SVString( GetDefaultPathName() ).empty() )
+	if ( GetDefaultPathName().empty() )
 	{
 		SetDefaultPathName( GetPathName() );
 	}
 
-	if ( SVString( GetDefaultFileName() ).empty() )
+	if ( GetDefaultFileName().empty() )
 	{
 		SetDefaultFileName( GetFileNameOnly() );
 	}
 
-	if ( SVString( GetDefaultFileExtension() ).empty() )
+	if ( GetDefaultFileExtension().empty() )
 	{
 		SetDefaultFileExtension( GetExtension() );
 	}
@@ -591,21 +573,21 @@ BOOL SVFileNameClass::SelectFile()
 	bool bFullAccess = SvOi::isUnrestrictedFileAccess();
 	SvMc::SVFileDialog dlg( true,
 					bFullAccess,  
-	                GetDefaultFileExtension(),
+	                GetDefaultFileExtension().c_str(),
 					sFileName.c_str(), 
 					GetFileSelectFlags(),
-					GetFileExtensionFilterList(),
+					GetFileExtensionFilterList().c_str(),
 					nullptr );
 
-	dlg.m_ofn.lpstrTitle = GetFileSelectDialogTitle();
+	dlg.m_ofn.lpstrTitle = GetFileSelectDialogTitle().c_str();
 
-	if ( SVString( GetPathName() ).empty() )
+	if ( GetPathName().empty() )
 	{
-		dlg.m_ofn.lpstrInitialDir = GetDefaultPathName();
+		dlg.m_ofn.lpstrInitialDir = GetDefaultPathName().c_str();
 	}
 	else
 	{
-		dlg.m_ofn.lpstrInitialDir = GetPathName();
+		dlg.m_ofn.lpstrInitialDir = GetPathName().c_str();
 	}
 
 	if ( IDOK == dlg.DoModal() )
@@ -623,17 +605,17 @@ BOOL SVFileNameClass::SaveFile()
 	BOOL bOk = false;
 	BOOL bDone = false;
 
-	if ( SVString( GetDefaultPathName() ).empty() )
+	if ( GetDefaultPathName().empty() )
 	{
 		SetDefaultPathName( GetPathName() );
 	}
 
-	if ( SVString( GetDefaultFileName() ).empty() )
+	if ( GetDefaultFileName().empty() )
 	{
 		SetDefaultFileName( GetFileNameOnly() );
 	}
 
-	if ( SVString( GetDefaultFileExtension() ).empty() )
+	if ( GetDefaultFileExtension().empty() )
 	{
 		SetDefaultFileExtension( GetExtension() );
 	}
@@ -644,23 +626,23 @@ BOOL SVFileNameClass::SaveFile()
 	bool bFullAccess = SvOi::isUnrestrictedFileAccess();
 	SvMc::SVFileDialog dlg( false, 
 					 bFullAccess,
-	                 GetDefaultFileExtension(),
+	                 GetDefaultFileExtension().c_str(),
 					 csFileName.c_str(), 
 					 GetFileSaveFlags(),
-					 GetFileExtensionFilterList(),
+					 GetFileExtensionFilterList().c_str(),
 					 nullptr );
 
-	dlg.m_ofn.lpstrTitle = GetFileSaveDialogTitle();
+	dlg.m_ofn.lpstrTitle = GetFileSaveDialogTitle().c_str();
 
 	while ( ! bDone )
 	{
-		if ( SVString( GetPathName() ).empty() )
+		if ( GetPathName().empty() )
 		{
-			dlg.m_ofn.lpstrInitialDir = GetDefaultPathName();
+			dlg.m_ofn.lpstrInitialDir = GetDefaultPathName().c_str();
 		}
 		else
 		{
-			dlg.m_ofn.lpstrInitialDir = GetPathName();
+			dlg.m_ofn.lpstrInitialDir = GetPathName().c_str();
 		}
 
 		bOk = IDOK == dlg.DoModal();
@@ -680,13 +662,13 @@ BOOL SVFileNameClass::SaveFile()
 			{
 				SVString csNewFullFileName = GetPathName();
 
-				if ( 0 != SvUl_SF::CompareNoCase(SVString( GetExtension() ), _T( ".svx" ) ) )
+				if ( 0 != SvUl_SF::CompareNoCase(GetExtension(), SVString( _T( ".svx" ) ) ) )
 				{
 					SetExtension( _T( ".svx" ) );
 				}
 
 				bDone = (0 == SvUl_SF::CompareNoCase(csNewFullFileName, SvStl::GlobalPath::Inst().GetRunPath() ) ) ||
-				        ( 0 == _access( GetFullFileName(), 0 ) );
+				        ( 0 == _access( GetFullFileName().c_str(), 0 ) );
 
 				if ( ! bDone )
 				{
@@ -697,14 +679,14 @@ BOOL SVFileNameClass::SaveFile()
 
 					bOk = SetFullFileName( csNewFullFileName.c_str() );
 
-					bDone = 0 != _access( GetFullFileName(), 0 );
+					bDone = 0 != _access( GetFullFileName().c_str(), 0 );
 
 					if ( ! bDone )
 					{
 						SVString csMessage = GetFullFileName();
 						csMessage += _T( " already exists.\nDo you want to replace it?" );
 
-						bDone = IDYES == dlg.MessageBox( csMessage.c_str(), GetFileSaveDialogTitle(), MB_ICONWARNING | MB_YESNO );
+						bDone = IDYES == dlg.MessageBox( csMessage.c_str(), GetFileSaveDialogTitle().c_str(), MB_ICONWARNING | MB_YESNO );
 					}
 				}
 			}

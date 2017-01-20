@@ -12,6 +12,7 @@
 
 #pragma region Includes
 #include "SVOResource/resource.h"
+#include "SVUtilityLibrary/SVString.h"
 #include "SVValueObjectClassImpl.h"
 #include "SVValueObjectGlobals.h"
 #pragma endregion Includes
@@ -32,13 +33,13 @@ public:
 	IMPLEMENT_VALUE_OBJECT_GET_SET()
 
 protected:
-	virtual HRESULT SetValueAt( int iBucket, int iIndex, const CString& value );
-	virtual HRESULT SetValueAt( int iBucket, int iIndex, double value );
-	virtual HRESULT SetValueAt( int iBucket, int iIndex, int value );
+	virtual HRESULT SetValueAt( int iBucket, int iIndex, const SVString& rValue );
+	virtual HRESULT SetValueAt( int iBucket, int iIndex, double Value );
+	virtual HRESULT SetValueAt( int iBucket, int iIndex, int Value );
 	virtual HRESULT SetValueAt( int iBucket, int iIndex, const VARIANT& rValue );
 
 	virtual HRESULT GetValueAt( int iBucket, int iIndex, double& rValue ) const;
-	virtual HRESULT GetValueAt( int iBucket, int iIndex, CString& rValue ) const;
+	virtual HRESULT GetValueAt( int iBucket, int iIndex, SVString& rValue ) const;
 	virtual HRESULT GetValueAt( int iBucket, int iIndex, VARIANT& rValue ) const;
 
 	virtual void ValidateValue( int iBucket, int iIndex, const SVString& rValue ) const override;
@@ -49,6 +50,6 @@ private:
 	/// Convert a string in a long. Throw an exception if the string isn't convertible into a long.
 	/// \param strValue [in] The input string
 	/// \returns char Return value.
-	long convertString2Long(const CString& rValue ) const;
+	long convertString2Long(const SVString& rValue ) const;
 };
 

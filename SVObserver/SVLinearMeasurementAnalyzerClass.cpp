@@ -19,6 +19,7 @@
 #include "SVLinearEdgeAProcessingClass.h"
 #include "SVLinearEdgeBProcessingClass.h"
 #include "SVTool.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 SV_IMPLEMENT_CLASS( SVLinearMeasurementAnalyzerClass, SVLinearMeasurementAnalyzerClassGuid );
@@ -94,18 +95,18 @@ void SVLinearMeasurementAnalyzerClass::init()
 	resultClassInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
 	resultClassInfo.m_ObjectTypeInfo.SubType	= SVResultDPointXObjectType;
 	resultClassInfo.m_ClassId = SVDPointXResultClassGuid;
-	resultClassInfo.m_ClassName = SvUl_SF::LoadString( IDS_OBJECTNAME_DPEDGE_A );
+	resultClassInfo.m_ClassName = SvUl_SF::LoadSVString( IDS_OBJECTNAME_DPEDGE_A );
 	strTitle.LoadString( IDS_CLASSNAME_RESULT_POINT_X );
-	resultClassInfo.m_ClassName += SV_TSTR_SPACE + strTitle;
+	resultClassInfo.m_ClassName += _T(" ") + strTitle;
 	m_availableChildren.Add( resultClassInfo );
 	
 	// Add the Sub-pixel EdgeA Y Result...
 	resultClassInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
 	resultClassInfo.m_ObjectTypeInfo.SubType	= SVResultDPointYObjectType;
 	resultClassInfo.m_ClassId = SVDPointYResultClassGuid;
-	resultClassInfo.m_ClassName = SvUl_SF::LoadString( IDS_OBJECTNAME_DPEDGE_A );
+	resultClassInfo.m_ClassName = SvUl_SF::LoadSVString( IDS_OBJECTNAME_DPEDGE_A );
 	strTitle.LoadString( IDS_CLASSNAME_RESULT_POINT_Y );
-	resultClassInfo.m_ClassName += SV_TSTR_SPACE + strTitle;
+	resultClassInfo.m_ClassName += _T(" ") + strTitle;
 	m_availableChildren.Add( resultClassInfo );
 
 	// Declare Input Interface of Sub-pixel Edge B Results...
@@ -117,18 +118,18 @@ void SVLinearMeasurementAnalyzerClass::init()
 	resultClassInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
 	resultClassInfo.m_ObjectTypeInfo.SubType	= SVResultDPointXObjectType;
 	resultClassInfo.m_ClassId = SVDPointXResultClassGuid;
-	resultClassInfo.m_ClassName = SvUl_SF::LoadString( IDS_OBJECTNAME_DPEDGE_B );
+	resultClassInfo.m_ClassName = SvUl_SF::LoadSVString( IDS_OBJECTNAME_DPEDGE_B );
 	strTitle.LoadString( IDS_CLASSNAME_RESULT_POINT_X );
-	resultClassInfo.m_ClassName += SV_TSTR_SPACE + strTitle;
+	resultClassInfo.m_ClassName += _T(" ") + strTitle;
 	m_availableChildren.Add( resultClassInfo );
 	
 	// Add the Sub-pixel EdgeB Y Result...
 	resultClassInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
 	resultClassInfo.m_ObjectTypeInfo.SubType	= SVResultDPointYObjectType;
 	resultClassInfo.m_ClassId = SVDPointYResultClassGuid;
-	resultClassInfo.m_ClassName = SvUl_SF::LoadString( IDS_OBJECTNAME_DPEDGE_B );
+	resultClassInfo.m_ClassName = SvUl_SF::LoadSVString( IDS_OBJECTNAME_DPEDGE_B );
 	strTitle.LoadString( IDS_CLASSNAME_RESULT_POINT_Y );
-	resultClassInfo.m_ClassName += SV_TSTR_SPACE + strTitle;
+	resultClassInfo.m_ClassName += _T(" ") + strTitle;
 	m_availableChildren.Add( resultClassInfo );
 
 	// Declare Input Interface of Sub-pixel Center Results...
@@ -140,18 +141,18 @@ void SVLinearMeasurementAnalyzerClass::init()
 	resultClassInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
 	resultClassInfo.m_ObjectTypeInfo.SubType	= SVResultDPointXObjectType;
 	resultClassInfo.m_ClassId = SVDPointXResultClassGuid;
-	resultClassInfo.m_ClassName = SvUl_SF::LoadString( IDS_OBJECTNAME_DPCENTER );
+	resultClassInfo.m_ClassName = SvUl_SF::LoadSVString( IDS_OBJECTNAME_DPCENTER );
 	strTitle.LoadString( IDS_CLASSNAME_RESULT_POINT_X );
-	resultClassInfo.m_ClassName += SV_TSTR_SPACE + strTitle;
+	resultClassInfo.m_ClassName += _T(" ") + strTitle;
 	m_availableChildren.Add( resultClassInfo );
 	
 	// Add the Sub-pixel Center Y Result...
 	resultClassInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
 	resultClassInfo.m_ObjectTypeInfo.SubType	= SVResultDPointYObjectType;
 	resultClassInfo.m_ClassId = SVDPointYResultClassGuid;
-	resultClassInfo.m_ClassName = SvUl_SF::LoadString( IDS_OBJECTNAME_DPCENTER );
+	resultClassInfo.m_ClassName = SvUl_SF::LoadSVString( IDS_OBJECTNAME_DPCENTER );
 	strTitle.LoadString( IDS_CLASSNAME_RESULT_POINT_Y );
-	resultClassInfo.m_ClassName += SV_TSTR_SPACE + strTitle;
+	resultClassInfo.m_ClassName += _T(" ") + strTitle;
 	m_availableChildren.Add( resultClassInfo );
 
 	// Declare Input Interface of Sub-pixel Width Result...
@@ -163,9 +164,9 @@ void SVLinearMeasurementAnalyzerClass::init()
 	resultClassInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
 	resultClassInfo.m_ObjectTypeInfo.SubType	= SVResultDoubleObjectType;
 	resultClassInfo.m_ClassId = SVDoubleResultClassGuid;
-	resultClassInfo.m_ClassName = SvUl_SF::LoadString( IDS_OBJECTNAME_DWIDTH );
+	resultClassInfo.m_ClassName = SvUl_SF::LoadSVString( IDS_OBJECTNAME_DWIDTH );
 	strTitle.LoadString( IDS_RESULT_STRING );
-	resultClassInfo.m_ClassName += SV_TSTR_SPACE + strTitle;
+	resultClassInfo.m_ClassName += _T(" ") + strTitle;
 	m_availableChildren.Add( resultClassInfo );
 
 	resultClassInfo.m_DesiredInputInterface.RemoveAll();
@@ -176,9 +177,9 @@ void SVLinearMeasurementAnalyzerClass::init()
 	resultClassInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
 	resultClassInfo.m_ObjectTypeInfo.SubType	= SVResultDoubleObjectType;
 	resultClassInfo.m_ClassId = SVDoubleResultClassGuid;
-	resultClassInfo.m_ClassName = SvUl_SF::LoadString( IDS_OBJECTNAME_LINEAR_DISTANCE_EDGE_A );
+	resultClassInfo.m_ClassName = SvUl_SF::LoadSVString( IDS_OBJECTNAME_LINEAR_DISTANCE_EDGE_A );
 	strTitle.LoadString( IDS_OBJECTNAME_LINEAR_DISTANCE_EDGE_A_RESULT );
-	resultClassInfo.m_ClassName += SV_TSTR_SPACE + strTitle;
+	resultClassInfo.m_ClassName += _T(" ") + strTitle;
 	m_availableChildren.Add( resultClassInfo );
 
 	resultClassInfo.m_DesiredInputInterface.RemoveAll();
@@ -189,9 +190,9 @@ void SVLinearMeasurementAnalyzerClass::init()
 	resultClassInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
 	resultClassInfo.m_ObjectTypeInfo.SubType	= SVResultDoubleObjectType;
 	resultClassInfo.m_ClassId = SVDoubleResultClassGuid;
-	resultClassInfo.m_ClassName = SvUl_SF::LoadString( IDS_OBJECTNAME_LINEAR_DISTANCE_EDGE_B );
+	resultClassInfo.m_ClassName = SvUl_SF::LoadSVString( IDS_OBJECTNAME_LINEAR_DISTANCE_EDGE_B );
 	strTitle.LoadString( IDS_OBJECTNAME_LINEAR_DISTANCE_EDGE_B_RESULT );
-	resultClassInfo.m_ClassName += SV_TSTR_SPACE + strTitle;
+	resultClassInfo.m_ClassName += _T(" ") + strTitle;
 	m_availableChildren.Add( resultClassInfo );
 }
 

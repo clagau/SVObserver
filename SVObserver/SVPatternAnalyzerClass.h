@@ -44,7 +44,7 @@ public:
 	bool UpdateModelFromInputImage(long modelPosX = 0, long modelPosY = 0);
 	bool UpdateModelFromBuffer();
 
-	bool RestorePattern(CString strImageFile, SvOi::MessageTextEnum *ErrMsgId = nullptr);
+	bool RestorePattern(const SVString& rImageFile, SvOi::MessageTextEnum *ErrMsgId = nullptr);
 	bool SetSearchParameters();
 	void SetDefaultSearchValues();
 

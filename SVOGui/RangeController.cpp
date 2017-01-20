@@ -252,7 +252,7 @@ namespace Seidenader { namespace SVOGui
 		RangeValidator::IsFieldValid(fieldName, rValue);
 	}
 
-	void RangeController::Validate(HINSTANCE resHandle)
+	void RangeController::Validate()
 	{
 		SVString InspectionName = GetInspectionName();
 
@@ -265,6 +265,6 @@ namespace Seidenader { namespace SVOGui
 		double WarnHighValue = m_directRangeValues.Get<double>(WarnHigh);
 		double WarnLowValue = m_directRangeValues.Get<double>(WarnLow);
 
-		RangeValidator::Validate(resHandle, InspectionName, FailHighIndirectValue, FailLowIndirectValue, WarnHighIndirectValue, WarnLowIndirectValue, FailHighValue, FailLowValue, WarnHighValue, WarnLowValue, m_InspectionID);
+		RangeValidator::Validate(InspectionName, FailHighIndirectValue, FailLowIndirectValue, WarnHighIndirectValue, WarnLowIndirectValue, FailHighValue, FailLowValue, WarnHighValue, WarnLowValue, m_InspectionID);
 	}
 } /* namespace SVOGui */ } /* namespace Seidenader */

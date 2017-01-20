@@ -133,12 +133,12 @@ HRESULT SVDeviceParamCollection::SetParameterDefaults()
 
 		SVBoolValueDeviceParam::OptionType l_Option;
 
-		l_Option.strDescription = _T("Rising Edge");
-		l_Option.value = true;
+		l_Option.m_Description = _T("Rising Edge");
+		l_Option.m_Value = true;
 		pEdge->info.options.push_back( l_Option );
 
-		l_Option.strDescription = _T("Falling Edge");
-		l_Option.value = false;
+		l_Option.m_Description = _T("Falling Edge");
+		l_Option.m_Value = false;
 		pEdge->info.options.push_back( l_Option );
 
 		pEdge->bValue = l_bRising; // default falling edge
@@ -170,12 +170,12 @@ HRESULT SVDeviceParamCollection::SetParameterDefaults()
 
 		SVBoolValueDeviceParam::OptionType l_Option;
 
-		l_Option.strDescription = _T("Rising Edge");
-		l_Option.value = true;
+		l_Option.m_Description = _T("Rising Edge");
+		l_Option.m_Value = true;
 		pEdge->info.options.push_back( l_Option );
 
-		l_Option.strDescription = _T("Falling Edge");
-		l_Option.value = false;
+		l_Option.m_Description = _T("Falling Edge");
+		l_Option.m_Value = false;
 		pEdge->info.options.push_back( l_Option );
 
 		pEdge->bValue = l_bRising; // default falling edge

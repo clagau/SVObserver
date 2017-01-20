@@ -52,7 +52,7 @@ namespace Seidenader { namespace SVStatusLibrary
 		//! \param ProgramCode <in> the unique program ID for the code
 		//! \param rObjectId <in> reference to the unique object ID of the message owner
 		//************************************
-		MessageContainer( long MessageCode, SvOi::MessageTextEnum AdditionalTextId, const SVStringArray& rAdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode = 0, const GUID& rObjectId = SV_GUID_NULL );
+		MessageContainer( long MessageCode, SvOi::MessageTextEnum AdditionalTextId, const SVStringVector& rAdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode = 0, const GUID& rObjectId = SV_GUID_NULL );
 
 		//************************************
 		//! This is the assignment operator
@@ -96,7 +96,7 @@ namespace Seidenader { namespace SVStatusLibrary
 		//! \param ProgramCode <in> the unique program ID for the code
 		//! \param rObjectId <in> reference to the unique object ID of the message owner
 		//************************************
-		void setMessage( long MessageCode, SvOi::MessageTextEnum AdditionalTextId, const SVStringArray& rAdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode=0, const GUID& rObjectId=SV_GUID_NULL );
+		void setMessage( long MessageCode, SvOi::MessageTextEnum AdditionalTextId, const SVStringVector& rAdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode=0, const GUID& rObjectId=SV_GUID_NULL );
 
 		//************************************
 		//! This is the method to set the data this will delete the m_AdditonalMessages list
@@ -115,7 +115,7 @@ namespace Seidenader { namespace SVStatusLibrary
 		//! \param SourceFile <in> the source file standard parameters in which the code set
 		//! \param ProgramCode <in> the unique program ID for the code
 		//************************************
-		void addMessage( long MessageCode, SvOi::MessageTextEnum AdditionalTextId, SVStringArray AdditionalTextList, SourceFileParams SourceFile, DWORD dwProgramCode = 0 );
+		void addMessage( long MessageCode, SvOi::MessageTextEnum AdditionalTextId, SVStringVector AdditionalTextList, SourceFileParams SourceFile, DWORD dwProgramCode = 0 );
 
 		//************************************
 		//! This method is the same as the addMessage above with a message structure when the flag is true which is the default
@@ -208,7 +208,7 @@ namespace Seidenader { namespace SVStatusLibrary
 		//! The method sets the substitute strings for the event log
 		//! \param rSubstituteStrings <out> the reference for the substitute strings
 		//************************************
-		void setSubstituteStrings( SVStringArray& rSubstituteStrings ) const;
+		void setSubstituteStrings( SVStringVector& rSubstituteStrings ) const;
 
 		//************************************
 		//! Method to set the message dll instance

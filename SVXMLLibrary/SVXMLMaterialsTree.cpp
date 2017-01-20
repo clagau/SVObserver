@@ -263,9 +263,9 @@ namespace Seidenader { namespace SVXMLLibrary
 		return Result;
 	}
 
-	std::string SVXMLMaterialsTree::getBranchName( const SVBranchHandle pBranch ) const
+	SVString SVXMLMaterialsTree::getBranchName( const SVBranchHandle pBranch ) const
 	{
-		std::string Result;
+		SVString Result;
 
 		if( nullptr != pBranch )
 		{
@@ -279,7 +279,7 @@ namespace Seidenader { namespace SVXMLLibrary
 
 				if( nullptr != pElement )
 				{
-					Result = pElement->first.c_str();
+					Result = pElement->first;
 				}
 			}
 		}
@@ -502,13 +502,13 @@ namespace Seidenader { namespace SVXMLLibrary
 		return Result;
 	}
 
-	std::string SVXMLMaterialsTree::getLeafName( const SVLeafHandle pLeaf ) const
+	SVString SVXMLMaterialsTree::getLeafName( const SVLeafHandle pLeaf ) const
 	{
-		std::string Result;
+		SVString Result;
 
 		if( m_Tree.end() != pLeaf )
 		{
-			Result = pLeaf->first.c_str();
+			Result = pLeaf->first;
 		}
 
 		return Result;

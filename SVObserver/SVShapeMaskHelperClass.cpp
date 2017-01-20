@@ -11,11 +11,11 @@
 
 #include "stdafx.h"
 #include "SVShapeMaskHelperClass.h"
-#include "SVLibrary/StringHelper.h"
 #include "SVUserMaskOperatorClass.h"
 //Moved to precompiled header: #include <algorithm>
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVUtilityLibrary/SetBits.h"
+#include "SVUtilityLibrary/SVString.h"
 
 SV_IMPLEMENT_CLASS( SVShapeMaskHelperClass, SVShapeMaskHelperClassGuid )
 
@@ -49,10 +49,10 @@ void SVShapeMaskHelperClass::init()
 	m_Data.bvoAutoResize.SetDefaultValue( false, false );
 
 	SVEnumerateVector vec;
-	vec.push_back( SVEnumeratePair(SVLoadString(IDS_OBJECTNAME_SHAPE_TYPE_RECTANGLE), SVMaskShapeTypeRectangle ) );
-	vec.push_back( SVEnumeratePair(SVLoadString(IDS_OBJECTNAME_SHAPE_TYPE_OVAL), SVMaskShapeTypeOval ) );
-	vec.push_back( SVEnumeratePair(SVLoadString(IDS_OBJECTNAME_SHAPE_TYPE_DOUGHNUT), SVMaskShapeTypeDoughnut ) );
-	vec.push_back( SVEnumeratePair(SVLoadString(IDS_OBJECTNAME_SHAPE_TYPE_SYMMETRIC_TRAPEZOID), SVMaskShapeTypeSymmetricTrapezoid ) );
+	vec.push_back( SVEnumeratePair(SvUl_SF::LoadSVString(IDS_OBJECTNAME_SHAPE_TYPE_RECTANGLE), SVMaskShapeTypeRectangle ) );
+	vec.push_back( SVEnumeratePair(SvUl_SF::LoadSVString(IDS_OBJECTNAME_SHAPE_TYPE_OVAL), SVMaskShapeTypeOval ) );
+	vec.push_back( SVEnumeratePair(SvUl_SF::LoadSVString(IDS_OBJECTNAME_SHAPE_TYPE_DOUGHNUT), SVMaskShapeTypeDoughnut ) );
+	vec.push_back( SVEnumeratePair(SvUl_SF::LoadSVString(IDS_OBJECTNAME_SHAPE_TYPE_SYMMETRIC_TRAPEZOID), SVMaskShapeTypeSymmetricTrapezoid ) );
 	m_Data.evoShapeType.SetEnumTypes(vec);
 	m_Data.evoShapeType.SetDefaultValue(SVMaskShapeTypeRectangle, TRUE);
 

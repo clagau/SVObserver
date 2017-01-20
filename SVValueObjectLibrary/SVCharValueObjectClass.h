@@ -16,11 +16,12 @@
 
 #pragma region Includes
 #include "SVOResource/resource.h"
+#include "SVUtilityLibrary/SVString.h"
 #include "SVValueObjectClassImpl.h"
 #include "SVValueObjectGlobals.h"
 #pragma endregion Includes
 
-class SVCharValueObjectClass : public SVValueObjectClassImpl <char>
+class SVCharValueObjectClass : public SVValueObjectClassImpl <TCHAR>
 {
 	SV_DECLARE_CLASS( SVCharValueObjectClass );
 
@@ -38,10 +39,10 @@ public:
 protected:
 
 	virtual HRESULT SetValueAt( int iBucket, int iIndex, const VARIANT& rValue );
-	virtual HRESULT SetValueAt( int iBucket, int iIndex, const CString& value );
+	virtual HRESULT SetValueAt( int iBucket, int iIndex, const SVString& rValue );
 
 	virtual HRESULT GetValueAt( int iBucket, int iIndex, double& rValue ) const;
-	virtual HRESULT GetValueAt( int iBucket, int iIndex, CString& rValue ) const;
+	virtual HRESULT GetValueAt( int iBucket, int iIndex, SVString& rValue ) const;
 	virtual HRESULT GetValueAt( int iBucket, int iIndex, VARIANT& rValue ) const;
 
 	virtual void ValidateValue( int iBucket, int iIndex, const SVString& rValue ) const override;
@@ -52,8 +53,7 @@ private:
 	/// Convert a string in a char. Throw an exception if the string isn't convertible into a char
 	/// \param strValue [in] The input string
 	/// \returns char Return value.
-	char convertString2Char(const CString& rValue ) const;
+	TCHAR convertString2Char(const SVString& rValue ) const;
 };
 
 #pragma warning (pop)
-

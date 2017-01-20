@@ -11,9 +11,12 @@
 
 #pragma once
 
+#pragma region Includes 
 //Moved to precompiled header: #include <vector>
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #include "SVAccessPointNode.h"
+#include "SVUtilityLibrary\SVString.h"
+#pragma endregion Includes
 
 class SVSecurityStorage
 {
@@ -24,16 +27,15 @@ public:
 	virtual ~SVSecurityStorage();
 
 	HRESULT Load(LPCTSTR FileName);
-	HRESULT Add( long lID, LPCTSTR sName, LPCTSTR sGroup , bool bForcePrompt = false );
-	HRESULT Add( long lID, LPCTSTR sName );
+	HRESULT Add( long lID, LPCTSTR Name, LPCTSTR NTGroup = nullptr , bool ForcePrompt = false );
 	HRESULT ProtectData( long lID );
 
 	bool GetUseLogon() const;
 	bool GetAutoEdit() const;
 	void SetUser( LPCTSTR strUser );
 	void SetPW( LPCTSTR strPW );
-	CString GetCurrentUser() const;
-	CString GetCurrentPassword() const;
+	const SVString& GetCurrentUser() const;
+	const SVString& GetCurrentPassword() const;
 
 	// Use these functions to setup access
 	HRESULT Save(LPCTSTR pFileName);
@@ -75,10 +77,8 @@ protected:
 	// The Tree Stored as an array
 	SVAccessPointNodeVectorArray m_aNodes;
 
-	// Auto Log
-//	CString m_strLogonServer;
-	CString m_strCurrentUser;
-	CString m_strCurrentPW;
+	SVString m_CurrentUser;
+	SVString m_CurrentPW;
 
 };
 

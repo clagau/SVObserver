@@ -26,7 +26,6 @@
 #include "CameraLibrary/SVBoolValueDeviceParam.h"
 #include "SVFileAcquisitionDevice/SVFileAcquisitionLoadingModeEnum.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
-#include "SVUtilityLibrary/SVString.h"
 #include "SVObserver.h"
 #include "SVOPPQObj.h"
 #include "SVOInspectionObj.h"
@@ -57,72 +56,72 @@
 static const int GrayScaleBitDepth = 8;
 
 // Defines for Camera File extensions
-static const CString SVGigeCameraFileDefExt = _T(".ogc");
+static const TCHAR* const  cGigeCameraFileDefExt = _T(".ogc");
 
 //const strings for Gig-E product types
-static const CString SYSTEM_SVIM_X2_GD1A		( _T("SVIM X2-GD1A") );
-static const CString SYSTEM_SVIM_X2_GD1A_COLOR	( _T("SVIM X2-GD1A Color") );
-static const CString SYSTEM_SVIM_X2_GD1A_MIXED	( _T("SVIM X2-GD1A Mixed camera") );
-static const CString SYSTEM_SVIM_X2_GD2A		( _T("SVIM X2-GD2A") );
-static const CString SYSTEM_SVIM_X2_GD2A_COLOR	( _T("SVIM X2-GD2A Color") );
-static const CString SYSTEM_SVIM_X2_GD4A		( _T("SVIM X2-GD4A") );
-static const CString SYSTEM_SVIM_X2_GD4A_COLOR	( _T("SVIM X2-GD4A Color") );
-static const CString SYSTEM_SVIM_X2_GD8A		( _T("SVIM X2-GD8A") );
-static const CString SYSTEM_SVIM_X2_GD8A_COLOR	( _T("SVIM X2-GD8A Color") );
-static const CString SYSTEM_SVIM_X2_GD8A_MIXED	( _T("SVIM X2-GD8A Mixed camera") );
+static const TCHAR* const  SYSTEM_SVIM_X2_GD1A		( _T("SVIM X2-GD1A") );
+static const TCHAR* const SYSTEM_SVIM_X2_GD1A_COLOR	( _T("SVIM X2-GD1A Color") );
+static const TCHAR* const SYSTEM_SVIM_X2_GD1A_MIXED	( _T("SVIM X2-GD1A Mixed camera") );
+static const TCHAR* const SYSTEM_SVIM_X2_GD2A		( _T("SVIM X2-GD2A") );
+static const TCHAR* const SYSTEM_SVIM_X2_GD2A_COLOR	( _T("SVIM X2-GD2A Color") );
+static const TCHAR* const SYSTEM_SVIM_X2_GD4A		( _T("SVIM X2-GD4A") );
+static const TCHAR* const SYSTEM_SVIM_X2_GD4A_COLOR	( _T("SVIM X2-GD4A Color") );
+static const TCHAR* const SYSTEM_SVIM_X2_GD8A		( _T("SVIM X2-GD8A") );
+static const TCHAR* const SYSTEM_SVIM_X2_GD8A_COLOR	( _T("SVIM X2-GD8A Color") );
+static const TCHAR* const SYSTEM_SVIM_X2_GD8A_MIXED	( _T("SVIM X2-GD8A Mixed camera") );
 
-static const CString SYSTEM_SVIM_X2_GD8A_NONIO		( _T("SVIM Non I/O") );
-static const CString SYSTEM_SVIM_X2_GD8A_NONIO_COLOR	( _T("SVIM Non I/O Color") );
+static const TCHAR* const SYSTEM_SVIM_X2_GD8A_NONIO		( _T("SVIM Non I/O") );
+static const TCHAR* const SYSTEM_SVIM_X2_GD8A_NONIO_COLOR	( _T("SVIM Non I/O Color") );
 
-static const CString SVIM_BOARD_FILEACQUISITION_STRING     ( _T("File") );
-static const CString SVIM_BOARD_MATROX_GIGE	( _T("Matrox_GIGE") );
+static const TCHAR* const SVIM_BOARD_FILEACQUISITION_STRING     ( _T("File") );
+static const TCHAR* const SVIM_BOARD_MATROX_GIGE	( _T("Matrox_GIGE") );
 
-static const CString SVIM_DIG_NAME_STRING       ( _T(".Dig_") );
+static const TCHAR* const SVIM_DIG_NAME_STRING       ( _T(".Dig_") );
 
-static const CString ERR_STR                 ( _T( "**ERROR**   " ) );
-static const CString WARNING_STR             ( _T( "**WARNING** " ) );
-static const CString CAMERA_INVALID_FILES    ( _T( "-Camera files are invalid" ) );
-static const CString CAMERA_NONE_DEFINED     ( _T( "-No cameras defined" ) );
-static const CString TRIGGER_NONE_DEFINED    ( _T( "-No trigger defined" ) );
-static const CString INSPECT_NONE_DEFINED    ( _T( "-No inspection defined" ) );
-static const CString PPQ_NONE_DEFINED        ( _T( "-No PPQ defined" ) );
-static const CString PPQ_NO_TRIGGER          ( _T( "-No Trigger attached to PPQ" ) );
-static const CString PPQ_NO_CAMERA           ( _T( "-No Camera attached to PPQ" ) );
-static const CString PPQ_NO_INSPECT          ( _T( "-No Inspection attached to PPQ" ) );
-static const CString CONFIG_NAME_ERR         ( _T( " No Configuration name" ) );
-static const CString INVALID_CAMERA          ( _T( "-Camera is invalid for current product" ) );
-static const CString INVALID_TRIGGER         ( _T( "-Trigger is invalid for current product" ) );
-static const CString INSPECTION_ERROR        ( _T( "-Inspection is not attached to a PPQ" ) );
-static const CString TOOLSET_IMAGE_ERROR     ( _T( "-Inspection has no Toolset Image" ) );
-static const CString PPQ_PROP_SRC_IMG_ERROR  ( _T( "- Property -'Maintain souce image' set to TRUE, PPQ length > ") );
-static const CString PPQ_CONDITIONAL_OUTPUT_INVALID ( _T( "-Conditional Output for PPQ is not valid" ) );
-static const CString MESSAGE_UNSUPPORTED_CAM_FILE ( _T("The camera file you have selected is not an SVResearch supported file.") );
-static const CString MESSAGE_INCORRECT_CAM_FILE   ( _T("The selected camera file does not match the physical camera.") );
-static const CString MESSAGE_NOT_COLOR_CAM_FILE   ( _T("The selected camera file is not a color camera file.") );
-static const CString MESSAGE_NOT_COLOR_CAM        ( _T("The physical camera is not a color camera.") );
-static const CString MESSAGE_ONE_INVERT_CONTROL   ( _T("There is only one Invert control on a SVIM X-Series for all triggers and strobes.") );
-static const CString MESSAGE_SOFTWARE_TRIGGER_NOT_ALLOWED ( _T("The camera does not support Software Triggering.") );
-static const CString MESSAGE_FILE_ACQUISITION_NOT_ALLOWED ( _T("File Acquisition is not allowed.") );
-static const CString MESSAGE_FILE_ACQUISITION_INVALID_FILE ( _T("The Image Filename specified is Invalid.") );
-static const CString MESSAGE_FILE_ACQUISITION_INVALID_DIRECTORY ( _T("The Image Directory specified is Invalid.") );
-static const CString MESSAGE_FILE_ACQUISITION_MISSING_FILENAME ( _T("The Image Filename must be specified.") );
-static const CString MESSAGE_FILE_ACQUISITION_MISSING_DIRECTORY ( _T("The Image Directory must be specified.") );
-static const CString MESSAGE_FILE_ACQUISITION_INVALID_IMAGE_SIZE ( _T("The Image Size is Invalid.") );
-static const CString MESSAGE_FILE_ACQUISITION_COLOR_MISMATCH ( _T("The bitmap file acquisition color does not match the camera color setting") );
-static const CString MESSAGE_INSPECTION_CAMERA_COLOR  ( _T("-The toolset camera image color does not match the inspection color") );
+static const TCHAR* const ERR_STR                 ( _T( "**ERROR**   " ) );
+static const TCHAR* const WARNING_STR             ( _T( "**WARNING** " ) );
+static const TCHAR* const CAMERA_INVALID_FILES    ( _T( "-Camera files are invalid" ) );
+static const TCHAR* const CAMERA_NONE_DEFINED     ( _T( "-No cameras defined" ) );
+static const TCHAR* const TRIGGER_NONE_DEFINED    ( _T( "-No trigger defined" ) );
+static const TCHAR* const INSPECT_NONE_DEFINED    ( _T( "-No inspection defined" ) );
+static const TCHAR* const PPQ_NONE_DEFINED        ( _T( "-No PPQ defined" ) );
+static const TCHAR* const PPQ_NO_TRIGGER          ( _T( "-No Trigger attached to PPQ" ) );
+static const TCHAR* const PPQ_NO_CAMERA           ( _T( "-No Camera attached to PPQ" ) );
+static const TCHAR* const PPQ_NO_INSPECT          ( _T( "-No Inspection attached to PPQ" ) );
+static const TCHAR* const CONFIG_NAME_ERR         ( _T( " No Configuration name" ) );
+static const TCHAR* const INVALID_CAMERA          ( _T( "-Camera is invalid for current product" ) );
+static const TCHAR* const INVALID_TRIGGER         ( _T( "-Trigger is invalid for current product" ) );
+static const TCHAR* const INSPECTION_ERROR        ( _T( "-Inspection is not attached to a PPQ" ) );
+static const TCHAR* const TOOLSET_IMAGE_ERROR     ( _T( "-Inspection has no Toolset Image" ) );
+static const TCHAR* const PPQ_PROP_SRC_IMG_ERROR  ( _T( "- Property -'Maintain souce image' set to TRUE, PPQ length > ") );
+static const TCHAR* const PPQ_CONDITIONAL_OUTPUT_INVALID ( _T( "-Conditional Output for PPQ is not valid" ) );
+static const TCHAR* const MESSAGE_UNSUPPORTED_CAM_FILE ( _T("The camera file you have selected is not an SVResearch supported file.") );
+static const TCHAR* const MESSAGE_INCORRECT_CAM_FILE   ( _T("The selected camera file does not match the physical camera.") );
+static const TCHAR* const MESSAGE_NOT_COLOR_CAM_FILE   ( _T("The selected camera file is not a color camera file.") );
+static const TCHAR* const MESSAGE_NOT_COLOR_CAM        ( _T("The physical camera is not a color camera.") );
+static const TCHAR* const MESSAGE_ONE_INVERT_CONTROL   ( _T("There is only one Invert control on a SVIM X-Series for all triggers and strobes.") );
+static const TCHAR* const MESSAGE_SOFTWARE_TRIGGER_NOT_ALLOWED ( _T("The camera does not support Software Triggering.") );
+static const TCHAR* const MESSAGE_FILE_ACQUISITION_NOT_ALLOWED ( _T("File Acquisition is not allowed.") );
+static const TCHAR* const MESSAGE_FILE_ACQUISITION_INVALID_FILE ( _T("The Image Filename specified is Invalid.") );
+static const TCHAR* const MESSAGE_FILE_ACQUISITION_INVALID_DIRECTORY ( _T("The Image Directory specified is Invalid.") );
+static const TCHAR* const MESSAGE_FILE_ACQUISITION_MISSING_FILENAME ( _T("The Image Filename must be specified.") );
+static const TCHAR* const MESSAGE_FILE_ACQUISITION_MISSING_DIRECTORY ( _T("The Image Directory must be specified.") );
+static const TCHAR* const MESSAGE_FILE_ACQUISITION_INVALID_IMAGE_SIZE ( _T("The Image Size is Invalid.") );
+static const TCHAR* const MESSAGE_FILE_ACQUISITION_COLOR_MISMATCH ( _T("The bitmap file acquisition color does not match the camera color setting") );
+static const TCHAR* const MESSAGE_INSPECTION_CAMERA_COLOR  ( _T("-The toolset camera image color does not match the inspection color") );
 
-const CSVOConfigAssistantDlg::SVProductStringMap CSVOConfigAssistantDlg::m_ProductStringMap = boost::assign::map_list_of< SVIMProductEnum, CString >
+const CSVOConfigAssistantDlg::SVProductStringMap CSVOConfigAssistantDlg::m_ProductStringMap = boost::assign::map_list_of< SVIMProductEnum, SVString >
 	// SYSTEM ID, DISPLAY NAME
-	( SVIM_PRODUCT_X2_GD1A, SYSTEM_SVIM_X2_GD1A )
-	( SVIM_PRODUCT_X2_GD1A_COLOR, SYSTEM_SVIM_X2_GD1A_COLOR )
-	( SVIM_PRODUCT_X2_GD2A, SYSTEM_SVIM_X2_GD2A )
-	( SVIM_PRODUCT_X2_GD2A_COLOR, SYSTEM_SVIM_X2_GD2A_COLOR )
-	( SVIM_PRODUCT_X2_GD4A, SYSTEM_SVIM_X2_GD4A )
-	( SVIM_PRODUCT_X2_GD4A_COLOR, SYSTEM_SVIM_X2_GD4A_COLOR )
-	( SVIM_PRODUCT_X2_GD8A, SYSTEM_SVIM_X2_GD8A )
-	( SVIM_PRODUCT_X2_GD8A_COLOR, SYSTEM_SVIM_X2_GD8A_COLOR )
-	//( SVIM_PRODUCT_X2_GD8A_NONIO, SYSTEM_SVIM_X2_GD8A_NONIO )
-	//( SVIM_PRODUCT_X2_GD8A_NONIO_COLOR, SYSTEM_SVIM_X2_GD8A_NONIO_COLOR );
+	( SVIM_PRODUCT_X2_GD1A, SVString( SYSTEM_SVIM_X2_GD1A ) )
+	( SVIM_PRODUCT_X2_GD1A_COLOR, SVString( SYSTEM_SVIM_X2_GD1A_COLOR ) )
+	( SVIM_PRODUCT_X2_GD2A, SVString( SYSTEM_SVIM_X2_GD2A ) )
+	( SVIM_PRODUCT_X2_GD2A_COLOR, SVString( SYSTEM_SVIM_X2_GD2A_COLOR ) )
+	( SVIM_PRODUCT_X2_GD4A, SVString( SYSTEM_SVIM_X2_GD4A ) )
+	( SVIM_PRODUCT_X2_GD4A_COLOR, SVString( SYSTEM_SVIM_X2_GD4A_COLOR ) )
+	( SVIM_PRODUCT_X2_GD8A, SVString( SYSTEM_SVIM_X2_GD8A ) )
+	( SVIM_PRODUCT_X2_GD8A_COLOR, SVString( SYSTEM_SVIM_X2_GD8A_COLOR ) )
+	//( SVIM_PRODUCT_X2_GD8A_NONIO, SVString( SYSTEM_SVIM_X2_GD8A_NONIO ) )
+	//( SVIM_PRODUCT_X2_GD8A_NONIO_COLOR, SVString( SYSTEM_SVIM_X2_GD8A_NONIO_COLOR ) );
 	;
 
 /////////////////////////////////////////////////////////////////////////////
@@ -133,9 +132,9 @@ CSVOConfigAssistantDlg::CSVOConfigAssistantDlg(CWnd* pParent /*=nullptr*/)
 	, m_ctlConfigurationName(SvO::SVEXCLUDECHARS_CONFIG_NAME)
 {
 	//{{AFX_DATA_INIT(CSVOConfigAssistantDlg)
-	m_sAvailableSystem = _T("");
-	m_sCurrentSys = _T("");
-	m_sConfigurationName = _T("");
+	m_AvailableSystem = _T("");
+	m_CurrentSys = _T("");
+	m_ConfigurationName = _T("");
 	//}}AFX_DATA_INIT
 
 	m_bNewConfiguration = FALSE;
@@ -150,14 +149,14 @@ CSVOConfigAssistantDlg::CSVOConfigAssistantDlg(CWnd* pParent /*=nullptr*/)
 
 CSVOConfigAssistantDlg::~CSVOConfigAssistantDlg()
 {
-	m_slUsedTriggers.RemoveAll();
-	m_slUsedInspect.RemoveAll();
+	m_UsedTriggers.clear();
+	m_UsedInspections.clear();
+	m_InspectionNamesUsed.clear();
+	m_InspectionLabelsUsed.clear();
 	m_CameraList.ResetContent();
 	m_TriggerList.ResetContent();
 	m_InspectList.ResetContent();
 	m_PPQList.ResetContent();
-	m_slInspectionNamesUsed.RemoveAll();
-	m_slInspectionLabelsUsed.RemoveAll();
 }
 
 void CSVOConfigAssistantDlg::DoDataExchange(CDataExchange* pDX)
@@ -169,9 +168,9 @@ void CSVOConfigAssistantDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EDIT_CONFIGURATION_NAME, m_ctlConfigurationName);
 	DDX_Control(pDX, IDC_EDIT_CURRENT_SYS, m_ctlCurrentSys);
 	DDX_Control(pDX, IDC_COMBO_AVAL_SYS, m_ctlAvailableSys);
-	DDX_CBString(pDX, IDC_COMBO_AVAL_SYS, m_sAvailableSystem);
-	DDX_Text(pDX, IDC_EDIT_CURRENT_SYS, m_sCurrentSys);
-	DDX_Text(pDX, IDC_EDIT_CONFIGURATION_NAME, m_sConfigurationName);
+	DDX_CBString(pDX, IDC_COMBO_AVAL_SYS, m_AvailableSystem);
+	DDX_Text(pDX, IDC_EDIT_CURRENT_SYS, m_CurrentSys);
+	DDX_Text(pDX, IDC_EDIT_CONFIGURATION_NAME, m_ConfigurationName);
 	//}}AFX_DATA_MAP
 }
 
@@ -228,7 +227,7 @@ BOOL CSVOConfigAssistantDlg::OnInitDialog()
 	{
 		m_bConfigName = TRUE;
 		GetConfigurationForExisting();
-		m_ctlConfigurationName.SetWindowText( TheSVObserverApp.getConfigFileName() );
+		m_ctlConfigurationName.SetWindowText( TheSVObserverApp.getConfigFileName().c_str() );
 		m_ctlConfigurationName.EnableWindow(FALSE);
 	}
 	SetupSystemComboBox();
@@ -240,11 +239,9 @@ BOOL CSVOConfigAssistantDlg::OnInitDialog()
 		ReloadForCurrentSystem();
 	}
 
-	CString l_sProductString;
-
 	//select correct product on right hand side
-	l_sProductString = GetNameFromProductID( m_lConfigurationType );
-	int iExactStringPosition = m_ctlAvailableSys.FindStringExact(-1,l_sProductString.operator LPCSTR());
+	SVString ProductString = GetNameFromProductID( m_lConfigurationType );
+	int iExactStringPosition = m_ctlAvailableSys.FindStringExact(-1, ProductString.c_str() );
 	if (CB_ERR != iExactStringPosition)
 	{
 		m_ctlAvailableSys.SetCurSel(iExactStringPosition);
@@ -264,8 +261,6 @@ BOOL CSVOConfigAssistantDlg::OnInitDialog()
 // The purpose of this method is to populate the Available Systems combobox.
 void CSVOConfigAssistantDlg::SetupSystemComboBox()
 {
-	CString l_sSystemString;
-
 	SVIMProductEnumList list; 
 	typedef std::insert_iterator<SVIMProductEnumList> Insertor;
 	Insertor insertor(list, list.begin());
@@ -273,17 +268,15 @@ void CSVOConfigAssistantDlg::SetupSystemComboBox()
 
 	for (SVIMProductEnumList::iterator l_Iter = list.begin();l_Iter != list.end(); ++l_Iter)
 	{
-		const CString& l_Name =  GetNameFromProductID(*l_Iter);
-		m_ctlAvailableSys.AddString( l_Name );
+		m_ctlAvailableSys.AddString( GetNameFromProductID(*l_Iter).c_str() );
 	}
 
 	if ( !m_bNewConfiguration )
 	{
-		const CString& l_Name = GetNameFromProductID( m_lConfigurationType );
 		const SvTi::SVIMTypeInfoStruct& l_SVIMInfo = SvTi::SVHardwareManifest::GetSVIMTypeInfo( m_lConfigurationType );
 		if ( !l_SVIMInfo.m_Supported )
 		{
-			m_ctlAvailableSys.AddString( l_Name );
+			m_ctlAvailableSys.AddString( GetNameFromProductID( m_lConfigurationType ).c_str() );
 		}
 	}
 }
@@ -298,49 +291,47 @@ bool CSVOConfigAssistantDlg::IsNewConfiguration()
 	return m_bNewConfiguration == TRUE;
 }
 
-BOOL CSVOConfigAssistantDlg::AddToCameraList(CString CameraName, int Dig, int CameraID)
+BOOL CSVOConfigAssistantDlg::AddToCameraList(LPCTSTR CameraName, int Dig, int CameraID)
 {
 	return m_CameraList.AddCameraToList(CameraName, Dig, CameraID);
 }
 
-BOOL CSVOConfigAssistantDlg::AddToInspectList(CString sExternal, CString sInternal, bool NewInspection)
+BOOL CSVOConfigAssistantDlg::AddToInspectList(LPCTSTR External, LPCTSTR Internal, bool NewInspection)
 {
-	return m_InspectList.AddInspectionToList(sExternal, sInternal, NewInspection);
+	return m_InspectList.AddInspectionToList( External, Internal, NewInspection );
 }
 
-BOOL CSVOConfigAssistantDlg::AddToTriggerList(CString sTriggerName, int iDig)
+BOOL CSVOConfigAssistantDlg::AddToTriggerList(LPCTSTR TriggerName, int iDig)
 {
-	return m_TriggerList.AddTriggerToList(SVString(sTriggerName), iDig);
+	return m_TriggerList.AddTriggerToList( SVString(TriggerName), iDig );
 }
 
-BOOL CSVOConfigAssistantDlg::AddToPPQList(CString sPPQ, CString sCamera, CString sTrigger, CString sInspection)
+BOOL CSVOConfigAssistantDlg::AddToPPQList(LPCTSTR PPQ, LPCTSTR Camera, LPCTSTR Trigger, LPCTSTR Inspection)
 {
 	BOOL bRet = FALSE;
-	bRet = m_PPQList.AddPPQToList(sPPQ);
-	bRet = m_PPQList.AttachCameraToPPQ(sPPQ, sCamera) && bRet;
-	bRet = m_PPQList.AttachInspectToPPQ(sPPQ, sInspection) && bRet;
-	bRet = m_PPQList.AttachTriggerToPPQ(sPPQ, sTrigger) && bRet;
+	bRet = m_PPQList.AddPPQToList( PPQ );
+	bRet = m_PPQList.AttachCameraToPPQ( PPQ, Camera ) && bRet;
+	bRet = m_PPQList.AttachInspectToPPQ( PPQ, Inspection ) && bRet;
+	bRet = m_PPQList.AttachTriggerToPPQ( PPQ, Trigger ) && bRet;
 
 	return bRet;
 }
 
-BOOL CSVOConfigAssistantDlg::AddToPPQList(CString sPPQ)
+BOOL CSVOConfigAssistantDlg::AddToPPQList(LPCTSTR PPQ)
 {
-	return m_PPQList.AddPPQToList(sPPQ);
+	return m_PPQList.AddPPQToList( PPQ );
 }
 
 void CSVOConfigAssistantDlg::OnSelchangeComboAvalSys() 
 {
-	CString sSelectedTxt;
-	m_ctlAvailableSys.GetWindowText(sSelectedTxt);
-	m_sAvailableSystem = sSelectedTxt;
+	m_ctlAvailableSys.GetWindowText( m_AvailableSystem );
 
 	SVIMProductEnum CurrentSvimType = m_lConfigurationType; 
 
-	SVIMProductEnum l_ConfigurationType = GetProductIDFromName( sSelectedTxt );
+	SVIMProductEnum l_ConfigurationType = GetProductIDFromName( SVString(m_AvailableSystem) );
 
-	CString l_PrevName = GetNameFromProductID( CurrentSvimType );
-	SVIMProductEnum eType = GetProductIDFromName( l_PrevName );
+	SVString PrevName = GetNameFromProductID( CurrentSvimType );
+	SVIMProductEnum eType = GetProductIDFromName( PrevName );
 
 	if ( ( !m_bNewConfiguration ) || ( m_bModified ) )
 	{
@@ -404,7 +395,7 @@ void CSVOConfigAssistantDlg::OnSelchangeComboAvalSys()
 				}
 				else
 				{
-					UINT l_NextIndex = m_ctlAvailableSys.FindStringExact( 0, l_PrevName );
+					UINT l_NextIndex = m_ctlAvailableSys.FindStringExact( 0, PrevName.c_str() );
 
 					if ( l_NextIndex != CB_ERR )
 					{
@@ -449,8 +440,8 @@ void CSVOConfigAssistantDlg::UpdateAvailableSystems( SVIMProductEnum p_CurrentCo
 
 	if ( !l_SVIMInfo.m_Supported && p_CurrentConfigurationType != p_SelectedConfigurationType )
 	{
-		CString l_SelectedSystemName = GetNameFromProductID( p_CurrentConfigurationType );
-		UINT l_Index = m_ctlAvailableSys.FindStringExact( 0, l_SelectedSystemName );
+		SVString SelectedSystemName = GetNameFromProductID( p_CurrentConfigurationType );
+		UINT l_Index = m_ctlAvailableSys.FindStringExact( 0, SelectedSystemName.c_str() );
 
 		if ( l_Index != CB_ERR )
 		{
@@ -496,8 +487,8 @@ void CSVOConfigAssistantDlg::ReloadForCurrentSystem()
 
 				CreateDefaultForSVIMDigital(4, SvO::cTriggerFixedName);
 
-				CString l_sProductString = GetNameFromProductID( m_lConfigurationType );
-				m_ctlAvailableSys.SelectString(-1,l_sProductString.operator LPCTSTR());
+				SVString ProductName = GetNameFromProductID( m_lConfigurationType );
+				m_ctlAvailableSys.SelectString( -1, ProductName.c_str() );
 				break;
 			}
 		}
@@ -537,45 +528,45 @@ void CSVOConfigAssistantDlg::CreateDefaultForSVIMDigital(int Number, LPCTSTR Tri
 	for ( int i = 0; i < Number; i++ )
 	{
 		//add a camera
-		CString sCameraName = GetNextCameraName();
-		m_CameraList.AddCameraToList(sCameraName, i, i);
+		SVString CameraName = GetNextCameraName();
+		m_CameraList.AddCameraToList( CameraName.c_str(), i, i );
 
 		//add a trigger
-		CString sTriggerName = GetNextTriggerName(TriggerBaseName);
-		m_TriggerList.AddTriggerToList(SVString(sTriggerName), i);
+		SVString TriggerName = GetNextTriggerName(TriggerBaseName);
+		m_TriggerList.AddTriggerToList(TriggerName, i);
 
 		//add an inspection...
-		CString sInspectionName = GetNextInspectionName();
-		m_InspectList.AddInspectionToList(sInspectionName, sInspectionName, true);
-		m_InspectList.SetToolsetImage(sInspectionName, sCameraName);
-		m_slInspectionNamesUsed.AddTail(sInspectionName);
-		m_slInspectionLabelsUsed.AddTail(sInspectionName);
+		SVString InspectionName = GetNextInspectionName();
+		m_InspectList.AddInspectionToList( InspectionName.c_str(), InspectionName.c_str(), true );
+		m_InspectList.SetToolsetImage( InspectionName.c_str(), CameraName.c_str() );
+		m_InspectionNamesUsed.push_back(InspectionName);
+		m_InspectionLabelsUsed.push_back(InspectionName);
 
 		//add a ppq, attach trigger, camera and inspection to it.
-		CString sPPQName = GetNextPPQName();
-		m_PPQList.AddPPQToList(sPPQName);
-		m_PPQList.AttachCameraToPPQ(sPPQName, sCameraName);
-		m_PPQList.AttachInspectToPPQ(sPPQName, sInspectionName);
-		AddUsedInspect(sInspectionName);
-		m_PPQList.AttachTriggerToPPQ(sPPQName, sTriggerName);
-		AddUsedTrigger(sTriggerName);
+		SVString PPQName = GetNextPPQName();
+		m_PPQList.AddPPQToList( PPQName.c_str() );
+		m_PPQList.AttachCameraToPPQ( PPQName.c_str(), CameraName.c_str() );
+		m_PPQList.AttachInspectToPPQ( PPQName.c_str(), InspectionName.c_str() );
+		AddUsedInspect( InspectionName.c_str() );
+		m_PPQList.AttachTriggerToPPQ( PPQName.c_str(), TriggerName.c_str() );
+		AddUsedTrigger( TriggerName.c_str() );
 	}
 }
 
-CString CSVOConfigAssistantDlg::GetNextCameraName()
+SVString CSVOConfigAssistantDlg::GetNextCameraName()
 {
 	int iRet = 0;
 	BOOL bFound = TRUE;
-	CString sSearchName;
+	SVString Result;
 
 	while ( bFound )
 	{
 		iRet++;
-		sSearchName.Format("%s%d", SvO::cCameraFixedName, iRet);
-		bFound = m_CameraList.IsCameraInList(sSearchName);
+		Result = SvUl_SF::Format( _T("%s%d"), SvO::cCameraFixedName, iRet );
+		bFound = m_CameraList.IsCameraInList( Result.c_str() );
 	}
 	m_iNextCameraNumber = iRet;
-	return sSearchName;
+	return Result;
 }
 
 int CSVOConfigAssistantDlg::GetNextCameraNumber() const
@@ -583,11 +574,11 @@ int CSVOConfigAssistantDlg::GetNextCameraNumber() const
 	return m_iNextCameraNumber;
 }
 
-CString CSVOConfigAssistantDlg::GetNextInspectionName() const
+SVString CSVOConfigAssistantDlg::GetNextInspectionName() const
 {
 	int iRet = 0;
 	BOOL bFound = TRUE;
-	CString sSearchName;
+	SVString Result;
 
 	if ( m_bInspectionDeleted )
 	{
@@ -597,19 +588,19 @@ CString CSVOConfigAssistantDlg::GetNextInspectionName() const
 	while ( bFound )
 	{
 		iRet++;
-		sSearchName.Format("%s%d", SvO::cInspectionFixedName, iRet);
-		bFound = m_InspectList.IsInspectionInList(sSearchName);
+		Result = SvUl_SF::Format( _T("%s%d"), SvO::cInspectionFixedName, iRet );
+		bFound = m_InspectList.IsInspectionInList(Result.c_str());
 	}
-	return sSearchName;
+	return Result;
 }
 
-CString CSVOConfigAssistantDlg::GetNextTriggerName(const CString& baseName) const
+SVString CSVOConfigAssistantDlg::GetNextTriggerName(LPCTSTR BaseName) const
 {
 	int iRet = m_TriggerList.GetNextTriggerID();
 	
-	CString name;
-	name.Format(_T("%s%d"), baseName, iRet + 1);
-	return name;
+	SVString Result = SvUl_SF::Format(_T("%s%d"), BaseName, iRet + 1 );
+
+	return Result;
 }
 
 int CSVOConfigAssistantDlg::GetNextTriggerID() const
@@ -617,63 +608,63 @@ int CSVOConfigAssistantDlg::GetNextTriggerID() const
 	return m_TriggerList.GetNextTriggerID();
 }
 
-CString CSVOConfigAssistantDlg::GetNextPPQName() const
+SVString CSVOConfigAssistantDlg::GetNextPPQName() const
 {
 	int iRet = 0;
-	BOOL bFound = TRUE;
-	CString sSearchName;
+	bool bFound = true;
+	SVString Result;
 
-	while (bFound)
+	while( bFound )
 	{
 		iRet++;
-		sSearchName.Format("%s%d", SvO::cPpqFixedName, iRet);
-		bFound = m_PPQList.IsPPQInList(sSearchName);
+		Result = SvUl_SF::Format( _T("%s%d"), SvO::cPpqFixedName, iRet );
+		bFound = m_PPQList.IsPPQInList( Result.c_str() ) ? true : false;
 	}
-	return sSearchName;
+	return Result;
 }
 
-CString CSVOConfigAssistantDlg::GetInspectionNameFromLabel(CString sInspectLabel)
+SVString CSVOConfigAssistantDlg::GetInspectionNameFromLabel(LPCTSTR InspectLabel)
 {
-	return m_InspectList.GetInspectionName(sInspectLabel);
+	return m_InspectList.GetInspectionName( InspectLabel );
 }
 
-CString CSVOConfigAssistantDlg::GetInspectionLabelFromName(CString sInspectName)
+SVString CSVOConfigAssistantDlg::GetInspectionLabelFromName(LPCTSTR InspectionName)
 {
-	return m_InspectList.GetInspectionLabel(sInspectName);
+	return m_InspectList.GetInspectionLabel( InspectionName );
 }
 
-BOOL CSVOConfigAssistantDlg::RenameInspection(CString sInspectLabel, CString sNewName)
+BOOL CSVOConfigAssistantDlg::RenameInspection(LPCTSTR InspectLabel, LPCTSTR NewName)
 {
-	const SVOInspectionObjPtr pInspectionObj( GetInspectionObjectByName(sInspectLabel) );
-	CString sOldName;
+	const SVOInspectionObjPtr pInspectionObj( GetInspectionObjectByName(InspectLabel) );
+	SVString OldName;
 
 	if( nullptr != pInspectionObj )
 	{
-		sOldName = pInspectionObj->GetInspectionName();
+		OldName = pInspectionObj->GetInspectionName();
 	}
 
 	//check to see if the old message is in the list.  if it is replace it with the
 	// new inspection name...
 
-	CString sMessage = BuildDisplayMessage(MESSAGE_TYPE_ERROR, sOldName, INSPECTION_ERROR);    
+	SVString Message = BuildDisplayMessage(MESSAGE_TYPE_ERROR, OldName.c_str(), INSPECTION_ERROR);    
 
-	if (RemoveMessageFromList(sMessage))
+	if (RemoveMessageFromList(Message.c_str()))
 	{//add new message
-		sMessage = BuildDisplayMessage(MESSAGE_TYPE_ERROR, sNewName, INSPECTION_ERROR);
-		AddMessageToList(PPQ_DLG,sMessage);
+		Message = BuildDisplayMessage(MESSAGE_TYPE_ERROR, NewName, INSPECTION_ERROR);
+		AddMessageToList(PPQ_DLG, Message.c_str());
 	}
 	else
 	{
 		// inspection is attached. do nothing
 	}
-	sMessage = BuildDisplayMessage(MESSAGE_TYPE_ERROR, sOldName, TOOLSET_IMAGE_ERROR);
-	if ( RemoveMessageFromList(sMessage) )
+	Message = BuildDisplayMessage(MESSAGE_TYPE_ERROR, OldName.c_str(), TOOLSET_IMAGE_ERROR);
+	if ( RemoveMessageFromList(Message.c_str()) )
 	{
-		sMessage = BuildDisplayMessage(MESSAGE_TYPE_ERROR, sNewName, TOOLSET_IMAGE_ERROR);
-		AddMessageToList(INSPECT_DLG,sMessage);
+		Message = BuildDisplayMessage(MESSAGE_TYPE_ERROR, NewName, TOOLSET_IMAGE_ERROR);
+		AddMessageToList(INSPECT_DLG, Message.c_str());
 	}
 	
-	return m_InspectList.ReNameInspection(sInspectLabel,sNewName);
+	return m_InspectList.ReNameInspection(InspectLabel, NewName);
 }
 
 int CSVOConfigAssistantDlg::GetCameraListCount() const
@@ -701,9 +692,9 @@ SVOInspectionObjPtr CSVOConfigAssistantDlg::GetInspectionObject(int iPos)
 	return m_InspectList.GetInspectionByPosition(iPos);
 }
 
-SVOInspectionObjPtr CSVOConfigAssistantDlg::GetInspectionObjectByName(CString sName)
+SVOInspectionObjPtr CSVOConfigAssistantDlg::GetInspectionObjectByName(LPCTSTR Name)
 {
-	return m_InspectList.GetInspectionByName(sName);
+	return m_InspectList.GetInspectionByName(Name);
 }
 
 SVOCameraObjPtr CSVOConfigAssistantDlg::GetCameraObject(int iPos)
@@ -711,9 +702,9 @@ SVOCameraObjPtr CSVOConfigAssistantDlg::GetCameraObject(int iPos)
 	return m_CameraList.GetCameraObjectByPosition(iPos);
 }
 
-SVOCameraObjPtr CSVOConfigAssistantDlg::GetCameraObjectByName(CString sCameraName)
+SVOCameraObjPtr CSVOConfigAssistantDlg::GetCameraObjectByName(LPCTSTR CameraName)
 {
-	return m_CameraList.GetCameraObjectByName(sCameraName);
+	return m_CameraList.GetCameraObjectByName(CameraName);
 }
 
 SvTi::SVOTriggerObjPtr CSVOConfigAssistantDlg::GetTriggerObject(int iPos)
@@ -721,9 +712,9 @@ SvTi::SVOTriggerObjPtr CSVOConfigAssistantDlg::GetTriggerObject(int iPos)
 	return m_TriggerList.GetTriggerObjectByPosition(iPos);
 }
 
-SvTi::SVOTriggerObjPtr CSVOConfigAssistantDlg::GetTriggerObjectByName(CString sTriggerName)
+SvTi::SVOTriggerObjPtr CSVOConfigAssistantDlg::GetTriggerObjectByName(LPCTSTR TriggerName)
 {
-	return m_TriggerList.GetTriggerObjectByName(SVString(sTriggerName));
+	return m_TriggerList.GetTriggerObjectByName(SVString(TriggerName));
 }
 
 SVOPPQObjPtr CSVOConfigAssistantDlg::GetPPQObject(int iPos)
@@ -731,67 +722,67 @@ SVOPPQObjPtr CSVOConfigAssistantDlg::GetPPQObject(int iPos)
 	return m_PPQList.GetPPQObjectByPosition(iPos);
 }
 
-SVOPPQObjPtr CSVOConfigAssistantDlg::GetPPQObjectByName(CString sPPQName)
+SVOPPQObjPtr CSVOConfigAssistantDlg::GetPPQObjectByName(LPCTSTR PPQName)
 {
-	return m_PPQList.GetPPQObjectByName(sPPQName);
+	return m_PPQList.GetPPQObjectByName( PPQName );
 }
 
-BOOL CSVOConfigAssistantDlg::RemoveCameraFromList(CString sCameraName)
+BOOL CSVOConfigAssistantDlg::RemoveCameraFromList(LPCTSTR CameraName)
 {
-	return m_CameraList.RemoveCameraFromList(sCameraName);
+	return m_CameraList.RemoveCameraFromList( CameraName );
 }
 
-BOOL CSVOConfigAssistantDlg::RemoveInspectionFromList(CString sInspection)
+BOOL CSVOConfigAssistantDlg::RemoveInspectionFromList(LPCTSTR Inspection)
 {
-	if (IsInspectUsed(sInspection))
+	if (IsInspectUsed(Inspection))
 	{
-		RemoveUsedInspect(sInspection);
+		RemoveUsedInspect(Inspection);
 	}
-	InspectionDeletedCheckAgainstPPQ(sInspection);
-	return m_InspectList.RemoveInspectionFromList(sInspection);
+	InspectionDeletedCheckAgainstPPQ(Inspection);
+	return m_InspectList.RemoveInspectionFromList(Inspection);
 }
 
-BOOL CSVOConfigAssistantDlg::RemoveTriggerFromList(CString sTriggerName)
+BOOL CSVOConfigAssistantDlg::RemoveTriggerFromList(LPCTSTR TriggerName)
 {
-	if (IsTriggerUsed(sTriggerName))
+	if (IsTriggerUsed( TriggerName ) )
 	{
-		RemoveUsedTrigger(sTriggerName);
+		RemoveUsedTrigger( TriggerName );
 	}
-	return m_TriggerList.RemoveTriggerFromList(SVString(sTriggerName));
+	return m_TriggerList.RemoveTriggerFromList(SVString(TriggerName));
 }
 
-BOOL CSVOConfigAssistantDlg::RemovePPQFromList(CString sPPQ)
+BOOL CSVOConfigAssistantDlg::RemovePPQFromList(LPCTSTR PPQ)
 {
-	const SVOPPQObjPtr pPPQObj = GetPPQObjectByName(sPPQ);
+	const SVOPPQObjPtr pPPQObj = GetPPQObjectByName( PPQ );
 	
 	if( nullptr != pPPQObj )
 	{
-		RemoveUsedTrigger(pPPQObj->GetAttachedTriggerName());
+		RemoveUsedTrigger( pPPQObj->GetAttachedTriggerName().c_str() );
 
 		int iInsCnt = pPPQObj->GetAttachedInspectionCount();
 
 		for (int i = 0; i< iInsCnt; i++)
 		{
-			RemoveUsedInspect(pPPQObj->GetAttachedInspection(i));
+			RemoveUsedInspect( pPPQObj->GetAttachedInspection(i).c_str() );
 		}
 	}
 
-	return m_PPQList.RemovePPQFromList(sPPQ);
+	return m_PPQList.RemovePPQFromList(PPQ);
 }
 
-CString CSVOConfigAssistantDlg::BuildTrgDig( const SvTi::SVOTriggerObj& rTriggerObj) const
+SVString CSVOConfigAssistantDlg::BuildTrgDig( const SvTi::SVOTriggerObj& rTriggerObj) const
 {
-	CString sDigName;
+	SVString Result;
 
 	int iDig = rTriggerObj.GetTriggerDigNumber();
 
 	if (rTriggerObj.IsAcquisitionTrigger())
 	{
-		sDigName = SvTi::SVHardwareManifest::BuildAcquisitionTriggerDeviceName(iDig).c_str();
+		Result = SvTi::SVHardwareManifest::BuildAcquisitionTriggerDeviceName(iDig);
 	}
 	else if (rTriggerObj.IsSoftwareTrigger())
 	{
-		sDigName = SvTi::SVHardwareManifest::BuildSoftwareTriggerDeviceName(iDig).c_str();
+		Result = SvTi::SVHardwareManifest::BuildSoftwareTriggerDeviceName(iDig);
 	}
 	else
 	{
@@ -806,23 +797,23 @@ CString CSVOConfigAssistantDlg::BuildTrgDig( const SvTi::SVOTriggerObj& rTrigger
 			case SVIM_PRODUCT_X2_GD8A:
 			case SVIM_PRODUCT_X2_GD8A_COLOR:
 			{
-				sDigName = SvTi::SVHardwareManifest::BuildIOBoardTriggerDeviceName(iDig).c_str();
+				Result = SvTi::SVHardwareManifest::BuildIOBoardTriggerDeviceName(iDig);
 				break;
 			}
 			case SVIM_PRODUCT_X2_GD8A_NONIO:
 			case SVIM_PRODUCT_X2_GD8A_NONIO_COLOR:
 			{
-				sDigName = SvTi::SVHardwareManifest::BuildAcquisitionTriggerDeviceName(iDig).c_str();
+				Result = SvTi::SVHardwareManifest::BuildAcquisitionTriggerDeviceName(iDig);
 				break;
 			}
 		}
 	}
-	return sDigName;
+	return Result;
 }
 
-CString  CSVOConfigAssistantDlg::BuildDigName(const SVOCameraObj& rCameraObj) const
+SVString CSVOConfigAssistantDlg::BuildDigName(const SVOCameraObj& rCameraObj) const
 {
-	CString sDigName;
+	SVString Result;
 	int iDigNumber = rCameraObj.GetDigNumber();
 
 	if (rCameraObj.IsFileAcquisition())
@@ -840,7 +831,7 @@ CString  CSVOConfigAssistantDlg::BuildDigName(const SVOCameraObj& rCameraObj) co
 			case SVIM_PRODUCT_X2_GD8A_COLOR:
 			case SVIM_PRODUCT_X2_GD8A_NONIO_COLOR:
 			{
-				sDigName.Format(_T("%s%s%d"), SVIM_BOARD_FILEACQUISITION_STRING, SVIM_DIG_NAME_STRING, iDigNumber);
+				Result = SvUl_SF::Format(_T("%s%s%d"), SVIM_BOARD_FILEACQUISITION_STRING, SVIM_DIG_NAME_STRING, iDigNumber);
 				break;
 			}
 
@@ -863,7 +854,7 @@ CString  CSVOConfigAssistantDlg::BuildDigName(const SVOCameraObj& rCameraObj) co
 			case SVIM_PRODUCT_X2_GD8A_COLOR:
 			case SVIM_PRODUCT_X2_GD8A_NONIO_COLOR:
 			{
-				sDigName.Format(_T("%s%s%d"), SVIM_BOARD_MATROX_GIGE, SVIM_DIG_NAME_STRING, iDigNumber);
+				Result = SvUl_SF::Format(_T("%s%s%d"), SVIM_BOARD_MATROX_GIGE, SVIM_DIG_NAME_STRING, iDigNumber);
 				break;
 			}
 
@@ -871,54 +862,54 @@ CString  CSVOConfigAssistantDlg::BuildDigName(const SVOCameraObj& rCameraObj) co
 				break;
 		} 
 	}
-	return sDigName;
+	return Result;
 }
 
-BOOL CSVOConfigAssistantDlg::IsDigitizerUsed(CString sDigString)
+BOOL CSVOConfigAssistantDlg::IsDigitizerUsed(LPCTSTR DigString)
 {
-	BOOL bRet = FALSE;
-	CString sCameraDig;
+	bool Result( false );
+	SVString CameraDig;
 
 	int iCamCnt = m_CameraList.GetCameraListCount();
 
-	for (int i = 0; ( (i < iCamCnt) && (!bRet) ); i++)
+	for (int i = 0; i < iCamCnt && !Result; i++)
 	{
 		if( nullptr != m_CameraList.GetCameraObjectByPosition(i) )
 		{
-			sCameraDig = BuildDigName( *m_CameraList.GetCameraObjectByPosition(i) );
+			CameraDig = BuildDigName( *m_CameraList.GetCameraObjectByPosition(i) );
 
-			if (sDigString == sCameraDig)
+			if( DigString == CameraDig )
 			{
-				bRet = TRUE;
+				Result = true;
 			}
 		}
 	}
-	return bRet;
+	return Result;
 }
 
-BOOL CSVOConfigAssistantDlg::IsCameraInList(CString sCameraName) const
+BOOL CSVOConfigAssistantDlg::IsCameraInList(LPCTSTR CameraName) const
 {
-	return m_CameraList.IsCameraInList(sCameraName);
+	return m_CameraList.IsCameraInList(CameraName);
 }
 
-BOOL CSVOConfigAssistantDlg::IsInspectionInList(CString sInspectionName) const
+BOOL CSVOConfigAssistantDlg::IsInspectionInList(LPCTSTR InspectionName) const
 {
-	return m_InspectList.IsInspectionInList(sInspectionName);
+	return m_InspectList.IsInspectionInList(InspectionName);
 }
 
-BOOL CSVOConfigAssistantDlg::IsInspectionNameInList(CString sInspectionName) const
+BOOL CSVOConfigAssistantDlg::IsInspectionNameInList(LPCTSTR InspectionName) const
 {
-	return m_InspectList.IsInspectionNameInList(sInspectionName);
+	return m_InspectList.IsInspectionNameInList(InspectionName);
 }
 
-bool CSVOConfigAssistantDlg::IsTriggerInList(CString sTriggerName) const
+bool CSVOConfigAssistantDlg::IsTriggerInList(LPCTSTR TriggerName) const
 {
-	return m_TriggerList.IsTriggerInList(SVString(sTriggerName));
+	return m_TriggerList.IsTriggerInList(SVString(TriggerName));
 }
 
-BOOL CSVOConfigAssistantDlg::IsPPQInList(CString sPPQName) const
+BOOL CSVOConfigAssistantDlg::IsPPQInList(LPCTSTR PPQName) const
 {
-	return m_PPQList.IsPPQInList(sPPQName);
+	return m_PPQList.IsPPQInList(PPQName);
 }
 
 void CSVOConfigAssistantDlg::SetCurrentSystem(long lSysValue)
@@ -943,43 +934,44 @@ void CSVOConfigAssistantDlg::SetConfigurationSystem(long lSysValue)
 
 void CSVOConfigAssistantDlg::SetCurrentSystemDisplay()
 {
-	CString sSystemName;
+	SVString SystemName;
 
-	sSystemName = GetNameFromProductID( m_lSystemType );
-	if ( sSystemName == _T("") )
+	SystemName = GetNameFromProductID( m_lSystemType );
+	if ( SystemName.empty() )
 	{
-		sSystemName = _T("<UNKNOWN>");
+		SystemName = _T("<UNKNOWN>");
 	}
 
-	m_ctlCurrentSys.SetWindowText(sSystemName);
+	m_ctlCurrentSys.SetWindowText( SystemName.c_str() );
 }
 
-BOOL CSVOConfigAssistantDlg::IsTriggerUsed(CString sTriggerName) const
+BOOL CSVOConfigAssistantDlg::IsTriggerUsed(LPCTSTR TriggerName) const
 {
-	BOOL bRet = false;
-	if (nullptr != m_slUsedTriggers.Find(sTriggerName))
+	bool Result = false;
+
+	SVStringVector::const_iterator Iter = std::find( m_UsedTriggers.begin(), m_UsedTriggers.end(), SVString(TriggerName) );
+	if( m_UsedTriggers.end() != Iter )
 	{
-		bRet = true;
+		Result = true;
 	}
-	return bRet;
+	return Result;
 }
 
-void CSVOConfigAssistantDlg::AddUsedTrigger(CString sTriggerName)
+void CSVOConfigAssistantDlg::AddUsedTrigger(LPCTSTR TriggerName)
 {
-	m_slUsedTriggers.AddTail(sTriggerName);
+	m_UsedTriggers.push_back( SVString(TriggerName) );
 }
 
-void CSVOConfigAssistantDlg::RemoveUsedTrigger(CString sTriggerName)
+void CSVOConfigAssistantDlg::RemoveUsedTrigger(LPCTSTR TriggerName)
 {
-	POSITION pos = m_slUsedTriggers.Find(sTriggerName);
-
-	if (pos)
+	SVStringVector::const_iterator Iter = std::find( m_UsedTriggers.begin(), m_UsedTriggers.end(), SVString(TriggerName) );
+	if( m_UsedTriggers.end() != Iter)
 	{
-		m_slUsedTriggers.RemoveAt(pos);
+		m_UsedTriggers.erase( Iter );
 	}
 }
 
-bool CSVOConfigAssistantDlg::IsSoftwareTriggerAllowed(LPCTSTR triggerName) const
+bool CSVOConfigAssistantDlg::IsSoftwareTriggerAllowed(LPCTSTR TriggerName) const
 {
 	bool bRetVal = true;
 
@@ -999,13 +991,13 @@ bool CSVOConfigAssistantDlg::IsSoftwareTriggerAllowed(LPCTSTR triggerName) const
 			const SVOPPQObjPtr pPPQObj = m_PPQList.GetPPQObjectByPosition(i);
 			if( nullptr != pPPQObj )
 			{
-				CString attachedTriggerName = pPPQObj->GetAttachedTriggerName();
-				if (attachedTriggerName.CompareNoCase(triggerName) == 0)
+				SVString attachedTriggerName = pPPQObj->GetAttachedTriggerName();
+				if( 0 == SvUl_SF::CompareNoCase( attachedTriggerName, SVString(TriggerName) ) )
 				{
 					int camCnt = pPPQObj->GetAttachedCameraCount();
 					for (int n = 0;n < camCnt;n++)
 					{
-						CString CameraName = pPPQObj->GetAttachedCamera(n);
+						SVString CameraName = pPPQObj->GetAttachedCamera(n);
 						// find camera in camera list
 						int iCam = GetCameraListCount();
 						for (int c = 0;c < iCam;c++)
@@ -1027,7 +1019,7 @@ bool CSVOConfigAssistantDlg::IsSoftwareTriggerAllowed(LPCTSTR triggerName) const
 	return bRetVal;
 }
 
-bool CSVOConfigAssistantDlg::IsCameraLineInputAllowed(LPCTSTR triggerName) const
+bool CSVOConfigAssistantDlg::IsCameraLineInputAllowed(LPCTSTR TriggerName) const
 {
 	bool bRetVal = false;
 
@@ -1047,13 +1039,13 @@ bool CSVOConfigAssistantDlg::IsCameraLineInputAllowed(LPCTSTR triggerName) const
 			const SVOPPQObjPtr pPPQObj = m_PPQList.GetPPQObjectByPosition(i);
 			if( nullptr != pPPQObj )
 			{
-				const CString& attachedTriggerName = pPPQObj->GetAttachedTriggerName();
-				if (attachedTriggerName.CompareNoCase(triggerName) == 0)
+				SVString attachedTriggerName = pPPQObj->GetAttachedTriggerName();
+				if( 0 == SvUl_SF::CompareNoCase( attachedTriggerName, SVString(TriggerName) ) )
 				{
 					int camCnt = pPPQObj->GetAttachedCameraCount();
 					for (int n = 0;n < camCnt;n++)
 					{
-						CString CameraName = pPPQObj->GetAttachedCamera(n);
+						SVString CameraName = pPPQObj->GetAttachedCamera(n);
 						// find camera in camera list
 						int iCam = GetCameraListCount();
 						for (int c = 0;c < iCam;c++)
@@ -1079,11 +1071,11 @@ SVIMProductEnum CSVOConfigAssistantDlg::GetProductType() const
 {
 	SVIMProductEnum eProduct;
 	//get the current avaliable system first.  if blank use the m_lSystemType
-	CString l_AvailableSystem;
-	m_ctlAvailableSys.GetWindowText(l_AvailableSystem);
-	if ( !l_AvailableSystem.IsEmpty() )
+	CString AvailableSystem;
+	m_ctlAvailableSys.GetWindowText(AvailableSystem);
+	if ( !AvailableSystem.IsEmpty() )
 	{
-		eProduct = GetProductIDFromName( l_AvailableSystem );
+		eProduct = GetProductIDFromName( SVString(AvailableSystem) );
 		return eProduct;
 	}
 	else
@@ -1092,29 +1084,29 @@ SVIMProductEnum CSVOConfigAssistantDlg::GetProductType() const
 	}
 }
 
-BOOL CSVOConfigAssistantDlg::IsInspectUsed(CString sInspect)
+BOOL CSVOConfigAssistantDlg::IsInspectUsed(LPCTSTR Inspection)
 {
-	BOOL bRet = false;
+	bool Result = false;
 
-	if ( nullptr != m_slUsedInspect.Find(sInspect))
+	SVStringVector::const_iterator Iter = std::find( m_UsedInspections.begin(), m_UsedInspections.end(), SVString(Inspection) );
+	if( m_UsedInspections.end() != Iter )
 	{
-		bRet = true;
+		Result = true;
 	}
-	return bRet;
+	return Result;
 }
 
-void CSVOConfigAssistantDlg::AddUsedInspect(CString sInspect)
+void CSVOConfigAssistantDlg::AddUsedInspect(LPCTSTR Inspection)
 {
-	m_slUsedInspect.AddTail(sInspect);
+	m_UsedInspections.push_back( SVString(Inspection) );
 }
 
-void CSVOConfigAssistantDlg::RemoveUsedInspect(CString sInspect)
+void CSVOConfigAssistantDlg::RemoveUsedInspect(LPCTSTR Inspection)
 {
-	POSITION pos = m_slUsedInspect.Find(sInspect);
-
-	if (pos)
+	SVStringVector::const_iterator Iter = std::find( m_UsedInspections.begin(), m_UsedInspections.end(), SVString(Inspection) );
+	if( m_UsedInspections.end() != Iter)
 	{
-		m_slUsedInspect.RemoveAt(pos);
+		m_UsedInspections.erase( Iter );
 	}
 }
 
@@ -1125,18 +1117,17 @@ void CSVOConfigAssistantDlg::SetModified(BOOL bModified)
 
 void CSVOConfigAssistantDlg::OnOK()
 {
-	CString sTmp = m_sConfigurationName.Right(4);
+	UpdateData(true);
 
-	UpdateData(TRUE);
-
+	CString sTmp = m_ConfigurationName.Right(4);
 	//check configuration name.  do not allow name to have extension
 	if ( ( sTmp.CompareNoCase( ".svx" ) == 0) )
 	{
-		int iLen = m_sConfigurationName.GetLength();
-		sTmp = m_sConfigurationName.Left(iLen-4);
-		m_sConfigurationName = sTmp;
+		int iLen = m_ConfigurationName.GetLength();
+		sTmp = m_ConfigurationName.Left(iLen-4);
+		m_ConfigurationName = sTmp;
 	}
-	UpdateData(FALSE);
+	UpdateData(false);
 
 	SendDataToConfiguration();
 
@@ -1147,23 +1138,23 @@ void CSVOConfigAssistantDlg::OnOK()
 ///               Message area 
 ///
 ////////////////////////////////////////////////////////
-BOOL CSVOConfigAssistantDlg::AddMessageToList(int iDlg, CString sMessage)
+BOOL CSVOConfigAssistantDlg::AddMessageToList(int iDlg, LPCTSTR Message)
 {
 	BOOL bRet = FALSE;
-	if (m_ctlMsgList.FindStringExact(-1,sMessage) == LB_ERR)
+	if (m_ctlMsgList.FindStringExact(-1, Message) == LB_ERR)
 	{
 		//message not there add it.
-		int iPos = m_ctlMsgList.AddString(sMessage);
-		m_ctlMsgList.SetItemData(iPos,iDlg);
+		int iPos = m_ctlMsgList.AddString( Message );
+		m_ctlMsgList.SetItemData(iPos, iDlg);
 		bRet = TRUE;
 	}
 	return bRet;
 }
 
-BOOL CSVOConfigAssistantDlg::RemoveMessageFromList(CString sMessage)
+BOOL CSVOConfigAssistantDlg::RemoveMessageFromList(LPCTSTR Message)
 {
 	BOOL bRet = FALSE;
-	int iPos = m_ctlMsgList.FindStringExact(-1,sMessage);
+	int iPos = m_ctlMsgList.FindStringExact(-1, Message);
 	
 	if (iPos != LB_ERR)
 	{
@@ -1173,7 +1164,7 @@ BOOL CSVOConfigAssistantDlg::RemoveMessageFromList(CString sMessage)
 	return bRet;
 }
 
-int CSVOConfigAssistantDlg::RemoveAllObjectMessages(CString sObjectName)
+int CSVOConfigAssistantDlg::RemoveAllObjectMessages(LPCTSTR ObjectName)
 {
 	CString sString;
 	int iNumberDeleted = 0;
@@ -1182,7 +1173,7 @@ int CSVOConfigAssistantDlg::RemoveAllObjectMessages(CString sObjectName)
 	for (int i = iCnt-1; -1 < i; i--)
 	{
 		m_ctlMsgList.GetText(i,sString);
-		if (sString.Find(sObjectName,0) != -1)
+		if (sString.Find(ObjectName, 0) != -1)
 		{
 			if ( sString.Find("ERROR",0) != -1)
 			{
@@ -1244,7 +1235,7 @@ void CSVOConfigAssistantDlg::SetupMessages()
 			{
 				if (!pCameraObj->IsCameraObjOk())
 				{
-					AddMessageToList(CAMERA_DLG, BuildDisplayMessage(MESSAGE_TYPE_ERROR, pCameraObj->GetCameraDisplayName(), CAMERA_INVALID_FILES));
+					AddMessageToList(CAMERA_DLG, BuildDisplayMessage(MESSAGE_TYPE_ERROR, pCameraObj->GetCameraDisplayName().c_str(), CAMERA_INVALID_FILES).c_str());
 				}
 				CheckCamera( *pCameraObj );
 			}
@@ -1252,14 +1243,14 @@ void CSVOConfigAssistantDlg::SetupMessages()
 	}
 	else
 	{ //configuration had no camera's.  add error message...
-		AddMessageToList(CAMERA_DLG,BuildDisplayMessage(MESSAGE_TYPE_ERROR, "", CAMERA_NONE_DEFINED));
+		AddMessageToList(CAMERA_DLG,BuildDisplayMessage(MESSAGE_TYPE_ERROR, "", CAMERA_NONE_DEFINED).c_str());
 		m_bCameraGood = FALSE;
 	}
 
 	if ( iTrg < 1 )
 	{
 		m_bTriggerGood = FALSE;
-		AddMessageToList(TRIGGER_DLG,BuildDisplayMessage(MESSAGE_TYPE_ERROR, "", TRIGGER_NONE_DEFINED));
+		AddMessageToList(TRIGGER_DLG,BuildDisplayMessage(MESSAGE_TYPE_ERROR, "", TRIGGER_NONE_DEFINED).c_str());
 	}
 	else
 	{
@@ -1271,13 +1262,13 @@ void CSVOConfigAssistantDlg::SetupMessages()
 	if ( iIns < 1 )
 	{
 		m_bInspectionGood = FALSE;
-		AddMessageToList(INSPECT_DLG,BuildDisplayMessage(MESSAGE_TYPE_ERROR, "", INSPECT_NONE_DEFINED));
+		AddMessageToList(INSPECT_DLG,BuildDisplayMessage(MESSAGE_TYPE_ERROR, "", INSPECT_NONE_DEFINED).c_str());
 	}
 
 	if ( iPpq < 1 )
 	{
 		m_bPPQGood = FALSE;
-		AddMessageToList(PPQ_DLG,BuildDisplayMessage(MESSAGE_TYPE_ERROR, "", PPQ_NONE_DEFINED));
+		AddMessageToList(PPQ_DLG,BuildDisplayMessage(MESSAGE_TYPE_ERROR, "", PPQ_NONE_DEFINED).c_str());
 	}
 	else
 	{
@@ -1290,22 +1281,22 @@ void CSVOConfigAssistantDlg::SetupMessages()
 				if ( pPPQObj->GetAttachedCameraCount() < 1 )
 				{
 					// no camera's attached
-					AddMessageToList(PPQ_DLG,BuildDisplayMessage(MESSAGE_TYPE_ERROR, pPPQObj->GetPPQName(), PPQ_NO_CAMERA));
+					AddMessageToList(PPQ_DLG,BuildDisplayMessage(MESSAGE_TYPE_ERROR, pPPQObj->GetPPQName().c_str(), PPQ_NO_CAMERA).c_str());
 				}
 				if ( pPPQObj->GetAttachedInspectionCount() < 1 )
 				{
 					//no inspection's attached
-					AddMessageToList(PPQ_DLG, BuildDisplayMessage(MESSAGE_TYPE_WARNING, pPPQObj->GetPPQName(), PPQ_NO_INSPECT));
+					AddMessageToList(PPQ_DLG, BuildDisplayMessage(MESSAGE_TYPE_WARNING, pPPQObj->GetPPQName().c_str(), PPQ_NO_INSPECT).c_str());
 				}
-				if ( pPPQObj->GetAttachedTriggerName().IsEmpty() )
+				if ( pPPQObj->GetAttachedTriggerName().empty() )
 				{
 					//no attached trigger
-					AddMessageToList(PPQ_DLG, BuildDisplayMessage(MESSAGE_TYPE_ERROR, pPPQObj->GetPPQName(), PPQ_NO_TRIGGER));
+					AddMessageToList(PPQ_DLG, BuildDisplayMessage(MESSAGE_TYPE_ERROR, pPPQObj->GetPPQName().c_str(), PPQ_NO_TRIGGER).c_str());
 				}
-				if ( pPPQObj->IsConditionalOutputCameraInput() && !IsCameraLineInputAllowed(pPPQObj->GetAttachedTriggerName()) )
+				if ( pPPQObj->IsConditionalOutputCameraInput() && !IsCameraLineInputAllowed(pPPQObj->GetAttachedTriggerName().c_str()) )
 				{
 					// condition for output not valid
-					AddMessageToList(PPQ_DLG, BuildDisplayMessage(MESSAGE_TYPE_ERROR, pPPQObj->GetPPQName(), PPQ_CONDITIONAL_OUTPUT_INVALID));
+					AddMessageToList(PPQ_DLG, BuildDisplayMessage(MESSAGE_TYPE_ERROR, pPPQObj->GetPPQName().c_str(), PPQ_CONDITIONAL_OUTPUT_INVALID).c_str());
 				}
 			}
 		}
@@ -1441,17 +1432,17 @@ BOOL CSVOConfigAssistantDlg::SendAcquisitionDataToConfiguration()
 	SVLut* pLut = nullptr;
 	SVDeviceParamCollection* pDeviceParams = nullptr;
 
-	CString sAcquName;
+	SVString AcquisitionName;
 	SVConfigurationObject::SVAcquisitionDeviceMap::iterator aPos = pConfig->GetAcquisitionDeviceStartPosition();
 	while (aPos != pConfig->GetAcquisitionDeviceEndPosition())
 	{
 		//see if things are in the dlg...
-		pConfig->GetAcquisitionDeviceNextAssoc( aPos, sAcquName );
-		if (!IsDigitizerUsed(sAcquName))
+		pConfig->GetAcquisitionDeviceNextAssoc( aPos, AcquisitionName );
+		if (!IsDigitizerUsed(AcquisitionName.c_str()))
 		{
 			SVAcquisitionClassPtr psvDevice;
-			psvDevice = SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( sAcquName );
-			pConfig->RemoveAcquisitionDevice(sAcquName);
+			psvDevice = SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( AcquisitionName.c_str() );
+			pConfig->RemoveAcquisitionDevice(AcquisitionName.c_str());
 			if( nullptr != psvDevice )
 			{
 				psvDevice->DestroyBuffers();
@@ -1467,8 +1458,7 @@ BOOL CSVOConfigAssistantDlg::SendAcquisitionDataToConfiguration()
 	SVLut lut;
 	SVDeviceParamCollection svDeviceParams;
 	SVFileNameClass svFile;
-	CString sCameraFileName;
-	CString sDigName;
+	SVString DigName;
 
 	int iCamCnt = m_CameraList.GetCameraListCount();
 
@@ -1487,11 +1477,11 @@ BOOL CSVOConfigAssistantDlg::SendAcquisitionDataToConfiguration()
 			{
 				pCameraObj->SetDigNumber( Digitizer );
 			}
-			sDigName = BuildDigName( *pCameraObj );
+			DigName = BuildDigName( *pCameraObj );
 			// For File Acquisition
 			if ( pCameraObj->IsFileAcquisition())
 			{
-				psvDevice = SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( sDigName );
+				psvDevice = SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( DigName.c_str() );
 				if ( nullptr != psvDevice )
 				{
 					SVLightReference lightRef;
@@ -1499,8 +1489,8 @@ BOOL CSVOConfigAssistantDlg::SendAcquisitionDataToConfiguration()
 
 					SVDeviceParamCollection deviceParams;
 
-					_variant_t fileNameVar = pCameraObj->GetImageFilename();
-					_variant_t dirNameVar = pCameraObj->GetImageDirectoryName();
+					_variant_t fileNameVar = pCameraObj->GetImageFilename().c_str();
+					_variant_t dirNameVar = pCameraObj->GetImageDirectoryName().c_str();
 
 					long loadingMode = pCameraObj->GetFileLoadingMode();
 					_variant_t fileLoadingModeVar = loadingMode;
@@ -1519,7 +1509,7 @@ BOOL CSVOConfigAssistantDlg::SendAcquisitionDataToConfiguration()
 					{
 						// File is supposed to be managed in Single File Mode
 						SVFileNameClass svFile;
-						svFile.SetFullFileName(pCameraObj->GetImageFilename());
+						svFile.SetFullFileName( pCameraObj->GetImageFilename().c_str() );
 						svFiles.Add(svFile);
 					}
 					deviceParams.CreateParameter(DeviceParamFileAcqLoadingMode, fileLoadingModeVar);
@@ -1531,10 +1521,9 @@ BOOL CSVOConfigAssistantDlg::SendAcquisitionDataToConfiguration()
 					psvDevice->SetDeviceParameters( deviceParams );	// must be done before CreateBuffers
 
 					// save the camera file (for future simulation mode)
-					CString sCameraFileName = pCameraObj->GetCameraFile();
-					svFile.SetFullFileName(sCameraFileName);
+					svFile.SetFullFileName( pCameraObj->GetCameraFile().c_str() );
 			
-					if ( 0 == CString( svFile.GetExtension() ).CompareNoCase(SVGigeCameraFileDefExt) )
+					if ( 0 == SvUl_SF::CompareNoCase(SVString(svFile.GetExtension()), SVString(cGigeCameraFileDefExt)) )
 					{
 						svFiles.Add(svFile);
 					}
@@ -1553,21 +1542,20 @@ BOOL CSVOConfigAssistantDlg::SendAcquisitionDataToConfiguration()
 					HRESULT hrCreateBuffers = psvDevice->CreateBuffers( svImageInfo, TheSVObserverApp.GetSourceImageDepth() );
 
 					// Add the acquisition device
-					bRet = pConfig->AddAcquisitionDevice( sDigName, svFiles, lightRef, lut, &deviceParams ) && bRet;
+					bRet = pConfig->AddAcquisitionDevice( DigName.c_str(), svFiles, lightRef, lut, &deviceParams ) && bRet;
 				}
 			}
 			else
 			{
-				sCameraFileName = pCameraObj->GetCameraFile();
-				svFile.SetFullFileName(sCameraFileName);
+				svFile.SetFullFileName( pCameraObj->GetCameraFile().c_str() );
 			
-				if ( 0 == CString( svFile.GetExtension() ).CompareNoCase(SVGigeCameraFileDefExt)  )
+				if ( 0 == SvUl_SF::CompareNoCase( svFile.GetExtension(), SVString(cGigeCameraFileDefExt) ) )
 				{
 					svFiles.Add(svFile);
 				}
 
 				psvLight = nullptr;
-				psvDevice =  SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( sDigName );
+				psvDevice =  SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( DigName.c_str() );
 				if ( nullptr != psvDevice )
 				{
 					bool bGetLightReference = false;
@@ -1575,7 +1563,7 @@ BOOL CSVOConfigAssistantDlg::SendAcquisitionDataToConfiguration()
 					{
 						SVImageInfoClass svImageInfo;
 
-						if ( pConfig->GetAcquisitionDevice( sDigName, psvFiles, psvLight, pLut, pDeviceParams ) )
+						if ( pConfig->GetAcquisitionDevice( DigName.c_str(), psvFiles, psvLight, pLut, pDeviceParams ) )
 						{
 							psvDevice->DestroyBuffers();
 							if( pCameraObj->GetCameraFileChanged() )
@@ -1677,7 +1665,7 @@ BOOL CSVOConfigAssistantDlg::SendAcquisitionDataToConfiguration()
 					pDeviceParams = &svDeviceParams;
 				}
 
-				bRet = pConfig->AddAcquisitionDevice( sDigName, svFiles, *psvLight, *pLut, pDeviceParams ) && bRet;
+				bRet = pConfig->AddAcquisitionDevice( DigName.c_str(), svFiles, *psvLight, *pLut, pDeviceParams ) && bRet;
 			}
 		}
 	}
@@ -1724,15 +1712,14 @@ BOOL CSVOConfigAssistantDlg::SendCameraDataToConfiguration()
 	int iCamCnt = m_CameraList.GetCameraListCount();
 	if (iCamCnt > 0)
 	{
-		CString sKey;
-		CString sName;
+		SVString CameraDisplayName;
 
 		for (int i = 0; i < iCamCnt; i++)
 		{
 			SVOCameraObjPtr pCameraObj = GetCameraObject(i);
 			if( nullptr != pCameraObj )
 			{
-				sKey = pCameraObj->GetCameraDisplayName();
+				CameraDisplayName = pCameraObj->GetCameraDisplayName();
 				lCfgCamCnt = pConfig->GetCameraCount();
 
 				for ( long l = lCfgCamCnt - 1; -1 < l; l-- )
@@ -1740,7 +1727,7 @@ BOOL CSVOConfigAssistantDlg::SendCameraDataToConfiguration()
 					pCamera = pConfig->GetCamera(l);
 					if ( nullptr != pCamera )
 					{
-						if (sKey.Compare(pCamera->GetName() ) == 0)
+						if( CameraDisplayName == pCamera->GetName() )
 						{
 							pCamera->Destroy();
 							break;
@@ -1758,7 +1745,7 @@ BOOL CSVOConfigAssistantDlg::SendCameraDataToConfiguration()
 				if ( nullptr == pCamera )
 				{
 					pCamera = new SVVirtualCamera;
-					pCamera->SetName( sKey );
+					pCamera->SetName( CameraDisplayName.c_str() );
 					bRet = nullptr != pCamera && bRet;
 					bAddCamera = TRUE;
 				}
@@ -1780,10 +1767,9 @@ BOOL CSVOConfigAssistantDlg::SendCameraDataToConfiguration()
 					pCamera->SetFileImageSize(pCameraObj->GetFileImageSize());
 					pCamera->SetIsColor( pCameraObj->IsColor() );
 
-					CString sDevice;
-					sDevice = BuildDigName( *pCameraObj );
+					SVString DeviceName = BuildDigName( *pCameraObj );
 
-					bRet = pCamera->Create( sDevice ) && bRet;
+					bRet = pCamera->Create( DeviceName.c_str() ) && bRet;
 
 					if ( bAddCamera )
 					{
@@ -1831,9 +1817,8 @@ BOOL CSVOConfigAssistantDlg::SendTriggerDataToConfiguration()
 	int iTrgCnt = m_TriggerList.GetTriggerListCount();
 	if (iTrgCnt > 0)
 	{
-		CString sKey;
-		CString sName;
-		CString sDeviceName;
+		SVString TriggerDisplayName;
+		SVString DeviceName;
 
 		// Check for Triggers changed
 		for (int i = 0; i < iTrgCnt; i++)
@@ -1841,8 +1826,8 @@ BOOL CSVOConfigAssistantDlg::SendTriggerDataToConfiguration()
 			const SvTi::SVOTriggerObjPtr pTriggerObj( GetTriggerObject(i) );
 			if( nullptr != pTriggerObj )
 			{
-				sKey = pTriggerObj->GetTriggerDisplayName();
-				sDeviceName = BuildTrgDig( *pTriggerObj );
+				TriggerDisplayName = pTriggerObj->GetTriggerDisplayName();
+				DeviceName = BuildTrgDig( *pTriggerObj );
 
 				pTrigger = nullptr;
 				lCfgTrgCnt = pConfig->GetTriggerCount();
@@ -1853,7 +1838,7 @@ BOOL CSVOConfigAssistantDlg::SendTriggerDataToConfiguration()
 					pTrigger = pConfig->GetTrigger(l);
 					if ( nullptr != pTrigger )
 					{
-						if ( sKey.Compare(pTrigger->GetName() ) == 0 )
+						if ( TriggerDisplayName == pTrigger->GetName() )
 						{
 							pTrigger->Destroy();
 							break;
@@ -1871,7 +1856,7 @@ BOOL CSVOConfigAssistantDlg::SendTriggerDataToConfiguration()
 				if ( nullptr == pTrigger )
 				{
 					pTrigger = new SvTi::SVTriggerObject;
-					pTrigger->SetName( sKey );
+					pTrigger->SetName( TriggerDisplayName.c_str() );
 				
 					bRet = nullptr != pTrigger && bRet;
 					bAddTrigger = TRUE;
@@ -1889,7 +1874,7 @@ BOOL CSVOConfigAssistantDlg::SendTriggerDataToConfiguration()
 						pTrigger->SetSoftwareTrigger(false);
 					}
 
-					SvTh::SVTriggerClass* psvDevice = SvTi::SVTriggerProcessingClass::Instance().GetTrigger( sDeviceName );
+					SvTh::SVTriggerClass* psvDevice = SvTi::SVTriggerProcessingClass::Instance().GetTrigger( DeviceName.c_str() );
 
 					if ( nullptr != psvDevice )
 					{
@@ -1909,10 +1894,10 @@ BOOL CSVOConfigAssistantDlg::SendTriggerDataToConfiguration()
 	return bRet;
 }
 
-BOOL CSVOConfigAssistantDlg::RenameInspectionObjects(CString sInspectionName, CString sNewInspectionName)
+BOOL CSVOConfigAssistantDlg::RenameInspectionObjects(LPCTSTR InspectionName, LPCTSTR NewInspectionName)
 {
 	BOOL bRet = TRUE;
-	if( sInspectionName != sNewInspectionName )
+	if( InspectionName != NewInspectionName )
 	{
 		// PPQ Object Inspection Name...
 		long lCount = 0;
@@ -1925,10 +1910,10 @@ BOOL CSVOConfigAssistantDlg::RenameInspectionObjects(CString sInspectionName, CS
 				int Count = pPPQObject->GetAttachedInspectionCount();
 				for( int j = 0 ; j < Count ; j++ )
 				{
-					if( pPPQObject->GetAttachedInspection(j) == sInspectionName)
+					if( pPPQObject->GetAttachedInspection(j) == InspectionName)
 					{
-						bRet &= pPPQObject->DetachInspectionFromPPQ( sInspectionName);
-						bRet &= pPPQObject->AttachInspectionToPPQ( sNewInspectionName);
+						bRet &= pPPQObject->DetachInspectionFromPPQ( InspectionName );
+						bRet &= pPPQObject->AttachInspectionToPPQ( NewInspectionName );
 					}
 				}
 			}
@@ -1937,7 +1922,7 @@ BOOL CSVOConfigAssistantDlg::RenameInspectionObjects(CString sInspectionName, CS
 	return bRet;
 }
 
-SVOPPQObjPtr CSVOConfigAssistantDlg::GetPPQObjectByInspectionName(const SVString& inspectionName)
+SVOPPQObjPtr CSVOConfigAssistantDlg::GetPPQObjectByInspectionName(const SVString& rInspectionName)
 {
 	bool bFound = false;
 	SVOPPQObjPtr pPPQObj;
@@ -1952,8 +1937,8 @@ SVOPPQObjPtr CSVOConfigAssistantDlg::GetPPQObjectByInspectionName(const SVString
 			for (int j = 0; !bFound && j < inspectionCount;j++)
 			{
 				// What is this key (label or name)?
-				CString name = pPPQObj->GetAttachedInspection(j);
-				if (name == inspectionName.c_str())
+				SVString Name = pPPQObj->GetAttachedInspection(j);
+				if( Name == rInspectionName.c_str() )
 				{
 					bFound = true;
 				}
@@ -2015,11 +2000,10 @@ BOOL CSVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 	int iInsCnt = m_InspectList.GetInspectionListCount();
 	if ( iInsCnt > 0 )
 	{
-		CString sKey; // the label
-		CString sName;
-		CString sFileName; // what will be seen...
-		CString sToolsetImage;
-		CString sNewDisableMethod;
+		SVString Key;
+		SVString FileName;
+		SVString ToolsetImage;
+		SVString NewDisableMethod;
 		long lEnableAuxiliaryExtent;
 
 		for ( int i = 0; i < iInsCnt; i++ )
@@ -2027,10 +2011,10 @@ BOOL CSVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 			const SVOInspectionObjPtr pInspectionObj( GetInspectionObject(i) );
 			if( nullptr != pInspectionObj )
 			{
-				sKey = pInspectionObj->GetInspectionLabelName();
-				sFileName = pInspectionObj->GetInspectionName();
-				sToolsetImage = pInspectionObj->GetToolsetImage();
-				sNewDisableMethod = pInspectionObj->GetNewDisableMethod();
+				Key = pInspectionObj->GetInspectionLabelName();
+				FileName = pInspectionObj->GetInspectionName();
+				ToolsetImage = pInspectionObj->GetToolsetImage();
+				NewDisableMethod = pInspectionObj->GetNewDisableMethod();
 				lEnableAuxiliaryExtent = pInspectionObj->GetEnableAuxiliaryExtent();
 
 				lCfgInsCnt = pConfig->GetInspectionCount();
@@ -2040,11 +2024,11 @@ BOOL CSVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 					pInspection = pConfig->GetInspection(l);
 					if (nullptr != pInspection)
 					{
-						if ( sKey.Compare(pInspection->GetName()) == 0 )
+						if ( Key == pInspection->GetName() )
 						{
-							pInspection->SetName(sFileName);
+							pInspection->SetName( FileName.c_str() );
 
-							pConfig->RenameOutputListInspectionNames( sKey, sFileName );
+							pConfig->RenameOutputListInspectionNames( Key.c_str(), FileName.c_str() );
 
 							TheSVObserverApp.OnUpdateAllIOViews();
 							break;
@@ -2061,10 +2045,10 @@ BOOL CSVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 
 				if ( nullptr == pInspection )
 				{
-					const CString& importFilename = pInspectionObj->GetImportFilename();
-					if (!importFilename.IsEmpty())
+					const SVString& importFilename = pInspectionObj->GetImportFilename();
+					if (!importFilename.empty())
 					{
-						SVInspectionImportHelper importer  = SVInspectionImportHelper(SVString(importFilename), SVString(sFileName), SVString(sToolsetImage));
+						SVInspectionImportHelper importer  = SVInspectionImportHelper(SVString(importFilename), SVString(FileName), SVString(ToolsetImage));
 						SVString title = _T( "Importing Inspection..." );
 						SVImportProgress<SVInspectionImportHelper> progress(importer, title.c_str());
 						progress.DoModal();
@@ -2084,17 +2068,17 @@ BOOL CSVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 								if( bRet )
 								{
 									pInspection = dynamic_cast<SVInspectionProcess*> (pObject);
-									RenameInspectionObjects(sKey, sFileName);
+									RenameInspectionObjects(Key.c_str(), FileName.c_str());
 									bRet = pConfig->AddInspection( pInspection );
 
-									SVOPPQObjPtr pPPQObj = GetPPQObjectByInspectionName(SVString(sFileName));
+									SVOPPQObjPtr pPPQObj = GetPPQObjectByInspectionName(FileName);
 									if( nullptr != pPPQObj )
 									{
 										pPPQObj->SetImportedInputList(importer.info.m_inputList);
 									}
 
 									BOOL bNewDisableMethod = pInspection->GetNewDisableMethod();
-									sNewDisableMethod = (bNewDisableMethod) ? _T( "Method 2" ): _T( "Method 1" );
+									NewDisableMethod = (bNewDisableMethod) ? _T( "Method 2" ): _T( "Method 1" );
 									lEnableAuxiliaryExtent = pInspection->GetEnableAuxiliaryExtent();
 								}
 							}
@@ -2102,7 +2086,7 @@ BOOL CSVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 						}
 						else
 						{
-							SVStringArray msgList;
+							SVStringVector msgList;
 							msgList.push_back(SvUl_SF::Format(_T("%d"), hr));
 							SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 							INT_PTR result = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Config_InspectionImportFailed, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10140);
@@ -2117,12 +2101,12 @@ BOOL CSVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 
 						if( bRet )
 						{
-							pInspection->SetName( sFileName );
-							RenameInspectionObjects(sKey, sFileName);
+							pInspection->SetName( FileName.c_str() );
+							RenameInspectionObjects(Key.c_str(), FileName.c_str());
 
-							pInspection->SetToolsetImage(sToolsetImage);
+							pInspection->SetToolsetImage(ToolsetImage.c_str());
 
-							bRet = pInspection->CreateInspection(sFileName);
+							bRet = pInspection->CreateInspection(FileName.c_str());
 
 							if( bRet )
 							{
@@ -2134,9 +2118,9 @@ BOOL CSVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 
 				if ( nullptr != pInspection )
 				{
-					pInspection->SetToolsetImage(sToolsetImage);
+					pInspection->SetToolsetImage(ToolsetImage.c_str());
 
-					pInspection->SetNewDisableMethod( sNewDisableMethod == _T( "Method 2" ) );
+					pInspection->SetNewDisableMethod( NewDisableMethod == _T( "Method 2" ) );
 
 					long l_lPrevEnable = pInspection->GetEnableAuxiliaryExtent();
 					pInspection->SetEnableAuxiliaryExtent( lEnableAuxiliaryExtent );
@@ -2181,7 +2165,7 @@ BOOL CSVOConfigAssistantDlg::SendPPQAttachmentsToConfiguration(SVPPQObjectArray&
 	int iPPQCnt = m_PPQList.GetPPQListCount();
 	if ( iPPQCnt > 0) 
 	{
-		CString sKey;
+		SVString Key;
 		SVPPQObject* pPPQ( nullptr );
 
 		for (int i = 0; i < iPPQCnt; i++)
@@ -2192,7 +2176,7 @@ BOOL CSVOConfigAssistantDlg::SendPPQAttachmentsToConfiguration(SVPPQObjectArray&
 				continue;
 			}
 
-			sKey = pPPQObj->GetPPQName();
+			Key = pPPQObj->GetPPQName();
 			BOOL bNew = FALSE;
 
 			for ( long l = lCPPQCnt -1; -1 < l; l-- )
@@ -2201,7 +2185,7 @@ BOOL CSVOConfigAssistantDlg::SendPPQAttachmentsToConfiguration(SVPPQObjectArray&
 				
 				if ( nullptr != pPPQ )
 				{
-					if ( sKey.Compare(pPPQ->GetName()) == 0 )
+					if ( Key == pPPQ->GetName() )
 					{
 						break;
 					}
@@ -2217,15 +2201,13 @@ BOOL CSVOConfigAssistantDlg::SendPPQAttachmentsToConfiguration(SVPPQObjectArray&
 			if ( nullptr == pPPQ )
 			{
 				pPPQ = new SVPPQObject;
-				pPPQ->SetName(sKey);
+				pPPQ->SetName(Key.c_str());
 				bNew = TRUE;
 			}
 
 			if ( nullptr != pPPQ )
 			{
-				CString sNewName;
-				CString sCfgCameraName;
-				CString sPPQCameraName;
+				SVString PPQCameraName;
 				long lSize = 0;
 
 				bRet = pPPQ->SetPPQOutputMode((SVPPQOutputModeEnum)pPPQObj->GetPPQMode()) && bRet;
@@ -2253,21 +2235,21 @@ BOOL CSVOConfigAssistantDlg::SendPPQAttachmentsToConfiguration(SVPPQObjectArray&
 						long lPosition = 0;
 						long l = 0;
 
-						sPPQCameraName = pPPQObj->GetAttachedCamera(i);
+						PPQCameraName = pPPQObj->GetAttachedCamera(i);
 
-						std::deque< SVVirtualCamera* > l_Cameras;
+						std::deque< SVVirtualCamera* > Cameras;
 
-						pPPQ->GetCameraList( l_Cameras );
+						pPPQ->GetCameraList( Cameras );
 
-						std::deque< SVVirtualCamera* >::iterator l_Iter = l_Cameras.begin();
+						std::deque< SVVirtualCamera* >::iterator l_Iter = Cameras.begin();
 
-						while( l_Iter != l_Cameras.end() )
+						while( l_Iter != Cameras.end() )
 						{
 							SVVirtualCamera* pCamera = ( *l_Iter );
 
 							if ( nullptr != pCamera )
 							{
-								if ( sPPQCameraName.Compare(pCamera->GetName()) == 0 )
+								if ( PPQCameraName == pCamera->GetName() )
 								{
 									pPPQ->GetCameraPPQPosition( lPosition, pCamera );
 
@@ -2289,7 +2271,7 @@ BOOL CSVOConfigAssistantDlg::SendPPQAttachmentsToConfiguration(SVPPQObjectArray&
 							SVVirtualCamera* pCamera = pConfig->GetCamera(l);
 							if ( nullptr != pCamera )
 							{
-								if ( sPPQCameraName.Compare(pCamera->GetName()) == 0 )
+								if ( PPQCameraName == pCamera->GetName() )
 								{
 									pPPQ->AttachCamera(pCamera,lPosition);
 									break;
@@ -2304,11 +2286,9 @@ BOOL CSVOConfigAssistantDlg::SendPPQAttachmentsToConfiguration(SVPPQObjectArray&
 					}
 				}
 
-				CString sPPQTrigger;
+				SVString PPQTrigger = pPPQObj->GetAttachedTriggerName();
 
-				sPPQTrigger = pPPQObj->GetAttachedTriggerName();
-
-				if ( !sPPQTrigger.IsEmpty() )
+				if ( !PPQTrigger.empty() )
 				{
 					SvTi::SVTriggerObject* pTrigger( nullptr );
 					lSize = pConfig->GetTriggerCount();
@@ -2317,7 +2297,7 @@ BOOL CSVOConfigAssistantDlg::SendPPQAttachmentsToConfiguration(SVPPQObjectArray&
 						pTrigger = pConfig->GetTrigger(l);
 						if ( nullptr != pTrigger )
 						{
-							if ( sPPQTrigger.Compare(pTrigger->GetName()) == 0 )
+							if ( PPQTrigger ==pTrigger->GetName() )
 							{
 								pPPQ->AttachTrigger(pTrigger);
 								break;
@@ -2334,15 +2314,15 @@ BOOL CSVOConfigAssistantDlg::SendPPQAttachmentsToConfiguration(SVPPQObjectArray&
 
 				if ( iAttachedInsCnt > 0 )
 				{
-					CString sPpqInsStr;
+					SVString PpqInspectionName;
 					long lInsCnt;
 
 					for (int i = 0; i < iAttachedInsCnt; i++)
 					{
 						BOOL bFound = FALSE;
 
-						sPpqInsStr = pPPQObj->GetAttachedInspection(i);
-						const SVOInspectionObjPtr pInspectionObj = GetInspectionObjectByName(sPpqInsStr);
+						PpqInspectionName = pPPQObj->GetAttachedInspection(i);
+						const SVOInspectionObjPtr pInspectionObj = GetInspectionObjectByName(PpqInspectionName.c_str());
 						pPPQ->GetInspectionCount(lInsCnt);
 
 						if( nullptr != pInspectionObj )
@@ -2353,7 +2333,7 @@ BOOL CSVOConfigAssistantDlg::SendPPQAttachmentsToConfiguration(SVPPQObjectArray&
 								
 								if ( ( nullptr != pInspection ) && (!pInspectionObj->IsNewInspection()) )
 								{
-									if ( sPpqInsStr.Compare(pInspection->GetName()) == 0 )
+									if ( PpqInspectionName == pInspection->GetName() )
 									{
 										bFound = TRUE;
 										break;
@@ -2372,7 +2352,7 @@ BOOL CSVOConfigAssistantDlg::SendPPQAttachmentsToConfiguration(SVPPQObjectArray&
 								pInspection = pConfig->GetInspection(l);
 								if ( nullptr != pInspection )
 								{
-									if ( sPpqInsStr.Compare(pInspection->GetName()) == 0 )
+									if ( PpqInspectionName ==pInspection->GetName() )
 									{
 										pPPQ->AttachInspection(pInspection);
 
@@ -2583,25 +2563,25 @@ BOOL CSVOConfigAssistantDlg::GetConfigurationForExisting()
 	m_TriggerList.ResetContent();
 	m_InspectList.ResetContent();
 	m_PPQList.ResetContent();
-	m_slUsedTriggers.RemoveAll();
-	m_slUsedInspect.RemoveAll();
-	m_slInspectionNamesUsed.RemoveAll();
-	m_slInspectionLabelsUsed.RemoveAll();
+	m_UsedTriggers.clear();
+	m_UsedInspections.clear();
+	m_InspectionNamesUsed.clear();
+	m_InspectionLabelsUsed.clear();
 
 	long lCfgCameraCnt;
 	long lCfgTriggerCnt;
 	long lCfgInspectCnt;
 	long lCfgPPQCnt;
-	CString sDigName;
-	CString sCameraName;
-	CString sTriggerName;
-	CString sInspectLabel;
-	CString sInspectName;
-	CString sPPQName;
+	SVString DigName;
+	SVString CameraName;
+	SVString TriggerName;
+	SVString InspectLabel;
+	SVString InspectName;
+	SVString PPQName;
 	int iDigNumber;
 	int CameraID;
 	int iChannel;
-	CString sCameraFileName;
+	SVString CameraFileName;
 
 	SVVirtualCamera* pcfgCamera( nullptr );
 	SvTi::SVTriggerObject* pcfgTrigger( nullptr );
@@ -2616,52 +2596,52 @@ BOOL CSVOConfigAssistantDlg::GetConfigurationForExisting()
 		pcfgCamera = pConfig->GetCamera(lCam);
 		if ( nullptr != pcfgCamera )
 		{
-			sCameraName = pcfgCamera->GetName();
+			CameraName = pcfgCamera->GetName();
 			if ( nullptr != pcfgCamera->mpsvDevice )
 			{
-				sDigName = pcfgCamera->mpsvDevice->DigName();
+				DigName = pcfgCamera->mpsvDevice->DigName();
 				iDigNumber = pcfgCamera->mpsvDevice->DigNumber();
 				iChannel = pcfgCamera->mpsvDevice->Channel();
 				CameraID = pcfgCamera->getCameraID();
 
-				sCameraFileName.Empty();
+				CameraFileName.clear();
 				
 				long lSize;
 				SVFileNameClass oCamFile;
 				pcfgCamera->mpsvDevice->GetFileNameArraySize( lSize );
-				for ( long lFile = 0; lFile < lSize && sCameraFileName.IsEmpty();lFile++)
+				for ( long lFile = 0; lFile < lSize && CameraFileName.empty(); lFile++)
 				{
 					pcfgCamera->mpsvDevice->GetFileName( lFile, oCamFile );
-					CString csExt = oCamFile.GetExtension();				
+					SVString Extension = oCamFile.GetExtension();				
 
-					if ( 0 == csExt.CompareNoCase( SVGigeCameraFileDefExt ) && sCameraFileName.IsEmpty() )
+					if ( 0 == SvUl_SF::CompareNoCase( Extension, SVString(cGigeCameraFileDefExt) ) && CameraFileName.empty() )
 					{
-						sCameraFileName = oCamFile.GetFullFileName();
+						CameraFileName = oCamFile.GetFullFileName();
 					}
 				}
 
 				//Add Camera Name, Camera Files and Camera Device Params to tmp list in case of a cancel
-				m_CameraList.AddCameraToList(sCameraName,iDigNumber,iChannel, CameraID); 
-				m_TmpCameraList.AddCameraToList(sCameraName,iDigNumber,iChannel, CameraID); 
-				m_CameraList.SetCameraFile(sCameraName, sCameraFileName);
-				m_TmpCameraList.SetCameraFile(sCameraName, sCameraFileName);
+				m_CameraList.AddCameraToList(CameraName.c_str(), iDigNumber, iChannel, CameraID); 
+				m_TmpCameraList.AddCameraToList(CameraName.c_str(), iDigNumber, iChannel, CameraID); 
+				m_CameraList.SetCameraFile(CameraName.c_str(), CameraFileName.c_str());
+				m_TmpCameraList.SetCameraFile(CameraName.c_str(), CameraFileName.c_str());
 
 				SVDeviceParamCollection l_Params;
 				SVDeviceParamCollection l_CameraFileParams;
 				pcfgCamera->mpsvDevice->GetDeviceParameters( l_Params );
 				pcfgCamera->mpsvDevice->GetCameraFileParameters( l_CameraFileParams );
 
-				m_CameraList.SetCameraDeviceParams( sCameraName, l_Params, l_CameraFileParams );
-				m_TmpCameraList.SetCameraDeviceParams( sCameraName, l_Params, l_CameraFileParams );
+				m_CameraList.SetCameraDeviceParams( CameraName.c_str(), l_Params, l_CameraFileParams );
+				m_TmpCameraList.SetCameraDeviceParams( CameraName.c_str(), l_Params, l_CameraFileParams );
 
-				SVOCameraObjPtr pCameraObj = m_CameraList.GetCameraObjectByName(sCameraName);
+				SVOCameraObjPtr pCameraObj = m_CameraList.GetCameraObjectByName(CameraName.c_str());
 				if( nullptr != pCameraObj )
 				{
 					// move from configuration (SVVirtualCamera) camera object to editing (CSVOCameraObj) camera object
 					pCameraObj->SetFileAcquisitionMode(pcfgCamera->IsFileAcquisition());
 					pCameraObj->SetFileLoadingMode(pcfgCamera->GetFileLoadingMode());
-					pCameraObj->SetImageFilename(pcfgCamera->GetImageFilename());
-					pCameraObj->SetImageDirectoryName(pcfgCamera->GetImageDirectoryName());
+					pCameraObj->SetImageFilename( SVString(pcfgCamera->GetImageFilename()) );
+					pCameraObj->SetImageDirectoryName( SVString(pcfgCamera->GetImageDirectoryName()) );
 					pCameraObj->SetFileImageSizeEditModeFileBased(pcfgCamera->IsFileImageSizeEditModeFileBased());
 					pCameraObj->SetFileImageSize(pcfgCamera->GetFileImageSize());
 					pCameraObj->SetIsColor( pcfgCamera->IsColor() );
@@ -2683,27 +2663,29 @@ BOOL CSVOConfigAssistantDlg::GetConfigurationForExisting()
 		bRet = (nullptr != pcfgTrigger) && bRet;
 		if ( nullptr != pcfgTrigger && nullptr != pcfgTrigger->mpsvDevice )
 		{
-			sTriggerName = pcfgTrigger->GetName();
+			TriggerName = pcfgTrigger->GetName();
 			iDigNumber = pcfgTrigger->mpsvDevice->miChannelNumber;
 			if (iDigNumber < 0)
 			{
 				// use the numeric at the end of the name (it's one based and we want zero based)
 				// find the last underscore
-				int pos = sTriggerName.ReverseFind(_T('_'));
-				if (pos != -1)
+				size_t Pos = TriggerName.rfind(_T('_'));
+				if( SVString::npos != Pos )
 				{
-					CString name = sTriggerName.Right(sTriggerName.GetLength() - (pos + 1));
-					iDigNumber  = _ttoi(name);
+					SVString TriggerNumber = SvUl_SF::Right( TriggerName, TriggerName.size() - Pos + 1);
+					iDigNumber  = _ttoi(TriggerNumber.c_str());
 
 					// make it zero based
 					if (iDigNumber > 0)
+					{
 						iDigNumber--;
+					}
 				}
 			}
-			m_TriggerList.AddTriggerToList(SVString(sTriggerName), iDigNumber);
+			m_TriggerList.AddTriggerToList(SVString(TriggerName), iDigNumber);
 
 			// Add Software trigger flag and interval here
-			const SvTi::SVOTriggerObjPtr pTriggerObj( m_TriggerList.GetTriggerObjectByName(SVString(sTriggerName)) );
+			const SvTi::SVOTriggerObjPtr pTriggerObj( m_TriggerList.GetTriggerObjectByName(SVString(TriggerName)) );
 			if( nullptr != pTriggerObj )
 			{
 				pTriggerObj->SetSoftwareTrigger(pcfgTrigger->IsSoftwareTrigger());
@@ -2721,19 +2703,19 @@ BOOL CSVOConfigAssistantDlg::GetConfigurationForExisting()
 		pcfgInspection = pConfig->GetInspection(lIns);
 		if ( nullptr != pcfgInspection )
 		{
-			sInspectLabel = pcfgInspection->GetName();  // label name
-			sInspectName = pcfgInspection->GetName();
+			InspectLabel = pcfgInspection->GetName();  // label name
+			InspectName = pcfgInspection->GetName();
 
-			m_InspectList.AddInspectionToList(sInspectLabel,sInspectName, false);
-			m_slInspectionNamesUsed.AddTail(sInspectName);
-			m_slInspectionLabelsUsed.AddTail(sInspectLabel);
+			m_InspectList.AddInspectionToList(InspectLabel.c_str(), InspectName.c_str(), false);
+			m_InspectionNamesUsed.push_back( InspectName );
+			m_InspectionLabelsUsed.push_back( InspectLabel );
 
 			// Determine which image is the main image
-			CString sToolsetImage;
-			sToolsetImage = pcfgInspection->GetToolsetImage();
-			m_InspectList.SetToolsetImage( sInspectLabel, sToolsetImage );
+			SVString ToolsetImage;
+			ToolsetImage = pcfgInspection->GetToolsetImage();
+			m_InspectList.SetToolsetImage( InspectLabel.c_str(), ToolsetImage.c_str() );
 			
-			m_InspectList.SetColor( sInspectLabel, pcfgInspection->IsColorCamera() );
+			m_InspectList.SetColor( InspectLabel.c_str(), pcfgInspection->IsColorCamera() );
 
 			if( pcfgInspection->GetNewDisableMethod() )
 			{
@@ -2744,9 +2726,9 @@ BOOL CSVOConfigAssistantDlg::GetConfigurationForExisting()
 				sDisable = _T( "Method 1" );
 			}// end else
 
-			m_InspectList.SetNewDisableMethod( sInspectLabel, sDisable );
+			m_InspectList.SetNewDisableMethod( InspectLabel.c_str(), sDisable );
 
-			m_InspectList.SetShowAuxExtent( sInspectLabel );
+			m_InspectList.SetShowAuxExtent( InspectLabel.c_str() );
 
 			// Enable Auxiliary Extent
 			long l_lEnable = 0;
@@ -2758,7 +2740,7 @@ BOOL CSVOConfigAssistantDlg::GetConfigurationForExisting()
 			{
 				l_lEnable = 0;
 			}
-			m_InspectList.SetEnableAuxiliaryExtent( sInspectLabel, l_lEnable );
+			m_InspectList.SetEnableAuxiliaryExtent( InspectLabel.c_str(), l_lEnable );
 		}
 		else
 		{
@@ -2775,8 +2757,8 @@ BOOL CSVOConfigAssistantDlg::GetConfigurationForExisting()
 		pcfgPPQ = pConfig->GetPPQ(lPpq);
 		if ( nullptr != pcfgPPQ )
 		{
-			sPPQName = pcfgPPQ->GetName();
-			m_PPQList.AddPPQToList(sPPQName);
+			PPQName = pcfgPPQ->GetName();
+			m_PPQList.AddPPQToList(PPQName.c_str());
 			long lppqIns;
 			pcfgPPQ->GetInspectionCount(lppqIns);
 
@@ -2792,7 +2774,7 @@ BOOL CSVOConfigAssistantDlg::GetConfigurationForExisting()
 
 				if ( nullptr != pcfgCamera && (nullptr != pcfgCamera->mpsvDevice) )
 				{
-					m_PPQList.AttachCameraToPPQ(sPPQName,pcfgCamera->GetName());
+					m_PPQList.AttachCameraToPPQ(PPQName.c_str(), pcfgCamera->GetName());
 				}
 
 				++l_Iter;
@@ -2804,7 +2786,7 @@ BOOL CSVOConfigAssistantDlg::GetConfigurationForExisting()
 				bRet = pcfgPPQ->GetInspection(lpIns,pcfgInspection) && bRet;
 				if ( nullptr != pcfgInspection )
 				{
-					m_PPQList.AttachInspectToPPQ(sPPQName,pcfgInspection->GetName());
+					m_PPQList.AttachInspectToPPQ(PPQName.c_str(), pcfgInspection->GetName());
 					AddUsedInspect(pcfgInspection->GetName());
 				}
 			}
@@ -2813,12 +2795,12 @@ BOOL CSVOConfigAssistantDlg::GetConfigurationForExisting()
 			bRet = pcfgPPQ->GetTrigger(pcfgTrigger) && bRet;
 			if ( (nullptr != pcfgTrigger ) && (nullptr != pcfgTrigger->mpsvDevice) )
 			{
-				m_PPQList.AttachTriggerToPPQ(sPPQName,pcfgTrigger->GetName());
+				m_PPQList.AttachTriggerToPPQ(PPQName.c_str(), pcfgTrigger->GetName());
 				AddUsedTrigger(pcfgTrigger->GetName());
 			}
 			//set properties for PPQ
 
-			SVOPPQObjPtr pPPQObj( GetPPQObjectByName(sPPQName) );
+			SVOPPQObjPtr pPPQObj( GetPPQObjectByName(PPQName.c_str()) );
 			if( nullptr != pPPQObj )
 			{
 				long lPPQLength;
@@ -2894,7 +2876,7 @@ BOOL CSVOConfigAssistantDlg::GetConfigurationForExisting()
 	return bRet;
 }
 
-BOOL CSVOConfigAssistantDlg::ItemChanged(int iItemDlg, CString sLabelName, int iAction)
+BOOL CSVOConfigAssistantDlg::ItemChanged(int iItemDlg, LPCTSTR LabelName, int iAction)
 {
 	BOOL bRet = FALSE;
 	SVOCameraObjPtr pCameraObj;
@@ -2902,7 +2884,7 @@ BOOL CSVOConfigAssistantDlg::ItemChanged(int iItemDlg, CString sLabelName, int i
 	SVOPPQObjPtr pPPQObj;
 	int iObjCnt = 0;
 
-	CString sMessage;
+	SVString Message;
 
 	switch (iItemDlg)
 	{
@@ -2916,18 +2898,18 @@ BOOL CSVOConfigAssistantDlg::ItemChanged(int iItemDlg, CString sLabelName, int i
 					if (iObjCnt == 1)
 					{
 						m_bCameraGood = TRUE;
-						sMessage = BuildDisplayMessage(MESSAGE_TYPE_ERROR, "", CAMERA_NONE_DEFINED);
-						RemoveMessageFromList(sMessage);
+						Message = BuildDisplayMessage(MESSAGE_TYPE_ERROR, "", CAMERA_NONE_DEFINED);
+						RemoveMessageFromList(Message.c_str());
 						//delete message
 					}
-					pCameraObj = GetCameraObjectByName(sLabelName);
+					pCameraObj = GetCameraObjectByName(LabelName);
 					if( nullptr != pCameraObj )
 					{
 						if (!pCameraObj->IsCameraObjOk())
 						{   // check to see if camera files are valid.
 							// if not, add message to list.
-							sMessage = BuildDisplayMessage(MESSAGE_TYPE_ERROR, pCameraObj->GetCameraDisplayName(), CAMERA_INVALID_FILES);
-							AddMessageToList(CAMERA_DLG,sMessage);
+							Message = BuildDisplayMessage(MESSAGE_TYPE_ERROR, pCameraObj->GetCameraDisplayName().c_str(), CAMERA_INVALID_FILES);
+							AddMessageToList(CAMERA_DLG,Message.c_str());
 						}
 					}
 					break;
@@ -2935,34 +2917,34 @@ BOOL CSVOConfigAssistantDlg::ItemChanged(int iItemDlg, CString sLabelName, int i
 
 				case ITEM_ACTION_DELETE:
 				{
-					RemoveMessageFromList(BuildDisplayMessage(MESSAGE_TYPE_ERROR, sLabelName, INVALID_CAMERA));
+					RemoveMessageFromList(BuildDisplayMessage(MESSAGE_TYPE_ERROR, LabelName, INVALID_CAMERA).c_str());
 
-					RemoveAllObjectMessages(sLabelName);
+					RemoveAllObjectMessages(LabelName);
 					if (iObjCnt < 1) 
 					{
 						m_bCameraGood = FALSE;
-						sMessage = BuildDisplayMessage(MESSAGE_TYPE_ERROR, "", CAMERA_NONE_DEFINED);
+						Message = BuildDisplayMessage(MESSAGE_TYPE_ERROR, _T(""), CAMERA_NONE_DEFINED);
 						// they removed the last one.  place message
-						AddMessageToList(CAMERA_DLG,sMessage);
+						AddMessageToList(CAMERA_DLG,Message.c_str());
 					}
-					CameraDeletedCheckAgainstPPQ(sLabelName);
-					CameraDeletedCheckAgainstInspection( sLabelName );
+					CameraDeletedCheckAgainstPPQ( LabelName );
+					CameraDeletedCheckAgainstInspection( LabelName );
 					break;
 				}// end case ITEM_ACTION_DELETE:
 
 				case ITEM_ACTION_PROP:
 				{
-					pCameraObj = GetCameraObjectByName(sLabelName);
+					pCameraObj = GetCameraObjectByName( LabelName );
 
 					if( nullptr != pCameraObj )
 					{
-						RemoveFileAcquisitionMessages( pCameraObj->GetCameraDisplayName() );
+						RemoveFileAcquisitionMessages( pCameraObj->GetCameraDisplayName().c_str() );
 
-						sMessage = BuildDisplayMessage(MESSAGE_TYPE_ERROR, pCameraObj->GetCameraDisplayName(), CAMERA_INVALID_FILES);
+						Message = BuildDisplayMessage(MESSAGE_TYPE_ERROR, pCameraObj->GetCameraDisplayName().c_str(), CAMERA_INVALID_FILES);
 
 						if (pCameraObj->IsCameraObjOk())
 						{
-							RemoveMessageFromList(sMessage);
+							RemoveMessageFromList(Message.c_str());
 						
 							// File Acquisition
 							if (pCameraObj->IsFileAcquisition())
@@ -2983,7 +2965,7 @@ BOOL CSVOConfigAssistantDlg::ItemChanged(int iItemDlg, CString sLabelName, int i
 						}
 						else
 						{
-							AddMessageToList(CAMERA_DLG, sMessage);
+							AddMessageToList(CAMERA_DLG, Message.c_str());
 						}
 					}
 					break;
@@ -3030,22 +3012,22 @@ BOOL CSVOConfigAssistantDlg::ItemChanged(int iItemDlg, CString sLabelName, int i
 					if (iObjCnt == 1)
 					{
 						m_bTriggerGood = TRUE;
-						sMessage = BuildDisplayMessage(MESSAGE_TYPE_ERROR, "", TRIGGER_NONE_DEFINED);
-						RemoveMessageFromList(sMessage);
+						Message = BuildDisplayMessage(MESSAGE_TYPE_ERROR, "", TRIGGER_NONE_DEFINED);
+						RemoveMessageFromList(Message.c_str());
 					}
 					break;
 				}// end case ITEM_ACTION_NEW:
 
 				case ITEM_ACTION_DELETE:
 				{
-					RemoveMessageFromList(BuildDisplayMessage(MESSAGE_TYPE_ERROR, sLabelName, INVALID_TRIGGER));
+					RemoveMessageFromList(BuildDisplayMessage(MESSAGE_TYPE_ERROR, LabelName, INVALID_TRIGGER).c_str());
 					if (iObjCnt < 1)
 					{
 						m_bTriggerGood = FALSE;
-						sMessage = BuildDisplayMessage(MESSAGE_TYPE_ERROR, "", TRIGGER_NONE_DEFINED);
-						AddMessageToList(TRIGGER_DLG,sMessage);
+						Message = BuildDisplayMessage(MESSAGE_TYPE_ERROR, "", TRIGGER_NONE_DEFINED);
+						AddMessageToList(TRIGGER_DLG,Message.c_str());
 					}
-					TriggerDeletedCheckAgainstPPQ(sLabelName);
+					TriggerDeletedCheckAgainstPPQ(LabelName);
 					break;
 				}// end case ITEM_ACTION_DELETE:
 
@@ -3073,7 +3055,7 @@ BOOL CSVOConfigAssistantDlg::ItemChanged(int iItemDlg, CString sLabelName, int i
 			{
 				case ITEM_ACTION_NEW:
 				{
-					pInspectionObj = GetInspectionObjectByName(sLabelName);
+					pInspectionObj = GetInspectionObjectByName(LabelName);
 					if( nullptr != pInspectionObj )
 					{
 						pInspectionObj->SetNewInspection();
@@ -3081,11 +3063,11 @@ BOOL CSVOConfigAssistantDlg::ItemChanged(int iItemDlg, CString sLabelName, int i
 					if (iObjCnt == 1)
 					{
 						m_bInspectionGood = TRUE;
-						sMessage = BuildDisplayMessage(MESSAGE_TYPE_ERROR, "", INSPECT_NONE_DEFINED);
-						RemoveMessageFromList(sMessage);
+						Message = BuildDisplayMessage(MESSAGE_TYPE_ERROR, "", INSPECT_NONE_DEFINED);
+						RemoveMessageFromList(Message.c_str());
 					}
-					sMessage = BuildDisplayMessage(MESSAGE_TYPE_ERROR, sLabelName, INSPECTION_ERROR);
-					AddMessageToList(PPQ_DLG,sMessage);
+					Message = BuildDisplayMessage(MESSAGE_TYPE_ERROR, LabelName, INSPECTION_ERROR);
+					AddMessageToList(PPQ_DLG,Message.c_str());
 					break;
 				}// end case ITEM_ACTION_NEW:
 
@@ -3095,31 +3077,29 @@ BOOL CSVOConfigAssistantDlg::ItemChanged(int iItemDlg, CString sLabelName, int i
 					if (iObjCnt < 1)
 					{
 						m_bInspectionGood = FALSE;
-						sMessage = BuildDisplayMessage(MESSAGE_TYPE_ERROR, "", INSPECT_NONE_DEFINED);
-						AddMessageToList(INSPECT_DLG,sMessage);
+						Message = BuildDisplayMessage(MESSAGE_TYPE_ERROR, "", INSPECT_NONE_DEFINED);
+						AddMessageToList(INSPECT_DLG,Message.c_str());
 					}
-					sMessage = BuildDisplayMessage(MESSAGE_TYPE_ERROR, sLabelName, INSPECTION_ERROR);
-					RemoveMessageFromList(sMessage);
-					sMessage = BuildDisplayMessage(MESSAGE_TYPE_ERROR, sLabelName, TOOLSET_IMAGE_ERROR);
-					RemoveMessageFromList(sMessage);
-					sMessage = BuildDisplayMessage(MESSAGE_TYPE_ERROR, sLabelName, MESSAGE_INSPECTION_CAMERA_COLOR);
-					RemoveMessageFromList( sMessage );
-					InspectionDeletedCheckAgainstPPQ(sLabelName);
+					Message = BuildDisplayMessage(MESSAGE_TYPE_ERROR, LabelName, INSPECTION_ERROR);
+					RemoveMessageFromList(Message.c_str());
+					Message = BuildDisplayMessage(MESSAGE_TYPE_ERROR, LabelName, TOOLSET_IMAGE_ERROR);
+					RemoveMessageFromList(Message.c_str());
+					Message = BuildDisplayMessage(MESSAGE_TYPE_ERROR,LabelName, MESSAGE_INSPECTION_CAMERA_COLOR);
+					RemoveMessageFromList( Message.c_str() );
+					InspectionDeletedCheckAgainstPPQ(LabelName);
 					break;
 				}// end case ITEM_ACTION_DELETE:
 
 				case ITEM_ACTION_PROP:
 				{
-					pInspectionObj = GetInspectionObjectByName(sLabelName);
+					pInspectionObj = GetInspectionObjectByName(LabelName);
 					if( nullptr != pInspectionObj )
 					{
-						CString sInspect( pInspectionObj->GetInspectionName() );
-						CString sToolsetImage( pInspectionObj->GetToolsetImage() );
-						if( !sToolsetImage.IsEmpty() )
+						if( !pInspectionObj->GetToolsetImage().empty() )
 						{
-							RemoveMessageFromList(BuildDisplayMessage(MESSAGE_TYPE_ERROR, sInspect, TOOLSET_IMAGE_ERROR));
+							RemoveMessageFromList(BuildDisplayMessage(MESSAGE_TYPE_ERROR, pInspectionObj->GetInspectionName().c_str(), TOOLSET_IMAGE_ERROR).c_str());
 						}
-						pCameraObj = GetCameraObjectByName(sToolsetImage);
+						pCameraObj = GetCameraObjectByName( pInspectionObj->GetToolsetImage().c_str());
 						if( nullptr != pCameraObj )
 						{
 							CheckColor( *pCameraObj );
@@ -3146,105 +3126,105 @@ BOOL CSVOConfigAssistantDlg::ItemChanged(int iItemDlg, CString sLabelName, int i
 					if (iObjCnt == 1)
 					{
 						m_bPPQGood = TRUE;
-						sMessage = BuildDisplayMessage(MESSAGE_TYPE_ERROR, "", PPQ_NONE_DEFINED);
-						RemoveMessageFromList(sMessage);
+						Message = BuildDisplayMessage(MESSAGE_TYPE_ERROR, "", PPQ_NONE_DEFINED);
+						RemoveMessageFromList(Message.c_str());
 					}
-					AddMessageToList(PPQ_DLG,BuildDisplayMessage(MESSAGE_TYPE_ERROR, sLabelName, PPQ_NO_TRIGGER));
-					AddMessageToList(PPQ_DLG,BuildDisplayMessage(MESSAGE_TYPE_ERROR, sLabelName, PPQ_NO_CAMERA));
-					AddMessageToList(PPQ_DLG,BuildDisplayMessage(MESSAGE_TYPE_WARNING, sLabelName, PPQ_NO_INSPECT));
+					AddMessageToList(PPQ_DLG,BuildDisplayMessage(MESSAGE_TYPE_ERROR, LabelName, PPQ_NO_TRIGGER).c_str());
+					AddMessageToList(PPQ_DLG,BuildDisplayMessage(MESSAGE_TYPE_ERROR, LabelName, PPQ_NO_CAMERA).c_str());
+					AddMessageToList(PPQ_DLG,BuildDisplayMessage(MESSAGE_TYPE_WARNING, LabelName, PPQ_NO_INSPECT).c_str());
 					break;
 				}
 				case ITEM_ACTION_DELETE:
 				{
-					sMessage = BuildDisplayMessage(MESSAGE_TYPE_ERROR, sLabelName, PPQ_NO_TRIGGER);
-					RemoveMessageFromList(sMessage);
-					sMessage = BuildDisplayMessage(MESSAGE_TYPE_ERROR, sLabelName, PPQ_NO_CAMERA);
-					RemoveMessageFromList(sMessage);
-					RemoveAllObjectMessages(sLabelName);
+					Message = BuildDisplayMessage(MESSAGE_TYPE_ERROR, LabelName, PPQ_NO_TRIGGER);
+					RemoveMessageFromList(Message.c_str());
+					Message = BuildDisplayMessage(MESSAGE_TYPE_ERROR, LabelName, PPQ_NO_CAMERA);
+					RemoveMessageFromList(Message.c_str());
+					RemoveAllObjectMessages(LabelName);
 					if (iObjCnt < 1)
 					{
 						m_bPPQGood = FALSE;
-						sMessage = BuildDisplayMessage(MESSAGE_TYPE_ERROR, "", PPQ_NONE_DEFINED);
-						AddMessageToList(PPQ_DLG,sMessage);
+						Message = BuildDisplayMessage(MESSAGE_TYPE_ERROR, "", PPQ_NONE_DEFINED);
+						AddMessageToList(PPQ_DLG,Message.c_str());
 					}
 					break;
 				}
 				case ITEM_PPQ_ADD_TRG:
 				{
-					pPPQObj = GetPPQObjectByName(sLabelName);
+					pPPQObj = GetPPQObjectByName(LabelName);
 					if (pPPQObj)
 					{
-						sMessage = BuildDisplayMessage(MESSAGE_TYPE_ERROR, pPPQObj->GetPPQName(), PPQ_NO_TRIGGER);
-						RemoveMessageFromList(sMessage);
+						Message = BuildDisplayMessage(MESSAGE_TYPE_ERROR, pPPQObj->GetPPQName().c_str(), PPQ_NO_TRIGGER);
+						RemoveMessageFromList(Message.c_str());
 					}
 					break;
 				}
 				case ITEM_PPQ_DEL_TRG:
 				{
-					pPPQObj = GetPPQObjectByName(sLabelName);
+					pPPQObj = GetPPQObjectByName(LabelName);
 					if (pPPQObj)
 					{
-						sMessage = BuildDisplayMessage(MESSAGE_TYPE_ERROR, pPPQObj->GetPPQName(), PPQ_NO_TRIGGER);
-						AddMessageToList(PPQ_DLG,sMessage);
+						Message = BuildDisplayMessage(MESSAGE_TYPE_ERROR, pPPQObj->GetPPQName().c_str(), PPQ_NO_TRIGGER);
+						AddMessageToList(PPQ_DLG,Message.c_str());
 					}
 					break;
 				}
 				case ITEM_PPQ_ADD_CAM:
 				{
-					pPPQObj = GetPPQObjectByName(sLabelName);
+					pPPQObj = GetPPQObjectByName(LabelName);
 					if (pPPQObj)
 					{
-						sMessage = BuildDisplayMessage(MESSAGE_TYPE_ERROR, pPPQObj->GetPPQName(), PPQ_NO_CAMERA);
-						RemoveMessageFromList(sMessage);
+						Message = BuildDisplayMessage(MESSAGE_TYPE_ERROR, pPPQObj->GetPPQName().c_str(), PPQ_NO_CAMERA);
+						RemoveMessageFromList(Message.c_str());
 					}
 					break;
 				}
 				case ITEM_PPQ_DEL_CAM:
 				{
-					pPPQObj = GetPPQObjectByName(sLabelName);
+					pPPQObj = GetPPQObjectByName(LabelName);
 					if (pPPQObj)
 					{
 						if ( pPPQObj->GetAttachedCameraCount() < 1 )
 						{
-							sMessage = BuildDisplayMessage(MESSAGE_TYPE_ERROR, pPPQObj->GetPPQName(), PPQ_NO_CAMERA);
-							AddMessageToList(PPQ_DLG,sMessage);
+							Message = BuildDisplayMessage(MESSAGE_TYPE_ERROR, pPPQObj->GetPPQName().c_str(), PPQ_NO_CAMERA);
+							AddMessageToList(PPQ_DLG,Message.c_str());
 						}
-						CameraDetachedCheckAgainstInspection( sLabelName );
+						CameraDetachedCheckAgainstInspection( LabelName );
 					}
 					break;
 				}
 				case ITEM_PPQ_ADD_INS:
 				{
-					sMessage = BuildDisplayMessage(MESSAGE_TYPE_ERROR, sLabelName, INSPECTION_ERROR);
-					RemoveMessageFromList(sMessage);
-					sMessage = BuildDisplayMessage(MESSAGE_TYPE_WARNING, sLabelName, PPQ_NO_INSPECT);
-					RemoveMessageFromList(sMessage);
+					Message = BuildDisplayMessage(MESSAGE_TYPE_ERROR, LabelName, INSPECTION_ERROR);
+					RemoveMessageFromList(Message.c_str());
+					Message = BuildDisplayMessage(MESSAGE_TYPE_WARNING, LabelName, PPQ_NO_INSPECT);
+					RemoveMessageFromList(Message.c_str());
 					
-					AddMessageToList(INSPECT_DLG,BuildDisplayMessage(MESSAGE_TYPE_ERROR, sLabelName, TOOLSET_IMAGE_ERROR));
+					AddMessageToList(INSPECT_DLG,BuildDisplayMessage(MESSAGE_TYPE_ERROR, LabelName, TOOLSET_IMAGE_ERROR).c_str());
 
 					break;
 				}
 				case ITEM_PPQ_DEL_INS:
 				{
-					CString sInsLabelName = GetInspectionLabelFromName(sLabelName);
-					pInspectionObj = GetInspectionObjectByName(sInsLabelName);
+					SVString sInsLabelName = GetInspectionLabelFromName(LabelName);
+					pInspectionObj = GetInspectionObjectByName(sInsLabelName.c_str());
 					if( nullptr != pInspectionObj )
 					{
 						pInspectionObj->SetToolsetImage(_T(""));
 					}
-					sMessage = BuildDisplayMessage(MESSAGE_TYPE_ERROR, sLabelName, INSPECTION_ERROR);
-					AddMessageToList(PPQ_DLG,sMessage);
-					RemoveUsedInspect(sLabelName);
+					Message = BuildDisplayMessage(MESSAGE_TYPE_ERROR, LabelName, INSPECTION_ERROR);
+					AddMessageToList(PPQ_DLG,Message.c_str());
+					RemoveUsedInspect(LabelName);
 					break;
 				}
 				case ITEM_PPQ_DETACH_INS:
 				{
-					AddMessageToList(PPQ_DLG,BuildDisplayMessage(MESSAGE_TYPE_WARNING, sLabelName, PPQ_NO_INSPECT));
+					AddMessageToList(PPQ_DLG, BuildDisplayMessage(MESSAGE_TYPE_WARNING, LabelName, PPQ_NO_INSPECT).c_str());
 					break;
 				}
 				case ITEM_PPQ_ATTACH_INS:
 				{
-					RemoveMessageFromList(BuildDisplayMessage(MESSAGE_TYPE_WARNING, sLabelName, PPQ_NO_INSPECT) );
+					RemoveMessageFromList( BuildDisplayMessage(MESSAGE_TYPE_WARNING, LabelName, PPQ_NO_INSPECT).c_str() );
 					break;
 				}
 				case ITEM_ACTION_PROP:
@@ -3253,7 +3233,7 @@ BOOL CSVOConfigAssistantDlg::ItemChanged(int iItemDlg, CString sLabelName, int i
 					//if good remove message from list (if it is there)
 					//if bad add message to list, if not already there
 					//set errors
-					pPPQObj = GetPPQObjectByName(sLabelName);
+					pPPQObj = GetPPQObjectByName(LabelName);
 					if ( pPPQObj )
 					{
 						long l_lPpqLength = pPPQObj->GetPPQLength();
@@ -3263,18 +3243,16 @@ BOOL CSVOConfigAssistantDlg::ItemChanged(int iItemDlg, CString sLabelName, int i
 							if ( l_lPpqLength <= l_lImageDepth )
 							{
 								// remove error message if exist
-								CString l_strError;
-								l_strError.Format("%s%d",PPQ_PROP_SRC_IMG_ERROR,l_lImageDepth);
+								SVString Msg = SvUl_SF::Format( _T("%s%d"), PPQ_PROP_SRC_IMG_ERROR, l_lImageDepth);
 								//create error display message
-								RemoveMessageFromList(BuildDisplayMessage( MESSAGE_TYPE_ERROR, sLabelName, l_strError ) );
+								RemoveMessageFromList(BuildDisplayMessage( MESSAGE_TYPE_ERROR, LabelName, Msg.c_str() ).c_str() );
 							}
 							else
 							{
 								// add error message if it does not exist
-								CString l_strError;
-								l_strError.Format("%s%d",PPQ_PROP_SRC_IMG_ERROR,l_lImageDepth);
+								SVString Msg = SvUl_SF::Format( _T("%s%d"), PPQ_PROP_SRC_IMG_ERROR, l_lImageDepth);
 								//create error display message
-								AddMessageToList( PPQ_DLG, BuildDisplayMessage( MESSAGE_TYPE_ERROR, sLabelName, l_strError ) );
+								AddMessageToList( PPQ_DLG, BuildDisplayMessage( MESSAGE_TYPE_ERROR, LabelName, Msg.c_str() ).c_str() );
 							}
 						}
 					}
@@ -3283,7 +3261,7 @@ BOOL CSVOConfigAssistantDlg::ItemChanged(int iItemDlg, CString sLabelName, int i
 				case ITEM_PPQ_PROP_SRC_IMG:
 				{
 					//special property case for the PPQ's
-					pPPQObj = GetPPQObjectByName(sLabelName);
+					pPPQObj = GetPPQObjectByName(LabelName);
 					if ( pPPQObj )
 					{
 						if ( pPPQObj->GetMaintainSourceImageProperty() )
@@ -3292,21 +3270,19 @@ BOOL CSVOConfigAssistantDlg::ItemChanged(int iItemDlg, CString sLabelName, int i
 							long l_lImageDepth = TheSVObserverApp.GetMaxPPQLength(); //GetSourceImageDepth() - 2;
 							if ( l_lPpqLength > l_lImageDepth )
 							{
-								CString l_strError;
-								l_strError.Format("%s%d",PPQ_PROP_SRC_IMG_ERROR,l_lImageDepth);
+								SVString Msg = SvUl_SF::Format( _T("%s%d"), PPQ_PROP_SRC_IMG_ERROR, l_lImageDepth);
 								//create error display message
-								AddMessageToList( PPQ_DLG, BuildDisplayMessage( MESSAGE_TYPE_ERROR, sLabelName, l_strError ) );
+								AddMessageToList( PPQ_DLG, BuildDisplayMessage( MESSAGE_TYPE_ERROR, LabelName, Msg.c_str() ).c_str() );
 							}
 						}
 						else
 						{
 							// see if error conditions exist, if so remove it
 							// maintain source image = false
-							CString l_strError;
 							long l_lImageDepth = TheSVObserverApp.GetMaxPPQLength(); //GetSourceImageDepth() - 2;
-							l_strError.Format("%s%d",PPQ_PROP_SRC_IMG_ERROR,l_lImageDepth);
+							SVString Msg = SvUl_SF::Format( _T("%s%d"),PPQ_PROP_SRC_IMG_ERROR,l_lImageDepth);
 							//create error display message
-							RemoveMessageFromList(BuildDisplayMessage( MESSAGE_TYPE_ERROR, sLabelName, l_strError ) );
+							RemoveMessageFromList(BuildDisplayMessage( MESSAGE_TYPE_ERROR, LabelName, Msg.c_str() ).c_str() );
 						}
 					}// end if ( pPpq )
 					break;
@@ -3328,19 +3304,20 @@ BOOL CSVOConfigAssistantDlg::ItemChanged(int iItemDlg, CString sLabelName, int i
 	return bRet;
 }
 
-CString CSVOConfigAssistantDlg::BuildDisplayMessage(ConfigMsgTypeEnum iErrorFlag, CString sObjectName, CString sMessage)
+SVString CSVOConfigAssistantDlg::BuildDisplayMessage(ConfigMsgTypeEnum iErrorFlag, LPCTSTR ObjectName, LPCTSTR Message)
 {
-	CString sRetMessage;
+	SVString Result;
+
 	switch (iErrorFlag)
 	{
 		case MESSAGE_TYPE_ERROR:
 		{
-			sRetMessage = ERR_STR + sObjectName + ' ' + sMessage;
+			Result = ERR_STR + SVString(ObjectName) + ' ' + Message;
 			break;
 		}
 		case MESSAGE_TYPE_WARNING:
 		{
-			sRetMessage = WARNING_STR + sObjectName + ' ' + sMessage;
+			Result = WARNING_STR + SVString(ObjectName) + ' ' + Message;
 			break;
 		}
 		default:
@@ -3349,10 +3326,10 @@ CString CSVOConfigAssistantDlg::BuildDisplayMessage(ConfigMsgTypeEnum iErrorFlag
 		}
 	}
 
-	return sRetMessage;
+	return Result;
 }
 
-void CSVOConfigAssistantDlg::TriggerDeletedCheckAgainstPPQ(CString sTriggerName)
+void CSVOConfigAssistantDlg::TriggerDeletedCheckAgainstPPQ(LPCTSTR TriggerName)
 {
 	//see if Trigger is connected to any PPQ.  if so remove it.  and add message to list
 	int iPPQCnt = GetPPQListCount();
@@ -3361,21 +3338,20 @@ void CSVOConfigAssistantDlg::TriggerDeletedCheckAgainstPPQ(CString sTriggerName)
 	{
 		SVOPPQObjPtr pPPQObj( GetPPQObject(i) );
 
-		if( nullptr != pPPQObj && pPPQObj->GetAttachedTriggerName().Compare(sTriggerName) == 0)
+		if( nullptr != pPPQObj && pPPQObj->GetAttachedTriggerName() == TriggerName )
 		{
 			pPPQObj->DetachTriggerFromPPQ();
 			pPPQObj->RemoveCameraInputConditionalOutput();
-			CString sMessage = BuildDisplayMessage(MESSAGE_TYPE_ERROR, pPPQObj->GetPPQName(), PPQ_NO_TRIGGER);
-			AddMessageToList(PPQ_DLG,sMessage);
+			SVString Message = BuildDisplayMessage(MESSAGE_TYPE_ERROR, pPPQObj->GetPPQName().c_str(), PPQ_NO_TRIGGER);
+			AddMessageToList(PPQ_DLG, Message.c_str());
 		}
 	}
 }
 
-void CSVOConfigAssistantDlg::CameraDeletedCheckAgainstPPQ(CString sCameraName)
+void CSVOConfigAssistantDlg::CameraDeletedCheckAgainstPPQ(LPCTSTR CameraName)
 {
 	int iPPQCnt = GetPPQListCount();
 	int iCamCnt;
-	CString sCam;
 
 	for (int i = 0; i < iPPQCnt; i++)
 	{
@@ -3388,21 +3364,21 @@ void CSVOConfigAssistantDlg::CameraDeletedCheckAgainstPPQ(CString sCameraName)
 		iCamCnt = pPPQObj->GetAttachedCameraCount();
 		for (int iC = 0; iC < iCamCnt; iC++)
 		{
-			if (pPPQObj->GetAttachedCamera(iC).Compare(sCameraName) == 0)
+			if( pPPQObj->GetAttachedCamera(iC) == CameraName )
 			{
-				pPPQObj->DetachCameraFromPPQ(sCameraName);
+				pPPQObj->DetachCameraFromPPQ( CameraName );
 				pPPQObj->RemoveCameraInputConditionalOutput();
 				iCamCnt--;
 			}
 		}
 		if (iCamCnt == 0)
 		{
-			AddMessageToList(PPQ_DLG,BuildDisplayMessage(MESSAGE_TYPE_ERROR, pPPQObj->GetPPQName(), PPQ_NO_CAMERA));
+			AddMessageToList(PPQ_DLG, BuildDisplayMessage(MESSAGE_TYPE_ERROR, pPPQObj->GetPPQName().c_str(), PPQ_NO_CAMERA).c_str());
 		}
 	}
 }
 
-void CSVOConfigAssistantDlg::CameraDeletedCheckAgainstInspection(CString sCameraName)
+void CSVOConfigAssistantDlg::CameraDeletedCheckAgainstInspection(LPCTSTR CameraName)
 {
 	long lSize;
 	long l;
@@ -3412,18 +3388,18 @@ void CSVOConfigAssistantDlg::CameraDeletedCheckAgainstInspection(CString sCamera
 	{
 		const SVOInspectionObjPtr pInspectionObj( GetInspectionObject( l ) );
 		
-		if( nullptr != pInspectionObj && pInspectionObj->GetToolsetImage().IsEmpty() )
+		if( nullptr != pInspectionObj && pInspectionObj->GetToolsetImage().empty() )
 		{
 			//Need to remove this message if in the list after Tool Set image has been reseted
-			CString MessageColor( BuildDisplayMessage(MESSAGE_TYPE_ERROR, pInspectionObj->GetInspectionName(), MESSAGE_INSPECTION_CAMERA_COLOR) );
-			RemoveMessageFromList( MessageColor );
+			SVString Message( BuildDisplayMessage(MESSAGE_TYPE_ERROR, pInspectionObj->GetInspectionName().c_str(), MESSAGE_INSPECTION_CAMERA_COLOR) );
+			RemoveMessageFromList( Message.c_str() );
 
-			AddMessageToList( INSPECT_DLG, BuildDisplayMessage( MESSAGE_TYPE_ERROR, pInspectionObj->GetInspectionName(), TOOLSET_IMAGE_ERROR ) );
+			AddMessageToList( INSPECT_DLG, BuildDisplayMessage( MESSAGE_TYPE_ERROR, pInspectionObj->GetInspectionName().c_str(), TOOLSET_IMAGE_ERROR ).c_str() );
 		}// end if
 	}// end for
 }// end CameraDeletedCheckAgainstInspection
 
-void CSVOConfigAssistantDlg::CameraDetachedCheckAgainstInspection(CString sCameraName)
+void CSVOConfigAssistantDlg::CameraDetachedCheckAgainstInspection(LPCTSTR CameraName)
 {
 	long lSize;
 	long l;
@@ -3433,22 +3409,21 @@ void CSVOConfigAssistantDlg::CameraDetachedCheckAgainstInspection(CString sCamer
 	{
 		const SVOInspectionObjPtr pInspectionObj( GetInspectionObject( l ) );
 
-		if( nullptr != pInspectionObj && pInspectionObj->GetToolsetImage().IsEmpty() )
+		if( nullptr != pInspectionObj && pInspectionObj->GetToolsetImage().empty() )
 		{
 			//Need to remove this message if in the list after Tool Set image has been reseted
-			CString MessageColor( BuildDisplayMessage(MESSAGE_TYPE_ERROR, pInspectionObj->GetInspectionName(), MESSAGE_INSPECTION_CAMERA_COLOR) );
-			RemoveMessageFromList( MessageColor );
+			SVString Message( BuildDisplayMessage(MESSAGE_TYPE_ERROR, pInspectionObj->GetInspectionName().c_str(), MESSAGE_INSPECTION_CAMERA_COLOR) );
+			RemoveMessageFromList( Message.c_str() );
 
-			AddMessageToList( INSPECT_DLG, BuildDisplayMessage( MESSAGE_TYPE_ERROR, pInspectionObj->GetInspectionName(), TOOLSET_IMAGE_ERROR ) );
+			AddMessageToList( INSPECT_DLG, BuildDisplayMessage( MESSAGE_TYPE_ERROR, pInspectionObj->GetInspectionName().c_str(), TOOLSET_IMAGE_ERROR ).c_str() );
 		}// end if
 	}// end for
 }// end CameraDetachedCheckAgainstInspection
 
-void CSVOConfigAssistantDlg::InspectionDeletedCheckAgainstPPQ(CString sInspectName)
+void CSVOConfigAssistantDlg::InspectionDeletedCheckAgainstPPQ(LPCTSTR InspectName)
 {
 	int iPPQCnt = GetPPQListCount();
 	int iInsCnt;
-	CString sCam;
 
 	for (int i = 0; i < iPPQCnt; i++)
 	{
@@ -3459,15 +3434,15 @@ void CSVOConfigAssistantDlg::InspectionDeletedCheckAgainstPPQ(CString sInspectNa
 
 			for (int iC = 0; iC < iInsCnt; iC++)
 			{
-				if (pPPQObj->GetAttachedInspection(iC).Compare(sInspectName) == 0)
+				if( pPPQObj->GetAttachedInspection(iC) == InspectName )
 				{
-					pPPQObj->DetachInspectionFromPPQ(sInspectName);
+					pPPQObj->DetachInspectionFromPPQ(InspectName);
 					iInsCnt--;
 				}
 			}
 			if (iInsCnt == 0)
 			{
-				AddMessageToList(PPQ_DLG,BuildDisplayMessage(MESSAGE_TYPE_WARNING, pPPQObj->GetPPQName(), PPQ_NO_INSPECT));
+				AddMessageToList( PPQ_DLG, BuildDisplayMessage(MESSAGE_TYPE_WARNING, pPPQObj->GetPPQName().c_str(), PPQ_NO_INSPECT).c_str() );
 			}
 		}
 	}
@@ -3503,25 +3478,25 @@ void CSVOConfigAssistantDlg::OnDblclkLstErrList()
 	}
 }
 
-CString CSVOConfigAssistantDlg::GetConfigurationName()
+SVString CSVOConfigAssistantDlg::GetConfigurationName()
 {
-	return m_sConfigurationName;
+	return SVString(m_ConfigurationName);
 }
 
 void CSVOConfigAssistantDlg::OnChangeEditConfigurationName()
 {
 	UpdateData();
-	m_sConfigurationName.TrimLeft();
-	m_sConfigurationName.TrimRight();
+	m_ConfigurationName.TrimLeft();
+	m_ConfigurationName.TrimRight();
 
-	if (m_sConfigurationName.IsEmpty())
+	if (m_ConfigurationName.IsEmpty())
 	{
-		AddMessageToList(999,BuildDisplayMessage(MESSAGE_TYPE_ERROR, "", CONFIG_NAME_ERR));
+		AddMessageToList(999,BuildDisplayMessage(MESSAGE_TYPE_ERROR, "", CONFIG_NAME_ERR).c_str());
 		m_bConfigName = FALSE;
 	}
 	else
 	{
-		RemoveMessageFromList(BuildDisplayMessage(MESSAGE_TYPE_ERROR, "", CONFIG_NAME_ERR));
+		RemoveMessageFromList(BuildDisplayMessage(MESSAGE_TYPE_ERROR, "", CONFIG_NAME_ERR).c_str());
 		m_bConfigName = TRUE;
 	}
 	IsGood();
@@ -3577,7 +3552,7 @@ void CSVOConfigAssistantDlg::CheckAgainstCurrentList()
 			{
 				if (pCameraObj->GetDigNumber() > iNumberDigitizersAllowed-1)
 				{
-					AddMessageToList(CAMERA_DLG, BuildDisplayMessage(MESSAGE_TYPE_ERROR, pCameraObj->GetCameraDisplayName(), INVALID_CAMERA) );
+					AddMessageToList(CAMERA_DLG, BuildDisplayMessage(MESSAGE_TYPE_ERROR, pCameraObj->GetCameraDisplayName().c_str(), INVALID_CAMERA).c_str() );
 				}
 			}
 		}
@@ -3589,7 +3564,7 @@ void CSVOConfigAssistantDlg::CheckAgainstCurrentList()
 			const SvTi::SVOTriggerObjPtr pTriggerObj( m_TriggerList.GetTriggerObjectByPosition(i) );
 			if ( nullptr != pTriggerObj && pTriggerObj->GetTriggerDigNumber() > iNumberTriggersAllowed-1 )
 			{
-				AddMessageToList(TRIGGER_DLG, BuildDisplayMessage(MESSAGE_TYPE_ERROR, CString(pTriggerObj->GetTriggerDisplayName()), INVALID_TRIGGER) );
+				AddMessageToList(TRIGGER_DLG, BuildDisplayMessage(MESSAGE_TYPE_ERROR, pTriggerObj->GetTriggerDisplayName(), INVALID_TRIGGER).c_str() );
 			}
 		}
 	}
@@ -3597,10 +3572,10 @@ void CSVOConfigAssistantDlg::CheckAgainstCurrentList()
 	m_Page2.SetupList();
 }
 
-BOOL CSVOConfigAssistantDlg::IsInspectionOnPPQ(CString sPPQName, CString sInspectionLabel)
+BOOL CSVOConfigAssistantDlg::IsInspectionOnPPQ(LPCTSTR PPQName, LPCTSTR InspectionLabel)
 {
 	BOOL bFound = FALSE;
-	const SVOPPQObjPtr pPPQObj( GetPPQObjectByName(sPPQName) );
+	const SVOPPQObjPtr pPPQObj( GetPPQObjectByName(PPQName) );
 
 	if( nullptr != pPPQObj )
 	{
@@ -3608,7 +3583,7 @@ BOOL CSVOConfigAssistantDlg::IsInspectionOnPPQ(CString sPPQName, CString sInspec
 
 		for (int i = 0; ((i < iInsCnt) && (!bFound)); i++)
 		{
-			if (sInspectionLabel.CompareNoCase(pPPQObj->GetAttachedInspection(i)) == 0)
+			if( InspectionLabel == pPPQObj->GetAttachedInspection(i))
 			{
 				bFound = TRUE;
 			}
@@ -3617,10 +3592,10 @@ BOOL CSVOConfigAssistantDlg::IsInspectionOnPPQ(CString sPPQName, CString sInspec
 	return bFound;
 }
 
-BOOL CSVOConfigAssistantDlg::IsCameraOnPPQ(CString sPPQName, CString sCameraName)
+BOOL CSVOConfigAssistantDlg::IsCameraOnPPQ(LPCTSTR PPQName, LPCTSTR CameraName)
 {
 	BOOL bFound = FALSE;
-	const SVOPPQObjPtr pPPQObj( GetPPQObjectByName(sPPQName) );
+	const SVOPPQObjPtr pPPQObj( GetPPQObjectByName(PPQName) );
 
 	if( nullptr != pPPQObj )
 	{
@@ -3628,7 +3603,7 @@ BOOL CSVOConfigAssistantDlg::IsCameraOnPPQ(CString sPPQName, CString sCameraName
 
 		for (int i = 0; ( (i < iCamCnt) && (!bFound) ); i++)
 		{
-			if (sCameraName.CompareNoCase(pPPQObj->GetAttachedCamera(i)) == 0)
+			if( CameraName == pPPQObj->GetAttachedCamera(i) )
 			{
 				bFound = TRUE;
 			}
@@ -3637,41 +3612,40 @@ BOOL CSVOConfigAssistantDlg::IsCameraOnPPQ(CString sPPQName, CString sCameraName
 	return bFound;
 }
 
-BOOL CSVOConfigAssistantDlg::IsTriggerOnPPQ(CString sPPQName, CString sTriggerName)
+BOOL CSVOConfigAssistantDlg::IsTriggerOnPPQ(LPCTSTR PPQName, LPCTSTR TriggerName)
 {
-	BOOL bFound = FALSE;
-	const SVOPPQObjPtr pPPQObj( GetPPQObjectByName(sPPQName) );
+	bool bFound( false );
+	const SVOPPQObjPtr pPPQObj( GetPPQObjectByName(PPQName) );
 
 	if( nullptr != pPPQObj )
 	{
-		if ( sTriggerName.CompareNoCase(pPPQObj->GetAttachedTriggerName()) == 0 )
+		if ( TriggerName == pPPQObj->GetAttachedTriggerName() )
 		{
-			bFound = TRUE;
+			bFound = true;
 		}
 	}
 	return bFound;
 }
 
-void CSVOConfigAssistantDlg::LastInspectionLabelDeleted(CString sInspectionLabel)
+void CSVOConfigAssistantDlg::LastInspectionLabelDeleted(LPCTSTR InspectionLabel)
 {
-	CString sTmp = sInspectionLabel.Mid(11);
-	int iNum = atoi(sTmp);
+	int iNum = atoi( SvUl_SF::Mid( SVString(InspectionLabel), 11 ).c_str() );
 	if ( iNum > m_iLastInspectionNum )
 	{
 		m_iLastInspectionNum = iNum;
 	}
 }
 
-BOOL CSVOConfigAssistantDlg::CanInspectionNameBeUsed(CString sName)
+BOOL CSVOConfigAssistantDlg::CanInspectionNameBeUsed(LPCTSTR Name)
 {
-	BOOL bRet = false;
-	POSITION pos = m_slInspectionNamesUsed.Find(sName);
+	bool Result( false );
 
-	if ( nullptr == pos )
+	SVStringVector::const_iterator Iter = std::find( m_InspectionNamesUsed.begin(), m_InspectionNamesUsed.end(), SVString(Name) );
+	if( m_InspectionNamesUsed.end() != Iter)
 	{
-		bRet = true;
+		Result = true;
 	}
-	return bRet;
+	return Result;
 }
 
 BOOL CSVOConfigAssistantDlg::SystemChangeResetCamera( SVIMProductEnum p_lNewSystemType )
@@ -3700,10 +3674,10 @@ BOOL CSVOConfigAssistantDlg::SystemChangeResetCamera( SVIMProductEnum p_lNewSyst
 					iDig = pCameraObj->GetDigNumber();
 					pCameraObj->SetDigNumber(iDig);
 					pCameraObj->SetBandNumber(0);
-					pCameraObj->SetCameraFile("");
+					pCameraObj->SetCameraFile( SVString() );
 					if (!pCameraObj->IsFileAcquisition())
 					{
-						AddMessageToList(CAMERA_DLG, BuildDisplayMessage(MESSAGE_TYPE_ERROR, pCameraObj->GetCameraDisplayName(), CAMERA_INVALID_FILES));
+						AddMessageToList(CAMERA_DLG, BuildDisplayMessage(MESSAGE_TYPE_ERROR, pCameraObj->GetCameraDisplayName().c_str(), CAMERA_INVALID_FILES).c_str());
 					}
 				}
 			}
@@ -3724,10 +3698,10 @@ BOOL CSVOConfigAssistantDlg::SystemChangeResetCamera( SVIMProductEnum p_lNewSyst
 					iDig = pCameraObj->GetDigNumber();
 					pCameraObj->SetDigNumber(0);
 					pCameraObj->SetBandNumber(iDig);
-					pCameraObj->SetCameraFile("");
+					pCameraObj->SetCameraFile( SVString() );
 					if (!pCameraObj->IsFileAcquisition())
 					{
-						AddMessageToList(CAMERA_DLG, BuildDisplayMessage(MESSAGE_TYPE_ERROR, pCameraObj->GetCameraDisplayName(), CAMERA_INVALID_FILES));
+						AddMessageToList(CAMERA_DLG, BuildDisplayMessage(MESSAGE_TYPE_ERROR, pCameraObj->GetCameraDisplayName().c_str(), CAMERA_INVALID_FILES).c_str());
 					}
 				}
 			}
@@ -3747,14 +3721,10 @@ void CSVOConfigAssistantDlg::ClearMessages()
 
 void CSVOConfigAssistantDlg::ConvertToDigital(SVIMProductEnum eType)
 {
-	typedef std::map<CString, int> StringIntMap;
-	CString baseTriggerName = (!IsNonIOSVIM(eType) ? SvO::cTriggerFixedName : SvTh::CameraTriggerName);
+	typedef std::map<SVString, int> StringIntMap;
 	//get trigger count...
 	int iTriggerCount = m_TriggerList.GetTriggerListCount();
 	int iCameraCount = m_CameraList.GetCameraListCount();
-
-	CString sCameraName;
-	CString sTriggerName;
 
 	//delete all triggers and re add them.
 	StringIntMap l_Triggers;
@@ -3789,51 +3759,51 @@ void CSVOConfigAssistantDlg::ConvertToDigital(SVIMProductEnum eType)
 
 	for ( StringIntMap::iterator it = l_Cameras.begin(); it != l_Cameras.end() ; ++it )
 	{
-		m_CameraList.AddCameraToList(it->first, it->second, it->second);
+		m_CameraList.AddCameraToList(it->first.c_str(), it->second, it->second);
 	}
 }
 
-void CSVOConfigAssistantDlg::RemoveFileAcquisitionMessages( const CString& rCameraName )
+void CSVOConfigAssistantDlg::RemoveFileAcquisitionMessages( LPCTSTR CameraName )
 {
-	CString sFileAcquisitionNotAllowedMessage = BuildDisplayMessage(MESSAGE_TYPE_WARNING, rCameraName, MESSAGE_FILE_ACQUISITION_NOT_ALLOWED);
-	CString sEmptyFileNameMessage = BuildDisplayMessage(MESSAGE_TYPE_ERROR, rCameraName, MESSAGE_FILE_ACQUISITION_MISSING_FILENAME);
-	CString sEmptyDirNameMessage = BuildDisplayMessage(MESSAGE_TYPE_ERROR, rCameraName, MESSAGE_FILE_ACQUISITION_MISSING_DIRECTORY);
-	CString sInvalidFileMessage = BuildDisplayMessage(MESSAGE_TYPE_WARNING, rCameraName, MESSAGE_FILE_ACQUISITION_INVALID_FILE);
-	CString sInvalidDirMessage = BuildDisplayMessage(MESSAGE_TYPE_WARNING, rCameraName, MESSAGE_FILE_ACQUISITION_INVALID_DIRECTORY);
-	CString sInvalidImageSizeMessage = BuildDisplayMessage(MESSAGE_TYPE_ERROR, rCameraName, MESSAGE_FILE_ACQUISITION_INVALID_IMAGE_SIZE);
-	CString sColorMismatchMessage =  BuildDisplayMessage(MESSAGE_TYPE_ERROR, rCameraName, MESSAGE_FILE_ACQUISITION_COLOR_MISMATCH);
+	SVString FileAcquisitionNotAllowedMessage = BuildDisplayMessage(MESSAGE_TYPE_WARNING, CameraName, MESSAGE_FILE_ACQUISITION_NOT_ALLOWED);
+	SVString EmptyFileNameMessage = BuildDisplayMessage(MESSAGE_TYPE_ERROR, CameraName, MESSAGE_FILE_ACQUISITION_MISSING_FILENAME);
+	SVString EmptyDirNameMessage = BuildDisplayMessage(MESSAGE_TYPE_ERROR, CameraName, MESSAGE_FILE_ACQUISITION_MISSING_DIRECTORY);
+	SVString InvalidFileMessage = BuildDisplayMessage(MESSAGE_TYPE_WARNING, CameraName, MESSAGE_FILE_ACQUISITION_INVALID_FILE);
+	SVString InvalidDirMessage = BuildDisplayMessage(MESSAGE_TYPE_WARNING, CameraName, MESSAGE_FILE_ACQUISITION_INVALID_DIRECTORY);
+	SVString InvalidImageSizeMessage = BuildDisplayMessage(MESSAGE_TYPE_ERROR, CameraName, MESSAGE_FILE_ACQUISITION_INVALID_IMAGE_SIZE);
+	SVString ColorMismatchMessage =  BuildDisplayMessage(MESSAGE_TYPE_ERROR, CameraName, MESSAGE_FILE_ACQUISITION_COLOR_MISMATCH);
 
-	RemoveMessageFromList(sFileAcquisitionNotAllowedMessage);
-	RemoveMessageFromList(sEmptyFileNameMessage);
-	RemoveMessageFromList(sEmptyDirNameMessage);
-	RemoveMessageFromList(sInvalidFileMessage);
-	RemoveMessageFromList(sInvalidDirMessage);
-	RemoveMessageFromList(sInvalidImageSizeMessage);
-	RemoveMessageFromList(sColorMismatchMessage);
+	RemoveMessageFromList(FileAcquisitionNotAllowedMessage.c_str());
+	RemoveMessageFromList(EmptyFileNameMessage.c_str());
+	RemoveMessageFromList(EmptyDirNameMessage.c_str());
+	RemoveMessageFromList(InvalidFileMessage.c_str());
+	RemoveMessageFromList(InvalidDirMessage.c_str());
+	RemoveMessageFromList(InvalidImageSizeMessage.c_str());
+	RemoveMessageFromList(ColorMismatchMessage.c_str());
 }
 
 HRESULT CSVOConfigAssistantDlg::CheckCamera( SVOCameraObj& rCameraObj, bool SetFileParameters )
 {
-	CString CameraName( rCameraObj.GetCameraDisplayName() );
-	RemoveFileAcquisitionMessages( CameraName );
+	SVString CameraName( rCameraObj.GetCameraDisplayName() );
+	RemoveFileAcquisitionMessages( CameraName.c_str() );
 
-	CString sDigName = BuildDigName( rCameraObj );
-	SVDigitizerProcessingClass::Instance().SetDigitizerColor( sDigName, rCameraObj.IsColor() );
+	SVString DigName = BuildDigName( rCameraObj );
+	SVDigitizerProcessingClass::Instance().SetDigitizerColor( DigName.c_str(), rCameraObj.IsColor() );
 
 	if( rCameraObj.IsFileAcquisition())
 	{
-		CString sEmptyFileNameMessage = BuildDisplayMessage(MESSAGE_TYPE_ERROR, CameraName, MESSAGE_FILE_ACQUISITION_MISSING_FILENAME);
-		CString sEmptyDirNameMessage = BuildDisplayMessage(MESSAGE_TYPE_ERROR, CameraName, MESSAGE_FILE_ACQUISITION_MISSING_DIRECTORY);
-		CString sInvalidFileMessage = BuildDisplayMessage(MESSAGE_TYPE_WARNING, CameraName, MESSAGE_FILE_ACQUISITION_INVALID_FILE);
-		CString sInvalidDirMessage = BuildDisplayMessage(MESSAGE_TYPE_WARNING, CameraName, MESSAGE_FILE_ACQUISITION_INVALID_DIRECTORY);
-		CString sInvalidImageSizeMessage = BuildDisplayMessage(MESSAGE_TYPE_ERROR, CameraName, MESSAGE_FILE_ACQUISITION_INVALID_IMAGE_SIZE);
-		CString sColorMismatchMessage =  BuildDisplayMessage(MESSAGE_TYPE_ERROR, CameraName, MESSAGE_FILE_ACQUISITION_COLOR_MISMATCH);
+		SVString EmptyFileNameMessage = BuildDisplayMessage(MESSAGE_TYPE_ERROR, CameraName.c_str(), MESSAGE_FILE_ACQUISITION_MISSING_FILENAME);
+		SVString EmptyDirNameMessage = BuildDisplayMessage(MESSAGE_TYPE_ERROR, CameraName.c_str(), MESSAGE_FILE_ACQUISITION_MISSING_DIRECTORY);
+		SVString InvalidFileMessage = BuildDisplayMessage(MESSAGE_TYPE_WARNING, CameraName.c_str(), MESSAGE_FILE_ACQUISITION_INVALID_FILE);
+		SVString InvalidDirMessage = BuildDisplayMessage(MESSAGE_TYPE_WARNING, CameraName.c_str(), MESSAGE_FILE_ACQUISITION_INVALID_DIRECTORY);
+		SVString InvalidImageSizeMessage = BuildDisplayMessage(MESSAGE_TYPE_ERROR, CameraName.c_str(), MESSAGE_FILE_ACQUISITION_INVALID_IMAGE_SIZE);
+		SVString ColorMismatchMessage =  BuildDisplayMessage(MESSAGE_TYPE_ERROR, CameraName.c_str(), MESSAGE_FILE_ACQUISITION_COLOR_MISMATCH);
 
 		// check that image size is not zero
 		const SIZE& size = rCameraObj.GetFileImageSize();
 		if (size.cx == 0 || size.cy == 0)
 		{
-			AddMessageToList( CAMERA_DLG, sInvalidImageSizeMessage );
+			AddMessageToList( CAMERA_DLG, InvalidImageSizeMessage.c_str() );
 		}
 
 		// check that file or directory is valid
@@ -3841,43 +3811,42 @@ HRESULT CSVOConfigAssistantDlg::CheckCamera( SVOCameraObj& rCameraObj, bool SetF
 		if (loadingMode == ContinuousMode || loadingMode == SingleIterationMode)
 		{
 			// check that directory exists
-			CString directoryName = rCameraObj.GetImageDirectoryName();
-			if (!directoryName.IsEmpty())
+			SVString directoryName = rCameraObj.GetImageDirectoryName();
+			if( !directoryName.empty() )
 			{
 				// strip off trailing slash or backslash
-				CString lastChar = directoryName.Right(1);
+				SVString lastChar = SvUl_SF::Right( directoryName, 1 );
 				if (lastChar == _T("\\") || lastChar == _T("/"))
 				{
-					directoryName.Delete(directoryName.GetLength() - 1);
+					directoryName.erase( directoryName.size() - 1);
 				}
 
 				struct _stat buf;
-				int result = _stat( directoryName, &buf );
+				int result = _stat( directoryName.c_str(), &buf );
 				
 				if (result != 0)
 				{
-					AddMessageToList( CAMERA_DLG, sInvalidDirMessage );
+					AddMessageToList( CAMERA_DLG, InvalidDirMessage.c_str() );
 				}
 			}
 			else
 			{
-				AddMessageToList( CAMERA_DLG, sEmptyDirNameMessage );
+				AddMessageToList( CAMERA_DLG, EmptyDirNameMessage.c_str() );
 			}
 		}
 		else 
 		{
 			// check that File Exists
-			CString filename = rCameraObj.GetImageFilename();
-			if ( filename.IsEmpty() )
+			if ( rCameraObj.GetImageFilename().empty() )
 			{
-				AddMessageToList( CAMERA_DLG, sEmptyFileNameMessage);
+				AddMessageToList( CAMERA_DLG, EmptyFileNameMessage.c_str() );
 			}
 			else
 			{
 				// check that File Exists
-				if ( _access( filename, 0 ) != 0 )
+				if ( _access( rCameraObj.GetImageFilename().c_str(), 0 ) != 0 )
 				{
-					AddMessageToList( CAMERA_DLG, sInvalidFileMessage );
+					AddMessageToList( CAMERA_DLG, InvalidFileMessage.c_str() );
 				}
 			}
 		}
@@ -3900,13 +3869,13 @@ HRESULT CSVOConfigAssistantDlg::CheckCamera( SVOCameraObj& rCameraObj, bool SetF
 
 			if ( rCameraObj.IsColor() != isColorImage )
 			{
-				AddMessageToList( CAMERA_DLG,sColorMismatchMessage );
+				AddMessageToList( CAMERA_DLG, ColorMismatchMessage.c_str() );
 			}
 		}
 	}
 	else
 	{
-		SVAcquisitionClassPtr pDevice = SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( sDigName );
+		SVAcquisitionClassPtr pDevice = SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( DigName.c_str() );
 		if( !( pDevice.empty() ) )
 		{
 			SVDeviceParamCollection DeviceParams;
@@ -3915,7 +3884,7 @@ HRESULT CSVOConfigAssistantDlg::CheckCamera( SVOCameraObj& rCameraObj, bool SetF
 			pDevice->GetDeviceParameters( DeviceParams );
 			rCameraObj.SetCameraDeviceParams( DeviceParams );
 
-			HRESULT hr = pDevice->ReadCameraFile( SVString(rCameraObj.GetCameraFile()), DeviceParams );
+			HRESULT hr = pDevice->ReadCameraFile( rCameraObj.GetCameraFile(), DeviceParams );
 
 			if( SetFileParameters )
 			{
@@ -3923,8 +3892,8 @@ HRESULT CSVOConfigAssistantDlg::CheckCamera( SVOCameraObj& rCameraObj, bool SetF
 			}
 
 			bool bDisplayWarnings = TheSVObserverApp.GetSVIMType() == GetProductType();
-			CString sMessageIncorrectCamFile = BuildDisplayMessage(MESSAGE_TYPE_WARNING, CameraName, MESSAGE_INCORRECT_CAM_FILE);
-			RemoveMessageFromList(sMessageIncorrectCamFile);
+			SVString MessageIncorrectCamFile = BuildDisplayMessage(MESSAGE_TYPE_WARNING, CameraName.c_str(), MESSAGE_INCORRECT_CAM_FILE);
+			RemoveMessageFromList(MessageIncorrectCamFile.c_str());
 			if( DeviceParams.ParameterExists( DeviceParamVendorId ) || DeviceParams.ParameterExists( DeviceParamModelName ) )
 			{
 				// do this only if True SVIM type matches selected product type - do warning
@@ -3934,21 +3903,21 @@ HRESULT CSVOConfigAssistantDlg::CheckCamera( SVOCameraObj& rCameraObj, bool SetF
 					{
 						if( S_OK != pDevice->IsValidCameraFileParameters( DeviceParams ) )
 						{
-							AddMessageToList( CAMERA_DLG, sMessageIncorrectCamFile );
+							AddMessageToList( CAMERA_DLG, MessageIncorrectCamFile.c_str() );
 						}
 					}
 					catch( const SvStl::MessageContainer& )
 					{
-						AddMessageToList( CAMERA_DLG, sMessageIncorrectCamFile );
+						AddMessageToList( CAMERA_DLG, MessageIncorrectCamFile.c_str() );
 					}
 				}// end if ( bDisplayWarnings )
 			}
 
-			CString sMessageNotColorCamFile = BuildDisplayMessage(MESSAGE_TYPE_ERROR, CameraName, MESSAGE_NOT_COLOR_CAM_FILE);
-			CString sMessageNoColorCam = BuildDisplayMessage(MESSAGE_TYPE_WARNING, CameraName, MESSAGE_NOT_COLOR_CAM);
+			SVString MessageNotColorCamFile = BuildDisplayMessage(MESSAGE_TYPE_ERROR, CameraName.c_str(), MESSAGE_NOT_COLOR_CAM_FILE);
+			SVString MessageNoColorCam = BuildDisplayMessage(MESSAGE_TYPE_WARNING, CameraName.c_str(), MESSAGE_NOT_COLOR_CAM);
 
-			RemoveMessageFromList(sMessageNotColorCamFile);
-			RemoveMessageFromList(sMessageNoColorCam);
+			RemoveMessageFromList(MessageNotColorCamFile.c_str());
+			RemoveMessageFromList(MessageNoColorCam.c_str());
 			// if camera file color mismatch selected product color - error
 			//      only color product and b/w cam file
 			//      the other way is OK, because color cams usu. support b/w images
@@ -3959,7 +3928,7 @@ HRESULT CSVOConfigAssistantDlg::CheckCamera( SVOCameraObj& rCameraObj, bool SetF
 					const SVCameraFormatsDeviceParam* pParam = DeviceParams.Parameter( DeviceParamCameraFormats ).DerivedValue( pParam );
 					if ( !pParam->SupportsColor() )
 					{
-						AddMessageToList(CAMERA_DLG,sMessageNotColorCamFile);
+						AddMessageToList(CAMERA_DLG, MessageNotColorCamFile.c_str());
 					}
 
 					SVDeviceParamCollection l_HardwareParams;
@@ -3974,7 +3943,7 @@ HRESULT CSVOConfigAssistantDlg::CheckCamera( SVOCameraObj& rCameraObj, bool SetF
 							const SVCameraFormatsDeviceParam* pHardwareParam = l_HardwareParams.Parameter( DeviceParamCameraFormats ).DerivedValue( pHardwareParam );
 							if ( pParam->SupportsColor() && !pHardwareParam->SupportsColor() )
 							{
-								AddMessageToList(CAMERA_DLG,sMessageNoColorCam);
+								AddMessageToList(CAMERA_DLG, MessageNoColorCam.c_str());
 							}
 						}
 					}// end if ( l_HardwareCapabilities.ParameterExists( DeviceParamCameraFormats ) )
@@ -3996,21 +3965,19 @@ void CSVOConfigAssistantDlg::CheckColor( const SVOCameraObj& rCameraObj )
 
 		if( nullptr != pInspectionObj )
 		{
-			CString sToolsetImage( pInspectionObj->GetToolsetImage() );
-
-			if( sToolsetImage == rCameraObj.GetCameraDisplayName() )
+			if( pInspectionObj->GetToolsetImage() == rCameraObj.GetCameraDisplayName() )
 			{
-				CString MessageColor( BuildDisplayMessage(MESSAGE_TYPE_ERROR, pInspectionObj->GetInspectionLabelName(), MESSAGE_INSPECTION_CAMERA_COLOR) );
-				RemoveMessageFromList( MessageColor );
+				SVString Message( BuildDisplayMessage(MESSAGE_TYPE_ERROR, pInspectionObj->GetInspectionLabelName().c_str(), MESSAGE_INSPECTION_CAMERA_COLOR) );
+				RemoveMessageFromList( Message.c_str() );
 
-				if ( !sToolsetImage.IsEmpty() )
+				if ( !pInspectionObj->GetToolsetImage().empty() )
 				{
 					//If an existing or imported inspection then inspection color is not allowed to be changed
-					if( !pInspectionObj->IsNewInspection() || !pInspectionObj->GetImportFilename().IsEmpty() )
+					if( !pInspectionObj->IsNewInspection() || !pInspectionObj->GetImportFilename().empty() )
 					{
 						if( rCameraObj.IsColor() != pInspectionObj->IsColor() )
 						{
-							AddMessageToList( INSPECT_DLG, MessageColor );
+							AddMessageToList( INSPECT_DLG, Message.c_str() );
 						}
 					}
 				}
@@ -4036,26 +4003,26 @@ void CSVOConfigAssistantDlg::CheckTriggers()
 BOOL CSVOConfigAssistantDlg::CheckTrigger( const SvTi::SVOTriggerObj& rTriggerObj)
 {
 	BOOL bRet = true;
-	CString TriggerName( rTriggerObj.GetTriggerDisplayName() );
-	CString sMessageNoSoftwareTriggerAllowed = BuildDisplayMessage(MESSAGE_TYPE_ERROR, TriggerName, MESSAGE_SOFTWARE_TRIGGER_NOT_ALLOWED);
+	SVString TriggerName = rTriggerObj.GetTriggerDisplayName();
+	SVString MessageNoSoftwareTriggerAllowed = BuildDisplayMessage(MESSAGE_TYPE_ERROR, TriggerName.c_str(), MESSAGE_SOFTWARE_TRIGGER_NOT_ALLOWED);
 
 	if ( rTriggerObj.IsSoftwareTrigger() )
 	{
 		// check if Software Trigger is allowed
-		bRet = IsSoftwareTriggerAllowed( TriggerName );
+		bRet = IsSoftwareTriggerAllowed( TriggerName.c_str() );
 		if (!bRet)
 		{
 			// add message
-			AddMessageToList(TRIGGER_DLG, sMessageNoSoftwareTriggerAllowed );
+			AddMessageToList(TRIGGER_DLG, MessageNoSoftwareTriggerAllowed.c_str() );
 		}
 		else
 		{
-			RemoveMessageFromList( sMessageNoSoftwareTriggerAllowed );
+			RemoveMessageFromList( MessageNoSoftwareTriggerAllowed.c_str() );
 		}
 	}
 	else
 	{
-		RemoveMessageFromList( sMessageNoSoftwareTriggerAllowed );
+		RemoveMessageFromList( MessageNoSoftwareTriggerAllowed.c_str() );
 	}
 	return  bRet;
 }
@@ -4100,12 +4067,11 @@ void CSVOConfigAssistantDlg::SetupTriggerStrobeMessage()
 		{
 			if( m_TriggerList.GetTriggerListCount() > 1 )
 			{
-				AddMessageToList(TRIGGER_DLG,
-					BuildDisplayMessage( MESSAGE_TYPE_WARNING, "", MESSAGE_ONE_INVERT_CONTROL ));
+				AddMessageToList(TRIGGER_DLG, BuildDisplayMessage( MESSAGE_TYPE_WARNING, "", MESSAGE_ONE_INVERT_CONTROL ).c_str() );
 			}
 			else
 			{
-				RemoveMessageFromList(BuildDisplayMessage( MESSAGE_TYPE_WARNING, "", MESSAGE_ONE_INVERT_CONTROL ));
+				RemoveMessageFromList( BuildDisplayMessage( MESSAGE_TYPE_WARNING, "", MESSAGE_ONE_INVERT_CONTROL ).c_str() );
 			}
 		}
 	}
@@ -4132,24 +4098,24 @@ void CSVOConfigAssistantDlg::ClearImportedInspectionInfoList()
 	m_ImportedInspectionInfoList.clear();
 }
 
-CString CSVOConfigAssistantDlg::GetNameFromProductID( SVIMProductEnum p_ID )
+SVString CSVOConfigAssistantDlg::GetNameFromProductID( SVIMProductEnum p_ID )
 {
-	CString l_Retval = "Unknown";
+	SVString Result( _T("Unknown") );
 
 	SVProductStringMap::index_iterator< from >::type l_Iter = m_ProductStringMap.get< from >().find( p_ID );
 
 	if( l_Iter != m_ProductStringMap.get< from >().end() )
 	{
-		l_Retval = l_Iter->second;
+		Result = l_Iter->second;
 	}
-	return l_Retval;
+	return Result;
 }
 
-SVIMProductEnum CSVOConfigAssistantDlg::GetProductIDFromName( const CString& p_Name )
+SVIMProductEnum CSVOConfigAssistantDlg::GetProductIDFromName( const SVString& rName )
 {
 	SVIMProductEnum l_Retval = SVIM_PRODUCT_INVALID_TYPE;
 
-	SVProductStringMap::index_iterator< to >::type l_Iter = m_ProductStringMap.get< to >().find( p_Name );
+	SVProductStringMap::index_iterator< to >::type l_Iter = m_ProductStringMap.get< to >().find( rName );
 
 	if( l_Iter != m_ProductStringMap.get< to >().end() )
 	{
@@ -4231,11 +4197,10 @@ void CSVOConfigAssistantDlg::OnBnClickedCancel()
 
 			if( nullptr != pCameraObj )
 			{
-				psvDevice = SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( BuildDigName( *pCameraObj ) );
+				psvDevice = SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( BuildDigName( *pCameraObj ).c_str() );
 				if( nullptr != psvDevice )
 				{
-					CString szFileName = pCameraObj->GetCameraFile();
-					svFile.SetFullFileName(szFileName);
+					svFile.SetFullFileName( pCameraObj->GetCameraFile().c_str() );
 					svFiles.Add(svFile);
 					psvDevice->LoadFiles(svFiles);
 					

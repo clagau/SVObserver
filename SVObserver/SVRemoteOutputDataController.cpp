@@ -29,7 +29,7 @@
 
 SV_IMPLEMENT_CLASS( SVRemoteOutputDataController, SVRemoteOutputDataControllerGUID );
 
-SVRemoteOutputDataController::SVRemoteOutputDataController( LPCSTR ObjectName )
+SVRemoteOutputDataController::SVRemoteOutputDataController( LPCTSTR ObjectName )
 : SVObjectClass( ObjectName )
 {
 	SVOutputStreamManager::Instance().InsertOutputController( GetUniqueObjectID() );
@@ -70,14 +70,14 @@ void SVRemoteOutputDataController::Destroy()
 }
 
 // AddItem creates a new RemoteOutputObject and adds it to the remote group parameters
-HRESULT SVRemoteOutputDataController::AddItem( const CString& p_strRemoteGroupId, SVRemoteOutputObject*& p_pNewOutput, GUID p_InputObjectID, const CString p_strPPQ )
+HRESULT SVRemoteOutputDataController::AddItem( const SVString& rRemoteGroupId, SVRemoteOutputObject*& p_pNewOutput, GUID p_InputObjectID, const SVString& rPPQ )
 {
 	HRESULT l_hr = E_FAIL;
 	SVRemoteOutputObject* l_pEntry = new SVRemoteOutputObject;
 	if( l_pEntry )
 	{
 		l_pEntry->SetInputObjectId( p_InputObjectID );
-		l_pEntry->SetGroupID( SVString(p_strRemoteGroupId) );
+		l_pEntry->SetGroupID( rRemoteGroupId );
 		SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObjectA( p_InputObjectID );
 		if( l_pObject )
 		{
@@ -92,25 +92,23 @@ HRESULT SVRemoteOutputDataController::AddItem( const CString& p_strRemoteGroupId
 		}
 		else
 		{
-			OutputDebugString(_T("Added an Remote Output that had an invalid input!\n"));
-			CString strTmp;
-			strTmp.Format(_T("Added an Remote Output that had an invalid input!\n"));
-			strTmp += l_pObject->GetCompleteObjectName();
-			OutputDebugString( strTmp );
+			SVString Temp( _T("Added an Remote Output that had an invalid input!\n") );
+			Temp += l_pObject->GetCompleteName();
+			OutputDebugString( Temp.c_str() );
 		}
-		if( m_RemoteGroupParameters.find( p_strRemoteGroupId) == m_RemoteGroupParameters.end() )
+		if( m_RemoteGroupParameters.end() != m_RemoteGroupParameters.find( rRemoteGroupId ) )
 		{
-			SVRemoteOutputGroup* l_par = new SVRemoteOutputGroup(p_strRemoteGroupId);
+			SVRemoteOutputGroup* l_par = new SVRemoteOutputGroup( rRemoteGroupId.c_str() );
 
 			l_par->AddOutput( l_pEntry );
-			l_par->SetPPQName( SVString(p_strPPQ) );
-			m_RemoteGroupParameters[p_strRemoteGroupId] = l_par;
+			l_par->SetPPQName( rPPQ );
+			m_RemoteGroupParameters[rRemoteGroupId] = l_par;
 		}
 		else
 		{
 			// Add new output to Remote Output Control Parameters map.
-			m_RemoteGroupParameters[ p_strRemoteGroupId ]->AddOutput( l_pEntry );
-			m_RemoteGroupParameters[ p_strRemoteGroupId ]->SetPPQName( SVString(p_strPPQ) );
+			m_RemoteGroupParameters[ rRemoteGroupId ]->AddOutput( l_pEntry );
+			m_RemoteGroupParameters[ rRemoteGroupId ]->SetPPQName( rPPQ );
 		}
 		p_pNewOutput = l_pEntry;
 		l_hr = S_OK;
@@ -119,46 +117,46 @@ HRESULT SVRemoteOutputDataController::AddItem( const CString& p_strRemoteGroupId
 }
 
 // This gives us a way to get the data associated with a Remote Group Id.
-SVRemoteOutputGroup* SVRemoteOutputDataController::GetControlPar( const CString& p_strGroupID )
+SVRemoteOutputGroup* SVRemoteOutputDataController::GetControlPar( const SVString& rRemoteGroupId )
 {
 	SVRemoteOutputGroup* l_pPars = nullptr;
-	if( m_RemoteGroupParameters.find( p_strGroupID ) != m_RemoteGroupParameters.end() )
+	if( m_RemoteGroupParameters.end() != m_RemoteGroupParameters.find( rRemoteGroupId ) )
 	{
-		l_pPars = m_RemoteGroupParameters[p_strGroupID];
+		l_pPars = m_RemoteGroupParameters[rRemoteGroupId];
 	}
 	return l_pPars;
 }
 
 // Get the RemoteOutputGroupPar associated with the Remote Group Id.
-HRESULT SVRemoteOutputDataController::GetControlPar( const CString& p_strRemoteGroup, SVRemoteOutputGroup*& p_pControl )
+HRESULT SVRemoteOutputDataController::GetControlPar( const SVString& rRemoteGroupId, SVRemoteOutputGroup*& p_pControl )
 {
 	HRESULT l_hr = S_FALSE;
-	if( m_RemoteGroupParameters.find( p_strRemoteGroup ) != m_RemoteGroupParameters.end() )
+	if( m_RemoteGroupParameters.end() != m_RemoteGroupParameters.find( rRemoteGroupId ) )
 	{
-		p_pControl = m_RemoteGroupParameters[p_strRemoteGroup];
+		p_pControl = m_RemoteGroupParameters[rRemoteGroupId];
 		l_hr = S_OK;
 	}
 	return l_hr;
 }
 
 // Get the element Count from the SVRemoteOutputGroup for the given Remote Group Id
-size_t SVRemoteOutputDataController::GetItemCount( const CString& p_strRemoteGroup )
+size_t SVRemoteOutputDataController::GetItemCount( const SVString& rRemoteGroupId )
 {
 	size_t l_lSize = 0;
-	if( m_RemoteGroupParameters.find( p_strRemoteGroup ) != m_RemoteGroupParameters.end() )
+	if( m_RemoteGroupParameters.end() != m_RemoteGroupParameters.find( rRemoteGroupId ) )
 	{
-		l_lSize = m_RemoteGroupParameters[p_strRemoteGroup]->RemoteOutputListSize();
+		l_lSize = m_RemoteGroupParameters[rRemoteGroupId]->RemoteOutputListSize();
 	}
 	return l_lSize;
 }
 
 // Get a RemoteOutputObject based on index from the given Remote Group Id
-HRESULT SVRemoteOutputDataController::GetItem( const CString& p_strRemoteGroupId, long l_lIndex, SVRemoteOutputObject*& p_rItem )
+HRESULT SVRemoteOutputDataController::GetItem( const SVString& rRemoteGroupId, long l_lIndex, SVRemoteOutputObject*& p_rItem )
 {
 	HRESULT l_hr = -3130;
-	if( m_RemoteGroupParameters.find( p_strRemoteGroupId ) != m_RemoteGroupParameters.end() )
+	if( m_RemoteGroupParameters.end() != m_RemoteGroupParameters.find( rRemoteGroupId ) )
 	{
-		l_hr = m_RemoteGroupParameters[p_strRemoteGroupId]->GetItem( l_lIndex, p_rItem );
+		l_hr = m_RemoteGroupParameters[rRemoteGroupId]->GetItem( l_lIndex, p_rItem );
 	}
 	return l_hr;
 }
@@ -183,11 +181,9 @@ bool SVRemoteOutputDataController::GetParameters( SVObjectXMLWriter& rWriter )
 		long lIndex = 0;
 		for( l_it = m_RemoteGroupParameters.begin(); l_it != m_RemoteGroupParameters.end() ; ++l_it )
 		{
-			CString l_strBranch;
-
 			lIndex++;
-			l_strBranch.Format( "%s_%d",CTAG_REMOTE_GROUP_ID, lIndex );
-			rWriter.StartElement( l_strBranch );
+			SVString Branch = SvUl_SF::Format( "%s_%d", CTAG_REMOTE_GROUP_ID, lIndex );
+			rWriter.StartElement( Branch.c_str() );
 			l_it->second->GetParameters( rWriter );
 			rWriter.EndElement();
 		}
@@ -234,24 +230,23 @@ BOOL SVRemoteOutputDataController::SetParameters( SVTreeType& p_rTree, SVTreeTyp
 			while( l_bTmp )
 			{
 				SVTreeType::SVBranchHandle htiBranch = nullptr;
-				CString l_strEntry;
-				CString l_strGroupID;
+				SVString GroupID;
 
-				l_strEntry.Format( "%s_%d", CTAG_REMOTE_GROUP_ID, ++l_lEntryNum );
-				l_bTmp = SVNavigateTree::GetItemBranch( p_rTree, l_strEntry, htiIORemoteOutput, htiBranch );
+				SVString Entry = SvUl_SF::Format( _T("%s_%d"), CTAG_REMOTE_GROUP_ID, ++l_lEntryNum );
+				l_bTmp = SVNavigateTree::GetItemBranch( p_rTree, Entry.c_str(), htiIORemoteOutput, htiBranch );
 
 				if ( l_bTmp )
 				{
 					SVRemoteOutputGroup* l_ControlParameter = new SVRemoteOutputGroup;
 					l_bTmp = l_ControlParameter->SetParameters( p_rTree, htiBranch );
-					SVRemoteOutputObject* l_pRemOut = l_ControlParameter->GetFirstObject();
-					if( l_pRemOut )
+					SVRemoteOutputObject* pRemoteOutput = l_ControlParameter->GetFirstObject();
+					if( nullptr != pRemoteOutput )
 					{
-						l_strGroupID = l_pRemOut->GetGroupID().c_str();
+						GroupID = pRemoteOutput->GetGroupID();
 					}
-					if( l_bTmp && nullptr != l_pRemOut )
+					if( l_bTmp && nullptr != pRemoteOutput )
 					{
-						m_RemoteGroupParameters[ l_strGroupID ] = l_ControlParameter;
+						m_RemoteGroupParameters[ GroupID ] = l_ControlParameter;
 					}
 					l_ControlParameter->AttachStreamManager();
 				}
@@ -263,19 +258,17 @@ BOOL SVRemoteOutputDataController::SetParameters( SVTreeType& p_rTree, SVTreeTyp
 }
 
 // Write Outputs with the supplied PPQ name.
-HRESULT SVRemoteOutputDataController::WriteOutputs( const CString& p_strRemoteGroupID, SVProductInfoStruct *pProduct)
+HRESULT SVRemoteOutputDataController::WriteOutputs( const SVString& rRemoteGroupID, SVProductInfoStruct *pProduct)
 {
 	HRESULT hr = S_FALSE;
 
-	if( pProduct && (m_RemoteGroupParameters.find(p_strRemoteGroupID) != m_RemoteGroupParameters.end()) )
+	if( nullptr != pProduct && (m_RemoteGroupParameters.end() != m_RemoteGroupParameters.find( rRemoteGroupID ) ) )
 	{
 		long l_lOutputIndex=-1;
 		l_lOutputIndex = pProduct->oPPQInfo.m_ResultDataDMIndexHandle.GetIndex();
-		std::vector<CString> l_strAddresses;  // place to collect address strings
-		std::vector<CString> l_strStringValues;
 
 		// parameters for a Remote Output Group
-		SVRemoteOutputGroup* l_RemoteGroupPar = m_RemoteGroupParameters[p_strRemoteGroupID];
+		SVRemoteOutputGroup* l_RemoteGroupPar = m_RemoteGroupParameters[rRemoteGroupID];
 
 		//  Implement Write Function....
 		OutputDebugString(_T("Write Outputs Function\n"));
@@ -285,56 +278,65 @@ HRESULT SVRemoteOutputDataController::WriteOutputs( const CString& p_strRemoteGr
 } // end WriteOutputs(...
 
 // Gets the last remote output object with in this group.
-SVRemoteOutputObject* SVRemoteOutputDataController::GetLastObject( const CString& p_strRemoteOutputName )
+SVRemoteOutputObject* SVRemoteOutputDataController::GetLastObject( const SVString& rRemoteGroupId )
 {
-	return m_RemoteGroupParameters[p_strRemoteOutputName]->GetLastObject();
+	if( m_RemoteGroupParameters.end() != m_RemoteGroupParameters.find( rRemoteGroupId ) )
+	{
+		return m_RemoteGroupParameters[rRemoteGroupId]->GetLastObject();
+	}
+
+	return nullptr;
 }
 
 // Gets the last output object with in this group.
-SVRemoteOutputObject* SVRemoteOutputDataController::GetFirstObject( const CString& p_strGroupId )
+SVRemoteOutputObject* SVRemoteOutputDataController::GetFirstObject( const SVString& rRemoteGroupId )
 {
-	return m_RemoteGroupParameters[p_strGroupId]->GetFirstObject();
+	if( m_RemoteGroupParameters.end() != m_RemoteGroupParameters.find( rRemoteGroupId ) )
+	{
+		return m_RemoteGroupParameters[rRemoteGroupId]->GetFirstObject();
+	}
+
+	return nullptr;
 }
 
 // This function fills a list with group ids that are setup in the output data controller.
-HRESULT SVRemoteOutputDataController::GetRemoteOutputGroups( std::vector<CString>& p_astrRemoteOutputGroupIds )
+HRESULT SVRemoteOutputDataController::GetRemoteOutputGroups( SVStringVector& rRemoteOutputGroupIds )
 {
 	HRESULT l_hr = S_OK;
 
-	p_astrRemoteOutputGroupIds.clear();
+	rRemoteOutputGroupIds.clear();
 
 	SVRemoteOutputGroupMap::iterator l_it;
 	for( l_it = m_RemoteGroupParameters.begin() ; l_it != m_RemoteGroupParameters.end() ; ++l_it )
 	{
-		p_astrRemoteOutputGroupIds.push_back( l_it->first );
+		rRemoteOutputGroupIds.push_back( l_it->first );
 	}
 
 	return l_hr;
 }
 
 // This function fills a list with the PPQ names that are associated with Groups that are setup.
-HRESULT SVRemoteOutputDataController::GetPPQs( std::vector<CString>& p_astrPPQs, SVConfigurationObject* pConfig )
+HRESULT SVRemoteOutputDataController::GetPPQs( SVStringVector& rPPQs, SVConfigurationObject* pConfig )
 {
 	HRESULT l_hr = S_OK;
 
 	//Only ASSERT not to change runtime
 	ASSERT( nullptr != pConfig );
 
-	p_astrPPQs.clear();
+	rPPQs.clear();
 
 	SVRemoteOutputGroupMap::iterator l_it;
 	for( l_it = m_RemoteGroupParameters.begin() ; l_it != m_RemoteGroupParameters.end() ; ++l_it )
 	{
 		long l_lPPQCount = pConfig->GetPPQCount( );
-		CString l_strRemoteOutputID = l_it->first;
 		for( int i = 0 ; i < l_lPPQCount ; i++ )
 		{
 			SVPPQObject* pPPQ = pConfig->GetPPQ(i);
 			if( nullptr != pPPQ )
 			{
-				if( SVString( pPPQ->GetName() ) == l_it->second->GetPPQName() )
+				if( pPPQ->GetName() == l_it->second->GetPPQName() )
 				{
-					p_astrPPQs.push_back( pPPQ->GetName() );
+					rPPQs.push_back( pPPQ->GetName() );
 					break;
 				}
 			}
@@ -343,15 +345,15 @@ HRESULT SVRemoteOutputDataController::GetPPQs( std::vector<CString>& p_astrPPQs,
 	return l_hr;
 }
 
-HRESULT SVRemoteOutputDataController::GetGroupNames( std::vector<CString>& p_astrPPQs )
+HRESULT SVRemoteOutputDataController::GetGroupNames( SVStringVector& rPPQs )
 {
 	HRESULT l_hr = S_OK;
-	p_astrPPQs.clear();
+	rPPQs.clear();
 
 	SVRemoteOutputGroupMap::iterator l_it;
 	for( l_it = m_RemoteGroupParameters.begin() ; l_it != m_RemoteGroupParameters.end() ; ++l_it )
 	{
-		p_astrPPQs.push_back( l_it->first );
+		rPPQs.push_back( l_it->first );
 	}
 	return l_hr;
 }
@@ -364,19 +366,19 @@ bool SVRemoteOutputDataController::IsEmpty()
 }
 
 // This function deletes a remote output and removes it from the Remote Group control parameters class.
-HRESULT SVRemoteOutputDataController::DeleteRemoteOutputEntry( const CString& p_strRemoteGroupId, SVRemoteOutputObject* p_pOutputObject )
+HRESULT SVRemoteOutputDataController::DeleteRemoteOutputEntry( const SVString& rRemoteGroupId, SVRemoteOutputObject* p_pOutputObject )
 {
 	HRESULT l_hr;
-	l_hr = m_RemoteGroupParameters[p_strRemoteGroupId]->Delete( p_pOutputObject );
+	l_hr = m_RemoteGroupParameters[rRemoteGroupId]->Delete( p_pOutputObject );
 	return l_hr;
 }
 
 // DeleteRemoteOutput deletes the entire RemoteOutput control parameters class.
-HRESULT SVRemoteOutputDataController::DeleteRemoteOutput( const CString& p_strGroupId )
+HRESULT SVRemoteOutputDataController::DeleteRemoteOutput( const SVString& rRemoteGroupId )
 {
 	HRESULT l_hr = S_FALSE;
 	SVRemoteOutputGroupMap::iterator l_it;
-	l_it = m_RemoteGroupParameters.find( p_strGroupId );
+	l_it = m_RemoteGroupParameters.find( rRemoteGroupId );
 	if( l_it != m_RemoteGroupParameters.end() )
 	{
 		delete l_it->second;
@@ -431,9 +433,8 @@ HRESULT SVRemoteOutputDataController::ClearUnUsedData( )
 			} );
 			if (l_ppqIt == l_PPQInfos.end())
 			{
-				CString l_strTmp;
-				l_strTmp.Format(_T("Deleting Remote Output Group associated with PPQ %s\n"), ppqInfo.first.c_str() );
-				OutputDebugString(l_strTmp);
+				SVString Text = SvUl_SF::Format(_T("Deleting Remote Output Group associated with PPQ %s\n"), ppqInfo.first.c_str() );
+				OutputDebugString( Text.c_str() );
 				l_it = m_RemoteGroupParameters.erase(l_it);
 			}
 			else
@@ -452,7 +453,7 @@ HRESULT SVRemoteOutputDataController::ClearUnUsedData( )
 }
 
 // Adds the trigger count if the parameter map is empty
-HRESULT SVRemoteOutputDataController::AddDefaultOutputs(CString p_strRemoteGroupID, SVPPQObject* pPPQ )
+HRESULT SVRemoteOutputDataController::AddDefaultOutputs( const SVString& rRemoteGroupID, SVPPQObject* pPPQ )
 {
 	HRESULT l_hr = S_FALSE;
 	ASSERT( nullptr != pPPQ );
@@ -461,13 +462,13 @@ HRESULT SVRemoteOutputDataController::AddDefaultOutputs(CString p_strRemoteGroup
 		return l_hr;
 	}
 
-	if( !p_strRemoteGroupID.IsEmpty() )
+	if( !rRemoteGroupID.empty() )
 	{
-		if( m_RemoteGroupParameters.find( p_strRemoteGroupID ) == m_RemoteGroupParameters.end() )
+		if( m_RemoteGroupParameters.find( rRemoteGroupID ) == m_RemoteGroupParameters.end() )
 		{
 			SVRemoteOutputObject* l_pNewOutput = nullptr;
 			
-			AddItem( p_strRemoteGroupID, l_pNewOutput, pPPQ->m_voTriggerCount.GetUniqueObjectID(), pPPQ->GetName() );
+			AddItem( rRemoteGroupID, l_pNewOutput, pPPQ->m_voTriggerCount.GetUniqueObjectID(), pPPQ->GetName() );
 		}
 		l_hr = S_OK;
 	}
@@ -519,16 +520,16 @@ void SVRemoteOutputDataController::SetupRemoteOutput(SVConfigurationObject* pCon
 	ASSERT( nullptr != pConfig );
 
 	SVGroupDefVect l_OriginalList;
-	std::vector<CString> l_GroupOutputNames;
-	l_hr = GetRemoteOutputGroups( l_GroupOutputNames );
-
-	for( std::vector<CString>::iterator l_it = l_GroupOutputNames.begin() ; l_it != l_GroupOutputNames.end() ; ++l_it)
+	SVStringVector GroupOutputNames;
+	l_hr = GetRemoteOutputGroups( GroupOutputNames );
+	SVStringVector::const_iterator Iter;
+	for( Iter = GroupOutputNames.begin() ; Iter != GroupOutputNames.end() ; ++Iter)
 	{
-		SVGroupDef l_grp;
-		l_grp.m_strName = *l_it;
-		SVRemoteOutputGroup* l_pControlPar = GetControlPar(*l_it);
-		l_grp.m_strPPQ = l_pControlPar->GetPPQName().c_str();
-		l_OriginalList.push_back( l_grp );
+		SVGroupDef GroupDevice;
+		GroupDevice.m_Name = *Iter;
+		SVRemoteOutputGroup* l_pControlPar = GetControlPar(*Iter);
+		GroupDevice.m_PPQName = l_pControlPar->GetPPQName().c_str();
+		l_OriginalList.push_back( GroupDevice );
 	}
 
 	if( S_OK == l_hr )
@@ -564,7 +565,7 @@ void SVRemoteOutputDataController::SetupRemoteOutputGroup(SVConfigurationObject*
 
 	SVSVIMStateClass::AddState(SV_STATE_EDITING);
 	// these containers hold the list of ppq names that will be used for Remote Groups.
-	CStringVec l_AvailablePPQs;
+	SVStringVector AvailablePPQs;
 	// Initialize PPQ - Remote Groups by selecting from dialog.
 	long l_lPPQSize = pConfig->GetPPQCount( );
 	for( long l = 0 ; l < l_lPPQSize ; l++ )
@@ -572,43 +573,43 @@ void SVRemoteOutputDataController::SetupRemoteOutputGroup(SVConfigurationObject*
 		SVPPQObject* pPPQ = pConfig->GetPPQ(l);
 		if( nullptr != pPPQ )
 		{
-			l_AvailablePPQs.push_back( pPPQ->GetName() );
+			AvailablePPQs.push_back( pPPQ->GetName() );
 		}
 	}
 
 
 	SVRemoteOutputGroupAddRemoveDlg l_dlg;
-	l_dlg.m_astrAvailablePPQs = l_AvailablePPQs;
+	l_dlg.m_AvailablePPQs = AvailablePPQs;
 	l_dlg.m_SetupGroup = p_rOriginalList;
 	if( l_dlg.DoModal() == IDOK )
 	{
-		CStringVec l_astrNewItems;
-		CStringVec l_astrRemovedItems;
-		CStringPairVect l_aRenamedItems;
+		SVStringVector NewItems;
+		SVStringVector RemovedItems;
+		SVStringPairVector RenamedItems;
 
 		// Get a list of what was removed.
-		l_dlg.GetNewItems( l_astrNewItems );
-		l_dlg.GetRemoved( l_astrRemovedItems );
-		l_dlg.GetRenamed( l_aRenamedItems );
+		l_dlg.GetNewItems( NewItems );
+		l_dlg.GetRemoved( RemovedItems );
+		l_dlg.GetRenamed( RenamedItems );
 
-		for( CStringPairVect::iterator l_it = l_aRenamedItems.begin() ; l_it != l_aRenamedItems.end() ; ++l_it )
+		for( SVStringPairVector::iterator l_it = RenamedItems.begin() ; l_it != RenamedItems.end() ; ++l_it )
 		{
 			RenameGroup( l_it->first, l_it->second );
-			SVOutputStreamManager::Instance().Rename( l_it->first, l_it->second );
+			SVOutputStreamManager::Instance().Rename( l_it->first.c_str(), l_it->second.c_str() );
 		}
 
 		// Add New Output Groups
-		for( size_t i = 0; i < l_astrNewItems.size() ; i++ )
+		for( size_t i = 0; i < NewItems.size() ; i++ )
 		{
 			for( size_t j = 0 ; j < l_dlg.m_SetupGroup.size() ; j++ )
 			{
-				if( l_dlg.m_SetupGroup[j].m_strName == l_astrNewItems[i] )
+				if( l_dlg.m_SetupGroup[j].m_Name == NewItems[i] )
 				{
 					SVPPQObject* pPPQ( nullptr );
-					BOOL l_bTmp = pConfig->GetChildObjectByName(l_dlg.m_SetupGroup[j].m_strPPQ, &pPPQ );
+					BOOL l_bTmp = pConfig->GetChildObjectByName(l_dlg.m_SetupGroup[j].m_PPQName.c_str(), &pPPQ );
 					if( l_bTmp )
 					{
-						AddDefaultOutputs(l_astrNewItems[i], pPPQ );
+						AddDefaultOutputs(NewItems[i], pPPQ );
 					}
 				}
 			}
@@ -616,9 +617,9 @@ void SVRemoteOutputDataController::SetupRemoteOutputGroup(SVConfigurationObject*
 		}
 
 		// Remove Items
-		for( size_t i = 0; i < l_astrRemovedItems.size() ; i++ )
+		for( size_t i = 0; i < RemovedItems.size() ; i++ )
 		{
-			DeleteRemoteOutput( l_astrRemovedItems[i] );
+			DeleteRemoteOutput( RemovedItems[i] );
 
 			SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
 		}
@@ -626,15 +627,15 @@ void SVRemoteOutputDataController::SetupRemoteOutputGroup(SVConfigurationObject*
 	SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
 }
 
-bool SVRemoteOutputDataController::RenameGroup( CString oldName, CString newName )
+bool SVRemoteOutputDataController::RenameGroup( const SVString& rOldName, const SVString& rNewName )
 {
 	bool l_bRet = false;
-	SVRemoteOutputGroupMap::iterator l_it = m_RemoteGroupParameters.find( oldName );
+	SVRemoteOutputGroupMap::iterator l_it = m_RemoteGroupParameters.find( rOldName );
 	if( l_it != m_RemoteGroupParameters.end() )
 	{
-		m_RemoteGroupParameters[newName] = l_it->second;
+		m_RemoteGroupParameters[rNewName] = l_it->second;
 
-		m_RemoteGroupParameters[newName]->SetGroupName( SVString(newName) );
+		m_RemoteGroupParameters[rNewName]->SetGroupName( rNewName );
 		m_RemoteGroupParameters.erase( l_it );
 		l_bRet = true;
 	}

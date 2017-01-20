@@ -51,6 +51,7 @@
 #include "SVShapeMaskHelperClass.h"
 #include "SVIOController.h"
 #include "SVUserMaskOperatorClass.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma region Includes
 
 typedef CComPtr<IXmlWriter> Writer;

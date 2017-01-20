@@ -61,9 +61,9 @@ BOOL SVBlobFeaturePropertiesDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 	
-	CString strTitle = _T("Properties for ");
-	strTitle += m_strFeatureName;
-	SetWindowText(strTitle);
+	SVString Title = _T("Properties for ");
+	Title += m_FeatureName;
+	SetWindowText( Title.c_str() );
 	
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE

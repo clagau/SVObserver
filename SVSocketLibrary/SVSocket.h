@@ -90,7 +90,7 @@ namespace Seidenader { namespace SVSocketLibrary
 		virtual void Destroy();
 
 		ULONG GetAddr() const;
-		std::string Log(const std::string & msg, bool full = false) const;
+		std::basic_string<TCHAR> Log(const std::basic_string<TCHAR> & msg, bool full = false) const;
 
 		Err SetNonBlocking();
 		Err SetBlocking();
@@ -106,7 +106,7 @@ namespace Seidenader { namespace SVSocketLibrary
 		Err SetBufferSize(int sz);
 		Err SetReadTimeout(u_int tout);
 
-		Err Write(const std::string& data, bool hasHeader = false); // Use for non-JSON data.
+		Err Write(const std::basic_string<TCHAR>& data, bool hasHeader = false); // Use for non-JSON data.
 		Err Write(const unsigned char* buffer, size_t len, bool hasHeader = false); // Use for non-JSON data.
 		Err Read(unsigned char* buffer, size_t len, size_t& amtRead, bool hasHeader = false);
 		Err Select(int & nfds, FdSet_t * readfds, FdSet_t * writefds, FdSet_t * exceptfds, const timeval *timeout);
@@ -124,11 +124,11 @@ namespace Seidenader { namespace SVSocketLibrary
 		}
 		bool IsConnected() const { return m_isConnected; }
 
-		std::string state() const;
+		std::basic_string<TCHAR> state() const;
 
 		bool IsValidPayload(size_t) { return true; } // Currently, we say every payload is valid.  May be specialized later.
 		Err Bind(const TCHAR* hostAddr, unsigned short portNo);
-		SVSocketError::ErrorEnum Send( const std::string& data ); // Use Send for JSON (no header).
+		SVSocketError::ErrorEnum Send( const std::basic_string<TCHAR>& data ); // Use Send for JSON (no header).
 
 		bool DataAvailable() const
 		{

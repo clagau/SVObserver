@@ -29,7 +29,7 @@ namespace Seidenader { namespace SVStatusLibrary
 		//! \param AdditionalTextId <in> Id for the additional text
 		//! \param rAdditionalTextList <in> Reference to list of strings for the additional text
 		//************************************
-		MessageData( DWORD MessageCode, SvOi::MessageTextEnum AdditionalTextId = SvOi::Tid_Empty, const SVStringArray& rAdditionalTextList = SVStringArray() );
+		MessageData( DWORD MessageCode, SvOi::MessageTextEnum AdditionalTextId = SvOi::Tid_Empty, const SVStringVector& rAdditionalTextList = SVStringVector() );
 
 		//************************************
 		//! This is the copy constructor
@@ -73,7 +73,7 @@ namespace Seidenader { namespace SVStatusLibrary
 		mutable bool m_Displayed;			//Flag indicating if the message has been displayed
 		DWORD m_MessageCode;				//Number identifying the message
 		SvOi::MessageTextEnum m_AdditionalTextId; //The main additional text id
-		SVStringArray m_AdditionalTextList; //String list to be inserted in the main additional text id
+		SVStringVector m_AdditionalTextList; //String list to be inserted in the main additional text id
 		SourceFileParams m_SourceFile;		//The source file standard parameters
 		DWORD m_ProgramCode;				//Program specific code.
 		std::time_t m_DateTime;				//The date and time when the data is set

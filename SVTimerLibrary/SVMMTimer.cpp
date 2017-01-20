@@ -9,10 +9,12 @@
 //* .Check In Date   : $Date:   01 Dec 2014 14:12:44  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 //Moved to precompiled header: #include <mmsystem.h>
 //Moved to precompiled header: #include <boost/bind.hpp>
 #include "SVMMTimer.h"
+#pragma endregion Includes
 
 SVMMTimer::SVMMTimer()
 : m_timerID(0)

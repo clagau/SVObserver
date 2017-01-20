@@ -18,6 +18,7 @@
 #include "GuiController.h"
 #include "ValuesAccessor.h"
 #include "BoundValue.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion
 
 namespace Seidenader

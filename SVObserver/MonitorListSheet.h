@@ -44,7 +44,6 @@ public:
 	virtual HRESULT SetCancelData(SVCancelData* pData) override;
 
 // Attributes
-	CString    m_sListName;
 	MonitorListType m_eListType;
 // Operations
 

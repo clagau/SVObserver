@@ -10,7 +10,7 @@
 #pragma region Includes
 //Moved to precompiled header: #include <boost/any.hpp>
 //Moved to precompiled header: #include <boost/noncopyable.hpp>
-//Moved to precompiled header: #include <string>
+#include "SVUtilityLibrary\SVString.h"
 #include "ObjectInterfaces\NameValueList.h"
 #include "SVStatusLibrary\MessageContainer.h"
 #pragma endregion Includes
@@ -34,21 +34,21 @@ namespace Seidenader
 			}
 			
 			template<typename DataType>
-			DataType Get(const std::string& name) const
+			DataType Get(const SVString& rName) const
 			{
-				return static_cast<DataType>(boost::any_cast<_variant_t>(m_Data.GetValue(name)));
+				return static_cast<DataType>(boost::any_cast<_variant_t>(m_Data.GetValue(rName)));
 			}
 
 			template<typename DataType>
-			void Set(const std::string& name, const DataType& rValue)
+			void Set(const SVString& rName, const DataType& rValue)
 			{
 				_variant_t v(rValue);
-				m_Data.SetValue(name, boost::any(v));
+				m_Data.SetValue(rName, boost::any(v));
 			}
 
-			SvOi::NameValueList GetEnumTypes(const std::string& name) const
+			SvOi::NameValueList GetEnumTypes(const SVString& rName) const
 			{
-				return GetEnums(m_Data.GetInspectionID(), m_Data.GetObjectID(name));
+				return GetEnums(m_Data.GetInspectionID(), m_Data.GetObjectID(rName));
 			}
 
 			HRESULT Commit(bool bReset = false)
@@ -61,7 +61,7 @@ namespace Seidenader
 				return getSetFailedMessageList();
 			}
 
-			const GUID& GetOwnerID() const { return m_Data.GetOwnerID(); }
+			const GUID& GetOwnerID() const { return m_Data.GetOwnerID(); };
 		};
 	}
 }

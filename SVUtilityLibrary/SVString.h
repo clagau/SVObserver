@@ -18,12 +18,13 @@
 //Moved to precompiled header: #include <set>
 //Moved to precompiled header: #include <comutil.h>
 //Moved to precompiled header: #include <tchar.h>
+//Moved to precompiled header: #include <utility>
 #pragma endregion Includes
 
-
 typedef std::basic_string<TCHAR> SVString;
+typedef std::pair<SVString, SVString> SVStringPair;
 typedef std::set< SVString > SVStringSet;
-typedef std::vector< SVString > SVStringArray;
+typedef std::vector< SVString > SVStringVector;
 typedef std::map< SVString, SVString > TranslateMap;
 
 namespace Seidenader { namespace SVUtilityLibrary { namespace StringFunctions {
@@ -38,7 +39,7 @@ namespace Seidenader { namespace SVUtilityLibrary { namespace StringFunctions {
 	SVString createSVString( const _variant_t& rVariant );
 
 	//************************************
-	/// Compare to strings like the std::string.comapre function, but ignore upper and lower cases.
+	/// Compare to strings like the std::string.compare function, but ignore upper and lower cases.
 	/// \param rStringValue [in]
 	/// \param rStringValue2 [in]
 	/// \returns int 0 = strings are similar
@@ -94,9 +95,17 @@ namespace Seidenader { namespace SVUtilityLibrary { namespace StringFunctions {
 
 	//************************************
 	//! Method to remove a list of characters
+	/// \param rStringValue [in][out] The source string can be changed
 	//! \param ExcludeCharacters [in] the characters to remove
 	//************************************
 	void RemoveCharacters(SVString& rStringValue, LPCTSTR ExcludeCharacters);
+
+	//************************************
+	//! Method to validate the string with a list of characters
+	/// \param rStringValue [in] The source string, will not be changed.
+	//! \param ValidCharacters [in] the characters which are valid
+	//************************************
+	SVString ValidateString(const SVString& rStringValue, LPCTSTR ValidCharacters);
 
 	//************************************
 	// Description:  Check if searchString is found in this string. For the searchString wildcard "*" can be used.
@@ -142,7 +151,7 @@ namespace Seidenader { namespace SVUtilityLibrary { namespace StringFunctions {
 	/// \param ResourceID [in] The resource ID to load from the resource dll
 	/// \returns SVString Created string with the loaded string
 	//************************************
-	SVString LoadString( UINT ResourceID );
+	SVString LoadSVString( UINT ResourceID );
 } /* namespace StringFunctions */ } /* namespace SVUtilityLibrary */ } /* namespace Seidenader */
 
 namespace SvUl = Seidenader::SVUtilityLibrary;

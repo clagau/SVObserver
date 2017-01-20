@@ -15,7 +15,14 @@
 #include "SVObjectNameInfo.h"
 #pragma endregion Includes
 
-static void StripSpaces(std::string& rStr)
+#pragma region Declarations
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+#endif
+#pragma endregion Declarations
+
+static void StripSpaces(SVString& rStr)
 {
 	boost::algorithm::trim(rStr);
 }
@@ -33,52 +40,52 @@ static void StripSpaces(std::string& rStr)
 //  Inspection_1.Tool Set.Window Tool.Blob Analyzer.Area[ 2 ]          - second index of Area
 //  Inspection_1.Tool Set.Window Tool.Blob Analyzer.Area[ 2 {-1} ]     - second index with -1 as default value if index is not valid
 //
-HRESULT SVObjectNameInfo::ParseObjectName( SVObjectNameInfo& p_rNameInfo, const SVString& p_rObjectName )
+HRESULT SVObjectNameInfo::ParseObjectName( SVObjectNameInfo& rNameInfo, const SVString& rObjectName )
 {
 	HRESULT l_Status = S_OK;
 
-	if( !( p_rObjectName.empty() ) )
+	if( !( rObjectName.empty() ) )
 	{
-		SVString::size_type l_Index = p_rObjectName.find_first_of( _T( ".[" ) );
+		SVString::size_type l_Index = rObjectName.find_first_of( _T( ".[" ) );
 
 		if( l_Index != SVString::npos )
 		{
-			p_rNameInfo.m_NameArray.push_back( p_rObjectName.substr(0, l_Index ) );
+			rNameInfo.m_NameArray.push_back( rObjectName.substr(0, l_Index ) );
 
-			if( p_rObjectName[ l_Index ] == _T( '.' ) )
+			if( rObjectName[ l_Index ] == _T( '.' ) )
 			{
-				l_Status = ParseObjectName( p_rNameInfo, SvUl_SF::Mid( p_rObjectName, l_Index + 1 ) );
+				l_Status = ParseObjectName( rNameInfo, SvUl_SF::Mid( rObjectName, l_Index + 1 ) );
 			}
 			else
 			{
-				SVString::size_type l_NextIndex = p_rObjectName.find_first_of( _T( "]{" ), l_Index + 1 );
+				SVString::size_type l_NextIndex = rObjectName.find_first_of( _T( "]{" ), l_Index + 1 );
 
 				if( l_NextIndex != SVString::npos )
 				{
-					p_rNameInfo.SetIsIndexPresent(true);
+					rNameInfo.SetIsIndexPresent(true);
 					// ignore whitespace
-					std::string indexStr = p_rObjectName.substr( l_Index + 1, l_NextIndex - ( l_Index + 1 ) ).c_str();
+					SVString indexStr = rObjectName.substr( l_Index + 1, l_NextIndex - ( l_Index + 1 ) ).c_str();
 					StripSpaces(indexStr);
-					p_rNameInfo.m_Index = indexStr.c_str();
+					rNameInfo.m_Index = indexStr.c_str();
 
-					if( p_rObjectName[ l_NextIndex ] == _T( ']' ) )
+					if( rObjectName[ l_NextIndex ] == _T( ']' ) )
 					{
-						if( !( SvUl_SF::Mid( p_rObjectName, l_NextIndex + 1 ).empty() ) )
+						if( !( SvUl_SF::Mid( rObjectName, l_NextIndex + 1 ).empty() ) )
 						{
 							l_Status = E_FAIL;
 						}
 					}
 					else
 					{
-						SVString::size_type l_BraceIndex = p_rObjectName.find_first_of( _T( "}" ), l_NextIndex + 1 );
-						SVString::size_type l_BracketIndex = p_rObjectName.find_first_of( _T( "]" ), l_NextIndex + 1 );
+						SVString::size_type l_BraceIndex = rObjectName.find_first_of( _T( "}" ), l_NextIndex + 1 );
+						SVString::size_type l_BracketIndex = rObjectName.find_first_of( _T( "]" ), l_NextIndex + 1 );
 
 						if( l_BraceIndex != SVString::npos && l_BracketIndex != SVString::npos )
 						{
-							p_rNameInfo.m_DefaultValuePresent = true;
-							p_rNameInfo.m_DefaultValue = p_rObjectName.substr( l_NextIndex + 1, l_BraceIndex - ( l_NextIndex + 1 ) );
+							rNameInfo.m_DefaultValuePresent = true;
+							rNameInfo.m_DefaultValue = rObjectName.substr( l_NextIndex + 1, l_BraceIndex - ( l_NextIndex + 1 ) );
 
-							if( !( SvUl_SF::Mid( p_rObjectName, l_BracketIndex + 1 ).empty() ) )
+							if( !( SvUl_SF::Mid( rObjectName, l_BracketIndex + 1 ).empty() ) )
 							{
 								l_Status = E_FAIL;
 							}
@@ -97,7 +104,7 @@ HRESULT SVObjectNameInfo::ParseObjectName( SVObjectNameInfo& p_rNameInfo, const 
 		}
 		else
 		{
-			p_rNameInfo.m_NameArray.push_back( p_rObjectName );
+			rNameInfo.m_NameArray.push_back( rObjectName );
 		}
 	}
 

@@ -419,7 +419,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 	template<typename TreeType>
 	HRESULT  SaxXMLHandler<TreeType>::OnXMLError(int line, int column, const wchar_t *pwchErrorText, unsigned long errorCode, bool fatal )
 	{
-		SVStringArray messageList;
+		SVStringVector messageList;
 		messageList.push_back(SvUl_SF::Format(_T("%i"), line));
 		messageList.push_back(SvUl_SF::Format(_T("%i"), column));
 		messageList.push_back(SvUl_SF::Format(_T("%i"), errorCode));

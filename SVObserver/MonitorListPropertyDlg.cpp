@@ -14,7 +14,6 @@
 //Moved to precompiled header: #include <algorithm>
 #include "MonitorListPropertyDlg.h"
 #include "TextDefinesSvO.h"
-#include "SVUtilityLibrary/SVString.h"
 #include "RemoteMonitorListController.h"
 #pragma endregion Includes
 
@@ -22,10 +21,10 @@ enum {IDC_MONITOR_PROPERTY_TREE = 100};
 
 IMPLEMENT_DYNAMIC(MonitorListPropertyDlg, CDialog)
 
-MonitorListPropertyDlg::MonitorListPropertyDlg(RemoteMonitorList& MonitorList, CString sName, CWnd* pParent)
+MonitorListPropertyDlg::MonitorListPropertyDlg(RemoteMonitorList& MonitorList, LPCTSTR Name, CWnd* pParent)
 : CDialog(MonitorListPropertyDlg::IDD, pParent)
 , m_MonitorList(MonitorList)
-, m_MonitorListName(sName)
+, m_MonitorListName(Name)
 ,m_IsMonitorListActive(false)
 {
 }
@@ -76,30 +75,27 @@ BOOL MonitorListPropertyDlg::OnInitDialog()
 
 /////////////////////////////////////////////////////////////////////////////
 // Validate label text and remove unwanted characters.
-void MonitorListPropertyDlg::ValidateLabelText(CString& newText) const
+SVString MonitorListPropertyDlg::ValidateLabelText(const SVString& rNewText) const
 {
-	SVString newName( newText );
+	SVString Result( rNewText );
 
-	SvUl_SF::RemoveCharacters( newName, SvO::SVEXCLUDECHARS_TOOL_IP_NAME );
+	SvUl_SF::RemoveCharacters( Result, SvO::SVEXCLUDECHARS_TOOL_IP_NAME );
 
-	if( 0 < newName.size() )
+	if( Result.empty() )
 	{
-		newText = newName.c_str();
+		assert(m_DisplayName.size() > 0);
+		Result = m_DisplayName;
 	}
-	else
-	{
-		ASSERT(m_DisplayName.GetLength() > 0);
-		newText = m_DisplayName;
-	}
+	return Result;
 }
 
-bool MonitorListPropertyDlg::IsValidListName(const CString& name, const CString& originalName) const
+bool MonitorListPropertyDlg::IsValidListName(const SVString& rName, const SVString& rOriginalName) const
 {
 	bool bRetVal = true;
 	// check for uniqueness (case insensitive)
 	RemoteMonitorList::const_iterator it = std::find_if(m_MonitorList.begin(), m_MonitorList.end(), [&](const RemoteMonitorList::value_type& entry)->bool 
 	{ 
-		return (0 == name.CompareNoCase(entry.first.c_str()) && 0 != originalName.CompareNoCase(entry.first.c_str())); 
+		return (0 == SvUl_SF::CompareNoCase(rName, entry.first) && 0 != SvUl_SF::CompareNoCase(rOriginalName, entry.first)); 
 	} 
 	);
 	if (it != m_MonitorList.end())
@@ -119,16 +115,16 @@ void MonitorListPropertyDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResu
 
 		if ( PROP_MONITOR_LIST_NAME == pItem->GetCtrlID() )
 		{
-			CString sName;
-			m_Tree.FindItem(PROP_MONITOR_LIST_NAME)->GetItemValue(sName);
-			sName.Trim();
+			SVString Name;
+			m_Tree.FindItem(PROP_MONITOR_LIST_NAME)->GetItemValue(Name);
+			SvUl_SF::Trim( Name );
 			
-			ValidateLabelText(sName);
-			if (IsValidListName(sName, m_DisplayName))
+			ValidateLabelText(Name);
+			if (IsValidListName(Name, m_DisplayName))
 			{ 
-				m_DisplayName = sName;
+				m_DisplayName = Name;
 			}
-			m_Tree.FindItem(PROP_MONITOR_LIST_NAME)->SetItemValue(m_DisplayName);
+			m_Tree.FindItem(PROP_MONITOR_LIST_NAME)->SetItemValue( m_DisplayName.c_str() );
 		}
 		else if ( PROP_MONITOR_LIST_DEPTH == pItem->GetCtrlID() )
 		{
@@ -176,8 +172,6 @@ void MonitorListPropertyDlg::SetupMonitorListProperties()
 	SVRPropertyItem* pRoot = m_Tree.InsertItem(new SVRPropertyItem());
 	SVRPropertyItemEdit* pPropItem;
 
-	CString sValue;
-
 	if (pRoot)
 	{
 		pRoot->SetCanShrink(false);
@@ -190,7 +184,7 @@ void MonitorListPropertyDlg::SetupMonitorListProperties()
 			pPropItem->SetLabelText(_T("Monitor List Name"));
 			pPropItem->SetCtrlID(PROP_MONITOR_LIST_NAME);
 			pPropItem->SetInfoText(_T("The name of the monitor list"));
-			pPropItem->SetItemValue(m_DisplayName);
+			pPropItem->SetItemValue( m_DisplayName.c_str() );
 		}
 		
 		pPropItem = (SVRPropertyItemEdit*)m_Tree.InsertItem(new SVRPropertyItemEdit(),pRoot);
@@ -217,7 +211,7 @@ void MonitorListPropertyDlg::SetupMonitorListProperties()
 	}
 }
 
-CString MonitorListPropertyDlg::GetMonitorListName() const
+const SVString& MonitorListPropertyDlg::GetMonitorListName() const
 {
 	return m_DisplayName;
 }

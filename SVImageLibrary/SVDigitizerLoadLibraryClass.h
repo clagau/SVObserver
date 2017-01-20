@@ -12,7 +12,6 @@
 #pragma once
 
 #pragma region Includes
-#include "SVLibrary/StringHelper.h"
 #include "SVUtilityLibrary/SVUtilityGlobals.h"
 #include "TriggerHandling/TriggerBasics.h"
 #include "CameraLibrary/SVDeviceParamCollection.h"

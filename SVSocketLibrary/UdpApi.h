@@ -48,7 +48,7 @@ namespace Seidenader { namespace SVSocketLibrary
 		uint16 seq; // sequence number (0-based) of a datatagram in a message
 		header(uint32 i, uint32 l, uint32 t, uint16 c, uint16 s): id(i), len(l), tot(t), cnt(c), seq(s) {}
 		header() : id(0), len(0), tot(0), cnt(0), seq(0) {}
-		std::string tostr() const
+		std::basic_string<TCHAR> tostr() const
 		{
 			char buf[128];
 

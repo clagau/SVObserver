@@ -9,12 +9,6 @@
 // * .Check In Date   : $Date:   21 Oct 2013 08:21:26  $
 // ******************************************************************************
 
-#pragma region Includes
-#include "SVMessage\SVMessage.h"
-#include "SVLibrary/StringHelper.h"
-#include "SVStatusLibrary\MessageManager.h"
-#pragma endregion Includes
-
 inline SVDLLToolLoadLibraryClass::SVDLLToolLoadLibraryClass()
 {
 	m_hmHandle = nullptr;
@@ -62,9 +56,8 @@ inline HRESULT SVDLLToolLoadLibraryClass::Open(LPCTSTR p_szLibrary, SVDllLoadLib
 			// Check bitness
 			if( CheckBitness( p_szLibrary ) != ImageFileMachineAMD64 )
 			{
-				CString l_strTmp;
-				l_strTmp.Format(_T("External Tool %s is not 64Bit"),p_szLibrary);
-				fnNotifyProgress( l_strTmp);
+				SVString Message = SvUl_SF::Format(_T("External Tool %s is not 64Bit"), p_szLibrary);
+				fnNotifyProgress( Message.c_str() );
 			}
 		}
 		fnNotifyProgress( _T("Attempting LoadLibrary"));
@@ -235,7 +228,7 @@ inline HRESULT SVDLLToolLoadLibraryClass::Open(LPCTSTR p_szLibrary, SVDllLoadLib
 						}
 						else
 						{
-							fnNotifyProgress( CString( bstName ));
+							fnNotifyProgress( SvUl_SF::createSVString( _bstr_t(bstName) ).c_str() );
 						}
 					}
 					catch(...)
@@ -259,7 +252,8 @@ inline HRESULT SVDLLToolLoadLibraryClass::Open(LPCTSTR p_szLibrary, SVDllLoadLib
 						}
 						else
 						{
-							fnNotifyProgress( _T("Version ") + AsString( lTmp ) );
+							SVString Version = SvUl_SF::Format( _T("Version %d"), lTmp );
+							fnNotifyProgress( Version.c_str() );
 						}
 					}
 					catch(...)
@@ -440,7 +434,7 @@ inline HRESULT SVDLLToolLoadLibraryClass::RunTool (GUID tool, long* plStatus)
 		if( S_OK != l_hrOk )
 		{
 			ASSERT (0);
-			SVStringArray msgList;
+			SVStringVector msgList;
 			msgList.push_back(SvUl_SF::Format(_T("%d"), l_hrOk));
 
 			SvStl::MessageMgrStd Exception( SvStl::LogOnly );
@@ -507,7 +501,7 @@ inline HRESULT SVDLLToolLoadLibraryClass::InitializeRun ( GUID tool, long lImage
 		if( S_OK != l_hrOk )
 		{
 			ASSERT (0);
-			SVStringArray msgList;
+			SVStringVector msgList;
 			msgList.push_back(SvUl_SF::Format(_T("%d"), l_hrOk));
 			SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 			Exception.setMessage( static_cast<DWORD> (l_hrOk), SvOi::Tid_SVInitializeRun_Exception, msgList, SvStl::SourceFileParams(StdMessageParams) );

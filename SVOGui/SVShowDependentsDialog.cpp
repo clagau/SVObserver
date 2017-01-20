@@ -75,7 +75,7 @@ namespace Seidenader { namespace SVOGui
 
 				// Where/What object is being used
 				SVString WhatName = it->second->GetCompleteObjectNameToObjectType(nullptr, ObjectType);
-				m_dependencyList.push_back(SvOi::Relation(WhoName, WhatName));
+				m_dependencyList.push_back( SVStringPair(WhoName, WhatName) );
 			}
 		}
 
@@ -85,11 +85,10 @@ namespace Seidenader { namespace SVOGui
 
 			if( !rInspectionID.empty() && !rTaskObjectID.empty() )
 			{
-				CString DisplayText;
-				CString Name( rName.c_str() );
-				DisplayText.Format( IDS_DELETE_CHECK_DEPENDENCIES, Name, Name, Name, Name);
+				SVString FormatText = SvUl_SF::LoadSVString(IDS_DELETE_CHECK_DEPENDENCIES);
+				SVString DisplayText = SvUl_SF::Format( FormatText.c_str(), rName.c_str(), rName.c_str(), rName.c_str(), rName.c_str() );
 	
-				SVShowDependentsDialog Dlg(rInspectionID, rTaskObjectID, OnlyImages, SVToolObjectType, DisplayText);
+				SVShowDependentsDialog Dlg(rInspectionID, rTaskObjectID, OnlyImages, SVToolObjectType, DisplayText.c_str());
 
 				Result = Dlg.DoModal();
 			}
@@ -99,12 +98,10 @@ namespace Seidenader { namespace SVOGui
 
 		void SVShowDependentsDialog::addColumnHeadings()
 		{
-			CString columnName;
-
 			// load the Column names
 			for( int i = 0; i < SV_NUMBER_DEPENDENTS_COLUMNS; i++ )
 			{
-				listCtrl.InsertColumn( i, columnName, LVCFMT_LEFT, -1, i );
+				listCtrl.InsertColumn( i, _T(""), LVCFMT_LEFT, -1, i );
 			}
 		}
 
@@ -112,7 +109,7 @@ namespace Seidenader { namespace SVOGui
 		{
 			int index = 0;
 			CListCtrl* pCtrl = &listCtrl;
-			std::for_each(m_dependencyList.begin(),m_dependencyList.end(), [&index, &pCtrl](const SvOi::Relation& rel)->void
+			std::for_each(m_dependencyList.begin(),m_dependencyList.end(), [&index, &pCtrl](const SVStringPair& rel)->void
 			{
 				pCtrl->InsertItem(index, rel.first.c_str()); // Who is using
 				pCtrl->SetItemText(index, 1, rel.second.c_str()); // Where/What object is being used

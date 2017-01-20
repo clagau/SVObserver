@@ -25,17 +25,6 @@ namespace Seidenader { namespace  SVXMLLibrary
 		static  UINT WCHAR2Type(const wchar_t *ptype );
 
 		//************************************
-		//! convert variant to a value and type string 
-		//! \param rVar [in]
-		//! \param rtype [out]
-		//! \param rValue [out]
-		//! \returns void
-		//************************************
-		static void FromVariant( const _variant_t& rVar, std::wstring  &rtype, std::wstring  &rValue );
-
-		static void FromVariant( const _variant_t& rVar, std::string  &rtype, std::string  &rValue );
-			
-		//************************************
 		//! Convert a type and value string to a variant 
 		//! \param ptype [in]
 		//! \param pValue [in]

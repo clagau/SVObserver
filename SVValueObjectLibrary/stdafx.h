@@ -27,9 +27,12 @@
 #define VC_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
 #define _CRT_SECURE_NO_WARNINGS
 
-#include <afx.h>
+//************************************
+//! Precompiled headers section
+//************************************
+#pragma region Precompiled Headers
+#include <windows.h>
 #include "targetver.h"
-
 
 #include <algorithm>
 #include <assert.h>
@@ -48,3 +51,4 @@
 #include <boost/assign/list_of.hpp>
 #include <boost/circular_buffer.hpp>
 #include <boost/function.hpp> //Used by static library
+#pragma endregion Precompiled Headers

@@ -17,9 +17,9 @@
 
 namespace Seidenader { namespace SVSystemLibrary
 {
-	std::string SVVersionInfo::GetVersion()
+	SVString SVVersionInfo::GetVersion()
 	{
-		std::string verStr;
+		SVString Result;
 
 		TCHAR moduleFilename[512];
 		::GetModuleFileName(nullptr, moduleFilename, sizeof(moduleFilename));
@@ -33,37 +33,36 @@ namespace Seidenader { namespace SVSystemLibrary
 		{
 			VS_FIXEDFILEINFO* pFileInfo = nullptr;
 			UINT Len = 0;
-			if (::VerQueryValue(lpData, "\\", (LPVOID *)&pFileInfo, (PUINT)&Len)) 
+			if (::VerQueryValue(lpData, _T("\\"), (LPVOID *)&pFileInfo, (PUINT)&Len)) 
 			{
 				std::stringstream buf;
-				buf << HIWORD(pFileInfo->dwFileVersionMS) << "." << std::setfill( '0' ) << std::setw( 2 ) << LOWORD(pFileInfo->dwFileVersionMS);
+				buf << HIWORD(pFileInfo->dwFileVersionMS) << _T(".") << std::setfill( '0' ) << std::setw( 2 ) << LOWORD(pFileInfo->dwFileVersionMS);
 
 				auto alphaOrBetaNumber=HIWORD(pFileInfo->dwFileVersionLS);
 				if( alphaOrBetaNumber > 0 && alphaOrBetaNumber < 255)
 				{
-					buf << " Beta " << std::setfill( '0' ) << std::setw( 3 ) << alphaOrBetaNumber;
+					buf << _T(" Beta ") << std::setfill( '0' ) << std::setw( 3 ) << alphaOrBetaNumber;
 				}
-				else
-					if( alphaOrBetaNumber >1000)
-					{
-						buf << " Alpha " <<  std::setfill( '0' ) << std::setw( 3 ) << alphaOrBetaNumber;
-					}
+				else if( alphaOrBetaNumber >1000)
+				{
+					buf << _T(" Alpha ") <<  std::setfill( '0' ) << std::setw( 3 ) << alphaOrBetaNumber;
+				}
 
 				if( LOWORD(pFileInfo->dwFileVersionLS) > 0 )
 				{
-					buf << ", Revision " << LOWORD(pFileInfo->dwFileVersionLS);
+					buf << _T(", Revision ") << LOWORD(pFileInfo->dwFileVersionLS);
 				}
 
-				verStr = buf.str();
+				Result = buf.str();
 			}
 		}
 		delete [] lpData;
 
 		#ifdef _DEBUG
-			verStr += _T("d");        // For debug builds.
+			Result += _T("d");        // For debug builds.
 		#endif
 
-		return verStr;
+		return Result;
 	}
 
 	unsigned long SVVersionInfo::GetLongVersion()
@@ -82,7 +81,7 @@ namespace Seidenader { namespace SVSystemLibrary
 		{
 			VS_FIXEDFILEINFO* pFileInfo = nullptr;
 			UINT Len = 0;
-			if (::VerQueryValue(lpData, "\\", (LPVOID *)&pFileInfo, (PUINT)&Len)) 
+			if (::VerQueryValue(lpData, _T("\\"), (LPVOID *)&pFileInfo, (PUINT)&Len)) 
 			{
 				// Version numbering code:
 				//
@@ -122,9 +121,9 @@ namespace Seidenader { namespace SVSystemLibrary
 		return l_Version;
 	}
 
-	std::string SVVersionInfo::GetTitleVersion()
+	SVString SVVersionInfo::GetTitleVersion()
 	{
-		std::string verStr;
+		SVString verStr;
 
 		TCHAR moduleFilename[512];
 		::GetModuleFileName(nullptr, moduleFilename, sizeof(moduleFilename));
@@ -138,7 +137,7 @@ namespace Seidenader { namespace SVSystemLibrary
 		{
 			VS_FIXEDFILEINFO* pFileInfo = nullptr;
 			UINT Len = 0;
-			if (::VerQueryValue(lpData, "\\", (LPVOID *)&pFileInfo, (PUINT)&Len)) 
+			if (::VerQueryValue(lpData, _T("\\"), (LPVOID *)&pFileInfo, (PUINT)&Len)) 
 			{
 				std::stringstream buf;
 
@@ -160,9 +159,9 @@ namespace Seidenader { namespace SVSystemLibrary
 		return verStr;
 	}
 
-	std::string SVVersionInfo::GetShortTitleVersion()
+	SVString SVVersionInfo::GetShortTitleVersion()
 	{
-		std::string verStr;
+		SVString Result;
 
 		TCHAR moduleFilename[512];
 		::GetModuleFileName(nullptr, moduleFilename, sizeof(moduleFilename));
@@ -176,12 +175,12 @@ namespace Seidenader { namespace SVSystemLibrary
 		{
 			VS_FIXEDFILEINFO* pFileInfo = nullptr;
 			UINT Len = 0;
-			if (::VerQueryValue(lpData, "\\", (LPVOID *)&pFileInfo, (PUINT)&Len)) 
+			if (::VerQueryValue(lpData, _T("\\"), (LPVOID *)&pFileInfo, (PUINT)&Len)) 
 			{
 				std::stringstream buf;
 
 				buf << HIWORD(pFileInfo->dwFileVersionMS);
-				buf << ".";
+				buf << _T(".");
 				buf << std::setfill('0') << std::setw(2) << LOWORD(pFileInfo->dwFileVersionMS);
 
 				auto alphaOrBetaNumber=HIWORD(pFileInfo->dwFileVersionLS);
@@ -189,30 +188,29 @@ namespace Seidenader { namespace SVSystemLibrary
 
 				if( alphaOrBetaNumber > 0 && alphaOrBetaNumber < 255)
 				{
-					buf << "b" << alphaOrBetaNumber;
+					buf << _T("b") << alphaOrBetaNumber;
 				}
-				else
-					if( alphaOrBetaNumber >1000)
-					{
-						buf << "ALPHA" << alphaOrBetaNumber;
-					}
+				else if( alphaOrBetaNumber > 1000)
+				{
+					buf << _T("ALPHA") << alphaOrBetaNumber;
+				}
 
 				if( LOWORD(pFileInfo->dwFileVersionLS) > 0 )
 				{
-					buf << "r" << LOWORD(pFileInfo->dwFileVersionLS);
+					buf << _T("r") << LOWORD(pFileInfo->dwFileVersionLS);
 				}
 
-				verStr = buf.str();
+				Result = buf.str();
 			}
 		}
 
 		delete [] lpData;
 
 		#ifdef _DEBUG
-			verStr += _T("d");        // For debug builds.
+			Result += _T("d");        // For debug builds.
 		#endif
 
-		return verStr;
+		return Result;
 	}
 
 } /*SVSystemLibrary*/ } /*Seidenader*/

@@ -27,6 +27,7 @@
 #include "GlobalSelector.h"
 #include "NoSelector.h"
 #include "ToolSetItemSelector.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -111,11 +112,10 @@ bool TADialogRingBufferParameterPage::QueryAllowExit()
 			indexString2 = m_Values.Get<CString>(RingBufferIndexTag[1]);
 		}
 		//set edit controls
-		CString depthString;
-		depthString.Format("%d", m_Values.Get<long>(RingDepthTag));
-		m_EditRingDepth.SetWindowText(depthString);
-		m_EditImageIndex[0].SetWindowText(indexString1.c_str());
-		m_EditImageIndex[1].SetWindowText(indexString2.c_str());
+		SVString depthString = SvUl_SF::Format( _T("%d"), m_Values.Get<long>(RingDepthTag) );
+		m_EditRingDepth.SetWindowText( depthString.c_str() );
+		m_EditImageIndex[0].SetWindowText( indexString1.c_str() );
+		m_EditImageIndex[1].SetWindowText( indexString2.c_str() );
 
 		return TRUE;
 	}
@@ -137,13 +137,13 @@ bool TADialogRingBufferParameterPage::QueryAllowExit()
 	{
 		int ButtonIndex( nID-IDC_BUTTON_IMAGE_INDEX1 );
 
-		CString Value;
-		m_EditImageIndex[ButtonIndex].GetWindowText( Value );
-		CString Title;
-		Title.LoadString( IDS_OBJECTNAME_RINGBUFFER_INDEX1 + ButtonIndex	 );
+		CString Temp;
+		m_EditImageIndex[ButtonIndex].GetWindowText( Temp );
+		SVString Value = Temp;
+		SVString Title = SvUl_SF::LoadSVString( IDS_OBJECTNAME_RINGBUFFER_INDEX1 + ButtonIndex	 );
 		if (m_objectSelector.Show<ToolSetItemSelector<>>( Value, Title, this ))
 		{
-			m_EditImageIndex[ButtonIndex].SetWindowText( Value );
+			m_EditImageIndex[ButtonIndex].SetWindowText( Value.c_str() );
 		}
 	}
 #pragma endregion Protected Methods
@@ -197,7 +197,7 @@ bool TADialogRingBufferParameterPage::QueryAllowExit()
 		else
 		{
 			SvStl::MessageMgrStd Exception( SvStl::LogAndDisplay );
-			SVStringArray msgList;
+			SVStringVector msgList;
 			msgList.push_back( SvUl_SF::Format(_T("%d"), SvOi::cRingBufferDepthMin) );
 			msgList.push_back( SvUl_SF::Format(_T("%d"), SvOi::cRingBufferDepthMax) );
 			msgList.push_back( Value );

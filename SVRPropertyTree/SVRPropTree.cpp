@@ -10,7 +10,7 @@
 // ******************************************************************************
 
 #include "stdafx.h"
-#include "PropTree.h"
+#include "SVRPropTree.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -26,14 +26,14 @@ const int SVRPropTree::PROPTREEITEM_CHECKBOX      = 14;			// size of the check b
 const int SVRPropTree::PNINDENT                   = 16;			// child level indent
 const int SVRPropTree::PROPTREEITEM_EXPANDBOXHALF = (PROPTREEITEM_EXPANDBOX / 2);
 
-static const CString strOfficeFontName	= _T("Tahoma");
-static const CString strDefaultFontName = _T("MS Sans Serif");
+static const TCHAR* const cOfficeFontName	= _T("Tahoma");
+static const TCHAR* const cDefaultFontName = _T("MS Sans Serif");
 
 static int CALLBACK FontFamilyProcFonts(const LOGFONT FAR* lplf, const TEXTMETRIC FAR*, ULONG, LPARAM)
 {
 	ASSERT(nullptr != lplf);
 	CString strFont = lplf->lfFaceName;
-	return strFont.CollateNoCase (strOfficeFontName) == 0 ? 0 : 1;
+	return strFont.CollateNoCase (cOfficeFontName) == 0 ? 0 : 1;
 }
 
 
@@ -61,7 +61,9 @@ SVRPropTree::SVRPropTree() :
 
 	// init global resources only once
 	if (!s_nInstanceCount)
+	{
 		InitGlobalResources();
+	}
 	s_nInstanceCount++;
 }
 
@@ -74,7 +76,9 @@ SVRPropTree::~SVRPropTree()
 
 	// free global resource when ALL SVRPropTrees are destroyed
 	if (!s_nInstanceCount)
+	{
 		FreeGlobalResources();
+	}
 }
 
 
@@ -111,7 +115,9 @@ BOOL SVRPropTree::Create(DWORD dwStyle, const RECT& rect, CWnd* pParentWnd, UINT
 int SVRPropTree::OnCreate(LPCREATESTRUCT lpCreateStruct) 
 {
 	if (CWnd::OnCreate(lpCreateStruct) == -1)
+	{
 		return -1;
+	}
 
 	DWORD dwStyle;
 	CRect rc;
@@ -170,16 +176,22 @@ void SVRPropTree::ResizeChildWindows(int cx, int cy)
 	if (m_bShowInfo)
 	{
 		if (IsWindow(m_List.m_hWnd))
+		{
 			m_List.MoveWindow(0, 0, cx, cy - m_nInfoHeight);
+		}
 
 		if (IsWindow(m_Info.m_hWnd))
+		{
 			m_Info.MoveWindow(0, cy - m_nInfoHeight, cx, m_nInfoHeight);
+		}
 		m_Info.ShowWindow(SW_SHOW);
 	}
 	else
 	{
 		if (IsWindow(m_List.m_hWnd))
+		{
 			m_List.MoveWindow(0, 0, cx, cy);
+		}
 		m_Info.ShowWindow(SW_HIDE);
 	}
 }
@@ -212,12 +224,12 @@ void SVRPropTree::InitGlobalResources()
 		if (::EnumFontFamilies(dc.GetSafeHdc(), nullptr, FontFamilyProcFonts, 0)==0)
 		{
 			// Found! Use MS Office font!
-			_tcscpy(lf.lfFaceName, strOfficeFontName);
+			_tcscpy(lf.lfFaceName, cOfficeFontName);
 		}
 		else
 		{
 			// Not found. Use default font:
-			_tcscpy(lf.lfFaceName, strDefaultFontName);
+			_tcscpy(lf.lfFaceName, cDefaultFontName);
 		}
 	}
 
@@ -296,12 +308,16 @@ SVRPropertyItem* SVRPropTree::GetVisibleList()
 
 void SVRPropTree::AddToVisibleList(SVRPropertyItem* pItem)
 {
-	if (!pItem)
+	if (nullptr == pItem)
+	{
 		return;
+	}
 
 	// check for an empty visible list
 	if (!m_pVisbleList)
+	{
 		m_pVisbleList = pItem;
+	}
 	else
 	{
 		// Add the new item to the end of the list
@@ -320,14 +336,18 @@ void SVRPropTree::AddToVisibleList(SVRPropertyItem* pItem)
 
 bool SVRPropTree::EnumItems(SVRPropertyItem* pItem, ENUMPROPITEMPROC proc, LPARAM lParam)
 {
-	if (!pItem || !proc)
+	if (nullptr == pItem || nullptr == proc)
+	{
 		return false;
+	}
 
 	SVRPropertyItem* pNext;
 
 	// don't count the root item in any enumerations
 	if (pItem!=&m_Root && !proc(this, pItem, lParam))
+	{
 		return false;
+	}
 
 	// recurse thru all child items
 	pNext = pItem->GetChild();
@@ -352,8 +372,10 @@ void SVRPropTree::SetOriginOffset(LONG nOffset)
 	
 void SVRPropTree::UpdatedItems()
 {
-	if (!IsWindow(m_hWnd))
+	if( !IsWindow(m_hWnd) )
+	{
 		return;
+	}
 
 	if ( !m_bLockWindowUpdate )
 	{
@@ -401,9 +423,13 @@ void SVRPropTree::SetColumn(LONG nColumn)
 	GetClientRect(rc);
 	
 	if (rc.IsRectEmpty())
+	{
 		nColumn = __max(PROPTREEITEM_EXPANDCOLUMN, nColumn);
+	}
 	else
+	{
 		nColumn = __min(__max(PROPTREEITEM_EXPANDCOLUMN, nColumn), rc.Width() - PROPTREEITEM_EXPANDCOLUMN);
+	}
 
 	m_Origin.x = nColumn;
 
@@ -414,11 +440,15 @@ void SVRPropTree::SetColumn(LONG nColumn)
 void SVRPropTree::Delete(SVRPropertyItem* pItem)
 {
 	if (pItem && pItem!=&m_Root && SendNotify(PTN_DELETEITEM, pItem))
+	{
 		return;
+	}
 
 	// passing in a NULL item is the same as calling DeleteAllItems
-	if (!pItem)
+	if ( nullptr == pItem)
+	{
 		pItem = &m_Root;
+	}
 
 	// delete children
 
@@ -437,22 +467,30 @@ void SVRPropTree::Delete(SVRPropertyItem* pItem)
 	if (pItem->GetParent())
 	{
 		if (pItem->GetParent()->GetChild()==pItem)
+		{
 			pItem->GetParent()->SetChild(pItem->GetSibling());
+		}
 		else
 		{
 			pIter = pItem->GetParent()->GetChild();
 			while (pIter->GetSibling() && pIter->GetSibling()!=pItem)
+			{
 				pIter = pIter->GetSibling();
+			}
 
 			if (pIter->GetSibling())
+			{
 				pIter->SetSibling(pItem->GetSibling());
+			}
 		}
 	}
 
 	if (pItem != &m_Root)
 	{
 		if (pItem==GetFocusedItem())
+		{
 			SetFocusedItem(nullptr);
+		}
 		delete pItem;
 	}
 }
@@ -472,7 +510,9 @@ void SVRPropTree::SetFocusedItem(SVRPropertyItem* pItem)
 	EnsureVisible(m_pFocus);
 
 	if (!IsWindow(m_hWnd))
+	{
 		return;
+	}
 
 	Invalidate();
 }
@@ -492,22 +532,28 @@ void SVRPropTree::ShowInfoText(bool bShow)
 bool SVRPropTree::IsItemVisible(SVRPropertyItem* pItem)
 {
 	if (!pItem)
-		return FALSE;
+	{
+		return false;
+	}
 
 	for (SVRPropertyItem* pNext = m_pVisbleList; pNext; pNext = pNext->GetNextVisible())
 	{
 		if (pNext==pItem)
-			return TRUE;
+		{
+			return true;
+		}
 	}
 
-	return FALSE;
+	return false;
 }
 
 
 void SVRPropTree::EnsureVisible(SVRPropertyItem* pItem)
 {
-	if (!pItem)
+	if( nullptr == pItem)
+	{
 		return;
+	}
 
 	// item is not scroll visible (expand all parents)
 	if (!IsItemVisible(pItem))
@@ -553,14 +599,20 @@ void SVRPropTree::EnsureVisible(SVRPropertyItem* pItem)
 
 SVRPropertyItem* SVRPropTree::InsertItem(SVRPropertyItem* pItem, SVRPropertyItem* pParent)
 {
-	if (!pItem)
+	if( nullptr == pItem)
+	{
 		return nullptr;
+	}
 
 	if (!pParent)
+	{
 		pParent = &m_Root;
+	}
 
 	if (!pParent->GetChild())
+	{
 		pParent->SetChild(pItem);
+	}
 	else
 	{
 		// add to end of the sibling list
@@ -568,7 +620,9 @@ SVRPropertyItem* SVRPropTree::InsertItem(SVRPropertyItem* pItem, SVRPropertyItem
 
 		pNext = pParent->GetChild();
 		while (pNext->GetSibling())
+		{
 			pNext = pNext->GetSibling();
+		}
 
 		pNext->SetSibling(pItem);
 	}
@@ -600,16 +654,24 @@ LONG SVRPropTree::HitTest(const POINT& pt)
 	if (nullptr != (pItem = FindItem(pt)))
 	{
 		if (!pItem->IsRootLevel() && pt.x >= m_Origin.x - PROPTREEITEM_COLRNG && pt.x <= m_Origin.x + PROPTREEITEM_COLRNG)
+		{
 			return HTCOLUMN;
+		}
 
 		if (pt.x > m_Origin.x + PROPTREEITEM_COLRNG)
+		{
 			return HTATTRIBUTE;
+		}
 
 		if (pItem->HitExpand(p))
+		{
 			return HTEXPAND;
+		}
 
 		if (pItem->HitCheckBox(p))
+		{
 			return HTCHECKBOX;
+		}
 
 		return HTLABEL;
 	}
@@ -673,17 +735,21 @@ void SVRPropTree::DisableInput(bool bDisable)
 {
 	m_bDisableInput = bDisable;
 
-	CWnd* pWnd;
+	CWnd* pWnd( GetParent() );
 
-	if (nullptr != (pWnd = GetParent()))
+	if( nullptr != pWnd )
+	{
 		pWnd->EnableWindow(!bDisable);
+	}
 }
 
 
 void SVRPropTree::SelectItems(SVRPropertyItem* pItem, bool bSelect)
 {
-	if (!pItem)
+	if( nullptr == pItem )
+	{
 		pItem = &m_Root;
+	}
 
 	EnumItems(pItem, EnumSelectAll, (LPARAM)bSelect);
 }
@@ -704,7 +770,9 @@ SVRPropertyItem* SVRPropTree::FocusFirst()
 	}
 
 	if (pold!=m_pFocus)
+	{
 		SendNotify(PTN_SELCHANGE, m_pFocus);
+	}
 
 	return m_pFocus;
 }
@@ -722,7 +790,9 @@ SVRPropertyItem* SVRPropTree::FocusLast()
 	if (pNext)
 	{
 		while (pNext->GetNextVisible())
+		{
 			pNext = pNext->GetNextVisible();
+		}
 
 		SetFocusedItem(pNext);
 
@@ -734,7 +804,9 @@ SVRPropertyItem* SVRPropTree::FocusLast()
 	}
 
 	if (pChange!=m_pFocus)
+	{
 		SendNotify(PTN_SELCHANGE, m_pFocus);
+	}
 
 	return pNext;
 }
@@ -762,7 +834,9 @@ SVRPropertyItem* SVRPropTree::FocusPrev()
 	}
 
 	if (pNext)
+	{
 		SetFocusedItem(pNext);
+	}
 	
 	if (m_pFocus)
 	{
@@ -771,7 +845,9 @@ SVRPropertyItem* SVRPropTree::FocusPrev()
 	}
 
 	if (pChange!=m_pFocus)
+	{
 		SendNotify(PTN_SELCHANGE, m_pFocus);
+	}
 
 	return pNext;
 }
@@ -785,15 +861,22 @@ SVRPropertyItem* SVRPropTree::FocusNext()
 	pChange = m_pFocus;
 
 	if (nullptr == m_pFocus)
+	{
 		pNext = m_pVisbleList;
-	else
-	if (m_pFocus->GetNextVisible())
+	}
+	else if (m_pFocus->GetNextVisible())
+	{
 		pNext = m_pFocus->GetNextVisible();
+	}
 	else
+	{
 		pNext = nullptr;
+	}
 
-	if (pNext)
-		SetFocusedItem(pNext);
+	if( nullptr != pNext )
+	{
+		SetFocusedItem( pNext );
+	}
 
 	if (m_pFocus)
 	{
@@ -802,7 +885,9 @@ SVRPropertyItem* SVRPropTree::FocusNext()
 	}
 
 	if (pChange!=m_pFocus)
+	{
 		SendNotify(PTN_SELCHANGE, m_pFocus);
+	}
 
 	return pNext;
 }
@@ -816,8 +901,10 @@ void SVRPropTree::UpdateMoveAllItems()
 
 void SVRPropTree::RefreshItems(SVRPropertyItem* pItem)
 {
-	if (!pItem)
+	if( nullptr == pItem )
+	{
 		pItem = &m_Root;
+	}
 
 	EnumItems(pItem, EnumRefreshAll);
 
@@ -827,8 +914,10 @@ void SVRPropTree::RefreshItems(SVRPropertyItem* pItem)
 
 bool CALLBACK SVRPropTree::EnumSelectAll(SVRPropTree*, SVRPropertyItem* pItem, LPARAM lParam)
 {
-	if (!pItem)
+	if( nullptr == pItem )
+	{
 		return false;
+	}
 
 	pItem->Select((lParam ? true : false));
 
@@ -838,8 +927,10 @@ bool CALLBACK SVRPropTree::EnumSelectAll(SVRPropTree*, SVRPropertyItem* pItem, L
 
 bool CALLBACK SVRPropTree::EnumRefreshAll(SVRPropTree*, SVRPropertyItem* pItem, LPARAM)
 {
-	if (!pItem)
+	if( nullptr == pItem )
+	{
 		return false;
+	}
 
 	pItem->OnRefresh();
 
@@ -849,8 +940,10 @@ bool CALLBACK SVRPropTree::EnumRefreshAll(SVRPropTree*, SVRPropertyItem* pItem, 
 
 bool CALLBACK SVRPropTree::EnumMoveAll(SVRPropTree*, SVRPropertyItem* pItem, LPARAM)
 {
-	if (!pItem)
+	if( nullptr == pItem )
+	{
 		return false;
+	}
 
 	pItem->OnMove();
 
@@ -861,10 +954,14 @@ bool CALLBACK SVRPropTree::EnumMoveAll(SVRPropTree*, SVRPropertyItem* pItem, LPA
 LRESULT SVRPropTree::SendNotify(UINT nNotifyCode, SVRPropertyItem* pItem)
 {
 	if (!IsWindow(m_hWnd))
+	{
 		return 0L;
+	}
 
 	if (!(GetStyle() & PTS_NOTIFY))
+	{
 		return 0L;
+	}
 
 	NMPROPTREE nmmp;
 	LPNMHDR lpnm;
@@ -929,26 +1026,24 @@ bool SVRPropTree::SaveState(SVRPropTreeState& rState)
 	bool bOK = true;
 	SVRPropertyItem* pItem = GetRootItem();
 
-	CString sItemName;
-	bOK = SaveState(sItemName, pItem, rState);
+	bOK = SaveState( _T(""), pItem, rState);
 	return bOK;
 }
 
-bool SVRPropTree::SaveState(CString sItemName, SVRPropertyItem* pItem, SVRPropTreeState& rState)
+bool SVRPropTree::SaveState(LPCTSTR ItemName, SVRPropertyItem* pItem, SVRPropTreeState& rState)
 {
 	bool bOK = true;
 	if( pItem )
 	{
-		sItemName += pItem->GetLabelText();
-		sItemName += _T("¬");
-		SVRPropTreeState::ItemType ItemState;
-		ItemState.bExpanded = pItem->IsExpanded();
-		rState.m_State[sItemName] = ItemState;
+		SVString Value( ItemName );
+		Value += pItem->GetLabelText();
+		Value += _T("¬");
+		rState.m_State[Value.c_str()] = pItem->IsExpanded();
 
 		SVRPropertyItem* pChild = pItem->GetChild();
 		while( pChild )
 		{
-			bOK = SaveState( sItemName, pChild, rState ) && bOK;
+			bOK = SaveState( Value.c_str(), pChild, rState ) && bOK;
 			pChild = pChild->GetSibling();
 		}
 	}
@@ -961,28 +1056,28 @@ bool SVRPropTree::RestoreState(const SVRPropTreeState& rState)
 	bool bOK = true;
 	SVRPropertyItem* pItem = GetRootItem();
 
-	CString sItemName;
-	bOK = RestoreState(sItemName, pItem, rState);
+	bOK = RestoreState( _T(""), pItem, rState);
 	return bOK;
 }
 
-bool SVRPropTree::RestoreState(CString sItemName, SVRPropertyItem* pItem, const SVRPropTreeState& rState)
+bool SVRPropTree::RestoreState(LPCTSTR ItemName, SVRPropertyItem* pItem, const SVRPropTreeState& rState)
 {
 	bool bOK = true;
-	if( pItem )
+	if( nullptr != pItem )
 	{
-		sItemName += pItem->GetLabelText();
-		sItemName += _T("¬");
+		SVString Value( ItemName );
+		Value += pItem->GetLabelText();
+		Value += _T("¬");
 
-		SVRPropTreeState::MapType::const_iterator iter =  rState.m_State.find(sItemName);
+		SVRPropTreeState::MapStringTreeState::const_iterator iter =  rState.m_State.find( Value.c_str() );
 		if( iter!= rState.m_State.end() )
 		{
-			pItem->Expand( iter->second.bExpanded );
+			pItem->Expand( iter->second );
 
 			SVRPropertyItem* pChild = pItem->GetChild();
 			while( pChild )
 			{
-				bOK = RestoreState( sItemName, pChild, rState ) && bOK;
+				bOK = RestoreState( Value.c_str(), pChild, rState ) && bOK;
 				pChild = pChild->GetSibling();
 			}
 		}

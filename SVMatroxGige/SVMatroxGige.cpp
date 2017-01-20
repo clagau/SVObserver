@@ -126,11 +126,9 @@ SVMatroxIdentifier SVMatroxGige::ProcessFrame( SVMatroxIdentifier HookType, SVMa
 						}
 #endif
 					}
-					CString l_csbuf;
-					l_csbuf.Format("Process End Frame Callback - Camera %d-%d",
-									l_pCamera->m_SystemHandle, l_pCamera->m_Handle);
 #if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
-					TRACE( "%s\n", l_csbuf );
+					SVString Temp = SvUl_SF::Format( _T("Process End Frame Callback - Camera %d-%d\n"), l_pCamera->m_SystemHandle, l_pCamera->m_Handle );
+					TRACE( Temp.c_str() );
 #endif
 				}
 				else
@@ -169,13 +167,12 @@ SVMatroxIdentifier SVMatroxGige::DigitizerCallback( SVMatroxIdentifier HookType,
 					// Do StartFrame Logic
 					g_svTheApp.m_svSystem.ProcessStartFrame( *l_pCamera );
 
-					CString l_csbuf;
-					l_csbuf.Format("Process Start Frame Callback - Camera %d-%d Buffer %d", 
-								l_pCamera->m_SystemHandle, 
-								l_pCamera->m_Handle, 
-								l_pCamera->m_lStartIndex );
 #if defined (TRACE_THEM_ALL) || defined (TRACE_MATROXGIGE)
-					TRACE( "%s\n", l_csbuf );
+					SVString Temp = SvUl_SF::Format( _T("Process Start Frame Callback - Camera %d-%d Buffer %d\n"), 
+						l_pCamera->m_SystemHandle, 
+						l_pCamera->m_Handle, 
+						l_pCamera->m_lStartIndex );
+					TRACE( Temp.c_str() );
 #endif
 				}
 				
@@ -285,23 +282,23 @@ HRESULT SVMatroxGige::CreateSystems()
 
 		for ( long i = 0; i < l_lSystemCount; i++ )
 		{
-			SVString l_Name;
+			SVString Name;
 
-			l_Code = SVMatroxApplicationInterface::GetSystemName( i, l_Name );
+			l_Code = SVMatroxApplicationInterface::GetSystemName( i, Name );
 			
 			if ( l_Code == SVMEE_STATUS_OK )
 			{
 				// Check for GIGE system
-				if (l_Name.find("GIGE") != SVString::npos )
+				if( SVString::npos != Name.find( _T("GIGE") ) )
 				{
 					// Check for Solios GIGE
-					if (l_Name.find("SOLIOS") != SVString::npos)
+					if(SVString::npos != Name.find( _T("SOLIOS") ) )
 					{
-						AddSystem(l_Name, soliosGigeSystemID++);
+						AddSystem(Name, soliosGigeSystemID++);
 					}
 					else // GIGE system (dongle ?)
 					{
-						l_Code = AddSystem(l_Name, gigeSystemID++);
+						l_Code = AddSystem(Name, gigeSystemID++);
 						if ( SVMEE_STATUS_OK != l_Code )
 						{
 							hr = l_Code;
@@ -1511,7 +1508,7 @@ SVMatroxIdentifier SVMatroxGige::CameraPresentCallback( SVMatroxIdentifier HookT
 			if (IsCamPresent)
 			{
 				// log an exception
-				SVStringArray msgList;
+				SVStringVector msgList;
 				msgList.push_back(SvUl_SF::Format(_T("%d"), deviceNumber));
 				SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 				Exception.setMessage( SVMSG_SVMATROXGIGE_NO_ERROR, SvOi::Tid_MatroxGigE_Connect, msgList, SvStl::SourceFileParams(StdMessageParams) );
@@ -1521,7 +1518,7 @@ SVMatroxIdentifier SVMatroxGige::CameraPresentCallback( SVMatroxIdentifier HookT
 			else
 			{
 				// log an exception
-				SVStringArray msgList;
+				SVStringVector msgList;
 				msgList.push_back(SvUl_SF::Format(_T("%d"), deviceNumber));
 				SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 				Exception.setMessage( SVMSG_SVMATROXGIGE_NO_ERROR, SvOi::Tid_MatroxGigE_Disconnect, msgList, SvStl::SourceFileParams(StdMessageParams) );
@@ -1574,7 +1571,7 @@ void SVMatroxGige::HandleConnect(SVMatroxGigeSystem& p_rSystem, long deviceNumbe
 									if (S_OK != hr)
 									{
 										// log an exception
-										SVStringArray msgList;
+										SVStringVector msgList;
 										msgList.push_back(SvUl_SF::Format(_T("%d"), hr));
 										msgList.push_back(SvUl_SF::Format(_T("%d"), deviceNumber));
 										SvStl::MessageMgrStd Exception( SvStl::LogOnly );
@@ -1584,7 +1581,7 @@ void SVMatroxGige::HandleConnect(SVMatroxGigeSystem& p_rSystem, long deviceNumbe
 								else
 								{
 									// log an exception
-									SVStringArray msgList;
+									SVStringVector msgList;
 									msgList.push_back(SvUl_SF::Format(_T("%d"), hr));
 									msgList.push_back(SvUl_SF::Format(_T("%d"), deviceNumber));
 									SvStl::MessageMgrStd Exception( SvStl::LogOnly );
@@ -1594,7 +1591,7 @@ void SVMatroxGige::HandleConnect(SVMatroxGigeSystem& p_rSystem, long deviceNumbe
 							else
 							{
 								// log an exception
-								SVStringArray msgList;
+								SVStringVector msgList;
 								msgList.push_back(SvUl_SF::Format(_T("%d"), hr));
 								msgList.push_back(SvUl_SF::Format(_T("%d"), deviceNumber));
 								SvStl::MessageMgrStd Exception( SvStl::LogOnly );
@@ -1604,7 +1601,7 @@ void SVMatroxGige::HandleConnect(SVMatroxGigeSystem& p_rSystem, long deviceNumbe
 						else
 						{
 							// log an exception
-							SVStringArray msgList;
+							SVStringVector msgList;
 							msgList.push_back(SvUl_SF::Format(_T("%d"), hr));
 							msgList.push_back(SvUl_SF::Format(_T("%d"), deviceNumber));
 							SvStl::MessageMgrStd Exception( SvStl::LogOnly );
@@ -1615,7 +1612,7 @@ void SVMatroxGige::HandleConnect(SVMatroxGigeSystem& p_rSystem, long deviceNumbe
 				else
 				{
 					// log an exception
-					SVStringArray msgList;
+					SVStringVector msgList;
 					msgList.push_back(SvUl_SF::Format(_T("%d"), hr));
 					msgList.push_back(SvUl_SF::Format(_T("%d"), deviceNumber));
 					SvStl::MessageMgrStd Exception( SvStl::LogOnly );
@@ -1626,7 +1623,7 @@ void SVMatroxGige::HandleConnect(SVMatroxGigeSystem& p_rSystem, long deviceNumbe
 		else
 		{
 			// log an exception
-			SVStringArray msgList;
+			SVStringVector msgList;
 			msgList.push_back(SvUl_SF::Format(_T("%d"), hr));
 			msgList.push_back(SvUl_SF::Format(_T("%d"), deviceNumber));
 			SvStl::MessageMgrStd Exception( SvStl::LogOnly );
@@ -1636,7 +1633,7 @@ void SVMatroxGige::HandleConnect(SVMatroxGigeSystem& p_rSystem, long deviceNumbe
 	else
 	{
 		// log an exception
-		SVStringArray msgList;
+		SVStringVector msgList;
 		msgList.push_back(SvUl_SF::Format(_T("%d"), hr));
 		msgList.push_back(SvUl_SF::Format(_T("%d"), deviceNumber));
 		SvStl::MessageMgrStd Exception( SvStl::LogOnly );
@@ -1669,7 +1666,7 @@ void SVMatroxGige::HandleDisconnect(SVMatroxGigeSystem& p_rSystem, long deviceNu
 		else
 		{
 			// log an exception
-			SVStringArray msgList;
+			SVStringVector msgList;
 			msgList.push_back(SvUl_SF::Format(_T("%d"), hr));
 			msgList.push_back(SvUl_SF::Format(_T("%d"), deviceNumber));
 			SvStl::MessageMgrStd Exception( SvStl::LogOnly );
@@ -1679,7 +1676,7 @@ void SVMatroxGige::HandleDisconnect(SVMatroxGigeSystem& p_rSystem, long deviceNu
 	else
 	{
 		// log an exception
-		SVStringArray msgList;
+		SVStringVector msgList;
 		msgList.push_back(SvUl_SF::Format(_T("%d"), hr));
 		msgList.push_back(SvUl_SF::Format(_T("%d"), deviceNumber));
 		SvStl::MessageMgrStd Exception( SvStl::LogOnly );

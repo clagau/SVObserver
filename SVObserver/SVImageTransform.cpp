@@ -9,17 +9,17 @@
 //* .Check In Date   : $Date:   15 May 2014 12:44:08  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVImageTransform.h"
-
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
 #include "SVObjectLibrary/SVAnalyzerLevelCreateStruct.h"
-
 #include "ObjectInterfaces/GlobalConst.h"
 #include "SVTool.h"
 #include "SVTransformationTool.h"
-
+#include "SVUtilityLibrary/SVString.h"
+#pragma endregion Includes
 
 SV_IMPLEMENT_CLASS( SVImageTransformClass, SVImageTransformClassGuid )
 
@@ -35,7 +35,7 @@ SVImageTransformClass::SVImageTransformClass( SVObjectClass* POwner, int StringR
 	// Image
 	m_inputImageObjectInfo.SetInputObjectType( SVImageObjectType );
 	m_inputImageObjectInfo.SetObject( GetObjectInfo() );
-	RegisterInputObject( &m_inputImageObjectInfo, _T( "ImageTransformImage" ) );
+	RegisterInputObject( &m_inputImageObjectInfo, _T("ImageTransformImage") );
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject( &m_outputImageObject, SVOutputImageObjectGuid, IDS_OBJECTNAME_IMAGE1 );
@@ -52,23 +52,23 @@ SVImageTransformClass::SVImageTransformClass( SVObjectClass* POwner, int StringR
 
 	// Interpolation mode object
 	// Set Default Interpolation Mode to use Nearest Neighbor
-	CString strMode("");
-	CString strPrepare("");
-	CString strEnumTypes("");
+	SVString Mode;
+	SVString Text;
+	SVString EnumTypes;
 	// M_NEAREST_NEIGHBOR 
-	strMode.LoadString( IDS_NEAREST_NEIGHBOR_STRING );
-	strPrepare.Format( _T( "%s=%d," ), strMode, SVNearestNeighOverScanClear); // M_NEAREST_NEIGHBOR);
-	strEnumTypes += strPrepare;
+	Mode = SvUl_SF::LoadSVString( IDS_NEAREST_NEIGHBOR_STRING );
+	Text = SvUl_SF::Format( _T("%s=%d,"), Mode.c_str(), SVNearestNeighOverScanClear); // M_NEAREST_NEIGHBOR);
+	EnumTypes += Text;
 	// M_BILINEAR
-	strMode.LoadString( IDS_BILINEAR_STRING );
-	strPrepare.Format( _T( "%s=%d," ), strMode, SVBilinear);		// M_BILINEAR );
-	strEnumTypes += strPrepare;
+	Mode = SvUl_SF::LoadSVString( IDS_BILINEAR_STRING );
+	Text = SvUl_SF::Format( _T("%s=%d,"), Mode.c_str(), SVBilinear);		// M_BILINEAR );
+	EnumTypes += Text;
 	// M_BICUBIC
-	strMode.LoadString( IDS_BICUBIC_STRING );
-	strPrepare.Format( _T( "%s=%d," ), strMode, SVBiCubic);			// M_BICUBIC );
-	strEnumTypes += strPrepare;
+	Mode = SvUl_SF::LoadSVString( IDS_BICUBIC_STRING );
+	Text = SvUl_SF::Format( _T("%s=%d,"), Mode.c_str(), SVBiCubic);			// M_BICUBIC );
+	EnumTypes += Text;
 	// And now set enum types...
-	m_interpolationMode.SetEnumTypes( strEnumTypes );
+	m_interpolationMode.SetEnumTypes( EnumTypes.c_str() );
 	m_interpolationMode.SetDefaultValue( SVNearestNeighOverScanClear, TRUE );	// Refer to MIL...
 	RegisterEmbeddedObject( &m_interpolationMode, SVOutputInterpolationModeObjectGuid, IDS_OBJECTNAME_INTERPOLATION_MODE, false, SVResetItemNone );
 
@@ -474,9 +474,9 @@ HRESULT SVImageTransformClass::CollectInputImageNames()
 	SVTransformationToolClass* l_pTool = dynamic_cast<SVTransformationToolClass*>(GetTool());
 	if( l_pInputImage && l_pTool )
 	{
-		CString l_strName = l_pInputImage->GetCompleteObjectName();
+		SVString Name = l_pInputImage->GetCompleteName();
 
-		l_pTool->GetInputImageNames()->SetValue( 0, l_strName );
+		l_pTool->GetInputImageNames()->SetValue( 0, Name );
 
 		l_hr = S_OK;
 	}

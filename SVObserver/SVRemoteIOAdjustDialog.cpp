@@ -53,24 +53,24 @@ void SVRemoteIOAdjustDialog::SetIOValue( const _variant_t& p_rValue )
 	}
 }
 
-void SVRemoteIOAdjustDialog::GetIOValue( _variant_t& p_rValue ) const
+void SVRemoteIOAdjustDialog::GetIOValue( _variant_t& rValue ) const
 {
-	p_rValue.Clear();
+	rValue.Clear();
 
 	if( nullptr != m_ValueEditControl.GetSafeHwnd() )
 	{
-		CString l_Value;
+		CString Text;
 
-		m_ValueEditControl.GetWindowText( l_Value );
+		m_ValueEditControl.GetWindowText( Text );
 
-		p_rValue = static_cast< LPCTSTR >( l_Value );
+		rValue.SetString( Text );
 	}
 	else
 	{
-		p_rValue = m_Value;
+		rValue = m_Value;
 	}
 
-	p_rValue.ChangeType( VT_R8 );
+	rValue.ChangeType( VT_R8 );
 }
 
 void SVRemoteIOAdjustDialog::DoDataExchange(CDataExchange* pDX)

@@ -14,6 +14,7 @@
 #include "RemoteMonitorList.h"
 #include "SVMonitorList.h"
 #include "SVSharedMemoryLibrary/SVProductFilterEnum.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 class SVConfigurationObject;

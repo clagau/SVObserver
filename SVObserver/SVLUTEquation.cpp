@@ -14,7 +14,7 @@
 #include "SVLUTEquation.h"
 #include "SVObserver.h"
 #include "CameraLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
-
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 SV_IMPLEMENT_CLASS( SVLUTEquationClass, SVLUTEquationClassGuid );
@@ -126,14 +126,12 @@ BOOL SVLUTEquationClass::OnValidate()
 BOOL SVLUTEquationClass::SetDefaultFormula()
 {
 	// Get current complete name of LUT Index...
-	CString strName = m_lutIndex.GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType );
+	SVString Name = m_lutIndex.GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType );
 
-	CString strEmpty;
-	if( ! strName.IsEmpty() )
+	if( ! Name.empty() )
 	{
 		// Set equation in quotes...
-		CString strEquation;
-		strEquation.Format( _T( "\"%s\"" ), strName );
+		SVString strEquation = SvUl_SF::Format( _T( "\"%s\"" ), Name.c_str() );
 
 		// Set equation...
 		SetEquationText( strEquation );
@@ -141,14 +139,14 @@ BOOL SVLUTEquationClass::SetDefaultFormula()
 		// Update symbol table and test...
 		if( Test().bPassed )
 		{
-			return TRUE;
+			return true;
 		}
 		
 		// something is wrong, flush equation...
-		SetEquationText( strEmpty );
+		SetEquationText( SVString() );
 	}
 
-	return FALSE;
+	return false;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

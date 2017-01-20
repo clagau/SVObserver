@@ -84,34 +84,34 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		return failStats;
 	}
 
-	void SVSharedMonitorList::SetProductItems(const std::vector<std::string> & items)
+	void SVSharedMonitorList::SetProductItems(const SVStringVector & items)
 	{
 		SVSharedConfiguration::Log("SVSharedMonitorList::SetProductItems");
 		prodItems.clear();
 		prodItems.reserve(items.size());
-		for (std::vector<std::string>::const_iterator it = items.begin(); it != items.end(); ++it)
+		for (SVStringVector::const_iterator it = items.begin(); it != items.end(); ++it)
 		{
 			prodItems.push_back(char_string(it->c_str(), m_allocator));
 		}
 	}
 
-	void SVSharedMonitorList::SetRejectCond(const std::vector<std::string> & items)
+	void SVSharedMonitorList::SetRejectCond(const SVStringVector & items)
 	{
 		SVSharedConfiguration::Log("SVSharedMonitorList::SetRejectCond");
 		rejctCond.clear();
 		rejctCond.reserve(items.size());
-		for (std::vector<std::string>::const_iterator it = items.begin(); it != items.end(); ++it)
+		for (SVStringVector::const_iterator it = items.begin(); it != items.end(); ++it)
 		{
 			rejctCond.push_back(char_string(it->c_str(), m_allocator));
 		}
 	}
 
-	void SVSharedMonitorList::SetFailStatus(const std::vector<std::string> & items)
+	void SVSharedMonitorList::SetFailStatus(const SVStringVector & items)
 	{
 		SVSharedConfiguration::Log("SVSharedMonitorList::SetFailStatus");
 		failStats.clear();
 		failStats.reserve(items.size());
-		for (std::vector<std::string>::const_iterator it = items.begin(); it != items.end(); ++it)
+		for (SVStringVector::const_iterator it = items.begin(); it != items.end(); ++it)
 		{
 			failStats.push_back(char_string(it->c_str(), m_allocator));
 		}

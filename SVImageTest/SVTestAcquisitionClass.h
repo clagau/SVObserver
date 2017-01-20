@@ -15,6 +15,7 @@
 #include "CameraLibrary/SVDeviceParamCollection.h"
 #include "SVImageLibrary/SVAcquisitionBufferInterface.h"
 #include "SVTimerLibrary/SVClock.h"
+#include "SVUtilityLibrary/SVString.h"
 
 class SVCameraPage;
 class SVTestAcquisitionSubsystem;

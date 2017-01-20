@@ -29,8 +29,11 @@
 
 #pragma once
 
-#include "PropTreeItem.h"
+#pragma region Includes
+#include "SVUtilityLibrary/SVString.h"
+#include "SVRPropTreeItem.h"
 #include "SVNotifyButton.h"
+#pragma endregion Includes
 
 class SVRPropertyItemCombo : public CComboBox, public SVRPropertyItem
 {
@@ -80,7 +83,7 @@ public:
 	// Get the height of the dropdown combo box
 	LONG GetDropDownHeight();
 
-	void SetButtonText( const CString& sText );
+	void SetButtonText( LPCTSTR Text );
 
 	void EnableButton( bool bEnable = true );	// must be done before Create
 
@@ -88,7 +91,7 @@ protected:
 //	CVariantObj	m_vtData;
 	LPARAM  m_lComboData;
 	LONG    m_nDropHeight;
-	CString m_strButtonText;
+	SVString m_ButtonText;
 
 // Operations
 protected:

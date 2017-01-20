@@ -11,11 +11,14 @@
 
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <boost/config.hpp>
 //Moved to precompiled header: #include <boost/function.hpp>
 #include "SVMMTimerEventHandler.h"
 #include "SVSystemLibrary/SVAsyncProcedure.h"
 #include "SVSystemLibrary/SVCriticalSection.h"
+#include "SVUtilityLibrary/SVString.h"
+#pragma endregion Includes
 
 class SVMMTimer
 {

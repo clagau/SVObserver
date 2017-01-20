@@ -12,49 +12,57 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVObjectAttributeClass.h"
+#include "ObjectInterfaces/TextDefineSvOi.h"
 #pragma endregion Includes
+
+#pragma region Declarations
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+#endif
+#pragma endregion Declarations
 
 SVObjectAttributeClass::SVObjectAttributeClass()
 {
 	miType = SV_OBJECT_TYPE_UNKNOWN;
 }
 
-SVObjectAttributeClass::SVObjectAttributeClass(SVObjectAttributeClass& orig) // @WARNING [SEJ][20 April 2016] - Should be const &
+SVObjectAttributeClass::SVObjectAttributeClass( const SVObjectAttributeClass& rRhs )
 {
-	(*this) = orig; // @WARNING [SEJ][20 April 2016] - prevents rvalue from being const & - See operator=() Implementation
+	(*this) = rRhs;
 }
 
 SVObjectAttributeClass::~SVObjectAttributeClass()
 {
 }
 
-SVObjectAttributeClass& SVObjectAttributeClass::operator=(SVObjectAttributeClass& rhs) // @WARNING [SEJ][20 April 2016] - Should be const &
+SVObjectAttributeClass& SVObjectAttributeClass::operator=(const SVObjectAttributeClass& rRhs)
 {
-	if ( this != &rhs )
+	if ( this != &rRhs )
 	{
-		SetName( rhs.GetName() ); // @WARNING [SEJ][20 April 2016] - prevents rvalue from being const &
-		SetType( rhs.GetType() ); // @WARNING [SEJ][20 April 2016] - prevents rvalue from being const &
+		SetName( rRhs.GetName() );
+		SetType( rRhs.GetType() );
 
-		msvBoolArray = rhs.msvBoolArray;
-		msvByteArray = rhs.msvByteArray;
-		msvCStringArray = rhs.msvCStringArray;
-		msvDoubleArray = rhs.msvDoubleArray;
-		msvDWordArray = rhs.msvDWordArray;
-		msvLongArray = rhs.msvLongArray;
-		msvPointArray = rhs.msvPointArray;
-		msvDPointArray = rhs.msvDPointArray;
-		msvVariantArray = rhs.msvVariantArray;
-		msvInt64Array = rhs.msvInt64Array;
+		m_BoolArray = rRhs.m_BoolArray;
+		m_ByteArray = rRhs.m_ByteArray;
+		m_StringArray = rRhs.m_StringArray;
+		m_DoubleArray = rRhs.m_DoubleArray;
+		m_DWordArray = rRhs.m_DWordArray;
+		m_LongArray = rRhs.m_LongArray;
+		m_PointArray = rRhs.m_PointArray;
+		m_DPointArray = rRhs.m_DPointArray;
+		m_VariantArray = rRhs.m_VariantArray;
+		m_Int64Array = rRhs.m_Int64Array;
 	}	
-	return rhs;
+	return *this;
 }
 
-LPCTSTR SVObjectAttributeClass::GetName()
+LPCTSTR SVObjectAttributeClass::GetName() const
 {
-	return mcsName;
+	return m_Name.c_str();
 }
 
-int SVObjectAttributeClass::GetType()
+int SVObjectAttributeClass::GetType() const
 {
 	return miType;
 }
@@ -77,7 +85,7 @@ SVObjectScriptDataObjectTypeEnum SVObjectAttributeClass::GetSVObjectScriptDataOb
 
 			break;
 		}
-		case SV_OBJECT_TYPE_CSTRING:
+		case SV_OBJECT_TYPE_STRING:
 		{
 			eType = SV_STRING_Type;
 
@@ -142,7 +150,7 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectBoolArrayClass& svData)
 	{
 		case SV_OBJECT_TYPE_BOOL:
 		{
-			svData = msvBoolArray;
+			svData = m_BoolArray;
 
 			bOk = TRUE;
 
@@ -152,7 +160,7 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectBoolArrayClass& svData)
 		{
 			break;
 		}
-		case SV_OBJECT_TYPE_CSTRING:
+		case SV_OBJECT_TYPE_STRING:
 		{
 			break;
 		}
@@ -205,17 +213,17 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectByteArrayClass& svData)
 		}
 		case SV_OBJECT_TYPE_BYTE:
 		{
-			svData = msvByteArray;
+			svData = m_ByteArray;
 
 			bOk = TRUE;
 
 			break;
 		}
-		case SV_OBJECT_TYPE_CSTRING:
+		case SV_OBJECT_TYPE_STRING:
 		{
-			for ( int i = 0; i < msvCStringArray.GetSize(); i++ )
+			for ( int i = 0; i < m_StringArray.GetSize(); i++ )
 			{
-				BYTE bTemp = (BYTE)atoi( msvCStringArray[i] );
+				BYTE bTemp = (BYTE)atoi( m_StringArray[i].c_str() );
 
 				svData.InsertAt( i, bTemp );
 			}
@@ -274,9 +282,9 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectArrayClassTemplate<char>& svD
 		case SV_OBJECT_TYPE_BYTE:
 		{
 			svData.RemoveAll();
-			for (int i=0; i < msvByteArray.GetSize(); i++)
+			for (int i=0; i < m_ByteArray.GetSize(); i++)
 			{
-				char c = (char)msvByteArray[i];
+				char c = (char)m_ByteArray[i];
 				svData.Add(c);
 			}
 
@@ -284,11 +292,11 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectArrayClassTemplate<char>& svD
 
 			break;
 		}
-		case SV_OBJECT_TYPE_CSTRING:
+		case SV_OBJECT_TYPE_STRING:
 		{
-			for ( int i = 0; i < msvCStringArray.GetSize(); i++ )
+			for ( int i = 0; i < m_StringArray.GetSize(); i++ )
 			{
-				char cTemp = (char) atoi( msvCStringArray[i] );
+				char cTemp = (char) atoi( m_StringArray[i].c_str() );
 
 				svData.InsertAt( i, cTemp );
 			}
@@ -334,7 +342,7 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectArrayClassTemplate<char>& svD
 	return bOk;
 }// end GetData(SVObjectArrayClassTemplate<char>& svData)
 
-BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectCStringArrayClass& svData)
+BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectSVStringArrayClass& svData)
 {
 	BOOL bOk = FALSE;
 
@@ -342,20 +350,20 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectCStringArrayClass& svData)
 	{
 		case SV_OBJECT_TYPE_BOOL:
 		{
-			for ( int i = 0; i < msvBoolArray.GetSize(); i++ )
+			for ( int i = 0; i < m_BoolArray.GetSize(); i++ )
 			{
-				CString csTemp;
+				SVString Temp;
 				
-				if ( msvBoolArray[i] )
+				if ( m_BoolArray[i] )
 				{
-					csTemp = "TRUE";
+					Temp = SvOi::cTrue;
 				}
 				else
 				{
-					csTemp = "FALSE";
+					Temp = SvOi::cFalse;
 				}
 
-				svData.InsertAt( i, csTemp );
+				svData.InsertAt( i, Temp );
 			}
 
 			bOk = TRUE;
@@ -364,22 +372,20 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectCStringArrayClass& svData)
 		}
 		case SV_OBJECT_TYPE_BYTE:
 		{
-			for ( int i = 0; i < msvByteArray.GetSize(); i++ )
+			for ( int i = 0; i < m_ByteArray.GetSize(); i++ )
 			{
-				CString csTemp;
+				SVString Temp = SvUl_SF::Format( "%x", m_ByteArray[i] );
 
-				csTemp.Format( "%x", msvByteArray[i] );
-
-				svData.InsertAt( i, csTemp );
+				svData.InsertAt( i, Temp );
 			}
 
 			bOk = TRUE;
 
 			break;
 		}
-		case SV_OBJECT_TYPE_CSTRING:
+		case SV_OBJECT_TYPE_STRING:
 		{
-			svData = msvCStringArray;
+			svData = m_StringArray;
 
 			bOk = TRUE;
 
@@ -387,13 +393,11 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectCStringArrayClass& svData)
 		}
 		case SV_OBJECT_TYPE_DOUBLE:
 		{
-			for ( int i = 0; i < msvDoubleArray.GetSize(); i++ )
+			for ( int i = 0; i < m_DoubleArray.GetSize(); i++ )
 			{
-				CString csTemp;
+				SVString Temp = SvUl_SF::Format( "%f", m_DoubleArray[i] );
 
-				csTemp.Format( "%f", msvDoubleArray[i] );
-
-				svData.InsertAt( i, csTemp );
+				svData.InsertAt( i, Temp );
 			}
 
 			bOk = TRUE;
@@ -402,13 +406,11 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectCStringArrayClass& svData)
 		}
 		case SV_OBJECT_TYPE_DWORD:
 		{
-			for ( int i = 0; i < msvDWordArray.GetSize(); i++)
+			for ( int i = 0; i < m_DWordArray.GetSize(); i++)
 			{
-				CString csTemp;
+				SVString Temp = SvUl_SF::Format( _T("%lx"), m_DWordArray[i] );
 
-				csTemp.Format( "%lx", msvDWordArray[i] );
-
-				svData.InsertAt( i, csTemp );
+				svData.InsertAt( i, Temp );
 			}
 
 			bOk = TRUE;
@@ -417,13 +419,11 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectCStringArrayClass& svData)
 		}
 		case SV_OBJECT_TYPE_LONG:
 		{
-			for ( int i = 0; i < msvLongArray.GetSize(); i++)
+			for ( int i = 0; i < m_LongArray.GetSize(); i++)
 			{
-				CString csTemp;
+				SVString Temp = SvUl_SF::Format( _T("%ld"), m_LongArray[i] );
 
-				csTemp.Format( "%ld", msvLongArray[i] );
-
-				svData.InsertAt( i, csTemp );
+				svData.InsertAt( i, Temp );
 			}
 
 			bOk = TRUE;
@@ -432,11 +432,9 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectCStringArrayClass& svData)
 		}
 		case SV_OBJECT_TYPE_POINT:
 		{
-			for ( int i = 0; i < msvPointArray.GetSize(); i++)
+			for ( int i = 0; i < m_PointArray.GetSize(); i++)
 			{
-				CString csTemp = msvPointArray[i].ToString().c_str();
-
-				svData.InsertAt( i, csTemp );
+				svData.InsertAt( i, m_PointArray[i].ToString() );
 			}
 
 			bOk = TRUE;
@@ -445,13 +443,11 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectCStringArrayClass& svData)
 		}
 		case SV_OBJECT_TYPE_DPOINT:
 		{
-			for ( int i = 0; i < msvDPointArray.GetSize(); i++)
+			for ( int i = 0; i < m_DPointArray.GetSize(); i++)
 			{
-				CString csTemp;
+				SVString Temp = SvUl_SF::Format( _T("(%lf,%lf)"), m_DPointArray[i].x, m_DPointArray[i].y );
 
-				csTemp.Format( "(%lf,%lf)", msvDPointArray[i].x, msvDPointArray[i].y );
-
-				svData.InsertAt( i, csTemp );
+				svData.InsertAt( i, Temp );
 			}
 
 			bOk = TRUE;
@@ -460,21 +456,21 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectCStringArrayClass& svData)
 		}
 		case SV_OBJECT_TYPE_VARIANT:
 		{
-			for ( int i = 0; i < msvDPointArray.GetSize(); i++)
+			for ( int i = 0; i < m_DPointArray.GetSize(); i++)
 			{
-				CString csTemp;
+				SVString Temp;
 
-				VARIANT vtTemp = msvVariantArray[i];
+				VARIANT vtTemp = m_VariantArray[i];
 				HRESULT hr = ::VariantChangeType( &vtTemp, &vtTemp, VARIANT_ALPHABOOL, VT_BSTR);
 				if( S_OK == hr )
 				{
-					csTemp = vtTemp.bstrVal;
+					Temp = SvUl_SF::createSVString( _bstr_t( vtTemp.bstrVal ) );
 				}
 				else
 				{
-					csTemp = "";
+					Temp = _T("");
 				}
-				svData.InsertAt( i, csTemp );
+				svData.InsertAt( i, Temp );
 			}
 
 			bOk = TRUE;
@@ -483,13 +479,11 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectCStringArrayClass& svData)
 		}
 		case SV_OBJECT_TYPE_INT64:
 		{
-			for ( int i = 0; i < msvInt64Array.GetSize(); i++)
+			for ( int i = 0; i < m_Int64Array.GetSize(); i++)
 			{
-				CString csTemp;
+				SVString Temp = SvUl_SF::Format( _T("%I64d"), m_Int64Array[i] );
 
-				csTemp.Format( "%I64d", msvInt64Array[i] );
-
-				svData.InsertAt( i, csTemp );
+				svData.InsertAt( i, Temp );
 			}
 
 			bOk = TRUE;
@@ -503,175 +497,7 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectCStringArrayClass& svData)
 	}
 
 	return bOk;
-}// end GetData(SVObjectArrayClassTemplate<CString>& svData)
-
-BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectArrayClassTemplate<SVString>& svData)
-{
-	BOOL bOk = FALSE;
-
-	switch ( GetType() )
-	{
-		case SV_OBJECT_TYPE_BOOL:
-		{
-			for ( int i = 0; i < msvBoolArray.GetSize(); i++ )
-			{
-				SVString csTemp;
-				
-				if ( msvBoolArray[i] )
-				{
-					csTemp = "TRUE";
-				}
-				else
-				{
-					csTemp = "FALSE";
-				}
-
-				svData.InsertAt( i, csTemp );
-			}
-
-			bOk = TRUE;
-
-			break;
-		}
-		case SV_OBJECT_TYPE_BYTE:
-		{
-			for ( int i = 0; i < msvByteArray.GetSize(); i++ )
-			{
-				SVString csTemp;
-
-				csTemp = SvUl_SF::Format( "%x", msvByteArray[i] );
-
-				svData.InsertAt( i, csTemp );
-			}
-
-			bOk = TRUE;
-
-			break;
-		}
-		case SV_OBJECT_TYPE_CSTRING:
-		{
-			svData = msvCStringArray;
-
-			bOk = TRUE;
-
-			break;
-		}
-		case SV_OBJECT_TYPE_DOUBLE:
-		{
-			for ( int i = 0; i < msvDoubleArray.GetSize(); i++ )
-			{
-				SVString csTemp;
-
-				csTemp = SvUl_SF::Format( "%f", msvDoubleArray[i] );
-
-				svData.InsertAt( i, csTemp );
-			}
-
-			bOk = TRUE;
-
-			break;
-		}
-		case SV_OBJECT_TYPE_DWORD:
-		{
-			for ( int i = 0; i < msvDWordArray.GetSize(); i++)
-			{
-				SVString csTemp;
-
-				csTemp = SvUl_SF::Format( "%lx", msvDWordArray[i] );
-
-				svData.InsertAt( i, csTemp );
-			}
-
-			bOk = TRUE;
-
-			break;
-		}
-		case SV_OBJECT_TYPE_LONG:
-		{
-			for ( int i = 0; i < msvLongArray.GetSize(); i++)
-			{
-				SVString csTemp;
-
-				csTemp = SvUl_SF::Format( "%ld", msvLongArray[i] );
-
-				svData.InsertAt( i, csTemp );
-			}
-
-			bOk = TRUE;
-
-			break;
-		}
-		case SV_OBJECT_TYPE_POINT:
-		{
-			for ( int i = 0; i < msvPointArray.GetSize(); i++)
-			{
-				const SVString& csTemp = msvPointArray[i].ToString();
-
-				svData.InsertAt( i, csTemp );
-			}
-
-			bOk = TRUE;
-
-			break;
-		}
-		case SV_OBJECT_TYPE_DPOINT:
-		{
-			for ( int i = 0; i < msvDPointArray.GetSize(); i++)
-			{
-				SVString csTemp = SvUl_SF::Format( "(%lf,%lf)", msvDPointArray[i].x, msvDPointArray[i].y );
-
-				svData.InsertAt( i, csTemp );
-			}
-
-			bOk = TRUE;
-
-			break;
-		}
-		case SV_OBJECT_TYPE_VARIANT:
-		{
-			for ( int i = 0; i < msvDPointArray.GetSize(); i++)
-			{
-				SVString csTemp;
-
-				VARIANT vtTemp = msvVariantArray[i];
-				HRESULT hr = ::VariantChangeType( &vtTemp, &vtTemp, VARIANT_ALPHABOOL, VT_BSTR);
-				if( S_OK == hr )
-				{
-					csTemp = SvUl_SF::createSVString(vtTemp);
-				}
-				else
-				{
-					csTemp = "";
-				}
-				svData.InsertAt( i, csTemp );
-			}
-
-			bOk = TRUE;
-
-			break;
-		}
-		case SV_OBJECT_TYPE_INT64:
-		{
-			for ( int i = 0; i < msvInt64Array.GetSize(); i++)
-			{
-				SVString csTemp = SvUl_SF::Format( "%I64d", msvInt64Array[i] );
-
-				svData.InsertAt( i, csTemp );
-			}
-
-			bOk = TRUE;
-
-			break;
-		}
-
-		default:
-		{
-			break;
-		}
-	}
-
-	return bOk;
-}// end GetData(SVObjectArrayClassTemplate<CString>& svData)
+}
 
 BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectDoubleArrayClass& svData)
 {
@@ -685,9 +511,9 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectDoubleArrayClass& svData)
 		}
 		case SV_OBJECT_TYPE_BYTE:
 		{
-			for ( int i = 0; i < msvByteArray.GetSize(); i++ )
+			for ( int i = 0; i < m_ByteArray.GetSize(); i++ )
 			{
-				double dTemp = (double)msvByteArray[i];
+				double dTemp = (double)m_ByteArray[i];
 
 				svData.InsertAt( i, dTemp );
 			}
@@ -696,11 +522,11 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectDoubleArrayClass& svData)
 
 			break;
 		}
-		case SV_OBJECT_TYPE_CSTRING:
+		case SV_OBJECT_TYPE_STRING:
 		{
-			for ( int i = 0; i < msvCStringArray.GetSize(); i++ )
+			for ( int i = 0; i < m_StringArray.GetSize(); i++ )
 			{
-				double dTemp = atof( msvCStringArray[i] );
+				double dTemp = atof( m_StringArray[i].c_str() );
 
 				svData.InsertAt( i, dTemp );
 			}
@@ -711,7 +537,7 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectDoubleArrayClass& svData)
 		}
 		case SV_OBJECT_TYPE_DOUBLE:
 		{
-			svData = msvDoubleArray;
+			svData = m_DoubleArray;
 
 			bOk = TRUE;
 
@@ -719,9 +545,9 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectDoubleArrayClass& svData)
 		}
 		case SV_OBJECT_TYPE_DWORD:
 		{
-			for ( int i = 0; i < msvDWordArray.GetSize(); i++)
+			for ( int i = 0; i < m_DWordArray.GetSize(); i++)
 			{
-				double dTemp = (double)msvDWordArray[i];
+				double dTemp = (double)m_DWordArray[i];
 
 				svData.InsertAt( i, dTemp );
 			}
@@ -732,9 +558,9 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectDoubleArrayClass& svData)
 		}
 		case SV_OBJECT_TYPE_LONG:
 		{
-			for ( int i = 0; i < msvLongArray.GetSize(); i++)
+			for ( int i = 0; i < m_LongArray.GetSize(); i++)
 			{
-				double dTemp = (double)msvLongArray[i];
+				double dTemp = (double)m_LongArray[i];
 
 				svData.InsertAt( i, dTemp );
 			}
@@ -754,9 +580,9 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectDoubleArrayClass& svData)
 		case SV_OBJECT_TYPE_VARIANT:
 		{
 
-			for ( int i = 0; i < msvVariantArray.GetSize(); i++)
+			for ( int i = 0; i < m_VariantArray.GetSize(); i++)
 			{
-				VARIANT vtTemp = msvVariantArray[i];
+				VARIANT vtTemp = m_VariantArray[i];
 				if(vtTemp.vt == VT_R8)
 				{
 					svData.InsertAt(i, vtTemp.dblVal);
@@ -789,9 +615,9 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectDWordArrayClass& svData)
 		}
 		case SV_OBJECT_TYPE_BYTE:
 		{
-			for ( int i = 0; i < msvByteArray.GetSize(); i++ )
+			for ( int i = 0; i < m_ByteArray.GetSize(); i++ )
 			{
-				DWORD dwTemp = (DWORD)msvByteArray[i];
+				DWORD dwTemp = (DWORD)m_ByteArray[i];
 
 				svData.InsertAt( i, dwTemp );
 			}
@@ -800,11 +626,11 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectDWordArrayClass& svData)
 
 			break;
 		}
-		case SV_OBJECT_TYPE_CSTRING:
+		case SV_OBJECT_TYPE_STRING:
 		{
-			for ( int i = 0; i < msvCStringArray.GetSize(); i++ )
+			for ( int i = 0; i < m_StringArray.GetSize(); i++ )
 			{
-				DWORD dwTemp = (DWORD)atol( msvCStringArray[i] );
+				DWORD dwTemp = (DWORD)atol( m_StringArray[i].c_str() );
 
 				svData.InsertAt( i, dwTemp );
 			}
@@ -815,9 +641,9 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectDWordArrayClass& svData)
 		}
 		case SV_OBJECT_TYPE_DOUBLE:
 		{
-			for ( int i = 0; i < msvDoubleArray.GetSize(); i++)
+			for ( int i = 0; i < m_DoubleArray.GetSize(); i++)
 			{
-				DWORD dwTemp = (DWORD)msvDoubleArray[i];
+				DWORD dwTemp = (DWORD)m_DoubleArray[i];
 
 				svData.InsertAt( i, dwTemp );
 			}
@@ -828,7 +654,7 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectDWordArrayClass& svData)
 		}
 		case SV_OBJECT_TYPE_DWORD:
 		{
-			svData = msvDWordArray;
+			svData = m_DWordArray;
 
 			bOk = TRUE;
 
@@ -836,9 +662,9 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectDWordArrayClass& svData)
 		}
 		case SV_OBJECT_TYPE_LONG:
 		{
-			for ( int i = 0; i < msvLongArray.GetSize(); i++)
+			for ( int i = 0; i < m_LongArray.GetSize(); i++)
 			{
-				DWORD dwTemp = (DWORD)msvLongArray[i];
+				DWORD dwTemp = (DWORD)m_LongArray[i];
 
 				svData.InsertAt( i, dwTemp );
 			}
@@ -858,9 +684,9 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectDWordArrayClass& svData)
 		case SV_OBJECT_TYPE_VARIANT:
 		{
 
-			for ( int i = 0; i < msvVariantArray.GetSize(); i++)
+			for ( int i = 0; i < m_VariantArray.GetSize(); i++)
 			{
-				VARIANT vtTemp = msvVariantArray[i];
+				VARIANT vtTemp = m_VariantArray[i];
 				if(vtTemp.vt == VT_UI4)
 				{
 					svData.InsertAt(i, vtTemp.ulVal);
@@ -893,9 +719,9 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectLongArrayClass& svData)
 		}
 		case SV_OBJECT_TYPE_BYTE:
 		{
-			for ( int i = 0; i < msvByteArray.GetSize(); i++ )
+			for ( int i = 0; i < m_ByteArray.GetSize(); i++ )
 			{
-				long lTemp = (long)msvByteArray[i];
+				long lTemp = (long)m_ByteArray[i];
 
 				svData.InsertAt( i, lTemp );
 			}
@@ -904,11 +730,11 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectLongArrayClass& svData)
 
 			break;
 		}
-		case SV_OBJECT_TYPE_CSTRING:
+		case SV_OBJECT_TYPE_STRING:
 		{
-			for ( int i = 0; i < msvCStringArray.GetSize(); i++ )
+			for ( int i = 0; i < m_StringArray.GetSize(); i++ )
 			{
-				long lTemp = atol( msvCStringArray[i] );
+				long lTemp = atol( m_StringArray[i].c_str() );
 
 				svData.InsertAt( i, lTemp );
 			}
@@ -919,9 +745,9 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectLongArrayClass& svData)
 		}
 		case SV_OBJECT_TYPE_DOUBLE:
 		{
-			for ( int i = 0; i < msvDoubleArray.GetSize(); i++)
+			for ( int i = 0; i < m_DoubleArray.GetSize(); i++)
 			{
-				long lTemp = (long)msvDoubleArray[i];
+				long lTemp = (long)m_DoubleArray[i];
 
 				svData.InsertAt( i, lTemp );
 			}
@@ -932,9 +758,9 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectLongArrayClass& svData)
 		}
 		case SV_OBJECT_TYPE_DWORD:
 		{
-			for ( int i = 0; i < msvDWordArray.GetSize(); i++)
+			for ( int i = 0; i < m_DWordArray.GetSize(); i++)
 			{
-				long lTemp = (long)msvDWordArray[i];
+				long lTemp = (long)m_DWordArray[i];
 
 				svData.InsertAt( i, lTemp );
 			}
@@ -945,7 +771,7 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectLongArrayClass& svData)
 		}
 		case SV_OBJECT_TYPE_LONG:
 		{
-			svData = msvLongArray;
+			svData = m_LongArray;
 
 			bOk = TRUE;
 
@@ -962,9 +788,9 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectLongArrayClass& svData)
 		case SV_OBJECT_TYPE_VARIANT:
 		{
 
-			for ( int i = 0; i < msvVariantArray.GetSize(); i++)
+			for ( int i = 0; i < m_VariantArray.GetSize(); i++)
 			{
-				VARIANT vtTemp = msvVariantArray[i];
+				VARIANT vtTemp = m_VariantArray[i];
 				if(vtTemp.vt == VT_I4)
 				{
 					svData.InsertAt(i, vtTemp.lVal);
@@ -999,7 +825,7 @@ BOOL SVObjectAttributeClass::GetData(SVObjectSVPointArrayClass& svData)
 		{
 			break;
 		}
-		case SV_OBJECT_TYPE_CSTRING:
+		case SV_OBJECT_TYPE_STRING:
 		{
 			break;
 		}
@@ -1019,11 +845,11 @@ BOOL SVObjectAttributeClass::GetData(SVObjectSVPointArrayClass& svData)
 		{
 			bOk = TRUE;
 
-			for ( int i = 0; bOk && i < msvPointArray.GetSize(); i++)
+			for ( int i = 0; bOk && i < m_PointArray.GetSize(); i++)
 			{
 				POINT Point;
 				
-				msvPointArray[i].GetValue( Point );
+				m_PointArray[i].GetValue( Point );
 
 				svData.InsertAt( i, SVPOINT( Point ) );
 			}
@@ -1034,11 +860,11 @@ BOOL SVObjectAttributeClass::GetData(SVObjectSVPointArrayClass& svData)
 		{
 			bOk = TRUE;
 
-			for ( int i = 0; bOk && i < msvDPointArray.GetSize(); i++)
+			for ( int i = 0; bOk && i < m_DPointArray.GetSize(); i++)
 			{
 				POINT Point;
 				
-				msvDPointArray[i].GetValue( Point );
+				m_DPointArray[i].GetValue( Point );
 
 				svData.InsertAt( i, SVPOINT( Point ) );
 			}
@@ -1076,7 +902,7 @@ BOOL SVObjectAttributeClass::GetData(SVObjectDPointArrayClass& svData)
 		{
 			break;
 		}
-		case SV_OBJECT_TYPE_CSTRING:
+		case SV_OBJECT_TYPE_STRING:
 		{
 			break;
 		}
@@ -1096,11 +922,11 @@ BOOL SVObjectAttributeClass::GetData(SVObjectDPointArrayClass& svData)
 		{
 			bOk = TRUE;
 
-			for ( int i = 0; bOk && i < msvPointArray.GetSize(); i++)
+			for ( int i = 0; bOk && i < m_PointArray.GetSize(); i++)
 			{
 				SVDPointClass Point;
 				
-				Point = msvPointArray[i];
+				Point = m_PointArray[i];
 
 				svData.InsertAt( i, Point );
 			}
@@ -1109,7 +935,7 @@ BOOL SVObjectAttributeClass::GetData(SVObjectDPointArrayClass& svData)
 		}
 		case SV_OBJECT_TYPE_DPOINT:
 		{
-			svData = msvDPointArray;
+			svData = m_DPointArray;
 
 			bOk = TRUE;
 
@@ -1140,11 +966,11 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectVariantArrayClass& svData)
 	{
 		case SV_OBJECT_TYPE_BOOL:
 		{
-			for ( int i = 0; i < msvByteArray.GetSize(); i++ )
+			for ( int i = 0; i < m_ByteArray.GetSize(); i++ )
 			{
 				_variant_t vt;
 				vt.vt = VT_BOOL;
-				vt.boolVal = msvBoolArray[i];
+				vt.boolVal = m_BoolArray[i];
 
 				svData.InsertAt( i, vt );
 			}
@@ -1155,11 +981,11 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectVariantArrayClass& svData)
 		}
 		case SV_OBJECT_TYPE_BYTE:
 		{
-			for ( int i = 0; i < msvByteArray.GetSize(); i++ )
+			for ( int i = 0; i < m_ByteArray.GetSize(); i++ )
 			{
 				_variant_t vt;
 				vt.vt = VT_UI1;
-				vt.bVal = msvByteArray[i];
+				vt.bVal = m_ByteArray[i];
 
 				svData.InsertAt( i, vt );
 			}
@@ -1168,13 +994,12 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectVariantArrayClass& svData)
 
 			break;
 		}
-		case SV_OBJECT_TYPE_CSTRING:
+		case SV_OBJECT_TYPE_STRING:
 		{
-			for ( int i = 0; i < msvByteArray.GetSize(); i++ )
+			for ( int i = 0; i < m_ByteArray.GetSize(); i++ )
 			{
 				_variant_t vt;
-				vt.vt = VT_BSTR;
-				vt.bstrVal = msvCStringArray[i].AllocSysString();
+				vt.SetString( m_StringArray[i].c_str() );
 
 				svData.InsertAt( i, vt );
 			}
@@ -1185,11 +1010,11 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectVariantArrayClass& svData)
 		}
 		case SV_OBJECT_TYPE_DOUBLE:
 		{
-			for ( int i = 0; i < msvByteArray.GetSize(); i++ )
+			for ( int i = 0; i < m_ByteArray.GetSize(); i++ )
 			{
 				_variant_t vt;
 				vt.vt = VT_R8;
-				vt.dblVal = msvDoubleArray[i];
+				vt.dblVal = m_DoubleArray[i];
 
 				svData.InsertAt( i, vt );
 			}
@@ -1200,12 +1025,12 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectVariantArrayClass& svData)
 		}
 		case SV_OBJECT_TYPE_DWORD:
 		{
-			for ( int i = 0; i < msvByteArray.GetSize(); i++ )
+			for ( int i = 0; i < m_ByteArray.GetSize(); i++ )
 			{
 				_variant_t vt;
 				vt.vt = VT_UI4;
 				//vt.bVal = msvDWordArray[i];
-				vt.ulVal = msvDWordArray[i];
+				vt.ulVal = m_DWordArray[i];
 
 				svData.InsertAt( i, vt );
 			}
@@ -1216,12 +1041,12 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectVariantArrayClass& svData)
 		}
 		case SV_OBJECT_TYPE_LONG:
 		{
-			for ( int i = 0; i < msvByteArray.GetSize(); i++ )
+			for ( int i = 0; i < m_ByteArray.GetSize(); i++ )
 			{
 				_variant_t vt;
 				vt.vt = VT_I4;
 				//vt.bVal = msvLongArray[i];
-				vt.lVal = msvLongArray[i];
+				vt.lVal = m_LongArray[i];
 
 				svData.InsertAt( i, vt );
 			}
@@ -1241,10 +1066,10 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectVariantArrayClass& svData)
 		case SV_OBJECT_TYPE_VARIANT:
 		{
 
-			for ( int i = 0; i < msvVariantArray.GetSize(); i++)
+			for ( int i = 0; i < m_VariantArray.GetSize(); i++)
 			{
 				_variant_t vtTemp;
-				HRESULT hr = ::VariantCopy(&vtTemp, &msvVariantArray[i]);
+				HRESULT hr = ::VariantCopy(&vtTemp, &m_VariantArray[i]);
 				svData.InsertAt(i, vtTemp);
 			}
 
@@ -1253,11 +1078,11 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectVariantArrayClass& svData)
 		}
 		case SV_OBJECT_TYPE_INT64:
 		{
-			for ( int i = 0; i < msvInt64Array.GetSize(); i++ )
+			for ( int i = 0; i < m_Int64Array.GetSize(); i++ )
 			{
 				_variant_t vt;
 				vt.vt = VT_I8;
-				vt.llVal = msvInt64Array[i];
+				vt.llVal = m_Int64Array[i];
 
 				svData.InsertAt( i, vt );
 			}
@@ -1290,7 +1115,7 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectInt64ArrayClass& svData)
 		{
 			break;
 		}
-		case SV_OBJECT_TYPE_CSTRING:
+		case SV_OBJECT_TYPE_STRING:
 		{
 			break;
 		}
@@ -1320,7 +1145,7 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectInt64ArrayClass& svData)
 		}
 		case SV_OBJECT_TYPE_INT64:
 		{
-			svData = msvInt64Array;
+			svData = m_Int64Array;
 			bOk = TRUE;
 			break;
 		}
@@ -1334,7 +1159,7 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectInt64ArrayClass& svData)
 
 BOOL SVObjectAttributeClass::SetName(LPCTSTR szName)
 {
-	mcsName = szName;
+	m_Name = szName;
 
 	SetType( SV_OBJECT_TYPE_UNKNOWN );
 
@@ -1352,7 +1177,7 @@ BOOL SVObjectAttributeClass::AddData(BOOL Value)
 
 	if ( bOk )
 	{
-		msvBoolArray.Add( Value );
+		m_BoolArray.Add( Value );
 	}
 
 	return bOk;
@@ -1371,7 +1196,7 @@ BOOL SVObjectAttributeClass::AddData(VARIANT Value)
 	{
 		_variant_t l_Variant( Value );
 
-		msvVariantArray.Add( l_Variant );
+		m_VariantArray.Add( l_Variant );
 	}
 
 	return bOk;
@@ -1388,7 +1213,7 @@ BOOL SVObjectAttributeClass::AddData(BYTE Value)
 
 	if ( bOk )
 	{
-		msvByteArray.Add( Value );
+		m_ByteArray.Add( Value );
 	}
 
 	return bOk;
@@ -1398,16 +1223,14 @@ BOOL SVObjectAttributeClass::AddData(LPCTSTR Value)
 {
 	BOOL bOk = TRUE;
 
-	if ( GetType() != SV_OBJECT_TYPE_CSTRING )
+	if ( GetType() != SV_OBJECT_TYPE_STRING )
 	{
-		bOk = SetType( SV_OBJECT_TYPE_CSTRING );
+		bOk = SetType( SV_OBJECT_TYPE_STRING );
 	}
 
 	if ( bOk )
 	{
-		CString csTemp = Value;
-
-		msvCStringArray.Add( csTemp );
+		m_StringArray.Add( SVString( Value ) );
 	}
 
 	return bOk;
@@ -1424,7 +1247,7 @@ BOOL SVObjectAttributeClass::AddData(double Value)
 
 	if ( bOk )
 	{
-		msvDoubleArray.Add( Value );
+		m_DoubleArray.Add( Value );
 	}
 
 	return bOk;
@@ -1441,7 +1264,7 @@ BOOL SVObjectAttributeClass::AddData(DWORD Value)
 
 	if ( bOk )
 	{
-		msvDWordArray.Add( Value );
+		m_DWordArray.Add( Value );
 	}
 
 	return bOk;
@@ -1458,7 +1281,7 @@ BOOL SVObjectAttributeClass::AddData(long Value)
 
 	if ( bOk )
 	{
-		msvLongArray.Add( Value );
+		m_LongArray.Add( Value );
 	}
 
 	return bOk;
@@ -1475,7 +1298,7 @@ BOOL SVObjectAttributeClass::AddData(POINT Value)
 
 	if ( bOk )
 	{
-		msvPointArray.Add( Value );
+		m_PointArray.Add( Value );
 	}
 
 	return bOk;
@@ -1492,7 +1315,7 @@ BOOL SVObjectAttributeClass::AddData(SVDPointClass Value)
 
 	if ( bOk )
 	{
-		msvDPointArray.Add( Value );
+		m_DPointArray.Add( Value );
 	}
 
 	return bOk;
@@ -1509,7 +1332,7 @@ BOOL SVObjectAttributeClass::AddData(__int64 Value)
 
 	if ( bOk )
 	{
-		msvInt64Array.Add( Value );
+		m_Int64Array.Add( Value );
 	}
 
 	return bOk;
@@ -1524,15 +1347,15 @@ BOOL SVObjectAttributeClass::SetType(int iType)
 {
 	miType = iType;
 
-	msvBoolArray.RemoveAll();
-	msvByteArray.RemoveAll();
-	msvCStringArray.RemoveAll();
-	msvDoubleArray.RemoveAll();
-	msvDWordArray.RemoveAll();
-	msvLongArray.RemoveAll();
-	msvPointArray.RemoveAll();
-	msvDPointArray.RemoveAll();
-	msvInt64Array.RemoveAll();
+	m_BoolArray.RemoveAll();
+	m_ByteArray.RemoveAll();
+	m_StringArray.RemoveAll();
+	m_DoubleArray.RemoveAll();
+	m_DWordArray.RemoveAll();
+	m_LongArray.RemoveAll();
+	m_PointArray.RemoveAll();
+	m_DPointArray.RemoveAll();
+	m_Int64Array.RemoveAll();
 
 	return TRUE;
 }
@@ -1580,7 +1403,7 @@ BOOL SVObjectAttributeClass::SetType(SVObjectScriptDataObjectTypeEnum eType)
 		}
 		case SV_STRING_Type:
 		{
-			bOk = SetType( SV_OBJECT_TYPE_CSTRING );
+			bOk = SetType( SV_OBJECT_TYPE_STRING );
 			break;
 		}
 		case SV_DPOINT_Type:

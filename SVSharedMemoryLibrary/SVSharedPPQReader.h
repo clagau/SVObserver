@@ -12,11 +12,11 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <map>
-//Moved to precompiled header: #include <string>
 #include "SVSharedProductStore.h"
 #include "SVSharedMonitorList.h"
 #include "SVSharedMemorySettings.h"
 #include "SVSharedInspectionReader.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 #pragma intrinsic (_InterlockedCompareExchange)
@@ -36,17 +36,17 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 	struct SVProductBundle
 	{
 		const SVSharedProduct& product;
-		typedef std::map<std::string, InspectionDataPtr> InspectionDataPtrMap;
+		typedef std::map<SVString, InspectionDataPtr> InspectionDataPtrMap;
 		InspectionDataPtrMap inspections;
 		SVProductBundle(const SVSharedProduct& prod)
 		: product(prod), inspections()
 		{
 		}
-		Value find(const std::string& name) const;
+		Value find(const SVString& name) const;
 	};
 
 	typedef std::shared_ptr<SVProductBundle> ProductPtr;
-	typedef std::map<std::string, InspectionReaderPtr> InspReaderMap;
+	typedef std::map<SVString, InspectionReaderPtr> InspReaderMap;
 
 	class SVSharedPPQReader // one reader per ppq
 	{
@@ -54,7 +54,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		SVSharedPPQReader();
 		~SVSharedPPQReader();
 
-		bool Open(const std::string& name);
+		bool Open(const SVString& name);
 		void Close();
 		bool IsOpen() const;
 
@@ -64,7 +64,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		ProductPtr RequestReject(long trig, long& idx) const;
 		void ReleaseReject(const ProductPtr product, long idx) const;
 
-		FailStatusMap GetFailStatus(const std::vector<std::string>& names) const;
+		FailStatusMap GetFailStatus(const SVStringVector& names) const;
 
 	private:
 		long next_readable() const;
@@ -75,7 +75,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		SVSharedProductStore* m_SharedProductStorePPQ;
 		SVSharedProductStore* m_SharedProductStorePPQReject;
 		bool m_isOpen;
-		std::string m_ShareName;
+		SVString m_ShareName;
 		mutable InspReaderMap m_inspReaders;
 
 		ProductPtr GetReject(long idx) const;

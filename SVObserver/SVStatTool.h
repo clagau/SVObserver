@@ -12,6 +12,7 @@
 
 #pragma region Includes
 #include "SVTool.h" 
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 class SVResultClass;
@@ -52,14 +53,14 @@ public:
 	BOOL HasVariable();
 	BOOL Test();
 
-	CString GetFeatureString();
-	CString GetFeatureName( int aIndex );
+	SVString GetFeatureString();
+	SVString GetFeatureName( int aIndex );
 
-	CString GetOccurenceTestValue();
-	void SetOccurenceTestValue( CString value );
+	SVString GetOccurenceTestValue();
+	void SetOccurenceTestValue( const SVString& rValue );
 	
 	SVObjectReference GetVariableSelected();
-	void SetVariableSelected( CString strName );
+	void SetVariableSelected( const SVString& rName );
 	void SetVariableSelected( SVObjectReference refObject );
 
 	DWORD EnableFeature( SVStatisticsFeatureEnum aIndex );

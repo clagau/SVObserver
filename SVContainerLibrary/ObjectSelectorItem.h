@@ -18,6 +18,7 @@
 //Moved to precompiled header: #include <deque>
 #include "IObjectSelectorItem.h"
 #include "SVUtilityLibrary/SVSharedPtr.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 namespace Seidenader { namespace SVContainerLibrary

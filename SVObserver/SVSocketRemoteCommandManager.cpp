@@ -389,7 +389,7 @@ HRESULT SVRemoteCommandFunctions::ConvertDataDefinitionToJsonValue( const SVData
 		p_rJsonValue[SVRC::ddlo::type] = p_rDataDefinition.m_Type.c_str();
 
 		Json::Value l_AddInfoArray(Json::arrayValue);
-		for( SVStringArray::const_iterator l_Iter = p_rDataDefinition.m_AdditionalInfo.begin(); l_Iter != p_rDataDefinition.m_AdditionalInfo.end(); ++l_Iter )
+		for( SVStringVector::const_iterator l_Iter = p_rDataDefinition.m_AdditionalInfo.begin(); l_Iter != p_rDataDefinition.m_AdditionalInfo.end(); ++l_Iter )
 		{
 			Json::Value l_Value(Json::objectValue);
 			l_Value = l_Iter->c_str();

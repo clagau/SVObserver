@@ -51,9 +51,9 @@ bool ResultViewReferences::IsViewable(const SVObjectReference& objectRef) const
 bool ResultViewReferences::Load( SVTreeType& rTree, SVTreeType::SVBranchHandle hParent, LPCTSTR TagName )
 {
 
-	CString csTagName =  nullptr == TagName ?  m_TagName: TagName;
+	SVString BranchName =  (nullptr == TagName) ?  m_TagName: TagName;
 	SVTreeType::SVBranchHandle hVariables = nullptr;
-	bool bOK = SVNavigateTree::GetItemBranch(rTree, csTagName, hParent, hVariables);
+	bool bOK = SVNavigateTree::GetItemBranch(rTree, BranchName.c_str(), hParent, hVariables);
 
 	if (bOK)
 	{
@@ -115,16 +115,15 @@ bool ResultViewReferences::Insert( const SVString &rDottedName )
 
 bool ResultViewReferences::Save(SVObjectWriter& rWriter)
 {
-	rWriter.StartElement(m_TagName);
+	rWriter.StartElement( m_TagName.c_str() );
 	std::vector<SVObjectReference>::const_iterator it = m_ReferenceVector.begin();
 	for( ; it != m_ReferenceVector.end(); ++it )
 	{
 		if( nullptr != it->Object() )
 		{
-			CString csObjectName = it->GetCompleteOneBasedObjectName();
-			_variant_t var(csObjectName);
-			rWriter.WriteAttribute(CTAG_COMPLETENAME, var);
-			var.Clear();
+			_variant_t Value;
+			Value.SetString( it->GetCompleteOneBasedObjectName().c_str() );
+			rWriter.WriteAttribute(CTAG_COMPLETENAME, Value);
 		}
 	}
 	rWriter.EndElement();
@@ -208,40 +207,38 @@ HRESULT  ResultViewReferences::GetResultData( SVIPResultData& p_rResultData) con
 		}
 
 
-		CString csValue;
+		SVString Value;
 		BasicValueObject* bvo(nullptr); 
 		SVValueObjectReference voref(*it);  // try to assign to value object
 		if( voref.Object() )                // if successful
 		{
 			if( voref->GetObjectType() == SVStringValueObjectType)
 			{
-				CString l_strQuotes;
-				CString l_strValue;
-				voref.GetValue( l_strValue );
+				SVString ValueString;
+				voref.GetValue( ValueString );
 				// Wrap string in Quotes...
-				l_strQuotes.Format(_T("\042%s\042"),l_strValue);
-				csValue = l_strQuotes;
+				Value = SvUl_SF::Format(_T("\042%s\042"), ValueString.c_str());
 			}
 			else
 			{
 				if (!voref.IsEntireArray())
 				{
-					HRESULT hr = voref.GetValue( csValue );
+					HRESULT hr = voref.GetValue( Value );
 					if ( hr == SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE )
 					{
-						csValue = _T("< ") + csValue + _T(" >");
+						Value = _T("< ") + Value + _T(" >");
 					}
 					else if ( S_OK != hr )
 					{
-						csValue = _T( "<Not Valid>" );
+						Value = _T( "<Not Valid>" );
 					}
 				}
 				else
 				{
-					HRESULT hr = voref.GetValues( csValue );
+					HRESULT hr = voref.GetValues( Value );
 					if ( S_OK != hr )
 					{
-						csValue = _T( "<Not Valid>" );
+						Value = _T( "<Not Valid>" );
 					}
 				}
 			}
@@ -250,19 +247,14 @@ HRESULT  ResultViewReferences::GetResultData( SVIPResultData& p_rResultData) con
 		{
 			Color = SV_DEFAULT_WHITE_COLOR;
 
-			SVString value;
-			HRESULT hr = bvo->getValue(value);
+			HRESULT hr = bvo->getValue( Value );
 
 			if ( S_OK != hr )
 			{
-				csValue = _T( "<Not Valid>" );
-			}
-			else
-			{
-				csValue = value.c_str();
+				Value = _T( "<Not Valid>" );
 			}
 		}
-		p_rResultData.m_ResultData[ itemDef ] = SVIPResultItemData( static_cast< LPCTSTR >( csValue ), Color );
+		p_rResultData.m_ResultData[ itemDef ] = SVIPResultItemData( Value, Color );
 
 	}
 

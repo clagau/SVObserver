@@ -164,19 +164,19 @@ public:
 		DERIVED* DerivedValue(DERIVED*& rpDummyArg)
 	                            { DERIVED* p = nullptr;
 	                              if (m_pImpl) {p = dynamic_cast< DERIVED* > ((BASETYPE*) *this);
-								              ASSERT(p); }	// if the ASSERT hits, the type is incorrect
+								              assert(p); }	// if the assert hits, the type is incorrect
 	                              return p;}
 	template<typename DERIVED>
 	    const DERIVED* DerivedValue(const DERIVED*& rpDummyArg) const
 	                            { const DERIVED* p = nullptr;
 	                              if (m_pImpl) { p = dynamic_cast< const DERIVED* > ((const BASETYPE*) *this);
-								               ASSERT(p); }  // if the ASSERT hits, the type is incorrect
+								               assert(p); }  // if the assert hits, the type is incorrect
 	                              return p; }
 	template<typename DERIVED>
 	    HRESULT GetDerivedValue(DERIVED*& rpd)
 	                            { if (nullptr == m_pImpl) return ERROR_NOT_FOUND; 
 	                              else if (nullptr != (rpd = dynamic_cast< DERIVED* > ((BASETYPE*) *this))) return S_OK;
-								  else { ASSERT(rpd); return TYPE_E_TYPEMISMATCH;} }  // if the ASSERT hits, the type is incorrect
+								  else { assert(rpd); return TYPE_E_TYPEMISMATCH;} }  // if the assert hits, the type is incorrect
 private:
 	BASETYPE* m_pImpl;
 };
@@ -205,7 +205,7 @@ template < typename DERIVED, typename DUMMYARG > DERIVED* DerivedValue ( TValueS
 	if ( nullptr != ((DUMMYARG*) base) )
 	{
 		pd = dynamic_cast < DERIVED* > ((DUMMYARG*) base);
-		ASSERT( pd );	// if the ASSERT hits, you are telling it the wrong type
+		assert( pd );	// if the assert hits, you are telling it the wrong type
 	}
 	return pd;
 }
@@ -220,7 +220,7 @@ TValueSemantics<BASETYPE>::TValueSemantics()
 template <typename BASETYPE>
 TValueSemantics<BASETYPE>::TValueSemantics(const BASETYPE* pType)
 {
-	ASSERT( pType );
+	assert( pType );
 	if ( pType )
 	{
 		// needs an explicit cast because MSVC 6.0 doesn't support covariant return types (Q240862)

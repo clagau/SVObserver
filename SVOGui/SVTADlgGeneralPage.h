@@ -14,10 +14,10 @@
 #pragma region Includes
 #include "SVOResource/resource.h"
 #include "SVUtilityLibrary\SVGUID.h"
-#include "SVOGui\BoundValue.h"
-#include "SVOGui\ValuesAccessor.h"
-#include "SVOGui\GuiController.h"
-#include "SVOGui\AuxiliaryExtentsController.h"
+#include "BoundValue.h"
+#include "ValuesAccessor.h"
+#include "GuiController.h"
+#include "AuxiliaryExtentsController.h"
 #include "SVMFCControls\AvailableObjectListComboBox.h"
 #pragma endregion Includes
 

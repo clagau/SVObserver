@@ -13,7 +13,6 @@
 #include "GuiCommands\GetInstanceIDByDottedName.h"
 #include "GuiCommands\GetAttributesAllowed.h"
 #include "SVObjectLibrary\SVObjectSynchronousCommandTemplate.h"
-#include "SVUtilityLibrary\SVStringLoader.h"
 #include "TextDefinesSvOg.h"
 #include "ObjectInterfaces\MessageTextEnum.h"
 #include "SVStatusLibrary\MessageContainer.h"
@@ -80,7 +79,7 @@ namespace Seidenader { namespace SVOGui
 
 		if (!len)
 		{
-			SVStringArray msgList;
+			SVStringVector msgList;
 			msgList.push_back(SvStl::MessageData::convertId2AddtionalText(fieldName));
 			SvStl::MessageContainer message(SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_RangeValue_EmptyString, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10229);
 			throw message;
@@ -96,7 +95,7 @@ namespace Seidenader { namespace SVOGui
 				const double s_RangeMin = -s_RangeMax;
 				if (val > s_RangeMax || val < s_RangeMin)
 				{
-					SVStringArray msgList;
+					SVStringVector msgList;
 					msgList.push_back(SvStl::MessageData::convertId2AddtionalText(fieldName));
 					msgList.push_back(SvUl_SF::Format(_T("%d"), static_cast<int>(s_RangeMin)));
 					msgList.push_back(SvUl_SF::Format(_T("%d"), static_cast<int>(s_RangeMax)));
@@ -107,8 +106,7 @@ namespace Seidenader { namespace SVOGui
 		}
 	}
 
-	void RangeValidator::Validate(HINSTANCE resHandle,
-									const SVString& InspectionName, 
+	void RangeValidator::Validate(	const SVString& InspectionName, 
 									const SVString& FailHighIndirectValue, 
 									const SVString& FailLowIndirectValue, 
 									const SVString& WarnHighIndirectValue, 
@@ -119,13 +117,13 @@ namespace Seidenader { namespace SVOGui
 									double WarnLowValue,
 									const GUID& rInspectionID)
 	{
-		SVString ToolSetName(SvU::SVStringLoader(resHandle, static_cast<UINT>(IDS_CLASSNAME_SVTOOLSET)));
+		SVString ToolSetName( SvUl_SF::LoadSVString(IDS_CLASSNAME_SVTOOLSET) );
 	
 		if (!FailHighIndirectValue.empty())
 		{
 			if (!isValidReference(rInspectionID, InspectionName, ToolSetName, FailHighIndirectValue))
 			{
-				SVStringArray messageList;
+				SVStringVector messageList;
 				messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_FailHigh));
 				messageList.push_back(FailHighIndirectValue);
 				SvStl::MessageContainer message(SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_IsInvalidRef, messageList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16018);
@@ -136,7 +134,7 @@ namespace Seidenader { namespace SVOGui
 		{
 			if( !isValidReference(rInspectionID, InspectionName, ToolSetName, WarnHighIndirectValue))
 			{
-				SVStringArray messageList;
+				SVStringVector messageList;
 				messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_WarnHigh));
 				messageList.push_back(WarnHighIndirectValue);
 				SvStl::MessageContainer message(SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_IsInvalidRef, messageList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16019);
@@ -147,7 +145,7 @@ namespace Seidenader { namespace SVOGui
 		{
 			if (!isValidReference(rInspectionID, InspectionName, ToolSetName, WarnLowIndirectValue))
 			{
-				SVStringArray messageList;
+				SVStringVector messageList;
 				messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_WarnLow));
 				messageList.push_back(WarnLowIndirectValue);
 				SvStl::MessageContainer message(SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_IsInvalidRef, messageList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16020);
@@ -158,7 +156,7 @@ namespace Seidenader { namespace SVOGui
 		{
 			if (!isValidReference(rInspectionID, InspectionName, ToolSetName, FailLowIndirectValue))
 			{
-				SVStringArray messageList;
+				SVStringVector messageList;
 				messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_FailLow));
 				messageList.push_back(FailLowIndirectValue);
 				SvStl::MessageContainer message(SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_IsInvalidRef, messageList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16021);
@@ -170,7 +168,7 @@ namespace Seidenader { namespace SVOGui
 		{
 			if (WarnHighIndirectValue.empty() && FailHighValue < WarnHighValue)
 			{
-				SVStringArray messageList;
+				SVStringVector messageList;
 				messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_FailHigh));
 				messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_WarnHigh));
 				SvStl::MessageContainer message(SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_IsLessThan, messageList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16012);
@@ -178,7 +176,7 @@ namespace Seidenader { namespace SVOGui
 			}
 			if (WarnLowIndirectValue.empty() && FailHighValue < WarnLowValue)
 			{
-				SVStringArray messageList;
+				SVStringVector messageList;
 				messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_FailHigh));
 				messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_WarnLow));
 				SvStl::MessageContainer message(SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_IsLessThan, messageList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16013);
@@ -186,7 +184,7 @@ namespace Seidenader { namespace SVOGui
 			}
 			if (FailLowIndirectValue.empty() && FailHighValue < FailLowValue)
 			{
-				SVStringArray messageList;
+				SVStringVector messageList;
 				messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_FailHigh));
 				messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_FailLow));
 				SvStl::MessageContainer message(SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_IsLessThan, messageList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16014);
@@ -197,7 +195,7 @@ namespace Seidenader { namespace SVOGui
 		{
 			if (WarnLowIndirectValue.empty() && WarnHighValue < WarnLowValue)
 			{
-				SVStringArray messageList;
+				SVStringVector messageList;
 				messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_WarnHigh));
 				messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_WarnLow));
 				SvStl::MessageContainer message(SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_IsLessThan, messageList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16015);
@@ -205,7 +203,7 @@ namespace Seidenader { namespace SVOGui
 			}
 			if (FailLowIndirectValue.empty() && WarnHighValue < FailLowValue)
 			{
-				SVStringArray messageList;
+				SVStringVector messageList;
 				messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_WarnHigh));
 				messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_FailLow));
 				SvStl::MessageContainer message(SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_IsLessThan, messageList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16016);
@@ -213,7 +211,7 @@ namespace Seidenader { namespace SVOGui
 			}
 			if (FailLowIndirectValue.empty() && WarnLowValue < FailLowValue)
 			{
-				SVStringArray messageList;
+				SVStringVector messageList;
 				messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_WarnLow));
 				messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_FailLow));
 				SvStl::MessageContainer message(SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_IsLessThan, messageList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16017);

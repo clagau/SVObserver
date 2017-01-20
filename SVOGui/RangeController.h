@@ -13,6 +13,7 @@
 #include "BoundValue.h"
 #include "GuiController.h"
 #include "ObjectInterfaces\MessageTextEnum.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 namespace Seidenader
@@ -36,7 +37,7 @@ namespace Seidenader
 
 			SVString GetOwnerName() const;
 			void IsFieldValid(SvOi::MessageTextEnum fieldName, const SVString& rValue);
-			void Validate(HINSTANCE resHandle);
+			void Validate();
 
 			static const std::string FailHigh;
 			static const std::string FailLow;

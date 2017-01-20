@@ -12,8 +12,8 @@
 #pragma region Includes
 #include "stdafx.h"
 //Moved to precompiled header: #include <string>
-#include "SVIOTEST.h"
-#include "SVIOTESTDlg.h"
+#include "SVIOTest.h"
+#include "SVIOTestDlg.h"
 #include "TriggerHandling/TriggerBasics.h"
 #include "SVIOLibrary/SVIOParameterEnum.h"
 #include "SVTriggerSetupDlgClass.h"
@@ -21,6 +21,7 @@
 #include "SVLibrary/SVOIniClass.h"
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
 #include "SVStatusLibrary/GlobalPath.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG

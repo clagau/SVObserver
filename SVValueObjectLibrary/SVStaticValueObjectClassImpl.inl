@@ -9,8 +9,6 @@
 //* .Check In Date   : $Date:   19 Nov 2013 09:24:20  $
 //******************************************************************************
 
-//Moved to precompiled header: #include <assert.h>
-
 template <typename T>
 SVStaticValueObjectClassImpl<T>::~SVStaticValueObjectClassImpl()
 {
@@ -37,10 +35,10 @@ const SVStaticValueObjectClassImpl<T>& SVStaticValueObjectClassImpl<T>::operator
 				}
 				else
 				{
-					Buckets() = Buckets(rhs);
+					Buckets() = rhs.Buckets();
 				}
 
-				DefaultValue() = DefaultValue(rhs);
+				DefaultValue() = rhs.DefaultValue();
 
 				m_iLastSetIndex = rhs.m_iLastSetIndex;
 			}
@@ -110,7 +108,7 @@ HRESULT SVStaticValueObjectClassImpl<T>::CreateBuckets()
 	{
 		if ( 1 == ArraySize() )
 		{
-			BucketsNoAssert().resize(0);	// avoid ASSERT in Buckets()
+			BucketNoAssert().resize(0);	// avoid assert in Buckets()
 			m_ScalarBuckets.resize( 1, DefaultValue() );
 		}
 		else
@@ -139,7 +137,7 @@ HRESULT SVStaticValueObjectClassImpl<T>::SetArraySize(int iSize)
 
 	if ( 1 == ArraySize() )
 	{
-		BucketsNoAssert().resize(0);	// avoid ASSERT in Buckets()
+		BucketNoAssert().resize(0);	// avoid assert in Buckets()
 		if ( 0 == iSize )
 		{
 			m_ScalarBuckets.resize(0);
@@ -232,29 +230,29 @@ HRESULT SVStaticValueObjectClassImpl<T>::GetValueAt( int iBucket, int iIndex, T&
 }
 
 template <typename T>
-HRESULT SVStaticValueObjectClassImpl<T>::GetObjectValue( const SVString& p_rValueName, VARIANT& p_rVariantValue ) const
+HRESULT SVStaticValueObjectClassImpl<T>::GetObjectValue( const SVString& rValueName, VARIANT& rVariantValue ) const
 {
 	HRESULT hr = S_OK;
 
-	if( p_rValueName == _T( "Default" ) )
+	if( SvOi::cDefaultTag == rValueName )
 	{
 		_variant_t l_TempVariant;
 
-		l_TempVariant.Attach( p_rVariantValue );
+		l_TempVariant.Attach( rVariantValue );
 
-		l_TempVariant = DefaultValue();
+		l_TempVariant = ConvertToVariant( DefaultValue() );
 
 		l_TempVariant.Detach();
 	}
-	else if( p_rValueName == _T( "Array_Elements" ) )
+	else if( SvOi::cArrayTag == rValueName )
 	{
 		_variant_t l_TempVariant;
 
-		l_TempVariant.Attach( p_rVariantValue );
+		l_TempVariant.Attach( rVariantValue );
 
 		if( 1 == ArraySize() )
 		{
-			l_TempVariant = ScalarBucket( 0 );
+			l_TempVariant = ConvertToVariant( ScalarBucket( 0 ) );
 		}
 		else if( 1 < ArraySize() )
 		{
@@ -262,7 +260,7 @@ HRESULT SVStaticValueObjectClassImpl<T>::GetObjectValue( const SVString& p_rValu
 
 			for( int i = 0; i < m_iArraySize; i++ )
 			{
-				_variant_t l_Value = Element( 0, i );
+				_variant_t l_Value = ConvertToVariant( Element( 0, i ) );
 
 				l_SafeArray.Add( l_Value );
 			}
@@ -280,7 +278,7 @@ HRESULT SVStaticValueObjectClassImpl<T>::GetObjectValue( const SVString& p_rValu
 	}
 	else
 	{
-		hr = SVValueObjectClass::GetObjectValue( p_rValueName, p_rVariantValue );
+		hr = SVValueObjectClass::GetObjectValue( rValueName, rVariantValue );
 	}
 
 	return hr;
@@ -292,17 +290,17 @@ HRESULT SVStaticValueObjectClassImpl<T>::SetObjectValue(SVObjectAttributeClass* 
 	HRESULT hr = S_FALSE;
 	
 	SvCl::SVObjectArrayClassTemplate<T> svArray;	// for default values
-	bucket_type l_Buckets(BucketsNoAssert());
+	bucket_type l_Buckets(BucketNoAssert());
 	array_type l_Array;
 
-	if ( SVObjectAttributeClassHelper::GetAttributeData(pDataObject, "Default", svArray) )
+	if ( SVObjectAttributeClassHelper::GetAttributeData(pDataObject, SvOi::cDefaultTag, svArray) )
 	{
 		if ( svArray.GetSize() > 0 )
 		{
 			DefaultValue() = svArray[ svArray.GetSize()-1 ];
 		}
 	}
-	else if ( SVObjectAttributeClassHelper::GetAttributeData(pDataObject, "Array", l_Buckets, DefaultValue() ) )//  BUCKET_TAG_LOAD; get buckets, not array; for backward compatibility;
+	else if ( SVObjectAttributeClassHelper::GetAttributeData(pDataObject, SvOi::cBucketTag, l_Buckets, DefaultValue() ) )//  BUCKET_TAG_LOAD; get buckets, not array; for backward compatibility;
 	{
 		if ( 1 == ArraySize() )
 		{
@@ -318,7 +316,7 @@ HRESULT SVStaticValueObjectClassImpl<T>::SetObjectValue(SVObjectAttributeClass* 
 		}
 	}
 	// new-style: store all array elements:
-	else if ( SVObjectAttributeClassHelper::GetArrayData(pDataObject, "Array_Elements", l_Array, DefaultValue() ) )
+	else if ( SVObjectAttributeClassHelper::GetArrayData(pDataObject, SvOi::cArrayTag, l_Array, DefaultValue() ) )
 	{
 		SetArraySize( static_cast< int >( l_Array.size() ) );
 		if ( 1 == ArraySize()  )
@@ -331,14 +329,14 @@ HRESULT SVStaticValueObjectClassImpl<T>::SetObjectValue(SVObjectAttributeClass* 
 		}
 		m_iLastSetIndex = 0;
 	}
-	else if ( SVObjectAttributeClassHelper::GetAttributeData(pDataObject, m_sLegacyScriptDefaultName, svArray) )
+	else if ( SVObjectAttributeClassHelper::GetAttributeData(pDataObject, m_sLegacyScriptDefaultName.c_str(), svArray) )
 	{
 		if ( svArray.GetSize() > 0 )
 		{
 			DefaultValue() = svArray[ svArray.GetSize()-1 ];
 		}
 	}
-	else if ( SVObjectAttributeClassHelper::GetAttributeData(pDataObject, m_sLegacyScriptArrayName, l_Buckets, DefaultValue() ) )
+	else if ( SVObjectAttributeClassHelper::GetAttributeData(pDataObject, m_sLegacyScriptArrayName.c_str(), l_Buckets, DefaultValue() ) )
 	{
 		if ( 1 == ArraySize() )
 		{
@@ -387,7 +385,7 @@ HRESULT SVStaticValueObjectClassImpl<T>::GetArrayValues(int iBucket, DoubleVecto
 }
 
 template <typename T>
-HRESULT SVStaticValueObjectClassImpl<T>::GetArrayValues(int iBucket, CString& rValues) const
+HRESULT SVStaticValueObjectClassImpl<T>::GetArrayValues(int iBucket, SVString& rValues) const
 {
 	HRESULT hrOk = S_FALSE;
 	rValues = _T("");
@@ -399,7 +397,7 @@ HRESULT SVStaticValueObjectClassImpl<T>::GetArrayValues(int iBucket, CString& rV
 		int resultSize = GetResultSize(0);
 		for( int i = 1; i < resultSize; ++i )
 		{
-			CString valueString;
+			SVString valueString;
 			GetValue( 1, i, valueString );
 			rValues += _T(" ; ")+valueString;
 		}
@@ -476,7 +474,7 @@ HRESULT SVStaticValueObjectClassImpl<T>::GetArrayValuesAsVariantVector(int iBuck
 		raValues.resize( iResultSize );
 		if ( 1 == ArraySize() )
 		{
-			raValues[0] = ScalarBucket(0);
+			raValues[0] = ConvertToVariant( ScalarBucket(0) );
 		}
 		else
 		{
@@ -488,7 +486,7 @@ HRESULT SVStaticValueObjectClassImpl<T>::GetArrayValuesAsVariantVector(int iBuck
 				l_FromIter != Array(0).end() && 
 				l_FromIter != Array(0).begin() + iResultSize )
 			{
-				*l_ToIter = *l_FromIter;
+				*l_ToIter = ConvertToVariant( *l_FromIter );
 
 				++l_FromIter;
 				++l_ToIter;
@@ -503,7 +501,7 @@ HRESULT SVStaticValueObjectClassImpl<T>::GetArrayValuesAsVariantVector(int iBuck
 template <typename T>
 inline void SVStaticValueObjectClassImpl<T>::swap( SVStaticValueObjectClassImpl<T>& rhs )
 {
-	ASSERT( typeid( *this ) == typeid( rhs ) );
+	assert( typeid( *this ) == typeid( rhs ) );
 
 	if ( this != &rhs )
 	{
@@ -522,7 +520,7 @@ HRESULT SVStaticValueObjectClassImpl<T>::SetArrayValues(int iBucket, InIterator 
 	if ( S_OK == hr || SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE == hr )
 	{
 		int iSize = static_cast< int >( std::distance(begin, end));
-		ASSERT( iSize <= ArraySize() );
+		assert( iSize <= ArraySize() );
 		if ( iSize <= ArraySize() )
 		{
 			SetResultSize(iBucket, iSize);
@@ -582,4 +580,9 @@ HRESULT SVStaticValueObjectClassImpl<T>::GetArrayValuesImpl(int iBucket, std::ve
 		hrOk = S_OK;
 	}
 	return hrOk;
+}
+
+variant_t SVStaticValueObjectClassImpl<SVString>::ConvertToVariant( const SVString& rValue ) const
+{
+	return _variant_t( rValue.c_str() );
 }

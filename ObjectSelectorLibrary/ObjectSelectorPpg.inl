@@ -19,12 +19,12 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 
 	SVString ObjectSelectorPpg::getHighlightedNode() const
 	{
-		return SVString( m_HighlightedNode );
+		return m_HighlightedNode;
 	}
 
 	void ObjectSelectorPpg::setHighlightedNode( const SVString& rHighlightedNode )
 	{
-		m_HighlightedNode = rHighlightedNode.c_str();
+		m_HighlightedNode = rHighlightedNode;
 		UpdateData( FALSE );
 	}
 

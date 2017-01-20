@@ -12,10 +12,11 @@
 
 #pragma region Includes
 #include "SVMFCControls\SVEditNumbers.h"
-#include "SVOGui\ISVPropertyPageDialog.h"
-#include "SVOGui\RangeController.h"
+#include "ISVPropertyPageDialog.h"
+#include "RangeController.h"
 #include "ObjectInterfaces\RangeEnum.h"
 #include "ObjectSelectorController.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 namespace Seidenader
@@ -57,19 +58,12 @@ namespace Seidenader
 
 		#pragma region Privated Methods
 			//************************************
-			/// Open an object selector and set the chosen value to the control.
-			/// \param control [in] The erfernec to the value
-			/// \param fieldEnum [in] Enum of the value
-			//************************************
-			void setValuePerObjectSelector(CString& rValue, RangeEnum::ERange fieldEnum);
-
-			//************************************
 			/// Show an object selector and return the name of the selection.
-			/// \param name [in,out] Name of the object.
+			/// \param Name [in,out] Name of the object.
 			/// \param fieldEnum [in] Enum of the value
 			/// \returns bool true if a new object would selected.
 			//************************************
-			bool ShowObjectSelector(CString& name, RangeEnum::ERange fieldEnum);
+			bool ShowObjectSelector(SVString& rName, RangeEnum::ERange fieldEnum);
 		#pragma region Privated Methods
 
 		#pragma region Member Variables

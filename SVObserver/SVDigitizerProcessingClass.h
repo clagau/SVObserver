@@ -34,7 +34,7 @@ public:
 
 	HRESULT UpdateDigitizerSubsystem( SVDigitizerLoadLibraryClass* pDigitizerSubsystem );
 
-	HRESULT GetAcquisitionDeviceList( SVStringArray& rList ) const;
+	HRESULT GetAcquisitionDeviceList( SVStringVector& rList ) const;
 
 	bool IsValidDigitizerSubsystem( LPCTSTR digitizerName ) const;
 	SVDigitizerLoadLibraryClass* GetDigitizerSubsystem( LPCTSTR digitizerName ) const;

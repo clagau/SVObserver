@@ -61,11 +61,10 @@ protected:
 	HRESULT RestoreOriginalData();
 	bool ShowDependentsDlg();
 	bool m_bToolTipEnabled;
-	CString m_sDetailBtnToolTipText;
-	bool EnableDetailTip(  bool bEnable, const CString& strTip = CString(_T("")));
+	bool EnableDetailTip(  bool bEnable, LPCTSTR Tip = nullptr );
 	void InitializeDll();
 	void SetDependencies();
-	void NotifyProgress(const CString& rstrMessage);
+	void NotifyProgress(LPCTSTR Message);
 
 
 	SVToolAdjustmentDialogSheetClass* m_pSheet;

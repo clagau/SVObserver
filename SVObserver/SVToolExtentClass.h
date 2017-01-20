@@ -16,6 +16,7 @@
 #include "ObjectInterfaces/SVImageEnums.h"
 #include "SVImageLibrary/SVImageExtentClass.h"
 #include "SVToolExtentPropertiesClass.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 class SVImageClass;
@@ -100,7 +101,7 @@ public:
 	HRESULT UpdateOffsetData( bool p_bForceUpdate, SVImageClass* p_svToolImage );
 	HRESULT TranslatePointToSource( SVExtentPointStruct p_svIn, SVExtentPointStruct& p_rsvOut );
 	HRESULT TranslatePositionPointToSource( SVExtentPointStruct& p_rsvOut );
-	HRESULT GetAuxiliaryDrawTypeString( CString& p_strDrawType );
+	SVString GetAuxiliaryDrawTypeString() const;
 
 	// ******* End Source Extent Data
 

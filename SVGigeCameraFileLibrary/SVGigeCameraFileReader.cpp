@@ -31,95 +31,59 @@
 #pragma endregion Includes
 
 // section headings
-static LPCTSTR scINFO = _T("Info");
-static LPCTSTR scSETTINGS = _T("Settings");
-static LPCTSTR scCUSTOMSETTINGS = _T("Custom Settings");
-static LPCTSTR scCHECKSUM = _T("Checksum");
-static LPCTSTR scCHECKSUMSECTION = _T("[Checksum]");
+static const TCHAR* const cINFO = _T("Info");
+static const TCHAR* const cSETTINGS = _T("Settings");
+static const TCHAR* const cCUSTOMSETTINGS = _T("Custom Settings");
 
 // common tags
-static LPCTSTR scDESCRIPTION = _T("_Description");
-static LPCTSTR scVISUALNAME = _T("_VisualName");
-static LPCTSTR scORDER = _T("_Order");
-static LPCTSTR scDETAILLEVEL = _T("_DetailLevel");
-static LPCTSTR scOPTIONFORMAT = _T("%s_Option_%d");
-static LPCTSTR scOPTIONDESCFORMAT = _T("%s_Option_%d_Description");
+static const TCHAR* const cDESCRIPTION = _T("_Description");
+static const TCHAR* const cVISUALNAME = _T("_VisualName");
+static const TCHAR* const cORDER = _T("_Order");
+static const TCHAR* const cDETAILLEVEL = _T("_DetailLevel");
+static const TCHAR* const cOPTIONFORMAT = _T("%s_Option_%d");
+static const TCHAR* const cOPTIONDESCFORMAT = _T("%s_Option_%d_Description");
 
 // option qualifiers
-static LPCTSTR scMIN = _T("_min");
-static LPCTSTR scMAX = _T("_max");
-static LPCTSTR scOFFSET = _T("_offset");
-static LPCTSTR scMULTIPLIER = _T("_multiplier");
-static LPCTSTR scUNIT_DIVISOR = _T("_unit_divisor");
-static LPCTSTR scUNIT = _T("_unit");
+static const TCHAR* const cMIN = _T("_min");
+static const TCHAR* const cMAX = _T("_max");
+static const TCHAR* const cOFFSET = _T("_offset");
+static const TCHAR* const cMULTIPLIER = _T("_multiplier");
+static const TCHAR* const cUNIT_DIVISOR = _T("_unit_divisor");
+static const TCHAR* const cUNIT = _T("_unit");
 
 // defaults
-static LPCTSTR scDEFAULTMULTIPLIER = _T("1.0");
-static LPCTSTR scDEFAULTDIVISOR = _T("1.0");
-static LPCTSTR scDEFAULTUNIT = "Unit";
+static const TCHAR* const cDEFAULTMULTIPLIER = _T("1.0");
+static const TCHAR* const cDEFAULTDIVISOR = _T("1.0");
+static const TCHAR* const cDEFAULTUNIT = "Unit";
 
 // Info Tags
-static LPCTSTR scVERSION = _T("Version");
-static LPCTSTR scCAMERATYPE = _T("CameraType");
+static const TCHAR* const scVERSION = _T("Version");
+static const TCHAR* const scCAMERATYPE = _T("CameraType");
 
 // Settings Tags
-static LPCTSTR scHSTEP = _T("_HStep");
-static LPCTSTR scVSTEP = _T("_VStep");
-static LPCTSTR scHPOSSTEP = _T("_HPosStep");
-static LPCTSTR scVPOSSTEP = _T("_VPosStep");
-static LPCTSTR scMINTRANSFERTIME = _T("_MinTransferTime");
-static LPCTSTR scMAXTRANSFERTIME = _T("_MaxTransferTime");
-static LPCTSTR scOPTIMIZEDTRANSFERX = _T("_OptimizedTransferX");
-static LPCTSTR scOPTIMIZEDTRANSFERY = _T("_OptimizedTransferY");
+static const TCHAR* const scHSTEP = _T("_HStep");
+static const TCHAR* const scVSTEP = _T("_VStep");
+static const TCHAR* const scHPOSSTEP = _T("_HPosStep");
+static const TCHAR* const scVPOSSTEP = _T("_VPosStep");
+static const TCHAR* const scMINTRANSFERTIME = _T("_MinTransferTime");
+static const TCHAR* const scMAXTRANSFERTIME = _T("_MaxTransferTime");
+static const TCHAR* const scOPTIMIZEDTRANSFERX = _T("_OptimizedTransferX");
+static const TCHAR* const scOPTIMIZEDTRANSFERY = _T("_OptimizedTransferY");
 
 // LUT Tags
-static LPCTSTR scNUMBANDS = _T("_NumBands");
-static LPCTSTR scBANDSIZE = _T("_BandSize");
-static LPCTSTR scMAXVALUE = _T("_MaxValue");
+static const TCHAR* const scNUMBANDS = _T("_NumBands");
+static const TCHAR* const scBANDSIZE = _T("_BandSize");
+static const TCHAR* const scMAXVALUE = _T("_MaxValue");
 
 static const int iKEY_DOES_NOT_EXIST = -987654321;
-static const CString sKEY_DOES_NOT_EXIST = _T("");
 static const int MAX_STRING_BUFFER = 128;
 
 // For Custom params
-static LPCTSTR scValue = _T("Value");
+static const TCHAR* const cValue = _T("Value");
 
-inline DWORD ROL(DWORD& rdwValue, BYTE byNumBitsToShift = 1)
+static SVMaterialsTree::iterator GetBaseNode(SVMaterialsTree& rTree, const SVString& rKey)
 {
-	DWORD dwMask = (1 << byNumBitsToShift) - 1;
-	dwMask <<= (8*sizeof(DWORD) - byNumBitsToShift);
-	DWORD dwMoveBits = rdwValue & dwMask;
-	rdwValue <<= byNumBitsToShift;
-	dwMoveBits >>= (8*sizeof(DWORD) - byNumBitsToShift);
-	rdwValue |= dwMoveBits;
-	return rdwValue;
-}
-
-inline WORD ROL(WORD& rwValue, BYTE byNumBitsToShift = 1)
-{
-	WORD wMask = (1 << byNumBitsToShift) - 1;
-	wMask <<= (8*sizeof(WORD) - byNumBitsToShift);
-	WORD wMoveBits = rwValue & wMask;
-	rwValue <<= byNumBitsToShift;
-	wMoveBits >>= (8*sizeof(WORD) - byNumBitsToShift);
-	rwValue |= wMoveBits;
-	return rwValue;
-}
-
-inline BYTE ROL(BYTE& rbyValue, BYTE byNumBitsToShift = 1)
-{
-	BYTE byMask = (1 << byNumBitsToShift) - 1;
-	byMask <<= (8 - byNumBitsToShift);
-	BYTE byMoveBits = rbyValue & byMask;
-	rbyValue <<= byNumBitsToShift;
-	byMoveBits >>= (8 - byNumBitsToShift);
-	rbyValue |= byMoveBits;
-	return rbyValue;
-}
-
-static SVMaterialsTree::iterator GetBaseNode(SVMaterialsTree& rTree, const std::string& key)
-{
-	SVString SearchKey(key.c_str() );
+	SVString SearchKey(rKey.c_str() );
 	SVMaterialsTree::iterator it( SVMaterialsTree::find( rTree, SearchKey ));
 	if (it == rTree.end())
 	{
@@ -130,17 +94,17 @@ static SVMaterialsTree::iterator GetBaseNode(SVMaterialsTree& rTree, const std::
 	return it;
 }
 
-static SVMaterialsTree::iterator GetOptionNode(SVMaterialsTree& rTree, const std::string& key, const std::string& optionKey)
+static SVMaterialsTree::iterator GetOptionNode(SVMaterialsTree& rTree, const SVString& rKey, const SVString& rOptionKey)
 {
 	SVMaterialsTree::iterator Result( rTree.end() );
-	SVMaterialsTree::iterator itBase = GetBaseNode(rTree, key);
+	SVMaterialsTree::iterator itBase = GetBaseNode(rTree, rKey);
 	
 	if (itBase != rTree.end())
 	{
 		SVMaterialsTree::SVTreeContainer* pSubTree = itBase.node();
 		if( nullptr != pSubTree)
 		{
-			SVString Key( optionKey.c_str());
+			SVString Key( rOptionKey.c_str());
 			SVMaterialsTree::iterator FindIt( SVMaterialsTree::find( *pSubTree, Key) );
 			if( FindIt != pSubTree->end() )
 			{
@@ -198,13 +162,13 @@ HRESULT SVGigeCameraFileReader::ReadCameraFileImpl( SVDeviceParamCollection &rPa
 HRESULT SVGigeCameraFileReader::ReadParams( SVDeviceParamCollection& rParams )
 {
 	HRESULT Result( S_OK );
-	SVString sSection( scINFO );
+	SVString sSection( cINFO );
 
 	ReadCameraFileStringParam( rParams, DeviceParamVendorName,  sSection );
 	ReadCameraFileStringParam( rParams, DeviceParamModelName, sSection );
 	ReadCameraFileStringParam( rParams, DeviceParamFirmware,  sSection );
 
-	sSection = scSETTINGS;
+	sSection = cSETTINGS;
 
 	ReadCameraFileCameraFormatsParam( rParams, DeviceParamCameraFormats, sSection );
 	ReadCameraFileStringParam( rParams, DeviceParamCameraDefaultSettings, sSection );
@@ -255,21 +219,22 @@ HRESULT SVGigeCameraFileReader::ReadParams( SVDeviceParamCollection& rParams )
 	return Result;
 }
 
-typedef std::deque< std::string > split_list_type;
+typedef std::deque< SVString > split_list_type;
 
 HRESULT SVGigeCameraFileReader::ReadCustomParams(const SVString& filename, SVDeviceParamCollection& rParams)
 {
 	HRESULT hr = S_OK;
-	std::string section(scCUSTOMSETTINGS);
+	SVString Section(cCUSTOMSETTINGS);
 	DWORD size = 64 * 1024; // 64K is that large enough ?
-	char* x = new char[size];
+	SVString CustomSettings;
+	CustomSettings.resize( size, '\0' );
 	
-	DWORD len = GetPrivateProfileSection(section.c_str(), x, size, filename.c_str());
-	while (len == (size - 2)) // means the buffer is not large enough
+	DWORD len = GetPrivateProfileSection( Section.c_str(), &CustomSettings.at(0), size, filename.c_str() );
+	while (len == (size - 1)) // means the buffer is not large enough
 	{
-		delete [] x;
 		size = size * 2; // keep doubling it...
-		len = GetPrivateProfileSection(section.c_str(), x, size, filename.c_str());
+		CustomSettings.resize( size, '\0' );
+		len = GetPrivateProfileSection( Section.c_str(), &CustomSettings.at(0), size, filename.c_str() );
 	}
 
 	SVMaterialsTree customParams;
@@ -279,7 +244,7 @@ HRESULT SVGigeCameraFileReader::ReadCustomParams(const SVString& filename, SVDev
 	while (!bDone)
 	{
 		// get first string
-		std::string key = (x + offset);
+		SVString key = (&CustomSettings.at(offset));
 		if (key.empty())
 		{
 			bDone = true;
@@ -299,7 +264,7 @@ HRESULT SVGigeCameraFileReader::ReadCustomParams(const SVString& filename, SVDev
 						if( customParams.end() != it )
 						{
 							SVMaterialDataPtr pMaterial = new SVMaterialData( _variant_t( splitContainer[1].c_str() ) );
-							it.node()->insert( SVMaterialsTree::SVTreeElement( SVString(scValue), pMaterial ));
+							it.node()->insert( SVMaterialsTree::SVTreeElement( SVString(cValue), pMaterial ));
 						}
 					}
 					break;
@@ -321,7 +286,7 @@ HRESULT SVGigeCameraFileReader::ReadCustomParams(const SVString& filename, SVDev
 						if( customParams.end() != it )
 						{
 							SVMaterialDataPtr pMaterial = new SVMaterialData( _variant_t( splitContainer[3].c_str() ) );
-							it.node()->insert( SVMaterialsTree::SVTreeElement( SVString(scValue), pMaterial ));
+							it.node()->insert( SVMaterialsTree::SVTreeElement( SVString(cValue), pMaterial ));
 						}
 					}
 					break;
@@ -342,7 +307,6 @@ HRESULT SVGigeCameraFileReader::ReadCustomParams(const SVString& filename, SVDev
 			offset++;
 		}
 	}
-	delete [] x;
 
 	// Process Materials tree for the Custom parameters
 	typedef std::insert_iterator<SVDeviceParamMap> Insertor;
@@ -350,65 +314,46 @@ HRESULT SVGigeCameraFileReader::ReadCustomParams(const SVString& filename, SVDev
 	return hr;
 }
 
-unsigned short SVGigeCameraFileReader::GetChecksum(std::istream& rFile)
+HRESULT SVGigeCameraFileReader::ReadCameraFileStringParam( SVDeviceParamCollection& rParams, SVDeviceParamEnum e, const SVString& rSection )
 {
-	unsigned short wChecksum = 0;
-	
-	std::string sLine;
+	const SVString& rKey = SVDeviceParam::GetParameterName( e );
 
-	do
+	SVString Value;
+	Value.resize( MAX_STRING_BUFFER, '\0' );
+	DWORD ValueSize = GetPrivateProfileString( rSection.c_str(), rKey.c_str(), _T(""), &Value.at(0), MAX_STRING_BUFFER, m_Filename.c_str() );
+	if ( !Value.empty() )
 	{
-		rFile >> sLine;
-		if (rFile.gcount() > 0)
-		if ( scCHECKSUMSECTION == sLine )
-			break;
-
-		for (size_t i = 0; i < sLine.length(); i++)
-		{
-			unsigned char w = sLine[i];
-			ROL(wChecksum);
-			wChecksum = wChecksum + w;
-		}
-	} while (!rFile.eof() && !rFile.fail());
-
-	return wChecksum;
-}
-
-HRESULT SVGigeCameraFileReader::ReadCameraFileStringParam( SVDeviceParamCollection& rParams, SVDeviceParamEnum e, const SVString& sSection )
-{
-	const CString& csKey = SVDeviceParam::GetParameterName( e );
-
-	CString csVal;
-	DWORD dwLen = GetPrivateProfileString(sSection.c_str(), csKey, sKEY_DOES_NOT_EXIST, csVal.GetBuffer(MAX_STRING_BUFFER), MAX_STRING_BUFFER, m_Filename.c_str());
-	csVal.ReleaseBuffer(dwLen);
-	if ( csVal != sKEY_DOES_NOT_EXIST )
-	{
+		Value.resize( ValueSize );
 		rParams.SetParameter( e, (const SVDeviceParam*) SVDeviceParamTempWrapper(SVDeviceParam::Create( e )) );
 
 		SVStringValueDeviceParam* pParam = rParams.GetParameter( e ).DerivedValue(pParam);
 		ASSERT( pParam );
-		pParam->strValue = csVal;
-		pParam->SetName(SVString(csKey));
+		pParam->strValue = Value;
+		pParam->SetName( rKey );
 
-		ReadCameraFileCommonParams(sSection, SVString(csKey), m_Filename, pParam);
+		ReadCameraFileCommonParams( rSection, rKey, m_Filename, pParam );
 
 		// now load options
 		int iOption = 0;
-		CString csOptionKey;
-		CString csOptionDescription;
-		csOptionKey.Format(scOPTIONFORMAT, csKey, ++iOption);
-
-		while ( (dwLen = GetPrivateProfileString( sSection.c_str(), csOptionKey, sKEY_DOES_NOT_EXIST, csVal.GetBuffer(MAX_STRING_BUFFER), MAX_STRING_BUFFER, m_Filename.c_str() )) > 0 )
+		SVString OptionKey;
+		OptionKey = SvUl_SF::Format( cOPTIONFORMAT, rKey.c_str(), ++iOption );
+		Value.clear();
+		Value.resize( MAX_STRING_BUFFER, '\0' );
+		while ( (ValueSize = GetPrivateProfileString( rSection.c_str(), OptionKey.c_str(), _T(""), &Value.at(0), MAX_STRING_BUFFER, m_Filename.c_str()) ) > 0 )
 		{
-			csVal.ReleaseBuffer(dwLen);
-			csOptionKey.Format(scOPTIONDESCFORMAT, csKey, iOption);
-			dwLen = GetPrivateProfileString(sSection.c_str(), csOptionKey, _T(""), csOptionDescription.GetBuffer(MAX_STRING_BUFFER), MAX_STRING_BUFFER, m_Filename.c_str());
-			csOptionDescription.ReleaseBuffer(dwLen);
+			Value.resize( ValueSize );
+			OptionKey = SvUl_SF::Format( cOPTIONDESCFORMAT, rKey.c_str(), iOption );
+			SVString OptionDescription;
+			OptionDescription.resize( MAX_STRING_BUFFER, '\0' );
+			DWORD DescriptionSize = GetPrivateProfileString( rSection.c_str(), OptionKey.c_str(), _T(""), &OptionDescription.at(0), MAX_STRING_BUFFER, m_Filename.c_str() );
+			OptionDescription.resize( DescriptionSize );
 			
-			SVStringValueDeviceParam::OptionType option = SVStringValueDeviceParam::OptionType( SVString(csVal), SVString(csOptionDescription) );
+			SVStringValueDeviceParam::OptionType option = SVStringValueDeviceParam::OptionType( Value, OptionDescription );
 			pParam->info.options.push_back(option);
 
-			csOptionKey.Format(scOPTIONFORMAT, csKey, ++iOption);
+			OptionKey = SvUl_SF::Format( cOPTIONFORMAT, rKey.c_str(), ++iOption );
+			Value.clear();
+			Value.resize( MAX_STRING_BUFFER, '\0' );
 		}
 	}
 	return S_OK;
@@ -416,35 +361,36 @@ HRESULT SVGigeCameraFileReader::ReadCameraFileStringParam( SVDeviceParamCollecti
 
 HRESULT SVGigeCameraFileReader::ReadCameraFileBoolParam( SVDeviceParamCollection& rParams, SVDeviceParamEnum e, const SVString& sSection )
 {
-	const CString& csKey = SVDeviceParam::GetParameterName( e );
+	const SVString& rKey = SVDeviceParam::GetParameterName( e );
 
-	int iVal = GetPrivateProfileInt(sSection.c_str(), csKey, iKEY_DOES_NOT_EXIST, m_Filename.c_str());
-	if ( iVal != iKEY_DOES_NOT_EXIST )
+	int iVal = GetPrivateProfileInt( sSection.c_str(), rKey.c_str(), iKEY_DOES_NOT_EXIST, m_Filename.c_str() );
+	if ( iKEY_DOES_NOT_EXIST != iVal )
 	{
 		rParams.SetParameter( e, (const SVDeviceParam*) SVDeviceParamTempWrapper(SVDeviceParam::Create( e )) );
 		SVBoolValueDeviceParam* pParam = rParams.GetParameter( e ).DerivedValue(pParam);
 		ASSERT( pParam );
 		pParam->bValue = iVal != 0;
-		pParam->SetName(SVString(csKey));
+		pParam->SetName( rKey );
 
-		ReadCameraFileCommonParams(sSection, SVString(csKey), m_Filename, pParam);
+		ReadCameraFileCommonParams( sSection, rKey, m_Filename, pParam );
 
 		// load options
 		int iOption = 0;
-		CString csOptionKey;
-		CString csOptionDescription;
-		csOptionKey.Format(scOPTIONFORMAT, csKey, ++iOption);
+		SVString OptionKey;
+		OptionKey = SvUl_SF::Format( cOPTIONFORMAT, rKey.c_str(), ++iOption );
 		int iVal = iKEY_DOES_NOT_EXIST;
-		while ( iKEY_DOES_NOT_EXIST != (iVal = GetPrivateProfileInt( sSection.c_str(), csOptionKey, iKEY_DOES_NOT_EXIST, m_Filename.c_str() )) )
+		while ( iKEY_DOES_NOT_EXIST != (iVal = GetPrivateProfileInt( sSection.c_str(), OptionKey.c_str(), iKEY_DOES_NOT_EXIST, m_Filename.c_str() )) )
 		{
-			csOptionKey.Format(scOPTIONDESCFORMAT, csKey, iOption);
-			DWORD dwLen = GetPrivateProfileString(sSection.c_str(), csOptionKey, sKEY_DOES_NOT_EXIST, csOptionDescription.GetBuffer(MAX_STRING_BUFFER), MAX_STRING_BUFFER, m_Filename.c_str());
-			csOptionDescription.ReleaseBuffer(dwLen);
+			OptionKey = SvUl_SF::Format( cOPTIONDESCFORMAT, rKey.c_str(), iOption );
+			SVString OptionDescription;
+			OptionDescription.resize( MAX_STRING_BUFFER, '\0' );
+			DWORD ValueSize = GetPrivateProfileString( sSection.c_str(), OptionKey.c_str(), _T(""), &OptionDescription.at(0), MAX_STRING_BUFFER, m_Filename.c_str() );
+			OptionDescription.resize( ValueSize );
 			
-			SVBoolValueDeviceParam::OptionType option( iVal != 0, SVString(csOptionDescription) );
+			SVBoolValueDeviceParam::OptionType option( iVal != 0, OptionDescription );
 			pParam->info.options.push_back(option);
 
-			csOptionKey.Format(scOPTIONFORMAT, csKey, ++iOption);
+			OptionKey = SvUl_SF::Format( cOPTIONFORMAT, rKey.c_str(), ++iOption );
 		}
 	}
 	return S_OK;
@@ -452,92 +398,94 @@ HRESULT SVGigeCameraFileReader::ReadCameraFileBoolParam( SVDeviceParamCollection
 
 HRESULT SVGigeCameraFileReader::ReadCameraFileLongParam( SVDeviceParamCollection& rParams, SVDeviceParamEnum e, const SVString& sSection )
 {
-	const CString& csKey = SVDeviceParam::GetParameterName( e );
+	const SVString& rKey = SVDeviceParam::GetParameterName( e );
 
-	int iVal = GetPrivateProfileInt(sSection.c_str(), csKey, iKEY_DOES_NOT_EXIST, m_Filename.c_str());
+	int iVal = GetPrivateProfileInt( sSection.c_str(), rKey.c_str(), iKEY_DOES_NOT_EXIST, m_Filename.c_str() );
 	if (iKEY_DOES_NOT_EXIST != iVal)
 	{
 		rParams.SetParameter( e, (const SVDeviceParam*) SVDeviceParamTempWrapper(SVDeviceParam::Create( e )) );
 		SVLongValueDeviceParam* pParam = rParams.GetParameter( e ).DerivedValue(pParam);
 		ASSERT( pParam );
 		pParam->lValue = iVal;
-		pParam->SetName(SVString(csKey));
+		pParam->SetName( rKey );
 
-		ReadCameraFileCommonParams(sSection, SVString(csKey), m_Filename, pParam);
+		ReadCameraFileCommonParams( sSection, rKey, m_Filename, pParam );
 
 		// now load options
 		int iOption = 0;
-		CString csOptionKey;
-		CString csOptionDescription;
-		csOptionKey.Format(scOPTIONFORMAT, csKey, ++iOption);
+		SVString OptionKey;
+		OptionKey = SvUl_SF::Format( cOPTIONFORMAT, rKey.c_str(), ++iOption );
 
-		while ( iKEY_DOES_NOT_EXIST != (iVal = GetPrivateProfileInt( sSection.c_str(), csOptionKey, iKEY_DOES_NOT_EXIST, m_Filename.c_str() )) )
+		while ( iKEY_DOES_NOT_EXIST != (iVal = GetPrivateProfileInt( sSection.c_str(), OptionKey.c_str(), iKEY_DOES_NOT_EXIST, m_Filename.c_str() )) )
 		{
-			csOptionKey.Format(scOPTIONDESCFORMAT, csKey, iOption);
-			DWORD dwLen = GetPrivateProfileString(sSection.c_str(), csOptionKey, _T(""), csOptionDescription.GetBuffer(MAX_STRING_BUFFER), MAX_STRING_BUFFER, m_Filename.c_str());
-			csOptionDescription.ReleaseBuffer(dwLen);
+			OptionKey = SvUl_SF::Format( cOPTIONDESCFORMAT, rKey.c_str(), iOption );
+			SVString OptionDescription;
+			OptionDescription.resize( MAX_STRING_BUFFER, '\0' );
+			DWORD ValueSize = GetPrivateProfileString( sSection.c_str(), OptionKey.c_str(), _T(""), &OptionDescription.at(0), MAX_STRING_BUFFER, m_Filename.c_str() );
+			OptionDescription.resize( ValueSize );
 			
-			SVLongValueDeviceParam::OptionType option( iVal, SVString(csOptionDescription) );
+			SVLongValueDeviceParam::OptionType option( iVal, OptionDescription );
 			pParam->info.options.push_back(option);
 
-			csOptionKey.Format(scOPTIONFORMAT, csKey, ++iOption);
+			OptionKey = SvUl_SF::Format( cOPTIONFORMAT, rKey.c_str(), ++iOption );
 		}
 
-		ReadCameraFileLongValueInfo(sSection, SVString(csKey), m_Filename, pParam);
+		ReadCameraFileLongValueInfo(sSection, rKey, m_Filename, pParam);
 	}
 	return S_OK;
 }
 
 HRESULT SVGigeCameraFileReader::ReadCameraFileCameraFormatsParam( SVDeviceParamCollection& rParams, SVDeviceParamEnum e, const SVString& sSection )
 {
-	const CString& csKey = SVDeviceParam::GetParameterName( e );
+	const SVString& rKey = SVDeviceParam::GetParameterName( e );
 
-	CString csVal;
-	DWORD dwLen = GetPrivateProfileString(sSection.c_str(), csKey, sKEY_DOES_NOT_EXIST, csVal.GetBuffer(MAX_STRING_BUFFER), MAX_STRING_BUFFER, m_Filename.c_str());
-	csVal.ReleaseBuffer(dwLen);
-	if ( sKEY_DOES_NOT_EXIST != csVal )
+	SVString Value;
+	Value.resize( MAX_STRING_BUFFER, '\0' );
+	DWORD ValueSize = GetPrivateProfileString(sSection.c_str(), rKey.c_str(), _T(""), &Value.at(0), MAX_STRING_BUFFER, m_Filename.c_str());
+	if ( !Value.empty() )
 	{
+		Value.resize( ValueSize );
 		rParams.SetParameter( e, (const SVDeviceParam*) SVDeviceParamTempWrapper(SVDeviceParam::Create( e )) );
 		SVCameraFormatsDeviceParam* pParam = rParams.GetParameter( e ).DerivedValue( pParam );
 		ASSERT( pParam );
-		pParam->strValue = csVal;
-		pParam->SetName(SVString(csKey));
+		pParam->strValue = Value;
+		pParam->SetName( rKey );
 
-		ReadCameraFileCommonParams(sSection, SVString(csKey), m_Filename, pParam);
+		ReadCameraFileCommonParams(sSection, rKey, m_Filename, pParam);
 
 		// now load options
 		int iOption = 0;
-		CString csOptionKey;
-		CString csOptionDescription;
-		CString csOption;
-		csOptionKey.Format(scOPTIONFORMAT, csKey, ++iOption);
-		while ( (dwLen = GetPrivateProfileString( sSection.c_str(), csOptionKey, sKEY_DOES_NOT_EXIST, csOption.GetBuffer(MAX_STRING_BUFFER), MAX_STRING_BUFFER, m_Filename.c_str() )) > 0 )
+		SVString OptionKey;
+		SVString Option;
+		OptionKey = SvUl_SF::Format( cOPTIONFORMAT, rKey.c_str(), ++iOption );
+		Option.resize( MAX_STRING_BUFFER, '\0' );
+		while ( (ValueSize = GetPrivateProfileString( sSection.c_str(), OptionKey.c_str(), _T(""), &Option.at(0), MAX_STRING_BUFFER, m_Filename.c_str() )) > 0 )
 		{
+			Option.resize( ValueSize );
 			SVCameraFormat cf;
 
-			csOption.ReleaseBuffer(dwLen);
+			cf.ParseAndAssignCameraFormat( Option );
 
-			cf.ParseAndAssignCameraFormat( csOption );
+			SVString OptionDescriptionKey = SvUl_SF::Format( cOPTIONDESCFORMAT, rKey.c_str(), iOption );
+			SVString OptionDescription;
+			OptionDescription.resize( MAX_STRING_BUFFER, '\0' );
+			ValueSize = GetPrivateProfileString( sSection.c_str(), OptionDescriptionKey.c_str(), _T(""), &OptionDescription.at(0), MAX_STRING_BUFFER, m_Filename.c_str() );
+			OptionDescription.resize( ValueSize );
+			cf.m_strDescription = OptionDescription;
 
-			CString csOptionDescriptionKey;
-			csOptionDescriptionKey.Format(scOPTIONDESCFORMAT, csKey, iOption);
-			dwLen = GetPrivateProfileString(sSection.c_str(), csOptionDescriptionKey, sKEY_DOES_NOT_EXIST, csOptionDescription.GetBuffer(MAX_STRING_BUFFER), MAX_STRING_BUFFER, m_Filename.c_str());
-			csOptionDescription.ReleaseBuffer(dwLen);
-			cf.m_strDescription = csOptionDescription;
-
-			int iVal = GetPrivateProfileInt(sSection.c_str(), csOptionKey + scHSTEP, iKEY_DOES_NOT_EXIST, m_Filename.c_str());
+			int iVal = GetPrivateProfileInt( sSection.c_str(), SVString(OptionKey + scHSTEP).c_str(), iKEY_DOES_NOT_EXIST, m_Filename.c_str());
 			if ( iKEY_DOES_NOT_EXIST != iVal )
 			{
 				cf.m_lHStep = iVal;
 			}
 			
-			iVal = GetPrivateProfileInt(sSection.c_str(), csOptionKey + scVSTEP, iKEY_DOES_NOT_EXIST, m_Filename.c_str());
+			iVal = GetPrivateProfileInt( sSection.c_str(), SVString(OptionKey + scVSTEP).c_str(), iKEY_DOES_NOT_EXIST, m_Filename.c_str());
 			if ( iKEY_DOES_NOT_EXIST != iVal )
 			{
 				cf.m_lVStep = iVal;
 			}
 			
-			iVal = GetPrivateProfileInt(sSection.c_str(), csOptionKey + scHPOSSTEP, iKEY_DOES_NOT_EXIST, m_Filename.c_str());
+			iVal = GetPrivateProfileInt( sSection.c_str(), SVString(OptionKey + scHPOSSTEP).c_str(), iKEY_DOES_NOT_EXIST, m_Filename.c_str() );
 			if ( iKEY_DOES_NOT_EXIST != iVal )
 			{
 				cf.m_lHPosStep = iVal;
@@ -547,7 +495,7 @@ HRESULT SVGigeCameraFileReader::ReadCameraFileCameraFormatsParam( SVDeviceParamC
 				cf.m_lHPosStep = cf.m_lHStep;
 			}
 
-			iVal = GetPrivateProfileInt(sSection.c_str(), csOptionKey + scVPOSSTEP, iKEY_DOES_NOT_EXIST, m_Filename.c_str());
+			iVal = GetPrivateProfileInt(sSection.c_str(), SVString(OptionKey + scVPOSSTEP).c_str(), iKEY_DOES_NOT_EXIST, m_Filename.c_str());
 			if ( iKEY_DOES_NOT_EXIST != iVal )
 			{
 				cf.m_lVPosStep = iVal;
@@ -558,9 +506,11 @@ HRESULT SVGigeCameraFileReader::ReadCameraFileCameraFormatsParam( SVDeviceParamC
 			}
 
 			cf.m_lOrder = iOption;
-			pParam->options[SVString(csOption)] = cf;
+			pParam->options[SVString(Option)] = cf;
 
-			csOptionKey.Format(scOPTIONFORMAT, csKey, ++iOption);
+			OptionKey = SvUl_SF::Format(cOPTIONFORMAT, rKey.c_str(), ++iOption);
+			Option.clear();
+			Option.resize( MAX_STRING_BUFFER, '\0' );
 		}
 
 		if ( 0 == iOption )
@@ -596,32 +546,30 @@ HRESULT SVGigeCameraFileReader::ReadCameraFileCameraFormatsParam( SVDeviceParamC
 
 HRESULT SVGigeCameraFileReader::ReadCameraFileLutParam( SVDeviceParamCollection& rParams, SVDeviceParamEnum e, const SVString& sSection )
 {
-	const CString& csKey = SVDeviceParam::GetParameterName( e );
+	const SVString& rKey = SVDeviceParam::GetParameterName( e );
 
-	CString csVal;
-
-	int iTransformOperation = GetPrivateProfileInt(sSection.c_str(), csKey, iKEY_DOES_NOT_EXIST, m_Filename.c_str());
+	int iTransformOperation = GetPrivateProfileInt( sSection.c_str(), rKey.c_str(), iKEY_DOES_NOT_EXIST, m_Filename.c_str() );
 	if (iKEY_DOES_NOT_EXIST != iTransformOperation )
 	{
 		rParams.SetParameter( e, (const SVDeviceParam*) SVDeviceParamTempWrapper(SVDeviceParam::Create( e )) );
 		SVLutDeviceParam* pParam = rParams.GetParameter( e ).DerivedValue( pParam );
 		ASSERT( pParam );
-		pParam->SetName(SVString(csKey));
+		pParam->SetName( rKey );
 
-		ReadCameraFileCommonParams(sSection, SVString(csKey), m_Filename, pParam);
+		ReadCameraFileCommonParams( sSection, rKey, m_Filename, pParam );
 
 		SVLut& rLut = pParam->lut;
 
 		SVLutInfo lutinfo;
 
-		int iVal = GetPrivateProfileInt(sSection.c_str(), csKey + scNUMBANDS, 1, m_Filename.c_str());	// default to mono
+		int iVal = GetPrivateProfileInt(sSection.c_str(), SVString(rKey + scNUMBANDS).c_str(), 1, m_Filename.c_str());	// default to mono
 		lutinfo.SetBands( iVal );	/////!!!   may vary for different image formats!
 
-		iVal = GetPrivateProfileInt(sSection.c_str(), csKey + scBANDSIZE, 1, m_Filename.c_str());
+		iVal = GetPrivateProfileInt(sSection.c_str(), SVString(rKey + scBANDSIZE).c_str(), 1, m_Filename.c_str());
 		ASSERT( iVal != 1 );	// file needs to define this!!!
 		lutinfo.SetBandSize( iVal );	/////!!!   may vary for different image formats!
 
-		iVal = GetPrivateProfileInt(sSection.c_str(), csKey + scMAXVALUE, 1024, m_Filename.c_str());
+		iVal = GetPrivateProfileInt(sSection.c_str(), SVString(rKey + scMAXVALUE).c_str(), 1024, m_Filename.c_str());
 		lutinfo.SetMaxValue( iVal );
 
 		lutinfo.SetTransform(SVDefaultLutTransform());
@@ -639,27 +587,29 @@ HRESULT SVGigeCameraFileReader::ReadCameraFileLutParam( SVDeviceParamCollection&
 	return S_OK;
 }
 
-HRESULT SVGigeCameraFileReader::ReadCameraFileCommonParams(const SVString& sSection, const SVString& sKey, const SVString& sFilename, SVDeviceParam* pParam)
+HRESULT SVGigeCameraFileReader::ReadCameraFileCommonParams(const SVString& rSection, const SVString& rKey, const SVString& rFilename, SVDeviceParam* pParam)
 {
-	CString csKey = sKey.c_str();
 
-	CString csVal;
-	DWORD dwLen = GetPrivateProfileString(sSection.c_str(), csKey + scDESCRIPTION, sKEY_DOES_NOT_EXIST, csVal.GetBuffer(MAX_STRING_BUFFER), MAX_STRING_BUFFER, sFilename.c_str());
-	csVal.ReleaseBuffer(dwLen);
-	pParam->SetDescription(SVString(csVal));
+	SVString Value;
+	Value.resize( MAX_STRING_BUFFER, '\0' );
+	DWORD ValueSize = GetPrivateProfileString( rSection.c_str(), SVString(rKey + cDESCRIPTION).c_str(), _T(""), &Value.at(0), MAX_STRING_BUFFER, rFilename.c_str() );
+	Value.resize( ValueSize );
 
-	csVal = sKEY_DOES_NOT_EXIST;
-	dwLen = GetPrivateProfileString(sSection.c_str(), csKey + scVISUALNAME, csKey, csVal.GetBuffer(MAX_STRING_BUFFER), MAX_STRING_BUFFER, sFilename.c_str());
-	csVal.ReleaseBuffer(dwLen);
-	pParam->SetVisualName(SVString(csVal));
+	pParam->SetDescription( Value );
+
+	Value.clear();
+	Value.resize( MAX_STRING_BUFFER, '\0' );
+	ValueSize = GetPrivateProfileString( rSection.c_str(), SVString(rKey + cVISUALNAME).c_str(), rKey.c_str(), &Value.at(0), MAX_STRING_BUFFER, rFilename.c_str() );
+	Value.resize( ValueSize );
+	pParam->SetVisualName( Value );
 	
-	int iVal = GetPrivateProfileInt(sSection.c_str(), csKey + scORDER, iKEY_DOES_NOT_EXIST, sFilename.c_str());
+	int iVal = GetPrivateProfileInt( rSection.c_str(), SVString(rKey + cORDER).c_str(), iKEY_DOES_NOT_EXIST, rFilename.c_str() );
 	if ( iKEY_DOES_NOT_EXIST != iVal )
 	{
 		pParam->SetOrder( iVal );
 	}
 	
-	iVal = GetPrivateProfileInt(sSection.c_str(), csKey + scDETAILLEVEL, iKEY_DOES_NOT_EXIST, sFilename.c_str());
+	iVal = GetPrivateProfileInt( rSection.c_str(), SVString(rKey + cDETAILLEVEL).c_str(), iKEY_DOES_NOT_EXIST, rFilename.c_str() );
 	if ( iKEY_DOES_NOT_EXIST != iVal )
 	{
 		pParam->SetDetailLevel( iVal );
@@ -667,46 +617,49 @@ HRESULT SVGigeCameraFileReader::ReadCameraFileCommonParams(const SVString& sSect
 	return S_OK;
 }
 
-HRESULT SVGigeCameraFileReader::ReadCameraFileLongValueInfo(const SVString& sSection, const SVString& sKey, const SVString& sFilename, SVLongValueDeviceParam* pParam)
+HRESULT SVGigeCameraFileReader::ReadCameraFileLongValueInfo(const SVString& rSection, const SVString& rKey, const SVString& rFilename, SVLongValueDeviceParam* pParam)
 {
-	CString csKey = sKey.c_str();
-
 	int iVal = iKEY_DOES_NOT_EXIST;
 	// now load info (e.g. min/max)
-	if ( (iVal = GetPrivateProfileInt(sSection.c_str(), csKey + scMIN, iKEY_DOES_NOT_EXIST, sFilename.c_str())) != iKEY_DOES_NOT_EXIST )
+	if ( (iVal = GetPrivateProfileInt( rSection.c_str(), SVString(rKey + cMIN).c_str(), iKEY_DOES_NOT_EXIST, rFilename.c_str()) ) != iKEY_DOES_NOT_EXIST )
 	{
 		pParam->info.min = iVal;
 	}
 
-	if ( (iVal = GetPrivateProfileInt(sSection.c_str(), csKey + scMAX, iKEY_DOES_NOT_EXIST, sFilename.c_str())) != iKEY_DOES_NOT_EXIST )
+	if ( (iVal = GetPrivateProfileInt( rSection.c_str(), SVString(rKey + cMAX).c_str(), iKEY_DOES_NOT_EXIST, rFilename.c_str()) ) != iKEY_DOES_NOT_EXIST )
 	{
 		pParam->info.max = iVal;
 	}
 
 	// load offset, multiplier, and Unit string.
-	iVal = GetPrivateProfileInt(sSection.c_str(), csKey + scOFFSET, 0, sFilename.c_str());
+	iVal = GetPrivateProfileInt( rSection.c_str(), SVString(rKey + cOFFSET).c_str(), 0, rFilename.c_str() );
 	pParam->info.offset = iVal;
 
-	CString csVal; 
-	DWORD dwLen = GetPrivateProfileString(sSection.c_str(), csKey + scMULTIPLIER, scDEFAULTMULTIPLIER, csVal.GetBuffer(MAX_STRING_BUFFER), MAX_STRING_BUFFER, sFilename.c_str());
-	csVal.ReleaseBuffer(dwLen);
-	pParam->info.multiplier = atof(csVal);
+	SVString Value;
+	Value.resize( MAX_STRING_BUFFER, '\0' );
+	DWORD ValueSize = GetPrivateProfileString( rSection.c_str(), SVString(rKey + cMULTIPLIER).c_str(), cDEFAULTMULTIPLIER, &Value.at(0), MAX_STRING_BUFFER, rFilename.c_str() );
+	Value.resize( ValueSize );
+	pParam->info.multiplier = atof( Value.c_str() );
 	if (0 == pParam->info.multiplier)
 	{
 		pParam->info.multiplier = 1.0;
 	}
 
-	dwLen = GetPrivateProfileString(sSection.c_str(), csKey + scUNIT_DIVISOR, scDEFAULTDIVISOR, csVal.GetBuffer(MAX_STRING_BUFFER), MAX_STRING_BUFFER, sFilename.c_str());
-	csVal.ReleaseBuffer(dwLen);
-	pParam->info.unit_divisor = atof(csVal);
+	Value.clear();
+	Value.resize( MAX_STRING_BUFFER, '\0' );
+	ValueSize = GetPrivateProfileString( rSection.c_str(), SVString(rKey + cUNIT_DIVISOR).c_str(), cDEFAULTDIVISOR, &Value.at(0), MAX_STRING_BUFFER, rFilename.c_str() );
+	Value.resize( ValueSize );
+	pParam->info.unit_divisor = atof( Value.c_str() );
 	if (0 == pParam->info.unit_divisor)
 	{
 		pParam->info.unit_divisor = 1.0;
 	}
 
-	dwLen = GetPrivateProfileString(sSection.c_str(), csKey + scUNIT, scDEFAULTUNIT, csVal.GetBuffer(MAX_STRING_BUFFER), MAX_STRING_BUFFER, sFilename.c_str());
-	csVal.ReleaseBuffer(dwLen);
-	pParam->info.sUnits = csVal;
+	Value.clear();
+	Value.resize( MAX_STRING_BUFFER, '\0' );
+	ValueSize = GetPrivateProfileString( rSection.c_str(), SVString(rKey + cUNIT).c_str(), cDEFAULTUNIT, &Value.at(0), MAX_STRING_BUFFER, rFilename.c_str() );
+	Value.resize( ValueSize );
+	pParam->info.sUnits = Value;
 
 	return S_OK;
 }
@@ -727,7 +680,7 @@ HRESULT SVGigeCameraFileReader::ReadGigeFeatureOverrides()
 		{
 			if (!xmlPartOfCameraFileReached)
 				// Find the xml tag
-				if (std::string::npos != line.find("<?xml"))
+				if (SVString::npos != line.find("<?xml"))
 				{
 					xmlPartOfCameraFileReached = true;
 				}

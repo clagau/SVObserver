@@ -12,6 +12,7 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <comdef.h>
 #include "SVXMLCTreeCtrl.h"
+#include "SVUtilityLibrary/SVString.h"
 
 namespace Seidenader { namespace SVXMLLibrary
 {
@@ -114,9 +115,9 @@ namespace Seidenader { namespace SVXMLLibrary
 
 		while( nullptr == pResult && nullptr != pBranch )
 		{
-			CString BranchName = m_rTree.GetItemText( pBranch );
+			SVString BranchName = m_rTree.GetItemText( pBranch );
 
-			if( 0 == m_rTree.GetItemData( pBranch ) && 0 == BranchName.Compare( Name ) )
+			if( 0 == m_rTree.GetItemData( pBranch ) && Name == BranchName )
 			{
 				pResult = pBranch;
 			}
@@ -194,9 +195,9 @@ namespace Seidenader { namespace SVXMLLibrary
 		return l_Status;
 	}
 
-	std::string SVXMLCTreeCtrl::getBranchName( const SVBranchHandle pBranch ) const
+	SVString SVXMLCTreeCtrl::getBranchName( const SVBranchHandle pBranch ) const
 	{
-		std::string Result;
+		SVString Result;
 
 		if( isRoot( pBranch ) )
 		{
@@ -257,9 +258,9 @@ namespace Seidenader { namespace SVXMLLibrary
 
 		while( nullptr == pResult && nullptr != pBranch )
 		{
-			CString BranchName = m_rTree.GetItemText( pBranch );
+			SVString BranchName = m_rTree.GetItemText( pBranch );
 
-			if( m_rTree.GetItemData( pBranch ) && 0 == BranchName.Compare( Name ) )
+			if( m_rTree.GetItemData( pBranch ) && Name == BranchName )
 			{
 				pResult = pBranch;
 			}
@@ -369,9 +370,9 @@ namespace Seidenader { namespace SVXMLLibrary
 		return l_Status;
 	}
 
-	std::string SVXMLCTreeCtrl::getLeafName( const SVLeafHandle pLeaf ) const
+	SVString SVXMLCTreeCtrl::getLeafName( const SVLeafHandle pLeaf ) const
 	{
-		std::string Result;
+		SVString Result;
 
 		Result = m_rTree.GetItemText( pLeaf );
 

@@ -19,6 +19,13 @@
 #include "LoadDll.h"
 #pragma endregion Includes
 
+#pragma region Declarations
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+#endif
+#pragma endregion Declarations
+
 static const long cBufferSize = 1024;
 
 namespace Seidenader { namespace SVUtilityLibrary { namespace StringFunctions
@@ -142,6 +149,21 @@ namespace Seidenader { namespace SVUtilityLibrary { namespace StringFunctions
 		}
 	}
 
+	SVString ValidateString( const SVString& rStringValue, LPCTSTR ValidCharacters )
+	{
+		SVString Result( rStringValue );
+
+		size_t Pos( Result.find_first_not_of( ValidCharacters ) );
+
+		while( SVString::npos != Pos )
+		{
+			Result.erase(Pos, 1);
+			Pos = Result.find_first_not_of( ValidCharacters );
+		}
+
+		return Result;
+	}
+
 	bool isSubmatch(const SVString& rStringValue, const SVString& rSearchString, size_t offsetSource, size_t offsetSearch )
 	{
 		bool retVal = false;
@@ -238,7 +260,7 @@ namespace Seidenader { namespace SVUtilityLibrary { namespace StringFunctions
 		return true;
 	}
 	
-	SVString LoadString( UINT ResourceID )
+	SVString LoadSVString( UINT ResourceID )
 	{
 		SVString Result;
 

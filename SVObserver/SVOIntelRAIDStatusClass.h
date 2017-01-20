@@ -11,6 +11,8 @@
 
 #pragma once
 
+#include "SVUtilityLibrary/SVString.h"
+
 class SVOIntelRAIDStatusClass  
 {
 public:
@@ -20,15 +22,15 @@ public:
 	HRESULT UpdateStatus();
 	HRESULT CheckStatus();
 
-	const CString& GetRaidStatus();
-	const CString& GetErrorStatus();
+	const SVString& GetRaidStatus();
+	const SVString& GetErrorStatus();
 
 	const HANDLE GetCheckEvent();
 
 protected:
 	HANDLE m_hCheckEvent;
 
-	CString m_csRaidStatus;
-	CString m_csErrorStatus;
+	SVString m_RaidStatus;
+	SVString m_ErrorStatus;
 };
 

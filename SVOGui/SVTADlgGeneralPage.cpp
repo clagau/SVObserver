@@ -18,6 +18,7 @@
 #include "GuiCommands\GetDependencies.h"
 #include "SVObjectLibrary\SVObjectSynchronousCommandTemplate.h"
 #include "SVShowDependentsDialog.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -234,7 +235,7 @@ namespace Seidenader { namespace SVOGui
 			m_AvailableSourceImageCombo.GetLBText(index, name);
 			if (!name.IsEmpty())
 			{
-				m_AuxExtentsController.SetAuxSourceImage(name.GetString());
+				m_AuxExtentsController.SetAuxSourceImage( SVString(name.GetString() ));
 			}
 		}
 		refresh();

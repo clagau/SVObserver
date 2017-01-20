@@ -21,11 +21,10 @@
 #include "SVOLibrary/SVODeviceClass.h"
 #include "CameraLibrary/SVDeviceParamCollection.h"
 #include "SVUtilityLibrary/SVSharedPtr.h"
+#include "SVUtilityLibrary/SVString.h"
 #include "TriggerInformation/SVAcquisitionConstructParams.h"
-
 #include "SVSystemLibrary/SVFileNameArrayClass.h"
 #include "SVOCore/SVImageObjectClass.h"
-#include "SVSubscriberProviderInterfaces.h"
 #pragma endregion Includes
 
 /**
@@ -36,9 +35,10 @@
 @SVObjectOperations This object maintains operations for connecting and configuring the camera device information.  This includes but is not limited to setting up the notification signals, starting the notification process, stopping the notification process, creating buffers based on the image parameters, etc. 
 
 */
+class SVDigitizerProcessingClass;
+
 class SVAcquisitionClass :
 	public SVODataDeviceClass,
-	public SVSubscriberInterface,
 	public SVAcquisitionBufferInterface
 {
 public:
@@ -92,14 +92,14 @@ public:
 	HRESULT GetNextIndex( SVDataManagerHandle &rDMHandle ) const;
 	HRESULT GetNextIndex( SVDataManagerHandle &rDMHandle, SVDataManagerLockTypeEnum p_LockType ) const;
 
-	inline CString DeviceName() const { return mDeviceName.c_str(); }
-	inline CString DigName() const { return mcsDigName; }
+	inline SVString DeviceName() const { return m_DeviceName; }
+	inline SVString DigName() const { return m_DigName; }
 	inline int Channel() const { return miChannel; }
 	inline int DigNumber() const { return miDigNumber; }
 	inline int BandSize() const { return miBandSize; }
 	inline int BandMaxSize() const { return miBandMaxSize; }
 
-	inline CString SetDigName(const CString& s) {return mcsDigName = s;}
+	inline void	   SetDigName(LPCTSTR Name) {m_DigName = Name;}
 	inline int     SetChannel(int i) {return miChannel = i;}
 	inline int     SetDigNumber(int i) {return miDigNumber = i;}
 	inline int     SetBandSize(int i) {return miBandSize = i;}
@@ -125,9 +125,6 @@ public:
 	bool IsDigitizerSubsystemValid() const;
 
 	virtual HRESULT SingleGrab( SVSmartHandlePointer p_SingleGrabHandle );
-
-	// temp hack
-	virtual SVOCallbackPtr GetCallbackFunction(const CString& sType) const override {return nullptr;}
 
 	virtual BOOL SetCurrentIndex( const SVDataManagerHandle& rDMIndexHandle );
 	virtual BOOL SetCurrentIndex( const SVDataManagerHandle& rDMIndexHandle, SVDataManagerLockTypeEnum p_LockType );
@@ -177,7 +174,7 @@ protected:
 	SVLightReference mLightReference;
 	SVFileNameArrayClass mFiles;
 
-	CString mcsDigName;
+	SVString m_DigName;
 	int miChannel; //&&& Var needs to be set
 	int miDigNumber; // &&& Var needs to be set
 	int miBandSize;
@@ -189,6 +186,7 @@ protected:
 	bool mbIsBufferCreated;
 	bool mbTempOnline;
 	SVSmartHandlePointer m_SingleGrabHandle;
+	SVDigitizerProcessingClass& m_rDigitizerProc;
 
 private:
 	SVAcquisitionClass();

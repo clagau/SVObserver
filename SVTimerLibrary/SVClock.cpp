@@ -9,12 +9,14 @@
 //* .Check In Date   : $Date:   13 May 2013 11:56:18  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 //Moved to precompiled header: #include <limits>
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include "boost/config.hpp"
 //Moved to precompiled header: #include "boost/assign.hpp"
 #include "SVClock.h"
+#pragma endregion Includes
 
 typedef std::map< SVClock::SVConversionEnum, double > SVConversionFactorMap;
 static const SVConversionFactorMap g_Conversions = boost::assign::map_list_of< SVClock::SVConversionEnum, double >

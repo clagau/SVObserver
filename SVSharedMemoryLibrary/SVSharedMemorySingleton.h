@@ -40,7 +40,7 @@ public:
 	SVMonitorListWriter& GetMonitorListWriter();
 	SVShareControlHandler& GetIPCShare();
 
-	std::string GetInspectionShareName(const SVGUID& rPPQGuid,const SVGUID& rGuid);
+	SVString GetInspectionShareName(const SVGUID& rPPQGuid,const SVGUID& rGuid);
 	const SVSharedMemorySettings& GetSettings() const;
 	static HRESULT SetProductFilter(const SVString& listName, SVProductFilterEnum filter);
 

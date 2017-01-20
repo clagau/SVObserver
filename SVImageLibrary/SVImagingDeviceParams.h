@@ -16,9 +16,9 @@
 #include "SVLut.h"
 #include "SVLightReference.h"
 #include "SVCameraFormat.h"
-
 #include "CameraLibrary/SVDeviceParams.h"
 #include "CameraLibrary/SVStringValueDeviceParam.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 // for now, still need to update the enum in SVDeviceParams.h
@@ -43,7 +43,7 @@ public:
 #if defined(_DEBUG) || defined (_MINDEBUG)
 	SVLut& Lut(SVDeviceParamWrapper& w);
 #else
-	inline SVLut& Lut(SVDeviceParamWrapper& w) {SVLutDeviceParam* p = w.DerivedValue(p); if (nullptr == p) {w = SVLutDeviceParam(); p = w.DerivedValue(p);} ASSERT(p); return p->lut;}
+	inline SVLut& Lut(SVDeviceParamWrapper& w) {SVLutDeviceParam* p = w.DerivedValue(p); if (nullptr == p) {w = SVLutDeviceParam(); p = w.DerivedValue(p);} assert(p); return p->lut;}
 #endif
 
 class SVLightReferenceDeviceParam : public SVDeviceParam
@@ -66,7 +66,7 @@ public:
 #if defined(_DEBUG) || defined (_MINDEBUG)
 	SVLightReference& LR(SVDeviceParamWrapper& w);
 #else
-	inline SVLightReference& LR(SVDeviceParamWrapper& w) {SVLightReferenceDeviceParam* p = w.DerivedValue(p); if (nullptr == p) {w = SVLightReferenceDeviceParam(); p = w.DerivedValue(p);} ASSERT(p); return p->lr;}
+	inline SVLightReference& LR(SVDeviceParamWrapper& w) {SVLightReferenceDeviceParam* p = w.DerivedValue(p); if (nullptr == p) {w = SVLightReferenceDeviceParam(); p = w.DerivedValue(p);} assert(p); return p->lr;}
 #endif
 
 class SVCameraFormatsDeviceParam : public SVStringValueDeviceParam

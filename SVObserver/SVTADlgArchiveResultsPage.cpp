@@ -27,6 +27,7 @@
 #include "TextDefinesSvO.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVOResource/ConstGlobalSvOr.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -77,23 +78,22 @@ bool SVTADlgArchiveResultsPage::QueryAllowExit()
 {
 	UpdateData(TRUE); 
 
+	CString Text;
 	// Update the file path to the archive file for associated archive tool.
-	CString csArchiveFileName;
-	m_ArchiveFileName.GetWindowText( csArchiveFileName );
+	m_ArchiveFileName.GetWindowText( Text );
+	SVString ArchiveFileName = Text;
 
 	//check for valid drive for text archive
-	CString szDrive;
-
-	CString sTmpArchiveFileName;
+	SVString TmpArchiveFileName = ArchiveFileName;
 	ArchiveToolHelper athArchivePathAndName;
-	athArchivePathAndName.Init(SVString(csArchiveFileName));
+	athArchivePathAndName.Init( ArchiveFileName );
 
 	if (athArchivePathAndName.isUsingKeywords())
 	{
 		if (athArchivePathAndName.isTokensValid())
 		{
-			sTmpArchiveFileName = athArchivePathAndName.TranslatePath(SVString(csArchiveFileName)).c_str();
-			SVCheckPathDir( sTmpArchiveFileName, TRUE );
+			TmpArchiveFileName = athArchivePathAndName.TranslatePath( ArchiveFileName );
+			SVCheckPathDir( TmpArchiveFileName.c_str(), true );
 		}
 		else
 		{
@@ -106,13 +106,13 @@ bool SVTADlgArchiveResultsPage::QueryAllowExit()
 	else
 	{
 		//not using Keywords 
-		SVCheckPathDir( csArchiveFileName, TRUE );
+		SVCheckPathDir( ArchiveFileName.c_str(), true );
 	}
-
-	if(!ArchiveToolHelper::ValidateDrive(csArchiveFileName,szDrive) || csArchiveFileName.IsEmpty())
+	SVString Drive;
+	if(!ArchiveToolHelper::ValidateDrive(ArchiveFileName.c_str(), Drive) || ArchiveFileName.empty())
 	{
-		SVStringArray msgList;
-		msgList.push_back(SVString(szDrive));
+		SVStringVector msgList;
+		msgList.push_back( Drive );
 		SvStl::MessageMgrStd Exception( SvStl::LogAndDisplay );
 		Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvOi::Tid_InvalidDrive, msgList, SvStl::SourceFileParams(StdMessageParams) );
 
@@ -124,17 +124,17 @@ bool SVTADlgArchiveResultsPage::QueryAllowExit()
 	// archive tool in any other toolset, i.e. it must be unique on the 
 	// NT file system.
 	//
-	BOOL bResult = m_pTool->CheckForUniqueArchiveFilePath(csArchiveFileName);
+	BOOL bResult = m_pTool->CheckForUniqueArchiveFilePath(ArchiveFileName.c_str());
 	if(!bResult)
 	{
-		SVStringArray msgList;
-		msgList.push_back(SVString(csArchiveFileName));
+		SVStringVector msgList;
+		msgList.push_back(SVString(ArchiveFileName));
 		SvStl::MessageMgrStd Exception( SvStl::LogAndDisplay );
 		Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvOi::Tid_AP_InvalidFile, msgList, SvStl::SourceFileParams(StdMessageParams) );
 		return false;   // Property is ready to exit.
 	}
 
-	m_pTool->SetFileArchive( csArchiveFileName );
+	m_pTool->SetFileArchive( ArchiveFileName.c_str() );
 
 	m_pTool->m_dwAppendArchiveFile.SetValue( 1, m_AppendArchive );
 
@@ -226,9 +226,9 @@ BOOL SVTADlgArchiveResultsPage::OnInitDialog()
 	// from the archive tool.
 	m_pTool->UpdateTaskObjectOutputList();
 
-	CString		csArchiveFileName; 
-	m_pTool->GetFileArchive( csArchiveFileName );
-	m_ArchiveFileName.SetWindowText(csArchiveFileName);
+	SVString ArchiveFileName; 
+	m_pTool->GetFileArchive( ArchiveFileName );
+	m_ArchiveFileName.SetWindowText( ArchiveFileName.c_str() );
 
 	DWORD dwTemp=0;
 	m_pTool->m_dwAppendArchiveFile.GetValue( dwTemp );
@@ -340,15 +340,15 @@ void SVTADlgArchiveResultsPage::ReadSelectedObjects()
 {
 	m_ItemsSelected.DeleteAllItems();
 
-	CString strPrefix = m_pTool->GetInspection()->GetName();
-	strPrefix += _T(".Tool Set.");
+	SVString Prefix = m_pTool->GetInspection()->GetName();
+	Prefix += _T(".Tool Set.");
 
 	int Index = 0;
 	SvOsl::SelectorItemVector::const_iterator Iter;
 	for ( Iter = m_List.begin(); m_List.end() != Iter ; ++Iter )
 	{
 		SVString Name = Iter->getLocation();
-		SvUl_SF::searchAndReplace( Name, strPrefix, _T("") );
+		SvUl_SF::searchAndReplace( Name, Prefix.c_str(), _T("") );
 
 		m_ItemsSelected.InsertItem(LVIF_STATE | LVIF_TEXT,
 			Index,
@@ -383,9 +383,8 @@ void SVTADlgArchiveResultsPage::ShowObjectSelector()
 	SvOsl::ObjectTreeGenerator::Instance().setCheckItems( CheckItems );
 
 	SVString Title = SvUl_SF::Format( _T("%s - %s"), m_strCaption, InspectionName.c_str() );
-	CString Filter;
-	Filter.LoadString( IDS_FILTER );
-	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title.c_str(), m_strCaption, Filter, this );
+	SVString Filter = SvUl_SF::LoadSVString( IDS_FILTER );
+	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title.c_str(), m_strCaption, Filter.c_str(), this );
 
 	if( IDOK == Result )
 	{
@@ -424,18 +423,19 @@ void SVTADlgArchiveResultsPage::OnBrowse()
 	SVFileNameClass	svfncArchiveFileName;
 
 	//get current path
-	CString sArchiveFullNameAndPath;
-	m_ArchiveFileName.GetWindowText( sArchiveFullNameAndPath );
+	CString Text;
+	m_ArchiveFileName.GetWindowText( Text );
+	SVString ArchiveFullName = Text;
 
 	ArchiveToolHelper athArchivePathAndName;
-	athArchivePathAndName.Init(SVString(sArchiveFullNameAndPath)); 
+	athArchivePathAndName.Init( ArchiveFullName ); 
 
 	bool bUsingKeywords = athArchivePathAndName.isUsingKeywords();
 	if (bUsingKeywords)
 	{
 		if (athArchivePathAndName.isTokensValid())
 		{
-			sArchiveFullNameAndPath = athArchivePathAndName.TranslatePath(SVString(sArchiveFullNameAndPath)).c_str();
+			ArchiveFullName = athArchivePathAndName.TranslatePath(ArchiveFullName);
 		}
 		else
 		{
@@ -445,19 +445,14 @@ void SVTADlgArchiveResultsPage::OnBrowse()
 			return;
 		}
 	}
-	CString sFileName;
-	CString sPath;
-	int iEndOfPath = sArchiveFullNameAndPath.ReverseFind('\\');
-	sFileName = sArchiveFullNameAndPath.Right((sArchiveFullNameAndPath.GetLength() - iEndOfPath));
-	sPath = sArchiveFullNameAndPath.Left(iEndOfPath);
 
-	SVCheckPathDir( sArchiveFullNameAndPath, TRUE );
+	SVCheckPathDir( ArchiveFullName.c_str(), TRUE );
 
 	svfncArchiveFileName.SetFileType(SV_DEFAULT_FILE_TYPE);
-	svfncArchiveFileName.SetDefaultFullFileName(sArchiveFullNameAndPath);
+	svfncArchiveFileName.SetDefaultFullFileName( ArchiveFullName.c_str() );
 	if (svfncArchiveFileName.SelectFile())
 	{
-		m_ArchiveFileName.SetWindowText(svfncArchiveFileName.GetFullFileName());
+		m_ArchiveFileName.SetWindowText(svfncArchiveFileName.GetFullFileName().c_str());
 	}
 }
 
@@ -470,19 +465,17 @@ bool SVTADlgArchiveResultsPage::GetSelectedHeaderNamePairs( StringPairVect& Head
 		// Collect and build string pair vector from header Guid and Header Label from the archive tool.
 		// but only add if Guids match the selected object Guids
 		// output a vector of Object Name / Label pairs filtered by the selected objects..
-		std::vector<int> vecInt;
 
 		// Get Lists....
-		typedef std::vector<CString> StringVect;
-		StringVect l_HeaderLabelNames;
-		StringVect l_HeaderObjectGUIDs;
-		m_pTool->m_HeaderLabelNames.GetValues( l_HeaderLabelNames );
-		m_pTool->m_HeaderObjectGUIDs.GetValues( l_HeaderObjectGUIDs );
+		SVStringVector HeaderLabelNames;
+		SVStringVector HeaderObjectGUIDs;
+		m_pTool->m_HeaderLabelNames.GetValues( HeaderLabelNames );
+		m_pTool->m_HeaderObjectGUIDs.GetValues( HeaderObjectGUIDs );
 
 		// Collect Object and Label into pairs.
-		for( StringVect::const_iterator it = l_HeaderObjectGUIDs.begin(),it1 = l_HeaderLabelNames.begin() ; it != l_HeaderObjectGUIDs.end() ;++it1, ++it)
+		for( SVStringVector::const_iterator it = HeaderObjectGUIDs.begin(),it1 = HeaderLabelNames.begin() ; it != HeaderObjectGUIDs.end() ;++it1, ++it)
 		{
-			StrStrPair l_Pair(*it, *it1 );
+			SVStringPair l_Pair(*it, *it1 );
 			HeaderPairs.push_back(l_Pair);
 		}
 
@@ -493,8 +486,8 @@ bool SVTADlgArchiveResultsPage::GetSelectedHeaderNamePairs( StringPairVect& Head
 		{
 			SVGUID GuidValue( Iter->getItemKey() );
 
-			StrStrPair NewPair( GuidValue.ToString().c_str(), 
-			SVObjectManagerClass::Instance().GetObject(GuidValue)->GetCompleteObjectName() );
+			SVStringPair NewPair( GuidValue.ToString().c_str(), 
+			SVObjectManagerClass::Instance().GetObject(GuidValue)->GetCompleteName() );
 			SelectedHeaderPairs.push_back(NewPair);
 		}
 
@@ -530,17 +523,17 @@ bool SVTADlgArchiveResultsPage::StoreHeaderValuesToTool(StringPairVect& HeaderPa
 	bool bRet = false;
 	if( m_pTool )
 	{
-		std::vector<CString> l_HeaderLabelNames;
-		std::vector<CString> l_HeaderObjectGUIDs;
+		SVStringVector HeaderLabelNames;
+		SVStringVector HeaderObjectGUIDs;
 		for( StringPairVect::iterator it = HeaderPairs.begin(); it != HeaderPairs.end() ;++it)
 		{
-			l_HeaderObjectGUIDs.push_back( it->first);
-			l_HeaderLabelNames.push_back( it->second);
+			HeaderObjectGUIDs.push_back( it->first );
+			HeaderLabelNames.push_back( it->second );
 		}
 		m_pTool->m_HeaderLabelNames.SetArraySize( static_cast<int>(HeaderPairs.size()) );
 		m_pTool->m_HeaderObjectGUIDs.SetArraySize( static_cast<int>(HeaderPairs.size()) );
-		m_pTool->m_HeaderLabelNames.SetArrayValues(0, l_HeaderLabelNames.begin(), l_HeaderLabelNames.end());
-		m_pTool->m_HeaderObjectGUIDs.SetArrayValues(0, l_HeaderObjectGUIDs.begin(), l_HeaderObjectGUIDs.end());
+		m_pTool->m_HeaderLabelNames.SetArrayValues(0, HeaderLabelNames.begin(), HeaderLabelNames.end());
+		m_pTool->m_HeaderObjectGUIDs.SetArrayValues(0, HeaderObjectGUIDs.begin(), HeaderObjectGUIDs.end());
 		bRet = true;
 	}
 	return bRet;

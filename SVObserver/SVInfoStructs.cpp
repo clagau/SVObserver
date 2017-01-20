@@ -1065,7 +1065,7 @@ void SVInputRequestInfoStruct::Init()
 }// end Init
 
 SVInputImageRequestInfoStruct::SVInputImageRequestInfoStruct()
-: m_strObjectName()
+: m_ObjectName()
 , m_ImageInfo()
 , m_ImageHandlePtr()
 , m_bUsingCameraName( false )
@@ -1079,12 +1079,12 @@ SVInputImageRequestInfoStruct::~SVInputImageRequestInfoStruct()
 
 void SVInputImageRequestInfoStruct::Reset()
 {
-	m_strObjectName.Empty();
+	m_ObjectName.clear();
 }// end Reset
 
 void SVInputImageRequestInfoStruct::Init()
 {
-	m_strObjectName.Empty();
+	m_ObjectName.clear();
 }// end Init
 
 SVOutputRequestInfoStruct::SVOutputRequestInfoStruct()

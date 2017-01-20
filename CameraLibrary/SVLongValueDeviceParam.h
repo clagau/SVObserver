@@ -59,8 +59,8 @@ private:
 	SVDeviceParamWrapper DeviceParam(int i);
 	SVDeviceParamWrapper DeviceParam(short i);
 #else
-	inline long& LongValue(SVDeviceParamWrapper& w) {SVLongValueDeviceParam* p = w.DerivedValue(p); if (nullptr == p) {w = SVLongValueDeviceParam(); p = w.DerivedValue(p);} ASSERT(p); return p->lValue;}
-	inline long LongValue(const SVDeviceParamWrapper& w) {const SVLongValueDeviceParam* p = w.DerivedValue(p); if (p) return p->lValue; else {ASSERT(FALSE); return 0;} }
+	inline long& LongValue(SVDeviceParamWrapper& w) {SVLongValueDeviceParam* p = w.DerivedValue(p); if (nullptr == p) {w = SVLongValueDeviceParam(); p = w.DerivedValue(p);} assert(p); return p->lValue;}
+	inline long LongValue(const SVDeviceParamWrapper& w) {const SVLongValueDeviceParam* p = w.DerivedValue(p); if (p) return p->lValue; else {assert(false); return 0;} }
 	inline SVDeviceParamWrapper DeviceParam(long l) {return SVLongValueDeviceParam(l);}	// get conversions for free
 	inline SVDeviceParamWrapper DeviceParam(int i) {return SVLongValueDeviceParam(i);}
 	inline SVDeviceParamWrapper DeviceParam(short i) {return SVLongValueDeviceParam(i);}

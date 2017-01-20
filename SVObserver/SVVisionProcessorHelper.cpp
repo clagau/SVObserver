@@ -837,9 +837,9 @@ HRESULT SVVisionProcessorHelper::GetObjectDefinition( const SVObjectClass& p_rOb
 	l_bValueIncluded = l_bValueIncluded && ( (p_rObj.ObjectAttributesAllowed() & SV_HIDDEN) == 0 );
 	if( l_bValueIncluded )
 	{
-		CString l_String;
-		l_String = _T("Inspections.") + p_rObj.GetCompleteObjectName();
-		p_rDataDef.m_Name = l_String;
+		SVString Temp;
+		Temp = _T("Inspections.") + p_rObj.GetCompleteName();
+		p_rDataDef.m_Name = Temp;
 		p_rDataDef.m_Writable = (p_rObj.ObjectAttributesAllowed() & SV_REMOTELY_SETABLE) == SV_REMOTELY_SETABLE;
 		p_rDataDef.m_Published = (p_rObj.ObjectAttributesSet() & SV_PUBLISHABLE) != 0;
 		const SVValueObjectClass* l_pValueObject = dynamic_cast<const SVValueObjectClass*> (&p_rObj);
@@ -876,12 +876,12 @@ HRESULT SVVisionProcessorHelper::GetObjectDefinition( const SVObjectClass& p_rOb
 			const SVBoolValueObjectClass* l_pBoolVO = dynamic_cast<const SVBoolValueObjectClass*> (&p_rObj);
 			if( nullptr != l_pBoolVO)
 			{
-				SVBoolValueObjectClass::SVValidTypesVector l_StringVect;
-				SVBoolValueObjectClass::SVValidTypesVector::iterator l_StringIter;
-				l_pBoolVO->GetValidTypes(l_StringVect);
-				for( l_StringIter = l_StringVect.begin(); l_StringIter != l_StringVect.end(); l_StringIter++)
+				SVStringVector Types;
+				SVStringVector::iterator Iter;
+				l_pBoolVO->GetValidTypes(Types);
+				for( Iter = Types.begin(); Iter != Types.end(); Iter++)
 				{
-					p_rDataDef.m_AdditionalInfo.push_back(SVString(*l_StringIter));
+					p_rDataDef.m_AdditionalInfo.push_back(*Iter);
 				}
 			}
 		}
@@ -900,10 +900,10 @@ HRESULT SVVisionProcessorHelper::GetObjectDefinition( const SVObjectClass& p_rOb
 						long l_lSize = l_pSourceNames->GetArraySize();
 						for( long l_lIndex = 0; l_lIndex < l_lSize ; l_lIndex++ )
 						{
-							HRESULT l_hr = l_pSourceNames->GetValue( l_pSourceNames->GetLastSetIndex(), l_lIndex, l_String );
+							HRESULT l_hr = l_pSourceNames->GetValue( l_pSourceNames->GetLastSetIndex(), l_lIndex, Temp );
 							// Prepend the "Inspections." prefix for use with SVRC.
-							l_String = _T( "Inspections." ) + l_String;
-							p_rDataDef.m_AdditionalInfo.push_back(SVString(l_String));
+							Temp = _T( "Inspections." ) + Temp;
+							p_rDataDef.m_AdditionalInfo.push_back( Temp );
 						}
 					}
 				}

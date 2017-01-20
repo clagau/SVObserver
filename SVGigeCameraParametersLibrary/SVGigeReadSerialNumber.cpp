@@ -11,6 +11,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVGigeReadSerialNumber.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 HRESULT SVGigeReadSerialNumber::operator()(SVMatroxDigitizerRef Digitizer, const SVGigeFeature& rFeature, _variant_t& rValue) const

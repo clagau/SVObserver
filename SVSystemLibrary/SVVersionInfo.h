@@ -10,17 +10,17 @@
 //******************************************************************************
 #pragma once
 
-//Moved to precompiled header: #include <string>
+#include "SVUtilityLibrary/SVString.h"
 
 namespace Seidenader { namespace SVSystemLibrary
 {
 	class SVVersionInfo
 	{
 	public:
-		static std::string GetVersion();
+		static SVString GetVersion();
 		static unsigned long GetLongVersion();
-		static std::string GetTitleVersion();
-		static std::string GetShortTitleVersion();
+		static SVString GetTitleVersion();
+		static SVString GetShortTitleVersion();
 
 	private:
 		SVVersionInfo();

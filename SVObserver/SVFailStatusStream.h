@@ -18,6 +18,7 @@
 #include "RemoteMonitorNamedList.h"
 #include "SVInfoStructs.h"
 #include "SVObjectCommandDataJson.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion
 
 class SVFailStatusStream

@@ -19,6 +19,7 @@
 #include "SVLibrary/SVFileNameClass.h"
 #include "SVUtilityLibrary/SVUtilityGlobals.h"
 #include "SVUtilityLibrary/SVImageCopyUtility.h"
+#include "SVUtilityLibrary/SVString.h"
 #include "SVMatroxLibrary/SVMatroxImagingLibrary.h"  // has MIL includes
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
@@ -220,7 +221,7 @@ HRESULT SVImageProcessingClass::CreateImageChildBuffer( const SVImageInfoClass& 
 		{
 			if (l_oChild.top < l_oParent.top) // should never be true? child is relative to parent
 			{
-				ASSERT(FALSE);
+				assert( false );
 				l_oChild.top = 0;
 			}
 			else if (l_oChild.bottom > l_oParent.bottom) // may happen if the main image shrinks (camera files change)
@@ -230,7 +231,7 @@ HRESULT SVImageProcessingClass::CreateImageChildBuffer( const SVImageInfoClass& 
 
 			if (l_oChild.left < l_oParent.left)   // should never be true? child is relative to parent
 			{
-				ASSERT(FALSE);
+				assert( false );
 				l_oChild.left = 0;
 			}
 			else if (l_oChild.right > l_oParent.right) // may happen if the main image shrinks (camera files change)
@@ -294,15 +295,15 @@ HRESULT SVImageProcessingClass::CreateImageChildBuffer( const SVImageInfoClass& 
 			{
 				if (nullptr != rParentInfo.GetOwner())
 				{
-					SVStringArray msgList;
-					msgList.push_back(SVString(rChildInfo.GetOwner()->GetCompleteObjectName()));
-					msgList.push_back(SVString(rParentInfo.GetOwner()->GetCompleteObjectName()));
+					SVStringVector msgList;
+					msgList.push_back(SVString(rChildInfo.GetOwner()->GetCompleteName()));
+					msgList.push_back(SVString(rParentInfo.GetOwner()->GetCompleteName()));
 					message.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_CreateImageChildBuffer_parent, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10065);
 				}
 				else 
 				{
-					SVStringArray msgList;
-					msgList.push_back(SVString(rChildInfo.GetOwner()->GetCompleteObjectName()));
+					SVStringVector msgList;
+					msgList.push_back(SVString(rChildInfo.GetOwner()->GetCompleteName()));
 					message.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_CreateImageChildBuffer_child, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10065);
 				}
 			}
@@ -529,10 +530,7 @@ HRESULT SVImageProcessingClass::InitBuffer( SVSmartHandlePointer rHandle, DWORD 
 	return Result;
 }
 
-HRESULT SVImageProcessingClass::LoadImageBuffer( LPCTSTR tstrImagePathName, 
-                                              SVImageInfoClass& rInfo,
-                                              SVSmartHandlePointer& rHandle, 
-                                              BOOL bBrowseIfNotExists )
+HRESULT SVImageProcessingClass::LoadImageBuffer( LPCTSTR tstrImagePathName, SVImageInfoClass& rInfo, SVSmartHandlePointer& rHandle )
 {
 	SVFileNameClass	svfncImageFile(tstrImagePathName);
 	SVString strImagePathName = svfncImageFile.GetFullFileName();
@@ -541,38 +539,10 @@ HRESULT SVImageProcessingClass::LoadImageBuffer( LPCTSTR tstrImagePathName,
 	{
 		if( ! ::SVFileExists( strImagePathName.c_str() ) )
 		{
-			if( ! bBrowseIfNotExists )
-			{
-				return S_FALSE;
-			}
-
-			SVStringArray msgList;
-			msgList.push_back(SVString(strImagePathName));
-			SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_MatroxImage_UnableToFindFile, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10067 );
-			// Browse...
-			//
-			// Try to read the current image file path name from registry...
-			//
-			///read from ini file
-			//@WARNING [gra][7.50][22.11.2016] This should be changed to SVString and AfxGetApp() should be changed to avoid MFC useage
-			CString csPath = AfxGetApp()->GetProfileString( _T( "Settings" ),
-				_T( "ImagesFilePath" ), 
-				_T( "C:\\Images" ) );
-			svfncImageFile.SetPathName(csPath);
-			svfncImageFile.SetFileType(SV_IMAGE_SOURCE_FILE_TYPE);
-			if( svfncImageFile.SelectFile() )
-			{
-				// Extract the file path...
-				csPath = svfncImageFile.GetPathName();
-				//
-				// Write this path name back to registry...to initialize registry.
-				//
-				AfxGetApp()->WriteProfileString( _T( "Settings" ), _T( "ImagesFilePath" ), csPath );
-			}
+				return E_FAIL;
 		}
 
-		SVMatroxFileTypeEnum fileformat( SVMatroxImageInterface::getFileType( svfncImageFile.GetExtension() ) );
+		SVMatroxFileTypeEnum fileformat( SVMatroxImageInterface::getFileType( svfncImageFile.GetExtension().c_str() ) );
 
 		strImagePathName = svfncImageFile.GetFullFileName();
 		if( fileformat != SVFileUnknown && ::SVFileExists( strImagePathName.c_str() ) )
@@ -595,7 +565,7 @@ HRESULT SVImageProcessingClass::LoadImageBuffer( LPCTSTR tstrImagePathName,
 				}
 				else
 				{
-					return S_FALSE;
+					return E_FAIL;
 				}
 			}
 
@@ -635,9 +605,9 @@ HRESULT SVImageProcessingClass::LoadImageBuffer( LPCTSTR tstrImagePathName,
 
 				newBuffer.clear();
 
-				ASSERT( l_Code == SVMEE_STATUS_OK );
+				assert( SVMEE_STATUS_OK == l_Code );
 				if( S_OK == CreateImageBuffer( rInfo, rHandle ) && 
-					S_OK == LoadImageBuffer( strImagePathName.c_str(), rInfo, rHandle, FALSE ) )
+					S_OK == LoadImageBuffer( strImagePathName.c_str(), rInfo, rHandle ) )
 				{
 					return S_OK;
 				}
@@ -651,7 +621,7 @@ HRESULT SVImageProcessingClass::LoadImageBuffer( LPCTSTR tstrImagePathName,
 	SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 	Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_FailedToLoadImage, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10069 );
 
-	return S_FALSE;
+	return E_FAIL;
 }
 
 HRESULT SVImageProcessingClass::LoadImageBuffer( void* pBuffer, 

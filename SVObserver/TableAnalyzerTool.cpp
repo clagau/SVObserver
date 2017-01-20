@@ -16,6 +16,7 @@
 #include "SVGlobal.h"
 #include "SVResultLong.h"
 #include "TextDefinesSvO.h"
+#include "SVUtilityLibrary\SVString.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -206,35 +207,34 @@ void TableAnalyzerTool::LocalInitialize ()
 	analyzerClassInfo.m_ObjectTypeInfo.ObjectType = TableAnalyzerType;
 	analyzerClassInfo.m_ObjectTypeInfo.SubType = TableAnalyzerSortType;
 	analyzerClassInfo.m_ClassId = TableAnaylzerSortGuid;
-	analyzerClassInfo.m_ClassName = SvUl_SF::LoadString( IDS_CLASSNAME_TABLEANALYZER_SORT );
+	analyzerClassInfo.m_ClassName = SvUl_SF::LoadSVString( IDS_CLASSNAME_TABLEANALYZER_SORT );
 	m_availableChildren.Add( analyzerClassInfo );
 
 	// Add the Exclude Analyzer
 	analyzerClassInfo.m_ObjectTypeInfo.ObjectType = TableAnalyzerType;
 	analyzerClassInfo.m_ObjectTypeInfo.SubType = TableAnalyzerExcludeType;
 	analyzerClassInfo.m_ClassId = TableAnaylzerExcludeGuid;
-	analyzerClassInfo.m_ClassName = SvUl_SF::LoadString( IDS_CLASSNAME_TABLEANALYZER_EXCLUDE );
+	analyzerClassInfo.m_ClassName = SvUl_SF::LoadSVString( IDS_CLASSNAME_TABLEANALYZER_EXCLUDE );
 	m_availableChildren.Add( analyzerClassInfo );
 
 	// Add the Limit Analyzer
 	analyzerClassInfo.m_ObjectTypeInfo.ObjectType = TableAnalyzerType;
 	analyzerClassInfo.m_ObjectTypeInfo.SubType = TableAnalyzerLimitType;
 	analyzerClassInfo.m_ClassId = TableAnaylzerLimitGuid;
-	analyzerClassInfo.m_ClassName = SvUl_SF::LoadString( IDS_CLASSNAME_TABLEANALYZER_LIMIT );
+	analyzerClassInfo.m_ClassName = SvUl_SF::LoadSVString( IDS_CLASSNAME_TABLEANALYZER_LIMIT );
 	m_availableChildren.Add( analyzerClassInfo );
 
 	// Setup the result
 	SVClassInfoStruct resultClassInfo;
-	CString strTitle;
 	SVObjectTypeInfoStruct interfaceInfo;
 	// Declare Input Interface
 	interfaceInfo.EmbeddedID = TableObject_NumberOfRowsGuid;
 	resultClassInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
 	resultClassInfo.m_ObjectTypeInfo.SubType = SVResultLongObjectType;
 	resultClassInfo.m_ClassId = SVLongResultClassGuid;
-	resultClassInfo.m_ClassName = SvUl_SF::LoadString( IDS_OBJECTNAME_TABLEOBJECT_NUMBEROFROWS );
-	strTitle.LoadString( IDS_OBJECTNAME_RESULT );
-	resultClassInfo.m_ClassName += SV_TSTR_SPACE + strTitle;
+	resultClassInfo.m_ClassName = SvUl_SF::LoadSVString( IDS_OBJECTNAME_TABLEOBJECT_NUMBEROFROWS );
+	SVString Title = SvUl_SF::LoadSVString( IDS_OBJECTNAME_RESULT );
+	resultClassInfo.m_ClassName += _T(" ") + Title;
 	// Construct the result
 	SVLongResultClass* pResult = ( SVLongResultClass * )resultClassInfo.Construct();
 	Add( pResult );

@@ -23,13 +23,13 @@ IMPLEMENT_DYNAMIC(SVSoftwareTriggerDlg, CDialog)
 SVSoftwareTriggerDlg::SVSoftwareTriggerDlg(CWnd* pParent /*=nullptr*/)
 	: CDialog(SVSoftwareTriggerDlg::IDD, pParent)
 {
-	m_spins = 0;
+	m_pSpins = 0;
 }
 
 SVSoftwareTriggerDlg::~SVSoftwareTriggerDlg()
 {
-	delete m_spins;
-	delete m_brush;
+	delete m_pSpins;
+	delete m_pBrush;
 }
 
 void SVSoftwareTriggerDlg::DoDataExchange(CDataExchange* pDX)
@@ -87,22 +87,17 @@ int SVSoftwareTriggerDlg::SelectTrigger()
 	item.mask = TCIF_PARAM;
 	if (m_triggerTabs.GetItem(idx, &item))
 	{
-		SVTriggerProxy * l_trigger = reinterpret_cast<SVTriggerProxy *>(item.lParam);
-		if (l_trigger)
+		SVTriggerProxy* pTrigger = reinterpret_cast<SVTriggerProxy*> (item.lParam);
+		if( nullptr != pTrigger )
 		{
-			int val = l_trigger->GetSoftwareTriggerPeriod();
-			CString str;
-			str.Format("%d", val);
-			m_intervalEdit.SetWindowText(str);
-			m_spins->SetValue(val);
-			m_knobCtrl.SetValue(val);
-			double l_freq = 1000.0 / val;
-			str.Format("%.4fHz", l_freq);
-			m_frequency.SetWindowText(str);
-			l_freq *= 60;
-			str.Format("%.2f/min", l_freq);
-			m_ppmLabel.SetWindowText(str);
-			m_pauseBtn.SetWindowText(l_trigger->ButtonText());
+			int Value = pTrigger->GetSoftwareTriggerPeriod();
+
+			SVString Text = SvUl_SF::Format( _T("%d"), Value );
+			m_intervalEdit.SetWindowText( Text.c_str() );
+			m_pSpins->SetValue( Value );
+			m_knobCtrl.SetValue( Value );
+			SetFrequency( Value );
+			m_pauseBtn.SetWindowText( pTrigger->ButtonText().c_str() );
 		}
 		else
 		{
@@ -130,36 +125,31 @@ void SVSoftwareTriggerDlg::OnStop()
 		item.mask = TCIF_PARAM;
 		if (m_triggerTabs.GetItem(i, &item))
 		{
-			SVTriggerProxy * l_trigger = reinterpret_cast<SVTriggerProxy *>(item.lParam);
-			l_trigger->Continue();
+			SVTriggerProxy* pTrigger = reinterpret_cast<SVTriggerProxy *>(item.lParam);
+			pTrigger->Continue();
 		}
 	}
 }
 
 bool SVSoftwareTriggerDlg::EditOK()
 {
-	CString str;
-	m_intervalEdit.GetWindowText(str);
-	int l_val = _ttoi(str);
-	return (20 <= l_val && l_val <= KNOB_MAX);
+	CString Text;
+	m_intervalEdit.GetWindowText(Text);
+	int Value = _ttoi(Text);
+	return (20 <= Value && Value <= KNOB_MAX);
 }
 
 void SVSoftwareTriggerDlg::OnEnChangeUsecEdit()
 {
-	CString str;
-	m_intervalEdit.GetWindowText(str);
-	int l_val = _ttoi(str);
-	if (EditOK())
+	CString Text;
+	m_intervalEdit.GetWindowText(Text);
+	int Value = _ttoi(Text);
+	if( EditOK() )
 	{
-		double l_freq = 1000.0 / l_val;
-		str.Format("%.4fHz", l_freq);
-		m_frequency.SetWindowText(str);
-		l_freq *= 60;
-		str.Format("%.2f/min", l_freq);
-		m_ppmLabel.SetWindowText(str);
-		m_knobCtrl.SetValue(l_val);
-		m_spins->SetValue(l_val);
-		SetTriggerPeriod(l_val);
+		m_pSpins->SetValue( Value );
+		m_knobCtrl.SetValue( Value );
+		SetFrequency( Value );
+		SetTriggerPeriod( Value );
 	}
 }
 
@@ -171,60 +161,51 @@ void SVSoftwareTriggerDlg::OnBnClickedOk()
 int SVSoftwareTriggerDlg::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
 	if (CDialog::OnCreate(lpCreateStruct) == -1)
+	{
 		return -1;
+	}
 	m_knobCtrl.CreateBitmaps();
-	m_brush = new CBrush(COLOR_WARN);
+	m_pBrush = new CBrush(COLOR_WARN);
 
 	return 0;
 }
 
 LRESULT SVSoftwareTriggerDlg::OnTriggerChange(WPARAM wParam, LPARAM lParam)
 {
-	CString str;
-	str.Format("%d", wParam);
-	m_intervalEdit.SetWindowText(str);
-	m_spins->SetValue( static_cast< int >( wParam ) );
-	double l_freq = 1000.0 / wParam;
-	str.Format("%.4fHz", l_freq);
-	m_frequency.SetWindowText(str);
-	l_freq *= 60;
-	str.Format("%.2f/min", l_freq);
-	m_ppmLabel.SetWindowText(str);
-	SetTriggerPeriod( static_cast< int >( wParam ) );
+	int Value = static_cast< int >( wParam );
+	SVString Text = SvUl_SF::Format( _T("%d"), Value );
+	m_intervalEdit.SetWindowText( Text.c_str() );
+	m_pSpins->SetValue( Value );
+	SetFrequency( Value );
+	SetTriggerPeriod( Value );
 	return TRUE;
 }
 
 void SVSoftwareTriggerDlg::OnDeltaposSpin(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	LPNMUPDOWN pNMUpDown = reinterpret_cast<LPNMUPDOWN>(pNMHDR);
-	SVSpinGroup * l_spin = m_spins->find( static_cast< int >( pNMUpDown->hdr.idFrom ) );
+	SVSpinGroup * l_spin = m_pSpins->find( static_cast< int >( pNMUpDown->hdr.idFrom ) );
 	*pResult = 0;
 	if (l_spin)
 	{
-		int val = pNMUpDown->iDelta;
-		if (!l_spin->Increment(val)) //, boost::bind(&SVSpinGroup::GetValue, m_spins)))
+		int Value = pNMUpDown->iDelta;
+		if (!l_spin->Increment(Value)) //, boost::bind(&SVSpinGroup::GetValue, m_spins)))
 		{
 			*pResult = 1;
 		}
 		else
 		{
-			val = m_spins->GetValue();
-			int tmp = m_knobCtrl.SetValue(val);		
-			if (tmp != val)
+			Value = m_pSpins->GetValue();
+			int tmp = m_knobCtrl.SetValue(Value);		
+			if (tmp != Value)
 			{
-				m_spins->SetValue(tmp);
-				val = tmp;
+				m_pSpins->SetValue(tmp);
+				Value = tmp;
 			}
-			CString str;
-			str.Format("%d", val);
-			m_intervalEdit.SetWindowText(str);
-			double l_freq = 1000.0 / val;
-			str.Format("%.4fHz", l_freq);
-			m_frequency.SetWindowText(str);
-			l_freq *= 60;
-			str.Format("%.2f/min", l_freq);
-			m_ppmLabel.SetWindowText(str);
-			SetTriggerPeriod(val);
+			SVString Text = SvUl_SF::Format( _T("%d"), Value );
+			m_intervalEdit.SetWindowText( Text.c_str() );
+			SetFrequency( Value );
+			SetTriggerPeriod( Value );
 		}
 	}
 }
@@ -234,7 +215,7 @@ BOOL SVSoftwareTriggerDlg::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 
-	m_spins = 
+	m_pSpins = 
 		new SVSpinGroup(
 			m_msecSpin, 
 			m_msecEdit, 
@@ -261,8 +242,8 @@ void SVSoftwareTriggerDlg::ClearTriggers()
 		item.mask = TCIF_PARAM;
 		if (m_triggerTabs.GetItem(i, &item))
 		{
-			SVTriggerProxy * l_trigger = reinterpret_cast<SVTriggerProxy *>(item.lParam);
-			delete l_trigger;
+			SVTriggerProxy* pTrigger = reinterpret_cast<SVTriggerProxy *>(item.lParam);
+			delete pTrigger;
 		}
 	}
 	m_triggerTabs.DeleteAllItems();
@@ -289,12 +270,12 @@ SVSoftwareTriggerDlg & SVSoftwareTriggerDlg::Instance()
 	if (!created)
 	{
 		created = true;
-		CWnd * l_parent = ::AfxGetMainWnd();
-		while (nullptr != l_parent->GetParent())
+		CWnd* pParent = ::AfxGetMainWnd();
+		while (nullptr != pParent->GetParent())
 		{
-			l_parent = l_parent->GetParent();
+			pParent = pParent->GetParent();
 		}
-		dlg.Create(IDD_TRIGGER_PERIOD_DLG, l_parent);
+		dlg.Create(IDD_TRIGGER_PERIOD_DLG, pParent);
 	}
 	return dlg;
 }
@@ -307,17 +288,26 @@ void SVSoftwareTriggerDlg::SetTriggerPeriod(int val)
 	item.mask = TCIF_PARAM;
 	if (m_triggerTabs.GetItem(idx, &item) && item.lParam)
 	{
-		SVTriggerProxy * l_trigger = reinterpret_cast<SVTriggerProxy *>(item.lParam);
-		l_trigger->SetSoftwareTriggerPeriod(val, true);
+		SVTriggerProxy* pTrigger = reinterpret_cast<SVTriggerProxy*> (item.lParam);
+		pTrigger->SetSoftwareTriggerPeriod(val, true);
 	}
+}
+
+void SVSoftwareTriggerDlg::SetFrequency( int Value )
+{
+	double Frequency = 1000.0 / Value;
+	SVString Text = SvUl_SF::Format( _T("%.4fHz"), Frequency);
+	m_frequency.SetWindowText( Text.c_str() );
+	Frequency *= 60;
+	Text = SvUl_SF::Format( _T("%.2f/min"), Frequency);
+	m_ppmLabel.SetWindowText( Text.c_str() );
 }
 
 void SVSoftwareTriggerDlg::OnEnKillfocusUsecEdit()
 {
-	int l_val = m_knobCtrl.GetValue();
-	CString str;
-	str.Format("%d", l_val);
-	m_intervalEdit.SetWindowText(str);
+	int Value = m_knobCtrl.GetValue();
+	SVString Text = SvUl_SF::Format( _T("%d"), Value );
+	m_intervalEdit.SetWindowText( Text.c_str() );
 }
 
 HBRUSH SVSoftwareTriggerDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
@@ -326,7 +316,7 @@ HBRUSH SVSoftwareTriggerDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 	if (nCtlColor == CTLCOLOR_EDIT && !EditOK())
 	{
 		pDC->SetBkColor(COLOR_WARN);
-		return (HBRUSH)m_brush->GetSafeHandle();
+		return (HBRUSH)m_pBrush->GetSafeHandle();
 	}
 
 	return hbr;
@@ -340,9 +330,9 @@ void SVSoftwareTriggerDlg::OnBnClickedPausebutton()
 	item.mask = TCIF_PARAM;
 	if (m_triggerTabs.GetItem(idx, &item) && item.lParam)
 	{
-		SVTriggerProxy * l_trigger = reinterpret_cast<SVTriggerProxy *>(item.lParam);
-		l_trigger->Toggle();
-		m_pauseBtn.SetWindowText(l_trigger->ButtonText());
+		SVTriggerProxy* pTrigger = reinterpret_cast<SVTriggerProxy *>(item.lParam);
+		pTrigger->Toggle();
+		m_pauseBtn.SetWindowText( pTrigger->ButtonText().c_str() );
 	}
 }
 

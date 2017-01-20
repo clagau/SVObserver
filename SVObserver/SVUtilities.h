@@ -19,7 +19,7 @@
 class SVUtilitiesClass  
 {
 public:
-	CMenu *FindSubMenuByName(CMenu *pMenu, CString &szName);
+	CMenu *FindSubMenuByName(CMenu *pMenu, LPCTSTR Name);
 	BOOL LoadMenu (CMenu *pMenu);
 	BOOL SetupUtilities (CMenu *pMenu);
 	void RunUtility (SVSecurityManager* pAccess, UINT uiUtilityId);

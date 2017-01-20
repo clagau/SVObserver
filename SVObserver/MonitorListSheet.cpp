@@ -23,6 +23,7 @@
 #include "SVToolSet.h"
 #include "RemoteMonitorListHelper.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -31,8 +32,8 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-static const CString ValuesTag(_T("Values"));
-static const CString ImagesTag(_T("Images"));
+static const TCHAR* const ValuesTag(_T("Values"));
+static const TCHAR* const ImagesTag(_T("Images"));
 
 typedef boost::function<bool(const SVObjectTypeInfoStruct& info)> AllowedFunc;
 
@@ -146,7 +147,7 @@ static SvUl::NameSelectionList BuildSelectionList(const SVString& PPQName, const
 										}
 										else
 										{
-											SVString name = objectRef.GetCompleteObjectName();
+											SVString name = objectRef.GetCompleteName();
 											nameList.push_back(std::make_pair(name, false));
 										}
 									}
@@ -167,7 +168,7 @@ static SvUl::NameSelectionList BuildSelectionList(const SVString& PPQName, const
 							const SVImageClass* pMainImage = pToolSet->getCurrentImage();
 							if (pMainImage)
 							{
-								SVString mainImageName = pMainImage->GetCompleteObjectName();
+								SVString mainImageName = pMainImage->GetCompleteName();
 								nameList.push_back(std::make_pair(mainImageName, false));
 							}
 							for (SVImageListClass::const_iterator it = imageList.begin();it != imageList.end();++it)
@@ -175,7 +176,7 @@ static SvUl::NameSelectionList BuildSelectionList(const SVString& PPQName, const
 								const SVImageClass* pImage = (*it);
 								if (pImage)
 								{
-									SVString name = pImage->GetCompleteObjectName();
+									SVString name = pImage->GetCompleteName();
 									nameList.push_back(std::make_pair(name, false));
 								}
 							}

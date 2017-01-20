@@ -28,6 +28,7 @@
 #include "TriggerInformation/SVIMTypeInfoStruct.h"
 #include "SVImportedInspectionInfo.h" 
 #include "ObjectInterfaces/GlobalConstantData.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 // Moved SVIM_FULL_BOARD, etc. to SVObserverEnums.h
@@ -73,7 +74,7 @@ class SVOTriggerList;
 class CSVOConfigAssistantDlg : public CDialog
 {
 public:
-	typedef SVBiUniqueMap< SVIMProductEnum, CString >::type SVProductStringMap;
+	typedef SVBiUniqueMap< SVIMProductEnum, SVString >::type SVProductStringMap;
 
 	CSVOConfigAssistantDlg(CWnd* pParent = nullptr);   // standard constructor
 
@@ -84,30 +85,30 @@ public:
 	void SetCurrentSystem(long lSysValue = SVIM_PRODUCT_X2_GD4A);
 	void SetConfigurationSystem(long lSysValue = SVIM_PRODUCT_X2_GD4A);
 
-	BOOL AddToCameraList(CString CameraName, int Dig, int CameraID);
-	BOOL AddToTriggerList(CString sTriggerName, int iDig);
-	BOOL AddToInspectList(CString sExternal, CString sInternal, bool NewInspection);
-	BOOL AddToPPQList(CString sPPQ, CString sCamera, CString sTrigger, CString sInspection);
-	BOOL AddToPPQList(CString sPPQ);
+	BOOL AddToCameraList(LPCTSTR CameraName, int Dig, int CameraID);
+	BOOL AddToTriggerList(LPCTSTR TriggerName, int iDig);
+	BOOL AddToInspectList(LPCTSTR External, LPCTSTR Internal, bool NewInspection);
+	BOOL AddToPPQList(LPCTSTR PPQ, LPCTSTR Camera, LPCTSTR Trigger, LPCTSTR Inspection);
+	BOOL AddToPPQList(LPCTSTR PPQ);
 
-	BOOL RemoveCameraFromList(CString sCameraName);
-	BOOL RemoveTriggerFromList(CString sTriggerName);
-	BOOL RemoveInspectionFromList(CString sInspeciton);
-	BOOL RemovePPQFromList(CString sPPQ);
+	BOOL RemoveCameraFromList(LPCTSTR CameraName);
+	BOOL RemoveTriggerFromList(LPCTSTR TriggerName);
+	BOOL RemoveInspectionFromList(LPCTSTR Inspeciton);
+	BOOL RemovePPQFromList(LPCTSTR PPQ);
 
-	BOOL IsDigitizerUsed(CString sDigString);
-	BOOL IsCameraInList(CString sCameraName) const;
-	bool IsTriggerInList(CString sTriggerName) const;
-	BOOL IsInspectionInList(CString sInspectionName) const;
-	BOOL IsInspectionNameInList(CString sInspectionName) const;
-	BOOL IsPPQInList(CString sPPQName) const;
+	BOOL IsDigitizerUsed(LPCTSTR DigString);
+	BOOL IsCameraInList(LPCTSTR CameraName) const;
+	bool IsTriggerInList(LPCTSTR TriggerName) const;
+	BOOL IsInspectionInList(LPCTSTR InspectionName) const;
+	BOOL IsInspectionNameInList(LPCTSTR InspectionName) const;
+	BOOL IsPPQInList(LPCTSTR PPQName) const;
 
-	CString BuildDigName( const SVOCameraObj& rCameraObj ) const;
-	CString BuildTrgDig(const SvTi::SVOTriggerObj& rTriggerObj) const;
+	SVString BuildDigName( const SVOCameraObj& rCameraObj ) const;
+	SVString BuildTrgDig(const SvTi::SVOTriggerObj& rTriggerObj) const;
 
-	CString GetInspectionLabelFromName(CString sInspectName);
-	CString GetInspectionNameFromLabel(CString sInspectLabel);
-	BOOL RenameInspection(CString sInspectLabel, CString sNewName);
+	SVString GetInspectionLabelFromName(LPCTSTR InspectName);
+	SVString GetInspectionNameFromLabel(LPCTSTR InspectLabel);
+	BOOL RenameInspection(LPCTSTR InspectLabel, LPCTSTR NewName);
 
 	int GetCameraListCount() const;
 	int GetInspectionListCount() const;
@@ -115,52 +116,52 @@ public:
 	int GetPPQListCount() const;
 
 	SVOCameraObjPtr GetCameraObject(int iPos);
-	SVOCameraObjPtr GetCameraObjectByName(CString sCameraName);
+	SVOCameraObjPtr GetCameraObjectByName(LPCTSTR CameraName);
 	SvTi::SVOTriggerObjPtr GetTriggerObject(int iPos);
-	SvTi::SVOTriggerObjPtr GetTriggerObjectByName(CString sTriggerName);
+	SvTi::SVOTriggerObjPtr GetTriggerObjectByName(LPCTSTR TriggerName);
 	SVOInspectionObjPtr GetInspectionObject(int iPos);
-	SVOInspectionObjPtr GetInspectionObjectByName(CString sName);
+	SVOInspectionObjPtr GetInspectionObjectByName(LPCTSTR Name);
 	SVOPPQObjPtr GetPPQObject(int iPos);
-	SVOPPQObjPtr GetPPQObjectByName(CString sPPQName);
+	SVOPPQObjPtr GetPPQObjectByName(LPCTSTR PPQName);
 
-	CString GetNextCameraName();
+	SVString GetNextCameraName();
 	int GetNextCameraNumber() const;
-	CString GetNextInspectionName() const;
-	CString GetNextInspectionDisplayName() const;
-	CString GetNextTriggerName(const CString& baseName) const;
+	SVString GetNextInspectionName() const;
+	SVString GetNextInspectionDisplayName() const;
+	SVString GetNextTriggerName(LPCTSTR BaseName) const;
 	int GetNextTriggerID() const;
-	CString GetNextPPQName() const;
+	SVString GetNextPPQName() const;
 
-	CStringList m_slUsedTriggers;
-	CStringList m_slUsedInspect;
-	CStringList m_slInspectionNamesUsed;
-	CStringList m_slInspectionLabelsUsed;
+	SVStringVector m_UsedTriggers;
+	SVStringVector m_UsedInspections;
+	SVStringVector m_InspectionNamesUsed;
+	SVStringVector m_InspectionLabelsUsed;
 
-	BOOL IsTriggerUsed(CString sTriggerName) const;
-	void AddUsedTrigger(CString sTriggerName);
-	void RemoveUsedTrigger(CString sTriggerName);
+	BOOL IsTriggerUsed(LPCTSTR TriggerName) const;
+	void AddUsedTrigger(LPCTSTR TriggerName);
+	void RemoveUsedTrigger(LPCTSTR TriggerName);
 
 	bool IsSoftwareTriggerAllowed(LPCTSTR sTriggerName) const;
 	bool IsCameraLineInputAllowed(LPCTSTR triggerName) const;
 
-	BOOL IsInspectUsed(CString sInspect);
-	void AddUsedInspect(CString sInspect);
-	void RemoveUsedInspect(CString sInspect);
+	BOOL IsInspectUsed(LPCTSTR Inspect);
+	void AddUsedInspect(LPCTSTR Inspect);
+	void RemoveUsedInspect(LPCTSTR Inspect);
 
 	SVIMProductEnum GetProductType() const;
 	void SetModified(BOOL bModified);
 	BOOL Modified();
 
-	BOOL ItemChanged(int iItemDlg, CString sLabelName, int iAction); 
+	BOOL ItemChanged(int iItemDlg, LPCTSTR LabelName, int iAction); 
 
-	CString GetConfigurationName();
+	SVString GetConfigurationName();
 
 	BOOL GetNewConfigFlag();
 
 	int GetAllowedNumberOfDigs(BOOL bTrigger = FALSE);
 
-	void LastInspectionLabelDeleted(CString sInspectionLabel);
-	BOOL CanInspectionNameBeUsed(CString sName);
+	void LastInspectionLabelDeleted(LPCTSTR InspectionLabel);
+	BOOL CanInspectionNameBeUsed(LPCTSTR Name);
 	void SetIOBoardCapabilities( SVIOBoardCapabilities& p_svCapable );
 
 	bool IsNonIOSVIM(SVIMProductEnum productType) const;
@@ -181,9 +182,9 @@ public:
 	SvMc::CSVOConfigNameEdit	m_ctlConfigurationName;
 	CEdit	m_ctlCurrentSys;
 	CComboBox	m_ctlAvailableSys;
-	CString	m_sAvailableSystem;
-	CString	m_sCurrentSys;
-	CString	m_sConfigurationName;
+	CString	m_AvailableSystem;
+	CString	m_CurrentSys;
+	CString m_ConfigurationName;
 	//}}AFX_DATA
 
 	// Overrides
@@ -220,13 +221,13 @@ private:
 	void CheckColor( const SVOCameraObj& rCameraObj );
 	void CheckTriggers();
 	BOOL CheckTrigger( const SvTi::SVOTriggerObj& rTriggerObj);
-	void RemoveFileAcquisitionMessages( const CString& rCameraName );
+	void RemoveFileAcquisitionMessages( LPCTSTR CameraName );
 
 	HRESULT ConnectToolsetBuffers();
 	void resolveGlobalConflicts( SvOi::GlobalConflictPairVector& rGlobalConflicts );
 
-	static CString GetNameFromProductID( SVIMProductEnum p_ID );
-	static SVIMProductEnum GetProductIDFromName( const CString& p_Name );
+	static SVString GetNameFromProductID( SVIMProductEnum p_ID );
+	static SVIMProductEnum GetProductIDFromName( const SVString& rName );
 
 	void ClearMessages();
 	//data members
@@ -234,7 +235,7 @@ private:
 	BOOL m_bModified;
 	SVIMProductEnum m_lSystemType;
 	SVIMProductEnum m_lConfigurationType;
-	CString m_sConfigName;
+	SVString m_sConfigName;
 
 	BOOL m_bCameraGood;
 	BOOL m_bTriggerGood;
@@ -263,9 +264,9 @@ private:
 
 	SVOCameraList m_TmpCameraList; //used for cancel
 
-	BOOL AddMessageToList(int iDlg, CString sMessage);
-	BOOL RemoveMessageFromList(CString sMessage);
-	int RemoveAllObjectMessages(CString sObjectName);
+	BOOL AddMessageToList(int iDlg, LPCTSTR Message);
+	BOOL RemoveMessageFromList(LPCTSTR Message);
+	int RemoveAllObjectMessages(LPCTSTR ObjectName);
 	void RemoveAllDlgMessages(int IDlg);
 	bool ContainsErrorMessage() const;
 	void SetupMessages();
@@ -278,14 +279,14 @@ private:
 	void CreateDefaultForSVIMDigital( int Number, LPCTSTR TriggerBaseName );
 
 	void SetCurrentSystemDisplay();
-	CString BuildDisplayMessage(ConfigMsgTypeEnum iErrorFlag, CString sObjectName, CString sMessage);
+	SVString BuildDisplayMessage( ConfigMsgTypeEnum iErrorFlag, LPCTSTR ObjectName, LPCTSTR Message );
 
-	void CameraDeletedCheckAgainstPPQ(CString sCameraName);
-	void TriggerDeletedCheckAgainstPPQ(CString sTriggerName);
-	void InspectionDeletedCheckAgainstPPQ(CString sInspectName);
+	void CameraDeletedCheckAgainstPPQ(LPCTSTR CameraName);
+	void TriggerDeletedCheckAgainstPPQ(LPCTSTR TriggerName);
+	void InspectionDeletedCheckAgainstPPQ(LPCTSTR InspectName);
 
-	void CameraDeletedCheckAgainstInspection(CString sCameraName);
-	void CameraDetachedCheckAgainstInspection(CString sCameraName);
+	void CameraDeletedCheckAgainstInspection(LPCTSTR CameraName);
+	void CameraDetachedCheckAgainstInspection(LPCTSTR CameraName);
 
 	//methods for writing out to the config object
 	//will be called ONLY from OnOk()
@@ -301,9 +302,9 @@ private:
 
 	void CheckAgainstCurrentList();
 
-	BOOL IsInspectionOnPPQ(CString sPPQName, CString sInspectionLabel);
-	BOOL IsCameraOnPPQ(CString sPPQName, CString sCameraName);
-	BOOL IsTriggerOnPPQ(CString sPPQName, CString sTriggerName);
+	BOOL IsInspectionOnPPQ(LPCTSTR PPQName, LPCTSTR InspectionLabel);
+	BOOL IsCameraOnPPQ(LPCTSTR PPQName, LPCTSTR CameraName);
+	BOOL IsTriggerOnPPQ(LPCTSTR PPQName, LPCTSTR TriggerName);
 
 	SVOPPQObjPtr GetPPQObjectByInspectionName(const SVString& inspectionName);
 
@@ -311,7 +312,7 @@ private:
 
 	void SetupTriggerStrobeMessage();
 
-	BOOL RenameInspectionObjects(CString sInspectionName, CString sNewInspectionName);
+	BOOL RenameInspectionObjects(LPCTSTR InspectionName, LPCTSTR NewInspectionName);
 };
 
 

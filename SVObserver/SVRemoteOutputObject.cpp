@@ -38,7 +38,7 @@ SVString SVRemoteOutputObject::GetInputValueObjectName()
 	SVValueObjectClass* l_pObject = dynamic_cast<SVValueObjectClass*>(SVObjectManagerClass::Instance().GetObjectA(m_InputObjectId));
 	if( nullptr != l_pObject )
 	{	// Get the object name from the object pointer.
-		m_strObjectName = l_pObject->GetCompleteObjectName();
+		m_strObjectName = l_pObject->GetCompleteName();
 		m_pValueObject = l_pObject;
 	}
 	return m_strObjectName;

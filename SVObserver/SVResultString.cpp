@@ -12,6 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVResultString.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 SV_IMPLEMENT_CLASS( SVStringResultClass, SVStringResultClassGuid );
@@ -96,11 +97,11 @@ BOOL SVStringResultClass::onRun( SVRunStatusClass& RRunStatus )
 		SVStringValueObjectClass* pValue = getInputString();
 		ASSERT( pValue );
 
-		CString szValue;
-		pValue->GetValue (szValue);
+		SVString Value;
+		pValue->GetValue( Value );
 
 		// Set Value
-		m_szValue.SetValue( RRunStatus.m_lResultDataIndex, szValue );
+		m_szValue.SetValue( RRunStatus.m_lResultDataIndex, Value );
 		
 		return TRUE;
   }

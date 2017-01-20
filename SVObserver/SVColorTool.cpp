@@ -17,6 +17,7 @@
 #include "SVColorThreshold.h"
 #include "SVGlobal.h"
 #include "SVRGBMainImage.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 enum BandNUmberEnum
@@ -314,7 +315,7 @@ SVBoolValueObjectClass* SVColorToolClass::GetConvertToHSIVariable()
 // Set String value object for Source Image Names
 HRESULT SVColorToolClass::CollectInputImageNames( )
 {
-	CString l_strName;
+	SVString Name;
 	SVImageClass* l_pImage = nullptr;
 	bool l_bConvertToHSI;
 	HRESULT l_hr = m_convertToHSI.GetValue( l_bConvertToHSI );
@@ -330,8 +331,8 @@ HRESULT SVColorToolClass::CollectInputImageNames( )
 		}
 		if( nullptr != l_pImage )
 		{
-			l_strName = l_pImage->GetCompleteObjectName();
-			m_svSourceImageNames.SetDefaultValue( l_strName, true );
+			Name = l_pImage->GetCompleteName();
+			m_svSourceImageNames.SetDefaultValue( Name, true );
 		}
 	}
 	return l_hr;

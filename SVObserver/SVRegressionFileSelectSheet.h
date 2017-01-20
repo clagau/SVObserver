@@ -13,6 +13,7 @@
 #pragma region Includes
 #include "SVRegressionTestStruct.h"
 #include "SVVirtualCamera.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 /////////////////////////////////////////////////////////////////////////////
@@ -50,9 +51,9 @@ public:
 	void CreatePages(CList<RegressionTestStruct*,RegressionTestStruct*>*RegessionList,SVVirtualCameraPtrSet CameraList );
 
 private: //methods
-	CString MakeFileNameMask(CString csFileName);
+	SVString MakeFileNameMask( const SVString& rFileName );
 	RegressionFileSelectCode ValidateList();
-	long GetNumberOfFilesMatchingMask(CString sMask);
+	long GetNumberOfFilesMatchingMask( const SVString& rMask);
 	void ClearRegressionList();
 	void FillFileList();
 

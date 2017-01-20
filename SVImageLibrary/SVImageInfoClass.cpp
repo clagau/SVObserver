@@ -17,7 +17,6 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 
 #ifdef _DEBUG
-#define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
@@ -483,10 +482,10 @@ bool SVImageInfoClass::operator!=( const SVImageInfoClass &p_rsvValue ) const
 long SVImageInfoClass::GetBufferSize()
 {
 	long lDepth = 1;
-	CRect rect;
+	RECT rect;
 	m_svExtents.GetOutputRectangle(rect);
-	long lHeight = rect.Height();
-	long lWidth = rect.Width();
+	long lHeight = abs(rect.top - rect.bottom);
+	long lWidth = abs(rect.right - rect.left);
 	long lFormat;
 	m_svProperties.GetImageProperty( SVImagePropertyFormat, lFormat );
 

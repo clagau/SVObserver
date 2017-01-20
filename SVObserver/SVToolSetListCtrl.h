@@ -14,21 +14,22 @@
 #pragma region Includes
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVUtilityLibrary/NameGuidList.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 #pragma region Declarations
 class ToolSetView;
 #pragma endregion Declarations
 
-class ToolListSelectionInfo // @TODO:  Move to its own file.
+struct ToolListSelectionInfo
 {
 public:
-	const int m_listIndex;			// selected index in the ListCtrl // @WARNING:  bad practice making members public
-	const CString m_selection;		// text for current selection // @WARNING:  bad practice making members public
+	const int m_listIndex;
+	const SVString m_Selection;
 
-	ToolListSelectionInfo(int listIndex, const CString& selection)
-	: m_listIndex(listIndex)
-	, m_selection(selection) {}
+	ToolListSelectionInfo(int listIndex, const SVString& Selection)
+	: m_listIndex( listIndex )
+	, m_Selection( Selection ) {}
 };
 
 class SVToolSetListCtrl : public CListCtrl
@@ -70,15 +71,15 @@ public:
 	void RestoreScrollPos();
 
 	bool AllowedToEdit() const;
-	bool IsEndListDelimiter(const CString& text) const;
-	bool IsEmptyStringPlaceHolder(const CString& text) const;
+	bool IsEndListDelimiter( const SVString& rName ) const;
+	bool IsEmptyStringPlaceHolder( const SVString& rName ) const;
 
 protected:
 	ToolSetView* GetView();
 	const ToolSetView* GetView() const;
 	void CreateImageLists();
-	int InsertStartGroup(int itemNo, const CString& startName, bool bCollapsed);
-	int InsertEndGroup(int itemNo, const CString& endName, bool bCollapsed);
+	int InsertStartGroup(int itemNo, const SVString& rStartName, bool bCollapsed);
+	int InsertEndGroup(int itemNo, const SVString& rEndName, bool bCollapsed);
 	int InsertTool(int itemNo, int listIndex, bool bCollapsed, int indent);
 	void AddEndDelimiter();
 	void InsertEmptyString(int itemNo);

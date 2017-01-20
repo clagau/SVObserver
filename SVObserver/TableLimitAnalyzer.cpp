@@ -12,6 +12,7 @@
 #include "SVObjectLibrary\SVClsids.h"
 #include "TableAnalyzerTool.h"
 #include "TextDefinesSvO.h"
+#include "SVUtilityLibrary\SVString.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -106,7 +107,7 @@ BOOL TableLimitAnalyzer::OnValidate()
 		if( !Result && 0 != getFirstTaskMessage().getMessage().m_MessageCode)
 		{
 			SvStl::MessageContainer message;
-			SVStringArray msgList;
+			SVStringVector msgList;
 			msgList.push_back(GetName());
 			message.setMessage( SVMSG_SVO_5074_BASECLASSONVALIDATEFAILED, SvOi::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams) );
 			addTaskMessage( message );
@@ -193,10 +194,9 @@ void TableLimitAnalyzer::BuildEmbeddedObjectList()
 	vtTemp.lVal = cDefaultLimitValue;
 	m_LimitValue.SetDefaultValue( vtTemp, true );
 
-	CString ObjectName;
-	ObjectName.LoadString( IDS_OBJECTNAME_TABLEANALYZERLIMIT_VALUE );
+	SVString ObjectName = SvUl_SF::LoadSVString( IDS_OBJECTNAME_TABLEANALYZERLIMIT_VALUE );
 	ObjectName +=  SvO::cLinkName;
-	RegisterEmbeddedObject( &m_LimitValue.getLinkedName(), TableAnaylzerLimitValue_LinkGuid, ObjectName, false, SVResetItemNone );
+	RegisterEmbeddedObject( &m_LimitValue.getLinkedName(), TableAnaylzerLimitValue_LinkGuid, ObjectName.c_str(), false, SVResetItemNone );
 	m_LimitValue.getLinkedName().SetDefaultValue( _T(""), false );
 }
 

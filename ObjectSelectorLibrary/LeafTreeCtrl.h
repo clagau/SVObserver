@@ -16,6 +16,7 @@
 
 #pragma region Includes
 #include "ObjectTreeCtrl.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 namespace Seidenader { 	namespace ObjectSelectorLibrary

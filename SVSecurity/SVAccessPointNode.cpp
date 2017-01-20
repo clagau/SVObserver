@@ -31,55 +31,53 @@ SVAccessPointNode::SVAccessPointNode()
 	m_bHasData = false;
 	m_lID = 0;
 	m_bForcePrompt = true;
-	m_strName = _T("");
-	m_strNTGroup = _T("Administrators");
+	m_Name = _T("");
+	m_NTGroup = _T("Administrators");
 }
 
 SVAccessPointNode::~SVAccessPointNode()
 {
 }
 
-SVAccessPointNode::SVAccessPointNode(const SVAccessPointNode& rhs)
+SVAccessPointNode::SVAccessPointNode(const SVAccessPointNode& rRhs)
 {
-	*this = rhs;
+	*this = rRhs;
 }
 
-const SVAccessPointNode& SVAccessPointNode::operator =(const SVAccessPointNode& rhs)
+const SVAccessPointNode& SVAccessPointNode::operator=(const SVAccessPointNode& rRhs)
 {
-	m_lID = rhs.m_lID;
-	m_bForcePrompt = rhs.m_bForcePrompt;
-	m_strName = rhs.m_strName;
-	m_strNTGroup = rhs.m_strNTGroup;
-	m_bHasData = rhs.m_bHasData;
-	m_bDataCannotChange = rhs.m_bDataCannotChange;
+	m_lID = rRhs.m_lID;
+	m_bForcePrompt = rRhs.m_bForcePrompt;
+	m_Name = rRhs.m_Name;
+	m_NTGroup = rRhs.m_NTGroup;
+	m_bHasData = rRhs.m_bHasData;
+	m_bDataCannotChange = rRhs.m_bDataCannotChange;
 	return *this;
 }
 
-const SVAccessPointNode& SVAccessPointNode::CopyData( const SVAccessPointNode& rhs )
+const SVAccessPointNode& SVAccessPointNode::CopyData( const SVAccessPointNode& rRhs )
 {
-	m_bForcePrompt = rhs.m_bForcePrompt;
-	m_strNTGroup = rhs.m_strNTGroup;
-	m_bHasData = rhs.m_bHasData;
-	m_bDataCannotChange = rhs.m_bDataCannotChange;
+	m_bForcePrompt = rRhs.m_bForcePrompt;
+	m_NTGroup = rRhs.m_NTGroup;
+	m_bHasData = rRhs.m_bHasData;
+	m_bDataCannotChange = rRhs.m_bDataCannotChange;
 	return *this;
 }
 
-SVAccessPointNode::SVAccessPointNode(long lID, LPCTSTR strName, LPCTSTR strNTGroup, bool bForce )
+SVAccessPointNode::SVAccessPointNode(long lID, LPCTSTR Name, LPCTSTR NTGroup, bool bForce )
 {
 	m_lID = lID;
 	m_bForcePrompt = bForce;
-	m_strName = strName;
-	m_strNTGroup = strNTGroup;
-	m_bHasData = true;
+	m_Name = Name;
+	if( nullptr == NTGroup )
+	{
+		m_NTGroup.clear();
+		m_bHasData = false;
+	}
+	else
+	{
+		m_NTGroup = NTGroup;
+		m_bHasData = true;
+	}
 	m_bDataCannotChange = false;
 }	
-
-SVAccessPointNode::SVAccessPointNode( long lID, LPCTSTR strName )
-{
-	m_strName = strName;
-	m_lID = lID;
-	m_strNTGroup.Empty();
-	m_bHasData = false;
-	m_bDataCannotChange = false;
-}
-

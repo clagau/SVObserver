@@ -641,7 +641,7 @@ BOOL SVRegistryClass::ImportKeys(FILE * pFile)
 	return rc;
 }
 
-int SVRegistryClass::GetImportString(FILE * pFile, SVString & szName, SVByteArray & baValue, DWORD * pdwType)
+int SVRegistryClass::GetImportString(FILE * pFile, SVString& rName, SVByteArray & baValue, DWORD * pdwType)
 {
 	TCHAR tBuffer;
 	int i;
@@ -665,9 +665,9 @@ int SVRegistryClass::GetImportString(FILE * pFile, SVString & szName, SVByteArra
 	{
 	case _T('[') :
 		// read the key name
-		for (szName.clear();
+		for (rName.clear();
 			(_T('\n') != (tBuffer = _fgettc (pFile))) && !feof (pFile) && !ferror (pFile);
-			szName += tBuffer);
+			rName += tBuffer);
 
 		if (ferror (pFile))
 		{
@@ -676,19 +676,19 @@ int SVRegistryClass::GetImportString(FILE * pFile, SVString & szName, SVByteArra
 			Exception.Throw();
 		}
 
-		if (szName.rfind (_T(']')) == -1)
+		if( SVString::npos == rName.rfind (_T(']')))
 		{
 			return SV_ISGARBAGE;
 		}
 
-		szName.erase(szName.rfind (_T(']')));
+		rName.erase(rName.rfind (_T(']')));
 
 		return SV_ISKEY;
 		break;
 
 	case _T('"') :
 		// get the value name
-		for (szName.clear();
+		for (rName.clear();
 			(_T('"') != (tBuffer = _fgettc (pFile))) && !feof (pFile) && !ferror (pFile);
 			)
 		{
@@ -698,7 +698,7 @@ int SVRegistryClass::GetImportString(FILE * pFile, SVString & szName, SVByteArra
 				if (ferror (pFile) || feof (pFile) || tBuffer == _T('\n'))
 					return SV_ISERROR;
 			}
-			szName += tBuffer;
+			rName += tBuffer;
 		}
 		// skip past the '='
 		_ftscanf (pFile, _T(" ="));

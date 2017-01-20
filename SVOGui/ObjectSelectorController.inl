@@ -9,7 +9,7 @@ namespace Seidenader { namespace SVOGui {
 
 #pragma region Public Methods
 	template <typename ToolsetItemSelector>
-	bool ObjectSelectorController::Show(CString& name, const CString& Title, CWnd* pParent, const SVGUID& rInstanceId)
+	bool ObjectSelectorController::Show( SVString& rName, const SVString& rTitle, CWnd* pParent, const SVGUID& rInstanceId)
 	{
 		bool result = false;
 		SVString InspectionName = GetInspectionName();
@@ -28,23 +28,21 @@ namespace Seidenader { namespace SVOGui {
 		SvOsl::SelectorOptions BuildOptions( m_InspectionID, SV_SELECTABLE_FOR_EQUATION, InstanceGuid );
 		SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<GlobalSelector, NoSelector, ToolsetItemSelector>( BuildOptions );
 
-		if(0 < name.GetLength())
+		if(!rName.empty())
 		{
 			SVStringSet nameSet;
-			nameSet.insert(name);
+			nameSet.insert(rName);
 			SvOsl::ObjectTreeGenerator::Instance().setCheckItems(nameSet);
 		}
 
-		CString mainTabTitle;
-		mainTabTitle.LoadString( IDS_SELECT_TOOLSET_OUTPUT );
-		CString FilterTab;
-		FilterTab.LoadString( IDS_FILTER );
+		SVString mainTabTitle =	SvUl_SF::LoadSVString( IDS_SELECT_TOOLSET_OUTPUT );
+		SVString FilterTab =	SvUl_SF::LoadSVString( IDS_FILTER );
 
-		INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title, mainTabTitle, FilterTab, pParent );
+		INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( rTitle.c_str(), mainTabTitle.c_str(), FilterTab.c_str(), pParent );
 
 		if( IDOK == Result )
 		{
-			name = SvOsl::ObjectTreeGenerator::Instance().getSingleObjectResult().getLocation().c_str(); 
+			rName = SvOsl::ObjectTreeGenerator::Instance().getSingleObjectResult().getLocation().c_str();
 			result = true;
 		}
 

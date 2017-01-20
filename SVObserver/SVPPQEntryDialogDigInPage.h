@@ -40,9 +40,9 @@ class SVPPQEntryDialogDigInPageClass : public CPropertyPage
 	//{{AFX_DATA(SVPPQEntryDialogDigInPageClass)
 	public:
 	enum { IDD = IDD_PPQENTRY_DIGITAL_INPUT_PAGE };
-	CListBox selectedInputListCtrl;
-	CListBox availableInputListCtrl;
-	CString StrCurPos;
+	CListBox m_SelectedInputCtrl;
+	CListBox m_AvailableInputCtrl;
+	CString m_CurrentPos;
 	//}}AFX_DATA
 
 	friend class SVPPQEntryDialogPropertySheetClass;

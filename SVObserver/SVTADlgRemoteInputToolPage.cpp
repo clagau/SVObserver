@@ -79,7 +79,7 @@ BOOL SVTADlgRemoteInputToolPage::OnInitDialog()
 
 		if( l_Status )
 		{
-			m_InputName = l_pObject->GetCompleteObjectName();
+			m_InputName = l_pObject->GetCompleteName();
 		}
 	}
 
@@ -93,7 +93,7 @@ BOOL SVTADlgRemoteInputToolPage::OnInitDialog()
 
 void SVTADlgRemoteInputToolPage::OnBnClickedClearInputButton()
 {
-	m_InputName.Empty();
+	m_InputName.clear();
 
 	if( nullptr != m_pTool )
 	{
@@ -126,26 +126,23 @@ void SVTADlgRemoteInputToolPage::OnBnClickedSelectInputButton()
 		SvOsl::SelectorItem InsertItem;
 		SVObjectReference ObjectRef( m_pTool->GetInputObject() );
 
-		InsertItem.setName( ObjectRef.GetName() );
-		InsertItem.setLocation( ObjectRef.GetCompleteOneBasedObjectName() );
+		InsertItem.setName( ObjectRef.GetName().c_str() );
+		InsertItem.setLocation( ObjectRef.GetCompleteOneBasedObjectName().c_str() );
 
 		SVString Location = SvOsl::ObjectTreeGenerator::Instance().convertObjectArrayName( InsertItem );
 		Items.insert( Location );
 		SvOsl::ObjectTreeGenerator::Instance().setCheckItems( Items );
 	}
 
-	CString Title;
-	CString ToolsetOutput;
-	CString Filter;
-	ToolsetOutput.LoadString( IDS_SELECT_TOOLSET_OUTPUT );
-	Title.Format( _T("%s - %s"), ToolsetOutput, m_pTool->GetName() );
-	Filter.LoadString( IDS_FILTER );
+	SVString ToolsetOutput = SvUl_SF::LoadSVString( IDS_SELECT_TOOLSET_OUTPUT );
+	SVString Title = SvUl_SF::Format( _T("%s - %s"), ToolsetOutput.c_str(), m_pTool->GetName() );
+	SVString Filter = SvUl_SF::LoadSVString( IDS_FILTER );
 
-	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title, ToolsetOutput, Filter, this );
+	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title.c_str(), ToolsetOutput.c_str(), Filter.c_str(), this );
 
 	if( IDOK == Result )
 	{
-		m_InputName = SvOsl::ObjectTreeGenerator::Instance().getSingleObjectResult().getLocation().c_str();
+		m_InputName = SvOsl::ObjectTreeGenerator::Instance().getSingleObjectResult().getLocation();
 
 		SVGUID ObjectGuid(SvOsl::ObjectTreeGenerator::Instance().getSingleObjectResult().getItemKey());
 		m_pTool->SetInputObject( ObjectGuid );
@@ -156,6 +153,6 @@ void SVTADlgRemoteInputToolPage::OnBnClickedSelectInputButton()
 
 void SVTADlgRemoteInputToolPage::RefreshSelectedInputName()
 {
-	m_RemoteInputNameCtrl.SetWindowText( m_InputName );
+	m_RemoteInputNameCtrl.SetWindowText( m_InputName.c_str() );
 }
 

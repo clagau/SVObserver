@@ -51,10 +51,6 @@
 #pragma region Precompiled Headers
 #include <afx.h>
 #include <afxwin.h>         // MFC core and standard components
-#include <afxcmn.h>			// MFC support for Windows Common Controls
-#include <afxdtctl.h>		// MFC support for Internet Explorer 4 Common Controls
-#include <afxext.h>         // MFC extensions
-#include <afxtempl.h>
 
 #include <bitset>			//Used by static library
 #include <ctime>			//Used by static library

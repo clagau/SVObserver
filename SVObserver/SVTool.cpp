@@ -339,7 +339,7 @@ BOOL SVToolClass::OnValidate()
 	else
 	{
 		SvStl::MessageContainer message;
-		SVStringArray msgList;
+		SVStringVector msgList;
 		msgList.push_back(GetName());
 		message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ConditionalValue_Invalid, msgList, SvStl::SourceFileParams(StdMessageParams) );
 		addTaskMessage( message );
@@ -376,12 +376,11 @@ void SVToolClass::UpdateAuxiliaryExtents(long resultDataIndex)
 			SVImageClass* pAuxSourceImage = GetAuxSourceImage();
 			if( nullptr != pAuxSourceImage )
 			{
-				m_svAuxiliarySourceImageName.SetValue( resultDataIndex, pAuxSourceImage->GetCompleteObjectName() );
+				m_svAuxiliarySourceImageName.SetValue( resultDataIndex, SVString(pAuxSourceImage->GetCompleteName()) );
 			}
 
-			CString l_strDrawType;
-			m_svToolExtent.GetAuxiliaryDrawTypeString( l_strDrawType );
-			m_svAuxiliaryDrawType.SetValue( resultDataIndex, l_strDrawType );
+			SVString DrawType = m_svToolExtent.GetAuxiliaryDrawTypeString();
+			m_svAuxiliaryDrawType.SetValue( resultDataIndex, DrawType );
 			
 			SVExtentPointStruct pt;
 			SVImageClass* pImage = m_svToolExtent.GetToolImage();

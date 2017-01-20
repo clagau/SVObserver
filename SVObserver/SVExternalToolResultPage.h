@@ -11,20 +11,21 @@
 
 #pragma once
 
+#pragma region Includes
+#include "SVRPropertyTree/SVRPropTree.h"
+#include "SVUtilityLibrary/SVString.h"
+#pragma endregion Includes
+
 class SVExternalToolDetailsSheet;
 class SVExternalTool;
 class SVExternalToolTask;
-
-#pragma region Includes
-#include "PropertyTree/PropTree.h"
-#pragma endregion Includes
 
 class SVExternalToolResultPage : public CPropertyPage
 {
 	DECLARE_DYNCREATE(SVExternalToolResultPage)
 
 public:
-	SVExternalToolResultPage(const CString& sTitle = _T(""), SVExternalToolDetailsSheet* pParent = nullptr, int id = IDD );
+	SVExternalToolResultPage(LPCTSTR Title = nullptr, SVExternalToolDetailsSheet* pParent = nullptr, int id = IDD );
 	virtual ~SVExternalToolResultPage();
 
 	//{{AFX_DATA(SVExternalToolResultPage)
@@ -48,7 +49,7 @@ protected:
 	SVExternalToolDetailsSheet*		m_pParentDialog;
 	SVExternalToolTask*				m_pTask;
 	SVExternalTool*					m_pTool;
-	CString							m_sTitle;
+	SVString						m_sTitle;
 	
 	enum
 	{

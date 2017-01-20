@@ -9,9 +9,10 @@
 //* .Check In Date   : $Date:   25 Apr 2013 19:21:10  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVGUID.h"
-#include "SVString.h"
+#pragma endregion Includes
 
 const GUID SV_GUID_NULL = GUID_NULL;
 

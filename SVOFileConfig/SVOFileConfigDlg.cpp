@@ -83,11 +83,11 @@ BOOL SVOFileConfigDlg::OnInitDialog()
 	SetIcon(m_hIcon, FALSE);		// Set small icon
 	
 	m_ulCurrentVersion = 0x00050100; // initialize version with 501.
-	CString l_Text;
-	GetWindowText( l_Text );
-	l_Text += " - With Detect and Repair IOEntries - version";
-	l_Text +=  STRPRODUCTVER;
-	SetWindowText( l_Text );
+	CString Label;
+	GetWindowText( Label );
+	Label += _T(" - With Detect and Repair IOEntries - version");
+	Label +=  STRPRODUCTVER;
+	SetWindowText( Label );
 	m_strLastDirectory = SvStl::GlobalPath::Inst().GetRunPath().c_str();
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -179,19 +179,20 @@ void SVOFileConfigDlg::OnSelchangedTree1(NMHDR* pNMHDR, LRESULT* pResult)
 	
 	*pResult = 0;
 }
-bool SVOFileConfigDlg::GetDirectoryRemoveLevel( CString& p_strFile, int p_level )
+bool SVOFileConfigDlg::GetDirectoryRemoveLevel( SVString& rFileName, int p_level )
 {
 	bool l_bChanged = false;
-	if( p_strFile.ReverseFind( '.' ) > 0 )
+	if( rFileName.rfind( '.' ) > 0 )
 	{
-		int pos = p_strFile.ReverseFind( _T('\\') );
+		size_t Pos = rFileName.rfind( _T('\\') );
 		int count = 0;
-		while( pos > 0 && count < p_level )
+		//Make sure that it is not a UNC path
+		while( SVString::npos != Pos && 1 < Pos != Pos && count < p_level )
 		{
-			int pos = p_strFile.ReverseFind( _T('\\') );
-			if( pos > 0 )
+			Pos = rFileName.rfind( _T('\\') );
+			if( SVString::npos != Pos )
 			{
-				p_strFile = p_strFile.Mid( 0, pos );
+				rFileName = rFileName.substr(0 , Pos );
 				count++;
 				l_bChanged = true;
 			}
@@ -209,13 +210,13 @@ void SVOFileConfigDlg::OnButtonloadSvx()
 
 	while (1)
 	{
-		CFileDialog dlg( TRUE, ".svx", NULL, 
+		CFileDialog dlg( TRUE, _T(".svx"), NULL, 
 										 OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | 
 										 OFN_ENABLESIZING | OFN_EXPLORER,
-										 "SVObserver Environment Configuration Files (*.svx)|*.svx||", this );
+										 _T("SVObserver Environment Configuration Files (*.svx)|*.svx||"), this );
 
-		dlg.m_ofn.lpstrTitle = "Select Configuration File";
-		dlg.m_ofn.lpstrInitialDir = m_strLastDirectory;
+		dlg.m_ofn.lpstrTitle = _T("Select Configuration File");
+		dlg.m_ofn.lpstrInitialDir = m_strLastDirectory.c_str();
 
 		if (dlg.DoModal () != IDOK)
 		{
@@ -239,7 +240,7 @@ void SVOFileConfigDlg::OnButtonloadSvx()
 		}
 		else
 		{
-			MessageBox("This program will only detect IOEntry errors in Configurations saved with SVObserver 5.00 or newer");
+			MessageBox(_T("This program will only detect IOEntry errors in Configurations saved with SVObserver 5.00 or newer"));
 		}
 		mTree.SetRedraw( true );
 			
@@ -251,13 +252,13 @@ void SVOFileConfigDlg::OnButtonloadSvx()
 void SVOFileConfigDlg::OnButtonsaveSvx() 
 {
 	
-	CFileDialog dlg( TRUE, ".svx", NULL, 
+	CFileDialog dlg( TRUE, _T(".svx"), NULL, 
 		OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | 
 		OFN_ENABLESIZING | OFN_EXPLORER,
-		"SVObserver Environment Configuration Files (*.svx)|*.svx||", this );
+		_T("SVObserver Environment Configuration Files (*.svx)|*.svx||"), this );
 
-	dlg.m_ofn.lpstrTitle = "Select Configuration File";
-	dlg.m_ofn.lpstrInitialDir = m_strLastDirectory;
+	dlg.m_ofn.lpstrTitle = _T("Select Configuration File");
+	dlg.m_ofn.lpstrInitialDir = m_strLastDirectory.c_str();
 
 	if (dlg.DoModal () == IDOK)
 	{
@@ -296,25 +297,25 @@ void SVOFileConfigDlg::FixConfiguration()
 {
 	for( HTIStringPairs::iterator it = m_IOEntryPairs.begin() ; it != m_IOEntryPairs.end() ; ++it)
 	{
-		CString Inspection;
+		SVString Inspection;
 		if( ParseInspection( (*it).second, Inspection ) )
 		{
 			if( std::find( m_Inspections.begin(), m_Inspections.end(), Inspection) == m_Inspections.end() )
 			{
 				if( mTree.DeleteItem((*it).first) )
 				{
-					OutputDebugString( "Deleting "+(*it).second );
+					OutputDebugString( SVString(_T("Deleting ")+(*it).second).c_str() );
 				}
 			}
 		}
-		CString l_strPPQ;
+		SVString l_strPPQ;
 		if( ParsePPQ( (*it).second, l_strPPQ ) )
 		{
 			if( std::find( m_PPQs.begin(), m_PPQs.end(), l_strPPQ) == m_PPQs.end() )
 			{
 				if( mTree.DeleteItem((*it).first) )
 				{
-					OutputDebugString( "Deleting "+(*it).second );
+					OutputDebugString( SVString(_T("Deleting ")+(*it).second).c_str() );
 				}
 			}
 		}
@@ -336,7 +337,7 @@ void SVOFileConfigDlg::FixConfiguration()
 						l_DeletedHTreeItems.insert( it1->first );
 						if( mTree.DeleteItem( it1->first ))
 						{
-							OutputDebugString( "Deleting " + it->second + "\n" );
+							OutputDebugString( SVString(_T("Deleting ") + it->second + "\n").c_str() );
 						}
 					}
 				}
@@ -354,10 +355,9 @@ void SVOFileConfigDlg::FixConfiguration()
 
 	while( l_Current != NULL )
 	{
-		CString l_strName = mTree.GetItemText( l_Current );
-		CString l_strTmp;
+		SVString l_strName = mTree.GetItemText( l_Current );
 
-		if( l_strName == "IO")
+		if( l_strName == _T("IO"))
 		{
 			ReIndexIOEntries(l_Current);
 			break;
@@ -374,14 +374,13 @@ void SVOFileConfigDlg::ReIndexIOEntries(HTREEITEM p_Item)
 	// Find all IOEntries.
 	while( l_Current != NULL )
 	{
-		CString l_strName = mTree.GetItemText( l_Current);
+		SVString Name = mTree.GetItemText( l_Current);
 
-		if( l_strName.Find( "IOEntry" ) >= 0 )
+		if( SVString::npos != Name.find( _T("IOEntry") ) )
 		{
-			CString l_strNewName;
-			l_strNewName.Format( "IOEntry%d", count);
+			SVString NewName = SvUl_SF::Format( _T("IOEntry%d"), count);
 			count++;
-			mTree.SetItemText(l_Current, l_strNewName );
+			mTree.SetItemText(l_Current, NewName.c_str() );
 		}
 		l_Current = mTree.GetNextSiblingItem(l_Current);
 	}
@@ -390,9 +389,9 @@ void SVOFileConfigDlg::ReIndexIOEntries(HTREEITEM p_Item)
 	l_Current = mTree.GetChildItem( p_Item);
 	while( l_Current != NULL )
 	{
-		CString l_strName = mTree.GetItemText( l_Current);
+		SVString Name = mTree.GetItemText( l_Current);
 
-		if( l_strName == "NumberOfIOEntries")
+		if( Name == _T("NumberOfIOEntries") )
 		{
 			VARIANT* l_pVt = reinterpret_cast<VARIANT*> (mTree.GetItemData( l_Current ));
 			l_pVt->lVal = count;
@@ -405,113 +404,114 @@ void SVOFileConfigDlg::ReIndexIOEntries(HTREEITEM p_Item)
 
 void SVOFileConfigDlg::CheckConfiguration()
 {
-	HTREEITEM l_Root = mTree.GetRootItem();
-	HTREEITEM l_Child = mTree.GetNextSiblingItem( l_Root );
-	HTREEITEM l_Current = l_Child;
+	HTREEITEM Root = mTree.GetRootItem();
+	HTREEITEM Child = mTree.GetNextSiblingItem( Root );
+	HTREEITEM Current = Child;
 	m_IOEntryPairs.clear();
 	m_Inspections.clear();
 
-	while( l_Current != NULL )
+	while( Current != NULL )
 	{
-		CString l_strName = mTree.GetItemText( l_Current );
-		CString l_strTmp;
+		SVString Name = mTree.GetItemText( Current );
 
-		if( l_strName == "IO")
+		if( Name == _T("IO"))
 		{
-			GetIOChildren(l_Current);
+			GetIOChildren(Current);
 		}
 
-		if( l_strName == "Inspection")
+		if( Name == _T("Inspection"))
 		{
-			GetInspections(l_Current);
+			GetInspections(Current);
 		}
 
-		if( l_strName == "PPQ")
+		if( Name == _T("PPQ"))
 		{
-			GetPPQs(l_Current);
+			GetPPQs(Current);
 		}
 
-		l_Current = mTree.GetNextSiblingItem(l_Current);
+		Current = mTree.GetNextSiblingItem(Current);
 		
 	}
 
 	// search IOEntries for invalid inspections
-	CString strMainMessage;
+	SVString strMainMessage;
 	
 	for( HTIStringPairs::iterator it = m_IOEntryPairs.begin() ; it != m_IOEntryPairs.end() ; ++it)
 	{
-		CString Inspection;
+		SVString Inspection;
 		if( ParseInspection( (*it).second, Inspection ) )
 		{
 			if( std::find( m_Inspections.begin(), m_Inspections.end(), Inspection) == m_Inspections.end() )
 			{
-				CString strMessage;
-				strMessage.Format( "%s\n", (*it).second);
+				SVString strMessage = SvUl_SF::Format( _T("%s\n"), it->second.c_str());
 				strMainMessage+= strMessage;
 
 				if( mTree.DeleteItem((*it).first) )
-					OutputDebugString( "Deleting "+(*it).second );
+				{
+					OutputDebugString( SVString(_T("Deleting ") + it->second).c_str() );
+				}
 			}
 		}
-		CString l_strPPQ;
-		if( ParsePPQ( (*it).second, l_strPPQ ) )
+		SVString PPQName;
+		if( ParsePPQ( (*it).second, PPQName ) )
 		{
-			if( std::find( m_PPQs.begin(), m_PPQs.end(), l_strPPQ) == m_PPQs.end() )
+			if( std::find( m_PPQs.begin(), m_PPQs.end(), PPQName) == m_PPQs.end() )
 			{
-				CString strMessage;
-				strMessage.Format( "%s\n", (*it).second);
+				SVString strMessage = SvUl_SF::Format( _T("%s\n"), it->second.c_str());
 				strMainMessage+= strMessage;
 
 				if( mTree.DeleteItem((*it).first) )
-					OutputDebugString( "Deleting "+(*it).second );
+				{
+					OutputDebugString( SVString(_T("Deleting ") + it->second).c_str() );
+				}
 			}
 		}
 
 	}
 
-	if( strMainMessage.GetLength() > 0 )
+	if( !strMainMessage.empty() )
 	{
-		MessageBox(strMainMessage,"The following IOEntries are Invalid!", MB_OK);
+		MessageBox(strMainMessage.c_str(),_T("The following IOEntries are Invalid!"), MB_OK);
 	}
 
 }
-bool SVOFileConfigDlg::ParseInspection( CString p_strName, CString& p_rstrOut)
+bool SVOFileConfigDlg::ParseInspection( const SVString& rName, SVString& rOut)
 {
-	bool l_bRet = false;
-	CString strRet ="";
-	int loc = p_strName.Find('.');
-	if( loc >= 0 )
+	bool Result( false );
+	size_t Pos = rName.find('.');
+	if( SVString::npos != Pos )
 	{
-		l_bRet = true;
-		strRet = p_strName.Left( loc );
-		if( strRet == "DIO" ||
-			(strRet.Find("PPQ",0) == 0))
+		SVString Temp;
+		Result = true;
+		Temp = SvUl_SF::Left( rName, Pos );
+		if( Temp == _T("DIO") || (Temp.find( _T("PPQ")) == 0))
 		{
-			l_bRet = false;
+			Result = false;
 		}
 		else
 		{
-			p_rstrOut = strRet;
+			rOut = Temp;
 		}
 	}
-	return l_bRet;
+	return Result;
 }
 
-bool SVOFileConfigDlg::ParsePPQ( CString p_strName, CString& p_rstrOut)
+bool SVOFileConfigDlg::ParsePPQ( const SVString& rName, SVString& rOut)
 {
-	bool l_bRet = false;
-	CString strRet ="";
-	int loc = p_strName.Find('.');
-	if( loc >= 0 )
+	bool Result( false );
+	size_t Pos = rName.find('.');
+	if( SVString::npos != Pos )
 	{
-		strRet = p_strName.Left( loc );
-		if( strRet.Find("PPQ",0) == 0)
+		SVString Temp;
+
+		Temp = SvUl_SF::Left( rName,  Pos );
+		if( Temp.find( _T("PPQ") ) == 0)
 		{
-			l_bRet = true;
-			p_rstrOut = strRet;
+			Result = true;
+			rOut = Temp;
 		}
 	}
-	return l_bRet;
+	return Result;
 }
 
 
@@ -520,21 +520,21 @@ void SVOFileConfigDlg::GetIOChildren(HTREEITEM p_Item)
 	HTREEITEM l_Current = mTree.GetChildItem( p_Item);
 	while( l_Current != NULL )
 	{
-		CString l_strName = mTree.GetItemText( l_Current);
+		SVString Name = mTree.GetItemText( l_Current);
 
-		if( l_strName.Find( "IOEntry" ) >= 0 )
+		if( SVString::npos != Name.find( _T("IOEntry") ) )
 		{
 			HTREEITEM l_InspItem = mTree.GetChildItem( l_Current );
 			while( l_InspItem != NULL )
 			{
-				CString Name = mTree.GetItemText( l_InspItem );
-				if( Name == "IOEntryName" )
+				Name = mTree.GetItemText( l_InspItem );
+				if( Name == _T("IOEntryName") )
 				{
 					VARIANT* l_vt = reinterpret_cast<VARIANT*> (mTree.GetItemData( l_InspItem ));
 					if( l_vt->vt == VT_BSTR )
 					{
-						CString l_IOEntryName = l_vt->bstrVal;
-						HTIStringPair l_Pair(l_Current, l_IOEntryName);
+						SVString IOEntryName = SvUl_SF::createSVString( _bstr_t(l_vt->bstrVal) );
+						HTIStringPair l_Pair(l_Current, IOEntryName);
 						m_IOEntryPairs.push_back( l_Pair );
 						break;
 					}
@@ -552,9 +552,9 @@ void SVOFileConfigDlg::GetPPQs(HTREEITEM p_Item)
 	HTREEITEM l_Current = mTree.GetChildItem( p_Item);
 	while( l_Current != NULL )
 	{
-		CString l_PPQName = mTree.GetItemText( l_Current);
+		SVString PPQName = mTree.GetItemText( l_Current);
 
-		m_PPQs.push_back( l_PPQName );
+		m_PPQs.push_back( PPQName );
 
 		l_Current = mTree.GetNextSiblingItem(l_Current);
 	}
@@ -566,8 +566,8 @@ void SVOFileConfigDlg::GetInspections(HTREEITEM p_Item)
 	HTREEITEM l_Current = mTree.GetChildItem( p_Item);
 	while( l_Current != NULL )
 	{
-		CString l_strName = mTree.GetItemText( l_Current);
-		m_Inspections.push_back( l_strName );
+		SVString Name = mTree.GetItemText( l_Current);
+		m_Inspections.push_back( Name );
 
 		l_Current = mTree.GetNextSiblingItem(l_Current);
 	}

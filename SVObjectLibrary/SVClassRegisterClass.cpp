@@ -26,19 +26,19 @@ SVClassRegisterClass::~SVClassRegisterClass()
 
 SVGUID SVClassRegisterClass::GetClassID() 
 { 
-	ASSERT( 0 );
+	assert( 0 );
 	return SV_GUID_NULL; 
 }
 
 SVObjectClass* SVClassRegisterClass::Construct() 
 { 
-	ASSERT( 0 );
+	assert( 0 );
 	return nullptr; 
 }
 
 LPCTSTR SVClassRegisterClass::GetClassName()	
 { 
-	ASSERT( 0 );
+	assert( 0 );
 	return _T( "" ); 
 }
 

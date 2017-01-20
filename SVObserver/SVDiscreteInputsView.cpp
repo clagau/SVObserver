@@ -30,6 +30,7 @@
 #include "ObjectInterfaces\ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "TextDefinesSvO.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -127,7 +128,6 @@ void SVDiscreteInputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHin
 
 		m_Items.clear();
 
-		CString strItem;
 		long lSize;
 		int j;
 		int i;
@@ -164,9 +164,9 @@ void SVDiscreteInputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHin
 		for( i = 0; i < static_cast<long>(maxInput); ++i )
 		{
 			// First column: Module I/O
-			strItem.Format( _T( "Digital Input %d" ), i + 1 );
+			SVString Item = SvUl_SF::Format( _T( "Digital Input %d" ), i + 1 );
 			GetListCtrl().InsertItem( LVIF_IMAGE | LVIF_TEXT | LVIF_STATE,
-									  i, strItem,
+									  i, Item.c_str(),
 									  INDEXTOSTATEIMAGEMASK( 1 ),	// state
 									  LVIS_STATEIMAGEMASK,			// stateMask
 									  1, 0 );						// Set item data to nothing
@@ -193,13 +193,13 @@ void SVDiscreteInputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHin
 					// Column: Force
 					if( pDigInput->IsForced() )
 					{
-						strItem.Format( _T( "%d" ), pDigInput->GetForcedValue() ? 1 : 0 );
-						GetListCtrl().SetItemText( i, 2, strItem );
+						Item = SvUl_SF::Format( _T( "%d" ), pDigInput->GetForcedValue() ? 1 : 0 );
+						GetListCtrl().SetItemText( i, 2, Item.c_str() );
 					}// end if
 
 					// Column: Inverted
-					strItem.Format( _T( "%s" ), pDigInput->IsInverted() ? _T( "1" ) : _T( "" ) );
-					GetListCtrl().SetItemText( i, 3, strItem );
+					Item = pDigInput->IsInverted() ? _T( "1" ) : _T( "" );
+					GetListCtrl().SetItemText( i, 3, Item.c_str() );
 
 					break;
 				}// end if
@@ -262,9 +262,9 @@ void SVDiscreteInputsView::OnLButtonDblClk( UINT nFlags, CPoint point )
 			pDigInput = dynamic_cast< SVDigitalInputObject* >( SVObjectManagerClass::Instance().GetObject( pIOEntry->m_IOId ) );
 			if( pDigInput )
 			{
-				dlg.StrIOName = _T( "Module " ) + GetListCtrl().GetItemText( item, 0 );
-				dlg.StrIOName += _T( ", " ) + GetListCtrl().GetItemText( item, 1 );
-				dlg.StrIOValue.Format( "%d", pDigInput->GetValue() ? 1 : 0 );
+				dlg.IOName = _T( "Module " ) + GetListCtrl().GetItemText( item, 0 );
+				dlg.IOName += _T( ", " ) + GetListCtrl().GetItemText( item, 1 );
+				dlg.IOValue.Format( "%d", pDigInput->GetValue() ? 1 : 0 );
 				dlg.m_pDigInput = pDigInput;
 				dlg.m_pIOEntry  = pIOEntry;
 				dlg.m_bInputMode = TRUE;

@@ -9,8 +9,10 @@
 // * .Check In Date   : $Date:   23 Apr 2013 09:14:20  $
 // ******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "ModelessMessageBox.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -25,11 +27,10 @@ BEGIN_MESSAGE_MAP(CModelessMsgBox, CDialog)
 END_MESSAGE_MAP()
 
 
-CModelessMsgBox::CModelessMsgBox(const CString& s, HANDLE p_hEvent)
+CModelessMsgBox::CModelessMsgBox(const SVString& rMsg, HANDLE p_hEvent)
 	: CDialog(CModelessMsgBox::IDD, nullptr)
+, m_Msg( rMsg )
 {
-	m_sMsg = s;
-
 	DuplicateHandle( GetCurrentProcess(), p_hEvent,
 		GetCurrentProcess(), &m_hEvent,
 		0, FALSE, DUPLICATE_SAME_ACCESS );
@@ -45,7 +46,7 @@ CModelessMsgBox::~CModelessMsgBox()
 		m_hEvent = nullptr;
 	}
 
-	m_sMsg.Empty();
+	m_Msg.clear();
 }
 
 void CModelessMsgBox::DoDataExchange(CDataExchange* pDX)
@@ -76,7 +77,7 @@ BOOL CModelessMsgBox::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 	
-	GetDlgItem(IDC_MODELESS_MESSAGE_BOX_TEXT)->SetWindowText(m_sMsg);
+	GetDlgItem(IDC_MODELESS_MESSAGE_BOX_TEXT)->SetWindowText( m_Msg.c_str() );
 	
 	return TRUE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE

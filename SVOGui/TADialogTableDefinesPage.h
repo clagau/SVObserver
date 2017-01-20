@@ -12,6 +12,7 @@
 #include "SVOResource/resource.h"
 #include "GridCtrlLibrary/GridCtrl.h"
 #include "SVUtilityLibrary/NameGuidList.h"
+#include "SVUtilityLibrary/SVString.h"
 #include "ISVPropertyPageDialog.h"
 #pragma endregion Includes
 

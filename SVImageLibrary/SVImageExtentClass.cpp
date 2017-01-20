@@ -51,7 +51,7 @@ ExtentPropertyMapInit::ExtentPropertyMapInit()
 	map[ SVExtentPropertyOutputHeight ] = _T("Height");
 };
 
-CString SVImageExtentClass::GetExtentPropertyName( SVExtentPropertyEnum p_eProperty )
+SVString SVImageExtentClass::GetExtentPropertyName( SVExtentPropertyEnum p_eProperty )
 {
 	return g_svExtentPropertyMap.map[p_eProperty];
 }

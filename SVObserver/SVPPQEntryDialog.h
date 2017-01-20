@@ -84,9 +84,9 @@ public:
 // Dialog Data
 	//{{AFX_DATA(SVPPQEntryDialogCameraPageClass)
 	enum { IDD = IDD_PPQENTRY_CAMERA_PAGE };
-	CListBox	selectedList;
-	CListBox	availableList;
-	CString		StrCurPos;
+	CListBox	m_SelectedList;
+	CListBox	m_AvailableList;
+	CString		m_CurrentPos;
 	//}}AFX_DATA
 
 protected:

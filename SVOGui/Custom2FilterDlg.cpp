@@ -34,7 +34,7 @@ namespace Seidenader
 {
 	namespace SVOGui
 	{
-		static const int HeaderSize = 1;
+		static const int cHeaderSize = 1;
 		static const int CellSize = 40;
 		static const int HeaderColumnSize = 60;
 		static const int MaxCellCharSize = 3;
@@ -160,8 +160,8 @@ namespace Seidenader
 				m_SumSelectorCtrl.AddString( SumSelections[i] );
 			}
 
-			m_Grid.SetFixedRowCount( HeaderSize );
-			m_Grid.SetFixedColumnCount( HeaderSize );
+			m_Grid.SetFixedRowCount( cHeaderSize );
+			m_Grid.SetFixedColumnCount( cHeaderSize );
 			m_Grid.SetRowResize( FALSE );
 			m_Grid.SetColumnResize( FALSE );
 			m_Grid.AllowReorderColumn( false );
@@ -344,21 +344,21 @@ namespace Seidenader
 					{
 						if (SvOi::E_CUSTOM_IMPORT_FORMAT_INVALID == Result)
 						{
-							SVStringArray msgList;
+							SVStringVector msgList;
 							msgList.push_back(pathName);
 							msgList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_XmlFormatInvalid));
 							message.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_ImportFailed, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10226 );
 						}
 						else if (SvOi::E_CUSTOM_IMPORT_VERSION_MISMATCH == Result)
 						{
-							SVStringArray msgList;
+							SVStringVector msgList;
 							msgList.push_back(pathName);
 							msgList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_VersionMismatch));
 							message.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_ImportFailed, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10226 );
 						}
 						else
 						{
-							SVStringArray msgList;
+							SVStringVector msgList;
 							msgList.push_back(pathName);
 							msgList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_Unknown));
 							message.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_ImportFailed, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10226 );
@@ -371,7 +371,7 @@ namespace Seidenader
 				}
 				catch ( ... )
 				{
-					SVStringArray msgList;
+					SVStringVector msgList;
 					msgList.push_back(pathName);
 					msgList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_Unknown));
 					message.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_ImportFailed, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10226 );
@@ -638,8 +638,8 @@ namespace Seidenader
 				m_KernelHeight = Height;
 			}
 
-			m_Grid.SetColumnCount( HeaderSize +  m_KernelWidth );
-			for( int i=0; i < HeaderSize + m_KernelWidth; i++ )
+			m_Grid.SetColumnCount( cHeaderSize +  m_KernelWidth );
+			for( int i=0; i < cHeaderSize + m_KernelWidth; i++ )
 			{
 				if( 0 == i )
 				{
@@ -651,7 +651,7 @@ namespace Seidenader
 				}
 			}
 
-			m_Grid.SetRowCount( HeaderSize + m_KernelHeight );
+			m_Grid.SetRowCount( cHeaderSize + m_KernelHeight );
 			m_Grid.SetRowHeight( 0, CellSize );
 
 			//Deselect when changing size etc..
@@ -728,9 +728,9 @@ namespace Seidenader
 		{
 			m_KernelSum = 0;
 			SumType CurrentSum = static_cast<SumType> (m_SumSelectorCtrl.GetCurSel());
-			for( int i=HeaderSize; i <= m_Grid.GetRowCount() ; i++ )
+			for( int i=cHeaderSize; i <= m_Grid.GetRowCount() ; i++ )
 			{
-				for( int j=HeaderSize; j <= m_Grid.GetColumnCount(); j++ )
+				for( int j=cHeaderSize; j <= m_Grid.GetColumnCount(); j++ )
 				{
 					long CellValue = ::atol( m_Grid.GetItemText( i, j ) );
 					switch( CurrentSum )
@@ -786,7 +786,7 @@ namespace Seidenader
 			}
 		}
 
-		void Custom2FilterDlg::updateGridSelection( const CString& rValue )
+		void Custom2FilterDlg::updateGridSelection( LPCTSTR Value )
 		{
 			SvGcl::CCellRange Selection = m_Grid.GetSelectedCellRange();
 			for( int i = Selection.GetMinRow(); i <= Selection.GetMaxRow(); i++ )
@@ -795,12 +795,12 @@ namespace Seidenader
 				{
 					if(m_Grid.IsCellSelected( i, j ) )
 					{
-						m_Grid.SetItemText( i, j, rValue );
+						m_Grid.SetItemText( i, j, Value );
 						int EditIndex = (i - 1)*m_KernelWidth + (j - 1);
 						LongArray::iterator Iter = m_KernelArray.begin() + EditIndex;
 						if( Iter != m_KernelArray.end() )
 						{
-							*Iter = atol( rValue );
+							*Iter = atol( Value );
 						}
 					}
 				}
@@ -813,7 +813,7 @@ namespace Seidenader
 
 		void Custom2FilterDlg::updateEditCellandStatus()
 		{
-			CString MarkedCellsValue;
+			SVString MarkedCellsValue;
 			int Row = 0;
 			int Col = 0;
 			int CellCount = 0;
@@ -827,12 +827,12 @@ namespace Seidenader
 				{
 					if( m_Grid.IsCellSelected( i, j ) )
 					{
-						CString Value;
+						SVString Value;
 						Value = m_Grid.GetItemText( i, j );
 
 						if( Value != MarkedCellsValue )
 						{
-							if( MarkedCellsValue.IsEmpty() )
+							if( MarkedCellsValue.empty() )
 							{
 								MarkedCellsValue = Value;
 							}
@@ -847,7 +847,7 @@ namespace Seidenader
 							Row = i;
 							Col = j;
 						}
-						MarkedSum += atol( Value );
+						MarkedSum += atol( Value.c_str() );
 						CellCount++;
 					}
 				}
@@ -865,7 +865,7 @@ namespace Seidenader
 				m_GridStatus.Format( StatusGridMultiCell, CellCount, MarkedSum );
 			}
 
-			m_EditCell = MarkedCellsValue;
+			m_EditCell = MarkedCellsValue.c_str();
 		}
 
 		void Custom2FilterDlg::checkCellsValid()
@@ -876,13 +876,13 @@ namespace Seidenader
 				{
 					for( int j = 1; j <= m_KernelWidth; j++ )
 					{
-						CString Value;
+						SVString Value;
 						Value = m_Grid.GetItemText( i, j );
 						//Check if during input only a minus was entered (invalid) set it to 0
 						if( _T("-") == Value )
 						{
 							Value = _T("0");
-							m_Grid.SetItemText( i, j, Value );
+							m_Grid.SetItemText( i, j, Value.c_str() );
 						}
 					}
 				}
@@ -894,7 +894,7 @@ namespace Seidenader
 			//Kernel array and kernel height and width must match
 			if( m_KernelArray.size() != m_KernelWidth*m_KernelHeight )
 			{
-				SVStringArray msgList;
+				SVStringVector msgList;
 				msgList.push_back(SvUl_SF::Format(_T("%d"),m_KernelArray.size()));
 				msgList.push_back(SvUl_SF::Format(_T("%d"),m_KernelWidth));
 				msgList.push_back(SvUl_SF::Format(_T("%d"),m_KernelHeight));
@@ -905,7 +905,7 @@ namespace Seidenader
 			//Check that the Kernel Width and Height are odd and between 1 and MaxKernelSize
 			if( 1 != m_KernelWidth % 2 || 1 > m_KernelWidth || SvOi::ICustom2Filter::MaxKernelSize < m_KernelWidth )
 			{
-				SVStringArray msgList;
+				SVStringVector msgList;
 				msgList.push_back(SvUl_SF::Format(_T("%d"), m_KernelWidth));
 				msgList.push_back(SvUl_SF::Format(_T("%d"), SvOi::ICustom2Filter::MaxKernelSize));
 				SvStl::MessageContainer message(SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_DataInvalidKernelWidth, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10228);
@@ -913,7 +913,7 @@ namespace Seidenader
 			}
 			if( 1 != m_KernelHeight % 2 || 1 > m_KernelHeight || SvOi::ICustom2Filter::MaxKernelSize < m_KernelHeight )
 			{
-				SVStringArray msgList;
+				SVStringVector msgList;
 				msgList.push_back(SvUl_SF::Format(_T("%d"), m_KernelHeight));
 				msgList.push_back(SvUl_SF::Format(_T("%d"), SvOi::ICustom2Filter::MaxKernelSize));
 				SvStl::MessageContainer message(SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_DataInvalidKernelHeight, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10228);

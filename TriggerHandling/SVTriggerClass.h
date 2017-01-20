@@ -14,7 +14,6 @@
 #include "SVOLibrary/SVODeviceClass.h"
 #include "SVOLibrary/SVQueueObject.h"
 #include "SVIOLibrary/SVIOTriggerLoadLibraryClass.h"
-
 #pragma endregion Includes
 
 namespace Seidenader { namespace TriggerHandling {

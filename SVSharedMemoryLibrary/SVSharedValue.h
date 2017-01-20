@@ -12,6 +12,7 @@
 
 #pragma region Includes
 #include "SVShared.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 namespace Seidenader { namespace SVSharedMemoryLibrary
@@ -36,8 +37,8 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		SVSharedValue(const void_allocator& rAlloc);
 		SVSharedValue(const SVSharedValue& rData);
 		const SVSharedValue& operator=(const SVSharedValue& rData);
-		void SetName(const std::string& Name);
-		void SetData(ResultTypeEnum ResultType, const std::string& Result, int Status);
+		void SetName(const SVString& Name);
+		void SetData(ResultTypeEnum ResultType, const SVString& Result, int Status);
 	};
 
 	// local memory structure
@@ -45,10 +46,10 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 	{
 		long trigger;
 		long status;
-		std::string name;
-		std::string value;
+		SVString name;
+		SVString value;
 
-		SVValue(const std::string& n, long trg, long sts, const std::string& val)
+		SVValue(const SVString& n, long trg, long sts, const SVString& val)
 		: name(n), trigger(trg), status(sts), value(val)
 		{
 		}

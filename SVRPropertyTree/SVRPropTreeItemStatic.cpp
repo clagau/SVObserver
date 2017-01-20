@@ -2,14 +2,14 @@
 // * COPYRIGHT (c) 2000 by SVResearch, Harrisburg
 // * All Rights Reserved
 // ******************************************************************************
-// * .Module Name     : PropertyItemStatic.h
-// * .File Name       : $Workfile:   PropTreeItemStatic.h  $
+// * .Module Name     : PropTreeItemStatic.cpp
+// * .File Name       : $Workfile:   PropTreeItemStatic.cpp  $
 // * ----------------------------------------------------------------------------
 // * .Current Version : $Revision:   1.0  $
 // * .Check In Date   : $Date:   18 Apr 2013 16:43:18  $
 // ******************************************************************************
 
-// PropertyItemStatic.h
+// PropTreeItemStatic.cpp
 //
 //  Copyright (C) 1998-2001 Scott Ramsay
 //	sramsay@gonavi.com
@@ -26,28 +26,52 @@
 // 
 //	If you use this code, drop me an email.  I'd like to know if you find the code
 //	useful.
-#pragma once
 
-#include "PropTreeItem.h"
+#include "stdafx.h"
+#include "SVRPropTree.h"
 
-class SVRPropertyItemStatic : public SVRPropertyItem
+#include "SVRPropTreeItemStatic.h"
+
+
+SVRPropertyItemStatic::SVRPropertyItemStatic()
 {
-public:
-	SVRPropertyItemStatic();
-	virtual ~SVRPropertyItemStatic();
+}
 
-public:
-	// The attribute area needs drawing
-	virtual void DrawAttribute(CDC* pDC, const RECT& rc) override;
 
-	// Retrieve the item's attribute value (in this case the CString)
-	virtual bool GetItemValue(CString& strVal) override;
-    //virtual bool GetItemValue(VARIANT& vtVal);
+SVRPropertyItemStatic::~SVRPropertyItemStatic()
+{
+}
 
-	// Set the item's attribute value
-	virtual bool SetItemValue(LPCTSTR lpszVal) override;
 
-protected:
-	CString		m_sAttribute;
-};
+void SVRPropertyItemStatic::DrawAttribute(CDC* pDC, const RECT& rRect)
+{
+	ASSERT(nullptr != m_pProp);
+	CFont*	l_pOldFont;
+
+
+//- JAB110708 - GetNormalFont is a static function getting a static member.
+	l_pOldFont = pDC->SelectObject(m_pProp->GetNormalFont());
+	pDC->SetTextColor(RGB(0,0,0));
+	pDC->SetBkMode(TRANSPARENT);
+
+	CRect DrawRect( rRect );
+	pDC->DrawText(m_Attribute.c_str(), DrawRect, DT_SINGLELINE|DT_VCENTER);
+
+//- JAB110708
+	pDC->SelectObject(l_pOldFont);
+}
+
+
+bool SVRPropertyItemStatic::GetItemValue(SVString& rVal)
+{
+	rVal = m_Attribute;
+	return true;
+}
+
+
+bool SVRPropertyItemStatic::SetItemValue(LPCTSTR lpszVal)
+{
+	m_Attribute = lpszVal;
+	return true;
+}
 

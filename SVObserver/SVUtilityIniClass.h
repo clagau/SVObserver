@@ -11,19 +11,21 @@
 
 #pragma once
 
+#include "SVUtilityLibrary/SVString.h"
+
 class SVUtilityIniClass  
 {
 public:
 	SVUtilityIniClass();
 	virtual ~SVUtilityIniClass();
 
-	SVUtilityIniClass( const SVUtilityIniClass& p_rObject );
+	SVUtilityIniClass( const SVUtilityIniClass& rRhs );
 
-	const SVUtilityIniClass& operator=( const SVUtilityIniClass& p_rObject );
+	const SVUtilityIniClass& operator=( const SVUtilityIniClass& rRhs);
 
-	CString m_csDisplayName;
-	CString m_csCommand;
-	CString m_csWorkingDirectory;
-	CString m_csArguments;
-	CString m_csPromptForArguments;
+	SVString m_DisplayName;
+	SVString m_Command;
+	SVString m_WorkingDirectory;
+	SVString m_Arguments;
+	SVString m_PromptForArguments;
 };

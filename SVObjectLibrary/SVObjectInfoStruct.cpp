@@ -17,6 +17,13 @@
 #include "SVObjectManagerClass.h"
 #pragma endregion Includes
 
+#pragma region Declarations
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+#endif
+#pragma endregion Declarations
+
 SVObjectInfoStruct::SVObjectInfoStruct()
 : PObject( nullptr ), UniqueObjectID(), ObjectTypeInfo(), m_ObjectNameInfo()
 {
@@ -122,7 +129,7 @@ HRESULT SVObjectInfoStruct::SetObject( SVObjectClass* p_psvObject )
 				UniqueObjectID = PObject->GetObjectInfo().UniqueObjectID;
 			}
 
-			m_ObjectNameInfo.ParseObjectName( static_cast< LPCTSTR >( PObject->GetCompleteObjectName() ) );
+			m_ObjectNameInfo.ParseObjectName( PObject->GetCompleteName().c_str() );
 		}
 		else
 		{

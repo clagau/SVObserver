@@ -12,7 +12,6 @@
 #include "stdafx.h"
 #include "SVSharedInspectionWriter.h"
 #include "SVSharedConfiguration.h"
-#include "SVUtilityLibrary\SVString.h"
 #pragma endregion Includes
 
 namespace Seidenader { namespace SVSharedMemoryLibrary
@@ -45,17 +44,17 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		RemovePreviousImageFiles();
 	}
 
-	static void RemoveAllFilesInDirectory(const std::string& directoryName)
+	static void RemoveAllFilesInDirectory(const SVString& directoryName)
 	{
 		WIN32_FIND_DATA fData;
-		std::string searchpath = directoryName  + "*.bmp";
+		SVString searchpath = directoryName  + "*.bmp";
 		HANDLE fHandle = FindFirstFile(searchpath.c_str(), &fData);
 		if (fHandle != INVALID_HANDLE_VALUE)
 		{
 			int rc = true;
 			do
 			{
-				std::string filename = directoryName + fData.cFileName;
+				SVString filename = directoryName + fData.cFileName;
 				::DeleteFile(filename.c_str());
 				rc = FindNextFile(fHandle, &fData);
 			} while(rc);
@@ -66,7 +65,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 	void SVSharedInspectionWriter::RemovePreviousImageFiles()
 	{
 		// Remove all files in the image directory
-		std::string directoryName = SVSharedConfiguration::GetImageDirectoryName();
+		SVString directoryName = SVSharedConfiguration::GetImageDirectoryName();
 		directoryName += "\\";
 		RemoveAllFilesInDirectory(directoryName);
 
@@ -77,7 +76,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 	}
 
 	// Create
-	HRESULT SVSharedInspectionWriter::Create( const std::string& name, const GUID& guid, const SVSharedMemorySettings& rSettings, const long numProductSlots, const long numRejectSlots, const CreationInfo& rImagesInfo, const CreationInfo& rValuesInfo )
+	HRESULT SVSharedInspectionWriter::Create( const SVString& name, const GUID& guid, const SVSharedMemorySettings& rSettings, const long numProductSlots, const long numRejectSlots, const CreationInfo& rImagesInfo, const CreationInfo& rValuesInfo )
 	{
 		HRESULT hr = S_OK;
 		m_guid = guid;
@@ -151,7 +150,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		m_ShareName.clear();
 	}
 
-	const std::string& SVSharedInspectionWriter::GetShareName() const
+	const SVString& SVSharedInspectionWriter::GetShareName() const
 	{
 		return m_ShareName;
 	}
@@ -238,9 +237,9 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 
 			for (SVSharedImageContainer::iterator it = rReject.m_Images.begin();it != rReject.m_Images.end();++it)
 			{
-				std::string lastInspectedImageFileName = it->m_Filename;
+				SVString lastInspectedImageFileName = it->m_Filename;
 				// need to change image name and copy image
-				std::string basename = it->m_ElementName.c_str();
+				SVString basename = it->m_ElementName.c_str();
 				// What a horrible unsafe practice and programmer trap!
 				// m_SecondPtrImageFileName points to m_BufferImageFileName, sort of
 				// You must use m_BufferImageFileName and not m_SecondPtrImageFileName after calling SvSml::SVSharedImage::BuildImageFileName

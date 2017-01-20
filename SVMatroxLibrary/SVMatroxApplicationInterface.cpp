@@ -130,7 +130,7 @@ void SVMatroxApplicationInterface::Log( SVMatroxStatusInformation &p_rStatusInfo
 			MessageCode = SVMSG_SVMATROXLIBRARY_UNKNOWN_FATAL_ERROR;
 			ProgramCode = SvOi::Err_25021_MatroxLibraryFatal;
 		}
-		SVStringArray msgList;
+		SVStringVector msgList;
 		msgList.push_back( SvUl_SF::Format( _T("%d"), OsError ));
 		msgList.push_back( SvUl_SF::Format( _T("0X%08X"), OsError ));
 		msgList.push_back( p_rStatusInfo.GetCompleteString() );
@@ -482,7 +482,7 @@ void SVMatroxApplicationInterface::LocalInitialize()
 
 			if ( SV_CURRENT_MIL_VERSION != l_MilVersion )
 			{
-				SVStringArray msgList;
+				SVStringVector msgList;
 				msgList.push_back(SvUl_SF::Format(_T("%4.2f"), SV_CURRENT_MIL_VERSION));
 				msgList.push_back(SvUl_SF::Format(_T("%4.2f"), l_MilVersion));
 				

@@ -12,6 +12,7 @@
 
 #pragma region Includes
 #include "SVOResource/resource.h"
+#include "SVUtilityLibrary/SVString.h"
 #include "SVValueObjectClassImpl.h"
 #include "SVValueObjectGlobals.h"
 #pragma endregion Includes
@@ -35,14 +36,14 @@ public:
 
 protected:
 
-	virtual HRESULT SetValueAt( int iBucket, int iIndex, const CString& value );
+	virtual HRESULT SetValueAt( int iBucket, int iIndex, const SVString& rValue );
 	virtual HRESULT SetValueAt( int iBucket, int iIndex, const VARIANT& rValue );
-	virtual HRESULT SetValueAt( int iBucket, int iIndex, int value );
-	virtual HRESULT SetValueAt( int iBucket, int iIndex, long value );
+	virtual HRESULT SetValueAt( int iBucket, int iIndex, int Value );
+	virtual HRESULT SetValueAt( int iBucket, int iIndex, long Value );
 
 	virtual HRESULT GetValueAt( int iBucket, int iIndex, long& rValue ) const;
 	virtual HRESULT GetValueAt( int iBucket, int iIndex, DWORD& rValue ) const;
-	virtual HRESULT GetValueAt( int iBucket, int iIndex, CString& rValue ) const;
+	virtual HRESULT GetValueAt( int iBucket, int iIndex, SVString& rValue ) const;
 	virtual HRESULT GetValueAt( int iBucket, int iIndex, VARIANT& rValue ) const;
 
 	virtual void ValidateValue( int iBucket, int iIndex, const SVString& rValue ) const override;

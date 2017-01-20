@@ -11,8 +11,8 @@
 
 #pragma region Includes
 #include "stdafx.h"
+#include "SVUtilityLibrary/SVString.h"
 #include "SVMatroxBlobInterface.h"
-
 #include "SVCommandLibrary/SVCommandDataHolder.h"
 #include "SVMatroxImagingLibrary.h"  // has MIL includes
 #include "SVMatroxResourceMonitor.h"

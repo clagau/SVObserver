@@ -13,8 +13,10 @@
 #pragma region Includes
 //Moved to precompiled header: #include <assert.h>
 #include "SVUtilityLibrary/SVSAFEARRAY.h"
+#include "SVUtilityLibrary/SVString.h"
 #include "UseTypeExceptMatch.h"
 #include "SVValueObjectClass.h"
+#include "ObjectInterfaces/TextDefineSvOi.h"
 #pragma endregion Includes
 
 // implement default behavior for most of the types
@@ -84,7 +86,7 @@ protected:
 	typedef typename UseTypeExceptMatch<std::vector<double>, std::vector<T> >::type DoubleVectorType;
 	typedef typename UseTypeExceptMatch<double, T>::type DoubleType;
 	virtual HRESULT GetArrayValues(int iBucket, DoubleVectorType& raValues) const;	// allow copy to vector<double>
-	virtual HRESULT GetArrayValues(int iBucket, CString& raValues) const override;
+	virtual HRESULT GetArrayValues(int iBucket, SVString& raValues) const override;
 	virtual HRESULT GetArrayValuesAsVariant( int iBucket, VARIANT& rValue ) const override;	// allow copy to VARIANT SAFEARRAY
 	virtual HRESULT GetArrayValuesAsVariantVector(int iBucket, std::vector<_variant_t>& raValues) const override;	// allow copy to vector<_variant_t>
 
@@ -120,23 +122,17 @@ protected:
 		{assert(ArraySize() != 1); return (static_cast<SVArrayValueHolder<array_type>*> (m_pBuckets))->m_array;}
 	__forceinline const bucket_type& Buckets() const
 		{assert(ArraySize() != 1); return (static_cast<const SVArrayValueHolder<array_type>*> (m_pBuckets))->m_array;}
-	__forceinline bucket_type& BucketsNoAssert()
+	__forceinline bucket_type& BucketNoAssert()
 		{return (static_cast<SVArrayValueHolder<array_type>*> (m_pBuckets))->m_array;}
-	__forceinline const bucket_type& BucketsNoAssert() const
+	__forceinline const bucket_type& BucketNoAssert() const
 		{return (static_cast<const SVArrayValueHolder<array_type>*> (m_pBuckets))->m_array;}
-	static const bucket_type& Buckets(const this_type& rhs)
-		{assert(rhs.ArraySize() != 1); return (static_cast<const SVArrayValueHolder<array_type>*> (rhs.m_pBuckets))->m_array;}
-	static const bucket_type& Buckets(const SVArrayValueHolderBase* pArrayHolder)
-		{assert(rhs.ArraySize() != 1); return (static_cast<const SVArrayValueHolder<array_type>*> (pArrayHolder))->m_array;}
 
-	__forceinline value_type& DefaultValue()
-		{return m_DefaultValue;}
-	__forceinline const value_type& DefaultValue() const
-		{return m_DefaultValue;}
-	static const value_type& DefaultValue(const this_type& rhs)
-		{return rhs.m_DefaultValue;}
-	static const value_type& DefaultValue(const SVArrayValueHolderBase* pArrayHolder)
-		{return rhs.m_DefaultValue;}
+
+	value_type& DefaultValue() { return m_DefaultValue; };
+	const value_type& DefaultValue() const { return m_DefaultValue; };
+
+	variant_t ConvertToVariant( const value_type& rValue ) const
+	{ return _variant_t( rValue ); }
 
 	// helper structs for GetArrayValues(int iBucket, std::vector< UseTypeExceptMatch<double, T>::result >& raValues)
 	struct conversion_exists
@@ -153,17 +149,17 @@ protected:
 	friend struct conversion_doesnt_exist;
 
 	// used by SetObjectValue; one set per template type
-	static CString m_sLegacyScriptDefaultName;
-	static CString m_sLegacyScriptArrayName;
+	static SVString m_sLegacyScriptDefaultName;
+	static SVString m_sLegacyScriptArrayName;
 
 private:
 	void Init();
 };// end SVValueObjectClassImpl
 
 template <typename T>
-CString SVValueObjectClassImpl<T>::m_sLegacyScriptDefaultName;
+SVString SVValueObjectClassImpl<T>::m_sLegacyScriptDefaultName;
 template <typename T>
-CString SVValueObjectClassImpl<T>::m_sLegacyScriptArrayName;
+SVString SVValueObjectClassImpl<T>::m_sLegacyScriptArrayName;
 
 // we don't want to use the default std::swap because it will invoke copy constructors and destructors.
 // Make the efficient member function available to algorithms:

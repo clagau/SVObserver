@@ -42,7 +42,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		return *this;
 	}
 
-	long SVSharedProduct::InspectionSlotIndex(const std::string & inspectionShareName) const
+	long SVSharedProduct::InspectionSlotIndex(const SVString & inspectionShareName) const
 	{
 		char_string key(inspectionShareName.c_str(), m_Allocator);
 		SVSharedInspectionMap::const_iterator it = m_Inspections.find(key);

@@ -11,6 +11,7 @@
 // SVExternalToolDetailsSheet.cpp : implementation file
 //
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVExternalToolDetailsSheet.h"
 
@@ -21,7 +22,8 @@
 #include "SVExternalToolResultPage.h"
 #include "SVExternalToolDlg.h"
 #include "CameraLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
-
+#include "SVUtilityLibrary/SVString.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -74,14 +76,14 @@ HRESULT SVExternalToolDetailsSheet::CreatePages()
 	const bool bTabbed = false;
 	if ( !bTabbed )
 	{
-		SVExternalToolInputSelectPage* pInputDlg = new SVExternalToolInputSelectPage( CString(_T("External Tool Inputs")), this );
+		SVExternalToolInputSelectPage* pInputDlg = new SVExternalToolInputSelectPage( _T("External Tool Inputs"), this );
 		AddPage(pInputDlg);
 	}
 	else
 	{// If Tabbed then find all unique groups and create a page for each group.
 
-		std::map<CString, SVRPropertyItem*> mapGroupItems;
-		std::map<CString, SVRPropertyItem*>::iterator iterGroup;
+		std::map<SVString, SVRPropertyItem*> mapGroupItems;
+		std::map<SVString, SVRPropertyItem*>::iterator iterGroup;
 
 		for( int i = 0 ; i < m_pTask->m_Data.m_lNumInputValues ; i++ )
 		{
@@ -89,22 +91,22 @@ HRESULT SVExternalToolDetailsSheet::CreatePages()
 			SVVariantValueObjectClass& rValue = m_pTask->m_Data.m_aInputObjects[i];
 			InputValueDefinitionStruct& rDefinition = m_pTask->m_Data.m_aInputValueDefinitions[i];
 
-			CString sGroup(rDefinition.bstrGroup);
+			SVString GroupName = SvUl_SF::createSVString( rDefinition.m_bGroup );
 			SVRPropertyItem* pGroupItem = nullptr;
-			if ( (iterGroup = mapGroupItems.find(sGroup)) == mapGroupItems.end() )
+			if ( (iterGroup = mapGroupItems.find(GroupName)) == mapGroupItems.end() )
 			{	// if new group, add tab
 
-				SVExternalToolInputSelectPage* pInputDlg = new SVExternalToolInputSelectPage(sGroup, this);
+				SVExternalToolInputSelectPage* pInputDlg = new SVExternalToolInputSelectPage(GroupName.c_str(), this);
 				AddPage(pInputDlg);
-				pInputDlg->m_sGroupName = sGroup;
+				pInputDlg->m_sGroupName = GroupName;
 				pInputDlg->m_bTabbed = bTabbed;
 				
-				mapGroupItems[sGroup] = pGroupItem;
+				mapGroupItems[GroupName] = pGroupItem;
 			}
 		}// end for( int i = 0 ; i < m_pTask->m_Data.m_iNumInputValues ; i++ )
 	}// end else
 
-	SVExternalToolResultPage* pResultsDlg = new SVExternalToolResultPage(CString(_T("External Tool Results")), this);
+	SVExternalToolResultPage* pResultsDlg = new SVExternalToolResultPage( _T("External Tool Results"), this);
 	AddPage(pResultsDlg);
 
 	return S_OK;

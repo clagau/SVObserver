@@ -20,10 +20,10 @@
 #include "SVHardwareManifest.h"
 #pragma endregion Includes
 
-static const CString SVIM_TRIGGER_SOURCE_IO_BOARD_STRING   ( _T("IO_Board_1") );
-static const CString SVIM_SOFTWARE_TRIGGER_SOURCE_STRING   ( _T("SoftwareTrigger_1") );
-static const CString SVIM_CAMERA_TRIGGER_SOURCE_STRING   ( _T("CameraTrigger") );
-static const CString SVIM_DIG_NAME_STRING       ( _T(".Dig_") );
+static const TCHAR* const SVIM_TRIGGER_SOURCE_IO_BOARD_STRING = _T("IO_Board_1");
+static const TCHAR* const SVIM_SOFTWARE_TRIGGER_SOURCE_STRING = _T("SoftwareTrigger_1");
+static const TCHAR* const SVIM_CAMERA_TRIGGER_SOURCE_STRING = _T("CameraTrigger");
+static const TCHAR* const SVIM_DIG_NAME_STRING = _T(".Dig_");
 
 namespace Seidenader { namespace TriggerInformation {
 

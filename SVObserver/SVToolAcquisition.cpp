@@ -12,6 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVToolAcquisition.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 SV_IMPLEMENT_CLASS( SVAcquisitionToolClass, SVAcquisitionToolClassGuid );
@@ -54,7 +55,7 @@ BOOL SVAcquisitionToolClass::CreateObject( SVObjectLevelCreateStruct* PCreateStr
 	}
 
 	m_svSourceImageNames.ObjectAttributesAllowedRef() &=~SV_REMOTELY_SETABLE & ~SV_SETABLE_ONLINE;
-	m_svSourceImageNames.SetValue( 0, mainImageObject.GetCompleteObjectName() );
+	m_svSourceImageNames.SetValue( 0, SVString(mainImageObject.GetCompleteName()) );
 
 	m_isCreated = bOk;
 

@@ -8,7 +8,6 @@
 #pragma once
 
 #pragma region Includes
-#include <Windows.h>
 #include <tchar.h>
 #pragma endregion Includes
 

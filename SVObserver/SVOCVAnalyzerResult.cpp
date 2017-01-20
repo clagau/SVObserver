@@ -150,14 +150,12 @@ void SVOCVAnalyzeResultClass::clearAll()
 	
 	for( long l = 0; l < OCV_MAX_RESULTS; l++ )
 	{
-		CString strName;
 		SVOCVCharacterResultClass *pResult = new SVOCVCharacterResultClass( this );
-
 		// Add it to our task object list
 		Add( pResult );
 
-		strName.Format( "Character %d Result", l + 1 );
-		pResult->SetName( strName );
+		SVString Name = SvUl_SF::Format( "Character %d Result", l + 1 );
+		pResult->SetName( Name.c_str() );
 	}// end for
 
 	// Set Embedded defaults
@@ -337,48 +335,11 @@ BOOL SVOCVAnalyzeResultClass::CloseObject()
 // Operation(s) Of Reading Access:
 //******************************************************************************
 
-void SVOCVAnalyzeResultClass::GetOCVResultString( CString & csResult )
+void SVOCVAnalyzeResultClass::GetOCVResultString( SVString& rResult )
 {
-   BOOL bResult = ( S_OK == m_svoFoundString.GetValue( csResult ) );
+   BOOL bResult = ( S_OK == m_svoFoundString.GetValue( rResult ) );
    ASSERT(bResult);
 }
-
-/////////////////////////////////////////////////////////////////////////////
-//
-//
-//
-//
-//CRect SVOCVAnalyzeResultClass::Draw( HDC DC, CRect R )
-//{
-//	CString text;
-//	
-//	::SetTextColor( DC, SV_DEFAULT_TEXT_COLOR ); 
-//
-//	text = _T("OCV Analyzer Owner TBD");         // 16 Jul 1999 - frb.
-//
-//	::TextOut( DC, R.left, R.top, text, text.GetLength() );
-//	R.top += SV_DEFAULT_TEXT_HEIGHT;
-//
-//	text = _T( "Match String:" );
-//	::TextOut( DC, R.left, R.top, text, text.GetLength() );
-//	CString csResult;
-//	m_svoMatchString.GetValue( csResult );
-//	text.Format( _T( "%s" ), (LPCTSTR)csResult );
-//	::TextOut( DC, R.left + 100, R.top, text, text.GetLength() );
-//	R.top += SV_DEFAULT_TEXT_HEIGHT + 2;
-//
-//    DWORD dwColor = GetObjectColor();
-//	::SetTextColor(DC,dwColor);
-//
-//	text = _T( "OCV String:" );
-//	::TextOut( DC, R.left, R.top, text, text.GetLength() );
-//	m_svoFoundString.GetValue( csResult );
-//	text.Format( _T( "%s" ), (LPCTSTR)csResult );
-//	::TextOut( DC, R.left + 100, R.top, text, text.GetLength() );
-//	R.top += SV_DEFAULT_TEXT_HEIGHT + 2;
-//
-//	return R;
-//}
 
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -412,12 +373,12 @@ BOOL SVOCVAnalyzeResultClass::GenerateFontModel()
 	{
 		// Now recreate the MIL font and result buffer
 		CFileStatus rStatus;
-		CString strFontFileName;
-		CString strConstraintsFileName;
-		CString strControlsFileName;
+		SVString FontFileName;
+		SVString ConstraintsFileName;
+		SVString ControlsFileName;
 
-		m_fnvoFontFileName.GetValue( strFontFileName );
-		bOk = CFile::GetStatus( strFontFileName, rStatus );
+		m_fnvoFontFileName.GetValue( FontFileName );
+		bOk = CFile::GetStatus( FontFileName.c_str(), rStatus );
 		if ( bOk )
 		{
 			bOk = 0L < rStatus.m_size;
@@ -425,10 +386,10 @@ BOOL SVOCVAnalyzeResultClass::GenerateFontModel()
 
 		if( bOk )
 		{
-			m_fnvoControlsFileName.GetValue( strControlsFileName );
-			if( !strControlsFileName.IsEmpty() )
+			m_fnvoControlsFileName.GetValue( ControlsFileName );
+			if( !ControlsFileName.empty() )
 			{
-				bOk = CFile::GetStatus( strControlsFileName, rStatus );
+				bOk = CFile::GetStatus( ControlsFileName.c_str(), rStatus );
 				if ( bOk )
 				{
 					bOk = 0L < rStatus.m_size;
@@ -440,10 +401,10 @@ BOOL SVOCVAnalyzeResultClass::GenerateFontModel()
 
 		if( bOk )
 		{
-			m_fnvoConstraintsFileName.GetValue( strConstraintsFileName );
-			if( !strConstraintsFileName.IsEmpty() )
+			m_fnvoConstraintsFileName.GetValue( ConstraintsFileName );
+			if( !ConstraintsFileName.empty() )
 			{
-				bOk = CFile::GetStatus( strConstraintsFileName, rStatus );
+				bOk = CFile::GetStatus( ConstraintsFileName.c_str(), rStatus );
 				if ( bOk )
 				{
 					bOk = 0L < rStatus.m_size;
@@ -460,10 +421,10 @@ BOOL SVOCVAnalyzeResultClass::GenerateFontModel()
 			
 			SVMatroxOcrInterface ::SVStatusCode l_Code;
 
-			SVString l_strPath;
-			l_strPath = strFontFileName;
+			SVString Path;
+			Path = FontFileName;
 
-			l_Code = SVMatroxOcrInterface::RestoreFont( m_milFontID, l_strPath, SVOcrRestore );
+			l_Code = SVMatroxOcrInterface::RestoreFont( m_milFontID, Path, SVOcrRestore );
 			if( m_milFontID.empty() )
 			{
 				SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
@@ -471,10 +432,10 @@ BOOL SVOCVAnalyzeResultClass::GenerateFontModel()
 			
 			}// end if
 			
-			if( !strControlsFileName.IsEmpty() )
+			if( !ControlsFileName.empty() )
 			{
-				l_strPath = strControlsFileName;
-				l_Code = SVMatroxOcrInterface::RestoreFont( m_milFontID, l_strPath, SVOcrLoadControl );
+				Path = ControlsFileName;
+				l_Code = SVMatroxOcrInterface::RestoreFont( m_milFontID, Path, SVOcrLoadControl );
 				if( m_milFontID.empty() )
 				{
 					SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
@@ -483,10 +444,10 @@ BOOL SVOCVAnalyzeResultClass::GenerateFontModel()
 
 			}// end if
 
-			if( !strConstraintsFileName.IsEmpty() )
+			if( !ConstraintsFileName.empty() )
 			{
-				l_strPath = strConstraintsFileName;
-				l_Code = SVMatroxOcrInterface::RestoreFont( m_milFontID, l_strPath, SVOcrLoadConstraint );
+				Path = ConstraintsFileName;
+				l_Code = SVMatroxOcrInterface::RestoreFont( m_milFontID, Path, SVOcrLoadConstraint );
 
 				if( m_milFontID.empty() )
 				{
@@ -572,7 +533,6 @@ HRESULT SVOCVAnalyzeResultClass::LoadMatchString()
 	// Check to see if match string is to read from a file.
 	//
 	HRESULT hrRet = S_OK;
-	CString strMatchString;
 	BOOL bUseFile;
 	
 	DWORD LastError(0);
@@ -589,9 +549,9 @@ HRESULT SVOCVAnalyzeResultClass::LoadMatchString()
 			 //
 			 // Check to see if the file exists..
 			 //
-			 CString strMatchStringFileName;
-			 m_fnvoMatchStringFileName.GetValue( strMatchStringFileName  );
-			 if( ! ::SVFileExists( strMatchStringFileName ) )
+			 SVString MatchStringFileName;
+			 m_fnvoMatchStringFileName.GetValue( MatchStringFileName  );
+			 if( ! ::SVFileExists( MatchStringFileName.c_str() ) )
 			 {
 				 //
 				 // The file does not exist.  Set error and set defaults.
@@ -607,7 +567,7 @@ HRESULT SVOCVAnalyzeResultClass::LoadMatchString()
 			 // Open and read the OCV match string from the file.
 			 //
 			 CFile matchFile;
-			 if( !matchFile.Open( strMatchStringFileName, CFile::modeRead | CFile::shareDenyNone ) )
+			 if( !matchFile.Open( MatchStringFileName.c_str(), CFile::modeRead | CFile::shareDenyNone ) )
 			 {
 				 hrRet = S_FALSE;
 				 SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
@@ -664,11 +624,11 @@ HRESULT SVOCVAnalyzeResultClass::LoadMatchString()
 		 }// end if
 		 else
 		 {
-			 CString l_strMatch;
+			 SVString MatchString;
 			 
-			 m_svoMatchString.GetValue( l_strMatch );
+			 m_svoMatchString.GetValue( MatchString );
 			 
-			 m_lMatchStringLength = l_strMatch.GetLength();
+			 m_lMatchStringLength = static_cast<long> (MatchString.size());
 		 }
 		 
 		 break;
@@ -765,8 +725,8 @@ BOOL SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& RRunStatus )
 	double l_dCharBoxSizeX;
 	double l_dCharBoxSizeY;
 
-	SVString l_strFound;
-	SVString l_strMatch;
+	SVString FoundString;
+	SVString MatchString;
 	 
 	SVMatroxOcrInterface ::SVStatusCode l_Code = SVMEE_STATUS_OK;
   
@@ -821,7 +781,7 @@ BOOL SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& RRunStatus )
 
 						if ( imageTypeMil != 8)  // (8L + M_UNSIGNED) )
 						{
-							SVStringArray msgList;
+							SVStringVector msgList;
 							msgList.push_back(SvUl_SF::Format(_T("%x"), imageTypeMil));
 							SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 							Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_MilImageTypeInvalid, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10170);
@@ -867,7 +827,7 @@ BOOL SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& RRunStatus )
 
 				// Reset results
 				
-				CString strFunctionName;
+				SVString strFunctionName;
 				int iProgramCode=-12382;
 
 				try
@@ -901,17 +861,15 @@ BOOL SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& RRunStatus )
 							m_bvoUseMatchFile.GetValue( bUseFile );
 							if( bUseFile )
 							{
-								l_strMatch = m_pDataArr[0];
+								MatchString = m_pDataArr[0];
 							}// end if
 							else
 							{
-								CString l_strTmp;
-								m_svoMatchString.GetValue( l_strTmp );
-								l_strMatch = l_strTmp;
+								m_svoMatchString.GetValue( MatchString );
 							}// end else
 
 							strFunctionName = _T("MocrVerifyString"); iProgramCode = -12384;
-							m_milFontID.m_VerifyString = l_strMatch;
+							m_milFontID.m_VerifyString = MatchString;
 							m_milFontID.m_bVerify = true;
 							l_Code = SVMatroxOcrInterface::Execute( m_milResultID , 
 								                                    m_milFontID, 
@@ -1098,7 +1056,7 @@ BOOL SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& RRunStatus )
 					}
 
 					SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-					Exception.setMessage( SVMSG_SVO_30_EXCEPTION_IN_MIL, strFunctionName, SvStl::SourceFileParams(StdMessageParams), iProgramCode );
+					Exception.setMessage( SVMSG_SVO_30_EXCEPTION_IN_MIL, strFunctionName.c_str(), SvStl::SourceFileParams(StdMessageParams), iProgramCode );
 
 					l_lLength = 0;
 				}// end catch
@@ -1146,12 +1104,12 @@ BOOL SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& RRunStatus )
 
 				if( l_lLength )
 				{
-					l_strFound = l_strLabel.c_str();
+					FoundString = l_strLabel.c_str();
 					l_dAvg = l_dSum / l_lLength;
 				}// end if
 				else
 				{
-					l_strFound = _T( "" );
+					FoundString = _T( "" );
 					bOk = TRUE;
 				}// end else
 
@@ -1172,11 +1130,9 @@ BOOL SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& RRunStatus )
 				//
 				// Copy OCV result to a storage array element.
 				//
-				m_svoFoundString.SetValue( RRunStatus.m_lResultDataIndex, l_strFound.c_str() );
+				m_svoFoundString.SetValue( RRunStatus.m_lResultDataIndex, FoundString.c_str() );
 
-				CString l_strTmp;
-				m_svoMatchString.GetValue( l_strTmp );
-				l_strMatch = l_strTmp;
+				m_svoMatchString.GetValue( MatchString );
 
 				//
 				// Is result == matchstring?
@@ -1187,7 +1143,7 @@ BOOL SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& RRunStatus )
 					if( m_nTotalCount > 1 )
 					{
 						int nStringMatch;
-						if( ( nStringMatch = CheckStringInTable( l_strFound.c_str() ) ) == -1 )
+						if( ( nStringMatch = CheckStringInTable( FoundString ) ) == -1 )
 						{
 							if( bStringPassed && bCharsPassed )
 							{
@@ -1216,7 +1172,7 @@ BOOL SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& RRunStatus )
 					}// end if
 					else // Handle the old way
 					{
-						if( l_strFound == l_strMatch )
+						if( FoundString == MatchString )
 						{
 							if( bStringPassed && bCharsPassed )
 							{
@@ -1251,7 +1207,7 @@ BOOL SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& RRunStatus )
 				}// end if
 				else
 				{
-					if( l_strFound == l_strMatch )
+					if( FoundString == MatchString )
 					{
 						if( bStringPassed && bCharsPassed )
 						{
@@ -1321,7 +1277,7 @@ BOOL SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& RRunStatus )
 		SetInvalid();
 		RRunStatus.SetInvalid();
 
-		SVStringArray msgList;
+		SVStringVector msgList;
 		msgList.push_back(_T("SVOCVAnalyzeResultClass::onRun"));
 
 		SvStl::MessageMgrStd Exception( SvStl::LogOnly );
@@ -1478,17 +1434,17 @@ void SVOCVAnalyzeResultClass::InsertValueToTable ( short nValue, int nIndex )
 //  4-25-00    sri			First Implementation
 //	:
 ////////////////////////////////////////////////////////////////////////////////
-int SVOCVAnalyzeResultClass::CheckStringInTable(CString MatchString)
+int SVOCVAnalyzeResultClass::CheckStringInTable(const SVString& rMatchString)
 {
 	int nReturnIndex = -1;
 	
 	long  lIndexValue = 0;
-	int   nCharCount = MatchString.GetLength();
+	size_t   nCharCount = rMatchString.size();
 	
-	for (int i = 0; i < nCharCount; i++)
+	for(size_t i = 0; i < nCharCount; i++)
 	{
-		int   nValue = MatchString.GetAt(i) - 0x20;
-		lIndexValue += nValue * nValue * (i + 1);
+		long lValue = static_cast<LONG> (rMatchString[i] - 0x20);
+		lIndexValue += lValue * lValue * static_cast<long> (i + 1);
 	}
 	
 	// if Index value is out of range, definitely there won't be a match in the file.
@@ -1499,9 +1455,9 @@ int SVOCVAnalyzeResultClass::CheckStringInTable(CString MatchString)
 		
 		while(m_pIndexTable[nActualIndex] != 0) 
 		{
-			char *pData = m_pDataArr[m_pIndexTable[nActualIndex] - 1];
+			TCHAR *pData = m_pDataArr[m_pIndexTable[nActualIndex] - 1];
 			
-			if(MatchString  == (CString)pData)
+			if( rMatchString == pData )
 			{
 				nReturnIndex = m_pIndexTable[nActualIndex];
 				break;

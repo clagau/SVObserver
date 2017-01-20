@@ -34,11 +34,11 @@ private:
 // Dialog Data
 	//{{AFX_DATA(SVUtilitiesCustomizeDialogClass)
 	enum { IDD = IDD_EXTRAS_UTILITIES_CUSTOMIZE };
-	CString	mszArguments;
-	CString	mszCommand;
-	CString	mszMenuText;
+	CString	m_Arguments;
+	CString	m_Command;
+	CString	m_MenuText;
+	CString	m_WorkingDirectory;
 	BOOL	mbPromptForArguments;
-	CString	mszWorkingDirectory;
 	//}}AFX_DATA
 
 // Overrides

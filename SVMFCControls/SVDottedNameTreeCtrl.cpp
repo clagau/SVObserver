@@ -41,15 +41,15 @@ namespace Seidenader
 		//				: ( Value could also be a pointer, e.g. SVObjectClass* )
 		//				: Expand Item if BExpand is TRUE ( default )
 		////////////////////////////////////////////////////////////////////////////////
-		BOOL SVDottedNameTreeCtrlClass::AddItem( CString StrDottedItemName, DWORD_PTR DwItemValue, BOOL BExpand )
+		BOOL SVDottedNameTreeCtrlClass::AddItem( LPCTSTR DottedItemName, DWORD_PTR DwItemValue, BOOL BExpand )
 		{
-			LPTSTR tStrSource = _tcsdup( StrDottedItemName );
-			if( tStrSource )
+			LPTSTR Source = _tcsdup( DottedItemName );
+			if( Source )
 			{
 				HTREEITEM hRoot = nullptr;
 
 				TCHAR sep[] = _T( "." );
-				LPTSTR tStrToken = _tcstok( tStrSource, sep );
+				LPTSTR tStrToken = _tcstok( Source, sep );
 				LPTSTR tStrNextToken = _tcstok( nullptr, sep );
 
 				while( nullptr != tStrToken )
@@ -92,7 +92,7 @@ namespace Seidenader
 							if( BExpand )
 								Expand( hRoot, TVE_EXPAND );
 
-							free( tStrSource );
+							free( Source );
 							return( nullptr != hSibling );
 						}
 
@@ -128,7 +128,7 @@ namespace Seidenader
 					break;
 				}	
 
-				free( tStrSource );
+				free( Source );
 			}
 
 			return FALSE;
@@ -140,9 +140,9 @@ namespace Seidenader
 		// .Description : Get Item using dotted name. Starts always at the root.
 		//				: Returns nullptr, if Item not exists.
 		////////////////////////////////////////////////////////////////////////////////
-		HTREEITEM SVDottedNameTreeCtrlClass::GetItem( CString StrDottedItemName )
+		HTREEITEM SVDottedNameTreeCtrlClass::GetItem( LPCTSTR DottedItemName )
 		{
-			LPTSTR tStrSource = _tcsdup( StrDottedItemName );
+			LPTSTR tStrSource = _tcsdup( DottedItemName );
 			if( tStrSource )
 			{
 				HTREEITEM hRoot = nullptr;

@@ -30,6 +30,7 @@
 #endif
 
 #pragma warning ( disable : 4786 )
+#pragma warning ( disable : 4482 )
 
 #define VC_EXTRALEAN		// Exclude rarely-used stuff from Windows headers
 

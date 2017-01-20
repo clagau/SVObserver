@@ -18,6 +18,7 @@
 #include "SVSystemLibrary/SVThreadWait.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #include "SVUtilityLibrary/SVWinHandle.h"
+#include "SVUtilityLibrary/SVString.h"
 #include "SVInfoStructs.h"
 #include "SVOGui/ZoomHelper.h"
 #include "SVOGui/ZoomHelperEx.h"
@@ -174,7 +175,7 @@ protected:
 	bool SetScaleIndex( unsigned long p_scaleIndex );
 	bool SetImageRect( CRect& p_rect );
 
-	SVImageClass* GetImageByName( CString& p_imageName ) const;
+	SVImageClass* GetImageByName( LPCTSTR ImageName ) const;
 
 	HRESULT ShouldDraw( const SVExtentMultiLineStruct& p_rMultiLine );
 	void DrawOverlay( SVDrawContext* PDrawContext, const SVExtentMultiLineStruct& p_rMultiLine );
@@ -200,7 +201,7 @@ protected:
 	HRESULT UpdateImageSurfaces( const SVBitmapInfo& p_rBitmapInfo );
 	HRESULT CopyBitsToSurface( const CRect& p_rSourceRect, const SVBitmapInfo& p_rBitmapInfo, const unsigned char* p_pBitmapBits );
 
-	HRESULT BlitToScaledSurface( CRect& p_rSourceRect, CRect& p_rDestRect, CString Filepath = "", bool showOverlays = true);
+	HRESULT BlitToScaledSurface( CRect& p_rSourceRect, CRect& p_rDestRect, LPCTSTR Filepath = nullptr, bool showOverlays = true);
 	HRESULT BlitToPrimarySurface( CRect& p_rDestRect );
 	HRESULT RecreateLostSurface();
 
@@ -219,13 +220,14 @@ protected:
 	bool CalculateZoomFit();
 
 #pragma region Member variables
+private:
 	SVByteVector m_ImageDIB;
 	SVExtentMultiLineStructCArray m_OverlayData;
 
 	ZoomHelperEx m_ZoomHelper;
 
 	SVGUID m_ImageId;
-	CString m_imageName;
+	SVString m_imageName;
 
 	IDirectDrawSurface7* m_pDDImageSurface;
 	IDirectDrawSurface7* m_pDDScaledImageSurface;
@@ -259,8 +261,6 @@ protected:
 
 	SVThreadWait m_ThreadWait;
 
-private:
-	
 	SVFileNameClass m_ViewOrImageFilename; /// filepath under which the last view or image was saved
 
 #pragma endregion Member variables

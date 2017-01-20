@@ -15,6 +15,7 @@
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #include "SVToolSetListCtrl.h"
 #include "SVToolGrouping.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 #define ID_EDIT_LABEL_ENDS 40000
@@ -50,7 +51,7 @@ public:
 	SVGUID GetSelectedTool() const;
 
 	ToolListSelectionInfo GetToolListSelectionInfo() const;
-	void HandleExpandCollapse(const CString& name, bool bCollapse);
+	void HandleExpandCollapse(const SVString& rName, bool bCollapse);
 	bool IsEndToolGroupAllowed() const;
 
 	SVToolSetListCtrl& getListCtrl() { return m_toolSetListCtrl; };
@@ -92,16 +93,16 @@ protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	virtual void OnUpdate(CView* pSender, LPARAM lHint, CObject* pHint) override;
 
-	void ValidateLabelText(CString& newText);
-	void RenameItem(int item, const CString& oldName, const CString& newName);
+	void ValidateLabelText( SVString& rNewText );
+	void RenameItem(int item, const SVString& rOldName, const SVString& rNewName);
 	void ToggleExpandCollapse(int item);
 	//************************************
 	//! Searches the name in the list of all tool and group names case insensitive 
-	//! \param name [in ]
+	//! \param rName [in ]
 	//! \param lpExclude [in] if not null and the name is found (case sensitive)  this is ignored 
 	//! \returns bool  bool true if the name is unique 
 	//************************************
-	bool CheckName(const CString& name, LPCTSTR lpExclude = nullptr) const;
+	bool CheckName(const SVString& rName, LPCTSTR lpExclude = nullptr) const;
 	bool EditToolGroupingComment();
 
 private:
@@ -113,8 +114,8 @@ private:
 
 	bool m_isLabeling;
 	int m_labelingIndex;
-	CString m_csLabelSaved;    // To restore label if necessary during editing.
-	CString m_csLabelEdited;
+	SVString m_LabelSaved;    // To restore label if necessary during editing.
+	SVString m_LabelEdited;
 
 	SVString m_duplicateName;			//Store Name for DuplicatenameMessage
 	bool m_showDuplicateNameMessage; //DuplictaNameMessage is shown after edeting the name 

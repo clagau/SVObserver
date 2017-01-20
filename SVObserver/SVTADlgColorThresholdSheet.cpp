@@ -9,9 +9,12 @@
 //* .Check In Date   : $Date:   23 Apr 2013 15:21:00  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVColorTool.h"
 #include "SVTADlgColorThresholdSheet.h"
+#include "SVUtilityLibrary/SVString.h"
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -120,10 +123,10 @@ BOOL SVTADlgColorThresholdSheet::OnInitDialog()
 
 	if( m_pTool )
 	{
-		CString l_Temp = _T( "Tool Adjustment: " );
-		l_Temp += m_pTool->GetName();
+		SVString Text = _T("Tool Adjustment: ");
+		Text += m_pTool->GetName();
 
-		SetWindowText( l_Temp );
+		SetWindowText( Text.c_str() );
 		
 		return bResult;
 	}

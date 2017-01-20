@@ -15,19 +15,14 @@
 #include "SVInt64ValueObjectClass.h"
 #include "SVObjectLibrary\SVClsids.h"
 #include "SVObjectLibrary/SVToolsetScriptTags.h"
-#include "SVLibrary/StringMunge.h"
+#include "ObjectInterfaces/TextDefineSvOi.h"
 #pragma endregion Includes
 
-namespace	// only for this file
-{
-	const CString DEFAULT_TAG_SAVE(_T(".Default"));
-	const CString BUCKET_TAG_SAVE(_T(".Array"));	// for backwards compatibility
-	const CString ARRAY_TAG_SAVE(_T(".Array_Elements"));	// new style; one bucket, all array values
-
-	const CString DEFAULT_TAG_LOAD(_T("Default"));
-	const CString BUCKET_TAG_LOAD(_T("Array"));	// for backwards compatibility
-	const CString ARRAY_TAG_LOAD(_T("Array_Elements"));	// new style; one bucket, all array values
-}	// end file scope namespace
+#pragma region Declarations
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+#endif
 
 SV_IMPLEMENT_CLASS(SVInt64ValueObjectClass, SVInt64ValueObjectClassGuid);
 
@@ -90,13 +85,12 @@ HRESULT SVInt64ValueObjectClass::SetValueAt(int iBucket, int iIndex, const int i
     return base::SetValueAt(iBucket, iIndex, static_cast <__int64> (iValue) );
 }
 
-HRESULT SVInt64ValueObjectClass::SetValueAt(int iBucket, int iIndex, const CString& strValue)
+HRESULT SVInt64ValueObjectClass::SetValueAt(int iBucket, int iIndex, const SVString& rValue)
 {
-	CString strDigits( strValue );
-	StringMunge::KeepChars( &strDigits, _T("0123456789- ") );
-	if ( strDigits == strValue )
+	SVString Digits = SvUl_SF::ValidateString( rValue, _T("0123456789- ") );
+	if ( Digits == rValue )
 	{
-		__int64 iValue = _atoi64( strDigits );
+		__int64 iValue = _atoi64( Digits.c_str() );
 		return base::SetValueAt(iBucket, iIndex, iValue);
 	}
 	assert( false );
@@ -118,12 +112,12 @@ HRESULT SVInt64ValueObjectClass::GetValueAt(int iBucket, int iIndex, double& rdV
 	return hr;
 }
 
-HRESULT SVInt64ValueObjectClass::GetValueAt(int iBucket, int iIndex, CString& rstrValue) const
+HRESULT SVInt64ValueObjectClass::GetValueAt(int iBucket, int iIndex, SVString& rValue) const
 {
-	__int64 value=0;
+	__int64 Value=0;
 
-	HRESULT hr = base::GetValueAt(iBucket, iIndex, value);
-	rstrValue.Format("%d",value);
+	HRESULT hr = base::GetValueAt(iBucket, iIndex, Value);
+	rValue = SvUl_SF::Format(_T("%d"),Value);
 
 	return hr;
 }
@@ -151,8 +145,8 @@ void SVInt64ValueObjectClass::LocalInitialize()
 {
 	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVInt64ValueObjectType;
 	DefaultValue() = 0;
-	m_sLegacyScriptDefaultName = _T("Default");
-	m_sLegacyScriptArrayName = _T("Array");
+	m_sLegacyScriptDefaultName = SvOi::cDefaultTag;
+	m_sLegacyScriptArrayName = SvOi::cBucketTag;
 	SetTypeName( _T("Integer64") );
 
 	InitializeBuckets();

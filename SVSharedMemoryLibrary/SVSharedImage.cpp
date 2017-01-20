@@ -42,17 +42,17 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		return *this;
 	}
 
-	void SVSharedImage::SetName(const std::string& Name)
+	void SVSharedImage::SetName(const SVString& Name)
 	{
 		m_ElementName = char_string(Name.c_str(), m_Allocator);
 	}
 
-	void SVSharedImage::SetFileName(const std::string& Filename)
+	void SVSharedImage::SetFileName(const SVString& Filename)
 	{
 		strcpy_s(m_Filename, sizeof(m_Filename), Filename.c_str());
 	}
 
-	void SVSharedImage::SetData( const std::string& Filename, int Status )
+	void SVSharedImage::SetData( const SVString& Filename, int Status )
 	{
 		SetFileName(Filename);
 		m_Status = Status;

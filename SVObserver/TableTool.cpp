@@ -15,6 +15,7 @@
 #include "ObjectInterfaces\TextDefineSvOi.h"
 #include "TableColumnEquation.h"
 #include "ObjectInterfaces\GlobalConst.h"
+#include "SVUtilityLibrary\SVString.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -139,7 +140,7 @@ HRESULT TableTool::ResetObject()
 				}
 				else
 				{
-					SVStringArray msgList;
+					SVStringVector msgList;
 					msgList.push_back(SvUl_SF::Format(_T("%d"), c_maxTableColumn));
 					SvStl::MessageMgrStd e( SvStl::LogOnly );
 					e.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_TableColumn_TooManyEquation, SvStl::SourceFileParams(StdMessageParams) );
@@ -207,7 +208,7 @@ bool TableTool::ValidateOfflineParameters ()
 		m_MaxRow.GetValue(maxRow);
 		if (SvOi::cTableMaxRowMin > maxRow || SvOi::cTableMaxRowMax < maxRow)
 		{
-			SVStringArray messageList;
+			SVStringVector messageList;
 			messageList.push_back(SvUl_SF::Format(_T("%d"), SvOi::cTableMaxRowMin));
 			messageList.push_back(SvUl_SF::Format(_T("%d"), SvOi::cTableMaxRowMax));
 			messageList.push_back(SvUl_SF::Format(_T("%d"), maxRow));

@@ -11,6 +11,7 @@
 #include "SVOResource\resource.h"
 #include "SVMFCControls\AvailableObjectListComboBox.h"
 #include "SVUtilityLibrary\SVGUID.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 namespace Seidenader { namespace SVOGui {

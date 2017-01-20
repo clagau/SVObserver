@@ -353,41 +353,41 @@ SVObserverApp::SVObserverApp()
 	::OutputDebugString( _T( "Executing => SVObserverApp::SVObserverApp()\n" ) );
 #endif
 
-	m_csProductName.Empty();
+	m_ProductName.clear();
 
-	m_csProcessorBoardName = _T( "Unknown board" );
-	m_csTriggerBoardName = _T( "Unknown board" );
-	m_csAcquisitionBoardName = _T( "Unknown board" );
-	m_csFileAcquisitionBoardName = _T( "File Acquisition" );
-	m_csDigitalBoardName = _T( "Unknown board" );
+	m_ProcessorBoardName = _T( "Unknown board" );
+	m_TriggerBoardName = _T( "Unknown board" );
+	m_AcquisitionBoardName = _T( "Unknown board" );
+	m_FileAcquisitionBoardName = _T( "File Acquisition" );
+	m_DigitalBoardName = _T( "Unknown board" );
 
-	m_csTriggerDLL.Empty();
-	m_csSoftwareTriggerDLL.Empty();
-	m_csAcquisitionTriggerDLL.Empty();
-	m_csDigitizerDLL.Empty();
-	m_csFileAcquisitionDLL.Empty();
-	m_csDigitalDLL.Empty();
+	m_TriggerDLL.clear();
+	m_SoftwareTriggerDLL.clear();
+	m_AcquisitionTriggerDLL.clear();
+	m_DigitizerDLL.clear();
+	m_FileAcquisitionDLL.clear();
+	m_DigitalDLL.clear();
 
-	m_csReloadTriggerDLL = _T( "Y" );
-	m_csReloadAcquisitionDLL = _T( "Y" );
-	m_csReloadDigitalDLL = _T( "Y" );
+	m_ReloadTriggerDLL = _T( "Y" );
+	m_ReloadAcquisitionDLL = _T( "Y" );
+	m_ReloadDigitalDLL = _T( "Y" );
 
 	// The Standard Configuration Execution Directory
-	m_ConfigExePNVariableName			= _T( "ConfigurationExecutionPathName" );	// LPCTSTR
+	m_ConfigExePNVariableName			= _T( "ConfigurationExecutionPathName" );
 	
-	m_ConfigExePNVariableValue			= _T( "" );									// CString
+	m_ConfigExePNVariableValue			= _T( "" );
 
 	// The Standard Last Valid Configuration Directory
-	m_LastValidConfigPNVariableName			= _T( "LastValidConfigurationPathName" );	// LPCTSTR
+	m_LastValidConfigPNVariableName			= _T( "LastValidConfigurationPathName" );
 
-	m_LastValidConfigPNVariableValue		= _T( "" );									// CString
+	m_LastValidConfigPNVariableValue		= _T( "" );
 
-	m_csProcessor.Empty();
-	m_csFrameGrabber.Empty();
-	m_csIOBoard.Empty();
-	m_csOptions.Empty();
+	m_Processor.clear();
+	m_FrameGrabber.clear();
+	m_IOBoard.clear();
+	m_Options.clear();
 
-	m_csTrigger.Empty();
+	m_Trigger.clear();
 
 	m_hrHardwareFailure = SV_HARDWARE_FAILURE_ALL;
 	m_OfflineCount = 0;
@@ -403,14 +403,14 @@ SVObserverApp::SVObserverApp()
 	m_ConfigFileName.SetFileType( SV_SVX_CONFIGURATION_FILE_TYPE );
 	m_ConfigFileName.setExcludeCharacters( SvO::SVEXCLUDECHARS_CONFIG_NAME );
 
-	SVFileNameManagerClass::AddItem(&m_ConfigFileName);
+	SVFileNameManagerClass::Instance().AddItem(&m_ConfigFileName);
 
 }// end SVObserver ctor
 
 SVObserverApp::~SVObserverApp()
 {
 	// File management for config file.
-	SVFileNameManagerClass::RemoveItem( &m_ConfigFileName );
+	SVFileNameManagerClass::Instance().RemoveItem( &m_ConfigFileName );
 }
 #pragma endregion Constructor
 
@@ -483,26 +483,26 @@ void SVObserverApp::OnFileNewConfig()
 ////////////////////////////////////////////////////////////////////////////////
 void SVObserverApp::OnFileSaveConfig()
 {
-	if( CString( getConfigFullFileName() ).IsEmpty() || 
-		CString( getConfigPathName() ).IsEmpty() )
+	if( SVString( getConfigFullFileName() ).empty() || 
+		SVString( getConfigPathName() ).empty() )
 	{
 		fileSaveAsSVX();
 	}
 	else
 	{
-		CString csTempName = SVFileNameManagerClass::GetConfigurationPathName();
+		SVString TempName = SVFileNameManagerClass::Instance().GetConfigurationPathName();
 
-		if ( csTempName.IsEmpty() )
+		if ( TempName.empty() )
 		{
-			csTempName = getConfigFullFileName();
+			TempName = getConfigFullFileName();
 		}
 		else
 		{
-			csTempName += _T( "\\" );
-			csTempName += getConfigFileName();
+			TempName += _T( "\\" );
+			TempName += getConfigFileName();
 		}
 
-		fileSaveAsSVX( csTempName );
+		fileSaveAsSVX( TempName.c_str() );
 	}
 }
 
@@ -536,19 +536,17 @@ void SVObserverApp::OnFileOpenSVC()
 			//
 			// Write this path name back to registry...to initialize registry.
 			//
-			AfxGetApp()->WriteProfileString( _T( "Settings" ),
-				_T( "SVCFilePath" ),
-				svFileName.GetPathName() );
+			AfxGetApp()->WriteProfileString( _T("Settings"), _T("SVCFilePath"),	svFileName.GetPathName().c_str() );
 
 			// Check for SVX file...
-			if ( CString( svFileName.GetExtension() ).CompareNoCase( _T( ".svx" ) ) == 0 )
+			if ( 0 == SvUl_SF::CompareNoCase( svFileName.GetExtension(), SVString(_T( ".svx")) ) )
 			{
 				//
 				// Open the configuration file (.svx) and read it and
 				// all the associated files for this configuration.
 				//
 				TheSVOLicenseManager().ClearLicenseErrors();
-				if ( S_OK == OpenSVXFile( svFileName.GetFullFileName() ) )
+				if ( S_OK == OpenSVXFile( svFileName.GetFullFileName().c_str() ) )
 				{
 					if ( TheSVOLicenseManager().HasToolErrors() )
 					{
@@ -935,12 +933,12 @@ void SVObserverApp::OnStop()
 		pConfig->SetRaidErrorBit( true );
 	}
 
-	CString l_strTrigCnts;
-	GetTriggersAndCounts( l_strTrigCnts );
+	SVString TriggerCounts;
+	GetTriggersAndCounts( TriggerCounts );
 
 	//add message to event viewer - gone off-line
 	SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-	Exception.setMessage( SVMSG_SVO_28_SVOBSERVER_GO_OFFLINE, static_cast<LPCTSTR> (l_strTrigCnts), SvStl::SourceFileParams(StdMessageParams) );
+	Exception.setMessage( SVMSG_SVO_28_SVOBSERVER_GO_OFFLINE, TriggerCounts.c_str(), SvStl::SourceFileParams(StdMessageParams) );
 
 	SVSVIMStateClass::AddState( SV_STATE_READY );
 	SVSVIMStateClass::RemoveState( SV_STATE_UNAVAILABLE | SV_STATE_STOPING );
@@ -1024,13 +1022,12 @@ void SVObserverApp::OnUpdateEditRemoteInputs( CCmdUI* PCmdUI )
 		// If more are to be supported, then these resources for the ID_EDIT_PUBLISHEDRESULTS_LIMIT will need changed. 
 		SVInspectionProcessPtrList l_Inspections; // Get Inspections
 		pConfig->GetInspections( l_Inspections );
-		RemoveMenu(hmen, "&Edit\\Published Results" ); // start empty.
+		RemoveMenu(hmen, _T("&Edit\\Published Results") ); // start empty.
 		for( UINT i = 0; i < static_cast< UINT >( l_Inspections.size() ) && i < (ID_EDIT_PUBLISHEDRESULTS_LIMIT - ID_EDIT_PUBLISHEDRESULTS_BASE + 1); i++ )
 		{
 			// Add a menu for each inspection.
-			CString strName;
-			strName.Format("&Edit\\Published Results\\%s",l_Inspections[i]->GetName());
-			AddMenuItem(hmen, strName, static_cast< UINT >( ID_EDIT_PUBLISHEDRESULTS_BASE + i ) );
+			SVString Name = SvUl_SF::Format(_T("&Edit\\Published Results\\%s"), l_Inspections[i]->GetName());
+			AddMenuItem(hmen, Name, static_cast< UINT >( ID_EDIT_PUBLISHEDRESULTS_BASE + i ) );
 		}
 	}
 }
@@ -1209,7 +1206,7 @@ void SVObserverApp::OnFilePrintConfig()
 	if( S_OK == m_svSecurityMgr.SVValidate( SECURITY_POINT_FILE_MENU_PRINT ) )
 	{
 		if ( ! SVSVIMStateClass::CheckState( SV_STATE_READY | SV_STATE_RUNNING ) || 
-			CString( getConfigFullFileName() ).IsEmpty() )
+			SVString( getConfigFullFileName() ).empty() )
 		{
 			return;
 		}
@@ -1407,11 +1404,11 @@ void SVObserverApp::OnGoOnline()
 				}
 				else
 				{
-					SVStringArray	msgList;
-					msgList.push_back(SVString(m_csProcessor));
-					msgList.push_back(SVString(m_csFrameGrabber));
-					msgList.push_back(SVString(m_csIOBoard));
-					msgList.push_back(SVString(m_csOptions));
+					SVStringVector	msgList;
+					msgList.push_back(m_Processor );
+					msgList.push_back(m_FrameGrabber );
+					msgList.push_back(m_IOBoard );
+					msgList.push_back( m_Options );
 					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 					Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_SVObserver_CannotRun_WrongModelNumber, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10121 );
 					SVSVIMStateClass::AddState( l_lPrevState );
@@ -1419,39 +1416,39 @@ void SVObserverApp::OnGoOnline()
 			}
 			else
 			{
-				CString l_csItem;
+				SVString ItemText;
 				
 				if ( ( m_hrHardwareFailure & SV_HARDWARE_FAILURE_IO ) == SV_HARDWARE_FAILURE_IO )
 				{
-					l_csItem = GetDigitalBoardName();
+					ItemText = GetDigitalBoardName();
 				}
 				else if ( ( m_hrHardwareFailure & SV_HARDWARE_FAILURE_TRIGGER ) == SV_HARDWARE_FAILURE_TRIGGER )
 				{
-					l_csItem = GetTriggerBoardName();
+					ItemText = GetTriggerBoardName();
 				}
 				else if ( ( m_hrHardwareFailure & SV_HARDWARE_FAILURE_SOFTWARETRIGGER ) == SV_HARDWARE_FAILURE_SOFTWARETRIGGER )
 				{
-					l_csItem = GetSoftwareTriggerBoardName();
+					ItemText = GetSoftwareTriggerBoardName();
 				}
 				else if ( ( m_hrHardwareFailure & SV_HARDWARE_FAILURE_ACQUISITION ) == SV_HARDWARE_FAILURE_ACQUISITION )
 				{
-					l_csItem = GetAcquisitionBoardName();
+					ItemText = GetAcquisitionBoardName();
 				}
 				else if ( ( m_hrHardwareFailure & SV_HARDWARE_FAILURE_FILEACQUISITION ) == SV_HARDWARE_FAILURE_FILEACQUISITION )
 				{
-					l_csItem = GetFileAcquisitionBoardName();
+					ItemText = GetFileAcquisitionBoardName();
 				}
 				else
 				{
-					l_csItem = _T( "Unknown Item" );
+					ItemText = _T( "Unknown Item" );
 				}
 
-				SVStringArray msgList;
-				msgList.push_back(SVString(m_csProcessor));
-				msgList.push_back(SVString(m_csFrameGrabber));
-				msgList.push_back(SVString(m_csIOBoard));
-				msgList.push_back(SVString(m_csOptions));
-				msgList.push_back(SVString(l_csItem));
+				SVStringVector msgList;
+				msgList.push_back( m_Processor );
+				msgList.push_back( m_FrameGrabber );
+				msgList.push_back( m_IOBoard );
+				msgList.push_back( m_Options );
+				msgList.push_back( ItemText );
 				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 				Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_SVObserver_WrongModelNumber, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10122 );
 				SVSVIMStateClass::AddState( l_lPrevState );
@@ -1664,15 +1661,13 @@ void SVObserverApp::OnExtrasUtilitiesEdit()
 	SVUtilitiesClass util;
 	CWnd* pWindow;
 	CMenu* pMenu;
-	CString szMenuText;
 	SVSVIMStateClass::AddState(SV_STATE_EDITING); /// do this before calling validate for security as it may display a logon dialog!
 	if( S_OK == m_svSecurityMgr.SVValidate( SECURITY_POINT_EXTRAS_MENU_UTILITIES_SETUP ) )
 	{
 		pWindow = AfxGetMainWnd();
 		pMenu = pWindow->GetMenu();
-		szMenuText = _T( "&Utilities" );
 
-		if ( pMenu = util.FindSubMenuByName( pMenu, szMenuText ) )
+		if ( pMenu = util.FindSubMenuByName( pMenu, _T("&Utilities") ) )
 		{
 			util.SetupUtilities( pMenu );
 			UpdateAllMenuExtrasUtilities();
@@ -1780,30 +1775,28 @@ void SVObserverApp::OnRCSaveAllAndGetConfig()
 
 	if ( SVSVIMStateClass::CheckState( SV_STATE_READY ) )
 	{
-		CString csConfigPath;
-
 		BOOL bModified = SVSVIMStateClass::CheckState( SV_STATE_MODIFIED );
 
-		csConfigPath = SVFileNameManagerClass::GetConfigurationPathName();
+		SVString ConfigPath = SVFileNameManagerClass::Instance().GetConfigurationPathName();
 
-		if ( ! csConfigPath.IsEmpty() )
+		if ( !ConfigPath.empty() )
 		{
-			SVFileNameManagerClass::SetConfigurationPathName( _T(""));
+			SVFileNameManagerClass::Instance().SetConfigurationPathName( _T("") );
 		}
 
 		SVFileNameClass svFileName;
 
-		svFileName.SetFullFileName( getConfigFullFileName() );
+		svFileName.SetFullFileName( getConfigFullFileName().c_str() );
 		svFileName.SetPathName( SvStl::GlobalPath::Inst().GetRunPath().c_str() );
 		svFileName.SetExtension( _T( ".svx" ) );
 
 		fileSaveAsSVX( svFileName.GetFullFileName() );
 
-		SVRCSetSVCPathName( getConfigFullFileName() );
+		SVRCSetSVCPathName( getConfigFullFileName().c_str() );
 
-		if ( ! csConfigPath.IsEmpty() )
+		if ( ! ConfigPath.empty() )
 		{
-			SVFileNameManagerClass::SetConfigurationPathName( csConfigPath );
+			SVFileNameManagerClass::Instance().SetConfigurationPathName( ConfigPath.c_str() );
 		}
 
 		if ( bModified )
@@ -2219,20 +2212,20 @@ BOOL SVObserverApp::InitInstance()
 	m_ConfigExePNVariableValue = SvStl::GlobalPath::Inst().GetRunPath(_T("\\")).c_str();
 
 	// Update registry...
-	WriteProfileString( _T( "Settings" ), m_ConfigExePNVariableName, m_ConfigExePNVariableValue );
+	WriteProfileString( _T( "Settings" ), m_ConfigExePNVariableName, m_ConfigExePNVariableValue.c_str() );
 
 	// Check path, create if necessary but don't delete contents...
-	InitPath( m_ConfigExePNVariableValue, TRUE, FALSE );
-	SetEnvironmentVariable( m_ConfigExePNVariableName, m_ConfigExePNVariableValue );
+	InitPath( m_ConfigExePNVariableValue.c_str(), true, false );
+	SetEnvironmentVariable( m_ConfigExePNVariableName, m_ConfigExePNVariableValue.c_str() );
 
 	// Last Valid Configuration Path Name... ( "Last Valid Directory" )
 	
 	m_LastValidConfigPNVariableValue = SvStl::GlobalPath::Inst().GetLastValidPath(_T("\\")).c_str();
-	WriteProfileString( _T( "Settings" ), m_LastValidConfigPNVariableName, m_LastValidConfigPNVariableValue );
+	WriteProfileString( _T( "Settings" ), m_LastValidConfigPNVariableName, m_LastValidConfigPNVariableValue.c_str() );
 	
 	// Check path, create if necessary but don't delete contents...
-	InitPath( m_LastValidConfigPNVariableValue, TRUE, FALSE );
-	SetEnvironmentVariable( m_LastValidConfigPNVariableName, m_LastValidConfigPNVariableValue );
+	InitPath( m_LastValidConfigPNVariableValue.c_str(), true, false );
+	SetEnvironmentVariable( m_LastValidConfigPNVariableName, m_LastValidConfigPNVariableValue.c_str() );
 
 	// Load special profile settings
 	if( GetProfileInt( _T( "Settings" ), _T( "Run Last Configuration Automatically" ), 0 ) )
@@ -2255,39 +2248,39 @@ BOOL SVObserverApp::InitInstance()
 	HRESULT l_hrLoad = INILoad();
 	if ( S_OK != l_hrLoad )
 	{
-		CString l_csItem;
+		SVString ItemText;
 
 		if ( ( l_hrLoad & SV_HARDWARE_FAILURE_IO ) == SV_HARDWARE_FAILURE_IO )
 		{
-			l_csItem = GetDigitalBoardName();
+			ItemText = GetDigitalBoardName();
 		}
 		else if ( ( l_hrLoad & SV_HARDWARE_FAILURE_TRIGGER ) == SV_HARDWARE_FAILURE_TRIGGER )
 		{
-			l_csItem = GetTriggerBoardName();
+			ItemText = GetTriggerBoardName();
 		}
 		else if ( ( l_hrLoad & SV_HARDWARE_FAILURE_SOFTWARETRIGGER ) == SV_HARDWARE_FAILURE_SOFTWARETRIGGER )
 		{
-			l_csItem = GetSoftwareTriggerBoardName();
+			ItemText = GetSoftwareTriggerBoardName();
 		}
 		else if ( ( l_hrLoad & SV_HARDWARE_FAILURE_ACQUISITION ) == SV_HARDWARE_FAILURE_ACQUISITION )
 		{
-			l_csItem = GetAcquisitionBoardName();
+			ItemText = GetAcquisitionBoardName();
 		}
 		else if ( ( l_hrLoad & SV_HARDWARE_FAILURE_FILEACQUISITION ) == SV_HARDWARE_FAILURE_FILEACQUISITION )
 		{
-			l_csItem = GetFileAcquisitionBoardName();
+			ItemText = GetFileAcquisitionBoardName();
 		}
 		else
 		{
-			l_csItem = _T( "Unknown Item" );
+			ItemText = _T( "Unknown Item" );
 		}
 
-		SVStringArray msgList;
-		msgList.push_back(SVString(m_csProcessor));
-		msgList.push_back(SVString(m_csFrameGrabber));
-		msgList.push_back(SVString(m_csIOBoard));
-		msgList.push_back(SVString(m_csOptions));
-		msgList.push_back(SVString(l_csItem));
+		SVStringVector msgList;
+		msgList.push_back( m_Processor );
+		msgList.push_back( m_FrameGrabber );
+		msgList.push_back( m_IOBoard );
+		msgList.push_back( m_Options );
+		msgList.push_back( ItemText );
 		#ifndef _DEBUG                    // 23 Mar 1999 - frb.
 		#ifndef _MINDEBUG
 			sWin.ShowWindow( SW_HIDE );
@@ -2350,13 +2343,11 @@ BOOL SVObserverApp::InitInstance()
 	SVUtilitiesClass util;
 	CWnd *pWindow;
 	CMenu *pMenu;
-	CString szMenuText;
 
 	pWindow = AfxGetMainWnd();
 	pMenu = pWindow->GetMenu();
-	szMenuText = _T("&Utilities");
 
-	if ( pMenu = util.FindSubMenuByName( pMenu, szMenuText ) )
+	if ( pMenu = util.FindSubMenuByName( pMenu, _T("&Utilities") ) )
 	{
 		util.LoadMenu( pMenu );
 	}
@@ -2379,7 +2370,7 @@ BOOL SVObserverApp::InitInstance()
 	// allocate pools in the memory manager
 
 	//Log amount of physical memory - may help in debugging issues in the future.
-	SVStringArray MessageList;
+	SVStringVector MessageList;
 	MessageList.push_back(SvUl_SF::Format(_T("%d"), AmountOfRam));
 	SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 	Exception.setMessage(SVMSG_SVO_54_EMPTY, SvOi::Tid_AmountOfSystemMemoryText, MessageList, SvStl::SourceFileParams(StdMessageParams), SvOi::Memory_Log_45001);
@@ -2432,7 +2423,7 @@ BOOL SVObserverApp::InitInstance()
 	}
 
 	// add message to event viewer - SVObserver Started
-	SVStringArray msgList;
+	SVStringVector msgList;
 	if( (m_CurrentVersion & 0xff) == 0xff )
 	{
 		msgList.push_back(SvSyl::SVVersionInfo::GetShortTitleVersion());
@@ -2615,7 +2606,7 @@ int SVObserverApp::Run()
 		SvStl::MessageData Msg( rExp.getMessage() );
 		SVString OrgMessageCode = SvUl_SF::Format( _T("0x%08X"), Msg.m_MessageCode );
 		Msg.m_AdditionalTextId = SvOi::Tid_Default;
-		SVStringArray msgList;
+		SVStringVector msgList;
 		msgList.push_back(OrgMessageCode);
 		Msg.m_AdditionalTextList = msgList;
 		Msg.m_MessageCode = SVMSG_SVO_72_UNHANDLED_EXCEPTION;
@@ -2676,12 +2667,12 @@ HRESULT SVObserverApp::OpenSVXFile(LPCTSTR PathName)
 		// Check if we tried to load the SVC from 
 		// Execution path...("C:\RUN\")
 		//
-		if ( CString( svFileName.GetPathName() ).CompareNoCase( SVFileNameManagerClass::GetRunPathName() ) )
+		if ( 0 != SvUl_SF::CompareNoCase( SVString(svFileName.GetPathName()), SVFileNameManagerClass::Instance().GetRunPathName() ) )
 		{
 			// Clean up Execution Directory...
 			// Check path, create if necessary and delete contents...
-			InitPath( CString( SVFileNameManagerClass::GetRunPathName() ) + "\\", TRUE, TRUE );
-		} // if ( CString
+			InitPath( SVString(SVFileNameManagerClass::Instance().GetRunPathName() + "\\").c_str(), TRUE, TRUE );
+		}
 
 		try
 		{
@@ -2689,15 +2680,15 @@ HRESULT SVObserverApp::OpenSVXFile(LPCTSTR PathName)
 
 			setConfigFullFileName( PathName );
 
-			CString csFullFileName( getConfigFullFileName() );
-			SVRCSetSVCPathName( csFullFileName );
+			SVString FullFileName( getConfigFullFileName() );
+			SVRCSetSVCPathName( FullFileName.c_str() );
 
 			while (1)
 			{
 				SVTreeType XMLTree;
 				try 
 				{
-					hr = SVOCMLoadConfiguration( configVer, csFullFileName, XMLTree );
+					hr = SVOCMLoadConfiguration( configVer, FullFileName.c_str(), XMLTree );
 				}
 				catch( const SvStl::MessageContainer& rExp )
 				{
@@ -2719,7 +2710,7 @@ HRESULT SVObserverApp::OpenSVXFile(LPCTSTR PathName)
 				{
 					break;
 				}
-				CString itemType;
+				SVString itemType;
 				int errorCode(0);
 				hr = SvXml::CheckObsoleteItems( XMLTree, configVer, itemType, errorCode );
 				if (hr & SV_ERROR_CONDITION)
@@ -2727,25 +2718,25 @@ HRESULT SVObserverApp::OpenSVXFile(LPCTSTR PathName)
 					if( SVSVIMStateClass::CheckState( SV_STATE_REMOTE_CMD ) )
 					{
 						SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-						Exception.setMessage( SVMSG_SVO_76_CONFIGURATION_HAS_OBSOLETE_ITEMS, itemType, SvStl::SourceFileParams(StdMessageParams), errorCode );
+						Exception.setMessage( SVMSG_SVO_76_CONFIGURATION_HAS_OBSOLETE_ITEMS, itemType.c_str(), SvStl::SourceFileParams(StdMessageParams), errorCode );
 					}
 					else
 					{
 						SvStl::MessageMgrStd Exception( SvStl::LogAndDisplay );
-						Exception.setMessage( SVMSG_SVO_76_CONFIGURATION_HAS_OBSOLETE_ITEMS, itemType, SvStl::SourceFileParams(StdMessageParams), errorCode );
+						Exception.setMessage( SVMSG_SVO_76_CONFIGURATION_HAS_OBSOLETE_ITEMS, itemType.c_str(), SvStl::SourceFileParams(StdMessageParams), errorCode );
 					}
 					break;
 				}
 
 				if ( configVer > m_CurrentVersion )
 				{
-					CString strFile, strApp;
+					SVString File, App;
 
-					::SVGetVersionString( strApp, m_CurrentVersion );
-					::SVGetVersionString( strFile, configVer );
-					SVStringArray msgList;
-					msgList.push_back(SVString(strFile));
-					msgList.push_back(SVString(strApp));
+					::SVGetVersionString( App, m_CurrentVersion );
+					::SVGetVersionString( File, configVer );
+					SVStringVector msgList;
+					msgList.push_back( File);
+					msgList.push_back( App );
 
 					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 					INT_PTR result = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_SVObserver_WrongVersionNumber, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10128, SV_GUID_NULL, MB_YESNO );
@@ -2840,7 +2831,7 @@ HRESULT SVObserverApp::OpenSVXFile(LPCTSTR PathName)
 				l_FinishLoad = SVClock::GetTimeStamp();
 				long l_lTime = static_cast<long>(l_FinishLoad - l_StartLoading);
 
-				SVStringArray msgList;
+				SVStringVector msgList;
 				msgList.push_back(PathName);
 				msgList.push_back(SvUl_SF::Format(_T("%d"), l_lTime));
 				
@@ -2859,7 +2850,7 @@ HRESULT SVObserverApp::OpenSVXFile(LPCTSTR PathName)
 				//Use E_FAIL to stop the loading but do not show any error messages
 				if( E_FAIL != hr )
 				{
-					SVStringArray msgList;
+					SVStringVector msgList;
 					msgList.push_back(SvUl_SF::Format( _T("%d"), hr));
 					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_SVObserver_ConfigurationLoadFailed, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10129 );
@@ -2871,15 +2862,14 @@ HRESULT SVObserverApp::OpenSVXFile(LPCTSTR PathName)
 
 			// IsSECModified = FALSE; 03 Dec 1999 - frb. delay until 
 			// .ipd parsing is completed.
-
-			if ( CString( SVFileNameManagerClass::GetConfigurationPathName() ).IsEmpty() )
+			SVString FileName = SVFileNameManagerClass::Instance().GetConfigurationPathName();
+			if ( FileName.empty() )
 			{
-				AddToRecentFileList( getConfigFullFileName() );
+				AddToRecentFileList( getConfigFullFileName().c_str() );
 			}
 			else
 			{
-				AddToRecentFileList( CString( SVFileNameManagerClass::GetConfigurationPathName() ) + 
-					"\\" + getConfigFileName() );
+				AddToRecentFileList( SVString(FileName + _T("\\") + getConfigFileName()).c_str()  );
 			}
 
 			UpdatePPQBar();
@@ -3002,31 +2992,31 @@ SVIPDoc* SVObserverApp::NewSVIPDoc( LPCTSTR DocName, SVInspectionProcess& Inspec
 }
 #pragma endregion virtual
 
-CString SVObserverApp::GetConfigurationName() const
+SVString SVObserverApp::GetConfigurationName() const
 {
-	CString l_ConfigName;
+	SVString ConfigName;
 
 	SVFileNameClass svFileName;
 
-	svFileName.SetFullFileName( getConfigFullFileName() );
+	svFileName.SetFullFileName( getConfigFullFileName().c_str() );
 
-	if( 0 < strlen( svFileName.GetFileNameOnly() ) )
+	if( 0 < svFileName.GetFileNameOnly().size() )
 	{
 		svFileName.SetPathName( SvStl::GlobalPath::Inst().GetRunPath().c_str() );
 
-		l_ConfigName = svFileName.GetFullFileName();
+		ConfigName = svFileName.GetFullFileName();
 	}
 
-	return l_ConfigName;
+	return ConfigName;
 }
 
-HRESULT SVObserverApp::LoadPackedConfiguration( const CString& p_rPackedFileName )
+HRESULT SVObserverApp::LoadPackedConfiguration( const SVString& rPackedFileName )
 {
 	HRESULT l_Status = S_OK;
 
 	SVPackedFile PackedFile;
 
-	if( 0 == _access( p_rPackedFileName, 0 ) )
+	if( 0 == _access( rPackedFileName.c_str(), 0 ) )
 	{
 		SendMessage( m_pMainWnd->m_hWnd, WM_COMMAND, MAKEWPARAM (ID_RC_CLOSE_AND_CLEAN_RUN_DIR, 0), 0 );
 	}
@@ -3037,7 +3027,7 @@ HRESULT SVObserverApp::LoadPackedConfiguration( const CString& p_rPackedFileName
 
 	if( S_OK == l_Status )
 	{
-		if( !( PackedFile.UnPackFiles( p_rPackedFileName, SvStl::GlobalPath::Inst().GetRunPath().c_str() ) ) )
+		if( !( PackedFile.UnPackFiles( rPackedFileName.c_str(), SvStl::GlobalPath::Inst().GetRunPath().c_str() ) ) )
 		{
 			l_Status = E_UNEXPECTED;
 		}
@@ -3045,15 +3035,14 @@ HRESULT SVObserverApp::LoadPackedConfiguration( const CString& p_rPackedFileName
 
 	if( S_OK == l_Status )
 	{
-		CString configFilePath = PackedFile.getConfigFilePath();
 
-		if( configFilePath.IsEmpty() || ( _access( configFilePath, 0 ) != 0 ) )
+		if( PackedFile.getConfigFilePath().empty() || ( _access( PackedFile.getConfigFilePath().c_str(), 0 ) != 0 ) )
 		{
 			l_Status = E_UNEXPECTED;
 		}
 		else
 		{
-			SVRCSetSVCPathName(configFilePath);
+			SVRCSetSVCPathName( PackedFile.getConfigFilePath().c_str() );
 
 			l_Status = static_cast<HRESULT>(SendMessage( m_pMainWnd->m_hWnd, SV_LOAD_CONFIGURATION, 0, 0 ));
 		}
@@ -3062,7 +3051,7 @@ HRESULT SVObserverApp::LoadPackedConfiguration( const CString& p_rPackedFileName
 	return l_Status;
 }
 
-HRESULT SVObserverApp::SavePackedConfiguration( const CString& p_rPackedFileName )
+HRESULT SVObserverApp::SavePackedConfiguration( const SVString& rPackedFileName )
 {
 	HRESULT l_Status = S_OK;
 
@@ -3070,7 +3059,7 @@ HRESULT SVObserverApp::SavePackedConfiguration( const CString& p_rPackedFileName
 
 	SVPackedFile PackedFile;
 
-	if( !( PackedFile.PackFiles( GetConfigurationName(), p_rPackedFileName ) ) )
+	if( !( PackedFile.PackFiles( GetConfigurationName().c_str(), rPackedFileName.c_str() ) ) )
 	{
 		l_Status = E_UNEXPECTED;
 	}
@@ -3109,7 +3098,6 @@ HRESULT SVObserverApp::DestroyConfig( BOOL AskForSavingOrClosing /* = TRUE */,
 
 	if ( ! bOk )
 	{
-		CString message;
 		BOOL bClose = TRUE;
 
 		if ( CloseWithoutHint )
@@ -3118,7 +3106,7 @@ HRESULT SVObserverApp::DestroyConfig( BOOL AskForSavingOrClosing /* = TRUE */,
 		}
 		else
 		{
-			SVStringArray msgList;
+			SVStringVector msgList;
 			msgList.push_back(getConfigFileName()); 
 			SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 			INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvOi::Tid_UserQuestionCloseConfig, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10130, SV_GUID_NULL, MB_YESNO );
@@ -3139,7 +3127,7 @@ HRESULT SVObserverApp::DestroyConfig( BOOL AskForSavingOrClosing /* = TRUE */,
 				// Check if current config is modified and ask for saving
 				if ( SVSVIMStateClass::CheckState( SV_STATE_MODIFIED ) )
 				{
-					SVStringArray msgList;
+					SVStringVector msgList;
 					msgList.push_back( getConfigFileName() ); 
 					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 					INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvOi::Tid_UserQuestionSaveChanges, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10131, SV_GUID_NULL, MB_YESNOCANCEL );
@@ -3161,7 +3149,7 @@ HRESULT SVObserverApp::DestroyConfig( BOOL AskForSavingOrClosing /* = TRUE */,
 								// Check whether config saving is done.
 								// If not, an error or an user cancel
 								// command occured!
-								bClose = ! CString( getConfigFullFileName() ).IsEmpty() &&
+								bClose = !SVString( getConfigFullFileName() ).empty() &&
 									! SVSVIMStateClass::CheckState( SV_STATE_MODIFIED );
 							}
 							break;
@@ -3297,7 +3285,7 @@ HRESULT SVObserverApp::DestroyConfig( BOOL AskForSavingOrClosing /* = TRUE */,
 
 void SVObserverApp::RemoveUnusedFiles()
 {
-	SVFileNameManagerClass::RemoveUnusedFiles( false );
+	SVFileNameManagerClass::Instance().RemoveUnusedFiles( false );
 }
 
 SVIODoc* SVObserverApp::GetIODoc() const
@@ -3358,26 +3346,26 @@ bool SVObserverApp::InitPath( LPCTSTR PathName, bool CreateIfDoesNotExist /*= tr
 			if( DeleteContents )
 			{
 				// Get Delete Directory...
-				CString strDelName;
-				SVGetPathInformation( strDelName, PathName, SVDRIVE | SVDIR );
+				SVString DeleteName;
+				SVGetPathInformation( DeleteName, PathName, SVDRIVE | SVDIR );
 
 				// Be sure that this is not the boot, system or windows directory...
 				TCHAR dirBuf[ _MAX_PATH ];
 				dirBuf[ 0 ] = _TCHAR( '\0' );
 				GetWindowsDirectory( dirBuf, _MAX_PATH );
-				if( strDelName.CompareNoCase( dirBuf ) )
+				if( SvUl_SF::CompareNoCase( DeleteName, SVString(dirBuf) ) )
 				{
 					// Not identical with windows directory...
 					GetSystemDirectory( dirBuf, _MAX_PATH );
-					if( strDelName.CompareNoCase( dirBuf ) )
+					if( SvUl_SF::CompareNoCase( DeleteName, SVString(dirBuf) ) )
 					{
 						// Not identical with system directory...
-						if( strDelName.CompareNoCase( _T( "C:\\" ) ) )
+						if( SvUl_SF::CompareNoCase( DeleteName, SVString( _T("C:\\") ) ) )
 						{
 							// Not identical with boot directory...
-
 							// Delete contents of this directory...
-							return SVDeleteFiles( strDelName + _T( "*.*" ), TRUE );
+							DeleteName +=  _T( "*.*" );
+							return SVDeleteFiles( DeleteName.c_str(), true );
 						}
 					}
 				}
@@ -3396,11 +3384,10 @@ bool SVObserverApp::IsMatroxGige() const
 {
 	bool l_bOk = false;
 
-	l_bOk = (m_csProductName.CompareNoCase( SvOi::SVO_PRODUCT_KONTRON_X2_GD2A ) == 0
-		|| m_csProductName.CompareNoCase( SvOi::SVO_PRODUCT_KONTRON_X2_GD4A ) == 0
-		|| m_csProductName.CompareNoCase( SvOi::SVO_PRODUCT_KONTRON_X2_GD8A ) == 0
-		|| m_csProductName.CompareNoCase( SvOi::SVO_PRODUCT_KONTRON_X2_GD8A_NONIO ) == 0
-		);
+	l_bOk = ( 0 == SvUl_SF::CompareNoCase( m_ProductName, SvOi::SVO_PRODUCT_KONTRON_X2_GD2A )
+		||  0 == SvUl_SF::CompareNoCase( m_ProductName, SvOi::SVO_PRODUCT_KONTRON_X2_GD4A )
+		||  0 == SvUl_SF::CompareNoCase( m_ProductName, SvOi::SVO_PRODUCT_KONTRON_X2_GD8A )
+		||  0 == SvUl_SF::CompareNoCase( m_ProductName, SvOi::SVO_PRODUCT_KONTRON_X2_GD8A_NONIO ) );
 
 	return l_bOk;
 }
@@ -3468,23 +3455,23 @@ SVIMProductEnum SVObserverApp::GetSVIMType() const
 {
 	SVIMProductEnum eType = SVIM_PRODUCT_TYPE_UNKNOWN;
 
-	if (0 == m_csProductName.CompareNoCase(SvOi::SVO_PRODUCT_KONTRON_X2_GD1A))
+	if (0 == SvUl_SF::CompareNoCase( m_ProductName, SvOi::SVO_PRODUCT_KONTRON_X2_GD1A))
 	{
 		eType = SVIM_PRODUCT_X2_GD1A;
 	}
-	else if (0 == m_csProductName.CompareNoCase(SvOi::SVO_PRODUCT_KONTRON_X2_GD2A))
+	else if (0 == SvUl_SF::CompareNoCase( m_ProductName, SvOi::SVO_PRODUCT_KONTRON_X2_GD2A))
 	{
 		eType = SVIM_PRODUCT_X2_GD2A;
 	}
-	else if (0 == m_csProductName.CompareNoCase(SvOi::SVO_PRODUCT_KONTRON_X2_GD4A))
+	else if (0 == SvUl_SF::CompareNoCase( m_ProductName, SvOi::SVO_PRODUCT_KONTRON_X2_GD4A))
 	{
 		eType = SVIM_PRODUCT_X2_GD4A;
 	}
-	else if (0 == m_csProductName.CompareNoCase(SvOi::SVO_PRODUCT_KONTRON_X2_GD8A))
+	else if (0 == SvUl_SF::CompareNoCase( m_ProductName, SvOi::SVO_PRODUCT_KONTRON_X2_GD8A))
 	{
 		eType = SVIM_PRODUCT_X2_GD8A;
 	}
-	else if (0 == m_csProductName.CompareNoCase(SvOi::SVO_PRODUCT_KONTRON_X2_GD8A_NONIO))
+	else if (0 == SvUl_SF::CompareNoCase( m_ProductName, SvOi::SVO_PRODUCT_KONTRON_X2_GD8A_NONIO))
 	{
 		eType = SVIM_PRODUCT_X2_GD8A_NONIO;
 	}
@@ -3493,7 +3480,7 @@ SVIMProductEnum SVObserverApp::GetSVIMType() const
 
 bool SVObserverApp::IsProductTypeRAID() const
 {
-	bool bRet = ( m_csRAIDBoardName.CompareNoCase( "Intel" ) == 0 );
+	bool bRet = ( SvUl_SF::CompareNoCase( m_RAIDBoardName, _T("Intel") ) == 0 );
 	return bRet;
 }
 
@@ -3510,8 +3497,8 @@ void SVObserverApp::ValidateMRUList()
 			{
 				m_pRecentFileList->Remove( i );
 			}
-		}// end for
-	}// end if
+		}
+	}
 }
 
 void SVObserverApp::ResetAllCounts()
@@ -3558,30 +3545,30 @@ void SVObserverApp::ResetAllCounts()
 // ItemID of 0 will cause a separator to be added
 bool SVObserverApp::AddMenuItem(
 	HMENU hTargetMenu, 
-	const CString& itemText, 
+	const SVString& rItemText, 
 	UINT itemID)
 {
 	bool bSuccess = false;
 
-	ASSERT(itemText.GetLength() > 0);
-	ASSERT(nullptr != hTargetMenu);
+	assert(rItemText.size() > 0);
+	assert(nullptr != hTargetMenu);
 
 	// first, does the menu item have
 	// any required submenus to be found/created?
-	if (itemText.Find('\\') >= 0)
+	size_t Pos = rItemText.find('\\');
+	if( SVString::npos != Pos )
 	{
 		// yes, we need to do a recursive call
 		// on a submenu handle and with that sub
 		// menu name removed from itemText
 
 		// 1:get the popup menu name
-		CString popupMenuName = itemText.Left(itemText.Find('\\'));
+		SVString popupMenuName = SvUl_SF::Left( rItemText, Pos );
 
 		// 2:get the rest of the menu item name
 		// minus the delimiting '\' character
-		CString remainingText = 
-			itemText.Right(itemText.GetLength() 
-			- popupMenuName.GetLength() - 1);
+		size_t RestSize = rItemText.size()- popupMenuName.size() - 1;
+		SVString remainingText = SvUl_SF::Right( rItemText, RestSize );
 
 		// 3:See whether the popup menu already exists
 		int itemCount = ::GetMenuItemCount(hTargetMenu);
@@ -3643,7 +3630,7 @@ bool SVObserverApp::AddMenuItem(
 						hTargetMenu, 
 						MF_POPUP, 
 						reinterpret_cast<UINT_PTR> (hPopupMenu), 
-						popupMenuName) > 0)
+						popupMenuName.c_str()) > 0)
 					{
 						bSuccess = true;
 						// hPopupMenu now owned by hTargetMenu,
@@ -3682,7 +3669,7 @@ bool SVObserverApp::AddMenuItem(
 			if (menuItemInfo.wID == itemID)
 			{
 				// Set the inspection name.
-				::ModifyMenuA(hTargetMenu, itemIndex, MF_BYPOSITION | MF_STRING, itemID, itemText);
+				::ModifyMenuA(hTargetMenu, itemIndex, MF_BYPOSITION | MF_STRING, itemID, rItemText.c_str());
 				bFoundSubMenu = true;
 			}
 		}
@@ -3697,7 +3684,7 @@ bool SVObserverApp::AddMenuItem(
 					hTargetMenu, 
 					MF_ENABLED, 
 					itemID, 
-					itemText) > 0)
+					rItemText.c_str()) > 0)
 				{
 					// we successfully added the item to the menu
 					bSuccess = true;
@@ -3710,7 +3697,7 @@ bool SVObserverApp::AddMenuItem(
 					hTargetMenu, 
 					MF_SEPARATOR, 
 					itemID, 
-					itemText) > 0)
+					rItemText.c_str()) > 0)
 				{
 					// we successfully added the separator to the menu
 					bSuccess = true;
@@ -3729,29 +3716,29 @@ bool SVObserverApp::AddMenuItem(
 // popup menus. If the end popup menu exists, it will be deleted.
 bool SVObserverApp::RemoveMenu(
 	HMENU hTargetMenu, 
-	const CString& itemText)
+	const SVString& rItemText)
 {
 	bool bSuccess = false;
 
-	ASSERT(itemText.GetLength() > 0);
-	ASSERT(nullptr != hTargetMenu);
+	assert( rItemText.size() > 0 );
+	assert( nullptr != hTargetMenu );
 
 	// first, does the menu item have
 	// any required submenus to be found/created?
-	if (itemText.Find('\\') >= 0)
+	size_t Pos = rItemText.find('\\');
+	if( SVString::npos != Pos )
 	{
 		// yes, we need to do a recursive call
 		// on a submenu handle and with that sub
 		// menu name removed from itemText
 
 		// 1:get the popup menu name
-		CString popupMenuName = itemText.Left(itemText.Find('\\'));
+		SVString popupMenuName = SvUl_SF::Left( rItemText, Pos );
 
 		// 2:get the rest of the menu item name
 		// minus the delimiting '\' character
-		CString remainingText = 
-			itemText.Right(itemText.GetLength() 
-			- popupMenuName.GetLength() - 1);
+		size_t RestSize = rItemText.size()- popupMenuName.size() - 1;
+		SVString remainingText = SvUl_SF::Right( rItemText, RestSize );
 
 		// 3:See whether the popup menu already exists
 		int itemCount = ::GetMenuItemCount(hTargetMenu);
@@ -3822,7 +3809,7 @@ bool SVObserverApp::RemoveMenu(
 					buffer, 
 					MAX_PATH, 
 					MF_BYPOSITION);
-				if (itemText == buffer)
+				if (rItemText == buffer)
 				{
 					// this is the popup menu we have to remove
 					bSuccess = DeleteMenu( hTargetMenu, itemIndex, MF_BYPOSITION ) ? true : false;
@@ -3959,20 +3946,17 @@ HRESULT SVObserverApp::LoadConfiguration()
 {
 	HRESULT l_Status = S_OK;
 
-	CString szConfigName = SVRCGetSVCPathName();
-
 	TCHAR szDrive[_MAX_DRIVE];
 	TCHAR szDir[_MAX_DIR];
 	TCHAR szFile[_MAX_FNAME];
 	TCHAR szExt[_MAX_EXT];
-	CString sComp;
 
-	_tsplitpath( szConfigName, szDrive, szDir, szFile, szExt );
-	sComp = szExt;
+	_tsplitpath( SVRCGetSVCPathName(), szDrive, szDir, szFile, szExt );
+	SVString Extension = szExt;
 
-	if( sComp.CompareNoCase(_T(".svx"))==0 )
+	if( 0 == SvUl_SF::CompareNoCase( Extension, SVString( _T(".svx") ) ) )
 	{
-		l_Status = OpenSVXFile( szConfigName );
+		l_Status = OpenSVXFile( SVRCGetSVCPathName() );
 	}
 	else
 	{
@@ -4080,22 +4064,22 @@ void SVObserverApp::UpdatePPQBar()
 	GetMainFrame()->OnViewPPQBar();
 }
 
-LPCTSTR SVObserverApp::getConfigFileNameOnly() const
+const SVString& SVObserverApp::getConfigFileNameOnly() const
 {
 	return m_ConfigFileName.GetFileNameOnly();
 }
 
-LPCTSTR SVObserverApp::getConfigPathName() const
+const SVString& SVObserverApp::getConfigPathName() const
 {
 	return m_ConfigFileName.GetPathName();
 }
 
-LPCTSTR SVObserverApp::getConfigFileName() const
+const SVString& SVObserverApp::getConfigFileName() const
 {
 	return m_ConfigFileName.GetFileName();
 }
 
-LPCTSTR SVObserverApp::getConfigFullFileName() const
+const SVString& SVObserverApp::getConfigFullFileName() const
 {
 	return m_ConfigFileName.GetFullFileName();
 }
@@ -4106,19 +4090,19 @@ BOOL SVObserverApp::setConfigFullFileName(LPCTSTR csFullFileName, DWORD dwAction
 
 	if ( bOk )
 	{
-		if ( CString( m_ConfigFileName.GetPathName() ).IsEmpty() )
+		if ( m_ConfigFileName.GetPathName().empty() )
 		{
-			SVFileNameManagerClass::SetConfigurationPathName( nullptr );
+			SVFileNameManagerClass::Instance().SetConfigurationPathName( nullptr );
 		}
 		else
 		{
-			if ( CString( m_ConfigFileName.GetPathName() ).CompareNoCase( SvStl::GlobalPath::Inst().GetRunPath().c_str() ) == 0 )
+			if ( 0 == SvUl_SF::CompareNoCase( m_ConfigFileName.GetPathName(), SvStl::GlobalPath::Inst().GetRunPath() ) )
 			{
-				SVFileNameManagerClass::SetConfigurationPathName( nullptr );
+				SVFileNameManagerClass::Instance().SetConfigurationPathName( nullptr );
 			}
 			else
 			{
-				bOk = SVFileNameManagerClass::SetConfigurationPathName( m_ConfigFileName.GetPathName() );
+				bOk = SVFileNameManagerClass::Instance().SetConfigurationPathName( m_ConfigFileName.GetPathName().c_str() );
 				// if this returns FALSE, unable to access specified path!
 				if ( !bOk )
 				{
@@ -4126,7 +4110,7 @@ BOOL SVObserverApp::setConfigFullFileName(LPCTSTR csFullFileName, DWORD dwAction
 						dwAction == LOAD_CONFIG ||
 						dwAction == RENAME_CONFIG );
 
-					SVStringArray msgList;
+					SVStringVector msgList;
 					msgList.push_back(SvStl::MessageData::convertId2AddtionalText(dwAction == LOAD_CONFIG ? SvOi::Tid_Load : SvOi::Tid_Save));
 					msgList.push_back(m_ConfigFileName.GetPathName());
 					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
@@ -4141,17 +4125,17 @@ BOOL SVObserverApp::setConfigFullFileName(LPCTSTR csFullFileName, DWORD dwAction
 			{
 			case LOAD_CONFIG:
 				{
-					bOk = SVFileNameManagerClass::LoadItem( &m_ConfigFileName );
+					bOk = SVFileNameManagerClass::Instance().LoadItem( &m_ConfigFileName );
 					break;
 				}
 			case SAVE_CONFIG:
 				{
-					bOk = SVFileNameManagerClass::SaveItem( &m_ConfigFileName );
+					bOk = SVFileNameManagerClass::Instance().SaveItem( &m_ConfigFileName );
 					break;
 				}
 			case RENAME_CONFIG:
 				{
-					bOk = SVFileNameManagerClass::RenameItem( &m_ConfigFileName );
+					bOk = SVFileNameManagerClass::Instance().RenameItem( &m_ConfigFileName );
 					break;
 				}
 			default:
@@ -4165,11 +4149,9 @@ BOOL SVObserverApp::setConfigFullFileName(LPCTSTR csFullFileName, DWORD dwAction
 
 	if ( bOk )
 	{
-		if ( !CString( SVFileNameManagerClass::GetConfigurationPathName() ).IsEmpty() )
+		if ( !SVFileNameManagerClass::Instance().GetConfigurationPathName().empty() )
 		{
-			AfxGetApp()->WriteProfileString( _T( "Settings" ), 
-				_T( "ConfigurationFilePath" ), 
-				SVFileNameManagerClass::GetConfigurationPathName() );
+			AfxGetApp()->WriteProfileString( _T( "Settings" ), _T( "ConfigurationFilePath" ), SVFileNameManagerClass::Instance().GetConfigurationPathName().c_str() );
 		}
 	}
 
@@ -4253,14 +4235,6 @@ BOOL SVObserverApp::AlreadyExistsIPDocTitle( LPCTSTR StrIPDocTitle )
 	return FALSE;
 }
 
-CString SVObserverApp::GetStringResource( int ResourceID ) const
-{
-	CString strResource;
-	if( ! strResource.LoadString( ResourceID ) ) { strResource = _T( " " ); }
-
-	return strResource;
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : ShowConfigurationAssistant
 // -----------------------------------------------------------------------------
@@ -4299,7 +4273,7 @@ BOOL SVObserverApp::ShowConfigurationAssistant( int Page /*= 3*/,
 
 		// Clean up Execution Directory...
 		// Check path, create if necessary and delete contents...
-		InitPath( CString( SVFileNameManagerClass::GetRunPathName() ) + "\\", TRUE, TRUE );
+		InitPath( SVString( SVFileNameManagerClass::Instance().GetRunPathName() + _T("\\")).c_str(), TRUE, TRUE );
 
 		// Ensure that DestroyConfig() can do his work...
 		SVSVIMStateClass::AddState( SV_STATE_READY );
@@ -4348,19 +4322,19 @@ BOOL SVObserverApp::ShowConfigurationAssistant( int Page /*= 3*/,
 
 	// Special code to determine the inverters 
 	// and triggers based on IO board
-	if( m_csIOBoard.Compare( "10" ) == 0 )
+	if( _T("10") == m_IOBoard )
 	{
 		l_svCapable.SetStrobeInverters( 1 );
 		l_svCapable.SetTriggerInverters( 1 );
 		l_svCapable.SetTriggerCount( 1 );
 	}
-	else if( m_csIOBoard.Compare("12") == 0 )
+	else if( _T("12") == m_IOBoard )
 	{
 		l_svCapable.SetStrobeInverters( 1 );
 		l_svCapable.SetTriggerInverters( 1 );
 		l_svCapable.SetTriggerCount( 3 );
 	}
-	else if( m_csIOBoard.Compare("00") == 0 )
+	else if( _T("00") == m_IOBoard )
 	{
 		// Get Trigger count from the TriggerDLL (in this case the DigitizerDLL)
 		int numTriggers = 0;
@@ -4399,8 +4373,6 @@ BOOL SVObserverApp::ShowConfigurationAssistant( int Page /*= 3*/,
 	}
 	SVSVIMStateClass::RemoveState( SV_STATE_EDITING );
 
-	CString sNewName;
-
 	//****RPY - End - added new AppAssistant
 
 	// Call the application assistant dialog...
@@ -4409,15 +4381,14 @@ BOOL SVObserverApp::ShowConfigurationAssistant( int Page /*= 3*/,
 	{
 		CWaitCursor wait;
 
-		sNewName = cDlg.GetConfigurationName();
+		SVString NewName = cDlg.GetConfigurationName();
 		if( bFileNewConfiguration )
 		{
-			m_ConfigFileName.SetFileNameOnly( sNewName );
-			m_ConfigFileName.SetExtension( ".svx" );
+			m_ConfigFileName.SetFileNameOnly( NewName.c_str() );
+			m_ConfigFileName.SetExtension( _T(".svx") );
 
 			SVDigitalInputObject *pInput = nullptr;
 			SVPPQObject			 *pPPQ = nullptr;
-			CString strName;
 			unsigned long ulCount = 0;
 			unsigned long l = 0;
 			long lPPQ = 0;
@@ -4435,9 +4406,9 @@ BOOL SVObserverApp::ShowConfigurationAssistant( int Page /*= 3*/,
 					{
 						pInput = nullptr;
 
-						strName.Format( "DIO.Input%d", l+1 );
+						SVString Name = SvUl_SF::Format( _T("DIO.Input%d"), l+1 );
 
-						pInputObjectList->GetInputFlyweight( static_cast< LPCTSTR >( strName ), pInput );
+						pInputObjectList->GetInputFlyweight( Name, pInput );
 
 						if( nullptr != pInput )
 						{
@@ -4859,9 +4830,9 @@ HRESULT SVObserverApp::SendCameraParameters()
 	SVConfigurationObject* pConfig( nullptr );
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-	SVStringArray Cameras;
+	SVStringVector Cameras;
 	SVDigitizerProcessingClass::Instance().GetAcquisitionDeviceList( Cameras );
-	SVStringArray::const_iterator Iter( Cameras.begin() );
+	SVStringVector::const_iterator Iter( Cameras.begin() );
 	for( ; Cameras.end() != Iter; ++Iter )
 	{
 		SVDeviceParamCollection* pDeviceParams = nullptr;
@@ -5086,7 +5057,7 @@ void SVObserverApp::SetTestMode(bool p_bNoSecurity )
 	}
 }
 
-HRESULT SVObserverApp::GetTriggersAndCounts( CString& p_strTrigCnts ) const
+HRESULT SVObserverApp::GetTriggersAndCounts( SVString& rTriggerCounts ) const
 {
 	HRESULT l_hr = S_FALSE;
 	SVConfigurationObject* pConfig( nullptr );
@@ -5101,15 +5072,13 @@ HRESULT SVObserverApp::GetTriggersAndCounts( CString& p_strTrigCnts ) const
 			//Returns true when pointer valid
 			if( nullptr != pPPQ )
 			{
-				CString l_strTmp;
 				SvTi::SVTriggerObject* pTrigger( nullptr );
 				//If returns true has valid pointer
 				if( pPPQ->GetTrigger( pTrigger ))
 				{
 					l_hr = S_OK;
-					pTrigger->m_lTriggerCount;
-					l_strTmp.Format( "\n%s count-%d", pTrigger->GetName(), pTrigger->m_lTriggerCount );
-					p_strTrigCnts += l_strTmp;
+					SVString Temp = SvUl_SF::Format( _T("\n%s count-%d"), pTrigger->GetName(), pTrigger->m_lTriggerCount );
+					rTriggerCounts += Temp;
 				}
 			}
 		}
@@ -5419,52 +5388,50 @@ void SVObserverApp::UpdateRemoteInputTabs()
 	}
 }
 
-HRESULT SVObserverApp::CheckDrive(const CString& p_strDrive) const
+HRESULT SVObserverApp::CheckDrive(const SVString& rDrive) const
 {
 	HRESULT l_hr = S_OK;
 	// Check if exists
-	if( PathFileExists(p_strDrive) == FALSE )
+	if( !PathFileExists( rDrive.c_str() ) )
 	{
-		CString l_strDrive = p_strDrive;
-		l_strDrive.MakeUpper();
+		SVString Drive = SvUl_SF::Left( rDrive, 1);
+		SvUl_SF::MakeUpper( Drive );
 
-		SVStringArray msgList;
-		msgList.push_back(SVString(l_strDrive.Left(1)));
+		SVStringVector msgList;
+		msgList.push_back( Drive );
 
 		SvStl::MessageMgrStd Exception( SvStl::LogAndDisplay );
 		Exception.setMessage( SVMSG_SVO_5051_DRIVEDOESNOTEXIST, SvOi::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams) );
 	}
-	TCHAR szVolumeName[100];
-	TCHAR szFileSystemName[32];
+	TCHAR VolumeName[100];
+	TCHAR FileSystemName[32];
 	DWORD dwSerialNumber;
 	DWORD dwMaxFileNameLength;
 	DWORD dwFileSystemFlags;
 
-	if( GetVolumeInformation( p_strDrive,
-		szVolumeName,
-		sizeof( szVolumeName),
+	if( GetVolumeInformation( rDrive.c_str(),
+		VolumeName,
+		sizeof( VolumeName),
 		&dwSerialNumber,
 		&dwMaxFileNameLength,
 		&dwFileSystemFlags,
-		szFileSystemName,
-		sizeof(szFileSystemName)))
+		FileSystemName,
+		sizeof(FileSystemName)))
 	{
-		CString l_strName(szFileSystemName);
-		if( l_strName.Find(_T("NTFS")) < 0)
+		SVString Name( FileSystemName );
+		if( SVString::npos == Name.find( _T("NTFS") ) )
 		{
-			CString l_strDrive;
-			l_strDrive = p_strDrive;
-			l_strDrive.MakeUpper();
-			l_strDrive = l_strDrive.Left(1);
+			SVString Drive = SvUl_SF::Left( rDrive, 1);
+			SvUl_SF::MakeUpper( Drive );
 
 			SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-			Exception.setMessage( SVMSG_SVO_5052_DRIVENOTNTFSFORMAT, l_strDrive, SvStl::SourceFileParams(StdMessageParams) );
+			Exception.setMessage( SVMSG_SVO_5052_DRIVENOTNTFSFORMAT, Drive.c_str(), SvStl::SourceFileParams(StdMessageParams) );
 		
 #ifndef _DEBUG
-			ASSERT( false ); //l_strDrive );
+			ASSERT( false );
 #else
 #if defined (TRACE_THEM_ALL) || defined (TRACE_SVO)
-			::OutputDebugString(l_strDrive);
+			::OutputDebugString(Drive.c_str());
 #endif
 #endif
 		}
@@ -5547,7 +5514,7 @@ void SVObserverApp::Start()
 			//If more than the normal pecentage used then log a message
 			if( cNormalNonPageMemoryUsage < NonPagedMemUsage )
 			{
-				SVStringArray msgList;
+				SVStringVector msgList;
 				msgList.push_back( SvUl_SF::Format(_T("%.0f"), cNormalNonPageMemoryUsage ) );
 				msgList.push_back( SvUl_SF::Format(_T("%.0f"), NonPagedMemUsage ) );
 				SvStl::MessageMgrStd Exception( SvStl::LogOnly );
@@ -5699,13 +5666,13 @@ void SVObserverApp::Start()
 
 		SVObjectManagerClass::Instance().SetState( SVObjectManagerClass::ReadOnly );
 
-		CString l_strTrigCnts;
-		GetTriggersAndCounts( l_strTrigCnts );
+		SVString TriggerCounts;
+		GetTriggersAndCounts( TriggerCounts );
 		l_FinishLoad = SVClock::GetTimeStamp();
 		long l_lTime = static_cast<long>(l_FinishLoad - l_StartLoading);
 
-		SVStringArray msgList;
-		msgList.push_back(SVString(l_strTrigCnts));
+		SVStringVector msgList;
+		msgList.push_back( TriggerCounts );
 		msgList.push_back(SvUl_SF::Format(_T("%d"), l_lTime));
 
 		//add go-online message to the event viewer.
@@ -5743,18 +5710,18 @@ HRESULT SVObserverApp::INILoad()
 	l_csSystemDir.Format( "%s\\OEMINFO.INI", l_szSystemDir );
 
 	// clear these variables
-	m_csProductName.Empty();
+	m_ProductName.clear();
 
-	m_csProcessorBoardName = _T( "Unknown board" );
-	m_csTriggerBoardName = _T( "Unknown board" );
-	m_csAcquisitionBoardName = _T( "Unknown board" );
-	m_csDigitalBoardName = _T( "Unknown board" );
-	m_csRAIDBoardName = _T( "Unknown board" );
+	m_ProcessorBoardName = _T( "Unknown board" );
+	m_TriggerBoardName = _T( "Unknown board" );
+	m_AcquisitionBoardName = _T( "Unknown board" );
+	m_DigitalBoardName = _T( "Unknown board" );
+	m_RAIDBoardName = _T( "Unknown board" );
 
-	m_csProcessor.Empty();
-	m_csFrameGrabber.Empty();
-	m_csIOBoard.Empty();
-	m_csOptions.Empty();
+	m_Processor.clear();
+	m_FrameGrabber.clear();
+	m_IOBoard.clear();
+	m_Options.clear();
 
 	// load the SVIM.ini, OEMINFO.ini, and HARDWARE.ini
 	HRESULT l_hrOk = IniLoader.Load(SvStl::GlobalPath::Inst().GetSVIMIniPath(), l_csSystemDir,SvStl::GlobalPath::Inst().GetHardwareIniPath());
@@ -5772,32 +5739,32 @@ HRESULT SVObserverApp::INILoad()
 		RootObject::setRootChildValue( SvOl::FqnEnvironmentSerialNumber , IniLoader.m_SerialNumber.c_str() );
 		RootObject::setRootChildValue( SvOl::FqnEnvironmentWinKey, IniLoader.m_WinKey.c_str() );
 
-		m_csProductName = IniLoader.m_ProductName.c_str();
+		m_ProductName = IniLoader.m_ProductName;
 
-		m_csProcessorBoardName = IniLoader.m_ProcessorBoardName.c_str();
-		m_csTriggerBoardName = IniLoader.m_TriggerBoardName.c_str();
-		m_csAcquisitionBoardName = IniLoader.m_AcquisitionBoardName.c_str();
-		m_csDigitalBoardName = IniLoader.m_DigitalBoardName.c_str();
-		m_csRAIDBoardName = IniLoader.m_RAIDBoardName.c_str();
+		m_ProcessorBoardName = IniLoader.m_ProcessorBoardName;
+		m_TriggerBoardName = IniLoader.m_TriggerBoardName;
+		m_AcquisitionBoardName = IniLoader.m_AcquisitionBoardName;
+		m_DigitalBoardName = IniLoader.m_DigitalBoardName;
+		m_RAIDBoardName = IniLoader.m_RAIDBoardName;
 
-		m_csDigitalDLL = IniLoader.m_DigitalDLL.c_str();
-		m_csDigitalOption = IniLoader.m_IOBoardOption.c_str();
-		m_csDigitizerDLL = IniLoader.m_DigitizerDLL.c_str();
-		m_csFileAcquisitionDLL = IniLoader.m_FileAcquisitionDLL.c_str();
-		m_csTriggerDLL = IniLoader.m_TriggerDLL.c_str();
-		m_csSoftwareTriggerDLL = IniLoader.m_SoftwareTriggerDLL.c_str();
-		m_csAcquisitionTriggerDLL = IniLoader.m_AcquisitionTriggerDLL.c_str();
+		m_DigitalDLL = IniLoader.m_DigitalDLL;
+		m_DigitalOption = IniLoader.m_IOBoardOption;
+		m_DigitizerDLL = IniLoader.m_DigitizerDLL;
+		m_FileAcquisitionDLL = IniLoader.m_FileAcquisitionDLL;
+		m_TriggerDLL = IniLoader.m_TriggerDLL;
+		m_SoftwareTriggerDLL = IniLoader.m_SoftwareTriggerDLL;
+		m_AcquisitionTriggerDLL = IniLoader.m_AcquisitionTriggerDLL;
 
-		m_csReloadDigitalDLL = IniLoader.m_ReloadDigitalDLL.c_str();
-		m_csReloadAcquisitionDLL = IniLoader.m_ReloadAcquisitionDLL.c_str();
-		m_csReloadTriggerDLL = IniLoader.m_ReloadTriggerDLL.c_str();
+		m_ReloadDigitalDLL = IniLoader.m_ReloadDigitalDLL;
+		m_ReloadAcquisitionDLL = IniLoader.m_ReloadAcquisitionDLL;
+		m_ReloadTriggerDLL = IniLoader.m_ReloadTriggerDLL;
 
-		m_csOptions = IniLoader.m_Options.c_str();
-		m_csProcessor = IniLoader.m_Processor.c_str();
-		m_csFrameGrabber = IniLoader.m_FrameGrabber.c_str();
-		m_csIOBoard = IniLoader.m_IOBoard.c_str();
+		m_Options = IniLoader.m_Options;
+		m_Processor = IniLoader.m_Processor;
+		m_FrameGrabber = IniLoader.m_FrameGrabber;
+		m_IOBoard = IniLoader.m_IOBoard;
 
-		m_csTrigger = IniLoader.m_Trigger.c_str();
+		m_Trigger = IniLoader.m_Trigger;
 
 		// Get GIGE packet Size
 		m_gigePacketSize = IniLoader.m_gigePacketSize;
@@ -5838,18 +5805,18 @@ HRESULT SVObserverApp::INIClose()
 {
 	m_hrHardwareFailure = SV_HARDWARE_FAILURE_ALL;
 
-	m_csProductName.Empty();
+	m_ProductName.clear();
 
-	m_csProcessor.Empty();
-	m_csFrameGrabber.Empty();
-	m_csIOBoard.Empty();
-	m_csOptions.Empty();
+	m_Processor.clear();
+	m_FrameGrabber.clear();
+	m_IOBoard.clear();
+	m_Options.clear();
 
-	m_csProcessorBoardName = _T( "Unknown board" );
-	m_csTriggerBoardName = _T( "Unknown board" );
-	m_csAcquisitionBoardName = _T( "Unknown board" );
-	m_csDigitalBoardName = _T( "Unknown board" );
-	m_csRAIDBoardName = _T( "Unknown board" );
+	m_ProcessorBoardName = _T( "Unknown board" );
+	m_TriggerBoardName = _T( "Unknown board" );
+	m_AcquisitionBoardName = _T( "Unknown board" );
+	m_DigitalBoardName = _T( "Unknown board" );
+	m_RAIDBoardName = _T( "Unknown board" );
 
 	CloseAcquisitionDLL();
 
@@ -5864,34 +5831,34 @@ HRESULT SVObserverApp::INIReset()
 {
 	HRESULT l_hrOk = S_OK;
 
-	if( m_csReloadAcquisitionDLL.CompareNoCase( _T( "Y" ) ) == 0 )
+	if( 0 == SvUl_SF::CompareNoCase( m_ReloadAcquisitionDLL, _T( "Y" ) ) )
 	{
 		CloseAcquisitionDLL();
 	}
 
-	if( m_csReloadTriggerDLL.CompareNoCase( _T( "Y" ) ) == 0 )
+	if( 0 == SvUl_SF::CompareNoCase( m_ReloadTriggerDLL, _T( "Y" ) ) )
 	{
 		CloseTriggerDLL();
 	}
 
-	if( m_csReloadDigitalDLL.CompareNoCase( _T( "Y" ) ) == 0 )
+	if( 0 == SvUl_SF::CompareNoCase( m_ReloadDigitalDLL, _T( "Y" ) ) )
 	{
 		CloseDigitalDLL();
 	}
 
-	if( m_csReloadDigitalDLL.CompareNoCase( _T( "Y" ) ) == 0 )
+	if( 0 == SvUl_SF::CompareNoCase( m_ReloadDigitalDLL, _T( "Y" ) ) )
 	{
 		l_hrOk = l_hrOk | LoadDigitalDLL();
 	}
 
-	if( m_csReloadTriggerDLL.CompareNoCase( _T( "Y" ) ) == 0 )
+	if( 0 == SvUl_SF::CompareNoCase( m_ReloadTriggerDLL, _T( "Y" ) ) )
 	{
 		l_hrOk = l_hrOk | LoadTriggerDLL();
 		l_hrOk = l_hrOk | LoadSoftwareTriggerDLL();
 		l_hrOk = l_hrOk | LoadAcquisitionTriggerDLL();
 	}
 
-	if( m_csReloadAcquisitionDLL.CompareNoCase( _T( "Y" ) ) == 0 )
+	if( 0 == SvUl_SF::CompareNoCase( m_ReloadAcquisitionDLL, _T( "Y" ) ) )
 	{
 		l_hrOk = l_hrOk | LoadAcquisitionDLL();
 		l_hrOk = l_hrOk | LoadFileAcquisitionDLL();
@@ -5904,7 +5871,7 @@ HRESULT SVObserverApp::LoadTriggerDLL()
 {
 	HRESULT l_hrOk = S_OK ;
 
-	if ( ! m_csTriggerDLL.IsEmpty() )
+	if ( ! m_TriggerDLL.empty() )
 	{
 		VARIANT l_varValue;
 
@@ -5912,7 +5879,7 @@ HRESULT SVObserverApp::LoadTriggerDLL()
 
 		l_varValue.vt = VT_I4;
 
-		if ( S_OK != m_svDLLTriggers.Open( m_csTriggerDLL ) )
+		if ( S_OK != m_svDLLTriggers.Open( m_TriggerDLL.c_str() ) )
 		{
 			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_TRIGGER;
 		}
@@ -5949,7 +5916,7 @@ HRESULT SVObserverApp::LoadTriggerDLL()
 	}
 	else
 	{
-		if( m_csTrigger != _T( "00" ) )
+		if( m_Trigger != _T("00") )
 		{
 			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_TRIGGER;
 		}
@@ -5973,9 +5940,9 @@ HRESULT SVObserverApp::LoadSoftwareTriggerDLL()
 {
 	HRESULT l_hrOk = S_OK;
 
-	if ( ! m_csSoftwareTriggerDLL.IsEmpty() )
+	if ( ! m_SoftwareTriggerDLL.empty() )
 	{
-		if ( S_OK != m_svDLLSoftwareTriggers.Open( m_csSoftwareTriggerDLL ) )
+		if ( S_OK != m_svDLLSoftwareTriggers.Open( m_SoftwareTriggerDLL.c_str() ) )
 		{
 			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_SOFTWARETRIGGER;
 		}
@@ -5992,9 +5959,9 @@ HRESULT SVObserverApp::LoadAcquisitionTriggerDLL()
 {
 	HRESULT l_hrOk = S_OK;
 
-	if ( ! m_csAcquisitionTriggerDLL.IsEmpty() )
+	if ( ! m_AcquisitionTriggerDLL.empty() )
 	{
-		HRESULT ResultLoadDLL( m_svDLLAcquisitionTriggers.Open( m_csAcquisitionTriggerDLL ) );
+		HRESULT ResultLoadDLL( m_svDLLAcquisitionTriggers.Open( m_AcquisitionTriggerDLL.c_str() ) );
 		//Do not care about the Matrox service here as it will be handled in the LoadAcquisitionDLL
 		if( S_OK != ResultLoadDLL && ErrorMatroxServiceNotRunning != ResultLoadDLL )
 		{
@@ -6016,16 +5983,16 @@ HRESULT SVObserverApp::LoadAcquisitionDLL()
 {
 	HRESULT l_hrOk = S_OK;
 
-	if( ! m_csDigitizerDLL.IsEmpty() )
+	if( ! m_DigitizerDLL.empty() )
 	{
-		HRESULT ResultLoadDLL( m_svDLLDigitizers.Open( m_csDigitizerDLL ) );
+		HRESULT ResultLoadDLL( m_svDLLDigitizers.Open( m_DigitizerDLL.c_str() ) );
 		if( S_OK != ResultLoadDLL )
 		{
 			//This is the error result which indicates that the Matrox Gige service is not running
 			if( ErrorMatroxServiceNotRunning == ResultLoadDLL )
 			{
 				SvStl::MessageMgrStd Exception( SvStl::LogAndDisplay );
-				Exception.setMessage( SVMSG_SVO_90_MATROX_SERVICE_NOT_RUNNING, m_csDigitizerDLL, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_25048_NoMatroxService );
+				Exception.setMessage( SVMSG_SVO_90_MATROX_SERVICE_NOT_RUNNING, m_DigitizerDLL.c_str(), SvStl::SourceFileParams(StdMessageParams), SvOi::Err_25048_NoMatroxService );
 			}
 			else
 			{
@@ -6042,7 +6009,7 @@ HRESULT SVObserverApp::LoadAcquisitionDLL()
 	}
 	else
 	{
-		if( m_csFrameGrabber != _T( "00" ) )
+		if( m_FrameGrabber != _T( "00" ) )
 		{
 			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_ACQUISITION;
 		}
@@ -6066,9 +6033,9 @@ HRESULT SVObserverApp::LoadFileAcquisitionDLL()
 {
 	HRESULT l_hrOk = S_OK;
 
-	if( ! m_csFileAcquisitionDLL.IsEmpty() )
+	if( ! m_FileAcquisitionDLL.empty() )
 	{
-		if( S_OK != m_svDLLFileAcquisition.Open( m_csFileAcquisitionDLL ) )
+		if( S_OK != m_svDLLFileAcquisition.Open( m_FileAcquisitionDLL.c_str() ) )
 		{
 			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_FILEACQUISITION;
 		}
@@ -6085,9 +6052,9 @@ HRESULT SVObserverApp::LoadDigitalDLL()
 {
 	HRESULT l_hrOk = S_OK;
 
-	if ( ! m_csDigitalDLL.IsEmpty() )
+	if ( ! m_DigitalDLL.empty() )
 	{
-		if ( SVIOConfigurationInterfaceClass::Instance().OpenDigital( m_csDigitalDLL ) != S_OK )
+		if ( SVIOConfigurationInterfaceClass::Instance().OpenDigital( m_DigitalDLL.c_str() ) != S_OK )
 		{
 			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_IO;
 		}
@@ -6097,21 +6064,21 @@ HRESULT SVObserverApp::LoadDigitalDLL()
 			l_vt.vt = VT_I4;
 
 			// Hardware.ini has the new IOBoardOption.
-			if( !m_csDigitalOption.IsEmpty() )
+			if( !m_DigitalOption.empty() )
 			{
-				l_vt.lVal = atol( m_csDigitalOption );
+				l_vt.lVal = atol( m_DigitalOption.c_str() );
 				SVIOConfigurationInterfaceClass::Instance().SetParameterValue( SVBoardType, &l_vt );
 			}
 			else
 			{	// Legacy behavior.... Hardware.Ini file does not have new entry...
-				l_vt.lVal = atol( m_csIOBoard );
+				l_vt.lVal = atol( m_IOBoard.c_str() );
 				SVIOConfigurationInterfaceClass::Instance().SetParameterValue( SVBoardType, &l_vt );
 			}
 		}
 	}
 	else
 	{
-		if( m_csIOBoard != _T( "00" ) )
+		if( m_IOBoard != _T("00") )
 		{
 			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_IO;
 		}
@@ -6127,34 +6094,34 @@ HRESULT SVObserverApp::CloseDigitalDLL()
 	return S_OK;
 }
 
-LPCTSTR SVObserverApp::GetTriggerBoardName() const
+const SVString& SVObserverApp::GetTriggerBoardName() const
 {
-	return m_csTriggerBoardName;
+	return m_TriggerBoardName;
 }
 
-LPCTSTR SVObserverApp::GetSoftwareTriggerBoardName() const
+const SVString& SVObserverApp::GetSoftwareTriggerBoardName() const
 {
-	return m_csSoftwareTriggerDLL;
+	return m_SoftwareTriggerDLL;
 }
 
-LPCTSTR SVObserverApp::GetAcquisitionBoardName() const
+const SVString& SVObserverApp::GetAcquisitionBoardName() const
 {
-	return m_csAcquisitionBoardName;
+	return m_AcquisitionBoardName;
 }
 
-LPCTSTR SVObserverApp::GetFileAcquisitionBoardName() const
+const SVString& SVObserverApp::GetFileAcquisitionBoardName() const
 {
-	return m_csFileAcquisitionBoardName;
+	return m_FileAcquisitionBoardName;
 }
 
-LPCTSTR SVObserverApp::GetDigitalBoardName() const
+const SVString& SVObserverApp::GetDigitalBoardName() const
 {
-	return m_csDigitalBoardName;
+	return m_DigitalBoardName;
 }
 
-LPCTSTR SVObserverApp::GetRAIDBoardName() const
+const SVString& SVObserverApp::GetRAIDBoardName() const
 {
-	return m_csRAIDBoardName;
+	return m_RAIDBoardName;
 }
 
 HRESULT SVObserverApp::DisconnectAllCameraBuffers()
@@ -6175,12 +6142,12 @@ HRESULT SVObserverApp::ConnectCameraBuffers()
 
 	SVConfigurationObject* pConfig( nullptr );
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
-	SVStringArray Cameras;
+	SVStringVector Cameras;
 	SVDigitizerProcessingClass::Instance().GetAcquisitionDeviceList( Cameras );
 
 	if( nullptr != pConfig )
 	{
-		SVStringArray::const_iterator Iter( Cameras.begin() );
+		SVStringVector::const_iterator Iter( Cameras.begin() );
 		for( ; Cameras.end() != Iter; ++Iter )
 		{
 			SVAcquisitionClassPtr pAcqDevice;
@@ -6289,7 +6256,7 @@ HRESULT SVObserverApp::InitializeSecurity()
 // this class should receive at least the following methods from SVObserverApp:
 // fileSaveAsSVX(), DetermineConfigurationSaveName(), SaveConfigurationAndRelatedFiles();
 
-void SVObserverApp::fileSaveAsSVX( CString StrSaveAsPathName, bool isAutoSave) 
+void SVObserverApp::fileSaveAsSVX( SVString SaveAsPathName, bool isAutoSave) 
 {
 	CWaitCursor wait;
 
@@ -6302,17 +6269,16 @@ void SVObserverApp::fileSaveAsSVX( CString StrSaveAsPathName, bool isAutoSave)
 	//
 	if (!isAutoSave)// in an AutoSave the configuration name must not be changed
 	{
-		if(StrSaveAsPathName.IsEmpty() )
+		if(SaveAsPathName.empty() )
 		{
 			bOk = DetermineConfigurationSaveName();
 		}
 		else
 		{
-			bOk = (setConfigFullFileName( StrSaveAsPathName, FALSE ) == TRUE);
+			bOk = (setConfigFullFileName( SaveAsPathName.c_str(), FALSE ) == TRUE);
 		}
 	}
-
-	if ( bOk && !CString( m_ConfigFileName.GetExtension() ).CompareNoCase( ".svx" ) )
+	if ( bOk && !SvUl_SF::CompareNoCase( m_ConfigFileName.GetExtension(), SVString(_T(".svx")) ) )
 	{
 		SaveConfigurationAndRelatedFiles(isAutoSave);
 	}
@@ -6331,23 +6297,23 @@ bool SVObserverApp::DetermineConfigurationSaveName()
 
 	svFileName.SetFileType( SV_SVX_CONFIGURATION_FILE_TYPE );
 
-	if ( CString( getConfigPathName() ).IsEmpty() ||
-		CString( getConfigPathName() ).CompareNoCase( SvStl::GlobalPath::Inst().GetRunPath().c_str() ) == 0 )
+	if ( getConfigPathName().empty() ||
+		 0 == SvUl_SF::CompareNoCase( getConfigPathName(), SvStl::GlobalPath::Inst().GetRunPath() ) )
 	{
 		svFileName.SetPathName( AfxGetApp()->GetProfileString( _T( "Settings" ), 
 			_T( "ConfigurationFilePath" ), 
 			SvStl::GlobalPath::Inst().GetRunPath().c_str() ) );
 
-		if ( CString( svFileName.GetPathName() ).CompareNoCase(SvStl::GlobalPath::Inst().GetRunPath().c_str() ) == 0 )
+		if ( 0 == SvUl_SF::CompareNoCase( svFileName.GetPathName(), SvStl::GlobalPath::Inst().GetRunPath().c_str() ) )
 		{
-			if ( ! CString( SVFileNameManagerClass::GetConfigurationPathName() ).IsEmpty() )
+			if (  !SVFileNameManagerClass::Instance().GetConfigurationPathName().empty() )
 			{
-				svFileName.SetPathName( SVFileNameManagerClass::GetConfigurationPathName() );
+				svFileName.SetPathName( SVFileNameManagerClass::Instance().GetConfigurationPathName().c_str() );
 			}
 		}
 		else
 		{
-			CString path = svFileName.GetPathName();
+			CString path = svFileName.GetPathName().c_str();
 			int pos = path.ReverseFind(_T('\\'));
 			if (pos != -1)
 			{
@@ -6364,11 +6330,11 @@ bool SVObserverApp::DetermineConfigurationSaveName()
 
 	if ( svFileName.SaveFile() )
 	{
-		if (setConfigFullFileName( svFileName.GetFullFileName(), RENAME ))
+		if (setConfigFullFileName( svFileName.GetFullFileName().c_str(), RENAME ))
 		{
 			AfxGetApp()->WriteProfileString( _T( "Settings" ), 
 				_T( "ConfigurationFilePath" ), 
-				svFileName.GetPathName() );
+				svFileName.GetPathName().c_str() );
 		}
 		else
 		{
@@ -6389,14 +6355,14 @@ void SVObserverApp::SaveConfigurationAndRelatedFiles(bool isAutoSave)
 	SVConfigurationObject* pConfig( nullptr );
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-	CString csFilePath = m_ConfigFileName.GetFullFileName();
+	CString csFilePath = m_ConfigFileName.GetFullFileName().c_str();
 	if(isAutoSave) 
 	{
 		ExtrasEngine::Instance().CopyDirectoryToTempDirectory(SvStl::GlobalPath::Inst().GetRunPath().c_str()); //ABX wäre CopyDirectoryToTempDirectory() nicht woanders besser aufgehoben als bei ExtrasEngine?
 		ExtrasEngine::Instance().ResetAutoSaveInformation(); //update autosave timestamp
 
 		//in an AutoSave the configuration is not to be saved into its standard directory!
-		csFilePath = SvStl::GlobalPath::Inst().GetAutoSaveTempPath(m_ConfigFileName.GetFileName()).c_str();
+		csFilePath = SvStl::GlobalPath::Inst().GetAutoSaveTempPath(m_ConfigFileName.GetFileName().c_str()).c_str();
 	}
 
 	if( nullptr != pConfig ) 
@@ -6424,20 +6390,20 @@ void SVObserverApp::SaveConfigurationAndRelatedFiles(bool isAutoSave)
 		// save are skipped, 
 		// e.g. the configuration name must not be added to the LRU list
 
-		SVFileNameManagerClass::SaveItem( &m_ConfigFileName ); //Arvid: here the configuration seems to be copied from the Run directory (C:\Run)
-		SVFileNameManagerClass::SaveItems();				   //Arvid: here other files required for the configuration seem to be copied from the Run directory (C:\Run)
-		SVFileNameManagerClass::RemoveUnusedFiles();
+		SVFileNameManagerClass::Instance().SaveItem( &m_ConfigFileName );
+		SVFileNameManagerClass::Instance().SaveItems();
+		SVFileNameManagerClass::Instance().RemoveUnusedFiles();
 
 		SVSVIMStateClass::RemoveState( SV_STATE_MODIFIED );
 
-		if ( CString( SVFileNameManagerClass::GetConfigurationPathName() ).IsEmpty() )
+		SVString ConfigPath(SVFileNameManagerClass::Instance().GetConfigurationPathName());
+		if ( ConfigPath.empty() )
 		{
-			AddToRecentFileList( getConfigFullFileName() );
+			AddToRecentFileList( getConfigFullFileName().c_str() );
 		}
 		else
 		{
-			AddToRecentFileList( CString( SVFileNameManagerClass::GetConfigurationPathName() ) + 
-				"\\" + getConfigFileName() );
+			AddToRecentFileList( SVString( ConfigPath + _T("\\") + getConfigFileName()).c_str() );
 		}
 
 		( (CMDIFrameWnd*) AfxGetMainWnd() )->OnUpdateFrameTitle(TRUE);
@@ -6481,7 +6447,7 @@ BOOL SVObserverApp::OpenConfigFileFromMostRecentList(int nID)
 		
 	HRESULT hr = S_FALSE;
 
-	if ( CString( svFileName.GetExtension() ).CollateNoCase( ".svx" ) == 0 )
+	if ( 0 == SvUl_SF::CompareNoCase( svFileName.GetExtension(), SVString( _T(".svx") ) ) )
 	{
 		hr = OpenSVXFile((*m_pRecentFileList)[nIndex]);
 	}
@@ -6921,7 +6887,7 @@ BOOL SVObserverApp::InitATL()
 
 	if( FAILED( l_Status ) )
 	{
-		SVStringArray msgList;
+		SVStringVector msgList;
 		msgList.push_back(SvUl_SF::Format( _T("%08X"), l_Status ));
 #ifdef _DEBUG
 		if( ! l_AppRegister && ! l_AppUnregister )
@@ -7035,20 +7001,21 @@ void SVObserverApp::StopRegression()
 	OnStop();
 }
 
-bool SVObserverApp::AddSecurityNode( HMODULE hMessageDll, long lId ,CString sNTGroup, bool bForcePrompt)
+bool SVObserverApp::AddSecurityNode( HMODULE hMessageDll, long lId ,LPCTSTR NTGroup, bool bForcePrompt)
 {
-	LPTSTR pszTmp;
+	LPTSTR pTmp;
 
 	if (FormatMessage (FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_IGNORE_INSERTS |
 		FORMAT_MESSAGE_FROM_HMODULE,
 		(LPCVOID) hMessageDll, lId,
 		MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), // Default language
-		(LPTSTR) &pszTmp, 0, nullptr))
+		(LPTSTR) &pTmp, 0, nullptr))
 	{
 
-		CString strTmp = pszTmp;
-		m_svSecurityMgr.SVAdd( lId, strTmp.Left( strTmp.Find('\n',0) -1), sNTGroup, bForcePrompt);
-		LocalFree( pszTmp );
+		SVString Tmp( pTmp );
+		Tmp = SvUl_SF::Left( Tmp, Tmp.find('\n') - 1 );
+		m_svSecurityMgr.SVAdd( lId, Tmp.c_str(), NTGroup, bForcePrompt);
+		LocalFree( pTmp );
 		return true;
 	}
 	return false;

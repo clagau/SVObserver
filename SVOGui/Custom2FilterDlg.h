@@ -140,9 +140,9 @@ namespace Seidenader
 
 			//************************************
 			// Description: Updates all selected cells of the grid with the given value
-			// Parameter: rValue <in> The new value for all selected cells
+			// Parameter: Value <in> The new value for all selected cells
 			//************************************
-			void updateGridSelection( const CString& rValue );
+			void updateGridSelection( LPCTSTR Value );
 
 			//************************************
 			// Description: This method is used to update the Edit Cell control and the Grid Status

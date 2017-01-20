@@ -11,27 +11,30 @@
 
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <boost/function.hpp>
 #include "SVJsonCommandServerSocket.h"
+#include "SVUtilityLibrary/SVString.h"
+#pragma endregion Includes
 
 class SVJsonCommandServer
 {
 public:
 	typedef boost::function<void ( )> SVClientAcceptFunction;
-	typedef boost::function<void ( const std::string& p_rCommand, std::string& p_rResponse )> SVProcessCommandFunction;
+	typedef boost::function<void ( const SVString& rCommand, SVString& rResponse )> SVProcessCommandFunction;
 
 	SVJsonCommandServer();
 	virtual ~SVJsonCommandServer();
 
-	void ListenForClients(unsigned short p_PortNumber, SVProcessCommandFunction p_ProcessCommandFunction, SVClientAcceptFunction p_ClientAcceptFunction = SVClientAcceptFunction() );
+	void ListenForClients(unsigned short p_PortNumber, SVProcessCommandFunction ProcessCommandFunction, SVClientAcceptFunction ClientAcceptFunction = SVClientAcceptFunction() );
 	void DisconnectFromClients();
 
-	HRESULT WriteJson(const std::string& data);
+	HRESULT WriteJson(const SVString& rData);
 	bool HasClient() const;
 
 private:
 	void OnClientAccepted();
-	void OnClientJsonReceived(const std::string& data);
+	void OnClientJsonReceived(const SVString& rData);
 
 	SVClientAcceptFunction m_ClientAcceptFunction;
 	SVProcessCommandFunction m_ProcessCommandFunction;

@@ -13,6 +13,7 @@
 #pragma region Includes
 #include "SVSystemLibrary/SVLockableClass.h"
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
+#include "SVUtilityLibrary/SVString.h"
 #include "SVOCVBlobRecord.h"
 #include "SVResult.h"
 #pragma endregion Includes
@@ -39,7 +40,7 @@ public:
 	//virtual CRect Draw( HDC DC, CRect R ) override;
 	virtual BOOL OnValidate() override;
 
-	void GetOCVResultString( CString & csResult );
+	void GetOCVResultString( SVString& rResult );
 	
 	BOOL GenerateFontModel();
 	HRESULT LoadMatchString();
@@ -47,7 +48,7 @@ public:
 
 	BOOL BuildHashTable(char *pBuffer);
 	void InsertValueToTable(short nValue, int index);
-	int CheckStringInTable(CString MatchString);
+	int CheckStringInTable(const SVString& rMatchString);
 	BOOL UpdateResultFigure( long p_lIndex );
 
 	SVImageClass* getInputImage();
@@ -76,7 +77,7 @@ protected:
 	long     m_lLowValue;
 	long     m_lHighValue;
 	int      m_nTotalCount;
-	char     *m_pDataArr[OCV_MAX_ENTREES];
+	TCHAR    *m_pDataArr[OCV_MAX_ENTREES];
 	short    *m_pIndexTable;
 	double   m_dFactor;
 

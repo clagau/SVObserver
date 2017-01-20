@@ -11,8 +11,8 @@
 //Moved to precompiled header: #include <sstream>
 #include "SVXMLMaterialsTree.h"
 #include "SVObjectXMLWriter.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
-
 
 #pragma region Declarations
 #pragma endregion Declarations
@@ -33,7 +33,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 		static bool  CopyTreeNodeToWriter( SVT_TREE& rTree, const typename SVT_TREE::SVBranchHandle& TreeNodeHandle, SVObjectXMLWriter& rWriter )
 		{
 			bool status(true);
-			std::string  TreeNodeName;
+			SVString  TreeNodeName;
 			TreeNodeName = rTree.getBranchName( TreeNodeHandle );
 			if( TreeNodeHandle == rTree.getRoot() && TreeNodeName == "Base")
 			{
@@ -50,7 +50,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 				pLeaf = rTree.getFirstLeaf( TreeNodeHandle );
 				while( rTree.isValidLeaf( TreeNodeHandle, pLeaf ) )
 				{
-					std::string  Leafname;
+					SVString  Leafname;
 					_variant_t leafdata;
 					Leafname = rTree.getLeafName( pLeaf );
 					if( 0 == Leafname.length() )

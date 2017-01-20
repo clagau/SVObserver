@@ -16,6 +16,7 @@
 #include "SVObjectLibrary/SVOutputInfoListClass.h"
 #include "SVInfoStructs.h"
 #include "ResultViewReferences.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 

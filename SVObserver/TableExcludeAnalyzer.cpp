@@ -13,6 +13,7 @@
 #include "SVObjectLibrary\SVClsids.h"
 #include "TableAnalyzerTool.h"
 #include "TextDefinesSvO.h"
+#include "SVUtilityLibrary\SVString.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -109,7 +110,7 @@ BOOL TableExcludeAnalyzer::OnValidate()
 		if( !Result && 0 != getFirstTaskMessage().getMessage().m_MessageCode)
 		{
 			SvStl::MessageContainer message;
-			SVStringArray msgList;
+			SVStringVector msgList;
 			msgList.push_back(GetName());
 			message.setMessage( SVMSG_SVO_5074_BASECLASSONVALIDATEFAILED, SvOi::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams) );
 			addTaskMessage( message );
@@ -229,10 +230,9 @@ void TableExcludeAnalyzer::BuildEmbeddedObjectList()
 	vtTemp.dblVal = cDefaultHighValue;
 	m_excludeHigh.SetDefaultValue( vtTemp, true );
 
-	CString ObjectName;
-	ObjectName.LoadString( IDS_OBJECTNAME_TABLEANALYZEREXCLUDE_HIGHVALUE );
+	SVString ObjectName = SvUl_SF::LoadSVString( IDS_OBJECTNAME_TABLEANALYZEREXCLUDE_HIGHVALUE );
 	ObjectName +=  SvO::cLinkName;
-	RegisterEmbeddedObject( &m_excludeHigh.getLinkedName(), TableAnaylzerExcludeHigh_LinkGuid, ObjectName, false, SVResetItemNone );
+	RegisterEmbeddedObject( &m_excludeHigh.getLinkedName(), TableAnaylzerExcludeHigh_LinkGuid, ObjectName.c_str(), false, SVResetItemNone );
 	m_excludeHigh.getLinkedName().SetDefaultValue( _T(""), false );
 
 	//set excludeLow-Value
@@ -241,9 +241,9 @@ void TableExcludeAnalyzer::BuildEmbeddedObjectList()
 	vtTemp.dblVal = cDefaultLowValue;
 	m_excludeLow.SetDefaultValue( vtTemp, true );
 
-	ObjectName.LoadString( IDS_OBJECTNAME_TABLEANALYZEREXCLUDE_LOWVALUE );
+	ObjectName = SvUl_SF::LoadSVString( IDS_OBJECTNAME_TABLEANALYZEREXCLUDE_LOWVALUE );
 	ObjectName +=  SvO::cLinkName;
-	RegisterEmbeddedObject( &m_excludeLow.getLinkedName(), TableAnaylzerExcludeLow_LinkGuid, ObjectName, false, SVResetItemNone );
+	RegisterEmbeddedObject( &m_excludeLow.getLinkedName(), TableAnaylzerExcludeLow_LinkGuid, ObjectName.c_str(), false, SVResetItemNone );
 	m_excludeLow.getLinkedName().SetDefaultValue( _T(""), false );
 }
 

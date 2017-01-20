@@ -25,6 +25,7 @@
 #include "SVOGui/NoSelector.h"
 #include "SVOGui/ToolSetItemSelector.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -87,8 +88,8 @@ BOOL SVToolAdjustmentDialogStatisticsPageClass::OnInitDialog()
 		getParameters();
 
 		SVObjectReference refObject = m_pTool->GetVariableSelected();
-		m_strVariableToMonitor = refObject.GetCompleteObjectNameToObjectType( nullptr, m_pToolSet->GetObjectType() );
-		m_strFullNameOfVariable = refObject.GetCompleteObjectName();
+		m_strVariableToMonitor = refObject.GetCompleteObjectNameToObjectType( nullptr, m_pToolSet->GetObjectType() ).c_str();
+		m_strFullNameOfVariable = refObject.GetCompleteName().c_str();
 	}
 
 	UpdateData( FALSE ); // set data to dialog
@@ -157,8 +158,8 @@ void SVToolAdjustmentDialogStatisticsPageClass::initListBox(CListBox* pListBox, 
 
     while (1)
     {
-		CString featureStr;
-		featureStr = m_pTool->GetFeatureString();
+		SVString FeatureString;
+		FeatureString = m_pTool->GetFeatureString();
 		
         pListBox->ResetContent();
 
@@ -166,9 +167,9 @@ void SVToolAdjustmentDialogStatisticsPageClass::initListBox(CListBox* pListBox, 
 
 		for (int i = SV_STATS_MIN_VALUE; i < SV_STATS_TOPOF_LIST; i++ )
 		{	
-            if (featureStr [i] == atcTestChar)
+            if( FeatureString[i] == atcTestChar)
             {
-				lReturned = pListBox->AddString( m_pTool->GetFeatureName( i ) );
+				lReturned = pListBox->AddString( m_pTool->GetFeatureName( i ).c_str() );
                 
                 if (lReturned == LB_ERR || lReturned == LB_ERRSPACE)
                 {
@@ -197,8 +198,10 @@ void SVToolAdjustmentDialogStatisticsPageClass::initListBox(CListBox* pListBox, 
 void SVToolAdjustmentDialogStatisticsPageClass::getParameters()
 {
 	// Get Occurence Value
-	if( m_pTool )
-		m_strTestValue = m_pTool->GetOccurenceTestValue();
+	if( nullptr != m_pTool )
+	{
+		m_strTestValue = m_pTool->GetOccurenceTestValue().c_str();
+	}
 
 	// List of not enabled.
 	initListBox( &m_lbAvailableList, _T('0') );
@@ -214,10 +217,10 @@ void SVToolAdjustmentDialogStatisticsPageClass::UpdateStatisticsParameters()
 	if( m_pTool )
 	{
 		// Get the Occurence Value
-		m_pTool->SetOccurenceTestValue( m_strTestValue );
+		m_pTool->SetOccurenceTestValue( SVString(m_strTestValue) );
 
 		// Get selected variable
-		m_pTool->SetVariableSelected( m_strFullNameOfVariable );
+		m_pTool->SetVariableSelected( SVString(m_strFullNameOfVariable) );
 	}
 }
 
@@ -283,19 +286,16 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnPublishButton()
 	if( nullptr == pInspection ) { return; }
 
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSetAttributes );
-	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, SVString(pInspection->GetToolSet()->GetCompleteObjectName()), SVString( _T("") ) );
+	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, SVString(pInspection->GetToolSet()->GetCompleteName()), SVString( _T("") ) );
 
 	SvOsl::SelectorOptions BuildOptions( pInspection->GetUniqueObjectID(), SV_PUBLISHABLE, m_pTool->GetUniqueObjectID() );
 	SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::NoSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<>>(BuildOptions);
 
-	CString Title;
-	CString PublishableResults;
-	CString Filter;
-	PublishableResults.LoadString( IDS_PUBLISHABLE_RESULTS );
-	Title.Format( _T("%s - %s"), PublishableResults, m_pTool->GetName() );
-	Filter.LoadString( IDS_FILTER );
+	SVString PublishableResults = SvUl_SF::LoadSVString( IDS_PUBLISHABLE_RESULTS );
+	SVString Title = SvUl_SF::Format( _T("%s - %s"), PublishableResults.c_str(), m_pTool->GetName() );
+	SVString Filter = SvUl_SF::LoadSVString( IDS_FILTER );
 	
-	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title, PublishableResults, Filter, this );
+	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title.c_str(), PublishableResults.c_str(), Filter.c_str(), this );
 
 	if( IDOK == Result )
 	{
@@ -332,14 +332,11 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnBtnObjectPicker()
 	SvOsl::SelectorOptions BuildOptions( pInspection->GetUniqueObjectID(), SV_SELECTABLE_FOR_STATISTICS, m_pToolSet->GetUniqueObjectID() );
 	SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::NoSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<>>( BuildOptions );
 
-	CString Title;
-	CString ToolsetOutput;
-	CString Filter;
-	ToolsetOutput.LoadString( IDS_SELECT_TOOLSET_OUTPUT );
-	Title.Format( _T("%s - %s"), ToolsetOutput, m_pTool->GetName() );
-	Filter.LoadString( IDS_FILTER );
+	SVString ToolsetOutput = SvUl_SF::LoadSVString( IDS_SELECT_TOOLSET_OUTPUT );
+	SVString Title = SvUl_SF::Format( _T("%s - %s"), ToolsetOutput.c_str(), m_pTool->GetName() );
+	SVString Filter = SvUl_SF::LoadSVString( IDS_FILTER );
 
-	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title, ToolsetOutput, Filter, this );
+	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title.c_str(), ToolsetOutput.c_str(), Filter.c_str(), this );
 
 	if( IDOK == Result )
 	{
@@ -350,8 +347,8 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnBtnObjectPicker()
 		SVObjectManagerClass::Instance().GetObjectByIdentifier( ResultObjectGuid,  pResultObject);
 		if( nullptr != pResultObject )
 		{
-			m_pTool->SetVariableSelected( pResultObject->GetCompleteObjectName() );
-			m_strFullNameOfVariable = pResultObject->GetCompleteObjectName();
+			m_pTool->SetVariableSelected( SVString(pResultObject->GetCompleteName()) );
+			m_strFullNameOfVariable = pResultObject->GetCompleteName().c_str();
 		}
 
 		UpdateData( FALSE );

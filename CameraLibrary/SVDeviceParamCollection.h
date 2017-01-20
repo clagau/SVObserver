@@ -152,7 +152,7 @@ public:	// needed for iterators
 	SVDeviceParamMap mapParameters;
 };
 
-typedef TDoubleFactorySingleton<SVDeviceParamEnum, CString, SVDeviceParam>::factory TheDeviceParamFactory;
+typedef TDoubleFactorySingleton<SVDeviceParamEnum, SVString, SVDeviceParam>::factory TheDeviceParamFactory;
 
 class SVDeviceParamIndexer : public std::vector<SVDeviceParamEnum>
 {

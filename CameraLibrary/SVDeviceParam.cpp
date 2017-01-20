@@ -14,9 +14,9 @@
 #include "SVDeviceParams.h"
 
 SVDeviceParam::SVDeviceParam()
-: m_eParam(DeviceParamInvalid)
-, m_eDataType(DeviceDataTypeUnknown)
-, m_bSupports(true) 
+	: m_eParam(DeviceParamInvalid)
+	, m_eDataType(DeviceDataTypeUnknown)
+	, m_bSupports(true) 
 {
 	SetOrder(INT_MAX);
 	SetDetailLevel(0);
@@ -24,42 +24,41 @@ SVDeviceParam::SVDeviceParam()
 }
 
 SVDeviceParam::SVDeviceParam(SVDeviceParamEnum typeEnum)
-: m_eParam(typeEnum)
-, m_eDataType(DeviceDataTypeUnknown)
-, m_bSupports(true) 
+	: m_eParam(typeEnum)
+	, m_eDataType(DeviceDataTypeUnknown)
+	, m_bSupports(true) 
 {
 	SetOrder(INT_MAX);
 	SetDetailLevel(0);
 }
 
-SVDeviceParam::SVDeviceParam(const SVDeviceParam& rhs)
+SVDeviceParam::SVDeviceParam(const SVDeviceParam& rRhs)
 {
-	m_eParam = rhs.Type();
-	m_eDataType = rhs.DataType();
-	m_bSupports = rhs.DeviceSupports();
+	m_eParam = rRhs.Type();
+	m_eDataType = rRhs.DataType();
+	m_bSupports = rRhs.DeviceSupports();
 
-	SetOrder( rhs.GetOrder() );
-	SetDetailLevel( rhs.DetailLevel() );
-	SetName( rhs.Name() );
-	SetVisualName( rhs.VisualName() );
-	SetDescription( rhs.Description() );
-	Init( rhs.Type() );
+	SetOrder( rRhs.GetOrder() );
+	SetDetailLevel( rRhs.DetailLevel() );
+	SetName( rRhs.Name() );
+	SetVisualName( rRhs.VisualName() );
+	SetDescription( rRhs.Description() );
+	Init( rRhs.Type() );
 }
 
 SVDeviceParam::~SVDeviceParam()
 {
-	m_eParam = DeviceParamInvalid; // really?
 }
 
-/*static*/CString SVDeviceParam::GetParameterName(SVDeviceParamEnum e)
+/*static*/SVString SVDeviceParam::GetParameterName(SVDeviceParamEnum e)
 {
-	CString sName;
+	SVString Result;
 	TheDeviceParamFactory::InstanceType::const_iterator iter = TheDeviceParamFactory::Instance().PrimaryMap().find(e);
 	if (iter != TheDeviceParamFactory::Instance().PrimaryMap().end())
 	{
-		sName = iter->second;
+		Result = iter->second;
 	}
-	return sName;
+	return Result;
 }
 
 SVDeviceParam* SVDeviceParam::Create(SVDeviceParamEnum eType)
@@ -88,15 +87,15 @@ SVDeviceParam* SVDeviceParam::Create(SVDeviceParamEnum eType)
 	return pParam;
 }
 
-HRESULT SVDeviceParam::SetName(const SVString& strName)
+HRESULT SVDeviceParam::SetName(const SVString& rName)
 {
-	m_strName = strName;
+	m_strName = rName;
 	return S_OK;
 }
 
-HRESULT SVDeviceParam::SetVisualName( const SVString& strName)
+HRESULT SVDeviceParam::SetVisualName( const SVString& rName)
 {
-	m_strVisualName = strName;
+	m_strVisualName = rName;
 	return S_OK;
 }
 
@@ -106,9 +105,9 @@ HRESULT SVDeviceParam::SetDetailLevel( long lDetailLevel )
 	return S_OK;
 }
 
-HRESULT SVDeviceParam::SetDescription(const SVString& strDescription)
+HRESULT SVDeviceParam::SetDescription(const SVString& rDescription)
 {
-	m_strDescription = strDescription;
+	m_strDescription = rDescription;
 	return S_OK;
 }
 
@@ -136,4 +135,3 @@ HRESULT SVDeviceParam::SetValue( const VARIANT& rv )
 {
 	return S_FALSE;	// derived class needs to implement
 }
-

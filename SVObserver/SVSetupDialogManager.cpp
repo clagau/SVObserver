@@ -54,6 +54,7 @@
 #include "SVRange.h"
 #include "CameraLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
 #include "SVToolSet.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Inlcudes
 
 SVSetupDialogManager& SVSetupDialogManager::Instance()
@@ -254,13 +255,12 @@ HRESULT SVSetupDialogManager::SVBarCodeAnalyzerClassSetupDialog( const SVGUID& p
 
 		SVBarCodeProperties dlgProp;
 		int iResult;
-		CString   csTemp;
 		BOOL bUseSingle;
-		CString csRegExp;
+		SVString RegExp;
 		BOOL bSaveInFile;
-		CString csSingleFile;
+		SVString SingleFile;
 		BOOL bUseMultiple;
-		CString csMultiFile;
+		SVString MultiFile;
 		
 		SVBarCodeResultClass *pResult = dynamic_cast< SVBarCodeResultClass* >( l_pAnalyzer->GetResultObject() );
 		
@@ -291,18 +291,18 @@ HRESULT SVSetupDialogManager::SVBarCodeAnalyzerClassSetupDialog( const SVGUID& p
 		l_pAnalyzer->LoadRegExpression();
 		
 		pResult->msv_bUseSingleMatchString.GetValue( bUseSingle );
-		l_pAnalyzer->msv_szRegExpressionValue.GetValue( csRegExp );
+		l_pAnalyzer->msv_szRegExpressionValue.GetValue( RegExp );
 		l_pAnalyzer->msv_bSaveStringInFile.GetValue( bSaveInFile );
-		l_pAnalyzer->msv_szStringFileName.GetValue ( csSingleFile );
+		l_pAnalyzer->msv_szStringFileName.GetValue ( SingleFile );
 		pResult->msv_bUseMatchStringFile.GetValue( bUseMultiple );
-		pResult->msv_szMatchStringFileName.GetValue( csMultiFile );
+		pResult->msv_szMatchStringFileName.GetValue( MultiFile );
 		
 		dlgProp.m_dlgBarCodeStringMatch.SetUseSingle( bUseSingle );
-		dlgProp.m_dlgBarCodeStringMatch.SetRegExpression( csRegExp );
+		dlgProp.m_dlgBarCodeStringMatch.SetRegExpression( RegExp.c_str() );
 		dlgProp.m_dlgBarCodeStringMatch.SetSaveInFile( bSaveInFile );
-		dlgProp.m_dlgBarCodeStringMatch.SetSingleFileName( csSingleFile );
+		dlgProp.m_dlgBarCodeStringMatch.SetSingleFileName( SingleFile.c_str() );
 		dlgProp.m_dlgBarCodeStringMatch.SetUseMultiple( bUseMultiple );
-		dlgProp.m_dlgBarCodeStringMatch.SetMultiFileName( csMultiFile );
+		dlgProp.m_dlgBarCodeStringMatch.SetMultiFileName( MultiFile.c_str() );
 		
 		dlgProp.m_dlgBarCodeDataMatrix.SetCellX (l_pAnalyzer->msv_dCellNumberX);
 		dlgProp.m_dlgBarCodeDataMatrix.SetCellY (l_pAnalyzer->msv_dCellNumberY);
@@ -316,12 +316,12 @@ HRESULT SVSetupDialogManager::SVBarCodeAnalyzerClassSetupDialog( const SVGUID& p
 		
 		if (iResult == IDOK)
 		{
-			dlgProp.m_dlgBarCodeStringMatch.GetUseSingle( bUseSingle );
-			dlgProp.m_dlgBarCodeStringMatch.GetRegExpression( csRegExp );
-			dlgProp.m_dlgBarCodeStringMatch.GetSaveInFile( bSaveInFile );
-			dlgProp.m_dlgBarCodeStringMatch.GetSingleFileName( csSingleFile );
-			dlgProp.m_dlgBarCodeStringMatch.GetUseMultiple( bUseMultiple );
-			dlgProp.m_dlgBarCodeStringMatch.GetMultiFileName( csMultiFile );
+			bUseSingle= dlgProp.m_dlgBarCodeStringMatch.GetUseSingle();
+			RegExp = dlgProp.m_dlgBarCodeStringMatch.GetRegExpression();
+			bSaveInFile = dlgProp.m_dlgBarCodeStringMatch.GetSaveInFile();
+			SingleFile = dlgProp.m_dlgBarCodeStringMatch.GetSingleFileName();
+			bUseMultiple = dlgProp.m_dlgBarCodeStringMatch.GetUseMultiple();
+			MultiFile = dlgProp.m_dlgBarCodeStringMatch.GetMultiFileName();
 				
 			try
 			{
@@ -337,11 +337,11 @@ HRESULT SVSetupDialogManager::SVBarCodeAnalyzerClassSetupDialog( const SVGUID& p
 				pInspection->AddInputRequest( &l_pAnalyzer->msv_dEncoding, dlgProp.m_dlgBarCodeAttributes.GetEncoding() );
 				pInspection->AddInputRequest( &l_pAnalyzer->msv_dErrorCorrection, dlgProp.m_dlgBarCodeAttributes.GetErrorCorrection() );
 				pInspection->AddInputRequest( &( pResult->msv_bUseSingleMatchString ), bUseSingle );
-				pInspection->AddInputRequest( &l_pAnalyzer->msv_szRegExpressionValue, static_cast< LPCTSTR >( csRegExp ) );
+				pInspection->AddInputRequest( &l_pAnalyzer->msv_szRegExpressionValue, RegExp.c_str() );
 				pInspection->AddInputRequest( &l_pAnalyzer->msv_bSaveStringInFile, bSaveInFile );
-				pInspection->AddInputRequest( &l_pAnalyzer->msv_szStringFileName, static_cast< LPCTSTR >( csSingleFile ) );
+				pInspection->AddInputRequest( &l_pAnalyzer->msv_szStringFileName, SingleFile.c_str() );
 				pInspection->AddInputRequest( &( pResult->msv_bUseMatchStringFile ), bUseMultiple );
-				pInspection->AddInputRequest( &( pResult->msv_szMatchStringFileName ), static_cast< LPCTSTR >( csMultiFile ) );
+				pInspection->AddInputRequest( &( pResult->msv_szMatchStringFileName ), MultiFile.c_str() );
 				pInspection->AddInputRequest( &l_pAnalyzer->msv_dCellNumberX, dlgProp.m_dlgBarCodeDataMatrix.GetCellX() );
 				pInspection->AddInputRequest( &l_pAnalyzer->msv_dCellNumberY, dlgProp.m_dlgBarCodeDataMatrix.GetCellY() );
 				pInspection->AddInputRequest( &l_pAnalyzer->msv_dCellMinSize, dlgProp.m_dlgBarCodeDataMatrix.GetMinCellSize() );
@@ -441,12 +441,10 @@ HRESULT SVSetupDialogManager::SVColorToolClassSetupDialog( const SVGUID& p_rObje
 	
 	if( nullptr != l_pTool )
 	{
-		CString strTitle;
-		
-		strTitle.LoadString( IDS_ADJUSTMENT_STRING );
+		SVString Title = SvUl_SF::LoadSVString( IDS_ADJUSTMENT_STRING );
 
 		// Get Complete Name up to the tool level...
-		strTitle = l_pTool->GetCompleteObjectNameToObjectType( nullptr, SVToolObjectType ) + _T( " " ) + strTitle;
+		Title = l_pTool->GetCompleteObjectNameToObjectType( nullptr, SVToolObjectType ) + _T( " " ) + Title;
 
 		SVObjectClass* pInspection( l_pTool->GetInspection() );
 		
@@ -458,7 +456,7 @@ HRESULT SVSetupDialogManager::SVColorToolClassSetupDialog( const SVGUID& p_rObje
 			if( nullptr != pIPDoc )
 			{
 				// Create the Train Color Property Sheet
-				SVTADlgColorThresholdSheet dlg( l_pTool, strTitle );
+				SVTADlgColorThresholdSheet dlg( l_pTool, Title.c_str() );
 				SVColorThresholdClass* pThreshold = ( SVColorThresholdClass * )l_pTool->GetAt(0);
 				if (pThreshold)
 				{
@@ -551,17 +549,16 @@ HRESULT SVSetupDialogManager::SVLinearAnalyzerClassSetupDialog( const SVGUID& p_
 
 	if( nullptr != l_pAnalyzer && nullptr != (pInspection = dynamic_cast<SVInspectionProcess*>(l_pAnalyzer->GetInspection())) )
 	{
-		CString strTitle;
-		strTitle.LoadString( IDS_ADJUSTMENT_STRING );
+		SVString Title = SvUl_SF::LoadSVString( IDS_ADJUSTMENT_STRING );
 		// Get Complete Name up to the tool level...
-		strTitle = l_pAnalyzer->GetCompleteObjectNameToObjectType( nullptr, SVToolObjectType ) + _T( " " ) + strTitle;
+		Title = l_pAnalyzer->GetCompleteObjectNameToObjectType( nullptr, SVToolObjectType ) + _T( " " ) + Title;
 
 		SVIPDoc* pIPDoc = TheSVObserverApp.GetIPDoc( pInspection->GetUniqueObjectID() );
 
 		SVLinearEdgeProcessingClass *l_psvEdgeA = l_pAnalyzer->GetEdgeA();
 		SVLinearEdgeProcessingClass *l_psvEdgeB = l_pAnalyzer->GetEdgeB();
 
-		SVMeasureAnalyzerAdjustmentSheetClass measureDialog( strTitle );
+		SVMeasureAnalyzerAdjustmentSheetClass measureDialog( Title.c_str() );
 
 		measureDialog.m_psh.dwFlags |= PSH_NOAPPLYNOW;
 
@@ -862,14 +859,13 @@ HRESULT SVSetupDialogManager::SVPatternAnalyzerClassSetupDialog( const SVGUID& p
 {
 	HRESULT l_Status = S_OK;
 	SVPatternAnalyzerClass* l_pAnalyzer = dynamic_cast< SVPatternAnalyzerClass* >( SVObjectManagerClass::Instance().GetObject( p_rObjectId ) );
-	
+
 	SVInspectionProcess* pInspection( nullptr );
 
 	if( nullptr != l_pAnalyzer && nullptr != (pInspection = dynamic_cast<SVInspectionProcess*>(l_pAnalyzer->GetInspection())) )
 	{
 		double dParam;
 		long lParam;
-		CString strValue;
 		BOOL bPreProcess = false;
 		long lSpeedFactor[5] = { SVValueVeryLow, SVValueLow, SVValueMedium, SVValueHigh, SVValueVeryHigh };
 		int index;
@@ -881,7 +877,7 @@ HRESULT SVSetupDialogManager::SVPatternAnalyzerClassSetupDialog( const SVGUID& p
 		SVPatModelPageClass ModelPage(l_pAnalyzer->GetInspection()->GetUniqueObjectID(), l_pAnalyzer->GetUniqueObjectID());
 		SVPatGeneralPageClass GeneralPage;
 		SVPatAdvancedPageClass AdvancedPage;
-		
+
 		// General page
 		l_pAnalyzer->msv_lpatMaxOccurances.GetValue(lParam); 
 		GeneralPage.m_nOccurances = (int)lParam;
@@ -966,7 +962,7 @@ HRESULT SVSetupDialogManager::SVPatternAnalyzerClassSetupDialog( const SVGUID& p
 				pInspection->AddInputRequest( &( l_pAnalyzer->msv_lpatModelStep), AdvancedPage.m_lModelStep );
 				pInspection->AddInputRequest( &( l_pAnalyzer->msv_lpatBeginningResolutionLevel), AdvancedPage.m_lBeginningResolutionLevel );
 				pInspection->AddInputRequest( &( l_pAnalyzer->msv_lpatFinalResolutionLevel), AdvancedPage.m_lFinalResolutionLevel );
-				
+
 				if (GeneralPage.m_bAngleSearch)
 				{
 					pInspection->AddInputRequest( &( l_pAnalyzer->msv_dpatSearchAngle ), GeneralPage.m_dSearchAngle);

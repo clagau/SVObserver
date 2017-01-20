@@ -15,6 +15,7 @@
 #include "SVSharedLastInspectedCache.h"
 #include "SVSharedRejectCache.h"
 #include "SVSharedMemorySettings.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 #define 	BUFFER_REJECT_IMAGE_FILENAME_LEN 1024
@@ -27,10 +28,10 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		SVSharedInspectionWriter();
 		~SVSharedInspectionWriter();
 
-		HRESULT Create(const std::string& name, const GUID& guid, const SVSharedMemorySettings& rSettings, const long numProductSlots, const long numRejectSlots, const CreationInfo& rImagesInfo, const CreationInfo& rValuesInfo);
+		HRESULT Create(const SVString& name, const GUID& guid, const SVSharedMemorySettings& rSettings, const long numProductSlots, const long numRejectSlots, const CreationInfo& rImagesInfo, const CreationInfo& rValuesInfo);
 		void Destroy();
 
-		const std::string& GetShareName() const;
+		const SVString& GetShareName() const;
 		const GUID& GetGuid() const;
 
 		const SVSharedData& GetLastInspectedSlot(long idx) const;
@@ -53,7 +54,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 
 		managed_shared_memory_shared_ptr m_pManagedSharedMemory;
 
-		std::string m_ShareName;
+		SVString m_ShareName;
 		SVSharedLastInspectedCache* m_pSharedLastInspectedCache;
 		SVSharedRejectCache* m_pSharedRejectCache;
 		GUID m_guid;

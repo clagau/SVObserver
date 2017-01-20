@@ -11,16 +11,17 @@
 
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <map>
-
 #include "svobjectlibrary\svobjectclass.h"
 #include "SVObjectLibrary/SVObjectNotifyTemplate.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
-
 #include "SVObjectCommandDataJson.h"
 #include "SVRemoteOutputGroup.h"
 #include "SVRemoteOutputGroupAddRemoveDlg.h"
 #include "SVRemoteOutputObject.h"
+#include "SVUtilityLibrary/SVString.h"
+#pragma endregion Includes
 
 struct SVProductInfoStruct;
 class SVConfigurationObject;
@@ -32,17 +33,17 @@ class SVRemoteOutputDataController :
 	SV_DECLARE_CLASS( SVRemoteOutputDataController );
 
 public:
-	SVRemoteOutputDataController( LPCSTR ObjectName );
+	SVRemoteOutputDataController( LPCTSTR ObjectName );
 	SVRemoteOutputDataController( SVObjectClass *pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVREMOTEOUTPUTCONTROLLER );
 
 	virtual ~SVRemoteOutputDataController();
 
-	virtual HRESULT ProcessNotifyData( SVObjectCommandDataJsonPtr& p_rDataPtr ) override;
+	virtual HRESULT ProcessNotifyData( SVObjectCommandDataJsonPtr& rDataPtr ) override;
 
-	HRESULT AddItem( const CString& p_strRemoteGroupId, SVRemoteOutputObject*& p_pNewOutput, GUID p_InputObjectID, const CString p_strPPQ );
+	HRESULT AddItem( const SVString& rRemoteGroupId, SVRemoteOutputObject*& pNewOutput, GUID InputObjectID, const SVString& rPPQ );
 
-	size_t GetItemCount( const CString& p_strRemoteGroupId );
-	HRESULT GetItem( const CString& p_strRemoteGroupId, long l_lIndex, SVRemoteOutputObject*& p_rItem );
+	size_t GetItemCount( const SVString& rRemoteGroupId );
+	HRESULT GetItem( const SVString& rRemoteGroupId, long l_lIndex, SVRemoteOutputObject*& p_rItem );
 
 	typedef SvXml::SVXMLMaterialsTree SVTreeType;
 
@@ -53,28 +54,28 @@ public:
 	void Destroy();
 
 	// Writes Outputs for a RemoteOutput name.
-	HRESULT WriteOutputs( const CString& p_strRemoteGroupID, SVProductInfoStruct *pProduct);
+	HRESULT WriteOutputs( const SVString& rRemoteGroupId, SVProductInfoStruct *pProduct);
 
 	// Gets the last RemoteOutput object in the list
-	SVRemoteOutputObject* GetLastObject( const CString& p_strRemoteGroupId );
+	SVRemoteOutputObject* GetLastObject( const SVString& rRemoteGroupId );
 	// Gets the first RemoteOutput object in the list
-	SVRemoteOutputObject* GetFirstObject( const CString& p_strRemoteGroupId );
+	SVRemoteOutputObject* GetFirstObject( const SVString& rRemoteGroupId );
 
 	// Gets a list of RemoteOutput names 
-	HRESULT GetRemoteOutputGroups( std::vector<CString>& p_astrRemoteOutputIds );
+	HRESULT GetRemoteOutputGroups( SVStringVector& rRemoteOutputIds );
 
-	HRESULT GetPPQs( std::vector<CString>& p_astrPPQs,  SVConfigurationObject* p_pConfig );
-	HRESULT GetGroupNames( std::vector<CString>& p_astrPPQs );
+	HRESULT GetPPQs( SVStringVector& rPPQs,  SVConfigurationObject* p_pConfig );
+	HRESULT GetGroupNames( SVStringVector& rPPQs );
 
 	// Deletes a single remote Output.
-	HRESULT DeleteRemoteOutputEntry( const CString& p_strRemoteGroupId, SVRemoteOutputObject* p_pOutputObject);
+	HRESULT DeleteRemoteOutputEntry( const SVString& rRemoteGroupId, SVRemoteOutputObject* p_pOutputObject);
 
 	// Deletes an entire logical RemoteOutput associated with a PPQ
-	HRESULT DeleteRemoteOutput( const CString& p_strRemoteGroupId );
+	HRESULT DeleteRemoteOutput( const SVString& rRemoteGroupId );
 	
-	LPCSTR GetConnectString( );	
+	LPCTSTR GetConnectString( );	
 
-	HRESULT SetConnectString( LPCSTR p_strConnection );
+	HRESULT SetConnectString( LPCTSTR Connection );
 
 	// This function is used to tell if the RemoteOutput Outputs screen should be hidden
 	bool IsEmpty();
@@ -83,20 +84,20 @@ public:
 	size_t GetRemoteOutputGroupCount();
 
 	// Returns a copy of the SVRemoteOutputGroup class based on the Remote Group ID.
-	SVRemoteOutputGroup* GetControlPar( const CString& p_strRemoteGroupID );
+	SVRemoteOutputGroup* GetControlPar( const SVString& rRemoteGroupId );
 
 	// returns a pointer to a SVRemoteOutputGroup class based on the Remote Group ID.
-	HRESULT GetControlPar( const CString& p_strRemoteGroupID, SVRemoteOutputGroup*& p_pControl );
+	HRESULT GetControlPar( const SVString& rRemoteGroupId, SVRemoteOutputGroup*& p_pControl );
 
 	// Adds the defaults to a SVRemoteOutputGroup object
-	HRESULT AddDefaultOutputs( CString p_strRemoteGroupID, SVPPQObject* p_pPPQ );
+	HRESULT AddDefaultOutputs( const SVString& rRemoteGroupId, SVPPQObject* p_pPPQ );
 
 	void SetupRemoteOutput(SVConfigurationObject* p_pConfig );
 
 	void SetupRemoteOutputGroup(SVConfigurationObject* p_pConfig, SVGroupDefVect& p_rOriginalList );
 
 	// Returns the RemoteOutput size of the first element in the starting block address array.
-	long GetElementBitSize( const CString& p_strRemoteOutputId );
+	long GetElementBitSize( LPCTSTR RemoteOutputId );
 
 	// This function walks the input list and attempts to validate each input GUID 
 	// by getting a pointer from the Object Manager for each GUID.
@@ -108,7 +109,7 @@ public:
 private:
 	HRESULT GetValueObjectData( void* l_mem, long p_lNumBytes, SVValueObjectClass* p_ValueObject, long p_lProductIndex );
 
-	bool RenameGroup( CString oldName, CString newName );
+	bool RenameGroup( const SVString& rOldName, const SVString& rNewName );
 	SVRemoteOutputGroupMap m_RemoteGroupParameters;	// Map of RemoteOutput parameters based on RemoteOutput ID
 };
 

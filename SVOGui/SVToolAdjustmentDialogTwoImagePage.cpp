@@ -177,11 +177,11 @@ namespace Seidenader { namespace SVOGui
 	{
 		UpdateData(true); // get data from dialog
 
-		CString name;
-		m_firstAvailableSourceImageListBoxCtl.GetLBText(m_firstAvailableSourceImageListBoxCtl.GetCurSel(), name);
-		if (!name.IsEmpty() && name != NoImageTag)
+		CString Name;
+		m_firstAvailableSourceImageListBoxCtl.GetLBText(m_firstAvailableSourceImageListBoxCtl.GetCurSel(), Name);
+		if (!Name.IsEmpty() && Name != NoImageTag)
 		{
-			m_firstImageName = name;
+			m_firstImageName = Name;
 			ConnectToImage(m_firstInputName, m_firstImageName);
 			refresh();
 		}
@@ -191,11 +191,11 @@ namespace Seidenader { namespace SVOGui
 	{
 		UpdateData(true); // get data from dialog
 
-		CString name;
-		m_secondAvailableSourceImageListBoxCtl.GetLBText(m_secondAvailableSourceImageListBoxCtl.GetCurSel(), name);
-		if (!name.IsEmpty() && name != NoImageTag)
+		CString Name;
+		m_secondAvailableSourceImageListBoxCtl.GetLBText(m_secondAvailableSourceImageListBoxCtl.GetCurSel(), Name);
+		if (!Name.IsEmpty() && Name != NoImageTag)
 		{
-			m_secondImageName = name;
+			m_secondImageName = Name;
 			ConnectToImage(m_secondInputName, m_secondImageName);
 			refresh();
 		}

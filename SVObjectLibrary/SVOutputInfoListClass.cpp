@@ -24,6 +24,13 @@
 #include "SVObjectManagerClass.h"
 #pragma endregion Includes
 
+#pragma region Declarations
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+#endif
+#pragma endregion Declarations
+
 namespace
 {
 	class DebugOutput
@@ -186,8 +193,8 @@ SVOutObjectInfoStruct* SVOutputInfoListClass::GetAt( int p_iIndex )
 			}
 			else
 			{
-				CString s; s.Format(_T("BAD OBJECT (VALIDATE_OBJECT pInfoObject->PObject %08X)"), l_psvObjectInfo->PObject);
-				debug.Add(s);
+				SVString Temp = SvUl_SF::Format(_T("BAD OBJECT (VALIDATE_OBJECT pInfoObject->PObject %08X)"), l_psvObjectInfo->PObject);
+				debug.Add( Temp.c_str() );
 				l_psvObjectInfo->PObject = nullptr;
 			}
 		}
@@ -542,8 +549,8 @@ void SVOutputInfoListClass::GetAllowedAttributesList( UINT uAttributeMask, SVOut
 				}
 				else
 				{
-					CString s; s.Format(_T("BAD OBJECT (VALIDATE_OBJECT pInfoObject->PObject %08X)"), pInfoObject->PObject);
-					debug.Add(s);
+					SVString Temp = SvUl_SF::Format(_T("BAD OBJECT (VALIDATE_OBJECT pInfoObject->PObject %08X)"), pInfoObject->PObject);
+					debug.Add( Temp.c_str() );
 					pInfoObject->PObject = nullptr;
 				}
 			}

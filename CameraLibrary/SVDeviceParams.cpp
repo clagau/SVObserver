@@ -280,29 +280,13 @@ HRESULT FromVariant( SVString& rsValue, const VARIANT& rv )
 	{
 		case VT_BSTR:
 			{
-			CString s( rv.bstrVal );
-			rsValue = s;
+				rsValue = SvUl_SF::createSVString( _bstr_t( rv.bstrVal ) );
 			}
 			break;
 		default:
 			hr = S_FALSE;
 	}
 
-	return hr;
-}
-
-HRESULT FromVariant( CString& rsValue, const VARIANT& rv )
-{
-	HRESULT hr = S_OK;
-
-	switch ( rv.vt )
-	{
-		case VT_BSTR:
-			rsValue = rv.bstrVal;
-			break;
-		default:
-			hr = S_FALSE;
-	}
 	return hr;
 }
 
@@ -331,9 +315,8 @@ SVDeviceParamStructTestCases::SVDeviceParamStructTestCases(SVDeviceParamCollecti
 		SVLongValueDeviceParam param;
 		param.lValue = 10;
 		SVLongValueDeviceParam::OptionType option;
-		option.value = 5;
-		option.strDescription = "hello";
-		option.strDescription = SVString("hello");
+		option.m_Value = 5;
+		option.m_Description = _T("hello");
 		param.info.options.push_back(option);
 		rDevice.SetParameter( DeviceParamBrightness, param );
 

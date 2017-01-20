@@ -45,7 +45,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		return *this;
 	}
 
-	SVValue SVSharedData::FindValue(const std::string& name) const
+	SVValue SVSharedData::FindValue(const SVString& name) const
 	{
 		SVSharedValueContainer::const_iterator it = std::find_if(m_Values.begin(), m_Values.end(),
 			[&name](const SVSharedValue& value)

@@ -26,6 +26,7 @@
 #include "SVRunControlLibrary/SVImageIndexStruct.h"
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVUtilityLibrary/SVSharedPtr.h"
+#include "SVUtilityLibrary/SVString.h"
 #include "SVLibrary/SVIOEntryHostStruct.h"
 #include "SVValueObjectLibrary/SVValueObjectReference.h"
 #include "SVRunControlLibrary/ProductWorkloadInformation.h" 
@@ -366,7 +367,7 @@ struct SVInputImageRequestInfoStruct
 	void Reset();
 	void Init();
 
-	CString m_strObjectName;
+	SVString m_ObjectName;
 	SVImageInfoClass m_ImageInfo;
 	SVSmartHandlePointer m_ImageHandlePtr;
 	bool m_bUsingCameraName;

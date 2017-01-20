@@ -15,6 +15,7 @@
 #include "SVOResource/resource.h"
 #include "SVMFCControls/SVToolBar.h"
 #include "ObjectInterfaces/IFormulaController.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 namespace Seidenader
@@ -27,7 +28,7 @@ namespace Seidenader
 			SVFormulaEditorPageClass( const GUID& rInspectionID, const GUID& rTaskObjectID, SvOi::IFormulaControllerPtr controller, bool isDisableCheckboxesVisible = false, UINT captionID = IDS_FORMULA_STRING, UINT disableExtentionID = IDS_TOOL_STRING );   // standard constructor
 			virtual ~SVFormulaEditorPageClass();
 
-			CString GetOwnerName() const;
+			SVString GetOwnerName() const;
 			void SetDefaultInputs();
 			bool validateAndSetEquation();
 
@@ -38,12 +39,12 @@ namespace Seidenader
 			CButton	m_AddLocalVariableCtrl;
 			CButton	m_AddConstantCtrl;
 			CWnd m_EditWnd;
-			CString	m_StrConstantValue;
+			CString	m_ConstantValue;
 			int		m_constantType;
 			CButton m_decimalRadioButton;
 			CButton m_hexadecimalRadioButton;
 			CButton m_binaryRadioButton;
-			CString	m_strToolsetOutputVariable;
+			CString	m_ToolsetOutputVariable;
 			CButton	m_ToolsetOutputSelectButton;
 			CButton m_DisableEquationCtrl;
 			CButton m_DisableToolCtrl;
@@ -56,7 +57,7 @@ namespace Seidenader
 			void insertIntoEditor( LPCTSTR tszValue );
 			void advanceInEditor( long Pos );
 			void deleteInEditor( long Pos );
-			CString getEquationText() const;
+			SVString getEquationText() const;
 			void setEquationText();
 			BOOL createToolbars();
 

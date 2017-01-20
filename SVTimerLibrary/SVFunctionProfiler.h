@@ -11,9 +11,12 @@
 
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <iostream>
 //Moved to precompiled header: #include <map>
 #include "SVClock.h"
+#include "SVUtilityLibrary/SVString.h"
+#pragma endregion Includes
 
 /* // this class is meant to be used like this:
 void MyClass::MyFunction()
@@ -26,7 +29,7 @@ void MyClass::MyFunction()
 class SVFunctionProfiler
 {
 public:
-	SVFunctionProfiler(const CString& sName);
+	SVFunctionProfiler(LPCTSTR Name);
 	~SVFunctionProfiler();
 public:
 	void Begin();
@@ -36,7 +39,7 @@ private:
 	__int64 m_iCount;
 	SVClock::SVTimeStamp m_TotalTime;
 	SVClock::SVTimeStamp m_BeginTime;
-	CString m_sName;
+	SVString m_Name;
 
 	friend class SVFunctionProfilerLocal;
 };
@@ -62,11 +65,11 @@ inline SVFunctionProfilerLocal::~SVFunctionProfilerLocal()
 }
 
 
-inline SVFunctionProfiler::SVFunctionProfiler(const CString& sName)
+inline SVFunctionProfiler::SVFunctionProfiler(LPCTSTR Name) :
+  m_Name( Name )
+, m_iCount( 0 )
+, m_TotalTime( 0.0 )
 {
-	m_sName = sName;
-	m_iCount = 0;
-	m_TotalTime = 0.0;
 }
 
 inline SVFunctionProfiler::~SVFunctionProfiler()
@@ -75,12 +78,12 @@ inline SVFunctionProfiler::~SVFunctionProfiler()
 	FILE* fh = fopen("c:\\temp\\profile.txt","a");
 	if( fh )
 	{
-		fprintf(fh,_T("PROFILER: %s count=%I64u, total time=%I64u ms\n"), m_sName, m_iCount, iTotalTime);
+		fprintf(fh,_T("PROFILER: %s count=%I64u, total time=%I64u ms\n"), m_Name, m_iCount, iTotalTime);
 		fclose( fh );
 	}
 	
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PROFILER)
-	TRACE(_T("PROFILER: %s count=%I64u, total time=%I64u ms\n"), m_sName, m_iCount, iTotalTime);
+	TRACE(_T("PROFILER: %s count=%I64u, total time=%I64u ms\n"), m_Name, m_iCount, iTotalTime);
 #endif
 }
 
@@ -104,17 +107,17 @@ inline void SVFunctionProfiler::End()
 class SVSizeProfiler
 {
 public:
-	SVSizeProfiler(const CString& sName);
+	SVSizeProfiler(LPCTSTR Name);
 	~SVSizeProfiler();
 	void Add(int iSize);
 private:
 	std::map<int,int> m_mapSizeCounter;
-	CString m_sName;
+	SVString m_Name;
 };
 
-inline SVSizeProfiler::SVSizeProfiler(const CString& sName)
+inline SVSizeProfiler::SVSizeProfiler(LPCTSTR Name) :
+m_Name( Name )
 {
-	m_sName = sName;
 }
 
 inline SVSizeProfiler::~SVSizeProfiler()
@@ -126,9 +129,9 @@ inline SVSizeProfiler::~SVSizeProfiler()
 		for (iter = m_mapSizeCounter.begin(); iter != m_mapSizeCounter.end(); ++iter)
 		{
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PROFILER)
-			TRACE(_T("COUNT_PROFILER: %s size %d count=%d\n"), m_sName, iter->first, iter->second);
+			TRACE(_T("COUNT_PROFILER: %s size %d count=%d\n"), m_Name, iter->first, iter->second);
 #endif
-			fprintf(fh,_T("COUNT_PROFILER: %s size %d count=%d\n"), m_sName, iter->first, iter->second);
+			fprintf(fh,_T("COUNT_PROFILER: %s size %d count=%d\n"), m_Name, iter->first, iter->second);
 		}
 		fclose( fh );
 	}

@@ -31,7 +31,7 @@
 #pragma warning (pop)
 #pragma endregion Includes
 
-typedef std::vector<std::string> split_vector_type;
+typedef std::vector<SVString> split_vector_type;
 
 typedef std::map<SVObjectTypeEnum, SVObjectScriptDataObjectTypeEnum> ObjectTypeTable;
 
@@ -52,57 +52,55 @@ static ObjectTypeTable typeTable = boost::assign::map_list_of<>
 ;
 
 template<typename Separator>
-static void SplitString(const std::string& val, split_vector_type& vec, Separator sep)
+static void SplitString(const SVString& rValue, split_vector_type& rContainer, Separator sep)
 {
-	boost::tokenizer<Separator> tokens(val, sep);
-	BOOST_FOREACH (const std::string& t, tokens) 
+	boost::tokenizer<Separator> tokens(rValue, sep);
+	BOOST_FOREACH (const SVString& rItem, tokens) 
 	{ 
-       vec.push_back(t);
+       rContainer.push_back( rItem );
 	}
 }
 
 typedef boost::char_separator<char> Separator;
 
-static POINT GetPointFromString(const SVString& strVal)
+static POINT GetPointFromString(const SVString& rValue)
 {
 	POINT pointValue = { 0, 0 };
 	split_vector_type SplitVec;
-	std::string val(strVal.c_str());
 	SplitVec.reserve(2);
 	Separator sep(",");
-	SplitString<Separator>(val, SplitVec, sep);
+	SplitString<Separator>(rValue, SplitVec, sep);
 	
 	if (SplitVec.size() == 2)
 	{
-		_stscanf( SplitVec[0].c_str(), "%d", &pointValue.x );
-		_stscanf( SplitVec[1].c_str(), "%d", &pointValue.y );
+		_stscanf( SplitVec[0].c_str(), _T("%d"), &pointValue.x );
+		_stscanf( SplitVec[1].c_str(), _T("%d"), &pointValue.y );
 	}
 #if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 	else 
 	{
-		TRACE("GetPointFromString - Invalid String (Not a Point)\n");
+		::OutputDebugString( _T("GetPointFromString - Invalid String (Not a Point)\n") );
 	}
 #endif
 	return pointValue;
 }
 
-static SVDPointClass GetDPointFromString(const SVString& strVal)
+static SVDPointClass GetDPointFromString(const SVString& rValue)
 {
 	SVDPointClass pointValue(0.0, 0.0);
 	split_vector_type SplitVec;
-	std::string val(strVal.c_str());
 	SplitVec.reserve(2);
 	Separator sep(",");
-	SplitString<Separator>(val, SplitVec, sep);
+	SplitString<Separator>(rValue, SplitVec, sep);
 	if (SplitVec.size() == 2)
 	{
-		_stscanf( SplitVec[0].c_str(), "%lf", &pointValue.x );
-		_stscanf( SplitVec[1].c_str(), "%lf", &pointValue.y );
+		_stscanf( SplitVec[0].c_str(), _T("%lf"), &pointValue.x );
+		_stscanf( SplitVec[1].c_str(), _T("%lf"), &pointValue.y );
 	}
 	else
 	{
 #if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
-		TRACE("GetDPointFromString - Invalid String (Not a DPoint)\n");
+		::OutputDebugString( _T("GetDPointFromString - Invalid String (Not a DPoint)\n") );
 #endif
 	}
 	return pointValue;
@@ -127,14 +125,15 @@ HRESULT SVObjectBuilder::CreateObject(const GUID& classID, const GUID& uniqueID,
 				// Try to replace or add object...
 				if( !pOwnerObject->replaceObject(pObject, uniqueID) )
 				{
-					ASSERT(false);
+					assert(false);
 #if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
-					TRACE("SVObjectBuilder::CreateObject - ReplaceObject %.80s\n", name.c_str());
+					SVString Temp = SvUl_SF::Format(_T("SVObjectBuilder::CreateObject - ReplaceObject %.80s\n"), name.c_str() );
+					::OutputDebugString( Temp.c_str() );
 #endif
 					delete pObject;
 
 #if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
-					TRACE("SVObjectBuilder::CreateObject - replaceObject was not successfully");
+					::OutputDebugString( _T("SVObjectBuilder::CreateObject - replaceObject was not successfully") );
 #endif
 					hr = S_FALSE;
 				}
@@ -146,10 +145,10 @@ HRESULT SVObjectBuilder::CreateObject(const GUID& classID, const GUID& uniqueID,
 			else
 			{
 				hr = S_FALSE;
-				ASSERT(false);
+				assert(false);
 				delete pObject;
 #if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
-				TRACE("SVObjectBuilder::CreateObject - Owner Object not Found");
+				::OutputDebugString( _T("SVObjectBuilder::CreateObject - Owner Object not Found") );
 #endif
 			}
 		}
@@ -169,9 +168,9 @@ HRESULT SVObjectBuilder::CreateObject(const GUID& classID, const GUID& uniqueID,
 	else
 	{
 		hr = S_FALSE;
-		ASSERT(false);
+		assert(false);
 #if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
-		TRACE("SVObjectBuilder::CreateObject - Creation Failed");
+		::OutputDebugString( _T("SVObjectBuilder::CreateObject - Creation Failed") );
 #endif
 	}
 	return hr;
@@ -196,7 +195,7 @@ HRESULT SVObjectBuilder::CreateFriendObject(const GUID& classID, const GUID& uni
 
 	if ( GUID_NULL == ownerUniqueID )
 	{
-		ASSERT(FALSE);
+		assert(false);
 		return E_FAIL;
 	}
 
@@ -238,7 +237,7 @@ HRESULT SVObjectBuilder::CreateFriendObject(const GUID& classID, const GUID& uni
 			{
 				delete pObject;
 				hr = E_FAIL;
-				ASSERT(FALSE);
+				assert(false);
 			}
 			
 		}
@@ -273,7 +272,7 @@ HRESULT SVObjectBuilder::OverwriteEmbeddedObject(const GUID& embeddedID, const G
 		else
 		{
 			hr = S_FALSE;
-			ASSERT(FALSE);
+			assert(false);
 		}
 }
 	return hr;
@@ -417,7 +416,7 @@ HRESULT SVObjectBuilder::SetInputs(const GUID& objectID, const SVNameGuidList& g
 			else
 			{
 #if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
-				TRACE("SVObjectBuilder::SetInputs - Input Info pointer is not valid\n");
+				::OutputDebugString( _T("SVObjectBuilder::SetInputs - Input Info pointer is not valid\n") );
 #endif
 				hr = S_FALSE;
 			}
@@ -426,7 +425,7 @@ HRESULT SVObjectBuilder::SetInputs(const GUID& objectID, const SVNameGuidList& g
 	else
 	{
 #if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
-		TRACE("SVObjectBuilder::SetInputs - Not a Valid Object\n");
+		::OutputDebugString( _T("SVObjectBuilder::SetInputs - Not a Valid Object\n") );
 #endif
 		hr = S_FALSE;
 	}

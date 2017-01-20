@@ -11,9 +11,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
-
-#include "SVOResource\resource.h"
-
+#include "SVOResource/Resource.h"
 #include "SVBarCodeStringMatchDialog.h"
 #include "SVFileNameClass.h"
 #pragma endregion Includes
@@ -31,14 +29,9 @@ static char THIS_FILE[] = __FILE__;
 SVBarCodeStringMatchDialog::SVBarCodeStringMatchDialog(CWnd* pParent /*=nullptr*/)
 	: CPropertyPage(SVBarCodeStringMatchDialog::IDD)
 {
-	//{{AFX_DATA_INIT(SVBarCodeStringMatchDialog)
-	m_szRegExpression = _T("");
-	m_bSaveInFile = FALSE;
-	m_szStringFileName = _T("");
-	mcsMultiMatchFileName = _T("");
-	mbUseMutiMatch = FALSE;
-	mbUseSingleMatch = TRUE;
-	//}}AFX_DATA_INIT
+	m_SaveInFile = FALSE;
+	m_UseMultiMatch = FALSE;
+	m_UseSingleMatch = TRUE;
 }
 
 SVBarCodeStringMatchDialog::~SVBarCodeStringMatchDialog()
@@ -54,7 +47,7 @@ BOOL SVBarCodeStringMatchDialog::EnableFileSelect(BOOL bEnable)
 		pFileSelect = (CButton *) GetDlgItem (IDC_BARCODE_SELECTFILE);
 		pFileSelect->EnableWindow (bEnable);
 
-	  return bEnable;
+		return bEnable;
 	}
 
 	return FALSE;
@@ -95,86 +88,50 @@ void SVBarCodeStringMatchDialog::EnableDisableControls(BOOL bSingle)
 
 BOOL SVBarCodeStringMatchDialog::SetUseSingle( BOOL bValue )
 {
-  mbUseSingleMatch = bValue;
-  return TRUE;
-}
-
-BOOL SVBarCodeStringMatchDialog::GetUseSingle( BOOL &rbValue )
-{
-  rbValue = mbUseSingleMatch;
+	m_UseSingleMatch = bValue;
 	return TRUE;
 }
 
 BOOL SVBarCodeStringMatchDialog::SetRegExpression( LPCTSTR szRegExpression )
 {
-  m_szRegExpression = szRegExpression;
-  return TRUE;
-}
-
-BOOL SVBarCodeStringMatchDialog::GetRegExpression( CString &rcsRegExpression )
-{
-  rcsRegExpression = m_szRegExpression;
-  return TRUE;
+	m_RegExpression = szRegExpression;
+	return TRUE;
 }
 
 BOOL SVBarCodeStringMatchDialog::SetSaveInFile( BOOL bValue )
 {
-  m_bSaveInFile = bValue;
-  return TRUE;
-}
-
-BOOL SVBarCodeStringMatchDialog::GetSaveInFile( BOOL &rbValue )
-{
-  rbValue = m_bSaveInFile;
+	m_SaveInFile = bValue;
 	return TRUE;
 }
 
 BOOL SVBarCodeStringMatchDialog::SetSingleFileName( LPCTSTR szFileName )
 {
-   m_szStringFileName = szFileName;
-   return TRUE;
-}
-
-BOOL SVBarCodeStringMatchDialog::GetSingleFileName(CString& rcsFileName)
-{
-   rcsFileName = m_szStringFileName;
-	 return TRUE;
+	m_StringFileName = szFileName;
+	return TRUE;
 }
 
 BOOL SVBarCodeStringMatchDialog::SetUseMultiple( BOOL bValue )
 {
-  mbUseMutiMatch = bValue;
-  return TRUE;
-}
-
-BOOL SVBarCodeStringMatchDialog::GetUseMultiple( BOOL &rbValue )
-{
-  rbValue = mbUseMutiMatch;
+	m_UseMultiMatch = bValue;
 	return TRUE;
 }
 
 BOOL SVBarCodeStringMatchDialog::SetMultiFileName( LPCTSTR szFileName )
 {
-   mcsMultiMatchFileName = szFileName;
-   return TRUE;
-}
-
-BOOL SVBarCodeStringMatchDialog::GetMultiFileName(CString& rcsFileName)
-{
-   rcsFileName = mcsMultiMatchFileName;
-	 return TRUE;
+	m_MultiMatchFileName = szFileName;
+	return TRUE;
 }
 
 void SVBarCodeStringMatchDialog::DoDataExchange(CDataExchange* pDX)
 {
 	CPropertyPage::DoDataExchange(pDX);
 	//{{AFX_DATA_MAP(SVBarCodeStringMatchDialog)
-	DDX_Text(pDX, IDC_BARCODE_REGEXPRESSION, m_szRegExpression);
-	DDX_Check(pDX, IDC_BARCODE_SAVEINFILE, m_bSaveInFile);
-	DDX_Text(pDX, IDC_BARCODE_STRINGFILE, m_szStringFileName);
-	DDX_Text(pDX, IDC_BC_MULTI_STRINGFILE, mcsMultiMatchFileName);
-	DDX_Check(pDX, IDC_BC_USE_MULTIPLE, mbUseMutiMatch);
-	DDX_Check(pDX, IDC_BC_USE_SINGLE, mbUseSingleMatch);
+	DDX_Text(pDX, IDC_BARCODE_REGEXPRESSION, m_RegExpression);
+	DDX_Check(pDX, IDC_BARCODE_SAVEINFILE, m_SaveInFile);
+	DDX_Text(pDX, IDC_BARCODE_STRINGFILE, m_StringFileName);
+	DDX_Text(pDX, IDC_BC_MULTI_STRINGFILE, m_MultiMatchFileName);
+	DDX_Check(pDX, IDC_BC_USE_MULTIPLE, m_UseMultiMatch);
+	DDX_Check(pDX, IDC_BC_USE_SINGLE, m_UseSingleMatch);
 	//}}AFX_DATA_MAP
 }
 
@@ -194,31 +151,31 @@ END_MESSAGE_MAP()
 
 void SVBarCodeStringMatchDialog::OnBarcodeSaveInFile() 
 {
-  UpdateData (TRUE);
-  EnableFileSelect (m_bSaveInFile);
+	UpdateData (TRUE);
+	EnableFileSelect (m_SaveInFile);
 }
 
 void SVBarCodeStringMatchDialog::OnBarCodeSelectFile() 
 {
-   // begin SES 18-Jan-2001
-   SVFileNameClass   svfnFileName;
+	// begin SES 18-Jan-2001
+	SVFileNameClass   svfnFileName;
 
-   svfnFileName.SetFileType ( SV_BAR_CODE_STORE_VALUE_FILE_TYPE );
+	svfnFileName.SetFileType ( SV_BAR_CODE_STORE_VALUE_FILE_TYPE );
 
-   if ( svfnFileName.SelectFile () == IDOK )
-   {
-      m_szStringFileName = svfnFileName.GetFullFileName ();
+	if ( svfnFileName.SelectFile () == IDOK )
+	{
+		m_StringFileName = svfnFileName.GetFullFileName().c_str();
 
-      UpdateData ( FALSE );
-   }
-   // end SES 18-Jan-2001
+		UpdateData ( FALSE );
+	}
+	// end SES 18-Jan-2001
 }
 
 BOOL SVBarCodeStringMatchDialog::OnInitDialog() 
 {
 	CPropertyPage::OnInitDialog();
-	
-	EnableDisableControls( mbUseSingleMatch );
+
+	EnableDisableControls( m_UseSingleMatch );
 	return TRUE;
 }
 
@@ -226,14 +183,14 @@ void SVBarCodeStringMatchDialog::OnBcUseSingle()
 {
 	EnableDisableControls(TRUE);
 
-  UpdateData (TRUE);
+	UpdateData (TRUE);
 }
 
 void SVBarCodeStringMatchDialog::OnBcUseMultiple() 
 {
 	EnableDisableControls(FALSE);
 
-  UpdateData (TRUE);
+	UpdateData (TRUE);
 }
 
 void SVBarCodeStringMatchDialog::OnBcMultiSelectfile() 
@@ -244,9 +201,8 @@ void SVBarCodeStringMatchDialog::OnBcMultiSelectfile()
 
 	if ( svfnFileName.SelectFile () == IDOK )
 	{
-		mcsMultiMatchFileName = svfnFileName.GetFullFileName ();
+		m_MultiMatchFileName = svfnFileName.GetFullFileName().c_str();
 
 		UpdateData ( FALSE );
 	}
 }
-

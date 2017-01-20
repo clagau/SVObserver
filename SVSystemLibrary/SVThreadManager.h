@@ -18,6 +18,7 @@
 //Moved to precompiled header: #include <comdef.h>
 #include "SVThreadManager\SVThreadAttribute.h"
 #include "SVStatusLibrary\MessageManager.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion
 
 
@@ -28,7 +29,7 @@ struct SVThreadSetup
 	long m_lPriority;
 	long m_lAffinity;
 	// Threads will be setup based on thread name or partial thread name.
-	std::string m_strName; // Thread name
+	SVString m_strName; // Thread name
 	HANDLE m_hThread;
 };
 

@@ -21,7 +21,8 @@
 #include "SVOCore/SVImageClass.h"
 #include "CameraLibrary\SVGraphix.h"
 #include "SVOGui/DisplayHelper.h"
-#include "SVLibrary/StringHelper.h"
+#include "SVUtilityLibrary/SVStringConversions.h"
+#include "SVUtilityLibrary/SVString.h"
 #include "SVImageLibrary\MatroxImageData.h"
 #include "SVOGui\SVColor.h"
 #include "TextDefinesSvO.h"
@@ -264,15 +265,13 @@ void SVPatModelPageClass::OnCreateModel()
 			{
 				SVFileNameClass svFileName( m_strModelName );
 
-				CString strExt = svFileName.GetExtension();
-
 				// Now save the Model Image buffer to a file
 				SVMatroxFileTypeEnum FileFormatID = SVFileMIL; // Set as default.
-				if ( strExt.CompareNoCase(_T(".bmp")) == 0)
+				if ( 0 == SvUl_SF::CompareNoCase( svFileName.GetExtension(), SVString( _T(".bmp") ) ) )
 				{
 					FileFormatID = SVFileBitmap;
 				}
-				else if(strExt.CompareNoCase(_T(".tif")) == 0)
+				if ( 0 == SvUl_SF::CompareNoCase( svFileName.GetExtension(), SVString( _T(".tif") ) ) )
 				{
 					FileFormatID = SVFileTiff;
 				}
@@ -349,10 +348,10 @@ void SVPatModelPageClass::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
 	{
 		SVRPropertyItem* pItem = pNMPropTree->pItem;
 
-		CString sValue;
+		SVString Value;
 		long lNewValue;
-		pItem->GetItemValue( sValue );
-		lNewValue = atol( sValue );
+		pItem->GetItemValue( Value );
+		lNewValue = atol( Value.c_str() );
 
 		switch (pItem->GetCtrlID())
 		{
@@ -364,8 +363,8 @@ void SVPatModelPageClass::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
 			}
 			else
 			{
-				sValue = AsString( m_lModelWidth );
-				pItem->SetItemValue( sValue );
+				Value = SvUl::AsString( m_lModelWidth );
+				pItem->SetItemValue( Value.c_str() );
 			}
 			break;
 		case ModelHeight_Property:
@@ -376,8 +375,8 @@ void SVPatModelPageClass::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
 			}
 			else
 			{
-				sValue = AsString( m_lModelHeight );
-				pItem->SetItemValue( sValue );
+				Value = SvUl::AsString( m_lModelHeight );
+				pItem->SetItemValue( Value.c_str() );
 			}
 			break;
 		case ModelOriginX_Property:
@@ -387,8 +386,8 @@ void SVPatModelPageClass::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
 			}
 			else
 			{
-				sValue = AsString( m_nXPos );
-				pItem->SetItemValue( sValue );
+				Value = SvUl::AsString( m_nXPos );
+				pItem->SetItemValue( Value.c_str() );
 			}
 			break;
 		case ModelOriginY_Property:
@@ -398,8 +397,8 @@ void SVPatModelPageClass::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
 			}
 			else
 			{
-				sValue = AsString( m_nYPos );
-				pItem->SetItemValue( sValue );
+				Value = SvUl::AsString( m_nYPos );
+				pItem->SetItemValue( Value.c_str() );
 			}	
 			break;
 		default:
@@ -434,25 +433,25 @@ void SVPatModelPageClass::ObjectChangedExDialogImage(long Tab, long Handle, VARI
 {
 	if (ToolImageTab == Tab && m_handleToModelOverlayObject == Handle)
 	{
-		////////////////////////////////////////////////////////
-		// SET SHAPE PROPERTIES
-		VariantParamMap ParaMap;
+	////////////////////////////////////////////////////////
+	// SET SHAPE PROPERTIES
+	VariantParamMap ParaMap;
 		int count = SvOg::DisplayHelper::FillParameterMap(ParaMap, ParameterList, ParameterValue);
 
-		if( ParaMap.end() != ParaMap.find(CDSVPictureDisplay::P_X1) && VT_I4 == ParaMap[CDSVPictureDisplay::P_X1].vt &&
-			ParaMap.end() != ParaMap.find(CDSVPictureDisplay::P_X2) && VT_I4 == ParaMap[CDSVPictureDisplay::P_X2].vt &&
-			ParaMap.end() != ParaMap.find(CDSVPictureDisplay::P_Y1) && VT_I4 == ParaMap[CDSVPictureDisplay::P_Y1].vt &&
-			ParaMap.end() != ParaMap.find(CDSVPictureDisplay::P_Y2) && VT_I4 == ParaMap[CDSVPictureDisplay::P_Y2].vt)
-		{
-			m_lModelWidth = ParaMap[CDSVPictureDisplay::P_X2].lVal - ParaMap[CDSVPictureDisplay::P_X1].lVal;
-			m_lModelHeight = ParaMap[CDSVPictureDisplay::P_Y2].lVal - ParaMap[CDSVPictureDisplay::P_Y1].lVal;
-			m_nXPos = ParaMap[CDSVPictureDisplay::P_X1].lVal;
-			m_nYPos = ParaMap[CDSVPictureDisplay::P_Y1].lVal;
+	if( ParaMap.end() != ParaMap.find(CDSVPictureDisplay::P_X1) && VT_I4 == ParaMap[CDSVPictureDisplay::P_X1].vt &&
+		ParaMap.end() != ParaMap.find(CDSVPictureDisplay::P_X2) && VT_I4 == ParaMap[CDSVPictureDisplay::P_X2].vt &&
+		ParaMap.end() != ParaMap.find(CDSVPictureDisplay::P_Y1) && VT_I4 == ParaMap[CDSVPictureDisplay::P_Y1].vt &&
+		ParaMap.end() != ParaMap.find(CDSVPictureDisplay::P_Y2) && VT_I4 == ParaMap[CDSVPictureDisplay::P_Y2].vt)
+	{
+		m_lModelWidth = ParaMap[CDSVPictureDisplay::P_X2].lVal - ParaMap[CDSVPictureDisplay::P_X1].lVal;
+		m_lModelHeight = ParaMap[CDSVPictureDisplay::P_Y2].lVal - ParaMap[CDSVPictureDisplay::P_Y1].lVal;
+		m_nXPos = ParaMap[CDSVPictureDisplay::P_X1].lVal;
+		m_nYPos = ParaMap[CDSVPictureDisplay::P_Y1].lVal;
 
-			setCircularOverscanCheckboxState();
-		}
+		setCircularOverscanCheckboxState();
+	}
 
-		RefreshProperties();
+	RefreshProperties();
 	}
 	else if (ModelImageTab == Tab && m_handleToModelCenterOverlay == Handle)
 	{
@@ -562,8 +561,6 @@ void SVPatModelPageClass::ValidateModelFilename() // @TODO:  Add actual validati
 // SVPatModelPageClass message handlers
 void SVPatModelPageClass::InitializeData()
 {
-	CString	strValue;
-
 	SVImageExtentClass l_svExtents;
 	RECT l_oRect;
 
@@ -638,7 +635,7 @@ void SVPatModelPageClass::InitializeData()
 		m_nYPos = nMaxY;
 	}
 
-	UpdateData(false);
+	UpdateData( false );
 	setCircularOverscanCheckboxState();
 }
 
@@ -697,7 +694,7 @@ SvOi::MessageTextEnum SVPatModelPageClass::RestoreModelFromFile()
 	// set analyzer values
 	SetValuesToAnalyzer();
 
-	if ( m_pPatAnalyzer->RestorePattern( m_strModelName, &msgId ) )
+	if ( m_pPatAnalyzer->RestorePattern( SVString(m_strModelName), &msgId ) )
 	{
 		InitializeData();
 		RefreshProperties();
@@ -723,11 +720,11 @@ BOOL SVPatModelPageClass::GetModelFile(BOOL bMode)
 	//
 	// Try to read the current image file path name from registry...
 	//
-	CString csPath = AfxGetApp()->GetProfileString(	_T( "Settings" ), 
+	SVString Path = AfxGetApp()->GetProfileString(	_T( "Settings" ), 
 		                                              _T( "SVCFilePath" ), 
 		                                              SvStl::GlobalPath::Inst().GetRunPath().c_str() );   // Default
 
-	svfncFileName.SetDefaultPathName( csPath );
+	svfncFileName.SetDefaultPathName( Path );
 
 	UpdateData( TRUE );
 
@@ -745,9 +742,9 @@ BOOL SVPatModelPageClass::GetModelFile(BOOL bMode)
 	{
 		AfxGetApp()->WriteProfileString( _T( "Settings" ),
 		                                 _T( "SVCFilePath" ),
-										svfncFileName.GetPathName() );
+										svfncFileName.GetPathName().c_str() );
 
-		m_strModelName = svfncFileName.GetFullFileName();
+		m_strModelName = svfncFileName.GetFullFileName().c_str();
 		m_strOldModelName.Empty(); // mark it as update needed
 
 		UpdateData( false );
@@ -767,11 +764,10 @@ HRESULT SVPatModelPageClass::BuildPropertyList()
 	pRoot->HideItem();
 	pRoot->SetHeight(2);
 
-	CString text;
+	SVString Text;
 	SVRPropertyItemEdit* pItem = dynamic_cast <SVRPropertyItemEdit*> ( m_Tree.InsertItem(new SVRPropertyItemEdit(), pRoot) );
 	long lValue = m_nXPos;
-	CString sValue = AsString(lValue);
-	pItem->SetItemValue( sValue );
+	pItem->SetItemValue( SvUl::AsString(lValue).c_str() );
 	pItem->SetCtrlID( ModelOriginX_Property );
 	pItem->SetBold( false );
 	pItem->SetHeight(16);
@@ -780,8 +776,7 @@ HRESULT SVPatModelPageClass::BuildPropertyList()
 
 	pItem = dynamic_cast <SVRPropertyItemEdit*> ( m_Tree.InsertItem(new SVRPropertyItemEdit(), pRoot) );
 	lValue = m_nYPos;
-	sValue = AsString(lValue);
-	pItem->SetItemValue( sValue );
+	pItem->SetItemValue( SvUl::AsString(lValue).c_str() );
 	pItem->SetCtrlID( ModelOriginY_Property );
 	pItem->SetBold( false );
 	pItem->SetHeight(16);
@@ -790,24 +785,22 @@ HRESULT SVPatModelPageClass::BuildPropertyList()
 
 	pItem = dynamic_cast <SVRPropertyItemEdit*> ( m_Tree.InsertItem(new SVRPropertyItemEdit(), pRoot) );
 	lValue = m_lModelWidth;
-	sValue = AsString(lValue);
-	pItem->SetItemValue( sValue );
+	pItem->SetItemValue( SvUl::AsString(lValue).c_str() );
 	pItem->SetCtrlID( ModelWidth_Property );
 	pItem->SetBold( false );
 	pItem->SetHeight(16);
-	text.Format(_T("Width (%d - %d)"),  SVMinModelWidth, m_sourceImageWidth);
-	pItem->SetLabelText( text );
+	Text= SvUl_SF::Format(_T("Width (%d - %d)"),  SVMinModelWidth, m_sourceImageWidth);
+	pItem->SetLabelText( Text.c_str() );
 	pItem->OnRefresh();
 
 	pItem = dynamic_cast <SVRPropertyItemEdit*> ( m_Tree.InsertItem(new SVRPropertyItemEdit(), pRoot) );
 	lValue = m_lModelHeight;
-	sValue = AsString(lValue);
-	pItem->SetItemValue( sValue );
+	pItem->SetItemValue( SvUl::AsString(lValue).c_str() );
 	pItem->SetCtrlID( ModelHeight_Property );
 	pItem->SetBold( false );
 	pItem->SetHeight(16);
-	text.Format(_T("Height (%d - %d)"), SVMinModelHeight, m_sourceImageHeight);
-	pItem->SetLabelText( text );
+	Text= SvUl_SF::Format(_T("Height (%d - %d)"), SVMinModelHeight, m_sourceImageHeight);
+	pItem->SetLabelText( Text.c_str() );
 	pItem->OnRefresh();
 
 	SVRPropertyItem* pChild = pRoot->GetChild();
@@ -829,26 +822,21 @@ HRESULT SVPatModelPageClass::RefreshProperties()
 	ASSERT( pRoot );
 	SVRPropertyItem* pChild = pRoot->GetChild();
 
-	CString sValue("");
 	while ( nullptr != pChild )
 	{
 		switch (pChild->GetCtrlID())
 		{
 		case ModelWidth_Property:
-			sValue = AsString( m_lModelWidth );
-			pChild->SetItemValue( sValue );
+			pChild->SetItemValue( SvUl::AsString( m_lModelWidth ).c_str() );
 			break;
 		case ModelHeight_Property:
-			sValue = AsString( m_lModelHeight );
-			pChild->SetItemValue( sValue );
+			pChild->SetItemValue( SvUl::AsString( m_lModelHeight ).c_str() );
 			break;
 		case ModelOriginX_Property:
-			sValue = AsString( m_nXPos );
-			pChild->SetItemValue( sValue );
+			pChild->SetItemValue( SvUl::AsString( m_nXPos ).c_str() );
 			break;
 		case ModelOriginY_Property:
-			sValue = AsString( m_nYPos );
-			pChild->SetItemValue( sValue );
+			pChild->SetItemValue( SvUl::AsString( m_nYPos ).c_str() );
 			break;
 		}
 		pChild = pChild->GetSibling();

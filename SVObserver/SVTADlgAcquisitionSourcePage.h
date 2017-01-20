@@ -30,11 +30,11 @@ public:
 	//{{AFX_DATA(SVToolAdjustmentDialogAcquisitionSourcePageClass)
 	enum { IDD = IDD_TA_ACQUISITION_DIALOG };
 	SvMc::SVDottedNameTreeCtrlClass	availableDigitizerTreeCtrl;
-	CString	StrSelectedDigitizer;
-	BOOL	bChannel0;
-	BOOL	bChannel1;
-	BOOL	bChannel2;
-	BOOL	bChannel3;
+	CString	m_SelectedDigitizer;
+	BOOL	m_Channel0;
+	BOOL	m_Channel1;
+	BOOL	m_Channel2;
+	BOOL	m_Channel3;
 	//}}AFX_DATA
 
 protected:

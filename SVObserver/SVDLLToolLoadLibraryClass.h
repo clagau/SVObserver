@@ -17,6 +17,8 @@
 #pragma region Includes
 #include "SVDLLToolDefinitionStructs.h"
 #include "SVLoki/functor.h"
+#include "SVMessage\SVMessage.h"
+#include "SVStatusLibrary\MessageManager.h"
 #pragma endregion Includes
 
 struct SVImageDefinitionStruct;
@@ -69,8 +71,8 @@ typedef HRESULT (__stdcall *SetMILResultImagesPtr) (GUID tool, long lArraySize, 
 typedef HRESULT (__stdcall *GetResultImageDefinitionsPtr) (GUID tool, long* plArraySize, SVImageDefinitionStruct** ppaImageDefinitions);
 typedef HRESULT (__stdcall *DestroyImageDefinitionStructurePtr) ( SVImageDefinitionStruct* paStructs);
 
-typedef Loki::Functor<void, TYPELIST_1(const CString&) > SVDllLoadLibraryCallback;
-typedef Loki::DefaultFunctor< void, TYPELIST_1( const CString& ) > SVDllLoadLibraryCallbackDefault;
+typedef Loki::Functor<void, TYPELIST_1( LPCTSTR ) > SVDllLoadLibraryCallback;
+typedef Loki::DefaultFunctor< void, TYPELIST_1( LPCTSTR ) > SVDllLoadLibraryCallbackDefault;
 
 class SVDLLToolLoadLibraryClass  
 {

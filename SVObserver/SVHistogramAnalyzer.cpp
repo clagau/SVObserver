@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   01 Oct 2013 14:19:30  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 //Moved to precompiled header: #include <boost/utility.hpp>
 //Moved to precompiled header: #include <boost/fusion/container.hpp>
@@ -27,6 +28,8 @@
 #include "SVOCore/SVImageProcessingClass.h"
 #include "SVResultLong.h"
 #include "SVStatusLibrary/MessageManager.h"
+#include "SVUtilityLibrary/SVString.h"
+#pragma endregion Includes
 
 const double histogram_width = 512;
 const double histogram_height = 512;
@@ -420,7 +423,7 @@ void SVHistogramAnalyzerClass::AddResult(const std::pair<GUID, DWORD> & p)
 	l_resultInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
 	l_resultInfo.m_ObjectTypeInfo.SubType	= SVResultLongObjectType;
 	l_resultInfo.m_ClassId = SVLongResultClassGuid;
-	l_resultInfo.m_ClassName = SvUl_SF::LoadString(p.second);
+	l_resultInfo.m_ClassName = SvUl_SF::LoadSVString(p.second);
 
 	pAnalyzerResult = dynamic_cast<SVLongResultClass *>(l_resultInfo.Construct());
 

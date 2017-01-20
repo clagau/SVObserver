@@ -27,7 +27,7 @@
 #include "TextDefinesSvO.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
-#include "SVLibrary/StringEscape.h"
+#include "SVUtilityLibrary/SVStringConversions.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -41,7 +41,7 @@ static char THIS_FILE[] = __FILE__;
 
 SVEquationSymbolTableClass::SVEquationSymbolTableClass()
 {
-	m_ToolSetName.LoadString( IDS_CLASSNAME_SVTOOLSET );
+	m_ToolSetName = SvUl_SF::LoadSVString( IDS_CLASSNAME_SVTOOLSET );
 	m_ToolSetName +=  "."; 
 	m_DIOInputName = SvO::DIOInput;
 	m_RemoteInputName = SvO::Remote_Input;
@@ -87,7 +87,7 @@ int SVEquationSymbolTableClass::FindSymbol( LPCTSTR name )
 {
 	for( const_iterator it = begin(); it != end(); it++ )
 	{
-		if( !_tcscmp(name, (*it)->Name ) )
+		if( !_tcscmp(name, (*it)->Name.c_str() ) )
 		{
 			return static_cast<int> (it - begin());
 		}	
@@ -113,40 +113,39 @@ void SVEquationSymbolTableClass::Init(SVObjectClass* pRequestor)
 int SVEquationSymbolTableClass::AddSymbol(LPCTSTR name, SVObjectClass* pRequestor )
 {
 	// Strip off Double Quotes
-	CString csName = name;
-	csName.Trim(_T("\"" ) );
+	SVString SymbolName = SvUl_SF::Trim( SVString(name), _T("\"" ) );
 
 	SVEquationSymbolTypeEnum Type = SV_INPUT_SYMBOL_TYPE; 
 	
-	int symbolIndex = FindSymbol( csName ); 
+	int symbolIndex = FindSymbol( SymbolName.c_str() ); 
 	if(symbolIndex != -1)
 	{
 		///it is already in the vector
 		return symbolIndex;
 	}
 	
-	CString strLookUpName;
+	SVString LookUpName;
 	
-	if(0== csName.Left(m_ToolSetName.GetLength()).Compare(m_ToolSetName))
+	if( SvUl_SF::Left(SymbolName, m_ToolSetName.size()) == m_ToolSetName )
 	{
 		Type = SV_TOOLSET_SYMBOL_TYPE;
-		strLookUpName = m_InspectionName;
-		strLookUpName += csName;
+		LookUpName = m_InspectionName;
+		LookUpName += SymbolName;
 	}
-	else if ( 0 == csName.Left(m_DIOInputName.GetLength()).Compare(m_DIOInputName) 
-			||  0 == csName.Left(m_RemoteInputName.GetLength()).Compare(m_RemoteInputName) )
+	else if ( SvUl_SF::Left(SymbolName, m_DIOInputName.size()) == m_DIOInputName
+			||  SvUl_SF::Left(SymbolName, m_RemoteInputName.size()) == m_RemoteInputName )
 	{
-		strLookUpName = m_InspectionName;
-		strLookUpName += csName;
+		LookUpName = m_InspectionName;
+		LookUpName += SymbolName;
 	}
 	else
 	{
-		strLookUpName = csName;
+		LookUpName = SymbolName;
 	}
 		
 	SVObjectReference ObjectReference;
 
-	HRESULT hr = SVObjectManagerClass::Instance().GetObjectByDottedName( strLookUpName.GetString(), ObjectReference );
+	HRESULT hr = SVObjectManagerClass::Instance().GetObjectByDottedName( LookUpName.c_str(), ObjectReference );
 	if( S_OK != hr )
 	{
 		return -1;
@@ -362,11 +361,9 @@ BOOL SVEquationClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure 
 	SVObjectClass *owner = enabled.GetOwner();
 	if (nullptr != owner)
 	{
-		SVString ownerName(owner->GetName());
-		CString conditionalString;
-		conditionalString.LoadString( IDS_CLASSNAME_SVCONDITIONAL );
+		SVString conditionalString = SvUl_SF::LoadSVString( IDS_CLASSNAME_SVCONDITIONAL );
 
-		if (0 == ownerName.compare(conditionalString))
+		if( owner->GetName() == conditionalString )
 		{
 			// Set / Reset Remotely Setable Flag, if owner is conditional class.
 			enabled.ObjectAttributesAllowedRef() |= SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE;
@@ -380,7 +377,7 @@ BOOL SVEquationClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure 
 
 BOOL SVEquationClass::HasCondition()
 {
-	return !equationStruct.EquationBuffer.IsEmpty();
+	return !equationStruct.EquationBuffer.empty();
 }
 
 double SVEquationClass::GetYACCResult() const
@@ -388,42 +385,32 @@ double SVEquationClass::GetYACCResult() const
 	return yacc.equationResult;
 }
 
-void SVEquationClass::GetEquationText(CString& text) const
+const SVString& SVEquationClass::GetEquationText() const
 {
-	text = equationStruct.EquationBuffer;
+	return equationStruct.GetEquationText();
 }
 
-void SVEquationClass::GetEquationText(SVString& text) const
+void SVEquationClass::SetEquationText(const SVString& rText)
 {
-	text = equationStruct.EquationBuffer.GetString();
-}
-
-void SVEquationClass::SetEquationText(const CString& text)
-{
-	equationStruct.EquationBuffer = text;
-	if (text.IsEmpty())
+	equationStruct.SetEquationText( rText );
+	if( rText.empty() )
 	{
 		symbols.ClearAll();
 		yacc.equationResult = 0.0;
 	}
 }
 
-void SVEquationClass::SetEquationText(const SVString& text)
-{
-	SetEquationText(CString(text.c_str()));
-}
-
 HRESULT SVEquationClass::GetObjectValue( const SVString& p_rValueName, VARIANT& p_rVariantValue ) const
 {
 	HRESULT hr = S_OK;
 
-	if( p_rValueName == _T( "EquationBuffer" ) )
+	if( p_rValueName == _T("EquationBuffer") )
 	{
 		_variant_t l_TempVariant;
 
 		l_TempVariant.Attach( p_rVariantValue );
 
-		l_TempVariant = static_cast< LPCTSTR >( equationStruct.EquationBuffer );
+		l_TempVariant.SetString( equationStruct.GetEquationText().c_str() );
 
 		l_TempVariant.Detach();
 	}
@@ -440,12 +427,12 @@ void SVEquationClass::Persist( SVObjectWriter& rWriter )
 	SVTaskObjectClass::Persist(rWriter);
 	
 	// Get the Data Values (Member Info, Values)
-	CString tmp = equationStruct.EquationBuffer;
+	SVString Temp = equationStruct.EquationBuffer;
 	
-	SvLib::AddEscapeSpecialCharacters( tmp, true );
+	SvUl::AddEscapeSpecialCharacters( Temp, true );
 
 	_variant_t value;
-	value.SetString(tmp);
+	value.SetString(Temp.c_str());
 	rWriter.WriteAttribute(scEquationBufferTag, value);
 	value.Clear();
 }
@@ -453,25 +440,25 @@ void SVEquationClass::Persist( SVObjectWriter& rWriter )
 ////////////////////////////////////////////////////////////////////////////////
 // 
 ////////////////////////////////////////////////////////////////////////////////
-HRESULT SVEquationClass::SetObjectValue( SVObjectAttributeClass* PDataObject )
+HRESULT SVEquationClass::SetObjectValue( SVObjectAttributeClass* pDataObject )
 {
 	HRESULT hr = S_FALSE;
 	BOOL bOk = FALSE;
 
-	SvCl::SVObjectCStringArrayClass svCStringArray;
+	SvCl::SVObjectSVStringArrayClass AttributeList;
 
-	if ( ( bOk = PDataObject->GetAttributeData( "EquationBuffer", svCStringArray ) ) )
+	if ( ( bOk = pDataObject->GetAttributeData( _T("EquationBuffer"), AttributeList ) ) )
 	{
-		for( int i = 0;i < svCStringArray.GetSize();i++ )
+		for( int i = 0;i < AttributeList.GetSize();i++ )
 		{
-			equationStruct.EquationBuffer = svCStringArray.GetAt( i );
+			equationStruct.EquationBuffer = AttributeList.GetAt( i );
 
-			SvLib::RemoveEscapedSpecialCharacters( equationStruct.EquationBuffer, true );
+			SvUl::RemoveEscapedSpecialCharacters( equationStruct.EquationBuffer, true );
 		}
 	}
 	else
 	{
-		hr = SVTaskObjectClass::SetObjectValue( PDataObject );
+		hr = SVTaskObjectClass::SetObjectValue( pDataObject );
 		return hr;
 	}
 
@@ -513,12 +500,11 @@ SvOi::EquationTestResult SVEquationClass::Test( bool DisplayErrorMessage )
 		symbols.Init(this);
 		
 
-		CString equationText;
-		GetEquationText( equationText );
+		SVString equationText = GetEquationText();
 		equationText += "\n";
 		// Note Buffer must be terminated with a new line
 		// Build Lexical Stack
-		SvOi::EquationTestResult result = lexicalScan( static_cast<LPCTSTR> (equationText) );
+		SvOi::EquationTestResult result = lexicalScan( equationText.c_str() );
 		if( result.bPassed )
 		{
 			// Parse the equation
@@ -557,7 +543,7 @@ SvOi::EquationTestResult SVEquationClass::Test( bool DisplayErrorMessage )
 			if (yacc.yacc_err)
 			{
 				SVString fullObjectName = GetCompleteObjectNameToObjectType( nullptr, SVInspectionObjectType );
-				SVStringArray msgList;
+				SVStringVector msgList;
 				msgList.push_back(fullObjectName);
 				if( S_OK != yacc.m_StatusCode )
 				{
@@ -650,7 +636,7 @@ SvOi::EquationTestResult SVEquationClass::lexicalScan(LPCTSTR inBuffer)
 		SVString fullObjectName = GetCompleteObjectNameToObjectType( nullptr, SVInspectionObjectType );
 		ret.bPassed = false;
 		ret.iPositionFailed = static_cast< int >( lex.position + 1 );
-		SVStringArray msgList;
+		SVStringVector msgList;
 		msgList.push_back(fullObjectName);
 		msgList.push_back(SvUl_SF::Format(_T("%d"), ret.iPositionFailed));
 		errContainer.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_EquationParserError, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10198 );
@@ -938,11 +924,10 @@ void SVEquationClass::OnObjectRenamed(const SVObjectClass& rRenamedObject, const
 	oldPrefix = newPrefix;
 	SvUl_SF::searchAndReplace( oldPrefix, rRenamedObject.GetName(), rOldName.c_str() );
 
-	CString equationBuff;
-	GetEquationText( equationBuff );
+	SVString equationBuff = GetEquationText();
 
 	// Replace all occurences
-	if( equationBuff.Replace( oldPrefix.c_str(), newPrefix.c_str() ) )
+	if( GetEquationText() != SvUl_SF::searchAndReplace( equationBuff, oldPrefix.c_str(), newPrefix.c_str() ) )
 	{
 		SetEquationText( equationBuff );
 	}

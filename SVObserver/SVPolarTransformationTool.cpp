@@ -80,17 +80,17 @@ void SVPolarTransformationToolClass::init()
 		Add( pEvaluate );
 
 	// Set Default Value to Use Angular Method1
-	CString strEnumTypes;
-	strEnumTypes = "Angular Method1=0,Angular Method2=1";
-	m_svAngularMethod.SetEnumTypes( strEnumTypes );
+	m_svAngularMethod.SetEnumTypes( _T("Angular Method1=0,Angular Method2=1") );
 
 	m_svAngularMethod.SetDefaultValue( _T("Angular Method1"), TRUE );
 	m_svAngularMethod.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
 
 	// Add the Image Transformation Class
 	SVImagePolarTransformClass* pTransform = new SVImagePolarTransformClass;
-	if( pTransform )
+	if( nullptr != pTransform )
+	{
 		Add( pTransform );
+	}
 
 	// Set default inputs and outputs
 	addDefaultInputObjects();

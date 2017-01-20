@@ -17,7 +17,7 @@
 #include "SVPerspectiveTool.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "CameraLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
-
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -139,14 +139,14 @@ BOOL SVPerspectiveWarpDlg::OnInitDialog()
 		if( m_pWarpType )
 		{
 			
-			CString l_strEnumList;
+			SVString EnumList;
 
-			m_pWarpType->GetEnumTypes( l_strEnumList );
-			m_FunctionCombo.SetEnumTypes( l_strEnumList );
+			m_pWarpType->GetEnumTypes( EnumList );
+			m_FunctionCombo.SetEnumTypes( EnumList.c_str() );
 
-			CString strEnum;
-			m_pWarpType->GetValue( strEnum );
-			m_FunctionCombo.SelectString( -1, strEnum );
+			SVString EnumString;
+			m_pWarpType->GetValue( EnumString );
+			m_FunctionCombo.SelectString( -1, EnumString.c_str() );
 		}
 		m_pWarpType->GetValue( m_lLastWarpType );
 
@@ -155,14 +155,14 @@ BOOL SVPerspectiveWarpDlg::OnInitDialog()
 		m_pInterpolationMode = dynamic_cast<SVEnumerateValueObjectClass*>(m_pTool->getFirstObject(objectInfo));
 		if( m_pInterpolationMode )
 		{
-			CString l_strEnumList;
+			SVString EnumList;
 
-			m_pInterpolationMode->GetEnumTypes( l_strEnumList );
-			m_cbInterpolation.SetEnumTypes( l_strEnumList );
+			m_pInterpolationMode->GetEnumTypes( EnumList );
+			m_cbInterpolation.SetEnumTypes( EnumList.c_str() );
 
-			CString strEnum;
-			m_pInterpolationMode->GetValue( strEnum );
-			m_cbInterpolation.SelectString( -1, strEnum );
+			SVString EnumString;
+			m_pInterpolationMode->GetValue( EnumString );
+			m_cbInterpolation.SelectString( -1, EnumString.c_str() );
 		}
 		m_pWarpType->GetValue( m_lLastWarpType );
 

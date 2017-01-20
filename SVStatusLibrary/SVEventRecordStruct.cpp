@@ -170,7 +170,7 @@ LPCTSTR SVEventRecordStruct::GetType()
 	return l_pString;
 }
 
-std::string SVEventRecordStruct::GetDateTime()
+SVString SVEventRecordStruct::GetDateTime()
 {
 	CTime l_time((__time64_t)m_poRecord->TimeWritten);
 	return static_cast<LPCTSTR>( l_time.Format(_T("%m/%d/%Y  %I:%M:%S %p")));

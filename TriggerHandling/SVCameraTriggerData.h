@@ -15,6 +15,7 @@
 #include "SVValueObjectLibrary/SVDoubleValueObjectClass.h"
 #include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
 #include "SVLibrary/SVIOEntryHostStruct.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 namespace Seidenader { namespace TriggerHandling {

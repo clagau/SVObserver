@@ -15,12 +15,12 @@
 
 #include "SVOutputObject.h"
 #include "SVInfoStructs.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 class SVOutputObjectList : public SVObjectClass
 {
 public:
-	typedef std::vector<CString> StringVect;
 	SVOutputObjectList( LPCSTR ObjectName );
 	SVOutputObjectList( SVObjectClass *pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVOUTPUTOBJECTLIST );
 
@@ -49,8 +49,8 @@ public:
 	BOOL WriteOutput( SVIOEntryHostStructPtr pIOEntry, long lDataIndex, bool p_ACK, bool p_NAK );
 	BOOL WriteOutputValue( SVIOEntryHostStructPtr pIOEntry, const _variant_t& p_rValue );
 	BOOL ResetOutput( SVIOEntryHostStructPtr pIOEntry );
-	bool RenameInspection( CString& OldInspection, CString& NewInspectionName);
-	HRESULT RemoveUnusedOutputs( const StringVect& p_aStrInspNames, const StringVect& p_astrPPQNames );
+	bool RenameInspection( LPCTSTR OldInspection, LPCTSTR NewInspectionName);
+	HRESULT RemoveUnusedOutputs( const SVStringVector& rInspectionNames, const SVStringVector& rPPQNames );
 
 	BOOL FillOutputs( SVIOEntryHostStructPtrList& p_IOEntries );
 

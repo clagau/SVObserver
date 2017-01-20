@@ -32,15 +32,15 @@ static char THIS_FILE[] = __FILE__;
 
 IMPLEMENT_DYNCREATE(SVExternalToolResultPage, CPropertyPage)
 
-SVExternalToolResultPage::SVExternalToolResultPage(const CString& sTitle, SVExternalToolDetailsSheet* pParent, int id ) 
+SVExternalToolResultPage::SVExternalToolResultPage( LPCTSTR Title, SVExternalToolDetailsSheet* pParent, int id ) 
 	: CPropertyPage(SVExternalToolResultPage::IDD)
 {
 	m_pParentDialog = pParent;
 	m_pTool = m_pParentDialog->m_pTool;
 	m_pTask = m_pParentDialog->m_pTask;
 
-	m_sTitle = sTitle;
-    m_psp.pszTitle = m_sTitle;
+	m_sTitle = Title;
+    m_psp.pszTitle = m_sTitle.c_str();
     m_psp.dwFlags |= PSP_USETITLE;
 
 	//{{AFX_DATA_INIT(SVExternalToolResultPage)
@@ -116,36 +116,34 @@ BOOL SVExternalToolResultPage::OnInitDialog()
 			pEdit->SetCtrlID( iID );
 
 			// display name like: "Result 01 ( )"
-			CString l_Temp;
-			rName.GetValue(l_Temp);
+			SVString Temp;
+			rName.GetValue(Temp);
 
-			CString sLabel = rValue.GetName();
-			sLabel += _T(" (");
-			sLabel += l_Temp;
-			sLabel += _T(")");
+			SVString sLabel = SvUl_SF::Format( _T("%s (%s)"), rValue.GetName(), Temp.c_str());
 
-			pEdit->SetLabelText( sLabel );
+			pEdit->SetLabelText( sLabel.c_str() );
 
-			CString strType;
-			switch ( rDefinition.lVT )
+			SVString Type;
+			switch ( rDefinition.m_VT )
 			{
-				case VT_BOOL: strType = _T("Bool");   break;
-				case VT_I4:   strType = _T("Long");   break;
-				case VT_R8:   strType = _T("Double"); break;
-				case VT_BSTR: strType = _T("String"); break;
-				default:      strType = _T("???");    break;
+				case VT_BOOL: Type = _T("Bool");   break;
+				case VT_I4:   Type = _T("Long");   break;
+				case VT_R8:   Type = _T("Double"); break;
+				case VT_BSTR: Type = _T("String"); break;
+				default:      Type = _T("???");    break;
 			}
 
-			CString sDescription;
-			sDescription = _T(" (Type : ") + strType +_T(")  ") + CString(rDefinition.bstrDisplayName);
-			pEdit->SetInfoText( sDescription ) ;
+			SVString sDescription = SvUl_SF::Format( _T(" (Type : %s)  %s"), Type.c_str(), SvUl_SF::createSVString( rDefinition.m_bDisplayName ).c_str() );
+			pEdit->SetInfoText( sDescription.c_str() ) ;
 			pEdit->SetButtonText( _T("Range"));
 
-			CString sValue;
+			SVString sValue;
 			rValue.GetValue(sValue);
-			pEdit->SetItemValue( sValue );
-			if( rDefinition.lVT == VT_BSTR )
+			pEdit->SetItemValue( sValue.c_str() );
+			if( rDefinition.m_VT == VT_BSTR )
+			{
 				pEdit->ReadOnly();
+			}
 			pEdit->OnRefresh();
 		}// end for( int i = 0 ; i < m_pTask->m_Data.m_iNumResultValues ; i++ )
 
@@ -180,7 +178,7 @@ void SVExternalToolResultPage::OnItemQueryShowButton(NMHDR* pNotifyStruct, LRESU
 		SVRPropertyItem* pItem = pNMPropTree->pItem;
 		int iIndex = GetItemIndex(pItem);
 	
-		if( m_pTask->m_Data.m_aResultValueDefinitions[iIndex].lVT == VT_BSTR )
+		if( m_pTask->m_Data.m_aResultValueDefinitions[iIndex].m_VT == VT_BSTR )
 		{
 			*plResult = FALSE;	// Do not show button for a string, No Range available.
 		}
@@ -203,10 +201,9 @@ void SVExternalToolResultPage::OnItemButtonClick(NMHDR* pNotifyStruct, LRESULT* 
 		int iIndex = GetItemIndex(pItem);
 
 		// display value object picker
-		CString sObjectName;
 		if ( SelectObject(iIndex) == IDOK )
 		{
-			pItem->SetItemValue( sObjectName );
+			pItem->SetItemValue( _T("") );
 			pItem->OnRefresh();
 		}
 	}// end if ( pNMPropTree->pItem )
@@ -238,9 +235,6 @@ void SVExternalToolResultPage::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plRe
 		SVRPropertyItem* pItem = pNMPropTree->pItem;
 		int iIndex = GetItemIndex(pItem);
 		ASSERT( iIndex >= 0 );
-
-		CString sValue;
-		pItem->GetItemValue(sValue);
 
 		// do validation
 		bool bValidated = true;

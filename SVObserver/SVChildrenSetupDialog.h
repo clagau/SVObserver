@@ -10,6 +10,9 @@
 //******************************************************************************
 
 #pragma once
+#pragma region Includes
+#include "SVUtilityLibrary/SVString.h"
+#pragma endregion Includes
 
 class SVIPDoc;
 class SVTaskObjectClass;
@@ -63,7 +66,7 @@ protected:
 public:
 	SVClassInfoStructListClass*	m_pAvailableChildrenList;
 	SVTaskObjectListClass*		m_pParentObject;
-	CString StrTitle;
+	SVString					m_Title;
 	BOOL						m_AllowMultipleChildrenInstances;
 	SVIPDoc*					m_pDocument;
 

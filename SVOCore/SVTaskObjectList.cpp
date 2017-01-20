@@ -26,7 +26,6 @@
 #pragma endregion
 
 #ifdef _DEBUG
-#define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
@@ -243,7 +242,7 @@ BOOL SVTaskObjectListClass::OnValidate()
 		if( !Result && 0 != getFirstTaskMessage().getMessage().m_MessageCode)
 		{
 			SvStl::MessageContainer message;
-			SVStringArray msgList;
+			SVStringVector msgList;
 			msgList.push_back(GetName());
 			message.setMessage( SVMSG_SVO_5074_BASECLASSONVALIDATEFAILED, SvOi::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams) );
 			addTaskMessage( message );
@@ -317,7 +316,7 @@ void SVTaskObjectListClass::InsertAt(int nIndex, SVTaskObjectClass* PTaskObject,
 {
 	if (! PTaskObject)
 	{
-		ASSERT(0);
+		assert( false );
 		return;
 	}
 	
@@ -642,7 +641,7 @@ void SVTaskObjectListClass::Delete(GUID& objectID)
 		}
 	}
 	// unknown owner!!
-	ASSERT(0);
+	assert( false );
 }
 
 void SVTaskObjectListClass::InsertAt(int index, SvOi::ITaskObject& rObject, int count)
@@ -921,19 +920,19 @@ void SVTaskObjectListClass::DeleteAt(int Index, int Count /*= 1*/)
 	
 	if (Index < 0)
 	{
-		ASSERT(0);
+		assert( false );
 		Index = 0;
 	}
 	
 	if (Index >= m_aTaskObjects.GetSize())
 	{
-		ASSERT(0);	
+		assert( false );
 		return;
 	}
 	
 	if (Index + Count > m_aTaskObjects.GetSize())
 	{
-		ASSERT(0);	
+		assert( false );
 		Count = m_aTaskObjects.GetSize() - Index; 
 	}
 	

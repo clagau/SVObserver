@@ -48,7 +48,7 @@ public:
 	//extension.  These three pieces of information are 
 	//collected from the full file name string pass as a 
 	//parameter.
-	SVFileNameClass(LPCTSTR szFullFileName);
+	SVFileNameClass(LPCTSTR FullFileName);
 
 	//This operator is the copy constructor.  This method 
 	//will create an exact copy of the object supplied as the 
@@ -69,11 +69,11 @@ public:
 
 	//This operator exposes the string contained in the 
 	//mcsFileName attribute.
-	LPCTSTR GetFileNameOnly() const;
+	const SVString& GetFileNameOnly() const;
 
 	//This operator exposed the string contained in the 
 	//mcsExtension attribute.
-	LPCTSTR GetExtension() const;
+	const SVString& GetExtension() const;
 
 	//This operator exposes the values contained in the 
 	//mdwFileType attribute.
@@ -81,33 +81,33 @@ public:
 
 	//This operator exposes the string contained in the 
 	//mcsPathName attribute.
-	LPCTSTR GetPathName() const;
+	const SVString& GetPathName() const;
 
 	//This operator exposes the strings contained in the 
 	//mcsFileName and mcsExtension attribute.
-	LPCTSTR GetFileName() const;
+	const SVString& GetFileName() const;
 
 	//This operator exposed the strings contained in the 
 	//mcsPathName, mcsFileName and mcsExtension attributes.
-	LPCTSTR GetFullFileName() const;
+	const SVString& GetFullFileName() const;
 
 	//This operator exposes the string contained in the 
 	//mcsFileSelectDialogTitle attribute.
-	LPCTSTR GetFileSelectDialogTitle() const;
+	const SVString& GetFileSelectDialogTitle() const;
 
 	//This operator exposes the string contained in the 
 	//mcsFileSaveDialogTitle attribute.
-	LPCTSTR GetFileSaveDialogTitle() const;
+	const SVString& GetFileSaveDialogTitle() const;
 
-	LPCTSTR GetDefaultPathName() const;
+	const SVString& GetDefaultPathName() const;
 
 	//This operator exposes the string contained in the 
 	//mcsDefaultFileName attribute.
-	LPCTSTR GetDefaultFileName() const;
+	const SVString& GetDefaultFileName() const;
 
 	//This operator exposes the string contained in the 
 	//mcsFileExtensionFilterList attribute.
-	LPCTSTR GetFileExtensionFilterList() const;
+	const SVString& GetFileExtensionFilterList() const;
 
 	//This operator exposes the value contained in the 
 	//mdwFileSaveFlags attribute.
@@ -119,7 +119,7 @@ public:
 
 	//This operator exposes the string contained in the 
 	//mcsDefaultFileExtension attribute.
-	LPCTSTR GetDefaultFileExtension() const;
+	const SVString& GetDefaultFileExtension() const;
 
 	//This operator sets the mdwFileType attribute and also 
 	//sets default values for the mcsFileSelectDialogTitle, 
@@ -166,7 +166,7 @@ public:
 	//This operator changes the string contained in the 
 	//mcsFileExtensionFilterList attribute to the value 
 	//contain in the operator parameter.
-	BOOL SetFileExtensionFilterList(LPCTSTR szFilter);
+	BOOL SetFileExtensionFilterList(const SVString& rFilter);
 
 	//This operator changes the string contained in the 
 	//mdwFileSaveFlags attribute to the value contain in the 
@@ -178,19 +178,19 @@ public:
 	//the operator parameter.
 	BOOL SetFileSelectFlags(DWORD dwFlags);
 
-	BOOL SetDefaultFullFileName(LPCTSTR szFullName);
+	BOOL SetDefaultFullFileName(LPCTSTR FullName);
 
-	BOOL SetDefaultPathName(LPCTSTR szName);
+	BOOL SetDefaultPathName(const SVString& rName);
 
 	//This operator changes the string contained in the 
 	//mcsDefaultFileName attribute to the value contain in 
 	//the operator parameter.
-	BOOL SetDefaultFileName(LPCTSTR szName);
+	BOOL SetDefaultFileName(const SVString& rName);
 
 	//This operator changes the string contained in the 
 	//mcsDefaultFileExtension attribute to the value contain 
 	//in the operator parameter.
-	BOOL SetDefaultFileExtension(LPCTSTR szExtension);
+	BOOL SetDefaultFileExtension(const SVString& rExtension);
 
 	//This operator uses the object's attributes to build a 
 	//file dialog for selecting a path for the object.  A 

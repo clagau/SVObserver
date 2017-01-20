@@ -15,21 +15,16 @@
 #include "SVObjectLibrary\SVToolsetScriptTags.h"
 #include "SVObjectLibrary\SVClsids.h"
 #include "SVObjectLibrary/SVObjectAttributeClass.h"
-#include "SVLibrary/StringMunge.h"
 #include "SVUtilityLibrary/SetBits.h"
 #include "SVStatusLibrary/MessageManager.h"
 #pragma endregion Includes
 
-namespace	// only for this file
-{
-	const CString DEFAULT_TAG_SAVE(_T(".Default"));
-	const CString BUCKET_TAG_SAVE(_T(".Array"));	// for backwards compatibility
-	const CString ARRAY_TAG_SAVE(_T(".Array_Elements"));	// new style; one bucket, all array values
-
-	const CString DEFAULT_TAG_LOAD(_T("Default"));
-	const CString BUCKET_TAG_LOAD(_T("Array"));	// for backwards compatibility
-	const CString ARRAY_TAG_LOAD(_T("Array_Elements"));	// new style; one bucket, all array values
-}	// end file scope namespace
+#pragma region Declarations
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+#endif
+#pragma endregion Declarations
 
 SV_IMPLEMENT_CLASS( SVDPointValueObjectClass, SVDPointValueObjectClassGuid );
 
@@ -72,11 +67,11 @@ void SVDPointValueObjectClass::Persist(SVObjectWriter& rWriter)
 	SVValueObjectClass::Persist( rWriter );
 
 	// Get the Data Values (Member Info, Values)
-	CString tmp;
-	tmp.Format( _T( "%lf, %lf"), DefaultValue().x, DefaultValue().y );
+	SVString tmp;
+	tmp = SvUl_SF::Format( _T( "%lf, %lf"), DefaultValue().x, DefaultValue().y );
 	
 	_variant_t value;
-	value.SetString(tmp);
+	value.SetString(tmp.c_str());
 	rWriter.WriteAttribute(scDefaultTag, value);
 	value.Clear();
 
@@ -88,8 +83,8 @@ void SVDPointValueObjectClass::Persist(SVObjectWriter& rWriter)
 	// for all elements in the array (m_iArraySize)
 	for( int i = 0; i < m_iArraySize; i++ )
 	{
-		tmp.Format( _T("%lf, %lf"), Element(m_iLastSetIndex, i).x, Element(m_iLastSetIndex, i).y );
-		value.SetString(tmp);
+		tmp = SvUl_SF::Format( _T("%lf, %lf"), Element(m_iLastSetIndex, i).x, Element(m_iLastSetIndex, i).y );
+		value.SetString(tmp.c_str());
 		list.push_back(value);
 		value.Clear();
 	}
@@ -105,7 +100,7 @@ HRESULT SVDPointValueObjectClass::SetObjectValue( SVObjectAttributeClass* PDataO
 	BOOL bOk = FALSE;
 
 	SVObjectDPointArrayClass svPointArray;
-	bucket_type l_Buckets(BucketsNoAssert());
+	bucket_type l_Buckets(BucketNoAssert());
 
 	if ( ( bOk = PDataObject->GetAttributeData( "defaultPoint", svPointArray ) ) )
 	{
@@ -114,7 +109,7 @@ HRESULT SVDPointValueObjectClass::SetObjectValue( SVObjectAttributeClass* PDataO
 			DefaultValue() = svPointArray[i];
 		}
 	}
-	else if ( bOk = PDataObject->GetAttributeData( "pArray", l_Buckets, DefaultValue() ) )
+	else if ( bOk = PDataObject->GetAttributeData( _T("pArray"), l_Buckets, DefaultValue() ) )
 	{
 		if ( 1 == ArraySize() )
 		{
@@ -156,7 +151,7 @@ HRESULT SVDPointValueObjectClass::GetDefaultValue( POINT& rPoint ) const
 	return IsCreated() ? S_OK : S_FALSE;
 }
 
-HRESULT SVDPointValueObjectClass::SetValueAt( int iBucket, int iIndex, const CString& strValue )
+HRESULT SVDPointValueObjectClass::SetValueAt( int iBucket, int iIndex, const SVString& strValue )
 {
 	try
 	{
@@ -192,14 +187,14 @@ HRESULT SVDPointValueObjectClass::GetValueAt( int nBucket, int iIndex, double& r
 	return S_FALSE;
 }
 
-HRESULT SVDPointValueObjectClass::GetValueAt( int iBucket, int iIndex, CString& rstrValue ) const
+HRESULT SVDPointValueObjectClass::GetValueAt( int iBucket, int iIndex, SVString& rValue ) const
 {
 	SVDPointClass value;
 
 	HRESULT hr = base::GetValueAt( iBucket, iIndex, value );
 	//if ( S_OK == hr ) // @WARNING - log an error here?
 	{
-		rstrValue.Format( _T( "( %lf, %lf )" ), value.x, value.y );
+		rValue = SvUl_SF::Format( _T( "( %lf, %lf )" ), value.x, value.y );
 	}
 
 	return hr;
@@ -209,21 +204,20 @@ HRESULT SVDPointValueObjectClass::GetValueAt( int iBucket, int iIndex, VARIANT& 
 {
 	SVDPointClass l_dPoint;
 
-	_variant_t l_Temp;
-	l_Temp.Attach( rValue );
+	_variant_t vtValue;
+	vtValue.Attach( rValue );
 
 	HRESULT hr = base::GetValueAt( iBucket, iIndex, l_dPoint );
 	if( S_OK == hr )
 	{
-		CString l_strTmp;
-		l_strTmp.Format(  _T( "( %lf, %lf )"),l_dPoint.x, l_dPoint.y);
-		l_Temp = l_strTmp;
+		SVString Temp = SvUl_SF::Format(  _T("( %lf, %lf )"), l_dPoint.x, l_dPoint.y);
+		vtValue = Temp.c_str();
 	}
 	else
 	{
-		l_Temp.Clear();
+		vtValue.Clear();
 	}
-	rValue = l_Temp.Detach();
+	rValue = vtValue.Detach();
 
 	return hr;
 }
@@ -245,22 +239,21 @@ void SVDPointValueObjectClass::LocalInitialize()
 	InitializeBuckets();
 }
 
-SVDPointClass SVDPointValueObjectClass::convertString2DPoint(const CString& rValue ) const
+SVDPointClass SVDPointValueObjectClass::convertString2DPoint(const SVString& rValue ) const
 {
-	CString strLegalChars (rValue);
-	StringMunge::KeepChars( &strLegalChars, _T("0123456789()-., ") );	// floats
-	if ( strLegalChars == rValue )
+	SVString LegalChars = SvUl_SF::ValidateString( rValue, _T("0123456789()-., ") );	// floats
+	if ( LegalChars == rValue )
 	{
-		StringMunge::StripChars( &strLegalChars, _T("()") );
-		int iComma = strLegalChars.Find(_T(','));
-		if ( iComma > 0 && iComma < strLegalChars.GetLength() - 1 )
+		SvUl_SF::RemoveCharacters( LegalChars, _T("()") );
+		size_t Pos = LegalChars.find(_T(','));
+		if ( SVString::npos != Pos )
 		{
-			CString sX = strLegalChars.Left( iComma );
-			CString sY = strLegalChars.Mid( iComma + 1 );
-			return SVDPointClass(atof(sX), atof(sY));
+			SVString sX = SvUl_SF::Left( LegalChars, Pos );
+			SVString sY = SvUl_SF::Mid( LegalChars, Pos + 1 );
+			return SVDPointClass(atof(sX.c_str()), atof(sY.c_str()));
 		}
 	}
-	SVStringArray msgList;
+	SVStringVector msgList;
 	msgList.push_back(SVString(rValue));
 	msgList.push_back(GetName());
 	SvStl::MessageMgrStd Exception( SvStl::LogOnly );

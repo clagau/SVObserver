@@ -9,14 +9,16 @@
 //* .Check In Date   : $Date:   23 Apr 2013 13:16:36  $
 //******************************************************************************
 
+#pragma region Includes
 #include "StdAfx.h"
 //Moved to precompiled header: #include <boost/bind.hpp>
 #include "SVOutputStreamManager.h"
 #include "SVRemoteControlConstants.h"
 #include "JsonLib/include/json.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-
 #include "SVObjectCommandDataJson.h"
+#include "SVUtilityLibrary/SVString.h"
+#pragma endregion Includes
 
 #pragma region Constants
 static const std::string scRemoteOutputGroupTag = "SVRemoteOutputGroup";

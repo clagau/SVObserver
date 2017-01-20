@@ -33,7 +33,7 @@ namespace Seidenader { namespace SVStatusLibrary
 		/// \param additionalList [in] A list of the additional text parts
 		/// \returns SVString
 		//************************************
-		SVString getText(SvOi::MessageTextEnum messageId, const SVStringArray &additionalList = SVStringArray()) const;
+		SVString getText(SvOi::MessageTextEnum messageId, const SVStringVector &additionalList = SVStringVector()) const;
 
 		//************************************
 		/// Convert an enum id to a string for setting it to the addtionalTextList.

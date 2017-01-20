@@ -68,7 +68,7 @@ public:
 
 	//************************************
 	// Description:  Gets the value of the member variable m_ObjectID
-	// Returns:  const SVString&:  the value of the member variable m_ObjectID
+	// Returns:  const SVGUID&:  the value of the member variable m_ObjectID
 	//************************************
 	const SVGUID& getGuid() const;
 #pragma endregion Public Methods

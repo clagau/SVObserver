@@ -18,7 +18,6 @@
 
 #pragma region Declarations
 #ifdef _DEBUG
-#define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
@@ -101,10 +100,10 @@ namespace Seidenader { namespace SVStatusLibrary
 
 	MessageContainer::MessageContainer( long MessageCode, SvOi::MessageTextEnum AdditionalTextId, SourceFileParams SourceFile, DWORD ProgramCode /*=0*/, const GUID& rObjectId /*=SV_GUID_NULL*/ )
 	{
-		setMessage( MessageCode, AdditionalTextId, SVStringArray(), SourceFile, ProgramCode, rObjectId );
+		setMessage( MessageCode, AdditionalTextId, SVStringVector(), SourceFile, ProgramCode, rObjectId );
 	}
 
-	MessageContainer::MessageContainer( long MessageCode, SvOi::MessageTextEnum AdditionalTextId, const SVStringArray& rAdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode /*=0*/, const GUID& rObjectId /*=SV_GUID_NULL*/  )
+	MessageContainer::MessageContainer( long MessageCode, SvOi::MessageTextEnum AdditionalTextId, const SVStringVector& rAdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode /*=0*/, const GUID& rObjectId /*=SV_GUID_NULL*/  )
 	{
 		setMessage( MessageCode, AdditionalTextId, rAdditionalTextList, SourceFile, ProgramCode, rObjectId );
 	}
@@ -140,10 +139,10 @@ namespace Seidenader { namespace SVStatusLibrary
 
 	void MessageContainer::setMessage( long MessageCode, SvOi::MessageTextEnum AdditionalTextId, SourceFileParams SourceFile, DWORD ProgramCode /*=0*/, const GUID& rObjectId /*=SV_GUID_NULL*/  )
 	{
-		setMessage( MessageCode, AdditionalTextId, SVStringArray(), SourceFile, ProgramCode, rObjectId );
+		setMessage( MessageCode, AdditionalTextId, SVStringVector(), SourceFile, ProgramCode, rObjectId );
 	}
 
-	void MessageContainer::setMessage( long MessageCode, SvOi::MessageTextEnum AdditionalTextId, const SVStringArray& rAdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode /*=0*/, const GUID& rObjectId /*=SV_GUID_NULL*/  )
+	void MessageContainer::setMessage( long MessageCode, SvOi::MessageTextEnum AdditionalTextId, const SVStringVector& rAdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode /*=0*/, const GUID& rObjectId /*=SV_GUID_NULL*/  )
 	{
 		clearMessage();
 		m_Message.m_MessageCode = MessageCode;
@@ -185,7 +184,7 @@ namespace Seidenader { namespace SVStatusLibrary
 		}
 	}
 
-	void MessageContainer::addMessage( long MessageCode, SvOi::MessageTextEnum AdditionalTextId, SVStringArray AdditionalTextList, SourceFileParams SourceFile , DWORD ProgramCode )
+	void MessageContainer::addMessage( long MessageCode, SvOi::MessageTextEnum AdditionalTextId, SVStringVector AdditionalTextList, SourceFileParams SourceFile , DWORD ProgramCode )
 	{
 		//Save the current message to the additional messages
 		m_AdditionalMessages.push_back( m_Message );
@@ -225,7 +224,7 @@ namespace Seidenader { namespace SVStatusLibrary
 
 	void MessageContainer::logMessage() const
 	{
-		SVStringArray SubstituteStrings;
+		SVStringVector SubstituteStrings;
 		const TCHAR *pSubstituteString[SubstituteStringNr];
 
 #if defined (TRACE_THEM_ALL) || defined (TRACE_OTHER)
@@ -326,7 +325,7 @@ namespace Seidenader { namespace SVStatusLibrary
 
 		if (nullptr != m_MessageDll )
 		{
-			SVStringArray SubstituteStrings;
+			SVStringVector SubstituteStrings;
 			const TCHAR *pSubstituteString[SubstituteStringNr];
 
 			setSubstituteStrings( SubstituteStrings );
@@ -355,7 +354,7 @@ namespace Seidenader { namespace SVStatusLibrary
 				SVString SearchString( _T("\r\n") );
 				SearchString += DetailsToken;
 				size_t Index = rMessage.find( SearchString.c_str() );
-				if ( -1 != Index )
+				if ( SVString::npos != Index )
 				{
 					MsgDetails = SvUl_SF::Mid( rMessage, Index +  SearchString.size() );
 					//Remove unnecessary new lines from the details
@@ -480,7 +479,7 @@ namespace Seidenader { namespace SVStatusLibrary
 		return Result;
 	}
 
-	void MessageContainer::setSubstituteStrings( SVStringArray& rSubstituteStrings ) const
+	void MessageContainer::setSubstituteStrings( SVStringVector& rSubstituteStrings ) const
 	{
 		rSubstituteStrings.clear();
 		rSubstituteStrings.resize( SubstituteStringNr );

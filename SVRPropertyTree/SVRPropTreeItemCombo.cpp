@@ -28,10 +28,10 @@
 //	useful.
 
 #include "stdafx.h"
-#include "PropTree.h"
+#include "SVRPropTree.h"
 //#include "Resource.h"
 
-#include "PropTreeItemCombo.h"
+#include "SVRPropTreeItemCombo.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -71,13 +71,13 @@ void SVRPropertyItemCombo::Initialize()
 	// Initialize all variables
 	m_bShowButton      = false;
 	m_bEnableButton    = true;
-	m_strButtonText = _T("...");
+	m_ButtonText = _T("...");
 }
 
 /////////////////////////////////////////////////////////////////////////////
 // SVRPropertyItemCombo message handlers
 
-void SVRPropertyItemCombo::DrawAttribute(CDC* pDC, const RECT& rc)
+void SVRPropertyItemCombo::DrawAttribute(CDC* pDC, const RECT& rRect)
 {
 	ASSERT(nullptr != m_pProp);
 
@@ -95,19 +95,18 @@ void SVRPropertyItemCombo::DrawAttribute(CDC* pDC, const RECT& rc)
 	l_pOldFont = pDC->SelectObject(IsReadOnly() ? m_pProp->GetNormalFont() : m_pProp->GetBoldFont());
 
 	pDC->SetTextColor( m_rgbForeColor );
-	//pDC->SetTextColor(RGB(0,0,0));
 	pDC->SetBkMode(TRANSPARENT);
 
-	CRect r = rc;
-	CString s;
+	CRect DrawRect( rRect );
+	CString Text;
 	LONG idx;
 
-	if ((idx = GetCurSel())!=CB_ERR)
-		GetLBText(idx, s);
-	else
-		s = _T("");
+	if( CB_ERR != (idx = GetCurSel()))
+	{
+		GetLBText(idx, Text);
+	}
 
-	pDC->DrawText(s, r, DT_SINGLELINE|DT_VCENTER);
+	pDC->DrawText(Text, DrawRect, DT_SINGLELINE|DT_VCENTER);
 
 // JAB110708
 	pDC->SelectObject (l_pOldFont);
@@ -117,7 +116,9 @@ void SVRPropertyItemCombo::DrawAttribute(CDC* pDC, const RECT& rc)
 void SVRPropertyItemCombo::OnMove()
 {
 	if (IsWindow(m_hWnd) && IsWindowVisible())
+	{
 		SetWindowPos(nullptr, m_rc.left, m_rc.top, m_rc.Width(), m_rc.Height(), SWP_NOZORDER|SWP_SHOWWINDOW|SWP_NOACTIVATE);
+	}
 }
 
 
@@ -150,10 +151,14 @@ void SVRPropertyItemCombo::StoreItemData()
 	// store combo box item data
 	if ( nullptr != GetSafeHwnd() )
 	{
-		if ((idx = GetCurSel()) == CB_ERR)
-			m_lComboData = 0L;
-		else
+		if( CB_ERR != (idx = GetCurSel()) )
+		{
 			m_lComboData = (LPARAM)GetItemData(idx);
+		}
+		else
+		{
+			m_lComboData = 0L;
+		}
 	}
 }
 
@@ -163,7 +168,7 @@ void SVRPropertyItemCombo::OnActivate()
 	if ( m_bEnableButton )
 	{
 		CDC* pDC = m_btnDots.GetDC();
-		CSize size = pDC->GetTextExtent(m_strButtonText);
+		CSize size = pDC->GetTextExtent( m_ButtonText.c_str(), static_cast<int> (m_ButtonText.size()) );
 		iButtonWidth = size.cx + g_buttonSpace;
 	}	
 	// activate the combo box
@@ -184,7 +189,9 @@ BOOL SVRPropertyItemCombo::CreateComboBox(DWORD dwStyle)
 	ASSERT(nullptr != m_pProp);
 
 	if (IsWindow(m_hWnd))
+	{
 		DestroyWindow();
+	}
 
 	dwStyle = (WS_CHILD|WS_VSCROLL|dwStyle|WS_VISIBLE);
 
@@ -199,7 +206,7 @@ BOOL SVRPropertyItemCombo::CreateComboBox(DWORD dwStyle)
 	if ( m_bEnableButton )
 	{
 		m_btnDots.Create("", WS_CHILD, CRect(0,0,0,0), m_pProp->GetCtrlParent(), 32000-GetCtrlID());
-		m_btnDots.SetWindowText(m_strButtonText);
+		m_btnDots.SetWindowText( m_ButtonText.c_str() );
 		m_btnDots.SetOwner( this );
 		m_btnDots.SendMessage(WM_SETFONT, (WPARAM)m_pProp->GetNormalFont()->m_hObject);
 	}
@@ -218,7 +225,7 @@ void SVRPropertyItemCombo::DisplayButton()
 	if ( m_bEnableButton )
 	{
 		CDC* pDC = m_btnDots.GetDC();
-		CSize size = pDC->GetTextExtent(m_strButtonText);
+		CSize size = pDC->GetTextExtent( m_ButtonText.c_str(), static_cast<int> (m_ButtonText.size()) );
 		int iButtonWidth = size.cx + g_buttonSpace;
 		m_bShowButton = (m_pProp->SendNotify(PTN_QUERY_SHOW_BUTTON, this)) != FALSE;
 		m_btnDots.SetWindowPos(nullptr, m_rc.right-iButtonWidth, m_rc.top, iButtonWidth, m_rc.Height(), SWP_NOZORDER | (m_bShowButton ? SWP_SHOWWINDOW : SWP_HIDEWINDOW));
@@ -230,7 +237,9 @@ BOOL SVRPropertyItemCombo::CreateComboBoxBool()
 	ASSERT(nullptr != m_pProp);
 
 	if (IsWindow(m_hWnd))
+	{
 		DestroyWindow();
+	}
 
 	// force as a non-visible child window
 	DWORD dwStyle = WS_CHILD|WS_VSCROLL|CBS_SORT|CBS_DROPDOWNLIST;
@@ -246,7 +255,7 @@ BOOL SVRPropertyItemCombo::CreateComboBoxBool()
 	if ( m_bEnableButton )
 	{
 		m_btnDots.Create("", WS_CHILD, CRect(0,0,0,0), m_pProp->GetCtrlParent(), 32000-GetCtrlID());
-		m_btnDots.SetWindowText(m_strButtonText);
+		m_btnDots.SetWindowText( m_ButtonText.c_str() );
 		m_btnDots.SetOwner( this );
 		m_btnDots.SendMessage(WM_SETFONT, (WPARAM)m_pProp->GetNormalFont()->m_hObject);
 	}
@@ -254,13 +263,9 @@ BOOL SVRPropertyItemCombo::CreateComboBoxBool()
 
 	// file the combo box
 	LONG idx;
-	CString s;
-
-//	s.LoadString(IDS_TRUE);
 	idx = AddString(_T("True"));
 	SetItemData(idx, TRUE);
 
-//	s.LoadString(IDS_FALSE);
 	idx = AddString(_T("False"));
 	SetItemData(idx, FALSE);
 
@@ -275,7 +280,9 @@ LONG SVRPropertyItemCombo::FindCBData(LPARAM lParam)
 	for (idx = 0; idx < GetCount(); idx++)
 	{
 		if (GetItemData(idx) == static_cast<DWORD_PTR>(lParam))
+		{
 			return idx;
+		}
 	}
 
 	return CB_ERR;
@@ -450,8 +457,8 @@ BOOL SVRPropertyItemCombo::OnNotify(WPARAM wParam, LPARAM lParam, LRESULT* pResu
 	return bResult;
 }
 
-void SVRPropertyItemCombo::SetButtonText( const CString& sText )
+void SVRPropertyItemCombo::SetButtonText( LPCTSTR Text )
 {
-	m_strButtonText = sText;
+	m_ButtonText = Text;
 }
 

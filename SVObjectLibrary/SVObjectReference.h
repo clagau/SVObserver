@@ -11,9 +11,12 @@
 
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <vector>
 #include "ObjectInterfaces/SVObjectTypeInfoStruct.h"
+#include "SVUtilityLibrary/SVString.h"
 #include "SVObjectNameInfo.h"
+#pragma endregion Includes
 
 class SVObjectClass;
 
@@ -32,7 +35,7 @@ class SVObjectReference
 public:
 	SVObjectReference();
 	SVObjectReference( const SVObjectReference& rhs );
-	SVObjectReference( SVObjectClass* pObject, long lArrayIndex, CString strDefaultValue = CString() );
+	SVObjectReference( SVObjectClass* pObject, long lArrayIndex, SVString strDefaultValue = SVString() );
 	SVObjectReference( SVObjectClass* pObject, const SVObjectNameInfo& p_rNameInfo );
 	SVObjectReference( SVObjectClass* pObject );
 	SVObjectReference( GUID guid );
@@ -59,7 +62,7 @@ public:
 	//! \returns long
 	//************************************
 	long ArrayIndex() const;
-	CString DefaultValue() const;
+	SVString DefaultValue() const;
 	
 	//************************************
 	//! returns true if the whole array is referenced 
@@ -71,12 +74,12 @@ public:
 	void SetEntireArray();
 	void SetArrayIndex( long lArrayIndex );
 
-	CString GetName() const;
-	CString GetCompleteObjectName() const;
-	CString GetCompleteObjectNameToObjectType( LPCSTR lpszCompleteName = nullptr, SVObjectTypeEnum objectTypeToInclude = SVToolSetObjectType ) const;
+	SVString GetName() const;
+	SVString GetCompleteName() const;
+	SVString GetCompleteObjectNameToObjectType( LPCTSTR lpszCompleteName = nullptr, SVObjectTypeEnum objectTypeToInclude = SVToolSetObjectType ) const;
 
-	CString GetOneBasedName() const;
-	CString GetCompleteOneBasedObjectName() const;
+	SVString GetOneBasedName() const;
+	SVString GetCompleteOneBasedObjectName() const;
 
 	const SVObjectNameInfo& GetObjectNameInfo() const;
 
@@ -87,8 +90,8 @@ public:
 
 	bool operator < ( const SVObjectReference& rhs ) const;
 
-	CString GetOneBasedIndexString() const;
-	CString GetZeroBasedIndexString() const;
+	SVString GetOneBasedIndexString() const;
+	SVString GetZeroBasedIndexString() const;
 
 	//************************************
 	//! Increments the array index if the reference points to a single array variable. 
@@ -120,8 +123,8 @@ class SVCheckedObjectReference : public SVObjectReference
 public:
 	SVCheckedObjectReference() : SVObjectReference() {}
 
-	SVCheckedObjectReference( SVObjectClass* pObject, long lArrayIndex, CString strDefaultValue = CString() );
-	SVCheckedObjectReference( T* pObject, long lArrayIndex, CString strDefaultValue = CString() );
+	SVCheckedObjectReference( SVObjectClass* pObject, long lArrayIndex, SVString strDefaultValue = SVString() );
+	SVCheckedObjectReference( T* pObject, long lArrayIndex, SVString strDefaultValue = SVString() );
 
 	SVCheckedObjectReference( SVObjectClass* pObject, const SVObjectNameInfo& p_rNameInfo );
 	SVCheckedObjectReference( T* pObject, const SVObjectNameInfo& p_rNameInfo );

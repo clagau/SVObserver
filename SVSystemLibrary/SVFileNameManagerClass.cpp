@@ -31,65 +31,53 @@ SVFileNameManagerClass& SVFileNameManagerClass::Instance()
 
 SVFileNameManagerClass::SVFileNameManagerClass()
 {
-	CString csRunPathName = GetRunPathName();
+	SVString csRunPathName = GetRunPathName();
 
 	m_iCurrentItem = 0;
 
-	if ( csRunPathName.IsEmpty() )
+	if ( csRunPathName.empty() )
 	{
 		SetRunPathName( SvStl::GlobalPath::Inst().GetRunPath().c_str() );
 	}
 }
 
-LPCTSTR SVFileNameManagerClass::GetConfigurationPathName()
+bool SVFileNameManagerClass::SetRunPathName(LPCTSTR PathName)
 {
-	return Instance().m_ConfigurationPathName.c_str();
-}
+	bool Result( false );
 
-LPCTSTR SVFileNameManagerClass::GetRunPathName()
-{
-	return Instance().m_RunPathName.c_str();
-}
-
-BOOL SVFileNameManagerClass::SetRunPathName(LPCTSTR szPathName)
-{
-	BOOL bOk = false;
-
-	SVFileNameManagerClass& rFileMgr = Instance();
-
-	if ( rFileMgr.m_svFileNameList.Lock() )
+	if ( m_svFileNameList.Lock() )
 	{
-		bOk = true;
+		Result = true;
 
-		if (szPathName)
+		if( nullptr != PathName)
 		{
-			rFileMgr.m_RunPathName = szPathName;
+			m_RunPathName = PathName;
 		}
 		else
 		{
-			rFileMgr.m_RunPathName.clear();
+			m_RunPathName.clear();
 		}
 
-		if ( !rFileMgr.m_RunPathName.empty() )
+		if ( !m_RunPathName.empty() )
 		{
-			bOk = CreatePath( rFileMgr.m_RunPathName.c_str() );
+			Result = CreatePath( m_RunPathName.c_str() );
 		}
 
-		rFileMgr.m_svFileNameList.Unlock();
+		m_svFileNameList.Unlock();
 	}
 
-	return bOk;
+	return Result;
 }
 
-BOOL SVFileNameManagerClass::SetConfigurationPathName(LPCTSTR szPathName)
+bool SVFileNameManagerClass::SetConfigurationPathName(LPCTSTR szPathName)
 {
-	BOOL bOk = false;
+	bool Result( false );
 
 	SVFileNameManagerClass& rFileMgr = Instance();
 
 	if ( rFileMgr.m_svFileNameList.Lock() )
 	{
-		bOk = true;
+		Result = true;
 
 		if (szPathName)
 		{
@@ -102,13 +90,13 @@ BOOL SVFileNameManagerClass::SetConfigurationPathName(LPCTSTR szPathName)
 
 		if ( !rFileMgr.m_ConfigurationPathName.empty() )
 		{
-			bOk = CreatePath( rFileMgr.m_ConfigurationPathName.c_str() );
+			Result = CreatePath( rFileMgr.m_ConfigurationPathName.c_str() );
 		}
 
 		rFileMgr.m_svFileNameList.Unlock();
 	}
 
-	return bOk;
+	return Result;
 }
 
 BOOL SVFileNameManagerClass::FindItem(SVFileNameClass* svpFileNameClass)
@@ -141,23 +129,21 @@ BOOL SVFileNameManagerClass::FindItem(SVFileNameClass* svpFileNameClass)
 	return bOk;
 }
 
-BOOL SVFileNameManagerClass::AddItem(SVFileNameClass* svpFileName)
+bool SVFileNameManagerClass::AddItem(SVFileNameClass* pFileName)
 {
-	BOOL bOk = false;
+	bool Result( false );
 
-	SVFileNameManagerClass& rFileMgr = Instance();
-
-	if ( rFileMgr.m_svFileNameList.Lock() )
+	if ( m_svFileNameList.Lock() )
 	{
-		bOk = FindItem( svpFileName );
+		Result = FindItem( pFileName ) ? true : false;
 
-		if ( !bOk )
+		if( !Result )
 		{
 			try
 			{
-				rFileMgr.m_svFileNameList.InsertAt( rFileMgr.m_iCurrentItem, svpFileName );
+				m_svFileNameList.InsertAt( m_iCurrentItem, pFileName );
 
-				bOk = LoadItem( rFileMgr.m_svFileNameList[rFileMgr.m_iCurrentItem] );
+				Result = LoadItem( m_svFileNameList[m_iCurrentItem] );
 			}
 			catch (std::bad_alloc& e)
 			{
@@ -166,43 +152,41 @@ BOOL SVFileNameManagerClass::AddItem(SVFileNameClass* svpFileName)
 			}
 		}
 
-		rFileMgr.m_svFileNameList.Unlock();
+		m_svFileNameList.Unlock();
 	}
 
-	return bOk;
+	return Result;
 }
 
-BOOL SVFileNameManagerClass::RemoveItem(SVFileNameClass * svpFileName)
+bool SVFileNameManagerClass::RemoveItem(SVFileNameClass* pFileName)
 {
-	BOOL bOk = false;
+	bool Result = false;
 
-	SVFileNameManagerClass& rFileMgr = Instance();
-
-	if ( rFileMgr.m_svFileNameList.Lock() )
+	if ( m_svFileNameList.Lock() )
 	{
-		bOk = FindItem( svpFileName );
+		Result = FindItem( pFileName ) ? true : false;
 
-		if ( bOk )
+		if ( Result )
 		{
-			rFileMgr.m_svFileNameList.RemoveAt( rFileMgr.m_iCurrentItem );
+			m_svFileNameList.RemoveAt( m_iCurrentItem );
 
-			if ( 0 < rFileMgr.m_svFileNameList.GetSize() )
+			if ( 0 < m_svFileNameList.GetSize() )
 			{
-				if ( rFileMgr.m_svFileNameList.GetSize() <= rFileMgr.m_iCurrentItem )
+				if ( m_svFileNameList.GetSize() <= m_iCurrentItem )
 				{
-					rFileMgr.m_iCurrentItem = static_cast<int>(rFileMgr.m_svFileNameList.GetSize()) - 1;
+					m_iCurrentItem = static_cast<int>(m_svFileNameList.GetSize()) - 1;
 				}
 			}
 			else
 			{
-				rFileMgr.m_iCurrentItem = 0;
+				m_iCurrentItem = 0;
 			}
 		}
 
-		rFileMgr.m_svFileNameList.Unlock();
+		m_svFileNameList.Unlock();
 	}
 
-	return bOk;
+	return Result;
 }
 
 SVFileNameClass * SVFileNameManagerClass::GetItem()
@@ -224,322 +208,282 @@ SVFileNameClass * SVFileNameManagerClass::GetItem()
 	return pItem;
 }
 
-BOOL SVFileNameManagerClass::CreatePath(LPCTSTR szPathName)
+bool SVFileNameManagerClass::CreatePath(LPCTSTR PathName)
 {
-	CString csPathName = szPathName;
+	SVString Path( PathName );
 
-	BOOL bOk = _access( csPathName, 0 ) == 0;
+	bool Result = _access( Path.c_str(), 0 ) == 0;
 
-	if ( !bOk )
+	if ( !Result )
 	{
-		BOOL bDone = FALSE;
+		bool bDone = false;
 
-		int iStart=-1;
-		if (csPathName.Left(2) == _T("\\\\"))	// UNC path
+		size_t Start=-1;
+		if( SvUl_SF::Left(Path, 2) == _T("\\\\"))	// UNC path
 		{
-			iStart = csPathName.Mid(2).Find('\\') + 2 - 1;
+			Start = SvUl_SF::Mid(Path, 2).find('\\') + 1;
 		}
 		else	// drive letter
 		{
-			iStart = csPathName.Find(':');
+			Start = Path.find(':');
 		}
 
-		assert( iStart > 0 );
+		assert( Start > 0 );
 
 		do
 		{
-			bDone = csPathName.GetLength() <= iStart + 1;
+			bDone = Path.size() <= Start + 1;
 
 			if (!bDone)
 			{
-				if ( csPathName[iStart + 1] == '\\' )
+				if ( Path[Start + 1] == '\\' )
 				{
-					iStart++;
+					Start++;
 
-					bDone = csPathName.GetLength() <= iStart + 1;
+					bDone = Path.size() <= Start + 1;
 
 					if ( !bDone )
 					{
-						bDone = csPathName[iStart + 1] == '\\';
-						bOk = !bDone;
+						bDone = Path[Start + 1] == '\\';
+						Result = !bDone;
 					}
 				}
 
 				if ( !bDone )
 				{
-					int iNextBS = csPathName.Find( '\\', iStart + 1 );
-					int iNextFS = csPathName.Find( '/', iStart + 1 );
+					size_t NextBS = Path.find( '\\', Start + 1 );
+					size_t NextFS = Path.find( '/', Start + 1 );
 
-					CString csPathMake;
+					SVString MakePath;
 
-					if ( iNextBS == -1 && iNextFS == -1 )
+					if ( SVString::npos == NextBS && SVString::npos == NextFS )
 					{
-						csPathMake = csPathName;
+						MakePath = Path;
 					}
 					else
 					{
-						if ( iNextFS == -1 || iNextBS != -1 && iNextBS < iNextFS )
+						if ( SVString::npos == NextFS || SVString::npos != NextBS && NextBS < NextFS )
 						{
-							csPathMake = csPathName.Left( iNextBS );
+							MakePath = SvUl_SF::Left( Path,  NextBS );
 						}
 						else
 						{
-							csPathMake = csPathName.Left( iNextFS );
+							MakePath = SvUl_SF::Left( Path, NextFS );
 						}
 					}
 
-					bOk = _access( csPathMake, 0 ) == 0;
+					Result = _access( MakePath.c_str(), 0 ) == 0;
 
-					if ( !bOk )
+					if ( !Result )
 					{
-						bOk = _mkdir( csPathMake ) == 0;
+						Result = _mkdir( MakePath.c_str() ) == 0;
 					}
 
-					iStart = csPathMake.GetLength();
+					Start = MakePath.size();
 				}
 			}
 		}
-		while ( bOk && !bDone );
+		while ( Result && !bDone );
 	}
 
-	return bOk;
+	return Result;
 }
 
-BOOL SVFileNameManagerClass::LoadItem(SVFileNameClass* svFileName)
+bool SVFileNameManagerClass::LoadItem(SVFileNameClass* pFileName)
 {
-	BOOL bOk = true;
+	bool Result = true;
 
-	if ( !CString( svFileName->GetFileName() ).IsEmpty() )
+	if ( !SVString( pFileName->GetFileName() ).empty() )
 	{
-		CString csFullName = svFileName->GetFullFileName();
-		CString csConfigFullName = svFileName->GetFullFileName();
-		CString csRunFullName = CString( GetRunPathName() ) + 
-		                        "\\" + svFileName->GetFileName();
+		SVString FullName = pFileName->GetFullFileName();
+		SVString ConfigFullName = pFileName->GetFullFileName();
+		SVString RunFullName = SVString( GetRunPathName() ) + _T("\\") + pFileName->GetFileName();
 		 
-		if ( !CString( GetConfigurationPathName() ).IsEmpty() )
+		if ( !GetConfigurationPathName().empty() )
 		{
-			csConfigFullName = CString( GetConfigurationPathName() ) + 
-			                   "\\" + svFileName->GetFileName();
+			ConfigFullName = GetConfigurationPathName() + _T("\\") + pFileName->GetFileName();
 		}
 
-		csRunFullName.Replace( '/', '\\' );
-		csConfigFullName.Replace ( '/', '\\' );
-		csFullName.Replace( '/', '\\' );
+		SvUl_SF::searchAndReplace( RunFullName, _T("/"), _T("\\") );
+		SvUl_SF::searchAndReplace( ConfigFullName, _T("/"), _T("\\") );
+		SvUl_SF::searchAndReplace( FullName,  _T("/"), _T("\\") );
 
-		bOk = csRunFullName.CompareNoCase( csFullName ) == 0 &&
-		      _access( csRunFullName, 0 ) == 0;
+		Result = SvUl_SF::CompareNoCase( RunFullName, FullName ) == 0 && _access( RunFullName.c_str(), 0 ) == 0;
 
-		if ( !bOk )
+		if ( !Result )
 		{
-			if ( csConfigFullName.CompareNoCase( csFullName ) != 0 )
+			if ( 0 != SvUl_SF::CompareNoCase( ConfigFullName, FullName ) )
 			{
-				if ( _access( csFullName, 0 ) == 0 )
+				if ( _access( FullName.c_str(), 0 ) == 0 )
 				{
-					bOk = CopyFile( csFullName, csRunFullName, FALSE );
-					_chmod(csRunFullName,_S_IREAD | _S_IWRITE);
+					Result = CopyFile( FullName.c_str(), RunFullName.c_str(), false ) ? true : false;
+					_chmod( RunFullName.c_str(), _S_IREAD | _S_IWRITE);
 				}
 			}
 
-			if ( !bOk )
+			if ( !Result )
 			{
-				if ( _access( csConfigFullName, 0 ) == 0 )
+				if ( _access( ConfigFullName.c_str(), 0 ) == 0 )
 				{
-					bOk = CopyFile( csConfigFullName, csRunFullName, FALSE );
-					_chmod(csRunFullName,_S_IREAD | _S_IWRITE);
+					Result = CopyFile( ConfigFullName.c_str(), RunFullName.c_str(), false ) ? true : false;
+					_chmod( RunFullName.c_str(), _S_IREAD | _S_IWRITE);
 				}
 			}
 
-			if ( !bOk )
+			if ( !Result )
 			{
-				bOk = _access( csRunFullName, 0 ) == 0;
+				Result = _access( RunFullName.c_str(), 0 ) == 0;
 			}
 
-			if ( bOk )
+			if ( Result )
 			{
-				bOk = svFileName->SetPathName( GetRunPathName() );
+				Result = pFileName->SetPathName( GetRunPathName().c_str() ) ? true : false;
 			}
 		}
 	}
 
-	return bOk;
+	return Result;
 }
 
-BOOL SVFileNameManagerClass::SaveItem(SVFileNameClass * svFileName)
+bool SVFileNameManagerClass::SaveItem( SVFileNameClass* pFileName )
 {
-	BOOL bOk = true;
+	bool Result( true );
 
-	if ( !CString( svFileName->GetFileName() ).IsEmpty() )
+	if ( !SVString( pFileName->GetFileName() ).empty() )
 	{
-		CString csRunFullName = CString( GetRunPathName() ) + 
-		                        "\\" + svFileName->GetFileName();
-
-		csRunFullName.Replace( '/', '\\' );
-
-		if ( csRunFullName.CompareNoCase( svFileName->GetFullFileName() ) )
+		Result = CopyFileToPath( GetRunPathName(), pFileName );
+		if ( Result )
 		{
-			bOk = _access( svFileName->GetFullFileName(), 0 ) != 0;
-
-			if ( !bOk )
-			{
-				bOk = CopyFile( svFileName->GetFullFileName(), csRunFullName, FALSE );
-				_chmod(csRunFullName,_S_IREAD | _S_IWRITE);
-			}
-
-			if ( bOk )
-			{
-				bOk = svFileName->SetPathName( GetRunPathName() );
-			}
-		}
-
-		if ( bOk )
-		{
-			if ( !CString( GetConfigurationPathName() ).IsEmpty() )
-			{
-				CString csFullName = CString( GetConfigurationPathName() ) + 
-				                     "\\" + CString( svFileName->GetFileName() );
-
-				csFullName.Replace ( '/', '\\' );
-
-				if ( csFullName.CompareNoCase( svFileName->GetFullFileName() ) )
-				{
-					bOk = _access( csRunFullName, 0 ) != 0;
-
-					if ( !bOk )
-					{
-						bOk = CopyFile( csRunFullName, csFullName, FALSE );
-						_chmod(csRunFullName,_S_IREAD | _S_IWRITE);
-					}
-				}
-			}
+			Result = CopyFileToPath( GetConfigurationPathName(), pFileName );
 		}
 	}
 
-	return bOk;
+	return Result;
 }
 
-BOOL SVFileNameManagerClass::RenameItem(SVFileNameClass * svFileName)
+bool SVFileNameManagerClass::RenameItem(SVFileNameClass* pFileName)
 {
-	BOOL bOk = true;
+	bool Result( true );
 
-	if ( !CString( svFileName->GetFileName() ).IsEmpty() )
+	if ( !SVString( pFileName->GetFileName() ).empty() )
 	{
-		bOk = svFileName->SetPathName( GetRunPathName() );
+		Result = pFileName->SetPathName( GetRunPathName().c_str() ) ? true : false;
 	}
 
-	return bOk;
+	return Result;
 }
 
-BOOL SVFileNameManagerClass::SaveItems()
+bool SVFileNameManagerClass::SaveItems()
 {
-	BOOL bOk = false;
+	bool Result = false;
 
-	SVFileNameManagerClass& rFileMgr = Instance();
-
-	if ( rFileMgr.m_svFileNameList.Lock() )
+	if ( m_svFileNameList.Lock() )
 	{
-		bOk = true;
+		Result = true;
 
-		for ( int i= 0; i < rFileMgr.m_svFileNameList.GetSize(); i++ )
+		for ( int i= 0; i < m_svFileNameList.GetSize(); i++ )
 		{
-			bOk = SaveItem( rFileMgr.m_svFileNameList[i] ) && bOk;
+			Result = SaveItem( m_svFileNameList[i] ) && Result;
 		}
 
-		rFileMgr.m_svFileNameList.Unlock();
+		m_svFileNameList.Unlock();
 	}
 
-	return bOk;
+	return Result;
 }
 
 LPCTSTR SVFileNameManagerClass::GetFileNameList()
 {
-	return Instance().m_svFileNameList.GetFileNameList();
+	return m_svFileNameList.GetFileNameList();
 }
 
-BOOL SVFileNameManagerClass::RemoveUnusedFiles(BOOL bCleanConfigDir)
+bool SVFileNameManagerClass::RemoveUnusedFiles(bool bCleanConfigDir)
 {
-	BOOL bOk = true;
+	bool Result( true );
 
-	WIN32_FIND_DATA FindFileData;
-	HANDLE hFind;
-
-	SVFileNameManagerClass& rFileMgr = Instance();
-
-	CString csFileMask = GetRunPathName();
-
-	csFileMask += _T( "\\*.*" );
-
-	hFind = FindFirstFile( csFileMask, &FindFileData );
-	if ( hFind != INVALID_HANDLE_VALUE )
+	Result = RemoveUnusedFiles( GetRunPathName() );
+	if ( bCleanConfigDir && Result )
 	{
-		BOOL bRun = true;
+		Result = RemoveUnusedFiles( GetConfigurationPathName() );
 
-		while ( bRun )
-		{
-			BOOL bFound = false;
-			CString csFileName = FindFileData.cFileName;
-
-			for ( int i = 0; ! bFound && i < rFileMgr.m_svFileNameList.GetSize(); i++ )
-			{
-				bFound = csFileName.CompareNoCase( rFileMgr.m_svFileNameList[i]->GetFileName() ) == 0;
-			}
-
-			if ( ! bFound )
-			{
-				CString csFullFileName = GetRunPathName();
-
-				csFullFileName += _T( "\\" );
-				csFullFileName += csFileName;
-
-				_chmod(csFullFileName,_S_IREAD | _S_IWRITE);
-				bOk = DeleteFile( csFullFileName );
-			}
-
-			bRun = FindNextFile( hFind, &FindFileData );
-		}
-		FindClose( hFind );
 	}
 
-	if ( bCleanConfigDir && bOk )
+	return Result;
+}
+
+bool SVFileNameManagerClass::RemoveUnusedFiles( const SVString& rPath )
+{
+	bool Result( true );
+
+	if ( !rPath.empty() )
 	{
-		csFileMask = GetConfigurationPathName();
+		SVString FileMask = rPath + _T( "\\*.*" );
 
-		if ( !csFileMask.IsEmpty() )
+		WIN32_FIND_DATA FindFileData;
+		HANDLE hFind;
+
+		hFind = FindFirstFile( FileMask.c_str(), &FindFileData );
+		if ( hFind != INVALID_HANDLE_VALUE )
 		{
-			csFileMask += _T( "\\*.*" );
+			BOOL bRun = true;
 
-			hFind = FindFirstFile( csFileMask, &FindFileData );
-			if ( hFind != INVALID_HANDLE_VALUE )
+			while ( bRun )
 			{
-				BOOL bRun = true;
+				bool bFound = false;
+				SVString FileName = FindFileData.cFileName;
 
-				while ( bRun )
+				for ( int i = 0; ! bFound && i < m_svFileNameList.GetSize(); i++ )
 				{
-					BOOL bFound = false;
-					CString csFileName = FindFileData.cFileName;
-
-					for ( int i = 0; ! bFound && i < rFileMgr.m_svFileNameList.GetSize(); i++ )
-					{
-						bFound = csFileName.CompareNoCase( rFileMgr.m_svFileNameList[i]->GetFileName() ) == 0;
-					}
-
-					if ( ! bFound )
-					{
-						CString csFullFileName = GetConfigurationPathName();
-
-						csFullFileName += _T( "\\" );
-						csFullFileName += csFileName;
-
-						_chmod(csFullFileName,_S_IREAD | _S_IWRITE);
-						bOk = DeleteFile( csFullFileName );
-					}
-
-					bRun = FindNextFile( hFind, &FindFileData );
+					bFound = (0 ==SvUl_SF::CompareNoCase( FileName, m_svFileNameList[i]->GetFileName() ));
 				}
 
-				FindClose( hFind );
+				if ( ! bFound )
+				{
+					SVString FullFileName = rPath;
+
+					FullFileName += _T( "\\" );
+					FullFileName += FileName;
+
+					_chmod(FullFileName.c_str(),_S_IREAD | _S_IWRITE);
+					Result = DeleteFile( FullFileName.c_str() ) ? true : false;
+				}
+
+				bRun = FindNextFile( hFind, &FindFileData );
+			}
+
+			FindClose( hFind );
+		}
+	}
+	
+	return Result;
+}
+
+bool SVFileNameManagerClass::CopyFileToPath( const SVString& rPath, SVFileNameClass* pFileName ) const
+{
+	bool Result( true );
+	
+	if( !rPath.empty() )
+	{
+		SVString RunFullName = rPath + _T("\\") + pFileName->GetFileName();
+
+		SvUl_SF::searchAndReplace( RunFullName, _T("/"), _T("\\") );
+
+		if ( SvUl_SF::CompareNoCase( RunFullName, pFileName->GetFullFileName() ) )
+		{
+			Result = _access( pFileName->GetFullFileName().c_str(), 0 ) != 0;
+
+			if( !Result )
+			{
+				Result = CopyFile( pFileName->GetFullFileName().c_str(), RunFullName.c_str(), false ) ? true : false;
+				_chmod( RunFullName.c_str(), _S_IREAD | _S_IWRITE );
+			}
+
+			if ( Result )
+			{
+				Result = pFileName->SetPathName( rPath.c_str() ) ? true : false;
 			}
 		}
 	}
 
-	return bOk;
+	return Result;
 }

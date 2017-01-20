@@ -60,16 +60,16 @@ protected:
 public:
 	//{{AFX_DATA(SVToolAdjustmentDialogTransformationLearnPageClass)
 	enum { IDD = IDD_TA_TRANSFORMATION_LEARN_DIALOG };
-	CString	StrTranslationXValue;
-	CString	StrTranslationYValue;
-	CString	StrRotationXValue;
-	CString	StrRotationYValue;
-	CString	StrRotationAngleValue;
-	CString	StrLearnedTranslationXValue;
-	CString	StrLearnedTranslationYValue;
-	CString	StrLearnedRotationXValue;
-	CString	StrLearnedRotationYValue;
-	CString	StrLearnedRotationAngleValue;
+	CString	m_TranslationXValue;
+	CString	m_TranslationYValue;
+	CString	m_RotationXValue;
+	CString	m_RotationYValue;
+	CString	m_RotationAngleValue;
+	CString	m_LearnedTranslationXValue;
+	CString	m_LearnedTranslationYValue;
+	CString	m_LearnedRotationXValue;
+	CString	m_LearnedRotationYValue;
+	CString	m_LearnedRotationAngleValue;
 	//}}AFX_DATA
 
 protected:

@@ -16,7 +16,7 @@
 #include "SVOCore/SVTaskObject.h"
 #include "SVTool.h"
 #include "CameraLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
-
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -124,21 +124,21 @@ BOOL SVFillBlobDlg::OnInitDialog()
 
 void SVFillBlobDlg::FillCombos()
 {
-	CString l_sBlobTypeStr;
-	CString l_sBlobColorStr;
+	SVString BlobType;
+	SVString BlobColor;
 
-	m_pvoBlobType->GetEnumTypes(l_sBlobTypeStr);
-	m_ctlBlobType.SetEnumTypes(l_sBlobTypeStr);
+	m_pvoBlobType->GetEnumTypes( BlobType );
+	m_ctlBlobType.SetEnumTypes( BlobType.c_str() );
 
-	CString l_sCurrentType;
-	m_pvoBlobType->GetValue(l_sCurrentType);
-	m_ctlBlobType.SelectString(-1,l_sCurrentType);
+	SVString CurrentType;
+	m_pvoBlobType->GetValue( CurrentType );
+	m_ctlBlobType.SelectString( -1,CurrentType.c_str() );
 
-	CString l_sCurrentColor;
-	m_pvoBlobFillColor->GetEnumTypes(l_sBlobColorStr);
-	m_ctlBlobColor.SetEnumTypes(l_sBlobColorStr);
-	m_pvoBlobFillColor->GetValue(l_sCurrentColor);
-	m_ctlBlobColor.SelectString(-1,l_sCurrentColor);
+	SVString CurrentColor;
+	m_pvoBlobFillColor->GetEnumTypes( BlobColor );
+	m_ctlBlobColor.SetEnumTypes( BlobColor.c_str() );
+	m_pvoBlobFillColor->GetValue( CurrentColor );
+	m_ctlBlobColor.SelectString( -1,CurrentColor.c_str() );
 
 	UpdateData( FALSE );
 }

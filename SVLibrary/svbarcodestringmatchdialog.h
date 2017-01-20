@@ -13,7 +13,7 @@
 
 class SVBarCodeStringMatchDialog : public CPropertyPage
 {
-// Construction
+	// Construction
 public:
 	SVBarCodeStringMatchDialog(CWnd* pParent = nullptr);   // standard constructor
 	virtual ~SVBarCodeStringMatchDialog();
@@ -22,43 +22,34 @@ public:
 	void EnableDisableControls(BOOL bSingle = TRUE);
 
 	BOOL SetUseSingle( BOOL bValue );
-	BOOL GetUseSingle( BOOL &rbValue );
+	BOOL GetUseSingle() const { return m_UseSingleMatch; };
 
 	BOOL SetRegExpression( LPCTSTR szRegExpression );
-	BOOL GetRegExpression( CString &rcsRegExpression );
+	const CString& GetRegExpression() const { return m_RegExpression; };
 
 	BOOL SetSaveInFile( BOOL bValue );
-	BOOL GetSaveInFile( BOOL &rbValue );
+	BOOL GetSaveInFile() const { return m_SaveInFile; };
 
 	BOOL SetSingleFileName( LPCTSTR szFileName );
-	BOOL GetSingleFileName( CString &rcsFileName );
+	const CString& GetSingleFileName() const { return m_StringFileName; };
 
 	BOOL SetUseMultiple( BOOL bValue );
-	BOOL GetUseMultiple( BOOL &rbValue );
+	BOOL GetUseMultiple() const { return m_UseMultiMatch; };
 
 	BOOL SetMultiFileName( LPCTSTR szFileName );
-	BOOL GetMultiFileName( CString &rcsFileName );
+	const CString& GetMultiFileName() const { return m_MultiMatchFileName; };
 
-// Dialog Data
-	//{{AFX_DATA(SVBarCodeStringMatchDialog)
 	enum { IDD = IDD_BARCODE_STRINGMATCH };
-	BOOL	mbUseSingleMatch;
-	CString	m_szRegExpression;
-	BOOL	m_bSaveInFile;
-	CString	m_szStringFileName;
-	BOOL	mbUseMutiMatch;
-	CString	mcsMultiMatchFileName;
-	//}}AFX_DATA
 
 
-// Overrides
+	// Overrides
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(SVBarCodeStringMatchDialog)
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
 	//}}AFX_VIRTUAL
 
-// Implementation
+	// Implementation
 protected:
 
 	// Generated message map functions
@@ -71,7 +62,12 @@ protected:
 	afx_msg void OnBcMultiSelectfile();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
-};
 
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
+private:
+	BOOL m_UseSingleMatch;
+	CString m_RegExpression;
+	BOOL m_SaveInFile;
+	CString m_StringFileName;
+	BOOL m_UseMultiMatch;
+	CString m_MultiMatchFileName;
+};

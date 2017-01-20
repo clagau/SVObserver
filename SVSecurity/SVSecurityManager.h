@@ -34,22 +34,12 @@ public:
 	HRESULT SVLogout();
 	HRESULT SVGetUser( BSTR& p_rbstrUser );
 
-	// Ansi charactor functions
-	HRESULT SVLoad(const char* const pFileName);
-	HRESULT SVCreateProcess( const char* const strAppName, const char* const strPath, const char* const strCommand  );
-	HRESULT SVAdd( long lID, const char* const sName, const char* const sGroup , bool bForcePrompt = false );
-	HRESULT SVAdd( long lID, const char* const sName );
-
-	// Wide charactor / Unicode support
-	HRESULT SVLoad( const wchar_t* const pFileName);
-	HRESULT SVCreateProcess( const wchar_t* const strAppName, const wchar_t* const strPath, const wchar_t* const strCommand  );
-	HRESULT SVAdd( long lID, const wchar_t* const sName, const wchar_t* const sGroup , bool bForcePrompt = false );
-	HRESULT SVAdd( long lID, const wchar_t* const sName );
+	HRESULT SVLoad( LPCTSTR pFileName);
+	HRESULT SVCreateProcess( LPCTSTR AppName, LPCTSTR Path, LPCTSTR Command  );
+	HRESULT SVAdd( long lID, LPCTSTR Name, LPCTSTR NTGroup = nullptr, bool ForcePrompt = false );
 
 	HRESULT SVProtectData( long lID );
 	bool    SVGetUseLogon();
-//	bool    SVGetAutoEdit();
 private:
 	SVAccessClass* m_pSVAccess;
-
 };

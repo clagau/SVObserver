@@ -14,9 +14,10 @@
 #pragma region Includes
 #include "SVOResource/resource.h"
 #include "SVValueObjectClassImpl.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
-class SVStringValueObjectClass : public SVValueObjectClassImpl < CString >
+class SVStringValueObjectClass : public SVValueObjectClassImpl < SVString >
 {
 	SV_DECLARE_CLASS( SVStringValueObjectClass );
 
@@ -44,12 +45,12 @@ public:
 	template <typename TOTYPE>
 	__forceinline HRESULT GetValue(int iBucket, int iIndex, TOTYPE& rValue) const { return GetValueAt(iBucket, iIndex, rValue); }
 
-	virtual HRESULT SetValueAtConvert( int iBucket, int iIndex, const CString& value ) override { return SetValueAt(iBucket, iIndex, value); }
-	virtual HRESULT SetValueAtConvert( int iBucket, int iIndex, double value ) override { return S_FALSE; } //SetValueAt(iBucket, iIndex, value); }
-	virtual HRESULT SetValueAtConvert( int iBucket, int iIndex, long value ) override { return S_FALSE; } //return SetValueAt(iBucket, iIndex, value); }
-	virtual HRESULT SetValueAtConvert( int iBucket, int iIndex, int value ) override { return S_FALSE; } //SetValueAt(iBucket, iIndex, value); }
+	virtual HRESULT SetValueAtConvert( int iBucket, int iIndex, const SVString& rValue ) override { return SetValueAt(iBucket, iIndex, rValue); }
+	virtual HRESULT SetValueAtConvert( int iBucket, int iIndex, double Value ) override { return S_FALSE; } //SetValueAt(iBucket, iIndex, value); }
+	virtual HRESULT SetValueAtConvert( int iBucket, int iIndex, long Value ) override { return S_FALSE; } //return SetValueAt(iBucket, iIndex, value); }
+	virtual HRESULT SetValueAtConvert( int iBucket, int iIndex, int Value ) override { return S_FALSE; } //SetValueAt(iBucket, iIndex, value); }
 
-	__forceinline  HRESULT SetValueAt( int iBucket, int iIndex, value_type value ) {return base::SetValueAt(iBucket, iIndex, value); }
+	__forceinline  HRESULT SetValueAt( int iBucket, int iIndex, value_type Value ) {return base::SetValueAt(iBucket, iIndex, Value); }
 	__forceinline  HRESULT GetValueAt( int iBucket, int iIndex, value_type& rValue ) const {return base::GetValueAt(iBucket, iIndex, rValue); }
 
 protected:

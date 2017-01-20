@@ -16,6 +16,7 @@
 //Moved to precompiled header: #include <map>
 #include "SVContainerLibrary/SVVector.h"
 #include "SVValueObjectLibrary/SVValueObject.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 /////////////////////////////////////////////////////////////////////////////
@@ -68,14 +69,14 @@ protected:
 public:
 	struct SVBarCodeErrorCorrectionEncodingStruct
 	{
-		long lMil;
-		CString strName;
+		long m_Mil;
+		SVString m_Name;
 
-		SVBarCodeErrorCorrectionEncodingStruct() { lMil = 0; }
-		SVBarCodeErrorCorrectionEncodingStruct(long l_lMil, const CString& l_strName )
+		SVBarCodeErrorCorrectionEncodingStruct() { m_Mil = 0; }
+		SVBarCodeErrorCorrectionEncodingStruct(long Mil, const SVString& Name )
 		{
-			lMil = l_lMil;
-			strName = l_strName;
+			m_Mil = Mil;
+			m_Name = Name;
 		}
 	};
 

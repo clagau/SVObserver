@@ -39,7 +39,7 @@ SVString RemoteMonitorListHelper::GetNameFromMonitoredObject(const MonitoredObje
 		}
 		else
 		{
-			name = objectRef.GetCompleteObjectName();
+			name = objectRef.GetCompleteName();
 		}
 	}
 	return name;

@@ -11,9 +11,11 @@
 
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <map>
 #include "SVTimerCallback.h"
 #include "SVUtilityLibrary/SVString.h"
+#pragma endregion Includes
 
 namespace dummy
 {

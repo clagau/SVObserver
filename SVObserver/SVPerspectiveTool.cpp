@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 13:21:48  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVPerspectiveTool.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
@@ -16,9 +17,14 @@
 #include "SVImageLibrary/SVImageExtentClass.h"
 #include "SVOCore/SVImageProcessingClass.h"
 #include "CameraLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
+#include "SVUtilityLibrary/SVString.h"
+#pragma endregion Includes
 
 
 SV_IMPLEMENT_CLASS( SVPerspectiveToolClass, SVPerspectiveToolClassGuid )
+
+static const TCHAR* const PERSPECTIVE_WARP_TYPE_HORIZONTAL = _T("Horizontal Warp");
+static const TCHAR* const PERSPECTIVE_WARP_TYPE_VERTICAL = _T("Vertical Warp");
 
 SVPerspectiveToolClass::SVPerspectiveToolClass( BOOL p_bCreateDefaultTaskList, SVObjectClass *p_pOwner, int p_iStringResourceID )
 	:SVToolClass(p_bCreateDefaultTaskList, p_pOwner, p_iStringResourceID)
@@ -229,7 +235,7 @@ HRESULT SVPerspectiveToolClass::ResetObject()
 	if (nullptr != inputImage)
 	{
 		//Set input name to source image name to display it in result picker
-		m_svSourceImageName.SetValue( 0, inputImage->GetCompleteObjectName() );
+		m_svSourceImageName.SetValue( 0, SVString( inputImage->GetCompleteName() ) );
 	}
 
 	UpdateImageWithExtent( 1 );
@@ -385,33 +391,32 @@ void SVPerspectiveToolClass::LocalInitialize()
 
 	// Set Default Warp Method to Use Horizontal
 	RegisterEmbeddedObject( &m_svWarpType, SVWarpTypeObjectGuid, IDS_OBJECTNAME_WARPTYPE, false, SVResetItemTool );
-	CString strEnumTypes;
-	strEnumTypes.Format("%s=%d,%s=%d", PERSPECTIVE_WARP_TYPE_HORIZONTAL, WarpTypeHorizontal,
+	SVString EnumTypes = SvUl_SF::Format("%s=%d,%s=%d", PERSPECTIVE_WARP_TYPE_HORIZONTAL, WarpTypeHorizontal,
 	                                   PERSPECTIVE_WARP_TYPE_VERTICAL, WarpTypeVertical);
-	m_svWarpType.SetEnumTypes( strEnumTypes );
+	m_svWarpType.SetEnumTypes( EnumTypes.c_str() );
 	m_svWarpType.SetDefaultValue( PERSPECTIVE_WARP_TYPE_VERTICAL, TRUE );
 	m_svWarpType.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
 
 	// Set Default Interpolation Mode to use Nearest Neighbor
-	CString strMode;
-	CString strPrepare;
-	strEnumTypes.Empty();
+	SVString Mode;
+	SVString Text;
+	EnumTypes.clear();
 
 	// M_NEAREST_NEIGHBOR 
-	strMode.LoadString( IDS_NEAREST_NEIGHBOR_STRING );
-	strPrepare.Format( _T( "%s=%d," ), strMode, SVNearestNeighbor);
-	strEnumTypes += strPrepare;
+	Mode = SvUl_SF::LoadSVString( IDS_NEAREST_NEIGHBOR_STRING );
+	Text = SvUl_SF::Format( _T( "%s=%d," ), Mode.c_str(), SVNearestNeighbor);
+	EnumTypes += Text;
 	// M_BILINEAR
-	strMode.LoadString( IDS_BILINEAR_STRING );
-	strPrepare.Format( _T( "%s=%d," ), strMode, SVBilinear ); // M_BILINEAR );
-	strEnumTypes += strPrepare;
+	Mode = SvUl_SF::LoadSVString( IDS_BILINEAR_STRING );
+	Text = SvUl_SF::Format( _T( "%s=%d," ), Mode.c_str(), SVBilinear ); // M_BILINEAR );
+	EnumTypes += Text;
 	// M_BICUBIC
-	strMode.LoadString( IDS_BICUBIC_STRING );
-	strPrepare.Format( _T( "%s=%d," ), strMode, SVBiCubic ); // M_BICUBIC );
-	strEnumTypes += strPrepare;
+	Mode = SvUl_SF::LoadSVString( IDS_BICUBIC_STRING );
+	Text = SvUl_SF::Format( _T( "%s=%d," ), Mode.c_str(), SVBiCubic ); // M_BICUBIC );
+	EnumTypes += Text;
 
 	// And now set enum types...
-	m_svInterpolationMode.SetEnumTypes( strEnumTypes );
+	m_svInterpolationMode.SetEnumTypes( EnumTypes.c_str() );
 	m_svInterpolationMode.SetDefaultValue( SVNearestNeighbor, TRUE );	// Refer to MIL...
 	RegisterEmbeddedObject( &m_svInterpolationMode, SVOutputInterpolationModeObjectGuid, IDS_OBJECTNAME_INTERPOLATION_MODE, false, SVResetItemNone );
 

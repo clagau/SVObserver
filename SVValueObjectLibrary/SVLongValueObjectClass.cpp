@@ -15,20 +15,14 @@
 #include "SVLongValueObjectClass.h"
 #include "SVObjectLibrary\SVClsids.h"
 #include "SVObjectLibrary\SVToolsetScriptTags.h"
-#include "SVLibrary/StringMunge.h"
 #include "SVStatusLibrary/MessageManager.h"
 #pragma endregion Includes
 
-namespace	// only for this file
-{
-	const CString DEFAULT_TAG_SAVE(_T(".Default"));
-	const CString BUCKET_TAG_SAVE(_T(".Array"));	// for backwards compatibility
-	const CString ARRAY_TAG_SAVE(_T(".Array_Elements"));	// new style; one bucket, all array values
-
-	const CString DEFAULT_TAG_LOAD(_T("Default"));
-	const CString BUCKET_TAG_LOAD(_T("Array"));	// for backwards compatibility
-	const CString ARRAY_TAG_LOAD(_T("Array_Elements"));	// new style; one bucket, all array values
-}	// end file scope namespace
+#pragma region Declarations
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+#endif
 
 SV_IMPLEMENT_CLASS(SVLongValueObjectClass, SVLongValueObjectClassGuid);
 
@@ -116,16 +110,16 @@ HRESULT SVLongValueObjectClass::SetValueAt( int iBucket, int iIndex, const VARIA
 	return S_FALSE;
 }
 
-HRESULT SVLongValueObjectClass::SetValueAt( int iBucket, int iIndex, const CString& strValue )
+HRESULT SVLongValueObjectClass::SetValueAt( int iBucket, int iIndex, const SVString& rValue )
 {
 	try
 	{
-		long value = convertString2Long(strValue);
+		long value = convertString2Long(rValue);
 		return base::SetValueAt(iBucket, iIndex, value );
 	}
 	catch (const SvStl::MessageContainer&)
 	{
-		ASSERT(FALSE);
+		assert(FALSE);
 		return S_FALSE;
 	}
 }
@@ -149,12 +143,12 @@ HRESULT SVLongValueObjectClass::GetValueAt( int iBucket, int iIndex, VARIANT& rv
 	return hr;
 }
 
-HRESULT SVLongValueObjectClass::GetValueAt( int iBucket, int iIndex, CString& rstrValue) const
+HRESULT SVLongValueObjectClass::GetValueAt( int iBucket, int iIndex, SVString& rValue) const
 {
 	long lValue=0;
 
 	HRESULT hr = base::GetValueAt(iBucket, iIndex, lValue);
-	rstrValue.Format(_T("%d"), lValue);
+	rValue = SvUl_SF::Format(_T("%d"), lValue);
 
 	return hr;
 }
@@ -179,36 +173,35 @@ void SVLongValueObjectClass::LocalInitialize()
 {
 	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVLongValueObjectType;
 	DefaultValue() = 0;
-	if ( m_sLegacyScriptDefaultName.IsEmpty() )
+	if ( m_sLegacyScriptDefaultName.empty() )
 	{
-		m_sLegacyScriptDefaultName = "lDefault";
-		m_sLegacyScriptArrayName = "pLArray";
+		m_sLegacyScriptDefaultName = _T("lDefault");
+		m_sLegacyScriptArrayName = _T("pLArray");
 	}
 	SetTypeName( _T("Integer32") );
 	InitializeBuckets();
 }
 
-long SVLongValueObjectClass::convertString2Long(const CString& rValue ) const
+long SVLongValueObjectClass::convertString2Long(const SVString& rValue ) const
 {
-	CString strDigits (rValue);
-	StringMunge::KeepChars( &strDigits, _T("-0123456789 .xXabcdefABCDEF") );
-	if ( strDigits == rValue )
+	SVString Digits = SvUl_SF::ValidateString( rValue, _T("-0123456789 .xXabcdefABCDEF") );
+	if ( Digits == rValue )
 	{
-		strDigits.MakeLower();
+		SvUl_SF::MakeLower(Digits);
 		TCHAR* p = nullptr;
 		long lValue;
-		if ( strDigits.Find(_T('x')) != -1 )
+		if ( SVString::npos != Digits.find( 'x' ) )
 		{
-			lValue = _tcstol(strDigits, &p, 16);
+			lValue = _tcstol(Digits.c_str(), &p, 16);
 		}
 		else
 		{
-			lValue = _tcstol(strDigits, &p, 10);
+			lValue = _tcstol(Digits.c_str(), &p, 10);
 		}
 
 		return lValue;
 	}
-	SVStringArray msgList;
+	SVStringVector msgList;
 	msgList.push_back(SVString(rValue));
 	msgList.push_back(GetName());
 	SvStl::MessageMgrStd Exception( SvStl::LogOnly );

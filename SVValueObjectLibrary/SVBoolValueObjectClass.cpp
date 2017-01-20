@@ -16,39 +16,34 @@
 #include "SVObjectLibrary\SVToolsetScriptTags.h"
 #include "SVObjectLibrary\SVClsids.h"
 #include "SVStatusLibrary\MessageManager.h"
+#include "ObjectInterfaces\TextDefineSvOi.h"
 #pragma endregion Includes
 
-namespace	// only for this file
-{
-	const CString DEFAULT_TAG_SAVE(_T(".Default"));
-	const CString BUCKET_TAG_SAVE(_T(".Array"));	// for backwards compatibility
-	const CString ARRAY_TAG_SAVE(_T(".Array_Elements"));	// new style; one bucket, all array values
-
-	const CString DEFAULT_TAG_LOAD(_T("Default"));
-	const CString BUCKET_TAG_LOAD(_T("Array"));	// for backwards compatibility
-	const CString ARRAY_TAG_LOAD(_T("Array_Elements"));	// new style; one bucket, all array values
-
-	const CString scTrue = _T("TRUE");
-	const CString scFalse = _T("FALSE");
-}	// end file scope namespace
+#pragma region Declarations
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+#endif
+#pragma endregion Declarations
 
 SV_IMPLEMENT_CLASS(SVBoolValueObjectClass, SVBoolValueObjectClassGuid);
 
 /*static*/
-HRESULT SVBoolValueObjectClass::GetNormalizedValue( const CString& p_strValue, CString& rstrNormalized )
+HRESULT SVBoolValueObjectClass::GetNormalizedValue( const SVString& rValue, SVString& rstrNormalized )
 {
 	HRESULT hr = S_FALSE;
-	CString strValue(p_strValue);
-	strValue.TrimLeft();
-	strValue.TrimRight();
-	if ( strValue == _T("1") || strValue == _T("-1") /*for VB weenies*/ || (strValue.CompareNoCase(scTrue) == 0) )
+	SVString strValue(rValue);
+
+	SvUl_SF::TrimLeft( strValue );
+	SvUl_SF::TrimRight( strValue );
+	if ( strValue == _T("1") || strValue == _T("-1") /*for VB weenies*/ || (SvUl_SF::CompareNoCase(strValue, SvOi::cTrue) == 0) )
 	{
-		rstrNormalized = scTrue;
+		rstrNormalized = SvOi::cTrue;
 		hr = S_OK;
 	}
-	else if ( strValue == _T("0") || (strValue.CompareNoCase(scFalse) == 0) )
+	else if ( strValue == _T("0") || (SvUl_SF::CompareNoCase(strValue, SvOi::cFalse) == 0) )
 	{
-		rstrNormalized = scFalse;
+		rstrNormalized = SvOi::cFalse;
 		hr = S_OK;
 	}
 	return hr;
@@ -117,10 +112,10 @@ void SVBoolValueObjectClass::Persist(SVObjectWriter& rWriter)
 	rWriter.EndElement();
 }
 
-HRESULT SVBoolValueObjectClass::GetValidTypes( SVValidTypesVector& p_astrTypes ) const
+HRESULT SVBoolValueObjectClass::GetValidTypes( SVStringVector& rTypes ) const
 {
-	p_astrTypes.push_back(scTrue);
-	p_astrTypes.push_back(scFalse);
+	rTypes.push_back( SvOi::cTrue );
+	rTypes.push_back( SvOi::cFalse );
 	return S_OK;
 }
 
@@ -142,7 +137,7 @@ HRESULT SVBoolValueObjectClass::SetValueAt( int iBucket, int iIndex, const bool 
 	return base::SetValueAt(iBucket, iIndex, l_bValue);
 }
 
-HRESULT SVBoolValueObjectClass::SetValueAt( int iBucket, int iIndex, const CString& strValue )
+HRESULT SVBoolValueObjectClass::SetValueAt( int iBucket, int iIndex, const SVString& strValue )
 {
 	try
 	{
@@ -176,12 +171,12 @@ HRESULT SVBoolValueObjectClass::GetValueAt( int iBucket, int iIndex, bool& rbVal
 	return hr;
 }
 
-HRESULT SVBoolValueObjectClass::GetValueAt( int iBucket, int iIndex, CString& rstrValue) const
+HRESULT SVBoolValueObjectClass::GetValueAt( int iBucket, int iIndex, SVString& rstrValue) const
 {
 	BOOL bValue = FALSE;
 
 	HRESULT hr = base::GetValueAt(iBucket, iIndex, bValue);
-	rstrValue = (bValue ? scTrue : scFalse);
+	rstrValue = (bValue ? SvOi::cTrue : SvOi::cFalse);
 
 	return hr;
 }
@@ -221,14 +216,14 @@ void SVBoolValueObjectClass::ValidateValue( int iBucket, int iIndex, const SVStr
 	base::ValidateValue( iBucket, iIndex, rValue );
 }
 
-HRESULT SVBoolValueObjectClass::CompareWithCurrentValueImpl( const CString& rstrCompare ) const
+HRESULT SVBoolValueObjectClass::CompareWithCurrentValueImpl( const SVString& rstrCompare ) const
 {
-	CString strValue;
+	SVString strValue;
 	GetValue( strValue );
 	return S_OK;
 }
 
-HRESULT SVBoolValueObjectClass::GetNormalizedValueImpl( const CString& strValue, CString& rstrNormalized ) const
+HRESULT SVBoolValueObjectClass::GetNormalizedValueImpl( const SVString& strValue, SVString& rstrNormalized ) const
 {
 	return SVBoolValueObjectClass::GetNormalizedValue(strValue, rstrNormalized);
 }
@@ -237,7 +232,7 @@ void SVBoolValueObjectClass::LocalInitialize()
 {
 	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVBoolValueObjectType;
 	DefaultValue() = false;
-	if ( m_sLegacyScriptDefaultName.IsEmpty() )
+	if ( m_sLegacyScriptDefaultName.empty() )
 	{
 		m_sLegacyScriptDefaultName = "bDefault";
 		m_sLegacyScriptArrayName = "pBArray";
@@ -247,24 +242,25 @@ void SVBoolValueObjectClass::LocalInitialize()
 	InitializeBuckets();
 }
 
-BOOL SVBoolValueObjectClass::ConvertString2Bool( const CString &rValue ) const
+BOOL SVBoolValueObjectClass::ConvertString2Bool( const SVString &rValue ) const
 {
 	bool Result(TRUE);
-	CString value = rValue;
-	value.TrimLeft();
-	value.TrimRight();
-	if ( _T("1") == value  || _T("-1") == value /*for VB weenies*/ || (value.CompareNoCase(scTrue) == 0) )
+	SVString Value = rValue;
+
+	Value = SvUl_SF::TrimLeft( Value );
+	Value = SvUl_SF::TrimRight( Value );
+	if ( _T("1") == Value  || _T("-1") == Value /*for VB weenies*/ || (SvUl_SF::CompareNoCase( Value, SvOi::cTrue) == 0) )
 	{
 		Result = TRUE;
 	}
-	else if ( _T("0") == value || (value.CompareNoCase(scFalse) == 0) )
+	else if ( _T("0") == Value || (SvUl_SF::CompareNoCase( Value, SvOi::cFalse) == 0) )
 	{
 		Result = FALSE;
 	}
 	else
 	{
-		SVStringArray msgList;
-		msgList.push_back(SVString(value));
+		SVStringVector msgList;
+		msgList.push_back(Value);
 		msgList.push_back(GetName());
 		SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 		Exception.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_ValueObject_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );

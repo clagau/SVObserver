@@ -13,11 +13,8 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <comdef.h>
-//Moved to precompiled header: #include <string>
-
+#include "SVUtilityLibrary/SVString.h"
 #include "SVSystemLibrary/SVAsyncProcedure.h"
-
-
 #include "SVOCallbackClass.h"
 #include "SVODataResponseClass.h"
 #include "SVProcessFunctor.h"
@@ -30,7 +27,6 @@ This class represents the base functionality required for a device.
 class SVODataDeviceClass  
 {
 public:
-	typedef std::string SVDeviceName;
 	typedef SVProcessFunctor< SVODataDeviceClass > SVProcessFunctorImpl;
 
 	friend class SVProcessFunctor< SVODataDeviceClass >;
@@ -90,7 +86,7 @@ protected:
 	SVCallbackClassPtrQueue m_CallbackList;
 
 	//This attribute holds the device name.
-	SVDeviceName mDeviceName;
+	SVString m_DeviceName;
 
 	//This attribute holds the creation state of this object.
 	bool mbIsCreated;

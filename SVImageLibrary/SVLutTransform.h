@@ -13,6 +13,7 @@
 
 #pragma region Includes
 #include "SVContainerLibrary/SVVector.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 enum SVLutTransformOperationEnum	// for legacy conversion
@@ -36,11 +37,11 @@ class SVLutTransformOperationMap
 public:
 	struct SVLutTransformTypeInfo
 	{
-		SVLutTransformOperationEnum eType;
-		SVLutTransformOperation* pType;
-		CString sType;
-		SVLutTransformTypeInfo() {eType = LutTransformTypeUnknown; pType = nullptr;}
-		SVLutTransformTypeInfo(SVLutTransformOperationEnum e_, SVLutTransformOperation* pType_, const CString& sType_) {eType = e_; pType = pType_; sType = sType_;}
+		SVLutTransformOperationEnum m_eType;
+		SVLutTransformOperation* m_pType;
+		SVString m_Type;
+		SVLutTransformTypeInfo() {m_eType = LutTransformTypeUnknown; m_pType = nullptr;}
+		SVLutTransformTypeInfo(SVLutTransformOperationEnum eType, SVLutTransformOperation* pType, const SVString& rType) {m_eType = eType; m_pType = pType; m_Type = rType;}
 	};
 	typedef SVVector< SVLutTransformTypeInfo > SVLutTransformTypeInfoArray;
 public:
@@ -50,13 +51,13 @@ public:
 	SVLutTransformOperationEnum GetType(const SVLutTransformOperation* pType);
 	const SVLutTransformTypeInfo* GetInfo(SVLutTransformOperationEnum e);
 	const SVLutTransformTypeInfo* GetInfo(const SVLutTransformOperation* pType);
-	const SVLutTransformTypeInfo* GetInfo(const CString& sType);
+	const SVLutTransformTypeInfo* GetInfo(const SVString& rType);
 	const SVLutTransformTypeInfoArray& GetTypes() {return maTypeInfo;}
 private:
 	SVLutTransformTypeInfoArray maTypeInfo;
 };
 
-typedef CDWordArray SVLutTransformParameters;
+typedef std::vector<DWORD> SVLutTransformParameters;
 
 class SVLutBand;
 

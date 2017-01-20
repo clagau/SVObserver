@@ -19,7 +19,7 @@ SVTaskObjectInterfaceInputRequestStruct::SVTaskObjectInterfaceInputRequestStruct
 {
 	m_Guid = rGuid;
 	m_ObjectRef = SVValueObjectReference( SVObjectManagerClass::Instance().GetObject( m_Guid ) );
-	m_Name = m_ObjectRef.GetCompleteObjectName();
+	m_Name = m_ObjectRef.GetCompleteName();
 }
 
 SVTaskObjectInterfaceInputRequestStruct::SVTaskObjectInterfaceInputRequestStruct( const SVString& rName )
@@ -32,31 +32,31 @@ SVTaskObjectInterfaceInputRequestStruct::SVTaskObjectInterfaceInputRequestStruct
 HRESULT SVInputRequestStructMap::Add( SVValueObjectClass* pValueObject )
 {
 	ASSERT( pValueObject );
-	HRESULT hr = S_FALSE;
+	HRESULT Result( E_FAIL );
 	if ( nullptr != pValueObject )
 	{
-		CString strValue;		//@WARNING [gra][7.50][22.11.2016] This should be changed to SVString when GetValue for value objects is changed 
-		hr = pValueObject->GetValue( strValue );
-		if ( S_OK == hr )
+		SVString Value;
+		Result = pValueObject->GetValue( Value );
+		if ( S_OK == Result )
 		{
-			(*this)[ SVValueObjectReference( pValueObject ) ] = strValue;
+			(*this)[ SVValueObjectReference( pValueObject ) ] = Value;
 		}
 	}
-	return hr;
+	return Result;
 }
 
 HRESULT SVInputRequestStructMap::Add( const SVValueObjectReference& rObjectRef )
 {
-	HRESULT Result( S_FALSE );
+	HRESULT Result( E_FAIL );
 
 	ASSERT( rObjectRef.Object() );
 	if ( nullptr != rObjectRef.Object() )
 	{
-		CString strValue;		//@WARNING [gra][7.50][22.11.2016] This should be changed to SVString when GetValue for value objects is changed 
-		Result = rObjectRef.GetValue( strValue );
+		SVString Value;
+		Result = rObjectRef.GetValue( Value );
 		if ( S_OK == Result )
 		{
-			(*this)[ rObjectRef ] = strValue;
+			(*this)[ rObjectRef ] = Value;
 		}
 	}
 	return Result;

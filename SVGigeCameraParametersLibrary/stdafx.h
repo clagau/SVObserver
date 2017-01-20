@@ -36,12 +36,11 @@
 //************************************
 #pragma region Precompiled Headers
 #include <windows.h>
-#include <atlbase.h>
-#include <atlconv.h>
 
 #include <comdef.h>
 #include <map>
 #include <string>
+#include <tchar.h>
 #include <vector>
 #include <utility>
 

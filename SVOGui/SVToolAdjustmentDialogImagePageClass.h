@@ -13,10 +13,11 @@
 
 #pragma region Includes
 #include "SVOResource/resource.h"
-#include "SVOGui\PictureDisplay.h"
+#include "PictureDisplay.h"
 #include "SVMFCControls\AvailableObjectListComboBox.h"
-#include "SVOGui\ImageController.h"
+#include "ImageController.h"
 #include "SVUtilityLibrary\SVGUID.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 namespace Seidenader

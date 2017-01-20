@@ -20,12 +20,12 @@ SVJsonCommandData::SVJsonCommandData()
 	m_WaitHandle = ::CreateEvent( nullptr, true, false, nullptr );
 }
 
-SVJsonCommandData::SVJsonCommandData( const SVJsonCommandData& p_rObject )
+SVJsonCommandData::SVJsonCommandData( const SVJsonCommandData& rObject )
 : m_WaitHandle( nullptr )
-, m_JsonCommand( p_rObject.m_JsonCommand )
-, m_JsonResults( p_rObject.m_JsonResults )
+, m_JsonCommand( rObject.m_JsonCommand )
+, m_JsonResults( rObject.m_JsonResults )
 {
-	p_rObject.GetWaitHandle( m_WaitHandle );
+	rObject.GetWaitHandle( m_WaitHandle );
 }
 
 SVJsonCommandData::~SVJsonCommandData()
@@ -70,13 +70,13 @@ HRESULT SVJsonCommandData::NotifyRequestComplete() const
 	return l_Status;
 }
 
-HRESULT SVJsonCommandData::WaitForRequest( DWORD p_TimeoutInMilliseconds ) const
+HRESULT SVJsonCommandData::WaitForRequest( DWORD TimeoutInMilliseconds ) const
 {
 	HRESULT l_Status = S_OK;
 
 	if( nullptr != m_WaitHandle )
 	{
-		if( ::WaitForSingleObject( m_WaitHandle, p_TimeoutInMilliseconds ) != WAIT_OBJECT_0 )
+		if( ::WaitForSingleObject( m_WaitHandle, TimeoutInMilliseconds ) != WAIT_OBJECT_0 )
 		{
 			l_Status = RPC_E_TIMEOUT; // timeout occurred
 		}
@@ -89,16 +89,11 @@ HRESULT SVJsonCommandData::WaitForRequest( DWORD p_TimeoutInMilliseconds ) const
 	return l_Status;
 }
 
-const std::string& SVJsonCommandData::GetJsonCommand() const
-{
-	return m_JsonCommand;
-}
-
-HRESULT SVJsonCommandData::SetJsonCommand( const std::string& p_rCommand )
+HRESULT SVJsonCommandData::SetJsonCommand( const SVString& rCommand )
 {
 	HRESULT l_Status = S_OK;
 
-	m_JsonCommand = p_rCommand;
+	m_JsonCommand = rCommand;
 
 	if( nullptr != m_WaitHandle )
 	{
@@ -115,18 +110,18 @@ HRESULT SVJsonCommandData::SetJsonCommand( const std::string& p_rCommand )
 	return l_Status;
 }
 
-HRESULT SVJsonCommandData::GetWaitHandle( HANDLE& p_rHandle ) const
+HRESULT SVJsonCommandData::GetWaitHandle( HANDLE& rHandle ) const
 {
 	HRESULT l_Status = S_OK;
 
-	if( nullptr != p_rHandle )
+	if( nullptr != rHandle )
 	{
-		::CloseHandle( p_rHandle );
+		::CloseHandle( rHandle );
 
-		p_rHandle = nullptr;
+		rHandle = nullptr;
 	}
 
-	if( ! ::DuplicateHandle( GetCurrentProcess(), m_WaitHandle, GetCurrentProcess(), &p_rHandle, 0, FALSE, DUPLICATE_SAME_ACCESS ) )
+	if( ! ::DuplicateHandle( GetCurrentProcess(), m_WaitHandle, GetCurrentProcess(), &rHandle, 0, FALSE, DUPLICATE_SAME_ACCESS ) )
 	{
 		l_Status = E_FAIL;
 	}

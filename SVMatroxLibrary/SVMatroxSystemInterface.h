@@ -11,9 +11,12 @@
 
 #pragma once
 
+#pragma region Includes
+#include "SVUtilityLibrary/SVString.h"
 #include "SVMatroxStatusInformation.h"
 #include "SVMatroxSystem.h"
 #include "SVMatroxSystemEnums.h"
+#pragma endregion Includes
 
 class SVMatroxSystemInterface
 {

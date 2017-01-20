@@ -15,10 +15,10 @@
 #include "SVContainerLibrary/SVBiUniqueMap.h"
 #include "SVObjectLibrary/SVObjectNotifyTemplate.h"
 #include "SVOLibrary/SVQueueObject.h"
-
 #include "SVObjectCommandDataJson.h"
 #include "SVTool.h"
 #include "SVValueObjectLibrary/SVVariantValueObjectClass.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 class SVRemoteInputTool : 

@@ -27,7 +27,7 @@ public:
 	SVDeviceParam( SVDeviceParamEnum e );
 	virtual ~SVDeviceParam();
 	static SVDeviceParam* Create(SVDeviceParamEnum eType);
-	static CString GetParameterName( SVDeviceParamEnum e );
+	static SVString GetParameterName( SVDeviceParamEnum e );
 	SVDeviceParam* Clone() const {return static_cast< SVDeviceParam* >( CloneImpl() );}
 	virtual SVClonable* CloneImpl() const = 0;
 
@@ -35,33 +35,33 @@ public:
 	virtual HRESULT SetValue( const VARIANT& rv );
 	virtual HRESULT SetMetadata(const SVDeviceParam* pBaseParam );
 
-	const char* Name() const {return m_strName.c_str();}
+	LPCTSTR Name() const { return m_strName.c_str(); };
 	HRESULT SetName( const SVString& strName);
 
-	const char* VisualName() const {return m_strVisualName.c_str();}
+	LPCTSTR VisualName() const { return m_strVisualName.c_str(); };
 	HRESULT SetVisualName( const SVString& strName);
 
-	const char* Description() const { return m_strDescription.c_str();}
+	LPCTSTR Description() const { return m_strDescription.c_str(); };
 	HRESULT SetDescription( const SVString& strDescription );
 
-	long DetailLevel() const { return m_lDetailLevel;}
+	long DetailLevel() const { return m_lDetailLevel; };
 	HRESULT SetDetailLevel( long lDetailLevel );
 
-	SVDeviceParamEnum Type() const {return m_eParam;}
+	SVDeviceParamEnum Type() const { return m_eParam; };
 	HRESULT SetType( SVDeviceParamEnum e );
-	SVDeviceParamDataTypeEnum DataType() const { return m_eDataType; }
+	SVDeviceParamDataTypeEnum DataType() const { return m_eDataType; };
 
-	int GetOrder() const {return m_iOrder;}
-	void SetOrder(int iOrder) {m_iOrder = iOrder;}
+	int GetOrder() const { return m_iOrder; };
+	void SetOrder(int iOrder) { m_iOrder = iOrder; };
 
-	bool DeviceSupports() const {return m_bSupports;}
-	bool Supports() const {return m_bSupports;}
-	void Supports(bool bSupports) {m_bSupports = bSupports;}
+	bool DeviceSupports() const { return m_bSupports; };
+	bool Supports() const { return m_bSupports; };
+	void Supports(bool bSupports) { m_bSupports = bSupports; };
 
 	DEFINE_VISITABLE()
 
 protected:
-	void Init( const SVDeviceParam& rhs ) { m_eParam = rhs.m_eParam; }
+	void Init( const SVDeviceParam& rhs ) { m_eParam = rhs.m_eParam; };
 	virtual void Init( SVDeviceParamEnum e );
 	SVDeviceParamEnum m_eParam;
 	SVDeviceParamDataTypeEnum m_eDataType;
@@ -74,10 +74,10 @@ protected:
 	
 // disable assignment and copy constructor
 protected:
-	SVDeviceParam(const SVDeviceParam& );
+	SVDeviceParam( const SVDeviceParam& rRhs );
 
 private:
-	const SVDeviceParam& operator = (const SVDeviceParam& );
+	const SVDeviceParam& operator = (const SVDeviceParam& rRhs );
 };
 
 typedef TTemporaryPointerWrapper<SVDeviceParam> SVDeviceParamTempWrapper;

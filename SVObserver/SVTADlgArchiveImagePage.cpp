@@ -31,6 +31,7 @@
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVOResource\ConstGlobalSvOr.h"
 #include "SVStatusLibrary\GlobalPath.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -109,20 +110,20 @@ bool SVTADlgArchiveImagePage::QueryAllowExit()
 	}
 
 	//update the image path
-	CString csImageFolder;
-	m_ImageFilesRoot.GetWindowText( csImageFolder );
-	SVString svImageFolder = SVString(csImageFolder);
+	CString Text;
+	m_ImageFilesRoot.GetWindowText( Text );
+	SVString ImageFolder = Text;
 
-	CString sTmpArchiveImagePath = csImageFolder;
+	SVString TmpArchiveImagePath = ImageFolder;
 	ArchiveToolHelper athImagePath;
-	athImagePath.Init(svImageFolder);
+	athImagePath.Init(ImageFolder);
 
 	if (athImagePath.isUsingKeywords())
 	{
 		if (athImagePath.isTokensValid())
 		{
-			sTmpArchiveImagePath = athImagePath.TranslatePath(svImageFolder).c_str();
-			SVCheckPathDir( sTmpArchiveImagePath, TRUE );
+			TmpArchiveImagePath = athImagePath.TranslatePath(ImageFolder);
+			SVCheckPathDir( TmpArchiveImagePath.c_str(), TRUE );
 		}
 		else
 		{
@@ -135,21 +136,21 @@ bool SVTADlgArchiveImagePage::QueryAllowExit()
 	else
 	{
 		//not using Keywords 
-		SVCheckPathDir( csImageFolder, TRUE );
+		SVCheckPathDir( ImageFolder.c_str(), TRUE );
 	}
 
-	CString szDrive;
+	SVString Drive;
 	//check for valid drive for image archive
-	if(!ArchiveToolHelper::ValidateDrive(csImageFolder,szDrive ) || csImageFolder.IsEmpty())
+	if(!ArchiveToolHelper::ValidateDrive(ImageFolder.c_str(), Drive ) || ImageFolder.empty())
 	{
-		SVStringArray msgList;
-		msgList.push_back(SVString(szDrive));
+		SVStringVector msgList;
+		msgList.push_back(Drive);
 		SvStl::MessageMgrStd Exception( SvStl::LogAndDisplay );
 		Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvOi::Tid_InvalidDrive, msgList, SvStl::SourceFileParams(StdMessageParams) );
 		return false; 
 	}
 
-	m_pTool->SetImageArchivePath( csImageFolder );
+	m_pTool->SetImageArchivePath( ImageFolder.c_str() );
 
 	m_pTool->m_dwArchiveStopAtMaxImages.SetValue( 1, m_StopAtMaxImages );
 
@@ -157,13 +158,12 @@ bool SVTADlgArchiveImagePage::QueryAllowExit()
 	m_eSelectedArchiveMethod = static_cast <SVArchiveMethodEnum> (m_Mode.GetItemData(iCurSel));
 	m_pTool->m_evoArchiveMethod.SetValue( 1, static_cast <DWORD> (m_eSelectedArchiveMethod) );
 
-	CString s;
-	m_MaxImages.GetWindowText(s);
-	DWORD dwTemp = atol((LPCTSTR)s);
+	m_MaxImages.GetWindowText(Text);
+	DWORD dwTemp = atol( Text );
 	m_ImagesToArchive = dwTemp;
 	if( UpperLimitImageNumbers < dwTemp )
 	{
-		SVStringArray msgList;
+		SVStringVector msgList;
 		msgList.push_back(SvUl_SF::Format(_T("%ld"), dwTemp));
 		msgList.push_back(SvUl_SF::Format(_T("%ld"), UpperLimitImageNumbers));
 		SvStl::MessageMgrStd Exception( SvStl::LogAndDisplay );
@@ -174,7 +174,7 @@ bool SVTADlgArchiveImagePage::QueryAllowExit()
 
 	if( MaxImagesWarningLimit < dwTemp )
 	{
-		SVStringArray msgList;
+		SVStringVector msgList;
 		msgList.push_back(SvUl_SF::Format(_T("%ld"),  dwTemp));
 		SvStl::MessageMgrStd Exception( SvStl::LogAndDisplay );
 		Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvOi::Tid_ArchiveTool_WarningMaxImages, msgList, SvStl::SourceFileParams(StdMessageParams) );
@@ -265,7 +265,7 @@ BOOL SVTADlgArchiveImagePage::OnInitDialog()
 	m_pTool->m_evoArchiveMethod.GetEnumTypes(vec);
 	for ( size_t i=0; i < vec.size(); i++ )
 	{
-		m_Mode.SetItemData( iIndex = m_Mode.AddString(vec[i].first), vec[i].second );
+		m_Mode.SetItemData( iIndex = m_Mode.AddString(vec[i].first.c_str()), vec[i].second );
 		dwaIndex.SetAtGrow( vec[i].second, iIndex );
 	}
 
@@ -282,12 +282,11 @@ BOOL SVTADlgArchiveImagePage::OnInitDialog()
 	DWORD dwTemp=0;
     m_pTool->m_dwArchiveMaxImagesCount.GetValue( dwTemp );
 	m_ImagesToArchive = dwTemp;
-	CString s;
-	s.Format(_T("%ld"),dwTemp);
-	m_MaxImages.SetWindowText((LPCTSTR)s);
+	SVString Text = SvUl_SF::Format(_T("%ld"),dwTemp);
+	m_MaxImages.SetWindowText( Text.c_str() );
 
 	//store the MaxImageNumber
-	m_sMaxImageNumber = s;
+	m_sMaxImageNumber = Text.c_str();
 
 	__int64 MemUsed = TheSVMemoryManager().ReservedBytes( SvO::ARCHIVE_TOOL_MEMORY_POOL_GO_OFFLINE_NAME );
  	m_ToolImageMemoryUsage = 0;
@@ -295,10 +294,10 @@ BOOL SVTADlgArchiveImagePage::OnInitDialog()
 
 	m_wndAvailableArchiveImageMemory.ShowWindow( lMode == SVArchiveGoOffline );
 
-	CString		csImageFolder; 
+	SVString ImageFolder; 
 	
-	m_pTool->GetImageArchivePath( csImageFolder );
-	m_ImageFilesRoot.SetWindowText(csImageFolder);
+	m_pTool->GetImageArchivePath( ImageFolder );
+	m_ImageFilesRoot.SetWindowText( ImageFolder.c_str() );
 
 	m_pTool->m_dwArchiveStopAtMaxImages.GetValue( dwTemp );
 	m_StopAtMaxImages = (int)dwTemp;
@@ -473,10 +472,8 @@ void SVTADlgArchiveImagePage::ReadSelectedObjects()
 		CalculateFreeMem();
 	}
 
-	CString Prefix;
-	CString ToolName;
-	ToolName.LoadString( IDS_CLASSNAME_SVTOOLSET );
-	Prefix.Format( _T("%s.%s."), m_pTool->GetInspection()->GetName(), ToolName );
+	SVString ToolName = SvUl_SF::LoadSVString( IDS_CLASSNAME_SVTOOLSET );
+	SVString Prefix = SvUl_SF::Format( _T("%s.%s."), m_pTool->GetInspection()->GetName(), ToolName.c_str() );
 
 	int Index = 0;
 	SvOsl::SelectorItemVector::const_iterator Iter;
@@ -484,7 +481,7 @@ void SVTADlgArchiveImagePage::ReadSelectedObjects()
 	{
 		SVString Name;
 		Name = Iter->getLocation();
-		SvUl_SF::searchAndReplace( Name, Prefix, _T("") );
+		SvUl_SF::searchAndReplace( Name, Prefix.c_str(), _T("") );
 
 		m_ItemsSelected.InsertItem(LVIF_STATE | LVIF_TEXT,
 			Index,
@@ -519,9 +516,8 @@ void SVTADlgArchiveImagePage::ShowObjectSelector()
 	SvOsl::ObjectTreeGenerator::Instance().setCheckItems( CheckItems );
 
 	SVString Title = SvUl_SF::Format( _T("%s - %s"), m_strCaption, InspectionName.c_str() );
-	CString Filter;
-	Filter.LoadString( IDS_FILTER );
-	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title.c_str(), m_strCaption, Filter, this );
+	SVString Filter = SvUl_SF::LoadSVString( IDS_FILTER );
+	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title.c_str(), m_strCaption, Filter.c_str(), this );
 
 	if( IDOK == Result )
 	{
@@ -575,7 +571,9 @@ void SVTADlgArchiveImagePage::OnBrowse()
 
 	m_ImageFilesRoot.GetWindowText(csInitialPath);
 	if (!csInitialPath.IsEmpty())
+	{
 		svfncImageFolder.SetPathName(csInitialPath);
+	}
 
 	ArchiveToolHelper athImagePath;
 	athImagePath.Init(SVString(csInitialPath)); 
@@ -601,7 +599,7 @@ void SVTADlgArchiveImagePage::OnBrowse()
 	svfncImageFolder.SetFileType(SV_DEFAULT_FILE_TYPE);
 	if (svfncImageFolder.SelectPath())
     {
-		csInitialPath = svfncImageFolder.GetPathName();
+		csInitialPath = svfncImageFolder.GetPathName().c_str();
 		int len = csInitialPath.GetLength();
 		if (len)
 		{
@@ -665,7 +663,7 @@ void SVTADlgArchiveImagePage::OnChangeEditMaxImages()
 				}
 				else
 				{
-					SVStringArray msgList;
+					SVStringVector msgList;
 					msgList.push_back(SVString(strNumImages));
 					SvStl::MessageMgrStd Exception( SvStl::LogAndDisplay );
 					Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvOi::Tid_AP_NotEnoughImageMemoryInChangeMode, msgList, SvStl::SourceFileParams(StdMessageParams) );
@@ -735,8 +733,8 @@ bool SVTADlgArchiveImagePage::checkImageMemory( SVGUID ImageGuid , bool bNewStat
 			{
 				bAddItem = false;
 				bOk = false;
-				SVStringArray msgList;
-				msgList.push_back(SVString(pImage->GetCompleteObjectName()));
+				SVStringVector msgList;
+				msgList.push_back(SVString(pImage->GetCompleteName()));
 				SvStl::MessageMgrStd Exception( SvStl::LogAndDisplay );
 				Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvOi::Tid_AP_NotEnoughImageMemoryToSelect, msgList, SvStl::SourceFileParams(StdMessageParams) );
 			}
@@ -788,9 +786,8 @@ __int64 SVTADlgArchiveImagePage::CalculateFreeMem()
 	if( 0 <= m_ToolImageMemoryUsage )
 	{
 		FreeMem = m_TotalArchiveImageMemoryAvailable - (m_ToolImageMemoryUsage + m_InitialArchiveImageMemoryUsageExcludingThisTool);
-		CString AvailableMemory;
-		AvailableMemory.Format( SvO::AvailableArchiveImageMemory, (double) FreeMem / (double) (1024 * 1024) );
-		m_wndAvailableArchiveImageMemory.SetWindowText( AvailableMemory );
+		SVString AvailableMemory = SvUl_SF::Format( SvO::AvailableArchiveImageMemory, (double) FreeMem / (double) (1024 * 1024) );
+		m_wndAvailableArchiveImageMemory.SetWindowText( AvailableMemory.c_str() );
 	}
 
 	return FreeMem;

@@ -36,9 +36,9 @@
 #include "ObjectInterfaces\SVUserMessage.h"
 #include "SVIOController.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
-#include "SVStatusLibrary\MessageManager.h"
 #include "TextDefinesSvO.h"
 #include "SVStatusLibrary\MessageManager.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -77,12 +77,12 @@ SVIODoc::SVIODoc()
 {
 	m_pIOController = nullptr;
 
-	SVFileNameManagerClass::AddItem( &msvFileName );
+	SVFileNameManagerClass::Instance().AddItem( &msvFileName );
 }
 
 SVIODoc::~SVIODoc()
 {
-	SVFileNameManagerClass::RemoveItem( &msvFileName );
+	SVFileNameManagerClass::Instance().RemoveItem( &msvFileName );
 
 	m_pIOController = nullptr;
 }
@@ -152,10 +152,10 @@ void SVIODoc::SetPathName( LPCTSTR lpszPathName, BOOL bAddToMRU )
 {
 	msvFileName.SetFullFileName( lpszPathName );
 
-	SVFileNameManagerClass::LoadItem( &msvFileName );
+	SVFileNameManagerClass::Instance().LoadItem( &msvFileName );
 
 	// Never add to MRU file list! 
-	CDocument::SetPathName( msvFileName.GetFullFileName(), FALSE );
+	CDocument::SetPathName( msvFileName.GetFullFileName().c_str(), FALSE );
 }
 
 void SVIODoc::SetTitle(LPCTSTR lpszTitle)
@@ -220,7 +220,6 @@ void SVIODoc::OnExtrasEditRemoteInputs()
 	SVIOEntryHostStructPtrList ppIOEntries;
 	SVIOEntryHostStructPtr pIOEntry;
 	SVValueObjectClass* pObject( nullptr );
-	CString strName;
 	long lCount;
 	int i;
 	int j;
@@ -260,9 +259,9 @@ void SVIODoc::OnExtrasEditRemoteInputs()
 				{
 					pRemInput = nullptr;
 
-					strName.Format( "Remote Input %d", j + 1 );
+					SVString RemoteInputName = SvUl_SF::Format( _T("Remote Input %d"), j + 1 );
 
-					pInputList->GetInputFlyweight( static_cast< LPCTSTR >( strName ), pRemInput );
+					pInputList->GetInputFlyweight( RemoteInputName.c_str(), pRemInput );
 
 					if( nullptr != pRemInput )
 					{
@@ -279,7 +278,7 @@ void SVIODoc::OnExtrasEditRemoteInputs()
 
 								if( !( pIOEntry.empty() ) && pObject )
 								{
-									pObject->SetName( strName );
+									pObject->SetName( RemoteInputName.c_str() );
 									pObject->SetResetOptions( false, SVResetItemNone );
 									pIOEntry->m_IOId = pRemInput->GetUniqueObjectID();
 									pIOEntry->m_Enabled = FALSE;
@@ -300,7 +299,7 @@ void SVIODoc::OnExtrasEditRemoteInputs()
 				j = oDlg.m_lRemoteInputCount;
 				for( i = 0; i < lSize; i++ )
 				{
-					strName.Format( "Remote Input %d", j + 1 );
+					SVString RemoteInputName = SvUl_SF::Format( _T("Remote Input %d"), j + 1 );
 
 					bool bFound = false;
 
@@ -315,7 +314,7 @@ void SVIODoc::OnExtrasEditRemoteInputs()
 						if ( !l_pObject )
 							continue; //item already removed.  move on to the next one.
 
-						if( strName == l_pObject->GetName() )
+						if( RemoteInputName == l_pObject->GetName() )
 						{
 							bFound = true;
 							pRemInput = dynamic_cast< SVRemoteInputObject* >( l_pObject );
@@ -383,13 +382,11 @@ void SVIODoc::InitMenu()
 	SVUtilitiesClass util;
 	CWnd* pWindow;
 	CMenu* pMenu;
-	CString szMenuText;
 
 	pWindow = AfxGetMainWnd();
 	pMenu = pWindow->GetMenu();
-	szMenuText = _T("&Utilities");
 
-	if (pMenu = util.FindSubMenuByName(pMenu, szMenuText))
+	if( pMenu = util.FindSubMenuByName(pMenu, _T("&Utilities") ) )
 	{
 		util.LoadMenu(pMenu);
 	}
@@ -423,12 +420,12 @@ BOOL SVIODoc::OnOpenDocument(LPCTSTR lpszPathName)
 
 	if ( bOk )
 	{
-		bOk = SVFileNameManagerClass::LoadItem( &msvFileName );
+		bOk = SVFileNameManagerClass::Instance().LoadItem( &msvFileName );
 	}
 
 	if ( bOk )
 	{
-		bOk = CDocument::OnOpenDocument( msvFileName.GetFullFileName() );
+		bOk = CDocument::OnOpenDocument( msvFileName.GetFullFileName().c_str() );
 	}
 
 	return bOk;
@@ -439,28 +436,28 @@ BOOL SVIODoc::OnSaveDocument(LPCTSTR lpszPathName)
 
 	BOOL bOk = msvFileName.SetFullFileName( lpszPathName );
 
-	if ( bOk && CString( msvFileName.GetPathName() ).CompareNoCase( SVFileNameManagerClass::GetRunPathName() ) != 0 )
+	if ( bOk && 0 != SvUl_SF::CompareNoCase( msvFileName.GetPathName(),SVFileNameManagerClass::Instance().GetRunPathName() ) )
 	{
-		bOk = msvFileName.SetPathName( SVFileNameManagerClass::GetRunPathName() );
+		bOk = msvFileName.SetPathName( SVFileNameManagerClass::Instance().GetRunPathName().c_str() );
 	}
 
-	if ( bOk && CString( msvFileName.GetExtension() ).CompareNoCase( ".iod" ) != 0 )
+	if ( bOk && 0 != SvUl_SF::CompareNoCase( msvFileName.GetExtension(), SVString(_T(".iod") ) ) )
 	{
-		bOk = msvFileName.SetExtension( ".iod" );
+		bOk = msvFileName.SetExtension( _T(".iod") );
 	}
 	
 	if ( bOk )
 	{
-		bOk = CDocument::OnSaveDocument( msvFileName.GetFullFileName() );
+		bOk = CDocument::OnSaveDocument( msvFileName.GetFullFileName().c_str() );
 	}
 	
 	if ( bOk )
 	{
-		bOk = SVFileNameManagerClass::SaveItem( &msvFileName );
+		bOk = SVFileNameManagerClass::Instance().SaveItem( &msvFileName );
 
 		if ( bOk )
 		{
-			CDocument::SetPathName( msvFileName.GetFullFileName(), FALSE );
+			CDocument::SetPathName( msvFileName.GetFullFileName().c_str(), FALSE );
 		}
 	}
 

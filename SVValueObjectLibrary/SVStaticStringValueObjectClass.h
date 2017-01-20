@@ -12,10 +12,11 @@
 
 #pragma region Includes
 #include "SVOResource/resource.h"
+#include "SVUtilityLibrary/SVString.h"
 #include "SVStaticValueObjectClassImpl.h"
 #pragma endregion Includes
 
-class SVStaticStringValueObjectClass : public SVStaticValueObjectClassImpl < CString >
+class SVStaticStringValueObjectClass : public SVStaticValueObjectClassImpl < SVString >
 {
 	SV_DECLARE_CLASS( SVStaticStringValueObjectClass );
 
@@ -25,8 +26,8 @@ public:
 	SVStaticStringValueObjectClass( const SVStaticStringValueObjectClass& rhs);
 	const SVStaticStringValueObjectClass& operator = (const SVStaticStringValueObjectClass& rhs);
 
-	HRESULT GetValues(std::vector<CString>& raValues) const {return GetArrayValuesImpl(0, raValues);}
-	HRESULT GetValues(int iBucket, std::vector<CString>& raValues) const {return GetArrayValuesImpl(0, raValues);}
+	HRESULT GetValues(std::vector<SVString>& raValues) const {return GetArrayValuesImpl(0, raValues);}
+	HRESULT GetValues(int iBucket, std::vector<SVString>& raValues) const {return GetArrayValuesImpl(0, raValues);}
 
 	virtual ~SVStaticStringValueObjectClass();
 
@@ -46,7 +47,7 @@ public:
 	template <typename TOTYPE>
 	__forceinline HRESULT GetValue(int iBucket, int iIndex, TOTYPE& rValue) const { return GetValueAt(iBucket, iIndex, rValue); }
 
-	virtual HRESULT SetValueAtConvert( int iBucket, int iIndex, const CString& value ) override { return SetValueAt(iBucket, iIndex, value); }
+	virtual HRESULT SetValueAtConvert( int iBucket, int iIndex, const SVString& value ) override { return SetValueAt(iBucket, iIndex, value); }
 	virtual HRESULT SetValueAtConvert( int iBucket, int iIndex, double value ) override { return S_FALSE; }
 	virtual HRESULT SetValueAtConvert( int iBucket, int iIndex, long value ) override { return S_FALSE; }
 	virtual HRESULT SetValueAtConvert( int iBucket, int iIndex, int value ) override { return S_FALSE; }

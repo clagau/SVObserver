@@ -25,7 +25,7 @@ struct SVDataDefinitionStruct
 	bool m_Writable;
 	bool m_Published;
 	SVString m_Type;
-	SVStringArray m_AdditionalInfo;
+	SVStringVector m_AdditionalInfo;
 public:
 	SVDataDefinitionStruct( );
 	~SVDataDefinitionStruct( );

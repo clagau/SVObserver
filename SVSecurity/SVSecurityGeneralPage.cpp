@@ -77,9 +77,7 @@ void SVSecurityGeneralPage::OnUserMgrBtn()
 
 	_tcscat(tcharCommand, _T("\\lusrmgr.msc"));
 
-	CString sStr1(tcharCommand);
-	CString sStr2(tcharSysDir);
-	m_pAccess->CreateProcess(_T("MMC.exe"),tcharSysDir,tcharCommand);
+	m_pAccess->CreateProcess(_T("MMC.exe"), tcharSysDir, tcharCommand);
 }
 
 void SVSecurityGeneralPage::OnEventViewerBtn() 
@@ -92,11 +90,7 @@ void SVSecurityGeneralPage::OnEventViewerBtn()
 
 	_tcscat(tcharCommand,_T("\\eventvwr.msc"));
 
-	CString sStr1(tcharCommand);
-	CString sStr2(tcharSysDir);
-
-	//ShellExecute(m_hWnd, _T("open"),_T("c:\\winnt\\System32\\eventvwr.msc"), _T(""), _T(""), SW_SHOW );
-	m_pAccess->CreateProcess(_T("MMC.exe"),tcharSysDir,tcharCommand);
+	m_pAccess->CreateProcess(_T("MMC.exe"), tcharSysDir, tcharCommand);
 }
 
 void SVSecurityGeneralPage::OnLoginBtn() 

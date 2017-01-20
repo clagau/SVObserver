@@ -12,6 +12,7 @@
 #pragma once
 
 #pragma region Includes
+#include "SVUtilityLibrary\SVString.h"
 #include "SVUtilityLibrary\SVSharedPtr.h"
 #pragma endregion Includes
 
@@ -21,17 +22,17 @@ public:
 	SVOInspectionObj();
 	virtual ~SVOInspectionObj();
 
-    CString GetInspectionLabelName() const;
-    void SetInspectionLabelName(CString sLabel);
+    const SVString& GetInspectionLabelName() const;
+    void SetInspectionLabelName(LPCTSTR Label);
 
-    CString GetInspectionName() const;
-    void SetInspectionName(CString sInspection);
+    const SVString& GetInspectionName() const;
+    void SetInspectionName(LPCTSTR Inspection);
 
-    CString GetToolsetImage() const;
-    void SetToolsetImage(CString sImage);
+    const SVString& GetToolsetImage() const;
+    void SetToolsetImage(LPCTSTR Image);
 
-	CString GetNewDisableMethod() const;
-	void SetNewDisableMethod(CString sDisable);
+	const SVString& GetNewDisableMethod() const;
+	void SetNewDisableMethod(LPCTSTR Disable);
 
 	bool GetShowAuxExtent() const;
 	void SetShowAuxExtent( bool ShowAuxExtent );
@@ -40,26 +41,26 @@ public:
 	void SetEnableAuxiliaryExtent(long lEnable);
 
 	bool HasInspectionNameChange() const;
-    CString GetOrginalInspectionName() const;
-    void RenameInspection(CString sNewName);
+    const SVString& GetOrginalInspectionName() const;
+    void RenameInspection(LPCTSTR NewName);
     
 	bool IsNewInspection() const;
 	void SetNewInspection();
 
-	const CString& GetImportFilename() const;
-	void SetImportFilename(const CString& importFilename);
+	const SVString& GetImportFilename() const;
+	void SetImportFilename(LPCTSTR ImportFilename);
 	void ClearImportFilename();
 
 	bool IsColor() const;
 	void SetColor( bool Color );
 
 private:
-	CString m_sToolsetImage;
-    CString m_sLabelName;
-    CString m_sInspectionName;
-    CString m_sOrginalName;
-	CString m_sNewDisableMethod;
-	CString m_ImportFilename;
+	SVString m_ToolsetImage;
+    SVString m_LabelName;
+    SVString m_InspectionName;
+    SVString m_OrginalName;
+	SVString m_NewDisableMethod;
+	SVString m_ImportFilename;
 	long m_lEnableAuxiliaryExtent;
 	int m_iNumPanels;
 	bool m_ShowAuxExtent;

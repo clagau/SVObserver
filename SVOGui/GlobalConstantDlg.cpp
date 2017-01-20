@@ -12,7 +12,6 @@
 #include "GlobalConstantDlg.h"
 #include "TextDefinesSvOg.h"
 #include "SVTextEditDialog.h"
-#include "SVUtilityLibrary/SVString.h"
 #include "SVObjectLibrary/SVObjectNameInfo.h"
 #include "SVObjectLibrary/GlobalConst.h"
 #include "SVMessage/SVMessage.h"
@@ -39,7 +38,7 @@ namespace Seidenader { namespace SVOGui
 	GlobalConstantDlg::GlobalConstantDlg( SvOi::GlobalConstantData& rData, CWnd* pParent /*nullptr*/ )
 	  : CDialog(GlobalConstantDlg::IDD, pParent)
 	, m_rData( rData )
-	, m_Branch( CString(SvOl::FqnGlobal) + _T(".") )
+	, m_Branch( SVString(SvOl::FqnGlobal) + _T(".") )
 	{
 
 	}
@@ -50,7 +49,7 @@ namespace Seidenader { namespace SVOGui
 	#pragma endregion Constructor
 
 	#pragma region Public Methods
-	void GlobalConstantDlg::setExistingNames( const SVStringArray& rNames )
+	void GlobalConstantDlg::setExistingNames( const SVStringVector& rNames )
 	{
 		m_ExistingNames.clear();
 
@@ -63,10 +62,8 @@ namespace Seidenader { namespace SVOGui
 	{
 		CDialog::DoDataExchange(pDX);
 		DDX_Text(pDX, IDC_GLOBAL_NAME, m_Name);
-		SVString Name( m_Branch );
-		Name += m_Name.GetString();
 
-		DDV_GlobalName( pDX, Name );
+		DDV_GlobalName( pDX, SVString(m_Branch + m_Name.GetString()) );
 		DDX_Control(pDX, IDC_GLOBAL_TYPE, m_Type);
 		DDX_Text(pDX, IDC_GLOBAL_VALUE, m_Value);
 		int CurrentSelection = m_Type.GetCurSel();
@@ -100,8 +97,7 @@ namespace Seidenader { namespace SVOGui
 			ParseName.ParseObjectName( m_rData.m_DottedName );
 			m_Name = ParseName.m_NameArray[ParseName.m_NameArray.size() - 1].c_str();
 			ParseName.RemoveBottomName();
-			m_Branch = ParseName.GetObjectArrayName().c_str();
-			m_Branch += _T(".");
+			m_Branch = ParseName.GetObjectArrayName() + _T(".");
 		}
 
 		switch( m_rData.m_Value.vt )
@@ -187,7 +183,7 @@ namespace Seidenader { namespace SVOGui
 	{
 		if( pDX->m_bSaveAndValidate && rName != m_rData.m_DottedName )
 		{
-			SVStringArray::const_iterator Iter( m_ExistingNames.cbegin() );
+			SVStringVector::const_iterator Iter( m_ExistingNames.cbegin() );
 			bool Failed( false );
 			//Checks to see if the name of the Global Constant already exists
 			while( m_ExistingNames.cend() != Iter )
@@ -203,7 +199,7 @@ namespace Seidenader { namespace SVOGui
 			}
 
 			SVString NewName( rName );
-			SvUl_SF::searchAndReplace( NewName, m_Branch.GetString(), _T("") );
+			SvUl_SF::searchAndReplace( NewName, m_Branch.c_str(), _T("") );
 
 			if( !Failed )
 			{

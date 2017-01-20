@@ -11,10 +11,13 @@
 
 #pragma once
 
+#pragma region Includes
 #include "SVContainerLibrary/SVVector.h"
 #include "SVUtilityLibrary/SVGUID.h"
+#include "SVUtilityLibrary/SVString.h"
 #include "SVExtentLineStruct.h"
 #include "SVExtentFigureStruct.h"
+#pragma endregion Includes
 
 struct SVExtentMultiLineStruct  
 {
@@ -44,7 +47,7 @@ struct SVExtentMultiLineStruct
 	COLORREF m_Color;
 
 	SVExtentPointStruct m_StringPoint;
-	CString m_csString;
+	SVString m_csString;
 
 	SVExtentLineStructCArray m_svLineArray;
 };

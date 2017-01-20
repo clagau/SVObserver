@@ -29,7 +29,10 @@
 
 #pragma once
 
-#include "PropTreeItem.h"
+#pragma region Includes
+#include "SVUtilityLibrary/SVString.h"
+#include "SVRPropTreeItem.h"
+#pragma endregion Includes
 
 /////////////////////////////////////////////////////////////////////////////
 // SVRPropertyItemFile control
@@ -64,11 +67,11 @@ public:
 	virtual void DrawAttribute(CDC* pDC, const RECT& rc) override;
 
 	// Retrieve the item's attribute value
-	virtual bool GetItemValue(CString& strVal) override;
+	virtual bool GetItemValue(SVString& rVal) override;
 	virtual bool GetItemValue(VARIANT& vtVal) override;
 
 	// Set the item's attribute value
-	virtual bool SetItemValue(LPCTSTR lpszVal) override;
+	virtual bool SetItemValue(LPCTSTR pVal) override;
 
 	// @cmember Called when attribute area has changed size.
 	virtual void OnMove() override;
@@ -89,11 +92,11 @@ public:
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(SVRPropertyItemFile)
 	//}}AFX_VIRTUAL
-	bool SetItemType(DWORD dwFlags, LPCTSTR lpszVal = nullptr);
+	bool SetItemType(DWORD dwFlags, LPCTSTR pVal = nullptr);
 
 // Implementation
 public:
-	CString GetPathName(void);
+	SVString GetPathName();
 
 	// Generated message map functions
 protected:
@@ -138,7 +141,7 @@ protected:
 
 private:
 	// @cmember Filter for CFileDialog control.
-	CString	m_sFilter;
+	SVString	m_Filter;
 	// @cmember Browse button on left side of control?
 	bool m_bButtonLeft;
 	// @cmember TRUE while control is being created, FALSE otherwise.
@@ -157,10 +160,10 @@ private:
 	CRect m_rcButtonRect;
 
     BOOL m_bInitialDirSet;
-    CString m_sInitialDir;
+    SVString m_InitialDir;
 	bool m_bFullAccess;
 protected:
-	CString m_sAttribute;
+	SVString m_Attribute;
 };
 
 /////////////////////////////////////////////////////////////////////////////

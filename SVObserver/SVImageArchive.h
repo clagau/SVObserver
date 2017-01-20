@@ -15,6 +15,7 @@
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
 #include "SVLibrary/SVFileNameClass.h"
 #include "SVOCore/SVImageObjectClass.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 class SVImageClass;
@@ -26,27 +27,26 @@ class SVImageArchiveClass
 {
 public:
 	BOOL LoadImageArchiveFile( SVImageObjectClassPtr p_AcquisitionCircleBufferPtr );
-	BOOL ImageArchiveFileExists (CString &szFileName);
-	BOOL LoadImageArchiveFile (SVImageClass *pImage);
+	BOOL ImageArchiveFileExists( const SVString& rFileName );
+	BOOL LoadImageArchiveFile( SVImageClass *pImage );
 	BOOL LoadImageArchiveFile( SVSmartHandlePointer p_HandlePtr );
 	DWORD NextFileName ();
 	DWORD ResetFileNumber ();
-	BOOL SetImageArchivePath (CString &szPath);
-	BOOL SetImageArchiveFileTemplate (CString &szTemplate);
+	BOOL SetImageArchivePath( const SVString& rPath );
+	BOOL SetImageArchiveFileTemplate(const SVString& rTemplate);
 	SVImageArchiveClass();
-	SVImageArchiveClass(CString &szStartFileName);
+	SVImageArchiveClass( const SVString& rFileName);
 	virtual ~SVImageArchiveClass();
 
 protected:
-	DWORD mdwFileNumber;
-	CString mszArchiveFileTemplate;  // Template to use to generate unique filenames
-	CString mszCurrentFileName;      // Most recent "generated" filename
-	CString mszImageArchivePath;     // Path where image files reside
+	DWORD m_FileNumber;
+	SVString m_ArchiveFileTemplate;  // Template to use to generate unique filenames
+	SVString m_CurrentFileName;      // Most recent "generated" filename
+	SVString m_ImageArchivePath;     // Path where image files reside
 
 	SVFileNameClass   msvfnFileName;
 
 private:
-  void Init (CString &szStartFileName);
-
+  void Init (CONST SVString& rFileName);
 };
 

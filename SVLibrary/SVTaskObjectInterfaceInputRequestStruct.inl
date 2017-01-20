@@ -29,7 +29,7 @@ inline SVTaskObjectInterfaceInputRequestStruct::SVTaskObjectInterfaceInputReques
 	if ( m_ObjectRef.Object() )
 	{
 		m_Guid = m_ObjectRef.Guid();
-		m_Name = m_ObjectRef.GetCompleteObjectName();
+		m_Name = m_ObjectRef.GetCompleteName();
 	}
 }
 

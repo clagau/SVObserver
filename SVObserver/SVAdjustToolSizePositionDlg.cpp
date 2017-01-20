@@ -29,7 +29,7 @@
 #include "SVMainFrm.h"
 #include "ToolSizeAdjustTask.h"
 #include "GuiCommands/InspectionRunOnce.h"
-
+#include "SVUtilityLibrary/SVStringConversions.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -70,13 +70,14 @@ inline bool ApproxEqual(double d1, double d2)
 }
 
 #pragma region Constructor
-SVAdjustToolSizePositionDlg::SVAdjustToolSizePositionDlg(LPCTSTR pCaption, CWnd* pParentWnd, SVTaskObjectClass* pToolTask)
+SVAdjustToolSizePositionDlg::SVAdjustToolSizePositionDlg(LPCTSTR Caption, CWnd* pParentWnd, SVTaskObjectClass* pToolTask)
 	: CDialog(SVAdjustToolSizePositionDlg::IDD, pParentWnd)
+, m_pToolTask( pToolTask )
+, m_Title(Caption)
 {
-	m_pToolTask = pToolTask;
-	ASSERT( m_pToolTask );
+	assert( m_pToolTask );
 
-	if ( m_pToolTask )
+	if ( nullptr != m_pToolTask )
 	{
 		if ( m_pToolTask->DoesObjectHaveExtents() )
 		{
@@ -84,11 +85,7 @@ SVAdjustToolSizePositionDlg::SVAdjustToolSizePositionDlg(LPCTSTR pCaption, CWnd*
 		}
 	}
 	m_svOriginalExtents = m_svExtents;
-	m_sTitle = pCaption;
-
-	//{{AFX_DATA_INIT(SVAdjustToolSizePositionDlg)
 	m_iMode = -1;
-	//}}AFX_DATA_INIT
 }
 
 SVAdjustToolSizePositionDlg::~SVAdjustToolSizePositionDlg()
@@ -121,7 +118,7 @@ BOOL SVAdjustToolSizePositionDlg::OnInitDialog()
 	m_iMode = MODE_MOVE;	// Default action: Move
 	CDialog::OnInitDialog();
 
-	SetWindowText(m_sTitle);
+	SetWindowText(m_Title.c_str());
 
 	createIcons();
 	bool l_bShow = ( nullptr != dynamic_cast< AllowResizeToParent* >( m_pToolTask ) );
@@ -243,9 +240,9 @@ void SVAdjustToolSizePositionDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* p
 
 		// do validation
 		SVExtentPropertyEnum eProperty = static_cast< SVExtentPropertyEnum >( pItem->GetCtrlID() - ID_BASE );
-		CString sValue;
-		pItem->GetItemValue( sValue );
-		double dValue = atof( sValue );
+		SVString Value;
+		pItem->GetItemValue( Value );
+		double dValue = atof( Value.c_str() );
 
 		m_pToolTask->GetImageExtent( m_svExtents );
 
@@ -258,8 +255,7 @@ void SVAdjustToolSizePositionDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* p
 			m_svExtents.UpdateData();
 
 			m_svExtents.GetExtentProperty( eProperty, dValue );
-			sValue = AsString(dValue);
-			pItem->SetItemValue( sValue );
+			pItem->SetItemValue( SvUl::AsString(dValue).c_str() );
 			pItem->OnRefresh();
 
 			HRESULT hr = SVGuiExtentUpdater::SetImageExtent(m_pToolTask, m_svExtents,ResetMode_Tool);
@@ -499,27 +495,27 @@ void SVAdjustToolSizePositionDlg::FillTreeFromExtents( SVRPropertyItem* pRoot, b
 
 		if (nullptr != pEdit)
 		{
-			CString sName = iter->second;
+			SVString Name = iter->second;
 			double dValue = 0.0;
 			m_svExtents.GetExtentProperty( iter->first, dValue);
 
 			pEdit->SetCtrlID( ID_BASE + (int) iter->first );
-			pEdit->SetLabelText( sName );
+			pEdit->SetLabelText( Name.c_str() );
 			pEdit->SetBold( false );
 			pEdit->SetHeight(16);
 
-			CString sValue;
+			SVString Value;
 			if ((iter->first&g_SVExtentPropertyNoDecimalPlaces) != 0)
 			{
-				sValue = AsString((int)dValue);
+				Value = SvUl_SF::Format( _T("%d"), static_cast<int> (dValue) );
 			}
 			else if ((iter->first&g_SVExtentProperty2DecimalPlaces) != 0)
 			{
-				sValue.Format("%.2f", dValue);
+				Value = SvUl_SF::Format( _T("%.2f"), dValue );
 			}
 			else
 			{
-				sValue = AsString(dValue);
+				Value = SvUl::AsString(dValue);
 			}
 			
 			bool bReadonly(false);
@@ -541,7 +537,7 @@ void SVAdjustToolSizePositionDlg::FillTreeFromExtents( SVRPropertyItem* pRoot, b
 				pEdit->SetForeColor(::GetSysColor(COLOR_INACTIVECAPTION));
 				pEdit->ReadOnly(true);
 			}
-			pEdit->SetItemValue( sValue );
+			pEdit->SetItemValue( Value.c_str() );
 			pEdit->OnRefresh();
 		}
 	}//end for( iter = map.begin(); iter != map.end(); iter++ )

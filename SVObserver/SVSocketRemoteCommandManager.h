@@ -19,6 +19,7 @@
 #include "SVJsonCommandServerLibrary/SVJsonCommandManager.h"
 #include "SVStorageResult.h"
 #include "SVDataDefinitionStruct.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 namespace Json

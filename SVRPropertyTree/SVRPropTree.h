@@ -2,8 +2,8 @@
 // * COPYRIGHT (c) 2000 by SVResearch, Harrisburg
 // * All Rights Reserved
 // ******************************************************************************
-// * .Module Name     : PropTree.h
-// * .File Name       : $Workfile:   PROPTREE.H  $
+// * .Module Name     : SVRPropTree.h
+// * .File Name       : $Workfile:   SVRProptree.h  $
 // * ----------------------------------------------------------------------------
 // * .Current Version : $Revision:   1.3  $
 // * .Check In Date   : $Date:   26 May 2014 10:16:02  $
@@ -30,13 +30,14 @@
 #pragma once
 
 #pragma region Includes
-#include "PropTreeCtrl.h"
-#include "PropTreeInfo.h"
-#include "PropTreeItem.h"
-#include "PropTreeItemStatic.h"
-#include "PropTreeItemEdit.h"
-#include "PropTreeItemCombo.h"
-#include "PropTreeItemFile.h"
+#include "SVUtilityLibrary/SVString.h"
+#include "SVRPropTreeCtrl.h"
+#include "SVRPropTreeInfo.h"
+#include "SVRPropTreeItem.h"
+#include "SVRPropTreeItemStatic.h"
+#include "SVRPropTreeItemEdit.h"
+#include "SVRPropTreeItemCombo.h"
+#include "SVRPropTreeItemFile.h"
 #include "SVRPropTreeState.h"
 #pragma endregion Includes
 
@@ -204,8 +205,8 @@ public:
 
 protected:
 
-	bool SaveState(CString sItemName, SVRPropertyItem* pItem, SVRPropTreeState& rState);
-	bool RestoreState(CString sItemName, SVRPropertyItem* pItem, const SVRPropTreeState& rState);
+	bool SaveState(LPCTSTR ItemName, SVRPropertyItem* pItem, SVRPropTreeState& rState);
+	bool RestoreState(LPCTSTR  ItemName, SVRPropertyItem* pItem, const SVRPropTreeState& rState);
 
 	// Resize the child windows to fit the exact dimensions the SVRPropTree control
 	void ResizeChildWindows(int cx, int cy);

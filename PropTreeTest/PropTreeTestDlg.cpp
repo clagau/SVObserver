@@ -13,8 +13,8 @@
 #include "PropTreeTest.h"
 #include "PropTreeTestDlg.h"
 #include "afxdialogex.h"
-#include "PropertyTree/PropTreeItemEdit.h" // for SVRPropertyItemEdit
-#include "PropertyTree/PropTreeItemCombo.h" // for SVRPropertyItemCombo
+#include "SVRPropertyTree/SVRPropTreeItemEdit.h"
+#include "SVRPropertyTree/SVRPropTreeItemCombo.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

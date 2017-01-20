@@ -74,9 +74,9 @@ private:
 	CButton	m_chkFillBlob;
 	CButton	m_btnFillBlobs;
 	CComboBox m_cbBlobColor;
-	CListBox	m_lbSelectedFeatures;
-	CListBox	m_lbAvailableFeatures;
-	CString	msvSortFeatureEdt;
+	CListBox m_lbSelectedFeatures;
+	CListBox m_lbAvailableFeatures;
+	CString m_SortFeatureEdt;
 	BOOL	msvAscending;
 	BOOL	m_bExclude;
 	long	m_lMaxNumberBlobs;
@@ -90,9 +90,6 @@ private:
 	TCHAR  msvszOriginalFeaturesEnabled[SV_NUMBER_OF_BLOB_FEATURES + 1]; // Null Terminated
 
 	SVToolClass* m_pTool;
-
-	CString script;
-	CString alias;
 	long m_colorBlobEnum;
 
 protected:

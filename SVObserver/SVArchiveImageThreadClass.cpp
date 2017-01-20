@@ -87,7 +87,7 @@ HRESULT SVArchiveImageThreadClass::QueueImage( BufferInfo p_BufferInfo )
 		QueueType::iterator iter;
 		for ( iter = m_Queue.begin(); iter != m_Queue.end(); ++iter )
 		{
-			if ( iter->strFilename == p_BufferInfo.strFilename )
+			if ( iter->m_FileName == p_BufferInfo.m_FileName )
 				break;
 		}
 
@@ -273,7 +273,7 @@ HRESULT SVArchiveImageThreadClass::PopAndWrite()
 			m_Queue.pop_front();
 			HRESULT hrAllocate = TheSVMemoryManager().ReleasePoolMemory(SvO::ARCHIVE_TOOL_MEMORY_POOL_ONLINE_ASYNC_NAME, this, info.lBufferSize );
 			lock.Unlock();
-			SVArchiveRecord::WriteImage( info.id, info.strFilename );
+			SVArchiveRecord::WriteImage( info.id, info.m_FileName );
 
 			info.pImageObject.clear();
 			//TheSVDataManager.ReleaseBufferIndex( info.lDMBuffer, info.lDMIndex, SV_ARCHIVE );

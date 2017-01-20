@@ -18,6 +18,7 @@
 #include "SVTimerLibrary/SVClock.h"
 #include "SVLibrary/SVFileNameClass.h"
 #include "SVUtilityLibrary/SVUtilityGlobals.h"
+#include "SVUtilityLibrary/SVString.h"
 #include "SVImageProcessingClass.h"
 #include "SVTaskObject.h"
 #include "SVMessage/SVMessage.h"
@@ -346,7 +347,7 @@ bool SVImageObjectClass::GetImageHandle( SVSmartHandlePointer& p_rValuePtr ) con
 
 HRESULT SVImageObjectClass::LoadImageFullSize( LPCTSTR p_szFileName, SVImageExtentClass& p_rNewExtent  )
 {
-	ASSERT(m_CurrentDMIndexHandle.GetIndex() >= 0);
+	assert( 0 <= m_CurrentDMIndexHandle.GetIndex() );
 	HRESULT l_hrOk = LoadImage( p_szFileName, m_CurrentDMIndexHandle, true );
 
 	p_rNewExtent = GetImageInfo().GetExtents();
@@ -377,7 +378,7 @@ HRESULT SVImageObjectClass::LoadImage( LPCTSTR p_szFileName, SVDataManagerHandle
 			{
 				SVFileNameClass	svfncImageFile(p_szFileName);
 				
-				SVMatroxFileTypeEnum fileformatID = SVMatroxImageInterface::getFileType( svfncImageFile.GetExtension() );
+				SVMatroxFileTypeEnum fileformatID = SVMatroxImageInterface::getFileType( svfncImageFile.GetExtension().c_str() );
 				
 				if( fileformatID != -1 && ::SVFileExists( p_szFileName ) )
 				{
@@ -429,7 +430,7 @@ HRESULT SVImageObjectClass::GetImageExtentFromFile( LPCTSTR pFileName, SVImageEx
 	if( 0 < strlen( pFileName ) )
 	{
 		SVFileNameClass	svfncImageFile(pFileName);
-		SVMatroxFileTypeEnum fileformatID = SVMatroxImageInterface::getFileType( svfncImageFile.GetExtension() );
+		SVMatroxFileTypeEnum fileformatID = SVMatroxImageInterface::getFileType( svfncImageFile.GetExtension().c_str() );
 
 		if( fileformatID != SVFileUnknown && ::SVFileExists( pFileName ) )
 		{

@@ -28,14 +28,14 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 namespace Seidenader { namespace SVOGui {
-	static const int HeaderSize = 1;
-	static const int NameColumnSize = 150;
-	static const int FormulaColumnSize = 500;
-	static const int NameColumn = 0;
-	static const int FormulaColumn = 1;
-	const TCHAR* const EquationName = _T("Table Column");
-	const TCHAR* const HeaderName_NameColumn = _T("Column Name");
-	const TCHAR* const HeaderName_FormulaColumn = _T("Formula");
+	static const int cHeaderSize = 1;
+	static const int cNameColumnSize = 150;
+	static const int cFormulaColumnSize = 500;
+	static const int cNameColumn = 0;
+	static const int cFormulaColumn = 1;
+	static const TCHAR* const cEquationName = _T("Table Column");
+	static const TCHAR* const cHeaderName_NameColumn = _T("Column Name");
+	static const TCHAR* const cHeaderName_FormulaColumn = _T("Formula");
 
 	BEGIN_MESSAGE_MAP(TADialogTableDefinesPage, CPropertyPage)
 		//{{AFX_MSG_MAP(TADialogTableDefinesPage)
@@ -114,7 +114,7 @@ namespace Seidenader { namespace SVOGui {
 					HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 					if (S_OK != hr)
 					{
-						SVStringArray msgList;
+						SVStringVector msgList;
 						msgList.push_back(SvUl_SF::Format(_T("%d"), hr));
 						SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 						Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_TableColumn_RemovingFailed, msgList, SvStl::SourceFileParams(StdMessageParams) );
@@ -135,13 +135,13 @@ namespace Seidenader { namespace SVOGui {
 			addPreGuid = m_gridList[Selection.GetMinRow()-1].second;
 		}
 		int number = static_cast<int>(m_gridList.size()+1);
-		SVString name = SvUl_SF::Format(_T("%s %d"), EquationName, number);
+		SVString name = SvUl_SF::Format(_T("%s %d"), cEquationName, number);
 
 		//search for unique name until one is found
 		while ( !isTableNameUnique(name) )
 		{
 			number++;
-			name = SvUl_SF::Format(_T("%s %d"), EquationName, number);
+			name = SvUl_SF::Format(_T("%s %d"), cEquationName, number);
 		}
 		// Construct and Create the Filter Class Object
 		typedef GuiCmd::ConstructAndInsertFriend Command;
@@ -151,7 +151,7 @@ namespace Seidenader { namespace SVOGui {
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		if (S_OK != hr)
 		{
-			SVStringArray msgList;
+			SVStringVector msgList;
 			msgList.push_back(SvUl_SF::Format(_T("%d"), hr));
 			SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_TableColumn_AddingFailed, msgList, SvStl::SourceFileParams(StdMessageParams) );
@@ -164,7 +164,7 @@ namespace Seidenader { namespace SVOGui {
 	{
 		SvGcl::NM_GRIDVIEW* pItem = (SvGcl::NM_GRIDVIEW*) pNotifyStruct;
 
-		if (FormulaColumn == pItem->iColumn && 0 < pItem->iRow && m_gridList.size() >= pItem->iRow)
+		if (cFormulaColumn == pItem->iColumn && 0 < pItem->iRow && m_gridList.size() >= pItem->iRow)
 		{
 			ValidateData(); //validate the new line (this does a reset and add the column to the tableObject)
 			SVString strCaption = SvUl_SF::Format(_T("%s %s"), m_gridList[pItem->iRow-1].first.c_str(), _T("Formula"));
@@ -192,7 +192,7 @@ namespace Seidenader { namespace SVOGui {
 		SvGcl::NM_GRIDVIEW* pItem = (SvGcl::NM_GRIDVIEW*) pNotifyStruct;
 		bool bAcceptChange = true;
 
-		if (NameColumn == pItem->iColumn && 0 < pItem->iRow && m_gridList.size() >= pItem->iRow)
+		if (cNameColumn == pItem->iColumn && 0 < pItem->iRow && m_gridList.size() >= pItem->iRow)
 		{
 			SVString newName = m_Grid.GetCell(pItem->iRow, pItem->iColumn)->GetText();
 			if (!newName.empty())
@@ -207,7 +207,7 @@ namespace Seidenader { namespace SVOGui {
 					if (S_OK != hr)
 					{
 						bAcceptChange = false;
-						SVStringArray msgList;
+						SVStringVector msgList;
 						msgList.push_back(SvUl_SF::Format(_T("%d"), hr));
 						SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 						Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_TableColumn_RenamingFailed, msgList, SvStl::SourceFileParams(StdMessageParams) );
@@ -220,7 +220,7 @@ namespace Seidenader { namespace SVOGui {
 				else
 				{
 					bAcceptChange = false;
-					SVStringArray msgList;
+					SVStringVector msgList;
 					msgList.push_back(newName);
 					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_TableColumnName_NotUnique, msgList, SvStl::SourceFileParams(StdMessageParams) );
@@ -263,7 +263,7 @@ namespace Seidenader { namespace SVOGui {
 
 	void TADialogTableDefinesPage::initGridControl()
 	{
-		m_Grid.SetFixedRowCount( HeaderSize );
+		m_Grid.SetFixedRowCount( cHeaderSize );
 		m_Grid.SetFixedColumnCount( 0 );
 		m_Grid.SetRowResize( FALSE );
 		m_Grid.SetColumnResize( FALSE );
@@ -271,19 +271,19 @@ namespace Seidenader { namespace SVOGui {
 		m_Grid.EnableDragAndDrop( FALSE );
 		m_Grid.SetEditable( true );
 		m_Grid.SetColumnCount( 2 );
-		m_Grid.SetColumnWidth( NameColumn, NameColumnSize );
-		m_Grid.SetColumnWidth( FormulaColumn, FormulaColumnSize );
+		m_Grid.SetColumnWidth( cNameColumn, cNameColumnSize );
+		m_Grid.SetColumnWidth( cFormulaColumn, cFormulaColumnSize );
 		SvGcl::GV_ITEM Item;
 		Item.mask = GVIF_TEXT | GVIF_FORMAT | GVIF_BKCLR;
 		Item.row = 0;
-		Item.col = NameColumn;
+		Item.col = cNameColumn;
 		Item.crBkClr = CLR_DEFAULT;
 		Item.nFormat = DT_LEFT | DT_VCENTER | DT_WORDBREAK;
-		Item.strText = HeaderName_NameColumn;
+		Item.strText = cHeaderName_NameColumn;
 		m_Grid.SetItem( &Item );
 
-		Item.col = FormulaColumn;
-		Item.strText = HeaderName_FormulaColumn;
+		Item.col = cFormulaColumn;
+		Item.strText = cHeaderName_FormulaColumn;
 		m_Grid.SetItem( &Item );
 	}
 
@@ -298,23 +298,23 @@ namespace Seidenader { namespace SVOGui {
 		if (S_OK == hr)
 		{
 			m_gridList = commandPtr->AvailableObjects();
-			m_Grid.SetRowCount( HeaderSize + static_cast<int>(m_gridList.size()) );
+			m_Grid.SetRowCount( cHeaderSize + static_cast<int>(m_gridList.size()) );
 			SvGcl::GV_ITEM Item;
 			Item.mask = GVIF_TEXT | GVIF_FORMAT | GVIF_BKCLR;
 			Item.crBkClr = CLR_DEFAULT;
 			Item.nFormat = DT_LEFT | DT_VCENTER;
 			for(int i=0; i<m_gridList.size(); i++)
 			{
-				Item.row = i+HeaderSize;
-				Item.col = NameColumn;
+				Item.row = i+cHeaderSize;
+				Item.col = cNameColumn;
 				Item.strText = m_gridList[i].first.c_str();
 				m_Grid.SetItem( &Item );
 
-				Item.col = FormulaColumn;
+				Item.col = cFormulaColumn;
 				FormulaController formulaController(m_InspectionID, m_TaskObjectID, m_gridList[i].second.ToGUID());
 				Item.strText = formulaController.GetEquationText().c_str();
 				m_Grid.SetItem( &Item );
-				m_Grid.SetItemState(Item.row, FormulaColumn, m_Grid.GetItemState(Item.row,FormulaColumn) | GVIS_READONLY);
+				m_Grid.SetItemState(Item.row, cFormulaColumn, m_Grid.GetItemState(Item.row,cFormulaColumn) | GVIS_READONLY);
 			}
 		}
 		m_Grid.Refresh();

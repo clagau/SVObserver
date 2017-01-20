@@ -11,6 +11,7 @@
 
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <vector>
 #include "SVExtentDimensionsClass.h"
@@ -21,6 +22,8 @@
 #include "SVExtentPositionClass.h"
 #include "SVExtentLineStruct.h"
 #include "SVExtentMultiLineStruct.h"
+#include "SVUtilityLibrary/SVString.h"
+#pragma endregion Includes
 
 extern double SVGetRadius( SVExtentPointStruct p_svCenter, SVExtentPointStruct p_svPoint );
 extern double SVGetRotationAngle( SVExtentPointStruct p_svCenter, SVExtentPointStruct p_svPoint );
@@ -33,7 +36,7 @@ extern SVExtentPointStruct SVRotateAndFlipPoint( SVExtentPointStruct p_svCenter,
 extern SVExtentPointStruct SVRotateAndFlipPoint( SVExtentPointStruct p_svCenter, SVExtentPointStruct p_svStart, double p_dAngle );
 
 typedef std::vector<SVExtentPropertyEnum> SVExtentPropertyListType;
-typedef std::map< SVExtentPropertyEnum, CString > SVExtentPropertyMapType;
+typedef std::map< SVExtentPropertyEnum, SVString > SVExtentPropertyMapType;
 
 class SVImageExtentClass
 {
@@ -65,7 +68,7 @@ public:
 	HRESULT GetExtentProperty( SVExtentPropertyEnum p_eProperty, SVExtentPointStruct &p_rsvValue ) const;
 	HRESULT GetExtentPropertyList( SVExtentPropertyEnum p_eWhichProperties, SVExtentPropertyListType& p_rPropertyList ) const;
 	HRESULT GetExtentPropertyList( SVExtentPropertyEnum p_eWhichProperties, SVExtentPropertyMapType& p_rPropertyMap ) const;
-	static CString GetExtentPropertyName( SVExtentPropertyEnum p_eProperty );
+	static SVString GetExtentPropertyName( SVExtentPropertyEnum p_eProperty );
 
 	HRESULT SetExtentProperty( SVExtentPropertyEnum p_eProperty, double p_dValue );
 	HRESULT SetExtentProperty( SVExtentPropertyEnum p_eProperty, SVExtentPointStruct p_svValue );

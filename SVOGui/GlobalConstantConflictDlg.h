@@ -11,6 +11,7 @@
 #include "SVOResource/resource.h"
 #include "GridCtrlLibrary\GridCtrl.h"
 #include "ObjectInterfaces/GlobalConstantData.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 namespace Seidenader { namespace SVOGui

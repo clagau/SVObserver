@@ -14,6 +14,7 @@
 #pragma region Includes
 #include "SVMatroxStatusInformation.h"
 #include "SVMatroxTypedefs.h"
+#include "SVUtilityLibrary\SVString.h"
 #pragma endregion Includes
 
 /**

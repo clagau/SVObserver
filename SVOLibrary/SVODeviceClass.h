@@ -17,7 +17,7 @@
 
 #include "SVContainerLibrary/SVRingBuffer.h"
 #include "SVSystemLibrary/SVAsyncProcedure.h"
-
+#include "SVUtilityLibrary/SVString.h"
 #include "SVProcessFunctor.h"
 #include "SVOCallbackClass.h"
 #include "SVOResponseClass.h"
@@ -30,7 +30,6 @@ This class represents the base functionality required for a device.
 class SVODeviceClass  
 {
 public:
-	typedef std::string SVDeviceName;
 	typedef SVProcessFunctor< SVODeviceClass > SVProcessFunctorImpl;
 
 	friend class SVProcessFunctor< SVODeviceClass >;
@@ -90,10 +89,7 @@ protected:
 	SVCallbackClassPtrQueue m_CallbackList;
 
 	//This attribute holds the device name.
-	SVDeviceName mDeviceName;
-
-
-
+	SVString m_DeviceName;
 
 private:
 	SVODeviceClass();

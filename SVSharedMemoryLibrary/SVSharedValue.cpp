@@ -45,12 +45,12 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		return *this;
 	}
 
-	void SVSharedValue::SetName(const std::string& Name)
+	void SVSharedValue::SetName(const SVString& Name)
 	{
 		m_ElementName = char_string(Name.c_str(), m_Allocator);
 	}
 
-	void SVSharedValue::SetData(ResultTypeEnum ResultType, const std::string& Result, int Status)
+	void SVSharedValue::SetData(ResultTypeEnum ResultType, const SVString& Result, int Status)
 	{
 		m_ResultType = ResultType;
 		try

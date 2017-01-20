@@ -30,7 +30,8 @@
 
 #pragma region Declarations
 #ifdef _DEBUG
-#define new DEBUG_NEW
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
@@ -348,7 +349,7 @@ HRESULT SVObjectManagerClass::GetObjectByDottedName( const SVString& rFullName, 
 	{
 		SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 		Exception.setMessage( SVMSG_SVO_96_DOTTED_NAME_NOT_UNIQUE, rFullName.c_str(), SvStl::SourceFileParams(StdMessageParams), SvOi::Err_25049_DottedName );
-		ASSERT(false);
+		assert(false);
 		Result = E_FAIL;
 		rObjectRef = SVObjectReference();
 		return Result;
@@ -594,8 +595,7 @@ SVObjectClass* SVObjectManagerClass::GetObjectCompleteName( LPCTSTR Name )
 {
 	SVObjectClass* pObject = nullptr;
 	SVAutoLockAndReleaseTemplate< SVCriticalSection > AutoLock;
-	CString sName = Name;
-	bool Status = !sName.IsEmpty();
+	bool Status = ( nullptr != Name );
 
 	if( Status && ReadWrite == m_State )
 	{
@@ -611,7 +611,7 @@ SVObjectClass* SVObjectManagerClass::GetObjectCompleteName( LPCTSTR Name )
 		{
 			SVObjectNameInfo NameInfo;
 
-			NameInfo.ParseObjectName( static_cast< LPCTSTR >( sName ) );
+			NameInfo.ParseObjectName( Name );
 
 			Status = S_OK == pConfig->GetChildObject( pObject, NameInfo );
 		}
@@ -660,7 +660,7 @@ SVString SVObjectManagerClass::GetCompleteObjectName( const SVGUID& rGuid )
 
 	if( nullptr != pObject )
 	{
-		Result = static_cast< LPCTSTR >( pObject->GetCompleteObjectName() );
+		Result = pObject->GetCompleteName();
 	}
 
 	return Result;
@@ -1318,7 +1318,7 @@ HRESULT SVObjectManagerClass::getTreeList(const SVString& rPath, SVObjectReferen
 
 	if( nullptr != pStartObject )
 	{
-		SVString InternalPath = pStartObject->GetCompleteObjectName();
+		SVString InternalPath = pStartObject->GetCompleteName();
 		if( (pStartObject->ObjectAttributesAllowed() & AttributesAllowedFilter) == AttributesAllowedFilter )
 		{
 			GuidObjectList.insert(pStartObject->GetUniqueObjectID());
@@ -1348,7 +1348,7 @@ HRESULT SVObjectManagerClass::getTreeList(const SVString& rPath, SVObjectReferen
 					if( (pUniqueObjectEntry->m_pObject->ObjectAttributesAllowed() & AttributesAllowedFilter) == AttributesAllowedFilter )
 					{
 						//Check if owner is in list
-						SVString ObjectPath = pUniqueObjectEntry->m_pObject->GetCompleteObjectName();
+						SVString ObjectPath = pUniqueObjectEntry->m_pObject->GetCompleteName();
 						SVString::size_type Pos = ObjectPath.find( InternalPath.c_str() );
 						if( SVString::npos != Pos )
 						{
@@ -1485,11 +1485,11 @@ SVObjectManagerClass::SVUniqueObjectEntryStructPtr SVObjectManagerClass::getUniq
 	return pUniqueObjectEntry;
 }
 
-SVObjectManagerClass::SVUniqueObjectEntryStructPtr SVObjectManagerClass::getUniqueObjectEntry( const CString& rName ) const
+SVObjectManagerClass::SVUniqueObjectEntryStructPtr SVObjectManagerClass::getUniqueObjectEntry( const SVString& rName ) const
 {
 	SVUniqueObjectEntryStructPtr pUniqueObjectEntry( nullptr );
 
-	if( !rName.IsEmpty() )
+	if( !rName.empty() )
 	{
 		SVAutoLockAndReleaseTemplate< SVCriticalSection > AutoLock;
 
@@ -1510,8 +1510,7 @@ SVObjectManagerClass::SVUniqueObjectEntryStructPtr SVObjectManagerClass::getUniq
 
 				if( !pUniqueObjectEntry.empty() )
 				{
-					if( nullptr == pUniqueObjectEntry->m_pObject ||
-						pUniqueObjectEntry->m_pObject->GetName() != rName )
+					if( nullptr == pUniqueObjectEntry->m_pObject || pUniqueObjectEntry->m_pObject->GetName() != rName )
 					{
 						pUniqueObjectEntry.clear();
 					}

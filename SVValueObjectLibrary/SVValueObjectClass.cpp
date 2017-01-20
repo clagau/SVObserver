@@ -22,7 +22,6 @@
 #ifdef _DEBUG
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
-#define new DEBUG_NEW
 #endif
 
 // The commented out code below is for Factory Creatable classes
@@ -102,7 +101,7 @@ BOOL SVValueObjectClass::CloseObject()
 bool SVValueObjectClass::resetAllObjects( bool shouldNotifyFriends, bool silentReset )
 {
 	bool Result = ( S_OK == ResetObject() );
-	ASSERT( Result );
+	assert( Result );
 	return Result;
 }
 
@@ -219,15 +218,15 @@ HRESULT SVValueObjectClass::SetResultSize(int iBucket, int riResultSize)
 	return hr;
 }
 
-HRESULT SVValueObjectClass::CompareWithCurrentValueImpl( const CString& rstrCompare ) const
+HRESULT SVValueObjectClass::CompareWithCurrentValueImpl( const SVString& rCompare ) const
 {
 	// default implementation
 	HRESULT hr = S_FALSE;
-	CString strCurrentValue;
-	HRESULT hrGet = GetValue( strCurrentValue );
+	SVString CurrentValue;
+	HRESULT hrGet = GetValue( CurrentValue );
 	if ( S_OK == hrGet )
 	{
-		hr = ( (strCurrentValue == rstrCompare) ? S_OK : S_FALSE );
+		hr = ( (CurrentValue == rCompare) ? S_OK : S_FALSE );
 	}
 	return hr;
 }
@@ -338,7 +337,7 @@ void SVValueObjectClass::ValidateValue( const _variant_t& rValue ) const
 				HRESULT tempHr = safeArray.GetElement( i, tmpVar );
 				if (S_OK != tempHr)
 				{
-					SVStringArray msgList;
+					SVStringVector msgList;
 					msgList.push_back(SvUl_SF::Format(_T("%d"), tempHr));
 					SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 					Exception.setMessage( SVMSG_SVO_93_GENERAL_WARNING , SvOi::Tid_ValidateValue_InvalidElementInVariantArray, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );

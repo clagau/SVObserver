@@ -21,7 +21,6 @@
 
 #pragma region Declarations
 #ifdef _DEBUG
-#define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
@@ -83,7 +82,7 @@ HRESULT LinkedValue::GetValueAt( int Bucket, int Index, VARIANT& rValue ) const
 	return Result;
 }
 
-HRESULT LinkedValue::GetValueAt( int Bucket, int Index, CString& rValue ) const
+HRESULT LinkedValue::GetValueAt( int Bucket, int Index, SVString& rValue ) const
 {
 	HRESULT Result( S_OK );
 	_variant_t Value;
@@ -97,15 +96,15 @@ HRESULT LinkedValue::GetValueAt( int Bucket, int Index, CString& rValue ) const
 		Result = ::VariantChangeTypeEx( &Value.GetVARIANT(), &Value.GetVARIANT(), SvOl::LCID_USA, VARIANT_ALPHABOOL, VT_BSTR);
 		if ( S_OK == Result )
 		{
-			rValue = Value.bstrVal;
+			rValue = SvUl_SF::createSVString( Value.bstrVal );
 			if( VT_BOOL == oldType )
 			{
-				rValue.MakeUpper();
+				SvUl_SF::MakeUpper( rValue );
 			}
 		}
 		else
 		{
-			rValue.Empty();
+			rValue.clear();
 		}
 	}
 
@@ -268,7 +267,7 @@ HRESULT LinkedValue::GetValueAt( int Bucket, int Index, BYTE& rValue) const
 	return Result;
 }
 
-HRESULT LinkedValue::SetValueAt( int Bucket, int Index, const CString& rValue )
+HRESULT LinkedValue::SetValueAt( int Bucket, int Index, const SVString& rValue )
 {
 	HRESULT Result( S_OK );
 	SVObjectClass* pNewLinkedObject = ConvertStringInObject( SVString( rValue ) );
@@ -285,7 +284,7 @@ HRESULT LinkedValue::SetValueAt( int Bucket, int Index, const CString& rValue )
 		if (S_OK == Result)
 		{
 			bool messageReturn = ConnectInput();
-			ASSERT( messageReturn );
+			assert( messageReturn );
 			//To check that the linked value has no circular reference we do a GetValue
 			_variant_t Value;
 			Result = GetValueAt( Bucket, Index, Value.GetVARIANT() );
@@ -294,7 +293,7 @@ HRESULT LinkedValue::SetValueAt( int Bucket, int Index, const CString& rValue )
 	else
 	{
 		SetType( GetDefaultType() );
-		Result = SetValueKeepType( Bucket, rValue );
+		Result = SetValueKeepType( Bucket, rValue.c_str() );
 	}
 
 	UpdateLinkedName();
@@ -314,12 +313,12 @@ void LinkedValue::UpdateLinkedName()
 {
 	if( nullptr != m_pLinkedObject && SV_GUID_NULL != m_LinkedUid )
 	{
-		m_LinkedName.SetValue( 0, m_pLinkedObject->GetCompleteObjectNameToObjectType() );
+		m_LinkedName.SetValue( 0, SVString(m_pLinkedObject->GetCompleteObjectNameToObjectType()) );
 		m_LinkedName.ObjectAttributesAllowedRef() = SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES;
 	}
 	else
 	{
-		CString Value;
+		SVString Value;
 		m_LinkedName.GetDefaultValue( Value );
 		m_LinkedName.SetValue( 0, Value );
 		m_LinkedName.ObjectAttributesAllowedRef() = SV_HIDDEN;
@@ -344,7 +343,7 @@ void LinkedValue::ValidateValue( int iBucket, int iIndex, const SVString& rValue
 		{
 			pLinkedObject = nullptr;
 			//! This means the linked object is invalid
-			SVStringArray msgList;
+			SVStringVector msgList;
 			msgList.push_back( GetName() );
 			SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 			Exception.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_LinkedValue_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
@@ -361,7 +360,7 @@ void LinkedValue::ValidateValue( int iBucket, int iIndex, const SVString& rValue
 			HRESULT Result = ::VariantChangeType( &vtTemp, &vtTemp, 0, DefaultValue().vt );
 			if ( S_OK != Result) //object index out of range will not throw
 			{
-				SVStringArray msgList;
+				SVStringVector msgList;
 				msgList.push_back(GetName());
 				SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 				Exception.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_LinkedValue_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
@@ -380,12 +379,12 @@ HRESULT LinkedValue::UpdateConnection()
 	HRESULT Result = S_OK;
 	SVObjectClass* pLinkedObject( nullptr );
 	bool ConvertDottedName( false );
-	CString Value;
+	SVString Value;
 
 	//We now need to check the no linked value so call the base class method
 	SVVariantValueObjectClass::GetValueAt( m_iLastSetIndex, 0,  Value );
 
-	SVGUID LinkedUid( _bstr_t( static_cast<LPCTSTR> (Value)) );
+	SVGUID LinkedUid( _bstr_t( Value.c_str() ) );
 
 	//If valid GUID then should be able to get the linked value from the object manager
 	if( SV_GUID_NULL != LinkedUid  )
@@ -400,15 +399,15 @@ HRESULT LinkedValue::UpdateConnection()
 	}
 	else
 	{
-		CString ToolSetName;
+		SVString ToolSetName;
 		SVString ObjectName;
 
-		ToolSetName.LoadString( IDS_CLASSNAME_SVTOOLSET );
+		ToolSetName = SvUl_SF::LoadSVString( IDS_CLASSNAME_SVTOOLSET );
 
 		//Default name
 		ObjectName = Value;
 		//If the tool set name is at the start then add the inspection name at the beginning
-		if( 0 == Value.Find( ToolSetName ) )
+		if( 0 == Value.find( ToolSetName ) )
 		{
 			SvOi::IObjectClass* pInspection = GetAncestorInterface( SVInspectionObjectType );
 			if( nullptr != pInspection )
@@ -438,7 +437,7 @@ HRESULT LinkedValue::UpdateConnection()
 				SVVariantValueObjectClass::SetValueAt( 0, 0, m_LinkedUid.ToString().c_str() );
 			}
 			bool messageReturn = ConnectInput();
-			ASSERT( messageReturn );
+			assert( messageReturn );
 			if( !messageReturn )
 			{
 				Result = SvOi::Err_10015_LinkedValueConnectInput_ConnectFailed;
@@ -504,13 +503,13 @@ HRESULT LinkedValue::ResetObject()
 
 SVObjectClass* LinkedValue::ConvertStringInObject( const SVString& rValue ) const
 {
-	CString ToolSetName;
+	SVString ToolSetName;
 	SVString ObjectName;
 
-	ToolSetName.LoadString( IDS_CLASSNAME_SVTOOLSET );
+	ToolSetName = SvUl_SF::LoadSVString( IDS_CLASSNAME_SVTOOLSET );
 
 	//If the tool set name is at the start then add the inspection name at the beginning
-	if( 0 == rValue.find( ToolSetName ) )
+	if( 0 == rValue.find( ToolSetName.c_str() ) )
 	{
 		const SvOi::IObjectClass* pInspection = GetAncestorInterface( SVInspectionObjectType );
 		if( nullptr != pInspection )

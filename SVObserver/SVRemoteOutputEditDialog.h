@@ -17,6 +17,7 @@
 #include "SVLibrary/SVDataItemManagerTemplate.h"
 #include "SVLibrary/SVIOEntryHostStruct.h"
 #include "SVInfoStructs.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 class SVRemoteOutputObject;
@@ -27,9 +28,8 @@ class SVRemoteOutputEditDialog : public CDialog
 
 	public:
 	enum { IDD = IDD_REMOTE_OUTPUT_EDIT };
-	CString m_strValueObjectSourceName;
-	CString  m_strGroupName;
-	CComboBox m_ValueObjectNameCombo;
+	SVString  m_GroupName;
+	SVString m_ValueObjectSourceName;
 
 protected:
 	virtual BOOL OnInitDialog() override;
@@ -54,6 +54,7 @@ protected:
 private:
 	typedef SVDataItemManagerTemplate< SVIOEntryHostStructPtr > SVDataItemManager;
 
+	CComboBox m_ValueObjectNameCombo;
 	SVDataItemManager m_Items;
 };
 

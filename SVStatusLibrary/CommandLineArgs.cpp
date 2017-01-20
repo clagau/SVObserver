@@ -16,7 +16,6 @@
 
 #pragma region Declarations
 #ifdef _DEBUG
-#define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
@@ -61,7 +60,7 @@ namespace Seidenader { namespace SVStatusLibrary
 
 	void CommandLineArgs::ParseCommandline()
 	{
-		std::string StrCommandline  = GetCommandLine(); 
+		SVString StrCommandline  = GetCommandLine(); 
 		typedef boost::escaped_list_separator<char> Tels; 
 		Tels els("" ," ","\"" ); //escape, separator, quote
 
@@ -70,8 +69,8 @@ namespace Seidenader { namespace SVStatusLibrary
 		
 		for(boost::tokenizer<Tels>::iterator beg=tok.begin(); beg!=tok.end();beg++)
 		{
-			std::string::size_type size = beg->size();
-			std::string temp = *beg;
+			SVString::size_type size = beg->size();
+			SVString temp = *beg;
 			if(size == 0)
 			{
 				continue;

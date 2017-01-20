@@ -16,7 +16,6 @@
 
 #pragma region Declarations
 #ifdef _DEBUG
-#define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
@@ -61,7 +60,7 @@ DoubleSortValueObject::~DoubleSortValueObject()
 #pragma region Public Methods
 const ValueObjectSortContainer& DoubleSortValueObject::getSortContainer(int iBucket) const 
 {
-	ASSERT(iBucket >= 0 && iBucket < m_iNumberOfBuckets);
+	assert(iBucket >= 0 && iBucket < m_iNumberOfBuckets);
 	if (iBucket < 0 || iBucket > m_iNumberOfBuckets)
 	{
 		iBucket = 0;
@@ -137,16 +136,16 @@ HRESULT DoubleSortValueObject::SetValueAt(int iBucket, int iIndex, const double 
 	return E_FAIL;
 }
 
-HRESULT DoubleSortValueObject::SetValueAt( int iBucket, int iIndex, const CString& value )
+HRESULT DoubleSortValueObject::SetValueAt( int iBucket, int iIndex, const SVString& rValue )
 {
 	try
 	{
-		ValidateValue( iBucket, iIndex, SVString(value) );
-		return SVDoubleValueObjectClass::SetValueAt(iBucket, m_sortContainerArray[iBucket][iIndex], value);
+		ValidateValue( iBucket, iIndex, SVString(rValue) );
+		return SVDoubleValueObjectClass::SetValueAt(iBucket, m_sortContainerArray[iBucket][iIndex], rValue);
 	}
 	catch(const SvStl::MessageContainer&)
 	{
-		ASSERT(FALSE);
+		assert(FALSE);
 		return E_FAIL;
 	}
 }
@@ -178,7 +177,7 @@ HRESULT DoubleSortValueObject::GetValueAt( int iBucket, int iIndex, DWORD& rValu
 	return E_FAIL;
 }
 
-HRESULT DoubleSortValueObject::GetValueAt( int iBucket, int iIndex, CString& rValue) const
+HRESULT DoubleSortValueObject::GetValueAt( int iBucket, int iIndex, SVString& rValue) const
 {
 	if (0 <= iBucket && iBucket < m_iNumberOfBuckets && 0 <= iIndex && m_sortContainerArray[iBucket].size()>iIndex)
 	{
@@ -199,11 +198,11 @@ HRESULT DoubleSortValueObject::GetValueAt( int iBucket, int iIndex, VARIANT& rVa
 HRESULT DoubleSortValueObject::GetArrayValues(int iBucket, std::vector<double>& raValues) const
 {
 	HRESULT hrOk = E_FAIL;
-	ASSERT( iBucket >= 0 && iBucket < m_iNumberOfBuckets );
+	assert( iBucket >= 0 && iBucket < m_iNumberOfBuckets );
 	if ( iBucket >= 0 && iBucket < m_iNumberOfBuckets )
 	{
 		int iResultSize = GetResultSize(iBucket);
-		ASSERT( iResultSize <= ArraySize() );
+		assert( iResultSize <= ArraySize() );
 		raValues.resize( iResultSize );
 		double value = 0;
 		for (int i=0; i<iResultSize; i++)
@@ -262,11 +261,11 @@ HRESULT DoubleSortValueObject::GetArrayValuesAsVariant( int iBucket, VARIANT&  r
 HRESULT DoubleSortValueObject::GetArrayValuesAsVariantVector( int iBucket, std::vector< _variant_t >&  rValues ) const
 {
 	HRESULT hrOk = E_FAIL;
-	ASSERT( iBucket >= 0 && iBucket < m_iNumberOfBuckets );
+	assert( iBucket >= 0 && iBucket < m_iNumberOfBuckets );
 	if ( iBucket >= 0 && iBucket < m_iNumberOfBuckets )
 	{
 		int iResultSize = GetResultSize(iBucket);
-		ASSERT( iResultSize <= ArraySize() );
+		assert( iResultSize <= ArraySize() );
 		rValues.resize( iResultSize );
 		_variant_t value = 0;
 		for (int i=0; i<iResultSize; i++)
@@ -284,7 +283,7 @@ void DoubleSortValueObject::ValidateValue( int iBucket, int iIndex, const SVStri
 {
 	if (0 > iBucket || iBucket >= m_iNumberOfBuckets || 0 > iIndex && m_sortContainerArray[iBucket].size()<=iIndex)
 	{
-		SVStringArray msgList;
+		SVStringVector msgList;
 		msgList.push_back(GetName());
 		SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 		Exception.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_LinkedValue_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );

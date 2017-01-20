@@ -105,7 +105,7 @@ namespace Seidenader { namespace SVOGui
 				HRESULT hr = ConnectToObject(m_inputName, SVString(tableName));
 				if ( S_OK != hr )
 				{
-					SVStringArray msgList;
+					SVStringVector msgList;
 					msgList.push_back(m_inputName);
 					msgList.push_back(SVString(tableName));
 					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );

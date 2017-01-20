@@ -22,68 +22,63 @@ class SVFileNameClass;
 class SVFileNameManagerClass 
 {
 private:
-	SVString m_ConfigurationPathName; // Configuration Path Name variable
-	SVString m_RunPathName; // Run Path Name variable
-	SVFileNameLockablePointerArrayClass m_svFileNameList; // File Name List
-	int m_iCurrentItem; //This attribute contains the value of the current position in the file name list.
-
-	static SVFileNameManagerClass& Instance();
-	
 	// This method assigns the default values to the class's attributes.
 	SVFileNameManagerClass();
 
 public:
+	static SVFileNameManagerClass& Instance();
+
 	//This operator will create a semicolon separated string 
 	//list of file names contained within the array.
-	static LPCTSTR GetFileNameList();
+	LPCTSTR GetFileNameList();
 
 	//This operator copies the file from the selected 
 	//location to the configuration and run directory as 
 	//necessary.
-	static BOOL SaveItem(SVFileNameClass* svFileName);
+	bool SaveItem(SVFileNameClass* pFileName);
 
 	//This operator copies the file from the selected 
 	//location to the configuration and run directory as 
 	//necessary.
-	static BOOL LoadItem(SVFileNameClass* svFileName);
+	bool LoadItem(SVFileNameClass* pFileName);
 
 	//This operator renames the file from the selected 
 	//location to the run directory as necessary.
-	static BOOL RenameItem(SVFileNameClass* svFileName);
+	bool RenameItem(SVFileNameClass* pFileName);
 
 	//This operator exposes the string contained in the 
 	//gcsConfigurationPathName application attribute.
-	static LPCTSTR GetConfigurationPathName();
+	const SVString& GetConfigurationPathName() const { return m_ConfigurationPathName; };
 
 	//This operator exposes the string contained in the 
 	//gcsRunPathName application attribute.
-	static LPCTSTR GetRunPathName();
+	const SVString& GetRunPathName() const { return m_RunPathName; };
 
 	//This operator sets the gcsRunPathName application 
 	//attribute with the value passes as a parameter to the 
 	//method.
-	static BOOL SetRunPathName(LPCTSTR szPathName);
+	bool SetRunPathName(LPCTSTR PathName);
 
 	//This operator sets the gcsConfigurationPathName 
 	//application attribute with the value passes as a 
 	//parameter to the method.
-	static BOOL SetConfigurationPathName(LPCTSTR szPathName);
+	bool SetConfigurationPathName(LPCTSTR PathName);
 
 	//This operator will add a pointer to a SVFileNameClass 
 	//object to the application file list.  The miCurrentItem 
 	//index will be set to this element.
-	static BOOL AddItem(SVFileNameClass* svpFileName);
+	bool AddItem(SVFileNameClass* pFileName);
 
 	//This operator will remove a pointer to a 
 	//SVFileNameClass object from the application file list.  
-	//The miCurrentItem index will be set to the proceding 
+	//The miCurrentItem index will be set to the proceeding 
 	//element.
-	static BOOL RemoveItem(SVFileNameClass* svpFileName);
+	bool RemoveItem(SVFileNameClass* pFileName);
 
 	//This operator will search the global application list 
 	//for a match for the pointer address.  It will reset the 
 	//array index pointer to the appropriate array element.
-	static BOOL FindItem(SVFileNameClass* svpFileNameClass);
+	static BOOL FindItem(SVFileNameClass* pFileName);
 
 	//This operator will return the pointer address to the 
 	//appropriate file object at the current array index.
@@ -91,12 +86,21 @@ public:
 
 	//This operator creates the full path tree if it does not 
 	//exist.
-	static BOOL CreatePath(LPCTSTR szPathName);
+	bool CreatePath(LPCTSTR PathName);
 
 	//This operator copies all the files contained in the 
 	//application array from the selected location to the 
 	//configuration and run directory as necessary.
-	static BOOL SaveItems();
+	bool SaveItems();
 
-	static BOOL RemoveUnusedFiles(BOOL bCleanConfigDir = true);
+	bool RemoveUnusedFiles(bool bCleanConfigDir = true);
+
+private:
+	bool RemoveUnusedFiles(const SVString& rPath);
+	bool CopyFileToPath(const SVString& rPath ,SVFileNameClass* pFileName) const;
+
+	SVString m_ConfigurationPathName; // Configuration Path Name variable
+	SVString m_RunPathName; // Run Path Name variable
+	SVFileNameLockablePointerArrayClass m_svFileNameList; // File Name List
+	int m_iCurrentItem; //This attribute contains the value of the current position in the file name list.
 };

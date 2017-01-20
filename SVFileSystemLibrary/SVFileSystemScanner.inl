@@ -8,7 +8,6 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   22 Apr 2013 09:37:36  $
 //******************************************************************************
-#include "SVFileInfo.h"
 
 template<typename Insertor>
 HRESULT SVFileSystemScanner<Insertor>::ScanForFiles(LPCTSTR dirName, LPCTSTR filter, Insertor& insertor, bool bScanSubDirs)
@@ -22,7 +21,9 @@ HRESULT SVFileSystemScanner<Insertor>::ScanForFiles(LPCTSTR dirName, LPCTSTR fil
 	// check for trailing slash
 	size_t pos = dirSpec.rfind(_T("\\"));
 	if (pos == SVString::npos || pos != dirSpec.size() - 1)
+	{
 		dirSpec += _T("\\");
+	}
 
 	fileSpec = dirSpec;
 	fileSpec += (nullptr != filter) ? filter : SVString();
@@ -73,7 +74,9 @@ HRESULT SVFileSystemScanner<Insertor>::ScanForDirectories(LPCTSTR dirName, LPCTS
 	// check for trailing slash
 	size_t pos = dirSpec.rfind(_T("\\"));
 	if (pos == SVString::npos || pos != dirSpec.size() - 1)
+	{
 		dirSpec += _T("\\");
+	}
 
 	fileSpec = dirSpec;
 	fileSpec += (nullptr != filter) ? filter : SVString();

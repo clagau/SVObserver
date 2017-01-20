@@ -11,20 +11,24 @@
 
 #pragma once
 
+#pragma region Includes 
+#include "SVUtilityLibrary\SVString.h"
+#pragma endregion Includes
+
+
 class SVAccessPointNode  
 {
 public:
 	SVAccessPointNode();
-	SVAccessPointNode(const SVAccessPointNode& rhs);
-	SVAccessPointNode(long lID, LPCTSTR strName, LPCTSTR m_strNTGroup, bool bForce );
-	SVAccessPointNode(long lID, LPCTSTR strName );
+	SVAccessPointNode(const SVAccessPointNode& rRhs);
+	SVAccessPointNode(long lID, LPCTSTR Name, LPCTSTR NTGroup, bool bForce );
 	~SVAccessPointNode();
-	const SVAccessPointNode& operator=( const SVAccessPointNode& rhs );
-	const SVAccessPointNode& CopyData( const SVAccessPointNode& rhs );
+	const SVAccessPointNode& operator=( const SVAccessPointNode& rRhs );
+	const SVAccessPointNode& CopyData( const SVAccessPointNode& rRhs );
 	bool m_bHasData;
 	long m_lID;
-	CString m_strName;
-	CString m_strNTGroup;
+	SVString m_Name;
+	SVString m_NTGroup;
 	bool m_bForcePrompt;
 	bool m_bDataCannotChange;
 };

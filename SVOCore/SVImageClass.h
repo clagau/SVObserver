@@ -25,6 +25,7 @@
 #include "SVImageObjectClass.h"
 #include "SVObjectAppClass.h"
 #include "SVCameraInfoStruct.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 typedef SVVector< long > SVImageChildIndexCArray;

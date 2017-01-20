@@ -14,20 +14,14 @@
 #include "SVObjectLibrary\SVClsids.h"
 #include "SVObjectLibrary\SVToolsetScriptTags.h"
 #include "SVObjectLibrary/SVObjectAttributeClass.h"
-#include "SVLibrary/StringMunge.h"
 #include "SVStatusLibrary/MessageManager.h"
 #pragma endregion Includes
 
-namespace	// only for this file
-{
-	const CString DEFAULT_TAG_SAVE(_T(".Default"));
-	const CString BUCKET_TAG_SAVE(_T(".Array"));	// for backwards compatibility
-	const CString ARRAY_TAG_SAVE(_T(".Array_Elements"));	// new style; one bucket, all array values
-
-	const CString DEFAULT_TAG_LOAD(_T("Default"));
-	const CString BUCKET_TAG_LOAD(_T("Array"));	// for backwards compatibility
-	const CString ARRAY_TAG_LOAD(_T("Array_Elements"));	// new style; one bucket, all array values
-}	// end file scope namespace
+#pragma region Declarations
+#ifdef _DEBUG
+#undef THIS_FILE
+static char THIS_FILE[] = __FILE__;
+#endif
 
 SV_IMPLEMENT_CLASS( SVEnumerateValueObjectClass, SVEnumerateValueObjectClassGuid );
 
@@ -127,7 +121,7 @@ HRESULT SVEnumerateValueObjectClass::GetObjectValue( const SVString& p_rValueNam
 
 			for( int i = 0; i < static_cast< int >( l_Enums.size() ); ++i )
 			{
-				_variant_t l_Name = l_Enums[i].first;
+				_variant_t l_Name = l_Enums[i].first.c_str();
 				_variant_t l_Value = l_Enums[i].second;
 
 				l_Index[ 0 ] = i;
@@ -163,25 +157,25 @@ HRESULT SVEnumerateValueObjectClass::SetObjectValue( SVObjectAttributeClass* pDa
 	HRESULT hr = S_FALSE;
 	BOOL bOk = FALSE;
 	
-	SvCl::SVObjectCStringArrayClass svCStringArray;
+	SvCl::SVObjectSVStringArrayClass SVStringArray;
 	SvCl::SVObjectLongArrayClass svLongArray;
-	bucket_type l_Buckets(BucketsNoAssert());
+	bucket_type l_Buckets(BucketNoAssert());
 
-	if ( bOk = pDataObject->GetAttributeData( "Enumeration", svCStringArray ) )
+	if ( bOk = pDataObject->GetAttributeData( _T("Enumeration"), SVStringArray ) )
 	{
-		for( int i = 0; i < svCStringArray.GetSize(); i++ )
+		for( int i = 0; i < SVStringArray.GetSize(); i++ )
 		{
-			SetEnumTypes( svCStringArray[i] );
+			SetEnumTypes( SVStringArray[i].c_str() );
 		}
 	}
-	else if ( bOk = pDataObject->GetAttributeData( "lDefault", svLongArray ) )
+	else if ( bOk = pDataObject->GetAttributeData( _T("lDefault"), svLongArray ) )
 	{
 		for( int i = 0; i < svLongArray.GetSize(); i++ )
 		{
 			DefaultValue() = svLongArray[i];
 		}
 	}
-	else if ( bOk = pDataObject->GetAttributeData( "pLArray", l_Buckets, DefaultValue() ) )
+	else if ( bOk = pDataObject->GetAttributeData( _T("pLArray"), l_Buckets, DefaultValue() ) )
 	{
 		if ( ArraySize() == 1 )
 		{
@@ -218,11 +212,11 @@ HRESULT SVEnumerateValueObjectClass::SetValueAt( int iBucket, int iIndex, const 
 	return base::SetValueAt( iBucket, iIndex, (long) iValue );
 }
 
-HRESULT SVEnumerateValueObjectClass::SetValueAt( int iBucket, int iIndex, const CString& strValue )
+HRESULT SVEnumerateValueObjectClass::SetValueAt( int iBucket, int iIndex, const SVString& rValue )
 {
 	long lValue = 0;
 
-	if (GetEnumerator( strValue, lValue ))
+	if (GetEnumerator( rValue.c_str(), lValue ))
 	{
 		return base::SetValueAt( iBucket, iIndex, lValue );
 	}
@@ -231,57 +225,57 @@ HRESULT SVEnumerateValueObjectClass::SetValueAt( int iBucket, int iIndex, const 
 
 HRESULT SVEnumerateValueObjectClass::SetValueAt( int iBucket, int iIndex, double value )
 {
-	return SetValueAt(iBucket, iIndex, static_cast <int> (value) );
+	return SetValueAt(iBucket, iIndex, static_cast<int> (value) );
 }
 
-HRESULT SVEnumerateValueObjectClass::SetDefaultValue( LPCTSTR StrValue, bool bResetAll )
+HRESULT SVEnumerateValueObjectClass::SetDefaultValue( LPCTSTR rValue, bool bResetAll )
 {
 	long lValue = 0;
-	GetEnumerator( StrValue, lValue );
+	GetEnumerator( rValue, lValue );
 	return base::SetDefaultValue( lValue, bResetAll );
 }
 
-HRESULT SVEnumerateValueObjectClass::GetValueAt( int iBucket, int iIndex, DWORD& rdwValue ) const
+HRESULT SVEnumerateValueObjectClass::GetValueAt( int iBucket, int iIndex, DWORD& rValue ) const
 {
 	long value=0;
 
 	HRESULT hr = base::GetValueAt(iBucket, iIndex, value);
-	rdwValue = value;
+	rValue = value;
 	
 	return hr;
 }
 
-HRESULT SVEnumerateValueObjectClass::GetValueAt( int iBucket, int iIndex, CString& rstrValue ) const
+HRESULT SVEnumerateValueObjectClass::GetValueAt( int iBucket, int iIndex, SVString& rValue ) const
 {
 	long lValue=0;
 	HRESULT hr = base::GetValueAt( iBucket, iIndex, lValue );
 	//if ( S_OK == hr ) // @WARNING - log an error here ?
 	{
-		GetEnumeratorName( lValue, rstrValue );
+		GetEnumeratorName( lValue, rValue );
 	}
 	return hr;
 }
 
-HRESULT SVEnumerateValueObjectClass::GetValueAt( int iBucket, int iIndex, double& rdValue ) const
+HRESULT SVEnumerateValueObjectClass::GetValueAt( int iBucket, int iIndex, double& rValue ) const
 {
 	long lValue=0;
 	HRESULT hr = base::GetValueAt( iBucket, iIndex, lValue );
 	//if ( S_OK == hr ) // @WARNING - log an error here ?
 	{
-		rdValue = ( double ) lValue;
+		rValue = ( double ) lValue;
 	}
 	return hr;
 }
 
 HRESULT SVEnumerateValueObjectClass::GetValueAt( int iBucket, int iIndex, VARIANT& rValue ) const
 {
-	CString sVal;
+	SVString sVal;
 	_variant_t l_Temp;
 	l_Temp.Attach( rValue );
 	HRESULT hr = GetValueAt( iBucket, iIndex, sVal );
 	if( S_OK == hr )
 	{
-		l_Temp = static_cast< LPCTSTR >( sVal );
+		l_Temp = static_cast< LPCTSTR >( sVal.c_str() );
 	}
 	else
 	{
@@ -297,8 +291,8 @@ void SVEnumerateValueObjectClass::ValidateValue( int iBucket, int iIndex, const 
 	long lValue = 0;
 	if (!GetEnumerator( rValue.c_str(), lValue ))
 	{
-		SVStringArray msgList;
-		msgList.push_back(SVString(rValue));
+		SVStringVector msgList;
+		msgList.push_back( rValue );
 		msgList.push_back(GetName());
 		SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 		Exception.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_ValueObject_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
@@ -335,24 +329,24 @@ BOOL SVEnumerateValueObjectClass::SetEnumTypes( LPCTSTR szEnumList )
 			do   
 			{
 				// Get Enum Identifier...
-				CString strEnum  = szEnumToken;
-				int ind = strEnum.Find( TCHAR( '=' ) );
-				if( ind >= 0 )
+				SVString EnumString  = szEnumToken;
+				size_t Pos = EnumString.find( TCHAR( '=' ) );
+				if( SVString::npos != Pos )
 				{
 					// Extract Value...
-					enumValue = atol( strEnum.Mid( ind + 1 ) );
+					enumValue = atol( SvUl_SF::Mid( EnumString, Pos + 1 ).c_str() );
 					// Extract Identifier...
-					CString strIdent = strEnum.Left( ind );
-					strEnum = strIdent;
+					SVString strIdent = SvUl_SF::Left( EnumString, Pos );
+					EnumString = strIdent;
 				}
 				
 				// Trim identifier..
-				strEnum.TrimLeft();
-				strEnum.TrimRight();
+				EnumString = SvUl_SF::TrimLeft( EnumString );
+				EnumString = SvUl_SF::TrimRight( EnumString );
 
 				// Check if identifier is valid and unique...
 				long lDummy = 0L;
-				if ( ! strEnum.IsEmpty() && ! GetEnumerator( strEnum, lDummy ) )	// If this fails enumerator was unknown!
+				if ( !EnumString.empty() && !GetEnumerator( EnumString.c_str(), lDummy ) )	// If this fails enumerator was unknown!
 				{
 					int i = 0;
 					// Get position in tables ( sorted by value )
@@ -363,7 +357,7 @@ BOOL SVEnumerateValueObjectClass::SetEnumTypes( LPCTSTR szEnumList )
 							break;
 					}
 					// Insert enumeration at found position...
-					m_enumStringTable.InsertAt( i, strEnum );
+					m_enumStringTable.InsertAt( i, EnumString );
 					m_enumValueTable.InsertAt( i, enumValue );
 
 					// Prepare next enumeration value...
@@ -388,7 +382,7 @@ BOOL SVEnumerateValueObjectClass::SetEnumTypes( const SVEnumerateVector& rVec )
 {
 	for ( size_t i=0; i < rVec.size(); i++ )
 	{
-		CString sFirst = rVec[i].first;
+		SVString sFirst = rVec[i].first;
 		long lSecond = rVec[i].second;
 		m_enumStringTable.Add( sFirst );
 		m_enumValueTable.Add( lSecond );
@@ -409,9 +403,9 @@ BOOL SVEnumerateValueObjectClass::GetEnumTypes( SVEnumerateVector& rVec ) const
 
 BOOL SVEnumerateValueObjectClass::SetEnumTypes( int StringResourceID )
 {
-	CString strEnumList;
-	strEnumList.LoadString( StringResourceID );
-	return SetEnumTypes( strEnumList );
+	SVString EnumList;
+	EnumList = SvUl_SF::LoadSVString( StringResourceID );
+	return SetEnumTypes( EnumList.c_str() );
 }
 
 
@@ -431,7 +425,7 @@ BOOL SVEnumerateValueObjectClass::GetEnumerator( LPCTSTR szEnumerator, long& lVa
 		// Check if enumerator is defined...
 		for( int i = 0; i < m_enumStringTable.GetSize(); ++ i )
 		{
-			if( 0 == m_enumStringTable.GetAt( i ).CompareNoCase( szEnumerator ) )
+			if( 0 == SvUl_SF::CompareNoCase( m_enumStringTable.GetAt( i ), szEnumerator ) )
 			{
 				// Found it...
 				lValue = m_enumValueTable[ i ];
@@ -467,36 +461,34 @@ SvOi::NameValueList SVEnumerateValueObjectClass::GetEnumList() const
 	SvOi::NameValueList list;
 	for (int i = 0;i < m_enumStringTable.GetSize(); i++)
 	{
-		list.push_back(std::make_pair(m_enumStringTable.GetAt(i).GetString(), m_enumValueTable.GetAt(i)));
+		list.push_back(std::make_pair(m_enumStringTable.GetAt(i).c_str(), m_enumValueTable.GetAt(i)));
 	}
 	return list;
 }
 #pragma endregion IVEnumerateValueObject
 
-/*static*/ bool SVEnumerateValueObjectClass::ToNumber(const CString& str, long& p_rlValue)
+/*static*/ bool SVEnumerateValueObjectClass::ToNumber(const SVString& rString, long& rValue)
 {
 	bool bConverted = false;
 
-	CString strTemp( str );
-	strTemp.MakeLower();
-	CString strMunge( strTemp );
-	StringMunge::KeepChars( &strMunge, _T("0123456789-. xabcdef") );
-	if ( (strTemp == strMunge) && strMunge.FindOneOf( _T("0123456789") ) != -1 )	// MUST have at least one digit and no non-hex alphabetic stuff or other spurrious chars
+	SVString strTemp( rString );
+	SvUl_SF::MakeLower( strTemp );
+	SVString Digits = SvUl_SF::ValidateString( rString, _T("0123456789-. xabcdef") );
+	if ( (strTemp == Digits) && SVString::npos != Digits.find_first_of( _T("0123456789") ) )	// MUST have at least one digit and no non-hex alphabetic stuff or other spurrious chars
 	{
-		if ( strMunge.Find( _T('x') ) != -1 )	// HEX
+		if ( SVString::npos != Digits.find( 'x' ) )	// HEX
 		{
 			TCHAR* p = nullptr;
-			p_rlValue = _tcstol(strMunge, &p, 16);	// base 16
+			rValue = _tcstol(Digits.c_str(), &p, 16);	// base 16
 			bConverted = true;
 		}
 		else	// assume base 10
 		{
-			CString strDec( strMunge );
-			StringMunge::KeepChars( &strDec, _T("0123456789-. ") );
-			if ( strDec == strMunge )	// if no abcdef
+			SVString Decimal = SvUl_SF::ValidateString( Digits, _T("0123456789-. ") );
+			if ( Decimal == Digits )	// if no abcdef
 			{
 				TCHAR* p = nullptr;
-				p_rlValue = _tcstol(strDec, &p, 10);	// base 10
+				rValue = _tcstol(Decimal.c_str(), &p, 10);	// base 10
 				bConverted = true;
 			}
 		}
@@ -513,7 +505,7 @@ SvOi::NameValueList SVEnumerateValueObjectClass::GetEnumList() const
 //				: returns in rEnumerator the value converted to a String and
 //				: returns FALSE.
 ////////////////////////////////////////////////////////////////////////////////
-BOOL SVEnumerateValueObjectClass::GetEnumeratorName( long lValue, CString& rEnumerator ) const
+BOOL SVEnumerateValueObjectClass::GetEnumeratorName( long lValue, SVString& rEnumerator ) const
 {
 	BOOL bRetVal = FALSE;
 	// Check if enumerator is defined...
@@ -530,7 +522,7 @@ BOOL SVEnumerateValueObjectClass::GetEnumeratorName( long lValue, CString& rEnum
 		if( ! bRetVal )
 		{
 			// Return undefined value as string...
-			rEnumerator.Format( _T( "%d" ), lValue );
+			rEnumerator = SvUl_SF::Format( _T( "%d" ), lValue );
 		}
 	}
 	return bRetVal;
@@ -541,23 +533,22 @@ BOOL SVEnumerateValueObjectClass::GetEnumeratorName( long lValue, CString& rEnum
 // -----------------------------------------------------------------------------
 // .Description : Returns a string with all defined enumerations and their values
 ////////////////////////////////////////////////////////////////////////////////
-BOOL SVEnumerateValueObjectClass::GetEnumTypes( CString& rStrEnumList ) const
+BOOL SVEnumerateValueObjectClass::GetEnumTypes( SVString& rEnumList ) const
 {
 	BOOL bRetVal = TRUE;
 	// Get Enumeration types...
-	CString tmp;
 	for( int i = 0; i < m_enumStringTable.GetSize(); ++ i )
 	{
 		long lEnumValue = m_enumValueTable[ i ];
-		tmp.Format( "=%d", lEnumValue );
+		SVString tmp = SvUl_SF::Format( "=%d", lEnumValue );
 
 		if( i )
 		{
 			// Add comma, but after first element...
-			rStrEnumList += _T( "," );
+			rEnumList += _T( "," );
 		}
 
-		rStrEnumList += m_enumStringTable.GetAt( i ) + tmp;
+		rEnumList += m_enumStringTable.GetAt( i ) + tmp;
 	}
 	return bRetVal;
 }
@@ -592,7 +583,7 @@ int SVEnumerateValueObjectClass::GetFirstEnumTypePos() const
 //				: Use Iterator which is returned by GetFirstEnumType(...),
 //				:	to iterate through list of enum types.
 ////////////////////////////////////////////////////////////////////////////////
-BOOL SVEnumerateValueObjectClass::GetNextEnumType( int& RIterator, CString& RStrEnum, long& REnumValue ) const
+BOOL SVEnumerateValueObjectClass::GetNextEnumType( int& RIterator, SVString& RStrEnum, long& REnumValue ) const
 {
 	BOOL bRetVal = FALSE;
 	if( RIterator >= 0 && RIterator < m_enumStringTable.GetSize() )
@@ -607,18 +598,18 @@ BOOL SVEnumerateValueObjectClass::GetNextEnumType( int& RIterator, CString& RStr
 	return bRetVal;
 }
 
-HRESULT SVEnumerateValueObjectClass::CompareWithCurrentValueImpl( const CString& rstrCompare ) const
+HRESULT SVEnumerateValueObjectClass::CompareWithCurrentValueImpl( const SVString& rCompare ) const
 {
 	HRESULT hr = S_FALSE;
 
 	long lEnumValue = 0;
-	BOOL bGetEnum = GetEnumerator( rstrCompare, lEnumValue );
+	BOOL bGetEnum = GetEnumerator( rCompare.c_str(), lEnumValue );
 	if ( bGetEnum )
 	{
 		long lCurrentValue;
-		CString strCurrentValue;
+		SVString strCurrentValue;
 		HRESULT hrGet = GetValue( strCurrentValue );
-		BOOL bGetCurrentEnum = GetEnumerator( strCurrentValue, lCurrentValue );
+		BOOL bGetCurrentEnum = GetEnumerator( strCurrentValue.c_str(), lCurrentValue );
 		if ( bGetCurrentEnum )
 		{
 			hr = ( (lEnumValue == lCurrentValue) ? S_OK : S_FALSE );
@@ -628,7 +619,7 @@ HRESULT SVEnumerateValueObjectClass::CompareWithCurrentValueImpl( const CString&
 	return hr;
 }
 
-HRESULT SVEnumerateValueObjectClass::GetNormalizedValueImpl( const CString& strValue, CString& rstrNormalized ) const
+HRESULT SVEnumerateValueObjectClass::GetNormalizedValueImpl( const SVString& strValue, SVString& rstrNormalized ) const
 {
 	return S_FALSE;
 }

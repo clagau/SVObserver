@@ -7,14 +7,12 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "SVUtilityLibrary\SVString.h"
 #include "MessageTextGenerator.h"
 #include "MessageTextMap.h"
 #pragma endregion Includes
 
 #pragma region Declarations
 #ifdef _DEBUG
-#define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
@@ -37,7 +35,7 @@ MessageTextGenerator::MessageTextGenerator()
 #pragma endregion Constructor
 
 #pragma region Public Methods
-SVString MessageTextGenerator::getText(SvOi::MessageTextEnum messageId, const SVStringArray &additionalList) const
+SVString MessageTextGenerator::getText(SvOi::MessageTextEnum messageId, const SVStringVector &additionalList) const
 {
 	SVString retString("");
 	MessageTextMap::const_iterator it = g_MessageTextMap.find(messageId); 

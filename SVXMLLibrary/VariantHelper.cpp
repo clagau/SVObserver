@@ -73,7 +73,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 		HRESULT hres = SVVariantConverter::RestoreVariant(Value.GetBSTR(), Type.GetBSTR() ,pVar);
 		if (S_OK != hres)
 		{
-			SVStringArray messageList;
+			SVStringVector messageList;
 			messageList.push_back(SvUl_SF::Format(_T("%d"), hres));
 			SvStl::MessageContainer Exception;
 			Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR, SvOi::Tid_RestoreVariantError, messageList, SvStl::SourceFileParams(StdMessageParams),SvOi::Err_16064_RESTOREVARIANT  );
@@ -81,48 +81,6 @@ namespace Seidenader { namespace  SVXMLLibrary
 		}
 
 	}
-
-	void VariantHelper::FromVariant( const _variant_t& rVar, std::wstring  &rtype, std::wstring  &rValue )
-	{
-		_bstr_t Value;
-		_bstr_t Type;
-
-		HRESULT hres = 	SVVariantConverter::TranslateVariant(const_cast<_variant_t*> (&rVar) , &Value.GetBSTR(), &Type.GetBSTR() );
-		if (S_OK != hres)
-		{
-			SVStringArray messageList;
-			messageList.push_back(SvUl_SF::Format(_T("%d"), hres));
-			SvStl::MessageContainer Exception;
-			Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR, SvOi::Tid_TranslateVariantError, messageList, SvStl::SourceFileParams(StdMessageParams),SvOi::Err_16065_TRANSLATEVARIANT  );
-			throw Exception;
-		}
-
-		rtype  = Type;
-		rValue = Value;
-	}
-
-
-	void VariantHelper::FromVariant( const _variant_t& rVar, std::string  &rtype, std::string  &rValue )
-	{
-		_bstr_t Value;
-		_bstr_t Type;
-
-		HRESULT hres = 	SVVariantConverter::TranslateVariant(const_cast<_variant_t*> (&rVar) , &Value.GetBSTR(), &Type.GetBSTR() );
-		if(hres != S_OK )
-		{
-			SVStringArray messageList;
-			messageList.push_back(SvUl_SF::Format(_T("%d"), hres));
-			SvStl::MessageContainer Exception;
-			Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR, SvOi::Tid_TranslateVariantError, messageList, SvStl::SourceFileParams(StdMessageParams),SvOi::Err_16065_TRANSLATEVARIANT  );
-			throw Exception;
-		}
-
-		rtype  = Type;
-		rValue = Value;
-	}
-
-
-
 
 	const  WCHAR* VariantHelper::pWhitespace = L"\a\b\f\n\r\t\v ";
 

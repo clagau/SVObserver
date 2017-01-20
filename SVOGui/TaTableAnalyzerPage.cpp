@@ -87,6 +87,23 @@ namespace Seidenader { namespace SVOGui {
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
+	void TaTableAnalyzerPage::DoDataExchange(CDataExchange* pDX)
+	{
+		CPropertyPage::DoDataExchange(pDX);
+		//{{AFX_DATA_MAP(TaTableAnalyzerPage)
+		DDX_Control(pDX, IDC_ANALYZER_LIST, m_analyzerListBox);
+		DDX_Control(pDX, IDC_AVAILABLE_ANALYZER_COMBO, m_availableAnaylzerCB);
+		DDX_Control(pDX, IDC_COLUMN_SELECT_CBOX, m_columnSelectionCB);
+		DDX_Control(pDX, IDC_EDIT_EXCLUDE_HIGH, m_EditExcludeHigh);
+		DDX_Control(pDX, IDC_EDIT_EXCLUDE_LOW, m_EditExcludeLow);
+		DDX_Control(pDX, IDC_EDIT_LIMIT_VALUE, m_EditLimitValue);
+		DDX_Control(pDX, IDC_BUTTON_EXCLUDE_HIGH, m_ButtonExcludeHigh);
+		DDX_Control(pDX, IDC_BUTTON_EXCLUDE_LOW, m_ButtonExcludeLow);
+		DDX_Control(pDX, IDC_BUTTON_LIMIT_VALUE, m_ButtonLimitValue);
+		DDX_Radio(pDX, IDC_ASC_RADIO, m_SortDirection);
+		//}}AFX_DATA_MAP
+	}
+
 	BOOL TaTableAnalyzerPage::OnInitDialog() 
 	{
 		CPropertyPage::OnInitDialog();
@@ -240,7 +257,7 @@ namespace Seidenader { namespace SVOGui {
 			hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 			if ( S_OK != hr )
 			{
-				SVStringArray msgList;
+				SVStringVector msgList;
 				msgList.push_back(m_inputName);
 				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_ConnectFailed, msgList, SvStl::SourceFileParams(StdMessageParams) );
@@ -250,58 +267,41 @@ namespace Seidenader { namespace SVOGui {
 
 	void TaTableAnalyzerPage::OnButtonClickExcludeHigh()
 	{
-		CString Value;
-		m_EditExcludeHigh.GetWindowText( Value );
-		CString Title;
-		Title.LoadString( IDS_OBJECTNAME_TABLEANALYZEREXCLUDE_HIGHVALUE );
+		CString Temp;
+		m_EditExcludeHigh.GetWindowText( Temp );
+		SVString Value = Temp;
+		SVString Title = SvUl_SF::LoadSVString( IDS_OBJECTNAME_TABLEANALYZEREXCLUDE_HIGHVALUE );
 		if (m_objectSelector.Show<ToolSetItemSelector<>>( Value, Title, this))
 		{
-			m_EditExcludeHigh.SetWindowText( Value );
+			m_EditExcludeHigh.SetWindowText( Value.c_str() );
 		}
-		UpdateData(FALSE);
+		UpdateData( false );
 	}
 
 	void TaTableAnalyzerPage::OnButtonClickExcludeLow()
 	{
-		CString Value;
-		m_EditExcludeLow.GetWindowText( Value );
-		CString Title;
-		Title.LoadString( IDS_OBJECTNAME_TABLEANALYZEREXCLUDE_LOWVALUE );
+		CString Temp;
+		m_EditExcludeLow.GetWindowText( Temp );
+		SVString Value = Temp;
+		SVString Title = SvUl_SF::LoadSVString( IDS_OBJECTNAME_TABLEANALYZEREXCLUDE_LOWVALUE );
 		if (m_objectSelector.Show<ToolSetItemSelector<>>( Value, Title, this ))
 		{
-			m_EditExcludeLow.SetWindowText( Value );
+			m_EditExcludeLow.SetWindowText( Value.c_str() );
 		}
-		UpdateData(FALSE);
+		UpdateData( false );
 	}
 
 	void TaTableAnalyzerPage::OnButtonClickLimitValue()
 	{
-		CString Value;
-		m_EditLimitValue.GetWindowText( Value );
-		CString Title;
-		Title.LoadString( IDS_OBJECTNAME_TABLEANALYZERLIMIT_VALUE );
+		CString Temp;
+		m_EditLimitValue.GetWindowText( Temp );
+		SVString Value = Temp;
+		SVString Title = SvUl_SF::LoadSVString( IDS_OBJECTNAME_TABLEANALYZERLIMIT_VALUE );
 		if (m_objectSelector.Show<ToolSetItemSelector<>>( Value, Title, this ))
 		{
-			m_EditLimitValue.SetWindowText( Value );
+			m_EditLimitValue.SetWindowText( Value.c_str() );
 		}
-		UpdateData(FALSE);
-	}
-
-	void TaTableAnalyzerPage::DoDataExchange(CDataExchange* pDX)
-	{
-		CPropertyPage::DoDataExchange(pDX);
-		//{{AFX_DATA_MAP(TaTableAnalyzerPage)
-		DDX_Control(pDX, IDC_ANALYZER_LIST, m_analyzerListBox);
-		DDX_Control(pDX, IDC_AVAILABLE_ANALYZER_COMBO, m_availableAnaylzerCB);
-		DDX_Control(pDX, IDC_COLUMN_SELECT_CBOX, m_columnSelectionCB);
-		DDX_Control(pDX, IDC_EDIT_EXCLUDE_HIGH, m_EditExcludeHigh);
-		DDX_Control(pDX, IDC_EDIT_EXCLUDE_LOW, m_EditExcludeLow);
-		DDX_Control(pDX, IDC_EDIT_LIMIT_VALUE, m_EditLimitValue);
-		DDX_Control(pDX, IDC_BUTTON_EXCLUDE_HIGH, m_ButtonExcludeHigh);
-		DDX_Control(pDX, IDC_BUTTON_EXCLUDE_LOW, m_ButtonExcludeLow);
-		DDX_Control(pDX, IDC_BUTTON_LIMIT_VALUE, m_ButtonLimitValue);
-		DDX_Radio(pDX, IDC_ASC_RADIO, m_SortDirection);
-		//}}AFX_DATA_MAP
+		UpdateData( false );
 	}
 
 	BOOL TaTableAnalyzerPage::OnKillActive()
@@ -374,7 +374,7 @@ namespace Seidenader { namespace SVOGui {
 			else
 			{
 				//display an error if set failed.
-				SVStringArray msgList;
+				SVStringVector msgList;
 				msgList.push_back(SvUl_SF::Format(_T("%d"), hrOk));
 				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_SetTableAnalyzerData, msgList, SvStl::SourceFileParams(StdMessageParams) );

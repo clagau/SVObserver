@@ -65,6 +65,6 @@ private:
     BOOL m_bModified;
     BOOL m_bNewConfig;
     
-    void SetCameraPropForAll(CString sCurrentCamera);
+    void SetCameraPropForAll( LPCTSTR CurrentCamera );
 };
 

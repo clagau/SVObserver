@@ -21,7 +21,7 @@
 #include "SVTimerLibrary/SVClock.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "CameraLibrary/SVDeviceParams.h" //Arvid: added to avoid VS2015 compile Error
-
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -124,9 +124,9 @@ void ExtrasEngine::ResetAutoSaveInformation()
 }
 
 
-void ExtrasEngine::CopyDirectoryToTempDirectory(const CString &rSourceDir) const 
+void ExtrasEngine::CopyDirectoryToTempDirectory(LPCTSTR SourceDir ) const 
 {
-	CopyFilesInDirectory(rSourceDir, SvStl::GlobalPath::Inst().GetAutoSaveTempPath().c_str());
+	CopyFilesInDirectory( SourceDir, SvStl::GlobalPath::Inst().GetAutoSaveTempPath().c_str() );
 }
 
 
@@ -136,9 +136,9 @@ void ExtrasEngine::ToggleEnableFbwf()
 
 	m_FbwfActiveChanging = (m_FbwfActive != m_IsFbwfSelected);
 
-	CString RequiredBatchFileName(SvO::NoneString);
+	SVString RequiredBatchFileName(SvO::NoneString);
 	SvOi::MessageTextEnum msgId = SvOi::Tid_Empty;
-	SVStringArray msgList;
+	SVStringVector msgList;
 
 	if(m_IsFbwfSelected)
 	{
@@ -165,13 +165,12 @@ void ExtrasEngine::ToggleEnableFbwf()
 		}
 	}
 
-	CString BatchfilePath;
-	BatchfilePath.Format("\"%s\\%s\"",SvStl::GlobalPath::Inst().GetBinPath().c_str(),RequiredBatchFileName);
-	auto ret = system(BatchfilePath);
+	SVString BatchfilePath = SvUl_SF::Format( _T("\"%s\\%s\""), SvStl::GlobalPath::Inst().GetBinPath().c_str(), RequiredBatchFileName.c_str());
+	auto ret = system( BatchfilePath.c_str() );
 	if(ret)
 	{
 		msgId = SvOi::Tid_CouldNotExecuteFormatString;
-		msgList.push_back(SVString(BatchfilePath));
+		msgList.push_back( BatchfilePath );
 		// undo selection in this case
 		m_IsFbwfSelected = !m_IsFbwfSelected; 
 		m_FbwfActiveChanging = (m_FbwfActive != m_IsFbwfSelected);

@@ -25,12 +25,12 @@ SVStringValueDeviceParam::SVStringValueDeviceParam(SVDeviceParamEnum typeEnum)
 	m_eDataType = DeviceDataTypeString;
 }
 
-SVStringValueDeviceParam::SVStringValueDeviceParam( const SVStringValueDeviceParam& rhs )
-: SVDeviceParam( rhs )
+SVStringValueDeviceParam::SVStringValueDeviceParam( const SVStringValueDeviceParam& rRhs )
+: SVDeviceParam( rRhs )
 {
 	m_eDataType = DeviceDataTypeString;
-	strValue = rhs.strValue;
-	info = rhs.info;
+	strValue = rRhs.strValue;
+	info = rRhs.info;
 }
 
 SVStringValueDeviceParam::~SVStringValueDeviceParam()
@@ -42,30 +42,25 @@ SVClonable* SVStringValueDeviceParam::CloneImpl() const
 	return new SVStringValueDeviceParam( *this );
 }
 
-SVStringValueDeviceParam::SVStringValueDeviceParam( const CString& rhs )
+SVStringValueDeviceParam::SVStringValueDeviceParam( const SVString& rRhs )
 {
 	m_eDataType = DeviceDataTypeString;
-	strValue = rhs;
+	strValue = rRhs;
 }
 
-SVStringValueDeviceParam::operator CString () const
+SVStringValueDeviceParam& SVStringValueDeviceParam::operator = (const SVStringValueDeviceParam& rRhs)
 {
-	return CString(strValue.c_str());
-}
-
-SVStringValueDeviceParam& SVStringValueDeviceParam::operator = (const SVStringValueDeviceParam& rhs)
-{
-	if ( this != &rhs )
+	if ( this != &rRhs )
 	{
-		strValue = rhs.strValue;
-		info = rhs.info;
+		strValue = rRhs.strValue;
+		info = rRhs.info;
 	}
 	return *this;
 }
 
-SVStringValueDeviceParam& SVStringValueDeviceParam::operator = (const SVString& sVal)
+SVStringValueDeviceParam& SVStringValueDeviceParam::operator = (const SVString& rValue)
 {
-	strValue = sVal;
+	strValue = rValue;
 	return *this;
 }
 
@@ -118,11 +113,6 @@ const SVString& StringValue(const SVDeviceParamWrapper& w)
 SVDeviceParamWrapper DeviceParam(const SVString& s) 
 {
 	return SVStringValueDeviceParam(s.c_str());
-}
-
-SVDeviceParamWrapper DeviceParam(const CString& s) 
-{
-	return SVStringValueDeviceParam(s);
 }
 
 #endif

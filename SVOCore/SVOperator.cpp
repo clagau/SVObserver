@@ -16,7 +16,6 @@
 #pragma endregion Includes
 
 #ifdef _DEBUG
-#define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
@@ -50,7 +49,7 @@ BOOL SVOperatorClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure 
 bool SVOperatorClass::resetAllObjects( bool shouldNotifyFriends, bool silentReset )
 {
 	bool Result = ( S_OK == ResetObject() );
-	ASSERT( Result );
+	assert( Result );
 	return( __super::resetAllObjects( shouldNotifyFriends, silentReset ) && Result );
 }
 

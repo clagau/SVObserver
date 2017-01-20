@@ -40,6 +40,7 @@
 SVAcquisitionClass::SVAcquisitionClass( const SvTi::SVAcquisitionConstructParams& p_rParams )
 : SVODataDeviceClass( p_rParams.m_DigitizerName.c_str() )
 ,m_LUTAndLRSet( p_rParams.m_LUTAndLRSet )
+,m_rDigitizerProc( SVDigitizerProcessingClass::Instance() )
 {
 	mbIsBufferCreated = false;
 	mbTempOnline = false;
@@ -107,7 +108,7 @@ void SVAcquisitionClass::ClearDevice()
 
 	for ( long l = mFiles.GetSize() - 1; -1 < l; l-- )
 	{
-		SVFileNameManagerClass::RemoveItem( &(mFiles[l]) );
+		SVFileNameManagerClass::Instance().RemoveItem( &(mFiles[l]) );
 	}
 
 	m_SingleGrabHandle.clear();
@@ -146,7 +147,7 @@ HRESULT SVAcquisitionClass::Destroy()
 
 	for ( long l = mFiles.GetSize() - 1; -1 < l; l-- )
 	{
-		SVFileNameManagerClass::RemoveItem( &(mFiles[l]) );
+		SVFileNameManagerClass::Instance().RemoveItem( &(mFiles[l]) );
 	}
 
 	return hrOk;
@@ -186,14 +187,14 @@ HRESULT SVAcquisitionClass::Stop()
 
 	if( IsDigitizerSubsystemValid() )
 	{
-		l_Temp = SVDigitizerProcessingClass::Instance().GetDigitizerSubsystem(mcsDigName)->Stop( m_hDigitizer );
+		l_Temp = m_rDigitizerProc.GetDigitizerSubsystem(m_DigName.c_str())->Stop( m_hDigitizer );
 
 		if( S_OK == hr )
 		{
 			hr = l_Temp;
 		}
 
-		l_Temp = SVDigitizerProcessingClass::Instance().GetDigitizerSubsystem(mcsDigName)->UnregisterBufferInterface( m_hDigitizer );
+		l_Temp = m_rDigitizerProc.GetDigitizerSubsystem(m_DigName.c_str())->UnregisterBufferInterface( m_hDigitizer );
 
 		if( S_OK == hr )
 		{
@@ -238,7 +239,7 @@ HRESULT SVAcquisitionClass::CreateBuffers( SVImageInfoClass IInfo, unsigned long
 	Result = DestroyBuffers();
 	if ( S_OK == Result )
 	{
-		_bstr_t bsName = DeviceName();
+		_bstr_t bsName = DeviceName().c_str();
 
 		Result = TheSVDataManager.CreateManagedIndexArray( m_pDataManagerHandle, bsName, ulSize );
 
@@ -249,7 +250,7 @@ HRESULT SVAcquisitionClass::CreateBuffers( SVImageInfoClass IInfo, unsigned long
 		{
 			if ( IsDigitizerSubsystemValid() )
 			{
-				Result = SVDigitizerProcessingClass::Instance().GetDigitizerSubsystem(mcsDigName)->CreateBuffers( m_hDigitizer, ulSize + 3 );
+				Result = m_rDigitizerProc.GetDigitizerSubsystem(m_DigName.c_str())->CreateBuffers( m_hDigitizer, ulSize + 3 );
 			}
 
 			bool l_Status = true;
@@ -316,7 +317,7 @@ HRESULT SVAcquisitionClass::DestroyBuffers()
 	
 	if ( IsDigitizerSubsystemValid() )
 	{
-		if ( S_OK != SVDigitizerProcessingClass::Instance().GetDigitizerSubsystem(mcsDigName)->DestroyBuffers( m_hDigitizer ) )
+		if ( S_OK != m_rDigitizerProc.GetDigitizerSubsystem(m_DigName.c_str())->DestroyBuffers( m_hDigitizer ) )
 		{
 			hrOk = S_FALSE;
 		}
@@ -338,7 +339,7 @@ HRESULT SVAcquisitionClass::LoadFiles(SVFileNameArrayClass &rArray)
 
 	for ( l = mFiles.GetSize() - 1; -1 < l; l-- )
 	{
-		SVFileNameManagerClass::RemoveItem( &(mFiles[l]) );
+		SVFileNameManagerClass::Instance().RemoveItem( &(mFiles[l]) );
 	}
 
 	mFiles = rArray;
@@ -346,7 +347,7 @@ HRESULT SVAcquisitionClass::LoadFiles(SVFileNameArrayClass &rArray)
 
 	for ( l = 0; S_OK == Result  && l < mFiles.GetSize(); l++ )
 	{
-		if ( ! SVFileNameManagerClass::AddItem( &(mFiles[l]) ) )
+		if ( ! SVFileNameManagerClass::Instance().AddItem( &(mFiles[l]) ) )
 		{
 			if( SVSVIMStateClass::CheckState( SV_STATE_REMOTE_CMD ) )
 			{
@@ -355,12 +356,12 @@ HRESULT SVAcquisitionClass::LoadFiles(SVFileNameArrayClass &rArray)
 			if( LogOnly )
 			{
 				SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-				Exception.setMessage( SVMSG_SVO_74_LOAD_FILE, mFiles[l].GetFullFileName(), SvStl::SourceFileParams(StdMessageParams), SvOi::Err_25047_LoadFileFailed );
+				Exception.setMessage( SVMSG_SVO_74_LOAD_FILE, mFiles[l].GetFullFileName().c_str(), SvStl::SourceFileParams(StdMessageParams), SvOi::Err_25047_LoadFileFailed );
 			}
 			else
 			{
 				SvStl::MessageMgrStd Exception( SvStl::LogAndDisplay );
-				if( IDYES == Exception.setMessage( SVMSG_SVO_74_LOAD_FILE, mFiles[l].GetFullFileName(), SvStl::SourceFileParams(StdMessageParams), SvOi::Err_25047_LoadFileFailed, SV_GUID_NULL, MB_YESNO ) )
+				if( IDYES == Exception.setMessage( SVMSG_SVO_74_LOAD_FILE, mFiles[l].GetFullFileName().c_str(), SvStl::SourceFileParams(StdMessageParams), SvOi::Err_25047_LoadFileFailed, SV_GUID_NULL, MB_YESNO ) )
 				{
 					//All other missing files will only be logged
 					LogOnly = true;
@@ -527,7 +528,7 @@ HRESULT SVAcquisitionClass::UnloadFiles()
 
 	for ( long l = mFiles.GetSize() - 1; -1 < l; l-- )
 	{
-		SVFileNameManagerClass::RemoveItem( &(mFiles[l]) );
+		SVFileNameManagerClass::Instance().RemoveItem( &(mFiles[l]) );
 	}
 
 	mFiles.RemoveAll();
@@ -724,7 +725,7 @@ HRESULT SVAcquisitionClass::GetNextIndex( SVDataManagerHandle &rDMHandle, SVData
 
 	if( S_OK != hrOk )
 	{
-		SVStringArray msgList;
+		SVStringVector msgList;
 		msgList.push_back(GetDeviceName());
 		SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 		Exception.setMessage( static_cast<DWORD> (hrOk), SvOi::Tid_SVAcquisitionClass_GetNextIndex, msgList, SvStl::SourceFileParams(StdMessageParams) );
@@ -789,7 +790,7 @@ HRESULT SVAcquisitionClass::ReadCameraFile( const SVString& , SVDeviceParamColle
 
 bool SVAcquisitionClass::IsDigitizerSubsystemValid() const
 {
-	return SVDigitizerProcessingClass::Instance().IsValidDigitizerSubsystem(mcsDigName);
+	return m_rDigitizerProc.IsValidDigitizerSubsystem(m_DigName.c_str());
 }
 
 DWORD WINAPI SVAcquisitionClass::SingleGrabHelperFn(LPVOID lpParameter)
@@ -1024,11 +1025,11 @@ HRESULT SVAcquisitionClass::StartDigitizer()
 	
 	if ( IsDigitizerSubsystemValid() )
 	{
-		hrOk = SVDigitizerProcessingClass::Instance().GetDigitizerSubsystem(mcsDigName)->RegisterBufferInterface( m_hDigitizer, this );
+		hrOk = m_rDigitizerProc.GetDigitizerSubsystem(m_DigName.c_str())->RegisterBufferInterface( m_hDigitizer, this );
 
 		if( S_OK == hrOk )
 		{
-			hrOk = SVDigitizerProcessingClass::Instance().GetDigitizerSubsystem(mcsDigName)->Start( m_hDigitizer );
+			hrOk = m_rDigitizerProc.GetDigitizerSubsystem(m_DigName.c_str())->Start( m_hDigitizer );
 		}
 	}
 	else

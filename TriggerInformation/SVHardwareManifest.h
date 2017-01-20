@@ -17,6 +17,7 @@
 #include "SVTriggerDeviceParams.h"
 #include "SVIMTypeInfoStruct.h"
 #include "SVSystemLibrary/SVObserverEnums.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 namespace Seidenader { namespace TriggerInformation {

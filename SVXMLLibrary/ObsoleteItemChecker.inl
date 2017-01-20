@@ -10,28 +10,28 @@ namespace Seidenader { namespace  SVXMLLibrary
 	#pragma region String Defines
 	LPCWSTR const TAG_ALIAS = L"alias ";
 	LPCWSTR const TAG_SINGLE_QUOTE = L"\'";
-	LPCSTR const TAG_VIPER = "Viper_";
-	LPCSTR const TAG_1394 = "Matrox_1394";
-	LPCSTR const TAG_GAGETOOL = "Gage Tool";
-	LPCSTR const TAG_PROFILETOOL = "Profile Tool";
-	LPCSTR const TAG_OCROCVANALYZER = "OCR  OCV Analyzer";
-	LPCSTR const TAG_OCROCVGRAYANALYZER = "OCR  OCV Gray Scale Analyzer";
+	const TCHAR* const TAG_VIPER = "Viper_";
+	const TCHAR* const TAG_1394 = "Matrox_1394";
+	const TCHAR* const TAG_GAGETOOL = "Gage Tool";
+	const TCHAR* const TAG_PROFILETOOL = "Profile Tool";
+	const TCHAR* const TAG_OCROCVANALYZER = "OCR  OCV Analyzer";
+	const TCHAR* const TAG_OCROCVGRAYANALYZER = "OCR  OCV Gray Scale Analyzer";
 
-	LPCTSTR const ITEM_ANALOG_CAMERA = _T("Analog Camera - Obsolete");
-	LPCTSTR const ITEM_1394_CAMERA = _T("1394 Camera - Obsolete");
-	LPCTSTR const ITEM_GAGE_TOOL = _T("Gage Tool - Obsolete");
-	LPCTSTR const ITEM_PROFILE_TOOL = _T("Profile Tool - Obsolete");
-	LPCTSTR const ITEM_FAST_OCR = _T("Fast OCR - Obsolete");
-	LPCTSTR const ITEM_PRODUCTTYPE = _T("Unknown Product Type");
+	const TCHAR* const ITEM_ANALOG_CAMERA = _T("Analog Camera - Obsolete");
+	const TCHAR* const ITEM_1394_CAMERA = _T("1394 Camera - Obsolete");
+	const TCHAR* const ITEM_GAGE_TOOL = _T("Gage Tool - Obsolete");
+	const TCHAR* const ITEM_PROFILE_TOOL = _T("Profile Tool - Obsolete");
+	const TCHAR* const ITEM_FAST_OCR = _T("Fast OCR - Obsolete");
+	const TCHAR* const ITEM_PRODUCTTYPE = _T("Unknown Product Type");
 	#pragma endregion String Defines
 
 	struct ObsoleteItem
 	{
-		std::string m_tag;
-		std::string m_itemType;
+		SVString m_tag;
+		SVString m_itemType;
 		int m_errorNo;
-		ObsoleteItem(const std::string& tag, const std::string& itemType, int errorNo)
-		: m_tag(tag), m_itemType(itemType), m_errorNo(errorNo)
+		ObsoleteItem(const SVString& rTag, const SVString& rItemType, int errorNo)
+		: m_tag(rTag), m_itemType(rItemType), m_errorNo(errorNo)
 		{
 		}
 	};
@@ -40,7 +40,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 		
 		
 	template< typename SVTreeType >
-	HRESULT CheckObsoleteItems( SVTreeType& rTree, const unsigned long& ulSVOConfigVersion, CString& rItemType, int& errorCode )
+	HRESULT CheckObsoleteItems( SVTreeType& rTree, const unsigned long& ulSVOConfigVersion, SVString& rItemType, int& errorCode )
 	{
 		HRESULT hr = S_OK;
 		if (0x00072800 > ulSVOConfigVersion) // if 7.40 or greater no need to check
@@ -52,7 +52,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 		
 		
 	template<typename TreeType>
-	static bool HasAcquisitionDevice(TreeType& rTree, const ObsoleteItems& rItems, CString& rItemType, int& rErrorCode)
+	static bool HasAcquisitionDevice(TreeType& rTree, const ObsoleteItems& rItems, SVString& rItemType, int& rErrorCode)
 	{
 		TreeType::SVBranchHandle hChild( nullptr );
 		TreeType::SVBranchHandle hBoardChild( nullptr );
@@ -63,15 +63,15 @@ namespace Seidenader { namespace  SVXMLLibrary
 
 		while ( !bFound && bOk && nullptr != hBoardChild )
 		{
-			const std::string& BoardName = rTree.getBranchName( hBoardChild );
+			const SVString& rBoardName = rTree.getBranchName( hBoardChild );
 			for (ObsoleteItems::const_iterator it = rItems.begin();it != rItems.end() && !bFound; ++it)
 			{
-				size_t pos = BoardName.find(it->m_tag);
-				if (std::string::npos != pos) 
+				size_t pos = rBoardName.find(it->m_tag);
+				if (SVString::npos != pos) 
 				{
 					bFound = true;
 					rErrorCode = it->m_errorNo;
-					rItemType = it->m_itemType.c_str();
+					rItemType = it->m_itemType;
 				}
 			}
 			hBoardChild = rTree.getNextBranch( hChild, hBoardChild );
@@ -80,7 +80,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 	}
 		
 	template<typename TreeType>
-	static bool HasTaskObject(TreeType& rTree, const ObsoleteItems& rItems, CString& rItemType, int& rErrorCode)
+	static bool HasTaskObject(TreeType& rTree, const ObsoleteItems& rItems, SVString& rItemType, int& rErrorCode)
 	{
 		bool bFound = false;
 
@@ -95,9 +95,9 @@ namespace Seidenader { namespace  SVXMLLibrary
 			
 				while( !bFound && nullptr != htiDataChild )
 				{
-					const std::string& DataName = rTree.getBranchName( htiDataChild );
+					const SVString& rDataName = rTree.getBranchName( htiDataChild );
 
-					if ( 0 == DataName.compare( CTAG_SVIPDOC ) )
+					if ( 0 == rDataName.compare( CTAG_SVIPDOC ) )
 					{
 						TreeType::SVBranchHandle htiSVIPDoc = htiDataChild;
 						_variant_t value;
@@ -115,12 +115,12 @@ namespace Seidenader { namespace  SVXMLLibrary
 								{
 									bFound = true;
 									rErrorCode = it->m_errorNo;
-									rItemType = it->m_itemType.c_str();
+									rItemType = it->m_itemType;
 								}
 							}
 						}
 					}
-					else if ( 0 == DataName.compare( CTAG_INSPECTION_PROCESS ) )
+					else if ( 0 == rDataName.compare( CTAG_INSPECTION_PROCESS ) )
 					{
 						TreeType::SVBranchHandle hItemToolset;
 						if( SVNavigateTree::GetItemBranch( rTree, CTAG_TOOLSET_SET, htiDataChild, hItemToolset ) )
@@ -132,7 +132,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 								{
 									bFound = true;
 									rErrorCode = it->m_errorNo;
-									rItemType = it->m_itemType.c_str();
+									rItemType = it->m_itemType;
 								}
 							}
 						}
@@ -146,7 +146,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 	}
 		
 	template<typename TreeType>
-	static bool HasInvalidProductType(TreeType& rTree, CString& rItemType, int& rErrorCode)
+	static bool HasInvalidProductType(TreeType& rTree, SVString& rItemType, int& rErrorCode)
 	{
 		bool bInvalid = false;
 		TreeType::SVBranchHandle hChild(nullptr);
@@ -170,7 +170,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 	}
 
 	template<typename TreeType>
-	HRESULT HasObsoleteItem(TreeType& rTree, CString& rItemType, int& rErrorCode)
+	HRESULT HasObsoleteItem(TreeType& rTree, SVString& rItemType, int& rErrorCode)
 	{
 		ObsoleteItems cameraItems = boost::assign::list_of<>
 			( ObsoleteItem(TAG_VIPER, ITEM_ANALOG_CAMERA, SvOi::Err_15038_AnalogCamera) )

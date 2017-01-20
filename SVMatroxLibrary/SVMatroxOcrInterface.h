@@ -11,7 +11,9 @@
 
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <comdef.h>
+#include "SVUtilityLibrary/SVString.h"
 #include "SVUtilityLibrary/SVUtilityGlobals.h"
 #include "SVMatroxEnums.h"
 #include "SVMatroxStatusInformation.h"
@@ -21,6 +23,7 @@
 #include "SVMatroxApplicationInterface.h"
 #include "SVMatroxOcrCreateStruct.h"
 #include "SVMatroxOcrCalibrateStruct.h"
+#pragma endregion Includes
 
 class SVCommandDataHolder;
 

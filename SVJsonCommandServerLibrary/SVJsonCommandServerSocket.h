@@ -11,18 +11,21 @@
 
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <deque>
 //Moved to precompiled header: #include <boost/function.hpp>
 #include "SVSocketLibrary/SVJsonPacket.h"
 #include "SVSocketLibrary/SVServerSocket.h"
 #include "SVSystemLibrary/SVCriticalSection.h"
 #include "SVSystemLibrary/SVThread.h"
+#include "SVUtilityLibrary/SVString.h"
+#pragma endregion Includes
 
 class SVJsonCommandServerSocket
 {
 public:
 	typedef boost::function<void ()> ConnectionAcceptedCallback;
-	typedef boost::function<void ( const std::string& data )> DataReceivedCallback;
+	typedef boost::function<void ( const SVString& rData )> DataReceivedCallback;
 
 	SVJsonCommandServerSocket();
 	virtual ~SVJsonCommandServerSocket();
@@ -32,19 +35,19 @@ public:
 
 	bool Start(unsigned short portNo);
 	void Stop();
-	bool Write(const std::string& data);
+	bool Write(const SVString& rData);
 
 	bool CanAccept() const;
 	bool HasClient() const;
 	
 private:
-	typedef std::deque< std::string > SVWriteDeque;
+	typedef std::deque< SVString > SVWriteDeque;
 	typedef boost::function<void ( bool& )> SVThreadProcessHandler;
 
-	static void CALLBACK OnAPCEvent( ULONG_PTR data );
+	static void CALLBACK OnAPCEvent( ULONG_PTR pData );
 
 	void OnAccept();
-	void OnDataReceived(const std::string& data);
+	void OnDataReceived(const SVString& rData);
 	void ProcessDataRead(const char* p_pBuf);
 
 	void CloseClient();

@@ -59,7 +59,7 @@ void SVObjectScriptAliasListClass::CleanUp()
 	m_mapAlias.clear();
 }
 
-SVObjectScriptParserSVXClass::SVObjectScriptParserSVXClass(unsigned long parserHandle, SVSharedPtr<CString> pScript, const GUID& OwnerGuid, SVObjectClass* pOwnerObject, CWnd* pWnd)
+SVObjectScriptParserSVXClass::SVObjectScriptParserSVXClass(unsigned long parserHandle, SVSharedPtr<SVString> pScript, const GUID& OwnerGuid, SVObjectClass* pOwnerObject, CWnd* pWnd)
 : SVObjectScriptParserBase(parserHandle, OwnerGuid, pOwnerObject, pWnd)
 , m_pParseString( pScript )
 {
@@ -1285,7 +1285,7 @@ LPCTSTR SVObjectScriptParserSVXClass::Parse( SVObjectClass* pOwner, LPCTSTR tstr
 								{
 									ASSERT(FALSE);
 									SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-									SVStringArray msgList;
+									SVStringVector msgList;
 									msgList.push_back(pObject->GetName());
 									Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_Error_ScriptParseFailed, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10030 ); 
 									
@@ -2394,12 +2394,12 @@ bool SVObjectScriptParserSVXClass::ProcessMemberAssignment( SVExpressionStack& r
 
 size_t SVObjectScriptParserSVXClass::GetTotal() const
 {
-	return m_pParseString->GetLength();
+	return m_pParseString->size();
 }
 
 HRESULT SVObjectScriptParserSVXClass::DoParse()
 {
-	LPCTSTR pScript = Parse( m_pOwnerObject, *m_pParseString );
+	LPCTSTR pScript = Parse( m_pOwnerObject, m_pParseString->c_str() );
 	return (nullptr != pScript) ? S_OK : E_FAIL;
 }
 

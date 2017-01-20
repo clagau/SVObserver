@@ -153,22 +153,42 @@ namespace Seidenader { namespace SVOGui
 
 	void SVToolAdjustmentDialogPassFailPageClass::OnBnClickedFailHighIndirect()
 	{
-		setValuePerObjectSelector(m_FailHigh, RangeEnum::ER_FailHigh);
+		SVString Value( m_FailHigh );
+		if( ShowObjectSelector( Value, RangeEnum::ER_FailHigh) )
+		{
+			m_FailHigh = Value.c_str();
+			UpdateData( false );
+		}
 	}
 
 	void SVToolAdjustmentDialogPassFailPageClass::OnBnClickedWarnlHighIndirect()
 	{
-		setValuePerObjectSelector(m_WarnHigh, RangeEnum::ER_WarnHigh);
+		SVString Value( m_WarnHigh );
+		if( ShowObjectSelector( Value, RangeEnum::ER_WarnHigh) )
+		{
+			m_WarnHigh = Value.c_str();
+			UpdateData( false );
+		}
 	}
 
 	void SVToolAdjustmentDialogPassFailPageClass::OnBnClickedWarnLowIndirect()
 	{
-		setValuePerObjectSelector(m_WarnLow, RangeEnum::ER_WarnLow);
+		SVString Value( m_WarnLow );
+		if( ShowObjectSelector( Value, RangeEnum::ER_WarnLow) )
+		{
+			m_WarnLow = Value.c_str();
+			UpdateData( false );
+		}
 	}
 
 	void SVToolAdjustmentDialogPassFailPageClass::OnBnClickedFailedLowIndirect()
 	{
-		setValuePerObjectSelector(m_FailLow, RangeEnum::ER_FailLow);
+		SVString Value( m_FailLow );
+		if( ShowObjectSelector( Value, RangeEnum::ER_FailLow) )
+		{
+			m_FailLow = Value.c_str();
+			UpdateData( false );
+		}
 	}
 	#pragma endregion Protected Methods
 
@@ -182,7 +202,7 @@ namespace Seidenader { namespace SVOGui
 		try
 		{
 			SetInspectionData();
-			Validate(AfxGetResourceHandle());
+			Validate();
 			Commit();
 		}
 		catch (const SvStl::MessageContainer& rSvE)
@@ -195,21 +215,13 @@ namespace Seidenader { namespace SVOGui
 		return bRetVal;
 	}
 
-	void SVToolAdjustmentDialogPassFailPageClass::setValuePerObjectSelector(CString& value, RangeEnum::ERange fieldEnum)
-	{
-		if (ShowObjectSelector(value, fieldEnum))
-		{
-			 UpdateData(false);
-		}
-	}
-
-	bool SVToolAdjustmentDialogPassFailPageClass::ShowObjectSelector(CString& name, RangeEnum::ERange fieldEnum)
+	bool SVToolAdjustmentDialogPassFailPageClass::ShowObjectSelector(SVString& rName, RangeEnum::ERange fieldEnum)
 	{
 		SVString Title = GetOwnerName();
 		Title += _T(": ");
-		Title += RangeEnum::ERange2String(AfxGetResourceHandle(), fieldEnum);
+		Title += RangeEnum::ERange2String(fieldEnum);
 
-		return m_objectSelector.Show<ToolSetItemSelector<GuiCmd::RangeSelectorFilterType>>(name, Title.c_str(), this);
+		return m_objectSelector.Show<ToolSetItemSelector<GuiCmd::RangeSelectorFilterType>>( rName, Title, this);
 	}
 
 	#pragma endregion Private Methods

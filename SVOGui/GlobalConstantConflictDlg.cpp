@@ -24,7 +24,7 @@ static char THIS_FILE[] = __FILE__;
 namespace Seidenader { namespace SVOGui
 {
 #pragma region Declarations
-	static const int HeaderSize = 1;
+	static const int cHeaderSize = 1;
 	static const int DataSets = 2;
 	static const int GridColumnNumber = 4;
 	static const int GridColumnWidth[] = {30, 150, 80, 100};
@@ -61,14 +61,14 @@ namespace Seidenader { namespace SVOGui
 		CDialog::OnInitDialog();
 
 		m_Grid.SetRedraw( false );
-		m_Grid.SetFixedRowCount( HeaderSize );
+		m_Grid.SetFixedRowCount( cHeaderSize );
 		m_Grid.SetRowResize( false );
 		m_Grid.SetColumnResize( false );
 		m_Grid.AllowReorderColumn( false );
 		m_Grid.EnableDragAndDrop( false );
 		m_Grid.SetEditable( false );
 		m_Grid.SetColumnCount( GridColumnNumber * DataSets );
-		m_Grid.SetRowCount( static_cast<int> (m_rGlobalPairs.size()) + HeaderSize );
+		m_Grid.SetRowCount( static_cast<int> (m_rGlobalPairs.size()) + cHeaderSize );
 		//This is 2 sets of the same data 
 		for( int i=0; i < DataSets; i++ )
 		{

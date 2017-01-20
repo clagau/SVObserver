@@ -17,6 +17,7 @@
 #include "SVStatusLibrary/MessageManager.h"
 #include "TextDefinesSvO.h"
 #include "ObjectInterfaces/ErrorNumbers.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 IMPLEMENT_DYNAMIC(SVLightReferenceDialogPropertySheetClass, CPropertySheet)
@@ -92,7 +93,7 @@ bool SVLightReferenceDialogPropertySheetClass::CreatePages( SVVirtualCameraPtrSe
 		{
 			if (0 == pLR->NumBands() )
 			{
-				SVStringArray msgList;
+				SVStringVector msgList;
 				if( !( pDevice.empty() ) )
 				{
 					msgList.push_back(SvUl_SF::Format("%s (Dig_%d.Ch_%d)", pCamera->GetName(), pDevice->DigNumber(), pDevice->Channel()));
@@ -115,10 +116,9 @@ bool SVLightReferenceDialogPropertySheetClass::CreatePages( SVVirtualCameraPtrSe
 				for (int iAttribute=0; iAttribute < pLRBand->NumAttributes(); iAttribute++)
 				{
 					// the IDs are no longer valid... use the text instead
-					CString sTabText;
-					CString sDigName; sDigName.Format(_T("Dig.%d"), pDevice->DigNumber());
-					sTabText = pCamera->GetName() + CString(_T(" ")) + sDigName + CString(_T(" ")) + pLRBand->Attribute( iAttribute ).strName.c_str();
-					SVLightReferenceDialogPropertyPageClass* pPage = new SVLightReferenceDialogPropertyPageClass( sTabText );
+					SVString DigitizerName = SvUl_SF::Format( _T("Dig.%d"), pDevice->DigNumber() );
+					SVString TabText = pCamera->GetName() + SVString(_T(" ")) + DigitizerName + SVString(_T(" ")) + pLRBand->Attribute( iAttribute ).strName;
+					SVLightReferenceDialogPropertyPageClass* pPage = new SVLightReferenceDialogPropertyPageClass( TabText.c_str() );
 					pPage->mpCamera = pCamera;
 					pPage->mpDevice = pDevice;
 					pPage->mpLR = pLR;
@@ -214,11 +214,10 @@ BOOL SVLightReferenceDialogPropertyPageClass::OnSetActive()
 	mValueSlider.SetPageSize( (max-min)/10 );
 
 	// Set Min and Max Text 
-	CString strTmp;
-	strTmp.Format("%ld",min);
-	GetDlgItem(IDC_MIN)->SetWindowText(strTmp);
-	strTmp.Format("%ld",max);
-	GetDlgItem(IDC_MAX)->SetWindowText(strTmp);
+	SVString Text = SvUl_SF::Format( _T("%ld"), min );
+	GetDlgItem(IDC_MIN)->SetWindowText( Text.c_str() );
+	Text = SvUl_SF::Format( _T("%ld"), max );
+	GetDlgItem(IDC_MAX)->SetWindowText( Text.c_str() );
 
 	// Update step width...
 	unsigned long step;

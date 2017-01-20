@@ -446,7 +446,7 @@ BOOL SVThresholdClass::onRun( BOOL First,
 		SetInvalid();
 		RRunStatus.SetInvalid();
 
-		SVStringArray msgList;
+		SVStringVector msgList;
 		msgList.push_back(_T("SVThresholdClass::onRun"));
 		
 		SvStl::MessageMgrStd Exception( SvStl::LogOnly );

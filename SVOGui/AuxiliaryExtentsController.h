@@ -11,10 +11,11 @@
 //Moved to precompiled header: #include <boost/noncopyable.hpp>
 #include "ObjectInterfaces\NameValueList.h"
 #include "SVUtilityLibrary\SVGUID.h"
+#include "SVUtilityLibrary/SVString.h"
 #include "ImageController.h"
-#include "SVOGui\BoundValue.h"
-#include "SVOGui\ValuesAccessor.h"
-#include "SVOGui\GuiController.h"
+#include "BoundValue.h"
+#include "ValuesAccessor.h"
+#include "GuiController.h"
 #pragma endregion Includes
 
 namespace Seidenader

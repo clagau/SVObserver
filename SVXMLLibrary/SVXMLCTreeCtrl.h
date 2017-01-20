@@ -13,6 +13,7 @@
 
 #pragma region Includes
 #include "SVXMLTree.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 namespace Seidenader { namespace SVXMLLibrary
@@ -137,7 +138,7 @@ namespace Seidenader { namespace SVXMLLibrary
 		//! \param pBranch [in] handle to the branch
 		//! \returns the branch name
 		//************************************
-		virtual std::string	getBranchName( const SVBranchHandle pBranch ) const override;
+		virtual SVString getBranchName( const SVBranchHandle pBranch ) const override;
 
 		//************************************
 		//! Method to determine if the branch has child leaves
@@ -198,7 +199,7 @@ namespace Seidenader { namespace SVXMLLibrary
 		//! \param pLeaf [in] handle to the leaf
 		//! \returns the leaf name
 		//************************************
-		virtual std::string	getLeafName( const SVLeafHandle pLeaf ) const override;
+		virtual SVString getLeafName( const SVLeafHandle pLeaf ) const override;
 
 		//************************************
 		//! Method to get the leaf data

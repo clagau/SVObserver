@@ -22,6 +22,7 @@
 #include "SVGigeCameraParametersLibrary/SVGigeLUTGetter.h"
 #include "SVGigeCameraParametersLibrary/SVGigeReadSerialNumber.h"
 #include "SVGigeCameraParametersLibrary/SVGigeReadIPAddress.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 struct SVGigeTriggerLineGet

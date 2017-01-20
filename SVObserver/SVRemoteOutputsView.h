@@ -13,6 +13,7 @@
 
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <vector>
+#include "SVUtilityLibrary/SVString.h"
 
 // SVRemoteOutputsView view
 class SVIODoc;
@@ -22,14 +23,14 @@ class SVRemoteOutputsView : public CListView
 	DECLARE_DYNCREATE(SVRemoteOutputsView)
 
 protected:
-	typedef std::map< CString, bool > SVGroupStateMap;
+	typedef std::map< SVString, bool > SVGroupStateMap;
 
 	SVRemoteOutputsView();           // protected constructor used by dynamic creation
 	virtual ~SVRemoteOutputsView();
 	DECLARE_MESSAGE_MAP()
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs) override;
 	virtual void OnUpdate(CView* /*pSender*/, LPARAM /*lHint*/, CObject* /*pHint*/) override;
-	HRESULT RemoteOutputGroupNameAtItem( CString& p_rstrGroupName, int p_iItem );
+	HRESULT RemoteOutputGroupNameAtItem( SVString& rGroupName, int p_iItem );
 	bool EditOutput(int p_iWhere);
 	bool AddOutput(int p_iWhere);
 

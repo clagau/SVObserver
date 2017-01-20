@@ -95,7 +95,7 @@
     <ClCompile Include="SVPoint.cpp" />
     <ClCompile Include="SVSafeArray.cpp" />
     <ClCompile Include="SVString.cpp" />
-    <ClCompile Include="SVStringLoader.cpp" />
+    <ClCompile Include="SVStringConversions.cpp" />
     <ClCompile Include="SVUtilityGlobals.cpp" />
     <ClCompile Include="Unzip.cpp" />
     <ClCompile Include="Zip.cpp" />
@@ -127,7 +127,6 @@
     <ClInclude Include="SVSharedPtr.h" />
     <ClInclude Include="SVString.h" />
     <ClInclude Include="SVStringConversions.h" />
-    <ClInclude Include="SVStringLoader.h" />
     <ClInclude Include="SVUniqueIDGenerator.h" />
     <ClInclude Include="SVUniqueObjectID.h" />
     <ClInclude Include="SVUtilityGlobals.h" />

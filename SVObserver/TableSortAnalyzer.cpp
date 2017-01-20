@@ -117,7 +117,7 @@ BOOL TableSortAnalyzer::OnValidate()
 		if( !Result && 0 != getFirstTaskMessage().getMessage().m_MessageCode)
 		{
 			SvStl::MessageContainer message;
-			SVStringArray msgList;
+			SVStringVector msgList;
 			msgList.push_back(GetName());
 			message.setMessage( SVMSG_SVO_5074_BASECLASSONVALIDATEFAILED, SvOi::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams) );
 			addTaskMessage( message );

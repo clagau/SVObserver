@@ -17,8 +17,7 @@ namespace Seidenader
 {
 	namespace ObjectInterfaces
 	{
-		typedef std::pair<SVString, SVString> Relation;
-		typedef std::deque<Relation> DependencyList;
+		typedef std::deque<SVStringPair> DependencyList;
 	}
 }
 namespace SvOi = Seidenader::ObjectInterfaces;
