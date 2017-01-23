@@ -13,7 +13,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVOGui/ZoomHelper.h"
+#include "ZoomHelper.h"
 #pragma endregion Includes
 
 #pragma region Declarations

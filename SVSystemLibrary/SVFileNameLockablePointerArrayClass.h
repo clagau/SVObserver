@@ -12,7 +12,7 @@
 #pragma once
 
 #include "SVContainerLibrary/SVVector.h"
-#include "SVSystemLibrary/SVLockableClass.h"
+#include "SVLockableClass.h"
 #include "SVUtilityLibrary/SVString.h"
 
 class SVFileNameClass;

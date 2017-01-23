@@ -13,7 +13,7 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <fstream>
 
-#include "TriggerHandling/TriggerBasics.h"
+#include "TriggerBasics.h"
 #include "SVTriggerClass.h"
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes

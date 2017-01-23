@@ -19,7 +19,7 @@
 #include "SVColor.h"
 //for image copy
 #include "SVMatroxLibrary\SVMatroxBufferInterface.h"
-#include "SVOGui\DisplayHelper.h"
+#include "DisplayHelper.h"
 #include "ObjectInterfaces\ISVImage.h"
 #include "ObjectInterfaces\IMatroxImageData.h"
 

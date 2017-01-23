@@ -15,11 +15,11 @@
 #include "SVOResource/resource.h"
 #include "SVLibrary/SVFileNameClass.h"
 //TODO: MZA(10.Nov 2014): Move this files to SVOGui project and then remove folder from include and Namespace add-on add PictureDisplay declaration.
-#include "SVOGui/PictureDisplay.h"
-#include "SVOGui/ImageController.h"
-#include "SVOGui/GuiController.h"
-#include "SVOGui/ValuesAccessor.h"
-#include "SVOGui/BoundValue.h"
+#include "PictureDisplay.h"
+#include "ImageController.h"
+#include "GuiController.h"
+#include "ValuesAccessor.h"
+#include "BoundValue.h"
 #pragma endregion Includes
 
 namespace Seidenader

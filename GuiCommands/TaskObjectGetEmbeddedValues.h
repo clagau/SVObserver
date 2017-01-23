@@ -13,7 +13,6 @@
 #include "ObjectInterfaces\IObjectManager.h"
 #include "ObjectInterfaces\IObjectClass.h"
 #include "ObjectInterfaces\IValueObject.h"
-#include "SVOGUI/BoundValue.h"
 #include "SVUtilityLibrary\SVGUID.h"
 #include "SVUtilityLibrary\SVSharedPtr.h"
 #pragma endregion Includes

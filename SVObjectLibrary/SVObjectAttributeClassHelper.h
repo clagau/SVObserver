@@ -13,7 +13,7 @@
 #pragma region Includes
 //Moved to precompiled header: #include <vector>
 #include "SVContainerLibrary\SVObjectArrayClassTemplate.h"
-#include "SVObjectLibrary/SVObjectAttributeClass.h"
+#include "SVObjectAttributeClass.h"
 #pragma endregion Includes
 
 class SVObjectAttributeClassHelper

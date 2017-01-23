@@ -13,11 +13,11 @@
 //Moved to precompiled header: #include <boost/assign/std/map.hpp>
 //Moved to precompiled header: #include <boost/assign/list_of.hpp>
 #include "VariantHelper.h"
-#include "SVXMLLibrary/SVVariantCustomTypes.h"
+#include "SVVariantCustomTypes.h"
 #include "SVStatusLibrary/MessageContainer.h"
 #include "SVMessage/SVMessage.h"
 #include "ObjectInterfaces/ICustom2Filter.h"
-#include "SVXMLLibrary/SVVariantConverter.h"
+#include "SVVariantConverter.h"
 #include "ObjectInterfaces/ErrorNumbers.h"
 #pragma endregion Includes
 

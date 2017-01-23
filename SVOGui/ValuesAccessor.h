@@ -9,6 +9,7 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <guiddef.h>
+#include "BoundValue.h"
 #include "ObjectInterfaces/NameValueList.h"
 #include "SVObjectLibrary/SVObjectSynchronousCommandTemplate.h"
 #include "GuiCommands/TaskObjectGetEmbeddedValues.h"

@@ -11,10 +11,10 @@
 #pragma once
 
 #pragma region Includes
-#include "SVOGui/BoundValue.h"
-#include "SVOGui/ValuesAccessor.h"
-#include "SVOGui/GuiController.h"
-#include "SVOGui/SVToolAdjustmentDialogImagePageClass.h"
+#include "BoundValue.h"
+#include "ValuesAccessor.h"
+#include "GuiController.h"
+#include "SVToolAdjustmentDialogImagePageClass.h"
 #pragma endregion Includes
 
 namespace Seidenader

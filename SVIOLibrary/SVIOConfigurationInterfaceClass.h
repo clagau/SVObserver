@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include "SVIOLibrary/SVIODigitalArrayClass.h"
+#include "SVIODigitalArrayClass.h"
 #include "SVIODigitalLoadLibraryClass.h"
 
 class SVIOConfigurationInterfaceClass  

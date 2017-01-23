@@ -15,7 +15,7 @@
 //Moved to precompiled header: #include <boost/assign/list_of.hpp>
 #include "SVObjectXMLWriter.h"
 #include "SVUtilityLibrary/SVStringConversions.h"
-#include "SVXMLLibrary/SVXMLLibraryGlobals.h"
+#include "SVXMLLibraryGlobals.h"
 #include "SVUtilityLibrary/SVSafeArray.h"
 #include "SVXMLEncryptionClass.h"
 
