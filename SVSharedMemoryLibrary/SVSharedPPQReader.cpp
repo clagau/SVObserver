@@ -320,7 +320,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		}
 	}
 
-	FailStatusMap SVSharedPPQReader::GetFailStatus(const SVStringVector& names) const
+	FailStatusMap SVSharedPPQReader::GetFailStatus(const SvSml::MonitorEntryVector & Entries) const
 	{
 		FailStatusMap ret;
 		const SVSharedPPQReader& reader = *this;
@@ -334,11 +334,11 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 				ProductPtr pp = reader.GetReject(idx);
 				ret.insert(std::make_pair(trig, Values()));
 				Values& values = ret[trig];
-				values.reserve(names.size());
-				std::for_each(names.begin(), names.end(), //init values with fail status names/triggers
-					[&values, trig, pp](const SVString& name)
+				values.reserve(Entries.size());
+				std::for_each(Entries.begin(), Entries.end(), //init values with fail status names/triggers
+				[&values, trig, pp] (const SvSml::MonitorEntry & Entry)
 				{
-					Value val = pp->find(name);
+					Value val = pp->find(Entry.name);
 					if (!val.empty())
 					{
 						val.trigger = trig;

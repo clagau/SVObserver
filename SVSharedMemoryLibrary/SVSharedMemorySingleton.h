@@ -16,7 +16,6 @@
 #include "SVUtilityLibrary/SVString.h"
 #include "SVSharedMemoryLibrary/SVSharedPPQWriter.h"
 #include "SVSharedMemoryLibrary/SVMonitorListWriter.h"
-#include "SVSharedMemoryLibrary/SVShareControlHandler.h"
 #include "SVSharedMemoryLibrary/SVSharedMemorySettings.h"
 #include "SVSharedMemoryLibrary/SVProductFilterEnum.h"
 #pragma endregion Includes
@@ -38,16 +37,9 @@ public:
 	SVSharedPPQWriter& GetPPQWriter(const SVGUID& rGuid);
 	SVSharedInspectionWriter& GetInspectionWriter(const SVGUID& rPPQGuid, const SVGUID& rGuid);
 	SVMonitorListWriter& GetMonitorListWriter();
-	SVShareControlHandler& GetIPCShare();
-
 	SVString GetInspectionShareName(const SVGUID& rPPQGuid,const SVGUID& rGuid);
 	const SVSharedMemorySettings& GetSettings() const;
-	static HRESULT SetProductFilter(const SVString& listName, SVProductFilterEnum filter);
-
-	/// Stops the RRS reading Products. Function is moved from SVPPQObjects 
-	static void QuiesceSharedMemory();
-	///Returns the ready flag from ControlSegment in shared memory 
-	static bool  IsReady();
+	
 	/// Clears the PPQ part of the shared memory
 	static void ClearPPQSharedMemory();
 	static bool HasShares();
@@ -59,7 +51,7 @@ protected:
 
 	SVPPQSharedMemoryMap m_PPQSharedMemory;
 	SvSml::SVMonitorListWriter m_monitorListWriter;
-	SvSml::SVShareControlHandler m_shareControlHandler;
+	
 private:
 	//Do not implement this method
 	SVSharedMemorySingleton(const SVSharedMemorySingleton& p_rObject);

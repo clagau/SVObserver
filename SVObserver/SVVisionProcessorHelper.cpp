@@ -1115,8 +1115,17 @@ HRESULT SVVisionProcessorHelper::QueryMonitorListNames( SVNameSet& rNames ) cons
 
 HRESULT SVVisionProcessorHelper::SetProductFilter(const SVString& rListName, SvSml::SVProductFilterEnum filter) 
 {
+	
+	
+	DWORD notAllowedStates = SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION | 
+		SV_STATE_START_PENDING | SV_STATE_STARTING | SV_STATE_STOP_PENDING | SV_STATE_STOPING |
+		SV_STATE_CREATING | SV_STATE_LOADING | SV_STATE_SAVING | SV_STATE_CLOSING;
+	if ( SVSVIMStateClass::CheckState( notAllowedStates ) )
+	{
+		return  SVMSG_SVO_ACCESS_DENIED;
+	}
+	
 	SVConfigurationObject* pConfig = nullptr;
-
 	HRESULT hr = SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 	if ( nullptr != pConfig )
 	{

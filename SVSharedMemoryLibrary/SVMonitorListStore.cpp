@@ -20,7 +20,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 
 	SVMonitorListStore::SVMonitorListStore(const void_allocator& rAllocator)
 	: m_allocator(rAllocator)
-	, m_lists(std::less<char_string>(), rAllocator)
+	, m_lists(std::less<bip_string>(), rAllocator)
 	{
 		SVSharedConfiguration::Log("SVMonitorListStore::Constructor");
 	}
@@ -45,7 +45,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		// iterate over the monitor list names
 		for (MonitorMap::iterator it = m_lists.begin();it != m_lists.end();++it)
 		{
-			const char_string& key = it->first;
+			const bip_string& key = it->first;
 			if (listName == key.c_str())
 			{
 				return it->second;
@@ -67,7 +67,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		*/
 		for (MonitorMap::const_iterator it = m_lists.begin();it != m_lists.end();++it)
 		{
-			const char_string& key = it->first;
+			const bip_string& key = it->first;
 			if (listName == key.c_str())
 			{
 				return it->second;
@@ -96,7 +96,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 	void SVMonitorListStore::Add(const SVSharedMonitorList & list)
 	{
 		SVSharedConfiguration::Log("SVMonitorListStore::Add");
-		const char_string& name = list.GetName();
+		const bip_string& name = list.GetName();
 		MonitorMapValue val(name, list);
 		m_lists.insert(val);
 	}

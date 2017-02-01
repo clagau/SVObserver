@@ -58,10 +58,13 @@
     <ClCompile Include="SVMonitorListWriter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVShareControlHandler.cpp">
+    <ClCompile Include="SVSharedMemorySingleton.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVSharedMemorySingleton.cpp">
+    <ClCompile Include="ShareEvents.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MonitorListCpy.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -126,12 +129,6 @@
     <ClInclude Include="SVMonitorListWriter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVShareControlHandler.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVSharedControl.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVProductFilterEnum.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -142,6 +139,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVSharedMemorySingleton.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ShareEvents.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MonitorListCpy.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MonitorEntry.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

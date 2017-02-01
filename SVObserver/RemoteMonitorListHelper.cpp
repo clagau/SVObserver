@@ -13,6 +13,10 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "RemoteMonitorListHelper.h"
 #include "SVValueObjectLibrary/SVValueObjectReference.h"
+#include "SVOCore/SVImageClass.h"
+#include "SVSharedMemoryLibrary/MonitorEntry.h"
+#include "SVSharedMemoryLibrary/MonitorListCpy.h"
+
 #pragma endregion Includes
 
 SVString RemoteMonitorListHelper::GetNameFromMonitoredObject(const MonitoredObject& rMonitoredObject)
@@ -44,6 +48,29 @@ SVString RemoteMonitorListHelper::GetNameFromMonitoredObject(const MonitoredObje
 	}
 	return name;
 }
+
+DWORD RemoteMonitorListHelper::GetTypeFromFromMonitoredObject(const MonitoredObject& rMonitoredObject)
+{
+	SVObjectReference objectRef(SVObjectManagerClass::Instance().GetObject(rMonitoredObject.guid));
+	return  objectRef.Object()->GetObjectType();
+}
+DWORD RemoteMonitorListHelper::GetSizeFromFromMonitoredObject(const MonitoredObject& rMonitoredObject)
+{
+	DWORD size(0);
+	SVObjectReference objectRef(SVObjectManagerClass::Instance().GetObject(rMonitoredObject.guid));
+	SVImageClass* pImageObject = dynamic_cast<SVImageClass*>(objectRef.Object());
+	if( pImageObject)
+	{
+		long  height(0), width(0); 
+		pImageObject->GetImageExtents().GetExtentProperty( SVExtentPropertyHeight, height );
+		pImageObject->GetImageExtents().GetExtentProperty( SVExtentPropertyWidth, width );
+		size = height * width;
+	}
+	return size;
+	
+}
+
+
 
 MonitoredObject RemoteMonitorListHelper::GetMonitoredObjectFromName(const SVString& name)
 {
@@ -79,3 +106,38 @@ MonitoredObject RemoteMonitorListHelper::GetMonitoredObjectFromName(const SVStri
 	return obj;
 }
 
+void RemoteMonitorListHelper::AddMonitorObjects2MoListEntryVector(const MonitoredObjectList& values, SvSml::MonitorEntryVector  &ListEntries )
+{
+	MonitoredObjectList::const_iterator it;
+	SvSml::MonitorEntry Entry;
+	for(it = values.begin(); it != values.end() ; ++it)
+	{
+		Entry.name =  RemoteMonitorListHelper::GetNameFromMonitoredObject(*it).c_str();
+		Entry.size = RemoteMonitorListHelper::GetSizeFromFromMonitoredObject(*it);
+		Entry.type = RemoteMonitorListHelper::GetTypeFromFromMonitoredObject(*it);
+		ListEntries.push_back(Entry);	
+	}
+
+}
+
+
+void RemoteMonitorListHelper::InsertRemotMonitorNamedList2MonitorListcpy(const RemoteMonitorNamedList& remoteMonitorNamedlist,SvSml::MonitorListCpy  &monitorListCpy )
+{
+
+	monitorListCpy.m_name = remoteMonitorNamedlist.GetName(); 
+	monitorListCpy.m_rejectDepth = remoteMonitorNamedlist.GetRejectDepthQueue(); 
+	monitorListCpy.m_IsActive = remoteMonitorNamedlist.IsActive();
+	monitorListCpy.m_ppq = remoteMonitorNamedlist.GetPPQName();;
+	monitorListCpy.m_ProductFilter = remoteMonitorNamedlist.GetProductFilter();
+
+	monitorListCpy.prodItems.clear();
+	monitorListCpy.failStats.clear();
+	monitorListCpy.rejctCond.clear();
+	AddMonitorObjects2MoListEntryVector(remoteMonitorNamedlist.GetProductValuesList(),monitorListCpy.prodItems);
+	AddMonitorObjects2MoListEntryVector(remoteMonitorNamedlist.GetProductImagesList(),monitorListCpy.prodItems);
+	AddMonitorObjects2MoListEntryVector(remoteMonitorNamedlist.GetFailStatusList(),monitorListCpy.failStats);
+	AddMonitorObjects2MoListEntryVector(remoteMonitorNamedlist.GetRejectConditionList(),monitorListCpy.rejctCond);
+
+	
+
+}

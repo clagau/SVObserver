@@ -37,7 +37,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		/////////////////////////////////////////////////////////////////////////////////
 		HRESULT Create(const SVSharedMemorySettings& settings, size_t requiredSize);
 		void AddList(const SVString& listName, const SVString& ppqName, int rejectDepth, bool isActive);
-		void FillList(const SVString& listName, listType type, const SVStringVector& list);
+		void FillList(const SVString& listName, listType type, const SvSml::MonitorEntryVector& list);
 		void SetProductFilter(const SVString& listName, SVProductFilterEnum filter);
 
 		void Release();

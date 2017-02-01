@@ -71,6 +71,10 @@ public:
 	static bool IsValidMonitoredObject(const SVObjectClass* pObject);
 
 
+
+
+	static size_t CalcSharedMemorySize(const RemoteMonitorList& rList);
+
 	static LPCTSTR s_DefaultMonitorListName;
 
 

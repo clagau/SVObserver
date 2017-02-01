@@ -21,9 +21,9 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 	// typedef for std/boost containers to be used with shared memory and corresponding allocators
 	// for details see boost::interprocess and/or std library documentation
 	
-	typedef std::pair<const char_string, SVSharedMonitorList> MonitorMapValue;
+	typedef std::pair<const bip_string, SVSharedMonitorList> MonitorMapValue;
 	typedef boost::interprocess::allocator<MonitorMapValue, segment_manager_t> MonitorMapValueAllocator;
-	typedef boost::interprocess::map<char_string, SVSharedMonitorList, std::less< char_string >, MonitorMapValueAllocator> MonitorMap;
+	typedef boost::interprocess::map<bip_string, SVSharedMonitorList, std::less< bip_string >, MonitorMapValueAllocator> MonitorMap;
 	typedef boost::interprocess::allocator<MonitorMap, segment_manager_t> MonitorMapAllocator;
 
 	class SVMonitorListStore

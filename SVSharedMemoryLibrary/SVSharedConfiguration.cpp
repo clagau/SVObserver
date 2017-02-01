@@ -205,14 +205,5 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		}
 	}
 
-	bool SVSharedConfiguration::ControlFileExits()
-	{
-		SVString fname;
-		//MEC with the comment out code the function returns always 0 ?
-		//boost::interprocess::ipcdetail::get_shared_dir_root(fname);
-		fname =  GetSharedMemoryDirectoryName();
-		fname += "\\" + GetControlShareName();
-		return PathFileExistsA(fname.c_str()) ? true : false;
-	}
-
+	
 } /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/

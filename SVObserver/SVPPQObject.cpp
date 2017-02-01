@@ -51,6 +51,7 @@
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVVisionProcessorHelper.h"
 #include "SVToolSet.h"
+#include "SVSharedMemoryLibrary\ShareEvents.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -748,10 +749,7 @@ BOOL SVPPQObject::Destroy()
 
 	if (SvSml::SVSharedMemorySingleton::HasShares())
 	{
-		if(SvSml::SVSharedMemorySingleton::IsReady())
-		{
-			SvSml::SVSharedMemorySingleton::QuiesceSharedMemory();
-		}
+		SvSml::ShareEvents::GetInstance().QuiesceSharedMemory();
 		SvSml::SVSharedMemorySingleton::Instance().ErasePPQSharedMemory(GetUniqueObjectID());
 	}
 
@@ -1324,12 +1322,8 @@ void SVPPQObject::PrepareGoOnline()
 		}
 		else
 		{
-			SvSml::SVShareControlHandler& rControlHandler = SvSml::SVSharedMemorySingleton::Instance().GetIPCShare();
-			if (rControlHandler.IsCreated())
-			{
-				rControlHandler.SetReady();
-				// do we wait for ack?
-			}
+			
+			SvSml::ShareEvents::GetInstance().SignaltReadyStatus();
 		}
 	}
 }// end PrepareGoOnline
@@ -5280,7 +5274,7 @@ void SVPPQObject::CommitSharedMemory(const SVProductInfoStruct& rProduct)
 			{
 				const SVString& rShareName = rWriter[it->first].GetShareName();
 				std::pair< SvSml::SVSharedInspectionMap::iterator,bool>  mRet; 	
-				mRet = rSharedProduct.m_Inspections.insert(SvSml::SVSharedInspectionPair(SvSml::char_string(rShareName.c_str(), rSharedProduct.m_Allocator), 
+				mRet = rSharedProduct.m_Inspections.insert(SvSml::SVSharedInspectionPair(SvSml::bip_string(rShareName.c_str(), rSharedProduct.m_Allocator), 
 					SvSml::SVSharedInspection(rShareName.c_str(), it->second.m_lastInspectedSlot, rSharedProduct.m_Allocator)));
 			}
 			// A Reject Depth of Zero is allowed and means we aren't keeping any rejects

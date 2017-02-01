@@ -14,6 +14,7 @@
 #include "SVSharedMemoryLibrary/SVSharedConfiguration.h"
 #include "SVSharedMemoryLibrary/SVSharedMemorySingleton.h"
 #include "SVStatusLibrary/GlobalPath.h"
+#include "ShareEvents.h"
 
 namespace Seidenader { namespace SVSharedMemoryLibrary
 {
@@ -52,28 +53,24 @@ void SVSharedMemorySingleton::CheckDirectories()
 	// Ensure Directories exist
 	try
 	{
-		//if (S_OK == SvSml::SVSharedConfiguration::SharedResourcesOk()) // Check if drive exists and enough space
 		if (SVSharedConfiguration::SharedDriveExists()) // just check that the drive exists
 		{
 			const SVString& sharedMemoryDirectory = SVSharedConfiguration::GetSharedMemoryDirectoryName();
 			DWORD res = GetFileAttributes(sharedMemoryDirectory.c_str());
 			if (res == INVALID_FILE_ATTRIBUTES)
 			{
-				// Create the directory
 				CreateDirectory(sharedMemoryDirectory.c_str(), nullptr);
 			}
 			const SVString& imageFileDirectory = SVSharedConfiguration::GetImageDirectoryName();
 			res = GetFileAttributes(imageFileDirectory.c_str());
 			if (res == INVALID_FILE_ATTRIBUTES)
 			{
-				// Create the directory
 				CreateDirectory(imageFileDirectory.c_str(), nullptr);
 			}
 			const SVString& rejectImageFileDirectory = SVSharedConfiguration::GetRejectImageDirectoryName();
 			res = GetFileAttributes(rejectImageFileDirectory.c_str());
 			if (res == INVALID_FILE_ATTRIBUTES)
 			{
-				// Create the directory
 				CreateDirectory(rejectImageFileDirectory.c_str(), nullptr);
 			}
 		}
@@ -167,93 +164,21 @@ SvSml::SVMonitorListWriter& SVSharedMemorySingleton::GetMonitorListWriter()
 	return m_monitorListWriter;
 }
 
-SvSml::SVShareControlHandler& SVSharedMemorySingleton::GetIPCShare()
-{
-	return m_shareControlHandler;
-}
-
-HRESULT SVSharedMemorySingleton::SetProductFilter(const SVString& listName, SvSml::SVProductFilterEnum filter)
-{
-	HRESULT hr = S_OK;
-	if (SVSharedConfiguration::SharedDriveExists() && SVSharedConfiguration::ControlFileExits())
-	{
-		SVSharedMemorySingleton& instance = SVSharedMemorySingleton::Instance();
-		try
-		{
-			instance.m_monitorListWriter.SetProductFilter(listName.c_str(), filter);
-			instance.m_shareControlHandler.SetProductFilterChanged();
-		}
-		catch (std::exception& e)
-		{
-			UNREFERENCED_PARAMETER(e);
-			hr = E_UNEXPECTED;
-		}
-	}
-	else
-	{
-		hr = E_HANDLE;
-	}
-	return hr;
-}
-
-bool SVSharedMemorySingleton::IsReady()
-{
-	SvSml::SVShareControlHandler& rControlShare = SVSharedMemorySingleton::Instance().GetIPCShare();
-	if (rControlShare.IsCreated())
-	{
-		return rControlShare.IsReady();
-	}
-	else
-	{
-		return false;
-	}
-}
-
-void SVSharedMemorySingleton::QuiesceSharedMemory()
-{
-	SvSml::SVShareControlHandler& rControlShare = SVSharedMemorySingleton::Instance().GetIPCShare();
-	if (rControlShare.IsCreated())
-	{
-		rControlShare.ClearReady();
-		bool bStop = false;
-		long timetoWait = 25; // ticks are approx 10 to 16 ms
-		long startTime = GetTickCount();
-		while (!bStop)
-		{
-			bStop = rControlShare.GotAck();
-			if (!bStop)
-			{
-				long curTime = GetTickCount();
-				if ((curTime - startTime) > timetoWait)
-				{
-					bStop = true;
-				}
-				else
-				{
-					::Sleep(20);
-				}
-			}
-		}
-	}
-}
-
-
 
 void SVSharedMemorySingleton::Destroy()
 {
-	if (SVSharedConfiguration::SharedDriveExists() && SVSharedConfiguration::ControlFileExits())
+	if (SVSharedConfiguration::SharedDriveExists())
 	{
 		SVSharedMemorySingleton& instance = SVSharedMemorySingleton::Instance();
 		instance.m_PPQSharedMemory.clear();
 		instance.m_monitorListWriter.Release();
-		instance.m_shareControlHandler.Release();
 	}
 }
 
 
 void SVSharedMemorySingleton::ClearPPQSharedMemory()
 {
-	if (SVSharedConfiguration::SharedDriveExists() && SVSharedConfiguration::ControlFileExits())
+	if (SVSharedConfiguration::SharedDriveExists() )
 	{
 		SVSharedMemorySingleton& instance = SVSharedMemorySingleton::Instance();
 		instance.m_PPQSharedMemory.clear();
@@ -264,7 +189,7 @@ void SVSharedMemorySingleton::ClearPPQSharedMemory()
 
 bool SVSharedMemorySingleton::HasShares()
 {
-	return (SVSharedConfiguration::SharedDriveExists() && SVSharedConfiguration::ControlFileExits());
+	return (SVSharedConfiguration::SharedDriveExists() );
 }
 
 } /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/

@@ -37,7 +37,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		static HRESULT SharedResourcesOk();
 		static void EnsureShareDirectoryExists();
 		static bool SharedDriveExists();
-		static bool ControlFileExits();
+	
 
 	private:
 		SVSharedConfiguration();

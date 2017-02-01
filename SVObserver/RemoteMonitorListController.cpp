@@ -31,6 +31,7 @@
 #include "ObjectInterfaces\ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "TextDefinesSvO.h"
+#include "SVSharedMemoryLibrary\MonitorListCpy.h"
 #pragma endregion Includes
 
 extern SVObserverApp TheSVObserverApp;
@@ -244,26 +245,8 @@ HRESULT RemoteMonitorListController::InitMonitorListInSharedMemory(size_t size)
 	return hr;
 }
 
-typedef std::vector<std::string> NameList;
-typedef std::insert_iterator<NameList> Insertor;
 
-////////////////////////////////////////////////////////////////////////////
-// Calculate the size required to hold the itmes in the NameList in SharedMemory
-////////////////////////////////////////////////////////////////////////////
-static size_t CalcMemorySize(const NameList& rList)
-{
-	size_t size(0);
-	for (NameList::const_iterator it = rList.begin();it != rList.end();++it)
-	{
-		size += it->length();
-	}
-	return size;
-}
-
-////////////////////////////////////////////////////////////////////////////
-// Calculate the size required to hold the item in the RemoteMonitorList in SharedMemory
-////////////////////////////////////////////////////////////////////////////
-static size_t CalcSharedMemorySize(const RemoteMonitorList& rList)
+size_t RemoteMonitorListController::CalcSharedMemorySize(const RemoteMonitorList& rList)
 {
 	size_t size(0);
 	for (RemoteMonitorList::const_iterator it = rList.begin();it != rList.end();++it)
@@ -273,67 +256,24 @@ static size_t CalcSharedMemorySize(const RemoteMonitorList& rList)
 		bool isActive = remoteMonitorNamedList.IsActive();
 		if (isActive)
 		{
-			int rejectDepth = 	remoteMonitorNamedList.GetRejectDepthQueue(); 
-			std::string  ppqName = remoteMonitorNamedList.GetPPQName().c_str();
-			const MonitoredObjectList& values = remoteMonitorNamedList .GetProductValuesList();
-			const MonitoredObjectList& images = remoteMonitorNamedList.GetProductImagesList();
-			const MonitoredObjectList& failStatus = remoteMonitorNamedList.GetFailStatusList();
-			const MonitoredObjectList& rejectCond = remoteMonitorNamedList.GetRejectConditionList();
-	
-			NameList productItems;
-			NameList failStatusItems;
-			NameList rejectCondItems;
-
-			std::transform(values.begin(), values.end(), Insertor(productItems, productItems.begin()), [](const MonitoredObject& rObj)->std::string { return RemoteMonitorListHelper::GetNameFromMonitoredObject(rObj).c_str(); });
-			std::transform(images.begin(), images.end(), Insertor(productItems, productItems.end()), [](const MonitoredObject& rObj)->std::string { return RemoteMonitorListHelper::GetNameFromMonitoredObject(rObj).c_str(); });
-			std::transform(rejectCond.begin(), rejectCond.end(), Insertor(rejectCondItems, rejectCondItems.end()), [](const MonitoredObject& rObj)->std::string { return RemoteMonitorListHelper::GetNameFromMonitoredObject(rObj).c_str(); });
-			std::transform(failStatus.begin(), failStatus.end(), Insertor(failStatusItems, failStatusItems.end()), [](const MonitoredObject& rObj)->std::string { return RemoteMonitorListHelper::GetNameFromMonitoredObject(rObj).c_str(); });
-
-			size += ppqName.length() + sizeof(bool) + sizeof(int); // PPQname + active + rejectDepth size
-			size += CalcMemorySize(productItems);
-			size += CalcMemorySize(rejectCondItems);
-			size += CalcMemorySize(failStatusItems);
+			SvSml::MonitorListCpy  monitorListCpy;
+			RemoteMonitorListHelper::InsertRemotMonitorNamedList2MonitorListcpy(remoteMonitorNamedList,monitorListCpy); 
+			size += monitorListCpy.CalcMemorySize();
 		}
 	}
 	return size;
 }
 
+
 void RemoteMonitorListController::WriteMonitorListToSharedMemory(const std::string& name, const RemoteMonitorNamedList& remoteMonitorNamedlist)
 {
+	
 	const SvSml::SVSharedMemorySettings& rSettings = SvSml::SVSharedMemorySingleton::Instance().GetSettings();
 	SvSml::SVMonitorListWriter& rWriter = SvSml::SVSharedMemorySingleton::Instance().GetMonitorListWriter();
-
-	const MonitoredObjectList& values = remoteMonitorNamedlist.GetProductValuesList();
-	const MonitoredObjectList& images = remoteMonitorNamedlist.GetProductImagesList();
-	const MonitoredObjectList& failStatus = remoteMonitorNamedlist.GetFailStatusList();
-	const MonitoredObjectList& rejectCond = remoteMonitorNamedlist.GetRejectConditionList();
+	SvSml::MonitorListCpy  monitorListCpy;
+	RemoteMonitorListHelper::InsertRemotMonitorNamedList2MonitorListcpy(remoteMonitorNamedlist,monitorListCpy); 
+	SvSml::MonitorListCpyHelper::WriteMonitorList(rWriter, monitorListCpy);
 	
-	int  rejectDepth = remoteMonitorNamedlist.GetRejectDepthQueue(); 
-	bool isActive = remoteMonitorNamedlist.IsActive();
-	SVString ppqName = remoteMonitorNamedlist.GetPPQName();
-	
-	typedef std::insert_iterator<NameList> Insertor;
-	NameList productItems;
-	NameList failStatusItems;
-	NameList rejectCondItems;
-
-	std::transform(values.begin(), values.end(), Insertor(productItems, productItems.begin()), [](const MonitoredObject& rObj)->std::string { return RemoteMonitorListHelper::GetNameFromMonitoredObject(rObj).c_str(); });
-	std::transform(images.begin(), images.end(), Insertor(productItems, productItems.end()), [](const MonitoredObject& rObj)->std::string { return RemoteMonitorListHelper::GetNameFromMonitoredObject(rObj).c_str(); });
-	std::transform(rejectCond.begin(), rejectCond.end(), Insertor(rejectCondItems, rejectCondItems.end()), [](const MonitoredObject& rObj)->std::string { return RemoteMonitorListHelper::GetNameFromMonitoredObject(rObj).c_str(); });
-	std::transform(failStatus.begin(), failStatus.end(), Insertor(failStatusItems, failStatusItems.end()), [](const MonitoredObject& rObj)->std::string { return RemoteMonitorListHelper::GetNameFromMonitoredObject(rObj).c_str(); });
-
-	if (rWriter.IsCreated())
-	{
-		rWriter.AddList(name, ppqName, rejectDepth, isActive);
-		rWriter.FillList(name, SvSml::productItems, productItems);
-		rWriter.FillList(name, SvSml::rejectCondition, rejectCondItems);
-		rWriter.FillList(name, SvSml::failStatus, failStatusItems);
-	}
-	else
-	{
-		SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-		Exception.setMessage( SVMSG_SVO_44_SHARED_MEMORY, SvOi::Tid_ErrorWriteMonitorListNoSharedMemory, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_15020 );
-	}
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -454,12 +394,7 @@ HRESULT RemoteMonitorListController::SetRemoteMonitorListProductFilter(const SVS
 		if (it->second.IsActive())
 		{
 			it->second.SetProductFilter(filter);
-			// if we are online, update the filter for the monitorList in shared memory
-			// otherwise we will pick up the change when we go online
-			if (SVSVIMStateClass::CheckState(SV_STATE_RUNNING))
-			{
-				SvSml::SVSharedMemorySingleton::SetProductFilter(listName, filter);
-			}
+			// we will pick up the change when we go online
 		}
 		else
 		{

@@ -64,8 +64,8 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		ProductPtr RequestReject(long trig, long& idx) const;
 		void ReleaseReject(const ProductPtr product, long idx) const;
 
-		FailStatusMap GetFailStatus(const SVStringVector& names) const;
-
+		FailStatusMap GetFailStatus(const SvSml::MonitorEntryVector& Entries) const;
+		
 	private:
 		long next_readable() const;
 		long next_reject_readable() const;

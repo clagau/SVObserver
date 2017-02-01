@@ -20,15 +20,17 @@ const TCHAR* SharedMemorySectionKey = _T("SharedMemory");
 const TCHAR* DefaultRejectQeueDepthKey = _T("DefaultRejectQueueDepth");
 const TCHAR* MaxRejectQeueDepthKey = _T("MaxRejectQueueDepth");
 
-RemoteMonitorNamedList::RemoteMonitorNamedList(): m_bActive(false)
+RemoteMonitorNamedList::RemoteMonitorNamedList(): m_bActive(false),m_filter(SvSml::LastInspectedFilter)
 {
   m_rejectQueueDepth = GetDefaultRejectQueueDepth();
+  
 }
 
 RemoteMonitorNamedList::RemoteMonitorNamedList(const SVString& PPQName, const SVString& name)
 : m_PPQName(PPQName)
 , m_name(name)
 , m_bActive(false)
+,m_filter(SvSml::LastInspectedFilter)
 {
 	 m_rejectQueueDepth = GetDefaultRejectQueueDepth();
 	ResolveGuidForPPQName();
@@ -43,6 +45,7 @@ RemoteMonitorNamedList::RemoteMonitorNamedList(const SVString& PPQName, const SV
 , m_failStatusList(failStatusList)
 , m_rejectQueueDepth(rejectDepth)
 , m_bActive(false)
+,m_filter(SvSml::LastInspectedFilter)
 {
 	ResolveGuidForPPQName();
 }

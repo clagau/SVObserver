@@ -44,7 +44,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 
 	void SVSharedImage::SetName(const SVString& Name)
 	{
-		m_ElementName = char_string(Name.c_str(), m_Allocator);
+		m_ElementName = bip_string(Name.c_str(), m_Allocator);
 	}
 
 	void SVSharedImage::SetFileName(const SVString& Filename)

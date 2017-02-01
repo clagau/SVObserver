@@ -1,0 +1,37 @@
+//*****************************************************************************
+/// \copyright COPYRIGHT (c) 2017,2017 by Seidenader Maschinenbau GmbH
+/// \file MonitorLIstDlg.h 
+/// All Rights Reserved 
+//*****************************************************************************
+
+/// MonitorLIstDlg dialog  to Display Entries of one Monitorlist 
+//******************************************************************************
+#pragma once
+
+
+//! MonitorLIstDlg dialog  to Display Entries of one Monitorlist 
+class MonitorListDlg : public CDialog
+{
+	DECLARE_DYNAMIC(MonitorListDlg)
+
+public:
+	enum ECOL {List =0, Name, Type, ECOL_Size };
+	static LPCTSTR ColHeader[ECOL_Size+1];
+	static DWORD ColHeaderWidth[ECOL_Size+1];
+
+	MonitorListDlg(CWnd* pParent = NULL);   // standard constructor
+	virtual ~MonitorListDlg();
+
+// Dialog Data
+	enum { IDD = IDD_MONITORLIST };
+
+protected:
+	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
+	virtual BOOL OnInitDialog();
+	void FillControl();
+	DECLARE_MESSAGE_MAP()
+
+	
+public:
+	CListCtrl m_ListCtrl;
+};

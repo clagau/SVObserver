@@ -28,7 +28,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 			FloatType = 3,
 			BooleanType = 4
 		};
-		char_string m_ElementName;
+		bip_string m_ElementName;
 		ResultTypeEnum m_ResultType;	// this is the native type
 		char m_Result[statics::max_result_size];
 		int m_Status;

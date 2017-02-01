@@ -538,6 +538,8 @@ namespace Seidenader { namespace ObjectInterfaces
 
 	static const int 	Err_16220_SaveImageBuffer   =  Mec_ErrorBase + 220;	
 
+	static const int Err_16221_FailToCreateEvent   =  Mec_ErrorBase + 221;	
+	static const int Err_16222_FailToCreateEvent   =  Mec_ErrorBase + 222;	
 
 	
 	// Ben Walter

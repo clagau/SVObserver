@@ -127,7 +127,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		m_lists->Add(list);
 	}
 
-	void SVMonitorListWriter::FillList(const SVString & listName, listType type, const SVStringVector & list)
+	void SVMonitorListWriter::FillList(const SVString & listName, listType type, const std::vector<MonitorEntry> & list)
 	{
 		SVSharedConfiguration::Log("SVMonitorListWriter::FillList");
 		if (!m_lists)

@@ -62,7 +62,6 @@
 #include <string>
 #include <vector>
 #include <winioctl.h>
-
 #include <boost/bind.hpp>
 #include <boost/function.hpp>
 

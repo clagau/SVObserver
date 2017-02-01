@@ -81,6 +81,8 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="MonitorListCpy.cpp" />
+    <ClCompile Include="ShareEvents.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -88,7 +90,6 @@
     <ClCompile Include="SVMonitorListReader.cpp" />
     <ClCompile Include="SVMonitorListStore.cpp" />
     <ClCompile Include="SVMonitorListWriter.cpp" />
-    <ClCompile Include="SVShareControlHandler.cpp" />
     <ClCompile Include="SVSharedConfiguration.cpp" />
     <ClCompile Include="SVSharedData.cpp" />
     <ClCompile Include="SVSharedImage.cpp" />
@@ -107,15 +108,16 @@
     <ClCompile Include="SVSharedValue.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="MonitorEntry.h" />
+    <ClInclude Include="MonitorListCpy.h" />
+    <ClInclude Include="ShareEvents.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SVMonitorListReader.h" />
     <ClInclude Include="SVMonitorListStore.h" />
     <ClInclude Include="SVMonitorListWriter.h" />
     <ClInclude Include="SVProductFilterEnum.h" />
-    <ClInclude Include="SVShareControlHandler.h" />
     <ClInclude Include="SVShared.h" />
     <ClInclude Include="SVSharedConfiguration.h" />
-    <ClInclude Include="SVSharedControl.h" />
     <ClInclude Include="SVSharedData.h" />
     <ClInclude Include="SVSharedImage.h" />
     <ClInclude Include="SVSharedImageContainer.h" />

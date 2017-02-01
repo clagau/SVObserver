@@ -47,7 +47,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 
 	void SVSharedValue::SetName(const SVString& Name)
 	{
-		m_ElementName = char_string(Name.c_str(), m_Allocator);
+		m_ElementName = bip_string(Name.c_str(), m_Allocator);
 	}
 
 	void SVSharedValue::SetData(ResultTypeEnum ResultType, const SVString& Result, int Status)

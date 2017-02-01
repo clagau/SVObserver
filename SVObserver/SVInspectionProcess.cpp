@@ -37,6 +37,7 @@
 #ifdef _DEBUG_PERFORMANCE_INFO //Arvid 160212 this is helpful for debugging the creation of Performance Information
 #include "SVTimerLibrary\SVProfiler.h"
 #endif
+#include "SVSharedMemoryLibrary\SVSharedConfiguration.h"
 #pragma endregion Includes
 
 SV_IMPLEMENT_CLASS( SVInspectionProcess, SVInspectionProcessGuid );

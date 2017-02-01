@@ -37,15 +37,17 @@
 //Moved to precompiled header: #include <boost/bind.hpp>
 #pragma endregion Includes
 
+namespace bip = boost::interprocess;
+
 namespace Seidenader { namespace SVSharedMemoryLibrary
 {
 	//Typedefs of allocators and containers
-	typedef boost::interprocess::managed_shared_memory::segment_manager                       segment_manager_t;
-	typedef boost::interprocess::allocator<void, segment_manager_t>                           void_allocator;
-	typedef boost::interprocess::allocator<char, segment_manager_t>                           char_allocator;
-	typedef boost::interprocess::basic_string<char, std::char_traits<char>, char_allocator>   char_string;
-	typedef boost::interprocess::allocator<char_string, segment_manager_t>                    char_string_allocator;
-	typedef boost::interprocess::offset_t													  offset_t;
+	typedef bip::managed_shared_memory::segment_manager                       segment_manager_t;
+	typedef bip::allocator<void, segment_manager_t>                           void_allocator;
+	typedef bip::allocator<char, segment_manager_t>                           char_allocator;
+	typedef bip::basic_string<char, std::char_traits<char>, char_allocator>   bip_string;
+	typedef bip::allocator<bip_string, segment_manager_t>					  bip_string_allocator;
+	typedef bip::offset_t													  offset_t;
 
 	struct statics
 	{

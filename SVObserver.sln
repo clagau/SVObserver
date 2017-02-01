@@ -561,6 +561,12 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FilterOperators", "FilterOp
 		{5796BBF7-F64D-4B14-816E-B9012A52A225} = {5796BBF7-F64D-4B14-816E-B9012A52A225}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RRSView", "RRSView\RRSView.vcxproj", "{9BEE5F0D-27E9-4A2B-879A-FC084EA8FB15}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B022279A-59CD-41C3-9EA5-F9721FECAFDD} = {B022279A-59CD-41C3-9EA5-F9721FECAFDD}
+		{B479E2E3-2B4F-4E2C-A6AD-A0A03579FE59} = {B479E2E3-2B4F-4E2C-A6AD-A0A03579FE59}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -1071,6 +1077,12 @@ Global
 		{F854F11D-EDDB-4795-996A-D9FD0C795744}.Unicode Debug|x64.Build.0 = Debug|x64
 		{F854F11D-EDDB-4795-996A-D9FD0C795744}.Unicode Release|x64.ActiveCfg = Release|x64
 		{F854F11D-EDDB-4795-996A-D9FD0C795744}.Unicode Release|x64.Build.0 = Release|x64
+		{9BEE5F0D-27E9-4A2B-879A-FC084EA8FB15}.Debug|x64.ActiveCfg = Debug|x64
+		{9BEE5F0D-27E9-4A2B-879A-FC084EA8FB15}.Debug|x64.Build.0 = Debug|x64
+		{9BEE5F0D-27E9-4A2B-879A-FC084EA8FB15}.Release|x64.ActiveCfg = Release|x64
+		{9BEE5F0D-27E9-4A2B-879A-FC084EA8FB15}.Release|x64.Build.0 = Release|x64
+		{9BEE5F0D-27E9-4A2B-879A-FC084EA8FB15}.Unicode Debug|x64.ActiveCfg = Debug|x64
+		{9BEE5F0D-27E9-4A2B-879A-FC084EA8FB15}.Unicode Release|x64.ActiveCfg = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

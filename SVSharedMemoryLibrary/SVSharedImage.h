@@ -20,7 +20,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 {
 	struct SVSharedImage
 	{
-		char_string m_ElementName;
+		bip_string m_ElementName;
 		char m_Filename[statics::max_result_size];
 		long m_Status;
 		void_allocator m_Allocator;

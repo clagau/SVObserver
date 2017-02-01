@@ -17,7 +17,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 {
 	SVSharedProduct::SVSharedProduct(const void_allocator & allocator)
 	: m_Flags(ds::none)
-	, m_Inspections(std::less< char_string >(), allocator) 
+	, m_Inspections(std::less< bip_string >(), allocator) 
 	, m_TriggerCount(-1)
 	, m_Allocator(allocator)
 	{
@@ -44,7 +44,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 
 	long SVSharedProduct::InspectionSlotIndex(const SVString & inspectionShareName) const
 	{
-		char_string key(inspectionShareName.c_str(), m_Allocator);
+		bip_string key(inspectionShareName.c_str(), m_Allocator);
 		SVSharedInspectionMap::const_iterator it = m_Inspections.find(key);
 		if (it != m_Inspections.end())
 		{

@@ -118,7 +118,7 @@
 #include "SVXMLLibrary\ObsoleteItemChecker.h"
 #include "SVObjectLibrary\GlobalConst.h"
 #include "SVMatroxLibrary\SVMatroxSystemInterface.h"
-
+#include "SVSharedMemoryLibrary\ShareEvents.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -5529,7 +5529,8 @@ void SVObserverApp::Start()
 		
 		if (SvSml::SVSharedMemorySingleton::HasShares())
 		{
-			SvSml::SVSharedMemorySingleton::QuiesceSharedMemory();
+			SvSml::ShareEvents::GetInstance().QuiesceSharedMemory();
+			
 		}
 		
 		PPQMonitorList ppqMonitorList;
