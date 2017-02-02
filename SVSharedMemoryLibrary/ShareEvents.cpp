@@ -114,6 +114,7 @@ namespace Seidenader
 					break;
 				}
 			case 	WAIT_OBJECT_0 +1:
+				pShareEvent->m_IsReady = true;
 				if(pShareEvent->m_CallBackFct)
 				{
 					pShareEvent->m_CallBackFct(Ready );
