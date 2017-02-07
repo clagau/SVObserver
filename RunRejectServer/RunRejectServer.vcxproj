@@ -96,6 +96,7 @@
     <ClInclude Include="RunRejectService.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="RRSVersionString.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="RunRejectServer.cpp" />
@@ -104,6 +105,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="RRSVersionString.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="RunRejectServer.rc" />

@@ -55,6 +55,9 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		//! True if InitEventIsSet
 		bool GetIsReady() const;
 		
+		//! The Ready counter is incremented when the ready flag is set to true
+		long ShareEvents::GetReadyCounter() const;
+
 		//!True if Init Flag isSet
 		bool GetIsInit() const;
 		
@@ -69,14 +72,10 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		
 		mutable bool m_IsReady;
 		mutable bool m_IsInit;
+		mutable long m_ReadyCounter;
 
 		
 		boost::function<bool(DWORD )> m_CallBackFct;
-		//boost::function<bool ()> m_ChangeFunction;
-		//boost::function<bool ()> m_ReadyFunction;
-		
-		//boost::function<void ()> m_UpdateFunction;
-
 		HANDLE m_hChangeEvent;
 		HANDLE m_hReadyEvent;
 		

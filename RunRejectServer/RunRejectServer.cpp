@@ -36,6 +36,8 @@
 #include "SVSharedMemoryLibrary\ShareEvents.h"
 #include "SVSharedMemoryLibrary\SVSharedMonitorList.h"
 #include "SVSharedMemoryLibrary\MonitorListCpy.h"
+
+#include "RRSVersionString.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -183,47 +185,6 @@ DWORD WINAPI servimg(LPVOID)
 		Exception.setMessage( SVMSG_RRS_2_STD_EXCEPTION, SvOi::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams) );
 	}
 	return 0;
-}
-
-
-SVString GetVersionString()
-{
-	SVString Result;
-
-	TCHAR moduleFilename[512];
-	::GetModuleFileName( nullptr, moduleFilename, static_cast<DWORD> (_tcslen(moduleFilename)) );
-
-	DWORD dwHandle;
-	DWORD size = ::GetFileVersionInfoSize( moduleFilename, &dwHandle );
-	unsigned char* lpData = new unsigned char[size];
-
-	BOOL rc = ::GetFileVersionInfo(moduleFilename, 0, size, lpData);
-	if (rc)
-	{
-		VS_FIXEDFILEINFO* pFileInfo = nullptr;
-		UINT Len = 0;
-		if (::VerQueryValueA(lpData, "\\", (LPVOID *)&pFileInfo, (PUINT)&Len)) 
-		{
-			std::stringstream buf;
-
-			buf << HIWORD(pFileInfo->dwFileVersionMS);
-			buf << ".";
-			buf << std::setfill('0') << std::setw(2) << LOWORD(pFileInfo->dwFileVersionMS);
-
-			if( HIWORD(pFileInfo->dwFileVersionLS) < 255 )
-			{
-				buf << "b" << HIWORD(pFileInfo->dwFileVersionLS);
-			}
-			Result = buf.str();
-		}
-	}
-	delete [] lpData;
-
-#ifdef _DEBUG
-	Result += "d";        // For debug builds.
-#endif
-
-	return Result;
 }
 
 
@@ -378,11 +339,11 @@ Json::Value & GenerateImages(Json::Value & rArr, SvSml::InspectionDataPtr data, 
 	for (SvSml::SVSharedImageContainer::iterator it = data->m_Images.begin(); it != data->m_Images.end(); ++it)
 	{
 		const SvSml::SVSharedImageContainer::value_type& sharedImage = *it;
-		
+
 		//@TODO[MEC][7.50][30.01.2017] 
 		// Is this lookup really necessary? 		
 		// The MonitorList should be in sync with SVObserver, so what is written to shared memory would be correct
-		
+
 		if(SvSml::SVSharedMonitorList::IsInMoListVector( sharedImage.m_ElementName.c_str(), rProductItemNames))
 		{
 			Json::Value val(Json::objectValue);
@@ -680,9 +641,8 @@ Json::Value DispatchCommand<SvSol::TcpApi>(const JsonCmd & cmd, const SvSml::Mon
 	}
 	else if (cmd[SVRC::cmd::name] == SVRC::cmdName::getVersion)
 	{
-		const SVString& rVerStr = GetVersionString();
 		Json::Value rslt(Json::objectValue);
-		rslt[SVRC::result::SVO_ver] = rVerStr.c_str();
+		rslt[SVRC::result::SVO_ver] = RRSVersionString::Get().c_str();
 		return rslt;
 	}
 
@@ -823,10 +783,10 @@ SVString BusyMessage(const JsonCmd & cmd)
 
 
 template<typename API, typename ServerSocket>
-void Handler(ServerSocket& sok, SvSml::SVMonitorListReader& mlReader, SvSml::MonitorListCpyMap& rmonitorMap);
+void Handler(ServerSocket& sok, SvSml::SVMonitorListReader& mlReader, SvSml::MonitorListCpyMap& rmonitorMap, DWORD& rVersion);
 
 template <>
-void Handler<SvSol::UdpApi, UdpServerSocket>(UdpServerSocket& sok,  SvSml::SVMonitorListReader& mlReader, SvSml::MonitorListCpyMap& rmonitorMap)
+void Handler<SvSol::UdpApi, UdpServerSocket>(UdpServerSocket& sok,  SvSml::SVMonitorListReader& mlReader, SvSml::MonitorListCpyMap& rmonitorMap,DWORD& rVersion)
 {
 	typedef SvSol::UdpApi API;
 	typedef UdpSocket Socket;
@@ -853,14 +813,17 @@ void Handler<SvSol::UdpApi, UdpServerSocket>(UdpServerSocket& sok,  SvSml::SVMon
 			bool isready = SvSml::ShareEvents::GetInstance().GetIsReady(); 
 			if(isready)
 			{
-				if(!SvSml::ShareEvents::GetInstance().GetIsInit())
+				if(SvSml::ShareEvents::GetInstance().GetReadyCounter() != rVersion)
 				{
+					rVersion = SvSml::ShareEvents::GetInstance().GetReadyCounter();
 					SvSml::MonitorListCpyHelper::ReloadMonitorMap(mlReader, rmonitorMap);
-					SvSml::ShareEvents::GetInstance().SetIsInit();
+
 					ClearHeld<API>();
 				}
-					const SVString& rResponse = GenerateResponse<API>(cmd, rmonitorMap);
-					client.Write(rResponse, SvSol::Traits<API>::needsHeader);
+				
+				//@TODO[MEC][7.50][07.02.2017] Check if copying could be avoided 
+				SVString rResponse = GenerateResponse<API>(cmd, rmonitorMap);
+				client.Write(rResponse, SvSol::Traits<API>::needsHeader);
 			}
 			else
 			{
@@ -890,7 +853,7 @@ void Handler<SvSol::UdpApi, UdpServerSocket>(UdpServerSocket& sok,  SvSml::SVMon
 }
 
 template<>
-void Handler<SvSol::TcpApi, TcpServerSocket>(TcpServerSocket& sok,/* SvSml::SVShareControlHandler& ctrl,*/ SvSml::SVMonitorListReader& mlReader, SvSml::MonitorListCpyMap& rmonitorMap)
+void Handler<SvSol::TcpApi, TcpServerSocket>(TcpServerSocket& sok,SvSml::SVMonitorListReader& mlReader,	SvSml::MonitorListCpyMap& rmonitorMap, DWORD& rVersion)
 {
 	typedef SvSol::TcpApi API;
 	typedef TcpSocket Socket; 
@@ -917,13 +880,15 @@ void Handler<SvSol::TcpApi, TcpServerSocket>(TcpServerSocket& sok,/* SvSml::SVSh
 					bool isready = SvSml::ShareEvents::GetInstance().GetIsReady(); 
 					if(isready)
 					{
-						if(!SvSml::ShareEvents::GetInstance().GetIsInit())
+						if(SvSml::ShareEvents::GetInstance().GetReadyCounter() != rVersion)
 						{
+							rVersion = SvSml::ShareEvents::GetInstance().GetReadyCounter();
 							SvSml::MonitorListCpyHelper::ReloadMonitorMap(mlReader, rmonitorMap);
-							SvSml::ShareEvents::GetInstance().SetIsInit();
 							ClearHeld<API>();
 						}
-						const SVString& rResponse = GenerateResponse<API>(cmd, rmonitorMap);
+						
+						//@TODO[MEC][7.50][07.02.2017] Check if copying could be avoided 
+						SVString  rResponse = GenerateResponse<API>(cmd, rmonitorMap);
 						client.Write(rResponse, SvSol::Traits<API>::needsHeader);
 						break;
 
@@ -933,7 +898,9 @@ void Handler<SvSol::TcpApi, TcpServerSocket>(TcpServerSocket& sok,/* SvSml::SVSh
 						// check for version command
 						if (cmd[SVRC::cmd::name] == SVRC::cmdName::getVersion)
 						{
-							const SVString& rResponse = GenerateResponse<API>(cmd, rmonitorMap);
+					
+							//@TODO[MEC][7.50][07.02.2017] Check if copying could be avoided 
+							SVString rResponse = GenerateResponse<API>(cmd, rmonitorMap);
 							client.Write(rResponse, SvSol::Traits<API>::needsHeader);
 						}
 						else
@@ -966,9 +933,10 @@ DWORD WINAPI servcmd(LPVOID ctrlPtr)
 	try
 	{
 		typedef SvSol::SVServerSocket<API> ServerSocket;
-		
+
 		SvSml::SVMonitorListReader mlReader;
 		SvSml::MonitorListCpyMap monitorMap;
+		DWORD MonitorMapVersion(0);
 		ServerSocket sok;
 		sok.Create();
 		sok.SetBlocking();
@@ -977,10 +945,12 @@ DWORD WINAPI servcmd(LPVOID ctrlPtr)
 		{
 			if (sok.ClientConnecting())
 			{
-				Handler<API>(sok,  mlReader, monitorMap);
+				Handler<API>(sok,  mlReader, monitorMap, MonitorMapVersion);
 			}
-		}
+	
+}
 	}
+
 	catch( const SvStl::MessageContainer& rExp )
 	{
 		SvStl::MessageMgrStd e( SvStl::LogOnly );
@@ -1060,9 +1030,8 @@ void StartThreads( DWORD argc, LPTSTR  *argv )
 
 		previousHandler = signal(SIGSEGV, AccessViolationHandler);
 
-		const SVString& rVersionStr = GetVersionString();
 		SVString title = _T("Run/Reject Server ");
-		title += rVersionStr;
+		title += RRSVersionString::Get();
 		SetConsoleTitle( title.c_str() );
 		SvSol::SVSocketLibrary::Init();
 		DWORD threadIds[3];

@@ -17,7 +17,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		MonitorListCpy(void);
 		MonitorListCpy(const SVSharedMonitorList& sharedMonitorList);
 		size_t CalcMemorySize();
-		
+
 		MonitorEntryVector  prodItems;
 		MonitorEntryVector  rejctCond;
 		MonitorEntryVector  failStats;
@@ -28,32 +28,32 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		bool m_IsActive;
 		SVProductFilterEnum m_ProductFilter;
 	};
-	
-typedef std::map<SVString, MonitorListCpy> MonitorListCpyMap;
 
-///Helperfunction for Monitorlist 
-class MonitorListCpyHelper
-{
-public:
-	//! Load MonitorLists from Shared  Memory
-	//! \param mlReader [in]
-	//! \param monitorMap [out]
-	//! \returns void
-	static void ReloadMonitorMap(SVMonitorListReader& rmlReader, MonitorListCpyMap& rmonitorMap);
-	
-	
-	//! Writes a monitor list to shared memory
-	//! \param rWriter [in,out]
-	//! \param rmonitorList [in,out]
-	//! \returns void
-	static void WriteMonitorList(SVMonitorListWriter& rWriter,  const MonitorListCpy& rmonitorList);
+	typedef std::map<SVString, MonitorListCpy> MonitorListCpyMap;
 
-	
-	//!Helper function converts ShMoListEntryVector to MoListEntryVector
-	static void  Assign2MoListEntryVector (MonitorEntryVector &rcpy, const ShMoListEntryVector  &rsev);
-};
- 
+	///Helperfunction for Monitorlist 
+	class MonitorListCpyHelper
+	{
+	public:
+		//! Load MonitorLists from Shared  Memory
+		//! \param mlReader [in]
+		//! \param monitorMap [out]
+		//! \returns void
+		static void ReloadMonitorMap(SVMonitorListReader& rmlReader, MonitorListCpyMap& rmonitorMap);
 
- } /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
+
+		//! Writes a monitor list to shared memory
+		//! \param rWriter [in,out]
+		//! \param rmonitorList [in,out]
+		//! \returns void
+		static void WriteMonitorList(SVMonitorListWriter& rWriter,  const MonitorListCpy& rmonitorList);
+
+
+		//!Helper function converts ShMoListEntryVector to MoListEntryVector
+		static void  Assign2MoListEntryVector (MonitorEntryVector &rcpy, const ShMoListEntryVector  &rsev);
+	};
+
+
+} /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
 
 namespace SvSml = Seidenader::SVSharedMemoryLibrary;

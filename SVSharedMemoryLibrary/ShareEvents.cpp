@@ -16,7 +16,7 @@ namespace Seidenader
 	 const LPCTSTR ShareEvents::GNameReadyEvent  = _T("Global\\Seidenader_ReadyEvent");
 	const  DWORD ShareEvents::DELAY =  30;
 	
-	 ShareEvents::ShareEvents(): m_StopEvent(NULL), m_hWatchThread(NULL),m_IsReady(false), m_IsInit(false)
+	 ShareEvents::ShareEvents(): m_StopEvent(NULL), m_hWatchThread(NULL),m_IsReady(false), m_IsInit(false),m_ReadyCounter(0)
 	{
 		
 		PSECURITY_DESCRIPTOR psd = (PSECURITY_DESCRIPTOR) LocalAlloc(LPTR, SECURITY_DESCRIPTOR_MIN_LENGTH); 
@@ -55,6 +55,8 @@ namespace Seidenader
 		ResetEvent(m_hChangeEvent);
 		SetEvent(m_hReadyEvent);
 		m_IsReady = true;
+		m_ReadyCounter++;
+		
 	}
 	void ShareEvents::SignalChangingStatus()
 	{
@@ -74,6 +76,12 @@ namespace Seidenader
 	{
 		return m_IsReady;
 	}
+	
+	long ShareEvents::GetReadyCounter() const
+	{
+		return m_ReadyCounter;
+	}
+
 	bool ShareEvents::GetIsInit()  const
 	{
 		return m_IsInit;
@@ -115,6 +123,7 @@ namespace Seidenader
 				}
 			case 	WAIT_OBJECT_0 +1:
 				pShareEvent->m_IsReady = true;
+				pShareEvent->m_ReadyCounter++;
 				if(pShareEvent->m_CallBackFct)
 				{
 					pShareEvent->m_CallBackFct(Ready );

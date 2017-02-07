@@ -61,7 +61,9 @@ namespace Seidenader { namespace SVSocketLibrary
 		{
 			std::basic_string<TCHAR> msg = "accept: ";
 			Log(msg + SVSocketError::GetErrorText(error), true);
-			return InvalidSock;
+			m_socket = InvalidSock;
+			return *this;
+			//return InvalidSock;
 		}
 		m_peer = *addr_in;
 		return *this; // Should create a new socket?
