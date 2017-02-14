@@ -71,17 +71,6 @@ BOOL EQAdjustSize::CreateObject(SVObjectLevelCreateStruct *PCreateStruct)
 }
 
 
-BOOL EQAdjustSize::OnValidate()
-{
-	BOOL retVal = TRUE;
-
-	// validate our outputs
-	retVal = SVEquationClass::OnValidate() && retVal;
-
-	return retVal;
-}
-
-
 BOOL EQAdjustSize::onRun( SVRunStatusClass& RRunStatus )
 {
 	///This function is not called
@@ -89,20 +78,18 @@ BOOL EQAdjustSize::onRun( SVRunStatusClass& RRunStatus )
 	return TRUE;
 }
 
-HRESULT EQAdjustSize::ResetObject()
+bool EQAdjustSize::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	double value = 0.0;
-	HRESULT hr = SVEquationClass::ResetObject();
+	bool Result = SVEquationClass::ResetObject(pErrorMessages);
 
-	if( S_OK == hr )
+	if( Result )
 	{
 		if( HasCondition() && IsEnabled() )
 		{
-			value = yacc.equationResult;
-			m_result.SetValue(1,value);	
+			m_result.SetValue(1,yacc.equationResult);	
 		}
 		
 	}
-	return hr;
+	return Result;
 }
 

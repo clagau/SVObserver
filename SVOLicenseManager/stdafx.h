@@ -65,7 +65,9 @@
 #include <list>				//Used by static library
 #include <map>				//Used by static library
 #include <set>
+#include <iterator>		//Used by static library
 #include <string>			//Used by static library
 #include <tchar.h>			//Used by static library
 #include <vector>			//Used by static library
+#include <boost\function.hpp>		//Used by static library
 #pragma endregion Precompiled Headers

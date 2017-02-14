@@ -26,17 +26,19 @@ public:
 	
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
 
+	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
+
 #pragma region virtual method (IFilter)
 	virtual bool shouldResetInspection() const override { return true; }
 #pragma region virtual method (IFilter)
+protected:
+	virtual BOOL onRun( BOOL First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus ) override;
 
 private:
 	void init();
+	bool ValidateLocal( SvStl::MessageContainerVector * pErrorMessages ) const;
 
-protected:
-	virtual BOOL onRun( BOOL First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus ) override;
-	virtual BOOL OnValidate() override;
-	
+
 private:
 	SVInObjectInfoStruct m_MarkerImageInfo;
 	SVBoolValueObjectClass m_bvoUseMarker;

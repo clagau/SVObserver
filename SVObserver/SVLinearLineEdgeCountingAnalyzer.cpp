@@ -92,13 +92,15 @@ BOOL SVLinearEdgeCountingLineAnalyzerClass::CloseObject()
 	return SVLinearAnalyzerClass::CloseObject();
 }
 
+bool SVLinearEdgeCountingLineAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
+{
+	return __super::ResetObject(pErrorMessages) && ValidateEdgeA(pErrorMessages);
+}
 
 BOOL SVLinearEdgeCountingLineAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 {
 	// All inputs and outputs must be validated first
-	BOOL l_bOk = SVLinearAnalyzerClass::onRun( RRunStatus );
-
-	l_bOk = l_bOk && nullptr != GetEdgeA();
+	BOOL l_bOk = SVLinearAnalyzerClass::onRun( RRunStatus ) && ValidateEdgeA(&m_RunErrorMessages);
 
 	if( l_bOk )
 	{
@@ -118,18 +120,6 @@ BOOL SVLinearEdgeCountingLineAnalyzerClass::onRun( SVRunStatusClass& RRunStatus 
 	}
 
 	return l_bOk;
-}
-
-BOOL SVLinearEdgeCountingLineAnalyzerClass::OnValidate()
-{
-	BOOL retVal = SVLinearAnalyzerClass::OnValidate();
-		
-	retVal = retVal && nullptr != GetEdgeA();
-
-	if( !retVal )
-		SetInvalid();
-
-	return retVal;
 }
 
 HRESULT SVLinearEdgeCountingLineAnalyzerClass::GetSelectedEdgeOverlays( SVExtentMultiLineStruct &p_MultiLine )

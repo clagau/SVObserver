@@ -40,8 +40,6 @@ SVInt64ValueObjectClass::SVInt64ValueObjectClass(SVObjectClass* pOwner, int Stri
 
 SVInt64ValueObjectClass::~SVInt64ValueObjectClass()
 {
-	SetObjectDepth( 0 );
-	ResetObject();
 }
 
 const SVInt64ValueObjectClass& SVInt64ValueObjectClass::operator = (const SVInt64ValueObjectClass& rhs)

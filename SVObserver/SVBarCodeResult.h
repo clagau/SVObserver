@@ -26,14 +26,11 @@ class SVBarCodeResultClass : public SVStringResultClass
 public:
 	bool m_bFailedToRead;
 	virtual BOOL onRun( SVRunStatusClass& RRunStatus ) override;
-	virtual BOOL OnValidate() override;
 	SVStringValueObjectClass* getRegExpression();
 	virtual BOOL CloseObject() override;
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
 	SVBarCodeResultClass(BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVBARCODEANALYZERESULT);
 	virtual ~SVBarCodeResultClass();
-
-	virtual bool resetAllObjects( bool shouldNotifyFriends, bool silentReset ) override;
 
 	HRESULT LoadMatchStringFile();
 	BOOL BuildHashTable(char *szBuffer);
@@ -46,10 +43,15 @@ public:
 	SVFileNameValueObjectClass msv_szMatchStringFileName;
 	SVLongValueObjectClass msv_lMatchStringLine;
 	SVDoubleValueObjectClass m_dReadScore;
-	virtual HRESULT ResetObject() override;
+	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 protected:
 	SVStringValueObjectClass* getInputString();
+
+private:
+	bool ValidateLocal(SvStl::MessageContainerVector *pErrorMessages=nullptr) const;
+
+private:
 	SVInObjectInfoStruct m_SVRegExpressionObjectInfo;
 
 	long     m_lTotalBytes;

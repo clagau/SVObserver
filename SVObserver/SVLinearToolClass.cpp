@@ -94,14 +94,13 @@ BOOL SVLinearToolClass::CloseObject()
 	return bRetVal;
 }
 
-HRESULT SVLinearToolClass::ResetObject()
+bool SVLinearToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	HRESULT l_hrOk = S_OK;
-
-	long l_lValue = 0;
+	bool Result = true;
 	BOOL l_bValue = FALSE;
 
-	if( S_OK == m_voUseProfileRotation.GetValue( l_bValue ) )
+	HRESULT l_hrOk = m_voUseProfileRotation.GetValue( l_bValue );
+	if( S_OK == l_hrOk )
 	{
 		long l_DataIndex = m_voUseProfileRotation.GetLastSetIndex();
 
@@ -141,12 +140,19 @@ HRESULT SVLinearToolClass::ResetObject()
 		}
 	}
 
-	if( S_OK != SVToolClass::ResetObject() )
+	if ( S_OK != l_hrOk )
 	{
-		l_hrOk = S_FALSE;
+		Result = false;
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_UpdateLinearToolDataFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
 	}
 
-	if ( S_OK == l_hrOk )
+	Result = SVToolClass::ResetObject(pErrorMessages) && Result;
+
+	if ( Result )
 	{
 		SVImageExtentClass l_svExtents;
 
@@ -169,13 +175,18 @@ HRESULT SVLinearToolClass::ResetObject()
 		}
 		else
 		{
-			l_hrOk = S_FALSE;
+			Result = false;
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_GetImageExtentFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				pErrorMessages->push_back(Msg);
+			}
 		}
 	}
 
 	UpdateImageWithExtent( 1 );
 
-	return l_hrOk;
+	return Result;
 }
 
 HRESULT SVLinearToolClass::SetImageExtentToParent( unsigned long p_ulIndex )
@@ -373,20 +384,5 @@ void SVLinearToolClass::init()
 
 	addDefaultInputObjects();
 }
-
-BOOL SVLinearToolClass::IsValid()
-{
-	BOOL bValid = TRUE;
-
-	ToolSizeAdjustTask* pToolSizeAdjustTask = nullptr;
-	pToolSizeAdjustTask = ToolSizeAdjustTask::GetToolSizeAdjustTask(this);
-	if(nullptr != pToolSizeAdjustTask)
-	{
-			bValid =  pToolSizeAdjustTask->OnValidate();
-	}
-
-	return SVToolClass::IsValid() & bValid ;
-}
-
 #pragma endregion Private Methods
 

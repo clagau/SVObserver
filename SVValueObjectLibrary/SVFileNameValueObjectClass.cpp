@@ -57,10 +57,6 @@ const SVFileNameValueObjectClass& SVFileNameValueObjectClass::operator = ( const
 
 SVFileNameValueObjectClass::~SVFileNameValueObjectClass()
 {
-	// Delete all object's data arrays...
-	SetObjectDepth(0);
-	CreateBuckets();
-	
 	SVFileNameManagerClass::Instance().RemoveItem(&m_svFileName);
 }
 

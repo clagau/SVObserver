@@ -421,7 +421,7 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 		bool resetResult = false;
 		if ( nullptr != pTool )
 		{
-			resetResult = pTool->resetAllObjects(true, false);
+			resetResult = pTool->resetAllObjects();
 		}
 		
 		if( resetResult )

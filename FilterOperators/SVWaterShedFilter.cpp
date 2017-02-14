@@ -81,21 +81,12 @@ BOOL SVWatershedFilterClass::CreateObject( SVObjectLevelCreateStruct* PCreateStr
 	return bOk;
 }
 
-BOOL SVWatershedFilterClass::OnValidate()
+bool SVWatershedFilterClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	BOOL bUseMarker;
+	bool Result = __super::ResetObject(pErrorMessages);
+	Result = ValidateLocal(pErrorMessages) && Result;
 
-	BOOL bRetVal = SVFilterClass::OnValidate();
-
-	bRetVal = bRetVal && ( S_OK == m_bvoUseMarker.GetValue(bUseMarker) );
-
-	if( bRetVal && bUseMarker )
-	{
-		bRetVal = bRetVal && m_MarkerImageInfo.IsConnected();
-		bRetVal = bRetVal && nullptr != m_MarkerImageInfo.GetInputObjectInfo().PObject;
-	}
-
-	return bRetVal;	
+	return Result;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -181,5 +172,36 @@ BOOL SVWatershedFilterClass::onRun( BOOL First, SVSmartHandlePointer RInputImage
 	SetInvalid();
 	RRunStatus.SetInvalid();
 	return FALSE;
+}
+
+bool SVWatershedFilterClass::ValidateLocal( SvStl::MessageContainerVector * pErrorMessages ) const
+{
+	bool Result = true;
+	BOOL bUseMarker;
+	if ( S_OK == m_bvoUseMarker.GetValue(bUseMarker) )
+	{
+		if( bUseMarker )
+		{
+			if (!m_MarkerImageInfo.IsConnected() || nullptr == m_MarkerImageInfo.GetInputObjectInfo().PObject)
+			{
+				Result = false;
+				if (nullptr != pErrorMessages)
+				{
+					SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+					pErrorMessages->push_back(Msg);
+				}
+			}
+		}
+	}
+	else
+	{
+		Result = false;
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_InvalidData, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
+	}	
+	return Result;
 }
 

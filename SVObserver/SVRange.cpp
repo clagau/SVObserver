@@ -90,8 +90,6 @@ void SVRangeClass::init()
 
 	m_isValidRange = true;
 
-	m_isObjectValid.SetDefaultValue(true, true);
-
 	// Setup up the input
 	m_inputObjectInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_inputObjectInfo, _T( "RangeValue" ) );
@@ -133,23 +131,28 @@ bool SVRangeClass::SetReference(LPCTSTR Name, SVObjectReference &ObjectReference
 	return ret;
 }
 
-HRESULT SVRangeClass::ResetObject()
+bool SVRangeClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	HRESULT hresult = S_OK;
-	hresult = InitReferencesAndInputs();
-	if(S_OK != hresult)
+	bool Result = InitReferencesAndInputs(pErrorMessages);
+
+	// check if input is valid
+	if( !m_inputObjectInfo.IsConnected() || nullptr == m_inputObjectInfo.GetInputObjectInfo().PObject )
+	{
+		Result = false;
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
+	}
+
+	if(!Result)
 	{
 		SetInvalid();
 	}
 
-	HRESULT hres = SVTaskObjectClass::ResetObject();
-
-	if (S_OK == hresult)
-	{
-		hresult = hres;
-	}
-
-	return hresult;
+	Result = SVTaskObjectClass::ResetObject(pErrorMessages) && Result;
+	return Result;
 }
 
 BOOL SVRangeClass::CloseObject()
@@ -158,9 +161,9 @@ BOOL SVRangeClass::CloseObject()
 	return SVTaskObjectClass::CloseObject();
 }
 
-HRESULT SVRangeClass::InitReferencesAndInputs()
+bool SVRangeClass::InitReferencesAndInputs(SvStl::MessageContainerVector *pErrorMessages)
 {
-	HRESULT hResult = S_OK;
+	bool Result = true;
 	DisconnectAllInputObjects();
 	SVValueObjectReference emptyRef;
 	SVString ValueIndirect;
@@ -192,12 +195,28 @@ HRESULT SVRangeClass::InitReferencesAndInputs()
 			}
 			if(!SetReference( dottedName.c_str(), m_ValueObjectReferences[i] ))
 			{
-				hResult = -SvOi::Err_16025; //invalid Reference;
+				Result = false;
+				if (nullptr != pErrorMessages)
+				{
+					SvStl::MessageContainer message;
+					SVStringVector msgList;
+					msgList.push_back(SVString(GetCompleteObjectNameToObjectType( nullptr, SVInspectionObjectType )));
+					message.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_InvalidReference, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16025 ); 
+					pErrorMessages->push_back( message );
+				}
 			}
 			//check if we have an valid but disabled input
 			else if( FALSE == (m_ValueObjectReferences[i].ObjectAttributesAllowed() & SV_SELECTABLE_FOR_EQUATION ) )
 			{
-				hResult = -SvOi::Err_16026; //Reference not allowed
+				Result = false;
+				if (nullptr != pErrorMessages)
+				{
+					SvStl::MessageContainer message;
+					SVStringVector msgList;
+					msgList.push_back(SVString(GetCompleteObjectNameToObjectType( nullptr, SVInspectionObjectType )));
+					message.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_InvalidReference, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16026 ); 
+					pErrorMessages->push_back( message );
+				}
 			}
 			else
 			{
@@ -206,7 +225,7 @@ HRESULT SVRangeClass::InitReferencesAndInputs()
 		}
 	}
 
-	if( S_OK != hResult )
+	if( !Result )
 	{
 		m_isValidRange = false;
 		///SetInvalid();
@@ -216,37 +235,12 @@ HRESULT SVRangeClass::InitReferencesAndInputs()
 		m_isValidRange = true;
 	}
 
-	if( S_OK == hResult )
+	if( Result )
 	{
 		ConnectAllInputObjects();
 	}
 
-	return hResult;
-}
-
-BOOL SVRangeClass::OnValidate()
-{
-	BOOL bRetVal = SVTaskObjectClass::OnValidate();
-
-	// check if input is valid
-	if( bRetVal && m_inputObjectInfo.IsConnected() &&
-		m_inputObjectInfo.GetInputObjectInfo().PObject )
-	{
-		bRetVal = true;
-	}
-
-	if(bRetVal)
-	{
-		bRetVal = ( S_OK == InitReferencesAndInputs() );
-	}
-
-	if(!bRetVal)
-	{
-		m_isValidRange = false;
-		SetInvalid();
-	}
-
-	return bRetVal;
+	return Result;
 }
 
 SVDoubleValueObjectClass&  SVRangeClass::GetRange(RangeEnum::ERange range)
@@ -331,29 +325,6 @@ void SVRangeClass::OnObjectRenamed(const SVObjectClass& rRenamedObject, const SV
 		rangeHelper.SetInspectionData();
 	}
 	__super::OnObjectRenamed(rRenamedObject, rOldName);
-}
-
-bool SVRangeClass::resetAllObjects( bool shouldNotifyFriends, bool silentReset )
-{
-	bool Result = false;
-
-	HRESULT ResetStatus = ResetObject();
-	if( S_OK != ResetStatus )
-	{
-		if(!silentReset && (ResetStatus == -SvOi::Err_16025 || ResetStatus == -SvOi::Err_16026))
-		{
-			SVStringVector msgList;
-			msgList.push_back(SVString(GetCompleteObjectNameToObjectType( nullptr, SVInspectionObjectType )));
-			SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_InvalidReference, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10186 ); 
-		}
-		Result = false;
-	}
-	else
-	{
-		Result = true;
-	}
-	return( __super::resetAllObjects( shouldNotifyFriends, silentReset ) && Result );
 }
 
 BOOL SVRangeClass::onRun(SVRunStatusClass& RRunStatus)

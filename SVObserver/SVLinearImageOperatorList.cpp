@@ -77,7 +77,7 @@ BOOL SVLinearImageOperatorListClass::CloseObject()
 	return l_bOk;
 }
 
-HRESULT SVLinearImageOperatorListClass::ResetObject()
+bool SVLinearImageOperatorListClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	BOOL UseRotation = TRUE;
 
@@ -92,30 +92,21 @@ HRESULT SVLinearImageOperatorListClass::ResetObject()
 		outputImageObject.InitializeImage( SVImageTypePhysical );
 	}
 
-	HRESULT l_hrOk = SVStdImageOperatorListClass::ResetObject();
+	bool Result = __super::ResetObject(pErrorMessages);
 
 	CollectInputImageNames();
 
 	if( S_OK != UpdateLineExtentData() )
 	{
-		l_hrOk = S_FALSE;
-	}
-
-	return l_hrOk;
-}
-
-BOOL SVLinearImageOperatorListClass::OnValidate()
-{
-	if( SVStdImageOperatorListClass::OnValidate() )
-	{
-		if( nullptr != getInputProfileOrientation() && 
-			  m_aulLineData.size() > 0 )
+		Result = false;
+		if (nullptr != pErrorMessages)
 		{
-			return TRUE;
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_UpdateLineExtentDataFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
 		}
 	}
-	SetInvalid();
-	return FALSE;
+
+	return Result;
 }
 
 BOOL SVLinearImageOperatorListClass::Run( SVRunStatusClass& RRunStatus )
@@ -135,6 +126,8 @@ BOOL SVLinearImageOperatorListClass::Run( SVRunStatusClass& RRunStatus )
 
 	if( UseRotation )
 	{
+		clearRunErrorMessages();
+
 		SVRunStatusClass ChildRunStatus;
 		ChildRunStatus.m_lResultDataIndex  = RRunStatus.m_lResultDataIndex;
 		ChildRunStatus.Images = RRunStatus.Images;
@@ -402,16 +395,19 @@ HRESULT SVLinearImageOperatorListClass::UpdateLineExtentData()
 			m_ulLineLength = l_oRect.bottom;
 		}
 
-		m_svArray.resize( m_ulLineLength );
-
-		m_aulLineData.resize( m_ulLineLength );
-
-		if( m_svProfileResultData.Resize( m_ulLineLength ) )
+		if (0 < m_ulLineLength)
 		{
-			l_hrOk = S_OK;
-		}
+			m_svArray.resize( m_ulLineLength );
 
-		m_svLinearData.SetArraySize( m_ulLineLength );
+			m_aulLineData.resize( m_ulLineLength );
+
+			if( m_svProfileResultData.Resize( m_ulLineLength ) )
+			{
+				l_hrOk = S_OK;
+			}
+
+			m_svLinearData.SetArraySize( m_ulLineLength );
+		}
 	}
 
 	return l_hrOk;

@@ -179,7 +179,7 @@ void SVExternalToolDlg::OnOK()
 	try
 	{
 		hr = m_pTask->Initialize();
-		if( m_pTask->resetAllObjects(true, false) )
+		if( m_pTask->resetAllObjects() )
 		{
 			hr = S_FALSE;
 		}
@@ -392,7 +392,7 @@ void SVExternalToolDlg::InitializeDll()
 		m_strStatus.Empty();
 		UpdateData(FALSE);
 		m_pTask->Initialize( SVDllLoadLibraryCallback(this, &SVExternalToolDlg::NotifyProgress) );
-		m_pTask->resetAllObjects(true, false);
+		m_pTask->resetAllObjects();
 
 
 		m_strStatus += _T("DLL passes the tests.");

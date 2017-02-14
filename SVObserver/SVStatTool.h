@@ -46,12 +46,9 @@ public:
 	virtual ~SVStatisticsToolClass();
 
 	virtual BOOL CreateObject(SVObjectLevelCreateStruct* PCreateStruct ) override;
-	virtual bool resetAllObjects( bool shouldNotifyFriends, bool silentReset ) override;
-	virtual HRESULT ResetObject() override;
-	virtual BOOL    OnValidate() override;
+	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 	
-	BOOL HasVariable();
-	BOOL Test();
+	BOOL HasVariable() const;
 
 	SVString GetFeatureString();
 	SVString GetFeatureName( int aIndex );
@@ -59,7 +56,7 @@ public:
 	SVString GetOccurenceTestValue();
 	void SetOccurenceTestValue( const SVString& rValue );
 	
-	SVObjectReference GetVariableSelected();
+	SVObjectReference GetVariableSelected() const;
 	void SetVariableSelected( const SVString& rName );
 	void SetVariableSelected( SVObjectReference refObject );
 
@@ -84,6 +81,11 @@ protected:
 
 	void RestoreFeatureAttributes();
 
+	bool Test(SvStl::MessageContainerVector *pErrorMessages=nullptr);
+
+private:
+	bool ValidateLocal(SvStl::MessageContainerVector *pErrorMessages=nullptr) const;
+
 protected:
 	SVDoubleValueObjectClass    msvValue [SV_NUMBER_OF_STAT_FEATURES];
 	SVStringValueObjectClass    msvOccurenceValue;
@@ -92,8 +94,6 @@ protected:
 	SVStringValueObjectClass    msvVariableName;
 
 	DWORD                       msvlDefaultAttributes; 
-
-	SvStl::MessageContainer     m_errContainer; // for errorEvent
 
 	double                      msvAccumulatedTotal;
 	double                      msvAccumulatedSquares;

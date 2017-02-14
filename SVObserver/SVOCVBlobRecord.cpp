@@ -55,7 +55,6 @@ void SVOCVCharacterResultClass::init()
 
 void SVOCVCharacterResultClass::HideResults()
 {
-	m_isObjectValid.ObjectAttributesAllowedRef() = SV_EMBEDABLE;
 	m_statusColor.ObjectAttributesAllowedRef() = SV_EMBEDABLE;
 	m_statusTag.ObjectAttributesAllowedRef() = SV_EMBEDABLE;
 
@@ -71,7 +70,6 @@ void SVOCVCharacterResultClass::HideResults()
 
 void SVOCVCharacterResultClass::UnhideResults()
 {
-	m_isObjectValid.ObjectAttributesAllowedRef() = ( SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES & ~SV_PRINTABLE );
 	m_statusColor.ObjectAttributesAllowedRef() = ( SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES & ~SV_PRINTABLE );
 	m_statusTag.ObjectAttributesAllowedRef() = ( SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES & ~SV_PRINTABLE );
 

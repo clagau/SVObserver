@@ -1381,7 +1381,7 @@ void SVIPDoc::OnEditPaste()
 
 			pInspection->createAllObjects(createObjStruct);
 			//Reset only the inserted tool
-			pTool->resetAllObjects(true, true);
+			pTool->resetAllObjects();
 
 			RunOnce();
 			UpdateAllViews(nullptr);
@@ -1640,7 +1640,7 @@ void SVIPDoc::OnPublishedResultImagesPicker()
 				SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject( ObjectGuid );
 				if ( nullptr != pObject )
 				{
-					pObject->resetAllObjects(true, false);
+					pObject->resetAllObjects();
 				}
 			}
 

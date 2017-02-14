@@ -98,13 +98,13 @@ BOOL SVTransformationToolClass::CreateObject( SVObjectLevelCreateStruct* PCreate
 	return bOk;
 }
 
-HRESULT SVTransformationToolClass::ResetObject()
+bool SVTransformationToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	HRESULT l_Status = SVToolClass::ResetObject();
+	bool Result = SVToolClass::ResetObject(pErrorMessages);
 
 	UpdateImageWithExtent( 1 );
 
-	return l_Status;
+	return Result;
 }
 
 

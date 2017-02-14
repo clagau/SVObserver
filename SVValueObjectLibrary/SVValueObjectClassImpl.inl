@@ -33,21 +33,20 @@ const SVValueObjectClassImpl<T>& SVValueObjectClassImpl<T>::operator = (const SV
 	{
 		if ( SetObjectDepth( rhs.m_iNumberOfBuckets ) )
 		{
-			if ( S_OK == CreateBuckets() )
-			{
-				if ( 1 == rhs.ArraySize() )
-				{
-					m_ScalarBuckets = rhs.m_ScalarBuckets;
-				}
-				else
-				{
-// Jim 10.02.15 - allow the copy of empty vector.
-					BucketNoAssert() = rhs.Buckets();
-				}
-				DefaultValue() = rhs.DefaultValue();
+			CreateBuckets();
 
-				m_iLastSetIndex = rhs.m_iLastSetIndex;
+			if ( 1 == rhs.ArraySize() )
+			{
+				m_ScalarBuckets = rhs.m_ScalarBuckets;
 			}
+			else
+			{
+				// Jim 10.02.15 - allow the copy of empty vector.
+				BucketNoAssert() = rhs.Buckets();
+			}
+			DefaultValue() = rhs.DefaultValue();
+
+			m_iLastSetIndex = rhs.m_iLastSetIndex;
 		}
 	}
 	return *this;
@@ -125,10 +124,8 @@ BOOL SVValueObjectClassImpl<T>::SetObjectDepthWithIndex(int iNewObjectDepth, int
 }
 
 template <typename T>
-HRESULT SVValueObjectClassImpl<T>::CreateBuckets()
+void SVValueObjectClassImpl<T>::CreateBuckets()
 {
-	HRESULT l_hrOk = S_OK;
-
 	if( m_objectDepth < 2 )
 	{
 		m_objectDepth = 2;
@@ -152,9 +149,7 @@ HRESULT SVValueObjectClassImpl<T>::CreateBuckets()
 
 	m_iNumberOfBuckets = m_objectDepth;
 
-	l_hrOk = SVValueObjectClass::CreateBuckets();
-
-	return l_hrOk;
+	SVValueObjectClass::CreateBuckets();
 }
 
 template <typename T>

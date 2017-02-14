@@ -126,18 +126,16 @@ BOOL SVCameraImageTemplate::ResetImageIndex()
 	return l_Status;
 }
 
-HRESULT SVCameraImageTemplate::ResetObject()
+bool SVCameraImageTemplate::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	HRESULT l_Status = RebuildCameraImage();
+	RebuildCameraImage();
 
 	if( !( GetCameraBufferArrayPtr().empty() ) )
 	{
 		m_LastUpdate = std::max( m_LastUpdate, GetCameraBufferArrayPtr()->GetLastResetTimeStamp() );
 	}
 
-	l_Status = SVImageClass::ResetObject();
-
-	return l_Status;
+	return SVImageClass::ResetObject(pErrorMessages);
 }
 
 SVVirtualCamera* SVCameraImageTemplate::GetCamera() const
@@ -284,7 +282,7 @@ HRESULT SVCameraImageTemplate::ReconnectBuffers()
 
 		m_LastUpdate = SVClock::GetTimeStamp();
 
-		if ( S_OK != ResetObject() )
+		if ( !ResetObject() )
 		{
 			hr = S_FALSE;
 		}

@@ -30,7 +30,7 @@ public:
 	SVTADlgTranslationResizePage( const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* Parent, int id = IDD );
 	virtual ~SVTADlgTranslationResizePage();
 
-	HRESULT SetInspectionData();
+	HRESULT SetInspectionData(SvStl::MessageContainerVector *pErrorMessages=nullptr);
 
 	bool	QueryAllowExit() override;
 

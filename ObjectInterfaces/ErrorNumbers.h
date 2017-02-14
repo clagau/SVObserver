@@ -36,15 +36,7 @@ namespace Seidenader { namespace ObjectInterfaces
 	static const int Err_10009_LoadOfResourceDllFailed = Maz_ErrorBase + 9;
 	static const int Err_10010_TreeParser_InspectionCreateFailed = Maz_ErrorBase + 10;
 	//RingBuffer
-	static const int Err_10011_RingBuffer_OnValidFailed = Maz_ErrorBase + 11;
-	static const int Err_10012_RingBuffer_NoInputImage = Maz_ErrorBase + 12;
 	static const int Err_10013_RingBuffer_DepthValueInvalid = Maz_ErrorBase + 13;
-	static const int Err_10014_LinkedValueConnectInput_InvalidUid = Maz_ErrorBase + 14;
-	static const int Err_10015_LinkedValueConnectInput_ConnectFailed = Maz_ErrorBase + 15;
-	static const int Err_10016_LinkedValueConnectInput_InvalidValue = Maz_ErrorBase + 16;
-	static const int Err_10017_LinkedValueConnectInput_ResetFailed = Maz_ErrorBase + 17;
-	static const int Err_10018_RingBuffer_InvalidRingDepth = Maz_ErrorBase + 18;
-	static const int Err_10019_RingBuffer_InvalidImageIndex = Maz_ErrorBase + 19;
 
 	static const int Err_10020_InsertTaskObject_InvalidParameter = Maz_ErrorBase + 20;
 	static const int Err_10021_InsertTaskObject_CreateObjectFailed = Maz_ErrorBase + 21;
@@ -72,7 +64,6 @@ namespace Seidenader { namespace ObjectInterfaces
 	static const int Err_10037 = Maz_ErrorBase + 37;
 	static const int Err_10038 = Maz_ErrorBase + 38;
 	static const int Err_10039 = Maz_ErrorBase + 39;
-	static const int Err_10040 = Maz_ErrorBase + 40;
 	static const int Err_10041 = Maz_ErrorBase + 41;
 	static const int Err_10042 = Maz_ErrorBase + 42;
 	static const int Err_10043 = Maz_ErrorBase + 43;
@@ -184,7 +175,6 @@ namespace Seidenader { namespace ObjectInterfaces
 	static const int Err_10183 = Maz_ErrorBase + 183;
 	static const int Err_10184 = Maz_ErrorBase + 184;
 	static const int Err_10185 = Maz_ErrorBase + 185;
-	static const int Err_10186 = Maz_ErrorBase + 186;
 	static const int Err_10187 = Maz_ErrorBase + 187;
 	static const int Err_10188 = Maz_ErrorBase + 188;
 	static const int Err_10189 = Maz_ErrorBase + 189;
@@ -338,7 +328,6 @@ namespace Seidenader { namespace ObjectInterfaces
 	static const int Err_16030_InvalidValuePointer = Mec_ErrorBase + 30;
 	static const int Err_16031_InvalidSize = Mec_ErrorBase + 31;
 	static const int Err_16032_InvalidSize = Mec_ErrorBase + 32;
-	static const int Err_16033_SetExtensionFailed = Mec_ErrorBase + 33;
 	static const int Err_16034_InvalidMode = Mec_ErrorBase + 34;
 	static const int Err_16035_InvalidMode = Mec_ErrorBase + 35;
 	static const int Err_16036_InvalidMode = Mec_ErrorBase + 36;
@@ -611,7 +600,6 @@ namespace Seidenader { namespace ObjectInterfaces
 	static const int Err_25009_ClipboardDataConversion = Gra_ErrorBase + 9;
 	static const int Err_25010_ClipboardDataConversion = Gra_ErrorBase + 10;
 	static const int Err_25011_ClipboardDataConversion = Gra_ErrorBase + 11;
-	static const int Err_25012_StatTool_Test = Gra_ErrorBase + 12;
 	static const int Err_25013_NoMatroxDongle = Gra_ErrorBase + 13;
 	static const int Err_25014_GlobalConstantNumber = Gra_ErrorBase + 14;
 	static const int Err_25015_GlobalNameAlreadyUsed = Gra_ErrorBase + 15;

@@ -72,7 +72,9 @@ public:
 
 	virtual const SVClock::SVTimeStamp& GetLastResetTimeStamp() const;
 	
-	virtual HRESULT ResetObject() override;
+	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
+	
+	HRESULT RebuildStorage( bool p_ExcludePositionCheck, SvStl::MessageContainerVector *pErrorMessages=nullptr );
 
 	SVImageExtentClass GetImageExtents();
 	HRESULT GetImageExtentsToFit( SVImageExtentClass p_svInExtent, SVImageExtentClass &p_rsvOutExtent );
@@ -107,8 +109,6 @@ public:
 	virtual void Persist( SVObjectWriter& rWriter ) override;
 	void PersistImageAttributes( SVObjectWriter& rWriter );
 
-	virtual BOOL OnValidate() override; //@TODO:  Change method to const?
-
 	virtual SVImageIndexStruct GetSourceImageIndex( SVDataManagerHandle* pHandle, const SVGuidSVCameraInfoStructMap& rGuidCameraMap );
 
 	SVImageClass* GetRootImage(); //@TODO:  Change method to const?
@@ -116,8 +116,6 @@ public:
 
 	void GetChildExtents( SVChildExtentDeque& p_rChildExtents ) const;
 	void SetTranslationOffset(double offsetX, double offsetY);
-
-	virtual bool resetAllObjects( bool shouldNotifyFriends, bool silentReset ) override;
 
 #pragma region virtual method (ISVImage)
 	virtual SVImageTypeEnum GetImageType() const override;
@@ -158,7 +156,7 @@ protected:
 
 	HRESULT UpdateChildBuffers( SVImageObjectClassPtr p_psvChildBuffers, const SVImageInfoClass& p_rImageInfo );
 
-	HRESULT UpdateBufferArrays( bool p_ExcludePositionCheck = false );
+	HRESULT UpdateBufferArrays( bool p_ExcludePositionCheck = false, SvStl::MessageContainerVector *pErrorMessages=nullptr );
 
 	HRESULT GetChildImageInfo( const GUID& p_rChildID, SVImageInfoClass& p_rImageInfo ) const;
 
@@ -173,7 +171,7 @@ protected:
 	virtual HRESULT RegisterAsSubObject();
 	virtual HRESULT UnregisterAsSubObject();
 
-	HRESULT RebuildStorage( bool p_ExcludePositionCheck );
+	virtual bool ValidateImage();
 
 	mutable SVClock::SVTimeStamp m_LastUpdate;
 	mutable SVClock::SVTimeStamp m_LastReset;

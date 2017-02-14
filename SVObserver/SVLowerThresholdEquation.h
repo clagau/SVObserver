@@ -22,8 +22,6 @@ public:
 	SVLowerThresholdEquationClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVLOWERTHRESHOLDEQUATION );
 	virtual ~SVLowerThresholdEquationClass();
 
-	virtual BOOL OnValidate() override;
-
 protected:
 	virtual BOOL CreateObject(SVObjectLevelCreateStruct *PCreateStruct) override;
 	void init();

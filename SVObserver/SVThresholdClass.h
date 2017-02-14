@@ -28,12 +28,11 @@ public:
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
 	virtual BOOL CloseObject() override;
 
-	virtual HRESULT ResetObject() override;
+	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	SVBoolValueObjectClass& GetThresholdActivateAttribute();
 
-	HRESULT Rebuild();
-	virtual BOOL OnValidate() override;
+	bool Rebuild();
 
 	const SVMatroxLongArray & GetHistogramValues() const
 	{

@@ -44,14 +44,6 @@ public:
 
 	virtual HRESULT IsInputImage( SVImageClass* p_psvImage ) override;
 
-	// Routing Version of Validate
-	// Validates Local Scope and all owned objects
-	virtual BOOL Validate() override;
-
-	// Non Routing Version of Validate
-	// validates only Local Scope
-	virtual BOOL OnValidate() override;
-
 	virtual BOOL CloseObject() override;
 
 	virtual HRESULT GetChildObject( SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index = 0 ) const override;
@@ -106,7 +98,7 @@ public:
 	virtual bool replaceObject(SVObjectClass* pObject, const GUID& rNewGuid) override;
 
 	BOOL getAvailableObjects( SVClassInfoStructListClass* pList, const SVObjectTypeInfoStruct* pObjectTypeInfo ) const;
-	virtual bool resetAllObjects( bool shouldNotifyFriends, bool silentReset ) override;
+	virtual bool resetAllObjects( SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 #pragma endregion Methods to replace processMessage
 #pragma endregion public methods	
 
@@ -129,7 +121,7 @@ protected:
 	virtual SVObjectPtrDeque GetPreProcessObjects() const override;
 	virtual SVObjectPtrDeque GetPostProcessObjects() const override;
 
-	virtual bool resetAllOutputListObjects( bool shouldNotifyFriends, bool silentReset ) override;
+	virtual bool resetAllOutputListObjects( SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
 	/// Call method ConnectObject at the child object with a create struct defined in this method.
 	/// \param rChildObject [in] Child object

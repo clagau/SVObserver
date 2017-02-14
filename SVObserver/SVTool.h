@@ -57,7 +57,6 @@ public:
 	virtual HRESULT GetDrawInfo( SVExtentMultiLineStruct& p_rMultiLine ) override;
 
 	bool IsEnabled() const;
-	bool IsEnabled(long p_lIndex) const;
 
 	bool WasEnabled() const;
 
@@ -88,14 +87,10 @@ public:
 	HRESULT TranslatePointToSource( SVExtentPointStruct p_svIn, SVExtentPointStruct& p_rsvOut );
 	HRESULT EnableAuxiliaryExtents( bool p_bEnable );
 
-	virtual bool resetAllObjects( bool shouldNotifyFriends, bool silentReset ) override;
-	virtual HRESULT ResetObject() override;
+	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	virtual HRESULT GetPropertyInfo( SVExtentPropertyEnum p_eProperty, SVExtentPropertyInfoStruct& p_rInfo ) const override;
 	HRESULT SetExtentPropertyInfo( SVExtentPropertyEnum p_eProperty, const SVExtentPropertyInfoStruct& p_rInfo );
-
-	virtual BOOL Validate() override;
-	virtual BOOL OnValidate() override;
 
 	bool getConditionalResult() const;
 	bool getConditionalResult(long p_lIndex) const;
@@ -175,6 +170,11 @@ protected:
 
 	virtual void connectChildObject( SVTaskObjectClass& rChildObject ) override;
 
+private:
+	void init();
+	bool ValidateLocal(SvStl::MessageContainerVector *pErrorMessages=nullptr) const;
+
+protected:
 	SVToolSetClass* m_pCurrentToolSet;
 
 	// Passed, if TRUE ( Reset Value: FALSE )
@@ -225,8 +225,5 @@ protected:
 
 protected:
 	SVToolExtentClass m_svToolExtent;
-
-private:
-	void init();
 };
 

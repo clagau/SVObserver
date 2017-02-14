@@ -22,8 +22,6 @@ public:
 	SVMathEquationClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVMATHEQUATION );
 	virtual ~SVMathEquationClass();
 
-	virtual BOOL OnValidate() override;
-
 protected:
 	void init();
 	virtual BOOL CreateObject(SVObjectLevelCreateStruct *PCreateStruct) override;

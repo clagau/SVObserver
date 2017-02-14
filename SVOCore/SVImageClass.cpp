@@ -350,7 +350,7 @@ HRESULT SVImageClass::UpdateImage( const SVImageInfoClass& p_rImageInfo )
 
 		m_LastUpdate = SVClock::GetTimeStamp();
 
-		l_Status = ResetObject();
+		l_Status = ( ResetObject() ? S_OK : S_FALSE );
 	}
 
 	return l_Status;
@@ -369,7 +369,7 @@ HRESULT SVImageClass::UpdateImage( const GUID& p_rParentID )
 
 		m_LastUpdate = SVClock::GetTimeStamp();
 
-		l_Status = ResetObject();
+		l_Status = ( ResetObject() ? S_OK : S_FALSE );
 	}
 
 	return l_Status;
@@ -398,11 +398,11 @@ HRESULT SVImageClass::UpdateImage( const GUID& p_rParentID, const SVImageExtentC
 
 		m_LastUpdate = SVClock::GetTimeStamp();
 
-		l_Temp = ResetObject();
+		bool bOk = ResetObject();
 
-		if( S_OK == l_Status )
+		if( S_OK == l_Status && !bOk )
 		{
-			l_Status = l_Temp;
+			l_Status = S_FALSE;
 		}
 	}
 
@@ -428,7 +428,7 @@ HRESULT SVImageClass::UpdateImage( const GUID& p_rParentID, const SVImageInfoCla
 
 		m_LastUpdate = SVClock::GetTimeStamp();
 
-		l_Status = ResetObject();
+		l_Status = ( ResetObject() ? S_OK : S_FALSE );
 	}
 
 	return l_Status;
@@ -444,7 +444,7 @@ HRESULT SVImageClass::UpdateImage( SVImageTypeEnum p_ImageType )
 
 		m_LastUpdate = SVClock::GetTimeStamp();
 
-		l_Status = ResetObject();
+		l_Status = ( ResetObject() ? S_OK : S_FALSE );
 	}
 
 	return l_Status;
@@ -463,7 +463,7 @@ HRESULT SVImageClass::UpdateImage( SVImageTypeEnum p_ImageType, const SVImageInf
 
 		m_LastUpdate = SVClock::GetTimeStamp();
 
-		l_Status = ResetObject();
+		l_Status = ( ResetObject() ? S_OK : S_FALSE );
 	}
 
 	return l_Status;
@@ -487,7 +487,7 @@ HRESULT SVImageClass::UpdateImage( SVImageTypeEnum p_ImageType, const GUID& p_rP
 
 		m_LastUpdate = SVClock::GetTimeStamp();
 
-		l_Status = ResetObject();
+		l_Status = ( ResetObject() ? S_OK : S_FALSE );
 	}
 
 	return l_Status;
@@ -514,7 +514,7 @@ HRESULT SVImageClass::UpdateImage( SVImageTypeEnum p_ImageType, const GUID& p_rP
 
 		m_LastUpdate = SVClock::GetTimeStamp();
 
-		l_Status = ResetObject();
+		l_Status = ( ResetObject() ? S_OK : S_FALSE );
 	}
 
 	return l_Status;
@@ -522,15 +522,15 @@ HRESULT SVImageClass::UpdateImage( SVImageTypeEnum p_ImageType, const GUID& p_rP
 
 BOOL SVImageClass::SetImageDepth( long lDepth )
 {
-	BOOL l_bOk = true;
+	bool l_bOk = true;
 
 	if( lDepth != GetImageDepth() )
 	{
-		l_bOk = SVObjectAppClass::SetImageDepth( lDepth );
+		l_bOk = (TRUE == SVObjectAppClass::SetImageDepth( lDepth ));
 
 		m_LastUpdate = SVClock::GetTimeStamp();
 
-		l_bOk &= ( S_OK == ResetObject() );
+		l_bOk &= ResetObject();
 	}
 
 	return l_bOk;
@@ -541,12 +541,22 @@ const SVClock::SVTimeStamp& SVImageClass::GetLastResetTimeStamp() const
 	return m_LastReset;
 }
 	
-HRESULT SVImageClass::ResetObject()
+bool SVImageClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	return RebuildStorage( false );
+	bool Result = (S_OK == RebuildStorage( false, pErrorMessages )) && __super::ResetObject(pErrorMessages);
+	if (!ValidateImage())
+	{
+		Result = false;
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_InitImageFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
+	}
+	return Result;
 }
 
-HRESULT SVImageClass::RebuildStorage( bool p_ExcludePositionCheck )
+HRESULT SVImageClass::RebuildStorage( bool p_ExcludePositionCheck, SvStl::MessageContainerVector *pErrorMessages )
 {
 	HRESULT hr = UpdateFromParentInformation();
 
@@ -568,7 +578,7 @@ HRESULT SVImageClass::RebuildStorage( bool p_ExcludePositionCheck )
 		// arrays.
 		if (S_OK == l_Temp)
 		{
-			l_Temp = UpdateBufferArrays( p_ExcludePositionCheck );
+			l_Temp = UpdateBufferArrays( p_ExcludePositionCheck, pErrorMessages );
 		}
 
 		if( S_OK == hr )
@@ -588,6 +598,12 @@ HRESULT SVImageClass::RebuildStorage( bool p_ExcludePositionCheck )
 	if( S_OK == hr )
 	{
 		m_LastReset = SVClock::GetTimeStamp();
+	}
+
+	if ( S_OK != hr && nullptr != pErrorMessages && pErrorMessages->empty() )
+	{
+		SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_RebuildFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+		pErrorMessages->push_back(Msg);
 	}
 
 	return hr;
@@ -1568,14 +1584,6 @@ SVImageClass* SVImageClass::GetRootImage()
 	return pRootImage;
 }
 
-bool SVImageClass::resetAllObjects( bool shouldNotifyFriends, bool silentReset )
-{
-	bool Result = ( S_OK == ResetObject() );
-	assert( Result );
-
-	return Result && __super::resetAllObjects(shouldNotifyFriends, silentReset);
-}
-
 #ifdef _DEBUG
 //Moved to precompiled header: #include <map>
 namespace
@@ -2052,7 +2060,12 @@ HRESULT SVImageClass::UpdateChildBuffers( SVImageObjectClassPtr p_psvChildBuffer
 		p_psvChildBuffers->SetParentImageObject( l_BufferPtr );
 		p_psvChildBuffers->SetImageInfo( p_rImageInfo );
 
-		l_Status = p_psvChildBuffers->ResetObject();
+		SvStl::MessageContainerVector errorMessage;
+		bool Result = p_psvChildBuffers->ResetObject(&errorMessage);
+		if (!Result && !errorMessage.empty())
+		{
+			l_Status = errorMessage[0].getMessage().m_MessageCode;
+		}
 	}
 	else
 	{
@@ -2062,7 +2075,7 @@ HRESULT SVImageClass::UpdateChildBuffers( SVImageObjectClassPtr p_psvChildBuffer
 }
 // JMS - New Image Object methods */
 
-HRESULT SVImageClass::UpdateBufferArrays( bool p_ExcludePositionCheck )
+HRESULT SVImageClass::UpdateBufferArrays( bool p_ExcludePositionCheck, SvStl::MessageContainerVector *pErrorMessages )
 {
 	HRESULT		l_Status = S_OK;
 
@@ -2132,67 +2145,46 @@ HRESULT SVImageClass::UpdateBufferArrays( bool p_ExcludePositionCheck )
 
 				if( l_Reset )
 				{
-					SvStl::MessageContainerVector oldMessages;
+					SvStl::MessageContainerVector currentMessages;
+					m_BufferArrayPtr->ResetObject(&currentMessages);
 
-					SVTaskObjectClass*	pParentTask = dynamic_cast <SVTaskObjectClass*> (GetTool());
-
-					if ( nullptr == pParentTask || SVToolObjectType != pParentTask->GetObjectType() )
+					if (!currentMessages.empty())
 					{
-						// this image does not belong to a Tool.  
-					}
-					else
-					{
-						// Because m_BufferArrayPtr->ResetObject() only 
-						// returns an S_FALSE, error data will be tracked 
-						// through the owning Tool (if present).
-						//Save all current messages to add them later if no other error message occurs
-						oldMessages = pParentTask->getTaskMessages();
-						pParentTask->clearTaskMessages();
-					}
-
-					l_Status = m_BufferArrayPtr->ResetObject();
-					SvStl::MessageContainer currentMessage;
-					if (nullptr != pParentTask)
-					{
-						currentMessage = pParentTask->getFirstTaskMessage();
-					}
-
-					if ((S_OK == l_Status) && (S_OK != currentMessage.getMessage().m_MessageCode ))
-					{
-						l_Status = SVMSG_SVO_5068_INCONSISTENTDATA;
-					}
-					else
-					{
-						l_Status = currentMessage.getMessage().m_MessageCode;
-					}
-
-					if (SVMSG_SVO_5067_IMAGEALLOCATIONFAILED == l_Status)
-					{
-						SVStringVector msgList;
-						msgList.push_back(GetCompleteName());
-						currentMessage.setMessage( currentMessage.getMessage().m_MessageCode, SvOi::Tid_Default, msgList,  SvStl::SourceFileParams(StdMessageParams) );
-						pParentTask->addTaskMessage( currentMessage );
-					}
-
-					if( nullptr != pParentTask && SUCCEEDED(pParentTask->getFirstTaskMessage().getMessage().m_MessageCode) && 0 < oldMessages.size() )  
-					{
-						//No other error messages so add the previous messages
-						SvStl::MessageContainerVector::const_iterator Iter( oldMessages.begin() );
-						for( ; oldMessages.end() != Iter; ++Iter)
+						l_Status = currentMessages[0].getMessage().m_MessageCode;
+						if (nullptr != pErrorMessages)
 						{
-							pParentTask->addTaskMessage( *Iter );
+							GUID thisGuid = GetUniqueObjectID();
+							for( SvStl::MessageContainerVector::const_iterator Iter( currentMessages.begin() ); currentMessages.end() != Iter; ++Iter)
+							{
+								SvStl::MessageData messageData = Iter->getMessage();
+								if (SVMSG_SVO_5067_IMAGEALLOCATIONFAILED == messageData.m_MessageCode)
+								{
+									SVStringVector msgList;
+									msgList.push_back(GetCompleteName());
+									messageData.m_AdditionalTextList = msgList;
+								}
+
+								SvStl::MessageContainer message;
+								message.setMessage(messageData, thisGuid);
+								pErrorMessages->push_back( message );
+							}
 						}
 					}
 				}
 				else
 				{
-					l_Status = m_BufferArrayPtr->UpdateTimeStamp();
+					m_BufferArrayPtr->UpdateTimeStamp();
 				}
 			}
 		}
-		else
+		else // if (!( m_BufferArrayPtr.empty() )
 		{
 			l_Status = E_FAIL;
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_UpdateBufferFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				pErrorMessages->push_back(Msg);
+			}
 		}
 	}
 
@@ -2466,9 +2458,9 @@ RECT SVImageClass::GetOutputRectangle() const
 }
 #pragma endregion virtual method (ISVImage)
 
-BOOL SVImageClass::OnValidate()
+bool SVImageClass::ValidateImage()
 {
-	if( SVObjectAppClass::OnValidate() )
+	if( IsCreated() )
 	{
 		switch( m_ImageType )
 		{
@@ -2535,7 +2527,7 @@ BOOL SVImageClass::OnValidate()
 			}
 		}
 	}
-	return m_isObjectValid;
+	return (TRUE == m_isObjectValid);
 }
 
 HRESULT SVImageClass::GetImageIndex( SVDataManagerHandle& p_rHandle, const SVImageIndexStruct& rIndex ) const

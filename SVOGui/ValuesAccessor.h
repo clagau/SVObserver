@@ -70,7 +70,7 @@ namespace Seidenader
 					{
 						// Do a reset of the Tool
 						typedef SVSharedPtr<GuiCmd::ResetObject> ResetObjectCommandPtr;
-						ResetObjectCommandPtr commandPtr(new GuiCmd::ResetObject(ownerID, true));
+						ResetObjectCommandPtr commandPtr(new GuiCmd::ResetObject(ownerID));
 						SVObjectSynchronousCommandTemplate<ResetObjectCommandPtr> cmd(inspectionID, commandPtr);
 
 						hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);

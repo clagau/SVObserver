@@ -30,9 +30,9 @@ public:
 	
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
 
-	virtual HRESULT ResetObject() override;
+	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
-	BOOL RebuildRanking();
+	void RebuildRanking();
 
 #pragma region virtual method (IFilter)
 	virtual bool shouldResetInspection() const override { return true; }
@@ -43,7 +43,7 @@ private:
 
 protected:
 	virtual BOOL onRun( BOOL First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus ) override;
-	virtual BOOL OnValidate() override;
+	bool ValidateLocal(SvStl::MessageContainerVector *pErrorMessages=nullptr) const;
 
 private:
 	SVMatroxBuffer m_milRanking;

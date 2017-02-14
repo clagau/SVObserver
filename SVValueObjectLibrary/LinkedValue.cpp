@@ -333,8 +333,7 @@ void LinkedValue::ValidateValue( int iBucket, int iIndex, const SVString& rValue
 
 	if ( nullptr != pLinkedObject )
 	{
-		HRESULT Result = CheckLinkedObject( pLinkedObject );
-		if( S_OK == Result )
+		if( CheckLinkedObject( pLinkedObject ) )
 		{
 			//This must use the base class otherwise causes recursive call to ValidateValue
 			SVVariantValueObjectClass::ValidateValue( iBucket, iIndex, pLinkedObject->GetUniqueObjectID().ToString().c_str() );
@@ -374,9 +373,9 @@ void LinkedValue::ValidateValue( int iBucket, int iIndex, const SVString& rValue
 #pragma endregion Protected Methods
 
 #pragma region Private Methods
-HRESULT LinkedValue::UpdateConnection()
+bool LinkedValue::UpdateConnection(SvStl::MessageContainerVector *pErrorMessages)
 {
-	HRESULT Result = S_OK;
+	bool Result = true;
 	SVObjectClass* pLinkedObject( nullptr );
 	bool ConvertDottedName( false );
 	SVString Value;
@@ -391,8 +390,8 @@ HRESULT LinkedValue::UpdateConnection()
 	{
 		SVObjectManagerClass::Instance().GetObjectByIdentifier( LinkedUid, pLinkedObject );
 		
-		Result = CheckLinkedObject( pLinkedObject );
-		if( S_OK != Result )
+		Result = CheckLinkedObject( pLinkedObject, pErrorMessages );
+		if( !Result )
 		{
 			pLinkedObject = nullptr;
 		}
@@ -440,13 +439,18 @@ HRESULT LinkedValue::UpdateConnection()
 			assert( messageReturn );
 			if( !messageReturn )
 			{
-				Result = SvOi::Err_10015_LinkedValueConnectInput_ConnectFailed;
+				Result = false;
+				if (nullptr != pErrorMessages)
+				{
+					SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ConnectInputFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+					pErrorMessages->push_back(Msg);
+				}
 			}
 		}
 	}
 	else	// plain data
 	{
-		if( S_OK == Result )
+		if( Result )
 		{
 			DisconnectInput();
 
@@ -454,7 +458,12 @@ HRESULT LinkedValue::UpdateConnection()
 			SVVariantValueObjectClass::GetValue( value );
 			if ( GetDefaultType() != value.vt)
 			{
-				Result = SvOi::Err_10016_LinkedValueConnectInput_InvalidValue;
+				Result = false;
+				if (nullptr != pErrorMessages)
+				{
+					SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_WrongType, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+					pErrorMessages->push_back(Msg);
+				}
 			}
 		}
 	}
@@ -489,15 +498,11 @@ bool LinkedValue::ConnectInput()
 	return Result;
 }
 
-HRESULT LinkedValue::ResetObject()
+bool LinkedValue::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	HRESULT Result = SVVariantValueObjectClass::ResetObject();
-	if( S_OK == Result )
-	{
-		Result = UpdateConnection();
-	}
-	m_isObjectValid = (S_OK == Result);
-
+	bool Result = SVVariantValueObjectClass::ResetObject(pErrorMessages);
+	Result = Result && UpdateConnection(pErrorMessages);
+	m_isObjectValid = Result;
 	return Result;
 }
 
@@ -529,14 +534,19 @@ SVObjectClass* LinkedValue::ConvertStringInObject( const SVString& rValue ) cons
 	return pNewLinkedObject;
 }
 
-HRESULT LinkedValue::CheckLinkedObject( const SVObjectClass* const pLinkedObject ) const
+bool LinkedValue::CheckLinkedObject( const SVObjectClass* const pLinkedObject, SvStl::MessageContainerVector *pErrorMessages ) const
 {
-	HRESULT Result( S_OK );
+	bool Result( true );
 
 	//! Check if a valid object and make sure it does not link to itself
 	if ( nullptr == pLinkedObject || this == pLinkedObject )
 	{
-		Result = SvOi::Err_10014_LinkedValueConnectInput_InvalidUid;
+		Result = false;
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_InvalidLinkedObjectOrSame, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
 	}
 	else
 	{
@@ -547,7 +557,12 @@ HRESULT LinkedValue::CheckLinkedObject( const SVObjectClass* const pLinkedObject
 		//! If linked object has no inspection (e.g. Global Constants) then we don't need to check that the inspections are the same
 		if( nullptr != pLinkedObjectInspection && !isSameInpection )
 		{
-			Result = SvOi::Err_10014_LinkedValueConnectInput_InvalidUid;
+			Result = false;
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_WrongInspection, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				pErrorMessages->push_back(Msg);
+			}
 		}
 	}
 

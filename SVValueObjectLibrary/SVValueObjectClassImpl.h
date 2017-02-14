@@ -73,7 +73,7 @@ protected:
 	SVValueObjectClassImpl(LPCTSTR lpszObjectName) : SVValueObjectClass(lpszObjectName) {Init();}
 	SVValueObjectClassImpl(SVObjectClass* pOwner, int StringResourceID) : SVValueObjectClass(pOwner, StringResourceID) {Init();}
 
-	virtual HRESULT CreateBuckets() override;
+	virtual void CreateBuckets() override;
 	virtual HRESULT SetValueAt( int iBucket, int iIndex, T value );
 	virtual HRESULT GetValueAt( int iBucket, int iIndex, T& rValue ) const;
 

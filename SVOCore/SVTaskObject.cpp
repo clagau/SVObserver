@@ -96,30 +96,32 @@ SVTaskObjectClass::~SVTaskObjectClass()
 	CloseObject();
 }
 
-bool SVTaskObjectClass::resetAllObjects( bool shouldNotifyFriends, bool silentReset )
+bool SVTaskObjectClass::resetAllObjects( SvStl::MessageContainerVector *pErrorMessages/*=nullptr */ )
 {
-	// Check if friend should process first....
-	if (shouldNotifyFriends)
+	bool Result = true;
+	clearTaskMessages();
+	m_isObjectValid.SetValue(1, true);
+
+	// Notify friends...
+	for (size_t i = 0; i < m_friendList.size(); ++ i)
 	{
-		// Notify friends...
-		for (size_t i = 0; i < m_friendList.size(); ++ i)
+		const SVObjectInfoStruct& rfriend = m_friendList[i];
+		if (rfriend.PObject)
 		{
-			const SVObjectInfoStruct& rfriend = m_friendList[i];
-			if (rfriend.PObject)
-			{
-				rfriend.PObject->resetAllObjects(shouldNotifyFriends, silentReset);
-			}
+			Result = rfriend.PObject->resetAllObjects(&m_ResetErrorMessages) && Result;
 		}
 	}
 
-	return resetAllOutputListObjects( shouldNotifyFriends, silentReset );
-}
+	Result = resetAllOutputListObjects(&m_ResetErrorMessages) && Result;
 
-HRESULT SVTaskObjectClass::ResetObject()
-{
-	HRESULT l_hrOk = S_OK;
-	clearTaskMessages();
-	return l_hrOk;
+	Result = __super::resetAllObjects(&m_ResetErrorMessages) && Result;
+
+	if (nullptr != pErrorMessages && !m_ResetErrorMessages.empty())
+	{
+		pErrorMessages->insert(pErrorMessages->end(), m_ResetErrorMessages.begin(), m_ResetErrorMessages.end());
+	}
+	m_isObjectValid.SetValue(1, Result);
+	return Result;
 }
 
 HRESULT SVTaskObjectClass::GetOutputList( SVOutputInfoListClass& p_rOutputInfoList ) const
@@ -551,11 +553,11 @@ SvStl::MessageContainerVector SVTaskObjectClass::validateAndSetEmmeddedValues(co
 				//! Check if general error or specific error for detailed information
 				if( E_FAIL ==  Result || S_FALSE == Result )
 				{
-					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_SetEmbeddedValueFailed, msgList, SvStl::SourceFileParams(StdMessageParams) );
+					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_SetEmbeddedValueFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 				}
 				else
 				{
-					Msg.setMessage( Result, SvOi::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams) );
+					Msg.setMessage( Result, SvOi::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 				}
 				messages.push_back(Msg.getMessageContainer());
 			}
@@ -594,9 +596,9 @@ void SVTaskObjectClass::ResolveDesiredInputs(const SvOi::SVInterfaceList& rDesir
 
 SvStl::MessageContainer SVTaskObjectClass::getFirstTaskMessage() const
 {
-	if( 0 < m_TaskMessages.size() )
+	if( 0 < m_ResetErrorMessages.size() )
 	{
-		return m_TaskMessages[0];
+		return m_ResetErrorMessages[0];
 	}
 
 	return SvStl::MessageContainer();
@@ -982,6 +984,13 @@ bool SVTaskObjectClass::IsObjectValid() const
 	return const_cast<SVTaskObjectClass*>(this)->IsValid() ? true : false; 
 }
 
+SvStl::MessageContainerVector SVTaskObjectClass::getErrorMessages() const
+{ 
+	SvStl::MessageContainerVector list = m_ResetErrorMessages;
+	list.insert(list.end(), m_RunErrorMessages.begin(), m_RunErrorMessages.end());
+	return list;
+};
+
 struct CompareInputName
 {
 	SVString m_Name;
@@ -1073,7 +1082,7 @@ HRESULT SVTaskObjectClass::ConnectToObject( SVInObjectInfoStruct* p_psvInputInfo
 		if (nullptr != pTool)
 		{
 			pTool->ConnectAllInputs();
-			pTool->resetAllObjects( true, false );
+			pTool->resetAllObjects();
 		}
 	}
 	else
@@ -1126,7 +1135,7 @@ BOOL SVTaskObjectClass::CreateObject(SVObjectLevelCreateStruct* PCreateStruct)
 		}
 	}
 
-	m_isObjectValid.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;	//	Embedded
+	m_isObjectValid.ObjectAttributesAllowedRef() = SV_HIDDEN;
 	m_statusTag.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
 	m_statusColor.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
 	
@@ -1141,72 +1150,9 @@ BOOL SVTaskObjectClass::CreateObject(SVObjectLevelCreateStruct* PCreateStruct)
 // .Description : Returns the Validity state of this object
 //				: must be overridden
 ////////////////////////////////////////////////////////////////////////////////
-BOOL SVTaskObjectClass::IsValid()
+BOOL SVTaskObjectClass::IsValid() const
 {
-	BOOL bIsValid;
-	
-	m_isObjectValid.GetValue(bIsValid);
-	
-	return bIsValid;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : Validate member function of class SVTaskObjectClass
-// -----------------------------------------------------------------------------
-// .Description : validates the inputs of this object
-//				: Note: Only Override in special cases
-////////////////////////////////////////////////////////////////////////////////
-BOOL SVTaskObjectClass::Validate()
-{
-	BOOL retVal = TRUE;
-
-	clearTaskMessages();
-
-	for (int i = 0; i < m_embeddedList.GetSize(); i++)
-	{
-		SVObjectClass* pObject = m_embeddedList.GetAt(i);
-		if (pObject)
-		{
-			BOOL l_bTemp = pObject->Validate();
-
-			assert( l_bTemp );
-
-			retVal &= l_bTemp;
-		}
-		else
-		{
-			retVal = FALSE;
-		}
-	}
-
-	retVal &= SVObjectClass::Validate();
-	
-	return retVal;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnValidate member function of class SVTaskObjectClass
-// -----------------------------------------------------------------------------
-// .Description : validates the inputs of this object
-//				: Note: Do Not Route , Validate Routes!
-// -----------------------------------------------------------------------------
-////////////////////////////////////////////////////////////////////////////////
-BOOL SVTaskObjectClass::OnValidate()
-{
-	BOOL l_bOk = SVObjectClass::OnValidate();
-
-	if( l_bOk )
-	{
-		m_isObjectValid.SetValue(1, true);
-	}
-	else
-	{
-		SetInvalid();
-	}
-
-	assert( l_bOk );
-
-	return l_bOk;
+	return IsErrorMessageEmpty();
 }
 
 BOOL SVTaskObjectClass::SetObjectDepth(int NewObjectDepth)
@@ -1396,6 +1342,40 @@ BOOL SVTaskObjectClass::RegisterEmbeddedObjectAsClass(SVObjectClass* pEmbeddedOb
 		return TRUE;
 	}
 	return FALSE;
+}
+
+bool SVTaskObjectClass::resetAllOutputListObjects( SvStl::MessageContainerVector *pErrorMessages/*=nullptr */ )
+{
+	bool Result = true;
+
+	for (size_t i = 0; i < m_friendList.size(); ++ i)
+	{
+		const SVObjectInfoStruct& rFriend = m_friendList[ i ];
+
+		// Check if Friend is alive...
+		SVTaskObjectClass* pObject = dynamic_cast<SVTaskObjectClass*> ( SVObjectManagerClass::Instance().GetObject( rFriend.UniqueObjectID ) );
+
+		if( nullptr != pObject )
+		{
+			//return-value and error-messages do not be saved here, because this object will call resetAllOutputListObjects by its own and return error message to the parents.
+			//this call here is important to reset (resize) the embedded images, so the parents can use it for its reset.
+			pObject->resetAllOutputListObjects();
+		}
+	}
+
+	// Try to send message to outputObjectList members
+	for( long i = 0; i < m_embeddedList.GetSize(); i++ )
+	{
+		SVObjectClass* l_pObject = m_embeddedList.GetAt(i);
+
+		if( nullptr != l_pObject )
+		{
+			//the error of this embedded objects must be saved by this object.
+			Result = l_pObject->resetAllObjects( pErrorMessages) && Result;
+		}
+	}
+
+	return Result;
 }
 
 SVTaskObjectClass::SVObjectPtrDeque SVTaskObjectClass::GetPreProcessObjects() const
@@ -1639,49 +1619,10 @@ void SVTaskObjectClass::PersistEmbeddeds(SVObjectWriter& rWriter)
 	}
 }
 
-bool SVTaskObjectClass::OnValidateParameter (ValidationLevelEnum validationLevel)
-{
-	bool Result(true);
-
-	Result = ValidateInspectionSettableParameters();
-
-	if (Result && (RemotelyAndInspectionSettable == validationLevel || AllParameters == validationLevel))
-	{
-		Result = ValidateRemotelySettableParameters ();
-	}
-
-	if (Result && AllParameters == validationLevel)
-	{
-		Result = ValidateOfflineParameters ();
-	}
-
-	return Result;
-}
-
-bool SVTaskObjectClass::ValidateInspectionSettableParameters ()
-{
-	bool Result = true;
-	// Possibly should include ROI extents (top, bottom, height, width), but 
-	// I think Extents are checked elsewhere.
-	return Result;
-}
-
-bool SVTaskObjectClass::ValidateRemotelySettableParameters ()
-{
-	bool Result = true;
-
-	return Result;
-}
-
-bool SVTaskObjectClass::ValidateOfflineParameters ()
-{
-	bool Result = true;
-
-	return Result;
-}
-
 BOOL SVTaskObjectClass::Run(SVRunStatusClass& RRunStatus)
 {
+	clearRunErrorMessages();
+
 	// Run yourself...
 	BOOL bRetVal = onRun(RRunStatus);
 	
@@ -1702,8 +1643,13 @@ BOOL SVTaskObjectClass::onRun(SVRunStatusClass& RRunStatus)
 	BOOL bRetVal = runFriends(RRunStatus);
 	
 	// Now Validate yourself...
-	if (! OnValidate())
+	if (bRetVal && IsErrorMessageEmpty())
 	{
+		m_isObjectValid.SetValue(1, true);
+	}
+	else
+	{
+		m_isObjectValid.SetValue(1, false);
 		RRunStatus.SetInvalid();
 		bRetVal = FALSE;
 	}
@@ -1924,39 +1870,6 @@ BOOL SVTaskObjectClass::CloseObject()
 		if (pObject && pObject->IsCreated())
 		{
 			pObject->CloseObject();
-		}
-	}
-	return Result;
-}
-
-bool SVTaskObjectClass::resetAllOutputListObjects( bool shouldNotifyFriends, bool silentReset )
-{
-	bool Result = true;
-
-	if (shouldNotifyFriends)
-	{
-		for (size_t i = 0; i < m_friendList.size(); ++ i)
-		{
-			const SVObjectInfoStruct& rFriend = m_friendList[ i ];
-
-			// Check if Friend is alive...
-			SVTaskObjectClass* pObject = dynamic_cast<SVTaskObjectClass*> ( SVObjectManagerClass::Instance().GetObject( rFriend.UniqueObjectID ) );
-
-			if( nullptr != pObject )
-			{
-				Result = pObject->resetAllOutputListObjects( shouldNotifyFriends, silentReset ) && Result;
-			}
-		}
-	}
-
-	// Try to send message to outputObjectList members
-	for( long i = 0; i < m_embeddedList.GetSize(); i++ )
-	{
-		SVObjectClass* l_pObject = m_embeddedList.GetAt(i);
-
-		if( nullptr != l_pObject )
-		{
-			Result = l_pObject->resetAllObjects(shouldNotifyFriends, silentReset) && Result;
 		}
 	}
 	return Result;

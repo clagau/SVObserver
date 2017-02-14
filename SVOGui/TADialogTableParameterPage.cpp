@@ -17,6 +17,7 @@
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVMessage\SVMessage.h"
 #include "ObjectInterfaces\GlobalConst.h"
+#include "GuiCommands\GetErrorMessageList.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -151,10 +152,8 @@ namespace Seidenader { namespace SVOGui {
 				}
 				else
 				{
-					SVStringVector msgList;
-					msgList.push_back(SvUl_SF::Format(_T("%d"), hResult));
-					SvStl::MessageMgrStd Exception( SvStl::LogAndDisplay );
-					Exception.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_UnknownCommitError, msgList, SvStl::SourceFileParams(StdMessageParams));
+					//this error is not coming directly from the commit and will be shown in another place.
+					hResult = S_OK;
 				}
 			}
 			else
@@ -180,13 +179,17 @@ namespace Seidenader { namespace SVOGui {
 	void TADialogTableParameterPage::resetInspection()
 	{
 		typedef SVSharedPtr<GuiCmd::ResetObject> ResetObjectCommandPtr;
-		ResetObjectCommandPtr commandPtr(new GuiCmd::ResetObject(m_InspectionID, true));
+		ResetObjectCommandPtr commandPtr(new GuiCmd::ResetObject(m_InspectionID));
 		SVObjectSynchronousCommandTemplate<ResetObjectCommandPtr> cmd(m_InspectionID, commandPtr);
 
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		if (S_OK != hr)
 		{
-			SvStl::MessageContainerVector messages = commandPtr->getErrorMessages();
+			typedef SVSharedPtr<GuiCmd::GetErrorMessageList> GetErrorMessageListCommandPtr;
+			GetErrorMessageListCommandPtr errorCommandPtr(new GuiCmd::GetErrorMessageList(m_TaskObjectID));
+			SVObjectSynchronousCommandTemplate<GetErrorMessageListCommandPtr> errorCmd(m_InspectionID, errorCommandPtr);
+			errorCmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+			SvStl::MessageContainerVector messages = errorCommandPtr->GetMessageList();
 			if (messages.size() > 0 && 0 != messages[0].getMessage().m_MessageCode)
 			{
 				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );

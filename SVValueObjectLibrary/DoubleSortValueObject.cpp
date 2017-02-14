@@ -51,9 +51,6 @@ const DoubleSortValueObject& DoubleSortValueObject::operator = (const DoubleSort
 
 DoubleSortValueObject::~DoubleSortValueObject()
 {
-	// Delete all object's data arrays...
-	SetObjectDepth(0);
-	CreateBuckets();
 }
 #pragma endregion Constructor
 
@@ -93,11 +90,10 @@ HRESULT DoubleSortValueObject::CopyValue(int iSourceBucket, int iDestBucket)
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
-HRESULT DoubleSortValueObject::CreateBuckets( )
+void DoubleSortValueObject::CreateBuckets( )
 {
-	HRESULT result = SVDoubleValueObjectClass::CreateBuckets();
+	__super::CreateBuckets();
 	m_sortContainerArray.resize(m_iNumberOfBuckets);
-	return result;
 }
 
 HRESULT DoubleSortValueObject::SetValueAt( int iBucket, int iIndex, const VARIANT& rvtValue )

@@ -56,9 +56,6 @@ const SVVariantValueObjectClass& SVVariantValueObjectClass::operator = (const SV
 
 SVVariantValueObjectClass::~SVVariantValueObjectClass()
 {
-	// Delete all object's data arrays...
-	SetObjectDepth(0);
-	CreateBuckets();
 }
 
 void SVVariantValueObjectClass::Persist(SVObjectWriter& rWriter)

@@ -46,6 +46,7 @@ public:
 	virtual ~SVResultClass();
 
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
+	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	// ISVCancel interface
 	virtual bool CanCancel() override;
@@ -63,22 +64,24 @@ public:
 	virtual BOOL Run(SVRunStatusClass& RRunStatus) override;
 	
 	
-	// Only valid for single input Results that can use the inputObjectInfo 
+	// Only valid for single input Results that can use the m_inputObjectInfo 
 	// shortcut.
 	SVValueObjectClass* getInput();
-
 
 protected:
 	virtual BOOL onRun( SVRunStatusClass& RRunStatus ) override;
 
 	void init();
+	
+private:
+	bool ValidateLocal(SvStl::MessageContainerVector *pErrorMessages=nullptr) const;
 
 public:
 	// Input: Pointer to the Input Object
 	// This gives an easy shortcut to the input object.  Really only useful 
 	// with objects that KNOW they only have a single input object (otherwise walk 
 	// the input object list).  Objects that can use this are Double and Long.
-	SVInObjectInfoStruct		inputObjectInfo;
+	SVInObjectInfoStruct		m_inputObjectInfo;
 
 protected:
 	// Passed, if TRUE ( Reset Value: FALSE )

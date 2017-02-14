@@ -10,6 +10,7 @@
 #pragma region Includes
 #include "SVObjectTypeInfoStruct.h"
 #include "SVUtilityLibrary\NameGuidList.h"
+#include "SVStatusLibrary\MessageContainer.h"
 #pragma endregion Includes
 
 namespace Seidenader
@@ -113,10 +114,9 @@ namespace Seidenader
 			virtual IObjectClass* getFirstObject(const SVObjectTypeInfoStruct& rObjectTypeInfo, bool useFriends = true, const IObjectClass* pRequestor = nullptr) const = 0;
 
 			/// Reset this object and all children and required all friends.
-			/// \param shouldNotifyFriends [in] if true it reset also the friends of this object.
-			/// \param silentReset [in] if true it avoid to display messages.
+			/// \param pErrorMessages [in,out] Pointer to an Error Message Container. If the pointer unequal nullptr, an error message will be added if it happens during reset.
 			/// \returns bool
-			virtual bool resetAllObjects(bool shouldNotifyFriends, bool silentReset) = 0;
+			virtual bool resetAllObjects(SvStl::MessageContainerVector *pErrorMessages=nullptr) = 0;
 		};
 	}
 }

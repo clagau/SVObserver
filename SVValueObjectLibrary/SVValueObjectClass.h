@@ -70,8 +70,7 @@ public:
 
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
 	virtual BOOL CloseObject() override;
-	virtual bool resetAllObjects( bool shouldNotifyFriends, bool silentReset ) override;
-	virtual HRESULT ResetObject() override;
+	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	bool ResetAlways() const;
 	SVResetItemEnum ResetItem() const;
@@ -173,7 +172,7 @@ protected:
 	virtual HRESULT CompareWithCurrentValueImpl( const SVString& rCompare ) const;
 	virtual HRESULT GetNormalizedValueImpl( const SVString& rValue, SVString& rNormalized ) const { return E_NOTIMPL; }
 
-	virtual HRESULT CreateBuckets();
+	virtual void CreateBuckets();
 	void InitializeBuckets();
 	virtual int GetResultSize(int iBucket) const;
 	/// Validate the value. If value invalid an exception message will be thrown.

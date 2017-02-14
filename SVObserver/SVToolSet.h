@@ -38,15 +38,11 @@ public:
 
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
 	virtual void SetInvalid() override;
-	virtual bool resetAllObjects( bool shouldNotifyFriends, bool silentReset ) override;
-	virtual HRESULT ResetObject() override;
-	virtual BOOL OnValidate() override;
-	virtual BOOL Validate() override;
+	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	void Destroy();
 
 	bool IsEnabled() const;
-	bool IsEnabled(long p_lIndex) const;
 
 	bool WasEnabled() const;
 
@@ -104,6 +100,8 @@ protected:
 #pragma region Private Methods
 private:
 	void init();
+
+	bool ValidateLocal(SvStl::MessageContainerVector *pErrorMessages=nullptr) const;
 #pragma endregion Private Methods
 
 #pragma region Member Variables

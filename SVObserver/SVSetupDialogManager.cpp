@@ -789,7 +789,7 @@ HRESULT SVSetupDialogManager::SVOCVAnalyzerClassSetupDialog( const SVGUID& p_rOb
 						// 16 Dec 1999 - frb (100)
 						//
 						// Reset all objects...
-						bool bOk = pInspection->GetToolSet()->resetAllObjects(true, false);
+						bool bOk = pInspection->GetToolSet()->resetAllObjects();
 						if( bOk )
 						{
 							GuiCmd::InspectionRunOncePtr l_CommandPtr = new GuiCmd::InspectionRunOnce( pInspection->GetUniqueObjectID() );

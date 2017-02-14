@@ -1347,19 +1347,6 @@ void SVObserverApp::OnGoOnline()
 	SvStl::MessageContainer exceptionContainer;
 	ExtrasEngine::Instance().ExecuteAutoSaveIfAppropriate(true);
 
-	SVConfigurationObject* pConfig( nullptr );
-	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
-	if( nullptr != pConfig )
-	{
-		SVInspectionProcessPtrList Inspections;
-		pConfig->GetInspections( Inspections );
-		SVInspectionProcessPtrList::iterator Iter( Inspections.begin() );
-		for( ; Inspections.end() != Iter; ++Iter )
-		{
-			(*Iter)->clearToolMessages();
-		}
-	}
-
 	long l_lPrevState = 0;
 
 	if( SVSVIMStateClass::CheckState( SV_STATE_EDIT ))

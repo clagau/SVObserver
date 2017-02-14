@@ -420,7 +420,7 @@ DWORD SVBlobAnalyzerClass::AllocateResult (SVBlobFeatureEnum aFeatureIndex)
 		if(!pResult)
 		{	
 			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16111);
+			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16111, GetUniqueObjectID());
 			LastError =  -SvOi::Err_16111;
 			break;
 		}
@@ -436,7 +436,7 @@ DWORD SVBlobAnalyzerClass::AllocateResult (SVBlobFeatureEnum aFeatureIndex)
 		if (!pValue)
 		{
 			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16112);
+			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16112, GetUniqueObjectID());
 			LastError =   -SvOi::Err_16112 ; 
 			break;
 		}
@@ -515,7 +515,7 @@ DWORD SVBlobAnalyzerClass::AllocateBlobResult ()
 		if(!m_pResultBlob)
 		{
 			SvStl::MessageMgrStd  Ex( SvStl::LogAndDisplay );
-			Ex.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16113);
+			Ex.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16113, GetUniqueObjectID());
 			LastError =   -SvOi::Err_16113 ; 
 			break;
 		}
@@ -531,7 +531,7 @@ DWORD SVBlobAnalyzerClass::AllocateBlobResult ()
 		if (!pValue)
 		{		
 			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16114);
+			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16114, GetUniqueObjectID());
 			LastError =   -SvOi::Err_16114 ; 
 			break;
 		}
@@ -549,7 +549,7 @@ DWORD SVBlobAnalyzerClass::AllocateBlobResult ()
 			if( !CreateChildObject(m_pResultBlob) )
 			{
 				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_BlobAnalyzer_ResultCreationFailed, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10042 ); 
+				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_BlobAnalyzer_ResultCreationFailed, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10042, GetUniqueObjectID() ); 
 				
 				// Remove it from the Blob Analyzer TaskObjectList ( Destruct it )
 				GUID objectID = m_pResultBlob->GetUniqueObjectID();
@@ -579,7 +579,7 @@ DWORD SVBlobAnalyzerClass::FreeResult (SVBlobFeatureEnum aFeatureIndex)
 	if (nullptr == pResult)
 	{
 		SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16115);
+		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16115, GetUniqueObjectID());
 		LastError =   -SvOi::Err_16115 ; 
 
 	}
@@ -715,7 +715,7 @@ BOOL SVBlobAnalyzerClass::CreateObject(SVObjectLevelCreateStruct* PCreateStructu
 		if(!SVImageAnalyzerClass::CreateObject( PCreateStructure ))
 		{
 			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16116);
+			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16116, GetUniqueObjectID());
 			LastError = - SvOi::Err_16116;
 			break;
 		}
@@ -763,7 +763,7 @@ BOOL SVBlobAnalyzerClass::CreateObject(SVObjectLevelCreateStruct* PCreateStructu
 		if ( msvResultBufferID.empty() )
 		{
 			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16117);
+			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16117, GetUniqueObjectID());
 			LastError = - SvOi::Err_16117;
 			break;
 		}
@@ -802,7 +802,7 @@ BOOL SVBlobAnalyzerClass::CreateObject(SVObjectLevelCreateStruct* PCreateStructu
 				if(!pResult)
 				{
 					SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-					MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16118);
+					MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16118, GetUniqueObjectID());
 					LastError = - SvOi::Err_16118;
 					break; // Break out of for loop 
 				}
@@ -811,7 +811,7 @@ BOOL SVBlobAnalyzerClass::CreateObject(SVObjectLevelCreateStruct* PCreateStructu
 				if(!pRange)
 				{
 					SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-					MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16119);
+					MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16119, GetUniqueObjectID());
 					LastError = - SvOi::Err_16119;
 					break; // Break out of for loop 
 				}
@@ -847,7 +847,7 @@ BOOL SVBlobAnalyzerClass::CreateObject(SVObjectLevelCreateStruct* PCreateStructu
 			{
 			
 				SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-				MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16120);
+				MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16120, GetUniqueObjectID());
 				LastError = SvOi::Err_16120;
 				break; 
 			}
@@ -945,25 +945,6 @@ DWORD SVBlobAnalyzerClass::DisableFeature(SVBlobFeatureEnum aIndex)
 	return 0;
 }
 
-BOOL SVBlobAnalyzerClass::OnValidate()
-{
-	if (!SVImageAnalyzerClass::OnValidate ())
-	{
-		SetInvalid();
-		return false;
-	}
-
-	m_isObjectValid.SetValue(1, true);
-	return true;
-}
-
-bool SVBlobAnalyzerClass::resetAllObjects( bool shouldNotifyFriends, bool silentReset )
-{
-	bool Result = ( S_OK == ResetObject() );
-	ASSERT( Result );
-	return (Result && __super::resetAllObjects( shouldNotifyFriends, silentReset ));
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 //
 //
@@ -997,7 +978,7 @@ BOOL SVBlobAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 		{
 
 			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16135);
+			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16135, GetUniqueObjectID());
 			LastError = - SvOi::Err_16135;
 			break;
 		}
@@ -1006,7 +987,7 @@ BOOL SVBlobAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 		{
 			ASSERT( FALSE );
 			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16136);
+			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16136, GetUniqueObjectID());
 			LastError = - SvOi::Err_16136;
 			break;;
 		}
@@ -1018,7 +999,7 @@ BOOL SVBlobAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 		{
 			ASSERT( FALSE );
 			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16137);
+			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16137, GetUniqueObjectID());
 			LastError = - SvOi::Err_16137;
 			break;
 		}
@@ -1032,7 +1013,7 @@ BOOL SVBlobAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 		{
 			ASSERT( FALSE );
 			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16138);
+			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16138, GetUniqueObjectID());
 			LastError = - SvOi::Err_16138;
 			break;
 
@@ -1061,7 +1042,7 @@ BOOL SVBlobAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 					if(!pResult)
 					{
 						SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-						MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16139);
+						MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16139, GetUniqueObjectID());
 						LastError = - SvOi::Err_16139;
 						break;
 					}
@@ -1069,7 +1050,7 @@ BOOL SVBlobAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 					if(!pRange)
 					{
 						SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-						MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16140);
+						MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16140, GetUniqueObjectID());
 						LastError = - SvOi::Err_16140;
 						break;
 					}
@@ -1109,7 +1090,7 @@ BOOL SVBlobAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 					{
 
 						SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-						MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16141);
+						MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16141, GetUniqueObjectID());
 						LastError = - SvOi::Err_16141;
 						break;
 					}
@@ -1130,7 +1111,7 @@ BOOL SVBlobAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 		if( l_Code != SVMEE_STATUS_OK )
 		{
 			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16142);
+			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16142, GetUniqueObjectID());
 			LastError = - SvOi::Err_16142;
 			break;
 		}
@@ -1185,7 +1166,7 @@ BOOL SVBlobAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 			{
 				// this is an error condition!  i.e. selected more blobs then we asked for !
 				SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-				MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16143);
+				MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16143, GetUniqueObjectID());
 				LastError = - SvOi::Err_16143;
 				break;
 			}
@@ -1193,7 +1174,7 @@ BOOL SVBlobAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 			if( l_Code != SVMEE_STATUS_OK )
 			{
 				SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-				MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16144);
+				MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16144, GetUniqueObjectID());
 				LastError = - SvOi::Err_16144;
 				break;
 			}
@@ -1738,9 +1719,9 @@ void SVBlobAnalyzerClass::CreateArray()
 	}
 }
 
-HRESULT SVBlobAnalyzerClass::ResetObject()
+bool SVBlobAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	HRESULT l_hr = SVImageAnalyzerClass::ResetObject();
+	bool Result = __super::ResetObject(pErrorMessages);
 
 	BOOL l_bIsFillBlob;
 	m_bvoFillBlobs.GetValue( l_bIsFillBlob );
@@ -1762,7 +1743,7 @@ HRESULT SVBlobAnalyzerClass::ResetObject()
 
 	RebuildResultObjectArray();
 
-	return l_hr;
+	return Result;
 }
 
 HRESULT SVBlobAnalyzerClass::onCollectOverlays(SVImageClass* p_pImage, SVExtentMultiLineStructCArray& p_rMultiLineArray )

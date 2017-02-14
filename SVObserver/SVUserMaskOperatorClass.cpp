@@ -143,9 +143,9 @@ BOOL SVUserMaskOperatorClass::CreateObject( SVObjectLevelCreateStruct* PCreateSt
 	return m_isCreated;
 }
 
-HRESULT SVUserMaskOperatorClass::ResetObject()
+bool SVUserMaskOperatorClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	HRESULT l_hrOk = SVUnaryImageOperatorClass::ResetObject();
+	bool Result = SVUnaryImageOperatorClass::ResetObject(pErrorMessages);
 
 	DWORD dwMaskType;
 	m_Data.dwvoMaskType.GetValue( dwMaskType );
@@ -156,7 +156,7 @@ HRESULT SVUserMaskOperatorClass::ResetObject()
 	ASSERT( pShapeHelper );
 	if ( pShapeHelper )
 	{
-		l_hrOk = pShapeHelper->ResetObject();
+		Result = pShapeHelper->ResetObject(pErrorMessages) && Result;
 
 		SvUl::SetBits( pShapeHelper->ObjectAttributesSetRef(),     SV_PRINTABLE, dwMaskType == MASK_TYPE_SHAPE );
 		SvUl::SetBits( pShapeHelper->ObjectAttributesSetRef(),     SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE, true );
@@ -175,6 +175,16 @@ HRESULT SVUserMaskOperatorClass::ResetObject()
 			SvUl::SetBits( m_Data.lvoFillColor.ObjectAttributesSetRef(), SV_PRINTABLE| SV_VIEWABLE, ( (dwMaskType == MASK_TYPE_SHAPE) && bActive)  );
 		}
 	}
+	else
+	{
+		Result = false;
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_NoShapeHelper, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
+	}
+
 	// if image mask or overlays are turned on, set to true
 	SVDrawCriteriaEnum l_eCriteria;
 	long l_lValue;
@@ -185,10 +195,15 @@ HRESULT SVUserMaskOperatorClass::ResetObject()
 
 	if( S_OK != CreateLocalImageBuffer() )
 	{
-		l_hrOk = S_FALSE;
+		Result = false;
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_CreateBufferFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
 	}
 
-	return l_hrOk;
+	return Result;
 }
 
 HRESULT SVUserMaskOperatorClass::GetFillProperties( SVMaskFillPropertiesStruct& rsvFillStruct )
@@ -284,7 +299,7 @@ HRESULT SVUserMaskOperatorClass::SetCancelData(SVCancelData* p_pData)
 			m_Data = *pData;
 			m_Data.pShapeData = nullptr;
 
-			hr = ResetObject();
+			hr = ( ResetObject() ? S_OK : S_FALSE );
 		}
 	}
 	return hr;
@@ -918,26 +933,6 @@ SVImageClass* SVUserMaskOperatorClass::getMaskInputImage()
 		return dynamic_cast< SVImageClass* > ( m_inObjectInfo.GetInputObjectInfo().PObject );
 	}
 	return nullptr;
-}
-
-BOOL SVUserMaskOperatorClass::OnValidate()
-{
-	BOOL bValidate = SVUnaryImageOperatorClass::OnValidate();
-	if ( bValidate )
-	{
-		SVShapeMaskHelperClass* pShapeHelper = GetShapeHelper();
-		if ( pShapeHelper )
-		{
-			DWORD dwMaskType = MASK_TYPE_STATIC;
-			m_Data.dwvoMaskType.GetValue( dwMaskType );
-			if ( dwMaskType == MASK_TYPE_SHAPE )
-			{
-				BOOL bShapeValidate = pShapeHelper->OnValidate();
-				bValidate = bValidate && bShapeValidate;
-			}
-		}
-	}
-	return bValidate;
 }
 
 bool SVUserMaskOperatorClass::hasToAskFriendForConnection( const SVObjectTypeInfoStruct& rInfo, SVObjectClass*& rPOwner ) const

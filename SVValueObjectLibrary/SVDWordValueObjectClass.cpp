@@ -55,9 +55,6 @@ const SVDWordValueObjectClass& SVDWordValueObjectClass::operator = ( const SVDWo
 
 SVDWordValueObjectClass::~SVDWordValueObjectClass()
 {
-	// Delete all object's data arrays...
-	SetObjectDepth(0);
-	CreateBuckets();
 }
 
 void SVDWordValueObjectClass::Persist(SVObjectWriter& rWriter)

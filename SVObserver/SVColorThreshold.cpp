@@ -340,7 +340,7 @@ BOOL SVColorThresholdClass::CloseObject()
 }
 
 
-HRESULT SVColorThresholdClass::ResetObject()
+bool SVColorThresholdClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	double l_dWidth = 0.0;
 	double l_dHeight = 0.0;
@@ -357,9 +357,17 @@ HRESULT SVColorThresholdClass::ResetObject()
 	band1HistogramImage.ResetObject();
 	band2HistogramImage.ResetObject();
 
-	HRESULT l_hrOk = SVOperatorClass::ResetObject();
+	bool Result = ValidateLocal();
+	if (!Result)
+	{
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
+	}
 
-	return l_hrOk;
+	return SVOperatorClass::ResetObject(pErrorMessages) && Result;
 }
 
 SVImageClass* SVColorThresholdClass::GetBand0InputImage()
@@ -419,29 +427,6 @@ SVImageClass* SVColorThresholdClass::GetBand2OutputImage()
 SVImageClass* SVColorThresholdClass::GetOutputImage()
 {
 	return &outputImage;
-}
-
-BOOL SVColorThresholdClass::OnValidate() 
-{
-	if ( SVOperatorClass::OnValidate() )
-	{
-		// Validate that we have inputs and outputs
-		if( inputBand0Image.IsConnected() && 
-			inputBand0Image.GetInputObjectInfo().PObject && 
-			inputBand0Image.GetInputObjectInfo().PObject->IsValid() &&
-			inputBand1Image.IsConnected() && 
-			inputBand1Image.GetInputObjectInfo().PObject && 
-			inputBand1Image.GetInputObjectInfo().PObject->IsValid() &&
-			inputBand2Image.IsConnected() && 
-			inputBand2Image.GetInputObjectInfo().PObject && 
-			inputBand2Image.GetInputObjectInfo().PObject->IsValid() &&
-			band0OutputImage.IsCreated() && band0OutputImage.IsValid() && 
-			band1OutputImage.IsCreated() && band1OutputImage.IsValid() &&
-			band2OutputImage.IsCreated() && band2OutputImage.IsValid() &&
-			outputImage.IsCreated() && outputImage.IsValid() )
-		return TRUE;
-	}
-	return FALSE;
 }
 
 BOOL SVColorThresholdClass::onRun( SVRunStatusClass& RRunStatus )
@@ -803,4 +788,26 @@ SVDrawObjectListClass* SVColorThresholdClass::GetThresholdBarsFigure( int bandNu
 		return &thresholdBarFigures[bandNumber];
 
 	return nullptr;
+}
+
+bool SVColorThresholdClass::ValidateLocal() const
+{
+	// Validate that we have inputs and outputs
+	if( inputBand0Image.IsConnected() && 
+		inputBand0Image.GetInputObjectInfo().PObject && 
+		inputBand0Image.GetInputObjectInfo().PObject->IsValid() &&
+		inputBand1Image.IsConnected() && 
+		inputBand1Image.GetInputObjectInfo().PObject && 
+		inputBand1Image.GetInputObjectInfo().PObject->IsValid() &&
+		inputBand2Image.IsConnected() && 
+		inputBand2Image.GetInputObjectInfo().PObject && 
+		inputBand2Image.GetInputObjectInfo().PObject->IsValid() &&
+		band0OutputImage.IsCreated() && band0OutputImage.IsValid() && 
+		band1OutputImage.IsCreated() && band1OutputImage.IsValid() &&
+		band2OutputImage.IsCreated() && band2OutputImage.IsValid() &&
+		outputImage.IsCreated() && outputImage.IsValid() )
+	{
+		return true;
+	}
+	return false;
 }

@@ -33,13 +33,6 @@ class SVImageClass;
 
 typedef std::set<SVImageClass *> SVImageClassPtrSet;
 
-enum ValidationLevelEnum
-{
-	AllParameters,					// level 3
-	RemotelyAndInspectionSettable,  // level 2
-	InspectionSettable				// level 1
-};
-
 class SVTaskObjectClass : public SVObjectAppClass, public SvOi::ITaskObject
 {
 	SV_DECLARE_CLASS( SVTaskObjectClass )
@@ -53,8 +46,7 @@ public:
 
 	virtual ~SVTaskObjectClass();
 
-	virtual bool resetAllObjects( bool shouldNotifyFriends, bool silentReset ) override;
-	virtual HRESULT ResetObject() override;
+	virtual bool resetAllObjects( SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
 	virtual HRESULT IsInputImage( SVImageClass* p_psvImage );
 
@@ -73,15 +65,7 @@ public:
 	virtual bool ConnectAllInputs() override;
 	HRESULT ConnectToObject( SVInObjectInfoStruct* p_psvInputInfo, SVObjectClass* pNewObject );
 
-	virtual BOOL IsValid() override;
-
-	// Routing Version of Validate
-	// Validates Local Scope and all owned objects
-	virtual BOOL Validate() override;
-
-	// Non Routing Version of Validate
-	// validates only Local Scope
-	virtual BOOL OnValidate() override;
+	virtual BOOL IsValid() const override;
 
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStruct ) override;
 	virtual BOOL CloseObject() override;
@@ -117,12 +101,16 @@ public:
 	//! Adds a task message to the list
 	//! \param rMessage [in] reference to the message container
 	//************************************
-	void addTaskMessage( const SvStl::MessageContainer& rMessage ) { m_TaskMessages.push_back( rMessage ); };
+	void addRunErrorMessage( const SvStl::MessageContainer& rMessage ) { m_RunErrorMessages.push_back( rMessage ); };
 
 	//************************************
 	//! Clears the task set message list 
 	//************************************
-	void clearTaskMessages( ) { m_TaskMessages.clear(); };
+	void clearTaskMessages( ) { m_ResetErrorMessages.clear(); m_RunErrorMessages.clear(); };
+	void clearRunErrorMessages( ) { m_RunErrorMessages.clear(); };
+
+	bool IsErrorMessageEmpty() const { return m_ResetErrorMessages.empty() && m_RunErrorMessages.empty(); };
+	bool IsRunErrorMessageEmpty() { return m_RunErrorMessages.empty(); };
 
 	/// Preparing to go offline. Is used e.g. by the Archive Tool.
 	virtual void goingOffline() {};
@@ -136,7 +124,9 @@ public:
 	virtual void GetInputs(SvUl::InputNameGuidPairList& rList, const SVObjectTypeInfoStruct& typeInfo = SVObjectTypeInfoStruct(SVNotSetObjectType), SVObjectTypeEnum objectTypeToInclude = SVNotSetObjectType ) override;
 	virtual HRESULT ConnectToObject(const SVString& rInputName, const SVGUID& rNewID, SVObjectTypeEnum objectType = SVNotSetObjectType) override;
 	virtual bool IsObjectValid() const override;
-	virtual const SvStl::MessageContainerVector& getTaskMessages() const override {return m_TaskMessages;};
+	virtual const SvStl::MessageContainerVector& getResetErrorMessages() const override {return m_ResetErrorMessages;};
+	virtual const SvStl::MessageContainerVector& getRunErrorMessages() const override {return m_RunErrorMessages;};
+	virtual SvStl::MessageContainerVector getErrorMessages() const override;
 	virtual SvStl::MessageContainerVector validateAndSetEmmeddedValues(const SvOi::SetValuePairVector& valueVector, bool shouldSet) override;
 	virtual void ResolveDesiredInputs(const SvOi::SVInterfaceList& rDesiredInputs) override;
 	//************************************
@@ -199,21 +189,6 @@ public:
 	virtual HRESULT ResetObjectInputs() override;
 
 protected:
-	/// Validate the Parameter of this object and call depending of the level the sub methods.
-	/// \param validationLevel [in] InspectionSettable calls only ValidateInspectionSettableParameters, RemotelyAndInspectionSettable calls also ValidateRemotelySettableParameters 
-	///										and AllParameters also ValidateOfflineParameters.
-	/// \returns bool
-	bool OnValidateParameter (ValidationLevelEnum validationLevel);
-	/// Check parameter which can be changed online if they are valid.
-	/// \returns bool
-	virtual bool ValidateInspectionSettableParameters ();
-	/// Check parameter which can be remotely settable if they are valid.
-	/// \returns bool
-	virtual bool ValidateRemotelySettableParameters ();
-	/// Check parameter which can only set offline if they are valid.
-	/// \returns bool
-	virtual bool ValidateOfflineParameters ();
-
 	// Direct Method Call
 	// NOTE:
 	// Use onRun() to implement your special updating!
@@ -243,11 +218,13 @@ protected:
 	// NOTE:
 	// Override this if you want to implement your own special run.
 	// Don't forget to call base class onRun() first.
-	// He will call OnValidate() for you!
 	virtual BOOL onRun( SVRunStatusClass& RRunStatus );
 	BOOL runFriends( SVRunStatusClass& RRunStatus );
 
-	virtual bool resetAllOutputListObjects( bool shouldNotifyFriends, bool silentReset );
+	virtual bool resetAllOutputListObjects( SvStl::MessageContainerVector *pErrorMessages=nullptr );
+	
+private:
+		HRESULT LocalInitialize();
 
 protected:
 	SVValueObjectClassPtrSet m_svValueObjectSet;
@@ -277,9 +254,7 @@ protected:
 
 	bool m_bUseOverlays;
 
-private:
-	HRESULT LocalInitialize();
-
-	SvStl::MessageContainerVector m_TaskMessages;  ///The list of task messages
+	SvStl::MessageContainerVector m_ResetErrorMessages;  ///The list of task messages
+	SvStl::MessageContainerVector m_RunErrorMessages;  ///The list of task messages
 };	// end class SVTaskObjectClass
 

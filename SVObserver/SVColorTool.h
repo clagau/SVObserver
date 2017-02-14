@@ -27,7 +27,7 @@ public:
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
 	virtual BOOL CloseObject() override;
 
-	virtual HRESULT ResetObject() override;
+	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	virtual bool DoesObjectHaveExtents() const override;
 	virtual SVStaticStringValueObjectClass* GetInputImageNames() override;

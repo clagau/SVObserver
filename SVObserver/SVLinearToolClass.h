@@ -36,7 +36,7 @@ public:
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
 	virtual BOOL CloseObject() override;
 
-	virtual HRESULT ResetObject() override;
+	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	virtual HRESULT SetImageExtentToParent( unsigned long p_ulIndex ) override;
 	virtual SVTaskObjectClass *GetObjectAtPoint( const SVExtentPointStruct &p_rsvPoint ) override;
@@ -53,9 +53,6 @@ public:
 	BOOL IsToolRotated();
 
 	virtual SVStaticStringValueObjectClass* GetInputImageNames() override;
-
-	virtual BOOL IsValid() override;
-
 #pragma endregion Public Methods
 
 	//Embedded Object : Profile Orientation

@@ -70,9 +70,6 @@ SVBoolValueObjectClass::SVBoolValueObjectClass(const SVBoolValueObjectClass& rhs
 
 SVBoolValueObjectClass::~SVBoolValueObjectClass()
 {
-	// Delete all object's data arrays...
-	SetObjectDepth(0);
-	CreateBuckets();
 }
 
 const SVBoolValueObjectClass& SVBoolValueObjectClass::operator = (const SVBoolValueObjectClass& rhs)

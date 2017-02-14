@@ -34,7 +34,7 @@ public:
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
 	virtual BOOL CloseObject() override;
 
-	virtual HRESULT ResetObject() override;
+	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	SVImageClass* GetBand0InputImage();
 	SVImageClass* GetBand1InputImage();
@@ -53,8 +53,6 @@ public:
 	SVDrawObjectClass* GetGraphFigure( int bandNumber );	
 	SVDrawObjectListClass* GetThresholdBarsFigure( int bandNumber );
 
-	virtual BOOL OnValidate() override;
-
 	BOOL bShowHistogram;
 
 protected:
@@ -66,6 +64,7 @@ protected:
 	BOOL binarize( long lower, long upper, BOOL bExclude, SVImageClass* pInputImage, SVImageClass* pOutputImage );
 	BOOL getHistogram( SVImageClass* pInputImage, SVMatroxLongArray& pHistValues, SVDrawObjectClass* pGraphFigure );
 	BOOL updateThresholdBars( SVImageClass* pImage, SVDrawObjectListClass* pThresholdBarFigure, long lMinThresholdValue, long lMaxThresholdValue );
+	bool ValidateLocal() const;
 
 	SVMatroxImageResult histResultID;
 	SVMatroxLongArray  aHistValueArray[3];

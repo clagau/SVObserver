@@ -190,7 +190,7 @@ BOOL SVPixelAnalyzerClass::onRun(SVRunStatusClass &RRunStatus)
         if( ! pInputImage )
         {
 			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16188);
+			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16188, GetUniqueObjectID());
 			LastError = SvOi::Err_16188;
 			break;
         }
@@ -198,7 +198,7 @@ BOOL SVPixelAnalyzerClass::onRun(SVRunStatusClass &RRunStatus)
         if ( ! pInputImage->GetImageHandle( ImageHandle ) || ImageHandle.empty() )
         {
 			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16189);
+			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16189, GetUniqueObjectID());
 			LastError = SvOi::Err_16189;
 			break;
         }
@@ -211,7 +211,7 @@ BOOL SVPixelAnalyzerClass::onRun(SVRunStatusClass &RRunStatus)
 		if( l_Code != SVMEE_STATUS_OK )
         {
 			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16190);
+			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16190, GetUniqueObjectID());
 			LastError = SvOi::Err_16190;
 			break;
         }
@@ -221,7 +221,7 @@ BOOL SVPixelAnalyzerClass::onRun(SVRunStatusClass &RRunStatus)
 		if( l_Code != SVMEE_STATUS_OK )
         {
 			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16191);
+			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16191, GetUniqueObjectID());
 			LastError = SvOi::Err_16191;
 			break;
         }
@@ -242,42 +242,29 @@ BOOL SVPixelAnalyzerClass::onRun(SVRunStatusClass &RRunStatus)
     return true;
 }
 
-BOOL SVPixelAnalyzerClass::OnValidate ()
+bool SVPixelAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	DWORD LastError(0);
-	while (1)
+	bool Valid = __super::ResetObject(pErrorMessages);
+
+	if (m_histResultID.empty())
 	{
-		if (!SVImageAnalyzerClass::OnValidate ())
+		if (nullptr != pErrorMessages)
 		{
-			break;
+			SvStl::MessageContainer Msg(  SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16197, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
 		}
-
-		if ( m_histResultID.empty() )
-		{
-			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16197);
-			LastError = -SvOi::Err_16197;
-			break;
-		
-		}
-
-		if ( m_alHistValues.size() != m_svlHistValueArraySize)
-		{
-			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16198);
-			LastError = -SvOi::Err_16198;
-			break;
-		}
-		break;
+		Valid = false;
 	}
 
-	if (0 != LastError)
+	if (m_alHistValues.size() != m_svlHistValueArraySize)
 	{
-
-		SetInvalid();
-		return false;
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg(  SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16198, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
+		Valid = false;
 	}
-	m_isObjectValid.SetValue(1, true);
-	return true;
+
+	return Valid;
 }
-

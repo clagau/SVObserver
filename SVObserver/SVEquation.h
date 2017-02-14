@@ -179,15 +179,13 @@ public:
 #pragma region IEquation
 	virtual const SVString& GetEquationText() const override;
 	virtual void SetEquationText(const SVString& text) override;
-	virtual SvOi::EquationTestResult Test( bool DisplayErrorMessage = true ) override;
+	virtual SvOi::EquationTestResult Test( bool DisplayErrorMessage = true, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 	virtual double GetYACCResult() const override;
 #pragma endregion IEquation
 
 	virtual int AddSymbol( LPCTSTR name ) override;
 
 	virtual bool DisconnectObjectInput( SVInObjectInfoStruct* pInObjectInfo ) override;
-
-	virtual BOOL OnValidate() override;
 
 	virtual double GetPropertyValue( int iSymbolIndex ) override;
 	virtual double GetSubscriptedPropertyValue( int iSymbolIndex, int iIndex, double dDefault ) override;
@@ -200,11 +198,10 @@ public:
 	virtual HRESULT GetObjectValue( const SVString& p_rValueName, VARIANT& p_rVariantValue ) const override;
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* PDataObject ) override;
 
-	virtual HRESULT ResetObject() override;
+	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 #pragma region Methods to replace processMessage
 	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const SVString& rOldName) override;
-	virtual bool resetAllObjects( bool shouldNotifyFriends, bool silentReset ) override;
 #pragma endregion Methods to replace processMessage
 
 	SVBoolValueObjectClass enabled;			// enabled flag TRUE=Enabled

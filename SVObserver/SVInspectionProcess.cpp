@@ -705,8 +705,6 @@ BOOL SVInspectionProcess::CanGoOnline()
 
 	ClearResetCounts();
 
-	l_bOk = l_bOk && Validate();
-
 	return l_bOk;
 }// end CanGoOnline
 
@@ -719,13 +717,11 @@ BOOL SVInspectionProcess::CanRegressionGoOnline()
 	SetResetCounts();
 	m_svReset.AddState( SVResetStateInitializeOnReset |	SVResetStateArchiveToolCreateFiles | SVResetStateLoadFiles );
 
-	l_bOk = resetAllObjects(true, false);
+	l_bOk = resetAllObjects();
 
 	m_svReset.RemoveState( SVResetStateInitializeOnReset |	SVResetStateArchiveToolCreateFiles | SVResetStateLoadFiles );
 
 	ClearResetCounts();
-
-	l_bOk = l_bOk && Validate();
 
 	return l_bOk;
 }
@@ -1612,8 +1608,6 @@ void SVInspectionProcess::ValidateAndInitialize( bool p_Validate, bool p_IsNew )
 		BOOL bok = ProcessInputRequests( 1, l_eResetItem, l_svToolMap );
 
 		m_svReset.RemoveState( SVResetAutoMoveAndResize | SVResetStateInitializeOnReset | SVResetStateArchiveToolCreateFiles | SVResetStateLoadFiles );
-
-		Validate();
 	}
 
 	if( !p_IsNew )
@@ -1662,19 +1656,48 @@ void SVInspectionProcess::SingleRunModeLoop( bool p_Refresh )
 	}
 }
 
-bool SVInspectionProcess::resetAllObjects( bool shouldNotifyFriends, bool silentReset )
+bool SVInspectionProcess::resetAllObjects( SvStl::MessageContainerVector *pErrorMessages/*=nullptr */ )
 {
+	SvStl::MessageContainerVector ErrorMessages;
+	
 	for (size_t l = 0; l < m_PPQInputs.size(); l++)
 	{
 		if( !( m_PPQInputs[ l ].empty() ) && nullptr != m_PPQInputs[l].m_IOEntryPtr->m_pValueObject )
 		{
-			m_PPQInputs[l].m_IOEntryPtr->m_pValueObject->resetAllObjects(shouldNotifyFriends, silentReset);
+			m_PPQInputs[l].m_IOEntryPtr->m_pValueObject->resetAllObjects(&ErrorMessages);
 			break;
 		}
 	}// end for
 
-	bool Result = ( S_OK == ResetObject() );
+	bool Result = true;
+	if( IsColorCamera() )
+	{
+		Result = m_rgbMainImageObject.resetAllObjects(&ErrorMessages);
+	}
+
+	if( nullptr != m_pCurrentToolset )
+	{
+		Result = m_pCurrentToolset->resetAllObjects(&ErrorMessages) && Result;
+	}
+	else
+	{
+		Result = false;
+		SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ToolsetNotCreated, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+		ErrorMessages.push_back(Msg);
+	}
+
+	Result = __super::resetAllObjects( &ErrorMessages ) && Result;
 	ASSERT( Result );
+	//log all error messages to event log
+	for (SvStl::MessageContainerVector::iterator iter = ErrorMessages.begin(); ErrorMessages.end() != iter; iter++ )
+	{
+		SvStl::MessageMgrStd message( SvStl::LogOnly );
+		message.setMessage(iter->getMessage());
+	}
+	if (nullptr != pErrorMessages)
+	{
+		*pErrorMessages = ErrorMessages;
+	}
 	return Result;
 }
 
@@ -1805,7 +1828,7 @@ HRESULT SVInspectionProcess::ObserverUpdate( const SVDeleteTool& p_rData )
 		createAllObjects(createStruct);
 
 		// Reset all objects
-		resetAllObjects(true, false);
+		resetAllObjects();
 		BuildValueObjectMap();
 	}
 	else
@@ -2268,7 +2291,7 @@ BOOL SVInspectionProcess::ProcessInputRequests( long p_DataIndex, SVResetItemEnu
 		{
 			if( SVResetItemIP == p_reResetItem )
 			{
-				bRet &= resetAllObjects(true, false);
+				bRet &= resetAllObjects();
 				bRet &= S_OK == m_pCurrentToolset->ClearResetCounts();
 			}
 			else
@@ -2285,7 +2308,7 @@ BOOL SVInspectionProcess::ProcessInputRequests( long p_DataIndex, SVResetItemEnu
 						{
 							if( p_rsvToolMap[ l_psvTool ].m_svObjectSet.empty() )
 							{
-								bRet &= l_psvTool->resetAllObjects(true, false);
+								bRet &= l_psvTool->resetAllObjects();
 							}
 							else
 							{
@@ -2299,7 +2322,7 @@ BOOL SVInspectionProcess::ProcessInputRequests( long p_DataIndex, SVResetItemEnu
 
 									if (nullptr != l_psvObject)
 									{
-										bRet &= l_psvObject->resetAllObjects(true, false);
+										bRet &= l_psvObject->resetAllObjects();
 									}
 									else
 									{
@@ -3104,28 +3127,25 @@ BOOL SVInspectionProcess::CreateObject( SVObjectLevelCreateStruct* PCreateStruct
 	return m_isCreated;
 }
 
-HRESULT SVInspectionProcess::ResetObject()
+bool SVInspectionProcess::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	HRESULT l_hrOk = S_OK;
+	bool Result = __super::ResetObject(pErrorMessages);
 
-	if( IsColorCamera() )
+	if ( Result && !m_pCurrentToolset->IsCreated() )
 	{
-		if( S_OK != m_rgbMainImageObject.ResetObject() )
+		Result = false;
+		if (nullptr != pErrorMessages)  
 		{
-			l_hrOk = S_FALSE;
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ToolsetNotCreated, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
 		}
-	}
-
-	if( nullptr == m_pCurrentToolset || !m_pCurrentToolset->resetAllObjects(true, false) )
-	{
-		l_hrOk = S_FALSE;
 	}
 
 	BuildValueObjectMap();
 
 	m_bForceOffsetUpdate = true;
 
-	return l_hrOk;
+	return Result;
 }
 
 void SVInspectionProcess::SetInvalid()
@@ -3197,41 +3217,6 @@ int SVInspectionProcess::UpdateMainImagesByProduct( SVProductInfoStruct* p_psvPr
 	return Result;
 }
 
-BOOL SVInspectionProcess::OnValidate()
-{
-	BOOL retVal = SVObjectClass::OnValidate();
-
-	retVal = retVal && GetToolSet() && GetToolSet()->IsCreated();
-
-	if( !retVal )
-		SetInvalid();
-
-	return retVal;
-}
-
-BOOL SVInspectionProcess::Validate()
-{
-	//
-	// Broadcast: 'going on line' - 08 Feb 2000 - frb.
-	//
-
-	BOOL retVal = SVObjectClass::Validate();
-
-	// Prep the conditonal
-	// The equation should only be executed when the following items are true:
-	// 1. The ToolSet is Enabled
-	// 2. The Condition is Enabled
-	// The purpose for these checks are that the operator can start to build 
-	// an equation and disable either the Toolset or the Condition.
-	// This will leave the equation in a not validated state, since validation
-	// of the Equation only occurs ( in the SVConditionalDialogClass::OnOK() )
-	// when both the ToolSet and the Condition are NOT disabled.
-
-	retVal = retVal && GetToolSet()->Validate();
-
-	return retVal;
-}
-
 HRESULT SVInspectionProcess::OnlyCopyForward( SVRunStatusClass& rRunStatus)
 {
 	HRESULT hRet = S_OK;
@@ -3257,7 +3242,7 @@ HRESULT SVInspectionProcess::OnlyCopyForward( SVRunStatusClass& rRunStatus)
 BOOL SVInspectionProcess::Run( SVRunStatusClass& RRunStatus )
 {
 	// Validate IPDoc's values...
-	BOOL retVal = OnValidate();
+	BOOL retVal = IsValid();
 
 	if( retVal )
 	{
@@ -4289,23 +4274,6 @@ bool   SVInspectionProcess::LoopOverTools(pToolFunc pf, int& counter )
 	return ret;
 }
 
-void SVInspectionProcess::clearToolMessages()
-{
-	SVToolSetClass* pToolSet( GetToolSet() );
-
-	if( nullptr != pToolSet )
-	{
-		for(int i =0; i < pToolSet->GetSize(); i++)
-		{
-			SVTaskObjectClass* pTaskObject( pToolSet->GetAt(i) );
-			if(nullptr != pTaskObject)
-			{
-				pTaskObject->clearTaskMessages();
-			}
-		}		
-	}
-}
-
 void SVInspectionProcess::getToolMessages( SvStl::MessageContainerInserter& rInserter ) const
 {
 	SVToolSetClass* pToolSet( GetToolSet() );
@@ -4317,7 +4285,7 @@ void SVInspectionProcess::getToolMessages( SvStl::MessageContainerInserter& rIns
 			SVTaskObjectClass* pTaskObject( pToolSet->GetAt(i) );
 			if(nullptr != pTaskObject)
 			{
-				const SvStl::MessageContainerVector& rToolMessages( pTaskObject->getTaskMessages() );
+				const SvStl::MessageContainerVector& rToolMessages( pTaskObject->getErrorMessages() );
 				std::copy( rToolMessages.begin(), rToolMessages.end(), rInserter );
 			}
 		}		
@@ -4374,7 +4342,7 @@ bool SVInspectionProcess::CreateChildObject( SVObjectClass* pChildObject, DWORD 
 
 		if( SVMFResetObject == ( context & SVMFResetObject ) )
 		{
-			pChildObject->resetAllObjects(true, false);
+			pChildObject->resetAllObjects();
 		}
 
 		if( SVMFSetDefaultInputs == ( context & SVMFSetDefaultInputs ) )
@@ -4384,7 +4352,7 @@ bool SVInspectionProcess::CreateChildObject( SVObjectClass* pChildObject, DWORD 
 
 		if( SVMFResetInspection == ( context & SVMFResetInspection ) )
 		{
-			resetAllObjects(true, false);
+			resetAllObjects();
 		}
 
 		return Return;

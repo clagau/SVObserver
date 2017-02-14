@@ -172,7 +172,7 @@ HRESULT SVImagePolarTransformClass::IsInputImage( SVImageClass *p_psvImage )
 	return l_hrOk;
 }
 
-SVImageClass* SVImagePolarTransformClass::getInputImage()
+SVImageClass* SVImagePolarTransformClass::getInputImage() const
 {
 	if( inputImageObjectInfo.IsConnected() && inputImageObjectInfo.GetInputObjectInfo().PObject )
 		return ( SVImageClass* ) inputImageObjectInfo.GetInputObjectInfo().PObject;
@@ -416,34 +416,6 @@ void SVImagePolarTransformClass::correctAngles( double& RDStartAngle, double& RD
 	}
 }
 
-
-
-
-BOOL SVImagePolarTransformClass::OnValidate()
-{
-	BOOL bRetVal = FALSE;
-	SetCalculatedPrintableFlags();
-	if( getInputImage() )
-	{
-		bRetVal = TRUE;
-		bRetVal = SVPolarTransformClass::OnValidate() && bRetVal;
-	}
-
-	// Note: Make sure this is called when Validate fails !!!
-	if( ! bRetVal )
-		SetInvalid();
-
-	return bRetVal;
-}
-
-bool SVImagePolarTransformClass::resetAllObjects( bool shouldNotifyFriends, bool silentReset )
-{
-	bool Result = ( S_OK == ResetObject() );
-	ASSERT( Result );
-
-	return( __super::resetAllObjects(shouldNotifyFriends, silentReset) && Result );
-}
-
 void SVImagePolarTransformClass::AnglesTo360( double& p_dStart, double& p_dEnd)
 {
 	// Shifts start and end angles to be between -360 and +350 degrees.
@@ -469,7 +441,7 @@ BOOL SVImagePolarTransformClass::onRun( SVRunStatusClass& RRunStatus )
 	BOOL l_bUseFormula = FALSE;
 	long l_lAngularMethod = 0;
 
-	BOOL l_bOk = SVPolarTransformClass::onRun( RRunStatus );
+	BOOL l_bOk = SVPolarTransformClass::onRun( RRunStatus ) && ValidateLocal(&m_RunErrorMessages);
 
 	l_bOk = l_bOk && (S_OK == useFormulaInput.GetValue( l_bUseFormula ));
 
@@ -554,7 +526,7 @@ BOOL SVImagePolarTransformClass::onRun( SVRunStatusClass& RRunStatus )
 
 		l_bOk = l_bOk && outputImageObject.GetImageHandle( l_svOutputHandle ) && !( l_svOutputHandle.empty() );
 
-		l_bOk = l_bOk && nullptr != getInputImage() && getInputImage()->GetImageHandle( l_svInputHandle ) && !( l_svInputHandle.empty() );
+		l_bOk = l_bOk && getInputImage()->GetImageHandle( l_svInputHandle ) && !( l_svInputHandle.empty() );
 
 		SVImageBufferHandleImage l_InMilHandle;
 		l_bOk = l_bOk && ( S_OK == l_svInputHandle->GetData( l_InMilHandle ) );
@@ -707,7 +679,7 @@ void SVImagePolarTransformClass::SetCalculatedPrintableFlags()
 
 }
 
-HRESULT SVImagePolarTransformClass::ResetObject()
+bool SVImagePolarTransformClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	SVPolarTransformationToolClass* pTool = dynamic_cast<SVPolarTransformationToolClass*> ( GetOwner() );
 	ASSERT( pTool );
@@ -745,16 +717,24 @@ HRESULT SVImagePolarTransformClass::ResetObject()
 	info.bFormula = bUseFormula;
 	hr = pTool->m_svToolExtent.SetExtentPropertyInfo( SVExtentPropertyRotationAngle, info );
 
-	HRESULT l_hrOk = outputImageObject.InitializeImage( getInputImage() );
-
-	if (S_OK != SVPolarTransformClass::ResetObject() )
+	bool Result = true;
+	if (S_OK != outputImageObject.InitializeImage( getInputImage() ))
 	{
-		l_hrOk = S_FALSE;
+		Result = false;
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_InitImageFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
 	}
+
+	Result = __super::ResetObject(pErrorMessages) && Result;
+
+	SetCalculatedPrintableFlags();
 
 	CollectInputImageNames();
 
-	return l_hrOk;
+	return ValidateLocal(pErrorMessages) && Result;
 }
 
 // Set String value object for Source Image Names
@@ -774,3 +754,17 @@ HRESULT SVImagePolarTransformClass::CollectInputImageNames()
 	return l_hr;
 }
 
+bool SVImagePolarTransformClass::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) const
+{
+	if( nullptr == getInputImage() )
+	{
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_NoSourceImage, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
+		return false;
+	}
+
+	return true;
+}

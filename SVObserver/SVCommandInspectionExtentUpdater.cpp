@@ -53,7 +53,7 @@ int SVCommandInspectionExtentUpdater::ResetToolSizeAdjustTool(SVObjectClass* pOb
 		bool Result = false;
 		if (nullptr != pObject)
 		{
-			Result = pObject->resetAllObjects(true, false);
+			Result = pObject->resetAllObjects();
 		}
 		if(!Result)
 		{
@@ -127,7 +127,7 @@ HRESULT SVCommandInspectionExtentUpdater::Execute()
 				SVObjectClass*  pResetObject =  dynamic_cast<SVObjectClass*>  (pInspection);
 				if (nullptr != pResetObject)
 				{
-					result = pResetObject->resetAllObjects(true, false);
+					result = pResetObject->resetAllObjects();
 				}
 			}
 			else if ( m_ResetMode == ResetMode_ToolList)
@@ -150,7 +150,7 @@ HRESULT SVCommandInspectionExtentUpdater::Execute()
 				SVObjectClass*  pResetObject =  dynamic_cast<SVObjectClass*>  (pTool);
 				if (nullptr != pResetObject)
 				{
-					result = pResetObject->resetAllObjects(true, false);
+					result = pResetObject->resetAllObjects();
 				}
 			}
 

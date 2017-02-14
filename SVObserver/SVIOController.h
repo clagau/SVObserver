@@ -43,15 +43,12 @@ public:
 	virtual void ResetName() override;
 	virtual void SetName( LPCTSTR StrString ) override;
 
-	virtual bool resetAllObjects( bool shouldNotifyFriends, bool silentReset ) override;
-
-	virtual HRESULT ResetObject() override;
-	virtual BOOL OnValidate() override;
+	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	void SetIODoc(SVIODoc* pDoc); 
 	SVIODoc* GetIODoc() const;
 
-	BOOL RebuildOutputList();
+	bool RebuildOutputList();
 
 	typedef SvXml::SVXMLMaterialsTree SVTreeType;
 
@@ -60,7 +57,7 @@ public:
 	bool GetParameters( SVObjectXMLWriter& rWriter ) const;
 
 	HRESULT SetModuleReady( bool p_Value );
-	HRESULT SetRaidErrorBit( bool p_Value );
+	bool SetRaidErrorBit( bool p_Value );
 
 	SVIOEntryHostStructPtr GetModuleReady();
 	SVIOEntryHostStructPtr GetRaidErrorBit();

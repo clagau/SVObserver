@@ -598,7 +598,7 @@ namespace Seidenader { namespace SVOGui {
 			{
 				// Do a reset of the analyzer
 				typedef SVSharedPtr<GuiCmd::ResetObject> ResetObjectCommandPtr;
-				ResetObjectCommandPtr commandPtr(new GuiCmd::ResetObject(analyzerGUID, true));
+				ResetObjectCommandPtr commandPtr(new GuiCmd::ResetObject(analyzerGUID));
 				SVObjectSynchronousCommandTemplate<ResetObjectCommandPtr> cmd(m_InspectionID, commandPtr);
 
 				hrOk = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);

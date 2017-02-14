@@ -39,17 +39,18 @@ public:
 
 	virtual bool DoesObjectHaveExtents() const override;
 
-	virtual HRESULT ResetObject() override;
+	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
 protected:
 	virtual BOOL onRun( SVRunStatusClass& rRunStatus ) override;
-	virtual bool ValidateOfflineParameters () override;
 #pragma endregion Protected Methods
 
 #pragma region Private Methods
 private:
+	bool ValidateLocal( SvStl::MessageContainerVector * pErrorMessages ) const;
+
 	/// Initialized the class.
 	void	LocalInitialize();
 

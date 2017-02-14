@@ -93,15 +93,31 @@ SVStaticStringValueObjectClass* RingBufferTool::GetInputImageNames()
 	return &m_svSourceImageName;
 }
 
-HRESULT RingBufferTool::ResetObject()
+bool RingBufferTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	HRESULT status = SVToolClass::ResetObject();
+	bool Result = SVToolClass::ResetObject(pErrorMessages);
 
 	SetToolROIExtentToFullInputImage ();
 
-	if (OnValidate())
+	long ringBufferDepth = 0;
+	m_BufferDepth.GetValue(ringBufferDepth);
+	if( SvOi::cRingBufferDepthMin > ringBufferDepth || SvOi::cRingBufferDepthMax < ringBufferDepth )
 	{
-		SVImageClass* inputImage = getInputImage ();
+		Result = false;
+		if (nullptr != pErrorMessages)
+		{
+			SVStringVector msgList;
+			msgList.push_back(SvUl_SF::Format("%d", SvOi::cRingBufferDepthMin));
+			msgList.push_back(SvUl_SF::Format("%d", SvOi::cRingBufferDepthMax));
+			msgList.push_back(SvUl_SF::Format("%d", ringBufferDepth));
+			SvStl::MessageContainer message( SVMSG_SVO_61_RINGBUFFER_ERROR, SvOi::Tid_RingBuffer_Depth_Invalid_Value, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10013_RingBuffer_DepthValueInvalid, GetUniqueObjectID() );
+			pErrorMessages->push_back(message);
+		}
+	}
+
+	if (Result)
+	{
+		SVImageClass* inputImage = getInputImage();
 		if (nullptr != inputImage)
 		{
 			//Set input name to source image name to display it in result picker
@@ -109,60 +125,32 @@ HRESULT RingBufferTool::ResetObject()
 
 			SVImageInfoClass imageInfo = inputImage->GetImageInfo();
 
-			if (S_OK == status)
+			//create ring buffer images
+			m_ringBuffer.clear();
+			m_ringBuffer.resize(ringBufferDepth);
+			m_isBufferFull = false;
+			m_nextBufferPos = 0;
+
+			imageInfo.setDibBufferFlag(false);
+			for (int i=0; i<ringBufferDepth; i++)
 			{
-				//create ring buffer images
-				long ringBufferDepth = 0;
-				m_BufferDepth.GetValue(ringBufferDepth);
-				m_ringBuffer.clear();
-				m_ringBuffer.resize(ringBufferDepth);
-				m_isBufferFull = false;
-				m_nextBufferPos = 0;
-				
-				imageInfo.setDibBufferFlag(false);
-				for (int i=0; i<ringBufferDepth; i++)
-				{
-					SVSmartHandlePointer imageHandle;
-					SVImageProcessingClass::CreateImageBuffer(imageInfo, imageHandle);
-					m_ringBuffer[i] = imageHandle;
-				}
+				SVSmartHandlePointer imageHandle;
+				SVImageProcessingClass::CreateImageBuffer(imageInfo, imageHandle);
+				m_ringBuffer[i] = imageHandle;
 			}
 		}
 		else
 		{
-			status = SvOi::Err_10012_RingBuffer_NoInputImage;
+			Result = false;
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_NoSourceImage, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				pErrorMessages->push_back(Msg);
+			}
 		}
 	}
-	else
-	{
-		status = SvOi::Err_10011_RingBuffer_OnValidFailed;
-	}
 
-	return status;
-}
-
-BOOL RingBufferTool::OnValidate()
-{
-	bool bValid = (nullptr != getInputImage());
-
-	long ringBufferDepth = 0;
-	m_BufferDepth.GetValue(ringBufferDepth);
-	if( SvOi::cRingBufferDepthMin > ringBufferDepth || SvOi::cRingBufferDepthMax < ringBufferDepth )
-	{
-		bValid = false;
-		SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-		SVStringVector msgList;
-		msgList.push_back(SvUl_SF::Format("%d", SvOi::cRingBufferDepthMin));
-		msgList.push_back(SvUl_SF::Format("%d", SvOi::cRingBufferDepthMax));
-		msgList.push_back(SvUl_SF::Format("%d", ringBufferDepth));
-		Exception.setMessage( SVMSG_SVO_61_RINGBUFFER_ONVALIDATE_ERROR, SvOi::Tid_RingBuffer_Depth_Invalid_Value, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10013_RingBuffer_DepthValueInvalid );
-	}
-	for (int i=0; i< SvOi::cRingBufferNumberOutputImages; ++i)
-	{
-		bValid &= m_ImageIndexManager[i].IsValid() ? true : false;
-	}	
-
-	return SVToolClass::OnValidate() && bValid ;
+	return Result;
 }
 
 SVImageClass* RingBufferTool::getInputImage()

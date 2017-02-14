@@ -75,10 +75,9 @@ BOOL TableTool::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 		{
 			bOk = false;
 			SvStl::MessageContainer message;
-			message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_TableObject_CreateFailed, SvStl::SourceFileParams(StdMessageParams) );
+			message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_TableObject_CreateFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 			SvStl::MessageMgrStd Msg( SvStl::LogOnly );
 			Msg.setMessage( message.getMessage() );
-			addTaskMessage( message );
 		}
 	}
 
@@ -121,13 +120,15 @@ bool TableTool::DoesObjectHaveExtents() const
 	return false;
 }
 
-HRESULT TableTool::ResetObject()
+bool TableTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	HRESULT status = SVToolClass::ResetObject();
+	bool Result = SVToolClass::ResetObject(pErrorMessages);
 
-	if (OnValidateParameter(AllParameters))
+	Result = ValidateLocal(pErrorMessages) && Result;
+
+	if (Result)
 	{
-		m_pTable->ResetObject();
+		Result = m_pTable->ResetObject(pErrorMessages);
 		m_ColumnEquationList.clear();
 		for( size_t j = 0; j < m_friendList.size(); j++ )
 		{
@@ -140,36 +141,39 @@ HRESULT TableTool::ResetObject()
 				}
 				else
 				{
-					SVStringVector msgList;
-					msgList.push_back(SvUl_SF::Format(_T("%d"), c_maxTableColumn));
-					SvStl::MessageMgrStd e( SvStl::LogOnly );
-					e.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_TableColumn_TooManyEquation, SvStl::SourceFileParams(StdMessageParams) );
-					status = E_FAIL;
+					Result = false;
 					DestroyFriendObject(*equation, 0);
 					j--;
+					if (nullptr != pErrorMessages)
+					{
+						SVStringVector msgList;
+						msgList.push_back(SvUl_SF::Format(_T("%d"), c_maxTableColumn));
+						SvStl::MessageContainer message;
+						message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_TableColumn_TooManyEquation, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+						pErrorMessages->push_back( message );
+					}
 				}
 			}
 		}
-		long maxArray = 0;
-		m_MaxRow.GetValue(maxArray);
 		try
 		{
-			m_pTable->setColumnValueObjects(m_ColumnEquationList, maxArray);
+			long maxRow = 0;
+			m_MaxRow.GetValue(maxRow);
+			m_pTable->setColumnValueObjects(m_ColumnEquationList, maxRow);
 		}
 		catch( const SvStl::MessageContainer& rSvE )
 		{
+			Result = false;
 			SvStl::MessageMgrStd e( SvStl::LogOnly );
 			e.setMessage( rSvE.getMessage() );
-			addTaskMessage(rSvE);
-			status = S_FALSE;
+			if (nullptr != pErrorMessages)
+			{
+				pErrorMessages->push_back(rSvE);
+			}
 		}
 	}
-	else
-	{
-		status = S_FALSE;
-	}
 
-	return status;
+	return Result;
 }
 #pragma endregion Public Methods
 
@@ -184,46 +188,48 @@ BOOL TableTool::onRun( SVRunStatusClass& rRunStatus )
 		//clear table if required
 		if( m_pClearEquation->HasCondition() && m_pClearEquation->IsEnabled() && 0 != m_pClearEquation->GetYACCResult() )
 		{
-			m_pTable->ResetObject();
+			returnValue = m_pTable->ResetObject(&m_RunErrorMessages);
 		}
 	}
 
 	return returnValue;
 }
+#pragma endregion Protected Methods
 
-bool TableTool::ValidateOfflineParameters ()
+#pragma region Private Methods
+bool TableTool::ValidateLocal( SvStl::MessageContainerVector * pErrorMessages ) const
 {
-	bool Result = SVToolClass::ValidateOfflineParameters();
-	if (Result)
+	bool Result = true;
+	if (nullptr == m_pTable)
 	{
-		if (nullptr == m_pTable)
+		Result = false;
+		if (nullptr != pErrorMessages)
 		{
 			SvStl::MessageContainer message;
-			message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_TableObject_Nullptr, SvStl::SourceFileParams(StdMessageParams) );
-			addTaskMessage( message );
-			Result = false;
+			message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_TableObject_Nullptr, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back( message );
 		}
+	}
 
-		long maxRow = 0;
-		m_MaxRow.GetValue(maxRow);
-		if (SvOi::cTableMaxRowMin > maxRow || SvOi::cTableMaxRowMax < maxRow)
+	long maxRow = 0;
+	m_MaxRow.GetValue(maxRow);
+	if (SvOi::cTableMaxRowMin > maxRow || SvOi::cTableMaxRowMax < maxRow)
+	{
+		Result = false;
+		if (nullptr != pErrorMessages)
 		{
 			SVStringVector messageList;
 			messageList.push_back(SvUl_SF::Format(_T("%d"), SvOi::cTableMaxRowMin));
 			messageList.push_back(SvUl_SF::Format(_T("%d"), SvOi::cTableMaxRowMax));
 			messageList.push_back(SvUl_SF::Format(_T("%d"), maxRow));
 			SvStl::MessageContainer message;
-			message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_TableObject_MaxRowWrongValue, messageList, SvStl::SourceFileParams(StdMessageParams) );
-			addTaskMessage( message );
-			Result = false;
+			message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_TableObject_MaxRowWrongValue, messageList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back( message );
 		}
-	}
-
+	}	
 	return Result;
 }
-#pragma endregion Protected Methods
 
-#pragma region Private Methods
 void TableTool::LocalInitialize ()
 {
 	BuildInputObjectList ();

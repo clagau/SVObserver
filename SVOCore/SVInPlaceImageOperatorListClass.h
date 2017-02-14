@@ -40,7 +40,7 @@ public:
 
 	virtual HRESULT IsInputImage( SVImageClass *p_psvImage ) override;
 
-	virtual BOOL OnValidate() override;
+	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 	virtual BOOL Run( SVRunStatusClass& RRunStatus ) override;
 
 private:

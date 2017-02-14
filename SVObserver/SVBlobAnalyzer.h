@@ -151,7 +151,7 @@ public:
 	virtual BOOL CloseObject() override;
 
 	virtual BOOL CreateObject(SVObjectLevelCreateStruct* PCreateStructure) override;
-	HRESULT ResetObject();
+	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	DWORD BuildFeatureListID ();
 	DWORD EnableFeature (SVBlobFeatureEnum aIndex);
@@ -178,9 +178,6 @@ public:
 	SVLongResultClass* GetBlobResultObject();
 
 	virtual BOOL onRun( SVRunStatusClass& RRunStatus ) override;
-	virtual BOOL OnValidate() override;
-
-	virtual bool resetAllObjects( bool shouldNotifyFriends, bool silentReset ) override;
 
 	virtual bool IsPtOverResult( const POINT& rPoint ) override;
 	virtual	void DisplayAnalyzerResult() override;

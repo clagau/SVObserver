@@ -116,19 +116,3 @@ BOOL SVMathToolClass::CreateObject(SVObjectLevelCreateStruct* PCreateStruct )
 
 	return m_isCreated;
 }
-
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnValidate
-// -----------------------------------------------------------------------------
-// .Description : 
-////////////////////////////////////////////////////////////////////////////////
-BOOL SVMathToolClass::OnValidate()
-{
-	if( SVToolClass::OnValidate() )
-	{
-		return TRUE;
-	}
-	SetInvalid();
-	return FALSE;
-}
-

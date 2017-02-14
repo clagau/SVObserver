@@ -21,6 +21,7 @@
 #include "SVOLibrary/SVQueueObject.h"
 #include "SVTimerLibrary/SVClock.h"
 #include "SVUtilityLibrary/SVSharedPtr.h"
+#include "SVStatusLibrary/MessageContainer.h"
 #pragma endregion Includes
 
 class SVImageObjectClass
@@ -45,8 +46,8 @@ public:
 
 	const SVClock::SVTimeStamp& GetLastResetTimeStamp() const;
 	
-	HRESULT ResetObject();
-	HRESULT UpdateTimeStamp();
+	bool ResetObject(SvStl::MessageContainerVector *pErrorContainer=nullptr);
+	void UpdateTimeStamp();
 
 	bool Clear( long lIndex, unsigned long ulValue = 0 );
 	bool Clear( unsigned long ulValue = 0 );
@@ -105,17 +106,17 @@ protected:
 	typedef std::set< long > SVImageIndexSet;
 	typedef std::map< long, SVImageObjectElementPtr > SVImageHandleMap;
 
-	bool CreateBufferArrays();
+	bool CreateBufferArrays(SvStl::MessageContainerVector *pErrorContainer=nullptr);
 	bool DestroyBufferArrays();
 
-	bool CreateImageBuffer( SVImageInfoClass &rInfo, long p_Index, SVImageObjectElementPtr& p_Handle );
+	bool CreateImageBuffer( SVImageInfoClass &rInfo, long p_Index, SVImageObjectElementPtr& p_Handle, SvStl::MessageContainerVector *pErrorContainer=nullptr );
 	bool CreateImageChildBuffer( const SVImageInfoClass &rParentInfo, SVSmartHandlePointer pParentHandle, 
 	                             SVImageInfoClass &rChildInfo, long p_Index, SVImageObjectElementPtr& p_Handle );
 	bool DestroyImageBuffer( SVImageObjectElementPtr& p_Handle );
 
 	bool GetArrayImageHandle( long lIndex, SVSmartHandlePointer& rHandle ) const;
 
-	bool CreateImageHandleArray( long lSize );
+	bool CreateImageHandleArray( long lSize, SvStl::MessageContainerVector *pErrorContainer=nullptr );
 	bool DestroyImageHandleArray();
 
 	HRESULT GetMasterIndex( size_t p_Index, size_t& p_rMasterIndex ) const;

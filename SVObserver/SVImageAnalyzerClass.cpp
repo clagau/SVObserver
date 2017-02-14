@@ -48,16 +48,13 @@ SVImageAnalyzerClass::~SVImageAnalyzerClass()
 {
 }
 
-BOOL SVImageAnalyzerClass::CloseObject()
+bool SVImageAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	return SVAnalyzerClass::CloseObject();
+	return __super::ResetObject(pErrorMessages) && ValidateLocal(pErrorMessages);
 }
-
-BOOL SVImageAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+BOOL SVImageAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 {
-	m_isCreated = SVAnalyzerClass::CreateObject( pCreateStructure );
-
-	return m_isCreated;
+	return __super::onRun(RRunStatus) && ValidateLocal(&m_RunErrorMessages);
 }
 
 SVImageClass* SVImageAnalyzerClass::getInputImage()
@@ -77,7 +74,7 @@ unsigned long SVImageAnalyzerClass::GetInputPixelDepth()
 	if (!pImage)
 	{
 		SvStl::MessageMgrStd MesMan( SvStl::DataOnly );
-		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16110);
+		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16110, GetUniqueObjectID());
 		MesMan.Throw();
 	}
 	else
@@ -87,13 +84,17 @@ unsigned long SVImageAnalyzerClass::GetInputPixelDepth()
 	return ulPixelDepth;
 }
 
-BOOL SVImageAnalyzerClass::OnValidate()
+bool SVImageAnalyzerClass::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) const
 {
-	BOOL l_bOk = true;
+	if( !inputImageObjectInfo.IsConnected() || nullptr == inputImageObjectInfo.GetInputObjectInfo().PObject || !inputImageObjectInfo.GetInputObjectInfo().PObject->IsValid() ) 
+	{
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
+		return false;
+	}
 
-	l_bOk = l_bOk && inputImageObjectInfo.IsConnected();
-	l_bOk = l_bOk && nullptr != inputImageObjectInfo.GetInputObjectInfo().PObject;
-	l_bOk = l_bOk && inputImageObjectInfo.GetInputObjectInfo().PObject->IsValid();
-
-	return l_bOk;
+	return true;
 }

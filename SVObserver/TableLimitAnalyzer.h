@@ -31,15 +31,10 @@ public:
 #pragma region Public Methods
 public:
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
-	virtual bool resetAllObjects( bool shouldNotifyFriends, bool silentReset ) override;
-	virtual HRESULT ResetObject() override;
-	virtual BOOL Validate() override;
-	virtual BOOL OnValidate() override;
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
 protected:
-	virtual bool ValidateOfflineParameters () override;
 	virtual BOOL onRun( SVRunStatusClass& rRunStatus ) override;
 #pragma endregion Protected Methods
 

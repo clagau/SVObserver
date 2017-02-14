@@ -35,7 +35,7 @@ public:
 
     SVResultClass* GetResultObject();
    
-	virtual BOOL OnValidate() override;
+	 virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 public:
 	long msvlHistValueArraySize;

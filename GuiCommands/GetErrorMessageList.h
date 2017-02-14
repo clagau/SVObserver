@@ -34,7 +34,7 @@ namespace Seidenader
 				SvOi::ITaskObject* pTask = dynamic_cast<SvOi::ITaskObject *>(SvOi::getObject(m_InstanceID));
 				if (pTask)
 				{
-					m_MessageList = pTask->getTaskMessages();
+					m_MessageList = pTask->getErrorMessages();
 				}
 				else
 				{

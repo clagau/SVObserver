@@ -54,9 +54,6 @@ const SVPointValueObjectClass& SVPointValueObjectClass::operator = (const SVPoin
 
 SVPointValueObjectClass::~SVPointValueObjectClass()
 {
-	// Delete all object's data arrays...
-	SetObjectDepth(0);
-	CreateBuckets();
 }
 
 void SVPointValueObjectClass::Persist(SVObjectWriter& rWriter)

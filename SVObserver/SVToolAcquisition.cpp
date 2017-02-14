@@ -62,35 +62,34 @@ BOOL SVAcquisitionToolClass::CreateObject( SVObjectLevelCreateStruct* PCreateStr
 	return bOk;
 }
 
-HRESULT SVAcquisitionToolClass::ResetObject()
+bool SVAcquisitionToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	HRESULT l_hrOk = SVToolClass::ResetObject();
+	bool Result = __super::ResetObject(pErrorMessages);
 	HRESULT l_Temp = SetImageExtent( 1, mainImageObject.GetImageExtents() );
 
-	if( S_OK == l_hrOk )
+	if( S_OK != l_Temp )
 	{
-		l_hrOk = l_Temp;
+		Result = false;
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_SetImageExtentFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
 	}
 
 	UpdateImageWithExtent( 1 );
 
-	return l_hrOk;
-}
-
-BOOL SVAcquisitionToolClass::OnValidate()
-{
-	BOOL bRetVal = FALSE;
-
-	bRetVal = SVToolClass::OnValidate();
-
-	bRetVal &= nullptr != mainImageObject.GetCamera();
-
-	if( !bRetVal )
+	if (nullptr == mainImageObject.GetCamera())
 	{
-		SetInvalid();
+		Result = false;
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_NoCameraToMainImage, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
 	}
 
-	return bRetVal;	
+	return Result;
 }
 
 bool SVAcquisitionToolClass::DoesObjectHaveExtents() const

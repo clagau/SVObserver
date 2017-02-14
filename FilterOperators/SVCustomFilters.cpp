@@ -199,45 +199,18 @@ BOOL SVCustomFilterClass::CreateObject( SVObjectLevelCreateStruct* PCreateStruct
 
 	bOk &= SVFilterClass::CreateObject( PCreateStructure );
 
-	bOk &= RebuildKernel();
+	RebuildKernel();
 
 	return bOk;
 }
 
-HRESULT SVCustomFilterClass::ResetObject()
+bool SVCustomFilterClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	HRESULT l_hrOk = SVFilterClass::ResetObject();
+	bool Result = SVFilterClass::ResetObject(pErrorMessages);
 
-	if ( ! RebuildKernel() )
-	{
-		l_hrOk = S_FALSE;
-	}
+	RebuildKernel();
 
-	return l_hrOk;
-}
-
-BOOL SVCustomFilterClass::OnValidate()
-{
-	BOOL bRetVal = TRUE;
-	long lWidth;
-	long lHeight;
-	
-	m_lvoKernelWidth.GetValue( lWidth );
-	m_lvoKernelHeight.GetValue( lHeight );
-	
-	if( lWidth != 1 && lWidth != 3 && lWidth != 5 && lWidth != 7 )
-		bRetVal = FALSE;
-
-	if( lHeight != 1 && lHeight != 3 && lHeight != 5 && lHeight != 7 )
-		bRetVal = FALSE;
-
-	bRetVal = SVOperatorClass::OnValidate() || bRetVal;
-
-	if( !bRetVal )
-	{
-		SetInvalid();
-	}
-	return bRetVal;	
+	return Result && ValidateLocal(pErrorMessages);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -245,7 +218,7 @@ BOOL SVCustomFilterClass::OnValidate()
 // -----------------------------------------------------------------------------
 // .Description : Initialization of newly Instantiated Object
 ////////////////////////////////////////////////////////////////////////////////
-BOOL SVCustomFilterClass::RebuildKernel()
+void SVCustomFilterClass::RebuildKernel()
 {
 	SVMatroxBufferInterface::SVStatusCode l_Code;
 
@@ -357,8 +330,6 @@ BOOL SVCustomFilterClass::RebuildKernel()
 		m_plvoKernelCells[l]->ObjectAttributesAllowedRef() = SV_EMBEDABLE;
 		m_plvoKernelCells[l]->ObjectAttributesSetRef() = SV_EMBEDABLE;
 	}// end for
-
-	return TRUE;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -415,4 +386,40 @@ BOOL SVCustomFilterClass::onRun( BOOL First, SVSmartHandlePointer RInputImageHan
 	SetInvalid();
 	RRunStatus.SetInvalid();
 	return FALSE;
+}
+
+bool SVCustomFilterClass::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) const
+{
+	bool bRetVal = true;
+	long lWidth;
+	m_lvoKernelWidth.GetValue( lWidth );
+	if( lWidth != 1 && lWidth != 3 && lWidth != 5 && lWidth != 7 )
+	{
+		bRetVal = false;
+		if (nullptr != pErrorMessages)
+		{
+			SVStringVector msgList;
+			msgList.push_back(SvUl_SF::Format(_T("%d"), lWidth));
+			msgList.push_back(SvUl_SF::Format(_T("%d"), 7));
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_DataInvalidKernelWidth, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
+	}
+
+	long lHeight;
+	m_lvoKernelHeight.GetValue( lHeight );
+	if( lHeight != 1 && lHeight != 3 && lHeight != 5 && lHeight != 7 )
+	{
+		bRetVal = false;
+		if (nullptr != pErrorMessages)
+		{
+			SVStringVector msgList;
+			msgList.push_back(SvUl_SF::Format(_T("%d"), lHeight));
+			msgList.push_back(SvUl_SF::Format(_T("%d"), 7));
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_DataInvalidKernelHeight, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
+	}
+
+	return bRetVal;	
 }

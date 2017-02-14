@@ -480,7 +480,7 @@ BOOL SVEquationClass::IsEnabled()
 ////////////////////////////////////////////////////////////////////////////////
 // 
 ////////////////////////////////////////////////////////////////////////////////
-SvOi::EquationTestResult SVEquationClass::Test( bool DisplayErrorMessage )
+SvOi::EquationTestResult SVEquationClass::Test( bool DisplayErrorMessage, SvStl::MessageContainerVector *pErrorMessages )
 {
 	SvOi::EquationTestResult ret;
 	m_lCurrentRunIndex = -1;
@@ -547,13 +547,13 @@ SvOi::EquationTestResult SVEquationClass::Test( bool DisplayErrorMessage )
 				msgList.push_back(fullObjectName);
 				if( S_OK != yacc.m_StatusCode )
 				{
-					errContainer.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_TooManyVariables, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10046 );
+					errContainer.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_TooManyVariables, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10046, GetUniqueObjectID() );
 				}
 				else
 				{
 					ret.iPositionFailed = yacc.lex_stack[yacc.sIndex-1].position+1;
 					msgList.push_back(SvUl_SF::Format(_T("%d"), ret.iPositionFailed));
-					errContainer.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_EquationParserError, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10047 );
+					errContainer.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_EquationParserError, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10047, GetUniqueObjectID() );
 				}
 				isDataValid = FALSE;
 			}
@@ -575,10 +575,18 @@ SvOi::EquationTestResult SVEquationClass::Test( bool DisplayErrorMessage )
 	{
 		ret.bPassed = true;
 	}
-	if( DisplayErrorMessage && !ret.bPassed )
+	if( !ret.bPassed )
 	{
-		SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-		Msg.setMessage( errContainer.getMessage() ); 
+		if (nullptr != pErrorMessages)
+		{
+			pErrorMessages->push_back(errContainer);
+		}
+		
+		if (DisplayErrorMessage)
+		{
+			SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
+			Msg.setMessage( errContainer.getMessage() ); 
+		}
 	}
 
 	return ret;
@@ -639,7 +647,7 @@ SvOi::EquationTestResult SVEquationClass::lexicalScan(LPCTSTR inBuffer)
 		SVStringVector msgList;
 		msgList.push_back(fullObjectName);
 		msgList.push_back(SvUl_SF::Format(_T("%d"), ret.iPositionFailed));
-		errContainer.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_EquationParserError, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10198 );
+		errContainer.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_EquationParserError, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10198, GetUniqueObjectID() );
 
 		isDataValid = FALSE;
 	}
@@ -687,23 +695,6 @@ bool SVEquationClass::DisconnectObjectInput( SVInObjectInfoStruct* pInObjectInfo
 	}
 	return __super::DisconnectObjectInput(pInObjectInfo);
 }
-
-////////////////////////////////////////////////////////////////////////////////
-// 
-////////////////////////////////////////////////////////////////////////////////
-BOOL SVEquationClass::OnValidate()
-{
-	BOOL retVal = isDataValid;
-	
-	// validate our outputs
-	retVal = SVTaskObjectClass::OnValidate() && retVal;
-
-	if( !retVal )
-		SetInvalid();
-
-	return retVal;
-}
-
 
 ////////////////////////////////////////////////////////////////////////////////
 // 
@@ -862,42 +853,18 @@ double SVEquationClass::GetSubscriptedPropertyValue( int iSymbolIndex, int iInde
 ////////////////////////////////////////////////////////////////////////////////
 // 
 ////////////////////////////////////////////////////////////////////////////////
-bool SVEquationClass::resetAllObjects( bool shouldNotifyFriends, bool silentReset )
+bool SVEquationClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	bool Result = false;
-	HRESULT ResetStatus = ResetObject();
-	if( S_OK != ResetStatus )
-	{
-		if( !silentReset && 0 != errContainer.getMessage().m_MessageCode )
-		{
-			SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-			Msg.setMessage( errContainer.getMessage() ); 
-		}
-		Result = false;
-	}
-	else
-	{
-		Result = true;
-	}
-
-	return( __super::resetAllObjects( shouldNotifyFriends, silentReset) && Result );
-}
-
-HRESULT SVEquationClass::ResetObject()
-{
-	HRESULT l_hrOk = SVTaskObjectClass::ResetObject();
+	bool Result = __super::ResetObject(pErrorMessages);
 
 	// call Test()...( Rebuilds symbol table !!! )
 	if( HasCondition() && IsEnabled() )
 	{
 		//In reset object call test without displaying error messages is done using the returned result
-		if( ! Test( FALSE ).bPassed )
-		{
-			l_hrOk = S_FALSE;
-		}
+		Result = Test( FALSE, pErrorMessages ).bPassed && Result;
 	}
 
-	return l_hrOk;
+	return Result;
 }
 
 void SVEquationClass::OnObjectRenamed(const SVObjectClass& rRenamedObject, const SVString& rOldName)

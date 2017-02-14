@@ -109,6 +109,25 @@ BOOL SVTransformClass::CloseObject()
 	return FALSE;
 }
 
+bool SVTransformClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
+{
+	bool Valid = __super::ResetObject(pErrorMessages);
+
+	if( nullptr == getInputTranslationXResult() || nullptr == getInputTranslationYResult() ||
+		nullptr == getInputRotationXResult()    || nullptr == getInputRotationYResult() ||
+		nullptr == getInputRotationAngleResult() )
+	{
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
+		Valid = false;
+	}
+
+	return Valid;
+}
+
 SVDoubleValueObjectClass* SVTransformClass::getInputTranslationXResult()
 {
 	if( inputTranslationXResult.IsConnected() && inputTranslationXResult.GetInputObjectInfo().PObject )
@@ -148,22 +167,4 @@ SVDoubleValueObjectClass* SVTransformClass::getInputRotationAngleResult()
 		return ( SVDoubleValueObjectClass* ) inputRotationAngleResult.GetInputObjectInfo().PObject;
 
 	return nullptr;
-}
-
-BOOL SVTransformClass::OnValidate()
-{
-	BOOL bRetVal = FALSE;
-	if( getInputTranslationXResult() && getInputTranslationYResult() &&
-		getInputRotationXResult()    && getInputRotationYResult() &&
-		getInputRotationAngleResult() )
-	{
-		bRetVal = TRUE;
-		bRetVal = SVTaskObjectClass::OnValidate() && bRetVal;
-	}
-
-	// Note: Make sure this is called when Validate fails !!!
-	if( ! bRetVal )
-		SetInvalid();
-
-	return bRetVal;
 }

@@ -259,32 +259,20 @@ SVImageClass* SVUnaryImageOperatorListClass::getInputImage()
 	return nullptr;
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnValidate
-// -----------------------------------------------------------------------------
-// .Description : Special routing.
-//				: NOTE
-//				: Since we have here a special routing for Run(...), and the 
-//				: image operators are not calling their base class onRun(...), 
-//				: we have to do a complete validation 
-//				: ( including children validation !!!).
-//				: So we call Validate() of Task Object List instead of 
-//				: base class OnValidate() !!!
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment                                       
-//  :31.01.1999 RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
-BOOL SVUnaryImageOperatorListClass::OnValidate()
+bool SVUnaryImageOperatorListClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	BOOL bRetVal = SVTaskObjectListClass::OnValidate();
+	bool Result = __super::ResetObject(pErrorMessages);
 
-	bRetVal = bRetVal && IsCreated();
-	bRetVal = bRetVal && inputImageObjectInfo.IsConnected();
-	bRetVal = bRetVal && inputImageObjectInfo.GetInputObjectInfo().PObject;
+	if (!inputImageObjectInfo.IsConnected() || nullptr == inputImageObjectInfo.GetInputObjectInfo().PObject)
+	{
+		Result = false;
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_NoSourceImage, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
+	}
 
-	if( ! bRetVal )
-		SetInvalid();
+	return Result;
 
-	return bRetVal;
 }

@@ -38,8 +38,6 @@ SVTimerValueObjectClass::SVTimerValueObjectClass(SVObjectClass *pOwner, int Stri
 
 SVTimerValueObjectClass::~SVTimerValueObjectClass()
 {
-	SetObjectDepth(0);
-	ResetObject();
 }
 
 BOOL SVTimerValueObjectClass::Start()

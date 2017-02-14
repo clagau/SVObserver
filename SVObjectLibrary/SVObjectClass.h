@@ -26,6 +26,7 @@
 #include "SVObjectInfoArrayClass.h"
 #include "SVUtilityLibrary/NameGuidList.h"
 #include "SVInputInfoListClass.h"
+#include "SVStatusLibrary/MessageContainer.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -68,7 +69,7 @@ public:
 	/*
 	This method is a placeholder for the object reset functionality.  This method will be overridden by derived classes.
 	*/
-	virtual HRESULT ResetObject() { return S_OK; };
+	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr);
 
 	virtual void ResetPrivateInputInterface();
 
@@ -83,9 +84,7 @@ public:
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* pCreateStructure );
 	virtual void ConnectObject( const SVObjectLevelCreateStruct& rCreateStructure );
 	virtual BOOL CloseObject();
-	virtual BOOL IsValid();
-	virtual BOOL Validate();
-	virtual BOOL OnValidate();
+	virtual BOOL IsValid() const { return m_isObjectValid; }
 	virtual BOOL SetObjectOwner( SVObjectClass* pNewOwner );
 	virtual BOOL SetObjectOwner( const GUID& rNewOwnerGUID );
 
@@ -93,6 +92,7 @@ public:
 	virtual HRESULT SetValuesForAnObject( const GUID& rAimObjectID, SVObjectAttributeClass* pDataObject );
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* pDataObject );
 	virtual void SetInvalid();
+	/// Set status color to disabled (in SVTaskObjectClass), but also for all children
 	virtual void SetDisabled();
 	virtual DWORD GetObjectColor() const;
 	virtual DWORD GetObjectState() const;
@@ -111,7 +111,6 @@ public:
 	virtual bool ConnectAllInputs() { return false; };
 	bool ConnectObjectInput( SVInObjectInfoStruct* pObjectInInfo );
 	virtual bool DisconnectObjectInput( SVInObjectInfoStruct* pObjectInInfo );
-	BOOL IsObjectValid( GUID& rValidationReferenceID );
 	BOOL IsDescendantOf( SVObjectClass* pAncestorObject );
 	BOOL IsDescendantOfType( const SVObjectInfoStruct& rAncestorInfo );
 
@@ -182,7 +181,7 @@ public:
 	virtual SvUl::NameGuidList GetCreatableObjects(const SVObjectTypeInfoStruct& rObjectTypeInfo) const override;
 	virtual void SetName( LPCTSTR Name ) override;
 	virtual SvOi::IObjectClass* getFirstObject(const SVObjectTypeInfoStruct& rObjectTypeInfo, bool useFriends = true, const SvOi::IObjectClass* pRequestor = nullptr) const override;
-	virtual bool resetAllObjects( bool shouldNotifyFriends, bool silentReset ) override { return true; };
+	virtual bool resetAllObjects( SvStl::MessageContainerVector *pErrorMessages=nullptr ) override { return ResetObject(pErrorMessages); };
 #pragma endregion virtual method (IObjectClass)
 
 	const SVObjectInfoStruct& GetOwnerInfo() const;
@@ -259,8 +258,6 @@ protected:
 	mutable BOOL m_isObjectValid;
 	// Refer to IsCreated()
 	BOOL m_isCreated;
-	//This attribute holds the validation reference identification number.
-	SVGUID m_validationReferenceID;
 	//If object is embedded, set this ID
 	SVGUID m_embeddedID;
 	//Owner Info

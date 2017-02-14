@@ -87,6 +87,11 @@ BOOL SVResultClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 	return bOk;
 }
 
+bool SVResultClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
+{
+	return __super::ResetObject(pErrorMessages) && ValidateLocal(pErrorMessages);
+}
+
 BOOL SVResultClass::IsFailed()
 {
 	BOOL RVal = TRUE;
@@ -132,6 +137,7 @@ BOOL SVResultClass::Run( SVRunStatusClass& RRunStatus )
 	// characters, or getting a barcode read.
 	if (0 == resultSize)
 	{
+		clearRunErrorMessages();
 		// no results to process.
 		// if there are no results outside the range, we want the ResultObject
 		// to pass.
@@ -170,16 +176,18 @@ BOOL SVResultClass::Run( SVRunStatusClass& RRunStatus )
 
 SVValueObjectClass* SVResultClass::getInput()
 {
-	if( inputObjectInfo.IsConnected() && inputObjectInfo.GetInputObjectInfo().PObject )
-		return static_cast <SVValueObjectClass*> ( inputObjectInfo.GetInputObjectInfo().PObject);
+	if( m_inputObjectInfo.IsConnected() )
+	{
+		return dynamic_cast <SVValueObjectClass*> ( m_inputObjectInfo.GetInputObjectInfo().PObject);
+	}
 
 	return nullptr;
 }
 
-
 BOOL SVResultClass::onRun( SVRunStatusClass& RRunStatus )
 {
-	if( SVTaskObjectListClass::onRun( RRunStatus ) )
+	//@WARNING[MZA][7.50][17.01.2017] Not sure if we need to check ValidateLocal in Run-mode, maybe it is enough to check it in ResetObject
+	if( SVTaskObjectListClass::onRun( RRunStatus ) && ValidateLocal(&m_RunErrorMessages) )
 	{
 		return TRUE;
 	}
@@ -226,6 +234,21 @@ HRESULT SVResultClass::SetCancelData(SVCancelData* pCancelData)
 	{
 		return S_FALSE;
 	}
+}
+
+bool SVResultClass::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) const
+{
+	if( !m_inputObjectInfo.IsConnected() || nullptr == m_inputObjectInfo.GetInputObjectInfo().PObject ) 
+	{
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
+		return false;
+	}
+
+	return true;
 }
 
 SV_IMPLEMENT_CLASS( SVAnalyzeFeatureClass, SVAnalyzeFeatureClassGuid );

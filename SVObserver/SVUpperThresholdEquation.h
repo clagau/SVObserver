@@ -24,8 +24,6 @@ public:
 
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
 
-	virtual BOOL OnValidate() override;
-
 protected:
 	void init();
 	virtual BOOL onRun( SVRunStatusClass& RRunStatus ) override;

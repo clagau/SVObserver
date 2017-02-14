@@ -60,20 +60,7 @@ public:
 	//************************************
 	BOOL UseAutoMode() const;
 	
-	//************************************
-	//! Non routing version  
-	//!	return false if last ResetObject did fail 
-	//! 
-	//************************************
-	virtual BOOL OnValidate() override;
-	
-	virtual bool resetAllObjects( bool shouldNotifyFriends, bool silentReset ) override;
-
-	//************************************
-	//! Do nothing if we are in Run Mode. Otherwise set the image Extends of the tool 
-	//! \returns HRESULT
-	//************************************
-	virtual HRESULT ResetObject() override;
+	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	//************************************
 	//! DoNothing in onRun
@@ -124,15 +111,6 @@ public:
 	//! \returns DWORD
 	//************************************
 	virtual DWORD GetObjectColor() const override; 
-
-	//************************************
-	//! Called by resetAllObjects in SVToolclass before ResetObject 
-	//! \param DwMessageID [in]
-	//! \param DwMessageValue [in]
-	//! \param DwMessageContext [in]
-	//! \returns DWORD_PTR
-	//************************************
-	bool ProcessResetAllObject( bool SilentReset ); 
 
 	bool IsFullSizeAllowed() const;
 	bool IsAdjustSizeAllowed() const;
@@ -190,7 +168,5 @@ protected:
 	bool m_AllowFullSize;
 	bool m_AllowAdjustSize;
 	bool m_AllowAdjustPosition;
-	
-	HRESULT m_Status; //< the status of last ResetObject()
 };
  

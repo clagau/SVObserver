@@ -56,7 +56,6 @@ SVArchiveTool::SVArchiveTool( BOOL BCreateDefaultTaskList,
 void SVArchiveTool::initializeArchiveTool()
 {
 	m_ArchiveImagePathUsingKW = false;
-	m_bDriveError = false;
 	m_ImageTranslatedPath = "";
 
 	m_arrayResultsInfoObjectsToArchive.SetArchiveTool( this );
@@ -189,7 +188,7 @@ void SVArchiveTool::initializeArchiveTool()
 	m_svoArchiveImageNames.ObjectAttributesAllowedRef() =  SV_REMOTELY_SETABLE;
 	m_svoArchiveResultNames.ObjectAttributesAllowedRef() = SV_REMOTELY_SETABLE;
 	m_HeaderObjectGUIDs.ObjectAttributesAllowedRef() = SV_NO_ATTRIBUTES;
-	m_bInitializedForRun = FALSE;
+	m_bInitializedForRun = false;
 	m_eArchiveMethod = SVArchiveInvalidMethod;
 	m_uiValidateCount = 0;
 }
@@ -239,8 +238,9 @@ BOOL SVArchiveTool::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 	return bOk;
 }
 
-HRESULT SVArchiveTool::ResetObject()
+bool SVArchiveTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
+	bool result = SVToolClass::ResetObject(pErrorMessages);
 	long l_lArchiveMethod = 0;
 
 	m_evoArchiveMethod.GetValue( l_lArchiveMethod );
@@ -282,18 +282,20 @@ HRESULT SVArchiveTool::ResetObject()
 	SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(GetInspection());
 	if ( pInspection && pInspection->IsResetStateSet( SVResetStateArchiveToolCreateFiles ) )
 	{
-		HRESULT hrInitialize = initializeOnRun();
-		m_bInitializedForRun = S_OK == hrInitialize;
+		m_bInitializedForRun = initializeOnRun(pErrorMessages);
+		result = result && m_bInitializedForRun;
 	}
 	else
 	{
 		m_arrayImagesInfoObjectsToArchive.ResetImageCounts();
 		m_arrayImagesInfoObjectsToArchive.ValidateImageObjects();
 
-		HRESULT hrAllocate = AllocateImageBuffers();
+		result = AllocateImageBuffers(pErrorMessages) && result;
 	}
 
-	return SVToolClass::ResetObject();
+	m_uiValidateCount = 0;
+
+	return ValidateImageSpace(true, pErrorMessages) && result;
 }
 
 SVArchiveTool::~SVArchiveTool()
@@ -328,7 +330,7 @@ BOOL SVArchiveTool::SetObjectDepthWithIndex( int NewObjectDepth, int NewLastSetI
 
 // Create a file to store selected results in text format.
 //
-BOOL SVArchiveTool::CreateTextArchiveFile()
+bool SVArchiveTool::CreateTextArchiveFile(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool bValidFile = true;
 	//
@@ -339,7 +341,12 @@ BOOL SVArchiveTool::CreateTextArchiveFile()
 
 	if( FileArchivePath.empty() )
 	{
-		return FALSE;
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_ArchiveTool_PathEmpty, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() ); 
+			pErrorMessages->push_back(Msg);
+		}
+		return false;
 	}
 
 	ArchiveToolHelper athFile;
@@ -373,6 +380,13 @@ BOOL SVArchiveTool::CreateTextArchiveFile()
 		{
 			if (!SVFileNameManagerClass::Instance().CreatePath( svFileName.GetPathName().c_str() ) )
 			{
+				if (nullptr != pErrorMessages)
+				{
+					SVStringVector msgList;
+					msgList.push_back( FileArchivePath );
+					SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_ArchiveTool_CreateFileFailed, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10036, GetUniqueObjectID() ); 
+					pErrorMessages->push_back(Msg);
+				}
 				return false;
 			}
 		}
@@ -397,11 +411,14 @@ BOOL SVArchiveTool::CreateTextArchiveFile()
 
 	if(!bResult)
 	{
-		SVStringVector msgList;
-		msgList.push_back( FileArchivePath );
-		SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_ArchiveTool_CreateFileFailed, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10036 ); 
-		return FALSE;
+		if (nullptr != pErrorMessages)
+		{
+			SVStringVector msgList;
+			msgList.push_back( FileArchivePath );
+			SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_ArchiveTool_CreateFileFailed, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10036, GetUniqueObjectID() ); 
+			pErrorMessages->push_back(Msg);
+		}
+		return false;
 	}
 	
 	//
@@ -450,169 +467,27 @@ BOOL SVArchiveTool::CreateTextArchiveFile()
 			}
 		}
 	} 
-	catch (CException*)
+	catch (CException* e)
 	{
-		return FALSE;
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_ArchiveTool_WriteToFileFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() ); 
+			pErrorMessages->push_back(Msg);
+		}
+		return false;
 	}
 	catch (...)
 	{
-		return FALSE;
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_ArchiveTool_WriteToFileFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() ); 
+			pErrorMessages->push_back(Msg);
+		}
+		return false;
 	}
 		
-	return TRUE;
+	return true;
 }
-
-BOOL SVArchiveTool::Validate()	// called once when going online
-{
-	BOOL bOk = FALSE;
-
-	SVString ImagePath;
-
-	GetImageArchivePath( ImagePath );
-
-	ArchiveToolHelper athImage;
-	athImage.Init( ImagePath );
-	if (athImage.isUsingKeywords() && athImage.isTokensValid())
-	{
-		ImagePath = athImage.TranslatePath( ImagePath );
-		m_ImageTranslatedPath = ImagePath.c_str();
-		m_ArchiveImagePathUsingKW = true;
-	}
-
-	bOk = ! ImagePath.empty();
-	if ( bOk )
-	{
-		bOk = _access( ImagePath.c_str(), 0 ) == 0;
-
-		if ( !bOk )
-		{
-			bOk = SVFileNameManagerClass::Instance().CreatePath( ImagePath.c_str() );
-		}
-	}
-
-	if (m_bDriveError)
-	{	
-		SVStringVector msgList;
-		msgList.push_back( ImagePath );
-		SvStl::MessageContainer Msg( 0L, SvOi::Tid_Drive_Full, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
-		addTaskMessage( Msg );
-	}
-	m_uiValidateCount = 0;
-
-	bOk = SVToolClass::Validate();
-
-	return bOk;
-}
-
-BOOL SVArchiveTool::OnValidate()	// called each onRun
-{
-	BOOL bOk = SVToolClass::OnValidate();
-
-	if ( bOk )
-	{
-		int iSize = m_arrayImagesInfoObjectsToArchive.GetSize();
-
-		//Only need to verify space if there are images to be archived.  If no images are checked we do not need to 
-		//run through the checking of disk space.
-		if (iSize > 0)
-		{
-			if (m_uiValidateCount % 10 == 0)
-			{
-				SVString ImagePath;
-				GetImageArchivePath( ImagePath );
-
-				if ( !SVSVIMStateClass::CheckState(SV_STATE_RUNNING) )
-				{
-					ArchiveToolHelper athImage;
-					athImage.Init( ImagePath );
-
-					if (athImage.isUsingKeywords() && athImage.isTokensValid())
-					{
-						ImagePath = athImage.TranslatePath(SVString(ImagePath)).c_str();
-						m_ImageTranslatedPath = ImagePath.c_str();
-						m_ArchiveImagePathUsingKW = true;
-
-						//since it is using keywords verify that the path exists
-						if ( _access( ImagePath.c_str(), 0 ) != 0 )
-						{
-							//create the new path
-							SVFileNameManagerClass::Instance().CreatePath( ImagePath.c_str() );
-						}
-					}
-				}
-				else
-				{
-					if (m_ArchiveImagePathUsingKW)
-					{
-						ImagePath = m_ImageTranslatedPath;
-					}
-				}
-
-				//
-				// Check the available space for storing image archive files.
-				//
-				
-				ULARGE_INTEGER lFreeBytesAvailableToCaller;
-				ULARGE_INTEGER lTotalNumberOfBytes;
-				ULARGE_INTEGER lTotalNumberOfFreeBytes;
-				
-				bOk = ::GetDiskFreeSpaceEx( ImagePath.c_str(),         // pointer to the directory name
-											&lFreeBytesAvailableToCaller, // receives the number of bytes on
-																			// disk available to the caller
-											&lTotalNumberOfBytes,         // receives the number of bytes on disk
-											&lTotalNumberOfFreeBytes );   // receives the free bytes on disk
-				
-				if(!bOk)  
-				{
-					DWORD  ErrorCd =  GetLastError();
-					if ( ErrorCd == ERROR_PATH_NOT_FOUND )
-					{ //should not ever get here since the path is validated above
-						SVStringVector msgList;
-						msgList.push_back( ImagePath );
-						SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-						Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_PathFileNotFound, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10037 ); 
-
-						bOk = FALSE;
-					}
-				}
-				
-				//
-				// Make sure we have at least 100 Meg bytes space on the drive.
-				//
-				//For systems wtih 16GB of memory the amount of memory will be 300Meg
-				if ( bOk )
-				{
-					bOk = ((__int64)100000000) < lFreeBytesAvailableToCaller.QuadPart;
-					if (!bOk)
-					{
-						m_bDriveError = true;
-					}
-					else
-					{
-						m_bDriveError = false;
-					}
-				}
-
-			}
-		}
-		else
-		{
-			//don't worry about drive space because no images are selected for archiving.
-			m_bDriveError = false;
-		}
-		m_uiValidateCount++;
-
-	}
-
-	if ( ! bOk )
-	{
-		SetInvalid();
-	}
-
-	return bOk;
-}
-
-
 
 void local_remove_items( SVStringVector& rVec, SVStringValueObjectClass& rvo )
 {
@@ -639,7 +514,7 @@ void local_remove_items( SVStringVector& rVec, SVStringValueObjectClass& rvo )
 }
 
 
-HRESULT SVArchiveTool::initializeOnRun()
+bool SVArchiveTool::initializeOnRun(SvStl::MessageContainerVector *pErrorMessages)
 {
 	DWORD dwMethod=0;
 	m_evoArchiveMethod.GetValue( dwMethod );
@@ -661,7 +536,16 @@ HRESULT SVArchiveTool::initializeOnRun()
 		if ( _access( Temp.c_str(), 0 ) != 0 )
 		{
 			if (!SVFileNameManagerClass::Instance().CreatePath( Temp.c_str() ))
-				return S_FALSE;
+			{
+				if (nullptr != pErrorMessages)
+				{
+					SVStringVector msgList;
+					msgList.push_back( Temp );
+					SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_ArchiveTool_CreatePathFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() ); 
+					pErrorMessages->push_back(Msg);
+				}
+				return false;
+			}
 		}
 	}
 
@@ -679,9 +563,10 @@ HRESULT SVArchiveTool::initializeOnRun()
 	
 	if ( m_eArchiveMethod == SVArchiveGoOffline || m_eArchiveMethod == SVArchiveAsynchronous )
 	{
-		HRESULT hrAllocate = AllocateImageBuffers();
-		if ( S_OK != hrAllocate )
-			return hrAllocate;
+		if ( !AllocateImageBuffers(pErrorMessages) )
+		{
+			return false;
+		}
 
 		if ( m_eArchiveMethod == SVArchiveAsynchronous )
 		{
@@ -702,7 +587,7 @@ HRESULT SVArchiveTool::initializeOnRun()
 	//
 	if ( ! nCountResults )
 	{
-		return S_OK;
+		return true;
 	}
 	
 	//
@@ -710,7 +595,7 @@ HRESULT SVArchiveTool::initializeOnRun()
 	//
 	if ( m_fileArchive.m_hFile != CFile::hFileNull )
 	{
-		return S_OK;
+		return true;
 	}
 
 	SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(GetInspection());
@@ -719,17 +604,13 @@ HRESULT SVArchiveTool::initializeOnRun()
 		//
 		// Create and open the results to text Archive file.
 		//
-		BOOL bResult = CreateTextArchiveFile();
-		if (!bResult)
-		{
-			 return S_FALSE;
-		}
+		return CreateTextArchiveFile(pErrorMessages);
 	}
 	
-	return S_OK;
+	return true;
 }
 
-HRESULT SVArchiveTool::AllocateImageBuffers()
+bool SVArchiveTool::AllocateImageBuffers(SvStl::MessageContainerVector *pErrorMessages)
 {
 	if ( m_eArchiveMethod == SVArchiveGoOffline || m_eArchiveMethod == SVArchiveAsynchronous )
 	{
@@ -738,16 +619,28 @@ HRESULT SVArchiveTool::AllocateImageBuffers()
 		m_dwArchiveMaxImagesCount.GetValue( dwMaxImages );
 		HRESULT hrAllocate = m_arrayImagesInfoObjectsToArchive.AllocateBuffers( dwMaxImages );
 		ASSERT( S_OK == hrAllocate );
-		return hrAllocate;
+		if ( S_OK != hrAllocate )
+		{
+			if (nullptr != pErrorMessages)
+			{
+				SVStringVector msgList;
+				msgList.push_back( SvUl_SF::Format(_T("%x"), hrAllocate) );
+				SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_ArchiveTool_AllocImageFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() ); 
+				pErrorMessages->push_back(Msg);
+			}
+			return false;
+		}
+		
 	}
-	return S_OK;
+	return true;
 }
 
 /////////////////////////////////////////////////////////////////////////////
 //
 BOOL SVArchiveTool::onRun( SVRunStatusClass& RRunStatus )
 {
-	if( SVToolClass::onRun( RRunStatus ) )
+	bool isValid = ValidateOnRun(&m_RunErrorMessages);
+	if( isValid && SVToolClass::onRun( RRunStatus ) )
 	{
 		//
 		// If this is not a test mode or run mode (online) no work is required.
@@ -1130,21 +1023,6 @@ long SVArchiveTool::CalculateImageMemory( std::vector<SVImageClass*> p_apImages 
 	return lTotalMemory;
 }
 
-HRESULT SVArchiveTool::ValidateArchiveTool()
-{
-	HRESULT hRet = S_OK;
-
-	//reset m_uiValidateCount back to 0 so it will check the drive space
-	m_uiValidateCount = 0;
-
-	if (!OnValidate())
-	{
-		hRet = S_FALSE;
-	}
-	
-	return hRet;
-}
-
 bool SVArchiveTool::isImagePathUsingKeywords()
 {
 	return m_ArchiveImagePathUsingKW;
@@ -1244,4 +1122,104 @@ void SVArchiveTool::OnObjectRenamed( const SVObjectClass& rRenamedObject, const 
 	}
 
 	__super::OnObjectRenamed(rRenamedObject, rOldName);
+}
+
+bool SVArchiveTool::ValidateImageSpace( bool shouldFullCheck, SvStl::MessageContainerVector *pErrorMessages )
+{
+	int iSize = m_arrayImagesInfoObjectsToArchive.GetSize();
+
+	//Only need to verify space if there are images to be archived.  If no images are checked we do not need to 
+	//run through the checking of disk space.
+	if (iSize > 0)
+	{
+		SVString ImagePath;
+		GetImageArchivePath( ImagePath );
+
+		if ( shouldFullCheck )
+		{
+			ArchiveToolHelper athImage;
+			athImage.Init( ImagePath );
+			m_ImageTranslatedPath = ImagePath;
+			if (athImage.isUsingKeywords() && athImage.isTokensValid())
+			{
+				ImagePath = athImage.TranslatePath( ImagePath.c_str() );
+				m_ImageTranslatedPath = ImagePath;
+				m_ArchiveImagePathUsingKW = true;
+			}
+			if ( _access( ImagePath.c_str(), 0 ) != 0 )
+			{
+				//create the new path
+				SVFileNameManagerClass::Instance().CreatePath( ImagePath.c_str() );
+			}
+		}
+		else
+		{
+			if (m_ArchiveImagePathUsingKW)
+			{
+				ImagePath = m_ImageTranslatedPath;
+			}
+		}
+
+		//
+		// Check the available space for storing image archive files.
+		//
+
+		ULARGE_INTEGER lFreeBytesAvailableToCaller;
+		ULARGE_INTEGER lTotalNumberOfBytes;
+		ULARGE_INTEGER lTotalNumberOfFreeBytes;
+
+		BOOL bOk = ::GetDiskFreeSpaceEx( ImagePath.c_str(),         // pointer to the directory name
+			&lFreeBytesAvailableToCaller, // receives the number of bytes on
+			// disk available to the caller
+			&lTotalNumberOfBytes,         // receives the number of bytes on disk
+			&lTotalNumberOfFreeBytes );   // receives the free bytes on disk
+
+		if(!bOk)
+		{
+			if (nullptr != pErrorMessages)  
+			{
+				DWORD  ErrorCd =  GetLastError();
+				if ( ErrorCd == ERROR_PATH_NOT_FOUND )
+				{ //should not ever get here since the path is validated above
+					SVStringVector msgList;
+					msgList.push_back( ImagePath );
+					SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_PathFileNotFound, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10037, GetUniqueObjectID() ); 
+					pErrorMessages->push_back(Msg);
+				}
+			}
+			return false;
+		}
+
+		//
+		// Make sure we have at least 100 Meg bytes space on the drive.
+		//
+		//For systems wtih 16GB of memory the amount of memory will be 300Meg
+		if (((__int64)100000000) > lFreeBytesAvailableToCaller.QuadPart)
+		{
+			if (nullptr != pErrorMessages)  
+			{
+				SVStringVector msgList;
+				msgList.push_back( SVString( m_ImageTranslatedPath ) );
+				SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Drive_Full, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				pErrorMessages->push_back(Msg);
+			}
+			return false;
+		}
+		
+	}	
+	return true;
+}
+
+bool SVArchiveTool::ValidateOnRun(SvStl::MessageContainerVector *pErrorMessages)	// called each onRun
+{
+	bool bOk = true;
+
+	if ( (0 == m_uiValidateCount % 10))
+	{
+		bool shouldFullCheck = !SVSVIMStateClass::CheckState(SV_STATE_RUNNING);
+		bOk = ValidateImageSpace(shouldFullCheck, pErrorMessages);
+	}
+	m_uiValidateCount++;
+
+	return bOk;
 }

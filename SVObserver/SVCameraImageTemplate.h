@@ -37,7 +37,7 @@ public:
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStruct ) override;
 	virtual BOOL SetImageDepth( long lDepth ) override;
 
-	virtual HRESULT ResetObject() override;
+	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	GUID GetDigitizerID();
 	SVVirtualCamera* GetCamera() const;

@@ -322,20 +322,13 @@ SVStaticStringValueObjectClass* ResizeTool::GetInputImageNames()
 	return &m_svSourceImageName;
 }
 
-HRESULT ResizeTool::ResetObject()
+bool ResizeTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	HRESULT	hr  = S_OK;
-
-	if (!OnValidateParameter(RemotelyAndInspectionSettable))
+	bool Result = ValidateParameters(pErrorMessages) && ValidateOfflineParameters(pErrorMessages);
+	
+	SVImageClass* inputImage = getInputImage();
+	if (Result)
 	{
-		hr = getFirstTaskMessage().getMessage().m_MessageCode;
-	}
-
-	SVImageClass* inputImage = nullptr;
-	if (SUCCEEDED (hr))
-	{
-		inputImage = getInputImage();
-
 		if (nullptr != inputImage)
 		{
 			//Set input name to source image name to display it in result picker
@@ -343,127 +336,100 @@ HRESULT ResizeTool::ResetObject()
 		}
 		else
 		{
-			hr = SVMSG_SVO_5047_GETINPUTIMAGEFAILED;
+			Result = false;
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg( SVMSG_SVO_5047_GETINPUTIMAGEFAILED, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				pErrorMessages->push_back(Msg);
+			}
 		}
 	}
 		
-	if (SUCCEEDED(hr))		
+	if (Result)
 	{
 		// required within ResetObject in order to correctly reallocate
 		// buffers when source image is changed within GUI.
-		hr = m_LogicalROIImage.InitializeImage( inputImage );
-		//@WARNING [Jim] Several functions within InitializeImage can return 
-		// S_FALSE.  This is not helpful in attempting to debug the error,
-		// and does not adhere to HRESULT standards by setting the fail bit.
-		// At some point, all S_FALSE return codes should be 
-		// removed.  
-		if (S_FALSE == hr)
+		if (S_FALSE == m_LogicalROIImage.InitializeImage( inputImage ))
 		{
-			hr = SVMSG_SVO_5048_INITIALIZEROIIMAGEFAILED;
+			Result = false;
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg( SVMSG_SVO_5048_INITIALIZEROIIMAGEFAILED, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				pErrorMessages->push_back(Msg);
+			}
 		}
-	}
-
-	if (SUCCEEDED(hr))
-	{
-		// required within ResetObject in order to correctly reallocate
-		// buffers when source image is changed within GUI.
-		hr = m_OutputImage.InitializeImage( inputImage );
-		if (S_FALSE == hr)
-		{
-			hr = SVMSG_SVO_5049_INITIALIZEOUTPUTIMAGEFAILED;
-		}
-	}
-		
-	if (SUCCEEDED(hr))
-	{
-		hr = SVToolClass::ResetObject();
-		if (S_FALSE == hr)
-		{
-			hr = SVMSG_SVO_5050_BASECLASSFAILED;
-		}
-	}
-
-	return hr;
-}
-
-BOOL ResizeTool::IsValid()
-{
-	BOOL bValid = true;
-	
-	ToolSizeAdjustTask* pToolSizeAdjustTask = ToolSizeAdjustTask::GetToolSizeAdjustTask(this);
-	if (nullptr != pToolSizeAdjustTask)
-	{
-		bValid = pToolSizeAdjustTask->OnValidate();
-	}
-
-	return SVToolClass::IsValid() && bValid;
-}
-
-bool ResizeTool::ValidateRemotelySettableParameters ()
-{
-	bool Result = SVToolClass::ValidateRemotelySettableParameters();
-
-	SVImageExtentClass toolImageExtents;
-
-	HRESULT hr = GetImageExtent(toolImageExtents);
-	if (S_OK != hr)
-	{
-		SvStl::MessageContainer message;
-		message.setMessage( SVMSG_SVO_5071_CAPTUREDSFALSE, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
-		addTaskMessage( message );
-		Result = false;
 	}
 
 	if (Result)
+	{
+		// required within ResetObject in order to correctly reallocate
+		// buffers when source image is changed within GUI.
+		if (S_FALSE == m_OutputImage.InitializeImage( inputImage ))
+		{
+			Result = false;
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg( SVMSG_SVO_5049_INITIALIZEOUTPUTIMAGEFAILED, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				pErrorMessages->push_back(Msg);
+			}
+		}
+	}
+		
+	Result = Result && SVToolClass::ResetObject(pErrorMessages);
+
+	return Result;
+}
+
+bool ResizeTool::ValidateParameters (SvStl::MessageContainerVector *pErrorMessages)
+{
+	SVImageExtentClass toolImageExtents;
+	bool Result = true;
+	HRESULT hr = GetImageExtent(toolImageExtents);
+	if (S_OK == hr)
 	{
 		double newWidthScaleFactor = 0.0;
 		toolImageExtents.GetExtentProperty(SVExtentPropertyWidthScaleFactor, newWidthScaleFactor);
-		Result = (S_OK == ValidateScaleFactor(newWidthScaleFactor));
-	}
+		Result = ValidateScaleFactor(newWidthScaleFactor, pErrorMessages) && Result;
 
-	if (Result)
-	{
 		double newHeightScaleFactor = 0.0;
 		toolImageExtents.GetExtentProperty(SVExtentPropertyHeightScaleFactor, newHeightScaleFactor);
-		Result = (S_OK == ValidateScaleFactor(newHeightScaleFactor));
+		Result = ValidateScaleFactor(newHeightScaleFactor, pErrorMessages) && Result;
 	}
+	else
+	{
+		Result = false;
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_5071_CAPTUREDSFALSE, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
+	}
+	return Result;
+}
+
+bool ResizeTool::ValidateOfflineParameters (SvStl::MessageContainerVector *pErrorMessages)
+{
+	SVInterpolationModeOptions::SVInterpolationModeOptionsEnum interpolationValue;
+	SVEnumerateValueObjectClass* interpolationMode = getInterpolationMode ();
+	interpolationMode->GetValue (*(reinterpret_cast <long*> (&interpolationValue)));
+	bool Result = ValidateInterpolation(interpolationValue, pErrorMessages);
+
+	SVOverscanOptions::SVOverscanOptionsEnum overscanValue;
+	SVEnumerateValueObjectClass* overscan = getOverscan ();
+	overscan->GetValue (*(reinterpret_cast <long*> (&overscanValue)));
+	Result = ValidateOverscan(overscanValue) && Result;
+
+	SVPerformanceOptions::SVPerformanceOptionsEnum performanceValue;
+	SVEnumerateValueObjectClass* performance = getPerformance ();
+	performance->GetValue (*(reinterpret_cast <long*> (&performanceValue)));
+	Result = ValidatePerformance(performanceValue) && Result;
 
 	return Result;
 }
 
-bool ResizeTool::ValidateOfflineParameters ()
+bool	ResizeTool::ValidateInterpolation (SVInterpolationModeOptions::SVInterpolationModeOptionsEnum interpolationMode, SvStl::MessageContainerVector *pErrorMessages)
 {
-	bool Result = SVToolClass::ValidateOfflineParameters();
-	if (Result)
-	{
-		SVInterpolationModeOptions::SVInterpolationModeOptionsEnum interpolationValue;
-		SVEnumerateValueObjectClass* interpolationMode = getInterpolationMode ();
-		interpolationMode->GetValue (*(reinterpret_cast <long*> (&interpolationValue)));
-		Result = (S_OK == ValidateInterpolation(interpolationValue));
-	}
-
-	if (Result)
-	{
-		SVOverscanOptions::SVOverscanOptionsEnum overscanValue;
-		SVEnumerateValueObjectClass* overscan = getOverscan ();
-		overscan->GetValue (*(reinterpret_cast <long*> (&overscanValue)));
-		Result = (S_OK == ValidateOverscan(overscanValue));
-	}
-
-	if (Result)
-	{
-		SVPerformanceOptions::SVPerformanceOptionsEnum performanceValue;
-		SVEnumerateValueObjectClass* performance = getPerformance ();
-		performance->GetValue (*(reinterpret_cast <long*> (&performanceValue)));
-		Result = (S_OK == ValidatePerformance(performanceValue));
-	}
-
-	return Result;
-}
-
-HRESULT	ResizeTool::ValidateInterpolation (SVInterpolationModeOptions::SVInterpolationModeOptionsEnum interpolationMode)
-{
-	HRESULT hr = S_OK;
+	bool Result = true;
 
 	switch (interpolationMode)
 	{
@@ -479,20 +445,22 @@ HRESULT	ResizeTool::ValidateInterpolation (SVInterpolationModeOptions::SVInterpo
 	default:
 		{
 			// invalid parameter
-			SvStl::MessageContainer message;
-			message.setMessage( SVMSG_SVO_5044_INVALIDINTERPOLATIONMODE, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
-			addTaskMessage( message );
-			hr = SVMSG_SVO_5044_INVALIDINTERPOLATIONMODE;
+			Result = false;
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg( SVMSG_SVO_5044_INVALIDINTERPOLATIONMODE, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				pErrorMessages->push_back(Msg);
+			}
 			break;
 		}
 	}
 
-	return hr;
+	return Result;
 }
 
-HRESULT	ResizeTool::ValidateOverscan (const SVOverscanOptions::SVOverscanOptionsEnum overscan)
+bool	ResizeTool::ValidateOverscan (const SVOverscanOptions::SVOverscanOptionsEnum overscan, SvStl::MessageContainerVector *pErrorMessages)
 {
-	HRESULT hr = S_OK;
+	bool Result = true;
 
 	switch (overscan)
 	{
@@ -504,20 +472,22 @@ HRESULT	ResizeTool::ValidateOverscan (const SVOverscanOptions::SVOverscanOptions
 	default:
 		{
 			// invalid parameter
-			SvStl::MessageContainer message;
-			message.setMessage( SVMSG_SVO_5045_INVALIDOVERSCAN, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
-			addTaskMessage( message );
-			hr = SVMSG_SVO_5045_INVALIDOVERSCAN;
+			Result = false;
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg( SVMSG_SVO_5045_INVALIDOVERSCAN, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				pErrorMessages->push_back(Msg);
+			}
 			break;
 		}
 	} 
 
-	return hr;
+	return Result;
 }
 
-HRESULT	ResizeTool::ValidatePerformance (const SVPerformanceOptions::SVPerformanceOptionsEnum performance)
+bool	ResizeTool::ValidatePerformance (const SVPerformanceOptions::SVPerformanceOptionsEnum performance, SvStl::MessageContainerVector *pErrorMessages)
 {
-	HRESULT hr = S_OK;
+	bool Result = true;
 
 	switch (performance)
 	{
@@ -529,34 +499,38 @@ HRESULT	ResizeTool::ValidatePerformance (const SVPerformanceOptions::SVPerforman
 	default:
 		{
 			// invalid parameter
-			SvStl::MessageContainer message;
-			message.setMessage( SVMSG_SVO_5046_INVALIDPERFORMANCE, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
-			addTaskMessage( message );
-			hr = SVMSG_SVO_5046_INVALIDPERFORMANCE;
+			Result = false;
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg( SVMSG_SVO_5046_INVALIDPERFORMANCE, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				pErrorMessages->push_back(Msg);
+			}
 			break;
 		}
 	}
 
-	return hr;
+	return Result;
 }
 
-HRESULT ResizeTool::ValidateScaleFactor(const double value)
+bool ResizeTool::ValidateScaleFactor(const double value, SvStl::MessageContainerVector *pErrorMessages)
 {
-	HRESULT hr = S_OK;
+	bool Result = true;
 
 	// Arbitrary high end scale factor limit of 1000.
 	if ((value <= MinScaleFactorThreshold) ||
 		(value > MaxScaleFactor))
 	{
-		hr = SVMSG_SVO_5061_SFOUTSIDERANGE;
-		SvStl::MessageContainer message;
-		SVStringVector msgList;
-		msgList.push_back(SvUl_SF::Format(_T("%d"), value));
-		message.setMessage( SVMSG_SVO_5061_SFOUTSIDERANGE, SvOi::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams) );
-		addTaskMessage( message );
+		Result = false;
+		if (nullptr != pErrorMessages)
+		{
+			SVStringVector msgList;
+			msgList.push_back(SvUl_SF::Format(_T("%d"), value));
+			SvStl::MessageContainer Msg( SVMSG_SVO_5061_SFOUTSIDERANGE, SvOi::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
 	}
 
-	return hr;
+	return Result;
 }
 
 HRESULT	ResizeTool::BackupInspectionParameters ()
@@ -792,8 +766,8 @@ BOOL ResizeTool::onRun( SVRunStatusClass& RRunStatus )
 	if( Result && !SUCCEEDED( hr ) )
 	{
 		SvStl::MessageContainer message;
-		message.setMessage( hr, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
-		addTaskMessage( message );
+		message.setMessage( hr, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+		addRunErrorMessage( message );
 		Result = false;
 	}
 

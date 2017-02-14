@@ -31,7 +31,7 @@ public:
 #pragma region Public Methods
 public:
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
-	virtual HRESULT ResetObject() override;
+	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	SVObjectClass* getNumberOfRowObject() const;
 

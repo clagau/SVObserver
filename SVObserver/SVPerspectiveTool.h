@@ -29,9 +29,7 @@ public:
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct *p_pCreateStructure ) override;
 	virtual BOOL CloseObject() override;
 
-	virtual HRESULT ResetObject() override;
-
-	virtual BOOL OnValidate() override;
+	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	SVImageClass *GetInputImage();
 
@@ -58,10 +56,8 @@ protected:
 private:
 	void LocalInitialize();
 
-	HRESULT LocalDestroy();
-
 	HRESULT CreateLUT();
-	HRESULT DestroyLUT();
+	void DestroyLUT();
 	
 	SVInObjectInfoStruct m_InputImageObjectInfo;
 

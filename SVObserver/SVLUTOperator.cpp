@@ -130,32 +130,13 @@ BOOL SVLUTOperatorClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructu
 	return bOk;
 }
 
-bool SVLUTOperatorClass::resetAllObjects( bool shouldNotifyFriends, bool silentReset )
+bool SVLUTOperatorClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	bool bUseSilent = silentReset;
-	bool Result = ( S_OK == ResetObject() );
-	bool bLutActive = false;
-	m_useLUT.GetValue(bLutActive);
+	bool Result = SVUnaryImageOperatorClass::ResetObject(pErrorMessages);
 
-	long lLutMode = 0;
-	m_lutMode.GetValue(lLutMode);
+	m_bForceLUTRecalc = m_bForceLUTRecalc || Result;
 
-	if (!bLutActive || (bLutActive && (lLutMode != 4)))
-	{
-		//Set silentReset to be silent if you are not using a formula
-		bUseSilent = true;
-	}
-	//using of SVTaskObjectClass instead of __super is here wanted, because it should be avoid to call SVOperatorClass::resetAllObjects
-	return( SVTaskObjectClass::resetAllObjects( shouldNotifyFriends, bUseSilent ) && Result );
-}
-
-HRESULT SVLUTOperatorClass::ResetObject()
-{
-	HRESULT l_hrOk = SVUnaryImageOperatorClass::ResetObject();
-
-	m_bForceLUTRecalc = m_bForceLUTRecalc || S_OK == l_hrOk;
-
-	return l_hrOk;
+	return Result;
 }
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : CloseObject
@@ -387,16 +368,6 @@ SVByteValueObjectClass* SVLUTOperatorClass::getInputLUTVectorResult()
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnValidate
-// -----------------------------------------------------------------------------
-// .Description : ...
-////////////////////////////////////////////////////////////////////////////////
-BOOL SVLUTOperatorClass::OnValidate() 
-{
-	return SVUnaryImageOperatorClass::OnValidate();
-}
-
-////////////////////////////////////////////////////////////////////////////////
 // .Title       : onRun
 // -----------------------------------------------------------------------------
 // .Description : Runs this operator.
@@ -408,7 +379,7 @@ BOOL SVLUTOperatorClass::onRun( BOOL First, SVSmartHandlePointer RInputImageHand
 	// Don't call base class onRun(...).
 
 	// Since we do special routing here, we have to validate by ourself...
-	if( ! OnValidate() || RInputImageHandle.empty() || ROutputImageHandle.empty() )
+	if( RInputImageHandle.empty() || ROutputImageHandle.empty() )
 	{
 		// Signal that something was wrong...
 		SetInvalid();

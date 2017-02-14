@@ -47,16 +47,21 @@ SVRGBMainImageClass::~SVRGBMainImageClass()
 {
 }
 
-HRESULT SVRGBMainImageClass::ResetObject()
+bool SVRGBMainImageClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	HRESULT l_hrOk = SVCameraImageTemplate::ResetObject();
+	bool Result = SVCameraImageTemplate::ResetObject(pErrorMessages);
 
 	if( ! UpdateBuffer() )
 	{
-		l_hrOk = S_FALSE;
+		Result = false;
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_UpdateBufferFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
 	}
 
-	return l_hrOk;
+	return Result;
 }
 
 BOOL SVRGBMainImageClass::CopyImageTo( SVImageIndexStruct svIndex )

@@ -27,21 +27,20 @@ const SVStaticValueObjectClassImpl<T>& SVStaticValueObjectClassImpl<T>::operator
 	{
 		if ( SetObjectDepth( 1 ) )
 		{
-			if ( S_OK == CreateBuckets() )
+			CreateBuckets();
+
+			if ( 1 == rhs.ArraySize() )
 			{
-				if ( 1 == rhs.ArraySize() )
-				{
-					m_ScalarBuckets = rhs.m_ScalarBuckets;
-				}
-				else
-				{
-					Buckets() = rhs.Buckets();
-				}
-
-				DefaultValue() = rhs.DefaultValue();
-
-				m_iLastSetIndex = rhs.m_iLastSetIndex;
+				m_ScalarBuckets = rhs.m_ScalarBuckets;
 			}
+			else
+			{
+				Buckets() = rhs.Buckets();
+			}
+
+			DefaultValue() = rhs.DefaultValue();
+
+			m_iLastSetIndex = rhs.m_iLastSetIndex;
 		}
 	}
 
@@ -98,10 +97,8 @@ BOOL SVStaticValueObjectClassImpl<T>::SetObjectDepthWithIndex(int iNewObjectDept
 }
 
 template <typename T>
-HRESULT SVStaticValueObjectClassImpl<T>::CreateBuckets()
+void SVStaticValueObjectClassImpl<T>::CreateBuckets()
 {
-	HRESULT l_hrOk = S_OK;
-
 	m_objectDepth = 1;
 
 	if ( 1 != m_iNumberOfBuckets && m_objectDepth > 0)
@@ -122,9 +119,7 @@ HRESULT SVStaticValueObjectClassImpl<T>::CreateBuckets()
 
 	m_iNumberOfBuckets = 1;
 
-	l_hrOk = SVValueObjectClass::CreateBuckets();
-
-	return l_hrOk;
+	SVValueObjectClass::CreateBuckets();
 }
 
 template <typename T>

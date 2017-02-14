@@ -23,8 +23,7 @@ public:
 	virtual ~SVWindowToolClass();
 
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
-	virtual HRESULT ResetObject() override;
-	virtual BOOL IsValid() override;
+	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	virtual BOOL SetDefaultFormulas() override;
 

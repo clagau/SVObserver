@@ -197,7 +197,7 @@ HRESULT SVCylindricalWarpToolClass::LocalCreate()
 
 		if( S_OK != l_hrOk )
 		{
-			l_hrOk = CreateLUT();
+			CreateLUT();
 		}
 
 		// Return code for UpdateOffsetData not being checked because it may not be valid the first time.
@@ -271,23 +271,35 @@ HRESULT SVCylindricalWarpToolClass::UpdateOutputImageExtents()
 	return l_hrOk;
 }
 
-HRESULT SVCylindricalWarpToolClass::ResetObject()
+bool SVCylindricalWarpToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	HRESULT l_hrOk = SVToolClass::ResetObject();
+	bool Result = SVToolClass::ResetObject(pErrorMessages);
 
-	l_hrOk = UpdateOutputImageExtents();
-
-	// Now the input image is valid!
-	if( S_OK == m_OutputImage.ResetObject() )
+	HRESULT l_hrOk = UpdateOutputImageExtents();
+	if (S_OK != l_hrOk)
 	{
-		if( S_OK != CreateLUT() )
+		Result = false;
+		if (nullptr != pErrorMessages)
 		{
-			l_hrOk = S_FALSE;
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_UpdateOutputImageExtentsFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
 		}
 	}
-	else
+
+	// Now the input image is valid!
+	Result = m_OutputImage.ResetObject(pErrorMessages) && Result;
+
+	if (Result)
 	{
-		l_hrOk = S_FALSE;
+		if (!CreateLUT())
+		{
+			Result = false;
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_InitImageFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				pErrorMessages->push_back(Msg);
+			}
+		}
 	}
 
 	SVImageClass *inputImage = GetInputImage();
@@ -299,19 +311,7 @@ HRESULT SVCylindricalWarpToolClass::ResetObject()
 
 	UpdateImageWithExtent( 1 );
 
-	return l_hrOk;
-}
-
-BOOL SVCylindricalWarpToolClass::OnValidate()
-{
-	BOOL l_bOk = SVToolClass::OnValidate();
-
-	if ( l_bOk )
-	{
-		l_bOk = !m_LutX.empty() && !m_LutY.empty();
-	}
-
-	return l_bOk;
+	return Result;
 }
 
 SVImageClass* SVCylindricalWarpToolClass::GetInputImage()
@@ -357,7 +357,7 @@ BOOL SVCylindricalWarpToolClass::onRun( SVRunStatusClass& p_rRunStatus )
 
 		if( (l_dInputWidth != l_dToolWidth) || (l_dInputHeight != l_dToolHeight) )
 		{
-			HRESULT hrReset = ResetObject();
+			l_bOk = ResetObject(&m_RunErrorMessages) && l_bOk;
 		}
 
 		if ( nullptr != l_pInputImage &&
@@ -403,23 +403,15 @@ BOOL SVCylindricalWarpToolClass::onRun( SVRunStatusClass& p_rRunStatus )
 	return l_bOk;
 }
 
-HRESULT SVCylindricalWarpToolClass::CreateLUT()
+bool SVCylindricalWarpToolClass::CreateLUT()
 {
-	HRESULT l_hrOk = S_OK;
-
 	SVImageExtentClass l_OutputExtents;
-
-	
 	SVMatroxImageInterface::SVStatusCode l_Code;
-	
-
 	long l_lOutputWidth = 100;
 	long l_lOutputHeight = 100;
 	l_OutputExtents = m_OutputImage.GetImageExtents();
 	l_OutputExtents.GetExtentProperty( SVExtentPropertyOutputWidth, l_lOutputWidth );
 	l_OutputExtents.GetExtentProperty( SVExtentPropertyOutputHeight, l_lOutputHeight );
-
-
 
 	SVMatroxBufferCreateStruct l_Create;
 	l_Create.m_eAttribute = SVBufAttLut;
@@ -461,10 +453,12 @@ HRESULT SVCylindricalWarpToolClass::CreateLUT()
 				l_plLutYData[ x + ( y * l_lPitchX ) ] = (long)( l_svPointResult.m_dPositionY * 256L );
 			}
 		}
-		l_hrOk = S_OK;
+		return true;
 	}
-
-	return l_hrOk;
+	else //if ( !m_LutX.empty() && !m_LutY.empty() )
+	{
+		return false;
+	}
 }
 
 HRESULT SVCylindricalWarpToolClass::DestroyLUT()

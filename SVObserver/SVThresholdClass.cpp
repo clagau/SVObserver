@@ -131,7 +131,7 @@ BOOL SVThresholdClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure
 	m_lowerThresh.ObjectAttributesAllowedRef() |= SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE;
 	m_dAutoThresholdMultiplier.ObjectAttributesAllowedRef() |= SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE;
 
-	bOk = S_OK == Rebuild();
+	bOk = Rebuild();
 
 	m_isCreated = bOk;
 
@@ -152,16 +152,21 @@ BOOL SVThresholdClass::CloseObject()
 	return SVUnaryImageOperatorClass::CloseObject();
 }
 
-HRESULT SVThresholdClass::ResetObject()
+bool SVThresholdClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	HRESULT l_hrOk = SVUnaryImageOperatorClass::ResetObject();
+	bool Result = __super::ResetObject(pErrorMessages);
 
-	if( S_OK != Rebuild() )
+	if( !Rebuild() )
 	{
-		l_hrOk = S_FALSE;
+		Result = false;
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_RebuildFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
 	}
 
-	return l_hrOk;
+	return Result;
 }
 
 SVBoolValueObjectClass& SVThresholdClass::GetThresholdActivateAttribute()
@@ -191,11 +196,6 @@ SVDoubleValueObjectClass* SVThresholdClass::getExternalATM()
 		return ( SVDoubleValueObjectClass* ) m_inputATM.GetInputObjectInfo().PObject;
 
 	return nullptr;
-}
-
-BOOL SVThresholdClass::OnValidate() 
-{
-	return SVUnaryImageOperatorClass::OnValidate();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -450,7 +450,7 @@ BOOL SVThresholdClass::onRun( BOOL First,
 		msgList.push_back(_T("SVThresholdClass::onRun"));
 		
 		SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-		Exception.setMessage( static_cast<DWORD> (l_Code), SvOi::Tid_ErrorIn, msgList, SvStl::SourceFileParams(StdMessageParams) );
+		Exception.setMessage( static_cast<DWORD> (l_Code), SvOi::Tid_ErrorIn, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 
 		RRunStatus.SetCriticalFailure();
 
@@ -468,16 +468,11 @@ BOOL SVThresholdClass::onRun( BOOL First,
 		return TRUE;
 }
 
-HRESULT SVThresholdClass::Rebuild()
+bool SVThresholdClass::Rebuild()
 {
-	HRESULT l_hrOk = S_OK;
+	bool Result = ( nullptr != GetTool() );
 
-	if ( nullptr == GetTool() )
-	{
-		l_hrOk = S_FALSE;
-	}
-
-	if( S_OK == l_hrOk )
+	if( Result )
 	{
 		// &&&
 		SVDataBufferInfoClass svData;
@@ -495,15 +490,12 @@ HRESULT SVThresholdClass::Rebuild()
 
 		if( !m_histResultID.empty() )
 		{
-			l_hrOk = SVImageProcessingClass::DestroyDataBuffer( &svData );
+			Result = (S_OK == SVImageProcessingClass::DestroyDataBuffer( &svData ));
 		}
 
-		if ( S_OK == l_hrOk )
-		{
-			l_hrOk = SVImageProcessingClass::CreateDataBuffer( &svData );
-		}
+		Result = Result && (S_OK == SVImageProcessingClass::CreateDataBuffer( &svData ));
 
-		if ( S_OK == l_hrOk )
+		if ( Result )
 		{
 			m_histResultID = svData.HBuffer.milResult;
 		}
@@ -531,12 +523,12 @@ HRESULT SVThresholdClass::Rebuild()
 			}
 			else
 			{
-				l_hrOk = S_FALSE;
+				Result = false;
 			}
 		}
 		else
 		{
-			l_hrOk = S_FALSE;
+			Result = false;
 
 			m_histValueArraySize = 0;
 		}
@@ -581,6 +573,6 @@ HRESULT SVThresholdClass::Rebuild()
 		m_upperThresh.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
 	}
 
-	return l_hrOk;
+	return Result;
 }
 

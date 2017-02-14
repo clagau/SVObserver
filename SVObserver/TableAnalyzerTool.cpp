@@ -63,7 +63,6 @@ BOOL TableAnalyzerTool::CreateObject( SVObjectLevelCreateStruct* pCreateStructur
 			message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_TableObject_CreateFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 			SvStl::MessageMgrStd Msg( SvStl::LogOnly );
 			Msg.setMessage( message.getMessage() );
-			addTaskMessage( message );
 		}
 	}
 
@@ -90,7 +89,6 @@ BOOL TableAnalyzerTool::CreateObject( SVObjectLevelCreateStruct* pCreateStructur
 			message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_TableObject_CreateFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 			SvStl::MessageMgrStd Msg( SvStl::LogOnly );
 			Msg.setMessage( message.getMessage() );
-			addTaskMessage( message );
 		}
 	}
 	else
@@ -100,7 +98,6 @@ BOOL TableAnalyzerTool::CreateObject( SVObjectLevelCreateStruct* pCreateStructur
 		message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_TableObject_CreateFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 		SvStl::MessageMgrStd Msg( SvStl::LogOnly );
 		Msg.setMessage( message.getMessage() );
-		addTaskMessage( message );
 	}
 
 	// Override base class exposure of the drawflag
@@ -126,22 +123,47 @@ bool TableAnalyzerTool::DoesObjectHaveExtents() const
 	return false;
 }
 
-HRESULT TableAnalyzerTool::ResetObject()
+bool TableAnalyzerTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	HRESULT status = SVToolClass::ResetObject();
+	bool Result = SVToolClass::ResetObject(pErrorMessages);
 
-	if (OnValidateParameter(AllParameters))
+	Result = ValidateLocal(pErrorMessages) && Result;
+
+	SVObjectClass* pObject = m_sourceTableObjectInfo.GetInputObjectInfo().PObject;
+	if (!m_sourceTableObjectInfo.IsConnected() || nullptr == dynamic_cast<TableObject*>(pObject))
+	{
+		Result = false;
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer message;
+			message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_NoValidTableConnected, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back( message );
+		}
+	}
+	else if (pObject->GetAncestorInterface(SVInspectionObjectType) != GetAncestorInterface(SVInspectionObjectType))
+	{
+		pObject->DisconnectObjectInput( &m_sourceTableObjectInfo );
+		m_sourceTableObjectInfo.SetInputObject(nullptr);
+		Result = false;
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer message;
+			message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_NoValidTableConnected, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back( message );
+		}
+	}
+
+	if (Result)
 	{
 		m_pResultTable->setSourecTable(dynamic_cast<TableObject*>(m_sourceTableObjectInfo.GetInputObjectInfo().PObject));
-		m_pResultTable->ResetObject();
+		Result = m_pResultTable->ResetObject(pErrorMessages);
 	}
 	else
 	{
 		m_pResultTable->setSourecTable(nullptr);
-		status = S_FALSE;
 	}
 
-	return status;
+	return Result;
 }
 
 void TableAnalyzerTool::InsertAt(int index, ITaskObject& rObject, int count)
@@ -152,44 +174,27 @@ void TableAnalyzerTool::InsertAt(int index, ITaskObject& rObject, int count)
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
-bool TableAnalyzerTool::ValidateOfflineParameters ()
+
+#pragma endregion Protected Methods
+
+#pragma region Private Methods
+bool TableAnalyzerTool::ValidateLocal( SvStl::MessageContainerVector * pErrorMessages ) const
 {
-	bool Result = SVToolClass::ValidateOfflineParameters();
-	if (Result)
+	bool Result = true;
+	if (nullptr == m_pResultTable)
 	{
-		if (nullptr == m_pResultTable)
+		Result = false;
+		if (nullptr != pErrorMessages)
 		{
 			SvStl::MessageContainer message;
 			message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_TableObject_Nullptr, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
-			addTaskMessage( message );
-			Result = false;
-		}
-
-		SVObjectClass* pObject = m_sourceTableObjectInfo.GetInputObjectInfo().PObject;
-		if (!m_sourceTableObjectInfo.IsConnected() || nullptr == dynamic_cast<TableObject*>(pObject))
-		{
-			SvStl::MessageContainer message;
-			message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_NoValidTableConnected, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
-			addTaskMessage( message );
-			Result = false;
-		}
-		else if (pObject->GetAncestorInterface(SVInspectionObjectType) != GetAncestorInterface(SVInspectionObjectType))
-		{
-			SvStl::MessageContainer message;
-			message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_NoValidTableConnected, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
-			addTaskMessage( message );
-			
-			pObject->DisconnectObjectInput( &m_sourceTableObjectInfo );
-			m_sourceTableObjectInfo.SetInputObject(nullptr);
-			Result = false;
+			pErrorMessages->push_back( message );
 		}
 	}
 
 	return Result;
 }
-#pragma endregion Protected Methods
 
-#pragma region Private Methods
 void TableAnalyzerTool::LocalInitialize ()
 {
 	BuildInputObjectList ();

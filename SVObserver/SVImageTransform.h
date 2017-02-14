@@ -31,9 +31,7 @@ public:
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
 	virtual HRESULT IsInputImage( SVImageClass *p_psvImage ) override;
 
-	virtual BOOL OnValidate() override;
-	virtual HRESULT ResetObject( ) override;
-	virtual bool resetAllObjects( bool shouldNotifyFriends, bool silentReset ) override;
+	virtual bool ResetObject( SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 #pragma endregion
 
 	SVImageClass* getInputImage();

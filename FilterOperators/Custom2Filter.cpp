@@ -48,26 +48,23 @@ BOOL Custom2Filter::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 
 	bOk &= SVFilterClass::CreateObject( pCreateStructure );
 
-	bOk &= RebuildKernel();
+	RebuildKernel();
 
 	return bOk;
 }
 
-HRESULT Custom2Filter::ResetObject()
+bool Custom2Filter::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	HRESULT l_hrOk = SVFilterClass::ResetObject();
+	bool Result = __super::ResetObject(pErrorMessages);
 
-	if ( ! RebuildKernel() )
-	{
-		l_hrOk = S_FALSE;
-	}
+	RebuildKernel();
 
-	return l_hrOk;
+	return Result && ValidateLocal(pErrorMessages);
 }
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
-BOOL Custom2Filter::RebuildKernel()
+void Custom2Filter::RebuildKernel()
 {
 	SVMatroxBufferInterface::SVStatusCode StatusCode;
 
@@ -135,8 +132,6 @@ BOOL Custom2Filter::RebuildKernel()
 	}
 
 	delete [] pKernelData;
-
-	return TRUE;
 }
 
 BOOL Custom2Filter::onRun( BOOL First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus )
@@ -174,42 +169,6 @@ BOOL Custom2Filter::onRun( BOOL First, SVSmartHandlePointer RInputImageHandle, S
 		// Signal that something was wrong...
 		SetInvalid();
 		RRunStatus.SetInvalid();
-	}
-	return Result;
-}
-
-BOOL Custom2Filter::OnValidate()
-{
-	BOOL Result( TRUE );
-	long Width( 0 );
-	long Height( 0 );
-	long NormalizationFactor( 0 );
-	
-	m_KernelWidth.GetValue( Width );
-	m_KernelHeight.GetValue( Height );
-	m_NormalizationFactor.GetValue( NormalizationFactor );
-	
-	//Check that Width and Height are odd and between 1 and MaxKernelSize
-	if( 1 != Width % 2 || 1 > Width || SvOi::ICustom2Filter::MaxKernelSize < Width )
-	{
-		Result = FALSE;
-	}
-
-	if( 1 != Height % 2 || 1 > Height || SvOi::ICustom2Filter::MaxKernelSize < Height )
-	{
-		Result = FALSE;
-	}
-
-	if( 0 >= NormalizationFactor )
-	{
-		Result = FALSE;
-	}
-
-	Result = SVOperatorClass::OnValidate() || Result;
-
-	if( !Result )
-	{
-		SetInvalid();
 	}
 	return Result;
 }
@@ -272,6 +231,56 @@ long Custom2Filter::validateKernelSize( SVLongValueObjectClass& rKernelSize )
 	rKernelSize.SetValue( 1, Size );
 
 	return Size;
+}
+
+bool Custom2Filter::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) const
+{
+	bool Result( true );
+
+	//Check that Width and Height are odd and between 1 and MaxKernelSize
+	long Width( 0 );
+	m_KernelWidth.GetValue( Width );
+	if( 1 != Width % 2 || 1 > Width || SvOi::ICustom2Filter::MaxKernelSize < Width )
+	{
+		Result = false;
+		if (nullptr != pErrorMessages)
+		{
+			SVStringVector msgList;
+			msgList.push_back(SvUl_SF::Format(_T("%d"), Width));
+			msgList.push_back(SvUl_SF::Format(_T("%d"), SvOi::ICustom2Filter::MaxKernelSize));
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_DataInvalidKernelWidth, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
+	}
+
+	long Height( 0 );
+	m_KernelHeight.GetValue( Height );
+	if( 1 != Height % 2 || 1 > Height || SvOi::ICustom2Filter::MaxKernelSize < Height )
+	{
+		Result = false;
+		if (nullptr != pErrorMessages)
+		{
+			SVStringVector msgList;
+			msgList.push_back(SvUl_SF::Format(_T("%d"), Height));
+			msgList.push_back(SvUl_SF::Format(_T("%d"), SvOi::ICustom2Filter::MaxKernelSize));
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_DataInvalidKernelHeight, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
+	}
+
+	long NormalizationFactor( 0 );
+	m_NormalizationFactor.GetValue( NormalizationFactor );
+	if( 0 >= NormalizationFactor )
+	{
+		Result = false;
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_DataInvalidNormalizationFactor, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
+	}
+
+	return Result;
 }
 #pragma endregion Private Methods
 

@@ -2126,7 +2126,7 @@ BOOL CSVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 					pInspection->SetEnableAuxiliaryExtent( lEnableAuxiliaryExtent );
 					if( l_lPrevEnable && lEnableAuxiliaryExtent == 0 )
 					{
-						pInspection->resetAllObjects(true, false);
+						pInspection->resetAllObjects();
 					}
 				}
 				pInspection = nullptr;

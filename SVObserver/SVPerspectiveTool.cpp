@@ -34,7 +34,7 @@ SVPerspectiveToolClass::SVPerspectiveToolClass( BOOL p_bCreateDefaultTaskList, S
 
 SVPerspectiveToolClass::~SVPerspectiveToolClass()
 {
-	LocalDestroy();
+	DestroyLUT();
 }
 
 BOOL SVPerspectiveToolClass::CreateObject( SVObjectLevelCreateStruct *p_pCreateStructure )
@@ -52,11 +52,9 @@ BOOL SVPerspectiveToolClass::CreateObject( SVObjectLevelCreateStruct *p_pCreateS
 
 BOOL SVPerspectiveToolClass::CloseObject()
 {
-	BOOL l_bOk = S_OK == LocalDestroy();
+	DestroyLUT();
 
-	l_bOk = SVToolClass::CloseObject() && l_bOk;
-
-	return l_bOk;
+	return SVToolClass::CloseObject();
 }
 
 HRESULT SVPerspectiveToolClass::UpdateOutputImageExtents()
@@ -211,23 +209,28 @@ HRESULT SVPerspectiveToolClass::UpdateOutputImageExtents()
 	return l_hrOk;
 }
 
-HRESULT SVPerspectiveToolClass::ResetObject()
+bool SVPerspectiveToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	HRESULT l_hrOk = UpdateOutputImageExtents();
+	UpdateOutputImageExtents();
 
-	 l_hrOk = SVToolClass::ResetObject();
+	bool Result = SVToolClass::ResetObject(pErrorMessages);
 	
 	// Now the input image is valid!
-	if( S_OK == m_OutputImage.ResetObject() )
+	if( m_OutputImage.ResetObject(pErrorMessages) )
 	{
 		if( S_OK != CreateLUT() )
 		{
-			l_hrOk = S_FALSE;
+			Result = false;
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_CreateLutFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				pErrorMessages->push_back(Msg);
+			}
 		}
 	}
 	else
 	{
-		l_hrOk = S_FALSE;
+		Result = false;
 	}
 
 	SVImageClass *inputImage = GetInputImage();
@@ -240,22 +243,8 @@ HRESULT SVPerspectiveToolClass::ResetObject()
 
 	UpdateImageWithExtent( 1 );
 
-	return l_hrOk;
+	return Result;
 }
-
-BOOL SVPerspectiveToolClass::OnValidate()
-{
-	BOOL l_bOk = SVToolClass::OnValidate();
-
-	if ( l_bOk )
-	{
-		l_bOk = !m_LutX.empty() && !m_LutY.empty();
-	}
-
-
-	return l_bOk;
-}
-
 
 SVImageClass* SVPerspectiveToolClass::GetInputImage()
 {
@@ -327,7 +316,7 @@ BOOL SVPerspectiveToolClass::onRun( SVRunStatusClass &p_rRunStatus )
 
 		if( (l_dInputWidth != l_dToolWidth) || (l_dInputHeight != l_dToolHeight) )
 		{
-			ResetObject();
+			l_bOk = ResetObject(&m_RunErrorMessages) && l_bOk;
 		}
 
 		if ( nullptr != l_pInputImage &&
@@ -428,87 +417,70 @@ void SVPerspectiveToolClass::LocalInitialize()
 
 }
 
-HRESULT SVPerspectiveToolClass::LocalDestroy()
-{
-	HRESULT l_hrOk = S_OK;
-
-	if ( S_OK != DestroyLUT() )
-	{
-		l_hrOk = S_FALSE;
-	}
-
-	return l_hrOk;
-}
-
 HRESULT SVPerspectiveToolClass::CreateLUT()
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( S_OK == DestroyLUT() )
+	DestroyLUT();
+	
+	SVImageExtentClass l_svOutputExtents;
+
+	SVMatroxImageInterface::SVStatusCode l_Code;
+
+	long l_lWidth = 100;
+	long l_lHeight = 100;
+	if ( nullptr != GetInputImage() )
 	{
-		SVImageExtentClass l_svOutputExtents;
+		HRESULT l_hr = GetImageExtent(l_svOutputExtents);
 
-		SVMatroxImageInterface::SVStatusCode l_Code;
+		l_svOutputExtents.GetExtentProperty( SVExtentPropertyOutputWidth , l_lWidth );
+		l_svOutputExtents.GetExtentProperty( SVExtentPropertyOutputHeight, l_lHeight );
+		SVMatroxBufferCreateStruct l_Create;
+		l_Create.m_eAttribute = SVBufAttLut;
+		l_Create.m_eType = SV32BitSigned;
+		l_Create.m_lSizeBand = 1;
+		l_Create.m_lSizeX = l_lWidth;
+		l_Create.m_lSizeY = l_lHeight;
+		l_Code = SVMatroxBufferInterface::Create( m_LutX, l_Create );
+		l_Code = SVMatroxBufferInterface::Create( m_LutY, l_Create );
+	}
+	SVExtentPointStruct l_svPoint;
 
-		long l_lWidth = 100;
-		long l_lHeight = 100;
-		if ( nullptr != GetInputImage() )
+	if ( !m_LutX.empty() && !m_LutY.empty() )
+	{
+
+		long l_lPitchX = 0; //MbufInquire( m_LutX, M_PITCH, M_NULL );
+		long l_lPitchY = 0; //MbufInquire( m_LutY, M_PITCH, M_NULL );
+		l_Code = SVMatroxBufferInterface::Get( m_LutX, SVPitch, l_lPitchX );
+		l_Code = SVMatroxBufferInterface::Get( m_LutY, SVPitch, l_lPitchY );
+
+		long *l_plLutXData = nullptr; //(long *)MbufInquire( m_LutX, M_HOST_ADDRESS, M_NULL );
+		long *l_plLutYData = nullptr; // (long *)MbufInquire( m_LutY, M_HOST_ADDRESS, M_NULL );
+		l_Code = SVMatroxBufferInterface::GetHostAddress( &l_plLutXData, m_LutX );
+		l_Code = SVMatroxBufferInterface::GetHostAddress( &l_plLutYData,m_LutY );
+
+		for ( long j = 0; j < l_lHeight; j++ )
 		{
-			HRESULT l_hr = GetImageExtent(l_svOutputExtents);
-
-			l_svOutputExtents.GetExtentProperty( SVExtentPropertyOutputWidth , l_lWidth );
-			l_svOutputExtents.GetExtentProperty( SVExtentPropertyOutputHeight, l_lHeight );
-			SVMatroxBufferCreateStruct l_Create;
-			l_Create.m_eAttribute = SVBufAttLut;
-			l_Create.m_eType = SV32BitSigned;
-			l_Create.m_lSizeBand = 1;
-			l_Create.m_lSizeX = l_lWidth;
-			l_Create.m_lSizeY = l_lHeight;
-			l_Code = SVMatroxBufferInterface::Create( m_LutX, l_Create );
-			l_Code = SVMatroxBufferInterface::Create( m_LutY, l_Create );
-		}
-		SVExtentPointStruct l_svPoint;
-
-		if ( !m_LutX.empty() && !m_LutY.empty() )
-		{
-
-			long l_lPitchX = 0; //MbufInquire( m_LutX, M_PITCH, M_NULL );
-			long l_lPitchY = 0; //MbufInquire( m_LutY, M_PITCH, M_NULL );
-			l_Code = SVMatroxBufferInterface::Get( m_LutX, SVPitch, l_lPitchX );
-			l_Code = SVMatroxBufferInterface::Get( m_LutY, SVPitch, l_lPitchY );
-
-			long *l_plLutXData = nullptr; //(long *)MbufInquire( m_LutX, M_HOST_ADDRESS, M_NULL );
-			long *l_plLutYData = nullptr; // (long *)MbufInquire( m_LutY, M_HOST_ADDRESS, M_NULL );
-			l_Code = SVMatroxBufferInterface::GetHostAddress( &l_plLutXData, m_LutX );
-			l_Code = SVMatroxBufferInterface::GetHostAddress( &l_plLutYData,m_LutY );
-
-			for ( long j = 0; j < l_lHeight; j++ )
+			for ( long i = 0; i < l_lWidth; i++ )
 			{
-				for ( long i = 0; i < l_lWidth; i++ )
-				{
-					l_svPoint.m_dPositionX = i;
-					l_svPoint.m_dPositionY = j;
-					l_svOutputExtents.TranslateFromOutputSpace( l_svPoint, l_svPoint );
-					l_plLutXData[ i + ( j * l_lPitchX ) ] = (long)( l_svPoint.m_dPositionX * 256L );
-					l_plLutYData[ i + ( j * l_lPitchY ) ] = (long)( l_svPoint.m_dPositionY * 256L );
-				}
+				l_svPoint.m_dPositionX = i;
+				l_svPoint.m_dPositionY = j;
+				l_svOutputExtents.TranslateFromOutputSpace( l_svPoint, l_svPoint );
+				l_plLutXData[ i + ( j * l_lPitchX ) ] = (long)( l_svPoint.m_dPositionX * 256L );
+				l_plLutYData[ i + ( j * l_lPitchY ) ] = (long)( l_svPoint.m_dPositionY * 256L );
 			}
-
-			l_hrOk = S_OK;
 		}
+
+		l_hrOk = S_OK;
 	}
 
 	return l_hrOk;
 }
 
-HRESULT SVPerspectiveToolClass::DestroyLUT()
+void SVPerspectiveToolClass::DestroyLUT()
 {
-	HRESULT l_Status = S_OK;	
-
 	m_LutX.clear();
 	m_LutY.clear();
-
-	return l_Status;
 }
 
 HRESULT SVPerspectiveToolClass::SetImageExtent( unsigned long p_ulIndex, SVImageExtentClass p_svImageExtent )

@@ -82,7 +82,7 @@ void TableFillObject::setColumnValueObjects(const std::vector<TableColumnEquatio
 			else
 			{
 				SvStl::MessageMgrStd e( SvStl::DataOnly );
-				e.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_TableObject_columnValueMapInvalid, SvStl::SourceFileParams(StdMessageParams) );
+				e.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_TableObject_columnValueMapInvalid, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 				e.Throw();
 			}
 		}
@@ -109,7 +109,7 @@ void TableFillObject::setColumnValueObjects(const std::vector<TableColumnEquatio
 		if (SV_GUID_NULL == newGuid)
 		{
 			SvStl::MessageMgrStd e( SvStl::LogOnly );
-			e.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_TableObject_columnValue_NoFreeGUID, SvStl::SourceFileParams(StdMessageParams) );
+			e.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_TableObject_columnValue_NoFreeGUID, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 			e.Throw();
 		}
 		createColumnObject(newGuid, (*iter)->GetName(), maxArray);

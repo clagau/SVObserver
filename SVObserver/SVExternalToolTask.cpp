@@ -122,8 +122,6 @@ SVExternalToolTask::SVExternalToolTask( SVObjectClass* POwner, int StringResourc
 
 	size_t i;
 
-	m_hrInitialized = S_FALSE;
-
 	SvLib::SVOINIClass m_SvimIni(SvStl::GlobalPath::Inst().GetSVIMIniPath());
 
 	m_bUseImageCopies = m_SvimIni.GetValueInt(_T("External Tool"), _T("UseImageCopy"), TRUE) != FALSE;
@@ -323,8 +321,6 @@ HRESULT SVExternalToolTask::Initialize(	SVDllLoadLibraryCallback fnNotify )
 	HRESULT hrClose = m_dll.Close();
 	HRESULT hrUninitialize = Uninitialize();
 
-	m_hrInitialized = S_FALSE;
-
 	m_aInspectionInputImages.clear();
 	m_aInspectionInputValues.clear();
 	m_aInspectionResultValues.clear();
@@ -344,8 +340,9 @@ HRESULT SVExternalToolTask::Initialize(	SVDllLoadLibraryCallback fnNotify )
 	}
 	catch( const SvStl::MessageContainer& e )
 	{
-		m_hrInitialized = static_cast<HRESULT> (e.getMessage().m_MessageCode);
-		throw;
+		SvStl::MessageContainer newMessage;
+		newMessage.setMessage(e.getMessage(), GetUniqueObjectID());
+		throw newMessage;
 	}
 
 	if ( S_OK == hr )
@@ -692,8 +689,6 @@ HRESULT SVExternalToolTask::Initialize(	SVDllLoadLibraryCallback fnNotify )
 		}
 	}
 
-	m_hrInitialized = hr;
-
 	return hr;
 }
 
@@ -733,24 +728,6 @@ BOOL SVExternalToolTask::CloseObject()
 		return FALSE;
 	}
 	return TRUE;
-}
-
-BOOL SVExternalToolTask::OnValidate()
-{
-	BOOL bRetVal = FALSE;
-
-	if(    nullptr != GetInspection()
-		&& nullptr != GetTool()
-		&& S_OK == m_hrInitialized )
-	{
-		bRetVal = SVTaskObjectListClass::OnValidate();
-	}
-
-	// Note: Make sure this is called when Validate fails !!!
-	if( ! bRetVal )
-		SetInvalid();
-
-	return bRetVal;
 }
 
 BOOL SVExternalToolTask::onRun( SVRunStatusClass& RRunStatus )
@@ -814,7 +791,9 @@ BOOL SVExternalToolTask::onRun( SVRunStatusClass& RRunStatus )
 			}
 
 			if ( bNeedReset )
-				ResetObject();
+			{
+				l_bOk = ResetObject(&m_RunErrorMessages) && l_bOk;
+			}
 
 			/////////////////////////////////////////////////////
 			//   Inputs
@@ -1243,7 +1222,7 @@ HRESULT SVExternalToolTask::SetCancelData(SVCancelData* pCancelData)
 		// Reset all objects again...
 		if (nullptr != pTool)
 		{
-			pTool->resetAllObjects(true, false);
+			pTool->resetAllObjects();
 		}
 		
 		return S_OK;
@@ -1600,22 +1579,19 @@ HRESULT SVExternalToolTask::SetDefaultValues()
 	return hr;
 }
 
-HRESULT SVExternalToolTask::ResetObject()
+bool SVExternalToolTask::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	SVTaskObjectListClass::ResetObject();
+	bool Result = SVTaskObjectListClass::ResetObject(pErrorMessages);
 
-	///////////////////////////////////////
-	// Initialize Input Objects
-	///////////////////////////////////////
-	HRESULT hr = S_OK;
-
-	hr = ConnectInputs();
+	ConnectInputs();
 
 	if( m_bUseImageCopies )
 	{
 		for ( int i = 0; i < m_Data.m_lNumResultImages; i++ )
 		{
-			m_aResultImagesCopy[i].ResetObject();
+			//the images in m_aResultImagesCopy are not created like the rest of the image and not register by inspection. 
+			//For this reason ResetObject can not called because the validation will be failed, also call only RebuildStorage.
+			Result = Result && (S_OK == m_aResultImagesCopy[i].RebuildStorage( false, pErrorMessages ));
 		}
 	}
 
@@ -1626,14 +1602,27 @@ HRESULT SVExternalToolTask::ResetObject()
 
 	try
 	{
-		hr = Initialize( SVDllLoadLibraryCallbackDefault() );
+		HRESULT hr = Initialize( SVDllLoadLibraryCallbackDefault() );
+		if (S_OK != hr)
+		{
+			Result = false;
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_InitExternalTaskFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				pErrorMessages->push_back(Msg);
+			}
+		}
 	}
 	catch ( const SvStl::MessageContainer& e)
 	{
-		hr = static_cast<HRESULT> (e.getMessage().m_MessageCode);
+		Result = false;
+		if ( nullptr != pErrorMessages )
+		{
+			pErrorMessages->push_back(e);
+		}
 	}
 
-	return hr;
+	return Result;
 }
 
 // compare cancel data (original) with current data.
@@ -1792,14 +1781,6 @@ void SVExternalToolTask::OnObjectRenamed(const SVObjectClass& rRenamedObject, co
 	__super::OnObjectRenamed(rRenamedObject, rOldName);
 }
 
-bool SVExternalToolTask::resetAllObjects( bool shouldNotifyFriends, bool silentReset )
-{
-	bool Result = ( S_OK == ResetObject() );
-	ASSERT( Result );
-
-	return __super::resetAllObjects( shouldNotifyFriends, silentReset ) && Result;
-}
-
 HRESULT SVExternalToolTask::DisconnectInputsOutputs(SVObjectVector& rListOfObjects)
 {
 	return __super::DisconnectInputsOutputs(rListOfObjects);
@@ -1928,7 +1909,7 @@ HRESULT SVExternalToolTask::ConnectInputs()
 		{
 			m_Data.m_aInputObjects[i].SetDefaultValue(m_Data.m_aInputValueDefinitions[i].m_DefaultValue, FALSE);
 			m_Data.m_aInputObjects[i].SetType(m_Data.m_aInputValueDefinitions[i].m_VT);
-			if( m_Data.m_aInputObjects[i].resetAllObjects(true, false) )
+			if( m_Data.m_aInputObjects[i].resetAllObjects() )
 			{
 				hr = S_FALSE;
 			}

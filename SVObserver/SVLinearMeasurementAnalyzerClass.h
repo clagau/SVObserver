@@ -25,8 +25,7 @@ public:
 
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
 	virtual BOOL CloseObject() override;
-
-	virtual BOOL OnValidate() override;
+	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 protected:
 	virtual BOOL onRun( SVRunStatusClass& RRunStatus ) override;

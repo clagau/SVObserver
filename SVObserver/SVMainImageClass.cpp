@@ -94,14 +94,14 @@ BOOL SVMainImageClass::GetImageHandle( SVImageIndexStruct svIndex, SVSmartHandle
 	return bOk;
 }
 
-BOOL SVMainImageClass::OnValidate()
+bool SVMainImageClass::ValidateImage()
 {
-	if( SVObjectAppClass::OnValidate() )
+	if( IsCreated() )
 	{
 		m_isObjectValid = !( GetCameraBufferArrayPtr().empty() );
 	}
 
-	return m_isObjectValid;
+	return (TRUE == m_isObjectValid);
 }
 
 const SVClock::SVTimeStamp& SVMainImageClass::GetLastResetTimeStamp() const

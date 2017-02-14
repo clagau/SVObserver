@@ -26,14 +26,12 @@ public:
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
 	virtual BOOL CloseObject() override;
 
-	virtual HRESULT ResetObject() override;
+	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	virtual HRESULT IsInputImage( SVImageClass *p_psvImage ) override;
 	virtual SVTaskObjectClass *GetObjectAtPoint( const SVExtentPointStruct &p_rsvPoint ) override;
 	virtual bool DoesObjectHaveExtents() const override;
 	virtual HRESULT SetImageExtent( unsigned long p_ulIndex, SVImageExtentClass p_svImageExtent ) override;
-
-	virtual BOOL OnValidate() override;
 
 	virtual HRESULT SetImageExtentToParent( unsigned long p_ulIndex ) override;
 	//************************************
@@ -42,13 +40,13 @@ public:
 	//! \returns HRESULT S_OK if no error occurs
 	//************************************
 	virtual HRESULT GetParentExtent( SVImageExtentClass& rExtent) const override;
-	
-	virtual BOOL IsValid() override;
 
 protected:
 	void init();
 
 	virtual BOOL onRun( SVRunStatusClass& RRunStatus ) override;
+
+	bool ValidateLocal(SvStl::MessageContainerVector *pErrorMessages=nullptr) const;
 
 	// Embedded Objects:
 

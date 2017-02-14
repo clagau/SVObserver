@@ -245,7 +245,7 @@ void SVToolAdjustmentDialogAcquisitionSourcePageClass::OnSelectButton()
 		if ( S_OK == pMainImage->UpdateImage( ImageInfo ) )
 		{
 			// Reset all objects...
-			pTool->resetAllObjects(true, false);
+			pTool->resetAllObjects();
 
 			refresh();
 		}
@@ -280,7 +280,7 @@ void SVToolAdjustmentDialogAcquisitionSourcePageClass::OnChannel0Check()
 				// Reset all objects...
 				if (nullptr != pTool)
 				{
-					pTool->resetAllObjects(true, false);
+					pTool->resetAllObjects();
 				}
 
 				refresh();
@@ -307,7 +307,7 @@ void SVToolAdjustmentDialogAcquisitionSourcePageClass::OnChannel1Check()
 				// Reset all objects...
 				if (nullptr != pTool)
 				{
-					pTool->resetAllObjects(true, false);
+					pTool->resetAllObjects();
 				}
 
 				refresh();
@@ -334,7 +334,7 @@ void SVToolAdjustmentDialogAcquisitionSourcePageClass::OnChannel2Check()
 				// Reset all objects...
 				if (nullptr != pTool)
 				{
-					pTool->resetAllObjects(true, false);
+					pTool->resetAllObjects();
 				}
 
 				refresh();
@@ -361,7 +361,7 @@ void SVToolAdjustmentDialogAcquisitionSourcePageClass::OnChannel3Check()
 				// Reset all objects...
 				if (nullptr != pTool)
 				{
-					pTool->resetAllObjects(true, false);
+					pTool->resetAllObjects();
 				}
 
 				refresh();
@@ -386,7 +386,7 @@ void SVToolAdjustmentDialogAcquisitionSourcePageClass::OnMultibandRadio()
 			// Reset all objects...
 			if (nullptr != pTool)
 			{
-				pTool->resetAllObjects(true, false);
+				pTool->resetAllObjects();
 			}
 
 			CheckRadioButton( IDC_SINGLEBAND_RADIO, IDC_MULTIBAND_RADIO, IDC_MULTIBAND_RADIO );
@@ -420,7 +420,7 @@ void SVToolAdjustmentDialogAcquisitionSourcePageClass::OnSinglebandRadio()
 			// Reset all objects...
 			if (nullptr != pTool)
 			{
-				pTool->resetAllObjects(true, false);
+				pTool->resetAllObjects();
 			}
 
 			CheckRadioButton( IDC_SINGLEBAND_RADIO, IDC_MULTIBAND_RADIO, IDC_SINGLEBAND_RADIO );

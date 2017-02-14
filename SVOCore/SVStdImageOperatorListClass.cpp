@@ -92,22 +92,20 @@ BOOL SVStdImageOperatorListClass::CloseObject()
 	return bRetVal;
 }
 
-bool SVStdImageOperatorListClass::resetAllObjects( bool shouldNotifyFriends, bool silentReset )
+bool SVStdImageOperatorListClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	bool Result = ( S_OK == ResetObject() );
-	assert( Result );
-
-	return( __super::resetAllObjects( shouldNotifyFriends, silentReset ) );
-}
-
-HRESULT SVStdImageOperatorListClass::ResetObject()
+	bool Result = true;
+	if (outputImageObject.InitializeImage( getInputImage() ))
 {
-	HRESULT hrOk = outputImageObject.InitializeImage( getInputImage() );
-	
-	if ( S_OK != __super::ResetObject() )
+		Result = false;
+		if (nullptr != pErrorMessages)
 	{
-		hrOk = S_FALSE;
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_InitImageFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
 	}
+
+	Result = __super::ResetObject(pErrorMessages) && Result;
 
 	CollectInputImageNames();
 
@@ -121,7 +119,7 @@ HRESULT SVStdImageOperatorListClass::ResetObject()
 		SVImageProcessingClass::CreateImageBuffer(imageInfo, m_milTmpImageObjectInfo2);
 	}
 
-	return hrOk;
+	return Result;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -142,9 +140,7 @@ SVImageClass* SVStdImageOperatorListClass::getOutputImage()
 BOOL SVStdImageOperatorListClass::Run( SVRunStatusClass& RRunStatus )
 {
 	BOOL bRetVal = true;
-
-	SVSmartHandlePointer input;
-	SVSmartHandlePointer output;
+	clearRunErrorMessages();
 	
 	SVRunStatusClass ChildRunStatus;
 	ChildRunStatus.m_lResultDataIndex  = RRunStatus.m_lResultDataIndex;
@@ -168,6 +164,9 @@ BOOL SVStdImageOperatorListClass::Run( SVRunStatusClass& RRunStatus )
 
 		if ( bRetVal )
 		{
+			SVSmartHandlePointer input;
+			SVSmartHandlePointer output;
+
 			// Check for new image type...
 			if( nullptr == pOutputImage->GetParentImage() )
 			{
@@ -290,20 +289,6 @@ BOOL SVStdImageOperatorListClass::Run( SVRunStatusClass& RRunStatus )
 	m_statusTag.SetValue( RRunStatus.m_lResultDataIndex, dwValue );
 	
 	return bRetVal;
-}
-
-BOOL SVStdImageOperatorListClass::OnValidate()
-{
-	if( SVUnaryImageOperatorListClass::OnValidate() )
-	{
-		if( outputImageObject.OnValidate() ) 
-		{
-			return true;
-		}
-	}
-
-	SetInvalid();
-	return false;
 }
 
 // Set String value object for Source Image Names

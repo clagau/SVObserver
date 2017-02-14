@@ -24,16 +24,12 @@ public:
 
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
 	virtual BOOL CloseObject() override;
-	virtual BOOL OnValidate() override;
 
 protected:
 	SVValueObjectClass* GetInputValue();
 	virtual BOOL onRun( SVRunStatusClass& RRunStatus ) override;
 
 protected:
-	// Input
-	SVInObjectInfoStruct		m_InputValueObjectInfo;
-
 	// Output
 	SVVariantValueObjectClass	m_Value;
 };

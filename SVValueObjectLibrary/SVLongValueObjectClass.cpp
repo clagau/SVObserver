@@ -54,9 +54,6 @@ const SVLongValueObjectClass& SVLongValueObjectClass::operator = (const SVLongVa
 
 SVLongValueObjectClass::~SVLongValueObjectClass()
 {
-	// Delete all object's data arrays...
-	SetObjectDepth(0);
-	CreateBuckets();
 }
 
 void SVLongValueObjectClass::Persist(SVObjectWriter& rWriter)

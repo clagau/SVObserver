@@ -42,7 +42,7 @@ public:
 
 #pragma region Protected Methods
 protected:
-	virtual HRESULT CreateBuckets( ) override;
+	virtual void CreateBuckets( ) override;
 	/// Return the result size. 
 	/// ATTENTION: Do not use m_aiResultSize, this must be on ArraySize because otherwise ValidateIndexes can failed even if index valid.
 	/// \param iBucket [in]

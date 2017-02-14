@@ -164,7 +164,12 @@ HRESULT SVAcquisitionClass::Start()
 	{
 		if( !( m_AcquisitionBuffersPtr.empty() ) )
 		{
-			hrOk = m_AcquisitionBuffersPtr->ResetObject();
+			SvStl::MessageContainerVector errorMessages;
+			m_AcquisitionBuffersPtr->ResetObject(&errorMessages);
+			if (!errorMessages.empty())
+			{
+				hrOk = errorMessages[0].getMessage().m_MessageCode;
+			}
 		}
 		else
 		{
@@ -271,7 +276,7 @@ HRESULT SVAcquisitionClass::CreateBuffers( SVImageInfoClass IInfo, unsigned long
 				m_AcquisitionBuffersPtr->SetImageInfo( msvImageInfo );
 			}
 
-			l_Status = l_Status && ( S_OK == m_AcquisitionBuffersPtr->ResetObject()  );
+			l_Status = l_Status && m_AcquisitionBuffersPtr->ResetObject();
 			l_Status = l_Status && S_OK == GetNextIndex( l_Handle );
 			l_Status = l_Status && SetCurrentIndex( l_Handle );
 

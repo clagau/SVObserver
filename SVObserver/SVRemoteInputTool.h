@@ -34,7 +34,7 @@ public:
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
 	virtual BOOL CloseObject() override;
 
-	virtual BOOL OnValidate() override;
+	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	virtual HRESULT ProcessNotifyData( SVObjectCommandDataJsonPtr& p_rDataPtr ) override;
 
@@ -87,6 +87,8 @@ protected:
 	virtual BOOL onRun( SVRunStatusClass& RRunStatus ) override;
 
 	HRESULT ProcessCommandQueue();
+
+	bool ValidateLocal(SvStl::MessageContainerVector *pErrorMessages=nullptr) const;
 
 	SVInObjectInfoStruct m_InputObjectInfo;
 

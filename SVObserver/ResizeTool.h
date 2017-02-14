@@ -42,15 +42,14 @@ public:
 	///  Retrieves source image name from m_svSourceImageName.
 	virtual SVStaticStringValueObjectClass* GetInputImageNames() override;
 
-	virtual HRESULT	ResetObject() override;
-	virtual BOOL	IsValid() override;
+	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
-	virtual bool ValidateRemotelySettableParameters () override;
-	virtual bool ValidateOfflineParameters () override;
-	HRESULT ValidateScaleFactor(const double value);
-	HRESULT ValidateInterpolation(const SVInterpolationModeOptions::SVInterpolationModeOptionsEnum interpolationMode);
-	HRESULT ValidateOverscan(const SVOverscanOptions::SVOverscanOptionsEnum overscan);
-	HRESULT ValidatePerformance(const SVPerformanceOptions::SVPerformanceOptionsEnum performance);
+	bool ValidateParameters (SvStl::MessageContainerVector *pErrorMessages=nullptr);
+	bool ValidateOfflineParameters (SvStl::MessageContainerVector *pErrorMessages=nullptr);
+	bool ValidateScaleFactor(const double value, SvStl::MessageContainerVector *pErrorMessages=nullptr);
+	bool ValidateInterpolation(const SVInterpolationModeOptions::SVInterpolationModeOptionsEnum interpolationMode, SvStl::MessageContainerVector *pErrorMessages=nullptr);
+	bool ValidateOverscan(const SVOverscanOptions::SVOverscanOptionsEnum overscan, SvStl::MessageContainerVector *pErrorMessages=nullptr);
+	bool ValidatePerformance(const SVPerformanceOptions::SVPerformanceOptionsEnum performance, SvStl::MessageContainerVector *pErrorMessages=nullptr);
 
 
 	HRESULT	BackupInspectionParameters ();

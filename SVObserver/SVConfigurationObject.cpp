@@ -4024,7 +4024,10 @@ HRESULT SVConfigurationObject::SetRaidErrorBit( bool p_Value )
 
 	if( nullptr != m_pIOController )
 	{
-		l_Status = m_pIOController->SetRaidErrorBit( p_Value );
+		if ( !m_pIOController->SetRaidErrorBit( p_Value ) )
+		{
+			l_Status = E_FAIL;
+		}
 	}
 	else
 	{

@@ -30,13 +30,11 @@ public:
 
 	virtual BOOL SetDefaultFormulas() override;
 
-	virtual HRESULT ResetObject() override;
+	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	virtual SVStaticStringValueObjectClass* GetInputImageNames() override;
 
 	virtual HRESULT SetImageExtentToParent( unsigned long p_ulIndex ) override;
-
-	virtual BOOL IsValid() override;
 
 protected:
 	virtual BOOL onRun( SVRunStatusClass& RRunStatus ) override;

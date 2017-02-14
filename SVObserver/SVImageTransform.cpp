@@ -136,38 +136,25 @@ HRESULT SVImageTransformClass::IsInputImage( SVImageClass *p_psvImage )
 	return l_hrOk;
 }
 
-BOOL SVImageTransformClass::OnValidate()
+bool SVImageTransformClass::ResetObject( SvStl::MessageContainerVector *pErrorMessages )
 {
-	BOOL bRetVal = FALSE;
-	if( getInputImage() )
+	bool Result = true;
+	
+	if (S_OK != UpdateTransformData( 1 ))
 	{
-		bRetVal = TRUE;
-		bRetVal = SVTransformClass::OnValidate() && bRetVal;
+		Result = false;
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_UpdateTransformDataFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
 	}
 
-	// Note: Make sure this is called when Validate fails !!!
-	if( ! bRetVal )
-		SetInvalid();
-
-	return bRetVal;
-}
-
-HRESULT SVImageTransformClass::ResetObject( )
-{
-	HRESULT l_hrOk = UpdateTransformData( 1 );
-
-	::KeepPrevError( l_hrOk, SVTransformClass::ResetObject() );
+	Result = SVTransformClass::ResetObject(pErrorMessages) && Result;
 
 	CollectInputImageNames();
 
-	return l_hrOk;
-}
-
-bool SVImageTransformClass::resetAllObjects( bool shouldNotifyFriends, bool silentReset )
-{
-	bool Result = ( S_OK == ResetObject() );
-	ASSERT( Result );
-	return( __super::resetAllObjects( shouldNotifyFriends, silentReset ) && Result );
+	return Result;
 }
 #pragma endregion
 

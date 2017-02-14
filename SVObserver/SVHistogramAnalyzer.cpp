@@ -435,48 +435,31 @@ void SVHistogramAnalyzerClass::AddResult(const std::pair<GUID, DWORD> & p)
 	Add( pAnalyzerResult );
 }
 
-BOOL SVHistogramAnalyzerClass::OnValidate()
+bool SVHistogramAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
+	bool Valid = __super::ResetObject(pErrorMessages);
 
-   DWORD LastError(0);
+	if (msvHistResultID.empty())
+	{
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg(  SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16151, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
+		Valid = false;
+	}
 
-   while (1)
-   {
-      if (!SVImageAnalyzerClass::OnValidate())
-      {
-		  SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-		  MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16150);
-		  LastError = - SvOi::Err_16150;
-		  break;
-      }
+	if (0 == msvplHistValues.size())
+	{
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg(  SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16152, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
+		Valid = false;
+	}
 
-      if (msvHistResultID.empty())
-      {
-		  SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-		  MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16151);
-		  LastError = - SvOi::Err_16151;
-		  break;
-      }
-
-      if (0 == msvplHistValues.size())
-      {
-		  SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-		  MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16152);
-		  LastError = - SvOi::Err_16152;
-		  break;
-      }
-
-      break;
-   }
-
-   if( 0 != LastError )
-   {
-       SetInvalid();
-       return false;
-   }
-
-   m_isObjectValid.SetValue(1, true);
-   return true;
+	return Valid;
 }
 
 SVHistogramAnalyzerClass::~SVHistogramAnalyzerClass()

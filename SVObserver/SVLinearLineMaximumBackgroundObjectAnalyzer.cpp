@@ -228,6 +228,11 @@ BOOL SVLinearMaximumBackgroundObjectLineAnalyzerClass::CloseObject()
 	return SVLinearAnalyzerClass::CloseObject();
 }
 
+bool SVLinearMaximumBackgroundObjectLineAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
+{
+	return __super::ResetObject(pErrorMessages) && ValidateEdgeA(pErrorMessages) && ValidateEdgeB(pErrorMessages);
+}
+
 HRESULT SVLinearMaximumBackgroundObjectLineAnalyzerClass::GetSelectedEdgeOverlays( SVExtentMultiLineStruct &p_MultiLine )
 {
 	double l_dDistance = 0.0;
@@ -283,7 +288,7 @@ BOOL SVLinearMaximumBackgroundObjectLineAnalyzerClass::onRun( SVRunStatusClass& 
 
 	BOOL l_bOk = SVLinearAnalyzerClass::onRun(RRunStatus);
 
-	l_bOk &= nullptr != GetEdgeA() && nullptr != GetEdgeB() && nullptr != GetTool();
+	l_bOk &= ValidateEdgeA(&m_RunErrorMessages) && ValidateEdgeB(&m_RunErrorMessages) && nullptr != GetTool();
 	
 	l_bOk = (S_OK == GetEdgeA()->m_svLinearEdges.GetValues( l_svAEdges ) ) && l_bOk;
 	l_bOk = (S_OK == GetEdgeB()->m_svLinearEdges.GetValues( l_svBEdges ) ) && l_bOk;
@@ -379,18 +384,3 @@ BOOL SVLinearMaximumBackgroundObjectLineAnalyzerClass::onRun( SVRunStatusClass& 
 
 	return l_bOk;
 }
-
-BOOL SVLinearMaximumBackgroundObjectLineAnalyzerClass::OnValidate()
-{
-	BOOL retVal = ( GetEdgeA() && GetEdgeB() );
-	
-	retVal = SVLinearAnalyzerClass::OnValidate() && retVal;
-
-	// Set this object and all objects it owns, to invalid
-	if( !retVal )
-	{
-		SetInvalid();
-	}
-	return retVal;
-}
-

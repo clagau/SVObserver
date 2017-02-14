@@ -181,45 +181,18 @@ BOOL SVRankingFilterClass::CreateObject( SVObjectLevelCreateStruct* PCreateStruc
 
 	bOk &= SVFilterClass::CreateObject( PCreateStructure );
 
-	bOk &= RebuildRanking();
+	RebuildRanking();
 
 	return bOk;
 }
 
-HRESULT SVRankingFilterClass::ResetObject()
+bool SVRankingFilterClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	HRESULT l_hrOk = SVFilterClass::ResetObject();
+	bool Result = __super::ResetObject(pErrorMessages);
 
-	if ( ! RebuildRanking() )
-	{
-		l_hrOk = S_FALSE;
-	}
+	RebuildRanking();
 
-	return l_hrOk;
-}
-
-BOOL SVRankingFilterClass::OnValidate()
-{
-	BOOL bRetVal = TRUE;
-	long lWidth;
-	long lHeight;
-	
-	m_lvoRankingWidth.GetValue( lWidth );
-	m_lvoRankingHeight.GetValue( lHeight );
-	
-	if( lWidth != 1 && lWidth != 3 && lWidth != 5 && lWidth != 7 )
-		bRetVal = FALSE;
-
-	if( lHeight != 1 && lHeight != 3 && lHeight != 5 && lHeight != 7 )
-		bRetVal = FALSE;
-
-	bRetVal = SVOperatorClass::OnValidate() || bRetVal;
-
-	if( !bRetVal )
-	{
-		SetInvalid();
-	}
-	return bRetVal;	
+	return Result && ValidateLocal(pErrorMessages);
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -227,9 +200,8 @@ BOOL SVRankingFilterClass::OnValidate()
 // -----------------------------------------------------------------------------
 // .Description : Initialization of newly Instantiated Object
 ////////////////////////////////////////////////////////////////////////////////
-BOOL SVRankingFilterClass::RebuildRanking()
+void SVRankingFilterClass::RebuildRanking()
 {
-	
 	SVMatroxBufferInterface::SVStatusCode l_Code;
 	// First free old ranking
 
@@ -317,8 +289,6 @@ BOOL SVRankingFilterClass::RebuildRanking()
 		m_plvoRankingCells[l]->ObjectAttributesAllowedRef() = SV_EMBEDABLE;
 		m_plvoRankingCells[l]->ObjectAttributesSetRef() = SV_EMBEDABLE;
 	}// end for
-
-	return TRUE;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -373,3 +343,38 @@ BOOL SVRankingFilterClass::onRun( BOOL First, SVSmartHandlePointer RInputImageHa
 	return FALSE;
 }
 
+bool SVRankingFilterClass::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) const
+{
+	bool bRetVal = true;
+	long lWidth;
+	m_lvoRankingWidth.GetValue( lWidth );
+	if( lWidth != 1 && lWidth != 3 && lWidth != 5 && lWidth != 7 )
+	{
+		bRetVal = false;
+		if (nullptr != pErrorMessages)
+		{
+			SVStringVector msgList;
+			msgList.push_back(SvUl_SF::Format(_T("%d"), lWidth));
+			msgList.push_back(SvUl_SF::Format(_T("%d"), 7));
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_DataInvalidKernelWidth, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
+	}
+
+	long lHeight;
+	m_lvoRankingHeight.GetValue( lHeight );
+	if( lHeight != 1 && lHeight != 3 && lHeight != 5 && lHeight != 7 )
+	{
+		bRetVal = false;
+		if (nullptr != pErrorMessages)
+		{
+			SVStringVector msgList;
+			msgList.push_back(SvUl_SF::Format(_T("%d"), lHeight));
+			msgList.push_back(SvUl_SF::Format(_T("%d"), 7));
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_DataInvalidKernelHeight, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
+	}
+
+	return bRetVal;	
+}

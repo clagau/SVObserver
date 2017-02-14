@@ -188,80 +188,6 @@ HRESULT SVTaskObjectListClass::IsInputImage( SVImageClass* p_psvImage )
 	return l_hrOk;
 }
 
-// .Title       : Validate member function of class SVTaskObjectListClass
-// .Description : Validates the inputs of this object and its children
-//				: Only Override in Special Cases
-//				: Note: Normally Override OnValidate
-BOOL SVTaskObjectListClass::Validate()
-{
-	BOOL Result = SVTaskObjectClass::Validate();
-
-	if (Result)
-	{
-		for (int i = 0; i < m_aTaskObjects.GetSize(); i++)
-		{
-			SVTaskObjectClass* pTaskObject = m_aTaskObjects.GetAt(i);
-			if (pTaskObject)
-			{
-				BOOL l_bTemp = pTaskObject->Validate();
-				Result &= l_bTemp;
-			}
-			else
-			{
-				Result = FALSE;
-			}
-		}
-	}
-
-	//if Tool-validation is fail but no message in the Message-List, add one
-	if (FALSE == Result && 0 == getFirstTaskMessage().getMessage().m_MessageCode)
-	{
-		SvStl::MessageContainer message;
-		message.setMessage( SVMSG_SVO_5072_INCONSISTENTDATA, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
-		addTaskMessage( message );
-	}
-
-	if (Result)
-	{
-		Result = OnValidateParameter(AllParameters);
-	}
-
-	return Result;
-}
-
-// .Title       : OnValidate member function of class SVTaskObjectListClass
-// .Description : validates the inputs of this object
-//				: must be overridden
-BOOL SVTaskObjectListClass::OnValidate()
-{
-	BOOL Result = (0 == getFirstTaskMessage().getMessage().m_MessageCode);
-
-	if ( Result )
-	{
-		Result = SVTaskObjectClass::OnValidate();
-		if( !Result && 0 != getFirstTaskMessage().getMessage().m_MessageCode)
-		{
-			SvStl::MessageContainer message;
-			SVStringVector msgList;
-			msgList.push_back(GetName());
-			message.setMessage( SVMSG_SVO_5074_BASECLASSONVALIDATEFAILED, SvOi::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams) );
-			addTaskMessage( message );
-		}
-	}
-
-	if ( Result )
-	{
-		Result = OnValidateParameter(InspectionSettable);
-	}
-
-	if (! Result)
-	{
-		SetInvalid();
-	}
-
-	return Result;
-}
-
 BOOL SVTaskObjectListClass::CloseObject()
 {
 	BOOL Result( true );
@@ -691,7 +617,7 @@ bool SVTaskObjectListClass::DestroyFriendObject(SvOi::IObjectClass& rObject, DWO
 
 		if( SVMFResetInspection == ( context & SVMFResetInspection ) )
 		{
-			GetInspection()->resetAllObjects(true, false);
+			GetInspection()->resetAllObjects();
 		}
 	}
 
@@ -1012,9 +938,9 @@ BOOL SVTaskObjectListClass::getAvailableObjects(SVClassInfoStructListClass* pLis
 	return rc;
 }
 
-bool SVTaskObjectListClass::resetAllOutputListObjects( bool shouldNotifyFriends, bool silentReset )
+bool SVTaskObjectListClass::resetAllOutputListObjects( SvStl::MessageContainerVector *pErrorMessages/*=nullptr */ )
 {
-	bool Result = SVTaskObjectClass::resetAllOutputListObjects( shouldNotifyFriends, silentReset );
+	bool Result = SVTaskObjectClass::resetAllOutputListObjects( pErrorMessages );
 
 	// Try to send message to outputObjectList members
 	for( int i = 0; i < m_aTaskObjects.GetSize(); ++ i )
@@ -1022,7 +948,9 @@ bool SVTaskObjectListClass::resetAllOutputListObjects( bool shouldNotifyFriends,
 		SVTaskObjectClass* l_pObject( m_aTaskObjects[ i ] );
 		if( nullptr != l_pObject )
 		{
-			Result = l_pObject->resetAllOutputListObjects( shouldNotifyFriends, silentReset) && Result;
+			//return-value and error-messages do not be saved here, because this object will call resetAllOutputListObjects by its own and return error-messages to the parents.
+			//this call here is important to reset (resize) the embedded images, so the parents can use it for its reset.
+			l_pObject->resetAllOutputListObjects();
 		}
 	}
 	return Result;
@@ -1030,6 +958,7 @@ bool SVTaskObjectListClass::resetAllOutputListObjects( bool shouldNotifyFriends,
 
 BOOL SVTaskObjectListClass::Run(SVRunStatusClass& RRunStatus)
 {
+	clearRunErrorMessages();
 	SVRunStatusClass ChildRunStatus;
 	ChildRunStatus.m_lResultDataIndex  = RRunStatus.m_lResultDataIndex;
 	ChildRunStatus.Images = RRunStatus.Images;
@@ -1049,7 +978,6 @@ BOOL SVTaskObjectListClass::Run(SVRunStatusClass& RRunStatus)
 				ChildRunStatus.ResetRunStateAndToolSetTimes();
 
 				BOOL l_bTemp = pTaskObject->Run(ChildRunStatus);
-
 				bRetVal &= l_bTemp;
 
 				// Update our Run Status
@@ -1105,18 +1033,31 @@ SVTaskObjectListClass::SVObjectPtrDeque SVTaskObjectListClass::GetPostProcessObj
 	return Objects;
 }
 
-bool SVTaskObjectListClass::resetAllObjects( bool shouldNotifyFriends, bool silentReset )
+bool SVTaskObjectListClass::resetAllObjects( SvStl::MessageContainerVector *pErrorMessages/*=nullptr */ )
 {
-	bool Result = __super::resetAllObjects(shouldNotifyFriends, silentReset);
+	bool Result = __super::resetAllObjects(pErrorMessages);
 
+	SvStl::MessageContainerVector taskErrorMessages;
 	// Notify all...
 	for (int i = 0; i < m_aTaskObjects.GetSize(); i++)
 	{
 		if (m_aTaskObjects.GetAt(i))
 		{
-			Result = (m_aTaskObjects.GetAt(i)->resetAllObjects(shouldNotifyFriends, silentReset) && Result);
+			Result = (m_aTaskObjects.GetAt(i)->resetAllObjects(&taskErrorMessages) && Result);
 		}
 	}
+
+	//set error return from the tasks to the member error container and to the return container if necessary. 
+	if (!taskErrorMessages.empty())
+	{
+		m_ResetErrorMessages.insert(m_ResetErrorMessages.end(), taskErrorMessages.begin(), taskErrorMessages.end());
+		if (nullptr != pErrorMessages)
+		{
+			pErrorMessages->insert(pErrorMessages->end(), taskErrorMessages.begin(), taskErrorMessages.end());
+		}
+	}
+
+	m_isObjectValid.SetValue(1, Result);
 
 	return Result;
 }
@@ -1162,7 +1103,7 @@ void SVTaskObjectListClass::DestroyTaskObject(SVTaskObjectClass& rTaskObject, DW
 
 		if( SVMFResetInspection == ( context & SVMFResetInspection ) )
 		{
-			GetInspection()->resetAllObjects( true, false );
+			GetInspection()->resetAllObjects();
 		}
 	}
 }

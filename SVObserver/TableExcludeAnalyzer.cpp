@@ -60,71 +60,41 @@ BOOL TableExcludeAnalyzer::CreateObject( SVObjectLevelCreateStruct* pCreateStruc
 	return l_bOk;
 }
 
-bool TableExcludeAnalyzer::resetAllObjects( bool shouldNotifyFriends, bool silentReset )
+bool TableExcludeAnalyzer::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	bool Result = ( S_OK == ResetObject() );
-	ASSERT( Result );
-	return( __super::resetAllObjects( shouldNotifyFriends, silentReset ) && Result );
-}
+	bool Result = __super::ResetObject(pErrorMessages);
 
-HRESULT TableExcludeAnalyzer::ResetObject()
-{
-	HRESULT status = __super::ResetObject();
-
-	if (!OnValidateParameter(AllParameters))
+	SVObjectClass* pObject = m_excludeColumnObjectInfo.GetInputObjectInfo().PObject;
+	if (!m_excludeColumnObjectInfo.IsConnected() || nullptr == dynamic_cast<DoubleSortValueObject*>(pObject) 
+		//check if column part of the right table object (The object must be from same tool as this analyzer.)
+		|| nullptr == pObject->GetOwner() || pObject->GetOwner()->GetOwner() != m_ownerObjectInfo.PObject)
 	{
-		status = S_FALSE;
-	}
-
-	return status;
-}
-
-
-BOOL TableExcludeAnalyzer::Validate()
-{
-	BOOL Result = __super::Validate();
-
-	//if Tool-validation is fail but no message in the Message-List, add one
-	if (FALSE == Result && 0 == getFirstTaskMessage().getMessage().m_MessageCode)
-	{
-		SvStl::MessageContainer message;
-		message.setMessage( SVMSG_SVO_5072_INCONSISTENTDATA, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
-		addTaskMessage( message );
-	}
-
-	if (Result)
-	{
-		Result = OnValidateParameter(AllParameters);
-	}
-
-	return Result;
-}
-
-BOOL TableExcludeAnalyzer::OnValidate()
-{
-	BOOL Result = (0 == getFirstTaskMessage().getMessage().m_MessageCode);
-
-	if ( Result )
-	{
-		Result = __super::OnValidate();
-		if( !Result && 0 != getFirstTaskMessage().getMessage().m_MessageCode)
+		Result = false;
+		if (nullptr != pErrorMessages)
 		{
 			SvStl::MessageContainer message;
-			SVStringVector msgList;
-			msgList.push_back(GetName());
-			message.setMessage( SVMSG_SVO_5074_BASECLASSONVALIDATEFAILED, SvOi::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams) );
-			addTaskMessage( message );
+			message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_NoValidColumnConnected, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back( message );
 		}
 	}
 
-	if ( Result )
+	if (!m_excludeLow.isIndirectValue() && !m_excludeHigh.isIndirectValue())
 	{
-		Result = OnValidateParameter(InspectionSettable);
-	}
-
-	if (! Result)
-	{
-		SetInvalid();
+		//check if high greater than low
+		double excludeHigh;
+		double excludeLow;
+		m_excludeHigh.GetValue(excludeHigh);
+		m_excludeLow.GetValue(excludeLow);
+		if (excludeHigh<excludeLow)
+		{
+			Result = false;
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer message;
+				message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ExcludeHighMustBeHigher, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				pErrorMessages->push_back( message );
+			}
+		}
 	}
 
 	return Result;
@@ -170,42 +140,6 @@ BOOL TableExcludeAnalyzer::onRun( SVRunStatusClass& rRunStatus )
 	}
 
 	return returnValue;
-}
-
-bool TableExcludeAnalyzer::ValidateOfflineParameters ()
-{
-	bool Result = __super::ValidateOfflineParameters();
-	if (Result)
-	{
-		SvOi::IObjectClass* pObject = m_excludeColumnObjectInfo.GetInputObjectInfo().PObject;
-		if (!m_excludeColumnObjectInfo.IsConnected() || nullptr == dynamic_cast<DoubleSortValueObject*>(pObject))
-		{
-			SvStl::MessageContainer message;
-			message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_NoValidColumnConnected, SvStl::SourceFileParams(StdMessageParams) );
-			addTaskMessage( message );
-			Result = false;
-		}
-		Result &= m_excludeHigh.IsValid() ? true : false;
-		Result &= m_excludeLow.IsValid() ? true : false;
-
-		if (!m_excludeLow.isIndirectValue() && !m_excludeHigh.isIndirectValue())
-		{
-			//check if high greater than low
-			double excludeHigh;
-			double excludeLow;
-			m_excludeHigh.GetValue(excludeHigh);
-			m_excludeLow.GetValue(excludeLow);
-			if (excludeHigh<excludeLow)
-			{
-				SvStl::MessageContainer message;
-				message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ExcludeHighMustBeHigher, SvStl::SourceFileParams(StdMessageParams) );
-				addTaskMessage( message );
-				Result = false;
-			}
-		}
-	}
-
-	return Result;
 }
 #pragma endregion Protected Methods
 

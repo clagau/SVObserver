@@ -335,7 +335,7 @@ void SVTADlgColorThresholdAdjustment::updateGraphDisplay()
 	{
 		SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(m_pTool->GetInspection());
 
-		m_pTool->resetAllObjects(true, false);
+		m_pTool->resetAllObjects();
 
 		if( nullptr != pInspection )
 		{

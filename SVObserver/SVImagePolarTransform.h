@@ -30,17 +30,13 @@ public:
 
 	virtual HRESULT IsInputImage( SVImageClass *p_psvImage ) override;
 
-	virtual BOOL OnValidate() override;
-
-	virtual bool resetAllObjects( bool shouldNotifyFriends, bool silentReset ) override;
-
-	HRESULT ResetObject();
+	bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr);
 
 	SVImageClass* GetOutputImage();
 
 	BOOL SetDefaultFormulas();
 
-	SVImageClass* getInputImage();
+	SVImageClass* getInputImage() const;
 
 protected:
 	void NewCorrectAngles( double& RDStartAngle, double& RDEndAngle );
@@ -85,5 +81,7 @@ private:
 	static double g_dMaxAngularDistance;
 
 	HRESULT CollectInputImageNames();
+
+	bool ValidateLocal(SvStl::MessageContainerVector *pErrorMessages=nullptr) const;
 };
 

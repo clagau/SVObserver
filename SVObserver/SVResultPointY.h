@@ -25,7 +25,6 @@ public:
 
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
 	virtual BOOL CloseObject() override;
-	virtual BOOL OnValidate() override;
 
 protected:
 	SVPointValueObjectClass* getInputPoint();

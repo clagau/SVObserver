@@ -84,7 +84,7 @@ BOOL SVShiftTool::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 	return l_Status;
 }
 
-HRESULT SVShiftTool::ResetObject()
+bool SVShiftTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	SVGUID l_ParentGuid;
 	SVImageClass* l_pInputImage = GetImageInput();
@@ -101,8 +101,7 @@ HRESULT SVShiftTool::ResetObject()
 
 	m_OutputImage.UpdateImage( l_ParentGuid );
 	
-	HRESULT l_Status = SVToolClass::ResetObject();
-	return l_Status;
+	return SVToolClass::ResetObject(pErrorMessages) && ValidateLocal(pErrorMessages);
 }
 
 HRESULT SVShiftTool::SetImageExtentToParent( unsigned long p_ulIndex )
@@ -156,7 +155,8 @@ bool SVShiftTool::DoesObjectHaveExtents() const
 #pragma region Protected Methods
 BOOL SVShiftTool::onRun( SVRunStatusClass& p_rRunStatus )
 {
-	BOOL l_Status = SVToolClass::onRun( p_rRunStatus );
+	//@WARNING[MZA][7.50][17.01.2017] Not sure if we need to check ValidateLocal in Run-mode, maybe it is enough to check it in ResetObject
+	BOOL l_Status = SVToolClass::onRun( p_rRunStatus ) && ValidateLocal(&m_RunErrorMessages);
 	long l_Mode;
 
 	if( l_Status )
@@ -331,30 +331,6 @@ BOOL SVShiftTool::onRun( SVRunStatusClass& p_rRunStatus )
 		{
 			m_OutputImage.CopyImageTo(p_rRunStatus.Images);
 		}
-	}
-	return l_Status;
-}
-
-BOOL SVShiftTool::OnValidate()
-{
-	BOOL l_Status = true;
-	BOOL l_PerformTranslation = false;
-	long l_Mode = SV_SHIFT_NONE;
-
-	m_evoShiftMode.GetValue(l_Mode);
-	if ( SV_SHIFT_NONE != l_Mode )
-	{
-		l_PerformTranslation = true;
-	}
-
-	l_Status = l_Status && ( nullptr != GetImageInput() );
-	l_Status = l_Status && ( !l_PerformTranslation || nullptr != GetTranslationXInput() );
-	l_Status = l_Status && ( !l_PerformTranslation || nullptr != GetTranslationYInput() );
-	l_Status = l_Status && SVToolClass::OnValidate();
-
-	if( !l_Status )
-	{
-		SetInvalid();
 	}
 	return l_Status;
 }
@@ -562,19 +538,6 @@ void SVShiftTool::SetAttributeData()
 	}
 }
 
-BOOL SVShiftTool::IsValid()
-{
-	BOOL bValid = true;
-
-	ToolSizeAdjustTask* pToolSizeAdjustTask = nullptr;
-	pToolSizeAdjustTask = ToolSizeAdjustTask::GetToolSizeAdjustTask(this);
-	if ( nullptr != pToolSizeAdjustTask )
-	{
-		bValid = pToolSizeAdjustTask->OnValidate();
-	}
-	return SVToolClass::IsValid() & bValid;
-}
-
 EAutoSize SVShiftTool::GetAutoSizeEnabled()
 {
 	long shiftMode;
@@ -584,6 +547,34 @@ EAutoSize SVShiftTool::GetAutoSizeEnabled()
 		return EnableSize;
 	}
 	return EnableAll;
+}
+
+bool SVShiftTool::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) const
+{
+	bool Result = true;
+	long mode = SV_SHIFT_NONE;
+	m_evoShiftMode.GetValue(mode);
+
+	if ( nullptr == GetImageInput() )
+	{
+		Result = false;
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_NoSourceImage, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
+	}
+	if ( SV_SHIFT_NONE != mode && (nullptr == GetTranslationXInput() || nullptr == GetTranslationYInput()) )
+	{
+		Result = false;
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
+	}
+
+	return Result;
 }
 #pragma endregion Private Methods
 

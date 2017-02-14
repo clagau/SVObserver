@@ -105,31 +105,21 @@ const SVClock::SVTimeStamp& SVImageObjectClass::GetLastResetTimeStamp() const
 	return m_LastReset;
 }
 
-HRESULT SVImageObjectClass::ResetObject()
+bool SVImageObjectClass::ResetObject( SvStl::MessageContainerVector *pErrorContainer )
 {
-	HRESULT l_hrOk = S_OK;
-
-	if ( ! CreateBufferArrays() )
+	bool Result = CreateBufferArrays(pErrorContainer);
+	
+	if( Result )
 	{
-		//@WARNING  S_FALSE should probably not be used here.
-		l_hrOk = S_FALSE;  
+		UpdateTimeStamp();
 	}
 
-	if( S_OK == l_hrOk )
-	{
-		l_hrOk = UpdateTimeStamp();
-	}
-
-	return l_hrOk;
+	return Result;
 }
 
-HRESULT SVImageObjectClass::UpdateTimeStamp()
+void SVImageObjectClass::UpdateTimeStamp()
 {
-	HRESULT l_hrOk = S_OK;
-
 	m_LastReset = SVClock::GetTimeStamp();
-
-	return l_hrOk;
 }
 
 bool SVImageObjectClass::Clear( long lIndex, unsigned long ulValue )
@@ -640,9 +630,9 @@ SVImageObjectClass::SVImageObjectElement::SVImageObjectElement( size_t p_MasterI
 {
 }
 
-bool SVImageObjectClass::CreateBufferArrays()
+bool SVImageObjectClass::CreateBufferArrays(SvStl::MessageContainerVector *pErrorContainer)
 {
-	bool Result( true );
+	bool Result = true;
 	bool l_ValidExtents = true;
 
 	DestroyBufferArrays();
@@ -661,49 +651,46 @@ bool SVImageObjectClass::CreateBufferArrays()
 		}
 	}
 
-	if( l_ValidExtents && Result )
+	if( l_ValidExtents )
 	{
 		if( m_HandleCount < 1 )
 		{
 			m_HandleCount = 1;
 		}
 
-		Result = CreateImageHandleArray( m_HandleCount );
+		Result = CreateImageHandleArray( m_HandleCount, pErrorContainer );
 
-		if( Result )
+		// JMS - This block is used to initialize non-embedded image objects
+		for( long i = m_HandleCount - 1; Result && 0 <= i; --i )
 		{
-			// JMS - This block is used to initialize non-embedded image objects
+			Result &= UnlockIndex( i );
+			Result &= LockIndex( i );
 
-			for( long i = m_HandleCount - 1; Result && 0 <= i; --i )
+			if( Result && m_ParentImagePtr.empty() )
 			{
-				Result &= UnlockIndex( i );
-				Result &= LockIndex( i );
+				SVSmartHandlePointer l_svOutBuffer;
+				Result = GetImageHandle( i, l_svOutBuffer );
 
-				if( Result && m_ParentImagePtr.empty() )
+				if( Result )
 				{
-					SVSmartHandlePointer l_svOutBuffer;
-					
-					Result = GetImageHandle( i, l_svOutBuffer );
+					SVImageBufferHandleImage l_MilHandle;
+					l_svOutBuffer->GetData( l_MilHandle );
 
-					if( Result )
-					{
-						SVImageBufferHandleImage l_MilHandle;
-						l_svOutBuffer->GetData( l_MilHandle );
+					SVMatroxBufferInterface::SVStatusCode l_Code;
 
-						SVMatroxBufferInterface::SVStatusCode l_Code;
+					l_Code = SVMatroxBufferInterface::ClearBuffer( l_MilHandle.GetBuffer(), 0.0 );
 
-						l_Code = SVMatroxBufferInterface::ClearBuffer( l_MilHandle.GetBuffer(), 0.0 );
-
-						Result = l_Code == SVMEE_STATUS_OK;
-					}
+					Result = l_Code == SVMEE_STATUS_OK;
 				}
 			}
-		}
-	}
 
-	if( 0 <= m_CurrentDMIndexHandle.GetIndex() && m_CurrentDMIndexHandle.GetIndex() < static_cast< long >( m_ImageHandleArray.size() ) )
-	{
-		Result &= !( m_ImageHandleArray[ m_CurrentDMIndexHandle.GetIndex() ].empty() );
+			if (!Result && nullptr != pErrorContainer)
+			{
+				SvStl::MessageContainer message;
+				message.setMessage( SVMSG_SVO_5065_COULDNOTCREATEIMAGEBUFFER, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
+				pErrorContainer->push_back(message);
+			}
+		}
 	}
 
 	return Result;
@@ -716,48 +703,50 @@ bool SVImageObjectClass::DestroyBufferArrays()
 	return Result;
 }
 
-bool SVImageObjectClass::CreateImageBuffer(SVImageInfoClass &rInfo, long p_Index, SVImageObjectElementPtr& p_Handle )
+bool SVImageObjectClass::CreateImageBuffer(SVImageInfoClass &rInfo, long p_Index, SVImageObjectElementPtr& p_Handle, SvStl::MessageContainerVector *pErrorContainer )
 {
 	bool Result( true );
-	HRESULT hr = S_OK;
-	
+
 	DestroyImageBuffer( p_Handle );
 
 	SVImageObjectElementPtr l_IndexHandle;
 	SVSmartHandlePointer l_Handle;
 
-	hr = SVImageProcessingClass::CreateImageBuffer( rInfo, l_Handle );
-	if (S_FALSE == hr)
+	HRESULT hr = SVImageProcessingClass::CreateImageBuffer( rInfo, l_Handle );
+	if (S_OK != hr)
 	{
-		hr = SVMSG_SVO_5065_COULDNOTCREATEIMAGEBUFFER;
-	}
-	else
-	if (SVMSG_SVO_5067_IMAGEALLOCATIONFAILED == hr)
-	{
-		SVTaskObjectClass*	pParentTask = dynamic_cast <SVTaskObjectClass*> (rInfo.GetOwner());
-
-		if ( nullptr == pParentTask || SVToolObjectType != pParentTask->GetObjectType() )
+		Result = false;
+		if (nullptr != pErrorContainer)
 		{
-			// Image does not have a Tool for a parent. Not sure if this can 
-			// happen.
-			SvStl::MessageMgrStd Exception(  SvStl::LogAndDisplay );
-			Exception.setMessage( hr, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), SvOi::ProgCode_5066_CreateImageBuffer);
-		}
-		else
-		{
-			SvStl::MessageContainer message;
-			message.setMessage( hr, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
-			pParentTask->addTaskMessage( message );
+			if (SVMSG_SVO_5067_IMAGEALLOCATIONFAILED == hr)
+			{
+				SvStl::MessageContainer message;
+				message.setMessage( hr, SvOi::Tid_Default, SvStl::SourceFileParams(StdMessageParams) );
+				pErrorContainer->push_back(message);
+			}
+			else 
+			{
+				SvStl::MessageContainer message;
+				message.setMessage( SVMSG_SVO_5065_COULDNOTCREATEIMAGEBUFFER, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
+				pErrorContainer->push_back(message);
+			}
 		}
 	}
 
-	Result = !( l_Handle.empty() ) && SUCCEEDED (hr);
-
-	if( Result )
+	if( !l_Handle.empty() && Result )
 	{
 		p_Handle = new SVImageObjectElement( p_Index, SVImageObjectClassPtr(), l_Handle );
 
-		Result = !( p_Handle.empty() );
+		if(p_Handle.empty())
+		{
+			Result = false;
+			if (nullptr != pErrorContainer)
+			{
+				SvStl::MessageContainer message;
+				message.setMessage( SVMSG_SVO_5065_COULDNOTCREATEIMAGEBUFFER, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
+				pErrorContainer->push_back(message);
+			}
+		}
 	}
 	else
 	{
@@ -838,7 +827,7 @@ bool SVImageObjectClass::GetArrayImageHandle( long lIndex, SVSmartHandlePointer&
 	return Result;
 }
 
-bool SVImageObjectClass::CreateImageHandleArray( long lSize ) 
+bool SVImageObjectClass::CreateImageHandleArray( long lSize, SvStl::MessageContainerVector *pErrorContainer ) 
 {
 	bool Result( true );
 
@@ -860,10 +849,17 @@ bool SVImageObjectClass::CreateImageHandleArray( long lSize )
 			{
 				Result = CreateImageChildBuffer( m_ParentImagePtr->GetImageInfo(), l_ParentHandlePtr, m_ImageInfo, l, p_Handle );
 			}
+
+			if (!Result && nullptr != pErrorContainer)
+			{
+				SvStl::MessageContainer message;
+				message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_CreateChildBufferFailed, SvStl::SourceFileParams(StdMessageParams) );
+				pErrorContainer->push_back(message);
+			}
 		}
 		else
 		{
-			Result = CreateImageBuffer( m_ImageInfo, l, p_Handle );
+			Result = CreateImageBuffer( m_ImageInfo, l, p_Handle, pErrorContainer );
 		}
 
 		if( Result )
@@ -886,6 +882,12 @@ bool SVImageObjectClass::CreateImageHandleArray( long lSize )
 		}
 
 		Result = SetCurrentIndex( l_DMIndexHandle );
+		if( ! Result && nullptr != pErrorContainer )
+		{
+			SvStl::MessageContainer message;
+			message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_CreateImageHandleArrayFailed, SvStl::SourceFileParams(StdMessageParams) );
+			pErrorContainer->push_back(message);
+		}
 	}
 
 	if( ! Result )

@@ -87,7 +87,6 @@ void SVObjectClass::init()
 	m_objectDepth = 0;	// Standard Depth
 
 	m_isObjectValid		  = false;
-	m_validationReferenceID = SV_GUID_NULL;
 	m_embeddedID = SV_GUID_NULL;
 
 	// Set object Info...
@@ -138,6 +137,21 @@ SVObjectClass::~SVObjectClass()
 	m_outObjectInfo.DisconnectAllInputs();
 
 	SVObjectManagerClass::Instance().CloseUniqueObjectID( this );
+}
+
+bool SVObjectClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
+{
+	m_isObjectValid = m_isCreated;
+	if (!m_isObjectValid)
+	{
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_NotCreated, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
+		return false;
+	}
+	return true;
 }
 
 SVObjectClass::SVObjectPtrDeque SVObjectClass::GetPreProcessObjects() const
@@ -283,15 +297,6 @@ BOOL SVObjectClass::CloseObject()
 }
 
 /*
-This method return the validity state of this object.
-*/
-BOOL SVObjectClass::IsObjectValid( GUID& rValidationReferenceID )
-{
-	rValidationReferenceID = m_validationReferenceID;
-	return m_isObjectValid;
-}
-
-/*
 This method returns whether this object is a descendant of PAncestorObject.
 */
 BOOL SVObjectClass::IsDescendantOf( SVObjectClass* pAncestorObject )
@@ -358,26 +363,6 @@ BOOL SVObjectClass::InitObject( SVObjectClass* pObject )
 		return true;
 	}
 	return false;
-}
-
-/*
-Routing Version of Validate.  Validates Local Scope and all owned objects. Here only for polymorphism.
-*/
-BOOL SVObjectClass::Validate()
-{
-	BOOL l_bOk = OnValidate();
-
-	assert( l_bOk );
-
-	return l_bOk;
-}
-
-/*
-Non Routing Version of Validate. Validates only Local Scope.
-*/
-BOOL SVObjectClass::OnValidate()
-{
-	return ( m_isObjectValid = m_isCreated );
 }
 
 /*

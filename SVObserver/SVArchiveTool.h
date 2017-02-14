@@ -39,7 +39,7 @@ public:
 	virtual ~SVArchiveTool();
 
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
-	virtual HRESULT ResetObject() override;
+	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 	void UpdateTaskObjectOutputList();
 	void RebuildResultsArchiveList();
 	void AddImageToArray(SVImageClass* pImage);
@@ -53,20 +53,12 @@ public:
 	BOOL SetFileArchive( LPCTSTR lpszName );
 	BOOL SetImageArchivePath( LPCTSTR lpszName );
 
-	virtual BOOL Validate() override;
-	virtual BOOL OnValidate() override;
 	virtual BOOL SetObjectDepth( int NewObjectDepth ) override;
 	virtual BOOL SetObjectDepthWithIndex( int NewObjectDepth, int NewLastSetIndex ) override;
 
 	static long CalculateImageMemory( SVImageClass* p_pImage );
 	static long CalculateImageMemory( std::vector<SVImageClass*> p_apImages );
 
-	//--ValidateArvhiveTool - called from the Tool Adjustment Dialog
-	//-- This will cause the Archive Tool to run through a full validation cycle
-	//--Previously the OnValidate would only run through the initial time or every 10th time
-	//--This method guarantees that the OnValidate will run. 
-	HRESULT ValidateArchiveTool();
-	
 	//--IsImagePathUsingKeywords - Called from SVArchiveRecord::BuildArchiveImageFilePath
 	//--when archiving images it needs to know if the images has keywords in it
 	bool isImagePathUsingKeywords();
@@ -80,22 +72,13 @@ public:
 	virtual void goingOffline() override;
 	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const SVString& rOldName) override;
 #pragma endregion Methods to replace processMessage
+
+	//@TODO[MZA][7.50][22.11.2016] The following parameters should be move to private, but now it is needed public because some other classes use it directly
 	//
 	// The arrays for results and images to archive.
 	//
 	SVArchiveRecordsArray  m_arrayResultsInfoObjectsToArchive;
 	SVArchiveRecordsArray  m_arrayImagesInfoObjectsToArchive;
-
-	//
-	// A string value to represent all the Guids for the
-	// images so they can
-	// be stored and retrieved from storage.
-	//
-	SVStringValueObjectClass    m_stringArchiveImageGuids_OBSOLETE;
-	SVStringValueObjectClass    m_stringArchiveResultGuids_OBSOLETE;
-	SVStringValueObjectClass    m_svoArchiveImageNames;
-	/// This variable holds an array of result names with an Zero based Index (In the svx  files these names have also a zero based index). 
-	SVStringValueObjectClass    m_svoArchiveResultNames;
 
 	SVDWordValueObjectClass     m_dwAppendArchiveFile;
 	SVDWordValueObjectClass     m_dwArchiveStopAtMaxImages;
@@ -118,32 +101,46 @@ protected:
 	// Data elements.
 	//
 	HRESULT WriteBuffers();
-    CFile m_fileArchive;       // The file for archived results.
-	UINT m_uiValidateCount;
 
-    //
-    // A flag used to indicate a first call to onRun() after a
-    // going online message.
-    //
-    BOOL m_bInitializedForRun;
-
-	SVStringVector m_ArchiveStringBuffer;
 
 private:
 	void initializeArchiveTool();
-    HRESULT initializeOnRun();
-	HRESULT AllocateImageBuffers();
-	BOOL CreateTextArchiveFile();
+	bool initializeOnRun(SvStl::MessageContainerVector *pErrorMessages=nullptr);
+	bool AllocateImageBuffers(SvStl::MessageContainerVector *pErrorMessages=nullptr);
+	bool CreateTextArchiveFile(SvStl::MessageContainerVector *pErrorMessages=nullptr);
+	bool ValidateImageSpace( bool shouldFullCheck, SvStl::MessageContainerVector *pErrorMessages=nullptr );
+	bool ValidateOnRun(SvStl::MessageContainerVector *pErrorMessages=nullptr);
+
+
+private:
+
+	//
+	// A string value to represent all the Guids for the
+	// images so they can
+	// be stored and retrieved from storage.
+	//
+	SVStringValueObjectClass    m_stringArchiveImageGuids_OBSOLETE;
+	SVStringValueObjectClass    m_stringArchiveResultGuids_OBSOLETE;
+	SVStringValueObjectClass    m_svoArchiveImageNames;
+	/// This variable holds an array of result names with an Zero based Index (In the svx  files these names have also a zero based index). 
+	SVStringValueObjectClass    m_svoArchiveResultNames;
+	
+	SVStringVector m_ArchiveStringBuffer;
+
+	//
+	// A flag used to indicate a first call to onRun() after a
+	// going online message.
+	//
+	bool m_bInitializedForRun;
 
 	SVStringValueObjectClass	m_stringImageFileRootPath;
 	SVStringValueObjectClass	m_stringFileArchivePath;
 
-	//--m_bDriveError will will hold the error state of the drive.
-	//--will be true if the hard drive has less than 100 MG of free space
-	//--if images are selected for archive.
-	bool m_bDriveError;
 	SVString m_ImageTranslatedPath;
 	bool m_ArchiveImagePathUsingKW;
+
+	CFile m_fileArchive;       // The file for archived results.
+	UINT m_uiValidateCount;
 };
 
 

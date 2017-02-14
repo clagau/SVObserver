@@ -12,6 +12,7 @@
 #include "SVUtilityLibrary\NameGuidList.h"
 #include "SVUtilityLibrary\SVString.h"
 #include "ObjectInterfaces\SVObjectTypeInfoStruct.h"
+#include "SVStatusLibrary\MessageContainer.h"
 #pragma endregion Includes
 
 namespace Seidenader
@@ -44,6 +45,7 @@ namespace Seidenader
 			HRESULT ConnectToImage(const SVString& inputName, const SVString& name, const GUID& rInstanceID = GUID_NULL) const;
 			HRESULT SaveImage(const SVString& rImageName, const SVString& rFilename);
 			bool IsToolValid() const;
+			HRESULT ResetTask(SvStl::MessageContainerVector& messages) const;
 			HRESULT ToolRunOnce();
 			
 			SVObjectTypeInfoStruct GetImageTypeInfo(const GUID& imageID) const;

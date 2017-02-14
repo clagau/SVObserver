@@ -220,23 +220,25 @@ BOOL SVImageToolClass::SetDefaultFormulas()
 	return bRetVal;
 }
 
-HRESULT SVImageToolClass::ResetObject()
+bool SVImageToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	HRESULT l_hrOk = S_OK;
+	bool Result = true;
 
 	if( S_OK != UpdateTranslation() )
 	{
-		l_hrOk = S_FALSE;
+		Result = false;
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_UpdateTranslationFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
 	}
 
-	if( S_OK != SVToolClass::ResetObject() )
-	{
-		l_hrOk = S_FALSE;
-	}
+	Result = SVToolClass::ResetObject(pErrorMessages) && Result;
 
 	UpdateImageWithExtent( 1 );
 
-	return l_hrOk;
+	return Result;
 } 
 
 BOOL SVImageToolClass::onRun( SVRunStatusClass& RRunStatus )
@@ -311,18 +313,3 @@ HRESULT SVImageToolClass::SetImageExtentToParent(unsigned long p_ulIndex )
 	}
 	return l_hrOk;
 }
-
-BOOL SVImageToolClass::IsValid()
-{
-	BOOL bValid = TRUE;
-
-	ToolSizeAdjustTask* pToolSizeAdjustTask = nullptr;
-	pToolSizeAdjustTask = ToolSizeAdjustTask::GetToolSizeAdjustTask(this);
-	if(nullptr != pToolSizeAdjustTask)
-	{
-			bValid =  pToolSizeAdjustTask->OnValidate();
-	}
-
-	return SVToolClass::IsValid() & bValid ;
-}
-

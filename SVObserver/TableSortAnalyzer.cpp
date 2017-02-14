@@ -56,18 +56,25 @@ BOOL TableSortAnalyzer::CreateObject( SVObjectLevelCreateStruct* pCreateStructur
 	return l_bOk;
 }
 
-bool TableSortAnalyzer::resetAllObjects( bool shouldNotifyFriends, bool silentReset )
+bool TableSortAnalyzer::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	bool Result = ( S_OK == ResetObject() );
-	ASSERT( Result );
-	return( __super::resetAllObjects( shouldNotifyFriends, silentReset ) && Result );
-}
+	bool Result = __super::ResetObject(pErrorMessages);
 
-HRESULT TableSortAnalyzer::ResetObject()
-{
-	HRESULT status = __super::ResetObject();
+	SVObjectClass* pObject = m_sortColumnObjectInfo.GetInputObjectInfo().PObject;
+	if (!m_sortColumnObjectInfo.IsConnected() || nullptr == dynamic_cast<DoubleSortValueObject*>(pObject)
+		//check if column part of the right table object (The object must be from same tool as this analyzer.)
+		|| nullptr == pObject->GetOwner() || pObject->GetOwner()->GetOwner() != m_ownerObjectInfo.PObject)
+	{
+		Result = false;
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer message;
+			message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_NoValidColumnConnected, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back( message );
+		}
+	}
 
-	if (OnValidateParameter(AllParameters))
+	if (Result)
 	{
 		//allocate m_tmpValues
 		DoubleSortValueObject* pColumnValues = dynamic_cast<DoubleSortValueObject*>(m_sortColumnObjectInfo.GetInputObjectInfo().PObject);
@@ -77,61 +84,6 @@ HRESULT TableSortAnalyzer::ResetObject()
 			size_t sizeTmp = sortContainer.capacity();
 			CheckAndResizeTmpArray(sizeTmp);
 		}
-	}
-	else
-	{
-		status = S_FALSE;
-	}
-
-	return status;
-}
-
-
-BOOL TableSortAnalyzer::Validate()
-{
-	BOOL Result = __super::Validate();
-
-	//if Task-validation is fail but no message in the Message-List, add one
-	if (FALSE == Result && 0 == getFirstTaskMessage().getMessage().m_MessageCode)
-	{
-		SvStl::MessageContainer message;
-		message.setMessage( SVMSG_SVO_5072_INCONSISTENTDATA, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
-		addTaskMessage( message );
-	}
-
-	if (Result)
-	{
-		Result = OnValidateParameter(AllParameters);
-	}
-
-	return Result;
-}
-
-BOOL TableSortAnalyzer::OnValidate()
-{
-	BOOL Result = (0 == getFirstTaskMessage().getMessage().m_MessageCode);
-
-	if ( Result )
-	{
-		Result = __super::OnValidate();
-		if( !Result && 0 != getFirstTaskMessage().getMessage().m_MessageCode)
-		{
-			SvStl::MessageContainer message;
-			SVStringVector msgList;
-			msgList.push_back(GetName());
-			message.setMessage( SVMSG_SVO_5074_BASECLASSONVALIDATEFAILED, SvOi::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams) );
-			addTaskMessage( message );
-		}
-	}
-
-	if ( Result )
-	{
-		Result = OnValidateParameter(InspectionSettable);
-	}
-
-	if (! Result)
-	{
-		SetInvalid();
 	}
 
 	return Result;
@@ -187,24 +139,6 @@ BOOL TableSortAnalyzer::onRun( SVRunStatusClass& rRunStatus )
 	}
 
 	return returnValue;
-}
-
-bool TableSortAnalyzer::ValidateOfflineParameters ()
-{
-	bool Result = __super::ValidateOfflineParameters();
-	if (Result)
-	{
-		SvOi::IObjectClass* pObject = m_sortColumnObjectInfo.GetInputObjectInfo().PObject;
-		if (!m_sortColumnObjectInfo.IsConnected() || nullptr == dynamic_cast<DoubleSortValueObject*>(pObject))
-		{
-			SvStl::MessageContainer message;
-			message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_NoValidColumnConnected, SvStl::SourceFileParams(StdMessageParams) );
-			addTaskMessage( message );
-			Result = false;
-		}
-	}
-
-	return Result;
 }
 #pragma endregion Protected Methods
 

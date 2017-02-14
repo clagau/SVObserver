@@ -112,41 +112,32 @@ void SVLuminanceAnalyzerClass::init()
 	{
 		Add( pAnalyzerResult );
 	}
-
-
-
-
 }
 
-
-BOOL SVLuminanceAnalyzerClass::OnValidate ()
+bool SVLuminanceAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	bool Valid(true);
-	if (!SVImageAnalyzerClass::OnValidate ())
+	bool Valid = __super::ResetObject(pErrorMessages);
+
+	if (msvHistResultID.empty())
 	{
-		//Error code set inside SVImageAnalyzerClass::OnValidate ()
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg(  SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16094, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
 		Valid = false;
-	}
-	else if (msvHistResultID.empty())
-	{
-		SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16094);
-		Valid = false;	
 	}
 	else if (0 == msvplHistValues.size())
 	{
-		SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16095);
-		Valid = false;	
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg(  SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16095, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
+		Valid = false;
 	}
 
-	if (false == Valid)
-   {
-       SetInvalid();
-       return false;
-   }
-   m_isObjectValid.SetValue (1, true);
-   return true;
+	return Valid;
 }
 
 SVLuminanceAnalyzerClass::~SVLuminanceAnalyzerClass()

@@ -35,7 +35,6 @@ public:
 	SVString m_StringFileName;
 
 	SVBoolValueObjectClass m_bWarnOnFailedRead;
-	virtual bool resetAllObjects( bool shouldNotifyFriends, bool silentReset ) override;
 	SVStringValueObjectClass msv_szBarCodeValue;
 	SVStringValueObjectClass msv_szRegExpressionValue;
 	SVLongValueObjectClass msv_lBarCodeType;
@@ -69,15 +68,14 @@ public:
 	virtual ~SVBarCodeAnalyzerClass();
 
 	void CloseMil();
-	BOOL InitMil();
+	bool InitMil(SvStl::MessageContainerVector *pErrorMessages=nullptr);
 	virtual BOOL CreateObject(SVObjectLevelCreateStruct* PCreateStructure) override;
-	virtual BOOL OnValidate() override;
 
 	SVResultClass* GetResultObject();
 	
 	virtual BOOL CloseObject() override;
 
-	virtual HRESULT ResetObject() override;
+	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 	static bool CharIsControl(TCHAR p_Char);
 
 protected:
@@ -85,10 +83,8 @@ protected:
 	virtual BOOL onRun(SVRunStatusClass &RRunStatus) override;
 
 private:
-	BOOL SaveRegExpression( BOOL DisplayErrorMessage = TRUE );
-	BOOL LoadRegExpression( BOOL DisplayErrorMessage = TRUE );
-
-	SvOi::MessageTextEnum m_errId;							// for errorEvent
+	bool SaveRegExpression( SvStl::MessageContainerVector *pErrorMessages=nullptr );
+	bool LoadRegExpression( bool DisplayErrorMessage = true, SvStl::MessageContainerVector *pErrorMessages=nullptr );
 
 	bool m_bHasLicenseError;
 };

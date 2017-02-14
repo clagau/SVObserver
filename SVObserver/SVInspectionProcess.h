@@ -81,7 +81,7 @@ public:
 	SVInspectionProcess( SVObjectClass *pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVINSPECTIONOBJECT );
 	virtual ~SVInspectionProcess();
 
-	virtual bool resetAllObjects( bool shouldNotifyFriends, bool silentReset ) override;
+	virtual bool resetAllObjects( SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 	virtual BOOL GetChildObjectByName( LPCTSTR tszName, SVObjectClass** ppObject ) override;
 
 	virtual HRESULT GetChildObject( SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index = 0 ) const override;
@@ -94,9 +94,7 @@ public:
 	virtual void SetName( LPCTSTR StrString ) override;
 
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStruct ) override;
-	virtual HRESULT ResetObject() override;
-	virtual BOOL OnValidate() override;
-	virtual BOOL Validate() override;
+	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	virtual HRESULT RegisterSubObject( SVObjectClass* pObject ) override;
 	virtual HRESULT UnregisterSubObject( SVObjectClass* pObject ) override;
@@ -182,7 +180,7 @@ public:
 	SVImageClass* GetRGBMainImage();
 	SVImageClass* GetHSIMainImage();
 
-	void SetInvalid();
+	virtual void SetInvalid() override;
 
 	HRESULT RebuildInspection();
 	void ValidateAndInitialize( bool p_Validate, bool p_IsNew );
@@ -252,11 +250,6 @@ public:
 	//************************************
 	bool   LoopOverTools(pToolFunc pf, int& counter ); 
 	
-	//************************************
-	//! Clear the tool messages
-	//************************************
-	void clearToolMessages();
-
 	//************************************
 	//! Get the tool messages
 	//! \param rInserter [out] reference to an inserter iterator

@@ -248,33 +248,13 @@ SVStaticStringValueObjectClass* SVWindowToolClass::GetInputImageNames()
 	return &m_svSourceImageNames;
 }
 
-HRESULT SVWindowToolClass::ResetObject()
+bool SVWindowToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	HRESULT l_Status = SVToolClass::ResetObject();
+	bool Result = SVToolClass::ResetObject(pErrorMessages);
 
 	UpdateImageWithExtent( 1 );
 
-	return l_Status;
-}
-
-BOOL SVWindowToolClass::IsValid()
-{
-	BOOL l_bValid = TRUE;
-	for( SVTaskObjectPtrVector::iterator it = m_aTaskObjects.begin() ; it != m_aTaskObjects.end() ; ++it)
-	{
-		SVTaskObjectClass* pTask = *it;
-		l_bValid &= pTask->OnValidate();
-	}
-
-
-	ToolSizeAdjustTask* pToolSizeAdjustTask = nullptr;
-	pToolSizeAdjustTask = ToolSizeAdjustTask::GetToolSizeAdjustTask(this);
-	if(pToolSizeAdjustTask)
-	{
-		l_bValid = l_bValid &&  pToolSizeAdjustTask->OnValidate();
-	}
-	
-	return SVToolClass::IsValid() & l_bValid ;
+	return Result;
 }
 
 BOOL SVWindowToolClass::onRun( SVRunStatusClass& RRunStatus )

@@ -110,7 +110,7 @@ SVIODoc* SVIOController::GetIODoc() const
 	return m_pIODoc;
 }
 
-BOOL SVIOController::RebuildOutputList()
+bool SVIOController::RebuildOutputList()
 {
 	SVOutputObjectArray ppNewOutputs;
 
@@ -119,7 +119,7 @@ BOOL SVIOController::RebuildOutputList()
 
 	if( nullptr == pConfig || nullptr == pConfig->GetOutputObjectList( ) )
 	{
-		return FALSE;
+		return false;
 	}
 
 	//Start of check to see if there is a raid failure
@@ -139,7 +139,7 @@ BOOL SVIOController::RebuildOutputList()
 		return SetRaidErrorBit( true );
 	}
 
-	return TRUE;
+	return true;
 }
 
 BOOL SVIOController::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent )
@@ -253,48 +253,49 @@ void SVIOController::SetName( LPCTSTR StrString )
 	}
 }
 
-bool SVIOController::resetAllObjects( bool shouldNotifyFriends, bool silentReset )
+bool SVIOController::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	bool Result = ( S_OK == ResetObject() );
-	ASSERT( Result );
-	return Result;
-}
+	bool Result = __super::ResetObject(pErrorMessages);
 
-HRESULT SVIOController::ResetObject()
-{
-	HRESULT l_hrOk = S_OK;
-
-	if (nullptr == m_pModuleReady || nullptr == m_pModuleReady->m_pValueObject || !m_pModuleReady->m_pValueObject->resetAllObjects(true, false) )
+	if ( nullptr == m_pModuleReady || nullptr == m_pModuleReady->m_pValueObject || !m_pModuleReady->m_pValueObject->IsCreated() )
 	{
-		l_hrOk = S_FALSE;
+		Result = false;
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_InvalidModuleReadyPointer, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
 	}
-	if (nullptr == m_pRaidErrorBit || nullptr == m_pRaidErrorBit->m_pValueObject || !m_pRaidErrorBit->m_pValueObject->resetAllObjects(true, false) )
+	else
 	{
-		l_hrOk = S_FALSE;
+		Result = m_pModuleReady->m_pValueObject->ResetObject(pErrorMessages);
+	}
+	if ( nullptr == m_pRaidErrorBit || nullptr == m_pRaidErrorBit->m_pValueObject || !m_pRaidErrorBit->m_pValueObject->IsCreated() )
+	{
+		Result = false;
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_InvalidRaidBitPointer, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
+	}
+	else
+	{
+		Result = m_pRaidErrorBit->m_pValueObject->ResetObject(pErrorMessages) && Result;
 	}
 
-	//
 	m_RemoteMonitorListController.ResetObject();
 
 	if( ! RebuildOutputList() )
 	{
-		l_hrOk = S_FALSE;
+		Result = false;
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_IoController_RebuildOutpuListFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
 	}
-	return l_hrOk;
-}
-
-BOOL SVIOController::OnValidate()
-{
-	BOOL retVal = SVObjectClass::OnValidate();
-
-	retVal = retVal && !( m_pModuleReady.empty() ) && m_pModuleReady->m_pValueObject->IsCreated();
-	retVal = retVal && !( m_pRaidErrorBit.empty() ) && m_pRaidErrorBit->m_pValueObject->IsCreated();
-
-	if( !retVal )
-	{
-		SetInvalid();
-	}
-	return retVal;
+	return Result;
 }
 
 HRESULT SVIOController::SetModuleReady( bool p_Value )
@@ -322,9 +323,9 @@ HRESULT SVIOController::SetModuleReady( bool p_Value )
 	return l_Status;
 }
 
-HRESULT SVIOController::SetRaidErrorBit( bool p_Value )
+bool SVIOController::SetRaidErrorBit( bool p_Value )
 {
-	HRESULT l_Status( S_OK );
+	bool Result( true );
 
 	// Don't set Module Ready if it isn't in the output list
 	if( !( m_pRaidErrorBit->m_IOId.empty() ) )
@@ -340,11 +341,11 @@ HRESULT SVIOController::SetRaidErrorBit( bool p_Value )
 
 		if( nullptr == pOutputList || !pOutputList->WriteOutput( m_pRaidErrorBit, 1, true, false ) )
 		{
-			l_Status = S_FALSE; // JMS ERROR - Cannot write to module ready output.
+			Result = false; // JMS ERROR - Cannot write to module ready output.
 		}
 	}// end if
 
-	return l_Status;
+	return Result;
 }
 
 SVIOEntryHostStructPtr SVIOController::GetModuleReady()

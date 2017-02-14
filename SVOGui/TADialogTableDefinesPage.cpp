@@ -19,6 +19,7 @@
 #include "GuiCommands\SetObjectName.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVMessage\SVMessage.h"
+#include "GuiCommands\GetErrorMessageList.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -245,13 +246,17 @@ namespace Seidenader { namespace SVOGui {
 		HRESULT hResult = S_OK;
 		// Do a reset of the Tool
 		typedef SVSharedPtr<GuiCmd::ResetObject> ResetObjectCommandPtr;
-		ResetObjectCommandPtr commandPtr(new GuiCmd::ResetObject(m_InspectionID, true));
+		ResetObjectCommandPtr commandPtr(new GuiCmd::ResetObject(m_InspectionID));
 		SVObjectSynchronousCommandTemplate<ResetObjectCommandPtr> cmd(m_InspectionID, commandPtr);
 
 		hResult = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		if (S_OK != hResult)
 		{
-			SvStl::MessageContainerVector errorMessageList = commandPtr->getErrorMessages();
+			typedef SVSharedPtr<GuiCmd::GetErrorMessageList> GetErrorMessageListCommandPtr;
+			GetErrorMessageListCommandPtr errorCommandPtr(new GuiCmd::GetErrorMessageList(m_TaskObjectID));
+			SVObjectSynchronousCommandTemplate<GetErrorMessageListCommandPtr> errorCmd(m_InspectionID, errorCommandPtr);
+			errorCmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+			SvStl::MessageContainerVector errorMessageList = errorCommandPtr->GetMessageList();
 			if (0 < errorMessageList.size())
 			{
 				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );

@@ -86,7 +86,6 @@ public:
 
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
 	virtual BOOL CloseObject() override;
-	virtual BOOL OnValidate() override;
 	virtual bool ConnectAllInputs() override;
 
 	
@@ -109,7 +108,7 @@ public:
 	HRESULT GetImageDefinitionStruct( SVImageDefinitionStruct& rImageDef, const SVImageInfoClass& rInfo);
 
 	void SetAllAttributes();
-	virtual HRESULT ResetObject() override;
+	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 	enum FindEnum
 	{
 		FIND_IMAGES = 1,
@@ -122,7 +121,6 @@ public:
 #pragma region Methods to replace processMessage
 	virtual bool DisconnectObjectInput( SVInObjectInfoStruct* pObjectInInfo ) override;
 	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const SVString& rOldName) override;
-	virtual bool resetAllObjects( bool shouldNotifyFriends, bool silentReset ) override;
 #pragma endregion Methods to replace processMessage
 
 protected:
@@ -155,8 +153,6 @@ protected:
 
 	SVExternalToolTaskData m_Data;	// this is our cancelable data
 
-	HRESULT                  m_hrInitialized;	// OnValidate checks this; set when CreateObject/Initialize is successful.
-	
 	std::vector<long>      m_aInspectionInputImages;
 	std::vector<long>      m_aInspectionResultImages;
 	std::vector<SVDIBITMAPINFO> m_aInspectionInputHBMImages;

@@ -118,8 +118,10 @@ namespace Seidenader { namespace SVOGui
 				IPictureDisp* pImage = GetImage(svImageName);
 				m_dialogImage.setImage(pImage);
 				refresh();
+				SvStl::MessageContainerVector errorMessages;
+				HRESULT result = ResetTask(errorMessages);
 
-				if (bIsValid && !IsToolValid())
+				if (bIsValid && S_OK != result)
 				{
 					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_ToolPositionError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10232 );

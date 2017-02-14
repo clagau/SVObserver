@@ -45,9 +45,6 @@ const SVEnumerateValueObjectClass& SVEnumerateValueObjectClass::operator = (cons
 
 SVEnumerateValueObjectClass::~SVEnumerateValueObjectClass()
 {
-	// Delete all object's data arrays...
-	SetObjectDepth( 0 );
-	ResetObject();
 }
 
 BOOL SVEnumerateValueObjectClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )

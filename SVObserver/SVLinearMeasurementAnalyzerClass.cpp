@@ -224,6 +224,11 @@ BOOL SVLinearMeasurementAnalyzerClass::CloseObject()
 	return SVLinearAnalyzerClass::CloseObject();
 }
 
+bool SVLinearMeasurementAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
+{
+	return __super::ResetObject(pErrorMessages) && ValidateEdgeA(pErrorMessages) && ValidateEdgeB(pErrorMessages);
+}
+
 BOOL SVLinearMeasurementAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 {
 	BOOL l_bOk = SVLinearAnalyzerClass::onRun( RRunStatus );
@@ -235,7 +240,7 @@ BOOL SVLinearMeasurementAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 	double l_dDistanceA = 0.0;
 	double l_dDistanceB = 0.0;
 
-	l_bOk = l_bOk && nullptr != GetEdgeA() && nullptr != GetEdgeB() && nullptr != GetTool();
+	l_bOk = l_bOk && ValidateEdgeA(&m_RunErrorMessages) && ValidateEdgeB(&m_RunErrorMessages) && nullptr != GetTool();
 
 	if ( l_bOk )
 	{
@@ -301,18 +306,3 @@ BOOL SVLinearMeasurementAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 
 	return l_bOk;
 }
-
-BOOL SVLinearMeasurementAnalyzerClass::OnValidate()
-{
-	BOOL retVal = ( GetEdgeA() && GetEdgeB() );
-	
-	retVal = SVLinearAnalyzerClass::OnValidate() && retVal;
-
-	// Set this object and all objects it owns, to invalid
-	if( !retVal )
-	{
-		SetInvalid();
-	}
-	return retVal;
-}
-

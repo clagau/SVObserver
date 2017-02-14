@@ -31,9 +31,7 @@ public:
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* p_pCreateStructure ) override;
 	virtual BOOL CloseObject() override;
 
-	virtual HRESULT ResetObject() override;
-
-	virtual BOOL OnValidate() override;
+	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	SVImageClass* GetInputImage();
 	HRESULT ValidateAngle(double &p_dWarpAngle );
@@ -59,7 +57,7 @@ private:
 	HRESULT LocalCreate();
 	HRESULT LocalDestroy();
 
-	HRESULT CreateLUT();
+	bool CreateLUT();
 	HRESULT DestroyLUT();
 	
 	SVInObjectInfoStruct m_InputImageObjectInfo;

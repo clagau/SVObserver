@@ -70,22 +70,6 @@ BOOL SVConditionalClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructu
 ////////////////////////////////////////////////////////////////////////////////
 // 
 ////////////////////////////////////////////////////////////////////////////////
-BOOL SVConditionalClass::OnValidate()
-{
-	BOOL retVal = TRUE;
-	
-	// validate our outputs
-	retVal = SVEquationClass::OnValidate() && retVal;
-
-	if( !retVal )
-		SetInvalid();
-
-	return retVal;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// 
-////////////////////////////////////////////////////////////////////////////////
 // If Conditional is disabled conditional.Run() returns always TRUE.
 // Otherwise the return value depends on the Conditional equation result!
 BOOL SVConditionalClass::onRun( SVRunStatusClass& RRunStatus )

@@ -26,9 +26,9 @@ SVDoubleResultClass::SVDoubleResultClass( BOOL BCreateDefaultTaskList, SVObjectC
 	m_outObjectInfo.ObjectTypeInfo.SubType = SVResultDoubleObjectType;
 
 	// Identify our input type needs
-	inputObjectInfo.SetInputObjectType( SVDoubleValueObjectType );
-	inputObjectInfo.SetObject( GetObjectInfo() );
-	RegisterInputObject( &inputObjectInfo, _T( "DoubleResultValue" ) );
+	m_inputObjectInfo.SetInputObjectType( SVDoubleValueObjectType );
+	m_inputObjectInfo.SetObject( GetObjectInfo() );
+	RegisterInputObject( &m_inputObjectInfo, _T( "DoubleResultValue" ) );
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject( &value, SVValueObjectGuid, IDS_OBJECTNAME_VALUE, false, SVResetItemNone );
@@ -87,23 +87,6 @@ BOOL SVDoubleResultClass::CloseObject()
 	return SVResultClass::CloseObject();
 }
 
-BOOL SVDoubleResultClass::OnValidate()
-{
-	BOOL bRetVal = FALSE;
-	if( inputObjectInfo.IsConnected() &&
-		inputObjectInfo.GetInputObjectInfo().PObject )
-	{
-		bRetVal = TRUE;
-		bRetVal = SVResultClass::OnValidate() && bRetVal;
-	}
-
-	// Note: Make sure this is called when Validate fails !!!
-	if( ! bRetVal )
-		SetInvalid();
-
-	return bRetVal;
-}
-
 BOOL SVDoubleResultClass::onRun( SVRunStatusClass& RRunStatus )
 {
 	// All inputs and outputs must be validated first
@@ -129,8 +112,8 @@ BOOL SVDoubleResultClass::onRun( SVRunStatusClass& RRunStatus )
 
 SVDoubleValueObjectClass* SVDoubleResultClass::getInputDouble()
 {
-	if( inputObjectInfo.IsConnected() && inputObjectInfo.GetInputObjectInfo().PObject )
-		return static_cast<SVDoubleValueObjectClass*>(inputObjectInfo.GetInputObjectInfo().PObject);
+	if( m_inputObjectInfo.IsConnected() && m_inputObjectInfo.GetInputObjectInfo().PObject )
+		return static_cast<SVDoubleValueObjectClass*>(m_inputObjectInfo.GetInputObjectInfo().PObject);
 
 	return nullptr;
 }

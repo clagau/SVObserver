@@ -58,9 +58,9 @@ BOOL TableObject::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 	return l_bOk;
 }
 
-HRESULT TableObject::ResetObject()
+bool TableObject::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	HRESULT hr = SVTaskObjectClass::ResetObject();
+	bool Result = __super::ResetObject(pErrorMessages);
 
 	m_sortContainer.clear();
 
@@ -70,7 +70,7 @@ HRESULT TableObject::ResetObject()
 	}
 	m_NumberOfRows.SetValue(0, 0);
 
-	return hr;
+	return Result;
 }
 
 SVObjectClass* TableObject::getNumberOfRowObject() const
@@ -121,7 +121,7 @@ void TableObject::createColumnObject(SVGUID embeddedID, LPCTSTR name, int arrayS
 		delete pObject;
 		ASSERT(FALSE);
 		SvStl::MessageMgrStd e( SvStl::DataOnly );
-		e.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_TableObject_createColumnValueObjectFailed, SvStl::SourceFileParams(StdMessageParams) );
+		e.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_TableObject_createColumnValueObjectFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 		e.Throw();
 	}
 }

@@ -58,24 +58,30 @@ HRESULT SVInPlaceImageOperatorListClass::IsInputImage( SVImageClass *p_psvImage 
 	return S_FALSE;
 }
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : OnValidate
-// -----------------------------------------------------------------------------
-// .Description : Validates base class and checks, 
-//				: if input image is a physical type.
-////////////////////////////////////////////////////////////////////////////////
-BOOL SVInPlaceImageOperatorListClass::OnValidate()
+bool SVInPlaceImageOperatorListClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	if( SVUnaryImageOperatorListClass::OnValidate() )
+	bool Valid = __super::ResetObject(pErrorMessages);
+
+	if( nullptr == getInputImage() )
 	{
-		if( nullptr != getInputImage() && getInputImage()->GetImageType() == SVImageTypePhysical )
+		if (nullptr != pErrorMessages)
 		{
-			return true;
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
 		}
+		Valid = false;
+	}
+	else if( getInputImage()->GetImageType() != SVImageTypePhysical )
+	{
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_NotImageTypePhysical, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
+		Valid = false;
 	}
 
-	SetInvalid();
-	return false;
+	return Valid;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -86,8 +92,7 @@ BOOL SVInPlaceImageOperatorListClass::OnValidate()
 //				: Special routing for image operators here.
 BOOL SVInPlaceImageOperatorListClass::Run( SVRunStatusClass& RRunStatus )
 {
-	SVSmartHandlePointer input;
-	SVSmartHandlePointer output;
+	clearRunErrorMessages();
 
 	SVRunStatusClass ChildRunStatus;
 	ChildRunStatus.m_lResultDataIndex  = RRunStatus.m_lResultDataIndex;
@@ -97,7 +102,7 @@ BOOL SVInPlaceImageOperatorListClass::Run( SVRunStatusClass& RRunStatus )
 	// Run yourself...
 	BOOL bRetVal = onRun( RRunStatus );
 
-	if( ! getInputImage() )
+	if( bRetVal && nullptr == getInputImage() )
 	{
 		// Signal something is wrong...
 		bRetVal = false;
@@ -105,8 +110,10 @@ BOOL SVInPlaceImageOperatorListClass::Run( SVRunStatusClass& RRunStatus )
 
 	if( bRetVal )
 	{
+		SVSmartHandlePointer input;
+		SVSmartHandlePointer output;
 		// Use input image for in- and output.
-		// Image must be a Physical type!!! ( Is already checked in OnValidate() )
+		// Image must be a Physical type!!! ( Is already checked in ResetObject() )
 		getInputImage()->GetImageHandle( input );
 		getInputImage()->GetImageHandle( output );
 		
@@ -146,7 +153,9 @@ BOOL SVInPlaceImageOperatorListClass::Run( SVRunStatusClass& RRunStatus )
 				}
 			}
 			else
-				bRetVal = FALSE;
+			{
+				bRetVal = false;
+			}
 
 			// Update our Run Status
 			if( ChildRunStatus.IsDisabled() )
@@ -172,7 +181,6 @@ BOOL SVInPlaceImageOperatorListClass::Run( SVRunStatusClass& RRunStatus )
 	if( ! bRetVal )
 	{
 		// Something was wrong...
-
 		SetInvalid();
 		RRunStatus.SetInvalid();
 	}

@@ -34,10 +34,9 @@ SVVariantResultClass::SVVariantResultClass( BOOL BCreateDefaultTaskList , SVObje
 	m_outObjectInfo.ObjectTypeInfo.SubType = SVResultVariantObjectType;
 
 	// Identify our input type needs
-	m_InputValueObjectInfo.SetInputObjectType( SVVariantValueObjectType );
-	//m_InputValueObjectInfo.InputObjectInfo.ObjectTypeInfo.ObjectType = SVVariantValueObjectType;
-	m_InputValueObjectInfo.SetObject( GetObjectInfo() );
-	RegisterInputObject( &m_InputValueObjectInfo, _T( "VariantResultValue" ) );
+	m_inputObjectInfo.SetInputObjectType( SVVariantValueObjectType );
+	m_inputObjectInfo.SetObject( GetObjectInfo() );
+	RegisterInputObject( &m_inputObjectInfo, _T( "VariantResultValue" ) );
 
 
 	// Register Embedded Objects
@@ -102,28 +101,10 @@ BOOL SVVariantResultClass::CloseObject()
 	return SVResultClass::CloseObject();
 }
 
-BOOL SVVariantResultClass::OnValidate()
-{
-	BOOL bRetVal = FALSE;
-	if( m_InputValueObjectInfo.IsConnected() &&
-		m_InputValueObjectInfo.GetInputObjectInfo().PObject &&
-		dynamic_cast <SVValueObjectClass*> (m_InputValueObjectInfo.GetInputObjectInfo().PObject) )
-	{
-		bRetVal = TRUE;
-		bRetVal = SVResultClass::OnValidate() && bRetVal;
-	}
-
-	// Note: Make sure this is called when Validate fails !!!
-	if( ! bRetVal )
-		SetInvalid();
-
-	return bRetVal;
-}
-
 SVValueObjectClass* SVVariantResultClass::GetInputValue()
 {
-	if( m_InputValueObjectInfo.IsConnected() && m_InputValueObjectInfo.GetInputObjectInfo().PObject )
-		return static_cast<SVValueObjectClass*> ( m_InputValueObjectInfo.GetInputObjectInfo().PObject );
+	if( m_inputObjectInfo.IsConnected() && m_inputObjectInfo.GetInputObjectInfo().PObject )
+		return static_cast<SVValueObjectClass*> ( m_inputObjectInfo.GetInputObjectInfo().PObject );
 
 	return nullptr;
 }

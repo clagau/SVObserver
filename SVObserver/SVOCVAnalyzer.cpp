@@ -92,13 +92,6 @@ BOOL SVOCVAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructu
 	return m_isCreated;
 }
 
-HRESULT SVOCVAnalyzerClass::ResetObject()
-{
-	HRESULT	l_hrOk = SVImageAnalyzerClass::ResetObject();
-
-	return l_hrOk;
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 SVResultClass* SVOCVAnalyzerClass::GetResultObject()
 {
@@ -110,32 +103,20 @@ SVResultClass* SVOCVAnalyzerClass::GetResultObject()
 	return( pAnalyzerResult );
 }
 
-
-/////////////////////////////////////////////////////////////////////////////
-BOOL SVOCVAnalyzerClass::OnValidate()
+bool SVOCVAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	BOOL bRetVal = SVImageAnalyzerClass::OnValidate();
-
-	// Note: Make sure this is called when Validate fails !!!
-	if (! bRetVal)
-	{
-		SetInvalid();
-		bRetVal = FALSE;
-	}
+	bool Valid = __super::ResetObject(pErrorMessages);
 	if( m_bHasLicenseError )
 	{
-		bRetVal = FALSE;
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_SVObserver_MatroxLicenseNotFound, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16151, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
+		Valid = false;
 	}
 
-	return bRetVal;
-}
-
-bool SVOCVAnalyzerClass::resetAllObjects( bool shouldNotifyFriends, bool silentReset )
-{
-	bool Result = ( S_OK == ResetObject() );
-	ASSERT( Result );
-
-	return( __super::resetAllObjects( shouldNotifyFriends, silentReset ) && Result );
+	return Valid;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

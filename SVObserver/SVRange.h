@@ -32,19 +32,13 @@ public:
 
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
 
-	//************************************
-	// Description:  call InitReferencesAndInputs and base class
-	// Returns:  HRESULT:  S_OK if successful
-	//************************************
-	virtual HRESULT ResetObject() override;
+	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	//************************************
 	// Description:  Disconnect Inputs and call base class 
 	// Returns:  BOOL:  TRUE if succesful
 	//************************************
 	virtual BOOL CloseObject() override;
-
-	BOOL OnValidate();
 
 	// ISVCancel interface
 	virtual bool CanCancel() override;
@@ -54,9 +48,9 @@ public:
 	//************************************
 	// Description:  Recalculate Reference Object for indirect range Variables.
 	//               Mark reference object as Input.
-	// Returns:  S_OK if references are valid
+	// Returns:  true if references are valid
 	//************************************
-	HRESULT InitReferencesAndInputs();
+	bool InitReferencesAndInputs(SvStl::MessageContainerVector *pErrorMessages=nullptr);
 
 	//************************************
 	// Description:  Calculate Reference
@@ -145,7 +139,6 @@ public:
 #pragma region Methods to replace processMessage
 	virtual bool DisconnectObjectInput( SVInObjectInfoStruct* pObjectInInfo ) override;
 	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const SVString& rOldName) override;
-	virtual bool resetAllObjects( bool shouldNotifyFriends, bool silentReset ) override;
 #pragma endregion Methods to replace processMessage
 	
 protected:

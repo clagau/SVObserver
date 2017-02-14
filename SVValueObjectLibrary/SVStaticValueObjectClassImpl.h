@@ -74,7 +74,7 @@ protected:
 	SVStaticValueObjectClassImpl(LPCTSTR lpszObjectName) : SVValueObjectClass(lpszObjectName) {Init();}
 	SVStaticValueObjectClassImpl(SVObjectClass* pOwner, int StringResourceID) : SVValueObjectClass(pOwner, StringResourceID) {Init();}
 
-	virtual HRESULT CreateBuckets() override;
+	virtual void CreateBuckets() override;
 	virtual HRESULT SetValueAt( int iBucket, int iIndex, T value );
 	virtual HRESULT GetValueAt( int iBucket, int iIndex, T& rValue ) const override;
 

@@ -101,14 +101,6 @@ inline BOOL SVObjectClass::IsCreated() const
 	return m_isCreated;
 }
 
-/*
-This method returns the object's valid state.
-*/
-inline BOOL SVObjectClass::IsValid()
-{
-	return m_isObjectValid;
-}
-
 template< typename SVObjectVisitor >
 HRESULT SVObjectClass::Accept( SVObjectVisitor& rVisitor )
 {

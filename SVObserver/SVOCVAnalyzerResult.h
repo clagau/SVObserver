@@ -37,8 +37,6 @@ public:
 
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
 	virtual BOOL CloseObject() override;
-	//virtual CRect Draw( HDC DC, CRect R ) override;
-	virtual BOOL OnValidate() override;
 
 	void GetOCVResultString( SVString& rResult );
 	
@@ -53,8 +51,7 @@ public:
 
 	SVImageClass* getInputImage();
 
-	virtual bool resetAllObjects( bool shouldNotifyFriends, bool silentReset ) override;
-	virtual HRESULT ResetObject() override;
+	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 protected:
 	virtual BOOL onRun( SVRunStatusClass& RRunStatus ) override;
@@ -83,8 +80,6 @@ protected:
 
 	SvSyl::SVLockableClass		lock;
 
-	// Input: Image
-	SVInObjectInfoStruct inputImageObjectInfo;
 	long m_lCurrentFoundStringLength;
 
 public:

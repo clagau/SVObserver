@@ -27,9 +27,7 @@ public:
 	virtual ~SVAcquisitionToolClass();
 
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
-	virtual HRESULT ResetObject() override;
-
-	virtual BOOL OnValidate() override;
+	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	virtual bool DoesObjectHaveExtents() const override;
 

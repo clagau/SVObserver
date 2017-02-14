@@ -27,9 +27,9 @@ SVLongResultClass::SVLongResultClass( BOOL BCreateDefaultTaskList, SVObjectClass
 	m_outObjectInfo.ObjectTypeInfo.SubType = SVResultLongObjectType;
 
 	// Identify our input type needs
-	inputObjectInfo.SetInputObjectType( SVLongValueObjectType );
-	inputObjectInfo.SetObject( GetObjectInfo() );
-	RegisterInputObject( &inputObjectInfo, SvO::cInputTag_LongResultValue );
+	m_inputObjectInfo.SetInputObjectType( SVLongValueObjectType );
+	m_inputObjectInfo.SetObject( GetObjectInfo() );
+	RegisterInputObject( &m_inputObjectInfo, SvO::cInputTag_LongResultValue );
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject( &value, SVValueObjectGuid, IDS_OBJECTNAME_VALUE, false, SVResetItemNone );
@@ -89,23 +89,6 @@ BOOL SVLongResultClass::CloseObject()
 	return SVResultClass::CloseObject();
 }
 
-BOOL SVLongResultClass::OnValidate()
-{
-	BOOL bRetVal = FALSE;
-	if( inputObjectInfo.IsConnected() &&
-		inputObjectInfo.GetInputObjectInfo().PObject )
-	{
-		bRetVal = TRUE;
-		bRetVal = SVResultClass::OnValidate() && bRetVal;
-	}
-
-	// Note: Make sure this is called when Validate fails !!!
-	if( ! bRetVal )
-		SetInvalid();
-
-	return bRetVal;
-}
-
 BOOL SVLongResultClass::onRun( SVRunStatusClass& RRunStatus )
 {
 	// All inputs and outputs must be validated first
@@ -128,8 +111,8 @@ BOOL SVLongResultClass::onRun( SVRunStatusClass& RRunStatus )
 
 SVLongValueObjectClass* SVLongResultClass::getInputLong()
 {
-	if( inputObjectInfo.IsConnected() && inputObjectInfo.GetInputObjectInfo().PObject )
-		return static_cast<SVLongValueObjectClass*>(inputObjectInfo.GetInputObjectInfo().PObject);
+	if( m_inputObjectInfo.IsConnected() && m_inputObjectInfo.GetInputObjectInfo().PObject )
+		return static_cast<SVLongValueObjectClass*>(m_inputObjectInfo.GetInputObjectInfo().PObject);
 
 	return nullptr;
 }

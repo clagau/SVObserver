@@ -31,30 +31,31 @@ public:
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
 	virtual BOOL CloseObject() override;
 
-	virtual HRESULT ResetObject() override;
+	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	virtual HRESULT IsInputImage( SVImageClass *p_psvImage ) override;
 
-	SVImageClass* getInputImageA();
-	SVImageClass* getInputImageB();
+	SVImageClass* getInputImageA() const;
+	SVImageClass* getInputImageB() const;
 	SVImageClass* getOutputImage();
 
-	virtual BOOL OnValidate() override;
-
-	virtual bool resetAllObjects( bool shouldNotifyFriends, bool silentReset ) override;
-
 protected:
-	SVBoolValueObjectClass*		getInputEnableOffsetA();
-	SVPointValueObjectClass*	getInputOffsetAPoint();
-
-	SVBoolValueObjectClass*		getInputEnableOffsetB();
-	SVPointValueObjectClass*	getInputOffsetBPoint();
-	
-	SVLongValueObjectClass*		getInputArithOperator();
-
 	virtual BOOL  onRun( SVRunStatusClass& RRunStatus ) override;
 
+private:
+	SVBoolValueObjectClass*		getInputEnableOffsetA() const;
+	SVPointValueObjectClass*	getInputOffsetAPoint() const;
+
+	SVBoolValueObjectClass*		getInputEnableOffsetB() const;
+	SVPointValueObjectClass*	getInputOffsetBPoint() const;
+	
+	SVLongValueObjectClass*		getInputArithOperator() const;
+
 	void ScaleWithAveraging( SVImageClass* pInputImage, SVImageClass* pOutputImage );
+	
+	HRESULT CollectInputImageNames( );
+
+	bool ValidateLocal(SvStl::MessageContainerVector *pErrorMessages=nullptr) const;
 
 	SVInObjectInfoStruct		inputImageAInfo;
 	SVInObjectInfoStruct		inputEnableOffsetAInfo;
@@ -69,6 +70,5 @@ protected:
 	// Embedded Object:
 	SVImageClass				outputImageObject;
 
-	HRESULT CollectInputImageNames( );
 };
 

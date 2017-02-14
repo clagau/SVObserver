@@ -118,6 +118,11 @@ BOOL SVLinearEdgePositionLineAnalyzerClass::CloseObject()
 	return SVLinearAnalyzerClass::CloseObject();
 }
 
+bool SVLinearEdgePositionLineAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
+{
+	return __super::ResetObject(pErrorMessages) && ValidateEdgeA(pErrorMessages);
+}
+
 BOOL SVLinearEdgePositionLineAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 {
 	SVDPointClass l_svDPoint;
@@ -127,7 +132,7 @@ BOOL SVLinearEdgePositionLineAnalyzerClass::onRun( SVRunStatusClass& RRunStatus 
 	// All inputs and outputs must be validated first
 	BOOL l_bOk = SVLinearAnalyzerClass::onRun( RRunStatus );
 
-	l_bOk = l_bOk && nullptr != GetEdgeA() && nullptr != GetTool();
+	l_bOk = l_bOk && ValidateEdgeA(&m_RunErrorMessages) && nullptr != GetTool();
 
 	if( l_bOk )
 	{
@@ -165,18 +170,3 @@ BOOL SVLinearEdgePositionLineAnalyzerClass::onRun( SVRunStatusClass& RRunStatus 
 
 	return l_bOk;
 }
-
-BOOL SVLinearEdgePositionLineAnalyzerClass::OnValidate()
-{
-	BOOL retVal = SVLinearAnalyzerClass::OnValidate();
-	
-	retVal &= nullptr != GetEdgeA();
-
-	if( ! retVal )
-	{
-		SetInvalid();
-	}
-
-	return retVal;
-}
-

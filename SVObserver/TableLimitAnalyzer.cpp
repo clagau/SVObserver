@@ -56,76 +56,6 @@ BOOL TableLimitAnalyzer::CreateObject( SVObjectLevelCreateStruct* pCreateStructu
 	
 	return l_bOk;
 }
-
-bool TableLimitAnalyzer::resetAllObjects( bool shouldNotifyFriends, bool silentReset )
-{
-	bool Result = ( S_OK == ResetObject() );
-	ASSERT( Result );
-	return( __super::resetAllObjects( shouldNotifyFriends, silentReset ) && Result );
-}
-
-HRESULT TableLimitAnalyzer::ResetObject()
-{
-	HRESULT status = __super::ResetObject();
-
-	if (!OnValidateParameter(AllParameters))
-	{
-		status = S_FALSE;
-	}
-
-	return status;
-}
-
-
-BOOL TableLimitAnalyzer::Validate()
-{
-	BOOL Result = __super::Validate();
-
-	//if Task-validation is fail but no message in the Message-List, add one
-	if (FALSE == Result && 0 == getFirstTaskMessage().getMessage().m_MessageCode)
-	{
-		SvStl::MessageContainer message;
-		message.setMessage( SVMSG_SVO_5072_INCONSISTENTDATA, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
-		addTaskMessage( message );
-	}
-
-	if (Result)
-	{
-		Result = OnValidateParameter(AllParameters);
-	}
-
-	return Result;
-}
-
-BOOL TableLimitAnalyzer::OnValidate()
-{
-	BOOL Result = (0 == getFirstTaskMessage().getMessage().m_MessageCode);
-
-	if ( Result )
-	{
-		Result = __super::OnValidate();
-		if( !Result && 0 != getFirstTaskMessage().getMessage().m_MessageCode)
-		{
-			SvStl::MessageContainer message;
-			SVStringVector msgList;
-			msgList.push_back(GetName());
-			message.setMessage( SVMSG_SVO_5074_BASECLASSONVALIDATEFAILED, SvOi::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams) );
-			addTaskMessage( message );
-		}
-	}
-
-	if ( Result )
-	{
-		Result = OnValidateParameter(InspectionSettable);
-	}
-
-	if (! Result)
-	{
-		SetInvalid();
-	}
-
-	return Result;
-}
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
@@ -159,18 +89,6 @@ BOOL TableLimitAnalyzer::onRun( SVRunStatusClass& rRunStatus )
 	return returnValue;
 }
 
-bool TableLimitAnalyzer::ValidateOfflineParameters ()
-{
-	bool Result = __super::ValidateOfflineParameters();
-	if (Result)
-	{
-		//@TODO[MZA][7.40][17.10.2016] This line must be uncomment yet, because the analyzer tool set this parameter invalid when another analyzer is invalid
-		//This should be fix when Onvalidate-behavior is fixed.
-		//Result &= m_LimitValue.IsValid() ? true : false;
-	}
-
-	return Result;
-}
 #pragma endregion Protected Methods
 
 #pragma region Private Methods

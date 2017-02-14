@@ -33,8 +33,7 @@ public:
 
 	virtual SVStaticStringValueObjectClass* GetInputImageNames() override;
 
-	virtual HRESULT ResetObject() override;
-	virtual BOOL OnValidate() override;
+	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	SVImageClass* getInputImage();
 	SVImageClass* getOutputImage(int index); 

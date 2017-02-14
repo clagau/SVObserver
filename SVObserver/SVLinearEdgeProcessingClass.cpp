@@ -161,9 +161,9 @@ BOOL SVLinearEdgeProcessingClass::CreateObject( SVObjectLevelCreateStruct *PCrea
 	return bOk;
 }
 
-HRESULT SVLinearEdgeProcessingClass::ResetObject()
+bool SVLinearEdgeProcessingClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	HRESULT hRet = SVTaskObjectClass::ResetObject();
+	bool Result = SVTaskObjectClass::ResetObject(pErrorMessages);
 
 	BOOL bUpper = FALSE;
 	BOOL bLower = FALSE;
@@ -191,29 +191,29 @@ HRESULT SVLinearEdgeProcessingClass::ResetObject()
 
 	if( S_OK != GetPixelDepth() )
 	{
-		hRet = S_FALSE;
+		Result = false;
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_GetPixelDepthFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
 	}
 
 	if ( SVDoubleValueObjectClass* pdvoLinearData = GetInputLinearData() )
 	{
 		m_svLinearEdges.SetArraySize( pdvoLinearData->GetArraySize() );
 	}
-
-	return hRet;
-}
-
-BOOL SVLinearEdgeProcessingClass::OnValidate()
-{
-	if( SVTaskObjectClass::OnValidate() )
+	else
 	{
-		if( nullptr != GetInputLinearData() )
+		Result = false;
+		if (nullptr != pErrorMessages)
 		{
-			return true;
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ConnectInputFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
 		}
 	}
 
-	SetInvalid();
-	return false;
+	return Result;
 }
 
 BOOL SVLinearEdgeProcessingClass::onRun( SVRunStatusClass &p_rsvRunStatus )
@@ -1386,13 +1386,5 @@ HRESULT SVLinearEdgeProcessingClass::CalculateSubPixelEdge( double p_dStart, dou
 	}
 
 	return l_hrOk;
-}
-
-bool SVLinearEdgeProcessingClass::resetAllObjects( bool shouldNotifyFriends, bool silentReset )
-{
-	bool Result = ( S_OK == ResetObject() );
-	ASSERT( Result );
-
-	return (Result && __super::resetAllObjects(shouldNotifyFriends, silentReset));
 }
 

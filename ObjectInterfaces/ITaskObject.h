@@ -72,9 +72,15 @@ namespace Seidenader
 			//************************************
 			virtual bool IsObjectValid() const = 0;
 
-			/// Gets the list of task messages
+			/// Gets the list of error messages happen in offline modus and will be reset if object is reset.
 			/// \return a const reference to the message list
-			virtual const SvStl::MessageContainerVector& getTaskMessages() const = 0;
+			virtual const SvStl::MessageContainerVector& getResetErrorMessages() const = 0;
+			/// Gets the list of error messages in run mode. Will be reset every run.
+			/// \return a const reference to the message list
+			virtual const SvStl::MessageContainerVector& getRunErrorMessages() const = 0;
+			/// Gets the list of all error messages (Reset and run errors)
+			/// \return a const reference to the message list
+			virtual SvStl::MessageContainerVector getErrorMessages() const = 0;
 
 			/// Validate values and set them if required.
 			/// \param valueVector [in] A vector of parameter-value pairs.

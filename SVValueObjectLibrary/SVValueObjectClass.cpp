@@ -62,12 +62,10 @@ void SVValueObjectClass::InitializeBuckets()
 	}
 }
 
-HRESULT SVValueObjectClass::CreateBuckets( )
+void SVValueObjectClass::CreateBuckets( )
 {
 	m_aiResultSize.resize(m_iNumberOfBuckets);
 	std::fill(m_aiResultSize.begin(), m_aiResultSize.end(), m_iArraySize);
-
-	return S_OK;
 }
 
 BOOL SVValueObjectClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
@@ -82,7 +80,7 @@ BOOL SVValueObjectClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructu
 		l_bOk = l_bOk && SetObjectDepth( 2 );
 	}
 
-	l_bOk = l_bOk && ( S_OK == CreateBuckets());
+	CreateBuckets();
 
 	if( l_bOk )
 	{
@@ -98,18 +96,10 @@ BOOL SVValueObjectClass::CloseObject()
 	return SVObjectClass::CloseObject();
 }
 
-bool SVValueObjectClass::resetAllObjects( bool shouldNotifyFriends, bool silentReset )
+bool SVValueObjectClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	bool Result = ( S_OK == ResetObject() );
-	assert( Result );
-	return Result;
-}
-
-HRESULT SVValueObjectClass::ResetObject()
-{
-	HRESULT l_hrOk = CreateBuckets();
-
-	return l_hrOk;
+	CreateBuckets();
+	return __super::ResetObject(pErrorMessages);
 }
 
 bool SVValueObjectClass::ResetAlways() const

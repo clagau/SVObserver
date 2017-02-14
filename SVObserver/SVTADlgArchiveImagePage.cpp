@@ -217,9 +217,8 @@ bool SVTADlgArchiveImagePage::QueryAllowExit()
 			pIPDoc->SetModifiedFlag();
 		}
 	}
-	HRESULT hRet = m_pTool->ValidateArchiveTool();
 
-	m_pTool->resetAllObjects(true, false);
+	m_pTool->resetAllObjects();
 
 	return true;
 }
@@ -247,8 +246,6 @@ BOOL SVTADlgArchiveImagePage::OnInitDialog()
 	CPropertyPage::OnInitDialog();
 
 	GetWindowText( m_strCaption );
-	//will need to fix the call to ResetObject at a later date - RPY
-	m_pTool->ResetObject();
 
 	m_ItemsSelected.InsertColumn( ItemSelectedCol, _T(""), 0, ItemsSelectedWidth );
 	m_StateImageList.Create( SvOr::IconSize, SvOr::IconSize, ILC_COLOR24 | ILC_MASK, IconNumber, IconGrowBy );

@@ -42,7 +42,7 @@ public:
 
 #pragma region Public Methods
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
-	virtual HRESULT ResetObject() override;
+	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	virtual HRESULT SetImageExtentToParent( unsigned long p_ulIndex ) override;
 	virtual SVStaticStringValueObjectClass* GetInputImageNames() override;
@@ -50,7 +50,6 @@ public:
 	virtual HRESULT IsInputImage( SVImageClass *p_psvImage ) override;
 	virtual SVTaskObjectClass* GetObjectAtPoint( const SVExtentPointStruct &p_rPoint ) override;
 	virtual bool DoesObjectHaveExtents() const override;
-	virtual BOOL IsValid() override;
 	//************************************
 	//! return Flag with enabled Autosize
 	//! \returns  EnableSize  | EnablePosition
@@ -61,7 +60,6 @@ public:
 protected:
 #pragma region Protected Methods
 	virtual BOOL onRun( SVRunStatusClass &p_rRunStatus ) override;
-	virtual BOOL OnValidate() override;
 	SVImageClass* GetImageInput() const;
 	SVDoubleValueObjectClass* GetTranslationXInput() const;
 	SVDoubleValueObjectClass* GetTranslationYInput() const;
@@ -93,6 +91,7 @@ private:
 	void LocalInitialize();
 	void LocalDestroy();
 	void SetAttributeData();
+	bool ValidateLocal(SvStl::MessageContainerVector *pErrorMessages=nullptr) const;
 #pragma endregion Private Methods
 };
 

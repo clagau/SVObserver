@@ -34,7 +34,7 @@ public:
 
 	virtual bool DoesObjectHaveExtents() const override;
 
-	virtual HRESULT ResetObject() override;
+	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	/// The method inserts a task object to this task object list. This method must be override for TableAnalyzer, 
 	/// because if a Analyzer will be insert, the index will increased by one, because the first task is always the ResultTable.
@@ -49,11 +49,12 @@ public:
 
 #pragma region Protected Methods
 protected:
-	virtual bool ValidateOfflineParameters () override;
 #pragma endregion Protected Methods
 
 #pragma region Private Methods
 private:
+	bool ValidateLocal( SvStl::MessageContainerVector * pErrorMessages ) const;
+
 	/// Initialized the class.
 	void	LocalInitialize();
 

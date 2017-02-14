@@ -116,10 +116,8 @@ BOOL SVShapeMaskHelperClass::CreateObject( SVObjectLevelCreateStruct* PCreateStr
 	return m_isCreated;
 }
 
-HRESULT SVShapeMaskHelperClass::ResetObject()
+bool SVShapeMaskHelperClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	HRESULT hr = S_OK;
-
 	if ( m_pShape )
 		delete m_pShape;
 
@@ -185,9 +183,7 @@ HRESULT SVShapeMaskHelperClass::ResetObject()
 		SvUl::SetBits( m_Data.evoXYSymmetry.ObjectAttributesAllowedRef(),         dwAttributes, bIsShape && bIsTrapezoid );
 	}	
 
-	SVTaskObjectClass::ResetObject();	// ignore return value.
-
-	return hr;
+	return __super::ResetObject(pErrorMessages);
 }
 
 BOOL SVShapeMaskHelperClass::onRun( BOOL First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus )

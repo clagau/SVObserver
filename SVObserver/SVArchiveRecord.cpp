@@ -327,7 +327,12 @@ HRESULT SVArchiveRecord::AllocateBuffers( long lBufferSize )
 				m_ImageBufferPtr->SetImageInfo( info );
 				m_ImageBufferPtr->resize( lBufferSize+1 );
 
-				hr = m_ImageBufferPtr->ResetObject();
+				SvStl::MessageContainerVector errorMessages;
+				m_ImageBufferPtr->ResetObject(&errorMessages);
+				if (!errorMessages.empty())
+				{
+					hr = errorMessages[0].getMessage().m_MessageCode;
+				}
 			}
 			else
 			{

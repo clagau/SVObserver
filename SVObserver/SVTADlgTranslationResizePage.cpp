@@ -648,10 +648,9 @@ HRESULT SVTADlgTranslationResizePage::UpdatePropertyTreeData ()
 	return hr;
 }
 
-HRESULT SVTADlgTranslationResizePage::SetInspectionData()
+HRESULT SVTADlgTranslationResizePage::SetInspectionData(SvStl::MessageContainerVector *pErrorMessages)
 {
 	HRESULT	hr1 = S_OK;
-	HRESULT	hr2 = S_OK;
 
 	bool	extentChanged =					false;
 	bool	embeddedChanged =				false;
@@ -729,12 +728,11 @@ HRESULT SVTADlgTranslationResizePage::SetInspectionData()
 	{
 		editItem = static_cast <SVRPropertyItemEdit*> (m_Tree.FindItem(IDC_INPUTLISTTREE_HEIGHTSCALEFACTOR));
 		editItem->GetItemValue(newHeightScaleFactor);
-		hr1 = m_pTool->ValidateScaleFactor (newHeightScaleFactor);
-		if (!SUCCEEDED (hr1))
+		if (!m_pTool->ValidateScaleFactor (newHeightScaleFactor, pErrorMessages))
 		{
+			hr1 = E_FAIL;
 			newHeightScaleFactor = oldHeightScaleFactor;
-			hr2 = m_pTool->ValidateScaleFactor (newHeightScaleFactor);
-			if (!SUCCEEDED (hr2))
+			if (!m_pTool->ValidateScaleFactor (newHeightScaleFactor, pErrorMessages))
 			{
 				// old values were also invalid.  Currently this can happen 
 				// with corruption or with Remote Access putting in an 
@@ -756,14 +754,13 @@ HRESULT SVTADlgTranslationResizePage::SetInspectionData()
 	{
 		editItem = static_cast <SVRPropertyItemEdit*> (m_Tree.FindItem(IDC_INPUTLISTTREE_WIDTHSCALEFACTOR));
 		editItem->GetItemValue(newWidthScaleFactor);
-		hr1 = m_pTool->ValidateScaleFactor (newWidthScaleFactor);
-		if (!SUCCEEDED (hr1))
+		if (!m_pTool->ValidateScaleFactor (newWidthScaleFactor, pErrorMessages))
 		{
+			hr1 = E_FAIL;
 			// Expected codes include...
 			//  SVMSG_SVO_5061_SFOUTSIDERANGE
 			newWidthScaleFactor = oldWidthScaleFactor;
-			hr2 = m_pTool->ValidateScaleFactor (newWidthScaleFactor);
-			if (!SUCCEEDED (hr2))
+			if (!m_pTool->ValidateScaleFactor (newWidthScaleFactor, pErrorMessages))
 			{
 				// old values were also invalid.  Currently this can happen 
 				// with corruption or with Remote Access putting in an 
@@ -787,12 +784,11 @@ HRESULT SVTADlgTranslationResizePage::SetInspectionData()
 		SVRPropertyItemCombo* comboItem = static_cast <SVRPropertyItemCombo*> (m_Tree.FindItem(IDC_INPUTLISTTREE_INTERPOLATIONMODE));
 		comboItem->GetItemValue(*(reinterpret_cast <long*> (&newInterpolationValue)));
 
-		hr1 = m_pTool->ValidateInterpolation(newInterpolationValue);
-		if (!SUCCEEDED (hr1))
+		if (!m_pTool->ValidateInterpolation(newInterpolationValue, pErrorMessages))
 		{
+			hr1 = E_FAIL;
 			newInterpolationValue = oldInterpolationValue;
-			hr2 = m_pTool->ValidateInterpolation(newInterpolationValue);
-			if (!SUCCEEDED (hr2))
+			if (!m_pTool->ValidateInterpolation(newInterpolationValue, pErrorMessages))
 			{
 				// old values were also invalid.  Currently this can happen 
 				// with corruption or with Remote Access putting in an 
@@ -815,12 +811,11 @@ HRESULT SVTADlgTranslationResizePage::SetInspectionData()
 		comboItem = static_cast <SVRPropertyItemCombo*> (m_Tree.FindItem(IDC_INPUTLISTTREE_OVERSCAN));
 		comboItem->GetItemValue(*(reinterpret_cast <long*> (&newOverscanValue)));
 
-		hr1 = m_pTool->ValidateOverscan(newOverscanValue);
-		if (!SUCCEEDED (hr1))
+		if (!m_pTool->ValidateOverscan(newOverscanValue, pErrorMessages))
 		{
+			hr1 = E_FAIL;
 			newOverscanValue = oldOverscanValue;
-			hr2 = m_pTool->ValidateOverscan(newOverscanValue);
-			if (!SUCCEEDED (hr2))
+			if (!m_pTool->ValidateOverscan(newOverscanValue, pErrorMessages))
 			{
 				// old values were also invalid.  Currently this can happen 
 				// with corruption or with Remote Access putting in an 
@@ -842,12 +837,11 @@ HRESULT SVTADlgTranslationResizePage::SetInspectionData()
 	{
 		comboItem = static_cast <SVRPropertyItemCombo*> (m_Tree.FindItem(IDC_INPUTLISTTREE_PERFORMANCE));
 		comboItem->GetItemValue(*(reinterpret_cast <long*> (&newPerformanceValue)));
-		hr1 = m_pTool->ValidatePerformance(newPerformanceValue);
-		if (!SUCCEEDED (hr1))
+		if (!m_pTool->ValidatePerformance(newPerformanceValue, pErrorMessages))
 		{
+			hr1 = E_FAIL;
 			newPerformanceValue = oldPerformanceValue;
-			hr2 = m_pTool->ValidatePerformance(newPerformanceValue);
-			if (!SUCCEEDED (hr2))
+			if (!m_pTool->ValidatePerformance(newPerformanceValue, pErrorMessages))
 			{
 				// old values were also invalid.  Currently this can happen 
 				// with corruption or with Remote Access putting in an 
@@ -915,7 +909,7 @@ HRESULT SVTADlgTranslationResizePage::SetInspectionData()
 
 	if ((true == extentChanged) || (true == embeddedChanged))
 	{
-		hr2 = RunOnce(m_pTool->GetUniqueObjectID());
+		HRESULT hr2 = RunOnce(m_pTool->GetUniqueObjectID());
 		if (S_FALSE == hr2)
 		{
 			hr2 = SVMSG_SVO_5066_CATCHRUNONCESFALSE;
@@ -975,7 +969,7 @@ HRESULT	SVTADlgTranslationResizePage::ExitTabValidation ()
 	// below validates the whole tool.
 	if (SUCCEEDED (message.getMessage().m_MessageCode))
 	{
-		BOOL br = m_pTool->Validate();
+		BOOL br = m_pTool->resetAllObjects();
 		message = m_pTool->getFirstTaskMessage();
 		if ((TRUE == br) != SUCCEEDED (message.getMessage().m_MessageCode))
 		{
@@ -1090,38 +1084,46 @@ void SVTADlgTranslationResizePage::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* 
 HRESULT SVTADlgTranslationResizePage::ValidateCurrentTreeData (SVRPropertyItem* item)
 {
 	SvStl::MessageContainer message;
+	SvStl::MessageContainerVector messageList;
 
 	// Some items are checked before the RunOnce, and then the RunOnce is 
 	// bypassed.  So the clear must be explicitly called.
 	m_pTool->clearTaskMessages();
 
-	HRESULT	hr = SetInspectionData();
+	HRESULT	hr = SetInspectionData(&messageList);
 
 	if (!SUCCEEDED (hr))
 	{
-		// SetInspectionData() ends up calling RunOnce and ResetObjects.  
-		// Error handling within these processes is not complete. The 
-		// maintains members to help pass error data outside these 
-		// operations.
-		message = m_pTool->getFirstTaskMessage();
-
-		if (((SVMSG_SVO_5067_IMAGEALLOCATIONFAILED == hr) ||
-			 (SVMSG_SVO_5061_SFOUTSIDERANGE == hr)) &&
-			(nullptr != item))
+		if (messageList.empty())
 		{
-			if (SVMSG_SVO_5067_IMAGEALLOCATIONFAILED == hr)
-			{
-				// more specific message for this context.
-				hr = SVMSG_SVO_5070_IMAGEALLOCATIONFAILED;
-			}
+			// SetInspectionData() ends up calling RunOnce and ResetObjects.  
+			// Error handling within these processes is not complete. The 
+			// maintains members to help pass error data outside these 
+			// operations.
+			message = m_pTool->getFirstTaskMessage();
 
-			SVStringVector msgList;
-			msgList.push_back(item->GetLabelText());
-			message.setMessage( hr, SvOi::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams) );
+			if (((SVMSG_SVO_5067_IMAGEALLOCATIONFAILED == hr) ||
+				(SVMSG_SVO_5061_SFOUTSIDERANGE == hr)) &&
+				(nullptr != item))
+			{
+				if (SVMSG_SVO_5067_IMAGEALLOCATIONFAILED == hr)
+				{
+					// more specific message for this context.
+					hr = SVMSG_SVO_5070_IMAGEALLOCATIONFAILED;
+				}
+
+				SVStringVector msgList;
+				msgList.push_back(item->GetLabelText());
+				message.setMessage( hr, SvOi::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams) );
+			}
+		}
+		else
+		{
+			message = messageList[0];
 		}
 
 		SvStl::MessageMgrStd Exception(  SvStl::LogAndDisplay );
-		Exception.setMessage( hr, message.getMessage().m_AdditionalTextId, message.getMessage().m_AdditionalTextList, SvStl::SourceFileParams(StdMessageParams), SvOi::ProgCode_5067_ValidateCurrentTreeData );
+		Exception.setMessage(message.getMessage());
 	}
 
 	if (!SUCCEEDED (hr))

@@ -140,13 +140,15 @@ void SVBarCodeAnalyzerClass::init()
 
 }
 
-BOOL SVBarCodeAnalyzerClass::InitMil ()
+bool SVBarCodeAnalyzerClass::InitMil (SvStl::MessageContainerVector *pErrorMessages)
 {
 	SVImageClass *pSVImage;
 	double dParm;
 
 	if ( !m_MilCodeId.empty() )
+	{
 		CloseMil();
+	}
 	
 	if (pSVImage = getInputImage ())
 	{
@@ -241,18 +243,28 @@ BOOL SVBarCodeAnalyzerClass::InitMil ()
 			BOOL bUnevenGrid;
 			msv_bUnEvenGrid.GetValue(bUnevenGrid);
 			l_Code = SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCUnEvenGrid, (long)bUnevenGrid );
-			return TRUE;
+			return true;
 		}
 		else
 		{
 			// McodeAlloc failed
-			return FALSE;
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_MilBarCodeInitFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				pErrorMessages->push_back(Msg);
+			}
+			return false;
 		}
 	}
 	else
 	{
 		// getInputImage failed
-		return FALSE;
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_NoSourceImage, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
+		return false;
 	}
 }
 
@@ -340,31 +352,6 @@ BOOL SVBarCodeAnalyzerClass::CloseObject ()
 {
 	CloseMil ();
 	return SVImageAnalyzerClass::CloseObject();
-}
-
-BOOL SVBarCodeAnalyzerClass::OnValidate ()
-{
-	BOOL bRetVal = SVImageAnalyzerClass::OnValidate();
-	if( bRetVal )
-	{
-		if (!m_MilCodeId.empty())
-		{
-			m_isObjectValid.SetValue (1, true);
-			return true;
-		}
-	}
-	else
-	{
-		SetInvalid();
-		bRetVal = false;
-	}
-
-	if( m_bHasLicenseError )
-	{
-		bRetVal = false;
-	}
-
-	return bRetVal;
 }
 
 SVResultClass* SVBarCodeAnalyzerClass::GetResultObject()
@@ -557,7 +544,7 @@ BOOL SVBarCodeAnalyzerClass::onRun (SVRunStatusClass &RRunStatus)
 }
 
 
-BOOL SVBarCodeAnalyzerClass::LoadRegExpression( BOOL DisplayErrorMessage )
+bool SVBarCodeAnalyzerClass::LoadRegExpression( bool DisplayErrorMessage, SvStl::MessageContainerVector *pErrorMessages )
 {
 	BOOL bSaveStringInFile;
 
@@ -581,30 +568,32 @@ BOOL SVBarCodeAnalyzerClass::LoadRegExpression( BOOL DisplayErrorMessage )
 
 			msv_szRegExpressionValue.GetValue(m_RegExpressionValue);
 		    msv_szStringFileName.GetValue(m_StringFileName);
-
-			return TRUE;
 		}
 		CATCH (CFileException, e)
 		{
 #if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 			TRACE( "Exception : File = %s -- Line = %d\n", _T(__FILE__), __LINE__ );
 #endif
-			m_errId = SvOi::Tid_BarCode_UnableToRead;
-
+			SvStl::MessageContainer message;
+			message.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_BarCode_UnableToRead, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10038, GetUniqueObjectID());
+			if (nullptr != pErrorMessages)
+			{
+				pErrorMessages->push_back(message);
+			}
 			if( DisplayErrorMessage )
 			{
 				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, m_errId, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10038 ); 
+				Msg.setMessage( message.getMessage() ); 
 			}
-			return FALSE;
+			return false;
 		}
 		END_CATCH
 	}
 
-  return TRUE;
+  return true;
 }
 
-BOOL SVBarCodeAnalyzerClass::SaveRegExpression( BOOL DisplayErrorMessage )
+bool SVBarCodeAnalyzerClass::SaveRegExpression( SvStl::MessageContainerVector *pErrorMessage )
 {
 	BOOL bSaveStringInFile;
 	
@@ -629,54 +618,28 @@ BOOL SVBarCodeAnalyzerClass::SaveRegExpression( BOOL DisplayErrorMessage )
 
 			msv_szRegExpressionValue.GetValue(m_RegExpressionValue);
 			msv_szStringFileName.GetValue(m_StringFileName);
-
-			return TRUE;
 		}
 		CATCH (CFileException, e)
 		{
-			m_errId = SvOi::Tid_BarCode_UnableToSave;
-
-			if( DisplayErrorMessage )
+			if (nullptr != pErrorMessage)
 			{
-				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, m_errId, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10039 ); 
+				SvStl::MessageContainer message(SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_BarCode_UnableToSave, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10039, GetUniqueObjectID());
+				pErrorMessage->push_back(message);
 			}
-			return FALSE;
+			return false;
 		}
 		END_CATCH
 	}
-	return TRUE;
+	return true;
 }
 
-bool SVBarCodeAnalyzerClass::resetAllObjects( bool shouldNotifyFriends, bool silentReset )
+bool SVBarCodeAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	bool Result = false;
-
-	HRESULT l_ResetStatus = ResetObject();
-	if( S_OK != l_ResetStatus )
-	{
-		if( !silentReset && SvOi::Tid_Empty != m_errId )
-		{
-			SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, m_errId, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10040 ); 
-		}
-		Result = false;
-	}
-	else
-	{
-		Result = true;
-	}
-	return Result && __super::resetAllObjects(shouldNotifyFriends, silentReset);
-}
-
-HRESULT SVBarCodeAnalyzerClass::ResetObject()
-{
-	HRESULT l_hrOk = SVImageAnalyzerClass::ResetObject();
-	m_errId = SvOi::Tid_Empty;
+	bool Result = __super::ResetObject(pErrorMessages);
 
 	if ( !m_bHasLicenseError )
 	{
-		if ( InitMil() )
+		if ( InitMil(pErrorMessages) )
 		{
 			SVString TempRegExpressionValue;
 			SVString TempStringFileName;
@@ -685,23 +648,22 @@ HRESULT SVBarCodeAnalyzerClass::ResetObject()
 			msv_szStringFileName.GetValue( TempStringFileName );
 			if( TempRegExpressionValue != m_RegExpressionValue || TempStringFileName != m_StringFileName )
 			{
-				if( ! SaveRegExpression( FALSE ) )
-				{
-					l_hrOk = S_FALSE;
-				}
+				Result = SaveRegExpression(pErrorMessages) && Result;
 			}
 
-			if ( ! LoadRegExpression( FALSE ) )
-			{
-				l_hrOk = S_FALSE;
-			}
+			Result = LoadRegExpression( false, pErrorMessages ) && Result;
 		}
 		else
 		{
-			l_hrOk = S_FALSE;
+			Result = false;
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_SVObserver_MatroxLicenseNotFound, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				pErrorMessages->push_back(Msg);
+			}
 		}
 	}
 
-	return l_hrOk;
+	return Result;
 }
 

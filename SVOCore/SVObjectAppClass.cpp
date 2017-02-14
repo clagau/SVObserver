@@ -116,7 +116,7 @@ bool SVObjectAppClass::CreateChildObject( SVObjectClass* pChildObject, DWORD con
 
 		if( SVMFResetObject == ( context & SVMFResetObject ) )
 		{
-			pChildObject->resetAllObjects(true, false);
+			pChildObject->resetAllObjects();
 		}
 
 		if( SVMFSetDefaultInputs == ( context & SVMFSetDefaultInputs ) )
@@ -126,7 +126,7 @@ bool SVObjectAppClass::CreateChildObject( SVObjectClass* pChildObject, DWORD con
 
 		if( SVMFResetInspection == ( context & SVMFResetInspection ) )
 		{
-			GetInspection()->resetAllObjects(true, false);
+			GetInspection()->resetAllObjects();
 		}
 
 		return Result;

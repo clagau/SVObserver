@@ -71,19 +71,6 @@ BOOL SVAutoThresholdEquationClass::CreateObject( SVObjectLevelCreateStruct* PCre
 ////////////////////////////////////////////////////////////////////////////////
 // 
 ////////////////////////////////////////////////////////////////////////////////
-BOOL SVAutoThresholdEquationClass::OnValidate()
-{
-	BOOL retVal = TRUE;
-	
-	// validate our outputs
-	retVal = SVEquationClass::OnValidate() && retVal;
-
-	return retVal;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// 
-////////////////////////////////////////////////////////////////////////////////
 // If Conditional is disabled conditional.Run() returns always TRUE.
 // Otherwise the return value depends on the Conditional equation result!
 BOOL SVAutoThresholdEquationClass::onRun( SVRunStatusClass& RRunStatus )

@@ -74,19 +74,9 @@ BOOL SVRemoteInputTool::CloseObject()
 	return l_Status;
 }
 
-BOOL SVRemoteInputTool::OnValidate()
+bool SVRemoteInputTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	BOOL l_Status = SVToolClass::OnValidate();
-
-	l_Status = l_Status && ( m_InputObjectInfo.IsConnected() );
-	l_Status = l_Status && ( nullptr != m_InputObjectInfo.GetInputObjectInfo().PObject );
-
-	if( !l_Status )
-	{
-		SetInvalid();
-	}
-
-	return l_Status;
+	return __super::ResetObject(pErrorMessages) && ValidateLocal(pErrorMessages);
 }
 
 HRESULT SVRemoteInputTool::ProcessNotifyData( SVObjectCommandDataJsonPtr& p_rDataPtr )
@@ -226,8 +216,7 @@ BOOL SVRemoteInputTool::onRun( SVRunStatusClass& RRunStatus )
 	long l_Identifier = 0;
 
 	l_Status = l_Status && ( S_OK == ProcessCommandQueue() );
-	l_Status = l_Status && ( m_InputObjectInfo.IsConnected() );
-	l_Status = l_Status && ( nullptr != m_InputObjectInfo.GetInputObjectInfo().PObject );
+	l_Status = l_Status && ValidateLocal(&m_RunErrorMessages);
 
 	if( l_Status )
 	{
@@ -541,4 +530,17 @@ bool SVRemoteInputTool::SVDataElement::operator<( const SVDataElement& p_rObject
 	return ( m_ElementData < p_rObject.m_ElementData );
 }
 
-
+bool SVRemoteInputTool::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) const
+{
+	if ( !m_InputObjectInfo.IsConnected() || nullptr == m_InputObjectInfo.GetInputObjectInfo().PObject )
+	{
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
+		return false;
+	}
+	
+	return true;
+}

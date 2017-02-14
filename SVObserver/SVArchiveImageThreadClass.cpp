@@ -131,7 +131,12 @@ HRESULT SVArchiveImageThreadClass::QueueImage( BufferInfo p_BufferInfo )
 					pImageObject->SetImageInfo( p_BufferInfo.info );
 					pImageObject->resize( 1 );
 
-					hr = pImageObject->ResetObject();
+					SvStl::MessageContainerVector errorMessages;
+					pImageObject->ResetObject(&errorMessages);
+					if (!errorMessages.empty())
+					{
+						hr = errorMessages[0].getMessage().m_MessageCode;
+					}
 				}
 				else
 				{

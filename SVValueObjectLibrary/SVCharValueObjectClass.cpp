@@ -55,9 +55,6 @@ const SVCharValueObjectClass& SVCharValueObjectClass::operator = ( const SVCharV
 
 SVCharValueObjectClass::~SVCharValueObjectClass()
 {
-	// Delete all object's data arrays...
-	SetObjectDepth(0);
-	CreateBuckets();
 }
 
 void SVCharValueObjectClass::Persist(SVObjectWriter& rWriter)

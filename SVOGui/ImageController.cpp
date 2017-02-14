@@ -23,6 +23,7 @@
 #include "ObjectInterfaces\SVObjectTypeInfoStruct.h"
 #include "ObjectInterfaces\IToolSet.h"
 #include "SVObjectLibrary\SVObjectSynchronousCommandTemplate.h"
+#include "GuiCommands\ResetObject.h"
 #pragma endregion Includes
 
 namespace Seidenader { namespace SVOGui
@@ -178,6 +179,21 @@ namespace Seidenader { namespace SVOGui
 			bIsValid = commandPtr->isValid();
 		}
 		return bIsValid;
+	}
+
+	HRESULT ImageController::ResetTask(SvStl::MessageContainerVector& messages) const
+	{
+		bool bIsValid = false;
+		typedef GuiCmd::ResetObject Command;
+		typedef SVSharedPtr<Command> CommandPtr;
+		CommandPtr commandPtr = new Command(m_TaskObjectID);
+		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
+		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+		if (S_OK != hr)
+		{
+			messages = commandPtr->getErrorMessages();
+		}
+		return hr;
 	}
 
 	HRESULT ImageController::ToolRunOnce()

@@ -73,6 +73,8 @@ BOOL SVUnaryImageOperatorClass::CreateObject( SVObjectLevelCreateStruct* PCreate
 BOOL SVUnaryImageOperatorClass::Run( BOOL First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus )
 {
 	// Should call Base Class Run() here but we have different parameters!!!
+
+	clearRunErrorMessages();
 	
 	// Run yourself...
 	BOOL bRetVal =  onRun( First, RInputImageHandle, ROutputImageHandle, RRunStatus );

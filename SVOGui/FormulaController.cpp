@@ -152,7 +152,7 @@ namespace Seidenader { namespace SVOGui
 				typedef GuiCmd::ResetObject ResetCommand;
 				typedef SVSharedPtr<ResetCommand> ResetCommandPtr;
 
-				ResetCommandPtr commandPtr(new ResetCommand(m_TaskObjectID, false));
+				ResetCommandPtr commandPtr(new ResetCommand(m_TaskObjectID));
 				SVObjectSynchronousCommandTemplate<ResetCommandPtr> cmd(m_InspectionID, commandPtr);
 				HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 				if (S_OK != hr)

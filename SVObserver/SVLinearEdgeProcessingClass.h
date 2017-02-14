@@ -24,9 +24,8 @@ public:
 
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct *PCreateStructure) override;
 
-	virtual HRESULT ResetObject() override;
+	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
-	virtual BOOL OnValidate() override;
 	virtual BOOL onRun( SVRunStatusClass &p_rsvRunStatus ) override;
 
 	SVImageClass*             GetInputImage();
@@ -60,8 +59,6 @@ public:
 	// Returns:   long
 	//************************************
 	long getUpperThresholdValue() const;
-
-	virtual bool resetAllObjects( bool shouldNotifyFriends, bool silentReset ) override;
 
 	SVEnumerateValueObjectClass m_svDirection;
 	SVEnumerateValueObjectClass m_svPolarisation;

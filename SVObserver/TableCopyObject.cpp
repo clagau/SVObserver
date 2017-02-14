@@ -48,7 +48,7 @@ TableCopyObject::~TableCopyObject()
 #pragma endregion Constructor
 
 #pragma region Public Methods
-HRESULT TableCopyObject::ResetObject()
+bool TableCopyObject::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	if (nullptr != m_pSourceTable)
 	{
@@ -81,7 +81,12 @@ HRESULT TableCopyObject::ResetObject()
 				std::vector<DoubleSortValuePtr>::iterator valueIter =m_ValueList.begin()+i;
 				m_ValueList.erase(valueIter);
 				i--;
-				RemoveEmbeddedObject(pValueObject.get());
+				if (nullptr != pValueObject.get())
+				{
+					hideEmbeddedObject(*pValueObject.get());
+					RemoveEmbeddedObject(pValueObject.get());
+				}
+				
 				//Object must be deleted, before SetDefaultInputs is called.
 				pValueObject.reset();
 				dynamic_cast<SVInspectionProcess*>(GetInspection())->SetDefaultInputs();
@@ -108,7 +113,7 @@ HRESULT TableCopyObject::ResetObject()
 			else
 			{
 				SvStl::MessageMgrStd e( SvStl::LogOnly );
-				e.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_TableObject_createColumnValueObjectFailed, SvStl::SourceFileParams(StdMessageParams) );
+				e.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_TableObject_createColumnValueObjectFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 				ASSERT(FALSE);
 			}
 		}
@@ -124,9 +129,7 @@ HRESULT TableCopyObject::ResetObject()
 		dynamic_cast<SVInspectionProcess*>(GetInspection())->SetDefaultInputs();
 	}
 
-	HRESULT hr = TableObject::ResetObject();
-
-	return hr;
+	return TableObject::ResetObject(pErrorMessages);
 }
 
 void TableCopyObject::setSortContainer(const ValueObjectSortContainer& sortMap, SVRunStatusClass& rRunStatus)
@@ -191,7 +194,7 @@ BOOL TableCopyObject::onRun( SVRunStatusClass& rRunStatus )
 			returnValue = E_FAIL;
 			SvStl::MessageContainer message;
 			message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_TableCopy_Nullptr, SvStl::SourceFileParams(StdMessageParams) );
-			addTaskMessage( message );
+			addRunErrorMessage( message );
 		}
 	}
 

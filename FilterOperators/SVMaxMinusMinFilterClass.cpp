@@ -44,7 +44,7 @@ BOOL SVMaxMinusMinFilterClass::CreateObject( SVObjectLevelCreateStruct* PCreateS
 
 	if( bOk )
 	{
-		bOk = S_OK == ResetObject();
+		bOk = ResetObject();
 	}
 
 	m_isCreated = bOk;
@@ -59,25 +59,33 @@ BOOL SVMaxMinusMinFilterClass::CloseObject()
 	return SVFilterClass::CloseObject();
 }
 
-HRESULT SVMaxMinusMinFilterClass::ResetObject()
+bool SVMaxMinusMinFilterClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	HRESULT l_hrOk = SVFilterClass::ResetObject();
+	bool Result = __super::ResetObject(pErrorMessages);
 
 	m_ProcBufferHandlePtr.clear();
 
-	if( S_OK == l_hrOk && nullptr != getReferenceImage() )
+	if( Result && nullptr != getReferenceImage() )
 	{
 		mProcBufferInfo = getReferenceImage()->GetImageInfo();
 
 		mProcBufferInfo.SetOwnerImage( SV_GUID_NULL );
 		mProcBufferInfo.SetOwner( SV_GUID_NULL );
 
-		l_hrOk = SVImageProcessingClass::CreateImageBuffer( mProcBufferInfo, m_ProcBufferHandlePtr );
+		if ( S_OK != SVImageProcessingClass::CreateImageBuffer( mProcBufferInfo, m_ProcBufferHandlePtr ) )
+		{
+			Result = false;
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_CreateBufferFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				pErrorMessages->push_back(Msg);
+			}
+		}
 	}
 
-	m_isCreated = S_OK == l_hrOk;
+	m_isCreated = Result;
 
-	return l_hrOk;
+	return Result;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

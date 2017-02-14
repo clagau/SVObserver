@@ -31,10 +31,9 @@ public:
 	virtual	BOOL CloseObject() override;
 	
 	virtual BOOL CreateObject(SVObjectLevelCreateStruct* PCreateStructure) override;
-	virtual BOOL OnValidate() override;
 	virtual BOOL onRun(SVRunStatusClass &RRunStatus) override;
 
-	//@TODO[MZA][7.40][22.11.2016] should be move to private, now it is needed public because SVPatModelPageClass use it
+	//@TODO[MZA][7.50][22.11.2016] should be move to private, now it is needed public because SVPatModelPageClass use it
 	SVSmartHandlePointer m_patBufferHandlePtr;	// Model Image Buffer Handle
 
 	void CloseMIL();
@@ -52,9 +51,8 @@ public:
 
 	virtual	void DisplayAnalyzerResult() override;
 
-	virtual bool resetAllObjects( bool shouldNotifyFriends, bool silentReset ) override;
-	virtual HRESULT ResetObject() override;
-	bool IsValidSize();
+	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
+	bool IsValidSize() const;
 
 protected:
 	void CreateResult();
@@ -74,6 +72,8 @@ private:
 	/// \param index [in] Index position in which bucket in the value-objects the result should be stored.
 	/// \returns SVMatroxPatternInterface::SVStatusCode Status of the excution or the get results.
 	SVMatroxPatternInterface::SVStatusCode executePatternAndSetResults( SVMatroxBuffer ImageBufId, long index = 1 );
+
+	bool ValidateLocal(SvStl::MessageContainerVector *pErrorMessages=nullptr) const;
 
 private:
 	SVImageInfoClass m_patBuffer;	// Model Image Buffer

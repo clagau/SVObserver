@@ -46,13 +46,6 @@ BOOL SVOperatorClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure 
 	return bOk;
 }
 
-bool SVOperatorClass::resetAllObjects( bool shouldNotifyFriends, bool silentReset )
-{
-	bool Result = ( S_OK == ResetObject() );
-	assert( Result );
-	return( __super::resetAllObjects( shouldNotifyFriends, silentReset ) && Result );
-}
-
 void SVOperatorClass::init()
 {
 	m_bUseOverlays = false;	// in general, operators don't have overlays

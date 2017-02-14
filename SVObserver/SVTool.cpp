@@ -267,13 +267,6 @@ bool SVToolClass::IsEnabled() const
 	return bEnabled;
 }
 
-bool SVToolClass::IsEnabled(long p_lIndex) const
-{
-	bool bEnabled = true;
-	enabled.GetValue( p_lIndex, bEnabled );
-	return bEnabled;
-}
-
 bool SVToolClass::WasEnabled() const
 {
 	bool bEnabled = true;
@@ -327,31 +320,6 @@ HRESULT SVToolClass::GetDrawInfo( SVExtentMultiLineStruct& p_rMultiLine )
 	return l_Status;
 }
 
-BOOL SVToolClass::OnValidate()
-{
-	BOOL bRetVal = FALSE;
-	
-	if( inputConditionBoolObjectInfo.IsConnected() &&
-		inputConditionBoolObjectInfo.GetInputObjectInfo().PObject )
-	{
-		bRetVal = SVTaskObjectListClass::OnValidate();
-	}
-	else
-	{
-		SvStl::MessageContainer message;
-		SVStringVector msgList;
-		msgList.push_back(GetName());
-		message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ConditionalValue_Invalid, msgList, SvStl::SourceFileParams(StdMessageParams) );
-		addTaskMessage( message );
-	}
-
-	if( !bRetVal )
-	{
-		SetInvalid();
-	}
-	return bRetVal;
-}
-
 void SVToolClass::UpdateAuxiliaryExtents(long resultDataIndex)
 {
 	if( dynamic_cast<SVInspectionProcess*>(GetInspection())->GetEnableAuxiliaryExtent() )
@@ -402,7 +370,7 @@ BOOL SVToolClass::Run( SVRunStatusClass& RRunStatus )
 	long lCount;
 	BOOL bIsValid = FALSE;
 
-	clearTaskMessages();
+	clearRunErrorMessages();
 
 	ToolTime.Start();
 
@@ -588,7 +556,7 @@ BOOL SVToolClass::RunWithNewDisable( SVRunStatusClass& RRunStatus )
 	else
 	{
 		dwRet = !( RRunStatus.m_UpdateCounters );
-
+		SetDisabled();
 		RRunStatus.SetDisabled();
 		bDisabled = TRUE;
 	}// end else
@@ -662,17 +630,6 @@ BOOL SVToolClass::RunWithNewDisable( SVRunStatusClass& RRunStatus )
 	return dwRet;
 }// end RunWithNewDisable
 
-BOOL SVToolClass::Validate()
-{
-	if( !IsEnabled() )
-	{
-		SetDisabled();
-		//return TRUE;
-	}// end if
-	
-	return SVTaskObjectListClass::Validate();
-}
-
 BOOL SVToolClass::onRun( SVRunStatusClass& RRunStatus )
 {
 	BOOL bRetVal = SVTaskObjectListClass::onRun( RRunStatus );
@@ -728,7 +685,7 @@ BOOL SVToolClass::onRun( SVRunStatusClass& RRunStatus )
 	{
 		SvStl::MessageContainer message;
 		message.setMessage( hr, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
-		addTaskMessage( message );
+		addRunErrorMessage( message );
 		bRetVal = false;
 	}
 
@@ -836,29 +793,9 @@ HRESULT SVToolClass::EnableAuxiliaryExtents( bool p_bEnable )
 	return l_hr;
 }
 
-bool SVToolClass::resetAllObjects( bool shouldNotifyFriends, bool silentReset )
+bool SVToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	bool Result = true;
-
-	ToolSizeAdjustTask* pToolSizeAdjustTask = nullptr;
-	pToolSizeAdjustTask = ToolSizeAdjustTask::GetToolSizeAdjustTask( this );
-	if( nullptr != pToolSizeAdjustTask )
-	{
-		Result = pToolSizeAdjustTask->ProcessResetAllObject(silentReset);
-	}
-	Result = ( S_OK == ResetObject() && Result );
-
-	return (__super::resetAllObjects( shouldNotifyFriends, silentReset ) && Result);
-}
-
-HRESULT SVToolClass::ResetObject()
-{
-	HRESULT l_hrOk = S_OK;
-		
-	if( S_OK != __super::ResetObject() )
-	{
-		l_hrOk = S_FALSE;
-	}
+	bool Result = __super::ResetObject(pErrorMessages) && ValidateLocal(pErrorMessages);
 
 	bool l_bReset = false;
 	SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(GetInspection());
@@ -876,7 +813,7 @@ HRESULT SVToolClass::ResetObject()
 	}
 
 	///UpdateBottomAndRight is called again when imageExtents are changed by ToolsizeAdjust
-	if ( S_OK == l_hrOk )
+	if ( Result )
 	{
 		UpdateBottomAndRight();
 	}
@@ -914,7 +851,7 @@ HRESULT SVToolClass::ResetObject()
 
 	EnableAuxiliaryExtents( l_dValue > 0 );
 
-	return l_hrOk;
+	return Result;
 }
 
 void SVToolClass::UpdateBottomAndRight()
@@ -1215,7 +1152,7 @@ HRESULT SVToolClass::SetAuxSourceImage( SVImageClass* p_psvImage )
 			pInspection->m_bForceOffsetUpdate = true;
 		}
 		UpdateAuxiliaryExtents(1);
-		GetInspection()->resetAllObjects(true, false);
+		GetInspection()->resetAllObjects();
 	}
 
 	return l_hr;
@@ -1443,4 +1380,22 @@ bool SVToolClass::IsAllowedLocation(const SVExtentLocationPropertyEnum Location 
 	return ret;
 }
 
-
+bool SVToolClass::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) const
+{
+	if( inputConditionBoolObjectInfo.IsConnected() &&
+		inputConditionBoolObjectInfo.GetInputObjectInfo().PObject )
+	{
+		return true;
+	}
+	else
+	{
+		if (nullptr != pErrorMessages)
+		{
+			SVStringVector msgList;
+			msgList.push_back(GetName());
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ConditionalValue_Invalid, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
+		return false;
+	}
+}

@@ -55,9 +55,6 @@ const SVDoubleValueObjectClass& SVDoubleValueObjectClass::operator = (const SVDo
 
 SVDoubleValueObjectClass::~SVDoubleValueObjectClass()
 {
-	// Delete all object's data arrays...
-	SetObjectDepth(0);
-	CreateBuckets();
 }
 
 void SVDoubleValueObjectClass::Persist(SVObjectWriter& rWriter)

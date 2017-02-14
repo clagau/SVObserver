@@ -169,9 +169,8 @@ bool SVTADlgArchiveResultsPage::QueryAllowExit()
 		GetSelectedHeaderNamePairs(l_HeaderPairs); // filters by what is selected.
 		StoreHeaderValuesToTool( l_HeaderPairs );
 	}
-	HRESULT hRet = m_pTool->ValidateArchiveTool();
 
-	m_pTool->resetAllObjects(true, false);
+	m_pTool->resetAllObjects();
 
 	// Mark the document as 'dirty' so user will be prompted to save
 	// this configuration on program exit.
@@ -204,8 +203,6 @@ BOOL SVTADlgArchiveResultsPage::OnInitDialog()
 	CPropertyPage::OnInitDialog();
 
 	GetWindowText( m_strCaption );
-	//will need to fix the call to ResetObject at a later date - RPY
-	m_pTool->ResetObject();
 
 	m_ItemsSelected.InsertColumn( ItemSelectedCol, _T(""), 0, ItemsSelectedWidth );
 	m_StateImageList.Create( SvOr::IconSize, SvOr::IconSize, ILC_COLOR24 | ILC_MASK, IconNumber, IconGrowBy );

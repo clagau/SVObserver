@@ -78,7 +78,10 @@ private:
 	/// Update the input connection, dependent of the variant value.
 	/// \returns HRESULT
 	//************************************
-	HRESULT UpdateConnection();
+	/// Update the input connection, dependent of the variant value.
+	/// \param pErrorMessages [in,out] Pointer to a error list, if pointer != nullptr an error message will be added if an error is happend.
+	/// \returns bool
+	bool UpdateConnection(SvStl::MessageContainerVector *pErrorMessages=nullptr);
 
 	//************************************
 	/// Disconnected the input connection and set it to nullptr.
@@ -91,17 +94,18 @@ private:
 	//************************************
 	bool ConnectInput();
 
-	virtual HRESULT ResetObject() override;
+	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	/// Convert a string (dotted name) to an object.
 	/// \param rValue [in] Input string
 	/// \returns SVObjectClass* The founded object. If object not found, return a nullptr.
 	SVObjectClass* ConvertStringInObject( const SVString& rValue ) const;
 
-	//! Checks if the linked object is valid.
-	//! \param pLinkedObject [in] Pointer to the indirect object
-	//! \returns S_OK if linked object is valid
-	HRESULT CheckLinkedObject( const SVObjectClass* const pLinkedObject ) const;
+	/// Checks if the linked object is valid.
+	/// \param pLinkedObject [in]  Pointer to the indirect object
+	/// \param pErrorMessages [in,out] Pointer to a error list, if pointer != nullptr an error message will be added if an error is happend.
+	/// \returns bool true if linked object is valid
+	bool CheckLinkedObject( const SVObjectClass* const pLinkedObject, SvStl::MessageContainerVector *pErrorMessages=nullptr ) const;
 #pragma endregion Private Methods
 
 #pragma region Member Variables

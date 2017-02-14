@@ -25,9 +25,9 @@ SVStringResultClass::SVStringResultClass( BOOL BCreateDefaultTaskList, SVObjectC
 	m_outObjectInfo.ObjectTypeInfo.SubType = SVResultStringObjectType;
 
 	// Identify our input type needs
-	m_SVInputStringObjectInfo.SetInputObjectType( SVStringValueObjectType );
-	m_SVInputStringObjectInfo.SetObject( GetObjectInfo() );
-	RegisterInputObject( &m_SVInputStringObjectInfo, _T( "StringResultValue" ) );
+	m_inputObjectInfo.SetInputObjectType( SVStringValueObjectType );
+	m_inputObjectInfo.SetObject( GetObjectInfo() );
+	RegisterInputObject( &m_inputObjectInfo, _T( "StringResultValue" ) );
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject( &m_szValue, SVStringValueObjectClassGuid, IDS_OBJECTNAME_VALUE, false, SVResetItemNone );
@@ -67,26 +67,10 @@ BOOL SVStringResultClass::CloseObject()
 
 SVStringValueObjectClass* SVStringResultClass::getInputString()
 {
-	if( m_SVInputStringObjectInfo.IsConnected() && m_SVInputStringObjectInfo.GetInputObjectInfo().PObject )
-		return ( SVStringValueObjectClass* ) m_SVInputStringObjectInfo.GetInputObjectInfo().PObject;
+	if( m_inputObjectInfo.IsConnected() && m_inputObjectInfo.GetInputObjectInfo().PObject )
+		return ( SVStringValueObjectClass* ) m_inputObjectInfo.GetInputObjectInfo().PObject;
 
 	return nullptr;
-}
-
-BOOL SVStringResultClass::OnValidate()
-{
-	BOOL bRetVal = FALSE;
-	if( m_SVInputStringObjectInfo.IsConnected() &&
-		m_SVInputStringObjectInfo.GetInputObjectInfo().PObject )
-	{
-		bRetVal = SVResultClass::OnValidate();
-	}
-
-	// Note: Make sure this is called when Validate fails !!!
-	if( ! bRetVal )
-		SetInvalid();
-
-	return bRetVal;
 }
 
 BOOL SVStringResultClass::onRun( SVRunStatusClass& RRunStatus )

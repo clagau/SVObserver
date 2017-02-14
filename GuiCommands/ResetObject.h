@@ -22,7 +22,7 @@ namespace Seidenader
 	{
 		struct ResetObject : public boost::noncopyable
 		{
-			ResetObject(const SVGUID& rInstanceID, bool bNotifyFriends) : m_InstanceID(rInstanceID), m_bNotifyFriends(bNotifyFriends) {}
+			ResetObject(const SVGUID& rInstanceID) : m_InstanceID(rInstanceID) {}
 
 			// This method is where the real separation would occur by using sockets/named pipes/shared memory
 			// The logic contained within this method would be moved to the "Server" side of a Client/Server architecture
@@ -30,22 +30,17 @@ namespace Seidenader
 			HRESULT Execute()
 			{
 				HRESULT hr = S_OK;
-
+				m_messages.clear();
 				SvOi::IObjectClass* pObject = SvOi::getObject(m_InstanceID);
 
 				bool Result = false;
 				if (nullptr != pObject)
 				{
-					Result = pObject->resetAllObjects(m_bNotifyFriends, false);
+					Result = pObject->resetAllObjects(&m_messages);
 				}
 				if (!Result)
 				{
 					hr = E_FAIL;
-					SvOi::ITaskObject* pTask = dynamic_cast<SvOi::ITaskObject *>(pObject);
-					if (nullptr != pTask)
-					{
-						m_messages = pTask->getTaskMessages();
-					}
 				}
 				return hr;
 			}
@@ -54,7 +49,6 @@ namespace Seidenader
 
 		private:
 			SVGUID m_InstanceID;
-			bool m_bNotifyFriends;
 			SvStl::MessageContainerVector m_messages;
 		};
 	}

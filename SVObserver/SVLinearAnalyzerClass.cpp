@@ -94,16 +94,21 @@ BOOL SVLinearAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateStru
 	return bOk;
 }
 
-HRESULT SVLinearAnalyzerClass::ResetObject()
+bool SVLinearAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	HRESULT l_hrOk = SVAnalyzerClass::ResetObject();
+	bool Result = __super::ResetObject(pErrorMessages);
 
 	if( S_OK != GetPixelDepth() )
 	{
-		l_hrOk = S_FALSE;
+		Result = false;
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_GetPixelDepthFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
 	}
 
-  if ( S_OK == l_hrOk )
+  if ( Result )
   {
 		// Set range...
 		m_dwMinThreshold = static_cast<unsigned long>(SVGetDataTypeMin( m_lPixelDepth ));	
@@ -114,21 +119,7 @@ HRESULT SVLinearAnalyzerClass::ResetObject()
 		m_svNormalizer.SetRealRange( m_dwMinThreshold, m_dwMaxThreshold );
 	}
 
-	return l_hrOk;
-}
-
-BOOL SVLinearAnalyzerClass::OnValidate()
-{
-	if( SVAnalyzerClass::OnValidate() )
-	{
-		if( nullptr != GetInputImage() )
-		{
-			return true;
-		}
-	}
-
-	SetInvalid();
-	return false;
+	return Result;
 }
 
 HRESULT SVLinearAnalyzerClass::GetSelectedEdgeOverlays( SVExtentMultiLineStruct &p_rsvMiltiLine )
@@ -445,10 +436,30 @@ HRESULT SVLinearAnalyzerClass::onCollectOverlays(SVImageClass *p_Image,SVExtentM
 	return l_hrRet;
 }
 
-bool SVLinearAnalyzerClass::resetAllObjects( bool shouldNotifyFriends, bool silentReset )
+bool SVLinearAnalyzerClass::ValidateEdgeA(SvStl::MessageContainerVector *pErrorMessages)
 {
-	bool Result = ( S_OK == ResetObject() );
-	ASSERT( Result );
+	if (nullptr == GetEdgeA())
+	{
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_GetEdgeAFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
+		return false;
+	}
+	return true;
+}
 
-	return (Result && __super::resetAllObjects(shouldNotifyFriends, silentReset));
+bool SVLinearAnalyzerClass::ValidateEdgeB(SvStl::MessageContainerVector *pErrorMessages)
+{
+	if (nullptr == GetEdgeB())
+	{
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_GetEdgeBFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
+		return false;
+	}
+	return true;
 }

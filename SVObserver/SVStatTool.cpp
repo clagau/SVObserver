@@ -213,26 +213,11 @@ BOOL SVStatisticsToolClass::CreateObject(SVObjectLevelCreateStruct* PCreateStruc
 	return m_isCreated;
 }
 
-bool SVStatisticsToolClass::resetAllObjects( bool shouldNotifyFriends, bool silentReset )
+bool SVStatisticsToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	bool Result = ( S_OK == ResetObject() );
-
-	if( !Result )
-	{
-		if( !silentReset && 0 != m_errContainer.getMessage().m_MessageCode )
-		{
-			SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-			Msg.setMessage( m_errContainer.getMessage() ); 
-		}
-	}
-	return( __super::resetAllObjects( shouldNotifyFriends, silentReset ) && Result );
-}
-
-HRESULT SVStatisticsToolClass::ResetObject()
-{
-	HRESULT Result = __super::ResetObject();
+	bool Result = __super::ResetObject(pErrorMessages);
 	
-	if ( S_OK == Result )
+	if ( Result )
 	{
 		SVString Name;
 		msvVariableName.GetValue( Name );
@@ -240,9 +225,9 @@ HRESULT SVStatisticsToolClass::ResetObject()
 
 		if( IsEnabled() )
 		{
-			if( HasVariable() && !Test() )
+			if( HasVariable() && !Test(pErrorMessages) )
 			{
-				Result = -SvOi::Err_25012_StatTool_Test;
+				Result = false;
 			}
 			else
 			{
@@ -505,7 +490,7 @@ void SVStatisticsToolClass::SetOccurenceTestValue( const SVString& rValue )
 	msvOccurenceValue.SetValue( 1, rValue );
 }
 
-SVObjectReference SVStatisticsToolClass::GetVariableSelected()
+SVObjectReference SVStatisticsToolClass::GetVariableSelected() const
 {
 	SVString Name;
 	msvVariableName.GetValue( Name );
@@ -633,7 +618,7 @@ double SVStatisticsToolClass::calculateVariance( double aNumberOfSamples, double
 	return value;
 }
 
-BOOL SVStatisticsToolClass::HasVariable()
+BOOL SVStatisticsToolClass::HasVariable() const
 {
 	BOOL bRetVal = FALSE;
 	SVObjectReference refObject = GetVariableSelected();
@@ -654,66 +639,11 @@ BOOL SVStatisticsToolClass::HasVariable()
 	return bRetVal;
 }
 
-BOOL SVStatisticsToolClass::Test()
-{
-	BOOL bRetVal = FALSE;
-
-	if( m_inputObjectInfo.IsConnected() && m_inputObjectInfo.GetInputObjectInfo().PObject )
-	{
-		// verify that the object is really valid
-		SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject( m_inputObjectInfo.GetInputObjectInfo().UniqueObjectID );
-		if ( pObject )
-		{
-			SVValueObjectReference refValueObject = m_inputObjectInfo.GetInputObjectInfo().GetObjectReference();
-			if ( refValueObject.Object() )
-			{
-				double dValue;
-				HRESULT hr = refValueObject.GetValue( dValue );
-				if ( S_OK == hr || SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE == hr )
-				{
-					bRetVal = TRUE;
-				}
-				else
-				{
-					SVString CompleteName = refValueObject.Object()->GetCompleteObjectNameToObjectType( nullptr, SVInspectionObjectType );
-					SVStringVector msgList;
-					msgList.push_back( CompleteName );
-					m_errContainer.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_StatToolInvalidVariable, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10201);
-				}
-			}
-		}
-	}
-
-	return bRetVal;
-}
-
-BOOL SVStatisticsToolClass::OnValidate()
-{
-	BOOL bRetVal = SVToolClass::OnValidate();
-
-	if( bRetVal )
-	{
-		if( HasVariable() )
-		{
-			bRetVal = m_inputObjectInfo.IsConnected() && nullptr != m_inputObjectInfo.GetInputObjectInfo().PObject;
-		}
-		else
-		{
-			bRetVal = true;
-		}
-	}
-
-	if( !bRetVal )
-		SetInvalid();
-
-	return bRetVal;
-}
-
 BOOL SVStatisticsToolClass::onRun( SVRunStatusClass& RRunStatus )
 {
 	BOOL l_bOk = SVToolClass::onRun( RRunStatus );
 
-	if( m_inputObjectInfo.IsConnected() && nullptr != m_inputObjectInfo.GetInputObjectInfo().PObject )
+	if( ValidateLocal(&m_RunErrorMessages) )
 	{
 		if( !RRunStatus.IsDisabled() && !RRunStatus.IsDisabledByCondition() )
 		{
@@ -846,4 +776,68 @@ BOOL SVStatisticsToolClass::onRun( SVRunStatusClass& RRunStatus )
 	}
 
 	return l_bOk;
+}
+
+bool SVStatisticsToolClass::Test(SvStl::MessageContainerVector *pErrorMessages)
+{
+	if( !ValidateLocal(pErrorMessages) )
+	{
+		return false;
+	}
+
+	// verify that the object is really valid
+	SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject( m_inputObjectInfo.GetInputObjectInfo().UniqueObjectID );
+	if ( pObject )
+	{
+		SVValueObjectReference refValueObject = m_inputObjectInfo.GetInputObjectInfo().GetObjectReference();
+		if ( refValueObject.Object() )
+		{
+			double dValue;
+			HRESULT hr = refValueObject.GetValue( dValue );
+			if ( S_OK == hr || SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE == hr )
+			{
+				return true;
+			}
+			else
+			{
+				if (nullptr != pErrorMessages)
+				{
+					SVString CompleteName = refValueObject.Object()->GetCompleteObjectNameToObjectType( nullptr, SVInspectionObjectType );
+					SVStringVector msgList;
+					msgList.push_back( CompleteName );
+					SvStl::MessageContainer message;
+					message.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_StatToolInvalidVariable, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10201, GetUniqueObjectID());
+					pErrorMessages->push_back( message );
+				}
+				return false;
+			}
+		}
+	}
+
+	//Test failed, if reach this point.
+	if (nullptr != pErrorMessages)
+	{
+		SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_StatToolTestFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+		pErrorMessages->push_back(Msg);
+	}
+
+	return false;
+}
+
+bool SVStatisticsToolClass::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) const
+{
+	if( HasVariable() )
+	{
+		if ( !m_inputObjectInfo.IsConnected() || nullptr == m_inputObjectInfo.GetInputObjectInfo().PObject )
+		{
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				pErrorMessages->push_back(Msg);
+			}
+			return false;
+		}
+	}
+
+	return true;
 }

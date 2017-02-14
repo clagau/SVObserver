@@ -86,6 +86,23 @@ BOOL SVPolarTransformClass::CloseObject()
 	return bRetVal;
 }
 
+bool SVPolarTransformClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
+{
+	bool Result = true;
+	if( nullptr == getInputCenterXResult() || nullptr == getInputCenterYResult() ||
+		 nullptr == getInputStartRadiusResult() || nullptr == getInputEndRadiusResult() ||
+		 nullptr == getInputStartAngleResult() ||  nullptr == getInputEndAngleResult() )
+	{
+		Result = false;
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
+	}
+	return __super::ResetObject(pErrorMessages) && Result;
+}
+
 SVDoubleValueObjectClass* SVPolarTransformClass::getInputCenterXResult()
 {
 	if( inputCenterXResult.IsConnected() && inputCenterXResult.GetInputObjectInfo().PObject )
@@ -140,26 +157,4 @@ SVDoubleValueObjectClass* SVPolarTransformClass::getInputEndAngleResult()
 		return ( SVDoubleValueObjectClass* ) inputEndAngleResult.GetInputObjectInfo().PObject;
 	}
 	return nullptr;
-}
-
-BOOL SVPolarTransformClass::OnValidate()
-{
-	BOOL bRetVal = false;
-	if( getInputCenterXResult() &&
-		getInputCenterYResult() &&
-		getInputStartRadiusResult() &&
-		getInputEndRadiusResult() &&
-		getInputStartAngleResult() &&
-		getInputEndAngleResult() )
-	{
-		bRetVal = true;
-		bRetVal = SVTaskObjectClass::OnValidate() && bRetVal;
-	}
-
-	// Note: Make sure this is called when Validate fails !!!
-	if( ! bRetVal )
-	{
-		SetInvalid();
-	}
-	return bRetVal;
 }

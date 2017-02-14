@@ -144,10 +144,8 @@ BOOL SVColorToolClass::CloseObject()
 	return SVToolClass::CloseObject();
 }
 
-HRESULT SVColorToolClass::ResetObject()
+bool SVColorToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	HRESULT l_hrOk = S_OK;
-
 	// Create 3 output images, one for each band...
 	SVImageClass* pInputImage = nullptr;
 
@@ -182,16 +180,13 @@ HRESULT SVColorToolClass::ResetObject()
 	createBandChildLayer( m_band2Image, pInputImage, Band2 );
 	m_band2Image.ResetObject();
 
-	if( S_OK != SVToolClass::ResetObject() )
-	{
-		l_hrOk = S_FALSE;
-	}
+	bool Result = SVToolClass::ResetObject(pErrorMessages);
 
 	CollectInputImageNames();
 
 	UpdateImageWithExtent( 1 );
 
-	return l_hrOk;
+	return Result;
 }
 
 bool SVColorToolClass::DoesObjectHaveExtents() const

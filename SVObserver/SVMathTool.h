@@ -27,8 +27,6 @@ public:
 
 	virtual BOOL CreateObject(SVObjectLevelCreateStruct* PCreateStruct ) override;
 
-	virtual BOOL OnValidate() override;
-
 private:
 	void init(void);
 

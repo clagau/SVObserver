@@ -29,9 +29,9 @@ SVDPointXResultClass::SVDPointXResultClass( BOOL BCreateDefaultTaskList, SVObjec
 	m_outObjectInfo.ObjectTypeInfo.SubType = SVResultDPointXObjectType;
 
 	// Identify our input type needs
-	inputObjectInfo.SetInputObjectType( SVDPointValueObjectType );
-	inputObjectInfo.SetObject( GetObjectInfo() );
-	RegisterInputObject( &inputObjectInfo, _T( "DPointXResult" ) );
+	m_inputObjectInfo.SetInputObjectType( SVDPointValueObjectType );
+	m_inputObjectInfo.SetObject( GetObjectInfo() );
+	RegisterInputObject( &m_inputObjectInfo, _T( "DPointXResult" ) );
 
 
 	// Register Embedded Objects
@@ -95,28 +95,10 @@ BOOL SVDPointXResultClass::CloseObject()
 
 SVDPointValueObjectClass* SVDPointXResultClass::getInputPoint()
 {
-	if( inputObjectInfo.IsConnected() && inputObjectInfo.GetInputObjectInfo().PObject )
-		return static_cast<SVDPointValueObjectClass*>(inputObjectInfo.GetInputObjectInfo().PObject);
+	if( m_inputObjectInfo.IsConnected() && m_inputObjectInfo.GetInputObjectInfo().PObject )
+		return static_cast<SVDPointValueObjectClass*>(m_inputObjectInfo.GetInputObjectInfo().PObject);
 
 	return nullptr;
-}
-
-
-BOOL SVDPointXResultClass::OnValidate()
-{
-	BOOL bRetVal = FALSE;
-	if( inputObjectInfo.IsConnected() &&
-		inputObjectInfo.GetInputObjectInfo().PObject ) 
-	{
-		bRetVal = TRUE;
-		bRetVal = SVResultClass::OnValidate() && bRetVal;
-	}
-
-	// Note: Make sure this is called when Validate fails !!!
-	if( ! bRetVal )
-		SetInvalid();
-
-	return bRetVal;
 }
 
 BOOL SVDPointXResultClass::onRun( SVRunStatusClass& RRunStatus )

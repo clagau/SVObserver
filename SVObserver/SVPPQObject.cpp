@@ -1275,26 +1275,26 @@ void SVPPQObject::PrepareGoOnline()
 		{
 			SvOi::MessageTextEnum messageId = SvOi::Tid_Empty;
 			SVStringVector msgList;
-			bool bShowToolError = false;
 
 			//@TODO[gra][7.40][25.05.2016]: This should at a later stage show all the tool errors not only the first error
 			SvStl::MessageContainerVector AllToolMessages;
 			m_arInspections[i]->getToolMessages( std::back_inserter( AllToolMessages ) );
 			SvStl::MessageContainerVector::const_iterator Iter( AllToolMessages.begin() );
+			SvStl::SourceFileParams sourceFileParam(StdMessageParams);
 			if( AllToolMessages.end() != Iter )
 			{
-				bShowToolError = true;
 				SVString sToolName = SVObjectManagerClass::Instance().GetCompleteObjectName( Iter->getObjectId() );
 				msgList.push_back( sToolName );
 				msgList.push_back( SVString( Iter->what() ) );
 				messageId = SvOi::Tid_CanGoOnlineFailure_InspectionTool;
+				sourceFileParam = Iter->getMessage().m_SourceFile;
 			}
-			if (!bShowToolError)
+			else
 			{
 				messageId = SvOi::Tid_CanGoOnlineFailure_Inspection;
 				msgList.push_back(m_arInspections[i]->GetCompleteName());
 			}
-			SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, messageId, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10185 );
+			SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, messageId, msgList, sourceFileParam, SvOi::Err_10185 );
 			throw Msg;
 		}
 	}// end for

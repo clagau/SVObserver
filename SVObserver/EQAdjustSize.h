@@ -18,8 +18,7 @@ public:
 	EQAdjustSize( long subType, GUID resultGuid,  SVObjectClass* POwner = nullptr, int StringResourceID = 0 );
 	virtual ~EQAdjustSize();
 
-	virtual BOOL OnValidate()    override;
-	virtual HRESULT ResetObject() override ;
+	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override ;
 	GUID& GetResultGuid();
 
 	//************************************

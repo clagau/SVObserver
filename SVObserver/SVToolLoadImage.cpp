@@ -115,30 +115,10 @@ BOOL SVLoadImageToolClass::CloseObject()
 	return FALSE;
 }
 
-/////////////////////////////////////////////////////////////////////////////
-//
-// Make sure we have an image file to load.
-//
-BOOL SVLoadImageToolClass::OnValidate ()
-{
-	if (SVToolClass::OnValidate ())
-	{
-		SVString PathName;
-		m_currentPathName.GetValue( PathName );
-		
-		if( ::SVFileExists( PathName.c_str() ) )
-		{
-			return true;
-		}
-	}
-	SetInvalid ();
-	return false;
-}
-
 BOOL SVLoadImageToolClass::onRun( SVRunStatusClass& RRunStatus )
 {
 	// All inputs and outputs must be validated first
-	if( SVToolClass::onRun( RRunStatus ) )
+	if( ValidateLocal(&m_RunErrorMessages) && SVToolClass::onRun( RRunStatus ) )
 	{
 		BOOL bReload = false;
 		SVString ImagePathName;
@@ -189,20 +169,15 @@ BOOL SVLoadImageToolClass::onRun( SVRunStatusClass& RRunStatus )
 	return FALSE;
 }
 
-HRESULT SVLoadImageToolClass::ResetObject()
+bool SVLoadImageToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	HRESULT l_hrOk = S_OK;
+	bool Result = SVToolClass::ResetObject(pErrorMessages);
 	
-	if ( S_OK != SVToolClass::ResetObject() )
-	{
-		l_hrOk = S_FALSE;
-	}
-
-	m_bResetFileImage = S_OK == l_hrOk;
+	m_bResetFileImage = Result;
 
 	UpdateImageWithExtent( 1 );
 
-	return l_hrOk;
+	return Result && ValidateLocal(pErrorMessages);
 }
 
 HRESULT SVLoadImageToolClass::IsInputImage(SVImageClass *p_psvImage)
@@ -302,17 +277,20 @@ HRESULT SVLoadImageToolClass::SetImageExtentToParent(unsigned long p_ulIndex )
 	return l_hrOk;
 }
 
-BOOL SVLoadImageToolClass::IsValid()
+bool SVLoadImageToolClass::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) const
 {
-	BOOL bValid = TRUE;
+	SVString PathName;
+	m_currentPathName.GetValue( PathName );
 
-	ToolSizeAdjustTask* pToolSizeAdjustTask = nullptr;
-	pToolSizeAdjustTask = ToolSizeAdjustTask::GetToolSizeAdjustTask(this);
-	if(nullptr != pToolSizeAdjustTask)
+	if( ::SVFileExists( PathName.c_str() ) )
 	{
-			bValid =  pToolSizeAdjustTask->OnValidate();
+		return true;
 	}
 
-	return SVToolClass::IsValid() & bValid ;
+	if (nullptr != pErrorMessages)
+	{
+		SvStl::MessageContainer message( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_FailedToLoadImage, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+		pErrorMessages->push_back(message);
+	}
+	return false;
 }
-

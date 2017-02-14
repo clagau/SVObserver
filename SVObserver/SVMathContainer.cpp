@@ -75,6 +75,23 @@ BOOL SVMathContainerClass::CloseObject()
 	return FALSE;
 }
 
+bool SVMathContainerClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
+{
+	bool Valid = __super::ResetObject(pErrorMessages);
+
+	if( nullptr == getInputMathResult() )
+	{
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
+		Valid = false;
+	}
+
+	return Valid;
+}
+
 SVDoubleValueObjectClass* SVMathContainerClass::getInputMathResult()
 {
 	if( inputMathResult.IsConnected() && inputMathResult.GetInputObjectInfo().PObject )
@@ -82,20 +99,3 @@ SVDoubleValueObjectClass* SVMathContainerClass::getInputMathResult()
 
 	return nullptr;
 }
-
-BOOL SVMathContainerClass::OnValidate()
-{
-	BOOL bRetVal = FALSE;
-	if( getInputMathResult() )
-	{
-		bRetVal = TRUE;
-		bRetVal = SVTaskObjectClass::OnValidate() && bRetVal;
-	}
-
-	// Note: Make sure this is called when Validate fails !!!
-	if( ! bRetVal )
-		SetInvalid();
-
-	return bRetVal;
-}
-

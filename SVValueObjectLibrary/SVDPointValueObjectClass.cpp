@@ -48,9 +48,6 @@ const SVDPointValueObjectClass& SVDPointValueObjectClass::operator = (const SVDP
   
 SVDPointValueObjectClass::~SVDPointValueObjectClass()
 {
-	// Delete all object's data arrays...
-	SetObjectDepth( 0 );
-	ResetObject();
 }
 
 BOOL SVDPointValueObjectClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )

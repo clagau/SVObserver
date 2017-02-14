@@ -68,7 +68,7 @@ public:
 
    SVResultClass* GetResultObject(const GUID & guid);
    
-	virtual BOOL   OnValidate () override;
+	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	HRESULT createHistogramImage();
 

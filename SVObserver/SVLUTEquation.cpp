@@ -83,27 +83,17 @@ BOOL SVLUTEquationClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructu
 	return bOk;
 }
 
-HRESULT SVLUTEquationClass::ResetObject()
+bool SVLUTEquationClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	HRESULT l_hrOk = SVEquationClass::ResetObject();
+	bool Result = __super::ResetObject(pErrorMessages);
 
 	// Resize to 256 entries...
-	if( S_OK == l_hrOk && 256 != m_byteVectorResult.GetArraySize()  )
+	if( Result && 256 != m_byteVectorResult.GetArraySize()  )
 	{
 		m_byteVectorResult.SetArraySize( 256 );
 	}
 
-	return l_hrOk;
-}
-
-BOOL SVLUTEquationClass::OnValidate()
-{
-	BOOL retVal = TRUE;
-	
-	// validate our outputs
-	retVal = SVEquationClass::OnValidate() && retVal;
-
-	return retVal;
+	return Result;
 }
 
 ////////////////////////////////////////////////////////////////////////////////

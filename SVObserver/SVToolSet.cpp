@@ -216,13 +216,6 @@ bool SVToolSetClass::IsEnabled() const
 	return bEnabled;
 }
 
-bool SVToolSetClass::IsEnabled(long p_lIndex) const
-{
-	bool bEnabled = true;
-	m_Enabled.GetValue( p_lIndex, bEnabled );
-	return bEnabled;
-}
-
 bool SVToolSetClass::WasEnabled() const
 {
 	bool bEnabled = IsEnabled();
@@ -409,28 +402,6 @@ SvOi::IObjectClass* SVToolSetClass::getBand0Image() const
 }
 #pragma endregion virtual method (IToolSet)
 
-BOOL SVToolSetClass::OnValidate()
-{
-	BOOL bRetVal = false;
-
-	//	if( mainImageObject )
-
-	// check that we have a main image and the Equation Class is created
-	if( inputConditionBoolObjectInfo.IsConnected() &&
-		inputConditionBoolObjectInfo.GetInputObjectInfo().PObject )
-	{
-		bRetVal = true;
-		bRetVal = SVTaskObjectListClass::OnValidate() && bRetVal;
-	}
-
-	if( !bRetVal )
-	{
-		SetInvalid();
-	}
-
-	return bRetVal;
-}
-
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : onRun member function of class SVToolSetClass
 // -----------------------------------------------------------------------------
@@ -477,6 +448,7 @@ BOOL SVToolSetClass::Run( SVRunStatusClass& RRunStatus )
 	BOOL bRetVal = TRUE;
 	BOOL bIsValid = FALSE;
 	BOOL bDisabled = FALSE;
+	clearRunErrorMessages();
 
 	if( !dynamic_cast<SVInspectionProcess*>(GetInspection())->GetNewDisableMethod() )
 	{
@@ -886,32 +858,6 @@ BOOL SVToolSetClass::RunWithNewDisable( SVRunStatusClass& RRunStatus )
 	return bRetVal;
 }// end RunWithNewDisable
 
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : Validate
-// -----------------------------------------------------------------------------
-// .Description : 
-// -----------------------------------------------------------------------------
-// .Input(s)
-//	 Type				Name				Description
-//	:None
-// .Return Value
-//	:BOOL
-////////////////////////////////////////////////////////////////////////////////
-// .History
-//	 Date		Author		Comment
-//  :30.07.1998 RO			First Implementation
-////////////////////////////////////////////////////////////////////////////////
-BOOL SVToolSetClass::Validate()
-{
-	if( !IsEnabled() )
-	{
-		// SetDisabled();
-		return true;
-	}// end if
-	
-	return __super::Validate();
-}
-
 void SVToolSetClass::SetInvalid()
 {
 	__super::SetInvalid();
@@ -924,23 +870,9 @@ void SVToolSetClass::SetInvalid()
 	}
 }
 
-bool SVToolSetClass::resetAllObjects( bool shouldNotifyFriends, bool silentReset )
+bool SVToolSetClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	bool Result = ( S_OK == ResetObject() );
-	ASSERT( Result );
-
-	return( __super::resetAllObjects( shouldNotifyFriends, silentReset ) && Result );
-}
-
-HRESULT SVToolSetClass::ResetObject()
-{
-	HRESULT l_hrOk = S_OK;
-
-	if( S_OK != __super::ResetObject() )
-	{
-		l_hrOk = S_FALSE;
-	}
-
+	bool Result = __super::ResetObject(pErrorMessages) && ValidateLocal(pErrorMessages);
 	bool l_bReset = false;
 
 	if( S_OK == m_ResetCounts.GetValue( l_bReset ) && l_bReset )
@@ -970,7 +902,7 @@ HRESULT SVToolSetClass::ResetObject()
 		m_Height.SetDefaultValue( Height, true );
 	}
 
-	return l_hrOk;
+	return Result;
 }
 
 HRESULT SVToolSetClass::ResetCounts()
@@ -1049,3 +981,22 @@ void SVToolSetClass::connectChildObject( SVTaskObjectClass& rChildObject )
 	rChildObject.ConnectObject(createStruct);
 }
 
+bool SVToolSetClass::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) const
+{
+	if( inputConditionBoolObjectInfo.IsConnected() &&
+		inputConditionBoolObjectInfo.GetInputObjectInfo().PObject )
+	{
+		return true;
+	}
+	else
+	{
+		if (nullptr != pErrorMessages)
+		{
+			SVStringVector msgList;
+			msgList.push_back(GetName());
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ConditionalValue_Invalid, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
+		return false;
+	}
+}

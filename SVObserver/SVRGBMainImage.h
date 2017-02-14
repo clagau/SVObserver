@@ -22,7 +22,7 @@ public:
 
 	virtual ~SVRGBMainImageClass();
 
-	virtual HRESULT ResetObject() override;
+	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	virtual BOOL SetImageHandleIndex( SVImageIndexStruct svIndex ) override;
 

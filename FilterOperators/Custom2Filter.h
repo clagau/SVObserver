@@ -47,11 +47,7 @@ public:
 	//************************************
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
 
-	//************************************
-	// Description: Resets the object
-	// Return: S_OK on success
-	//************************************
-	virtual HRESULT ResetObject() override;
+	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 #pragma region virtual method (IFilter)
 	//************************************
@@ -67,9 +63,8 @@ protected:
 #pragma region Protected Methods
 	//************************************
 	// Description: Rebuilds the Kernel values required for the filter
-	// Return: True on success
 	//************************************
-	BOOL RebuildKernel();
+	void RebuildKernel();
 
 	//************************************
 	// Description: This method is called when the mode is set to run
@@ -80,12 +75,6 @@ protected:
 	// Return: True on success
 	//************************************
 	virtual BOOL onRun( BOOL First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus ) override;
-
-	//************************************
-	// Description: This method is called to validate the kernel values
-	// Return: True on success
-	//************************************
-	virtual BOOL OnValidate() override;
 #pragma endregion Protected Methods
 
 private:
@@ -101,6 +90,8 @@ private:
 	// Return: A valid kernel size 
 	//************************************
 	long validateKernelSize( SVLongValueObjectClass& rKernelSize );
+
+	bool ValidateLocal(SvStl::MessageContainerVector *pErrorMessages = nullptr) const;
 #pragma endregion Private Methods
 
 private:

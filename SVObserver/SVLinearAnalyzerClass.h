@@ -30,9 +30,7 @@ public:
 
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
 
-	virtual HRESULT ResetObject() override;
-
-	virtual BOOL OnValidate() override;
+	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	virtual HRESULT GetSelectedEdgeOverlays( SVExtentMultiLineStruct &p_MultiLine );
 
@@ -45,8 +43,6 @@ public:
 
 	HRESULT GetPixelDepth();
 
-	virtual bool resetAllObjects( bool shouldNotifyFriends, bool silentReset ) override;
-
 	SVBoolValueObjectClass m_svShowAllEdgeAOverlays;
 	SVBoolValueObjectClass m_svShowAllEdgeBOverlays;
 
@@ -57,6 +53,8 @@ protected:
 
 	SVEnumerateValueObjectClass *GetInputProfileOrientation();
 	SVBoolValueObjectClass *GetInputUseRotationAngle();
+	bool ValidateEdgeA(SvStl::MessageContainerVector *pErrorMessages=nullptr);
+	bool ValidateEdgeB(SvStl::MessageContainerVector *pErrorMessages=nullptr);
 
 	SVInObjectInfoStruct m_svInputImageObjectInfo;
 	SVInObjectInfoStruct m_svInputProfileOrientation;

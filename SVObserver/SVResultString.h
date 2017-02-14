@@ -24,7 +24,6 @@ public:
 
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
 	virtual BOOL CloseObject() override;
-	virtual BOOL OnValidate() override;
 
 protected:
 	SVStringValueObjectClass* getInputString();
@@ -34,10 +33,6 @@ protected:
 // Data Element(s):
 //******************************************************************************
 protected:
-
-	// Input
-	SVInObjectInfoStruct		m_SVInputStringObjectInfo;
-
 	// Output
 	SVStringValueObjectClass		m_szValue;
 };
