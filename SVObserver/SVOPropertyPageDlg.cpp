@@ -1247,7 +1247,7 @@ void CSVOPropertyPageDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
 								if (pParam)
 								{
 									_variant_t Value;
-									pItem->GetItemValue( Value.GetVARIANT() );
+									pItem->GetItemValue( Value );
 									const SVCameraFormat* pFormat = reinterpret_cast< const SVCameraFormat*> (Value.llVal);
 									if ( nullptr != pFormat )
 									{

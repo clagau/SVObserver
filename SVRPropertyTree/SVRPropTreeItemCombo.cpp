@@ -349,28 +349,28 @@ LONG SVRPropertyItemCombo::GetDropDownHeight()
 }
 
 
-bool SVRPropertyItemCombo::GetItemValue( long& p_Value )
+bool SVRPropertyItemCombo::GetItemValue( long& rValue )
 {
 	StoreItemData();
-	p_Value = static_cast< long >( m_lComboData );
+	rValue = static_cast< long >( m_lComboData );
 	return true;
 }
 
-bool SVRPropertyItemCombo::GetItemValue( UINT& p_Value )
+bool SVRPropertyItemCombo::GetItemValue( UINT& rValue )
 {
 	StoreItemData();
-	p_Value = static_cast< UINT >( m_lComboData );
+	rValue = static_cast< UINT >( m_lComboData );
 	return true;
 }
 
 
-bool SVRPropertyItemCombo::GetItemValue(VARIANT& vtVal)
+bool SVRPropertyItemCombo::GetItemValue(_variant_t& rValue)
 {
 	StoreItemData();
-	::VariantClear(&vtVal);
+	rValue.Clear();
 
-	V_VT( &vtVal ) = VT_I8;
-	V_I8( &vtVal ) = m_lComboData;
+	rValue.ChangeType( VT_I8 );
+	rValue.llVal = m_lComboData;
 
 	return true;
 }

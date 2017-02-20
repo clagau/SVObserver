@@ -229,8 +229,8 @@ afx_msg void CPropTreeTestDlg::OnItemChanged( NMHDR* p_NotifyStruct, LRESULT* p_
 				SVRPropertyItem* l_Item = m_Tree.FindItem( l_ID );
 				l_Item->GetItemValue( l_Long );
 
-				VARIANT l_Var;
-				l_Item->GetItemValue( l_Var );
+				_variant_t Value;
+				l_Item->GetItemValue( Value );
 
 				break;
 			}

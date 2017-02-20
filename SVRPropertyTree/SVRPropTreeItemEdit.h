@@ -56,18 +56,18 @@ public:
 	virtual int GetItemType(void) override;
 
 	// Retrieve the item's attribute value
-	virtual bool GetItemValue(BYTE& pbVal) override;
-	virtual bool GetItemValue(short& piVal) override;
-	virtual bool GetItemValue(USHORT& puiVal) override;
-	virtual bool GetItemValue(long& plVal) override;
-	virtual bool GetItemValue(ULONG& pulVal) override;
-	virtual bool GetItemValue(int& pintVal) override;
-	virtual bool GetItemValue(UINT& puintVal) override;
-	virtual bool GetItemValue(float& pfltVal) override;
-	virtual bool GetItemValue(double& pdblVal) override;
-	virtual bool GetItemValue(SVString& rVal) override;
-	virtual bool GetItemValue(VARIANT& vtVal) override;
-	virtual bool GetItemValue(bool& bVal) override;
+	virtual bool GetItemValue(BYTE& rValue) override;
+	virtual bool GetItemValue(short& rValue) override;
+	virtual bool GetItemValue(USHORT& rValue) override;
+	virtual bool GetItemValue(long& rValue) override;
+	virtual bool GetItemValue(ULONG& rValue) override;
+	virtual bool GetItemValue(int& rValue) override;
+	virtual bool GetItemValue(UINT& rValue) override;
+	virtual bool GetItemValue(float& rValue) override;
+	virtual bool GetItemValue(double& rValue) override;
+	virtual bool GetItemValue(SVString& rValue) override;
+	virtual bool GetItemValue(_variant_t& rValue) override;
+	virtual bool GetItemValue(bool& rValue) override;
 
 	// Set the item's attribute value
 	virtual bool SetItemValue(const BYTE bVal) override;
@@ -114,11 +114,6 @@ public:
 
 	void SetButtonText( LPCTSTR Text );
 
-protected:
-	_variant_t	m_vtData;
-	SVString*   m_pValue;
-	SVString    m_Previous;
-	SVString    m_ButtonText;
 
 // Operations
 public:
@@ -149,10 +144,16 @@ protected:
 	void ButtonClicked();
 	void DisplayButton();
 
+	SVString Data2String();
+	void String2Data( LPCTSTR Text );
 
 	DECLARE_MESSAGE_MAP()
 
 private:
+	_variant_t	m_vtData;
+	SVString*   m_pValue;
+	SVString    m_Previous;
+	SVString    m_ButtonText;
 
 	SVNotifyButton m_btnDots;
 

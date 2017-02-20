@@ -48,9 +48,9 @@ public:
 	virtual void DrawAttribute(CDC* pDC, const RECT& rc) override;
 
 	// Retrieve the item's attribute value
-	virtual bool GetItemValue( long& l_Value ) override;
-	virtual bool GetItemValue( UINT& p_Value ) override;
-	virtual bool GetItemValue(VARIANT& vtVal) override;
+	virtual bool GetItemValue( long& rValue ) override;
+	virtual bool GetItemValue( UINT& rValue ) override;
+	virtual bool GetItemValue(_variant_t& rValue) override;
 
 	// Set the item's attribute value
 	virtual bool SetItemValue(const LPARAM lparam);

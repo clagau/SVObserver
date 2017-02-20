@@ -497,7 +497,7 @@ void SVCameraFilePropertyPageDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* p
 						{
 							SVCameraFormatsDeviceParam* pParam = w.DerivedValue( pParam );
 							_variant_t Value;
-							pItem->GetItemValue( Value.GetVARIANT() );
+							pItem->GetItemValue( Value );
 							const SVCameraFormat* pFormat = reinterpret_cast< const SVCameraFormat*> (Value.llVal);
 							if ( pFormat )
 							{
@@ -560,7 +560,7 @@ void SVCameraFilePropertyPageDlg::OnItemQueryShowButton(NMHDR* pNotifyStruct, LR
 				case DeviceParamCameraFormats:
 				{
 					_variant_t Value;
-					pItem->GetItemValue( Value.GetVARIANT() );
+					pItem->GetItemValue( Value );
 					const SVCameraFormat* pFormat = reinterpret_cast< const SVCameraFormat*> (Value.llVal);
 					if ( pFormat )
 					{
@@ -596,7 +596,7 @@ void SVCameraFilePropertyPageDlg::OnItemButtonClick(NMHDR* pNotifyStruct, LRESUL
 				case DeviceParamCameraFormats:
 				{
 					_variant_t Value;
-					pItem->GetItemValue( Value.GetVARIANT() );
+					pItem->GetItemValue( Value );
 					const SVCameraFormat* pSelectedFormat = reinterpret_cast< const SVCameraFormat*> (Value.llVal);
 					if ( pSelectedFormat )
 					{

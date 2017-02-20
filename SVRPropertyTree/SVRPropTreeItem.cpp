@@ -962,7 +962,7 @@ bool SVRPropertyItem::GetItemValue(SVString& /*strVal*/)
 }
 
 
-bool SVRPropertyItem::GetItemValue(VARIANT& /*vtVal*/)
+bool SVRPropertyItem::GetItemValue(_variant_t& /*vtVal*/)
 {
 	ASSERT(0);
 	return false;

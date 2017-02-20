@@ -141,7 +141,7 @@ public:
 	virtual bool GetItemValue(float& fltVal);
 	virtual bool GetItemValue(double& dblVal);
 	virtual bool GetItemValue(SVString& strVal);
-    virtual bool GetItemValue(VARIANT& vtVal);
+    virtual bool GetItemValue(_variant_t& vtVal);
 
 	// Set the item's attribute value
 	virtual bool SetItemValue(const bool boolVal);

@@ -79,8 +79,7 @@ void SVRPropertyItemEdit::DrawAttribute(CDC* pDC, const RECT& rRect)
 	pDC->SetBkMode(TRANSPARENT);
 
 	CRect DrawRect( rRect );
-	SVString Text = SvUl_SF::createSVString( m_vtData );
-	pDC->DrawText(Text.c_str(), DrawRect, DT_SINGLELINE|DT_VCENTER);
+	pDC->DrawText(Data2String().c_str(), DrawRect, DT_SINGLELINE|DT_VCENTER);
 }
 
 
@@ -249,8 +248,7 @@ void SVRPropertyItemEdit::OnRefresh()
 {
 	if (IsWindow(m_hWnd))
 	{
-		SVString Text = SvUl_SF::createSVString( m_vtData );
-		SetWindowText( Text.c_str() );
+		SetWindowText( Data2String().c_str() );
 	}
 }
 
@@ -262,8 +260,8 @@ void SVRPropertyItemEdit::OnCommit()
 
 	CString	Text;
 	GetWindowText( Text );
-	m_Previous = SvUl_SF::createSVString( m_vtData );
-	m_vtData.SetString( Text );
+	m_Previous = Data2String();
+	String2Data( Text );
 	if( nullptr != m_pValue )
 	{
 		*m_pValue = SVString( Text );
@@ -272,7 +270,7 @@ void SVRPropertyItemEdit::OnCommit()
 
 void SVRPropertyItemEdit::OnUndoCommit()
 {
-	m_vtData.SetString(m_Previous.c_str());
+	String2Data( m_Previous.c_str() );
 	if(nullptr != m_pValue)
 	{
 		*m_pValue = m_Previous;
@@ -387,178 +385,101 @@ void SVRPropertyItemEdit::SetButtonText( LPCTSTR Text )
 int SVRPropertyItemEdit::GetItemType(void)
 {
 	
-	return V_VT(&m_vtData);
+	return m_vtData.vt;
 }
 
 
-bool SVRPropertyItemEdit::GetItemValue(BYTE& bVal)
+bool SVRPropertyItemEdit::GetItemValue(BYTE& rValue)
 {
-	try
-	{
-		bVal = (BYTE)m_vtData;
-	}
-	catch(_com_error e)
-	{
-		return false;
-	}
+	rValue = static_cast<BYTE> (m_vtData);
 
 	return true;
 }
 
 
-bool SVRPropertyItemEdit::GetItemValue(bool& bVal)
+bool SVRPropertyItemEdit::GetItemValue(bool& rValue)
 {
-	try
-	{
-		bVal = (bool)m_vtData;
-	}
-	catch(_com_error e)
-	{
-		return false;
-	}
+	rValue = static_cast<bool> (m_vtData);
 	
 	return true;
 }
 
 
-bool SVRPropertyItemEdit::GetItemValue(short& iVal)
+bool SVRPropertyItemEdit::GetItemValue(short& rValue)
 {
-	try
-	{
-		iVal = (short)m_vtData;
-	}
-	catch(_com_error e)
-	{
-		return false;
-	}
+	rValue = static_cast<short> (m_vtData);
 	
 	return true;
 }
 
 
-bool SVRPropertyItemEdit::GetItemValue(USHORT& uiVal)
+bool SVRPropertyItemEdit::GetItemValue(USHORT& rValue)
 {
-	try
-	{
-		uiVal = (USHORT)m_vtData;
-	}
-	catch(_com_error e)
-	{
-		return false;
-	}
+	rValue = static_cast<USHORT> (m_vtData);
 
 	return true;
 }
 
 
-bool SVRPropertyItemEdit::GetItemValue(long& lVal)
+bool SVRPropertyItemEdit::GetItemValue(long& rValue)
 {
-	try
-	{
-		lVal = (long)m_vtData;
-	}
-	catch(_com_error e)
-	{
-		return false;
-	}
+	rValue = static_cast<long> (m_vtData);
 
 	return true;
 }
 
 
-bool SVRPropertyItemEdit::GetItemValue(ULONG& ulVal)
+bool SVRPropertyItemEdit::GetItemValue(ULONG& rValue)
 {
-	try
-	{
-		ulVal = (ULONG)m_vtData;
-	}
-	catch(_com_error e)
-	{
-		return false;
-	}
+	rValue = static_cast<long> (m_vtData);
 
 	return true;
 }
 
 
-bool SVRPropertyItemEdit::GetItemValue(int& intVal)
+bool SVRPropertyItemEdit::GetItemValue(int& rValue)
 {
-	try
-	{
-		intVal = (int)m_vtData;
-	}
-	catch(_com_error e)
-	{
-		return false;
-	}
+	rValue = static_cast<long> (m_vtData);
 
 	return true;
 }
 
 
-bool SVRPropertyItemEdit::GetItemValue(UINT& uintVal)
+bool SVRPropertyItemEdit::GetItemValue(UINT& rValue)
 {
-	try
-	{
-		uintVal = (UINT)m_vtData;
-	}
-	catch(_com_error e)
-	{
-		return false;
-	}
+	rValue = static_cast<long> (m_vtData);
 
 	return true;
 }
 
 
-bool SVRPropertyItemEdit::GetItemValue(float& fltVal)
+bool SVRPropertyItemEdit::GetItemValue(float& rValue)
 {
-	try
-	{
-		fltVal = (float)m_vtData;
-	}
-	catch(_com_error e)
-	{
-		return false;
-	}
+	rValue = static_cast<float> (m_vtData);
 
 	return true;
 }
 
 
-bool SVRPropertyItemEdit::GetItemValue(double& dblVal)
+bool SVRPropertyItemEdit::GetItemValue(double& rValue)
 {
-	try
-	{
-		dblVal = (double)m_vtData;
-	}
-	catch(_com_error e)
-	{
-		return false;
-	}
+	rValue = static_cast<double> (m_vtData);
 
 	return true;
 }
 
 
-bool SVRPropertyItemEdit::GetItemValue(SVString& rVal)
+bool SVRPropertyItemEdit::GetItemValue(SVString& rValue)
 {
-	try
-	{
-		rVal = SvUl_SF::createSVString( m_vtData );
-	}
-	catch(_com_error e)
-	{
-		return false;
-	}
+	rValue = Data2String();
 
 	return true;
 }
 
 
-bool SVRPropertyItemEdit::GetItemValue(VARIANT& vtVal)
+bool SVRPropertyItemEdit::GetItemValue(_variant_t& rValue)
 {
-	vtVal = m_vtData;
+	rValue = m_vtData;
 	return true;
 }
 
@@ -898,3 +819,213 @@ bool SVRPropertyItemEdit::SetItemValuePtr(SVString& rVal)
 	return true;
 }
 
+SVString SVRPropertyItemEdit::Data2String()
+{
+	SVString Result;
+
+	switch( m_vtData.vt )
+	{
+	case VT_BOOL:
+		Result = m_vtData.boolVal ? _T("True") : _T("False");
+		break;
+	case VT_BOOL | VT_BYREF:
+		Result = *m_vtData.pboolVal ? _T("True") : _T("False");
+		break;
+	case VT_I1:
+		Result = SvUl_SF::Format( _T("%c"), m_vtData.cVal );
+		break;
+	case VT_I1 | VT_BYREF:
+		Result = SvUl_SF::Format( _T("%c"), *m_vtData.pcVal );
+		break;
+	case VT_UI1:
+		Result = SvUl_SF::Format( _T("%#01.1hx"), m_vtData.bVal );
+		break;
+	case VT_UI1 | VT_BYREF:
+		Result = SvUl_SF::Format( _T("%#01.1hx"), *m_vtData.pbVal );
+		break;
+	case VT_I2:
+		Result = SvUl_SF::Format( _T("%hd"), m_vtData.iVal );
+		break;
+	case VT_I2 | VT_BYREF:
+		Result = SvUl_SF::Format( _T("%hd"), *m_vtData.piVal );
+		break;
+	case VT_UI2:
+		Result = SvUl_SF::Format( _T("%#02.2hx"), m_vtData.uiVal );
+		break;
+	case VT_UI2 | VT_BYREF:
+		Result = SvUl_SF::Format( _T("%#02.2hx"), *m_vtData.puiVal );
+		break;
+	case VT_I4:
+		Result = SvUl_SF::Format( _T("%ld"), m_vtData.lVal );
+		break;
+	case VT_I4 | VT_BYREF:
+		Result = SvUl_SF::Format( _T("%ld"), *m_vtData.plVal );
+		break;
+	case VT_UI4:
+		Result = SvUl_SF::Format( _T("%#04.4lx"), m_vtData.ulVal );
+		break;
+	case VT_UI4 | VT_BYREF:
+		Result = SvUl_SF::Format( _T("%#04.4lx"), *m_vtData.pulVal );
+		break;
+	case VT_INT:
+		Result = SvUl_SF::Format( _T("%d"), m_vtData.intVal );
+		break;
+	case VT_INT | VT_BYREF:
+		Result = SvUl_SF::Format( _T("%d"), *m_vtData.pintVal );
+		break;
+	case VT_UINT:
+		Result = SvUl_SF::Format( _T("%#04.4x"), m_vtData.uintVal );
+		break;
+	case VT_UINT | VT_BYREF:
+		Result = SvUl_SF::Format( _T("%#04.4x"), *m_vtData.puintVal );
+		break;
+	case VT_R4:
+		Result = SvUl_SF::Format( _T("%g"), m_vtData.fltVal );
+		break;
+	case VT_R4 | VT_BYREF:
+		Result = SvUl_SF::Format( _T("%g"), *m_vtData.pfltVal );
+		break;
+	case VT_R8:
+		Result = SvUl_SF::Format( _T("%g"), m_vtData.dblVal );
+		break;
+	case VT_R8 | VT_BYREF:
+		Result = SvUl_SF::Format( _T("%g"), *m_vtData.pdblVal );
+		break;
+	case VT_BSTR:
+		Result = SvUl_SF::createSVString( m_vtData.bstrVal );
+		break;
+	case VT_BSTR | VT_BYREF:
+		Result = SvUl_SF::createSVString( *m_vtData.pbstrVal );
+		break;
+	default:
+		break;
+	}
+
+	return Result;
+}
+
+void SVRPropertyItemEdit::String2Data( LPCTSTR Text )
+{
+	TCHAR* pStopCharacter;
+
+	switch( m_vtData.vt )
+	{
+
+	case VT_BOOL:
+	case VT_BOOL | VT_BYREF:
+		{
+			bool Value(false);
+			if( 0 == _tcsncmp( Text, _T("1"), 1 ) || 0 == _tcsnicmp( Text, _T("True"), 4 ) )
+			{
+				Value = true;
+			}
+
+			(VT_BYREF == (VT_BYREF & m_vtData.vt)) ? *m_vtData.pboolVal = Value : m_vtData.boolVal = Value;
+		}
+		break;
+
+	case VT_UI1:
+	case VT_UI1 | VT_BYREF:
+		{
+			BYTE Value = static_cast<BYTE> (_tcstoul(Text, &pStopCharacter, 0));
+			if( 0 == *pStopCharacter )
+			{
+				(VT_BYREF == (VT_BYREF & m_vtData.vt)) ? *m_vtData.pbVal = Value : m_vtData.bVal = Value;
+			}
+			break;
+		}
+	case VT_UI2:
+	case VT_UI2 | VT_BYREF:
+		{
+			USHORT Value = static_cast<USHORT> (_tcstoul(Text, &pStopCharacter, 0));
+			if( 0 == *pStopCharacter )
+			{
+				( VT_BYREF == (VT_BYREF & m_vtData.vt) ) ? *m_vtData.puiVal = Value : m_vtData.uiVal = Value;
+			}
+			break;
+		}
+	case VT_UI4:
+	case VT_UI4 | VT_BYREF:
+		{
+			ULONG Value = static_cast<ULONG> (_tcstoul(Text, &pStopCharacter, 0));
+			if( 0 == *pStopCharacter )
+			{
+				( VT_BYREF == (VT_BYREF & m_vtData.vt) ) ? *m_vtData.pulVal = Value : m_vtData.ulVal = Value;
+			}
+			break;
+		}
+	case VT_UINT:
+	case VT_UINT | VT_BYREF:
+		{
+			ULONG Value = static_cast<ULONG> (_tcstoul(Text, &pStopCharacter, 0));
+			if( 0 == *pStopCharacter )
+			{
+				( VT_BYREF == (VT_BYREF & m_vtData.vt) ) ? *m_vtData.puintVal = Value : m_vtData.uintVal = Value;
+			}
+			break;
+		}
+	case VT_INT:
+	case VT_INT | VT_BYREF:
+		{
+			long Value = _tcstol(Text, &pStopCharacter, 0);
+			if( 0 == *pStopCharacter )
+			{
+				( VT_BYREF == (VT_BYREF & m_vtData.vt) ) ? *m_vtData.pintVal = Value : m_vtData.intVal = Value;
+			}
+			break;
+		}
+	case VT_I1:
+	case VT_I1 | VT_BYREF:
+		{
+			if (_tcslen(Text) > 0)
+			{
+				( VT_BYREF == (VT_BYREF & m_vtData.vt) ) ? *m_vtData.pcVal = Text[0] : m_vtData.cVal = Text[0];
+			}
+			break;
+		}
+	case VT_I2:
+	case VT_I2 | VT_BYREF:
+		{
+			short Value = static_cast<short> (_tcstol(Text, &pStopCharacter, 0));
+			if( 0 == *pStopCharacter )
+			{
+				( VT_BYREF == (VT_BYREF & m_vtData.vt) ) ? *m_vtData.piVal = Value : m_vtData.iVal = Value;
+			}
+			break;
+		}
+	case VT_I4:
+	case VT_I4 | VT_BYREF:
+		{
+			long Value = _tcstol(Text, &pStopCharacter, 0);
+			if( 0 == *pStopCharacter )
+			{
+				( VT_BYREF == (VT_BYREF & m_vtData.vt) ) ? *m_vtData.plVal = Value : m_vtData.lVal = Value;
+			}
+			break;
+		}
+	case VT_R4:
+	case VT_R4 | VT_BYREF:
+		{
+			float Value = static_cast<float> (_tcstod(Text, &pStopCharacter));
+			if( 0 == *pStopCharacter )
+			{
+				( VT_BYREF == (VT_BYREF & m_vtData.vt) ) ? *m_vtData.pfltVal = Value : m_vtData.fltVal = Value;
+			}
+			break;
+		}
+	case VT_R8:
+	case VT_R8 | VT_BYREF:
+		{
+			double Value = _tcstod(Text, &pStopCharacter);
+			if( 0 == *pStopCharacter )
+			{
+				( VT_BYREF == (VT_BYREF & m_vtData.vt) ) ? *m_vtData.pdblVal = Value : m_vtData.dblVal = Value;
+			}
+			break;
+		}
+	case VT_BSTR:
+	case VT_BSTR | VT_BYREF:
+		m_vtData.SetString(Text);
+		break;
+	}
+}

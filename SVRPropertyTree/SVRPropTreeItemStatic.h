@@ -44,7 +44,7 @@ public:
 	virtual void DrawAttribute(CDC* pDC, const RECT& rc) override;
 
 	// Retrieve the item's attribute value (in this case the SVString)
-	virtual bool GetItemValue(SVString& rVal) override;
+	virtual bool GetItemValue(SVString& rValue) override;
     //virtual bool GetItemValue(VARIANT& vtVal);
 
 	// Set the item's attribute value

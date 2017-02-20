@@ -580,18 +580,16 @@ bool SVRPropertyItemFile::SetItemType(DWORD dwFlags, LPCTSTR sFilter /*=nullptr*
 	return true;
 }
 
-bool SVRPropertyItemFile::GetItemValue(SVString& rVal)
+bool SVRPropertyItemFile::GetItemValue(SVString& rValue)
 {
-	rVal = m_Attribute;
+	rValue = m_Attribute;
 	return true;
 }
 
-bool SVRPropertyItemFile::GetItemValue(VARIANT& vtVal)
+bool SVRPropertyItemFile::GetItemValue(_variant_t& rValue)
 {
-	VariantClear(&vtVal);
-	_variant_t	Value;
-	Value.SetString( m_Attribute.c_str() );
-	vtVal = Value.Detach();
+	rValue.Clear();
+	rValue.SetString( m_Attribute.c_str() );
 	return true;
 }
 
