@@ -1720,7 +1720,10 @@ bool SVExternalToolTask::DisconnectObjectInput( SVInObjectInfoStruct* pObjectInI
 				if ( rInfo.GetInputObjectInfo().PObject == pValueObject )
 				{
 					rInfo.SetInputObject( nullptr );
-					rInfo.GetInputObjectInfo().PObject->ConnectObjectInput(&rInfo);
+					if (nullptr != rInfo.GetInputObjectInfo().PObject)
+					{
+						rInfo.GetInputObjectInfo().PObject->ConnectObjectInput(&rInfo);
+					}
 
 					// set value to default
 					m_Data.m_aInputObjects[i].SetDefaultValue(m_Data.m_aInputValueDefinitions[i].m_DefaultValue, true);
