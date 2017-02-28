@@ -149,8 +149,12 @@ bool SVImageTransformClass::ResetObject( SvStl::MessageContainerVector *pErrorMe
 			pErrorMessages->push_back(Msg);
 		}
 	}
+	else
+	{
+		Result = m_outputImageObject.ResetObject(pErrorMessages);
+	}
 
-	Result = SVTransformClass::ResetObject(pErrorMessages) && Result;
+	Result = __super::ResetObject(pErrorMessages) && Result;
 
 	CollectInputImageNames();
 
@@ -173,9 +177,9 @@ SVImageClass* SVImageTransformClass::getOutputImage()
 #pragma endregion
 
 #pragma region Protected Methods
-BOOL SVImageTransformClass::onRun( SVRunStatusClass& runStatus )
+bool SVImageTransformClass::onRun( SVRunStatusClass& runStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
-	BOOL bRetVal = SVTransformClass::onRun( runStatus );
+	bool bRetVal = SVTransformClass::onRun( runStatus, pErrorMessages );
 
 	BOOL l_bUseExtentsOnly = FALSE;
 	BOOL l_bTranslationEnabled = FALSE;
@@ -193,13 +197,36 @@ BOOL SVImageTransformClass::onRun( SVRunStatusClass& runStatus )
 
 	SVImageClass* l_psvInputImage = getInputImage();
 
-	bRetVal = bRetVal && nullptr != l_psvInputImage;
+	if ( nullptr == l_psvInputImage )
+	{
+		bRetVal = false;
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
+	}
 
-	bRetVal = bRetVal && S_OK == UpdateTransformData( runStatus.m_lResultDataIndex );
+	if (bRetVal && S_OK != UpdateTransformData( runStatus.m_lResultDataIndex ))
+	{
+		bRetVal = false;
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_UpdateTranslationFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
+	}
 
-	bRetVal = bRetVal && S_OK == m_useExtentsOnly.GetValue( l_bUseExtentsOnly );
-	bRetVal = bRetVal && S_OK == performTranslation.GetValue( l_bTranslationEnabled );
-	bRetVal = bRetVal && S_OK == performRotation.GetValue( l_bRotationEnabled );
+	if (bRetVal && 
+		(S_OK != m_useExtentsOnly.GetValue( l_bUseExtentsOnly ) || S_OK != performTranslation.GetValue( l_bTranslationEnabled ) || S_OK != performRotation.GetValue( l_bRotationEnabled )))
+	{
+		bRetVal = false;
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
+	}
 
 	if( bRetVal )
 	{
@@ -222,6 +249,12 @@ BOOL SVImageTransformClass::onRun( SVRunStatusClass& runStatus )
 		bRetVal = bRetVal && S_OK == l_svExtents.GetExtentProperty( SVExtentPropertyHeight, height );
 		bRetVal = bRetVal && S_OK == l_svExtents.GetExtentProperty( SVExtentPropertyOutputPositionPointX, dstX );
 		bRetVal = bRetVal && S_OK == l_svExtents.GetExtentProperty( SVExtentPropertyOutputPositionPointY, dstY );
+
+		if (!bRetVal && nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
 	}
 
 	if( bRetVal )
@@ -229,7 +262,15 @@ BOOL SVImageTransformClass::onRun( SVRunStatusClass& runStatus )
 		SVSmartHandlePointer InImageHandle;
 		SVSmartHandlePointer OutImageHandle;
 
-		bRetVal = bRetVal && l_psvInputImage->GetImageHandle( InImageHandle ) && !( InImageHandle.empty() );
+		if ( !l_psvInputImage->GetImageHandle( InImageHandle ) || InImageHandle.empty() )
+		{
+			bRetVal = false;
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				pErrorMessages->push_back(Msg);
+			}
+		}
 
 		long intpolType = 0;
 		m_interpolationMode.GetValue(runStatus.m_lResultDataIndex, intpolType);
@@ -252,8 +293,15 @@ BOOL SVImageTransformClass::onRun( SVRunStatusClass& runStatus )
 			}
 		}
 
-		bRetVal = bRetVal && m_outputImageObject.SetImageHandleIndex( runStatus.Images );
-		bRetVal = bRetVal && m_outputImageObject.GetImageHandle( OutImageHandle ) && !( OutImageHandle.empty() );
+		if (bRetVal && (!m_outputImageObject.SetImageHandleIndex( runStatus.Images ) || !m_outputImageObject.GetImageHandle( OutImageHandle ) || OutImageHandle.empty() ))
+		{
+			bRetVal = false;
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				pErrorMessages->push_back(Msg);
+			}
+		}
 
 		if( bRetVal && nullptr != OutImageHandle->GetBufferAddress() )
 		{
@@ -263,16 +311,15 @@ BOOL SVImageTransformClass::onRun( SVRunStatusClass& runStatus )
 		SVImageBufferHandleImage l_InMilHandle;
 		SVImageBufferHandleImage l_OutMilHandle;
 
-		if( bRetVal )
+		if( bRetVal && ( S_OK != InImageHandle->GetData( l_InMilHandle ) || l_InMilHandle.empty() || 
+							S_OK != OutImageHandle->GetData( l_OutMilHandle ) || l_OutMilHandle.empty() ))
 		{
-			bRetVal = ( S_OK == InImageHandle->GetData( l_InMilHandle ) );
-			bRetVal &= !( l_InMilHandle.empty() );
-		}
-
-		if( bRetVal )
-		{
-			bRetVal = ( S_OK == OutImageHandle->GetData( l_OutMilHandle ) );
-			bRetVal &= !( l_OutMilHandle.empty() );
+			bRetVal = false;
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				pErrorMessages->push_back(Msg);
+			}
 		}
 
 		if( bRetVal )
@@ -293,7 +340,12 @@ BOOL SVImageTransformClass::onRun( SVRunStatusClass& runStatus )
 
 			if( l_Code != SVMEE_STATUS_OK )
 			{
-				bRetVal = FALSE;
+				bRetVal = false;
+				if (nullptr != pErrorMessages)
+				{
+					SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_RunRotateFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+					pErrorMessages->push_back(Msg);
+				}
 			}
 		}
 	}

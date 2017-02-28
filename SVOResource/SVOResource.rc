@@ -3858,6 +3858,7 @@ BEGIN
         MENUITEM "Copy Tool",                   ID_EDIT_COPY
         MENUITEM "Paste Tool",                  ID_EDIT_PASTE
         MENUITEM "Adjust Tool Size and Position", ID_EDIT_ADJUSTTOOLPOSITION
+        MENUITEM "Show First Error",            ID_SHOW_FIRST_ERROR
         MENUITEM SEPARATOR
         MENUITEM "Dependencies",                ID_SHOW_RELATIONS
     END
@@ -3880,6 +3881,7 @@ BEGIN
         MENUITEM SEPARATOR
         MENUITEM "Copy Tool",                   ID_EDIT_COPY
         MENUITEM "Paste Tool",                  ID_EDIT_PASTE
+        MENUITEM "Show First Error",            ID_SHOW_FIRST_ERROR
         MENUITEM SEPARATOR
         MENUITEM "Set Reference",               ID_SELECTTOOL_LEARN
         MENUITEM "Normalize",                   ID_SELECTTOOL_NORMALIZE

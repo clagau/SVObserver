@@ -3239,10 +3239,10 @@ HRESULT SVInspectionProcess::OnlyCopyForward( SVRunStatusClass& rRunStatus)
 	return hRet;
 }
 
-BOOL SVInspectionProcess::Run( SVRunStatusClass& RRunStatus )
+bool SVInspectionProcess::Run( SVRunStatusClass& RRunStatus )
 {
 	// Validate IPDoc's values...
-	BOOL retVal = IsValid();
+	bool retVal = IsValid();
 
 	if( retVal )
 	{

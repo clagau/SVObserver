@@ -31,7 +31,7 @@ public:
 	virtual	BOOL CloseObject() override;
 	
 	virtual BOOL CreateObject(SVObjectLevelCreateStruct* PCreateStructure) override;
-	virtual BOOL onRun(SVRunStatusClass &RRunStatus) override;
+	virtual bool onRun(SVRunStatusClass &RRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	//@TODO[MZA][7.50][22.11.2016] should be move to private, now it is needed public because SVPatModelPageClass use it
 	SVSmartHandlePointer m_patBufferHandlePtr;	// Model Image Buffer Handle

@@ -27,7 +27,7 @@ public:
 
 protected:
 	SVStringValueObjectClass* getInputString();
-	virtual BOOL onRun( SVRunStatusClass& RRunStatus ) override;
+	virtual bool onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
 //******************************************************************************
 // Data Element(s):

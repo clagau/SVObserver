@@ -63,27 +63,25 @@ SVDoubleValueObjectClass* SVEvaluateClass::getOutputMathResult()
 	return &m_outputMathResult;
 }
 
-BOOL SVEvaluateClass::onRun( SVRunStatusClass& RRunStatus )
+bool SVEvaluateClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	SVDoubleValueObjectClass* pResult = getOutputMathResult();
 	ASSERT( pResult );
 	
 	// All inputs and outputs must be validated first
-	if( SVMathContainerClass::onRun( RRunStatus ) )
+	if( __super::onRun( RRunStatus, pErrorMessages ) )
 	{
 		SVDoubleValueObjectClass* pInputResult = getInputMathResult();
 		ASSERT( pInputResult );
 
 		double result;
-		if( S_OK != pInputResult->GetValue( result ) )
+		if( S_OK != pInputResult->GetValue( result ) || S_OK != pResult->SetValue( RRunStatus.m_lResultDataIndex, result ))
 		{
-			SetInvalid();
-			RRunStatus.SetInvalid();
-			return false;
-		}
-
-		if( S_OK != pResult->SetValue( RRunStatus.m_lResultDataIndex, result ) )
-		{
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				pErrorMessages->push_back(Msg);
+			}
 			SetInvalid();
 			RRunStatus.SetInvalid();
 			return false;

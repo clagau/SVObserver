@@ -62,11 +62,11 @@ SVUpperThresholdEquationClass::~SVUpperThresholdEquationClass()
 ////////////////////////////////////////////////////////////////////////////////
 // If Conditional is disabled conditional.Run() returns always TRUE.
 // Otherwise the return value depends on the Conditional equation result!
-BOOL SVUpperThresholdEquationClass::onRun( SVRunStatusClass& RRunStatus )
+bool SVUpperThresholdEquationClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	double value = 0.0;
 
-	BOOL retVal = SVEquationClass::onRun( RRunStatus );
+	bool retVal = __super::onRun( RRunStatus, pErrorMessages );
 	
 	if( !retVal )
 	{

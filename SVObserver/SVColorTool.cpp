@@ -203,7 +203,7 @@ HRESULT SVColorToolClass::UpdateImageWithExtent( unsigned long p_Index )
 	return l_hrOk;
 }
 
-BOOL SVColorToolClass::onRun( SVRunStatusClass& RRunStatus )
+bool SVColorToolClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	// Create 3 output images, one for each band...
 	SVImageClass* pInputImage = nullptr;
@@ -240,7 +240,7 @@ BOOL SVColorToolClass::onRun( SVRunStatusClass& RRunStatus )
 		}
 	}
 
-	return SVToolClass::onRun( RRunStatus );
+	return __super::onRun( RRunStatus, pErrorMessages );
 }
 
 BOOL SVColorToolClass::createBandChildLayer( SVImageClass& p_rOutputImage, SVImageClass* p_pInputImage, long p_BandLink )

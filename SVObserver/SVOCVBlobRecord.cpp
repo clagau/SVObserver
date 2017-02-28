@@ -107,13 +107,3 @@ BOOL SVOCVCharacterResultClass::CloseObject()
 
 	return bOk;
 }// end CloseObject
-
-
-BOOL SVOCVCharacterResultClass::onRun(SVRunStatusClass& RRunStatus)
-{
-	// Run base class
-	BOOL bRetVal = SVTaskObjectClass::onRun(RRunStatus);
-	
-	return bRetVal;
-}
-

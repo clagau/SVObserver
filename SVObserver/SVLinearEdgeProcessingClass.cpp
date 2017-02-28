@@ -216,16 +216,21 @@ bool SVLinearEdgeProcessingClass::ResetObject(SvStl::MessageContainerVector *pEr
 	return Result;
 }
 
-BOOL SVLinearEdgeProcessingClass::onRun( SVRunStatusClass &p_rsvRunStatus )
+bool SVLinearEdgeProcessingClass::onRun( SVRunStatusClass &p_rsvRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
-	BOOL l_bOk = TRUE;
+	bool l_bOk = __super::onRun(p_rsvRunStatus, pErrorMessages);
 
-	l_bOk = SVTaskObjectClass::onRun(p_rsvRunStatus);
-
-	l_bOk &= S_OK == UpdateUpperThresholdValues( p_rsvRunStatus.m_lResultDataIndex );
-	l_bOk &= S_OK == UpdateLowerThresholdValues( p_rsvRunStatus.m_lResultDataIndex );
-
-	l_bOk &= S_OK == UpdateEdgeList( p_rsvRunStatus.m_lResultDataIndex );
+	if ( S_OK != UpdateUpperThresholdValues( p_rsvRunStatus.m_lResultDataIndex ) ||
+		  S_OK != UpdateLowerThresholdValues( p_rsvRunStatus.m_lResultDataIndex ) ||
+		  S_OK != UpdateEdgeList( p_rsvRunStatus.m_lResultDataIndex ) )
+	{
+		l_bOk = false;
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_RunLinearEdgeFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
+	}
 
 	return l_bOk;
 }

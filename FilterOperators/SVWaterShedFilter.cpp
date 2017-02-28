@@ -95,9 +95,8 @@ bool SVWatershedFilterClass::ResetObject(SvStl::MessageContainerVector *pErrorMe
 // .Description : Runs this operator.
 //              : Returns FALSE, if operator cannot run ( may be deactivated ! )
 ////////////////////////////////////////////////////////////////////////////////
-BOOL SVWatershedFilterClass::onRun( BOOL First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus )
-{ 
-
+bool SVWatershedFilterClass::onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+{
 	// Force a copy forward to keep the display correct
 	m_lvoMinVariation.CopyLastSetValue( RRunStatus.m_lResultDataIndex );
 	m_lvoControlFlag.CopyLastSetValue( RRunStatus.m_lResultDataIndex );
@@ -134,7 +133,7 @@ BOOL SVWatershedFilterClass::onRun( BOOL First, SVSmartHandlePointer RInputImage
 				}
 
 				l_Code = SVMatroxImageInterface::Watershed( l_OutMilHandle.GetBuffer(),
-					( First == TRUE ) ? l_InMilHandle.GetBuffer() : l_OutMilHandle.GetBuffer(),
+					First ? l_InMilHandle.GetBuffer() : l_OutMilHandle.GetBuffer(),
 					l_MilHandle.GetBuffer(),
 					lMinVariation,
 					static_cast<SVImageWaterShedEnum>(lControlFlag));
@@ -150,7 +149,7 @@ BOOL SVWatershedFilterClass::onRun( BOOL First, SVSmartHandlePointer RInputImage
 			}
 
 			l_Code = SVMatroxImageInterface::Watershed( l_OutMilHandle.GetBuffer(),
-				( First == TRUE ) ? l_InMilHandle.GetBuffer() : l_OutMilHandle.GetBuffer(),
+				First ? l_InMilHandle.GetBuffer() : l_OutMilHandle.GetBuffer(),
 				l_MilHandle.GetBuffer(),
 				lMinVariation,
 				static_cast<SVImageWaterShedEnum>(lControlFlag));
@@ -158,20 +157,33 @@ BOOL SVWatershedFilterClass::onRun( BOOL First, SVSmartHandlePointer RInputImage
 
 		if( l_Code != SVMEE_STATUS_OK )
 		{
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_RunFilterFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				pErrorMessages->push_back(Msg);
+			}
 			// Signal that something was wrong...
 			SetInvalid();
 			RRunStatus.SetInvalid();
-			return FALSE;
+			return false;
 		}
 
 		// Success...
-		return TRUE;
+		return true;
+	}
+	else
+	{
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
 	}
 
 	// Signal that something was wrong...
 	SetInvalid();
 	RRunStatus.SetInvalid();
-	return FALSE;
+	return false;
 }
 
 bool SVWatershedFilterClass::ValidateLocal( SvStl::MessageContainerVector * pErrorMessages ) const

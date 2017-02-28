@@ -144,11 +144,9 @@ void TableCopyObject::setSortContainer(const ValueObjectSortContainer& sortMap, 
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
-BOOL TableCopyObject::onRun( SVRunStatusClass& rRunStatus )
+bool TableCopyObject::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
-	BOOL returnValue = S_FALSE;
-
-	returnValue = TableObject::onRun( rRunStatus );
+	bool returnValue = __super::onRun( rRunStatus, pErrorMessages );
 	if (returnValue)
 	{
 		if (nullptr != m_pSourceTable)
@@ -186,15 +184,22 @@ BOOL TableCopyObject::onRun( SVRunStatusClass& rRunStatus )
 			else
 			{
 				m_NumberOfRows.SetValue(rRunStatus.m_lResultDataIndex, 0);
-				returnValue = E_FAIL;
+				returnValue = false;
+				if (nullptr != pErrorMessages)
+				{
+					SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_EmptyValueList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+					pErrorMessages->push_back(Msg);
+				}
 			}
 		}
 		else
 		{
-			returnValue = E_FAIL;
-			SvStl::MessageContainer message;
-			message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_TableCopy_Nullptr, SvStl::SourceFileParams(StdMessageParams) );
-			addRunErrorMessage( message );
+			returnValue = false;
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_TableCopy_Nullptr, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				pErrorMessages->push_back(Msg);
+			}
 		}
 	}
 

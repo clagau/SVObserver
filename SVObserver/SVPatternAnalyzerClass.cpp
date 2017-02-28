@@ -795,12 +795,13 @@ void SVPatternAnalyzerClass::ResetResultValues()
 	msv_dpatResultAngle.SetValue(1, 0.0);
 }
 
-BOOL SVPatternAnalyzerClass::onRun (SVRunStatusClass &RRunStatus)
+bool SVPatternAnalyzerClass::onRun (SVRunStatusClass &RRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
+	//@WARNING[MZA][7.50][17.01.2017] Not sure if we need to check ValidateLocal in Run-mode, maybe it is enough to check it in ResetObject
+	bool Result = __super::onRun(RRunStatus, pErrorMessages) && ValidateLocal(pErrorMessages);
 	try
 	{
-		//@WARNING[MZA][7.50][17.01.2017] Not sure if we need to check ValidateLocal in Run-mode, maybe it is enough to check it in ResetObject
-		if (SVImageAnalyzerClass::onRun(RRunStatus) && ValidateLocal(&m_RunErrorMessages))
+		if (Result)
 		{
 			SVImageClass* pSVImage = (SVImageClass *)getInputImage();
 			SVSmartHandlePointer ImageHandle;
@@ -818,34 +819,44 @@ BOOL SVPatternAnalyzerClass::onRun (SVRunStatusClass &RRunStatus)
 				// check if one of the matrox calls failed
 				if( l_Code != SVMEE_STATUS_OK )
 				{
-					ResetResultValues();
-					SetInvalid();
+					Result = false;
+					if (nullptr != pErrorMessages)
+					{
+						SvStl::MessageContainer Msg( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+						pErrorMessages->push_back(Msg);
+					}
 					RRunStatus.SetFailed();
 				}
 			}
 			else
 			{
-				SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-				MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16206, GetUniqueObjectID());
-				ResetResultValues();
-				SetInvalid();
+				Result = false;
+				if (nullptr != pErrorMessages)
+				{
+					SvStl::MessageContainer Msg( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16206, GetUniqueObjectID() );
+					pErrorMessages->push_back(Msg);
+				}
 				RRunStatus.SetInvalid();
-
-				return FALSE;
 			}
 		}
 	}
 	catch( ... )
 	{
-		SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-		Exception.setMessage( SVMSG_SVO_UNHANDLED_EXCEPTION, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
-		
+		Result = false;
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_UNHANDLED_EXCEPTION, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
+		RRunStatus.SetInvalid();
+	}
+
+	if (!Result)
+	{
 		ResetResultValues();
 		SetInvalid();
-		RRunStatus.SetInvalid();
-		return FALSE;
 	}
-	return TRUE;
+	return Result;
 }
 
 bool SVPatternAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)

@@ -36,7 +36,7 @@ public:
 	BOOL RecalcLUT( SVRunStatusClass& RRunStatus );
 
 protected:
-	virtual BOOL onRun( BOOL First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus ) override;
+	virtual bool onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 	SVByteValueObjectClass* getInputLUTVectorResult();
 
 protected:

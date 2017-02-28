@@ -242,7 +242,7 @@ SVResultClass* SVLuminanceAnalyzerClass::GetResultObject()
 	return( pAnalyzerResult );
 }
 
-BOOL SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
+bool SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	SVImageClass     *pInputImage(nullptr);
 	__int64          sum(0);
@@ -261,8 +261,9 @@ BOOL SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 		msvVarianceValue.SetValue( RRunStatus.m_lResultDataIndex, value );
 		msvStdDevValue.SetValue( RRunStatus.m_lResultDataIndex, value );
 
-		if( !SVImageAnalyzerClass::onRun( RRunStatus ) )
+		if( !__super::onRun( RRunStatus, pErrorMessages ) )
 		{
+			LastError = true;
 			break;
 		}
 
@@ -271,10 +272,12 @@ BOOL SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 		if( ! pInputImage )
 		{
 			SetInvalid ();            
-
-			SvStl::MessageMgrStd  Ex( SvStl::LogAndDisplay );
-			Ex.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16099);
 			LastError = true;
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16099, GetUniqueObjectID() );
+				pErrorMessages->push_back(Msg);
+			}
 			break;
 		}
 
@@ -282,9 +285,12 @@ BOOL SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 
 		if( ! pInputImage->GetImageHandle( ImageHandle ) || ImageHandle.empty() )
 		{
-			SvStl::MessageMgrStd  Ex( SvStl::LogAndDisplay );
-			Ex.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16100);
 			LastError = true;
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16100, GetUniqueObjectID() );
+				pErrorMessages->push_back(Msg);
+			}
 			break;
 		}
 
@@ -294,9 +300,12 @@ BOOL SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 
 		if( S_OK != l_Status )
 		{
-			SvStl::MessageMgrStd  Ex( SvStl::LogAndDisplay );
-			Ex.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16101);
 			LastError = true;
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16101, GetUniqueObjectID() );
+				pErrorMessages->push_back(Msg);
+			}
 			break;
 		}
 
@@ -306,9 +315,12 @@ BOOL SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 		if( l_Code != SVMEE_STATUS_OK )
 		{
 			//          35 = Invalid MIL ID, for others see milerr.h
-			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16102);
 			LastError = true;
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16102, GetUniqueObjectID() );
+				pErrorMessages->push_back(Msg);
+			}
 			break;
 		}
 
@@ -317,9 +329,12 @@ BOOL SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 
 		if( l_Code != SVMEE_STATUS_OK )
 		{
-			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16103);
 			LastError = true;
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16103, GetUniqueObjectID() );
+				pErrorMessages->push_back(Msg);
+			}
 			break;
 
 		}
@@ -332,17 +347,23 @@ BOOL SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 
 		if (lNbrPixels == 0)
 		{
-			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16104);
 			LastError = true;
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16104, GetUniqueObjectID() );
+				pErrorMessages->push_back(Msg);
+			}
 			break;
 		}
 
 		if ( S_OK != msvLuminanceValue.SetValue( RRunStatus.m_lResultDataIndex, (long)(sum / lNbrPixels) ) )
 		{
-			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16105);
 			LastError = true;
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16105, GetUniqueObjectID() );
+				pErrorMessages->push_back(Msg);
+			}
 			break;
 		}
 
@@ -353,9 +374,12 @@ BOOL SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 
 		if ( S_OK != msvCalcStdDevValue.GetValue( calcStdDev ))
 		{
-			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16106);
 			LastError = true;
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16106, GetUniqueObjectID() );
+				pErrorMessages->push_back(Msg);
+			}
 			break;
 		}
 
@@ -390,9 +414,12 @@ BOOL SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 				///////////////////////////////////////////////////////////////////
 				if (S_OK != msvVarianceValue.SetValue( RRunStatus.m_lResultDataIndex, value ))
 				{
-					SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-					MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16107);
 					LastError = true;
+					if (nullptr != pErrorMessages)
+					{
+						SvStl::MessageContainer Msg( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16107, GetUniqueObjectID() );
+						pErrorMessages->push_back(Msg);
+					}
 					break;
 				}
 
@@ -404,9 +431,12 @@ BOOL SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 				{
 					if (value < 0)
 					{
-						SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-						MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16108);
 						LastError = true;
+						if (nullptr != pErrorMessages)
+						{
+							SvStl::MessageContainer Msg( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16108, GetUniqueObjectID() );
+							pErrorMessages->push_back(Msg);
+						}
 						break;
 					}
 					else
@@ -417,9 +447,12 @@ BOOL SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 				///////////////////////////////////////////////////////////////////
 				if (S_OK != msvStdDevValue.SetValue( RRunStatus.m_lResultDataIndex, value ))
 				{
-					SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-					MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16109);
 					LastError = true;
+					if (nullptr != pErrorMessages)
+					{
+						SvStl::MessageContainer Msg( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16109, GetUniqueObjectID() );
+						pErrorMessages->push_back(Msg);
+					}
 					break;
 				}
 			}
@@ -428,14 +461,14 @@ BOOL SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 		break;
 	}
 
-	if(	LastError )  
+	if( LastError )  
 	{
 		SetInvalid ();
 		RRunStatus.SetInvalid();
-		return FALSE;
+		return false;
 	}
 
-	return TRUE;
+	return true;
 }
 
 double SVLuminanceAnalyzerClass::calculateVariance( double aNumberOfSamples, double aAverageValue, double aAccumulatedSquares )

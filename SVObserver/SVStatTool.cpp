@@ -639,11 +639,11 @@ BOOL SVStatisticsToolClass::HasVariable() const
 	return bRetVal;
 }
 
-BOOL SVStatisticsToolClass::onRun( SVRunStatusClass& RRunStatus )
+bool SVStatisticsToolClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
-	BOOL l_bOk = SVToolClass::onRun( RRunStatus );
+	bool l_bOk = __super::onRun( RRunStatus, pErrorMessages ) && ValidateLocal(pErrorMessages);
 
-	if( ValidateLocal(&m_RunErrorMessages) )
+	if( l_bOk )
 	{
 		if( !RRunStatus.IsDisabled() && !RRunStatus.IsDisabledByCondition() )
 		{

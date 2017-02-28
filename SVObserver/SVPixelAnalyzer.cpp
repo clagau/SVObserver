@@ -172,36 +172,42 @@ BOOL SVPixelAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateStruc
 	
 	return m_isCreated;
 }
-BOOL SVPixelAnalyzerClass::onRun(SVRunStatusClass &RRunStatus)
-{
-    SVImageClass* pInputImage (nullptr);
-    BYTE byIndex(0);
-	DWORD LastError(0);
-   
 
-    while (1)
-    {
+bool SVPixelAnalyzerClass::onRun(SVRunStatusClass &RRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+{
+	SVImageClass* pInputImage (nullptr);
+	BYTE byIndex(0);
+	bool Result = true;
+
+	while (1)
+	{
 		SVSmartHandlePointer ImageHandle;
 
 		SVMatroxImageInterface::SVStatusCode l_Code;
 
-        pInputImage = getInputImage ();
+		pInputImage = getInputImage ();
 
-        if( ! pInputImage )
-        {
-			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16188, GetUniqueObjectID());
-			LastError = SvOi::Err_16188;
+		if( ! pInputImage )
+		{
+			Result = false;
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16188, GetUniqueObjectID() );
+				pErrorMessages->push_back(Msg);
+			}
 			break;
-        }
+		}
 
-        if ( ! pInputImage->GetImageHandle( ImageHandle ) || ImageHandle.empty() )
-        {
-			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16189, GetUniqueObjectID());
-			LastError = SvOi::Err_16189;
+		if ( ! pInputImage->GetImageHandle( ImageHandle ) || ImageHandle.empty() )
+		{
+			Result = false;
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16189, GetUniqueObjectID() );
+				pErrorMessages->push_back(Msg);
+			}
 			break;
-        }
+		}
 
 		SVImageBufferHandleImage l_MilHandle;
 		ImageHandle->GetData( l_MilHandle );
@@ -209,37 +215,41 @@ BOOL SVPixelAnalyzerClass::onRun(SVRunStatusClass &RRunStatus)
 		l_Code = SVMatroxImageInterface::Histogram( m_histResultID, l_MilHandle.GetBuffer() );
 
 		if( l_Code != SVMEE_STATUS_OK )
-        {
-			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16190, GetUniqueObjectID());
-			LastError = SvOi::Err_16190;
+		{
+			Result = false;
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16190, GetUniqueObjectID() );
+				pErrorMessages->push_back(Msg);
+			}
 			break;
-        }
-		
+		}
+
 		l_Code = SVMatroxImageInterface::GetResult( m_histResultID, m_alHistValues );
-		
+
 		if( l_Code != SVMEE_STATUS_OK )
-        {
-			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16191, GetUniqueObjectID());
-			LastError = SvOi::Err_16191;
+		{
+			Result = false;
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16191, GetUniqueObjectID() );
+				pErrorMessages->push_back(Msg);
+			}
 			break;
-        }
-		
+		}
+
 		m_pixelCountColor.GetValue (byIndex);
 		m_pixelCount.SetValue( RRunStatus.m_lResultDataIndex, m_alHistValues[byIndex] );
-		
-        break;
-    }
-	
-    if (0 != LastError)
-    {
-		SetInvalid ();            
+
+		break;
+	}
+
+	if (!Result)
+	{
+		SetInvalid ();
 		RRunStatus.SetInvalid ();
-		
-		return false;
-    }
-    return true;
+	}
+	return Result;
 }
 
 bool SVPixelAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)

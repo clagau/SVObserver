@@ -25,10 +25,12 @@ public:
 
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
 
-	virtual BOOL Run( BOOL First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus );
+	//First definition of onRun with this parameter (SVTaskObjectClass has different parameter), so override is not possible
+	virtual bool Run( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr );
 
 protected:
-	virtual BOOL onRun( BOOL First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus );
+	//First definition of onRun with this parameter (SVTaskObjectClass has different parameter), so override is not possible
+	virtual bool onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr );
 	SVImageClass* getReferenceImage();
 
 	SVUnaryImageOperatorListClass* m_pCurrentUIOPL;

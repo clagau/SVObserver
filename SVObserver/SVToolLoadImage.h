@@ -44,7 +44,7 @@ public:
 protected:
 	void init();
 
-	virtual BOOL onRun( SVRunStatusClass& RRunStatus ) override;
+	virtual bool onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
 	bool ValidateLocal(SvStl::MessageContainerVector *pErrorMessages=nullptr) const;
 

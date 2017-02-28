@@ -364,9 +364,9 @@ void SVToolClass::UpdateAuxiliaryExtents(long resultDataIndex)
 	}
 }
 
-BOOL SVToolClass::Run( SVRunStatusClass& RRunStatus )
+bool SVToolClass::Run( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
-	DWORD retVal = 0;
+	bool retVal = true;
 	long lCount;
 	BOOL bIsValid = FALSE;
 
@@ -409,7 +409,7 @@ BOOL SVToolClass::Run( SVRunStatusClass& RRunStatus )
 				processedCount.SetValue( RRunStatus.m_lResultDataIndex, ++lCount );
 			}
 
-			retVal = SVTaskObjectListClass::Run( RRunStatus );
+			retVal = __super::Run( RRunStatus, &m_RunErrorMessages );
 
 			if( retVal )
 			{
@@ -482,7 +482,7 @@ BOOL SVToolClass::Run( SVRunStatusClass& RRunStatus )
 	}// end if
 	else
 	{
-		retVal = RunWithNewDisable( RRunStatus );
+		retVal = RunWithNewDisable( RRunStatus, &m_RunErrorMessages );
 	}// end else
 
 	//
@@ -493,12 +493,17 @@ BOOL SVToolClass::Run( SVRunStatusClass& RRunStatus )
 	
 	ToolTime.Stop( RRunStatus.m_lResultDataIndex );
 
+	if (nullptr != pErrorMessages && !m_RunErrorMessages.empty())
+	{
+		pErrorMessages->insert(pErrorMessages->end(), m_RunErrorMessages.begin(), m_RunErrorMessages.end());
+	}
+
 	return retVal;
 }// end Run
 
-BOOL SVToolClass::RunWithNewDisable( SVRunStatusClass& RRunStatus )
+bool SVToolClass::RunWithNewDisable( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
-	DWORD dwRet = 0;
+	bool Return = true;
 	long lCount = 0;
 	
 	BOOL bDisabled = FALSE;
@@ -533,9 +538,9 @@ BOOL SVToolClass::RunWithNewDisable( SVRunStatusClass& RRunStatus )
 				processedCount.SetValue( RRunStatus.m_lResultDataIndex, ++lCount );
 			}
 
-			dwRet = SVTaskObjectListClass::Run( RRunStatus );
+			Return = SVTaskObjectListClass::Run( RRunStatus, pErrorMessages );
 
-			if( dwRet )
+			if( Return )
 			{
 				RRunStatus.SetValid();
 			}
@@ -555,7 +560,7 @@ BOOL SVToolClass::RunWithNewDisable( SVRunStatusClass& RRunStatus )
 	}// end if
 	else
 	{
-		dwRet = !( RRunStatus.m_UpdateCounters );
+		Return = !( RRunStatus.m_UpdateCounters );
 		SetDisabled();
 		RRunStatus.SetDisabled();
 		bDisabled = TRUE;
@@ -627,21 +632,14 @@ BOOL SVToolClass::RunWithNewDisable( SVRunStatusClass& RRunStatus )
 	dwValue = RRunStatus.GetState();
 	m_statusTag.SetValue( RRunStatus.m_lResultDataIndex, dwValue );
 
-	return dwRet;
+	return Return;
 }// end RunWithNewDisable
 
-BOOL SVToolClass::onRun( SVRunStatusClass& RRunStatus )
+bool SVToolClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
-	BOOL bRetVal = SVTaskObjectListClass::onRun( RRunStatus );
-	HRESULT hr(S_OK);
+	bool bRetVal = __super::onRun( RRunStatus, pErrorMessages );
 
-	hr = getFirstTaskMessage().getMessage().m_MessageCode;
-	if( !bRetVal && SUCCEEDED( hr ) )
-	{
-		hr = SVMSG_SVO_5075_INCONSISTENTDATA;
-	}
-
-	if( SUCCEEDED( hr ) )
+	if( bRetVal )
 	{
 		if( SV_NO_ATTRIBUTES != ( extentTop.ObjectAttributesAllowed() & SV_NO_ATTRIBUTES )  )
 		{
@@ -670,7 +668,11 @@ BOOL SVToolClass::onRun( SVRunStatusClass& RRunStatus )
 
 		if( !bRetVal )
 		{
-			hr = SVMSG_SVO_5076_EXTENTSNOTCOPIED;
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg( SVMSG_SVO_5076_EXTENTSNOTCOPIED, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				pErrorMessages->push_back(Msg);
+			}
 		}
 
 		// Friends were running, validation was successfully
@@ -679,14 +681,6 @@ BOOL SVToolClass::onRun( SVRunStatusClass& RRunStatus )
 		{
 			RRunStatus.SetDisabledByCondition();
 		}
-	}
-
-	if( !SUCCEEDED ( hr ) )
-	{
-		SvStl::MessageContainer message;
-		message.setMessage( hr, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
-		addRunErrorMessage( message );
-		bRetVal = false;
 	}
 
 	return bRetVal;

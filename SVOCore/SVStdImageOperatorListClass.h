@@ -46,7 +46,7 @@ public:
 
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
-	virtual BOOL Run( SVRunStatusClass& RRunStatus ) override;
+	virtual bool Run( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
 protected:
 

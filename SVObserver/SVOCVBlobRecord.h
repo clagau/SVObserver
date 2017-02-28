@@ -32,7 +32,6 @@ public:
 	void UnhideResults();
 
 protected:
-	virtual BOOL onRun( SVRunStatusClass& RRunStatus ) override;
 
 //Attributes
 public:

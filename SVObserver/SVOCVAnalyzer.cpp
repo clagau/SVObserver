@@ -123,19 +123,27 @@ bool SVOCVAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMessag
 //
 //
 //
-BOOL SVOCVAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
+bool SVOCVAnalyzerClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	if ( !m_bHasLicenseError )
 	{
-		if( SVImageAnalyzerClass::onRun( RRunStatus ) )
+		if( __super::onRun( RRunStatus, pErrorMessages ) )
 		{
-			return TRUE;
+			return true;
+		}
+	}
+	else
+	{
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_SVObserver_MatroxLicenseNotFound, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16151, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
 		}
 	}
 	SetInvalid();
 	RRunStatus.SetInvalid();
 
-	return FALSE;
+	return false;
 }
 
 

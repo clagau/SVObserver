@@ -338,7 +338,7 @@ void SVCustomFilterClass::RebuildKernel()
 // .Description : Runs this operator.
 //              : Returns FALSE, if operator cannot run ( may be deactivated ! )
 ////////////////////////////////////////////////////////////////////////////////
-BOOL SVCustomFilterClass::onRun( BOOL First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus )
+bool SVCustomFilterClass::onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 { 
 	// Force a copy forward to keep the display correct
 	for( long l = 0; l < 49; l++ )
@@ -363,29 +363,40 @@ BOOL SVCustomFilterClass::onRun( BOOL First, SVSmartHandlePointer RInputImageHan
 		RInputImageHandle->GetData( l_InMilHandle );
 
 		l_Code = SVMatroxImageInterface::Convolve(l_MilHandle.GetBuffer(), 
-						( First == TRUE ) ? 
-						l_InMilHandle.GetBuffer() : 
-						l_MilHandle.GetBuffer(), 
+						First ? l_InMilHandle.GetBuffer() : l_MilHandle.GetBuffer(), 
 						m_milKernel );
 
 
 		long l_MILError( 0 );
 		if( l_Code != SVMEE_STATUS_OK )
 		{
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_RunFilterFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				pErrorMessages->push_back(Msg);
+			}
 			// Signal that something was wrong...
 			SetInvalid();
 			RRunStatus.SetInvalid();
-			return FALSE;
+			return false;
 		}
 
 		// Success...
-		return TRUE;
+		return true;
+	}
+	else
+	{
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
 	}
 
 	// Signal that something was wrong...
 	SetInvalid();
 	RRunStatus.SetInvalid();
-	return FALSE;
+	return false;
 }
 
 bool SVCustomFilterClass::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) const

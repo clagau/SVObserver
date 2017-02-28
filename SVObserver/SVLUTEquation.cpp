@@ -150,9 +150,9 @@ BOOL SVLUTEquationClass::SetDefaultFormula()
 //				: Use the m_lutIndex as variable in the equation, if you want to
 //				: index the values. ( m_lutIndex is running from 0 to 255 )
 ////////////////////////////////////////////////////////////////////////////////
-BOOL SVLUTEquationClass::onRun( SVRunStatusClass& RRunStatus )
+bool SVLUTEquationClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
-	BOOL   bRetVal   = FALSE;
+	bool   bRetVal   = true;
 	double dResult   = 0.0;
 	long   lLUTIndex = 0;
 
@@ -168,7 +168,7 @@ BOOL SVLUTEquationClass::onRun( SVRunStatusClass& RRunStatus )
 		m_lutIndex.SetValue( RRunStatus.m_lResultDataIndex, lLUTIndex );
 
 		// Run equation.. 
-		bRetVal = SVEquationClass::onRun( RRunStatus );
+		bRetVal = __super::onRun( RRunStatus, pErrorMessages );
 
 		if( bRetVal && HasCondition() && IsEnabled() )
 		{

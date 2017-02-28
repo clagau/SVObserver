@@ -77,7 +77,7 @@ protected:
 
 	void init( void );
 	void resetValues();
-	virtual BOOL onRun( SVRunStatusClass& RRunStatus ) override;
+	virtual bool onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
 	void RestoreFeatureAttributes();
 

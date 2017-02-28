@@ -274,7 +274,7 @@ HRESULT SVLinearMaximumForegroundObjectLineAnalyzerClass::GetSelectedEdgeOverlay
 	return l_hrOk;
 }
 
-BOOL SVLinearMaximumForegroundObjectLineAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
+bool SVLinearMaximumForegroundObjectLineAnalyzerClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	SVImageExtentClass l_svExtents;
 	std::vector<double> l_svAEdges;
@@ -286,12 +286,17 @@ BOOL SVLinearMaximumForegroundObjectLineAnalyzerClass::onRun( SVRunStatusClass& 
 	double l_dDistanceA = 0.0;
 	double l_dDistanceB = 0.0;
 
-	BOOL l_bOk = SVLinearAnalyzerClass::onRun(RRunStatus);
-
-	l_bOk = l_bOk && ValidateEdgeA(&m_RunErrorMessages) && ValidateEdgeB(&m_RunErrorMessages) && nullptr != GetTool();
-
-	l_bOk = ( S_OK == GetEdgeA()->m_svLinearEdges.GetValues( l_svAEdges ) ) && l_bOk;
-	l_bOk = ( S_OK == GetEdgeB()->m_svLinearEdges.GetValues( l_svBEdges ) ) && l_bOk;
+	bool l_bOk = __super::onRun(RRunStatus, pErrorMessages) && ValidateEdgeA(pErrorMessages) && ValidateEdgeB(pErrorMessages);
+	
+	if (nullptr == GetTool() || S_OK != GetEdgeA()->m_svLinearEdges.GetValues( l_svAEdges ) || S_OK != GetEdgeB()->m_svLinearEdges.GetValues( l_svBEdges ) )
+	{
+		l_bOk = false;
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
+	}
 
 	if( l_bOk )
 	{
@@ -380,6 +385,12 @@ BOOL SVLinearMaximumForegroundObjectLineAnalyzerClass::onRun( SVRunStatusClass& 
 	{
 		SetInvalid();
 		RRunStatus.SetInvalid();
+
+		if (nullptr != pErrorMessages && pErrorMessages->empty())
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_RunLinearEdgeFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
 	}
 
 	return l_bOk;

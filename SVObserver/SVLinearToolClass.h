@@ -61,7 +61,6 @@ public:
 
 protected:
 #pragma region Protected Methods
-	virtual BOOL onRun( SVRunStatusClass& RRunStatus ) override;
 #pragma endregion Protected Methods
 
 	SVDoubleValueObjectClass m_svRotationAngle;

@@ -364,6 +364,24 @@ void ToolSetView::OnRightClickToolSetList(NMHDR* pNMHDR, LRESULT* pResult)
 
 void ToolSetView::OnDblClkToolSetList(NMHDR* pNMHDR, LRESULT* pResult)
 {
+	//check if on black icon clicked and if display the error message instead of TA-dialog
+	const SVGUID& rGuid = m_toolSetListCtrl.GetSelectedTool();
+	if (!rGuid.empty())
+	{
+		NMITEMACTIVATE* pActivate = reinterpret_cast<NMITEMACTIVATE *>(pNMHDR);
+		UINT uFlags;
+		int item = m_toolSetListCtrl.HitTest(pActivate->ptAction, &uFlags);
+		if ((uFlags & LVHT_ONITEMICON))
+		{
+			//display error box and return else go further with TA dialog.
+			if (m_toolSetListCtrl.displayErrorBox(rGuid))
+			{
+				*pResult = 0;
+				return;
+			}
+		}
+	}
+
 	if ( enterSelectedEntry() )
 	{
 		*pResult = 0;
@@ -945,6 +963,25 @@ bool ToolSetView::enterSelectedEntry()
 	else
 	{
 		return false;
+	}
+}
+
+bool ToolSetView::hasCurrentToolErrors()
+{
+	const SVGUID& rGuid = m_toolSetListCtrl.GetSelectedTool();
+	if (!rGuid .empty())
+	{
+		return !m_toolSetListCtrl.isToolValid(rGuid);
+	}
+	return false;
+}
+
+void ToolSetView::displayFirstCurrentToolError()
+{
+	const SVGUID& rGuid = m_toolSetListCtrl.GetSelectedTool();
+	if (!rGuid .empty())
+	{
+		m_toolSetListCtrl.displayErrorBox(rGuid);
 	}
 }
 

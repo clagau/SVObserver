@@ -45,7 +45,7 @@ protected:
 
 	bool SetDefaultEquation( SVEquationClass* pEquation, const SVString& rName );
 
-	virtual BOOL onRun( SVRunStatusClass& RRunStatus ) override;
+	virtual bool onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 	
 	SVImageClass				outputImageObject;
 	

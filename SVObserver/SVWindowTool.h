@@ -35,7 +35,6 @@ public:
 	virtual bool DoesObjectHaveExtents() const override;
 
 protected:
-	virtual BOOL onRun( SVRunStatusClass& RRunStatus ) override;
 
 private:
 	void init();

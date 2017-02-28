@@ -701,9 +701,9 @@ bool SVEquationClass::DisconnectObjectInput( SVInObjectInfoStruct* pInObjectInfo
 ////////////////////////////////////////////////////////////////////////////////
 // If Conditional is disabled equation.Run() returns always TRUE.
 // Otherwise the return value depends on the Conditional equation result!
-BOOL SVEquationClass::onRun( SVRunStatusClass& RRunStatus )
+bool SVEquationClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
-	BOOL retVal = SVTaskObjectClass::onRun( RRunStatus );
+	bool retVal = __super::onRun( RRunStatus, pErrorMessages );
 
 	m_lCurrentRunIndex = RRunStatus.m_lResultDataIndex;
 
@@ -750,7 +750,12 @@ BOOL SVEquationClass::onRun( SVRunStatusClass& RRunStatus )
 		/////////////////////////////////////////////////////
 		if( !isDataValid || yacc.yacc_err )
 		{
-			retVal = FALSE;
+			retVal = false;
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_InvalidData, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				pErrorMessages->push_back(Msg);
+			}
 			SetInvalid();
 			RRunStatus.SetInvalid();
 		}

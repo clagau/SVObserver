@@ -73,11 +73,11 @@ BOOL SVAutoThresholdEquationClass::CreateObject( SVObjectLevelCreateStruct* PCre
 ////////////////////////////////////////////////////////////////////////////////
 // If Conditional is disabled conditional.Run() returns always TRUE.
 // Otherwise the return value depends on the Conditional equation result!
-BOOL SVAutoThresholdEquationClass::onRun( SVRunStatusClass& RRunStatus )
+bool SVAutoThresholdEquationClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	double value = 0.0;
 
-	BOOL retVal = SVEquationClass::onRun( RRunStatus );
+	bool retVal = __super::onRun( RRunStatus, pErrorMessages );
 	
 	if( !retVal )
 	{

@@ -137,9 +137,9 @@ SVImageClass* SVStdImageOperatorListClass::getOutputImage()
 // -----------------------------------------------------------------------------
 // .Description : Special routing here.
 ////////////////////////////////////////////////////////////////////////////////
-BOOL SVStdImageOperatorListClass::Run( SVRunStatusClass& RRunStatus )
+bool SVStdImageOperatorListClass::Run( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
-	BOOL bRetVal = true;
+	bool bRetVal = true;
 	clearRunErrorMessages();
 	
 	SVRunStatusClass ChildRunStatus;
@@ -150,19 +150,21 @@ BOOL SVStdImageOperatorListClass::Run( SVRunStatusClass& RRunStatus )
 	SVDataManagerHandle dmHandleInput;
 	
 	// Run yourself...
-	bRetVal = onRun( RRunStatus );
+	bRetVal = onRun( RRunStatus, &m_RunErrorMessages );
 
 	SVImageClass* pInputImage = getInputImage();
 	SVImageClass* pOutputImage = getOutputImage();
 	
-	bRetVal = bRetVal && ( nullptr != pInputImage );
-	bRetVal = bRetVal && ( nullptr != pOutputImage );
+	if ( nullptr == pInputImage || nullptr == pOutputImage )
+	{
+		bRetVal = false;
+		SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+		m_RunErrorMessages.push_back(Msg);
+	}
 
 	if( bRetVal )
 	{
-		bRetVal = pOutputImage->SetImageHandleIndex( RRunStatus.Images );
-
-		if ( bRetVal )
+		if ( pOutputImage->SetImageHandleIndex( RRunStatus.Images ) )
 		{
 			SVSmartHandlePointer input;
 			SVSmartHandlePointer output;
@@ -193,22 +195,28 @@ BOOL SVStdImageOperatorListClass::Run( SVRunStatusClass& RRunStatus )
 
 			pOutputImage->GetImageHandle( output );
 
-			bRetVal = bRetVal && !( input.empty() );
-			bRetVal = bRetVal && !( output.empty() );
-
-			if( input.empty() )
+			if ( input.empty() || output.empty() )
 			{
-				SVImageProcessingClass::InitBuffer( output );
+				bRetVal = false;
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				m_RunErrorMessages.push_back(Msg);
+				if( input.empty() )
+				{
+					SVImageProcessingClass::InitBuffer( output );
 
-				input = output;
+					input = output;
+				}
 			}
 
 			//set tmp variable
 			SVSmartHandlePointer sourceImage = m_milTmpImageObjectInfo1;
 			SVSmartHandlePointer destinationImage = m_milTmpImageObjectInfo2;
-			bRetVal = bRetVal && !( sourceImage->empty() );
-			bRetVal = bRetVal && !( destinationImage->empty() );
-			bRetVal = bRetVal && copyBuffer( input, sourceImage );
+			if ( sourceImage->empty() || destinationImage->empty() || !copyBuffer( input, sourceImage ) )
+			{
+				bRetVal = false;
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_CopyImagesFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				m_RunErrorMessages.push_back(Msg);
+			}
 
 			if (bRetVal)
 			{
@@ -218,9 +226,6 @@ BOOL SVStdImageOperatorListClass::Run( SVRunStatusClass& RRunStatus )
 					ChildRunStatus.ResetRunStateAndToolSetTimes();
 
 					SVUnaryImageOperatorClass*  pOperator = ( SVUnaryImageOperatorClass* )GetAt( i );
-
-					bRetVal &= ( nullptr != pOperator );
-
 					if( nullptr != pOperator )
 					{
 						if( pOperator->Run( true, sourceImage, destinationImage, ChildRunStatus ) )
@@ -239,6 +244,12 @@ BOOL SVStdImageOperatorListClass::Run( SVRunStatusClass& RRunStatus )
 						// WARNING:
 						// Do not set bRetVal automatically to FALSE, if operator was not running !!!
 						// ChildRunStatus keeps information about, if an error occurred while running !!!
+					}
+					else
+					{
+						bRetVal = false;
+						SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+						m_RunErrorMessages.push_back(Msg);
 					}
 
 					// Update our Run Status
@@ -267,8 +278,19 @@ BOOL SVStdImageOperatorListClass::Run( SVRunStatusClass& RRunStatus )
 			
 			if( bRetVal )
 			{
-				bRetVal = copyBuffer(sourceImage, output);
+				if (!copyBuffer(sourceImage, output))
+				{
+					bRetVal = false;
+					SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_CopyImagesFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+					m_RunErrorMessages.push_back(Msg);
+				}
 			} // if( bFirstFlag ) 
+		}  // if ( pOutputImage->SetImageHandleIndex( RRunStatus.Images ) )
+		else
+		{
+			bRetVal = false;
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_SetImageHandleIndexFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			m_RunErrorMessages.push_back(Msg);
 		}
 	}
 	
@@ -287,6 +309,11 @@ BOOL SVStdImageOperatorListClass::Run( SVRunStatusClass& RRunStatus )
 	// Get Status...
 	dwValue = RRunStatus.GetState();
 	m_statusTag.SetValue( RRunStatus.m_lResultDataIndex, dwValue );
+
+	if (nullptr != pErrorMessages && !m_RunErrorMessages.empty())
+	{
+		pErrorMessages->insert(pErrorMessages->end(), m_RunErrorMessages.begin(), m_RunErrorMessages.end());
+	}
 	
 	return bRetVal;
 }

@@ -29,7 +29,7 @@ public:
 protected:
 	SVDoubleValueObjectClass*		getOutputMathResult();
 
-	virtual BOOL  onRun( SVRunStatusClass& RRunStatus ) override;
+	virtual bool onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
 protected:
 	// Embedded Object: ( Outputs )

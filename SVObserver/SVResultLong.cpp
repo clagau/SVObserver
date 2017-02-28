@@ -89,10 +89,10 @@ BOOL SVLongResultClass::CloseObject()
 	return SVResultClass::CloseObject();
 }
 
-BOOL SVLongResultClass::onRun( SVRunStatusClass& RRunStatus )
+bool SVLongResultClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	// All inputs and outputs must be validated first
-	if( SVResultClass::onRun( RRunStatus ) )
+	if( __super::onRun( RRunStatus, pErrorMessages ) )
 	{
 		SVLongValueObjectClass* pValue = static_cast <SVLongValueObjectClass*> (getInput());
 		ASSERT( pValue );
@@ -103,10 +103,10 @@ BOOL SVLongResultClass::onRun( SVRunStatusClass& RRunStatus )
 		// Set Value
 		value.SetValue( RRunStatus.m_lResultDataIndex, v );
 
-		return TRUE;
+		return true;
 	}
 	RRunStatus.SetInvalid();
-	return FALSE;
+	return false;
 }
 
 SVLongValueObjectClass* SVLongResultClass::getInputLong()

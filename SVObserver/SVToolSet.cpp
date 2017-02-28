@@ -407,7 +407,7 @@ SvOi::IObjectClass* SVToolSetClass::getBand0Image() const
 // -----------------------------------------------------------------------------
 // .Description : runs this toolset
 ////////////////////////////////////////////////////////////////////////////////
-BOOL SVToolSetClass::onRun( SVRunStatusClass& RRunStatus )
+bool SVToolSetClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	m_TriggerCount.SetValue( RRunStatus.m_lResultDataIndex, RRunStatus.m_lTriggerCount > 0 ? RRunStatus.m_lTriggerCount : 0 );
 
@@ -421,7 +421,7 @@ BOOL SVToolSetClass::onRun( SVRunStatusClass& RRunStatus )
 	m_LastTriggerToPPQCompletion.SetValue( RRunStatus.m_lResultDataIndex, RRunStatus.m_WorkloadInfoRsc.TriggerToCompletionInMilliseconds() * SVClock::c_MicrosecondsPerMillisecond);
 	m_LastTriggerToStart.SetValue( RRunStatus.m_lResultDataIndex, RRunStatus.m_WorkloadInfoRsc.TriggerToStartInMilliseconds() * SVClock::c_MicrosecondsPerMillisecond);
 
-	BOOL bRetVal = SVTaskObjectListClass::onRun( RRunStatus );
+	bool bRetVal = SVTaskObjectListClass::onRun( RRunStatus, pErrorMessages );
 	if( bRetVal )
 	{
 		// Friends were running, validation was successfully
@@ -442,10 +442,10 @@ BOOL SVToolSetClass::onRun( SVRunStatusClass& RRunStatus )
 //				: Otherwise it returns FALSE, that means: if the Tool Set should
 //				: not run, because the Tool Set Condition failed!
 ////////////////////////////////////////////////////////////////////////////////
-BOOL SVToolSetClass::Run( SVRunStatusClass& RRunStatus )
+bool SVToolSetClass::Run( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	long lCount;
-	BOOL bRetVal = TRUE;
+	bool bRetVal = true;
 	BOOL bIsValid = FALSE;
 	BOOL bDisabled = FALSE;
 	clearRunErrorMessages();
@@ -492,7 +492,7 @@ BOOL SVToolSetClass::Run( SVRunStatusClass& RRunStatus )
 			}
 
 			// Run yourself...
-			bRetVal = onRun( RRunStatus );
+			bRetVal = onRun( RRunStatus, &m_RunErrorMessages );
 
 			// if disabled or disabled by condition
 			// leave in previous state
@@ -514,7 +514,7 @@ BOOL SVToolSetClass::Run( SVRunStatusClass& RRunStatus )
 						ToolRunStatus.ResetRunStateAndToolSetTimes();
 						ToolRunStatus.m_UpdateCounters = RRunStatus.m_UpdateCounters;
 
-						bRetVal = GetAt( i )->Run( ToolRunStatus ) && bRetVal;
+						bRetVal = GetAt( i )->Run( ToolRunStatus, &m_RunErrorMessages ) && bRetVal;
 
 						// Update the ToolSet Run Status
 						if( ToolRunStatus.IsWarned() )
@@ -639,7 +639,7 @@ BOOL SVToolSetClass::Run( SVRunStatusClass& RRunStatus )
 
 		m_ToolTime.Start();
 
-		bRetVal = RunWithNewDisable( RRunStatus );
+		bRetVal = RunWithNewDisable( RRunStatus, &m_RunErrorMessages );
 
 		SVClock::SVTimeStamp l_Elapsed = ( SVClock::GetTimeStamp() - l_Timer );
 		m_EndTime = SVClock::ConvertTo( SVClock::Seconds, l_Elapsed );
@@ -697,14 +697,19 @@ BOOL SVToolSetClass::Run( SVRunStatusClass& RRunStatus )
 		}
 	}// end else
 
+	if (nullptr != pErrorMessages && !m_RunErrorMessages.empty())
+	{
+		pErrorMessages->insert(pErrorMessages->end(), m_RunErrorMessages.begin(), m_RunErrorMessages.end());
+	}
+
 	return bRetVal;
 }// end Run
 
-BOOL SVToolSetClass::RunWithNewDisable( SVRunStatusClass& RRunStatus )
+bool SVToolSetClass::RunWithNewDisable( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	long lCount;
 	long l;
-	BOOL bRetVal = TRUE;
+	bool bRetVal = true;
 	BOOL bIsValid = FALSE;
 	BOOL bDisabled = FALSE;
 
@@ -735,7 +740,7 @@ BOOL SVToolSetClass::RunWithNewDisable( SVRunStatusClass& RRunStatus )
 			}
 
 			// Run yourself...
-			bRetVal = onRun( RRunStatus );
+			bRetVal = onRun( RRunStatus, pErrorMessages );
 
 			// if disabled or disabled by condition
 			// leave in previous state
@@ -754,7 +759,7 @@ BOOL SVToolSetClass::RunWithNewDisable( SVRunStatusClass& RRunStatus )
 					if( GetAt( l ) )
 					{
 						ToolRunStatus.ResetRunStateAndToolSetTimes();
-						bRetVal = GetAt( l )->Run( ToolRunStatus ) && bRetVal;
+						bRetVal = GetAt( l )->Run( ToolRunStatus, pErrorMessages ) && bRetVal;
 
 						// Update the ToolSet Run Status
 						if( ToolRunStatus.IsWarned() )

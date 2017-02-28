@@ -185,11 +185,9 @@ HRESULT RingBufferTool::IsInputImage( SVImageClass *p_psvImage )
 	return l_hrOk;
 }	
 
-BOOL RingBufferTool::onRun( SVRunStatusClass& RRunStatus )
+bool RingBufferTool::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
-	BOOL returnValue = S_FALSE;
-
-	returnValue = SVToolClass::onRun( RRunStatus );
+	bool returnValue = SVToolClass::onRun( RRunStatus, pErrorMessages );
 	if (returnValue)
 	{
 		//-----	Execute this objects run functionality. -----------------------------

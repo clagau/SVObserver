@@ -28,7 +28,7 @@ public:
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 protected:
-	virtual BOOL onRun( SVRunStatusClass& RRunStatus ) override;
+	virtual bool onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
 	SVDPointValueObjectClass dpEdge;	// Point
 	SVDoubleValueObjectClass m_svLinearDistance;

@@ -129,7 +129,7 @@ protected:
 	HRESULT Uninitialize();
 	HRESULT ClearData();
 	HRESULT SetDefaultValues();
-	virtual BOOL onRun( SVRunStatusClass& RRunStatus ) override;
+	virtual bool onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 	HRESULT InspectionInputsToVariantArray();
 
 	SVImageClass* GetInputImage(int iIndex);

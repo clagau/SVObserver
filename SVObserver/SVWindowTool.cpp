@@ -256,9 +256,3 @@ bool SVWindowToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessage
 
 	return Result;
 }
-
-BOOL SVWindowToolClass::onRun( SVRunStatusClass& RRunStatus )
-{
-	return SVToolClass::onRun( RRunStatus );
-}
-

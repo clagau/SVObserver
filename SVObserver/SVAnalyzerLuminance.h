@@ -55,7 +55,7 @@ private:
 protected:
 	double calculateVariance( double aNumberOfSamples, double aAverageValue, double aAccumulatedSquares );
 
-   virtual BOOL onRun( SVRunStatusClass& RRunStatus ) override;
+	virtual bool onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
 /*- USED BY onRun () ------------------------------------------*/
 /*- These values are only used by the Run () function, and   */

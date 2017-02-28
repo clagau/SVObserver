@@ -73,10 +73,10 @@ SVStringValueObjectClass* SVStringResultClass::getInputString()
 	return nullptr;
 }
 
-BOOL SVStringResultClass::onRun( SVRunStatusClass& RRunStatus )
+bool SVStringResultClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	// All inputs and outputs must be validated first
-	if( SVResultClass::onRun( RRunStatus ) )
+	if( SVResultClass::onRun( RRunStatus, pErrorMessages ) )
 	{
 		SVStringValueObjectClass* pValue = getInputString();
 		ASSERT( pValue );
@@ -87,9 +87,9 @@ BOOL SVStringResultClass::onRun( SVRunStatusClass& RRunStatus )
 		// Set Value
 		m_szValue.SetValue( RRunStatus.m_lResultDataIndex, Value );
 		
-		return TRUE;
-  }
+		return true;
+	}
 	RRunStatus.SetInvalid();
-	return FALSE;
+	return false;
 }
 

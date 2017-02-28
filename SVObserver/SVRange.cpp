@@ -327,13 +327,18 @@ void SVRangeClass::OnObjectRenamed(const SVObjectClass& rRenamedObject, const SV
 	__super::OnObjectRenamed(rRenamedObject, rOldName);
 }
 
-BOOL SVRangeClass::onRun(SVRunStatusClass& RRunStatus)
+bool SVRangeClass::onRun(SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
-	BOOL ret = true;
+	bool ret = true;
 	if(!m_isValidRange)
 	{
 		RRunStatus.SetInvalid();
 		ret = false;
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_InvalidRange, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
 	}
 
 	if(ret)

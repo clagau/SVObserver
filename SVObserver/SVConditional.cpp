@@ -72,7 +72,7 @@ BOOL SVConditionalClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructu
 ////////////////////////////////////////////////////////////////////////////////
 // If Conditional is disabled conditional.Run() returns always TRUE.
 // Otherwise the return value depends on the Conditional equation result!
-BOOL SVConditionalClass::onRun( SVRunStatusClass& RRunStatus )
+bool SVConditionalClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	BOOL value = false;
 
@@ -84,7 +84,7 @@ BOOL SVConditionalClass::onRun( SVRunStatusClass& RRunStatus )
 		return true;
 	}// end if
 
-	BOOL retVal = SVEquationClass::onRun( RRunStatus );
+	bool retVal = __super::onRun( RRunStatus, pErrorMessages );
 	if( !retVal )
 	{
 		SetInvalid();
@@ -95,7 +95,7 @@ BOOL SVConditionalClass::onRun( SVRunStatusClass& RRunStatus )
 		value = true;
 		if( HasCondition() && IsEnabled() )
 		{
-            value = yacc.equationResult ? true : false;
+			value = yacc.equationResult ? true : false;
 		}
 	}
 	result.SetValue( RRunStatus.m_lResultDataIndex, value );

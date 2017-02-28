@@ -241,11 +241,6 @@ bool SVImageToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages
 	return Result;
 } 
 
-BOOL SVImageToolClass::onRun( SVRunStatusClass& RRunStatus )
-{
-	return SVToolClass::onRun( RRunStatus );
-}
-
 HRESULT SVImageToolClass::UpdateTranslation()
 {
 	//get operator type

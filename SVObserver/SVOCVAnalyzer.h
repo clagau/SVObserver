@@ -37,7 +37,7 @@ public:
 	virtual void DisplayAnalyzerResult() override;
 
 protected:
-	virtual BOOL onRun( SVRunStatusClass& RRunStatus ) override;
+	virtual bool onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
 private:
 	void init();

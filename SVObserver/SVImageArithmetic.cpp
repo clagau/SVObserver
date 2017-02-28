@@ -202,11 +202,12 @@ SVImageClass* SVImageArithmeticClass::getOutputImage()
 	return &outputImageObject;
 }
 
-BOOL SVImageArithmeticClass::onRun( SVRunStatusClass& RRunStatus )
+bool SVImageArithmeticClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	// All inputs and outputs must be validated first
 	//@WARNING[MZA][7.50][17.01.2017] Not sure if we need to check ValidateLocal in Run-mode, maybe it is enough to check it in ResetObject
-	if (SVTaskObjectClass::onRun(RRunStatus) && ValidateLocal(&m_RunErrorMessages))
+	bool Return = SVTaskObjectClass::onRun(RRunStatus) && ValidateLocal(pErrorMessages);
+	if (Return)
 	{
 		SVImageClass*			 pImageA		= getInputImageA();
 		ASSERT( pImageA );
@@ -227,49 +228,79 @@ BOOL SVImageArithmeticClass::onRun( SVRunStatusClass& RRunStatus )
 
 		if ( ! pOutputImage->SetImageHandleIndex( RRunStatus.Images ) )
 		{
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				pErrorMessages->push_back(Msg);
+			}
 			SetInvalid();
 			RRunStatus.SetInvalid();
-			return FALSE;
+			return false;
 		}
 
 		BOOL bEnableOffsetA;
 		if( S_OK != pEnableOffsetA->GetValue( bEnableOffsetA ) )
 		{
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				pErrorMessages->push_back(Msg);
+			}
 			SetInvalid();
 			RRunStatus.SetInvalid();
-			return FALSE;
+			return false;
 		}
 
 		POINT offsetA;
 		if( S_OK != pOffsetAPoint->GetValue( offsetA ) )
 		{
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				pErrorMessages->push_back(Msg);
+			}
 			SetInvalid();
 			RRunStatus.SetInvalid();
-			return FALSE;
+			return false;
 		}
 
 		BOOL bEnableOffsetB;
 		if( S_OK != pEnableOffsetB->GetValue( bEnableOffsetB ) )
 		{
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				pErrorMessages->push_back(Msg);
+			}
 			SetInvalid();
 			RRunStatus.SetInvalid();
-			return FALSE;
+			return false;
 		}
 
 		POINT offsetB;
 		if( S_OK != pOffsetBPoint->GetValue( offsetB ) )
 		{
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				pErrorMessages->push_back(Msg);
+			}
 			SetInvalid();
 			RRunStatus.SetInvalid();
-			return FALSE;
+			return false;
 		}
 
 		long lOperator;
 		if( S_OK != pArithOperator->GetValue( lOperator ) )
 		{
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				pErrorMessages->push_back(Msg);
+			}
 			SetInvalid();
 			RRunStatus.SetInvalid();
-			return FALSE;
+			return false;
 		}
 
 		SVSmartHandlePointer HandleA;
@@ -342,10 +373,19 @@ BOOL SVImageArithmeticClass::onRun( SVRunStatusClass& RRunStatus )
 					static_cast<SVImageOperationTypeEnum>(lOperator) );
 			}
 
-			return TRUE;
+			return true;
+		}
+		else
+		{
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				pErrorMessages->push_back(Msg);
+			}
+			return false;
 		}
 	}
-	return FALSE;
+	return false;
 }
 
 void SVImageArithmeticClass::ScaleWithAveraging( SVImageClass* pInputImage, SVImageClass* pOutputImage )

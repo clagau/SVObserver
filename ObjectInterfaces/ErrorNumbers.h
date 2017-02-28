@@ -460,7 +460,6 @@ namespace Seidenader { namespace ObjectInterfaces
 	static const int 	Err_16155  =  Mec_ErrorBase + 155;
 	static const int 	Err_16156  =  Mec_ErrorBase + 156;
 	static const int 	Err_16157  =  Mec_ErrorBase + 157;
-	static const int 	Err_16158  =  Mec_ErrorBase + 158;
 	static const int 	Err_16159  =  Mec_ErrorBase + 159;	
 	static const int 	Err_16160  =  Mec_ErrorBase + 160;
 	static const int 	Err_16161  =  Mec_ErrorBase + 161;

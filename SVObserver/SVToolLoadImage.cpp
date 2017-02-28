@@ -115,23 +115,21 @@ BOOL SVLoadImageToolClass::CloseObject()
 	return FALSE;
 }
 
-BOOL SVLoadImageToolClass::onRun( SVRunStatusClass& RRunStatus )
+bool SVLoadImageToolClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	// All inputs and outputs must be validated first
-	if( ValidateLocal(&m_RunErrorMessages) && SVToolClass::onRun( RRunStatus ) )
+	if( ValidateLocal(pErrorMessages) && __super::onRun( RRunStatus, pErrorMessages ) )
 	{
 		BOOL bReload = false;
 		SVString ImagePathName;
 
-		if( S_OK != m_continuousReload.GetValue( bReload ) )
+		if( S_OK != m_continuousReload.GetValue( bReload ) || S_OK != m_currentPathName.GetValue( ImagePathName ) )
 		{
-			RRunStatus.SetInvalid();
-			SetInvalid();
-			return false;
-		}
-		
-		if( S_OK != m_currentPathName.GetValue( ImagePathName ) )
-		{
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				pErrorMessages->push_back(Msg);
+			}
 			RRunStatus.SetInvalid();
 			SetInvalid();
 			return false;
@@ -141,9 +139,13 @@ BOOL SVLoadImageToolClass::onRun( SVRunStatusClass& RRunStatus )
 		{
 			if( S_OK != m_fileImage.LoadImage( ImagePathName.c_str(), RRunStatus.Images ) )
 			{
+				if (nullptr != pErrorMessages)
+				{
+					SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_FailedToLoadImage, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+					pErrorMessages->push_back(Msg);
+				}
 				RRunStatus.SetInvalid();
 				SetInvalid();
-
 				return false;
 			}
 
@@ -154,9 +156,13 @@ BOOL SVLoadImageToolClass::onRun( SVRunStatusClass& RRunStatus )
 			//copy forward
 			if( ! m_fileImage.CopyImageTo( RRunStatus.Images ) )
 			{
+				if (nullptr != pErrorMessages)
+				{
+					SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_CopyImagesFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+					pErrorMessages->push_back(Msg);
+				}
 				RRunStatus.SetInvalid();
 				SetInvalid();
-
 				return false;
 			}
 		}
@@ -165,8 +171,7 @@ BOOL SVLoadImageToolClass::onRun( SVRunStatusClass& RRunStatus )
 	}
 
 	RRunStatus.SetInvalid();
-
-	return FALSE;
+	return false;
 }
 
 bool SVLoadImageToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)

@@ -71,11 +71,11 @@ BOOL EQAdjustSize::CreateObject(SVObjectLevelCreateStruct *PCreateStruct)
 }
 
 
-BOOL EQAdjustSize::onRun( SVRunStatusClass& RRunStatus )
+bool EQAdjustSize::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	///This function is not called
 	ASSERT(FALSE);
-	return TRUE;
+	return true;
 }
 
 bool EQAdjustSize::ResetObject(SvStl::MessageContainerVector *pErrorMessages)

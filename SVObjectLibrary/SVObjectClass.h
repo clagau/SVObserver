@@ -84,7 +84,7 @@ public:
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* pCreateStructure );
 	virtual void ConnectObject( const SVObjectLevelCreateStruct& rCreateStructure );
 	virtual BOOL CloseObject();
-	virtual BOOL IsValid() const { return m_isObjectValid; }
+	virtual bool IsValid() const { return (TRUE == m_isObjectValid); }
 	virtual BOOL SetObjectOwner( SVObjectClass* pNewOwner );
 	virtual BOOL SetObjectOwner( const GUID& rNewOwnerGUID );
 

@@ -43,7 +43,7 @@ public:
 protected:
 	virtual HRESULT IsInputImage( SVImageClass *p_psvImage ) override;
 	
-	virtual BOOL onRun( SVRunStatusClass& RRunStatus ) override;
+	virtual bool onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 #pragma endregion Protected Methods
 
 #pragma region Private Methods

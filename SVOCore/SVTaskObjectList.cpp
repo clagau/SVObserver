@@ -956,7 +956,7 @@ bool SVTaskObjectListClass::resetAllOutputListObjects( SvStl::MessageContainerVe
 	return Result;
 }
 
-BOOL SVTaskObjectListClass::Run(SVRunStatusClass& RRunStatus)
+bool SVTaskObjectListClass::Run(SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	clearRunErrorMessages();
 	SVRunStatusClass ChildRunStatus;
@@ -965,7 +965,7 @@ BOOL SVTaskObjectListClass::Run(SVRunStatusClass& RRunStatus)
 	ChildRunStatus.m_UpdateCounters = RRunStatus.m_UpdateCounters;
 
 	// Run yourself...
-	BOOL bRetVal = onRun(RRunStatus);
+	bool bRetVal = onRun(RRunStatus, &m_RunErrorMessages);
 
 	if (!RRunStatus.IsDisabled() && !RRunStatus.IsDisabledByCondition())
 	{
@@ -977,8 +977,7 @@ BOOL SVTaskObjectListClass::Run(SVRunStatusClass& RRunStatus)
 			{
 				ChildRunStatus.ResetRunStateAndToolSetTimes();
 
-				BOOL l_bTemp = pTaskObject->Run(ChildRunStatus);
-				bRetVal &= l_bTemp;
+				bRetVal = pTaskObject->Run(ChildRunStatus, &m_RunErrorMessages) & bRetVal;
 
 				// Update our Run Status
 				if ( ChildRunStatus.IsDisabled() ) { RRunStatus.SetDisabled(); }
@@ -1003,6 +1002,11 @@ BOOL SVTaskObjectListClass::Run(SVRunStatusClass& RRunStatus)
 	// Get Status...
 	dwValue = RRunStatus.GetState();
 	m_statusTag.SetValue( RRunStatus.m_lResultDataIndex, dwValue );
+
+	if (nullptr != pErrorMessages && !m_RunErrorMessages.empty())
+	{
+		pErrorMessages->insert(pErrorMessages->end(), m_RunErrorMessages.begin(), m_RunErrorMessages.end());
+	}
 
 	return bRetVal;
 }

@@ -667,9 +667,8 @@ bool SVOCVAnalyzeResultClass::ResetObject(SvStl::MessageContainerVector *pErrorM
 //
 //
 //
-BOOL SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& RRunStatus )
+bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
-	BOOL bOk = FALSE;
 	SVMatroxBuffer l_milImageID;
 	BYTE* pMilBuffer = nullptr;
 	BOOL l_bOperation;
@@ -700,62 +699,68 @@ BOOL SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& RRunStatus )
 	 
 	SVMatroxOcrInterface ::SVStatusCode l_Code = SVMEE_STATUS_OK;
   
-	bOk = SVResultClass::onRun( RRunStatus );
+	bool bOk = __super::onRun( RRunStatus, pErrorMessages );
 
 	if( bOk && !RRunStatus.IsDisabled() && !RRunStatus.IsDisabledByCondition() )
 	{
-
-		if( bOk )
+		SVImageClass* pImage = getInputImage();
+		if( nullptr == pImage )
 		{
-			SVImageClass* pImage = getInputImage();
-
-			bOk = nullptr != pImage;
-			
-			if( !bOk )
-			{    
-				SetInvalid();
-			}
-			else
+			SetInvalid();
+			bOk = false;
+			if (nullptr != pErrorMessages)
 			{
-				SVSmartHandlePointer ImageHandle;
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				pErrorMessages->push_back(Msg);
+			}
+		}
+		else
+		{
+			SVSmartHandlePointer ImageHandle;
 
-				if( pImage->GetImageHandle( ImageHandle ) && !( ImageHandle.empty() ) )
+			if( pImage->GetImageHandle( ImageHandle ) && !( ImageHandle.empty() ) )
+			{
+				SVImageBufferHandleImage l_MilHandle;
+				ImageHandle->GetData( l_MilHandle );
+
+				l_milImageID = l_MilHandle.GetBuffer();
+
+				//
+				// Get the Mil buffer host pointer ( address in the process address space )
+				//
+
+				SVMatroxBufferInterface::GetHostAddress( &pMilBuffer, l_milImageID );				
+
+				if( nullptr == pMilBuffer )
 				{
-					SVImageBufferHandleImage l_MilHandle;
-					ImageHandle->GetData( l_MilHandle );
-
-					l_milImageID = l_MilHandle.GetBuffer();
-
 					//
-					// Get the Mil buffer host pointer ( address in the process address space )
+					// No MIL image buffer handle..
 					//
-					
-					SVMatroxBufferInterface::GetHostAddress( &pMilBuffer, l_milImageID );				
-					bOk = nullptr != pMilBuffer;
-
-					if( ! bOk )
+					if (nullptr != pErrorMessages)
 					{
-						//
-						// No MIL image buffer handle..
-						//
-						SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-						Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_NoMilHostBuffer, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10169, GetUniqueObjectID());
+						SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_NoMilHostBuffer, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10169, GetUniqueObjectID() );
+						pErrorMessages->push_back(Msg);
 					}
-					else
-					{
-						//
-						// Check type of image buffer
-						//
-						long imageTypeMil = 0;
-						SVMatroxBufferInterface::Get( l_milImageID, SVType, imageTypeMil );
+					bOk = false;
+				}
+				else
+				{
+					//
+					// Check type of image buffer
+					//
+					long imageTypeMil = 0;
+					SVMatroxBufferInterface::Get( l_milImageID, SVType, imageTypeMil );
 
-						if ( imageTypeMil != 8)  // (8L + M_UNSIGNED) )
+					if ( imageTypeMil != 8)  // (8L + M_UNSIGNED) )
+					{
+						if (nullptr != pErrorMessages)
 						{
 							SVStringVector msgList;
 							msgList.push_back(SvUl_SF::Format(_T("%x"), imageTypeMil));
-							SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-							Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_MilImageTypeInvalid, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10170, GetUniqueObjectID());
+							SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_MilImageTypeInvalid, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10170, GetUniqueObjectID() );
+							pErrorMessages->push_back(Msg);
 						}
+						bOk = false;
 					}
 				}
 			}
@@ -766,11 +771,15 @@ BOOL SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& RRunStatus )
 			//
 			// Turn off mouse events for duration of this method.
 			//
-			bOk = lock.Lock( 1 );
-
-			if( !bOk )
+			if( !lock.Lock( 1 ) )
 			{
+				bOk = false;
 				SetInvalid();
+				if (nullptr != pErrorMessages)
+				{
+					SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_LockingFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+					pErrorMessages->push_back(Msg);
+				}
 			}
 			else
 			{
@@ -1025,9 +1034,14 @@ BOOL SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& RRunStatus )
 						RRunStatus.SetFailed();
 					}
 
-					SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-					Exception.setMessage( SVMSG_SVO_30_EXCEPTION_IN_MIL, strFunctionName.c_str(), SvStl::SourceFileParams(StdMessageParams), iProgramCode, GetUniqueObjectID() );
-
+					if (nullptr != pErrorMessages)
+					{
+						SVStringVector msgList;
+						msgList.push_back(strFunctionName);
+						SvStl::MessageContainer Msg( SVMSG_SVO_30_EXCEPTION_IN_MIL, SvOi::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams), iProgramCode, GetUniqueObjectID() );
+						pErrorMessages->push_back(Msg);
+					}
+					bOk = false;
 					l_lLength = 0;
 				}// end catch
 
@@ -1250,9 +1264,11 @@ BOOL SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& RRunStatus )
 		SVStringVector msgList;
 		msgList.push_back(_T("SVOCVAnalyzeResultClass::onRun"));
 
-		SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-		Exception.setMessage( static_cast<DWORD> (l_Code), SvOi::Tid_ErrorIn, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
-
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( static_cast<DWORD> (l_Code), SvOi::Tid_ErrorIn, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
 		bOk = false;
 	}
 

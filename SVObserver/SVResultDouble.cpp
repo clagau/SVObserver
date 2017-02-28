@@ -87,10 +87,10 @@ BOOL SVDoubleResultClass::CloseObject()
 	return SVResultClass::CloseObject();
 }
 
-BOOL SVDoubleResultClass::onRun( SVRunStatusClass& RRunStatus )
+bool SVDoubleResultClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	// All inputs and outputs must be validated first
-	if( SVResultClass::onRun(RRunStatus) )
+	if( SVResultClass::onRun(RRunStatus, pErrorMessages) )
 	{
 		SVDoubleValueObjectClass* pValue = static_cast <SVDoubleValueObjectClass*> (getInput());
 		ASSERT( pValue );
@@ -103,10 +103,10 @@ BOOL SVDoubleResultClass::onRun( SVRunStatusClass& RRunStatus )
 		value.SetValue(RRunStatus.m_lResultDataIndex, v);
 
 	
-		return TRUE;
+		return true;
 	}
 	RRunStatus.SetInvalid();
-	return FALSE;
+	return false;
 }
 
 

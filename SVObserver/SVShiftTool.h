@@ -59,7 +59,7 @@ public:
 
 protected:
 #pragma region Protected Methods
-	virtual BOOL onRun( SVRunStatusClass &p_rRunStatus ) override;
+	virtual bool onRun( SVRunStatusClass &p_rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 	SVImageClass* GetImageInput() const;
 	SVDoubleValueObjectClass* GetTranslationXInput() const;
 	SVDoubleValueObjectClass* GetTranslationYInput() const;

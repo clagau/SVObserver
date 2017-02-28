@@ -109,9 +109,9 @@ SVValueObjectClass* SVVariantResultClass::GetInputValue()
 	return nullptr;
 }
 
-BOOL SVVariantResultClass::onRun( SVRunStatusClass& RRunStatus )
+bool SVVariantResultClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
-	if( SVResultClass::onRun( RRunStatus ) )
+	if( __super::onRun( RRunStatus, pErrorMessages ) )
 	{
 		SVValueObjectClass* pValue = GetInputValue();
 		ASSERT( pValue );
@@ -122,9 +122,9 @@ BOOL SVVariantResultClass::onRun( SVRunStatusClass& RRunStatus )
 		// Set Value
 		m_Value.SetValue( RRunStatus.m_lResultDataIndex, v );
 
-		return TRUE;
+		return true;
 	}
 	RRunStatus.SetInvalid();
-	return FALSE;
+	return false;
 }
 

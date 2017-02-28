@@ -138,10 +138,10 @@ SVStringValueObjectClass* SVBarCodeResultClass::getRegExpression()
 	return nullptr;
 }
 
-BOOL SVBarCodeResultClass::onRun(SVRunStatusClass &RRunStatus)
+bool SVBarCodeResultClass::onRun(SVRunStatusClass &RRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	//@WARNING[MZA][7.50][17.01.2017] Not sure if we need to check ValidateLocal in Run-mode, maybe it is enough to check it in ResetObject
-	if( SVStringResultClass::onRun( RRunStatus ) && ValidateLocal(&m_RunErrorMessages) )
+	if( __super::onRun( RRunStatus, pErrorMessages ) && ValidateLocal(pErrorMessages) )
 	{
 		if( this->m_bFailedToRead )
 		{
@@ -155,13 +155,13 @@ BOOL SVBarCodeResultClass::onRun(SVRunStatusClass &RRunStatus)
 		{
 			BOOL bLoad = FALSE;
 
-		SVString InputString;
-		pValue->GetValue(InputString);
+			SVString InputString;
+			pValue->GetValue(InputString);
 
 			msv_bUseMatchStringFile.GetValue( bLoad );
 			if ( bLoad )
 			{
-			long lLine = CheckStringInTable( InputString );
+				long lLine = CheckStringInTable( InputString );
 				msv_lMatchStringLine.SetValue( RRunStatus.m_lResultDataIndex, lLine );
 				if ( 0 < lLine )
 				{
@@ -192,11 +192,11 @@ BOOL SVBarCodeResultClass::onRun(SVRunStatusClass &RRunStatus)
 		{
 			RRunStatus.SetFailed();
 		}
-		return TRUE;
+		return true;
 	}
 	RRunStatus.SetInvalid();
 	SetInvalid ();
-	return FALSE;
+	return false;
 }
 
 bool SVBarCodeResultClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)

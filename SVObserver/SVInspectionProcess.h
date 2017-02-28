@@ -99,7 +99,7 @@ public:
 	virtual HRESULT RegisterSubObject( SVObjectClass* pObject ) override;
 	virtual HRESULT UnregisterSubObject( SVObjectClass* pObject ) override;
 
-	BOOL Run( SVRunStatusClass& RRunStatus );
+	bool Run( SVRunStatusClass& RRunStatus );
 
 	virtual HRESULT ObserverUpdate( const SVAddTool& p_rData ) override;
 	virtual HRESULT ObserverUpdate( const SVDeleteTool& p_rData ) override;

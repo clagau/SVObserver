@@ -17,9 +17,11 @@
 #include "ObjectInterfaces\ISVOApp_Helper.h"
 #include "TextDefinesSvO.h"
 #include "GuiCommands\IsValid.h"
+#include "GuiCommands\GetErrorMessageList.h"
 #include "GuiCommands\GetTaskObjects.h"
 #include "SVObjectLibrary\SVObjectSynchronousCommandTemplate.h"
 #include "SVOResource\ConstGlobalSvOr.h"
+#include "SVStatusLibrary\MessageManager.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -276,6 +278,41 @@ bool SVToolSetListCtrl::IsEmptyStringPlaceHolder( const SVString& rName ) const
 {
 	SVString EmptyString = SvUl_SF::LoadSVString(IDS_EMPTY_STRING);
 	return (rName == EmptyString);
+}
+
+bool SVToolSetListCtrl::displayErrorBox(const SVGUID& rGuid) const
+{
+	typedef GuiCmd::GetErrorMessageList Command;
+	typedef SVSharedPtr<Command> CommandPtr;
+	CommandPtr commandPtr = new Command(rGuid);
+	SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionId, commandPtr);
+	HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+	if (S_OK == hr)
+	{
+		const SvStl::MessageContainerVector& messageList = commandPtr->GetMessageList();
+		if (0 < messageList.size())
+		{
+			SvStl::MessageMgrStd Exception( SvStl::LogAndDisplay );
+			Exception.setMessage( messageList[0].getMessage() );
+			return true;
+		}
+	}
+	return false;
+}
+
+bool SVToolSetListCtrl::isToolValid(const SVGUID& tool) const
+{
+	bool isToolValid = false;
+	typedef GuiCmd::IsValid Command;
+	typedef SVSharedPtr<Command> CommandPtr;
+	CommandPtr commandPtr = new Command(tool);
+	SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionId, commandPtr);
+	HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+	if (S_OK == hr)
+	{
+		isToolValid = commandPtr->isValid();
+	}
+	return isToolValid;
 }
 
 bool SVToolSetListCtrl::IsStartGrouping(int index, bool& bState) const
@@ -643,19 +680,3 @@ void SVToolSetListCtrl::ExpandItem(int item)
 		pView->HandleExpandCollapse( Name, false );
 	}
 }
-
-bool SVToolSetListCtrl::isToolValid(const SVGUID& tool) const
-{
-	bool isToolValid = false;
-	typedef GuiCmd::IsValid Command;
-	typedef SVSharedPtr<Command> CommandPtr;
-	CommandPtr commandPtr = new Command(tool);
-	SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionId, commandPtr);
-	HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-	if (S_OK == hr)
-	{
-		isToolValid = commandPtr->isValid();
-	}
-	return isToolValid;
-}
-

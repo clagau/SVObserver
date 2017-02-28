@@ -119,11 +119,9 @@ void TableFillObject::setColumnValueObjects(const std::vector<TableColumnEquatio
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
-BOOL TableFillObject::onRun( SVRunStatusClass& rRunStatus )
+bool TableFillObject::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
-	BOOL returnValue = S_FALSE;
-
-	returnValue = TableObject::onRun( rRunStatus );
+	bool returnValue = __super::onRun( rRunStatus, pErrorMessages );
 	if (returnValue)
 	{
 		int nextPos = 0;

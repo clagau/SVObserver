@@ -40,7 +40,7 @@ public:
 
 protected:
 	virtual HRESULT UpdateImageWithExtent( unsigned long p_Index ) override;
-	virtual BOOL onRun( SVRunStatusClass& RRunStatus ) override;
+	virtual bool onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
 	BOOL createBandChildLayer( SVImageClass& p_rOutputImage, SVImageClass* p_pInputImage, long p_BandLink );
 

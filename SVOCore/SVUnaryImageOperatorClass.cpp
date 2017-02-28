@@ -70,14 +70,14 @@ BOOL SVUnaryImageOperatorClass::CreateObject( SVObjectLevelCreateStruct* PCreate
 // .Description : Runs this operator.
 //              : Returns FALSE, if operator cannot run ( may be deactivated ! )
 ////////////////////////////////////////////////////////////////////////////////
-BOOL SVUnaryImageOperatorClass::Run( BOOL First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus )
+bool SVUnaryImageOperatorClass::Run( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	// Should call Base Class Run() here but we have different parameters!!!
 
 	clearRunErrorMessages();
 	
 	// Run yourself...
-	BOOL bRetVal =  onRun( First, RInputImageHandle, ROutputImageHandle, RRunStatus );
+	bool bRetVal =  onRun( First, RInputImageHandle, ROutputImageHandle, RRunStatus, &m_RunErrorMessages );
 
 	// Get Status Color...
 	DWORD dwValue = RRunStatus.GetStatusColor();
@@ -86,6 +86,11 @@ BOOL SVUnaryImageOperatorClass::Run( BOOL First, SVSmartHandlePointer RInputImag
 	// Get Status...
 	dwValue = RRunStatus.GetState();
 	m_statusTag.SetValue( RRunStatus.m_lResultDataIndex, dwValue );
+
+	if (nullptr != pErrorMessages && !m_RunErrorMessages.empty())
+	{
+		pErrorMessages->insert(pErrorMessages->end(), m_RunErrorMessages.begin(), m_RunErrorMessages.end());
+	}
 
 	return bRetVal;
 }
@@ -96,7 +101,7 @@ BOOL SVUnaryImageOperatorClass::Run( BOOL First, SVSmartHandlePointer RInputImag
 // .Description : Runs this operator. MUST BE OVERRIDDEN !!!
 //              : Returns FALSE, if operator cannot run ( may be deactivated ! )
 ////////////////////////////////////////////////////////////////////////////////
-BOOL SVUnaryImageOperatorClass::onRun( BOOL First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus )
+bool SVUnaryImageOperatorClass::onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	assert(0);
 	return false;

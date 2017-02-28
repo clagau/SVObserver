@@ -373,7 +373,7 @@ SVByteValueObjectClass* SVLUTOperatorClass::getInputLUTVectorResult()
 // .Description : Runs this operator.
 //              : Returns FALSE, if operator cannot run ( may be deactivated ! )
 ////////////////////////////////////////////////////////////////////////////////
-BOOL SVLUTOperatorClass::onRun( BOOL First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus )
+bool SVLUTOperatorClass::onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 { 
 	// Is doing special friend routing !!!
 	// Don't call base class onRun(...).
@@ -381,10 +381,15 @@ BOOL SVLUTOperatorClass::onRun( BOOL First, SVSmartHandlePointer RInputImageHand
 	// Since we do special routing here, we have to validate by ourself...
 	if( RInputImageHandle.empty() || ROutputImageHandle.empty() )
 	{
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
 		// Signal that something was wrong...
 		SetInvalid();
 		RRunStatus.SetInvalid();
-		return FALSE;
+		return false;
 	}
 
 	SVImageBufferHandleImage l_InMilHandle;
@@ -399,10 +404,15 @@ BOOL SVLUTOperatorClass::onRun( BOOL First, SVSmartHandlePointer RInputImageHand
 	// Check, if LUT shall run...
 	if( S_OK != m_useLUT.GetValue( bUseLUT ) )
 	{
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
 		// Signal that something was wrong...
 		SetInvalid();
 		RRunStatus.SetInvalid();
-		return FALSE;
+		return false;
 	}
 
 	// LUT Operator is disabled...
@@ -416,16 +426,21 @@ BOOL SVLUTOperatorClass::onRun( BOOL First, SVSmartHandlePointer RInputImageHand
 
 		// Signal that this operator was not running...
 		// But everything was ok!!!!
-		return FALSE;
+		return false;
 	}
 
 	// Get shall LUT be continuous recalculated...
 	if( S_OK != m_continuousRecalcLUT.GetValue( bContinuousRecalcLUT ) )
 	{
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
 		// Signal that something was wrong...
 		SetInvalid();
 		RRunStatus.SetInvalid();
-		return FALSE;
+		return false;
 	}
 
 	if( m_bForceLUTRecalc || bContinuousRecalcLUT )
@@ -433,6 +448,11 @@ BOOL SVLUTOperatorClass::onRun( BOOL First, SVSmartHandlePointer RInputImageHand
 		// Try to recalc LUT...
 		if( ! RecalcLUT( RRunStatus ) )
 		{
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_RecalcLUTFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				pErrorMessages->push_back(Msg);
+			}
 			// Signal that something was wrong...
 			SetInvalid();
 			RRunStatus.SetInvalid();
@@ -446,18 +466,23 @@ BOOL SVLUTOperatorClass::onRun( BOOL First, SVSmartHandlePointer RInputImageHand
 
 	// Do LUT...
 	l_Code = SVMatroxImageInterface::LutMap( l_OutMilHandle.GetBuffer(),
-		( First == TRUE ) ? l_InMilHandle.GetBuffer() :	l_OutMilHandle.GetBuffer(), 
+		First ? l_InMilHandle.GetBuffer() :	l_OutMilHandle.GetBuffer(), 
 			m_lutBufID);
 
 	if( l_Code != SVMEE_STATUS_OK )
 	{
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_RunLutFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
 		// Signal that something was wrong...
 		SetInvalid();
 		RRunStatus.SetInvalid();
-		return FALSE;
+		return false;
 	}
 
 	// Success...
-	return TRUE;
+	return true;
 }
 

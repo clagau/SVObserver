@@ -26,7 +26,7 @@ public:
 
 protected:
 	void init();
-	virtual BOOL onRun( SVRunStatusClass& RRunStatus ) override;
+	virtual bool onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
 protected:
 	SVDoubleValueObjectClass		result;			// resultant value

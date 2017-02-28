@@ -90,7 +90,7 @@ bool SVInPlaceImageOperatorListClass::ResetObject(SvStl::MessageContainerVector 
 // .Description : Is doing in place processing on input image!!!
 //				:
 //				: Special routing for image operators here.
-BOOL SVInPlaceImageOperatorListClass::Run( SVRunStatusClass& RRunStatus )
+bool SVInPlaceImageOperatorListClass::Run( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	clearRunErrorMessages();
 
@@ -100,12 +100,14 @@ BOOL SVInPlaceImageOperatorListClass::Run( SVRunStatusClass& RRunStatus )
 	ChildRunStatus.m_UpdateCounters = RRunStatus.m_UpdateCounters;
 
 	// Run yourself...
-	BOOL bRetVal = onRun( RRunStatus );
+	bool bRetVal = onRun( RRunStatus, &m_RunErrorMessages );
 
-	if( bRetVal && nullptr == getInputImage() )
+	if( nullptr == getInputImage() )
 	{
 		// Signal something is wrong...
 		bRetVal = false;
+		SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+		m_RunErrorMessages.push_back(Msg);
 	}
 
 	if( bRetVal )
@@ -131,7 +133,7 @@ BOOL SVInPlaceImageOperatorListClass::Run( SVRunStatusClass& RRunStatus )
 
 			if( pOperator )
 			{
-				if( pOperator->Run( bFirstFlag, input, output, ChildRunStatus ) )
+				if( pOperator->Run( bFirstFlag, input, output, ChildRunStatus, &m_RunErrorMessages ) )
 				{
 					// Switch first flag off ( FALSE )...
 					bFirstFlag = false;
@@ -155,6 +157,8 @@ BOOL SVInPlaceImageOperatorListClass::Run( SVRunStatusClass& RRunStatus )
 			else
 			{
 				bRetVal = false;
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_InvalidData, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				m_RunErrorMessages.push_back(Msg);
 			}
 
 			// Update our Run Status
@@ -176,7 +180,12 @@ BOOL SVInPlaceImageOperatorListClass::Run( SVRunStatusClass& RRunStatus )
 			if( ChildRunStatus.IsCriticalFailure() )
 				RRunStatus.SetCriticalFailure();
 		}
-  }
+	}
+
+	if (bRetVal && !m_RunErrorMessages.empty())
+	{
+		bRetVal = false;
+	}
 	
 	if( ! bRetVal )
 	{
@@ -192,6 +201,11 @@ BOOL SVInPlaceImageOperatorListClass::Run( SVRunStatusClass& RRunStatus )
 	// Get Status...
 	dwValue = RRunStatus.GetState();
 	m_statusTag.SetValue( RRunStatus.m_lResultDataIndex, dwValue );
+
+	if (nullptr != pErrorMessages && !m_RunErrorMessages.empty())
+	{
+		pErrorMessages->insert(pErrorMessages->end(), m_RunErrorMessages.begin(), m_RunErrorMessages.end());
+	}
 
 	return bRetVal;
 }

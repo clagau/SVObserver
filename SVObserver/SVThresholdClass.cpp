@@ -204,10 +204,10 @@ SVDoubleValueObjectClass* SVThresholdClass::getExternalATM()
 // .Description : Runs this operator.
 //              : Returns FALSE, if operator cannot run ( may be deactivated ! )
 ////////////////////////////////////////////////////////////////////////////////
-BOOL SVThresholdClass::onRun( BOOL First, 
+bool SVThresholdClass::onRun( bool First, 
 							  SVSmartHandlePointer RInputImageHandle, 
 							  SVSmartHandlePointer ROutputImageHandle, 
-							  SVRunStatusClass& RRunStatus )
+							  SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 { 
 	// Binarizing: lowerThresh <= x <= m_upperThresh		--> 255 
 	//	 		   otherwise							--> 0
@@ -449,23 +449,25 @@ BOOL SVThresholdClass::onRun( BOOL First,
 		SVStringVector msgList;
 		msgList.push_back(_T("SVThresholdClass::onRun"));
 		
-		SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-		Exception.setMessage( static_cast<DWORD> (l_Code), SvOi::Tid_ErrorIn, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
-
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( static_cast<DWORD> (l_Code), SvOi::Tid_ErrorIn, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
 		RRunStatus.SetCriticalFailure();
 
-		return FALSE;
+		return false;
 	}
-	else
-	if (l_Code == 15402)
+	else if (l_Code == 15402)
 	{
 //-		15402 indicates that Thresholds were not enabled!
 //-		False indicates that Thresholds were not run.... for whatever reason.
 
-		return FALSE;
+		return false;
 	}
-	else 
-		return TRUE;
+
+
+	return true;
 }
 
 bool SVThresholdClass::Rebuild()

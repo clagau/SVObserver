@@ -28,7 +28,7 @@ public:
 
 	SVDoubleValueObjectClass* getInputDouble();
 protected:
-	virtual BOOL onRun( SVRunStatusClass& RRunStatus ) override;
+	virtual bool onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
 // Data Element(s):
 protected:

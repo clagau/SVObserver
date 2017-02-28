@@ -178,17 +178,15 @@ bool TableTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
-BOOL TableTool::onRun( SVRunStatusClass& rRunStatus )
+bool TableTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
-	BOOL returnValue = S_FALSE;
-
-	returnValue = SVToolClass::onRun( rRunStatus );
+	bool returnValue = __super::onRun( rRunStatus, pErrorMessages );
 	if (returnValue)
 	{
 		//clear table if required
 		if( m_pClearEquation->HasCondition() && m_pClearEquation->IsEnabled() && 0 != m_pClearEquation->GetYACCResult() )
 		{
-			returnValue = m_pTable->ResetObject(&m_RunErrorMessages);
+			returnValue = m_pTable->ResetObject(pErrorMessages);
 		}
 	}
 

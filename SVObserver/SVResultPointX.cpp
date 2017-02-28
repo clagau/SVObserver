@@ -97,10 +97,10 @@ SVPointValueObjectClass* SVPointXResultClass::getInputPoint()
 	return nullptr;
 }
 
-BOOL SVPointXResultClass::onRun( SVRunStatusClass& RRunStatus )
+bool SVPointXResultClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	// All inputs and outputs must be validated first
-	if( SVResultClass::onRun( RRunStatus ) )
+	if( SVResultClass::onRun( RRunStatus, pErrorMessages ) )
 	{
 		SVPointValueObjectClass* pPoint = getInputPoint();
 		ASSERT( pPoint );
@@ -111,10 +111,10 @@ BOOL SVPointXResultClass::onRun( SVRunStatusClass& RRunStatus )
 		// Set X
 		x.SetValue( RRunStatus.m_lResultDataIndex, p.x );
 
-		return TRUE;
+		return true;
 	}
 	RRunStatus.SetInvalid();
-	return FALSE;
+	return false;
 }
 
 

@@ -43,7 +43,8 @@ public:
 	virtual ~SVShapeMaskHelperClass();
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
-	BOOL onRun( BOOL First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus );
+	//First definition of onRun with this parameter (SVTaskObjectClass has different parameter), so override is not possible
+	virtual bool onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr );
 
 	HRESULT Refresh();
 

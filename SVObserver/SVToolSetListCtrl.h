@@ -74,6 +74,13 @@ public:
 	bool IsEndListDelimiter( const SVString& rName ) const;
 	bool IsEmptyStringPlaceHolder( const SVString& rName ) const;
 
+	/// Display an error message box with the first error, if the tool has errors.
+	/// \param rGuid [in] Guid of the tool.
+	/// \returns bool Return true, if this method has displayed an message box, else false.
+	bool displayErrorBox(const SVGUID& rGuid) const;
+
+	bool isToolValid(const SVGUID& tool) const;
+
 protected:
 	ToolSetView* GetView();
 	const ToolSetView* GetView() const;
@@ -87,7 +94,6 @@ protected:
 	void CollapseItem(int item);
 	void ExpandItem(int item);
 	bool IsStartGrouping(int index, bool& bState) const;
-	bool isToolValid(const SVGUID& tool) const;
 
 	CImageList m_ImageList;
 

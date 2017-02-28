@@ -32,7 +32,7 @@ SVVertEdgeFilterClass::~SVVertEdgeFilterClass()
 // .Description : Runs this operator.
 //              : Returns FALSE, if operator cannot run ( may be deactivated ! )
 ////////////////////////////////////////////////////////////////////////////////
-BOOL SVVertEdgeFilterClass::onRun( BOOL First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus )
+bool SVVertEdgeFilterClass::onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 { 
 	if( m_pCurrentUIOPL && !( RInputImageHandle.empty() ) && !( ROutputImageHandle.empty() ) )
 	{
@@ -44,23 +44,28 @@ BOOL SVVertEdgeFilterClass::onRun( BOOL First, SVSmartHandlePointer RInputImageH
 
 		SVMatroxImageInterface::SVStatusCode l_Code;
 		l_Code = SVMatroxImageInterface::Convolve( l_OutMilHandle.GetBuffer(),
-			( First == TRUE ) ? l_InMilHandle.GetBuffer() : l_OutMilHandle.GetBuffer(),
+			First ? l_InMilHandle.GetBuffer() : l_OutMilHandle.GetBuffer(),
 				SVFilterOpVertEdge );
 		if( l_Code != SVMEE_STATUS_OK )
 		{
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_RunFilterFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				pErrorMessages->push_back(Msg);
+			}
 			// Signal that something was wrong...
 			SetInvalid();
 			RRunStatus.SetInvalid();
-			return FALSE;
+			return false;
 		}
 
 		// Success...
-		return TRUE;
+		return true;
 	}
 
 	// Signal that something was wrong...
 	SetInvalid();
 	RRunStatus.SetInvalid();
-	return FALSE;
+	return false;
 }
 

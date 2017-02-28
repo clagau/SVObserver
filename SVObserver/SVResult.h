@@ -61,7 +61,7 @@ public:
 
 	SVRangeClass* GetResultRange();
 
-	virtual BOOL Run(SVRunStatusClass& RRunStatus) override;
+	virtual bool Run(SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 	
 	
 	// Only valid for single input Results that can use the m_inputObjectInfo 
@@ -69,7 +69,7 @@ public:
 	SVValueObjectClass* getInput();
 
 protected:
-	virtual BOOL onRun( SVRunStatusClass& RRunStatus ) override;
+	virtual bool onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
 	void init();
 	

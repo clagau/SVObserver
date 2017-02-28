@@ -71,11 +71,11 @@ SVLowerThresholdEquationClass::~SVLowerThresholdEquationClass()
 ////////////////////////////////////////////////////////////////////////////////
 // If Conditional is disabled conditional.Run() returns always TRUE.
 // Otherwise the return value depends on the Conditional equation result!
-BOOL SVLowerThresholdEquationClass::onRun( SVRunStatusClass& RRunStatus )
+bool SVLowerThresholdEquationClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	double value = 0.0;
 
-	BOOL retVal = SVEquationClass::onRun( RRunStatus );
+	bool retVal = __super::onRun( RRunStatus, pErrorMessages );
 	
 	if( !retVal )
 	{

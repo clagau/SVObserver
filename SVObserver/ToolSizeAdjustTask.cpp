@@ -115,13 +115,13 @@ BOOL ToolSizeAdjustTask::AddEvaluationObject(SVInObjectInfoStruct* pInfo, GUID c
 	return RegisterInputObject( pInfo, Name );
 }
 
-BOOL ToolSizeAdjustTask::onRun(SVRunStatusClass& RRunStatus)
+bool ToolSizeAdjustTask::onRun(SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	//DoNothing in onRun
 	return true;
 }
 
-BOOL  ToolSizeAdjustTask::Run( SVRunStatusClass& RRunStatus )
+bool  ToolSizeAdjustTask::Run( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	//DoNothing in Run
 	return true;

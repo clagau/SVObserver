@@ -65,7 +65,7 @@ public:
 	virtual bool ConnectAllInputs() override;
 	HRESULT ConnectToObject( SVInObjectInfoStruct* p_psvInputInfo, SVObjectClass* pNewObject );
 
-	virtual BOOL IsValid() const override;
+	virtual bool IsValid() const override;
 
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStruct ) override;
 	virtual BOOL CloseObject() override;
@@ -96,12 +96,6 @@ public:
 
 	virtual HRESULT GetChildObject( SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index = 0 ) const override;
 	HRESULT FindNextInputImageInfo(SVInObjectInfoStruct*& p_rpsvFoundInfo, const SVInObjectInfoStruct* p_psvLastInfo = nullptr);
-	
-	//************************************
-	//! Adds a task message to the list
-	//! \param rMessage [in] reference to the message container
-	//************************************
-	void addRunErrorMessage( const SvStl::MessageContainer& rMessage ) { m_RunErrorMessages.push_back( rMessage ); };
 
 	//************************************
 	//! Clears the task set message list 
@@ -194,7 +188,7 @@ protected:
 	// Use onRun() to implement your special updating!
 	// Override this only if you have to reroute the call!
 	// NEVER call base class Run()! 
-	virtual BOOL Run( SVRunStatusClass& RRunStatus );
+	virtual bool Run( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr );
 
 	virtual HRESULT GetDrawInfo( SVExtentMultiLineStruct& p_rMultiLine );
 	virtual HRESULT UpdateOverlayIDs( SVExtentMultiLineStruct& p_rMultiLine );
@@ -218,8 +212,8 @@ protected:
 	// NOTE:
 	// Override this if you want to implement your own special run.
 	// Don't forget to call base class onRun() first.
-	virtual BOOL onRun( SVRunStatusClass& RRunStatus );
-	BOOL runFriends( SVRunStatusClass& RRunStatus );
+	virtual bool onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr );
+	bool runFriends( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr );
 
 	virtual bool resetAllOutputListObjects( SvStl::MessageContainerVector *pErrorMessages=nullptr );
 	

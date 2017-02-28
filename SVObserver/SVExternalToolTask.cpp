@@ -730,18 +730,23 @@ BOOL SVExternalToolTask::CloseObject()
 	return TRUE;
 }
 
-BOOL SVExternalToolTask::onRun( SVRunStatusClass& RRunStatus )
+bool SVExternalToolTask::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
-	BOOL l_bOk = TRUE;
+	bool l_bOk = true;
 
 	if ( m_dll.IsHandleNull() )
 	{
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_InitExternalTaskFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
 		RRunStatus.SetInvalid();
 		SetInvalid();
-		return FALSE;
+		return false;
 	}
 	// All inputs and outputs must be validated first
-	if( SVTaskObjectListClass::onRun( RRunStatus ) )
+	if( __super::onRun( RRunStatus, pErrorMessages ) )
 	{
 		try
 		{
@@ -792,7 +797,7 @@ BOOL SVExternalToolTask::onRun( SVRunStatusClass& RRunStatus )
 
 			if ( bNeedReset )
 			{
-				l_bOk = ResetObject(&m_RunErrorMessages) && l_bOk;
+				l_bOk = ResetObject(pErrorMessages) && l_bOk;
 			}
 
 			/////////////////////////////////////////////////////
@@ -817,7 +822,7 @@ BOOL SVExternalToolTask::onRun( SVRunStatusClass& RRunStatus )
 				throw hr;
 			}
 
-			BOOL l_bOkToRun = TRUE;
+			bool l_bOkToRun = true;
 
 			// collect input images
 			for ( i=0; i < m_Data.m_lNumInputImages; i++)
@@ -842,7 +847,7 @@ BOOL SVExternalToolTask::onRun( SVRunStatusClass& RRunStatus )
 								m_aInspectionInputImages[i] = static_cast<long>(l_MilHandle.GetBuffer().GetIdentifier());	// assign to internal buffer handle
 								if( m_aInspectionInputImages[i] == 0 )
 								{
-									l_bOkToRun = FALSE;
+									l_bOkToRun = false;
 								}
 							}
 							else
@@ -864,12 +869,12 @@ BOOL SVExternalToolTask::onRun( SVRunStatusClass& RRunStatus )
 									m_aInspectionInputImages[i] = static_cast<long>(l_CopyMilHandle.GetBuffer().GetIdentifier());	// assign to copy handle
 									if( m_aInspectionInputImages[i] == 0 )
 									{
-										l_bOkToRun = FALSE;
+										l_bOkToRun = false;
 									}
 								}
 								else
 								{
-									l_bOkToRun = FALSE;
+									l_bOkToRun = false;
 								}
 							}
 						}// if( m_dll.UseMil() )
@@ -877,7 +882,7 @@ BOOL SVExternalToolTask::onRun( SVRunStatusClass& RRunStatus )
 						{
 							if( l_MilHandle.empty() )
 							{
-								l_bOkToRun = FALSE;
+								l_bOkToRun = false;
 							}
 							l_Code = SVMatroxBufferInterface::CopyBuffer( m_aInspectionInputHBMImages[i].hbm, l_MilHandle.GetBuffer() );
 						}
@@ -925,7 +930,7 @@ BOOL SVExternalToolTask::onRun( SVRunStatusClass& RRunStatus )
 						m_aInspectionResultImages[i] = static_cast<long>(l_MilHandle.GetBuffer().GetIdentifier());
 						if( m_aInspectionResultImages[i] == 0 )
 						{
-							l_bOkToRun = FALSE;
+							l_bOkToRun = false;
 						}
 					}
 				}// if ( !m_bUseImageCopies )
@@ -949,7 +954,7 @@ BOOL SVExternalToolTask::onRun( SVRunStatusClass& RRunStatus )
 						m_aInspectionResultImages[i] = static_cast<long>(l_MilHandle.GetBuffer().GetIdentifier());
 						if( m_aInspectionResultImages[i] == 0 )
 						{
-							l_bOkToRun = FALSE;
+							l_bOkToRun = false;
 						}
 					}
 				}
@@ -1073,24 +1078,55 @@ BOOL SVExternalToolTask::onRun( SVRunStatusClass& RRunStatus )
 			}
 			else
 			{
-				l_bOk = FALSE;
+				l_bOk = false;
+				if (nullptr != pErrorMessages)
+				{
+					SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ExternalTask_CheckToRunFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+					pErrorMessages->push_back(Msg);
+				}
 			}
 
 		}	// end try
+		catch ( const SvStl::MessageContainer& rSvE )
+		{
+			l_bOk = false;
+			if (nullptr != pErrorMessages)
+			{
+				pErrorMessages->push_back(rSvE);
+			}
+		}
 		catch (HRESULT hr)
 		{
 			hr;	// remove compiler warning
 			// log hresult??
 
-			l_bOk = FALSE;
+			l_bOk = false;
+			if (nullptr != pErrorMessages)
+			{
+				SVStringVector msgList;
+				msgList.push_back(SvUl_SF::Format(_T("%X"), hr));
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ExternalTask_UnknownException, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				pErrorMessages->push_back(Msg);
+			}
 		}
 #ifndef _DEBUG
 		catch (...)
 		{
-			l_bOk = FALSE;
+			l_bOk = false;
+			if (nullptr != pErrorMessages)
+			{
+				SVStringVector msgList;
+				msgList.push_back(_T(""));
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ExternalTask_UnknownException, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				pErrorMessages->push_back(Msg);
+			}
 		}
 #endif
 	}// end if( SVTaskObjectListClass::onRun( RRunStatus ) )
+	else
+	{
+		l_bOk = false;
+	}
 
 	if ( ! l_bOk )
 	{

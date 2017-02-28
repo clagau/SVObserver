@@ -206,17 +206,26 @@ SVObjectClass* SVRemoteInputTool::GetInputObject() const
 	return l_pObject;
 }
 
-BOOL SVRemoteInputTool::onRun( SVRunStatusClass& RRunStatus )
+bool SVRemoteInputTool::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
-	BOOL l_Status = SVToolClass::onRun( RRunStatus );
+	bool l_Status = SVToolClass::onRun( RRunStatus, pErrorMessages );
 
 	SVString MatchString;
 	SVString MatchedString;
 	long l_MatchedStringId = 0;
 	long l_Identifier = 0;
 
-	l_Status = l_Status && ( S_OK == ProcessCommandQueue() );
-	l_Status = l_Status && ValidateLocal(&m_RunErrorMessages);
+	if (l_Status && S_OK != ProcessCommandQueue() )
+	{
+		l_Status = false;
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ProcessCommandQueueFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
+	}
+
+	l_Status = l_Status && ValidateLocal(pErrorMessages);
 
 	if( l_Status )
 	{
@@ -224,10 +233,7 @@ BOOL SVRemoteInputTool::onRun( SVRunStatusClass& RRunStatus )
 		SVValueObjectClass* pValueObject = dynamic_cast<SVValueObjectClass*> (m_InputObjectInfo.GetInputObjectInfo().PObject);
 		if( nullptr != pValueObject )
 		{
-			if( l_Status )
-			{
-				l_Status = ( S_OK == pValueObject->GetValue( MatchString ) );
-			}
+			l_Status = ( S_OK == pValueObject->GetValue( MatchString ) );
 		}
 
 		BasicValueObject* pBasicValueObject = dynamic_cast<BasicValueObject*> (m_InputObjectInfo.GetInputObjectInfo().PObject);
@@ -240,6 +246,15 @@ BOOL SVRemoteInputTool::onRun( SVRunStatusClass& RRunStatus )
 		}
 
 		l_Status = ( nullptr != pValueObject || nullptr != pBasicValueObject );
+
+		if (!l_Status)
+		{
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				pErrorMessages->push_back(Msg);
+			}
+		}
 	}
 
 	if( l_Status )

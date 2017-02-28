@@ -33,10 +33,8 @@ SVSkeletonFilterClass::~SVSkeletonFilterClass()
 {
 }
 
-BOOL SVSkeletonFilterClass::onRun( BOOL First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus )
-{ 
-
-
+bool SVSkeletonFilterClass::onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+{
 	if( m_pCurrentUIOPL && !( RInputImageHandle.empty() ) && !( ROutputImageHandle.empty() ) )
 	{
 		SVImageBufferHandleImage l_InMilHandle;
@@ -47,25 +45,38 @@ BOOL SVSkeletonFilterClass::onRun( BOOL First, SVSmartHandlePointer RInputImageH
 
 		SVMatroxImageInterface::SVStatusCode l_Code;
 		l_Code = SVMatroxImageInterface::Thin( l_OutMilHandle.GetBuffer(),
-			( First == TRUE ) ? l_InMilHandle.GetBuffer() : l_OutMilHandle.GetBuffer(),
+			First ? l_InMilHandle.GetBuffer() : l_OutMilHandle.GetBuffer(),
 			SVValueImageToSkeleton,
 			SVImageBinary);
 
-    if( l_Code != SVMEE_STATUS_OK )
+		if( l_Code != SVMEE_STATUS_OK )
 		{
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_RunFilterFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				pErrorMessages->push_back(Msg);
+			}
 			// Signal that something was wrong...
 			SetInvalid();
 			RRunStatus.SetInvalid();
-			return FALSE;
+			return false;
 		}
 
 		// Success...
-		return TRUE;
+		return true;
+	}
+	else
+	{
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
 	}
 
 	// Signal that something was wrong...
 	SetInvalid();
 	RRunStatus.SetInvalid();
-	return FALSE;
+	return false;
 }
 

@@ -153,15 +153,22 @@ bool SVShiftTool::DoesObjectHaveExtents() const
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
-BOOL SVShiftTool::onRun( SVRunStatusClass& p_rRunStatus )
+bool SVShiftTool::onRun( SVRunStatusClass& p_rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	//@WARNING[MZA][7.50][17.01.2017] Not sure if we need to check ValidateLocal in Run-mode, maybe it is enough to check it in ResetObject
-	BOOL l_Status = SVToolClass::onRun( p_rRunStatus ) && ValidateLocal(&m_RunErrorMessages);
+	bool l_Status = __super::onRun( p_rRunStatus, pErrorMessages ) && ValidateLocal(pErrorMessages);
 	long l_Mode;
 
 	if( l_Status )
 	{
-		l_Status = ( S_OK == m_evoShiftMode.GetValue( l_Mode ) );
+		if( S_OK != m_evoShiftMode.GetValue( l_Mode ) )
+		{
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				pErrorMessages->push_back(Msg);
+			}
+		}
 	}
 
 	if ( l_Status )
@@ -171,22 +178,33 @@ BOOL SVShiftTool::onRun( SVRunStatusClass& p_rRunStatus )
 			SVSmartHandlePointer OutImageHandle;
 			SVImageBufferHandleImage l_OutMilHandle;
 
-			l_Status = l_Status && m_OutputImage.SetImageHandleIndex( p_rRunStatus.Images );
-			l_Status = l_Status && m_OutputImage.GetImageHandle( OutImageHandle );
-			l_Status = l_Status && !( OutImageHandle.empty() );
-			l_Status = l_Status && ( S_OK == OutImageHandle->GetData( l_OutMilHandle ) );
-			l_Status = l_Status && !( l_OutMilHandle.empty() );
-
-			if( l_Status )
+			if ( m_OutputImage.SetImageHandleIndex( p_rRunStatus.Images ) && m_OutputImage.GetImageHandle( OutImageHandle ) &&
+					!OutImageHandle.empty() && ( S_OK == OutImageHandle->GetData( l_OutMilHandle ) ) && !l_OutMilHandle.empty()  )
 			{
 				SVMatroxBufferInterface::ClearBuffer( l_OutMilHandle.GetBuffer(), 0 );
+			}
+			else
+			{
+				l_Status = false;
+				if (nullptr != pErrorMessages)
+				{
+					SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+					pErrorMessages->push_back(Msg);
+				}
 			}
 
 			double l_Left = 0.0;
 			double l_Top = 0.0;
 
-			l_Status = l_Status && ( S_OK == extentLeft.GetValue( l_Left ) );
-			l_Status = l_Status && ( S_OK == extentTop.GetValue( l_Top ) );
+			if ( S_OK != extentLeft.GetValue( l_Left ) || S_OK != extentTop.GetValue( l_Top ) )
+			{
+				l_Status = false;
+				if (nullptr != pErrorMessages)
+				{
+					SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+					pErrorMessages->push_back(Msg);
+				}
+			}
 
 			if( l_Status )
 			{
@@ -196,7 +214,7 @@ BOOL SVShiftTool::onRun( SVRunStatusClass& p_rRunStatus )
 				double fInputTranslationX = 0.0;
 				double fInputTranslationY = 0.0;
 
-				if ( (l_Status ) && ( ( SV_SHIFT_ENUM::SV_SHIFT_REFERENCE == l_Mode ) || ( SV_SHIFT_ENUM::SV_SHIFT_ABSOLUTE == l_Mode ) ) )
+				if ( ( SV_SHIFT_ENUM::SV_SHIFT_REFERENCE == l_Mode ) || ( SV_SHIFT_ENUM::SV_SHIFT_ABSOLUTE == l_Mode ) )
 				{
 					SVDoubleValueObjectClass* l_pTranslationXInput = GetTranslationXInput();
 					SVDoubleValueObjectClass* l_pTranslationYInput = GetTranslationYInput();
@@ -206,6 +224,15 @@ BOOL SVShiftTool::onRun( SVRunStatusClass& p_rRunStatus )
 
 					l_Status = l_Status && ( nullptr != l_pTranslationXInput && S_OK == l_pTranslationXInput->GetValue( fInputTranslationX ) );
 					l_Status = l_Status && ( nullptr != l_pTranslationYInput && S_OK == l_pTranslationYInput->GetValue( fInputTranslationY ) );
+
+					if (!l_Status)
+					{
+						if (nullptr != pErrorMessages)
+						{
+							SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+							pErrorMessages->push_back(Msg);
+						}
+					}
 				}
 
 				if ( (l_Status ) && ( (l_Mode == SV_SHIFT_ENUM::SV_SHIFT_REFERENCE) || (l_Mode == SV_SHIFT_ENUM::SV_SHIFT_ABSOLUTE) ) )
@@ -311,7 +338,23 @@ BOOL SVShiftTool::onRun( SVRunStatusClass& p_rRunStatus )
 
 					l_Code = SVMatroxBufferInterface::CopyBuffer( l_OutMilHandle.GetBuffer(), l_InMilHandle.GetBuffer(), static_cast< long >( -l_OffsetX ), static_cast< long >( -l_OffsetY ) );
 
-					l_Status = ( SVMEE_STATUS_OK == l_Code );
+					if ( SVMEE_STATUS_OK != l_Code )
+					{
+						l_Status = false;
+						if (nullptr != pErrorMessages)
+						{
+							SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_CopyImagesFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+							pErrorMessages->push_back(Msg);
+						}
+					}
+				}
+				else
+				{
+					if (nullptr != pErrorMessages)
+					{
+						SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+						pErrorMessages->push_back(Msg);
+					}
 				}
 			}
 

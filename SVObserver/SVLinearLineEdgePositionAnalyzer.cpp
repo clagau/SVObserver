@@ -123,16 +123,23 @@ bool SVLinearEdgePositionLineAnalyzerClass::ResetObject(SvStl::MessageContainerV
 	return __super::ResetObject(pErrorMessages) && ValidateEdgeA(pErrorMessages);
 }
 
-BOOL SVLinearEdgePositionLineAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
+bool SVLinearEdgePositionLineAnalyzerClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	SVDPointClass l_svDPoint;
 	SVExtentPointStruct l_svEdgePoint;
 	double l_dDistance = 0.0;
 
 	// All inputs and outputs must be validated first
-	BOOL l_bOk = SVLinearAnalyzerClass::onRun( RRunStatus );
-
-	l_bOk = l_bOk && ValidateEdgeA(&m_RunErrorMessages) && nullptr != GetTool();
+	bool l_bOk = __super::onRun( RRunStatus, pErrorMessages ) && ValidateEdgeA(pErrorMessages);
+	if (nullptr == GetTool())
+	{
+		l_bOk = false;
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
+	}
 
 	if( l_bOk )
 	{
@@ -154,13 +161,27 @@ BOOL SVLinearEdgePositionLineAnalyzerClass::onRun( SVRunStatusClass& RRunStatus 
 		SVToolClass* pTool = dynamic_cast<SVToolClass*>(GetTool());
 		l_bOk &= pTool && S_OK == pTool->GetImageExtent( l_svExtents ) &&
 		         S_OK == l_svExtents.TranslateFromOutputSpace( l_svEdgePoint, l_svEdgePoint );
+
+		if (!l_bOk && nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_RunLinearEdgeFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
 	}
 
 	l_svDPoint.x = l_svEdgePoint.m_dPositionX;
 	l_svDPoint.y = l_svEdgePoint.m_dPositionY;
 
-	l_bOk = ( S_OK == m_svLinearDistance.SetValue( RRunStatus.m_lResultDataIndex, l_dDistance ) ) && l_bOk;
-	l_bOk = ( S_OK == dpEdge.SetValue( RRunStatus.m_lResultDataIndex, l_svDPoint ) ) && l_bOk;
+	if( S_OK != m_svLinearDistance.SetValue( RRunStatus.m_lResultDataIndex, l_dDistance ) ||
+		 S_OK != dpEdge.SetValue( RRunStatus.m_lResultDataIndex, l_svDPoint ) ) 
+	{
+		l_bOk = false;
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_SetValueFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
+	}
 	
 	if( ! l_bOk )
 	{

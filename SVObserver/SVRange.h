@@ -144,7 +144,7 @@ public:
 protected:
 	void init();
 	BOOL getInputValue( double& RVal );
-	BOOL onRun(SVRunStatusClass& RRunStatus);
+	virtual bool onRun(SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	//************************************
 	//! return a reference to the range value 

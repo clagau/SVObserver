@@ -276,10 +276,6 @@ SVStaticStringValueObjectClass* SVLinearToolClass::GetInputImageNames()
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
-BOOL SVLinearToolClass::onRun( SVRunStatusClass& RRunStatus )
-{
-	return SVToolClass::onRun( RRunStatus );
-}
 #pragma endregion Protected Methods
 
 #pragma region Private Methods

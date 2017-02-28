@@ -40,7 +40,7 @@ public:
 	SVImageClass* getOutputImage();
 
 protected:
-	virtual BOOL  onRun( SVRunStatusClass& RRunStatus ) override;
+	virtual bool onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
 private:
 	SVBoolValueObjectClass*		getInputEnableOffsetA() const;

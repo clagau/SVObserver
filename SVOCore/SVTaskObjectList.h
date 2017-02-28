@@ -116,7 +116,7 @@ protected:
 	// Use onRun() to implement your special updating!
 	// Override this only if you have to reroute the call!
 	// NEVER call base class Run()! 
-	virtual BOOL Run( SVRunStatusClass& RRunStatus ) override;
+	virtual bool Run( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
 	virtual SVObjectPtrDeque GetPreProcessObjects() const override;
 	virtual SVObjectPtrDeque GetPostProcessObjects() const override;

@@ -436,20 +436,36 @@ void SVImagePolarTransformClass::AnglesTo360( double& p_dStart, double& p_dEnd)
 	}
 }	
 
-BOOL SVImagePolarTransformClass::onRun( SVRunStatusClass& RRunStatus )
+bool SVImagePolarTransformClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	BOOL l_bUseFormula = FALSE;
 	long l_lAngularMethod = 0;
 
-	BOOL l_bOk = SVPolarTransformClass::onRun( RRunStatus ) && ValidateLocal(&m_RunErrorMessages);
+	bool l_bOk = __super::onRun( RRunStatus, pErrorMessages ) && ValidateLocal(pErrorMessages);
 
-	l_bOk = l_bOk && (S_OK == useFormulaInput.GetValue( l_bUseFormula ));
+	if (S_OK != useFormulaInput.GetValue( l_bUseFormula ))
+	{
+		l_bOk = false;
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
+	}
 
 	SVPolarTransformationToolClass* pTool = dynamic_cast<SVPolarTransformationToolClass*>( GetTool() );
 
 	if( pTool )
 	{
-		l_bOk = l_bOk && ( S_OK == pTool->m_svAngularMethod.GetValue( l_lAngularMethod ) );
+		if( S_OK != pTool->m_svAngularMethod.GetValue( l_lAngularMethod ) )
+		{
+			l_bOk = false;
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				pErrorMessages->push_back(Msg);
+			}
+		}
 	}
 	else
 		ASSERT( FALSE );
@@ -467,25 +483,40 @@ BOOL SVImagePolarTransformClass::onRun( SVRunStatusClass& RRunStatus )
 		if ( l_bUseFormula )
 		{
 			l_bOk = l_bOk && nullptr != getInputStartAngleResult() && S_OK == ( getInputStartAngleResult()->GetValue( l_dStartAngle ) );
-
 			l_bOk = l_bOk && nullptr != getInputEndAngleResult() && S_OK == ( getInputEndAngleResult()->GetValue( l_dEndAngle ) );
-
 			l_bOk = l_bOk && nullptr != getInputCenterXResult() && S_OK == ( getInputCenterXResult()->GetValue( l_dCenterX ) );
-			l_bOk = l_bOk && ( S_OK == centerX.SetValue( RRunStatus.m_lResultDataIndex, l_dCenterX ) );
-
 			l_bOk = l_bOk && nullptr != getInputCenterYResult() && S_OK == ( getInputCenterYResult()->GetValue( l_dCenterY ) );
-			l_bOk = l_bOk && ( S_OK == centerY.SetValue( RRunStatus.m_lResultDataIndex, l_dCenterY ) );
-
 			l_bOk = l_bOk && nullptr != getInputStartRadiusResult() && ( S_OK == getInputStartRadiusResult()->GetValue( l_dStartRadius ) );
-			l_bOk = l_bOk && ( S_OK == startRadius.SetValue( RRunStatus.m_lResultDataIndex, l_dStartRadius ) );
-
 			l_bOk = l_bOk && nullptr != getInputEndRadiusResult() && ( S_OK == getInputEndRadiusResult()->GetValue( l_dEndRadius ) );
-			l_bOk = l_bOk && ( S_OK == endRadius.SetValue( RRunStatus.m_lResultDataIndex, l_dEndRadius ) );
+
+			if (!l_bOk && nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_Error_NoResultObject, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				pErrorMessages->push_back(Msg);
+			}
+
+			if ( l_bOk )
+			{
+				l_bOk = l_bOk && ( S_OK == centerX.SetValue( RRunStatus.m_lResultDataIndex, l_dCenterX ) );
+				l_bOk = l_bOk && ( S_OK == centerY.SetValue( RRunStatus.m_lResultDataIndex, l_dCenterY ) );
+				l_bOk = l_bOk && ( S_OK == startRadius.SetValue( RRunStatus.m_lResultDataIndex, l_dStartRadius ) );
+				l_bOk = l_bOk && ( S_OK == endRadius.SetValue( RRunStatus.m_lResultDataIndex, l_dEndRadius ) );
+				if (!l_bOk && nullptr != pErrorMessages)
+				{
+					SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_SetValueFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+					pErrorMessages->push_back(Msg);
+				}
+			}
 		}
 		else
 		{
 			l_bOk = l_bOk && ( S_OK == startAngle.GetValue( l_dStartAngle ) );
 			l_bOk = l_bOk && ( S_OK == endAngle.GetValue( l_dEndAngle ) );
+			if (!l_bOk && nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_Error_NoResultObject, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				pErrorMessages->push_back(Msg);
+			}
 		}
 
 		// Correct start and end angle...
@@ -503,8 +534,15 @@ BOOL SVImagePolarTransformClass::onRun( SVRunStatusClass& RRunStatus )
 
 
 		// Write back modified angles...
-		l_bOk = l_bOk && ( S_OK == startAngle.SetValue( RRunStatus.m_lResultDataIndex, l_dStartAngle ) );
-		l_bOk = l_bOk && ( S_OK == endAngle.SetValue( RRunStatus.m_lResultDataIndex, l_dEndAngle ) );
+		if ( S_OK != startAngle.SetValue( RRunStatus.m_lResultDataIndex, l_dStartAngle ) || S_OK != endAngle.SetValue( RRunStatus.m_lResultDataIndex, l_dEndAngle ) )
+		{
+			l_bOk = false;
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_SetValueFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				pErrorMessages->push_back(Msg);
+			}
+		}
 	}
 
 	if ( l_bOk )
@@ -534,6 +572,12 @@ BOOL SVImagePolarTransformClass::onRun( SVRunStatusClass& RRunStatus )
 		SVImageBufferHandleImage l_OutMilHandle;
 		l_bOk = l_bOk && ( S_OK == l_svOutputHandle->GetData( l_OutMilHandle ) );
 
+		if (!l_bOk && nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_RunImagePolarFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
+
 		if ( l_bOk )
 		{
 			long l_lInterpolationMode;
@@ -558,7 +602,15 @@ BOOL SVImagePolarTransformClass::onRun( SVRunStatusClass& RRunStatus )
 
 			l_bOk = l_bOk && ( S_OK == interpolationMode.GetValue( l_lInterpolationMode ) );
 
-			if ( l_bOk )
+			if ( !l_bOk )
+			{
+				if (nullptr != pErrorMessages)
+				{
+					SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+					pErrorMessages->push_back(Msg);
+				}
+			}
+			else
 			{
 				try
 				{
@@ -615,7 +667,12 @@ BOOL SVImagePolarTransformClass::onRun( SVRunStatusClass& RRunStatus )
 
 					if( l_Code != SVMEE_STATUS_OK )
 					{
-						l_bOk = FALSE;
+						l_bOk = false;
+						if (nullptr != pErrorMessages)
+						{
+							SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_RunImagePolarFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+							pErrorMessages->push_back(Msg);
+						}
 					}
 
 
@@ -626,7 +683,12 @@ BOOL SVImagePolarTransformClass::onRun( SVRunStatusClass& RRunStatus )
 				{
 					_clearfp();
 
-					l_bOk = FALSE;
+					l_bOk = false;
+					if (nullptr != pErrorMessages)
+					{
+						SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_UnknownException, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+						pErrorMessages->push_back(Msg);
+					}
 				}
 
 				if( l_bOk )

@@ -160,6 +160,8 @@ public:
 	afx_msg void OnUpdateEditCopy( CCmdUI* PCmdUI );
 	afx_msg void OnEditPaste();
 	afx_msg void OnUpdateEditPaste( CCmdUI* PCmdUI );
+	afx_msg void OnShowFirstError();
+	afx_msg void OnUpdateShowFirstError( CCmdUI* PCmdUI );
 	afx_msg void OnEditDelete();
 	afx_msg void OnAdjustLightReference();
 	afx_msg void OnAdjustLut();

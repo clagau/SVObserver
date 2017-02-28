@@ -44,7 +44,7 @@ public:
 
 #pragma region Protected Methods
 protected:
-	virtual BOOL onRun( SVRunStatusClass& rRunStatus ) override;
+	virtual bool onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 #pragma endregion Protected Methods
 
 #pragma region Private Methods

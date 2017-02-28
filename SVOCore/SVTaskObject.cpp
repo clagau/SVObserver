@@ -1150,7 +1150,7 @@ BOOL SVTaskObjectClass::CreateObject(SVObjectLevelCreateStruct* PCreateStruct)
 // .Description : Returns the Validity state of this object
 //				: must be overridden
 ////////////////////////////////////////////////////////////////////////////////
-BOOL SVTaskObjectClass::IsValid() const
+bool SVTaskObjectClass::IsValid() const
 {
 	return IsErrorMessageEmpty();
 }
@@ -1619,12 +1619,12 @@ void SVTaskObjectClass::PersistEmbeddeds(SVObjectWriter& rWriter)
 	}
 }
 
-BOOL SVTaskObjectClass::Run(SVRunStatusClass& RRunStatus)
+bool SVTaskObjectClass::Run(SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	clearRunErrorMessages();
 
 	// Run yourself...
-	BOOL bRetVal = onRun(RRunStatus);
+	bool bRetVal = onRun(RRunStatus, &m_RunErrorMessages);
 	
 	// Get Status Color...
 	DWORD dwValue = RRunStatus.GetStatusColor();
@@ -1633,14 +1633,19 @@ BOOL SVTaskObjectClass::Run(SVRunStatusClass& RRunStatus)
 	// Get Status...
 	dwValue = RRunStatus.GetState();
 	m_statusTag.SetValue( RRunStatus.m_lResultDataIndex, dwValue );
+
+	if (nullptr != pErrorMessages && !m_RunErrorMessages.empty())
+	{
+		pErrorMessages->insert(pErrorMessages->end(), m_RunErrorMessages.begin(), m_RunErrorMessages.end());
+	}
 	
 	return bRetVal;
 }
 
-BOOL SVTaskObjectClass::onRun(SVRunStatusClass& RRunStatus)
+bool SVTaskObjectClass::onRun(SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	// Run first friends...
-	BOOL bRetVal = runFriends(RRunStatus);
+	bool bRetVal = runFriends(RRunStatus, pErrorMessages);
 	
 	// Now Validate yourself...
 	if (bRetVal && IsErrorMessageEmpty())
@@ -1651,15 +1656,15 @@ BOOL SVTaskObjectClass::onRun(SVRunStatusClass& RRunStatus)
 	{
 		m_isObjectValid.SetValue(1, false);
 		RRunStatus.SetInvalid();
-		bRetVal = FALSE;
+		bRetVal = false;
 	}
 	
 	return bRetVal;
 }
 
-BOOL SVTaskObjectClass::runFriends(SVRunStatusClass& RRunStatus)
+bool SVTaskObjectClass::runFriends(SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
-	BOOL bRetVal = true;
+	bool bRetVal = true;
 	
 	// Run your friends
 	for (size_t j = 0; j < m_friendList.size(); ++ j)
@@ -1667,7 +1672,7 @@ BOOL SVTaskObjectClass::runFriends(SVRunStatusClass& RRunStatus)
 		const SVObjectInfoStruct& rFriend = m_friendList[j];
 		if (SVTaskObjectClass* pTaskObject = dynamic_cast<SVTaskObjectClass*>(rFriend.PObject))
 		{
-			bRetVal = pTaskObject->Run(RRunStatus) && bRetVal;
+			bRetVal = pTaskObject->Run(RRunStatus, pErrorMessages) && bRetVal;
 		}
 		else
 		{

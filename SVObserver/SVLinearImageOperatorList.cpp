@@ -109,7 +109,7 @@ bool SVLinearImageOperatorListClass::ResetObject(SvStl::MessageContainerVector *
 	return Result;
 }
 
-BOOL SVLinearImageOperatorListClass::Run( SVRunStatusClass& RRunStatus )
+bool SVLinearImageOperatorListClass::Run( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	SVSmartHandlePointer output;
 	SVSmartHandlePointer input;
@@ -118,7 +118,7 @@ BOOL SVLinearImageOperatorListClass::Run( SVRunStatusClass& RRunStatus )
 	BOOL UseRotation = true;
 
 	SVToolClass* pTool  = dynamic_cast<SVToolClass*>(GetTool());
-	BOOL bRetVal = (pTool && S_OK == pTool->GetImageExtent( l_svImageExtent ));
+	bool bRetVal = (pTool && S_OK == pTool->GetImageExtent( l_svImageExtent ));
 
 	bRetVal = bRetVal && nullptr != getUseRotationAngle() && ( S_OK == getUseRotationAngle()->GetValue( UseRotation ) );
 	
@@ -128,13 +128,19 @@ BOOL SVLinearImageOperatorListClass::Run( SVRunStatusClass& RRunStatus )
 	{
 		clearRunErrorMessages();
 
+		if (!bRetVal)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			m_RunErrorMessages.push_back(Msg);
+		}
+
 		SVRunStatusClass ChildRunStatus;
 		ChildRunStatus.m_lResultDataIndex  = RRunStatus.m_lResultDataIndex;
 		ChildRunStatus.Images = RRunStatus.Images;
 		ChildRunStatus.m_UpdateCounters = RRunStatus.m_UpdateCounters;
 		
 		// Run yourself...
-		bRetVal &= onRun( RRunStatus );
+		bRetVal &= onRun( RRunStatus, &m_RunErrorMessages );
 		
 		SVImageClass *l_psvInputImage = getInputImage();
 
@@ -142,12 +148,13 @@ BOOL SVLinearImageOperatorListClass::Run( SVRunStatusClass& RRunStatus )
 		{
 			// Signal something is wrong...
 			bRetVal = false;
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			m_RunErrorMessages.push_back(Msg);
 		}
 		
 		if( bRetVal )
 		{
-			bRetVal = outputImageObject.SetImageHandleIndex( RRunStatus.Images );
-			if ( bRetVal )
+			if ( outputImageObject.SetImageHandleIndex( RRunStatus.Images ) )
 			{
 				SVImageBufferHandleImage l_InMilHandle;
 				SVImageBufferHandleImage l_OutMilHandle;
@@ -187,10 +194,14 @@ BOOL SVLinearImageOperatorListClass::Run( SVRunStatusClass& RRunStatus )
 					SVUnaryImageOperatorClass*  pOperator = dynamic_cast<SVUnaryImageOperatorClass *>(GetAt( i ));
 					if( pOperator )
 					{
-						pOperator->Run( FALSE, output, output, ChildRunStatus );
+						pOperator->Run( false, output, output, ChildRunStatus, pErrorMessages );
 					}
 					else
-						bRetVal = FALSE;
+					{
+						bRetVal = false;
+						SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+						m_RunErrorMessages.push_back(Msg);
+					}
 					
 					// Update our Run Status
 					if( ChildRunStatus.IsDisabled() )
@@ -216,11 +227,34 @@ BOOL SVLinearImageOperatorListClass::Run( SVRunStatusClass& RRunStatus )
 				// RO_22Mar2000
 				
 			}
+			else
+			{
+				bRetVal = false;
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_SetImageHandleIndexFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				m_RunErrorMessages.push_back(Msg);
+			}
+		}
+		if (nullptr != pErrorMessages && !m_RunErrorMessages.empty())
+		{
+			pErrorMessages->insert(pErrorMessages->end(), m_RunErrorMessages.begin(), m_RunErrorMessages.end());
 		}
 	}
 	else
 	{
-		bRetVal &= SVStdImageOperatorListClass::Run( RRunStatus );
+		if (bRetVal)
+		{	//clearRunErrorMessage will be done by SvStdImageOperatorListClass and filling of m_RunErrorMessage also.
+			bRetVal = SVStdImageOperatorListClass::Run( RRunStatus, pErrorMessages );
+		}
+		else
+		{
+			clearRunErrorMessages();
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			m_RunErrorMessages.push_back(Msg);
+			if (nullptr != pErrorMessages)
+			{
+				pErrorMessages->push_back(Msg);
+			}
+		}
 	}
 
 	if( bRetVal )
@@ -240,9 +274,16 @@ BOOL SVLinearImageOperatorListClass::Run( SVRunStatusClass& RRunStatus )
 
 		SVEnumerateValueObjectClass *l_svProjectAngle = getInputProfileOrientation();
 
-		bRetVal = m_aulLineData.size() != 0 &&
-		          nullptr != l_svProjectAngle && 
-		          ( S_OK == l_svProjectAngle->GetValue( l_dProjectAngle ) );
+		if ( 0 == m_aulLineData.size()|| nullptr == l_svProjectAngle || S_OK != l_svProjectAngle->GetValue( l_dProjectAngle ) )
+		{
+			bRetVal = false;
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			m_RunErrorMessages.push_back(Msg);
+			if (nullptr != pErrorMessages)
+			{
+				pErrorMessages->push_back(Msg);
+			}
+		}
 
 		double l_dMin = 9999999.0;
 		double l_dMax = 0.0;
@@ -294,6 +335,15 @@ BOOL SVLinearImageOperatorListClass::Run( SVRunStatusClass& RRunStatus )
 
 			bRetVal = ( S_OK == m_svLinearData.SetArrayValues( RRunStatus.m_lResultDataIndex, m_svArray ) ) && bRetVal;
 			ASSERT( bRetVal );
+			if (!bRetVal)
+			{
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_SetValueFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				m_RunErrorMessages.push_back(Msg);
+				if (nullptr != pErrorMessages)
+				{
+					pErrorMessages->push_back(Msg);
+				}
+			}
 		}
 	}
 

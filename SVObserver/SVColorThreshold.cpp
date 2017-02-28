@@ -429,9 +429,9 @@ SVImageClass* SVColorThresholdClass::GetOutputImage()
 	return &outputImage;
 }
 
-BOOL SVColorThresholdClass::onRun( SVRunStatusClass& RRunStatus )
+bool SVColorThresholdClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 { 
-	BOOL l_bOk = TRUE;
+	bool l_bOk = true;
 
 	// Binarizing: lowerThresh <= x <= upperTresh		--> 255 
 	//	 		   otherwise							--> 0
@@ -463,36 +463,51 @@ BOOL SVColorThresholdClass::onRun( SVRunStatusClass& RRunStatus )
 	band2LowerThreshold.GetValue( band2Lower );
 	band2UpperThreshold.GetValue( band2Upper );
 
-  l_bOk &= band0OutputImage.SetImageHandleIndex( RRunStatus.Images );
-  l_bOk &= band1OutputImage.SetImageHandleIndex( RRunStatus.Images );
-  l_bOk &= band2OutputImage.SetImageHandleIndex( RRunStatus.Images );
-
-  l_bOk &= outputImage.SetImageHandleIndex( RRunStatus.Images );
-
-	if( l_bOk )
+	if ( !band0OutputImage.SetImageHandleIndex( RRunStatus.Images ) || !band1OutputImage.SetImageHandleIndex( RRunStatus.Images ) ||
+		  !band2OutputImage.SetImageHandleIndex( RRunStatus.Images ) || !outputImage.SetImageHandleIndex( RRunStatus.Images ) )
 	{
-		l_bOk &= binarize( band0Lower, band0Upper, bBand0ThresholdExclude, GetBand0InputImage(), &band0OutputImage );
-		l_bOk &= binarize( band1Lower, band1Upper, bBand1ThresholdExclude, GetBand1InputImage(), &band1OutputImage );
-		l_bOk &= binarize( band2Lower, band2Upper, bBand2ThresholdExclude, GetBand2InputImage(), &band2OutputImage );
+		l_bOk = false;
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_SetImageHandleIndexFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
 	}
 
 	if( l_bOk )
 	{
-    SVSmartHandlePointer Band0Handle;
-    SVSmartHandlePointer Band1Handle;
-    SVSmartHandlePointer Band2Handle;
-    SVSmartHandlePointer OutputHandle;
+		BOOL isBinarize = binarize( band0Lower, band0Upper, bBand0ThresholdExclude, GetBand0InputImage(), &band0OutputImage );
+		isBinarize &= binarize( band1Lower, band1Upper, bBand1ThresholdExclude, GetBand1InputImage(), &band1OutputImage );
+		isBinarize &= binarize( band2Lower, band2Upper, bBand2ThresholdExclude, GetBand2InputImage(), &band2OutputImage );
+
+		if (!isBinarize)
+		{
+			l_bOk = false;
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_BinarizeFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				pErrorMessages->push_back(Msg);
+			}
+		}
+	}
+
+	if( l_bOk )
+	{
+		SVSmartHandlePointer Band0Handle;
+		SVSmartHandlePointer Band1Handle;
+		SVSmartHandlePointer Band2Handle;
+		SVSmartHandlePointer OutputHandle;
 
 		SVImageBufferHandleImage l_Band0MilBuffer;
 		SVImageBufferHandleImage l_Band1MilBuffer;
 		SVImageBufferHandleImage l_Band2MilBuffer;
 		SVImageBufferHandleImage l_OutputMilBuffer;
 
-    l_bOk &= band0OutputImage.GetImageHandle( Band0Handle );
-    l_bOk &= band1OutputImage.GetImageHandle( Band1Handle );
-    l_bOk &= band2OutputImage.GetImageHandle( Band2Handle );
+		l_bOk = l_bOk && band0OutputImage.GetImageHandle( Band0Handle );
+		l_bOk = l_bOk && band1OutputImage.GetImageHandle( Band1Handle );
+		l_bOk = l_bOk && band2OutputImage.GetImageHandle( Band2Handle );
 
-    l_bOk &= outputImage.GetImageHandle( OutputHandle );
+		l_bOk = l_bOk && outputImage.GetImageHandle( OutputHandle );
 
 		l_bOk &= !( Band0Handle.empty() );
 		l_bOk &= !( Band1Handle.empty() );
@@ -512,15 +527,23 @@ BOOL SVColorThresholdClass::onRun( SVRunStatusClass& RRunStatus )
 		l_bOk &= !( l_Band2MilBuffer.empty() );
 		l_bOk &= !( l_OutputMilBuffer.empty() );
 
-		if( l_bOk )
-    {
-			
+		if (!l_bOk)
+		{
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				pErrorMessages->push_back(Msg);
+			}
+		}
+		else
+		{
+
 			SVMatroxImageInterface::Arithmetic( l_OutputMilBuffer.GetBuffer(), l_Band0MilBuffer.GetBuffer(), l_Band1MilBuffer.GetBuffer(), SVImageAnd);
 			SVMatroxImageInterface::Arithmetic( l_OutputMilBuffer.GetBuffer(), l_Band2MilBuffer.GetBuffer(), l_OutputMilBuffer.GetBuffer(), SVImageAnd);
-		  // Do Image Arithemetic - AND the 3 outputs together
+			// Do Image Arithemetic - AND the 3 outputs together
 
-		  if( bShowHistogram )
-		  {
+			if( bShowHistogram )
+			{
 				long l_lTop = 0;
 				long l_lLeft = 0;
 
@@ -535,8 +558,8 @@ BOOL SVColorThresholdClass::onRun( SVRunStatusClass& RRunStatus )
 				band2HistogramImage.SetImageHandleIndex( RRunStatus.Images );
 
 				if( nullptr != GetBand0InputImage() && 
-					  GetBand0InputImage()->GetImageHandle( InputImageHandle ) && !( InputImageHandle.empty() ) &&
-				    band0HistogramImage.GetImageHandle( ImageHandle )  && !( ImageHandle.empty() )	)
+					GetBand0InputImage()->GetImageHandle( InputImageHandle ) && !( InputImageHandle.empty() ) &&
+					band0HistogramImage.GetImageHandle( ImageHandle )  && !( ImageHandle.empty() )	)
 				{
 					SVImageBufferHandleImage l_FromMilBuffer;
 					SVImageBufferHandleImage l_ToMilBuffer;
@@ -551,8 +574,8 @@ BOOL SVColorThresholdClass::onRun( SVRunStatusClass& RRunStatus )
 				}
 
 				if( nullptr != GetBand1InputImage() && 
-					  GetBand1InputImage()->GetImageHandle( InputImageHandle ) && !( InputImageHandle.empty() ) &&
-				    band1HistogramImage.GetImageHandle( ImageHandle )  && !( ImageHandle.empty() )	)
+					GetBand1InputImage()->GetImageHandle( InputImageHandle ) && !( InputImageHandle.empty() ) &&
+					band1HistogramImage.GetImageHandle( ImageHandle )  && !( ImageHandle.empty() )	)
 				{
 					SVImageBufferHandleImage l_FromMilBuffer;
 					SVImageBufferHandleImage l_ToMilBuffer;
@@ -567,8 +590,8 @@ BOOL SVColorThresholdClass::onRun( SVRunStatusClass& RRunStatus )
 				}
 
 				if( nullptr != GetBand2InputImage() && 
-					  GetBand2InputImage()->GetImageHandle( InputImageHandle ) && !( InputImageHandle.empty() ) &&
-				    band2HistogramImage.GetImageHandle( ImageHandle )  && !( ImageHandle.empty() )	)
+					GetBand2InputImage()->GetImageHandle( InputImageHandle ) && !( InputImageHandle.empty() ) &&
+					band2HistogramImage.GetImageHandle( ImageHandle )  && !( ImageHandle.empty() )	)
 				{
 					SVImageBufferHandleImage l_FromMilBuffer;
 					SVImageBufferHandleImage l_ToMilBuffer;
@@ -582,18 +605,18 @@ BOOL SVColorThresholdClass::onRun( SVRunStatusClass& RRunStatus )
 					}
 				}
 
-			  // Update Histogram graph
-			  getHistogram( GetBand0HistogramImage(), aHistValueArray[0], &graphFigures[0] );
-			  getHistogram( GetBand1HistogramImage(), aHistValueArray[1], &graphFigures[1] );
-			  getHistogram( GetBand2HistogramImage(), aHistValueArray[2], &graphFigures[2] );
-		  
-			  // Update threshold bars
-			  updateThresholdBars( GetBand0InputImage(), &thresholdBarFigures[0], band0Lower, band0Upper );
-			  updateThresholdBars( GetBand1InputImage(), &thresholdBarFigures[1], band1Lower, band1Upper );
-			  updateThresholdBars( GetBand2InputImage(), &thresholdBarFigures[2], band2Lower, band2Upper );
-		  }
-    }
-  }
+				// Update Histogram graph
+				getHistogram( GetBand0HistogramImage(), aHistValueArray[0], &graphFigures[0] );
+				getHistogram( GetBand1HistogramImage(), aHistValueArray[1], &graphFigures[1] );
+				getHistogram( GetBand2HistogramImage(), aHistValueArray[2], &graphFigures[2] );
+
+				// Update threshold bars
+				updateThresholdBars( GetBand0InputImage(), &thresholdBarFigures[0], band0Lower, band0Upper );
+				updateThresholdBars( GetBand1InputImage(), &thresholdBarFigures[1], band1Lower, band1Upper );
+				updateThresholdBars( GetBand2InputImage(), &thresholdBarFigures[2], band2Lower, band2Upper );
+			}
+		}
+	}
 
 	if( !l_bOk )
 	{

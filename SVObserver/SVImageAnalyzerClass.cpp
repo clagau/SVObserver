@@ -52,9 +52,9 @@ bool SVImageAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMess
 {
 	return __super::ResetObject(pErrorMessages) && ValidateLocal(pErrorMessages);
 }
-BOOL SVImageAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
+bool SVImageAnalyzerClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
-	return __super::onRun(RRunStatus) && ValidateLocal(&m_RunErrorMessages);
+	return __super::onRun(RRunStatus, pErrorMessages) && ValidateLocal(pErrorMessages);
 }
 
 SVImageClass* SVImageAnalyzerClass::getInputImage()

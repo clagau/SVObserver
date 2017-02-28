@@ -292,11 +292,11 @@ HRESULT SVPerspectiveToolClass::IsInputImage( SVImageClass *p_psvImage )
 }
 
 
-BOOL SVPerspectiveToolClass::onRun( SVRunStatusClass &p_rRunStatus )
+bool SVPerspectiveToolClass::onRun( SVRunStatusClass &p_rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
-	BOOL l_bOk = FALSE;
+	bool l_bOk = SVToolClass::onRun( p_rRunStatus, pErrorMessages );
 
-	if ( SVToolClass::onRun( p_rRunStatus ) )
+	if ( l_bOk )
 	{
 		SVImageClass *l_pInputImage = GetInputImage();
 
@@ -314,9 +314,15 @@ BOOL SVPerspectiveToolClass::onRun( SVRunStatusClass &p_rRunStatus )
 		l_bOk = ( S_OK == l_svInputExtents.GetExtentProperty( SVExtentPropertyOutputHeight, l_dInputHeight ) ) && l_bOk;
 		l_bOk = ( S_OK == l_svToolExtents.GetExtentProperty( SVExtentPropertyHeight, l_dToolHeight ) ) && l_bOk;
 
+		if (!l_bOk && nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
+
 		if( (l_dInputWidth != l_dToolWidth) || (l_dInputHeight != l_dToolHeight) )
 		{
-			l_bOk = ResetObject(&m_RunErrorMessages) && l_bOk;
+			l_bOk = ResetObject(pErrorMessages) && l_bOk;
 		}
 
 		if ( nullptr != l_pInputImage &&
@@ -340,7 +346,14 @@ BOOL SVPerspectiveToolClass::onRun( SVRunStatusClass &p_rRunStatus )
 
 			}
 			else
-				l_bOk = FALSE;
+			{
+				l_bOk = false;
+				if (nullptr != pErrorMessages)
+				{
+					SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+					pErrorMessages->push_back(Msg);
+				}
+			}
 		}
 	}
 

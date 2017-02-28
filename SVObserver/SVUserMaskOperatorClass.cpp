@@ -761,7 +761,7 @@ HRESULT SVUserMaskOperatorClass::SetObjectValue( SVObjectAttributeClass* PDataOb
 // .Description : Runs this operator.
 //              : Returns FALSE, if operator cannot run ( may be deactivated ! )
 ////////////////////////////////////////////////////////////////////////////////
-BOOL SVUserMaskOperatorClass::onRun( BOOL First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus )
+bool SVUserMaskOperatorClass::onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 { 
 	BOOL bActive;
 	m_Data.bvoActivated.GetValue( bActive );
@@ -778,7 +778,7 @@ BOOL SVUserMaskOperatorClass::onRun( BOOL First, SVSmartHandlePointer RInputImag
 		{
 			SVImageBufferHandleImage l_MaskMilHandle;
 			m_MaskBufferHandlePtr->GetData( l_MaskMilHandle );
-			
+
 			SVMatroxImageInterface::SVStatusCode l_Code;
 
 			DWORD dwMaskType = MASK_TYPE_STATIC;
@@ -790,7 +790,7 @@ BOOL SVUserMaskOperatorClass::onRun( BOOL First, SVSmartHandlePointer RInputImag
 				SVImageClass* l_pRefImage = getReferenceImage();
 
 				if ( nullptr != l_pRefImage &&
-				     nullptr != l_pMaskInputImage )
+					nullptr != l_pMaskInputImage )
 				{
 					SVExtentPointStruct l_svPoint;
 
@@ -799,7 +799,7 @@ BOOL SVUserMaskOperatorClass::onRun( BOOL First, SVSmartHandlePointer RInputImag
 					SVImageExtentClass l_svExtents = l_pRefImage->GetImageExtents();
 
 					if ( S_OK == l_svExtents.GetExtentProperty( SVExtentPropertyPositionPoint, l_svPoint ) &&
-					     l_pMaskInputImage->GetImageHandle( l_MaskInputBuffer ) && !( l_MaskInputBuffer.empty() ) )
+						l_pMaskInputImage->GetImageHandle( l_MaskInputBuffer ) && !( l_MaskInputBuffer.empty() ) )
 					{
 						if ( S_OK != l_pMaskInputImage->ValidateAgainstOutputExtents( l_svExtents ) )
 						{
@@ -807,10 +807,15 @@ BOOL SVUserMaskOperatorClass::onRun( BOOL First, SVSmartHandlePointer RInputImag
 
 							if( SVMEE_STATUS_OK != l_Code )
 							{
+								if (nullptr != pErrorMessages)
+								{
+									SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_UpdateBufferFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+									pErrorMessages->push_back(Msg);
+								}
 								// Signal that something was wrong...
 								SetInvalid();
 								RRunStatus.SetInvalid();
-								return FALSE;
+								return false;
 							}
 						}
 
@@ -821,18 +826,28 @@ BOOL SVUserMaskOperatorClass::onRun( BOOL First, SVSmartHandlePointer RInputImag
 
 						if( l_Code != SVMEE_STATUS_OK )
 						{
+							if (nullptr != pErrorMessages)
+							{
+								SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_CopyImagesFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+								pErrorMessages->push_back(Msg);
+							}
 							// Signal that something was wrong...
 							SetInvalid();
 							RRunStatus.SetInvalid();
-							return FALSE;
+							return false;
 						}
 					}
 					else
 					{
+						if (nullptr != pErrorMessages)
+						{
+							SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+							pErrorMessages->push_back(Msg);
+						}
 						// Signal that something was wrong...
 						SetInvalid();
 						RRunStatus.SetInvalid();
-						return FALSE;
+						return false;
 					}
 				}
 			}// end if ( dwMaskType == MASK_TYPE_IMAGE )
@@ -847,21 +862,26 @@ BOOL SVUserMaskOperatorClass::onRun( BOOL First, SVSmartHandlePointer RInputImag
 			m_Data.evoCurrentMaskOperator.GetValue( lMaskOperator );
 
 			l_Code = SVMatroxImageInterface::Arithmetic(l_OutMilHandle.GetBuffer(),
-				( First == TRUE ) ? l_InMilHandle.GetBuffer() : l_OutMilHandle.GetBuffer(),
+				First ? l_InMilHandle.GetBuffer() : l_OutMilHandle.GetBuffer(),
 				l_MaskMilHandle.GetBuffer(), 
-						static_cast<SVImageOperationTypeEnum>(lMaskOperator) );
+				static_cast<SVImageOperationTypeEnum>(lMaskOperator) );
 
 			if( l_Code != SVMEE_STATUS_OK )
 			{
+				if (nullptr != pErrorMessages)
+				{
+					SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_RunArithmeticFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+					pErrorMessages->push_back(Msg);
+				}
 				// Signal that something was wrong...
 				SetInvalid();
 				RRunStatus.SetInvalid();
-				return FALSE;
+				return false;
 			}
 
 #ifdef _DEBUG999
-            {
-                // Dump the images to .bmp files
+			{
+				// Dump the images to .bmp files
 				try
 				{
 					l_Code = SVMatroxBufferInterface::Export( m_MaskBufferHandlePtr.milImage,
@@ -883,7 +903,7 @@ BOOL SVUserMaskOperatorClass::onRun( BOOL First, SVSmartHandlePointer RInputImag
 				{
 				}
 
-            }
+			}
 #endif //_DEBUG999
 			SVShapeMaskHelperClass* pShapeHelper = GetShapeHelper();
 			if ( pShapeHelper )
@@ -897,8 +917,16 @@ BOOL SVUserMaskOperatorClass::onRun( BOOL First, SVSmartHandlePointer RInputImag
 				pShapeHelper->m_statusColor.SetValue( RRunStatus.m_lResultDataIndex, dwShapeColor );
 			}
 			// Success...
-			return TRUE;
-        }
+			return true;
+		}
+		else
+		{
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				pErrorMessages->push_back(Msg);
+			}
+		}
 
 		// Signal that something was wrong...
 		SetInvalid();
@@ -910,7 +938,7 @@ BOOL SVUserMaskOperatorClass::onRun( BOOL First, SVSmartHandlePointer RInputImag
 			m_statusColor.GetDefaultValue(dwShapeColor);
 			pShapeHelper->m_statusColor.SetValue( RRunStatus.m_lResultDataIndex, dwShapeColor );
 		}
-		return FALSE;
+		return false;
 	}
 
 	// Was deactivated, but everything is ok !!!
@@ -922,7 +950,7 @@ BOOL SVUserMaskOperatorClass::onRun( BOOL First, SVSmartHandlePointer RInputImag
 		m_statusColor.GetDefaultValue(dwShapeColor);
 		pShapeHelper->m_statusColor.SetValue( RRunStatus.m_lResultDataIndex, dwShapeColor );
 	}
-	return FALSE;
+	return false;
 }
 
 SVImageClass* SVUserMaskOperatorClass::getMaskInputImage()

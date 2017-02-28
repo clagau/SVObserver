@@ -51,7 +51,7 @@ public:
 
 protected:
 	HRESULT UpdateOutputImageExtents();
-	virtual BOOL onRun( SVRunStatusClass &p_rRunStatus ) override;
+	virtual bool onRun( SVRunStatusClass &p_rRunStatus, SvStl::MessageContainerVector *pErrorMessages = nullptr ) override;
 
 private:
 	void LocalInitialize();

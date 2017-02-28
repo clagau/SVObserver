@@ -154,15 +154,15 @@ public:
 
 protected:
 	void UpdateAuxiliaryExtents(long resultDataIndex);
-	virtual BOOL Run( SVRunStatusClass& RRunStatus ) override;
-	BOOL RunWithNewDisable( SVRunStatusClass& RRunStatus );
+	virtual bool Run( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+	bool RunWithNewDisable( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr );
 
 	HRESULT UpdateOffsetDataToImage( SVExtentOffsetStruct& p_rsvOffsetData, SVImageClass* p_svToolImage ); 
 
 	// Remove Embedded Extents
 	void removeEmbeddedExtents( bool p_DisconnectExtents = true );
 
-	virtual BOOL onRun( SVRunStatusClass& RRunStatus ) override;
+	virtual bool onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
 	virtual HRESULT UpdateOverlayIDs( SVExtentMultiLineStruct& p_rMultiLine ) override;
 

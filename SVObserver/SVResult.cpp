@@ -121,7 +121,7 @@ SVRangeClass* SVResultClass::GetResultRange()
 	return pRange;
 }
 
-BOOL SVResultClass::Run( SVRunStatusClass& RRunStatus )
+bool SVResultClass::Run( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	SVValueObjectClass* pValue = getInput();
 	
@@ -149,12 +149,12 @@ BOOL SVResultClass::Run( SVRunStatusClass& RRunStatus )
 		passed.SetValue( RRunStatus.m_lResultDataIndex, true );
 		failed.SetValue( RRunStatus.m_lResultDataIndex, false );
 		warned.SetValue( RRunStatus.m_lResultDataIndex, false );
-		return TRUE;
+		return true;
 	}
 	else
 	{
 		// valid results to process.
-		if( SVTaskObjectListClass::Run(RRunStatus) )
+		if( SVTaskObjectListClass::Run(RRunStatus, pErrorMessages) )
 		{
 			//make sure statusColor is set correctly
 			DWORD dwColor = RRunStatus.GetStatusColor();
@@ -165,13 +165,13 @@ BOOL SVResultClass::Run( SVRunStatusClass& RRunStatus )
 			failed.SetValue( RRunStatus.m_lResultDataIndex, RRunStatus.IsFailed() );
 			warned.SetValue( RRunStatus.m_lResultDataIndex, RRunStatus.IsWarned() );
 
-			return TRUE;
+			return true;
 		}
 	}
 
 	SetInvalid();
 	RRunStatus.SetInvalid();
-	return FALSE;
+	return false;
 }
 
 SVValueObjectClass* SVResultClass::getInput()
@@ -184,17 +184,17 @@ SVValueObjectClass* SVResultClass::getInput()
 	return nullptr;
 }
 
-BOOL SVResultClass::onRun( SVRunStatusClass& RRunStatus )
+bool SVResultClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	//@WARNING[MZA][7.50][17.01.2017] Not sure if we need to check ValidateLocal in Run-mode, maybe it is enough to check it in ResetObject
-	if( SVTaskObjectListClass::onRun( RRunStatus ) && ValidateLocal(&m_RunErrorMessages) )
+	if( __super::onRun( RRunStatus, pErrorMessages ) && ValidateLocal(pErrorMessages) )
 	{
-		return TRUE;
+		return true;
 	}
 
 	SetInvalid();
 	RRunStatus.SetInvalid();
-	return FALSE;
+	return false;
 }
 
 bool SVResultClass::CanCancel()

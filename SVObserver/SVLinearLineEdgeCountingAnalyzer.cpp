@@ -97,20 +97,38 @@ bool SVLinearEdgeCountingLineAnalyzerClass::ResetObject(SvStl::MessageContainerV
 	return __super::ResetObject(pErrorMessages) && ValidateEdgeA(pErrorMessages);
 }
 
-BOOL SVLinearEdgeCountingLineAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
+bool SVLinearEdgeCountingLineAnalyzerClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	// All inputs and outputs must be validated first
-	BOOL l_bOk = SVLinearAnalyzerClass::onRun( RRunStatus ) && ValidateEdgeA(&m_RunErrorMessages);
+	bool l_bOk = SVLinearAnalyzerClass::onRun( RRunStatus, pErrorMessages ) && ValidateEdgeA(pErrorMessages);
 
 	if( l_bOk )
 	{
 		std::vector<double> l_svEdges;
 
-		l_bOk = ( S_OK == GetEdgeA()->m_svLinearEdges.GetValues( RRunStatus.m_lResultDataIndex, l_svEdges ) );
-
-		long l_lCount = static_cast<int>(l_svEdges.size());
-
-		l_bOk = l_bOk && ( S_OK == m_svEdgeCount.SetValue( RRunStatus.m_lResultDataIndex, l_lCount ) );
+		if ( S_OK == GetEdgeA()->m_svLinearEdges.GetValues( RRunStatus.m_lResultDataIndex, l_svEdges ) )
+		{
+			long l_lCount = static_cast<int>(l_svEdges.size());
+			if ( S_OK != m_svEdgeCount.SetValue( RRunStatus.m_lResultDataIndex, l_lCount ) )
+			{
+				l_bOk = false;
+				if (nullptr != pErrorMessages)
+				{
+					SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_SetValueFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+					pErrorMessages->push_back(Msg);
+				}
+			}
+		}
+		else
+		{
+			l_bOk = false;
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				pErrorMessages->push_back(Msg);
+			}
+		}
+		
 	}
 
 	if( ! l_bOk )

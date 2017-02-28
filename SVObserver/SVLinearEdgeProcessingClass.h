@@ -26,7 +26,7 @@ public:
 
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
-	virtual BOOL onRun( SVRunStatusClass &p_rsvRunStatus ) override;
+	virtual bool onRun( SVRunStatusClass &p_rsvRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
 	SVImageClass*             GetInputImage();
 	SVDoubleValueObjectClass* GetInputMinThreshold();

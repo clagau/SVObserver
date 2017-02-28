@@ -86,10 +86,10 @@ public:
 
 #pragma region Protected Methods
 protected:
-	virtual BOOL Run( SVRunStatusClass& RRunStatus ) override;
-	BOOL RunWithNewDisable( SVRunStatusClass& RRunStatus );
+	virtual bool Run( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+	bool RunWithNewDisable( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr );
 
-	virtual BOOL onRun( SVRunStatusClass& RRunStatus ) override;
+	virtual bool onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 	virtual HRESULT onCollectOverlays(SVImageClass *p_Image, SVExtentMultiLineStructCArray &p_MultiLineArray ) override;
 
 	virtual bool createAllObjectsFromChild( SVObjectClass& rChildObject ) override;

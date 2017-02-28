@@ -60,7 +60,7 @@ protected:
 	BOOL createOutputImage( SVImageClass* p_pInputImage, SVImageClass& p_rOutputImage );
 	BOOL createHistogramImage( SVImageClass* p_pInputImage, SVImageClass& p_rOutputImage );
 
-	virtual BOOL onRun( SVRunStatusClass& RRunStatus ) override;
+	virtual bool onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 	BOOL binarize( long lower, long upper, BOOL bExclude, SVImageClass* pInputImage, SVImageClass* pOutputImage );
 	BOOL getHistogram( SVImageClass* pInputImage, SVMatroxLongArray& pHistValues, SVDrawObjectClass* pGraphFigure );
 	BOOL updateThresholdBars( SVImageClass* pImage, SVDrawObjectListClass* pThresholdBarFigure, long lMinThresholdValue, long lMaxThresholdValue );

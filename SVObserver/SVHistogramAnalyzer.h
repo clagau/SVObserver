@@ -90,7 +90,7 @@ private:
 	std::map<GUID, GUID> m_resultGuids;
 
 protected:
-   virtual BOOL   onRun( SVRunStatusClass& RRunStatus ) override;
+	virtual bool onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
 	SVMatroxImageResult msvHistResultID;
 	SVMatroxLongArray   msvplHistValues;

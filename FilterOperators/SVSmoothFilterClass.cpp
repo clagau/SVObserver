@@ -32,43 +32,47 @@ SVSmoothFilterClass::~SVSmoothFilterClass()
 // .Description : Runs this operator.
 //              : Returns FALSE, if operator cannot run ( may be deactivated ! )
 ////////////////////////////////////////////////////////////////////////////////
-BOOL SVSmoothFilterClass::onRun( BOOL First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus )
-{ 
-	if( nullptr != m_pCurrentUIOPL && !( RInputImageHandle.empty() ) && !( ROutputImageHandle.empty() ) )
+bool SVSmoothFilterClass::onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+{
+	SVImageBufferHandleImage l_InMilHandle;
+	SVImageBufferHandleImage l_OutMilHandle;
+	if( nullptr != m_pCurrentUIOPL && !( RInputImageHandle.empty() ) && !( ROutputImageHandle.empty() ) &&
+		S_OK == RInputImageHandle->GetData( l_InMilHandle ) && !( l_InMilHandle.empty() ) &&
+		S_OK == ROutputImageHandle->GetData( l_OutMilHandle ) && !( l_OutMilHandle.empty() )	)
 	{
-		SVImageBufferHandleImage l_InMilHandle;
-		SVImageBufferHandleImage l_OutMilHandle;
+		SVMatroxImageInterface::SVStatusCode l_Code;
 
-		if( S_OK == RInputImageHandle->GetData( l_InMilHandle ) && !( l_InMilHandle.empty() ) &&
-			S_OK == ROutputImageHandle->GetData( l_OutMilHandle ) && !( l_OutMilHandle.empty() ) )
+		l_Code = SVMatroxImageInterface::Convolve( l_OutMilHandle.GetBuffer(),
+			First ? l_InMilHandle.GetBuffer() : l_OutMilHandle.GetBuffer(),
+			SVFilterOpSmooth );
+
+		if( SVMEE_STATUS_OK != l_Code )
 		{
-			SVMatroxImageInterface::SVStatusCode l_Code;
-
-			l_Code = SVMatroxImageInterface::Convolve( l_OutMilHandle.GetBuffer(),
-				( TRUE == First ) ? l_InMilHandle.GetBuffer() : l_OutMilHandle.GetBuffer(),
-					SVFilterOpSmooth );
-
-			if( SVMEE_STATUS_OK != l_Code )
+			if (nullptr != pErrorMessages)
 			{
-				// Signal that something was wrong...
-				SetInvalid();
-				RRunStatus.SetInvalid();
-				return FALSE;
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_RunFilterFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				pErrorMessages->push_back(Msg);
 			}
-		}
-		else
-		{
+			// Signal that something was wrong...
 			SetInvalid();
 			RRunStatus.SetInvalid();
-			return FALSE;
+			return false;
 		}
 
-		return TRUE;
+		return true;
+	}
+	else
+	{
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
 	}
 
 	// Signal that something was wrong...
 	SetInvalid();
 	RRunStatus.SetInvalid();
-	return FALSE;
+	return false;
 }
 

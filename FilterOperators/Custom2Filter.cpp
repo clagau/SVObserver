@@ -134,9 +134,9 @@ void Custom2Filter::RebuildKernel()
 	delete [] pKernelData;
 }
 
-BOOL Custom2Filter::onRun( BOOL First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus )
+bool Custom2Filter::onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
-	BOOL Result( FALSE );
+	bool Result( false );
 	SVMatroxImageInterface::SVStatusCode StatusCode;
 
 	m_KernelWidth.CopyLastSetValue( RRunStatus.m_lResultDataIndex );
@@ -155,12 +155,28 @@ BOOL Custom2Filter::onRun( BOOL First, SVSmartHandlePointer RInputImageHandle, S
 		RInputImageHandle->GetData( InMilHandle );
 
 		StatusCode = SVMatroxImageInterface::Convolve(MilHandle.GetBuffer(), 
-			( First == TRUE ) ? InMilHandle.GetBuffer() : MilHandle.GetBuffer(), 
+			First ? InMilHandle.GetBuffer() : MilHandle.GetBuffer(), 
 			m_milKernel );
 
 		if( StatusCode == SVMEE_STATUS_OK )
 		{
-			Result = TRUE;
+			Result = true;
+		}
+		else
+		{
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_RunFilterFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				pErrorMessages->push_back(Msg);
+			}
+		}
+	}
+	else
+	{
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
 		}
 	}
 

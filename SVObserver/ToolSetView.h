@@ -61,6 +61,13 @@ public:
 	//************************************
 	bool enterSelectedEntry();
 
+	/// Check if the current selected tool has errors. If no tool selected it will return false.
+	/// \returns bool
+	bool hasCurrentToolErrors();
+
+	/// Display the first error of the current selected tool, if a tool is selected and it has an error.
+	void displayFirstCurrentToolError();
+
 protected:
 	DECLARE_DYNCREATE(ToolSetView)
 	enum { IDD = IDD_TOOLSET_VIEW };

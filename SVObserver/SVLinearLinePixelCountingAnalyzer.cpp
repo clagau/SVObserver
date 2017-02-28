@@ -116,17 +116,24 @@ BOOL SVLinearPixelCountingLineAnalyzerClass::CloseObject()
 	return SVLinearAnalyzerClass::CloseObject();
 }
 
-BOOL SVLinearPixelCountingLineAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
+bool SVLinearPixelCountingLineAnalyzerClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	std::vector<double> l_svEdges;
 
 	// All inputs and outputs must be validated first
-	BOOL l_bOk = SVLinearAnalyzerClass::onRun( RRunStatus );
+	bool l_bOk = __super::onRun( RRunStatus, pErrorMessages );
 
 	SVLinearEdgeProcessingClass *l_pEdge = GetEdgeA();
 
-	l_bOk = l_bOk && nullptr != l_pEdge;
-	l_bOk = l_bOk && ( S_OK == l_pEdge->m_svLinearEdges.GetValues( RRunStatus.m_lResultDataIndex, l_svEdges ) );
+	if ( nullptr == l_pEdge || S_OK != l_pEdge->m_svLinearEdges.GetValues( RRunStatus.m_lResultDataIndex, l_svEdges ) )
+	{
+		l_bOk = false;
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
+	}
 
 	long l_lBlack = 0;
 	long l_lWhite = 0;
@@ -146,8 +153,15 @@ BOOL SVLinearPixelCountingLineAnalyzerClass::onRun( SVRunStatusClass& RRunStatus
 		}
 	}
 
-	l_bOk = ( S_OK == blackPixelCount.SetValue( RRunStatus.m_lResultDataIndex, l_lBlack ) ) && l_bOk;
-	l_bOk = ( S_OK == whitePixelCount.SetValue( RRunStatus.m_lResultDataIndex, l_lWhite ) ) && l_bOk;
+	if ( S_OK != blackPixelCount.SetValue( RRunStatus.m_lResultDataIndex, l_lBlack )|| S_OK != whitePixelCount.SetValue( RRunStatus.m_lResultDataIndex, l_lWhite ) )
+	{
+		l_bOk = false;
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_SetValueFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
+	}
 
 	if( ! l_bOk )
 	{

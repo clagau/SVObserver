@@ -77,7 +77,7 @@ protected:
 
 	virtual HRESULT IsInputImage(SVImageClass *p_psvImage) override;
 	
-	virtual BOOL onRun(SVRunStatusClass& RRunStatus) override;
+	virtual bool onRun(SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	// Interpolation Mode - embedded
 	HRESULT InitializeInterpolationModeMember();

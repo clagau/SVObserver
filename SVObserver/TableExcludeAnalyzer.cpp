@@ -102,9 +102,9 @@ bool TableExcludeAnalyzer::ResetObject(SvStl::MessageContainerVector *pErrorMess
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
-BOOL TableExcludeAnalyzer::onRun( SVRunStatusClass& rRunStatus )
+bool TableExcludeAnalyzer::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
-	BOOL returnValue = __super::onRun( rRunStatus );
+	bool returnValue = __super::onRun( rRunStatus, pErrorMessages );
 	
 	if (returnValue)
 	{
@@ -135,7 +135,12 @@ BOOL TableExcludeAnalyzer::onRun( SVRunStatusClass& rRunStatus )
 		}
 		else
 		{
-			returnValue = FALSE;
+			returnValue = false;
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				pErrorMessages->push_back(Msg);
+			}
 		}
 	}
 

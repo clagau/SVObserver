@@ -229,9 +229,9 @@ bool SVLinearMeasurementAnalyzerClass::ResetObject(SvStl::MessageContainerVector
 	return __super::ResetObject(pErrorMessages) && ValidateEdgeA(pErrorMessages) && ValidateEdgeB(pErrorMessages);
 }
 
-BOOL SVLinearMeasurementAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
+bool SVLinearMeasurementAnalyzerClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
-	BOOL l_bOk = SVLinearAnalyzerClass::onRun( RRunStatus );
+	bool l_bOk = __super::onRun( RRunStatus, pErrorMessages ) && ValidateEdgeA(pErrorMessages) && ValidateEdgeB(pErrorMessages);
 
 	SVDPointClass l_svDPointA, l_svDPointB;
 	SVExtentPointStruct l_svEdgePointA;
@@ -240,7 +240,15 @@ BOOL SVLinearMeasurementAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 	double l_dDistanceA = 0.0;
 	double l_dDistanceB = 0.0;
 
-	l_bOk = l_bOk && ValidateEdgeA(&m_RunErrorMessages) && ValidateEdgeB(&m_RunErrorMessages) && nullptr != GetTool();
+	if ( nullptr == GetTool())
+	{
+		l_bOk = false;
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
+	}
 
 	if ( l_bOk )
 	{
@@ -302,6 +310,12 @@ BOOL SVLinearMeasurementAnalyzerClass::onRun( SVRunStatusClass& RRunStatus )
 	{
 		SetInvalid();
 		RRunStatus.SetInvalid();
+
+		if (nullptr != pErrorMessages && pErrorMessages->empty())
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_RunLinearEdgeFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
 	}
 
 	return l_bOk;

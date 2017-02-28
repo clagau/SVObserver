@@ -467,7 +467,7 @@ bool SVArchiveTool::CreateTextArchiveFile(SvStl::MessageContainerVector *pErrorM
 			}
 		}
 	} 
-	catch (CException* e)
+	catch (CException*)
 	{
 		if (nullptr != pErrorMessages)
 		{
@@ -637,10 +637,9 @@ bool SVArchiveTool::AllocateImageBuffers(SvStl::MessageContainerVector *pErrorMe
 
 /////////////////////////////////////////////////////////////////////////////
 //
-BOOL SVArchiveTool::onRun( SVRunStatusClass& RRunStatus )
+bool SVArchiveTool::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
-	bool isValid = ValidateOnRun(&m_RunErrorMessages);
-	if( isValid && SVToolClass::onRun( RRunStatus ) )
+	if( ValidateOnRun(pErrorMessages) && __super::onRun( RRunStatus, pErrorMessages ) )
 	{
 		//
 		// If this is not a test mode or run mode (online) no work is required.
@@ -649,7 +648,7 @@ BOOL SVArchiveTool::onRun( SVRunStatusClass& RRunStatus )
 		//
 		if ( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST | SV_STATE_REGRESSION) )
 		{
-			return TRUE;
+			return true;
 		}
 		
 		if ( ! RRunStatus.IsDisabled() && ! RRunStatus.IsDisabledByCondition() )
@@ -657,7 +656,12 @@ BOOL SVArchiveTool::onRun( SVRunStatusClass& RRunStatus )
 			if ( !m_bInitializedForRun )
 			{
 				RRunStatus.SetFailed();
-				return FALSE;
+				if (nullptr != pErrorMessages)
+				{
+					SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ArchiveTool_InitFlagFalse, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+					pErrorMessages->push_back(Msg);
+				}
+				return false;
 			}
 			
 			//
@@ -687,12 +691,22 @@ BOOL SVArchiveTool::onRun( SVRunStatusClass& RRunStatus )
 						{
 							RRunStatus.SetFailed();
 							e->Delete();
-							return FALSE;
+							if (nullptr != pErrorMessages)
+							{
+								SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_UnknownException, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+								pErrorMessages->push_back(Msg);
+							}
+							return false;
 						} 
 						catch (...)
 						{
+							if (nullptr != pErrorMessages)
+							{
+								SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_UnknownException, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+								pErrorMessages->push_back(Msg);
+							}
 							RRunStatus.SetFailed();
-							return FALSE;
+							return false;
 						}
 					}
 				}// end if ( !bBufferText || m_eArchiveMethod != SVArchiveGoOffline )
@@ -713,11 +727,11 @@ BOOL SVArchiveTool::onRun( SVRunStatusClass& RRunStatus )
 			RRunStatus.SetPassed();
 		}
 
-		return TRUE;
+		return true;
 	}
 	
 	RRunStatus.SetInvalid();
-	return FALSE;
+	return false;
 }
 
 HRESULT SVArchiveTool::QueueArchiveString( const SVString& rArchiveString )

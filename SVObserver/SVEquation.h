@@ -209,7 +209,7 @@ public:
 protected:
 	void init();
 
-	virtual BOOL onRun( SVRunStatusClass& RRunStatus ) override;
+	virtual bool onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
 private:
 	SvOi::EquationTestResult lexicalScan( LPCTSTR inBuffer );		// perform lexical scan

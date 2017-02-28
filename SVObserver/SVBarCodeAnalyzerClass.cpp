@@ -369,7 +369,7 @@ bool SVBarCodeAnalyzerClass::CharIsControl( TCHAR p_Char )
 	return p_Char < ' ' || p_Char > 126;
 }
 
-BOOL SVBarCodeAnalyzerClass::onRun (SVRunStatusClass &RRunStatus)
+bool SVBarCodeAnalyzerClass::onRun (SVRunStatusClass &RRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	long lMilResult;
 	SVImageClass *pInputImage;
@@ -378,15 +378,20 @@ BOOL SVBarCodeAnalyzerClass::onRun (SVRunStatusClass &RRunStatus)
 
 	if ( m_bHasLicenseError )
 	{
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_SVObserver_MatroxLicenseNotFound, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
 		SetInvalid ();
 		RRunStatus.SetInvalid ();
-		return FALSE;
+		return false;
 	}
 	
 	BarCodeValue.clear(); // clear previous value
 	msv_szBarCodeValue.SetValue( RRunStatus.m_lResultDataIndex, BarCodeValue );
 	
-	if (SVImageAnalyzerClass::onRun (RRunStatus))
+	if (SVImageAnalyzerClass::onRun (RRunStatus, pErrorMessages))
 	{
 		SVSmartHandlePointer ImageHandle;
 		
@@ -530,17 +535,22 @@ BOOL SVBarCodeAnalyzerClass::onRun (SVRunStatusClass &RRunStatus)
 				else
 					RRunStatus.SetFailed();
 				pResult->m_dReadScore.SetValue(RRunStatus.m_lResultDataIndex, dScore * 100);
-				return TRUE;
+				return true;
 
 			}// end try
 			catch( ... )
 			{
+				if (nullptr != pErrorMessages)
+				{
+					SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_UnknownException, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+					pErrorMessages->push_back(Msg);
+				}
 			}// end catch
 		}
 	}
 	SetInvalid ();
 	RRunStatus.SetInvalid ();
-	return FALSE;
+	return false;
 }
 
 

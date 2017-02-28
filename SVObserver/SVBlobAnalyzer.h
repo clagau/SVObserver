@@ -177,7 +177,7 @@ public:
 	SVResultClass* GetResultObject(SVBlobFeatureEnum aFeatureIndex);
 	SVLongResultClass* GetBlobResultObject();
 
-	virtual BOOL onRun( SVRunStatusClass& RRunStatus ) override;
+	virtual bool onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
 	virtual bool IsPtOverResult( const POINT& rPoint ) override;
 	virtual	void DisplayAnalyzerResult() override;

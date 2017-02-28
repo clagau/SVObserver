@@ -40,7 +40,7 @@ public:
 
 #pragma region Protected Methods
 protected:
-	virtual BOOL onRun( SVRunStatusClass& runStatus ) override;
+	virtual bool onRun( SVRunStatusClass& runStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
 	HRESULT UpdateTransformData( long p_lIndex );
 #pragma endregion
