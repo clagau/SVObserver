@@ -617,7 +617,7 @@ STDMETHODIMP CSVCommand::SVPutSVIMFile(BSTR bstrDestFile, long lOffset, long lBl
 {
 	HRESULT hrResult = S_OK;
 
-	SVString strPath;
+	SVString Path;
 	TCHAR szDrive[_MAX_DRIVE];
 	TCHAR szDir[_MAX_DIR];
 	TCHAR szFile[_MAX_FNAME];
@@ -636,11 +636,10 @@ STDMETHODIMP CSVCommand::SVPutSVIMFile(BSTR bstrDestFile, long lOffset, long lBl
 
 	_tmakepath( szPath, szDrive, szDir, szFile, szExt );
 
-	strPath = szDrive;
-	strPath += szDir;
-	strPath += strFilename;
+	Path = szDrive;
+	Path += szDir;
 
-	CreateDirPath( strPath.c_str() );
+	CreateDirPath( Path.c_str() );
 
 	CFile binFile;
 	CFileException l_FileException;

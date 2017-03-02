@@ -14,7 +14,7 @@
 //Moved to precompiled header: #include <errno.h>
 //DirectoryUtilities.h moved from SVCmnLib to SVLibrary 
 
-BOOL CreateDirPath( LPCTSTR Path);
+bool CreateDirPath( LPCTSTR Path);
 bool CopyFilesInDirectory(LPCTSTR sourceDirectory, LPCTSTR destinationDirectory); ///< non-recursively copies all files in sourceDirectory to destinationDirectory
 
 //************************************

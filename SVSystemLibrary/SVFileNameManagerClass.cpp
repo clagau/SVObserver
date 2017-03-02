@@ -354,6 +354,11 @@ bool SVFileNameManagerClass::SaveItem( SVFileNameClass* pFileName )
 		Result = CopyFileToPath( GetRunPathName(), pFileName );
 		if ( Result )
 		{
+			Result = pFileName->SetPathName( GetRunPathName().c_str() ) ? true : false;
+		}
+
+		if ( Result )
+		{
 			Result = CopyFileToPath( GetConfigurationPathName(), pFileName );
 		}
 	}
@@ -476,11 +481,6 @@ bool SVFileNameManagerClass::CopyFileToPath( const SVString& rPath, SVFileNameCl
 			{
 				Result = CopyFile( pFileName->GetFullFileName().c_str(), RunFullName.c_str(), false ) ? true : false;
 				_chmod( RunFullName.c_str(), _S_IREAD | _S_IWRITE );
-			}
-
-			if ( Result )
-			{
-				Result = pFileName->SetPathName( rPath.c_str() ) ? true : false;
 			}
 		}
 	}

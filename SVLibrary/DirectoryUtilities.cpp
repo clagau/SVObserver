@@ -18,7 +18,7 @@
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
-BOOL CreateDirPath( LPCTSTR Path)
+bool CreateDirPath( LPCTSTR Path)
 {
 	int nBackCount = 0;
 	size_t Pos = 0;
@@ -26,6 +26,12 @@ BOOL CreateDirPath( LPCTSTR Path)
 	if( nullptr == Path )
 	{ 
 		return false;
+	}
+
+	//Check if Path already exists
+	if( 0 == _access( Path, 0 ) )
+	{
+		return true;
 	}
 
 	SVString PathToCreate( Path );
@@ -42,11 +48,12 @@ BOOL CreateDirPath( LPCTSTR Path)
 		Pos = 0;
 		for( int nIndex=0; nIndex < nBackCount; nIndex++ )
 		{
+			Pos = PathToCreate.find( _T("\\"), Pos );
 			if(nIndex==0) 
 			{
+				Pos++;
 				continue;
 			}
-			Pos = PathToCreate.find( _T("\\"), Pos );
 			SVString Temp = SvUl_SF::Left( PathToCreate, Pos );
 			if( _tmkdir( Temp.c_str() ) )
 			{
