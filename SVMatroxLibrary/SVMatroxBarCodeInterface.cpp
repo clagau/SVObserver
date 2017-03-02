@@ -16,8 +16,9 @@
 #include "SVMatroxImagingLibrary.h"  // has MIL includes
 #include "SVMatroxResourceMonitor.h"
 #include "SVBufferResource.h"
-#include "SVStatusLibrary\MessageManager.h"
+#include "SVStatusLibrary\MessageContainer.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
+#include "ObjectInterfaces\MessageTextEnum.h"
 #include "SVMessage\SVMessage.h"
 #pragma endregion Includes
 
@@ -442,9 +443,10 @@ SVMatroxBarCodeInterface::SVStatusCode SVMatroxBarCodeInterface::Get( const SVMa
 @SVOperationDescription
 
 */
-SVMatroxBarCodeInterface::SVStatusCode SVMatroxBarCodeInterface::GetResult( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, double& p_rdValue)
+bool SVMatroxBarCodeInterface::GetResult( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, double& p_rdValue, SvStl::MessageContainerVector *pErrorMessages)
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	bool RetValue = true;
+
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -455,27 +457,55 @@ SVMatroxBarCodeInterface::SVStatusCode SVMatroxBarCodeInterface::GetResult( cons
 			if( l_lControlType != M_UNINITIALIZED )
 			{
 				McodeGetResult( p_rCodeID.m_BarCodeId, l_lControlType , &p_rdValue);
-				l_Code = SVMatroxApplicationInterface::GetLastStatus();
+				SVStatusCode l_Code = SVMatroxApplicationInterface::GetLastStatus();
+				if( SVMEE_STATUS_OK != l_Code )
+				{
+					RetValue = false;
+					if (nullptr != pErrorMessages)
+					{
+						SVMatroxStatusInformation l_info;
+						l_Code = SVMatroxApplicationInterface::GetLastStatus(l_info);
+						SVStringVector messageList;
+						messageList.push_back(l_info.m_StatusString);
+						SvStl::MessageContainer Msg( SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, SvOi::Tid_ErrorMcodeGetResult, messageList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10250);//, GetUniqueObjectID() );
+						pErrorMessages->push_back(Msg);
+					}
+				}
 			}
 			else
 			{
-				l_Code = SVMEE_INVALID_PARAMETER;
+				RetValue = false;
+				if (nullptr != pErrorMessages)
+				{
+					SvStl::MessageContainer Msg( SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, SvOi::Tid_StringTooLarge, SvStl::SourceFileParams(StdMessageParams));
+					pErrorMessages->push_back(Msg);
+				}
 			}
 		}
 		else
 		{
-			l_Code = SVMEE_INVALID_HANDLE;
+			RetValue = false;
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg( SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, SvOi::Tid_StringTooLarge, SvStl::SourceFileParams(StdMessageParams));
+				pErrorMessages->push_back(Msg);
+			}
 		}
 	}
 #ifdef USE_TRY_BLOCKS
 	catch(...)
 	{
-		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
+		RetValue = false;
 		SVMatroxApplicationInterface::LogMatroxException();
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, SvOi::Tid_UnknownException, SvStl::SourceFileParams(StdMessageParams));;
+			pErrorMessages->push_back(Msg);
+		}
 	}
 #endif
-	assert(l_Code == SVMEE_STATUS_OK );
-	return l_Code;
+	assert(RetValue);
+	return RetValue;
 }
 
 /**
@@ -484,13 +514,12 @@ SVMatroxBarCodeInterface::SVStatusCode SVMatroxBarCodeInterface::GetResult( cons
 @SVOperationDescription
 
 */
-SVMatroxBarCodeInterface::SVStatusCode SVMatroxBarCodeInterface::GetResult( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, long& p_rlValue)
+bool SVMatroxBarCodeInterface::GetResult( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, long& p_rlValue, SvStl::MessageContainerVector *pErrorMessages)
 {
-	SVStatusCode l_Code;
 	double l_dValue = 0.0;
-	l_Code = GetResult( p_rCodeID, p_eType, l_dValue);
+	bool retValue = GetResult( p_rCodeID, p_eType, l_dValue, pErrorMessages);
 	p_rlValue = static_cast<long>( l_dValue );
-	return l_Code;
+	return retValue;
 }
 
 /**
@@ -499,9 +528,9 @@ SVMatroxBarCodeInterface::SVStatusCode SVMatroxBarCodeInterface::GetResult( cons
 @SVOperationDescription
 
 */
-SVMatroxBarCodeInterface::SVStatusCode SVMatroxBarCodeInterface::GetResult( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, SVString& p_rstrValue)
+bool SVMatroxBarCodeInterface::GetResult( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, SVString& p_rstrValue, SvStl::MessageContainerVector *pErrorMessages)
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	bool retValue = true;
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -522,51 +551,79 @@ SVMatroxBarCodeInterface::SVStatusCode SVMatroxBarCodeInterface::GetResult( cons
 						MIL_TEXT_CHAR* l_pChars = nullptr;
 						l_Resource.GetBuffer( l_pChars );
 						McodeGetResult( p_rCodeID.m_BarCodeId, l_lControlType , l_pChars );
-						l_Code = SVMatroxApplicationInterface::GetLastStatus();
+						SVStatusCode l_Code = SVMatroxApplicationInterface::GetLastStatus();
 						if( l_Code == SVMEE_STATUS_OK )
 						{
 							p_rstrValue = l_pChars;
 						}
+						else
+						{
+							retValue = false;
+							if (nullptr != pErrorMessages)
+							{
+								SVMatroxStatusInformation l_info;
+								l_Code = SVMatroxApplicationInterface::GetLastStatus(l_info);
+								SVStringVector messageList;
+								messageList.push_back(l_info.m_StatusString);
+								SvStl::MessageContainer Msg( SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, SvOi::Tid_ErrorMcodeGetResult, messageList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10250);//, GetUniqueObjectID() );
+								pErrorMessages->push_back(Msg);
+							}
+						}
 					}
 					else
 					{
-						l_Code = SVMEE_STRING_TOO_LARGE;
-						SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-						Msg.setMessage( SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, "SVMEE_STRING_TOO_LARGE", SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10250 );
+						retValue = false;
+						if (nullptr != pErrorMessages)
+						{
+							SvStl::MessageContainer Msg( SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, SvOi::Tid_StringTooLarge, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10250);//, GetUniqueObjectID() );
+							pErrorMessages->push_back(Msg);
+						}
 					}
 				}
 				else
 				{
-					l_Code = SVMEE_INVALID_PARAMETER;
-					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-					Msg.setMessage( SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, "SVMEE_INVALID_PARAMETER", SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10251 );
+					retValue = false;
+					if (nullptr != pErrorMessages)
+					{
+						SvStl::MessageContainer Msg( SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, SvOi::Tid_InvalidData, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10251);//, GetUniqueObjectID() );
+						pErrorMessages->push_back(Msg);
+					}
 				}
 			}
 			else
 			{
-				l_Code = SVMEE_WRONG_PARAMETER;
-				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-				Msg.setMessage( SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, "SVMEE_WRONG_PARAMETER", SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10252 );
+				retValue = false;
+				if (nullptr != pErrorMessages)
+				{
+					SvStl::MessageContainer Msg( SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, SvOi::Tid_InvalidData, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10252);//, GetUniqueObjectID() );
+					pErrorMessages->push_back(Msg);
+				}
 			}
 		}
 		else
 		{
-			l_Code = SVMEE_INVALID_HANDLE;
-			SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-			Msg.setMessage( SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, "SVMEE_INVALID_HANDLE", SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10253 );
+			retValue = false;
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg( SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, SvOi::Tid_InvalidData, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10253);//, GetUniqueObjectID() );
+				pErrorMessages->push_back(Msg);
+			}
 		}
 	}
 #ifdef USE_TRY_BLOCKS
 	catch(...)
 	{
-		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
 		SVMatroxApplicationInterface::LogMatroxException();
-		SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-		Msg.setMessage( SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, "Exception", SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10253 );
+		retValue = false;
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, SvOi::Tid_UnknownException, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10253);//, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
 	}
 #endif
-	assert(l_Code == SVMEE_STATUS_OK );
-	return l_Code;
+	assert(retValue);
+	return retValue;
 }
 
 /**
@@ -575,9 +632,9 @@ SVMatroxBarCodeInterface::SVStatusCode SVMatroxBarCodeInterface::GetResult( cons
 @SVOperationDescription Execute function calls the mil function McodeRead.
 
 */
-SVMatroxBarCodeInterface::SVStatusCode SVMatroxBarCodeInterface::Execute( const SVMatroxBarCode& p_rCodeID, const SVMatroxBuffer& p_rSourceId )
+bool SVMatroxBarCodeInterface::Execute( const SVMatroxBarCode& p_rCodeID, const SVMatroxBuffer& p_rSourceId, SvStl::MessageContainerVector *pErrorMessages )
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	bool retValue = true;
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -585,22 +642,45 @@ SVMatroxBarCodeInterface::SVStatusCode SVMatroxBarCodeInterface::Execute( const 
 		if( !p_rCodeID.empty() && !p_rSourceId.empty() )
 		{
 			McodeRead(p_rCodeID.m_BarCodeId, p_rSourceId.GetIdentifier(), M_DEFAULT);
-			l_Code = SVMatroxApplicationInterface::GetLastStatus();
+			SVStatusCode l_Code = SVMatroxApplicationInterface::GetLastStatus();
+			if( SVMEE_STATUS_OK != l_Code )
+			{
+				retValue = false;
+				if (nullptr != pErrorMessages)
+				{
+					SVMatroxStatusInformation l_info;
+					l_Code = SVMatroxApplicationInterface::GetLastStatus(l_info);
+					SVStringVector messageList;
+					messageList.push_back(l_info.m_StatusString);
+					SvStl::MessageContainer Msg( SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, SvOi::Tid_ErrorMcodeGetResult, messageList, SvStl::SourceFileParams(StdMessageParams));
+					pErrorMessages->push_back(Msg);
+				}
+			}
 		}
 		else
 		{
-			l_Code = SVMEE_INVALID_HANDLE;
+			retValue = false;
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg( SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, SvOi::Tid_InvalidData, SvStl::SourceFileParams(StdMessageParams));
+				pErrorMessages->push_back(Msg);
+			}
 		}
 	}
 #ifdef USE_TRY_BLOCKS
 	catch(...)
 	{
-		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
+		retValue = false;
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, SvOi::Tid_UnknownException, SvStl::SourceFileParams(StdMessageParams));
+			pErrorMessages->push_back(Msg);
+		}
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(l_Code == SVMEE_STATUS_OK );
-	return l_Code;
+	assert(retValue);
+	return retValue;
 }
 
 /**

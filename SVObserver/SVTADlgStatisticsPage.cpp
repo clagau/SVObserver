@@ -102,17 +102,20 @@ BOOL SVToolAdjustmentDialogStatisticsPageClass::OnInitDialog()
 //
 void SVToolAdjustmentDialogStatisticsPageClass::OnButtonAdd() 
 {
-	DWORD_PTR    lAvailableIndex;
-	DWORD_PTR    lCurrentIndex;
-
-    lAvailableIndex = m_lbAvailableList.GetItemData( m_lbAvailableList.GetCurSel() );
-
-    lCurrentIndex = m_lbSelectedList.GetItemData( m_lbSelectedList.GetCurSel() );
-
+	DWORD_PTR lAvailableIndex = m_lbAvailableList.GetItemData( m_lbAvailableList.GetCurSel() );
+	DWORD_PTR lCurrentIndex = m_lbSelectedList.GetItemData( m_lbSelectedList.GetCurSel() );
 
 	if( lAvailableIndex != LB_ERR && lAvailableIndex >= 0)
 	{
-	    m_pTool->EnableFeature ((SVStatisticsFeatureEnum) lAvailableIndex);
+		try
+		{
+			m_pTool->EnableFeature ((SVStatisticsFeatureEnum) lAvailableIndex);
+		}
+		catch (const SvStl::MessageContainer& rExp)
+		{
+			SvStl::MessageMgrStd Exception(SvStl::LogAndDisplay);
+			Exception.setMessage(rExp.getMessage());
+		}
 
 		// List of not enabled.
 		initListBox( &m_lbAvailableList, _T('0') );
@@ -120,7 +123,7 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnButtonAdd()
 		// List of enabled.
 		initListBox( &m_lbSelectedList, _T('1') );
 
-        UpdateData (FALSE);
+		UpdateData (FALSE);
 	}
 }
 

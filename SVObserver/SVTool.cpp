@@ -916,9 +916,9 @@ EAutoSize SVToolClass::GetAutoSizeEnabled()
 	return (EnableSizeAndPosition);
 }
 
-BOOL SVToolClass::SetDefaultFormulas()
+bool SVToolClass::SetDefaultFormulas(SvStl::MessageContainerVector *pErrorMessages)
 {
-	return TRUE;
+	return true;
 }
 
 SVImageTypeEnum SVToolClass::GetImageType()

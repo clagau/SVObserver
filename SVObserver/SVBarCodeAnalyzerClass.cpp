@@ -371,11 +371,6 @@ bool SVBarCodeAnalyzerClass::CharIsControl( TCHAR p_Char )
 
 bool SVBarCodeAnalyzerClass::onRun (SVRunStatusClass &RRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
-	long lMilResult;
-	SVImageClass *pInputImage;
-	SVString BarCodeValue;
-	long cbBarCodeValue;
-
 	if ( m_bHasLicenseError )
 	{
 		if (nullptr != pErrorMessages)
@@ -388,9 +383,7 @@ bool SVBarCodeAnalyzerClass::onRun (SVRunStatusClass &RRunStatus, SvStl::Message
 		return false;
 	}
 	
-	BarCodeValue.clear(); // clear previous value
-	msv_szBarCodeValue.SetValue( RRunStatus.m_lResultDataIndex, BarCodeValue );
-	
+	msv_szBarCodeValue.SetValue( RRunStatus.m_lResultDataIndex, _T("") );
 	if (SVImageAnalyzerClass::onRun (RRunStatus, pErrorMessages))
 	{
 		SVSmartHandlePointer ImageHandle;
@@ -402,38 +395,49 @@ bool SVBarCodeAnalyzerClass::onRun (SVRunStatusClass &RRunStatus, SvStl::Message
 									// default value will be false.
 		pResult->m_bFailedToRead = bWarnOnFailedRead != FALSE;// Preset flag to failed condition..
 
-		pInputImage = getInputImage ();		
+		SVImageClass* pInputImage = getInputImage ();		
 		if ( pInputImage->GetImageHandle( ImageHandle ) && !( ImageHandle.empty() ) )
 		{
 			try
 			{
-				
-				SVMatroxBarCodeInterface::SVStatusCode l_Code;
-
 				SVImageBufferHandleImage l_MilBuffer;
 				ImageHandle->GetData( l_MilBuffer );
 
 				SVMatroxBuffer ImageBufId = l_MilBuffer.GetBuffer();
 
-				l_Code = SVMatroxBarCodeInterface::Execute( m_MilCodeId, ImageBufId );
+				bool Result = SVMatroxBarCodeInterface::Execute( m_MilCodeId, ImageBufId, pErrorMessages );
 
-				l_Code = SVMatroxBarCodeInterface::GetResult( m_MilCodeId, SVBCBarCodeStatus, lMilResult );
-				double dScore = 0.0;
+				long lMilResult = SVBCStatusNotFound;
+				Result = Result && SVMatroxBarCodeInterface::GetResult( m_MilCodeId, SVBCBarCodeStatus, lMilResult, pErrorMessages );
 
-				SVString l_strBarCodeValue;
+				if (!Result)
+				{
+					if (nullptr != pErrorMessages)
+					{
+						for (SvStl::MessageContainerVector::iterator iter = pErrorMessages->begin(); pErrorMessages->end() != iter; iter++ )
+						{	//set GUId of this object to the error message without a GUID. (should be error message from the matrox interface)
+							if (SV_GUID_NULL == iter->getObjectId())
+							{
+								iter->setObjectId(GetUniqueObjectID());
+							}
+						}
+					}
+					SetInvalid ();
+					RRunStatus.SetInvalid ();
+					return false;
+				}
 
 				switch ( lMilResult )
 				{
-					case SVBCStatusReadOK:
+				case SVBCStatusReadOK:
 					{
 						pResult->m_bFailedToRead = false;
-						l_Code = SVMatroxBarCodeInterface::GetResult( m_MilCodeId, SVBCBarcodeStringSize, cbBarCodeValue );
-
-
-						l_Code = SVMatroxBarCodeInterface::GetResult( m_MilCodeId, SVBCBarCodeString, l_strBarCodeValue );
-
-						l_Code = SVMatroxBarCodeInterface::GetResult( m_MilCodeId, SVBCBarcodeScore, dScore );
-
+						long cbBarCodeValue = 0;
+						Result &= SVMatroxBarCodeInterface::GetResult( m_MilCodeId, SVBCBarcodeStringSize, cbBarCodeValue, pErrorMessages );
+						SVString l_strBarCodeValue;
+						Result &= SVMatroxBarCodeInterface::GetResult( m_MilCodeId, SVBCBarCodeString, l_strBarCodeValue, pErrorMessages );
+						double dScore = 0.0;
+						Result &= SVMatroxBarCodeInterface::GetResult( m_MilCodeId, SVBCBarcodeScore, dScore, pErrorMessages );
 						pResult->m_dReadScore.SetValue(RRunStatus.m_lResultDataIndex, dScore * 100);
 
 						// To support special DMCs May 2008.
@@ -442,23 +446,31 @@ bool SVBarCodeAnalyzerClass::onRun (SVRunStatusClass &RRunStatus, SvStl::Message
 						{
 							msv_RawData.SetArraySize( static_cast< int >( l_strBarCodeValue.size() ) );
 						}
-						l_Code = msv_RawData.SetResultSize( RRunStatus.m_lResultDataIndex, static_cast< int >( l_strBarCodeValue.size() ) );
-						msv_RawData.SetArrayValues( RRunStatus.m_lResultDataIndex, l_strBarCodeValue.begin(), l_strBarCodeValue.end() );
+						if ( S_OK != msv_RawData.SetResultSize( RRunStatus.m_lResultDataIndex, static_cast< int >( l_strBarCodeValue.size() ) ) || 
+							S_OK != msv_RawData.SetArrayValues( RRunStatus.m_lResultDataIndex, l_strBarCodeValue.begin(), l_strBarCodeValue.end() ))
+						{
+							Result = false;
+							if (nullptr != pErrorMessages)
+							{
+								SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_SetValueFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+								pErrorMessages->push_back(Msg);
+							}
+						}
 
 						// based on msv_eBarcodeStringFormat replace control characters...
 						long l_lTmpFormat=SVBCStringFormatReplaceCharacters;
 						msv_eStringFormat.GetValue( l_lTmpFormat );
 						switch( l_lTmpFormat )
 						{
-							case SVBCStringFormatReplaceCharacters:
+						case SVBCStringFormatReplaceCharacters:
 							{
 								replace_if( l_strBarCodeValue.begin(),
-											l_strBarCodeValue.end(),
-											CharIsControl,
-											_T('~'));
+									l_strBarCodeValue.end(),
+									CharIsControl,
+									_T('~'));
 								break;
 							}
-							case SVBCStringFormatRemoveCharacters:
+						case SVBCStringFormatRemoveCharacters:
 							{
 								SVString l_strRemoved;
 								l_strRemoved.resize( l_strBarCodeValue.size() + 1);
@@ -476,7 +488,7 @@ bool SVBarCodeAnalyzerClass::onRun (SVRunStatusClass &RRunStatus, SvStl::Message
 								l_strBarCodeValue = l_strRemoved;
 								break;
 							}
-							case SVBCStringFormatTranslateCharacters:
+						case SVBCStringFormatTranslateCharacters:
 							{
 								SVString l_strTranslated;
 								l_strTranslated.resize( l_strBarCodeValue.size()+256);
@@ -506,24 +518,35 @@ bool SVBarCodeAnalyzerClass::onRun (SVRunStatusClass &RRunStatus, SvStl::Message
 								l_strBarCodeValue = l_strTranslated;
 								break;
 							}
-							default:
+						default:
 							{
 								break;
 							}
 						}
 						msv_szBarCodeValue.SetValue( RRunStatus.m_lResultDataIndex, l_strBarCodeValue.c_str() );
-						return TRUE;
-						
-						break;
+						if (!Result)
+						{
+							if (nullptr != pErrorMessages)
+							{	//set GUId of this object to the error message without a GUID. (should be error message from the matrox interface)
+								for (SvStl::MessageContainerVector::iterator iter = pErrorMessages->begin(); pErrorMessages->end() != iter; iter++ )
+								{
+									if (SV_GUID_NULL == iter->getObjectId())
+									{
+										iter->setObjectId(GetUniqueObjectID());
+									}
+								}
+							}
+							SetInvalid ();
+							RRunStatus.SetInvalid ();
+						}
+						return Result;
 					}
-					case SVBCStatusCRCFailed:
-					case SVBCStatusECCUnknown:
-					case SVBCStatusENCUnknown:
-					case SVBCStatusNotFound:
-					default:
+				case SVBCStatusCRCFailed:
+				case SVBCStatusECCUnknown:
+				case SVBCStatusENCUnknown:
+				case SVBCStatusNotFound:
+				default:
 					{
-
-
 						// Clear The Raw Data if no read.
 						msv_RawData.SetResultSize( RRunStatus.m_lResultDataIndex, 0 );
 						break;
@@ -534,9 +557,8 @@ bool SVBarCodeAnalyzerClass::onRun (SVRunStatusClass &RRunStatus, SvStl::Message
 					RRunStatus.SetWarned();
 				else
 					RRunStatus.SetFailed();
-				pResult->m_dReadScore.SetValue(RRunStatus.m_lResultDataIndex, dScore * 100);
+				pResult->m_dReadScore.SetValue(RRunStatus.m_lResultDataIndex, 0.0);
 				return true;
-
 			}// end try
 			catch( ... )
 			{

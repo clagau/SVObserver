@@ -61,6 +61,7 @@
 #include <tchar.h>			//Used by static library
 #include <vector>			//Used by static library
 
+#include <boost/function.hpp>							//Used by SVMatroxLibrary
 #include <boost/multi_index_container.hpp>				//Used by static library
 #include <boost/multi_index/member.hpp>					//Used by static library
 #include <boost/multi_index/ordered_index.hpp>			//Used by static library

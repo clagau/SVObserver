@@ -650,7 +650,13 @@ namespace Seidenader { namespace SVOGui
 			UpdateData( TRUE ); // Update the variables
 
 			double value = 0;
-			const int result = m_FormulaController->ValidateEquation( equationText, value, true );
+			SvStl::MessageContainerVector ErrorMessages;
+			const int result = m_FormulaController->ValidateEquation( equationText, value, true, ErrorMessages );
+			for (SvStl::MessageContainerVector::iterator iter = ErrorMessages.begin(); ErrorMessages.end() != iter; iter++ )
+			{
+				SvStl::MessageMgrStd message( SvStl::LogAndDisplay );
+				message.setMessage(iter->getMessage());
+			}
 			enableUndoButton();
 			//@Info (MZA): result also true if resetFailed, because the fail of reset of the object maybe happen by a other page.
 			//By leaving the sheet it will reset objects and check if it works
@@ -665,7 +671,13 @@ namespace Seidenader { namespace SVOGui
 
 		UpdateData( TRUE ); // Update the variables
 		double value = 0;
-		const int result = m_FormulaController->ValidateEquation( equationText, value, false );
+		SvStl::MessageContainerVector ErrorMessages;
+		const int result = m_FormulaController->ValidateEquation( equationText, value, true, ErrorMessages );
+		for (SvStl::MessageContainerVector::iterator iter = ErrorMessages.begin(); ErrorMessages.end() != iter; iter++ )
+		{
+			SvStl::MessageMgrStd message( SvStl::LogAndDisplay );
+			message.setMessage(iter->getMessage());
+		}
 		if( result == SvOi::IFormulaController::validateSuccessful )
 		{
 			SvOi::MessageTextEnum id = SvOi::Tid_Empty;

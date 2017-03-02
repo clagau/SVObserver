@@ -1791,7 +1791,13 @@ HRESULT SVInspectionProcess::ObserverUpdate( const SVAddTool& p_rData )
 			BuildValueObjectMap();
 
 			// Set default formulas in newly instantiated tool...
-			p_rData.m_pTool->SetDefaultFormulas();
+			SvStl::MessageContainerVector ErrorMessages;
+			p_rData.m_pTool->SetDefaultFormulas(&ErrorMessages);
+			for (SvStl::MessageContainerVector::iterator iter = ErrorMessages.begin(); ErrorMessages.end() != iter; iter++ )
+			{
+				SvStl::MessageMgrStd message( SvStl::LogAndDisplay );
+				message.setMessage(iter->getMessage());
+			}
 
 			RunOnce();
 		}

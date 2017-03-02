@@ -16,6 +16,7 @@
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVUtilityLibrary/SVSharedPtr.h"
 #include "SVUtilityLibrary/SVString.h"
+#include "SVStatusLibrary/MessageContainer.h"
 #pragma endregion Includes
 
 enum
@@ -40,6 +41,7 @@ namespace Seidenader
 			HRESULT Execute()
 			{
 				HRESULT hr = S_OK;
+				m_ErrorMessages.clear();
 		
 				SvOi::IEquation* pEquation = dynamic_cast<SvOi::IEquation *>(SvOi::getObject(m_ownerID));
 				if (pEquation)
@@ -49,7 +51,7 @@ namespace Seidenader
 					oldString = pEquation->GetEquationText();
 					pEquation->SetEquationText(m_equation);
 
-					SvOi::EquationTestResult testResult = pEquation->Test();
+					SvOi::EquationTestResult testResult = pEquation->Test(&m_ErrorMessages);
 					if (testResult.bPassed)
 					{// set result and set return value to successful
 						m_result = pEquation->GetYACCResult();
@@ -69,6 +71,7 @@ namespace Seidenader
 			}
 			int GetValidateStatus() { return m_retValue; }
 			double GetResultValue() { return m_result; }
+			const SvStl::MessageContainerVector& GetErrorMessages() { return m_ErrorMessages; }
 
 		private:
 			SVGUID m_ownerID;
@@ -76,6 +79,7 @@ namespace Seidenader
 			bool m_bSetValue;
 			double m_result;
 			int m_retValue;
+			SvStl::MessageContainerVector m_ErrorMessages;
 		};
 	}
 }

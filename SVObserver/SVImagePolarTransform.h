@@ -34,7 +34,7 @@ public:
 
 	SVImageClass* GetOutputImage();
 
-	BOOL SetDefaultFormulas();
+	bool SetDefaultFormulas(SvStl::MessageContainerVector *pErrorMessages=nullptr);
 
 	SVImageClass* getInputImage() const;
 
@@ -43,7 +43,7 @@ protected:
 	void correctAngles( double& RDStartAngle, double& RDEndAngle );
 	void AnglesTo360( double& p_dStart, double& p_dEnd);
 
-	bool SetDefaultEquation( SVEquationClass* pEquation, const SVString& rName );
+	bool SetDefaultEquation( SVEquationClass* pEquation, const SVString& rName, SvStl::MessageContainerVector *pErrorMessages=nullptr );
 
 	virtual bool onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 	

@@ -24,7 +24,7 @@ public:
 
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
 
-	virtual BOOL SetDefaultFormulas() override;
+	virtual bool SetDefaultFormulas(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	virtual SVTaskObjectClass *GetObjectAtPoint( const SVExtentPointStruct &p_rsvPoint ) override;
 	virtual bool DoesObjectHaveExtents() const override;

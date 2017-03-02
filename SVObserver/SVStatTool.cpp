@@ -253,7 +253,7 @@ SVString SVStatisticsToolClass::GetFeatureName( int aIndex )
 
 /////////////////////////////////////////////////////////////////////////////
 //
-DWORD SVStatisticsToolClass::EnableFeature (SVStatisticsFeatureEnum aIndex)
+void SVStatisticsToolClass::EnableFeature (SVStatisticsFeatureEnum aIndex)
 {
 	msvValue[aIndex].ObjectAttributesAllowedRef() = msvlDefaultAttributes;
 
@@ -266,9 +266,8 @@ DWORD SVStatisticsToolClass::EnableFeature (SVStatisticsFeatureEnum aIndex)
 	}
 	msvPersistantFeaturesEnabled.SetValue(1, FeatureString);
 
+	// ATTENTION: In error case this method throw an exception (const SvStl::MessageContainer&)
 	AllocateResult (aIndex);
-
-	return 0;
 }
 
 ////////////////////////////////////////////////////
@@ -320,89 +319,73 @@ DWORD SVStatisticsToolClass::DisableFeature (SVStatisticsFeatureEnum aIndex)
 	return 0;
 }
 
-DWORD SVStatisticsToolClass::AllocateResult (SVStatisticsFeatureEnum aFeatureIndex)
+void SVStatisticsToolClass::AllocateResult (SVStatisticsFeatureEnum aFeatureIndex)
 {
 	SVClassInfoStruct       resultClassInfo;
 	SVObjectTypeInfoStruct  interfaceInfo;
 
-	SVDoubleResultClass*    pResult;
-	
-	DWORD LastError(0);
-	
-	while (1)
+	// Declare Input Interface of Result...
+	interfaceInfo.EmbeddedID = msvValue [aFeatureIndex].GetEmbeddedID();
+	resultClassInfo.m_DesiredInputInterface.Add( interfaceInfo );
+
+	resultClassInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
+	resultClassInfo.m_ObjectTypeInfo.SubType	= SVResultDoubleObjectType;
+	resultClassInfo.m_ClassId = SVDoubleResultClassGuid;
+	resultClassInfo.m_ClassName = SvUl_SF::LoadSVString( IDS_OBJECTNAME_RESULT );
+	resultClassInfo.m_ClassName += _T(" ") + SVString(msvValue [aFeatureIndex].GetName());
+
+	// Construct the result class
+	SVDoubleResultClass* pResult = dynamic_cast<SVDoubleResultClass *>(resultClassInfo.Construct());
+
+	if(!pResult)
 	{
-		// Setup the result
-		
-		// Declare Input Interface of Result...
-		interfaceInfo.EmbeddedID = msvValue [aFeatureIndex].GetEmbeddedID();
-		resultClassInfo.m_DesiredInputInterface.Add( interfaceInfo );
-		
-		resultClassInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
-		resultClassInfo.m_ObjectTypeInfo.SubType	= SVResultDoubleObjectType;
-		resultClassInfo.m_ClassId = SVDoubleResultClassGuid;
-		resultClassInfo.m_ClassName = SvUl_SF::LoadSVString( IDS_OBJECTNAME_RESULT );
-		resultClassInfo.m_ClassName += _T(" ") + SVString(msvValue [aFeatureIndex].GetName());
-		
-		// Construct the result class
-		pResult = (SVDoubleResultClass *) resultClassInfo.Construct();
-		
-		if(!pResult)
-		{
-			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16207);
-			LastError = -SvOi::Err_16207;
-			break;
-		}
-		
-		Add( pResult );
-		
-		SVObjectTypeInfoStruct info;
-		info.ObjectType = SVDoubleValueObjectType;
-		info.EmbeddedID = SVValueObjectGuid;
-		
-		// Get the output of the result
-		SVDoubleValueObjectClass* pValue = dynamic_cast<SVDoubleValueObjectClass*>(pResult->getFirstObject(info));
-		
-		if (!pValue)
-		{
-			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16208);
-			LastError = -SvOi::Err_16208;
-			break;
-		}
-		
-		// Make it non visible for any selection
-		pValue->ObjectAttributesAllowedRef() &= ( ~SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES );
-		
-		// Ensure this Object's inputs get connected
-		pResult->ConnectAllInputs();
-		
-		// And last - Create (initialize) it
-		
-		if( ! pResult->IsCreated() )
-		{
-			// And finally try to create the child object...
-			if( !CreateChildObject(pResult) )
-			{
-				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_StatTool_ResultFailed, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10200 ); 
-				
-				// Remove it from the Blob Analyzer TaskObjectList ( Destruct it )
-				GUID objectID = pResult->GetUniqueObjectID();
-				if( SV_GUID_NULL != objectID )
-				{
-					Delete( objectID );
-				}
-				else
-				{
-					delete pResult;
-				}
-			}
-		}
-		break;
+		SvStl::MessageContainer Exception( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16207, GetUniqueObjectID() );
+		throw Exception;
 	}
-	
-	return LastError;
+
+	Add( pResult );
+
+	SVObjectTypeInfoStruct info;
+	info.ObjectType = SVDoubleValueObjectType;
+	info.EmbeddedID = SVValueObjectGuid;
+
+	// Get the output of the result
+	SVDoubleValueObjectClass* pValue = dynamic_cast<SVDoubleValueObjectClass*>(pResult->getFirstObject(info));
+
+	if (!pValue)
+	{
+		SvStl::MessageContainer Exception( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16208, GetUniqueObjectID() );
+		throw Exception;
+	}
+
+	// Make it non visible for any selection
+	pValue->ObjectAttributesAllowedRef() &= ( ~SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES );
+
+	// Ensure this Object's inputs get connected
+	pResult->ConnectAllInputs();
+
+	// And last - Create (initialize) it
+
+	if( ! pResult->IsCreated() )
+	{
+		// And finally try to create the child object...
+		if( !CreateChildObject(pResult) )
+		{
+			// Remove it from the Blob Analyzer TaskObjectList ( Destruct it )
+			GUID objectID = pResult->GetUniqueObjectID();
+			if( SV_GUID_NULL != objectID )
+			{
+				Delete( objectID );
+			}
+			else
+			{
+				delete pResult;
+			}
+
+			SvStl::MessageContainer Exception( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_StatTool_ResultFailed, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10200, GetUniqueObjectID() );
+			throw Exception;
+		}
+	}
 }
 
 DWORD SVStatisticsToolClass::FreeResult (SVStatisticsFeatureEnum aFeatureIndex)

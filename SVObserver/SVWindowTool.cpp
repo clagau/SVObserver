@@ -169,9 +169,9 @@ BOOL SVWindowToolClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructur
 	return bOk;
 }
 
-BOOL SVWindowToolClass::SetDefaultFormulas()
+bool SVWindowToolClass::SetDefaultFormulas(SvStl::MessageContainerVector *pErrorMessages)
 {
-	BOOL bRetVal = TRUE;
+	bool bRetVal = true;
 
 	// Set Default Formula of LUTEquation, if any...
 	SVObjectTypeInfoStruct lutEquationInfo;
@@ -180,7 +180,7 @@ BOOL SVWindowToolClass::SetDefaultFormulas()
 	SVLUTEquationClass* pLUTEquation = dynamic_cast<SVLUTEquationClass*>(getFirstObject(lutEquationInfo));
 	if( pLUTEquation )
 	{
-		bRetVal = pLUTEquation->SetDefaultFormula() && bRetVal;
+		bRetVal = pLUTEquation->SetDefaultFormula(pErrorMessages) && bRetVal;
 	}
 
 	return bRetVal;

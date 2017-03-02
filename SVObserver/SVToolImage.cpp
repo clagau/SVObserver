@@ -203,9 +203,9 @@ HRESULT SVImageToolClass::SetImageExtent( unsigned long p_ulIndex, SVImageExtent
 //				:	to have default equations in your tool and/or 
 //				:	friends, children, embeddeds, etc.
 ////////////////////////////////////////////////////////////////////////////////
-BOOL SVImageToolClass::SetDefaultFormulas()
+bool SVImageToolClass::SetDefaultFormulas(SvStl::MessageContainerVector *pErrorMessages)
 {
-	BOOL bRetVal = TRUE;
+	bool bRetVal = true;
 
 	// Set Default Formula of LUTEquation, if any...
 	SVObjectTypeInfoStruct lutEquationInfo;
@@ -214,7 +214,7 @@ BOOL SVImageToolClass::SetDefaultFormulas()
 	SVLUTEquationClass* pLUTEquation = dynamic_cast<SVLUTEquationClass*>(getFirstObject(lutEquationInfo));
 	if( pLUTEquation )
 	{
-		bRetVal = pLUTEquation->SetDefaultFormula() && bRetVal;
+		bRetVal = pLUTEquation->SetDefaultFormula(pErrorMessages) && bRetVal;
 	}
 
 	return bRetVal;

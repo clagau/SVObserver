@@ -25,7 +25,6 @@
 #include "SVObjectLibrary\GlobalConst.h"
 #include "RootObject.h"
 #include "TextDefinesSvO.h"
-#include "SVStatusLibrary\MessageManager.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
 #include "SVUtilityLibrary/SVStringConversions.h"
 #pragma endregion Includes
@@ -480,7 +479,7 @@ BOOL SVEquationClass::IsEnabled()
 ////////////////////////////////////////////////////////////////////////////////
 // 
 ////////////////////////////////////////////////////////////////////////////////
-SvOi::EquationTestResult SVEquationClass::Test( bool DisplayErrorMessage, SvStl::MessageContainerVector *pErrorMessages )
+SvOi::EquationTestResult SVEquationClass::Test( SvStl::MessageContainerVector *pErrorMessages/*=nullptr */ )
 {
 	SvOi::EquationTestResult ret;
 	m_lCurrentRunIndex = -1;
@@ -580,12 +579,6 @@ SvOi::EquationTestResult SVEquationClass::Test( bool DisplayErrorMessage, SvStl:
 		if (nullptr != pErrorMessages)
 		{
 			pErrorMessages->push_back(errContainer);
-		}
-		
-		if (DisplayErrorMessage)
-		{
-			SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-			Msg.setMessage( errContainer.getMessage() ); 
 		}
 	}
 
@@ -866,7 +859,7 @@ bool SVEquationClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	if( HasCondition() && IsEnabled() )
 	{
 		//In reset object call test without displaying error messages is done using the returned result
-		Result = Test( FALSE, pErrorMessages ).bPassed && Result;
+		Result = Test( pErrorMessages).bPassed && Result;
 	}
 
 	return Result;

@@ -10,6 +10,7 @@
 #pragma region Includes
 #include "SVUtilityLibrary\SVString.h"
 #include "SVUtilityLibrary\SVSharedPtr.h"
+#include "SVStatusLibrary\MessageContainer.h"
 #pragma endregion Includes
 
 namespace Seidenader
@@ -53,14 +54,13 @@ namespace Seidenader
 			**********/
 			virtual HRESULT SetOwnerAndEquationEnabled(bool ownerEnabled, bool equationEnabled) = 0;
 
-			/**********
-			Validate a string and set the value if bSetValue is true.
-			\param equationString [in] the equation string.
-			\param result [out] return the result of the equation, if the validation is successfully.
-			\param bSetValue[in] boolean if true, set value and reset object, else the old value will restored.
-			\return return the position of the failure. If the validation is successful, the value will be "validateSuccessful".
-			**********/
-			virtual int ValidateEquation(const SVString &equationString, double& result, bool bSetValue) const = 0;
+			/// Validate a string and set the value if bSetValue is true.
+			/// \param equationString [in] the equation string.
+			/// \param result [out] return the result of the equation, if the validation is successfully.
+			/// \param bSetValue [in] boolean if true, set value and reset object, else the old value will restored.
+			/// \param rErrorMessages [out] Return a list of ErrorMessages.
+			/// \returns int return the position of the failure. If the validation is successful, the value will be "validateSuccessful".
+			virtual int ValidateEquation(const SVString &equationString, double& result, bool bSetValue, SvStl::MessageContainerVector& rErrorMessages) const = 0;
 
 			/**********
 			/// Set the Default Inputs

@@ -1327,8 +1327,9 @@ BOOL SVTaskObjectClass::RegisterEmbeddedObjectAsClass(SVObjectClass* pEmbeddedOb
 			{
 				if (pObject->GetEmbeddedID() == rGuidEmbeddedID)
 				{
-					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
+					SvStl::MessageMgrStd Msg( SvStl::LogOnly );
 					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_DuplicateEmbeddedId, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10204 ); 
+					assert(false);
 					return FALSE;
 				}
 			}

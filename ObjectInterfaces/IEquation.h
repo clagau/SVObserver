@@ -22,7 +22,7 @@ namespace Seidenader
 			virtual ~IEquation() {}
 			virtual const SVString& GetEquationText() const = 0;
 			virtual void SetEquationText(const SVString& text) = 0;
-			virtual EquationTestResult Test(bool DisplayErrorMessage = true, SvStl::MessageContainerVector *pErrorMessages=nullptr ) = 0;
+			virtual EquationTestResult Test( SvStl::MessageContainerVector *pErrorMessages=nullptr ) = 0;
 			virtual double GetYACCResult() const = 0;
 		};
 	}

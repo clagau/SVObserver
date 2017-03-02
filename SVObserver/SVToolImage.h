@@ -28,7 +28,7 @@ public:
 	virtual bool DoesObjectHaveExtents() const override;
 	virtual HRESULT SetImageExtent( unsigned long p_ulIndex, SVImageExtentClass p_svImageExtent ) override;
 
-	virtual BOOL SetDefaultFormulas() override;
+	virtual bool SetDefaultFormulas(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 

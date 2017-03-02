@@ -509,6 +509,8 @@ MessageTextMap g_MessageTextMap = boost::assign::map_list_of
 	(SvOi::Tid_ArchiveTool_InitFlagFalse, _T("ArchiveTool-init Flag is false."))
 	(SvOi::Tid_RecalcLUTFailed, _T("Recalcuation of LUT failed."))
 	(SvOi::Tid_RunLutFailed, _T("Run Lut failed."))
+	(SvOi::Tid_StringTooLarge, _T("String too large."))
+	(SvOi::Tid_ErrorMcodeGetResult, _T("Function McodeGetResult return error: %s"))
 	;
 } /* namespace SVStatusLibrary */ } /* namespace Seidenader */
 

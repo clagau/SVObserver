@@ -148,7 +148,7 @@ bool SVPolarTransformationToolClass::DoesObjectHaveExtents() const
 // change the formulas.
 // Another possibilty to call this function is in the setup
 // dialog, if a kind of reset formula button exists.
-BOOL SVPolarTransformationToolClass::SetDefaultFormulas()
+bool SVPolarTransformationToolClass::SetDefaultFormulas(SvStl::MessageContainerVector *pErrorMessages)
 {
 	// Find image polar transform child...
 	SVObjectTypeInfoStruct objectInfo;
@@ -156,9 +156,9 @@ BOOL SVPolarTransformationToolClass::SetDefaultFormulas()
 	SVImagePolarTransformClass* pImagePolarTransform = dynamic_cast<SVImagePolarTransformClass*>(getFirstObject(objectInfo));
 	if( pImagePolarTransform )
 	{
-		return pImagePolarTransform->SetDefaultFormulas();
+		return pImagePolarTransform->SetDefaultFormulas(pErrorMessages);
 	}
-	return FALSE;
+	return false;
 }
 
 HRESULT SVPolarTransformationToolClass::SetImageExtent( unsigned long p_ulIndex, SVImageExtentClass p_svImageExtent )

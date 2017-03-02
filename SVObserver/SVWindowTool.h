@@ -25,7 +25,7 @@ public:
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
-	virtual BOOL SetDefaultFormulas() override;
+	virtual bool SetDefaultFormulas(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	virtual HRESULT SetImageExtent( unsigned long p_ulIndex, SVImageExtentClass p_svImageExtent ) override;
 	virtual HRESULT SetImageExtentToParent( unsigned long p_ulIndex ) override;

@@ -159,6 +159,10 @@ namespace Seidenader { namespace SVStatusLibrary
 		//************************************
 		const SVGUID& getObjectId( ) const { return m_ObjectId; };
 
+		/// This is the method to set the object id of the message owner
+		/// \param rGuid [in] reference to the object id
+		void setObjectId( const SVGUID& rGuid ) { m_ObjectId = rGuid; };
+
 		//************************************
 		//! Sets the functor objects for display and notify
 		//! \returns const reference to the object id

@@ -58,7 +58,7 @@ namespace Seidenader
 			/// \param bSetValue[in] boolean for determining whether to set (true) the new value or restore (false) to the previous equation string. if the string is invalid the previous equation string is restored in every case 
 			/// \return return the position of the failure. If the validation is successful, the value will be "validateSuccessful". If the reset of the object failed the value will be "resetFailed", but the string will be set (if bSetValue == true).
 			//**********
-			virtual int ValidateEquation(const SVString &equationString, double& result, bool bSetValue) const override;
+			virtual int ValidateEquation(const SVString &equationString, double& result, bool bSetValue, SvStl::MessageContainerVector& rErrorMessages) const override;
 			virtual HRESULT SetDefaultInputs() override;
 		#pragma endregion Virtual Methods (IFormulaController)
 		#pragma endregion Public Methods

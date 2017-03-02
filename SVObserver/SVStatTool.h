@@ -60,10 +60,14 @@ public:
 	void SetVariableSelected( const SVString& rName );
 	void SetVariableSelected( SVObjectReference refObject );
 
-	DWORD EnableFeature( SVStatisticsFeatureEnum aIndex );
+	/// Enabled a feature. ATTENTION: In error case this method throw an exception (const SvStl::MessageContainer&)
+	/// \param aIndex [in] The index of the feature.
+	void EnableFeature( SVStatisticsFeatureEnum aIndex );
 	DWORD DisableFeature( SVStatisticsFeatureEnum aIndex );
 
-	DWORD AllocateResult( SVStatisticsFeatureEnum aFeatureIndex );
+	/// Allocate a result. ATTENTION: In error case this method throw an exception (const SvStl::MessageContainer&)
+	/// \param aFeatureIndex [in] The Index of the feature with should allocated.
+	void AllocateResult( SVStatisticsFeatureEnum aFeatureIndex );
 	DWORD FreeResult( SVStatisticsFeatureEnum aFeatureIndex );
 	SVResultClass* GetResultObject( SVStatisticsFeatureEnum aFeatureIndex );
 

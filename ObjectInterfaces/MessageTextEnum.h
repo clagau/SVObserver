@@ -473,6 +473,8 @@ namespace Seidenader { namespace ObjectInterfaces
 		Tid_ArchiveTool_InitFlagFalse,
 		Tid_RecalcLUTFailed,
 		Tid_RunLutFailed,
+		Tid_StringTooLarge,
+		Tid_ErrorMcodeGetResult,
 	};
 } /* namespace ObjectInterfaces */ } /* namespace Seidenader */
 

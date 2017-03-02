@@ -179,7 +179,7 @@ public:
 #pragma region IEquation
 	virtual const SVString& GetEquationText() const override;
 	virtual void SetEquationText(const SVString& text) override;
-	virtual SvOi::EquationTestResult Test( bool DisplayErrorMessage = true, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+	virtual SvOi::EquationTestResult Test( SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 	virtual double GetYACCResult() const override;
 #pragma endregion IEquation
 

@@ -26,7 +26,7 @@ public:
 
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
-	BOOL SetDefaultFormula();
+	bool SetDefaultFormula(SvStl::MessageContainerVector *pErrorMessages=nullptr);
 
 protected:
 	void init();

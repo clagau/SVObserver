@@ -194,10 +194,10 @@ SVImageClass* SVImagePolarTransformClass::GetOutputImage()
 // change the formulas.
 // Another possibility to call this function is in the setup
 // dialog, if a kind of reset formula button exists.
-BOOL SVImagePolarTransformClass::SetDefaultFormulas()
+bool SVImagePolarTransformClass::SetDefaultFormulas(SvStl::MessageContainerVector *pErrorMessages)
 {
-	BOOL bRetVal = true;
-	BOOL bOk;
+	bool bRetVal = true;
+	bool bOk;
 	SVObjectTypeInfoStruct objectInfo;
 	SVObjectTypeInfoStruct equationObjectInfo;
 	equationObjectInfo.ObjectType = SVEquationObjectType;
@@ -212,7 +212,7 @@ BOOL SVImagePolarTransformClass::SetDefaultFormulas()
 		// Find equation object...
 		SVEquationClass* pEquation = dynamic_cast<SVEquationClass*>(pEvaluateCenterX->getFirstObject(equationObjectInfo));
 		SVString Name = centerX.GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType );
-		bOk = SetDefaultEquation( pEquation, Name );
+		bOk = SetDefaultEquation( pEquation, Name, pErrorMessages );
 	}
 	if( ! bOk )
 	{
@@ -228,7 +228,7 @@ BOOL SVImagePolarTransformClass::SetDefaultFormulas()
 		// Find equation object...
 		SVEquationClass* pEquation = dynamic_cast<SVEquationClass*>(pEvaluateCenterY->getFirstObject(equationObjectInfo));
 		SVString Name = centerY.GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType );
-		bOk = SetDefaultEquation( pEquation, Name );
+		bOk = SetDefaultEquation( pEquation, Name, pErrorMessages );
 	}
 	if( ! bOk )
 	{
@@ -244,7 +244,7 @@ BOOL SVImagePolarTransformClass::SetDefaultFormulas()
 		// Find equation object...
 		SVEquationClass* pEquation = dynamic_cast<SVEquationClass*>(pEvaluateStartRadius->getFirstObject(equationObjectInfo));
 		SVString Name = startRadius.GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType );
-		bOk = SetDefaultEquation( pEquation, Name );
+		bOk = SetDefaultEquation( pEquation, Name, pErrorMessages );
 	}
 	if( ! bOk )
 	{
@@ -260,7 +260,7 @@ BOOL SVImagePolarTransformClass::SetDefaultFormulas()
 		// Find equation object...
 		SVEquationClass* pEquation = dynamic_cast<SVEquationClass*>(pEvaluateEndRadius->getFirstObject(equationObjectInfo));
 		SVString Name = endRadius.GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType );
-		bOk = SetDefaultEquation( pEquation, Name );
+		bOk = SetDefaultEquation( pEquation, Name, pErrorMessages );
 	}
 	if( ! bOk )
 	{
@@ -276,7 +276,7 @@ BOOL SVImagePolarTransformClass::SetDefaultFormulas()
 		// Find equation object...
 		SVEquationClass* pEquation = dynamic_cast<SVEquationClass*>(pEvaluateStartAngle->getFirstObject(equationObjectInfo));
 		SVString Name = startAngle.GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType );
-		bOk = SetDefaultEquation( pEquation, Name );
+		bOk = SetDefaultEquation( pEquation, Name, pErrorMessages );
 	}
 	if( ! bOk )
 	{
@@ -292,7 +292,7 @@ BOOL SVImagePolarTransformClass::SetDefaultFormulas()
 		// Find equation object...
 		SVEquationClass* pEquation = dynamic_cast<SVEquationClass*>(pEvaluateEndAngle->getFirstObject(equationObjectInfo));
 		SVString Name = endAngle.GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType );
-		bOk = SetDefaultEquation( pEquation, Name );
+		bOk = SetDefaultEquation( pEquation, Name, pErrorMessages );
 	}
 	if( ! bOk )
 	{
@@ -302,7 +302,7 @@ BOOL SVImagePolarTransformClass::SetDefaultFormulas()
 	return bRetVal;
 }
 
-bool SVImagePolarTransformClass::SetDefaultEquation( SVEquationClass* pEquation, const SVString& rName )
+bool SVImagePolarTransformClass::SetDefaultEquation( SVEquationClass* pEquation, const SVString& rName, SvStl::MessageContainerVector *pErrorMessages )
 {
 	bool Result( false );
 
@@ -314,7 +314,7 @@ bool SVImagePolarTransformClass::SetDefaultEquation( SVEquationClass* pEquation,
 			// Set equation...
 			pEquation->SetEquationText( SvUl_SF::Format( _T( "\"%s\"" ), rName.c_str() ) );
 			// Update symbol table and test...
-			if( ! ( Result = pEquation->Test().bPassed ) )
+			if( ! ( Result = pEquation->Test(pErrorMessages).bPassed ) )
 			{
 				// something is wrong...
 				pEquation->SetEquationText( SVString() );

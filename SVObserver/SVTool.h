@@ -67,7 +67,7 @@ public:
 	virtual EAutoSize GetAutoSizeEnabled();
 	
 	BOOL IsOkToEdit();
-	virtual BOOL SetDefaultFormulas();
+	virtual bool SetDefaultFormulas(SvStl::MessageContainerVector *pErrorMessages=nullptr);
 	
 	SVImageTypeEnum GetImageType();
 

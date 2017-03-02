@@ -133,7 +133,7 @@ namespace Seidenader { namespace SVOGui
 		return hr;
 	}
 
-	int FormulaController::ValidateEquation( const SVString& equationString, double& result, bool bSetValue ) const
+	int FormulaController::ValidateEquation( const SVString& equationString, double& result, bool bSetValue, SvStl::MessageContainerVector& rErrorMessages ) const
 	{
 		int retValue = validateSuccessful;
 		typedef GuiCmd::ValidateAndSetEquation Command;
@@ -146,6 +146,7 @@ namespace Seidenader { namespace SVOGui
 		{
 			retValue = commandPtr->GetValidateStatus();
 			result = commandPtr->GetResultValue();
+			rErrorMessages = commandPtr->GetErrorMessages();
 
 			if (validateSuccessful == retValue && bSetValue)
 			{

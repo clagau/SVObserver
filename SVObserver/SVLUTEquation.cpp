@@ -113,7 +113,7 @@ bool SVLUTEquationClass::ResetObject(SvStl::MessageContainerVector *pErrorMessag
 //				: ( i.e. if your correlated tool is added to the tool set,
 //				:   after the user clicked on 'Add XXXTool' ).
 ////////////////////////////////////////////////////////////////////////////////
-BOOL SVLUTEquationClass::SetDefaultFormula()
+bool SVLUTEquationClass::SetDefaultFormula(SvStl::MessageContainerVector *pErrorMessages)
 {
 	// Get current complete name of LUT Index...
 	SVString Name = m_lutIndex.GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType );
@@ -127,7 +127,7 @@ BOOL SVLUTEquationClass::SetDefaultFormula()
 		SetEquationText( strEquation );
 
 		// Update symbol table and test...
-		if( Test().bPassed )
+		if( Test(pErrorMessages).bPassed )
 		{
 			return true;
 		}

@@ -18,6 +18,7 @@
 #include "SVMatroxApplicationInterface.h"
 #include "SVMatroxBarCode.h"
 #include "SVMatroxBuffer.h"
+#include "SVStatusLibrary\MessageContainer.h"
 
 #pragma endregion Includes
 
@@ -54,9 +55,9 @@ public:
 	static SVStatusCode Get( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, SVString& p_dValue ) ;
 
 	// The following functions call McodeGetResult.
-	static SVStatusCode GetResult( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, double& p_rdValue);
-	static SVStatusCode GetResult( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, long& p_rlValue);
-	static SVStatusCode GetResult( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, SVString& p_rsValue);
+	static bool GetResult( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, double& p_rdValue, SvStl::MessageContainerVector *pErrorMessages=nullptr);
+	static bool GetResult( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, long& p_rlValue, SvStl::MessageContainerVector *pErrorMessages=nullptr);
+	static bool GetResult( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, SVString& p_rsValue, SvStl::MessageContainerVector *pErrorMessages=nullptr);
 
 	// Does the work of McodeAllocate 
 	static SVStatusCode Create( SVMatroxBarCode& p_rCodeID, SVBarCodeTypesEnum p_eType );
@@ -66,7 +67,7 @@ public:
 	static SVStatusCode Destroy( SVMatroxBarCode& p_rCodeID );
 
 	// McodeRead
-	static SVStatusCode Execute( const SVMatroxBarCode& p_rCodeID, const SVMatroxBuffer& p_rSourceId );
+	static bool Execute( const SVMatroxBarCode& p_rCodeID, const SVMatroxBuffer& p_rSourceId, SvStl::MessageContainerVector *pErrorMessages=nullptr );
 private:
 	static MatroxType Convert2MatroxType(SVBarCodeControlTypeEnum p_eType) ;
 	static MatroxType Convert2MatroxType(SVBarCodeTypesEnum p_eType) ;
