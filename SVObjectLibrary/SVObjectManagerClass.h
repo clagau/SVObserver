@@ -141,6 +141,9 @@ public:
 
 	HRESULT DisconnectObjects( const SVGUID& rSource, const SVGUID& rDestination );
 
+	///Resets all the indicators, which are used to determine if the display should be updated
+	void ClearAllIndicator();
+
 	long GetShortPPQIndicator() const;
 	void ClearShortPPQIndicator();
 	void IncrementShortPPQIndicator();

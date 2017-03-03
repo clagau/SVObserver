@@ -1204,6 +1204,17 @@ long SVObjectManagerClass::GetShortPPQIndicator() const
 	return m_ShortPPQIndicator;
 }
 
+
+void SVObjectManagerClass::ClearAllIndicator()
+{
+	ClearShortPPQIndicator();
+	ClearProductIndicator();
+	ClearPendingImageIndicator();
+	ClearInspectionIndicator();
+
+}
+
+
 void SVObjectManagerClass::ClearShortPPQIndicator()
 {
 	::InterlockedExchange( &m_ShortPPQIndicator, 0 );

@@ -5457,6 +5457,8 @@ void SVObserverApp::Start()
 
 	l_StartLoading = SVClock::GetTimeStamp();
 
+	SVObjectManagerClass::Instance().ClearAllIndicator();
+
 	SVConfigurationObject* pConfig( nullptr );
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 	ASSERT( nullptr != pConfig );
