@@ -83,7 +83,7 @@ bool ResultViewReferences::LoadResultViewItemDef( SVTreeType& rTree, SVTreeType:
 	if ( bOK )
 	{
 		SVObjectReference objRef;
-		SVString dottedName = SvUl_SF::createSVString(Value.GetVARIANT());
+		SVString dottedName = SvUl_SF::createSVString( Value );
 		bOK = (S_OK == SVObjectManagerClass::Instance().GetObjectByDottedName( dottedName, objRef ));
 		if ( bOK && objRef.Object() )
 		{

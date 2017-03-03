@@ -1669,7 +1669,7 @@ bool  SVConfigurationObject::LoadCameras( SVTreeType&  rTree, long& lNumCameras,
 
 			if( SVNavigateTree::GetItem( rTree, CTAG_UNIQUE_REFERENCE_ID, hSubChild, Value ) )
 			{
-				SVGUID l_Guid( Value.GetVARIANT() );
+				SVGUID l_Guid( Value );
 
 				SVObjectManagerClass::Instance().CloseUniqueObjectID( pCamera );
 
@@ -1906,7 +1906,7 @@ bool SVConfigurationObject::LoadInspection( SVTreeType& rTree )
 			bOk = SVNavigateTree::GetItem( rTree, CTAG_UNIQUE_REFERENCE_ID, hTempIPObjectItem, Value );
 			if ( bOk )
 			{
-				SVGUID ObjectID( Value.GetVARIANT() );
+				SVGUID ObjectID( Value );
 
 				SVObjectManagerClass::Instance().CloseUniqueObjectID( pInspection );
 
@@ -2012,7 +2012,7 @@ bool SVConfigurationObject::LoadPPQ( SVTreeType& rTree )
 
 		if( bOk )
 		{
-			SVGUID ObjectID( Value.GetVARIANT() );
+			SVGUID ObjectID( Value );
 
 			SVObjectManagerClass::Instance().CloseUniqueObjectID( pPPQ );
 
@@ -2091,7 +2091,7 @@ bool SVConfigurationObject::LoadPPQ( SVTreeType& rTree )
 
 		if( bTmp )
 		{
-			SVGUID ObjectID( Value.GetVARIANT() );
+			SVGUID ObjectID( Value );
 
 			SVObjectManagerClass::Instance().CloseUniqueObjectID( &pPPQ->m_voOutputState );
 
@@ -2103,7 +2103,7 @@ bool SVConfigurationObject::LoadPPQ( SVTreeType& rTree )
 		bTmp = SVNavigateTree::GetItem( rTree, CTAG_PPQ_TRIGGER_COUNT_ID, hSubChild, Value );
 		if ( bTmp )
 		{
-			SVGUID l_TriggercountId( Value.GetVARIANT() );
+			SVGUID l_TriggercountId( Value );
 
 			SVObjectManagerClass::Instance().CloseUniqueObjectID( &pPPQ->m_voTriggerCount );
 

@@ -290,7 +290,7 @@ int GlobalConstantView::insertItem(const BasicValueObjectPtr& rpObject, int Pos 
 	case VT_BSTR:
 		{
 			Type = SvOg::GlobalConstantTypes[SvOi::GlobalConstantData::TextType];
-			ValueText = SvUl_SF::createSVString(Value.GetVARIANT());
+			ValueText = SvUl_SF::createSVString( Value );
 		}
 		break;
 	default:

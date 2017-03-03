@@ -140,7 +140,7 @@ HRESULT SVInspectionTreeParser< SVTreeType >::Process(typename SVTreeType::SVBra
 		GUID objectID( GUID_NULL );
 		if( m_ReplaceUniqueID )
 		{
-			objectID = SVGUID(uniqueID.GetVARIANT());
+			objectID = SVGUID(uniqueID);
 		}
 		//Create this object only if it is not the same as the owner GUID
 		if( ownerID == objectID )
@@ -150,7 +150,7 @@ HRESULT SVInspectionTreeParser< SVTreeType >::Process(typename SVTreeType::SVBra
 		}
 		else
 		{
-			hr = SVObjectBuilder::CreateObject(SVGUID(classID), objectID, name, SvUl_SF::createSVString(objectName.GetVARIANT()), ownerID);
+			hr = SVObjectBuilder::CreateObject(SVGUID(classID), objectID, name, SvUl_SF::createSVString(objectName), ownerID);
 		}
 		if (S_OK == hr)
 		{
@@ -268,8 +268,8 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessFriend(typename SVTreeType:
 	UpdateProgress(m_count, m_totalSize);
 
 	// Build the Object
-	GUID objectID = SVGUID(uniqueID.GetVARIANT());
-	hr = SVObjectBuilder::CreateFriendObject(SVGUID(classID), objectID, SvUl_SF::createSVString(objectName.GetVARIANT()), ownerID);
+	GUID objectID = SVGUID(uniqueID);
+	hr = SVObjectBuilder::CreateFriendObject(SVGUID(classID), objectID, SvUl_SF::createSVString(objectName), ownerID);
 	if (S_OK == hr)
 	{
 		// this will be different for embeddeds, it will use the owning object ID and the embedded object ID
@@ -319,8 +319,8 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessEmbedded(typename SVTreeTyp
 
 	UpdateProgress(m_count, m_totalSize);
 
-	GUID objectID = SVGUID(uniqueID.GetVARIANT());
-	hr = SVObjectBuilder::OverwriteEmbeddedObject(SVGUID(embeddedID), objectID, SvUl_SF::createSVString(objectName.GetVARIANT()), ownerID);
+	GUID objectID = SVGUID(uniqueID);
+	hr = SVObjectBuilder::OverwriteEmbeddedObject(SVGUID(embeddedID), objectID, SvUl_SF::createSVString(objectName), ownerID);
 	if (S_OK == hr)
 	{
 		SVObjectScriptDataObjectTypeEnum dataType;

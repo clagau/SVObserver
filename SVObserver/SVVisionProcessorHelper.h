@@ -67,41 +67,41 @@ public:
 
 	virtual ~SVVisionProcessorHelper();
 
-	HRESULT GetVersion( unsigned long& p_rVersion ) const;
-	HRESULT GetVersion( SVString& p_rVersion ) const;
+	HRESULT GetVersion( unsigned long& rVersion ) const;
+	HRESULT GetVersion( SVString& rVersion ) const;
 
-	HRESULT GetState( unsigned long& p_rState ) const;
+	HRESULT GetState( unsigned long& rState ) const;
 
-	HRESULT GetOfflineCount( unsigned long& p_rCount ) const;
+	HRESULT GetOfflineCount( unsigned long& rCount ) const;
 
-	HRESULT LoadConfiguration( const SVString& p_rPackFileName );
+	HRESULT LoadConfiguration( const SVString& rPackFileName );
 
-	HRESULT SaveConfiguration( const SVString& p_rPackFileName ) const;
+	HRESULT SaveConfiguration( const SVString& rPackFileName ) const;
 
-	HRESULT GetConfigurationMode( unsigned long& p_rMode ) const;
-	HRESULT SetConfigurationMode( unsigned long p_Mode );
+	HRESULT GetConfigurationMode( unsigned long& rMode ) const;
+	HRESULT SetConfigurationMode( unsigned long Mode );
 
-	HRESULT GetConfigurationPrintReport( SVString& p_rReport ) const;
+	HRESULT GetConfigurationPrintReport( SVString& rReport ) const;
 
-	HRESULT GetDataDefinitionList( const SVString& p_rInspectionName, const SVDataDefinitionListType& p_rListType, SVDataDefinitionStructArray& p_rDataDefinitionArray) const;
+	HRESULT GetDataDefinitionList( const SVString& rInspectionName, const SVDataDefinitionListType& rListType, SVDataDefinitionStructArray& rDataDefinitionArray) const;
 
 	//************************************
 	//! Get Items value for the Item in NameSet to the SVNameStorageResultMap 
-	//! \param p_rNames [in]
-	//! \param p_rItems [out]
+	//! \param rNames [in]
+	//! \param rItems [out]
 	//! \param IsOneBased [in] if One based is true the index for arrays are taken as one based otherwise as zero based  
 	//! \returns HRESULT
 	//************************************
-	HRESULT GetItems( const SVNameSet& p_rNames, SVNameStorageResultMap& p_rItems , bool IsOneBased) const;
+	HRESULT GetItems( const SVNameSet& rNames, SVNameStorageResultMap& rItems , bool IsOneBased) const;
 	
 	//************************************
 	//! Set the item values in SVnameStorage map Result are in SVNameStatusMap 
-	//! \param p_rItems [in]
-	//! \param rStatusOfItems [out]
+	//! \param rItems [in]
+	//! \param rStatusItems [out]
 	//! \param IsOneBased [in] if One based is true the index for arrays are taken as one based otherwise as zero based  
 	//! \returns HRESULT
 	//************************************
-	HRESULT SetItems( const SVNameStorageMap& p_rItems, SVNameStatusMap& rStatusOfItems,  bool IsOneBased );
+	HRESULT SetItems( const SVNameStorageMap& rItems, SVNameStatusMap& rStatusItems,  bool IsOneBased );
 
 	HRESULT SetLastModifiedTime();
 	HRESULT FireModeChanged(svModeEnum mode);
@@ -148,16 +148,16 @@ protected:
 
 	static void CALLBACK APCThreadProcess( DWORD_PTR dwParam );
 
-	HRESULT GetStandardItems( const SVNameSet& p_rNames, SVNameStorageResultMap& p_rItems ) const;
-	HRESULT GetInspectionItems( const SVNameSet& p_rNames, SVNameStorageResultMap& p_rItems ) const;
-	HRESULT GetRemoteInputItems( const SVNameSet& p_rNames, SVNameStorageResultMap& p_rItems ) const;
+	HRESULT GetStandardItems( const SVNameSet& rNames, SVNameStorageResultMap& rItems ) const;
+	HRESULT GetInspectionItems( const SVNameSet& rNames, SVNameStorageResultMap& rItems ) const;
+	HRESULT GetRemoteInputItems( const SVNameSet& rNames, SVNameStorageResultMap& rItems ) const;
 
-	HRESULT SetStandardItems( const SVNameStorageMap& p_rItems, SVNameStatusMap& p_rStatus );
-	HRESULT SetInspectionItems( const SVNameStorageMap& p_rItems, SVNameStatusMap& p_rStatus );
-	HRESULT SetRemoteInputItems( const SVNameStorageMap& p_rItems, SVNameStatusMap& p_rStatus );
-	HRESULT SetCameraItems( const SVNameStorageMap& p_rItems, SVNameStatusMap& p_rStatus );
+	HRESULT SetStandardItems( const SVNameStorageMap& rItems, SVNameStatusMap& rStatus );
+	HRESULT SetInspectionItems( const SVNameStorageMap& rItems, SVNameStatusMap& rStatus );
+	HRESULT SetRemoteInputItems( const SVNameStorageMap& rItems, SVNameStatusMap& rStatus );
+	HRESULT SetCameraItems( const SVNameStorageMap& rItems, SVNameStatusMap& rStatus );
 
-	HRESULT GetObjectDefinition( const SVObjectClass& p_rObj, const long p_Filter, SVDataDefinitionStruct& p_rDataDef ) const;
+	HRESULT GetObjectDefinition( const SVObjectClass& rObj, const long p_Filter, SVDataDefinitionStruct& rDataDef ) const;
 
 	void ThreadProcess( bool& rWaitForEvents );
 
@@ -178,8 +178,8 @@ protected:
 private:
 #pragma region Private Methods
 	SVVisionProcessorHelper();
-	SVVisionProcessorHelper( const SVVisionProcessorHelper& p_rObject );
-	const SVVisionProcessorHelper& operator=( const SVVisionProcessorHelper& p_rObject );
+	SVVisionProcessorHelper( const SVVisionProcessorHelper& rObject );
+	const SVVisionProcessorHelper& operator=( const SVVisionProcessorHelper& rObject );
 
 	//************************************
 	// Method:    SetValuesOrImagesMonitoredObjectLists

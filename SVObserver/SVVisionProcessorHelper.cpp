@@ -78,97 +78,97 @@ SVVisionProcessorHelper::~SVVisionProcessorHelper()
 }
 #pragma endregion Constructor
 
-HRESULT SVVisionProcessorHelper::GetVersion( unsigned long& p_rVersion ) const
+HRESULT SVVisionProcessorHelper::GetVersion( unsigned long& rVersion ) const
 {
 	HRESULT l_Status = S_OK;
 
-	p_rVersion = SvSyl::SVVersionInfo::GetLongVersion();
+	rVersion = SvSyl::SVVersionInfo::GetLongVersion();
 
 	return l_Status;
 }
 
-HRESULT SVVisionProcessorHelper::GetVersion( SVString& p_rVersion ) const
+HRESULT SVVisionProcessorHelper::GetVersion( SVString& rVersion ) const
 {
 	HRESULT l_Status = S_OK;
 
-	p_rVersion = SvSyl::SVVersionInfo::GetShortTitleVersion();
+	rVersion = SvSyl::SVVersionInfo::GetShortTitleVersion();
 
 	return l_Status;
 }
 
-HRESULT SVVisionProcessorHelper::GetState( unsigned long& p_rState ) const
+HRESULT SVVisionProcessorHelper::GetState( unsigned long& rState ) const
 {
 	HRESULT l_Status = S_OK;
 
-	p_rState = 0;
+	rState = 0;
 
 	if ( SVSVIMStateClass::CheckState( SV_STATE_READY ) )
 	{
-		p_rState |= SvOi::SVIM_CONFIG_LOADED;
+		rState |= SvOi::SVIM_CONFIG_LOADED;
 	}
 
 	if ( SVSVIMStateClass::CheckState( SV_STATE_SAVING ) )
 	{
-		p_rState |= SvOi::SVIM_SAVING_CONFIG;
+		rState |= SvOi::SVIM_SAVING_CONFIG;
 	}
 
 	if ( SVSVIMStateClass::CheckState( SV_STATE_LOADING ) )
 	{
-		p_rState |= SvOi::SVIM_CONFIG_LOADING;
+		rState |= SvOi::SVIM_CONFIG_LOADING;
 	}
 
 	if ( SVSVIMStateClass::CheckState( SV_STATE_RUNNING ) )
 	{
-		p_rState |= SvOi::SVIM_ONLINE;
+		rState |= SvOi::SVIM_ONLINE;
 
 		if (! SVSVIMStateClass::CheckState( SV_STATE_TEST ) ) // testing (but not regression testing) sets the running flag
 		{
-			p_rState |= SvOi::SVIM_RUNNING;
+			rState |= SvOi::SVIM_RUNNING;
 		}
 	}
 
 	if ( SVSVIMStateClass::CheckState( SV_STATE_REGRESSION ) )
 	{
-		p_rState |= SvOi::SVIM_REGRESSION_TEST;
+		rState |= SvOi::SVIM_REGRESSION_TEST;
 	}
 	else if ( SVSVIMStateClass::CheckState( SV_STATE_TEST ) )// can be testing without regression testing, but can't be regression testing without testing
 	{
-		p_rState |= SvOi::SVIM_RUNNING_TEST;
+		rState |= SvOi::SVIM_RUNNING_TEST;
 	}
 
 	if ( SVSVIMStateClass::CheckState( SV_STATE_EDIT ) )
 	{
-		p_rState |= SvOi::SVIM_SETUPMODE;
+		rState |= SvOi::SVIM_SETUPMODE;
 	}
 
 	if ( SVSVIMStateClass::CheckState( SV_STATE_CLOSING ) )
 	{
-		p_rState |= SvOi::SVIM_STOPPING;
+		rState |= SvOi::SVIM_STOPPING;
 	}
 
 	if ( SVSVIMStateClass::CheckState( SV_STATE_START_PENDING ) )
 	{
-		p_rState |= SvOi::SVIM_ONLINE_PENDING;
+		rState |= SvOi::SVIM_ONLINE_PENDING;
 	}
 
 	if ( SVSVIMStateClass::CheckState( SV_STATE_RAID_FAILURE ) )
 	{
-		p_rState |= SvOi::SVIM_RAID_FAILURE;
+		rState |= SvOi::SVIM_RAID_FAILURE;
 	}
 
 	return l_Status;
 }
 
-HRESULT SVVisionProcessorHelper::GetOfflineCount( unsigned long& p_rCount ) const
+HRESULT SVVisionProcessorHelper::GetOfflineCount( unsigned long& rCount ) const
 {
 	HRESULT l_Status = S_OK;
 
-	p_rCount = TheSVObserverApp.getOfflineCount();
+	rCount = TheSVObserverApp.getOfflineCount();
 
 	return l_Status;
 }
 
-HRESULT SVVisionProcessorHelper::LoadConfiguration( const SVString& p_rPackFileName )
+HRESULT SVVisionProcessorHelper::LoadConfiguration( const SVString& rPackFileName )
 {
 	// Check if we are in an allowed state first
 	// Not allowed to perform if in Regression or Test
@@ -176,12 +176,12 @@ HRESULT SVVisionProcessorHelper::LoadConfiguration( const SVString& p_rPackFileN
 	{
 		return SVMSG_63_SVIM_IN_WRONG_MODE;
 	}
-	HRESULT l_Status = TheSVObserverApp.LoadPackedConfiguration( p_rPackFileName.c_str() );
+	HRESULT l_Status = TheSVObserverApp.LoadPackedConfiguration( rPackFileName.c_str() );
 
 	return l_Status;
 }
 
-HRESULT SVVisionProcessorHelper::SaveConfiguration( const SVString& p_rPackFileName ) const
+HRESULT SVVisionProcessorHelper::SaveConfiguration( const SVString& rPackFileName ) const
 {
 	SVConfigurationObject* pConfig = nullptr;
 	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
@@ -190,15 +190,15 @@ HRESULT SVVisionProcessorHelper::SaveConfiguration( const SVString& p_rPackFileN
 	{
 		return SVMSG_CONFIGURATION_NOT_LOADED;
 	}
-	HRESULT l_Status = TheSVObserverApp.SavePackedConfiguration(p_rPackFileName.c_str());
+	HRESULT l_Status = TheSVObserverApp.SavePackedConfiguration(rPackFileName.c_str());
 	return l_Status;
 }
 
-HRESULT SVVisionProcessorHelper::GetConfigurationMode( unsigned long& p_rMode ) const
+HRESULT SVVisionProcessorHelper::GetConfigurationMode( unsigned long& rMode ) const
 {
 	HRESULT l_Status = S_OK;
 
-	p_rMode = SVSVIMStateClass::GetMode();
+	rMode = SVSVIMStateClass::GetMode();
 
 	return l_Status;
 }
@@ -235,14 +235,14 @@ HRESULT SVVisionProcessorHelper::SetConfigurationMode( unsigned long p_Mode )
 	return l_Status;
 }
 
-HRESULT SVVisionProcessorHelper::GetConfigurationPrintReport( SVString& p_rReport ) const
+HRESULT SVVisionProcessorHelper::GetConfigurationPrintReport( SVString& rReport ) const
 {
 	HRESULT l_Status = S_OK;
 
 	SVConfigXMLPrint printSEC;
 	try
 	{
-		p_rReport = printSEC.Print();
+		rReport = printSEC.Print();
 	}
 	catch(std::exception & ex)
 	{
@@ -256,35 +256,35 @@ HRESULT SVVisionProcessorHelper::GetConfigurationPrintReport( SVString& p_rRepor
 	return l_Status;
 }
 
-HRESULT SVVisionProcessorHelper::GetDataDefinitionList( const SVString& p_rInspectionName, const SVDataDefinitionListType& p_rListType, SVDataDefinitionStructArray& p_rDataDefinitionArray) const
+HRESULT SVVisionProcessorHelper::GetDataDefinitionList( const SVString& rInspectionName, const SVDataDefinitionListType& rListType, SVDataDefinitionStructArray& rDataDefinitionArray) const
 {
 	HRESULT l_Status = S_OK;
 	long l_ValueFilter = -1;
 	long l_ImageFilter = -1;
 
-	if(0 != ( p_rListType & SelectedValues ))
+	if(0 != ( rListType & SelectedValues ))
 	{
 		l_ValueFilter = SV_DD_VALUE;
 	}
 
-	if(0 != ( p_rListType & AllValues))
+	if(0 != ( rListType & AllValues))
 	{
 		l_ValueFilter = SV_DD_VALUE | SV_VIEWABLE;
 	}
 
-	if(0 != ( p_rListType & SelectedImages))
+	if(0 != ( rListType & SelectedImages))
 	{
 		l_ImageFilter = SV_DD_IMAGE;
 	}
 
-	if(0 != ( p_rListType & AllImages))
+	if(0 != ( rListType & AllImages))
 	{
 		l_ImageFilter = SV_DD_IMAGE | SV_VIEWABLE;
 	}
 
 	SVInspectionProcess* pInspection = nullptr;
 
-	if ( SVConfigurationObject::GetInspection( p_rInspectionName.c_str(), pInspection ) )
+	if ( SVConfigurationObject::GetInspection( rInspectionName.c_str(), pInspection ) )
 	{
 		// Get Data Definition list from inspection
 		SVToolSetClass* pToolSet = pInspection->GetToolSet();
@@ -324,7 +324,7 @@ HRESULT SVVisionProcessorHelper::GetDataDefinitionList( const SVString& p_rInspe
 					SVDataDefinitionStruct l_DataDefinition;
 					if(S_OK == GetObjectDefinition(*l_pObject, l_ValueFilter, l_DataDefinition))
 					{
-						p_rDataDefinitionArray.push_back(l_DataDefinition);
+						rDataDefinitionArray.push_back(l_DataDefinition);
 					}
 				}
 			}
@@ -346,7 +346,7 @@ HRESULT SVVisionProcessorHelper::GetDataDefinitionList( const SVString& p_rInspe
 					SVDataDefinitionStruct l_DataDefinition;
 					if(S_OK == GetObjectDefinition(*l_pImage, l_ImageFilter, l_DataDefinition))
 					{
-						p_rDataDefinitionArray.push_back(l_DataDefinition);
+						rDataDefinitionArray.push_back(l_DataDefinition);
 					}
 				}
 			}
@@ -356,16 +356,15 @@ HRESULT SVVisionProcessorHelper::GetDataDefinitionList( const SVString& p_rInspe
 	return l_Status;
 }
 
-HRESULT SVVisionProcessorHelper::GetItems( const SVNameSet& p_rNames, SVNameStorageResultMap& p_rItems , bool isOneBased ) const
+HRESULT SVVisionProcessorHelper::GetItems( const SVNameSet& rNames, SVNameStorageResultMap& rItems , bool isOneBased ) const
 {
 	typedef std::map< SVString, SVNameSet > SVNameSetMap;
 
 	HRESULT l_Status = S_OK;
 
 	SVNameSetMap l_NameSets;
-	std::map<SVString,SVString> Internal_DisplayNameMap;
 
-	for( SVNameSet::const_iterator l_Iter = p_rNames.begin(); l_Iter != p_rNames.end(); ++l_Iter )
+	for( SVNameSet::const_iterator l_Iter = rNames.begin(); l_Iter != rNames.end(); ++l_Iter )
 	{
 		SVObjectNameInfo l_Info;
 		
@@ -393,7 +392,7 @@ HRESULT SVVisionProcessorHelper::GetItems( const SVNameSet& p_rNames, SVNameStor
 			}
 			else
 			{
-				p_rItems[ l_Iter->c_str() ] = SVStorageResult( SVStorage(), SVMSG_ONE_OR_MORE_INSPECTIONS_DO_NOT_EXIST, 0 );
+				rItems[ l_Iter->c_str() ] = SVStorageResult( SVStorage(), SVMSG_ONE_OR_MORE_INSPECTIONS_DO_NOT_EXIST, 0 );
 
 				if( S_OK == l_Status )
 				{
@@ -403,7 +402,7 @@ HRESULT SVVisionProcessorHelper::GetItems( const SVNameSet& p_rNames, SVNameStor
 		}
 		else
 		{
-			p_rItems[ l_Iter->c_str() ] = SVStorageResult( SVStorage(), SVMSG_ONE_OR_MORE_INSPECTIONS_DO_NOT_EXIST, 0 );
+			rItems[ l_Iter->c_str() ] = SVStorageResult( SVStorage(), SVMSG_ONE_OR_MORE_INSPECTIONS_DO_NOT_EXIST, 0 );
 
 			if( S_OK == l_Status )
 			{
@@ -418,34 +417,7 @@ HRESULT SVVisionProcessorHelper::GetItems( const SVNameSet& p_rNames, SVNameStor
 
 		if( l_FunctorIter != m_GetItemsFunctors.end() )
 		{
-			
-			SVNameStorageResultMap l_Items;
-
-			HRESULT l_LoopStatus = l_FunctorIter->second( l_NameIterator->second, l_Items );
-			if(Internal_DisplayNameMap.size() == 0 )
-			{
-				p_rItems.insert( l_Items.begin(), l_Items.end() );
-			}			
-			else
-			{	
-				SVNameStorageResultMap::iterator NameStorageResultMapIt = l_Items.begin();
-				for(;NameStorageResultMapIt != l_Items.end();++NameStorageResultMapIt)
-				{
-					std::map<SVString,SVString>::iterator foundIterator  =  Internal_DisplayNameMap.find(NameStorageResultMapIt->first);
-					SVString DisplayName; 
-
-					if( foundIterator != Internal_DisplayNameMap.end())
-					{
-						DisplayName = foundIterator->second;
-						p_rItems.insert( std::pair< SVString, SVStorageResult >(DisplayName, NameStorageResultMapIt->second ));
-					}
-					else
-					{
-						p_rItems.insert( std::pair< SVString, SVStorageResult >(NameStorageResultMapIt->first, NameStorageResultMapIt->second ));
-					}	
-
-				}
-			}
+			HRESULT l_LoopStatus = l_FunctorIter->second( l_NameIterator->second, rItems );
 			if( S_OK == l_Status )
 			{
 				l_Status = l_LoopStatus;
@@ -453,7 +425,7 @@ HRESULT SVVisionProcessorHelper::GetItems( const SVNameSet& p_rNames, SVNameStor
 		}
 		else
 		{
-			p_rItems[ l_NameIterator->first.c_str() ] = SVStorageResult( SVStorage(), SVMSG_ONE_OR_MORE_INSPECTIONS_DO_NOT_EXIST, 0 );
+			rItems[ l_NameIterator->first.c_str() ] = SVStorageResult( SVStorage(), SVMSG_ONE_OR_MORE_INSPECTIONS_DO_NOT_EXIST, 0 );
 
 			if( S_OK == l_Status )
 			{
@@ -482,7 +454,7 @@ static bool IsRemoteInputRequest(const SVObjectNameInfo& rInfo, bool& bValidRemo
 	return bRemoteInput;
 }
 
-HRESULT SVVisionProcessorHelper::SetItems( const SVNameStorageMap& p_rItems, SVNameStatusMap& rStatusOfItems, bool isOneBased )
+HRESULT SVVisionProcessorHelper::SetItems( const SVNameStorageMap& rItems, SVNameStatusMap& rStatusItems, bool isOneBased )
 {
 	typedef std::map< SVString, SVNameStorageMap > SVStringNameStorageMap;
 
@@ -490,9 +462,7 @@ HRESULT SVVisionProcessorHelper::SetItems( const SVNameStorageMap& p_rItems, SVN
 
 	SVStringNameStorageMap l_NameStorageItems;
 
-	std::map<SVString,SVString> Internal_DisplayNameMap;
-
-	for( SVNameStorageMap::const_iterator l_Iter = p_rItems.begin(); l_Iter != p_rItems.end(); ++l_Iter )
+	for( SVNameStorageMap::const_iterator l_Iter = rItems.begin(); l_Iter != rItems.end(); ++l_Iter )
 	{
 		SVObjectNameInfo l_Info;
 
@@ -510,7 +480,7 @@ HRESULT SVVisionProcessorHelper::SetItems( const SVNameStorageMap& p_rItems, SVN
 				bool bValidRemoteInputRequest = false;
 				if (IsRemoteInputRequest(l_Info, bValidRemoteInputRequest) && !bValidRemoteInputRequest)
 				{
-					rStatusOfItems[ l_Iter->first.c_str() ] = SVMSG_OBJECT_WRONG_TYPE;//SVMSG_OBJECT_NOT_PROCESSED;
+					rStatusItems[ l_Iter->first.c_str() ] = SVMSG_OBJECT_WRONG_TYPE;//SVMSG_OBJECT_NOT_PROCESSED;
 				}
 				else
 				{
@@ -528,7 +498,7 @@ HRESULT SVVisionProcessorHelper::SetItems( const SVNameStorageMap& p_rItems, SVN
 			}
 			else
 			{
-				rStatusOfItems[ l_Iter->first.c_str() ] = SVMSG_ONE_OR_MORE_INSPECTIONS_DO_NOT_EXIST;
+				rStatusItems[ l_Iter->first.c_str() ] = SVMSG_ONE_OR_MORE_INSPECTIONS_DO_NOT_EXIST;
 
 				if( S_OK == l_Status )
 				{
@@ -538,7 +508,7 @@ HRESULT SVVisionProcessorHelper::SetItems( const SVNameStorageMap& p_rItems, SVN
 		}
 		else
 		{
-			rStatusOfItems[ l_Iter->first.c_str() ] = SVMSG_ONE_OR_MORE_INSPECTIONS_DO_NOT_EXIST;
+			rStatusItems[ l_Iter->first.c_str() ] = SVMSG_ONE_OR_MORE_INSPECTIONS_DO_NOT_EXIST;
 
 			if( S_OK == l_Status )
 			{
@@ -559,20 +529,7 @@ HRESULT SVVisionProcessorHelper::SetItems( const SVNameStorageMap& p_rItems, SVN
 			SVNameStatusMap::iterator StatusItemIt =  l_StatusItems.begin();
 			for(; StatusItemIt != l_StatusItems.end(); ++StatusItemIt)
 			{
-				std::map<SVString,SVString>::iterator foundIterator  =  Internal_DisplayNameMap.find(StatusItemIt->first);
-				SVString DisplayName; 
-
-				if( foundIterator != Internal_DisplayNameMap.end())
-				{
-					DisplayName = foundIterator->second;
-					rStatusOfItems.insert(std::pair< SVString, HRESULT >(DisplayName, StatusItemIt->second) );
-
-				}
-				else
-				{
-					rStatusOfItems.insert(std::pair< SVString, HRESULT >(StatusItemIt->first, StatusItemIt->second) );
-				}	
-			
+				rStatusItems.insert(std::pair< SVString, HRESULT >(StatusItemIt->first, StatusItemIt->second) );
 			}
 			if( S_OK == l_Status )
 			{
@@ -581,7 +538,7 @@ HRESULT SVVisionProcessorHelper::SetItems( const SVNameStorageMap& p_rItems, SVN
 		}
 		else
 		{
-			rStatusOfItems[ l_NameIterator->first.c_str() ] = SVMSG_ONE_OR_MORE_INSPECTIONS_DO_NOT_EXIST;
+			rStatusItems[ l_NameIterator->first.c_str() ] = SVMSG_ONE_OR_MORE_INSPECTIONS_DO_NOT_EXIST;
 
 			if( S_OK == l_Status )
 			{
@@ -593,13 +550,13 @@ HRESULT SVVisionProcessorHelper::SetItems( const SVNameStorageMap& p_rItems, SVN
 	return l_Status;
 }
 
-HRESULT SVVisionProcessorHelper::GetStandardItems( const SVNameSet& p_rNames, SVNameStorageResultMap& p_rItems ) const
+HRESULT SVVisionProcessorHelper::GetStandardItems( const SVNameSet& rNames, SVNameStorageResultMap& rItems ) const
 {
 	HRESULT Status = S_OK;
 
-	p_rItems.clear();
+	rItems.clear();
 
-	for( SVNameSet::const_iterator l_Iter = p_rNames.begin(); SUCCEEDED( Status ) && l_Iter != p_rNames.end(); ++l_Iter )
+	for( SVNameSet::const_iterator l_Iter = rNames.begin(); SUCCEEDED( Status ) && l_Iter != rNames.end(); ++l_Iter )
 	{
 		HRESULT LoopStatus = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
 		SVObjectReference ref;
@@ -648,7 +605,7 @@ HRESULT SVVisionProcessorHelper::GetStandardItems( const SVNameSet& p_rNames, SV
 				}
 			}
 		}
-		p_rItems[ l_Iter->c_str() ] = SVStorageResult(ValueStorage, LoopStatus, 0);
+		rItems[ l_Iter->c_str() ] = SVStorageResult(ValueStorage, LoopStatus, 0);
 
 		if( S_OK == Status  && S_OK != LoopStatus )
 		{
@@ -659,7 +616,7 @@ HRESULT SVVisionProcessorHelper::GetStandardItems( const SVNameSet& p_rNames, SV
 	return Status;
 }
 
-HRESULT SVVisionProcessorHelper::GetInspectionItems( const SVNameSet& p_rNames, SVNameStorageResultMap& p_rItems ) const
+HRESULT SVVisionProcessorHelper::GetInspectionItems( const SVNameSet& rNames, SVNameStorageResultMap& rItems ) const
 {
 	HRESULT l_Status = S_OK;
 
@@ -669,7 +626,7 @@ HRESULT SVVisionProcessorHelper::GetInspectionItems( const SVNameSet& p_rNames, 
 
 	if( nullptr != pConfig )
 	{
-		l_Status = pConfig->GetInspectionItems( p_rNames, p_rItems );
+		l_Status = pConfig->GetInspectionItems( rNames, rItems );
 	}
 	else if( S_OK == l_Status )
 	{
@@ -679,7 +636,7 @@ HRESULT SVVisionProcessorHelper::GetInspectionItems( const SVNameSet& p_rNames, 
 	return l_Status;
 }
 
-HRESULT SVVisionProcessorHelper::GetRemoteInputItems( const SVNameSet& p_rNames, SVNameStorageResultMap& p_rItems ) const
+HRESULT SVVisionProcessorHelper::GetRemoteInputItems( const SVNameSet& rNames, SVNameStorageResultMap& rItems ) const
 {
 	HRESULT l_Status = S_OK;
 
@@ -689,7 +646,7 @@ HRESULT SVVisionProcessorHelper::GetRemoteInputItems( const SVNameSet& p_rNames,
 
 	if( nullptr != pConfig )
 	{
-		l_Status = pConfig->GetRemoteInputItems( p_rNames, p_rItems );
+		l_Status = pConfig->GetRemoteInputItems( rNames, rItems );
 	}
 	else if( S_OK == l_Status )
 	{
@@ -758,7 +715,7 @@ HRESULT SVVisionProcessorHelper::SetStandardItems( const SVNameStorageMap& rItem
 	return Status;
 }
 
-HRESULT SVVisionProcessorHelper::SetInspectionItems( const SVNameStorageMap& p_rItems, SVNameStatusMap& p_rStatus )
+HRESULT SVVisionProcessorHelper::SetInspectionItems( const SVNameStorageMap& rItems, SVNameStatusMap& rStatus )
 {
 	HRESULT l_Status = S_OK;
 
@@ -768,7 +725,7 @@ HRESULT SVVisionProcessorHelper::SetInspectionItems( const SVNameStorageMap& p_r
 
 	if( nullptr != pConfig )
 	{
-		l_Status = pConfig->SetInspectionItems( p_rItems, p_rStatus );
+		l_Status = pConfig->SetInspectionItems( rItems, rStatus );
 	}
 	else if( S_OK == l_Status )
 	{
@@ -778,7 +735,7 @@ HRESULT SVVisionProcessorHelper::SetInspectionItems( const SVNameStorageMap& p_r
 	return l_Status;
 }
 
-HRESULT SVVisionProcessorHelper::SetRemoteInputItems( const SVNameStorageMap& p_rItems, SVNameStatusMap& p_rStatus )
+HRESULT SVVisionProcessorHelper::SetRemoteInputItems( const SVNameStorageMap& rItems, SVNameStatusMap& rStatus )
 {
 	HRESULT l_Status = S_OK;
 
@@ -788,7 +745,7 @@ HRESULT SVVisionProcessorHelper::SetRemoteInputItems( const SVNameStorageMap& p_
 
 	if( nullptr != pConfig )
 	{
-		l_Status = pConfig->SetRemoteInputItems( p_rItems, p_rStatus );
+		l_Status = pConfig->SetRemoteInputItems( rItems, rStatus );
 	}
 	else if( S_OK == l_Status )
 	{
@@ -798,7 +755,7 @@ HRESULT SVVisionProcessorHelper::SetRemoteInputItems( const SVNameStorageMap& p_
 	return l_Status;
 }
 
-HRESULT SVVisionProcessorHelper::SetCameraItems( const SVNameStorageMap& p_rItems, SVNameStatusMap& p_rStatus )
+HRESULT SVVisionProcessorHelper::SetCameraItems( const SVNameStorageMap& rItems, SVNameStatusMap& rStatus )
 {
 	HRESULT l_Status = S_OK;
 
@@ -808,7 +765,7 @@ HRESULT SVVisionProcessorHelper::SetCameraItems( const SVNameStorageMap& p_rItem
 
 	if( nullptr != pConfig )
 	{
-		l_Status = pConfig->SetCameraItems( p_rItems, p_rStatus );
+		l_Status = pConfig->SetCameraItems( rItems, rStatus );
 	}
 	else if( S_OK == l_Status )
 	{
@@ -818,7 +775,7 @@ HRESULT SVVisionProcessorHelper::SetCameraItems( const SVNameStorageMap& p_rItem
 	return l_Status;
 }
 
-HRESULT SVVisionProcessorHelper::GetObjectDefinition( const SVObjectClass& p_rObj, const long p_Filter, SVDataDefinitionStruct& p_rDataDef ) const
+HRESULT SVVisionProcessorHelper::GetObjectDefinition( const SVObjectClass& rObj, const long p_Filter, SVDataDefinitionStruct& rDataDef ) const
 {
 	HRESULT l_Status = S_OK;
 
@@ -827,37 +784,37 @@ HRESULT SVVisionProcessorHelper::GetObjectDefinition( const SVObjectClass& p_rOb
 	if((SV_DD_VALUE == p_Filter) || (SV_DD_IMAGE == p_Filter))
 	{
 		//This is called when selected values or images
-		l_bValueIncluded = (p_rObj.ObjectAttributesSet() & p_Filter) != 0;
+		l_bValueIncluded = (rObj.ObjectAttributesSet() & p_Filter) != 0;
 	}
 	else
 	{
 		//This is called when all values or all images
-		l_bValueIncluded = (p_rObj.ObjectAttributesAllowed() & p_Filter) != 0;
+		l_bValueIncluded = (rObj.ObjectAttributesAllowed() & p_Filter) != 0;
 	}
-	l_bValueIncluded = l_bValueIncluded && ( (p_rObj.ObjectAttributesAllowed() & SV_HIDDEN) == 0 );
+	l_bValueIncluded = l_bValueIncluded && ( (rObj.ObjectAttributesAllowed() & SV_HIDDEN) == 0 );
 	if( l_bValueIncluded )
 	{
 		SVString Temp;
-		Temp = _T("Inspections.") + p_rObj.GetCompleteName();
-		p_rDataDef.m_Name = Temp;
-		p_rDataDef.m_Writable = (p_rObj.ObjectAttributesAllowed() & SV_REMOTELY_SETABLE) == SV_REMOTELY_SETABLE;
-		p_rDataDef.m_Published = (p_rObj.ObjectAttributesSet() & SV_PUBLISHABLE) != 0;
-		const SVValueObjectClass* l_pValueObject = dynamic_cast<const SVValueObjectClass*> (&p_rObj);
+		Temp = _T("Inspections.") + rObj.GetCompleteName();
+		rDataDef.m_Name = Temp;
+		rDataDef.m_Writable = (rObj.ObjectAttributesAllowed() & SV_REMOTELY_SETABLE) == SV_REMOTELY_SETABLE;
+		rDataDef.m_Published = (rObj.ObjectAttributesSet() & SV_PUBLISHABLE) != 0;
+		const SVValueObjectClass* l_pValueObject = dynamic_cast<const SVValueObjectClass*> (&rObj);
 		//If null we assume its an image
 		if( nullptr != l_pValueObject)
 		{
-			p_rDataDef.m_Type = l_pValueObject->GetTypeName();
+			rDataDef.m_Type = l_pValueObject->GetTypeName();
 		}
 		else
 		{
 			//For now we are setting the type to a generic "Image" could change in the future
-			p_rDataDef.m_Type = _T("Image");
+			rDataDef.m_Type = _T("Image");
 		}
 		//This part fills the additional info section
-		if( SVEnumValueObjectType == p_rObj.GetObjectType() )
+		if( SVEnumValueObjectType == rObj.GetObjectType() )
 		{
 			// Get the strings from the enumeration value object class.
-			const SVEnumerateValueObjectClass* l_pEnumVO = dynamic_cast<const SVEnumerateValueObjectClass*> (&p_rObj);
+			const SVEnumerateValueObjectClass* l_pEnumVO = dynamic_cast<const SVEnumerateValueObjectClass*> (&rObj);
 			if( nullptr != l_pEnumVO )
 			{
 				SVEnumerateVector l_EnumVect;
@@ -866,14 +823,14 @@ HRESULT SVVisionProcessorHelper::GetObjectDefinition( const SVObjectClass& p_rOb
 				l_pEnumVO->GetEnumTypes( l_EnumVect );
 				for( l_EnumIter = l_EnumVect.begin(); l_EnumIter != l_EnumVect.end(); l_EnumIter++)
 				{
-					p_rDataDef.m_AdditionalInfo.push_back(SVString(l_EnumIter->first));
+					rDataDef.m_AdditionalInfo.push_back(SVString(l_EnumIter->first));
 				}
 			}
 		}
-		else if( SVBoolValueObjectType == p_rObj.GetObjectType() )
+		else if( SVBoolValueObjectType == rObj.GetObjectType() )
 		{
 			// Get the strings from the enumeration value object class.
-			const SVBoolValueObjectClass* l_pBoolVO = dynamic_cast<const SVBoolValueObjectClass*> (&p_rObj);
+			const SVBoolValueObjectClass* l_pBoolVO = dynamic_cast<const SVBoolValueObjectClass*> (&rObj);
 			if( nullptr != l_pBoolVO)
 			{
 				SVStringVector Types;
@@ -881,14 +838,14 @@ HRESULT SVVisionProcessorHelper::GetObjectDefinition( const SVObjectClass& p_rOb
 				l_pBoolVO->GetValidTypes(Types);
 				for( Iter = Types.begin(); Iter != Types.end(); Iter++)
 				{
-					p_rDataDef.m_AdditionalInfo.push_back(*Iter);
+					rDataDef.m_AdditionalInfo.push_back(*Iter);
 				}
 			}
 		}
 		else
 		//This should be an image so check for its additional info
 		{
-			const SVImageClass* l_pImage = dynamic_cast<const SVImageClass*> (&p_rObj);
+			const SVImageClass* l_pImage = dynamic_cast<const SVImageClass*> (&rObj);
 			if(nullptr != l_pImage)
 			{
 				SVToolClass* l_pTool = dynamic_cast<SVToolClass*>(l_pImage->GetTool());
@@ -903,7 +860,7 @@ HRESULT SVVisionProcessorHelper::GetObjectDefinition( const SVObjectClass& p_rOb
 							HRESULT l_hr = l_pSourceNames->GetValue( l_pSourceNames->GetLastSetIndex(), l_lIndex, Temp );
 							// Prepend the "Inspections." prefix for use with SVRC.
 							Temp = _T( "Inspections." ) + Temp;
-							p_rDataDef.m_AdditionalInfo.push_back( Temp );
+							rDataDef.m_AdditionalInfo.push_back( Temp );
 						}
 					}
 				}
