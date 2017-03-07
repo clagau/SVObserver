@@ -417,7 +417,14 @@ HRESULT SVVisionProcessorHelper::GetItems( const SVNameSet& rNames, SVNameStorag
 
 		if( l_FunctorIter != m_GetItemsFunctors.end() )
 		{
-			HRESULT l_LoopStatus = l_FunctorIter->second( l_NameIterator->second, rItems );
+			SVNameStorageResultMap Items;
+			HRESULT l_LoopStatus = l_FunctorIter->second( l_NameIterator->second, Items );
+
+			SVNameStorageResultMap::const_iterator ItemIter =  Items.begin();
+			for( ; Items.end() != ItemIter; ++ItemIter )
+			{
+				rItems.insert( *ItemIter );
+			}
 			if( S_OK == l_Status )
 			{
 				l_Status = l_LoopStatus;
@@ -523,13 +530,13 @@ HRESULT SVVisionProcessorHelper::SetItems( const SVNameStorageMap& rItems, SVNam
 
 		if( l_FunctorIter != m_SetItemsFunctors.end() )
 		{
-			SVNameStatusMap l_StatusItems;
-			HRESULT l_LoopStatus = l_FunctorIter->second( l_NameIterator->second, l_StatusItems );
+			SVNameStatusMap StatusItems;
+			HRESULT l_LoopStatus = l_FunctorIter->second( l_NameIterator->second, StatusItems );
 	
-			SVNameStatusMap::iterator StatusItemIt =  l_StatusItems.begin();
-			for(; StatusItemIt != l_StatusItems.end(); ++StatusItemIt)
+			SVNameStatusMap::const_iterator StatusItemIter =  StatusItems.begin();
+			for( ; StatusItems.end() != StatusItemIter; ++StatusItemIter )
 			{
-				rStatusItems.insert(std::pair< SVString, HRESULT >(StatusItemIt->first, StatusItemIt->second) );
+				rStatusItems.insert( *StatusItemIter );
 			}
 			if( S_OK == l_Status )
 			{
