@@ -1425,19 +1425,8 @@ void SVTaskObjectClass::GetPrivateInputList(SVInputInfoListClass& RInputInterfac
 }
 
 // Set the valid flag to Invalid
-// and all our embedded objects ???
 void SVTaskObjectClass::SetInvalid()
 {
-	// Set all embeddeds ( outputs ) to invalid...
-	for (int i = 0; i < m_embeddedList.GetSize(); i++)
-	{
-		SVObjectClass* pObject = m_embeddedList.GetAt(i);
-		if (pObject)
-		{
-			pObject->SetInvalid();
-		}
-	}
-	
 	// Set yourself to invalid...
 	m_isObjectValid.SetValue(1, false);
 }
