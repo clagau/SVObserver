@@ -14,7 +14,6 @@
 #include "SVXMLLibrary/SVNavigateTree.h"
 #include "ObjectInterfaces/ICustom2Filter.h"
 #include "SVXMLLibrary/SaxXMLHandler.h"
-#include "CameraLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 

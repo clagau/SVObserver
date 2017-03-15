@@ -29,7 +29,6 @@
 #include "ObjectInterfaces\ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVStatusLibrary\GlobalPath.h"
-#include "CameraLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
 #include "SVOGui/GuiValueHelper.h"
 #pragma endregion Includes
 

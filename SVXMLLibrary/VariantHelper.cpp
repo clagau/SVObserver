@@ -296,7 +296,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 				else if ((iswdigit (*pNumericVal)) || (iswxdigit (*pNumericVal)))
 				{
 					//-			Convert string to byte (including hex representations)
-					swscanf(pNumericVal, L"%02X", &(pVar->bVal));
+					swscanf(pNumericVal, L"%hhX", &(pVar->bVal));
 				}
 				else
 				{

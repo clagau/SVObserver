@@ -172,7 +172,7 @@ namespace Seidenader { namespace SVSocketLibrary
 		if (IsValidSocket())
 		{
 			m_peer.sin_family = AF_INET;
-			m_peer.sin_addr.s_addr = inet_addr(hostAddr);
+			inet_pton(AF_INET, hostAddr, &m_peer.sin_addr.s_addr);
 			m_peer.sin_port = htons(portNo);
 			if (API::bind(m_socket, reinterpret_cast< sockaddr* >( &m_peer ), sizeof(sockaddr_in)) == SOCKET_ERROR)
 			{

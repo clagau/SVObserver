@@ -161,11 +161,11 @@ private:
 	void DoAcquisitionTrigger( const SVMatroxGigeDigitizer& p_rCamera, SVMatroxIdentifier HookId );
 
 	// Matrox Hooks
-	static SVMatroxIdentifier __stdcall DigitizerStartFrameCallback( SVMatroxIdentifier HookType, SVMatroxIdentifier EventId, void* p_pvContext );
-	static SVMatroxIdentifier __stdcall DigitizerEndFrameCallback( SVMatroxIdentifier HookType, SVMatroxIdentifier EventId, void* p_pvContext );
-	static SVMatroxIdentifier __stdcall ProcessFrame( SVMatroxIdentifier HookType, SVMatroxIdentifier HookId, void* p_pvContext );
-	static SVMatroxIdentifier __stdcall DigitizerCallback( SVMatroxIdentifier HookType, SVMatroxIdentifier EventId, void* p_pvContext );
-	static SVMatroxIdentifier __stdcall CameraPresentCallback( SVMatroxIdentifier HookType, SVMatroxIdentifier EventId, void* p_pvContext );
-	static SVMatroxIdentifier __stdcall LineEdgeEventCallback( SVMatroxIdentifier HookType, SVMatroxIdentifier EventId, void* p_pvContext );
+	static SVMatroxIdentifier __stdcall DigitizerStartFrameCallback( SVMatroxIdentifier HookType, SVMatroxIdentifier EventId, void* pContext );
+	static SVMatroxIdentifier __stdcall DigitizerEndFrameCallback( SVMatroxIdentifier HookType, SVMatroxIdentifier EventId, void* pContext );
+	static SVMatroxIdentifier __stdcall ProcessFrame( SVMatroxIdentifier HookType, SVMatroxIdentifier HookId, void* pContext );
+	static SVMatroxIdentifier __stdcall DigitizerCallback( SVMatroxIdentifier HookType, SVMatroxIdentifier EventId, void* pContext );
+	static SVMatroxIdentifier __stdcall CameraPresentCallback( SVMatroxIdentifier HookType, SVMatroxIdentifier EventId, void* pContext );
+	static SVMatroxIdentifier __stdcall LineEdgeEventCallback( SVMatroxIdentifier HookType, SVMatroxIdentifier EventId, void* pContext );
 };
 

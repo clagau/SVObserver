@@ -17,7 +17,6 @@
 #include "SVUnaryImageOperatorClass.h"
 #include "ObjectInterfaces/ITool.h"
 #include "SVObjectLibrary/SVClsids.h"
-#include "CameraLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 

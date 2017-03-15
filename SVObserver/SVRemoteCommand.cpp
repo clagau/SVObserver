@@ -15,8 +15,6 @@
 #include "SVRemoteCommand.h"
 #include "SVCommandLibrary/SVCommandLibraryEnums.h"
 #include "SVRemoteCommandData.h"
-#include "CameraLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
-
 #pragma endregion Includes
 
 SVRemoteCommand::SVRemoteCommand()

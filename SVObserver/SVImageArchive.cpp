@@ -17,8 +17,6 @@
 #include "SVObserver.h"
 #include "SVOCore/SVImageClass.h"
 #include "SVOCore/SVImageObjectClass.h"
-#include "CameraLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
-
 #pragma endregion Includes
 
 #ifdef _DEBUG

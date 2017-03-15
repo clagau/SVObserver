@@ -14,7 +14,6 @@
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVImageLibrary/SVImageExtentClass.h"
 #include "SVOCore/SVImageProcessingClass.h"
-#include "CameraLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 

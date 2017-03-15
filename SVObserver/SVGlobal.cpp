@@ -16,8 +16,6 @@
 #include "SVDataManagerLibrary/DataManager.h"
 #include "SVObserver.h"
 #include "SVOCore/SVImageProcessingClass.h"
-#include "CameraLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
-
 #pragma endregion Includes
 
 TCHAR SVRCCurrentSVCPathName[ _MAX_PATH ];

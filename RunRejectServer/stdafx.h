@@ -40,6 +40,8 @@
 #include <tlhelp32.h>
 #include <utility>
 #include <vector>
+#include <winsock2.h>		//Used by static library
+#include <ws2tcpip.h>		//Used by static library
 
 #include <boost/any.hpp>
 #include <boost/bind.hpp>

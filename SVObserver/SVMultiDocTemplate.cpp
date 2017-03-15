@@ -13,8 +13,6 @@
 #include "stdafx.h"
 #include "SVObserver.h"
 #include "SVMultiDocTemplate.h"
-#include "CameraLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
-
 #pragma endregion Includes
 
 #ifdef _DEBUG

@@ -245,24 +245,8 @@ namespace Seidenader { namespace GridCtrlLibrary
 	#else // not CE
 
 		NONCLIENTMETRICS ncm;
-	#if defined(_MSC_VER) && (_MSC_VER < 1300)
-		ncm.cbSize = sizeof(NONCLIENTMETRICS); // NONCLIENTMETRICS has an extra element after VC6
-	#else
-		// Check the operating system's version
-		OSVERSIONINFOEX osvi;
-		ZeroMemory(&osvi, sizeof(OSVERSIONINFOEX));
-		osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFOEX);
-		if( !GetVersionEx((OSVERSIONINFO *) &osvi))
-		{
-    		osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);	
-			GetVersionEx ((OSVERSIONINFO *)&osvi);
-		}
-    
-		if (osvi.dwMajorVersion > 5)
-    		ncm.cbSize = sizeof(NONCLIENTMETRICS);
-		else
-			ncm.cbSize = sizeof(NONCLIENTMETRICS) - sizeof(ncm.iPaddedBorderWidth);
-	#endif
+		//The GridCell is not being used in versions prior to VC6 or older than Win XP!
+   		ncm.cbSize = sizeof(NONCLIENTMETRICS);
 		VERIFY(SystemParametersInfo(SPI_GETNONCLIENTMETRICS, sizeof(NONCLIENTMETRICS), &ncm, 0));
 
 		SetFont(&(ncm.lfMessageFont));

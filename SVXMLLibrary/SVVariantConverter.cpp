@@ -500,7 +500,7 @@ HRESULT SVVariantConverter::RestoreVariant(BSTR abstrValue, BSTR abstrType, VARI
 			if ((iswdigit (*wcpPntr1)) || (iswxdigit (*wcpPntr1)))
 			{
 //-			Convert string to byte (including hex representations)
-				swscanf(wcpPntr1, L"%02X", &vRestoredValue.bVal);
+				swscanf(wcpPntr1, L"%hhX", &vRestoredValue.bVal);
 			}
 			else
 			{
@@ -521,7 +521,7 @@ HRESULT SVVariantConverter::RestoreVariant(BSTR abstrValue, BSTR abstrType, VARI
 			if ((iswdigit (*wcpPntr1)) || (iswxdigit (*wcpPntr1)))
 			{
 //-			Convert string to char (byte actually)
-				swscanf(wcpPntr1, L"%02X", &vRestoredValue.bVal);
+				swscanf(wcpPntr1, L"%hhX", &vRestoredValue.bVal);
 			}
 			else
 			{

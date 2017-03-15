@@ -15,7 +15,6 @@
 #include "SVFillBlobDlg.h"
 #include "SVOCore/SVTaskObject.h"
 #include "SVTool.h"
-#include "CameraLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 

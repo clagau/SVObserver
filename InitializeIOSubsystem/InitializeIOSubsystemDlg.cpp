@@ -323,10 +323,10 @@ void CInitializeIOSubsystemDlg::OnDestroy()
 		struct tm NowInfo;
 		localtime_s( &NowInfo, &Now );
 		DateTime.Format(_T("Started InitializeIOSubsystem %02d.%02d.%04d %02d:%02d:%02d"), NowInfo.tm_mday, NowInfo.tm_mon + 1, NowInfo.tm_year + 1900, NowInfo.tm_hour, NowInfo.tm_min, NowInfo.tm_sec );
-		fprintf( fh, "\n%s\n%s\nStartup Time %d Seconds, Errors %d\n", DateTime, m_strVer, m_TimeElapse, m_FailedCounts );
+		fprintf( fh, "\n%s\n%s\nStartup Time %lld Seconds, Errors %d\n", DateTime.GetString(), m_strVer.GetString(), m_TimeElapse, m_FailedCounts );
 		for( size_t i = 0 ; i < m_strLog.size() ; i++ )
 		{
-			fprintf( fh, "%s\n", m_strLog[i] );
+			fprintf( fh, "%s\n", m_strLog[i].GetString() );
 		}
 		fclose( fh );
 	}

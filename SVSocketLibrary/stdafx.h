@@ -12,7 +12,7 @@
 #pragma once
 
 #ifndef WINVER				// Allow use of features specific to Windows XP or later.
-#define WINVER 0x0501		// Change this to the appropriate value to target other versions of Windows.
+#define WINVER 0x0600		// Change this to the appropriate value to target other versions of Windows.
 #endif
 
 #ifndef _WIN32_WINNT		// Allow use of features specific to Windows XP or later.                   
@@ -41,6 +41,7 @@
 #include <tchar.h>
 #include <vector>
 #include <winsock2.h>
+#include <ws2tcpip.h>
 
 #include <boost/bind.hpp>
 #include <boost/function.hpp>

@@ -16,7 +16,6 @@
 #include "SVTool.h"
 #include "SVPerspectiveTool.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
-#include "CameraLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 

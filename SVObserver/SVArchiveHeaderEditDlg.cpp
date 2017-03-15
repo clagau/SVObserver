@@ -15,7 +15,6 @@
 #include "SVArchiveHeaderEditDlg.h"
 #include "afxdialogex.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "CameraLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 

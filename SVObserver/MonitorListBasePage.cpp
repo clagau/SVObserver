@@ -16,7 +16,6 @@
 #include "MonitorListBasePage.h"
 #include "MonitorListSheet.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "CameraLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
 #pragma endregion Includes
 
 #ifdef _DEBUG

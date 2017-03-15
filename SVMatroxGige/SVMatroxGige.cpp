@@ -69,23 +69,23 @@ bool SVMatroxGige::IsValidDigitizerHandle(unsigned long p_Handle) const
 }
 
 // Callback used for MdigHook - Start Frame
-SVMatroxIdentifier SVMatroxGige::DigitizerStartFrameCallback( SVMatroxIdentifier HookType, SVMatroxIdentifier EventId, void* p_pvContext )
+SVMatroxIdentifier SVMatroxGige::DigitizerStartFrameCallback( SVMatroxIdentifier HookType, SVMatroxIdentifier EventId, void* pContext )
 {
-	return SVMatroxGige::DigitizerCallback(HookType, EventId, p_pvContext);
+	return SVMatroxGige::DigitizerCallback(HookType, EventId, pContext);
 }
 
 // Callback used for MdigHook - End Frame
-SVMatroxIdentifier SVMatroxGige::DigitizerEndFrameCallback( SVMatroxIdentifier HookType, SVMatroxIdentifier EventId, void* p_pvContext )
+SVMatroxIdentifier SVMatroxGige::DigitizerEndFrameCallback( SVMatroxIdentifier HookType, SVMatroxIdentifier EventId, void* pContext )
 {
-	return SVMatroxGige::DigitizerCallback(HookType, EventId, p_pvContext);
+	return SVMatroxGige::DigitizerCallback(HookType, EventId, pContext);
 }
 
 // Callback used for MdigProcess
-SVMatroxIdentifier SVMatroxGige::ProcessFrame( SVMatroxIdentifier HookType, SVMatroxIdentifier HookId, void* p_pvContext )
+SVMatroxIdentifier SVMatroxGige::ProcessFrame( SVMatroxIdentifier HookType, SVMatroxIdentifier HookId, void* pContext )
 {
 	try
 	{
-		SVMatroxGigeDigitizer* l_pCamera = reinterpret_cast<SVMatroxGigeDigitizer *>(p_pvContext);
+		SVMatroxGigeDigitizer* l_pCamera = reinterpret_cast<SVMatroxGigeDigitizer*> (pContext);
 		if ( nullptr != l_pCamera )
 		{
 			if ( l_pCamera->m_lIsStarted == 1 )
@@ -150,11 +150,11 @@ SVMatroxIdentifier SVMatroxGige::ProcessFrame( SVMatroxIdentifier HookType, SVMa
 }
 
 // General handler for MdigHook callbacks (Indirect)
-SVMatroxIdentifier SVMatroxGige::DigitizerCallback( SVMatroxIdentifier HookType, SVMatroxIdentifier EventId, void* p_pvContext )
+SVMatroxIdentifier SVMatroxGige::DigitizerCallback( SVMatroxIdentifier HookType, SVMatroxIdentifier EventId, void* pContext )
 {
 	try
 	{
-		SVMatroxGigeDigitizer* l_pCamera = reinterpret_cast<SVMatroxGigeDigitizer *>(p_pvContext);
+		SVMatroxGigeDigitizer* l_pCamera = reinterpret_cast<SVMatroxGigeDigitizer *>(pContext);
 		if ( nullptr != l_pCamera )
 		{
 			if ( l_pCamera->m_lIsStarted == 1 )
@@ -192,9 +192,9 @@ SVMatroxIdentifier SVMatroxGige::DigitizerCallback( SVMatroxIdentifier HookType,
 	return 0L;
 }
 
-SVMatroxIdentifier __stdcall SVMatroxGige::LineEdgeEventCallback( SVMatroxIdentifier HookType, SVMatroxIdentifier EventId, void* p_pvContext )
+SVMatroxIdentifier __stdcall SVMatroxGige::LineEdgeEventCallback( SVMatroxIdentifier HookType, SVMatroxIdentifier EventId, void* pContext )
 {
-	SVMatroxGigeDigitizer* l_pCamera = reinterpret_cast<SVMatroxGigeDigitizer *>(p_pvContext);
+	SVMatroxGigeDigitizer* l_pCamera = reinterpret_cast<SVMatroxGigeDigitizer *>(pContext);
 	// Get State of the line
 	long l_EventType = 0;
 	SVMatroxDigitizerInterface::GetGigeEventType(EventId, l_EventType);
@@ -344,7 +344,7 @@ HRESULT SVMatroxGige::AddSystem(const SVString& rName, long SystemNumber)
 			if (S_OK == hr)
 			{
 				// Register camera present hook
-				l_Code = SVMatroxSystemInterface::SetHookFunction(*(rSystem.m_System.get()), SVMatroxSystemHook::SVCameraPresent, SVMatroxGige::CameraPresentCallback, (void *)(l_System.m_Handle)); 
+				l_Code = SVMatroxSystemInterface::SetHookFunction(*(rSystem.m_System.get()), SVMatroxSystemHook::SVCameraPresent, SVMatroxGige::CameraPresentCallback, reinterpret_cast<void*> (&l_System.m_Handle)); 
 				if (l_Code == SVMEE_STATUS_OK)
 				{
 					hr = CreateDigitizers(rSystem);
@@ -516,7 +516,7 @@ HRESULT SVMatroxGige::DestroySystem(SVMatroxGigeSystem& rSystem)
 
 	SVMatroxSystemInterface::SVStatusCode l_Code = SVMEE_STATUS_OK;
 	// Unregister camera present hook
-	l_Code = SVMatroxSystemInterface::ReleaseHookFunction(*(rSystem.m_System.get()), SVMatroxSystemHook::SVCameraPresent, SVMatroxGige::CameraPresentCallback, (void *)(rSystem.m_Handle)); 
+	l_Code = SVMatroxSystemInterface::ReleaseHookFunction(*(rSystem.m_System.get()), SVMatroxSystemHook::SVCameraPresent, SVMatroxGige::CameraPresentCallback, reinterpret_cast<void*> (&rSystem.m_Handle)); 
 	l_Code = SVMatroxSystemInterface::Destroy(*(rSystem.m_System.get()));
 	if (l_Code != SVMEE_STATUS_OK)
 	{
@@ -1488,9 +1488,9 @@ unsigned long SVMatroxGige::GetDigitizerHandle(unsigned long index) const
 }
 
 // Handler for camera disconnect/reconnect
-SVMatroxIdentifier SVMatroxGige::CameraPresentCallback( SVMatroxIdentifier HookType, SVMatroxIdentifier EventId, void* p_pvContext )
+SVMatroxIdentifier SVMatroxGige::CameraPresentCallback( SVMatroxIdentifier HookType, SVMatroxIdentifier EventId, void* pContext )
 {
-	unsigned char systemHandle = reinterpret_cast<unsigned char>(p_pvContext);
+	unsigned char systemHandle = *(reinterpret_cast<unsigned char*> (pContext));
 	HRESULT hr = S_OK;
 	SVMatroxGigeSystem& system = g_svTheApp.m_svSystem.m_Systems.Get(systemHandle, hr);
 	const SVMatroxSystem& l_rMatroxSystem = *(system.m_System.get());

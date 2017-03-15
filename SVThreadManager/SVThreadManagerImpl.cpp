@@ -26,10 +26,10 @@ SVThreadManagerImpl::SVThreadManagerImpl()
 	if( bRet )
 	{
 		// count the number of processors.
-		DWORD_PTR i =  1;
+		DWORD_PTR i =  1ULL;
 		for( ; i < 64 ; i++ )
 		{
-			if( static_cast<DWORD_PTR>((1 << i)) > systemAffinityMask )
+			if( (1ULL << i) > systemAffinityMask )
 			{
 				break;
 			}

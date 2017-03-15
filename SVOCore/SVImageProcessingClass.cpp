@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   23 Apr 2013 10:54:02  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVImageProcessingClass.h"
 #include "SVImageLibrary/SVImageInfoClass.h"
@@ -24,7 +25,7 @@
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "ObjectInterfaces/ErrorNumbers.h"
-#include "CameraLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
+#pragma endregion Includes
 
 HRESULT SVImageProcessingClass::CreateImageBuffer( const SVImageInfoClass& rInfo, SVSmartHandlePointer& rHandle )
 {

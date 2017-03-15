@@ -17,7 +17,6 @@
 #include "SVSystemLibrary/SVThreadManager.h"
 #include "SVSVIMStateClass.h"
 #include "SVStatusLibrary/GlobalPath.h"
-#include "CameraLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 

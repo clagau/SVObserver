@@ -213,14 +213,8 @@ BOOL SVMainFrame::CreateClient(LPCREATESTRUCT lpCreateStruct, CMenu* pWindowMenu
 	DWORD dwExStyle = 0;
 	// will be inset by the frame
 
-	if( ( ( BYTE ) ::GetVersion() ) >= 4 )	
-	// This is a Win4 application and that code will always be executed!
-	// Only for backward compatibility, refer to MFC source code afxData.bWin4
-	{
-		// special styles for 3d effect on Win4
-		dwStyle &= ~WS_BORDER;
-		dwExStyle = WS_EX_CLIENTEDGE;
-	}
+	dwStyle &= ~WS_BORDER;
+	dwExStyle = WS_EX_CLIENTEDGE;
 
 	WNDCLASS	windowClass;
 

@@ -19,7 +19,6 @@
 #include "SVGlobal.h"
 #include "ObjectInterfaces/SVIMCommand.h"
 #include "SVStatusLibrary/GlobalPath.h"
-#include "CameraLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
 #pragma endregion includes
 
 #pragma region Global functions

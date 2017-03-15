@@ -14,7 +14,6 @@
 #include "SVObserver.h"
 #include "SVRemoteOutputGroupAddRemoveDlg.h"
 #include "TextDefinesSvO.h"
-#include "CameraLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
 #pragma endregion Includes
 
 // SVRemoteOutputGroupAddRemoveDlg dialog

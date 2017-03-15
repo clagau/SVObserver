@@ -22,7 +22,6 @@
 #include "SVOCore/SVImageProcessingClass.h"
 #include "SVResultLong.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
-#include "CameraLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
 #include "SVStatusLibrary/MessageManager.h"
 
 #pragma endregion Includes

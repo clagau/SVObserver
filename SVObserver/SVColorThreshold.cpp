@@ -9,6 +9,7 @@
 //* .Check In Date   : $Date:   15 May 2014 11:10:26  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVColorThreshold.h"
 
@@ -22,7 +23,7 @@
 #include "ObjectInterfaces/GlobalConst.h"
 #include "SVOCore/SVImageProcessingClass.h"
 #include "SVTool.h"
-#include "CameraLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

@@ -78,12 +78,12 @@ inline SVFunctionProfiler::~SVFunctionProfiler()
 	FILE* fh = fopen("c:\\temp\\profile.txt","a");
 	if( fh )
 	{
-		fprintf(fh,_T("PROFILER: %s count=%I64u, total time=%I64u ms\n"), m_Name, m_iCount, iTotalTime);
+		fprintf(fh,_T("PROFILER: %s count=%I64u, total time=%I64u ms\n"), m_Name.c_str(), m_iCount, iTotalTime);
 		fclose( fh );
 	}
 	
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PROFILER)
-	TRACE(_T("PROFILER: %s count=%I64u, total time=%I64u ms\n"), m_Name, m_iCount, iTotalTime);
+	TRACE(_T("PROFILER: %s count=%I64u, total time=%I64u ms\n"), m_Name.c_str(), m_iCount, iTotalTime);
 #endif
 }
 
@@ -129,9 +129,9 @@ inline SVSizeProfiler::~SVSizeProfiler()
 		for (iter = m_mapSizeCounter.begin(); iter != m_mapSizeCounter.end(); ++iter)
 		{
 #if defined (TRACE_THEM_ALL) || defined (TRACE_PROFILER)
-			TRACE(_T("COUNT_PROFILER: %s size %d count=%d\n"), m_Name, iter->first, iter->second);
+			TRACE(_T("COUNT_PROFILER: %s size %d count=%d\n"), m_Name.c_str(), iter->first, iter->second);
 #endif
-			fprintf(fh,_T("COUNT_PROFILER: %s size %d count=%d\n"), m_Name, iter->first, iter->second);
+			fprintf(fh,_T("COUNT_PROFILER: %s size %d count=%d\n"), m_Name.c_str(), iter->first, iter->second);
 		}
 		fclose( fh );
 	}

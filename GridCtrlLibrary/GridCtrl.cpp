@@ -176,31 +176,8 @@ namespace Seidenader { namespace GridCtrlLibrary
 		int nScrollLines = 3;            // reasonable default
 
 	#ifndef _WIN32_WCE
-		// Do things the hard way in win95
-		OSVERSIONINFO VersionInfo;
-		VersionInfo.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
-		if (!GetVersionEx(&VersionInfo) || 
-			(VersionInfo.dwPlatformId == VER_PLATFORM_WIN32_WINDOWS && VersionInfo.dwMinorVersion == 0))
-		{
-			HKEY hKey;
-			if (RegOpenKeyEx(HKEY_CURRENT_USER,  _T("Control Panel\\Desktop"),
-				0, KEY_QUERY_VALUE, &hKey) == ERROR_SUCCESS)
-			{
-				TCHAR szData[128];
-				DWORD dwKeyDataType;
-				DWORD dwDataBufSize = sizeof(szData);
-            
-				if (RegQueryValueEx(hKey, _T("WheelScrollLines"), nullptr, &dwKeyDataType,
-					(LPBYTE) &szData, &dwDataBufSize) == ERROR_SUCCESS)
-				{
-					nScrollLines = _tcstoul(szData, nullptr, 10);
-				}
-				RegCloseKey(hKey);
-			}
-		}
-		// win98 or greater
-		else
-			   SystemParametersInfo (SPI_GETWHEELSCROLLLINES, 0, &nScrollLines, 0);
+		//Do need to check OS version as we will not be using win95
+		SystemParametersInfo (SPI_GETWHEELSCROLLLINES, 0, &nScrollLines, 0);
 	#endif
 
 		return nScrollLines;

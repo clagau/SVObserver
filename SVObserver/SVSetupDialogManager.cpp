@@ -52,7 +52,6 @@
 #include "SVOLicenseManager/SVOLicenseManager.h"
 #include "RangeXDialogClass.h"
 #include "SVRange.h"
-#include "CameraLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
 #include "SVToolSet.h"
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Inlcudes

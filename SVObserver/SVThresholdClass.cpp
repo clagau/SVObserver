@@ -21,8 +21,6 @@
 #include "SVOCore/SVImageProcessingClass.h"
 #include "SVTool.h"
 #include "SVStatusLibrary\MessageManager.h"
-#include "CameraLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
-
 #pragma endregion Includes
 
 #define SV_OC_ERROR 0xc0000000   //SV Operator Class Error.

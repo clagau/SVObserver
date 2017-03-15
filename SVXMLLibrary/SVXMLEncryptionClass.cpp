@@ -57,7 +57,11 @@ long	SVXMLEncryptionClass::m_lLookUpTable1 [256] =
 };
 
 
-unsigned char SVXMLEncryptionClass::m_cCharTable [128] = 
+//! Disables compile warning conversion from char to unsigned char
+//! This type has to remain unsigned char for the encryption to function
+#pragma warning (push)
+#pragma warning (disable : 4838)
+unsigned char SVXMLEncryptionClass::m_cCharTable [128] =
 {
 	//-                            1   1   1
 	//-                9   9   9   0   0   0
@@ -122,7 +126,7 @@ unsigned char SVXMLEncryptionClass::m_cCharTable [128] =
 	/* 124 - 127 */	']','%','ß','?'
 
 };
-
+#pragma warning (pop)
 
 
 

@@ -76,7 +76,7 @@ namespace Seidenader { namespace SVSocketLibrary
 		if (IsValidSocket())
 		{
 			// bind to INADDR_ANY
-			error = Bind(" ", portNo); //localIP, portNo);
+			error = Bind(_T(" "), portNo); //localIP, portNo);
 			if (error == SVSocketError::Success)
 			{
 				if (API::listen(m_socket, 1) == SOCKET_ERROR)

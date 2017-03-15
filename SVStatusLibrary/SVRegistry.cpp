@@ -718,10 +718,10 @@ int SVRegistryClass::GetImportString(FILE * pFile, SVString& rName, SVByteArray 
 			}
 			// get the binary data
 			baValue.RemoveAll();
-			for (i = 0; _ftscanf (pFile, _T(" %x"), &tBuffer); i++)
+			for (i = 0; _ftscanf (pFile, _T(" %hhx"), &tBuffer); i++)
 			{
 				baValue.Add((BYTE) tBuffer);
-				_ftscanf (pFile, _T("%c"), tBuffer);
+				_ftscanf (pFile, _T("%c"), &tBuffer);
 				if (tBuffer == _T(','))
 				{
 					_ftscanf (pFile, _T("\\")); // remove any line continuations...
@@ -846,7 +846,7 @@ BOOL SVRegistryClass::ExportKeys(FILE * pFile)
 	DWORD dwcbBuffSize;
 	LONG lResult;
 
-	_ftprintf (pFile, _T("[%s]\n"), mszKey);
+	_ftprintf (pFile, _T("[%s]\n"), mszKey.c_str());
 
 	if (ExportValues (pFile))
 	{

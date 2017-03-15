@@ -23,8 +23,6 @@
 #include "SVResultLong.h"   // Required by SVLongResultClass
 #include "ObjectInterfaces\ErrorNumbers.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "CameraLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
-
 #pragma endregion Includes
 
 SV_IMPLEMENT_CLASS( SVPixelAnalyzerClass, SVPixelAnalyzerClassGuid );

@@ -20,8 +20,6 @@
 #include "SVRemoteOutputsView.h"
 #include "MonitorListView.h"
 #include "GlobalConstantView.h"
-#include "CameraLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
-
 #pragma endregion Includes
 
 IMPLEMENT_DYNCREATE(SVIOTabbedView, CMDIChildWnd)

@@ -9,10 +9,10 @@
 //* .Check In Date   : $Date:   15 May 2014 12:40:48  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVGigeCameraManagerDlg.h"
-#include "CameraLibrary/SVDeviceParams.h" //Arvid added to avoid VS2015 compile Error
-
+#pragma endregion Includes
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

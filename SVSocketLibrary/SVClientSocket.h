@@ -80,7 +80,7 @@ namespace Seidenader { namespace SVSocketLibrary
 			if ( SVSocketError::Success == error )
 			{
 				m_peer.sin_family = AF_INET;
-				m_peer.sin_addr.s_addr = inet_addr(ipAddr.c_str());
+				inet_pton(AF_INET, ipAddr.c_str(), &m_peer.sin_addr.s_addr);
 				m_peer.sin_port = htons(portNo);
 
 				if ( API::connect( m_socket, reinterpret_cast< SOCKADDR* >( &m_peer ), sizeof(sockaddr_in) ) == SOCKET_ERROR )
