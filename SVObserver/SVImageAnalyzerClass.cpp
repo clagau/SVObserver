@@ -39,7 +39,7 @@ void SVImageAnalyzerClass::init()
 	// Set Input requirement
 	inputImageObjectInfo.SetInputObjectType( SVImageObjectType );
 	inputImageObjectInfo.SetObject( GetObjectInfo() );
-	RegisterInputObject( &inputImageObjectInfo, _T( "ImageAnalyzerImage" ) );
+	RegisterInputObject( &inputImageObjectInfo, SvOi::ImageAnalyzerImageName );
 
 	addDefaultInputObjects();
 }

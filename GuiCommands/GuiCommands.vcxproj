@@ -17,6 +17,7 @@
     <ClInclude Include="AttributesSetFilter.h" />
     <ClInclude Include="ConnectToObject.h" />
     <ClInclude Include="ConstructAndInsertFriend.h" />
+    <ClInclude Include="CreateModel.h" />
     <ClInclude Include="DestroyChildObject.h" />
     <ClInclude Include="DestroyFriend.h" />
     <ClInclude Include="ExportMask.h" />

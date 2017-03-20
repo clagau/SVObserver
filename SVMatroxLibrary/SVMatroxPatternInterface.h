@@ -85,6 +85,18 @@ public:
 	// (MpatSetCenter)
 	static SVStatusCode SetCenter( const SVMatroxPatternModel& p_rModelId, long p_lXOffset, long p_lYOffset);
 
+	/// Set the "don't care" pixels in a model. 
+	/// \param rDontCareImageId [in] Id of the Don't care image
+	/// \param rModelId [in] ID of the model.
+	/// \returns SVMatroxPatternInterface::SVStatusCode
+	static SVStatusCode SetDontCare( const SVMatroxBuffer& rDontCareImageId, const SVMatroxPatternModel& rModelId );
+
+	/// Clear the "don't care" pixels in a model.
+	/// \param rModelImageId [in] Id of the model image.
+	/// \param rModelId [in] ID of the model.
+	/// \returns SVMatroxPatternInterface::SVStatusCode
+	static SVStatusCode ClearDontCare(const SVMatroxBuffer& rModelImageId, const SVMatroxPatternModel& rModelId);
+
 	// (MpatSetNumber)
 	static SVStatusCode SetNumber( const SVMatroxPatternModel& p_rModelId, long p_lNumber );
 

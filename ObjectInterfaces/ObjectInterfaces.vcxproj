@@ -97,6 +97,7 @@
     <ClInclude Include="IMask.h" />
     <ClInclude Include="IMatroxImageData.h" />
     <ClInclude Include="IObjectManager.h" />
+    <ClInclude Include="IPatternAnalyzer.h" />
     <ClInclude Include="ISelectorItemVector.h" />
     <ClInclude Include="IRootObject.h" />
     <ClInclude Include="ISelectorItem.h" />

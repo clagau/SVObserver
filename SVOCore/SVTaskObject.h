@@ -128,6 +128,8 @@ public:
 	//! \return a const reference to the first task message
 	//************************************
 	virtual SvStl::MessageContainer getFirstTaskMessage() const override;
+	virtual void getSpecialImageList(std::vector<SVString>& rList) const override {};
+	virtual bool getSpecialImage(const SVString& rName, SvOi::MatroxImageSmartHandlePtr& rImagePtr) const override { return false; };
 #pragma endregion virtual method (ITaskObject)
 
 #pragma region Methods to replace processMessage

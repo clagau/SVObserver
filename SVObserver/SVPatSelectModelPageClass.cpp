@@ -12,24 +12,21 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVPatSelectModelPageClass.h"
-#include "SVImageLibrary/SVImageBufferHandleImage.h"
-#include "SVRunControlLibrary/SVRunControlLibrary.h"
-#include "SVPatternAnalyzerClass.h"
 #include "SVPatAnalyzeSetupDlgSheet.h"
-#include "SVTool.h"
-#include "SVOCore/SVImageProcessingClass.h"
-#include "SVOCore/SVImageClass.h"
 #include "CameraLibrary\SVGraphix.h"
-#include "SVOGui/DisplayHelper.h"
 #include "SVUtilityLibrary/SVStringConversions.h"
 #include "SVUtilityLibrary/SVString.h"
-#include "SVImageLibrary\MatroxImageData.h"
-#include "SVOGui\SVColor.h"
-#include "TextDefinesSvO.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVStatusLibrary\GlobalPath.h"
+#include "SVOGui/DisplayHelper.h"
 #include "SVOGui/GuiValueHelper.h"
+#include "SVOGui\SVColor.h"
+#include "GuiCommands/CreateModel.h"
+#include "SVMessage/SVMessage.h"
+#include "SVMatroxLibrary/SVMatroxPatternInterface.h"
+#include "SVImageLibrary/SVExtentPointStruct.h"
+#include "SVImageLibrary/SVImageExtentClass.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -43,6 +40,7 @@ static const int SVMinModelWidthWithCircular = 25;
 static const int SVMinModelHeightWithCircular = 25;
 static const int ToolImageTab = 0;
 static const int ModelImageTab = 1;
+static const int DontCareImageTab = 2;
 
 static const std::string ModelWidthTag("Model Width");
 static const std::string ModelHeightTag("Model Height");
@@ -50,6 +48,8 @@ static const std::string ModelCenterXTag("Model CenterX");
 static const std::string ModelCenterYTag("Model CenterY");
 static const std::string ModelImageFileTag("Model ImageFileName");
 static const std::string UseCircularOverscanTag("Use Circular Overscan");
+static const std::string UseDontCareTag("Use Dont Care Area");
+static const std::string DontCareImageFileTag("Dont Care ImageFileName");
 static const std::string ResultXTag("ResultX");
 static const std::string ResultYTag("ResultY");
 static const std::string ResultAngleTag("ResultAngle");
@@ -62,6 +62,7 @@ SVPatModelPageClass::SVPatModelPageClass(const SVGUID& rInspectionID, const SVGU
 , m_rInspectionID(rInspectionID)
 , m_rAnalyzerID(rAnalyzerID)
 , m_strModelName( _T("") )
+, m_strDontCareName( _T("") )
 , m_sourceImageWidth( 100 )
 , m_sourceImageHeight( 100 )
 , m_handleToModelOverlayObject( -1 )
@@ -74,6 +75,8 @@ SVPatModelPageClass::SVPatModelPageClass(const SVGUID& rInspectionID, const SVGU
 , m_nYPos( 0 )
 , m_lModelWidth( m_sourceImageWidth/2 )
 , m_lModelHeight( m_sourceImageHeight/2 )
+, m_AnalyzerImageGUID( SV_GUID_NULL )
+, SvOg::ImageController(rInspectionID, rAnalyzerID)
 , m_values(SvOg::BoundValues(rInspectionID, rAnalyzerID, boost::assign::map_list_of
 (ModelWidthTag, SVpatModelWidthObjectGuid)
 (ModelHeightTag, SVpatModelHeightObjectGuid)
@@ -81,12 +84,13 @@ SVPatModelPageClass::SVPatModelPageClass(const SVGUID& rInspectionID, const SVGU
 (ModelCenterYTag, SVpatModelCenterYObjectGuid)
 (UseCircularOverscanTag, SVpatCircularOverscanObjectGuid)
 (ModelImageFileTag, SVpatModelImageFileGuid)
+(UseDontCareTag, SVpatDontCareObjectGuid)
+(DontCareImageFileTag, SVpatDontCareImageFileGuid)
 (ResultXTag, SVpatResultXObjectGuid)
 (ResultYTag, SVpatResultYObjectGuid)
 (ResultAngleTag, SVpatResultAngleObjectGuid)
 (ResultSizeTag, SVpatResultNumFoundOccurancesObjectGuid)))
 {
-	m_pPatAnalyzer = dynamic_cast<SVPatternAnalyzerClass*>(SVObjectManagerClass::Instance().GetObject(m_rAnalyzerID));
 }
 
 SVPatModelPageClass::~SVPatModelPageClass()
@@ -102,10 +106,11 @@ void SVPatModelPageClass::OnCancel()
 
 void SVPatModelPageClass::OnOK()
 {
-	UINT nMsgID = 0;
+	m_bAllowExit = true;
+
 	try
 	{
-		ValidateModelParameters();
+		ValidateModelParameters(true);
 		// Should we check if model needs created here?
 		CPropertyPage::OnOK();
 	}
@@ -114,17 +119,10 @@ void SVPatModelPageClass::OnOK()
 		//Now that we have caught the exception we would like to display it
 		SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 		Msg.setMessage( rSvE.getMessage() );
-	}
-
-	m_bAllowExit = true;
-	if (!m_pPatAnalyzer->IsValidSize())
-	{
-		SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-		INT_PTR result = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Pattern_Model2Large, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10184, SV_GUID_NULL, MB_YESNO ); 
+		INT_PTR result = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Pattern_Invalid_ShouldLeave, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10184, SV_GUID_NULL, MB_YESNO ); 
 		if (IDYES == result)
 		{
 			m_bAllowExit = false;
-			return;
 		}
 		else
 		{
@@ -188,7 +186,7 @@ BOOL SVPatModelPageClass::OnInitDialog()
 
 	CPropertyPage::OnInitDialog();
 
-	m_pSheet = static_cast< SVPatAnalyzeSetupDlgSheet* >( GetParent() );
+	Init(); //init of ImageController
 	
 	///////////////////////////////////////////////////////////////////////
 	// Create Property box
@@ -207,6 +205,7 @@ BOOL SVPatModelPageClass::OnInitDialog()
 
 	m_dialogImage.AddTab(_T("Tool Image")); 
 	m_dialogImage.AddTab(_T("Model Image")); 
+	m_dialogImage.AddTab(_T("Dont Care Image"));
 
 	InitializeData();
 	BuildPropertyList();
@@ -223,6 +222,8 @@ void SVPatModelPageClass::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_PAT_CIRCULAR_OVERSCAN, m_CircularOverscanCheckbox);
 	DDX_Check(pDX, IDC_PAT_CIRCULAR_OVERSCAN, m_bCircularOverscan);
 	DDX_Text(pDX, IDC_PAT1_FILE_NAME, m_strModelName);
+	DDX_Check(pDX, IDC_PAT_USE_DONT_CARE, m_bDontCare);
+	DDX_Text(pDX, IDC_PAT_DONT_CARE_FILE_NAME, m_strDontCareName);
 	DDX_Text(pDX, IDC_PAT_MODELCENTERX, m_CenterX);
 	DDX_Text(pDX, IDC_PAT_MODELCENTERY, m_CenterY);
 	DDX_Control(pDX, IDC_DIALOGIMAGE, m_dialogImage);
@@ -233,9 +234,18 @@ void SVPatModelPageClass::DoDataExchange(CDataExchange* pDX)
 #pragma region AFX MSG
 void SVPatModelPageClass::OnFileButton()
 {
-	if ( GetModelFile( TRUE ) ) // @TODO:  Explain the "TRUE".
+	if ( GetModelFile( true, m_strModelName ) ) // true is mode for selected file.
 	{
+		m_strOldModelName.Empty(); // mark it as update needed
 		ProcessOnKillFocus( IDC_PAT1_FILE_NAME );
+	}
+}
+
+void SVPatModelPageClass::OnFileDontCareButton()
+{
+	if (GetModelFile(true, m_strDontCareName)) // true is mode for selected file.
+	{
+		ProcessOnKillFocus(IDC_PAT_DONT_CARE_FILE_NAME);
 	}
 }
 
@@ -243,76 +253,37 @@ void SVPatModelPageClass::OnCreateModel()
 {
 	UpdateData();
 
-	SvOi::MessageTextEnum msgID = SvOi::Tid_Empty;
+	SetValuesToAnalyzer();
 
-	if ( nullptr != m_pPatAnalyzer && GetModelFile( FALSE ) ) // @TODO:  Explain the "FALSE".
+	if ( GetModelFile( false, m_strModelName ) ) // false parameter is mode for save file.
 	{
-		//Model Width and Height will normally set by Analyzer himself, depending of ModelImage-size.
-		//But here this values must be set, because from this values the new ModelImage will be created.
-		m_values.Set(ModelWidthTag, m_lModelWidth);
-		m_values.Set(ModelHeightTag, m_lModelHeight);
-		m_values.Commit();
-		SetValuesToAnalyzer();
-
-		if( m_pPatAnalyzer->UpdateModelFromInputImage(m_nXPos, m_nYPos) )
+		SVSharedPtr<GuiCmd::CreateModel> commandPtr = new GuiCmd::CreateModel(m_rAnalyzerID, m_nXPos, m_nYPos, m_lModelWidth, m_lModelHeight, SVString(m_strModelName));
+		SVObjectSynchronousCommandTemplate<SVSharedPtr<GuiCmd::CreateModel>> cmd(m_rInspectionID, commandPtr);
+		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+		if (S_OK == hr)
 		{
-			SVMatroxBufferInterface::SVStatusCode l_Code;
-
-			// Set the Search parameters
-			bool bOk = m_pPatAnalyzer->SetSearchParameters() && !( m_pPatAnalyzer->m_patBufferHandlePtr.empty() );
-			if (bOk)
+			SvStl::MessageContainerVector ErrorMessages;
+			RestoreImagesFromFile(&ErrorMessages);
+			if (!ErrorMessages.empty())
 			{
-				SVFileNameClass svFileName( m_strModelName );
-
-				// Now save the Model Image buffer to a file
-				SVMatroxFileTypeEnum FileFormatID = SVFileMIL; // Set as default.
-				if ( 0 == SvUl_SF::CompareNoCase( svFileName.GetExtension(), SVString( _T(".bmp") ) ) )
-				{
-					FileFormatID = SVFileBitmap;
-				}
-				if ( 0 == SvUl_SF::CompareNoCase( svFileName.GetExtension(), SVString( _T(".tif") ) ) )
-				{
-					FileFormatID = SVFileTiff;
-				}
-
-				SVString l_strFileName = m_strModelName;
-
-				SVImageBufferHandleImage l_MilHandle;
-				m_pPatAnalyzer->m_patBufferHandlePtr->GetData( l_MilHandle );
-
-				l_Code = SVMatroxBufferInterface::Export( l_MilHandle.GetBuffer(),
-															l_strFileName,
-															FileFormatID );
-
-				if (l_Code == SVMEE_STATUS_OK)
-				{
-					
-					msgID = RestoreModelFromFile();
-				}
-				else
-				{
-					msgID = SvOi::Tid_PatAllocModelFailed;
-				}
-			}
-			else
-			{
-				msgID = SvOi::Tid_PatAllocModelFailed;
+				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
+				Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_PatAllocModelFailed, SvStl::SourceFileParams(StdMessageParams), 0, m_rAnalyzerID );
 			}
 		}
 		else
 		{
-			msgID = SvOi::Tid_PatAllocModelFailed;
+			SvStl::MessageContainerVector ErrorMessages = commandPtr->getErrorMessages();
+			if (!ErrorMessages.empty())
+			{
+				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
+				Msg.setMessage( ErrorMessages[0].getMessage() );
+			}
 		}
-	}
-	if (SvOi::Tid_Empty != msgID)
-	{
-		SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, msgID, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10246 );
 	}
 }
 
 // Kill focus of File name edit control
-void SVPatModelPageClass::OnKillFileName()
+void SVPatModelPageClass::OnKillModelFileName()
 {
 	if(GetFocus() && (GetFocus()->GetDlgCtrlID() == IDC_PAT1_FILE_BUTTON))
 	{
@@ -324,6 +295,29 @@ void SVPatModelPageClass::OnKillFileName()
 	UpdateData(true);
 
 	ProcessOnKillFocus(IDC_PAT1_FILE_NAME);
+}
+
+void SVPatModelPageClass::OnKillDontCareFileName()
+{
+	if (GetFocus() && (GetFocus()->GetDlgCtrlID() == IDC_PAT_DONT_CARE_FILE_NAME))
+	{
+		return;
+	}
+
+	UpdateData(true);
+
+	ProcessOnKillFocus(IDC_PAT_DONT_CARE_FILE_NAME);
+}
+
+void SVPatModelPageClass::OnUseDontCareClicked()
+{
+	UpdateData(true);
+	if (m_bDontCare)
+	{
+		ProcessOnKillFocus(IDC_PAT_DONT_CARE_FILE_NAME);
+	}
+	
+	setImages();
 }
 
 void SVPatModelPageClass::OnCircularOverscanClicked()
@@ -415,7 +409,10 @@ BEGIN_MESSAGE_MAP(SVPatModelPageClass, CPropertyPage)
 	ON_BN_CLICKED(IDC_PAT1_FILE_BUTTON, OnFileButton)
 	ON_BN_CLICKED(IDC_PAT1_CREATE_MODEL, OnCreateModel)
 	ON_BN_CLICKED(IDC_PAT_CIRCULAR_OVERSCAN, OnCircularOverscanClicked)
-	ON_EN_KILLFOCUS(IDC_PAT1_FILE_NAME, OnKillFileName)
+	ON_BN_CLICKED(IDC_PAT_DONT_CARE_FILE_BUTTON, OnFileDontCareButton)
+	ON_BN_CLICKED(IDC_PAT_USE_DONT_CARE, OnUseDontCareClicked)
+	ON_EN_KILLFOCUS(IDC_PAT1_FILE_NAME, OnKillModelFileName)
+	ON_EN_KILLFOCUS(IDC_PAT_DONT_CARE_FILE_NAME, OnKillDontCareFileName)
 	ON_EN_KILLFOCUS(IDC_PAT_MODELCENTERX, OnKillModelCenter)
 	ON_EN_KILLFOCUS(IDC_PAT_MODELCENTERY, OnKillModelCenter)
 	ON_NOTIFY(PTN_ITEMCHANGED, IDC_PROPERTIES, OnItemChanged)
@@ -432,25 +429,25 @@ void SVPatModelPageClass::ObjectChangedExDialogImage(long Tab, long Handle, VARI
 {
 	if (ToolImageTab == Tab && m_handleToModelOverlayObject == Handle)
 	{
-	////////////////////////////////////////////////////////
-	// SET SHAPE PROPERTIES
-	VariantParamMap ParaMap;
+		////////////////////////////////////////////////////////
+		// SET SHAPE PROPERTIES
+		VariantParamMap ParaMap;
 		int count = SvOg::DisplayHelper::FillParameterMap(ParaMap, ParameterList, ParameterValue);
 
-	if( ParaMap.end() != ParaMap.find(CDSVPictureDisplay::P_X1) && VT_I4 == ParaMap[CDSVPictureDisplay::P_X1].vt &&
-		ParaMap.end() != ParaMap.find(CDSVPictureDisplay::P_X2) && VT_I4 == ParaMap[CDSVPictureDisplay::P_X2].vt &&
-		ParaMap.end() != ParaMap.find(CDSVPictureDisplay::P_Y1) && VT_I4 == ParaMap[CDSVPictureDisplay::P_Y1].vt &&
-		ParaMap.end() != ParaMap.find(CDSVPictureDisplay::P_Y2) && VT_I4 == ParaMap[CDSVPictureDisplay::P_Y2].vt)
-	{
-		m_lModelWidth = ParaMap[CDSVPictureDisplay::P_X2].lVal - ParaMap[CDSVPictureDisplay::P_X1].lVal;
-		m_lModelHeight = ParaMap[CDSVPictureDisplay::P_Y2].lVal - ParaMap[CDSVPictureDisplay::P_Y1].lVal;
-		m_nXPos = ParaMap[CDSVPictureDisplay::P_X1].lVal;
-		m_nYPos = ParaMap[CDSVPictureDisplay::P_Y1].lVal;
+		if( ParaMap.end() != ParaMap.find(CDSVPictureDisplay::P_X1) && VT_I4 == ParaMap[CDSVPictureDisplay::P_X1].vt &&
+			ParaMap.end() != ParaMap.find(CDSVPictureDisplay::P_X2) && VT_I4 == ParaMap[CDSVPictureDisplay::P_X2].vt &&
+			ParaMap.end() != ParaMap.find(CDSVPictureDisplay::P_Y1) && VT_I4 == ParaMap[CDSVPictureDisplay::P_Y1].vt &&
+			ParaMap.end() != ParaMap.find(CDSVPictureDisplay::P_Y2) && VT_I4 == ParaMap[CDSVPictureDisplay::P_Y2].vt)
+		{
+			m_lModelWidth = ParaMap[CDSVPictureDisplay::P_X2].lVal - ParaMap[CDSVPictureDisplay::P_X1].lVal;
+			m_lModelHeight = ParaMap[CDSVPictureDisplay::P_Y2].lVal - ParaMap[CDSVPictureDisplay::P_Y1].lVal;
+			m_nXPos = ParaMap[CDSVPictureDisplay::P_X1].lVal;
+			m_nYPos = ParaMap[CDSVPictureDisplay::P_Y1].lVal;
 
-		setCircularOverscanCheckboxState();
-	}
+			setCircularOverscanCheckboxState();
+		}
 
-	RefreshProperties();
+		RefreshProperties();
 	}
 	else if (ModelImageTab == Tab && m_handleToModelCenterOverlay == Handle)
 	{
@@ -485,7 +482,7 @@ void SVPatModelPageClass::TabChangeDialogImage(long Tab)
 #pragma endregion Protected Methods
 
 #pragma region Private Methods
-void SVPatModelPageClass::ValidateModelParameters()
+void SVPatModelPageClass::ValidateModelParameters(bool shouldReset)
 {
 	UpdateData(true);
 
@@ -493,7 +490,12 @@ void SVPatModelPageClass::ValidateModelParameters()
 	ValidateModelHeight();
 	ValidateModelFilename();
 
-	SetValuesToAnalyzer();
+	SvStl::MessageContainerVector ErrorMessages;
+	SetValuesToAnalyzer(&ErrorMessages, shouldReset);
+	if (!ErrorMessages.empty())
+	{
+		throw ErrorMessages[0];
+	}
 }
 
 void SVPatModelPageClass::ValidateModelWidth()
@@ -560,15 +562,13 @@ void SVPatModelPageClass::ValidateModelFilename() // @TODO:  Add actual validati
 // SVPatModelPageClass message handlers
 void SVPatModelPageClass::InitializeData()
 {
-	SVImageExtentClass l_svExtents;
-	RECT l_oRect;
-
-	dynamic_cast<SVToolClass*>(m_pPatAnalyzer->GetTool())->GetImageExtent( l_svExtents );
-	l_svExtents.GetOutputRectangle( l_oRect );
-
-	// Get Source Image Extents
-	m_sourceImageWidth = l_oRect.right - l_oRect.left;
-	m_sourceImageHeight = l_oRect.bottom - l_oRect.top;
+	const SvUl::InputNameGuidPairList& rImageList = GetConnectedImageList();
+	const SvUl::InputNameGuidPairList::const_iterator Iter = rImageList.find(SvOi::ImageAnalyzerImageName); 
+	if (rImageList.cend() != Iter)
+	{
+		m_AnalyzerImageGUID = Iter->second.second;
+		GetImage(m_AnalyzerImageGUID, m_sourceImageWidth, m_sourceImageHeight);
+	}	
 	
 	// Model Selection values
 	m_values.Init();
@@ -578,6 +578,8 @@ void SVPatModelPageClass::InitializeData()
 	m_CenterY = m_values.Get<long>(ModelCenterYTag);
 	m_strModelName = m_values.Get<CString>(ModelImageFileTag); 
 	m_bCircularOverscan = m_values.Get<bool>(UseCircularOverscanTag);
+	m_strDontCareName = m_values.Get<CString>(DontCareImageFileTag); 
+	m_bDontCare = m_values.Get<bool>(UseDontCareTag);
 	int resultSize = m_values.Get<bool>(ResultSizeTag);
 	m_nXPos = 0;
 	m_nYPos = 0;
@@ -608,18 +610,18 @@ void SVPatModelPageClass::InitializeData()
 		}
 	}
 
-	if(l_oRect.bottom < m_lModelHeight)
+	if(m_sourceImageHeight < m_lModelHeight)
 	{
-		m_lModelHeight = l_oRect.bottom - 1;
+		m_lModelHeight = m_sourceImageHeight - 1;
 	}
 
-	if(l_oRect.right < m_lModelWidth)
+	if(m_sourceImageWidth < m_lModelWidth)
 	{
-		m_lModelWidth = l_oRect.right - 1;
+		m_lModelWidth = m_sourceImageWidth - 1;
 	}
 
 	// Initialize the Slider for X origin
-	int nMaxX = l_oRect.right - m_lModelWidth;
+	int nMaxX = m_sourceImageWidth - m_lModelWidth;
 
 	if(m_nXPos > nMaxX)
 	{
@@ -627,7 +629,7 @@ void SVPatModelPageClass::InitializeData()
 	}
 
 	// Initialize the Slider for Y origin
-	int nMaxY = l_oRect.bottom - m_lModelHeight;
+	int nMaxY = m_sourceImageHeight - m_lModelHeight;
 
 	if(m_nYPos > nMaxY)
 	{
@@ -638,16 +640,14 @@ void SVPatModelPageClass::InitializeData()
 	setCircularOverscanCheckboxState();
 }
 
-BOOL SVPatModelPageClass::ProcessOnKillFocus(UINT nId) //@TODO:  Change c-style casts in this method to _cast.
+BOOL SVPatModelPageClass::ProcessOnKillFocus(UINT nId)
 {
-	// @TODO:  Move these method calls outside the "if" line.
-	if (GetActiveWindow() != (CWnd *)m_pSheet ||
-		m_pSheet->GetActiveIndex() != 0)
+	CPropertySheet* pPropSheet = dynamic_cast<CPropertySheet*>(GetParent());
+	int activeIndex = (nullptr != pPropSheet) ? pPropSheet->GetActiveIndex() : 0;
+	if (GetActiveWindow() != GetParent() || 0 != activeIndex)
 	{
-		return TRUE;
+		return true;
 	}
-
-	SvOi::MessageTextEnum msgID = SvOi::Tid_Empty;
 
 	switch (nId)
 	{
@@ -663,7 +663,41 @@ BOOL SVPatModelPageClass::ProcessOnKillFocus(UINT nId) //@TODO:  Change c-style 
 			if (m_strModelName != m_strOldModelName)
 			{
 				// Extract Model from the file
-				msgID = RestoreModelFromFile();
+				SvStl::MessageContainerVector ErrorMessages;
+				if (!RestoreImagesFromFile(&ErrorMessages))
+				{
+					if (!ErrorMessages.empty())
+					{
+						SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
+						Msg.setMessage( ErrorMessages[0].getMessage() );
+					}
+					
+					GetDlgItem(nId)->SetFocus();
+					(dynamic_cast<CEdit *>(GetDlgItem(nId)))->SetSel(0, -1);
+					return false;
+				}
+			}
+			break;
+		}
+		case IDC_PAT_DONT_CARE_FILE_NAME:
+		{
+			// if no model name - don't create
+			if (m_strDontCareName.IsEmpty())
+			{
+				break;
+			}
+			SvStl::MessageContainerVector ErrorMessages;
+			if (!RestoreImagesFromFile(&ErrorMessages))
+			{
+				if (!ErrorMessages.empty())
+				{
+					SvStl::MessageMgrStd Msg(SvStl::LogAndDisplay);
+					Msg.setMessage(ErrorMessages[0].getMessage());
+				}
+
+				GetDlgItem(nId)->SetFocus();
+				(dynamic_cast<CEdit *>(GetDlgItem(nId)))->SetSel(0, -1);
+				return false;
 			}
 			break;
 		}
@@ -673,27 +707,16 @@ BOOL SVPatModelPageClass::ProcessOnKillFocus(UINT nId) //@TODO:  Change c-style 
 		}
 	}
 
-	if (SvOi::Tid_Empty != msgID)
-	{
-		SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, msgID, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10247 );
-		GetDlgItem(nId)->SetFocus();
-		((CEdit *)GetDlgItem(nId))->SetSel(0, -1);
-		return FALSE;
-	}
-	return TRUE;
+	return true;
 }
 
 // If an error occurs, return the Error message Id, otherwise return 0;
-SvOi::MessageTextEnum SVPatModelPageClass::RestoreModelFromFile()
+bool SVPatModelPageClass::RestoreImagesFromFile(SvStl::MessageContainerVector *pErrorMessages)
 {
-	SvOi::MessageTextEnum msgId = SvOi::Tid_Empty;
 	UpdateData( true );
 
 	// set analyzer values
-	SetValuesToAnalyzer();
-
-	if ( m_pPatAnalyzer->RestorePattern( SVString(m_strModelName), &msgId ) )
+	if ( S_OK == SetValuesToAnalyzer(pErrorMessages, true) )
 	{
 		InitializeData();
 		RefreshProperties();
@@ -701,16 +724,16 @@ SvOi::MessageTextEnum SVPatModelPageClass::RestoreModelFromFile()
 	}
 	else
 	{
-		return msgId;
+		return false;
 	}
 
 	setImages();
-	return SvOi::Tid_Empty;
+	return true;
 }
 
-BOOL SVPatModelPageClass::GetModelFile(BOOL bMode)
+bool SVPatModelPageClass::GetModelFile(bool bMode, CString& rFileName)
 {
-	BOOL bOk = FALSE;
+	bool bOk = false;
 
 	SVFileNameClass svfncFileName;
 
@@ -727,14 +750,14 @@ BOOL SVPatModelPageClass::GetModelFile(BOOL bMode)
 
 	UpdateData( TRUE );
 
-	svfncFileName.SetFullFileName( m_strModelName );
+	svfncFileName.SetFullFileName(rFileName);
 	if ( bMode )
 	{
-		bOk = svfncFileName.SelectFile();
+		bOk = (TRUE == svfncFileName.SelectFile());
 	}
 	else
 	{
-		bOk = svfncFileName.SaveFile();
+		bOk = (TRUE == svfncFileName.SaveFile());
 	}
 
 	if ( bOk )
@@ -743,9 +766,8 @@ BOOL SVPatModelPageClass::GetModelFile(BOOL bMode)
 		                                 _T( "SVCFilePath" ),
 										svfncFileName.GetPathName().c_str() );
 
-		m_strModelName = svfncFileName.GetFullFileName().c_str();
-		m_strOldModelName.Empty(); // mark it as update needed
-
+		rFileName = svfncFileName.GetFullFileName().c_str();
+		
 		UpdateData( false );
 	}
 
@@ -847,13 +869,26 @@ HRESULT SVPatModelPageClass::RefreshProperties()
 
 void SVPatModelPageClass::setImages()
 {
-	if ( nullptr != m_pPatAnalyzer )
+	if ( SV_GUID_NULL != m_AnalyzerImageGUID )
 	{
-		m_dialogImage.setImage( m_pPatAnalyzer->getInputImage(), ToolImageTab );
-		MatroxImageData data(m_pPatAnalyzer->m_patBufferHandlePtr);
-		m_dialogImage.setImage( &data, ModelImageTab );
+		IPictureDisp* pFirstImage = GetImage(m_AnalyzerImageGUID);
+		m_dialogImage.setImage( pFirstImage, ToolImageTab );
 	}
-	
+
+	IPictureDisp* pSecondImage = GetImage(SvOi::PatternModelImageName);
+	m_dialogImage.setImage( pSecondImage, ModelImageTab );
+
+	if (m_bDontCare)
+	{
+		IPictureDisp* pThirdImage = GetImage(SvOi::PatternDontCareImageName);
+		m_dialogImage.setImage(pThirdImage, DontCareImageTab);
+		m_dialogImage.ShowTab(DontCareImageTab, true);
+	}
+	else
+	{
+		m_dialogImage.ShowTab(DontCareImageTab, false);
+	}
+
 	setOverlay();
 	m_dialogImage.Refresh();
 }
@@ -953,11 +988,12 @@ void SVPatModelPageClass::setCircularToolOverlay()
 
 void SVPatModelPageClass::setCircularModelOverlay()
 {
+	long modelWidth;
+	long modelHeight;
 	//Overlay for the model
-	if (!m_pPatAnalyzer->m_patBufferHandlePtr->empty())
+	IPictureDisp* pModelImage = GetImage(SvOi::PatternModelImageName, modelWidth, modelHeight);
+	if (nullptr != pModelImage)
 	{
-		long modelWidth = abs(m_pPatAnalyzer->m_patBufferHandlePtr->GetBitmapInfo().GetWidth());
-		long modelHeight = abs(m_pPatAnalyzer->m_patBufferHandlePtr->GetBitmapInfo().GetHeight());
 		CRect innerRect = SVMatroxPatternInterface::CalculateOverscanInnerRect(CPoint(0, 0), CSize(modelWidth, modelHeight));
 		CRect outerRect = SVMatroxPatternInterface::CalculateOverscanOuterRect(CPoint(innerRect.left, innerRect.top), innerRect.Size() );
 		LongParamMap Parmap;
@@ -994,7 +1030,7 @@ void SVPatModelPageClass::setCircularModelOverlay()
 		{
 			m_dialogImage.AddOverlay(ModelImageTab, Parmap, &m_handleToSquareOverlayObject2);
 		}
-	}  //if (!m_pPatAnalyzer->m_patBufferHandlePtr->empty())
+	}  //if (nullptr != pModelImage)
 }
 
 void SVPatModelPageClass::setModelCenterOverlay()
@@ -1047,13 +1083,20 @@ void SVPatModelPageClass::setCircularOverscanCheckboxState()
 	UpdateData(FALSE);
 }
 
-void SVPatModelPageClass::SetValuesToAnalyzer()
+HRESULT SVPatModelPageClass::SetValuesToAnalyzer(SvStl::MessageContainerVector *pErrorMessages, bool shouldResetTask)
 {
 	m_values.Set(ModelImageFileTag, m_strModelName);
 	m_values.Set(UseCircularOverscanTag, m_bCircularOverscan);
 	m_values.Set(ModelCenterXTag, m_CenterX);
 	m_values.Set(ModelCenterYTag, m_CenterY);
-	m_values.Commit();
+	m_values.Set(DontCareImageFileTag, m_strDontCareName);
+	m_values.Set(UseDontCareTag, m_bDontCare);
+	HRESULT result = m_values.Commit(shouldResetTask);
+	if (S_OK != result && nullptr != pErrorMessages)
+	{
+		*pErrorMessages = m_values.getCommitErrorList();
+	}
+	return result;
 }
 
 #pragma endregion Private Methods

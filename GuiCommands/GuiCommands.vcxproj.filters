@@ -165,5 +165,8 @@
     <ClInclude Include="GetInputs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="CreateModel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

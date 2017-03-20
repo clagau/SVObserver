@@ -11,6 +11,7 @@
 #include "IObjectClass.h"
 #include "IValueObject.h"
 #include "ISelectorItemVector.h"
+#include "ISVImage.h"
 #include "SVInterfaceList.h"
 #include "SVObjectTypeInfoStruct.h"
 #include "DependencyList.h"
@@ -95,6 +96,18 @@ namespace Seidenader
 			// get the first task error message (usually from validation or run once)
 			// This is temporary, in the future all the TaskObject error messages will be retrieved
 			virtual SvStl::MessageContainer getFirstTaskMessage() const = 0;
+
+			/// Get a list of special images from this task. If this task has no special images this list is empty.
+			/// Special images are images which are not from type SVImageClass and is not in ObjectManager and so it has no GUID. An example for special image is the model in the pattern analyzer.
+			/// \param rList [in,out] A list of names of available special image of this task.
+			virtual void getSpecialImageList(std::vector<SVString>& rList) const = 0;
+
+			/// Get a special image from this task. A list of available images can be get by getSpecialImageList.
+			/// Special images are images which are not from type SVImageClass and is not in ObjectManager and so it has no GUID. An example for special image is the model in the pattern analyzer.
+			/// \param rName [in] The name of the special image of this task.
+			/// \param rImagePtr [out] Pointer to the image.
+			/// \returns bool return true if setting of this image was succeeded.
+			virtual bool getSpecialImage(const SVString& rName, MatroxImageSmartHandlePtr& rImagePtr) const = 0;
 		};
 	}
 }

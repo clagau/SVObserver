@@ -14,6 +14,7 @@
 //Moved to precompiled header: #include <cmath>
 #include "SVPatternAnalyzerClass.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
+#include "SVImageLibrary/MatroxImageData.h"
 #include "SVMessage/SVMessage.h"
 #include "SVRunControlLibrary/SVRunControlLibrary.h"
 #include "SVStatusLibrary\MessageManager.h"
@@ -80,6 +81,8 @@ SV_IMPLEMENT_CLASS(SVPatternAnalyzerClass, SVPatternAnalyzerClassGuid);
 
 SVPatternAnalyzerClass::SVPatternAnalyzerClass(BOOL BCreateDefaultTaskList, SVObjectClass* POwner, int StringResourceID)
   : SVImageAnalyzerClass(BCreateDefaultTaskList, POwner, StringResourceID)
+  , m_bReloadModelFromFile(false)
+  , m_bReloadDonCareFromFile(false)
 {
 	m_outObjectInfo.ObjectTypeInfo.SubType = SVPatternAnalyzerObjectType;
 	m_nPatternIndex = -1;
@@ -92,6 +95,7 @@ SVPatternAnalyzerClass::SVPatternAnalyzerClass(BOOL BCreateDefaultTaskList, SVOb
 	RegisterEmbeddedObject(&msv_bpatSearchAngleMode, SVpatSearchAngleModeObjectGuid, IDS_OBJECTNAME_PAT_SEARCHANGLEMODE, false, SVResetItemOwner );
 	RegisterEmbeddedObject(&msv_lpatSpeed, SVpatSpeedObjectGuid, IDS_OBJECTNAME_PAT_SPEED, false, SVResetItemOwner );
 	RegisterEmbeddedObject(&msv_szModelImageFile, SVpatModelImageFileGuid, IDS_OBJECTNAME_PAT_MODELIMAGEFILE, false, SVResetItemOwner );
+	RegisterEmbeddedObject(&m_DontCareImageFile, SVpatDontCareImageFileGuid, IDS_OBJECTNAME_PAT_DONT_CARE_IMAGEFILE, false, SVResetItemOwner );
 
 	RegisterEmbeddedObject(&msv_dpatSearchAngle, SVpatSearchAngleObjectGuid, IDS_OBJECTNAME_PAT_SEARCHANGLE, false, SVResetItemOwner );
 	RegisterEmbeddedObject(&msv_dpatAngleDeltaNeg, SVpatAngleDeltaNegObjectGuid, IDS_OBJECTNAME_PAT_DELTANEG, false, SVResetItemOwner );
@@ -101,6 +105,7 @@ SVPatternAnalyzerClass::SVPatternAnalyzerClass(BOOL BCreateDefaultTaskList, SVOb
 	RegisterEmbeddedObject(&msv_dpatAngleInterpolation, SVpatAngleInterpolationObjectGuid, IDS_OBJECTNAME_PAT_INTERPOLATION, false, SVResetItemOwner );
 
 	RegisterEmbeddedObject(&msv_bpatCircularOverscan, SVpatCircularOverscanObjectGuid, IDS_OBJECTNAME_PAT_CIRCULAROVERSCAN, false, SVResetItemOwner );
+	RegisterEmbeddedObject(&m_bpatDontCare, SVpatDontCareObjectGuid, IDS_OBJECTNAME_PAT_USE_DONT_CARE, false, SVResetItemOwner );
 
 	RegisterEmbeddedObject(&msv_dpatPreliminaryAcceptanceThreshold, SVpatPreliminaryAcceptanceThresholdObjectGuid, IDS_OBJECTNAME_PAT_PRELIMINARYACCEPTANCETHRESHOLD, false, SVResetItemOwner );
 	RegisterEmbeddedObject(&msv_lpatFastFind, SVpatFastFindObjectGuid, IDS_OBJECTNAME_PAT_FASTFIND, false, SVResetItemOwner );
@@ -121,11 +126,14 @@ SVPatternAnalyzerClass::SVPatternAnalyzerClass(BOOL BCreateDefaultTaskList, SVOb
 	RegisterEmbeddedObject(&m_lpatModelHeight, SVpatModelHeightObjectGuid, IDS_OBJECTNAME_PAT_MODELHEIGHT, false, SVResetItemOwner );
 	RegisterEmbeddedObject(&m_lpatModelCenterX, SVpatModelCenterXObjectGuid, IDS_OBJECTNAME_PAT_MODELCENTERX, false, SVResetItemOwner );
 	RegisterEmbeddedObject(&m_lpatModelCenterY, SVpatModelCenterYObjectGuid, IDS_OBJECTNAME_PAT_MODELCENTERY, false, SVResetItemOwner );
+	RegisterEmbeddedObject(&m_dontCareWidth, SVpatDontCareWidthObjectGuid, IDS_OBJECTNAME_PAT_DONTCAREWIDTH, false, SVResetItemOwner);
+	RegisterEmbeddedObject(&m_dontCareHeight, SVpatDontCareHeightObjectGuid, IDS_OBJECTNAME_PAT_DONTCAREHEIGHT, false, SVResetItemOwner);
 
   // Set default values for search parameters
 	SetDefaultSearchValues ();
 
 	msv_szModelImageFile.SetDefaultValue (_T(""), TRUE);
+	m_DontCareImageFile.SetDefaultValue (_T(""), TRUE);
 	msv_dpatResultMatchScore.SetDefaultValue (0.0, TRUE);
 	msv_dpatResultX.SetDefaultValue (0.0, TRUE);
 	msv_dpatResultY.SetDefaultValue (0.0, TRUE);
@@ -216,6 +224,7 @@ void SVPatternAnalyzerClass::SetDefaultSearchValues()
 	msv_dpatAngleInterpolation.SetDefaultValue(SVNearestNeighbor, TRUE);
 
 	msv_bpatCircularOverscan.SetDefaultValue(false, true);
+	m_bpatDontCare.SetDefaultValue(false, true);
 
 	msv_dpatPreliminaryAcceptanceThreshold.SetDefaultValue(SVValueDefault, true);
 	msv_lpatFastFind.SetDefaultValue(SVValueDefault, true);
@@ -227,29 +236,22 @@ void SVPatternAnalyzerClass::SetDefaultSearchValues()
 	msv_dpatCandidateSpacingYMin.SetDefaultValue(SVValueDefault, true);
 	m_lpatModelWidth.SetDefaultValue(4, true);
 	m_lpatModelHeight.SetDefaultValue(4, true);
+	m_dontCareWidth.SetDefaultValue(4, true);
+	m_dontCareHeight.SetDefaultValue(4, true);
 
 	m_vec2dPatResults.fill(0.0);
 }
 
-bool SVPatternAnalyzerClass::CreateModelBuffer()
+bool SVPatternAnalyzerClass::UpdateModelFromInputImage(long posX, long posY, long modelWidth, long modelHeight)
 {
-	m_patBufferHandlePtr.clear();
-
-	// Allocate Buffer for storing the Model Image
-	m_patBuffer.SetImageProperty( SVImagePropertyPixelDepth, SV8BitUnsigned );
-	m_patBuffer.SetImageProperty( SVImagePropertyBandNumber, 1 );
-
-	m_patBuffer.SetExtentProperty( SVExtentPropertyPositionPoint, 0 );
-	long tmp = 0;
-	m_lpatModelWidth.GetValue(tmp);
-	m_patBuffer.SetExtentProperty( SVExtentPropertyWidth, tmp );
-	m_lpatModelHeight.GetValue(tmp);
-	m_patBuffer.SetExtentProperty( SVExtentPropertyHeight, tmp );
-
-	return (S_OK == SVImageProcessingClass::CreateImageBuffer( m_patBuffer, m_patBufferHandlePtr ));
+	if ( S_OK == m_lpatModelWidth.SetValue(1, modelWidth) && S_OK == m_lpatModelHeight.SetValue(1, modelHeight) )
+	{
+		return UpdateModelFromInputImage(posX, posY);
+	}
+	return false;
 }
 
-bool SVPatternAnalyzerClass::UpdateModelFromInputImage(long modelPosX, long modelPosY)
+bool SVPatternAnalyzerClass::UpdateModelFromInputImage(long posX, long posY)
 {
 	bool bOk = false;
 
@@ -275,8 +277,8 @@ bool SVPatternAnalyzerClass::UpdateModelFromInputImage(long modelPosX, long mode
 		childImageInfo.SetImageProperty( SVImagePropertyPixelDepth, SV8BitUnsigned );
 		childImageInfo.SetImageProperty( SVImagePropertyBandNumber, 1 );
 
-		childImageInfo.SetExtentProperty( SVExtentPropertyPositionPointX, modelPosX );
-		childImageInfo.SetExtentProperty( SVExtentPropertyPositionPointY, modelPosY );
+		childImageInfo.SetExtentProperty( SVExtentPropertyPositionPointX, posX );
+		childImageInfo.SetExtentProperty( SVExtentPropertyPositionPointY, posY );
 		long tmp = 0;
 		m_lpatModelWidth.GetValue(tmp);
 		childImageInfo.SetExtentProperty( SVExtentPropertyWidth, tmp );
@@ -306,6 +308,12 @@ bool SVPatternAnalyzerClass::UpdateModelFromInputImage(long modelPosX, long mode
 			bOk = false;
 		}
 	}
+
+	if (bOk)
+	{
+		bOk = SetSearchParameters();
+	}
+
 	return bOk;
 }
 
@@ -374,88 +382,42 @@ bool SVPatternAnalyzerClass::UpdateModelFromBuffer()
 	return bOk;
 }
 
-bool SVPatternAnalyzerClass::RestorePattern (const SVString& rImageFile, SvOi::MessageTextEnum *pErrMsgId)
+bool SVPatternAnalyzerClass::RestorePattern (const SVString& rImageFile, SvStl::MessageContainerVector *pErrorMessages)
 {
-	DWORD LastError(0);
-	bool bOk = false;
+	bool bOk = ReloadImage(rImageFile, m_lpatModelWidth, m_lpatModelHeight, m_patBufferHandlePtr, pErrorMessages);
 
-	SVMatroxBuffer l_ImportHandle;
 
-	SVMatroxBufferInterface::SVStatusCode l_Code = SVMatroxBufferInterface::Import( l_ImportHandle, rImageFile, SVFileBitmap, true );
-
-	if ( l_Code == SVMEE_STATUS_OK )
+	if ( bOk && !UpdateModelFromBuffer() )
 	{
-		long tmp=0;
-		l_Code = SVMatroxBufferInterface::Get( l_ImportHandle, SVSizeX, tmp );
-		if ( l_Code == SVMEE_STATUS_OK )
+		bOk = false;
+		if (nullptr != pErrorMessages)
 		{
-			m_lpatModelWidth.SetValue(1, tmp);
-			l_Code = SVMatroxBufferInterface::Get( l_ImportHandle, SVSizeY, tmp );
-			if (l_Code == SVMEE_STATUS_OK)
-			{
-				m_lpatModelHeight.SetValue(1, tmp);
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_PatAllocModelFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
 		}
-		}
-		if ( l_Code == SVMEE_STATUS_OK )
+	}
+
+	if ( bOk && !SetSearchParameters() )
+	{
+		bOk = false;
+		if (nullptr != pErrorMessages)
 		{
-			bOk = CreateModelBuffer() && !( m_patBufferHandlePtr.empty() );
-
-			if ( bOk )
-			{
-				SVImageBufferHandleImage l_PatMilHandle;
-				m_patBufferHandlePtr->GetData( l_PatMilHandle );
-
-				l_Code = SVMatroxBufferInterface::CopyBuffer( l_PatMilHandle.GetBuffer(), l_ImportHandle );
-			}
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_Pattern_SetSearchParamFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
 		}
-		if ( l_Code == SVMEE_STATUS_OK )
-		{
-			l_ImportHandle.clear();
-		}
+	}
 
-		// check if one of the matrox calls failed
-		if ( l_Code != SVMEE_STATUS_OK )
+	if ( bOk )
+	{
+		if(  S_OK != msv_szModelImageFile.SetValue( 1, rImageFile ) )
 		{
 			bOk = false;
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_SetValueFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				pErrorMessages->push_back(Msg);
+			}
 		}
-	}
-	else
-	{
-		if ( pErrMsgId )
-		{
-			*pErrMsgId = SvOi::Tid_PatInvalidFilename;
-		}
-
-		SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16205, GetUniqueObjectID());
-		LastError = -SvOi::Err_16205;
-		
-	}
-
-	if ( bOk )
-	{
-		bOk = UpdateModelFromBuffer();
-	}
-
-	if ( ! bOk )
-	{
-		if(pErrMsgId)
-		{
-			*pErrMsgId = SvOi::Tid_PatAllocModelFailed;
-		}
-
-		SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16206, GetUniqueObjectID());
-		LastError = -SvOi::Err_16206;
-	}
-	else
-	{
-		bOk = SetSearchParameters();
-	}
-
-	if ( bOk )
-	{
-		bOk = ( S_OK == msv_szModelImageFile.SetValue( 1, rImageFile ) );
 	}
 	return bOk;
 }	
@@ -654,6 +616,37 @@ bool SVPatternAnalyzerClass::SetSearchParameters ()
 						l_Code = SVMatroxPatternInterface::Set(m_patModelHandle, SVPatMinSpacingY, dParam); 
 					}
 
+					if (l_Code == SVMEE_STATUS_OK)
+					{
+						BOOL useDontCare = false;
+						m_bpatDontCare.GetValue(useDontCare);
+						if (useDontCare)
+						{
+							if (nullptr != m_DontCareBufferHandlePtr)
+							{
+								SVImageBufferHandleImage patMilHandle;
+								m_DontCareBufferHandlePtr->GetData(patMilHandle);
+								if (!patMilHandle.empty())
+								{
+									l_Code = SVMatroxPatternInterface::SetDontCare(patMilHandle.GetBuffer(), m_patModelHandle);
+								}
+								else
+								{
+									bOk = false;
+								}
+							}
+						}
+						else
+						{
+							SVImageBufferHandleImage patMilHandle;
+							m_patBufferHandlePtr->GetData(patMilHandle);
+							if (!patMilHandle.empty())
+							{
+								l_Code = SVMatroxPatternInterface::ClearDontCare(patMilHandle.GetBuffer(), m_patModelHandle);
+							}
+						}
+					}
+
 					if( l_Code == SVMEE_STATUS_OK )
 					{
 						if( !ImageBufId.empty() )
@@ -701,6 +694,7 @@ void SVPatternAnalyzerClass::CloseMIL ()
 		l_Code = SVMatroxPatternInterface::Destroy( m_patResultHandle );
 	}
 	m_patBufferHandlePtr.clear();
+	m_DontCareBufferHandlePtr.clear();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -728,7 +722,6 @@ BOOL SVPatternAnalyzerClass::CreateObject(SVObjectLevelCreateStruct* pCreateStru
 	msv_lpatMaxOccurances.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
 	msv_bpatSearchAngleMode.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
 	msv_lpatSpeed.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_REMOTELY_SETABLE;
-	msv_szModelImageFile.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_REMOTELY_SETABLE;
 
 	msv_dpatSearchAngle.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
 	msv_dpatAngleDeltaNeg.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
@@ -742,10 +735,13 @@ BOOL SVPatternAnalyzerClass::CreateObject(SVObjectLevelCreateStruct* pCreateStru
 	msv_dpatResultY.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
 	msv_dpatResultAngle.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
 
-	msv_szModelImageFile.ObjectAttributesAllowedRef() |= SV_PRINTABLE; // Name of the Model Image File
+	msv_szModelImageFile.ObjectAttributesAllowedRef() |= SV_PRINTABLE| SV_REMOTELY_SETABLE; // Name of the Model Image File
 
 	msv_bpatCircularOverscan.ObjectAttributesAllowedRef() |= SV_REMOTELY_SETABLE;
 	msv_bpatCircularOverscan.ObjectAttributesAllowedRef() &= (~SV_SETABLE_ONLINE);
+	m_bpatDontCare.ObjectAttributesAllowedRef() |= SV_REMOTELY_SETABLE;
+	m_bpatDontCare.ObjectAttributesAllowedRef() &= (~SV_SETABLE_ONLINE);
+	m_DontCareImageFile.ObjectAttributesAllowedRef() |= SV_PRINTABLE| SV_REMOTELY_SETABLE;
 	
 	msv_dpatPreliminaryAcceptanceThreshold.ObjectAttributesAllowedRef() |= (SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE);
 	msv_lpatFastFind.ObjectAttributesAllowedRef() |= (SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE);
@@ -870,11 +866,13 @@ bool SVPatternAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMe
 		// Insures that the Pattern will be reloaded when going online.
 		if ( nullptr != pInspection && pInspection->IsResetStateSet( SVResetStateLoadFiles ) )
 		{
-			ResetImageFile();
+			ResetPattern();
 		}
 
-		if( m_patModelHandle.empty() ) // if the model exists, update the search area according to the 
+		if( m_patModelHandle.empty() || m_bReloadModelFromFile ) // if the model exists, update the search area according to the 
 		{
+			m_bReloadModelFromFile = false;
+
 			// Check whether there is a valid model file available.
 			// If so, restore the model from the file.
 			SVString FileName;
@@ -883,15 +881,7 @@ bool SVPatternAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMe
 			{
 				if( !FileName.empty() )
 				{
-					if( !ResetImageFile() )
-					{
-						Result = false;
-						if (nullptr != pErrorMessages)
-						{
-							SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_Pattern_ResetImageFileFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
-							pErrorMessages->push_back(Msg);
-						}
-					}
+					Result = ResetPattern(pErrorMessages) && Result;
 				}
 				else if( UpdateModelFromInputImage() ) // create a new model
 				{
@@ -926,6 +916,35 @@ bool SVPatternAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMe
 			}
 		}
 
+		if (Result)
+		{
+			BOOL useDontCare = false;
+			if (S_OK == m_bpatDontCare.GetValue(useDontCare))
+			{
+				if (useDontCare)
+				{
+					if (m_DontCareBufferHandlePtr.empty() || m_bReloadDonCareFromFile)
+					{
+						m_bReloadDonCareFromFile = false;
+
+						Result = RestoreDontCareImage(pErrorMessages);
+					}
+
+				}
+			}
+			else
+			{
+				Result = false;
+				if (nullptr != pErrorMessages)
+				{
+					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+					pErrorMessages->push_back(Msg);
+				}
+			}
+		}
+
+		Result = Result && ValidateLocal(pErrorMessages);
+
 		if( Result )
 		{
 			if( !SetSearchParameters() )
@@ -938,10 +957,59 @@ bool SVPatternAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMe
 				}
 			}
 		}
-
-		Result = Result && ValidateLocal(pErrorMessages);
 	}
 	return Result;
+}
+
+void SVPatternAnalyzerClass::getSpecialImageList(std::vector<SVString>& rList) const
+{
+	rList.push_back(SvOi::PatternModelImageName);
+	rList.push_back(SvOi::PatternDontCareImageName);
+}
+
+bool SVPatternAnalyzerClass::getSpecialImage(const SVString& rName, SvOi::MatroxImageSmartHandlePtr& rImagePtr) const
+{
+	if (SvOi::PatternModelImageName == rName)
+	{
+		rImagePtr = new MatroxImageData(m_patBufferHandlePtr);
+		return true;
+	}
+	else if (SvOi::PatternDontCareImageName == rName)
+	{
+		rImagePtr = new MatroxImageData(m_DontCareBufferHandlePtr);
+		return true;
+	}
+	return false;
+}
+
+SvStl::MessageContainerVector SVPatternAnalyzerClass::validateAndSetEmmeddedValues(const SvOi::SetValuePairVector& rValueVector, bool shouldSet)
+{
+	SvStl::MessageContainerVector messages;
+	bool isModelFileNameToSet = false;
+	bool isDonCareFileNameToSet = false;
+	bool checkDontCareSize = false;
+	long dontCareWidth = 0;
+	long dontCareHeight = 0;
+	long modelWidth = 0;
+	long modelHeight = 0;
+	bool useDontCare = getNewUseDontCareValue(rValueVector);
+
+	if (useDontCare)
+	{
+		isDonCareFileNameToSet = validateNewDontCareFileName(rValueVector, dontCareWidth, dontCareHeight, messages);
+	}
+
+	isModelFileNameToSet = validateNewModelFileName(rValueVector, modelWidth, modelHeight, messages);
+	
+	IsValidSize(modelWidth, modelHeight, useDontCare, dontCareWidth, dontCareHeight, &messages);
+	
+	if (messages.empty())
+	{
+		m_bReloadModelFromFile = isModelFileNameToSet;
+		m_bReloadDonCareFromFile = isDonCareFileNameToSet;
+		return __super::validateAndSetEmmeddedValues(rValueVector, shouldSet);
+	}
+	return messages;
 }
 
 HRESULT SVPatternAnalyzerClass::onCollectOverlays(SVImageClass* p_pImage, SVExtentMultiLineStructCArray& p_rMultiLineArray )
@@ -1067,7 +1135,7 @@ void SVPatternAnalyzerClass::ResizeResultValues(int nNum)
 	m_vec2dPatResults.resize( SV_NUMBER_OF_PATTERN_RESULTS, nNum );
 }
 
-bool SVPatternAnalyzerClass::ResetImageFile()
+bool SVPatternAnalyzerClass::ResetPattern(SvStl::MessageContainerVector *pErrorMessages)
 {
 	SVString	FileName;
 	
@@ -1077,47 +1145,35 @@ bool SVPatternAnalyzerClass::ResetImageFile()
 	{
 		if ( !FileName.empty() )
 		{
-			bOk = RestorePattern( FileName );
+			bOk = RestorePattern( FileName, pErrorMessages );
 		}
 		else
 		{
 			if ( CreateModelBuffer() )
 			{
-				bOk = UpdateModelFromBuffer();
-			}
-		}
-	}
-	return bOk;
-}
-
-bool SVPatternAnalyzerClass::IsValidSize() const
-{
-	bool bRet = true;
-	SVImageExtentClass svExtents;
-
-	SVToolClass* pTool = dynamic_cast<SVToolClass*>(GetTool());
-	if ( pTool && S_OK == pTool->GetImageExtent( svExtents ) )
-	{
-		RECT oRec;
-		HRESULT hrOk = svExtents.GetOutputRectangle( oRec );
-
-		if ( S_OK == hrOk )
-		{
-			long lpatModelWidth = 0;
-			long lpatModelHeight = 0;
-			m_lpatModelWidth.GetValue(lpatModelWidth);
-			m_lpatModelHeight.GetValue(lpatModelHeight);
-			if( oRec.bottom < lpatModelHeight || oRec.right < lpatModelWidth )
-			{
-				bRet = false;
+				if ( !UpdateModelFromBuffer() )
+				{
+					bOk = false;
+					if (nullptr != pErrorMessages)
+					{
+						SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_PatAllocModelFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+						pErrorMessages->push_back(Msg);
+					}
+				}
 			}
 		}
 	}
 	else
 	{
-		bRet = false;
+		bOk = false;
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_Pattern_ResetImageFileFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			pErrorMessages->push_back(Msg);
+		}
 	}
-	return bRet;
+
+	return bOk;
 }
 
 std::vector<SVExtentFigureStruct> SVPatternAnalyzerClass::GetResultExtentFigureList( long lOccurances )
@@ -1306,25 +1362,325 @@ SVMatroxPatternInterface::SVStatusCode SVPatternAnalyzerClass::executePatternAnd
 
 bool SVPatternAnalyzerClass::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) const
 {
-	if ( !IsValidSize() )
-	{
-		if (nullptr != pErrorMessages)
-		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_PatModelSizeErr, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
-			pErrorMessages->push_back(Msg);
-		}
-		return false;
-	}
+	bool Result = IsValidSize(pErrorMessages);
 
-	if ( m_patModelHandle.empty() || m_patResultHandle.empty() )
+	if ( Result && (m_patModelHandle.empty() || m_patResultHandle.empty()) )
 	{
 		if (nullptr != pErrorMessages)
 		{
 			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_PatAllocModelFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 			pErrorMessages->push_back(Msg);
 		}
-		return false;
+		Result = false;
 	}
 
-	return true;
+	return Result;
+}
+
+bool SVPatternAnalyzerClass::RestoreDontCareImage(SvStl::MessageContainerVector *pErrorMessages)
+{
+	bool Result = true;
+	m_DontCareBufferHandlePtr.clear();
+	SVString FileName;
+
+	if( S_OK == m_DontCareImageFile.GetValue( FileName ) )
+	{
+		if (!FileName.empty())
+		{
+			Result = ReloadImage(FileName, m_dontCareWidth, m_dontCareHeight, m_DontCareBufferHandlePtr, pErrorMessages);
+		}
+		else
+		{
+			Result = false;
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_DontCareInvalidFilename, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+				pErrorMessages->push_back(Msg);
+			}
+		}
+	}
+	else
+	{
+		Result = false;
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+			pErrorMessages->push_back(Msg);
+		}
+	}
+	return Result;
+}
+
+bool SVPatternAnalyzerClass::getNewUseDontCareValue(const SvOi::SetValuePairVector &rValueVector)
+{
+	BOOL useDontCare = false;
+	SvOi::SetValuePairVector::const_iterator iter = std::find_if(rValueVector.begin(), rValueVector.end(), [&](const SvOi::SetValuePairVector::value_type& entry)->bool
+	{
+		return entry.first == &m_bpatDontCare;
+	}
+	);
+	if (rValueVector.end() != iter)
+	{
+		assert(VT_INT == iter->second.vt);
+		useDontCare = iter->second.boolVal;
+	}
+	else
+	{
+		m_bpatDontCare.GetValue(useDontCare);
+	}
+	return (TRUE == useDontCare);
+}
+
+bool SVPatternAnalyzerClass::validateNewDontCareFileName(const SvOi::SetValuePairVector &rValueVector, long& rDontCareWidth, long& rDontCareHeight, SvStl::MessageContainerVector& rMessages)
+{
+	bool isValueToSet = false;
+	SvOi::SetValuePairVector::const_iterator iter = std::find_if(rValueVector.begin(), rValueVector.end(), [&](const SvOi::SetValuePairVector::value_type& entry)->bool
+	{
+		return entry.first == &m_DontCareImageFile;
+	}
+	);
+	if (rValueVector.end() != iter)
+	{
+		assert(VT_BSTR == iter->second.vt);
+		SVString fileName;
+		m_DontCareImageFile.GetValue(fileName);
+		SVString newFileName = SvUl_SF::createSVString(iter->second.bstrVal);
+
+		if (fileName != newFileName)
+		{
+			SVMatroxBuffer importHandle;
+			if (SVMEE_STATUS_OK != SVMatroxBufferInterface::Import(importHandle, newFileName, SVFileBitmap, true) ||
+				SVMEE_STATUS_OK != SVMatroxBufferInterface::Get(importHandle, SVSizeX, rDontCareWidth) ||
+				SVMEE_STATUS_OK != SVMatroxBufferInterface::Get(importHandle, SVSizeY, rDontCareHeight))
+			{
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_DontCareInvalidFilename, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+				rMessages.push_back(Msg);
+			}
+			else
+			{
+				isValueToSet = true;
+			}
+			importHandle.clear();
+		}
+		else
+		{
+			m_dontCareWidth.GetValue(rDontCareWidth);
+			m_dontCareHeight.GetValue(rDontCareHeight);
+		}
+	}
+	else
+	{
+		m_dontCareWidth.GetValue(rDontCareWidth);
+		m_dontCareHeight.GetValue(rDontCareHeight);
+	}
+	return isValueToSet;
+}
+
+bool SVPatternAnalyzerClass::validateNewModelFileName(const SvOi::SetValuePairVector &rValueVector, long& rModelWidth, long& rModelHeight, SvStl::MessageContainerVector &messages)
+{
+	bool isValueToSet = false;
+	SvOi::SetValuePairVector::const_iterator iter = std::find_if(rValueVector.begin(), rValueVector.end(), [&](const SvOi::SetValuePairVector::value_type& entry)->bool
+	{
+		return entry.first == &msv_szModelImageFile;
+	}
+	);
+	if (rValueVector.end() != iter)
+	{
+		assert(VT_BSTR == iter->second.vt);
+		SVString fileName;
+		msv_szModelImageFile.GetValue(fileName);
+		SVString newFileName = SvUl_SF::createSVString(iter->second.bstrVal);
+		if (fileName != newFileName)
+		{
+			SVMatroxBuffer importHandle;
+			if (SVMEE_STATUS_OK != SVMatroxBufferInterface::Import(importHandle, newFileName, SVFileBitmap, true) ||
+				SVMEE_STATUS_OK != SVMatroxBufferInterface::Get(importHandle, SVSizeX, rModelWidth) ||
+				SVMEE_STATUS_OK != SVMatroxBufferInterface::Get(importHandle, SVSizeY, rModelHeight))
+			{
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_PatInvalidFilename, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+				messages.push_back(Msg);
+			}
+			else
+			{
+				isValueToSet = true;
+			}
+			importHandle.clear();
+		}
+		else
+		{
+			m_lpatModelWidth.GetValue(rModelWidth);
+			m_lpatModelHeight.GetValue(rModelHeight);
+		}
+	}
+	else
+	{
+		m_lpatModelWidth.GetValue(rModelWidth);
+		m_lpatModelHeight.GetValue(rModelHeight);
+	}
+	return isValueToSet;
+}
+
+bool SVPatternAnalyzerClass::IsValidSize(SvStl::MessageContainerVector *pErrorMessages) const
+{
+	long modelWidth = 0;
+	long modelHeight = 0;
+	BOOL useDontCare = false;
+	long dontCareWidth = 0;
+	long dontCareHeight = 0;
+	m_lpatModelWidth.GetValue(modelWidth);
+	m_lpatModelHeight.GetValue(modelHeight);
+	m_bpatDontCare.GetValue(useDontCare);
+	m_dontCareWidth.GetValue(dontCareWidth);
+	m_dontCareHeight.GetValue(dontCareHeight);
+	return IsValidSize(modelWidth, modelHeight, (TRUE == useDontCare), dontCareWidth, dontCareHeight, pErrorMessages);
+}
+
+bool SVPatternAnalyzerClass::IsValidSize(long modelWidth, long modelHeight, bool useDontCare, long dontCareWidth, long dontCareHeight, SvStl::MessageContainerVector *pErrorMessages) const
+{
+	bool bRet = true;
+	SVImageExtentClass svExtents;
+
+	SVToolClass* pTool = dynamic_cast<SVToolClass*>(GetTool());
+	if (pTool && S_OK == pTool->GetImageExtent(svExtents))
+	{
+		RECT oRec;
+		HRESULT hrOk = svExtents.GetOutputRectangle(oRec);
+
+		if (S_OK == hrOk)
+		{
+
+			if (oRec.bottom < modelHeight || oRec.right < modelWidth)
+			{
+				bRet = false;
+				if (nullptr != pErrorMessages)
+				{
+					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_Pattern_Model2Large, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+					pErrorMessages->push_back(Msg);
+				}
+			}
+
+			if (useDontCare)
+			{
+				if (modelWidth > dontCareWidth || modelHeight > dontCareHeight)
+				{
+					bRet = false;
+					if (nullptr != pErrorMessages)
+					{
+						SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_Pattern_DontCare2Small, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+						pErrorMessages->push_back(Msg);
+					}
+				}
+			}
+		}
+	}
+	else
+	{
+		bRet = false;
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+			pErrorMessages->push_back(Msg);
+		}
+	}
+	return bRet;
+}
+
+bool SVPatternAnalyzerClass::CreateModelBuffer()
+{
+	long width = 0, height = 0;
+	m_lpatModelWidth.GetValue(width);
+	m_lpatModelHeight.GetValue(height);
+	return CreateBuffer(width, height, m_patBufferHandlePtr);
+}
+
+bool SVPatternAnalyzerClass::CreateBuffer(long width, long height, SVSmartHandlePointer& rBufferHandle)
+{
+	rBufferHandle.clear();
+
+	// Allocate Buffer for storing the Model Image
+	SVImageInfoClass patBuffer;
+	patBuffer.SetImageProperty(SVImagePropertyPixelDepth, SV8BitUnsigned);
+	patBuffer.SetImageProperty(SVImagePropertyBandNumber, 1);
+
+	patBuffer.SetExtentProperty(SVExtentPropertyPositionPoint, 0);
+	patBuffer.SetExtentProperty(SVExtentPropertyWidth, width);
+	patBuffer.SetExtentProperty(SVExtentPropertyHeight, height);
+
+	return (S_OK == SVImageProcessingClass::CreateImageBuffer(patBuffer, rBufferHandle));
+}
+
+bool SVPatternAnalyzerClass::ReloadImage(const SVString& rImageFile, SVLongValueObjectClass& rWidthValueObject, SVLongValueObjectClass& rHeightValueObject, SVSmartHandlePointer& rBufferHandle, SvStl::MessageContainerVector* pErrorMessages)
+{
+	bool bOk = true;
+	SVMatroxBuffer importHandle;
+
+	SVMatroxBufferInterface::SVStatusCode milErrorCode = SVMatroxBufferInterface::Import(importHandle, rImageFile, SVFileBitmap, true);
+
+	if (milErrorCode == SVMEE_STATUS_OK)
+	{
+		long width = 0, height = 0;;
+		milErrorCode = SVMatroxBufferInterface::Get(importHandle, SVSizeX, width);
+		if (milErrorCode == SVMEE_STATUS_OK)
+		{
+			rWidthValueObject.SetValue(1, width);
+			milErrorCode = SVMatroxBufferInterface::Get(importHandle, SVSizeY, height);
+			if (milErrorCode == SVMEE_STATUS_OK)
+			{
+				rHeightValueObject.SetValue(1, height);
+			}
+		}
+		if (milErrorCode == SVMEE_STATUS_OK)
+		{
+			bOk = CreateBuffer(width, height, rBufferHandle) && !(rBufferHandle.empty());
+
+			if (bOk)
+			{
+				SVImageBufferHandleImage l_PatMilHandle;
+				rBufferHandle->GetData(l_PatMilHandle);
+
+				milErrorCode = SVMatroxBufferInterface::CopyBuffer(l_PatMilHandle.GetBuffer(), importHandle);
+				if (SVMEE_STATUS_OK != milErrorCode)
+				{
+					bOk = false;
+					if (nullptr != pErrorMessages)
+					{
+						SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_CopyImagesFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+						pErrorMessages->push_back(Msg);
+					}
+				}
+			}
+			else
+			{
+				bOk = false;
+				if (nullptr != pErrorMessages)
+				{
+					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_PatAllocFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+					pErrorMessages->push_back(Msg);
+				}
+			}
+		}
+		else
+		{
+			bOk = false;
+			if (nullptr != pErrorMessages)
+			{
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+				pErrorMessages->push_back(Msg);
+			}
+		}
+
+		if (bOk)
+		{
+			importHandle.clear();
+		}
+	}
+	else
+	{
+		bOk = false;
+		if (nullptr != pErrorMessages)
+		{
+			SvStl::MessageContainer Msg(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16205, GetUniqueObjectID());
+			pErrorMessages->push_back(Msg);
+		}
+	}	return bOk;
 }

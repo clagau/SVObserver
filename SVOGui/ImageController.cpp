@@ -52,6 +52,7 @@ namespace Seidenader { namespace SVOGui
 		if (S_OK == hr)
 		{
 			m_availableList = commandPtr->AvailableObjects();
+			m_specialImageList = commandPtr->AvailableSpecialImages();
 		}
 		return hr;
 	}
@@ -59,6 +60,11 @@ namespace Seidenader { namespace SVOGui
 	const SvUl::NameGuidList& ImageController::GetAvailableImageList() const 
 	{ 
 		return m_availableList; 
+	}
+
+	const std::vector<SVString>& ImageController::GetSpecialImageList() const
+	{
+		return m_specialImageList;
 	}
 
 	SvUl::NameGuidList ImageController::GetResultImages() const
@@ -104,29 +110,64 @@ namespace Seidenader { namespace SVOGui
 	public:
 		ByName(const SVString& rName) : m_name(rName) {}
 		bool operator()(const SvUl::NameGuidPair& rVal) const { return rVal.first == m_name; }
+		bool operator()(const SVString& rVal) const { return rVal == m_name; }
 	};
 
-	IPictureDisp* ImageController::GetImage(const SVString& name) const 
+	IPictureDisp* ImageController::GetImage(const SVString& name) const
+	{
+		long Width, Height;
+		return GetImage(name, Width, Height);
+	}
+
+	IPictureDisp* ImageController::GetImage(const SVString& name, long& rWidth, long& rHeight) const
 	{ 
 		SvUl::NameGuidList::const_iterator it = std::find_if(m_availableList.begin(), m_availableList.end(), ByName(name));
 		if (it != m_availableList.end())
 		{
 			return GetImage(it->second.ToGUID());
 		}
+		else
+		{
+			std::vector<SVString>::const_iterator itVector = std::find_if(m_specialImageList.begin(), m_specialImageList.end(), ByName(name));
+			if (itVector != m_specialImageList.end())
+			{
+				typedef GuiCmd::GetImage Command;
+				typedef SVSharedPtr<Command> CommandPtr;
+
+				CommandPtr commandPtr = new Command(*itVector, m_TaskObjectID);
+				SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
+				HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+				if (S_OK == hr)
+				{
+					m_picture = commandPtr->Image();
+					rWidth = commandPtr->getWidth();
+					rHeight = commandPtr->getHeight();
+				}
+				return m_picture;
+			}
+		}
 		return nullptr; 
 	}
 
-	IPictureDisp* ImageController::GetImage(const GUID& imageID) const 
+	IPictureDisp* ImageController::GetImage(const GUID& rImageID) const 
+	{
+		long Width, Height;
+		return GetImage(rImageID, Width, Height);
+	}
+
+	IPictureDisp* ImageController::GetImage(const GUID& rImageID, long& rWidth, long& rHeight) const 
 	{
 		typedef GuiCmd::GetImage Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 	
-		CommandPtr commandPtr = new Command(imageID);
+		CommandPtr commandPtr = new Command(rImageID);
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		if (S_OK == hr)
 		{
 			m_picture = commandPtr->Image();
+			rWidth = commandPtr->getWidth();
+			rHeight = commandPtr->getHeight();
 		}
 		return m_picture;
 	}

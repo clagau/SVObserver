@@ -17,8 +17,7 @@ namespace Seidenader
 	{
 		typedef std::pair<SVString, SVGUID> NameGuidPair;
 		typedef std::deque<NameGuidPair> NameGuidList;
-		typedef SVString InputName;
-		typedef std::map<InputName, NameGuidPair> InputNameGuidPairList;
+		typedef std::map<SVString, NameGuidPair> InputNameGuidPairList;
 	}
 }
 

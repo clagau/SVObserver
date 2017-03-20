@@ -27,6 +27,7 @@ namespace Seidenader
 			bool m_bAllowColor;
 
 			mutable SvUl::NameGuidList m_availableList;
+			mutable std::vector<SVString> m_specialImageList;;
 			mutable SvUl::InputNameGuidPairList m_connectedList;
 			mutable CComPtr<IPictureDisp> m_picture;
 
@@ -36,11 +37,14 @@ namespace Seidenader
 			HRESULT Init();
 
 			const SvUl::NameGuidList& GetAvailableImageList() const;
+			const std::vector<SVString>& GetSpecialImageList() const;
 			const SvUl::InputNameGuidPairList& GetConnectedImageList(const GUID& rChildObjectID = GUID_NULL, int maxImages=1) const;
 			SvUl::NameGuidList GetResultImages() const;
 
 			IPictureDisp* GetImage(const SVString& name) const;
-			IPictureDisp* GetImage(const GUID& imageID) const;
+			IPictureDisp* GetImage(const SVString& name, long& rWidth, long& rHeight) const;
+			IPictureDisp* GetImage(const GUID& rImageID) const;
+			IPictureDisp* GetImage(const GUID& rImageID, long& rWidth, long& rHeight) const;
 
 			HRESULT ConnectToImage(const SVString& inputName, const SVString& name, const GUID& rInstanceID = GUID_NULL) const;
 			HRESULT SaveImage(const SVString& rImageName, const SVString& rFilename);

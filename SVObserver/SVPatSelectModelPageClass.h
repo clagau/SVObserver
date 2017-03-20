@@ -15,20 +15,18 @@
 #include "SVRPropertyTree/SVRPropTree.h"
 //TODO: MZA(10.Nov 2014): Move this files to SVOGui project and then remove folder from include and Namespace add-on add PictureDisplay declaration.
 #include "SVOGui/PictureDisplay.h"
+#include "SVOGui/ImageController.h"
 #include "ObjectInterfaces/MessageTextEnum.h"
 #include "SVOGui/ValuesAccessor.h"
 #include "SVOGui/GuiController.h"
 #pragma endregion Includes
 
 #pragma region Declarations
-class SVToolClass;
-class SVPatternAnalyzerClass;
-class SVPatAnalyzeSetupDlgSheet;
 //{{AFX_INSERT_LOCATION}}
 // Microsoft Visual C++ will insert additional declarations immediately before the previous line.
 #pragma endregion Declarations
 
-class SVPatModelPageClass : public CPropertyPage
+class SVPatModelPageClass : public CPropertyPage, protected SvOg::ImageController
 {
 #pragma region Constructor
 public:
@@ -61,8 +59,11 @@ protected:
 	// Generated message map functions
 	//{{AFX_MSG(SVPatModelPageClass)
 	afx_msg void OnFileButton();
+	afx_msg void OnFileDontCareButton();
 	afx_msg void OnCreateModel();
-	afx_msg void OnKillFileName();
+	afx_msg void OnKillModelFileName();
+	afx_msg void OnKillDontCareFileName();
+	afx_msg void OnUseDontCareClicked();
 	afx_msg void OnCircularOverscanClicked();
 	afx_msg void OnKillModelCenter();
 	afx_msg void OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult);
@@ -87,15 +88,15 @@ protected:
 #pragma region Private Methods
 private:
 	// Validation routines
-	void ValidateModelParameters();
+	void ValidateModelParameters(bool shouldReset = false);
 	void ValidateModelWidth();
 	void ValidateModelHeight();
 	void ValidateModelFilename();
 
 	void InitializeData(); 
 	BOOL ProcessOnKillFocus(UINT nId);
-	SvOi::MessageTextEnum RestoreModelFromFile();
-	BOOL GetModelFile(BOOL bMode);
+	bool RestoreImagesFromFile(SvStl::MessageContainerVector *pErrorMessages=nullptr);
+	bool GetModelFile(bool bMode, CString& rFileName);
 
 	HRESULT BuildPropertyList();
 	HRESULT RefreshProperties();
@@ -113,7 +114,7 @@ private:
 	void setCircularOverscanCheckboxState();
 
 	/// Set the values from the GUI to the analyzer (business logic)
-	void SetValuesToAnalyzer();
+	HRESULT SetValuesToAnalyzer(SvStl::MessageContainerVector *pErrorMessages=nullptr, bool shouldResetTask = false);
 #pragma endregion Private Methods
 
 #pragma region Member Variables
@@ -127,12 +128,13 @@ private:
 	} Model_Property_Enums;
 
 	bool m_bAllowExit;
-	SVPatAnalyzeSetupDlgSheet* m_pSheet;
 
 	CButton m_CircularOverscanCheckbox;
 	SvOg::PictureDisplay m_dialogImage;
 	CString	m_strModelName;
 	BOOL m_bCircularOverscan;
+	CString	m_strDontCareName;
+	BOOL m_bDontCare;
 	SVRPropTree          m_Tree;
 
 	int	m_nXPos;
@@ -141,8 +143,7 @@ private:
 	long	m_lModelHeight;
 	long m_CenterX;
 	long m_CenterY;
-
-	SVPatternAnalyzerClass* m_pPatAnalyzer;
+	SVGUID m_AnalyzerImageGUID;
 
 	long m_sourceImageWidth;
 	long m_sourceImageHeight;

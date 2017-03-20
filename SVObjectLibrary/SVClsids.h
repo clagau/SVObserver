@@ -1064,6 +1064,8 @@ extern /*const*/ GUID SVpatAngleAccuracyObjectGuid;
 extern /*const*/ GUID SVpatAngleInterpolationObjectGuid;
 
 extern /*const*/ GUID SVpatCircularOverscanObjectGuid;
+extern /*const*/ GUID SVpatDontCareObjectGuid;
+extern /*const*/ GUID SVpatDontCareImageFileGuid;
 
 extern /*const*/ GUID SVpatPreliminaryAcceptanceThresholdObjectGuid;
 extern /*const*/ GUID SVpatFastFindObjectGuid;
@@ -1072,6 +1074,8 @@ extern /*const*/ GUID SVpatModelWidthObjectGuid;
 extern /*const*/ GUID SVpatModelHeightObjectGuid;
 extern /*const*/ GUID SVpatModelCenterXObjectGuid;
 extern /*const*/ GUID SVpatModelCenterYObjectGuid;
+extern /*const*/ GUID SVpatDontCareWidthObjectGuid;
+extern /*const*/ GUID SVpatDontCareHeightObjectGuid;
 extern /*const*/ GUID SVpatBeginningResolutionLevelObjectGuid;
 extern /*const*/ GUID SVpatFinalResolutionLevelObjectGuid;
 extern /*const*/ GUID SVpatAdditionalCandidatesObjectGuid;
