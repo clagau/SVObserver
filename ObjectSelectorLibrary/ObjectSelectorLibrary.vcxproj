@@ -87,14 +87,12 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="DlgItemResizer.cpp" />
     <ClCompile Include="LeafTreeCtrl.cpp" />
     <ClCompile Include="NodeTreeCtrl.cpp" />
     <ClCompile Include="ObjectFilterPpg.cpp" />
     <ClCompile Include="ObjectSelectorPpg.cpp" />
     <ClCompile Include="ObjectTreeCtrl.cpp" />
     <ClCompile Include="ObjectTreeGenerator.cpp" />
-    <ClCompile Include="ResizablePropertySheet.cpp" />
     <ClCompile Include="SelectorItem.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -102,14 +100,12 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="DlgItemResizer.h" />
     <ClInclude Include="LeafTreeCtrl.h" />
     <ClInclude Include="NodeTreeCtrl.h" />
     <ClInclude Include="ObjectFilterPpg.h" />
     <ClInclude Include="ObjectSelectorPpg.h" />
     <ClInclude Include="ObjectTreeCtrl.h" />
     <ClInclude Include="ObjectTreeGenerator.h" />
-    <ClInclude Include="ResizablePropertySheet.h" />
     <ClInclude Include="SelectorItem.h" />
     <ClInclude Include="SelectorItemVector.h" />
     <ClInclude Include="SelectorOptions.h" />

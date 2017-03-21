@@ -165,7 +165,7 @@ bool SVTADlgArchiveResultsPage::QueryAllowExit()
 	HRESULT hr = m_pTool->m_bvoUseHeaders.GetValue( bUseHeaders );
 	if( S_OK == hr && bUseHeaders )
 	{
-		StringPairVect l_HeaderPairs;
+		StringPairVector l_HeaderPairs;
 		GetSelectedHeaderNamePairs(l_HeaderPairs); // filters by what is selected.
 		StoreHeaderValuesToTool( l_HeaderPairs );
 	}
@@ -453,7 +453,7 @@ void SVTADlgArchiveResultsPage::OnBrowse()
 	}
 }
 
-bool SVTADlgArchiveResultsPage::GetSelectedHeaderNamePairs( StringPairVect& HeaderPairs)
+bool SVTADlgArchiveResultsPage::GetSelectedHeaderNamePairs( StringPairVector& HeaderPairs)
 {
 	bool bRet = false;
 	if( m_pTool )
@@ -477,7 +477,7 @@ bool SVTADlgArchiveResultsPage::GetSelectedHeaderNamePairs( StringPairVect& Head
 		}
 
 		// ... Create List from selected...
-		StringPairVect SelectedHeaderPairs;
+		StringPairVector SelectedHeaderPairs;
 		SvOsl::SelectorItemVector::const_iterator Iter;
 		for( Iter = m_List.begin(); m_List.end() != Iter ; ++Iter )
 		{
@@ -489,10 +489,10 @@ bool SVTADlgArchiveResultsPage::GetSelectedHeaderNamePairs( StringPairVect& Head
 		}
 
 		// copy labels to the selected List...
-		for( StringPairVect::iterator it = SelectedHeaderPairs.begin() ; it != SelectedHeaderPairs.end(); ++it)
+		for( StringPairVector::iterator it = SelectedHeaderPairs.begin() ; it != SelectedHeaderPairs.end(); ++it)
 		{
 			bool bFound = false;
-			StringPairVect::const_iterator it2 = HeaderPairs.begin();
+			StringPairVector::const_iterator it2 = HeaderPairs.begin();
 			for( ; it2 != HeaderPairs.end() ; ++it2)
 			{
 				if( it->first == it2->first ) // GUIDs match
@@ -515,14 +515,14 @@ bool SVTADlgArchiveResultsPage::GetSelectedHeaderNamePairs( StringPairVect& Head
 	return bRet;
 }
 
-bool SVTADlgArchiveResultsPage::StoreHeaderValuesToTool(StringPairVect& HeaderPairs)
+bool SVTADlgArchiveResultsPage::StoreHeaderValuesToTool(StringPairVector& HeaderPairs)
 {
 	bool bRet = false;
 	if( m_pTool )
 	{
 		SVStringVector HeaderLabelNames;
 		SVStringVector HeaderObjectGUIDs;
-		for( StringPairVect::iterator it = HeaderPairs.begin(); it != HeaderPairs.end() ;++it)
+		for( StringPairVector::iterator it = HeaderPairs.begin(); it != HeaderPairs.end() ;++it)
 		{
 			HeaderObjectGUIDs.push_back( it->first );
 			HeaderLabelNames.push_back( it->second );
@@ -539,7 +539,7 @@ bool SVTADlgArchiveResultsPage::StoreHeaderValuesToTool(StringPairVect& HeaderPa
 void SVTADlgArchiveResultsPage::OnBnClickedHeaderBtn()
 {
 	// Get a collection of header name/Label pairs from this class and the tool.
-	StringPairVect l_HeaderPairs;
+	StringPairVector l_HeaderPairs;
 	GetSelectedHeaderNamePairs(l_HeaderPairs); // filters by what is selected.
 
 	SVArchiveHeaderEditDlg l_dlg;

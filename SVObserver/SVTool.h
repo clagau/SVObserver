@@ -129,6 +129,12 @@ public:
 	//************************************
 	void UpdateBottomAndRight();
 
+	//************************************
+	//! Sets the tool position index (One based)
+	//! \param Position
+	//************************************
+	void setToolPosition(long ToolPosition) { m_ToolPosition.SetValue(1, ToolPosition); };
+
 	//
 	// Flag to indicate this tool is selected for SVIM operator move.
 	// 26 Jan 2000 - frb.
@@ -150,6 +156,7 @@ public:
 	virtual SvUl::NameGuidPair getAuxSourceImage() const override;
 	virtual HRESULT setAuxSourceImage(const SVGUID& rObjectID) override;
 	virtual void SetToolImage( const SVGUID& rObjectID ) override;
+	virtual long getToolPosition() const override;
 #pragma endregion ITool methods
 
 protected:
@@ -176,39 +183,40 @@ private:
 
 protected:
 	SVToolSetClass* m_pCurrentToolSet;
-
-	// Passed, if TRUE ( Reset Value: FALSE )
-	SVBoolValueObjectClass passed;
-	// Warned, if TRUE ( Reset Value: TRUE )
-	SVBoolValueObjectClass warned;
-	// Failed, if TRUE ( Reset Value: TRUE )
-	SVBoolValueObjectClass failed;
-	// Failed, if TRUE ( Reset Value: FALSE )
-	SVBoolValueObjectClass explicitFailed;
-
-	SVLongValueObjectClass passedCount;
-	SVLongValueObjectClass failedCount;
-	SVLongValueObjectClass warnedCount;
-
-	SVLongValueObjectClass enabledCount;
-	SVLongValueObjectClass processedCount;
-
 	// Conditional input
 	SVInObjectInfoStruct inputConditionBoolObjectInfo;
 
 	// Conditional tool set drawing flag.
 	SVEnumerateValueObjectClass	drawToolFlag;
-	SVTimerValueObjectClass ToolTime;
+	SVTimerValueObjectClass m_ToolTime;
+
+	// Passed, if TRUE ( Reset Value: FALSE )
+	SVBoolValueObjectClass m_Passed;
+	// Warned, if TRUE ( Reset Value: TRUE )
+	SVBoolValueObjectClass m_Warned;
+	// Failed, if TRUE ( Reset Value: TRUE )
+	SVBoolValueObjectClass m_Failed;
+	// Failed, if TRUE ( Reset Value: FALSE )
+	SVBoolValueObjectClass m_ExplicitFailed;
+
+	SVLongValueObjectClass m_PassedCount;
+	SVLongValueObjectClass m_FailedCount;
+	SVLongValueObjectClass m_WarnedCount;
+
+	SVLongValueObjectClass m_EnabledCount;
+	SVLongValueObjectClass m_ProcessedCount;
+
+	SVLongValueObjectClass m_ToolPosition;
 
 	// Embedded Objects for Extents
-	SVDoubleValueObjectClass extentLeft;
-	SVDoubleValueObjectClass extentTop;
-	SVDoubleValueObjectClass extentRight;
-	SVDoubleValueObjectClass extentBottom;
-	SVDoubleValueObjectClass extentWidth;
-	SVDoubleValueObjectClass extentHeight;
-	SVDoubleValueObjectClass extentWidthScaleFactor;
-	SVDoubleValueObjectClass extentHeightScaleFactor;
+	SVDoubleValueObjectClass m_ExtentLeft;
+	SVDoubleValueObjectClass m_ExtentTop;
+	SVDoubleValueObjectClass m_ExtentRight;
+	SVDoubleValueObjectClass m_ExtentBottom;
+	SVDoubleValueObjectClass m_ExtentWidth;
+	SVDoubleValueObjectClass m_ExtentHeight;
+	SVDoubleValueObjectClass m_ExtentWidthScaleFactor;
+	SVDoubleValueObjectClass m_ExtentHeightScaleFactor;
 
 	//***** New source image extent value objects
 	SVBoolValueObjectClass m_svUpdateAuxiliaryExtents;

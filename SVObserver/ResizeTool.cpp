@@ -181,7 +181,7 @@ BOOL ResizeTool::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 
 	// Override base class hiding of Scale Factors.  These values will be 
 	// exposed for the Resize Tool.
-	extentWidthScaleFactor.ObjectAttributesAllowedRef() = 
+	m_ExtentWidthScaleFactor.ObjectAttributesAllowedRef() = 
 		(SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES | 
 		 SV_REMOTELY_SETABLE | 
 		 SV_EXTENT_OBJECT | 
@@ -189,7 +189,7 @@ BOOL ResizeTool::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 		~SV_EMBEDABLE;				// Since this value object is already 
 									// exposed as an extent, we do not want 
 									// it to be embeddable.
-	extentHeightScaleFactor.ObjectAttributesAllowedRef() = 
+	m_ExtentHeightScaleFactor.ObjectAttributesAllowedRef() = 
 		(SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES | 
 		SV_REMOTELY_SETABLE | 
 		SV_EXTENT_OBJECT | 

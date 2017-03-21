@@ -15,24 +15,23 @@
 #pragma once
 
 #pragma region Includes
-#include "ResizablePropertySheet.h"
 #include "DlgItemResizer.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace ObjectSelectorLibrary
+namespace Seidenader { namespace SVMFCControls
 {
-	class CResizablePropertySheet : public CPropertySheet
+	class ResizablePropertySheet : public CPropertySheet
 	{
 	#pragma region Declarations
-		DECLARE_DYNAMIC(CResizablePropertySheet)
+		DECLARE_DYNAMIC(ResizablePropertySheet)
 	#pragma endregion Declarations
 
 	public:
 	#pragma region Constructor
-		CResizablePropertySheet();
-		CResizablePropertySheet(UINT nIDCaption, CWnd *pParentWnd = nullptr, UINT iSelectPage = 0);
-		CResizablePropertySheet(LPCTSTR pszCaption, CWnd *pParentWnd = nullptr, UINT iSelectPage = 0);
-		virtual ~CResizablePropertySheet();
+		ResizablePropertySheet();
+		ResizablePropertySheet(UINT nIDCaption, CWnd *pParentWnd = nullptr, UINT iSelectPage = 0);
+		ResizablePropertySheet(LPCTSTR pszCaption, CWnd *pParentWnd = nullptr, UINT iSelectPage = 0);
+		virtual ~ResizablePropertySheet();
 	#pragma endregion Constructor
 
 	public:
@@ -58,12 +57,12 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 
 	private:
 	#pragma region Member Variables
-		CDlgItemResizer m_Resize;
+		DlgItemResizer m_Resize;
 		CRect m_rcPage;
 		CRect m_rcClient;
 		CRect m_rcGripper;
 	#pragma endregion Member Variables
 	};
-} /*namespace ObjectSelectorLibrary*/ } /*namespace Seidenader*/
+} /*namespace SVMFCControls*/ } /*namespace Seidenader*/
 
-namespace SvOsl = Seidenader::ObjectSelectorLibrary;
+namespace SvMc = Seidenader::SVMFCControls;

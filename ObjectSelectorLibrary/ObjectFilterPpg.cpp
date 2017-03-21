@@ -225,8 +225,8 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 
 	void ObjectFilterPpg::setResizeControls()
 	{
-		m_Resizer.Add(this, IDC_GRID_CONTROL, RESIZE_LOCKLEFT | RESIZE_LOCKRIGHT | RESIZE_LOCKBOTTOM | RESIZE_LOCKTOP );
-		m_Resizer.Add(this, IDC_RESET_BUTTON, RESIZE_LOCKLEFT | RESIZE_LOCKBOTTOM );
+		m_Resizer.Add(this, IDC_GRID_CONTROL, SvMc::RESIZE_LOCKALL );
+		m_Resizer.Add(this, IDC_RESET_BUTTON, SvMc::RESIZE_LOCKLEFT | SvMc::RESIZE_LOCKBOTTOM );
 	}
 
 	void ObjectFilterPpg::loadGridCtrl()

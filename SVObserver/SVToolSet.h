@@ -49,12 +49,13 @@ public:
 	HRESULT ResetCounts();
 	HRESULT ClearResetCounts();
 
-	//************************************
-	// Description: This moves a tool to the desired index
-	// Parameter: NewIndex <in> The new index for the tool
-	// Parameter: pTool <in> Pointer to the tool
-	//************************************
+	//! Description: This moves a tool to the desired index
+	//! Parameter: NewIndex <in> The new index for the tool
+	//! Parameter: pTool <in> Pointer to the tool
 	void moveTool( int NewIndex, SVToolClass* pTool );
+
+	//! Update the tool position
+	void updateToolPosition();
 
 	void SetDefaultInputs();
 	

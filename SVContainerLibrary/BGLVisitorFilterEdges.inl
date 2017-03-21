@@ -8,7 +8,7 @@
 /// filters and in out edges
 //******************************************************************************
 
-namespace Seidenader { namespace SVContainerLibrary
+namespace Sv { namespace Container
 {
 	//! Edge style filter template class
 	template< typename EdgeTypeMapConst, typename EdgeType >

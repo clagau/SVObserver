@@ -19,7 +19,7 @@
 #include "SVUtilityLibrary\SVString.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace SVContainerLibrary
+namespace Sv { namespace Container
 {
 	class ObjectTreeItems : public SVTree<SVString, ObjectSelectorItem>
 	{
@@ -119,5 +119,5 @@ namespace Seidenader { namespace SVContainerLibrary
 	};
 } /* namespace SVContainerLibrary */ } /* namespace Seidenader */
 
-namespace SvCl = Seidenader::SVContainerLibrary;
+namespace SvCl = Sv::Container;
 

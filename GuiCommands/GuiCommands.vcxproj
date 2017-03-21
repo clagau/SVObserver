@@ -27,7 +27,6 @@
     <ClInclude Include="GetAvailableAuxSourceImages.h" />
     <ClInclude Include="GetAvailableObjects.h" />
     <ClInclude Include="GetCreatableObjects.h" />
-    <ClInclude Include="GetDependencies.h" />
     <ClInclude Include="GetConnectedObjects.h" />
     <ClInclude Include="GetEquation.h" />
     <ClInclude Include="GetErrorMessageList.h" />

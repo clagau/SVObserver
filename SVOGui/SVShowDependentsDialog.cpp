@@ -12,8 +12,9 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <functional>
 #include "SVShowDependentsDialog.h"
-#include "GuiCommands\GetDependencies.h"
-#include "SVObjectLibrary\SVObjectSynchronousCommandTemplate.h"
+#include "SVColor.h"
+#include "ObjectInterfaces/IDependencyManager.h"
+#include "ObjectInterfaces/IObjectManager.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -24,172 +25,264 @@ static char THIS_FILE[] = __FILE__;
 
 namespace Seidenader { namespace SVOGui
 {
-		#define SV_NUMBER_DEPENDENTS_COLUMNS 2
+	BEGIN_MESSAGE_MAP(SVShowDependentsDialog, CDialog)
+		ON_WM_PAINT()
+		ON_WM_SIZE()
+		ON_WM_GETMINMAXINFO()
+		ON_NOTIFY(NM_CUSTOMDRAW, IDC_DEPENDENCY_LIST, &SVShowDependentsDialog::OnCustomdrawDependencyList)
+	END_MESSAGE_MAP()
 
-		SVShowDependentsDialog::SVShowDependentsDialog( const SVObjectPairVector& rList, LPCTSTR DisplayText, DialogType Type /*= DeleteConfirm*/, CWnd* pParent /*=nullptr*/ )
-		: CDialog(SVShowDependentsDialog::IDD, pParent)
-		, m_DisplayText( (nullptr != DisplayText) ? DisplayText : SVString() )
-		, m_DialogType( Type )
+	const int DependentColumnNumber = 2;
+	const TCHAR* const ColumnHeadings[] = { _T("Client"), _T("Supplier") };
+
+	SVShowDependentsDialog::SVShowDependentsDialog(const SVGuidSet& rSourceSet, SVObjectTypeEnum objectType, LPCTSTR DisplayText, DialogType Type /*= DeleteConfirm*/, CWnd* pParent /*=nullptr*/ )
+	: CDialog(SVShowDependentsDialog::IDD, pParent)
+	, m_rSourceSet( rSourceSet )
+	, m_objectType( objectType )
+	, m_DisplayText( (nullptr != DisplayText) ? DisplayText : SVString() )
+	, m_DialogType( Type )
+	{
+		RetreiveList();
+	}
+
+	/*static*/ INT_PTR SVShowDependentsDialog::StandardDialog( const SVString& rName, const SVGUID rTaskObjectID )
+	{
+		INT_PTR Result( IDOK );
+
+		if( !rTaskObjectID.empty() )
 		{
-			ConvertList(rList);
+			SVString FormatText = SvUl_SF::LoadSVString(IDS_DELETE_CHECK_DEPENDENCIES);
+			SVString DisplayText = SvUl_SF::Format( FormatText.c_str(), rName.c_str(), rName.c_str(), rName.c_str(), rName.c_str() );
+
+			SVGuidSet SourceSet;
+			SourceSet.insert( rTaskObjectID );
+			SVShowDependentsDialog Dlg( SourceSet, SVToolObjectType, DisplayText.c_str() );
+
+			Result = Dlg.DoModal();
 		}
 
-		SVShowDependentsDialog::SVShowDependentsDialog( const GUID& rInspectionID, const GUID& rTaskObjectID, bool bOnlyImages, SVObjectTypeEnum objectType, LPCTSTR DisplayText, DialogType Type /*= DeleteConfirm*/, CWnd* pParent /*=nullptr*/ )
-		: CDialog(SVShowDependentsDialog::IDD, pParent)
-		, m_DisplayText( (nullptr != DisplayText) ? DisplayText : SVString() )
-		, m_DialogType( Type )
-		, m_InspectionID(rInspectionID)
-		, m_TaskObjectID(rTaskObjectID)
-		, m_bOnlyImages(bOnlyImages)
-		, m_objectType(objectType)
-		{
-			RetreiveList();
-		}
+		return Result;
+	}
 
-		void SVShowDependentsDialog::RetreiveList()
-		{
-			typedef GuiCmd::GetDependencies Command;
-			typedef SVSharedPtr<Command> CommandPtr;
+	void SVShowDependentsDialog::DoDataExchange(CDataExchange* pDX)
+	{
+		CDialog::DoDataExchange(pDX);
+		//{{AFX_DATA_MAP(SVShowDependentsDialog)
+		DDX_Control(pDX, IDC_DEPENDENCY_LIST, m_ListCtrl);
+		//}}AFX_DATA_MAP
+	}
 
-			CommandPtr commandPtr = new Command(m_TaskObjectID, m_bOnlyImages, m_objectType);
-			SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
-			HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-			if (S_OK == hr)
-			{
-				m_dependencyList = commandPtr->Dependencies();
-			}
-		}
-
-		void SVShowDependentsDialog::ConvertList(const SVObjectPairVector& rList)
-		{
-			SVObjectTypeEnum ObjectType(SVToolObjectType);
-
-			if (DeleteConfirmWithIP_Name == m_DialogType || ShowWithIP_Name == m_DialogType)
-			{
-				ObjectType = SVInspectionProcessType;
-			}
-			for (SVObjectPairVector::const_iterator it = rList.begin(); it != rList.end(); ++it)
-			{
-				// Who is using
-				SVString WhoName = it->first->GetCompleteObjectNameToObjectType(nullptr, ObjectType);
-
-				// Where/What object is being used
-				SVString WhatName = it->second->GetCompleteObjectNameToObjectType(nullptr, ObjectType);
-				m_dependencyList.push_back( SVStringPair(WhoName, WhatName) );
-			}
-		}
-
-		/*static*/ INT_PTR SVShowDependentsDialog::StandardDialog( const SVString& rName, const SVGUID rInspectionID, const SVGUID rTaskObjectID, bool OnlyImages )
-		{
-			INT_PTR Result( IDOK );
-
-			if( !rInspectionID.empty() && !rTaskObjectID.empty() )
-			{
-				SVString FormatText = SvUl_SF::LoadSVString(IDS_DELETE_CHECK_DEPENDENCIES);
-				SVString DisplayText = SvUl_SF::Format( FormatText.c_str(), rName.c_str(), rName.c_str(), rName.c_str(), rName.c_str() );
+	BOOL SVShowDependentsDialog::OnInitDialog() 
+	{
+		CDialog::OnInitDialog();
 	
-				SVShowDependentsDialog Dlg(rInspectionID, rTaskObjectID, OnlyImages, SVToolObjectType, DisplayText.c_str());
+		// Get the original client rect
+		GetClientRect( m_OrginalClient );
 
-				Result = Dlg.DoModal();
-			}
+		setResizeControls();
 
-			return Result;
-		}
-
-		void SVShowDependentsDialog::addColumnHeadings()
+		CWnd* pControl(nullptr);
+		if( DeleteConfirm == m_DialogType )
 		{
-			// load the Column names
-			for( int i = 0; i < SV_NUMBER_DEPENDENTS_COLUMNS; i++ )
+			if( 0 == m_dependencyList.size() )
 			{
-				listCtrl.InsertColumn( i, _T(""), LVCFMT_LEFT, -1, i );
+				EndDialog(IDOK);
+				return false;
+			}
+			pControl = GetDlgItem( IDC_WARNING_TEXT );
+			if( nullptr != pControl )
+			{
+				pControl->SetWindowText( m_DisplayText.c_str() );
 			}
 		}
-
-		void SVShowDependentsDialog::addItems()
+		else
 		{
-			int index = 0;
-			CListCtrl* pCtrl = &listCtrl;
-			std::for_each(m_dependencyList.begin(),m_dependencyList.end(), [&index, &pCtrl](const SVStringPair& rel)->void
+			pControl = GetDlgItem( IDC_WARNING_TEXT );
+			if( nullptr != pControl )
 			{
-				pCtrl->InsertItem(index, rel.first.c_str()); // Who is using
-				pCtrl->SetItemText(index, 1, rel.second.c_str()); // Where/What object is being used
-				++index;
+				pControl->ShowWindow( SW_HIDE );
 			}
-			);
+			pControl = GetDlgItem( IDCANCEL );
+			if( nullptr != pControl )
+			{
+				pControl->ShowWindow( SW_HIDE );
+			}
 		}
 
-		void SVShowDependentsDialog::setColumnWidths()
+		// Build ListCtrl Headers
+		addColumnHeadings();
+
+		// Set the widths
+		setColumnWidths();
+
+		addItems();
+
+		return TRUE;  // return TRUE unless you set the focus to a control
+						// EXCEPTION: OCX Property Pages should return FALSE
+	}
+
+	void SVShowDependentsDialog::OnPaint()
+	{
+		CPaintDC dc(this);
+
+		CRect Rect;
+		GetClientRect( &Rect );
+
+		// Get the standard size of the gripper
+		Rect.left = Rect.right - ::GetSystemMetrics(SM_CXHSCROLL);
+		Rect.top = Rect.bottom - ::GetSystemMetrics(SM_CYVSCROLL);
+
+		// Draw it
+		dc.DrawFrameControl(&Rect, DFC_SCROLL, DFCS_SCROLLSIZEGRIP);
+
+		// Save the painted rect so we can invalidate the rect on next OnSize()
+		m_Gripper = Rect;
+	}
+
+	void SVShowDependentsDialog::OnSize(UINT nType, int cx, int cy)
+	{
+		CDialog::OnSize(nType, cx, cy);
+
+		InvalidateRect( m_Gripper, true );
+		m_Resizer.Resize( this );
+		setColumnWidths();
+	}
+
+	void SVShowDependentsDialog::OnGetMinMaxInfo(MINMAXINFO* lpMMI)
+	{
+		CRect Rect = m_OrginalClient;
+
+		// Adjust it according to the window style
+		AdjustWindowRect( Rect, GetStyle(), false );
+		// Make sure it does not get smaller than the initial size
+		lpMMI->ptMinTrackSize.x = Rect.Width();
+		lpMMI->ptMinTrackSize.y = Rect.Height();
+
+		CDialog::OnGetMinMaxInfo(lpMMI);
+	}
+
+	void SVShowDependentsDialog::OnCustomdrawDependencyList(NMHDR* pNMHDR, LRESULT* pResult)
+	{
+		NMLVCUSTOMDRAW* pLVCD = reinterpret_cast<NMLVCUSTOMDRAW*> (pNMHDR);
+
+		// Take the default processing unless we 
+		// set this to something else below.
+		*pResult = CDRF_DODEFAULT;
+
+		// First thing - check the draw stage. If it's the control's prepaint
+		// stage, then tell Windows we want messages for every item.
+		if (CDDS_PREPAINT == pLVCD->nmcd.dwDrawStage)
+		{
+			*pResult = CDRF_NOTIFYITEMDRAW;
+		}
+		else if( CDDS_ITEMPREPAINT == pLVCD->nmcd.dwDrawStage )
+		{
+			// This is the prepaint stage for an item. Here's where we set the
+			// item's text color. Our return value will tell Windows to draw the
+			// item itself, but it will use the new color we set here.
+			// We'll cycle the colors through red, green, and light blue.
+
+			//! Default text color is black
+			COLORREF TextColor = SVColor::Black;
+			//! Get the client item text
+			CString Text = m_ListCtrl.GetItemText( static_cast<int> (pLVCD->nmcd.dwItemSpec), 0 );
+			SVString ItemText(Text.GetString());
+
+			SVStringSet::const_iterator Iter(m_SourceNames.begin());
+			for (; m_SourceNames.end() != Iter; ++Iter)
+			{
+				//If item has part of source name then this is the client for suppliers 
+				if( 0 == ItemText.find(*Iter) )
+				{
+					TextColor = SVColor::Blue;
+				}
+			}
+
+			// Store the color back in the NMLVCUSTOMDRAW struct.
+			pLVCD->clrText = TextColor;
+
+			// Tell Windows to paint the control itself.
+			*pResult = CDRF_DODEFAULT;
+		}
+	}
+
+	void SVShowDependentsDialog::setResizeControls()
+	{
+		m_Resizer.Add( this, IDC_DEPENDENCY_LIST, SvMc::RESIZE_LOCKALL );
+		m_Resizer.Add( this, IDC_WARNING_TEXT, SvMc::RESIZE_LOCKLEFT | SvMc::RESIZE_LOCKBOTTOM );
+
+		m_Resizer.Add( this, IDOK, SvMc::RESIZE_LOCKRIGHT | SvMc::RESIZE_LOCKBOTTOM );
+		m_Resizer.Add( this, IDCANCEL, SvMc::RESIZE_LOCKRIGHT | SvMc::RESIZE_LOCKBOTTOM );
+	}
+
+	void SVShowDependentsDialog::RetreiveList()
+	{
+		SVGuidSet::const_iterator Iter(m_rSourceSet.begin());
+		for (; m_rSourceSet.end() != Iter; ++Iter)
+		{
+			SvOi::IObjectClass* pSourceObject =  SvOi::getObject(*Iter);
+			if (nullptr != pSourceObject)
+			{
+				SVString Name;
+				if( m_objectType == pSourceObject->GetObjectType() )
+				{
+					Name = pSourceObject->GetName();
+				}
+				else
+				{
+					pSourceObject->GetCompleteNameToType(m_objectType, Name);
+				}
+				if (!Name.empty())
+				{
+					//! Need to add this otherwise tool names that are sub names of other tools cause problems
+					Name += _T(".");
+					m_SourceNames.insert(Name);
+				}
+			}
+		}
+			
+		m_dependencyList.clear();
+		SvOi::ToolDependencyEnum ToolDependency = (DeleteConfirm == m_DialogType) ? SvOi::ToolDependencyEnum::Client : SvOi::ToolDependencyEnum::ClientAndSupplier;
+		
+		SvOi::getToolDependency( std::back_inserter(m_dependencyList), m_rSourceSet, m_objectType, ToolDependency );
+	}
+
+	void SVShowDependentsDialog::addColumnHeadings()
+	{
+		// load the Column names
+		for (int i = 0; i < DependentColumnNumber; i++)
+		{
+			m_ListCtrl.InsertColumn(i, ColumnHeadings[i], LVCFMT_LEFT, -1, i);
+		}
+	}
+
+	void SVShowDependentsDialog::addItems()
+	{
+		int index = 0;
+		CListCtrl& rCtrl = m_ListCtrl;
+		std::for_each(m_dependencyList.begin(), m_dependencyList.end(), [&index, &rCtrl](const SVStringPair& rel)->void
+		{
+			//! First item is supplier second client
+			rCtrl.InsertItem( index, rel.second.c_str() );
+			rCtrl.SetItemText( index, 1, rel.first.c_str() );
+			++index;
+		}
+		);
+	}
+
+	void SVShowDependentsDialog::setColumnWidths()
+	{
+		if( ::IsWindow( m_ListCtrl.GetSafeHwnd() ) )
 		{
 			CRect viewRect;
-			listCtrl.GetClientRect( viewRect );
+			m_ListCtrl.GetClientRect(viewRect);
 
-			int columnWidth = viewRect.Width() / SV_NUMBER_DEPENDENTS_COLUMNS;
+			int columnWidth = viewRect.Width() / DependentColumnNumber;
 
-			for( int i = 0; i < SV_NUMBER_DEPENDENTS_COLUMNS; i++ )
+			for (int i = 0; i < DependentColumnNumber; i++)
 			{
-				listCtrl.SetColumnWidth( i, columnWidth );
+				m_ListCtrl.SetColumnWidth(i, columnWidth);
 			}
 		}
-
-		void SVShowDependentsDialog::DoDataExchange(CDataExchange* pDX)
-		{
-			CDialog::DoDataExchange(pDX);
-			//{{AFX_DATA_MAP(SVShowDependentsDialog)
-			DDX_Control(pDX, IDC_DEPENDENCY_LIST, listCtrl);
-			//}}AFX_DATA_MAP
-		}
-
-
-		BEGIN_MESSAGE_MAP(SVShowDependentsDialog, CDialog)
-			//{{AFX_MSG_MAP(SVShowDependentsDialog)
-			//}}AFX_MSG_MAP
-		END_MESSAGE_MAP()
-
-		/////////////////////////////////////////////////////////////////////////////
-		// SVShowDependentsDialog message handlers
-
-		BOOL SVShowDependentsDialog::OnInitDialog() 
-		{
-			CDialog::OnInitDialog();
-	
-			CWnd* pControl(nullptr);
-			if( DeleteConfirm == m_DialogType || DeleteConfirmWithIP_Name == m_DialogType)
-			{
-				if( 0 == m_dependencyList.size() )
-				{
-					EndDialog(IDOK);
-					return false;
-				}
-				pControl = GetDlgItem( IDC_WARNING_TEXT );
-				if( nullptr != pControl )
-				{
-					pControl->SetWindowText( m_DisplayText.c_str() );
-				}
-			}
-			else
-			{
-				pControl = GetDlgItem( IDC_WARNING_TEXT );
-				if( nullptr != pControl )
-				{
-					pControl->ShowWindow( SW_HIDE );
-				}
-				pControl = GetDlgItem( IDCANCEL );
-				if( nullptr != pControl )
-				{
-					pControl->ShowWindow( SW_HIDE );
-				}
-			}
-
-			// Build ListCtrl Headers
-			addColumnHeadings();
-
-			// Set the widths
-			setColumnWidths();
-
-			addItems();
-
-			return TRUE;  // return TRUE unless you set the focus to a control
-						  // EXCEPTION: OCX Property Pages should return FALSE
-		}
+	}
 } /* namespace SVOGui */ } /* namespace Seidenader */
-

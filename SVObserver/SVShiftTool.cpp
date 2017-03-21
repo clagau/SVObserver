@@ -64,8 +64,8 @@ BOOL SVShiftTool::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 	m_LeftResult.ObjectAttributesAllowedRef() &= ( ~SV_REMOTELY_SETABLE & ~SV_SETABLE_ONLINE & ~SV_PRINTABLE );
 	m_TopResult.ObjectAttributesAllowedRef() &= ( ~SV_REMOTELY_SETABLE & ~SV_SETABLE_ONLINE & ~SV_PRINTABLE );
 
-	extentRight.ObjectAttributesAllowedRef() &= (~SV_PRINTABLE);
-	extentBottom.ObjectAttributesAllowedRef() &= (~SV_PRINTABLE);
+	m_ExtentRight.ObjectAttributesAllowedRef() &= (~SV_PRINTABLE);
+	m_ExtentBottom.ObjectAttributesAllowedRef() &= (~SV_PRINTABLE);
 	
 	m_LearnedTranslationX.ObjectAttributesAllowedRef() &= (~SV_EXTENT_OBJECT);
 	m_LearnedTranslationY.ObjectAttributesAllowedRef() &= (~SV_EXTENT_OBJECT);
@@ -196,7 +196,7 @@ bool SVShiftTool::onRun( SVRunStatusClass& p_rRunStatus, SvStl::MessageContainer
 			double l_Left = 0.0;
 			double l_Top = 0.0;
 
-			if ( S_OK != extentLeft.GetValue( l_Left ) || S_OK != extentTop.GetValue( l_Top ) )
+			if ( S_OK != m_ExtentLeft.GetValue( l_Left ) || S_OK != m_ExtentTop.GetValue( l_Top ) )
 			{
 				l_Status = false;
 				if (nullptr != pErrorMessages)
@@ -263,8 +263,8 @@ bool SVShiftTool::onRun( SVRunStatusClass& p_rRunStatus, SvStl::MessageContainer
 						m_TranslationY.SetValue( p_rRunStatus.m_lResultDataIndex, nInputTranslationY );
 						m_DisplacementX.SetValue( p_rRunStatus.m_lResultDataIndex, nInputTranslationX);
 						m_DisplacementY.SetValue( p_rRunStatus.m_lResultDataIndex, nInputTranslationY );
-						extentLeft.SetValue(p_rRunStatus.m_lResultDataIndex, 0.0);
-						extentTop.SetValue(p_rRunStatus.m_lResultDataIndex, 0.0);
+						m_ExtentLeft.SetValue(p_rRunStatus.m_lResultDataIndex, 0.0);
+						m_ExtentTop.SetValue(p_rRunStatus.m_lResultDataIndex, 0.0);
 
 						m_LeftResult.SetValue( p_rRunStatus.m_lResultDataIndex, nInputTranslationX  );
 						m_TopResult.SetValue( p_rRunStatus.m_lResultDataIndex, nInputTranslationY );
@@ -290,11 +290,11 @@ bool SVShiftTool::onRun( SVRunStatusClass& p_rRunStatus, SvStl::MessageContainer
 					{
 						long l_lValue = static_cast<long>(l_svFigure.m_svBottomRight.m_dPositionX);
 
-						extentRight.SetValue( p_rRunStatus.m_lResultDataIndex, l_lValue );
+						m_ExtentRight.SetValue( p_rRunStatus.m_lResultDataIndex, l_lValue );
 						
 						l_lValue = static_cast<long>(l_svFigure.m_svBottomRight.m_dPositionY);
 
-						extentBottom.SetValue( p_rRunStatus.m_lResultDataIndex, l_lValue );
+						m_ExtentBottom.SetValue( p_rRunStatus.m_lResultDataIndex, l_lValue );
 					}
 				}
 			}
@@ -475,10 +475,10 @@ void SVShiftTool::LocalInitialize()
 	m_svToolExtent.SetExtentObject( SVExtentPropertyTranslationOffsetY, &m_DisplacementY );
 
 	//Set Default Values
-	extentTop.SetDefaultValue( 10, true );
-	extentLeft.SetDefaultValue( 10, true );
-	extentWidth.SetDefaultValue( 100, true );
-	extentHeight.SetDefaultValue( 100, true );
+	m_ExtentTop.SetDefaultValue( 10, true );
+	m_ExtentLeft.SetDefaultValue( 10, true );
+	m_ExtentWidth.SetDefaultValue( 100, true );
+	m_ExtentHeight.SetDefaultValue( 100, true );
 
 	m_TranslationX.SetDefaultValue( 0, true );
 	m_TranslationY.SetDefaultValue( 0, true );
@@ -575,8 +575,8 @@ void SVShiftTool::SetAttributeData()
 			m_svToolExtent.SetExtentPropertyInfo(SVExtentPropertyPositionPointY, info);
 
 			//set default value to be 0, 0
-			extentLeft.SetDefaultValue(0, true);
-			extentTop.SetDefaultValue(0, true);
+			m_ExtentLeft.SetDefaultValue(0, true);
+			m_ExtentTop.SetDefaultValue(0, true);
 		}
 	}
 }

@@ -28,7 +28,7 @@ namespace Seidenader
 			virtual void SetToolImage( const SVGUID& rObjectID ) = 0;
 			virtual HRESULT UpdateImageWithExtent( unsigned long p_Index ) = 0;
 			virtual bool SetFirstInputImageName( LPCTSTR FirstName) = 0;
-
+			virtual long getToolPosition() const = 0;
 		};
 	}
 }

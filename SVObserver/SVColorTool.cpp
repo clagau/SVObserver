@@ -55,8 +55,8 @@ void SVColorToolClass::init()
 	m_band1Image.InitializeImage( SVImageTypeDependent );
 	m_band2Image.InitializeImage( SVImageTypeDependent );
 
-	extentTop.SetDefaultValue( 0.0, true );
-	extentLeft.SetDefaultValue( 0.0, true );
+	m_ExtentTop.SetDefaultValue( 0.0, true );
+	m_ExtentLeft.SetDefaultValue( 0.0, true );
 
 	m_svToolExtent.SetTranslation( SVExtentTranslationNone );
 
@@ -113,8 +113,8 @@ BOOL SVColorToolClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure
 		}
 	}
 	
-	extentTop.SetDefaultValue( 0.0, true );
-	extentLeft.SetDefaultValue( 0.0, true );
+	m_ExtentTop.SetDefaultValue( 0.0, true );
+	m_ExtentLeft.SetDefaultValue( 0.0, true );
 
 	// Set / Reset Printable Flag
 	m_convertToHSI.ObjectAttributesAllowedRef() |= SV_PRINTABLE;

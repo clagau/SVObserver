@@ -5,7 +5,7 @@
 //* Licenses         : No known license
 //* From             : http://www.codeguru.com/cpp/controls/propertysheet/sizing/article.php/c599/Resizable-CPropertySheet.htm
 //******************************************************************************
-//* .Module Name     : CResizablePropertySheet
+//* .Module Name     : ResizablePropertySheet
 //* .File Name       : $Workfile:   ResizablePropertySheet.cpp  $
 //* .Description	 : The class resizes the registered controls in a dialog 
 //* ----------------------------------------------------------------------------
@@ -25,12 +25,12 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-namespace Seidenader { namespace ObjectSelectorLibrary
+namespace Seidenader { namespace SVMFCControls
 {
-	IMPLEMENT_DYNAMIC(CResizablePropertySheet, CPropertySheet)
+	IMPLEMENT_DYNAMIC(ResizablePropertySheet, CPropertySheet)
 
-	BEGIN_MESSAGE_MAP(CResizablePropertySheet, CPropertySheet)
-		//{{AFX_MSG_MAP(CResizablePropertySheet)
+	BEGIN_MESSAGE_MAP(ResizablePropertySheet, CPropertySheet)
+		//{{AFX_MSG_MAP(ResizablePropertySheet)
 		ON_WM_SIZE()
 		ON_WM_GETMINMAXINFO()
 		ON_WM_PAINT()
@@ -39,25 +39,25 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 	#pragma endregion Declarations
 
 	#pragma region Constructor
-	CResizablePropertySheet::CResizablePropertySheet()
+	ResizablePropertySheet::ResizablePropertySheet()
 	{
 	}
 
-	CResizablePropertySheet::CResizablePropertySheet(UINT nIDCaption, CWnd *pParentWnd, UINT iSelectPage) : CPropertySheet(nIDCaption, pParentWnd, iSelectPage)
+	ResizablePropertySheet::ResizablePropertySheet(UINT nIDCaption, CWnd *pParentWnd, UINT iSelectPage) : CPropertySheet(nIDCaption, pParentWnd, iSelectPage)
 	{
 	}
 
-	CResizablePropertySheet::CResizablePropertySheet(LPCTSTR pszCaption, CWnd *pParentWnd, UINT iSelectPage) : CPropertySheet(pszCaption, pParentWnd, iSelectPage)
+	ResizablePropertySheet::ResizablePropertySheet(LPCTSTR pszCaption, CWnd *pParentWnd, UINT iSelectPage) : CPropertySheet(pszCaption, pParentWnd, iSelectPage)
 	{
 	}
 
-	CResizablePropertySheet::~CResizablePropertySheet()
+	ResizablePropertySheet::~ResizablePropertySheet()
 	{
 	}
 	#pragma endregion Constructor
 
 	#pragma region Public Methods
-	BOOL CResizablePropertySheet::OnInitDialog() 
+	BOOL ResizablePropertySheet::OnInitDialog() 
 	{
 		CPropertySheet::OnInitDialog();
 
@@ -125,7 +125,7 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 		return TRUE; 
 	}
 
-	void CResizablePropertySheet::GetPageRect(RECT *pRect)
+	void ResizablePropertySheet::GetPageRect(RECT *pRect)
 	{
 		CRect rcClient;
 		GetClientRect(rcClient);
@@ -139,7 +139,7 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 	#pragma endregion Public Methods
 
 	#pragma region Protected Methods
-	void CResizablePropertySheet::OnSize(UINT nType, int cx, int cy) 
+	void ResizablePropertySheet::OnSize(UINT nType, int cx, int cy) 
 	{
 		CPropertySheet::OnSize(nType, cx, cy);
 
@@ -168,7 +168,7 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 	
 	}
 
-	LRESULT CResizablePropertySheet::WindowProc(UINT message, WPARAM wParam, LPARAM lParam) 
+	LRESULT ResizablePropertySheet::WindowProc(UINT message, WPARAM wParam, LPARAM lParam) 
 	{
 		// In wizard mode, it seems like the tab control does not send notification
 		// messages (Spy++ says it is disabled) when a page is activated. 
@@ -196,7 +196,7 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 		return CPropertySheet::WindowProc(message, wParam, lParam);
 	}
 
-	void CResizablePropertySheet::OnGetMinMaxInfo(MINMAXINFO FAR* lpMMI) 
+	void ResizablePropertySheet::OnGetMinMaxInfo(MINMAXINFO FAR* lpMMI) 
 	{
 		CRect rc = m_rcClient;
 
@@ -210,7 +210,7 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 		CPropertySheet::OnGetMinMaxInfo(lpMMI);
 	}
 
-	void CResizablePropertySheet::OnPaint()
+	void ResizablePropertySheet::OnPaint()
 	{
 		CPaintDC dc(this);
 
@@ -228,7 +228,7 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 		m_rcGripper = rect;
 	}
 
-	INT_PTR CResizablePropertySheet::DoModal()
+	INT_PTR ResizablePropertySheet::DoModal()
 	{
 		// Hook into property sheet creation code
 		m_psh.dwFlags |= PSH_USECALLBACK;
@@ -237,7 +237,7 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 		return CPropertySheet::DoModal();
 	}
 
-	int CALLBACK CResizablePropertySheet::ResizePropSheetCallback(HWND hWnd, UINT message, LPARAM lParam)
+	int CALLBACK ResizablePropertySheet::ResizePropSheetCallback(HWND hWnd, UINT message, LPARAM lParam)
 	{
 		extern int CALLBACK AfxPropSheetCallback(HWND, UINT message, LPARAM lParam);
 		// XMN: Call MFC's callback
@@ -254,5 +254,5 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 	}
 	#pragma endregion Protected Methods
 
-} /*namespace ObjectSelectorLibrary*/ } /*namespace Seidenader*/
+} /*namespace SVMFCControls*/ } /*namespace Seidenader*/
 

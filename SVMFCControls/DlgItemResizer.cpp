@@ -35,15 +35,15 @@ struct DLGITEMINFO
 };
 #pragma endregion Declarations
 
-namespace Seidenader { namespace ObjectSelectorLibrary
+namespace Seidenader { namespace SVMFCControls
 {
-	#pragma region Constructor
-	CDlgItemResizer::CDlgItemResizer() :
+#pragma region Constructor
+	DlgItemResizer::DlgItemResizer() :
 		m_szInitial(CSize(0, 0))
 	{
 	}
 
-	CDlgItemResizer::~CDlgItemResizer()
+	DlgItemResizer::~DlgItemResizer()
 	{
 		// Make sure to delete all allocated items
 		for (INT i = 0; i < m_Controls.GetSize(); i++)
@@ -54,7 +54,7 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 	#pragma endregion Constructor
 
 	#pragma region Public Methods
-	void CDlgItemResizer::Add(CWnd *pCtrl, UINT uFlags)
+	void DlgItemResizer::Add(CWnd *pCtrl, UINT uFlags)
 	{
 		// Make sure params are valid
 		ASSERT(pCtrl != 0);
@@ -88,7 +88,7 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 		m_Controls.Add(item);
 	}
 
-	void CDlgItemResizer::Resize(CWnd *pWnd)
+	void DlgItemResizer::Resize(CWnd *pWnd)
 	{
 		// Just return if no initial size yet
 		if (0 == m_szInitial.cx || 0 == m_szInitial.cy) return;
@@ -176,4 +176,5 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 	}
 	#pragma endregion Public Methods
 
-} /*namespace ObjectSelectorLibrary*/ } /*namespace Seidenader*/
+} /*namespace SVMFCControls*/ } /*namespace Seidenader*/
+

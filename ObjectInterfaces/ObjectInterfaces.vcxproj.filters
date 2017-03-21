@@ -72,9 +72,6 @@
     <ClInclude Include="IRootObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DependencyList.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ImageArthimeticOperators.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -136,6 +133,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IPatternAnalyzer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="IDependencyManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

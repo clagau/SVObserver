@@ -117,6 +117,7 @@ extern /*const*/ GUID SVToolEnabledObjectGuid;
 extern /*const*/ GUID SVToolSelectedForOperatorMoveObjectGuid;
 
 //GUID for the Embedded object for SVToolClass
+extern /*const*/ GUID SVToolPositionGuid;
 extern /*const*/ GUID SVToolTimeGuid;
 
 //GUID for the Embedded object for SVToolsetClass

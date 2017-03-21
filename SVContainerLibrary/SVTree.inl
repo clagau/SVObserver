@@ -9,7 +9,7 @@
 //* .Check In Date   : $Date:   17 Jul 2014 16:54:28  $
 //******************************************************************************
 
-namespace Seidenader { namespace SVContainerLibrary
+namespace Sv { namespace Container
 {
 	template<typename Key, typename Data>
 	SVTree<Key, Data>::SVTree( )

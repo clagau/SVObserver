@@ -16,7 +16,7 @@
 #include "SVStatusLibrary/MessageManager.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace SVContainerLibrary
+namespace Sv { namespace Container
 {
 	#pragma region Constructor
 	ObjectTreeItems::ObjectTreeItems() : SVTree<SVString, ObjectSelectorItem>()

@@ -26,8 +26,8 @@ public:
 
 // Dialog Data
 	enum { IDD = IDD_HEADER_DIALOG };
-	bool SetValues( const StringPairVect& p_astrValues);
-	bool GetValues( StringPairVect& p_astrValues) const;
+	bool SetValues( const StringPairVector& p_astrValues);
+	bool GetValues( StringPairVector& p_astrValues) const;
 #pragma endregion
 
 #pragma region Protected
@@ -46,7 +46,7 @@ protected:
 
 #pragma region Private
 private:
-	StringPairVect m_Strings;
+	StringPairVector m_Strings;
 	CEdit* m_pEdit;
 	CRect m_PreviousClient;
 	CRect m_OriginalRec;

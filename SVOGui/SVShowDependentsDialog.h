@@ -12,76 +12,62 @@
 #pragma once
 #pragma region Includes
 #include "SVOResource/resource.h"
-#include "SVObjectLibrary\SVOutObjectInfoStruct.h"
-#include "ObjectInterfaces\DependencyList.h"
+#include "SVObjectLibrary/SVOutObjectInfoStruct.h"
 #include "SVUtilityLibrary/SVString.h"
+#include "SVMFCControls/DlgItemResizer.h"
 #pragma endregion Includes
 
-namespace Seidenader
+namespace Seidenader { namespace SVOGui
 {
-	namespace SVOGui
+	class SVShowDependentsDialog : public CDialog
 	{
-		class SVShowDependentsDialog : public CDialog
+	#pragma region Declarations
+	public:
+		enum { IDD = IDD_SHOW_DEPENDENTS_DIALOG };
+
+		enum DialogType
 		{
-		#pragma region Declarations
-		public:
-			enum DialogType
-			{
-				DeleteConfirm,
-				DeleteConfirmWithIP_Name,
-				Show,
-				ShowWithIP_Name,
-			};
-		#pragma endregion Declarations
-
-		#pragma region Constructor
-		public:
-			SVShowDependentsDialog( const SVObjectPairVector& rList, LPCTSTR DisplayText, DialogType Type = DeleteConfirm, CWnd* pParent = nullptr ); // old
-			SVShowDependentsDialog( const GUID& rInspectionId, const GUID& rTaskObjectID, bool bOnlyImages, SVObjectTypeEnum objectType = SVToolObjectType, LPCTSTR DisplayText = nullptr, DialogType Type = DeleteConfirm, CWnd* pParent = nullptr );
-
-		#pragma endregion Constructor
-			// Dialog Data
-			//{{AFX_DATA(SVShowDependentsDialog)
-			enum { IDD = IDD_SHOW_DEPENDENTS_DIALOG };
-			CListCtrl	listCtrl;
-			//}}AFX_DATA
-
-		// Overrides
-			// ClassWizard generated virtual function overrides
-			//{{AFX_VIRTUAL(SVShowDependentsDialog)
-			protected:
-			virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
-			//}}AFX_VIRTUAL
-
-		public:
-			static INT_PTR StandardDialog( const SVString& rName, const SVGUID rInspectionID, const SVGUID rTaskObjectID, bool OnlyImages=false );
-
-		// Implementation
-		protected:
-			void RetreiveList();
-			void ConvertList(const SVObjectPairVector& rList);
-			void addColumnHeadings();
-			void addItems();
-			void setColumnWidths();
-
-			// Generated message map functions
-			//{{AFX_MSG(SVShowDependentsDialog)
-			virtual BOOL OnInitDialog() override;
-			//}}AFX_MSG
-			DECLARE_MESSAGE_MAP()
-
-		private:
-			GUID m_InspectionID;
-			GUID m_TaskObjectID;
-			bool m_bOnlyImages;
-			SVObjectTypeEnum m_objectType;
-			SvOi::DependencyList m_dependencyList;
-			SVString m_DisplayText;
-			DialogType m_DialogType;
+			DeleteConfirm,
+			Show,
 		};
-	}
-}
+	#pragma endregion Declarations
 
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
+	#pragma region Constructor
+	public:
+		SVShowDependentsDialog( const SVGuidSet& rSourceSet, SVObjectTypeEnum objectType = SVToolObjectType, LPCTSTR DisplayText = nullptr, DialogType Type = DeleteConfirm, CWnd* pParent = nullptr );
+	#pragma endregion Constructor
 
+	public:
+		static INT_PTR StandardDialog(const SVString& rName, const SVGUID rTaskObjectID);
+	
+	protected:
+		virtual BOOL OnInitDialog() override;
+		virtual void DoDataExchange(CDataExchange* pDX) override;
+		afx_msg void OnPaint();
+		afx_msg void OnSize(UINT nType, int cx, int cy);
+		afx_msg void OnGetMinMaxInfo(MINMAXINFO* lpMMI);
+		afx_msg void OnCustomdrawDependencyList(NMHDR* pNMHDR, LRESULT* pResult);
+
+		//! Sets which controls are resized when the dialog is resized
+		void setResizeControls();
+
+		void RetreiveList();
+		void addColumnHeadings();
+		void addItems();
+		void setColumnWidths();
+
+		DECLARE_MESSAGE_MAP()
+
+	private:
+		SvMc::DlgItemResizer m_Resizer;
+		CRect m_OrginalClient;
+		CRect m_Gripper;
+		CListCtrl m_ListCtrl;
+		const SVGuidSet& m_rSourceSet;
+		SVObjectTypeEnum m_objectType;
+		StringPairVector m_dependencyList;
+		SVString m_DisplayText;
+		DialogType m_DialogType;
+		SVStringSet m_SourceNames;
+	};
+} /* namespace SVOGui */ } /* namespace Seidenader */

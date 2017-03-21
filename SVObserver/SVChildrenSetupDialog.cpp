@@ -408,8 +408,7 @@ BOOL SVChildrenSetupDialogClass::checkOkToDelete( SVTaskObjectClass* pTaskObject
 	if (pTaskObject)
 	{
 		SVGUID taskObjectID = pTaskObject->GetUniqueObjectID();
-		SVGUID inspectionID = pTaskObject->GetInspection()->GetUniqueObjectID();
-		INT_PTR rc = SvOg::SVShowDependentsDialog::StandardDialog( pTaskObject->GetName(), inspectionID, taskObjectID );
+		INT_PTR rc = SvOg::SVShowDependentsDialog::StandardDialog( pTaskObject->GetName(), taskObjectID );
 
 		bRetVal = ( IDCANCEL == rc ) ? false : true;
 	}

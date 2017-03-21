@@ -7,7 +7,7 @@
 /// GraphViz .dot format
 //******************************************************************************
 
-namespace Seidenader { namespace SVContainerLibrary
+namespace Sv { namespace Container
 {
 	//! Retrieve vertex name template class
 	template< typename NameFunction, typename Graph, typename VertexName >

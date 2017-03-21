@@ -424,53 +424,19 @@ bool GlobalConstantView::checkAllDependencies( BasicValueObject* pObject, bool C
 	{
 		SVString DisplayText = SvUl_SF::LoadSVString(IDS_DELETE_CHECK_DEPENDENCIES);
 		SVString Name( pObject->GetName() );
-		SVObjectVector ObjectCheckList;
-		SVObjectPairVector DependencyList;
+		SVGuidSet ObjectCheckList;
 
 		DisplayText = SvUl_SF::Format( DisplayText.c_str(), Name.c_str(), Name.c_str(), Name.c_str(), Name.c_str() );
 
-		ObjectCheckList.push_back( pObject );
-		SVInspectionProcessPtrList Inspections;
-		pConfig->GetInspections( Inspections );
-		SVInspectionProcessPtrList::const_iterator Iter( Inspections.begin() );
-		while( Inspections.end() != Iter && nullptr != (*Iter)->GetToolSet() )
-		{
-			SVObjectPairVector IP_DependencyList;
-			(*Iter)->GetToolSet()->GetDependentsList( ObjectCheckList, IP_DependencyList );
-
-			SVObjectPairVector::const_iterator PairIter( IP_DependencyList.cbegin() );
-			while( IP_DependencyList.cend() != PairIter )
-			{
-				SVObjectPairVector::const_iterator PairIter2( DependencyList.cbegin() );
-				bool NewItem( true );
-
-				//Check if the dependency is already in the main list
-				while( DependencyList.cend() != PairIter2 )
-				{
-					//@WARNING [gra][7.20][22.06.2015] This would be better done using std::find however we do not have the appropriate operator==
-					if( PairIter->first == PairIter2->first && PairIter->second == PairIter2->second )
-					{
-						NewItem = false;
-						break;
-					}
-					++PairIter2;
-				}
-				if( NewItem )
-				{
-					DependencyList.push_back( *PairIter );
-				}
-				++PairIter;
-			}
-			++Iter;
-		}
+		ObjectCheckList.insert( pObject->GetUniqueObjectID() );
 		
-		SvOg::SVShowDependentsDialog::DialogType Type( SvOg::SVShowDependentsDialog::ShowWithIP_Name );
+		SvOg::SVShowDependentsDialog::DialogType Type( SvOg::SVShowDependentsDialog::Show );
 		if( ConfirmDelete )
 		{
-			Type =  SvOg::SVShowDependentsDialog::DeleteConfirmWithIP_Name;
+			Type =  SvOg::SVShowDependentsDialog::DeleteConfirm;
 		}
 
-		SvOg::SVShowDependentsDialog DependentsDialog( DependencyList, DisplayText.c_str(), Type );
+		SvOg::SVShowDependentsDialog DependentsDialog( ObjectCheckList, SVInspectionObjectType, DisplayText.c_str(), Type );
 
 		if( IDCANCEL == DependentsDialog.DoModal() )
 		{

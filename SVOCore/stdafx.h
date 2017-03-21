@@ -64,4 +64,13 @@
 #include <boost/multi_index_container.hpp>				//Used by static library
 #include <boost/multi_index/member.hpp>					//Used by static library
 #include <boost/multi_index/ordered_index.hpp>			//Used by static library
+
+
+#include <boost/graph/adjacency_list.hpp>				//Used by static library
+#include <boost/graph/depth_first_search.hpp>			//Used by static library
+#include <boost/graph/breadth_first_search.hpp>			//Used by static library
+#include <boost/graph/reverse_graph.hpp>				//Used by static library
+#include <boost/graph/filtered_graph.hpp>				//Used by static library
+#include <boost/graph/graphviz.hpp>						//Used by static library
+#include <boost/scoped_array.hpp>						//Used by static library
 #pragma endregion Precompiled Headers

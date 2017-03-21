@@ -240,6 +240,19 @@ void SVToolSetClass::moveTool( int NewIndex, SVToolClass* pTool )
 	}
 }
 
+void SVToolSetClass::updateToolPosition()
+{
+	for (long i = 0; i < GetSize(); i++)
+	{
+		SVToolClass* pTool = dynamic_cast<SVToolClass*> (GetAt(i));
+		if (nullptr != pTool)
+		{
+			//! For object values use one based index
+			pTool->setToolPosition(i + 1);
+		}
+	}
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // Called by CreateObject
 ////////////////////////////////////////////////////////////////////////////////
@@ -906,6 +919,8 @@ bool SVToolSetClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 		m_Width.SetDefaultValue( Width, true );
 		m_Height.SetDefaultValue( Height, true );
 	}
+	
+	updateToolPosition();
 
 	return Result;
 }

@@ -73,8 +73,8 @@ BOOL SVLinearToolClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructur
 
 	m_svSourceImageNames.ObjectAttributesAllowedRef() &=~SV_REMOTELY_SETABLE & ~SV_SETABLE_ONLINE;
 
-	extentLeft.ObjectAttributesAllowedRef() &= ~SV_REMOTELY_SETABLE & ~SV_SETABLE_ONLINE;
-	extentTop.ObjectAttributesAllowedRef() &= ~SV_REMOTELY_SETABLE & ~SV_SETABLE_ONLINE;
+	m_ExtentLeft.ObjectAttributesAllowedRef() &= ~SV_REMOTELY_SETABLE & ~SV_SETABLE_ONLINE;
+	m_ExtentTop.ObjectAttributesAllowedRef() &= ~SV_REMOTELY_SETABLE & ~SV_SETABLE_ONLINE;
 
 
 	if(bOk)
@@ -162,14 +162,14 @@ bool SVLinearToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessage
 
 			if ( S_OK == l_svExtents.GetFigure( l_svFigure ) )
 			{
-				if( extentLeft.ObjectAttributesAllowed() != SV_NO_ATTRIBUTES )
+				if( m_ExtentLeft.ObjectAttributesAllowed() != SV_NO_ATTRIBUTES )
 				{
-					extentLeft.SetValue( 1, l_svFigure.m_svTopLeft.m_dPositionX );
+					m_ExtentLeft.SetValue( 1, l_svFigure.m_svTopLeft.m_dPositionX );
 				}
 				
-				if( extentTop.ObjectAttributesAllowed() != SV_NO_ATTRIBUTES )
+				if( m_ExtentTop.ObjectAttributesAllowed() != SV_NO_ATTRIBUTES )
 				{
-					extentTop.SetValue( 1, l_svFigure.m_svTopLeft.m_dPositionY );
+					m_ExtentTop.SetValue( 1, l_svFigure.m_svTopLeft.m_dPositionY );
 				}
 			}
 		}

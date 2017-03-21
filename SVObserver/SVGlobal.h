@@ -20,7 +20,6 @@
 #pragma endregion Includes
 
 typedef std::map<int, SVStringPair > IntStrPairMap;
-typedef std::vector<SVStringPair> StringPairVect;
 
 class SVObserverApp;
 class SVDataManager;

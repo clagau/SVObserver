@@ -31,6 +31,7 @@
 #include "ObjectInterfaces/ITaskObjectListClass.h"
 #include "ObjectInterfaces/IToolSet.h"
 #include "ObjectInterfaces/ErrorNumbers.h"
+#include "SVObjectLibrary/DependencyManager.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -419,24 +420,6 @@ SvOi::ISelectorItemVectorPtr SVTaskObjectClass::GetSelectorList(SvOi::IsObjectIn
 #endif
 	}
 	return Result;
-}
-
-SvOi::DependencyList SVTaskObjectClass::GetDependents(bool bImagesOnly, SVObjectTypeEnum nameToObjectType) const
-{
-	SvOi::DependencyList dependents;
-	SVObjectPairVector v;
-	HRESULT hr = const_cast<SVTaskObjectClass*>(this)->GetDependentsList(v, bImagesOnly);
-	if (S_OK == hr)
-	{
-		std::for_each(v.begin(), v.end(), [&dependents, &nameToObjectType](const SVObjectPair& item)->void
-		{
-			SVStringPair rel(item.first->GetCompleteObjectNameToObjectType(nullptr, nameToObjectType), 
-								item.second->GetCompleteObjectNameToObjectType(nullptr, nameToObjectType));
-			dependents.push_back(rel);
-		}
-		);
-	}
-	return dependents;
 }
 
 void SVTaskObjectClass::GetConnectedImages(SvUl::InputNameGuidPairList& rList, int maxEntries)
@@ -1870,72 +1853,6 @@ BOOL SVTaskObjectClass::CloseObject()
 	return Result;
 }
 
-HRESULT SVTaskObjectClass::GetDependentsList( SVObjectPairVector& rListOfDependents, bool bOnlyImageDependencies )
-{
-	assert( rListOfDependents.size() == 0 );	// should be clear before calling
-	int itemNo = 0;
-
-	// Check for Dependents
-	SVOutputInfoListClass l_OutputInfoList;
-	
-	GetOutputList( l_OutputInfoList );
-
-	if( l_OutputInfoList.HasDependents() )
-	{
-		long l_lCount = l_OutputInfoList.GetSize();
-
-		for( int i = 0;i < l_lCount; ++ i )
-		{
-			SVOutObjectInfoStruct* pOutput = l_OutputInfoList.GetAt( i );
-			if( pOutput )
-			{
-				if( bOnlyImageDependencies && pOutput->ObjectTypeInfo.ObjectType != SVImageObjectType )
-					continue;
-
-				pOutput->GetDependentsList( this, rListOfDependents );
-			}// end if( pOutput )
-		}// end for( int i = 0;i < pOutputInfoList->GetSize(); ++ i )
-	}// end if( pOutputInfoList && pOutputInfoList->HasDependents() )
-	
-	//return (itemNo != 0);
-	return S_OK;
-}
-
-// Get the dependents list for a specified list of objects (owned by this object)
-HRESULT SVTaskObjectClass::GetDependentsList( const SVObjectVector& rListOfObjects, SVObjectPairVector& rListOfDependents )
-{
-	int itemNo = 0;
-
-	// Check for Dependents
-	SVOutputInfoListClass l_OutputInfoList;
-	
-	GetOutputList( l_OutputInfoList );
-
-	GetNonToolsetOutputList( l_OutputInfoList );
-
-	if( l_OutputInfoList.HasDependents() )
-	{
-		SVObjectVector::const_iterator iter;
-		for ( iter = rListOfObjects.begin(); iter != rListOfObjects.end(); ++iter)
-		{
-			SVOutObjectInfoStruct* pOutput = nullptr;
-			for( int i = 0;i < l_OutputInfoList.GetSize() && (nullptr == pOutput || pOutput->PObject != *iter); ++ i )
-			{
-				pOutput = l_OutputInfoList.GetAt( i );
-			}
-
-			assert( nullptr != pOutput );	// if this asserts, the object is not on this object's output list
-			if( pOutput && pOutput->PObject == *iter)
-			{
-				pOutput->GetDependentsList( this, rListOfDependents );
-			}// end if( pOutput )
-		}// end for ( iter = rListOfObject.begin(); iter != rListOfObjects.end(); iter++)
-	}// end if( pOutputInfoList && pOutputInfoList->HasDependents() )
-	
-	//return (itemNo != 0);
-	return S_OK;
-}
-
 HRESULT SVTaskObjectClass::GetImageList( SVImageListClass& p_rImageList, UINT uiAttributes, bool bAND )
 {
 	HRESULT hr = S_OK;
@@ -1966,19 +1883,6 @@ HRESULT SVTaskObjectClass::GetImageList( SVImageListClass& p_rImageList, UINT ui
 		}
 	}
 
-	return hr;
-}
-
-HRESULT SVTaskObjectClass::GetDependentsList( SVObjectListClass& rListOfDependents, bool bOnlyImageDependencies )
-{
-	assert( rListOfDependents.GetSize() == 0 );	// should be clear before calling
-	SVObjectPairVector list;
-	HRESULT hr = GetDependentsList( list, bOnlyImageDependencies );
-	SVObjectPairVector::iterator iter;
-	for ( iter = list.begin(); iter != list.end(); ++iter )
-	{
-		rListOfDependents.Add( iter->first );
-	}
 	return hr;
 }
 

@@ -113,6 +113,12 @@
     <ClCompile Include="SVDlgGraph.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="DlgItemResizer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ResizablePropertySheet.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StdAfx.h">
@@ -218,6 +224,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVDlgGraph.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DlgItemResizer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ResizablePropertySheet.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

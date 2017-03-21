@@ -7,13 +7,7 @@
     <ClCompile Include="ObjectTreeGenerator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DlgItemResizer.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ObjectSelectorPpg.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ResizablePropertySheet.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="ObjectTreeCtrl.cpp">
@@ -39,13 +33,7 @@
     <ClInclude Include="stdafx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DlgItemResizer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ObjectSelectorPpg.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ResizablePropertySheet.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ObjectTreeCtrl.h">

@@ -17,7 +17,7 @@
 #include "ObjectInterfaces/ObjectDefines.h"
 #include "SVObjectLibrary/GlobalConst.h"
 #include "SVContainerLibrary/ObjectSelectorItem.h"
-#include "ResizablePropertySheet.h"
+#include "SVMFCControls/ResizablePropertySheet.h"
 #include "ObjectSelectorPpg.h"
 #include "ObjectFilterPpg.h"
 #pragma endregion Includes
@@ -102,7 +102,7 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 		{
 			pParent = AfxGetApp()->GetMainWnd();
 		}
-		CResizablePropertySheet Sheet( title, pParent );
+		SvMc::ResizablePropertySheet Sheet( title, pParent );
 		ObjectSelectorPpg selectorPage( m_TreeContainer, mainTabTitle, isSingleObject );
 		ObjectFilterPpg filterPage( m_TreeContainer, filterTabTitle, isSingleObject );
 

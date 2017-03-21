@@ -480,6 +480,7 @@ BOOL SVIPDoc::AddTool(SVToolClass* pTool)
 
 				SetModifiedFlag();
 
+				pToolSet->updateToolPosition();
 				return true;
 			}
 		}
@@ -1775,10 +1776,9 @@ BOOL SVIPDoc::checkOkToDelete( SVTaskObjectClass* pTaskObject )
 
 	if (pTaskObject)
 	{
-		SVGUID inspectionID = GetInspectionID();
-		SVGUID taskObjectID = pTaskObject->GetUniqueObjectID();
+		SVGUID TaskObjectID = pTaskObject->GetUniqueObjectID();
 	
-		INT_PTR dlgResult = SvOg::SVShowDependentsDialog::StandardDialog( pTaskObject->GetName(), inspectionID, taskObjectID );
+		INT_PTR dlgResult = SvOg::SVShowDependentsDialog::StandardDialog( pTaskObject->GetName(), TaskObjectID );
 
 		bRetVal = ( IDCANCEL == dlgResult ) ? false : true;
 	}
@@ -2878,9 +2878,9 @@ void SVIPDoc::OnShowToolRelations()
 	SVGUID selectedToolID = GetSelectedToolID();
 	if (GUID_NULL != selectedToolID)
 	{
-		SVGUID inspectionID = GetInspectionID();
-		
-		SvOg::SVShowDependentsDialog Dlg(inspectionID, selectedToolID, false, SVToolObjectType, nullptr, SvOg::SVShowDependentsDialog::Show);
+		SVGuidSet DependencySet;
+		DependencySet.insert(selectedToolID);
+		SvOg::SVShowDependentsDialog Dlg( DependencySet, SVToolObjectType, nullptr, SvOg::SVShowDependentsDialog::Show );
 		Dlg.DoModal();
 	}
 }

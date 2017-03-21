@@ -6,7 +6,7 @@
 /// This is the object graph template for dependencies
 //******************************************************************************
 
-namespace Seidenader { namespace SVContainerLibrary
+namespace Sv { namespace Container
 {
 	#pragma region Constructor
 	template< typename VertexName, typename EdgeType >
@@ -185,9 +185,11 @@ namespace Seidenader { namespace SVContainerLibrary
 		Dependencies ChildDependencies;
 
 		//Search first using Depth First Search
-		getDependents( rStartName, std::back_inserter( ChildDependencies ), rChildEdgeType, false, true );
+		getDependents( rStartName, std::inserter( ChildDependencies, ChildDependencies.end() ), rChildEdgeType, false, true );
 
 		Dependent Children;
+		//Insert the main Vertex in the dependency check
+		Children.insert(rStartName);
 		Dependencies::const_iterator Iter( ChildDependencies.begin() );
 		for( ; ChildDependencies.end() != Iter; ++Iter )
 		{
@@ -200,7 +202,7 @@ namespace Seidenader { namespace SVContainerLibrary
 		for( ; Children.end() != ChildIter; ++ChildIter )
 		{
 			//Now search using Breadth First Search as it should only be one Vertex away
-			getDependents( *ChildIter, std::back_inserter( ChildDependencies ), rEdgeType, InvertEdge );
+			getDependents( *ChildIter, std::inserter( ChildDependencies, ChildDependencies.end() ), rEdgeType, InvertEdge );
 
 			if( 0 < ChildDependencies.size() )
 			{

@@ -113,7 +113,6 @@ public:
 
 #pragma region virtual method (ITaskObject)
 	virtual SvOi::ISelectorItemVectorPtr GetSelectorList(SvOi::IsObjectInfoAllowed func, UINT Attribute, bool WholeArray) const override;
-	virtual SvOi::DependencyList GetDependents(bool bImagesOnly, SVObjectTypeEnum nameToObjectType) const override;
 	virtual void GetConnectedImages(SvUl::InputNameGuidPairList& rList, int maxEntries) override;
 	virtual void GetInputs(SvUl::InputNameGuidPairList& rList, const SVObjectTypeInfoStruct& typeInfo = SVObjectTypeInfoStruct(SVNotSetObjectType), SVObjectTypeEnum objectTypeToInclude = SVNotSetObjectType ) override;
 	virtual HRESULT ConnectToObject(const SVString& rInputName, const SVGUID& rNewID, SVObjectTypeEnum objectType = SVNotSetObjectType) override;
@@ -165,11 +164,6 @@ public:
 	void PersistEmbeddeds(SVObjectWriter& rWriter);
 
 	void GetPrivateInputList( SVInputInfoListClass& RInputInterface ) const;
-	HRESULT GetDependentsList( SVObjectListClass& rListOfDependents, bool bOnlyImageDependencies = false );
-
-	// the first object is the dependent, the second is the specific object being used
-	HRESULT GetDependentsList( SVObjectPairVector& rListOfDependents, bool bOnlyImageDependencies = false );
-	HRESULT GetDependentsList( const SVObjectVector& rListOfObjects, SVObjectPairVector& rListOfDependents );
 
 	HRESULT GetImageList( SVImageListClass& p_rImageList, UINT uiAttributes = SV_NO_ATTRIBUTES, bool bAND = true );
 

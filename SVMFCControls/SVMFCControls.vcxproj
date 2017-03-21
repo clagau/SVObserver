@@ -114,8 +114,10 @@
   <ItemGroup>
     <ClCompile Include="AvailableObjectListComboBox.cpp" />
     <ClCompile Include="CLabel.cpp" />
+    <ClCompile Include="DlgItemResizer.cpp" />
     <ClCompile Include="NameSelectionTreeCtrl.cpp" />
     <ClCompile Include="ObjectsListBox.cpp" />
+    <ClCompile Include="ResizablePropertySheet.cpp" />
     <ClCompile Include="SVBitmap.cpp" />
     <ClCompile Include="SVDlgBitmap.cpp" />
     <ClCompile Include="SVDlgGraph.cpp" />
@@ -153,8 +155,10 @@
   <ItemGroup>
     <ClInclude Include="AvailableObjectListComboBox.h" />
     <ClInclude Include="CLabel.h" />
+    <ClInclude Include="DlgItemResizer.h" />
     <ClInclude Include="NameSelectionTreeCtrl.h" />
     <ClInclude Include="ObjectsListBox.h" />
+    <ClInclude Include="ResizablePropertySheet.h" />
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="SVBitmap.h" />
     <ClInclude Include="SVDlgBitmap.H" />

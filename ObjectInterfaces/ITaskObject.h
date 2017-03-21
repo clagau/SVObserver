@@ -14,7 +14,6 @@
 #include "ISVImage.h"
 #include "SVInterfaceList.h"
 #include "SVObjectTypeInfoStruct.h"
-#include "DependencyList.h"
 #include "SVStatusLibrary\MessageContainer.h"
 #include "SVUtilityLibrary\NameGuidList.h"
 #include "SVUtilityLibrary/SVString.h"
@@ -40,14 +39,6 @@ namespace Seidenader
 			/// \returns Seidenader::ObjectInterfaces::ISelectorItemVectorPtr
 			//************************************
 			virtual ISelectorItemVectorPtr GetSelectorList( IsObjectInfoAllowed func, UINT Attribute, bool WholeArray ) const = 0;
-
-			//************************************
-			/// Return the dependency list for this task object
-			/// /param bImagesOnly <in> Only Images.
-			/// /param nameToObjectType <in> get Name to ObjectType.
-			/// \returns DependencyList
-			//************************************
-			virtual DependencyList GetDependents(bool bImagesOnly, SVObjectTypeEnum nameToObjectType) const = 0;
 
 			/// Get the List of Images connected to this Task Object.
 			/// /param rList <in> The List to be populated.

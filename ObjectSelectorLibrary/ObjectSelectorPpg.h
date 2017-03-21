@@ -17,7 +17,7 @@
 #include "SVContainerLibrary/ObjectSelectorItem.h"
 #include "SVContainerLibrary/ObjectTreeItems.h"
 #include "SVUtilityLibrary/SVString.h"
-#include "DlgItemResizer.h"
+#include "SVMFCControls/DlgItemResizer.h"
 #include "NodeTreeCtrl.h"
 #include "LeafTreeCtrl.h"
 #pragma endregion Includes
@@ -100,7 +100,7 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 	private:
 	#pragma region Member Variables
 		SvCl::ObjectTreeItems& m_rTreeContainer; //The tree container reference
-		CDlgItemResizer m_Resizer;						//Object which handles the resizing of all controls
+		SvMc::DlgItemResizer m_Resizer;				//Object which handles the resizing of all controls
 		NodeTreeCtrl m_NodeTree;						//The node tree control
 		LeafTreeCtrl m_LeafTree;						//The leaf tree control
 		CImageList m_StateImageList;					//The state image list

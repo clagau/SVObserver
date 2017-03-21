@@ -472,13 +472,16 @@ bool SVExternalToolDlg::ShowDependentsDlg()
 		SVString Name( m_pTask->GetName() );
 		DisplayText = SvUl_SF::Format( DisplayText.c_str() , Name.c_str(), Name.c_str(), Name.c_str(), Name.c_str() );
 
-		SVObjectPairVector DependencyList;
+		SVGuidSet ObjectCheckList;
+		SVObjectVector::const_iterator Iter(list.begin());
+		for (; list.end() != Iter; ++Iter)
+		{
+			ObjectCheckList.insert( (*Iter)->GetUniqueObjectID());
+		}
 
-		m_pTask->GetDependentsList( list, DependencyList );
+		SvOg::SVShowDependentsDialog Dlg( ObjectCheckList, SVToolObjectType, DisplayText.c_str() );
 
-		SvOg::SVShowDependentsDialog Dlg( DependencyList, DisplayText.c_str() );
-
-		Result = ( IDOK == Dlg.DoModal() );
+		Result = (IDOK == Dlg.DoModal());
 	}
 	return Result;
 }

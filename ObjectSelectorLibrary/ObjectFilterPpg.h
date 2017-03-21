@@ -16,9 +16,9 @@
 #include "SVOResource\resource.h"
 #include "SVContainerLibrary/ObjectTreeItems.h"
 #include "SVUtilityLibrary/SVString.h"
-#include "GridCtrlLibrary\GridCtrl.h"
-#include "SVMFCControls\SVEditControlWithHelp.h"
-#include "DlgItemResizer.h"
+#include "GridCtrlLibrary/GridCtrl.h"
+#include "SVMFCControls/SVEditControlWithHelp.h"
+#include "SVMFCControls/DlgItemResizer.h"
 #pragma endregion Includes
 
 namespace Seidenader { namespace ObjectSelectorLibrary
@@ -104,7 +104,7 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 		} Column_Enum;
 
 		SvCl::ObjectTreeItems& m_rTreeContainer; //The tree container reference
-		CDlgItemResizer m_Resizer;						//Object which handles the resizing of all controls
+		SvMc::DlgItemResizer m_Resizer;				//Object which handles the resizing of all controls
 		SvGcl::CGridCtrl m_Grid;						//The grid control to display the filtered items
 		CImageList m_StateImageList;					//The state image list
 		CImageList m_ImageList;							//The image list

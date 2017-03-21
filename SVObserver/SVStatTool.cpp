@@ -571,7 +571,7 @@ double SVStatisticsToolClass::getInputValue()
 double SVStatisticsToolClass::getNumberOfSamples()
 {
 	double count;
-	enabledCount.GetValue( count );
+	m_EnabledCount.GetValue( count );
 
 	return count + 1;
 }

@@ -42,9 +42,6 @@
     <ClInclude Include="GetAttributesAllowed.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GetDependencies.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="GetAvailableObjects.h">
       <Filter>Header Files</Filter>
     </ClInclude>

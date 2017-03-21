@@ -55,8 +55,8 @@ protected:
 
 	void ReadSelectedObjects();
 	void ShowObjectSelector();
-	bool GetSelectedHeaderNamePairs( StringPairVect& HeaderPairs );
-	bool StoreHeaderValuesToTool( StringPairVect& HeaderPairs );
+	bool GetSelectedHeaderNamePairs( StringPairVector& HeaderPairs );
+	bool StoreHeaderValuesToTool( StringPairVector& HeaderPairs );
 #pragma endregion Protected Methods
 
 #pragma region Private Members

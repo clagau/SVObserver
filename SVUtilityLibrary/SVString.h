@@ -23,9 +23,10 @@
 
 typedef std::basic_string<TCHAR> SVString;
 typedef std::pair<SVString, SVString> SVStringPair;
-typedef std::set< SVString > SVStringSet;
-typedef std::vector< SVString > SVStringVector;
-typedef std::map< SVString, SVString > TranslateMap;
+typedef std::set<SVString> SVStringSet;
+typedef std::vector<SVString> SVStringVector;
+typedef std::vector<SVStringPair> StringPairVector;
+typedef std::map<SVString, SVString> TranslateMap;
 
 namespace Seidenader { namespace SVUtilityLibrary { namespace StringFunctions {
 

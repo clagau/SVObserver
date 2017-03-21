@@ -22,6 +22,7 @@
 #include "SVInspectionExporter.h"
 #include "SVXMLLibrary\SVObjectXMLWriter.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
+#include "SVObjectLibrary/DependencyManager.h"
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVObjectLibrary/SVToolsetScriptTags.h"
@@ -91,36 +92,39 @@ static void WriteGlobalConstants(SVObjectXMLWriter& rWriter, SVObjectClass* pObj
 	if ( nullptr != pInspection && nullptr != pInspection->GetToolSet() )
 	{
 		BasicValueObjects::ValueVector GlobalConstantObjects;
-		SVObjectVector ObjectCheckList;
+		//Only Global variables which the inspection is dependent on should be included
+		SvOl::DependencyManager::Dependencies DependencyList;
 
 		RootObject::getRootChildObjectList( GlobalConstantObjects, SvOl::FqnGlobal, 0 );
 		BasicValueObjects::ValueVector::const_iterator Iter( GlobalConstantObjects.cbegin() );
 		//Need to convert list to SVObjectVector
-		while ( GlobalConstantObjects.cend() != Iter  && !Iter->empty() )
+		for( ; GlobalConstantObjects.end() != Iter; ++Iter )
 		{
-			SVObjectClass* pGlobalConstantObject = dynamic_cast<SVObjectClass*> ( (*Iter).get() );
-			if( nullptr != pGlobalConstantObject )
+			if (!Iter->empty())
 			{
-				ObjectCheckList.push_back( pGlobalConstantObject );
+				SVObjectClass* pGlobalConstantObject = dynamic_cast<SVObjectClass*> ((*Iter).get());
+				if (nullptr != pGlobalConstantObject)
+				{
+					SvOl::DependencyManager::DependencyInserter Inserter(std::inserter(DependencyList, DependencyList.end()));
+					SvOl::DependencyManager::Instance().getDependents( pGlobalConstantObject->GetUniqueObjectID(), Inserter, SvOl::JoinType::Dependent );
+				}
 			}
-			++Iter;
 		}
+		
+		SvOl::DependencyManager::Dependencies::const_iterator PairIter( DependencyList.begin() );
 
-		//Only Global variables which the inspection is dependent on should be included
-		SVObjectPairVector DependencyList;
-		BasicValueObject* pGlobalConstant( nullptr );
-		_variant_t Value;
-		pInspection->GetToolSet()->GetDependentsList( ObjectCheckList, DependencyList );
-		SVObjectPairVector::const_iterator PairIter( DependencyList.cbegin() );
-
-		while( DependencyList.cend() != PairIter )
+		for( ; DependencyList.end() != PairIter; ++PairIter )
 		{
-			pGlobalConstant = dynamic_cast<BasicValueObject*> (PairIter->second);
-			if( nullptr != pGlobalConstant )
+			SVObjectClass* pObjectSupplier = SVObjectManagerClass::Instance().GetObject( PairIter->first );
+			SVObjectClass* pObjectClient = SVObjectManagerClass::Instance().GetObject( PairIter->second );
+			SVObjectClass* pOwner = (nullptr != pObjectClient) ? pObjectClient->GetAncestor(SVInspectionObjectType) : nullptr;
+			BasicValueObject* pGlobalConstant = dynamic_cast<BasicValueObject*> (pObjectSupplier);
+			//! Check that the client is from the same inspection
+			if( pOwner == pInspection && nullptr != pGlobalConstant )
 			{
 				rWriter.StartElement( pGlobalConstant->GetCompleteName().c_str() );
 
-				Value.Clear();
+				_variant_t Value;
 				pGlobalConstant->getValue( Value );
 				rWriter.WriteAttribute( CTAG_VALUE, Value );
 				Value.Clear();
@@ -132,7 +136,6 @@ static void WriteGlobalConstants(SVObjectXMLWriter& rWriter, SVObjectClass* pObj
 
 				rWriter.EndElement();
 			}
-			++PairIter;
 		}
 	}
 	rWriter.EndElement();

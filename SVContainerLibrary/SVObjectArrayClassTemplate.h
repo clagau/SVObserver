@@ -17,7 +17,7 @@
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace SVContainerLibrary
+namespace Sv { namespace Container
 {
 	template <class TYPE>
 	class SVObjectArrayClassTemplate : public SVVector<TYPE>
@@ -80,5 +80,5 @@ namespace Seidenader { namespace SVContainerLibrary
 	typedef SVObjectArrayClassTemplate<SVString> SVObjectSVStringArrayClass;
 } /*SVContainerLibrary*/ } /*Seidenader*/
 
-namespace SvCl = Seidenader::SVContainerLibrary;
+namespace SvCl = Sv::Container;
 

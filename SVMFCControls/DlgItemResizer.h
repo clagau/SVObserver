@@ -15,7 +15,7 @@
 
 #pragma once
 
-namespace Seidenader { namespace ObjectSelectorLibrary
+namespace Seidenader { namespace SVMFCControls
 {
 	#pragma region Declarations
 		const UINT RESIZE_LOCKLEFT        = 0x0001; // Distance to left is fixed
@@ -29,13 +29,13 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 		const UINT RESIZE_LOCKBOTTOMRIGHT = RESIZE_LOCKBOTTOM|RESIZE_LOCKRIGHT;
 	#pragma endregion Declarations
 
-	class CDlgItemResizer
+	class DlgItemResizer
 	{
 
 	public:
 	#pragma region Constructor
-		CDlgItemResizer();
-		virtual ~CDlgItemResizer();
+		DlgItemResizer();
+		virtual ~DlgItemResizer();
 	#pragma endregion Constructor
 
 	public:
@@ -45,9 +45,6 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 
 		void Add(CWnd *pWnd, INT nCtrlID, UINT uFlags)
 		{ Add(pWnd->GetDlgItem(nCtrlID), uFlags); }
-
-		// Resizes the controls in the form
-		void Resize(CFormView *pWnd);
 
 		// Resizes the controls in the window
 		void Resize(CWnd *pWnd);
@@ -71,6 +68,6 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 		CSize m_szInitial;
 	#pragma endregion Member Variables
 	};
-} /*namespace ObjectSelectorLibrary*/ } /*namespace Seidenader*/
+} /*namespace SVMFCControls*/ } /*namespace Seidenader*/
 
-namespace SvOsl = Seidenader::ObjectSelectorLibrary;
+namespace SvMc = Seidenader::SVMFCControls;

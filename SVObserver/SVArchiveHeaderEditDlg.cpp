@@ -39,14 +39,14 @@ SVArchiveHeaderEditDlg::~SVArchiveHeaderEditDlg()
 	}
 }
 
-bool SVArchiveHeaderEditDlg::SetValues( const StringPairVect& p_astrValues)
+bool SVArchiveHeaderEditDlg::SetValues( const StringPairVector& p_astrValues)
 {
 	m_Strings.clear();
 	m_Strings = p_astrValues;
 	return true;
 }
 
-bool SVArchiveHeaderEditDlg::GetValues( StringPairVect& p_astrValues) const
+bool SVArchiveHeaderEditDlg::GetValues( StringPairVector& p_astrValues) const
 {
 	p_astrValues.clear();
 	p_astrValues = m_Strings;
@@ -120,7 +120,7 @@ BOOL SVArchiveHeaderEditDlg::OnInitDialog()
 	m_HeaderListCtrl.InsertColumn(1, _T("Header Label"));
 
 	int iItem = 0;
-	for(StringPairVect::const_iterator l_it = m_Strings.begin() ; l_it != m_Strings.end() ; ++l_it)
+	for(StringPairVector::const_iterator l_it = m_Strings.begin() ; l_it != m_Strings.end() ; ++l_it)
 	{
 		_bstr_t bstGUID( l_it->first.c_str() );
 		SVGUID ObjGUID( bstGUID );
@@ -146,7 +146,7 @@ void SVArchiveHeaderEditDlg::OnOK()
 	if( iCount > 0 )
 	{
 		int index = 0;
-		for( StringPairVect::iterator it = m_Strings.begin() ; it != m_Strings.end(); ++it )
+		for( StringPairVector::iterator it = m_Strings.begin() ; it != m_Strings.end(); ++it )
 		{
 			SVString Text = m_HeaderListCtrl.GetItemText(index,1);
 			it->second = Text;

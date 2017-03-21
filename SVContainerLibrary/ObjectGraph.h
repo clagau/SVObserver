@@ -26,7 +26,7 @@
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace SVContainerLibrary
+namespace Sv { namespace Container
 {
 	#pragma region Declarations
 	struct edge_type_t 
@@ -44,8 +44,8 @@ namespace Seidenader { namespace SVContainerLibrary
 		//! The graph dependency decelerations which are vertex pairs defining an edge
 		typedef std::set< VertexName > Dependent;
 		typedef std::pair< VertexName, VertexName > Dependency;
-		typedef std::vector< Dependency > Dependencies;
-		typedef std::back_insert_iterator< Dependencies > DependencyInserter;
+		typedef std::set< Dependency > Dependencies;
+		typedef std::insert_iterator< Dependencies > DependencyInserter;
 
 		//! The boost graph vertex and edge properties
 		typedef typename boost::property< boost::vertex_name_t, VertexName > VertexObj;
@@ -196,4 +196,4 @@ namespace Seidenader { namespace SVContainerLibrary
 #include "ObjectGraph.inl"
 #pragma endregion Inline
 
-namespace SvCl = Seidenader::SVContainerLibrary;
+namespace SvCl = Sv::Container;

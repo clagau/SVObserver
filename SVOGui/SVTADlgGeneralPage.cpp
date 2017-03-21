@@ -15,7 +15,6 @@
 #include "SVTADlgGeneralPage.h"
 #include "SVObjectLibrary\SVClsids.h"
 #include "ObjectInterfaces\NameValueList.h"
-#include "GuiCommands\GetDependencies.h"
 #include "SVObjectLibrary\SVObjectSynchronousCommandTemplate.h"
 #include "SVShowDependentsDialog.h"
 #include "SVUtilityLibrary/SVString.h"
@@ -243,7 +242,9 @@ namespace Seidenader { namespace SVOGui
 	
 	void SVToolAdjustmentDialogGeneralPageClass::OnShowRelations() 
 	{
-		SVShowDependentsDialog Dlg(m_InspectionID, m_TaskObjectID, false, SVToolObjectType, nullptr, SVShowDependentsDialog::Show);
+		SVGuidSet DependencySet;
+		DependencySet.insert(m_TaskObjectID);
+		SVShowDependentsDialog Dlg( DependencySet, SVToolObjectType, nullptr, SVShowDependentsDialog::Show );
 		Dlg.DoModal();
 	}
 
