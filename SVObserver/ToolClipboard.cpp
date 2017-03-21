@@ -255,7 +255,7 @@ HRESULT ToolClipboard::streamToolToZip( const SVString rFileName, const SVGUID& 
 
 		SVString ZipFileName( rFileName );
 		ZipFileName += SvO::ZipExtension;
-		ZipHelper::makeZipFile( ZipFileName, FileNames, true );
+		ZipHelper::makeZipFile( ZipFileName, FileNames, false );
 	}
 
 	return Result;
