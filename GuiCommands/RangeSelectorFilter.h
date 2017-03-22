@@ -59,6 +59,7 @@ namespace Seidenader
 					(SVDWordValueObjectType)
 					(SVLongValueObjectType)
 					(SVDoubleValueObjectType)
+					(DoubleSortValueObjectType)
 					(SVBoolValueObjectType)
 					(SVPointValueObjectType)
 					(SVByteValueObjectType)).convert_to_container<std::set<SVObjectTypeEnum>>())
