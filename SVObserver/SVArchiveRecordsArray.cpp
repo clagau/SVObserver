@@ -346,6 +346,10 @@ SVString SVArchiveRecordsArray::BuildResultsArchiveString()
 
 				Result += Temp;
 			}
+			else
+			{
+				Result += _T(", ");
+			}
 		}
 	}
 
