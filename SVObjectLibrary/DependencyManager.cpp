@@ -36,13 +36,12 @@ namespace Seidenader { namespace SVObjectLibrary
 	DependencyManager& DependencyManager::Instance()
 	{
 		static DependencyManager DependencyMgr;
-		//Update the Vertices when calling the instance
-		DependencyMgr.updateVertexIndex();
 		return DependencyMgr;
 	}
 
 	void DependencyManager::getToolDependency( SvOi::StringPairInserter Inserter, const SVGuidSet& rSourceSet, SVObjectTypeEnum nameToObjectType, SvOi::ToolDependencyEnum ToolDependency /*= SvOi::ToolDependencyEnum::Client*/ ) const
 	{
+		//! Note before calling this method the graph index must be updated this is done in the interface!
 		SVGuidSet::const_iterator Iter( rSourceSet.begin() );
 		for( ; rSourceSet.end() != Iter; ++Iter )
 		{
@@ -142,6 +141,7 @@ namespace Seidenader { namespace SVObjectLibrary
 #pragma region IDependencyManager
 void SvOi::getToolDependency( StringPairInserter Inserter, const SVGuidSet& rSourceSet, SVObjectTypeEnum nameToObjectType, SvOi::ToolDependencyEnum ToolDependency /*= SvOi::ToolDependencyEnum::Client*/ )
 {
+	SvOl::DependencyManager::Instance().updateVertexIndex();
 	SvOl::DependencyManager::Instance().getToolDependency( Inserter, rSourceSet, nameToObjectType, ToolDependency );
 }
 #pragma endregion IDependencyManager
