@@ -344,7 +344,7 @@ HRESULT SVMatroxGige::AddSystem(const SVString& rName, long SystemNumber)
 			if (S_OK == hr)
 			{
 				// Register camera present hook
-				l_Code = SVMatroxSystemInterface::SetHookFunction(*(rSystem.m_System.get()), SVMatroxSystemHook::SVCameraPresent, SVMatroxGige::CameraPresentCallback, reinterpret_cast<void*> (&l_System.m_Handle)); 
+				l_Code = SVMatroxSystemInterface::SetHookFunction(*(rSystem.m_System.get()), SVMatroxSystemHook::SVCameraPresent, SVMatroxGige::CameraPresentCallback, reinterpret_cast<void*> (&rSystem.m_Handle)); 
 				if (l_Code == SVMEE_STATUS_OK)
 				{
 					hr = CreateDigitizers(rSystem);
