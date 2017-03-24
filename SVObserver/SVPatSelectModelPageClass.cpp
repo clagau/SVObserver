@@ -299,7 +299,7 @@ void SVPatModelPageClass::OnKillModelFileName()
 
 void SVPatModelPageClass::OnKillDontCareFileName()
 {
-	if (GetFocus() && (GetFocus()->GetDlgCtrlID() == IDC_PAT_DONT_CARE_FILE_NAME))
+	if (GetFocus() && (GetFocus()->GetDlgCtrlID() == IDC_PAT_DONT_CARE_FILE_BUTTON))
 	{
 		return;
 	}
@@ -316,6 +316,8 @@ void SVPatModelPageClass::OnUseDontCareClicked()
 	{
 		ProcessOnKillFocus(IDC_PAT_DONT_CARE_FILE_NAME);
 	}
+	GetDlgItem(IDC_PAT_DONT_CARE_FILE_BUTTON)->EnableWindow(m_bDontCare);
+	GetDlgItem(IDC_PAT_DONT_CARE_FILE_NAME)->EnableWindow(m_bDontCare);
 	
 	setImages();
 }
@@ -673,7 +675,8 @@ BOOL SVPatModelPageClass::ProcessOnKillFocus(UINT nId)
 					}
 					
 					GetDlgItem(nId)->SetFocus();
-					(dynamic_cast<CEdit *>(GetDlgItem(nId)))->SetSel(0, -1);
+					CWnd* tmp = (GetDlgItem(nId));
+					((CEdit*)GetDlgItem(nId))->SetSel(0, -1);
 					return false;
 				}
 			}
@@ -696,7 +699,7 @@ BOOL SVPatModelPageClass::ProcessOnKillFocus(UINT nId)
 				}
 
 				GetDlgItem(nId)->SetFocus();
-				(dynamic_cast<CEdit *>(GetDlgItem(nId)))->SetSel(0, -1);
+				((CEdit*)GetDlgItem(nId))->SetSel(0, -1);
 				return false;
 			}
 			break;

@@ -1151,7 +1151,7 @@ CAPTION "Select Model"
 FONT 8, "MS Sans Serif", 0, 0, 0x0
 BEGIN
     LTEXT           "Model &File :",IDC_STATIC,16,197,54,9
-    EDITTEXT        IDC_PAT1_FILE_NAME,60,194,183,12,ES_AUTOHSCROLL
+    EDITTEXT        IDC_PAT1_FILE_NAME,66,194,177,12,ES_AUTOHSCROLL
     PUSHBUTTON      "B&rowse",IDC_PAT1_FILE_BUTTON,248,193,35,14
     DEFPUSHBUTTON   "Create &Model",IDC_PAT1_CREATE_MODEL,31,77,53,17
     LTEXT           "Center X:",IDC_STATIC,5,123,54,9
@@ -1168,7 +1168,7 @@ BEGIN
     LTEXT           "Don't Care File:",IDC_STATIC,15,213,54,9
     EDITTEXT        IDC_PAT_DONT_CARE_FILE_NAME,65,211,177,12,ES_AUTOHSCROLL
     PUSHBUTTON      "B&rowse",IDC_PAT_DONT_CARE_FILE_BUTTON,248,210,35,14
-    CONTROL         "",IDC_PAT_USE_DONT_CARE,"Button",BS_AUTOCHECKBOX | BS_MULTILINE | WS_TABSTOP,1,209,13,15
+    CONTROL         "",IDC_PAT_USE_DONT_CARE,"Button",BS_AUTOCHECKBOX | BS_MULTILINE | WS_TABSTOP,3,210,9,15
 END
 
 IDD_PAT_RESULT_DIALOG DIALOG 0, 0, 167, 103
@@ -4304,6 +4304,17 @@ IDR_SVOBSERVER_DEBUG    REGISTRY                "SVObserverd.rgs"
 IDR_SVCOMMAND           REGISTRY                "SVCommand.rgs"
 IDR_SV_REMOTE_COMMAND_DATA REGISTRY                "SVRemoteCommandData.rgs"
 IDR_SV_REMOTE_COMMAND   REGISTRY                "SVRemoteCommand.rgs"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// AFX_DIALOG_LAYOUT
+//
+
+IDD_PAT_SETUP_MODEL AFX_DIALOG_LAYOUT
+BEGIN
+    0
+END
+
 
 /////////////////////////////////////////////////////////////////////////////
 //
