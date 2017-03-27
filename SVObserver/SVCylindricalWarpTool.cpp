@@ -335,7 +335,7 @@ bool SVCylindricalWarpToolClass::onRun( SVRunStatusClass& p_rRunStatus, SvStl::M
 {
 	bool l_bOk = __super::onRun( p_rRunStatus, pErrorMessages );
 
-	if ( l_bOk )
+	if (l_bOk && !p_rRunStatus.IsDisabled() && !p_rRunStatus.IsDisabledByCondition())
 	{
 		SVImageClass* l_pInputImage = GetInputImage();
 

@@ -120,28 +120,16 @@ bool SVLoadImageToolClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageCo
 	// All inputs and outputs must be validated first
 	if( ValidateLocal(pErrorMessages) && __super::onRun( RRunStatus, pErrorMessages ) )
 	{
-		BOOL bReload = false;
-		SVString ImagePathName;
-
-		if( S_OK != m_continuousReload.GetValue( bReload ) || S_OK != m_currentPathName.GetValue( ImagePathName ) )
+		if (!RRunStatus.IsDisabled() && !RRunStatus.IsDisabledByCondition())
 		{
-			if (nullptr != pErrorMessages)
-			{
-				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
-				pErrorMessages->push_back(Msg);
-			}
-			RRunStatus.SetInvalid();
-			SetInvalid();
-			return false;
-		}
+			BOOL bReload = false;
+			SVString ImagePathName;
 
-		if( bReload || m_bResetFileImage)
-		{
-			if( S_OK != m_fileImage.LoadImage( ImagePathName.c_str(), RRunStatus.Images ) )
+			if (S_OK != m_continuousReload.GetValue(bReload) || S_OK != m_currentPathName.GetValue(ImagePathName))
 			{
 				if (nullptr != pErrorMessages)
 				{
-					SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_FailedToLoadImage, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
 					pErrorMessages->push_back(Msg);
 				}
 				RRunStatus.SetInvalid();
@@ -149,21 +137,36 @@ bool SVLoadImageToolClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageCo
 				return false;
 			}
 
-			m_bResetFileImage = false;
-		}
-		else
-		{
-			//copy forward
-			if( ! m_fileImage.CopyImageTo( RRunStatus.Images ) )
+			if (bReload || m_bResetFileImage)
 			{
-				if (nullptr != pErrorMessages)
+				if (S_OK != m_fileImage.LoadImage(ImagePathName.c_str(), RRunStatus.Images))
 				{
-					SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_CopyImagesFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
-					pErrorMessages->push_back(Msg);
+					if (nullptr != pErrorMessages)
+					{
+						SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_FailedToLoadImage, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+						pErrorMessages->push_back(Msg);
+					}
+					RRunStatus.SetInvalid();
+					SetInvalid();
+					return false;
 				}
-				RRunStatus.SetInvalid();
-				SetInvalid();
-				return false;
+
+				m_bResetFileImage = false;
+			}
+			else
+			{
+				//copy forward
+				if (!m_fileImage.CopyImageTo(RRunStatus.Images))
+				{
+					if (nullptr != pErrorMessages)
+					{
+						SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_CopyImagesFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+						pErrorMessages->push_back(Msg);
+					}
+					RRunStatus.SetInvalid();
+					SetInvalid();
+					return false;
+				}
 			}
 		}
 		
