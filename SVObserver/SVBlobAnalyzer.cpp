@@ -197,6 +197,7 @@ SV_IMPLEMENT_CLASS( SVBlobAnalyzerClass, SVBlobAnalyzerClassGuid );
 //
 SVBlobAnalyzerClass::SVBlobAnalyzerClass( SVObjectClass* POwner, int StringResourceID )
 : SVImageAnalyzerClass(FALSE, POwner, StringResourceID ) 
+, m_pResultTable( nullptr )
 {
 	init();
 }
@@ -206,8 +207,10 @@ SVBlobAnalyzerClass::SVBlobAnalyzerClass( SVObjectClass* POwner, int StringResou
 //
 void SVBlobAnalyzerClass::init()
 {
-	SVBlobFeatureEnum i;
-
+	for (int i = 0; i < SV_NUMBER_OF_BLOB_FEATURES; i++)
+	{
+		m_ResultTableColumnValueObjects[i] = nullptr;
+	}
 
 	msvlDefaultAttributes = 0;
 	m_lNumberOfBlobsFound = 0;
@@ -284,7 +287,7 @@ void SVBlobAnalyzerClass::init()
 		IDS_BLOB_FILL_TYPE,
 		false, SVResetItemNone );
 
-	for (i = SV_AREA; i < SV_TOPOF_LIST; i = (SVBlobFeatureEnum) (i + 1))
+	for (SVBlobFeatureEnum i = SV_AREA; i < SV_TOPOF_LIST; i = (SVBlobFeatureEnum) (i + 1))
 	{
 		RegisterEmbeddedObject(
 			&msvValue[i], 
@@ -311,7 +314,7 @@ void SVBlobAnalyzerClass::init()
 	/*--- FEATURE LIST ---------------------------------------------------------*/
 	/*--- The list of enabled features is kept in a string because, of the      */
 	/*--- "value objects", the string appeared to contain the least overhead. --*/
-	for (i = SV_AREA; i < SV_TOPOF_LIST; i = (SVBlobFeatureEnum) (i + 1))
+	for (SVBlobFeatureEnum i = SV_AREA; i < SV_TOPOF_LIST; i = (SVBlobFeatureEnum) (i + 1))
 	{
 		msvszFeaturesEnabled [i] = _T('0');             // Not enabled.
 		msvValue[i].ObjectAttributesAllowedRef() = 
@@ -704,20 +707,36 @@ BOOL SVBlobAnalyzerClass::CreateObject(SVObjectLevelCreateStruct* PCreateStructu
 	SVString            tempString;
 	SVBlobFeatureEnum   i(SV_AREA);
 	double              deflt(0.0);
-	DWORD				LastError(0);
+	bool 				bOk = true;
 	
 	
 	
 	SVMatroxBlobInterface::SVStatusCode l_Code = SVMEE_STATUS_OK;
-	
+
 	do
 	{
 		if(!SVImageAnalyzerClass::CreateObject( PCreateStructure ))
 		{
 			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16116, GetUniqueObjectID());
-			LastError = - SvOi::Err_16116;
+			bOk = false;
 			break;
+		}
+
+		m_pResultTable = dynamic_cast<TableObject*>(SvOi::FindObject(GetUniqueObjectID(), SVObjectTypeInfoStruct(TableObjectType, SVNotSetSubObjectType)));
+		if (nullptr == m_pResultTable)
+		{
+			m_pResultTable = new TableObject(this);
+			Add(m_pResultTable);
+			if (!CreateChildObject(m_pResultTable))
+			{
+				bOk = false;
+				SvStl::MessageContainer message;
+				message.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_TableObject_CreateFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+				SvStl::MessageMgrStd Msg(SvStl::LogOnly);
+				Msg.setMessage(message.getMessage());
+				break;
+			}
 		}
 		
 		//
@@ -764,7 +783,7 @@ BOOL SVBlobAnalyzerClass::CreateObject(SVObjectLevelCreateStruct* PCreateStructu
 		{
 			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16117, GetUniqueObjectID());
-			LastError = - SvOi::Err_16117;
+			bOk = false;
 			break;
 		}
 		
@@ -803,7 +822,7 @@ BOOL SVBlobAnalyzerClass::CreateObject(SVObjectLevelCreateStruct* PCreateStructu
 				{
 					SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 					MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16118, GetUniqueObjectID());
-					LastError = - SvOi::Err_16118;
+					bOk = false;
 					break; // Break out of for loop 
 				}
 				
@@ -812,7 +831,7 @@ BOOL SVBlobAnalyzerClass::CreateObject(SVObjectLevelCreateStruct* PCreateStructu
 				{
 					SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 					MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16119, GetUniqueObjectID());
-					LastError = - SvOi::Err_16119;
+					bOk = false;
 					break; // Break out of for loop 
 				}
 				
@@ -822,7 +841,7 @@ BOOL SVBlobAnalyzerClass::CreateObject(SVObjectLevelCreateStruct* PCreateStructu
 		}
 
 
-		if (0 != LastError )
+		if ( !bOk )
 		{
 			break; // If any error had occurred in the for loop, break out of while loop also.	
 		}
@@ -848,7 +867,7 @@ BOOL SVBlobAnalyzerClass::CreateObject(SVObjectLevelCreateStruct* PCreateStructu
 			
 				SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 				MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16120, GetUniqueObjectID());
-				LastError = SvOi::Err_16120;
+				bOk = false;
 				break; 
 			}
 			pRange->FailLow.SetValue(1, m_defaultResultNumberOfBlobsLowFail); 
@@ -863,7 +882,7 @@ BOOL SVBlobAnalyzerClass::CreateObject(SVObjectLevelCreateStruct* PCreateStructu
 	} while ( false );
 
 	
-	if (0 != LastError )
+	if ( !bOk )
 	{
 		m_isCreated = false;
 	}
@@ -1374,13 +1393,25 @@ bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageCon
 			SortBlobs( lSortFeature, msvlSortMap.GetData(), static_cast< long >( msvlSortMap.GetSize() ) );
 		}
 
+		//create a sort Container with the size of founded blobs and from 0 to n
+		ValueObjectSortContainer resultTableSortContainer;
+		resultTableSortContainer.resize(m_lNumberOfBlobsFound);
+		for (int i = 0; i < m_lNumberOfBlobsFound; i++)
+		{
+			resultTableSortContainer[i] = msvlSortMap[i];
+		}
+		m_pResultTable->setSortContainer(resultTableSortContainer, RRunStatus);
+
 		for (eFeature = SV_AREA; eFeature < SV_TOPOF_LIST; eFeature = (SVBlobFeatureEnum) (eFeature + 1))
 		{
 			if (msvszFeaturesEnabled [eFeature] == _T('1'))
 			{
 				if (m_lNumberOfBlobsToProcess > 0)
 				{
-					// EB 2005 01 28
+					if (nullptr != m_ResultTableColumnValueObjects[eFeature])
+					{
+						m_ResultTableColumnValueObjects[eFeature]->SetArrayValues(RRunStatus.m_lResultDataIndex, m_vec2dBlobResults[eFeature]);
+					}
 					// add array capability to blob results
 					for ( int iBlob = 0; iBlob < m_lNumberOfBlobsToProcess; iBlob++ )
 					{
@@ -1446,12 +1477,10 @@ bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageCon
 	return Result;
 }
 
-DWORD SVBlobAnalyzerClass::SortBlobs (long alSortFeature, 
+void SVBlobAnalyzerClass::SortBlobs (long alSortFeature, 
 	long* alSortMap,
 	long p_lArraySize )
 {
-	DWORD LastError(0);
-	
 	for (int i = 0; i < p_lArraySize; i++)
 	{
 		alSortMap [i] = i;
@@ -1461,116 +1490,89 @@ DWORD SVBlobAnalyzerClass::SortBlobs (long alSortFeature,
 	msvSortAscending.GetValue(ascending);
 	if (m_vec2dBlobResults[alSortFeature].size() > 0)
 	{
-		LastError =	MapQuickSort (&(m_vec2dBlobResults[alSortFeature][0]),
+		MapQuickSort (&(m_vec2dBlobResults[alSortFeature][0]),
 			alSortMap,
 			0, 
 			p_lArraySize - 1, 
-		ascending);                           // Ascending
+			ascending);                           // Ascending
 
 	}
-	return LastError;
 }
 
-DWORD SVBlobAnalyzerClass::MapQuickSort (double*    aSortArray, 
+void SVBlobAnalyzerClass::MapQuickSort (double*    aSortArray, 
 	long*      alSortMap,
 	long       alBeginning,
 	long       alEnd,
 	BOOL       abAscending)
 {
-	DWORD LastError(0);
-	
 	long    i = alEnd;
 	long   	j = alBeginning;
-	double  val(0.0);
 	
+	if (alEnd < 0)
+	{
+		//          Number of blobs is zero.  This is not a fatal error, but there is 
+		//          nothing to sort.
+		return;
+	}
+
+	double val = aSortArray[alSortMap[(alBeginning + alEnd) / 2]];
+
 	do
 	{
-		if (alEnd < 0)
+		if (abAscending)
 		{
-			//          Number of blobs is zero.  This is not a fatal error, but there is 
-			//          nothing to sort.
-			break;
+			while (aSortArray[alSortMap[j]] < val)
+			{
+				j++;
+			}
+			while (aSortArray[alSortMap[i]] > val)
+			{
+				i--;
+			}
 		}
-
-		val = aSortArray [alSortMap [(alBeginning + alEnd) / 2]];
-
-		do
+		else
 		{
-			if (abAscending)
+			while (aSortArray[alSortMap[j]] > val)
 			{
-				while (aSortArray [alSortMap [j]] < val)
-				{
-					j++;
-				}
-				while (aSortArray [alSortMap [i]] > val)
-				{
-					i--;
-				}
+				j++;
 			}
-			else
+			while (aSortArray[alSortMap[i]] < val)
 			{
-				while (aSortArray [alSortMap [j]] > val)
-				{
-					j++;
-				}
-				while (aSortArray [alSortMap [i]] < val) 
-				{
-					i--;
-				}
-			}
-
-			if (i >= j)
-			{
-				if (i != j)
-				{
-					long lTemp = alSortMap [i];
-					alSortMap [i] = alSortMap [j];
-					alSortMap [j] = lTemp;
-				}
-
-				i --;
-				j ++;
-			}
-
-		} while (j <= i);
-
-		if (alBeginning < i)
-		{
-			LastError = MapQuickSort (aSortArray,
-				alSortMap,
-				alBeginning,
-				i,
-				abAscending);
-			if(LastError)
-			{
-
-				SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-				MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16146);
-				LastError = - SvOi::Err_16146;
-				break;
-			}
-
-			
-		}
-		if (j < alEnd)
-		{
-			LastError = MapQuickSort (aSortArray,
-				alSortMap,
-				j,
-				alEnd,
-				abAscending);
-			if(LastError)
-			{
-				SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-				MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16147);
-				LastError = - SvOi::Err_16147;
-				break;
+				i--;
 			}
 		}
 
-	} while ( false );
+		if (i >= j)
+		{
+			if (i != j)
+			{
+				long lTemp = alSortMap[i];
+				alSortMap[i] = alSortMap[j];
+				alSortMap[j] = lTemp;
+			}
 
-	return LastError;
+			i--;
+			j++;
+		}
+
+	} while (j <= i);
+
+	if (alBeginning < i)
+	{
+		MapQuickSort(aSortArray,
+			alSortMap,
+			alBeginning,
+			i,
+			abAscending);
+	}
+	if (j < alEnd)
+	{
+		MapQuickSort(aSortArray,
+			alSortMap,
+			j,
+			alEnd,
+			abAscending);
+	}
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -1726,17 +1728,23 @@ void SVBlobAnalyzerClass::CreateArray()
 
 	m_vec2dBlobResults.resize( SV_NUMBER_OF_BLOB_FEATURES, m_lBlobSampleSize );
 
-	// EB 2005 01 28
 	// add array capability to blob results
 	for ( int iFeature = 0; iFeature < SV_NUMBER_OF_BLOB_FEATURES; iFeature++ )
 	{
+		assert(iFeature < c_maxTableColumn);
 		if ( msvszFeaturesEnabled[iFeature] == _T('1') )
 		{
 			msvValue[iFeature].SetArraySize( m_lMaxBlobDataArraySize );	// no longer sample size (max number of blobs found)
+			m_ResultTableColumnValueObjects[iFeature] = m_pResultTable->updateOrCreateColumn(TableColumnValueObjectGuid[iFeature], BlobFeatureConstants[iFeature].NewStringResourceID, m_lBlobSampleSize);
 		}
 		else
 		{
 			msvValue[iFeature].SetArraySize( 0 );
+			if (nullptr != m_ResultTableColumnValueObjects[iFeature])
+			{
+				m_pResultTable->removeColumn(TableColumnValueObjectGuid[iFeature]);
+				m_ResultTableColumnValueObjects[iFeature] = nullptr;
+			}
 		}
 	}
 }

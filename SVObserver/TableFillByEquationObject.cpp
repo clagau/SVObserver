@@ -8,7 +8,7 @@
 
 #pragma region Includes
 #include "stdafx.h"
-#include "TableFillObject.h"
+#include "TableFillByEquationObject.h"
 #include "SVTool.h"
 #include "SVInspectionProcess.h"
 #include "ObjectInterfaces\IObjectManager.h"
@@ -23,31 +23,31 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-SV_IMPLEMENT_CLASS(TableFillObject, TableFillObjectGuid);
+SV_IMPLEMENT_CLASS(TableFillByEquationObject, TableFillObjectGuid);
 
 #pragma endregion Declarations
 
 #pragma region Constructor
-TableFillObject::TableFillObject( LPCTSTR ObjectName )
+TableFillByEquationObject::TableFillByEquationObject( LPCTSTR ObjectName )
 	: TableObject(ObjectName)
 {
 	Initialize();
 }
 
-TableFillObject::TableFillObject( SVObjectClass* pOwner, int StringResourceID )
+TableFillByEquationObject::TableFillByEquationObject( SVObjectClass* pOwner, int StringResourceID )
 	: TableObject(pOwner, StringResourceID)
 {
 	Initialize();
 }
 
-TableFillObject::~TableFillObject()
+TableFillByEquationObject::~TableFillByEquationObject()
 {
 	m_equationList.clear();
 }
 #pragma endregion Constructor
 
 #pragma region Public Methods
-void TableFillObject::setColumnValueObjects(const std::vector<TableColumnEquation*>& rColumnEquationList, int maxArray)
+void TableFillByEquationObject::setColumnValueObjects(const std::vector<TableColumnEquation*>& rColumnEquationList, int maxArray)
 {
 	m_sortContainer.set_capacity(maxArray);
 
@@ -119,7 +119,7 @@ void TableFillObject::setColumnValueObjects(const std::vector<TableColumnEquatio
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
-bool TableFillObject::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool TableFillByEquationObject::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	bool returnValue = __super::onRun( rRunStatus, pErrorMessages );
 	if (returnValue)
@@ -150,14 +150,14 @@ bool TableFillObject::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContain
 #pragma endregion Protected Methods
 
 #pragma region Private Methods
-void TableFillObject::Initialize()
+void TableFillByEquationObject::Initialize()
 {
 	// Set up your type
 	m_outObjectInfo.ObjectTypeInfo.ObjectType = TableObjectType;
 	m_outObjectInfo.ObjectTypeInfo.SubType    = TableFillObjectType;
 }
 
-SVGUID TableFillObject::getNextFreeEmbeddedColumGUID()
+SVGUID TableFillByEquationObject::getNextFreeEmbeddedColumGUID()
 {
 	for (int i=0; i < c_maxTableColumn; ++i)
 	{

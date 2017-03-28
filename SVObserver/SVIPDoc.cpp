@@ -1481,7 +1481,10 @@ void SVIPDoc::OpenToolAdjustmentDialog(int tab)
 						TheSVObserverApp.GetIODoc()->UpdateAllViews( nullptr );
 					}
 				}
-				l_pTool->ResetObject();
+				else
+				{
+					l_pTool->ResetObject();
+				}
 				SVSVIMStateClass::RemoveState( SV_STATE_EDITING );
 			}
 		}

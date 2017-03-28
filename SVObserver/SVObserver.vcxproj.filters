@@ -1016,9 +1016,6 @@
     <ClCompile Include="TableObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="TableFillObject.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="TableAnalyzerTool.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -1047,6 +1044,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="DummyFilter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TableFillByEquationObject.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -2100,9 +2100,6 @@
     <ClInclude Include="TableObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="TableFillObject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="TableAnalyzerTool.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -2128,6 +2125,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVToolExtentPropertiesClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TableFillByEquationObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

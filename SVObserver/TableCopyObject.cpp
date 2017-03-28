@@ -131,16 +131,6 @@ bool TableCopyObject::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 
 	return TableObject::ResetObject(pErrorMessages);
 }
-
-void TableCopyObject::setSortContainer(const ValueObjectSortContainer& sortMap, SVRunStatusClass& rRunStatus)
-{
-	m_sortContainer = sortMap;
-	for (int i=0; i<m_ValueList.size(); ++i)
-	{
-		m_ValueList[i]->setSortContainer(rRunStatus.m_lResultDataIndex, m_sortContainer);
-	}
-	m_NumberOfRows.SetValue(rRunStatus.m_lResultDataIndex, static_cast<long>(sortMap.size()));
-}
 #pragma endregion Public Methods
 
 #pragma region Protected Methods

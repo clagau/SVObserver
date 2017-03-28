@@ -37,6 +37,20 @@ public:
 
 	const std::vector<DoubleSortValuePtr>& getValueList() const { return m_ValueList; };
 	const ValueObjectSortContainer& getSortContainer() const { return m_sortContainer; };
+	/// Set a new sort Container to this object and its column values.
+	/// \param sortMap [in] the new container
+	void setSortContainer(const ValueObjectSortContainer& sortMap, SVRunStatusClass& rRunStatus);
+
+	/// Update (Name and array size) column if column (with embeddedID) exist, if not exist create column.
+	/// \param rEmbeddedID [in] Emdedded GUID.
+	/// \param nameId [in] ID of the new name
+	/// \param arraysize [in] New array size.
+	/// \returns DoubleSortValueObject* Pointer to the valueObject or nullptr if creation failed.
+	DoubleSortValueObject* updateOrCreateColumn(const GUID& rEmbeddedID, int nameId, int arraysize);
+
+	/// Remove a column.
+	/// \param rEmbeddedId [in] Emdedded GUID of the value object.
+	void removeColumn(const GUID& rEmbeddedId);
 
 	virtual SVObjectClass* OverwriteEmbeddedObject(const GUID& uniqueID, const GUID& rEmbeddedID) override;
 #pragma endregion Public Methods
@@ -47,7 +61,7 @@ protected:
 	/// \param embeddedID [in] The EmbeddedId of the new object.
 	/// \param name [in] The name of the new object.
 	/// \param arraySize [in] The array size of the new object.
-	void createColumnObject(SVGUID embeddedID, LPCTSTR name, int arraySize);
+	DoubleSortValueObject* createColumnObject(SVGUID embeddedID, LPCTSTR name, int arraySize);
 #pragma endregion Protected Methods
 
 #pragma region Private Methods

@@ -17,15 +17,15 @@
 
 #pragma endregion Declarations
 
-class TableFillObject : public TableObject
+class TableFillByEquationObject : public TableObject
 {
 #pragma region Constructor
-	SV_DECLARE_CLASS( TableFillObject );
+	SV_DECLARE_CLASS( TableFillByEquationObject );
 public:
-	TableFillObject( LPCTSTR ObjectName );
-	TableFillObject( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_TABLE_OBJECT );
+	TableFillByEquationObject( LPCTSTR ObjectName );
+	TableFillByEquationObject( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_TABLE_OBJECT );
 
-	virtual ~TableFillObject();
+	virtual ~TableFillByEquationObject();
 #pragma endregion Constructor
 
 #pragma region Public Methods

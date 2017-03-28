@@ -8,7 +8,7 @@
 
 #pragma region Includes
 #include "SVTool.h"
-#include "TableFillObject.h"
+#include "TableFillByEquationObject.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -68,6 +68,6 @@ private:
 	SVLongValueObjectClass m_MaxRow; 
 	SVEquationClass* m_pClearEquation;
 	std::vector<TableColumnEquation*> m_ColumnEquationList;
-	TableFillObject* m_pTable;
+	TableFillByEquationObject* m_pTable;
 #pragma endregion Member Variables
 };

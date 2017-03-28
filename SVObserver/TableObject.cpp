@@ -11,6 +11,7 @@
 #include "TableObject.h"
 #include "SVTool.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
+#include "SVInspectionProcess.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -79,6 +80,88 @@ SVObjectClass* TableObject::getNumberOfRowObject() const
 	return pObject; 
 }
 
+void TableObject::setSortContainer(const ValueObjectSortContainer& sortMap, SVRunStatusClass& rRunStatus)
+{
+	m_sortContainer = sortMap;
+	for (int i = 0; i < m_ValueList.size(); ++i)
+	{
+		m_ValueList[i]->setSortContainer(rRunStatus.m_lResultDataIndex, m_sortContainer);
+	}
+	m_NumberOfRows.SetValue(rRunStatus.m_lResultDataIndex, static_cast<long>(sortMap.size()));
+}
+
+DoubleSortValueObject* TableObject::updateOrCreateColumn(const GUID& rEmbeddedId, int nameId, int arraysize)
+{
+	SVString newName = SvUl_SF::LoadSVString(nameId);
+	std::vector<DoubleSortValuePtr>::const_iterator valueIter = std::find_if(m_ValueList.begin(), m_ValueList.end(), [&](const DoubleSortValuePtr& entry)->bool
+	{
+		return (nullptr != entry.get() && entry->GetEmbeddedID() == rEmbeddedId);
+	}
+	);
+	if (m_ValueList.end() != valueIter)
+	{
+		DoubleSortValueObject* pValueObject = valueIter->get();
+		if (nullptr == pValueObject)
+		{
+			try
+			{
+				pValueObject = createColumnObject(rEmbeddedId, newName.c_str(), arraysize);
+			}
+			catch (const SvStl::MessageContainer& rSvE)
+			{
+				SvStl::MessageMgrStd e(SvStl::LogOnly);
+				e.setMessage(rSvE.getMessage());
+			}
+		}
+		if (nullptr != pValueObject)
+		{
+			SVString OldName = pValueObject->GetName();
+			if (OldName != newName)
+			{
+				pValueObject->SetName(newName.c_str());
+				GetInspection()->OnObjectRenamed(*pValueObject, OldName);
+			}
+		}
+		return pValueObject;
+	}
+	else
+	{
+		try
+		{
+			return createColumnObject(rEmbeddedId, newName.c_str(), arraysize);
+		}
+		catch (const SvStl::MessageContainer& rSvE)
+		{
+			SvStl::MessageMgrStd e(SvStl::LogOnly);
+			e.setMessage(rSvE.getMessage());
+		}
+	}
+	return nullptr;
+}
+
+void TableObject::removeColumn(const GUID& rEmbeddedId)
+{
+	std::vector<DoubleSortValuePtr>::const_iterator valueIter = std::find_if(m_ValueList.begin(), m_ValueList.end(), [&](const DoubleSortValuePtr& entry)->bool
+	{
+		return (nullptr != entry.get() && entry->GetEmbeddedID() == rEmbeddedId);
+	}
+	);
+	if (m_ValueList.end() != valueIter)
+	{
+		DoubleSortValuePtr pValueObject = *valueIter;
+		m_ValueList.erase(valueIter);
+		if (nullptr != pValueObject.get())
+		{
+			hideEmbeddedObject(*pValueObject.get());
+			RemoveEmbeddedObject(pValueObject.get());
+		}
+
+		//Object must be deleted, before SetDefaultInputs is called.
+		pValueObject.reset();
+		dynamic_cast<SVInspectionProcess*>(GetInspection())->SetDefaultInputs();
+	}
+}
+
 SVObjectClass* TableObject::OverwriteEmbeddedObject(const GUID& rUniqueID, const GUID& rEmbeddedID)
 {
 	//check if it is an embeddedID from an column-Value object. This will not generated automatically. Create it before it will be overwrite
@@ -104,7 +187,7 @@ SVObjectClass* TableObject::OverwriteEmbeddedObject(const GUID& rUniqueID, const
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
-void TableObject::createColumnObject(SVGUID embeddedID, LPCTSTR name, int arraySize)
+DoubleSortValueObject* TableObject::createColumnObject(SVGUID embeddedID, LPCTSTR name, int arraySize)
 {
 	DoubleSortValueObject* pObject = nullptr;
 	// Construct new object...
@@ -119,11 +202,13 @@ void TableObject::createColumnObject(SVGUID embeddedID, LPCTSTR name, int arrayS
 	else
 	{
 		delete pObject;
+		pObject = nullptr;
 		ASSERT(FALSE);
 		SvStl::MessageMgrStd e( SvStl::DataOnly );
 		e.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_TableObject_createColumnValueObjectFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 		e.Throw();
 	}
+	return pObject;
 }
 #pragma endregion Protected Methods
 

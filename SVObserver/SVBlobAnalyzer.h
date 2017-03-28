@@ -14,7 +14,9 @@
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
 #include "SVImageAnalyzerClass.h"
 #include "SVBlobAnalyzerResultDlg.h"
+#include "TableObject.h"
 #include "ObjectInterfaces/IBlobAnalyzer.h"
+#include "SVValueObjectLibrary/DoubleSortValueObject.h"
 #pragma endregion Includes
 
 class SVLongResultClass;
@@ -164,7 +166,7 @@ public:
 /*- will be returned as asvlSortMap. No array data will be moved. If we choose */
 /*- to permit sorting on multiple features, it will just mean tracking         */
 /*- multiple sort maps. -------------------------------------------------------*/
-	DWORD SortBlobs (long asvlSortFeature, long* alSortMap, long p_lArraySize );
+	void SortBlobs (long asvlSortFeature, long* alSortMap, long p_lArraySize );
 
 	DWORD AllocateResult (SVBlobFeatureEnum aFeatureIndex);
 	DWORD FreeResult (SVBlobFeatureEnum aFeatureIndex);
@@ -240,13 +242,16 @@ public:
 	SVEnumerateValueObjectClass  m_evoBlobFillColor;
 	SVEnumerateValueObjectClass  m_evoBlobType;
 
+	TableObject* m_pResultTable;
+	DoubleSortValueObject* m_ResultTableColumnValueObjects[SV_NUMBER_OF_BLOB_FEATURES];
+
 protected:
 	virtual HRESULT onCollectOverlays(SVImageClass* p_pImage, SVExtentMultiLineStructCArray& p_rMultiLineArray ) override;
 
 /*- MapQuickSort () ----------------------------------------------------------*/
 /*- This should not be called directly, but through SortBlobs () -------------*/
 
-	DWORD MapQuickSort (double*    aSortArray, 
+	void MapQuickSort (double*    aSortArray, 
 	                    long*      alSortMap,
 	                    long       alBeginning,
 	                    long       alEnd,

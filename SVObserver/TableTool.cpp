@@ -66,10 +66,10 @@ BOOL TableTool::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 		}
 	}
 
-	m_pTable = dynamic_cast<TableFillObject*>(SvOi::FindObject(GetUniqueObjectID(), SVObjectTypeInfoStruct(TableObjectType,TableFillObjectType)));
+	m_pTable = dynamic_cast<TableFillByEquationObject*>(SvOi::FindObject(GetUniqueObjectID(), SVObjectTypeInfoStruct(TableObjectType,TableFillObjectType)));
 	if (nullptr == m_pTable)
 	{
-		m_pTable = new TableFillObject(this);
+		m_pTable = new TableFillByEquationObject(this);
 		Add( m_pTable );
 		if( !CreateChildObject(m_pTable) )
 		{

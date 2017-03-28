@@ -31,9 +31,6 @@ public:
 public:
 	void setSourecTable(TableObject* sourceTable) { m_pSourceTable = sourceTable; };
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
-	/// Set a new sort Container to this object and its column values.
-	/// \param sortMap [in] the new container
-	void setSortContainer(const ValueObjectSortContainer& sortMap, SVRunStatusClass& rRunStatus);
 #pragma endregion Public Methods
 
 #pragma region Protected Methods

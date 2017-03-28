@@ -536,7 +536,7 @@ echo %time%
     <ClCompile Include="TableColumnEquation.cpp" />
     <ClCompile Include="TableCopyObject.cpp" />
     <ClCompile Include="TableExcludeAnalyzer.cpp" />
-    <ClCompile Include="TableFillObject.cpp" />
+    <ClCompile Include="TableFillByEquationObject.cpp" />
     <ClCompile Include="TableLimitAnalyzer.cpp" />
     <ClCompile Include="TableObject.cpp" />
     <ClCompile Include="TableSortAnalyzer.cpp" />
@@ -647,7 +647,7 @@ echo %time%
     <ClInclude Include="TableColumnEquation.h" />
     <ClInclude Include="TableCopyObject.h" />
     <ClInclude Include="TableExcludeAnalyzer.h" />
-    <ClInclude Include="TableFillObject.h" />
+    <ClInclude Include="TableFillByEquationObject.h" />
     <ClInclude Include="TableLimitAnalyzer.h" />
     <ClInclude Include="TableObject.h" />
     <ClInclude Include="TableSortAnalyzer.h" />
