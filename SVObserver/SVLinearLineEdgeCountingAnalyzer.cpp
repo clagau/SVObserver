@@ -44,6 +44,7 @@ void SVLinearEdgeCountingLineAnalyzerClass::init()
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject( &m_svEdgeCount, SVEdgeCountObjectGuid, IDS_OBJECTNAME_EDGE_COUNT, false, SVResetItemNone );
+	RegisterEmbeddedObject(&m_svShowAllEdgeAOverlays, SVShowAllEdgeAOverlaysGuid, IDS_OBJECTNAME_SHOW_ALL_EDGE_A_OVERLAYS, false, SVResetItemNone);
 
 	// Set Embedded defaults
 	m_svEdgeCount.SetDefaultValue( 0, TRUE );
