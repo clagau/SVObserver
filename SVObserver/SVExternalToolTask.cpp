@@ -1934,8 +1934,35 @@ HRESULT SVExternalToolTask::ConnectInputs()
 	for (int i = 0 ; i < m_Data.m_lNumInputValues ; i++)
 	{
 		SVInObjectInfoStruct& rInfo = m_Data.m_aInputObjectInfo[i];
-		if ( nullptr != rInfo.GetInputObjectInfo().PObject )	// input is another VO
+		if ( SV_GUID_NULL != rInfo.GetInputObjectInfo().UniqueObjectID )	// input is another VO
 		{
+			//If nullptr then Unique Object ID is invalid try using the object name
+			if (nullptr == rInfo.GetInputObjectInfo().PObject)
+			{
+				SVString ObjectName;
+				m_Data.m_aInputObjects[i].GetValue(ObjectName);
+
+				SVString CompleteName = GetInspection()->GetCompleteName();
+				SVString ToolSetName = SvUl_SF::LoadSVString(IDS_CLASSNAME_SVTOOLSET);
+				if(0 == ObjectName.find(ToolSetName))
+				{
+					CompleteName += _T(".") + ObjectName;
+				}
+				else
+				{
+					CompleteName = ObjectName;
+				}
+				SVObjectClass* pObject(nullptr);
+				SVObjectManagerClass::Instance().GetObjectByDottedName(CompleteName.c_str(), pObject);
+				if (nullptr != pObject)
+				{
+					rInfo.SetInputObject(pObject);
+				}
+				else
+				{
+					hr = S_FALSE;
+				}
+			}
 			if ( !rInfo.IsConnected() )
 			{
 				if( !rInfo.GetInputObjectInfo().PObject->ConnectObjectInput(&rInfo) )
