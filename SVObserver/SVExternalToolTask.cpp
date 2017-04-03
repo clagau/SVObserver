@@ -1933,6 +1933,7 @@ HRESULT SVExternalToolTask::ConnectInputs()
 	//
 	for (int i = 0 ; i < m_Data.m_lNumInputValues ; i++)
 	{
+		bool SetPlainData(false);
 		SVInObjectInfoStruct& rInfo = m_Data.m_aInputObjectInfo[i];
 		if ( SV_GUID_NULL != rInfo.GetInputObjectInfo().UniqueObjectID )	// input is another VO
 		{
@@ -1960,10 +1961,10 @@ HRESULT SVExternalToolTask::ConnectInputs()
 				}
 				else
 				{
-					hr = S_FALSE;
+					SetPlainData = true;
 				}
 			}
-			if ( !rInfo.IsConnected() )
+			if ( !SetPlainData && !rInfo.IsConnected() )
 			{
 				if( !rInfo.GetInputObjectInfo().PObject->ConnectObjectInput(&rInfo) )
 				{
@@ -1971,7 +1972,11 @@ HRESULT SVExternalToolTask::ConnectInputs()
 				}
 			}
 		}
-		else	// plain data
+		else
+		{
+			SetPlainData = true;
+		}
+		if( SetPlainData )
 		{
 			m_Data.m_aInputObjects[i].SetDefaultValue(m_Data.m_aInputValueDefinitions[i].m_DefaultValue, FALSE);
 			m_Data.m_aInputObjects[i].SetType(m_Data.m_aInputValueDefinitions[i].m_VT);
