@@ -12,7 +12,6 @@
 #pragma once
 
 #pragma region Includes
-#include "SVLibrary/ISVCancel.h"
 #include "SVUtilityLibrary\SVGUID.h"
 #include "SVUtilityLibrary\SVString.h"
 #include "ObjectSelectorLibrary\SelectorItemVector.h"
@@ -21,7 +20,7 @@
 class SelectedObjectsPage;
 class SVIPDoc;
 
-class SVDataDefinitionSheet : public CPropertySheet, public ISVCancel
+class SVDataDefinitionSheet : public CPropertySheet
 {
 	DECLARE_DYNAMIC(SVDataDefinitionSheet)
 
@@ -33,10 +32,6 @@ public:
 
 #pragma region Public Methods
 public:
-	// ISVCancel
-	virtual bool CanCancel() override;
-	virtual HRESULT GetCancelData(SVCancelData*& rpData) override;
-	virtual HRESULT SetCancelData(SVCancelData* pData) override;
 #pragma endregion Public Methods
 
 #pragma region Private Methods
@@ -45,7 +40,6 @@ private:
 
 	HRESULT CreatePages();
 	void DestroyPages();
-	virtual BOOL OnInitDialog() override;
 	void OnOK();
 
 	void initSelectedList( SvOsl::SelectorItemVector* pList, UINT Attribute );

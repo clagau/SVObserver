@@ -17,40 +17,24 @@
 #include "CameraLibrary\SVGraphix.h"
 #include "SVImageLibrary/SVImageInfoClass.h"
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
-#include "SVLibrary/ISVCancel.h"
+#include "SVLibrary/SVTaskObjectInterfaceInputRequestStruct.h"
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 class SVShapeMaskHelperClass;
 struct SVMaskFillPropertiesStruct;
 
-struct SVMaskOperatorCancelData : public SVCancelData
+struct SVMaskOperatorCancelData
 {
-	SVCancelData*                pShapeData;
-
 	SVEnumerateValueObjectClass  evoCurrentMaskOperator;
 	SVBoolValueObjectClass       bvoActivated;
 	SVDWordValueObjectClass      dwvoMaskType;
 	SVEnumerateValueObjectClass  evoFillArea;
 	SVLongValueObjectClass       lvoFillColor;
 	SVEnumerateValueObjectClass  evoDrawCriteria;
-
-	SVMaskOperatorCancelData()
-	{
-		pShapeData = nullptr;
-	}
-
-	~SVMaskOperatorCancelData()
-	{
-		if ( pShapeData )
-		{
-			delete pShapeData;
-			pShapeData = nullptr;
-		}
-	}
 };
 
-class SVUserMaskOperatorClass : public SVUnaryImageOperatorClass, public SvOi::IMask, public ISVCancel, public ISVCancel2
+class SVUserMaskOperatorClass : public SVUnaryImageOperatorClass, public SvOi::IMask
 {
 	SV_DECLARE_CLASS( SVUserMaskOperatorClass );
 public:
@@ -84,13 +68,8 @@ public:
 	virtual HGLOBAL GetMaskData() const override;
 	virtual bool SetMaskData(HGLOBAL hGlobal) override;
 #pragma endregion IMask
-// ISVCancel
-	virtual bool CanCancel() override;
-	virtual HRESULT GetCancelData(SVCancelData*& rpData) override;
-	virtual HRESULT SetCancelData(SVCancelData* pData) override;
 
-	// ISVCancel2
-	virtual HRESULT GetCancelData(SVInputRequestStructMap& rMap) override;
+	HRESULT GetCancelData(SVInputRequestStructMap& rMap);
 
 	enum SVDrawCriteriaEnum 
 	{

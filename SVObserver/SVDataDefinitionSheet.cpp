@@ -33,7 +33,7 @@ END_MESSAGE_MAP()
 
 #pragma region Constructor
 SVDataDefinitionSheet::SVDataDefinitionSheet(SVIPDoc* pDoc, LPCTSTR pszCaption, const SVString& rInspectionName, const SVGUID& rInspectionID, CWnd* pParentWnd, UINT iSelectPage)
-: CPropertySheet(pszCaption, pParentWnd, iSelectPage), ISVCancel()
+: CPropertySheet(pszCaption, pParentWnd, iSelectPage)
 , m_InspectionName( rInspectionName )
 , m_InspectionID( rInspectionID )
 , m_pDoc(pDoc) 
@@ -48,20 +48,6 @@ SVDataDefinitionSheet::~SVDataDefinitionSheet()
 #pragma endregion Constructor
 
 #pragma region Public Methods
-bool SVDataDefinitionSheet::CanCancel()
-{
-	return true;
-}
-
-HRESULT SVDataDefinitionSheet::GetCancelData(SVCancelData*& rpData)
-{
-	return E_NOTIMPL;
-}
-
-HRESULT SVDataDefinitionSheet::SetCancelData(SVCancelData* pData)
-{
-	return E_NOTIMPL;
-}
 #pragma endregion Public Methods
 
 #pragma region Private Methods
@@ -91,22 +77,6 @@ void SVDataDefinitionSheet::DestroyPages()
 			delete pPage;
 		}
 	}
-}
-
-BOOL SVDataDefinitionSheet::OnInitDialog() 
-{
-	BOOL bResult = CPropertySheet::OnInitDialog();
-	
-
-	bool bCancelable = CanCancel();
-	CWnd* pWnd = GetDlgItem(IDCANCEL);
-	if ( nullptr != pWnd )
-	{
-		pWnd->ShowWindow( bCancelable ? SW_SHOW : SW_HIDE );
-	}
-
-	UpdateData( false );
-	return bResult;
 }
 
 void SVDataDefinitionSheet::OnOK() 

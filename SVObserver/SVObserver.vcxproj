@@ -452,7 +452,6 @@ echo %time%
     <ClCompile Include="SVPPQShiftRegister.cpp" />
     <ClCompile Include="SVProfileEdgeMarkerAdjustmentPage.cpp" />
     <ClCompile Include="SVProgressDialog.cpp" />
-    <ClCompile Include="SVPropertySheetCancelImpl.cpp" />
     <ClCompile Include="SVPublishList.cpp" />
     <ClCompile Include="SVRange.cpp" />
     <ClCompile Include="SVRegressionExitDlg.cpp" />
@@ -834,7 +833,6 @@ echo %time%
     <ClInclude Include="SVPPQShiftRegister.h" />
     <ClInclude Include="SVProfileEdgeMarkerAdjustmentPage.h" />
     <ClInclude Include="SVProgressDialog.h" />
-    <ClInclude Include="SVPropertySheetCancelImpl.h" />
     <ClInclude Include="SVPublishList.h" />
     <ClInclude Include="SVRange.h" />
     <ClInclude Include="SVRegressionExitDlg.h" />

@@ -524,9 +524,6 @@
     <ClCompile Include="SVProgressDialog.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVPropertySheetCancelImpl.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVPublishList.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -1582,9 +1579,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVProgressDialog.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVPropertySheetCancelImpl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVPublishList.h">

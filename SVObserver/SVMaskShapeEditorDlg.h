@@ -17,7 +17,6 @@
 //TODO: MZA(10.Nov 2014): Move this files to SVOGui project and then remove folder from include and Namespace add-on add PictureDisplay declaration.
 #include "SVOGui/PictureDisplay.h"
 #include "SVRPropertyTree/SVRPropTree.h"
-#include "SVLibrary/ISVCancel.h"
 #include "SVLibrary/SVTaskObjectValueInterface.h"
 #include "SVUtilityLibrary\SVGUID.h"
 #pragma endregion Includes
@@ -25,7 +24,7 @@
 class SVUserMaskOperatorClass;
 class SVToolClass;
 
-class SVMaskShapeEditorDlg : public CDialog, public ISVCancel2, public SVTaskObjectValueInterface
+class SVMaskShapeEditorDlg : public CDialog, public SVTaskObjectValueInterface
 {
 #pragma region Construction
 public:
@@ -58,8 +57,7 @@ public:
 
 #pragma region Protected Methods
 protected:
-	// ISVCancel2
-	virtual HRESULT GetCancelData(SVInputRequestStructMap& rMap) override;
+	HRESULT GetCancelData(SVInputRequestStructMap& rMap);
 
 	// SVTaskObjectInterfaceClass
 	HRESULT SetInspectionData();

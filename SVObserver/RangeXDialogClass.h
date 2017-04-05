@@ -13,7 +13,6 @@
 
 #pragma region Includes
 #include "SVContainerLibrary/SVVector.h"
-#include "SVLibrary/ISVCancel.h"
 #include "SVOCore/SVTaskObjectList.h"
 #include "RangeClassHelper.h"
 #include "SVUtilityLibrary/SVString.h"

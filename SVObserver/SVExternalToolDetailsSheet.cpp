@@ -145,7 +145,7 @@ BOOL SVExternalToolDetailsSheet::OnInitDialog()
 	BOOL bResult = CPropertySheet::OnInitDialog();
 	
 
-	bool bCancelable = CanCancel();	// from ISVCancel base //SVPropertySheetCancelImpl base
+	bool bCancelable = CanCancel();	// from ISVCancel base
 	CWnd* pWnd = GetDlgItem(IDCANCEL);
 	if ( pWnd )
 		pWnd->ShowWindow( bCancelable ? SW_SHOW : SW_HIDE );

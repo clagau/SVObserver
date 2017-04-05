@@ -12,7 +12,7 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <map>
-#include "SVPropertySheetCancelImpl.h"
+#include "SVLibrary\ISVCancel.h"
 #include "SVExternalTool.h"
 #pragma endregion Includes
 
@@ -20,7 +20,7 @@ class SVExternalToolTask;
 class SVExternalToolDlg;
 class SVIPDoc;
 
-class SVExternalToolDetailsSheet : public CPropertySheet, public ISVCancel//, public SVPropertySheetCancelImpl
+class SVExternalToolDetailsSheet : public CPropertySheet, public ISVCancel
 {
 	DECLARE_DYNAMIC(SVExternalToolDetailsSheet)
 

@@ -13,7 +13,6 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <map>
-#include "SVTaskObjectInterfaceInputRequestStruct.h"
 #pragma endregion Includes
 
 struct SVCancelData
@@ -29,16 +28,6 @@ public:
 	virtual bool CanCancel() = 0;
 	virtual HRESULT GetCancelData(SVCancelData*& rpData) = 0;
 	virtual HRESULT SetCancelData(SVCancelData* pData) = 0;
-};
-
-// new style using the input request queue
-// the caller of GetCancelData is responsible for sending it to the input request queue
-// (via SVTaskObjectInterfaceClass)
-class ISVCancel2
-{
-public:
-	virtual ~ISVCancel2() {}
-	virtual HRESULT GetCancelData(SVInputRequestStructMap& rMap) = 0;
 };
 
 struct SVMultiCancelData : public SVCancelData

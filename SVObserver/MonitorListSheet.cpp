@@ -206,7 +206,7 @@ BEGIN_MESSAGE_MAP(MonitorListSheet, CPropertySheet)
 END_MESSAGE_MAP()
 
 MonitorListSheet::MonitorListSheet( LPCTSTR pszCaption, MonitorListType eListType, bool bImageTab, const RemoteMonitorNamedList& rList, CWnd* pParentWnd, UINT iSelectPage)
-: CPropertySheet(pszCaption, pParentWnd, iSelectPage), ISVCancel()
+: CPropertySheet(pszCaption, pParentWnd, iSelectPage)
 , m_eListType(eListType)
 , m_MonitorList(rList)
 {
@@ -321,36 +321,8 @@ void MonitorListSheet::SetMonitoredImages(MonitorListType eListType, const Monit
 	}
 }
 
-bool MonitorListSheet::CanCancel()
-{
-	return true;
-}
-
-HRESULT MonitorListSheet::GetCancelData(SVCancelData*& rpData)
-{
-	return E_NOTIMPL;
-}
-
-HRESULT MonitorListSheet::SetCancelData(SVCancelData* pData)
-{
-	return E_NOTIMPL;
-}
-
 /////////////////////////////////////////////////////////////////////////////
 // MonitorListSheet message handlers
-
-BOOL MonitorListSheet::OnInitDialog() 
-{
-	BOOL bResult = CPropertySheet::OnInitDialog();
-	
-	bool bCancelable = CanCancel();	// from ISVCancel base //SVPropertySheetCancelImpl base
-	CWnd* pWnd = GetDlgItem(IDCANCEL);
-	if ( pWnd )
-	{
-		pWnd->ShowWindow( bCancelable ? SW_SHOW : SW_HIDE );
-	}
-	return bResult;
-}
 
 void MonitorListSheet::OnOK() 
 {

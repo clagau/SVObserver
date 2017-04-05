@@ -398,50 +398,6 @@ HRESULT SVShapeMaskHelperClass::Refresh()
 	return hr;
 }
 
-// ISVCancel
-bool SVShapeMaskHelperClass::CanCancel()
-{
-	return true;
-}
-
-// ISVCancel
-HRESULT SVShapeMaskHelperClass::GetCancelData(SVCancelData*& p_rpData)
-{
-	HRESULT hr = S_OK;
-	SVMaskShapeCancelData* pData = new SVMaskShapeCancelData;
-	p_rpData = pData;
-
-	pData->bvoAutoResize = m_Data.bvoAutoResize;
-	pData->evoShapeType = m_Data.evoShapeType;
-	pData->evoMaskArea  = m_Data.evoMaskArea;
-
-	hr = GetProperties( pData->mapProperties );
-
-	return hr;
-}
-
-// ISVCancel
-HRESULT SVShapeMaskHelperClass::SetCancelData(SVCancelData* p_pData)
-{
-	HRESULT hr = E_FAIL;
-
-	SVMaskShapeCancelData* pData = dynamic_cast <SVMaskShapeCancelData*> (p_pData);
-	ASSERT( pData );
-	if ( pData )
-	{
-		hr = S_OK;
-
-		m_Data.bvoAutoResize = pData->bvoAutoResize;
-		m_Data.evoShapeType = pData->evoShapeType;
-		m_Data.evoMaskArea  = pData->evoMaskArea;
-
-		hr = SetProperties( pData->mapProperties );
-	}
-
-	return hr;
-}
-
-// ISVCancel2
 HRESULT SVShapeMaskHelperClass::GetCancelData(SVInputRequestStructMap& rMap)
 {
 	HRESULT hr = S_OK;

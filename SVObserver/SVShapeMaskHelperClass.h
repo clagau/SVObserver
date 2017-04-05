@@ -13,12 +13,12 @@
 
 #pragma region Includes
 #include "SVOCore/SVTaskObject.h"
-#include "SVLibrary/ISVCancel.h"
 #include "SVMaskShape.h"
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
+#include "SVLibrary/SVTaskObjectInterfaceInputRequestStruct.h"
 #pragma endregion Includes
 
-struct SVMaskShapeCancelData : public SVCancelData
+struct SVMaskShapeCancelData
 {
 	SVMaskShape::MapType         mapProperties;
 
@@ -35,7 +35,7 @@ struct SVMaskShapeCancelData : public SVCancelData
 	SVEnumerateValueObjectClass  evoXYSymmetry;
 };
 
-class SVShapeMaskHelperClass : public SVTaskObjectClass, public ISVCancel, public ISVCancel2
+class SVShapeMaskHelperClass : public SVTaskObjectClass
 {
 	SV_DECLARE_CLASS( SVShapeMaskHelperClass );
 public:
@@ -65,13 +65,7 @@ public:
 	bool    IsAutoResize() const;
 	HRESULT SetAutoResize( bool bAutoResize );
 
-	// ISVCancel
-	virtual bool CanCancel() override;
-	virtual HRESULT GetCancelData(SVCancelData*& rpData) override;
-	virtual HRESULT SetCancelData(SVCancelData* pData) override;
-
-	// ISVCancel2
-	virtual HRESULT GetCancelData(SVInputRequestStructMap& rData) override;
+	HRESULT GetCancelData(SVInputRequestStructMap& rData);
 
 protected:
 	SVMaskShapeCancelData        m_Data;

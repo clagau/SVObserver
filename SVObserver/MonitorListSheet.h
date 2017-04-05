@@ -12,10 +12,10 @@
 #pragma once
 
 #pragma region Includes
-#include "SVPropertySheetCancelImpl.h"
 #include "RemoteMonitorNamedList.h"
 #include "SVUtilityLibrary/NameSelectionList.h"
 #pragma endregion Includes
+
 
 #pragma region Enum
 enum MonitorListType
@@ -26,7 +26,7 @@ enum MonitorListType
 };
 #pragma endregion Enum
 
-class MonitorListSheet : public CPropertySheet, public ISVCancel//, public SVPropertySheetCancelImpl
+class MonitorListSheet : public CPropertySheet
 {
 	DECLARE_DYNAMIC(MonitorListSheet)
 #pragma region Public
@@ -38,11 +38,6 @@ public:
 	const RemoteMonitorNamedList& GetMonitorList() const;
 	HRESULT CreatePages(bool bImageTab);
 
-	// ISVCancel
-	virtual bool CanCancel() override;
-	virtual HRESULT GetCancelData(SVCancelData*& rpData) override;
-	virtual HRESULT SetCancelData(SVCancelData* pData) override;
-
 // Attributes
 	MonitorListType m_eListType;
 // Operations
@@ -51,7 +46,6 @@ public:
 	// ClassWizard generated virtual function overrides
 	//{{AFX_VIRTUAL(MonitorListSheet)
 public:
-	virtual BOOL OnInitDialog() override;
 	//}}AFX_VIRTUAL
 	void OnOK();
 #pragma endregion Public

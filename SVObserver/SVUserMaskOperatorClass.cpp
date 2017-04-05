@@ -256,56 +256,6 @@ SVShapeMaskHelperClass* SVUserMaskOperatorClass::GetShapeHelper()
 	return pMaskHelper;
 }
 
-// ISVCancel
-bool SVUserMaskOperatorClass::CanCancel()
-{
-	return true;
-}
-
-// ISVCancel
-HRESULT SVUserMaskOperatorClass::GetCancelData(SVCancelData*& p_rpData)
-{
-	HRESULT hr = S_OK;
-	SVMaskOperatorCancelData* pData = new SVMaskOperatorCancelData;
-	p_rpData = pData;
-
-	*pData = m_Data;
-
-	SVShapeMaskHelperClass* pShapeHelper = GetShapeHelper();
-	if ( pShapeHelper )
-	{
-		HRESULT hrShape = pShapeHelper->GetCancelData( pData->pShapeData );
-	}
-
-	return hr;
-}
-
-// ISVCancel
-HRESULT SVUserMaskOperatorClass::SetCancelData(SVCancelData* p_pData)
-{
-	HRESULT hr = E_FAIL;
-	SVMaskOperatorCancelData* pData = dynamic_cast <SVMaskOperatorCancelData*> (p_pData);
-	ASSERT( pData );
-	if ( pData )
-	{
-		hr = S_OK;
-		SVShapeMaskHelperClass* pShapeHelper = GetShapeHelper();
-		if ( pShapeHelper )
-		{
-			hr = pShapeHelper->SetCancelData( pData->pShapeData );
-		}
-		if ( S_OK == hr )
-		{
-			m_Data = *pData;
-			m_Data.pShapeData = nullptr;
-
-			hr = ( ResetObject() ? S_OK : S_FALSE );
-		}
-	}
-	return hr;
-}
-
-// ISVCancel2
 HRESULT SVUserMaskOperatorClass::GetCancelData(SVInputRequestStructMap& rMap)
 {
 	HRESULT hr = S_OK;
