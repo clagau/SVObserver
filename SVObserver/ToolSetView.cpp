@@ -551,9 +551,9 @@ void ToolSetView::OnSelectToolComment()
 				{
 					// Get the tool comment...
 					SVString ToolComment;
-					SVValueObjectClass* l_pVo = pSelectedTool->GetToolComment(); 
+					SvOi::IValueObject* pValueObject = dynamic_cast<SvOi::IValueObject*> (pSelectedTool->GetToolComment());
 					// bring up tool comment edit.
-					HRESULT hr = l_pVo->GetValue(ToolComment);
+					HRESULT hr = pValueObject->getValue(ToolComment);
 					if (S_OK == hr )
 					{
 						SvOg::SVTextEditDialog Dlg( ToolComment.c_str() );

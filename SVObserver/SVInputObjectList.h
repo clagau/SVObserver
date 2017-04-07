@@ -30,36 +30,30 @@ public:
 	BOOL Create();
 	BOOL Destroy();
 
-	template< typename SVInputType >
-	HRESULT GetInput( const SVGUID& p_rInputID, SVInputType*& p_rpInput ) const;
+	SVInputObject* GetInput( const SVGUID& rInputID ) const;
 
-	template< typename SVInputType >
-	HRESULT GetInput( const SVString& p_rInputName, SVInputType*& p_rpInput ) const;
+	SVInputObject* GetInput( const SVString& rInputName ) const;
 
-	template< typename SVInputType >
-	HRESULT GetInputFlyweight( const SVString& p_rInputName, SVInputType*& p_rpInput );
+	SVInputObject* GetInputFlyweight( const SVString& rInputName, SVObjectSubTypeEnum ObjectSubType);
 
 	HRESULT AttachInput( SVInputObject *pInput );
 	HRESULT DetachInput( const SVGUID& p_rOutputID );
 
-	BOOL ReadInputs( const SVIOEntryHostStructPtrList& p_rInputs, SVVariantBoolVector& p_rInputValues );
-	BOOL ReadInput( SVIOEntryStruct pIOEntry, _variant_t& p_rVariant );
+	BOOL ReadInputs( const SVIOEntryHostStructPtrVector& p_rInputs, SVVariantBoolVector& p_rInputValues );
+	BOOL ReadInput( SVIOEntryStruct pIOEntry, _variant_t& rVariant );
 
-	BOOL FillInputs( SVIOEntryHostStructPtrList& p_IOEntries );
+	BOOL FillInputs( SVIOEntryHostStructPtrVector& p_IOEntries );
 
 	BOOL GetRemoteInputCount( long &lSize );
-	BOOL SetRemoteInput( long lIndex, VARIANT vtValue );
+	BOOL SetRemoteInput( long lIndex, const _variant_t& rValue );
 
 private:
-	BOOL Lock() const;
-	BOOL Unlock() const;
+	bool Lock() const;
+	bool Unlock() const;
 
 	CRITICAL_SECTION m_hCriticalSection;
 	BOOL m_bCreated;
 
 	SVGuidSVInputObjectPtrMap m_InputObjects;
-
 };
-
-#include "SVInputObjectList.inl"
 

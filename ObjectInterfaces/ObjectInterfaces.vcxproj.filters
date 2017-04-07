@@ -75,9 +75,6 @@
     <ClInclude Include="ImageArthimeticOperators.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="IValueObject.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="IEquation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -126,10 +123,10 @@
     <ClInclude Include="SVIMCommand.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVInterfaceList.h">
+    <ClInclude Include="SVInterfaceVector.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="IBasicValueObject.h">
+    <ClInclude Include="IValueObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="IPatternAnalyzer.h">

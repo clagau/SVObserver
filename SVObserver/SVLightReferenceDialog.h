@@ -17,7 +17,7 @@
 
 class SVLightReference;
 
-typedef SVVector< SVLightReference* > SVLightReferenceArray;
+typedef SVVector<SVLightReference*> SVLightReferencePtrVector;
 
 class SVLightReferenceDialogPropertySheetClass : public CPropertySheet
 {
@@ -27,7 +27,7 @@ public:
 
 	virtual ~SVLightReferenceDialogPropertySheetClass();
 
-	bool CreatePages( SVVirtualCameraPtrSet& setCameras, SVLightReferenceArray& apLRA );
+	bool CreatePages( SVVirtualCameraPtrSet& setCameras, SVLightReferencePtrVector& apLRA );
 	void DestroyAllPages();
 
 	// Vom Klassen-Assistenten generierte virtuelle Funktionsüberschreibungen
@@ -37,7 +37,7 @@ public:
 
 protected:
 	int miNumPages;
-	SVLightReferenceArray mapLRA;
+	SVLightReferencePtrVector mapLRA;
 
 protected:
 	DECLARE_DYNAMIC(SVLightReferenceDialogPropertySheetClass)

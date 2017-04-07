@@ -31,12 +31,11 @@
 #include "SVValueObjectLibrary/BasicValueObjects.h"
 #include "SVMonitorList.h"
 #include "SVUtilityLibrary/SVString.h"
+#include "SVInspectionProcess.h"
 #pragma endregion Includes
 
 #pragma region Declarations
 const long	StandardPpqLength	= 2;
-
-class SVInspectionProcess;
 
 #pragma endregion Declarations
 
@@ -134,14 +133,14 @@ public:
 	HRESULT GetInputIOValues( SVVariantBoolVector& p_rInputValues ) const;
 	BOOL AssignInputs( const SVVariantBoolVector& p_rInputValues );
 	BOOL RebuildInputList(bool bHasCameraTrigger);
-	BOOL GetAvailableInputs( SVIOEntryHostStructPtrList& p_IOEntries ) const;
-	BOOL GetAllInputs( SVIOEntryHostStructPtrList& p_IOEntries ) const;
+	BOOL GetAvailableInputs( SVIOEntryHostStructPtrVector& p_IOEntries ) const;
+	BOOL GetAllInputs( SVIOEntryHostStructPtrVector& p_IOEntries ) const;
 	BOOL AddDefaultInputs();
 	BOOL AddToAvailableInputs(SVIOObjectType eType, const SVString& rName );
 	SVIOEntryHostStructPtr GetInput( const SVString& rName ) const;
 
-	void AddCameraDataInputs(SVIOEntryHostStructPtrList& list);
-	void RemoveCameraDataInputs(SVIOEntryHostStructPtrList& list);
+	void AddCameraDataInputs(SVIOEntryHostStructPtrVector& list);
+	void RemoveCameraDataInputs(SVIOEntryHostStructPtrVector& list);
 	void SetDefaultConditionalOutput();
 	bool HasCameraDataInputForConditionalOutput() const;
 	bool HasDigitalInputForConditionalOutput() const;
@@ -151,7 +150,7 @@ public:
 	BOOL WriteOutputs( SVProductInfoStruct* pProduct );
 	BOOL ResetOutputs();
 	BOOL RebuildOutputList();
-	BOOL GetAllOutputs( SVIOEntryHostStructPtrList& p_IOEntries ) const;
+	BOOL GetAllOutputs( SVIOEntryHostStructPtrVector& p_IOEntries ) const;
 	BOOL AddDefaultOutputs();
 
 	//************************************
@@ -212,7 +211,6 @@ public:
 
 protected:
 	SvSml::InspectionWriterCreationInfos m_InspectionWriterCreationInfos;
-	typedef SVVector< SVInspectionProcess* > SVPPQInspectionProcessVector;
 
 	struct SVTriggerQueueElement
 	{
@@ -251,8 +249,9 @@ protected:
 
 	};
 
-	typedef std::map<SVString, SVValueObjectReference> SVFilterValueMap; // Dotted name to SVValueObjectReference mapping
-	typedef std::map<SVGUID, SVFilterValueMap> SVInspectionFilterValueMap; // Inspection Guid to FilterValueMap mapping
+	typedef std::map< SVString, SVObjectReference > SVNameObjectMap;
+
+	typedef std::map<SVGUID, SVNameObjectMap> SVInspectionFilterValueMap; // Inspection Guid to FilterValueMap mapping
 	struct SVSharedMemoryFilters
 	{
 		SVSharedMemoryFilters();
@@ -418,10 +417,10 @@ protected:
 	SVGuidSet m_ProcessInspectionsSet;
 
 	// Pointers to the PPQ's I/O Lists
-	SVIOEntryHostStructPtrList m_AllInputs;
-	SVIOEntryHostStructPtrList m_AllOutputs;
-	SVIOEntryHostStructPtrList m_UsedInputs;
-	SVIOEntryHostStructPtrList m_UsedOutputs;
+	SVIOEntryHostStructPtrVector m_AllInputs;
+	SVIOEntryHostStructPtrVector m_AllOutputs;
+	SVIOEntryHostStructPtrVector m_UsedInputs;
+	SVIOEntryHostStructPtrVector m_UsedOutputs;
 
 	SVIOEntryHostStructPtr m_pTriggerToggle;	
 	SVIOEntryHostStructPtr m_pOutputToggle;
@@ -429,7 +428,7 @@ protected:
 
 	// Pointers to the Subsystem objects used by the PPQ
 	SvTi::SVTriggerObject*            m_pTrigger;
-	SVPPQInspectionProcessVector    m_arInspections;
+	SVInspectionProcessVector    m_arInspections;
 
 	// Pointer to the PPQ's buckets
 	SVPPQShiftRegister m_ppPPQPositions;
@@ -550,5 +549,5 @@ private:
 	long m_numRejectSlots;
 };
 
-typedef SVVector< SVPPQObject* > SVPPQObjectArray;
+typedef SVVector<SVPPQObject*> SVPPQObjectPtrVector;
 

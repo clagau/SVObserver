@@ -388,15 +388,15 @@ void SVPPQObject::init()
 	m_pInputList			= nullptr;
 	m_pOutputList			= nullptr;
 
-	m_voTriggerToggle.ObjectAttributesAllowedRef()	= SV_EMBEDABLE | SV_PRINTABLE;
-	m_voOutputToggle.ObjectAttributesAllowedRef()	= SV_EMBEDABLE | SV_PRINTABLE;
-	m_voACK.ObjectAttributesAllowedRef()			= SV_EMBEDABLE | SV_PRINTABLE;
-	m_voNAK.ObjectAttributesAllowedRef()			= SV_EMBEDABLE | SV_PRINTABLE;
-	m_voMasterFault.ObjectAttributesAllowedRef()	= SV_EMBEDABLE | SV_PRINTABLE;
-	m_voMasterWarning.ObjectAttributesAllowedRef()	= SV_EMBEDABLE | SV_PRINTABLE;
-	m_voNotInspected.ObjectAttributesAllowedRef()	= SV_EMBEDABLE | SV_PRINTABLE;
-	m_voDataValid.ObjectAttributesAllowedRef()		= SV_EMBEDABLE | SV_PRINTABLE;
-	m_voOutputState.ObjectAttributesAllowedRef()	= SV_EMBEDABLE | SV_PRINTABLE;
+	m_voTriggerToggle.SetObjectAttributesAllowed( SV_EMBEDABLE | SV_PRINTABLE, SvOi::SetAttributeType::OverwriteAttribute );
+	m_voOutputToggle.SetObjectAttributesAllowed( SV_EMBEDABLE | SV_PRINTABLE, SvOi::SetAttributeType::OverwriteAttribute );
+	m_voACK.SetObjectAttributesAllowed( SV_EMBEDABLE | SV_PRINTABLE, SvOi::SetAttributeType::OverwriteAttribute );
+	m_voNAK.SetObjectAttributesAllowed( SV_EMBEDABLE | SV_PRINTABLE, SvOi::SetAttributeType::OverwriteAttribute );
+	m_voMasterFault.SetObjectAttributesAllowed( SV_EMBEDABLE | SV_PRINTABLE, SvOi::SetAttributeType::OverwriteAttribute );
+	m_voMasterWarning.SetObjectAttributesAllowed( SV_EMBEDABLE | SV_PRINTABLE, SvOi::SetAttributeType::OverwriteAttribute );
+	m_voNotInspected.SetObjectAttributesAllowed( SV_EMBEDABLE | SV_PRINTABLE, SvOi::SetAttributeType::OverwriteAttribute );
+	m_voDataValid.SetObjectAttributesAllowed( SV_EMBEDABLE | SV_PRINTABLE, SvOi::SetAttributeType::OverwriteAttribute );
+	m_voOutputState.SetObjectAttributesAllowed( SV_EMBEDABLE | SV_PRINTABLE, SvOi::SetAttributeType::OverwriteAttribute );
 
 	BasicValueObjectPtr pPpqLength =  m_PpqValues.setValueObject( SvOl::FqnPpqLength, StandardPpqLength, this );
 	SVObjectManagerClass::Instance().IncrementShortPPQIndicator();
@@ -570,16 +570,15 @@ BOOL SVPPQObject::Create()
 		}// end for
 	}
 
-	m_voTriggerToggle.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;	
-	m_voOutputToggle.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	m_voACK.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	m_voNAK.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	m_voMasterFault.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	m_voMasterWarning.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	m_voNotInspected.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	m_voDataValid.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	m_voOutputState.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-
+	m_voTriggerToggle.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_voOutputToggle.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_voACK.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_voNAK.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_voMasterFault.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_voMasterWarning.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_voNotInspected.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_voDataValid.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_voOutputState.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 
 	m_TriggerToggle = false;
 	m_OutputToggle = false;
@@ -1340,42 +1339,52 @@ void SVPPQObject::GoOnline()
 	RebuildOutputList();
 
 	// First, make sure the trigger toggle output is set to the right default
-	if( !( m_pTriggerToggle.empty() ) && m_pTriggerToggle->m_pValueObject )
+	SvOi::IValueObject* pValueObject( nullptr );
+	if( !m_pTriggerToggle.empty() )
 	{
-		BOOL bValue = false;
-		m_pTriggerToggle->m_pValueObject->SetValue( 1, bValue );
-		m_TriggerToggle = ( bValue != FALSE );
+		pValueObject = m_pTriggerToggle->getValueObject();
+	}
+	if( nullptr != pValueObject )
+	{
+		_variant_t Value( false );
+		pValueObject->setValue( Value, 1 );
+		m_TriggerToggle = static_cast<bool> (Value);
 	}// end if
 
-	// Also, make sure the output toggle output is set to the right default
-	if( !( m_pOutputToggle.empty() ) && m_pOutputToggle->m_pValueObject )
+	pValueObject = nullptr;
+	if( !m_pOutputToggle.empty() )
 	{
-		BOOL bValue = false;
-		m_pOutputToggle->m_pValueObject->SetValue( 1, bValue );
-		m_OutputToggle = ( bValue != FALSE );
+		pValueObject = m_pOutputToggle->getValueObject();
+	}
+	// Also, make sure the output toggle output is set to the right default
+	if( nullptr != pValueObject )
+	{
+		_variant_t Value( false );
+		pValueObject->setValue( Value, 1 );
+		m_OutputToggle =  static_cast<bool> (Value);
 	}// end if
 
 	// Reset the Outputs
 	if( !( m_pTriggerToggle.empty() ) )
 	{
-		m_pTriggerToggle->m_Enabled = TRUE;
+		m_pTriggerToggle->m_Enabled = true;
 	}
 
 	if( !( m_pOutputToggle.empty() ) )
 	{
-		m_pOutputToggle->m_Enabled = TRUE;
+		m_pOutputToggle->m_Enabled = true;
 	}
 
 	ResetOutputs();
 
 	if( !( m_pTriggerToggle.empty() ) )
 	{
-		m_pTriggerToggle->m_Enabled = FALSE;
+		m_pTriggerToggle->m_Enabled = false;
 	}
 
 	if( !( m_pOutputToggle.empty() ) )
 	{
-		m_pOutputToggle->m_Enabled = FALSE;
+		m_pOutputToggle->m_Enabled = false;
 	}
 
 	size_t lSize = m_arInspections.GetSize();
@@ -1511,7 +1520,8 @@ void SVPPQObject::GoOnline()
 	// is no appreciable delay in the writeOutputs function that uses dynaic_cast.
 	for( size_t i = 0; i < m_UsedOutputs.size(); i++ )
 	{
-		void* l_pInit = dynamic_cast<SVPPQObject*>( m_UsedOutputs[i]->m_pValueParent );
+		SVObjectClass* pObject = m_UsedOutputs[i]->getObject();
+		void* l_pInit = nullptr != pObject ? dynamic_cast<SVPPQObject*>( pObject->GetOwner() ) : nullptr;
 	}
 
 	if( SVPPQNextTriggerMode == m_oOutputMode )
@@ -1745,9 +1755,9 @@ BOOL SVPPQObject::RemoveInput( SVIOEntryHostStructPtr pInput )
 
 	SVString strName;
 
-	if( pInput->m_pValueObject )
+	if( nullptr != pInput->getObject() )
 	{
-		strName = pInput->m_pValueObject->GetCompleteName();
+		strName = pInput->getObject()->GetCompleteName();
 	}
 	else if( !( pInput->m_IOId.empty() ) )
 	{
@@ -1756,11 +1766,11 @@ BOOL SVPPQObject::RemoveInput( SVIOEntryHostStructPtr pInput )
 		strName = l_pObject->GetCompleteName();
 	}
 
-	SVIOEntryHostStructPtrList::iterator l_Iter = m_AllInputs.begin();
+	SVIOEntryHostStructPtrVector::iterator l_Iter = m_AllInputs.begin();
 
 	while( l_Iter != m_AllInputs.end() )
 	{
-		l_Status = ( strName == ( *l_Iter )->m_pValueObject->GetCompleteName() );
+		l_Status = ( strName == ( *l_Iter )->getObject()->GetCompleteName() );
 
 		if( l_Status )
 		{
@@ -1779,7 +1789,7 @@ BOOL SVPPQObject::RemoveInput( SVIOEntryHostStructPtr pInput )
 // This is only ever called from SVPPQObject::InitializeProduct ().
 // InitializeProduct () is only ever called from ProcessTrigger ().
 
-BOOL SVPPQObject::AssignInputs( const SVVariantBoolVector& p_rInputValues )
+BOOL SVPPQObject::AssignInputs( const SVVariantBoolVector& rInputValues )
 {
 	for( size_t i = 0; i < m_UsedInputs.size(); i++ )
 	{
@@ -1796,10 +1806,12 @@ BOOL SVPPQObject::AssignInputs( const SVVariantBoolVector& p_rInputValues )
 
 				if (pIOEntry->m_ObjectType != IO_CAMERA_DATA_INPUT)
 				{
-					_bstr_t l_String = p_rInputValues[ i ].first;
-
-					l_pIOEntry.m_IOEntryPtr->m_pValueObject->SetValue( lDataIndex, l_String );
-					l_pIOEntry.m_EntryValid = p_rInputValues[ i ].second;
+					SvOi::IValueObject* pValueObject = l_pIOEntry.m_IOEntryPtr->getValueObject();
+					if( nullptr != pValueObject )
+					{
+						pValueObject->setValue( rInputValues[ i ].first, lDataIndex );
+					}
+					l_pIOEntry.m_EntryValid = rInputValues[ i ].second;
 				}
 				else
 				{
@@ -1833,7 +1845,7 @@ HRESULT SVPPQObject::GetInputIOValues( SVVariantBoolVector& p_rInputValues ) con
 
 BOOL SVPPQObject::RebuildInputList(bool bHasCameraTrigger)
 {
-	SVIOEntryHostStructPtrList ppNewInputs;
+	SVIOEntryHostStructPtrVector ppNewInputs;
 	SVIOEntryHostStructPtr pOldInput;
 	SVIOEntryHostStructPtr pNewInput;
 	size_t iNew;
@@ -1863,18 +1875,17 @@ BOOL SVPPQObject::RebuildInputList(bool bHasCameraTrigger)
 
 				SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject( pNewInput->m_IOId );
 
-				if( ( 0 == strcmp( l_pObject->GetName(), pOldInput->m_pValueObject->GetName() ) ) &&
+				if( ( 0 == strcmp( l_pObject->GetName(), pOldInput->getObject()->GetName() ) ) &&
 					( pNewInput->m_ObjectType == pOldInput->m_ObjectType ) )
 				{
 					pNewInput->m_DeleteValueObject = false;
-					pNewInput->m_pValueObject = pOldInput->m_pValueObject;
-					pNewInput->m_pValueParent = pOldInput->m_pValueParent;
+					pNewInput->setObject(pOldInput->getObject());
 					pNewInput->m_PPQIndex	= pOldInput->m_PPQIndex;
 					pNewInput->m_Enabled		= pOldInput->m_Enabled;
 					pOldInput->m_ObjectType	= pNewInput->m_ObjectType;
 					pOldInput->m_IOId	= pNewInput->m_IOId;
-					pOldInput->m_pValueObject->SetObjectDepth( GetPPQLength() + g_lPPQExtraBufferSize );
-					pOldInput->m_pValueObject->ResetObject();
+					pOldInput->getObject()->SetObjectDepth( GetPPQLength() + g_lPPQExtraBufferSize );
+					pOldInput->getObject()->ResetObject();
 					break;
 				}// end if
 			}// end for
@@ -1913,22 +1924,22 @@ static bool CompareTypeWithIOEntry(SVIOEntryHostStructPtr ioEntry, const SVIOObj
 }
 
 typedef boost::function<bool (SVIOEntryHostStructPtr ioEntry, const SVString& name)> CompareIOEntryNameFunc;
-static bool CompareNameWithIOEntry(SVIOEntryHostStructPtr ioEntry, const SVString& name)
+static bool CompareNameWithIOEntry(SVIOEntryHostStructPtr pIoEntry, const SVString& name)
 {
 	bool bRetVal = false;
-	if (ioEntry && ioEntry->m_pValueObject)
+	if (nullptr != pIoEntry && nullptr != pIoEntry->getObject())
 	{
-		bRetVal = ( ioEntry->m_pValueObject->GetName() == name);
+		bRetVal = (pIoEntry->getObject()->GetName() == name);
 	}
 	return bRetVal; 
 }
 
-static bool CompareCompleteNameWithIOEntry(SVIOEntryHostStructPtr ioEntry, const SVString& name)
+static bool CompareCompleteNameWithIOEntry(SVIOEntryHostStructPtr pIoEntry, const SVString& name)
 {
 	bool bRetVal = false;
-	if (ioEntry && ioEntry->m_pValueObject)
+	if (nullptr != pIoEntry && nullptr != pIoEntry->getObject())
 	{
-		bRetVal = ( ioEntry->m_pValueObject->GetCompleteName() == name);
+		bRetVal = (pIoEntry->getObject()->GetCompleteName() == name);
 	}
 	return bRetVal; 
 }
@@ -1951,14 +1962,14 @@ private:
 	CompareFunc m_compareFunc;
 };
 
-void SVPPQObject::AddCameraDataInputs(SVIOEntryHostStructPtrList& list)
+void SVPPQObject::AddCameraDataInputs(SVIOEntryHostStructPtrVector& list)
 {
 	// Added the new Camera inputs...
-	SVIOEntryHostStructPtrList::iterator it = std::find_if(list.begin(), list.end(), FindIOEntry<SVString, CompareIOEntryNameFunc>(m_CameraInputData.GetTimestampName(), CompareNameWithIOEntry));
+	SVIOEntryHostStructPtrVector::iterator it = std::find_if(list.begin(), list.end(), FindIOEntry<SVString, CompareIOEntryNameFunc>(m_CameraInputData.GetTimestampName(), CompareNameWithIOEntry));
 	if (it == list.end())
 	{
 		// Get the Input from the All list
-		SVIOEntryHostStructPtrList::const_iterator refIt = std::find_if(m_AllInputs.begin(), m_AllInputs.end(), FindIOEntry<SVString, CompareIOEntryNameFunc>(m_CameraInputData.GetTimestampName(), CompareNameWithIOEntry));
+		SVIOEntryHostStructPtrVector::const_iterator refIt = std::find_if(m_AllInputs.begin(), m_AllInputs.end(), FindIOEntry<SVString, CompareIOEntryNameFunc>(m_CameraInputData.GetTimestampName(), CompareNameWithIOEntry));
 		if (refIt != m_AllInputs.end())
 		{
 			list.push_back(*refIt);
@@ -1968,7 +1979,7 @@ void SVPPQObject::AddCameraDataInputs(SVIOEntryHostStructPtrList& list)
 	if (it == list.end() )
 	{
 		// Get the Input from the All list
-		SVIOEntryHostStructPtrList::const_iterator refIt = std::find_if(m_AllInputs.begin(), m_AllInputs.end(), FindIOEntry<SVString, CompareIOEntryNameFunc>(m_CameraInputData.GetLineStateName(), CompareNameWithIOEntry));
+		SVIOEntryHostStructPtrVector::const_iterator refIt = std::find_if(m_AllInputs.begin(), m_AllInputs.end(), FindIOEntry<SVString, CompareIOEntryNameFunc>(m_CameraInputData.GetLineStateName(), CompareNameWithIOEntry));
 		if (refIt != m_AllInputs.end())
 		{
 			list.push_back(*refIt);
@@ -1976,9 +1987,9 @@ void SVPPQObject::AddCameraDataInputs(SVIOEntryHostStructPtrList& list)
 	}
 }
 
-void SVPPQObject::RemoveCameraDataInputs(SVIOEntryHostStructPtrList& list)
+void SVPPQObject::RemoveCameraDataInputs(SVIOEntryHostStructPtrVector& list)
 {
-	SVIOEntryHostStructPtrList::iterator it = std::remove_if(list.begin(), list.end(), FindIOEntry<SVIOObjectType, CompareIOEntryTypeFunc>(IO_CAMERA_DATA_INPUT, CompareTypeWithIOEntry));
+	SVIOEntryHostStructPtrVector::iterator it = std::remove_if(list.begin(), list.end(), FindIOEntry<SVIOObjectType, CompareIOEntryTypeFunc>(IO_CAMERA_DATA_INPUT, CompareTypeWithIOEntry));
 	if (it != list.end())
 	{
 		list.erase(it, list.end());
@@ -2015,7 +2026,7 @@ BOOL SVPPQObject::AddToAvailableInputs(SVIOObjectType eType, const SVString& rNa
 	for(size_t k = 0 ; k < m_AllInputs.size(); k++ )
 	{
 		SVIOEntryHostStructPtr pOldInput = m_AllInputs[k];
-		if( rName ==  pOldInput->m_pValueObject->GetName() )
+		if( rName ==  pOldInput->getObject()->GetName() )
 		{
 			bFound = true;
 			break;
@@ -2024,25 +2035,29 @@ BOOL SVPPQObject::AddToAvailableInputs(SVIOObjectType eType, const SVString& rNa
 
 	if( !bFound )
 	{
-		SVValueObjectClass* pObject = nullptr;
+		SVObjectClass* pObject = nullptr;
 		if( eType == IO_REMOTE_INPUT )
 		{
 			// new variant value object for Remote Inputs.
-			pObject = new SVVariantValueObjectClass();
+			SVVariantValueObjectClass* pRemoteObject = new SVVariantValueObjectClass();
+			pRemoteObject->setBucketized( true );
+			pObject = dynamic_cast<SVObjectClass*> (pRemoteObject);
 		}
 		else
 		{
 			// new Bool Value Object for Digital Inputs.
-			pObject = new SVBoolValueObjectClass();
+			SVBoolValueObjectClass* pDigitalObject = new SVBoolValueObjectClass();
+			pDigitalObject->setBucketized( true );
+			pObject = dynamic_cast<SVObjectClass*> (pDigitalObject);
 		}
 
 		pObject->SetName( rName.c_str() );
+		pObject->SetObjectOwner(this);
 		pObject->SetObjectDepth( GetPPQLength() + g_lPPQExtraBufferSize );
 		pObject->ResetObject();
 
 		SVIOEntryHostStructPtr pIOEntry = new SVIOEntryHostStruct;
-		pIOEntry->m_pValueObject	= pObject;
-		pIOEntry->m_pValueParent	= pObject;
+		pIOEntry->setObject(pObject);
 		pIOEntry->m_ObjectType	= eType;
 		pIOEntry->m_PPQIndex		= -1;
 		pIOEntry->m_Enabled		= FALSE;
@@ -2087,14 +2102,14 @@ BOOL SVPPQObject::AddDefaultInputs()
 	return TRUE;
 }
 
-BOOL SVPPQObject::GetAvailableInputs( SVIOEntryHostStructPtrList& ppIOEntries ) const
+BOOL SVPPQObject::GetAvailableInputs( SVIOEntryHostStructPtrVector& ppIOEntries ) const
 {
 	ppIOEntries = m_UsedInputs;
 
 	return TRUE;
 }
 
-BOOL SVPPQObject::GetAllInputs( SVIOEntryHostStructPtrList& ppIOEntries ) const
+BOOL SVPPQObject::GetAllInputs( SVIOEntryHostStructPtrVector& ppIOEntries ) const
 {
 	ppIOEntries = m_AllInputs;
 
@@ -2103,12 +2118,12 @@ BOOL SVPPQObject::GetAllInputs( SVIOEntryHostStructPtrList& ppIOEntries ) const
 
 SVIOEntryHostStructPtr SVPPQObject::GetInput( const SVString& name ) const
 {
-	for (SVIOEntryHostStructPtrList::const_iterator it = m_AllInputs.begin();it != m_AllInputs.end();++it)
+	for (SVIOEntryHostStructPtrVector::const_iterator it = m_AllInputs.begin();it != m_AllInputs.end();++it)
 	{
 		if (!it->empty())
 		{
 			SVIOEntryHostStructPtr ptr = (*it);
-			if (name == ptr->m_pValueObject->GetName())
+			if (name == ptr->getObject()->GetName())
 			{
 				return ptr;
 			}
@@ -2136,9 +2151,9 @@ BOOL SVPPQObject::RemoveOutput( SVIOEntryHostStructPtr pOutput )
 
 	SVString Name;
 
-	if( pOutput->m_pValueObject )
+	if( nullptr != pOutput->getObject() )
 	{
-		Name = pOutput->m_pValueObject->GetCompleteName();
+		Name = pOutput->getObject()->GetCompleteName();
 	}
 	else if( !( pOutput->m_IOId.empty() ) )
 	{
@@ -2147,12 +2162,12 @@ BOOL SVPPQObject::RemoveOutput( SVIOEntryHostStructPtr pOutput )
 		Name = l_pObject->GetCompleteName();
 	}
 
-	SVIOEntryHostStructPtrList::iterator l_Iter = m_AllOutputs.begin();
+	SVIOEntryHostStructPtrVector::iterator l_Iter = m_AllOutputs.begin();
 
 	while( l_Iter != m_AllOutputs.end() )
 	{
 		SVString PPQName;
-		PPQName = ( *l_Iter )->m_pValueObject->GetCompleteName();
+		PPQName = ( *l_Iter )->getObject()->GetCompleteName();
 
 		l_Status = ( Name == PPQName );
 
@@ -2178,13 +2193,13 @@ bool SVPPQObject::ResolveConditionalOutput()
 	if (!AlwaysWriteOutputs())
 	{
 		// Get Input with this name and assign guid
-		SVIOEntryHostStructPtrList::const_iterator it = std::find_if(m_UsedInputs.begin(), m_UsedInputs.end(), FindIOEntry<SVString, CompareIOEntryNameFunc>(m_conditionalOutputName, CompareNameWithIOEntry));
+		SVIOEntryHostStructPtrVector::const_iterator it = std::find_if(m_UsedInputs.begin(), m_UsedInputs.end(), FindIOEntry<SVString, CompareIOEntryNameFunc>(m_conditionalOutputName, CompareNameWithIOEntry));
 		if (it != m_UsedInputs.end())
 		{
-			SVIOEntryHostStructPtr ioEntry = (*it);
-			if (!ioEntry.empty() && ioEntry->m_pValueObject)
+			SVIOEntryHostStructPtr pIoEntry = (*it);
+			if (!pIoEntry.empty() && nullptr != pIoEntry->getObject())
 			{
-				m_conditionalOutputValueID = ioEntry->m_pValueObject->GetUniqueObjectID();
+				m_conditionalOutputValueID = pIoEntry->getObject()->GetUniqueObjectID();
 				bRetVal = true;
 			}
 		}
@@ -2210,15 +2225,11 @@ bool SVPPQObject::EvaluateConditionalOutput(long dataIndex) const
 		HRESULT hr = SVObjectManagerClass::Instance().GetObjectByIdentifier(m_conditionalOutputValueID, pObject);
 		if (S_OK == hr && nullptr != pObject )
 		{
-			SVValueObjectClass* pValueObject = dynamic_cast<SVValueObjectClass *>(pObject);
-			if (pValueObject)
+			double Value;
+			hr = pObject->getValue( Value, dataIndex );
+			if (S_OK == hr )
 			{
-				double value;
-				hr = pValueObject->GetValue(dataIndex, value);
-				if (S_OK == hr )
-				{
-					bRetVal = (value > std::numeric_limits<double>::epsilon()) ? true : false;
-				}
+				bRetVal = (std::numeric_limits<double>::epsilon() < Value ) ? true : false;
 			}
 		}
 	}
@@ -2228,12 +2239,12 @@ bool SVPPQObject::EvaluateConditionalOutput(long dataIndex) const
 BOOL SVPPQObject::WriteOutputs( SVProductInfoStruct *pProduct )
 {
 	BOOL bRet = TRUE;
-	SVDataManagerHandle l_Handle;
-	long lDataIndex = -1;
-	long l_TriggerCount = 0;
-	bool l_TriggerToggle = false;
-	bool l_ACK = false;
-	bool l_NAK = true;
+	SVDataManagerHandle Handle;
+	long DataIndex( -1 );
+	long TriggerCount( 0 );
+	bool bTriggerToggle( false );
+	BOOL bACK( false );
+	BOOL bNAK( true );
 
 #ifdef _DEBUG
 #ifdef SHOW_PPQ_STATE
@@ -2245,12 +2256,12 @@ BOOL SVPPQObject::WriteOutputs( SVProductInfoStruct *pProduct )
 
 	if( nullptr != pProduct )
 	{
-		l_TriggerCount = pProduct->ProcessCount();
-		l_TriggerToggle = pProduct->oTriggerInfo.m_ToggleState;
+		TriggerCount = pProduct->ProcessCount();
+		bTriggerToggle = pProduct->oTriggerInfo.m_ToggleState;
 
 		pProduct->oTriggerInfo.m_PushedOutputs = SVClock::GetTimeStamp();
 
-		lDataIndex = pProduct->oPPQInfo.m_ResultDataDMIndexHandle.GetIndex();
+		DataIndex = pProduct->oPPQInfo.m_ResultDataDMIndexHandle.GetIndex();
 
 		if( !( pProduct->bDataComplete ) )
 		{
@@ -2268,39 +2279,39 @@ BOOL SVPPQObject::WriteOutputs( SVProductInfoStruct *pProduct )
 	if (!AlwaysWriteOutputs())
 	{
 		// get value that represenst condition
-		bWriteOutputs = EvaluateConditionalOutput(lDataIndex);
+		bWriteOutputs = EvaluateConditionalOutput(DataIndex);
 	}
 
-	if( 0 <= lDataIndex )
+	if( 0 <= DataIndex )
 	{
-		m_voACK.GetValue( lDataIndex, l_ACK );
+		m_voACK.GetValue( bACK, DataIndex );
 
-		m_voNAK.GetValue( lDataIndex, l_NAK );
+		m_voNAK.GetValue( bNAK, DataIndex );
 
 		// First, write the trigger toggle output if it is okay
-		if( !( m_pTriggerToggle.empty() ) && m_pTriggerToggle->m_pValueObject )
+		if( !( m_pTriggerToggle.empty() ) && nullptr != m_pTriggerToggle->getValueObject() )
 		{
-			m_pTriggerToggle->m_pValueObject->SetValue( lDataIndex, l_TriggerToggle );
+			m_pTriggerToggle->getValueObject()->setValue( _variant_t(bTriggerToggle), DataIndex );
 		}
 
 		// Toggle the Output Toggle if it is okay
-		if( !( m_pOutputToggle.empty() ) && m_pOutputToggle->m_pValueObject )
+		if( !( m_pOutputToggle.empty() ) && nullptr != m_pOutputToggle->getValueObject() )
 		{
-			m_pOutputToggle->m_pValueObject->SetValue( lDataIndex, m_OutputToggle );
+			m_pOutputToggle->getValueObject()->setValue( _variant_t(m_OutputToggle), DataIndex );
 		}
 	}
 	else
 	{
-		if( S_OK == TheSVDataManager.GetNextAvailableBufferIndex( m_pResultDataCircleBuffer, SV_PPQ, l_Handle )  )
+		if( S_OK == TheSVDataManager.GetNextAvailableBufferIndex( m_pResultDataCircleBuffer, SV_PPQ, Handle )  )
 		{
-			lDataIndex = l_Handle.GetIndex();
+			DataIndex = Handle.GetIndex();
 
-			m_voNotInspected.SetValue( lDataIndex, TRUE );
-			m_voNAK.SetValue( lDataIndex, TRUE );
-			m_voMasterWarning.SetValue(	lDataIndex, TRUE );
-			m_voMasterFault.SetValue(	lDataIndex, TRUE );
-			m_voDataValid.SetValue( lDataIndex, FALSE );
-			m_voACK.SetValue( lDataIndex, FALSE );
+			m_voNotInspected.SetValue( BOOL(true), DataIndex );
+			m_voNAK.SetValue( BOOL(true), DataIndex  );
+			m_voMasterWarning.SetValue(	BOOL(true), DataIndex  );
+			m_voMasterFault.SetValue( BOOL(true), DataIndex  );
+			m_voDataValid.SetValue( BOOL(false), DataIndex );
+			m_voACK.SetValue( BOOL(false), DataIndex );
 		}
 
 		// Caution! enabling the logging here will cause thread contention because
@@ -2310,23 +2321,23 @@ BOOL SVPPQObject::WriteOutputs( SVProductInfoStruct *pProduct )
 #endif
 	}
 
-	if( 0 <= lDataIndex )
+	if( 0 <= DataIndex )
 	{
 		if (bWriteOutputs)
 		{
-			bRet = m_pOutputList->WriteOutputs( m_UsedOutputs, lDataIndex, l_ACK, l_NAK );
+			bRet = m_pOutputList->WriteOutputs( m_UsedOutputs, DataIndex, bACK ? true : false, bNAK ? true : false );
 
 			SVConfigurationObject* pConfig( nullptr );
 			SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
 
-			bool l_bValue=false;
-			m_voDataValid.GetValue(lDataIndex, l_bValue);
+			BOOL bValue=false;
+			m_voDataValid.GetValue( bValue, DataIndex );
 			if( 0 == m_DataValidDelay )
 			{
 				if( !m_pDataValid.empty() )
 				{
-					m_pOutputList->WriteOutputValue( m_pDataValid, l_bValue );
+					m_pOutputList->WriteOutputValue( m_pDataValid, bValue );
 				}
 				if( !m_pOutputToggle.empty() )
 				{
@@ -2335,7 +2346,7 @@ BOOL SVPPQObject::WriteOutputs( SVProductInfoStruct *pProduct )
 			}
 			else
 			{
-				pProduct->oOutputsInfo.DataValidResult = l_bValue;
+				pProduct->oOutputsInfo.DataValidResult = bValue ? true : false;
 				pProduct->oOutputsInfo.OutputToggleResult = m_OutputToggle;
 				// Set output data valid expire time
 				pProduct->oOutputsInfo.m_EndDataValidDelay = SVClock::GetTimeStamp() + pProduct->oOutputsInfo.lDataValidDelay;
@@ -2365,7 +2376,7 @@ BOOL SVPPQObject::WriteOutputs( SVProductInfoStruct *pProduct )
 #endif
 #endif
 
-	if( l_NAK )
+	if( bNAK )
 	{
 		// Caution! enabling the logging here will cause thread contention because
 		// the tracking class is not lock-less. It needs more work before we can use it here.
@@ -2407,7 +2418,7 @@ BOOL SVPPQObject::ResetOutputs()
 
 BOOL SVPPQObject::RebuildOutputList()
 {
-	SVIOEntryHostStructPtrList ppNewOutputs;
+	SVIOEntryHostStructPtrVector ppNewOutputs;
 	SVIOEntryHostStructPtr pOldOutput;
 	SVIOEntryHostStructPtr pNewOutput;
 	SVString OldName;
@@ -2436,24 +2447,33 @@ BOOL SVPPQObject::RebuildOutputList()
 			{
 				pNewOutput = ppNewOutputs[iNew];
 
-				SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject( pNewOutput->m_IOId );
+				SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject( pNewOutput->m_IOId );
 
-				NewName = l_pObject->GetCompleteName();
-				OldName = pOldOutput->m_pValueObject->GetCompleteName();
+				NewName = pObject->GetCompleteName();
+				OldName = pOldOutput->getObject()->GetCompleteName();
 
 				if ( pNewOutput->m_ObjectType == pOldOutput->m_ObjectType && NewName == OldName )
 				{
-					// Copy information to new Output object
-					l_pObject->SetName( OldName.c_str() );
+					if (SVIoObjectType == pObject->GetObjectType())
+					{
+						//IO object types require the complete name
+						pObject->SetName(pOldOutput->getObject()->GetCompleteName().c_str());
+						pNewOutput->setObject(pOldOutput->getObject());
+					}
+					else
+					{
+						//Normal object types require the name and set the owner
+						pObject->SetName(pOldOutput->getObject()->GetName());
+						pNewOutput->setObject(pOldOutput->getObject());
+						pNewOutput->getObject()->SetObjectOwner(pOldOutput->getObject()->GetOwner());
+					}
 
 					pNewOutput->m_DeleteValueObject = false;
-					pNewOutput->m_pValueObject = pOldOutput->m_pValueObject;
-					pNewOutput->m_pValueParent = pOldOutput->m_pValueParent;
 					pNewOutput->m_Enabled	 = pOldOutput->m_Enabled;
 					pOldOutput->m_ObjectType	 = pNewOutput->m_ObjectType;
 					pOldOutput->m_IOId	 = pNewOutput->m_IOId;
-					pOldOutput->m_pValueObject->SetObjectDepth( GetPPQLength() + g_lPPQExtraBufferSize );
-					pOldOutput->m_pValueObject->ResetObject();
+					pOldOutput->getObject()->SetObjectDepth( GetPPQLength() + g_lPPQExtraBufferSize );
+					pOldOutput->getObject()->ResetObject();
 
 					// Check for prefix of PPQ for these special signals...
 					if( 0 == NewName.find( _T("PPQ_")) )
@@ -2505,7 +2525,7 @@ BOOL SVPPQObject::AddDefaultOutputs()
 	{
 		pIOEntry = m_AllOutputs[l];
 
-		if( Name == pIOEntry->m_pValueObject->GetName() )
+		if( Name == pIOEntry->getObject()->GetName() )
 		{
 			bFound = TRUE;
 			break;
@@ -2514,154 +2534,154 @@ BOOL SVPPQObject::AddDefaultOutputs()
 
 	m_voNotInspected.SetName( _T( "Not Inspected" ) );
 	m_voNotInspected.SetObjectOwner( this );
+	m_voNotInspected.setBucketized( true );
 	m_voNotInspected.SetObjectDepth( GetPPQLength() + g_lPPQExtraBufferSize );
 	m_voNotInspected.ResetObject();
-	m_voNotInspected.SetDefaultValue( TRUE, TRUE );
-	m_voNotInspected.SetValue( 1, TRUE );
+	m_voNotInspected.SetDefaultValue( BOOL(true), true );
+	m_voNotInspected.SetValue( BOOL(true), 1 );
 
 	if( !bFound )
 	{
 		pIOEntry = new SVIOEntryHostStruct;
 		pIOEntry->m_DeleteValueObject = false;
-		pIOEntry->m_pValueObject	= &m_voNotInspected;
-		pIOEntry->m_pValueParent	= this;
+		pIOEntry->setObject(dynamic_cast<SVObjectClass*> (&m_voNotInspected));
 		pIOEntry->m_ObjectType	= IO_DIGITAL_OUTPUT;
-		pIOEntry->m_Enabled		= TRUE;
+		pIOEntry->m_Enabled		= true;
 
 		AddOutput( pIOEntry );
 	}// end if
 
 	m_voNAK.SetName( _T( "NAK" ) );
 	m_voNAK.SetObjectOwner( this );
+	m_voNAK.setBucketized( true );
 	m_voNAK.SetObjectDepth( GetPPQLength() + g_lPPQExtraBufferSize );
 	m_voNAK.ResetObject();
-	m_voNAK.SetDefaultValue( TRUE, TRUE );
-	m_voNAK.SetValue( 1, TRUE );
+	m_voNAK.SetDefaultValue( BOOL(true), true );
+	m_voNAK.SetValue( BOOL(true), 1 );
 
 	if( !bFound )
 	{
 		pIOEntry = new SVIOEntryHostStruct;
 		pIOEntry->m_DeleteValueObject = false;
-		pIOEntry->m_pValueObject	= &m_voNAK;
-		pIOEntry->m_pValueParent	= this;
+		pIOEntry->setObject(dynamic_cast<SVObjectClass*> (&m_voNAK));
 		pIOEntry->m_ObjectType	= IO_DIGITAL_OUTPUT;
-		pIOEntry->m_Enabled		= TRUE;
+		pIOEntry->m_Enabled		= true;
 
 		AddOutput( pIOEntry );
 	}// end if
 
 	m_voMasterWarning.SetName( _T( "Master Warning" ) );
 	m_voMasterWarning.SetObjectOwner( this );
+	m_voMasterWarning.setBucketized( true );
 	m_voMasterWarning.SetObjectDepth( GetPPQLength() + g_lPPQExtraBufferSize );
 	m_voMasterWarning.ResetObject();
-	m_voMasterWarning.SetDefaultValue( TRUE, TRUE );
-	m_voMasterWarning.SetValue( 1, TRUE );
+	m_voMasterWarning.SetDefaultValue( BOOL(true), true );
+	m_voMasterWarning.SetValue( BOOL(true), 1 );
 
 	if( !bFound )
 	{
 		pIOEntry = new SVIOEntryHostStruct;
 		pIOEntry->m_DeleteValueObject = false;
-		pIOEntry->m_pValueObject	= &m_voMasterWarning;
-		pIOEntry->m_pValueParent	= this;
+		pIOEntry->setObject(dynamic_cast<SVObjectClass*> (&m_voMasterWarning));
 		pIOEntry->m_ObjectType	= IO_DIGITAL_OUTPUT;
-		pIOEntry->m_Enabled		= TRUE;
+		pIOEntry->m_Enabled		= true;
 
 		AddOutput( pIOEntry );
 	}// end if
 
 	m_voMasterFault.SetName( _T( "Master Fault" ) );
 	m_voMasterFault.SetObjectOwner( this );
+	m_voMasterFault.setBucketized( true );
 	m_voMasterFault.SetObjectDepth( GetPPQLength() + g_lPPQExtraBufferSize );
 	m_voMasterFault.ResetObject();
-	m_voMasterFault.SetDefaultValue( TRUE, TRUE );
-	m_voMasterFault.SetValue( 1, TRUE );
+	m_voMasterFault.SetDefaultValue( BOOL(true), true );
+	m_voMasterFault.SetValue( BOOL(true), 1 );
 
 	if( !bFound )
 	{
 		pIOEntry = new SVIOEntryHostStruct;
 		pIOEntry->m_DeleteValueObject = false;
-		pIOEntry->m_pValueObject	= &m_voMasterFault;
-		pIOEntry->m_pValueParent	= this;
+		pIOEntry->setObject(dynamic_cast<SVObjectClass*> (&m_voMasterFault));
 		pIOEntry->m_ObjectType	= IO_DIGITAL_OUTPUT;
-		pIOEntry->m_Enabled		= TRUE;
+		pIOEntry->m_Enabled		= true;
 
 		AddOutput( pIOEntry );
 	}// end if
 
 	m_voDataValid.SetName( _T( "Data Valid" ) );
 	m_voDataValid.SetObjectOwner( this );
+	m_voDataValid.setBucketized( true );
 	m_voDataValid.SetObjectDepth( GetPPQLength() + g_lPPQExtraBufferSize );
 	m_voDataValid.ResetObject();
-	m_voDataValid.SetDefaultValue( FALSE, TRUE );
-	m_voDataValid.SetValue( 1, FALSE );
+	m_voDataValid.SetDefaultValue( BOOL(false), true );
+	m_voDataValid.SetValue( BOOL(false), 1 );
 
 	if( !bFound )
 	{
 		pIOEntry = new SVIOEntryHostStruct;
 		pIOEntry->m_DeleteValueObject = false;
-		pIOEntry->m_pValueObject	= &m_voDataValid;
-		pIOEntry->m_pValueParent	= this;
+		pIOEntry->setObject(dynamic_cast<SVObjectClass*> (&m_voDataValid));
 		pIOEntry->m_ObjectType	= IO_DIGITAL_OUTPUT;
-		pIOEntry->m_Enabled		= TRUE;
+		pIOEntry->m_Enabled		= true;
 
 		AddOutput( pIOEntry );
 	}// end if
 
 	m_voACK.SetName( _T( "ACK" ) );
 	m_voACK.SetObjectOwner( this );
+	m_voACK.setBucketized( true );
 	m_voACK.SetObjectDepth( GetPPQLength() + g_lPPQExtraBufferSize );
 	m_voACK.ResetObject();
-	m_voACK.SetDefaultValue( FALSE, TRUE );
-	m_voACK.SetValue( 1, FALSE );
+	m_voACK.SetDefaultValue( BOOL(false), true );
+	m_voACK.SetValue( BOOL(false), 1 );
 
 	if( !bFound )
 	{
 		pIOEntry = new SVIOEntryHostStruct;
 		pIOEntry->m_DeleteValueObject = false;
-		pIOEntry->m_pValueObject	= &m_voACK;
-		pIOEntry->m_pValueParent	= this;
+		pIOEntry->setObject(dynamic_cast<SVObjectClass*> (&m_voACK));
 		pIOEntry->m_ObjectType	= IO_DIGITAL_OUTPUT;
-		pIOEntry->m_Enabled		= TRUE;
+		pIOEntry->m_Enabled		= true;
 
 		AddOutput( pIOEntry );
 	}// end if
 
 	m_voTriggerToggle.SetName( _T( "Trigger Toggle" ) );
 	m_voTriggerToggle.SetObjectOwner( this );
+	m_voTriggerToggle.setBucketized( true );
 	m_voTriggerToggle.SetObjectDepth( GetPPQLength() + g_lPPQExtraBufferSize );
 	m_voTriggerToggle.ResetObject();
-	m_voTriggerToggle.SetDefaultValue( TRUE, TRUE );
-	m_voTriggerToggle.SetValue( 1, TRUE );
+	m_voTriggerToggle.SetDefaultValue( BOOL(true), true );
+	m_voTriggerToggle.SetValue( BOOL(true), 1 );
 	m_TriggerToggle = true;
 
 	if( !bFound )
 	{
 		pIOEntry = new SVIOEntryHostStruct;
 		pIOEntry->m_DeleteValueObject = false;
-		pIOEntry->m_pValueObject	= &m_voTriggerToggle;
-		pIOEntry->m_pValueParent	= this;
+		pIOEntry->setObject(dynamic_cast<SVObjectClass*> (&m_voTriggerToggle));
 		pIOEntry->m_ObjectType	= IO_DIGITAL_OUTPUT;
-		pIOEntry->m_Enabled		= FALSE;
+		pIOEntry->m_Enabled		= false;
 
 		AddOutput( pIOEntry );
 	}// end if
 
 	m_voOutputToggle.SetName( _T( "Output Toggle" ) );
 	m_voOutputToggle.SetObjectOwner( this );
+	m_voOutputToggle.setBucketized( true );
 	m_voOutputToggle.SetObjectDepth( GetPPQLength() + g_lPPQExtraBufferSize );
 	m_voOutputToggle.ResetObject();
-	m_voOutputToggle.SetDefaultValue( TRUE, TRUE );
-	m_voOutputToggle.SetValue( 1, TRUE );
+	m_voOutputToggle.SetDefaultValue( BOOL(true), true );
+	m_voOutputToggle.SetValue( BOOL(true), 1 );
 	m_OutputToggle = true;
 
 	if( !bFound )
 	{
 		pIOEntry = new SVIOEntryHostStruct;
 		pIOEntry->m_DeleteValueObject = false;
-		pIOEntry->m_pValueObject	= &m_voOutputToggle;
-		pIOEntry->m_pValueParent	= this;
+		pIOEntry->setObject(dynamic_cast<SVObjectClass*> (&m_voOutputToggle));
 		pIOEntry->m_ObjectType	= IO_DIGITAL_OUTPUT;
-		pIOEntry->m_Enabled		= FALSE;
+		pIOEntry->m_Enabled		= false;
 
 		AddOutput( pIOEntry );
 	}// end if
@@ -2669,10 +2689,11 @@ BOOL SVPPQObject::AddDefaultOutputs()
 	// This value object is used as the first default PLC output.
 	m_voTriggerCount.SetName( _T( "Trigger Count" ) );
 	m_voTriggerCount.SetObjectOwner( this );
+	m_voTriggerCount.setBucketized( true );
 	m_voTriggerCount.SetObjectDepth( GetPPQLength() + g_lPPQExtraBufferSize );
 	m_voTriggerCount.ResetObject();
-	m_voTriggerCount.SetDefaultValue( 0L, TRUE );
-	m_voTriggerCount.SetValue( 1, 0L );
+	m_voTriggerCount.SetDefaultValue( 0L, true );
+	m_voTriggerCount.SetValue( 0L, 1 );
 
 	BasicValueObjectPtr pPpqLength =  m_PpqValues.getValueObject( SvOl::FqnPpqLength );
 	SVGUID PpqLengthUid = PpqBaseLengthUidGuid;
@@ -2696,7 +2717,7 @@ BOOL SVPPQObject::AddDefaultOutputs()
 	return TRUE;
 }// end AddDefaultOutputs
 
-BOOL SVPPQObject::GetAllOutputs( SVIOEntryHostStructPtrList& ppIOEntries ) const
+BOOL SVPPQObject::GetAllOutputs( SVIOEntryHostStructPtrVector& ppIOEntries ) const
 {
 	ppIOEntries = m_AllOutputs;
 
@@ -2719,14 +2740,16 @@ SVProductInfoStruct* SVPPQObject::IndexPPQ( SvTi::SVTriggerInfoStruct& p_rTrigge
 			l_pNewProduct->oTriggerInfo.m_PreviousTrigger = l_pPrevProduct->oTriggerInfo.m_BeginProcess;
 		}
 
-		SVString l_TriggerCount = SvUl_SF::Format( _T( "%ld" ), p_rTriggerInfo.lTriggerCount );
+		//This is faster than SvUl_SF::Format
+		TCHAR TriggerCount[50];
+		sprintf_s( TriggerCount, 50, _T( "%ld" ), p_rTriggerInfo.lTriggerCount );
 
 		l_pNewProduct->bTriggered = TRUE;
 
 		l_pNewProduct->m_ProductState += _T( "|" );
 		l_pNewProduct->m_ProductState += GetName();
 		l_pNewProduct->m_ProductState += _T( "|TRI=" );
-		l_pNewProduct->m_ProductState += l_TriggerCount;
+		l_pNewProduct->m_ProductState += TriggerCount;
 
 		l_pNewProduct->SetProductActive();
 
@@ -2791,12 +2814,12 @@ BOOL SVPPQObject::InitializeProduct( SVProductInfoStruct* p_pNewProduct, const S
 	// Set all IO input objects for this product to use the new input data index
 
 	// Reset all IO output objects for this product to use the new output data index
-	m_voNotInspected.SetValue(	p_pNewProduct->oPPQInfo.m_ResultDataDMIndexHandle.GetIndex(), TRUE );
-	m_voNAK.SetValue(			p_pNewProduct->oPPQInfo.m_ResultDataDMIndexHandle.GetIndex(), TRUE );
-	m_voMasterWarning.SetValue(	p_pNewProduct->oPPQInfo.m_ResultDataDMIndexHandle.GetIndex(), TRUE );
-	m_voMasterFault.SetValue(	p_pNewProduct->oPPQInfo.m_ResultDataDMIndexHandle.GetIndex(), TRUE );
-	m_voDataValid.SetValue(		p_pNewProduct->oPPQInfo.m_ResultDataDMIndexHandle.GetIndex(), FALSE );
-	m_voACK.SetValue(			p_pNewProduct->oPPQInfo.m_ResultDataDMIndexHandle.GetIndex(), FALSE );
+	m_voNotInspected.SetValue( BOOL(true), p_pNewProduct->oPPQInfo.m_ResultDataDMIndexHandle.GetIndex() );
+	m_voNAK.SetValue( BOOL(true),	p_pNewProduct->oPPQInfo.m_ResultDataDMIndexHandle.GetIndex() );
+	m_voMasterWarning.SetValue( BOOL(true), p_pNewProduct->oPPQInfo.m_ResultDataDMIndexHandle.GetIndex() );
+	m_voMasterFault.SetValue( BOOL(true), p_pNewProduct->oPPQInfo.m_ResultDataDMIndexHandle.GetIndex() );
+	m_voDataValid.SetValue(	BOOL(false), p_pNewProduct->oPPQInfo.m_ResultDataDMIndexHandle.GetIndex() );
+	m_voACK.SetValue( BOOL(false), p_pNewProduct->oPPQInfo.m_ResultDataDMIndexHandle.GetIndex() );
 	// End preparing the IO
 	// ************************************************************************
 
@@ -3122,41 +3145,41 @@ bool SVPPQObject::AddResultsToPPQ( long p_PPQIndex )
 		{
 			if( PRODUCT_NOT_INSPECTED & oState )
 			{
-				m_voACK.SetValue( lIndex, FALSE );
-				m_voNAK.SetValue( lIndex, TRUE );
-				m_voMasterFault.SetValue( lIndex, TRUE );
-				m_voMasterWarning.SetValue( lIndex, TRUE );
-				m_voNotInspected.SetValue( lIndex, TRUE );
+				m_voACK.SetValue( BOOL(false), lIndex );
+				m_voNAK.SetValue( BOOL(true), lIndex );
+				m_voMasterFault.SetValue( BOOL(true), lIndex );
+				m_voMasterWarning.SetValue( BOOL(true), lIndex );
+				m_voNotInspected.SetValue( BOOL(true), lIndex );
 
 				pProduct->m_ProductState += _T( "|NI" );
 			}// end if
 			else if( PRODUCT_NOT_ACKNOWLEDGED & oState )
 			{
-				m_voACK.SetValue( lIndex, FALSE );
-				m_voNAK.SetValue( lIndex, TRUE );
-				m_voMasterFault.SetValue( lIndex, TRUE );
-				m_voMasterWarning.SetValue( lIndex, TRUE );
-				m_voNotInspected.SetValue( lIndex, TRUE );
+				m_voACK.SetValue( BOOL(false), lIndex );
+				m_voNAK.SetValue( BOOL(true), lIndex );
+				m_voMasterFault.SetValue( BOOL(true), lIndex );
+				m_voMasterWarning.SetValue( BOOL(true), lIndex );
+				m_voNotInspected.SetValue( BOOL(true), lIndex );
 
 				pProduct->m_ProductState += _T( "|NAK" );
 			}// end else if
 			else if( PRODUCT_INSPECTION_DISABLED & oState )
 			{
-				m_voACK.SetValue( lIndex, TRUE );
-				m_voNAK.SetValue( lIndex, FALSE );
-				m_voMasterFault.SetValue( lIndex, TRUE );
-				m_voMasterWarning.SetValue( lIndex, TRUE );
-				m_voNotInspected.SetValue( lIndex, TRUE );
+				m_voACK.SetValue( BOOL(true), lIndex );
+				m_voNAK.SetValue( BOOL(false), lIndex );
+				m_voMasterFault.SetValue( BOOL(true), lIndex );
+				m_voMasterWarning.SetValue( BOOL(true), lIndex );
+				m_voNotInspected.SetValue( BOOL(true), lIndex );
 
 				pProduct->m_ProductState += _T( "|DISABLED" );
 			}// end else if
 			else
 			{
-				m_voACK.SetValue( lIndex, FALSE );
-				m_voNAK.SetValue( lIndex, TRUE );
-				m_voMasterFault.SetValue( lIndex, TRUE );
-				m_voMasterWarning.SetValue( lIndex, TRUE );
-				m_voNotInspected.SetValue( lIndex, TRUE );
+				m_voACK.SetValue( BOOL(false), lIndex );
+				m_voNAK.SetValue( BOOL(true), lIndex );
+				m_voMasterFault.SetValue( BOOL(true), lIndex );
+				m_voMasterWarning.SetValue( BOOL(true), lIndex );
+				m_voNotInspected.SetValue( BOOL(true), lIndex );
 
 				pProduct->m_ProductState += _T( "|E_UNKNOWN" );
 			}// end else
@@ -3165,41 +3188,41 @@ bool SVPPQObject::AddResultsToPPQ( long p_PPQIndex )
 		{
 			if( PRODUCT_INSPECTION_FAILED & oState )
 			{
-				m_voACK.SetValue( lIndex, TRUE );
-				m_voNAK.SetValue( lIndex, FALSE );
-				m_voMasterFault.SetValue( lIndex, TRUE );
-				m_voMasterWarning.SetValue( lIndex, TRUE );
-				m_voNotInspected.SetValue( lIndex, FALSE );
+				m_voACK.SetValue( BOOL(true), lIndex );
+				m_voNAK.SetValue( BOOL(false), lIndex );
+				m_voMasterFault.SetValue( BOOL(true), lIndex );
+				m_voMasterWarning.SetValue( BOOL(true), lIndex );
+				m_voNotInspected.SetValue( BOOL(false), lIndex );
 
 				pProduct->m_ProductState += _T( "|FAILED" );
 			}// end if
 			else if( PRODUCT_INSPECTION_WARNING & oState )
 			{
-				m_voACK.SetValue( lIndex, TRUE );
-				m_voNAK.SetValue( lIndex, FALSE );
-				m_voMasterFault.SetValue( lIndex, FALSE );
-				m_voMasterWarning.SetValue( lIndex, TRUE );
-				m_voNotInspected.SetValue( lIndex, FALSE );
+				m_voACK.SetValue( BOOL(true), lIndex );
+				m_voNAK.SetValue( BOOL(false), lIndex );
+				m_voMasterFault.SetValue( BOOL(false), lIndex );
+				m_voMasterWarning.SetValue( BOOL(true), lIndex );
+				m_voNotInspected.SetValue( BOOL(false), lIndex );
 
 				pProduct->m_ProductState += _T( "|WARNING" );
 			}// end else if
 			else if( PRODUCT_INSPECTION_PASSED & oState )
 			{
-				m_voACK.SetValue( lIndex, TRUE );
-				m_voNAK.SetValue( lIndex, FALSE );
-				m_voMasterFault.SetValue( lIndex, FALSE );
-				m_voMasterWarning.SetValue( lIndex, FALSE );
-				m_voNotInspected.SetValue( lIndex, FALSE );
+				m_voACK.SetValue( BOOL(true), lIndex );
+				m_voNAK.SetValue( BOOL(false), lIndex );
+				m_voMasterFault.SetValue( BOOL(false), lIndex );
+				m_voMasterWarning.SetValue( BOOL(false), lIndex );
+				m_voNotInspected.SetValue( BOOL(false), lIndex );
 
 				pProduct->m_ProductState += _T( "|PASSED" );
 			}// end else if
 			else
 			{
-				m_voACK.SetValue( lIndex, FALSE );
-				m_voNAK.SetValue( lIndex, TRUE );
-				m_voMasterFault.SetValue( lIndex, TRUE );
-				m_voMasterWarning.SetValue( lIndex, TRUE );
-				m_voNotInspected.SetValue( lIndex, TRUE );
+				m_voACK.SetValue( BOOL(false), lIndex );
+				m_voNAK.SetValue( BOOL(true), lIndex );
+				m_voMasterFault.SetValue( BOOL(true), lIndex );
+				m_voMasterWarning.SetValue( BOOL(true), lIndex );
+				m_voNotInspected.SetValue( BOOL(true), lIndex );
 
 				pProduct->m_ProductState += _T( "|S_UNKNOWN" );
 			}// end else
@@ -3215,7 +3238,7 @@ bool SVPPQObject::AddResultsToPPQ( long p_PPQIndex )
 		}// end for
 
 		// Set the Data Valid to true
-		m_voDataValid.SetValue( lIndex, bValid );
+		m_voDataValid.SetValue( bValid, lIndex );
 	}
 
 	return TRUE;
@@ -3387,12 +3410,12 @@ BOOL SVPPQObject::RecycleProductInfo( SVProductInfoStruct *pProduct )
 	{
 		if( -1 < pProduct->oPPQInfo.m_ResultDataDMIndexHandle.GetIndex() )
 		{
-			m_voNotInspected.SetValue( pProduct->oPPQInfo.m_ResultDataDMIndexHandle.GetIndex(), TRUE );
-			m_voNAK.SetValue( pProduct->oPPQInfo.m_ResultDataDMIndexHandle.GetIndex(), TRUE );
-			m_voMasterWarning.SetValue( pProduct->oPPQInfo.m_ResultDataDMIndexHandle.GetIndex(), TRUE );
-			m_voMasterFault.SetValue( pProduct->oPPQInfo.m_ResultDataDMIndexHandle.GetIndex(), TRUE );
-			m_voDataValid.SetValue( pProduct->oPPQInfo.m_ResultDataDMIndexHandle.GetIndex(), FALSE );
-			m_voACK.SetValue( pProduct->oPPQInfo.m_ResultDataDMIndexHandle.GetIndex(), FALSE );
+			m_voNotInspected.SetValue( BOOL(true), pProduct->oPPQInfo.m_ResultDataDMIndexHandle.GetIndex() );
+			m_voNAK.SetValue( BOOL(true), pProduct->oPPQInfo.m_ResultDataDMIndexHandle.GetIndex() );
+			m_voMasterWarning.SetValue( BOOL(true), pProduct->oPPQInfo.m_ResultDataDMIndexHandle.GetIndex() );
+			m_voMasterFault.SetValue( BOOL(true), pProduct->oPPQInfo.m_ResultDataDMIndexHandle.GetIndex() );
+			m_voDataValid.SetValue( BOOL(false), pProduct->oPPQInfo.m_ResultDataDMIndexHandle.GetIndex() );
+			m_voACK.SetValue( BOOL(false), pProduct->oPPQInfo.m_ResultDataDMIndexHandle.GetIndex() );
 		}
 
 		pProduct->InitProductInfo();
@@ -3661,7 +3684,7 @@ BOOL SVPPQObject::FinishTrigger( void *pCaller, SvTi::SVTriggerInfoStruct& p_rTr
 
 		m_TriggerToggle = ! m_TriggerToggle;
 
-		if( !( m_pTriggerToggle.empty() ) && m_pTriggerToggle->m_pValueObject )
+		if( !( m_pTriggerToggle.empty() ) && nullptr != m_pTriggerToggle->getObject() )
 		{
 			m_pOutputList->WriteOutputValue( m_pTriggerToggle, m_TriggerToggle );
 		}
@@ -3821,7 +3844,7 @@ bool SVPPQObject::IsObjectInPPQ( const SVObjectClass& object ) const
 
 	if (nullptr != inspectObject)
 	{
-		for (SVPPQInspectionProcessVector::const_iterator it = m_arInspections.begin(); it != m_arInspections.end(); ++it)
+		for (SVInspectionProcessVector::const_iterator it = m_arInspections.begin(); it != m_arInspections.end(); ++it)
 		{
 			if (inspectObject == (*it))
 			{
@@ -4083,7 +4106,7 @@ HRESULT SVPPQObject::ProcessTrigger( bool& p_rProcessed )
 					{
 						long lDataIndex = pProduct->oPPQInfo.m_ResultDataDMIndexHandle.GetIndex();
 
-						m_voTriggerCount.SetValue( lDataIndex, poppedFromQueue.m_TriggerInfo.lTriggerCount );
+						m_voTriggerCount.SetValue( poppedFromQueue.m_TriggerInfo.lTriggerCount, lDataIndex );
 
 						m_oNotifyInspectionsSet.insert( pProduct->ProcessCount() );
 
@@ -4778,7 +4801,7 @@ HRESULT SVPPQObject::GetProduct( SVProductInfoStruct& p_rProduct, long lProcessC
 
 void SVPPQObject::PersistInputs(SVObjectWriter& rWriter)
 {
-	SVIOEntryHostStructPtrList ppIOEntries;
+	SVIOEntryHostStructPtrVector ppIOEntries;
 	_variant_t l_svValue;
 	SVString l_svName;
 
@@ -4805,7 +4828,7 @@ void SVPPQObject::PersistInputs(SVObjectWriter& rWriter)
 					rWriter.WriteAttribute(CTAG_IO_TYPE, l_svValue);
 					l_svValue.Clear();
 
-					l_svValue.SetString( pIOEntry->m_pValueObject->GetName() );
+					l_svValue.SetString( pIOEntry->getObject()->GetName() );
 					rWriter.WriteAttribute(CTAG_ITEM_NAME, l_svValue);
 					l_svValue.Clear();
 
@@ -4825,17 +4848,17 @@ void SVPPQObject::PersistInputs(SVObjectWriter& rWriter)
 					rWriter.WriteAttribute(CTAG_IO_TYPE, l_svValue);
 					l_svValue.Clear();
 
-					l_svValue.SetString( pIOEntry->m_pValueObject->GetName() );
+					l_svValue.SetString( pIOEntry->getObject()->GetName() );
 					rWriter.WriteAttribute(CTAG_ITEM_NAME, l_svValue);
 					l_svValue.Clear();
 
-					SVRemoteInputObject* l_pRemote = nullptr;
+					SVRemoteInputObject* pRemote = nullptr;
 
-					m_pInputList->GetInput( pIOEntry->m_IOId, l_pRemote );
+					pRemote = dynamic_cast<SVRemoteInputObject*> (m_pInputList->GetInput( pIOEntry->m_IOId ));
 
-					if( nullptr != l_pRemote )
+					if( nullptr != pRemote )
 					{
-						l_svValue = l_pRemote->m_lIndex;
+						l_svValue = pRemote->m_lIndex;
 						rWriter.WriteAttribute(CTAG_REMOTE_INDEX, l_svValue);
 						l_svValue.Clear();
 					}
@@ -4844,9 +4867,9 @@ void SVPPQObject::PersistInputs(SVObjectWriter& rWriter)
 					rWriter.WriteAttribute(CTAG_PPQ_POSITION, l_svValue);
 					l_svValue.Clear();
 
-					if( nullptr != l_pRemote )
+					if( nullptr != pRemote )
 					{
-						l_pRemote->GetCache( l_svValue );
+						pRemote->GetCache( l_svValue );
 
 						if( l_svValue.vt != VT_EMPTY )
 						{
@@ -4889,18 +4912,6 @@ static bool CompareInspectionName(const SVString& name, const SVString& dottedNa
 	return false;
 }
 
-static HRESULT GetValueObject(const SVString& rName, SVValueObjectReference& rRefObject)
-{
-	SVObjectClass* pObject(nullptr);
-	HRESULT hr = SVObjectManagerClass::Instance().GetObjectByDottedName(rName, pObject);
-	if (nullptr != pObject)
-	{
-		rRefObject = SVValueObjectReference(pObject);
-		hr = S_OK;
-	}
-	return hr;
-}
-
 void SVPPQObject::SetMonitorList(const ActiveMonitorList& rActiveList)
 {
 	m_bActiveMonitorList = rActiveList.first;
@@ -4922,7 +4933,7 @@ void SVPPQObject::SetMonitorList(const ActiveMonitorList& rActiveList)
 
 		typedef std::pair<SVMonitorItemList::const_iterator, SVMonitorItemList::const_iterator> Bounds;
 
-		for (SVPPQInspectionProcessVector::iterator it = m_arInspections.begin(); it != m_arInspections.end(); ++it)
+		for (SVInspectionProcessVector::iterator it = m_arInspections.begin(); it != m_arInspections.end(); ++it)
 		{
 			SVInspectionProcess* pInspection = (*it);
 			if( nullptr != pInspection )
@@ -4963,7 +4974,7 @@ void SVPPQObject::SetMonitorList(const ActiveMonitorList& rActiveList)
 		SetRejectConditionList(SVMonitorItemList());
 
 		// Clear the MonitorList(s)
-		for (SVPPQInspectionProcessVector::iterator it = m_arInspections.begin(); it != m_arInspections.end(); ++it)
+		for (SVInspectionProcessVector::iterator it = m_arInspections.begin(); it != m_arInspections.end(); ++it)
 		{
 			SVInspectionProcess* pInspection = (*it);
 			if( nullptr != pInspection )
@@ -5202,10 +5213,10 @@ void SVPPQObject::SetRejectConditionList(const SVMonitorItemList& rRejectCondLis
 		SVGUID inspectionGuid = GetInspectionGuid(name);
 		if (!inspectionGuid.empty())
 		{
-			SVValueObjectReference l_RefObject;
-			if (S_OK == GetValueObject(name, l_RefObject))
+			SVObjectReference ObjectRef;
+			if (S_OK == SVObjectManagerClass::Instance().GetObjectByDottedName(name, ObjectRef) )
 			{
-				m_SharedMemoryItems.m_RejectConditionValues[inspectionGuid][name] = l_RefObject;
+				m_SharedMemoryItems.m_RejectConditionValues[inspectionGuid][name] = ObjectRef;
 			}
 			else
 			{
@@ -5324,7 +5335,7 @@ HRESULT SVPPQObject::CheckRejectCondition(const SVProductInfoStruct& rProduct, S
 		if (-1 != index)
 		{
 			const SvSml::SVSharedData& rData = rInspectionWriter.GetLastInspectedSlot(index);
-			for (SVFilterValueMap::const_iterator itItem = it->second.begin();itItem != it->second.end() && S_OK != hr;++itItem)
+			for (SVNameObjectMap::const_iterator itItem = it->second.begin();itItem != it->second.end() && S_OK != hr;++itItem)
 			{
 				// Find the named item in the Shared memory
 				const SvSml::SVValue& val = rData.FindValue(itItem->first.c_str());
@@ -5332,19 +5343,18 @@ HRESULT SVPPQObject::CheckRejectCondition(const SVProductInfoStruct& rProduct, S
 				{
 					// Get the data value and convert to double...
 					double dValue = 0.0;
-					const std::string& result = val.value;
 					// handle boolean, as std::stod doesn't like it
-					if ("TRUE" == result || "true" == result)
+					if ("TRUE" == val.value || "true" == val.value)
 					{
 						dValue = 1.0;
 					}
-					else if ("FALSE" == result || "false" == result)
+					else if ("FALSE" == val.value || "false" == val.value)
 					{
 						dValue = 0.0;
 					}
 					else
 					{
-						dValue = std::stod(result);
+						dValue = std::stod(val.value);
 					}
 					if (0.0 != dValue)
 					{

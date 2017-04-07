@@ -17,6 +17,7 @@
 #include "SVObjectLibrary\SVToolsetScriptTags.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "ObjectInterfaces/TextDefineSvOi.h"
+#include "SVContainerLibrary/SVObjectArrayClassTemplate.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -28,20 +29,20 @@ static char THIS_FILE[] = __FILE__;
 
 SV_IMPLEMENT_CLASS(SVDoubleValueObjectClass, SVDoubleValueObjectClassGuid);
 
-SVDoubleValueObjectClass::SVDoubleValueObjectClass(LPCTSTR ObjectName)
-				         : base(ObjectName) 
+SVDoubleValueObjectClass::SVDoubleValueObjectClass( LPCTSTR ObjectName )
+: SVValueObjectClass<double>( ObjectName )
 {
 	LocalInitialize();
 }
 
-SVDoubleValueObjectClass::SVDoubleValueObjectClass(SVObjectClass* POwner, int StringResourceID)
-				         : base(POwner, StringResourceID) 
+SVDoubleValueObjectClass::SVDoubleValueObjectClass( SVObjectClass* pOwner, int StringResourceID )
+: SVValueObjectClass<double>( pOwner, StringResourceID )
 {
 	LocalInitialize();
 }
 
 SVDoubleValueObjectClass::SVDoubleValueObjectClass( const SVDoubleValueObjectClass& rhs )
-	: base()
+: SVValueObjectClass<double>()
 {
 	LocalInitialize();
 	*this = rhs;
@@ -49,7 +50,7 @@ SVDoubleValueObjectClass::SVDoubleValueObjectClass( const SVDoubleValueObjectCla
 
 const SVDoubleValueObjectClass& SVDoubleValueObjectClass::operator = (const SVDoubleValueObjectClass& rhs)
 {
-	base::operator = (rhs);
+	__super::operator = (rhs);
 	return *this;
 }
 
@@ -65,20 +66,20 @@ void SVDoubleValueObjectClass::Persist(SVObjectWriter& rWriter)
 	SVValueObjectClass::Persist( rWriter );
 
 	// Get the Data Values (Member Info, Values)
-	_variant_t value(DefaultValue());
+	_variant_t Value( GetDefaultValue() );
 	
-	rWriter.WriteAttribute(scDefaultTag, value);
+	rWriter.WriteAttribute(scDefaultTag, Value);
 
 	rWriter.StartElement(scArrayElementsTag);
 	// Where does Object Depth Get put into the Script ??? (maybe at the SVObjectClass)
 	// Object Depth is implicit (it's the count of the values)
 	SVVariantList list;	
 
-	// for all elements in the array (m_iArraySize)
-	for( int i = 0; i < m_iArraySize; i++ )
+	// for all elements in the array
+	for( int i = 0; i < getArraySize(); i++ )
 	{
-		value.dblVal = Element(m_iLastSetIndex, i);
-		list.push_back(value);
+		GetValue( Value.dblVal, GetLastSetIndex(), i );
+		list.push_back(Value);
 	}
 	rWriter.WriteAttribute(scElementTag, list);
 	rWriter.EndElement();
@@ -89,115 +90,35 @@ void SVDoubleValueObjectClass::Persist(SVObjectWriter& rWriter)
 // This override provides the ability to correctly load script data from the legacy SVDoubleVectorObjectClass
 HRESULT SVDoubleValueObjectClass::SetObjectValue( SVObjectAttributeClass* pDataObject )
 {
-	HRESULT hr = S_FALSE;
+	HRESULT Result( E_FAIL );
 	
-	SvCl::SVObjectArrayClassTemplate<value_type> svArray;	// for default values
+	SvCl::SVObjectArrayClassTemplate<ValueType> svArray;	// for default values
 
-	if ( m_bLegacyVectorObjectCompatibility )
+	if ( isLegacyVectorObjectCompatibility() )
 	{
-		if ( SVObjectAttributeClassHelper::GetAttributeData(pDataObject, "bDefault", svArray) )
+		if ( pDataObject->GetAttributeData( _T("bDefault"), svArray) )
 		{
 			if ( svArray.GetSize() > 0 )
+			{
 				DefaultValue() = svArray[ svArray.GetSize()-1 ];
-			hr = S_OK;
-			return hr;
+			}
+			Result = S_OK;
+			return Result;
 		}
-		else if (    SVObjectAttributeClassHelper::GetAttributeData(pDataObject, "pArray", svArray)
-		          || SVObjectAttributeClassHelper::GetAttributeData(pDataObject, SvOi::cBucketTag, svArray) )
+		else if ( pDataObject->GetAttributeData( _T("pArray"), svArray )
+		          || pDataObject->GetAttributeData( SvOi::cBucketTag, svArray ) )
 		{
 			SetArraySize( static_cast<int>(svArray.size()) );
-			hr = SetArrayValues(1, svArray.begin(), svArray.end());
-			return hr;
+			Result = SetArrayValues( svArray.begin(), svArray.end(), 1);
+			return Result;
 		}
 	}
-	hr = base::SetObjectValue( pDataObject );
-	return hr;
+
+	Result = __super::SetObjectValue( pDataObject );
+	return Result;
 }
 
-HRESULT SVDoubleValueObjectClass::SetValueAt( int iBucket, int iIndex, const VARIANT& rvtValue )
-{
-	if ( VT_R8 == rvtValue.vt )
-	{
-		return base::SetValueAt(iBucket, iIndex, rvtValue.dblVal);
-	}
-	assert(false);
-	return S_FALSE;
-}
-
-HRESULT SVDoubleValueObjectClass::SetValueAt(int iBucket, int iIndex, const int value)
-{
-    return base::SetValueAt(iBucket, iIndex, (double) value);
-}
-
-HRESULT SVDoubleValueObjectClass::SetValueAt(int iBucket, int iIndex, const long value)
-{
-    return base::SetValueAt(iBucket, iIndex, (double) value);
-}
-
-HRESULT SVDoubleValueObjectClass::SetValueAt( int iBucket, int iIndex, const SVString& rValue )
-{
-	try
-	{
-		ValidateValue( iBucket, iIndex, rValue );
-		double dValue = atof( rValue.c_str() );
-		return base::SetValueAt(iBucket, iIndex, dValue );
-	}
-	catch(const SvStl::MessageContainer&)
-	{
-		assert(FALSE);
-		return S_FALSE;
-	}
-}
-
-HRESULT SVDoubleValueObjectClass::GetValueAt( int iBucket, int iIndex, long& rlValue ) const
-{
-	double dValue=0.0;
-
-	HRESULT hr = base::GetValueAt( iBucket, iIndex, dValue );
-	rlValue = static_cast<long>(dValue);
-
-	return hr;
-}
-
-HRESULT SVDoubleValueObjectClass::GetValueAt( int iBucket, int iIndex, DWORD& rdwValue ) const
-{
-	double dValue=0.0;
-
-	HRESULT hr = base::GetValueAt( iBucket, iIndex, dValue );
-	rdwValue = static_cast<unsigned long>(dValue);
-
-	return hr;
-}
-
-HRESULT SVDoubleValueObjectClass::GetValueAt( int iBucket, int iIndex, SVString& rValue) const
-{
-	double value = 0.0;
-
-	HRESULT hr = base::GetValueAt(iBucket, iIndex, value);
-	rValue = SvUl_SF::Format( _T("%lf"), value );
-
-	return hr;
-}
-
-HRESULT SVDoubleValueObjectClass::GetValueAt( int iBucket, int iIndex, VARIANT& rvtValue ) const
-{
-	double l_dValue=0;
-	_variant_t l_Temp;
-	l_Temp.Attach( rvtValue );
-	HRESULT hr = base::GetValueAt( iBucket, iIndex, l_dValue );
-	if( S_OK == hr )
-	{
-		l_Temp = l_dValue;
-	}
-	else
-	{
-		l_Temp.Clear();
-	}
-	rvtValue = l_Temp.Detach();
-	return hr;
-}
-
-void SVDoubleValueObjectClass::ValidateValue( int iBucket, int iIndex, const SVString& rValue ) const
+double SVDoubleValueObjectClass::ConvertString2Type( const SVString& rValue ) const
 {
 	SVString Digits = SvUl_SF::ValidateString( rValue, _T("-0123456789. ") );
 	if ( Digits != rValue )
@@ -208,12 +129,13 @@ void SVDoubleValueObjectClass::ValidateValue( int iBucket, int iIndex, const SVS
 		Exception.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_LinkedValue_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 		Exception.Throw();
 	}
-	base::ValidateValue( iBucket, iIndex, rValue );
+
+	return atof( rValue.c_str() );
 }
 
 void SVDoubleValueObjectClass::LocalInitialize()
 {
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVDoubleValueObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVDoubleValueObjectType;
 	DefaultValue() = 0.0;
 	if ( m_sLegacyScriptDefaultName.empty() )
 	{
@@ -221,6 +143,7 @@ void SVDoubleValueObjectClass::LocalInitialize()
 		m_sLegacyScriptArrayName = _T("pDArray");
 	}
 	SetTypeName( _T("Decimal") );
+	setOutputFormat( _T("%lf") );
 	InitializeBuckets();
 }
 

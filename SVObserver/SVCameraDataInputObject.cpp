@@ -16,11 +16,13 @@
 SVCameraDataInputObject::SVCameraDataInputObject(LPCSTR strObjectName)
 : SVInputObject(strObjectName)
 {
+	LocalInitialize();
 }
 
 SVCameraDataInputObject::SVCameraDataInputObject(SVObjectClass *pOwner, int StringResourceID)
 : SVInputObject(pOwner, StringResourceID)
 {
+	LocalInitialize();
 }
 
 SVCameraDataInputObject::~SVCameraDataInputObject()
@@ -34,3 +36,8 @@ HRESULT SVCameraDataInputObject::Read( _variant_t& p_rValue )
 	return l_Status;
 }
 
+void SVCameraDataInputObject::LocalInitialize()
+{
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVIoObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVCameraDataInputObjectType;
+}

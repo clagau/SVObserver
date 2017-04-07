@@ -179,7 +179,7 @@ public:
 	SVResultClass* GetResultObject(SVBlobFeatureEnum aFeatureIndex);
 	SVLongResultClass* GetBlobResultObject();
 
-	virtual bool onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+	virtual bool onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
 	virtual bool IsPtOverResult( const POINT& rPoint ) override;
 	virtual	void DisplayAnalyzerResult() override;
@@ -192,11 +192,11 @@ public:
 /*- manipulating the enabled features configuration.                           */
 /*- msvPersistantFeaturesEnabled is required to preserve the values during     */
 /*- scripting. ----------------------------------------------------------------*/
-	SVStringValueObjectClass     msvPersistantFeaturesEnabled;
-	TCHAR                        msvszFeaturesEnabled [SV_NUMBER_OF_BLOB_FEATURES + 1]; // Null Terminated
+	SVStringValueObjectClass     m_PersistantFeaturesEnabled;
+	TCHAR                        m_FeaturesEnabled [SV_NUMBER_OF_BLOB_FEATURES + 1]; // Null Terminated
 /*- End of ENABLED FEATURES. --------------------------------------------------*/
 
-	SVDoubleValueObjectClass     msvValue [SV_NUMBER_OF_BLOB_FEATURES];
+	SVDoubleValueObjectClass     m_Value [SV_NUMBER_OF_BLOB_FEATURES];
 	GUID                         m_guidResults[ SV_NUMBER_OF_BLOB_FEATURES ];
 
 /*- msvPersistantNbrOfBlobs ---------------------------------------------------*/
@@ -211,10 +211,10 @@ public:
 /* msvSortFeature -------------------------------------------------------------*/
 /* MIL value from the msvlMILFeatureDef array. This value determins which      */
 /* feature should be sorted on. -----------------------------------------------*/
-	SVLongValueObjectClass       msvSortFeature;
-	SVBoolValueObjectClass       msvSortAscending;
+	SVLongValueObjectClass       m_SortFeature;
+	SVBoolValueObjectClass       m_SortAscending;
 // Exclude the Failed blobs from the result list.
-	SVBoolValueObjectClass       msvbExcludeFailed;
+	SVBoolValueObjectClass       m_bExcludeFailed;
 
 	SVLongValueObjectClass       m_lvoNumberOfBlobsFound;
 	long                         m_lNumberOfBlobsFound;
@@ -230,10 +230,10 @@ public:
 /*- data. ---------------------------------------------------------------------*/
 	SVVector< long > msvlSortMap;
 
-	DWORD                        msvlDefaultAttributes; 
+	DWORD                        m_DefaultAttributes; 
 
-	SVMatroxBlobFeatureList      msvFeatureListID;
-	SVMatroxBlobResult           msvResultBufferID;
+	SVMatroxBlobFeatureList      m_FeatureListID;
+	SVMatroxBlobResult           m_ResultBufferID;
 
 	SVEnumerateValueObjectClass  m_colorBlobEnumValue;
 
@@ -246,7 +246,7 @@ public:
 	DoubleSortValueObject* m_ResultTableColumnValueObjects[SV_NUMBER_OF_BLOB_FEATURES];
 
 protected:
-	virtual HRESULT onCollectOverlays(SVImageClass* p_pImage, SVExtentMultiLineStructCArray& p_rMultiLineArray ) override;
+	virtual HRESULT onCollectOverlays(SVImageClass* p_pImage, SVExtentMultiLineStructVector& p_rMultiLineArray ) override;
 
 /*- MapQuickSort () ----------------------------------------------------------*/
 /*- This should not be called directly, but through SortBlobs () -------------*/

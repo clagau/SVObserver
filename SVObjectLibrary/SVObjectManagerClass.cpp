@@ -15,7 +15,6 @@
 #include "DependencyManager.h"
 #include "ObjectInterfaces/IObjectManager.h"
 #include "ObjectInterfaces/IObjectClass.h"
-#include "ObjectInterfaces/IValueObject.h"
 #include "ObjectInterfaces/ISVImage.h"
 #include "ObjectInterfaces/ErrorNumbers.h"
 #include "SVSystemLibrary/SVAutoLockAndReleaseTemplate.h"
@@ -299,9 +298,9 @@ HRESULT SVObjectManagerClass::GetObjectByDottedName( const SVString& rFullName, 
 
 	Status = GetObjectByDottedName( rFullName, ObjectRef );
 
-	if( nullptr != ObjectRef.Object() )
+	if( nullptr != ObjectRef.getObject() )
 	{
-		rObjectID = ObjectRef.Object()->GetUniqueObjectID();
+		rObjectID = ObjectRef.getObject()->GetUniqueObjectID();
 	}
 	else
 	{
@@ -324,9 +323,9 @@ HRESULT SVObjectManagerClass::GetObjectByDottedName( const SVString& rFullName, 
 
 	Result = GetObjectByDottedName( rFullName, ObjectRef );
 
-	if( nullptr != ObjectRef.Object() )
+	if( nullptr != ObjectRef.getObject() )
 	{
-		rpObject = ObjectRef.Object();
+		rpObject = ObjectRef.getObject();
 	}
 	else
 	{
@@ -429,7 +428,7 @@ HRESULT SVObjectManagerClass::GetObjectByDottedName( const SVString& rFullName, 
 		rObjectRef = SVObjectReference();
 	}
 
-	if( S_OK == Result && nullptr == rObjectRef.Object() )
+	if( S_OK == Result && nullptr == rObjectRef.getObject() )
 	{
 		Result = E_FAIL;
 	}
@@ -461,7 +460,7 @@ BOOL SVObjectManagerClass::CreateUniqueObjectID( SVObjectClass* pObject )
 				if( Result )
 				{
 					pUniqueObject->m_pObject = pObject;
-					pObject->m_outObjectInfo.UniqueObjectID = pUniqueObject->m_ObjectUID; 
+					pObject->m_outObjectInfo.m_UniqueObjectID = pUniqueObject->m_ObjectUID; 
 					m_UniqueObjectEntries[ pUniqueObject->m_ObjectUID ] = pUniqueObject;
 
 					SvOl::DependencyManager::Instance().Add( pUniqueObject->m_ObjectUID );
@@ -491,7 +490,7 @@ BOOL SVObjectManagerClass::OpenUniqueObjectID( SVObjectClass* pObject )
 
 		if( Result )
 		{
-			SVUniqueObjectEntryStructPtr pUniqueObject = getUniqueObjectEntry( pObject->m_outObjectInfo.UniqueObjectID );
+			SVUniqueObjectEntryStructPtr pUniqueObject = getUniqueObjectEntry( pObject->m_outObjectInfo.m_UniqueObjectID );
 
 			Result = ( pUniqueObject.empty() );
 
@@ -504,7 +503,7 @@ BOOL SVObjectManagerClass::OpenUniqueObjectID( SVObjectClass* pObject )
 				if( Result )
 				{
 					pUniqueObject->m_pObject = pObject;
-					pUniqueObject->m_ObjectUID = pObject->m_outObjectInfo.UniqueObjectID; 
+					pUniqueObject->m_ObjectUID = pObject->m_outObjectInfo.m_UniqueObjectID; 
 					m_UniqueObjectEntries[ pUniqueObject->m_ObjectUID ] = pUniqueObject;
 
 					SvOl::DependencyManager::Instance().Add( pUniqueObject->m_ObjectUID );
@@ -556,7 +555,7 @@ BOOL SVObjectManagerClass::ChangeUniqueObjectID( SVObjectClass* pObject, const S
 {
 	if(	SV_GUID_NULL != rNewGuid && CloseUniqueObjectID( pObject ) )
 	{
-		pObject->m_outObjectInfo.UniqueObjectID = rNewGuid;
+		pObject->m_outObjectInfo.m_UniqueObjectID = rNewGuid;
 		BOOL bRetVal = OpenUniqueObjectID( pObject );
 
 		// Change ObjectID setting in private input interface...
@@ -1859,13 +1858,6 @@ SvOi::IObjectClass* SvOi::getObject( const SVGUID& rObjectID )
 SvOi::IObjectClass* SvOi::FindObject(const SVGUID& rParentID, const SVObjectTypeInfoStruct& rInfo)
 {
 	return SVObjectManagerClass::Instance().getFirstObject(rParentID, rInfo);
-}
-
-SvOi::IValueObject* SvOi::FindValueObject(const SVGUID& rParentID, const SVObjectTypeInfoStruct& rInfo)
-{
-	SvOi::IObjectClass* pObject = SvOi::FindObject(rParentID, rInfo);
-	
-	return dynamic_cast<SvOi::IValueObject*> (pObject);
 }
 
 SvOi::ISVImage* SvOi::FindImageObject(const SVGUID& rParentID, const SVObjectTypeInfoStruct& rInfo)

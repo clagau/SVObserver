@@ -17,12 +17,22 @@
 
 class SVCameraDataInputObject : public SVInputObject
 {
+#pragma region Constructor
 public:
 	SVCameraDataInputObject(LPCSTR strObjectName);
 	SVCameraDataInputObject(SVObjectClass *pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVCAMERADATAINPUTOBJECT);
 
 	virtual ~SVCameraDataInputObject();
+#pragma endregion Constructor
 
+#pragma region Public Methods
+public:
 	virtual HRESULT Read(_variant_t& p_rValue) override;
+#pragma endregion Public Methods
+
+#pragma region Private Methods
+private:
+	void LocalInitialize();
+#pragma endregion Private Methods
 };
 

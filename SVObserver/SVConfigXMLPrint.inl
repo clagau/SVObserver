@@ -10,7 +10,6 @@
 //******************************************************************************
 
 #pragma region Includes
-#include "SVObjectLibrary/SVObjectLibrary.h"
 #include "SVUtilityLibrary/SVStringConversions.h"
 #include "SVBlobAnalyzer.h"
 #include "SVResultDouble.h"
@@ -18,6 +17,7 @@
 #include "RemoteMonitorListHelper.h"
 #include "RootObject.h"
 #include "SVObserver.h"
+#include "ObjectInterfaces/IValueObject.h"
 #pragma endregion Includes
 
 std::pair<GUID **, size_t> NonPrintGuids();
@@ -519,7 +519,7 @@ inline void SVConfigXMLPrint::WriteResultIO(Writer writer) const
 	{
 		SVPPQObject				*pPPQ;
 		SVDigitalOutputObject	*pDigOutput;
-		SVIOEntryHostStructPtrList ppIOEntries;
+		SVIOEntryHostStructPtrVector ppIOEntries;
 		long lPPQSize = pConfig->GetPPQCount();
 		
 		// Print Result Output title...
@@ -608,7 +608,7 @@ inline void SVConfigXMLPrint::WriteModuleIO(Writer writer) const
 	{
 		SVInputObjectList* pInputList = nullptr;
 		SVDigitalInputObject	*pDigInput;
-		SVIOEntryHostStructPtrList ppIOEntries;
+		SVIOEntryHostStructPtrVector ppIOEntries;
 		
 		// Get list of available inputs
 		if ( nullptr != pConfig ) { pInputList = pConfig->GetInputObjectList(); }
@@ -867,7 +867,7 @@ inline void SVConfigXMLPrint::WritePPQBar(Writer writer) const
 				}
 				
 				long					lIOEntries;
-				SVIOEntryHostStructPtrList ppIOEntries;
+				SVIOEntryHostStructPtrVector ppIOEntries;
 				
 				pPPQ->GetAllInputs( ppIOEntries );
 
@@ -895,9 +895,9 @@ inline void SVConfigXMLPrint::WritePPQBar(Writer writer) const
 						}
 						else
 						{
-							if ( ppIOEntries[intIOEntry]->m_pValueObject->IsValid() )
+							if ( ppIOEntries[intIOEntry]->getObject()->IsValid() )
 							{
-								writer->WriteStartElement(nullptr, SvUl::to_utf16(ppIOEntries[intIOEntry]->m_pValueObject->GetName(), cp_dflt).c_str(), nullptr);
+								writer->WriteStartElement(nullptr, SvUl::to_utf16(ppIOEntries[intIOEntry]->getObject()->GetName(), cp_dflt).c_str(), nullptr);
 								bValid = true;
 							} // end if
 						} //end else
@@ -921,7 +921,7 @@ inline void SVConfigXMLPrint::WritePPQBar(Writer writer) const
 
 inline std::wstring utf16(const SVString & str) { return SvUl::to_utf16(str.c_str(), cp_dflt); }
 
-inline void SVConfigXMLPrint::WriteValueObject( Writer writer, SVValueObjectClass* pObj ) const
+inline void SVConfigXMLPrint::WriteValueObject( Writer writer, SVObjectClass* pObj ) const
 {
 	if ( pObj->ObjectAttributesAllowed() & SV_PRINTABLE )
 	{
@@ -938,7 +938,8 @@ inline void SVConfigXMLPrint::WriteValueObject( Writer writer, SVValueObjectClas
 		}
 		else
 		{
-			bGotValue = (S_OK == pObj->GetValue( sValue ));
+			SvOi::IValueObject* pValueObject = dynamic_cast<SvOi::IValueObject*> (pObj);
+			bGotValue = (S_OK == pValueObject->getValue( sValue ));
 		}
 
 		if ( !bGotValue || sValue.empty())
@@ -951,7 +952,7 @@ inline void SVConfigXMLPrint::WriteValueObject( Writer writer, SVValueObjectClas
 		}
 
 		writer->WriteEndElement();
-	}   // end if ( pObj->uObjectAttributesAllowed & SV_PRINTABLE )
+	}
 }
 
 inline void SVConfigXMLPrint::WriteTool(Writer writer, SVToolClass * ts) const
@@ -975,7 +976,7 @@ inline void SVConfigXMLPrint::WriteTool(Writer writer, SVToolClass * ts) const
 
 				if( l_psvImageInfo->IsConnected() )
 				{
-					pCurrentSourceImage = dynamic_cast <SVImageClass*> (l_psvImageInfo->GetInputObjectInfo().PObject);
+					pCurrentSourceImage = dynamic_cast <SVImageClass*> (l_psvImageInfo->GetInputObjectInfo().m_pObject);
 
 					WriteValueObject(writer, L"Property",  utf16(SvUl_SF::LoadSVString(IDS_IMAGE_SOURCE_STRING)), SvUl::to_utf16(pCurrentSourceImage->GetCompleteObjectNameToObjectType().c_str(), cp_dflt).c_str());
 				}
@@ -1034,7 +1035,7 @@ inline void SVConfigXMLPrint::WriteArchiveTool(Writer writer, SVArchiveTool * ar
 		for (i = 0; i < s; i++)
 		{
 			pRecord = ar->m_arrayResultsInfoObjectsToArchive.GetAt(i);
-			if (nullptr != pRecord->GetObjectReference().Object())
+			if (nullptr != pRecord->GetObjectReference().getObject())
 			{
 				writer->WriteStartElement(nullptr, L"Result", nullptr);
 				writer->WriteAttributeString(nullptr, L"Number", nullptr, _itow(i + 1, buff, 10));
@@ -1065,26 +1066,25 @@ inline void SVConfigXMLPrint::WriteArchiveTool(Writer writer, SVArchiveTool * ar
 	}
 }
 
-inline void SVConfigXMLPrint::WriteObject( Writer writer, SVObjectClass* pObj ) const
+inline void SVConfigXMLPrint::WriteObject( Writer writer, SVObjectClass* pObject ) const
 {
     SVObserverApp* pApp = dynamic_cast <SVObserverApp*> (AfxGetApp());
     int      nFirstHeight   = 0;
     int      nLastHeight    = 0;
 	
 	SVString sLabel, sValue;
-    SVString  strType   = pObj->GetObjectName();
-    SVString  strName   = pObj->GetName();
+    SVString  strType   = pObject->GetObjectName();
+    SVString  strName   = pObject->GetName();
 	wchar_t buff[64];
 	
-    GUID     guidObjID = pObj->GetClassID();
+    GUID     guidObjID = pObject->GetClassID();
 	
 	BOOL	bWriteToolExtents = FALSE;		// Sri 2/17/00
 	
-	SVValueObjectClass* pValueObject = dynamic_cast<SVValueObjectClass*> (pObj);
 	// If object is a value object, get embedded ID.
-	if (nullptr != pValueObject)
+	if( nullptr != dynamic_cast<SvOi::IValueObject*> (pObject)  )
 	{
-		guidObjID = pValueObject->GetEmbeddedID();
+		guidObjID = pObject->GetEmbeddedID();
 	}
 	
 	std::pair<GUID**, size_t> nPrs = NonPrintGuids();
@@ -1105,22 +1105,26 @@ inline void SVConfigXMLPrint::WriteObject( Writer writer, SVObjectClass* pObj ) 
 	}	
 	
 	// If object is a value object, print name and value.
-	if ( nullptr != pValueObject )
+	if( nullptr != dynamic_cast<SvOi::IValueObject*> (pObject) )
 	{
-		WriteValueObject(writer, pValueObject);
+		WriteValueObject(writer, pObject);
 	}
 	else
 	{
 		do
 		{
-			if ( dynamic_cast <SVShapeMaskHelperClass*> (pObj) )
-				if ( !( pObj->ObjectAttributesAllowed() & SV_PRINTABLE) )	// EB 20050818 - hack this instead of doing it right
+			if ( dynamic_cast <SVShapeMaskHelperClass*> (pObject) )
+			{
+				if ( !( pObject->ObjectAttributesAllowed() & SV_PRINTABLE) )	// EB 20050818 - hack this instead of doing it right
+				{
 					break;
+				}
+			}
 
-			writer->WriteStartElement(nullptr, SvUl::to_utf16(pObj->GetClassName(), cp_dflt).c_str(), nullptr);
-			std::wstring objName = SvUl::to_utf16(pObj->GetName(), cp_dflt);
+			writer->WriteStartElement(nullptr, SvUl::to_utf16(pObject->GetClassName(), cp_dflt).c_str(), nullptr);
+			std::wstring objName = SvUl::to_utf16(pObject->GetName(), cp_dflt);
 			writer->WriteAttributeString(nullptr,XML_Name, nullptr, objName.c_str());
-			SVToolClass* pTool = dynamic_cast<SVToolClass*> (pObj);
+			SVToolClass* pTool = dynamic_cast<SVToolClass*> (pObject);
 			if ( nullptr != pTool )
 			{
 				// Increment even if disabled, to maintain count.  Starts with zero, so for first
@@ -1143,15 +1147,15 @@ inline void SVConfigXMLPrint::WriteObject( Writer writer, SVObjectClass* pObj ) 
 				WriteTool(writer, pTool);
 			} 
 			
-			if ( SVArchiveTool* pArchiveTool = dynamic_cast <SVArchiveTool*> (pObj) )
+			if ( SVArchiveTool* pArchiveTool = dynamic_cast <SVArchiveTool*> (pObject) )
 			{
 				WriteArchiveTool(writer, pArchiveTool);
 			}
 			
-			if ( SVStatisticsToolClass* pStatisticsTool = dynamic_cast<SVStatisticsToolClass*> (pObj) )
+			if ( SVStatisticsToolClass* pStatisticsTool = dynamic_cast<SVStatisticsToolClass*> (pObject) )
 			{
 				SVObjectReference refObject = pStatisticsTool->GetVariableSelected();
-				if (refObject.Object())
+				if (refObject.getObject())
 				{
 					writer->WriteStartElement(nullptr,  L"Variable", nullptr);
 					writer->WriteAttributeString(nullptr,XML_Name, nullptr, utf16(refObject.GetName()).c_str());
@@ -1159,7 +1163,7 @@ inline void SVConfigXMLPrint::WriteObject( Writer writer, SVObjectClass* pObj ) 
 				}
 			}
 			
-			if (SVUserMaskOperatorClass* maskObj = dynamic_cast <SVUserMaskOperatorClass*>( pObj ))
+			if (SVUserMaskOperatorClass* maskObj = dynamic_cast <SVUserMaskOperatorClass*>( pObject ))
 			{
 				if ( nullptr != maskObj )
 				{
@@ -1171,16 +1175,15 @@ inline void SVConfigXMLPrint::WriteObject( Writer writer, SVObjectClass* pObj ) 
 				}
 			}
 
-			if (SVDoubleResultClass* pBlobResult = dynamic_cast<SVDoubleResultClass*>(pObj))
+			if (SVDoubleResultClass* pBlobResult = dynamic_cast<SVDoubleResultClass*>(pObject))
 			{
 				if (SV_IS_KIND_OF(pBlobResult->GetOwner(),SVBlobAnalyzerClass))
 				{  
 					sLabel = SvUl_SF::LoadSVString(IDS_BLOB_FEATURE_DEFAULT_VALUE) + _T(":");
-					SVDoubleValueObjectClass* pDoubleValueObj = pBlobResult->getInputDouble();
+					const SVDoubleValueObjectClass* pDoubleValueObj = dynamic_cast<const SVDoubleValueObjectClass*> (pBlobResult->getInput());
 					if ( pDoubleValueObj )
 					{
-						double dVal;
-						HRESULT hr = pDoubleValueObj->GetDefaultValue(dVal);
+						double dVal = pDoubleValueObj->GetDefaultValue();
 						sValue = SvUl_SF::Format(_T("%lf"), dVal);
 						//ptCurPos.x   = (nIndentLevel + 1) * m_shortTabPixels;
 						//PrintValueObject(pDC, ptCurPos, utf16(sLabel), utf16(sValue));
@@ -1191,9 +1194,9 @@ inline void SVConfigXMLPrint::WriteObject( Writer writer, SVObjectClass* pObj ) 
 				}
 			}
 
-			if (SV_IS_KIND_OF(pObj, SVTaskObjectClass))
+			if (SV_IS_KIND_OF(pObject, SVTaskObjectClass))
 			{
-				if ( SVEquationClass* pEquation = dynamic_cast <SVEquationClass*> (pObj) )
+				if ( SVEquationClass* pEquation = dynamic_cast <SVEquationClass*> (pObject) )
 				{
 					sValue = pEquation->GetEquationText();
 		
@@ -1204,11 +1207,11 @@ inline void SVConfigXMLPrint::WriteObject( Writer writer, SVObjectClass* pObj ) 
 					}
 					WriteValueObject(writer, L"Equation", utf16( sLabel ), utf16( sValue ));
 				}
-				WriteInputOutputList(writer, pObj);
+				WriteInputOutputList(writer, pObject);
 			} 
 
-			WriteFriends(writer, pObj);
-			WriteChildren(writer, pObj);
+			WriteFriends(writer, pObject);
+			WriteChildren(writer, pObject);
 			writer->WriteComment(objName.c_str());
 			writer->WriteEndElement();
 		} while (false);// end do
@@ -1309,9 +1312,9 @@ void SVConfigXMLPrint::WriteFriends( Writer writer, SVObjectClass* pObj ) const
 		{
 			const SVObjectInfoStruct& rObjInfo = rFriendList[nCnt];
 			
-			if (rObjInfo.PObject)
+			if (rObjInfo.m_pObject)
 			{
-				WriteObject(writer, rObjInfo.PObject);
+				WriteObject(writer, rObjInfo.m_pObject);
 			}  // end if( rObjInfo )
 		}  // end for( int nCnt = 0; nCnt < sz; nCnt++ )
 		writer->WriteEndElement();
@@ -1330,9 +1333,9 @@ void SVConfigXMLPrint::WriteInputOutputList( Writer writer, SVObjectClass* pObj 
 	{
 		SVOutObjectInfoStruct* pOutput = l_OutputList.GetAt(nCnt);
 		
-		if (pOutput->PObject->GetOwner() == pObj)
+		if (pOutput->m_pObject->GetOwner() == pObj)
 		{
-			WriteObject(writer, pOutput->PObject);
+			WriteObject(writer, pOutput->m_pObject);
 		}  // end if( pOutput->PObject->GetOwner () == pObj )
 	}  // end for( int nCnt = 0; nCnt < pOutputInfoList->GetSize(); nCnt++ )
 }  // end function void SVConfigXMLPrint:::PrintInputOutputList( ... )

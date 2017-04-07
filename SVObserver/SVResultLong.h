@@ -30,26 +30,11 @@ public:
 	const GUID & GetInputEmbeddedID() const;
 
 protected:
-	virtual bool onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
-
-	SVLongValueObjectClass* getInputLong();
+	virtual bool onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
 // Data Element(s):
 protected:
 	// Output
-	SVLongValueObjectClass		value;
+	SVLongValueObjectClass m_Value;
 };
-
-inline const GUID & SVLongResultClass::GetInputEmbeddedID() const
-{
-	const SVLongValueObjectClass * l_vo = static_cast <SVLongValueObjectClass *> (const_cast<SVLongResultClass *>(this)->getInput());
-	if (l_vo)
-	{
-		return l_vo->GetEmbeddedID();
-	}
-	else
-	{
-		return SV_GUID_NULL;
-	}
-}
 

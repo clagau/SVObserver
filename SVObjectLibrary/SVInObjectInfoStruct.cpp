@@ -82,7 +82,7 @@ void SVInObjectInfoStruct::SetInputObject( const SVString& p_rName )
 
 void SVInObjectInfoStruct::SetInputObject( const SVGUID& p_rObjectID )
 {
-	if( p_rObjectID != m_InputObjectInfo.UniqueObjectID )
+	if( p_rObjectID != m_InputObjectInfo.m_UniqueObjectID )
 	{
 		m_IsConnected = false;
 		m_InputObjectInfo.SetObject( p_rObjectID );
@@ -93,14 +93,14 @@ void SVInObjectInfoStruct::SetInputObject( SVObjectClass* p_pObject )
 {
 	m_InputObjectInfo.SetObject( p_pObject );
 
-	m_IsConnected = ( nullptr != m_InputObjectInfo.PObject );
+	m_IsConnected = ( nullptr != m_InputObjectInfo.m_pObject );
 }
 
 void SVInObjectInfoStruct::SetInputObject( const SVObjectReference& p_rObject )
 {
 	m_InputObjectInfo.SetObject( p_rObject );
 
-	m_IsConnected = ( nullptr != m_InputObjectInfo.PObject );
+	m_IsConnected = ( nullptr != m_InputObjectInfo.m_pObject );
 }
 
 const SVString& SVInObjectInfoStruct::GetInputName() const

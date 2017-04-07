@@ -54,24 +54,25 @@ BOOL SVShiftTool::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 
 	l_Status &= (S_OK == m_OutputImage.InitializeImage( GetImageInput() ) );
 
-	m_SourceImageName.ObjectAttributesAllowedRef() &= ( ~SV_REMOTELY_SETABLE & ~SV_SETABLE_ONLINE );
-	m_TranslationX.ObjectAttributesAllowedRef() &= ( ~SV_REMOTELY_SETABLE & ~SV_SETABLE_ONLINE & ~SV_PRINTABLE );
-	m_TranslationY.ObjectAttributesAllowedRef() &= ( ~SV_REMOTELY_SETABLE & ~SV_SETABLE_ONLINE & ~SV_PRINTABLE );
-	m_LearnedTranslationX.ObjectAttributesAllowedRef() |= ( SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE | SV_PRINTABLE );
-	m_LearnedTranslationY.ObjectAttributesAllowedRef() |= ( SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE | SV_PRINTABLE );
-	m_DisplacementX.ObjectAttributesAllowedRef() &= ( ~SV_REMOTELY_SETABLE & ~SV_SETABLE_ONLINE & ~SV_PRINTABLE );
-	m_DisplacementY.ObjectAttributesAllowedRef() &= ( ~SV_REMOTELY_SETABLE & ~SV_SETABLE_ONLINE & ~SV_PRINTABLE );
-	m_LeftResult.ObjectAttributesAllowedRef() &= ( ~SV_REMOTELY_SETABLE & ~SV_SETABLE_ONLINE & ~SV_PRINTABLE );
-	m_TopResult.ObjectAttributesAllowedRef() &= ( ~SV_REMOTELY_SETABLE & ~SV_SETABLE_ONLINE & ~SV_PRINTABLE );
+	const UINT cAttributes = SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE | SV_PRINTABLE;
+	m_SourceImageName.SetObjectAttributesAllowed( SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE, SvOi::SetAttributeType::RemoveAttribute );
+	m_TranslationX.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::RemoveAttribute );
+	m_TranslationY.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::RemoveAttribute );
+	m_LearnedTranslationX.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
+	m_LearnedTranslationY.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
+	m_DisplacementX.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::RemoveAttribute );
+	m_DisplacementY.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::RemoveAttribute );
+	m_LeftResult.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::RemoveAttribute );
+	m_TopResult.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::RemoveAttribute );
 
-	m_ExtentRight.ObjectAttributesAllowedRef() &= (~SV_PRINTABLE);
-	m_ExtentBottom.ObjectAttributesAllowedRef() &= (~SV_PRINTABLE);
+	m_ExtentRight.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_ExtentBottom.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 	
-	m_LearnedTranslationX.ObjectAttributesAllowedRef() &= (~SV_EXTENT_OBJECT);
-	m_LearnedTranslationY.ObjectAttributesAllowedRef() &= (~SV_EXTENT_OBJECT);
+	m_LearnedTranslationX.SetObjectAttributesAllowed( SV_EXTENT_OBJECT, SvOi::SetAttributeType::RemoveAttribute );
+	m_LearnedTranslationY.SetObjectAttributesAllowed( SV_EXTENT_OBJECT, SvOi::SetAttributeType::RemoveAttribute );
 
 	// This value object is obsolete, hide it.
-	m_EnableSourceImageExtents.ObjectAttributesAllowedRef() = SV_HIDDEN;
+	m_EnableSourceImageExtents.SetObjectAttributesAllowed( SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
 
 	m_isCreated = l_Status;
 
@@ -96,7 +97,7 @@ bool SVShiftTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 		l_ParentGuid = l_pInputImage->GetUniqueObjectID();
 
 		//Set input name to source image name to display it in result picker
-		m_SourceImageName.SetValue( 0/*Static value, this parameter will not used*/, SVString( l_pInputImage->GetCompleteName() ) );
+		m_SourceImageName.SetValue( l_pInputImage->GetCompleteName() );
 	}
 
 	m_OutputImage.UpdateImage( l_ParentGuid );
@@ -116,7 +117,7 @@ HRESULT SVShiftTool::SetImageExtentToParent( unsigned long p_ulIndex )
 	return l_hrOk;
 }
 
-SVStaticStringValueObjectClass* SVShiftTool::GetInputImageNames()
+SVStringValueObjectClass* SVShiftTool::GetInputImageNames()
 {
 	return &m_SourceImageName;
 }
@@ -153,39 +154,39 @@ bool SVShiftTool::DoesObjectHaveExtents() const
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
-bool SVShiftTool::onRun( SVRunStatusClass& p_rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVShiftTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	//@WARNING[MZA][7.50][17.01.2017] Not sure if we need to check ValidateLocal in Run-mode, maybe it is enough to check it in ResetObject
-	bool l_Status = __super::onRun( p_rRunStatus, pErrorMessages ) && ValidateLocal(pErrorMessages);
-	long l_Mode;
+	bool Result = __super::onRun( rRunStatus, pErrorMessages ) && ValidateLocal(pErrorMessages);
+	long Mode;
 
-	if( l_Status )
+	if( Result )
 	{
-		if( S_OK != m_evoShiftMode.GetValue( l_Mode ) )
+		if( S_OK != m_evoShiftMode.GetValue( Mode ) )
 		{
 			if (nullptr != pErrorMessages)
 			{
 				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 				pErrorMessages->push_back(Msg);
-			}
+	}
 		}
 	}
 
-	if ( l_Status )
+	if ( Result )
 	{
-		if (!p_rRunStatus.IsDisabled() && !p_rRunStatus.IsDisabledByCondition())
+		if (!rRunStatus.IsDisabled() && !rRunStatus.IsDisabledByCondition())
 		{
 			SVSmartHandlePointer OutImageHandle;
 			SVImageBufferHandleImage l_OutMilHandle;
 
-			if ( m_OutputImage.SetImageHandleIndex( p_rRunStatus.Images ) && m_OutputImage.GetImageHandle( OutImageHandle ) &&
+			if ( m_OutputImage.SetImageHandleIndex( rRunStatus.Images ) && m_OutputImage.GetImageHandle( OutImageHandle ) &&
 					!OutImageHandle.empty() && ( S_OK == OutImageHandle->GetData( l_OutMilHandle ) ) && !l_OutMilHandle.empty()  )
 			{
 				SVMatroxBufferInterface::ClearBuffer( l_OutMilHandle.GetBuffer(), 0 );
 			}
 			else
 			{
-				l_Status = false;
+				Result = false;
 				if (nullptr != pErrorMessages)
 				{
 					SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
@@ -193,12 +194,12 @@ bool SVShiftTool::onRun( SVRunStatusClass& p_rRunStatus, SvStl::MessageContainer
 				}
 			}
 
-			double l_Left = 0.0;
-			double l_Top = 0.0;
+			double dLeft( 0.0 );
+			double dTop( 0.0 );
 
-			if ( S_OK != m_ExtentLeft.GetValue( l_Left ) || S_OK != m_ExtentTop.GetValue( l_Top ) )
+			if ( S_OK != m_ExtentLeft.GetValue( dLeft ) || S_OK != m_ExtentTop.GetValue( dTop ) )
 			{
-				l_Status = false;
+				Result = false;
 				if (nullptr != pErrorMessages)
 				{
 					SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
@@ -206,26 +207,28 @@ bool SVShiftTool::onRun( SVRunStatusClass& p_rRunStatus, SvStl::MessageContainer
 				}
 			}
 
-			if( l_Status )
+			if( Result )
 			{
-				BOOL l_PerformTranslation = false;
-				long l_LearnedTranslationX = 0;
-				long l_LearnedTranslationY = 0;
-				double fInputTranslationX = 0.0;
-				double fInputTranslationY = 0.0;
+				BOOL PerformTranslation( false );
+				long LearnedTranslationX( 0L );
+				long LearnedTranslationY( 0L );
+				double dInputTranslationX( 0.0 );
+				double dInputTranslationY( 0.0 );
 
-				if ( ( SV_SHIFT_ENUM::SV_SHIFT_REFERENCE == l_Mode ) || ( SV_SHIFT_ENUM::SV_SHIFT_ABSOLUTE == l_Mode ) )
+				if ( ( SV_SHIFT_ENUM::SV_SHIFT_REFERENCE == Mode ) || ( SV_SHIFT_ENUM::SV_SHIFT_ABSOLUTE == Mode ) )
 				{
 					SVDoubleValueObjectClass* l_pTranslationXInput = GetTranslationXInput();
 					SVDoubleValueObjectClass* l_pTranslationYInput = GetTranslationYInput();
+					double Value( 0.0 );
+					Result = Result && ( S_OK == m_LearnedTranslationX.GetValue( Value ) );
+					LearnedTranslationX = static_cast<long> (Value);
+					Result = Result && ( S_OK == m_LearnedTranslationY.GetValue( Value ) );
+					LearnedTranslationY = static_cast<long> (Value);
 
-					l_Status = l_Status && ( S_OK == m_LearnedTranslationX.GetValue( l_LearnedTranslationX ) );
-					l_Status = l_Status && ( S_OK == m_LearnedTranslationY.GetValue( l_LearnedTranslationY ) );
+					Result = Result && ( nullptr != l_pTranslationXInput && S_OK == l_pTranslationXInput->GetValue( dInputTranslationX ) );
+					Result = Result && ( nullptr != l_pTranslationYInput && S_OK == l_pTranslationYInput->GetValue( dInputTranslationY ) );
 
-					l_Status = l_Status && ( nullptr != l_pTranslationXInput && S_OK == l_pTranslationXInput->GetValue( fInputTranslationX ) );
-					l_Status = l_Status && ( nullptr != l_pTranslationYInput && S_OK == l_pTranslationYInput->GetValue( fInputTranslationY ) );
-
-					if (!l_Status)
+					if (!Result)
 					{
 						if (nullptr != pErrorMessages)
 						{
@@ -235,49 +238,52 @@ bool SVShiftTool::onRun( SVRunStatusClass& p_rRunStatus, SvStl::MessageContainer
 					}
 				}
 
-				if ( (l_Status ) && ( (l_Mode == SV_SHIFT_ENUM::SV_SHIFT_REFERENCE) || (l_Mode == SV_SHIFT_ENUM::SV_SHIFT_ABSOLUTE) ) )
+				if ( (Result ) && ( (Mode == SV_SHIFT_ENUM::SV_SHIFT_REFERENCE) || (Mode == SV_SHIFT_ENUM::SV_SHIFT_ABSOLUTE) ) )
 				{
-					long nInputTranslationX = boost::math::lround(fInputTranslationX);
-					long nInputTranslationY = boost::math::lround(fInputTranslationY);
+					long lInputTranslationX = boost::math::lround(dInputTranslationX);
+					long lInputTranslationY = boost::math::lround(dInputTranslationY);
 
-					if ( l_Mode == SV_SHIFT_ENUM::SV_SHIFT_REFERENCE )
+					if ( Mode == SV_SHIFT_ENUM::SV_SHIFT_REFERENCE )
 					{
-						long l_DisplacementX = nInputTranslationX - l_LearnedTranslationX;
-						long l_DisplacementY = nInputTranslationY - l_LearnedTranslationY;
-						long l_NewLeft = static_cast< long >( l_Left ) + l_DisplacementX;
-						long l_NewTop = static_cast< long >( l_Top ) + l_DisplacementY;
+						double dDisplacementX = static_cast<double> (lInputTranslationX - LearnedTranslationX);
+						double dDisplacementY = static_cast<double> (lInputTranslationY - LearnedTranslationY);
+						double dNewLeft = dLeft + dDisplacementX;
+						double dNewTop = dTop + dDisplacementY;
 
-						m_TranslationX.SetValue( p_rRunStatus.m_lResultDataIndex, nInputTranslationX );
-						m_TranslationY.SetValue( p_rRunStatus.m_lResultDataIndex, nInputTranslationY );
-						m_DisplacementX.SetValue( p_rRunStatus.m_lResultDataIndex, l_DisplacementX );
-						m_DisplacementY.SetValue( p_rRunStatus.m_lResultDataIndex, l_DisplacementY );	
-						m_LeftResult.SetValue( p_rRunStatus.m_lResultDataIndex, l_NewLeft );
-						m_TopResult.SetValue( p_rRunStatus.m_lResultDataIndex, l_NewTop );
+						m_TranslationX.SetValue( lInputTranslationX, rRunStatus.m_lResultDataIndex );
+						m_TranslationY.SetValue( lInputTranslationY, rRunStatus.m_lResultDataIndex );
+						m_DisplacementX.SetValue( dDisplacementX, rRunStatus.m_lResultDataIndex );
+						m_DisplacementY.SetValue( dDisplacementY, rRunStatus.m_lResultDataIndex );	
+						m_LeftResult.SetValue( dNewLeft, rRunStatus.m_lResultDataIndex );
+						m_TopResult.SetValue( dNewTop, rRunStatus.m_lResultDataIndex );
 					}
 					else //Absolute Mode
 					{
-						m_LearnedTranslationX.SetValue( p_rRunStatus.m_lResultDataIndex, 0.0);
-						m_LearnedTranslationY.SetValue( p_rRunStatus.m_lResultDataIndex, 0.0);
+						double dDisplacementX = static_cast<double> (lInputTranslationX);
+						double dDisplacementY = static_cast<double> (lInputTranslationY);
 
-						m_TranslationX.SetValue( p_rRunStatus.m_lResultDataIndex, nInputTranslationX );
-						m_TranslationY.SetValue( p_rRunStatus.m_lResultDataIndex, nInputTranslationY );
-						m_DisplacementX.SetValue( p_rRunStatus.m_lResultDataIndex, nInputTranslationX);
-						m_DisplacementY.SetValue( p_rRunStatus.m_lResultDataIndex, nInputTranslationY );
-						m_ExtentLeft.SetValue(p_rRunStatus.m_lResultDataIndex, 0.0);
-						m_ExtentTop.SetValue(p_rRunStatus.m_lResultDataIndex, 0.0);
+						m_LearnedTranslationX.SetValue( 0.0, rRunStatus.m_lResultDataIndex );
+						m_LearnedTranslationY.SetValue( 0.0, rRunStatus.m_lResultDataIndex );
 
-						m_LeftResult.SetValue( p_rRunStatus.m_lResultDataIndex, nInputTranslationX  );
-						m_TopResult.SetValue( p_rRunStatus.m_lResultDataIndex, nInputTranslationY );
+						m_TranslationX.SetValue( lInputTranslationX, rRunStatus.m_lResultDataIndex );
+						m_TranslationY.SetValue( lInputTranslationY, rRunStatus.m_lResultDataIndex );
+						m_DisplacementX.SetValue( dDisplacementX, rRunStatus.m_lResultDataIndex );
+						m_DisplacementY.SetValue( dDisplacementY, rRunStatus.m_lResultDataIndex );
+						m_ExtentLeft.SetValue( 0.0, rRunStatus.m_lResultDataIndex );
+						m_ExtentTop.SetValue( 0.0, rRunStatus.m_lResultDataIndex );
+
+						m_LeftResult.SetValue( dDisplacementX, rRunStatus.m_lResultDataIndex );
+						m_TopResult.SetValue( dDisplacementY, rRunStatus.m_lResultDataIndex );
 					}
 				}
 				else
 				{
-					m_TranslationX.SetValue( p_rRunStatus.m_lResultDataIndex, 0.0 );
-					m_TranslationY.SetValue( p_rRunStatus.m_lResultDataIndex, 0.0 );
-					m_DisplacementX.SetValue( p_rRunStatus.m_lResultDataIndex, 0.0 );
-					m_DisplacementY.SetValue( p_rRunStatus.m_lResultDataIndex, 0.0 );
-					m_LeftResult.SetValue( p_rRunStatus.m_lResultDataIndex, l_Left );
-					m_TopResult.SetValue( p_rRunStatus.m_lResultDataIndex, l_Top );
+					m_TranslationX.SetValue( 0L, rRunStatus.m_lResultDataIndex );
+					m_TranslationY.SetValue( 0L, rRunStatus.m_lResultDataIndex );
+					m_DisplacementX.SetValue( 0.0, rRunStatus.m_lResultDataIndex );
+					m_DisplacementY.SetValue( 0.0, rRunStatus.m_lResultDataIndex );
+					m_LeftResult.SetValue( dLeft, rRunStatus.m_lResultDataIndex );
+					m_TopResult.SetValue( dTop, rRunStatus.m_lResultDataIndex );
 				}
 
 				SVImageExtentClass l_svExtents;
@@ -288,27 +294,22 @@ bool SVShiftTool::onRun( SVRunStatusClass& p_rRunStatus, SvStl::MessageContainer
 
 					if ( S_OK == l_svExtents.GetFigure( l_svFigure )  )
 					{
-						long l_lValue = static_cast<long>(l_svFigure.m_svBottomRight.m_dPositionX);
-
-						m_ExtentRight.SetValue( p_rRunStatus.m_lResultDataIndex, l_lValue );
-						
-						l_lValue = static_cast<long>(l_svFigure.m_svBottomRight.m_dPositionY);
-
-						m_ExtentBottom.SetValue( p_rRunStatus.m_lResultDataIndex, l_lValue );
+						m_ExtentRight.SetValue( l_svFigure.m_svBottomRight.m_dPositionX, rRunStatus.m_lResultDataIndex );
+						m_ExtentBottom.SetValue( l_svFigure.m_svBottomRight.m_dPositionY, rRunStatus.m_lResultDataIndex );
 					}
 				}
 			}
 			else
 			{
-				m_TranslationX.CopyLastSetValue( p_rRunStatus.m_lResultDataIndex );
-				m_TranslationY.CopyLastSetValue( p_rRunStatus.m_lResultDataIndex );
-				m_DisplacementX.CopyLastSetValue( p_rRunStatus.m_lResultDataIndex );
-				m_DisplacementY.CopyLastSetValue( p_rRunStatus.m_lResultDataIndex );
-				m_LeftResult.CopyLastSetValue( p_rRunStatus.m_lResultDataIndex );
-				m_TopResult.CopyLastSetValue( p_rRunStatus.m_lResultDataIndex );
+				m_TranslationX.CopyLastSetValue( rRunStatus.m_lResultDataIndex );
+				m_TranslationY.CopyLastSetValue( rRunStatus.m_lResultDataIndex );
+				m_DisplacementX.CopyLastSetValue( rRunStatus.m_lResultDataIndex );
+				m_DisplacementY.CopyLastSetValue( rRunStatus.m_lResultDataIndex );
+				m_LeftResult.CopyLastSetValue( rRunStatus.m_lResultDataIndex );
+				m_TopResult.CopyLastSetValue( rRunStatus.m_lResultDataIndex );
 			}
 
-			if( l_Status )
+			if( Result )
 			{
 				SVSmartHandlePointer InImageHandle;
 				SVImageBufferHandleImage l_InMilHandle;
@@ -318,18 +319,18 @@ bool SVShiftTool::onRun( SVRunStatusClass& p_rRunStatus, SvStl::MessageContainer
 				double l_OffsetX = 0.0;
 				double l_OffsetY = 0.0;
 
-				l_Status = l_Status && ( S_OK == m_LeftResult.GetValue( l_OffsetX ) );
-				l_Status = l_Status && ( S_OK == m_TopResult.GetValue( l_OffsetY ) );
-				l_Status = l_Status && ( nullptr != l_pImageInput );
-				l_Status = l_Status && ( l_pImageInput->GetImageHandle( InImageHandle ) );
-				l_Status = l_Status && !( InImageHandle.empty() );
-				l_Status = l_Status && ( S_OK == InImageHandle->GetData( l_InMilHandle ) );
-				l_Status = l_Status && !( l_InMilHandle.empty() );
+				Result = Result && ( S_OK == m_LeftResult.GetValue( l_OffsetX ) );
+				Result = Result && ( S_OK == m_TopResult.GetValue( l_OffsetY ) );
+				Result = Result && ( nullptr != l_pImageInput );
+				Result = Result && ( l_pImageInput->GetImageHandle( InImageHandle ) );
+				Result = Result && !( InImageHandle.empty() );
+				Result = Result && ( S_OK == InImageHandle->GetData( l_InMilHandle ) );
+				Result = Result && !( l_InMilHandle.empty() );
 
-				if( l_Status )
+				if( Result )
 				{
 					//[MEC][7.40][11.10.2016] this correction  was inserted with SVO1017 but for  mode==SV_SHIFT_NONE the offset is counted twice
-					if( (l_Mode == SV_SHIFT_ENUM::SV_SHIFT_REFERENCE) || (l_Mode == SV_SHIFT_ENUM::SV_SHIFT_ABSOLUTE) )
+					if( (Mode == SV_SHIFT_ENUM::SV_SHIFT_REFERENCE) || (Mode == SV_SHIFT_ENUM::SV_SHIFT_ABSOLUTE) )
 					{
 						m_OutputImage.SetTranslationOffset(l_OffsetX, l_OffsetY);
 					}
@@ -340,13 +341,13 @@ bool SVShiftTool::onRun( SVRunStatusClass& p_rRunStatus, SvStl::MessageContainer
 
 					if ( SVMEE_STATUS_OK != l_Code )
 					{
-						l_Status = false;
+						Result = false;
 						if (nullptr != pErrorMessages)
 						{
 							SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_CopyImagesFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 							pErrorMessages->push_back(Msg);
-						}
-					}
+				}
+			}
 				}
 				else
 				{
@@ -358,24 +359,24 @@ bool SVShiftTool::onRun( SVRunStatusClass& p_rRunStatus, SvStl::MessageContainer
 				}
 			}
 
-			if( l_Status )
+			if( Result )
 			{
-				p_rRunStatus.SetPassed();
+				rRunStatus.SetPassed();
 			}
 			else
 			{
-				p_rRunStatus.SetFailed();
-				p_rRunStatus.SetInvalid();
+				rRunStatus.SetFailed();
+				rRunStatus.SetInvalid();
 
 				SetInvalid();
 			}
 		}
 		else
 		{
-			m_OutputImage.CopyImageTo(p_rRunStatus.Images);
+			m_OutputImage.CopyImageTo(rRunStatus.Images);
 		}
 	}
-	return l_Status;
+	return Result;
 }
 
 SVImageClass* SVShiftTool::GetImageInput() const
@@ -384,7 +385,7 @@ SVImageClass* SVShiftTool::GetImageInput() const
 
 	if( m_ImageInput.IsConnected() )
 	{
-		l_pImage = dynamic_cast< SVImageClass* >( m_ImageInput.GetInputObjectInfo().PObject );
+		l_pImage = dynamic_cast< SVImageClass* >( m_ImageInput.GetInputObjectInfo().m_pObject );
 	}
 	return l_pImage;
 }
@@ -395,7 +396,7 @@ SVDoubleValueObjectClass* SVShiftTool::GetTranslationXInput() const
 
 	if( m_TranslationXInput.IsConnected() )
 	{
-		l_pValue = dynamic_cast< SVDoubleValueObjectClass* >( m_TranslationXInput.GetInputObjectInfo().PObject );
+		l_pValue = dynamic_cast< SVDoubleValueObjectClass* >( m_TranslationXInput.GetInputObjectInfo().m_pObject );
 	}
 	return l_pValue;
 }
@@ -406,7 +407,7 @@ SVDoubleValueObjectClass* SVShiftTool::GetTranslationYInput() const
 
 	if( m_TranslationYInput.IsConnected() )
 	{
-		l_pValue = dynamic_cast< SVDoubleValueObjectClass* >( m_TranslationYInput.GetInputObjectInfo().PObject );
+		l_pValue = dynamic_cast< SVDoubleValueObjectClass* >( m_TranslationYInput.GetInputObjectInfo().m_pObject );
 	}
 	return l_pValue;
 }
@@ -415,8 +416,8 @@ SVDoubleValueObjectClass* SVShiftTool::GetTranslationYInput() const
 #pragma region Private Methods
 void SVShiftTool::LocalInitialize()
 {
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVToolObjectType;
-	m_outObjectInfo.ObjectTypeInfo.SubType = SVShiftToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVShiftToolObjectType;
 
 	SVObjectClass* l_pObject = nullptr;
 
@@ -453,22 +454,25 @@ void SVShiftTool::LocalInitialize()
 	m_TranslationYInput.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_TranslationYInput, _T( "ShiftToolTranslationY" ) );
 
+	//Special type names for extents
+	m_LeftResult.SetTypeName( _T("Extent X") );
+	m_TopResult.SetTypeName( _T("Extent Y") );
 	//Register Embedded Objects
-	RegisterEmbeddedObject( &m_evoShiftMode, SVShiftToolModeGuid, IDS_OBJECTNAME_SHIFT_TOOL_MODE, false, SVResetItemTool );
-	RegisterEmbeddedObject( &m_SourceImageName, SVSourceImageNamesGuid, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SVResetItemNone );
-	RegisterEmbeddedObject( &m_TranslationX, SVTranslationXObjectGuid, IDS_OBJECTNAME_TRANSLATION_X_RESULT, false, SVResetItemNone );
-	RegisterEmbeddedObject( &m_TranslationY, SVTranslationYObjectGuid, IDS_OBJECTNAME_TRANSLATION_Y_RESULT, false, SVResetItemNone );
-	RegisterEmbeddedObject( &m_LearnedTranslationX, SVShiftToolReferenceXObjectGuid, IDS_OBJECTNAME_SHIFTTOOL_REFERENCE_X, false, SVResetItemNone );
-	RegisterEmbeddedObject( &m_LearnedTranslationY, SVShiftToolReferenceYObjectGuid, IDS_OBJECTNAME_SHIFTTOOL_REFERENCE_Y, false, SVResetItemNone );
-	RegisterEmbeddedObject( &m_DisplacementX, SVImageTransformDisplacementXGuid, IDS_TRANSFORM_DISPLACEMENTX, false, SVResetItemNone );
-	RegisterEmbeddedObject( &m_DisplacementY, SVImageTransformDisplacementYGuid, IDS_TRANSFORM_DISPLACEMENTY, false, SVResetItemNone );
-	RegisterEmbeddedObject( &m_LeftResult, SVLeftResultObjectGuid, IDS_OBJECTNAME_LEFT_RESULT, false, SVResetItemNone, _T("Extent X") );
-	RegisterEmbeddedObject( &m_TopResult, SVTopResultObjectGuid, IDS_OBJECTNAME_TOP_RESULT, false, SVResetItemNone, _T("Extent Y") );
+	RegisterEmbeddedObject( &m_evoShiftMode, SVShiftToolModeGuid, IDS_OBJECTNAME_SHIFT_TOOL_MODE, false, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &m_SourceImageName, SVSourceImageNamesGuid, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_TranslationX, SVTranslationXObjectGuid, IDS_OBJECTNAME_TRANSLATION_X_RESULT, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_TranslationY, SVTranslationYObjectGuid, IDS_OBJECTNAME_TRANSLATION_Y_RESULT, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_LearnedTranslationX, SVShiftToolReferenceXObjectGuid, IDS_OBJECTNAME_SHIFTTOOL_REFERENCE_X, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_LearnedTranslationY, SVShiftToolReferenceYObjectGuid, IDS_OBJECTNAME_SHIFTTOOL_REFERENCE_Y, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_DisplacementX, SVImageTransformDisplacementXGuid, IDS_TRANSFORM_DISPLACEMENTX, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_DisplacementY, SVImageTransformDisplacementYGuid, IDS_TRANSFORM_DISPLACEMENTY, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_LeftResult, SVLeftResultObjectGuid, IDS_OBJECTNAME_LEFT_RESULT, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_TopResult, SVTopResultObjectGuid, IDS_OBJECTNAME_TOP_RESULT, false, SvOi::SVResetItemNone );
 	RegisterEmbeddedObject( &m_OutputImage, SVOutputImageObjectGuid, IDS_OBJECTNAME_IMAGE1 );
-	RegisterEmbeddedObject( &m_EnableSourceImageExtents, SVShiftToolEnableSourceImageExtentsGuid, IDS_OBJECTNAME_SHIFTTOOL_ENABLE_SOURCE_IMAGE_EXTENTS, false, SVResetItemTool);
+	RegisterEmbeddedObject( &m_EnableSourceImageExtents, SVShiftToolEnableSourceImageExtentsGuid, IDS_OBJECTNAME_SHIFTTOOL_ENABLE_SOURCE_IMAGE_EXTENTS, false, SvOi::SVResetItemTool);
 
-	m_LearnedTranslationX.ObjectAttributesAllowedRef() &= ~SV_EXTENT_OBJECT;
-	m_LearnedTranslationY.ObjectAttributesAllowedRef() &= ~SV_EXTENT_OBJECT;
+	m_LearnedTranslationX.SetObjectAttributesAllowed( SV_EXTENT_OBJECT, SvOi::SetAttributeType::RemoveAttribute );
+	m_LearnedTranslationY.SetObjectAttributesAllowed( SV_EXTENT_OBJECT, SvOi::SetAttributeType::RemoveAttribute );
 
 	//Set Extent Information
 	m_svToolExtent.SetExtentObject( SVExtentPropertyTranslationOffsetX, &m_DisplacementX );

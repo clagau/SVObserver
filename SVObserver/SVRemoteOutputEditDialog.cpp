@@ -56,7 +56,7 @@ BOOL SVRemoteOutputEditDialog::OnInitDialog()
 {
 	CDialog::OnInitDialog();
 	SVPPQObject* pPPQ( nullptr );
-	SVIOEntryHostStructPtrList ppIOEntries;
+	SVIOEntryHostStructPtrVector ppIOEntries;
 	
 	int iCurrentSel = 0;
 
@@ -103,13 +103,13 @@ BOOL SVRemoteOutputEditDialog::OnInitDialog()
 			lSize = static_cast<long>(ppIOEntries.size());
 
 			// Put the Trigger Count in the list.
-			SVValueObjectClass* l_pCurrentObject = &pPPQ->m_voTriggerCount;
-			int iIndex = m_ValueObjectNameCombo.AddString( l_pCurrentObject->GetCompleteName().c_str() );
-			m_TriggerCount->m_pValueObject = l_pCurrentObject;
+			SVObjectClass* pCurrentObject = &pPPQ->m_voTriggerCount;
+			int iIndex = m_ValueObjectNameCombo.AddString( pCurrentObject->GetCompleteName().c_str() );
+			m_TriggerCount->setObject(pCurrentObject);
 			m_TriggerCount->m_DeleteValueObject = false;
 			m_Items.SetItemData( iIndex, m_TriggerCount );
 
-			l_pCurrentObject = dynamic_cast<SVValueObjectClass*>(SVObjectManagerClass::Instance().GetObject( m_InputObjectGUID));
+			pCurrentObject = SVObjectManagerClass::Instance().GetObject( m_InputObjectGUID);
 
 			// Init IO combo from m_ppIOEntries;
 			for( int i = 0; i < lSize; i++ )
@@ -121,14 +121,14 @@ BOOL SVRemoteOutputEditDialog::OnInitDialog()
 
 				if( !( pIOEntry.empty() ) )
 				{
-					if( nullptr != pIOEntry->m_pValueObject && SVString::npos == pIOEntry->m_pValueObject->GetCompleteName().find( _T( "PPQ" ) ) )
+					if( nullptr != pIOEntry->getObject() && SVString::npos == pIOEntry->getObject()->GetCompleteName().find( _T( "PPQ" ) ) )
 					{
-						iIndex = m_ValueObjectNameCombo.AddString( pIOEntry->m_pValueObject->GetCompleteName().c_str() );
+						iIndex = m_ValueObjectNameCombo.AddString( pIOEntry->getObject()->GetCompleteName().c_str() );
 						m_Items.SetItemData( iIndex, pIOEntry );
 					}
 
 					// Set current selection if object matches.
-					if( l_pCurrentObject == pIOEntry->m_pValueObject )
+					if( pCurrentObject == pIOEntry->getObject() )
 					{
 						iCurrentSel = iIndex;
 					}
@@ -179,8 +179,7 @@ void SVRemoteOutputEditDialog::OnCbnSelchangeValueObjectNameCombo()
 
 	if( !( l_pIOEntry.empty() ) )
 	{
-		SVValueObjectClass* l_pObject = l_pIOEntry->m_pValueObject;
-		SVObjectTypeEnum l_PCDataType = l_pObject->GetObjectType();
+		SVObjectTypeEnum l_PCDataType = l_pIOEntry->getObject()->GetObjectType();
 		UpdateData(FALSE);
 	}
 }
@@ -198,12 +197,12 @@ void SVRemoteOutputEditDialog::UpdateValueObjectFromCombo()
 			l_pIOEntry = l_Iter->second;
 		}
 
-		if( !( l_pIOEntry.empty() ) && ( nullptr != l_pIOEntry->m_pValueObject ) )
+		if( !( l_pIOEntry.empty() ) && ( nullptr != l_pIOEntry->getObject() ) )
 		{
 			CString Name;
 			m_ValueObjectNameCombo.GetLBText( l_iSel, Name  );
 			m_ValueObjectSourceName = Name;
-			m_InputObjectGUID = l_pIOEntry->m_pValueObject->GetUniqueObjectID();
+			m_InputObjectGUID = l_pIOEntry->getObject()->GetUniqueObjectID();
 		}
 	}
 }

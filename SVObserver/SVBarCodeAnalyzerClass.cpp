@@ -59,36 +59,36 @@ SVBarCodeAnalyzerClass::SVBarCodeAnalyzerClass (BOOL BCreateDefaultTaskList, SVO
 void SVBarCodeAnalyzerClass::init()
 {
 	
-	m_outObjectInfo.ObjectTypeInfo.SubType = SVBarCodeAnalyzerObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVBarCodeAnalyzerObjectType;
 	
 	// Register Embedded Objects
-	RegisterEmbeddedObject (&msv_szBarCodeValue, SVBarCodeObjectGuid, IDS_OBJECTNAME_BARCODEVALUE, false, SVResetItemNone);
-	RegisterEmbeddedObject (&msv_szRegExpressionValue, SVRegExpressionObjectGuid, IDS_OBJECTNAME_CONTROLVALUE, false, SVResetItemOwner);
-	RegisterEmbeddedObject (&msv_lBarCodeType, SVBCTypeObjectGuid, IDS_OBJECTNAME_BARCODETYPE, false, SVResetItemOwner);
-	RegisterEmbeddedObject (&msv_dOrientation, SVBCOrientationObjectGuid, IDS_OBJECTNAME_ORIENTATION, false, SVResetItemOwner);
-	RegisterEmbeddedObject (&msv_dSkewNegative, SVBCSkewNegativeObjectGuid, IDS_OBJECTNAME_SKEWNEGATIVE, false, SVResetItemOwner);
-	RegisterEmbeddedObject (&msv_dSkewPositive, SVBCSkewPositiveObjectGuid, IDS_OBJECTNAME_SKEWPOSITIVE, false, SVResetItemOwner);
-	RegisterEmbeddedObject (&msv_dCellMinSize, SVBCCellMinSizeObjectGuid, IDS_OBJECTNAME_CELLMINSIZE, false, SVResetItemOwner);
-	RegisterEmbeddedObject (&msv_dCellMaxSize, SVBCCellMaxSizeObjectGuid, IDS_OBJECTNAME_CELLMAXSIZE, false, SVResetItemOwner);
-	RegisterEmbeddedObject (&msv_dCellNumberX, SVBCCellNumberXObjectGuid, IDS_OBJECTNAME_CELLNUMBERX, false, SVResetItemOwner);
-	RegisterEmbeddedObject (&msv_dCellNumberY, SVBCCellNumberYObjectGuid, IDS_OBJECTNAME_CELLNUMBERY, false, SVResetItemOwner);
-	RegisterEmbeddedObject (&msv_dSpeed, SVBCSpeedObjectGuid, IDS_OBJECTNAME_SPEED, false, SVResetItemOwner);
-	RegisterEmbeddedObject (&msv_dThreshold, SVBCThresholdObjectGuid, IDS_OBJECTNAME_THRESHOLD, false, SVResetItemOwner);
-	RegisterEmbeddedObject (&msv_dStringSize, SVBCStringSizeObjectGuid, IDS_OBJECTNAME_STRINGSIZE, false, SVResetItemOwner);
-	RegisterEmbeddedObject (&msv_dErrorCorrection, SVBCErrorCorrectionObjectGuid, IDS_OBJECTNAME_ERRORCORRECTION, false, SVResetItemOwner);
-	RegisterEmbeddedObject (&msv_dEncoding, SVBCEncodingObjectGuid, IDS_OBJECTNAME_ENCODING, false, SVResetItemOwner);
-	RegisterEmbeddedObject (&msv_dForegroundColor, SVBCForegroundColorObjectGuid, IDS_OBJECTNAME_FOREGROUNDCOLOR, false, SVResetItemOwner);
-	RegisterEmbeddedObject (&msv_bSaveStringInFile, SVBCSaveStringInFileObjectGuid, IDS_OBJECTNAME_SAVESTRINGINFILE, false, SVResetItemOwner);
-	RegisterEmbeddedObject (&msv_szStringFileName, SVBCStringFileNameObjectGuid, IDS_OBJECTNAME_STRINGFILENAME, false, SVResetItemOwner);
-	RegisterEmbeddedObject (&m_bWarnOnFailedRead, SVBCWarnOnFailedReadObjectGuid, IDS_OBJECTNAME_WARNONFAILEDREAD, false, SVResetItemOwner);
-	RegisterEmbeddedObject (&msv_lBarcodeTimeout, SVBCTimeoutGuid, IDS_OBJECTNAME_BARCODETIMEOUT, false, SVResetItemOwner);
+	RegisterEmbeddedObject (&msv_szBarCodeValue, SVBarCodeObjectGuid, IDS_OBJECTNAME_BARCODEVALUE, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject (&msv_szRegExpressionValue, SVRegExpressionObjectGuid, IDS_OBJECTNAME_CONTROLVALUE, false, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject (&msv_lBarCodeType, SVBCTypeObjectGuid, IDS_OBJECTNAME_BARCODETYPE, false, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject (&msv_dOrientation, SVBCOrientationObjectGuid, IDS_OBJECTNAME_ORIENTATION, false, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject (&msv_dSkewNegative, SVBCSkewNegativeObjectGuid, IDS_OBJECTNAME_SKEWNEGATIVE, false, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject (&msv_dSkewPositive, SVBCSkewPositiveObjectGuid, IDS_OBJECTNAME_SKEWPOSITIVE, false, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject (&msv_dCellMinSize, SVBCCellMinSizeObjectGuid, IDS_OBJECTNAME_CELLMINSIZE, false, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject (&msv_dCellMaxSize, SVBCCellMaxSizeObjectGuid, IDS_OBJECTNAME_CELLMAXSIZE, false, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject (&msv_dCellNumberX, SVBCCellNumberXObjectGuid, IDS_OBJECTNAME_CELLNUMBERX, false, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject (&msv_dCellNumberY, SVBCCellNumberYObjectGuid, IDS_OBJECTNAME_CELLNUMBERY, false, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject (&msv_dSpeed, SVBCSpeedObjectGuid, IDS_OBJECTNAME_SPEED, false, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject (&msv_dThreshold, SVBCThresholdObjectGuid, IDS_OBJECTNAME_THRESHOLD, false, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject (&msv_dStringSize, SVBCStringSizeObjectGuid, IDS_OBJECTNAME_STRINGSIZE, false, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject (&msv_dErrorCorrection, SVBCErrorCorrectionObjectGuid, IDS_OBJECTNAME_ERRORCORRECTION, false, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject (&msv_dEncoding, SVBCEncodingObjectGuid, IDS_OBJECTNAME_ENCODING, false, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject (&msv_dForegroundColor, SVBCForegroundColorObjectGuid, IDS_OBJECTNAME_FOREGROUNDCOLOR, false, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject (&msv_bSaveStringInFile, SVBCSaveStringInFileObjectGuid, IDS_OBJECTNAME_SAVESTRINGINFILE, false, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject (&msv_szStringFileName, SVBCStringFileNameObjectGuid, IDS_OBJECTNAME_STRINGFILENAME, false, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject (&m_bWarnOnFailedRead, SVBCWarnOnFailedReadObjectGuid, IDS_OBJECTNAME_WARNONFAILEDREAD, false, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject (&msv_lBarcodeTimeout, SVBCTimeoutGuid, IDS_OBJECTNAME_BARCODETIMEOUT, false, SvOi::SVResetItemOwner);
 	// IDS_OBJECTNAME_BARCODEUNEVENGRID
-	RegisterEmbeddedObject (&msv_bUnEvenGrid, SVBCUnevenGridGuid,IDS_OBJECTNAME_BARCODEUNEVENGRID, false, SVResetItemOwner);
+	RegisterEmbeddedObject (&msv_bUnEvenGrid, SVBCUnevenGridGuid,IDS_OBJECTNAME_BARCODEUNEVENGRID, false, SvOi::SVResetItemOwner);
 
 	// To support special DMCs May 2008.
-	RegisterEmbeddedObject (&msv_RawData, SVBCRawDataGuid, IDS_OBJECTNAME_BARCODERAWDATA, false, SVResetItemOwner);
-	RegisterEmbeddedObject (&msv_eStringFormat, SVBCStringFormatGuid, IDS_OBJECTNAME_BARCODESTRINGFORMAT, false, SVResetItemOwner);
-	RegisterEmbeddedObject (&msv_lThresholdType, SVBCThresholdTypeGuid, IDS_OBJECTNAME_BARCODETHRESHOLDTYPE, false, SVResetItemOwner);
+	RegisterEmbeddedObject (&msv_RawData, SVBCRawDataGuid, IDS_OBJECTNAME_BARCODERAWDATA, false, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject (&msv_eStringFormat, SVBCStringFormatGuid, IDS_OBJECTNAME_BARCODESTRINGFORMAT, false, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject (&msv_lThresholdType, SVBCThresholdTypeGuid, IDS_OBJECTNAME_BARCODETHRESHOLDTYPE, false, SvOi::SVResetItemOwner);
 
 	// Set default values
 	msv_szBarCodeValue.SetDefaultValue (_T(""), TRUE);
@@ -306,27 +306,27 @@ BOOL SVBarCodeAnalyzerClass::CreateObject (SVObjectLevelCreateStruct* pCreateStr
 	}
 
 	// *** Set/Reset Printable Attributes ***
-	msv_szBarCodeValue.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	msv_szRegExpressionValue.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
-	msv_lBarCodeType.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
-	msv_dOrientation.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
-	msv_dSkewNegative.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
-	msv_dSkewPositive.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
-	msv_dCellMinSize.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
-	msv_dCellMaxSize.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
-	msv_dCellNumberX.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
-	msv_dCellNumberY.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
-	msv_dSpeed.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_REMOTELY_SETABLE;
-	msv_dThreshold.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
-	msv_dStringSize.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
-	msv_dErrorCorrection.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
-	msv_dEncoding.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
-	msv_dForegroundColor.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
-	msv_bSaveStringInFile.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
-	msv_szStringFileName.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
-	m_bWarnOnFailedRead.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_REMOTELY_SETABLE;
-	msv_lBarcodeTimeout.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_REMOTELY_SETABLE;
-	msv_RawData.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
+	msv_szBarCodeValue.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	msv_szRegExpressionValue.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	msv_lBarCodeType.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	msv_dOrientation.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	msv_dSkewNegative.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	msv_dSkewPositive.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	msv_dCellMinSize.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	msv_dCellMaxSize.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	msv_dCellNumberX.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	msv_dCellNumberY.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	msv_dSpeed.SetObjectAttributesAllowed( SV_PRINTABLE | SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
+	msv_dThreshold.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	msv_dStringSize.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	msv_dErrorCorrection.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	msv_dEncoding.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	msv_dForegroundColor.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	msv_bSaveStringInFile.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	msv_szStringFileName.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_bWarnOnFailedRead.SetObjectAttributesAllowed( SV_PRINTABLE | SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
+	msv_lBarcodeTimeout.SetObjectAttributesAllowed( SV_PRINTABLE | SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
+	msv_RawData.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 	m_isCreated = bOk;
 
 	if ( m_bHasLicenseError )
@@ -369,7 +369,7 @@ bool SVBarCodeAnalyzerClass::CharIsControl( TCHAR p_Char )
 	return p_Char < ' ' || p_Char > 126;
 }
 
-bool SVBarCodeAnalyzerClass::onRun (SVRunStatusClass &RRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool SVBarCodeAnalyzerClass::onRun (SVRunStatusClass &rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	if ( m_bHasLicenseError )
 	{
@@ -379,12 +379,12 @@ bool SVBarCodeAnalyzerClass::onRun (SVRunStatusClass &RRunStatus, SvStl::Message
 			pErrorMessages->push_back(Msg);
 		}
 		SetInvalid ();
-		RRunStatus.SetInvalid ();
+		rRunStatus.SetInvalid ();
 		return false;
 	}
 	
-	msv_szBarCodeValue.SetValue( RRunStatus.m_lResultDataIndex, _T("") );
-	if (SVImageAnalyzerClass::onRun (RRunStatus, pErrorMessages))
+	msv_szBarCodeValue.SetValue( SVString(), rRunStatus.m_lResultDataIndex );
+	if (SVImageAnalyzerClass::onRun (rRunStatus, pErrorMessages))
 	{
 		SVSmartHandlePointer ImageHandle;
 		
@@ -423,31 +423,37 @@ bool SVBarCodeAnalyzerClass::onRun (SVRunStatusClass &RRunStatus, SvStl::Message
 						}
 					}
 					SetInvalid ();
-					RRunStatus.SetInvalid ();
+					rRunStatus.SetInvalid ();
 					return false;
 				}
 
 				switch ( lMilResult )
 				{
-				case SVBCStatusReadOK:
+					case SVBCStatusReadOK:
 					{
 						pResult->m_bFailedToRead = false;
 						long cbBarCodeValue = 0;
 						Result &= SVMatroxBarCodeInterface::GetResult( m_MilCodeId, SVBCBarcodeStringSize, cbBarCodeValue, pErrorMessages );
-						SVString l_strBarCodeValue;
-						Result &= SVMatroxBarCodeInterface::GetResult( m_MilCodeId, SVBCBarCodeString, l_strBarCodeValue, pErrorMessages );
+						SVString BarCodeString;
+						Result &= SVMatroxBarCodeInterface::GetResult( m_MilCodeId, SVBCBarCodeString, BarCodeString, pErrorMessages );
 						double dScore = 0.0;
 						Result &= SVMatroxBarCodeInterface::GetResult( m_MilCodeId, SVBCBarcodeScore, dScore, pErrorMessages );
-						pResult->m_dReadScore.SetValue(RRunStatus.m_lResultDataIndex, dScore * 100);
+
+						pResult->m_dReadScore.SetValue(dScore * 100, rRunStatus.m_lResultDataIndex );
 
 						// To support special DMCs May 2008.
 						// Copy string to Byte Value Object
-						if( l_strBarCodeValue.size() > static_cast<size_t>(msv_RawData.GetArraySize()) )
+						if( BarCodeString.size() > static_cast<size_t>(msv_RawData.getArraySize()) )
 						{
-							msv_RawData.SetArraySize( static_cast< int >( l_strBarCodeValue.size() ) );
+							msv_RawData.SetArraySize( static_cast< int >( BarCodeString.size() ) );
 						}
-						if ( S_OK != msv_RawData.SetResultSize( RRunStatus.m_lResultDataIndex, static_cast< int >( l_strBarCodeValue.size() ) ) || 
-							S_OK != msv_RawData.SetArrayValues( RRunStatus.m_lResultDataIndex, l_strBarCodeValue.begin(), l_strBarCodeValue.end() ))
+
+						std::vector<BYTE> BarCodeValue;
+						BarCodeValue.resize(BarCodeString.size() );
+						//Convert string character to byte vector
+						std::copy( BarCodeString.begin(), BarCodeString.end(), BarCodeValue.begin() );
+						if ( S_OK != msv_RawData.SetResultSize( rRunStatus.m_lResultDataIndex, static_cast<int> ( BarCodeString.size() ) ) || 
+							S_OK != msv_RawData.SetArrayValues( BarCodeValue.begin(), BarCodeValue.end(), rRunStatus.m_lResultDataIndex ))
 						{
 							Result = false;
 							if (nullptr != pErrorMessages)
@@ -462,68 +468,68 @@ bool SVBarCodeAnalyzerClass::onRun (SVRunStatusClass &RRunStatus, SvStl::Message
 						msv_eStringFormat.GetValue( l_lTmpFormat );
 						switch( l_lTmpFormat )
 						{
-						case SVBCStringFormatReplaceCharacters:
+							case SVBCStringFormatReplaceCharacters:
 							{
-								replace_if( l_strBarCodeValue.begin(),
-									l_strBarCodeValue.end(),
-									CharIsControl,
-									_T('~'));
+								replace_if( BarCodeString.begin(),
+											BarCodeString.end(),
+											CharIsControl,
+											_T('~'));
 								break;
 							}
-						case SVBCStringFormatRemoveCharacters:
+							case SVBCStringFormatRemoveCharacters:
 							{
 								SVString l_strRemoved;
-								l_strRemoved.resize( l_strBarCodeValue.size() + 1);
+								l_strRemoved.resize( BarCodeString.size() + 1);
 								int j = 0;
-								for( size_t i = 0 ; i < l_strBarCodeValue.size(); i++ )
+								for( size_t i = 0 ; i < BarCodeString.size(); i++ )
 								{
-									if( CharIsControl(l_strBarCodeValue[i]) )
+									if( CharIsControl(BarCodeString[i]) )
 									{
 										continue;
 									}
-									l_strRemoved[j++]=l_strBarCodeValue[i];
+									l_strRemoved[j++]=BarCodeString[i];
 								}
 								l_strRemoved[j] = 0; // Teminate String...
 								l_strRemoved.resize(j);
-								l_strBarCodeValue = l_strRemoved;
+								BarCodeString = l_strRemoved;
 								break;
 							}
-						case SVBCStringFormatTranslateCharacters:
+							case SVBCStringFormatTranslateCharacters:
 							{
 								SVString l_strTranslated;
-								l_strTranslated.resize( l_strBarCodeValue.size()+256);
+								l_strTranslated.resize( BarCodeString.size()+256);
 								int j = 0;
-								for( size_t i = 0 ; i < l_strBarCodeValue.size(); i++ )
+								for( size_t i = 0 ; i < BarCodeString.size(); i++ )
 								{
-									if( CharIsControl(l_strBarCodeValue[i]) )
+									if( CharIsControl(BarCodeString[i]) )
 									{
-										SVString Temp = SvUl_SF::Format(_T("%03d"),l_strBarCodeValue[i]);
+										SVString Temp = SvUl_SF::Format(_T("%03d"),BarCodeString[i]);
 										l_strTranslated[j++] = '\\';
 										l_strTranslated[j++] = Temp[0];
 										l_strTranslated[j++] = Temp[1];
 										l_strTranslated[j++] = Temp[2];
 									}
-									else if ( l_strBarCodeValue[i] == '\\' )
+									else if ( BarCodeString[i] == '\\' )
 									{
 										l_strTranslated[j++] = '\\';
 										l_strTranslated[j++] = '\\';
 									}
 									else
 									{
-										l_strTranslated[j++]=l_strBarCodeValue[i];
+										l_strTranslated[j++]=BarCodeString[i];
 									}
 								}
 								l_strTranslated[j] = 0; // Terminate String...
 								l_strTranslated.resize(j);
-								l_strBarCodeValue = l_strTranslated;
+								BarCodeString = l_strTranslated;
 								break;
 							}
-						default:
+							default:
 							{
 								break;
 							}
 						}
-						msv_szBarCodeValue.SetValue( RRunStatus.m_lResultDataIndex, l_strBarCodeValue.c_str() );
+						msv_szBarCodeValue.SetValue( BarCodeString, rRunStatus.m_lResultDataIndex );
 						if (!Result)
 						{
 							if (nullptr != pErrorMessages)
@@ -537,27 +543,31 @@ bool SVBarCodeAnalyzerClass::onRun (SVRunStatusClass &RRunStatus, SvStl::Message
 								}
 							}
 							SetInvalid ();
-							RRunStatus.SetInvalid ();
+							rRunStatus.SetInvalid ();
 						}
 						return Result;
 					}
-				case SVBCStatusCRCFailed:
-				case SVBCStatusECCUnknown:
-				case SVBCStatusENCUnknown:
-				case SVBCStatusNotFound:
-				default:
+					case SVBCStatusCRCFailed:
+					case SVBCStatusECCUnknown:
+					case SVBCStatusENCUnknown:
+					case SVBCStatusNotFound:
+					default:
 					{
 						// Clear The Raw Data if no read.
-						msv_RawData.SetResultSize( RRunStatus.m_lResultDataIndex, 0 );
+						msv_RawData.SetResultSize( rRunStatus.m_lResultDataIndex, 0 );
 						break;
 					}
 				}
 				SetInvalid();
 				if( bWarnOnFailedRead )
-					RRunStatus.SetWarned();
+				{
+					rRunStatus.SetWarned();
+				}
 				else
-					RRunStatus.SetFailed();
-				pResult->m_dReadScore.SetValue(RRunStatus.m_lResultDataIndex, 0.0);
+				{
+					rRunStatus.SetFailed();
+				}
+				pResult->m_dReadScore.SetValue( 0.0, rRunStatus.m_lResultDataIndex );
 				return true;
 			}// end try
 			catch( ... )
@@ -571,7 +581,7 @@ bool SVBarCodeAnalyzerClass::onRun (SVRunStatusClass &RRunStatus, SvStl::Message
 		}
 	}
 	SetInvalid ();
-	RRunStatus.SetInvalid ();
+	rRunStatus.SetInvalid ();
 	return false;
 }
 
@@ -595,11 +605,11 @@ bool SVBarCodeAnalyzerClass::LoadRegExpression( bool DisplayErrorMessage, SvStl:
 			dwFileLen = static_cast<DWORD>(fRegExp.GetLength());
 			RegExp.resize(dwFileLen +1);
 			fRegExp.Read( &RegExp[0], dwFileLen);
-			msv_szRegExpressionValue.SetValue(1, RegExp);
+			msv_szRegExpressionValue.SetValue( RegExp );
 			fRegExp.Close();
 
 			msv_szRegExpressionValue.GetValue(m_RegExpressionValue);
-		    msv_szStringFileName.GetValue(m_StringFileName);
+		    msv_szStringFileName.GetValue( m_StringFileName );
 		}
 		CATCH (CFileException, e)
 		{

@@ -157,7 +157,7 @@ public:
 	CComboBox m_StringFormatCombo;
 	SVEnumerateVector m_EnumVect;
 
-	BOOL  m_bUnEvenGrid;
+	bool  m_bUnEvenGrid;
 
 	// Threshold Type Radio
 	CButton m_ThresholdRadio;

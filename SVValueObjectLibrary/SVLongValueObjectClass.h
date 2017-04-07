@@ -13,11 +13,10 @@
 #pragma region Includes
 #include "SVOResource/resource.h"
 #include "SVUtilityLibrary/SVString.h"
-#include "SVValueObjectClassImpl.h"
-#include "SVValueObjectGlobals.h"
+#include "SVValueObjectClass.h"
 #pragma endregion Includes
 
-class SVLongValueObjectClass : public SVValueObjectClassImpl <long>
+class SVLongValueObjectClass : public SVValueObjectClass<long>
 {
 	SV_DECLARE_CLASS( SVLongValueObjectClass );
 
@@ -30,26 +29,18 @@ public:
 	virtual ~SVLongValueObjectClass();
 	virtual void Persist( SVObjectWriter& rWriter) override;
 
-	IMPLEMENT_VALUE_OBJECT_GET_SET()
-
 protected:
-	virtual HRESULT SetValueAt( int iBucket, int iIndex, const SVString& rValue );
-	virtual HRESULT SetValueAt( int iBucket, int iIndex, double Value );
-	virtual HRESULT SetValueAt( int iBucket, int iIndex, int Value );
-	virtual HRESULT SetValueAt( int iBucket, int iIndex, const VARIANT& rValue );
-
-	virtual HRESULT GetValueAt( int iBucket, int iIndex, double& rValue ) const;
-	virtual HRESULT GetValueAt( int iBucket, int iIndex, SVString& rValue ) const;
-	virtual HRESULT GetValueAt( int iBucket, int iIndex, VARIANT& rValue ) const;
-
-	virtual void ValidateValue( int iBucket, int iIndex, const SVString& rValue ) const override;
-
-private:
-	void LocalInitialize();
+	virtual double ValueType2Double(const long& rValue) const override { return static_cast<double> (rValue); };
+	virtual _variant_t ValueType2Variant( const long& rValue ) const override { return _variant_t( rValue ); };
+	virtual long Variant2ValueType( const _variant_t& rValue ) const override { return long( rValue ); };
 
 	/// Convert a string in a long. Throw an exception if the string isn't convertible into a long.
 	/// \param strValue [in] The input string
 	/// \returns char Return value.
-	long convertString2Long(const SVString& rValue ) const;
+	virtual long ConvertString2Type(const SVString& rValue ) const override;
+
+	virtual SVString ConvertType2String(const long& rValue) const override { return FormatOutput(rValue); };
+private:
+	void LocalInitialize();
 };
 

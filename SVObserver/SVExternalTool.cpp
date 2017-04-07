@@ -29,7 +29,8 @@ BOOL SVExternalTool::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 {
 	BOOL bOk = SVToolClass::CreateObject( PCreateStructure );
 
-	m_svSourceImageNames.ObjectAttributesAllowedRef() &=~SV_REMOTELY_SETABLE & ~SV_SETABLE_ONLINE;
+	m_SourceImageNames.setStatic( true );
+	m_SourceImageNames.SetObjectAttributesAllowed( SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE, SvOi::SetAttributeType::RemoveAttribute );
 
 	m_isCreated = bOk;
 
@@ -58,11 +59,11 @@ HRESULT SVExternalTool::UpdateImageWithExtent( unsigned long p_Index )
 
 void SVExternalTool::Initialize()
 {
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVToolObjectType;
-	m_outObjectInfo.ObjectTypeInfo.SubType    = SVExternalToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SVExternalToolObjectType;
 
 	// Register SourceImageNames Value Object
-	RegisterEmbeddedObject( &m_svSourceImageNames, SVSourceImageNamesGuid, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SVResetItemTool );
+	RegisterEmbeddedObject( &m_SourceImageNames, SVSourceImageNamesGuid, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SvOi::SVResetItemTool );
 
 	SVExternalToolTask* l_pTask = new SVExternalToolTask;
 	if ( nullptr != l_pTask )
@@ -76,8 +77,8 @@ void SVExternalTool::Initialize()
 
 
 
-SVStaticStringValueObjectClass* SVExternalTool::GetInputImageNames()
+SVStringValueObjectClass* SVExternalTool::GetInputImageNames()
 {
-	return &m_svSourceImageNames;	
+	return &m_SourceImageNames;	
 }
 

@@ -48,8 +48,8 @@ namespace Seidenader { namespace TriggerHandling {
 
 	void SVCameraTriggerData::SetLineState(long index, double timeStamp, bool state)
 	{
-		m_timestamp.SetValue(index, timeStamp);
-		m_lineInState.SetValue(index, state);
+		m_timestamp.SetValue( timeStamp, index );
+		m_lineInState.SetValue( BOOL(state), index );
 	}
 
 	void SVCameraTriggerData::init()
@@ -60,12 +60,12 @@ namespace Seidenader { namespace TriggerHandling {
 		Name = SvUl_SF::LoadSVString( IDS_OBJECTNAME_CAMERA_TRIGGER_LINEINSTATE );
 		m_lineInState.SetObjectEmbedded(SVCameraTriggerLineInStateGuid, this, Name.c_str());
 	/* For Camera based Triggering
-		RegisterEmbeddedObject(&m_timestamp, SVCameraTriggerTimestampGuid, IDS_OBJECTNAME_CAMERA_TRIGGER_TIMESTAMP, false, SVResetItemNone);
-		RegisterEmbeddedObject(&m_lineInState, SVCameraTriggerLineInStateGuid, IDS_OBJECTNAME_CAMERA_TRIGGER_LINEINSTATE, false, SVResetItemNone);
+		RegisterEmbeddedObject(&m_timestamp, SVCameraTriggerTimestampGuid, IDS_OBJECTNAME_CAMERA_TRIGGER_TIMESTAMP, false, SvOi::SVResetItemNone);
+		RegisterEmbeddedObject(&m_lineInState, SVCameraTriggerLineInStateGuid, IDS_OBJECTNAME_CAMERA_TRIGGER_LINEINSTATE, false, SvOi::SVResetItemNone);
 	*/
-		const DWORD dwAttributes = SV_VIEWABLE | SV_PUBLISHABLE | SV_ARCHIVABLE;
-		m_timestamp.ObjectAttributesAllowedRef() = dwAttributes;
-		m_lineInState.ObjectAttributesAllowedRef() = dwAttributes;
+		const UINT cAttributes = SV_VIEWABLE | SV_PUBLISHABLE | SV_ARCHIVABLE;
+		m_timestamp.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::OverwriteAttribute );
+		m_lineInState.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::OverwriteAttribute );
 	}
 
 	void SVCameraTriggerData::destroy()
@@ -75,14 +75,14 @@ namespace Seidenader { namespace TriggerHandling {
 	SVIOEntryHostStructPtr SVCameraTriggerData::SetupLineStateInput(long objectDepth)
 	{
 		m_lineInState.SetObjectDepth(objectDepth);
-		m_lineInState.SetDefaultValue( 0, false );
-		m_lineInState.SetValue( 1, false );
+		m_lineInState.SetObjectOwner(this);
+		m_lineInState.SetDefaultValue(BOOL(false), false);
+		m_lineInState.SetValue(BOOL(false), 1);
 		m_lineInState.ResetObject();
 
 		SVIOEntryHostStructPtr pIOEntry = new SVIOEntryHostStruct;
 		pIOEntry->m_DeleteValueObject = false;
-		pIOEntry->m_pValueObject = &m_lineInState;
-		pIOEntry->m_pValueParent = this;
+		pIOEntry->setObject(dynamic_cast<SVObjectClass*> (&m_lineInState));
 		pIOEntry->m_ObjectType	= IO_CAMERA_DATA_INPUT;
 		pIOEntry->m_PPQIndex	= 0;
 		pIOEntry->m_Enabled		= true;
@@ -93,14 +93,14 @@ namespace Seidenader { namespace TriggerHandling {
 	SVIOEntryHostStructPtr SVCameraTriggerData::SetupTimestampInput(long objectDepth)
 	{
 		m_timestamp.SetObjectDepth(objectDepth);
-		m_timestamp.SetDefaultValue( 0, 0.0 );
-		m_timestamp.SetValue( 1, 0.0 );
+		m_timestamp.SetObjectOwner(this);
+		m_timestamp.SetDefaultValue( 0.0, false );
+		m_timestamp.SetValue( 0.0, 1 );
 		m_timestamp.ResetObject();
 
 		SVIOEntryHostStructPtr pIOEntry = new SVIOEntryHostStruct;
 		pIOEntry->m_DeleteValueObject = false;
-		pIOEntry->m_pValueObject = &m_timestamp;
-		pIOEntry->m_pValueParent = this;
+		pIOEntry->setObject(dynamic_cast<SVObjectClass*> (&m_timestamp));
 		pIOEntry->m_ObjectType	= IO_CAMERA_DATA_INPUT;
 		pIOEntry->m_PPQIndex	= 0;
 		pIOEntry->m_Enabled		= true;

@@ -29,7 +29,7 @@ public:
 	virtual HRESULT GetSelectedEdgeOverlays( SVExtentMultiLineStruct &p_MultiLine ) override;
 
 protected:
-	virtual bool onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+	virtual bool onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
 	SVDPointValueObjectClass mdpEdgeA;	// Point
 	SVDPointValueObjectClass mdpEdgeB;	// Point

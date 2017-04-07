@@ -13,6 +13,7 @@
 #pragma region Includes
 #include "SVTool.h"
 #include "SVMainImageClass.h"
+#include "SVValueObjectLibrary/SVStringValueObjectClass.h"
 #pragma endregion Includes
 
 class SVImageClass;
@@ -31,7 +32,7 @@ public:
 
 	virtual bool DoesObjectHaveExtents() const override;
 
-	virtual SVStaticStringValueObjectClass* GetInputImageNames( ) override;
+	virtual SVStringValueObjectClass* GetInputImageNames( ) override;
 
 protected:
 	void init();
@@ -40,6 +41,6 @@ protected:
 	SVMainImageClass				mainImageObject;	// Embedded
 
 	// String value object for Source Image Names
-	SVStaticStringValueObjectClass m_svSourceImageNames;
+	SVStringValueObjectClass m_SourceImageNames;
 };
 

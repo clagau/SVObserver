@@ -54,21 +54,21 @@ HRESULT SVOCVMatchDlg::SetInspectionData()
 	
 	if( pOCVAnalyzerResult )
 	{
-		l_hrOk = AddInputRequest( &( pOCVAnalyzerResult->m_fnvoMatchStringFileName ), m_MatchFilename );
+		l_hrOk = AddInputRequest( SVObjectReference(&pOCVAnalyzerResult->m_fnvoMatchStringFileName), _variant_t(m_MatchFilename) );
 
 		if( S_OK == l_hrOk )
 		{
-			l_hrOk = AddInputRequest( &( pOCVAnalyzerResult->m_svoMatchString ), m_MatchString );
+			l_hrOk = AddInputRequest( SVObjectReference(&pOCVAnalyzerResult->m_svoMatchString), _variant_t(m_MatchString) );
 		}
 
 		if( S_OK == l_hrOk )
 		{
-			l_hrOk = AddInputRequest( &( pOCVAnalyzerResult->m_bvoUseMatchFile ), !m_useMatchFile );
+			l_hrOk = AddInputRequest( SVObjectReference(&pOCVAnalyzerResult->m_bvoUseMatchFile), _variant_t(m_useMatchFile ? false : true) );
 		}
 
 		if( S_OK == l_hrOk )
 		{
-			l_hrOk = AddInputRequest( &( pOCVAnalyzerResult->m_bvoPerformOCR ), m_nRadioOperation ? 0:1);
+			l_hrOk = AddInputRequest( SVObjectReference(&pOCVAnalyzerResult->m_bvoPerformOCR), _variant_t(m_nRadioOperation ? false : true) );
 		}
 
 		if( S_OK == l_hrOk )

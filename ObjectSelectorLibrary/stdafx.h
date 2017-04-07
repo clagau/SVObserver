@@ -35,7 +35,8 @@
 
 #define VC_EXTRALEAN		// Exclude rarely-used stuff from Windows headers
 
-#pragma warning ( disable : 4503 )
+#pragma warning( disable: 4503 )
+#pragma warning( disable: 4482 )
 
 //************************************
 //! Precompiled headers section

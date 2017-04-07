@@ -15,10 +15,48 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #pragma endregion Includes
 
+SVTaskObjectInterfaceInputRequestStruct::SVTaskObjectInterfaceInputRequestStruct()
+{
+	m_Guid = SV_GUID_NULL;
+}
+
+SVTaskObjectInterfaceInputRequestStruct::SVTaskObjectInterfaceInputRequestStruct( const SVObjectReference& rObjectRef, const SVGUID& rGuid, const SVString& rName )
+{
+	m_ObjectRef = rObjectRef;
+	m_Guid = rGuid;
+	m_Name = rName;
+}
+
+SVTaskObjectInterfaceInputRequestStruct::SVTaskObjectInterfaceInputRequestStruct( const SVObjectReference& rObjectRef )
+{
+	m_ObjectRef = rObjectRef;
+	if( nullptr != m_ObjectRef.getObject() )
+	{
+		m_Guid = m_ObjectRef.Guid();
+		m_Name = m_ObjectRef.GetCompleteName();
+	}
+}
+
+inline bool SVTaskObjectInterfaceInputRequestStruct::operator < ( const SVTaskObjectInterfaceInputRequestStruct& rhs ) const
+{
+	if( nullptr != m_ObjectRef.getObject() && nullptr != rhs.m_ObjectRef.getObject() )
+	{
+		return m_ObjectRef < rhs.m_ObjectRef;
+	}
+	else if ( SV_GUID_NULL != m_Guid && SV_GUID_NULL != rhs.m_Guid )
+	{
+		return m_Guid < rhs.m_Guid;
+	}
+	else
+	{
+		return m_Name < rhs.m_Name;
+	}
+}
+
 SVTaskObjectInterfaceInputRequestStruct::SVTaskObjectInterfaceInputRequestStruct( const SVGUID& rGuid )
 {
 	m_Guid = rGuid;
-	m_ObjectRef = SVValueObjectReference( SVObjectManagerClass::Instance().GetObject( m_Guid ) );
+	m_ObjectRef = SVObjectReference( SVObjectManagerClass::Instance().GetObject( m_Guid ) );
 	m_Name = m_ObjectRef.GetCompleteName();
 }
 
@@ -29,31 +67,33 @@ SVTaskObjectInterfaceInputRequestStruct::SVTaskObjectInterfaceInputRequestStruct
 	m_Guid = m_ObjectRef.Guid();
 }
 
-HRESULT SVInputRequestStructMap::Add( SVValueObjectClass* pValueObject )
+HRESULT SVInputRequestStructMap::Add( SVObjectClass* pObject )
 {
-	ASSERT( pValueObject );
+	assert( pObject );
 	HRESULT Result( E_FAIL );
+	SvOi::IValueObject* pValueObject = dynamic_cast<SvOi::IValueObject*> (pObject);
 	if ( nullptr != pValueObject )
 	{
-		SVString Value;
-		Result = pValueObject->GetValue( Value );
+		_variant_t Value;
+		Result = pValueObject->getValue( Value );
 		if ( S_OK == Result )
 		{
-			(*this)[ SVValueObjectReference( pValueObject ) ] = Value;
+			(*this)[ SVObjectReference( pObject ) ] = Value;
 		}
 	}
 	return Result;
 }
 
-HRESULT SVInputRequestStructMap::Add( const SVValueObjectReference& rObjectRef )
+HRESULT SVInputRequestStructMap::Add( const SVObjectReference& rObjectRef )
 {
 	HRESULT Result( E_FAIL );
 
-	ASSERT( rObjectRef.Object() );
-	if ( nullptr != rObjectRef.Object() )
+	SvOi::IValueObject* pValueObject( rObjectRef.getValueObject() );
+	assert( pValueObject );
+	if ( nullptr != pValueObject )
 	{
-		SVString Value;
-		Result = rObjectRef.GetValue( Value );
+		_variant_t Value;
+		Result = pValueObject->getValue( Value, -1, rObjectRef.ArrayIndex() );
 		if ( S_OK == Result )
 		{
 			(*this)[ rObjectRef ] = Value;

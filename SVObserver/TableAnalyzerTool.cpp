@@ -102,16 +102,16 @@ BOOL TableAnalyzerTool::CreateObject( SVObjectLevelCreateStruct* pCreateStructur
 
 	// Override base class exposure of the drawflag
 	// This value will not be exposed for the Table Tool.
-	drawToolFlag.ObjectAttributesAllowedRef() = SV_HIDDEN;
+	drawToolFlag.SetObjectAttributesAllowed( SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
 
 	// Override base class exposure of the auxillaryextent variables
 	// These values will not be exposed for the Table Tool.
-	m_svUpdateAuxiliaryExtents.ObjectAttributesAllowedRef() = SV_HIDDEN;
-	m_svAuxiliarySourceX.ObjectAttributesAllowedRef() = SV_HIDDEN;
-	m_svAuxiliarySourceY.ObjectAttributesAllowedRef() = SV_HIDDEN;
-	m_svAuxiliarySourceAngle.ObjectAttributesAllowedRef() = SV_HIDDEN;
-	m_svAuxiliarySourceImageName.ObjectAttributesAllowedRef() = SV_HIDDEN;
-	m_svAuxiliaryDrawType.ObjectAttributesAllowedRef() = SV_HIDDEN;
+	m_svUpdateAuxiliaryExtents.SetObjectAttributesAllowed( SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
+	m_svAuxiliarySourceX.SetObjectAttributesAllowed( SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
+	m_svAuxiliarySourceY.SetObjectAttributesAllowed( SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
+	m_svAuxiliarySourceAngle.SetObjectAttributesAllowed( SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
+	m_svAuxiliarySourceImageName.SetObjectAttributesAllowed( SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
+	m_svAuxiliaryDrawType.SetObjectAttributesAllowed( SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
 
 	m_isCreated = bOk;
 
@@ -129,8 +129,8 @@ bool TableAnalyzerTool::ResetObject(SvStl::MessageContainerVector *pErrorMessage
 
 	Result = ValidateLocal(pErrorMessages) && Result;
 
-	SVObjectClass* pObject = m_sourceTableObjectInfo.GetInputObjectInfo().PObject;
-	if (!m_sourceTableObjectInfo.IsConnected() || nullptr == dynamic_cast<TableObject*>(pObject))
+	SVObjectClass* pObject = m_sourceTableObjectInfo.GetInputObjectInfo().m_pObject;
+	if( !m_sourceTableObjectInfo.IsConnected() || nullptr == dynamic_cast<TableObject*> (pObject) )
 	{
 		Result = false;
 		if (nullptr != pErrorMessages)
@@ -140,7 +140,7 @@ bool TableAnalyzerTool::ResetObject(SvStl::MessageContainerVector *pErrorMessage
 			pErrorMessages->push_back( message );
 		}
 	}
-	else if (pObject->GetAncestorInterface(SVInspectionObjectType) != GetAncestorInterface(SVInspectionObjectType))
+	else if( pObject->GetAncestorInterface(SVInspectionObjectType) != GetAncestorInterface(SVInspectionObjectType) )
 	{
 		pObject->DisconnectObjectInput( &m_sourceTableObjectInfo );
 		m_sourceTableObjectInfo.SetInputObject(nullptr);
@@ -155,7 +155,7 @@ bool TableAnalyzerTool::ResetObject(SvStl::MessageContainerVector *pErrorMessage
 
 	if (Result)
 	{
-		m_pResultTable->setSourecTable(dynamic_cast<TableObject*>(m_sourceTableObjectInfo.GetInputObjectInfo().PObject));
+		m_pResultTable->setSourecTable( dynamic_cast<TableObject*> (m_sourceTableObjectInfo.GetInputObjectInfo().m_pObject) );
 		Result = m_pResultTable->ResetObject(pErrorMessages);
 	}
 	else
@@ -200,8 +200,8 @@ void TableAnalyzerTool::LocalInitialize ()
 	BuildInputObjectList ();
 
 	// Set up your type
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVToolObjectType;
-	m_outObjectInfo.ObjectTypeInfo.SubType    = SVTableAnalyzerToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SVTableAnalyzerToolObjectType;
 
 	// Hide and Remove Embedded Extents
 	removeEmbeddedExtents();

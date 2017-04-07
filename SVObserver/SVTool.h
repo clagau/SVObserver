@@ -12,12 +12,14 @@
 #pragma once
 
 #pragma region Includes
-#include "ObjectInterfaces\ITool.h"
+#include "ObjectInterfaces/ITool.h"
+#include "ObjectInterfaces/IObjectClass.h"
 #include "SVOCore/SVTaskObjectList.h"
 #include "SVToolExtentClass.h"
 #include "SVOCore/SVImageClass.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVUtilityLibrary/SVString.h"
+#include "SVValueObjectLibrary/SVStringValueObjectClass.h"
 #pragma endregion Includes
 
 class SVAnalyzerClass;
@@ -71,7 +73,7 @@ public:
 	
 	SVImageTypeEnum GetImageType();
 
-	HRESULT SetImageExtentProperty( SVExtentPropertyEnum p_eProperty, SVValueObjectClass *p_psvValue );
+	HRESULT SetImageExtentProperty( SVExtentPropertyEnum p_eProperty, SvOi::IValueObject* pValueObject );
 
 	virtual HRESULT GetImageExtent( SVImageExtentClass &p_rsvImageExtent ) override;
 	virtual HRESULT GetImageExtent( unsigned long p_ulIndex, SVImageExtentClass &p_rsvImageExtent );
@@ -95,7 +97,7 @@ public:
 	bool getConditionalResult() const;
 	bool getConditionalResult(long p_lIndex) const;
 
-	virtual HRESULT CollectOverlays( SVImageClass *p_Image, SVExtentMultiLineStructCArray &p_MultiLineArray ) override;
+	virtual HRESULT CollectOverlays( SVImageClass *p_Image, SVExtentMultiLineStructVector &p_MultiLineArray ) override;
 
 	void UpdateTaskObjectOutputListAttributes( SVObjectReference refTarget, UINT uAttributes );
 
@@ -107,7 +109,7 @@ public:
 	virtual HRESULT IsAuxInputImage( const SVInObjectInfoStruct* p_psvInfo ) override; 
 
 	// Set String value object for Source Image Names
-	virtual SVStaticStringValueObjectClass* GetInputImageNames( );
+	virtual SVStringValueObjectClass* GetInputImageNames( );
 	virtual bool SetFirstInputImageName( LPCTSTR FirstName) override;
 
 
@@ -133,7 +135,7 @@ public:
 	//! Sets the tool position index (One based)
 	//! \param Position
 	//************************************
-	void setToolPosition(long ToolPosition) { m_ToolPosition.SetValue(1, ToolPosition); };
+	void setToolPosition(long ToolPosition) { m_ToolPosition.SetValue(ToolPosition, 1); };
 
 	//
 	// Flag to indicate this tool is selected for SVIM operator move.
@@ -146,7 +148,7 @@ public:
 
 	SVInObjectInfoStruct m_AuxSourceImageObjectInfo;
 
-	SVValueObjectClass* GetToolComment();
+	SVObjectClass* GetToolComment();
 
 	const SVImageInfoClass* getFirstImageInfo() const;
 
@@ -161,15 +163,15 @@ public:
 
 protected:
 	void UpdateAuxiliaryExtents(long resultDataIndex);
-	virtual bool Run( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
-	bool RunWithNewDisable( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr );
+	virtual bool Run( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+	bool RunWithNewDisable( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr );
 
 	HRESULT UpdateOffsetDataToImage( SVExtentOffsetStruct& p_rsvOffsetData, SVImageClass* p_svToolImage ); 
 
 	// Remove Embedded Extents
 	void removeEmbeddedExtents( bool p_DisconnectExtents = true );
 
-	virtual bool onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+	virtual bool onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
 	virtual HRESULT UpdateOverlayIDs( SVExtentMultiLineStruct& p_rMultiLine ) override;
 
@@ -229,7 +231,7 @@ protected:
 	//***** New source image extent value objects
 
 	// Tool Comments
-	SVStaticStringValueObjectClass m_svToolComment;
+	SVStringValueObjectClass m_ToolComment;
 
 protected:
 	SVToolExtentClass m_svToolExtent;

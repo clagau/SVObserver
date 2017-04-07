@@ -43,7 +43,7 @@ BOOL SVInputInfoListClass::CheckExistence( int Index /*= -1*/ )
 			// Check only this entry...
 			if( GetAt( Index ) )
 			{
-				BRetVal = ( nullptr != ( GetAt( Index )->PObject = SVObjectManagerClass::Instance().GetObject( GetAt( Index )->UniqueObjectID ) ) ) ? true : false;
+				BRetVal = ( nullptr != ( GetAt( Index )->m_pObject = SVObjectManagerClass::Instance().GetObject( GetAt( Index )->m_UniqueObjectID ) ) ) ? true : false;
 			}
 		}
 		else
@@ -54,7 +54,7 @@ BOOL SVInputInfoListClass::CheckExistence( int Index /*= -1*/ )
 			{
 				if( GetAt( i ) )
 				{
-					BRetVal = ( ( nullptr != ( GetAt( i )->PObject = SVObjectManagerClass::Instance().GetObject( GetAt( i )->UniqueObjectID ) ) ) ? true : false ) && BRetVal;
+					BRetVal = ( ( nullptr != ( GetAt( i )->m_pObject = SVObjectManagerClass::Instance().GetObject( GetAt( i )->m_UniqueObjectID ) ) ) ? true : false ) && BRetVal;
 				}
 				else
 				{

@@ -26,14 +26,14 @@ SVAcquisitionToolClass::SVAcquisitionToolClass( BOOL BCreateDefaultTaskList, SVO
 void SVAcquisitionToolClass::init()
 {
 	// Indentify our type in the Output List
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVToolObjectType;
-	m_outObjectInfo.ObjectTypeInfo.SubType = SVToolAcquisitionObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVToolAcquisitionObjectType;
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject( &mainImageObject, SVOutputImageObjectGuid, IDS_OBJECTNAME_IMAGE1 );
 
 	// Register SourceImageNames Value Object
-	RegisterEmbeddedObject( &m_svSourceImageNames, SVSourceImageNamesGuid, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SVResetItemTool );
+	RegisterEmbeddedObject( &m_SourceImageNames, SVSourceImageNamesGuid, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SvOi::SVResetItemTool );
 
 	addDefaultInputObjects();
 }
@@ -51,11 +51,12 @@ BOOL SVAcquisitionToolClass::CreateObject( SVObjectLevelCreateStruct* PCreateStr
 	if( SVToolClass::CreateObject( PCreateStructure ) )
 	{
 		bOk = ( S_OK == SetImageExtent( 1, mainImageObject.GetImageExtents() ) );
-		mainImageObject.ObjectAttributesAllowedRef() |= SV_PUBLISH_RESULT_IMAGE;
+		mainImageObject.SetObjectAttributesAllowed( SV_PUBLISH_RESULT_IMAGE, SvOi::SetAttributeType::AddAttribute );
 	}
 
-	m_svSourceImageNames.ObjectAttributesAllowedRef() &=~SV_REMOTELY_SETABLE & ~SV_SETABLE_ONLINE;
-	m_svSourceImageNames.SetValue( 0, SVString(mainImageObject.GetCompleteName()) );
+	m_SourceImageNames.setStatic( true );
+	m_SourceImageNames.SetObjectAttributesAllowed( SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE, SvOi::SetAttributeType::RemoveAttribute );
+	m_SourceImageNames.SetValue( mainImageObject.GetCompleteName(), 0 );
 
 	m_isCreated = bOk;
 
@@ -97,9 +98,9 @@ bool SVAcquisitionToolClass::DoesObjectHaveExtents() const
 	return false;
 }
 
-SVStaticStringValueObjectClass* SVAcquisitionToolClass::GetInputImageNames()
+SVStringValueObjectClass* SVAcquisitionToolClass::GetInputImageNames()
 {
-	return &m_svSourceImageNames;
+	return &m_SourceImageNames;
 }
 
 

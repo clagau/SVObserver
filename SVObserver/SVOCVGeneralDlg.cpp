@@ -59,16 +59,16 @@ HRESULT SVOCVGeneralDlg::SetInspectionData()
 	{
 		UpdateData(TRUE);
 
-		l_hrOk = AddInputRequest( &( pOCVAnalyzerResult->m_fnvoFontFileName ), m_fontFilename );
+		l_hrOk = AddInputRequest( SVObjectReference(&pOCVAnalyzerResult->m_fnvoFontFileName), _variant_t(m_fontFilename) );
 
 		if( S_OK == l_hrOk )
 		{
-			l_hrOk = AddInputRequest( &( pOCVAnalyzerResult->m_fnvoConstraintsFileName ), m_constraintsFilename );
+			l_hrOk = AddInputRequest( SVObjectReference(&pOCVAnalyzerResult->m_fnvoConstraintsFileName), _variant_t(m_constraintsFilename) );
 		}
 
 		if( S_OK == l_hrOk )
 		{
-			l_hrOk = AddInputRequest( &( pOCVAnalyzerResult->m_fnvoControlsFileName ), m_controlsFilename );
+			l_hrOk = AddInputRequest( SVObjectReference(&pOCVAnalyzerResult->m_fnvoControlsFileName), _variant_t(m_controlsFilename) );
 		}
 
 		if( S_OK == l_hrOk )

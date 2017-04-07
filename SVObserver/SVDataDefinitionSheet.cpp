@@ -197,18 +197,9 @@ void SVDataDefinitionSheet::setAttributes( const SvOsl::SelectorItemVector& rLis
 				{
 					ObjectRef.SetArrayIndex( Iter->getArrayIndex() );
 				}
-				UINT AttributeResult = ObjectRef.ObjectAttributesSet();
 				//Reset the attribute 
-				if( Clear )
-				{
-					AttributeResult &= ~Attribute;
-				}
-				else
-				{
-					AttributeResult |= Attribute;
-				}
-
-				ObjectRef.ObjectAttributesSetRef() = AttributeResult;
+				SvOi::SetAttributeType AddRemoveType = !Clear ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
+				ObjectRef.SetObjectAttributesSet( Attribute, AddRemoveType );
 			}
 		}
 	}

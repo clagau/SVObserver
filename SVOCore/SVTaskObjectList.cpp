@@ -467,7 +467,7 @@ const SVString SVTaskObjectListClass::checkName( LPCTSTR ToolName ) const
 	return newName;
 }
 
-HRESULT SVTaskObjectListClass::CollectOverlays( SVImageClass* p_Image, SVExtentMultiLineStructCArray &p_MultiLineArray )
+HRESULT SVTaskObjectListClass::CollectOverlays( SVImageClass* p_Image, SVExtentMultiLineStructVector &p_MultiLineArray )
 {
 	HRESULT hrRet = S_OK;
 
@@ -795,7 +795,7 @@ bool SVTaskObjectListClass::replaceObject(SVObjectClass* pObject, const GUID& rN
 		{
 			// Get the Owner
 			SVObjectInfoStruct ownerInfo = pObject->GetOwnerInfo();
-			SVObjectClass* pOwner = SVObjectManagerClass::Instance().GetObject(ownerInfo.UniqueObjectID);
+			SVObjectClass* pOwner = SVObjectManagerClass::Instance().GetObject(ownerInfo.m_UniqueObjectID);
 			if (pOwner)
 			{
 				SVTaskObjectListClass* pTaskListOwner = dynamic_cast<SVTaskObjectListClass*>(pOwner);
@@ -880,7 +880,7 @@ void SVTaskObjectListClass::DeleteAll()
 	m_LastListUpdateTimestamp = SVClock::GetTimeStamp();
 }
 
-HRESULT SVTaskObjectListClass::onCollectOverlays(SVImageClass* p_Image, SVExtentMultiLineStructCArray &p_MultiLineArray )
+HRESULT SVTaskObjectListClass::onCollectOverlays(SVImageClass* p_Image, SVExtentMultiLineStructVector &p_MultiLineArray )
 {
 	HRESULT hrRet = SVTaskObjectClass::onCollectOverlays(p_Image, p_MultiLineArray);
 
@@ -955,18 +955,18 @@ bool SVTaskObjectListClass::resetAllOutputListObjects( SvStl::MessageContainerVe
 	return Result;
 }
 
-bool SVTaskObjectListClass::Run(SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVTaskObjectListClass::Run(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	clearRunErrorMessages();
 	SVRunStatusClass ChildRunStatus;
-	ChildRunStatus.m_lResultDataIndex  = RRunStatus.m_lResultDataIndex;
-	ChildRunStatus.Images = RRunStatus.Images;
-	ChildRunStatus.m_UpdateCounters = RRunStatus.m_UpdateCounters;
+	ChildRunStatus.m_lResultDataIndex  = rRunStatus.m_lResultDataIndex;
+	ChildRunStatus.Images = rRunStatus.Images;
+	ChildRunStatus.m_UpdateCounters = rRunStatus.m_UpdateCounters;
 
 	// Run yourself...
-	bool bRetVal = onRun(RRunStatus, &m_RunErrorMessages);
+	bool bRetVal = onRun(rRunStatus, &m_RunErrorMessages);
 
-	if (!RRunStatus.IsDisabled() && !RRunStatus.IsDisabledByCondition())
+	if (!rRunStatus.IsDisabled() && !rRunStatus.IsDisabledByCondition())
 	{
 		// Run your children...
 		for (int i = 0; i < m_aTaskObjects.GetSize(); i++)
@@ -979,28 +979,28 @@ bool SVTaskObjectListClass::Run(SVRunStatusClass& RRunStatus, SvStl::MessageCont
 				bRetVal = pTaskObject->Run(ChildRunStatus, &m_RunErrorMessages) & bRetVal;
 
 				// Update our Run Status
-				if ( ChildRunStatus.IsDisabled() ) { RRunStatus.SetDisabled(); }
+				if ( ChildRunStatus.IsDisabled() ) { rRunStatus.SetDisabled(); }
 
-				if ( ChildRunStatus.IsDisabledByCondition() ) { RRunStatus.SetDisabledByCondition(); }
+				if ( ChildRunStatus.IsDisabledByCondition() ) { rRunStatus.SetDisabledByCondition(); }
 
-				if ( ChildRunStatus.IsWarned() ) { RRunStatus.SetWarned(); }
+				if ( ChildRunStatus.IsWarned() ) { rRunStatus.SetWarned(); }
 
-				if ( ChildRunStatus.IsFailed() ) { RRunStatus.SetFailed(); }
+				if ( ChildRunStatus.IsFailed() ) { rRunStatus.SetFailed(); }
 
-				if ( ChildRunStatus.IsPassed() ) { RRunStatus.SetPassed(); }
+				if ( ChildRunStatus.IsPassed() ) { rRunStatus.SetPassed(); }
 
-				if ( ChildRunStatus.IsCriticalFailure() ) { RRunStatus.SetCriticalFailure(); }
+				if ( ChildRunStatus.IsCriticalFailure() ) { rRunStatus.SetCriticalFailure(); }
 			}
 		}
 	}
 
 	// Get Status Color...
-	DWORD dwValue = RRunStatus.GetStatusColor();
-	m_statusColor.SetValue( RRunStatus.m_lResultDataIndex, dwValue );
+	DWORD dwValue = rRunStatus.GetStatusColor();
+	m_statusColor.SetValue( dwValue, rRunStatus.m_lResultDataIndex );
 
 	// Get Status...
-	dwValue = RRunStatus.GetState();
-	m_statusTag.SetValue( RRunStatus.m_lResultDataIndex, dwValue );
+	dwValue = rRunStatus.GetState();
+	m_statusTag.SetValue( dwValue, rRunStatus.m_lResultDataIndex );
 
 	if (nullptr != pErrorMessages && !m_RunErrorMessages.empty())
 	{
@@ -1060,7 +1060,7 @@ bool SVTaskObjectListClass::resetAllObjects( SvStl::MessageContainerVector *pErr
 		}
 	}
 
-	m_isObjectValid.SetValue(1, Result);
+	m_isObjectValid.SetValue( BOOL(Result), 1 );
 
 	return Result;
 }
@@ -1131,11 +1131,11 @@ SvOi::IObjectClass* SVTaskObjectListClass::getFirstObjectWithRequestor( const SV
 
 		if (pOutputInfo)
 		{
-			pObject = pOutputInfo->PObject;
+			pObject = pOutputInfo->m_pObject;
 
 			if (nullptr == pObject)
 			{
-				pObject = SVObjectManagerClass::Instance().GetObject(pOutputInfo->UniqueObjectID);
+				pObject = SVObjectManagerClass::Instance().GetObject(pOutputInfo->m_UniqueObjectID);
 			}
 
 			if (nullptr != pObject && pObject->GetOwner() != pRequestor && pObject != pRequestor)

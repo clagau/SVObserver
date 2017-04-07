@@ -389,9 +389,9 @@ void SVToolAdjustmentDialogTransformationLearnPageClass::refreshLearnedValues()
 {
 	SVString Value;
 	// refresh Learned Translation X settings...
-	if( pLearnedTranslationX )
+	if( nullptr != pLearnedTranslationX )
 	{
-		pLearnedTranslationX->GetValue(	Value );
+		pLearnedTranslationX->getValue(	Value );
 		m_LearnedTranslationXValue = Value.c_str();
 	}
 	else
@@ -400,9 +400,9 @@ void SVToolAdjustmentDialogTransformationLearnPageClass::refreshLearnedValues()
 	}
 	
 	// refresh Learned Translation Y settings...
-	if( pLearnedTranslationY )
+	if( nullptr != pLearnedTranslationY )
 	{
-		pLearnedTranslationY->GetValue(	Value );
+		pLearnedTranslationY->getValue(	Value );
 		m_LearnedTranslationYValue = Value.c_str();
 	}
 	else
@@ -411,9 +411,9 @@ void SVToolAdjustmentDialogTransformationLearnPageClass::refreshLearnedValues()
 	}
 
 	// refresh Learned Rotation X settings...
-	if( pLearnedRotationX )
+	if( nullptr != pLearnedRotationX )
 	{
-		pLearnedRotationX->GetValue( Value );
+		pLearnedRotationX->getValue( Value );
 		m_LearnedRotationXValue = Value.c_str();
 	}
 	else
@@ -422,9 +422,9 @@ void SVToolAdjustmentDialogTransformationLearnPageClass::refreshLearnedValues()
 	}
 	
 	// refresh Learned Rotation Y settings...
-	if( pLearnedRotationY )
+	if( nullptr != pLearnedRotationY )
 	{
-		pLearnedRotationY->GetValue( Value );
+		pLearnedRotationY->getValue( Value );
 		m_LearnedRotationYValue = Value.c_str();
 	}
 	else
@@ -433,9 +433,10 @@ void SVToolAdjustmentDialogTransformationLearnPageClass::refreshLearnedValues()
 	}
 
 	// refresh Learned Rotation Angle settings...
-	if( pLearnedRotationAngle )
+	if( nullptr != pLearnedRotationAngle )
 	{
-		pLearnedRotationAngle->GetValue( Value );
+		pLearnedRotationAngle->getValue( Value );
+
 		m_LearnedRotationAngleValue = Value.c_str();
 	}
 	else

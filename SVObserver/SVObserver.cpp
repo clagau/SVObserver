@@ -4374,8 +4374,8 @@ BOOL SVObserverApp::ShowConfigurationAssistant( int Page /*= 3*/,
 			m_ConfigFileName.SetFileNameOnly( NewName.c_str() );
 			m_ConfigFileName.SetExtension( _T(".svx") );
 
-			SVDigitalInputObject *pInput = nullptr;
-			SVPPQObject			 *pPPQ = nullptr;
+			SVDigitalInputObject* pInput = nullptr;
+			SVPPQObject* pPPQ = nullptr;
 			unsigned long ulCount = 0;
 			unsigned long l = 0;
 			long lPPQ = 0;
@@ -4395,7 +4395,7 @@ BOOL SVObserverApp::ShowConfigurationAssistant( int Page /*= 3*/,
 
 						SVString Name = SvUl_SF::Format( _T("DIO.Input%d"), l+1 );
 
-						pInputObjectList->GetInputFlyweight( Name, pInput );
+						pInput = dynamic_cast<SVDigitalInputObject*> (pInputObjectList->GetInputFlyweight(Name, SVDigitalInputObjectType));
 
 						if( nullptr != pInput )
 						{
@@ -4418,8 +4418,8 @@ BOOL SVObserverApp::ShowConfigurationAssistant( int Page /*= 3*/,
 				SVOutputObjectList *pOutputObjectList = pConfig->GetOutputObjectList( );
 				if (nullptr != pOutputObjectList)
 				{
-					SVDigitalOutputObject *pOutput = nullptr;
-					pOutputObjectList->GetOutputFlyweight( "Module Ready", pOutput );
+					SVDigitalOutputObject* pOutput(nullptr);
+					pOutput = dynamic_cast<SVDigitalOutputObject*> (pOutputObjectList->GetOutputFlyweight(SvO::cModuleReady, SVDigitalOutputObjectType));
 
 					// @HACK:  JAB082212 HACK!!!!!
 					if( nullptr != pOutput )

@@ -46,7 +46,7 @@ SVImageOverlayClass::SVImageOverlayClass()
 	Init();
 }// end ctor
 
-SVImageOverlayClass::SVImageOverlayClass(const SVExtentMultiLineStructCArray& rMultiLineArrayStruct)
+SVImageOverlayClass::SVImageOverlayClass(const SVExtentMultiLineStructVector& rMultiLineArrayStruct)
 {
 	Init();
 
@@ -74,7 +74,7 @@ const SVImageOverlayClass& SVImageOverlayClass::operator = ( const SVImageOverla
 	return *this;
 }
 
-const SVImageOverlayClass& SVImageOverlayClass::operator = (const SVExtentMultiLineStructCArray& rMultiLineArrayStruct)
+const SVImageOverlayClass& SVImageOverlayClass::operator = (const SVExtentMultiLineStructVector& rMultiLineArrayStruct)
 {
 	Clear();
 

@@ -217,7 +217,7 @@ BOOL SVExternalToolInputSelectPage::OnInitDialog()
 			pEdit->SetInfoText( Description.c_str() ) ;
 
 			SVString Value;
-			rValue.GetValue( Value );
+			rValue.getValue( Value );
 			pEdit->SetItemValue( Value.c_str() );
 			pEdit->OnRefresh();
 		}
@@ -379,20 +379,20 @@ void SVExternalToolInputSelectPage::OnOK()
 				pItem->GetItemValue( Value );
 
 				SVInObjectInfoStruct& rInfo = m_pTask->m_Data.m_aInputObjectInfo[iIndex];
-				if ( rInfo.GetInputObjectInfo().PObject )
+				if ( rInfo.GetInputObjectInfo().m_pObject )
 				{	// disconnect existing connection
-					rInfo.GetInputObjectInfo().PObject->DisconnectObjectInput(&rInfo);
+					rInfo.GetInputObjectInfo().m_pObject->DisconnectObjectInput(&rInfo);
 					rInfo.SetInputObject( nullptr );
 				}
 
 				if ( nullptr != pObject )
 				{
-					rValue.SetValue(iBucket, Value );
+					rValue.setValue( Value, iBucket );
 					rInfo.SetInputObject( pObject );
 					bool bSuccess = false;
-					if ( rInfo.GetInputObjectInfo().PObject )
+					if ( rInfo.GetInputObjectInfo().m_pObject )
 					{
-						bSuccess = rInfo.GetInputObjectInfo().PObject->ConnectObjectInput(&rInfo);
+						bSuccess = rInfo.GetInputObjectInfo().m_pObject->ConnectObjectInput(&rInfo);
 					}
 					ASSERT( bSuccess );
 				}

@@ -2129,16 +2129,10 @@
     <None Include="SVDLLToolLoadLibraryClass.inl">
       <Filter>Header Files</Filter>
     </None>
-    <None Include="SVInputObjectList.inl">
-      <Filter>Header Files</Filter>
-    </None>
     <None Include="SVInspectionProcessResetStruct.inl">
       <Filter>Header Files</Filter>
     </None>
     <None Include="SVMemoryManager.inl">
-      <Filter>Header Files</Filter>
-    </None>
-    <None Include="SVOutputObjectList.inl">
       <Filter>Header Files</Filter>
     </None>
     <None Include="hlp\AfxCore.rtf">

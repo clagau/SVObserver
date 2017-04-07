@@ -54,8 +54,8 @@ BOOL TableExcludeAnalyzer::CreateObject( SVObjectLevelCreateStruct* pCreateStruc
 {
 	BOOL l_bOk = __super::CreateObject( pCreateStructure );
 
-	m_excludeHigh.ObjectAttributesAllowedRef() |= SV_REMOTELY_SETABLE;
-	m_excludeLow.ObjectAttributesAllowedRef() |= SV_REMOTELY_SETABLE;
+	m_excludeHigh.SetObjectAttributesAllowed( SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
+	m_excludeLow.SetObjectAttributesAllowed( SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
 
 	return l_bOk;
 }
@@ -64,10 +64,10 @@ bool TableExcludeAnalyzer::ResetObject(SvStl::MessageContainerVector *pErrorMess
 {
 	bool Result = __super::ResetObject(pErrorMessages);
 
-	SVObjectClass* pObject = m_excludeColumnObjectInfo.GetInputObjectInfo().PObject;
-	if (!m_excludeColumnObjectInfo.IsConnected() || nullptr == dynamic_cast<DoubleSortValueObject*>(pObject) 
+	SVObjectClass* pObject = m_excludeColumnObjectInfo.GetInputObjectInfo().m_pObject;
+	if (!m_excludeColumnObjectInfo.IsConnected() || nullptr == dynamic_cast<DoubleSortValueObject*> (pObject) 
 		//check if column part of the right table object (The object must be from same tool as this analyzer.)
-		|| nullptr == pObject->GetOwner() || pObject->GetOwner()->GetOwner() != m_ownerObjectInfo.PObject)
+		|| nullptr == pObject->GetOwner() || pObject->GetOwner()->GetOwner() != m_ownerObjectInfo.m_pObject)
 	{
 		Result = false;
 		if (nullptr != pErrorMessages)
@@ -81,11 +81,13 @@ bool TableExcludeAnalyzer::ResetObject(SvStl::MessageContainerVector *pErrorMess
 	if (!m_excludeLow.isIndirectValue() && !m_excludeHigh.isIndirectValue())
 	{
 		//check if high greater than low
-		double excludeHigh;
-		double excludeLow;
-		m_excludeHigh.GetValue(excludeHigh);
-		m_excludeLow.GetValue(excludeLow);
-		if (excludeHigh<excludeLow)
+		_variant_t TempValue;
+		m_excludeHigh.GetValue( TempValue );
+		double excludeHigh = static_cast<double> (TempValue);
+		m_excludeLow.GetValue( TempValue );
+		double excludeLow= static_cast<double> (TempValue);
+		
+		if( excludeHigh < excludeLow )
 		{
 			Result = false;
 			if (nullptr != pErrorMessages)
@@ -108,24 +110,25 @@ bool TableExcludeAnalyzer::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCo
 	
 	if (returnValue)
 	{
-		double excludeHigh;
-		double excludeLow;
-		m_excludeHigh.GetValue(excludeHigh);
-		m_excludeLow.GetValue(excludeLow);
+		_variant_t TempValue;
+		m_excludeHigh.GetValue( TempValue );
+		double excludeHigh = static_cast<double> (TempValue);
+		m_excludeLow.GetValue( TempValue );
+		double excludeLow= static_cast<double> (TempValue);
 
-		TableAnalyzerTool* pTool = dynamic_cast<TableAnalyzerTool*>(m_ownerObjectInfo.PObject);
-		DoubleSortValueObject* pColumnValues = dynamic_cast<DoubleSortValueObject*>(m_excludeColumnObjectInfo.GetInputObjectInfo().PObject);
+		TableAnalyzerTool* pTool = dynamic_cast<TableAnalyzerTool*>(m_ownerObjectInfo.m_pObject);
+		DoubleSortValueObject* pColumnValues = dynamic_cast<DoubleSortValueObject*>(m_excludeColumnObjectInfo.GetInputObjectInfo().m_pObject);
 		if (nullptr != pTool && nullptr != pColumnValues)
 		{
 			ValueObjectSortContainer sortContainer = pColumnValues->getSortContainer(rRunStatus.m_lResultDataIndex);
 			size_t sizeValues = sortContainer.size();
 			if (0 < sizeValues)
 			{
-				double value;
+				double Value;
 				for (int i=static_cast<int>(sizeValues)-1; 0 <= i; --i)
 				{
-					pColumnValues->GetValue(rRunStatus.m_lResultDataIndex, i, value);
-					if (excludeHigh<value || excludeLow>value)
+					pColumnValues->GetValue(Value, rRunStatus.m_lResultDataIndex, i );
+					if (excludeHigh<Value || excludeLow>Value)
 					{
 						sortContainer.erase(sortContainer.begin()+i);
 					}
@@ -152,8 +155,8 @@ bool TableExcludeAnalyzer::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCo
 void TableExcludeAnalyzer::Initialize()
 {
 	// Set up your type
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = TableAnalyzerType;
-	m_outObjectInfo.ObjectTypeInfo.SubType    = TableAnalyzerExcludeType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = TableAnalyzerType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType    = TableAnalyzerExcludeType;
 
 	BuildInputObjectList();
 	BuildEmbeddedObjectList();
@@ -162,7 +165,7 @@ void TableExcludeAnalyzer::Initialize()
 void TableExcludeAnalyzer::BuildEmbeddedObjectList()
 {
 	//set excludeHigh-Value
-	RegisterEmbeddedObject( &m_excludeHigh, TableAnaylzerExcludeHighGuid, IDS_OBJECTNAME_TABLEANALYZEREXCLUDE_HIGHVALUE, true, SVResetItemTool );
+	RegisterEmbeddedObject( &m_excludeHigh, TableAnaylzerExcludeHighGuid, IDS_OBJECTNAME_TABLEANALYZEREXCLUDE_HIGHVALUE, true, SvOi::SVResetItemTool );
 	_variant_t vtTemp;
 	::VariantInit(&vtTemp);
 	vtTemp.vt = cVarType_Value;
@@ -171,18 +174,18 @@ void TableExcludeAnalyzer::BuildEmbeddedObjectList()
 
 	SVString ObjectName = SvUl_SF::LoadSVString( IDS_OBJECTNAME_TABLEANALYZEREXCLUDE_HIGHVALUE );
 	ObjectName +=  SvO::cLinkName;
-	RegisterEmbeddedObject( &m_excludeHigh.getLinkedName(), TableAnaylzerExcludeHigh_LinkGuid, ObjectName.c_str(), false, SVResetItemNone );
+	RegisterEmbeddedObject( &m_excludeHigh.getLinkedName(), TableAnaylzerExcludeHigh_LinkGuid, ObjectName.c_str(), false, SvOi::SVResetItemNone );
 	m_excludeHigh.getLinkedName().SetDefaultValue( _T(""), false );
 
 	//set excludeLow-Value
-	RegisterEmbeddedObject( &m_excludeLow, TableAnaylzerExcludeLowGuid, IDS_OBJECTNAME_TABLEANALYZEREXCLUDE_LOWVALUE, true, SVResetItemTool );
+	RegisterEmbeddedObject( &m_excludeLow, TableAnaylzerExcludeLowGuid, IDS_OBJECTNAME_TABLEANALYZEREXCLUDE_LOWVALUE, true, SvOi::SVResetItemTool );
 	//vtTemp.vt = cVarType_Value;
 	vtTemp.dblVal = cDefaultLowValue;
 	m_excludeLow.SetDefaultValue( vtTemp, true );
 
 	ObjectName = SvUl_SF::LoadSVString( IDS_OBJECTNAME_TABLEANALYZEREXCLUDE_LOWVALUE );
 	ObjectName +=  SvO::cLinkName;
-	RegisterEmbeddedObject( &m_excludeLow.getLinkedName(), TableAnaylzerExcludeLow_LinkGuid, ObjectName.c_str(), false, SVResetItemNone );
+	RegisterEmbeddedObject( &m_excludeLow.getLinkedName(), TableAnaylzerExcludeLow_LinkGuid, ObjectName.c_str(), false, SvOi::SVResetItemNone );
 	m_excludeLow.getLinkedName().SetDefaultValue( _T(""), false );
 }
 

@@ -38,18 +38,18 @@ SVColorToolClass::SVColorToolClass( BOOL BCreateDefaultTaskList, SVObjectClass* 
 void SVColorToolClass::init()
 {
  	// Set up your type...
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVToolObjectType;
-	m_outObjectInfo.ObjectTypeInfo.SubType    = SVColorToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SVColorToolObjectType;
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject( &m_band0Image, SVBand0ImageObjectGuid, IDS_OBJECTNAME_BAND0_IMAGE );
 	RegisterEmbeddedObject( &m_band1Image, SVBand1ImageObjectGuid, IDS_OBJECTNAME_BAND1_IMAGE );
 	RegisterEmbeddedObject( &m_band2Image, SVBand2ImageObjectGuid, IDS_OBJECTNAME_BAND2_IMAGE );
 
-	RegisterEmbeddedObject( &m_convertToHSI, SVConvertToHSIObjectGuid, IDS_OBJECTNAME_CONVERT_TO_HSI, true, SVResetItemIP );
+	RegisterEmbeddedObject( &m_convertToHSI, SVConvertToHSIObjectGuid, IDS_OBJECTNAME_CONVERT_TO_HSI, true, SvOi::SVResetItemIP );
 
 	// Register SourceImageNames Value Object
-	RegisterEmbeddedObject( &m_svSourceImageNames, SVSourceImageNamesGuid, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SVResetItemTool );
+	RegisterEmbeddedObject( &m_SourceImageNames, SVSourceImageNamesGuid, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SvOi::SVResetItemTool );
 
 	m_band0Image.InitializeImage( SVImageTypeDependent );
 	m_band1Image.InitializeImage( SVImageTypeDependent );
@@ -117,22 +117,23 @@ BOOL SVColorToolClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure
 	m_ExtentLeft.SetDefaultValue( 0.0, true );
 
 	// Set / Reset Printable Flag
-	m_convertToHSI.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
+	m_convertToHSI.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
 
-	m_svSourceImageNames.ObjectAttributesAllowedRef() &=~SV_REMOTELY_SETABLE & ~SV_SETABLE_ONLINE;
+	m_SourceImageNames.setStatic( true );
+	m_SourceImageNames.SetObjectAttributesAllowed( SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE, SvOi::SetAttributeType::RemoveAttribute );
 
 	// Override base class exposure of the drawflag
 	// This value will not be exposed for the Color Tool.
-	drawToolFlag.ObjectAttributesAllowedRef() = SV_HIDDEN;
+	drawToolFlag.SetObjectAttributesAllowed( SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
 
 	// Override base class exposure of the auxillaryextent variables
 	// These values will not be exposed for the Color Tool.
-	m_svUpdateAuxiliaryExtents.ObjectAttributesAllowedRef() = SV_HIDDEN;
-	m_svAuxiliarySourceX.ObjectAttributesAllowedRef() = SV_HIDDEN;
-	m_svAuxiliarySourceY.ObjectAttributesAllowedRef() = SV_HIDDEN;
-	m_svAuxiliarySourceAngle.ObjectAttributesAllowedRef() = SV_HIDDEN;
-	m_svAuxiliarySourceImageName.ObjectAttributesAllowedRef() = SV_HIDDEN;
-	m_svAuxiliaryDrawType.ObjectAttributesAllowedRef() = SV_HIDDEN;
+	m_svUpdateAuxiliaryExtents.SetObjectAttributesAllowed( SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
+	m_svAuxiliarySourceX.SetObjectAttributesAllowed( SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
+	m_svAuxiliarySourceY.SetObjectAttributesAllowed( SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
+	m_svAuxiliarySourceAngle.SetObjectAttributesAllowed( SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
+	m_svAuxiliarySourceImageName.SetObjectAttributesAllowed( SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
+	m_svAuxiliaryDrawType.SetObjectAttributesAllowed( SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
 
 	m_isCreated = bOk;
 
@@ -203,7 +204,7 @@ HRESULT SVColorToolClass::UpdateImageWithExtent( unsigned long p_Index )
 	return l_hrOk;
 }
 
-bool SVColorToolClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVColorToolClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	// Create 3 output images, one for each band...
 	SVImageClass* pInputImage = nullptr;
@@ -240,7 +241,7 @@ bool SVColorToolClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContai
 		}
 	}
 
-	return __super::onRun( RRunStatus, pErrorMessages );
+	return __super::onRun( rRunStatus, pErrorMessages );
 }
 
 BOOL SVColorToolClass::createBandChildLayer( SVImageClass& p_rOutputImage, SVImageClass* p_pInputImage, long p_BandLink )
@@ -312,11 +313,11 @@ HRESULT SVColorToolClass::CollectInputImageNames( )
 {
 	SVString Name;
 	SVImageClass* l_pImage = nullptr;
-	bool l_bConvertToHSI;
-	HRESULT l_hr = m_convertToHSI.GetValue( l_bConvertToHSI );
+	BOOL ConvertToHSI;
+	HRESULT l_hr = m_convertToHSI.GetValue( ConvertToHSI );
 	if( S_OK == l_hr )
 	{
-		if( l_bConvertToHSI )
+		if( ConvertToHSI )
 		{
 			l_pImage = GetHSIImage();
 		}
@@ -327,14 +328,14 @@ HRESULT SVColorToolClass::CollectInputImageNames( )
 		if( nullptr != l_pImage )
 		{
 			Name = l_pImage->GetCompleteName();
-			m_svSourceImageNames.SetDefaultValue( Name, true );
+			m_SourceImageNames.SetDefaultValue( Name, true );
 		}
 	}
 	return l_hr;
 }
 
-SVStaticStringValueObjectClass* SVColorToolClass::GetInputImageNames()
+SVStringValueObjectClass* SVColorToolClass::GetInputImageNames()
 {
-	return &m_svSourceImageNames;
+	return &m_SourceImageNames;
 }
 

@@ -29,30 +29,27 @@ public:
 	BOOL Create();
 	BOOL Destroy();
 
-	template< typename SVOutputType >
-	HRESULT GetOutput( const SVGUID& p_rOutputID, SVOutputType*& p_rpOutput ) const;
+	SVOutputObject* GetOutput(const SVGUID& rOutputID) const;
 
-	template< typename SVOutputType >
-	HRESULT GetOutput( LPCTSTR p_szName, SVOutputType*& p_rpOutput ) const;
+	SVOutputObject* GetOutput(const SVString& rName) const;
 
-	template< typename SVOutputType >
-	HRESULT GetOutputFlyweight( LPCTSTR p_szName, SVOutputType*& p_rpOutput );
+	SVOutputObject* GetOutputFlyweight(const SVString& rName, SVObjectSubTypeEnum ObjectSubType);
 
 	HRESULT AttachOutput( SVOutputObject *pOutput );
-	HRESULT DetachOutput( const SVGUID& p_rOutputID );
+	HRESULT DetachOutput( const SVGUID& rOutputID );
 
-	BOOL WriteOutputs( SVIOEntryStructVector& p_IOEntries, long lDataIndex, bool p_ACK, bool p_NAK );
-	BOOL WriteOutputs( SVIOEntryHostStructPtrList& p_IOEntries, long lDataIndex, bool p_ACK, bool p_NAK );
-	BOOL ResetOutputs( SVIOEntryStructVector& p_IOEntries );
-	BOOL ResetOutputs( SVIOEntryHostStructPtrList& p_IOEntries );
+	BOOL WriteOutputs( SVIOEntryStructVector& rIOEntries, long lDataIndex, bool p_ACK, bool p_NAK );
+	BOOL WriteOutputs( SVIOEntryHostStructPtrVector& rIOEntries, long lDataIndex, bool p_ACK, bool p_NAK );
+	BOOL ResetOutputs( SVIOEntryStructVector& rIOEntries );
+	BOOL ResetOutputs( SVIOEntryHostStructPtrVector& rIOEntries );
 	BOOL WriteOutput( SVIOEntryStruct pIOEntry, long lDataIndex, bool p_ACK, bool p_NAK );
 	BOOL WriteOutput( SVIOEntryHostStructPtr pIOEntry, long lDataIndex, bool p_ACK, bool p_NAK );
-	BOOL WriteOutputValue( SVIOEntryHostStructPtr pIOEntry, const _variant_t& p_rValue );
+	BOOL WriteOutputValue( SVIOEntryHostStructPtr pIOEntry, const _variant_t& rValue );
 	BOOL ResetOutput( SVIOEntryHostStructPtr pIOEntry );
 	bool RenameInspection( LPCTSTR OldInspection, LPCTSTR NewInspectionName);
 	HRESULT RemoveUnusedOutputs( const SVStringVector& rInspectionNames, const SVStringVector& rPPQNames );
 
-	BOOL FillOutputs( SVIOEntryHostStructPtrList& p_IOEntries );
+	BOOL FillOutputs( SVIOEntryHostStructPtrVector& rIOEntries );
 
 	bool OutputIsNotValid( SVString p_strName );
 
@@ -65,8 +62,8 @@ private:
 
 	void ClearOutputList();
 
-	BOOL Lock() const;
-	BOOL Unlock() const;
+	bool Lock() const;
+	bool Unlock() const;
 
 	BOOL m_bCreated;
 	CRITICAL_SECTION m_hCriticalSection;
@@ -74,5 +71,4 @@ private:
 	SVGuidSVOutputObjectPtrMap m_OutputObjects;
 };
 
-#include "SVOutputObjectList.inl"
 

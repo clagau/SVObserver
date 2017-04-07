@@ -29,20 +29,20 @@ static char THIS_FILE[] = __FILE__;
 
 SV_IMPLEMENT_CLASS(SVVariantValueObjectClass, SVVariantValueObjectClassGuid);
 
-SVVariantValueObjectClass::SVVariantValueObjectClass(LPCTSTR ObjectName)
-: base(ObjectName) 
+SVVariantValueObjectClass::SVVariantValueObjectClass( LPCTSTR ObjectName )
+: SVValueObjectClass<_variant_t>( ObjectName ) 
 {
 	LocalInitialize();
 }
 
-SVVariantValueObjectClass::SVVariantValueObjectClass(SVObjectClass* POwner, int StringResourceID)
-: base(POwner, StringResourceID) 
+SVVariantValueObjectClass::SVVariantValueObjectClass( SVObjectClass* pOwner, int StringResourceID )
+: SVValueObjectClass<_variant_t>( pOwner, StringResourceID )
 {
 	LocalInitialize();
 }
 
 SVVariantValueObjectClass::SVVariantValueObjectClass( const SVVariantValueObjectClass& rhs )
-: base()
+: SVValueObjectClass<_variant_t>()
 {
 	LocalInitialize();
 	*this = rhs;
@@ -50,7 +50,7 @@ SVVariantValueObjectClass::SVVariantValueObjectClass( const SVVariantValueObject
 
 const SVVariantValueObjectClass& SVVariantValueObjectClass::operator = (const SVVariantValueObjectClass& rhs )
 {
-	base::operator = (rhs);
+	__super::operator = (rhs);
 	return *this;
 }
 
@@ -65,32 +65,32 @@ void SVVariantValueObjectClass::Persist(SVObjectWriter& rWriter)
 	SVValueObjectClass::Persist(rWriter);
 	
 	// Get the Data Values (Member Info, Values)
-	_variant_t value(DefaultValue());
-	rWriter.WriteAttribute( scDefaultTag, value  );
+	_variant_t Value( GetDefaultValue() );
+	rWriter.WriteAttribute( scDefaultTag, Value  );
 	
 	rWriter.StartElement(scArrayElementsTag);
 
 	// Object Depth is implicit (it's the count of the values)
 	SVVariantList list;
 
-	// for all elements in the array (m_iNumberOfBuckets)
-	for (int i = 0; i < m_iArraySize; i++)
+	// for all elements in the array
+	for (int i = 0; i < getArraySize(); i++)
 	{
-		value = Element(m_iLastSetIndex, i);
+		GetValue( Value, GetLastSetIndex(), i );
 
 		// The parser does not like reading in empty safe array.
 		// Therefore if an empty array is detected then set the variant type to VT_EMPTY.
 		// 
-		if( VT_ARRAY == (value.vt & VT_ARRAY) )
+		if( VT_ARRAY == (Value.vt & VT_ARRAY) )
 		{
 			bool bEmpty = true;
-			unsigned int dim = ::SafeArrayGetDim(value.parray);
+			unsigned int dim = ::SafeArrayGetDim(Value.parray);
 			long lBound = 0;
 			long uBound = 0;
 			if( dim > 0 )
 			{
-				HRESULT hr = ::SafeArrayGetLBound( value.parray,1,&lBound);
-				hr = ::SafeArrayGetUBound( value.parray, 1, &uBound);
+				HRESULT hr = ::SafeArrayGetLBound( Value.parray,1,&lBound);
+				hr = ::SafeArrayGetUBound( Value.parray, 1, &uBound);
 				long lSize = uBound-lBound+1;
 				if( S_OK == hr && lSize > 0 )
 				{
@@ -99,10 +99,10 @@ void SVVariantValueObjectClass::Persist(SVObjectWriter& rWriter)
 			}
 			if( bEmpty)
 			{
-				value.Clear();
+				Value.Clear();
 			}
 		}
-		list.push_back( value );
+		list.push_back( Value );
 	}
 	rWriter.WriteAttribute( scElementTag, list );
 	rWriter.EndElement();
@@ -112,169 +112,115 @@ void SVVariantValueObjectClass::Persist(SVObjectWriter& rWriter)
 
 HRESULT SVVariantValueObjectClass::SetObjectValue(SVObjectAttributeClass* pDataObject)
 {
-	HRESULT hr = S_FALSE;
-	BOOL bOk = FALSE;
-	SvCl::SVObjectVariantArrayClass svArray;
-	bucket_type l_Buckets(BucketNoAssert());
-	array_type l_Array;
+	HRESULT Result( E_FAIL );
+	BOOL	bOk( false );
+
+	SvCl::SVObjectArrayClassTemplate<ValueType> ObjectArray;	// for default values
+	BucketVector BucketArray;
+	ValueVector ReadValueArray;
 	
-	if ( bOk = pDataObject->GetAttributeData(SvOi::cDefaultTag, svArray) )
-	{
-		for (int i = 0; i < svArray.GetSize(); i++)
-		{
-			DefaultValue() = svArray[i];
-		}
-	}
-	else if ( bOk = pDataObject->GetAttributeData(SvOi::cBucketTag, l_Buckets, DefaultValue() ) )
-	{
-		if ( 1 == ArraySize() )
-		{
-			ScalarBucket(0)=l_Buckets[0][0];
-			ScalarBucket(1)=l_Buckets[1][0];
-		}
-		else
-		{
-			std::swap(Buckets(), l_Buckets);
-		}
-		if ( 1 < m_iNumberOfBuckets )
-		{
-			m_iLastSetIndex = 1;
-		}
-	}
 	// new-style: store all array elements:
-	else if ( bOk = pDataObject->GetArrayData(SvOi::cArrayTag, l_Array, DefaultValue() ) )
+	if ( bOk = pDataObject->GetArrayData( SvOi::cArrayTag, ReadValueArray, DefaultValue() ) )
 	{
-		for ( size_t i = 0; i < l_Array.size(); i++ )
+		for (size_t i = 0; i < ReadValueArray.size(); i++)
 		{
-			_variant_t& rValue = l_Array[ i ];
+			_variant_t& rValue = ReadValueArray[i];
 			if( rValue.vt == VT_BSTR )
 			{
 				SVString Temp = SvUl_SF::createSVString( rValue.bstrVal );
 				if ( SvUl::RemoveEscapedSpecialCharacters(Temp, true) )
 				{
-					rValue = Temp.c_str();
+					rValue.SetString( Temp.c_str() );
 				}
 			}
 		}
 
-		SetArraySize( static_cast<int>(l_Array.size()) );
-		if ( ArraySize() == 1 )
+		SetArraySize( static_cast< int >( ReadValueArray.size() ) );
+		if( !isBucketized() )
 		{
-			ScalarBucket(1)=l_Array[0];
+			if ( 1 == getArraySize() )
+			{
+				Value() = ReadValueArray[0];
+			}
+			else
+			{
+				std::swap( ValueArray(), ReadValueArray );
+			}
 		}
-		else
-		{
-			std::swap(Array(1), l_Array);
-		}
-		m_iLastSetIndex = 1;
+		setLastSetIndex( 1 );
+
 	}
-	else if ( bOk = pDataObject->GetAttributeData(_T("m_vtDefault"), svArray) )
+	else if ( bOk = pDataObject->GetAttributeData(_T("m_vtDefault"), ObjectArray) )
 	{
-		if ( svArray.GetSize() > 0 )
+		if ( 0 < ObjectArray.GetSize() )
 		{
-			DefaultValue() = svArray[svArray.GetSize()-1];
+			DefaultValue() = ObjectArray[ObjectArray.GetSize()-1];
 		}
 	}
-	else if ( bOk = pDataObject->GetAttributeData(_T("m_pavtArray"), l_Buckets, DefaultValue() ) )
+	else if ( bOk = pDataObject->GetAttributeData(_T("m_pavtArray"), BucketArray, DefaultValue() ) )
 	{
-		for( size_t i = 0 ; i < l_Buckets.size(); i++ )
+		for( size_t i = 0 ; i < BucketArray.size(); i++ )
 		{
-			_variant_t& rValue = l_Buckets[i][0];
+			_variant_t& rValue = BucketArray[i][0];
 			if( rValue.vt == VT_BSTR )
 			{
 				SVString Temp = SvUl_SF::createSVString ( rValue.bstrVal );
 				if ( SvUl::RemoveEscapedSpecialCharacters( Temp, true ) )
 				{
-					rValue = Temp.c_str();
+					rValue.SetString( Temp.c_str() );
 				}
 			}
 		}
 
-		if ( 1 == ArraySize()  )
+		if( !isBucketized() )
 		{
-			ScalarBucket(0) = l_Buckets[0][0];
-			ScalarBucket(1) = l_Buckets[1][0];
+			if ( 1 == getArraySize() )
+			{
+				// In configurations the value are placed in bucket 1
+				Value() = BucketArray[1][0];
+			}
+			else
+			{
+				// In configurations the values are placed in bucket 1
+				std::swap( ValueArray(), BucketArray[1] );
+			}
 		}
 		else
 		{
-			std::swap(Buckets(), l_Buckets);
+			if ( 1 == getArraySize() )
+			{
+				if( nullptr != getBucket().get() )
+				{
+					getBucket()->at(0) = BucketArray[0][0];
+					getBucket()->at(1) = BucketArray[1][0];
+				}
+			}
+			else
+			{
+				if( nullptr != getBucketArray() )
+				{
+					std::swap( *getBucketArray(), BucketArray );
+				}
+			}
 		}
-		if ( 1 < m_iNumberOfBuckets )
+		if ( 1 < getNumberOfBuckets() )
 		{
-			m_iLastSetIndex = 1;
+			setLastSetIndex( 1 );
 		}
 	}
 	else
 	{
-		hr = base::SetObjectValue(pDataObject);
-		return hr;
+		Result = __super::SetObjectValue(pDataObject);
+		return Result;
 	}
 
-	hr = bOk ? S_OK : S_FALSE;
-	return hr;
-}
-
-HRESULT SVVariantValueObjectClass::SetValueAt( int iBucket, int iIndex, const VARIANT& rvtValue )
-{
-	return base::SetValueAt(iBucket, iIndex, _variant_t(rvtValue));
-}
-
-HRESULT SVVariantValueObjectClass::SetValueAt(int iBucket, int iIndex, const BOOL bValue)
-{
-	HRESULT hr = ValidateIndexes(iBucket, iIndex);
-
-	if ( S_OK == hr || SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE == hr )
-	{
-		Element(iBucket, iIndex).Clear();
-		Element(iBucket, iIndex).ChangeType(VT_BOOL);
-		Element(iBucket, iIndex) = (short) bValue;
-		m_iLastSetIndex  = iBucket;
-
-		hr = S_OK;
-	}
-	
-	return hr;
-}
-
-HRESULT SVVariantValueObjectClass::SetValueAt( int iBucket, int iIndex, const double dValue )
-{
-	return base::SetValueAt( iBucket, iIndex, _variant_t(dValue) );
-}
-
-HRESULT SVVariantValueObjectClass::SetValueAt( int iBucket, int iIndex, const BYTE byValue )
-{
-	return base::SetValueAt( iBucket, iIndex, _variant_t(byValue) );
-}
-
-HRESULT SVVariantValueObjectClass::SetValueAt( int iBucket, int iIndex, const long lValue )
-{
-	return base::SetValueAt( iBucket, iIndex, _variant_t(lValue) );
-}
-
-HRESULT SVVariantValueObjectClass::SetValueAt( int iBucket, int iIndex, const DWORD dwValue )
-{
-	HRESULT hr = ValidateIndexes(iBucket, iIndex);
-
-	if ( S_OK == hr || SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE == hr )
-	{
-		Element(iBucket, iIndex).Clear();
-		Element(iBucket, iIndex).ChangeType(VT_UI4);
-		Element(iBucket, iIndex).ulVal = dwValue;
-		m_iLastSetIndex  = iBucket;
-		
-		hr = S_OK;
-	}
-	return hr;
-}
-
-HRESULT SVVariantValueObjectClass::SetValueAt( int iBucket, int iIndex, const SVString& strValue )
-{
-	return base::SetValueAt( iBucket, iIndex, _variant_t(strValue.c_str()) );
+	Result = bOk ? S_OK : E_FAIL;
+	return Result;
 }
 
 VARTYPE SVVariantValueObjectClass::GetDefaultType( ) const
 {
-	return DefaultValue().vt;
+	return GetDefaultValue().vt;
 }
 
 
@@ -285,27 +231,25 @@ BOOL SVVariantValueObjectClass::SetType( int vt )
 		DefaultValue().Clear();
 		DefaultValue().ChangeType( vt );
 	}
-	if ( 1 == ArraySize() )
+	if ( 1 == getArraySize() )
 	{
-		for (int i = 0; i < m_iNumberOfBuckets; ++ i)
+		if ( Value().vt != vt )
 		{
-			if ( ScalarBucket(i).vt != vt )
-			{
-				ScalarBucket(i).Clear();
-				ScalarBucket(i).ChangeType( vt );
-			}
+			Value().Clear();
+			Value().ChangeType( vt );
 		}
 	}
 	else
 	{
-		for (int i = 0; i < m_iNumberOfBuckets; i++)
+		for (int i = 0; i < getNumberOfBuckets(); i++)
 		{
-			for (int j=0; j < ArraySize(); j++)
+			for (int j=0; j < getArraySize(); j++)
 			{
-				if ( Element(i, j).vt != vt )
+				_variant_t* pValue = getValuePointer( i, j );
+				if ( nullptr != pValue && pValue->vt != vt )
 				{
-					Element(i, j).Clear();
-					Element(i, j).ChangeType( vt );
+					pValue->Clear();
+					pValue->ChangeType( vt );
 				}
 			}
 		}
@@ -327,318 +271,7 @@ HRESULT SVVariantValueObjectClass::SetValueKeepType( int iBucket, int iIndex, LP
 
 	if( S_OK == hr)
 	{
-		hr = base::SetValueAt( iBucket, iIndex, vtTemp );
-	}
-
-	return hr;
-}
-
-HRESULT SVVariantValueObjectClass::SetDefaultValue(const VARIANT& rvtValue, bool bResetAll)
-{
-	HRESULT hr = ::VariantCopy( &(DefaultValue()), const_cast <VARIANT*>( &rvtValue) );
-	if ( bResetAll )
-	{
-		if ( 1 == ArraySize() )
-		{
-			for (int i = 0; i < m_iNumberOfBuckets; ++ i)
-			{
-				ScalarBucket(i) = rvtValue;
-			}
-		}
-		else
-		{
-			for (int i = 0; i < m_iNumberOfBuckets; ++ i)
-			{
-				for (size_t j=0; j < Buckets()[i].size(); ++j)
-				{
-					Buckets()[i][j] = rvtValue;
-				}
-			}
-		}
-	}
-	return hr;
-}
-
-HRESULT SVVariantValueObjectClass::GetDefaultValue(_variant_t& rValue) const
-{
-	HRESULT hr = ::VariantCopy( &rValue, &(DefaultValue()) );
-	return IsCreated() ? hr : S_FALSE;
-}
-
-HRESULT SVVariantValueObjectClass::GetValueAt( int iBucket, int iIndex, VARIANT& rValue) const
-{
-	HRESULT hr = ValidateIndexes(iBucket,iIndex);
-
-	if ( S_OK == hr )
-	{
-		hr = ::VariantCopy( &rValue, const_cast <_variant_t*> (&(Element(iBucket, iIndex))) );
-		m_isObjectValid = true;
-	}
-	else if ( SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE == hr )
-	{
-		rValue = DefaultValue();
-		m_isObjectValid = true;
-	}
-	else	//	BAD INDEX
-	{
-		rValue = DefaultValue();
-		m_isObjectValid = false;
-	}
-	return hr;
-}
-
-HRESULT SVVariantValueObjectClass::GetValueAt( int iBucket, int iIndex, BOOL& rbValue) const
-{
-	HRESULT hr = ValidateIndexes(iBucket,iIndex);
-
-	if ( S_OK == hr )
-	{
-		m_isObjectValid = true;
-		_variant_t vtTemp = Element(iBucket, iIndex);
-		switch ( vtTemp.vt )
-		{
-			case VT_BSTR:
-			{
-				SVString sTemp = SvUl_SF::createSVString( vtTemp.bstrVal );
-				if ( 0 == SvUl_SF::CompareNoCase( sTemp, SvOi::cTrue) )
-				{
-					rbValue = true;
-					hr = S_OK;
-				}
-				else if ( 0 == SvUl_SF::CompareNoCase( sTemp, SvOi::cFalse) )
-				{
-					rbValue = false;
-					hr = S_OK;
-				}
-				else if ( 0 == SvUl_SF::CompareNoCase( sTemp, _T("1")) )
-				{
-					rbValue = true;
-					hr = S_OK;
-				}
-				else if ( 0 == SvUl_SF::CompareNoCase( sTemp, _T("0")) )
-				{
-					rbValue = false;
-					hr = S_OK;
-				}
-				else
-				{
-					rbValue = false;
-				}
-			}
-			break;
-
-			default:
-			{
-				hr = ::VariantChangeType(&vtTemp, &vtTemp, 0, VT_BOOL);
-				if ( S_OK == hr )
-				{
-					rbValue = vtTemp.boolVal;
-				}
-				else
-				{
-					if ( VT_BOOL == DefaultValue().vt )
-					{
-						rbValue = DefaultValue().boolVal;
-					}
-					else
-					{
-						rbValue = false;
-					}
-				}
-			}
-		}// end switch ( vtTemp.vt )
-	}// end if (iBucket >= 0 && iBucket < m_iNumberOfBuckets)
-	else
-	{
-		if ( VT_BOOL == DefaultValue().vt )
-		{
-			rbValue = DefaultValue().boolVal;
-		}
-		else
-		{
-			rbValue = false;
-		}
-		m_isObjectValid = (SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE == hr);
-	}
-
-	return hr;
-}
-
-
-HRESULT SVVariantValueObjectClass::GetValueAt( int iBucket, int iIndex, SVString& rValue) const
-{
-	HRESULT hr = ValidateIndexes(iBucket,iIndex);
-
-	_variant_t vtTemp;
-	if ( S_OK == hr )
-	{
-		vtTemp = Element(iBucket, iIndex);
-		m_isObjectValid = true;
-	}
-	else
-	{
-		vtTemp = DefaultValue();
-		m_isObjectValid = (SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE == hr);
-	}
-
-	switch ( vtTemp.vt )
-	{
-		case VT_BSTR:
-		{
-			rValue = SvUl_SF::createSVString( vtTemp.bstrVal );
-			hr = S_OK;
-		}
-		break;
-
-		default:
-		{
-			VARTYPE vtOrig = vtTemp.vt;
-			hr = ::VariantChangeType(&vtTemp, &vtTemp, VARIANT_ALPHABOOL, VT_BSTR);
-			if ( S_OK == hr )
-			{
-				rValue = SvUl_SF::createSVString( vtTemp.bstrVal );
-				if( VT_BOOL == vtOrig )
-				{
-					SvUl_SF::MakeUpper( rValue );
-				}
-			}
-			else
-			{
-				rValue.clear();
-			}
-		}
-	}// end switch ( vtTemp.vt )
-
-	return hr;
-}
-
-HRESULT SVVariantValueObjectClass::GetValueAt( int iBucket, int iIndex, double& rdValue) const
-{
-	HRESULT hr = ValidateIndexes(iBucket, iIndex);
-
-	_variant_t vtTemp;
-	if ( S_OK == hr )
-	{
-		vtTemp = Element(iBucket, iIndex);
-		m_isObjectValid = true;
-	}
-	else
-	{
-		vtTemp = DefaultValue();
-		m_isObjectValid = (SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE == hr);
-	}
-
-	HRESULT hrChange = ::VariantChangeType(&vtTemp, &vtTemp, 0, VT_R8);
-	if ( S_OK == hrChange )
-	{
-		rdValue = vtTemp.dblVal;
-	}
-	else
-	{
-		rdValue = 0;
-		if ( S_OK == hr )
-		{
-			hr = hrChange;
-		}
-	}
-
-	return hr;
-}
-
-HRESULT SVVariantValueObjectClass::GetValueAt( int iBucket, int iIndex, long& rlValue ) const
-{
-	HRESULT hr = ValidateIndexes(iBucket, iIndex);
-
-	_variant_t vtTemp;
-	if ( S_OK == hr )
-	{
-		vtTemp = Element(iBucket, iIndex);
-		m_isObjectValid = true;
-	}
-	else
-	{
-		vtTemp = DefaultValue();
-		m_isObjectValid = (SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE == hr);
-	}
-
-	HRESULT hrChange = ::VariantChangeType(&vtTemp, &vtTemp, 0, VT_I4);
-	if ( S_OK == hrChange )
-	{
-		rlValue = vtTemp.lVal;
-	}
-	else
-	{
-		rlValue = 0;
-
-		if ( S_OK == hr )
-		{
-			hr = hrChange;
-		}
-	}
-
-	return hr;
-}
-
-HRESULT SVVariantValueObjectClass::GetValueAt( int iBucket, int iIndex, DWORD& rdwValue ) const
-{
-	HRESULT hr = ValidateIndexes(iBucket, iIndex);
-
-	_variant_t vtTemp;
-	if ( S_OK == hr )
-	{
-		vtTemp = Element(iBucket, iIndex);
-		m_isObjectValid = true;
-	}
-	else
-	{
-		vtTemp = DefaultValue();
-		m_isObjectValid = (SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE == hr);
-	}
-
-	HRESULT hrChange = ::VariantChangeType(&vtTemp, &vtTemp, 0, VT_UI4);
-	if ( S_OK == hrChange  )
-	{
-		rdwValue = vtTemp.ulVal;
-	}
-	else
-	{
-		rdwValue = 0;
-		if ( S_OK == hr )
-		{
-			hr = hrChange;
-		}
-	}
-	return hr;
-}
-
-HRESULT SVVariantValueObjectClass::GetValueAt( int iBucket, int iIndex, BYTE& rbyValue ) const
-{
-	HRESULT hr = ValidateIndexes(iBucket, iIndex);
-
-	_variant_t vtTemp;
-	if ( S_OK == hr )
-	{
-		vtTemp = Element(iBucket, iIndex);
-		m_isObjectValid = true;
-	}
-	else
-	{
-		vtTemp = DefaultValue();
-		m_isObjectValid = (SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE == hr );
-	}
-
-	HRESULT hrChange = ::VariantChangeType(&vtTemp, &vtTemp, 0, VT_UI1);
-	if ( S_OK == hrChange )
-	{
-		rbyValue = vtTemp.bVal;
-	}
-	else
-	{
-		rbyValue = 0;
-		if ( S_OK == hr )
-		{
-			hr = hrChange;
-		}
+		hr = __super::SetValue( vtTemp, iBucket, iIndex );
 	}
 
 	return hr;
@@ -717,9 +350,72 @@ SVString SVVariantValueObjectClass::ToString(const VARIANT& rValue, bool bScript
 	return Result;
 }
 
+double SVVariantValueObjectClass::ValueType2Double(const _variant_t& rValue) const
+{
+	double Result(0.0);
+
+	switch (rValue.vt)
+	{
+	case VT_BOOL:
+		Result = rValue.boolVal ? 1.0 : 0.0;
+		break;
+	case VT_I1:
+	case VT_UI1:
+	case VT_I2:
+	case VT_UI2:
+	case VT_I4:
+	case VT_UI4:
+	case VT_I8:
+	case VT_UI8:
+	case VT_INT:
+	case VT_UINT:
+		Result = static_cast<double> (rValue);
+		break;
+	case VT_R8:
+		Result = rValue.dblVal;
+		break;
+	case VT_BSTR:
+		SVString Value = SvUl_SF::createSVString(rValue);
+		Result = atof( Value.c_str() );
+		break;
+	}
+	return Result;
+}
+
+_variant_t SVVariantValueObjectClass::ConvertString2Type( const SVString& rValue ) const
+{
+	return _variant_t( rValue.c_str() );
+}
+
+SVString SVVariantValueObjectClass::ConvertType2String( const _variant_t& rValue ) const
+{
+	SVString Result;
+
+	switch ( rValue.vt )
+	{
+	case VT_BSTR:
+		Result = SvUl_SF::createSVString( rValue );
+		break;
+
+	default:
+		{
+			_variant_t Value;
+			if ( S_OK == ::VariantChangeType(&Value, &rValue, VARIANT_ALPHABOOL, VT_BSTR) )
+			{
+				Result = SvUl_SF::createSVString( Value );
+				if( VT_BOOL == rValue.vt )
+				{
+					SvUl_SF::MakeUpper( Result );
+				}
+			}
+		}
+	}
+	return Result;
+}
+
 void SVVariantValueObjectClass::LocalInitialize()
 {
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVVariantValueObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVVariantValueObjectType;
 	DefaultValue().Clear();
 
 	SetTypeName( _T("Variant") );

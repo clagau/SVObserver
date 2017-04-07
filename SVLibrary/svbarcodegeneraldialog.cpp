@@ -184,7 +184,7 @@ long SVBarCodeGeneralDialog::SetBarCodeType(SVLongValueObjectClass& svlBarCodeTy
 {
 	long lBarCodeType;
 	
-	svlBarCodeType.GetValue (lBarCodeType);
+	svlBarCodeType.GetValue(lBarCodeType);
 
 	m_lInitialBarCodeType = lBarCodeType;
 	const SVBarCodeInfoStruct* pInfo = m_aBarCodeInfo.GetInfoByMilID( lBarCodeType );
@@ -399,10 +399,9 @@ bool SVBarCodeGeneralDialog::SetBarcodeStringFormat( SVEnumerateValueObjectClass
 {
 
 	p_sveStringFormat.GetEnumTypes( m_EnumVect );
-
-	DWORD l_dwValue;
-	bool l_bRet = S_OK == p_sveStringFormat.GetValue( l_dwValue );
-	m_lStringFormat = l_dwValue;
+	long Value;
+	bool l_bRet = S_OK == p_sveStringFormat.GetValue( Value );
+	m_lStringFormat = static_cast<int> (Value);
 	return l_bRet;
 }
 
@@ -429,10 +428,10 @@ int SVBarCodeGeneralDialog::GetBarcodeThresholdType( )
 
 bool SVBarCodeGeneralDialog::SetUnEvenGrid(SVBoolValueObjectClass p_svbUnEvenGrid)
 {
-	BOOL bVal;
-	bool l_bRet = S_OK == p_svbUnEvenGrid.GetValue(bVal);
+	BOOL Value;
+	bool l_bRet = S_OK == p_svbUnEvenGrid.GetValue( Value );
 	
-	m_bUnEvenGrid = bVal;
+	m_bUnEvenGrid = Value ? true : false;
 	return l_bRet;
 }
 
@@ -816,7 +815,7 @@ void SVBarCodeGeneralDialog::OnBnClickedThresholdNormalRadio( UINT nID )
 
 void SVBarCodeGeneralDialog::OnBnClickedChkUnevenGrid()
 {
-	m_bUnEvenGrid = m_UnevenCheck.GetCheck();
+	m_bUnEvenGrid = m_UnevenCheck.GetCheck() ? true : false;
 }
 
 void SVBarCodeGeneralDialog::UpdateUnEvenGrid()

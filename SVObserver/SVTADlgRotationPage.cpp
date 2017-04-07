@@ -90,7 +90,7 @@ BOOL SVToolAdjustmentDialogRotationPageClass::OnSetActive()
 	if( m_pInterpolationMode )
 	{
 		SVString EnumString;
-		m_pInterpolationMode->GetValue( EnumString );
+		m_pInterpolationMode->getValue( EnumString );
 		m_cbInterpolation.SelectString( -1, EnumString.c_str() );
 	}
 
@@ -164,7 +164,7 @@ BOOL SVToolAdjustmentDialogRotationPageClass::OnInitDialog()
 		objectInfo.ObjectType = SVEnumValueObjectType;
 		objectInfo.EmbeddedID = SVOutputInterpolationModeObjectGuid;
 		m_pInterpolationMode = dynamic_cast<SVEnumerateValueObjectClass*>(m_pTool->getFirstObject(objectInfo));
-		if( m_pInterpolationMode )
+		if( nullptr != m_pInterpolationMode )
 		{
 			SVString EnumList;
 
@@ -172,7 +172,7 @@ BOOL SVToolAdjustmentDialogRotationPageClass::OnInitDialog()
 			m_cbInterpolation.SetEnumTypes( EnumList.c_str() );
 
 			SVString EnumString;
-			m_pInterpolationMode->GetValue( EnumString );
+			m_pInterpolationMode->getValue( EnumString );
 			m_cbInterpolation.SelectString( -1, EnumString.c_str() );
 		}
 
@@ -332,36 +332,36 @@ void SVToolAdjustmentDialogRotationPageClass::refresh()
 
 		SVString Value;
 		// refresh X settings...
-		if( m_pRotationXResult )
+		if( nullptr != m_pRotationXResult )
 		{
-			m_pRotationXResult->GetValue( Value );
+			m_pRotationXResult->getValue( Value );
 			m_strRotationXValue = Value.c_str();
 		}
 		else
 		{
-			m_strRotationXValue = _T( "" );
+			m_strRotationXValue = _T("");
 		}
 
 		// refresh Y settings...
-		if( m_pRotationYResult )
+		if( nullptr != m_pRotationYResult )
 		{
-			m_pRotationYResult->GetValue( Value );
+			m_pRotationYResult->getValue( Value );
 			m_strRotationYValue = Value.c_str();
 		}
 		else
 		{
-			m_strRotationYValue = _T( "" );
+			m_strRotationYValue = _T("");
 		}
 
 		// refresh Angle settings...
-		if( m_pRotationAngleResult )
+		if( nullptr != m_pRotationAngleResult )
 		{
-			m_pRotationAngleResult->GetValue( Value );
+			m_pRotationAngleResult->getValue( Value );
 			m_strRotationAngleValue = Value.c_str();
 		}
 		else
 		{
-			m_strRotationAngleValue = _T( "" );
+			m_strRotationAngleValue = _T("");
 		}
 
 		UpdateData( FALSE ); // set data to dialog

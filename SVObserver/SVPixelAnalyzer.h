@@ -49,7 +49,7 @@ public:
 	SVByteValueObjectClass m_pixelCountColor;
 
 protected:
-	virtual bool onRun(SVRunStatusClass &RRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
+	virtual bool onRun(SVRunStatusClass &rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	SVMatroxImageResult		m_histResultID;
 	SVMatroxLongArray		m_alHistValues;

@@ -71,7 +71,7 @@ public:
 
 	const SVString checkName( LPCTSTR ToolName ) const;
 
-	virtual HRESULT CollectOverlays( SVImageClass* p_Image, SVExtentMultiLineStructCArray &p_MultiLineArray ) override;
+	virtual HRESULT CollectOverlays( SVImageClass* p_Image, SVExtentMultiLineStructVector &p_MultiLineArray ) override;
 
 	/// The method destroys a child object. 
 	/// \param pTaskObject [in] object to destroy
@@ -107,7 +107,7 @@ protected:
 	void DeleteAt( int Index, int Count = 1 );
 	void DeleteAll();
 
-	virtual HRESULT onCollectOverlays(SVImageClass* p_Image, SVExtentMultiLineStructCArray &p_MultiLineArray ) override;
+	virtual HRESULT onCollectOverlays(SVImageClass* p_Image, SVExtentMultiLineStructVector &p_MultiLineArray ) override;
 
 	virtual SVObjectClass* UpdateObject( const GUID &friendGuid, SVObjectClass* p_psvObject, SVObjectClass* p_psvNewOwner ) override;
 
@@ -116,7 +116,7 @@ protected:
 	// Use onRun() to implement your special updating!
 	// Override this only if you have to reroute the call!
 	// NEVER call base class Run()! 
-	virtual bool Run( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+	virtual bool Run( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
 	virtual SVObjectPtrDeque GetPreProcessObjects() const override;
 	virtual SVObjectPtrDeque GetPostProcessObjects() const override;
@@ -140,7 +140,7 @@ private:
 	
 #pragma region Member Variables
 protected:
-	typedef SVVector< SVTaskObjectClass*, SVTaskObjectClass* > SVTaskObjectPtrVector;
+	typedef SVVector<SVTaskObjectClass*> SVTaskObjectPtrVector;
 	SVClassInfoStructListClass m_availableChildren; // available children classes (not instantiated)
 
 	SVClock::SVTimeStamp m_LastListUpdateTimestamp;

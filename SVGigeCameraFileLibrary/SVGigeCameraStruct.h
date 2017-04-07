@@ -56,6 +56,6 @@ struct SVGigeCameraStruct
 	unsigned long m_AcquisitionHandle;
 };
 
-typedef SVVector< SVGigeCameraStruct > SVGigeCameraStructVector;
+typedef SVVector<SVGigeCameraStruct> SVGigeCameraStructVector;
 
 

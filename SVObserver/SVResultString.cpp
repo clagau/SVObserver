@@ -21,8 +21,8 @@ SVStringResultClass::SVStringResultClass( BOOL BCreateDefaultTaskList, SVObjectC
 				  :SVResultClass( BCreateDefaultTaskList, POwner, StringResourceID )
 {
 	// Identify yourself
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVResultObjectType;
-	m_outObjectInfo.ObjectTypeInfo.SubType = SVResultStringObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVResultStringObjectType;
 
 	// Identify our input type needs
 	m_inputObjectInfo.SetInputObjectType( SVStringValueObjectType );
@@ -30,10 +30,10 @@ SVStringResultClass::SVStringResultClass( BOOL BCreateDefaultTaskList, SVObjectC
 	RegisterInputObject( &m_inputObjectInfo, _T( "StringResultValue" ) );
 
 	// Register Embedded Objects
-	RegisterEmbeddedObject( &m_szValue, SVStringValueObjectClassGuid, IDS_OBJECTNAME_VALUE, false, SVResetItemNone );
+	RegisterEmbeddedObject( &m_Value, SVStringValueObjectClassGuid, IDS_OBJECTNAME_VALUE, false, SvOi::SVResetItemNone );
 
 	// Set Embedded defaults
-	m_szValue.SetDefaultValue (_T(""), TRUE);
+	m_Value.SetDefaultValue (_T(""), TRUE);
 
 	// Add Default Inputs and Outputs
 	addDefaultInputObjects();
@@ -53,7 +53,7 @@ BOOL SVStringResultClass::CreateObject( SVObjectLevelCreateStruct* PCreateStruct
 		bOk = nullptr != getInputString();
 	}
 
-	m_szValue.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
+	m_Value.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 
 	m_isCreated = bOk;
 
@@ -67,29 +67,31 @@ BOOL SVStringResultClass::CloseObject()
 
 SVStringValueObjectClass* SVStringResultClass::getInputString()
 {
-	if( m_inputObjectInfo.IsConnected() && m_inputObjectInfo.GetInputObjectInfo().PObject )
-		return ( SVStringValueObjectClass* ) m_inputObjectInfo.GetInputObjectInfo().PObject;
+	if( m_inputObjectInfo.IsConnected() )
+	{
+		return dynamic_cast<SVStringValueObjectClass*> (m_inputObjectInfo.GetInputObjectInfo().m_pObject);
+	}
 
 	return nullptr;
 }
 
-bool SVStringResultClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVStringResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	// All inputs and outputs must be validated first
-	if( SVResultClass::onRun( RRunStatus, pErrorMessages ) )
+	if( __super::onRun( rRunStatus, pErrorMessages ) )
 	{
-		SVStringValueObjectClass* pValue = getInputString();
-		ASSERT( pValue );
+		SVStringValueObjectClass* pValueObject = getInputString();
+		ASSERT( pValueObject );
 
-		SVString Value;
-		pValue->GetValue( Value );
-
-		// Set Value
-		m_szValue.SetValue( RRunStatus.m_lResultDataIndex, Value );
-		
-		return true;
+		if( nullptr != pValueObject )
+		{
+			SVString Value;
+			pValueObject->GetValue( Value );
+			m_Value.SetValue( Value, rRunStatus.m_lResultDataIndex );
+			return true;
+		}
 	}
-	RRunStatus.SetInvalid();
+	rRunStatus.SetInvalid();
 	return false;
 }
 

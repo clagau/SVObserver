@@ -51,8 +51,8 @@ SVOCVAnalyzerClass::SVOCVAnalyzerClass(
 ////////////////////////////////////////////////////////////////////////////////
 void SVOCVAnalyzerClass::init()
 {
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVAnalyzerObjectType;
-	m_outObjectInfo.ObjectTypeInfo.SubType = SVOCVAnalyzerObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVAnalyzerObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVOCVAnalyzerObjectType;
 
 	SVOCVAnalyzeResultClass* pAnalyzerResult = new SVOCVAnalyzeResultClass( this );
 
@@ -123,11 +123,11 @@ bool SVOCVAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMessag
 //
 //
 //
-bool SVOCVAnalyzerClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVOCVAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	if ( !m_bHasLicenseError )
 	{
-		if( __super::onRun( RRunStatus, pErrorMessages ) )
+		if( __super::onRun( rRunStatus, pErrorMessages ) )
 		{
 			return true;
 		}
@@ -141,7 +141,7 @@ bool SVOCVAnalyzerClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageCont
 		}
 	}
 	SetInvalid();
-	RRunStatus.SetInvalid();
+	rRunStatus.SetInvalid();
 
 	return false;
 }

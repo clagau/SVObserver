@@ -11,7 +11,6 @@
 #pragma once
 
 #pragma region Includes
-#include "SVValueObjectLibrary/SVValueObjectReference.h"
 #include "SVTaskObjectInterfaceInputRequestStruct.h"
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
@@ -27,16 +26,16 @@ public:
 
 	void SetTaskObject( SVTaskObjectClass* pTaskObject );
 
-	virtual HRESULT GetObjectValue( const SVGUID& p_rObjectId, const SVString& p_rValueName, VARIANT& p_rVariantValue ) const;
+	virtual HRESULT GetObjectValue( const SVGUID& rObjectId, const SVString& rValueName, _variant_t& rValue ) const;
 
-	virtual HRESULT GetValue( const SVGUID& rTaskId, const SVGUID& rEmbeddedId, VARIANT& rValue ) const;
+	virtual HRESULT GetValue( const SVGUID& rTaskId, const SVGUID& rEmbeddedId, _variant_t& rValue ) const;
 
 	template <class InIterator>
-	HRESULT AddInputRequest(SVValueObjectReference ObjectRef, InIterator begin, InIterator end)
+	HRESULT AddInputRequest(SVObjectReference ObjectRef, InIterator begin, InIterator end)
 	{
 		HRESULT Result( S_OK );
 
-		ObjectRef->SetArraySize( static_cast< int >( std::distance( begin, end ) ) );
+		ObjectRef->SetArraySize( static_cast<int> ( std::distance( begin, end ) ) );
 
 		long Index = 0;
 		InIterator Iter( begin );
@@ -51,11 +50,9 @@ public:
 		return Result;
 	}
 
-	virtual HRESULT AddInputRequest( const SVInputRequestStructMap& map );
-	virtual HRESULT AddInputRequest( SVValueObjectReference objectRef, LPCTSTR szValue );
-	virtual HRESULT AddInputRequest( SVValueObjectReference objectRef, double dValue );
-	virtual HRESULT AddInputRequest( const SVGUID& rTaskId, const SVGUID& rEmbeddedId, LPCTSTR szValue );
-	virtual HRESULT AddInputRequest( const SVGUID& rTaskId, const SVGUID& rEmbeddedId, double dValue );
+	virtual HRESULT AddInputRequest( const SVInputRequestStructMap& rMap );
+	virtual HRESULT AddInputRequest( const SVObjectReference& rObjectRef, const _variant_t& rValue );
+	virtual HRESULT AddInputRequest( const SVGUID& rTaskId, const SVGUID& rEmbeddedId, const _variant_t& rValue );
 	virtual HRESULT AddInputRequestMarker();
 	virtual HRESULT RunOnce( const SVGUID& rToolId );
 

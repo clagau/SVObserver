@@ -57,7 +57,7 @@ const SVOutObjectInfoStruct& SVOutObjectInfoStruct::operator=( const SVOutObject
 HRESULT SVOutObjectInfoStruct::AddInput( SVInObjectInfoStruct& p_rsvInput )
 {
 	// Update Pointer...
-	p_rsvInput.SetInputObject( SVObjectManagerClass::Instance().GetObject( p_rsvInput.GetInputObjectInfo().UniqueObjectID ) );
+	p_rsvInput.SetInputObject( SVObjectManagerClass::Instance().GetObject( p_rsvInput.GetInputObjectInfo().m_UniqueObjectID ) );
 
 	UserInfoList.Add( p_rsvInput );	
 
@@ -74,7 +74,7 @@ HRESULT SVOutObjectInfoStruct::RemoveInput( SVInObjectInfoStruct& p_rsvInput )
 	{
 		SVInObjectInfoStruct& inObjectInfo = UserInfoList[ l ];
 
-		l_bFound = inObjectInfo.UniqueObjectID == p_rsvInput.UniqueObjectID;
+		l_bFound = inObjectInfo.m_UniqueObjectID == p_rsvInput.m_UniqueObjectID;
 
 		if ( l_bFound )
 		{
@@ -85,7 +85,7 @@ HRESULT SVOutObjectInfoStruct::RemoveInput( SVInObjectInfoStruct& p_rsvInput )
 
 			if( p_rsvInput.CheckExistence() )
 			{
-				p_rsvInput.PObject->ResetObjectInputs();
+				p_rsvInput.m_pObject->ResetObjectInputs();
 			}
 		}
 	}
@@ -101,12 +101,12 @@ HRESULT SVOutObjectInfoStruct::DisconnectAllInputs()
 	{
 		SVInObjectInfoStruct& inObjectInfo = UserInfoList[ l ];
 
-		inObjectInfo.SetInputObject( UniqueObjectID );
+		inObjectInfo.SetInputObject( m_UniqueObjectID );
 
-		if( SV_GUID_NULL != inObjectInfo.UniqueObjectID )
+		if( SV_GUID_NULL != inObjectInfo.m_UniqueObjectID )
 		{
 			// Send to the Object that is using this output
-			SVObjectManagerClass::Instance().DisconnectObjectInput(inObjectInfo.UniqueObjectID, &inObjectInfo);
+			SVObjectManagerClass::Instance().DisconnectObjectInput(inObjectInfo.m_UniqueObjectID, &inObjectInfo);
 		}
 	}
 
@@ -123,7 +123,7 @@ HRESULT SVOutObjectInfoStruct::GetDependentsList( SVObjectClass* p_psvObject, SV
 	{
 		SVInObjectInfoStruct& rInInfo = UserInfoList[ l ];
 
-		if( rInInfo.PObject && rInInfo.PObject != p_psvObject )
+		if( rInInfo.m_pObject && rInInfo.m_pObject != p_psvObject )
 		{
 			if( rInInfo.CheckExistence() )
 			{
@@ -131,18 +131,18 @@ HRESULT SVOutObjectInfoStruct::GetDependentsList( SVObjectClass* p_psvObject, SV
 				SVString strName = p_psvObject->GetCompleteObjectNameToObjectType( nullptr, SVToolObjectType ) + _T( "." );
 
 				// Who is using
-				strTempName = rInInfo.PObject->GetCompleteObjectNameToObjectType( nullptr, SVToolObjectType );
+				strTempName = rInInfo.m_pObject->GetCompleteObjectNameToObjectType( nullptr, SVToolObjectType );
 				
 				// exclude ourself or our children and the document (published)
-				SVObjectInfoStruct objectTypeInfo = rInInfo.PObject->GetObjectInfo();
+				SVObjectInfoStruct objectTypeInfo = rInInfo.m_pObject->GetObjectInfo();
 
 				if( SVString::npos == strTempName.find( strName ) && 
-					objectTypeInfo.ObjectTypeInfo.ObjectType != SVInspectionObjectType )
+					objectTypeInfo.m_ObjectTypeInfo.ObjectType != SVInspectionObjectType )
 				{
 					SVObjectPair pair;
 					
-					pair.first = rInInfo.PObject; // who is using
-					pair.second = PObject; // who is being used
+					pair.first = rInInfo.m_pObject; // who is using
+					pair.second = m_pObject; // who is being used
 
 					rListOfDependents.push_back( pair );
 				}

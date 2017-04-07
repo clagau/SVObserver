@@ -25,7 +25,7 @@ public:
 protected:
 	virtual BOOL CreateObject(SVObjectLevelCreateStruct *PCreateStruct) override;
 	void init();
-	virtual bool onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+	virtual bool onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
 protected:
 	SVDoubleValueObjectClass		result;			// resultant value

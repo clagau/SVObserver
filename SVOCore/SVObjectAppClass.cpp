@@ -66,7 +66,7 @@ BOOL SVObjectAppClass::CreateObject(SVObjectLevelCreateStruct* pCreateStruct)
 ////////////////////////////////////////////////////////////////////////////////////////
 void SVObjectAppClass::ConnectObject(const SVObjectLevelCreateStruct& rCreateStruct)
 {
-	if( rCreateStruct.OwnerObjectInfo.PObject != this && rCreateStruct.OwnerObjectInfo.UniqueObjectID != GetUniqueObjectID() )
+	if( rCreateStruct.OwnerObjectInfo.m_pObject != this && rCreateStruct.OwnerObjectInfo.m_UniqueObjectID != GetUniqueObjectID() )
 	{
 		UpdateConnections( &rCreateStruct );
 
@@ -139,7 +139,7 @@ void SVObjectAppClass::UpdateConnections( const SVObjectLevelCreateStruct* pCrea
 {
 	const SVObjectInfoStruct& rInfo = GetObjectInfo();
 
-	if( SVAnalyzerObjectType == rInfo.ObjectTypeInfo.ObjectType )
+	if( SVAnalyzerObjectType == rInfo.m_ObjectTypeInfo.ObjectType )
 	{
 		m_psvAnalyzer = this;
 	}
@@ -149,11 +149,11 @@ void SVObjectAppClass::UpdateConnections( const SVObjectLevelCreateStruct* pCrea
 
 		if( nullptr != l_psvTemp )
 		{
-			m_psvAnalyzer = l_psvTemp->AnalyzerObjectInfo.PObject;
+			m_psvAnalyzer = l_psvTemp->AnalyzerObjectInfo.m_pObject;
 		}
 	}
 
-	if( SVToolObjectType == rInfo.ObjectTypeInfo.ObjectType )
+	if( SVToolObjectType == rInfo.m_ObjectTypeInfo.ObjectType )
 	{
 		m_psvTool = this;
 	}
@@ -163,11 +163,11 @@ void SVObjectAppClass::UpdateConnections( const SVObjectLevelCreateStruct* pCrea
 
 		if( nullptr != l_psvTemp )
 		{
-			m_psvTool = l_psvTemp->ToolObjectInfo.PObject;
+			m_psvTool = l_psvTemp->ToolObjectInfo.m_pObject;
 		}
 	}
 
-	if( SVInspectionObjectType == rInfo.ObjectTypeInfo.ObjectType )
+	if( SVInspectionObjectType == rInfo.m_ObjectTypeInfo.ObjectType )
 	{
 		m_psvInspection = this;
 	}
@@ -177,7 +177,7 @@ void SVObjectAppClass::UpdateConnections( const SVObjectLevelCreateStruct* pCrea
 
 		if( nullptr != l_psvTemp )
 		{
-			m_psvInspection = l_psvTemp->InspectionObjectInfo.PObject;
+			m_psvInspection = l_psvTemp->InspectionObjectInfo.m_pObject;
 		}
 	}
 }

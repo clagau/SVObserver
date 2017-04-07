@@ -39,15 +39,15 @@ SVLoadImageToolClass::SVLoadImageToolClass( BOOL BCreateDefaultTaskList, SVObjec
 void SVLoadImageToolClass::init()
 {
 	// Set up your type...
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVToolObjectType;
-	m_outObjectInfo.ObjectTypeInfo.SubType    = SVToolLoadImageObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SVToolLoadImageObjectType;
 
 	// Identify our input type needs
 	
 	// Register Embedded Objects
 	RegisterEmbeddedObject( &m_fileImage, SVOutputImageObjectGuid, IDS_OBJECTNAME_IMAGE1 );
-	RegisterEmbeddedObject( &m_currentPathName, SVPathNameObjectGuid, IDS_OBJECTNAME_PATHNAME, false, SVResetItemTool );
-	RegisterEmbeddedObject( &m_continuousReload, SVContinuousReloadObjectGuid, IDS_OBJECTNAME_CONTINUOUS_RELOAD, false, SVResetItemNone );
+	RegisterEmbeddedObject( &m_currentPathName, SVPathNameObjectGuid, IDS_OBJECTNAME_PATHNAME, false, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &m_continuousReload, SVContinuousReloadObjectGuid, IDS_OBJECTNAME_CONTINUOUS_RELOAD, false, SvOi::SVResetItemNone );
 
 	// Set Embedded defaults
 	m_currentPathName.SetDefaultValue( _T( "" ), true );
@@ -90,9 +90,9 @@ BOOL SVLoadImageToolClass::CreateObject( SVObjectLevelCreateStruct* PCreateStruc
 	}
 
 	// Set / Reset Printable Flags
-	m_fileImage.ObjectAttributesAllowedRef() |= SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE;
-	m_currentPathName.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
-	m_continuousReload.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
+	m_fileImage.SetObjectAttributesAllowed( SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE, SvOi::SetAttributeType::AddAttribute );
+	m_currentPathName.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_continuousReload.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
 
 	if (bOk)
 	{
@@ -115,65 +115,65 @@ BOOL SVLoadImageToolClass::CloseObject()
 	return FALSE;
 }
 
-bool SVLoadImageToolClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVLoadImageToolClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	// All inputs and outputs must be validated first
-	if( ValidateLocal(pErrorMessages) && __super::onRun( RRunStatus, pErrorMessages ) )
+	if( ValidateLocal(pErrorMessages) && __super::onRun( rRunStatus, pErrorMessages ) )
 	{
-		if (!RRunStatus.IsDisabled() && !RRunStatus.IsDisabledByCondition())
+		if (!rRunStatus.IsDisabled() && !rRunStatus.IsDisabledByCondition())
 		{
-			BOOL bReload = false;
-			SVString ImagePathName;
+		BOOL bReload = false;
+		SVString ImagePathName;
 
 			if (S_OK != m_continuousReload.GetValue(bReload) || S_OK != m_currentPathName.GetValue(ImagePathName))
+		{
+			if (nullptr != pErrorMessages)
+			{
+					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+				pErrorMessages->push_back(Msg);
+			}
+			rRunStatus.SetInvalid();
+			SetInvalid();
+			return false;
+		}
+
+			if (bReload || m_bResetFileImage)
+		{
+			if( S_OK != m_fileImage.LoadImage( ImagePathName.c_str(), rRunStatus.Images ) )
 			{
 				if (nullptr != pErrorMessages)
 				{
-					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+						SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_FailedToLoadImage, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
 					pErrorMessages->push_back(Msg);
 				}
-				RRunStatus.SetInvalid();
+				rRunStatus.SetInvalid();
 				SetInvalid();
 				return false;
 			}
 
-			if (bReload || m_bResetFileImage)
+			m_bResetFileImage = false;
+		}
+		else
+		{
+			//copy forward
+			if( ! m_fileImage.CopyImageTo( rRunStatus.Images ) )
 			{
-				if (S_OK != m_fileImage.LoadImage(ImagePathName.c_str(), RRunStatus.Images))
+				if (nullptr != pErrorMessages)
 				{
-					if (nullptr != pErrorMessages)
-					{
-						SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_FailedToLoadImage, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
-						pErrorMessages->push_back(Msg);
-					}
-					RRunStatus.SetInvalid();
-					SetInvalid();
-					return false;
-				}
-
-				m_bResetFileImage = false;
-			}
-			else
-			{
-				//copy forward
-				if (!m_fileImage.CopyImageTo(RRunStatus.Images))
-				{
-					if (nullptr != pErrorMessages)
-					{
 						SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_CopyImagesFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
-						pErrorMessages->push_back(Msg);
-					}
-					RRunStatus.SetInvalid();
-					SetInvalid();
-					return false;
+					pErrorMessages->push_back(Msg);
 				}
+				rRunStatus.SetInvalid();
+				SetInvalid();
+				return false;
 			}
+		}
 		}
 		
 		return true;
 	}
 
-	RRunStatus.SetInvalid();
+	rRunStatus.SetInvalid();
 	return false;
 }
 

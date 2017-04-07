@@ -23,20 +23,19 @@
 // implement default behavior for most of the types
 // derived classes should override the virtuals needed for type-specific behavior.
 template <typename T>
-class SVStaticValueObjectClassImpl : public SVValueObjectClass
+class SVStaticValueObjectClassImpl : public SVValueObjectClass<T>
 {
 public:
 	virtual ~SVStaticValueObjectClassImpl(); // See C++ Coding standards page 90 avoid memory leaks. public virtual destructor.
 	typedef SVStaticValueObjectClassImpl<T>  this_type;
 	typedef typename T                 value_type;
 	typedef std::vector <value_type>   array_type;
-	typedef std::vector <value_type>   bucket_type_scalar;
-	typedef std::vector <array_type>   bucket_type_array;
-	typedef bucket_type_array          bucket_type;
-	typedef value_type*                bucket_pointer_type;
+	typedef array_type				   bucket_type;
 
-	array_type m_ScalarBuckets;
+	value_type m_Value;
 	value_type m_DefaultValue;
+
+	array_type m_ArrayValues;
 
 	const this_type& operator = (const this_type& rhs);
 	void swap( SVStaticValueObjectClassImpl<T>& rhs );	// provide an efficient swap; derived classes with extra data should redefine.
@@ -48,6 +47,8 @@ public:
 	
 	HRESULT SetDefaultValue( const T& value, bool bResetAll );
 	HRESULT GetDefaultValue( T& rValue ) const;
+
+	virtual HRESULT SetValue( int iBucket, int iIndex, LPCTSTR Value ) override { return E_FAIL; };
 
 	template <typename ELEMENT_TYPE>	// enable any allowable (implicit) conversions if using derived class interface
 	HRESULT GetValues(std::vector<ELEMENT_TYPE>& raValues) const {return GetArrayValuesImpl(GetLastSetIndex(), raValues);}
@@ -76,9 +77,9 @@ protected:
 
 	virtual void CreateBuckets() override;
 	virtual HRESULT SetValueAt( int iBucket, int iIndex, T value );
-	virtual HRESULT GetValueAt( int iBucket, int iIndex, T& rValue ) const override;
+	virtual HRESULT GetValueAt( int iBucket, int iIndex, T& rValue ) const;
 
-	virtual HRESULT GetObjectValue( const SVString& p_rValueName, VARIANT& p_rVariantValue ) const override;
+	virtual HRESULT GetObjectValue( const SVString& rValueName, _variant_t& rValue ) const override;
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* pDataObject ) override;
 
 	virtual HRESULT GetArrayValues(std::vector<T>& raValues) const;	// allow copy of native type
@@ -88,14 +89,14 @@ protected:
 	typedef typename UseTypeExceptMatch<double, T>::type DoubleType;
 	virtual HRESULT GetArrayValues(int iBucket, DoubleVectorType& raValues) const override;	// allow copy to vector<double>
 	virtual HRESULT GetArrayValues(int iBucket, SVString& raValues) const override;
-	virtual HRESULT GetArrayValuesAsVariant( int iBucket, VARIANT& rValue ) const override;	// allow copy to VARIANT SAFEARRAY
+	virtual HRESULT GetArrayValuesAsVariant( int iBucket, _variant_t& rValue ) const override;	// allow copy to VARIANT SAFEARRAY
 	virtual HRESULT GetArrayValuesAsVariantVector(int iBucket, std::vector<_variant_t>& raValues) const override;	// allow copy to vector<_variant_t>
 
 	// implements copying the specified array to a vector of any implicitly convertible type
 	template <typename ELEMENT_TYPE>
 	HRESULT GetArrayValuesImpl(int iBucket, std::vector<ELEMENT_TYPE>& raValues) const;
 
-	// Comments on m_ScalarBuckets vs. m_pBuckets:
+	// Comments on m_Value vs. m_pBuckets:
 	// Because of cache hits, having a two-dimensional array for all value objects caused
 	// approx. 20% slowdown per inspection on a large (100 tools) configuration.
 	// therefore, since 99.9% of all value objects are single array element, the optimization
@@ -105,33 +106,33 @@ protected:
 	// the object is operating in, and use the correct accessor function ( Buckets() and Array() vs. ScalarBucket() )
 
 	__forceinline value_type& Element(int iBucket, int iArray)
-		{if (ArraySize() == 1) return m_ScalarBuckets[iBucket]; else return (static_cast<SVArrayValueHolder<array_type>*> (m_pBuckets))->m_array[iBucket][iArray];}
+		{if (ArraySize() == 1) return m_Value; else return m_ArrayValues[iArray];}
 	__forceinline const value_type& Element(int iBucket, int iArray) const
-		{if (ArraySize() == 1) return m_ScalarBuckets[iBucket]; else return (static_cast<const SVArrayValueHolder<array_type>*> (m_pBuckets))->m_array[iBucket][iArray];}
+		{if (ArraySize() == 1) return m_Value; else return m_ArrayValues[iArray];}
 
 	__forceinline value_type& ScalarBucket(int iBucket)
-		{assert(ArraySize() == 1); return m_ScalarBuckets[iBucket];}
+		{assert(ArraySize() == 1); return m_Value;}
 	__forceinline const value_type& ScalarBucket(int iBucket) const
-		{assert(ArraySize() == 1); return m_ScalarBuckets[iBucket];}
+		{assert(ArraySize() == 1); return m_Value;}
 
 	__forceinline array_type& Array(int iBucket)
-		{assert(ArraySize() != 1); return (static_cast<SVArrayValueHolder<array_type>*> (m_pBuckets))->m_array[iBucket];}
+		{assert(ArraySize() != 1); return m_ArrayValues;}
 	__forceinline const array_type& Array(int iBucket) const
-		{assert(ArraySize() != 1); return (static_cast<const SVArrayValueHolder<array_type>*> (m_pBuckets))->m_array[iBucket];}
+		{assert(ArraySize() != 1); return m_ArrayValues;}
 
 	__forceinline bucket_type& Buckets()
-		{assert(ArraySize() != 1); return (static_cast<SVArrayValueHolder<array_type>*> (m_pBuckets))->m_array;}
+		{assert(ArraySize() != 1); return m_ArrayValues;}
 	__forceinline const bucket_type& Buckets() const
-		{assert(ArraySize() != 1); return (static_cast<const SVArrayValueHolder<array_type>*> (m_pBuckets))->m_array;}
+		{assert(ArraySize() != 1); return m_ArrayValues;}
 	__forceinline bucket_type& BucketNoAssert()
-		{return (static_cast<SVArrayValueHolder<array_type>*> (m_pBuckets))->m_array;}
+		{return m_ArrayValues;}
 	__forceinline const bucket_type& BucketNoAssert() const
-		{return (static_cast<const SVArrayValueHolder<array_type>*> (m_pBuckets))->m_array;}
+		{return m_ArrayValues;}
 
 	__forceinline value_type& DefaultValue()
-	{return m_DefaultValue;}
+		{return m_DefaultValue;}
 	__forceinline const value_type& DefaultValue() const
-	{return m_DefaultValue;}
+		{return m_DefaultValue;}
 
 	variant_t ConvertToVariant( const value_type& rValue ) const
 	{ return _variant_t( rValue ); }

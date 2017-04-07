@@ -72,7 +72,7 @@ HRESULT RootObject::RefreshObject( const SVObjectClass* const pSender, RefreshOb
 	if( PostRefresh == Type )
 	{
 		//When its of type Global Constant we need to update the IO view
-		if( SVGlobalConstantObjectType == pSender->GetObjectInfo().ObjectTypeInfo.ObjectType )
+		if( SVGlobalConstantObjectType == pSender->GetObjectInfo().m_ObjectTypeInfo.ObjectType )
 		{
 			SVIODoc* pIODoc = TheSVObserverApp.GetIODoc();
 			if(nullptr != pIODoc )
@@ -99,16 +99,16 @@ bool RootObject::createConfigurationObject()
 	if( !pValueObject.empty() )
 	{
 		//Need to set the attributes to settable remotely and online for the Image Update object but should not be selectable
-		pValueObject->ObjectAttributesAllowedRef() |= SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE;
-		pValueObject->ObjectAttributesAllowedRef() &= ~SV_SELECTABLE_ATTRIBUTES;
+		pValueObject->SetObjectAttributesAllowed( SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE, SvOi::SetAttributeType::AddAttribute );
+		pValueObject->SetObjectAttributesAllowed( SV_SELECTABLE_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute );
 	}
 
 	pValueObject = m_RootChildren.setValue( SvOl::FqnEnvironmentResultUpdate, Update );
 	if( !pValueObject.empty() )
 	{
 		//Need to set the attributes to settable remotely and online for the Result Update object but should not be selectable
-		pValueObject->ObjectAttributesAllowedRef() |= SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE;
-		pValueObject->ObjectAttributesAllowedRef() &= ~SV_SELECTABLE_ATTRIBUTES;
+		pValueObject->SetObjectAttributesAllowed( SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE, SvOi::SetAttributeType::AddAttribute );
+		pValueObject->SetObjectAttributesAllowed( SV_SELECTABLE_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute );
 	}
 
 	return true;
@@ -188,7 +188,7 @@ void RootObject::destroyConfigurationObject()
 		SVObjectManagerClass::Instance().GetRootChildObject( pRootChild, Name );
 		if( nullptr != pRootChild )
 		{
-			SVObjectTypeEnum ObjectType = pRootChild->GetObjectInfo().ObjectTypeInfo.ObjectType;
+			SVObjectTypeEnum ObjectType = pRootChild->GetObjectInfo().m_ObjectTypeInfo.ObjectType;
 			Result = pRoot->m_RootChildren.deleteValue( Name );
 			if( S_OK == Result )
 			{
@@ -206,7 +206,7 @@ bool RootObject::Initialize()
 {
 	bool Result(true);
 
-	m_outObjectInfo.ObjectTypeInfo.ObjectType =  SVRootObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType =  SVRootObjectType;
 
 	//The Root object should have an empty name
 	SetName(_T(""));
@@ -228,17 +228,17 @@ bool RootObject::createRootChildren()
 		pValueObject = m_RootChildren.setValue( SvOl::FqnEnvironmentModelNumber, _T("") );
 		if( !pValueObject.empty() )
 		{
-			pValueObject->ObjectAttributesAllowedRef() &= ~SV_SELECTABLE_ATTRIBUTES;
+			pValueObject->SetObjectAttributesAllowed( SV_SELECTABLE_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute );
 		}
 		pValueObject = m_RootChildren.setValue( SvOl::FqnEnvironmentSerialNumber , _T("") );
 		if( !pValueObject.empty() )
 		{
-			pValueObject->ObjectAttributesAllowedRef() &= ~SV_SELECTABLE_ATTRIBUTES;
+			pValueObject->SetObjectAttributesAllowed( SV_SELECTABLE_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute );
 		}
 		pValueObject = m_RootChildren.setValue( SvOl::FqnEnvironmentWinKey, _T("") );
 		if( !pValueObject.empty() )
 		{
-			pValueObject->ObjectAttributesAllowedRef() &= ~SV_SELECTABLE_ATTRIBUTES;
+			pValueObject->SetObjectAttributesAllowed( SV_SELECTABLE_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute );
 		}
 
 		Result = createRootChild( SvOl::FqnGlobal, SVGlobalConstantObjectType );

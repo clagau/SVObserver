@@ -29,31 +29,25 @@ static char THIS_FILE[] = __FILE__;
 SV_IMPLEMENT_CLASS( SVDPointValueObjectClass, SVDPointValueObjectClassGuid );
 
 SVDPointValueObjectClass::SVDPointValueObjectClass( LPCTSTR ObjectName )
-				        : base( ObjectName ) 
+: SVValueObjectClass<SVDPointClass>( ObjectName )
 {
 	LocalInitialize();
 }
 
 SVDPointValueObjectClass::SVDPointValueObjectClass( SVObjectClass* POwner, int StringResourceID )
-				        : base( POwner, StringResourceID ) 
+: SVValueObjectClass<SVDPointClass>( POwner, StringResourceID ) 
 {
 	LocalInitialize();
 }
 
 const SVDPointValueObjectClass& SVDPointValueObjectClass::operator = (const SVDPointValueObjectClass& rhs)
 {
-	base::operator = (rhs);
+	__super::operator = (rhs);
 	return *this;
 }
   
 SVDPointValueObjectClass::~SVDPointValueObjectClass()
 {
-}
-
-BOOL SVDPointValueObjectClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
-{
-	BOOL bCreate = base::CreateObject( pCreateStructure );
-	return bCreate;
 }
 
 void SVDPointValueObjectClass::Persist(SVObjectWriter& rWriter)
@@ -65,7 +59,7 @@ void SVDPointValueObjectClass::Persist(SVObjectWriter& rWriter)
 
 	// Get the Data Values (Member Info, Values)
 	SVString tmp;
-	tmp = SvUl_SF::Format( _T( "%lf, %lf"), DefaultValue().x, DefaultValue().y );
+	tmp = SvUl_SF::Format( _T( "%lf, %lf"), GetDefaultValue().x, GetDefaultValue().y );
 	
 	_variant_t value;
 	value.SetString(tmp.c_str());
@@ -77,10 +71,12 @@ void SVDPointValueObjectClass::Persist(SVObjectWriter& rWriter)
 	// Object Depth is implicit (it's the count of the values)
 	SVVariantList list;	
 
-	// for all elements in the array (m_iArraySize)
-	for( int i = 0; i < m_iArraySize; i++ )
+	// for all elements in the array
+	for( int i = 0; i < getArraySize(); i++ )
 	{
-		tmp = SvUl_SF::Format( _T("%lf, %lf"), Element(m_iLastSetIndex, i).x, Element(m_iLastSetIndex, i).y );
+		SVDPointClass Value;
+		GetValue( Value, GetLastSetIndex(), i );
+		tmp = SvUl_SF::Format( _T("%lf, %lf"), Value.x, Value.y );
 		value.SetString(tmp.c_str());
 		list.push_back(value);
 		value.Clear();
@@ -91,152 +87,35 @@ void SVDPointValueObjectClass::Persist(SVObjectWriter& rWriter)
 	rWriter.EndElement();
 }
 
-HRESULT SVDPointValueObjectClass::SetObjectValue( SVObjectAttributeClass* PDataObject )
+_variant_t SVDPointValueObjectClass::ValueType2Variant( const SVDPointClass& rValue ) const
 {
-	HRESULT hr = S_FALSE;
-	BOOL bOk = FALSE;
+	_variant_t Result;
 
-	SVObjectDPointArrayClass svPointArray;
-	bucket_type l_Buckets(BucketNoAssert());
+	Result.SetString( ConvertType2String(rValue).c_str() );
 
-	if ( ( bOk = PDataObject->GetAttributeData( "defaultPoint", svPointArray ) ) )
+	return Result;
+}
+
+SVDPointClass SVDPointValueObjectClass::Variant2ValueType( const _variant_t& rValue ) const
+{
+	SVDPointClass Result;
+
+	if( VT_BSTR == rValue.vt )
 	{
-		for( int i = 0; i < svPointArray.GetSize(); i++ )
+		try
 		{
-			DefaultValue() = svPointArray[i];
+			SVString Value = SvUl_SF::createSVString( rValue );
+			Result = ConvertString2Type( Value );
+		}
+		catch( const SvStl::MessageContainer& )
+		{
 		}
 	}
-	else if ( bOk = PDataObject->GetAttributeData( _T("pArray"), l_Buckets, DefaultValue() ) )
-	{
-		if ( 1 == ArraySize() )
-		{
-			ScalarBucket(0)=l_Buckets[0][0];
-			ScalarBucket(1)=l_Buckets[1][0];
-		}
-		else
-		{
-			std::swap(Buckets(), l_Buckets);
-		}
-		if ( 1 < m_iNumberOfBuckets )
-		{
-			m_iLastSetIndex = 1;
-		}
-	}
-	else
-	{
-		hr = base::SetObjectValue( PDataObject );
-		return hr;
-	}
 
-	hr = bOk ? S_OK : S_FALSE;
-	return hr;
+	return Result;
 }
 
-HRESULT SVDPointValueObjectClass::SetValueAt( int iBucket, int iIndex, const POINT& Point )
-{
-	return base::SetValueAt(iBucket, iIndex, SVDPointClass(Point));
-}
-
-HRESULT SVDPointValueObjectClass::SetDefaultValue( const POINT& Point, bool bResetAll )
-{
-	return base::SetDefaultValue( SVDPointClass(Point), bResetAll );
-}
-
-HRESULT SVDPointValueObjectClass::GetDefaultValue( POINT& rPoint ) const
-{
-	DefaultValue().GetValue( rPoint );
-	return IsCreated() ? S_OK : S_FALSE;
-}
-
-HRESULT SVDPointValueObjectClass::SetValueAt( int iBucket, int iIndex, const SVString& strValue )
-{
-	try
-	{
-		SVDPointClass value = convertString2DPoint(strValue);
-		return base::SetValueAt(iBucket, iIndex, value );
-	}
-	catch (const SvStl::MessageContainer&)
-	{
-		assert(false);
-		return S_FALSE;
-	}
-}
-
-HRESULT SVDPointValueObjectClass::SetValueAt( int iBucket, int iIndex, double value )
-{
-	assert(false);
-	return S_FALSE;
-}
-
-HRESULT SVDPointValueObjectClass::GetValueAt( int iBucket, int iIndex, POINT& rPoint ) const
-{
-	SVDPointClass value;
-
-	HRESULT hr = base::GetValueAt(iBucket, iIndex, value);
-	value.GetValue(rPoint);
-
-	return hr;
-}
-
-HRESULT SVDPointValueObjectClass::GetValueAt( int nBucket, int iIndex, double& rstrValue ) const
-{
-	assert(false);
-	return S_FALSE;
-}
-
-HRESULT SVDPointValueObjectClass::GetValueAt( int iBucket, int iIndex, SVString& rValue ) const
-{
-	SVDPointClass value;
-
-	HRESULT hr = base::GetValueAt( iBucket, iIndex, value );
-	//if ( S_OK == hr ) // @WARNING - log an error here?
-	{
-		rValue = SvUl_SF::Format( _T( "( %lf, %lf )" ), value.x, value.y );
-	}
-
-	return hr;
-}
-
-HRESULT SVDPointValueObjectClass::GetValueAt( int iBucket, int iIndex, VARIANT& rValue ) const
-{
-	SVDPointClass l_dPoint;
-
-	_variant_t vtValue;
-	vtValue.Attach( rValue );
-
-	HRESULT hr = base::GetValueAt( iBucket, iIndex, l_dPoint );
-	if( S_OK == hr )
-	{
-		SVString Temp = SvUl_SF::Format(  _T("( %lf, %lf )"), l_dPoint.x, l_dPoint.y);
-		vtValue = Temp.c_str();
-	}
-	else
-	{
-		vtValue.Clear();
-	}
-	rValue = vtValue.Detach();
-
-	return hr;
-}
-
-void SVDPointValueObjectClass::ValidateValue( int iBucket, int iIndex, const SVString& rValue ) const
-{
-	convertString2DPoint(rValue.c_str());
-	base::ValidateValue( iBucket, iIndex, rValue );
-}
-
-void SVDPointValueObjectClass::LocalInitialize()
-{
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVDPointValueObjectType;
-
-	ObjectAttributesAllowedRef() = SV_VIEWABLE | SV_ARCHIVABLE | SV_EMBEDABLE | SV_PRINTABLE | SV_DD_VALUE;
-
-	SetTypeName( _T("Point") );
-
-	InitializeBuckets();
-}
-
-SVDPointClass SVDPointValueObjectClass::convertString2DPoint(const SVString& rValue ) const
+SVDPointClass SVDPointValueObjectClass::ConvertString2Type( const SVString& rValue ) const
 {
 	SVString LegalChars = SvUl_SF::ValidateString( rValue, _T("0123456789()-., ") );	// floats
 	if ( LegalChars == rValue )
@@ -247,15 +126,41 @@ SVDPointClass SVDPointValueObjectClass::convertString2DPoint(const SVString& rVa
 		{
 			SVString sX = SvUl_SF::Left( LegalChars, Pos );
 			SVString sY = SvUl_SF::Mid( LegalChars, Pos + 1 );
-			return SVDPointClass(atof(sX.c_str()), atof(sY.c_str()));
+			return SVDPointClass( atof(sX.c_str()), atof(sY.c_str()) );
 		}
 	}
 	SVStringVector msgList;
-	msgList.push_back(SVString(rValue));
-	msgList.push_back(GetName());
+	msgList.push_back( rValue );
+	msgList.push_back( GetName() );
 	SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 	Exception.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_ValueObject_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 	Exception.Throw();
 	return SVDPointClass(); //will never reached, because the exception will throw before. But this line avoid a warning
+}
+
+SVString SVDPointValueObjectClass::ConvertType2String( const SVDPointClass& rValue ) const
+{
+	SVString Result;
+	//This is faster than SvUl_SF::Format
+	TCHAR Text[100];
+	sprintf_s(Text, 100, _T("( %lf, %lf )"), rValue.x, rValue.y);
+	Result = Text;
+	return Result;
+}
+
+void SVDPointValueObjectClass::LocalInitialize()
+{
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVDPointValueObjectType;
+
+	if ( m_sLegacyScriptDefaultName.empty() )
+	{
+		m_sLegacyScriptDefaultName = _T("defaultPoint");
+		m_sLegacyScriptArrayName = _T("pArray");
+	}	
+	SetObjectAttributesAllowed( SV_VIEWABLE | SV_ARCHIVABLE | SV_EMBEDABLE | SV_PRINTABLE | SV_DD_VALUE, SvOi::SetAttributeType::OverwriteAttribute );
+
+	SetTypeName( _T("Point") );
+
+	InitializeBuckets();
 }
 

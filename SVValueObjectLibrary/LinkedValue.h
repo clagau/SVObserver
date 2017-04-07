@@ -10,7 +10,7 @@
 #pragma region Includes
 #include "SVObjectLibrary\SVInObjectInfoStruct.h"
 #include "SVUtilityLibrary\SVString.h"
-#include "SVStaticStringValueObjectClass.h"
+#include "SVStringValueObjectClass.h"
 #include "SVVariantValueObjectClass.h"
 #pragma endregion Includes
 
@@ -31,24 +31,18 @@ public:
 
 	//************************************
 	/// Return the current value. If a valid linked value this will be returned otherwise it will return the the variant value.
+	/// \param rValue [out] reference to the value to write to
 	/// \param Bucket [in] bucket to get
 	/// \param Index [in]  index of array to get
-	/// \param rValue [out] reference to the value to write to
 	/// \returns S_OK if successful
 	//************************************
-	virtual HRESULT GetValueAt( int Bucket, int Index, VARIANT& rValue ) const override;
-	virtual HRESULT GetValueAt( int Bucket, int Index, SVString& rValue ) const override;
-	virtual HRESULT GetValueAt( int Bucket, int Index, BOOL& rValue ) const override;
-	virtual HRESULT GetValueAt( int Bucket, int Index, double& rValue ) const override;
-	virtual HRESULT GetValueAt( int Bucket, int Index, long& rValue ) const override;
-	virtual HRESULT GetValueAt( int Bucket, int Index, DWORD& rValue ) const override;
-	virtual HRESULT GetValueAt( int Bucket, int Index, BYTE& rValue ) const override;
+	virtual HRESULT GetValue( _variant_t& rValue,  int Bucket = -1, int Index = -1 ) const override;
 
 	//************************************
 	/// Set the value. If string a valid dotted name of a value object, it connect it to the linked object.
 	/// \returns HRESULT S_OK, if set was OK.
 	//************************************
-	virtual HRESULT SetValueAt( int Bucket, int Index, const SVString& rValue ) override;
+	//virtual HRESULT SetValueAt( int Bucket, int Index, const SVString& rValue ) override;
 
 	virtual bool DisconnectObjectInput( SVInObjectInfoStruct* pObjectInInfo ) override;
 
@@ -58,7 +52,7 @@ public:
 	//************************************
 	void UpdateLinkedName();
 
-	SVStaticStringValueObjectClass& getLinkedName() { return m_LinkedName; };
+	SVStringValueObjectClass& getLinkedName() { return m_LinkedName; };
 
 	bool isIndirectValue() { return ( nullptr != m_pLinkedObject ); };
 
@@ -69,36 +63,31 @@ public:
 
 #pragma region Protected Methods
 protected:
-	virtual void ValidateValue( int iBucket, int iIndex, const SVString& rValue ) const override;
+	//! Convert a string in a variant. Throw an exception if the string isn't convertible into a variant
+	//! \param rValue [in] The input string
+	//! \returns the converted value.
+	virtual _variant_t ConvertString2Type( const SVString& rValue ) const override;
 #pragma endregion Protected Methods
 
 #pragma region Private Methods
 private:
-	//************************************
-	/// Update the input connection, dependent of the variant value.
-	/// \returns HRESULT
-	//************************************
 	/// Update the input connection, dependent of the variant value.
 	/// \param pErrorMessages [in,out] Pointer to a error list, if pointer != nullptr an error message will be added if an error is happend.
 	/// \returns bool
 	bool UpdateConnection(SvStl::MessageContainerVector *pErrorMessages=nullptr);
 
-	//************************************
 	/// Disconnected the input connection and set it to nullptr.
-	//************************************
 	void DisconnectInput();
 
-	//************************************
 	/// Connect the input connection with a new object
 	/// \returns bool
-	//************************************
 	bool ConnectInput();
 
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	/// Convert a string (dotted name) to an object.
 	/// \param rValue [in] Input string
-	/// \returns SVObjectClass* The founded object. If object not found, return a nullptr.
+	/// \returns SVObjectClass* The found object. If object not found, return a nullptr.
 	SVObjectClass* ConvertStringInObject( const SVString& rValue ) const;
 
 	/// Checks if the linked object is valid.
@@ -110,9 +99,11 @@ private:
 
 #pragma region Member Variables
 private:
-	SVStaticStringValueObjectClass m_LinkedName;
+	SVStringValueObjectClass m_LinkedName;
 	SVObjectClass* m_pLinkedObject;
+	SvOi::IValueObject* m_pLinkedValueObject;
 	SVGUID m_LinkedUid;
 	mutable bool m_CircularReference;					//! Use this flag during GetValue to make sure no circular references are present
+	bool m_getNonLinkedValue;
 #pragma endregion Member Variables
 };

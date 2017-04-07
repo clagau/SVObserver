@@ -34,17 +34,18 @@ SVThickeningFilterClass::~SVThickeningFilterClass()
 
 void SVThickeningFilterClass::init()
 {
-	m_outObjectInfo.ObjectTypeInfo.SubType = SVThickeningFilterObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVThickeningFilterObjectType;
 
-	RegisterEmbeddedObject( &m_lvoItterations, SVThickeningFilterItterationsGuid, IDS_OBJECTNAME_THICKENINGFILTER_ITTERATIONS, false, SVResetItemNone );
-	RegisterEmbeddedObject( &m_bvoGrayOn, SVThickeningFilterGrayOnGuid, IDS_OBJECTNAME_THICKENINGFILTER_GRAYON, false, SVResetItemNone );
+	RegisterEmbeddedObject( &m_lvoItterations, SVThickeningFilterItterationsGuid, IDS_OBJECTNAME_THICKENINGFILTER_ITTERATIONS, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_bvoGrayOn, SVThickeningFilterGrayOnGuid, IDS_OBJECTNAME_THICKENINGFILTER_GRAYON, false, SvOi::SVResetItemNone );
 
 	m_lvoItterations.SetDefaultValue( 1L, true );
 	m_bvoGrayOn.SetDefaultValue( false, true );
 
 
-	m_lvoItterations.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE;
-	m_bvoGrayOn.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE;
+	const UINT cAttributes = SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE;
+	m_lvoItterations.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
+	m_bvoGrayOn.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 
 	// Set default inputs and outputs
 	addDefaultInputObjects();
@@ -70,11 +71,11 @@ BOOL SVThickeningFilterClass::CreateObject( SVObjectLevelCreateStruct* PCreateSt
 // .Description : Runs this operator.
 //              : Returns FALSE, if operator cannot run ( may be deactivated ! )
 ////////////////////////////////////////////////////////////////////////////////
-bool SVThickeningFilterClass::onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVThickeningFilterClass::onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 { 
 	// Force a copy forward to keep the display correct
-	m_lvoItterations.CopyLastSetValue( RRunStatus.m_lResultDataIndex );
-	m_bvoGrayOn.CopyLastSetValue( RRunStatus.m_lResultDataIndex );
+	m_lvoItterations.CopyLastSetValue( rRunStatus.m_lResultDataIndex );
+	m_bvoGrayOn.CopyLastSetValue( rRunStatus.m_lResultDataIndex );
 
 	long lItterations;
 	long lMode;
@@ -109,7 +110,7 @@ bool SVThickeningFilterClass::onRun( bool First, SVSmartHandlePointer RInputImag
 			}
 			// Signal that something was wrong...
 			SetInvalid();
-			RRunStatus.SetInvalid();
+			rRunStatus.SetInvalid();
 			return false;
 		}
 
@@ -127,7 +128,7 @@ bool SVThickeningFilterClass::onRun( bool First, SVSmartHandlePointer RInputImag
 
 	// Signal that something was wrong...
 	SetInvalid();
-	RRunStatus.SetInvalid();
+	rRunStatus.SetInvalid();
 	return false;
 }
 

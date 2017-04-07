@@ -37,7 +37,7 @@ SVUnaryImageOperatorListClass::SVUnaryImageOperatorListClass( BOOL BCreateDefaul
 void SVUnaryImageOperatorListClass::init()
 {
 	// Identify our output type
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVUnaryImageOperatorListObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVUnaryImageOperatorListObjectType;
 
 	// Identify our input type needs
 	inputImageObjectInfo.SetInputObjectType( SVImageObjectType );
@@ -252,8 +252,8 @@ HRESULT SVUnaryImageOperatorListClass::IsInputImage( SVImageClass *p_psvImage )
 ////////////////////////////////////////////////////////////////////////////////
 SVImageClass* SVUnaryImageOperatorListClass::getInputImage()
 {
-	if( inputImageObjectInfo.IsConnected() && inputImageObjectInfo.GetInputObjectInfo().PObject )
-		return ( SVImageClass* ) inputImageObjectInfo.GetInputObjectInfo().PObject;
+	if( inputImageObjectInfo.IsConnected() && inputImageObjectInfo.GetInputObjectInfo().m_pObject )
+		return ( SVImageClass* ) inputImageObjectInfo.GetInputObjectInfo().m_pObject;
 
 	return nullptr;
 }
@@ -262,7 +262,7 @@ bool SVUnaryImageOperatorListClass::ResetObject(SvStl::MessageContainerVector *p
 {
 	bool Result = __super::ResetObject(pErrorMessages);
 
-	if (!inputImageObjectInfo.IsConnected() || nullptr == inputImageObjectInfo.GetInputObjectInfo().PObject)
+	if (!inputImageObjectInfo.IsConnected() || nullptr == inputImageObjectInfo.GetInputObjectInfo().m_pObject)
 	{
 		Result = false;
 		if (nullptr != pErrorMessages)

@@ -1039,13 +1039,13 @@ SVRemoveSubjectStruct::~SVRemoveSubjectStruct()
 }
 
 SVInputRequestInfoStruct::SVInputRequestInfoStruct()
-: refValueObject(), m_Value()
+: m_ValueObjectRef(), m_Value()
 {
 	Reset();
 }
 
-SVInputRequestInfoStruct::SVInputRequestInfoStruct( const SVValueObjectReference& p_rValueObject, const _variant_t& p_rValue )
-: refValueObject( p_rValueObject ), m_Value( p_rValue )
+SVInputRequestInfoStruct::SVInputRequestInfoStruct( const SVObjectReference& rValueObject, const _variant_t& rValue )
+: m_ValueObjectRef( rValueObject ), m_Value( rValue )
 {
 }
 
@@ -1056,7 +1056,7 @@ SVInputRequestInfoStruct::~SVInputRequestInfoStruct()
 
 void SVInputRequestInfoStruct::Reset()
 {
-	refValueObject = SVValueObjectReference();
+	m_ValueObjectRef = SVObjectReference();
 	m_Value.Clear();
 }// end Reset
 

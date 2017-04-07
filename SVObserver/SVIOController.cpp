@@ -26,6 +26,7 @@
 #include "SVOutputStreamManager.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVSVIMStateClass.h"
+#include "TextDefinesSvO.h"
 #pragma endregion Includes
 
 SV_IMPLEMENT_CLASS( SVIOController, SVIOControllerGuid );
@@ -53,25 +54,27 @@ SVIOController::SVIOController( SVObjectClass *pOwner, int StringResourceID )
 void SVIOController::LocalIntialize()
 {
 	// Set up your type...
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVIOControllerType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVIOControllerType;
 
 	m_pModuleReady = new SVIOEntryHostStruct;
-	m_pModuleReady->m_pValueParent = this;
 	m_pModuleReady->m_ObjectType = IO_DIGITAL_OUTPUT;
-	m_pModuleReady->m_pValueObject = new SVBoolValueObjectClass;
-	m_pModuleReady->m_pValueObject->SetName( _T( "Module Ready" ) );
-	m_pModuleReady->m_pValueObject->SetObjectDepth( 100 );
-	m_pModuleReady->m_pValueObject->ResetObject();
-	m_pModuleReady->m_pValueObject->SetValue( 1, TRUE );
+	SVBoolValueObjectClass* pValueObject = new SVBoolValueObjectClass;
+	m_pModuleReady->setObject(dynamic_cast<SVObjectClass*> (pValueObject));
+	//! For Module Ready do not set the parent owner
+	pValueObject->SetName(SvO::cModuleReady);
+	pValueObject->SetObjectDepth( 100 );
+	pValueObject->ResetObject();
+	pValueObject->setValue( _variant_t(true) );
 
 	m_pRaidErrorBit = new SVIOEntryHostStruct;
-	m_pRaidErrorBit->m_pValueParent	= this;
 	m_pRaidErrorBit->m_ObjectType = IO_DIGITAL_OUTPUT;
-	m_pRaidErrorBit->m_pValueObject = new SVBoolValueObjectClass;
-	m_pRaidErrorBit->m_pValueObject->SetName( _T( "Raid Error Indicator" ) );
-	m_pRaidErrorBit->m_pValueObject->SetObjectDepth( 100 );
-	m_pRaidErrorBit->m_pValueObject->ResetObject();
-	m_pRaidErrorBit->m_pValueObject->SetValue( 1, FALSE );
+	pValueObject = new SVBoolValueObjectClass;
+	m_pRaidErrorBit->setObject(dynamic_cast<SVObjectClass*> (pValueObject));
+	//! For Raid Error Indicator do not set the parent owner
+	pValueObject->SetName(SvO::cRaidErrorIndicator);
+	pValueObject->SetObjectDepth( 100 );
+	pValueObject->ResetObject();
+	pValueObject->setValue( _variant_t(false) );
 }
 
 SVIOController::~SVIOController()
@@ -112,7 +115,7 @@ SVIODoc* SVIOController::GetIODoc() const
 
 bool SVIOController::RebuildOutputList()
 {
-	SVOutputObjectArray ppNewOutputs;
+	SVOutputObjectPtrVector ppNewOutputs;
 
 	SVConfigurationObject* pConfig( nullptr );
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
@@ -159,7 +162,7 @@ BOOL SVIOController::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandl
 
 			SVObjectManagerClass::Instance().CloseUniqueObjectID( this );
 
-			m_outObjectInfo.UniqueObjectID = ObjectID;
+			m_outObjectInfo.m_UniqueObjectID = ObjectID;
 
 			SVObjectManagerClass::Instance().OpenUniqueObjectID( this );
 		}
@@ -192,7 +195,7 @@ bool SVIOController::GetParameters( SVObjectXMLWriter& rWriter ) const
 
 	_variant_t svVariant;
 
-	svVariant = SVGUID( m_outObjectInfo.UniqueObjectID ).ToVARIANT();
+	svVariant = SVGUID( m_outObjectInfo.m_UniqueObjectID ).ToVARIANT();
 	rWriter.WriteAttribute( CTAG_UNIQUE_REFERENCE_ID, svVariant );
 
 	if( nullptr != m_pRemoteOutputController )
@@ -207,8 +210,8 @@ BOOL SVIOController::SetObjectDepth( int NewObjectDepth )
 {
 	BOOL l_bOk = SVObjectClass::SetObjectDepth( NewObjectDepth );
 
-	l_bOk &= !( m_pModuleReady.empty() ) && m_pModuleReady->m_pValueObject->SetObjectDepth( NewObjectDepth );
-	l_bOk &= !( m_pRaidErrorBit.empty() ) && m_pRaidErrorBit->m_pValueObject->SetObjectDepth( NewObjectDepth );
+	l_bOk &= !( m_pModuleReady.empty() ) && m_pModuleReady->getObject()->SetObjectDepth( NewObjectDepth );
+	l_bOk &= !( m_pRaidErrorBit.empty() ) && m_pRaidErrorBit->getObject()->SetObjectDepth( NewObjectDepth );
 
 	return l_bOk;
 }
@@ -217,8 +220,8 @@ BOOL SVIOController::SetObjectDepthWithIndex( int NewObjectDepth, int NewLastSet
 {
 	BOOL l_bOk = SVObjectClass::SetObjectDepthWithIndex( NewObjectDepth, NewLastSetIndex );
 
-	l_bOk &= !( m_pModuleReady.empty() ) && m_pModuleReady->m_pValueObject->SetObjectDepthWithIndex( NewObjectDepth, NewLastSetIndex );
-	l_bOk &= !( m_pRaidErrorBit.empty() ) && m_pRaidErrorBit->m_pValueObject->SetObjectDepthWithIndex( NewObjectDepth, NewLastSetIndex );
+	l_bOk &= !( m_pModuleReady.empty() ) && m_pModuleReady->getObject()->SetObjectDepthWithIndex( NewObjectDepth, NewLastSetIndex );
+	l_bOk &= !( m_pRaidErrorBit.empty() ) && m_pRaidErrorBit->getObject()->SetObjectDepthWithIndex( NewObjectDepth, NewLastSetIndex );
 
 	return l_bOk;
 }
@@ -227,8 +230,8 @@ BOOL SVIOController::SetImageDepth( long lDepth )
 {
 	BOOL l_bOk = SVObjectClass::SetImageDepth( lDepth );
 
-	l_bOk &= !( m_pModuleReady.empty() ) && m_pModuleReady->m_pValueObject->SetImageDepth( lDepth );
-	l_bOk &= !( m_pRaidErrorBit.empty() ) && m_pRaidErrorBit->m_pValueObject->SetImageDepth( lDepth );
+	l_bOk &= !( m_pModuleReady.empty() ) && m_pModuleReady->getObject()->SetImageDepth( lDepth );
+	l_bOk &= !( m_pRaidErrorBit.empty() ) && m_pRaidErrorBit->getObject()->SetImageDepth( lDepth );
 
 	return l_bOk;
 }
@@ -257,20 +260,20 @@ bool SVIOController::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = __super::ResetObject(pErrorMessages);
 
-	if ( nullptr == m_pModuleReady || nullptr == m_pModuleReady->m_pValueObject || !m_pModuleReady->m_pValueObject->IsCreated() )
+	if ( nullptr == m_pModuleReady || nullptr == m_pModuleReady->getObject() || !m_pModuleReady->getObject()->IsCreated() )
 	{
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
 			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_InvalidModuleReadyPointer, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 			pErrorMessages->push_back(Msg);
-		}
+	}
 	}
 	else
 	{
-		Result = m_pModuleReady->m_pValueObject->ResetObject(pErrorMessages);
+		Result = m_pModuleReady->getObject()->ResetObject(pErrorMessages);
 	}
-	if ( nullptr == m_pRaidErrorBit || nullptr == m_pRaidErrorBit->m_pValueObject || !m_pRaidErrorBit->m_pValueObject->IsCreated() )
+	if ( nullptr == m_pRaidErrorBit || nullptr == m_pRaidErrorBit->getObject() || !m_pRaidErrorBit->getObject()->IsCreated() )
 	{
 		Result = false;
 		if (nullptr != pErrorMessages)
@@ -281,7 +284,7 @@ bool SVIOController::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	}
 	else
 	{
-		Result = m_pRaidErrorBit->m_pValueObject->ResetObject(pErrorMessages) && Result;
+		Result = m_pRaidErrorBit->getObject()->ResetObject(pErrorMessages) && Result;
 	}
 
 	m_RemoteMonitorListController.ResetObject();
@@ -290,24 +293,26 @@ bool SVIOController::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	{
 		Result = false;
 		if (nullptr != pErrorMessages)
-		{
+	{
 			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_IoController_RebuildOutpuListFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 			pErrorMessages->push_back(Msg);
-		}
+	}
 	}
 	return Result;
 }
 
-HRESULT SVIOController::SetModuleReady( bool p_Value )
+HRESULT SVIOController::SetModuleReady( bool Value )
 {
 	HRESULT l_Status( S_OK );
 
 	// Don't set Module Ready if it isn't in the output list
 	if( !( m_pModuleReady->m_IOId.empty() ) )
 	{
-		SVOutputObjectList *pOutputList( nullptr );
-
-		m_pModuleReady->m_pValueObject->SetValue( 1, p_Value );
+		SVOutputObjectList* pOutputList( nullptr );
+		if(nullptr != m_pModuleReady->getValueObject())
+		{
+			m_pModuleReady->getValueObject()->setValue( _variant_t(Value) );
+		}
 
 		SVConfigurationObject* pConfig( nullptr );
 		SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
@@ -323,7 +328,7 @@ HRESULT SVIOController::SetModuleReady( bool p_Value )
 	return l_Status;
 }
 
-bool SVIOController::SetRaidErrorBit( bool p_Value )
+bool SVIOController::SetRaidErrorBit( bool Value )
 {
 	bool Result( true );
 
@@ -331,8 +336,10 @@ bool SVIOController::SetRaidErrorBit( bool p_Value )
 	if( !( m_pRaidErrorBit->m_IOId.empty() ) )
 	{
 		SVOutputObjectList *pOutputList( nullptr );
-
-		m_pRaidErrorBit->m_pValueObject->SetValue( 1, p_Value );
+		if(nullptr != m_pRaidErrorBit->getValueObject())
+		{
+			m_pRaidErrorBit->getValueObject()->setValue( _variant_t(Value) );
+		}
 
 		SVConfigurationObject* pConfig( nullptr );
 		SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );

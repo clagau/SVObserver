@@ -34,10 +34,13 @@ public:
 #pragma region Public Methods
 public:
 	const ValueObjectSortContainer& getSortContainer(int iBucket) const;
-	const ValueObjectSortContainer& getSortContainer() const { return getSortContainer(m_iLastSetIndex); };
+	const ValueObjectSortContainer& getSortContainer() const { return getSortContainer( GetLastSetIndex() ); };
 	HRESULT setSortContainer(int iBucket, const ValueObjectSortContainer& sortMap);
-	HRESULT setSortContainer(const ValueObjectSortContainer& sortMap) { return setSortContainer(m_iLastSetIndex, sortMap); };
+	HRESULT setSortContainer(const ValueObjectSortContainer& sortMap) { return setSortContainer( GetLastSetIndex(), sortMap ); };
 	virtual HRESULT CopyValue(int iSourceBucket, int iDestBucket) override;
+	virtual HRESULT SetValue( const double& rValue, int Bucket, int Index ) override;
+	virtual HRESULT GetValue( double& rValue, int Bucket, int Index ) const override;
+	virtual HRESULT getValues( std::vector<_variant_t>&  rValues, int Bucket ) const override;
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
@@ -47,25 +50,10 @@ protected:
 	/// ATTENTION: Do not use m_aiResultSize, this must be on ArraySize because otherwise ValidateIndexes can failed even if index valid.
 	/// \param iBucket [in]
 	/// \returns int Result size
-	virtual int GetResultSize(int iBucket) const override { return static_cast<int>(getSortContainer(iBucket).size()); };
+	virtual int getResultSize(int Bucket) const override;
 
-	virtual HRESULT SetValueAt( int iBucket, int iIndex, const SVString& rValue ) override;
-	virtual HRESULT SetValueAt( int iBucket, int iIndex, const VARIANT& rValue ) override;
-	virtual HRESULT SetValueAt( int iBucket, int iIndex, int value ) override;
-	virtual HRESULT SetValueAt( int iBucket, int iIndex, long value ) override;
-	virtual HRESULT SetValueAt( int iBucket, int iIndex, double value ) override;
+	virtual HRESULT GetArrayValues( std::vector<double>& rValues, int Bucket ) const override;
 
-	virtual HRESULT GetValueAt( int iBucket, int iIndex, double& rValue ) const override;
-	virtual HRESULT GetValueAt( int iBucket, int iIndex, long& rValue ) const override;
-	virtual HRESULT GetValueAt( int iBucket, int iIndex, DWORD& rValue ) const override;
-	virtual HRESULT GetValueAt( int iBucket, int iIndex, SVString& rValue ) const override;
-	virtual HRESULT GetValueAt( int iBucket, int iIndex, VARIANT& rValue ) const override;
-
-	virtual HRESULT GetArrayValues(int iBucket, std::vector<double>& raValues) const override;
-	virtual HRESULT GetArrayValuesAsVariant( int iBucket, VARIANT&  rValue ) const override;
-	virtual HRESULT GetArrayValuesAsVariantVector( int iBucket, std::vector< _variant_t >&  rValues ) const override;
-
-	virtual void ValidateValue( int iBucket, int iIndex, const SVString& rValue ) const override;
 #pragma endregion Protected Methods
 
 #pragma region Private Methods

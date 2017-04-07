@@ -32,7 +32,7 @@ SVUnaryImageOperatorClass::~SVUnaryImageOperatorClass()
 void SVUnaryImageOperatorClass::init()
 {
 	// Identify our output type
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVUnaryImageOperatorObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVUnaryImageOperatorObjectType;
 
 	// Identify our input type needs
 
@@ -70,22 +70,22 @@ BOOL SVUnaryImageOperatorClass::CreateObject( SVObjectLevelCreateStruct* PCreate
 // .Description : Runs this operator.
 //              : Returns FALSE, if operator cannot run ( may be deactivated ! )
 ////////////////////////////////////////////////////////////////////////////////
-bool SVUnaryImageOperatorClass::Run( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVUnaryImageOperatorClass::Run( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	// Should call Base Class Run() here but we have different parameters!!!
 
 	clearRunErrorMessages();
 	
 	// Run yourself...
-	bool bRetVal =  onRun( First, RInputImageHandle, ROutputImageHandle, RRunStatus, &m_RunErrorMessages );
+	bool bRetVal =  onRun( First, RInputImageHandle, ROutputImageHandle, rRunStatus, &m_RunErrorMessages );
 
 	// Get Status Color...
-	DWORD dwValue = RRunStatus.GetStatusColor();
-	m_statusColor.SetValue( RRunStatus.m_lResultDataIndex, dwValue );
+	DWORD dwValue = rRunStatus.GetStatusColor();
+	m_statusColor.SetValue( dwValue, rRunStatus.m_lResultDataIndex );
 
 	// Get Status...
-	dwValue = RRunStatus.GetState();
-	m_statusTag.SetValue( RRunStatus.m_lResultDataIndex, dwValue );
+	dwValue = rRunStatus.GetState();
+	m_statusTag.SetValue( dwValue, rRunStatus.m_lResultDataIndex );
 
 	if (nullptr != pErrorMessages && !m_RunErrorMessages.empty())
 	{
@@ -101,7 +101,7 @@ bool SVUnaryImageOperatorClass::Run( bool First, SVSmartHandlePointer RInputImag
 // .Description : Runs this operator. MUST BE OVERRIDDEN !!!
 //              : Returns FALSE, if operator cannot run ( may be deactivated ! )
 ////////////////////////////////////////////////////////////////////////////////
-bool SVUnaryImageOperatorClass::onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVUnaryImageOperatorClass::onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	assert(0);
 	return false;

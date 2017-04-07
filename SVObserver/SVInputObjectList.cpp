@@ -13,10 +13,10 @@
 #include "stdafx.h"
 #include "SVInputObjectList.h"
 #include "SVInfoStructs.h"
-#include "SVValueObjectLibrary/SVValueObject.h"
+#include "SVCameraDataInputObject.h"
 #include "SVDigitalInputObject.h"
 #include "SVRemoteInputObject.h"
-#include "SVCameraDataInputObject.h"
+#include "SVValueObjectLibrary/SVValueObject.h"
 #pragma endregion Includes
 
 SVInputObjectList::SVInputObjectList( LPCSTR ObjectName )
@@ -39,7 +39,7 @@ SVInputObjectList::~SVInputObjectList()
 
 BOOL SVInputObjectList::Create()
 {
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVInputObjectListType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVInputObjectListType;
 
 	try
 	{
@@ -90,29 +90,96 @@ BOOL SVInputObjectList::Destroy()
 	return TRUE;
 }// end Destroy
 
-BOOL SVInputObjectList::Lock() const
+SVInputObject* SVInputObjectList::GetInput(const SVGUID& rInputID) const
 {
-	if( m_bCreated )
+	SVInputObject* pResult(nullptr);
+
+	if (Lock())
 	{
-		::EnterCriticalSection( const_cast< LPCRITICAL_SECTION >( &m_hCriticalSection ) );
+		SVGuidSVInputObjectPtrMap::const_iterator l_Iter = m_InputObjects.find(rInputID);
 
-		return TRUE;
-	}// end if
+		if (l_Iter != m_InputObjects.end())
+		{
+			pResult = l_Iter->second;
+		}
+		Unlock();
+	}
 
-	return FALSE;
-}// end Lock
+	return pResult;
+}
 
-BOOL SVInputObjectList::Unlock() const
+SVInputObject* SVInputObjectList::GetInput(const SVString& rInputName) const
 {
-	if( m_bCreated )
+	SVInputObject* pResult(nullptr);
+
+	if (Lock())
 	{
-		::LeaveCriticalSection( const_cast< LPCRITICAL_SECTION >( &m_hCriticalSection ) );
+		SVGuidSVInputObjectPtrMap::const_iterator	l_Iter;
 
-		return TRUE;
-	}// end if
+		for (l_Iter = m_InputObjects.begin(); nullptr == pResult && l_Iter != m_InputObjects.end(); ++l_Iter)
+		{
+			SVInputObject* pInput = l_Iter->second;
 
-	return FALSE;
-}// end Unlock
+			if (nullptr != pInput && rInputName == pInput->GetName())
+			{
+				pResult = pInput;
+			}
+		}
+		Unlock();
+	}
+
+	return pResult;
+}
+
+SVInputObject* SVInputObjectList::GetInputFlyweight(const SVString& rInputName, SVObjectSubTypeEnum ObjectSubType)
+{
+	SVInputObject* pResult(nullptr);
+
+	if (Lock())
+	{
+		SVGuidSVInputObjectPtrMap::const_iterator	l_Iter;
+
+		for (l_Iter = m_InputObjects.begin(); nullptr == pResult && l_Iter != m_InputObjects.end(); ++l_Iter)
+		{
+			SVInputObject* pInput = l_Iter->second;
+
+			if (nullptr != pInput && rInputName == pInput->GetName())
+			{
+				pResult = pInput;
+			}
+		}
+
+		if (nullptr == pResult)
+		{
+			switch (ObjectSubType)
+			{
+			case SVDigitalInputObjectType:
+				pResult = new SVDigitalInputObject;
+				break;
+			case SVRemoteInputObjectType:
+				pResult = new SVRemoteInputObject;
+				break;
+			case SVCameraDataInputObjectType:
+				pResult = new SVCameraDataInputObject;
+				break;
+			}
+
+			if (nullptr != pResult)
+			{
+				pResult->SetName(rInputName.c_str());
+
+				if (S_OK != AttachInput(pResult))
+				{
+					delete pResult;
+					pResult = nullptr;
+				}
+			}
+		}
+		Unlock();
+	}
+
+	return pResult;
+}
 
 HRESULT SVInputObjectList::AttachInput( SVInputObject* pInput )
 {
@@ -167,7 +234,7 @@ HRESULT SVInputObjectList::DetachInput( const SVGUID& p_rOutputID )
 	return l_Status;
 }// end RemoveInput
 
-BOOL SVInputObjectList::ReadInputs( const SVIOEntryHostStructPtrList& p_rInputs, SVVariantBoolVector& p_rInputValues )
+BOOL SVInputObjectList::ReadInputs( const SVIOEntryHostStructPtrVector& p_rInputs, SVVariantBoolVector& p_rInputValues )
 {
 	size_t l_IOSize( p_rInputs.size() );
 	size_t i( 0 );
@@ -242,14 +309,15 @@ BOOL SVInputObjectList::ReadInput( SVIOEntryStruct pIOEntry, _variant_t& p_rVari
 	return l_Status;
 }// end ReadInput
 
-BOOL SVInputObjectList::FillInputs( SVIOEntryHostStructPtrList& p_IOEntries )
+BOOL SVInputObjectList::FillInputs( SVIOEntryHostStructPtrVector& p_IOEntries )
 {
+	bool Result(false);
 	p_IOEntries.clear();
 
 	if( Lock() )
 	{
 		SVGuidSVInputObjectPtrMap::iterator	l_Iter = m_InputObjects.begin();
-
+		Result = true;
 		while( l_Iter != m_InputObjects.end() )
 		{
 			SVInputObject *pInput = l_Iter->second;
@@ -260,23 +328,30 @@ BOOL SVInputObjectList::FillInputs( SVIOEntryHostStructPtrList& p_IOEntries )
 
 			pIOEntry->m_IOId = pInput->GetUniqueObjectID();
 
-			if( SV_IS_KIND_OF( pInput, SVDigitalInputObject ) )
+			switch (pInput->GetObjectSubType())
+			{
+			case SVDigitalInputObjectType:
 				pIOEntry->m_ObjectType = IO_DIGITAL_INPUT;
-			else if( SV_IS_KIND_OF( pInput, SVRemoteInputObject ) )
+				break;
+			case SVRemoteInputObjectType:
 				pIOEntry->m_ObjectType = IO_REMOTE_INPUT;
-			else if( SV_IS_KIND_OF( pInput, SVCameraDataInputObject ) )
+				break;
+			case SVCameraDataInputObjectType:
 				pIOEntry->m_ObjectType = IO_CAMERA_DATA_INPUT;
-
+				break;
+			default:
+				Result = false;
+				break;
+			}
 			p_IOEntries.push_back( pIOEntry );
 
 			++l_Iter;
 		}
 
 		Unlock();
-		return TRUE;
 	}
 
-	return FALSE;
+	return Result;
 }
 
 BOOL SVInputObjectList::GetRemoteInputCount( long &lCount )
@@ -295,8 +370,10 @@ BOOL SVInputObjectList::GetRemoteInputCount( long &lCount )
 		{
 			SVInputObject *pInput = l_Iter->second;
 
-			if( SV_IS_KIND_OF( pInput, SVRemoteInputObject ) )
+			if (SVRemoteInputObjectType == pInput->GetObjectSubType())
+			{
 				lTempCount++;
+			}
 
 			++l_Iter;
 		}
@@ -310,7 +387,7 @@ BOOL SVInputObjectList::GetRemoteInputCount( long &lCount )
 	return FALSE;
 }
 
-BOOL SVInputObjectList::SetRemoteInput( long lIndex, VARIANT vtValue )
+BOOL SVInputObjectList::SetRemoteInput( long lIndex, const _variant_t& rValue)
 {
 	if( Lock() )
 	{
@@ -328,7 +405,7 @@ BOOL SVInputObjectList::SetRemoteInput( long lIndex, VARIANT vtValue )
 
 				if( bFound )
 				{
-					pInput->WriteCache( vtValue );
+					pInput->WriteCache( rValue );
 
 					break;
 				}
@@ -345,3 +422,26 @@ BOOL SVInputObjectList::SetRemoteInput( long lIndex, VARIANT vtValue )
 	return FALSE;
 }
 
+bool SVInputObjectList::Lock() const
+{
+	if (m_bCreated)
+	{
+		::EnterCriticalSection(const_cast<LPCRITICAL_SECTION>(&m_hCriticalSection));
+
+		return TRUE;
+	}
+
+	return false;
+}
+
+bool SVInputObjectList::Unlock() const
+{
+	if (m_bCreated)
+	{
+		::LeaveCriticalSection(const_cast<LPCRITICAL_SECTION>(&m_hCriticalSection));
+
+		return true;
+	}
+
+	return FALSE;
+}

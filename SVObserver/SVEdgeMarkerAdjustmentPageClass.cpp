@@ -65,19 +65,19 @@ HRESULT SVEdgeMarkerAdjustmentPageClass::GetInspectionData()
 {
 	HRESULT l_hrOk = S_OK;
 
-	double l_dUpper = 0.0;
-	double l_dLower = 0.0;
+	DWORD Upper( 0 );
+	DWORD Lower( 0 );
 
-	l_hrOk = m_pvoEdgeUpperThresholdValue->GetValue( l_dUpper );
+	l_hrOk = m_pvoEdgeUpperThresholdValue->GetValue( Upper );
 
 	if( S_OK == l_hrOk )
 	{
-		l_hrOk = m_pvoEdgeLowerThresholdValue->GetValue( l_dLower );
+		l_hrOk = m_pvoEdgeLowerThresholdValue->GetValue( Lower );
 	}
 
 	if( S_OK == l_hrOk )
 	{
-		l_hrOk = UpdateSliderData( l_dLower, l_dUpper );
+		l_hrOk = UpdateSliderData( Lower, Upper );
 	}
 
 	BOOL bIsFixedEdgeMarker;
@@ -92,9 +92,9 @@ HRESULT SVEdgeMarkerAdjustmentPageClass::GetInspectionData()
 		CheckRadioButton( IDC_SEARCHED_EDGE_MARKER_RADIO, IDC_FIXED_EDGE_MARKER_RADIO, IDC_SEARCHED_EDGE_MARKER_RADIO );
 	}
 
-	DWORD dwDirection;
-	m_pvoEdgeDirection->GetValue(dwDirection);
-	switch( dwDirection )
+	long Direction;
+	m_pvoEdgeDirection->GetValue(Direction);
+	switch( Direction )
 	{
 		case SV_HEAD_TO_TAIL_DIRECTION:
 			CheckRadioButton( IDC_DIRECTION_HEAD_TO_TAIL_RADIO, IDC_DIRECTION_TAIL_TO_HEAD_RADIO, IDC_DIRECTION_HEAD_TO_TAIL_RADIO );
@@ -105,9 +105,9 @@ HRESULT SVEdgeMarkerAdjustmentPageClass::GetInspectionData()
 			break;
 	}
 
-	DWORD dwEdgeSelect;
-	m_pvoEdgeSelect->GetValue(dwEdgeSelect);
-	switch( dwEdgeSelect )
+	long EdgeSelect;
+	m_pvoEdgeSelect->GetValue(EdgeSelect);
+	switch( EdgeSelect )
 	{
 		case SV_FIRST_EDGE:
 		{
@@ -145,9 +145,9 @@ HRESULT SVEdgeMarkerAdjustmentPageClass::GetInspectionData()
 	m_pvoEdgeSelectThisValue->GetValue( dValue );
 	StrEdgeSelectThis.Format( "%.2f", dValue );
 
-	DWORD dwPolarisation;
-	m_pvoEdgePolarisation->GetValue(dwPolarisation);
-	switch( dwPolarisation )
+	long Polarisation;
+	m_pvoEdgePolarisation->GetValue(Polarisation);
+	switch( Polarisation )
 	{
 		case SV_POSITIVE_POLARISATION:
 			CheckRadioButton( IDC_POLARISATION_POSITIVE_RADIO, IDC_POLARISATION_ANY_RADIO, IDC_POLARISATION_POSITIVE_RADIO );
@@ -162,18 +162,19 @@ HRESULT SVEdgeMarkerAdjustmentPageClass::GetInspectionData()
 			break;
 	}
 
-	DWORD dwPosition;
-	m_pvoEdgePosition->GetValue(dwPosition);
-	switch( dwPosition )
+	long Position;
+	m_pvoEdgePosition->GetValue( Position );
+	switch( Position )
 	{
 		case SV_START_POSITION:
 		{
 			CheckRadioButton( IDC_POSITION_START_RADIO, IDC_POSITION_OFFSET_RADIO, IDC_POSITION_START_RADIO );
 
 			CWnd* pWnd = GetDlgItem( IDC_POSITION_OFFSET_EDIT );
-			if( pWnd )
+			if( nullptr != pWnd )
+			{
 				pWnd->EnableWindow( FALSE );
-
+			}
 			break;
 		}
 		case SV_CENTER_POSITION:
@@ -181,9 +182,10 @@ HRESULT SVEdgeMarkerAdjustmentPageClass::GetInspectionData()
 			CheckRadioButton( IDC_POSITION_START_RADIO, IDC_POSITION_OFFSET_RADIO, IDC_POSITION_CENTER_RADIO );
 
 			CWnd* pWnd = GetDlgItem( IDC_POSITION_OFFSET_EDIT );
-			if( pWnd )
+			if( nullptr != pWnd )
+			{
 				pWnd->EnableWindow( FALSE );
-
+			}
 			break;
 		}
 		case SV_END_POSITION:
@@ -191,9 +193,10 @@ HRESULT SVEdgeMarkerAdjustmentPageClass::GetInspectionData()
 			CheckRadioButton( IDC_POSITION_START_RADIO, IDC_POSITION_OFFSET_RADIO, IDC_POSITION_END_RADIO );
 
 			CWnd* pWnd = GetDlgItem( IDC_POSITION_OFFSET_EDIT );
-			if( pWnd )
+			if( nullptr != pWnd )
+			{
 				pWnd->EnableWindow( FALSE );
-
+			}
 			break;
 		}
 		case SV_OFFSET_POSITION:
@@ -201,9 +204,10 @@ HRESULT SVEdgeMarkerAdjustmentPageClass::GetInspectionData()
 			CheckRadioButton( IDC_POSITION_START_RADIO, IDC_POSITION_OFFSET_RADIO, IDC_POSITION_OFFSET_RADIO );
 
 			CWnd* pWnd = GetDlgItem( IDC_POSITION_OFFSET_EDIT );
-			if( pWnd )
+			if( nullptr != pWnd )
+			{
 				pWnd->EnableWindow();
-
+			}
 			break;
 		}
 	}
@@ -310,12 +314,14 @@ HRESULT SVEdgeMarkerAdjustmentPageClass::SetInspectionData()
 
 		if( S_OK == l_hrOk )
 		{
-			l_hrOk = AddInputRequest( m_pvoEdgeUpperThresholdValue, StrUpper );
+			_variant_t Value = static_cast<DWORD> (atol(StrUpper));
+			l_hrOk = AddInputRequest( m_pvoEdgeUpperThresholdValue, Value );
 		}
 
 		if( S_OK == l_hrOk )
 		{
-			l_hrOk = AddInputRequest( m_pvoEdgeLowerThresholdValue, StrLower );
+			_variant_t Value = static_cast<DWORD> (atol(StrLower));
+			l_hrOk = AddInputRequest( m_pvoEdgeLowerThresholdValue, Value );
 		}
 
 		switch ( GetCheckedRadioButton( IDC_SEARCHED_EDGE_MARKER_RADIO, IDC_FIXED_EDGE_MARKER_RADIO ) )
@@ -324,7 +330,7 @@ HRESULT SVEdgeMarkerAdjustmentPageClass::SetInspectionData()
 			{
 				if( S_OK == l_hrOk )
 				{
-					l_hrOk = AddInputRequest( m_pvoEdgeIsFixedEdgeMarker, (double)FALSE );
+					l_hrOk = AddInputRequest( m_pvoEdgeIsFixedEdgeMarker, _variant_t( false ) );
 				}
 
 				break;
@@ -333,7 +339,7 @@ HRESULT SVEdgeMarkerAdjustmentPageClass::SetInspectionData()
 			{
 				if( S_OK == l_hrOk )
 				{
-					l_hrOk = AddInputRequest( m_pvoEdgeIsFixedEdgeMarker, TRUE );
+					l_hrOk = AddInputRequest( m_pvoEdgeIsFixedEdgeMarker, _variant_t( true ) );
 				}
 
 				break;

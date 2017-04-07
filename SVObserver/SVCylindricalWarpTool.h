@@ -15,6 +15,7 @@
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
 #include "SVOCore/SVImageClass.h"
 #include "SVTool.h"
+#include "SVValueObjectLibrary/SVStringValueObjectClass.h"
 #pragma endregion Includes
 
 
@@ -45,7 +46,7 @@ public:
 
 	virtual bool DoesObjectHaveExtents() const override;
 
-	virtual SVStaticStringValueObjectClass* GetInputImageNames() override;
+	virtual SVStringValueObjectClass* GetInputImageNames() override;
 
 protected:
 	virtual bool onRun( SVRunStatusClass &p_rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
@@ -70,6 +71,6 @@ private:
 	SVMatroxBuffer m_LutX;
 	SVMatroxBuffer m_LutY;
 	// String value object for Source Image Names
-	SVStaticStringValueObjectClass m_svSourceImageName;
+	SVStringValueObjectClass m_SourceImageNames;
 };
 

@@ -28,8 +28,6 @@
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
-typedef SVVector< long > SVImageChildIndexCArray;
-
 class SVImageClass : public SVObjectAppClass, public SvOi::ISVImage
 {
 	SV_DECLARE_CLASS( SVImageClass );
@@ -103,7 +101,7 @@ public:
 	HRESULT LoadImageFullSize( LPCTSTR p_szFileName, SVImageExtentClass& p_rNewExtent );
 	HRESULT LoadImage( LPCTSTR p_szFileName, SVImageIndexStruct p_svToIndex );
 
-	virtual HRESULT GetObjectValue( const SVString& p_rValueName, VARIANT& p_rVariantValue ) const override;
+	virtual HRESULT GetObjectValue( const SVString& rValueName, _variant_t& rValue ) const override;
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* PDataObject ) override;
 
 	virtual void Persist( SVObjectWriter& rWriter ) override;
@@ -191,7 +189,7 @@ private:
 	mutable CRITICAL_SECTION m_hCriticalSection;
 };
 
-typedef SVVector <SVImageClass*, SVImageClass*> SVImageClassArray;
+typedef SVVector<SVImageClass*> SVImageClassPtrVector;
 
 class SVRGBImageClass : public SVImageClass
 {

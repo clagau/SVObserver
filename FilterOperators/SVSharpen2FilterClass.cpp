@@ -19,7 +19,7 @@
 SVSharpen2FilterClass::SVSharpen2FilterClass( SVObjectClass* POwner, int StringResourceID )
 					  :SVFilterClass( POwner, StringResourceID ) 
 {
-	m_outObjectInfo.ObjectTypeInfo.SubType = SVSharpen2FilterObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVSharpen2FilterObjectType;
 }
 
 SVSharpen2FilterClass::~SVSharpen2FilterClass()
@@ -32,7 +32,7 @@ SVSharpen2FilterClass::~SVSharpen2FilterClass()
 // .Description : Runs this operator.
 //              : Returns FALSE, if operator cannot run ( may be deactivated ! )
 ////////////////////////////////////////////////////////////////////////////////
-bool SVSharpen2FilterClass::onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVSharpen2FilterClass::onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 { 
 	if( m_pCurrentUIOPL && !( RInputImageHandle.empty() ) && !( ROutputImageHandle.empty() ) )
 	{
@@ -55,7 +55,7 @@ bool SVSharpen2FilterClass::onRun( bool First, SVSmartHandlePointer RInputImageH
 			}
 			// Signal that something was wrong...
 			SetInvalid();
-			RRunStatus.SetInvalid();
+			rRunStatus.SetInvalid();
 			return false;
 		}
 
@@ -73,7 +73,7 @@ bool SVSharpen2FilterClass::onRun( bool First, SVSmartHandlePointer RInputImageH
 
 	// Signal that something was wrong...
 	SetInvalid();
-	RRunStatus.SetInvalid();
+	rRunStatus.SetInvalid();
 	return false;
 }
 

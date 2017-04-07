@@ -109,8 +109,10 @@ BOOL SVExternalToolResultPage::OnInitDialog()
 
 
 			SVRPropertyItemEdit* pEdit = (SVRPropertyItemEdit*)m_Tree.InsertItem(new SVRPropertyItemEdit(), pRoot);
-			if (!pEdit)
+			if( nullptr == pEdit )
+			{
 				break;
+			}
 
 			iID++;
 			pEdit->SetCtrlID( iID );
@@ -138,7 +140,7 @@ BOOL SVExternalToolResultPage::OnInitDialog()
 			pEdit->SetButtonText( _T("Range"));
 
 			SVString sValue;
-			rValue.GetValue(sValue);
+			rValue.getValue(sValue);
 			pEdit->SetItemValue( sValue.c_str() );
 			if( rDefinition.m_VT == VT_BSTR )
 			{

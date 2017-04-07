@@ -1303,7 +1303,7 @@ void CSVOConfigAssistantDlg::SetupMessages()
 	}
 }
 
-BOOL CSVOConfigAssistantDlg::SendPPQDataToConfiguration(SVPPQObjectArray& aPPQsToDelete)
+BOOL CSVOConfigAssistantDlg::SendPPQDataToConfiguration(SVPPQObjectPtrVector& aPPQsToDelete)
 {
 	BOOL bRet = true;
 
@@ -2136,7 +2136,7 @@ BOOL CSVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 	return bRet;
 }
 
-BOOL CSVOConfigAssistantDlg::SendPPQAttachmentsToConfiguration(SVPPQObjectArray& aPPQsToDelete)
+BOOL CSVOConfigAssistantDlg::SendPPQAttachmentsToConfiguration(SVPPQObjectPtrVector& aPPQsToDelete)
 {
 	BOOL bRet = true;
 	SVConfigurationObject* pConfig( nullptr );
@@ -2424,7 +2424,7 @@ BOOL CSVOConfigAssistantDlg::SendDataToConfiguration()
 
 	long l( 0 );
 
-	SVPPQObjectArray aPPQsToDelete;
+	SVPPQObjectPtrVector aPPQsToDelete;
 
 	pConfig->SetProductType( m_lConfigurationType );
 
@@ -2825,30 +2825,30 @@ BOOL CSVOConfigAssistantDlg::GetConfigurationForExisting()
 				pPPQObj->SetConditionalOutputName(pcfgPPQ->GetConditionalOutputName());
 
 				// Get List Of Inputs
-				SVIOEntryHostStructPtrList ppIOEntries; 
+				SVIOEntryHostStructPtrVector ppIOEntries; 
 				BOOL bRet = pcfgPPQ->GetAvailableInputs( ppIOEntries );
 				if (bRet)
 				{
 					SVNameGuidPairList availableInputs;
-					for (SVIOEntryHostStructPtrList::const_iterator it = ppIOEntries.begin();it != ppIOEntries.end();++it)
+					for (SVIOEntryHostStructPtrVector::const_iterator it = ppIOEntries.begin();it != ppIOEntries.end();++it)
 					{
 						SVIOEntryHostStructPtr entry = (*it);
 						if (entry->m_ObjectType == IO_DIGITAL_INPUT)
 						{
 							if (!IsNonIOSVIM(GetProductType()))
 							{
-								availableInputs.push_back(std::make_pair(entry->m_pValueObject->GetName(), entry->m_IOId));
+								availableInputs.push_back(std::make_pair(entry->getObject()->GetName(), entry->m_IOId));
 							}
 						}
 						else if (entry->m_ObjectType == IO_CAMERA_DATA_INPUT)
 						{
 							// check for Camera Input Line State...
-							if (entry->m_pValueObject)
+							if (nullptr != entry->getObject())
 							{
-								if (entry->m_pValueObject->GetEmbeddedID() == SVCameraTriggerLineInStateGuid)
+								if (entry->getObject()->GetEmbeddedID() == SVCameraTriggerLineInStateGuid)
 								{
 									// Only if the camera supports it ?
-									availableInputs.push_back(std::make_pair(entry->m_pValueObject->GetName(), entry->m_IOId));
+									availableInputs.push_back(std::make_pair(entry->getObject()->GetName(), entry->m_IOId));
 								}
 							}
 						}
@@ -4233,10 +4233,10 @@ void CSVOConfigAssistantDlg::resolveGlobalConflicts( SvOi::GlobalConflictPairVec
 					{
 						pGlobalObject->setValue( Iter->second.m_Value );
 						pGlobalObject->setDescription( Iter->second.m_Description.c_str() );
-						pGlobalObject->ObjectAttributesAllowedRef() = SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES;
+						pGlobalObject->SetObjectAttributesAllowed( SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::OverwriteAttribute );
 						if( Iter->second.m_Value.vt == VT_BSTR )
 						{
-							pGlobalObject->ObjectAttributesAllowedRef() &= ~SV_SELECTABLE_FOR_EQUATION;
+							pGlobalObject->SetObjectAttributesAllowed( SV_SELECTABLE_FOR_EQUATION, SvOi::SetAttributeType::RemoveAttribute );
 						}
 					}
 				}

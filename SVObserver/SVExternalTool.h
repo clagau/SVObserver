@@ -12,6 +12,7 @@
 
 #pragma region Includes
 #include "SVTool.h"
+#include "SVValueObjectLibrary/SVStringValueObjectClass.h"
 #pragma endregion Includes
 
 class SVExternalTool : public SVToolClass
@@ -29,7 +30,7 @@ public:
 	virtual HRESULT GetImageExtent( SVImageExtentClass &p_rsvImageExtent ) override;
 	virtual HRESULT GetImageExtent( unsigned long p_ulIndex, SVImageExtentClass &p_rsvImageExtent ) override;
 
-	virtual SVStaticStringValueObjectClass* GetInputImageNames() override;
+	virtual SVStringValueObjectClass* GetInputImageNames() override;
 
 protected:
 	virtual HRESULT UpdateImageWithExtent( unsigned long p_Index ) override;
@@ -42,7 +43,7 @@ private:
 #pragma region Member Variables
 private:
 	// String value object for Source Image Names
-	SVStaticStringValueObjectClass m_svSourceImageNames;
+	SVStringValueObjectClass m_SourceImageNames;
 #pragma endregion Member Variables
 };
 

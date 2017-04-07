@@ -130,13 +130,13 @@ void SVFillBlobDlg::FillCombos()
 	m_ctlBlobType.SetEnumTypes( BlobType.c_str() );
 
 	SVString CurrentType;
-	m_pvoBlobType->GetValue( CurrentType );
+	m_pvoBlobType->getValue( CurrentType );
 	m_ctlBlobType.SelectString( -1,CurrentType.c_str() );
 
 	SVString CurrentColor;
 	m_pvoBlobFillColor->GetEnumTypes( BlobColor );
 	m_ctlBlobColor.SetEnumTypes( BlobColor.c_str() );
-	m_pvoBlobFillColor->GetValue( CurrentColor );
+	m_pvoBlobFillColor->getValue( CurrentColor );
 	m_ctlBlobColor.SelectString( -1,CurrentColor.c_str() );
 
 	UpdateData( FALSE );

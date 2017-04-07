@@ -33,7 +33,7 @@ SVImageAnalyzerClass::SVImageAnalyzerClass( BOOL bCreateDefaultTaskList, SVObjec
 void SVImageAnalyzerClass::init()
 {
 	// Set object type info...
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVAnalyzerObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVAnalyzerObjectType;
 	// Set sub type only in derived classes!
 
 	// Set Input requirement
@@ -52,16 +52,16 @@ bool SVImageAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMess
 {
 	return __super::ResetObject(pErrorMessages) && ValidateLocal(pErrorMessages);
 }
-bool SVImageAnalyzerClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVImageAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
-	return __super::onRun(RRunStatus, pErrorMessages) && ValidateLocal(pErrorMessages);
+	return __super::onRun(rRunStatus, pErrorMessages) && ValidateLocal(pErrorMessages);
 }
 
 SVImageClass* SVImageAnalyzerClass::getInputImage()
 {
-	if( inputImageObjectInfo.IsConnected() && inputImageObjectInfo.GetInputObjectInfo().PObject )
+	if( inputImageObjectInfo.IsConnected() && inputImageObjectInfo.GetInputObjectInfo().m_pObject )
 	{
-		return ( SVImageClass* ) inputImageObjectInfo.GetInputObjectInfo().PObject;
+		return ( SVImageClass* ) inputImageObjectInfo.GetInputObjectInfo().m_pObject;
 	}
 	return nullptr;
 }
@@ -86,7 +86,7 @@ unsigned long SVImageAnalyzerClass::GetInputPixelDepth()
 
 bool SVImageAnalyzerClass::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) const
 {
-	if( !inputImageObjectInfo.IsConnected() || nullptr == inputImageObjectInfo.GetInputObjectInfo().PObject || !inputImageObjectInfo.GetInputObjectInfo().PObject->IsValid() ) 
+	if( !inputImageObjectInfo.IsConnected() || nullptr == inputImageObjectInfo.GetInputObjectInfo().m_pObject || !inputImageObjectInfo.GetInputObjectInfo().m_pObject->IsValid() ) 
 	{
 		if (nullptr != pErrorMessages)
 		{

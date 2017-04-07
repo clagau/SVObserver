@@ -45,36 +45,36 @@ protected:
 
 	bool SetDefaultEquation( SVEquationClass* pEquation, const SVString& rName, SvStl::MessageContainerVector *pErrorMessages=nullptr );
 
-	virtual bool onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+	virtual bool onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 	
 	SVImageClass				outputImageObject;
 	
 	// Tool's center x value, comes from mouse positioning...
-	SVDoubleValueObjectClass centerX;
+	SVDoubleValueObjectClass m_centerX;
 	// Tool's center y value, comes from mouse positioning...
-	SVDoubleValueObjectClass centerY;
+	SVDoubleValueObjectClass m_centerY;
 	// Tool's start radius value, comes from mouse positioning...
-	SVDoubleValueObjectClass startRadius;
+	SVDoubleValueObjectClass m_startRadius;
 	// Tool's end radius value, comes from mouse positioning...
-	SVDoubleValueObjectClass endRadius;
+	SVDoubleValueObjectClass m_endRadius;
 	// Tool's start angle value, comes from mouse positioning...
-	SVDoubleValueObjectClass startAngle;
+	SVDoubleValueObjectClass m_startAngle;
 	// Tool's end angle value, comes from mouse positioning...
-	SVDoubleValueObjectClass endAngle;
+	SVDoubleValueObjectClass m_endAngle;
 
 	// If TRUE we use the result inputs from evaluate objects,
 	//	which are then used to overwrite centerX, centerY, etc. in onRun(...). 
 	//
 	// If FALSE we don't overwrite in onRun(...), so the values are free
 	//	to be changed by mouse movings.
-	SVBoolValueObjectClass useFormulaInput;
+	SVBoolValueObjectClass m_useFormulaInput;
 
 	// M_NEAREST_NEIGHBOR or M_BILINEAR or M_BICUBIC
 	//	plus: M_OVERSCAN_ENABLE or M_OVERSCAN_DISABLE or M_OVERSCAN_CLEAR
-	SVEnumerateValueObjectClass interpolationMode;
+	SVEnumerateValueObjectClass m_interpolationMode;
 
 	// Inputs
-	SVInObjectInfoStruct		inputImageObjectInfo;
+	SVInObjectInfoStruct		m_inputImageObjectInfo;
 
 private:
 	void SetCalculatedPrintableFlags();

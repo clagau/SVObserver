@@ -408,11 +408,11 @@ HRESULT SVSetupDialogManager::SVBlobAnalyzerClassSetupDialog( const SVGUID& p_rO
 
 					if ( l_bIsFillBlob )
 					{
-						SVMatroxBlobInterface::Set( l_pAnalyzer->msvResultBufferID, SVEBlobSaveRuns, static_cast<long>(SVValueEnable) );
+						SVMatroxBlobInterface::Set( l_pAnalyzer->m_ResultBufferID, SVEBlobSaveRuns, static_cast<long>(SVValueEnable) );
 					}
 					else
 					{
-						SVMatroxBlobInterface::Set( l_pAnalyzer->msvResultBufferID, SVEBlobSaveRuns, static_cast<long>(SVValueDisable) );
+						SVMatroxBlobInterface::Set( l_pAnalyzer->m_ResultBufferID, SVEBlobSaveRuns, static_cast<long>(SVValueDisable) );
 					}
 
 					l_pAnalyzer->CreateArray();

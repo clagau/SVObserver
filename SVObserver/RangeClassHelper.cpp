@@ -404,13 +404,13 @@ SVString RangeClassHelper::GetStringFromRange(RangeEnum::ERange ra) const
 	return Result;
 };
 
-bool RangeClassHelper::IsOwnedByRangeObject(const SVObjectClass& ref)
+bool RangeClassHelper::IsOwnedByRangeObject(const SVObjectClass& rObject)
 {
 	bool result = false;
 
-	if(ref.GetOwner())
+	if(rObject.GetOwner())
 	{
-		if(SVRangeObjectType == ref.GetOwner()->GetObjectType())
+		if(SVRangeObjectType == rObject.GetOwner()->GetObjectType())
 		{
 			result = true;
 		}
@@ -419,16 +419,16 @@ bool RangeClassHelper::IsOwnedByRangeObject(const SVObjectClass& ref)
 	return result;
 }
 
-bool RangeClassHelper::IsAllowedToSet(const SVObjectClass& ref, const SVString& rValue, bool bOnline, HRESULT& hres)
+bool RangeClassHelper::IsAllowedToSet(const SVObjectClass& ObjectRef, const SVString& rValue, bool bOnline, HRESULT& hres)
 {
-	if(!IsOwnedByRangeObject(ref))
+	if(!IsOwnedByRangeObject(ObjectRef))
 	{
 		return true;
 	}
 
 	bool res = true;
 	bool IsReference = false;
-	const SVGUID& guid = ref.GetEmbeddedID();
+	const SVGUID& guid = ObjectRef.GetEmbeddedID();
 	if ( guid == SVRangeClassFailHighIndirectObjectGuid ||
 		guid == SVRangeClassFailLowIndirectObjectGuid ||
 		guid == SVRangeClassWarnHighIndirectObjectGuid ||
@@ -449,7 +449,7 @@ bool RangeClassHelper::IsAllowedToSet(const SVObjectClass& ref, const SVString& 
 			SVObjectReference ObjectRefValue;
 			HRESULT hrFind = SVObjectManagerClass::Instance().GetObjectByDottedName( rValue.c_str(), ObjectRefValue );
 
-			if( !rValue.empty() && ( S_OK != hrFind || nullptr == ObjectRefValue.Object() ) )
+			if( !rValue.empty() && ( S_OK != hrFind || nullptr == ObjectRefValue.getObject() ) )
 			{
 				//a not empty string and no reference
 				hres = SVMSG_OBJECT_CANNOT_BE_SET_INVALID_REFERENCE;
@@ -553,7 +553,6 @@ bool RangeClassHelper::isValidReference( const SVString& rInspectionName, const 
 {
 	bool Result( true );
 
-	SVValueObjectReference objRef;
 	SVString dottedName;
 	SVString ToolSetName;
 	ToolSetName = SvUl_SF::LoadSVString( IDS_CLASSNAME_SVTOOLSET );
@@ -567,11 +566,12 @@ bool RangeClassHelper::isValidReference( const SVString& rInspectionName, const 
 		dottedName = rIndirectString;
 	}
 
-	if( !SVRangeClass::SetReference(dottedName.c_str(), objRef) )
+	SVObjectReference ObjectRef;
+	if( !SVRangeClass::SetReference(dottedName.c_str(), ObjectRef) )
 	{
 		Result = false;
 	}
-	else if( 0 == ( objRef.ObjectAttributesAllowed() & SV_SELECTABLE_FOR_EQUATION ) )
+	else if( 0 == ( ObjectRef.ObjectAttributesAllowed() & SV_SELECTABLE_FOR_EQUATION ) )
 	{
 		Result = false;
 	}

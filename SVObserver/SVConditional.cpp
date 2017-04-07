@@ -33,18 +33,18 @@ SVConditionalClass::SVConditionalClass( SVObjectClass* POwner, int StringResourc
 void SVConditionalClass::init()
 {
 	// Identify our output type
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVEquationObjectType;
-	m_outObjectInfo.ObjectTypeInfo.SubType = SVConditionalObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVEquationObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVConditionalObjectType;
 
 	// Identify our input type needs - this is a bit different here
 	// Since out inputs are dynamic via the script specified
 	// So the input will be identified when the script is created.
 	
 	// Register Embedded Objects
-	RegisterEmbeddedObject( &result, SVConditionalResultObjectGuid, IDS_OBJECTNAME_RESULT, false, SVResetItemNone );
+	RegisterEmbeddedObject( &result, SVConditionalResultObjectGuid, IDS_OBJECTNAME_RESULT, false, SvOi::SVResetItemNone );
 
 	// Set Embedded defaults
-	result.SetDefaultValue( false, true );
+	result.SetDefaultValue( BOOL(false), true );
 
 	// Set default inputs and outputs
 	addDefaultInputObjects();
@@ -62,7 +62,7 @@ BOOL SVConditionalClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructu
 	m_isCreated = SVEquationClass::CreateObject( PCreateStructure );
 
 	// Set/Reset printable Flags
-	result.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
+	result.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 
 	return m_isCreated;
 }
@@ -72,33 +72,33 @@ BOOL SVConditionalClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructu
 ////////////////////////////////////////////////////////////////////////////////
 // If Conditional is disabled conditional.Run() returns always TRUE.
 // Otherwise the return value depends on the Conditional equation result!
-bool SVConditionalClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVConditionalClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
-	BOOL value = false;
+	BOOL Value = false;
 
 	// Bypass all conditional execution if we are performing an internal run
 	// This is used to initially setup certain objects.
 	if( SVSVIMStateClass::CheckState( SV_STATE_INTERNAL_RUN ) )
 	{
-		result.SetValue( RRunStatus.m_lResultDataIndex, 1L );
+		result.SetValue( BOOL(true), rRunStatus.m_lResultDataIndex );
 		return true;
 	}// end if
 
-	bool retVal = __super::onRun( RRunStatus, pErrorMessages );
+	bool retVal = __super::onRun( rRunStatus, pErrorMessages );
 	if( !retVal )
 	{
 		SetInvalid();
-		RRunStatus.SetInvalid();
+		rRunStatus.SetInvalid();
 	}
 	else
 	{
-		value = true;
+		Value = true;
 		if( HasCondition() && IsEnabled() )
 		{
-			value = yacc.equationResult ? true : false;
+            Value = getResult() ? true : false;
 		}
 	}
-	result.SetValue( RRunStatus.m_lResultDataIndex, value );
+	result.SetValue( Value, rRunStatus.m_lResultDataIndex );
 
 	return retVal;
 }

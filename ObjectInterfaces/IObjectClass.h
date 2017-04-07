@@ -8,15 +8,25 @@
 #pragma once
 
 #pragma region Includes
+//Moved to precompiled header: #include <comdef.h>
+//Moved to precompiled header: #include <vector>
 #include "SVObjectTypeInfoStruct.h"
 #include "SVUtilityLibrary\NameGuidList.h"
 #include "SVStatusLibrary\MessageContainer.h"
+#include "SVUtilityLibrary\SVString.h"
 #pragma endregion Includes
 
 namespace Seidenader
 {
 	namespace ObjectInterfaces
 	{	
+		enum SetAttributeType
+		{
+			AddAttribute,
+			RemoveAttribute,
+			OverwriteAttribute
+		};
+
 		//this class is a interface. It should only have pure virtual public method and no member variables
 		class IObjectClass
 		{
@@ -71,18 +81,13 @@ namespace Seidenader
 			This method gets the attributes allowed for the object.
 			***********/
 			virtual const UINT& ObjectAttributesAllowed() const = 0;
-			virtual UINT& ObjectAttributesAllowedRef() = 0;
+			virtual void SetObjectAttributesAllowed( UINT Attributes, SetAttributeType Type ) = 0;
 
 			/**********
 			This method gets the attributes set for the object.
 			***********/
 			virtual const UINT& ObjectAttributesSet(int iIndex=0) const = 0;
-			virtual UINT& ObjectAttributesSetRef(int iIndex=0) = 0;
-
-			/**********
-			This method returns true if object is an array
-			***********/
-			virtual bool IsArray() const = 0;
+			virtual void SetObjectAttributesSet( UINT Attributes, SetAttributeType Type, int Index=0 ) = 0;
 
 			/*
 			This method returns the object's Global Unique Identifier (GUID) of this object instance.
@@ -117,6 +122,19 @@ namespace Seidenader
 			/// \param pErrorMessages [in,out] Pointer to an Error Message Container. If the pointer unequal nullptr, an error message will be added if it happens during reset.
 			/// \returns bool
 			virtual bool resetAllObjects(SvStl::MessageContainerVector *pErrorMessages=nullptr) = 0;
+
+			//! Gets the value for Value object NOTE: This is placed here instead of IValueObject for performance reasons !
+			//! \param rValue [out] The reference to write the value to
+			//! \param Bucket [in] The corresponding bucket index to get, if required
+			//! \param Index [in] The corresponding array index to write to, if required
+			//! \returns S_OK if succeeded
+			virtual HRESULT getValue(double& rValue, int Bucket = -1, int Index = -1) const = 0;
+
+			//! Gets the values for Value object NOTE: This is placed here instead of IValueObject for performance reasons !
+			//! \param rValue [out] The reference to double vector to store the values
+			//! \param Bucket [in] The corresponding bucket index to get, if required
+			//! \returns S_OK if succeeded
+			virtual HRESULT getValues(std::vector<double>& rValues, int Bucket = -1) const = 0;
 		};
 	}
 }

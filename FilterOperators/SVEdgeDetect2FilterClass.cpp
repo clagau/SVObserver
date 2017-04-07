@@ -19,7 +19,7 @@
 SVEdgeDetect2FilterClass::SVEdgeDetect2FilterClass( SVObjectClass* POwner, int StringResourceID )
 						 :SVFilterClass( POwner, StringResourceID ) 
 {
-	m_outObjectInfo.ObjectTypeInfo.SubType = SVEdgeDetect2FilterObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVEdgeDetect2FilterObjectType;
 }
 
 SVEdgeDetect2FilterClass::~SVEdgeDetect2FilterClass() 
@@ -32,7 +32,7 @@ SVEdgeDetect2FilterClass::~SVEdgeDetect2FilterClass()
 // .Description : Runs this operator.
 //              : Returns FALSE, if operator cannot run ( may be deactivated ! )
 ////////////////////////////////////////////////////////////////////////////////
-bool SVEdgeDetect2FilterClass::onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVEdgeDetect2FilterClass::onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 { 
 	if( m_pCurrentUIOPL && !( RInputImageHandle.empty() ) && !( ROutputImageHandle.empty() ) )
 	{
@@ -55,7 +55,7 @@ bool SVEdgeDetect2FilterClass::onRun( bool First, SVSmartHandlePointer RInputIma
 			}
 			// Signal that something was wrong...
 			SetInvalid();
-			RRunStatus.SetInvalid();
+			rRunStatus.SetInvalid();
 			return false;
 		}
 
@@ -73,7 +73,7 @@ bool SVEdgeDetect2FilterClass::onRun( bool First, SVSmartHandlePointer RInputIma
 
 	// Signal that something was wrong...
 	SetInvalid();
-	RRunStatus.SetInvalid();
+	rRunStatus.SetInvalid();
 	return false;
 }
 

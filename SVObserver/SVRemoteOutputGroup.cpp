@@ -181,18 +181,22 @@ HRESULT SVRemoteOutputGroup::ObserverUpdate( const SVProductInfoStruct& p_rData 
 
 					if( nullptr != l_pOutput )
 					{
-						SVValueObjectClass* l_pValue = l_pOutput->GetValueObject();
+						SVObjectClass* pObject = l_pOutput->GetValueObject();
 
-						if( nullptr != l_pValue )
+						if( nullptr != pObject )
 						{
 							Json::Value l_ElementObject(Json::objectValue);
 							Json::Value l_ArrayObject(Json::arrayValue);
 							long l_TriggerCount = p_rData.ProcessCount();
 							HRESULT l_TempStatus = S_OK;
 
-							std::vector< _variant_t > l_VariantVector;
+							std::vector<_variant_t> l_VariantVector;
 
-							l_pValue->GetValues( l_Index, l_VariantVector );
+							SvOi::IValueObject* pValueObject = dynamic_cast<SvOi::IValueObject*> (pObject);
+							if(nullptr != pValueObject )
+							{
+								pValueObject->getValues( l_VariantVector, l_Index  );
+							}
 
 							for( size_t i = 0; ( S_OK == l_TempStatus ) && ( i < l_VariantVector.size() ); ++i )
 							{
@@ -248,7 +252,7 @@ HRESULT SVRemoteOutputGroup::ObserverUpdate( const SVProductInfoStruct& p_rData 
 								}
 							}
 
-							l_ElementObject[ SVRC::vo::name ] = l_pValue->GetCompleteName().c_str();
+							l_ElementObject[ SVRC::vo::name ] = pObject->GetCompleteName().c_str();
 							l_ElementObject[ SVRC::vo::array ] = l_ArrayObject;
 							l_ElementObject[ SVRC::vo::count ] = l_TriggerCount;
 							l_ElementObject[ SVRC::vo::status ] = l_TempStatus;
@@ -291,7 +295,7 @@ BOOL SVRemoteOutputGroup::Clear()
 
 BOOL SVRemoteOutputGroup::Create()
 {
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVRemoteOutputGroupType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVRemoteOutputGroupType;
 
 	m_bCreated = true;
 
@@ -343,7 +347,7 @@ BOOL SVRemoteOutputGroup::GetParameters( SVObjectXMLWriter& rWriter ) const
 	_variant_t svVariant;
 
 	// Unique Id
-	svVariant = SVGUID( m_outObjectInfo.UniqueObjectID ).ToVARIANT();
+	svVariant = SVGUID( m_outObjectInfo.m_UniqueObjectID ).ToVARIANT();
 	rWriter.WriteAttribute( CTAG_UNIQUE_REFERENCE_ID, svVariant );
 	svVariant.Clear();
 
@@ -378,7 +382,7 @@ BOOL SVRemoteOutputGroup::SetParameters( SVTreeType& p_rTree, SVTreeType::SVBran
 
 		if( bOk )
 		{
-			m_outObjectInfo.UniqueObjectID = ObjectID;
+			m_outObjectInfo.m_UniqueObjectID = ObjectID;
 
 			bOk = SVObjectManagerClass::Instance().OpenUniqueObjectID( this );
 		}

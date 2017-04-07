@@ -17,11 +17,10 @@
 #pragma region Includes
 #include "SVOResource/resource.h"
 #include "SVUtilityLibrary/SVString.h"
-#include "SVValueObjectClassImpl.h"
-#include "SVValueObjectGlobals.h"
+#include "SVValueObjectClass.h"
 #pragma endregion Includes
 
-class SVByteValueObjectClass : public SVValueObjectClassImpl <BYTE>
+class SVByteValueObjectClass : public SVValueObjectClass<BYTE>
 {
 	// This is needed since SVByteVectorObjectClass has been changed
 	// to use SVByteValueObjectClass instead of SVObjectByteArrayClass
@@ -42,25 +41,20 @@ public:
 
 	virtual HRESULT SetOutputFormat(OutputFormat outputFormat) override;
 
-	IMPLEMENT_VALUE_OBJECT_GET_SET()
-
 protected:
-	virtual HRESULT SetValueAt( int iBucket, int iIndex, const VARIANT& vtValue );
-	virtual HRESULT SetValueAt( int iBucket, int iIndex, const SVString& value );
-
-	virtual HRESULT GetValueAt( int iBucket, int iIndex, double& rValue ) const;
-	virtual HRESULT GetValueAt( int iBucket, int iIndex, SVString& rValue ) const;
-	virtual HRESULT GetValueAt( int iBucket, int iIndex, VARIANT& rValue ) const;
-
-	virtual void ValidateValue( int iBucket, int iIndex, const SVString& rValue ) const override;
-
-private:
-	void LocalInitialize();
+	virtual double ValueType2Double(const BYTE& rValue) const override { return static_cast<double> (rValue); };
+	virtual _variant_t ValueType2Variant( const BYTE& rValue ) const override { return _variant_t( rValue ); };
+	virtual BYTE Variant2ValueType( const _variant_t& rValue ) const override { return BYTE( rValue ); };
 
 	/// Convert a string in a byte. Throw an exception if the string isn't convertible into a byte
 	/// \param strValue [in] The input string
 	/// \returns BYTE Return value.
-	BYTE convertString2Byte(const SVString& rValue ) const;
+	virtual BYTE ConvertString2Type( const SVString& rValue ) const override;
+
+	virtual SVString ConvertType2String(const BYTE& rValue) const override { return FormatOutput(rValue); };
+
+private:
+	void LocalInitialize();
 };
 
 #pragma warning (pop)

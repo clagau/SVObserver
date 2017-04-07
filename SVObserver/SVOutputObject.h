@@ -26,10 +26,12 @@ public:
 	virtual BOOL Create();
 	virtual BOOL Destroy();
 
-	virtual HRESULT Write( const _variant_t& p_rValue ) = 0;
+	virtual HRESULT Write( const _variant_t& rValue ) = 0;
 	virtual HRESULT Reset() = 0;
+	virtual bool IsCombined() const = 0;
+	virtual bool GetCombinedValue() const = 0;
 };
 
-typedef SVVector< SVOutputObject* > SVOutputObjectArray;
+typedef SVVector< SVOutputObject* > SVOutputObjectPtrVector;
 typedef std::map< SVGUID, SVOutputObject* > SVGuidSVOutputObjectPtrMap;
 

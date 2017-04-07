@@ -24,7 +24,7 @@
 SVRGBMainImageClass::SVRGBMainImageClass( LPCSTR ObjectName )
 : SVCameraImageTemplate( ObjectName )
 {
-	m_outObjectInfo.ObjectTypeInfo.SubType = SVRGBMainImageObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVRGBMainImageObjectType;
 
 	m_ImageType = SVImageTypeRGBMain;
 
@@ -35,7 +35,7 @@ SVRGBMainImageClass::SVRGBMainImageClass( LPCSTR ObjectName )
 SVRGBMainImageClass::SVRGBMainImageClass( SVObjectClass* POwner, int StringResourceID )
 : SVCameraImageTemplate( POwner, StringResourceID )
 {
-	m_outObjectInfo.ObjectTypeInfo.SubType = SVRGBMainImageObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVRGBMainImageObjectType;
 
 	m_ImageType = SVImageTypeRGBMain;
 

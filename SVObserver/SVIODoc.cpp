@@ -215,11 +215,10 @@ void SVIODoc::OnExtrasEditRemoteInputs()
 {
 	SvMc::SVRemoteInputDialog oDlg;
 	SVPPQObject* pPPQ( nullptr );
-	SVRemoteInputObject* pRemInput ( nullptr );
+	SVRemoteInputObject* pRemoteInput ( nullptr );
 	SVInputObjectList* pInputList( nullptr );
-	SVIOEntryHostStructPtrList ppIOEntries;
+	SVIOEntryHostStructPtrVector ppIOEntries;
 	SVIOEntryHostStructPtr pIOEntry;
-	SVValueObjectClass* pObject( nullptr );
 	long lCount;
 	int i;
 	int j;
@@ -257,16 +256,16 @@ void SVIODoc::OnExtrasEditRemoteInputs()
 				// Add new ones until we have enough
 				for( j = lCount; j < oDlg.m_lRemoteInputCount; j++ )
 				{
-					pRemInput = nullptr;
+					pRemoteInput = nullptr;
 
 					SVString RemoteInputName = SvUl_SF::Format( _T("Remote Input %d"), j + 1 );
 
-					pInputList->GetInputFlyweight( RemoteInputName.c_str(), pRemInput );
+					pRemoteInput = dynamic_cast<SVRemoteInputObject*> (pInputList->GetInputFlyweight( RemoteInputName, SVRemoteInputObjectType));
 
-					if( nullptr != pRemInput )
+					if( nullptr != pRemoteInput )
 					{
-						pRemInput->m_lIndex = j + 1;
-						pRemInput->Create();
+						pRemoteInput->m_lIndex = j + 1;
+						pRemoteInput->Create();
 
 						for( k = 0; k< lPPQSize; k++ )
 						{
@@ -274,17 +273,17 @@ void SVIODoc::OnExtrasEditRemoteInputs()
 							if( nullptr != pPPQ )
 							{
 								pIOEntry = new SVIOEntryHostStruct;
-								pObject = new SVVariantValueObjectClass;
+								SVVariantValueObjectClass* pValueObject = new SVVariantValueObjectClass;
 
-								if( !( pIOEntry.empty() ) && pObject )
+								if( !( pIOEntry.empty() ) && pValueObject )
 								{
-									pObject->SetName( RemoteInputName.c_str() );
-									pObject->SetResetOptions( false, SVResetItemNone );
-									pIOEntry->m_IOId = pRemInput->GetUniqueObjectID();
+									pValueObject->SetName( RemoteInputName.c_str() );
+									pValueObject->SetObjectOwner(GetIOController());
+									pValueObject->setResetOptions( false, SvOi::SVResetItemNone );
+									pIOEntry->m_IOId = pRemoteInput->GetUniqueObjectID();
 									pIOEntry->m_Enabled = FALSE;
 									pIOEntry->m_ObjectType = IO_REMOTE_INPUT;
-									pIOEntry->m_pValueObject = pObject;
-									pIOEntry->m_pValueParent = GetIOController();
+									pIOEntry->setObject(dynamic_cast<SVObjectClass*> (pValueObject));
 
 									pPPQ->AddInput( pIOEntry );
 								}// end if
@@ -310,16 +309,18 @@ void SVIODoc::OnExtrasEditRemoteInputs()
 						if ( pIOEntry->m_ObjectType != IO_REMOTE_INPUT )
 							continue;
 
-						SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject( pIOEntry->m_IOId );
-						if ( !l_pObject )
+						SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject( pIOEntry->m_IOId );
+						if ( !pObject )
+						{
 							continue; //item already removed.  move on to the next one.
+						}
 
-						if( RemoteInputName == l_pObject->GetName() )
+						if( RemoteInputName == pObject->GetName() )
 						{
 							bFound = true;
-							pRemInput = dynamic_cast< SVRemoteInputObject* >( l_pObject );
+							pRemoteInput = dynamic_cast< SVRemoteInputObject* >( pObject );
 
-							if( S_OK != pInputList->DetachInput( pRemInput->GetUniqueObjectID() ) )
+							if( S_OK != pInputList->DetachInput( pRemoteInput->GetUniqueObjectID() ) )
 							{
 								SvStl::MessageMgrStd e( SvStl::LogOnly );
 								e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvOi::Tid_ErrorDetachingInput, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_17033_ErrorDetachingInput );
@@ -334,7 +335,7 @@ void SVIODoc::OnExtrasEditRemoteInputs()
 
 							pIOEntry.clear();
 
-							delete pRemInput;
+							delete pRemoteInput;
 							j++;
 						}// end if
 					}// for

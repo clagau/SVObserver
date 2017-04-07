@@ -152,11 +152,11 @@ bool SVTADlgArchiveImagePage::QueryAllowExit()
 
 	m_pTool->SetImageArchivePath( ImageFolder.c_str() );
 
-	m_pTool->m_dwArchiveStopAtMaxImages.SetValue( 1, m_StopAtMaxImages );
+	m_pTool->m_dwArchiveStopAtMaxImages.SetValue( static_cast<DWORD> (m_StopAtMaxImages), 1 );
 
 	int iCurSel = m_Mode.GetCurSel();
 	m_eSelectedArchiveMethod = static_cast <SVArchiveMethodEnum> (m_Mode.GetItemData(iCurSel));
-	m_pTool->m_evoArchiveMethod.SetValue( 1, static_cast <DWORD> (m_eSelectedArchiveMethod) );
+	m_pTool->m_evoArchiveMethod.SetValue( static_cast<long> (m_eSelectedArchiveMethod), 1 );
 
 	m_MaxImages.GetWindowText(Text);
 	DWORD dwTemp = atol( Text );
@@ -185,7 +185,7 @@ bool SVTADlgArchiveImagePage::QueryAllowExit()
 		dwTemp = 1L;
 	}
 
-	m_pTool->m_dwArchiveMaxImagesCount.SetValue( 1, dwTemp );
+	m_pTool->m_dwArchiveMaxImagesCount.SetValue( dwTemp, 1 );
 
 	SvOsl::SelectorItemVector::const_iterator Iter;
 	for ( Iter = m_List.begin(); m_List.end() != Iter ; ++Iter )
@@ -201,7 +201,7 @@ bool SVTADlgArchiveImagePage::QueryAllowExit()
 		{
 			ObjectRef.SetArrayIndex( Iter->getArrayIndex() );
 		}
-		ObjectRef.ObjectAttributesSetRef() |= SV_ARCHIVABLE_IMAGE;
+		ObjectRef.SetObjectAttributesSet( SV_ARCHIVABLE_IMAGE, SvOi::SetAttributeType::AddAttribute );
 	}
 
 	m_pTool->RebuildImageArchiveList();
@@ -266,7 +266,7 @@ BOOL SVTADlgArchiveImagePage::OnInitDialog()
 		dwaIndex.SetAtGrow( vec[i].second, iIndex );
 	}
 
-	unsigned long lMode;
+	long lMode;
 	m_pTool->m_evoArchiveMethod.GetValue( lMode );
 	m_eSelectedArchiveMethod = static_cast<SVArchiveMethodEnum>( lMode );
 	m_iModeIndex = dwaIndex.GetAt( lMode );
@@ -346,7 +346,7 @@ void SVTADlgArchiveImagePage::OnRemoveAllItems()
 			{
 				ObjectRef.SetArrayIndex( Iter->getArrayIndex() );
 			}
-			ObjectRef.ObjectAttributesSetRef() &= ~SV_ARCHIVABLE_IMAGE;
+			ObjectRef.SetObjectAttributesSet( SV_ARCHIVABLE_IMAGE, SvOi::SetAttributeType::RemoveAttribute );
 		}
 	}
 	m_List.clear();
@@ -382,7 +382,7 @@ void SVTADlgArchiveImagePage::OnRemoveItem()
 			{
 				ObjectRef.SetArrayIndex( SelectedIter->getArrayIndex() );
 			}
-			ObjectRef.ObjectAttributesSetRef() &= ~SV_ARCHIVABLE_IMAGE;
+			ObjectRef.SetObjectAttributesSet( SV_ARCHIVABLE_IMAGE, SvOi::SetAttributeType::RemoveAttribute );
 		}
 
 		m_List.erase( SelectedIter );
@@ -552,7 +552,7 @@ void SVTADlgArchiveImagePage::ShowObjectSelector()
 					{
 						ObjectRef.SetArrayIndex( Iter->getArrayIndex() );
 					}
-					ObjectRef.ObjectAttributesSetRef() &= ~SV_ARCHIVABLE_IMAGE;
+					ObjectRef.SetObjectAttributesSet( SV_ARCHIVABLE_IMAGE, SvOi::SetAttributeType::RemoveAttribute );
 				}
 			}
 		}

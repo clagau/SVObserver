@@ -27,13 +27,13 @@ public:
 
 protected:
 	SVStringValueObjectClass* getInputString();
-	virtual bool onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+	virtual bool onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
 //******************************************************************************
 // Data Element(s):
 //******************************************************************************
 protected:
 	// Output
-	SVStringValueObjectClass		m_szValue;
+	SVStringValueObjectClass m_Value;
 };
 

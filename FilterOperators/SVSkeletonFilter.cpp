@@ -25,14 +25,14 @@ static char THIS_FILE[] = __FILE__;
 SVSkeletonFilterClass::SVSkeletonFilterClass( SVObjectClass* POwner, int StringResourceID )
 					: SVFilterClass( POwner, StringResourceID )
 {
-	m_outObjectInfo.ObjectTypeInfo.SubType = SVSkeletonFilterObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVSkeletonFilterObjectType;
 }
 
 SVSkeletonFilterClass::~SVSkeletonFilterClass()
 {
 }
 
-bool SVSkeletonFilterClass::onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVSkeletonFilterClass::onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	if( m_pCurrentUIOPL && !( RInputImageHandle.empty() ) && !( ROutputImageHandle.empty() ) )
 	{
@@ -57,7 +57,7 @@ bool SVSkeletonFilterClass::onRun( bool First, SVSmartHandlePointer RInputImageH
 			}
 			// Signal that something was wrong...
 			SetInvalid();
-			RRunStatus.SetInvalid();
+			rRunStatus.SetInvalid();
 			return false;
 		}
 
@@ -75,7 +75,7 @@ bool SVSkeletonFilterClass::onRun( bool First, SVSmartHandlePointer RInputImageH
 
 	// Signal that something was wrong...
 	SetInvalid();
-	RRunStatus.SetInvalid();
+	rRunStatus.SetInvalid();
 	return false;
 }
 

@@ -14,6 +14,7 @@
 #pragma region Includes
 //Moved to precompiled header: #include <set>
 #include "ObjectInterfaces/SVImageEnums.h"
+#include "ObjectInterfaces/IValueObject.h"
 #include "SVImageLibrary/SVImageExtentClass.h"
 #include "SVToolExtentPropertiesClass.h"
 #include "SVUtilityLibrary/SVString.h"
@@ -66,11 +67,11 @@ public:
 
 	HRESULT GetExtentShape( SVExtentPropertyEnum p_eProperty, SVExtentShapeEnum &p_reValue ) const;
 
-	HRESULT GetExtentObject( SVExtentPropertyEnum p_eProperty, SVValueObjectClass *&p_rpsvValue ) const;
-	HRESULT SetExtentObject( SVExtentPropertyEnum p_eProperty, SVValueObjectClass *p_psvValue );
+	HRESULT GetExtentObject( SVExtentPropertyEnum p_eProperty, SvOi::IValueObject*& rpValueObject ) const;
+	HRESULT SetExtentObject( SVExtentPropertyEnum p_eProperty, SvOi::IValueObject* pValueObject );
 
-	HRESULT GetExtentValue( SVExtentPropertyEnum p_eProperty, VARIANT& p_rValue ) const;
-	HRESULT SetExtentValue( SVExtentPropertyEnum p_eProperty, long p_DataIndex, const _variant_t& p_rValue );
+	HRESULT GetExtentValue( SVExtentPropertyEnum p_eProperty, _variant_t& rValue ) const;
+	HRESULT SetExtentValue( SVExtentPropertyEnum p_eProperty, long p_DataIndex, const _variant_t& rValue );
 
 	HRESULT GetExtentPropertyInfo( SVExtentPropertyEnum p_eProperty, SVExtentPropertyInfoStruct& p_rInfo ) const;
 	HRESULT SetExtentPropertyInfo( SVExtentPropertyEnum p_eProperty, const SVExtentPropertyInfoStruct& p_rInfo );

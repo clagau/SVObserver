@@ -63,8 +63,8 @@ SVOCVAnalyzeResultClass::SVOCVAnalyzeResultClass( SVObjectClass* POwner, int Str
 void SVOCVAnalyzeResultClass::clearAll()
 {	
 	// Identify yourself
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVResultObjectType;
-	m_outObjectInfo.ObjectTypeInfo.SubType = SVResultOCVObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVResultOCVObjectType;
 
 	// Identify our input type needs
 	m_inputObjectInfo.SetInputObjectType( SVImageObjectType );
@@ -76,75 +76,75 @@ void SVOCVAnalyzeResultClass::clearAll()
 		&m_svoMatchString, 
 		SVOCVMatchStringGuid,
 		IDS_OBJECTNAME_OCV_MATCH_STRING,
-		false, SVResetItemNone );
+		false, SvOi::SVResetItemNone );
 	
 	RegisterEmbeddedObject( 
 		&m_svoFoundString, 
 		SVOCVFoundStringGuid,
 		IDS_OBJECTNAME_OCV_FOUND_STRING,
-		false, SVResetItemNone );
+		false, SvOi::SVResetItemNone );
 	
 	RegisterEmbeddedObject( 
 		&m_bvoPerformOCR,
 		SVOCVPerformOCRGuid,
 		IDS_OBJECTNAME_OCV_PERFORM_OCR,
-		false, SVResetItemNone );
+		false, SvOi::SVResetItemNone );
 	
 	RegisterEmbeddedObject( 
 		&m_lvoMatchLineNumber,
 		SVOCVMatchLineNumberGuid,
 		IDS_OBJECTNAME_OCV_MATCH_LINE_NUMBER,
-		false, SVResetItemNone );
+		false, SvOi::SVResetItemNone );
 	
 	// Exposing OCV Match Scores
 	RegisterEmbeddedObject( 
 		&m_dvoHighestMatchScore,
 		SVOCVHighestMatchScoreGuid,
 		IDS_OBJECTNAME_OCV_HIGHEST_MATCH_SCORE,
-		false, SVResetItemNone );
+		false, SvOi::SVResetItemNone );
 	
 	RegisterEmbeddedObject( 
 		&m_dvoLowestMatchScore,
 		SVOCVLowestMatchScoreGuid,
 		IDS_OBJECTNAME_OCV_LOWEST_MATCH_SCORE,
-		false, SVResetItemNone );
+		false, SvOi::SVResetItemNone );
 	
 	RegisterEmbeddedObject( 
 		&m_dvoAverageMatchScore,
 		SVOCVAverageMatchScoreGuid,
 		IDS_OBJECTNAME_OCV_AVERAGE_MATCH_SCORE,
-		false, SVResetItemNone );
+		false, SvOi::SVResetItemNone );
 	
 	// OCV File Names
 	RegisterEmbeddedObject( 
 		&m_fnvoFontFileName,
 		SVOCVFontFileNameGuid,
 		IDS_OBJECTNAME_OCV_FONT_FILE_NAME,
-		false, SVResetItemOwner );
+		false, SvOi::SVResetItemOwner );
 	
 	RegisterEmbeddedObject( 
 		&m_fnvoConstraintsFileName,
 		SVOCVConstraintsFileNameGuid,
 		IDS_OBJECTNAME_OCV_CONSTRAINTS_FILE_NAME,
-		false, SVResetItemOwner );
+		false, SvOi::SVResetItemOwner );
 	
 	RegisterEmbeddedObject( 
 		&m_fnvoControlsFileName,
 		SVOCVControlsFileNameGuid,
 		IDS_OBJECTNAME_OCV_CONTROLS_FILE_NAME,
-		false, SVResetItemOwner );
+		false, SvOi::SVResetItemOwner );
 	
 	RegisterEmbeddedObject(
 		&m_fnvoMatchStringFileName,
 		SVOCVMatchStringFileNameGuid,
 		IDS_OBJECTNAME_OCV_MATCH_STRING_FILE_NAME,
-		false, SVResetItemOwner );
+		false, SvOi::SVResetItemOwner );
 	
 	RegisterEmbeddedObject( 
 		&m_bvoUseMatchFile,
 		SVOCVUseMatchFileGuid,
 		IDS_OBJECTNAME_OCV_USE_MATCH_FILE,
-		false, SVResetItemOwner );
+		false, SvOi::SVResetItemOwner );
 	
 	for( long l = 0; l < OCV_MAX_RESULTS; l++ )
 	{
@@ -223,10 +223,9 @@ SVOCVAnalyzeResultClass::~SVOCVAnalyzeResultClass()
 
 SVImageClass* SVOCVAnalyzeResultClass::getInputImage()
 {
-	if( m_inputObjectInfo.IsConnected() && 
-		m_inputObjectInfo.GetInputObjectInfo().PObject )
+	if( m_inputObjectInfo.IsConnected() )
 	{
-		return (SVImageClass*) m_inputObjectInfo.GetInputObjectInfo().PObject;
+		return dynamic_cast<SVImageClass*> (m_inputObjectInfo.GetInputObjectInfo().m_pObject);
 	}
 	return nullptr;
 }
@@ -250,20 +249,21 @@ BOOL SVOCVAnalyzeResultClass::CreateObject(	SVObjectLevelCreateStruct* PCreateSt
 	}
 
 	// Set / Reset Printable Flag
-	m_svoMatchString.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE;
-	m_svoFoundString.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	m_lvoMatchLineNumber.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	m_bvoPerformOCR.ObjectAttributesAllowedRef() = SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE;
+	UINT cAttibutes = SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE;
+	m_svoMatchString.SetObjectAttributesAllowed( cAttibutes, SvOi::SetAttributeType::AddAttribute );
+	m_svoFoundString.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_lvoMatchLineNumber.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_bvoPerformOCR.SetObjectAttributesAllowed( cAttibutes, SvOi::SetAttributeType::OverwriteAttribute );
 
-	m_dvoHighestMatchScore.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	m_dvoLowestMatchScore.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	m_dvoAverageMatchScore.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
+	m_dvoHighestMatchScore.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_dvoLowestMatchScore.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_dvoAverageMatchScore.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 
-	m_fnvoFontFileName.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE;
-	m_fnvoConstraintsFileName.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE;
-	m_fnvoControlsFileName.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE;
-	m_fnvoMatchStringFileName.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE;
-	m_bvoUseMatchFile.ObjectAttributesAllowedRef() = SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE;
+	m_fnvoFontFileName.SetObjectAttributesAllowed( cAttibutes, SvOi::SetAttributeType::AddAttribute );
+	m_fnvoConstraintsFileName.SetObjectAttributesAllowed( cAttibutes, SvOi::SetAttributeType::AddAttribute );
+	m_fnvoControlsFileName.SetObjectAttributesAllowed( cAttibutes, SvOi::SetAttributeType::AddAttribute );
+	m_fnvoMatchStringFileName.SetObjectAttributesAllowed( cAttibutes, SvOi::SetAttributeType::AddAttribute );
+	m_bvoUseMatchFile.SetObjectAttributesAllowed( cAttibutes, SvOi::SetAttributeType::OverwriteAttribute );
 
 	HideResults();
 
@@ -282,7 +282,7 @@ void SVOCVAnalyzeResultClass::HideResults()
 		for( long l = 0; l < OCV_MAX_RESULTS; l++ )
 		{
 			SVOCVCharacterResultClass *pResult = (SVOCVCharacterResultClass*) GetAt( l );
-			pResult->ObjectAttributesAllowedRef() = SV_EMBEDABLE;
+			pResult->SetObjectAttributesAllowed( SV_EMBEDABLE, SvOi::SetAttributeType::OverwriteAttribute );
 
 			if( l < m_lFontStringLength )
 			{
@@ -350,158 +350,158 @@ BOOL SVOCVAnalyzeResultClass::GenerateFontModel()
 {
 	long	l_lIsFontPreprocessed = 0;
 
-	SVMatroxOcrInterface ::SVStatusCode l_Code;
-	// First destroy the MIL font and result buffer
-	if( !m_milFontID.empty() )
-	{
-		l_Code = SVMatroxOcrInterface::Destroy( m_milFontID );
-	}// end if
-
-	if( !m_milResultID.empty() )
-	{
-		l_Code = SVMatroxOcrInterface::Destroy( m_milResultID );
-	}// end if
-
-	// Now recreate the MIL font and result buffer
-	CFileStatus rStatus;
-	SVString FontFileName;
-	SVString ConstraintsFileName;
-	SVString ControlsFileName;
-
-	m_fnvoFontFileName.GetValue( FontFileName );
-	BOOL bOk = CFile::GetStatus( FontFileName.c_str(), rStatus );
-	if ( bOk )
-	{
-		bOk = 0L < rStatus.m_size;
-	}// end if
-
-	if( bOk )
-	{
-		m_fnvoControlsFileName.GetValue( ControlsFileName );
-		if( !ControlsFileName.empty() )
-		{
-			bOk = CFile::GetStatus( ControlsFileName.c_str(), rStatus );
-			if ( bOk )
-			{
-				bOk = 0L < rStatus.m_size;
-			}// end if
-		}// end if
-	}// end if
-
-	if( bOk )
-	{
-		m_fnvoConstraintsFileName.GetValue( ConstraintsFileName );
-		if( !ConstraintsFileName.empty() )
-		{
-			bOk = CFile::GetStatus( ConstraintsFileName.c_str(), rStatus );
-			if ( bOk )
-			{
-				bOk = 0L < rStatus.m_size;
-			}// end if
-		}// end if
-	}// end if
-
-	if ( bOk )
-	{
-		// Allocate a MIL kernel.
 		SVMatroxOcrInterface ::SVStatusCode l_Code;
-
-		SVString Path;
-		Path = FontFileName;
-
-		l_Code = SVMatroxOcrInterface::RestoreFont( m_milFontID, Path, SVOcrRestore );
-		if( m_milFontID.empty() )
+		// First destroy the MIL font and result buffer
+		if( !m_milFontID.empty() )
 		{
-			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
+			l_Code = SVMatroxOcrInterface::Destroy( m_milFontID );
+		}// end if
+
+		if( !m_milResultID.empty() )
+		{
+			l_Code = SVMatroxOcrInterface::Destroy( m_milResultID );
+		}// end if
+
+		// Now recreate the MIL font and result buffer
+		CFileStatus rStatus;
+		SVString FontFileName;
+		SVString ConstraintsFileName;
+		SVString ControlsFileName;
+
+		m_fnvoFontFileName.GetValue( FontFileName );
+	BOOL bOk = CFile::GetStatus( FontFileName.c_str(), rStatus );
+		if ( bOk )
+		{
+			bOk = 0L < rStatus.m_size;
+		}// end if
+
+		if( bOk )
+		{
+			m_fnvoControlsFileName.GetValue( ControlsFileName );
+			if( !ControlsFileName.empty() )
+			{
+				bOk = CFile::GetStatus( ControlsFileName.c_str(), rStatus );
+				if ( bOk )
+				{
+					bOk = 0L < rStatus.m_size;
+				}// end if
+			}// end if
+		}// end if
+
+		if( bOk )
+		{
+			m_fnvoConstraintsFileName.GetValue( ConstraintsFileName );
+			if( !ConstraintsFileName.empty() )
+			{
+				bOk = CFile::GetStatus( ConstraintsFileName.c_str(), rStatus );
+				if ( bOk )
+				{
+					bOk = 0L < rStatus.m_size;
+				}// end if
+			}// end if
+		}// end if
+
+		if ( bOk )
+		{
+			// Allocate a MIL kernel.
+			SVMatroxOcrInterface ::SVStatusCode l_Code;
+
+			SVString Path;
+			Path = FontFileName;
+
+			l_Code = SVMatroxOcrInterface::RestoreFont( m_milFontID, Path, SVOcrRestore );
+			if( m_milFontID.empty() )
+			{
+				SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16126, GetUniqueObjectID());
 
-		}// end if
+			}// end if
 
-		if( !ControlsFileName.empty() )
-		{
-			Path = ControlsFileName;
-			l_Code = SVMatroxOcrInterface::RestoreFont( m_milFontID, Path, SVOcrLoadControl );
-			if( m_milFontID.empty() )
+			if( !ControlsFileName.empty() )
 			{
-				SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
+				Path = ControlsFileName;
+				l_Code = SVMatroxOcrInterface::RestoreFont( m_milFontID, Path, SVOcrLoadControl );
+				if( m_milFontID.empty() )
+				{
+					SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 				MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16127, GetUniqueObjectID());
+				}// end if
 			}// end if
-		}// end if
 
-		if( !ConstraintsFileName.empty() )
-		{
-			Path = ConstraintsFileName;
-			l_Code = SVMatroxOcrInterface::RestoreFont( m_milFontID, Path, SVOcrLoadConstraint );
-
-			if( m_milFontID.empty() )
+			if( !ConstraintsFileName.empty() )
 			{
-				SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
+				Path = ConstraintsFileName;
+				l_Code = SVMatroxOcrInterface::RestoreFont( m_milFontID, Path, SVOcrLoadConstraint );
+
+				if( m_milFontID.empty() )
+				{
+					SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 				MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16128, GetUniqueObjectID());
+				}// end if
 			}// end if
-		}// end if
 
 		//-			JAB111208
-		l_Code = SVMatroxOcrInterface::Get (m_milFontID, 
-			SVOcrIsFontPreprocessed,
-			l_lIsFontPreprocessed);
-		if (l_Code != SVMEE_STATUS_OK)
-		{
-			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16129, GetUniqueObjectID());
-		}
-
-		if (l_lIsFontPreprocessed == 0)
-		{
-			l_Code = SVMatroxOcrInterface::Preprocess( m_milFontID );
-
+			l_Code = SVMatroxOcrInterface::Get (m_milFontID, 
+												SVOcrIsFontPreprocessed,
+												l_lIsFontPreprocessed);
 			if (l_Code != SVMEE_STATUS_OK)
 			{
 				SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-				MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16130, GetUniqueObjectID());
+			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16129, GetUniqueObjectID());
 			}
-		}
 
-		l_Code = SVMatroxOcrInterface::Create( m_milResultID );
-		if( m_milResultID.empty() )
-		{
-			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16131, GetUniqueObjectID());
-		}// end if
+			if (l_lIsFontPreprocessed == 0)
+			{
+				l_Code = SVMatroxOcrInterface::Preprocess( m_milFontID );
 
-		l_Code = SVMatroxOcrInterface::Get( m_milFontID, SVOcrStringSize, m_lFontStringLength );
-		if( m_lFontStringLength < 1 )
-		{
-			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16132, GetUniqueObjectID());
-		}// end if
+				if (l_Code != SVMEE_STATUS_OK)
+				{
+					SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
+				MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16130, GetUniqueObjectID());
+				}
+			}
 
-		l_Code = SVMatroxOcrInterface::Get( m_milFontID, SVOcrStringSizeMax, m_lFontStringLengthMax );
-		if( m_lFontStringLengthMax < 1 )
-		{
-			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16133, GetUniqueObjectID());
-		}// end if
-
-		if( m_lFontStringLength == SVValueAny )
-		{
-			m_lFontStringLength = m_lFontStringLengthMax;
-		}// end if
-
-		if ( 0 < m_lMatchStringLength &&
-			m_lMatchStringLength != m_lFontStringLength && 
-			m_lMatchStringLength <= m_lFontStringLengthMax )
-		{
-			l_Code = SVMatroxOcrInterface::Set( m_milFontID, SVOcrStringSize, m_lMatchStringLength);
-
-			l_Code = SVMatroxOcrInterface::Get( m_milFontID, SVOcrStringSize, m_lFontStringLength );
-			if( m_lFontStringLength < 1 )
+			l_Code = SVMatroxOcrInterface::Create( m_milResultID );
+			if( m_milResultID.empty() )
 			{
 				SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-				MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16134, GetUniqueObjectID());
+			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16131, GetUniqueObjectID());
 			}// end if
-		}
 
-	}// end if
+				l_Code = SVMatroxOcrInterface::Get( m_milFontID, SVOcrStringSize, m_lFontStringLength );
+				if( m_lFontStringLength < 1 )
+				{
+					SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
+			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16132, GetUniqueObjectID());
+				}// end if
+
+				l_Code = SVMatroxOcrInterface::Get( m_milFontID, SVOcrStringSizeMax, m_lFontStringLengthMax );
+				if( m_lFontStringLengthMax < 1 )
+				{
+					SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
+			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16133, GetUniqueObjectID());
+				}// end if
+
+			if( m_lFontStringLength == SVValueAny )
+			{
+				m_lFontStringLength = m_lFontStringLengthMax;
+			}// end if
+
+			if ( 0 < m_lMatchStringLength &&
+				   m_lMatchStringLength != m_lFontStringLength && 
+			     m_lMatchStringLength <= m_lFontStringLengthMax )
+			{
+					l_Code = SVMatroxOcrInterface::Set( m_milFontID, SVOcrStringSize, m_lMatchStringLength);
+
+					l_Code = SVMatroxOcrInterface::Get( m_milFontID, SVOcrStringSize, m_lFontStringLength );
+					if( m_lFontStringLength < 1 )
+					{
+						SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
+				MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16134, GetUniqueObjectID());
+					}// end if
+			}
+
+		}// end if
 
 	HideResults();
 	return bOk;
@@ -579,7 +579,7 @@ HRESULT SVOCVAnalyzeResultClass::LoadMatchString()
 			 
 			 if (0 != LastError)
 			 {
-				 m_svoMatchString.SetValue( 1, _T( "" ) );
+				 m_svoMatchString.SetValue( SVString(), 1 );
 			 }
 			 
 			 if ( dwByteNumber > 0 )
@@ -616,7 +616,7 @@ HRESULT SVOCVAnalyzeResultClass::LoadMatchString()
 	
 	if (0 != LastError)
 	{
-	   m_svoMatchString.SetValue( 1, _T( "" ) );
+	   m_svoMatchString.SetValue( SVString(), 1 );
 	}
 
 	return hrRet;
@@ -645,7 +645,7 @@ bool SVOCVAnalyzeResultClass::ResetObject(SvStl::MessageContainerVector *pErrorM
 			{
 				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_InvalidData, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 				pErrorMessages->push_back(Msg);
-			}
+	}
 		}
 	}
 	else
@@ -665,41 +665,41 @@ bool SVOCVAnalyzeResultClass::ResetObject(SvStl::MessageContainerVector *pErrorM
 //
 //
 //
-bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	SVMatroxBuffer l_milImageID;
 	BYTE* pMilBuffer = nullptr;
-	BOOL l_bOperation;
+	BOOL bOperation;
 	BOOL bUseFile;
 	BOOL bStringPassed;
 	BOOL bCharsPassed;
 
 	long l_lLength = 0;
 
-	double l_dHigh;
-	double l_dLow;
-	double l_dAvg;
-	double l_dSum;
-	double l_dValidString = 0.0f;
-	double l_dNbrString = 0.0f;
+	double dHigh( 0.0 );
+	double dLow( 0.0 );
+	double dAvg( 0.0 );
+	double dSum( 0.0 );
+	double dValidString( 0.0 );
+	double dNbrString( 0.0 );
 	SVString l_strLabel;
 	SVMatroxDoubleArray l_adScores;
 	SVMatroxDoubleArray l_adXCoords;
 	SVMatroxDoubleArray l_adYCoords;
 	SVMatroxDoubleArray l_adValidChars;
-	double l_dScore;
-	double l_dLength = 0.0f;
-	double l_dCharBoxSizeX;
-	double l_dCharBoxSizeY;
+	double dScore( 0.0 );
+	double dLength( 0.0 );
+	double dCharBoxSizeX( 0.0 );
+	double dCharBoxSizeY( 0.0 );
 
 	SVString FoundString;
 	SVString MatchString;
 	 
 	SVMatroxOcrInterface ::SVStatusCode l_Code = SVMEE_STATUS_OK;
   
-	bool bOk = __super::onRun( RRunStatus, pErrorMessages );
+	bool bOk = __super::onRun( rRunStatus, pErrorMessages );
 
-	if( bOk && !RRunStatus.IsDisabled() && !RRunStatus.IsDisabledByCondition() )
+	if( bOk && !rRunStatus.IsDisabled() && !rRunStatus.IsDisabledByCondition() )
 	{
 		SVImageClass* pImage = getInputImage();
 		if( nullptr == pImage )
@@ -783,24 +783,24 @@ bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& RRunStatus, SvStl::Messag
 			{
 				long k( 0 );
 				// Reset the 'found' string to nothing.
-				m_svoFoundString.SetValue( RRunStatus.m_lResultDataIndex, _T("") );
-				m_lvoMatchLineNumber.SetValue( RRunStatus.m_lResultDataIndex, (const long) -1L );
+				m_svoFoundString.SetValue( SVString(), rRunStatus.m_lResultDataIndex );
+				m_lvoMatchLineNumber.SetValue( -1L, rRunStatus.m_lResultDataIndex );
 
 				//
 				// Preset for failure
 				//
-				failed.SetValue( RRunStatus.m_lResultDataIndex, TRUE );
-				warned.SetValue( RRunStatus.m_lResultDataIndex, TRUE );
-				passed.SetValue( RRunStatus.m_lResultDataIndex, FALSE );
+				failed.SetValue( BOOL(true), rRunStatus.m_lResultDataIndex );
+				warned.SetValue( BOOL(true), rRunStatus.m_lResultDataIndex );
+				passed.SetValue( BOOL(false), rRunStatus.m_lResultDataIndex );
 
-				m_dvoHighestMatchScore.SetValue( RRunStatus.m_lResultDataIndex, (double) 0.0f );
-				m_dvoLowestMatchScore.SetValue(  RRunStatus.m_lResultDataIndex, (double) 0.0f );
-				m_dvoAverageMatchScore.SetValue( RRunStatus.m_lResultDataIndex, (double) 0.0f );
+				m_dvoHighestMatchScore.SetValue( 0.0, rRunStatus.m_lResultDataIndex );
+				m_dvoLowestMatchScore.SetValue(  0.0, rRunStatus.m_lResultDataIndex );
+				m_dvoAverageMatchScore.SetValue( 0.0, rRunStatus.m_lResultDataIndex );
 
 				//
 				// Get some settings.
 				//
-				m_bvoPerformOCR.GetValue( l_bOperation );
+				m_bvoPerformOCR.GetValue( bOperation );
 
 				// Reset results
 				
@@ -821,7 +821,7 @@ bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& RRunStatus, SvStl::Messag
 							break;
 						}
 
-						if( l_bOperation ) // read
+						if( bOperation ) // read
 						{
 							m_milFontID.m_bVerify = false;
 							strFunctionName = _T("MocrReadString"); iProgramCode = -12383;
@@ -861,9 +861,9 @@ bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& RRunStatus, SvStl::Messag
 						//
 						// Process the OCV chars returned from MocrReadString();
 						//
-						l_dValidString = 0.0f;
-						l_dNbrString = 0.0f;
-						l_dLength = 0.0f;
+						dValidString = 0.0f;
+						dNbrString = 0.0f;
+						dLength = 0.0f;
 						strFunctionName = _T("MocrGetResult");
 
 
@@ -874,8 +874,8 @@ bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& RRunStatus, SvStl::Messag
 						// we have a string to get results from. Otherwise Matrox gets flaky.
 						l_Code = SVMatroxOcrInterface::GetResult(  m_milResultID, 
 							                                      SVOcrNbrString, 
-																  l_dNbrString );
-						if( l_dNbrString < 1 )
+																  dNbrString );
+						if( dNbrString < 1 )
 						{
 							// There is no reason to go on at this point 
 							// and in fact going on will cause trouble.
@@ -884,7 +884,7 @@ bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& RRunStatus, SvStl::Messag
 
 						l_Code = SVMatroxOcrInterface::GetResult( m_milResultID, 
 							                                      SVOcrStringValidFlag, 
-																  l_dValidString );
+																  dValidString );
 						if ((l_Code & ~0xcf000000) == 23002)
 						{
 //-							JAB111008 - This represents... Specified result 
@@ -913,7 +913,7 @@ bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& RRunStatus, SvStl::Messag
 						iProgramCode = -12385;
 						l_Code = SVMatroxOcrInterface::GetResult( m_milResultID, 
 																  SVOcrResultStringSize, 
-																  l_dLength );
+																  dLength );
 
 
 						if ((l_Code & 0xc0000000) != 0)
@@ -922,7 +922,7 @@ bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& RRunStatus, SvStl::Messag
 							break;
 						}
 
-						l_lLength = (long) l_dLength;
+						l_lLength = (long) dLength;
 						m_lCurrentFoundStringLength = l_lLength;
 						if (l_lLength == 0)
 						{
@@ -937,7 +937,7 @@ bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& RRunStatus, SvStl::Messag
 
 						strFunctionName = _T("MocrGetResult");
 						iProgramCode = -12387;
-						l_Code = SVMatroxOcrInterface::GetResult( m_milResultID, SVOcrStringScore, l_dScore);
+						l_Code = SVMatroxOcrInterface::GetResult( m_milResultID, SVOcrStringScore, dScore);
 						if ((l_Code & 0xc0000000) != 0)
 						{
 							l_Code = -12399;
@@ -989,7 +989,7 @@ bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& RRunStatus, SvStl::Messag
 
 						strFunctionName = _T("MocrInquire");
 						iProgramCode = -12393;
-						l_Code = SVMatroxOcrInterface::Get( m_milFontID, SVCharCellSizeX, l_dCharBoxSizeX);
+						l_Code = SVMatroxOcrInterface::Get( m_milFontID, SVCharCellSizeX, dCharBoxSizeX);
 						if ((l_Code & 0xc0000000) != 0)
 						{
 							l_Code = -12405;
@@ -998,7 +998,7 @@ bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& RRunStatus, SvStl::Messag
 
 						strFunctionName = _T("MocrInquire");
 						iProgramCode = -12394;
-						l_Code = SVMatroxOcrInterface::Get( m_milFontID, SVCharCellSizeY, l_dCharBoxSizeY);
+						l_Code = SVMatroxOcrInterface::Get( m_milFontID, SVCharCellSizeY, dCharBoxSizeY);
 						if ((l_Code & 0xc0000000) != 0)
 						{
 							l_Code = -12406;
@@ -1013,10 +1013,10 @@ bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& RRunStatus, SvStl::Messag
 						l_strLabel.empty();
 					}
 
-					l_dHigh = 0.0f;
-					l_dLow  = 100.0f;
-					l_dAvg  = 0.0f;
-					l_dSum	= 0.0f;
+					dHigh = 0.0f;
+					dLow  = 100.0f;
+					dAvg  = 0.0f;
+					dSum	= 0.0f;
 					if( l_lLength > OCV_MAX_RESULTS )
 						l_lLength = OCV_MAX_RESULTS;
 				}// end try
@@ -1028,8 +1028,8 @@ bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& RRunStatus, SvStl::Messag
 
 					if ( iError != 0 )
 					{
-						RRunStatus.SetInvalid();
-						RRunStatus.SetFailed();
+						rRunStatus.SetInvalid();
+						rRunStatus.SetFailed();
 					}
 
 					if (nullptr != pErrorMessages)
@@ -1050,22 +1050,22 @@ bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& RRunStatus, SvStl::Messag
 				{
 					SVOCVCharacterResultClass *pResult = arrayOCVCharacterResults.GetAt( k );
 
-					pResult->m_cvoLabelValue.SetValue( RRunStatus.m_lResultDataIndex, l_strLabel[k] );
+					pResult->m_cvoLabelValue.SetValue( l_strLabel[k], rRunStatus.m_lResultDataIndex );
 
-					pResult->m_dvoOverlayLeft.SetValue( RRunStatus.m_lResultDataIndex, l_adXCoords[k] - ( l_dCharBoxSizeX / 2.0f ) );
-					pResult->m_dvoOverlayTop.SetValue( RRunStatus.m_lResultDataIndex, l_adYCoords[k] - ( l_dCharBoxSizeY / 2.0f ) );
-					pResult->m_dvoOverlayWidth.SetValue( RRunStatus.m_lResultDataIndex, l_dCharBoxSizeX );
-					pResult->m_dvoOverlayHeight.SetValue( RRunStatus.m_lResultDataIndex, l_dCharBoxSizeY );
+					pResult->m_dvoOverlayLeft.SetValue( l_adXCoords[k] - ( dCharBoxSizeX / 2.0 ), rRunStatus.m_lResultDataIndex );
+					pResult->m_dvoOverlayTop.SetValue( l_adYCoords[k] - ( dCharBoxSizeY / 2.0 ), rRunStatus.m_lResultDataIndex );
+					pResult->m_dvoOverlayWidth.SetValue( dCharBoxSizeX, rRunStatus.m_lResultDataIndex );
+					pResult->m_dvoOverlayHeight.SetValue( dCharBoxSizeY, rRunStatus.m_lResultDataIndex );
 
-					pResult->m_dvoMatchScore.SetValue( RRunStatus.m_lResultDataIndex, l_adScores[k] );
+					pResult->m_dvoMatchScore.SetValue( l_adScores[k], rRunStatus.m_lResultDataIndex );
 
-					if( l_adScores[k] > l_dHigh )
-						l_dHigh = l_adScores[k];
+					if( l_adScores[k] > dHigh )
+						dHigh = l_adScores[k];
 
-					if( l_adScores[k] < l_dLow )
-						l_dLow = l_adScores[k];
+					if( l_adScores[k] < dLow )
+						dLow = l_adScores[k];
 
-					l_dSum += l_adScores[k];
+					dSum += l_adScores[k];
 
 				}// end for
 
@@ -1074,20 +1074,20 @@ bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& RRunStatus, SvStl::Messag
 				{
 					SVOCVCharacterResultClass *pResult = arrayOCVCharacterResults.GetAt( l );
 
-					pResult->m_cvoLabelValue.SetValue( RRunStatus.m_lResultDataIndex, 0 );
+					pResult->m_cvoLabelValue.SetValue( 0L, rRunStatus.m_lResultDataIndex );
 
-					pResult->m_dvoOverlayLeft.SetValue( RRunStatus.m_lResultDataIndex, 0.0f );
-					pResult->m_dvoOverlayTop.SetValue( RRunStatus.m_lResultDataIndex, 0.0f );
-					pResult->m_dvoOverlayWidth.SetValue( RRunStatus.m_lResultDataIndex, 0.0f );
-					pResult->m_dvoOverlayHeight.SetValue( RRunStatus.m_lResultDataIndex, 0.0f );
+					pResult->m_dvoOverlayLeft.SetValue( 0.0, rRunStatus.m_lResultDataIndex );
+					pResult->m_dvoOverlayTop.SetValue( 0.0, rRunStatus.m_lResultDataIndex );
+					pResult->m_dvoOverlayWidth.SetValue( 0.0, rRunStatus.m_lResultDataIndex );
+					pResult->m_dvoOverlayHeight.SetValue( 0.0, rRunStatus.m_lResultDataIndex );
 
-					pResult->m_dvoMatchScore.SetValue( RRunStatus.m_lResultDataIndex, -1.0f );
+					pResult->m_dvoMatchScore.SetValue( -1.0, rRunStatus.m_lResultDataIndex );
 				}// end for
 
 				if( l_lLength )
 				{
 					FoundString = l_strLabel.c_str();
-					l_dAvg = l_dSum / l_lLength;
+					dAvg = dSum / l_lLength;
 				}// end if
 				else
 				{
@@ -1096,7 +1096,7 @@ bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& RRunStatus, SvStl::Messag
 				}// end else
 
 				// Determine MIL pass/fail status 
-				bStringPassed = l_dValidString == SVValueTrue;
+				bStringPassed = dValidString == SVValueTrue;
 				bCharsPassed = TRUE;
 				for( k = 0; k < l_lLength; k++ )
 				{
@@ -1105,14 +1105,14 @@ bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& RRunStatus, SvStl::Messag
 
 				// Cleanup results
 
-				m_dvoHighestMatchScore.SetValue( RRunStatus.m_lResultDataIndex, (double) l_dHigh );
-				m_dvoLowestMatchScore.SetValue(  RRunStatus.m_lResultDataIndex, (double) l_dLow );
-				m_dvoAverageMatchScore.SetValue( RRunStatus.m_lResultDataIndex, (double) l_dAvg );
+				m_dvoHighestMatchScore.SetValue( dHigh, rRunStatus.m_lResultDataIndex );
+				m_dvoLowestMatchScore.SetValue(  dLow, rRunStatus.m_lResultDataIndex  );
+				m_dvoAverageMatchScore.SetValue( dAvg, rRunStatus.m_lResultDataIndex );
 
 				//
 				// Copy OCV result to a storage array element.
 				//
-				m_svoFoundString.SetValue( RRunStatus.m_lResultDataIndex, FoundString.c_str() );
+				m_svoFoundString.SetValue( FoundString, rRunStatus.m_lResultDataIndex );
 
 				m_svoMatchString.GetValue( MatchString );
 
@@ -1120,12 +1120,12 @@ bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& RRunStatus, SvStl::Messag
 				// Is result == matchstring?
 				//
 				int nResultValue = 0;
-				if( l_bOperation )
+				if( bOperation )
 				{
 					if( m_nTotalCount > 1 )
 					{
-						int nStringMatch;
-						if( ( nStringMatch = CheckStringInTable( FoundString ) ) == -1 )
+						long lStringMatch;
+						if( ( lStringMatch = CheckStringInTable( FoundString ) ) == -1L )
 						{
 							if( bStringPassed && bCharsPassed )
 							{
@@ -1150,7 +1150,7 @@ bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& RRunStatus, SvStl::Messag
 
 						}// end else
 
-						m_lvoMatchLineNumber.SetValue( RRunStatus.m_lResultDataIndex, (long) nStringMatch );
+						m_lvoMatchLineNumber.SetValue( lStringMatch, rRunStatus.m_lResultDataIndex );
 					}// end if
 					else // Handle the old way
 					{
@@ -1167,7 +1167,7 @@ bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& RRunStatus, SvStl::Messag
 						
 							if( m_nTotalCount == 1 )
 							{
-								m_lvoMatchLineNumber.SetValue( RRunStatus.m_lResultDataIndex, (const long) 1L );
+								m_lvoMatchLineNumber.SetValue( 1L, rRunStatus.m_lResultDataIndex );
 							}// end if
 
 						}// end if
@@ -1220,26 +1220,26 @@ bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& RRunStatus, SvStl::Messag
 				{
 					case 1: // Passed
 					{
-						failed.SetValue( RRunStatus.m_lResultDataIndex, FALSE );
-						warned.SetValue( RRunStatus.m_lResultDataIndex, FALSE );
-						passed.SetValue( RRunStatus.m_lResultDataIndex, TRUE );
+						failed.SetValue( BOOL(false), rRunStatus.m_lResultDataIndex );
+						warned.SetValue( BOOL(false), rRunStatus.m_lResultDataIndex );
+						passed.SetValue( BOOL(true), rRunStatus.m_lResultDataIndex );
 
-						RRunStatus.SetPassed();
+						rRunStatus.SetPassed();
 
 						break;
 					}
 					case 2: // Warned
 					{
-						failed.SetValue( RRunStatus.m_lResultDataIndex, FALSE );
-						warned.SetValue( RRunStatus.m_lResultDataIndex, TRUE );
+						failed.SetValue( BOOL(false), rRunStatus.m_lResultDataIndex );
+						warned.SetValue( BOOL(true), rRunStatus.m_lResultDataIndex );
 
-						RRunStatus.SetWarned();
+						rRunStatus.SetWarned();
 
 						break;
 					}
 					default: // Failed 
 					{
-						RRunStatus.SetFailed();
+						rRunStatus.SetFailed();
 
 						break;
 					}
@@ -1257,7 +1257,7 @@ bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& RRunStatus, SvStl::Messag
 	{
 		assert (0);
 		SetInvalid();
-		RRunStatus.SetInvalid();
+		rRunStatus.SetInvalid();
 
 		SVStringVector msgList;
 		msgList.push_back(_T("SVOCVAnalyzeResultClass::onRun"));
@@ -1312,29 +1312,37 @@ BOOL SVOCVAnalyzeResultClass::BuildHashTable( char *pBuffer )
 		// We are calculating m_lLowValue and m_lHighValue because the string corresponding to
 		// m_lLowValue should go to index 0 and the string for m_lHighValue should have the max index
 		if(!m_nTotalCount)
+		{
 			m_lLowValue = m_lHighValue = lIndexValue;
-		
+		}
 		else if(lIndexValue < m_lLowValue)
+		{
 			m_lLowValue = lIndexValue; 
+		}
 		else if(lIndexValue > m_lHighValue)
+		{
 			m_lHighValue = lIndexValue; 
+		}
 	}
 	
 	// Allocate a table that is 10 times the size of m_nTotalCount
 	while(1)
 	{
-		if(m_pIndexTable)
+		if(nullptr != m_pIndexTable)
+		{
 			delete m_pIndexTable;
+			m_pIndexTable = nullptr;
+		}
 		// If there is only one entry in the file, make it work the old way.   
 		if(m_nTotalCount == 1)
 		{
-			m_svoMatchString.SetValue( 1, (LPTSTR)pBuffer );
+			m_svoMatchString.SetValue( SVString(pBuffer), 1 );
 			m_pIndexTable = nullptr;
 			break; // No need to create hash table
 		}
 		
 		m_pIndexTable = new short[m_nTotalCount * 10];
-		if(!m_pIndexTable)
+		if( nullptr == m_pIndexTable)
 		{
 			bRet = FALSE;
 			break;
@@ -1418,9 +1426,9 @@ void SVOCVAnalyzeResultClass::InsertValueToTable ( short nValue, int nIndex )
 //  4-25-00    sri			First Implementation
 //	:
 ////////////////////////////////////////////////////////////////////////////////
-int SVOCVAnalyzeResultClass::CheckStringInTable(const SVString& rMatchString)
+long SVOCVAnalyzeResultClass::CheckStringInTable(const SVString& rMatchString)
 {
-	int nReturnIndex = -1;
+	long Result( -1L );
 	
 	long  lIndexValue = 0;
 	size_t   nCharCount = rMatchString.size();
@@ -1434,7 +1442,7 @@ int SVOCVAnalyzeResultClass::CheckStringInTable(const SVString& rMatchString)
 	// if Index value is out of range, definitely there won't be a match in the file.
 	if(lIndexValue >= m_lLowValue && lIndexValue <= m_lHighValue)
 	{
-		int nActualIndex = (int)((((double)(lIndexValue - m_lLowValue)) / m_dFactor) * 9.5);
+		int nActualIndex = static_cast<int> ((((double)(lIndexValue - m_lLowValue)) / m_dFactor) * 9.5);
 		// Check whether the string at this location is the matchString.
 		
 		while(m_pIndexTable[nActualIndex] != 0) 
@@ -1443,20 +1451,22 @@ int SVOCVAnalyzeResultClass::CheckStringInTable(const SVString& rMatchString)
 			
 			if( rMatchString == pData )
 			{
-				nReturnIndex = m_pIndexTable[nActualIndex];
+				Result = static_cast<long> (m_pIndexTable[nActualIndex]);
 				break;
 			}
 			nActualIndex++;
 			
 			// if we reach the end of the hash table, start from the begining( starting from 3rd position) 
 			if(nActualIndex >= m_nTotalCount * 10 )
+			{
 				nActualIndex = 2;
+			}
 		}
 	}
-	return  nReturnIndex;
+	return Result;
 } 
 
-HRESULT SVOCVAnalyzeResultClass::onCollectOverlays(SVImageClass* p_pImage, SVExtentMultiLineStructCArray& p_rMultiLineArray )
+HRESULT SVOCVAnalyzeResultClass::onCollectOverlays(SVImageClass* p_pImage, SVExtentMultiLineStructVector& p_rMultiLineArray )
 {
 	HRESULT l_hr = S_OK;
 
@@ -1476,10 +1486,15 @@ HRESULT SVOCVAnalyzeResultClass::onCollectOverlays(SVImageClass* p_pImage, SVExt
 
 				SVOCVCharacterResultClass *pResult = arrayOCVCharacterResults.GetAt( i );
 
-				pResult->m_dvoOverlayLeft.GetValue( lLeft );
-				pResult->m_dvoOverlayTop.GetValue( lTop );
-				pResult->m_dvoOverlayWidth.GetValue( lWidth );
-				pResult->m_dvoOverlayHeight.GetValue( lHeight );
+				double Value;
+				pResult->m_dvoOverlayLeft.GetValue( Value );
+				lLeft = static_cast<long> (Value);
+				pResult->m_dvoOverlayTop.GetValue( Value );
+				lTop = static_cast<long> (Value);
+				pResult->m_dvoOverlayWidth.GetValue( Value );
+				lWidth = static_cast<long> (Value);
+				pResult->m_dvoOverlayHeight.GetValue( Value );
+				lHeight = static_cast<long> (Value);
 
 				CRect l_oRect(lLeft, lTop, lLeft + lWidth, lTop + lHeight);
 

@@ -71,7 +71,7 @@ void SVLightReferenceDialogPropertySheetClass::OnClose()
 
 
 
-bool SVLightReferenceDialogPropertySheetClass::CreatePages( SVVirtualCameraPtrSet& setCameras, SVLightReferenceArray& apLRA)
+bool SVLightReferenceDialogPropertySheetClass::CreatePages( SVVirtualCameraPtrSet& setCameras, SVLightReferencePtrVector& apLRA)
 {
 	miNumPages=0;
 	int i;

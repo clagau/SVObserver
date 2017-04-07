@@ -15,19 +15,19 @@
 
 void SVShiftToolUtility::SetToolNormalize(SVShiftTool* pShiftTool)
 {
-	_variant_t l_Variant;
+	_variant_t Value;
 	long l_TranslationX = 0;
 	long l_TranslationY = 0;
 
 	SVTaskObjectValueInterface l_Interface( pShiftTool );
 
-	l_Interface.GetValue( pShiftTool->GetUniqueObjectID(), SVOutputEvaluateTranslationXResultObjectGuid, l_Variant.GetVARIANT() );
+	l_Interface.GetValue( pShiftTool->GetUniqueObjectID(), SVOutputEvaluateTranslationXResultObjectGuid, Value );
 
-	l_TranslationX = l_Variant;
+	l_TranslationX = Value.lVal;
 
-	l_Interface.GetValue( pShiftTool->GetUniqueObjectID(), SVOutputEvaluateTranslationYResultObjectGuid, l_Variant.GetVARIANT() );
+	l_Interface.GetValue( pShiftTool->GetUniqueObjectID(), SVOutputEvaluateTranslationYResultObjectGuid, Value );
 
-	l_TranslationY = l_Variant;
+	l_TranslationY = Value.lVal;
 
 	HRESULT l_hrOk = l_Interface.AddInputRequest( pShiftTool->GetUniqueObjectID(), SVShiftToolReferenceXObjectGuid, l_TranslationX );
 
@@ -49,54 +49,54 @@ void SVShiftToolUtility::SetToolNormalize(SVShiftTool* pShiftTool)
 
 void SVShiftToolUtility::SetToolSetReference(SVShiftTool *pShiftTool)
 {
-	_variant_t l_Variant;
-	long l_Left = 0;
-	long l_Top = 0;
-	long l_TranslationX = 0;
-	long l_TranslationY = 0;
+	_variant_t Value;
+	long Left( 0L );
+	long Top( 0L );
+	long TranslationX( 0L );
+	long TranslationY( 0L );
 
 	SVTaskObjectValueInterface l_Interface( pShiftTool );
 
 	// Normalize Extents
-	l_Interface.GetValue( pShiftTool->GetUniqueObjectID(), SVExtentRelativeLeftPositionObjectGuid, l_Variant.GetVARIANT() );
+	l_Interface.GetValue( pShiftTool->GetUniqueObjectID(), SVExtentRelativeLeftPositionObjectGuid, Value );
 
-	l_Left = l_Variant;
+	Left = static_cast<long> (Value);
 
-	l_Interface.GetValue( pShiftTool->GetUniqueObjectID(), SVExtentRelativeTopPositionObjectGuid, l_Variant.GetVARIANT() );
+	l_Interface.GetValue( pShiftTool->GetUniqueObjectID(), SVExtentRelativeTopPositionObjectGuid, Value );
 
-	l_Top = l_Variant;
+	Top = static_cast<long> (Value);
 
-	l_Interface.GetValue( pShiftTool->GetUniqueObjectID(), SVImageTransformDisplacementXGuid, l_Variant.GetVARIANT() );
+	l_Interface.GetValue( pShiftTool->GetUniqueObjectID(), SVImageTransformDisplacementXGuid, Value );
 
-	l_Left += static_cast< long >( l_Variant );
+	Left += static_cast<long> (Value);
 
-	l_Interface.GetValue( pShiftTool->GetUniqueObjectID(), SVImageTransformDisplacementYGuid, l_Variant.GetVARIANT() );
+	l_Interface.GetValue( pShiftTool->GetUniqueObjectID(), SVImageTransformDisplacementYGuid, Value );
 
-	l_Top += static_cast< long >( l_Variant );
+	Top += static_cast<long> (Value);
 
-	l_Interface.GetValue( pShiftTool->GetUniqueObjectID(), SVOutputEvaluateTranslationXResultObjectGuid, l_Variant.GetVARIANT() );
+	l_Interface.GetValue( pShiftTool->GetUniqueObjectID(), SVOutputEvaluateTranslationXResultObjectGuid, Value );
 
-	l_TranslationX = l_Variant;
+	TranslationX = static_cast<long> (Value);
 
-	l_Interface.GetValue( pShiftTool->GetUniqueObjectID(), SVOutputEvaluateTranslationYResultObjectGuid, l_Variant.GetVARIANT() );
+	l_Interface.GetValue( pShiftTool->GetUniqueObjectID(), SVOutputEvaluateTranslationYResultObjectGuid, Value );
 
-	l_TranslationY = l_Variant;
+	TranslationY = static_cast<long> (Value);
 
-	HRESULT l_hrOk = l_Interface.AddInputRequest( pShiftTool->GetUniqueObjectID(), SVExtentRelativeLeftPositionObjectGuid, l_Left );
+	HRESULT l_hrOk = l_Interface.AddInputRequest( pShiftTool->GetUniqueObjectID(), SVExtentRelativeLeftPositionObjectGuid, Left );
 
 	if( S_OK == l_hrOk )
 	{
-		l_hrOk = l_Interface.AddInputRequest( pShiftTool->GetUniqueObjectID(), SVExtentRelativeTopPositionObjectGuid, l_Top );
+		l_hrOk = l_Interface.AddInputRequest( pShiftTool->GetUniqueObjectID(), SVExtentRelativeTopPositionObjectGuid, Top );
 	}
 
 	if( S_OK == l_hrOk )
 	{
-		l_hrOk = l_Interface.AddInputRequest( pShiftTool->GetUniqueObjectID(), SVShiftToolReferenceXObjectGuid, l_TranslationX );
+		l_hrOk = l_Interface.AddInputRequest( pShiftTool->GetUniqueObjectID(), SVShiftToolReferenceXObjectGuid, TranslationX );
 	}
 
 	if( S_OK == l_hrOk )
 	{
-		l_hrOk = l_Interface.AddInputRequest( pShiftTool->GetUniqueObjectID(), SVShiftToolReferenceYObjectGuid, l_TranslationY );
+		l_hrOk = l_Interface.AddInputRequest( pShiftTool->GetUniqueObjectID(), SVShiftToolReferenceYObjectGuid, TranslationY );
 	}
 
 	if( S_OK == l_hrOk )

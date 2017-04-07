@@ -41,6 +41,6 @@ struct SVExtentPointStruct
 	double m_dPositionY;
 };
 
-typedef SVVector< SVExtentPointStruct > SVExtentPointStructCArray;
+typedef SVVector<SVExtentPointStruct> SVExtentPointStructVector;
 
 

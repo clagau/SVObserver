@@ -19,7 +19,7 @@
 SVLaplacianEdge2FilterClass::SVLaplacianEdge2FilterClass( SVObjectClass* POwner, int StringResourceID )
 						    :SVFilterClass( POwner, StringResourceID ) 
 {
-	m_outObjectInfo.ObjectTypeInfo.SubType = SVLaplacianEdge2FilterObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVLaplacianEdge2FilterObjectType;
 }
 
 SVLaplacianEdge2FilterClass::~SVLaplacianEdge2FilterClass()
@@ -32,7 +32,7 @@ SVLaplacianEdge2FilterClass::~SVLaplacianEdge2FilterClass()
 // .Description : Runs this operator.
 //              : Returns FALSE, if operator cannot run ( may be deactivated ! )
 ////////////////////////////////////////////////////////////////////////////////
-bool SVLaplacianEdge2FilterClass::onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVLaplacianEdge2FilterClass::onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 { 
 	if( m_pCurrentUIOPL && !( RInputImageHandle.empty() ) && !( ROutputImageHandle.empty() ) )
 	{
@@ -55,7 +55,7 @@ bool SVLaplacianEdge2FilterClass::onRun( bool First, SVSmartHandlePointer RInput
 			}
 			// Signal that something was wrong...
 			SetInvalid();
-			RRunStatus.SetInvalid();
+			rRunStatus.SetInvalid();
 			return false;
 		}
 
@@ -73,7 +73,7 @@ bool SVLaplacianEdge2FilterClass::onRun( bool First, SVSmartHandlePointer RInput
 
 	// Signal that something was wrong...
 	SetInvalid();
-	RRunStatus.SetInvalid();
+	rRunStatus.SetInvalid();
 	return false;
 }
 

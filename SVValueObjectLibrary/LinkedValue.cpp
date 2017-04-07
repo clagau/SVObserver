@@ -28,9 +28,12 @@ static char THIS_FILE[] = __FILE__;
 
 #pragma region Constructor
 LinkedValue::LinkedValue() : 
- m_pLinkedObject( nullptr )
-,m_CircularReference( false )
+ m_pLinkedObject(nullptr)
+,m_pLinkedValueObject(nullptr)
+,m_CircularReference(false)
+,m_getNonLinkedValue(false)
 {
+	m_LinkedName.setStatic( true );
 }
 
 LinkedValue::~LinkedValue()
@@ -39,8 +42,15 @@ LinkedValue::~LinkedValue()
 #pragma endregion Constructor
 
 #pragma region Public Methods
-HRESULT LinkedValue::GetValueAt( int Bucket, int Index, VARIANT& rValue ) const
+HRESULT LinkedValue::GetValue( _variant_t& rValue,  int Bucket /*= -1*/, int Index /*= -1*/ ) const
 {
+	//If get non linked value call base class method
+	if( m_getNonLinkedValue )
+	{
+		return __super::GetValue( rValue, Bucket, Index );
+	}
+
+	Bucket = (-1 == Bucket) ? GetLastSetIndex() : Bucket;
 	HRESULT Result( ValidateIndexes(Bucket,Index) );
 
 	//! If this flag is still set then this value is trying to reference itself!
@@ -54,19 +64,13 @@ HRESULT LinkedValue::GetValueAt( int Bucket, int Index, VARIANT& rValue ) const
 	{
 		//! When getting the value from an indirect value make sure it is not referencing this object
 		m_CircularReference = true;
-		if(  SVValueObjectClass* pValueObject = dynamic_cast<SVValueObjectClass*> (m_pLinkedObject) )
+		if( nullptr != m_pLinkedValueObject )
 		{
-			Result = pValueObject->GetValue( Bucket, Index, rValue );
-		}
-		else if( BasicValueObject* pBasicValueObject = dynamic_cast<BasicValueObject*> (m_pLinkedObject) )
-		{
-			_variant_t Value;
-			Result = pBasicValueObject->getValue( Value );
-			::VariantCopy( &rValue, &Value );
+			Result = m_pLinkedValueObject->getValue( rValue, Bucket, Index );
 		}
 		else
 		{
-			Result = SVVariantValueObjectClass::GetValueAt( Bucket, Index, rValue );
+			Result = __super::GetValue( rValue, Bucket, Index );
 		}
 		m_CircularReference = false;
 		if( S_OK == Result )
@@ -82,227 +86,9 @@ HRESULT LinkedValue::GetValueAt( int Bucket, int Index, VARIANT& rValue ) const
 	return Result;
 }
 
-HRESULT LinkedValue::GetValueAt( int Bucket, int Index, SVString& rValue ) const
-{
-	HRESULT Result( S_OK );
-	_variant_t Value;
-
-	Result = GetValueAt( Bucket, Index, Value.GetVARIANT() );
-
-	if( S_OK == Result && (Value.vt & VT_ARRAY) != VT_ARRAY )
-	{
-		VARTYPE oldType = Value.vt;
-		//Convert the variant to a valid string
-		Result = ::VariantChangeTypeEx( &Value.GetVARIANT(), &Value.GetVARIANT(), SvOl::LCID_USA, VARIANT_ALPHABOOL, VT_BSTR);
-		if ( S_OK == Result )
-		{
-			rValue = SvUl_SF::createSVString( Value.bstrVal );
-			if( VT_BOOL == oldType )
-			{
-				SvUl_SF::MakeUpper( rValue );
-			}
-		}
-		else
-		{
-			rValue.clear();
-		}
-	}
-
-	return Result;
-}
-
-HRESULT LinkedValue::GetValueAt( int Bucket, int Index, BOOL& rValue ) const
-{
-	HRESULT Result( S_OK );
-	_variant_t Value;
-
-	Result = GetValueAt( Bucket, Index, Value.GetVARIANT() );
-
-	if ( S_OK == Result )
-	{
-		switch ( Value.vt )
-		{
-		case VT_BSTR:
-			{
-				SVString Temp( _bstr_t( Value.bstrVal) );
-				if ( 0 == SvUl_SF::CompareNoCase( Temp, SVString( SvOi::cTrue) ) )
-				{
-					rValue = true;
-
-				}
-				if ( 0 == SvUl_SF::CompareNoCase( Temp, SVString( SvOi::cFalse) ) )
-				{
-					rValue = false;
-				}
-				else if ( Temp == _T("1") )
-				{
-					rValue = true;
-				}
-				else if ( Temp == _T("0") )
-				{
-					rValue = false;
-				}
-				else
-				{
-					rValue = false;
-				}
-			}
-			break;
-
-		default:
-			{
-				Result = ::VariantChangeType( &Value, &Value, 0, VT_BOOL );
-				if ( S_OK == Result )
-				{
-					rValue = Value.boolVal;
-				}
-				else
-				{
-					if ( VT_BOOL == DefaultValue().vt )
-					{
-						rValue = DefaultValue().boolVal;
-					}
-					else
-					{
-						rValue = false;
-					}
-				}
-			}
-		}
-	}
-
-	return Result;
-}
-
-
-HRESULT LinkedValue::GetValueAt( int Bucket, int Index, double& rValue ) const
-{
-	HRESULT Result( S_OK );
-	_variant_t Value;
-
-	Result = GetValueAt( Bucket, Index, Value.GetVARIANT() );
-
-	if( S_OK == Result && (Value.vt & VT_ARRAY) != VT_ARRAY )
-	{
-		Result = ::VariantChangeType( &Value, &Value, 0, VT_R8 );
-		if ( S_OK == Result )
-		{
-			rValue = Value.dblVal;
-		}
-		else
-		{
-			rValue = 0.0;
-		}
-	}
-
-	return Result;
-}
-
-HRESULT LinkedValue::GetValueAt( int Bucket, int Index, long& rValue ) const
-{
-	HRESULT Result( S_OK );
-	_variant_t Value;
-
-	Result = GetValueAt( Bucket, Index, Value.GetVARIANT() );
-
-	if( S_OK == Result && (Value.vt & VT_ARRAY) != VT_ARRAY )
-	{
-		Result = ::VariantChangeType( &Value, &Value, 0, VT_I4 );
-		if ( S_OK == Result )
-		{
-			rValue = Value.lVal;
-		}
-		else
-		{
-			rValue = 0;
-		}
-	}
-
-	return Result;
-}
-
-HRESULT LinkedValue::GetValueAt( int Bucket, int Index, DWORD& rValue ) const
-{
-	HRESULT Result( S_OK );
-	_variant_t Value;
-
-	Result = GetValueAt( Bucket, Index, Value.GetVARIANT() );
-
-	if( S_OK == Result && (Value.vt & VT_ARRAY) != VT_ARRAY )
-	{
-		Result = ::VariantChangeType( &Value, &Value, 0, VT_UI4 );
-		if ( S_OK == Result )
-		{
-			rValue = Value.ulVal;
-		}
-		else
-		{
-			rValue = 0;
-		}
-	}
-
-	return Result;
-}
-
-HRESULT LinkedValue::GetValueAt( int Bucket, int Index, BYTE& rValue) const
-{
-	HRESULT Result( S_OK );
-	_variant_t Value;
-
-	Result = GetValueAt( Bucket, Index, Value.GetVARIANT() );
-
-	if( S_OK == Result && (Value.vt & VT_ARRAY) != VT_ARRAY )
-	{
-		Result = ::VariantChangeType( &Value, &Value, 0, VT_UI1);
-		if ( S_OK == Result )
-		{
-			rValue = Value.bVal;
-		}
-		else
-		{
-			rValue = 0;
-		}
-	}
-
-	return Result;
-}
-
-HRESULT LinkedValue::SetValueAt( int Bucket, int Index, const SVString& rValue )
-{
-	HRESULT Result( S_OK );
-	SVObjectClass* pNewLinkedObject = ConvertStringInObject( SVString( rValue ) );
-
-	// disconnect existing connection if any existing
-	DisconnectInput();
-
-	if ( nullptr != pNewLinkedObject )
-	{
-		m_pLinkedObject = pNewLinkedObject;
-		m_LinkedUid = m_pLinkedObject->GetUniqueObjectID();
-		//This must use the base class otherwise causes recursive call to SetValueAt
-		Result = SVVariantValueObjectClass::SetValueAt( Bucket, Index, m_LinkedUid.ToString().c_str() );
-		if (S_OK == Result)
-		{
-			bool messageReturn = ConnectInput();
-			assert( messageReturn );
-			//To check that the linked value has no circular reference we do a GetValue
-			_variant_t Value;
-			Result = GetValueAt( Bucket, Index, Value.GetVARIANT() );
-		}
-	}
-	else
-	{
-		SetType( GetDefaultType() );
-		Result = SetValueKeepType( Bucket, rValue.c_str() );
-	}
-
-	UpdateLinkedName();
-	return Result;
-}
-
 bool LinkedValue::DisconnectObjectInput( SVInObjectInfoStruct* pObjectInInfo )
 {
-	if ( nullptr != pObjectInInfo && pObjectInInfo->GetInputObjectInfo().PObject == m_pLinkedObject )
+	if ( nullptr != pObjectInInfo && pObjectInInfo->GetInputObjectInfo().m_pObject == m_pLinkedObject )
 	{
 		DisconnectInput();
 	}
@@ -313,22 +99,23 @@ void LinkedValue::UpdateLinkedName()
 {
 	if( nullptr != m_pLinkedObject && SV_GUID_NULL != m_LinkedUid )
 	{
-		m_LinkedName.SetValue( 0, SVString(m_pLinkedObject->GetCompleteObjectNameToObjectType()) );
-		m_LinkedName.ObjectAttributesAllowedRef() = SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES;
+		m_LinkedName.SetValue( SVString(m_pLinkedObject->GetCompleteObjectNameToObjectType()) );
+		m_LinkedName.SetObjectAttributesAllowed( SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::OverwriteAttribute );
 	}
 	else
 	{
-		SVString Value;
-		m_LinkedName.GetDefaultValue( Value );
-		m_LinkedName.SetValue( 0, Value );
-		m_LinkedName.ObjectAttributesAllowedRef() = SV_HIDDEN;
+		SVString Value = m_LinkedName.GetDefaultValue();
+		m_LinkedName.SetValue( Value );
+		m_LinkedName.SetObjectAttributesAllowed( SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
 	}
 }
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
-void LinkedValue::ValidateValue( int iBucket, int iIndex, const SVString& rValue ) const
+_variant_t LinkedValue::ConvertString2Type( const SVString& rValue ) const
 {
+	_variant_t Result;
+
 	SVObjectClass* pLinkedObject = ConvertStringInObject(rValue);
 
 	if ( nullptr != pLinkedObject )
@@ -336,7 +123,7 @@ void LinkedValue::ValidateValue( int iBucket, int iIndex, const SVString& rValue
 		if( CheckLinkedObject( pLinkedObject ) )
 		{
 			//This must use the base class otherwise causes recursive call to ValidateValue
-			SVVariantValueObjectClass::ValidateValue( iBucket, iIndex, pLinkedObject->GetUniqueObjectID().ToString().c_str() );
+			Result = SVVariantValueObjectClass::ConvertString2Type( pLinkedObject->GetUniqueObjectID().ToString() );
 		}
 		else
 		{
@@ -352,11 +139,11 @@ void LinkedValue::ValidateValue( int iBucket, int iIndex, const SVString& rValue
 	else
 	{
 		_variant_t vtTemp;
-		vtTemp = rValue.c_str();
+		vtTemp.SetString( rValue.c_str() );
 
-		if( DefaultValue().vt != VT_EMPTY )
+		if( GetDefaultValue().vt != VT_EMPTY )
 		{
-			HRESULT Result = ::VariantChangeType( &vtTemp, &vtTemp, 0, DefaultValue().vt );
+			HRESULT Result = ::VariantChangeType( &vtTemp, &vtTemp, 0, GetDefaultValue().vt );
 			if ( S_OK != Result) //object index out of range will not throw
 			{
 				SVStringVector msgList;
@@ -367,8 +154,9 @@ void LinkedValue::ValidateValue( int iBucket, int iIndex, const SVString& rValue
 			}
 		}
 
-		base::ValidateValue( iBucket, iIndex, rValue );
+		Result = SVVariantValueObjectClass::ConvertString2Type( rValue );
 	}
+	return Result;
 }
 #pragma endregion Protected Methods
 
@@ -380,8 +168,9 @@ bool LinkedValue::UpdateConnection(SvStl::MessageContainerVector *pErrorMessages
 	bool ConvertDottedName( false );
 	SVString Value;
 
-	//We now need to check the no linked value so call the base class method
-	SVVariantValueObjectClass::GetValueAt( m_iLastSetIndex, 0,  Value );
+	m_getNonLinkedValue = true;
+	getValue( Value );
+	m_getNonLinkedValue = false;
 
 	SVGUID LinkedUid( _bstr_t( Value.c_str() ) );
 
@@ -429,11 +218,12 @@ bool LinkedValue::UpdateConnection(SvStl::MessageContainerVector *pErrorMessages
 			//First disconnect and then set the new Linked object
 			DisconnectInput();
 			m_pLinkedObject = pLinkedObject;
+			m_pLinkedValueObject = dynamic_cast<SvOi::IValueObject*> (m_pLinkedObject);
 			m_LinkedUid = m_pLinkedObject->GetUniqueObjectID();
 			//Convert old dotted name format to Unique GUID
 			if( ConvertDottedName )
 			{
-				SVVariantValueObjectClass::SetValueAt( 0, 0, m_LinkedUid.ToString().c_str() );
+				SVVariantValueObjectClass::setValue( m_LinkedUid.ToString() );
 			}
 			bool messageReturn = ConnectInput();
 			assert( messageReturn );
@@ -454,9 +244,11 @@ bool LinkedValue::UpdateConnection(SvStl::MessageContainerVector *pErrorMessages
 		{
 			DisconnectInput();
 
-			_variant_t value;
-			SVVariantValueObjectClass::GetValue( value );
-			if ( GetDefaultType() != value.vt)
+			_variant_t VariantValue;
+			m_getNonLinkedValue = true;
+			GetValue( VariantValue );
+			m_getNonLinkedValue = false;
+			if ( GetDefaultType() != VariantValue.vt)
 			{
 				Result = false;
 				if (nullptr != pErrorMessages)
@@ -482,6 +274,7 @@ void LinkedValue::DisconnectInput()
 		m_pLinkedObject->DisconnectObjectInput(&InputConnectionInfo);
 		m_LinkedUid = SV_GUID_NULL;
 		m_pLinkedObject = nullptr;
+		m_pLinkedValueObject = nullptr;
 	}
 }
 

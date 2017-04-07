@@ -29,7 +29,7 @@ SVBinaryOperatorClass::~SVBinaryOperatorClass()
 void SVBinaryOperatorClass::init()
 {
 	// Identify our output type
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVBinaryOperatorObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVBinaryOperatorObjectType;
 
 	// Register Embedded Object(s)
 

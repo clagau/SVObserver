@@ -317,7 +317,7 @@ HRESULT SVVisionProcessorHelper::GetDataDefinitionList( const SVString& rInspect
 					break;
 				}
 
-				SVObjectClass* l_pObject = l_ObjRef.Object();
+				SVObjectClass* l_pObject = l_ObjRef.getObject();
 
 				if( l_pObject )
 				{
@@ -537,7 +537,7 @@ HRESULT SVVisionProcessorHelper::SetItems( const SVNameStorageMap& rItems, SVNam
 			for( ; StatusItems.end() != StatusItemIter; ++StatusItemIter )
 			{
 				rStatusItems.insert( *StatusItemIter );
-			}
+				}
 			if( S_OK == l_Status )
 			{
 				l_Status = l_LoopStatus;
@@ -566,14 +566,14 @@ HRESULT SVVisionProcessorHelper::GetStandardItems( const SVNameSet& rNames, SVNa
 	for( SVNameSet::const_iterator l_Iter = rNames.begin(); SUCCEEDED( Status ) && l_Iter != rNames.end(); ++l_Iter )
 	{
 		HRESULT LoopStatus = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
-		SVObjectReference ref;
+		SVObjectReference ObjectRef;
 		SVStorage ValueStorage;
 
-		SVObjectManagerClass::Instance().GetObjectByDottedName( *l_Iter, ref );
+		SVObjectManagerClass::Instance().GetObjectByDottedName( *l_Iter, ObjectRef );
 
-		if( nullptr != ref.Object() )
+		if( nullptr != ObjectRef.getObject() )
 		{
-			BasicValueObject* pBasicValueObject = dynamic_cast< BasicValueObject* >( ref.Object() );
+			BasicValueObject* pBasicValueObject = dynamic_cast< BasicValueObject* >( ObjectRef.getObject() );
 
 			if( nullptr != pBasicValueObject )
 			{
@@ -594,12 +594,12 @@ HRESULT SVVisionProcessorHelper::GetStandardItems( const SVNameSet& rNames, SVNa
 			}
 			else
 			{
-				SVValueObjectClass* pValueObject = dynamic_cast< SVValueObjectClass* >( ref.Object() );
+				SvOi::IValueObject* pValueObject = ObjectRef.getValueObject();
 
 				if ( nullptr != pValueObject )
 				{
 					_variant_t Value;
-					if( S_OK == pValueObject->GetValue( Value ) )
+					if( S_OK == pValueObject->getValue( Value ) )
 					{
 						ValueStorage.m_Variant = Value;
 						ValueStorage.m_StorageType = SVVisionProcessor::SVStorageValue;
@@ -782,35 +782,35 @@ HRESULT SVVisionProcessorHelper::SetCameraItems( const SVNameStorageMap& rItems,
 	return l_Status;
 }
 
-HRESULT SVVisionProcessorHelper::GetObjectDefinition( const SVObjectClass& rObj, const long p_Filter, SVDataDefinitionStruct& rDataDef ) const
+HRESULT SVVisionProcessorHelper::GetObjectDefinition( const SVObjectClass& rObject, const long Filter, SVDataDefinitionStruct& rDataDef ) const
 {
 	HRESULT l_Status = S_OK;
 
 	//Check using the filter if object should be included
 	bool l_bValueIncluded = false;
-	if((SV_DD_VALUE == p_Filter) || (SV_DD_IMAGE == p_Filter))
+	if((SV_DD_VALUE == Filter) || (SV_DD_IMAGE == Filter))
 	{
 		//This is called when selected values or images
-		l_bValueIncluded = (rObj.ObjectAttributesSet() & p_Filter) != 0;
+		l_bValueIncluded = (rObject.ObjectAttributesSet() & Filter) != 0;
 	}
 	else
 	{
 		//This is called when all values or all images
-		l_bValueIncluded = (rObj.ObjectAttributesAllowed() & p_Filter) != 0;
+		l_bValueIncluded = (rObject.ObjectAttributesAllowed() & Filter) != 0;
 	}
-	l_bValueIncluded = l_bValueIncluded && ( (rObj.ObjectAttributesAllowed() & SV_HIDDEN) == 0 );
+	l_bValueIncluded = l_bValueIncluded && ( (rObject.ObjectAttributesAllowed() & SV_HIDDEN) == 0 );
 	if( l_bValueIncluded )
 	{
 		SVString Temp;
-		Temp = _T("Inspections.") + rObj.GetCompleteName();
+		Temp = _T("Inspections.") + rObject.GetCompleteName();
 		rDataDef.m_Name = Temp;
-		rDataDef.m_Writable = (rObj.ObjectAttributesAllowed() & SV_REMOTELY_SETABLE) == SV_REMOTELY_SETABLE;
-		rDataDef.m_Published = (rObj.ObjectAttributesSet() & SV_PUBLISHABLE) != 0;
-		const SVValueObjectClass* l_pValueObject = dynamic_cast<const SVValueObjectClass*> (&rObj);
+		rDataDef.m_Writable = (rObject.ObjectAttributesAllowed() & SV_REMOTELY_SETABLE) == SV_REMOTELY_SETABLE;
+		rDataDef.m_Published = (rObject.ObjectAttributesSet() & SV_PUBLISHABLE) != 0;
 		//If null we assume its an image
-		if( nullptr != l_pValueObject)
+		const SvOi::IValueObject* pValueObject = dynamic_cast<const SvOi::IValueObject*> (&rObject);
+		if( nullptr != pValueObject )
 		{
-			rDataDef.m_Type = l_pValueObject->GetTypeName();
+			rDataDef.m_Type = pValueObject->getTypeName();
 		}
 		else
 		{
@@ -818,10 +818,10 @@ HRESULT SVVisionProcessorHelper::GetObjectDefinition( const SVObjectClass& rObj,
 			rDataDef.m_Type = _T("Image");
 		}
 		//This part fills the additional info section
-		if( SVEnumValueObjectType == rObj.GetObjectType() )
+		if( SVEnumValueObjectType == rObject.GetObjectType() )
 		{
 			// Get the strings from the enumeration value object class.
-			const SVEnumerateValueObjectClass* l_pEnumVO = dynamic_cast<const SVEnumerateValueObjectClass*> (&rObj);
+			const SVEnumerateValueObjectClass* l_pEnumVO = dynamic_cast<const SVEnumerateValueObjectClass*> (&rObject);
 			if( nullptr != l_pEnumVO )
 			{
 				SVEnumerateVector l_EnumVect;
@@ -830,14 +830,14 @@ HRESULT SVVisionProcessorHelper::GetObjectDefinition( const SVObjectClass& rObj,
 				l_pEnumVO->GetEnumTypes( l_EnumVect );
 				for( l_EnumIter = l_EnumVect.begin(); l_EnumIter != l_EnumVect.end(); l_EnumIter++)
 				{
-					rDataDef.m_AdditionalInfo.push_back(SVString(l_EnumIter->first));
+					rDataDef.m_AdditionalInfo.push_back( SVString(l_EnumIter->first) );
 				}
 			}
 		}
-		else if( SVBoolValueObjectType == rObj.GetObjectType() )
+		else if( SVBoolValueObjectType == rObject.GetObjectType() )
 		{
 			// Get the strings from the enumeration value object class.
-			const SVBoolValueObjectClass* l_pBoolVO = dynamic_cast<const SVBoolValueObjectClass*> (&rObj);
+			const SVBoolValueObjectClass* l_pBoolVO = dynamic_cast<const SVBoolValueObjectClass*> (&rObject);
 			if( nullptr != l_pBoolVO)
 			{
 				SVStringVector Types;
@@ -852,19 +852,19 @@ HRESULT SVVisionProcessorHelper::GetObjectDefinition( const SVObjectClass& rObj,
 		else
 		//This should be an image so check for its additional info
 		{
-			const SVImageClass* l_pImage = dynamic_cast<const SVImageClass*> (&rObj);
-			if(nullptr != l_pImage)
+			const SVImageClass* pImage = dynamic_cast<const SVImageClass*> (&rObject);
+			if( nullptr != pImage )
 			{
-				SVToolClass* l_pTool = dynamic_cast<SVToolClass*>(l_pImage->GetTool());
-				if( nullptr != l_pTool )
+				SVToolClass* pTool = dynamic_cast<SVToolClass*>(pImage->GetTool());
+				if( nullptr != pTool )
 				{
-					SVStaticStringValueObjectClass* l_pSourceNames = l_pTool->GetInputImageNames();
-					if( l_pSourceNames )
+					SVStringValueObjectClass* pSourceNames = pTool->GetInputImageNames();
+					if( nullptr != pSourceNames )
 					{
-						long l_lSize = l_pSourceNames->GetArraySize();
+						long l_lSize = pSourceNames->getArraySize();
 						for( long l_lIndex = 0; l_lIndex < l_lSize ; l_lIndex++ )
 						{
-							HRESULT l_hr = l_pSourceNames->GetValue( l_pSourceNames->GetLastSetIndex(), l_lIndex, Temp );
+							HRESULT l_hr = pSourceNames->GetValue( Temp, pSourceNames->GetLastSetIndex(), l_lIndex );
 							// Prepend the "Inspections." prefix for use with SVRC.
 							Temp = _T( "Inspections." ) + Temp;
 							rDataDef.m_AdditionalInfo.push_back( Temp );
@@ -1305,7 +1305,7 @@ void SVVisionProcessorHelper::SetValuesOrImagesMonitoredObjectLists( const SVNam
 			{
 				if (pPPQ.IsObjectInPPQ(*pObject))
 				{
-					if (SV_IS_KIND_OF(pObject, SVValueObjectClass))
+					if( nullptr != dynamic_cast<SvOi::IValueObject*> (pObject) )
 					{
 						rMonitoredValueObjectList.push_back(rObj);
 					}

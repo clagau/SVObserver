@@ -90,7 +90,7 @@ private:
 	std::map<GUID, GUID> m_resultGuids;
 
 protected:
-	virtual bool onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+	virtual bool onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
 	SVMatroxImageResult msvHistResultID;
 	SVMatroxLongArray   msvplHistValues;
@@ -109,7 +109,7 @@ protected:
 	double m_fixedHeight;
 
 	bool m_useDefault;
-	bool m_accumulate;
-	bool m_dynamicHeight;
+	BOOL m_accumulate;
+	BOOL m_dynamicHeight;
 };
 

@@ -25,111 +25,120 @@ static char THIS_FILE[] = __FILE__;
 #pragma endregion Declarations
 
 SVObjectInfoStruct::SVObjectInfoStruct()
-: PObject( nullptr ), UniqueObjectID(), ObjectTypeInfo(), m_ObjectNameInfo()
+: m_pObject( nullptr ), m_UniqueObjectID(), m_ObjectTypeInfo(), m_ObjectNameInfo()
 {
 }
 
-SVObjectInfoStruct::SVObjectInfoStruct( const SVObjectInfoStruct& O2 )
-: PObject( O2.PObject ), UniqueObjectID( O2.UniqueObjectID ), ObjectTypeInfo( O2.ObjectTypeInfo ), m_ObjectNameInfo( O2.m_ObjectNameInfo )
+SVObjectInfoStruct::SVObjectInfoStruct( const SVObjectInfoStruct& rObjectInfo )
+: m_pObject( rObjectInfo.m_pObject )
+, m_UniqueObjectID( rObjectInfo.m_UniqueObjectID )
+, m_ObjectTypeInfo( rObjectInfo.m_ObjectTypeInfo )
+, m_ObjectNameInfo( rObjectInfo.m_ObjectNameInfo )
 {
 }
 
-SVObjectInfoStruct::SVObjectInfoStruct( SVObjectClass* PO2 )
-: PObject( nullptr ), UniqueObjectID(), ObjectTypeInfo(), m_ObjectNameInfo()
+SVObjectInfoStruct::SVObjectInfoStruct( SVObjectClass* pObject )
+: m_pObject( nullptr ), 
+m_UniqueObjectID(), 
+m_ObjectTypeInfo(), 
+m_ObjectNameInfo()
 {
-	SetObject( PO2 );
+	SetObject( pObject );
 }
 
-SVObjectInfoStruct::SVObjectInfoStruct( SVObjectReference ref )
-: PObject( nullptr ), UniqueObjectID(), ObjectTypeInfo(), m_ObjectNameInfo()
+SVObjectInfoStruct::SVObjectInfoStruct( const SVObjectReference& rObjectRef )
+: m_pObject( nullptr )
+, m_UniqueObjectID()
+, m_ObjectTypeInfo()
+, m_ObjectNameInfo()
 {
-	SetObject( ref );
+	SetObject( rObjectRef );
 }
 
 SVObjectInfoStruct::~SVObjectInfoStruct()
 {
 }
 
-const SVObjectInfoStruct& SVObjectInfoStruct::operator = ( const SVObjectInfoStruct& O2 )
+const SVObjectInfoStruct& SVObjectInfoStruct::operator = ( const SVObjectInfoStruct& rObjectInfo )
 {
-	if( this != &O2 )
+	if( this != &rObjectInfo )
 	{
-		PObject = O2.PObject;
-		UniqueObjectID = O2.UniqueObjectID;
-		ObjectTypeInfo = O2.ObjectTypeInfo;
-		m_ObjectNameInfo = O2.m_ObjectNameInfo;
+		m_pObject = rObjectInfo.m_pObject;
+		m_UniqueObjectID = rObjectInfo.m_UniqueObjectID;
+		m_ObjectTypeInfo = rObjectInfo.m_ObjectTypeInfo;
+		m_ObjectNameInfo = rObjectInfo.m_ObjectNameInfo;
 	}
 	return *this;
 }
 
 void SVObjectInfoStruct::clear()
 {
-	PObject = nullptr;
-	UniqueObjectID.clear();
-	ObjectTypeInfo = SVObjectTypeInfoStruct();
+	m_pObject = nullptr;
+	m_UniqueObjectID.clear();
+	m_ObjectTypeInfo = SVObjectTypeInfoStruct();
 	m_ObjectNameInfo.clear();
 }
 
 void SVObjectInfoStruct::ClearObjectInfo()
 {
-	PObject = nullptr;
-	UniqueObjectID.clear();
+	m_pObject = nullptr;
+	m_UniqueObjectID.clear();
 }
 
-HRESULT SVObjectInfoStruct::SetObject( const SVGUID& p_rObjectID )
+HRESULT SVObjectInfoStruct::SetObject( const SVGUID& rObjectID )
 {
 	HRESULT l_hrOk = S_OK;
 
-	if( p_rObjectID != UniqueObjectID )
+	if( rObjectID != m_UniqueObjectID )
 	{
 		ClearObjectInfo();
-		UniqueObjectID = p_rObjectID;
+		m_UniqueObjectID = rObjectID;
 	}
 	return l_hrOk;
 }
 
-HRESULT SVObjectInfoStruct::SetObject( const SVString& p_rName )
+HRESULT SVObjectInfoStruct::SetObject( const SVString& rName )
 {
 	HRESULT l_hrOk = S_OK;
 
-	if( p_rName != m_ObjectNameInfo.GetObjectArrayName() )
+	if( rName != m_ObjectNameInfo.GetObjectArrayName() )
 	{
 		ClearObjectInfo();
-		l_hrOk = m_ObjectNameInfo.ParseObjectName( p_rName );
+		l_hrOk = m_ObjectNameInfo.ParseObjectName( rName );
 	}
 	return l_hrOk;
 }
 
-HRESULT SVObjectInfoStruct::SetObject( const SVObjectTypeInfoStruct& p_rTypeInfo )
+HRESULT SVObjectInfoStruct::SetObject( const SVObjectTypeInfoStruct& rTypeInfo )
 {
 	HRESULT l_hrOk = S_OK;
 	clear();
-	ObjectTypeInfo = p_rTypeInfo;
+	m_ObjectTypeInfo = rTypeInfo;
 	return l_hrOk;
 }
 
-HRESULT SVObjectInfoStruct::SetObject( SVObjectClass* p_psvObject )
+HRESULT SVObjectInfoStruct::SetObject( SVObjectClass* pObject )
 {
 	HRESULT l_hrOk = S_OK;
 
 	try
 	{
-		if( nullptr != p_psvObject )
+		if( nullptr != pObject )
 		{
 			clear();
 
-			PObject = p_psvObject;
+			m_pObject = pObject;
 
-			ObjectTypeInfo = PObject->GetObjectInfo().ObjectTypeInfo;
+			m_ObjectTypeInfo = m_pObject->GetObjectInfo().m_ObjectTypeInfo;
 
-			UniqueObjectID = PObject->GetUniqueObjectID();
+			m_UniqueObjectID = m_pObject->GetUniqueObjectID();
 
-			if( SV_GUID_NULL == UniqueObjectID )
+			if( SV_GUID_NULL == m_UniqueObjectID )
 			{
-				UniqueObjectID = PObject->GetObjectInfo().UniqueObjectID;
+				m_UniqueObjectID = m_pObject->GetObjectInfo().m_UniqueObjectID;
 			}
 
-			m_ObjectNameInfo.ParseObjectName( PObject->GetCompleteName().c_str() );
+			m_ObjectNameInfo.ParseObjectName( m_pObject->GetCompleteName().c_str() );
 		}
 		else
 		{
@@ -145,66 +154,66 @@ HRESULT SVObjectInfoStruct::SetObject( SVObjectClass* p_psvObject )
 	return l_hrOk;
 }
 
-HRESULT SVObjectInfoStruct::SetObject( const SVObjectReference& p_svObject )
+HRESULT SVObjectInfoStruct::SetObject( const SVObjectReference& rObjectRef )
 {
-	HRESULT l_hrOk = SetObject( p_svObject.Object() );
+	HRESULT l_hrOk = SetObject( rObjectRef.getObject() );
 
 	if( S_OK == l_hrOk )
 	{
-		UniqueObjectID = p_svObject.Guid();
-		m_ObjectNameInfo = p_svObject.GetObjectNameInfo();
+		m_UniqueObjectID = rObjectRef.Guid();
+		m_ObjectNameInfo = rObjectRef.GetObjectNameInfo();
 	}
 	return l_hrOk;
 }
 
-HRESULT SVObjectInfoStruct::SetObject( const SVObjectInfoStruct& p_rObject )
+HRESULT SVObjectInfoStruct::SetObject( const SVObjectInfoStruct& rObjectInfo )
 {
 	HRESULT l_hrOk = S_OK;
 
-	if( this != &p_rObject )
+	if( this != &rObjectInfo )
 	{
-		PObject = p_rObject.PObject;
-		UniqueObjectID = p_rObject.UniqueObjectID;
-		ObjectTypeInfo = p_rObject.ObjectTypeInfo;
-		m_ObjectNameInfo = p_rObject.m_ObjectNameInfo;
+		m_pObject = rObjectInfo.m_pObject;
+		m_UniqueObjectID = rObjectInfo.m_UniqueObjectID;
+		m_ObjectTypeInfo = rObjectInfo.m_ObjectTypeInfo;
+		m_ObjectNameInfo = rObjectInfo.m_ObjectNameInfo;
 	}
 	return l_hrOk;
 }
 
-bool SVObjectInfoStruct::operator == ( const SVObjectInfoStruct& rhs ) const
+bool SVObjectInfoStruct::operator == ( const SVObjectInfoStruct& rRhs ) const
 {
-	bool l_Status = ( UniqueObjectID == rhs.UniqueObjectID );
+	bool l_Status = ( m_UniqueObjectID == rRhs.m_UniqueObjectID );
 
 	if( m_ObjectNameInfo.IsIndexPresent() )
 	{
-		l_Status = m_ObjectNameInfo.GetIndex() == rhs.m_ObjectNameInfo.GetIndex();
+		l_Status = m_ObjectNameInfo.GetIndex() == rRhs.m_ObjectNameInfo.GetIndex();
 	}
 	return l_Status;
 }
 
-bool SVObjectInfoStruct::operator == ( const SVObjectReference& rhs ) const
+bool SVObjectInfoStruct::operator == ( const SVObjectReference& rRhs ) const
 {
 	bool l_Status = true;
 
-	if ( nullptr != rhs.Object() )
+	if ( nullptr != rRhs.getObject() )
 	{
-		l_Status = ( UniqueObjectID == rhs->GetUniqueObjectID() );
+		l_Status = ( m_UniqueObjectID == rRhs.getObject()->GetUniqueObjectID() );
 
 		if( m_ObjectNameInfo.IsIndexPresent() )
 		{
-			l_Status = m_ObjectNameInfo.GetIndex() == rhs.GetObjectNameInfo().GetIndex();
+			l_Status = m_ObjectNameInfo.GetIndex() == rRhs.GetObjectNameInfo().GetIndex();
 		}
 	}
 	else
 	{
-		l_Status = ( SV_GUID_NULL == UniqueObjectID );
+		l_Status = ( SV_GUID_NULL == m_UniqueObjectID );
 	}
 	return l_Status;
 }
 
 SVObjectReference SVObjectInfoStruct::GetObjectReference() const
 {
-	SVObjectReference l_Ref( PObject );
+	SVObjectReference l_Ref( m_pObject );
 
 	if( m_ObjectNameInfo.IsIndexPresent() )
 	{
@@ -226,22 +235,22 @@ BOOL SVObjectInfoStruct::CheckExistence()
 {
 	BOOL l_bOk = true;
 
-	l_bOk = l_bOk && SV_GUID_NULL != UniqueObjectID;
+	l_bOk = l_bOk && SV_GUID_NULL != m_UniqueObjectID;
 
 	if( l_bOk )
 	{
-		SVObjectClass *l_psvObject = SVObjectManagerClass::Instance().GetObject( UniqueObjectID );
+		SVObjectClass *l_psvObject = SVObjectManagerClass::Instance().GetObject( m_UniqueObjectID );
 
-		l_bOk = l_bOk && l_psvObject == PObject;
+		l_bOk = l_bOk && l_psvObject == m_pObject;
 	}
 
-	l_bOk = l_bOk && nullptr != dynamic_cast<SVObjectClass *>(PObject);
+	l_bOk = l_bOk && nullptr != dynamic_cast<SVObjectClass *>(m_pObject);
 
 	if( l_bOk )
 	{
-		GUID l_guidId = PObject->GetUniqueObjectID();
+		GUID l_guidId = m_pObject->GetUniqueObjectID();
 
-		l_bOk = l_bOk && l_guidId == UniqueObjectID;
+		l_bOk = l_bOk && l_guidId == m_UniqueObjectID;
 	}
 	return l_bOk;
 }

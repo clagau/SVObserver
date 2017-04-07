@@ -14,6 +14,7 @@
 #pragma region Includes
 //Moved to precompiled header: #include <vector>
 #include "ObjectInterfaces/ITaskObject.h"
+#include "ObjectInterfaces/IValueObject.h"
 #include "SVRunControlLibrary/SVRunStatus.h"
 #include "SVObjectLibrary/SVInputInfoListClass.h"
 #include "SVObjectAppClass.h"
@@ -72,8 +73,8 @@ public:
 	void Disconnect();
 	virtual bool DisconnectObjectInput(SVInObjectInfoStruct* pInObjectInfo) override;
 	virtual HRESULT GetOutputList( SVOutputInfoListClass& p_rOutputInfoList ) const;
-	virtual HRESULT DisconnectInputsOutputs(SVObjectVector& rListOfObjects);
-	virtual HRESULT HideInputsOutputs(SVObjectVector& rListOfObjects);
+	virtual HRESULT DisconnectInputsOutputs(SVObjectPtrVector& rListOfObjects);
+	virtual HRESULT HideInputsOutputs(SVObjectPtrVector& rListOfObjects);
 
 	virtual BOOL SetObjectDepth( int NewObjectDepth ) override;
 	virtual BOOL SetObjectDepthWithIndex( int NewObjectDepth, int NewLastSetIndex ) override;
@@ -84,11 +85,11 @@ public:
 
 	BOOL RegisterEmbeddedObject( SVImageClass* pEmbeddedObject, const GUID& rGuidEmbeddedID, int StringResourceID );
 	BOOL RegisterEmbeddedObject( SVImageClass* pEmbeddedObject, const GUID& rGuidEmbeddedID, LPCTSTR newString );
-	BOOL RegisterEmbeddedObject( SVValueObjectClass* pEmbeddedObject, const GUID& rGuidEmbeddedID, int StringResourceID, bool p_bResetAlways, SVResetItemEnum p_eRequiredReset, LPCTSTR p_pszTypeName = nullptr );
-	BOOL RegisterEmbeddedObject( SVValueObjectClass* pEmbeddedObject, const GUID& rGuidEmbeddedID, LPCTSTR strName, bool p_bResetAlways, SVResetItemEnum p_eRequiredReset, LPCTSTR p_pszTypeName = nullptr );
+	BOOL RegisterEmbeddedObject( SVObjectClass* pEmbeddedObject, const GUID& rGuidEmbeddedID, int StringResourceID, bool p_bResetAlways, SvOi::SVResetItemEnum eRequiredReset );
+	BOOL RegisterEmbeddedObject( SVObjectClass* pEmbeddedObject, const GUID& rGuidEmbeddedID, LPCTSTR strName, bool p_bResetAlways, SvOi::SVResetItemEnum eRequiredReset );
 	BOOL RegisterInputObject( SVInObjectInfoStruct* PInObjectInfo, const SVString& p_rInputName );
 
-	HRESULT GetOutputListFiltered(std::vector<SVValueObjectReference>& rvecObjects, UINT uiAttributes = SV_NO_ATTRIBUTES, bool bAND = true ); /* true means AND, false means OR */
+	HRESULT GetOutputListFiltered( SVObjectReferenceVector& rvecObjects, UINT uiAttributes = SV_NO_ATTRIBUTES, bool bAND = true ); /* true means AND, false means OR */
 
 	HRESULT GetNonToolsetOutputList( SVOutputInfoListClass& p_rOutputInfoList ) const;
 
@@ -120,8 +121,8 @@ public:
 	virtual const SvStl::MessageContainerVector& getResetErrorMessages() const override {return m_ResetErrorMessages;};
 	virtual const SvStl::MessageContainerVector& getRunErrorMessages() const override {return m_RunErrorMessages;};
 	virtual SvStl::MessageContainerVector getErrorMessages() const override;
-	virtual SvStl::MessageContainerVector validateAndSetEmmeddedValues(const SvOi::SetValuePairVector& valueVector, bool shouldSet) override;
-	virtual void ResolveDesiredInputs(const SvOi::SVInterfaceList& rDesiredInputs) override;
+	virtual SvStl::MessageContainerVector validateAndSetEmmeddedValues(const SvOi::SetValueObjectPairVector& rValueVector, bool shouldSet) override;
+	virtual void ResolveDesiredInputs(const SvOi::SVInterfaceVector& rDesiredInputs) override;
 	//************************************
 	//! Get the first task message
 	//! \return a const reference to the first task message
@@ -170,11 +171,11 @@ public:
 	virtual HRESULT RegisterSubObject( SVObjectClass* pObject ) override;
 	virtual HRESULT UnregisterSubObject( SVObjectClass* pObject ) override;
 
-	virtual HRESULT CollectOverlays( SVImageClass* p_Image, SVExtentMultiLineStructCArray &p_MultiLineArray );
+	virtual HRESULT CollectOverlays( SVImageClass* p_Image, SVExtentMultiLineStructVector &p_MultiLineArray );
 
 	void AddEmbeddedObject( SVObjectClass* PObject );
 	void RemoveEmbeddedObject( SVObjectClass* pObjectToRemove);
-	SVValueObjectClass* GetEmbeddedValueObject( GUID classguid );
+	SVObjectClass* GetEmbeddedValueObject( GUID classguid );
 
 	virtual HRESULT ResetObjectInputs() override;
 
@@ -184,13 +185,13 @@ protected:
 	// Use onRun() to implement your special updating!
 	// Override this only if you have to reroute the call!
 	// NEVER call base class Run()! 
-	virtual bool Run( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr );
+	virtual bool Run( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr );
 
 	virtual HRESULT GetDrawInfo( SVExtentMultiLineStruct& p_rMultiLine );
 	virtual HRESULT UpdateOverlayIDs( SVExtentMultiLineStruct& p_rMultiLine );
 	HRESULT UpdateOverlayColor( SVExtentMultiLineStruct& p_rMultiLine );
 	HRESULT UpdateOverlayName( SVExtentMultiLineStruct& p_rMultiLine, const SVImageExtentClass& p_pImageExtents );
-	virtual HRESULT onCollectOverlays( SVImageClass* p_Image, SVExtentMultiLineStructCArray& p_MultiLineArray );
+	virtual HRESULT onCollectOverlays( SVImageClass* p_Image, SVExtentMultiLineStructVector& p_MultiLineArray );
 
 	virtual SVObjectPtrDeque GetPreProcessObjects() const override;
 	virtual SVObjectPtrDeque GetPostProcessObjects() const override;
@@ -199,17 +200,12 @@ protected:
 
 	void hideEmbeddedObject( SVObjectClass& RObjectToHide );
 
-	HRESULT RegisterSubObject( SVValueObjectClass* p_pValueObject );
-	HRESULT RegisterSubObject( SVImageClass* p_pImageObject );
-	HRESULT UnregisterSubObject( SVValueObjectClass* p_pValueObject );
-	HRESULT UnregisterSubObject( SVImageClass* p_pImageObject );
-
 	// Called by Run()
 	// NOTE:
 	// Override this if you want to implement your own special run.
 	// Don't forget to call base class onRun() first.
-	virtual bool onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr );
-	bool runFriends( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr );
+	virtual bool onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr );
+	bool runFriends( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr );
 
 	virtual bool resetAllOutputListObjects( SvStl::MessageContainerVector *pErrorMessages=nullptr );
 	
@@ -217,9 +213,9 @@ private:
 		HRESULT LocalInitialize();
 
 protected:
-	SVValueObjectClassPtrSet m_svValueObjectSet;
-	SVImageClassPtrSet       m_svImageObjectSet;
-	SVInputInfoListClass     m_InputObjectList;
+	SvOi::IValueObjectPtrSet m_ValueObjectSet;
+	SVImageClassPtrSet		m_ImageObjectSet;
+	SVInputInfoListClass	m_InputObjectList;
 
 	// Embedded Object:
 	SVBoolValueObjectClass  m_isObjectValid;	//	Embedded
@@ -234,7 +230,7 @@ protected:
 	// Only SVTaskObjectListClass and SVTaskObjectClass can have Embedded Objects
 	// Embedded Objects can be SVObjectClass Objects
 	//////////////////////////////////////////////////////////////////////////////////////////////
-	SVObjectClassPtrArray m_embeddedList;
+	SVObjectPtrVector m_embeddedList;
 
 	// Input Interface List
 	// Used to register your input interface...

@@ -12,7 +12,6 @@
 //Moved to precompiled header: #include <boost/noncopyable.hpp>
 #include "ObjectInterfaces\IObjectManager.h"
 #include "ObjectInterfaces\IObjectClass.h"
-#include "ObjectInterfaces\IValueObject.h"
 #include "SVUtilityLibrary\SVGUID.h"
 #include "SVUtilityLibrary\SVSharedPtr.h"
 #pragma endregion Includes
@@ -45,17 +44,17 @@ namespace Seidenader
 					while (!bFound && GUID_NULL != parentID)
 					{
 						const SVObjectTypeInfoStruct& ownerInfo = it->second.GetOwnerInfo();
-						SvOi::IValueObject* pValueObject = SvOi::FindValueObject(parentID, objectInfo);
-						if (pValueObject)
+						SvOi::IObjectClass* pObject = SvOi::FindObject(parentID, objectInfo);
+						SvOi::IValueObject* pValueObject = dynamic_cast<SvOi::IValueObject*> (pObject);
+						if( nullptr != pValueObject )
 						{
 							bFound = true;
 
-							_variant_t value;
-							hr = pValueObject->GetValue(value);
+							_variant_t Value;
+							hr = pValueObject->getValue( Value );
 							if (S_OK == hr)
 							{
-								SvOi::IObjectClass* pObject = dynamic_cast<SvOi::IObjectClass *>(pValueObject);
-								it->second = Items::mapped_type(objectInfo.EmbeddedID, pObject->GetUniqueObjectID(), value, ownerInfo, it->second.isReadOnly());
+								it->second = Items::mapped_type(objectInfo.EmbeddedID, pObject->GetUniqueObjectID(), Value, ownerInfo, it->second.isReadOnly());
 							}
 						}
 						else

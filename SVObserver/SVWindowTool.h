@@ -12,6 +12,7 @@
 
 #pragma region Includes
 #include "SVTool.h"
+#include "SVValueObjectLibrary/SVStringValueObjectClass.h"
 #pragma endregion Includes
 
 class SVWindowToolClass : public SVToolClass, public AllowResizeToParent
@@ -43,11 +44,11 @@ private:
 	void AddUnaryImageOperatorListAsChild ();
 
 public:
-	SVStaticStringValueObjectClass* GetInputImageNames( ) override;
+	SVStringValueObjectClass* GetInputImageNames( ) override;
 
 #pragma region Member Variables
 private:
-	SVStaticStringValueObjectClass m_svSourceImageNames;
+	SVStringValueObjectClass m_SourceImageNames;
 #pragma endregion Member Variables
 };
 

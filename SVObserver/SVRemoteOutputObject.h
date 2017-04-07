@@ -12,27 +12,37 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <vector>
-#include "SVObjectLibrary/SVObjectClass.h"
+#include "SVOutputObject.h"
 #include "SVValueObjectLibrary/SVValueObject.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #include "SVXMLLibrary\SVObjectXMLWriter.h"
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
-class SVRemoteOutputObject : public SVObjectClass
+class SVRemoteOutputObject : public SVOutputObject
 {
+#pragma region Constructor
 public:
 	SV_DECLARE_CLASS( SVRemoteOutputObject );
 
-	SVRemoteOutputObject(void);
-	virtual ~SVRemoteOutputObject(void);
-	
+	SVRemoteOutputObject();
+	virtual ~SVRemoteOutputObject();
+#pragma endregion Constructor
+
+#pragma region Public Methods
+public:
+	//For Remote Outputs these virtual methods don't do anything
+	virtual HRESULT Write(const _variant_t& p_rValue) override { return S_OK; };
+	virtual HRESULT Reset() override { return S_OK; };
+	virtual bool IsCombined() const override { return false; };
+	virtual bool GetCombinedValue() const override { return false; };
+
 	// Get Functions
 	SVString GetInputValueObjectName();
 	HRESULT GetInputValueObjectGUID( GUID& p_rGUID ) const;
 	SVGUID GetInputValueObjectGUID() const;
 
-	SVValueObjectClass* GetValueObject();	
+	SVObjectClass* GetValueObject();
 
 	SVString GetGroupID( ) const ;
 
@@ -41,24 +51,32 @@ public:
 	bool GetParameters( SVObjectXMLWriter& rWriter ) const;
 
 	// Set Functions
-	HRESULT SetInputObject( SVValueObjectClass* p_pObject );
+	HRESULT SetInputObject( SVObjectClass* p_pObject );
 	HRESULT SetInputObjectId( GUID p_ObjectId );
 	HRESULT SetGroupID( const SVString& p_strGroupID );
 
 	BOOL SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent );
+#pragma endregion Public Methods
 
+#pragma region Private Methods
+private:
+	void LocalInitialize();
+#pragma endregion Private Methods
+
+#pragma region Member Variables
 private:
 	// Member Variables
 	// The Value Objects name.
 	SVString m_strObjectName;
 
 	// The value object
-	SVValueObjectClass* m_pValueObject;	
+	SVObjectClass* m_pValueObject;
 
 	// Guid of the value object used to output
 	SVGUID m_InputObjectId;	
 
 	SVString m_strGroupID;	// Which Output Group this output belongs to.
+#pragma endregion Member Variables
 };
 
 typedef std::vector<SVRemoteOutputObject*> SVRemoteOutputObjectList;

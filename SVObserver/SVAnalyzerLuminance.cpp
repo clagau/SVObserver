@@ -58,35 +58,35 @@ void SVLuminanceAnalyzerClass::init()
 
 
 	// Identify our output type
-	m_outObjectInfo.ObjectTypeInfo.SubType = SVLuminanceAnalyzerObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVLuminanceAnalyzerObjectType;
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject( 
 		&msvLuminanceValue, 
 		SVLuminanceValueObjectGuid, 
 		IDS_OBJECTNAME_LUMINANCE,
-		false, SVResetItemNone );
+		false, SvOi::SVResetItemNone );
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject( 
 		&msvCalcStdDevValue,
 		SVCalcStdDevObjectGuid,
 		IDS_OBJECTNAME_CALCSTDDEV,
-		false, SVResetItemNone );
+		false, SvOi::SVResetItemNone );
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject( 
 		&msvVarianceValue,
 		SVStatVarianceObjectGuid,
 		IDS_OBJECTNAME_STATVARIANCE,
-		false, SVResetItemNone );
+		false, SvOi::SVResetItemNone );
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject( 
 		&msvStdDevValue,
 		SVStatStdDevObjectGuid,
 		IDS_OBJECTNAME_STATSTDDEV,
-		false, SVResetItemNone );
+		false, SvOi::SVResetItemNone );
 
 	// Set Embedded defaults
 	msvLuminanceValue.SetDefaultValue (0, TRUE);
@@ -210,10 +210,10 @@ BOOL SVLuminanceAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateS
 		m_isCreated = true;
 	}
 
-	msvLuminanceValue.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	msvVarianceValue.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	msvStdDevValue.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	msvCalcStdDevValue.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
+	msvLuminanceValue.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	msvVarianceValue.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	msvStdDevValue.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	msvCalcStdDevValue.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
 
 	return m_isCreated;
 }
@@ -241,7 +241,7 @@ SVResultClass* SVLuminanceAnalyzerClass::GetResultObject()
 	return( pAnalyzerResult );
 }
 
-bool SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	SVImageClass     *pInputImage(nullptr);
 	__int64          sum(0);
@@ -257,10 +257,10 @@ bool SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& RRunStatus, SvStl::Messa
 		///////////////////////////////////////////////////
 		// Clear Variance and Standard Deviation
 		///////////////////////////////////////////////////
-		msvVarianceValue.SetValue( RRunStatus.m_lResultDataIndex, value );
-		msvStdDevValue.SetValue( RRunStatus.m_lResultDataIndex, value );
+		msvVarianceValue.SetValue( value, rRunStatus.m_lResultDataIndex );
+		msvStdDevValue.SetValue( value, rRunStatus.m_lResultDataIndex );
 
-		if( !__super::onRun( RRunStatus, pErrorMessages ) )
+		if( !__super::onRun( rRunStatus, pErrorMessages ) )
 		{
 			LastError = true;
 			break;
@@ -355,7 +355,7 @@ bool SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& RRunStatus, SvStl::Messa
 			break;
 		}
 
-		if ( S_OK != msvLuminanceValue.SetValue( RRunStatus.m_lResultDataIndex, (long)(sum / lNbrPixels) ) )
+		if ( S_OK != msvLuminanceValue.SetValue( static_cast<long> (sum / lNbrPixels), rRunStatus.m_lResultDataIndex ) )
 		{
 			LastError = true;
 			if (nullptr != pErrorMessages)
@@ -411,7 +411,7 @@ bool SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& RRunStatus, SvStl::Messa
 				///////////////////////////////////////////////////////////////////
 				// Save Variance
 				///////////////////////////////////////////////////////////////////
-				if (S_OK != msvVarianceValue.SetValue( RRunStatus.m_lResultDataIndex, value ))
+				if (S_OK != msvVarianceValue.SetValue( value, rRunStatus.m_lResultDataIndex ))
 				{
 					LastError = true;
 					if (nullptr != pErrorMessages)
@@ -444,7 +444,7 @@ bool SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& RRunStatus, SvStl::Messa
 				///////////////////////////////////////////////////////////////////
 				// Save Standard Deviation
 				///////////////////////////////////////////////////////////////////
-				if (S_OK != msvStdDevValue.SetValue( RRunStatus.m_lResultDataIndex, value ))
+				if (S_OK != msvStdDevValue.SetValue( value, rRunStatus.m_lResultDataIndex ))
 				{
 					LastError = true;
 					if (nullptr != pErrorMessages)
@@ -463,7 +463,7 @@ bool SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& RRunStatus, SvStl::Messa
 	if( LastError )  
 	{
 		SetInvalid ();
-		RRunStatus.SetInvalid();
+		rRunStatus.SetInvalid();
 		return false;
 	}
 

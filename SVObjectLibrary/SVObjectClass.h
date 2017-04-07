@@ -88,7 +88,7 @@ public:
 	virtual BOOL SetObjectOwner( SVObjectClass* pNewOwner );
 	virtual BOOL SetObjectOwner( const GUID& rNewOwnerGUID );
 
-	virtual HRESULT GetObjectValue( const SVString& rValueName, VARIANT& rVariantValue ) const;
+	virtual HRESULT GetObjectValue( const SVString& rValueName, _variant_t& rValue ) const;
 	virtual HRESULT SetValuesForAnObject( const GUID& rAimObjectID, SVObjectAttributeClass* pDataObject );
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* pDataObject );
 	virtual void SetInvalid();
@@ -171,17 +171,17 @@ public:
 	virtual SvOi::IObjectClass* GetAncestorInterface(SVObjectTypeEnum ancestorObjectType) override;
 	virtual const SvOi::IObjectClass* GetAncestorInterface(SVObjectTypeEnum ancestorObjectType) const override;
 	virtual const UINT& ObjectAttributesAllowed() const override;
-	virtual UINT& ObjectAttributesAllowedRef() override;
+	virtual void SetObjectAttributesAllowed( UINT Attributes, SvOi::SetAttributeType Type ) override;
 	virtual const UINT& ObjectAttributesSet(int iIndex=0) const override;
-	virtual UINT& ObjectAttributesSetRef(int Index=0) override;
-	virtual bool IsArray() const;
-	virtual int GetArraySize() const;
+	virtual void SetObjectAttributesSet( UINT Attributes, SvOi::SetAttributeType Type, int iIndex=0 ) override;
 	virtual const SVGUID& GetUniqueObjectID() const override;
 	virtual bool is_Created() const override;
 	virtual SvUl::NameGuidList GetCreatableObjects(const SVObjectTypeInfoStruct& rObjectTypeInfo) const override;
 	virtual void SetName( LPCTSTR Name ) override;
 	virtual SvOi::IObjectClass* getFirstObject(const SVObjectTypeInfoStruct& rObjectTypeInfo, bool useFriends = true, const SvOi::IObjectClass* pRequestor = nullptr) const override;
 	virtual bool resetAllObjects( SvStl::MessageContainerVector *pErrorMessages=nullptr ) override { return ResetObject(pErrorMessages); };
+	virtual HRESULT getValue(double& rValue, int Bucket = -1, int Index = -1) const override { return E_NOTIMPL; };
+	virtual HRESULT getValues(std::vector<double>& rValues, int Bucket = -1) const override { return E_NOTIMPL; };
 #pragma endregion virtual method (IObjectClass)
 
 	const SVObjectInfoStruct& GetOwnerInfo() const;
@@ -278,9 +278,8 @@ private:
 };
 
 #pragma region Declarations
-typedef std::vector<SVObjectClass*> SVObjectVector;
-typedef std::set<SVObjectClass*> SVStdSetSVObjectClassPtr;
-typedef SVVector< SVObjectClass* > SVObjectClassPtrArray;
+typedef std::vector<SVObjectClass*> SVObjectPtrVector;
+typedef std::set<SVObjectClass*> SVObjectPtrSet;
 #pragma region Declarations
 
 #include "SVObjectClass.inl"

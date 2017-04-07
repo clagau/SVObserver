@@ -144,7 +144,7 @@ BOOL SVPerspectiveWarpDlg::OnInitDialog()
 			m_FunctionCombo.SetEnumTypes( EnumList.c_str() );
 
 			SVString EnumString;
-			m_pWarpType->GetValue( EnumString );
+			m_pWarpType->getValue( EnumString );
 			m_FunctionCombo.SelectString( -1, EnumString.c_str() );
 		}
 		m_pWarpType->GetValue( m_lLastWarpType );
@@ -160,7 +160,7 @@ BOOL SVPerspectiveWarpDlg::OnInitDialog()
 			m_cbInterpolation.SetEnumTypes( EnumList.c_str() );
 
 			SVString EnumString;
-			m_pInterpolationMode->GetValue( EnumString );
+			m_pInterpolationMode->getValue( EnumString );
 			m_cbInterpolation.SelectString( -1, EnumString.c_str() );
 		}
 		m_pWarpType->GetValue( m_lLastWarpType );

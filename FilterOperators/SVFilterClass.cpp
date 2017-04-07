@@ -79,8 +79,8 @@ BOOL SVFilterClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 	BOOL bOk = SVUnaryImageOperatorClass::CreateObject( pCreateStructure );
 
 	//hide valid, status and color for the result picker.
-	m_statusTag.ObjectAttributesAllowedRef() |= SV_HIDDEN;
-	m_statusColor.ObjectAttributesAllowedRef() |= SV_HIDDEN;
+	m_statusTag.SetObjectAttributesAllowed( SV_HIDDEN, SvOi::SetAttributeType::AddAttribute );
+	m_statusColor.SetObjectAttributesAllowed( SV_HIDDEN, SvOi::SetAttributeType::AddAttribute );
 
 	return bOk;
 }
@@ -88,7 +88,7 @@ BOOL SVFilterClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 void SVFilterClass::init()
 {
 	// Identify our output type
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVFilterObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVFilterObjectType;
 
 	// Register Embedded Object(s)
 

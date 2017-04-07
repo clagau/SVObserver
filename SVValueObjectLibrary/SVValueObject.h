@@ -24,7 +24,6 @@
 #include "SVLongValueObjectClass.h"
 #include "SVPointValueObjectClass.h"
 #include "SVStringValueObjectClass.h"
-#include "SVStaticStringValueObjectClass.h"
 #include "SVTimerValueObjectClass.h"
 #include "SVVariantValueObjectClass.h"
 #pragma endregion Includes

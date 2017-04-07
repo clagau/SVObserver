@@ -36,7 +36,7 @@ SVLinearPixelCountingLineAnalyzerClass::SVLinearPixelCountingLineAnalyzerClass( 
 void SVLinearPixelCountingLineAnalyzerClass::init()
 {
 	// Identify our type
-	m_outObjectInfo.ObjectTypeInfo.SubType = SVLinearPixelCountingAnalyzerObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVLinearPixelCountingAnalyzerObjectType;
 
 	SVLinearEdgeProcessingClass *l_pEdge = new SVLinearEdgeAProcessingClass( this );
 
@@ -48,9 +48,9 @@ void SVLinearPixelCountingLineAnalyzerClass::init()
 	}
 
 	// Register Embedded Objects
-	RegisterEmbeddedObject( &blackPixelCount, SVBlackPixelObjectGuid, IDS_OBJECTNAME_BLACKPIXELCOUNT, false, SVResetItemNone );
-	RegisterEmbeddedObject( &whitePixelCount, SVWhitePixelObjectGuid, IDS_OBJECTNAME_WHITEPIXELCOUNT, false, SVResetItemNone );
-	RegisterEmbeddedObject(&m_svShowAllEdgeAOverlays, SVShowAllEdgeAOverlaysGuid, IDS_OBJECTNAME_SHOW_ALL_EDGE_A_OVERLAYS, false, SVResetItemNone);
+	RegisterEmbeddedObject( &blackPixelCount, SVBlackPixelObjectGuid, IDS_OBJECTNAME_BLACKPIXELCOUNT, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &whitePixelCount, SVWhitePixelObjectGuid, IDS_OBJECTNAME_WHITEPIXELCOUNT, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject(&m_svShowAllEdgeAOverlays, SVShowAllEdgeAOverlaysGuid, IDS_OBJECTNAME_SHOW_ALL_EDGE_A_OVERLAYS, false, SvOi::SVResetItemNone);
 
 	// Set Embedded defaults
 	blackPixelCount.SetDefaultValue( 0, true );
@@ -104,8 +104,8 @@ BOOL SVLinearPixelCountingLineAnalyzerClass::CreateObject( SVObjectLevelCreateSt
 	BOOL bOk = SVLinearAnalyzerClass::CreateObject( PCreateStructure );
 
 	// Set / Reset Printable Flag
-	blackPixelCount.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	whitePixelCount.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
+	blackPixelCount.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	whitePixelCount.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 
 	m_isCreated = bOk;
 
@@ -117,18 +117,18 @@ BOOL SVLinearPixelCountingLineAnalyzerClass::CloseObject()
 	return SVLinearAnalyzerClass::CloseObject();
 }
 
-bool SVLinearPixelCountingLineAnalyzerClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVLinearPixelCountingLineAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
-	std::vector<double> l_svEdges;
+	std::vector<double> Edges;
 
 	// All inputs and outputs must be validated first
-	bool l_bOk = __super::onRun( RRunStatus, pErrorMessages );
+	bool Result = __super::onRun( rRunStatus, pErrorMessages );
 
-	SVLinearEdgeProcessingClass *l_pEdge = GetEdgeA();
+	SVLinearEdgeProcessingClass *pEdge = GetEdgeA();
 
-	if ( nullptr == l_pEdge || S_OK != l_pEdge->m_svLinearEdges.GetValues( RRunStatus.m_lResultDataIndex, l_svEdges ) )
+	if ( nullptr == pEdge || S_OK != pEdge->m_svLinearEdges.GetArrayValues( Edges, rRunStatus.m_lResultDataIndex ) )
 	{
-		l_bOk = false;
+		Result = false;
 		if (nullptr != pErrorMessages)
 		{
 			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
@@ -136,27 +136,27 @@ bool SVLinearPixelCountingLineAnalyzerClass::onRun( SVRunStatusClass& RRunStatus
 		}
 	}
 
-	long l_lBlack = 0;
-	long l_lWhite = 0;
+	long lBlack = 0;
+	long lWhite = 0;
 
-	if( l_bOk )
+	if( Result )
 	{
-		for( size_t l = 0; l < l_svEdges.size(); l++ )
+		for( size_t l = 0; l < Edges.size(); l++ )
 		{
-			if( l_svEdges[ l ] == 0.0 )
+			if( Edges[ l ] == 0.0 )
 			{
-				l_lBlack++;
+				lBlack++;
 			}
-			else if( l_svEdges[ l ] == l_pEdge->m_dwColorNumber - 1 )
+			else if( Edges[ l ] == pEdge->m_dwColorNumber - 1 )
 			{
-				l_lWhite++;
+				lWhite++;
 			}
 		}
 	}
 
-	if ( S_OK != blackPixelCount.SetValue( RRunStatus.m_lResultDataIndex, l_lBlack )|| S_OK != whitePixelCount.SetValue( RRunStatus.m_lResultDataIndex, l_lWhite ) )
+	if ( S_OK != blackPixelCount.SetValue( lBlack, rRunStatus.m_lResultDataIndex )|| S_OK != whitePixelCount.SetValue( lWhite, rRunStatus.m_lResultDataIndex ) )
 	{
-		l_bOk = false;
+		Result = false;
 		if (nullptr != pErrorMessages)
 		{
 			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_SetValueFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
@@ -164,13 +164,13 @@ bool SVLinearPixelCountingLineAnalyzerClass::onRun( SVRunStatusClass& RRunStatus
 		}
 	}
 
-	if( ! l_bOk )
+	if( !Result )
 	{
-		RRunStatus.SetInvalid();
+		rRunStatus.SetInvalid();
 		SetInvalid();
 	}
 
-	return l_bOk;
+	return Result;
 }
 
 HRESULT SVLinearPixelCountingLineAnalyzerClass::GetSelectedEdgeOverlays( SVExtentMultiLineStruct &p_MultiLine )

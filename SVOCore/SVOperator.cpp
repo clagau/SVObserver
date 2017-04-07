@@ -51,7 +51,7 @@ void SVOperatorClass::init()
 	m_bUseOverlays = false;	// in general, operators don't have overlays
 
 	// Identify our output type
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVOperatorObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVOperatorObjectType;
 
 	// Register Embedded Object(s)
 

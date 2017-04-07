@@ -69,9 +69,9 @@ bool TableCopyObject::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 					m_ValueList[i]->SetName((*it)->GetName());
 					GetInspection()->OnObjectRenamed(*(m_ValueList[i].get()), OldName );
 				}
-				if ((*it)->GetArraySize() != m_ValueList[i]->GetArraySize())
+				if ((*it)->getArraySize() != m_ValueList[i]->getArraySize())
 				{
-					m_ValueList[i]->SetArraySize((*it)->GetArraySize());
+					m_ValueList[i]->SetArraySize((*it)->getArraySize());
 				}
 				SourceValues.erase(it);
 			}
@@ -101,7 +101,7 @@ bool TableCopyObject::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 			{
 				try
 				{
-					createColumnObject(pSourceObject->GetEmbeddedID(), pSourceObject->GetName(), pSourceObject->GetArraySize());
+					createColumnObject(pSourceObject->GetEmbeddedID(), pSourceObject->GetName(), pSourceObject->getArraySize());
 				}
 				catch( const SvStl::MessageContainer& rSvE )
 				{
@@ -160,20 +160,20 @@ bool TableCopyObject::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContain
 						object->setSortContainer(rRunStatus.m_lResultDataIndex, m_sortContainer);
 						for (int i=0; i<m_sortContainer.size(); ++i)
 						{
-							double value = 0;
-							if (S_OK == (*itSource)->GetValue(rRunStatus.m_lResultDataIndex, i, value))
+							double Value( 0.0 );
+							if (S_OK == (*itSource)->GetValue( Value, rRunStatus.m_lResultDataIndex, i ))
 							{
-								object->SetValue(rRunStatus.m_lResultDataIndex, i, value);
+								object->SetValue( Value, rRunStatus.m_lResultDataIndex, i );
 							}
 						}
 					}
 				}
 				
-				m_NumberOfRows.SetValue(rRunStatus.m_lResultDataIndex, static_cast<long>(m_sortContainer.size()));
+				m_NumberOfRows.SetValue(static_cast<long>(m_sortContainer.size()), rRunStatus.m_lResultDataIndex );
 			}
 			else
 			{
-				m_NumberOfRows.SetValue(rRunStatus.m_lResultDataIndex, 0);
+				m_NumberOfRows.SetValue( 0L, rRunStatus.m_lResultDataIndex );
 				returnValue = false;
 				if (nullptr != pErrorMessages)
 				{
@@ -201,7 +201,7 @@ bool TableCopyObject::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContain
 void TableCopyObject::Initialize()
 {
 	// Set up your type
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = TableObjectType;
-	m_outObjectInfo.ObjectTypeInfo.SubType    = TableCopyObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = TableObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType    = TableCopyObjectType;
 }
 #pragma endregion Private Methods

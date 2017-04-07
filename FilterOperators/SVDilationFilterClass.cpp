@@ -19,7 +19,7 @@
 SVDilationFilterClass::SVDilationFilterClass( SVObjectClass* POwner, int StringResourceID )
 					  :SVFilterClass( POwner, StringResourceID ) 
 {
-	m_outObjectInfo.ObjectTypeInfo.SubType = SVDilationFilterObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVDilationFilterObjectType;
 }
 
 SVDilationFilterClass::~SVDilationFilterClass() 
@@ -32,7 +32,7 @@ SVDilationFilterClass::~SVDilationFilterClass()
 // .Description : Runs this operator.
 //              : Returns FALSE, if operator cannot run ( may be deactivated ! )
 ////////////////////////////////////////////////////////////////////////////////
-bool SVDilationFilterClass::onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVDilationFilterClass::onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 { 
 	if( m_pCurrentUIOPL && !( RInputImageHandle.empty() ) && !( ROutputImageHandle.empty() ) )
 	{
@@ -56,7 +56,7 @@ bool SVDilationFilterClass::onRun( bool First, SVSmartHandlePointer RInputImageH
 			}
 			// Signal that something was wrong...
 			SetInvalid();
-			RRunStatus.SetInvalid();
+			rRunStatus.SetInvalid();
 			return false;
 		}
 
@@ -74,7 +74,7 @@ bool SVDilationFilterClass::onRun( bool First, SVSmartHandlePointer RInputImageH
 
 	// Signal that something was wrong...
 	SetInvalid();
-	RRunStatus.SetInvalid();
+	rRunStatus.SetInvalid();
 	return false;
 }
 

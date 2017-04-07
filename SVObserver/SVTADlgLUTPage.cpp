@@ -42,9 +42,9 @@ BOOL CALLBACK SVLutGraphMousePointFunction( POINT Point, LPVOID PUserData )
 		// Get Lut vector...
 		SVToolAdjustmentDialogLUTPageClass* l_pDlg = reinterpret_cast <SVToolAdjustmentDialogLUTPageClass*> (PUserData);
 		
-		SVValueObjectReference l_svRef( l_pDlg->getLUTVector(), Point.x );
+		SVObjectReference ObjectRef( l_pDlg->getLUTVector(), Point.x );
 
-		l_pDlg->AddInputRequest( l_svRef, Point.y );
+		l_pDlg->AddInputRequest( ObjectRef, Point.y );
 
 		return TRUE;
 	}
@@ -484,7 +484,7 @@ void SVToolAdjustmentDialogLUTPageClass::refresh( bool p_bSave /*= true*/ )
 		{
 			// refresh lut mode combo settings...
 			SVString EnumString;
-			if( S_OK == m_pLUTMode->GetValue( EnumString ) )
+			if( S_OK == m_pLUTMode->getValue( EnumString ) )
 			{
 				// Set cur sel in combo box...
 				m_LUTModeCombo.SelectString( -1, EnumString.c_str() );
@@ -574,7 +574,7 @@ void SVToolAdjustmentDialogLUTPageClass::refreshLUTGraph()
 	{
 		std::vector<BYTE> byteVector;
 		SvCl::SVObjectByteArrayClass byteArray;
-		m_pLUTVector->GetValues( byteVector );
+		m_pLUTVector->GetArrayValues( byteVector );
 		int nSize = static_cast<int>(byteVector.size());
 		for( int j = 0; j < nSize; j++ )
 		{

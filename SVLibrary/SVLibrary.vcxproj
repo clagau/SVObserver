@@ -150,7 +150,6 @@
   <ItemGroup>
     <None Include="SVDataItemManagerTemplate.inl" />
     <None Include="SVOINIClass.inl" />
-    <None Include="SVTaskObjectInterfaceInputRequestStruct.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

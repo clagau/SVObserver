@@ -33,8 +33,8 @@ SVInPlaceImageOperatorListClass::SVInPlaceImageOperatorListClass( BOOL BCreateDe
 void SVInPlaceImageOperatorListClass::init()
 {
 	// Identify our output type
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVUnaryImageOperatorListObjectType;
-	m_outObjectInfo.ObjectTypeInfo.SubType	= SVInPlaceImageOperatorListObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVUnaryImageOperatorListObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType	= SVInPlaceImageOperatorListObjectType;
 
 	// SetObjectDepth() already called in SVObjectClass Ctor
 
@@ -88,17 +88,17 @@ bool SVInPlaceImageOperatorListClass::ResetObject(SvStl::MessageContainerVector 
 // .Description : Is doing in place processing on input image!!!
 //				:
 //				: Special routing for image operators here.
-bool SVInPlaceImageOperatorListClass::Run( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVInPlaceImageOperatorListClass::Run( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	clearRunErrorMessages();
 
 	SVRunStatusClass ChildRunStatus;
-	ChildRunStatus.m_lResultDataIndex  = RRunStatus.m_lResultDataIndex;
-	ChildRunStatus.Images = RRunStatus.Images;
-	ChildRunStatus.m_UpdateCounters = RRunStatus.m_UpdateCounters;
+	ChildRunStatus.m_lResultDataIndex  = rRunStatus.m_lResultDataIndex;
+	ChildRunStatus.Images = rRunStatus.Images;
+	ChildRunStatus.m_UpdateCounters = rRunStatus.m_UpdateCounters;
 
 	// Run yourself...
-	bool bRetVal = onRun( RRunStatus, &m_RunErrorMessages );
+	bool bRetVal = onRun( rRunStatus, &m_RunErrorMessages );
 
 	if( nullptr == getInputImage() )
 	{
@@ -161,22 +161,22 @@ bool SVInPlaceImageOperatorListClass::Run( SVRunStatusClass& RRunStatus, SvStl::
 
 			// Update our Run Status
 			if( ChildRunStatus.IsDisabled() )
-				RRunStatus.SetDisabled();
+				rRunStatus.SetDisabled();
 
 			if( ChildRunStatus.IsDisabledByCondition() )
-				RRunStatus.SetDisabledByCondition();
+				rRunStatus.SetDisabledByCondition();
 			
 			if( ChildRunStatus.IsWarned() )
-				RRunStatus.SetWarned();
+				rRunStatus.SetWarned();
 
 			if( ChildRunStatus.IsFailed() )
-				RRunStatus.SetFailed();
+				rRunStatus.SetFailed();
 
 			if( ChildRunStatus.IsPassed() )
-				RRunStatus.SetPassed();
+				rRunStatus.SetPassed();
 
 			if( ChildRunStatus.IsCriticalFailure() )
-				RRunStatus.SetCriticalFailure();
+				rRunStatus.SetCriticalFailure();
 		}
 	}
 
@@ -189,16 +189,16 @@ bool SVInPlaceImageOperatorListClass::Run( SVRunStatusClass& RRunStatus, SvStl::
 	{
 		// Something was wrong...
 		SetInvalid();
-		RRunStatus.SetInvalid();
+		rRunStatus.SetInvalid();
 	}
 
 	// Get Status Color...
-	DWORD dwValue = RRunStatus.GetStatusColor();
-	m_statusColor.SetValue( RRunStatus.m_lResultDataIndex, dwValue );
+	DWORD dwValue = rRunStatus.GetStatusColor();
+	m_statusColor.SetValue( dwValue, rRunStatus.m_lResultDataIndex );
 
 	// Get Status...
-	dwValue = RRunStatus.GetState();
-	m_statusTag.SetValue( RRunStatus.m_lResultDataIndex, dwValue );
+	dwValue = rRunStatus.GetState();
+	m_statusTag.SetValue( dwValue, rRunStatus.m_lResultDataIndex );
 
 	if (nullptr != pErrorMessages && !m_RunErrorMessages.empty())
 	{

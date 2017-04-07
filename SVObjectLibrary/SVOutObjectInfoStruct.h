@@ -48,12 +48,12 @@ private:
 	//	If you have to send messages to the user objects ( especially in SETUP MODE ),
 	//  you should use their object GUID! In RUN MODE you should normally not send 
 	//  messages, but you can use the validated object pointer!
-	SVVectorSVInObjectInfoStruct UserInfoList;
+	SVInObjectInfoStructVector UserInfoList;
 
 	mutable SVCriticalSectionPtr m_CriticalSectionPtr;
 
 };
 
 typedef std::set<SVOutObjectInfoStruct*> SVStdSetSVOutObjectInfoStructPtr;
-typedef SVVector< SVOutObjectInfoStruct* > SVOutObjectInfoStructPtrArray;
+typedef SVVector<SVOutObjectInfoStruct*> SVOutObjectInfoStructPtrVector;
 

@@ -42,7 +42,8 @@ BOOL SVPerspectiveToolClass::CreateObject( SVObjectLevelCreateStruct *p_pCreateS
 
 	l_bOk &= ( S_OK == m_OutputImage.InitializeImage( GetInputImage() ) );
 
-	m_svSourceImageName.ObjectAttributesAllowedRef() &=~SV_REMOTELY_SETABLE & ~SV_SETABLE_ONLINE;
+	m_SourceImageNames.setStatic( true );
+	m_SourceImageNames.SetObjectAttributesAllowed( SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE, SvOi::SetAttributeType::RemoveAttribute );
 
 	m_isCreated = l_bOk;
 
@@ -237,7 +238,7 @@ bool SVPerspectiveToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMe
 	if (nullptr != inputImage)
 	{
 		//Set input name to source image name to display it in result picker
-		m_svSourceImageName.SetValue( 0, SVString( inputImage->GetCompleteName() ) );
+		m_SourceImageNames.SetValue( inputImage->GetCompleteName() );
 	}
 
 	UpdateImageWithExtent( 1 );
@@ -250,9 +251,9 @@ SVImageClass* SVPerspectiveToolClass::GetInputImage()
 	SVImageClass *l_pImage = nullptr;
 
 	if( m_InputImageObjectInfo.IsConnected() && 
-		nullptr != m_InputImageObjectInfo.GetInputObjectInfo().PObject )
+		nullptr != m_InputImageObjectInfo.GetInputObjectInfo().m_pObject )
 	{
-		l_pImage = (SVImageClass *)m_InputImageObjectInfo.GetInputObjectInfo().PObject;
+		l_pImage = (SVImageClass *)m_InputImageObjectInfo.GetInputObjectInfo().m_pObject;
 	}
 
 	return l_pImage;
@@ -305,8 +306,8 @@ bool SVPerspectiveToolClass::onRun( SVRunStatusClass &p_rRunStatus, SvStl::Messa
 		SVImageExtentClass l_svInputExtents = l_pInputImage->GetImageExtents();
 		long l_dInputWidth, l_dToolWidth, l_dInputHeight, l_dToolHeight;
 
-		long l_lInterpolation;
-		m_svInterpolationMode.GetValue(p_rRunStatus.m_lResultDataIndex, l_lInterpolation);
+		long Interpolation;
+		m_svInterpolationMode.GetValue(Interpolation, p_rRunStatus.m_lResultDataIndex );
 
 		l_bOk = ( S_OK ==  l_svInputExtents.GetExtentProperty( SVExtentPropertyOutputWidth, l_dInputWidth ) ) && l_bOk;
 		l_bOk = ( S_OK == l_svToolExtents.GetExtentProperty( SVExtentPropertyWidth, l_dToolWidth ) ) && l_bOk;
@@ -324,8 +325,7 @@ bool SVPerspectiveToolClass::onRun( SVRunStatusClass &p_rRunStatus, SvStl::Messa
 			l_bOk = ResetObject(pErrorMessages) && l_bOk;
 		}
 
-		if ( nullptr != l_pInputImage &&
-			   m_OutputImage.SetImageHandleIndex( p_rRunStatus.Images ) )
+		if ( nullptr != l_pInputImage && m_OutputImage.SetImageHandleIndex( p_rRunStatus.Images ) )
 		{
 			SVSmartHandlePointer l_InputHandle;
 			SVSmartHandlePointer l_OutputHandle;
@@ -340,8 +340,8 @@ bool SVPerspectiveToolClass::onRun( SVRunStatusClass &p_rRunStatus, SvStl::Messa
 				l_OutputHandle->GetData( l_OutMilHandle );
 
 				SVMatroxImageInterface::SVStatusCode l_Code;
-				l_Code = SVMatroxImageInterface::Warp( l_OutMilHandle.GetBuffer(),
-					l_InMilHandle.GetBuffer(), m_LutX, m_LutY, static_cast<SVImageOperationTypeEnum>(l_lInterpolation) );
+				l_Code = SVMatroxImageInterface::Warp( l_OutMilHandle.GetBuffer(), 
+					l_InMilHandle.GetBuffer(), m_LutX, m_LutY, static_cast<SVImageOperationTypeEnum>(Interpolation) );
 
 			}
 			else
@@ -368,8 +368,8 @@ bool SVPerspectiveToolClass::onRun( SVRunStatusClass &p_rRunStatus, SvStl::Messa
 void SVPerspectiveToolClass::LocalInitialize()
 {
 	// Set up your type...
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVToolObjectType;
-	m_outObjectInfo.ObjectTypeInfo.SubType    = SVPerspectiveToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SVPerspectiveToolObjectType;
 
 	// Identify our input image...
 	m_InputImageObjectInfo.SetInputObjectType( SVImageObjectType );
@@ -379,11 +379,11 @@ void SVPerspectiveToolClass::LocalInitialize()
 	// Register Embedded Objects
 	RegisterEmbeddedObject( &m_OutputImage, SVOutputImageObjectGuid, IDS_OBJECTNAME_IMAGE1 );
 
-	RegisterEmbeddedObject( &m_svXOffset, SVTranslationXOffsetObjectGuid, IDS_X_OFFSET, false, SVResetItemTool ); 
-	RegisterEmbeddedObject( &m_svYOffset, SVTranslationYOffsetObjectGuid, IDS_Y_OFFSET, false, SVResetItemTool ); 
+	RegisterEmbeddedObject( &m_svXOffset, SVTranslationXOffsetObjectGuid, IDS_X_OFFSET, false, SvOi::SVResetItemTool ); 
+	RegisterEmbeddedObject( &m_svYOffset, SVTranslationYOffsetObjectGuid, IDS_Y_OFFSET, false, SvOi::SVResetItemTool ); 
 
 	// Register SourceImageNames Value Object
-	RegisterEmbeddedObject( &m_svSourceImageName, SVSourceImageNamesGuid, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SVResetItemTool );
+	RegisterEmbeddedObject( &m_SourceImageNames, SVSourceImageNamesGuid, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SvOi::SVResetItemTool );
 
 	HRESULT l_hr = SetImageExtentProperty( SVExtentPropertyTranslationOffsetX, &m_svXOffset );
 	l_hr = SetImageExtentProperty( SVExtentPropertyTranslationOffsetY, &m_svYOffset );
@@ -391,12 +391,12 @@ void SVPerspectiveToolClass::LocalInitialize()
 	m_OutputImage.InitializeImage( SVImageTypePhysical );
 
 	// Set Default Warp Method to Use Horizontal
-	RegisterEmbeddedObject( &m_svWarpType, SVWarpTypeObjectGuid, IDS_OBJECTNAME_WARPTYPE, false, SVResetItemTool );
+	RegisterEmbeddedObject( &m_svWarpType, SVWarpTypeObjectGuid, IDS_OBJECTNAME_WARPTYPE, false, SvOi::SVResetItemTool );
 	SVString EnumTypes = SvUl_SF::Format("%s=%d,%s=%d", PERSPECTIVE_WARP_TYPE_HORIZONTAL, WarpTypeHorizontal,
 	                                   PERSPECTIVE_WARP_TYPE_VERTICAL, WarpTypeVertical);
 	m_svWarpType.SetEnumTypes( EnumTypes.c_str() );
-	m_svWarpType.SetDefaultValue( PERSPECTIVE_WARP_TYPE_VERTICAL, TRUE );
-	m_svWarpType.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
+	m_svWarpType.SetDefaultValue( PERSPECTIVE_WARP_TYPE_VERTICAL, true );
+	m_svWarpType.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
 
 	// Set Default Interpolation Mode to use Nearest Neighbor
 	SVString Mode;
@@ -419,7 +419,7 @@ void SVPerspectiveToolClass::LocalInitialize()
 	// And now set enum types...
 	m_svInterpolationMode.SetEnumTypes( EnumTypes.c_str() );
 	m_svInterpolationMode.SetDefaultValue( SVNearestNeighbor, TRUE );	// Refer to MIL...
-	RegisterEmbeddedObject( &m_svInterpolationMode, SVOutputInterpolationModeObjectGuid, IDS_OBJECTNAME_INTERPOLATION_MODE, false, SVResetItemNone );
+	RegisterEmbeddedObject( &m_svInterpolationMode, SVOutputInterpolationModeObjectGuid, IDS_OBJECTNAME_INTERPOLATION_MODE, false, SvOi::SVResetItemNone );
 
 	// Initialize MIL Look up tables.
 
@@ -545,8 +545,8 @@ HRESULT SVPerspectiveToolClass::SetImageExtent( unsigned long p_ulIndex, SVImage
 	return l_hrOk;
 }
 
-SVStaticStringValueObjectClass* SVPerspectiveToolClass::GetInputImageNames()
+SVStringValueObjectClass* SVPerspectiveToolClass::GetInputImageNames()
 {
-	return &m_svSourceImageName;
+	return &m_SourceImageNames;
 }
 

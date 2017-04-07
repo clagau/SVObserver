@@ -42,6 +42,8 @@ namespace Seidenader { namespace SVObserver
 	const TCHAR* const ResizeImage = _T("ResizeImage");
 	const TCHAR* const Remote_Input= _T("Remote Input");
 	const TCHAR* const DIOInput= _T("DIO.Input");
+	const TCHAR* const cModuleReady = _T("Module Ready");
+	const TCHAR* const cRaidErrorIndicator = _T("Raid Error Indicator");
 	///Defines for SVConfigurationObjects
 	const TCHAR* const InputObjectList = _T( "Input Object List");
 	const TCHAR* const OutputObjectList =  _T( "Output Object List" );

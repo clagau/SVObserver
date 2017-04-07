@@ -36,15 +36,15 @@ SVLinearEdgeCountingLineAnalyzerClass::SVLinearEdgeCountingLineAnalyzerClass( BO
 void SVLinearEdgeCountingLineAnalyzerClass::init()
 {
 	// Identify our type
-	m_outObjectInfo.ObjectTypeInfo.SubType = SVLinearEdgeCountingAnalyzerObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVLinearEdgeCountingAnalyzerObjectType;
 
 	SVLinearEdgeProcessingClass *l_pEdge = new SVLinearEdgeAProcessingClass( this );
 
 	AddFriend( l_pEdge->GetUniqueObjectID() );
 
 	// Register Embedded Objects
-	RegisterEmbeddedObject( &m_svEdgeCount, SVEdgeCountObjectGuid, IDS_OBJECTNAME_EDGE_COUNT, false, SVResetItemNone );
-	RegisterEmbeddedObject(&m_svShowAllEdgeAOverlays, SVShowAllEdgeAOverlaysGuid, IDS_OBJECTNAME_SHOW_ALL_EDGE_A_OVERLAYS, false, SVResetItemNone);
+	RegisterEmbeddedObject( &m_svEdgeCount, SVEdgeCountObjectGuid, IDS_OBJECTNAME_EDGE_COUNT, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject(&m_svShowAllEdgeAOverlays, SVShowAllEdgeAOverlaysGuid, IDS_OBJECTNAME_SHOW_ALL_EDGE_A_OVERLAYS, false, SvOi::SVResetItemNone);
 
 	// Set Embedded defaults
 	m_svEdgeCount.SetDefaultValue( 0, TRUE );
@@ -81,7 +81,7 @@ BOOL SVLinearEdgeCountingLineAnalyzerClass::CreateObject( SVObjectLevelCreateStr
 	BOOL bOk = SVLinearAnalyzerClass::CreateObject( PCreateStructure );
 
 	// Set / Reset Printable Flag
-	m_svEdgeCount.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
+	m_svEdgeCount.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 
 	m_isCreated = bOk;
 
@@ -98,21 +98,21 @@ bool SVLinearEdgeCountingLineAnalyzerClass::ResetObject(SvStl::MessageContainerV
 	return __super::ResetObject(pErrorMessages) && ValidateEdgeA(pErrorMessages);
 }
 
-bool SVLinearEdgeCountingLineAnalyzerClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVLinearEdgeCountingLineAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	// All inputs and outputs must be validated first
-	bool l_bOk = SVLinearAnalyzerClass::onRun( RRunStatus, pErrorMessages ) && ValidateEdgeA(pErrorMessages);
+	bool Result = SVLinearAnalyzerClass::onRun( rRunStatus, pErrorMessages ) && ValidateEdgeA(pErrorMessages);
 
-	if( l_bOk )
+	if( Result )
 	{
-		std::vector<double> l_svEdges;
+		std::vector<double> Edges;
 
-		if ( S_OK == GetEdgeA()->m_svLinearEdges.GetValues( RRunStatus.m_lResultDataIndex, l_svEdges ) )
+		if ( S_OK == GetEdgeA()->m_svLinearEdges.GetArrayValues( Edges, rRunStatus.m_lResultDataIndex ) )
 		{
-			long l_lCount = static_cast<int>(l_svEdges.size());
-			if ( S_OK != m_svEdgeCount.SetValue( RRunStatus.m_lResultDataIndex, l_lCount ) )
+			long lCount = static_cast<int>(Edges.size());
+			if ( S_OK != m_svEdgeCount.SetValue( lCount, rRunStatus.m_lResultDataIndex ) )
 			{
-				l_bOk = false;
+				Result = false;
 				if (nullptr != pErrorMessages)
 				{
 					SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_SetValueFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
@@ -122,23 +122,22 @@ bool SVLinearEdgeCountingLineAnalyzerClass::onRun( SVRunStatusClass& RRunStatus,
 		}
 		else
 		{
-			l_bOk = false;
+			Result = false;
 			if (nullptr != pErrorMessages)
 			{
 				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 				pErrorMessages->push_back(Msg);
 			}
 		}
-		
 	}
 
-	if( ! l_bOk )
+	if( !Result )
 	{
 		SetInvalid();
-		RRunStatus.SetInvalid();
+		rRunStatus.SetInvalid();
 	}
 
-	return l_bOk;
+	return Result;
 }
 
 HRESULT SVLinearEdgeCountingLineAnalyzerClass::GetSelectedEdgeOverlays( SVExtentMultiLineStruct &p_MultiLine )

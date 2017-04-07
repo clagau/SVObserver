@@ -44,8 +44,8 @@ SVStatisticsToolClass::SVStatisticsToolClass( BOOL BCreateDefaultTaskList,
 
 void SVStatisticsToolClass::init(void)
 {
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVToolObjectType;
-	m_outObjectInfo.ObjectTypeInfo.SubType    = SVStatisticsToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SVStatisticsToolObjectType;
 	
 	// Register an empty input object
 	m_inputObjectInfo.SetObject( GetObjectInfo() );
@@ -57,84 +57,84 @@ void SVStatisticsToolClass::init(void)
 	// Set up your type...
 	//Register embedded objects.
 		RegisterEmbeddedObject(
-			&msvValue [SV_STATS_MIN_VALUE], 
+			&m_Value [SV_STATS_MIN_VALUE], 
 			SVStatMinObjectGuid,
 			IDS_OBJECTNAME_STATMIN,
-			false, SVResetItemNone );
+			false, SvOi::SVResetItemNone );
 		
 		RegisterEmbeddedObject(
-			&msvValue [SV_STATS_MAX_VALUE], 
+			&m_Value [SV_STATS_MAX_VALUE], 
 			SVStatMaxObjectGuid,
 			IDS_OBJECTNAME_STATMAX,
-			false, SVResetItemNone );
+			false, SvOi::SVResetItemNone );
 		
 		RegisterEmbeddedObject(
-			&msvValue [SV_STATS_AVERAGEOF_VALUES], 
+			&m_Value [SV_STATS_AVERAGEOF_VALUES], 
 			SVStatAverageObjectGuid,
 			IDS_OBJECTNAME_STATAVERAGE,
-			false, SVResetItemNone );
+			false, SvOi::SVResetItemNone );
 		
 		RegisterEmbeddedObject(
-			&msvValue [SV_STATS_STANDARD_DEVIATION], 
+			&m_Value [SV_STATS_STANDARD_DEVIATION], 
 			SVStatStdDevObjectGuid,
 			IDS_OBJECTNAME_STATSTDDEV,
-			false, SVResetItemNone );
+			false, SvOi::SVResetItemNone );
 		
 		RegisterEmbeddedObject(
-			&msvValue [SV_STATS_VARIANCEIN_VALUES], 
+			&m_Value [SV_STATS_VARIANCEIN_VALUES], 
 			SVStatVarianceObjectGuid,
 			IDS_OBJECTNAME_STATVARIANCE,
-			false, SVResetItemNone );
+			false, SvOi::SVResetItemNone );
 		
 		RegisterEmbeddedObject(
-			&msvValue [SV_STATS_NUMBEROF_OCCURANCES], 
+			&m_Value [SV_STATS_NUMBEROF_OCCURANCES], 
 			SVStatNbrOfOccurancesObjectGuid,
 			IDS_OBJECTNAME_STATNBROFOCCURANCES,
-			false, SVResetItemNone );
+			false, SvOi::SVResetItemNone );
 		
 		RegisterEmbeddedObject(
-			&msvValue [SV_STATS_PERCENTOF_OCCURANCES], 
+			&m_Value [SV_STATS_PERCENTOF_OCCURANCES], 
 			SVStatPercentOfOccurancesObjectGuid,
 			IDS_OBJECTNAME_STATPERCENTOFOCCURANCES,
-			false, SVResetItemNone );
+			false, SvOi::SVResetItemNone );
 		
 		RegisterEmbeddedObject(
-			&msvOccurenceValue, 
+			&m_OccurenceValue, 
 			SVStatTestValueObjectGuid,
 			IDS_OBJECTNAME_STATTESTVALUE,
-			false, SVResetItemTool );
+			false, SvOi::SVResetItemTool );
 		
 		RegisterEmbeddedObject(
-			&msvVariableGUID_OBSOLETE, 
+			&m_VariableGUID_OBSOLETE, 
 			SVStatVariableToMonitorObjectGuid,
 			IDS_OBJECTNAME_VARIABLEGUID,
-			false, SVResetItemTool );
+			false, SvOi::SVResetItemTool );
 		
 		RegisterEmbeddedObject(
-			&msvVariableName, 
+			&m_VariableName, 
 			SVStatVariableNameToMonitorObjectGuid,
 			IDS_OBJECTNAME_STAT_VARIABLE_NAME,
-			false, SVResetItemTool );
+			false, SvOi::SVResetItemTool );
 		
 		RegisterEmbeddedObject(
-			&msvPersistantFeaturesEnabled, 
+			&m_PersistantFeaturesEnabled, 
 			SVStatEnabledFeaturesObjectGuid,
 			IDS_OBJECTNAME_ENABLEDFEATURES,
-			false, SVResetItemTool );
+			false, SvOi::SVResetItemTool );
 
 	// Kludge
 	SetObjectDepth (2);	
 
 	// Save default attributes
-	msvlDefaultAttributes = msvValue [ SV_STATS_MIN_VALUE ].ObjectAttributesAllowed();
+	m_DefaultAttributes = m_Value [ SV_STATS_MIN_VALUE ].ObjectAttributesAllowed();
 
 	TCHAR szFeaturesEnabled[SV_NUMBER_OF_STAT_FEATURES + 1];
 
 	// Set Embedded defaults
 	for (int i = SV_STATS_MIN_VALUE; i < SV_STATS_TOPOF_LIST; i = (SVStatisticsFeatureEnum) (i + 1))
 	{
-		msvValue [i].SetDefaultValue(0.0, TRUE);
-		msvValue [i].ObjectAttributesAllowedRef() &= ( ~SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES );
+		m_Value [i].SetDefaultValue(0.0, TRUE);
+		m_Value [i].SetObjectAttributesAllowed( SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute );
 
 		/*----- FEATURE LIST ---------------------------------------------------------*/
 		/*----- The list of enabled features is kept in a string because, of the      */
@@ -144,11 +144,11 @@ void SVStatisticsToolClass::init(void)
 	
 	szFeaturesEnabled [SV_STATS_TOPOF_LIST] = _T( '\0' );    // Null termination.
 	
-	msvPersistantFeaturesEnabled.SetDefaultValue (szFeaturesEnabled,
+	m_PersistantFeaturesEnabled.SetDefaultValue (szFeaturesEnabled,
 		                                          TRUE);
 
-	msvAccumulatedSquares = 0.0;
-	msvAccumulatedTotal = 0.0;
+	m_AccumulatedSquares = 0.0;
+	m_AccumulatedTotal = 0.0;
 
 	// Set default inputs and outputs
 	addDefaultInputObjects();
@@ -165,35 +165,35 @@ BOOL SVStatisticsToolClass::CreateObject(SVObjectLevelCreateStruct* PCreateStruc
 
 	for ( int i = 0; i < SV_NUMBER_OF_STAT_FEATURES; i++ )
 	{
-		msvValue[i].ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
+		m_Value[i].SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 	}
 
-	msvOccurenceValue.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	msvPersistantFeaturesEnabled.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	msvVariableGUID_OBSOLETE.ObjectAttributesAllowedRef() = SV_HIDDEN;
-	msvVariableName.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
+	m_OccurenceValue.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_PersistantFeaturesEnabled.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_VariableGUID_OBSOLETE.SetObjectAttributesAllowed( SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
+	m_VariableName.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 
 	// Override base class exposure of the drawflag
 	// This value will not be exposed for the Statistics Tool.
-	drawToolFlag.ObjectAttributesAllowedRef() = SV_HIDDEN;
+	drawToolFlag.SetObjectAttributesAllowed( SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
 
 	// Override base class exposure of the auxillaryextent variables
 	// These values will not be exposed for the Statistics Tool.
-	m_svUpdateAuxiliaryExtents.ObjectAttributesAllowedRef() = SV_HIDDEN;
-	m_svAuxiliarySourceX.ObjectAttributesAllowedRef() = SV_HIDDEN;
-	m_svAuxiliarySourceY.ObjectAttributesAllowedRef() = SV_HIDDEN;
-	m_svAuxiliarySourceAngle.ObjectAttributesAllowedRef() = SV_HIDDEN;
-	m_svAuxiliarySourceImageName.ObjectAttributesAllowedRef() = SV_HIDDEN;
-	m_svAuxiliaryDrawType.ObjectAttributesAllowedRef() = SV_HIDDEN;
+	m_svUpdateAuxiliaryExtents.SetObjectAttributesAllowed( SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
+	m_svAuxiliarySourceX.SetObjectAttributesAllowed( SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
+	m_svAuxiliarySourceY.SetObjectAttributesAllowed( SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
+	m_svAuxiliarySourceAngle.SetObjectAttributesAllowed( SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
+	m_svAuxiliarySourceImageName.SetObjectAttributesAllowed( SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
+	m_svAuxiliaryDrawType.SetObjectAttributesAllowed( SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
 
 	SVString Name;
-	msvVariableName.GetValue( Name );
+	m_VariableName.GetValue( Name );
 
 	if ( Name.empty() )
 	{
 		// check for backwards compatibility
 		SVString GuidString;
-		msvVariableGUID_OBSOLETE.GetValue( GuidString );
+		m_VariableGUID_OBSOLETE.GetValue( GuidString );
 		if ( !GuidString.empty() )
 		{
 			GUID guid( SV_GUID_NULL );
@@ -220,7 +220,7 @@ bool SVStatisticsToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMes
 	if ( Result )
 	{
 		SVString Name;
-		msvVariableName.GetValue( Name );
+		m_VariableName.GetValue( Name );
 		SetVariableSelected( Name );
 
 		if( IsEnabled() )
@@ -242,29 +242,29 @@ bool SVStatisticsToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMes
 SVString SVStatisticsToolClass::GetFeatureString()
 {
 	SVString FeatureString;
-	msvPersistantFeaturesEnabled.GetValue( FeatureString );
+	m_PersistantFeaturesEnabled.GetValue( FeatureString );
 	return FeatureString;
 }
 
 SVString SVStatisticsToolClass::GetFeatureName( int aIndex )
 {
-	return SVString( msvValue[aIndex].GetName() );
+	return SVString( m_Value[aIndex].GetName() );
 }
 
 /////////////////////////////////////////////////////////////////////////////
 //
 void SVStatisticsToolClass::EnableFeature (SVStatisticsFeatureEnum aIndex)
 {
-	msvValue[aIndex].ObjectAttributesAllowedRef() = msvlDefaultAttributes;
+	m_Value[aIndex].SetObjectAttributesAllowed( m_DefaultAttributes, SvOi::SetAttributeType::OverwriteAttribute );
 
 	SVString FeatureString;
-	msvPersistantFeaturesEnabled.GetValue(FeatureString);
+	m_PersistantFeaturesEnabled.GetValue(FeatureString);
 
 	if( aIndex < static_cast<int> (FeatureString.size()) )
 	{
 		FeatureString[aIndex] =  '1';
 	}
-	msvPersistantFeaturesEnabled.SetValue(1, FeatureString);
+	m_PersistantFeaturesEnabled.SetValue(FeatureString, 1 );
 
 	// ATTENTION: In error case this method throw an exception (const SvStl::MessageContainer&)
 	AllocateResult (aIndex);
@@ -277,16 +277,16 @@ void SVStatisticsToolClass::EnableFeature (SVStatisticsFeatureEnum aIndex)
 void SVStatisticsToolClass::RestoreFeatureAttributes()
 {
 	SVString FeatureString;
-	msvPersistantFeaturesEnabled.GetValue( FeatureString );
+	m_PersistantFeaturesEnabled.GetValue( FeatureString );
 	for( int iFeature = SV_STATS_MIN_VALUE ; iFeature < SV_STATS_TOPOF_LIST ; iFeature++ )
 	{
 		if( '1' == FeatureString[iFeature] )
 		{
-			msvValue[iFeature].ObjectAttributesAllowedRef() = msvlDefaultAttributes;
+			m_Value[iFeature].SetObjectAttributesAllowed( m_DefaultAttributes, SvOi::SetAttributeType::OverwriteAttribute );
 		}
 		else
 		{
-			msvValue[iFeature].ObjectAttributesAllowedRef() &= ~SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES;
+			m_Value[iFeature].SetObjectAttributesAllowed( SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute );
 		}
 	}
 }
@@ -297,22 +297,22 @@ void SVStatisticsToolClass::RestoreFeatureAttributes()
 DWORD SVStatisticsToolClass::DisableFeature (SVStatisticsFeatureEnum aIndex)
 {
 
-	msvValue [aIndex].ObjectAttributesAllowedRef() &= (~SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES);
+	m_Value[aIndex].SetObjectAttributesAllowed( SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute );
 
-	msvValue [aIndex].ObjectAttributesSetRef() = 0;
+	m_Value[aIndex].SetObjectAttributesSet( 0, SvOi::SetAttributeType::OverwriteAttribute );
 
 	SVString FeatureString;
-	msvPersistantFeaturesEnabled.GetValue( FeatureString );
+	m_PersistantFeaturesEnabled.GetValue( FeatureString );
 	if( aIndex < static_cast<int>  (FeatureString.size()) )
 	{
 		FeatureString[aIndex] = '0';
 	}
-	msvPersistantFeaturesEnabled.SetValue( 1, FeatureString );
+	m_PersistantFeaturesEnabled.SetValue( FeatureString, 1 );
 
 	FreeResult (aIndex);
 
 	// Get this object's outputInfo
-	SVOutObjectInfoStruct& valueOutObjectInfo = msvValue [aIndex].GetObjectOutputInfo();
+	SVOutObjectInfoStruct& valueOutObjectInfo = m_Value [aIndex].GetObjectOutputInfo();
 
 	valueOutObjectInfo.DisconnectAllInputs();
 
@@ -324,68 +324,68 @@ void SVStatisticsToolClass::AllocateResult (SVStatisticsFeatureEnum aFeatureInde
 	SVClassInfoStruct       resultClassInfo;
 	SVObjectTypeInfoStruct  interfaceInfo;
 
-	// Declare Input Interface of Result...
-	interfaceInfo.EmbeddedID = msvValue [aFeatureIndex].GetEmbeddedID();
-	resultClassInfo.m_DesiredInputInterface.Add( interfaceInfo );
+		// Declare Input Interface of Result...
+		interfaceInfo.EmbeddedID = m_Value [aFeatureIndex].GetEmbeddedID();
+		resultClassInfo.m_DesiredInputInterface.Add( interfaceInfo );
 
-	resultClassInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
-	resultClassInfo.m_ObjectTypeInfo.SubType	= SVResultDoubleObjectType;
-	resultClassInfo.m_ClassId = SVDoubleResultClassGuid;
-	resultClassInfo.m_ClassName = SvUl_SF::LoadSVString( IDS_OBJECTNAME_RESULT );
-	resultClassInfo.m_ClassName += _T(" ") + SVString(msvValue [aFeatureIndex].GetName());
+		resultClassInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
+		resultClassInfo.m_ObjectTypeInfo.SubType	= SVResultDoubleObjectType;
+		resultClassInfo.m_ClassId = SVDoubleResultClassGuid;
+		resultClassInfo.m_ClassName = SvUl_SF::LoadSVString( IDS_OBJECTNAME_RESULT );
+		resultClassInfo.m_ClassName += _T(" ") + SVString(m_Value [aFeatureIndex].GetName());
 
-	// Construct the result class
-	SVDoubleResultClass* pResult = dynamic_cast<SVDoubleResultClass *>(resultClassInfo.Construct());
+		// Construct the result class
+		SVDoubleResultClass* pResult = dynamic_cast<SVDoubleResultClass *>(resultClassInfo.Construct());
 
-	if(!pResult)
-	{
-		SvStl::MessageContainer Exception( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16207, GetUniqueObjectID() );
-		throw Exception;
-	}
-
-	Add( pResult );
-
-	SVObjectTypeInfoStruct info;
-	info.ObjectType = SVDoubleValueObjectType;
-	info.EmbeddedID = SVValueObjectGuid;
-
-	// Get the output of the result
-	SVDoubleValueObjectClass* pValue = dynamic_cast<SVDoubleValueObjectClass*>(pResult->getFirstObject(info));
-
-	if (!pValue)
-	{
-		SvStl::MessageContainer Exception( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16208, GetUniqueObjectID() );
-		throw Exception;
-	}
-
-	// Make it non visible for any selection
-	pValue->ObjectAttributesAllowedRef() &= ( ~SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES );
-
-	// Ensure this Object's inputs get connected
-	pResult->ConnectAllInputs();
-
-	// And last - Create (initialize) it
-
-	if( ! pResult->IsCreated() )
-	{
-		// And finally try to create the child object...
-		if( !CreateChildObject(pResult) )
+		if( nullptr == pResult)
 		{
-			// Remove it from the Blob Analyzer TaskObjectList ( Destruct it )
-			GUID objectID = pResult->GetUniqueObjectID();
-			if( SV_GUID_NULL != objectID )
-			{
-				Delete( objectID );
-			}
-			else
-			{
-				delete pResult;
-			}
-
-			SvStl::MessageContainer Exception( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_StatTool_ResultFailed, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10200, GetUniqueObjectID() );
+			SvStl::MessageContainer Exception( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16207, GetUniqueObjectID() );
 			throw Exception;
 		}
-	}
+
+		Add( pResult );
+
+		SVObjectTypeInfoStruct info;
+		info.ObjectType = SVDoubleValueObjectType;
+		info.EmbeddedID = SVValueObjectGuid;
+
+		// Get the output of the result
+		SVDoubleValueObjectClass* pValue = dynamic_cast<SVDoubleValueObjectClass*>(pResult->getFirstObject(info));
+
+		if(nullptr == pValue)
+		{
+			SvStl::MessageContainer Exception( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16208, GetUniqueObjectID() );
+			throw Exception;
+		}
+
+		// Make it non visible for any selection
+		pValue->SetObjectAttributesAllowed( SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute );
+
+		// Ensure this Object's inputs get connected
+		pResult->ConnectAllInputs();
+
+		// And last - Create (initialize) it
+
+		if( ! pResult->IsCreated() )
+		{
+			// And finally try to create the child object...
+			if( !CreateChildObject(pResult) )
+			{
+				// Remove it from the Blob Analyzer TaskObjectList ( Destruct it )
+				GUID objectID = pResult->GetUniqueObjectID();
+				if( SV_GUID_NULL != objectID )
+				{
+					Delete( objectID );
+				}
+				else
+				{
+					delete pResult;
+				}
+
+				SvStl::MessageContainer Exception( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_StatTool_ResultFailed, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10200, GetUniqueObjectID() );
+				throw Exception;
+			}
+		}
 }
 
 DWORD SVStatisticsToolClass::FreeResult (SVStatisticsFeatureEnum aFeatureIndex)
@@ -448,9 +448,9 @@ SVResultClass* SVStatisticsToolClass::GetResultObject(SVStatisticsFeatureEnum aF
 			
 			pResultInputInfo = resultInputList.GetAt( 0 );
 			
-			pSVObject = pResultInputInfo->GetInputObjectInfo().PObject;
+			pSVObject = pResultInputInfo->GetInputObjectInfo().m_pObject;
 			
-			if (&msvValue [aFeatureIndex] == pSVObject)
+			if (&m_Value [aFeatureIndex] == pSVObject)
 			{
 				lDone = TRUE;
 			}
@@ -464,28 +464,25 @@ SVString SVStatisticsToolClass::GetOccurenceTestValue()
 {
 	SVString Value;
 
-	msvOccurenceValue.GetValue( Value );
+	m_OccurenceValue.GetValue( Value );
 	return Value;
 }
 
 void SVStatisticsToolClass::SetOccurenceTestValue( const SVString& rValue )
 {
-	msvOccurenceValue.SetValue( 1, rValue );
+	m_OccurenceValue.SetValue( rValue, 1 );
 }
 
 SVObjectReference SVStatisticsToolClass::GetVariableSelected() const
 {
 	SVString Name;
-	msvVariableName.GetValue( Name );
+	m_VariableName.GetValue( Name );
 
 	SVObjectReference refObject;
 
 	if( !Name.empty() )
 	{
-		// much better! (~50 µs)
-		SVValueObjectReference refValueObject;
-		HRESULT hr = SVObjectManagerClass::Instance().GetObjectByDottedName( Name.c_str(), refValueObject );
-		refObject = refValueObject;
+		SVObjectManagerClass::Instance().GetObjectByDottedName( Name, refObject );
 	}
 			
 	return refObject;
@@ -500,9 +497,9 @@ void SVStatisticsToolClass::SetVariableSelected( const SVString& rName )
 {
 	if( HasVariable() )
 	{
-		if( m_inputObjectInfo.IsConnected() && m_inputObjectInfo.GetInputObjectInfo().PObject )
+		if( m_inputObjectInfo.IsConnected() && m_inputObjectInfo.GetInputObjectInfo().m_pObject )
 		{
-			m_inputObjectInfo.GetInputObjectInfo().PObject->DisconnectObjectInput(&m_inputObjectInfo);
+			m_inputObjectInfo.GetInputObjectInfo().m_pObject->DisconnectObjectInput(&m_inputObjectInfo);
 		}
 	}
 
@@ -511,7 +508,7 @@ void SVStatisticsToolClass::SetVariableSelected( const SVString& rName )
 		// Get the Object
 		SVObjectReference refObject;
 		HRESULT hrGet = SVObjectManagerClass::Instance().GetObjectByDottedName( rName.c_str(), refObject );
-		if( refObject.Object() )
+		if( refObject.getObject() )
 		{
 			// Connect to the input
 			m_inputObjectInfo.SetObject( GetObjectInfo() );
@@ -519,14 +516,14 @@ void SVStatisticsToolClass::SetVariableSelected( const SVString& rName )
 			//m_inputObjectInfo.InputObjectInfo.UniqueObjectID = selectedVarGuid;
 			m_inputObjectInfo.SetInputObject( refObject );
 			
-			refObject.Object()->ConnectObjectInput(&m_inputObjectInfo);
+			refObject.getObject()->ConnectObjectInput(&m_inputObjectInfo);
 		}// end if( refObject.Object() )
-		msvVariableName.SetValue( 1, rName );
+		m_VariableName.SetValue( rName, 1 );
 	}
 	else
 	{
-		//msvVariableGUID_OBSOLETE.SetValue(1, guidStr);
-		msvVariableName.SetValue( 1, SVString() );
+		//msvVariableGUID_OBSOLETE.SetValue( guidStr, 1 );
+		m_VariableName.SetValue( SVString(), 1 );
 
 		// Clear the Object Info
 		m_inputObjectInfo.SetInputObject( nullptr );
@@ -540,7 +537,7 @@ void SVStatisticsToolClass::UpdateTaskObjectOutputListAttributes()
 
 bool SVStatisticsToolClass::DisconnectObjectInput( SVInObjectInfoStruct* pObjectInInfo )
 {
-	if( pObjectInInfo && pObjectInInfo->GetInputObjectInfo().UniqueObjectID == m_inputObjectInfo.GetInputObjectInfo().UniqueObjectID )
+	if( pObjectInInfo && pObjectInInfo->GetInputObjectInfo().m_UniqueObjectID == m_inputObjectInfo.GetInputObjectInfo().m_UniqueObjectID )
 	{
 		m_inputObjectInfo.SetInputObject( nullptr );
 
@@ -557,37 +554,35 @@ bool SVStatisticsToolClass::DisconnectObjectInput( SVInObjectInfoStruct* pObject
 
 double SVStatisticsToolClass::getInputValue()
 {
-	double value = 0.0;
-	if( m_inputObjectInfo.IsConnected() && m_inputObjectInfo.GetInputObjectInfo().PObject )
+	double Result( 0.0 );
+	if(m_inputObjectInfo.IsConnected() && nullptr != m_inputObjectInfo.GetInputObjectInfo().m_pObject)
 	{
-		SVValueObjectReference refObject = m_inputObjectInfo.GetInputObjectInfo().GetObjectReference();
-		ASSERT( refObject.Object() );
-		refObject.GetValue( value );
-		//( ( SVValueObjectClass* )( m_inputObjectInfo.InputObjectInfo.PObject ) )->GetValue( value );
+		const SVObjectReference& rObjectRef = m_inputObjectInfo.GetInputObjectInfo().GetObjectReference();
+		m_inputObjectInfo.GetInputObjectInfo().m_pObject->getValue( Result, -1, rObjectRef.getValidArrayIndex() );
 	}
-	return value;
+	return Result;
 }
 
 double SVStatisticsToolClass::getNumberOfSamples()
 {
-	double count;
+	long count;
 	m_EnabledCount.GetValue( count );
 
-	return count + 1;
+	return static_cast<double> (count + 1);
 }
 
 // Reset Statistics values
 void SVStatisticsToolClass::resetValues()
 {
-	msvValue[SV_STATS_MIN_VALUE].SetValue(1, 0);
-	msvValue[SV_STATS_MAX_VALUE].SetValue(1, 0);
-	msvValue[SV_STATS_AVERAGEOF_VALUES].SetValue(1, 0);
-	msvValue[SV_STATS_STANDARD_DEVIATION].SetValue(1, 0);
-	msvValue[SV_STATS_VARIANCEIN_VALUES].SetValue(1, 0);
-	msvValue[SV_STATS_NUMBEROF_OCCURANCES].SetValue(1, 0);
-	msvValue[SV_STATS_PERCENTOF_OCCURANCES].SetValue(1, 0);
-	msvAccumulatedSquares = 0.0;
-	msvAccumulatedTotal = 0.0;
+	m_Value[SV_STATS_MIN_VALUE].SetValue( 0.0, 1 );
+	m_Value[SV_STATS_MAX_VALUE].SetValue( 0.0, 1 );
+	m_Value[SV_STATS_AVERAGEOF_VALUES].SetValue( 0.0, 1 );
+	m_Value[SV_STATS_STANDARD_DEVIATION].SetValue( 0.0, 1 );
+	m_Value[SV_STATS_VARIANCEIN_VALUES].SetValue( 0.0, 1 );
+	m_Value[SV_STATS_NUMBEROF_OCCURANCES].SetValue( 0.0, 1 );
+	m_Value[SV_STATS_PERCENTOF_OCCURANCES].SetValue( 0.0, 1 );
+	m_AccumulatedSquares = 0.0;
+	m_AccumulatedTotal = 0.0;
 }
 
 double SVStatisticsToolClass::calculateVariance( double aNumberOfSamples, double aAverageValue )
@@ -596,7 +591,7 @@ double SVStatisticsToolClass::calculateVariance( double aNumberOfSamples, double
 	double averageTimesSamplesSquared = (averageTimesSamples * averageTimesSamples);
 
 	double value = ( 1.0 / ( aNumberOfSamples * ( aNumberOfSamples - 1.0 ) ) ) *
-	               ( aNumberOfSamples * msvAccumulatedSquares - ( averageTimesSamplesSquared) );
+	               ( aNumberOfSamples * m_AccumulatedSquares - ( averageTimesSamplesSquared) );
 
 	return value;
 }
@@ -606,33 +601,35 @@ BOOL SVStatisticsToolClass::HasVariable() const
 	BOOL bRetVal = FALSE;
 	SVObjectReference refObject = GetVariableSelected();
 
-	if( refObject.Object() )
+	if( refObject.getObject() )
 	{
 		// Double-check if variable still exists
 		// verify that the object is really valid
-		if ( refObject.Object() )
+		if ( refObject.getObject() )
 		{
 			// Special Check for BlobAnalyzer/StatTool Features
 			// which don't really go away they just change attributes
 			if ( refObject.ObjectAttributesAllowed() & SV_SELECTABLE_FOR_STATISTICS )
+			{
 				bRetVal = TRUE;
+			}
 		}
 	}
 
 	return bRetVal;
 }
 
-bool SVStatisticsToolClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVStatisticsToolClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
-	bool l_bOk = __super::onRun( RRunStatus, pErrorMessages ) && ValidateLocal(pErrorMessages);
+	bool Result = __super::onRun( rRunStatus, pErrorMessages ) && ValidateLocal(pErrorMessages);
 
-	if( l_bOk )
+	if( Result )
 	{
-		if( !RRunStatus.IsDisabled() && !RRunStatus.IsDisabledByCondition() )
+		if( !rRunStatus.IsDisabled() && !rRunStatus.IsDisabledByCondition() )
 		{
 			// check which result to calculate
 			SVString FeatureString;
-			msvPersistantFeaturesEnabled.GetValue( FeatureString );
+			m_PersistantFeaturesEnabled.GetValue( FeatureString );
 
 			// Calculate Average and Number of Occurences always
 			// Since they are use in other calculations
@@ -645,29 +642,33 @@ bool SVStatisticsToolClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageC
 
 			// Calculate Average (Mean)
 			value = dInputValue;
-			msvAccumulatedTotal += value;
-			if( numberOfSamples )
-				averageValue = msvAccumulatedTotal / numberOfSamples;
+			m_AccumulatedTotal += value;
+			if( 0 < numberOfSamples )
+			{
+				averageValue = m_AccumulatedTotal / numberOfSamples;
+			}
 			else
-				averageValue = msvAccumulatedTotal;
+			{
+				averageValue = m_AccumulatedTotal;
+			}
 
 			// Accumulate the Squares of the value
-			msvAccumulatedSquares += (value * value);
+			m_AccumulatedSquares += (value * value);
 
 			// Update the Average value
-			msvValue[SV_STATS_AVERAGEOF_VALUES].SetValue( RRunStatus.m_lResultDataIndex, averageValue );
+			m_Value[SV_STATS_AVERAGEOF_VALUES].SetValue( averageValue, rRunStatus.m_lResultDataIndex );
 
 			// increment number of matched occurences
 			SVString occurenceValueStr;
-			msvOccurenceValue.GetValue( occurenceValueStr );
+			m_OccurenceValue.GetValue( occurenceValueStr );
 			if( !occurenceValueStr.empty() )
 			{
 				value = atof( occurenceValueStr.c_str() );
 				if( value == dInputValue )
 				{
-					msvValue[SV_STATS_NUMBEROF_OCCURANCES].GetValue( count );
+					m_Value[SV_STATS_NUMBEROF_OCCURANCES].GetValue( count );
 					count++;
-					msvValue[SV_STATS_NUMBEROF_OCCURANCES].SetValue( RRunStatus.m_lResultDataIndex, count );
+					m_Value[SV_STATS_NUMBEROF_OCCURANCES].SetValue( count, rRunStatus.m_lResultDataIndex );
 				}
 			}
 
@@ -679,25 +680,33 @@ bool SVStatisticsToolClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageC
 					switch (i)
 					{
 						case SV_STATS_MIN_VALUE:
-							msvValue[SV_STATS_MIN_VALUE].GetValue( value );
+							m_Value[SV_STATS_MIN_VALUE].GetValue( value );
 							
 							if( numberOfSamples > 1 )
+							{
 								value = std::min( value, dInputValue );
+							}
 							else
+							{
 								value = dInputValue;
+							}
 							
-							msvValue[SV_STATS_MIN_VALUE].SetValue( RRunStatus.m_lResultDataIndex, value );
+							m_Value[SV_STATS_MIN_VALUE].SetValue( value, rRunStatus.m_lResultDataIndex );
 							break;
 
 						case SV_STATS_MAX_VALUE:
-							msvValue[SV_STATS_MAX_VALUE].GetValue( value );
+							m_Value[SV_STATS_MAX_VALUE].GetValue( value );
 
 							if( numberOfSamples > 1 )
+							{
 								value = std::max( value, dInputValue );
+							}
 							else
+							{
 								value = dInputValue;
+							}
 							
-							msvValue[SV_STATS_MAX_VALUE].SetValue( RRunStatus.m_lResultDataIndex, value );
+							m_Value[SV_STATS_MAX_VALUE].SetValue( value, rRunStatus.m_lResultDataIndex );
 							break;
 
 						case SV_STATS_VARIANCEIN_VALUES:
@@ -709,7 +718,7 @@ bool SVStatisticsToolClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageC
 							{
 								value = calculateVariance( numberOfSamples, averageValue );
 
-								msvValue[SV_STATS_VARIANCEIN_VALUES].SetValue( RRunStatus.m_lResultDataIndex, value );
+								m_Value[SV_STATS_VARIANCEIN_VALUES].SetValue( value, rRunStatus.m_lResultDataIndex );
 							}
 							break;
 
@@ -719,7 +728,7 @@ bool SVStatisticsToolClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageC
 							{
 								if( FeatureString[SV_STATS_VARIANCEIN_VALUES] == '1' )
 								{
-									msvValue[SV_STATS_VARIANCEIN_VALUES].GetValue( value );
+									m_Value[SV_STATS_VARIANCEIN_VALUES].GetValue( value );
 								}
 								else
 								{
@@ -729,36 +738,36 @@ bool SVStatisticsToolClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageC
 								if( value )
 									value = fabs( sqrt( value ) );
 
-								msvValue[SV_STATS_STANDARD_DEVIATION].SetValue( RRunStatus.m_lResultDataIndex, value );
+								m_Value[SV_STATS_STANDARD_DEVIATION].SetValue(value, rRunStatus.m_lResultDataIndex );
 							}
 							break;
 
 						case SV_STATS_PERCENTOF_OCCURANCES:
 							if( !occurenceValueStr.empty() && numberOfSamples )
 							{
-								msvValue[SV_STATS_NUMBEROF_OCCURANCES].GetValue( count );
+								m_Value[SV_STATS_NUMBEROF_OCCURANCES].GetValue( count );
 								
 								// Calculate percentile
 								value = (count / numberOfSamples ) * 100.0;
 
-								msvValue[SV_STATS_PERCENTOF_OCCURANCES].SetValue( RRunStatus.m_lResultDataIndex, value );
+								m_Value[SV_STATS_PERCENTOF_OCCURANCES].SetValue( value, rRunStatus.m_lResultDataIndex );
 							}
 							break;
 					}
 				}
 			}
 
-			RRunStatus.SetPassed();
+			rRunStatus.SetPassed();
 		}
 	}
 
-	if( ! l_bOk )
+	if( ! Result )
 	{
 		SetInvalid();
-		RRunStatus.SetInvalid();
+		rRunStatus.SetInvalid();
 	}
 
-	return l_bOk;
+	return Result;
 }
 
 bool SVStatisticsToolClass::Test(SvStl::MessageContainerVector *pErrorMessages)
@@ -769,14 +778,14 @@ bool SVStatisticsToolClass::Test(SvStl::MessageContainerVector *pErrorMessages)
 	}
 
 	// verify that the object is really valid
-	SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject( m_inputObjectInfo.GetInputObjectInfo().UniqueObjectID );
-	if ( pObject )
+	SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject( m_inputObjectInfo.GetInputObjectInfo().m_UniqueObjectID );
+	if ( nullptr != pObject )
 	{
-		SVValueObjectReference refValueObject = m_inputObjectInfo.GetInputObjectInfo().GetObjectReference();
-		if ( refValueObject.Object() )
+		SVObjectReference ObjectRef = m_inputObjectInfo.GetInputObjectInfo().GetObjectReference();
+		if( nullptr != ObjectRef.getObject() )
 		{
-			double dValue;
-			HRESULT hr = refValueObject.GetValue( dValue );
+			double Value;
+			HRESULT hr = ObjectRef.getObject()->getValue( Value, -1, ObjectRef.getValidArrayIndex() );
 			if ( S_OK == hr || SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE == hr )
 			{
 				return true;
@@ -785,7 +794,7 @@ bool SVStatisticsToolClass::Test(SvStl::MessageContainerVector *pErrorMessages)
 			{
 				if (nullptr != pErrorMessages)
 				{
-					SVString CompleteName = refValueObject.Object()->GetCompleteObjectNameToObjectType( nullptr, SVInspectionObjectType );
+					SVString CompleteName = ObjectRef.getObject()->GetCompleteObjectNameToObjectType( nullptr, SVInspectionObjectType );
 					SVStringVector msgList;
 					msgList.push_back( CompleteName );
 					SvStl::MessageContainer message;
@@ -811,7 +820,7 @@ bool SVStatisticsToolClass::ValidateLocal(SvStl::MessageContainerVector *pErrorM
 {
 	if( HasVariable() )
 	{
-		if ( !m_inputObjectInfo.IsConnected() || nullptr == m_inputObjectInfo.GetInputObjectInfo().PObject )
+		if ( !m_inputObjectInfo.IsConnected() || nullptr == m_inputObjectInfo.GetInputObjectInfo().m_pObject )
 		{
 			if (nullptr != pErrorMessages)
 			{

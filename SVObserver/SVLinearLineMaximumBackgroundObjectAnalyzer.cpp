@@ -37,7 +37,7 @@ SVLinearMaximumBackgroundObjectLineAnalyzerClass::SVLinearMaximumBackgroundObjec
 void SVLinearMaximumBackgroundObjectLineAnalyzerClass::init()
 {
 	// Identify our type
-	m_outObjectInfo.ObjectTypeInfo.SubType = SVLineMaximumBackgroundObjectAnalyzerObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVLineMaximumBackgroundObjectAnalyzerObjectType;
 
 	SVLinearEdgeProcessingClass *l_pEdgeA = new SVLinearEdgeAProcessingClass(this);
 	SVLinearEdgeProcessingClass *l_pEdgeB = new SVLinearEdgeBProcessingClass(this);
@@ -62,17 +62,17 @@ void SVLinearMaximumBackgroundObjectLineAnalyzerClass::init()
 		l_pEdgeB->m_svEdgeSelectThisValue.SetDefaultValue( 1.0, true );
 	}
 
-	RegisterEmbeddedObject( &m_svLinearDistanceA, SVLinearDistanceEdgeAObjectGuid, IDS_OBJECTNAME_LINEAR_DISTANCE_EDGE_A, false, SVResetItemNone );
-	RegisterEmbeddedObject( &m_svLinearDistanceB, SVLinearDistanceEdgeBObjectGuid, IDS_OBJECTNAME_LINEAR_DISTANCE_EDGE_B, false, SVResetItemNone );
+	RegisterEmbeddedObject( &m_svLinearDistanceA, SVLinearDistanceEdgeAObjectGuid, IDS_OBJECTNAME_LINEAR_DISTANCE_EDGE_A, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_svLinearDistanceB, SVLinearDistanceEdgeBObjectGuid, IDS_OBJECTNAME_LINEAR_DISTANCE_EDGE_B, false, SvOi::SVResetItemNone );
 
 	// Register Embedded Objects
-	RegisterEmbeddedObject( &mdpEdgeA, SVDPEdgeAObjectGuid, IDS_OBJECTNAME_DPEDGE_A, false, SVResetItemNone );
-	RegisterEmbeddedObject( &mdpEdgeB, SVDPEdgeBObjectGuid, IDS_OBJECTNAME_DPEDGE_B, false, SVResetItemNone );
-	RegisterEmbeddedObject( &mdpCenter, SVDPCenterObjectGuid, IDS_OBJECTNAME_DPCENTER, false, SVResetItemNone );
-	RegisterEmbeddedObject( &mdWidth, SVDWidthObjectGuid, IDS_OBJECTNAME_DWIDTH, false, SVResetItemNone );
+	RegisterEmbeddedObject( &mdpEdgeA, SVDPEdgeAObjectGuid, IDS_OBJECTNAME_DPEDGE_A, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &mdpEdgeB, SVDPEdgeBObjectGuid, IDS_OBJECTNAME_DPEDGE_B, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &mdpCenter, SVDPCenterObjectGuid, IDS_OBJECTNAME_DPCENTER, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &mdWidth, SVDWidthObjectGuid, IDS_OBJECTNAME_DWIDTH, false, SvOi::SVResetItemNone );
 
-	RegisterEmbeddedObject( &m_svShowAllEdgeAOverlays, SVShowAllEdgeAOverlaysGuid, IDS_OBJECTNAME_SHOW_ALL_EDGE_A_OVERLAYS, false, SVResetItemNone );
-	RegisterEmbeddedObject( &m_svShowAllEdgeBOverlays, SVShowAllEdgeBOverlaysGuid, IDS_OBJECTNAME_SHOW_ALL_EDGE_B_OVERLAYS, false, SVResetItemNone );
+	RegisterEmbeddedObject( &m_svShowAllEdgeAOverlays, SVShowAllEdgeAOverlaysGuid, IDS_OBJECTNAME_SHOW_ALL_EDGE_A_OVERLAYS, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_svShowAllEdgeBOverlays, SVShowAllEdgeBOverlaysGuid, IDS_OBJECTNAME_SHOW_ALL_EDGE_B_OVERLAYS, false, SvOi::SVResetItemNone );
 
 	// Set Edge defaults
 
@@ -211,12 +211,12 @@ BOOL SVLinearMaximumBackgroundObjectLineAnalyzerClass::CreateObject( SVObjectLev
 {
 	BOOL bOk = SVLinearAnalyzerClass::CreateObject( PCreateStructure );
 
-	mdpEdgeA.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	mdpEdgeB.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	mdpCenter.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	mdWidth.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	m_svLinearDistanceA.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	m_svLinearDistanceB.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
+	mdpEdgeA.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	mdpEdgeB.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	mdpCenter.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	mdWidth.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_svLinearDistanceA.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_svLinearDistanceB.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 
 	m_isCreated = bOk;
 
@@ -274,23 +274,23 @@ HRESULT SVLinearMaximumBackgroundObjectLineAnalyzerClass::GetSelectedEdgeOverlay
 	return l_hrOk;
 }
 
-bool SVLinearMaximumBackgroundObjectLineAnalyzerClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVLinearMaximumBackgroundObjectLineAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
-	SVImageExtentClass l_svExtents;
-	std::vector<double> l_svAEdges;
-	std::vector<double> l_svBEdges;
-	SVDPointClass l_svDPointA, l_svDPointB;
-	SVExtentPointStruct l_svEdgePointA;
-	SVExtentPointStruct l_svEdgePointB;
-	SVDPointClass l_svCenterPoint;
-	double l_dDistanceA = 0.0;
-	double l_dDistanceB = 0.0;
+	SVImageExtentClass Extents;
+	std::vector<double> AEdges;
+	std::vector<double> BEdges;
+	SVDPointClass DPointA, DPointB;
+	SVExtentPointStruct EdgePointA;
+	SVExtentPointStruct EdgePointB;
+	SVDPointClass CenterPoint;
+	double DistanceA( 0.0 );
+	double DistanceB( 0.0 );
 
-	bool l_bOk = __super::onRun(RRunStatus, pErrorMessages) && ValidateEdgeA(pErrorMessages) && ValidateEdgeB(pErrorMessages);
+	bool Result = __super::onRun(rRunStatus, pErrorMessages) && ValidateEdgeA(pErrorMessages) && ValidateEdgeB(pErrorMessages);
 	
-	if ( nullptr == GetTool() || S_OK != GetEdgeA()->m_svLinearEdges.GetValues( l_svAEdges ) || S_OK != GetEdgeB()->m_svLinearEdges.GetValues( l_svBEdges ) )
+	if ( nullptr == GetTool() || S_OK != GetEdgeA()->m_svLinearEdges.GetArrayValues( AEdges ) || S_OK != GetEdgeB()->m_svLinearEdges.GetArrayValues( BEdges ) )
 	{
-		l_bOk = false;
+		Result = false;
 		if (nullptr != pErrorMessages)
 		{
 			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
@@ -298,7 +298,7 @@ bool SVLinearMaximumBackgroundObjectLineAnalyzerClass::onRun( SVRunStatusClass& 
 		}
 	}
 
-	if( l_bOk )
+	if( Result )
 	{
 		int resultAIndex = -1;
 		int resultBIndex = -1;
@@ -306,23 +306,24 @@ bool SVLinearMaximumBackgroundObjectLineAnalyzerClass::onRun( SVRunStatusClass& 
 
 		double l_dMaxBackgroundDistance = 0.0;
 
-		int l_iACount = static_cast<int>(l_svAEdges.size());
-		int l_iBCount = static_cast<int>(l_svBEdges.size());
+		int l_iACount = static_cast<int>(AEdges.size());
+		int l_iBCount = static_cast<int>(BEdges.size());
 
 		// Calc maximum backgoundobject...
 		for( int indexA = 0; indexA < l_iACount && indexA + offsetB < l_iBCount; ++ indexA )
 		{
 			// Throw lower positive edges away...
-			while( l_svAEdges.at( indexA ) >= l_svBEdges.at( indexA + offsetB ) &&
-					 indexA + ( ++offsetB ) < l_iBCount );
+			while( AEdges.at( indexA ) >= BEdges.at( indexA + offsetB ) && indexA + ( ++offsetB ) < l_iBCount );
 
 			// Check for indexB bounds...
 			if( indexA + offsetB >= l_iBCount )
-				break;
-
-			if( l_svBEdges.at( indexA + offsetB ) - l_svAEdges.at( indexA ) > l_dMaxBackgroundDistance )
 			{
-				l_dMaxBackgroundDistance = l_svBEdges.at( indexA + offsetB ) - l_svAEdges.at( indexA );
+				break;
+			}
+
+			if( BEdges.at( indexA + offsetB ) - AEdges.at( indexA ) > l_dMaxBackgroundDistance )
+			{
+				l_dMaxBackgroundDistance = BEdges.at( indexA + offsetB ) - AEdges.at( indexA );
 				resultAIndex = indexA;
 				resultBIndex = indexA + offsetB;
 			}
@@ -330,61 +331,61 @@ bool SVLinearMaximumBackgroundObjectLineAnalyzerClass::onRun( SVRunStatusClass& 
 
 		if( 0 <= resultAIndex )
 		{
-			l_dDistanceA = l_svAEdges.at( resultAIndex );
+			DistanceA = AEdges.at( resultAIndex );
 		}
 		else
 		{
-			RRunStatus.SetFailed();
+			rRunStatus.SetFailed();
 		}
 
 		if(	0 <= resultBIndex )
 		{
-			l_dDistanceB = l_svBEdges.at( resultBIndex );
+			DistanceB = BEdges.at( resultBIndex );
 		}
 		else
 		{
-			RRunStatus.SetFailed();
+			rRunStatus.SetFailed();
 		}
 
-		l_bOk &= S_OK == GetEdgeA()->GetPointFromDistance( l_dDistanceA, l_svEdgePointA );
-		l_bOk &= S_OK == GetEdgeB()->GetPointFromDistance( l_dDistanceB, l_svEdgePointB );
+		Result &= S_OK == GetEdgeA()->GetPointFromDistance( DistanceA, EdgePointA );
+		Result &= S_OK == GetEdgeB()->GetPointFromDistance( DistanceB, EdgePointB );
 	}
 
-	l_bOk &= S_OK == GetImageExtent( l_svExtents ) &&
-			S_OK == l_svExtents.TranslateFromOutputSpace(l_svEdgePointA, l_svEdgePointA) &&
-			S_OK == l_svExtents.TranslateFromOutputSpace(l_svEdgePointB, l_svEdgePointB);
+	Result &= S_OK == GetImageExtent( Extents ) &&
+			S_OK == Extents.TranslateFromOutputSpace(EdgePointA, EdgePointA) &&
+			S_OK == Extents.TranslateFromOutputSpace(EdgePointB, EdgePointB);
 
 	SVToolClass* pTool = dynamic_cast<SVToolClass*>(GetTool());
-	l_bOk &= pTool && S_OK == pTool->GetImageExtent( l_svExtents ) &&
-			S_OK == l_svExtents.TranslateFromOutputSpace(l_svEdgePointA, l_svEdgePointA) &&
-			S_OK == l_svExtents.TranslateFromOutputSpace(l_svEdgePointB, l_svEdgePointB);
+	Result &= pTool && S_OK == pTool->GetImageExtent( Extents ) &&
+			S_OK == Extents.TranslateFromOutputSpace(EdgePointA, EdgePointA) &&
+			S_OK == Extents.TranslateFromOutputSpace(EdgePointB, EdgePointB);
 
-	l_svDPointA.x = l_svEdgePointA.m_dPositionX;
-	l_svDPointA.y = l_svEdgePointA.m_dPositionY;
+	DPointA.x = EdgePointA.m_dPositionX;
+	DPointA.y = EdgePointA.m_dPositionY;
 
-	l_svDPointB.x = l_svEdgePointB.m_dPositionX;
-	l_svDPointB.y = l_svEdgePointB.m_dPositionY;
+	DPointB.x = EdgePointB.m_dPositionX;
+	DPointB.y = EdgePointB.m_dPositionY;
 
 
-	l_svCenterPoint.x = l_svDPointA.x + ((l_svDPointB.x - l_svDPointA.x) / 2.0);
-	l_svCenterPoint.y = l_svDPointA.y + ((l_svDPointB.y - l_svDPointA.y) / 2.0);
+	CenterPoint.x = DPointA.x + ((DPointB.x - DPointA.x) / 2.0);
+	CenterPoint.y = DPointA.y + ((DPointB.y - DPointA.y) / 2.0);
 
-	double l_dWidth = 0.0;
+	double Width = 0.0;
 
-	l_dWidth = l_dDistanceB - l_dDistanceA;
+	Width = fabs( DistanceB - DistanceA );
 
-	l_bOk = ( S_OK == m_svLinearDistanceA.SetValue(RRunStatus.m_lResultDataIndex, l_dDistanceA) ) && l_bOk;
-	l_bOk = ( S_OK == m_svLinearDistanceB.SetValue(RRunStatus.m_lResultDataIndex, l_dDistanceB) ) && l_bOk;
+	Result = ( S_OK == m_svLinearDistanceA.SetValue( DistanceA, rRunStatus.m_lResultDataIndex ) ) && Result;
+	Result = ( S_OK == m_svLinearDistanceB.SetValue( DistanceB, rRunStatus.m_lResultDataIndex ) ) && Result;
 	
-	l_bOk = ( S_OK == mdpEdgeA.SetValue(RRunStatus.m_lResultDataIndex, l_svDPointA) ) && l_bOk;
-	l_bOk = ( S_OK == mdpEdgeB.SetValue(RRunStatus.m_lResultDataIndex, l_svDPointB) ) && l_bOk;
-	l_bOk = ( S_OK == mdpCenter.SetValue(RRunStatus.m_lResultDataIndex, l_svCenterPoint) ) && l_bOk;
-	l_bOk = ( S_OK == mdWidth.SetValue(RRunStatus.m_lResultDataIndex, fabs( l_dWidth ) ) ) && l_bOk;
+	Result = ( S_OK == mdpEdgeA.SetValue( DPointA, rRunStatus.m_lResultDataIndex ) ) && Result;
+	Result = ( S_OK == mdpEdgeB.SetValue( DPointB, rRunStatus.m_lResultDataIndex ) ) && Result;
+	Result = ( S_OK == mdpCenter.SetValue( CenterPoint, rRunStatus.m_lResultDataIndex ) ) && Result;
+	Result = ( S_OK == mdWidth.SetValue( Width, rRunStatus.m_lResultDataIndex ) ) && Result;
 
-	if ( !l_bOk )
+	if ( !Result )
 	{
 		SetInvalid();
-		RRunStatus.SetInvalid();
+		rRunStatus.SetInvalid();
 
 		if (nullptr != pErrorMessages && pErrorMessages->empty())
 		{
@@ -393,5 +394,5 @@ bool SVLinearMaximumBackgroundObjectLineAnalyzerClass::onRun( SVRunStatusClass& 
 		}
 	}
 
-	return l_bOk;
+	return Result;
 }

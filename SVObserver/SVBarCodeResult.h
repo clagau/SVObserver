@@ -25,7 +25,7 @@ class SVBarCodeResultClass : public SVStringResultClass
 
 public:
 	bool m_bFailedToRead;
-	virtual bool onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+	virtual bool onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 	SVStringValueObjectClass* getRegExpression();
 	virtual BOOL CloseObject() override;
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;

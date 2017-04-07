@@ -34,7 +34,7 @@ SVLinearAnalyzerClass::SVLinearAnalyzerClass( BOOL BCreateDefaultTaskList, SVObj
 					            :SVAnalyzerClass( BCreateDefaultTaskList, POwner, StringResourceID )
 {
 	// Identify yourself
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVAnalyzerObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVAnalyzerObjectType;
 
 	m_svInputImageObjectInfo.SetInputObjectType( SVImageObjectType );
 	m_svInputImageObjectInfo.SetObject( GetObjectInfo() );
@@ -87,8 +87,8 @@ BOOL SVLinearAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateStru
 		m_svNormalizer.SetNormalRange( m_dwMinThreshold, m_dwMaxThreshold );
 		m_svNormalizer.SetRealRange( m_dwMinThreshold, m_dwMaxThreshold );
 
-		m_svShowAllEdgeAOverlays.ObjectAttributesAllowedRef() |= SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE;
-		m_svShowAllEdgeBOverlays.ObjectAttributesAllowedRef() |= SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE;
+		m_svShowAllEdgeAOverlays.SetObjectAttributesAllowed( SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
+		m_svShowAllEdgeBOverlays.SetObjectAttributesAllowed( SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
 	}
 
 	return bOk;
@@ -159,70 +159,52 @@ HRESULT SVLinearAnalyzerClass::GetSelectedEdgeOverlays( SVExtentMultiLineStruct 
 	return l_hrOk;
 }
 
-HRESULT SVLinearAnalyzerClass::GetImageExtent( SVImageExtentClass &p_rsvImageExtent )
+HRESULT SVLinearAnalyzerClass::GetImageExtent( SVImageExtentClass &rImageExtent )
 {
 	SVExtentPointStruct l_svPosition;
 	SVExtentPointStruct l_svPositionEndOfLine;
 	SVImageExtentClass l_svExtents;
 
-	long l_lWidth = 0;
-	long l_lHeight = 0;
+	long Width( 0 );
+	long Height( 0 );
+	long Angle( 0 );
+	BOOL bUseRotation( false );
 
-	double l_dAngle = 0.0;
-
-	BOOL l_bUseRotation = FALSE;
-
-	HRESULT l_hrOk = p_rsvImageExtent.Initialize();
+	HRESULT l_hrOk = rImageExtent.Initialize();
 
 	SVToolClass* pTool = dynamic_cast<SVToolClass*>(GetTool());
 	if( nullptr == pTool || 
-		  nullptr == GetInputUseRotationAngle() ||
-	    ( S_OK != GetInputUseRotationAngle()->GetValue( l_bUseRotation ) ) ||
-		  nullptr == GetInputProfileOrientation() ||
-	    ( S_OK != GetInputProfileOrientation()->GetValue( l_dAngle ) ) ||
+	    ( S_OK != GetInputUseRotationAngle( bUseRotation ) ) ||
+	    ( S_OK != GetInputProfileOrientation( Angle ) ) ||
 			S_OK != pTool->GetImageExtent( l_svExtents ) ||
-			S_OK != l_svExtents.GetExtentProperty( SVExtentPropertyOutputWidth, l_lWidth ) ||
-			S_OK != l_svExtents.GetExtentProperty( SVExtentPropertyOutputHeight, l_lHeight ) )
+			S_OK != l_svExtents.GetExtentProperty( SVExtentPropertyOutputWidth, Width ) ||
+			S_OK != l_svExtents.GetExtentProperty( SVExtentPropertyOutputHeight, Height ) )
 	{
 		l_hrOk = S_FALSE;
 	}
 
 	if( S_OK == l_hrOk )
 	{
-		p_rsvImageExtent.SetTranslation( SVExtentTranslationLinear );
+		rImageExtent.SetTranslation( SVExtentTranslationLinear );
 
-		if( l_bUseRotation )
+		if( !bUseRotation )
 		{
-			p_rsvImageExtent.SetExtentProperty( SVExtentPropertyRotationAngle, l_dAngle );
-			p_rsvImageExtent.SetExtentProperty( SVExtentPropertyPositionPoint, l_svPosition );
-			p_rsvImageExtent.SetExtentProperty( SVExtentPropertyWidth, l_lWidth );
-			p_rsvImageExtent.SetExtentProperty( SVExtentPropertyHeight, l_lHeight );
-		}
-		else
-		{
-			if( l_dAngle == 0.0 )
+			if( 90 == Angle )
 			{
-				p_rsvImageExtent.SetExtentProperty( SVExtentPropertyRotationAngle, l_dAngle );
-				p_rsvImageExtent.SetExtentProperty( SVExtentPropertyPositionPoint, l_svPosition );
-				p_rsvImageExtent.SetExtentProperty( SVExtentPropertyWidth, l_lWidth );
-				p_rsvImageExtent.SetExtentProperty( SVExtentPropertyHeight, l_lHeight );
+				l_svPosition.m_dPositionX = Width - 1;
+				std::swap( Width, Height );
 			}
-			else if( l_dAngle == 90.0 )
+			else if( 0 != Angle )
 			{
-				l_svPosition.m_dPositionX = l_lWidth - 1;
-
-				p_rsvImageExtent.SetExtentProperty( SVExtentPropertyRotationAngle, l_dAngle );
-				p_rsvImageExtent.SetExtentProperty( SVExtentPropertyPositionPoint, l_svPosition );
-				p_rsvImageExtent.SetExtentProperty( SVExtentPropertyWidth, l_lHeight );
-				p_rsvImageExtent.SetExtentProperty( SVExtentPropertyHeight, l_lWidth );
-			}
-			else
-			{
-				l_hrOk = S_FALSE;
+				return S_FALSE;
 			}
 		}
+		rImageExtent.SetExtentProperty( SVExtentPropertyRotationAngle, static_cast<double> (Angle) );
+		rImageExtent.SetExtentProperty( SVExtentPropertyPositionPoint, l_svPosition );
+		rImageExtent.SetExtentProperty( SVExtentPropertyWidth, static_cast<double> (Width) );
+		rImageExtent.SetExtentProperty( SVExtentPropertyHeight, static_cast<double> (Height) );
 
-		l_hrOk = p_rsvImageExtent.UpdateData();
+		l_hrOk = rImageExtent.UpdateData();
 	}
 
 	return l_hrOk;
@@ -261,9 +243,9 @@ SVImageClass *SVLinearAnalyzerClass::GetInputImage()
 	SVImageClass *l_psvImage = nullptr;
 
 	if( m_svInputImageObjectInfo.IsConnected() && 
-		  nullptr != m_svInputImageObjectInfo.GetInputObjectInfo().PObject )
+		  nullptr != m_svInputImageObjectInfo.GetInputObjectInfo().m_pObject )
 	{
-		l_psvImage = dynamic_cast<SVImageClass *>(m_svInputImageObjectInfo.GetInputObjectInfo().PObject);
+		l_psvImage = dynamic_cast<SVImageClass *>(m_svInputImageObjectInfo.GetInputObjectInfo().m_pObject);
 	}
 
 	return l_psvImage;
@@ -283,29 +265,33 @@ HRESULT SVLinearAnalyzerClass::GetPixelDepth()
 	return l_hrOk;
 }
 
-SVEnumerateValueObjectClass *SVLinearAnalyzerClass::GetInputProfileOrientation()
+HRESULT SVLinearAnalyzerClass::GetInputProfileOrientation(long& rProfileOrientation)
 {
-	SVEnumerateValueObjectClass *l_psvValue = nullptr;
-
-	if( m_svInputProfileOrientation.IsConnected() && 
-		nullptr != m_svInputProfileOrientation.GetInputObjectInfo().PObject )
+	HRESULT Result(E_FAIL);
+	if( m_svInputProfileOrientation.IsConnected() && nullptr != m_svInputProfileOrientation.GetInputObjectInfo().m_pObject )
 	{
-		l_psvValue = dynamic_cast<SVEnumerateValueObjectClass *>(m_svInputProfileOrientation.GetInputObjectInfo().PObject);
+		double Value(0.0);
+		Result = m_svInputProfileOrientation.GetInputObjectInfo().m_pObject->getValue(Value);
+		rProfileOrientation = static_cast<long> (Value);
 	}
 
-	return l_psvValue;
+	return Result;
 }
 
-SVBoolValueObjectClass* SVLinearAnalyzerClass::GetInputUseRotationAngle()
+HRESULT SVLinearAnalyzerClass::GetInputUseRotationAngle(BOOL& rUseRotationAngle)
 {
-	if( m_svInputUseRotationAngle.IsConnected() && 
-		  m_svInputUseRotationAngle.GetInputObjectInfo().PObject )
-		return dynamic_cast<SVBoolValueObjectClass *>(m_svInputUseRotationAngle.GetInputObjectInfo().PObject);
+	HRESULT Result(E_FAIL);
+	if( m_svInputUseRotationAngle.IsConnected() && nullptr != m_svInputUseRotationAngle.GetInputObjectInfo().m_pObject )
+	{
+		double Value(0.0);
+		Result = m_svInputUseRotationAngle.GetInputObjectInfo().m_pObject->getValue(Value);
+		rUseRotationAngle = 0.0 < Value ? true : false;
+	}
 
-	return nullptr;
+	return Result;
 }
 
-HRESULT SVLinearAnalyzerClass::onCollectOverlays(SVImageClass *p_Image,SVExtentMultiLineStructCArray &p_MultiLineArray)
+HRESULT SVLinearAnalyzerClass::onCollectOverlays(SVImageClass *p_Image,SVExtentMultiLineStructVector &p_MultiLineArray)
 {
 	HRESULT l_hrRet = S_OK;
 	

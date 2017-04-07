@@ -16,12 +16,16 @@
 
 class SVRemoteInputObject : public SVInputObject 
 {
+#pragma region Constructor
 public:
 	SVRemoteInputObject( LPCSTR strObjectName );
 	SVRemoteInputObject( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVREMOTEINPUTOBJECT );
 
 	virtual ~SVRemoteInputObject();
+#pragma endregion Constructor
 
+#pragma region Public Methods
+public:
 	virtual BOOL Create() override;
 	virtual BOOL Destroy() override;
 
@@ -34,8 +38,16 @@ public:
 	HRESULT GetCache( _variant_t& p_rValue );
 
 	long m_lIndex;
+#pragma endregion Public Methods
 
+#pragma region Private Methods
+private:
+	void LocalInitialize();
+#pragma endregion Private Methods
+
+#pragma region Member Variables
 private:
 	CRITICAL_SECTION m_hCriticalSection;
 	_variant_t m_vtRemoteCache;
+#pragma endregion Member Variables
 };

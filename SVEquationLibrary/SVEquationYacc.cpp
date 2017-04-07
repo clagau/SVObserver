@@ -72,14 +72,9 @@ double SVEquationYaccClass::GetPropertyValue(int symbolIndex )
 	return pEquation->GetPropertyValue( symbolIndex );
 }
 
-double SVEquationYaccClass::GetAt(int symbolIndex, int index, double dDefault)
+double SVEquationYaccClass::GetAt(int symbolIndex, int index, double dDefault /*=0.0*/)
 {
 	return pEquation->GetSubscriptedPropertyValue( symbolIndex, index-1, dDefault );	// indexes in the Equation are 1-based
-}
-
-double SVEquationYaccClass::GetAt(int symbolIndex, int index)
-{
-	return pEquation->GetSubscriptedPropertyValue( symbolIndex, index-1);	// indexes in the Equation are 1-based
 }
 
 int SVEquationYaccClass::PushValues(int iSymbolIndex)

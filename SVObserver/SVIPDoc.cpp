@@ -811,8 +811,8 @@ void SVIPDoc::OnAdjustLightReference()
 	SVLightReferenceDialogPropertySheetClass dlg( SVString( _T( "Light Reference Adjustment - [") + GetTitle() + _T("]") ).c_str() );
 
 	// obtain copies of the arrays to set if IDOK
-	SVLightReferenceArray apLRA;
-	SVLightReferenceArray apLRAorig;
+	SVLightReferencePtrVector apLRA;
+	SVLightReferencePtrVector apLRAorig;
 
 	SVVirtualCameraPtrSet setCameras;
 
@@ -1460,7 +1460,7 @@ void SVIPDoc::OpenToolAdjustmentDialog(int tab)
 		SVToolClass* l_pTool = dynamic_cast< SVToolClass* >( SVObjectManagerClass::Instance().GetObject( GetSelectedToolID() ) );
 		if( nullptr != l_pTool )
 		{
-			const SVObjectTypeInfoStruct& rToolType = l_pTool->GetObjectInfo().ObjectTypeInfo;
+			const SVObjectTypeInfoStruct& rToolType = l_pTool->GetObjectInfo().m_ObjectTypeInfo;
 
 			// Check if can Edit this Tool
 			// Primarily for the Build Reference Tool
@@ -1614,7 +1614,7 @@ void SVIPDoc::OnPublishedResultsPicker()
 				pConfig->ValidateRemoteMonitorList();
 
 				// Force the PPQs to rebuild
-					long lSize = pConfig->GetPPQCount( );
+				long lSize = pConfig->GetPPQCount( );
 
 				for( long l = 0; l < lSize; l++ )
 				{
@@ -2013,7 +2013,7 @@ void SVIPDoc::OnChangeToolSetDrawFlag( UINT nId )
 				CString Temp;
 				pMenu->GetMenuString( pos, Temp, MF_BYPOSITION );
 				// Set Flag...
-				pEnum->SetValue( 1, SVString(Temp) );
+				pEnum->setValue( SVString(Temp), 1 );
 
 				// Update Menu...
 				pMenu->CheckMenuRadioItem( 0, pMenu->GetMenuItemCount() - 1, pos, MF_BYPOSITION );
@@ -2783,7 +2783,7 @@ HRESULT SVIPDoc::DeleteTool(SVTaskObjectClass* pTaskObject)
 					for (j = 0; j < l_OutputList.GetSize(); j++)
 					{
 						pOutputObjectInfo = l_OutputList.GetAt(j);
-						if (ViewImageUniqueId == pOutputObjectInfo->UniqueObjectID)
+						if (ViewImageUniqueId == pOutputObjectInfo->m_UniqueObjectID)
 						{
 							// Close Display resources...
 							pImageView->DetachFromImage();
@@ -2828,7 +2828,7 @@ void SVIPDoc::OnEditAdjustToolPosition()
 	if( nullptr != pTool )
 	{
 		SVObjectInfoStruct info = pTool->GetObjectInfo();
-		SVObjectTypeInfoStruct typeInfo = info.ObjectTypeInfo;
+		SVObjectTypeInfoStruct typeInfo = info.m_ObjectTypeInfo;
 		//------ Warp tool hands back a SVPolarTransformObjectType. Sub type 1792.
 		//------ Window tool, Luminance hands back a SVImageObjectType. Sub type 0.
 		if( SVImageViewClass* pImageView = GetImageView() )
@@ -3702,7 +3702,7 @@ HRESULT SVIPDoc::GetBitmapInfo( const SVGUID& p_rImageId, SVBitmapInfo& p_rBitma
 	return l_Status;
 }
 
-HRESULT SVIPDoc::GetImageData( const SVGUID& p_rImageId, SVByteVector& p_rImageData, SVExtentMultiLineStructCArray& p_rMultiLineArray ) const
+HRESULT SVIPDoc::GetImageData( const SVGUID& p_rImageId, SVByteVector& p_rImageData, SVExtentMultiLineStructVector& p_rMultiLineArray ) const
 {
 	HRESULT l_Status = S_OK;
 
@@ -3724,7 +3724,7 @@ HRESULT SVIPDoc::GetImageData( const SVGUID& p_rImageId, SVByteVector& p_rImageD
 	return l_Status;
 }
 
-HRESULT SVIPDoc::SetImageData( const SVGUID& p_rImageId, const SVByteVector& p_rImageData, const SVExtentMultiLineStructCArray& p_rMultiLineArray )
+HRESULT SVIPDoc::SetImageData( const SVGUID& p_rImageId, const SVByteVector& p_rImageData, const SVExtentMultiLineStructVector& p_rMultiLineArray )
 {
 	HRESULT l_Status = S_OK;
 

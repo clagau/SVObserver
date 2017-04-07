@@ -62,7 +62,7 @@ BOOL SVImageClass::CreateObject(SVObjectLevelCreateStruct* PCreateStruct)
 	l_bOk &= ( S_OK == UpdateFromToolInformation() );
 	l_bOk &= ( S_OK == UpdateBufferArrays() );
 
-	ObjectAttributesAllowedRef() |= SV_PUBLISH_RESULT_IMAGE | SV_DD_IMAGE;	// add this on older configs
+	SetObjectAttributesAllowed( SV_PUBLISH_RESULT_IMAGE | SV_DD_IMAGE, SvOi::SetAttributeType::AddAttribute );	// add this to older configs
 	
 	m_isCreated = l_bOk;
 	
@@ -159,11 +159,11 @@ void SVImageClass::init()
 
 	m_BufferArrayPtr = new SVImageObjectClass;
 	
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVImageObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVImageObjectType;
 	
 	// derived classes that are not result images (i.e. SVMainImageClass)
 	// need to remove the PUBLISH attribute.
-	ObjectAttributesAllowedRef() = SV_ARCHIVABLE_IMAGE | SV_PUBLISH_RESULT_IMAGE | SV_DD_IMAGE;
+	SetObjectAttributesAllowed( SV_ARCHIVABLE_IMAGE | SV_PUBLISH_RESULT_IMAGE | SV_DD_IMAGE, SvOi::SetAttributeType::OverwriteAttribute );
 
 	m_ParentImageInfo.second = nullptr;
 
@@ -1740,52 +1740,37 @@ void SVImageClass::PersistImageAttributes( SVObjectWriter& rWriter )
 	rWriter.WriteAttribute(scBandLinkTag, Value);
 }
 
-HRESULT SVImageClass::GetObjectValue( const SVString& p_rValueName, VARIANT& p_rVariantValue ) const
+HRESULT SVImageClass::GetObjectValue( const SVString& rValueName, _variant_t& rValue ) const
 {
 	HRESULT hr = S_OK;
 
-	if( p_rValueName == _T( "PixelDepth" ) )
+	if( _T("PixelDepth")  == rValueName )
 	{
-		long l_lValue = 0;
-		_variant_t l_TempVariant;
+		long Value = 0;
 
-		l_TempVariant.Attach( p_rVariantValue );
+		m_ImageInfo.GetImageProperty( SVImagePropertyPixelDepth, Value );
 
-		m_ImageInfo.GetImageProperty( SVImagePropertyPixelDepth, l_lValue );
-
-		l_TempVariant = l_lValue;
-
-		l_TempVariant.Detach();
+		rValue = Value;
 	}
-	else if( p_rValueName == _T( "BandNumber" ) )
+	else if( _T("BandNumber") == rValueName )
 	{
-		long l_lValue = 0;
-		_variant_t l_TempVariant;
+		long Value = 0;
 
-		l_TempVariant.Attach( p_rVariantValue );
+		m_ImageInfo.GetImageProperty( SVImagePropertyBandNumber, Value );
 
-		m_ImageInfo.GetImageProperty( SVImagePropertyBandNumber, l_lValue );
-
-		l_TempVariant = l_lValue;
-
-		l_TempVariant.Detach();
+		rValue = Value;
 	}
-	else if( p_rValueName == _T( "BandLink" ) )
+	else if( _T("BandLink") == rValueName )
 	{
-		long l_lValue = 0;
-		_variant_t l_TempVariant;
+		long Value = 0;
 
-		l_TempVariant.Attach( p_rVariantValue );
+		m_ImageInfo.GetImageProperty( SVImagePropertyBandLink, Value );
 
-		m_ImageInfo.GetImageProperty( SVImagePropertyBandLink, l_lValue );
-
-		l_TempVariant = l_lValue;
-
-		l_TempVariant.Detach();
+		rValue = Value;
 	}
 	else
 	{
-		hr = SVObjectAppClass::GetObjectValue( p_rValueName, p_rVariantValue );
+		hr = SVObjectAppClass::GetObjectValue( rValueName, rValue );
 	}
 
 	return hr;
@@ -2372,7 +2357,7 @@ SvOi::MatroxImageSmartHandlePtr SVImageClass::getParentImageData()
 
 SVString SVImageClass::getDisplayedName() const
 {
-	const SVObjectTypeInfoStruct& rObjectTypeInfo = GetObjectInfo().ObjectTypeInfo;
+	const SVObjectTypeInfoStruct& rObjectTypeInfo = GetObjectInfo().m_ObjectTypeInfo;
 	SVString strName;
 	switch( rObjectTypeInfo.SubType )
 	{

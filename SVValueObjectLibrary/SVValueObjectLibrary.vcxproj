@@ -90,7 +90,6 @@
     <ClInclude Include="DoubleSortValueObject.h" />
     <ClInclude Include="LinkedValue.h" />
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="SVArrayValueHolder.h" />
     <ClInclude Include="SVBoolValueObjectClass.h" />
     <ClInclude Include="SVByteValueObjectClass.h" />
     <ClInclude Include="SVCharValueObjectClass.h" />
@@ -102,18 +101,12 @@
     <ClInclude Include="SVInt64ValueObjectClass.h" />
     <ClInclude Include="SVLongValueObjectClass.h" />
     <ClInclude Include="SVPointValueObjectClass.h" />
-    <ClInclude Include="SVStaticStringValueObjectClass.h" />
-    <ClInclude Include="SVStaticValueObjectClassImpl.h" />
     <ClInclude Include="SVStringValueObjectClass.h" />
     <ClInclude Include="SVTimerValueObjectClass.h" />
     <ClInclude Include="SVValueObject.h" />
     <ClInclude Include="SVValueObjectClass.h" />
-    <ClInclude Include="SVValueObjectClassImpl.h" />
-    <ClInclude Include="SVValueObjectGlobals.h" />
-    <ClInclude Include="SVValueObjectReference.h" />
     <ClInclude Include="SVVariantValueObjectClass.h" />
     <ClInclude Include="targetver.h" />
-    <ClInclude Include="UseTypeExceptMatch.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BasicValueObject.cpp" />
@@ -135,18 +128,14 @@
     <ClCompile Include="SVInt64ValueObjectClass.cpp" />
     <ClCompile Include="SVLongValueObjectClass.cpp" />
     <ClCompile Include="SVPointValueObjectClass.cpp" />
-    <ClCompile Include="SVStaticStringValueObjectClass.cpp" />
     <ClCompile Include="SVStringValueObjectClass.cpp" />
     <ClCompile Include="SVTimerValueObjectClass.cpp" />
-    <ClCompile Include="SVValueObjectClass.cpp" />
     <ClCompile Include="SVVariantValueObjectClass.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="BasicValueObject.inl" />
     <None Include="BasicValueObjects.inl" />
-    <None Include="SVStaticValueObjectClassImpl.inl" />
     <None Include="SVValueObjectClass.inl" />
-    <None Include="SVValueObjectClassImpl.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

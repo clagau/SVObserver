@@ -60,12 +60,6 @@
     <ClInclude Include="SVPointValueObjectClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVStaticStringValueObjectClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVStaticValueObjectClassImpl.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVStringValueObjectClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -78,22 +72,7 @@
     <ClInclude Include="SVValueObjectClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVValueObjectClassImpl.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVValueObjectGlobals.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVValueObjectReference.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVVariantValueObjectClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="UseTypeExceptMatch.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVArrayValueHolder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="DoubleSortValueObject.h">
@@ -146,16 +125,10 @@
     <ClCompile Include="SVPointValueObjectClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVStaticStringValueObjectClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVStringValueObjectClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVTimerValueObjectClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVValueObjectClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVVariantValueObjectClass.cpp">
@@ -175,13 +148,7 @@
     <None Include="BasicValueObjects.inl">
       <Filter>Header Files</Filter>
     </None>
-    <None Include="SVStaticValueObjectClassImpl.inl">
-      <Filter>Header Files</Filter>
-    </None>
     <None Include="SVValueObjectClass.inl">
-      <Filter>Header Files</Filter>
-    </None>
-    <None Include="SVValueObjectClassImpl.inl">
       <Filter>Header Files</Filter>
     </None>
   </ItemGroup>

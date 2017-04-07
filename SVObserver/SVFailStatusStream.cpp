@@ -55,7 +55,7 @@ HRESULT SVFailStatusStream::Add(const SVString& rName, const MonitoredObjectList
 		for (MonitoredObjectList::const_iterator it = rList.begin();it != rList.end();++it)
 		{
 			SVObjectReference objRef(SVObjectManagerClass::Instance().GetObject(it->guid));
-			if (objRef.Object())
+			if (objRef.getObject())
 			{
 				m_list.push_back(objRef);
 			}
@@ -90,76 +90,71 @@ HRESULT SVFailStatusStream::BuildJsonStream(const SVProductInfoStruct& rData, SV
 		{
 			for (SVObjectReferenceVector::const_iterator it = m_list.begin(); it != m_list.end(); ++it)
 			{
-				const SVObjectReference& rObject = *(it);
+				const SVObjectReference& rObjectRef = *(it);
 
-				if (nullptr != rObject.Object())
+				if( nullptr != rObjectRef.getValueObject() )
 				{
-					SVValueObjectClass* pValue = dynamic_cast<SVValueObjectClass *>(rObject.Object());
+					Json::Value elementObject(Json::objectValue);
+					Json::Value arrayObject(Json::arrayValue);
+					long triggerCount = rData.ProcessCount();
+					HRESULT tempStatus = S_OK;
 
-					if (nullptr != pValue)
+					std::vector<_variant_t> variantVector;
+					rObjectRef.getValueObject()->getValues( variantVector, index );
+					for (size_t i = 0; (S_OK == tempStatus) && (i < variantVector.size()); ++i)
 					{
-						Json::Value elementObject(Json::objectValue);
-						Json::Value arrayObject(Json::arrayValue);
-						long triggerCount = rData.ProcessCount();
-						HRESULT tempStatus = S_OK;
-
-						std::vector<_variant_t> variantVector;
-						pValue->GetValues(index, variantVector);
-						for (size_t i = 0; (S_OK == tempStatus) && (i < variantVector.size()); ++i)
+						switch (variantVector[i].vt)
 						{
-							switch (variantVector[i].vt)
+							case VT_BSTR:
 							{
-								case VT_BSTR:
-								{
-									arrayObject.append(static_cast<LPCTSTR>(_bstr_t(variantVector[i])));
-									break;
-								}
-								case VT_BOOL:
-								{
-									arrayObject.append(static_cast<bool>(variantVector[i]));
-									break;
-								}
-								case VT_R4:
-								case VT_R8:
-								{
-									arrayObject.append(static_cast<double>(variantVector[i]));
-									break;
-								}
-								case VT_INT:
-								case VT_I1:
-								case VT_I2:
-								case VT_I4:
-								case VT_I8:
-								{
-									arrayObject.append(static_cast<int>(variantVector[i]));
-									break;
-								}
-								case VT_UINT:
-								case VT_UI1:
-								case VT_UI2:
-								case VT_UI4:
-								case VT_UI8:
-								{
-									arrayObject.append(static_cast<unsigned int>(variantVector[i]));
-									break;
-								}
-								default:
-								{
-									arrayObject.clear();
-									triggerCount = -1;
-									tempStatus = E_FAIL;
-									break;
-								}
+								arrayObject.append(static_cast<LPCTSTR>(_bstr_t(variantVector[i])));
+								break;
+							}
+							case VT_BOOL:
+							{
+								arrayObject.append(static_cast<bool>(variantVector[i]));
+								break;
+							}
+							case VT_R4:
+							case VT_R8:
+							{
+								arrayObject.append(static_cast<double>(variantVector[i]));
+								break;
+							}
+							case VT_INT:
+							case VT_I1:
+							case VT_I2:
+							case VT_I4:
+							case VT_I8:
+							{
+								arrayObject.append(static_cast<int>(variantVector[i]));
+								break;
+							}
+							case VT_UINT:
+							case VT_UI1:
+							case VT_UI2:
+							case VT_UI4:
+							case VT_UI8:
+							{
+								arrayObject.append(static_cast<unsigned int>(variantVector[i]));
+								break;
+							}
+							default:
+							{
+								arrayObject.clear();
+								triggerCount = -1;
+								tempStatus = E_FAIL;
+								break;
 							}
 						}
-
-						elementObject[SVRC::vo::name] = pValue->GetCompleteName().c_str();
-						elementObject[SVRC::vo::array] = arrayObject;
-						elementObject[SVRC::vo::count] = triggerCount;
-						elementObject[SVRC::vo::status] = tempStatus;
-
-						l_Array.append(elementObject);
 					}
+
+					elementObject[SVRC::vo::name] = rObjectRef.getObject()->GetCompleteName().c_str();
+					elementObject[SVRC::vo::array] = arrayObject;
+					elementObject[SVRC::vo::count] = triggerCount;
+					elementObject[SVRC::vo::status] = tempStatus;
+
+					l_Array.append(elementObject);
 				}
 			}
 		}

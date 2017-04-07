@@ -17,11 +17,10 @@
 #pragma region Includes
 #include "SVOResource/resource.h"
 #include "SVUtilityLibrary/SVString.h"
-#include "SVValueObjectClassImpl.h"
-#include "SVValueObjectGlobals.h"
+#include "SVValueObjectClass.h"
 #pragma endregion Includes
 
-class SVDWordValueObjectClass : public SVValueObjectClassImpl <DWORD>
+class SVDWordValueObjectClass : public SVValueObjectClass<DWORD>
 {
 	SV_DECLARE_CLASS( SVDWordValueObjectClass );
 
@@ -36,26 +35,19 @@ public:
 
 	virtual HRESULT SetOutputFormat(OutputFormat outputFormat) override;
 
-	IMPLEMENT_VALUE_OBJECT_GET_SET()
-
 protected:
+	virtual double ValueType2Double(const DWORD& rValue) const override { return static_cast<double> (rValue); };
+	virtual _variant_t ValueType2Variant( const DWORD& rValue ) const override { return _variant_t( rValue ); };
+	virtual DWORD Variant2ValueType( const _variant_t& rValue ) const override { return DWORD( rValue ); };
 
-	virtual HRESULT SetValueAt( int iBucket, int iIndex, const SVString& value );
-	virtual HRESULT SetValueAt( int iBucket, int iIndex, const VARIANT& rValue );
+	//! Convert a string in a DWORD. Throw an exception if the string isn't convertible into a DWORD.
+	//! \param rValue [in] The input string
+	//! \returns converted value.
+	virtual DWORD ConvertString2Type(const SVString& rValue ) const override;
 
-	virtual HRESULT GetValueAt( int iBucket, int iIndex, double& rValue ) const;
-	virtual HRESULT GetValueAt( int iBucket, int iIndex, SVString& rValue ) const;
-	virtual HRESULT GetValueAt( int iBucket, int iIndex, VARIANT& rValue ) const;
-
-	virtual void ValidateValue( int iBucket, int iIndex, const SVString& rValue ) const override;
-
+	virtual SVString ConvertType2String(const DWORD& rValue) const override { return FormatOutput(rValue); };
 private:
 	void LocalInitialize();
-
-	/// Convert a string in a DWORD. Throw an exception if the string isn't convertible into a DWORD.
-	/// \param strValue [in] The input string
-	/// \returns char Return value.
-	DWORD convertString2DWord(const SVString& rValue ) const;
 };
 
 #pragma warning (pop)

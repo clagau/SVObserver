@@ -923,11 +923,9 @@ echo %time%
     <None Include="SVConfigXMLPrint.inl" />
     <None Include="SVDLLToolLoadLibraryClass.inl" />
     <None Include="SVImportProgress.inl" />
-    <None Include="SVInputObjectList.inl" />
     <None Include="SVInspectionProcessResetStruct.inl" />
     <None Include="SVInspectionTreeParser.inl" />
     <None Include="SVMemoryManager.inl" />
-    <None Include="SVOutputObjectList.inl" />
     <None Include="hlp\AfxCore.rtf" />
     <None Include="hlp\AfxOleCl.rtf" />
     <None Include="hlp\AfxOleSv.rtf" />

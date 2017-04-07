@@ -22,6 +22,7 @@
 #include "SVInfoStructs.h"
 #include "SVOGui/ZoomHelper.h"
 #include "SVOGui/ZoomHelperEx.h"
+#include "SVLibrary/SVFileNameClass.h"
 #pragma endregion Includes
 
 struct IDirectDrawSurface7;
@@ -222,7 +223,7 @@ protected:
 #pragma region Member variables
 private:
 	SVByteVector m_ImageDIB;
-	SVExtentMultiLineStructCArray m_OverlayData;
+	SVExtentMultiLineStructVector m_OverlayData;
 
 	ZoomHelperEx m_ZoomHelper;
 

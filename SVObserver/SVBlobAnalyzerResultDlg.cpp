@@ -54,11 +54,11 @@ BOOL SVBlobAnalyzerResultDlg::OnInitDialog()
 
 	for( SVBlobFeatureEnum i = SV_AREA; i < SV_TOPOF_LIST; i = (SVBlobFeatureEnum)(i + 1))
 	{	
-		if (m_pBlobAnalyzer->msvszFeaturesEnabled [i] == _T('1'))
+		if (m_pBlobAnalyzer->m_FeaturesEnabled [i] == _T('1'))
 		{
 			double* pData = &(m_pBlobAnalyzer->m_vec2dBlobResults[i][0]);
 			
-			SVString Item = SvUl_SF::Format( _T("%s\t%5.1f"), m_pBlobAnalyzer->msvValue[i].GetName(), pData[m_pBlobAnalyzer->m_nBlobIndex]);
+			SVString Item = SvUl_SF::Format( _T("%s\t%5.1f"), m_pBlobAnalyzer->m_Value[i].GetName(), pData[m_pBlobAnalyzer->m_nBlobIndex]);
 			m_ResultList.AddString( SvUl_SF::Left(Item, 100).c_str() );
 		}
 	}

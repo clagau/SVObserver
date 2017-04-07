@@ -16,15 +16,15 @@
 //Moved to precompiled header: #include <utility>
 #include "SVOResource/resource.h"
 #include "SVUtilityLibrary/SVString.h"
-#include "SVValueObjectClassImpl.h"
-#include "SVValueObjectGlobals.h"
-#include "ObjectInterfaces\IEnumerateValueObject.h"
+#include "SVValueObjectClass.h"
+#include "ObjectInterfaces/IEnumerateValueObject.h"
+#include "SVContainerLibrary/SVObjectArrayClassTemplate.h"
 #pragma endregion Includes
 
 typedef std::pair<SVString, long> SVEnumeratePair;
 typedef std::vector<SVEnumeratePair> SVEnumerateVector;
 
-class SVEnumerateValueObjectClass : public SVValueObjectClassImpl <long>, public SvOi::IEnumerateValueObject
+class SVEnumerateValueObjectClass : public SVValueObjectClass<long>, public SvOi::IEnumerateValueObject
 {
 	SV_DECLARE_CLASS( SVEnumerateValueObjectClass );
 public:
@@ -34,10 +34,9 @@ public:
 
 	virtual ~SVEnumerateValueObjectClass();
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
 	virtual void Persist(SVObjectWriter& rWriter) override;
 
-	virtual HRESULT GetObjectValue( const SVString& rValueName, VARIANT& rVariantValue ) const override;
+	//virtual HRESULT GetObjectValue( const SVString& rValueName, _variant_t& rValue ) const override;
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* PDataObject ) override;
 
 	BOOL GetEnumerator( LPCTSTR szEnumerator, long& lValue ) const;
@@ -51,36 +50,34 @@ public:
 	BOOL SetEnumTypes( LPCTSTR szEnumList );
 	BOOL SetEnumTypes( int StringResourceID );
 
-	HRESULT SetDefaultValue( LPCTSTR strValue, bool bResetAll );
+	HRESULT SetDefaultValue( LPCTSTR Value, bool bResetAll );
 
-	//using base::SetDefaultValue;// does not work in VC6; write a forwarding function
-	HRESULT SetDefaultValue( const long& lValue, bool bResetAll ) {return base::SetDefaultValue(lValue, bResetAll);}
+	virtual HRESULT SetDefaultValue( const long& rValue, bool bResetAll ) override { return __super::SetDefaultValue( rValue, bResetAll ); };
 
 #pragma region IEnumerateValueObject
 	virtual SvOi::NameValueList GetEnumList() const override;
 #pragma endregion IEnumerateValueObject
 
-	IMPLEMENT_VALUE_OBJECT_GET_SET()
+	//IMPLEMENT_VALUE_OBJECT_GET_SET()
 
 	// this function should move to a library!
 	static bool ToNumber(const SVString& str, long& rlValue);
 
 protected:
-	virtual HRESULT GetValueAt( int nBucket, int iIndex, DWORD& rValue ) const;
-	virtual HRESULT GetValueAt( int nBucket, int iIndex, SVString& rValue ) const;
-	virtual HRESULT GetValueAt( int nBucket, int iIndex, double& rValue ) const;
-	virtual HRESULT GetValueAt( int iBucket, int iIndex, VARIANT& rValue ) const;
+	//This is a specialized version as it is required to return the enum text not value
+	virtual HRESULT GetVariantValue( _variant_t& rValue, int Bucket = -1, int Index = -1 ) const;
 
-	virtual HRESULT SetValueAt( int nBucket, int iIndex, int value );
-	virtual HRESULT SetValueAt( int nBucket, int iIndex, DWORD value );
-	virtual HRESULT SetValueAt( int nBucket, int iIndex, const SVString& value );
-	virtual HRESULT SetValueAt( int iBucket, int iIndex, double value );
+	//The variant should have the enum text and not the long value
+	virtual double ValueType2Double(const long& rValue) const override { return static_cast<double> (rValue); };
+	virtual _variant_t ValueType2Variant( const long& rValue ) const override { return _variant_t( rValue ); };
+	virtual long Variant2ValueType( const _variant_t& rValue ) const override { return long( rValue ); };
 
-	virtual void ValidateValue( int iBucket, int iIndex, const SVString& rValue ) const override;
-	
-	virtual HRESULT CompareWithCurrentValueImpl( const SVString& rCompare ) const override;
-	virtual HRESULT GetNormalizedValueImpl( const SVString& strValue, SVString& rstrNormalized ) const override;
+	//! Convert a string in an enum. Throw an exception if the string isn't convertible into an enum
+	//! \param rValue [in] The input string
+	//! \returns long value.
+	virtual long ConvertString2Type( const SVString& rValue ) const override;
 
+	virtual SVString ConvertType2String( const long& rValue ) const override;
 private:
 	void LocalInitialize();
 	

@@ -14,53 +14,37 @@
 #include "SVOResource/resource.h"
 #include "SVUtilityLibrary/SVString.h"
 #include "SVUtilityLibrary/SVDPointClass.h"
-#include "SVValueObjectClassImpl.h"
-#include "SVValueObjectGlobals.h"
+#include "SVValueObjectClass.h"
 #pragma endregion Includes
 
-class SVDPointValueObjectClass : public SVValueObjectClassImpl <SVDPointClass>
+class SVDPointValueObjectClass : public SVValueObjectClass<SVDPointClass>
 {
 	SV_DECLARE_CLASS( SVDPointValueObjectClass );
 
 public:
 	SVDPointValueObjectClass( LPCTSTR ObjectName );
-	SVDPointValueObjectClass( SVObjectClass* POwner = nullptr, 
-	                          int StringResourceID = IDS_CLASSNAME_SVDPOINTVALUEOBJECT );
+	SVDPointValueObjectClass( SVObjectClass* pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVDPOINTVALUEOBJECT );
 	const SVDPointValueObjectClass& operator = (const SVDPointValueObjectClass& rhs);
 
 	virtual ~SVDPointValueObjectClass();
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
-	virtual HRESULT SetObjectValue( SVObjectAttributeClass* PDataObject ) override;
 	virtual void Persist(SVObjectWriter& rWriter) override;
 
-	HRESULT GetDefaultValue( POINT& rPoint ) const;
-	HRESULT SetDefaultValue( const POINT& Point, bool bResetAll );
-
-	//using base::GetDefaultValue;// does not work in VC6; write a forwarding function
-	HRESULT GetDefaultValue( SVDPointClass& rPoint ) const { return base::GetDefaultValue(rPoint); }
-	//using base::SetDefaultValue;// does not work in VC6; write a forwarding function
-	HRESULT SetDefaultValue( const SVDPointClass& Point, bool bResetAll ) {return base::SetDefaultValue(Point, bResetAll);}
-
-	IMPLEMENT_VALUE_OBJECT_GET_SET()
-
 protected:
-	virtual HRESULT SetValueAt( int nBucket, int iIndex, const POINT& Point );
-	virtual HRESULT SetValueAt( int iBucket, int iIndex, const SVString& value );
-	virtual HRESULT SetValueAt( int iBucket, int iIndex, double value );
+	virtual double ValueType2Double(const SVDPointClass& rValue) const override { return E_NOTIMPL; };
+	virtual _variant_t ValueType2Variant( const SVDPointClass& rValue ) const override;
+	virtual SVDPointClass Variant2ValueType( const _variant_t& rValue ) const override;
 
-	virtual HRESULT GetValueAt( int nBucket, int iIndex, POINT& rPoint ) const;
-	virtual HRESULT GetValueAt( int nBucket, int iIndex, double& rstrValue ) const;
-	virtual HRESULT GetValueAt( int nBucket, int iIndex, SVString& rstrValue ) const;
-	virtual HRESULT GetValueAt( int iBucket, int iIndex, VARIANT& rValue ) const;
+	//! Convert a string in a SVDPointClass. Throw an exception if the string isn't convertible into a SVDPointClass
+	//! \param strValue [in] The input string
+	//! \returns converted value.
+	virtual SVDPointClass ConvertString2Type( const SVString& rValue ) const override;
 
-	virtual void ValidateValue( int iBucket, int iIndex, const SVString& rValue ) const override;
+	//! Convert SVDPointClass to SVString 
+	//! \param rValue [in] Type to convert
+	/// \returns the SVString
+	virtual SVString ConvertType2String( const SVDPointClass& rValue ) const override;
 
 private:
 	void LocalInitialize();
-
-	/// Convert a string in a SVDPointClass. Throw an exception if the string isn't convertible into a SVDPointClass
-	/// \param strValue [in] The input string
-	/// \returns char Return value.
-	SVDPointClass convertString2DPoint(const SVString& rValue ) const;
 };

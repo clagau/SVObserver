@@ -39,61 +39,61 @@ void SVRankingFilterClass::init()
 {
 	long l( 0 );
 
-	m_outObjectInfo.ObjectTypeInfo.SubType = SVRankingFilterObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVRankingFilterObjectType;
 
-	RegisterEmbeddedObject( &m_lvoCell01, SVRankingFilterCell01Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL01, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell02, SVRankingFilterCell02Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL02, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell03, SVRankingFilterCell03Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL03, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell04, SVRankingFilterCell04Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL04, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell05, SVRankingFilterCell05Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL05, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell06, SVRankingFilterCell06Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL06, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell07, SVRankingFilterCell07Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL07, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell08, SVRankingFilterCell08Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL08, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell09, SVRankingFilterCell09Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL09, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell10, SVRankingFilterCell10Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL10, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell11, SVRankingFilterCell11Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL11, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell12, SVRankingFilterCell12Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL12, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell13, SVRankingFilterCell13Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL13, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell14, SVRankingFilterCell14Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL14, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell15, SVRankingFilterCell15Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL15, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell16, SVRankingFilterCell16Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL16, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell17, SVRankingFilterCell17Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL17, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell18, SVRankingFilterCell18Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL18, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell19, SVRankingFilterCell19Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL19, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell20, SVRankingFilterCell20Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL20, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell21, SVRankingFilterCell21Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL21, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell22, SVRankingFilterCell22Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL22, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell23, SVRankingFilterCell23Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL23, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell24, SVRankingFilterCell24Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL24, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell25, SVRankingFilterCell25Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL25, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell26, SVRankingFilterCell26Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL26, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell27, SVRankingFilterCell27Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL27, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell28, SVRankingFilterCell28Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL28, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell29, SVRankingFilterCell29Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL29, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell30, SVRankingFilterCell30Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL30, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell31, SVRankingFilterCell31Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL31, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell32, SVRankingFilterCell32Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL32, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell33, SVRankingFilterCell33Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL33, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell34, SVRankingFilterCell34Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL34, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell35, SVRankingFilterCell35Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL35, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell36, SVRankingFilterCell36Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL36, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell37, SVRankingFilterCell37Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL37, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell38, SVRankingFilterCell38Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL38, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell39, SVRankingFilterCell39Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL39, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell40, SVRankingFilterCell40Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL40, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell41, SVRankingFilterCell41Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL41, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell42, SVRankingFilterCell42Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL42, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell43, SVRankingFilterCell43Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL43, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell44, SVRankingFilterCell44Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL44, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell45, SVRankingFilterCell45Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL45, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell46, SVRankingFilterCell46Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL46, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell47, SVRankingFilterCell47Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL47, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell48, SVRankingFilterCell48Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL48, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell49, SVRankingFilterCell49Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL49, false, SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell01, SVRankingFilterCell01Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL01, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell02, SVRankingFilterCell02Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL02, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell03, SVRankingFilterCell03Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL03, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell04, SVRankingFilterCell04Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL04, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell05, SVRankingFilterCell05Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL05, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell06, SVRankingFilterCell06Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL06, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell07, SVRankingFilterCell07Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL07, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell08, SVRankingFilterCell08Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL08, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell09, SVRankingFilterCell09Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL09, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell10, SVRankingFilterCell10Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL10, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell11, SVRankingFilterCell11Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL11, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell12, SVRankingFilterCell12Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL12, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell13, SVRankingFilterCell13Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL13, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell14, SVRankingFilterCell14Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL14, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell15, SVRankingFilterCell15Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL15, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell16, SVRankingFilterCell16Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL16, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell17, SVRankingFilterCell17Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL17, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell18, SVRankingFilterCell18Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL18, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell19, SVRankingFilterCell19Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL19, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell20, SVRankingFilterCell20Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL20, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell21, SVRankingFilterCell21Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL21, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell22, SVRankingFilterCell22Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL22, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell23, SVRankingFilterCell23Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL23, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell24, SVRankingFilterCell24Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL24, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell25, SVRankingFilterCell25Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL25, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell26, SVRankingFilterCell26Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL26, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell27, SVRankingFilterCell27Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL27, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell28, SVRankingFilterCell28Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL28, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell29, SVRankingFilterCell29Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL29, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell30, SVRankingFilterCell30Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL30, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell31, SVRankingFilterCell31Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL31, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell32, SVRankingFilterCell32Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL32, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell33, SVRankingFilterCell33Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL33, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell34, SVRankingFilterCell34Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL34, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell35, SVRankingFilterCell35Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL35, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell36, SVRankingFilterCell36Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL36, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell37, SVRankingFilterCell37Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL37, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell38, SVRankingFilterCell38Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL38, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell39, SVRankingFilterCell39Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL39, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell40, SVRankingFilterCell40Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL40, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell41, SVRankingFilterCell41Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL41, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell42, SVRankingFilterCell42Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL42, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell43, SVRankingFilterCell43Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL43, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell44, SVRankingFilterCell44Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL44, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell45, SVRankingFilterCell45Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL45, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell46, SVRankingFilterCell46Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL46, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell47, SVRankingFilterCell47Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL47, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell48, SVRankingFilterCell48Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL48, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell49, SVRankingFilterCell49Guid, IDS_OBJECTNAME_RANKINGFILTER_CELL49, false, SvOi::SVResetItemOwner );
 
-	RegisterEmbeddedObject( &m_lvoRankingWidth,  SVRankingFilterRankingWidthGuid, IDS_OBJECTNAME_RANKINGFILTER_RANKINGWIDTH, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoRankingHeight, SVRankingFilterRankingHeightGuid, IDS_OBJECTNAME_RANKINGFILTER_RANKINGHEIGHT, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoRankingRank,  SVRankingFilterRankingRankGuid, IDS_OBJECTNAME_RANKINGFILTER_RANKINGRANK, false, SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoRankingWidth,  SVRankingFilterRankingWidthGuid, IDS_OBJECTNAME_RANKINGFILTER_RANKINGWIDTH, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoRankingHeight, SVRankingFilterRankingHeightGuid, IDS_OBJECTNAME_RANKINGFILTER_RANKINGHEIGHT, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoRankingRank,  SVRankingFilterRankingRankGuid, IDS_OBJECTNAME_RANKINGFILTER_RANKINGRANK, false, SvOi::SVResetItemOwner );
 
 	m_plvoRankingCells[ 0] = &m_lvoCell01;
 	m_plvoRankingCells[ 1] = &m_lvoCell02;
@@ -154,14 +154,15 @@ void SVRankingFilterClass::init()
 	m_lvoRankingHeight.SetDefaultValue( 3L, TRUE );
 	m_lvoRankingRank.SetDefaultValue( SVValueMedian, TRUE );
 
+	const UINT cAttributes = SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE;
 	for( l = 0; l < 49; l++ )
 	{
-		m_plvoRankingCells[l]->ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE;
+		m_plvoRankingCells[l]->SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 	}// end for
 
-	m_lvoRankingWidth.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE;
-	m_lvoRankingHeight.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE;
-	m_lvoRankingRank.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE;
+	m_lvoRankingWidth.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
+	m_lvoRankingHeight.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
+	m_lvoRankingRank.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 
 	// Set default inputs and outputs
 	addDefaultInputObjects();
@@ -217,19 +218,19 @@ void SVRankingFilterClass::RebuildRanking()
 	m_lvoRankingWidth.GetValue( lWidth );
 	if( lWidth >= 7 )
 	{
-		m_lvoRankingWidth.SetValue( 1L, 7L );
+		m_lvoRankingWidth.SetValue( 7L, 1 );
 	}// end if
 	else if( lWidth >= 5 )
 	{
-		m_lvoRankingWidth.SetValue( 1L, 5L );
+		m_lvoRankingWidth.SetValue( 5L, 1 );
 	}// end else if
 	else if( lWidth >= 3 )
 	{
-		m_lvoRankingWidth.SetValue( 1L, 3L );
+		m_lvoRankingWidth.SetValue( 3L, 1 );
 	}// end else if
 	else
 	{
-		m_lvoRankingWidth.SetValue( 1L, 1L );
+		m_lvoRankingWidth.SetValue( 1L, 1 );
 	}// end else
 	m_lvoRankingWidth.GetValue( lWidth );
 
@@ -237,19 +238,19 @@ void SVRankingFilterClass::RebuildRanking()
 	m_lvoRankingHeight.GetValue( lHeight );
 	if( lHeight >= 7 )
 	{
-		m_lvoRankingHeight.SetValue( 1L, 7L );
+		m_lvoRankingHeight.SetValue( 7L, 1 );
 	}// end if
 	else if( lHeight >= 5 )
 	{
-		m_lvoRankingHeight.SetValue( 1L, 5L );
+		m_lvoRankingHeight.SetValue( 5L, 1 );
 	}// end else if
 	else if( lHeight >= 3 )
 	{
-		m_lvoRankingHeight.SetValue( 1L, 3L );
+		m_lvoRankingHeight.SetValue( 3L, 1 );
 	}// end else if
 	else
 	{
-		m_lvoRankingHeight.SetValue( 1L, 1L );
+		m_lvoRankingHeight.SetValue( 1L, 1 );
 	}// end else
 	m_lvoRankingHeight.GetValue( lHeight );
 
@@ -279,13 +280,13 @@ void SVRankingFilterClass::RebuildRanking()
 	delete [] pRankingData;	
 	for( l = 0; l < lWidth * lHeight; l++ )
 	{
-		m_plvoRankingCells[l]->ObjectAttributesAllowedRef() = SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES | SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE;
+		m_plvoRankingCells[l]->SetObjectAttributesAllowed( SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES | SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE, SvOi::SetAttributeType::OverwriteAttribute );
 	}// end for
 
 	for( l = lWidth * lHeight; l < 49; l++ )
 	{
-		m_plvoRankingCells[l]->ObjectAttributesAllowedRef() = SV_EMBEDABLE;
-		m_plvoRankingCells[l]->ObjectAttributesSetRef() = SV_EMBEDABLE;
+		m_plvoRankingCells[l]->SetObjectAttributesAllowed( SV_EMBEDABLE, SvOi::SetAttributeType::OverwriteAttribute );
+		m_plvoRankingCells[l]->SetObjectAttributesSet( SV_EMBEDABLE, SvOi::SetAttributeType::OverwriteAttribute );
 	}// end for
 }
 
@@ -295,19 +296,19 @@ void SVRankingFilterClass::RebuildRanking()
 // .Description : Runs this operator.
 //              : Returns FALSE, if operator cannot run ( may be deactivated ! )
 ////////////////////////////////////////////////////////////////////////////////
-bool SVRankingFilterClass::onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVRankingFilterClass::onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 { 
 	long lRank;
 
 	// Force a copy forward to keep the display correct
 	for( long l = 0; l < 49; l++ )
 	{
-		m_plvoRankingCells[l]->CopyLastSetValue( RRunStatus.m_lResultDataIndex );
+		m_plvoRankingCells[l]->CopyLastSetValue( rRunStatus.m_lResultDataIndex );
 	}// end for
 
-	m_lvoRankingWidth.CopyLastSetValue( RRunStatus.m_lResultDataIndex );
-	m_lvoRankingHeight.CopyLastSetValue( RRunStatus.m_lResultDataIndex );
-	m_lvoRankingRank.CopyLastSetValue( RRunStatus.m_lResultDataIndex );
+	m_lvoRankingWidth.CopyLastSetValue( rRunStatus.m_lResultDataIndex );
+	m_lvoRankingHeight.CopyLastSetValue( rRunStatus.m_lResultDataIndex );
+	m_lvoRankingRank.CopyLastSetValue( rRunStatus.m_lResultDataIndex );
 
 	if( m_pCurrentUIOPL && !( RInputImageHandle.empty() ) && !( ROutputImageHandle.empty() ) )
 	{
@@ -332,7 +333,7 @@ bool SVRankingFilterClass::onRun( bool First, SVSmartHandlePointer RInputImageHa
 			}
 			// Signal that something was wrong...
 			SetInvalid();
-			RRunStatus.SetInvalid();
+			rRunStatus.SetInvalid();
 			return false;
 		}
 
@@ -350,7 +351,7 @@ bool SVRankingFilterClass::onRun( bool First, SVSmartHandlePointer RInputImageHa
 
 	// Signal that something was wrong...
 	SetInvalid();
-	RRunStatus.SetInvalid();
+	rRunStatus.SetInvalid();
 	return false;
 }
 

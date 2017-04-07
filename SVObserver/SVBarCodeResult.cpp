@@ -32,38 +32,38 @@ SVBarCodeResultClass::SVBarCodeResultClass (BOOL BCreateDefaultTaskList, SVObjec
 	m_lTotalBytes = 0;
 
 	// Identify yourself
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVResultObjectType;
-	m_outObjectInfo.ObjectTypeInfo.SubType = SVResultBarCodeObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVResultBarCodeObjectType;
 
   RegisterEmbeddedObject(
 		&msv_bUseSingleMatchString, 
 	  SVBCUseSingleMatchStringGuid, 
 	  IDS_OBJECTNAME_BC_USE_SINGLE_MATCH_STRING,
-		false, SVResetItemOwner );
+		false, SvOi::SVResetItemOwner );
 
   RegisterEmbeddedObject(
 		&msv_bUseMatchStringFile, 
 		SVBCUseMatchStringFileGuid, 
 		IDS_OBJECTNAME_BC_USE_MATCH_STRING_FILE,
-		false, SVResetItemOwner );
+		false, SvOi::SVResetItemOwner );
 
   RegisterEmbeddedObject(
 		&msv_szMatchStringFileName, 
 	  SVBCMatchStringFileNameObjectGuid, 
 	  IDS_OBJECTNAME_BC_MATCH_STRING_FILE_NAME,
-		false, SVResetItemOwner );
+		false, SvOi::SVResetItemOwner );
 
   RegisterEmbeddedObject(
 		&msv_lMatchStringLine, 
 		SVBCMatchStringLineGuid, 
 		IDS_OBJECTNAME_BC_MATCH_STRING_LINE,
-		false, SVResetItemNone );
+		false, SvOi::SVResetItemNone );
 
   RegisterEmbeddedObject(
 		&m_dReadScore,
 		SVBCMatchScoreGuid,
 		IDS_OBJECTNAME_BC_READ_SCORE,
-		false, SVResetItemNone );
+		false, SvOi::SVResetItemNone );
 
 	msv_bUseSingleMatchString.SetDefaultValue( TRUE, TRUE );
   msv_szMatchStringFileName.SetDefaultValue(_T(""), TRUE);
@@ -103,15 +103,15 @@ BOOL SVBarCodeResultClass::CreateObject(SVObjectLevelCreateStruct *PCreateStruct
 		bOk = getInputString() && getRegExpression() && (S_OK == LoadMatchStringFile());
 		if (bOk)
 		{
-			getRegExpression()->ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE;
+			getRegExpression()->SetObjectAttributesAllowed( SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
 		}
 	}
 
-	msv_bUseSingleMatchString.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
-	msv_szMatchStringFileName.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE;
-	msv_lMatchStringLine.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	msv_bUseMatchStringFile.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
-	m_dReadScore.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
+	msv_bUseSingleMatchString.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	msv_szMatchStringFileName.SetObjectAttributesAllowed( SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
+	msv_lMatchStringLine.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	msv_bUseMatchStringFile.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_dReadScore.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 	m_isCreated = bOk;
 
 	return bOk;
@@ -124,78 +124,82 @@ BOOL SVBarCodeResultClass::CloseObject()
 
 SVStringValueObjectClass* SVBarCodeResultClass::getInputString()
 {
-	if( m_inputObjectInfo.IsConnected() && m_inputObjectInfo.GetInputObjectInfo().PObject )
-		return ( SVStringValueObjectClass* ) m_inputObjectInfo.GetInputObjectInfo().PObject;
+	if( m_inputObjectInfo.IsConnected() )
+	{
+		return dynamic_cast<SVStringValueObjectClass*> (m_inputObjectInfo.GetInputObjectInfo().m_pObject);
+	}
 
 	return nullptr;
 }
 
 SVStringValueObjectClass* SVBarCodeResultClass::getRegExpression()
 {
-	if( m_SVRegExpressionObjectInfo.IsConnected() && m_SVRegExpressionObjectInfo.GetInputObjectInfo().PObject )
-		return ( SVStringValueObjectClass* ) m_SVRegExpressionObjectInfo.GetInputObjectInfo().PObject;
+	if( m_SVRegExpressionObjectInfo.IsConnected() )
+	{
+		return dynamic_cast<SVStringValueObjectClass*>  (m_SVRegExpressionObjectInfo.GetInputObjectInfo().m_pObject);
+	}
 
 	return nullptr;
 }
 
-bool SVBarCodeResultClass::onRun(SVRunStatusClass &RRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool SVBarCodeResultClass::onRun(SVRunStatusClass &rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	//@WARNING[MZA][7.50][17.01.2017] Not sure if we need to check ValidateLocal in Run-mode, maybe it is enough to check it in ResetObject
-	if( __super::onRun( RRunStatus, pErrorMessages ) && ValidateLocal(pErrorMessages) )
-	{
-		if( this->m_bFailedToRead )
+	if( __super::onRun( rRunStatus, pErrorMessages ) && ValidateLocal(pErrorMessages) )
+  {
+	  if( this->m_bFailedToRead )
+	  {
+		  rRunStatus.SetWarned();
+		  return TRUE;
+	  }
+
+	SVStringValueObjectClass* pValue = getInputString();
+
+    if (pValue->IsValid())
+    {
+		BOOL bLoad = FALSE;
+
+		SVString InputString;
+		pValue->GetValue(InputString);
+
+		msv_bUseMatchStringFile.GetValue( bLoad );
+		if ( bLoad )
 		{
-			RRunStatus.SetWarned();
-			return TRUE;
-		}
-
-		SVStringValueObjectClass* pValue = getInputString();
-
-		if (pValue->IsValid())
-		{
-			BOOL bLoad = FALSE;
-
-			SVString InputString;
-			pValue->GetValue(InputString);
-
-			msv_bUseMatchStringFile.GetValue( bLoad );
-			if ( bLoad )
+			long lLine = CheckStringInTable( InputString );
+			msv_lMatchStringLine.SetValue( lLine, rRunStatus.m_lResultDataIndex );
+			if ( 0 < lLine )
 			{
-				long lLine = CheckStringInTable( InputString );
-				msv_lMatchStringLine.SetValue( RRunStatus.m_lResultDataIndex, lLine );
-				if ( 0 < lLine )
-				{
-					RRunStatus.SetPassed();
-				}
-				else
-				{
-					RRunStatus.SetFailed();
-				}
+				rRunStatus.SetPassed();
 			}
 			else
 			{
-				SVString RegExpression;
-				SVStringValueObjectClass* pRegExp = getRegExpression();
-				pRegExp->GetValue(RegExpression);
-
-				if (RegExpression.empty() || !InputString.compare(RegExpression))
-				{
-					RRunStatus.SetPassed();
-				}
-				else
-				{
-					RRunStatus.SetFailed();
-				}
+				rRunStatus.SetFailed();
 			}
 		}
 		else
 		{
-			RRunStatus.SetFailed();
-		}
+			SVString RegExpression;
+			SVStringValueObjectClass* pRegExp = getRegExpression();
+		    pRegExp->GetValue(RegExpression);
+
+				if (RegExpression.empty() || !InputString.compare(RegExpression))
+				{
+					rRunStatus.SetPassed();
+				}
+				else
+				{
+					rRunStatus.SetFailed();
+				}
+      }
+    }
+    else
+    {
+      rRunStatus.SetFailed();
+    }
 		return true;
-	}
-	RRunStatus.SetInvalid();
-	SetInvalid ();
+  }
+	rRunStatus.SetInvalid();
+  SetInvalid ();
 	return false;
 }
 
@@ -207,10 +211,10 @@ bool SVBarCodeResultClass::ResetObject(SvStl::MessageContainerVector *pErrorMess
 	{
 		Result = false;
 		if (nullptr != pErrorMessages)
-		{
+	{
 			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_BarCodeMatchStringLoadFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 			pErrorMessages->push_back(Msg);
-		}
+	}
 	}
 
 	return Result && ValidateLocal(pErrorMessages);
@@ -420,48 +424,48 @@ void SVBarCodeResultClass::InsertValueToTable(short nValue, int nIndex)
 
 int SVBarCodeResultClass::CheckStringInTable( const SVString& rMatchString )
 {
-	int nReturnIndex = -1;
+   int nReturnIndex = -1;
 
-	long  lIndexValue = 0;
-	size_t nCharCount = rMatchString.size();
+   long  lIndexValue = 0;
+   size_t nCharCount = rMatchString.size();
 
-	for( size_t i = 0; i < nCharCount; i++ )
-	{
-		int nValue = rMatchString[i] - 0x20;
-		lIndexValue += nValue * nValue * static_cast<int> (i + 1);
-	}
+   for( size_t i = 0; i < nCharCount; i++ )
+   {
+      int nValue = rMatchString[i] - 0x20;
+      lIndexValue += nValue * nValue * static_cast<int> (i + 1);
+   }
 
 	// if Index value is out of range, definitely there won't be a match in the file.
-	if(lIndexValue >= m_lLowValue && lIndexValue <= m_lHighValue)
-	{
-		int nActualIndex = (int)((((double)(lIndexValue - m_lLowValue)) / m_dFactor) * 9.5);
+   if(lIndexValue >= m_lLowValue && lIndexValue <= m_lHighValue)
+   {
+      int nActualIndex = (int)((((double)(lIndexValue - m_lLowValue)) / m_dFactor) * 9.5);
 		// Check whether the string at this location is the matchString.
 
-		while(m_pIndexTable[nActualIndex] != 0) 
-		{
-			TCHAR *pData = m_pDataArr[m_pIndexTable[nActualIndex] - 1];
+      while(m_pIndexTable[nActualIndex] != 0) 
+      {
+         TCHAR *pData = m_pDataArr[m_pIndexTable[nActualIndex] - 1];
 
-			if(rMatchString  == pData)
-			{
-				nReturnIndex = m_pIndexTable[nActualIndex];
-				break;
-			}
-			nActualIndex++;
+         if(rMatchString  == pData)
+         {
+            nReturnIndex = m_pIndexTable[nActualIndex];
+            break;
+         }
+         nActualIndex++;
 
 			// if we reach the end of the hash table, start from the begining( starting from 3rd position) 
-			if(nActualIndex >= m_nTotalCount * 10 )
-			{
-				nActualIndex = 2;
-			}
-		}
-	}
+         if(nActualIndex >= m_nTotalCount * 10 )
+		 {
+            nActualIndex = 2;
+		 }
+      }
+   }
 
-	return  nReturnIndex;
+   return  nReturnIndex;
 }
 
 bool SVBarCodeResultClass::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) const
 {
-	if ( !m_SVRegExpressionObjectInfo.IsConnected() || nullptr == m_SVRegExpressionObjectInfo.GetInputObjectInfo().PObject )
+	if ( !m_SVRegExpressionObjectInfo.IsConnected() || nullptr == m_SVRegExpressionObjectInfo.GetInputObjectInfo().m_pObject )
 	{
 		if (nullptr != pErrorMessages)
 		{

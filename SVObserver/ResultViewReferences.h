@@ -25,7 +25,6 @@ struct SVIPResultData;
 class SVIPResultItemDefinition;
 class SVResultsWrapperClass;
 class SVInspectionProcess;
-class SVValueObjectClass;
 #pragma endregion Declarations
 
 /**

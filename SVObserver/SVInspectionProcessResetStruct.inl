@@ -11,72 +11,72 @@
 
 inline SVInspectionProcessResetStruct::SVInspectionProcessResetStruct()
 {
-	m_eResetItem = SVResetItemNone;
+	m_eResetItem = SvOi::SVResetItemNone;
 };
 
-inline SVInspectionProcessResetStruct::SVInspectionProcessResetStruct( const SVInspectionProcessResetStruct &p_rsvObject )
+inline SVInspectionProcessResetStruct::SVInspectionProcessResetStruct( const SVInspectionProcessResetStruct& rRhs )
 {
-	*this = p_rsvObject;
+	*this = rRhs;
 };
 
-inline const SVInspectionProcessResetStruct &SVInspectionProcessResetStruct::operator=( const SVInspectionProcessResetStruct &p_rsvObject )
+inline const SVInspectionProcessResetStruct &SVInspectionProcessResetStruct::operator=( const SVInspectionProcessResetStruct& rRhs )
 {
-	if( this != &p_rsvObject )
+	if( &rRhs != this  )
 	{
-		m_eResetItem = p_rsvObject.m_eResetItem;
-		m_svObjectSet = p_rsvObject.m_svObjectSet;
+		m_eResetItem = rRhs.m_eResetItem;
+		m_ObjectSet = rRhs.m_ObjectSet;
 	}
 
 	return *this;
 };
 
-inline SVResetItemEnum SVInspectionProcessResetStruct::SetResetData( SVResetItemEnum p_eResetItem, SVObjectClass *p_psvObject )
+inline SvOi::SVResetItemEnum SVInspectionProcessResetStruct::SetResetData( SvOi::SVResetItemEnum eResetItem, SVObjectClass *pObject )
 {
-	switch( p_eResetItem )
+	switch( eResetItem )
 	{
+	case SvOi::SVResetItemIP:
+		{
+			if( eResetItem < m_eResetItem )
+			{
+				m_ObjectSet.clear();
+			}
+
+			m_eResetItem = SvOi::SVResetItemIP;
+
+			break;
+		}
+		case SvOi::SVResetItemTool:
+		{
+			if( eResetItem < m_eResetItem )
+			{
+				m_ObjectSet.clear();
+
+				m_eResetItem = SvOi::SVResetItemTool;
+			}
+
+			break;
+		}
+		case SvOi::SVResetItemOwner:
+		{
+			if( eResetItem <= m_eResetItem )
+			{
+				m_ObjectSet.insert( pObject->GetOwner() );
+
+				m_eResetItem = SvOi::SVResetItemOwner;
+			}
+
+			break;
+		}
+		case SvOi::SVResetItemNone:
+		{
+			break;
+		}
 		default:
 		{
-			m_svObjectSet.clear();
+			m_ObjectSet.clear();
 
-			m_eResetItem = SVResetItemIP;
+			m_eResetItem = SvOi::SVResetItemIP;
 
-			break;
-		}
-		case SVResetItemIP:
-		{
-			if( p_eResetItem < m_eResetItem )
-			{
-				m_svObjectSet.clear();
-			}
-
-			m_eResetItem = SVResetItemIP;
-
-			break;
-		}
-		case SVResetItemTool:
-		{
-			if( p_eResetItem < m_eResetItem )
-			{
-				m_svObjectSet.clear();
-
-				m_eResetItem = SVResetItemTool;
-			}
-
-			break;
-		}
-		case SVResetItemOwner:
-		{
-			if( p_eResetItem <= m_eResetItem )
-			{
-				m_svObjectSet.insert( p_psvObject->GetOwner() );
-
-				m_eResetItem = SVResetItemOwner;
-			}
-
-			break;
-		}
-		case SVResetItemNone:
-		{
 			break;
 		}
 	}

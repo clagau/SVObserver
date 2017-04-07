@@ -19,7 +19,7 @@ SVPolarTransformClass::SVPolarTransformClass( SVObjectClass* POwner, int StringR
 				 :SVTaskObjectClass( POwner, StringResourceID ) 
 {
 	// Identify yourself
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVPolarTransformObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVPolarTransformObjectType;
 
 	// Identify our input type needs...
 
@@ -105,27 +105,27 @@ bool SVPolarTransformClass::ResetObject(SvStl::MessageContainerVector *pErrorMes
 
 SVDoubleValueObjectClass* SVPolarTransformClass::getInputCenterXResult()
 {
-	if( inputCenterXResult.IsConnected() && inputCenterXResult.GetInputObjectInfo().PObject )
+	if( inputCenterXResult.IsConnected() && inputCenterXResult.GetInputObjectInfo().m_pObject )
 	{
-		return ( SVDoubleValueObjectClass* ) inputCenterXResult.GetInputObjectInfo().PObject;
+		return ( SVDoubleValueObjectClass* ) inputCenterXResult.GetInputObjectInfo().m_pObject;
 	}
 	return nullptr;
 }
 
 SVDoubleValueObjectClass* SVPolarTransformClass::getInputCenterYResult()
 {
-	if( inputCenterYResult.IsConnected() && inputCenterYResult.GetInputObjectInfo().PObject )
+	if( inputCenterYResult.IsConnected() && inputCenterYResult.GetInputObjectInfo().m_pObject )
 	{
-		return ( SVDoubleValueObjectClass* ) inputCenterYResult.GetInputObjectInfo().PObject;
+		return ( SVDoubleValueObjectClass* ) inputCenterYResult.GetInputObjectInfo().m_pObject;
 	}
 	return nullptr;
 }
 
 SVDoubleValueObjectClass* SVPolarTransformClass::getInputStartRadiusResult()
 {
-	if( inputStartRadiusResult.IsConnected() && inputStartRadiusResult.GetInputObjectInfo().PObject )
+	if( inputStartRadiusResult.IsConnected() && inputStartRadiusResult.GetInputObjectInfo().m_pObject )
 	{
-		return ( SVDoubleValueObjectClass* ) inputStartRadiusResult.GetInputObjectInfo().PObject;
+		return ( SVDoubleValueObjectClass* ) inputStartRadiusResult.GetInputObjectInfo().m_pObject;
 	}
 
 	return nullptr;
@@ -134,27 +134,27 @@ SVDoubleValueObjectClass* SVPolarTransformClass::getInputStartRadiusResult()
 SVDoubleValueObjectClass* SVPolarTransformClass::getInputEndRadiusResult()
 {
 
-	if( inputEndRadiusResult.IsConnected() && inputEndRadiusResult.GetInputObjectInfo().PObject )
+	if( inputEndRadiusResult.IsConnected() && inputEndRadiusResult.GetInputObjectInfo().m_pObject )
 	{
-		return ( SVDoubleValueObjectClass* ) inputEndRadiusResult.GetInputObjectInfo().PObject;
+		return ( SVDoubleValueObjectClass* ) inputEndRadiusResult.GetInputObjectInfo().m_pObject;
 	}
 	return nullptr;
 }
 
 SVDoubleValueObjectClass* SVPolarTransformClass::getInputStartAngleResult()
 {
-	if( inputStartAngleResult.IsConnected() && inputStartAngleResult.GetInputObjectInfo().PObject )
+	if( inputStartAngleResult.IsConnected() && inputStartAngleResult.GetInputObjectInfo().m_pObject )
 	{
-		return ( SVDoubleValueObjectClass* ) inputStartAngleResult.GetInputObjectInfo().PObject;
+		return ( SVDoubleValueObjectClass* ) inputStartAngleResult.GetInputObjectInfo().m_pObject;
 	}
 	return nullptr;
 }
 
 SVDoubleValueObjectClass* SVPolarTransformClass::getInputEndAngleResult()
 {
-	if( inputEndAngleResult.IsConnected() && inputEndAngleResult.GetInputObjectInfo().PObject )
+	if( inputEndAngleResult.IsConnected() && inputEndAngleResult.GetInputObjectInfo().m_pObject )
 	{
-		return ( SVDoubleValueObjectClass* ) inputEndAngleResult.GetInputObjectInfo().PObject;
+		return ( SVDoubleValueObjectClass* ) inputEndAngleResult.GetInputObjectInfo().m_pObject;
 	}
 	return nullptr;
 }

@@ -33,15 +33,15 @@ SVLowerThresholdEquationClass::SVLowerThresholdEquationClass( SVObjectClass* POw
 void SVLowerThresholdEquationClass::init()
 {
 	// Identify our output type
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVEquationObjectType;
-	m_outObjectInfo.ObjectTypeInfo.SubType	= SVLowerThresholdEquationObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVEquationObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType	= SVLowerThresholdEquationObjectType;
 
 	// Identify our input type needs - this is a bit different here
 	// Since out inputs are dynamic via the script specified
 	// So the input will be identified when the script is created.
 	
 	// Register Embedded Objects
-	RegisterEmbeddedObject( &result, SVLowerThresholdEquationResultObjectGuid, IDS_OBJECTNAME_LOWER_THRESHOLD_RESULT, false, SVResetItemNone );
+	RegisterEmbeddedObject( &result, SVLowerThresholdEquationResultObjectGuid, IDS_OBJECTNAME_LOWER_THRESHOLD_RESULT, false, SvOi::SVResetItemNone );
 
 	// Set Embedded defaults
 	result.SetDefaultValue( 0.0, TRUE );
@@ -55,7 +55,7 @@ BOOL SVLowerThresholdEquationClass::CreateObject( SVObjectLevelCreateStruct* PCr
 	m_isCreated = SVEquationClass::CreateObject( PCreateStructure );
 
 	// Set / Reset Printable Flag
-	result.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
+	result.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 
 	return m_isCreated;
 }
@@ -71,25 +71,25 @@ SVLowerThresholdEquationClass::~SVLowerThresholdEquationClass()
 ////////////////////////////////////////////////////////////////////////////////
 // If Conditional is disabled conditional.Run() returns always TRUE.
 // Otherwise the return value depends on the Conditional equation result!
-bool SVLowerThresholdEquationClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVLowerThresholdEquationClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	double value = 0.0;
 
-	bool retVal = __super::onRun( RRunStatus, pErrorMessages );
+	bool retVal = __super::onRun( rRunStatus, pErrorMessages );
 	
 	if( !retVal )
 	{
 		SetInvalid();
-		RRunStatus.SetInvalid();
+		rRunStatus.SetInvalid();
 	}
 	else
 	{
 		if( HasCondition() && IsEnabled() )
 		{
-			value = yacc.equationResult;
+			value = getResult();
 		}
 	}
-	result.SetValue( RRunStatus.m_lResultDataIndex, value );
+	result.SetValue( value, rRunStatus.m_lResultDataIndex );
 
 	return retVal;
 }

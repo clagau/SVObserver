@@ -106,7 +106,7 @@ BOOL SVDrawObjectClass::DrawHatch( SVDrawContext* PDrawContext, int& LastY )
 {
 	BOOL BRetVal = FALSE;
 	HDC DC = PDrawContext->DC;
-	SVCPointArray l_NewPoints;
+	CPointVector l_NewPoints;
 	static int LastRowY=InvalidPoint;
 	if( beginDraw( PDrawContext ) )
 	{
@@ -205,7 +205,7 @@ CPoint SVDrawObjectClass::GetPointAt( int Index )
 	return points.GetAt(Index);
 }
 
-const SVCPointArray& SVDrawObjectClass::GetPointArray()
+const CPointVector& SVDrawObjectClass::GetPointArray()
 {
 	return points;
 }

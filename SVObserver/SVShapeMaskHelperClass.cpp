@@ -30,21 +30,21 @@ void SVShapeMaskHelperClass::init()
 	m_pShape = nullptr;
 	m_bUseOverlays = false;
 
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVUnaryImageOperatorObjectType;
-	m_outObjectInfo.ObjectTypeInfo.SubType    = SVShapeMaskHelperObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVUnaryImageOperatorObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SVShapeMaskHelperObjectType;
 
 	// do these eventually be changed to ResetItemOwner?
-	RegisterEmbeddedObject( &m_Data.bvoAutoResize, SVShapeMaskAutoResizeGuid, IDS_OBJECTNAME_SHAPE_MASK_AUTO_RESIZE, false, SVResetItemTool );
-	RegisterEmbeddedObject( &m_Data.evoShapeType, SVShapeMaskTypeGuid, IDS_OBJECTNAME_SHAPE_MASK_TYPE, false, SVResetItemTool );
-	RegisterEmbeddedObject( &m_Data.evoMaskArea, SVShapeMaskMaskAreaGuid, IDS_OBJECTNAME_SHAPE_MASK_MASK_AREA, false, SVResetItemTool );
-	RegisterEmbeddedObject( &m_Data.lvoCenterX, SVShapeMaskPropertyCenterXGuid, IDS_OBJECTNAME_SHAPE_MASK_PROPERTY_CENTER_X, false, SVResetItemTool );
-	RegisterEmbeddedObject( &m_Data.lvoCenterY, SVShapeMaskPropertyCenterYGuid, IDS_OBJECTNAME_SHAPE_MASK_PROPERTY_CENTER_Y, false, SVResetItemTool );
-	RegisterEmbeddedObject( &m_Data.lvoWidth, SVShapeMaskPropertyWidthGuid, IDS_OBJECTNAME_SHAPE_MASK_PROPERTY_WIDTH, false, SVResetItemTool );
-	RegisterEmbeddedObject( &m_Data.lvoHeight, SVShapeMaskPropertyHeightGuid, IDS_OBJECTNAME_SHAPE_MASK_PROPERTY_HEIGHT, false, SVResetItemTool );
-	RegisterEmbeddedObject( &m_Data.lvoSideThickness, SVShapeMaskPropertySideThicknessGuid, IDS_OBJECTNAME_SHAPE_MASK_PROPERTY_SIDE_THICKNESS, false, SVResetItemTool );
-	RegisterEmbeddedObject( &m_Data.lvoTopBottomThickness, SVShapeMaskPropertyTopBottomThicknessGuid, IDS_OBJECTNAME_SHAPE_MASK_PROPERTY_TOP_BOTTOM_THICKNESS, false, SVResetItemTool );
-	RegisterEmbeddedObject( &m_Data.lvoOffset, SVShapeMaskPropertyOffsetGuid, IDS_OBJECTNAME_SHAPE_MASK_PROPERTY_OFFSET, false, SVResetItemTool );
-	RegisterEmbeddedObject( &m_Data.evoXYSymmetry, SVShapeMaskPropertySymmetryOrientationGuid, IDS_OBJECTNAME_SHAPE_MASK_PROPERTY_XY_SYMMETRY, false, SVResetItemTool );
+	RegisterEmbeddedObject( &m_Data.bvoAutoResize, SVShapeMaskAutoResizeGuid, IDS_OBJECTNAME_SHAPE_MASK_AUTO_RESIZE, false, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &m_Data.evoShapeType, SVShapeMaskTypeGuid, IDS_OBJECTNAME_SHAPE_MASK_TYPE, false, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &m_Data.evoMaskArea, SVShapeMaskMaskAreaGuid, IDS_OBJECTNAME_SHAPE_MASK_MASK_AREA, false, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &m_Data.lvoCenterX, SVShapeMaskPropertyCenterXGuid, IDS_OBJECTNAME_SHAPE_MASK_PROPERTY_CENTER_X, false, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &m_Data.lvoCenterY, SVShapeMaskPropertyCenterYGuid, IDS_OBJECTNAME_SHAPE_MASK_PROPERTY_CENTER_Y, false, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &m_Data.lvoWidth, SVShapeMaskPropertyWidthGuid, IDS_OBJECTNAME_SHAPE_MASK_PROPERTY_WIDTH, false, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &m_Data.lvoHeight, SVShapeMaskPropertyHeightGuid, IDS_OBJECTNAME_SHAPE_MASK_PROPERTY_HEIGHT, false, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &m_Data.lvoSideThickness, SVShapeMaskPropertySideThicknessGuid, IDS_OBJECTNAME_SHAPE_MASK_PROPERTY_SIDE_THICKNESS, false, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &m_Data.lvoTopBottomThickness, SVShapeMaskPropertyTopBottomThicknessGuid, IDS_OBJECTNAME_SHAPE_MASK_PROPERTY_TOP_BOTTOM_THICKNESS, false, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &m_Data.lvoOffset, SVShapeMaskPropertyOffsetGuid, IDS_OBJECTNAME_SHAPE_MASK_PROPERTY_OFFSET, false, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &m_Data.evoXYSymmetry, SVShapeMaskPropertySymmetryOrientationGuid, IDS_OBJECTNAME_SHAPE_MASK_PROPERTY_XY_SYMMETRY, false, SvOi::SVResetItemTool );
 
 	m_Data.bvoAutoResize.SetDefaultValue( false, false );
 
@@ -95,18 +95,18 @@ BOOL SVShapeMaskHelperClass::CreateObject( SVObjectLevelCreateStruct* PCreateStr
 {
 	BOOL bOk = SVTaskObjectClass::CreateObject( PCreateStructure );
 
-	const DWORD dwAttributes = SV_VIEWABLE | SV_PUBLISHABLE | SV_ARCHIVABLE | SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE | SV_PRINTABLE;
-	m_Data.bvoAutoResize.ObjectAttributesAllowedRef()         = dwAttributes;
-	m_Data.evoShapeType.ObjectAttributesAllowedRef()          = dwAttributes;
-	m_Data.evoMaskArea.ObjectAttributesAllowedRef()           = dwAttributes;
-	m_Data.lvoCenterX.ObjectAttributesAllowedRef()            = dwAttributes | SV_SELECTABLE_FOR_EQUATION; 
-	m_Data.lvoCenterY.ObjectAttributesAllowedRef()            = dwAttributes | SV_SELECTABLE_FOR_EQUATION;
-	m_Data.lvoWidth.ObjectAttributesAllowedRef()              = dwAttributes | SV_SELECTABLE_FOR_EQUATION;
-	m_Data.lvoHeight.ObjectAttributesAllowedRef()             = dwAttributes | SV_SELECTABLE_FOR_EQUATION;
-	m_Data.lvoSideThickness.ObjectAttributesAllowedRef()      = dwAttributes | SV_SELECTABLE_FOR_EQUATION;
-	m_Data.lvoTopBottomThickness.ObjectAttributesAllowedRef() = dwAttributes | SV_SELECTABLE_FOR_EQUATION;
-	m_Data.lvoOffset.ObjectAttributesAllowedRef()             = dwAttributes | SV_SELECTABLE_FOR_EQUATION;
-	m_Data.evoXYSymmetry.ObjectAttributesAllowedRef()         = dwAttributes | SV_SELECTABLE_FOR_EQUATION;
+	const UINT cAttributes = SV_VIEWABLE | SV_PUBLISHABLE | SV_ARCHIVABLE | SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE | SV_PRINTABLE;
+	m_Data.bvoAutoResize.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::OverwriteAttribute );
+	m_Data.evoShapeType.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::OverwriteAttribute );
+	m_Data.evoMaskArea.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::OverwriteAttribute );
+	m_Data.lvoCenterX.SetObjectAttributesAllowed( cAttributes | SV_SELECTABLE_FOR_EQUATION, SvOi::SetAttributeType::OverwriteAttribute );
+	m_Data.lvoCenterY.SetObjectAttributesAllowed( cAttributes | SV_SELECTABLE_FOR_EQUATION, SvOi::SetAttributeType::OverwriteAttribute );
+	m_Data.lvoWidth.SetObjectAttributesAllowed( cAttributes | SV_SELECTABLE_FOR_EQUATION, SvOi::SetAttributeType::OverwriteAttribute );
+	m_Data.lvoHeight.SetObjectAttributesAllowed( cAttributes | SV_SELECTABLE_FOR_EQUATION, SvOi::SetAttributeType::OverwriteAttribute );
+	m_Data.lvoSideThickness.SetObjectAttributesAllowed( cAttributes | SV_SELECTABLE_FOR_EQUATION, SvOi::SetAttributeType::OverwriteAttribute );
+	m_Data.lvoTopBottomThickness.SetObjectAttributesAllowed( cAttributes | SV_SELECTABLE_FOR_EQUATION, SvOi::SetAttributeType::OverwriteAttribute );
+	m_Data.lvoOffset.SetObjectAttributesAllowed( cAttributes | SV_SELECTABLE_FOR_EQUATION, SvOi::SetAttributeType::OverwriteAttribute );
+	m_Data.evoXYSymmetry.SetObjectAttributesAllowed( cAttributes | SV_SELECTABLE_FOR_EQUATION, SvOi::SetAttributeType::OverwriteAttribute );
 	
 
 	// Set / Reset Printable Flag
@@ -150,50 +150,50 @@ bool SVShapeMaskHelperClass::ResetObject(SvStl::MessageContainerVector *pErrorMe
 		DWORD dwMaskType;
 		pMaskOperator->m_Data.dwvoMaskType.GetValue( dwMaskType );
 		
-		const DWORD dwAttributes = SV_PRINTABLE;	// only change the printing flag; all other flags remain always on (remotely settable, etc.)
 		const bool bIsShape = dwMaskType == SVUserMaskOperatorClass::MASK_TYPE_SHAPE;
 		const bool bIsDoughnut = eShapeType == SVMaskShapeTypeDoughnut;
 		const bool bIsTrapezoid = eShapeType == SVMaskShapeTypeSymmetricTrapezoid;
 
-		SvUl::SetBits( m_Data.bvoAutoResize.ObjectAttributesSetRef(),         dwAttributes, bIsShape );
-		SvUl::SetBits( m_Data.evoShapeType.ObjectAttributesSetRef(),          dwAttributes, bIsShape );
-		SvUl::SetBits( m_Data.evoMaskArea.ObjectAttributesSetRef(),           dwAttributes, bIsShape );
-		SvUl::SetBits( m_Data.lvoCenterX.ObjectAttributesSetRef(),            dwAttributes, bIsShape );
-		SvUl::SetBits( m_Data.lvoCenterY.ObjectAttributesSetRef(),            dwAttributes, bIsShape );
-		SvUl::SetBits( m_Data.lvoWidth.ObjectAttributesSetRef(),              dwAttributes, bIsShape );
-		SvUl::SetBits( m_Data.lvoHeight.ObjectAttributesSetRef(),             dwAttributes, bIsShape );
+		SvOi::SetAttributeType AddRemoveType = bIsShape ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
+		m_Data.bvoAutoResize.SetObjectAttributesAllowed( SV_PRINTABLE, AddRemoveType );
+		m_Data.bvoAutoResize.SetObjectAttributesSet( SV_PRINTABLE, AddRemoveType );
+		m_Data.evoShapeType.SetObjectAttributesAllowed( SV_PRINTABLE, AddRemoveType );
+		m_Data.evoShapeType.SetObjectAttributesSet( SV_PRINTABLE, AddRemoveType );
+		m_Data.evoMaskArea.SetObjectAttributesAllowed( SV_PRINTABLE, AddRemoveType );
+		m_Data.evoMaskArea.SetObjectAttributesSet( SV_PRINTABLE, AddRemoveType );
+		m_Data.lvoCenterX.SetObjectAttributesAllowed( SV_PRINTABLE, AddRemoveType );
+		m_Data.lvoCenterX.SetObjectAttributesSet( SV_PRINTABLE, AddRemoveType );
+		m_Data.lvoCenterY.SetObjectAttributesAllowed( SV_PRINTABLE, AddRemoveType );
+		m_Data.lvoCenterY.SetObjectAttributesSet( SV_PRINTABLE, AddRemoveType );
+		m_Data.lvoWidth.SetObjectAttributesAllowed( SV_PRINTABLE, AddRemoveType );
+		m_Data.lvoWidth.SetObjectAttributesSet( SV_PRINTABLE, AddRemoveType );
+		m_Data.lvoHeight.SetObjectAttributesAllowed( SV_PRINTABLE, AddRemoveType );
+		m_Data.lvoHeight.SetObjectAttributesSet( SV_PRINTABLE, AddRemoveType );
 
-		SvUl::SetBits( m_Data.lvoSideThickness.ObjectAttributesSetRef(),      dwAttributes, bIsShape && bIsDoughnut );
-		SvUl::SetBits( m_Data.lvoTopBottomThickness.ObjectAttributesSetRef(), dwAttributes, bIsShape && bIsDoughnut );
-		SvUl::SetBits( m_Data.lvoOffset.ObjectAttributesSetRef(),             dwAttributes, bIsShape && bIsTrapezoid );
-		SvUl::SetBits( m_Data.evoXYSymmetry.ObjectAttributesSetRef(),         dwAttributes, bIsShape && bIsTrapezoid );
+		AddRemoveType = bIsShape && bIsDoughnut ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
+		m_Data.lvoSideThickness.SetObjectAttributesAllowed( SV_PRINTABLE, AddRemoveType );
+		m_Data.lvoSideThickness.SetObjectAttributesSet( SV_PRINTABLE, AddRemoveType );
+		m_Data.lvoTopBottomThickness.SetObjectAttributesAllowed( SV_PRINTABLE, AddRemoveType );
+		m_Data.lvoTopBottomThickness.SetObjectAttributesSet( SV_PRINTABLE, AddRemoveType );
 
-		// ARGH!
-		SvUl::SetBits( m_Data.bvoAutoResize.ObjectAttributesAllowedRef(),         dwAttributes, bIsShape );
-		SvUl::SetBits( m_Data.evoShapeType.ObjectAttributesAllowedRef(),          dwAttributes, bIsShape );
-		SvUl::SetBits( m_Data.evoMaskArea.ObjectAttributesAllowedRef(),           dwAttributes, bIsShape );
-		SvUl::SetBits( m_Data.lvoCenterX.ObjectAttributesAllowedRef(),            dwAttributes, bIsShape );
-		SvUl::SetBits( m_Data.lvoCenterY.ObjectAttributesAllowedRef(),            dwAttributes, bIsShape );
-		SvUl::SetBits( m_Data.lvoWidth.ObjectAttributesAllowedRef(),              dwAttributes, bIsShape );
-		SvUl::SetBits( m_Data.lvoHeight.ObjectAttributesAllowedRef(),             dwAttributes, bIsShape );
-
-		SvUl::SetBits( m_Data.lvoSideThickness.ObjectAttributesAllowedRef(),      dwAttributes, bIsShape && bIsDoughnut );
-		SvUl::SetBits( m_Data.lvoTopBottomThickness.ObjectAttributesAllowedRef(), dwAttributes, bIsShape && bIsDoughnut );
-		SvUl::SetBits( m_Data.lvoOffset.ObjectAttributesAllowedRef(),             dwAttributes, bIsShape && bIsTrapezoid );
-		SvUl::SetBits( m_Data.evoXYSymmetry.ObjectAttributesAllowedRef(),         dwAttributes, bIsShape && bIsTrapezoid );
+		AddRemoveType = bIsShape && bIsTrapezoid ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
+		m_Data.lvoOffset.SetObjectAttributesAllowed( SV_PRINTABLE, AddRemoveType );
+		m_Data.lvoOffset.SetObjectAttributesSet( SV_PRINTABLE, AddRemoveType );
+		m_Data.evoXYSymmetry.SetObjectAttributesAllowed( SV_PRINTABLE, AddRemoveType );
+		m_Data.evoXYSymmetry.SetObjectAttributesSet( SV_PRINTABLE, AddRemoveType );
 	}	
 
 	return __super::ResetObject(pErrorMessages);
 }
 
-bool SVShapeMaskHelperClass::onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVShapeMaskHelperClass::onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	return TRUE;	// what do we want to do here for the status?
 }
 
 HRESULT SVShapeMaskHelperClass::SetShape( ShapeTypeEnum eShapeType )
 {
-	HRESULT hr = m_Data.evoShapeType.SetValue( 1, (long) eShapeType );
+	HRESULT hr = m_Data.evoShapeType.SetValue( static_cast<long> (eShapeType), 1 );
 	return hr;
 }
 
@@ -210,10 +210,10 @@ HRESULT SVShapeMaskHelperClass::SetProperties( const SVMaskShape::MapType& p_map
 
 	SVMaskShape::MapType l_mapProperties(p_mapProperties);
 
-	m_Data.lvoCenterX.SetValue( 1, l_mapProperties[ SVShapeMaskPropertyCenterXGuid ].value );
-	m_Data.lvoCenterY.SetValue( 1, l_mapProperties[ SVShapeMaskPropertyCenterYGuid ].value );
-	m_Data.lvoWidth.SetValue  ( 1, l_mapProperties[ SVShapeMaskPropertyWidthGuid ].value   );
-	m_Data.lvoHeight.SetValue ( 1, l_mapProperties[ SVShapeMaskPropertyHeightGuid ].value  );
+	m_Data.lvoCenterX.SetValue( l_mapProperties[ SVShapeMaskPropertyCenterXGuid ].value, 1 );
+	m_Data.lvoCenterY.SetValue( l_mapProperties[ SVShapeMaskPropertyCenterYGuid ].value, 1 );
+	m_Data.lvoWidth.SetValue  ( l_mapProperties[ SVShapeMaskPropertyWidthGuid ].value, 1 );
+	m_Data.lvoHeight.SetValue ( l_mapProperties[ SVShapeMaskPropertyHeightGuid ].value, 1 );
 
 	ShapeTypeEnum eShapeType;
 	long lShapeType = SVMaskShapeTypeInvalid;
@@ -226,20 +226,20 @@ HRESULT SVShapeMaskHelperClass::SetProperties( const SVMaskShape::MapType& p_map
 	SVMaskShape::MapType::iterator iter;
 	if ( ( iter = l_mapProperties.find( SVShapeMaskPropertySideThicknessGuid )) != l_mapProperties.end() )
 	{
-		m_Data.lvoSideThickness.SetValue     ( 1, iter->second.value );
+		m_Data.lvoSideThickness.SetValue(iter->second.value, 1);
 	}
 	if ( ( iter = l_mapProperties.find( SVShapeMaskPropertyTopBottomThicknessGuid )) != l_mapProperties.end() )
 	{
-		m_Data.lvoTopBottomThickness.SetValue( 1, iter->second.value );
+		m_Data.lvoTopBottomThickness.SetValue(iter->second.value, 1);
 	}
 	
 	if ( ( iter = l_mapProperties.find( SVShapeMaskPropertyOffsetGuid ) ) != l_mapProperties.end() )
 	{
-		m_Data.lvoOffset.SetValue    ( 1, iter->second.value );
+		m_Data.lvoOffset.SetValue( iter->second.value, 1 );
 	}
 	if ( ( iter = l_mapProperties.find( SVShapeMaskPropertySymmetryOrientationGuid ) ) != l_mapProperties.end() )
 	{
-		m_Data.evoXYSymmetry.SetValue( 1, iter->second.value );
+		m_Data.evoXYSymmetry.SetValue( iter->second.value, 1 );
 	}
 
 	return hr;	
@@ -300,14 +300,14 @@ HRESULT SVShapeMaskHelperClass::GetFillProperties( SVMaskFillPropertiesStruct& r
 
 bool SVShapeMaskHelperClass::IsAutoResize() const
 {
-	bool bAutoResize = false;
+	BOOL bAutoResize = false;
 	HRESULT hr = m_Data.bvoAutoResize.GetValue( bAutoResize );
-	return bAutoResize;
+	return bAutoResize ? true : false;
 }
 
 HRESULT SVShapeMaskHelperClass::SetAutoResize( bool bAutoResize )
 {
-	HRESULT hr = m_Data.bvoAutoResize.SetValue( 1, bAutoResize );
+	HRESULT hr = m_Data.bvoAutoResize.SetValue( BOOL(bAutoResize), 1 );
 	return hr;
 }
 
@@ -375,9 +375,9 @@ HRESULT SVShapeMaskHelperClass::Refresh()
 			m_pShape->SetFillProperties( svFillStruct );
 			////////////////////
 
-			bool bAutoResize = false;
+			BOOL bAutoResize = false;
 			m_Data.bvoAutoResize.GetValue( bAutoResize );
-			m_pShape->SetAutoResize( bAutoResize );
+			m_pShape->SetAutoResize( bAutoResize ? true : false );
 
 			HRESULT hrTemp = S_OK;
 

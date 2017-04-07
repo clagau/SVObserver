@@ -73,30 +73,30 @@ public:
 	//}}AFX_DATA
 
 protected:
-	SVToolAdjustmentDialogSheetClass* pParentDialog;
+	SVToolAdjustmentDialogSheetClass* m_pParentDialog;
 	SVToolClass* pTool;
 
-	SVEvaluateClass*			pEvaluateCenterX;
-	SVDoubleValueObjectClass*	pCenterXResult;
+	SVEvaluateClass*			m_pEvaluateCenterX;
+	SVDoubleValueObjectClass*	m_pCenterXResult;
 
-	SVEvaluateClass*			pEvaluateCenterY;
-	SVDoubleValueObjectClass*	pCenterYResult;
+	SVEvaluateClass*			m_pEvaluateCenterY;
+	SVDoubleValueObjectClass*	m_pCenterYResult;
 
-	SVEvaluateClass*			pEvaluateStartRadius;
-	SVDoubleValueObjectClass*	pStartRadiusResult;
+	SVEvaluateClass*			m_pEvaluateStartRadius;
+	SVDoubleValueObjectClass*	m_pStartRadiusResult;
 
-	SVEvaluateClass*			pEvaluateEndRadius;
-	SVDoubleValueObjectClass*	pEndRadiusResult;
+	SVEvaluateClass*			m_pEvaluateEndRadius;
+	SVDoubleValueObjectClass*	m_pEndRadiusResult;
 
-	SVEvaluateClass*			pEvaluateStartAngle;
-	SVDoubleValueObjectClass*	pStartAngleResult;
+	SVEvaluateClass*			m_pEvaluateStartAngle;
+	SVDoubleValueObjectClass*	m_pStartAngleResult;
 
-	SVEvaluateClass*			pEvaluateEndAngle;
-	SVDoubleValueObjectClass*	pEndAngleResult;
+	SVEvaluateClass*			m_pEvaluateEndAngle;
+	SVDoubleValueObjectClass*	m_pEndAngleResult;
 
-	SVBoolValueObjectClass*		 pUseFormula;
+	SVBoolValueObjectClass*		 m_pUseFormula;
 	SVEnumerateValueObjectClass* m_pAngleMethod;
-	SVEnumerateValueObjectClass* pInterpolationMode;
+	SVEnumerateValueObjectClass* m_pInterpolationMode;
 };
 
 //{{AFX_INSERT_LOCATION}}

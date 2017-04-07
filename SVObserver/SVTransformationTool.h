@@ -12,6 +12,7 @@
 
 #pragma region Includes
 #include "SVTool.h"
+#include "SVValueObjectLibrary/SVStringValueObjectClass.h"
 #pragma endregion Includes
 
 class SVTransformationToolClass : public SVToolClass
@@ -30,7 +31,7 @@ public:
 
 	virtual HRESULT IsInputImage( SVImageClass *p_psvImage ) override;
 
-	virtual SVStaticStringValueObjectClass* GetInputImageNames() override;
+	virtual SVStringValueObjectClass* GetInputImageNames() override;
 
 protected:
 	virtual HRESULT UpdateImageWithExtent( unsigned long p_Index ) override;
@@ -45,7 +46,7 @@ private:
 
 #pragma region Member Variables
 private:
-	SVStaticStringValueObjectClass m_svSourceImageNames;
+	SVStringValueObjectClass m_SourceImageNames;
 #pragma endregion Member Variables
 };
 

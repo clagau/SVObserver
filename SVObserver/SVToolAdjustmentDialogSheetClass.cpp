@@ -141,7 +141,7 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 	}
 
 
-	const SVObjectTypeInfoStruct& rToolType = GetTool()->GetObjectInfo().ObjectTypeInfo;
+	const SVObjectTypeInfoStruct& rToolType = GetTool()->GetObjectInfo().m_ObjectTypeInfo;
 	switch( rToolType.SubType )
 	{
 		case SVToolAcquisitionObjectType:

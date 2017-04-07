@@ -20,10 +20,9 @@
 class SVOutputInfoListClass
 {
 public:
-	typedef SVOutObjectInfoStructPtrArray::value_type value_type;
-	typedef SVOutObjectInfoStructPtrArray::arg_type arg_type;
-	typedef SVOutObjectInfoStructPtrArray::iterator iterator;
-	typedef SVOutObjectInfoStructPtrArray::const_iterator const_iterator;
+	typedef SVOutObjectInfoStructPtrVector::value_type value_type;
+	typedef SVOutObjectInfoStructPtrVector::iterator iterator;
+	typedef SVOutObjectInfoStructPtrVector::const_iterator const_iterator;
 
 	SVOutputInfoListClass();
 	virtual ~SVOutputInfoListClass();
@@ -59,7 +58,7 @@ public:
 	bool HasDependents();
 
 protected:
-	SVOutObjectInfoStructPtrArray m_svObjectArray;
+	SVOutObjectInfoStructPtrVector m_svObjectArray;
 	SVStdSetSVOutObjectInfoStructPtr m_svObjectSet;
 };
 

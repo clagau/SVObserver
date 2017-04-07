@@ -18,7 +18,7 @@
 SVErosionFilterClass::SVErosionFilterClass( SVObjectClass* POwner, int StringResourceID )
 					 :SVFilterClass( POwner, StringResourceID ) 
 {
-	m_outObjectInfo.ObjectTypeInfo.SubType = SVErosionFilterObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVErosionFilterObjectType;
 }
 
 SVErosionFilterClass::~SVErosionFilterClass()
@@ -31,7 +31,7 @@ SVErosionFilterClass::~SVErosionFilterClass()
 // .Description : Runs this operator.
 //              : Returns FALSE, if operator cannot run ( may be deactivated ! )
 ////////////////////////////////////////////////////////////////////////////////
-bool SVErosionFilterClass::onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVErosionFilterClass::onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 { 
 	if( m_pCurrentUIOPL && !( RInputImageHandle.empty() ) && !( ROutputImageHandle.empty() ) )
 	{
@@ -55,7 +55,7 @@ bool SVErosionFilterClass::onRun( bool First, SVSmartHandlePointer RInputImageHa
 			}
 			// Signal that something was wrong...
 			SetInvalid();
-			RRunStatus.SetInvalid();
+			rRunStatus.SetInvalid();
 			return false;
 		}
 
@@ -73,7 +73,7 @@ bool SVErosionFilterClass::onRun( bool First, SVSmartHandlePointer RInputImageHa
 
 	// Signal that something was wrong...
 	SetInvalid();
-	RRunStatus.SetInvalid();
+	rRunStatus.SetInvalid();
 	return false;
 }
 

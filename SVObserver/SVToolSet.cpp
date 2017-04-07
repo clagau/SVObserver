@@ -37,43 +37,43 @@ SVToolSetClass::SVToolSetClass( BOOL BCreateDefaultTaskList, SVObjectClass* POwn
 void SVToolSetClass::init()
 {
 	// Identify our output type
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVToolSetObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVToolSetObjectType;
 
 	// Identify our input type needs
 
 	// SetObjectDepth() already called in SVObjectClass Ctor
 
 	// Register Embedded Objects
-	RegisterEmbeddedObject( &m_Enabled, SVToolSetEnabledObjectGuid, IDS_OBJECTNAME_ENABLED, false, SVResetItemNone );
+	RegisterEmbeddedObject( &m_Enabled, SVToolSetEnabledObjectGuid, IDS_OBJECTNAME_ENABLED, false, SvOi::SVResetItemNone );
 	RegisterEmbeddedObject( &m_MainImageObject, SVOutputImageObjectGuid, IDS_OBJECTNAME_IMAGE1 );
 
-	RegisterEmbeddedObject( &m_Passed, SVPassedObjectGuid, IDS_OBJECTNAME_PASSED, false, SVResetItemNone );
-	RegisterEmbeddedObject( &m_Failed, SVFailedObjectGuid, IDS_OBJECTNAME_FAILED, false, SVResetItemNone );
-	RegisterEmbeddedObject( &m_Warned, SVWarnedObjectGuid, IDS_OBJECTNAME_WARNED, false, SVResetItemNone );
-	RegisterEmbeddedObject( &m_ExplicitFailed, SVExplicitFailedObjectGuid, IDS_OBJECTNAME_EXPLICIT_FAILED, false, SVResetItemNone );
+	RegisterEmbeddedObject( &m_Passed, SVPassedObjectGuid, IDS_OBJECTNAME_PASSED, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_Failed, SVFailedObjectGuid, IDS_OBJECTNAME_FAILED, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_Warned, SVWarnedObjectGuid, IDS_OBJECTNAME_WARNED, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_ExplicitFailed, SVExplicitFailedObjectGuid, IDS_OBJECTNAME_EXPLICIT_FAILED, false, SvOi::SVResetItemNone );
 
-	RegisterEmbeddedObject( &m_PassedCount, SVPassedCountObjectGuid, IDS_OBJECTNAME_PASSED_COUNT, false, SVResetItemNone );
-	RegisterEmbeddedObject( &m_FailedCount, SVFailedCountObjectGuid, IDS_OBJECTNAME_FAILED_COUNT, false, SVResetItemNone );
-	RegisterEmbeddedObject( &m_WarnedCount, SVWarnedCountObjectGuid, IDS_OBJECTNAME_WARNED_COUNT, false, SVResetItemNone );
+	RegisterEmbeddedObject( &m_PassedCount, SVPassedCountObjectGuid, IDS_OBJECTNAME_PASSED_COUNT, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_FailedCount, SVFailedCountObjectGuid, IDS_OBJECTNAME_FAILED_COUNT, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_WarnedCount, SVWarnedCountObjectGuid, IDS_OBJECTNAME_WARNED_COUNT, false, SvOi::SVResetItemNone );
 
-	RegisterEmbeddedObject( &m_EnabledCount, SVEnabledCountObjectGuid, IDS_OBJECTNAME_ENABLED_COUNT, false, SVResetItemNone );
-	RegisterEmbeddedObject( &m_ProcessedCount, SVProcessedCountObjectGuid, IDS_OBJECTNAME_PROCESSED_COUNT, false, SVResetItemNone );
+	RegisterEmbeddedObject( &m_EnabledCount, SVEnabledCountObjectGuid, IDS_OBJECTNAME_ENABLED_COUNT, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_ProcessedCount, SVProcessedCountObjectGuid, IDS_OBJECTNAME_PROCESSED_COUNT, false, SvOi::SVResetItemNone );
 
-	RegisterEmbeddedObject ( &m_ToolTime, SVToolTimeGuid, IDS_OBJECTNAME_TOOLTIME, false, SVResetItemNone );
-	RegisterEmbeddedObject ( &m_MinToolsetTime, SVMinToolSetTimeGuid, IDS_OBJECTNAME_MINTOOLSETTIME, false, SVResetItemNone );
-	RegisterEmbeddedObject ( &m_MaxToolsetTime, SVMaxToolSetTimeGuid, IDS_OBJECTNAME_MAXTOOLSETTIME, false, SVResetItemNone );
+	RegisterEmbeddedObject ( &m_ToolTime, SVToolTimeGuid, IDS_OBJECTNAME_TOOLTIME, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject ( &m_MinToolsetTime, SVMinToolSetTimeGuid, IDS_OBJECTNAME_MINTOOLSETTIME, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject ( &m_MaxToolsetTime, SVMaxToolSetTimeGuid, IDS_OBJECTNAME_MAXTOOLSETTIME, false, SvOi::SVResetItemNone );
 
-	RegisterEmbeddedObject( &m_RegressionTestMode, SVRegressionTestModeGuid, IDS_OBJECTNAME_REGRESSIONTESTMODE, false, SVResetItemNone );
+	RegisterEmbeddedObject( &m_RegressionTestMode, SVRegressionTestModeGuid, IDS_OBJECTNAME_REGRESSIONTESTMODE, false, SvOi::SVResetItemNone );
 
-	RegisterEmbeddedObject( &m_DrawFlag, SVConditionalToolSetDrawFlagObjectGuid, IDS_OBJECTNAME_DRAWTOOL_FLAG, false, SVResetItemNone );
-	RegisterEmbeddedObject( &m_ResetCounts, SVResetInspectionCountsGuid, IDS_OBJECTNAME_RESET_COUNTS, false, SVResetItemIP );
-	RegisterEmbeddedObject( &m_TriggerCount, SVTriggerCountGuid, IDS_OBJECTNAME_TRIGGER_COUNT, false, SVResetItemNone );
-	RegisterEmbeddedObject( &m_latestCompletionPPQIndex, SVLatestCompletionPPQIndexGuid, IDS_LATEST_PPQ_INDEX_AT_COMPLETION, false, SVResetItemNone );
-	RegisterEmbeddedObject( &m_TriggerDelta, SVTriggerDeltaGuid, IDS_TRIGGER_DELTA, false, SVResetItemNone );
-	RegisterEmbeddedObject( &m_LastTriggerToPPQCompletion, SVLastTriggerToPPQCompletionGuid, IDS_TRIGGER_TO_COMPLETION_TIME, false, SVResetItemNone );
-	RegisterEmbeddedObject( &m_LastTriggerToStart, SVLastTriggerToStartGuid, IDS_TRIGGER_TO_START_TIME, false, SVResetItemNone );
-	RegisterEmbeddedObject( &m_Width, SVExtentWidthObjectGuid, IDS_OBJECTNAME_EXTENT_WIDTH, false, SVResetItemTool );
-	RegisterEmbeddedObject( &m_Height, SVExtentHeightObjectGuid, IDS_OBJECTNAME_EXTENT_HEIGHT, false, SVResetItemTool );
+	RegisterEmbeddedObject( &m_DrawFlag, SVConditionalToolSetDrawFlagObjectGuid, IDS_OBJECTNAME_DRAWTOOL_FLAG, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_ResetCounts, SVResetInspectionCountsGuid, IDS_OBJECTNAME_RESET_COUNTS, false, SvOi::SVResetItemIP );
+	RegisterEmbeddedObject( &m_TriggerCount, SVTriggerCountGuid, IDS_OBJECTNAME_TRIGGER_COUNT, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_latestCompletionPPQIndex, SVLatestCompletionPPQIndexGuid, IDS_LATEST_PPQ_INDEX_AT_COMPLETION, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_TriggerDelta, SVTriggerDeltaGuid, IDS_TRIGGER_DELTA, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_LastTriggerToPPQCompletion, SVLastTriggerToPPQCompletionGuid, IDS_TRIGGER_TO_COMPLETION_TIME, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_LastTriggerToStart, SVLastTriggerToStartGuid, IDS_TRIGGER_TO_START_TIME, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_Width, SVExtentWidthObjectGuid, IDS_OBJECTNAME_EXTENT_WIDTH, false, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &m_Height, SVExtentHeightObjectGuid, IDS_OBJECTNAME_EXTENT_HEIGHT, false, SvOi::SVResetItemTool );
 	
 
 	// Set Embedded defaults
@@ -151,32 +151,32 @@ BOOL SVToolSetClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 	BOOL bOk = SVTaskObjectListClass::CreateObject( PCreateStructure );
 
 	// Set / Reset Printable Flags
-	m_Enabled.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
-	m_Passed.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	m_Failed.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	m_Warned.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	m_ExplicitFailed.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	m_PassedCount.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	m_FailedCount.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	m_WarnedCount.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	m_EnabledCount.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	m_ProcessedCount.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	m_RegressionTestMode.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
-	m_DrawFlag.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
-	m_ToolTime.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	m_ResetCounts.ObjectAttributesAllowedRef() = SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE | SV_EMBEDABLE;
-	m_TriggerCount.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	m_latestCompletionPPQIndex.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	m_TriggerDelta.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	m_LastTriggerToPPQCompletion.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	m_LastTriggerToStart.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
+	m_Enabled.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_Passed.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_Failed.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_Warned.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_ExplicitFailed.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_PassedCount.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_FailedCount.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_WarnedCount.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_EnabledCount.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_ProcessedCount.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_RegressionTestMode.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_DrawFlag.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_ToolTime.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_ResetCounts.SetObjectAttributesAllowed( SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE | SV_EMBEDABLE, SvOi::SetAttributeType::OverwriteAttribute );
+	m_TriggerCount.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_latestCompletionPPQIndex.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_TriggerDelta.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_LastTriggerToPPQCompletion.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_LastTriggerToStart.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 
-	m_MinToolsetTime.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	m_MaxToolsetTime.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	m_Width.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	m_Height.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
+	m_MinToolsetTime.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_MaxToolsetTime.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_Width.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_Height.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 
-	m_MainImageObject.ObjectAttributesAllowedRef() |= SV_REMOTELY_SETABLE;
+	m_MainImageObject.SetObjectAttributesAllowed( SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
 
 	m_isCreated = bOk;
 
@@ -211,9 +211,9 @@ void SVToolSetClass::Destroy()
 ////////////////////////////////////////////////////////////////////////////////
 bool SVToolSetClass::IsEnabled() const
 {
-	bool bEnabled = true;
+	BOOL bEnabled( true );
 	m_Enabled.GetValue( bEnabled );
-	return bEnabled;
+	return bEnabled ? true : false;
 }
 
 bool SVToolSetClass::WasEnabled() const
@@ -304,32 +304,28 @@ SVImageClass* SVToolSetClass::getCurrentImage()
 	return &m_MainImageObject;
 }
 
-bool SVToolSetClass::getConditionalResult(long p_lIndex) const
+bool SVToolSetClass::getConditionalResult(long Index) const
 {
-	bool value = false;
-	SVBoolValueObjectClass* pBoolObject;
+	BOOL Value( false );
 
-	if( inputConditionBoolObjectInfo.IsConnected() &&
-		inputConditionBoolObjectInfo.GetInputObjectInfo().PObject )
+	if( inputConditionBoolObjectInfo.IsConnected() && inputConditionBoolObjectInfo.GetInputObjectInfo().m_pObject )
 	{
-		pBoolObject = ( SVBoolValueObjectClass* )inputConditionBoolObjectInfo.GetInputObjectInfo().PObject;
-		pBoolObject->GetValue( p_lIndex, value );
+		SVBoolValueObjectClass* pBoolObject = ( SVBoolValueObjectClass* )inputConditionBoolObjectInfo.GetInputObjectInfo().m_pObject;
+		pBoolObject->GetValue( Value, Index  );
 	}
-	return value;
+	return Value ? true : false;
 }
 
 bool SVToolSetClass::getConditionalResult() const
 {
-	bool value = false;
-	SVBoolValueObjectClass* pBoolObject;
+	BOOL Value( false );
 
-	if( inputConditionBoolObjectInfo.IsConnected() &&
-		inputConditionBoolObjectInfo.GetInputObjectInfo().PObject )
+	if( inputConditionBoolObjectInfo.IsConnected() && inputConditionBoolObjectInfo.GetInputObjectInfo().m_pObject )
 	{
-		pBoolObject = ( SVBoolValueObjectClass* )inputConditionBoolObjectInfo.GetInputObjectInfo().PObject;
-		pBoolObject->GetValue( value );
+		SVBoolValueObjectClass* pBoolObject = ( SVBoolValueObjectClass* )inputConditionBoolObjectInfo.GetInputObjectInfo().m_pObject;
+		pBoolObject->GetValue( Value );
 	}
-	return value;
+	return Value ? true : false;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -349,7 +345,7 @@ SVConditionalClass* SVToolSetClass::GetToolSetConditional() const
 
 	for( size_t j = 0; nullptr == l_pConditional && j < m_friendList.size(); j++ )
 	{
-		l_pConditional = dynamic_cast<SVConditionalClass *>(m_friendList[j].PObject);
+		l_pConditional = dynamic_cast<SVConditionalClass *>(m_friendList[j].m_pObject);
 	}// end for
 
 	return l_pConditional; 
@@ -372,7 +368,10 @@ void SVToolSetClass::GetToolIds( SVToolIdDeque& p_rToolIds ) const
 
 HRESULT SVToolSetClass::getResetCounts( bool& rResetCounts )
 {
-	return m_ResetCounts.GetValue( rResetCounts );
+	BOOL Value( false );
+	HRESULT Result = m_ResetCounts.GetValue( Value );
+	rResetCounts = Value ? true : false;
+	return Result;
 }
 
 void SVToolSetClass::goingOffline()
@@ -420,31 +419,32 @@ SvOi::IObjectClass* SVToolSetClass::getBand0Image() const
 // -----------------------------------------------------------------------------
 // .Description : runs this toolset
 ////////////////////////////////////////////////////////////////////////////////
-bool SVToolSetClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVToolSetClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
-	m_TriggerCount.SetValue( RRunStatus.m_lResultDataIndex, RRunStatus.m_lTriggerCount > 0 ? RRunStatus.m_lTriggerCount : 0 );
+	m_TriggerCount.SetValue( rRunStatus.m_lTriggerCount > 0L ? rRunStatus.m_lTriggerCount : 0L, rRunStatus.m_lResultDataIndex );
 
-	m_latestCompletionPPQIndex.SetValue( RRunStatus.m_lResultDataIndex, RRunStatus.m_WorkloadInfoRsc.m_PPQIndexAtCompletion);
+	m_latestCompletionPPQIndex.SetValue( rRunStatus.m_WorkloadInfoRsc.m_PPQIndexAtCompletion, rRunStatus.m_lResultDataIndex );
 
 	//before calculating the trigger delta: make sure both trigger times are valid:
-	bool bothTriggersValid = (RRunStatus.m_CurrentTriggerTime * RRunStatus.m_PreviousTriggerTime > 0.1);
-	double TriggerDelta_us = bothTriggersValid ? (SVClock::c_MicrosecondsPerMillisecond * (RRunStatus.m_CurrentTriggerTime - RRunStatus.m_PreviousTriggerTime)) : 0.0;
-	m_TriggerDelta.SetValue( RRunStatus.m_lResultDataIndex, TriggerDelta_us);
+	bool bothTriggersValid = (rRunStatus.m_CurrentTriggerTime * rRunStatus.m_PreviousTriggerTime > 0.1);
+	__int64 Value = bothTriggersValid ? static_cast<__int64>(SVClock::c_MicrosecondsPerMillisecond * (rRunStatus.m_CurrentTriggerTime - rRunStatus.m_PreviousTriggerTime)) : 0LL;
+	m_TriggerDelta.SetValue( Value, rRunStatus.m_lResultDataIndex );
+	Value = static_cast<__int64> (rRunStatus.m_WorkloadInfoRsc.TriggerToCompletionInMilliseconds() * SVClock::c_MicrosecondsPerMillisecond);
+	m_LastTriggerToPPQCompletion.SetValue( Value, rRunStatus.m_lResultDataIndex );
+	Value = static_cast<__int64> (rRunStatus.m_WorkloadInfoRsc.TriggerToStartInMilliseconds() * SVClock::c_MicrosecondsPerMillisecond);
+	m_LastTriggerToStart.SetValue( Value, rRunStatus.m_lResultDataIndex );
 
-	m_LastTriggerToPPQCompletion.SetValue( RRunStatus.m_lResultDataIndex, RRunStatus.m_WorkloadInfoRsc.TriggerToCompletionInMilliseconds() * SVClock::c_MicrosecondsPerMillisecond);
-	m_LastTriggerToStart.SetValue( RRunStatus.m_lResultDataIndex, RRunStatus.m_WorkloadInfoRsc.TriggerToStartInMilliseconds() * SVClock::c_MicrosecondsPerMillisecond);
-
-	bool bRetVal = SVTaskObjectListClass::onRun( RRunStatus, pErrorMessages );
-	if( bRetVal )
+	bool Result = __super::onRun( rRunStatus, pErrorMessages );
+	if( Result )
 	{
 		// Friends were running, validation was successfully
 		// Check conditional execution
-		if ( !getConditionalResult( RRunStatus.m_lResultDataIndex ) )
+		if ( !getConditionalResult( rRunStatus.m_lResultDataIndex ) )
 		{
-			RRunStatus.SetDisabledByCondition();
+			rRunStatus.SetDisabledByCondition();
 		}
 	}
-	return bRetVal;
+	return Result;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -455,7 +455,7 @@ bool SVToolSetClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContaine
 //				: Otherwise it returns FALSE, that means: if the Tool Set should
 //				: not run, because the Tool Set Condition failed!
 ////////////////////////////////////////////////////////////////////////////////
-bool SVToolSetClass::Run( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVToolSetClass::Run( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	long lCount;
 	bool bRetVal = true;
@@ -467,24 +467,24 @@ bool SVToolSetClass::Run( SVRunStatusClass& RRunStatus, SvStl::MessageContainerV
 	{
 		SVRunStatusClass ToolRunStatus;
 
-		ToolRunStatus.m_lResultDataIndex  = RRunStatus.m_lResultDataIndex;
-		ToolRunStatus.Images = RRunStatus.Images;
-		ToolRunStatus.m_UpdateCounters = RRunStatus.m_UpdateCounters;
+		ToolRunStatus.m_lResultDataIndex  = rRunStatus.m_lResultDataIndex;
+		ToolRunStatus.Images = rRunStatus.Images;
+		ToolRunStatus.m_UpdateCounters = rRunStatus.m_UpdateCounters;
 
 		// First Set ToolSet Invalid, if other things succeed, it will become valid
 		// Do the same for the counts
 		m_isObjectValid.GetValue( bIsValid );
-		m_isObjectValid.SetValue( RRunStatus.m_lResultDataIndex, bIsValid );
+		m_isObjectValid.SetValue( bIsValid, rRunStatus.m_lResultDataIndex );
 		m_PassedCount.GetValue( lCount );
-		m_PassedCount.SetValue( RRunStatus.m_lResultDataIndex, lCount );
+		m_PassedCount.SetValue( lCount, rRunStatus.m_lResultDataIndex );
 		m_FailedCount.GetValue( lCount );
-		m_FailedCount.SetValue( RRunStatus.m_lResultDataIndex, lCount );
+		m_FailedCount.SetValue( lCount, rRunStatus.m_lResultDataIndex );
 		m_WarnedCount.GetValue( lCount );
-		m_WarnedCount.SetValue( RRunStatus.m_lResultDataIndex, lCount );
+		m_WarnedCount.SetValue( lCount, rRunStatus.m_lResultDataIndex );
 		m_ProcessedCount.GetValue( lCount );
-		m_ProcessedCount.SetValue( RRunStatus.m_lResultDataIndex, lCount );
+		m_ProcessedCount.SetValue( lCount, rRunStatus.m_lResultDataIndex );
 		m_EnabledCount.GetValue( lCount );
-		m_EnabledCount.SetValue( RRunStatus.m_lResultDataIndex, lCount );
+		m_EnabledCount.SetValue( lCount, rRunStatus.m_lResultDataIndex );
 
 		// If Conditional is disabled equation.Run() returns always TRUE.
 		// Otherwise the return value depends on the Conditional equation result!
@@ -496,27 +496,27 @@ bool SVToolSetClass::Run( SVRunStatusClass& RRunStatus, SvStl::MessageContainerV
 
 			m_ToolTime.Start();
 
-			if( RRunStatus.m_UpdateCounters )
+			if( rRunStatus.m_UpdateCounters )
 			{
 				// Set Processed Count...
 				long lCount = 0;
 				m_ProcessedCount.GetValue( lCount );
-				m_ProcessedCount.SetValue( RRunStatus.m_lResultDataIndex, ++lCount );
+				m_ProcessedCount.SetValue( ++lCount, rRunStatus.m_lResultDataIndex );
 			}
 
 			// Run yourself...
-			bRetVal = onRun( RRunStatus, &m_RunErrorMessages );
+			bRetVal = onRun( rRunStatus, &m_RunErrorMessages );
 
 			// if disabled or disabled by condition
 			// leave in previous state
-			if( !RRunStatus.IsDisabled() && !RRunStatus.IsDisabledByCondition() )
+			if( !rRunStatus.IsDisabled() && !rRunStatus.IsDisabledByCondition() )
 			{
-				if( RRunStatus.m_UpdateCounters )
+				if( rRunStatus.m_UpdateCounters )
 				{
 					// Set Enabled Count...
 					long lCount = 0;
 					m_EnabledCount.GetValue( lCount );
-					m_EnabledCount.SetValue( RRunStatus.m_lResultDataIndex, ++lCount );
+					m_EnabledCount.SetValue( ++lCount, rRunStatus.m_lResultDataIndex );
 				}
 
 				// Run your children...
@@ -525,28 +525,28 @@ bool SVToolSetClass::Run( SVRunStatusClass& RRunStatus, SvStl::MessageContainerV
 					if( GetAt( i ) )
 					{
 						ToolRunStatus.ResetRunStateAndToolSetTimes();
-						ToolRunStatus.m_UpdateCounters = RRunStatus.m_UpdateCounters;
+						ToolRunStatus.m_UpdateCounters = rRunStatus.m_UpdateCounters;
 
 						bRetVal = GetAt( i )->Run( ToolRunStatus, &m_RunErrorMessages ) && bRetVal;
 
 						// Update the ToolSet Run Status
 						if( ToolRunStatus.IsWarned() )
-							RRunStatus.SetWarned();
+							rRunStatus.SetWarned();
 						if( ToolRunStatus.IsFailed() )
-							RRunStatus.SetFailed();
+							rRunStatus.SetFailed();
 						if( ToolRunStatus.IsPassed() )
-							RRunStatus.SetPassed();
+							rRunStatus.SetPassed();
 						if( ToolRunStatus.IsCriticalFailure() )
-							RRunStatus.SetCriticalFailure();
+							rRunStatus.SetCriticalFailure();
 					}
 				}
 			}
 
 			// Set ToolSet Valid
-			m_isObjectValid.SetValue( RRunStatus.m_lResultDataIndex, true );
+			m_isObjectValid.SetValue( BOOL(true), rRunStatus.m_lResultDataIndex );
 
 			// set our state according to the runStatus
-			// RRunStatus.SetValid();
+			// rRunStatus.SetValid();
 
 			SVClock::SVTimeStamp l_Elapsed = ( SVClock::GetTimeStamp() - l_Timer );
 			m_EndTime = SVClock::ConvertTo( SVClock::Seconds, l_Elapsed );
@@ -554,18 +554,18 @@ bool SVToolSetClass::Run( SVRunStatusClass& RRunStatus, SvStl::MessageContainerV
 
 			if( 0 < m_SetNumber )
 			{
-				RRunStatus.m_ToolSetEndTime = m_EndTime;	// put units in seconds
-				RRunStatus.m_ToolSetAvgTime = m_AverageTime;
+				rRunStatus.m_ToolSetEndTime = m_EndTime;	// put units in seconds
+				rRunStatus.m_ToolSetAvgTime = m_AverageTime;
 			}
 			else
 			{
-				RRunStatus.m_ToolSetEndTime = -1.0;
-				RRunStatus.m_ToolSetAvgTime = -1.0;
+				rRunStatus.m_ToolSetEndTime = -1.0;
+				rRunStatus.m_ToolSetAvgTime = -1.0;
 			}
 
-			if( RRunStatus.m_UpdateCounters )
+			if( rRunStatus.m_UpdateCounters )
 			{
-				m_ToolTime.Stop( RRunStatus.m_lResultDataIndex );
+				m_ToolTime.Stop( rRunStatus.m_lResultDataIndex );
 
 				__int64 l_i64Time = -1;
 
@@ -577,11 +577,11 @@ bool SVToolSetClass::Run( SVRunStatusClass& RRunStatus, SvStl::MessageContainerV
 
 				if( m_bResetMinMaxToolsetTime || l_i64MinTime < 0 || l_i64Time < l_i64MinTime )
 				{
-					m_MinToolsetTime.SetValue( RRunStatus.m_lResultDataIndex, l_i64Time );
+					m_MinToolsetTime.SetValue( l_i64Time, rRunStatus.m_lResultDataIndex );
 				}
 				else
 				{
-					m_MinToolsetTime.SetValue( RRunStatus.m_lResultDataIndex, l_i64MinTime );
+					m_MinToolsetTime.SetValue( l_i64MinTime, rRunStatus.m_lResultDataIndex );
 				}
 
 				__int64 l_i64MaxTime = -1;
@@ -590,11 +590,11 @@ bool SVToolSetClass::Run( SVRunStatusClass& RRunStatus, SvStl::MessageContainerV
 
 				if( m_bResetMinMaxToolsetTime || l_i64MaxTime < 0 || l_i64MaxTime < l_i64Time )
 				{
-					m_MaxToolsetTime.SetValue( RRunStatus.m_lResultDataIndex, l_i64Time );
+					m_MaxToolsetTime.SetValue( l_i64Time, rRunStatus.m_lResultDataIndex );
 				}
 				else
 				{
-					m_MaxToolsetTime.SetValue( RRunStatus.m_lResultDataIndex, l_i64MaxTime );
+					m_MaxToolsetTime.SetValue( l_i64MaxTime, rRunStatus.m_lResultDataIndex );
 				}
 
 				if( m_bResetMinMaxToolsetTime )
@@ -606,45 +606,45 @@ bool SVToolSetClass::Run( SVRunStatusClass& RRunStatus, SvStl::MessageContainerV
 
 		// if disabled or disabled by condition
 		// leave in previous state
-		if( !RRunStatus.IsDisabled() && !RRunStatus.IsDisabledByCondition() )
+		if( !rRunStatus.IsDisabled() && !rRunStatus.IsDisabledByCondition() )
 		{
 			// set our state according to the runStatus
-			m_Passed.SetValue( RRunStatus.m_lResultDataIndex, RRunStatus.IsPassed() );
-			m_Failed.SetValue( RRunStatus.m_lResultDataIndex, RRunStatus.IsFailed() );
-			m_ExplicitFailed.SetValue( RRunStatus.m_lResultDataIndex, RRunStatus.IsFailed() );
-			m_Warned.SetValue( RRunStatus.m_lResultDataIndex, RRunStatus.IsWarned() );
+			m_Passed.SetValue( BOOL(rRunStatus.IsPassed()), rRunStatus.m_lResultDataIndex );
+			m_Failed.SetValue( BOOL(rRunStatus.IsFailed()), rRunStatus.m_lResultDataIndex );
+			m_ExplicitFailed.SetValue( BOOL(rRunStatus.IsFailed()), rRunStatus.m_lResultDataIndex );
+			m_Warned.SetValue( BOOL(rRunStatus.IsWarned()), rRunStatus.m_lResultDataIndex );
 
-			if( RRunStatus.m_UpdateCounters )
+			if( rRunStatus.m_UpdateCounters )
 			{
 				// Set Counts...
 				long lCount = 0;
-				if( RRunStatus.IsPassed() )
+				if( rRunStatus.IsPassed() )
 				{
 					m_PassedCount.GetValue( lCount );
-					m_PassedCount.SetValue( RRunStatus.m_lResultDataIndex, ++lCount );
+					m_PassedCount.SetValue( ++lCount, rRunStatus.m_lResultDataIndex );
 				}
 				lCount = 0;
-				if( RRunStatus.IsFailed() )
+				if( rRunStatus.IsFailed() )
 				{
 					m_FailedCount.GetValue( lCount );
-					m_FailedCount.SetValue( RRunStatus.m_lResultDataIndex, ++lCount );
+					m_FailedCount.SetValue( ++lCount, rRunStatus.m_lResultDataIndex );
 				}
 				lCount = 0;
-				if( RRunStatus.IsWarned() )
+				if( rRunStatus.IsWarned() )
 				{
 					m_WarnedCount.GetValue( lCount );
-					m_WarnedCount.SetValue( RRunStatus.m_lResultDataIndex, ++lCount );
+					m_WarnedCount.SetValue( ++lCount, rRunStatus.m_lResultDataIndex );
 				}
 			}
 		}
 
 		// Get Status Color...
-		DWORD dwValue = RRunStatus.GetStatusColor();
-		m_statusColor.SetValue( RRunStatus.m_lResultDataIndex, dwValue );
+		DWORD dwValue = rRunStatus.GetStatusColor();
+		m_statusColor.SetValue( dwValue, rRunStatus.m_lResultDataIndex );
 
 		// Get Status...
-		dwValue = RRunStatus.GetState();
-		m_statusTag.SetValue( RRunStatus.m_lResultDataIndex, dwValue );
+		dwValue = rRunStatus.GetState();
+		m_statusTag.SetValue( dwValue, rRunStatus.m_lResultDataIndex );
 	}// end if
 	else
 	{
@@ -652,7 +652,7 @@ bool SVToolSetClass::Run( SVRunStatusClass& RRunStatus, SvStl::MessageContainerV
 
 		m_ToolTime.Start();
 
-		bRetVal = RunWithNewDisable( RRunStatus, &m_RunErrorMessages );
+		bRetVal = RunWithNewDisable( rRunStatus, &m_RunErrorMessages );
 
 		SVClock::SVTimeStamp l_Elapsed = ( SVClock::GetTimeStamp() - l_Timer );
 		m_EndTime = SVClock::ConvertTo( SVClock::Seconds, l_Elapsed );
@@ -660,18 +660,18 @@ bool SVToolSetClass::Run( SVRunStatusClass& RRunStatus, SvStl::MessageContainerV
 
 		if( 0 < m_SetNumber )
 		{
-			RRunStatus.m_ToolSetEndTime = m_EndTime;
-			RRunStatus.m_ToolSetAvgTime = m_AverageTime;
+			rRunStatus.m_ToolSetEndTime = m_EndTime;
+			rRunStatus.m_ToolSetAvgTime = m_AverageTime;
 		}
 		else
 		{
-			RRunStatus.m_ToolSetEndTime = -1.0;
-			RRunStatus.m_ToolSetAvgTime = -1.0;
+			rRunStatus.m_ToolSetEndTime = -1.0;
+			rRunStatus.m_ToolSetAvgTime = -1.0;
 		}
 
-		if( RRunStatus.m_UpdateCounters )
+		if( rRunStatus.m_UpdateCounters )
 		{
-			m_ToolTime.Stop( RRunStatus.m_lResultDataIndex );
+			m_ToolTime.Stop( rRunStatus.m_lResultDataIndex );
 
 			__int64 l_i64Time = -1;
 
@@ -683,11 +683,11 @@ bool SVToolSetClass::Run( SVRunStatusClass& RRunStatus, SvStl::MessageContainerV
 
 			if( m_bResetMinMaxToolsetTime || l_i64MinTime < 0 || l_i64Time < l_i64MinTime )
 			{
-				m_MinToolsetTime.SetValue( RRunStatus.m_lResultDataIndex, l_i64Time );
+				m_MinToolsetTime.SetValue( l_i64Time, rRunStatus.m_lResultDataIndex );
 			}
 			else
 			{
-				m_MinToolsetTime.SetValue( RRunStatus.m_lResultDataIndex, l_i64MinTime );
+				m_MinToolsetTime.SetValue( l_i64MinTime, rRunStatus.m_lResultDataIndex );
 			}
 
 			__int64 l_i64MaxTime = -1;
@@ -696,11 +696,11 @@ bool SVToolSetClass::Run( SVRunStatusClass& RRunStatus, SvStl::MessageContainerV
 
 			if( m_bResetMinMaxToolsetTime || l_i64MaxTime < 0 || l_i64MaxTime < l_i64Time )
 			{
-				m_MaxToolsetTime.SetValue( RRunStatus.m_lResultDataIndex, l_i64Time );
+				m_MaxToolsetTime.SetValue( l_i64Time, rRunStatus.m_lResultDataIndex );
 			}
 			else
 			{
-				m_MaxToolsetTime.SetValue( RRunStatus.m_lResultDataIndex, l_i64MaxTime );
+				m_MaxToolsetTime.SetValue( l_i64MaxTime, rRunStatus.m_lResultDataIndex );
 			}
 
 			if( m_bResetMinMaxToolsetTime )
@@ -718,7 +718,7 @@ bool SVToolSetClass::Run( SVRunStatusClass& RRunStatus, SvStl::MessageContainerV
 	return bRetVal;
 }// end Run
 
-bool SVToolSetClass::RunWithNewDisable( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVToolSetClass::RunWithNewDisable( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	long lCount;
 	long l;
@@ -728,9 +728,9 @@ bool SVToolSetClass::RunWithNewDisable( SVRunStatusClass& RRunStatus, SvStl::Mes
 
 	SVRunStatusClass ToolRunStatus;
 
-	ToolRunStatus.m_lResultDataIndex  = RRunStatus.m_lResultDataIndex;
-	ToolRunStatus.Images = RRunStatus.Images;
-	ToolRunStatus.m_UpdateCounters = RRunStatus.m_UpdateCounters;
+	ToolRunStatus.m_lResultDataIndex  = rRunStatus.m_lResultDataIndex;
+	ToolRunStatus.Images = rRunStatus.Images;
+	ToolRunStatus.m_UpdateCounters = rRunStatus.m_UpdateCounters;
 
 	// If Conditional is disabled equation.Run() returns always TRUE.
 	// Otherwise the return value depends on the Conditional equation result!
@@ -739,31 +739,31 @@ bool SVToolSetClass::RunWithNewDisable( SVRunStatusClass& RRunStatus, SvStl::Mes
 		SVConditionalClass* l_pConditional( GetToolSetConditional() );
 
 		if( l_pConditional )
-			l_pConditional->Run( RRunStatus );
+			l_pConditional->Run( rRunStatus );
 
-		if( !l_pConditional || getConditionalResult( RRunStatus.m_lResultDataIndex ) )
+		if( !l_pConditional || getConditionalResult( rRunStatus.m_lResultDataIndex ) )
 		{
 			++m_SetNumber;
 
-			if( RRunStatus.m_UpdateCounters )
+			if( rRunStatus.m_UpdateCounters )
 			{
 				// Set Processed Count...
 				m_ProcessedCount.GetValue( lCount );
-				m_ProcessedCount.SetValue( RRunStatus.m_lResultDataIndex, ++lCount );
+				m_ProcessedCount.SetValue( ++lCount, rRunStatus.m_lResultDataIndex );
 			}
 
 			// Run yourself...
-			bRetVal = onRun( RRunStatus, pErrorMessages );
+			bRetVal = onRun( rRunStatus, pErrorMessages );
 
 			// if disabled or disabled by condition
 			// leave in previous state
-			if( !RRunStatus.IsDisabled() && !RRunStatus.IsDisabledByCondition() )
+			if( !rRunStatus.IsDisabled() && !rRunStatus.IsDisabledByCondition() )
 			{
-				if( RRunStatus.m_UpdateCounters )
+				if( rRunStatus.m_UpdateCounters )
 				{
 					// Set Enabled Count...
 					m_EnabledCount.GetValue( lCount );
-					m_EnabledCount.SetValue( RRunStatus.m_lResultDataIndex, ++lCount );
+					m_EnabledCount.SetValue( ++lCount, rRunStatus.m_lResultDataIndex );
 				}
 
 				// Run your children...
@@ -776,13 +776,13 @@ bool SVToolSetClass::RunWithNewDisable( SVRunStatusClass& RRunStatus, SvStl::Mes
 
 						// Update the ToolSet Run Status
 						if( ToolRunStatus.IsWarned() )
-							RRunStatus.SetWarned();
+							rRunStatus.SetWarned();
 						if( ToolRunStatus.IsFailed() )
-							RRunStatus.SetFailed();
+							rRunStatus.SetFailed();
 						if( ToolRunStatus.IsPassed() )
-							RRunStatus.SetPassed();
+							rRunStatus.SetPassed();
 						if( ToolRunStatus.IsCriticalFailure() )
-							RRunStatus.SetCriticalFailure();
+							rRunStatus.SetCriticalFailure();
 					}// end if
 
 				}// end for
@@ -790,88 +790,88 @@ bool SVToolSetClass::RunWithNewDisable( SVRunStatusClass& RRunStatus, SvStl::Mes
 			}// end if
 			else
 			{
-				if( RRunStatus.m_UpdateCounters )
+				if( rRunStatus.m_UpdateCounters )
 				{
 					// Set Enabled Count...
 					m_EnabledCount.GetValue( lCount );
-					m_EnabledCount.SetValue( RRunStatus.m_lResultDataIndex, lCount );
+					m_EnabledCount.SetValue( lCount, rRunStatus.m_lResultDataIndex );
 				}
 
-				RRunStatus.SetDisabledByCondition();
+				rRunStatus.SetDisabledByCondition();
 				bDisabled = TRUE;
 			}// end else
 
 			// Set ToolSet Valid
-			m_isObjectValid.SetValue( RRunStatus.m_lResultDataIndex, true );
+			m_isObjectValid.SetValue( BOOL(true), rRunStatus.m_lResultDataIndex );
 
 			// set our state according to the runStatus
-			RRunStatus.SetValid();
+			rRunStatus.SetValid();
 		}// end if
 		else
 		{
-			RRunStatus.SetDisabledByCondition();
+			rRunStatus.SetDisabledByCondition();
 			bDisabled = true;
 		}// end else
 
 	}// end if
 	else
 	{
-		RRunStatus.SetDisabled();
+		rRunStatus.SetDisabled();
 		bDisabled = true;
 	}// end else
 
 	// if disabled or disabled by condition
 	// leave in previous state
-	if( !bDisabled && !RRunStatus.IsDisabled() && !RRunStatus.IsDisabledByCondition() )
+	if( !bDisabled && !rRunStatus.IsDisabled() && !rRunStatus.IsDisabledByCondition() )
 	{
 		// set our state according to the runStatus
-		m_Passed.SetValue( RRunStatus.m_lResultDataIndex, RRunStatus.IsPassed() );
-		m_Failed.SetValue( RRunStatus.m_lResultDataIndex, RRunStatus.IsFailed() );
-		m_ExplicitFailed.SetValue( RRunStatus.m_lResultDataIndex, RRunStatus.IsFailed() );
-		m_Warned.SetValue( RRunStatus.m_lResultDataIndex, RRunStatus.IsWarned() );
+		m_Passed.SetValue( BOOL(rRunStatus.IsPassed()), rRunStatus.m_lResultDataIndex );
+		m_Failed.SetValue( BOOL(rRunStatus.IsFailed()), rRunStatus.m_lResultDataIndex );
+		m_ExplicitFailed.SetValue( BOOL(rRunStatus.IsFailed()), rRunStatus.m_lResultDataIndex );
+		m_Warned.SetValue( BOOL(rRunStatus.IsWarned()), rRunStatus.m_lResultDataIndex );
 
-		if( RRunStatus.m_UpdateCounters )
+		if( rRunStatus.m_UpdateCounters )
 		{
 			// Set Counts...
-			if( RRunStatus.IsPassed() )
+			if( rRunStatus.IsPassed() )
 			{
 				m_PassedCount.GetValue( lCount );
-				m_PassedCount.SetValue( RRunStatus.m_lResultDataIndex, ++lCount );
+				m_PassedCount.SetValue( ++lCount, rRunStatus.m_lResultDataIndex );
 				m_FailedCount.GetValue( lCount );
-				m_FailedCount.SetValue( RRunStatus.m_lResultDataIndex, lCount );
+				m_FailedCount.SetValue( lCount, rRunStatus.m_lResultDataIndex );
 				m_WarnedCount.GetValue( lCount );
-				m_WarnedCount.SetValue( RRunStatus.m_lResultDataIndex, lCount );
+				m_WarnedCount.SetValue( lCount, rRunStatus.m_lResultDataIndex );
 			}// end if
 
-			if( RRunStatus.IsFailed() )
+			if( rRunStatus.IsFailed() )
 			{
 				m_PassedCount.GetValue( lCount );
-				m_PassedCount.SetValue( RRunStatus.m_lResultDataIndex, lCount );
+				m_PassedCount.SetValue( lCount, rRunStatus.m_lResultDataIndex );
 				m_FailedCount.GetValue( lCount );
-				m_FailedCount.SetValue( RRunStatus.m_lResultDataIndex, ++lCount );
+				m_FailedCount.SetValue( ++lCount, rRunStatus.m_lResultDataIndex );
 				m_WarnedCount.GetValue( lCount );
-				m_WarnedCount.SetValue( RRunStatus.m_lResultDataIndex, lCount );
+				m_WarnedCount.SetValue( lCount, rRunStatus.m_lResultDataIndex );
 			}// end if
 
-			if( RRunStatus.IsWarned() )
+			if( rRunStatus.IsWarned() )
 			{
 				m_PassedCount.GetValue( lCount );
-				m_PassedCount.SetValue( RRunStatus.m_lResultDataIndex, lCount );
+				m_PassedCount.SetValue( lCount, rRunStatus.m_lResultDataIndex );
 				m_FailedCount.GetValue( lCount );
-				m_FailedCount.SetValue( RRunStatus.m_lResultDataIndex, lCount );
+				m_FailedCount.SetValue( lCount, rRunStatus.m_lResultDataIndex );
 				m_WarnedCount.GetValue( lCount );
-				m_WarnedCount.SetValue( RRunStatus.m_lResultDataIndex, ++lCount );
+				m_WarnedCount.SetValue( ++lCount, rRunStatus.m_lResultDataIndex );
 			}// end if
 		}
 	}// end if
 
 	// Get Status Color...
-	DWORD dwValue = RRunStatus.GetStatusColor();
-	m_statusColor.SetValue( RRunStatus.m_lResultDataIndex, dwValue );
+	DWORD dwValue = rRunStatus.GetStatusColor();
+	m_statusColor.SetValue( dwValue, rRunStatus.m_lResultDataIndex );
 
 	// Get Status...
-	dwValue = RRunStatus.GetState();
-	m_statusTag.SetValue( RRunStatus.m_lResultDataIndex, dwValue );
+	dwValue = rRunStatus.GetState();
+	m_statusTag.SetValue( dwValue, rRunStatus.m_lResultDataIndex );
 
 	return bRetVal;
 }// end RunWithNewDisable
@@ -891,9 +891,9 @@ void SVToolSetClass::SetInvalid()
 bool SVToolSetClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = __super::ResetObject(pErrorMessages) && ValidateLocal(pErrorMessages);
-	bool l_bReset = false;
+	BOOL bReset( false );
 
-	if( S_OK == m_ResetCounts.GetValue( l_bReset ) && l_bReset )
+	if( S_OK == m_ResetCounts.GetValue( bReset ) && bReset )
 	{
 		// Reset Counters...
 		m_PassedCount.SetDefaultValue( 0, true );
@@ -962,17 +962,17 @@ HRESULT SVToolSetClass::ClearResetCounts()
 
 	if( -1 < l_iIndex )
 	{
-		l_hr = m_ResetCounts.SetValue( l_iIndex, false );
+		l_hr = m_ResetCounts.SetValue( BOOL(false), l_iIndex );
 	}
 	else
 	{
-		l_hr = m_ResetCounts.SetValue( 1, false );
+		l_hr = m_ResetCounts.SetValue( BOOL(false), 1 );
 	}
 
 	return l_hr;
 }
 
-HRESULT SVToolSetClass::onCollectOverlays(SVImageClass *p_Image, SVExtentMultiLineStructCArray &p_MultiLineArray )
+HRESULT SVToolSetClass::onCollectOverlays(SVImageClass *p_Image, SVExtentMultiLineStructVector &p_MultiLineArray )
 {
 	// override TaskObjectList implementation
 	return S_FALSE;	// no overlays for toolset
@@ -1003,8 +1003,7 @@ void SVToolSetClass::connectChildObject( SVTaskObjectClass& rChildObject )
 
 bool SVToolSetClass::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) const
 {
-	if( inputConditionBoolObjectInfo.IsConnected() &&
-		inputConditionBoolObjectInfo.GetInputObjectInfo().PObject )
+	if( inputConditionBoolObjectInfo.IsConnected() && inputConditionBoolObjectInfo.GetInputObjectInfo().m_pObject )
 	{
 		return true;
 	}

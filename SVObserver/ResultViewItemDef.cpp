@@ -39,7 +39,7 @@ ResultViewItemDef::ResultViewItemDef(const SVGUID& guid, int index)
 ResultViewItemDef::ResultViewItemDef(const SVObjectReference& objRef)
 {
 	m_ObjectID = objRef.Guid();
-	m_hasIndex = objRef.IsIndexPresent();
+	m_hasIndex = objRef.isArray();
 	m_Index = objRef.ArrayIndex();
 }
 

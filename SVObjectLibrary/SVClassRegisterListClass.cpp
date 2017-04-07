@@ -15,6 +15,7 @@
 #include "SVClassRegisterClass.h"
 #include "SVObjectClass.h"
 #include "SVUtilityLibrary/SVString.h"
+#include "SVClsids.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -26,13 +27,15 @@ static char THIS_FILE[] = __FILE__;
 
 SVClassRegisterListClass& SVClassRegisterListClass::Instance()
 {
-	static SVClassRegisterListClass l_Object;
+	static SVClassRegisterListClass Object;
 
-	return l_Object;
+	return Object;
 }
 
 SVClassRegisterListClass::SVClassRegisterListClass()
 {
+	m_ExchangeClassID = boost::assign::map_list_of<SVGUID, SVGUID>
+		(SVGUID(SVStaticStringValueObjectClassGuid), SVGUID(SVStringValueObjectClassGuid)).convert_to_container<ExchangeClassMap>();
 }
 
 SVClassRegisterListClass::~SVClassRegisterListClass()
@@ -45,21 +48,35 @@ SVClassRegisterListClass::~SVClassRegisterListClass()
 // Otherwise, it returns a SVObjectClass* to the new object.
 // You have to destroy this new object by yourself by using delete
 //
-SVObjectClass* SVClassRegisterListClass::ConstructNewObject( const SVGUID& RUniqueClassID )
+SVObjectClass* SVClassRegisterListClass::ConstructNewObject( const SVGUID& rUniqueClassID )
 {
-	SVObjectClass* l_pObject = nullptr;
+	SVObjectClass* pResult( nullptr );
 
-	SVRegisterClasses::const_iterator l_Iter = m_Registers.find( RUniqueClassID );
-
-	if( l_Iter != m_Registers.end() )
+	SVGUID ClassID( SVStaticStringValueObjectClassGuid );
+	if( rUniqueClassID == ClassID )
 	{
-		if( nullptr != l_Iter->second )
+		ExchangeClassMap::const_iterator IterExchange( m_ExchangeClassID.find( ClassID ) );
+		if( m_ExchangeClassID.end() != IterExchange )
 		{
-			l_pObject = l_Iter->second->Construct();
+			ClassID = IterExchange->second;
+		}
+	}
+	else
+	{
+		ClassID = rUniqueClassID;
+	}
+
+	SVRegisterClasses::const_iterator Iter = m_Registers.find( ClassID );
+
+	if( m_Registers.end() != Iter )
+	{
+		if( nullptr != Iter->second )
+		{
+			pResult = Iter->second->Construct();
 		}
 	}
 
-	return l_pObject;
+	return pResult;
 }
 
 void SVClassRegisterListClass::Add( SVClassRegisterClass* pClass )

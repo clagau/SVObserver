@@ -256,7 +256,7 @@ protected:
 	struct SVImageDataStruct
 	{
 		SVByteVector m_ImageData;
-		SVExtentMultiLineStructCArray m_OverlayData;
+		SVExtentMultiLineStructVector m_OverlayData;
 		SVImageViewPtrImageViewStatusMap m_ImageViews;
 
 		SVImageDataStruct() : m_ImageData(), m_OverlayData(), m_ImageViews() {}
@@ -298,8 +298,8 @@ protected:
 	HRESULT IsImageDataUpdated( const SVGUID& p_rImageId, SVImageViewClass* p_pImageView ) const;
 	HRESULT IsImageDataDisplayed( const SVGUID& p_rImageId, SVImageViewClass* p_pImageView ) const;
 	HRESULT GetBitmapInfo( const SVGUID& p_rImageId, SVBitmapInfo& p_rBitmapInfo ) const;
-	HRESULT GetImageData( const SVGUID& p_rImageId, SVByteVector& p_rImageData, SVExtentMultiLineStructCArray& p_rMultiLineArray ) const;
-	HRESULT SetImageData( const SVGUID& p_rImageId, const SVByteVector& p_rImageData, const SVExtentMultiLineStructCArray& p_rMultiLineArray );
+	HRESULT GetImageData( const SVGUID& p_rImageId, SVByteVector& p_rImageData, SVExtentMultiLineStructVector& p_rMultiLineArray ) const;
+	HRESULT SetImageData( const SVGUID& p_rImageId, const SVByteVector& p_rImageData, const SVExtentMultiLineStructVector& p_rMultiLineArray );
 	HRESULT MarkImageDataSent( const SVGUID& p_rImageId, SVImageViewClass* p_pImageView );
 	HRESULT MarkImageDataUpdated( const SVGUID& p_rImageId, SVImageViewClass* p_pImageView );
 	HRESULT MarkImageDataDisplayed( const SVGUID& p_rImageId, SVImageViewClass* p_pImageView );

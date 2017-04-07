@@ -12,7 +12,6 @@
 #include "stdafx.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "RemoteMonitorListHelper.h"
-#include "SVValueObjectLibrary/SVValueObjectReference.h"
 #include "SVOCore/SVImageClass.h"
 #include "SVSharedMemoryLibrary/MonitorEntry.h"
 #include "SVSharedMemoryLibrary/MonitorListCpy.h"
@@ -21,44 +20,45 @@
 
 SVString RemoteMonitorListHelper::GetNameFromMonitoredObject(const MonitoredObject& rMonitoredObject)
 {
-	SVString name;
-	SVObjectReference objectRef(SVObjectManagerClass::Instance().GetObject(rMonitoredObject.guid));
-	if (objectRef.Object())
+	SVString Result;
+
+	SVObjectReference ObjectRef( SVObjectManagerClass::Instance().GetObject(rMonitoredObject.guid) );
+	if( nullptr != ObjectRef.getObject() )
 	{
-		if (SV_IS_KIND_OF(objectRef.Object(), SVValueObjectClass))
+		if( ObjectRef.getValueObject() )
 		{
-			SVValueObjectReference valRef(objectRef);
 			if (rMonitoredObject.isArray)
 			{
 				if (rMonitoredObject.wholeArray)
 				{
-					valRef.SetEntireArray();
+					ObjectRef.SetEntireArray();
 				}
 				else
 				{
-					valRef.SetArrayIndex(rMonitoredObject.arrayIndex);
+					ObjectRef.SetArrayIndex(rMonitoredObject.arrayIndex);
 				}
 			}
-			name = valRef.GetCompleteOneBasedObjectName();
+			Result = ObjectRef.GetCompleteOneBasedObjectName();
 		}
 		else
 		{
-			name = objectRef.GetCompleteName();
+			Result = ObjectRef.GetCompleteName();
 		}
 	}
-	return name;
+	return Result;
 }
 
 DWORD RemoteMonitorListHelper::GetTypeFromFromMonitoredObject(const MonitoredObject& rMonitoredObject)
 {
 	SVObjectReference objectRef(SVObjectManagerClass::Instance().GetObject(rMonitoredObject.guid));
-	return  objectRef.Object()->GetObjectType();
+	return  objectRef.getObject()->GetObjectType();
 }
+
 DWORD RemoteMonitorListHelper::GetSizeFromFromMonitoredObject(const MonitoredObject& rMonitoredObject)
 {
 	DWORD size(0);
-	SVObjectReference objectRef(SVObjectManagerClass::Instance().GetObject(rMonitoredObject.guid));
-	SVImageClass* pImageObject = dynamic_cast<SVImageClass*>(objectRef.Object());
+	SVObjectReference ObjectRef(SVObjectManagerClass::Instance().GetObject(rMonitoredObject.guid));
+	SVImageClass* pImageObject = dynamic_cast<SVImageClass*> (ObjectRef.getObject());
 	if( pImageObject)
 	{
 		long  height(0), width(0); 
@@ -74,7 +74,7 @@ DWORD RemoteMonitorListHelper::GetSizeFromFromMonitoredObject(const MonitoredObj
 
 MonitoredObject RemoteMonitorListHelper::GetMonitoredObjectFromName(const SVString& name)
 {
-	MonitoredObject obj;
+	MonitoredObject Result;
 
 	SVString sObjectName;
 	size_t iLength = name.size();
@@ -88,22 +88,21 @@ MonitoredObject RemoteMonitorListHelper::GetMonitoredObjectFromName(const SVStri
 		sObjectName = name;
 	}
 
-	obj.guid = SVObjectManagerClass::Instance().GetObjectIdFromCompleteName(sObjectName.c_str());
+	Result.guid = SVObjectManagerClass::Instance().GetObjectIdFromCompleteName(sObjectName.c_str());
 	SVObjectNameInfo nameInfo;
 	SVObjectNameInfo::ParseObjectName(nameInfo, name.c_str());
 	
-	SVObjectReference ref(SVObjectManagerClass::Instance().GetObject(obj.guid), nameInfo);
-	if (ref.Object() && SV_IS_KIND_OF(ref.Object(), SVValueObjectClass))
+	SVObjectReference ObjectRef(  SVObjectManagerClass::Instance().GetObject( Result.guid ), nameInfo );
+	if( nullptr != ObjectRef.getValueObject() )
 	{
-		SVValueObjectReference valRef(ref);
-		obj.isArray = valRef.Object()->IsArray();
-		obj.wholeArray = valRef.IsEntireArray();
-		if (obj.isArray)
+		Result.isArray = ObjectRef.getValueObject()->isArray();
+		Result.wholeArray = ObjectRef.isEntireArray();
+		if( Result.isArray )
 		{
-			obj.arrayIndex = valRef.ArrayIndex();
+			Result.arrayIndex = ObjectRef.ArrayIndex();
 		}
 	}
-	return obj;
+	return Result;
 }
 
 void RemoteMonitorListHelper::AddMonitorObjects2MoListEntryVector(const MonitoredObjectList& values, SvSml::MonitorEntryVector  &ListEntries )

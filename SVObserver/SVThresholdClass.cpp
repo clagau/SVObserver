@@ -38,24 +38,24 @@ void SVThresholdClass::init()
 	m_bUseOverlays = false;
 
 	// Identify our output type
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVUnaryImageOperatorObjectType;
-	m_outObjectInfo.ObjectTypeInfo.SubType = SVThresholdObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVUnaryImageOperatorObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVThresholdObjectType;
 
 	// Register Embedded Object(s)
-	RegisterEmbeddedObject( &m_upperThresh, SVUpperThresholdObjectGuid, IDS_OBJECTNAME_UPPERTHRESHOLD, false, SVResetItemNone );
-	RegisterEmbeddedObject( &m_lowerThresh, SVLowerThresholdObjectGuid, IDS_OBJECTNAME_LOWERTHRESHOLD, false, SVResetItemNone );
-	RegisterEmbeddedObject( &m_threshActivate, SVThresholdActivateObjectGuid, IDS_OBJECTNAME_THRESHOLDACTIVATE, false, SVResetItemNone );
-	RegisterEmbeddedObject( &m_upperThreshActivate, SVUpperThresholdActivateObjectGuid, IDS_OBJECTNAME_UPPERTHRESHOLDACTIVATE, false, SVResetItemNone );
-	RegisterEmbeddedObject( &m_lowerThreshActivate, SVLowerThresholdActivateObjectGuid, IDS_OBJECTNAME_LOWERTHRESHOLDACTIVATE, false, SVResetItemNone );
+	RegisterEmbeddedObject( &m_upperThresh, SVUpperThresholdObjectGuid, IDS_OBJECTNAME_UPPERTHRESHOLD, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_lowerThresh, SVLowerThresholdObjectGuid, IDS_OBJECTNAME_LOWERTHRESHOLD, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_threshActivate, SVThresholdActivateObjectGuid, IDS_OBJECTNAME_THRESHOLDACTIVATE, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_upperThreshActivate, SVUpperThresholdActivateObjectGuid, IDS_OBJECTNAME_UPPERTHRESHOLDACTIVATE, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_lowerThreshActivate, SVLowerThresholdActivateObjectGuid, IDS_OBJECTNAME_LOWERTHRESHOLDACTIVATE, false, SvOi::SVResetItemNone );
 
-	RegisterEmbeddedObject( &m_autoThreshold, SVAutoThresholdObjectGuid, IDS_OBJECTNAME_AUTOTHRESHOLD, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_blackBackground, SVBlackBackgroundObjectGuid, IDS_OBJECTNAME_BLACKBACKGROUND, false, SVResetItemNone );
+	RegisterEmbeddedObject( &m_autoThreshold, SVAutoThresholdObjectGuid, IDS_OBJECTNAME_AUTOTHRESHOLD, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_blackBackground, SVBlackBackgroundObjectGuid, IDS_OBJECTNAME_BLACKBACKGROUND, false, SvOi::SVResetItemNone );
 
-	RegisterEmbeddedObject( &m_dAutoThresholdMultiplier, SVAutoThresholdMultiplierObjectGuid, IDS_OBJECTNAME_AUTOTHRESHOLDMULTIPLIER, false, SVResetItemNone );
+	RegisterEmbeddedObject( &m_dAutoThresholdMultiplier, SVAutoThresholdMultiplierObjectGuid, IDS_OBJECTNAME_AUTOTHRESHOLDMULTIPLIER, false, SvOi::SVResetItemNone );
 
-	RegisterEmbeddedObject( &m_useExternalATM, SVUseExternalATMObjectGuid, IDS_OBJECTNAME_USE_EXTERN_ATM, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_useExternalLT, SVUseExternalLTObjectGuid, IDS_OBJECTNAME_USE_EXTERN_LT, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_useExternalUT, SVUseExternalUTObjectGuid, IDS_OBJECTNAME_USE_EXTERN_UT, false, SVResetItemOwner );
+	RegisterEmbeddedObject( &m_useExternalATM, SVUseExternalATMObjectGuid, IDS_OBJECTNAME_USE_EXTERN_ATM, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_useExternalLT, SVUseExternalLTObjectGuid, IDS_OBJECTNAME_USE_EXTERN_LT, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_useExternalUT, SVUseExternalUTObjectGuid, IDS_OBJECTNAME_USE_EXTERN_UT, false, SvOi::SVResetItemOwner );
 
 	// Set Embedded defaults
 	m_upperThresh.SetDefaultValue( SvOi::cDefaultToolUpperThreshold, TRUE );
@@ -114,20 +114,20 @@ BOOL SVThresholdClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure
 	BOOL bOk = SVUnaryImageOperatorClass::CreateObject( PCreateStructure );
 
 	// Set / Reset Printable Flag
-	m_threshActivate.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
-	m_blackBackground.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
+	m_threshActivate.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_blackBackground.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
 
-	m_upperThreshActivate.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
-	m_lowerThreshActivate.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
-	m_useExternalLT.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
-	m_useExternalUT.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
+	m_upperThreshActivate.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_lowerThreshActivate.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_useExternalLT.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_useExternalUT.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
 	
-	m_autoThreshold.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE;
-	m_useExternalATM.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
+	m_autoThreshold.SetObjectAttributesAllowed( SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
+	m_useExternalATM.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
 
-	m_upperThresh.ObjectAttributesAllowedRef() |= SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE;
-	m_lowerThresh.ObjectAttributesAllowedRef() |= SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE;
-	m_dAutoThresholdMultiplier.ObjectAttributesAllowedRef() |= SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE;
+	m_upperThresh.SetObjectAttributesAllowed( SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
+	m_lowerThresh.SetObjectAttributesAllowed( SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
+	m_dAutoThresholdMultiplier.SetObjectAttributesAllowed( SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
 
 	bOk = Rebuild();
 
@@ -174,24 +174,24 @@ SVBoolValueObjectClass& SVThresholdClass::GetThresholdActivateAttribute()
 
 SVDoubleValueObjectClass* SVThresholdClass::getExternalUT()
 {
-	if( m_inputUT.IsConnected() && m_inputUT.GetInputObjectInfo().PObject )
-		return ( SVDoubleValueObjectClass* ) m_inputUT.GetInputObjectInfo().PObject;
+	if( m_inputUT.IsConnected() && m_inputUT.GetInputObjectInfo().m_pObject )
+		return ( SVDoubleValueObjectClass* ) m_inputUT.GetInputObjectInfo().m_pObject;
 
 	return nullptr;
 }
 
 SVDoubleValueObjectClass* SVThresholdClass::getExternalLT()
 {
-	if( m_inputLT.IsConnected() && m_inputLT.GetInputObjectInfo().PObject )
-		return ( SVDoubleValueObjectClass* ) m_inputLT.GetInputObjectInfo().PObject;
+	if( m_inputLT.IsConnected() && m_inputLT.GetInputObjectInfo().m_pObject )
+		return ( SVDoubleValueObjectClass* ) m_inputLT.GetInputObjectInfo().m_pObject;
 
 	return nullptr;
 }
 
 SVDoubleValueObjectClass* SVThresholdClass::getExternalATM()
 {
-	if( m_inputATM.IsConnected() && m_inputATM.GetInputObjectInfo().PObject )
-		return ( SVDoubleValueObjectClass* ) m_inputATM.GetInputObjectInfo().PObject;
+	if( m_inputATM.IsConnected() && m_inputATM.GetInputObjectInfo().m_pObject )
+		return ( SVDoubleValueObjectClass* ) m_inputATM.GetInputObjectInfo().m_pObject;
 
 	return nullptr;
 }
@@ -205,7 +205,7 @@ SVDoubleValueObjectClass* SVThresholdClass::getExternalATM()
 bool SVThresholdClass::onRun( bool First, 
 							  SVSmartHandlePointer RInputImageHandle, 
 							  SVSmartHandlePointer ROutputImageHandle, 
-							  SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+							  SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 { 
 	// Binarizing: lowerThresh <= x <= m_upperThresh		--> 255 
 	//	 		   otherwise							--> 0
@@ -290,9 +290,9 @@ bool SVThresholdClass::onRun( bool First,
 			// Run equation friends...
 			SVRunStatusClass runStatus;
 
-			runStatus.m_lResultDataIndex  = RRunStatus.m_lResultDataIndex;
-			runStatus.Images = RRunStatus.Images;
-			runStatus.m_UpdateCounters = RRunStatus.m_UpdateCounters;
+			runStatus.m_lResultDataIndex  = rRunStatus.m_lResultDataIndex;
+			runStatus.Images = rRunStatus.Images;
+			runStatus.m_UpdateCounters = rRunStatus.m_UpdateCounters;
 
 			runFriends( runStatus );
 			if( ! runStatus.IsValid() )
@@ -327,7 +327,7 @@ bool SVThresholdClass::onRun( bool First,
 							dTemp = 0.0;
 						if( dTemp > 2.0 )
 							dTemp = 2.0;
-						m_dAutoThresholdMultiplier.SetValue( RRunStatus.m_lResultDataIndex, dTemp );
+						m_dAutoThresholdMultiplier.SetValue( dTemp, rRunStatus.m_lResultDataIndex );
 					}
 				}
 
@@ -347,8 +347,8 @@ bool SVThresholdClass::onRun( bool First,
 						upper = 255L;
 					lower = 0L;
 				}
-					m_upperThresh.SetValue( RRunStatus.m_lResultDataIndex, upper );
-					m_lowerThresh.SetValue( RRunStatus.m_lResultDataIndex, lower );
+					m_upperThresh.SetValue( upper, rRunStatus.m_lResultDataIndex );
+					m_lowerThresh.SetValue( lower, rRunStatus.m_lResultDataIndex );
 			} // if( /*m_pHistValueArray &&*/ m_histValueArraySize && m_pixelNumber )
 		} // if( bAutoThreshold )
 		else
@@ -361,18 +361,16 @@ bool SVThresholdClass::onRun( bool First,
 			{
 				if( bUseExternalUT )
 				{
-					double dUpp = 0.0;
+					double dUpper = 0.0;
 					SVDoubleValueObjectClass* pExtUTValue = getExternalUT();
 					if( pExtUTValue )
 					{
-						pExtUTValue->GetValue( dUpp );
-						upper = ( long ) dUpp;
+						pExtUTValue->GetValue( dUpper );
+						upper = static_cast<long> (dUpper);
 						// Range check...
-						if( upper < 0 )
-							upper = 0;
-						if( upper > 255 )
-							upper = 255;
-						m_upperThresh.SetValue( RRunStatus.m_lResultDataIndex, upper );
+						upper = (0 > upper) ? 0 : upper;
+						upper = (255 < upper) ? 255 : upper;
+						m_upperThresh.SetValue( upper, rRunStatus.m_lResultDataIndex );
 					}
 				}
 			}
@@ -385,18 +383,16 @@ bool SVThresholdClass::onRun( bool First,
 			{
 				if( bUseExternalLT )
 				{
-					double dLow = 0.0;
+					double dLower = 0.0;
 					SVDoubleValueObjectClass* pExtLTValue = getExternalLT();
 					if( pExtLTValue )
 					{
-						pExtLTValue->GetValue( dLow );
-						lower = ( long ) dLow;
+						pExtLTValue->GetValue( dLower );
+						lower = static_cast<LONG> (dLower);
 						// Range check...
-						if( lower < 0 )
-							lower = 0;
-						if( lower > 255 )
-							lower = 255;
-						m_lowerThresh.SetValue( RRunStatus.m_lResultDataIndex, lower );
+						lower = (0 > lower) ? 0 : lower;
+						lower = (255 < lower) ? 255 : lower;
+						m_lowerThresh.SetValue( lower, rRunStatus.m_lResultDataIndex );
 					}
 				}
 			}
@@ -442,7 +438,7 @@ bool SVThresholdClass::onRun( bool First,
 	{
 		assert (0);
 		SetInvalid();
-		RRunStatus.SetInvalid();
+		rRunStatus.SetInvalid();
 
 		SVStringVector msgList;
 		msgList.push_back(_T("SVThresholdClass::onRun"));
@@ -452,7 +448,7 @@ bool SVThresholdClass::onRun( bool First,
 			SvStl::MessageContainer Msg( static_cast<DWORD> (l_Code), SvOi::Tid_ErrorIn, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 			pErrorMessages->push_back(Msg);
 		}
-		RRunStatus.SetCriticalFailure();
+		rRunStatus.SetCriticalFailure();
 
 		return false;
 	}
@@ -546,32 +542,14 @@ bool SVThresholdClass::Rebuild()
 	m_useExternalLT.GetValue( l_bLTValue );
 	m_useExternalUT.GetValue( l_bUTValue );
 
-	if ( l_bATMValue )
-	{
-		m_dAutoThresholdMultiplier.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	}
-	else
-	{
-		m_dAutoThresholdMultiplier.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
-	}
+	SvOi::SetAttributeType AddRemoveType = l_bATMValue ? SvOi::SetAttributeType::RemoveAttribute : SvOi::SetAttributeType::AddAttribute;
+	m_dAutoThresholdMultiplier.SetObjectAttributesAllowed( SV_PRINTABLE, AddRemoveType );
 
-	if ( l_bAutoValue || l_bLTValue )
-	{
-		m_lowerThresh.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	}
-	else
-	{
-		m_lowerThresh.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
-	}
+	AddRemoveType = (l_bAutoValue || l_bLTValue) ? SvOi::SetAttributeType::RemoveAttribute : SvOi::SetAttributeType::AddAttribute;
+	m_lowerThresh.SetObjectAttributesAllowed( SV_PRINTABLE, AddRemoveType );
 
-	if ( l_bAutoValue || l_bUTValue )
-	{
-		m_upperThresh.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	}
-	else
-	{
-		m_upperThresh.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
-	}
+	AddRemoveType = (l_bAutoValue || l_bUTValue) ? SvOi::SetAttributeType::RemoveAttribute : SvOi::SetAttributeType::AddAttribute;
+	m_upperThresh.SetObjectAttributesAllowed( SV_PRINTABLE, AddRemoveType );
 
 	return Result;
 }

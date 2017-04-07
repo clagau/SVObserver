@@ -51,45 +51,15 @@ BOOL SVTimerValueObjectClass::Start()
 
 BOOL SVTimerValueObjectClass::Stop(long lIndex)
 {
-	double l_Value = SVClock::ConvertTo( SVClock::Microseconds, ( SVClock::GetTimeStamp() - m_Start ) );
+	double Value = SVClock::ConvertTo( SVClock::Microseconds, ( SVClock::GetTimeStamp() - m_Start ) );
 
-	return S_OK == SetValue(lIndex, l_Value);
-}
-
-HRESULT SVTimerValueObjectClass::GetValueAt(int iBucket, int iIndex, SVString& rValue) const
-{
-	__int64 value=0;
-
-	HRESULT hr = base::GetValueAt(iBucket, iIndex, value);
-	//if ( S_OK == hr ) //@WARNING - log an error ?
-	{
-		rValue = SvUl_SF::Format(_T("%I64u (µs)"), value);
-	}
-	return hr;
-}
-
-HRESULT SVTimerValueObjectClass::GetValueAt( int iBucket, int iIndex, VARIANT& rValue ) const
-{
-	__int64 Value=0;
-	_variant_t l_Temp;
-	l_Temp.Attach( rValue );
-	HRESULT hr = base::GetValueAt( iBucket, iIndex, Value );
-	if( S_OK == hr )
-	{
-		l_Temp = Value;
-	}
-	else
-	{
-		l_Temp.Clear();
-	}
-	rValue = l_Temp.Detach();
-
-	return hr;
+	return S_OK == SetValue(static_cast<__int64> (Value), GetLastSetIndex(), lIndex );
 }
 
 void SVTimerValueObjectClass::LocalInitialize()
 {
 	m_Start = SVClock::GetTimeStamp();
-	SetTypeName( _T("Timer") );
+	SetTypeName(_T("Timer"));
+	setOutputFormat(_T("%I64u (µs)"));
 }
 

@@ -13,11 +13,10 @@
 #pragma region Includes
 #include "SVOResource/resource.h"
 #include "SVUtilityLibrary/SVString.h"
-#include "SVValueObjectClassImpl.h"
-#include "SVValueObjectGlobals.h"
+#include "SVValueObjectClass.h"
 #pragma endregion Includes
 
-class SVVariantValueObjectClass : public SVValueObjectClassImpl< _variant_t >
+class SVVariantValueObjectClass : public SVValueObjectClass<_variant_t>
 {
 	SV_DECLARE_CLASS( SVVariantValueObjectClass );
 
@@ -35,31 +34,21 @@ public:
 	BOOL SetType( int vt );
 	HRESULT SetValueKeepType( int iBucket, LPCTSTR value ) {return SetValueKeepType(iBucket, 0, value);}
 	HRESULT SetValueKeepType( int iBucket, int iIndex, LPCTSTR value );
-	HRESULT SetDefaultValue( const VARIANT& rValue, bool bResetAll );
-	HRESULT GetDefaultValue( _variant_t& rValue ) const;
 	VARTYPE GetDefaultType() const;
 
-	IMPLEMENT_VALUE_OBJECT_GET_SET_NO_T()
-
 protected:
-	virtual HRESULT SetValueAt( int iBucket, int iIndex, const SVString& rValue );
-	virtual HRESULT SetValueAt( int iBucket, int iIndex, BOOL Value );
-	virtual HRESULT SetValueAt( int iBucket, int iIndex, BYTE Value );
-	virtual HRESULT SetValueAt( int iBucket, int iIndex, DWORD Value );
-	virtual HRESULT SetValueAt( int iBucket, int iIndex, long Value );
-	virtual HRESULT SetValueAt( int iBucket, int iIndex, double Value );
-	virtual HRESULT SetValueAt( int iBucket, int iIndex, const VARIANT& rValue );
-
-	virtual HRESULT GetValueAt( int iBucket, int iIndex, VARIANT& rValue ) const;
-	virtual HRESULT GetValueAt( int iBucket, int iIndex, BYTE& rValue ) const;
-	virtual HRESULT GetValueAt( int iBucket, int iIndex, DWORD& rValue ) const;
-	virtual HRESULT GetValueAt( int iBucket, int iIndex, long& rValue ) const;
-	virtual HRESULT GetValueAt( int iBucket, int iIndex, BOOL& rValue ) const;
-	virtual HRESULT GetValueAt( int iBucket, int iIndex, double& rValue ) const;
-	virtual HRESULT GetValueAt( int iBucket, int iIndex, SVString& rValue ) const;
-
 	static SVString ToString(const VARIANT& rvt, bool bScript = false );
 
+	virtual double ValueType2Double(const _variant_t& rValue) const override;
+	virtual _variant_t ValueType2Variant( const _variant_t& rValue ) const override { return rValue; };
+	virtual _variant_t Variant2ValueType( const _variant_t& rValue ) const override { return rValue; };
+
+	//! Convert a string in a variant. Throw an exception if the string isn't convertible into a variant
+	//! \param rValue [in] The input string
+	//! \returns the converted value.
+	virtual _variant_t ConvertString2Type( const SVString& rValue ) const override;
+
+	virtual SVString ConvertType2String( const _variant_t& rValue ) const override;
 private:
 	void LocalInitialize();
 };

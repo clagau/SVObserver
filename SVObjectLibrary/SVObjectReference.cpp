@@ -16,20 +16,19 @@
 #pragma endregion Includes
 
 SVObjectReference::SVObjectReference( SVObjectClass* pObject ):
-	m_ArrayIndex(-1), 
-	m_IsArray(false)
+	m_ArrayIndex(-1)
 {
 	m_pObject = pObject;
+	m_pValueObject = nullptr;
 	m_Guid = m_pObject ? m_pObject->GetUniqueObjectID() : SV_GUID_NULL;
 	m_NameInfo.clear();
-	
 }
 
 SVObjectReference::SVObjectReference( SVObjectClass* pObject, long lArrayIndex, SVString strDefaultValue ):
-	m_ArrayIndex(lArrayIndex),  
-	m_IsArray(true)
+	m_ArrayIndex(lArrayIndex)  
 {
 	m_pObject = pObject;
+	m_pValueObject = nullptr;
 	m_Guid = m_pObject ? m_pObject->GetUniqueObjectID() : SV_GUID_NULL;
 	if( nullptr != m_pObject )
 	{
@@ -39,24 +38,39 @@ SVObjectReference::SVObjectReference( SVObjectClass* pObject, long lArrayIndex, 
 	m_NameInfo.SetIndex( SvUl_SF::Format(_T("%d"), lArrayIndex ));
 	m_NameInfo.SetIsDefaultValuePresent(true);
 	m_NameInfo.SetDefaultValue( strDefaultValue );
-	
-
 }
 
 SVObjectReference::SVObjectReference( SVObjectClass* pObject, const SVObjectNameInfo& p_rNameInfo )
 {
 	m_pObject = pObject;
+	m_pValueObject = nullptr;
 	m_Guid = m_pObject ? m_pObject->GetUniqueObjectID() : SV_GUID_NULL;
 	m_NameInfo = p_rNameInfo;
-	m_IsArray =  p_rNameInfo.IsIndexPresent();
 	m_ArrayIndex = p_rNameInfo.GetIndexValue();
+}
 
+const SVObjectReference& SVObjectReference::operator = ( const SVObjectReference& rhs )
+{
+	m_pObject = rhs.m_pObject;
+	m_pValueObject = nullptr;
+	m_Guid = rhs.m_Guid != SV_GUID_NULL ? rhs.m_Guid : (nullptr != m_pObject ? m_pObject->GetUniqueObjectID() : SV_GUID_NULL);
+	m_NameInfo = rhs.m_NameInfo;
+	m_ArrayIndex = rhs.m_ArrayIndex;
+	return *this;
+}
+
+SvOi::IValueObject* SVObjectReference::getValueObject() const
+{
+	if(nullptr == m_pValueObject)
+	{
+		m_pValueObject = dynamic_cast<SvOi::IValueObject*> (m_pObject);
+	}
+	return m_pValueObject;
 }
 
 void SVObjectReference::SetEntireArray()
 {
 	m_ArrayIndex = -1;  
-	m_IsArray = true;
 	m_NameInfo.SetIsIndexPresent(true);
 	m_NameInfo.ClearIndex();
 }
@@ -64,7 +78,6 @@ void SVObjectReference::SetEntireArray()
 void SVObjectReference::SetArrayIndex( long lArrayIndex )
 {
 	m_ArrayIndex = lArrayIndex;  
-	m_IsArray = true;
 	m_NameInfo.SetIsIndexPresent(true);
 	m_NameInfo.SetIndex( SvUl_SF::Format(_T("%d"), lArrayIndex ) );
 }
@@ -138,7 +151,7 @@ SVString SVObjectReference::GetZeroBasedIndexString() const
 {
 	SVString Result;
 
-	if( m_IsArray)
+	if( isArray() )
 	{
 		if ( m_ArrayIndex >= 0 )
 		{
@@ -156,7 +169,7 @@ SVString SVObjectReference::GetOneBasedIndexString() const
 {
 	SVString Result;
 
-	if( m_IsArray)
+	if( isArray() )
 	{
 		if (  m_ArrayIndex >= 0 )
 		{
@@ -188,26 +201,21 @@ const UINT SVObjectReference::ObjectAttributesSet() const
 	return m_pObject->ObjectAttributesSet(m_ArrayIndex >= 0 ? m_ArrayIndex : 0  );
 }
 
-UINT& SVObjectReference::ObjectAttributesAllowedRef()
+void SVObjectReference::SetObjectAttributesAllowed( UINT Attributes, SvOi::SetAttributeType Type )
 {
 	assert( nullptr != m_pObject );
-	return m_pObject->ObjectAttributesAllowedRef();
+	return m_pObject->SetObjectAttributesAllowed( Attributes, Type );
 }
 
-UINT& SVObjectReference::ObjectAttributesSetRef()
+void SVObjectReference::SetObjectAttributesSet( UINT Attributes, SvOi::SetAttributeType Type )
 {
 	assert( nullptr != m_pObject );
-	return m_pObject->ObjectAttributesSetRef(m_ArrayIndex >= 0 ? m_ArrayIndex : 0 );
+	return m_pObject->SetObjectAttributesSet( Attributes, Type,  m_ArrayIndex >= 0 ? m_ArrayIndex : 0 );
 }
 
-GUID SVObjectReference::GetObjectGuid( SVObjectClass* pObject )
+long SVObjectReference::IncrementIndex()
 {
-	return pObject->GetUniqueObjectID();
-}
-
-int SVObjectReference::IncrementIndex()
-{
-	if(m_IsArray && m_ArrayIndex > -1) 
+	if( isArray() && m_ArrayIndex > -1) 
 	{
 
 		m_ArrayIndex++;

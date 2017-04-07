@@ -71,10 +71,10 @@ protected:
 	// Parameter: First <in> 
 	// Parameter: RInputImageHandle <in> The handle to the source image to implement the filter on
 	// Parameter: ROutputImageHandle <out> The handle to the destination image
-	// Parameter: RRunStatus <in> The status of the run mode
+	// Parameter: rRunStatus <in> The status of the run mode
 	// Return: True on success
 	//************************************
-	virtual bool onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+	virtual bool onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 #pragma endregion Protected Methods
 
 private:

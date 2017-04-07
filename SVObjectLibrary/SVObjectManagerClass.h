@@ -14,6 +14,7 @@
 #pragma region Includes
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <set>
+//Moved to precompiled header: #include <memory>
 #include "SVCommandLibrary/SVCommandTemplate.h"
 #include "SVSystemLibrary/SVCriticalSection.h"
 #include "SVUtilityLibrary/SVGUID.h"
@@ -212,6 +213,14 @@ public:
 	/// \param pObjectInInfo [in] object input info
 	/// \returns bool
 	bool DisconnectObjectInput( const SVGUID& rSourceId, SVInObjectInfoStruct* pObjectInInfo );
+
+	//! Create Bucket for value object
+	//! \param rpBucket [in/out] reference to the Bucket shared pointer
+	//! \param RDefault [in] reference to the default value
+	//! \param NumberOfBuckets [in] the number of buckets
+	//! \returns bool
+	template<typename DataType>
+	bool createBucket( std::unique_ptr<std::vector<DataType>>& rpBucket, const DataType& rDefault, int NumberOfBuckets );
 
 protected:
 	typedef std::map< SVString, SVGUID > SVSubjectDataNameSubjectIDMap;

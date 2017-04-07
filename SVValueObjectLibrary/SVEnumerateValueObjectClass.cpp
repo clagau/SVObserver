@@ -26,31 +26,25 @@ static char THIS_FILE[] = __FILE__;
 SV_IMPLEMENT_CLASS( SVEnumerateValueObjectClass, SVEnumerateValueObjectClassGuid );
 
 SVEnumerateValueObjectClass::SVEnumerateValueObjectClass( LPCTSTR ObjectName )
-							              : base( ObjectName ) 
+: SVValueObjectClass<long>( ObjectName )
 {
 	LocalInitialize();
 }
 
-SVEnumerateValueObjectClass::SVEnumerateValueObjectClass( SVObjectClass* POwner, int StringResourceID )
-							: base( POwner, StringResourceID ) 
+SVEnumerateValueObjectClass::SVEnumerateValueObjectClass( SVObjectClass* pOwner, int StringResourceID )
+: SVValueObjectClass<long>( pOwner, StringResourceID )
 {
 	LocalInitialize();
 }
  
 const SVEnumerateValueObjectClass& SVEnumerateValueObjectClass::operator = (const SVEnumerateValueObjectClass& rhs)
 {
-	base::operator = (rhs);
+	SVValueObjectClass<long>::operator = (rhs);
 	return *this;
 }
 
 SVEnumerateValueObjectClass::~SVEnumerateValueObjectClass()
 {
-}
-
-BOOL SVEnumerateValueObjectClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
-{
-	BOOL bCreate = base::CreateObject( pCreateStructure );
-	return bCreate;
 }
 
 void SVEnumerateValueObjectClass::Persist(SVObjectWriter& rWriter)
@@ -61,9 +55,9 @@ void SVEnumerateValueObjectClass::Persist(SVObjectWriter& rWriter)
 	SVValueObjectClass::Persist( rWriter );
 
 	// Get the Data Values (Member Info, Values)
-	_variant_t value(DefaultValue());
+	_variant_t Value( GetDefaultValue() );
 	
-	rWriter.WriteAttribute(scDefaultTag, value);
+	rWriter.WriteAttribute(scDefaultTag, Value);
 
 	rWriter.StartElement(scArrayElementsTag);
 
@@ -71,11 +65,11 @@ void SVEnumerateValueObjectClass::Persist(SVObjectWriter& rWriter)
 	// Object Depth is implicit (it's the count of the values)
 	SVVariantList list;	
 
-	// for all elements in the array (m_iArraySize)
-	for( int i = 0; i < m_iArraySize; i++ )
+	// for all elements in the array
+	for( int i = 0; i < getArraySize(); i++ )
 	{
-		value.lVal = Element(m_iLastSetIndex, i);
-		list.push_back(value);
+		GetValue( Value.lVal, GetLastSetIndex(), i);
+		list.push_back(Value);
 	}
 	rWriter.WriteAttribute(scElementTag, list);
 	rWriter.EndElement();
@@ -83,80 +77,12 @@ void SVEnumerateValueObjectClass::Persist(SVObjectWriter& rWriter)
 	rWriter.EndElement();
 }
 
-HRESULT SVEnumerateValueObjectClass::GetObjectValue( const SVString& p_rValueName, VARIANT& p_rVariantValue ) const
-{
-	HRESULT hr = S_OK;
-
-	if( p_rValueName == _T( "Enumeration" ) )
-	{
-		_variant_t l_TempVariant;
-
-		l_TempVariant.Attach( p_rVariantValue );
-
-		SVEnumerateVector l_Enums;
-
-		GetEnumTypes( l_Enums );
-
-		if( !( l_Enums.empty() ) )
-		{
-			SVSAFEARRAY::SVBounds l_Bounds;
-
-			l_Bounds.resize( 2 );
-
-			// First Dimension number of objects in list..
-			l_Bounds[ 0 ].lLbound = 0;
-			l_Bounds[ 0 ].cElements = static_cast< ULONG >( l_Enums.size() );
-
-			// Second Dimension is the Enumeration Value
-			// 0 = Name, 1 = Enum Value
-			l_Bounds[ 1 ].lLbound = 0;
-			l_Bounds[ 1 ].cElements = 2;
-
-			size_t i = 0;
-			SVSAFEARRAY l_Temp( VT_VARIANT, l_Bounds );
-			SVSAFEARRAY::SVIndex l_Index( 2 );
-
-			for( int i = 0; i < static_cast< int >( l_Enums.size() ); ++i )
-			{
-				_variant_t l_Name = l_Enums[i].first.c_str();
-				_variant_t l_Value = l_Enums[i].second;
-
-				l_Index[ 0 ] = i;
-				l_Index[ 1 ] = 0;
-				
-				l_Temp.PutElement( l_Index, l_Name );
-
-				l_Index[ 0 ] = i;
-				l_Index[ 1 ] = 1;
-				
-				l_Temp.PutElement( l_Index, l_Value );
-			}
-
-			l_TempVariant = l_Temp;
-		}
-		else
-		{
-			l_TempVariant.Clear();
-		}
-
-		l_TempVariant.Detach();
-	}
-	else
-	{
-		hr = base::GetObjectValue( p_rValueName, p_rVariantValue );
-	}
-
-	return hr;
-}
-
 HRESULT SVEnumerateValueObjectClass::SetObjectValue( SVObjectAttributeClass* pDataObject )
 {
-	HRESULT hr = S_FALSE;
-	BOOL bOk = FALSE;
+	HRESULT Result( E_FAIL );
+	BOOL bOk( false );
 	
 	SvCl::SVObjectSVStringArrayClass SVStringArray;
-	SvCl::SVObjectLongArrayClass svLongArray;
-	bucket_type l_Buckets(BucketNoAssert());
 
 	if ( bOk = pDataObject->GetAttributeData( _T("Enumeration"), SVStringArray ) )
 	{
@@ -165,137 +91,21 @@ HRESULT SVEnumerateValueObjectClass::SetObjectValue( SVObjectAttributeClass* pDa
 			SetEnumTypes( SVStringArray[i].c_str() );
 		}
 	}
-	else if ( bOk = pDataObject->GetAttributeData( _T("lDefault"), svLongArray ) )
-	{
-		for( int i = 0; i < svLongArray.GetSize(); i++ )
-		{
-			DefaultValue() = svLongArray[i];
-		}
-	}
-	else if ( bOk = pDataObject->GetAttributeData( _T("pLArray"), l_Buckets, DefaultValue() ) )
-	{
-		if ( ArraySize() == 1 )
-		{
-			ScalarBucket(0)=l_Buckets[0][0];
-			ScalarBucket(1)=l_Buckets[1][0];
-		}
-		else
-		{
-			std::swap(Buckets(), l_Buckets);
-		}
-		if ( 1 < m_iNumberOfBuckets )
-		{
-			m_iLastSetIndex = 1;
-		}
-	}
 	else
 	{
-		hr = base::SetObjectValue( pDataObject );
-		return hr;
+		Result = __super::SetObjectValue( pDataObject );
+		return Result;
 	}
 
-	hr = bOk ? S_OK : S_FALSE;
-	return hr;
+	Result = bOk ? S_OK : E_FAIL;
+	return Result;
 }
 
-
-HRESULT SVEnumerateValueObjectClass::SetValueAt( int iBucket, int iIndex, const DWORD dwValue )
-{
-	return base::SetValueAt( iBucket, iIndex, (long) dwValue );
-}
-
-HRESULT SVEnumerateValueObjectClass::SetValueAt( int iBucket, int iIndex, const int iValue )
-{
-	return base::SetValueAt( iBucket, iIndex, (long) iValue );
-}
-
-HRESULT SVEnumerateValueObjectClass::SetValueAt( int iBucket, int iIndex, const SVString& rValue )
+HRESULT SVEnumerateValueObjectClass::SetDefaultValue( LPCTSTR Value, bool bResetAll )
 {
 	long lValue = 0;
-
-	if (GetEnumerator( rValue.c_str(), lValue ))
-	{
-		return base::SetValueAt( iBucket, iIndex, lValue );
-	}
-	return S_FALSE;
-}
-
-HRESULT SVEnumerateValueObjectClass::SetValueAt( int iBucket, int iIndex, double value )
-{
-	return SetValueAt(iBucket, iIndex, static_cast<int> (value) );
-}
-
-HRESULT SVEnumerateValueObjectClass::SetDefaultValue( LPCTSTR rValue, bool bResetAll )
-{
-	long lValue = 0;
-	GetEnumerator( rValue, lValue );
-	return base::SetDefaultValue( lValue, bResetAll );
-}
-
-HRESULT SVEnumerateValueObjectClass::GetValueAt( int iBucket, int iIndex, DWORD& rValue ) const
-{
-	long value=0;
-
-	HRESULT hr = base::GetValueAt(iBucket, iIndex, value);
-	rValue = value;
-	
-	return hr;
-}
-
-HRESULT SVEnumerateValueObjectClass::GetValueAt( int iBucket, int iIndex, SVString& rValue ) const
-{
-	long lValue=0;
-	HRESULT hr = base::GetValueAt( iBucket, iIndex, lValue );
-	//if ( S_OK == hr ) // @WARNING - log an error here ?
-	{
-		GetEnumeratorName( lValue, rValue );
-	}
-	return hr;
-}
-
-HRESULT SVEnumerateValueObjectClass::GetValueAt( int iBucket, int iIndex, double& rValue ) const
-{
-	long lValue=0;
-	HRESULT hr = base::GetValueAt( iBucket, iIndex, lValue );
-	//if ( S_OK == hr ) // @WARNING - log an error here ?
-	{
-		rValue = ( double ) lValue;
-	}
-	return hr;
-}
-
-HRESULT SVEnumerateValueObjectClass::GetValueAt( int iBucket, int iIndex, VARIANT& rValue ) const
-{
-	SVString sVal;
-	_variant_t l_Temp;
-	l_Temp.Attach( rValue );
-	HRESULT hr = GetValueAt( iBucket, iIndex, sVal );
-	if( S_OK == hr )
-	{
-		l_Temp = static_cast< LPCTSTR >( sVal.c_str() );
-	}
-	else
-	{
-		l_Temp.Clear();
-	}
-	rValue = l_Temp.Detach();
-
-	return hr;
-}
-
-void SVEnumerateValueObjectClass::ValidateValue( int iBucket, int iIndex, const SVString& rValue ) const
-{
-	long lValue = 0;
-	if (!GetEnumerator( rValue.c_str(), lValue ))
-	{
-		SVStringVector msgList;
-		msgList.push_back( rValue );
-		msgList.push_back(GetName());
-		SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-		Exception.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_ValueObject_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
-		Exception.Throw();
-	}
-	base::ValidateValue( iBucket, iIndex, rValue );
+	GetEnumerator( Value, lValue );
+	return __super::SetDefaultValue( lValue, bResetAll );
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -595,35 +405,56 @@ BOOL SVEnumerateValueObjectClass::GetNextEnumType( int& RIterator, SVString& RSt
 	return bRetVal;
 }
 
-HRESULT SVEnumerateValueObjectClass::CompareWithCurrentValueImpl( const SVString& rCompare ) const
+HRESULT SVEnumerateValueObjectClass::GetVariantValue( _variant_t& rValue, int Bucket, int Index ) const
 {
-	HRESULT hr = S_FALSE;
-
-	long lEnumValue = 0;
-	BOOL bGetEnum = GetEnumerator( rCompare.c_str(), lEnumValue );
-	if ( bGetEnum )
+	long Value;
+	HRESULT Result = GetValue( Value, Bucket, Index );
+	if( S_OK == Result )
 	{
-		long lCurrentValue;
-		SVString strCurrentValue;
-		HRESULT hrGet = GetValue( strCurrentValue );
-		BOOL bGetCurrentEnum = GetEnumerator( strCurrentValue.c_str(), lCurrentValue );
-		if ( bGetCurrentEnum )
-		{
-			hr = ( (lEnumValue == lCurrentValue) ? S_OK : S_FALSE );
-		}
+		rValue.SetString( ConvertType2String( Value ).c_str() );
+	}
+	else
+	{
+		rValue.Clear();
 	}
 
-	return hr;
+	return Result;
 }
 
-HRESULT SVEnumerateValueObjectClass::GetNormalizedValueImpl( const SVString& strValue, SVString& rstrNormalized ) const
+long SVEnumerateValueObjectClass::ConvertString2Type( const SVString& rValue ) const
 {
-	return S_FALSE;
+	long Result( 0L );
+
+	if (!GetEnumerator( rValue.c_str(), Result ))
+	{
+		SVStringVector msgList;
+		msgList.push_back( rValue );
+		msgList.push_back(GetName());
+		SvStl::MessageMgrStd Exception( SvStl::LogOnly );
+		Exception.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_ValueObject_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+		Exception.Throw();
+	}
+	return Result;
+}
+
+SVString SVEnumerateValueObjectClass::ConvertType2String( const long& rValue ) const
+{
+	SVString Result;
+
+	GetEnumeratorName( rValue, Result );
+
+	return Result;
 }
 
 void SVEnumerateValueObjectClass::LocalInitialize()
 {
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVEnumValueObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVEnumValueObjectType;
+
+	if ( m_sLegacyScriptDefaultName.empty() )
+	{
+		m_sLegacyScriptDefaultName = _T("lDefault");
+		m_sLegacyScriptArrayName = _T("pLArray");
+	}	
 
 	SetTypeName( _T("Enumeration") );
 

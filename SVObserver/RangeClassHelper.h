@@ -135,7 +135,7 @@ public:
 	// Parameter:  ref:  const reference to the object to check
 	// Returns:  bool:  true if the object is owned by a range object else false
 	//************************************
-	static bool IsOwnedByRangeObject(const SVObjectClass& ref);
+	static bool IsOwnedByRangeObject(const SVObjectClass& rObject);
 
 	//************************************
 	// Description:  Checks if the value can be set to the  object is allowed to be set via remote interface
@@ -146,7 +146,7 @@ public:
 	// Parameter:  status <out>:  the reason why it is not allowed
 	// Returns:  bool:  if true the value can be set
 	//************************************
-	static bool IsAllowedToSet(const SVObjectClass& ref, const SVString& rValue, bool bOnline, HRESULT& hres);
+	static bool IsAllowedToSet(const SVObjectClass& ObjectRef, const SVString& rValue, bool bOnline, HRESULT& hres);
 #pragma endregion Public Methods
 
 #pragma region Private Methods

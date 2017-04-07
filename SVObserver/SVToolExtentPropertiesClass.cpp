@@ -12,7 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVToolExtentPropertiesClass.h"
-#include "SVValueObjectLibrary/SVValueObject.h"
+#include "ObjectInterfaces/IValueObject.h"
 #pragma endregion Includes
 
 SVToolExtentPropertiesClass::SVToolExtentPropertiesClass()
@@ -34,7 +34,7 @@ HRESULT SVToolExtentPropertiesClass::Initialize()
 	return l_hrOk;
 }
 
-HRESULT SVToolExtentPropertiesClass::GetProperties( SVImageExtentClass &p_rsvExtents ) const
+HRESULT SVToolExtentPropertiesClass::GetProperties( SVImageExtentClass& rExtents ) const
 {
 	HRESULT l_hrOk = S_OK;
 
@@ -42,15 +42,15 @@ HRESULT SVToolExtentPropertiesClass::GetProperties( SVImageExtentClass &p_rsvExt
 
 	for ( iter = m_svProperties.begin(); S_OK == l_hrOk && iter != m_svProperties.end(); ++iter )
 	{
-		SVValueObjectClass* l_psvValue = iter->second.pValueObject;
+		SvOi::IValueObject* pValueObject = dynamic_cast<SvOi::IValueObject*> (iter->second.pValueObject);
 
-		if ( nullptr != l_psvValue )
+		if ( nullptr != pValueObject )
 		{
-			double l_dValue = 0.0;
+			_variant_t Value;
 
-			if ( S_OK == ( l_hrOk = l_psvValue->GetValue( l_dValue ) ) )
+			if ( S_OK == ( l_hrOk = pValueObject->getValue( Value ) ) )
 			{
-				l_hrOk = p_rsvExtents.SetExtentProperty( iter->first, l_dValue );
+				l_hrOk = rExtents.SetExtentProperty( iter->first, Value.dblVal );
 			}
 		}
 	}
@@ -58,7 +58,7 @@ HRESULT SVToolExtentPropertiesClass::GetProperties( SVImageExtentClass &p_rsvExt
 	return l_hrOk;
 }
 
-HRESULT SVToolExtentPropertiesClass::GetProperties( unsigned long p_ulIndex, SVImageExtentClass &p_rsvExtents ) const
+HRESULT SVToolExtentPropertiesClass::GetProperties( unsigned long Index, SVImageExtentClass &rExtents ) const
 {
 	HRESULT l_hrOk = S_OK;
 
@@ -66,15 +66,15 @@ HRESULT SVToolExtentPropertiesClass::GetProperties( unsigned long p_ulIndex, SVI
 
 	for ( iter = m_svProperties.begin(); S_OK == l_hrOk && iter != m_svProperties.end(); ++iter )
 	{
-		SVValueObjectClass* l_psvValue = iter->second.pValueObject;
+		SvOi::IValueObject* pValueObject = dynamic_cast<SvOi::IValueObject*> (iter->second.pValueObject);
 
-		if ( nullptr != l_psvValue )
+		if ( nullptr != pValueObject )
 		{
-			double l_dValue = 0.0;
+			_variant_t Value;
 
-			if ( S_OK == ( l_hrOk = l_psvValue->GetValue( p_ulIndex, l_dValue ) ) )
+			if ( S_OK == ( l_hrOk = pValueObject->getValue( Value, Index  ) ) )
 			{
-				l_hrOk = p_rsvExtents.SetExtentProperty( iter->first, l_dValue );
+				l_hrOk = rExtents.SetExtentProperty( iter->first, Value.dblVal );
 			}
 		}
 	}
@@ -82,7 +82,7 @@ HRESULT SVToolExtentPropertiesClass::GetProperties( unsigned long p_ulIndex, SVI
 	return l_hrOk;
 }
 
-HRESULT SVToolExtentPropertiesClass::GetExtentObject( SVExtentPropertyEnum p_eProperty, SVValueObjectClass *&p_rpsvValue ) const
+HRESULT SVToolExtentPropertiesClass::GetExtentObject( SVExtentPropertyEnum p_eProperty, SvOi::IValueObject*& rpValueObject ) const
 {
 	HRESULT l_hrOk = S_FALSE;
 
@@ -90,24 +90,24 @@ HRESULT SVToolExtentPropertiesClass::GetExtentObject( SVExtentPropertyEnum p_ePr
 
 	if ( iter != m_svProperties.end() )
 	{
-		p_rpsvValue = iter->second.pValueObject;
+		rpValueObject = iter->second.pValueObject;
 		l_hrOk = S_OK;
 	}
 
 	return l_hrOk;
 }
 
-HRESULT SVToolExtentPropertiesClass::SetExtentObject( SVExtentPropertyEnum p_eProperty, SVValueObjectClass *p_psvValue )
+HRESULT SVToolExtentPropertiesClass::SetExtentObject( SVExtentPropertyEnum p_eProperty, SvOi::IValueObject* pValueObject )
 {
 	HRESULT l_hrOk = S_OK;
 
-	if ( nullptr == p_psvValue )
+	if ( nullptr == pValueObject )
 	{
 		m_svProperties.erase( p_eProperty );
 	}
 	else
 	{
-		m_svProperties[ p_eProperty ].pValueObject = p_psvValue;
+		m_svProperties[ p_eProperty ].pValueObject = pValueObject;
 	}
 
 	return l_hrOk;

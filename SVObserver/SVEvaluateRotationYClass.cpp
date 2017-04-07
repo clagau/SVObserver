@@ -17,10 +17,10 @@ SVEvaluateRotationYClass::SVEvaluateRotationYClass( SVObjectClass* pOwner, int S
 : SVEvaluateClass( pOwner, StringResourceID ) 
 {
 	// Identify yourself
-	m_outObjectInfo.ObjectTypeInfo.SubType = SVEvaluateRotationYObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVEvaluateRotationYObjectType;
 
 	// Register Embedded Objects
-	RegisterEmbeddedObject( &m_outputMathResult, SVOutputEvaluateRotationYResultObjectGuid, IDS_OBJECTNAME_RESULT, false, SVResetItemNone );
+	RegisterEmbeddedObject( &m_outputMathResult, SVOutputEvaluateRotationYResultObjectGuid, IDS_OBJECTNAME_RESULT, false, SvOi::SVResetItemNone );
 
 	// Set Embedded defaults
 	m_outputMathResult.SetDefaultValue( 0.0, true );

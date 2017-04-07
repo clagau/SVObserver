@@ -133,7 +133,7 @@ void SVDiscreteInputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHin
 		int i;
 		SVInputObjectList* pInputList = nullptr;
 		SVDigitalInputObject* pDigInput;
-		SVIOEntryHostStructPtrList ppIOEntries;
+		SVIOEntryHostStructPtrVector ppIOEntries;
 		SVIOEntryHostStructPtr pIOEntry;
 
 		SVConfigurationObject* pConfig( nullptr );
@@ -214,7 +214,7 @@ void SVDiscreteInputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHin
 void SVDiscreteInputsView::OnLButtonDblClk( UINT nFlags, CPoint point )
 {
 	SVDigitalInputObject *pDigInput;
-	SVIOEntryHostStructPtrList ppIOEntries;
+	SVIOEntryHostStructPtrVector ppIOEntries;
 	SVIOEntryHostStructPtr pIOEntry;
 	UINT flags;
 	long lSize;

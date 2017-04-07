@@ -40,7 +40,7 @@ public:
 
 #pragma region Private Methods
 private:
-	void Init() const;
+	void LocalInitialize();
 #pragma endregion Private Methods
 
 #pragma region Member Variables

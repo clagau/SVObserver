@@ -19,7 +19,6 @@
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
-class SVValueObjectClass;
 class SVInspectionProcess;
 
 enum SVIMCOMMANDSRV_VERSION
@@ -33,7 +32,7 @@ enum SVIMCOMMANDSRV_VERSION
 
 struct StreamDataStruct
 {
-    SVValueObjectClass *pValueObject;
+    SVObjectClass *pValueObject;
 	SVGUID m_InspectionID;
     SVString strValueName;
 	long arrayIndex;
@@ -44,7 +43,7 @@ struct StreamDataStruct
 
 struct PacketDataStruct
 {
-    SVValueObjectClass *pValueObject;
+    SVObjectClass *pValueObject;
 	SVString strValue;
 	long lState;
 

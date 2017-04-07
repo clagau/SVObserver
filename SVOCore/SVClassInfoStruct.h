@@ -13,7 +13,7 @@
 
 #pragma region Includes
 #include "SVContainerLibrary/SVVector.h"
-#include "ObjectInterfaces/SVInterfaceList.h"
+#include "ObjectInterfaces/SVInterfaceVector.h"
 #include "SVUtilityLibrary/SVString.h"
 #include "SVUtilityLibrary/SVGUID.h"
 #pragma endregion Includes
@@ -35,7 +35,7 @@ struct SVClassInfoStruct
 	SVGUID m_ClassId;
 
 	// Must be in the same order, like the class defines its input interface!!!
-	SvOi::SVInterfaceList m_DesiredInputInterface;
+	SvOi::SVInterfaceVector m_DesiredInputInterface;
 };
 
 class SVClassInfoStructListClass : public SVVector< SVClassInfoStruct >

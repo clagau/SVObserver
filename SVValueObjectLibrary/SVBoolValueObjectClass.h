@@ -13,19 +13,16 @@
 
 #pragma region Includes
 #include "SVOResource/resource.h"
+#include "ObjectInterfaces/TextDefineSvOi.h"
 #include "SVUtilityLibrary/SVString.h"
-#include "SVValueObjectClassImpl.h"
-#include "SVValueObjectGlobals.h"
+#include "SVValueObjectClass.h"
 #pragma endregion Includes
 
-class SVBoolValueObjectClass : public SVValueObjectClassImpl <BOOL> // really int
+class SVBoolValueObjectClass : public SVValueObjectClass<BOOL>
 {
 	SV_DECLARE_CLASS( SVBoolValueObjectClass );
 
 public:
-
-	static HRESULT GetNormalizedValue( const SVString& rValue, SVString& rNormalized );
-
 	SVBoolValueObjectClass( LPCTSTR ObjectName );
 	SVBoolValueObjectClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVBOOLVALUEOBJECT );
 	SVBoolValueObjectClass(const SVBoolValueObjectClass& rhs);
@@ -36,30 +33,18 @@ public:
 
 	HRESULT GetValidTypes( SVStringVector& rTypes ) const;
 
-	IMPLEMENT_VALUE_OBJECT_GET_SET()
-
 protected:
-	virtual HRESULT SetValueAt( int iBucket, int iIndex, double Value );
-	virtual HRESULT SetValueAt( int iBucket, int iIndex, long Value );
-	virtual HRESULT SetValueAt( int iBucket, int iIndex, bool Value );
-	virtual HRESULT SetValueAt( int iBucket, int iIndex, const VARIANT& rValue );
-	virtual HRESULT SetValueAt( int iBucket, int iIndex, const SVString& rValue );
+	virtual double ValueType2Double(const BOOL& rValue) const override { return static_cast<double> (rValue); };
+	virtual _variant_t ValueType2Variant( const BOOL& rValue ) const override { return _variant_t( rValue ? true : false ); };
+	virtual BOOL Variant2ValueType( const _variant_t& rValue ) const override { return BOOL( rValue ? true : false ); };
 
-	virtual HRESULT GetValueAt( int iBucket, int iIndex, double&  rValue ) const;
-	virtual HRESULT GetValueAt( int iBucket, int iIndex, SVString& rValue ) const;
-	virtual HRESULT GetValueAt( int iBucket, int iIndex, VARIANT& rValue ) const;
-	virtual HRESULT GetValueAt( int iBucket, int iIndex, bool&    rValue ) const;
+	/// Convert a string in a bool. Throw an exception if the string isn't convertible into a bool
+	/// \param rValue [in] The input string: "True", 1 or -1 is true, "false" and 0 is false.
+	/// \returns bool Return value.
+	virtual BOOL ConvertString2Type( const SVString& rValue ) const override;
 
-	virtual void ValidateValue( int iBucket, int iIndex, const SVString& rValue ) const override;
-
-	virtual HRESULT CompareWithCurrentValueImpl( const SVString& rCompare ) const override;
-	virtual HRESULT GetNormalizedValueImpl( const SVString& rValue, SVString& rNormalized ) const override;
+	virtual SVString ConvertType2String( const BOOL& rValue ) const override {	return rValue ? SvOi::cTrue : SvOi::cFalse; };
 
 private:
 	void LocalInitialize();
-
-	/// Convert a string in a bool. Throw an exception if the string isn't convertible into a bool
-	/// \param strValue [in] The input string: "True", 1 or -1 is true, "false" and 0 is false.
-	/// \returns BOOL Return value.
-	BOOL ConvertString2Bool( const SVString& rValue ) const;
 };

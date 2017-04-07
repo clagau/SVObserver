@@ -108,7 +108,7 @@ BOOL SVTADlgTranslationShiftPageClass::OnInitDialog()
 		m_ctlShiftModeCombo.SetEnumTypes( EnumTypes.c_str() );
 
 		SVString ShiftType;
-		m_pvoShiftMode->GetValue( ShiftType );
+		m_pvoShiftMode->getValue( ShiftType );
 		m_ctlShiftModeCombo.SelectString( -1, ShiftType.c_str() );
 
 		m_lShiftType = m_ctlShiftModeCombo.GetCurSel();
@@ -197,20 +197,20 @@ void SVTADlgTranslationShiftPageClass::refresh()
 
 		FillShiftProperties();
 
-		_variant_t l_Variant;
+		_variant_t Value;
 
-		if( S_OK == GetValue( pTool->GetUniqueObjectID(), SVTranslationXObjectGuid, l_Variant.GetVARIANT() ) )
+		if( S_OK == GetValue( pTool->GetUniqueObjectID(), SVTranslationXObjectGuid, Value ) )
 		{
-			m_TranslationXValue = static_cast< LPCTSTR >( _bstr_t( l_Variant ) );
+			m_TranslationXValue = static_cast< LPCTSTR >( _bstr_t( Value ) );
 		}
 		else
 		{
 			m_TranslationXValue = _T("");
 		}
 		
-		if( S_OK == GetValue( pTool->GetUniqueObjectID(), SVTranslationYObjectGuid, l_Variant.GetVARIANT() ) )
+		if( S_OK == GetValue( pTool->GetUniqueObjectID(), SVTranslationYObjectGuid, Value ) )
 		{
-			m_TranslationYValue = static_cast< LPCTSTR >( _bstr_t( l_Variant ) );
+			m_TranslationYValue = static_cast< LPCTSTR >( _bstr_t( Value ) );
 		}
 		else
 		{
@@ -399,44 +399,44 @@ void SVTADlgTranslationShiftPageClass::SetupShiftPropertyTree()
 void SVTADlgTranslationShiftPageClass::FillShiftProperties()
 {
 	SVRPropertyItemStatic* pPropItem = nullptr;
-	_variant_t l_Variant;
+	_variant_t Value;
 
 	//get each value and put into property tree
 
-	if ( S_OK == GetValue( pTool->GetUniqueObjectID(), SVShiftToolReferenceYObjectGuid, l_Variant.GetVARIANT() ) )
+	if ( S_OK == GetValue( pTool->GetUniqueObjectID(), SVShiftToolReferenceYObjectGuid, Value ) )
 	{
 		pPropItem = (SVRPropertyItemStatic*)m_Tree.FindItem(PROP_SHIFT_TRANS_Y);
-		pPropItem->SetItemValue( static_cast< LPCTSTR >( _bstr_t(l_Variant) ) );
+		pPropItem->SetItemValue( static_cast< LPCTSTR >( _bstr_t(Value) ) );
 	}
 
-	if ( S_OK == GetValue( pTool->GetUniqueObjectID(), SVShiftToolReferenceXObjectGuid, l_Variant.GetVARIANT() ) )
+	if ( S_OK == GetValue( pTool->GetUniqueObjectID(), SVShiftToolReferenceXObjectGuid, Value ) )
 	{
 		pPropItem = dynamic_cast<SVRPropertyItemStatic*>(m_Tree.FindItem(PROP_SHIFT_TRANS_X));
 		if ( pPropItem )
 		{
-			pPropItem->SetItemValue( static_cast< LPCTSTR >( _bstr_t(l_Variant) ) );
+			pPropItem->SetItemValue( static_cast< LPCTSTR >( _bstr_t(Value) ) );
 		}
 	}
 
-	if ( S_OK == GetValue( pTool->GetUniqueObjectID(), SVImageTransformDisplacementXGuid, l_Variant.GetVARIANT() ) )
+	if ( S_OK == GetValue( pTool->GetUniqueObjectID(), SVImageTransformDisplacementXGuid, Value ) )
 	{
 		pPropItem = (SVRPropertyItemStatic*)m_Tree.FindItem(PROP_SHIFT_DISP_X);
-		pPropItem->SetItemValue( static_cast< LPCTSTR >( _bstr_t(l_Variant) ) );
+		pPropItem->SetItemValue( static_cast< LPCTSTR >( _bstr_t(Value) ) );
 	}
-	if ( S_OK == GetValue( pTool->GetUniqueObjectID(), SVImageTransformDisplacementYGuid, l_Variant.GetVARIANT() ) )
+	if ( S_OK == GetValue( pTool->GetUniqueObjectID(), SVImageTransformDisplacementYGuid, Value ) )
 	{
 		pPropItem = (SVRPropertyItemStatic*)m_Tree.FindItem(PROP_SHIFT_DISP_Y);
-		pPropItem->SetItemValue( static_cast< LPCTSTR >( _bstr_t(l_Variant) ) );
+		pPropItem->SetItemValue( static_cast< LPCTSTR >( _bstr_t(Value) ) );
 	}
-	if ( S_OK == GetValue( pTool->GetUniqueObjectID(), SVTopResultObjectGuid, l_Variant.GetVARIANT() ) )
+	if ( S_OK == GetValue( pTool->GetUniqueObjectID(), SVTopResultObjectGuid, Value ) )
 	{
 		pPropItem = (SVRPropertyItemStatic*)m_Tree.FindItem(PROP_SHIFT_RESULT_TOP);
-		pPropItem->SetItemValue( static_cast< LPCTSTR >( _bstr_t(l_Variant) ) );
+		pPropItem->SetItemValue( static_cast< LPCTSTR >( _bstr_t(Value) ) );
 	}
-	if ( S_OK == GetValue( pTool->GetUniqueObjectID(), SVLeftResultObjectGuid, l_Variant.GetVARIANT() ) )
+	if ( S_OK == GetValue( pTool->GetUniqueObjectID(), SVLeftResultObjectGuid, Value ) )
 	{
 		pPropItem = (SVRPropertyItemStatic*)m_Tree.FindItem(PROP_SHIFT_RESULT_LEFT);
-		pPropItem->SetItemValue( static_cast< LPCTSTR >( _bstr_t(l_Variant) ) );
+		pPropItem->SetItemValue( static_cast< LPCTSTR >( _bstr_t(Value) ) );
 	}
 	
 	m_Tree.RefreshItems();

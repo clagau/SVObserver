@@ -56,6 +56,3 @@ struct SVExtentFigureStruct
 	SVExtentPointStruct m_svCenter;
 
 };
-
-typedef SVVector< SVExtentFigureStruct > SVExtentFigureStructCArray;
-

@@ -76,7 +76,7 @@ namespace Seidenader { namespace TriggerInformation {
 			SVStatusDeque m_StatusLog;
 		#endif
 	};
-	typedef SVVector< SVTriggerObject* > SVTriggerObjectArray;
+	typedef SVVector<SVTriggerObject*> SVTriggerObjectPtrVector;
 } /* namespace TriggerInformation */ } /* namespace Seidenader */
 
 namespace SvTi = Seidenader::TriggerInformation;

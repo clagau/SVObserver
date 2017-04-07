@@ -40,9 +40,9 @@
 #include "SVPublishList.h"
 #include "SVResetStruct.h"
 #include "SVRGBMainImage.h"
-#include "SVValueObjectLibrary/SVValueObjectReference.h"
 #include "SVVirtualCamera.h"
 #include "SVMonitorList.h"
+#include "SVValueObjectLibrary/SVValueObjectClass.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -68,9 +68,9 @@ class SVInspectionProcess :
 	SV_DECLARE_CLASS( SVInspectionProcess );
 
 public:
-	typedef SVBiUniqueMap< SVString, SVValueObjectClass* >::type SVValueObjectMap;
+	typedef SVBiUniqueMap< SVString, SVObjectClass* >::type SVValueObjectMap;
 	typedef SVTQueueObject< SVOutputRequestInfoStruct > SVOutputRequestQueue;
-	typedef SVVector< SVPPQObject* > SVPPQObjectPtrVector;
+	typedef SVVector<SVPPQObject*> SVPPQObjectPtrVector;
 	//************************************
 	//! FunctionPointer as Argument for LoopOverTool
 	//! negative return values indicate an error 
@@ -99,7 +99,7 @@ public:
 	virtual HRESULT RegisterSubObject( SVObjectClass* pObject ) override;
 	virtual HRESULT UnregisterSubObject( SVObjectClass* pObject ) override;
 
-	bool Run( SVRunStatusClass& RRunStatus );
+	bool Run( SVRunStatusClass& rRunStatus );
 
 	virtual HRESULT ObserverUpdate( const SVAddTool& p_rData ) override;
 	virtual HRESULT ObserverUpdate( const SVDeleteTool& p_rData ) override;
@@ -115,7 +115,7 @@ public:
 	virtual SvOi::ITaskObject* GetToolSetInterface() const override;
 	virtual HRESULT RunOnce(SvOi::ITaskObject* pTask) override;
 	virtual long GetLastIndex() const  override;
-	virtual bool AddInputRequest( const SVGUID& ObjectRef, const _variant_t& rValue ) override;
+	virtual bool AddInputRequest( const SVGUID& ObjectRef, const _variant_t& rValue, long Index ) override;
 	virtual bool AddInputRequestMarker() override;
 #pragma endregion virtual method (IInspectionProcess)
 
@@ -140,7 +140,7 @@ public:
 	
 	BOOL RemoveCamera( const SVString& rCameraName );
 	
-	bool AddInputRequest( const SVValueObjectReference& rObjectRef, const _variant_t& rValue );
+	bool AddInputRequest( const SVObjectReference& rObjectRef, const _variant_t& rValue );
 
 	HRESULT AddInputImageRequest( SVImageClass* p_psvImage, BSTR& p_rbstrValue );
 	HRESULT AddInputImageFileNameRequest( SVImageClass* p_psvImage, const SVString& p_rFileName );
@@ -148,7 +148,7 @@ public:
 	HRESULT AddInputImageRequestByCameraName( const SVString& rCameraName, const SVString& rFileName);
 
 	//************************************
-	//! Checks if the configuration has conditional history attributes and resets them as they are deprectaed
+	//! Checks if the configuration has conditional history attributes and resets them as they are deprecated
 	//! \returns true if conditional history attributes are set
 	//************************************
 	bool CheckAndResetConditionalHistory();
@@ -163,7 +163,7 @@ public:
 	virtual void SetEnableAuxiliaryExtent( long p_lEnableAuxiliaryExtents ) override;
 
 	//new GetOverlay method for use with the ActiveX
-	HRESULT CollectOverlays(SVImageClass* p_pImage, SVExtentMultiLineStructCArray& p_rMultiLineArray);
+	HRESULT CollectOverlays(SVImageClass* p_pImage, SVExtentMultiLineStructVector& p_rMultiLineArray);
 
 	SVProductInfoStruct LastProductGet( SVDataManagerLockTypeEnum p_LockType ) const;
 	HRESULT LastProductUpdate( SVProductInfoStruct *p_psvProduct );
@@ -224,21 +224,21 @@ public:
 	//! Get all active ppqVariables for the used inspection.
 	//! \returns vector of objects
 	//************************************
-	SVObjectVector getPPQVariables() const;
+	SVObjectPtrVector getPPQVariables() const;
 	
 	//************************************
 	//! Check if the pValueObject is a active ppqVarable for the used inspection.
 	//! \param pValueObject [in]
 	//! \returns 
 	//************************************
-	bool IsEnabledPPQVariable(SVValueObjectClass* pValueObject);
+	bool IsEnabledPPQVariable( const SVObjectClass* pObject ) const;
 	
 	//************************************
 	//! Check if the pValueObject is an inactive ppqVarable for the used inspection.
 	//! \param pValueObject [in]
 	//! \returns 
 	//************************************
-	bool IsDisabledPPQVariable(SVValueObjectClass* pValueObject);
+	bool IsDisabledPPQVariable( const SVObjectClass* pObject ) const;
 	
 	virtual DWORD GetObjectColor() const override;
 
@@ -276,8 +276,7 @@ public:
 	SVStringVector& getViewedInputNames() { return m_arViewedInputNames; };
 	 
 protected:
-	typedef std::map< SVString, SVValueObjectReference > SVFilterValueMap;
-	typedef std::map< SVString, SVObjectReference > SVFilterImageMap;
+	typedef std::map< SVString, SVObjectReference > SVNameObjectMap;
 
 	struct SVSharedMemoryFilters
 	{
@@ -285,8 +284,8 @@ protected:
 
 		void clear();
 		
-		SVFilterValueMap m_LastInspectedValues;
-		SVFilterImageMap m_LastInspectedImages;
+		SVNameObjectMap m_LastInspectedValues;
+		SVNameObjectMap m_LastInspectedImages;
 	};
 
 #ifdef EnableTracking
@@ -345,11 +344,6 @@ protected:
 
 	virtual SVObjectClass* UpdateObject( const GUID &friendGuid, SVObjectClass *p_psvObject, SVObjectClass *p_psvNewOwner ) override;
 
-	HRESULT RegisterSubObject( SVValueObjectClass* p_pValueObject );
-	HRESULT RegisterSubObject( SVImageClass* p_pImageObject );
-	HRESULT UnregisterSubObject( SVValueObjectClass* p_pValueObject );
-	HRESULT UnregisterSubObject( SVImageClass* p_pImageObject );
-
 	BOOL RunOnce( SVToolClass* p_psvTool = nullptr );
 	BOOL RunInspection( long lResultDataIndex, SVImageIndexStruct svResultImageIndex, SVProductInfoStruct *pProduct, bool p_UpdateCounts = true );
 
@@ -359,16 +353,16 @@ protected:
 
 	HRESULT BuildValueObjectMap();
 
-	HRESULT GetInspectionValueObject( LPCTSTR Name, SVValueObjectReference& p_rRefObject );
+	HRESULT GetInspectionValueObject( LPCTSTR Name, SVObjectReference& rObjectRef );
 	HRESULT GetInspectionImage( LPCTSTR Name, SVImageClass*& p_rRefObject );
-	HRESULT GetInspectionObject( LPCTSTR Name, SVObjectReference& p_rRefObject );
+	HRESULT GetInspectionObject( LPCTSTR Name, SVObjectReference& rObjectRef );
 
 	bool AddInputRequest( SVInputRequestInfoStructPtr p_pInRequest );
 
 	BOOL RemoveAllInputRequests();
 
 	BOOL ProcessInputRequests( long p_DataIndex, bool &p_rbForceOffsetUpdate );
-	BOOL ProcessInputRequests( long p_DataIndex, SVResetItemEnum &p_reResetItem, SVStdMapSVToolClassPtrSVInspectionProcessResetStruct &p_svToolMap );
+	BOOL ProcessInputRequests( long p_DataIndex, SvOi::SVResetItemEnum& rResetItem, SVStdMapSVToolClassPtrSVInspectionProcessResetStruct &p_svToolMap );
 	BOOL ProcessInputImageRequests( SVProductInfoStruct *p_psvProduct );
 
 	HRESULT ReserveNextResultImage( SVProductInfoStruct *p_pProduct, SVDataManagerLockTypeEnum p_eLockType, bool p_ClearOtherInspections = false );
@@ -380,7 +374,7 @@ protected:
 	HRESULT RestoreCameraImages();
 
 	template<typename T>
-	HRESULT SetObjectArrayValues(SVValueObjectReference & object, int bucket, const SVString& rValues, bool & reset);
+	HRESULT SetObjectArrayValues(SVObjectReference& rObjectRef, int bucket, const SVString& rValues, bool & reset);
 
 	void SingleRunModeLoop( bool p_Refresh = false );
 
@@ -432,8 +426,8 @@ protected:
 
 	SVResetStruct m_svReset;
 
-	SVValueObjectClassPtrSet m_svValueObjectSet;
-	SVImageClassPtrSet m_svImageObjectSet;
+	SvOi::IValueObjectPtrSet m_ValueObjectSet;
+	SVImageClassPtrSet m_ImageObjectSet;
 
 	SVString m_ToolSetCameraName;
 	SVString m_DeviceName;
@@ -447,7 +441,7 @@ private:
 
 	HRESULT FindPPQInputObjectByName( SVObjectClass*& p_rpObject, LPCTSTR p_FullName ) const;
 
-	void FillSharedData(long sharedSlotIndex, SvSml::SVSharedData& rData, const SVFilterValueMap& rValues, const SVFilterImageMap& rImages, SVProductInfoStruct& rProductInfo, SvSml::SVSharedInspectionWriter& rWriter);
+	void FillSharedData(long sharedSlotIndex, SvSml::SVSharedData& rData, const SVNameObjectMap& rValues, const SVNameObjectMap& rImages, SVProductInfoStruct& rProductInfo, SvSml::SVSharedInspectionWriter& rWriter);
 	void InitSharedMemoryItemNames(const long ProductSlots, const long RejectSlots);
 
 	SVCriticalSectionPtr m_LastRunLockPtr;
@@ -471,7 +465,7 @@ private:
 	SVStringVector m_arViewedInputNames;
 };
 
-typedef SVVector< SVInspectionProcess* > SVInspectionProcessArray;
+typedef SVVector<SVInspectionProcess*> SVInspectionProcessVector;
 
 namespace SVDetail
 {
@@ -479,7 +473,7 @@ namespace SVDetail
 	struct ValueObjectTraits
 	{
 		typedef T value_type;
-		typedef SVValueObjectClassImpl<T> object_type;
+		typedef SVValueObjectClass<T> object_type;
 		inline static bool validate(const SVString &rString) { return true; }
 	};
 
@@ -487,7 +481,7 @@ namespace SVDetail
 	struct ValueObjectTraits<CFile>
 	{
 		typedef SVString value_type;
-		typedef SVValueObjectClassImpl<SVString> object_type;
+		typedef SVValueObjectClass<SVString> object_type;
 		inline static bool validate(const SVString& rString)
 		{
 			CFileStatus rStatus;
@@ -562,24 +556,24 @@ inline HRESULT Parse(std::vector<T> & vec, const SVString& rValues, SVDetail::Va
 }
 
 template<typename T>
-inline HRESULT SVInspectionProcess::SetObjectArrayValues(SVValueObjectReference & object, int bucket, const SVString& rValues, bool & reset)
+inline HRESULT SVInspectionProcess::SetObjectArrayValues(SVObjectReference& rObjectRef, int bucket, const SVString& rValues, bool & reset)
 {
-	ASSERT(object->IsCreated() && object->IsValid() && object->IsArray() && object.IsEntireArray());
+	ASSERT(rObjectRef.getObject()->IsCreated() && rObjectRef.getObject()->IsValid() && rObjectRef.isArray() && rObjectRef.isEntireArray());
 	typedef typename SVDetail::ValueObjectTraits<T> Traits;
 	typedef typename SVDetail::ValueObjectTraits<T>::value_type Type;
 	typedef typename SVDetail::ValueObjectTraits<T>::object_type ObjectType;
 	std::vector<Type> vec;
-	ObjectType* pObjectType = dynamic_cast<ObjectType *>(object.Object());
+	ObjectType* pObjectType = dynamic_cast<ObjectType*> (rObjectRef.getObject());
 	if( nullptr != pObjectType )
 	{
 		HRESULT hr = Parse(vec, rValues, Traits::validate);
 		if (S_OK == hr)
 		{
-			hr = object.SetArrayValues(1, vec);
+			hr = pObjectType->SetArrayValues(vec, 1);
 		}
 		if (S_OK == hr && bucket != 1)
 		{
-			hr = object.SetArrayValues(bucket, vec);
+			hr = pObjectType->SetArrayValues(vec, bucket);
 		}
 		reset = S_OK == hr;
 		return hr;

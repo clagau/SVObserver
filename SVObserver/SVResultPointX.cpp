@@ -22,8 +22,8 @@ SVPointXResultClass::SVPointXResultClass( BOOL BCreateDefaultTaskList, SVObjectC
 					:SVResultClass( BCreateDefaultTaskList, POwner, StringResourceID )
 {
 	// Identify yourself
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVResultObjectType;
-	m_outObjectInfo.ObjectTypeInfo.SubType = SVResultPointXObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVResultPointXObjectType;
 
 	// Identify our input type needs
 	m_inputObjectInfo.SetInputObjectType( SVPointValueObjectType );
@@ -32,10 +32,10 @@ SVPointXResultClass::SVPointXResultClass( BOOL BCreateDefaultTaskList, SVObjectC
 
 
 	// Register Embedded Objects
-	RegisterEmbeddedObject( &x, SVXObjectGuid, IDS_OBJECTNAME_X, false, SVResetItemNone );
+	RegisterEmbeddedObject( &m_X, SVXObjectGuid, IDS_OBJECTNAME_X, false, SvOi::SVResetItemNone );
 
 	// Set Embedded defaults
-	x.SetDefaultValue( 0, TRUE );
+	m_X.SetDefaultValue( 0, TRUE );
 
 	// Instantiate Dynamic Objects
 
@@ -77,7 +77,7 @@ BOOL SVPointXResultClass::CreateObject( SVObjectLevelCreateStruct* PCreateStruct
 		bOk = nullptr != getInputPoint();
 	}
 	
-	x.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
+	m_X.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 
 	m_isCreated = bOk;
 
@@ -91,29 +91,31 @@ BOOL SVPointXResultClass::CloseObject()
 
 SVPointValueObjectClass* SVPointXResultClass::getInputPoint()
 {
-	if( m_inputObjectInfo.IsConnected() && m_inputObjectInfo.GetInputObjectInfo().PObject )
-		return static_cast<SVPointValueObjectClass*>(m_inputObjectInfo.GetInputObjectInfo().PObject);
+	if( m_inputObjectInfo.IsConnected() )
+	{
+		return static_cast<SVPointValueObjectClass*>(m_inputObjectInfo.GetInputObjectInfo().m_pObject);
+	}
 
 	return nullptr;
 }
 
-bool SVPointXResultClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVPointXResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	// All inputs and outputs must be validated first
-	if( SVResultClass::onRun( RRunStatus, pErrorMessages ) )
+	if( __super::onRun( rRunStatus, pErrorMessages ) )
 	{
-		SVPointValueObjectClass* pPoint = getInputPoint();
-		ASSERT( pPoint );
+		const SVPointValueObjectClass* pValueObject = getInputPoint();
+		ASSERT( pValueObject );
 
-		POINT p;
-		pPoint->GetValue( p );
-
-		// Set X
-		x.SetValue( RRunStatus.m_lResultDataIndex, p.x );
-
-		return true;
+		if( nullptr != pValueObject )
+		{
+			SVPOINT Value;
+			pValueObject->GetValue( Value );
+			m_X.SetValue( Value.x(), rRunStatus.m_lResultDataIndex );
+			return true;
+		}
 	}
-	RRunStatus.SetInvalid();
+	rRunStatus.SetInvalid();
 	return false;
 }
 

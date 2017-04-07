@@ -54,7 +54,7 @@ BOOL TableObject::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
 	BOOL l_bOk = SVTaskObjectClass::CreateObject( pCreateStructure );
 
-	m_NumberOfRows.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
+	m_NumberOfRows.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 
 	return l_bOk;
 }
@@ -69,7 +69,7 @@ bool TableObject::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	{
 		(*iter)->setSortContainer(m_sortContainer);
 	}
-	m_NumberOfRows.SetValue(0, 0);
+	m_NumberOfRows.SetValue(0L, 0);
 
 	return Result;
 }
@@ -87,7 +87,7 @@ void TableObject::setSortContainer(const ValueObjectSortContainer& sortMap, SVRu
 	{
 		m_ValueList[i]->setSortContainer(rRunStatus.m_lResultDataIndex, m_sortContainer);
 	}
-	m_NumberOfRows.SetValue(rRunStatus.m_lResultDataIndex, static_cast<long>(sortMap.size()));
+	m_NumberOfRows.SetValue(static_cast<long>(sortMap.size()), rRunStatus.m_lResultDataIndex);
 }
 
 DoubleSortValueObject* TableObject::updateOrCreateColumn(const GUID& rEmbeddedId, int nameId, int arraysize)
@@ -178,7 +178,7 @@ SVObjectClass* TableObject::OverwriteEmbeddedObject(const GUID& rUniqueID, const
 		DoubleSortValueObject* pObject = nullptr;
 		// Construct new object...
 		SVObjectManagerClass::Instance().ConstructObject(DoubleSortValueObjectGuid, pObject);
-		RegisterEmbeddedObject( pObject, rEmbeddedID, _T(""), true, SVResetItemTool );
+		RegisterEmbeddedObject( pObject, rEmbeddedID, _T(""), true, SvOi::SVResetItemTool );
 		m_ValueList.push_back(pObject);
 	}
 
@@ -195,7 +195,7 @@ DoubleSortValueObject* TableObject::createColumnObject(SVGUID embeddedID, LPCTST
 
 	if( CreateChildObject(pObject) )
 	{
-		RegisterEmbeddedObject( pObject, embeddedID, name, true, SVResetItemTool );
+		RegisterEmbeddedObject( pObject, embeddedID, name, true, SvOi::SVResetItemTool );
 		pObject->SetArraySize(arraySize);
 		m_ValueList.push_back(pObject);
 	}
@@ -216,14 +216,14 @@ DoubleSortValueObject* TableObject::createColumnObject(SVGUID embeddedID, LPCTST
 void TableObject::Initialize()
 {
 	// Set up your type
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = TableObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = TableObjectType;
 
 	BuildEmbeddedObjectList();
 }
 
 void TableObject::BuildEmbeddedObjectList ()
 {
-	RegisterEmbeddedObject( &m_NumberOfRows, TableObject_NumberOfRowsGuid, IDS_OBJECTNAME_TABLEOBJECT_NUMBEROFROWS, true, SVResetItemTool );
-	m_NumberOfRows.SetDefaultValue( 0, TRUE );
+	RegisterEmbeddedObject( &m_NumberOfRows, TableObject_NumberOfRowsGuid, IDS_OBJECTNAME_TABLEOBJECT_NUMBEROFROWS, true, SvOi::SVResetItemTool );
+	m_NumberOfRows.SetDefaultValue( 0L, true );
 }
 #pragma endregion Private Methods

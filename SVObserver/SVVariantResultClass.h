@@ -26,8 +26,8 @@ public:
 	virtual BOOL CloseObject() override;
 
 protected:
-	SVValueObjectClass* GetInputValue();
-	virtual bool onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+	SVObjectClass* GetInputValue();
+	virtual bool onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
 protected:
 	// Output

@@ -27,21 +27,21 @@ static char THIS_FILE[] = __FILE__;
 
 SV_IMPLEMENT_CLASS(SVCharValueObjectClass, SVCharValueObjectClassGuid);
 
-SVCharValueObjectClass::SVCharValueObjectClass(LPCTSTR ObjectName)
-				       : base(ObjectName) 
+SVCharValueObjectClass::SVCharValueObjectClass( LPCTSTR ObjectName )
+: SVValueObjectClass<TCHAR>( ObjectName )
 {
 	LocalInitialize();
 }
 
 
-SVCharValueObjectClass::SVCharValueObjectClass(SVObjectClass* POwner, int StringResourceID)
-				       : base(POwner, StringResourceID) 
+SVCharValueObjectClass::SVCharValueObjectClass( SVObjectClass* pOwner, int StringResourceID )
+: SVValueObjectClass<TCHAR>( pOwner, StringResourceID )
 {
 	LocalInitialize();
 }
 
 SVCharValueObjectClass::SVCharValueObjectClass( const SVCharValueObjectClass& rhs )
-	: base()
+: SVValueObjectClass<TCHAR>()
 {
 	LocalInitialize();
 	*this = rhs;
@@ -49,7 +49,7 @@ SVCharValueObjectClass::SVCharValueObjectClass( const SVCharValueObjectClass& rh
 
 const SVCharValueObjectClass& SVCharValueObjectClass::operator = ( const SVCharValueObjectClass& rhs )
 {
-	base::operator = (rhs);
+	__super::operator = (rhs);
 	return *this;
 }
 
@@ -65,20 +65,20 @@ void SVCharValueObjectClass::Persist(SVObjectWriter& rWriter)
 	SVValueObjectClass::Persist( rWriter );
 
 	// Get the Data Values (Member Info, Values)
-	_variant_t value(DefaultValue());
+	_variant_t Value( GetDefaultValue() );
 	
-	rWriter.WriteAttribute(scDefaultTag, value);
+	rWriter.WriteAttribute(scDefaultTag, Value);
 
 	rWriter.StartElement(scArrayElementsTag);
 	// Where does Object Depth Get put into the Script ??? (maybe at the SVObjectClass)
 	// Object Depth is implicit (it's the count of the values)
 	SVVariantList list;	
 
-	// for all elements in the array (m_iArraySize)
-	for( int i = 0; i < m_iArraySize; i++ )
+	// for all elements in the array
+	for( int i = 0; i < getArraySize(); i++ )
 	{
-		value.cVal = Element(m_iLastSetIndex, i);
-		list.push_back(value);
+		GetValue( Value.cVal, GetLastSetIndex(), i );
+		list.push_back(Value);
 	}
 	rWriter.WriteAttribute(scElementTag, list);
 	rWriter.EndElement();
@@ -86,88 +86,7 @@ void SVCharValueObjectClass::Persist(SVObjectWriter& rWriter)
 	rWriter.EndElement();
 }
 
-HRESULT SVCharValueObjectClass::SetValueAt( int iBucket, int iIndex, const VARIANT& rvtValue )
-{
-	if ( VT_I1 == rvtValue.vt )
-	{
-		return base::SetValueAt(iBucket, iIndex, rvtValue.cVal);
-	}
-	assert(false);
-	return S_FALSE;
-}
-
-HRESULT SVCharValueObjectClass::SetValueAt( int iBucket, int iIndex, const SVString& rValue )
-{
-	try
-	{
-		TCHAR value = convertString2Char(rValue);
-		return base::SetValueAt(iBucket, iIndex, value );
-	}
-	catch (const SvStl::MessageContainer&)
-	{
-		assert(FALSE);
-		return S_FALSE;
-	}
-}
-
-HRESULT SVCharValueObjectClass::GetValueAt( int iBucket, int iIndex, VARIANT& rValue ) const
-{
-	TCHAR l_cValue=0;
-	_variant_t l_Temp;
-	l_Temp.Attach( rValue );
-	HRESULT hr = base::GetValueAt( iBucket, iIndex, l_cValue );
-	if( S_OK == hr )
-	{
-		l_Temp = l_cValue;
-	}
-	else
-	{
-		l_Temp.Clear();
-	}
-	rValue = l_Temp.Detach();
-	return hr;
-}
-
-HRESULT SVCharValueObjectClass::GetValueAt( int iBucket, int iIndex, SVString& rValue) const
-{
-	TCHAR value=0;
-
-	HRESULT hr = base::GetValueAt(iBucket, iIndex, value);
-	rValue = SvUl_SF::Format(_T("%c"), value);
-
-	return hr;
-}
-
-HRESULT SVCharValueObjectClass::GetValueAt( int iBucket, int iIndex, double& rdValue) const
-{
-	TCHAR value=0;
-
-	HRESULT hr = base::GetValueAt(iBucket, iIndex, value);
-	rdValue = (double) value;
-
-	return hr;
-}
-
-void SVCharValueObjectClass::ValidateValue( int iBucket, int iIndex, const SVString& rValue ) const
-{
-	convertString2Char(rValue.c_str());
-	base::ValidateValue( iBucket, iIndex, rValue );
-}
-
-void SVCharValueObjectClass::LocalInitialize()
-{
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVCharValueObjectType;
-	DefaultValue() = 0;
-	if ( m_sLegacyScriptDefaultName.empty() )
-	{
-		m_sLegacyScriptDefaultName = _T("bDefault");
-		m_sLegacyScriptArrayName = _T("pBArray");
-	}
-	SetTypeName( _T("Char") );
-	InitializeBuckets();
-}
-
-TCHAR SVCharValueObjectClass::convertString2Char( const SVString& rValue ) const
+TCHAR SVCharValueObjectClass::ConvertString2Type( const SVString& rValue ) const
 {
 	if ( 1 == rValue.size() )
 	{
@@ -178,21 +97,21 @@ TCHAR SVCharValueObjectClass::convertString2Char( const SVString& rValue ) const
 		SVString Digits = SvUl_SF::ValidateString( rValue, _T("0123456789 .xXabcdefABCDEF") );
 		if ( Digits == rValue )
 		{
-			Digits = SvUl_SF::MakeLower(Digits);
+			SvUl_SF::MakeLower(Digits);
 			TCHAR* p = nullptr;
-			long lValue;
+			long Value;
 			if ( SVString::npos != Digits.find( 'x' ) )
 			{
-				lValue = _tcstol(Digits.c_str(), &p, 16);
+				Value = _tcstol(Digits.c_str(), &p, 16);
 			}
 			else
 			{
-				lValue = _tcstol(Digits.c_str(), &p, 10);
+				Value = _tcstol(Digits.c_str(), &p, 10);
 			}
 
-			if ( lValue >= 0 && lValue <= 255 )
+			if ( 0 <= Value && 255 >= Value )
 			{
-				return static_cast <char> (lValue);
+				return static_cast<TCHAR> (Value);
 			}
 		}
 	}
@@ -202,6 +121,21 @@ TCHAR SVCharValueObjectClass::convertString2Char( const SVString& rValue ) const
 	SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 	Exception.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_ValueObject_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 	Exception.Throw();
-	return 0; //will never reached, because the exception will throw before. But this line avoid a warning
+	return 0; //will never reached, because the exception will throw before. But this line avoids a warning
 }
+
+void SVCharValueObjectClass::LocalInitialize()
+{
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVCharValueObjectType;
+	DefaultValue() = 0;
+	if ( m_sLegacyScriptDefaultName.empty() )
+	{
+		m_sLegacyScriptDefaultName = _T("bDefault");
+		m_sLegacyScriptArrayName = _T("pBArray");
+	}
+	SetTypeName( _T("Char") );
+	setOutputFormat( _T("%c") );
+	InitializeBuckets();
+}
+
 

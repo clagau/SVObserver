@@ -21,7 +21,7 @@ SVDigitalOutputObject::SVDigitalOutputObject( LPCSTR strObjectName )
 , m_bForcedValue( false )
 , m_bCombinedACK( true )
 {
-	m_isCreated	= false;
+	LocalInitialize();
 }
 
 SVDigitalOutputObject::SVDigitalOutputObject( SVObjectClass *pOwner, int StringResourceID )
@@ -35,7 +35,7 @@ SVDigitalOutputObject::SVDigitalOutputObject( SVObjectClass *pOwner, int StringR
 , m_bForcedValue( false )
 , m_bCombinedACK( true )
 {
-	m_isCreated = false;
+	LocalInitialize();
 }
 
 SVDigitalOutputObject::~SVDigitalOutputObject()
@@ -61,11 +61,11 @@ BOOL SVDigitalOutputObject::Destroy()
 	return !m_isCreated;
 }
 
-HRESULT SVDigitalOutputObject::Write( const _variant_t& p_rValue )
+HRESULT SVDigitalOutputObject::Write( const _variant_t& rValue )
 {
 	HRESULT l_Status = S_OK;
 
-	m_bLastValue = p_rValue;
+	m_bLastValue = rValue;
 
 	l_Status = SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputValue( m_lChannel, m_bLastValue );
 
@@ -154,5 +154,12 @@ BOOL SVDigitalOutputObject::SetChannel( long lChannel )
 long SVDigitalOutputObject::GetChannel() const
 {
 	return m_lChannel;
+}
+
+void SVDigitalOutputObject::LocalInitialize()
+{
+	m_isCreated = false;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVIoObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVDigitalOutputObjectType;
 }
 

@@ -48,9 +48,9 @@ void EQAdjustSize::Init()
 	enabled.SetDefaultValue( FALSE, TRUE );
 	m_bUseOverlays = false;
 	// Identify our output type
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVEquationObjectType;
-	m_outObjectInfo.ObjectTypeInfo.SubType = m_SubType;
-	RegisterEmbeddedObject( &m_result, m_ResultGuid, IDS_OBJECTNAME_RESULT, false, SVResetItemNone );
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVEquationObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = m_SubType;
+	RegisterEmbeddedObject( &m_result, m_ResultGuid, IDS_OBJECTNAME_RESULT, false, SvOi::SVResetItemNone );
 	// Set Embedded defaults
 	static const double DefaultValue = 100.0;
 	m_result.SetDefaultValue( DefaultValue, TRUE );
@@ -65,13 +65,13 @@ BOOL EQAdjustSize::CreateObject(SVObjectLevelCreateStruct *PCreateStruct)
 	m_isCreated = SVEquationClass::CreateObject(PCreateStruct);
 
 	// Set / Reset Printable Flag
-	m_result.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
+	m_result.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 
 	return m_isCreated;
 }
 
 
-bool EQAdjustSize::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool EQAdjustSize::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	///This function is not called
 	ASSERT(FALSE);
@@ -86,7 +86,7 @@ bool EQAdjustSize::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	{
 		if( HasCondition() && IsEnabled() )
 		{
-			m_result.SetValue(1,yacc.equationResult);	
+			m_result.SetValue( getResult(), 1 );
 		}
 		
 	}

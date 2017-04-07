@@ -32,8 +32,8 @@ SVLUTEquationClass::SVLUTEquationClass( SVObjectClass* POwner, int StringResourc
 void SVLUTEquationClass::init()
 {
 	// Identify our output type
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVEquationObjectType;
-	m_outObjectInfo.ObjectTypeInfo.SubType = SVLUTEquationObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVEquationObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVLUTEquationObjectType;
 
 	// Identify our input type needs - this is a bit different here
 	// Since out inputs are dynamic via the script specified
@@ -41,9 +41,9 @@ void SVLUTEquationClass::init()
 	
 	// Register Embedded Objects
 	m_byteVectorResult.SetLegacyVectorObjectCompatibility();
-	RegisterEmbeddedObject( &m_lutIndex, SVLUTIndexVariableObjectGuid, IDS_OBJECTNAME_LUTINDEXVARIABLE, false, SVResetItemNone  );
-	RegisterEmbeddedObject( &m_byteVectorResult, SVLUTEquationResultObjectGuid, IDS_OBJECTNAME_LUTRESULT, false, SVResetItemNone  );
-	RegisterEmbeddedObject( &m_isLUTFormulaClipped, SVLUTEquationClipFlagObjectGuid, IDS_OBJECTNAME_LUT_EQUATION_CLIP, false, SVResetItemTool  );
+	RegisterEmbeddedObject( &m_lutIndex, SVLUTIndexVariableObjectGuid, IDS_OBJECTNAME_LUTINDEXVARIABLE, false, SvOi::SVResetItemNone  );
+	RegisterEmbeddedObject( &m_byteVectorResult, SVLUTEquationResultObjectGuid, IDS_OBJECTNAME_LUTRESULT, false, SvOi::SVResetItemNone  );
+	RegisterEmbeddedObject( &m_isLUTFormulaClipped, SVLUTEquationClipFlagObjectGuid, IDS_OBJECTNAME_LUT_EQUATION_CLIP, false, SvOi::SVResetItemTool  );
 
 	// Set Embedded defaults
 	m_byteVectorResult.SetDefaultValue( 0, TRUE );
@@ -74,8 +74,8 @@ BOOL SVLUTEquationClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructu
 	BOOL bOk = SVEquationClass::CreateObject( PCreateStructure );
 
 	// Set / Reset Printable Flag
-	m_lutIndex.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	m_byteVectorResult.ObjectAttributesAllowedRef() &= ~(SV_PRINTABLE | SV_VIEWABLE);
+	m_lutIndex.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_byteVectorResult.SetObjectAttributesAllowed( SV_PRINTABLE | SV_VIEWABLE, SvOi::SetAttributeType::RemoveAttribute );
 
 	m_isCreated = bOk;
 
@@ -87,7 +87,7 @@ bool SVLUTEquationClass::ResetObject(SvStl::MessageContainerVector *pErrorMessag
 	bool Result = __super::ResetObject(pErrorMessages);
 
 	// Resize to 256 entries...
-	if( Result && 256 != m_byteVectorResult.GetArraySize()  )
+	if( Result && 256 != m_byteVectorResult.getArraySize()  )
 	{
 		m_byteVectorResult.SetArraySize( 256 );
 	}
@@ -149,14 +149,14 @@ bool SVLUTEquationClass::SetDefaultFormula(SvStl::MessageContainerVector *pError
 //				: Use the m_lutIndex as variable in the equation, if you want to
 //				: index the values. ( m_lutIndex is running from 0 to 255 )
 ////////////////////////////////////////////////////////////////////////////////
-bool SVLUTEquationClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVLUTEquationClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	bool   bRetVal   = true;
 	double dResult   = 0.0;
 	long   lLUTIndex = 0;
 
 	// Resize to 256 entries...
-	if( m_byteVectorResult.GetArraySize() != 256 )
+	if( m_byteVectorResult.getArraySize() != 256 )
 	{
 		m_byteVectorResult.SetArraySize( 256 );
 	}
@@ -164,23 +164,25 @@ bool SVLUTEquationClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageCont
 	do
 	{
 		// Set current m_lutIndex...
-		m_lutIndex.SetValue( RRunStatus.m_lResultDataIndex, lLUTIndex );
+		m_lutIndex.SetValue( lLUTIndex, rRunStatus.m_lResultDataIndex );
 
 		// Run equation.. 
-		bRetVal = __super::onRun( RRunStatus, pErrorMessages );
+		bRetVal = __super::onRun( rRunStatus, pErrorMessages );
 
 		if( bRetVal && HasCondition() && IsEnabled() )
 		{
 			// Get equation result...
-			dResult = yacc.equationResult;
+			dResult = getResult();
 		}
 		else
+		{
 			dResult = 0.0;
+		}
 
 		//Clip result if required
-		bool isClipped = false;
+		BOOL isClipped( false );
 		m_isLUTFormulaClipped.GetValue(isClipped);
-		if (isClipped)
+		if(isClipped)
 		{
 			if (UCHAR_MAX < dResult)
 			{
@@ -193,7 +195,7 @@ bool SVLUTEquationClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageCont
 		}
 
 		// Put result into LUT vector at m_lutIndex position...
-		m_byteVectorResult.SetValue( RRunStatus.m_lResultDataIndex, lLUTIndex, ( BYTE ) dResult );
+		m_byteVectorResult.SetValue( static_cast<BYTE> (dResult), rRunStatus.m_lResultDataIndex, lLUTIndex );
 
 		// next index...
 		++lLUTIndex;
@@ -203,7 +205,7 @@ bool SVLUTEquationClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageCont
 	if( ! bRetVal )
 	{
 		SetInvalid();
-		RRunStatus.SetInvalid();
+		rRunStatus.SetInvalid();
 	}
 
 	return bRetVal;

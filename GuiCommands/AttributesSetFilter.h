@@ -9,6 +9,7 @@
 #pragma region Includes
 #include "ObjectInterfaces/ObjectDefines.h"
 #include "ObjectInterfaces/IObjectClass.h"
+#include "ObjectInterfaces/IValueObject.h"
 #pragma endregion Includes
 
 namespace Seidenader
@@ -30,7 +31,8 @@ namespace Seidenader
 				{
 					if( nullptr != pObject )
 					{
-						if( pObject->IsArray() )
+						const SvOi::IValueObject* pValueObject = dynamic_cast<const SvOi::IValueObject*> (pObject);
+						if( nullptr != pValueObject && pValueObject->isArray() )
 						{
 							Result = ( Attribute == ( pObject->ObjectAttributesSet( ArrayIndex ) & Attribute) );
 						}

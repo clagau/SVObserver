@@ -15,22 +15,20 @@
 //Moved to precompiled header: #include <vector>
 //Moved to precompiled header: #include <BaseTsd.h>
 
-template< typename SVT_TYPE, typename SVT_ARG_TYPE = const SVT_TYPE& >
+template<typename SVT_TYPE>
 class SVVector
 {
 public:
-	typedef std::vector< SVT_TYPE > SVVectorBase;
+	typedef std::vector<SVT_TYPE> SVVectorBase;
 	typedef typename SVVectorBase::size_type size_type;
 	typedef typename SVVectorBase::reference reference;
 	typedef typename SVVectorBase::const_reference const_reference;
-	typedef typename SVVectorBase::value_type SVType;
 	typedef typename SVVectorBase::value_type value_type;
 	typedef typename SVVectorBase::iterator iterator;
 	typedef typename SVVectorBase::const_iterator const_iterator;
 	typedef typename SVVectorBase::reverse_iterator reverse_iterator;
 	typedef typename SVVectorBase::const_reverse_iterator const_reverse_iterator;
-	typedef SVT_ARG_TYPE SVArgType;
-	typedef SVT_ARG_TYPE arg_type;
+	typedef const SVT_TYPE& SVArgType;
 
 	SVVector();
 	SVVector( size_type p_InitSize );
@@ -65,9 +63,9 @@ public:
 	inline iterator erase( const_iterator p_Where );
 	inline void clear();
 
-	inline bool operator==(const SVVector<SVT_TYPE, SVT_ARG_TYPE>& rVector) const;
-	inline bool operator!=(const SVVector<SVT_TYPE, SVT_ARG_TYPE>& rVector) const;
-	inline void swap(SVVector<SVT_TYPE, SVT_ARG_TYPE>& rVector);
+	inline bool operator==(const SVVector<SVT_TYPE>& rVector) const;
+	inline bool operator!=(const SVVector<SVT_TYPE>& rVector) const;
+	inline void swap(SVVector<SVT_TYPE>& rVector);
 
 	// MFC Style Operators
 
@@ -78,20 +76,20 @@ public:
 	virtual void SetSize( int nNewSize );
 
 	// Add SFINAE to this
-	virtual const SVType* GetData() const;
+	virtual const SVT_TYPE* GetData() const;
 	// Add SFINAE to this
-	virtual SVType* GetData();
+	virtual SVT_TYPE* GetData();
 
-	virtual SVType GetAt( int nIndex ) const;
+	virtual SVT_TYPE GetAt( int nIndex ) const;
 
 	// Add SFINAE to this
-	virtual SVType& ElementAt( int nIndex );
+	virtual SVT_TYPE& ElementAt( int nIndex );
 	// Add SFINAE to this
-	virtual const SVType& ElementAt( int nIndex ) const;
+	virtual const SVT_TYPE& ElementAt( int nIndex ) const;
 
-	virtual const SVType& operator[]( size_type nIndex ) const;
+	virtual const SVT_TYPE& operator[]( size_type nIndex ) const;
 	// Add SFINAE to this
-	virtual SVType& operator[]( size_type nIndex );
+	virtual SVT_TYPE& operator[]( size_type nIndex );
 
 	virtual void Fill( SVArgType fillValue );
 
@@ -111,7 +109,6 @@ public:
 
 protected:
 	SVVectorBase m_Vector;
-
 };
 
 #include "SVVector.inl"

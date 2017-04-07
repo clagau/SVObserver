@@ -110,7 +110,7 @@ void SVRemoteInputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHint 
 		int j;
 		SVInputObjectList* pInputList = nullptr;
 		SVRemoteInputObject* pRemInput;
-		SVIOEntryHostStructPtrList ppIOEntries;
+		SVIOEntryHostStructPtrVector ppIOEntries;
 		SVIOEntryHostStructPtr pIOEntry;
 
 		SVConfigurationObject* pConfig( nullptr );
@@ -188,7 +188,7 @@ void SVRemoteInputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHint 
 
 void SVRemoteInputsView::OnLButtonDblClk( UINT nFlags, CPoint point )
 {
-	SVIOEntryHostStructPtrList ppIOEntries;
+	SVIOEntryHostStructPtrVector ppIOEntries;
 	SVIOEntryHostStructPtr pIOEntry;
 	UINT flags;
 	long lSize;
@@ -259,10 +259,10 @@ void SVRemoteInputsView::OnLButtonDblClk( UINT nFlags, CPoint point )
 
 							pRemoteInput->WriteCache( l_Value );
 
-							SVVariantValueObjectClass* l_pValueObject = dynamic_cast< SVVariantValueObjectClass* >( pIOEntry->m_pValueObject );
-							if( nullptr != l_pValueObject )
+							SVVariantValueObjectClass* pValueObject = dynamic_cast<SVVariantValueObjectClass*> ( pIOEntry->getObject() );
+							if( nullptr != pValueObject )
 							{
-								l_pValueObject->SetDefaultValue( l_Value, true );
+								pValueObject->SetDefaultValue( l_Value, true );
 							}
 
 							SVSVIMStateClass::AddState( SV_STATE_MODIFIED );

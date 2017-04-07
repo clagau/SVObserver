@@ -14,6 +14,7 @@
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
 #include "SVOCore/SVImageClass.h"
 #include "SVTool.h"
+#include "SVValueObjectLibrary/SVStringValueObjectClass.h"
 #pragma endregion Includes
 
 class SVPerspectiveToolClass : public SVToolClass
@@ -47,7 +48,7 @@ public:
 
 
 public:
-	virtual SVStaticStringValueObjectClass* GetInputImageNames() override;
+	virtual SVStringValueObjectClass* GetInputImageNames() override;
 
 protected:
 	HRESULT UpdateOutputImageExtents();
@@ -72,7 +73,7 @@ private:
 	
 private:
 	// String value object for Source Image Names
-	SVStaticStringValueObjectClass m_svSourceImageName;
+	SVStringValueObjectClass m_SourceImageNames;
 };
 
 

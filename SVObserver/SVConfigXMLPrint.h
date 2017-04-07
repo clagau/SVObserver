@@ -87,7 +87,7 @@ namespace sv_xml
 		void WriteMonitorListSection(Writer writer) const;
 		void WritePPQBar(Writer writer) const;
 		void WriteObject( Writer writer, SVObjectClass* pObj ) const;
-		void WriteValueObject( Writer writer, SVValueObjectClass* pObj ) const;
+		void WriteValueObject( Writer writer, SVObjectClass* pObj ) const;
 		void WriteAllChildren( Writer writer, SVTaskObjectListClass* pObj ) const;
 		void WriteChildren( Writer writer, SVObjectClass* pObj ) const;
 		void WriteFriends( Writer writer, SVObjectClass* pObj ) const;

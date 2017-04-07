@@ -46,7 +46,7 @@ public:
 
 	BOOL BuildHashTable(char *pBuffer);
 	void InsertValueToTable(short nValue, int index);
-	int CheckStringInTable(const SVString& rMatchString);
+	long CheckStringInTable(const SVString& rMatchString);
 	BOOL UpdateResultFigure( long p_lIndex );
 
 	SVImageClass* getInputImage();
@@ -54,8 +54,8 @@ public:
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 protected:
-	virtual bool onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
-	virtual HRESULT onCollectOverlays(SVImageClass* p_pImage, SVExtentMultiLineStructCArray& p_rMultiLineArray ) override;
+	virtual bool onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+	virtual HRESULT onCollectOverlays(SVImageClass* p_pImage, SVExtentMultiLineStructVector& p_rMultiLineArray ) override;
 
 private:
 	void clearAll();
@@ -65,7 +65,7 @@ private:
 //******************************************************************************
 public:
 	// Results
-	SVOCVCharacterResultArray arrayOCVCharacterResults;
+	SVOCVCharacterResultPtrVector arrayOCVCharacterResults;
 
 protected:
 

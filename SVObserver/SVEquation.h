@@ -14,6 +14,7 @@
 #pragma region Includes
 #include "ObjectInterfaces/EquationTestResult.h"
 #include "ObjectInterfaces/IEquation.h"
+#include "ObjectInterfaces/IValueObject.h"
 #include "SVEquationLibrary/SVEquationBase.h"
 #include "SVEquationLibrary/SVEquationLex.h"
 #include "SVEquationLibrary/SVEquationYacc.h"
@@ -86,9 +87,8 @@ public:
 	
 	SVInputInfoListClass& GetToolSetSymbolTable();	// Get the ToolSet Symbol table
 
-	HRESULT GetData(int iSymbolIndex, double& value, long lBufferIndex );		// Get the Data Value
-	HRESULT GetData(int iSymbolIndex, int index, double& value, long lBufferIndex );		// Get the Data Value
-	HRESULT GetData(int iSymbolIndex, std::vector<double>& values, long lBufferIndex );		// Get the Data Value
+	HRESULT GetData(int SymbolIndex, double& rValue, int Index = -1 );
+	HRESULT GetData(int SymbolIndex, std::vector<double>& rValues );
 
 	void ClearAll();
 	//************************************
@@ -98,8 +98,7 @@ public:
 	//************************************
 	void Init(SVObjectClass* pRequestor);
 
-	
-protected:
+private:
 	SVInputInfoListClass m_toolsetSymbolTable;		// The symbol table for the ToolSet Variables in the equation
 	SVString m_InspectionName;
 
@@ -188,14 +187,13 @@ public:
 	virtual bool DisconnectObjectInput( SVInObjectInfoStruct* pInObjectInfo ) override;
 
 	virtual double GetPropertyValue( int iSymbolIndex ) override;
-	virtual double GetSubscriptedPropertyValue( int iSymbolIndex, int iIndex, double dDefault ) override;
-	virtual double GetSubscriptedPropertyValue( int iSymbolIndex, int iIndex ) override;
+	virtual double GetSubscriptedPropertyValue( int SymbolIndex, int Index, double Default = 0.0 ) override;
 	virtual HRESULT GetArrayValues( int iSymbolIndex, std::vector< double >& values ) override;
 
 	BOOL IsEnabled();
 
 	virtual void Persist(SVObjectWriter& rWriter) override;
-	virtual HRESULT GetObjectValue( const SVString& p_rValueName, VARIANT& p_rVariantValue ) const override;
+	virtual HRESULT GetObjectValue( const SVString& rValueName, _variant_t& rValue ) const override;
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* PDataObject ) override;
 
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
@@ -209,23 +207,22 @@ public:
 protected:
 	void init();
 
-	virtual bool onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+	virtual bool onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+
+	double getResult() const { return m_Yacc.equationResult; };
 
 private:
 	SvOi::EquationTestResult lexicalScan( LPCTSTR inBuffer );		// perform lexical scan
 
-	protected:
-	SVEquationLexClass lex;					// scanner class
-	SVEquationYaccClass yacc;				// parser class
+	SVEquationLexClass m_Lex;					// scanner class
+	SVEquationYaccClass m_Yacc;				// parser class
 
 	SvStl::MessageContainer errContainer;							// for errorEvent
 
-	BOOL isDataValid;						// the variable(s) returned Valid Data
+	bool m_isDataValid;						// the variable(s) returned Valid Data
 	
-	SVEquationStruct equationStruct;		// the Equation Structure
+	SVEquationStruct m_equationStruct;		// the Equation Structure
 	
-	SVEquationSymbolTableClass symbols;		// all symbols ( input and local )
-	long m_lCurrentRunIndex;				// pointer to the run status for the current run
-											// it is needed to get the result data index for PPQ inputs
+	SVEquationSymbolTableClass m_Symbols;		// all symbols ( input and local )
 };
 

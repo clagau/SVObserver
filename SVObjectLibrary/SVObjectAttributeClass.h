@@ -16,7 +16,7 @@
 #include "SVObjectPointArrayClass.h"
 #include "SVObjectScriptEnums.h"
 #include "SVObjectDPointArrayClass.h"
-#include "SVContainerLibrary\SVObjectArrayClassTemplate.h"
+#include "SVContainerLibrary/SVObjectArrayClassTemplate.h"
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
@@ -44,7 +44,7 @@ class SVObjectAttributeClass
 public:
 	SVObjectAttributeClass();
 
-	SVObjectAttributeClass( const SVObjectAttributeClass& rRhs ); // @WARNING Should be const & - See Implementation
+	SVObjectAttributeClass( const SVObjectAttributeClass& rRhs );
 
 	virtual ~SVObjectAttributeClass();
 
@@ -81,8 +81,10 @@ public:
 			int iNewBucketSize = __max(iSourceDataSize, 2);
 			int iOldBucketSize = static_cast< int >( raaData.size() );
 			int iArraySize = 1;
-			if ( iOldBucketSize > 0 )
+			if ( 0 < iOldBucketSize )
+			{
 				iArraySize = static_cast< int >( raaData[0].size() );
+			}
 
 			std::vector<T> aArrayData(iArraySize, defaultValue);
 			std::vector< std::vector<T> > aaNewData(iNewBucketSize, aArrayData);
@@ -99,7 +101,7 @@ public:
 		return bOk;
 	}
 
-	// new code to load values into array positions in a single bucket.
+	//// new code to load values into array positions in a single bucket.
 	template <typename T>	
 	BOOL GetArrayData(LPCTSTR szName, std::vector<T>& raData, T defaultValue)
 	{// VC6 compiler limitation: code must be here (inside the class definition)

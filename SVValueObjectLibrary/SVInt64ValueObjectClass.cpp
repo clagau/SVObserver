@@ -26,14 +26,14 @@ static char THIS_FILE[] = __FILE__;
 
 SV_IMPLEMENT_CLASS(SVInt64ValueObjectClass, SVInt64ValueObjectClassGuid);
 
-SVInt64ValueObjectClass::SVInt64ValueObjectClass(LPCTSTR ObjectName)
-						: base(ObjectName)
+SVInt64ValueObjectClass::SVInt64ValueObjectClass( LPCTSTR ObjectName )
+: SVValueObjectClass<__int64>( ObjectName )
 {
 	LocalInitialize();
 }
 
-SVInt64ValueObjectClass::SVInt64ValueObjectClass(SVObjectClass* pOwner, int StringResourceID)
-						: base(pOwner, StringResourceID)
+SVInt64ValueObjectClass::SVInt64ValueObjectClass( SVObjectClass* pOwner, int StringResourceID )
+: SVValueObjectClass<__int64>( pOwner, StringResourceID )
 {
 	LocalInitialize();
 }
@@ -44,7 +44,7 @@ SVInt64ValueObjectClass::~SVInt64ValueObjectClass()
 
 const SVInt64ValueObjectClass& SVInt64ValueObjectClass::operator = (const SVInt64ValueObjectClass& rhs)
 {
-	base::operator = (rhs);
+	__super::operator = (rhs);
 	return *this;
 }
 
@@ -56,97 +56,55 @@ void SVInt64ValueObjectClass::Persist(SVObjectWriter& rWriter)
 	SVValueObjectClass::Persist( rWriter );
 
 	// Get the Data Values (Member Info, Values)
-	_variant_t value;
-	value.ChangeType(VT_I8);
-	value.llVal = DefaultValue();
+	_variant_t Value( GetDefaultValue() );
 
-	rWriter.WriteAttribute(scDefaultTag, value);
+	rWriter.WriteAttribute(scDefaultTag, Value);
 
 	rWriter.StartElement(scArrayElementsTag);
 	// Where does Object Depth Get put into the Script ??? (maybe at the SVObjectClass)
 	// Object Depth is implicit (it's the count of the values)
 	SVVariantList list;	
 
-	// for all elements in the array (m_iArraySize)
-	for( int i = 0; i < m_iArraySize; i++ )
+	// for all elements in the array
+	for( int i = 0; i < getArraySize(); i++ )
 	{
-		value.llVal = Element(m_iLastSetIndex, i);
-		list.push_back(value);
+		GetValue( Value.llVal, GetLastSetIndex(), i );
+		list.push_back(Value);
 	}
 	rWriter.WriteAttribute(scElementTag, list);
 	rWriter.EndElement();
 
 	rWriter.EndElement();
 }
-HRESULT SVInt64ValueObjectClass::SetValueAt(int iBucket, int iIndex, const int iValue)
-{
-    return base::SetValueAt(iBucket, iIndex, static_cast <__int64> (iValue) );
-}
 
-HRESULT SVInt64ValueObjectClass::SetValueAt(int iBucket, int iIndex, const SVString& rValue)
+__int64 SVInt64ValueObjectClass::ConvertString2Type( const SVString& rValue ) const
 {
+	__int64 Result(0LL);
 	SVString Digits = SvUl_SF::ValidateString( rValue, _T("0123456789- ") );
-	if ( Digits == rValue )
+	if( Digits == rValue )
 	{
-		__int64 iValue = _atoi64( Digits.c_str() );
-		return base::SetValueAt(iBucket, iIndex, iValue);
+		return _atoi64( Digits.c_str() );
 	}
-	assert( false );
-	return S_FALSE;
-}
 
-HRESULT SVInt64ValueObjectClass::SetValueAt( int iBucket, int iIndex, double value )
-{
-	return base::SetValueAt(iBucket, iIndex, static_cast <__int64> (value) );
-}
+	SVStringVector msgList;
+	msgList.push_back( rValue );
+	msgList.push_back( GetName() );
+	SvStl::MessageMgrStd Exception( SvStl::LogOnly );
+	Exception.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_ValueObject_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+	Exception.Throw();
 
-HRESULT SVInt64ValueObjectClass::GetValueAt(int iBucket, int iIndex, double& rdValue) const
-{
-	__int64 value=0;
-
-	HRESULT hr = base::GetValueAt(iBucket, iIndex, value);
-	rdValue = (double) value;
-
-	return hr;
-}
-
-HRESULT SVInt64ValueObjectClass::GetValueAt(int iBucket, int iIndex, SVString& rValue) const
-{
-	__int64 Value=0;
-
-	HRESULT hr = base::GetValueAt(iBucket, iIndex, Value);
-	rValue = SvUl_SF::Format(_T("%d"),Value);
-
-	return hr;
-}
-
-HRESULT SVInt64ValueObjectClass::GetValueAt( int iBucket, int iIndex, VARIANT& rValue ) const
-{
-	__int64 l_i64Value=0;
-	_variant_t l_Temp;
-	l_Temp.Attach( rValue );
-	HRESULT hr = base::GetValueAt( iBucket, iIndex, l_i64Value );
-	if( S_OK == hr )
-	{
-		l_Temp = l_i64Value;
-	}
-	else
-	{
-		l_Temp.Clear();
-	}
-	rValue = l_Temp.Detach();
-
-	return hr;
+	return Result;
 }
 
 void SVInt64ValueObjectClass::LocalInitialize()
 {
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVInt64ValueObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVInt64ValueObjectType;
 	DefaultValue() = 0;
 	m_sLegacyScriptDefaultName = SvOi::cDefaultTag;
 	m_sLegacyScriptArrayName = SvOi::cBucketTag;
 	SetTypeName( _T("Integer64") );
 
+	setOutputFormat( _T("%I64d") );
 	InitializeBuckets();
 }
 

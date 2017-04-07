@@ -29,6 +29,5 @@ public:
 	virtual HRESULT Read( _variant_t& p_rValue ) = 0;
 };
 
-typedef SVVector< SVInputObject* > SVInputObjectArray;
 typedef std::map< SVGUID, SVInputObject* > SVGuidSVInputObjectPtrMap;
 

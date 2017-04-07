@@ -16,7 +16,7 @@ This method returns the object's Global Unique Identifier (GUID) of this object 
 */
 inline const SVGUID& SVObjectClass::GetUniqueObjectID() const
 {
-	return m_outObjectInfo.UniqueObjectID;
+	return m_outObjectInfo.m_UniqueObjectID;
 }
 
 /*
@@ -32,7 +32,7 @@ This method returns the object's Global Unique Identifier (GUID) of this object'
 */
 inline const SVGUID& SVObjectClass::GetOwnerID() const
 {
-	return m_ownerObjectInfo.UniqueObjectID;
+	return m_ownerObjectInfo.m_UniqueObjectID;
 }
 
 #pragma region virtual method (IObjectClass)
@@ -41,7 +41,7 @@ This method returns the object's type.
 */
 inline const SVObjectTypeEnum& SVObjectClass::GetObjectType() const
 {
-	return m_outObjectInfo.ObjectTypeInfo.ObjectType;
+	return m_outObjectInfo.m_ObjectTypeInfo.ObjectType;
 }
 #pragma endregion virtual method (IObjectClass)
 
@@ -50,7 +50,7 @@ This metthod return the pointer to the owner object.
 */
 inline SVObjectClass* SVObjectClass::GetOwner() const
 {
-	return m_ownerObjectInfo.PObject;
+	return m_ownerObjectInfo.m_pObject;
 }
 
 /*

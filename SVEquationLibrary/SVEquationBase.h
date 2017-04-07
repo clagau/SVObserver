@@ -37,8 +37,7 @@ public:
 	virtual int AddSymbol( const char* name ) = 0;
 
 	virtual double GetPropertyValue( int iSymbolIndex ) = 0;
-	virtual double GetSubscriptedPropertyValue( int iSymbolIndex, int iIndex, double dDefault ) = 0;
-	virtual double GetSubscriptedPropertyValue( int iSymbolIndex, int iIndex ) = 0;
+	virtual double GetSubscriptedPropertyValue( int iSymbolIndex, int iIndex, double Default = 0.0 ) = 0;
 	virtual HRESULT GetArrayValues( int iSymbolIndex, std::vector< double >& values ) = 0;
 
 };

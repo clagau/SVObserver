@@ -12,7 +12,7 @@
 #include "IValueObject.h"
 #include "ISelectorItemVector.h"
 #include "ISVImage.h"
-#include "SVInterfaceList.h"
+#include "SVInterfaceVector.h"
 #include "SVObjectTypeInfoStruct.h"
 #include "SVStatusLibrary\MessageContainer.h"
 #include "SVUtilityLibrary\NameGuidList.h"
@@ -75,14 +75,14 @@ namespace Seidenader
 			virtual SvStl::MessageContainerVector getErrorMessages() const = 0;
 
 			/// Validate values and set them if required.
-			/// \param valueVector [in] A vector of parameter-value pairs.
+			/// \param rValueVector [in] A vector of parameter-value pairs.
 			/// \param shouldSet [in] If true, value will be set if validation was successfully.
 			/// \returns SvStl::MessageContainerVector A list of error messages. This list is empty if all validations and set was successfully.
-			virtual SvStl::MessageContainerVector validateAndSetEmmeddedValues(const SetValuePairVector& valueVector, bool shouldSet) = 0;
+			virtual SvStl::MessageContainerVector validateAndSetEmmeddedValues(const SetValueObjectPairVector& rValueVector, bool shouldSet) = 0;
 
 			// Resolve desired inputs, called on Construction from Class Factory
 			/// \param rDesiredInputs [in] List of desired inputs.
-			virtual void ResolveDesiredInputs(const SvOi::SVInterfaceList& rDesiredInputs) = 0;
+			virtual void ResolveDesiredInputs(const SvOi::SVInterfaceVector& rDesiredInputs) = 0;
 
 			// get the first task error message (usually from validation or run once)
 			// This is temporary, in the future all the TaskObject error messages will be retrieved

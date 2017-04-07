@@ -32,7 +32,7 @@ public:
 
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
-	virtual SVStaticStringValueObjectClass* GetInputImageNames() override;
+	virtual SVStringValueObjectClass* GetInputImageNames() override;
 
 	virtual HRESULT SetImageExtentToParent( unsigned long p_ulIndex ) override;
 
@@ -48,6 +48,6 @@ private:
 	SVPointValueObjectClass		outputOffsetBPoint;
 	SVLongValueObjectClass		outputOperator;
 	// String value object for Source Image Names
-	SVStaticStringValueObjectClass m_svSourceImageNames;
+	SVStringValueObjectClass m_SourceImageNames;
 };
 

@@ -19,7 +19,7 @@
 SVSmoothFilterClass::SVSmoothFilterClass( SVObjectClass* POwner, int StringResourceID )
 					:SVFilterClass( POwner, StringResourceID ) 
 {
-	m_outObjectInfo.ObjectTypeInfo.SubType = SVSmoothFilterObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVSmoothFilterObjectType;
 }
 
 SVSmoothFilterClass::~SVSmoothFilterClass()
@@ -32,7 +32,7 @@ SVSmoothFilterClass::~SVSmoothFilterClass()
 // .Description : Runs this operator.
 //              : Returns FALSE, if operator cannot run ( may be deactivated ! )
 ////////////////////////////////////////////////////////////////////////////////
-bool SVSmoothFilterClass::onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVSmoothFilterClass::onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	SVImageBufferHandleImage l_InMilHandle;
 	SVImageBufferHandleImage l_OutMilHandle;
@@ -55,7 +55,7 @@ bool SVSmoothFilterClass::onRun( bool First, SVSmartHandlePointer RInputImageHan
 			}
 			// Signal that something was wrong...
 			SetInvalid();
-			RRunStatus.SetInvalid();
+			rRunStatus.SetInvalid();
 			return false;
 		}
 
@@ -72,7 +72,7 @@ bool SVSmoothFilterClass::onRun( bool First, SVSmartHandlePointer RInputImageHan
 
 	// Signal that something was wrong...
 	SetInvalid();
-	RRunStatus.SetInvalid();
+	rRunStatus.SetInvalid();
 	return false;
 }
 

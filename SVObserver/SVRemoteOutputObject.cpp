@@ -23,28 +23,29 @@
 
 SV_IMPLEMENT_CLASS( SVRemoteOutputObject, SVRemoteOutputObjectGUID );
 
-SVRemoteOutputObject::SVRemoteOutputObject(void)
+SVRemoteOutputObject::SVRemoteOutputObject()
 : m_pValueObject(nullptr)
 {
+	LocalInitialize();
 }
 
-SVRemoteOutputObject::~SVRemoteOutputObject(void)
+SVRemoteOutputObject::~SVRemoteOutputObject()
 {
 }
 
 SVString SVRemoteOutputObject::GetInputValueObjectName()
 {
 	// Use the GUID to get an object.
-	SVValueObjectClass* l_pObject = dynamic_cast<SVValueObjectClass*>(SVObjectManagerClass::Instance().GetObjectA(m_InputObjectId));
-	if( nullptr != l_pObject )
+	SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObjectA(m_InputObjectId);
+	if( nullptr != dynamic_cast<SvOi::IValueObject*> (pObject) )
 	{	// Get the object name from the object pointer.
-		m_strObjectName = l_pObject->GetCompleteName();
-		m_pValueObject = l_pObject;
+		m_strObjectName = pObject->GetCompleteName();
+		m_pValueObject = pObject;
 	}
 	return m_strObjectName;
 }
 
-SVValueObjectClass* SVRemoteOutputObject::GetValueObject()
+SVObjectClass* SVRemoteOutputObject::GetValueObject()
 {
 	return m_pValueObject;
 }
@@ -60,7 +61,7 @@ bool SVRemoteOutputObject::GetParameters( SVObjectXMLWriter& rWriter ) const
 {
 	_variant_t svVariant;
 
-	svVariant = SVGUID( m_outObjectInfo.UniqueObjectID ).ToVARIANT();
+	svVariant = SVGUID( m_outObjectInfo.m_UniqueObjectID ).ToVARIANT();
 	rWriter.WriteAttribute( CTAG_UNIQUE_REFERENCE_ID, svVariant );
 	svVariant.Clear();
 
@@ -94,7 +95,7 @@ BOOL SVRemoteOutputObject::SetParameters( SVTreeType& rTree, SVTreeType::SVBranc
 
 		if( bOk )
 		{
-			m_outObjectInfo.UniqueObjectID = ObjectID;
+			m_outObjectInfo.m_UniqueObjectID = ObjectID;
 
 			bOk = SVObjectManagerClass::Instance().OpenUniqueObjectID( this );
 		}
@@ -137,27 +138,30 @@ BOOL SVRemoteOutputObject::SetParameters( SVTreeType& rTree, SVTreeType::SVBranc
 	return bOk;
 }
 
-
-HRESULT SVRemoteOutputObject::SetInputObject(SVValueObjectClass* p_pObject )
+HRESULT SVRemoteOutputObject::SetInputObject(SVObjectClass* pObject )
 {
-	if( nullptr != p_pObject )
+	if( nullptr != dynamic_cast<SvOi::IValueObject*> (pObject) )
 	{
-		m_InputObjectId = p_pObject->GetUniqueObjectID();
+		m_pValueObject = pObject;
+		m_InputObjectId = pObject->GetUniqueObjectID();
 	}
 	else
 	{
+		m_pValueObject = nullptr;
 		m_InputObjectId.clear();
 	}
 
-	m_pValueObject = p_pObject;
 	return S_OK;
 }
 
-
-HRESULT SVRemoteOutputObject::SetInputObjectId( GUID p_ObjectId )
+HRESULT SVRemoteOutputObject::SetInputObjectId( GUID ObjectId )
 {
-	m_InputObjectId = p_ObjectId;
-	m_pValueObject = dynamic_cast<SVValueObjectClass*>(SVObjectManagerClass::Instance().GetObjectA( p_ObjectId ));
+	SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject( ObjectId );
+	if( nullptr != dynamic_cast<SvOi::IValueObject*> (pObject) )
+	{
+		m_InputObjectId = ObjectId;
+		m_pValueObject = pObject;
+	}
 	return S_OK;
 }
 
@@ -178,3 +182,8 @@ HRESULT SVRemoteOutputObject::SetGroupID( const SVString& p_strGroupID )
 	return S_OK;
 }
 
+void SVRemoteOutputObject::LocalInitialize()
+{
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVIoObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVRemoteOutputObjectType;
+}

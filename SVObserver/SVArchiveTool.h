@@ -23,6 +23,7 @@
 #include "ArchiveToolHelper.h"
 #include "SVArchiveRecord.h"
 #include "SVArchiveRecordsArray.h"
+#include "SVValueObjectLibrary/SVStringValueObjectClass.h"
 #pragma endregion Includes
 
 class SVImageListClass;
@@ -87,13 +88,13 @@ public:
 
 	SVArchiveMethodEnum         m_eArchiveMethod;
 	SVBoolValueObjectClass      m_bvoUseHeaders;
-	SVStaticStringValueObjectClass m_HeaderLabelNames;
-	SVStaticStringValueObjectClass m_HeaderObjectGUIDs;
+	SVStringValueObjectClass	m_HeaderLabelNames;
+	SVStringValueObjectClass	m_HeaderObjectGUIDs;
 
 protected:
 	SV_DECLARE_CLASS( SVArchiveTool )
 
-	virtual bool onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+	virtual bool onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
 	HRESULT QueueArchiveString( const SVString& rArchiveString );
 

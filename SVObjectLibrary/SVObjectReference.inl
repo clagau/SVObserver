@@ -23,10 +23,10 @@ inline SVObjectReference::SVObjectReference( GUID guid )
 inline void SVObjectReference::init()
 {
 	m_pObject = nullptr;
+	m_pValueObject = nullptr;
 	m_Guid = SV_GUID_NULL;
 	m_NameInfo.clear();
 	m_ArrayIndex = -1;
-	m_IsArray = false; 
 }
 
 inline SVObjectReference::SVObjectReference( const SVObjectReference& rhs )
@@ -36,34 +36,20 @@ inline SVObjectReference::SVObjectReference( const SVObjectReference& rhs )
 
 inline bool SVObjectReference::operator == ( const SVObjectReference& rhs ) const
 {
-	bool res = (m_pObject == rhs.m_pObject) && (m_ArrayIndex == rhs.m_ArrayIndex) && (m_IsArray == rhs.m_IsArray);
+	bool res = (m_pObject == rhs.m_pObject) && (m_ArrayIndex == rhs.m_ArrayIndex);
 	return res;
 }
 
-inline SVObjectClass* SVObjectReference::operator -> ()
+inline SVObjectClass* SVObjectReference::getObject() const
 {
 	return m_pObject;
-}
-
-inline const SVObjectClass* SVObjectReference::operator -> () const
-{
-	return m_pObject;
-}
-
-inline SVObjectClass* SVObjectReference::Object() const
-{
-	return m_pObject;
-}
-
-inline bool SVObjectReference::IsIndexPresent() const
-{
-	return m_IsArray;
 }
 
 inline long SVObjectReference::ArrayIndex() const
 {
 	long Index = -1;
-	if(m_IsArray && m_ArrayIndex > -1)
+
+	if( isArray()  && m_ArrayIndex > -1)
 	{
 		Index = m_ArrayIndex ;
 	}
@@ -71,15 +57,26 @@ inline long SVObjectReference::ArrayIndex() const
 	return Index;
 }
 
+inline long SVObjectReference::getValidArrayIndex() const
+{
+	return ( -1 != ArrayIndex() ) ? ArrayIndex() : 0;
+}
+
 inline SVString SVObjectReference::DefaultValue() const
 {
 	return m_NameInfo.GetDefaultValue();
 }
 
-inline bool SVObjectReference::IsEntireArray() const
+inline bool SVObjectReference::isArray() const
 {
-	return m_IsArray && m_ArrayIndex == -1;
-	
+	const SvOi::IValueObject* pValueObject = getValueObject();
+	return nullptr != pValueObject ? pValueObject->isArray() : false;
+}
+
+inline bool SVObjectReference::isEntireArray() const
+{
+	return isArray() && m_ArrayIndex == -1 && m_NameInfo.IsIndexPresent();
+
 }
 
 inline GUID SVObjectReference::Guid() const
@@ -92,179 +89,4 @@ inline bool SVObjectReference::operator < ( const SVObjectReference& rhs ) const
 	return (m_pObject < rhs.m_pObject) || ((m_pObject == rhs.m_pObject) && (m_ArrayIndex < rhs.m_ArrayIndex));
 }
 
-inline const SVObjectReference& SVObjectReference::operator = ( const SVObjectReference& rhs )
-{
-	m_pObject = rhs.m_pObject;
-	m_Guid = rhs.m_Guid != SV_GUID_NULL ? rhs.m_Guid : (m_pObject ? GetObjectGuid( m_pObject ) : SV_GUID_NULL);
-	m_NameInfo = rhs.m_NameInfo;
-	m_IsArray = rhs.m_IsArray;
-	m_ArrayIndex = rhs.m_ArrayIndex;
-	return *this;
-}
-
-/////////////////////////////////////////////////////////////////////
-/////////////////////////////////////////////////////////////////////
-
-
-template <class T>
-inline SVCheckedObjectReference<T>::SVCheckedObjectReference( SVObjectClass* pObject )
-{
-	m_pObject = dynamic_cast <T*> (pObject);
-	if ( m_pObject )
-		m_Guid = m_pObject->GetUniqueObjectID();
-	else
-		m_Guid = SV_GUID_NULL;
-}
-
-template <class T>
-inline SVCheckedObjectReference<T>::SVCheckedObjectReference( T* pObject )
-{
-	m_pObject = pObject;	// no dynamic_cast
-	if ( m_pObject )
-		m_Guid = m_pObject->GetUniqueObjectID();
-	else
-		m_Guid = SV_GUID_NULL;
-}
-
-template <class T>
-inline SVCheckedObjectReference<T>::SVCheckedObjectReference( const SVObjectReference& rhs )
-{
-	*this = rhs;
-}
-
-template <class T>
-inline SVCheckedObjectReference<T>::SVCheckedObjectReference( const SVCheckedObjectReference<T>& rhs )
-{
-	*this = rhs;
-}
-
-template <class T>
-inline SVCheckedObjectReference<T>::SVCheckedObjectReference( SVObjectClass* pObject, long lArrayIndex, SVString strDefaultValue )
-{
-	m_pObject = dynamic_cast <T*> (pObject);
-	if ( m_pObject )
-	{
-		m_Guid = m_pObject->GetUniqueObjectID();
-		if( nullptr != m_pObject )
-		{
-			m_NameInfo.ParseObjectName( m_pObject->GetCompleteName() );
-		}
-		m_NameInfo.SetIsIndexPresent(true);
-		m_NameInfo.SetIndex( SvUl_SF::Format(_T("%d"), lArrayIndex ) );
-		m_NameInfo.SetIsDefaultValuePresent(true);
-		m_NameInfo.SetDefaultValue( strDefaultValue );
-
-		m_IsArray = true;
-		m_ArrayIndex = lArrayIndex;
-	}
-	else
-	{
-		m_Guid = SV_GUID_NULL;
-		m_NameInfo.clear();
-	}
-}
-
-template <class T>
-inline SVCheckedObjectReference<T>::SVCheckedObjectReference( T* pObject, long lArrayIndex, SVString strDefaultValue )
-{
-	m_pObject = pObject;	// no dynamic_cast
-	if ( m_pObject )
-	{
-		m_Guid = m_pObject->GetUniqueObjectID();
-		if( nullptr != m_pObject )
-		{
-			m_NameInfo.ParseObjectName( static_cast< LPCTSTR >( m_pObject->GetCompleteName() ) );
-		}
-		m_NameInfo.SetIsIndexPresent(true);
-		m_NameInfo.m_Index = _variant_t( lArrayIndex );
-		m_NameInfo.m_DefaultValuePresent = true;
-		m_NameInfo.m_DefaultValue = static_cast< LPCTSTR >( strDefaultValue );
-		m_IsArray = true;
-		m_ArrayIndex = lArrayIndex;
-	}
-	else
-	{
-		m_Guid = SV_GUID_NULL;
-		m_NameInfo.clear();
-	}
-}
-
-template <class T>
-inline SVCheckedObjectReference<T>::SVCheckedObjectReference( SVObjectClass* pObject, const SVObjectNameInfo& p_rNameInfo )
-{
-	m_pObject = dynamic_cast <T*> (pObject);
-	if ( m_pObject )
-	{
-		m_Guid = m_pObject->GetUniqueObjectID();
-		m_NameInfo = p_rNameInfo;
-		m_IsArray = p_rNameInfo.IsIndexPresent();
-		m_ArrayIndex = p_rNameInfo.GetIndexValue();
-	}
-	else
-	{
-		m_Guid = SV_GUID_NULL;
-		m_NameInfo.clear();
-		m_IsArray = false;
-		m_ArrayIndex = -1;
-	}
-}
-
-template <class T>
-inline SVCheckedObjectReference<T>::SVCheckedObjectReference( T* pObject, const SVObjectNameInfo& p_rNameInfo )
-{
-	m_pObject = pObject;	// no dynamic_cast
-	if ( m_pObject )
-	{
-		m_Guid = m_pObject->GetUniqueObjectID();
-		m_NameInfo = p_rNameInfo;
-		m_IsArray = p_rNameInfo.IsIndexPresent();
-		m_ArrayIndex = p_rNameInfo.GetIndexValue();
-	}
-	else
-	{
-		m_Guid = SV_GUID_NULL;
-		m_NameInfo.clear();
-		m_IsArray = false;
-		m_ArrayIndex = -1;
-	}
-}
-
-template <class T>
-inline const SVCheckedObjectReference<T>& SVCheckedObjectReference<T>::operator = ( const SVObjectReference& rhs )
-{
-	SVObjectReference::operator = ( rhs );
-	m_pObject = const_cast<T*> (dynamic_cast <const T*> (rhs.Object()));
-	return *this;
-}
-
-template <class T>
-inline const SVCheckedObjectReference<T>& SVCheckedObjectReference<T>::operator = ( const SVCheckedObjectReference<T>& rhs )
-{
-	SVObjectReference::operator = ( rhs );
-	return *this;
-}
-
-template <class T>
-inline T* SVCheckedObjectReference<T>::operator -> ()
-{
-	return static_cast <T*> ( m_pObject );
-}
-
-template <class T>
-inline const T* SVCheckedObjectReference<T>::operator -> () const
-{
-	return static_cast <const T*> ( m_pObject );
-}
-
-template <class T>
-inline T* SVCheckedObjectReference<T>::Object()
-{
-	return static_cast <T*> ( m_pObject );
-}
-
-template <class T>
-inline const T* SVCheckedObjectReference<T>::Object() const
-{
-	return static_cast <const T*> ( m_pObject );
-}
 

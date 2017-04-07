@@ -698,27 +698,21 @@ HRESULT SVTADlgTranslationResizePage::SetInspectionData(SvStl::MessageContainerV
 
 		SVEnumerateValueObjectClass* interpolationMode = m_pTool->getInterpolationMode ();
 		interpolationMode->GetValue (longOldInterpolationValue);
-		oldInterpolationValue = 
-			static_cast <SVInterpolationModeOptions::SVInterpolationModeOptionsEnum> (longOldInterpolationValue);
-		interpolationMode->GetDefaultValue(longDefaultInterpolationValue);
-		defaultInterpolationValue = 
-			static_cast <SVInterpolationModeOptions::SVInterpolationModeOptionsEnum> (longDefaultInterpolationValue);
+		oldInterpolationValue = static_cast<SVInterpolationModeOptions::SVInterpolationModeOptionsEnum> (longOldInterpolationValue);
+		longDefaultInterpolationValue = interpolationMode->GetDefaultValue();
+		defaultInterpolationValue = static_cast<SVInterpolationModeOptions::SVInterpolationModeOptionsEnum> (longDefaultInterpolationValue);
 
 		SVEnumerateValueObjectClass* overscan = m_pTool->getOverscan ();
 		overscan->GetValue (longOldOverscanValue);
-		oldOverscanValue = 
-			static_cast <SVOverscanOptions::SVOverscanOptionsEnum> (longOldOverscanValue);
-		overscan->GetDefaultValue(longDefaultOverscanValue);
-		defaultOverscanValue = 
-			static_cast <SVOverscanOptions::SVOverscanOptionsEnum> (longDefaultOverscanValue);
+		oldOverscanValue = static_cast<SVOverscanOptions::SVOverscanOptionsEnum> (longOldOverscanValue);
+		longDefaultOverscanValue = overscan->GetDefaultValue();
+		defaultOverscanValue = static_cast<SVOverscanOptions::SVOverscanOptionsEnum> (longDefaultOverscanValue);
 
 		SVEnumerateValueObjectClass* performance = m_pTool->getPerformance ();
 		performance->GetValue (longOldPerformanceValue);
-		oldPerformanceValue = 
-			static_cast <SVPerformanceOptions::SVPerformanceOptionsEnum> (longOldPerformanceValue);
-		performance->GetDefaultValue(longDefaultPerformanceValue);
-		defaultPerformanceValue = 
-			static_cast <SVPerformanceOptions::SVPerformanceOptionsEnum> (longDefaultPerformanceValue);
+		oldPerformanceValue = static_cast<SVPerformanceOptions::SVPerformanceOptionsEnum> (longOldPerformanceValue);
+		longDefaultPerformanceValue = performance->GetDefaultValue();
+		defaultPerformanceValue = static_cast<SVPerformanceOptions::SVPerformanceOptionsEnum> (longDefaultPerformanceValue);
 	}
 
 	// Validate new values --------------------------------------------------
@@ -878,21 +872,21 @@ HRESULT SVTADlgTranslationResizePage::SetInspectionData(SvStl::MessageContainerV
 
 	if (interpolationModeSucceeded)
 	{
-		SVValueObjectClass*	interpolationModeVO = m_pTool->getInterpolationMode();
+		SVObjectClass*	interpolationModeVO = m_pTool->getInterpolationMode();
 		AddInputRequest(interpolationModeVO, newInterpolationValue);
 		embeddedChanged = true;
 	}
 
 	if (overscanSucceeded)
 	{
-		SVValueObjectClass*	overscanVO = m_pTool->getOverscan();
+		SVObjectClass*	overscanVO = m_pTool->getOverscan();
 		AddInputRequest(overscanVO, newOverscanValue);
 		embeddedChanged = true;
 	}
 
 	if (performanceSucceeded)
 	{
-		SVValueObjectClass*	performanceVO = m_pTool->getPerformance();
+		SVObjectClass*	performanceVO = m_pTool->getPerformance();
 		AddInputRequest(performanceVO, newPerformanceValue);
 		embeddedChanged = true;
 	}

@@ -19,7 +19,6 @@
 #include "SVOCore/SVImageProcessingClass.h"
 #include "SVInfoStructs.h"
 #include "SVInspectionProcess.h"
-#include "SVValueObjectLibrary/SVValueObjectReference.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -52,21 +51,22 @@ HRESULT SVCommandInspectionGetItems::Execute()
 
 		for (SVNameObjectSet::const_iterator Iter = m_ItemNames.begin(); SUCCEEDED(Status) && Iter != m_ItemNames.end(); ++Iter)
 		{
-			SVObjectReference ref = Iter->second;
+			const SVObjectReference& rObjRef = Iter->second;
 
-			if (nullptr != ref.Object())
+			if (nullptr != rObjRef.getObject())
 			{
 				HRESULT TempStatus = S_OK;
 
 				// Check if it's a ValueObject or an ImageObject
 				// as these are the only items that can be gotten from the inspection remotely, currently
-				if (nullptr != dynamic_cast<SVValueObjectClass*>(ref.Object()))
+				SVObjectClass* pObject = rObjRef.getObject();
+				if (nullptr != rObjRef.getValueObject())
 				{
-					TempStatus = UpdateResultsWithValueData(Iter->first, ref, TriggerCount);
+					TempStatus = UpdateResultsWithValueData(Iter->first, rObjRef, TriggerCount);
 				}
-				else if (nullptr != dynamic_cast<SVImageClass*>(ref.Object()))
+				else if( nullptr != dynamic_cast<SVImageClass*> (pObject) )
 				{
-					TempStatus = UpdateResultsWithImageData(Iter->first, ref, TriggerCount);
+					TempStatus = UpdateResultsWithImageData(Iter->first, rObjRef, TriggerCount);
 				}
 				else
 				{
@@ -117,7 +117,7 @@ HRESULT SVCommandInspectionGetItems::UpdateResultsWithImageData(const SVString& 
 {
 	HRESULT Status = S_OK;
 
-	SVImageClass* pImage = dynamic_cast<SVImageClass*>(rImageRef.Object());
+	SVImageClass* pImage = dynamic_cast<SVImageClass*> (rImageRef.getObject());
 
 	if (nullptr != pImage)
 	{
@@ -178,7 +178,7 @@ HRESULT SVCommandInspectionGetItems::UpdateResultsWithImageData(const SVString& 
 	return Status;
 }
 
-HRESULT SVCommandInspectionGetItems::UpdateResultsWithValueData(const SVString& rItemName, const SVValueObjectReference& rValueRef, unsigned long TriggerCnt)
+HRESULT SVCommandInspectionGetItems::UpdateResultsWithValueData(const SVString& rItemName, const SVObjectReference& rValueRef, unsigned long TriggerCnt)
 {
 	HRESULT Status = S_OK;
 	HRESULT GetStatus = S_OK;
@@ -186,10 +186,11 @@ HRESULT SVCommandInspectionGetItems::UpdateResultsWithValueData(const SVString& 
 	SVStorage Storage;
 	unsigned long TriggerCount = TriggerCnt;
 	
-	if (!rValueRef.IsEntireArray())
+	SvOi::IValueObject* pValueObject = rValueRef.getValueObject();
+	if( nullptr != pValueObject && !rValueRef.isEntireArray())
 	{
-		///if this is an Array this is Zerro based!!!!
-		GetStatus = rValueRef.GetValue(Storage.m_Variant.GetVARIANT());
+		///if this is an Array this is Zero based!!!!
+		GetStatus = pValueObject->getValue( Storage.m_Variant, -1, rValueRef.getValidArrayIndex() );
 
 		if (S_OK == GetStatus)
 		{
@@ -205,7 +206,8 @@ HRESULT SVCommandInspectionGetItems::UpdateResultsWithValueData(const SVString& 
 	{
 		std::vector<_variant_t> Value;
 
-		GetStatus = rValueRef.GetValues(Value); 
+		if( nullptr != pValueObject )
+		GetStatus = pValueObject->getValues( Value );
 
 		if (S_OK == GetStatus)
 		{

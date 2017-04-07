@@ -124,7 +124,7 @@ BOOL SVIOAdjustDialogClass::OnInitDialog()
 	CDialog::OnInitDialog();
 
 	SVPPQObject* pPPQ( nullptr );
-	SVIOEntryHostStructPtrList ppIOEntries;
+	SVIOEntryHostStructPtrVector ppIOEntries;
 	SVIOEntryHostStructPtr pIOEntry;
 	long lPPQSize;
 	long lSize;
@@ -187,9 +187,9 @@ BOOL SVIOAdjustDialogClass::OnInitDialog()
 		{
 			pIOEntry = pConfig->GetModuleReady();
 
-			if( ( pIOEntry->m_IOId.empty() ) &&  SV_IS_KIND_OF( pIOEntry->m_pValueObject, SVBoolValueObjectClass ) )
+			if( ( pIOEntry->m_IOId.empty() ) &&  SV_IS_KIND_OF( pIOEntry->getObject(), SVBoolValueObjectClass ) )
 			{
-				nIndex = IOCombo.AddString( pIOEntry->m_pValueObject->GetCompleteName().c_str() );
+				nIndex = IOCombo.AddString( pIOEntry->getObject()->GetCompleteName().c_str() );
 				m_Items.SetItemData( nIndex, pIOEntry );
 			}// end if
 		}// end if
@@ -199,9 +199,9 @@ BOOL SVIOAdjustDialogClass::OnInitDialog()
 			if ( SvTi::SVHardwareManifest::IsProductTypeRAID( pConfig->GetProductType() ) )
 			{
 				pIOEntry = pConfig->GetRaidErrorBit();
-				if( ( pIOEntry->m_IOId.empty() ) && SV_IS_KIND_OF( pIOEntry->m_pValueObject, SVBoolValueObjectClass ) )
+				if( ( pIOEntry->m_IOId.empty() ) && SV_IS_KIND_OF( pIOEntry->getObject(), SVBoolValueObjectClass ) )
 				{
-					nIndex = IOCombo.AddString( pIOEntry->m_pValueObject->GetCompleteName().c_str() );
+					nIndex = IOCombo.AddString( pIOEntry->getObject()->GetCompleteName().c_str() );
 					m_Items.SetItemData( nIndex, pIOEntry );
 				}// end if
 			}
@@ -231,10 +231,10 @@ BOOL SVIOAdjustDialogClass::OnInitDialog()
 			for( i = 0; i < lSize; i++ )
 			{
 				pIOEntry = ppIOEntries[i];
-				if( ( pIOEntry->m_IOId.empty() ) && SV_IS_KIND_OF( pIOEntry->m_pValueObject, SVBoolValueObjectClass ) &&
+				if( ( pIOEntry->m_IOId.empty() ) && SV_IS_KIND_OF( pIOEntry->getObject(), SVBoolValueObjectClass ) &&
 					pIOEntry->m_ObjectType == IO_DIGITAL_OUTPUT )
 				{
-					nIndex = IOCombo.AddString( pIOEntry->m_pValueObject->GetCompleteName().c_str() );
+					nIndex = IOCombo.AddString( pIOEntry->getObject()->GetCompleteName().c_str() );
 					m_Items.SetItemData( nIndex, pIOEntry );
 				}// end if
 			}// end for
@@ -302,7 +302,7 @@ void SVIOAdjustDialogClass::OnSelChangeIOCombo()
 			if( pWnd ) { pWnd->EnableWindow( TRUE ); }
 
 			// You can't combine inputs or non inspection results
-			if( m_bInputMode || SV_IS_KIND_OF( pIOEntry->m_pValueParent, SVPPQObject ) )
+			if( m_bInputMode || SV_IS_KIND_OF( pIOEntry->getObject()->GetOwner(), SVPPQObject ) )
 			{
 				// disable Combine unit...
 				pWnd = GetDlgItem( IDC_COMBINE_ACK_RADIO );

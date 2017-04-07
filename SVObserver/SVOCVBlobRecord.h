@@ -45,6 +45,6 @@ public:
 	SVDoubleValueObjectClass m_dvoMatchScore;
 };
 
-typedef SVVector< SVOCVCharacterResultClass* > SVOCVCharacterResultArray;
+typedef SVVector< SVOCVCharacterResultClass* > SVOCVCharacterResultPtrVector;
 
 

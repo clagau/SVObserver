@@ -972,15 +972,15 @@ void SVProfileEdgeMarkerAdjustmentPageClass::updateGraphDisplay()
 
 void SVProfileEdgeMarkerAdjustmentPageClass::setGraphOverlayToPicture( SVLinearEdgeProcessingClass* pEdge )
 {
-	std::vector<double> histogramData;
-	pEdge->GetInputLinearData()->GetValues( histogramData );
+	std::vector<double> HistogramData;
+	pEdge->GetInputLinearData( HistogramData );
 	long handle = -1;
-	size_t sizePointsArray = histogramData.size();
+	size_t sizePointsArray = HistogramData.size();
 	double* points = new double[sizePointsArray * 2];
 	for (size_t i = 0; i < sizePointsArray; i++)
 	{
 		points[i*2] = static_cast<double>(i);
-		points[i*2+1] = static_cast<double>(histogramData[i]);
+		points[i*2+1] = static_cast<double>(HistogramData[i]);
 	}
 
 	COleSafeArray arraySafe;
@@ -1002,18 +1002,18 @@ void SVProfileEdgeMarkerAdjustmentPageClass::setGraphOverlayToPicture( SVLinearE
 	m_dialogImage.AddOverlay( 0, ParMap, &handle );
 
 	//set linear Edge lines
-	std::vector<double> linearEdge;
-	pEdge->m_svLinearEdges.GetValues( linearEdge );
+	std::vector<double> LinearEdges;
+	pEdge->m_svLinearEdges.GetArrayValues( LinearEdges );
 	ParMap[CDSVPictureDisplay::P_Color] = static_cast<long>(SV_DEFAULT_SUB_FUNCTION_COLOR_2);
 	ParMap[CDSVPictureDisplay::P_SelectedColor] = static_cast<long>(SV_DEFAULT_SUB_FUNCTION_COLOR_2);
 	ParMap[CDSVPictureDisplay::P_Is_Flip_Vertical] = false;
 	ParMap[CDSVPictureDisplay::P_Y_Max] = m_egdeLinesGraphMaxY;
 	points[1] = m_egdeLinesStartPos; // y of first point
 	points[3] = m_egdeLinesStopPos; // y of second point
-	for (size_t i = 0; i < linearEdge.size(); i++)
+	for (size_t i = 0; i < LinearEdges.size(); i++)
 	{
-		points[0] = linearEdge[i]; // x of first point
-		points[2] = linearEdge[i]; // x of second point
+		points[0] = LinearEdges[i]; // x of first point
+		points[2] = LinearEdges[i]; // x of second point
 		arraySafe.CreateOneDim(VT_R8, 4, points); // two points are four values
 		ParMap[CDSVPictureDisplay::P_ARRAY_XY] = arraySafe;
 		m_dialogImage.AddOverlay(0, ParMap, &handle );

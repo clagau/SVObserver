@@ -95,7 +95,8 @@ BOOL SVToolAdjustmentDialogTranslationPageClass::OnInitDialog()
 			m_cbInterpolation.SetEnumTypes( EnumList.c_str() );
 
 			SVString EnumString;
-			m_pInterpolationMode->GetValue( EnumString );
+			m_pInterpolationMode->getValue( EnumString );
+
 			m_cbInterpolation.SelectString( -1, EnumString.c_str() );
 		}
 
@@ -105,11 +106,11 @@ BOOL SVToolAdjustmentDialogTranslationPageClass::OnInitDialog()
 		// Check...
 		if( nullptr != m_pEvaluateTranslationX && nullptr != m_pEvaluateTranslationY )
 		{
-			_variant_t l_Variant = 0;
+			_variant_t Value = 0;
 
-			GetValue( m_pTool->GetUniqueObjectID(), SVPerformTranslationObjectGuid, l_Variant.GetVARIANT() );
+			GetValue( m_pTool->GetUniqueObjectID(), SVPerformTranslationObjectGuid, Value );
 
-			m_performTranslation = static_cast< bool >( l_Variant );
+			m_performTranslation = static_cast<bool> (Value);
 
 			UpdateData(FALSE);
 			refresh();
@@ -148,7 +149,7 @@ BOOL SVToolAdjustmentDialogTranslationPageClass::OnSetActive()
 	if( m_pInterpolationMode )
 	{
 		SVString EnumString;
-		m_pInterpolationMode->GetValue( EnumString );
+		m_pInterpolationMode->getValue( EnumString );
 		m_cbInterpolation.SelectString( -1, EnumString.c_str() );
 	}
 
@@ -248,20 +249,20 @@ void SVToolAdjustmentDialogTranslationPageClass::refresh()
 
 		SetInspectionData();
 
-		_variant_t l_Variant;
+		_variant_t Value;
 
-		if( S_OK == GetValue( m_pTool->GetUniqueObjectID(), SVOutputEvaluateTranslationXResultObjectGuid, l_Variant.GetVARIANT() ) )
+		if( S_OK == GetValue( m_pTool->GetUniqueObjectID(), SVOutputEvaluateTranslationXResultObjectGuid, Value ) )
 		{
-			m_TranslationXValue = static_cast< LPCTSTR >( _bstr_t( l_Variant ) );
+			m_TranslationXValue = static_cast< LPCTSTR >( _bstr_t( Value ) );
 		}
 		else
 		{
 			m_TranslationXValue = _T("");
 		}
 		
-		if( S_OK == GetValue( m_pTool->GetUniqueObjectID(), SVOutputEvaluateTranslationYResultObjectGuid, l_Variant.GetVARIANT() ) )
+		if( S_OK == GetValue( m_pTool->GetUniqueObjectID(), SVOutputEvaluateTranslationYResultObjectGuid, Value ) )
 		{
-			m_TranslationYValue = static_cast< LPCTSTR >( _bstr_t( l_Variant ) );
+			m_TranslationYValue = static_cast< LPCTSTR >( _bstr_t( Value ) );
 		}
 		else
 		{

@@ -136,7 +136,7 @@ bool SVTADlgArchiveResultsPage::QueryAllowExit()
 
 	m_pTool->SetFileArchive( ArchiveFileName.c_str() );
 
-	m_pTool->m_dwAppendArchiveFile.SetValue( 1, m_AppendArchive );
+	m_pTool->m_dwAppendArchiveFile.SetValue( static_cast<DWORD> (m_AppendArchive), 1 );
 
 	SvOsl::SelectorItemVector::const_iterator Iter;
 	for ( Iter = m_List.begin(); m_List.end() != Iter ; ++Iter )
@@ -154,14 +154,14 @@ bool SVTADlgArchiveResultsPage::QueryAllowExit()
 			{
 				ObjectRef.SetArrayIndex( Iter->getArrayIndex() );
 			}
-			ObjectRef.ObjectAttributesSetRef() |= SV_ARCHIVABLE;
+			ObjectRef.SetObjectAttributesSet( SV_ARCHIVABLE, SvOi::SetAttributeType::AddAttribute );
 		}
 	}
 	// Now make a list of archivable objects from the SVOutputInfoListClass.
 	m_pTool->RebuildResultsArchiveList();
 
 	// Add newly selected values to headers.
-	bool bUseHeaders = false;
+	BOOL bUseHeaders( false );
 	HRESULT hr = m_pTool->m_bvoUseHeaders.GetValue( bUseHeaders );
 	if( S_OK == hr && bUseHeaders )
 	{
@@ -231,7 +231,7 @@ BOOL SVTADlgArchiveResultsPage::OnInitDialog()
 	m_pTool->m_dwAppendArchiveFile.GetValue( dwTemp );
 	m_AppendArchive = (int)dwTemp;
 
-	bool bUseColumnHeaders = false;
+	BOOL bUseColumnHeaders( false );
 	m_pTool->m_bvoUseHeaders.GetValue( bUseColumnHeaders );
 	if(bUseColumnHeaders && m_pTool->m_arrayResultsInfoObjectsToArchive.GetSize() > 0)
 	{
@@ -289,7 +289,7 @@ void SVTADlgArchiveResultsPage::OnRemoveAllItems()
 			{
 				ObjectRef.SetArrayIndex( Iter->getArrayIndex() );
 			}
-			ObjectRef.ObjectAttributesSetRef() &= ~SV_ARCHIVABLE;
+			ObjectRef.SetObjectAttributesSet( SV_ARCHIVABLE, SvOi::SetAttributeType::RemoveAttribute );
 		}
 	}
 	m_List.clear();
@@ -324,7 +324,7 @@ void SVTADlgArchiveResultsPage::OnRemoveItem()
 			{
 				ObjectRef.SetArrayIndex( SelectedIter->getArrayIndex() );
 			}
-			ObjectRef.ObjectAttributesSetRef() &= ~SV_ARCHIVABLE;
+			ObjectRef.SetObjectAttributesSet( SV_ARCHIVABLE, SvOi::SetAttributeType::RemoveAttribute );
 		}
 
 		m_List.erase( SelectedIter );
@@ -408,7 +408,7 @@ void SVTADlgArchiveResultsPage::ShowObjectSelector()
 					{
 						ObjectRef.SetArrayIndex( Iter->getArrayIndex() );
 					}
-					ObjectRef.ObjectAttributesSetRef() &= ~SV_ARCHIVABLE;
+					ObjectRef.SetObjectAttributesSet( SV_ARCHIVABLE, SvOi::SetAttributeType::RemoveAttribute );
 				}
 			}
 		}
@@ -466,8 +466,8 @@ bool SVTADlgArchiveResultsPage::GetSelectedHeaderNamePairs( StringPairVector& He
 		// Get Lists....
 		SVStringVector HeaderLabelNames;
 		SVStringVector HeaderObjectGUIDs;
-		m_pTool->m_HeaderLabelNames.GetValues( HeaderLabelNames );
-		m_pTool->m_HeaderObjectGUIDs.GetValues( HeaderObjectGUIDs );
+		m_pTool->m_HeaderLabelNames.GetArrayValues( HeaderLabelNames );
+		m_pTool->m_HeaderObjectGUIDs.GetArrayValues( HeaderObjectGUIDs );
 
 		// Collect Object and Label into pairs.
 		for( SVStringVector::const_iterator it = HeaderObjectGUIDs.begin(),it1 = HeaderLabelNames.begin() ; it != HeaderObjectGUIDs.end() ;++it1, ++it)
@@ -529,8 +529,8 @@ bool SVTADlgArchiveResultsPage::StoreHeaderValuesToTool(StringPairVector& Header
 		}
 		m_pTool->m_HeaderLabelNames.SetArraySize( static_cast<int>(HeaderPairs.size()) );
 		m_pTool->m_HeaderObjectGUIDs.SetArraySize( static_cast<int>(HeaderPairs.size()) );
-		m_pTool->m_HeaderLabelNames.SetArrayValues(0, HeaderLabelNames.begin(), HeaderLabelNames.end());
-		m_pTool->m_HeaderObjectGUIDs.SetArrayValues(0, HeaderObjectGUIDs.begin(), HeaderObjectGUIDs.end());
+		m_pTool->m_HeaderLabelNames.SetArrayValues( HeaderLabelNames.begin(), HeaderLabelNames.end() );
+		m_pTool->m_HeaderObjectGUIDs.SetArrayValues( HeaderObjectGUIDs.begin(), HeaderObjectGUIDs.end() );
 		bRet = true;
 	}
 	return bRet;
@@ -560,7 +560,7 @@ void SVTADlgArchiveResultsPage::OnBnClickedHeaderCheck()
 	BOOL bEnable = 0 != m_List.size() && m_ColumnHeaders;
 	GetDlgItem(IDC_HEADER_BTN)->EnableWindow(bEnable);
 
-	m_pTool->m_bvoUseHeaders.SetValue( 1, m_ColumnHeaders );
+	m_pTool->m_bvoUseHeaders.SetValue( m_ColumnHeaders, 1 );
 }
 #pragma endregion Private Methods
 

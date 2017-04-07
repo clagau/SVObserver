@@ -21,7 +21,7 @@ typedef BOOL (CALLBACK *PFKEYENUMPROC) (LPCTSTR p_szKey, LPVOID pUserData);
 
 class SVRegistryClass
 {
-	typedef SVVector<unsigned char> SVByteArray;
+	typedef SVVector<unsigned char> SVByteVector;
 
 private:
 	//Handle to opened registry key.
@@ -74,7 +74,7 @@ public:
 	//Remarks:
 	//Sets the  registry value for the entry specified 
 	//by szValueName.
-	BOOL SetRegistryValue( LPCTSTR szValueName, SVByteArray& baValue, DWORD dwType, DWORD dwLength);
+	BOOL SetRegistryValue( LPCTSTR szValueName, SVByteVector& baValue, DWORD dwType, DWORD dwLength);
 
 	//BOOL GetRegistryValue (SVString &szValueName, SVByteArray 
 	//&baValue)
@@ -86,7 +86,7 @@ public:
 	//Remarks:
 	//Retrieves the value specified by szValueName and stores 
 	//it in baValue.
-	BOOL GetRegistryValue( LPCTSTR szValueName, SVByteArray& baValue );
+	BOOL GetRegistryValue( LPCTSTR szValueName, SVByteVector& baValue );
 
 	//BOOL SetRegistryValue (SVString &szValueName, SVByteArray 
 	//&baValue)
@@ -96,7 +96,7 @@ public:
 	//
 	//Remarks:
 	//Sets a registry value with the data supplied in baValue.
-	BOOL SetRegistryValue( LPCTSTR szValueName, SVByteArray& baValue );
+	BOOL SetRegistryValue( LPCTSTR szValueName, SVByteVector& baValue );
 
 	//BOOL DeleteValue (SVString &szValueName)
 	//
@@ -446,7 +446,7 @@ private:
 	//	SV_ISKEY
 	//	SV_ISVALUE
 	//	SV_ISGARBAGE
-	int GetImportString(FILE * pFile, SVString & szName, SVByteArray & baValue, DWORD * pdwType);
+	int GetImportString(FILE * pFile, SVString & szName, SVByteVector & baValue, DWORD * pdwType);
 
 	//This is a supporting function for the Import function.
 	BOOL ImportKeys(FILE * pFile);

@@ -13,6 +13,7 @@
 #pragma region Includes
 //Moved to precompiled header: #include <map>
 #include "SVObjectLibrary/SVObjectClass.h"
+#include "ObjectInterfaces/IValueObject.h"
 #pragma endregion Includes
 
 class SVToolClass;
@@ -20,18 +21,18 @@ class SVToolClass;
 struct SVInspectionProcessResetStruct
 {
 	SVInspectionProcessResetStruct();
-	SVInspectionProcessResetStruct( const SVInspectionProcessResetStruct &p_rsvObject );
+	SVInspectionProcessResetStruct( const SVInspectionProcessResetStruct &rObject );
 
-	const SVInspectionProcessResetStruct &operator=( const SVInspectionProcessResetStruct &p_rsvObject );
+	const SVInspectionProcessResetStruct &operator=( const SVInspectionProcessResetStruct &rObject );
 
-	SVResetItemEnum SetResetData( SVResetItemEnum p_eResetItem, SVObjectClass *p_psvObject );
+	SvOi::SVResetItemEnum SetResetData( SvOi::SVResetItemEnum eResetItem, SVObjectClass *pObject );
 
-	SVResetItemEnum m_eResetItem;
+	SvOi::SVResetItemEnum m_eResetItem;
 
-	SVStdSetSVObjectClassPtr m_svObjectSet;
+	SVObjectPtrSet m_ObjectSet;
 };
 
-typedef std::map< SVToolClass *, SVInspectionProcessResetStruct > SVStdMapSVToolClassPtrSVInspectionProcessResetStruct;
+typedef std::map<SVToolClass*, SVInspectionProcessResetStruct> SVStdMapSVToolClassPtrSVInspectionProcessResetStruct;
 
 #include "SVInspectionProcessResetStruct.inl"
 

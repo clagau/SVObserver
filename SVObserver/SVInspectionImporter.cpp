@@ -294,7 +294,7 @@ static void checkGlobalConstants( const SvOi::GlobalConstantDataSet& rImportedGl
 				pGlobalConstant->setDescription( DiffIter->m_Description.c_str() );
 				if( DiffIter->m_Value.vt == VT_BSTR)
 				{
-					pGlobalConstant->ObjectAttributesAllowedRef() &= ~SV_SELECTABLE_FOR_EQUATION;
+					pGlobalConstant->SetObjectAttributesAllowed( SV_SELECTABLE_FOR_EQUATION, SvOi::SetAttributeType::RemoveAttribute );
 				}
 			}
 		}

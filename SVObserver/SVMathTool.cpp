@@ -54,8 +54,8 @@ SVMathToolClass::SVMathToolClass( BOOL BCreateDefaultTaskList, SVObjectClass* PO
 void SVMathToolClass::init(void)
 {
 	// Set up your type...
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVToolObjectType;
-	m_outObjectInfo.ObjectTypeInfo.SubType    = SVMathToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SVMathToolObjectType;
 
 	// Hide and Remove Embedded Extents
 	removeEmbeddedExtents();
@@ -103,16 +103,16 @@ BOOL SVMathToolClass::CreateObject(SVObjectLevelCreateStruct* PCreateStruct )
 
 	// Override base class exposure of the drawflag
 	// This value will not be exposed for the Math Tool.
-	drawToolFlag.ObjectAttributesAllowedRef() = SV_HIDDEN;
+	drawToolFlag.SetObjectAttributesAllowed( SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
 
 	// Override base class exposure of the auxillaryextent variables
 	// These values will not be exposed for the Math Tool.
-	m_svUpdateAuxiliaryExtents.ObjectAttributesAllowedRef() = SV_HIDDEN;
-	m_svAuxiliarySourceX.ObjectAttributesAllowedRef() = SV_HIDDEN;
-	m_svAuxiliarySourceY.ObjectAttributesAllowedRef() = SV_HIDDEN;
-	m_svAuxiliarySourceAngle.ObjectAttributesAllowedRef() = SV_HIDDEN;
-	m_svAuxiliarySourceImageName.ObjectAttributesAllowedRef() = SV_HIDDEN;
-	m_svAuxiliaryDrawType.ObjectAttributesAllowedRef() = SV_HIDDEN;
+	m_svUpdateAuxiliaryExtents.SetObjectAttributesAllowed( SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
+	m_svAuxiliarySourceX.SetObjectAttributesAllowed( SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
+	m_svAuxiliarySourceY.SetObjectAttributesAllowed( SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
+	m_svAuxiliarySourceAngle.SetObjectAttributesAllowed( SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
+	m_svAuxiliarySourceImageName.SetObjectAttributesAllowed( SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
+	m_svAuxiliaryDrawType.SetObjectAttributesAllowed( SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
 
 	return m_isCreated;
 }

@@ -102,7 +102,7 @@ BOOL SVToolAdjustmentDialogAnalyzerPageClass::OnInitDialog()
 	ASSERT( m_pTool );
 	if( m_pTool )
 	{
-		const SVObjectTypeInfoStruct& rToolType = m_pTool->GetObjectInfo().ObjectTypeInfo;
+		const SVObjectTypeInfoStruct& rToolType = m_pTool->GetObjectInfo().m_ObjectTypeInfo;
 		CWnd* pWnd;
 		// Set Result/Publish button...
 		switch( rToolType.SubType )

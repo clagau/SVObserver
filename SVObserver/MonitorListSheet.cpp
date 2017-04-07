@@ -121,33 +121,33 @@ static SvUl::NameSelectionList BuildSelectionList(const SVString& PPQName, const
 							if (pInfo)
 							{
 								// Get Object Name
-								SVObjectReference objectRef = pInfo->GetObjectReference();
-								if (Allowed(pInfo->ObjectTypeInfo))
+								SVObjectReference ObjectRef = pInfo->GetObjectReference();
+								if (Allowed(pInfo->m_ObjectTypeInfo))
 								{
-									SVValueObjectClass* pValueObject = dynamic_cast<SVValueObjectClass*>(objectRef.Object());
-									if (pValueObject)
+									SvOi::IValueObject* pValueObject = ObjectRef.getValueObject();
+									if( nullptr != pValueObject )
 									{
-										if (pValueObject->IsArray())
+										if( pValueObject->isArray() )
 										{
 											// if want whole array
 											if (bAllowWholeArray)
 											{
 												// stuff entire array specifier at the top of the list
-												objectRef.SetEntireArray();
-												SVString name = objectRef.GetCompleteOneBasedObjectName();
+												ObjectRef.SetEntireArray();
+												SVString name = ObjectRef.GetCompleteOneBasedObjectName();
 												nameList.push_back(std::make_pair(name, false));
 											}
 											// add array elements
-											for (int i = 0;i < pValueObject->GetArraySize();i++)
+											for (int i = 0; i < pValueObject->getArraySize(); i++)
 											{
-												objectRef.SetArrayIndex(i);
-												SVString name = objectRef.GetCompleteOneBasedObjectName();
+												ObjectRef.SetArrayIndex(i);
+												SVString name = ObjectRef.GetCompleteOneBasedObjectName();
 												nameList.push_back(std::make_pair(name, false));
 											}
 										}
 										else
 										{
-											SVString name = objectRef.GetCompleteName();
+											SVString name = ObjectRef.GetCompleteName();
 											nameList.push_back(std::make_pair(name, false));
 										}
 									}

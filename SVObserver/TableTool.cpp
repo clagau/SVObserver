@@ -45,9 +45,9 @@ TableTool::~TableTool()
 #pragma region Public Methods
 BOOL TableTool::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
-	BOOL bOk = SVToolClass::CreateObject( pCreateStructure ); //  TRUE/FALSE
+	BOOL bOk = SVToolClass::CreateObject( pCreateStructure );
 
-	m_MaxRow.ObjectAttributesAllowedRef() |= SV_REMOTELY_SETABLE;
+	m_MaxRow.SetObjectAttributesAllowed( SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
 
 	bOk &= (nullptr != GetTool());
 	bOk &= (nullptr != GetInspection());
@@ -55,7 +55,7 @@ BOOL TableTool::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 	//set equation for table tool
 	for( size_t j = 0; j < m_friendList.size(); j++ )
 	{
-		SVEquationClass* pEquation = dynamic_cast<SVEquationClass *>(m_friendList[j].PObject);
+		SVEquationClass* pEquation = dynamic_cast<SVEquationClass *>(m_friendList[j].m_pObject);
 		if (nullptr != pEquation)
 		{
 			if (SvOi::TableClearEquationName == SVString(pEquation->GetName()))
@@ -83,16 +83,16 @@ BOOL TableTool::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 
 	// Override base class exposure of the drawflag
 	// This value will not be exposed for the Table Tool.
-	drawToolFlag.ObjectAttributesAllowedRef() = SV_HIDDEN;
+	drawToolFlag.SetObjectAttributesAllowed( SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
 
 	// Override base class exposure of the auxillaryextent variables
 	// These values will not be exposed for the Table Tool.
-	m_svUpdateAuxiliaryExtents.ObjectAttributesAllowedRef() = SV_HIDDEN;
-	m_svAuxiliarySourceX.ObjectAttributesAllowedRef() = SV_HIDDEN;
-	m_svAuxiliarySourceY.ObjectAttributesAllowedRef() = SV_HIDDEN;
-	m_svAuxiliarySourceAngle.ObjectAttributesAllowedRef() = SV_HIDDEN;
-	m_svAuxiliarySourceImageName.ObjectAttributesAllowedRef() = SV_HIDDEN;
-	m_svAuxiliaryDrawType.ObjectAttributesAllowedRef() = SV_HIDDEN;
+	m_svUpdateAuxiliaryExtents.SetObjectAttributesAllowed( SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
+	m_svAuxiliarySourceX.SetObjectAttributesAllowed( SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
+	m_svAuxiliarySourceY.SetObjectAttributesAllowed( SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
+	m_svAuxiliarySourceAngle.SetObjectAttributesAllowed( SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
+	m_svAuxiliarySourceImageName.SetObjectAttributesAllowed( SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
+	m_svAuxiliaryDrawType.SetObjectAttributesAllowed( SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
 
 	m_isCreated = bOk;
 
@@ -132,7 +132,7 @@ bool TableTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 		m_ColumnEquationList.clear();
 		for( size_t j = 0; j < m_friendList.size(); j++ )
 		{
-			TableColumnEquation* equation = dynamic_cast<TableColumnEquation*>(m_friendList[j].PObject);
+			TableColumnEquation* equation = dynamic_cast<TableColumnEquation*>(m_friendList[j].m_pObject);
 			if (nullptr != equation)
 			{
 				if (c_maxTableColumn > m_ColumnEquationList.size())
@@ -244,8 +244,8 @@ void TableTool::LocalInitialize ()
 	}
 
 	// Set up your type
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVToolObjectType;
-	m_outObjectInfo.ObjectTypeInfo.SubType    = SVTableToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SVTableToolObjectType;
 
 	// Hide and Remove Embedded Extents
 	removeEmbeddedExtents();
@@ -259,7 +259,7 @@ void TableTool::BuildInputObjectList ()
 
 void TableTool::BuildEmbeddedObjectList ()
 {
-	RegisterEmbeddedObject( &m_MaxRow, TableTool_MaxRowGuid, IDS_OBJECTNAME_TABLE_MAXROW, true, SVResetItemTool );
+	RegisterEmbeddedObject( &m_MaxRow, TableTool_MaxRowGuid, IDS_OBJECTNAME_TABLE_MAXROW, true, SvOi::SVResetItemTool );
 	m_MaxRow.SetDefaultValue( c_defaultMaxRow, TRUE );
 }
 #pragma endregion Private Methods

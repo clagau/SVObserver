@@ -52,6 +52,8 @@
 
 #define OEMRESOURCE	// OEM resource to use nicer cursors...
 
+#pragma warning( disable: 4482 )
+
 //************************************
 //! Precompiled headers section
 //************************************

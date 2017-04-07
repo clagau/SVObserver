@@ -45,7 +45,7 @@ void SVAnalyzerClass::init()
 	pAnalyzerResult	= nullptr;
 
 	// Indentify our type in the Output List
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVAnalyzerObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVAnalyzerObjectType;
 
 	// Set up the Defualt Inputs/Outputs
 	addDefaultInputObjects();

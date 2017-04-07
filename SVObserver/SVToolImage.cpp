@@ -39,21 +39,21 @@ SVImageToolClass::SVImageToolClass( BOOL BCreateDefaultTaskList, SVObjectClass* 
 void SVImageToolClass::init()
 {
 	// Set up your type...
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVToolObjectType;
-	m_outObjectInfo.ObjectTypeInfo.SubType    = SVToolImageObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SVToolImageObjectType;
 
 	// Register Embedded Objects
-	RegisterEmbeddedObject( &outputEnableOffsetA, SVEnableOffsetAObjectGuid, IDS_OBJECTNAME_ENABLEOFFSETA, false, SVResetItemNone );
-	RegisterEmbeddedObject( &outputOffsetAPoint, SVOffsetAPointObjectGuid, IDS_OBJECTNAME_OFFSETAPOINT, false, SVResetItemNone );
-	RegisterEmbeddedObject( &outputEnableOffsetB, SVEnableOffsetBObjectGuid, IDS_OBJECTNAME_ENABLEOFFSETB, false, SVResetItemNone );
-	RegisterEmbeddedObject( &outputOffsetBPoint, SVOffsetBPointObjectGuid, IDS_OBJECTNAME_OFFSETBPOINT, false, SVResetItemNone );
-	RegisterEmbeddedObject( &outputOperator, SVArithmeticOperatorObjectGuid, IDS_OBJECTNAME_ARITHMETICOPERATOR, false, SVResetItemOwner);
+	RegisterEmbeddedObject( &outputEnableOffsetA, SVEnableOffsetAObjectGuid, IDS_OBJECTNAME_ENABLEOFFSETA, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &outputOffsetAPoint, SVOffsetAPointObjectGuid, IDS_OBJECTNAME_OFFSETAPOINT, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &outputEnableOffsetB, SVEnableOffsetBObjectGuid, IDS_OBJECTNAME_ENABLEOFFSETB, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &outputOffsetBPoint, SVOffsetBPointObjectGuid, IDS_OBJECTNAME_OFFSETBPOINT, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &outputOperator, SVArithmeticOperatorObjectGuid, IDS_OBJECTNAME_ARITHMETICOPERATOR, false, SvOi::SVResetItemOwner);
 
 	m_svToolExtent.SetTranslation(SVExtentTranslationFigureShift);
 
 	// Register SourceImageNames Value Object
-	RegisterEmbeddedObject( &m_svSourceImageNames, SVSourceImageNamesGuid, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SVResetItemTool );
-	m_svSourceImageNames.SetArraySize(2);
+	RegisterEmbeddedObject( &m_SourceImageNames, SVSourceImageNamesGuid, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SvOi::SVResetItemTool );
+	m_SourceImageNames.SetArraySize(2);
 
 	// Set Embedded Defaults...
 	POINT defaultPoint;
@@ -133,13 +133,14 @@ BOOL SVImageToolClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure
 	BOOL bOk = SVToolClass::CreateObject( PCreateStructure );
 
 	// Set / Reset Printable Flags
-	outputEnableOffsetA.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
-	outputOffsetAPoint.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
-	outputEnableOffsetB.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
-	outputOffsetBPoint.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
-	outputOperator.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
+	outputEnableOffsetA.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	outputOffsetAPoint.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	outputEnableOffsetB.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	outputOffsetBPoint.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	outputOperator.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
 
-	m_svSourceImageNames.ObjectAttributesAllowedRef() &=~SV_REMOTELY_SETABLE & ~SV_SETABLE_ONLINE;
+	m_SourceImageNames.setStatic( true );
+	m_SourceImageNames.SetObjectAttributesAllowed( SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE, SvOi::SetAttributeType::RemoveAttribute );
 
 	bOk &= S_OK == UpdateTranslation();
 	
@@ -290,9 +291,9 @@ HRESULT SVImageToolClass::UpdateTranslation()
 	return l_hrOK;
 }
 
-SVStaticStringValueObjectClass* SVImageToolClass::GetInputImageNames()
+SVStringValueObjectClass* SVImageToolClass::GetInputImageNames()
 {
-	return &m_svSourceImageNames;
+	return &m_SourceImageNames;
 }
 
 HRESULT SVImageToolClass::SetImageExtentToParent(unsigned long p_ulIndex )

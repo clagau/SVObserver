@@ -81,7 +81,7 @@ protected:
 
 	void init( void );
 	void resetValues();
-	virtual bool onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+	virtual bool onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
 	void RestoreFeatureAttributes();
 
@@ -91,16 +91,16 @@ private:
 	bool ValidateLocal(SvStl::MessageContainerVector *pErrorMessages=nullptr) const;
 
 protected:
-	SVDoubleValueObjectClass    msvValue [SV_NUMBER_OF_STAT_FEATURES];
-	SVStringValueObjectClass    msvOccurenceValue;
-	SVStringValueObjectClass    msvPersistantFeaturesEnabled;
-	SVStringValueObjectClass	msvVariableGUID_OBSOLETE;
-	SVStringValueObjectClass    msvVariableName;
+	SVDoubleValueObjectClass    m_Value[SV_NUMBER_OF_STAT_FEATURES];
+	SVStringValueObjectClass    m_OccurenceValue;
+	SVStringValueObjectClass    m_PersistantFeaturesEnabled;
+	SVStringValueObjectClass	m_VariableGUID_OBSOLETE;
+	SVStringValueObjectClass    m_VariableName;
 
-	DWORD                       msvlDefaultAttributes; 
+	UINT                        m_DefaultAttributes; 
 
-	double                      msvAccumulatedTotal;
-	double                      msvAccumulatedSquares;
+	double                      m_AccumulatedTotal;
+	double                      m_AccumulatedSquares;
 
 	// Input: 
 	SVInObjectInfoStruct        m_inputObjectInfo;

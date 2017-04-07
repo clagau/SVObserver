@@ -132,8 +132,5 @@
     <None Include="SVDataItemManagerTemplate.inl">
       <Filter>Header Files</Filter>
     </None>
-    <None Include="SVTaskObjectInterfaceInputRequestStruct.inl">
-      <Filter>Header Files</Filter>
-    </None>
   </ItemGroup>
 </Project>

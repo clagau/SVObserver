@@ -43,7 +43,7 @@ public:
 		SVLutTransformTypeInfo() {m_eType = LutTransformTypeUnknown; m_pType = nullptr;}
 		SVLutTransformTypeInfo(SVLutTransformOperationEnum eType, SVLutTransformOperation* pType, const SVString& rType) {m_eType = eType; m_pType = pType; m_Type = rType;}
 	};
-	typedef SVVector< SVLutTransformTypeInfo > SVLutTransformTypeInfoArray;
+	typedef SVVector<SVLutTransformTypeInfo> SVLutTransformTypeInfoVector;
 public:
 	SVLutTransformOperationMap();
 	~SVLutTransformOperationMap();
@@ -52,9 +52,9 @@ public:
 	const SVLutTransformTypeInfo* GetInfo(SVLutTransformOperationEnum e);
 	const SVLutTransformTypeInfo* GetInfo(const SVLutTransformOperation* pType);
 	const SVLutTransformTypeInfo* GetInfo(const SVString& rType);
-	const SVLutTransformTypeInfoArray& GetTypes() {return maTypeInfo;}
+	const SVLutTransformTypeInfoVector& GetTypes() {return maTypeInfo;}
 private:
-	SVLutTransformTypeInfoArray maTypeInfo;
+	SVLutTransformTypeInfoVector maTypeInfo;
 };
 
 typedef std::vector<DWORD> SVLutTransformParameters;

@@ -29,15 +29,15 @@ SVLinearEdgePositionLineAnalyzerClass::SVLinearEdgePositionLineAnalyzerClass( BO
 void SVLinearEdgePositionLineAnalyzerClass::init()
 {
 	// Identify our type
-	m_outObjectInfo.ObjectTypeInfo.SubType = SVLinearEdgePositionAnalyzerObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVLinearEdgePositionAnalyzerObjectType;
 
 	SVLinearEdgeProcessingClass *l_pEdge = new SVLinearEdgeAProcessingClass( this );
 
 	AddFriend( l_pEdge->GetUniqueObjectID() );
 
-	RegisterEmbeddedObject( &dpEdge, SVDPEdgeAObjectGuid, IDS_OBJECTNAME_DPEDGE, false, SVResetItemNone );
-	RegisterEmbeddedObject( &m_svLinearDistance, SVLinearDistanceEdgeAObjectGuid, IDS_OBJECTNAME_LINEAR_DISTANCE_EDGE_A, false, SVResetItemNone );
-	RegisterEmbeddedObject( &m_svShowAllEdgeAOverlays, SVShowAllEdgeAOverlaysGuid, IDS_OBJECTNAME_SHOW_ALL_EDGE_A_OVERLAYS, false, SVResetItemNone );
+	RegisterEmbeddedObject( &dpEdge, SVDPEdgeAObjectGuid, IDS_OBJECTNAME_DPEDGE, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_svLinearDistance, SVLinearDistanceEdgeAObjectGuid, IDS_OBJECTNAME_LINEAR_DISTANCE_EDGE_A, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_svShowAllEdgeAOverlays, SVShowAllEdgeAOverlaysGuid, IDS_OBJECTNAME_SHOW_ALL_EDGE_A_OVERLAYS, false, SvOi::SVResetItemNone );
 
 	m_bEnableDirection = TRUE;
 	m_bEnableEdgeSelect = TRUE;
@@ -105,8 +105,8 @@ BOOL SVLinearEdgePositionLineAnalyzerClass::CreateObject( SVObjectLevelCreateStr
 {
 	BOOL bOk = SVLinearAnalyzerClass::CreateObject( PCreateStructure );
 
-	dpEdge.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;	// Point
-	m_svLinearDistance.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
+	dpEdge.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_svLinearDistance.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 
 	m_isCreated = bOk;
 
@@ -123,17 +123,17 @@ bool SVLinearEdgePositionLineAnalyzerClass::ResetObject(SvStl::MessageContainerV
 	return __super::ResetObject(pErrorMessages) && ValidateEdgeA(pErrorMessages);
 }
 
-bool SVLinearEdgePositionLineAnalyzerClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVLinearEdgePositionLineAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
-	SVDPointClass l_svDPoint;
-	SVExtentPointStruct l_svEdgePoint;
-	double l_dDistance = 0.0;
+	SVDPointClass DPoint;
+	SVExtentPointStruct EdgePoint;
+	double Distance( 0.0 );
 
 	// All inputs and outputs must be validated first
-	bool l_bOk = __super::onRun( RRunStatus, pErrorMessages ) && ValidateEdgeA(pErrorMessages);
+	bool Result = __super::onRun( rRunStatus, pErrorMessages ) && ValidateEdgeA(pErrorMessages);
 	if (nullptr == GetTool())
 	{
-		l_bOk = false;
+		Result = false;
 		if (nullptr != pErrorMessages)
 		{
 			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
@@ -141,41 +141,39 @@ bool SVLinearEdgePositionLineAnalyzerClass::onRun( SVRunStatusClass& RRunStatus,
 		}
 	}
 
-	if( l_bOk )
+	if( Result )
 	{
-		SVImageExtentClass l_svExtents;
+		SVImageExtentClass Extents;
 
-		if( S_OK != GetEdgeA()->GetOutputEdgePoint( l_svEdgePoint ) )
+		if( S_OK != GetEdgeA()->GetOutputEdgePoint( EdgePoint ) )
 		{
-			RRunStatus.SetFailed();	
+			rRunStatus.SetFailed();	
 		}
 
-		if( S_OK != GetEdgeA()->GetOutputEdgeDistance( l_dDistance ) )
+		if( S_OK != GetEdgeA()->GetOutputEdgeDistance( Distance ) )
 		{
-			RRunStatus.SetFailed();	
+			rRunStatus.SetFailed();	
 		}
 
-		l_bOk &= S_OK == GetImageExtent( l_svExtents ) &&
-		         S_OK == l_svExtents.TranslateFromOutputSpace( l_svEdgePoint, l_svEdgePoint );
+		Result &= S_OK == GetImageExtent( Extents ) && S_OK == Extents.TranslateFromOutputSpace( EdgePoint, EdgePoint );
 
 		SVToolClass* pTool = dynamic_cast<SVToolClass*>(GetTool());
-		l_bOk &= pTool && S_OK == pTool->GetImageExtent( l_svExtents ) &&
-		         S_OK == l_svExtents.TranslateFromOutputSpace( l_svEdgePoint, l_svEdgePoint );
+		Result &= pTool && S_OK == pTool->GetImageExtent( Extents ) && S_OK == Extents.TranslateFromOutputSpace( EdgePoint, EdgePoint );
 
-		if (!l_bOk && nullptr != pErrorMessages)
+		if (!Result && nullptr != pErrorMessages)
 		{
 			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_RunLinearEdgeFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 			pErrorMessages->push_back(Msg);
 		}
 	}
 
-	l_svDPoint.x = l_svEdgePoint.m_dPositionX;
-	l_svDPoint.y = l_svEdgePoint.m_dPositionY;
+	DPoint.x = EdgePoint.m_dPositionX;
+	DPoint.y = EdgePoint.m_dPositionY;
 
-	if( S_OK != m_svLinearDistance.SetValue( RRunStatus.m_lResultDataIndex, l_dDistance ) ||
-		 S_OK != dpEdge.SetValue( RRunStatus.m_lResultDataIndex, l_svDPoint ) ) 
+	if( S_OK != m_svLinearDistance.SetValue( Distance, rRunStatus.m_lResultDataIndex ) ||
+		 S_OK != dpEdge.SetValue( DPoint, rRunStatus.m_lResultDataIndex ) ) 
 	{
-		l_bOk = false;
+		Result = false;
 		if (nullptr != pErrorMessages)
 		{
 			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_SetValueFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
@@ -183,11 +181,11 @@ bool SVLinearEdgePositionLineAnalyzerClass::onRun( SVRunStatusClass& RRunStatus,
 		}
 	}
 	
-	if( ! l_bOk )
+	if( !Result )
 	{
 		SetInvalid();
-		RRunStatus.SetInvalid();	
+		rRunStatus.SetInvalid();	
 	}
 
-	return l_bOk;
+	return Result;
 }

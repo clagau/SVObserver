@@ -26,13 +26,12 @@ public:
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
 	virtual BOOL CloseObject() override;
 
-	SVDoubleValueObjectClass* getInputDouble();
 protected:
-	virtual bool onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+	virtual bool onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
 // Data Element(s):
 protected:
 	// Output
-	SVDoubleValueObjectClass		value;
+	SVDoubleValueObjectClass m_Value;
 };
 

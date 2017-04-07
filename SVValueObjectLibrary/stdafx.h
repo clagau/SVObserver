@@ -27,6 +27,8 @@
 #define VC_LEAN_AND_MEAN             // Exclude rarely-used stuff from Windows headers
 #define _CRT_SECURE_NO_WARNINGS
 
+#pragma warning( disable: 4482 )
+
 //************************************
 //! Precompiled headers section
 //************************************

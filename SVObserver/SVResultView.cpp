@@ -22,7 +22,6 @@
 #include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVIPChildFrm.h"
-#include "RootObject.h"
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "ObjectInterfaces/ErrorNumbers.h"
@@ -111,7 +110,15 @@ void SVResultViewClass::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHint )
 	SVIPDoc* l_pIPDoc = GetIPDoc();
 
 	bool Update = true;
-	RootObject::getRootChildValue( SvOl::FqnEnvironmentResultUpdate, Update );
+	SVObjectClass* pObject(nullptr);
+	SVObjectManagerClass::Instance().GetObjectByIdentifier(EnvironmentResultUpdateUidGuid, pObject);
+	if (nullptr != pObject)
+	{
+		double Value;
+		//Use the getValue with double as it is faster (no dynamic casting)
+		pObject->getValue(Value);
+		Update = 0.0 < Value ? true : false;
+	}
 	Update = Update || !SVSVIMStateClass::CheckState( SV_STATE_RUNNING );
 
 	if( !Update )

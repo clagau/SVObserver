@@ -26,7 +26,7 @@ public:
 
 	virtual ~SVClassRegisterListClass();
 
-	SVObjectClass* ConstructNewObject( const SVGUID& RUniqueClassID );
+	SVObjectClass* ConstructNewObject( const SVGUID& rUniqueClassID );
 
 	void Add( SVClassRegisterClass* pClass);
 
@@ -37,16 +37,18 @@ public:
 
 protected:
 	typedef SVMap< SVGUID, SVClassRegisterClass* > SVRegisterClasses;
+	typedef std::map<SVGUID, SVGUID>  ExchangeClassMap;
 
 	SVClassRegisterListClass();
 
+	ExchangeClassMap m_ExchangeClassID;			//This map is used to exchange a class ID with another, can construct another object when read from a confguration
 	SVRegisterClasses m_Registers;
 
 private:
 	// Do not Implement
-	SVClassRegisterListClass( const SVClassRegisterListClass& p_rObject );
+	SVClassRegisterListClass( const SVClassRegisterListClass& rObject );
 
 	// Do not Implement
-	const SVClassRegisterListClass& operator=( const SVClassRegisterListClass& p_rObject );
+	const SVClassRegisterListClass& operator=( const SVClassRegisterListClass& rObject );
 };
 

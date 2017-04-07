@@ -107,8 +107,6 @@ public:
 	HRESULT ClearUnUsedData( );
 
 private:
-	HRESULT GetValueObjectData( void* l_mem, long p_lNumBytes, SVValueObjectClass* p_ValueObject, long p_lProductIndex );
-
 	bool RenameGroup( const SVString& rOldName, const SVString& rNewName );
 	SVRemoteOutputGroupMap m_RemoteGroupParameters;	// Map of RemoteOutput parameters based on RemoteOutput ID
 };

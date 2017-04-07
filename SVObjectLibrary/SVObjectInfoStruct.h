@@ -25,9 +25,9 @@ class SVObjectClass;
 struct SVObjectInfoStruct
 {
 	SVObjectInfoStruct();
-	SVObjectInfoStruct( const SVObjectInfoStruct& p_rsvObject );
-	SVObjectInfoStruct( SVObjectClass* p_psvObject );
-	SVObjectInfoStruct( SVObjectReference p_svObject );
+	SVObjectInfoStruct( const SVObjectInfoStruct& rObjectInfo );
+	SVObjectInfoStruct( SVObjectClass* pObject );
+	SVObjectInfoStruct( const SVObjectReference& rObjectRef );
 
 	virtual ~SVObjectInfoStruct();
 
@@ -37,22 +37,22 @@ struct SVObjectInfoStruct
 
 	void ClearObjectInfo();
 
-	HRESULT SetObject( const SVGUID& p_rObjectID );
-	HRESULT SetObject( const SVString& p_rName );
-	HRESULT SetObject( const SVObjectTypeInfoStruct& p_rTypeInfo );
-	HRESULT SetObject( SVObjectClass* p_psvObject );
-	HRESULT SetObject( const SVObjectReference& p_rObject );
-	HRESULT SetObject( const SVObjectInfoStruct& p_rObject );
+	HRESULT SetObject( const SVGUID& rObjectID );
+	HRESULT SetObject( const SVString& rName );
+	HRESULT SetObject( const SVObjectTypeInfoStruct& rTypeInfo );
+	HRESULT SetObject( SVObjectClass* pObject );
+	HRESULT SetObject( const SVObjectReference& rObjectRef );
+	HRESULT SetObject( const SVObjectInfoStruct& rObjectInfo );
 
-	bool operator == ( const SVObjectInfoStruct& rhs ) const;
-	bool operator == ( const SVObjectReference& rhs ) const;
+	bool operator == ( const SVObjectInfoStruct& rRhs ) const;
+	bool operator == ( const SVObjectReference& rRhs ) const;
 
 	SVObjectReference GetObjectReference() const;
 	BOOL CheckExistence();
 
-	SVObjectClass* PObject;					// Where I am
-	SVGUID UniqueObjectID;					// Who I am
-	SVObjectTypeInfoStruct ObjectTypeInfo;  // What I am
+	SVObjectClass* m_pObject;					// Where I am
+	SVGUID m_UniqueObjectID;					// Who I am
+	SVObjectTypeInfoStruct m_ObjectTypeInfo;  // What I am
 	SVObjectNameInfo m_ObjectNameInfo;
 };
 

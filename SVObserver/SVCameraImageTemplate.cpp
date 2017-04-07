@@ -27,12 +27,12 @@ SVCameraImageTemplate::SVCameraImageTemplate( LPCSTR ObjectName )
 , digitizerObjectID()
 , m_CurrentIndex()
 {
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVImageObjectType;
-	m_outObjectInfo.ObjectTypeInfo.SubType = SVCameraImageTemplateObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVImageObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVCameraImageTemplateObjectType;
 
 	// SVMainImageClass is not a result image.
 	// We need to remove the PUBLISH attribute.
-	SvUl::SetBits( ObjectAttributesAllowedRef(), SV_PUBLISH_RESULT_IMAGE, false );
+	SetObjectAttributesAllowed( SV_PUBLISH_RESULT_IMAGE, SvOi::SetAttributeType::RemoveAttribute );
 }
 
 SVCameraImageTemplate::SVCameraImageTemplate( SVObjectClass* POwner, int StringResourceID )
@@ -41,12 +41,12 @@ SVCameraImageTemplate::SVCameraImageTemplate( SVObjectClass* POwner, int StringR
 , digitizerObjectID()
 , m_CurrentIndex()
 {
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVImageObjectType;
-	m_outObjectInfo.ObjectTypeInfo.SubType = SVCameraImageTemplateObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVImageObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVCameraImageTemplateObjectType;
 
 	// SVMainImageClass is not a result image.
 	// We need to remove the PUBLISH attribute.
-	SvUl::SetBits( ObjectAttributesAllowedRef(), SV_PUBLISH_RESULT_IMAGE, false );
+	SetObjectAttributesAllowed( SV_PUBLISH_RESULT_IMAGE, SvOi::SetAttributeType::RemoveAttribute );
 }
 
 SVCameraImageTemplate::~SVCameraImageTemplate()
@@ -97,8 +97,8 @@ BOOL SVCameraImageTemplate::CreateObject(SVObjectLevelCreateStruct* PCreateStruc
 
 	// SVMainImageClass is not a result image.
 	// We need to remove the PUBLISH attribute.
-	SvUl::SetBits( ObjectAttributesAllowedRef(), SV_PUBLISH_RESULT_IMAGE, false );
-	SvUl::SetBits( ObjectAttributesAllowedRef(), SV_DD_IMAGE, true );
+	SetObjectAttributesAllowed( SV_PUBLISH_RESULT_IMAGE, SvOi::SetAttributeType::RemoveAttribute );
+	SetObjectAttributesAllowed( SV_DD_IMAGE, SvOi::SetAttributeType::AddAttribute );
 	
 	m_isCreated = l_bOk;
 	
@@ -179,23 +179,20 @@ HRESULT SVCameraImageTemplate::RestoreMainImage( SVInspectionProcess* p_psvInspe
 	return l_svOk;
 }
 
-HRESULT SVCameraImageTemplate::GetObjectValue( const SVString& p_rValueName, VARIANT& p_rVariantValue ) const
+HRESULT SVCameraImageTemplate::GetObjectValue( const SVString& rValueName, _variant_t& rValue ) const
 {
 	HRESULT hr = S_OK;
 
-	if( scDigitizerIDTag == p_rValueName )
+	if( scDigitizerIDTag == rValueName )
 	{
-		_variant_t l_TempVariant;
 
-		l_TempVariant.Attach( p_rVariantValue );
 
-		l_TempVariant = digitizerObjectID.ToVARIANT();
+		rValue = digitizerObjectID.ToVARIANT();
 
-		l_TempVariant.Detach();
 	}
 	else
 	{
-		hr = SVImageClass::GetObjectValue( p_rValueName, p_rVariantValue );
+		hr = SVImageClass::GetObjectValue( rValueName, rValue );
 	}
 
 	return hr;

@@ -14,8 +14,12 @@
 #pragma region Includes
 //Moved to precompiled header: #include <vector>
 #include "ObjectInterfaces/SVObjectTypeInfoStruct.h"
+#include "ObjectInterfaces/IObjectClass.h"
+#include "ObjectInterfaces/IValueObject.h"
 #include "SVUtilityLibrary/SVString.h"
 #include "SVObjectNameInfo.h"
+//! Do not include SVObjectClass.h this causes circular includes with SVOutObjectInfoStruct and SVInObjectInfoStruct
+////@TODO[GRA][7.50][13.02.2017] The circular include dependencies need to be fixed
 #pragma endregion Includes
 
 class SVObjectClass;
@@ -42,33 +46,35 @@ public:
 	const SVObjectReference& operator = ( const SVObjectReference& rhs );
 	bool operator == ( const SVObjectReference& rhs ) const;
 
-	// we don't want automatic conversion to SVObjectClass* (silent loss of information).
-	// use the Object() accessor instead
-	//operator SVObjectClass*();
-	//operator const SVObjectClass*() const;
-	SVObjectClass* operator -> ();
-	const SVObjectClass* operator -> () const;
+	SVObjectClass* getObject() const;
 
-	SVObjectClass* Object() const;
-	
-	//************************************
-	//! True if Index is used 
-	//! \returns bool
-	//************************************
-	bool IsIndexPresent() const;
+	SvOi::IValueObject* getValueObject() const;
 	
 	//************************************
 	//! returns the 0 based Index. If Index is not used or the the whole array is referenced -1 is returned.
 	//! \returns long
 	//************************************
 	long ArrayIndex() const;
+
+	//************************************
+	//! returns the 0 based Index. If Index is -1 then 0 used
+	//! \returns long
+	//************************************
+	long getValidArrayIndex() const;
+
 	SVString DefaultValue() const;
 	
+	//************************************
+	//! returns true if value object is an array
+	//! \returns bool
+	//************************************
+	bool isArray() const;
+
 	//************************************
 	//! returns true if the whole array is referenced 
 	//! \returns bool
 	//************************************
-	bool IsEntireArray() const;
+	bool isEntireArray() const;
 	GUID Guid() const;
 
 	void SetEntireArray();
@@ -85,8 +91,8 @@ public:
 
 	const UINT ObjectAttributesAllowed() const;
 	const UINT ObjectAttributesSet() const;
-	UINT& ObjectAttributesAllowedRef();
-	UINT& ObjectAttributesSetRef();
+	void SetObjectAttributesAllowed( UINT Attributes, SvOi::SetAttributeType Type );
+	void SetObjectAttributesSet( UINT Attributes, SvOi::SetAttributeType Type );
 
 	bool operator < ( const SVObjectReference& rhs ) const;
 
@@ -97,53 +103,23 @@ public:
 	//! Increments the array index if the reference points to a single array variable. 
 	//! Used to correct the index where zero-based name strings are used. 
 	//! (Zero-based name strings are only used in deprecated code)
-	//! \returns int the new arrayIndex 
+	//! \returns long the new arrayIndex 
 	//************************************
-	int IncrementIndex();
+	long IncrementIndex();
 
 protected:	
 	const SVString& GetIndex() const;
-	static GUID GetObjectGuid( SVObjectClass* );	// for compilation dependency separation
 	
 	void init();
 	SVObjectClass* m_pObject;
+	mutable SvOi::IValueObject* m_pValueObject;
 	GUID m_Guid;
 	SVObjectNameInfo m_NameInfo;
 
-	int m_ArrayIndex; // zero based Array index.   -1 and true for IsArray indicates reference to whole array
-	bool m_IsArray; 
-
+	long m_ArrayIndex; // zero based Array index.   -1 and true for isArray indicates reference to whole array
 };
 
 typedef std::vector<SVObjectReference> SVObjectReferenceVector;
-
-template <class T>
-class SVCheckedObjectReference : public SVObjectReference
-{
-public:
-	SVCheckedObjectReference() : SVObjectReference() {}
-
-	SVCheckedObjectReference( SVObjectClass* pObject, long lArrayIndex, SVString strDefaultValue = SVString() );
-	SVCheckedObjectReference( T* pObject, long lArrayIndex, SVString strDefaultValue = SVString() );
-
-	SVCheckedObjectReference( SVObjectClass* pObject, const SVObjectNameInfo& p_rNameInfo );
-	SVCheckedObjectReference( T* pObject, const SVObjectNameInfo& p_rNameInfo );
-
-	SVCheckedObjectReference( SVObjectClass* pObject );
-	SVCheckedObjectReference( T* pObject );
-
-	SVCheckedObjectReference( const SVObjectReference& rhs );
-	SVCheckedObjectReference( const SVCheckedObjectReference<T>& rhs );
-
-	const SVCheckedObjectReference<T>& operator = ( const SVObjectReference& rhs );
-	const SVCheckedObjectReference<T>& operator = ( const SVCheckedObjectReference<T>& rhs );
-
-	T* operator -> ();
-	const T* operator -> () const;
-
-	T* Object();
-	const T* Object() const;
-};
 
 #include "SVObjectReference.inl"
 

@@ -34,17 +34,18 @@ SVThinningFilterClass::~SVThinningFilterClass()
 
 void SVThinningFilterClass::init()
 {
-	m_outObjectInfo.ObjectTypeInfo.SubType = SVThinningFilterObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVThinningFilterObjectType;
 
-	RegisterEmbeddedObject( &m_lvoItterations, SVThinningFilterItterationsGuid, IDS_OBJECTNAME_THINNINGFILTER_ITTERATIONS, false, SVResetItemNone );
-	RegisterEmbeddedObject( &m_bvoGrayOn, SVThinningFilterGrayOnGuid, IDS_OBJECTNAME_THINNINGFILTER_GRAYON, false, SVResetItemNone );
+	RegisterEmbeddedObject( &m_lvoItterations, SVThinningFilterItterationsGuid, IDS_OBJECTNAME_THINNINGFILTER_ITTERATIONS, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_bvoGrayOn, SVThinningFilterGrayOnGuid, IDS_OBJECTNAME_THINNINGFILTER_GRAYON, false, SvOi::SVResetItemNone );
 
 	m_lvoItterations.SetDefaultValue( 1L, true );
 	m_bvoGrayOn.SetDefaultValue( false, true );
 
 
-	m_lvoItterations.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE;
-	m_bvoGrayOn.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE;
+	const UINT cAttributes = SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE;
+	m_lvoItterations.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
+	m_bvoGrayOn.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 
 	// Set default inputs and outputs
 	addDefaultInputObjects();
@@ -70,11 +71,11 @@ BOOL SVThinningFilterClass::CreateObject( SVObjectLevelCreateStruct* PCreateStru
 // .Description : Runs this operator.
 //              : Returns FALSE, if operator cannot run ( may be deactivated ! )
 ////////////////////////////////////////////////////////////////////////////////
-bool SVThinningFilterClass::onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVThinningFilterClass::onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 { 
 	// Force a copy forward to keep the display correct
-	m_lvoItterations.CopyLastSetValue( RRunStatus.m_lResultDataIndex );
-	m_bvoGrayOn.CopyLastSetValue( RRunStatus.m_lResultDataIndex );
+	m_lvoItterations.CopyLastSetValue( rRunStatus.m_lResultDataIndex );
+	m_bvoGrayOn.CopyLastSetValue( rRunStatus.m_lResultDataIndex );
 
 	long lItterations;
 	long lMode;
@@ -109,7 +110,7 @@ bool SVThinningFilterClass::onRun( bool First, SVSmartHandlePointer RInputImageH
 			}
 			// Signal that something was wrong...
 			SetInvalid();
-			RRunStatus.SetInvalid();
+			rRunStatus.SetInvalid();
 			return false;
 		}
 
@@ -127,7 +128,7 @@ bool SVThinningFilterClass::onRun( bool First, SVSmartHandlePointer RInputImageH
 
 	// Signal that something was wrong...
 	SetInvalid();
-	RRunStatus.SetInvalid();
+	rRunStatus.SetInvalid();
 	return false;
 }
 

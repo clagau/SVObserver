@@ -56,7 +56,8 @@
 			SVInputObjectListType					= 0x00000055,
 			SVOutputObjectListType					= 0x00000056,
 			SVIOControllerType                      = 0x00000057,
-			SVRemoteOutputGroupType                 = 0x00000058,
+			SVRemoteOutputGroupType					= 0x00000058,
+			SVIoObjectType							= 0x00000059,
 			SVLinearEdgeProcessingObjectType        = 0x00000060,
 			SVBasicValueObjectType			        = 0x00000061,
 			SVEnvironmentObjectType			        = 0x00000062,
@@ -132,8 +133,8 @@
 			SVShiftToolObjectType						= 0x00000028,
 			SVResizeToolObjectType						= 0x00000029,
 			SVRingBufferToolObjectType					= 0x0000002a,
-			SVTableToolObjectType					= 0x0000002b,
-			SVTableAnalyzerToolObjectType			= 0x0000002c,
+			SVTableToolObjectType						= 0x0000002b,
+			SVTableAnalyzerToolObjectType				= 0x0000002c,
 
 			// Analyzer Subtypes:	
 			SVPixelAnalyzerObjectType				    = 0x00000100,
@@ -197,6 +198,13 @@
 			SVEvaluateStartAngleObjectType				= 0x0000048d,
 			SVEvaluateEndAngleObjectType				= 0x0000048e,
 			
+			// IO Subtypes:
+			SVDigitalInputObjectType					= 0x00000500,
+			SVDigitalOutputObjectType					= 0x00000501,
+			SVRemoteInputObjectType						= 0x00000502,
+			SVRemoteOutputObjectType					= 0x00000503,
+			SVCameraDataInputObjectType					= 0x00000504,
+
 			// Transform Subtypes:
 			SVImageTransformObjectType					= 0x00000600,
 			SVPointTransformObjectType					= 0x00000601,

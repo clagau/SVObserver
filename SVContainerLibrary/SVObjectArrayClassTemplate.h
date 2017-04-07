@@ -76,7 +76,7 @@ namespace Sv { namespace Container
 	typedef SVObjectArrayClassTemplate<double> SVObjectDoubleArrayClass;
 	typedef SVObjectArrayClassTemplate<DWORD> SVObjectDWordArrayClass;
 	typedef SVObjectArrayClassTemplate<__int64> SVObjectInt64ArrayClass;
-	typedef SVObjectArrayClassTemplate< _variant_t > SVObjectVariantArrayClass;
+	typedef SVObjectArrayClassTemplate<_variant_t> SVObjectVariantArrayClass;
 	typedef SVObjectArrayClassTemplate<SVString> SVObjectSVStringArrayClass;
 } /*SVContainerLibrary*/ } /*Seidenader*/
 

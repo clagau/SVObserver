@@ -1885,7 +1885,7 @@ HRESULT CSVOPropertyPageDlg::AdjustCameraImageFormat( LPCTSTR sSelectedFormat, S
 	SVConfigurationObject* pConfig( nullptr );
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
-	SVInspectionProcessArray aInspections;
+	SVInspectionProcessVector aInspections;
 	SVDeviceParamCollection l_CurrentParams;
 
 	SVAcquisitionClassPtr pDevice( SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( DeviceName.c_str() ) );

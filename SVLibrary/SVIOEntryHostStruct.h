@@ -11,13 +11,14 @@
 #pragma once
 
 #pragma region Includes
-//Moved to precompiled header: #include <deque>
+//Moved to precompiled header: #include <vector>
+#include "ObjectInterfaces/IValueObject.h"
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVUtilityLibrary/SVSharedPtr.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 class SVObjectClass;
-class SVValueObjectClass;
 
 enum SVIOObjectType
 {
@@ -43,9 +44,11 @@ struct SVIOEntryHostStruct
 
 	SVGUID m_IOId;
 
+	void setObject(SVObjectClass* pObject);
+	SVObjectClass* getObject() { return m_pObject; };
+	SvOi::IValueObject* getValueObject() { return m_pValueObject; };
+
 	bool m_DeleteValueObject;
-	SVValueObjectClass* m_pValueObject;
-	SVObjectClass* m_pValueParent;
 
 	static bool PtrGreater( SVSharedPtr< SVIOEntryHostStruct > elem1, SVSharedPtr< SVIOEntryHostStruct > elem2 );
 
@@ -53,8 +56,11 @@ private:
 	SVIOEntryHostStruct( const SVIOEntryHostStruct& p_rsvObject );
 
 	const SVIOEntryHostStruct& operator=( const SVIOEntryHostStruct& p_rsvObject );
+
+	SVObjectClass* m_pObject;
+	SvOi::IValueObject* m_pValueObject;
 };
 
 typedef SVSharedPtr< SVIOEntryHostStruct > SVIOEntryHostStructPtr;
-typedef std::deque< SVIOEntryHostStructPtr > SVIOEntryHostStructPtrList;
+typedef std::vector< SVIOEntryHostStructPtr > SVIOEntryHostStructPtrVector;
 

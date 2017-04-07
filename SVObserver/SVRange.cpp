@@ -65,17 +65,17 @@ void SVRangeClass::init()
 	m_bUseOverlays = false;
 
 	// Identify our type in the Output List
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVRangeObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVRangeObjectType;
 
 	// Register Embedded Objects
-	RegisterEmbeddedObject( &FailHigh, SVRangeClassFailHighObjectGuid, IDS_OBJECTNAME_FAIL_HIGH, false, SVResetItemNone );
-	RegisterEmbeddedObject( &WarnHigh, SVRangeClassWarnHighObjectGuid, IDS_OBJECTNAME_WARN_HIGH, false, SVResetItemNone );
-	RegisterEmbeddedObject( &FailLow, SVRangeClassFailLowObjectGuid, IDS_OBJECTNAME_FAIL_LOW, false, SVResetItemNone );
-	RegisterEmbeddedObject( &WarnLow, SVRangeClassWarnLowObjectGuid, IDS_OBJECTNAME_WARN_LOW, false, SVResetItemNone );
-	RegisterEmbeddedObject( &m_ValueIndirect[RangeEnum::ER_FailHigh], SVRangeClassFailHighIndirectObjectGuid, IDS_OBJECTNAME_FAIL_HIGH_INDIRECT, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_ValueIndirect[RangeEnum::ER_WarnHigh], SVRangeClassWarnHighIndirectObjectGuid, IDS_OBJECTNAME_WARN_HIGH_INDIRECT, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_ValueIndirect[RangeEnum::ER_FailLow], SVRangeClassFailLowIndirectObjectGuid, IDS_OBJECTNAME_FAIL_LOW_INDIRECT, false, SVResetItemOwner);
-	RegisterEmbeddedObject( &m_ValueIndirect[RangeEnum::ER_WarnLow], SVRangeClassWarnLowIndirectObjectGuid, IDS_OBJECTNAME_WARN_LOW_INDIRECT, false, SVResetItemOwner);
+	RegisterEmbeddedObject( &FailHigh, SVRangeClassFailHighObjectGuid, IDS_OBJECTNAME_FAIL_HIGH, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &WarnHigh, SVRangeClassWarnHighObjectGuid, IDS_OBJECTNAME_WARN_HIGH, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &FailLow, SVRangeClassFailLowObjectGuid, IDS_OBJECTNAME_FAIL_LOW, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &WarnLow, SVRangeClassWarnLowObjectGuid, IDS_OBJECTNAME_WARN_LOW, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_ValueIndirect[RangeEnum::ER_FailHigh], SVRangeClassFailHighIndirectObjectGuid, IDS_OBJECTNAME_FAIL_HIGH_INDIRECT, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_ValueIndirect[RangeEnum::ER_WarnHigh], SVRangeClassWarnHighIndirectObjectGuid, IDS_OBJECTNAME_WARN_HIGH_INDIRECT, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_ValueIndirect[RangeEnum::ER_FailLow], SVRangeClassFailLowIndirectObjectGuid, IDS_OBJECTNAME_FAIL_LOW_INDIRECT, false, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject( &m_ValueIndirect[RangeEnum::ER_WarnLow], SVRangeClassWarnLowIndirectObjectGuid, IDS_OBJECTNAME_WARN_LOW_INDIRECT, false, SvOi::SVResetItemOwner);
 
 	// Set Embedded defaults
 	FailLow.SetDefaultValue( lowDef, true );
@@ -103,14 +103,15 @@ BOOL SVRangeClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 	m_isCreated = SVTaskObjectClass::CreateObject( PCreateStructure );
 
 	// Set / Reset Printable Flags
-	FailHigh.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE;
-	WarnHigh.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE;
-	FailLow.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE;
-	WarnLow.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE;
+	const UINT cAttributes = SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE;
+	FailHigh.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
+	WarnHigh.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
+	FailLow.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
+	WarnLow.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 
 	for(int i = 0; i < RangeEnum::ER_COUNT; i++)
 	{
-		m_ValueIndirect[i].ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_REMOTELY_SETABLE;
+		m_ValueIndirect[i].SetObjectAttributesAllowed( SV_PRINTABLE | SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
 	}
 
 	return m_isCreated;
@@ -136,14 +137,14 @@ bool SVRangeClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	bool Result = InitReferencesAndInputs(pErrorMessages);
 
 	// check if input is valid
-	if( !m_inputObjectInfo.IsConnected() || nullptr == m_inputObjectInfo.GetInputObjectInfo().PObject )
+	if( !m_inputObjectInfo.IsConnected() || nullptr == m_inputObjectInfo.GetInputObjectInfo().m_pObject )
 	{
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
 			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 			pErrorMessages->push_back(Msg);
-		}
+	}
 	}
 
 	if(!Result)
@@ -165,7 +166,6 @@ bool SVRangeClass::InitReferencesAndInputs(SvStl::MessageContainerVector *pError
 {
 	bool Result = true;
 	DisconnectAllInputObjects();
-	SVValueObjectReference emptyRef;
 	SVString ValueIndirect;
 	SVString InspectionName;
 
@@ -178,8 +178,8 @@ bool SVRangeClass::InitReferencesAndInputs(SvStl::MessageContainerVector *pError
 	for(int i = 0; i < RangeEnum::ER_COUNT; i++)
 	{
 		ValueIndirect.clear();
-		m_ValueObjectReferences[i] = emptyRef;
-		m_ValueIndirect[i].ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
+		m_ValueObjectReferences[i] = SVObjectReference();
+		m_ValueIndirect[i].SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 		m_ValueIndirect[i].GetValue( ValueIndirect );
 		if( !ValueIndirect.empty() )
 		{
@@ -203,7 +203,7 @@ bool SVRangeClass::InitReferencesAndInputs(SvStl::MessageContainerVector *pError
 					msgList.push_back(SVString(GetCompleteObjectNameToObjectType( nullptr, SVInspectionObjectType )));
 					message.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_InvalidReference, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16025 ); 
 					pErrorMessages->push_back( message );
-				}
+			}
 			}
 			//check if we have an valid but disabled input
 			else if( FALSE == (m_ValueObjectReferences[i].ObjectAttributesAllowed() & SV_SELECTABLE_FOR_EQUATION ) )
@@ -216,11 +216,11 @@ bool SVRangeClass::InitReferencesAndInputs(SvStl::MessageContainerVector *pError
 					msgList.push_back(SVString(GetCompleteObjectNameToObjectType( nullptr, SVInspectionObjectType )));
 					message.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_InvalidReference, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16026 ); 
 					pErrorMessages->push_back( message );
-				}
+			}
 			}
 			else
 			{
-				m_ValueIndirect[i].ObjectAttributesAllowedRef() |= SV_PRINTABLE;
+				m_ValueIndirect[i].SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
 			}
 		}
 	}
@@ -265,26 +265,22 @@ SVDoubleValueObjectClass&  SVRangeClass::GetRange(RangeEnum::ERange range)
 
 void   SVRangeClass::UpdateRange(int bucket, RangeEnum::ERange  range )
 {
-	double dres(0);
-	if( SVValueObjectClass* pValueObject = dynamic_cast<SVValueObjectClass*> (m_ValueObjectReferences[range].Object()) )
+	SVObjectClass* pObject = m_ValueObjectReferences[range].getObject();
+
+	if(nullptr != pObject)
 	{
-		if(m_ValueObjectReferences[range].IsIndexPresent())
+		double Value(0.0);
+		if(m_ValueObjectReferences[range].isArray())
 		{
 			int index = m_ValueObjectReferences[range].ArrayIndex();
-			int LastSet =  pValueObject->GetLastSetIndex();
-			pValueObject->GetValue(LastSet,index,dres);
+			pObject->getValue( Value, -1, index );
 		}
 		else
 		{
-			pValueObject->GetValue( dres );
+			pObject->getValue( Value );
 		}
 
-		GetRange(range).SetValue( bucket,dres );	
-	}
-	else if( BasicValueObject* pBasicValueObject = dynamic_cast<BasicValueObject*> (m_ValueObjectReferences[range].Object()) )
-	{
-		pBasicValueObject->getValue( dres );
-		GetRange(range).SetValue( bucket,dres );
+		GetRange(range).SetValue( Value, bucket );	
 	}
 }
 
@@ -302,13 +298,13 @@ void SVRangeClass::OnObjectRenamed(const SVObjectClass& rRenamedObject, const SV
 	SVString newPrefix;
 	SVString oldPrefix;
 	//In this case the inspection name is not part of the saved name so do not rename inspection names
-	if( const BasicValueObject* pBasicValueObject = dynamic_cast<const BasicValueObject*> (&rRenamedObject) )
+	if( nullptr != dynamic_cast<const BasicValueObject*> (&rRenamedObject) )
 	{
-		newPrefix = pBasicValueObject->GetCompleteObjectNameToObjectType( nullptr, SVRootObjectType );
+		newPrefix = rRenamedObject.GetCompleteObjectNameToObjectType( nullptr, SVRootObjectType );
 	}
-	else if( const SVValueObjectClass* pValueObject = dynamic_cast<const SVValueObjectClass*> (&rRenamedObject) )
+	else if( nullptr != dynamic_cast<const SvOi::IValueObject*> (&rRenamedObject) )
 	{
-		newPrefix = pValueObject->GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType );
+		newPrefix = rRenamedObject.GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType );
 	}
 	else
 	{
@@ -327,12 +323,12 @@ void SVRangeClass::OnObjectRenamed(const SVObjectClass& rRenamedObject, const SV
 	__super::OnObjectRenamed(rRenamedObject, rOldName);
 }
 
-bool SVRangeClass::onRun(SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool SVRangeClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool ret = true;
 	if(!m_isValidRange)
 	{
-		RRunStatus.SetInvalid();
+		rRunStatus.SetInvalid();
 		ret = false;
 		if (nullptr != pErrorMessages)
 		{
@@ -347,28 +343,28 @@ bool SVRangeClass::onRun(SVRunStatusClass& RRunStatus, SvStl::MessageContainerVe
 		getInputValue(InputValue);
 
 
-		if( nullptr != m_ValueObjectReferences[RangeEnum::ER_FailLow].Object() )
+		if( nullptr != m_ValueObjectReferences[RangeEnum::ER_FailLow].getObject() )
 		{
-			UpdateRange(RRunStatus.m_lResultDataIndex, RangeEnum::ER_FailLow );
+			UpdateRange(rRunStatus.m_lResultDataIndex, RangeEnum::ER_FailLow );
 		}
 		FailLow.GetValue(failLow);
 
-		if( nullptr != m_ValueObjectReferences[RangeEnum::ER_FailHigh ].Object() )
+		if( nullptr != m_ValueObjectReferences[RangeEnum::ER_FailHigh ].getObject() )
 		{
-			UpdateRange(RRunStatus.m_lResultDataIndex, RangeEnum::ER_FailHigh );
+			UpdateRange(rRunStatus.m_lResultDataIndex, RangeEnum::ER_FailHigh );
 		}
 		FailHigh.GetValue(failHigh);
 
-		if( nullptr != m_ValueObjectReferences[RangeEnum::ER_WarnLow  ].Object() )
+		if( nullptr != m_ValueObjectReferences[RangeEnum::ER_WarnLow  ].getObject() )
 		{
-			UpdateRange(RRunStatus.m_lResultDataIndex, RangeEnum::ER_WarnLow );
+			UpdateRange(rRunStatus.m_lResultDataIndex, RangeEnum::ER_WarnLow );
 		}
 
 		WarnLow.GetValue(warnLow);
 
-		if( nullptr != m_ValueObjectReferences[ RangeEnum::ER_WarnHigh  ].Object() )
+		if( nullptr != m_ValueObjectReferences[ RangeEnum::ER_WarnHigh  ].getObject() )
 		{
-			UpdateRange(RRunStatus.m_lResultDataIndex, RangeEnum::ER_WarnHigh );
+			UpdateRange(rRunStatus.m_lResultDataIndex, RangeEnum::ER_WarnHigh );
 		}
 
 		WarnHigh.GetValue(warnHigh);
@@ -378,17 +374,17 @@ bool SVRangeClass::onRun(SVRunStatusClass& RRunStatus, SvStl::MessageContainerVe
 
 		if( isFailed )
 		{
-			RRunStatus.SetFailed();
+			rRunStatus.SetFailed();
 		}
 
 		if( isWarned )
 		{
-			RRunStatus.SetWarned();
+			rRunStatus.SetWarned();
 		}
 
 		if( !isFailed && !isWarned )
 		{
-			RRunStatus.SetPassed();
+			rRunStatus.SetPassed();
 		}
 	}
 
@@ -433,11 +429,14 @@ HRESULT SVRangeClass::SetCancelData(SVCancelData* pCancelData)
 	}
 }
 
-BOOL SVRangeClass::getInputValue( double& RVal )
+BOOL SVRangeClass::getInputValue( double& rValue )
 {
-	if( m_inputObjectInfo.IsConnected() && m_inputObjectInfo.GetInputObjectInfo().PObject )
+	if( m_inputObjectInfo.IsConnected() && m_inputObjectInfo.GetInputObjectInfo().m_pObject )
 	{
-		return S_OK == ( static_cast<SVValueObjectClass*>( m_inputObjectInfo.GetInputObjectInfo().PObject) )->GetValue( RVal );
+		if( nullptr != m_inputObjectInfo.GetInputObjectInfo().m_pObject)
+		{
+			return S_OK == m_inputObjectInfo.GetInputObjectInfo().m_pObject->getValue(rValue);
+		}
 	}
 	return false;
 }
@@ -448,14 +447,14 @@ void SVRangeClass::ConnectAllInputObjects()
 	{
 		m_IsConnectedInput[i] = false;
 
-		if(nullptr != m_ValueObjectReferences[i].Object())
+		if(nullptr != m_ValueObjectReferences[i].getObject())
 		{
 			if( SV_GUID_NULL != m_ValueObjectReferences[i].Guid() )
 			{
 				SVInObjectInfoStruct InObjectInfo;
-				InObjectInfo.PObject                    = this;
-				InObjectInfo.UniqueObjectID             = GetUniqueObjectID();
-				InObjectInfo.ObjectTypeInfo.ObjectType  = SVRangeObjectType;
+				InObjectInfo.m_pObject                    = this;
+				InObjectInfo.m_UniqueObjectID             = GetUniqueObjectID();
+				InObjectInfo.m_ObjectTypeInfo.ObjectType  = SVRangeObjectType;
 				m_IsConnectedInput[i] = SVObjectManagerClass::Instance().ConnectObjectInput( m_ValueObjectReferences[i].Guid(), &InObjectInfo );
 			}
 		}
@@ -466,15 +465,15 @@ void SVRangeClass::DisconnectAllInputObjects()
 {
 	for(int i = 0; i < RangeEnum::ER_COUNT; i++)
 	{
-		if(nullptr != m_ValueObjectReferences[i].Object() && m_IsConnectedInput[i] == true)
+		if(nullptr != m_ValueObjectReferences[i].getObject() && m_IsConnectedInput[i] == true)
 		{
 			if( SV_GUID_NULL != m_ValueObjectReferences[i].Guid() )
 			{
 				SVInObjectInfoStruct InObjectInfo;
 
-				InObjectInfo.PObject                    =this;
-				InObjectInfo.UniqueObjectID             = GetUniqueObjectID();
-				InObjectInfo.ObjectTypeInfo.ObjectType  = SVRangeObjectType;
+				InObjectInfo.m_pObject                    =this;
+				InObjectInfo.m_UniqueObjectID             = GetUniqueObjectID();
+				InObjectInfo.m_ObjectTypeInfo.ObjectType  = SVRangeObjectType;
 
 				SVObjectManagerClass::Instance().DisconnectObjectInput(m_ValueObjectReferences[i].Guid(), &InObjectInfo);
 				m_IsConnectedInput[i] = false;
@@ -500,24 +499,24 @@ bool SVRangeClass::HasIndirectValue(RangeEnum::ERange ra)
 	return res;
 };
 
-HRESULT SVRangeClass::GetValue(RangeEnum::ERange ra, double &ref)
+HRESULT SVRangeClass::GetValue(RangeEnum::ERange ra, double &rValue)
 {
 	switch (ra)
 	{
 	case RangeEnum::ER_FailHigh:
-		return FailHigh.GetValue(ref);
+		return FailHigh.GetValue(rValue);
 		break;
 
 	case RangeEnum::ER_WarnHigh:
-		return WarnHigh.GetValue(ref);
+		return WarnHigh.GetValue(rValue);
 		break;
 
 	case RangeEnum::ER_FailLow:
-		return FailLow.GetValue(ref);
+		return FailLow.GetValue(rValue);
 		break;
 
 	case RangeEnum::ER_WarnLow:
-		return WarnLow.GetValue(ref);
+		return WarnLow.GetValue(rValue);
 		break;
 	}
 	return E_FAIL;
@@ -537,7 +536,7 @@ const SVDoubleValueObjectClass& SVRangeClass::getUpdatedRange( RangeEnum::ERange
 {
 	if(m_isValidRange)
 	{
-		if( nullptr != m_ValueObjectReferences[  ra ].Object() )
+		if( nullptr != m_ValueObjectReferences[  ra ].getObject() )
 		{
 			UpdateRange(bucket, ra );
 		}
@@ -570,7 +569,7 @@ const SVDoubleValueObjectClass& SVRangeClass::getUpdatedFailLow( int bucket )
 {
 	if(m_isValidRange)
 	{
-		if( nullptr != m_ValueObjectReferences[  RangeEnum::ER_FailLow  ].Object() )
+		if( nullptr != m_ValueObjectReferences[  RangeEnum::ER_FailLow  ].getObject() )
 		{
 			UpdateRange(bucket, RangeEnum::ER_FailLow );
 		}
@@ -582,7 +581,7 @@ const SVDoubleValueObjectClass& SVRangeClass::getUpdatedFailHigh( int bucket )
 {
 	if(m_isValidRange)
 	{
-		if( nullptr != m_ValueObjectReferences[  RangeEnum::ER_FailHigh ].Object() )
+		if( nullptr != m_ValueObjectReferences[  RangeEnum::ER_FailHigh ].getObject() )
 		{
 			UpdateRange(bucket, RangeEnum::ER_FailHigh );
 		}

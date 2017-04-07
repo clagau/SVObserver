@@ -69,11 +69,11 @@ private:
 	 
 	typedef std::map<unsigned long, char> CharMap;	
 	
-	SVVector< long > m_arRemoteFontIdentifiers;
-	SVVector< SVMatroxOcr > m_arRemoteFontHandles;
-	SVVector< SVClock::SVTimeStamp > m_arRemoteFontTimestamps;
-	SVVector< SVMatroxBuffer > m_arRemoteFontImageHandles;
-	SVVector< long, const unsigned long& > m_arLastCharIds;
+	SVVector<long> m_arRemoteFontIdentifiers;
+	SVVector<SVMatroxOcr> m_arRemoteFontHandles;
+	SVVector<SVClock::SVTimeStamp> m_arRemoteFontTimestamps;
+	SVVector<SVMatroxBuffer> m_arRemoteFontImageHandles;
+	SVVector<long> m_arLastCharIds;
 
 	typedef std::map< long, CharMap > CharMappings;
 

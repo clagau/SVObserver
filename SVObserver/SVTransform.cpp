@@ -19,7 +19,7 @@ SVTransformClass::SVTransformClass( SVObjectClass* POwner, int StringResourceID 
 				 :SVTaskObjectClass( POwner, StringResourceID ) 
 {
 	// Identify yourself
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVTransformObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVTransformObjectType;
 
 	// Identify our input type needs...
 	// Translation X
@@ -48,14 +48,14 @@ SVTransformClass::SVTransformClass( SVObjectClass* POwner, int StringResourceID 
 	RegisterInputObject( &inputRotationAngleResult, _T( "TransformRotationAngleResult" ) );
 
 	// Register Embedded Objects
-	RegisterEmbeddedObject( &performTranslation, SVPerformTranslationObjectGuid, IDS_OBJECTNAME_PERFORM_TRANSLATION, false, SVResetItemTool );
-	RegisterEmbeddedObject( &performRotation, SVPerformRotationObjectGuid, IDS_OBJECTNAME_PERFORM_ROTATION, false, SVResetItemTool );
+	RegisterEmbeddedObject( &performTranslation, SVPerformTranslationObjectGuid, IDS_OBJECTNAME_PERFORM_TRANSLATION, false, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &performRotation, SVPerformRotationObjectGuid, IDS_OBJECTNAME_PERFORM_ROTATION, false, SvOi::SVResetItemTool );
 
-	RegisterEmbeddedObject( &learnedTranslationX, SVLearnedTranslationXObjectGuid, IDS_OBJECTNAME_LEARNED_TRANSLATION_X, false, SVResetItemTool );
-	RegisterEmbeddedObject( &learnedTranslationY, SVLearnedTranslationYObjectGuid, IDS_OBJECTNAME_LEARNED_TRANSLATION_Y, false, SVResetItemTool );
-	RegisterEmbeddedObject( &learnedRotationX, SVLearnedRotationXObjectGuid, IDS_OBJECTNAME_LEARNED_ROTATION_X, false, SVResetItemTool );
-	RegisterEmbeddedObject( &learnedRotationY, SVLearnedRotationYObjectGuid, IDS_OBJECTNAME_LEARNED_ROTATION_Y, false, SVResetItemTool );
-	RegisterEmbeddedObject( &learnedRotationAngle, SVLearnedRotationAngleObjectGuid, IDS_OBJECTNAME_LEARNED_ROTATION_ANGLE, false, SVResetItemTool );
+	RegisterEmbeddedObject( &learnedTranslationX, SVLearnedTranslationXObjectGuid, IDS_OBJECTNAME_LEARNED_TRANSLATION_X, false, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &learnedTranslationY, SVLearnedTranslationYObjectGuid, IDS_OBJECTNAME_LEARNED_TRANSLATION_Y, false, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &learnedRotationX, SVLearnedRotationXObjectGuid, IDS_OBJECTNAME_LEARNED_ROTATION_X, false, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &learnedRotationY, SVLearnedRotationYObjectGuid, IDS_OBJECTNAME_LEARNED_ROTATION_Y, false, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &learnedRotationAngle, SVLearnedRotationAngleObjectGuid, IDS_OBJECTNAME_LEARNED_ROTATION_ANGLE, false, SvOi::SVResetItemTool );
 
 	// Set Embedded defaults
 	performTranslation.SetDefaultValue( FALSE, TRUE );
@@ -85,14 +85,14 @@ BOOL SVTransformClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure
 		bOk = TRUE;
 	}
 
-	performTranslation.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
-	performRotation.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
+	performTranslation.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	performRotation.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
 
-	learnedTranslationX.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
-	learnedTranslationY.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
-	learnedRotationX.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
-	learnedRotationY.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
-	learnedRotationAngle.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
+	learnedTranslationX.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	learnedTranslationY.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	learnedRotationX.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	learnedRotationY.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	learnedRotationAngle.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
 
 	m_isCreated = bOk;
 
@@ -130,32 +130,32 @@ bool SVTransformClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages
 
 SVDoubleValueObjectClass* SVTransformClass::getInputTranslationXResult()
 {
-	if( inputTranslationXResult.IsConnected() && inputTranslationXResult.GetInputObjectInfo().PObject )
-		return ( SVDoubleValueObjectClass* ) inputTranslationXResult.GetInputObjectInfo().PObject;
+	if( inputTranslationXResult.IsConnected() && inputTranslationXResult.GetInputObjectInfo().m_pObject )
+		return ( SVDoubleValueObjectClass* ) inputTranslationXResult.GetInputObjectInfo().m_pObject;
 
 	return nullptr;
 }
 
 SVDoubleValueObjectClass* SVTransformClass::getInputTranslationYResult()
 {
-	if( inputTranslationYResult.IsConnected() && inputTranslationYResult.GetInputObjectInfo().PObject )
-		return ( SVDoubleValueObjectClass* ) inputTranslationYResult.GetInputObjectInfo().PObject;
+	if( inputTranslationYResult.IsConnected() && inputTranslationYResult.GetInputObjectInfo().m_pObject )
+		return ( SVDoubleValueObjectClass* ) inputTranslationYResult.GetInputObjectInfo().m_pObject;
 
 	return nullptr;
 }
 
 SVDoubleValueObjectClass* SVTransformClass::getInputRotationXResult()
 {
-	if( inputRotationXResult.IsConnected() && inputRotationXResult.GetInputObjectInfo().PObject )
-		return ( SVDoubleValueObjectClass* ) inputRotationXResult.GetInputObjectInfo().PObject;
+	if( inputRotationXResult.IsConnected() && inputRotationXResult.GetInputObjectInfo().m_pObject )
+		return ( SVDoubleValueObjectClass* ) inputRotationXResult.GetInputObjectInfo().m_pObject;
 
 	return nullptr;
 }
 
 SVDoubleValueObjectClass* SVTransformClass::getInputRotationYResult()
 {
-	if( inputRotationYResult.IsConnected() && inputRotationYResult.GetInputObjectInfo().PObject )
-		return ( SVDoubleValueObjectClass* ) inputRotationYResult.GetInputObjectInfo().PObject;
+	if( inputRotationYResult.IsConnected() && inputRotationYResult.GetInputObjectInfo().m_pObject )
+		return ( SVDoubleValueObjectClass* ) inputRotationYResult.GetInputObjectInfo().m_pObject;
 
 	return nullptr;
 }
@@ -163,8 +163,8 @@ SVDoubleValueObjectClass* SVTransformClass::getInputRotationYResult()
 
 SVDoubleValueObjectClass* SVTransformClass::getInputRotationAngleResult()
 {
-	if( inputRotationAngleResult.IsConnected() && inputRotationAngleResult.GetInputObjectInfo().PObject )
-		return ( SVDoubleValueObjectClass* ) inputRotationAngleResult.GetInputObjectInfo().PObject;
+	if( inputRotationAngleResult.IsConnected() && inputRotationAngleResult.GetInputObjectInfo().m_pObject )
+		return ( SVDoubleValueObjectClass* ) inputRotationAngleResult.GetInputObjectInfo().m_pObject;
 
 	return nullptr;
 }

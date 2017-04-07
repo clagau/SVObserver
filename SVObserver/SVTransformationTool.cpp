@@ -31,14 +31,14 @@ SVTransformationToolClass::SVTransformationToolClass( BOOL BCreateDefaultTaskLis
 void SVTransformationToolClass::init()
 {
 	// Set up your type...
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVToolObjectType;
-	m_outObjectInfo.ObjectTypeInfo.SubType    = SVTransformationToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SVTransformationToolObjectType;
 
 	// Identify our input type needs
 
 	// Register Embedded Objects
 
-	RegisterEmbeddedObject( &m_svSourceImageNames, SVSourceImageNamesGuid, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SVResetItemTool );
+	RegisterEmbeddedObject( &m_SourceImageNames, SVSourceImageNamesGuid, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SvOi::SVResetItemTool );
 		
 	// Set Embedded defaults
 
@@ -91,7 +91,8 @@ BOOL SVTransformationToolClass::CreateObject( SVObjectLevelCreateStruct* PCreate
 {
 	BOOL bOk = SVToolClass::CreateObject( PCreateStructure );
 
-	m_svSourceImageNames.ObjectAttributesAllowedRef() &=~SV_REMOTELY_SETABLE & ~SV_SETABLE_ONLINE;
+	m_SourceImageNames.setStatic( true );
+	m_SourceImageNames.SetObjectAttributesAllowed( SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE, SvOi::SetAttributeType::RemoveAttribute );
 
 	m_isCreated = bOk;
 
@@ -132,8 +133,8 @@ HRESULT SVTransformationToolClass::UpdateImageWithExtent( unsigned long p_Index 
 	return l_Status;
 }
 
-SVStaticStringValueObjectClass* SVTransformationToolClass::GetInputImageNames()
+SVStringValueObjectClass* SVTransformationToolClass::GetInputImageNames()
 {
-	return &m_svSourceImageNames;
+	return &m_SourceImageNames;
 }
 

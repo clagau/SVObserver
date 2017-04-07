@@ -70,30 +70,20 @@ void SVRemoteOutputDataController::Destroy()
 }
 
 // AddItem creates a new RemoteOutputObject and adds it to the remote group parameters
-HRESULT SVRemoteOutputDataController::AddItem( const SVString& rRemoteGroupId, SVRemoteOutputObject*& p_pNewOutput, GUID p_InputObjectID, const SVString& rPPQ )
+HRESULT SVRemoteOutputDataController::AddItem( const SVString& rRemoteGroupId, SVRemoteOutputObject*& pNewOutput, GUID InputObjectID, const SVString& rPPQ )
 {
 	HRESULT l_hr = E_FAIL;
 	SVRemoteOutputObject* l_pEntry = new SVRemoteOutputObject;
 	if( l_pEntry )
 	{
-		l_pEntry->SetInputObjectId( p_InputObjectID );
+		l_pEntry->SetInputObjectId( InputObjectID );
 		l_pEntry->SetGroupID( rRemoteGroupId );
-		SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObjectA( p_InputObjectID );
-		if( l_pObject )
-		{
-			SVValueObjectClass* l_pValueObject = dynamic_cast<SVValueObjectClass*>( l_pObject );
-			if( l_pValueObject )
-			{
-				if( l_pValueObject->GetObjectType() == SVStringValueObjectType )
-				{
-					// l_bConvert = false;
-				}
-			}
-		}
-		else
+		SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject( InputObjectID );
+		SvOi::IValueObject* pValueObject = dynamic_cast<SvOi::IValueObject*> (pObject);
+		if( nullptr == pValueObject )
 		{
 			SVString Temp( _T("Added an Remote Output that had an invalid input!\n") );
-			Temp += l_pObject->GetCompleteName();
+			Temp += pObject->GetCompleteName();
 			OutputDebugString( Temp.c_str() );
 		}
 		if( m_RemoteGroupParameters.end() != m_RemoteGroupParameters.find( rRemoteGroupId ) )
@@ -110,7 +100,7 @@ HRESULT SVRemoteOutputDataController::AddItem( const SVString& rRemoteGroupId, S
 			m_RemoteGroupParameters[ rRemoteGroupId ]->AddOutput( l_pEntry );
 			m_RemoteGroupParameters[ rRemoteGroupId ]->SetPPQName( rPPQ );
 		}
-		p_pNewOutput = l_pEntry;
+		pNewOutput = l_pEntry;
 		l_hr = S_OK;
 	}
 	return l_hr;
@@ -172,7 +162,7 @@ bool SVRemoteOutputDataController::GetParameters( SVObjectXMLWriter& rWriter )
 	{
 		rWriter.StartElement( CTAG_REMOTE_OUTPUT_PARAMETERS );
 		
-		svVariant = SVGUID( m_outObjectInfo.UniqueObjectID ).ToVARIANT();
+		svVariant = SVGUID( m_outObjectInfo.m_UniqueObjectID ).ToVARIANT();
 		rWriter.WriteAttribute(  CTAG_UNIQUE_REFERENCE_ID, svVariant );
 
 		// Remote Output Parameters
@@ -215,7 +205,7 @@ BOOL SVRemoteOutputDataController::SetParameters( SVTreeType& p_rTree, SVTreeTyp
 
 			SVObjectManagerClass::Instance().CloseUniqueObjectID( this );
 
-			m_outObjectInfo.UniqueObjectID = ObjectID;
+			m_outObjectInfo.m_UniqueObjectID = ObjectID;
 
 			SVObjectManagerClass::Instance().OpenUniqueObjectID( this );
 

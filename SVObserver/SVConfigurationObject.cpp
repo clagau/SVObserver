@@ -748,7 +748,7 @@ HRESULT SVConfigurationObject::AddImportedRemoteInput(SVPPQObject* pPPQ, const S
 			pIOEntry->m_Enabled = true;
 
 			SVRemoteInputObject* pRemoteInput = nullptr;
-			m_pInputObjectList->GetInputFlyweight( name.c_str(), pRemoteInput );
+			pRemoteInput = dynamic_cast<SVRemoteInputObject*> (m_pInputObjectList->GetInputFlyweight( name, SVRemoteInputObjectType));
 			if (nullptr != pRemoteInput)
 			{
 				pRemoteInput->m_lIndex = index;
@@ -779,7 +779,7 @@ HRESULT SVConfigurationObject::AddImportedDigitalInput(SVPPQObject* pPPQ, const 
 		if (!pIOEntry->m_Enabled)
 		{
 			SVDigitalInputObject* pDigitalInput = nullptr;
-			m_pInputObjectList->GetInputFlyweight( name.c_str(), pDigitalInput );
+			pDigitalInput = dynamic_cast<SVDigitalInputObject*> (m_pInputObjectList->GetInputFlyweight( name, SVDigitalInputObjectType));
 
 			pIOEntry->m_ObjectType = IO_DIGITAL_INPUT;
 			pIOEntry->m_PPQIndex = ppqPosition;
@@ -796,22 +796,22 @@ HRESULT SVConfigurationObject::AddRemoteInput(SVPPQObject* pPPQ, const SVString&
 	//Only do an assert check so that in release mode no check is made
 	ASSERT( nullptr != pPPQ );
 
-	SVRemoteInputObject* pRemoteInput = nullptr;
 
 	// Add Remote Inputs to the InputObjectList
 	//first check to see if remote input is there, check by name...
-	m_pInputObjectList->GetInputFlyweight( name.c_str(), pRemoteInput );
+	SVRemoteInputObject* pRemoteInput = nullptr;
+	pRemoteInput = dynamic_cast<SVRemoteInputObject*> (m_pInputObjectList->GetInputFlyweight(name, SVRemoteInputObjectType));
 
 	// Add Remote Input to the PPQ
-	SVValueObjectClass* pObject = new SVVariantValueObjectClass();
-	pObject->SetName( name.c_str() );
-	pObject->SetObjectDepth( 10 );
-	pObject->SetResetOptions( false, SVResetItemNone );
-	pObject->ResetObject();
+	SVVariantValueObjectClass* pValueObject = new SVVariantValueObjectClass();
+	pValueObject->SetName( name.c_str() );
+	pValueObject->SetObjectOwner(pPPQ);
+	pValueObject->SetObjectDepth( 10 );
+	pValueObject->setResetOptions( false, SvOi::SVResetItemNone );
+	pValueObject->ResetObject();
 
 	SVIOEntryHostStructPtr pIOEntry = new SVIOEntryHostStruct;
-	pIOEntry->m_pValueObject	= pObject;
-	pIOEntry->m_pValueParent	= pObject;
+	pIOEntry->setObject( dynamic_cast<SVObjectClass*> (pValueObject) );
 	pIOEntry->m_ObjectType		= IO_REMOTE_INPUT;
 	pIOEntry->m_PPQIndex		= ppqPosition;
 	pIOEntry->m_Enabled			= ppqPosition != -1;
@@ -839,18 +839,18 @@ HRESULT SVConfigurationObject::AddDigitalInput(SVPPQObject* pPPQ, const SVString
 
 	SVDigitalInputObject* pDigitalInput = nullptr;
 
-	m_pInputObjectList->GetInputFlyweight( name.c_str(), pDigitalInput );
+	pDigitalInput = dynamic_cast<SVDigitalInputObject*> (m_pInputObjectList->GetInputFlyweight( name, SVDigitalInputObjectType));
 
 	// Add Digital Input to the PPQ
-	SVValueObjectClass* pObject = new SVBoolValueObjectClass();
-	pObject->SetName(name.c_str());
-	pObject->SetObjectDepth(10);
-	pObject->SetResetOptions(false, SVResetItemNone);
-	pObject->ResetObject();
+	SVBoolValueObjectClass* pValueObject = new SVBoolValueObjectClass();
+	pValueObject->SetName(name.c_str());
+	pValueObject->SetObjectOwner(pPPQ);
+	pValueObject->SetObjectDepth(10);
+	pValueObject->setResetOptions(false, SvOi::SVResetItemNone);
+	pValueObject->ResetObject();
 
 	SVIOEntryHostStructPtr pIOEntry = new SVIOEntryHostStruct;
-	pIOEntry->m_pValueObject	= pObject;
-	pIOEntry->m_pValueParent	= pObject;
+	pIOEntry->setObject(dynamic_cast<SVObjectClass*> (pValueObject));
 	pIOEntry->m_ObjectType		= IO_DIGITAL_INPUT;
 	pIOEntry->m_PPQIndex		= ppqPosition;
 	pIOEntry->m_Enabled			= ppqPosition != -1;
@@ -873,13 +873,13 @@ HRESULT SVConfigurationObject::AddCameraDataInput(SVPPQObject* pPPQ, SVIOEntryHo
 	ASSERT( nullptr != pPPQ );
 
 	SVCameraDataInputObject* pInput = nullptr;
-	SVString name = pIOEntry->m_pValueObject->GetName();
-	m_pInputObjectList->GetInputFlyweight( name.c_str(), pInput );
-	pInput->Create(); // why o why...
+	SVString name = pIOEntry->getObject()->GetName();
+	pInput = dynamic_cast<SVCameraDataInputObject*> (m_pInputObjectList->GetInputFlyweight(name, SVCameraDataInputObjectType));
 
 	// Add Input to the PPQ
 	if( nullptr != pInput )
 	{
+		pInput->Create();
 		pIOEntry->m_IOId = pInput->GetUniqueObjectID();
 	}
 
@@ -1121,9 +1121,8 @@ bool SVConfigurationObject::LoadIO( SVTreeType& rTree )
 		{
 			if( bOutput )
 			{
-				SVDigitalOutputObject* pOutput = nullptr;
-
-				pOutputsList->GetOutputFlyweight( IOName.c_str(), pOutput );
+				SVDigitalOutputObject* pOutput(nullptr);
+				pOutput = dynamic_cast<SVDigitalOutputObject*> (pOutputsList->GetOutputFlyweight(IOName.c_str(), SVDigitalOutputObjectType));
 
 				if( nullptr != pOutput )
 				{
@@ -1132,11 +1131,11 @@ bool SVConfigurationObject::LoadIO( SVTreeType& rTree )
 					pOutput->Invert( bInverted );
 					pOutput->Combine( bCombined, bCombinedACK );
 
-					if( _T("Module Ready") == IOName )
+					if(SvO::cModuleReady == IOName)
 					{
 						l_ModuleReadyId = pOutput->GetUniqueObjectID();
 					}
-					else if( _T("Raid Error Indicator") == IOName )
+					else if(SvO::cRaidErrorIndicator == IOName)
 					{
 						l_RaidErrorId = pOutput->GetUniqueObjectID();
 					}
@@ -1145,8 +1144,7 @@ bool SVConfigurationObject::LoadIO( SVTreeType& rTree )
 			else
 			{
 				SVDigitalInputObject* pInput = nullptr;
-
-				pInputsList->GetInputFlyweight( IOName.c_str(), pInput );
+				pInput = dynamic_cast<SVDigitalInputObject*> (pInputsList->GetInputFlyweight( IOName, SVDigitalInputObjectType));
 
 				if( nullptr != pInput )
 				{
@@ -1193,9 +1191,8 @@ bool SVConfigurationObject::LoadIO( SVTreeType& rTree )
 
 	if(  l_ModuleReadyId.empty() )
 	{
-		SVDigitalOutputObject* pOutput( nullptr );
-
-		m_pOutputObjectList->GetOutputFlyweight( "Module Ready", pOutput );
+		SVDigitalOutputObject* pOutput(nullptr);
+		pOutput = dynamic_cast<SVDigitalOutputObject*> (m_pOutputObjectList->GetOutputFlyweight(SvO::cModuleReady, SVDigitalOutputObjectType));
 
 		if( nullptr != pOutput )
 		{
@@ -1673,7 +1670,7 @@ bool  SVConfigurationObject::LoadCameras( SVTreeType&  rTree, long& lNumCameras,
 
 				SVObjectManagerClass::Instance().CloseUniqueObjectID( pCamera );
 
-				pCamera->m_outObjectInfo.UniqueObjectID = l_Guid;
+				pCamera->m_outObjectInfo.m_UniqueObjectID = l_Guid;
 
 				SVObjectManagerClass::Instance().OpenUniqueObjectID( pCamera );
 			}
@@ -1910,7 +1907,7 @@ bool SVConfigurationObject::LoadInspection( SVTreeType& rTree )
 
 				SVObjectManagerClass::Instance().CloseUniqueObjectID( pInspection );
 
-				pInspection->m_outObjectInfo.UniqueObjectID = ObjectID;
+				pInspection->m_outObjectInfo.m_UniqueObjectID = ObjectID;
 
 				SVObjectManagerClass::Instance().OpenUniqueObjectID( pInspection );
 			}
@@ -2016,7 +2013,7 @@ bool SVConfigurationObject::LoadPPQ( SVTreeType& rTree )
 
 			SVObjectManagerClass::Instance().CloseUniqueObjectID( pPPQ );
 
-			pPPQ->m_outObjectInfo.UniqueObjectID = ObjectID;
+			pPPQ->m_outObjectInfo.m_UniqueObjectID = ObjectID;
 
 			SVObjectManagerClass::Instance().OpenUniqueObjectID( pPPQ );
 		}// end if
@@ -2095,7 +2092,7 @@ bool SVConfigurationObject::LoadPPQ( SVTreeType& rTree )
 
 			SVObjectManagerClass::Instance().CloseUniqueObjectID( &pPPQ->m_voOutputState );
 
-			pPPQ->m_voOutputState.m_outObjectInfo.UniqueObjectID = ObjectID;
+			pPPQ->m_voOutputState.m_outObjectInfo.m_UniqueObjectID = ObjectID;
 
 			SVObjectManagerClass::Instance().OpenUniqueObjectID( &pPPQ->m_voOutputState );
 		}// end if
@@ -2107,7 +2104,7 @@ bool SVConfigurationObject::LoadPPQ( SVTreeType& rTree )
 
 			SVObjectManagerClass::Instance().CloseUniqueObjectID( &pPPQ->m_voTriggerCount );
 
-			pPPQ->m_voTriggerCount.m_outObjectInfo.UniqueObjectID = l_TriggercountId;
+			pPPQ->m_voTriggerCount.m_outObjectInfo.m_UniqueObjectID = l_TriggercountId;
 
 			SVObjectManagerClass::Instance().OpenUniqueObjectID( &pPPQ->m_voTriggerCount );
 		}
@@ -2233,7 +2230,6 @@ bool SVConfigurationObject::LoadPPQ( SVTreeType& rTree )
 			SVString DataName = rTree.getBranchName( hDataChild );
 
 			SVRemoteInputObject *pRemoteInput = nullptr;
-			SVValueObjectClass *pObject = nullptr;
 			_variant_t Value;
 			long lIndex;
 			long lPPQPosition=0;
@@ -2390,7 +2386,7 @@ HRESULT SVConfigurationObject::ValidateOutputList( )
 			InspectionNames.push_back( SVString(pInspection->GetName()) );
 		}
 	}
-	for( SVPPQObjectArray::iterator it = m_arPPQArray.begin(); it != m_arPPQArray.end() ; ++it)
+	for( SVPPQObjectPtrVector::iterator it = m_arPPQArray.begin(); it != m_arPPQArray.end() ; ++it)
 	{
 		if( nullptr != *it )
 		{
@@ -2711,7 +2707,7 @@ HRESULT SVConfigurationObject::GetChildObject( SVObjectClass*& rpObject, const S
 		{
 			if(nullptr != m_pInputObjectList)
 			{
-				m_pInputObjectList->GetInput( rNameInfo.GetObjectName( 1 ), rpObject );
+				rpObject = m_pInputObjectList->GetInput( rNameInfo.GetObjectName( 1 ));
 			}
 			else
 			{
@@ -2742,7 +2738,7 @@ HRESULT SVConfigurationObject::GetChildObject( SVObjectClass*& rpObject, const S
 		{
 			if( rNameInfo.m_NameArray[ 0 ].substr( 0, 3 ) == _T( "PPQ" ) )
 			{
-				SVPPQObjectArray::const_iterator l_PPQIter;
+				SVPPQObjectPtrVector::const_iterator l_PPQIter;
 
 				for( l_PPQIter = m_arPPQArray.begin(); nullptr == rpObject && l_PPQIter != m_arPPQArray.end(); ++l_PPQIter )
 				{
@@ -2756,7 +2752,7 @@ HRESULT SVConfigurationObject::GetChildObject( SVObjectClass*& rpObject, const S
 			}
 			else if( rNameInfo.m_NameArray[ 0 ].substr( 0, 6 ) == _T( "Camera" ) )
 			{
-				SVVirtualCameraArray::const_iterator l_CameraIter;
+				SVVirtualCameraPtrVector::const_iterator l_CameraIter;
 
 				for( l_CameraIter = m_arCameraArray.begin(); nullptr == rpObject && l_CameraIter != m_arCameraArray.end(); ++l_CameraIter )
 				{
@@ -2770,7 +2766,7 @@ HRESULT SVConfigurationObject::GetChildObject( SVObjectClass*& rpObject, const S
 			}
 			else if( rNameInfo.m_NameArray[ 0 ].substr( 0, 7 ) == _T( "Trigger" ) )
 			{
-				SvTi::SVTriggerObjectArray::const_iterator l_TriggerIter;
+				SvTi::SVTriggerObjectPtrVector::const_iterator l_TriggerIter;
 
 				for( l_TriggerIter = m_arTriggerArray.begin(); nullptr == rpObject && l_TriggerIter != m_arTriggerArray.end(); ++l_TriggerIter )
 				{
@@ -2837,7 +2833,7 @@ void SVConfigurationObject::SaveIO(SVObjectXMLWriter& rWriter) const
 {
 	rWriter.StartElement( CTAG_IO );
 
-	SVIOEntryHostStructPtrList ppInList;
+	SVIOEntryHostStructPtrVector ppInList;
 
 	if ( nullptr != m_pInputObjectList )
 	{
@@ -2858,8 +2854,7 @@ void SVConfigurationObject::SaveIO(SVObjectXMLWriter& rWriter) const
 			_variant_t svVariant;
 
 			SVDigitalInputObject* pInput = nullptr;
-
-			m_pInputObjectList->GetInput( ppInList[lIn]->m_IOId, pInput );
+			pInput = dynamic_cast<SVDigitalInputObject*> (m_pInputObjectList->GetInput( ppInList[lIn]->m_IOId));
 
 			SVString EntryName = pInput->GetName();
 			svVariant.SetString( EntryName.c_str() );
@@ -2892,7 +2887,7 @@ void SVConfigurationObject::SaveIO(SVObjectXMLWriter& rWriter) const
 		}
 	}// end for
 
-	SVIOEntryHostStructPtrList ppOutList;
+	SVIOEntryHostStructPtrVector ppOutList;
 	long lOutSize = 0;
 	if ( nullptr != m_pOutputObjectList )
 	{
@@ -2913,7 +2908,7 @@ void SVConfigurationObject::SaveIO(SVObjectXMLWriter& rWriter) const
 
 			SVDigitalOutputObject* pOutput = nullptr;
 
-			m_pOutputObjectList->GetOutput( ppOutList[lOut]->m_IOId, pOutput );
+			pOutput = dynamic_cast<SVDigitalOutputObject*> (m_pOutputObjectList->GetOutput(ppOutList[lOut]->m_IOId));
 
 			svVariant.SetString( pOutput->GetName() );
 			rWriter.WriteAttribute( CTAG_IO_ENTRY_NAME, svVariant );
@@ -4291,10 +4286,10 @@ HRESULT SVConfigurationObject::GetInspectionItems( const SVNameSet& p_rNames, SV
 
 			if( SVString( SvOl::FqnInspections ) == l_Info.m_NameArray[ 0 ] )
 			{
-				SVObjectReference ref;
-				SVObjectManagerClass::Instance().GetObjectByDottedName( l_Info.GetObjectArrayName( 0 ), ref );
+				SVObjectReference ObjectRef;
+				SVObjectManagerClass::Instance().GetObjectByDottedName( l_Info.GetObjectArrayName( 0 ), ObjectRef );
 
-				if( nullptr != ref.Object() )
+				if( nullptr != ObjectRef.getObject() )
 				{
 					SVInspectionProcess* pInspection = nullptr;
 
@@ -4303,7 +4298,7 @@ HRESULT SVConfigurationObject::GetInspectionItems( const SVNameSet& p_rNames, SV
 					if( nullptr != pInspection )
 					{
 						l_Inspections[ pInspection->GetName() ] = pInspection;
-						SVCommandInspectionGetItems::SVFullNameObjectPair newPair(*l_Iter, ref);
+						SVCommandInspectionGetItems::SVFullNameObjectPair newPair(*l_Iter, ObjectRef);
 						l_InspectionItems[ pInspection->GetName() ].insert(newPair);
 					}
 					else
@@ -4525,17 +4520,17 @@ HRESULT SVConfigurationObject::SetInspectionItems( const SVNameStorageMap& p_rIt
 
 			if( l_Info.m_NameArray.size() >0 &&  SVString( SvOl::FqnInspections ) == l_Info.m_NameArray[ 0 ] )
 			{
-				SVObjectReference ref;
-				SVObjectManagerClass::Instance().GetObjectByDottedName( l_Info.GetObjectArrayName( 0 ), ref );
+				SVObjectReference ObjectRef;
+				SVObjectManagerClass::Instance().GetObjectByDottedName( l_Info.GetObjectArrayName( 0 ), ObjectRef );
 
-				if( nullptr != ref.Object() )
+				if( nullptr != ObjectRef.getObject() )
 				{
 					///someone wants to set this variable check if this is allowed
-					bool l_AddParameter = ( ( ref.ObjectAttributesAllowed() & SV_REMOTELY_SETABLE ) == SV_REMOTELY_SETABLE );
+					bool l_AddParameter = ( ( ObjectRef.ObjectAttributesAllowed() & SV_REMOTELY_SETABLE ) == SV_REMOTELY_SETABLE );
 
 					if( l_AddParameter )
 					{
-						l_AddParameter = !l_Online || ( ( ref.ObjectAttributesAllowed() & SV_SETABLE_ONLINE ) == SV_SETABLE_ONLINE );
+						l_AddParameter = !l_Online || ( ( ObjectRef.ObjectAttributesAllowed() & SV_SETABLE_ONLINE ) == SV_SETABLE_ONLINE );
 
 						if( !l_AddParameter )
 						{
@@ -4547,7 +4542,7 @@ HRESULT SVConfigurationObject::SetInspectionItems( const SVNameStorageMap& p_rIt
 							}
 						}
 
-						bool rangeParameter = RangeClassHelper::IsOwnedByRangeObject(*ref.Object());
+						bool rangeParameter = RangeClassHelper::IsOwnedByRangeObject(*ObjectRef.getObject());
 
 						if( l_AddParameter && rangeParameter )
 						{
@@ -4561,7 +4556,7 @@ HRESULT SVConfigurationObject::SetInspectionItems( const SVNameStorageMap& p_rIt
 								Value = SvUl_SF::createSVString( bstrValue );
 							}
 
-							if (!RangeClassHelper::IsAllowedToSet( *ref.Object(), Value, l_Online, hresult))
+							if (!RangeClassHelper::IsAllowedToSet( *ObjectRef.getObject(), Value, l_Online, hresult))
 							{
 								p_rStatus[ l_Iter->first ] = hresult;
 								l_AddParameter = false;
@@ -4594,7 +4589,7 @@ HRESULT SVConfigurationObject::SetInspectionItems( const SVNameStorageMap& p_rIt
 
 							if( l_Iter->second.m_StorageType == SVVisionProcessor::SVStorageImageFileName )
 							{
-								SVImageClass* l_pImage = dynamic_cast< SVImageClass* >( ref.Object() );
+								SVImageClass* l_pImage = dynamic_cast< SVImageClass* >( ObjectRef.getObject() );
 
 								if( nullptr != l_pImage )
 								{
@@ -4612,7 +4607,7 @@ HRESULT SVConfigurationObject::SetInspectionItems( const SVNameStorageMap& p_rIt
 							}
 							else if( l_Iter->second.m_StorageType == SVVisionProcessor::SVStorageValue )
 							{
-								if( pInspection->AddInputRequest( ref, l_Iter->second.m_Variant ) )
+								if( pInspection->AddInputRequest( ObjectRef, l_Iter->second.m_Variant ) )
 								{
 									l_ValueInspections[ pInspection->GetName() ] = pInspection;
 
@@ -4786,17 +4781,17 @@ HRESULT SVConfigurationObject::SetRemoteInputItems( const SVNameStorageMap& p_rI
 							l_Inspections[ pInspection->GetName() ] = pInspection;
 
 							SVString l_Name;
-							SVObjectReference ref;
+							SVObjectReference ObjectRef;
 
 							l_Name += pInspection->GetName();
 							l_Name += ".";
 							l_Name += l_Info.GetObjectName( 1 );
 
-							SVObjectManagerClass::Instance().GetObjectByDottedName( l_Name, ref );
+							SVObjectManagerClass::Instance().GetObjectByDottedName( l_Name, ObjectRef );
 
-							if( nullptr != ref.Object() )
+							if( nullptr != ObjectRef.getObject() )
 							{
-								if( pInspection->AddInputRequest( ref, l_Iter->second.m_Variant ) )
+								if( pInspection->AddInputRequest( ObjectRef, l_Iter->second.m_Variant ) )
 								{
 									l_ValueInspections[ pInspection->GetName() ] = pInspection;
 								}
@@ -4943,7 +4938,7 @@ void SVConfigurationObject::GetRemoteInputInspections( const SVString& p_rRemote
 		if( nullptr != l_pInspection )
 		{
 			SVString l_Name;
-			SVObjectReference ref;
+			SVObjectReference ObjectRef;
 			SVObjectNameInfo l_Info;
 
 			SVObjectNameInfo::ParseObjectName( l_Info, p_rRemoteInputName );
@@ -4952,9 +4947,9 @@ void SVConfigurationObject::GetRemoteInputInspections( const SVString& p_rRemote
 			l_Name += ".";
 			l_Name += l_Info.GetObjectName( 1 );
 
-			SVObjectManagerClass::Instance().GetObjectByDottedName( l_Name, ref );
+			SVObjectManagerClass::Instance().GetObjectByDottedName( l_Name, ObjectRef );
 
-			if( nullptr != ref.Object() )
+			if( nullptr != ObjectRef.getObject() )
 			{
 				p_rInspections.insert( l_pInspection );
 			}
@@ -5014,11 +5009,11 @@ void SVConfigurationObject::updateConfTreeToNewestVersion(SVTreeType &rTree, SVT
 						//add clip value to tree, with value FALSE
 						SVConfigurationTreeWriter< SVTreeType > writer(rTree, lutEquationEmbeddedsBranch);
 						SVBoolValueObjectClass isLUTFormulaClipped;
-						isLUTFormulaClipped.SetResetOptions( false, SVResetItemTool );
+						isLUTFormulaClipped.setResetOptions( false, SvOi::SVResetItemTool );
 						SVString Name = SvUl_SF::LoadSVString( IDS_OBJECTNAME_LUT_EQUATION_CLIP );
 						isLUTFormulaClipped.SetObjectEmbedded(SVLUTEquationClipFlagObjectGuid, nullptr, Name.c_str() );
-						isLUTFormulaClipped.SetDefaultValue( TRUE, TRUE );
-						isLUTFormulaClipped.SetValue(0, FALSE);
+						isLUTFormulaClipped.SetDefaultValue(BOOL(true), true);
+						isLUTFormulaClipped.SetValue(BOOL(false), 0);
 						isLUTFormulaClipped.Persist(writer);
 					}
 				}
@@ -5345,11 +5340,11 @@ HRESULT SVConfigurationObject::LoadGlobalConstants( SVTreeType& rTree )
 						SVObjectManagerClass::Instance().ChangeUniqueObjectID( pValue.get(), UniqueID );
 						pValue->setDescription( Description.c_str() );
 						//All Global constants can be remotely settable
-						pValue->ObjectAttributesAllowedRef() |= SV_REMOTELY_SETABLE;
+						pValue->SetObjectAttributesAllowed( SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
 						// If type string then remove Selectable for Equation flag.
 						if( VT_BSTR == Value.vt )
 						{
-							pValue->ObjectAttributesAllowedRef() &= ~SV_SELECTABLE_FOR_EQUATION;
+							pValue->SetObjectAttributesAllowed( SV_SELECTABLE_FOR_EQUATION, SvOi::SetAttributeType::RemoveAttribute );
 						}
 					}
 				}

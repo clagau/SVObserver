@@ -11,17 +11,23 @@
 
 class SVDigitalOutputObject : public SVOutputObject
 {
+#pragma region Constructor
 public:
 	SVDigitalOutputObject( LPCSTR strObjectName );
 	SVDigitalOutputObject( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVDIGITALOUTPUTOBJECT );
 
 	virtual ~SVDigitalOutputObject();
+#pragma endregion Constructor
 
+#pragma region Public Methods
+public:
 	virtual BOOL Create() override;
 	virtual BOOL Destroy() override;
 
-	virtual HRESULT Write( const _variant_t& p_rValue ) override;
+	virtual HRESULT Write( const _variant_t& rValue ) override;
 	virtual HRESULT Reset() override;
+	virtual bool IsCombined() const override;
+	virtual bool GetCombinedValue() const override;
 
 	BOOL Force( bool bForce, bool bForcedValue );
 	BOOL Invert( bool bInvert );
@@ -30,13 +36,18 @@ public:
 	bool IsForced() const;
 	bool GetForcedValue() const;
 	bool IsInverted() const;
-	bool IsCombined() const;
-	bool GetCombinedValue() const;
 	bool GetValue() const;
 
 	BOOL SetChannel( long lChannel );
 	long GetChannel() const;
+#pragma endregion Public Methods
 
+#pragma region Private Methods
+private:
+	void LocalInitialize();
+#pragma endregion Private Methods
+
+#pragma region Member Variables
 private:
 	// Values for this digital output
 	long m_lChannel;
@@ -47,4 +58,5 @@ private:
 	bool m_bDefaultValue;
 	bool m_bForcedValue;
 	bool m_bCombinedACK;
+#pragma endregion Member Variables
 };

@@ -19,7 +19,7 @@
 SVHorizEdgeFilterClass::SVHorizEdgeFilterClass( SVObjectClass* POwner, int StringResourceID )
 					   :SVFilterClass( POwner, StringResourceID ) 
 {
-	m_outObjectInfo.ObjectTypeInfo.SubType = SVHorzEdgeFilterObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVHorzEdgeFilterObjectType;
 }
 
 SVHorizEdgeFilterClass::~SVHorizEdgeFilterClass()
@@ -32,7 +32,7 @@ SVHorizEdgeFilterClass::~SVHorizEdgeFilterClass()
 // .Description : Runs this operator.
 //              : Returns FALSE, if operator cannot run ( may be deactivated ! )
 ////////////////////////////////////////////////////////////////////////////////
-bool SVHorizEdgeFilterClass::onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVHorizEdgeFilterClass::onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 { 
 	if( m_pCurrentUIOPL && !( RInputImageHandle.empty() ) && !( ROutputImageHandle.empty() ) )
 	{
@@ -55,7 +55,7 @@ bool SVHorizEdgeFilterClass::onRun( bool First, SVSmartHandlePointer RInputImage
 			}
 			// Signal that something was wrong...
 			SetInvalid();
-			RRunStatus.SetInvalid();
+			rRunStatus.SetInvalid();
 			return false;
 		}
 
@@ -73,7 +73,7 @@ bool SVHorizEdgeFilterClass::onRun( bool First, SVSmartHandlePointer RInputImage
 
 	// Signal that something was wrong...
 	SetInvalid();
-	RRunStatus.SetInvalid();
+	rRunStatus.SetInvalid();
 	return false;
 }
 

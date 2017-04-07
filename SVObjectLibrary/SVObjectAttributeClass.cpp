@@ -267,7 +267,7 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectByteArrayClass& svData)
 	}
 
 	return bOk;
-}// end GetData(SVObjectByteArrayClass& svData)
+}
 
 BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectArrayClassTemplate<char>& svData)
 {
@@ -340,7 +340,7 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectArrayClassTemplate<char>& svD
 	}
 
 	return bOk;
-}// end GetData(SVObjectArrayClassTemplate<char>& svData)
+}
 
 BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectSVStringArrayClass& svData)
 {

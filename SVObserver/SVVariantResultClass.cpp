@@ -30,8 +30,8 @@ SV_IMPLEMENT_CLASS( SVVariantResultClass, SVVariantResultClassGuid );
 SVVariantResultClass::SVVariantResultClass( BOOL BCreateDefaultTaskList , SVObjectClass* POwner  , int StringResourceID  )
 {
 	// Identify yourself
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVResultObjectType;
-	m_outObjectInfo.ObjectTypeInfo.SubType = SVResultVariantObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVResultVariantObjectType;
 
 	// Identify our input type needs
 	m_inputObjectInfo.SetInputObjectType( SVVariantValueObjectType );
@@ -40,7 +40,7 @@ SVVariantResultClass::SVVariantResultClass( BOOL BCreateDefaultTaskList , SVObje
 
 
 	// Register Embedded Objects
-	RegisterEmbeddedObject( &m_Value, SVValueObjectGuid, IDS_OBJECTNAME_VALUE, false, SVResetItemNone );
+	RegisterEmbeddedObject( &m_Value, SVValueObjectGuid, IDS_OBJECTNAME_VALUE, false, SvOi::SVResetItemNone );
 
 	// Set Embedded defaults
 	_variant_t vt;
@@ -89,7 +89,7 @@ BOOL SVVariantResultClass::CreateObject( SVObjectLevelCreateStruct* PCreateStruc
 		bOk = nullptr != GetInputValue();
 	}
 
-	m_Value.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
+	m_Value.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 
 	m_isCreated = bOk;
 
@@ -101,30 +101,32 @@ BOOL SVVariantResultClass::CloseObject()
 	return SVResultClass::CloseObject();
 }
 
-SVValueObjectClass* SVVariantResultClass::GetInputValue()
+SVObjectClass* SVVariantResultClass::GetInputValue()
 {
-	if( m_inputObjectInfo.IsConnected() && m_inputObjectInfo.GetInputObjectInfo().PObject )
-		return static_cast<SVValueObjectClass*> ( m_inputObjectInfo.GetInputObjectInfo().PObject );
+	if( m_inputObjectInfo.IsConnected() )
+	{
+		return m_inputObjectInfo.GetInputObjectInfo().m_pObject;
+	}
 
 	return nullptr;
 }
 
-bool SVVariantResultClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVVariantResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
-	if( __super::onRun( RRunStatus, pErrorMessages ) )
+	if( __super::onRun( rRunStatus, pErrorMessages ) )
 	{
-		SVValueObjectClass* pValue = GetInputValue();
-		ASSERT( pValue );
-
-		_variant_t v;
-		pValue->GetValue( v );
-
-		// Set Value
-		m_Value.SetValue( RRunStatus.m_lResultDataIndex, v );
-
-		return true;
+		SvOi::IValueObject* pValueObject = dynamic_cast<SvOi::IValueObject*> (GetInputValue());
+		ASSERT( pValueObject );
+		
+		if( nullptr != pValueObject )
+		{
+			_variant_t Value;
+			pValueObject->getValue( Value );
+			m_Value.SetValue( Value, rRunStatus.m_lResultDataIndex );
+			return true;
+		}
 	}
-	RRunStatus.SetInvalid();
+	rRunStatus.SetInvalid();
 	return false;
 }
 

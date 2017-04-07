@@ -27,7 +27,7 @@ SVPolarTransformationToolClass::SVPolarTransformationToolClass( BOOL BCreateDefa
 							   :SVToolClass( BCreateDefaultTaskList, POwner, StringResourceID )
 {
 	// BoolValueObject to use new method
-	RegisterEmbeddedObject( &m_svAngularMethod, SVOutputAngularMethodObjectGuid, IDS_OBJECTNAME_ANGULAR_METHOD,	false, SVResetItemNone );
+	RegisterEmbeddedObject( &m_svAngularMethod, SVOutputAngularMethodObjectGuid, IDS_OBJECTNAME_ANGULAR_METHOD,	false, SvOi::SVResetItemNone );
 
 	init();
 }
@@ -35,8 +35,8 @@ SVPolarTransformationToolClass::SVPolarTransformationToolClass( BOOL BCreateDefa
 void SVPolarTransformationToolClass::init()
 {
 	// Set up your type...
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVToolObjectType;
-	m_outObjectInfo.ObjectTypeInfo.SubType    = SVPolarTransformationToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SVPolarTransformationToolObjectType;
 
 	// Identify our input type needs
 
@@ -49,7 +49,7 @@ void SVPolarTransformationToolClass::init()
 	removeEmbeddedExtents();
 
 	// Register Embedded Objects
-	RegisterEmbeddedObject( &m_svSourceImageNames, SVSourceImageNamesGuid, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SVResetItemTool );
+	RegisterEmbeddedObject( &m_SourceImageNames, SVSourceImageNamesGuid, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SvOi::SVResetItemTool );
 		
 
 	// Default taskObjectList items:
@@ -82,8 +82,8 @@ void SVPolarTransformationToolClass::init()
 	// Set Default Value to Use Angular Method1
 	m_svAngularMethod.SetEnumTypes( _T("Angular Method1=0,Angular Method2=1") );
 
-	m_svAngularMethod.SetDefaultValue( _T("Angular Method1"), TRUE );
-	m_svAngularMethod.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
+	m_svAngularMethod.SetDefaultValue( _T("Angular Method1"), true );
+	m_svAngularMethod.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
 
 	// Add the Image Transformation Class
 	SVImagePolarTransformClass* pTransform = new SVImagePolarTransformClass;
@@ -112,7 +112,8 @@ BOOL SVPolarTransformationToolClass::CreateObject( SVObjectLevelCreateStruct* PC
 {
 	BOOL bOk = SVToolClass::CreateObject( PCreateStructure );
 
-	m_svSourceImageNames.ObjectAttributesAllowedRef() &=~SV_REMOTELY_SETABLE & ~SV_SETABLE_ONLINE;
+	m_SourceImageNames.setStatic( true );
+	m_SourceImageNames.SetObjectAttributesAllowed( SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE, SvOi::SetAttributeType::RemoveAttribute );
 
 	m_isCreated = bOk;
 
@@ -181,8 +182,8 @@ HRESULT SVPolarTransformationToolClass::SetImageExtent( unsigned long p_ulIndex,
 }
 
 
-SVStaticStringValueObjectClass* SVPolarTransformationToolClass::GetInputImageNames()
+SVStringValueObjectClass* SVPolarTransformationToolClass::GetInputImageNames()
 {
-	return &m_svSourceImageNames;
+	return &m_SourceImageNames;
 }
 

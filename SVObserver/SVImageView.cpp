@@ -35,7 +35,6 @@
 #include "SVSetupDialogManager.h"
 #include "SVToolLoadImage.h"
 #include "SVMainFrm.h"
-#include "RootObject.h"
 #include "SVIPChildFrm.h"
 #include "SVOResource/ConstGlobalSvOr.h"
 #include "SVShiftTool.h"
@@ -451,7 +450,7 @@ BOOL SVImageViewClass::OnCommand( WPARAM p_wParam, LPARAM p_lParam )
 			}
 
 			l_svInfo = m_psvObject->GetObjectInfo();
-			l_svTypeInfo = l_svInfo.ObjectTypeInfo;
+			l_svTypeInfo = l_svInfo.m_ObjectTypeInfo;
 
 			//------ Warp tool hands back a SVPolarTransformObjectType. Sub type 1792.
 			//------ Window tool, Luminance hands back a SVImageObjectType. Sub type 0.
@@ -929,8 +928,18 @@ void SVImageViewClass::OnInitialUpdate()
 
 void SVImageViewClass::OnUpdate( CView* p_pSender, LPARAM p_lHint, CObject* p_pHint )
 {
-	bool Update = TRUE;
-	RootObject::getRootChildValue( SvOl::FqnEnvironmentImageUpdate, Update );
+	bool Update = true;
+
+	SVObjectClass* pObject(nullptr);
+	SVObjectManagerClass::Instance().GetObjectByIdentifier(EnvironmentImageUpdateUidGuid, pObject);
+	if (nullptr != pObject)
+	{
+		double Value;
+		//Use the getValue with double as it is faster (no dynamic casting)
+		pObject->getValue(Value);
+		Update = 0.0 < Value ? true : false;
+	}
+
 	Update = Update || !SVSVIMStateClass::CheckState( SV_STATE_RUNNING );
 
 	if( Update )
@@ -1639,7 +1648,7 @@ void SVImageViewClass::UpdateOverlays( HDC p_hDC, long p_X, long p_Y )
 		drawContext.ViewPortOffset.y = -p_Y;
 
 		// Draw tool figures...
-		for( SVExtentMultiLineStructCArray::iterator l_Iter = m_OverlayData.begin(); l_Iter != m_OverlayData.end(); ++l_Iter )
+		for( SVExtentMultiLineStructVector::iterator l_Iter = m_OverlayData.begin(); l_Iter != m_OverlayData.end(); ++l_Iter )
 		{
 			DrawOverlay( &drawContext, *l_Iter );
 		}

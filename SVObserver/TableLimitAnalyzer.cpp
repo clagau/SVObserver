@@ -52,7 +52,7 @@ BOOL TableLimitAnalyzer::CreateObject( SVObjectLevelCreateStruct* pCreateStructu
 {
 	BOOL l_bOk = __super::CreateObject( pCreateStructure );
 
-	m_LimitValue.ObjectAttributesAllowedRef() |= SV_REMOTELY_SETABLE;
+	m_LimitValue.SetObjectAttributesAllowed( SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
 	
 	return l_bOk;
 }
@@ -65,10 +65,11 @@ bool TableLimitAnalyzer::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCont
 	
 	if (returnValue)
 	{
-		long LimitCount;
-		m_LimitValue.GetValue(LimitCount);
+		double Value;
+		m_LimitValue.getValue( Value );
+		long LimitCount = static_cast<long> (Value);
 		
-		TableAnalyzerTool* pTool = dynamic_cast<TableAnalyzerTool*>(m_ownerObjectInfo.PObject);
+		TableAnalyzerTool* pTool = dynamic_cast<TableAnalyzerTool*>(m_ownerObjectInfo.m_pObject);
 		
 		if (nullptr != pTool)
 		{
@@ -100,8 +101,8 @@ bool TableLimitAnalyzer::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCont
 void TableLimitAnalyzer::Initialize()
 {
 	// Set up your type
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = TableAnalyzerType;
-	m_outObjectInfo.ObjectTypeInfo.SubType    = TableAnalyzerLimitType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = TableAnalyzerType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType    = TableAnalyzerLimitType;
 
 	BuildInputObjectList();
 	BuildEmbeddedObjectList();
@@ -110,7 +111,7 @@ void TableLimitAnalyzer::Initialize()
 void TableLimitAnalyzer::BuildEmbeddedObjectList()
 {
 	//set excludeHigh-Value
-	RegisterEmbeddedObject( &m_LimitValue, TableAnaylzerLimitValueGuid, IDS_OBJECTNAME_TABLEANALYZERLIMIT_VALUE, true, SVResetItemTool );
+	RegisterEmbeddedObject( &m_LimitValue, TableAnaylzerLimitValueGuid, IDS_OBJECTNAME_TABLEANALYZERLIMIT_VALUE, true, SvOi::SVResetItemTool );
 	_variant_t vtTemp;
 	::VariantInit(&vtTemp);
 	vtTemp.vt = cVarType_Value;
@@ -119,7 +120,7 @@ void TableLimitAnalyzer::BuildEmbeddedObjectList()
 
 	SVString ObjectName = SvUl_SF::LoadSVString( IDS_OBJECTNAME_TABLEANALYZERLIMIT_VALUE );
 	ObjectName +=  SvO::cLinkName;
-	RegisterEmbeddedObject( &m_LimitValue.getLinkedName(), TableAnaylzerLimitValue_LinkGuid, ObjectName.c_str(), false, SVResetItemNone );
+	RegisterEmbeddedObject( &m_LimitValue.getLinkedName(), TableAnaylzerLimitValue_LinkGuid, ObjectName.c_str(), false, SvOi::SVResetItemNone );
 	m_LimitValue.getLinkedName().SetDefaultValue( _T(""), false );
 }
 

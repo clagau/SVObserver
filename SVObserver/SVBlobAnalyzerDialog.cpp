@@ -116,8 +116,8 @@ BOOL SVBlobAnalyzeFeatureDialogClass::OnInitDialog()
 			initFeatureListBox(m_lbSelectedFeatures, m_pCurrentAnalyzer->getFeatureList(true));
 
 	//      _tcscpy (msvszOriginalFeaturesEnabled, msvszOriginalFeaturesEnabled); 
-			m_pCurrentAnalyzer->msvSortAscending.GetValue(msvAscending);
-			m_pCurrentAnalyzer->msvbExcludeFailed.GetValue(m_bExclude);
+			m_pCurrentAnalyzer->m_SortAscending.GetValue(msvAscending);
+			m_pCurrentAnalyzer->m_bExcludeFailed.GetValue(m_bExclude);
 			m_pCurrentAnalyzer->m_colorBlobEnumValue.GetValue(m_colorBlobEnum);
 			m_pCurrentAnalyzer->m_lvoBlobSampleSize.GetValue(m_lMaxNumberBlobs);
 			m_pCurrentAnalyzer->m_lvoMaxBlobDataArraySize.GetValue(m_lMaxBlobDataArraySize);
@@ -136,7 +136,7 @@ BOOL SVBlobAnalyzeFeatureDialogClass::OnInitDialog()
 			Exception.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16080);
 		}
 		
-		m_pCurrentAnalyzer->msvSortFeature.GetValue (lSortFeature);
+		m_pCurrentAnalyzer->m_SortFeature.GetValue (lSortFeature);
 		
 		if (lSortFeature < 0)
 		{
@@ -144,7 +144,7 @@ BOOL SVBlobAnalyzeFeatureDialogClass::OnInitDialog()
 		}
 		else
 		{
-			m_SortFeatureEdt = m_pCurrentAnalyzer->msvValue [lSortFeature].GetName();
+			m_SortFeatureEdt = m_pCurrentAnalyzer->m_Value [lSortFeature].GetName();
 		}
 
 		EnableButtons();
@@ -202,16 +202,16 @@ HRESULT SVBlobAnalyzeFeatureDialogClass::SetInspectionData()
 	{
 		UpdateData(TRUE);
 
-		l_hrOk = AddInputRequest( &( m_pCurrentAnalyzer->msvPersistantFeaturesEnabled ), m_pCurrentAnalyzer->msvszFeaturesEnabled );
+		l_hrOk = AddInputRequest( &( m_pCurrentAnalyzer->m_PersistantFeaturesEnabled ), m_pCurrentAnalyzer->m_FeaturesEnabled );
 
 		if( S_OK == l_hrOk )
 		{
-			l_hrOk = AddInputRequest( &( m_pCurrentAnalyzer->msvSortAscending ), msvAscending );
+			l_hrOk = AddInputRequest( &( m_pCurrentAnalyzer->m_SortAscending ), msvAscending );
 		}
 
 		if( S_OK == l_hrOk )
 		{
-			l_hrOk = AddInputRequest( &( m_pCurrentAnalyzer->msvbExcludeFailed ), m_bExclude );
+			l_hrOk = AddInputRequest( &( m_pCurrentAnalyzer->m_bExcludeFailed ), m_bExclude );
 		}
 
 		if( S_OK == l_hrOk )
@@ -311,11 +311,11 @@ void SVBlobAnalyzeFeatureDialogClass::OnButtonAdd()
 	{
 		if (lCurrentIndex == LB_ERR)
 		{
-			m_pCurrentAnalyzer->msvSortFeature.SetValue (1, lAvailableIndex);
-			m_SortFeatureEdt.Format ("%s", m_pCurrentAnalyzer->msvValue [lAvailableIndex].GetName ());
+			m_pCurrentAnalyzer->m_SortFeature.SetValue (1, lAvailableIndex);
+			m_SortFeatureEdt.Format ("%s", m_pCurrentAnalyzer->m_Value [lAvailableIndex].GetName ());
 		}
 
-		m_pCurrentAnalyzer->msvszFeaturesEnabled [lAvailableIndex] = _T('1');
+		m_pCurrentAnalyzer->m_FeaturesEnabled [lAvailableIndex] = _T('1');
 		m_pCurrentAnalyzer->EnableFeature ((SVBlobFeatureEnum) lAvailableIndex);
 
 //      List of not enabled.
@@ -337,7 +337,7 @@ void SVBlobAnalyzeFeatureDialogClass::OnButtonRemove()
 	if( index != LB_ERR && 
 		index >= 0 )
 	{
-		m_pCurrentAnalyzer->msvszFeaturesEnabled [index] = _T('0');
+		m_pCurrentAnalyzer->m_FeaturesEnabled [index] = _T('0');
 		m_pCurrentAnalyzer->DisableFeature ((SVBlobFeatureEnum) index);
 
 		//      List of not enabled.
@@ -348,7 +348,7 @@ void SVBlobAnalyzeFeatureDialogClass::OnButtonRemove()
 
 		// need to reset the sort index
 		long sortIndex;
-		m_pCurrentAnalyzer->msvSortFeature.GetValue( sortIndex );
+		m_pCurrentAnalyzer->m_SortFeature.GetValue( sortIndex );
 
 		int count = m_lbSelectedFeatures.GetCount();
 
@@ -360,13 +360,13 @@ void SVBlobAnalyzeFeatureDialogClass::OnButtonRemove()
 				long newIndex = static_cast< long >( m_lbSelectedFeatures.GetItemData( 0 ) );
 				if( newIndex == LB_ERR)
 				{
-					m_pCurrentAnalyzer->msvSortFeature.SetValue (1, -1L);
+					m_pCurrentAnalyzer->m_SortFeature.SetValue (1, -1L);
 					m_SortFeatureEdt.Empty ();
 				}
 				else
 				{
-					m_pCurrentAnalyzer->msvSortFeature.SetValue (1, newIndex);
-					m_SortFeatureEdt.Format ("%s", m_pCurrentAnalyzer->msvValue [newIndex].GetName ());
+					m_pCurrentAnalyzer->m_SortFeature.SetValue (1, newIndex);
+					m_SortFeatureEdt.Format ("%s", m_pCurrentAnalyzer->m_Value [newIndex].GetName ());
 				}
 			}
 		}
@@ -374,7 +374,7 @@ void SVBlobAnalyzeFeatureDialogClass::OnButtonRemove()
 		{
 			if( !count ) // truly empty list
 			{
-				m_pCurrentAnalyzer->msvSortFeature.SetValue (1, -1L);
+				m_pCurrentAnalyzer->m_SortFeature.SetValue (1, -1L);
 				m_SortFeatureEdt.Empty ();
 			}
 			// Only one Entry and it may be the "No Feature" string
@@ -383,7 +383,7 @@ void SVBlobAnalyzeFeatureDialogClass::OnButtonRemove()
 				long newIndex = static_cast< long >( m_lbSelectedFeatures.GetItemData( 0 ) );
 				if( newIndex == LB_ERR)
 				{
-					m_pCurrentAnalyzer->msvSortFeature.SetValue (1, -1L);
+					m_pCurrentAnalyzer->m_SortFeature.SetValue (1, -1L);
 					m_SortFeatureEdt.Empty ();
 				}
 			}
@@ -454,12 +454,12 @@ void SVBlobAnalyzeFeatureDialogClass::OnSetSortBtn()
 
 	if( lCurrentIndex != LB_ERR && lCurrentIndex >= 0)
 	{
-		m_pCurrentAnalyzer->msvSortFeature.SetValue (1, lCurrentIndex);
-		m_SortFeatureEdt.Format ("%s", m_pCurrentAnalyzer->msvValue [lCurrentIndex].GetName ());
+		m_pCurrentAnalyzer->m_SortFeature.SetValue (1, lCurrentIndex);
+		m_SortFeatureEdt.Format ("%s", m_pCurrentAnalyzer->m_Value [lCurrentIndex].GetName ());
 	}
 	else
 	{
-		m_pCurrentAnalyzer->msvSortFeature.SetValue (1, -1L);
+		m_pCurrentAnalyzer->m_SortFeature.SetValue (1, -1L);
 		m_SortFeatureEdt.Empty();
 	}
 	UpdateData (FALSE);
@@ -570,7 +570,7 @@ void SVBlobAnalyzeFeatureDialogClass::OnChangeEditMaxNbrBlobs()
 	m_lMaxNumberBlobs = atol( Temp );
 
 
-//	m_pCurrentAnalyzer->m_lvoBlobSampleSize.SetValue(1,m_lMaxNumberBlobs);
+//	m_pCurrentAnalyzer->m_lvoBlobSampleSize.SetValue( m_lMaxNumberBlobs, 1 );
 	// TODO: If this is a RICHEDIT control, the control will not
 	// send this notification unless you override the CDialog::OnInitDialog()
 	// function and call CRichEditCtrl().SetEventMask()
@@ -588,7 +588,7 @@ void SVBlobAnalyzeFeatureDialogClass::OnChangeEditMaxBlobDataArraySize()
 {
 	UpdateData();
 
-	m_pCurrentAnalyzer->m_lvoMaxBlobDataArraySize.SetValue(1,m_lMaxBlobDataArraySize);
+	m_pCurrentAnalyzer->m_lvoMaxBlobDataArraySize.SetValue( m_lMaxBlobDataArraySize, 1 );
 }
 
 void SVBlobAnalyzeFeatureDialogClass::OnButtonSetFeatureProperties() 
@@ -597,11 +597,11 @@ void SVBlobAnalyzeFeatureDialogClass::OnButtonSetFeatureProperties()
 	{
 		SVBlobFeatureEnum eFeature = static_cast <SVBlobFeatureEnum> (m_lbSelectedFeatures.GetItemData( m_lbSelectedFeatures.GetCurSel()) );
 		SVBlobFeaturePropertiesDlg dlg;
-		HRESULT hr = m_pCurrentAnalyzer->msvValue[ eFeature ].GetDefaultValue(dlg.m_dDefaultValue);
-		dlg.m_FeatureName = m_pCurrentAnalyzer->msvValue[ eFeature ].GetName();
+		dlg.m_dDefaultValue = m_pCurrentAnalyzer->m_Value[ eFeature ].GetDefaultValue();
+		dlg.m_FeatureName = m_pCurrentAnalyzer->m_Value[ eFeature ].GetName();
 		if ( dlg.DoModal() == IDOK )
 		{
-			hr = m_pCurrentAnalyzer->msvValue[ eFeature ].SetDefaultValue( dlg.m_dDefaultValue, false );
+			m_pCurrentAnalyzer->m_Value[ eFeature ].SetDefaultValue( dlg.m_dDefaultValue, false );
 		}
 	}
 }

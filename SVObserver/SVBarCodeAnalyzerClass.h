@@ -80,7 +80,7 @@ public:
 
 protected:
 	void init();
-	virtual bool onRun(SVRunStatusClass &RRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
+	virtual bool onRun(SVRunStatusClass &rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 private:
 	bool SaveRegExpression( SvStl::MessageContainerVector *pErrorMessages=nullptr );

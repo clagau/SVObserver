@@ -15,6 +15,7 @@
 #include "SVValueObjectLibrary/SVBoolValueObjectClass.h"
 #include "SVValueObjectLibrary/SVDoubleValueObjectClass.h"
 #include "SVValueObjectLibrary/SVEnumerateValueObjectClass.h"
+#include "SVValueObjectLibrary/SVStringValueObjectClass.h"
 #include "SVOCore/SVImageClass.h"
 #include "SVTool.h"
 #pragma endregion Includes
@@ -45,7 +46,7 @@ public:
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	virtual HRESULT SetImageExtentToParent( unsigned long p_ulIndex ) override;
-	virtual SVStaticStringValueObjectClass* GetInputImageNames() override;
+	virtual SVStringValueObjectClass* GetInputImageNames() override;
 
 	virtual HRESULT IsInputImage( SVImageClass *p_psvImage ) override;
 	virtual SVTaskObjectClass* GetObjectAtPoint( const SVExtentPointStruct &p_rPoint ) override;
@@ -70,7 +71,7 @@ protected:
 	SVInObjectInfoStruct m_TranslationYInput;
 	SVInObjectInfoStruct m_TranslationXInput;
 
-	SVStaticStringValueObjectClass m_SourceImageName;
+	SVStringValueObjectClass m_SourceImageName;
 	SVLongValueObjectClass m_TranslationX;
 	SVLongValueObjectClass m_TranslationY;
 	SVDoubleValueObjectClass m_LearnedTranslationX;

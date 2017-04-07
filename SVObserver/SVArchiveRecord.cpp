@@ -17,6 +17,7 @@
 #include "SVOCore/SVImageObjectClass.h"
 #include "SVLibrary/SVFileNameClass.h"
 #include "TextDefinesSvO.h"
+#include "ObjectInterfaces/IValueObject.h"
 #pragma endregion Includes
 
 #pragma region Constructor
@@ -70,7 +71,7 @@ void SVArchiveRecord::InitArchiveRecord( SVArchiveTool* p_pToolArchive, SVObject
 
 	m_svObjectReference = p_refObject;
 	
-	if ( dynamic_cast <SVImageClass*> (m_svObjectReference.Object()) )
+	if ( dynamic_cast <SVImageClass*> (m_svObjectReference.getObject()) )
 	{
 		BuildFileName();
 	}
@@ -78,8 +79,8 @@ void SVArchiveRecord::InitArchiveRecord( SVArchiveTool* p_pToolArchive, SVObject
 
 void SVArchiveRecord::BuildFileName()
 {
-	ASSERT(m_svObjectReference.Object());
-	m_FileNameImage = m_ImageObjectName = m_svObjectReference.Object()->GetCompleteName();
+	ASSERT(m_svObjectReference.getObject());
+	m_FileNameImage = m_ImageObjectName = m_svObjectReference.getObject()->GetCompleteName();
 	SvUl_SF::searchAndReplace( m_FileNameImage,  _T("."), _T("_") );
 }
 
@@ -176,30 +177,30 @@ void SVArchiveRecord::ConnectInputObject()
 		//
 		// Get a pointer to the object based on the guid.
 		//
-		SVObjectClass* l_psvObject = nullptr;
+		SVObjectClass* pObject = nullptr;
 
 		try
 		{
-			l_psvObject = dynamic_cast<SVObjectClass*>( SVObjectManagerClass::Instance().GetObject( m_svObjectReference.Guid() ) );
+			pObject = SVObjectManagerClass::Instance().GetObject( m_svObjectReference.Guid() );
 
-			if( nullptr != l_psvObject )
+			if( nullptr != pObject )
 			{
-				if( nullptr == dynamic_cast<SVValueObjectClass*>( l_psvObject ) &&
-					nullptr == dynamic_cast<SVImageClass*>( l_psvObject ) )
+				if( nullptr == dynamic_cast<SvOi::IValueObject*> (pObject) &&
+					nullptr == dynamic_cast<SVImageClass*>( pObject ) )
 				{
-					l_psvObject = nullptr;
+					pObject = nullptr;
 				}
 			}
 		}
 		catch( ... )
 		{
-			l_psvObject = nullptr;
+			pObject = nullptr;
 		}
 
-		if ( l_psvObject != m_svObjectReference.Object() )
+		if ( pObject != m_svObjectReference.getObject() )
 		{
 			long lArrayIndex = m_svObjectReference.ArrayIndex();
-			m_svObjectReference = l_psvObject;
+			m_svObjectReference = pObject;
 			m_svObjectReference.SetArrayIndex( lArrayIndex );
 		}
 	}
@@ -210,9 +211,9 @@ void SVArchiveRecord::ConnectInputObject()
 
 		SVInObjectInfoStruct InObjectInfo;
 
-		InObjectInfo.PObject                    = m_pArchiveTool;
-		InObjectInfo.UniqueObjectID             = m_pArchiveTool->GetUniqueObjectID();
-		InObjectInfo.ObjectTypeInfo.ObjectType  = SVToolObjectType;
+		InObjectInfo.m_pObject                    = m_pArchiveTool;
+		InObjectInfo.m_UniqueObjectID             = m_pArchiveTool->GetUniqueObjectID();
+		InObjectInfo.m_ObjectTypeInfo.ObjectType  = SVToolObjectType;
 		
 		bool rc = SVObjectManagerClass::Instance().ConnectObjectInput( m_svObjectReference.Guid(), &InObjectInfo );
 
@@ -226,9 +227,9 @@ void SVArchiveRecord::DisconnectInputObject()
 	{
 		SVInObjectInfoStruct InObjectInfo;
 		
-		InObjectInfo.PObject                   = m_pArchiveTool;
-		InObjectInfo.UniqueObjectID            = m_pArchiveTool->GetUniqueObjectID();
-		InObjectInfo.ObjectTypeInfo.ObjectType = SVToolObjectType;
+		InObjectInfo.m_pObject                   = m_pArchiveTool;
+		InObjectInfo.m_UniqueObjectID            = m_pArchiveTool->GetUniqueObjectID();
+		InObjectInfo.m_ObjectTypeInfo.ObjectType = SVToolObjectType;
 		
 		SVObjectManagerClass::Instance().DisconnectObjectInput(m_svObjectReference.Guid(), &InObjectInfo);
 	}
@@ -290,7 +291,7 @@ HRESULT SVArchiveRecord::AllocateBuffers( long lBufferSize )
 	HRESULT hr = S_FALSE;
 
 	m_lMaxIndex = 0;
-	SVImageClass* pImage = dynamic_cast <SVImageClass*> (m_svObjectReference.Object());
+	SVImageClass* pImage = dynamic_cast <SVImageClass*> (m_svObjectReference.getObject());
 	ASSERT( pImage );
 	if ( pImage )
 	{
@@ -385,7 +386,7 @@ HRESULT SVArchiveRecord::WriteImage( )
 	HRESULT hr = S_OK;
 	bool bOk;
 
-	SVImageClass* pImage = dynamic_cast <SVImageClass*> (m_svObjectReference.Object());
+	SVImageClass* pImage = dynamic_cast <SVImageClass*> (m_svObjectReference.getObject());
 	bOk = nullptr != pImage;
 	
 	if ( bOk )
@@ -491,7 +492,7 @@ SVImageClass* SVArchiveRecord::GetImage()
 {
 	SVImageClass* l_psvImage = nullptr;
 
-	if( nullptr != m_svObjectReference.Object() )
+	if( nullptr != m_svObjectReference.getObject() )
 	{
 		GUID guid = m_svObjectReference.Guid();
 	

@@ -23,8 +23,8 @@ SVLongResultClass::SVLongResultClass( BOOL BCreateDefaultTaskList, SVObjectClass
 				  :SVResultClass( BCreateDefaultTaskList, POwner, StringResourceID )
 {
 	// Identify yourself
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVResultObjectType;
-	m_outObjectInfo.ObjectTypeInfo.SubType = SVResultLongObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVResultLongObjectType;
 
 	// Identify our input type needs
 	m_inputObjectInfo.SetInputObjectType( SVLongValueObjectType );
@@ -32,10 +32,10 @@ SVLongResultClass::SVLongResultClass( BOOL BCreateDefaultTaskList, SVObjectClass
 	RegisterInputObject( &m_inputObjectInfo, SvO::cInputTag_LongResultValue );
 
 	// Register Embedded Objects
-	RegisterEmbeddedObject( &value, SVValueObjectGuid, IDS_OBJECTNAME_VALUE, false, SVResetItemNone );
+	RegisterEmbeddedObject( &m_Value, SVValueObjectGuid, IDS_OBJECTNAME_VALUE, false, SvOi::SVResetItemNone );
 
 	// Set Embedded defaults
-	value.SetDefaultValue( 0, TRUE );
+	m_Value.SetDefaultValue( 0, true );
 
 	// Instantiate Dynamic Objects
 
@@ -77,7 +77,7 @@ BOOL SVLongResultClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructur
 		bOk = nullptr != getInput();
 	}
 
-	value.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
+	m_Value.SetObjectAttributesAllowed(SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 
 	m_isCreated = bOk;
 
@@ -89,32 +89,37 @@ BOOL SVLongResultClass::CloseObject()
 	return SVResultClass::CloseObject();
 }
 
-bool SVLongResultClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+const GUID & SVLongResultClass::GetInputEmbeddedID() const
 {
-	// All inputs and outputs must be validated first
-	if( __super::onRun( RRunStatus, pErrorMessages ) )
+	if (nullptr != getInput() && SVLongValueObjectType == getInput()->GetObjectType())
 	{
-		SVLongValueObjectClass* pValue = static_cast <SVLongValueObjectClass*> (getInput());
-		ASSERT( pValue );
-
-		long v;
-		pValue->GetValue( v );
-
-		// Set Value
-		value.SetValue( RRunStatus.m_lResultDataIndex, v );
-
-		return true;
+		return getInput()->GetEmbeddedID();
 	}
-	RRunStatus.SetInvalid();
-	return false;
+	else
+	{
+		return SV_GUID_NULL;
+	}
 }
 
-SVLongValueObjectClass* SVLongResultClass::getInputLong()
+bool SVLongResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
-	if( m_inputObjectInfo.IsConnected() && m_inputObjectInfo.GetInputObjectInfo().PObject )
-		return static_cast<SVLongValueObjectClass*>(m_inputObjectInfo.GetInputObjectInfo().PObject);
+	// All inputs and outputs must be validated first
+	if( __super::onRun( rRunStatus, pErrorMessages ) )
+	{
+		const SVObjectClass* pObject = getInput();
+		ASSERT( pObject );
 
-	return nullptr;
+		if( nullptr != pObject )
+		{
+			double FetchValue(0.0);
+			pObject->getValue( FetchValue );
+			long SetValue = static_cast<long> (FetchValue);
+			m_Value.SetValue(SetValue, rRunStatus.m_lResultDataIndex );
+			return true;
+		}
+	}
+	rRunStatus.SetInvalid();
+	return false;
 }
 
 

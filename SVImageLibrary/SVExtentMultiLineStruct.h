@@ -49,8 +49,8 @@ struct SVExtentMultiLineStruct
 	SVExtentPointStruct m_StringPoint;
 	SVString m_csString;
 
-	SVExtentLineStructCArray m_svLineArray;
+	SVExtentLineStructVector m_svLineArray;
 };
 
-typedef SVVector< SVExtentMultiLineStruct > SVExtentMultiLineStructCArray;
+typedef SVVector<SVExtentMultiLineStruct> SVExtentMultiLineStructVector;
 

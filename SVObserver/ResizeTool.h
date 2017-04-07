@@ -11,6 +11,7 @@
 
 #pragma region Includes
 #include "SVTool.h"  // SVToolClass
+#include "SVValueObjectLibrary/SVStringValueObjectClass.h"
 #pragma endregion
 
 class ResizeTool :	public SVToolClass,	public AllowResizeToParent
@@ -39,8 +40,8 @@ public:
 	virtual bool DoesObjectHaveExtents() const override;
 	
 	/// GetInputImageNames
-	///  Retrieves source image name from m_svSourceImageName.
-	virtual SVStaticStringValueObjectClass* GetInputImageNames() override;
+	///  Retrieves source image name from m_SourceImageNames.
+	virtual SVStringValueObjectClass* GetInputImageNames() override;
 
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
@@ -77,7 +78,7 @@ protected:
 
 	virtual HRESULT IsInputImage(SVImageClass *p_psvImage) override;
 	
-	virtual bool onRun(SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
+	virtual bool onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	// Interpolation Mode - embedded
 	HRESULT InitializeInterpolationModeMember();
@@ -97,7 +98,7 @@ protected:
 	// change while in Run Mode and buckettized data is all reset when going 
 	// online.  If the Input Image is changed, Output Image buffers will all 
 	// be destroyed and recreated anyway.
-	SVStaticStringValueObjectClass m_svSourceImageName;
+	SVStringValueObjectClass m_SourceImageNames;
 
 	// Output Image - embedded
 	SVImageClass m_OutputImage;

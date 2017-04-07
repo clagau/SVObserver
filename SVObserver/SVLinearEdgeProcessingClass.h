@@ -29,9 +29,10 @@ public:
 	virtual bool onRun( SVRunStatusClass &p_rsvRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
 	SVImageClass*             GetInputImage();
-	SVDoubleValueObjectClass* GetInputMinThreshold();
-	SVDoubleValueObjectClass* GetInputMaxThreshold();
 	SVDoubleValueObjectClass* GetInputLinearData();
+	HRESULT GetInputMinThreshold(double& rMinThreshold, int Index);
+	HRESULT GetInputMaxThreshold(double& rMaxThreshold, int Index);
+	HRESULT GetInputLinearData(std::vector<double>& rData);
 
 	HRESULT GetPixelDepth();
 

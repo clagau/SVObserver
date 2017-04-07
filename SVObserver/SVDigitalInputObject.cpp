@@ -21,7 +21,7 @@ SVDigitalInputObject::SVDigitalInputObject( LPCSTR strObjectName )
 , m_bDefaultValue( false )
 , m_bForcedValue( false )
 {
-	m_isCreated = false;
+	LocalInitialize();
 }
 
 SVDigitalInputObject::SVDigitalInputObject( SVObjectClass *pOwner, int StringResourceID )
@@ -33,7 +33,7 @@ SVDigitalInputObject::SVDigitalInputObject( SVObjectClass *pOwner, int StringRes
 , m_bDefaultValue( false )
 , m_bForcedValue( false )
 {
-	m_isCreated = false;
+	LocalInitialize();
 }
 
 SVDigitalInputObject::~SVDigitalInputObject()
@@ -47,6 +47,9 @@ SVDigitalInputObject::~SVDigitalInputObject()
 
 BOOL SVDigitalInputObject::Create()
 {
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVIoObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVDigitalInputObjectType;
+
 	m_isCreated = true;
 
 	return true;
@@ -127,7 +130,10 @@ BOOL SVDigitalInputObject::SetChannel( long lChannel )
 	if( m_lChannel != lChannel )
 	{
 		m_lChannel = lChannel;
-		Init();
+		//! When the channel is set then we need to initialize the input values
+		SVIOConfigurationInterfaceClass::Instance().SetDigitalInputIsInverted(m_lChannel, m_bInverted);
+		SVIOConfigurationInterfaceClass::Instance().SetDigitalInputIsForced(m_lChannel, m_bForced);
+		SVIOConfigurationInterfaceClass::Instance().SetDigitalInputForcedValue(m_lChannel, m_bForcedValue);
 	}
 	return TRUE;
 }
@@ -137,9 +143,9 @@ long SVDigitalInputObject::GetChannel() const
 	return m_lChannel;
 }
 
-void SVDigitalInputObject::Init() const
+void SVDigitalInputObject::LocalInitialize()
 {
-	SVIOConfigurationInterfaceClass::Instance().SetDigitalInputIsInverted( m_lChannel, m_bInverted );
-	SVIOConfigurationInterfaceClass::Instance().SetDigitalInputIsForced( m_lChannel, m_bForced );
-	SVIOConfigurationInterfaceClass::Instance().SetDigitalInputForcedValue( m_lChannel, m_bForcedValue );
+	m_isCreated = false;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVIoObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVDigitalInputObjectType;
 }

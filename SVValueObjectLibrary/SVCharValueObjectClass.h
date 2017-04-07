@@ -17,11 +17,10 @@
 #pragma region Includes
 #include "SVOResource/resource.h"
 #include "SVUtilityLibrary/SVString.h"
-#include "SVValueObjectClassImpl.h"
-#include "SVValueObjectGlobals.h"
+#include "SVValueObjectClass.h"
 #pragma endregion Includes
 
-class SVCharValueObjectClass : public SVValueObjectClassImpl <TCHAR>
+class SVCharValueObjectClass : public SVValueObjectClass<TCHAR>
 {
 	SV_DECLARE_CLASS( SVCharValueObjectClass );
 
@@ -34,26 +33,19 @@ public:
 	virtual ~SVCharValueObjectClass();
 	virtual void Persist(SVObjectWriter& rWriter) override;
 
-	IMPLEMENT_VALUE_OBJECT_GET_SET()
-
 protected:
-
-	virtual HRESULT SetValueAt( int iBucket, int iIndex, const VARIANT& rValue );
-	virtual HRESULT SetValueAt( int iBucket, int iIndex, const SVString& rValue );
-
-	virtual HRESULT GetValueAt( int iBucket, int iIndex, double& rValue ) const;
-	virtual HRESULT GetValueAt( int iBucket, int iIndex, SVString& rValue ) const;
-	virtual HRESULT GetValueAt( int iBucket, int iIndex, VARIANT& rValue ) const;
-
-	virtual void ValidateValue( int iBucket, int iIndex, const SVString& rValue ) const override;
-
-private:
-	void LocalInitialize();
+	virtual double ValueType2Double(const TCHAR& rValue) const override { return static_cast<double> (rValue); };
+	virtual _variant_t ValueType2Variant( const TCHAR& rValue ) const override { return _variant_t( rValue ); };
+	virtual TCHAR Variant2ValueType( const _variant_t& rValue ) const override { return TCHAR( rValue ); };
 
 	/// Convert a string in a char. Throw an exception if the string isn't convertible into a char
-	/// \param strValue [in] The input string
+	/// \param rValue [in] The input string
 	/// \returns char Return value.
-	TCHAR convertString2Char(const SVString& rValue ) const;
+	virtual TCHAR ConvertString2Type(const SVString& rValue ) const override;
+
+	virtual SVString ConvertType2String(const TCHAR& rValue) const override { return FormatOutput(rValue); };
+private:
+	void LocalInitialize();
 };
 
 #pragma warning (pop)

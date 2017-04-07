@@ -48,13 +48,13 @@ ToolSizeAdjustTask::ToolSizeAdjustTask(bool AllowFullsize , bool AllowAdjustSize
 , m_AllowAdjustPosition(AllowAdjustPosition)
 {
 	// Identify our output type
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVToolSizeAdjustTaskType;
-	m_outObjectInfo.ObjectTypeInfo.SubType = SVNotSetSubObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVToolSizeAdjustTaskType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVNotSetSubObjectType;
 
-	RegisterEmbeddedObject( &m_InputModes[TSWidth], ToolSizeAdjustSizeWidthModeGuid, IDS_OBJECTNAME_TOOLSIZEADJUSTSIZEWIDTH, false, SVResetItemNone );
-	RegisterEmbeddedObject( &m_InputModes[TSHeight], ToolSizeAdjustSizeHeightModeGuid, IDS_OBJECTNAME_TOOLSIZEADJUSTSIZEHEIGHT, false, SVResetItemNone );
-	RegisterEmbeddedObject( &m_InputModes[TSPositionX], ToolSizeAdjustSizePositionXModeGuid, IDS_OBJECTNAME_TOOLSIZEADJUSTPOSITIONX, false, SVResetItemNone );
-	RegisterEmbeddedObject( &m_InputModes[TSPositionY], ToolSizeAdjustSizePositionYModeGuid, IDS_OBJECTNAME_TOOLSIZEADJUSTPOSITIONY, false, SVResetItemNone );
+	RegisterEmbeddedObject( &m_InputModes[TSWidth], ToolSizeAdjustSizeWidthModeGuid, IDS_OBJECTNAME_TOOLSIZEADJUSTSIZEWIDTH, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_InputModes[TSHeight], ToolSizeAdjustSizeHeightModeGuid, IDS_OBJECTNAME_TOOLSIZEADJUSTSIZEHEIGHT, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_InputModes[TSPositionX], ToolSizeAdjustSizePositionXModeGuid, IDS_OBJECTNAME_TOOLSIZEADJUSTPOSITIONX, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_InputModes[TSPositionY], ToolSizeAdjustSizePositionYModeGuid, IDS_OBJECTNAME_TOOLSIZEADJUSTPOSITIONY, false, SvOi::SVResetItemNone );
 
 	SVEnumerateVector vec;
 	
@@ -69,7 +69,7 @@ ToolSizeAdjustTask::ToolSizeAdjustTask(bool AllowFullsize , bool AllowAdjustSize
 	{
 		m_InputModes[vType].SetEnumTypes( vec );
 		m_InputModes[vType].SetDefaultValue( TSModes::TSNone, true );
-		m_InputModes[vType].ObjectAttributesAllowedRef() &=~SV_REMOTELY_SETABLE & ~SV_SETABLE_ONLINE;
+		m_InputModes[vType].SetObjectAttributesAllowed( SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE, SvOi::SetAttributeType::RemoveAttribute );
 	}
 
 	//Add Evaluation Objects 
@@ -115,13 +115,13 @@ BOOL ToolSizeAdjustTask::AddEvaluationObject(SVInObjectInfoStruct* pInfo, GUID c
 	return RegisterInputObject( pInfo, Name );
 }
 
-bool ToolSizeAdjustTask::onRun(SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool ToolSizeAdjustTask::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	//DoNothing in onRun
 	return true;
 }
 
-bool  ToolSizeAdjustTask::Run( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool  ToolSizeAdjustTask::Run( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	//DoNothing in Run
 	return true;
@@ -188,34 +188,36 @@ HRESULT ToolSizeAdjustTask::GetModes(long &rModeWidth,long &rModeHeight,long &rM
 	return hresult;
 }
 
-HRESULT ToolSizeAdjustTask::GetResultValue( TSValues val, long &value) const
+HRESULT ToolSizeAdjustTask::GetResultValue( TSValues val, long& rValue) const
 {
 	HRESULT hresult = SvOi::Err_16030_InvalidValuePointer;
 	SVDoubleValueObjectClass* pValueObject =GetDResultObjects(val);
 	if (nullptr != pValueObject)
 	{
-		hresult =  pValueObject->GetValue(value);
+		double TempValue( 0.0 );
+		hresult =  pValueObject->GetValue(TempValue);
+		rValue = static_cast<long> (TempValue);
 	}
 	if (S_OK == hresult)
 	{
 		if( val == TSValues::TSHeight  || val == TSValues::TSWidth )
 		{
-			if (value < MinToolSize)
+			if (rValue < MinToolSize)
 			{
 				hresult = SvOi::Err_16031_InvalidSize;
 			}
-			else if (value > MaxToolSize)
+			else if (rValue > MaxToolSize)
 			{
 				hresult = SvOi::Err_16032_InvalidSize;
 			}
 		}
 		else
 		{
-			if (value < 0)
+			if (rValue < 0)
 			{
 				hresult = SvOi::Err_16039_NegativePosition;
 			}
-			else if (value > MaxToolSize)
+			else if (rValue > MaxToolSize)
 			{
 				hresult = SvOi::Err_16040_ToLargePosition;
 			}
@@ -226,7 +228,7 @@ HRESULT ToolSizeAdjustTask::GetResultValue( TSValues val, long &value) const
 
 SVToolClass* ToolSizeAdjustTask::GetTool() const 
 {
-	return dynamic_cast<SVToolClass* >(GetOwner());
+	return dynamic_cast<SVToolClass*> (GetOwner());
 }
 
 bool ToolSizeAdjustTask::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
@@ -456,7 +458,7 @@ SVDoubleValueObjectClass* ToolSizeAdjustTask::GetDResultObjects(ToolSizeAdjustTa
 
 	if( m_InObjectInfoDResult[val].IsConnected() )
 	{
-		pValue = dynamic_cast< SVDoubleValueObjectClass* >( m_InObjectInfoDResult[val].GetInputObjectInfo().PObject );
+		pValue = dynamic_cast< SVDoubleValueObjectClass* >( m_InObjectInfoDResult[val].GetInputObjectInfo().m_pObject );
 	}
 	return pValue;
 }

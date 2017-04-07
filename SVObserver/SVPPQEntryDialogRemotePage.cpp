@@ -81,7 +81,7 @@ BOOL SVPPQEntryDialogRemotePageClass::OnInitDialog()
 	long lSize;
 	int j;
 	int nIndex;
-	SVIOEntryHostStructPtrList ppIOEntries;
+	SVIOEntryHostStructPtrVector ppIOEntries;
 	SVIOEntryHostStructPtr pIOEntry;
 
 	// Get list of available inputs

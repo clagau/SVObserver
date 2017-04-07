@@ -38,8 +38,8 @@ void SVStdImageOperatorListClass::init()
 	m_bUseOverlays = false;
 
 	// Identify our output type
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVUnaryImageOperatorListObjectType;
-	m_outObjectInfo.ObjectTypeInfo.SubType	= SVStdImageOperatorListObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVUnaryImageOperatorListObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType	= SVStdImageOperatorListObjectType;
 
 	// SetObjectDepth() already called in SVObjectClass Ctor
 
@@ -136,20 +136,20 @@ SVImageClass* SVStdImageOperatorListClass::getOutputImage()
 // -----------------------------------------------------------------------------
 // .Description : Special routing here.
 ////////////////////////////////////////////////////////////////////////////////
-bool SVStdImageOperatorListClass::Run( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVStdImageOperatorListClass::Run( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	bool bRetVal = true;
 	clearRunErrorMessages();
 	
 	SVRunStatusClass ChildRunStatus;
-	ChildRunStatus.m_lResultDataIndex  = RRunStatus.m_lResultDataIndex;
-	ChildRunStatus.Images = RRunStatus.Images;
-	ChildRunStatus.m_UpdateCounters = RRunStatus.m_UpdateCounters;
+	ChildRunStatus.m_lResultDataIndex  = rRunStatus.m_lResultDataIndex;
+	ChildRunStatus.Images = rRunStatus.Images;
+	ChildRunStatus.m_UpdateCounters = rRunStatus.m_UpdateCounters;
 
 	SVDataManagerHandle dmHandleInput;
 	
 	// Run yourself...
-	bRetVal = onRun( RRunStatus, &m_RunErrorMessages );
+	bRetVal = onRun( rRunStatus, &m_RunErrorMessages );
 
 	SVImageClass* pInputImage = getInputImage();
 	SVImageClass* pOutputImage = getOutputImage();
@@ -163,7 +163,7 @@ bool SVStdImageOperatorListClass::Run( SVRunStatusClass& RRunStatus, SvStl::Mess
 
 	if( bRetVal )
 	{
-		if ( pOutputImage->SetImageHandleIndex( RRunStatus.Images ) )
+		if ( pOutputImage->SetImageHandleIndex( rRunStatus.Images ) )
 		{
 			SVSmartHandlePointer input;
 			SVSmartHandlePointer output;
@@ -186,7 +186,7 @@ bool SVStdImageOperatorListClass::Run( SVRunStatusClass& RRunStatus, SvStl::Mess
 				SvOi::ITool* pTool = dynamic_cast<SvOi::ITool *>(GetTool());
 				if( pTool && pOutputImage->GetLastResetTimeStamp() <= pInputImage->GetLastResetTimeStamp() )
 				{
-					pTool->UpdateImageWithExtent( RRunStatus.m_lResultDataIndex );
+					pTool->UpdateImageWithExtent( rRunStatus.m_lResultDataIndex );
 				}
 
 				pOutputImage->GetParentImageHandle( input );
@@ -253,22 +253,22 @@ bool SVStdImageOperatorListClass::Run( SVRunStatusClass& RRunStatus, SvStl::Mess
 
 					// Update our Run Status
 					if( ChildRunStatus.IsDisabled() )
-						RRunStatus.SetDisabled();
+						rRunStatus.SetDisabled();
 
 					if( ChildRunStatus.IsDisabledByCondition() )
-						RRunStatus.SetDisabledByCondition();
+						rRunStatus.SetDisabledByCondition();
 
 					if( ChildRunStatus.IsWarned() )
-						RRunStatus.SetWarned();
+						rRunStatus.SetWarned();
 
 					if( ChildRunStatus.IsFailed() )
-						RRunStatus.SetFailed();
+						rRunStatus.SetFailed();
 
 					if( ChildRunStatus.IsPassed() )
-						RRunStatus.SetPassed();
+						rRunStatus.SetPassed();
 
 					if( ChildRunStatus.IsCriticalFailure() )
-						RRunStatus.SetCriticalFailure();
+						rRunStatus.SetCriticalFailure();
 				}
 			} // for( int i = 0; i < GetSize(); i++ )
 			
@@ -284,7 +284,7 @@ bool SVStdImageOperatorListClass::Run( SVRunStatusClass& RRunStatus, SvStl::Mess
 					m_RunErrorMessages.push_back(Msg);
 				}
 			} // if( bFirstFlag ) 
-		}  // if ( pOutputImage->SetImageHandleIndex( RRunStatus.Images ) )
+		}  // if ( pOutputImage->SetImageHandleIndex( rRunStatus.Images ) )
 		else
 		{
 			bRetVal = false;
@@ -298,16 +298,16 @@ bool SVStdImageOperatorListClass::Run( SVRunStatusClass& RRunStatus, SvStl::Mess
 		// Something was wrong...
 		
 		SetInvalid();
-		RRunStatus.SetInvalid();
+		rRunStatus.SetInvalid();
 	}
 	
 	// Get Status Color...
-	DWORD dwValue = RRunStatus.GetStatusColor();
-	m_statusColor.SetValue( RRunStatus.m_lResultDataIndex, dwValue );
+	DWORD dwValue = rRunStatus.GetStatusColor();
+	m_statusColor.SetValue( dwValue, rRunStatus.m_lResultDataIndex );
 	
 	// Get Status...
-	dwValue = RRunStatus.GetState();
-	m_statusTag.SetValue( RRunStatus.m_lResultDataIndex, dwValue );
+	dwValue = rRunStatus.GetState();
+	m_statusTag.SetValue( dwValue, rRunStatus.m_lResultDataIndex );
 
 	if (nullptr != pErrorMessages && !m_RunErrorMessages.empty())
 	{

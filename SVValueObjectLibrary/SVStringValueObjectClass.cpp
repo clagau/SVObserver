@@ -29,20 +29,20 @@ static char THIS_FILE[] = __FILE__;
 
 SV_IMPLEMENT_CLASS(SVStringValueObjectClass, SVStringValueObjectClassGuid);
 
-SVStringValueObjectClass::SVStringValueObjectClass(LPCTSTR ObjectName)
-				         : base(ObjectName) 
+SVStringValueObjectClass::SVStringValueObjectClass( LPCTSTR ObjectName )
+: SVValueObjectClass<SVString>( ObjectName ) 
 {
 	LocalInitialize();
 }
 
-SVStringValueObjectClass::SVStringValueObjectClass(	SVObjectClass* POwner, 	int StringResourceID )
-   : base(POwner, StringResourceID) 
+SVStringValueObjectClass::SVStringValueObjectClass(	SVObjectClass* pOwner, 	int StringResourceID )
+: SVValueObjectClass<SVString>( pOwner, StringResourceID ) 
 {
 	LocalInitialize();
 }
 
 SVStringValueObjectClass::SVStringValueObjectClass( const SVStringValueObjectClass& rhs)
-	: base()
+: SVValueObjectClass<SVString>()
 {
 	LocalInitialize();
 	*this = rhs;
@@ -50,7 +50,7 @@ SVStringValueObjectClass::SVStringValueObjectClass( const SVStringValueObjectCla
 
 const SVStringValueObjectClass& SVStringValueObjectClass::operator = (const SVStringValueObjectClass& rhs)
 {
-	base::operator = (rhs);
+	__super::operator = (rhs);
 	return *this;
 }
 
@@ -67,13 +67,13 @@ void SVStringValueObjectClass::Persist(SVObjectWriter& rWriter)
 
 	// Get the Data Values (Member Info, Values)
 	// Check for DoubleQuotes in variable
-	SVString tmp = DefaultValue();
-	SvUl::AddEscapeSpecialCharacters(tmp, true);
+	SVString TempValue( GetDefaultValue() );
+	SvUl::AddEscapeSpecialCharacters( TempValue, true );
 	
-	_variant_t value;
-	value.SetString(tmp.c_str());
-	rWriter.WriteAttribute(scDefaultTag, value);
-	value.Clear();
+	_variant_t Value;
+	Value.SetString(TempValue.c_str());
+	rWriter.WriteAttribute(scDefaultTag, Value);
+	Value.Clear();
 
 	rWriter.StartElement(scArrayElementsTag);
 
@@ -81,14 +81,14 @@ void SVStringValueObjectClass::Persist(SVObjectWriter& rWriter)
 	// Object Depth is implicit (it's the count of the values)
 	SVVariantList list;
 	
-	// for all elements in the array (objectDepth)
-	for (int i = 0; i < m_iArraySize; i++)
+	// for all elements in the array
+	for (int i = 0; i < getArraySize(); i++)
 	{
-		tmp = Element(m_iLastSetIndex, i); 
-		SvUl::AddEscapeSpecialCharacters(tmp, true);
-		value.SetString(tmp.c_str());
-		list.push_back(value);
-		value.Clear();
+		GetValue( TempValue, GetLastSetIndex(), i );
+		SvUl::AddEscapeSpecialCharacters( TempValue, true );
+		Value.SetString( TempValue.c_str() );
+		list.push_back( Value );
+		Value.Clear();
 	}
 	rWriter.WriteAttribute(scElementTag, list);
 	rWriter.EndElement();
@@ -98,163 +98,167 @@ void SVStringValueObjectClass::Persist(SVObjectWriter& rWriter)
 
 HRESULT  SVStringValueObjectClass::SetObjectValue(SVObjectAttributeClass* pDataObject)
 {
-	HRESULT hr = S_FALSE;
-	BOOL bOk = FALSE;
-	
-	SVString  csTemp;
-	SvCl::SVObjectSVStringArrayClass svArray;
-	bucket_type l_Buckets(BucketNoAssert());
-	array_type l_Array;
-	
-	if ( bOk = pDataObject->GetAttributeData(SvOi::cDefaultTag, svArray) )
+	HRESULT Result( E_FAIL );
+	BOOL	bOk( false );
+
+	SvCl::SVObjectArrayClassTemplate<ValueType> ObjectArray;	// for default values
+	BucketVector BucketArray;
+	ValueVector ReadValueArray;
+
+	if ( bOk = pDataObject->GetAttributeData( SvOi::cDefaultTag, ObjectArray ) )
 	{
-		for (int i = 0; i < svArray.GetSize(); i++)
+		if ( 0 < ObjectArray.GetSize() )
 		{
-			DefaultValue() = svArray[i];
-			
-			// Remove any escapes
-			SvUl::RemoveEscapedSpecialCharacters(DefaultValue(), true);
-		}
-	}
-	else if ( bOk = pDataObject->GetAttributeData(SvOi::cBucketTag, l_Buckets, DefaultValue() ) )
-	{
-		for (size_t i = 0; i < l_Buckets.size(); i++)
-		{
-			// Remove any escapes
-			SvUl::RemoveEscapedSpecialCharacters(l_Buckets[i][0], true);
+			DefaultValue() = ObjectArray[ ObjectArray.GetSize()-1 ];
+			SvUl::RemoveEscapedSpecialCharacters( DefaultValue(), false );
 		}
 
-		if ( ArraySize() == 1 )
+		SetDefaultValue( GetDefaultValue().c_str(), false );
+	}
+	else if ( bOk = pDataObject->GetAttributeData( SvOi::cBucketTag, BucketArray, DefaultValue() ) )
+	{
+		for (size_t i = 0; i < BucketArray.size(); i++)
 		{
-			ScalarBucket(0)=l_Buckets[0][0];
-			ScalarBucket(1)=l_Buckets[1][0];
+			SvUl::RemoveEscapedSpecialCharacters(BucketArray[i][0], false);
+		}
+
+		if( !isBucketized() )
+		{
+			if ( 1 == getArraySize() )
+			{
+				// In configurations the value are placed in bucket 1
+				Value() = BucketArray[1][0];
+			}
+			else
+			{
+				// In configurations the values are placed in bucket 1
+				std::swap( ValueArray(), BucketArray[1] );
+			}
 		}
 		else
 		{
-			std::swap(Buckets(), l_Buckets);
+			if ( 1 == getArraySize() )
+			{
+				if(nullptr != getBucket().get())
+				{
+					getBucket()->at(0) = BucketArray[0][0];
+					getBucket()->at(1) = BucketArray[1][0];
+				}
+			}
+			else
+			{
+				if(nullptr != getBucketArray().get())
+				{
+					std::swap( *getBucketArray(), BucketArray );
+				}
+			}
 		}
-		if ( 1 < m_iNumberOfBuckets )
+		if ( 1 < getNumberOfBuckets() )
 		{
-			m_iLastSetIndex = 1;
+			setLastSetIndex( 1 );
 		}
+
+		SVString  Value;
+		GetValue( Value );
+		SetValue( Value );
 	}
 	// new-style: store all array elements:
-	else if ( bOk = pDataObject->GetArrayData(SvOi::cArrayTag, l_Array, DefaultValue() ) )
+	else if ( bOk = pDataObject->GetArrayData( SvOi::cArrayTag, ReadValueArray, DefaultValue() ) )
 	{
-		for (size_t i = 0; i < l_Array.size(); i++)
+		for (size_t i = 0; i < ReadValueArray.size(); i++)
 		{
 			// Remove any escapes
-			SvUl::RemoveEscapedSpecialCharacters(l_Array[i], true);
+			SvUl::RemoveEscapedSpecialCharacters(ReadValueArray[i], false);
 		}
 
-		SetArraySize( static_cast<int>(l_Array.size()) );
-		if ( ArraySize() == 1 )
+		SetArraySize( static_cast< int >( ReadValueArray.size() ) );
+		if( !isBucketized() )
 		{
-			ScalarBucket(1)=l_Array[0];
+			if ( 1 == getArraySize() )
+			{
+				Value() = ReadValueArray[0];
+			}
+			else
+			{
+				std::swap( ValueArray(), ReadValueArray );
+			}
+		}
+		setLastSetIndex( 1 );
+
+	}
+	else if ( bOk = pDataObject->GetAttributeData(_T("StrDefault"), ObjectArray) )
+	{
+		if ( 0 < ObjectArray.GetSize() )
+		{
+			DefaultValue() = ObjectArray[ ObjectArray.GetSize()-1 ];
+			SvUl::RemoveEscapedSpecialCharacters( DefaultValue(), false );
+		}
+
+		SetDefaultValue( GetDefaultValue().c_str(), false );
+	}
+	else if ( bOk = pDataObject->GetAttributeData( _T("StrArray"), BucketArray, DefaultValue() ) )
+	{
+		for (size_t i = 0; i < BucketArray.size(); i++)
+		{
+			SvUl::RemoveEscapedSpecialCharacters(BucketArray[i][0], false);
+		}
+
+		if( !isBucketized() )
+		{
+			if ( 1 == getArraySize() )
+			{
+				// In configurations the value are placed in bucket 1
+				Value() = BucketArray[1][0];
+			}
+			else
+			{
+				// In configurations the values are placed in bucket 1
+				std::swap( ValueArray(), BucketArray[1] );
+			}
 		}
 		else
 		{
-			std::swap(Array(1), l_Array);
+			if ( 1 == getArraySize() )
+			{
+				if( nullptr != getBucket() )
+				{
+					getBucket()->at(0) = BucketArray[0][0];
+					getBucket()->at(1) = BucketArray[0][0];
+				}
+			}
+			else
+			{
+				if( nullptr != getBucketArray() )
+				{
+					std::swap( *getBucketArray(), BucketArray );
+				}
+			}
 		}
-		m_iLastSetIndex = 1;
-	}
-	else if ((bOk = pDataObject->GetAttributeData(_T("StrDefault"), svArray)))
-	{
-		for (int i = 0; i < svArray.GetSize(); i++)
+		if ( 1 < getNumberOfBuckets() )
 		{
-			DefaultValue() = svArray[i];
-			
-			// Remove any escapes
-			SvUl::RemoveEscapedSpecialCharacters(DefaultValue(), true);
-		}
-	}
-	else if ( bOk = pDataObject->GetAttributeData("StrArray", l_Buckets, DefaultValue() ) )
-	{
-		for (size_t i = 0; i < l_Buckets.size(); i++)
-		{
-			// Remove any escapes
-			SvUl::RemoveEscapedSpecialCharacters(l_Buckets[i][0], true);
-		}
-
-		if ( ArraySize() == 1 )
-		{
-			ScalarBucket(0)=l_Buckets[0][0];
-			ScalarBucket(1)=l_Buckets[1][0];
-		}
-		else
-		{
-			std::swap(Buckets(), l_Buckets);
-		}
-		if ( 1 < m_iNumberOfBuckets )
-		{
-			m_iLastSetIndex = 1;
+			setLastSetIndex( 1 );
 		}
 	}
 	else
 	{
-		hr = base::SetObjectValue(pDataObject);
-		return hr;
+		Result = __super::SetObjectValue(pDataObject);
+		return Result;
 	}
 
-	hr = bOk ? S_OK : S_FALSE;
-	return hr;
+	Result = bOk ? S_OK : E_FAIL;
+	return Result;
 }
 
-HRESULT SVStringValueObjectClass::SetValueAt( int iBucket, int iIndex, const VARIANT& rvtValue )
+SVString SVStringValueObjectClass::ConvertString2Type( const SVString& rValue ) const
 {
-	if ( VT_BSTR == rvtValue.vt )
-	{
-		return base::SetValueAt(iBucket, iIndex, SvUl_SF::createSVString(rvtValue.bstrVal));
-	}
-	assert(false);
-	return S_FALSE;
-}
-
-HRESULT SVStringValueObjectClass::GetValueAt( int iBucket, int iIndex, long& rValue) const
-{
-	SVString Value;
-
-	HRESULT hr =  base::GetValueAt( iBucket, iIndex, Value );
-	rValue = atoi( Value.c_str() );
-
-	return hr;
-}
-
-HRESULT SVStringValueObjectClass::GetValueAt( int iBucket, int iIndex, double& rValue) const
-{
-	SVString Value;
-
-	HRESULT hr = base::GetValueAt( iBucket, iIndex, Value );
-	rValue = atof( Value.c_str() );
-
-	return hr;
-}
-
-HRESULT SVStringValueObjectClass::GetValueAt( int iBucket, int iIndex, VARIANT& rValue ) const
-{
-	SVString Value;
-
-	_variant_t l_Temp;
-	l_Temp.Attach( rValue );
-	HRESULT hr = base::GetValueAt( iBucket, iIndex, Value );
-	if( S_OK == hr )
-	{
-		l_Temp = Value.c_str();
-	}
-	else
-	{
-		l_Temp.Clear();
-	}
-	rValue = l_Temp.Detach();
-
-	return hr;
+	return rValue;
 }
 
 void SVStringValueObjectClass::LocalInitialize()
 {
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVStringValueObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVStringValueObjectType;
 	
-	ObjectAttributesAllowedRef() = SV_VIEWABLE | SV_PUBLISHABLE | SV_ARCHIVABLE | SV_EMBEDABLE | SV_PRINTABLE | SV_DD_VALUE;
+	SetObjectAttributesAllowed( SV_VIEWABLE | SV_PUBLISHABLE | SV_ARCHIVABLE | SV_EMBEDABLE | SV_PRINTABLE | SV_DD_VALUE, SvOi::SetAttributeType::OverwriteAttribute );
 	SetTypeName( _T("Text") );
 
 	InitializeBuckets();

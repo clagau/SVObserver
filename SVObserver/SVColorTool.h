@@ -13,6 +13,7 @@
 #pragma region Includes
 #include "SVOCore/SVImageClass.h"
 #include "SVTool.h"
+#include "SVValueObjectLibrary/SVStringValueObjectClass.h"
 #pragma endregion Includes
 
 class SVColorToolClass : public SVToolClass
@@ -30,7 +31,7 @@ public:
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	virtual bool DoesObjectHaveExtents() const override;
-	virtual SVStaticStringValueObjectClass* GetInputImageNames() override;
+	virtual SVStringValueObjectClass* GetInputImageNames() override;
 
 	SVImageClass* GetRGBImage();
 	SVImageClass* GetHSIImage();
@@ -40,7 +41,7 @@ public:
 
 protected:
 	virtual HRESULT UpdateImageWithExtent( unsigned long p_Index ) override;
-	virtual bool onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+	virtual bool onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
 	BOOL createBandChildLayer( SVImageClass& p_rOutputImage, SVImageClass* p_pInputImage, long p_BandLink );
 
@@ -51,7 +52,7 @@ protected:
 
 	SVBoolValueObjectClass m_convertToHSI;
 	// String value object for Source Image Names
-	SVStaticStringValueObjectClass m_svSourceImageNames;
+	SVStringValueObjectClass m_SourceImageNames;
 
 private:
 	void init();

@@ -22,8 +22,8 @@ SVDoubleResultClass::SVDoubleResultClass( BOOL BCreateDefaultTaskList, SVObjectC
 				  :SVResultClass( BCreateDefaultTaskList, POwner, StringResourceID )
 {
 	// Identify yourself
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVResultObjectType;
-	m_outObjectInfo.ObjectTypeInfo.SubType = SVResultDoubleObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVResultDoubleObjectType;
 
 	// Identify our input type needs
 	m_inputObjectInfo.SetInputObjectType( SVDoubleValueObjectType );
@@ -31,10 +31,10 @@ SVDoubleResultClass::SVDoubleResultClass( BOOL BCreateDefaultTaskList, SVObjectC
 	RegisterInputObject( &m_inputObjectInfo, _T( "DoubleResultValue" ) );
 
 	// Register Embedded Objects
-	RegisterEmbeddedObject( &value, SVValueObjectGuid, IDS_OBJECTNAME_VALUE, false, SVResetItemNone );
+	RegisterEmbeddedObject( &m_Value, SVValueObjectGuid, IDS_OBJECTNAME_VALUE, false, SvOi::SVResetItemNone );
 
 	// Set Embedded defaults
-	value.SetDefaultValue( 0, TRUE );
+	m_Value.SetDefaultValue( 0, true );
 	// Instantiate Dynamic Objects
 
 	// Construct the SVRangeClass via the ClassInfoStruct
@@ -75,7 +75,7 @@ BOOL SVDoubleResultClass::CreateObject( SVObjectLevelCreateStruct* PCreateStruct
 		bOk = nullptr != getInput();
 	}
 
-	value.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
+	m_Value.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 
 	m_isCreated = bOk;
 
@@ -87,35 +87,24 @@ BOOL SVDoubleResultClass::CloseObject()
 	return SVResultClass::CloseObject();
 }
 
-bool SVDoubleResultClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVDoubleResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	// All inputs and outputs must be validated first
-	if( SVResultClass::onRun(RRunStatus, pErrorMessages) )
+	if( __super::onRun(rRunStatus, pErrorMessages) )
 	{
-		SVDoubleValueObjectClass* pValue = static_cast <SVDoubleValueObjectClass*> (getInput());
-		ASSERT( pValue );
+		const SVObjectClass* pObject = getInput();
+		ASSERT(pObject);
 
-		double v;
-
-		pValue->GetValue(v);
-
-		// Set Value
-		value.SetValue(RRunStatus.m_lResultDataIndex, v);
-
-	
-		return true;
+		if( nullptr != pObject )
+		{
+			double Value;
+			pObject->getValue(Value);
+			m_Value.SetValue(Value, rRunStatus.m_lResultDataIndex );
+			return true;
+		}
 	}
-	RRunStatus.SetInvalid();
+	rRunStatus.SetInvalid();
 	return false;
-}
-
-
-SVDoubleValueObjectClass* SVDoubleResultClass::getInputDouble()
-{
-	if( m_inputObjectInfo.IsConnected() && m_inputObjectInfo.GetInputObjectInfo().PObject )
-		return static_cast<SVDoubleValueObjectClass*>(m_inputObjectInfo.GetInputObjectInfo().PObject);
-
-	return nullptr;
 }
 
 

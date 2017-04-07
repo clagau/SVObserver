@@ -214,9 +214,6 @@
     <ClInclude Include="DottedNameLookup.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVObjectAttributeClassHelper.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="SVGetObjectListVisitor.inl">

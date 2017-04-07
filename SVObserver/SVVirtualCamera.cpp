@@ -133,7 +133,7 @@ BOOL SVVirtualCamera::Create( LPCTSTR DeviceName )
 	{
 		SetBandLink( mpsvDevice->Channel() );
 
-		m_outObjectInfo.ObjectTypeInfo.ObjectType = SVVirtualCameraType;
+		m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVVirtualCameraType;
 
 		bOk = m_CallbackList.Create() && bOk;
 
@@ -756,7 +756,7 @@ HRESULT SVVirtualCamera::updateCameraLongParameter( LPCTSTR Name, const SVLongVa
 		BasicValueObjectPtr pValueObject = m_CameraValues.setValueObject( Name, Value, this, SVCameraObjectType );
 		if( !pValueObject.empty() )
 		{
-			pValueObject->ObjectAttributesAllowedRef() |= SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE;
+			pValueObject->SetObjectAttributesAllowed( SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE, SvOi::SetAttributeType::AddAttribute );
 			Result = S_OK;
 		}
 	}

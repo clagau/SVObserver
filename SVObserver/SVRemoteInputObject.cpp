@@ -18,17 +18,13 @@
 SVRemoteInputObject::SVRemoteInputObject( LPCSTR strObjectName )
 : SVInputObject( strObjectName )
 {
-	m_isCreated = false;
-	m_lIndex   = -1;
-	m_vtRemoteCache = 0.0;
+	LocalInitialize();
 }
 
 SVRemoteInputObject::SVRemoteInputObject( SVObjectClass* POwner, int StringResourceID )
 : SVInputObject( POwner, StringResourceID )
 {
-	m_isCreated = false;
-	m_lIndex   = -1;
-	m_vtRemoteCache = 0.0;
+	LocalInitialize();
 }
 
 SVRemoteInputObject::~SVRemoteInputObject()
@@ -43,6 +39,9 @@ BOOL SVRemoteInputObject::Create()
 {
 	if( !m_isCreated )
 	{
+		m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVIoObjectType;
+		m_outObjectInfo.m_ObjectTypeInfo.SubType = SVRemoteInputObjectType;
+
 		m_isCreated = true;
 
 		::InitializeCriticalSection( &m_hCriticalSection );
@@ -134,3 +133,11 @@ HRESULT SVRemoteInputObject::GetCache( _variant_t& p_rValue )
 	return l_Status;
 }
 
+void SVRemoteInputObject::LocalInitialize()
+{
+	m_isCreated = false;
+	m_lIndex = -1;
+	m_vtRemoteCache = 0.0;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVIoObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVRemoteInputObjectType;
+}

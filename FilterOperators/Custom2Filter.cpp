@@ -86,7 +86,7 @@ void Custom2Filter::RebuildKernel()
 	StatusCode = SVMatroxBufferInterface::Create( m_milKernel, CreateStruct );
 
 	SvOi::ICustom2Filter::LongArray KernelArray;
-	m_KernelArray.GetValues( KernelArray );
+	m_KernelArray.GetArrayValues( KernelArray );
 	long unsigned Index(0);
 
 	pKernelData = new unsigned char[Width*Height];
@@ -133,17 +133,17 @@ void Custom2Filter::RebuildKernel()
 	delete [] pKernelData;
 }
 
-bool Custom2Filter::onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool Custom2Filter::onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	bool Result( false );
 	SVMatroxImageInterface::SVStatusCode StatusCode;
 
-	m_KernelWidth.CopyLastSetValue( RRunStatus.m_lResultDataIndex );
-	m_KernelHeight.CopyLastSetValue( RRunStatus.m_lResultDataIndex );
-	m_ClippingEnabled.CopyLastSetValue( RRunStatus.m_lResultDataIndex );
-	m_AbsoluteValue.CopyLastSetValue( RRunStatus.m_lResultDataIndex );
-	m_NormalizationFactor.CopyLastSetValue( RRunStatus.m_lResultDataIndex );
-	m_KernelArray.CopyLastSetValue( RRunStatus.m_lResultDataIndex );
+	m_KernelWidth.CopyLastSetValue( rRunStatus.m_lResultDataIndex );
+	m_KernelHeight.CopyLastSetValue( rRunStatus.m_lResultDataIndex );
+	m_ClippingEnabled.CopyLastSetValue( rRunStatus.m_lResultDataIndex );
+	m_AbsoluteValue.CopyLastSetValue( rRunStatus.m_lResultDataIndex );
+	m_NormalizationFactor.CopyLastSetValue( rRunStatus.m_lResultDataIndex );
+	m_KernelArray.CopyLastSetValue( rRunStatus.m_lResultDataIndex );
 
 	if( m_pCurrentUIOPL && !( ROutputImageHandle.empty() ) && !( RInputImageHandle.empty() ) )
 	{
@@ -183,7 +183,7 @@ bool Custom2Filter::onRun( bool First, SVSmartHandlePointer RInputImageHandle, S
 	{
 		// Signal that something was wrong...
 		SetInvalid();
-		RRunStatus.SetInvalid();
+		rRunStatus.SetInvalid();
 	}
 	return Result;
 }
@@ -192,15 +192,15 @@ bool Custom2Filter::onRun( bool First, SVSmartHandlePointer RInputImageHandle, S
 #pragma region Private Methods
 void Custom2Filter::init()
 {
-	m_outObjectInfo.ObjectTypeInfo.SubType = SVCustom2FilterObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVCustom2FilterObjectType;
 
-	RegisterEmbeddedObject( &m_KernelArray, Custom2FilterKernelGuid, IDS_OBJECTNAME_CUSTOMFILTER_KERNELCELL, false, SVResetItemOwner );
+	RegisterEmbeddedObject( &m_KernelArray, Custom2FilterKernelGuid, IDS_OBJECTNAME_CUSTOMFILTER_KERNELCELL, false, SvOi::SVResetItemOwner );
 
-	RegisterEmbeddedObject( &m_KernelWidth, SVCustomFilterKernelWidthGuid, IDS_OBJECTNAME_CUSTOMFILTER_KERNELWIDTH, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_KernelHeight, SVCustomFilterKernelHeightGuid, IDS_OBJECTNAME_CUSTOMFILTER_KERNELHEIGHT, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_NormalizationFactor, SVCustomFilterTransformGuid, IDS_OBJECTNAME_CUSTOMFILTER_TRANSFORM, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_AbsoluteValue, SVCustomFilterAbsoluteGuid, IDS_OBJECTNAME_CUSTOMFILTER_ABSOLUTE, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_ClippingEnabled, SVCustomFilterClippingGuid, IDS_OBJECTNAME_CUSTOMFILTER_CLIPPING, false, SVResetItemOwner );
+	RegisterEmbeddedObject( &m_KernelWidth, SVCustomFilterKernelWidthGuid, IDS_OBJECTNAME_CUSTOMFILTER_KERNELWIDTH, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_KernelHeight, SVCustomFilterKernelHeightGuid, IDS_OBJECTNAME_CUSTOMFILTER_KERNELHEIGHT, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_NormalizationFactor, SVCustomFilterTransformGuid, IDS_OBJECTNAME_CUSTOMFILTER_TRANSFORM, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_AbsoluteValue, SVCustomFilterAbsoluteGuid, IDS_OBJECTNAME_CUSTOMFILTER_ABSOLUTE, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_ClippingEnabled, SVCustomFilterClippingGuid, IDS_OBJECTNAME_CUSTOMFILTER_CLIPPING, false, SvOi::SVResetItemOwner );
 
 	m_KernelArray.SetArraySize( SvOi::ICustom2Filter::StandardKernelSize*SvOi::ICustom2Filter::StandardKernelSize );
 	m_KernelArray.SetDefaultValue( 1, TRUE );
@@ -211,13 +211,14 @@ void Custom2Filter::init()
 	m_AbsoluteValue.SetDefaultValue( TRUE, TRUE );
 	m_NormalizationFactor.SetDefaultValue( SvOi::ICustom2Filter::StandardKernelSize*SvOi::ICustom2Filter::StandardKernelSize, TRUE );
 
-	m_KernelArray.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE;
+	const UINT cAttributes = SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE;
+	m_KernelArray.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 
-	m_KernelWidth.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE;
-	m_KernelHeight.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE;
-	m_ClippingEnabled.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE;
-	m_AbsoluteValue.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE;
-	m_NormalizationFactor.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE;
+	m_KernelWidth.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
+	m_KernelHeight.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
+	m_ClippingEnabled.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
+	m_AbsoluteValue.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
+	m_NormalizationFactor.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 
 	// Set default inputs and outputs
 	addDefaultInputObjects();
@@ -243,7 +244,7 @@ long Custom2Filter::validateKernelSize( SVLongValueObjectClass& rKernelSize )
 	{
 		Size = SvOi::ICustom2Filter::MaxKernelSize; 
 	}
-	rKernelSize.SetValue( 1, Size );
+	rKernelSize.SetValue( Size, 1 );
 
 	return Size;
 }

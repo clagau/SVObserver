@@ -33,7 +33,7 @@ BasicValueObject::BasicValueObject( LPCTSTR ObjectName,  SVObjectClass* pOwner, 
 	, m_Created(false)
 	, m_Node(Node)
 {
-	m_outObjectInfo.ObjectTypeInfo.ObjectType =  ObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType =  ObjectType;
 	Create( pOwner );
 }
 
@@ -55,7 +55,12 @@ bool BasicValueObject::operator==(const BasicValueObject& rRhs) const
 	return Result;
 }
 
-HRESULT BasicValueObject::setValue(const _variant_t& rValue )
+HRESULT BasicValueObject::getValue(double& rValue, int Bucket /*= -1*/, int Index /*= -1*/) const
+{
+	return getValue<double>(rValue);
+}
+
+HRESULT BasicValueObject::setValue(const _variant_t& rValue, int Bucket /*= -1*/, int Index /*= -1*/ )
 {
 	HRESULT	Result = S_OK;
 
@@ -99,23 +104,20 @@ HRESULT BasicValueObject::setValue(const _variant_t& rValue )
 	return Result;
 }
 
-HRESULT BasicValueObject::setValue(const LPCTSTR Value )
+HRESULT BasicValueObject::setValue( const SVString& rValue, int Bucket /*= -1*/, int Index /*= -1*/ )
 {
 	HRESULT Result( S_FALSE );
 
-	_bstr_t Temp;
-	Temp = Value;
 	Lock();
 	m_Value.Clear();
-	m_Value.vt = VT_BSTR;
-	m_Value.bstrVal = Temp.Detach();
+	m_Value.SetString( rValue.c_str() );
 	Unlock();
 
 	RefreshOwner( SVObjectClass::PostRefresh );
 	return Result;
 }
 
-HRESULT BasicValueObject::getValue( _variant_t& rValue ) const
+HRESULT BasicValueObject::getValue( _variant_t& rValue, int Bucket /*= -1*/, int Index /*= -1*/ ) const
 {
 	RefreshOwner( SVObjectClass::PreRefresh );
 
@@ -124,7 +126,7 @@ HRESULT BasicValueObject::getValue( _variant_t& rValue ) const
 	return S_OK;
 }
 
-HRESULT BasicValueObject::getValue( SVString& rValue ) const
+HRESULT BasicValueObject::getValue( SVString& rValue, int Bucket /*= -1*/, int Index /*= -1*/ ) const
 {
 	HRESULT	Result = S_OK;
 
@@ -218,40 +220,41 @@ HRESULT BasicValueObject::getValue( bool& rValue ) const
 
 SVString BasicValueObject::getTypeName() const
 {
-	SVString retString = _T("Invalid");
+	SVString Result = _T("Invalid");
+
 	switch (m_Value.vt)
 	{
 	case VT_BSTR:
 		{
-			retString = _T("Text");
+			Result = _T("Text");
 		}
 		break;
 	case VT_BOOL:
 	case VT_INT:		//BOOL implicit conversion to VT_INT
 		{
-			retString = _T("Bool");
+			Result = _T("Bool");
 		}
 		break;
 	case VT_I4:
 		{
-			retString = _T("Integer32");
+			Result = _T("Integer32");
 		}
 		break;
 	case VT_I8:
 		{
-			retString = _T("Integer64");
+			Result = _T("Integer64");
 		}
 		break;
 	case VT_R4:
 	case VT_R8:
 		{
-			retString = _T("Decimal");
+			Result = _T("Decimal");
 		}
 		break;
 	default:
 		break;
 	}
-	return retString;
+	return Result;
 }
 
 HRESULT BasicValueObject::updateDeviceParameter(SVDeviceParam* pDeviceParam)
@@ -354,7 +357,7 @@ BOOL BasicValueObject::Create( SVObjectClass* pOwner )
 	SetObjectDepth( 1 );
 	if( !m_Node )
 	{
-		ObjectAttributesAllowedRef() = SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES;
+		SetObjectAttributesAllowed( SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::OverwriteAttribute );
 	}
 	if( nullptr != pOwner )
 	{

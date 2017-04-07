@@ -42,10 +42,10 @@ namespace Seidenader { namespace ObjectInterfaces
 	const long			cDefaultResultViewHeight = 200L;
 
 	// Default tool extents
-	const long			cDefaultWindowToolLeft = 10L;
-	const long			cDefaultWindowToolTop = 10L;
-	const long			cDefaultWindowToolWidth = 100L;
-	const long			cDefaultWindowToolHeight  = 100L;
+	const double		cDefaultWindowToolLeft = 10.0;
+	const double		cDefaultWindowToolTop = 10.0;
+	const double		cDefaultWindowToolWidth = 100.0;
+	const double		cDefaultWindowToolHeight  = 100.0;
 	const double		cDefaultWindowToolWidthScaleFactor = 1.0;
 	const double		cDefaultWindowToolHeightScaleFactor = 1.0;
 

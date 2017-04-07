@@ -21,7 +21,7 @@ SVEvaluateClass::SVEvaluateClass( SVObjectClass* POwner, int StringResourceID )
 : SVMathContainerClass( POwner, StringResourceID ) 
 {
 	// Identify yourself
-	m_outObjectInfo.ObjectTypeInfo.SubType = SVEvaluateObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVEvaluateObjectType;
 
 	// Identify our input type needs...
 
@@ -43,7 +43,7 @@ BOOL SVEvaluateClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure 
 	m_isCreated = SVMathContainerClass::CreateObject( PCreateStructure );
 
 	// Set / Reset Printable flag
-	m_outputMathResult.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
+	m_outputMathResult.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 
 	return m_isCreated;
 }
@@ -63,19 +63,19 @@ SVDoubleValueObjectClass* SVEvaluateClass::getOutputMathResult()
 	return &m_outputMathResult;
 }
 
-bool SVEvaluateClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVEvaluateClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	SVDoubleValueObjectClass* pResult = getOutputMathResult();
 	ASSERT( pResult );
 	
 	// All inputs and outputs must be validated first
-	if( __super::onRun( RRunStatus, pErrorMessages ) )
+	if( __super::onRun( rRunStatus, pErrorMessages ) )
 	{
 		SVDoubleValueObjectClass* pInputResult = getInputMathResult();
 		ASSERT( pInputResult );
 
-		double result;
-		if( S_OK != pInputResult->GetValue( result ) || S_OK != pResult->SetValue( RRunStatus.m_lResultDataIndex, result ))
+		double Value( 0.0 );
+		if( S_OK != pInputResult->GetValue( Value ) || S_OK != pResult->SetValue( Value, rRunStatus.m_lResultDataIndex ))
 		{
 			if (nullptr != pErrorMessages)
 			{
@@ -83,7 +83,7 @@ bool SVEvaluateClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContain
 				pErrorMessages->push_back(Msg);
 			}
 			SetInvalid();
-			RRunStatus.SetInvalid();
+			rRunStatus.SetInvalid();
 			return false;
 		}
 

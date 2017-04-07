@@ -42,14 +42,14 @@ SVPixelAnalyzerClass::SVPixelAnalyzerClass(BOOL BCreateDefaultTaskList, SVObject
 void SVPixelAnalyzerClass::init()
 {
 	// Identify our output type
-	m_outObjectInfo.ObjectTypeInfo.SubType = SVPixelAnalyzerObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVPixelAnalyzerObjectType;
 
 	// Identify our input type needs
 
 	// Register Embedded Objects
-	RegisterEmbeddedObject(&m_pixelCount, SVPixelCountObjectGuid, IDS_OBJECTNAME_PIXEL_COUNT, false, SVResetItemNone);
+	RegisterEmbeddedObject(&m_pixelCount, SVPixelCountObjectGuid, IDS_OBJECTNAME_PIXEL_COUNT, false, SvOi::SVResetItemNone);
 
-	RegisterEmbeddedObject(&m_pixelCountColor, SVPixelColorIndexObjectGuid,	IDS_OBJECTNAME_PIXEL_COLOR_INDEX, false, SVResetItemNone);
+	RegisterEmbeddedObject(&m_pixelCountColor, SVPixelColorIndexObjectGuid,	IDS_OBJECTNAME_PIXEL_COLOR_INDEX, false, SvOi::SVResetItemNone);
 
 	// Set Embedded defaults
 	m_pixelCountColor. SetDefaultValue( 255, true ); // White
@@ -164,14 +164,14 @@ BOOL SVPixelAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateStruc
 	}
 	
 	// Set / Reset Printable Flags
-	m_pixelCount.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	m_pixelCountColor.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
+	m_pixelCount.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_pixelCountColor.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
 	m_pixelCountColor.SetOutputFormat(OutputFormat_int);
 	
 	return m_isCreated;
 }
 
-bool SVPixelAnalyzerClass::onRun(SVRunStatusClass &RRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool SVPixelAnalyzerClass::onRun(SVRunStatusClass &rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	SVImageClass* pInputImage (nullptr);
 	BYTE byIndex(0);
@@ -237,7 +237,7 @@ bool SVPixelAnalyzerClass::onRun(SVRunStatusClass &RRunStatus, SvStl::MessageCon
 		}
 
 		m_pixelCountColor.GetValue (byIndex);
-		m_pixelCount.SetValue( RRunStatus.m_lResultDataIndex, m_alHistValues[byIndex] );
+		m_pixelCount.SetValue( m_alHistValues[byIndex], rRunStatus.m_lResultDataIndex );
 
 		break;
 	}
@@ -245,7 +245,7 @@ bool SVPixelAnalyzerClass::onRun(SVRunStatusClass &RRunStatus, SvStl::MessageCon
 	if (!Result)
 	{
 		SetInvalid ();
-		RRunStatus.SetInvalid ();
+		rRunStatus.SetInvalid ();
 	}
 	return Result;
 }

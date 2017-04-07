@@ -16,7 +16,6 @@
 #include "SVRunControlLibrary/SVRunControlLibrary.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVValueObjectLibrary/BasicValueObject.h"
-#include "SVValueObjectLibrary/SVValueObjectReference.h"
 #include "ResultViewReferences.h"
 #include "SVIPResultData.h"
 #include "SVIPResultItemDefinition.h"
@@ -85,7 +84,7 @@ bool ResultViewReferences::LoadResultViewItemDef( SVTreeType& rTree, SVTreeType:
 		SVObjectReference objRef;
 		SVString dottedName = SvUl_SF::createSVString( Value );
 		bOK = (S_OK == SVObjectManagerClass::Instance().GetObjectByDottedName( dottedName, objRef ));
-		if ( bOK && objRef.Object() )
+		if ( bOK && objRef.getObject() )
 		{
 			if (IsViewable(objRef))
 			{
@@ -103,7 +102,7 @@ bool ResultViewReferences::Insert( const SVString &rDottedName )
 	SVObjectReference objRef;
 	bool bOK = ( S_OK == SVObjectManagerClass::Instance().GetObjectByDottedName( rDottedName, objRef ) );
 
-	if ( bOK && objRef.Object() )
+	if ( bOK && objRef.getObject() )
 	{
 
 		ResultViewItemDef itemDef(objRef);
@@ -119,7 +118,7 @@ bool ResultViewReferences::Save(SVObjectWriter& rWriter)
 	std::vector<SVObjectReference>::const_iterator it = m_ReferenceVector.begin();
 	for( ; it != m_ReferenceVector.end(); ++it )
 	{
-		if( nullptr != it->Object() )
+		if( nullptr != it->getObject() )
 		{
 			_variant_t Value;
 			Value.SetString( it->GetCompleteOneBasedObjectName().c_str() );
@@ -154,7 +153,7 @@ void ResultViewReferences::RebuildReferenceVector( SVInspectionProcess* pIProces
 		if( nullptr != pObject )
 		{
 			bInsert = true;
-			if( nullptr != pIProcess && true == pIProcess->IsDisabledPPQVariable(dynamic_cast<SVValueObjectClass*>(pObject)) )
+			if( nullptr != pIProcess && true == pIProcess->IsDisabledPPQVariable(pObject) )
 			{
 				bInsert = false;
 			}
@@ -185,12 +184,12 @@ HRESULT  ResultViewReferences::GetResultData( SVIPResultData& p_rResultData) con
 	std::vector<SVObjectReference>::const_iterator it = m_ReferenceVector.begin();
 	for( ; it != m_ReferenceVector.end(); ++it)
 	{
-		if( nullptr == it->Object() )
+		if( nullptr == it->getObject() )
 			continue;
 
 		SVIPResultItemDefinition itemDef;
 
-		if( it->IsIndexPresent() )
+		if( it->isArray() && -1 != it->ArrayIndex() )
 		{
 			itemDef = SVIPResultItemDefinition( it->Guid(), it->ArrayIndex() );
 		}
@@ -201,59 +200,44 @@ HRESULT  ResultViewReferences::GetResultData( SVIPResultData& p_rResultData) con
 
 		unsigned long Color = SV_DEFAULT_WHITE_COLOR;
 
-		if( it->Object()->GetOwner() )
+		if( it->getObject()->GetOwner() )
 		{
-			Color = it->Object()->GetOwner()->GetObjectColor();
+			Color = it->getObject()->GetOwner()->GetObjectColor();
 		}
 
 
 		SVString Value;
-		BasicValueObject* bvo(nullptr); 
-		SVValueObjectReference voref(*it);  // try to assign to value object
-		if( voref.Object() )                // if successful
+		if( it->getObject()->GetObjectType() == SVStringValueObjectType )
 		{
-			if( voref->GetObjectType() == SVStringValueObjectType)
+			SVString ValueString;
+			it->getValueObject()->getValue( ValueString, -1, it->getValidArrayIndex() );
+			// Wrap string in Quotes...
+			Value = SvUl_SF::Format(_T("\042%s\042"), ValueString.c_str());
+		}
+		else
+		{
+			if( !it->isEntireArray() )
 			{
-				SVString ValueString;
-				voref.GetValue( ValueString );
-				// Wrap string in Quotes...
-				Value = SvUl_SF::Format(_T("\042%s\042"), ValueString.c_str());
+				HRESULT hr = it->getValueObject()->getValue( Value, -1, it->getValidArrayIndex() );
+				if ( hr == SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE )
+				{
+					Value = _T("< ") + Value + _T(" >");
+				}
+				else if ( S_OK != hr )
+				{
+					Value = _T( "<Not Valid>" );
+				}
 			}
 			else
 			{
-				if (!voref.IsEntireArray())
+				HRESULT hr = it->getValueObject()->getValue( Value );
+				if ( S_OK != hr )
 				{
-					HRESULT hr = voref.GetValue( Value );
-					if ( hr == SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE )
-					{
-						Value = _T("< ") + Value + _T(" >");
-					}
-					else if ( S_OK != hr )
-					{
-						Value = _T( "<Not Valid>" );
-					}
-				}
-				else
-				{
-					HRESULT hr = voref.GetValues( Value );
-					if ( S_OK != hr )
-					{
-						Value = _T( "<Not Valid>" );
-					}
+					Value = _T( "<Not Valid>" );
 				}
 			}
 		}
-		else  if(nullptr != (bvo = dynamic_cast<BasicValueObject*>(it->Object()))) 
-		{
-			Color = SV_DEFAULT_WHITE_COLOR;
 
-			HRESULT hr = bvo->getValue( Value );
-
-			if ( S_OK != hr )
-			{
-				Value = _T( "<Not Valid>" );
-			}
-		}
 		p_rResultData.m_ResultData[ itemDef ] = SVIPResultItemData( Value, Color );
 
 	}
@@ -265,18 +249,18 @@ HRESULT  ResultViewReferences::GetResultDefinitions( SVResultDefinitionDeque &rD
 {
 	for( size_t i = 0; i < m_ReferenceVector.size(); ++i )
 	{
-		SVObjectReference ref = m_ReferenceVector.at(i);
-		if( nullptr != ref.Object() )
+		SVObjectReference ObjectRef = m_ReferenceVector.at(i);
+		if( nullptr != ObjectRef.getObject() )
 		{
 			SVIPResultItemDefinition Def;
 
-			if( ref.IsIndexPresent() )
+			if( ObjectRef.isArray() && -1 != ObjectRef.ArrayIndex() )
 			{
-				Def = SVIPResultItemDefinition( ref.Guid(), ref.ArrayIndex() );
+				Def = SVIPResultItemDefinition( ObjectRef.Guid(), ObjectRef.ArrayIndex() );
 			}
 			else
 			{
-				Def = SVIPResultItemDefinition( ref.Guid() );
+				Def = SVIPResultItemDefinition( ObjectRef.Guid() );
 			}
 
 			rDefinitions.push_back( Def );
@@ -314,7 +298,7 @@ void ResultViewReferences::InsertFromOutputList(SVInspectionProcess* pInspection
 
 	for(SVObjectReferenceVector::const_iterator iter = RefVector.begin(); iter != RefVector.end(); ++iter)
 	{
-		if( nullptr != iter->Object() && iter->ObjectAttributesSet() & SV_VIEWABLE )
+		if( nullptr != iter->getObject() && iter->ObjectAttributesSet() & SV_VIEWABLE )
 		{
 			m_ReferenceVector.push_back(*iter);
 			ResultViewItemDef item(*iter);
@@ -337,12 +321,12 @@ void ResultViewReferences::InsertFromPPQInputs(SVInspectionProcess* pInspection)
 		for( size_t l = 0; pInspection && l < PpqInputSize; ++l )
 		{
 			SVIOEntryStruct pIOEntry = pInspection->m_PPQInputs[l];
-			SVObjectClass * object  = pIOEntry.m_IOEntryPtr->m_pValueObject;
-			if( nullptr != object && object->ObjectAttributesSet() & SV_VIEWABLE )
+			SVObjectClass* pObject  = pIOEntry.m_IOEntryPtr->getObject();
+			if( nullptr != pObject && pObject->ObjectAttributesSet() & SV_VIEWABLE )
 			{
-				SVObjectReference ref(object);
-				ResultViewItemDef item(ref);
-				m_ReferenceVector.push_back(ref);
+				SVObjectReference ObjectRef(pObject);
+				ResultViewItemDef item(ObjectRef);
+				m_ReferenceVector.push_back(ObjectRef);
 				m_ResultViewItemDefList.push_back(item);
 			}
 		}

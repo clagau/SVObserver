@@ -31,6 +31,7 @@
 #include "SVVisionProcessorHelper.h"
 #include "SVValueObjectLibrary/BasicValueObject.h"
 #include "TextDefinesSvO.h"
+#include "ObjectInterfaces/IValueObject.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -62,8 +63,8 @@ void SVArchiveTool::initializeArchiveTool()
 	m_arrayImagesInfoObjectsToArchive.SetArchiveTool( this );
 
 	// Set up your type...
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVToolObjectType;
-	m_outObjectInfo.ObjectTypeInfo.SubType    = SVToolArchiveObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SVToolArchiveObjectType;
 	
 	// Hide and Remove Embedded Extents
 	removeEmbeddedExtents();
@@ -73,82 +74,82 @@ void SVArchiveTool::initializeArchiveTool()
 		&m_stringFileArchivePath, 
 		SVArchiveFilePathObjectGuid, 
 		IDS_OBJECTNAME_ARCHIVE_FILEPATH,
-		false, SVResetItemTool );
+		false, SvOi::SVResetItemTool );
 	
 	RegisterEmbeddedObject(	
 		&m_stringArchiveImageGuids_OBSOLETE, 
 		SVArchiveImageGuidsObjectGuid, 
 		IDS_OBJECTNAME_ARCHIVE_IMAGE_GUIDS,
-		false, SVResetItemTool );
+		false, SvOi::SVResetItemTool );
 	
 	RegisterEmbeddedObject(	
 		&m_stringArchiveResultGuids_OBSOLETE, 
 		SVArchiveResultGuidsObjectGuid, 
 		IDS_OBJECTNAME_ARCHIVE_RESULT_GUIDS,
-		false, SVResetItemTool );
+		false, SvOi::SVResetItemTool );
 	
 	RegisterEmbeddedObject(	
 		&m_svoArchiveImageNames, 
 		SVArchiveImageNamesObjectGuid, 
 		IDS_OBJECTNAME_ARCHIVE_IMAGE_NAMES,
-		false, SVResetItemTool );
+		false, SvOi::SVResetItemTool );
 	
 	RegisterEmbeddedObject(	
 		&m_svoArchiveResultNames, 
 		SVArchiveResultNamesObjectGuid, 
 		IDS_OBJECTNAME_ARCHIVE_RESULT_NAMES,
-		false, SVResetItemTool );
+		false, SvOi::SVResetItemTool );
 	
 	RegisterEmbeddedObject(	
 		&m_stringImageFileRootPath,
 		SVArchiveImageFileRootPathGuid,
 		IDS_OBJECTNAME_ARCHIVE_IMAGE_ROOT_PATH,
-		false, SVResetItemNone );
+		false, SvOi::SVResetItemNone );
 	
 	RegisterEmbeddedObject(	
 		&m_dwAppendArchiveFile,
 		SVArchiveAppendArchiveFileGuid,
 		IDS_OBJECTNAME_ARCHIVE_APPEND_ARCHIVE_FILE,
-		false, SVResetItemTool );
+		false, SvOi::SVResetItemTool );
 	m_dwAppendArchiveFile.SetOutputFormat(OutputFormat_int);
 	
 	RegisterEmbeddedObject(	
 		&m_dwArchiveStopAtMaxImages,
 		SVArchiveStopAtMaxImagesGuid,
 		IDS_OBJECTNAME_ARCHIVE_STOP_AT_MAX_IMAGES,
-		false, SVResetItemNone );
+		false, SvOi::SVResetItemNone );
 	m_dwArchiveStopAtMaxImages.SetOutputFormat(OutputFormat_int);
 	
 	RegisterEmbeddedObject(	
 		&m_dwArchiveMaxImagesCount,
 		SVArchiveMaxImagesCountGuid,
 		IDS_OBJECTNAME_ARCHIVE_MAX_IMAGES_COUNT,
-		false, SVResetItemNone );
+		false, SvOi::SVResetItemNone );
 	m_dwArchiveMaxImagesCount.SetOutputFormat(OutputFormat_int);
 
 	RegisterEmbeddedObject(	
 		&m_evoArchiveMethod,
 		SVArchiveMethodGuid,
 		IDS_OBJECTNAME_ARCHIVE_TOOL_METHOD,
-		false, SVResetItemNone  );
+		false, SvOi::SVResetItemNone  );
 
 	RegisterEmbeddedObject(
 		&m_HeaderLabelNames,
 		SVArchiveHeaderLabelGUID,
 		IDS_OBJECTNAME_HEADER_LABELS,
-		false, SVResetItemNone);
+		false, SvOi::SVResetItemNone);
 
 	RegisterEmbeddedObject(
 		&m_HeaderObjectGUIDs,
 		SVArchiveHeaderObjectGUID,
 		IDS_OBJECTNAME_HEADER_OBJECT_STRINGS,
-		false, SVResetItemNone);
+		false, SvOi::SVResetItemNone);
 	
 	RegisterEmbeddedObject(
 		&m_bvoUseHeaders,
 		SVArchiveUseHeadersGUID,
 		IDS_OBJECTNAME_ENABLE_HEADERS,
-		false, SVResetItemNone);
+		false, SvOi::SVResetItemNone);
 
 	// no need to register image buffer
 	
@@ -183,11 +184,11 @@ void SVArchiveTool::initializeArchiveTool()
 	vec.push_back( SVEnumeratePair(_T("Asynchronous"), SVArchiveAsynchronous ) );
 	m_evoArchiveMethod.SetEnumTypes(vec);
 	
-	m_stringArchiveImageGuids_OBSOLETE.ObjectAttributesAllowedRef() = SV_NO_ATTRIBUTES;
-	m_stringArchiveResultGuids_OBSOLETE.ObjectAttributesAllowedRef() = SV_NO_ATTRIBUTES;
-	m_svoArchiveImageNames.ObjectAttributesAllowedRef() =  SV_REMOTELY_SETABLE;
-	m_svoArchiveResultNames.ObjectAttributesAllowedRef() = SV_REMOTELY_SETABLE;
-	m_HeaderObjectGUIDs.ObjectAttributesAllowedRef() = SV_NO_ATTRIBUTES;
+	m_stringArchiveImageGuids_OBSOLETE.SetObjectAttributesAllowed( SV_NO_ATTRIBUTES, SvOi::SetAttributeType::OverwriteAttribute );
+	m_stringArchiveResultGuids_OBSOLETE.SetObjectAttributesAllowed( SV_NO_ATTRIBUTES, SvOi::SetAttributeType::OverwriteAttribute );
+	m_svoArchiveImageNames.SetObjectAttributesAllowed( SV_REMOTELY_SETABLE, SvOi::SetAttributeType::OverwriteAttribute );
+	m_svoArchiveResultNames.SetObjectAttributesAllowed( SV_REMOTELY_SETABLE, SvOi::SetAttributeType::OverwriteAttribute );
+	m_HeaderObjectGUIDs.SetObjectAttributesAllowed( SV_NO_ATTRIBUTES, SvOi::SetAttributeType::OverwriteAttribute );
 	m_bInitializedForRun = false;
 	m_eArchiveMethod = SVArchiveInvalidMethod;
 	m_uiValidateCount = 0;
@@ -199,39 +200,45 @@ BOOL SVArchiveTool::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 
 	if ( SVToolClass::CreateObject( PCreateStructure ) )
 	{
-		DWORD dwMethod = SVArchiveInvalidMethod;
-		m_evoArchiveMethod.GetValue( dwMethod );
-		m_eArchiveMethod = static_cast<SVArchiveMethodEnum>( dwMethod );
+		long Method = SVArchiveInvalidMethod;
+		m_evoArchiveMethod.GetValue( Method );
+		m_eArchiveMethod = static_cast<SVArchiveMethodEnum> (Method);
 
 		bOk = TRUE;
 	}
 
-	m_stringFileArchivePath.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_REMOTELY_SETABLE & ~SV_SETABLE_ONLINE;
-	m_stringArchiveImageGuids_OBSOLETE.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	m_stringArchiveResultGuids_OBSOLETE.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	m_svoArchiveImageNames.ObjectAttributesAllowedRef() |= SV_REMOTELY_SETABLE & ~SV_SETABLE_ONLINE;
-	m_svoArchiveResultNames.ObjectAttributesAllowedRef() |= SV_REMOTELY_SETABLE & ~SV_SETABLE_ONLINE;
-	m_stringImageFileRootPath.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_REMOTELY_SETABLE;
-	m_dwAppendArchiveFile.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
-	m_dwArchiveStopAtMaxImages.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_REMOTELY_SETABLE;
-	m_dwArchiveMaxImagesCount.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_REMOTELY_SETABLE;
-	m_evoArchiveMethod.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_REMOTELY_SETABLE;
-	m_HeaderLabelNames.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_REMOTELY_SETABLE;
-	m_HeaderObjectGUIDs.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	m_bvoUseHeaders.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
+	m_HeaderLabelNames.setStatic( true );
+	m_HeaderObjectGUIDs.setStatic( true );
+
+	m_stringFileArchivePath.SetObjectAttributesAllowed( SV_PRINTABLE | SV_REMOTELY_SETABLE & ~SV_SETABLE_ONLINE, SvOi::SetAttributeType::AddAttribute );
+	m_stringFileArchivePath.SetObjectAttributesAllowed( SV_SETABLE_ONLINE, SvOi::SetAttributeType::RemoveAttribute );
+	m_stringArchiveImageGuids_OBSOLETE.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_stringArchiveResultGuids_OBSOLETE.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_svoArchiveImageNames.SetObjectAttributesAllowed( SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
+	m_svoArchiveImageNames.SetObjectAttributesAllowed( SV_SETABLE_ONLINE, SvOi::SetAttributeType::RemoveAttribute );
+	m_svoArchiveResultNames.SetObjectAttributesAllowed( SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
+	m_svoArchiveResultNames.SetObjectAttributesAllowed( SV_SETABLE_ONLINE, SvOi::SetAttributeType::RemoveAttribute );
+	m_stringImageFileRootPath.SetObjectAttributesAllowed( SV_PRINTABLE | SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
+	m_dwAppendArchiveFile.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_dwArchiveStopAtMaxImages.SetObjectAttributesAllowed( SV_PRINTABLE | SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
+	m_dwArchiveMaxImagesCount.SetObjectAttributesAllowed( SV_PRINTABLE | SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
+	m_evoArchiveMethod.SetObjectAttributesAllowed( SV_PRINTABLE | SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
+	m_HeaderLabelNames.SetObjectAttributesAllowed( SV_PRINTABLE | SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
+	m_HeaderObjectGUIDs.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_bvoUseHeaders.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
 
 	// Override base class exposure of the drawflag
 	// This value will not be exposed for the Archive Tool.
-	drawToolFlag.ObjectAttributesAllowedRef() = SV_HIDDEN;
+	drawToolFlag.SetObjectAttributesAllowed( SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
 
 	// Override base class exposure of the auxillaryextent variables
 	// These values will not be exposed for the Archive Tool.
-	m_svUpdateAuxiliaryExtents.ObjectAttributesAllowedRef() = SV_HIDDEN;
-	m_svAuxiliarySourceX.ObjectAttributesAllowedRef() = SV_HIDDEN;
-	m_svAuxiliarySourceY.ObjectAttributesAllowedRef() = SV_HIDDEN;
-	m_svAuxiliarySourceAngle.ObjectAttributesAllowedRef() = SV_HIDDEN;
-	m_svAuxiliarySourceImageName.ObjectAttributesAllowedRef() = SV_HIDDEN;
-	m_svAuxiliaryDrawType.ObjectAttributesAllowedRef() = SV_HIDDEN;
+	m_svUpdateAuxiliaryExtents.SetObjectAttributesAllowed( SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
+	m_svAuxiliarySourceX.SetObjectAttributesAllowed( SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
+	m_svAuxiliarySourceY.SetObjectAttributesAllowed( SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
+	m_svAuxiliarySourceAngle.SetObjectAttributesAllowed( SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
+	m_svAuxiliarySourceImageName.SetObjectAttributesAllowed( SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
+	m_svAuxiliaryDrawType.SetObjectAttributesAllowed( SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
 
 	m_isCreated = bOk;
 
@@ -444,18 +451,18 @@ bool SVArchiveTool::CreateTextArchiveFile(SvStl::MessageContainerVector *pErrorM
 		
 		m_fileArchive.Write( TimeStamp.c_str(), static_cast<int> (TimeStamp.size()) );
 
-		bool bUseHeaders = false;
+		BOOL bUseHeaders = false;
 		HRESULT hr = m_bvoUseHeaders.GetValue( bUseHeaders );
 		if( S_OK == hr && bUseHeaders )
 		{
 			// Write Header
-			SVStringVector astrHeaders;
-			m_HeaderLabelNames.GetValues( astrHeaders );
+			SVStringVector HeaderVector;
+			m_HeaderLabelNames.GetArrayValues( HeaderVector );
 			SVString strHeader;
-			for( SVStringVector::iterator it = astrHeaders.begin() ; it != astrHeaders.end() ; ++it)
+			for( SVStringVector::iterator it = HeaderVector.begin() ; it != HeaderVector.end() ; ++it)
 			{
 				strHeader += *it;
-				if( it+1 != astrHeaders.end())
+				if( it+1 != HeaderVector.end())
 				{
 					strHeader+= _T(",");
 				}
@@ -467,7 +474,7 @@ bool SVArchiveTool::CreateTextArchiveFile(SvStl::MessageContainerVector *pErrorM
 			}
 		}
 	} 
-	catch (CException*)
+	catch (const CException& )
 	{
 		if (nullptr != pErrorMessages)
 		{
@@ -491,34 +498,34 @@ bool SVArchiveTool::CreateTextArchiveFile(SvStl::MessageContainerVector *pErrorM
 
 void local_remove_items( SVStringVector& rVec, SVStringValueObjectClass& rvo )
 {
-	SVStringVector vecNames;
+	SVStringVector NameVector;
 	SVStringVector::iterator iterRemoved;
 
 	if ( !rVec.empty() )
 	{
-		rvo.GetValues( vecNames );
+		rvo.GetArrayValues( NameVector );
 
 		for ( iterRemoved = rVec.begin(); iterRemoved != rVec.end(); ++iterRemoved )
 		{
 			SVStringVector::iterator iterName;
-			iterName = std::find(vecNames.begin(), vecNames.end(), *iterRemoved );
-			if ( iterName != vecNames.end() )
+			iterName = std::find(NameVector.begin(), NameVector.end(), *iterRemoved );
+			if ( iterName != NameVector.end() )
 			{
-				vecNames.erase( iterName );
+				NameVector.erase( iterName );
 			}
 		}
 
-		rvo.SetArraySize( static_cast< int >( vecNames.size() ) );
-		rvo.SetArrayValues(1, vecNames );
+		rvo.SetArraySize( static_cast< int >( NameVector.size() ) );
+		rvo.SetArrayValues( NameVector, 1 );
 	}
 }
 
 
 bool SVArchiveTool::initializeOnRun(SvStl::MessageContainerVector *pErrorMessages)
 {
-	DWORD dwMethod=0;
-	m_evoArchiveMethod.GetValue( dwMethod );
-	m_eArchiveMethod = static_cast<SVArchiveMethodEnum>( dwMethod );
+	long Method( SVArchiveInvalidMethod );
+	m_evoArchiveMethod.GetValue( Method );
+	m_eArchiveMethod = static_cast<SVArchiveMethodEnum> (Method);
 
 	SVString Temp;
 	GetImageArchivePath( Temp );
@@ -637,9 +644,9 @@ bool SVArchiveTool::AllocateImageBuffers(SvStl::MessageContainerVector *pErrorMe
 
 /////////////////////////////////////////////////////////////////////////////
 //
-bool SVArchiveTool::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVArchiveTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
-	if( ValidateOnRun(pErrorMessages) && __super::onRun( RRunStatus, pErrorMessages ) )
+	if( ValidateOnRun(pErrorMessages) && __super::onRun( rRunStatus, pErrorMessages ) )
 	{
 		//
 		// If this is not a test mode or run mode (online) no work is required.
@@ -651,11 +658,11 @@ bool SVArchiveTool::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainer
 			return true;
 		}
 		
-		if ( ! RRunStatus.IsDisabled() && ! RRunStatus.IsDisabledByCondition() )
+		if ( ! rRunStatus.IsDisabled() && ! rRunStatus.IsDisabledByCondition() )
 		{
 			if ( !m_bInitializedForRun )
 			{
-				RRunStatus.SetFailed();
+				rRunStatus.SetFailed();
 				if (nullptr != pErrorMessages)
 				{
 					SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ArchiveTool_InitFlagFalse, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
@@ -689,7 +696,7 @@ bool SVArchiveTool::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainer
 						} 
 						catch (CException* e)
 						{
-							RRunStatus.SetFailed();
+							rRunStatus.SetFailed();
 							e->Delete();
 							if (nullptr != pErrorMessages)
 							{
@@ -705,7 +712,7 @@ bool SVArchiveTool::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainer
 								SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_UnknownException, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 								pErrorMessages->push_back(Msg);
 							}
-							RRunStatus.SetFailed();
+							rRunStatus.SetFailed();
 							return false;
 						}
 					}
@@ -724,13 +731,13 @@ bool SVArchiveTool::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainer
 			//
 			m_arrayImagesInfoObjectsToArchive.WriteArchiveImageFiles( );
 
-			RRunStatus.SetPassed();
+			rRunStatus.SetPassed();
 		}
 
 		return true;
 	}
 	
-	RRunStatus.SetInvalid();
+	rRunStatus.SetInvalid();
 	return false;
 }
 
@@ -761,12 +768,12 @@ void SVArchiveTool::UpdateTaskObjectOutputList()
 	int nCount = static_cast< int >( vecObjects.size() );
 	for (int i = 0; i < nCount; i++)
 	{
-		SVObjectReference ref = vecObjects.at(i);
+		SVObjectReference ObjectRef = vecObjects.at(i);
 		
 		//
 		// Clear the existing archivable bits that might be set.
 		//
-		ref.ObjectAttributesSetRef() &= ~SV_ARCHIVABLE;
+		ObjectRef.SetObjectAttributesSet( SV_ARCHIVABLE, SvOi::SetAttributeType::RemoveAttribute );
 		
 	}
 	//
@@ -777,11 +784,11 @@ void SVArchiveTool::UpdateTaskObjectOutputList()
 	{
 		// SVObjectInfoStruct InfoItemArchive = 
 		//	arrayResultsInfoObjectsToArchive.GetAt(k);
-		SVObjectReference ref = m_arrayResultsInfoObjectsToArchive.GetAt( i )->GetObjectReference();
+		SVObjectReference ObjectRef = m_arrayResultsInfoObjectsToArchive.GetAt( i )->GetObjectReference();
 
-		if (ref.ObjectAttributesAllowed() & SV_ARCHIVABLE)
+		if (ObjectRef.ObjectAttributesAllowed() & SV_ARCHIVABLE)
 		{
-			ref.ObjectAttributesSetRef() |= SV_ARCHIVABLE;
+			ObjectRef.SetObjectAttributesSet( SV_ARCHIVABLE, SvOi::SetAttributeType::AddAttribute );
 		}
 	}
 }
@@ -812,23 +819,23 @@ void SVArchiveTool::RebuildResultsArchiveList()
 
 	l_ToolSetOutputList.GetSetAttributesList( SV_ARCHIVABLE, vecObjects );
 	
-	m_svoArchiveResultNames.SetArraySize( static_cast< int >( vecObjects.size() ) );
+	m_svoArchiveResultNames.SetArraySize( static_cast<int> (vecObjects.size()) );
 
-	for ( int i = 0; i < static_cast< int >( vecObjects.size() ); i++ )
+	for ( int i = 0; i < static_cast<int> (vecObjects.size()); i++ )
 	{
-		SVObjectReference ref = vecObjects[i];
+		const SVObjectReference& rObjectRef = vecObjects[i];
 
 		SVArchiveRecord* pArchiveRecord = new SVArchiveRecord;
 		pArchiveRecord->Init( this );
-		pArchiveRecord->GetObjectReference() = ref;
+		pArchiveRecord->GetObjectReference() = rObjectRef;
 		
 		m_arrayResultsInfoObjectsToArchive.Add( pArchiveRecord );
 		pArchiveRecord->ConnectInputObject();
 
-		m_svoArchiveResultNames.SetValue(1 , i, ref.GetCompleteName() );
+		m_svoArchiveResultNames.SetValue( rObjectRef.GetCompleteName(), -1 , i );
 	}
 
-	m_stringArchiveResultGuids_OBSOLETE.SetValue( 1, SVString(_T("")) );
+	m_stringArchiveResultGuids_OBSOLETE.SetValue( SVString() );
 }
 
 void SVArchiveTool::AddImageToArray( SVImageClass* PImage )
@@ -873,7 +880,7 @@ void SVArchiveTool::RebuildImageArchiveList()
 		if( ( nullptr != pImage ) && ( pImage->ObjectAttributesSet() & SV_ARCHIVABLE_IMAGE ) )
 		{
 			AddImageToArray( pImage );
-			pImage->ObjectAttributesSetRef() &= ~SV_ARCHIVABLE_IMAGE;	// WHY??
+			pImage->SetObjectAttributesSet( SV_ARCHIVABLE_IMAGE, SvOi::SetAttributeType::RemoveAttribute );
 
 			vecImages.push_back( pImage );
 		}
@@ -884,12 +891,12 @@ void SVArchiveTool::RebuildImageArchiveList()
 
 	for ( int i = 0; i < static_cast< int >( vecImages.size() ); i++ )
 	{
-		SVObjectReference ref = vecImages[i];
+		const SVObjectReference& rObjectRef = vecImages[i];
 
-		m_svoArchiveImageNames.SetValue( 1, i, ref.GetCompleteName() );
+		m_svoArchiveImageNames.SetValue( rObjectRef.GetCompleteName(), -1, i  );
 	}
 
-	m_stringArchiveImageGuids_OBSOLETE.SetValue(1, SVString(_T("")) );
+	m_stringArchiveImageGuids_OBSOLETE.SetValue( SVString() );
 }
 
 // Update the attributes for archivable images from the current list of
@@ -917,7 +924,7 @@ void SVArchiveTool::SetImageAttributesFromArchiveList( SVImageListClass* pImageL
 			{
 				SVArchiveRecord* pRecordImage = m_arrayImagesInfoObjectsToArchive.GetAt(k);
 				ASSERT(pRecordImage);
-				SVImageClass* pImage2 = dynamic_cast <SVImageClass*> ( pRecordImage->GetObjectReference().Object() );
+				SVImageClass* pImage2 = dynamic_cast <SVImageClass*> ( pRecordImage->GetObjectReference().getObject() );
 				if (pImage2)
 				{
 					//
@@ -931,7 +938,7 @@ void SVArchiveTool::SetImageAttributesFromArchiveList( SVImageListClass* pImageL
 					{
 						if (pImage->ObjectAttributesAllowed() & SV_ARCHIVABLE_IMAGE)
 						{
-							pImage->ObjectAttributesSetRef() |= SV_ARCHIVABLE_IMAGE;
+							pImage->SetObjectAttributesSet( SV_ARCHIVABLE_IMAGE, SvOi::SetAttributeType::AddAttribute );
 							//
 							// Update the pointer to the image..incase..
 							//
@@ -968,12 +975,12 @@ BOOL SVArchiveTool::GetImageArchivePath( SVString& rName )
 
 BOOL SVArchiveTool::SetFileArchive( LPCTSTR lpszName )
 {
-	return S_OK == m_stringFileArchivePath.SetValue( 1, lpszName );
+	return S_OK == m_stringFileArchivePath.SetValue( SVString( lpszName ) );
 }
 
 BOOL SVArchiveTool::SetImageArchivePath( LPCTSTR lpszName )
 {
-	return S_OK == m_stringImageFileRootPath.SetValue( 1, lpszName );
+	return S_OK == m_stringImageFileRootPath.SetValue( SVString( lpszName ) );
 }
 
 
@@ -1089,14 +1096,14 @@ void SVArchiveTool::OnObjectRenamed( const SVObjectClass& rRenamedObject, const 
 	if( const SVInspectionProcess* l_pInspection = dynamic_cast<const SVInspectionProcess*> (&rRenamedObject) )
 	{
 		newPrefix = l_pInspection->GetCompleteObjectNameToObjectType( nullptr, SVInspectionObjectType ) + _T( "." );
-	}// end if
-	else if( const BasicValueObject* pBasicValueObject = dynamic_cast<const BasicValueObject*> (&rRenamedObject) )
-	{
-		newPrefix = pBasicValueObject->GetCompleteObjectNameToObjectType( nullptr, SVRootObjectType );
 	}
-	else if( const SVValueObjectClass* pValueObject = dynamic_cast<const SVValueObjectClass*> (&rRenamedObject) )
+	else if( nullptr != dynamic_cast<const BasicValueObject*> (&rRenamedObject) )
 	{
-		newPrefix = pValueObject->GetCompleteObjectNameToObjectType( nullptr, SVInspectionObjectType );
+		newPrefix = rRenamedObject.GetCompleteObjectNameToObjectType( nullptr, SVRootObjectType );
+	}
+	else if( nullptr != dynamic_cast<const SvOi::IValueObject*> (&rRenamedObject) )
+	{
+		newPrefix = rRenamedObject.GetCompleteObjectNameToObjectType( nullptr, SVInspectionObjectType );
 	}
 	else
 	{
@@ -1105,21 +1112,21 @@ void SVArchiveTool::OnObjectRenamed( const SVObjectClass& rRenamedObject, const 
 	oldPrefix = newPrefix;
 	SvUl_SF::searchAndReplace( oldPrefix, rRenamedObject.GetName(), rOldName.c_str() );
 
-	int iSize = m_svoArchiveResultNames.GetResultSize();
+	int iSize = m_svoArchiveResultNames.getResultSize();
 	int iLastSet = m_svoArchiveResultNames.GetLastSetIndex();
 
 	for (int i = 0; i < iSize; i++ )
 	{
-		SVString sName;
-		m_svoArchiveResultNames.GetValue(iLastSet,i,sName);
+		SVString Name;
+		m_svoArchiveResultNames.GetValue( Name, iLastSet, i );
 
 		if ('.' == oldPrefix[oldPrefix.size()-1])
 		{	//check if part of the name (ends with '.') is to replace
-			SvUl_SF::searchAndReplace( sName, oldPrefix.c_str(), newPrefix.c_str() );
+			SvUl_SF::searchAndReplace( Name, oldPrefix.c_str(), newPrefix.c_str() );
 		}
 		else
 		{
-			SVString indirectTmp = sName;
+			SVString indirectTmp = Name;
 			size_t pos = indirectTmp.find('[');
 			if (SVString::npos != pos)
 			{	//if array ("[x]") in the name, remove it for the check
@@ -1128,11 +1135,11 @@ void SVArchiveTool::OnObjectRenamed( const SVObjectClass& rRenamedObject, const 
 			//only replace the name if it is the fully name. Do NOT replace parts of the name, because then it this a other object with similar name.
 			if (oldPrefix == indirectTmp)
 			{
-				SvUl_SF::searchAndReplace( sName, oldPrefix.c_str(), newPrefix.c_str() );
+				SvUl_SF::searchAndReplace( Name, oldPrefix.c_str(), newPrefix.c_str() );
 			}
 		}
-		m_svoArchiveResultNames.SetValue(iLastSet,i, sName);
-		m_svoArchiveResultNames.GetValue(iLastSet,i, sName);
+		m_svoArchiveResultNames.SetValue( Name, iLastSet, i );
+		m_svoArchiveResultNames.GetValue( Name, iLastSet, i );
 	}
 
 	__super::OnObjectRenamed(rRenamedObject, rOldName);

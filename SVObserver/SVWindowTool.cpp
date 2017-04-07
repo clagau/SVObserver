@@ -45,18 +45,18 @@ void SVWindowToolClass::init()
 
 	// Set up your type... in this case this will reference that this tool is a 
 	// Window Tool.
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVToolObjectType;
-	m_outObjectInfo.ObjectTypeInfo.SubType    = SVWindowToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SVWindowToolObjectType;
 }
 
 void SVWindowToolClass::BuildEmbeddedObjectList ()
 {
 	// Register Embedded Object
-	RegisterEmbeddedObject( &m_svSourceImageNames, 
+	RegisterEmbeddedObject( &m_SourceImageNames, 
 							SVSourceImageNamesGuid, 
 							IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, 
 							false, 
-							SVResetItemTool );
+							SvOi::SVResetItemTool );
 }
 
 void SVWindowToolClass::BuildAvailableAnalyzerList ()
@@ -158,7 +158,8 @@ BOOL SVWindowToolClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructur
 {
 	BOOL bOk = SVToolClass::CreateObject( PCreateStructure );
 	
-	m_svSourceImageNames.ObjectAttributesAllowedRef() &=~SV_REMOTELY_SETABLE & ~SV_SETABLE_ONLINE;
+	m_SourceImageNames.setStatic( true );
+	m_SourceImageNames.SetObjectAttributesAllowed( SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE, SvOi::SetAttributeType::RemoveAttribute );
 	
 	if(bOk)
 	{
@@ -243,9 +244,9 @@ bool SVWindowToolClass::DoesObjectHaveExtents() const
 	return true;
 }
 
-SVStaticStringValueObjectClass* SVWindowToolClass::GetInputImageNames()
+SVStringValueObjectClass* SVWindowToolClass::GetInputImageNames()
 {
-	return &m_svSourceImageNames;
+	return &m_SourceImageNames;
 }
 
 bool SVWindowToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)

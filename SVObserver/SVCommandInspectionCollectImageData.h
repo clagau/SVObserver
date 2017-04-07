@@ -46,7 +46,7 @@ protected:
 
 	HRESULT UpdateBuffer( const SVGUID& p_rImageId, SVGuidSVCameraInfoStructMap& p_rsvCameraInfos,
 		SVImageIndexStruct p_svResultImageIndex, long p_ResultDataIndex, 
-		SVByteVector& p_rImageDIB, SVExtentMultiLineStructCArray& p_rMultiLineArray );
+		SVByteVector& p_rImageDIB, SVExtentMultiLineStructVector& p_rMultiLineArray );
 
 private:
 	SVGUID m_InspectionId;

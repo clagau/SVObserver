@@ -39,20 +39,20 @@ SVLinearMeasurementAnalyzerClass::SVLinearMeasurementAnalyzerClass( BOOL BCreate
 void SVLinearMeasurementAnalyzerClass::init()
 {
 	// Identify our type
-	m_outObjectInfo.ObjectTypeInfo.SubType = SVLinearMeasurementAnalyzerObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVLinearMeasurementAnalyzerObjectType;
 
 	// Register Embedded Objects
 
-	RegisterEmbeddedObject( &mdpEdgeA, SVDPEdgeAObjectGuid, IDS_OBJECTNAME_DPEDGE_A, false, SVResetItemNone );
-	RegisterEmbeddedObject( &mdpEdgeB, SVDPEdgeBObjectGuid, IDS_OBJECTNAME_DPEDGE_B, false, SVResetItemNone );
-	RegisterEmbeddedObject( &mdpCenter, SVDPCenterObjectGuid, IDS_OBJECTNAME_DPCENTER, false, SVResetItemNone );
-	RegisterEmbeddedObject( &mdWidth, SVDWidthObjectGuid, IDS_OBJECTNAME_DWIDTH, false, SVResetItemNone );
+	RegisterEmbeddedObject( &mdpEdgeA, SVDPEdgeAObjectGuid, IDS_OBJECTNAME_DPEDGE_A, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &mdpEdgeB, SVDPEdgeBObjectGuid, IDS_OBJECTNAME_DPEDGE_B, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &mdpCenter, SVDPCenterObjectGuid, IDS_OBJECTNAME_DPCENTER, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &mdWidth, SVDWidthObjectGuid, IDS_OBJECTNAME_DWIDTH, false, SvOi::SVResetItemNone );
 
-	RegisterEmbeddedObject( &m_svLinearDistanceA, SVLinearDistanceEdgeAObjectGuid, IDS_OBJECTNAME_LINEAR_DISTANCE_EDGE_A, false, SVResetItemNone );
-	RegisterEmbeddedObject( &m_svLinearDistanceB, SVLinearDistanceEdgeBObjectGuid, IDS_OBJECTNAME_LINEAR_DISTANCE_EDGE_B, false, SVResetItemNone );
+	RegisterEmbeddedObject( &m_svLinearDistanceA, SVLinearDistanceEdgeAObjectGuid, IDS_OBJECTNAME_LINEAR_DISTANCE_EDGE_A, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_svLinearDistanceB, SVLinearDistanceEdgeBObjectGuid, IDS_OBJECTNAME_LINEAR_DISTANCE_EDGE_B, false, SvOi::SVResetItemNone );
 
-	RegisterEmbeddedObject( &m_svShowAllEdgeAOverlays, SVShowAllEdgeAOverlaysGuid, IDS_OBJECTNAME_SHOW_ALL_EDGE_A_OVERLAYS, false, SVResetItemNone );
-	RegisterEmbeddedObject( &m_svShowAllEdgeBOverlays, SVShowAllEdgeBOverlaysGuid, IDS_OBJECTNAME_SHOW_ALL_EDGE_B_OVERLAYS, false, SVResetItemNone );
+	RegisterEmbeddedObject( &m_svShowAllEdgeAOverlays, SVShowAllEdgeAOverlaysGuid, IDS_OBJECTNAME_SHOW_ALL_EDGE_A_OVERLAYS, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_svShowAllEdgeBOverlays, SVShowAllEdgeBOverlaysGuid, IDS_OBJECTNAME_SHOW_ALL_EDGE_B_OVERLAYS, false, SvOi::SVResetItemNone );
 
 	// Set Edge defaults
 	SVLinearEdgeProcessingClass *l_pEdgeA = new SVLinearEdgeAProcessingClass(this);
@@ -206,13 +206,13 @@ BOOL SVLinearMeasurementAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* 
 	BOOL bOk = SVLinearAnalyzerClass::CreateObject( PCreateStructure );
 
 	// Set / Reset Printable Flag
-	mdpEdgeA.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	mdpEdgeB.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	mdpCenter.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	mdWidth.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
+	mdpEdgeA.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	mdpEdgeB.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	mdpCenter.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	mdWidth.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 
-	m_svLinearDistanceA.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	m_svLinearDistanceB.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
+	m_svLinearDistanceA.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_svLinearDistanceB.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 
 	m_isCreated = bOk;
 
@@ -229,20 +229,20 @@ bool SVLinearMeasurementAnalyzerClass::ResetObject(SvStl::MessageContainerVector
 	return __super::ResetObject(pErrorMessages) && ValidateEdgeA(pErrorMessages) && ValidateEdgeB(pErrorMessages);
 }
 
-bool SVLinearMeasurementAnalyzerClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVLinearMeasurementAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
-	bool l_bOk = __super::onRun( RRunStatus, pErrorMessages ) && ValidateEdgeA(pErrorMessages) && ValidateEdgeB(pErrorMessages);
+	bool Result = __super::onRun( rRunStatus, pErrorMessages ) && ValidateEdgeA(pErrorMessages) && ValidateEdgeB(pErrorMessages);
 
-	SVDPointClass l_svDPointA, l_svDPointB;
-	SVExtentPointStruct l_svEdgePointA;
-	SVExtentPointStruct l_svEdgePointB;
-	SVDPointClass l_svCenterPoint;
-	double l_dDistanceA = 0.0;
-	double l_dDistanceB = 0.0;
+	SVDPointClass DPointA, DPointB;
+	SVExtentPointStruct EdgePointA;
+	SVExtentPointStruct EdgePointB;
+	SVDPointClass CenterPoint;
+	double DistanceA( 0.0 );
+	double DistanceB( 0.0 );
 
 	if ( nullptr == GetTool())
 	{
-		l_bOk = false;
+		Result = false;
 		if (nullptr != pErrorMessages)
 		{
 			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
@@ -250,66 +250,64 @@ bool SVLinearMeasurementAnalyzerClass::onRun( SVRunStatusClass& RRunStatus, SvSt
 		}
 	}
 
-	if ( l_bOk )
+	if ( Result )
 	{
 		SVImageExtentClass l_svExtents;
 
-		if ( S_OK != GetEdgeA()->GetOutputEdgePoint(l_svEdgePointA) )
+		if ( S_OK != GetEdgeA()->GetOutputEdgePoint(EdgePointA) )
 		{
-			RRunStatus.SetFailed();
+			rRunStatus.SetFailed();
 		}
 
-		if ( S_OK != GetEdgeA()->GetOutputEdgeDistance(l_dDistanceA) )
+		if ( S_OK != GetEdgeA()->GetOutputEdgeDistance(DistanceA) )
 		{
-			RRunStatus.SetFailed();
+			rRunStatus.SetFailed();
 		}
 
-		if ( S_OK != GetEdgeB()->GetOutputEdgePoint(l_svEdgePointB) )
+		if ( S_OK != GetEdgeB()->GetOutputEdgePoint(EdgePointB) )
 		{
-			RRunStatus.SetFailed();
+			rRunStatus.SetFailed();
 		}
 
-		if ( S_OK != GetEdgeB()->GetOutputEdgeDistance(l_dDistanceB) )
+		if ( S_OK != GetEdgeB()->GetOutputEdgeDistance(DistanceB) )
 		{
-			RRunStatus.SetFailed();
+			rRunStatus.SetFailed();
 		}
 
-		l_bOk &= S_OK == GetImageExtent( l_svExtents ) &&
-				S_OK == l_svExtents.TranslateFromOutputSpace(l_svEdgePointA, l_svEdgePointA) &&
-				S_OK == l_svExtents.TranslateFromOutputSpace(l_svEdgePointB, l_svEdgePointB);
+		Result &= S_OK == GetImageExtent( l_svExtents ) &&
+				S_OK == l_svExtents.TranslateFromOutputSpace(EdgePointA, EdgePointA) &&
+				S_OK == l_svExtents.TranslateFromOutputSpace(EdgePointB, EdgePointB);
 
 		SVToolClass* pTool = dynamic_cast<SVToolClass*>(GetTool());
-		l_bOk &= pTool && S_OK == pTool->GetImageExtent( l_svExtents ) &&
-				S_OK == l_svExtents.TranslateFromOutputSpace(l_svEdgePointA, l_svEdgePointA) &&
-				S_OK == l_svExtents.TranslateFromOutputSpace(l_svEdgePointB, l_svEdgePointB);
+		Result &= pTool && S_OK == pTool->GetImageExtent( l_svExtents ) &&
+				S_OK == l_svExtents.TranslateFromOutputSpace(EdgePointA, EdgePointA) &&
+				S_OK == l_svExtents.TranslateFromOutputSpace(EdgePointB, EdgePointB);
 
-		l_svDPointA.x = l_svEdgePointA.m_dPositionX;
-		l_svDPointA.y = l_svEdgePointA.m_dPositionY;
+		DPointA.x = EdgePointA.m_dPositionX;
+		DPointA.y = EdgePointA.m_dPositionY;
 
-		l_svDPointB.x = l_svEdgePointB.m_dPositionX;
-		l_svDPointB.y = l_svEdgePointB.m_dPositionY;
+		DPointB.x = EdgePointB.m_dPositionX;
+		DPointB.y = EdgePointB.m_dPositionY;
 
 
-		l_svCenterPoint.x = l_svDPointA.x + ((l_svDPointB.x - l_svDPointA.x) / 2.0);
-		l_svCenterPoint.y = l_svDPointA.y + ((l_svDPointB.y - l_svDPointA.y) / 2.0);
+		CenterPoint.x = DPointA.x + ((DPointB.x - DPointA.x) / 2.0);
+		CenterPoint.y = DPointA.y + ((DPointB.y - DPointA.y) / 2.0);
 
-		double l_dWidth = 0.0;
+		double Width = fabs( DistanceB - DistanceA + 1.0 );
 
-		l_dWidth = l_dDistanceB - l_dDistanceA + 1.0;
-
-		l_bOk = ( S_OK == m_svLinearDistanceA.SetValue(RRunStatus.m_lResultDataIndex, l_dDistanceA) ) && l_bOk;
-		l_bOk = ( S_OK == m_svLinearDistanceB.SetValue(RRunStatus.m_lResultDataIndex, l_dDistanceB) ) && l_bOk;
+		Result = ( S_OK == m_svLinearDistanceA.SetValue( DistanceA, rRunStatus.m_lResultDataIndex ) ) && Result;
+		Result = ( S_OK == m_svLinearDistanceB.SetValue( DistanceB, rRunStatus.m_lResultDataIndex ) ) && Result;
 		
-		l_bOk = ( S_OK == mdpEdgeA.SetValue(RRunStatus.m_lResultDataIndex, l_svDPointA) ) && l_bOk;
-		l_bOk = ( S_OK == mdpEdgeB.SetValue(RRunStatus.m_lResultDataIndex, l_svDPointB) ) && l_bOk;
-		l_bOk = ( S_OK == mdpCenter.SetValue(RRunStatus.m_lResultDataIndex, l_svCenterPoint) ) && l_bOk;
-		l_bOk = ( S_OK == mdWidth.SetValue(RRunStatus.m_lResultDataIndex, fabs( l_dWidth ) ) ) && l_bOk;
+		Result = ( S_OK == mdpEdgeA.SetValue( DPointA, rRunStatus.m_lResultDataIndex ) ) && Result;
+		Result = ( S_OK == mdpEdgeB.SetValue( DPointB, rRunStatus.m_lResultDataIndex ) ) && Result;
+		Result = ( S_OK == mdpCenter.SetValue( CenterPoint, rRunStatus.m_lResultDataIndex ) ) && Result;
+		Result = ( S_OK == mdWidth.SetValue( Width, rRunStatus.m_lResultDataIndex ) ) && Result;
 	}
 
-	if ( !l_bOk )
+	if ( !Result )
 	{
 		SetInvalid();
-		RRunStatus.SetInvalid();
+		rRunStatus.SetInvalid();
 
 		if (nullptr != pErrorMessages && pErrorMessages->empty())
 		{
@@ -318,5 +316,5 @@ bool SVLinearMeasurementAnalyzerClass::onRun( SVRunStatusClass& RRunStatus, SvSt
 		}
 	}
 
-	return l_bOk;
+	return Result;
 }

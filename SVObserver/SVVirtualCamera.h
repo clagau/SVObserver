@@ -27,11 +27,11 @@
 #pragma endregion Includes
 
 #pragma region Declarations
-typedef SVVector< SVVirtualCamera* > SVVirtualCameraArray;
-typedef SVSet< SVVirtualCamera* > SVVirtualCameraSet;
-typedef std::set< SVVirtualCamera* > SVVirtualCameraPtrSet;
-typedef SVSet< SVAcquisitionClassPtr > SVAcquisitionClassSet;
-typedef SVMap< SVString, SVVirtualCamera* > SVVirtualCameraMap;
+typedef SVVector<SVVirtualCamera*> SVVirtualCameraPtrVector;
+typedef SVSet<SVVirtualCamera*> SVVirtualCameraSet;
+typedef std::set<SVVirtualCamera*> SVVirtualCameraPtrSet;
+typedef SVSet<SVAcquisitionClassPtr> SVAcquisitionClassSet;
+typedef SVMap<SVString, SVVirtualCamera*> SVVirtualCameraMap;
 
 class SVORequestClass;
 class SVDeviceParamCollection;

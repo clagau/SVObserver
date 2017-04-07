@@ -40,16 +40,16 @@ SVLUTOperatorClass::SVLUTOperatorClass( SVObjectClass* POwner, int StringResourc
 void SVLUTOperatorClass::init()
 {
 	// Identify our output type
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVUnaryImageOperatorObjectType;
-	m_outObjectInfo.ObjectTypeInfo.SubType = SVLUTOperatorObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVUnaryImageOperatorObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVLUTOperatorObjectType;
 
 	// Register Embedded Object(s)
-	RegisterEmbeddedObject( &m_lutVector, SVOutputLUTVectorObjectGuid, IDS_OBJECTNAME_LUTVECTOR, false, SVResetItemNone );
-	RegisterEmbeddedObject( &m_useLUT, SVUseLUTObjectGuid, IDS_OBJECTNAME_USE_LUT, false, SVResetItemOwner  );
-	RegisterEmbeddedObject( &m_continuousRecalcLUT, SVContinuousRecalcLUTObjectGuid, IDS_OBJECTNAME_CONTINUOUS_RECALC_LUT, false, SVResetItemOwner  );
-	RegisterEmbeddedObject( &m_lutMode, SVLUTModeObjectGuid, IDS_OBJECTNAME_LUT_MODE, false, SVResetItemOwner  );
-	RegisterEmbeddedObject( &m_upperClip, SVLUTUpperClipObjectGuid, IDS_OBJECTNAME_LUT_UPPER_CLIP, false, SVResetItemOwner  );
-	RegisterEmbeddedObject( &m_lowerClip, SVLUTLowerClipObjectGuid, IDS_OBJECTNAME_LUT_LOWER_CLIP, false, SVResetItemOwner  );
+	RegisterEmbeddedObject( &m_lutVector, SVOutputLUTVectorObjectGuid, IDS_OBJECTNAME_LUTVECTOR, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_useLUT, SVUseLUTObjectGuid, IDS_OBJECTNAME_USE_LUT, false, SvOi::SVResetItemOwner  );
+	RegisterEmbeddedObject( &m_continuousRecalcLUT, SVContinuousRecalcLUTObjectGuid, IDS_OBJECTNAME_CONTINUOUS_RECALC_LUT, false, SvOi::SVResetItemOwner  );
+	RegisterEmbeddedObject( &m_lutMode, SVLUTModeObjectGuid, IDS_OBJECTNAME_LUT_MODE, false, SvOi::SVResetItemOwner  );
+	RegisterEmbeddedObject( &m_upperClip, SVLUTUpperClipObjectGuid, IDS_OBJECTNAME_LUT_UPPER_CLIP, false, SvOi::SVResetItemOwner  );
+	RegisterEmbeddedObject( &m_lowerClip, SVLUTLowerClipObjectGuid, IDS_OBJECTNAME_LUT_LOWER_CLIP, false, SvOi::SVResetItemOwner  );
 
 	// Set Embedded defaults...
 
@@ -114,14 +114,14 @@ BOOL SVLUTOperatorClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructu
 	BOOL bOk = SVUnaryImageOperatorClass::CreateObject( PCreateStructure );
 
 	// Set / Reset Printable Flag
-	m_lutVector.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
-	m_lutVector.ObjectAttributesAllowedRef() &= ~SV_VIEWABLE;
+	m_lutVector.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_lutVector.SetObjectAttributesAllowed( SV_VIEWABLE, SvOi::SetAttributeType::RemoveAttribute );
 	
-	m_useLUT.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
-	m_continuousRecalcLUT.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
-	m_lutMode.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
-	m_upperClip.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
-	m_lowerClip.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
+	m_useLUT.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_continuousRecalcLUT.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_lutMode.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_upperClip.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_lowerClip.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
 
 	m_isCreated = bOk;
 
@@ -157,7 +157,7 @@ BOOL SVLUTOperatorClass::CloseObject()
 //              : If MIL LUT buffer is not yet allocated, it tries to do this, 
 //				: also.
 ////////////////////////////////////////////////////////////////////////////////
-BOOL SVLUTOperatorClass::RecalcLUT( SVRunStatusClass& RRunStatus )
+BOOL SVLUTOperatorClass::RecalcLUT( SVRunStatusClass& rRunStatus )
 {
 	long lLutMode = 0;
 
@@ -204,7 +204,7 @@ BOOL SVLUTOperatorClass::RecalcLUT( SVRunStatusClass& RRunStatus )
 				}
 
 				m_lutVector.SetArraySize(static_cast<int>(byteVec.size()));
-				if( S_OK != m_lutVector.SetArrayValues( RRunStatus.m_lResultDataIndex, byteVec ) )
+				if( S_OK != m_lutVector.SetArrayValues( byteVec, rRunStatus.m_lResultDataIndex ) )
 				{
 					return FALSE;
 				}
@@ -222,7 +222,7 @@ BOOL SVLUTOperatorClass::RecalcLUT( SVRunStatusClass& RRunStatus )
 					byteVec[i] = (BYTE) (firstEntry - i);
 				}
 
-				if( S_OK != m_lutVector.SetArrayValues( RRunStatus.m_lResultDataIndex, byteVec ) )
+				if( S_OK != m_lutVector.SetArrayValues( byteVec, rRunStatus.m_lResultDataIndex ) )
 				{
 					return FALSE;
 				}
@@ -240,7 +240,7 @@ BOOL SVLUTOperatorClass::RecalcLUT( SVRunStatusClass& RRunStatus )
 					byteVec[i] = (BYTE) (firstEntry + i);
 				}
 
-				if( S_OK != m_lutVector.SetArrayValues( RRunStatus.m_lResultDataIndex, byteVec ) )
+				if( S_OK != m_lutVector.SetArrayValues( byteVec, rRunStatus.m_lResultDataIndex ) )
 				{
 					return FALSE;
 				}
@@ -281,7 +281,7 @@ BOOL SVLUTOperatorClass::RecalcLUT( SVRunStatusClass& RRunStatus )
 					}
 				}
 
-				if( S_OK != m_lutVector.SetArrayValues( RRunStatus.m_lResultDataIndex, byteVec ) )
+				if( S_OK != m_lutVector.SetArrayValues( byteVec, rRunStatus.m_lResultDataIndex ) )
 				{
 					return FALSE;
 				}
@@ -290,7 +290,7 @@ BOOL SVLUTOperatorClass::RecalcLUT( SVRunStatusClass& RRunStatus )
 
 			case 4: // Formula...
 			{
-				BOOL l_bOk = runFriends( RRunStatus );
+				BOOL l_bOk = runFriends( rRunStatus );
 
 				// Get LUT Vector from equation and stick it inside m_lutVector...
 				std::vector<BYTE> byteVector;
@@ -298,7 +298,7 @@ BOOL SVLUTOperatorClass::RecalcLUT( SVRunStatusClass& RRunStatus )
 
 				l_bOk = l_bOk && nullptr != pLUTResult;
 				l_bOk = l_bOk && S_OK == pLUTResult->GetArrayValues( byteVector );
-				l_bOk = l_bOk && S_OK == m_lutVector.SetArrayValues( RRunStatus.m_lResultDataIndex, byteVector );
+				l_bOk = l_bOk && S_OK == m_lutVector.SetArrayValues( byteVector, rRunStatus.m_lResultDataIndex );
 
 				if( ! l_bOk )
 				{
@@ -317,7 +317,7 @@ BOOL SVLUTOperatorClass::RecalcLUT( SVRunStatusClass& RRunStatus )
 		}
 
 		// Check LUT Vector size...
-		if( m_lutVector.GetArraySize() != m_lutElementNumber )
+		if( m_lutVector.getArraySize() != m_lutElementNumber )
 		{
 			m_lutVector.SetArraySize( m_lutElementNumber );
 		}
@@ -359,8 +359,8 @@ BOOL SVLUTOperatorClass::RecalcLUT( SVRunStatusClass& RRunStatus )
 ////////////////////////////////////////////////////////////////////////////////
 SVByteValueObjectClass* SVLUTOperatorClass::getInputLUTVectorResult()
 {
-	if( m_inputLUTVectorResult.IsConnected() && m_inputLUTVectorResult.GetInputObjectInfo().PObject )
-		return dynamic_cast <SVByteValueObjectClass*> (m_inputLUTVectorResult.GetInputObjectInfo().PObject);
+	if( m_inputLUTVectorResult.IsConnected() && m_inputLUTVectorResult.GetInputObjectInfo().m_pObject )
+		return dynamic_cast <SVByteValueObjectClass*> (m_inputLUTVectorResult.GetInputObjectInfo().m_pObject);
 
 	return nullptr;
 }
@@ -371,7 +371,7 @@ SVByteValueObjectClass* SVLUTOperatorClass::getInputLUTVectorResult()
 // .Description : Runs this operator.
 //              : Returns FALSE, if operator cannot run ( may be deactivated ! )
 ////////////////////////////////////////////////////////////////////////////////
-bool SVLUTOperatorClass::onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVLUTOperatorClass::onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 { 
 	// Is doing special friend routing !!!
 	// Don't call base class onRun(...).
@@ -386,7 +386,7 @@ bool SVLUTOperatorClass::onRun( bool First, SVSmartHandlePointer RInputImageHand
 		}
 		// Signal that something was wrong...
 		SetInvalid();
-		RRunStatus.SetInvalid();
+		rRunStatus.SetInvalid();
 		return false;
 	}
 
@@ -409,7 +409,7 @@ bool SVLUTOperatorClass::onRun( bool First, SVSmartHandlePointer RInputImageHand
 		}
 		// Signal that something was wrong...
 		SetInvalid();
-		RRunStatus.SetInvalid();
+		rRunStatus.SetInvalid();
 		return false;
 	}
 
@@ -437,14 +437,14 @@ bool SVLUTOperatorClass::onRun( bool First, SVSmartHandlePointer RInputImageHand
 		}
 		// Signal that something was wrong...
 		SetInvalid();
-		RRunStatus.SetInvalid();
+		rRunStatus.SetInvalid();
 		return false;
 	}
 
 	if( m_bForceLUTRecalc || bContinuousRecalcLUT )
 	{
 		// Try to recalc LUT...
-		if( ! RecalcLUT( RRunStatus ) )
+		if( ! RecalcLUT( rRunStatus ) )
 		{
 			if (nullptr != pErrorMessages)
 			{
@@ -453,7 +453,7 @@ bool SVLUTOperatorClass::onRun( bool First, SVSmartHandlePointer RInputImageHand
 			}
 			// Signal that something was wrong...
 			SetInvalid();
-			RRunStatus.SetInvalid();
+			rRunStatus.SetInvalid();
 			return FALSE;
 		}
 
@@ -476,7 +476,7 @@ bool SVLUTOperatorClass::onRun( bool First, SVSmartHandlePointer RInputImageHand
 		}
 		// Signal that something was wrong...
 		SetInvalid();
-		RRunStatus.SetInvalid();
+		rRunStatus.SetInvalid();
 		return false;
 	}
 

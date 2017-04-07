@@ -138,11 +138,11 @@ bool TableFillByEquationObject::onRun( SVRunStatusClass& rRunStatus, SvStl::Mess
 			if (nullptr != pValueObject && nullptr != pEquation)
 			{
 				pValueObject->setSortContainer(rRunStatus.m_lResultDataIndex, m_sortContainer);
-				pValueObject->SetValue(rRunStatus.m_lResultDataIndex, 0, pEquation->GetYACCResult());
+				pValueObject->SetValue(pEquation->GetYACCResult(), rRunStatus.m_lResultDataIndex, 0 );
 			}
 		}
 
-		m_NumberOfRows.SetValue(rRunStatus.m_lResultDataIndex, static_cast<long>(m_sortContainer.size()));
+		m_NumberOfRows.SetValue(static_cast<long>(m_sortContainer.size()), rRunStatus.m_lResultDataIndex);
 	}
 
 	return returnValue;
@@ -153,8 +153,8 @@ bool TableFillByEquationObject::onRun( SVRunStatusClass& rRunStatus, SvStl::Mess
 void TableFillByEquationObject::Initialize()
 {
 	// Set up your type
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = TableObjectType;
-	m_outObjectInfo.ObjectTypeInfo.SubType    = TableFillObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = TableObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType    = TableFillObjectType;
 }
 
 SVGUID TableFillByEquationObject::getNextFreeEmbeddedColumGUID()

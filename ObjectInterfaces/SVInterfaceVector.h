@@ -16,7 +16,7 @@ namespace Seidenader
 {
 	namespace ObjectInterfaces
 	{
-		typedef SVVector< SVObjectTypeInfoStruct > SVInterfaceList;
+		typedef SVVector<SVObjectTypeInfoStruct> SVInterfaceVector;
 	}
 }
 namespace SvOi = Seidenader::ObjectInterfaces;

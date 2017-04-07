@@ -18,7 +18,7 @@
 //					if (when, hopefully) this file is removed from SVLibrary, this #undef should be removed again
 
 #include "SVIOEntryHostStruct.h"
-#include "SVValueObjectLibrary/SVValueObjectClass.h"
+#include "SVObjectLibrary/SVObjectClass.h"
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
@@ -28,8 +28,8 @@ SVIOEntryHostStruct::SVIOEntryHostStruct()
 , m_ObjectType( IO_INVALID_OBJECT )
 , m_IOId()
 , m_DeleteValueObject( true )
-, m_pValueObject( nullptr )
-, m_pValueParent( nullptr )
+, m_pObject(nullptr)
+, m_pValueObject(nullptr)
 {
 }
 
@@ -40,9 +40,9 @@ SVIOEntryHostStruct::~SVIOEntryHostStruct()
 
 void SVIOEntryHostStruct::clear()
 {
-	if( m_DeleteValueObject && ( nullptr != m_pValueObject ) )
+	if( m_DeleteValueObject && ( nullptr != m_pObject ) )
 	{
-		delete m_pValueObject;
+		delete m_pObject;
 	}
 
 	m_Enabled = false;
@@ -50,20 +50,27 @@ void SVIOEntryHostStruct::clear()
 	m_ObjectType = IO_INVALID_OBJECT;
 	m_IOId.clear();
 	m_DeleteValueObject = true;
+	m_pObject = nullptr;
 	m_pValueObject = nullptr;
-  m_pValueParent = nullptr;
 }
 
-bool SVIOEntryHostStruct::PtrGreater( SVIOEntryHostStructPtr elem1, SVIOEntryHostStructPtr elem2 )
+void SVIOEntryHostStruct::setObject(SVObjectClass* pObject)
+{
+	//Required to avoid dynamic cast at run time
+	m_pObject = pObject;
+	m_pValueObject = dynamic_cast<SvOi::IValueObject*> (m_pObject);
+}
+
+bool SVIOEntryHostStruct::PtrGreater(SVIOEntryHostStructPtr elem1, SVIOEntryHostStructPtr elem2)
 {
 	bool Greater = false;
 
 	if( !( elem1.empty() ) && !( elem2.empty() ) )
 	{
-		if( ( nullptr != elem1->m_pValueObject ) && ( nullptr != elem2->m_pValueObject ) )
+		if( ( nullptr != elem1->m_pObject ) && ( nullptr != elem2->m_pObject ) )
 		{
-			SVString Name1 = elem1->m_pValueObject->GetCompleteName();
-			SVString Name2 = elem2->m_pValueObject->GetCompleteName();
+			SVString Name1 = elem1->m_pObject->GetCompleteName();
+			SVString Name2 = elem2->m_pObject->GetCompleteName();
 
 			//We assume the name is a dotted name and only the last part of the name may have a number
 

@@ -28,8 +28,8 @@ SVMaxMinusMinFilterClass::SVMaxMinusMinFilterClass( SVObjectClass* POwner, int S
 void SVMaxMinusMinFilterClass::init()
 {
 	// Identify our output type
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVFilterObjectType;
-	m_outObjectInfo.ObjectTypeInfo.SubType = SVMaxMinusMinFilterObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVFilterObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVMaxMinusMinFilterObjectType;
 }
 
 SVMaxMinusMinFilterClass::~SVMaxMinusMinFilterClass()
@@ -93,7 +93,7 @@ bool SVMaxMinusMinFilterClass::ResetObject(SvStl::MessageContainerVector *pError
 // .Description : Runs this operator.
 //              : Returns FALSE, if operator cannot run ( may be deactivated ! )
 ////////////////////////////////////////////////////////////////////////////////
-bool SVMaxMinusMinFilterClass::onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVMaxMinusMinFilterClass::onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 { 
 	if( m_pCurrentUIOPL && !m_ProcBufferHandlePtr.empty() && !( RInputImageHandle.empty() ) && !( ROutputImageHandle.empty() ) )
 	{
@@ -123,7 +123,7 @@ bool SVMaxMinusMinFilterClass::onRun( bool First, SVSmartHandlePointer RInputIma
 
 			// Signal that something was wrong...
 			SetInvalid();
-			RRunStatus.SetInvalid();
+			rRunStatus.SetInvalid();
 			return false;
 		}
 
@@ -144,7 +144,7 @@ bool SVMaxMinusMinFilterClass::onRun( bool First, SVSmartHandlePointer RInputIma
 
 			// Signal that something was wrong...
 			SetInvalid();
-			RRunStatus.SetInvalid();
+			rRunStatus.SetInvalid();
 			return false;
 		}
 
@@ -165,7 +165,7 @@ bool SVMaxMinusMinFilterClass::onRun( bool First, SVSmartHandlePointer RInputIma
 
 			// Signal that something was wrong...
 			SetInvalid();
-			RRunStatus.SetInvalid();
+			rRunStatus.SetInvalid();
 			return false;
 		}
 
@@ -183,7 +183,7 @@ bool SVMaxMinusMinFilterClass::onRun( bool First, SVSmartHandlePointer RInputIma
 
 	// Signal that something was wrong...
 	SetInvalid();
-	RRunStatus.SetInvalid();
+	rRunStatus.SetInvalid();
 	return false;
 }
 

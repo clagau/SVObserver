@@ -50,63 +50,63 @@ void SVCustomFilterClass::init()
 {
 	long l( 0 );
 
-	m_outObjectInfo.ObjectTypeInfo.SubType = SVCustomFilterObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVCustomFilterObjectType;
 
-	RegisterEmbeddedObject( &m_lvoCell01, SVCustomFilterCell01Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL01, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell02, SVCustomFilterCell02Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL02, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell03, SVCustomFilterCell03Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL03, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell04, SVCustomFilterCell04Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL04, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell05, SVCustomFilterCell05Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL05, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell06, SVCustomFilterCell06Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL06, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell07, SVCustomFilterCell07Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL07, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell08, SVCustomFilterCell08Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL08, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell09, SVCustomFilterCell09Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL09, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell10, SVCustomFilterCell10Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL10, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell11, SVCustomFilterCell11Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL11, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell12, SVCustomFilterCell12Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL12, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell13, SVCustomFilterCell13Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL13, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell14, SVCustomFilterCell14Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL14, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell15, SVCustomFilterCell15Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL15, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell16, SVCustomFilterCell16Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL16, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell17, SVCustomFilterCell17Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL17, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell18, SVCustomFilterCell18Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL18, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell19, SVCustomFilterCell19Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL19, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell20, SVCustomFilterCell20Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL20, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell21, SVCustomFilterCell21Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL21, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell22, SVCustomFilterCell22Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL22, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell23, SVCustomFilterCell23Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL23, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell24, SVCustomFilterCell24Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL24, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell25, SVCustomFilterCell25Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL25, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell26, SVCustomFilterCell26Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL26, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell27, SVCustomFilterCell27Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL27, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell28, SVCustomFilterCell28Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL28, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell29, SVCustomFilterCell29Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL29, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell30, SVCustomFilterCell30Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL30, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell31, SVCustomFilterCell31Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL31, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell32, SVCustomFilterCell32Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL32, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell33, SVCustomFilterCell33Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL33, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell34, SVCustomFilterCell34Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL34, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell35, SVCustomFilterCell35Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL35, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell36, SVCustomFilterCell36Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL36, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell37, SVCustomFilterCell37Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL37, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell38, SVCustomFilterCell38Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL38, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell39, SVCustomFilterCell39Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL39, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell40, SVCustomFilterCell40Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL40, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell41, SVCustomFilterCell41Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL41, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell42, SVCustomFilterCell42Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL42, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell43, SVCustomFilterCell43Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL43, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell44, SVCustomFilterCell44Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL44, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell45, SVCustomFilterCell45Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL45, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell46, SVCustomFilterCell46Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL46, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell47, SVCustomFilterCell47Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL47, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell48, SVCustomFilterCell48Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL48, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoCell49, SVCustomFilterCell49Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL49, false, SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell01, SVCustomFilterCell01Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL01, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell02, SVCustomFilterCell02Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL02, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell03, SVCustomFilterCell03Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL03, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell04, SVCustomFilterCell04Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL04, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell05, SVCustomFilterCell05Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL05, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell06, SVCustomFilterCell06Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL06, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell07, SVCustomFilterCell07Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL07, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell08, SVCustomFilterCell08Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL08, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell09, SVCustomFilterCell09Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL09, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell10, SVCustomFilterCell10Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL10, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell11, SVCustomFilterCell11Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL11, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell12, SVCustomFilterCell12Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL12, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell13, SVCustomFilterCell13Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL13, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell14, SVCustomFilterCell14Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL14, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell15, SVCustomFilterCell15Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL15, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell16, SVCustomFilterCell16Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL16, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell17, SVCustomFilterCell17Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL17, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell18, SVCustomFilterCell18Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL18, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell19, SVCustomFilterCell19Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL19, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell20, SVCustomFilterCell20Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL20, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell21, SVCustomFilterCell21Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL21, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell22, SVCustomFilterCell22Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL22, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell23, SVCustomFilterCell23Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL23, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell24, SVCustomFilterCell24Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL24, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell25, SVCustomFilterCell25Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL25, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell26, SVCustomFilterCell26Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL26, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell27, SVCustomFilterCell27Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL27, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell28, SVCustomFilterCell28Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL28, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell29, SVCustomFilterCell29Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL29, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell30, SVCustomFilterCell30Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL30, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell31, SVCustomFilterCell31Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL31, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell32, SVCustomFilterCell32Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL32, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell33, SVCustomFilterCell33Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL33, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell34, SVCustomFilterCell34Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL34, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell35, SVCustomFilterCell35Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL35, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell36, SVCustomFilterCell36Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL36, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell37, SVCustomFilterCell37Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL37, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell38, SVCustomFilterCell38Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL38, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell39, SVCustomFilterCell39Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL39, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell40, SVCustomFilterCell40Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL40, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell41, SVCustomFilterCell41Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL41, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell42, SVCustomFilterCell42Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL42, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell43, SVCustomFilterCell43Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL43, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell44, SVCustomFilterCell44Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL44, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell45, SVCustomFilterCell45Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL45, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell46, SVCustomFilterCell46Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL46, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell47, SVCustomFilterCell47Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL47, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell48, SVCustomFilterCell48Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL48, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoCell49, SVCustomFilterCell49Guid, IDS_OBJECTNAME_CUSTOMFILTER_CELL49, false, SvOi::SVResetItemOwner );
 
-	RegisterEmbeddedObject( &m_lvoKernelWidth, SVCustomFilterKernelWidthGuid, IDS_OBJECTNAME_CUSTOMFILTER_KERNELWIDTH, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoKernelHeight, SVCustomFilterKernelHeightGuid, IDS_OBJECTNAME_CUSTOMFILTER_KERNELHEIGHT, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_bvoClippingOn, SVCustomFilterClippingGuid, IDS_OBJECTNAME_CUSTOMFILTER_CLIPPING, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_bvoAbsoluteValue, SVCustomFilterAbsoluteGuid, IDS_OBJECTNAME_CUSTOMFILTER_ABSOLUTE, false, SVResetItemOwner );
-	RegisterEmbeddedObject( &m_lvoTransformationFactor, SVCustomFilterTransformGuid, IDS_OBJECTNAME_CUSTOMFILTER_TRANSFORM, false, SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoKernelWidth, SVCustomFilterKernelWidthGuid, IDS_OBJECTNAME_CUSTOMFILTER_KERNELWIDTH, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoKernelHeight, SVCustomFilterKernelHeightGuid, IDS_OBJECTNAME_CUSTOMFILTER_KERNELHEIGHT, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_bvoClippingOn, SVCustomFilterClippingGuid, IDS_OBJECTNAME_CUSTOMFILTER_CLIPPING, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_bvoAbsoluteValue, SVCustomFilterAbsoluteGuid, IDS_OBJECTNAME_CUSTOMFILTER_ABSOLUTE, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject( &m_lvoTransformationFactor, SVCustomFilterTransformGuid, IDS_OBJECTNAME_CUSTOMFILTER_TRANSFORM, false, SvOi::SVResetItemOwner );
 
 	m_plvoKernelCells[ 0] = &m_lvoCell01;
 	m_plvoKernelCells[ 1] = &m_lvoCell02;
@@ -169,16 +169,17 @@ void SVCustomFilterClass::init()
 	m_bvoAbsoluteValue.SetDefaultValue( TRUE, TRUE );
 	m_lvoTransformationFactor.SetDefaultValue( 1, TRUE );
 
+	const UINT cAttributes = SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE;
 	for( l = 0; l < 49; l++ )
 	{
-		m_plvoKernelCells[l]->ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE;
+		m_plvoKernelCells[l]->SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 	}// end for
 
-	m_lvoKernelWidth.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE;
-	m_lvoKernelHeight.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE;
-	m_bvoClippingOn.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE;
-	m_bvoAbsoluteValue.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE;
-	m_lvoTransformationFactor.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE;
+	m_lvoKernelWidth.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
+	m_lvoKernelHeight.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
+	m_bvoClippingOn.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
+	m_bvoAbsoluteValue.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
+	m_lvoTransformationFactor.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 
 	// Set default inputs and outputs
 	addDefaultInputObjects();
@@ -235,19 +236,19 @@ void SVCustomFilterClass::RebuildKernel()
 	m_lvoKernelWidth.GetValue( lWidth );
 	if( lWidth >= 7 )
 	{
-		m_lvoKernelWidth.SetValue( 1L, 7L );
+		m_lvoKernelWidth.SetValue( 7L, 1 );
 	}// end if
 	else if( lWidth >= 5 )
 	{
-		m_lvoKernelWidth.SetValue( 1L, 5L );
+		m_lvoKernelWidth.SetValue( 5L, 1 );
 	}// end else if
 	else if( lWidth >= 3 )
 	{
-		m_lvoKernelWidth.SetValue( 1L, 3L );
+		m_lvoKernelWidth.SetValue( 3L, 1 );
 	}// end else if
 	else
 	{
-		m_lvoKernelWidth.SetValue( 1L, 1L );
+		m_lvoKernelWidth.SetValue( 1L, 1 );
 	}// end else
 	m_lvoKernelWidth.GetValue( lWidth );
 
@@ -255,19 +256,19 @@ void SVCustomFilterClass::RebuildKernel()
 	m_lvoKernelHeight.GetValue( lHeight );
 	if( lHeight >= 7 )
 	{
-		m_lvoKernelHeight.SetValue( 1L, 7L );
+		m_lvoKernelHeight.SetValue( 7L, 1 );
 	}// end if
 	else if( lHeight >= 5 )
 	{
-		m_lvoKernelHeight.SetValue( 1L, 5L );
+		m_lvoKernelHeight.SetValue( 5L, 1 );
 	}// end else if
 	else if( lHeight >= 3 )
 	{
-		m_lvoKernelHeight.SetValue( 1L, 3L );
+		m_lvoKernelHeight.SetValue( 3L, 1 );
 	}// end else if
 	else
 	{
-		m_lvoKernelHeight.SetValue( 1L, 1L );
+		m_lvoKernelHeight.SetValue( 1L, 1 );
 	}// end else
 	m_lvoKernelHeight.GetValue( lHeight );
 
@@ -319,13 +320,13 @@ void SVCustomFilterClass::RebuildKernel()
 	delete [] pKernelData;	
 	for( l = 0; l < lWidth * lHeight; l++ )
 	{
-		m_plvoKernelCells[l]->ObjectAttributesAllowedRef() = (SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES | SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE);
+		m_plvoKernelCells[l]->SetObjectAttributesAllowed( SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES | SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE, SvOi::SetAttributeType::OverwriteAttribute );
 	}// end for
 
 	for( l = lWidth * lHeight; l < 49; l++ )
 	{
-		m_plvoKernelCells[l]->ObjectAttributesAllowedRef() = SV_EMBEDABLE;
-		m_plvoKernelCells[l]->ObjectAttributesSetRef() = SV_EMBEDABLE;
+		m_plvoKernelCells[l]->SetObjectAttributesAllowed( SV_EMBEDABLE, SvOi::SetAttributeType::OverwriteAttribute );
+		m_plvoKernelCells[l]->SetObjectAttributesSet( SV_EMBEDABLE, SvOi::SetAttributeType::OverwriteAttribute );
 	}// end for
 }
 
@@ -335,21 +336,21 @@ void SVCustomFilterClass::RebuildKernel()
 // .Description : Runs this operator.
 //              : Returns FALSE, if operator cannot run ( may be deactivated ! )
 ////////////////////////////////////////////////////////////////////////////////
-bool SVCustomFilterClass::onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVCustomFilterClass::onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 { 
 	// Force a copy forward to keep the display correct
 	for( long l = 0; l < 49; l++ )
 	{
-		m_plvoKernelCells[l]->CopyLastSetValue( RRunStatus.m_lResultDataIndex );
+		m_plvoKernelCells[l]->CopyLastSetValue( rRunStatus.m_lResultDataIndex );
 	}// end for
 
 	SVMatroxImageInterface::SVStatusCode l_Code;
 
-	m_lvoKernelWidth.CopyLastSetValue( RRunStatus.m_lResultDataIndex );
-	m_lvoKernelHeight.CopyLastSetValue( RRunStatus.m_lResultDataIndex );
-	m_bvoClippingOn.CopyLastSetValue( RRunStatus.m_lResultDataIndex );
-	m_bvoAbsoluteValue.CopyLastSetValue( RRunStatus.m_lResultDataIndex );
-	m_lvoTransformationFactor.CopyLastSetValue( RRunStatus.m_lResultDataIndex );
+	m_lvoKernelWidth.CopyLastSetValue( rRunStatus.m_lResultDataIndex );
+	m_lvoKernelHeight.CopyLastSetValue( rRunStatus.m_lResultDataIndex );
+	m_bvoClippingOn.CopyLastSetValue( rRunStatus.m_lResultDataIndex );
+	m_bvoAbsoluteValue.CopyLastSetValue( rRunStatus.m_lResultDataIndex );
+	m_lvoTransformationFactor.CopyLastSetValue( rRunStatus.m_lResultDataIndex );
 
 	if( m_pCurrentUIOPL && !( ROutputImageHandle.empty() ) && !( RInputImageHandle.empty() ) )
 	{
@@ -374,7 +375,7 @@ bool SVCustomFilterClass::onRun( bool First, SVSmartHandlePointer RInputImageHan
 			}
 			// Signal that something was wrong...
 			SetInvalid();
-			RRunStatus.SetInvalid();
+			rRunStatus.SetInvalid();
 			return false;
 		}
 
@@ -392,7 +393,7 @@ bool SVCustomFilterClass::onRun( bool First, SVSmartHandlePointer RInputImageHan
 
 	// Signal that something was wrong...
 	SetInvalid();
-	RRunStatus.SetInvalid();
+	rRunStatus.SetInvalid();
 	return false;
 }
 

@@ -24,13 +24,13 @@ struct SVExtentLineStruct
 
 	HRESULT Initialize();
 
-	SVExtentPointStructCArray m_svPointArray;
+	SVExtentPointStructVector m_svPointArray;
 	COLORREF m_dwColor;
 	
 	bool m_bIsAngleValid;
 	double m_dAngle;
 };
 
-typedef SVVector< SVExtentLineStruct > SVExtentLineStructCArray;
+typedef SVVector<SVExtentLineStruct > SVExtentLineStructVector;
 
 

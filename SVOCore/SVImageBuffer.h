@@ -143,11 +143,11 @@ public:
 	// Construction section
 	SVImageOverlayClass();
 	SVImageOverlayClass( const SVImageOverlayClass& rRhs );
-	SVImageOverlayClass(const SVExtentMultiLineStructCArray& rMultiLineArrayStruct);
+	SVImageOverlayClass(const SVExtentMultiLineStructVector& rMultiLineArrayStruct);
 	~SVImageOverlayClass();
 
 	const SVImageOverlayClass& operator = ( const SVImageOverlayClass& rRhs );
-	const SVImageOverlayClass& operator = ( const SVExtentMultiLineStructCArray& rMultiLineArrayStruct );
+	const SVImageOverlayClass& operator = ( const SVExtentMultiLineStructVector& rMultiLineArrayStruct );
 
 	// General and header section
 	long GetBufferSize() const { return m_lBufferSize; };

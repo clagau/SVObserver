@@ -84,50 +84,50 @@ SVPatternAnalyzerClass::SVPatternAnalyzerClass(BOOL BCreateDefaultTaskList, SVOb
   , m_bReloadModelFromFile(false)
   , m_bReloadDonCareFromFile(false)
 {
-	m_outObjectInfo.ObjectTypeInfo.SubType = SVPatternAnalyzerObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVPatternAnalyzerObjectType;
 	m_nPatternIndex = -1;
 
 	// Register Embedded Objects
-	RegisterEmbeddedObject(&msv_dpatAcceptanceThreshold, SVpatAcceptThresholdObjectGuid, IDS_OBJECTNAME_PAT_ACCEPTTHRESHOLD, false, SVResetItemOwner );
-	RegisterEmbeddedObject(&msv_dpatCertaintyThreshold, SVpatCertainThresholdObjectGuid, IDS_OBJECTNAME_PAT_CERTAINTHRESHOLD, false, SVResetItemOwner );
-	RegisterEmbeddedObject(&msv_lpatAccuracy, SVpatAccuracyObjectGuid, IDS_OBJECTNAME_PAT_ACCURACY, false, SVResetItemOwner );
-	RegisterEmbeddedObject(&msv_lpatMaxOccurances, SVpatMaxOccurancesObjectGuid, IDS_OBJECTNAME_PAT_MAXOCCURANCES, false, SVResetItemOwner );
-	RegisterEmbeddedObject(&msv_bpatSearchAngleMode, SVpatSearchAngleModeObjectGuid, IDS_OBJECTNAME_PAT_SEARCHANGLEMODE, false, SVResetItemOwner );
-	RegisterEmbeddedObject(&msv_lpatSpeed, SVpatSpeedObjectGuid, IDS_OBJECTNAME_PAT_SPEED, false, SVResetItemOwner );
-	RegisterEmbeddedObject(&msv_szModelImageFile, SVpatModelImageFileGuid, IDS_OBJECTNAME_PAT_MODELIMAGEFILE, false, SVResetItemOwner );
-	RegisterEmbeddedObject(&m_DontCareImageFile, SVpatDontCareImageFileGuid, IDS_OBJECTNAME_PAT_DONT_CARE_IMAGEFILE, false, SVResetItemOwner );
+	RegisterEmbeddedObject(&msv_dpatAcceptanceThreshold, SVpatAcceptThresholdObjectGuid, IDS_OBJECTNAME_PAT_ACCEPTTHRESHOLD, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject(&msv_dpatCertaintyThreshold, SVpatCertainThresholdObjectGuid, IDS_OBJECTNAME_PAT_CERTAINTHRESHOLD, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject(&msv_lpatAccuracy, SVpatAccuracyObjectGuid, IDS_OBJECTNAME_PAT_ACCURACY, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject(&msv_lpatMaxOccurances, SVpatMaxOccurancesObjectGuid, IDS_OBJECTNAME_PAT_MAXOCCURANCES, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject(&msv_bpatSearchAngleMode, SVpatSearchAngleModeObjectGuid, IDS_OBJECTNAME_PAT_SEARCHANGLEMODE, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject(&msv_lpatSpeed, SVpatSpeedObjectGuid, IDS_OBJECTNAME_PAT_SPEED, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject(&msv_szModelImageFile, SVpatModelImageFileGuid, IDS_OBJECTNAME_PAT_MODELIMAGEFILE, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject(&m_DontCareImageFile, SVpatDontCareImageFileGuid, IDS_OBJECTNAME_PAT_DONT_CARE_IMAGEFILE, false, SvOi::SVResetItemOwner );
 
-	RegisterEmbeddedObject(&msv_dpatSearchAngle, SVpatSearchAngleObjectGuid, IDS_OBJECTNAME_PAT_SEARCHANGLE, false, SVResetItemOwner );
-	RegisterEmbeddedObject(&msv_dpatAngleDeltaNeg, SVpatAngleDeltaNegObjectGuid, IDS_OBJECTNAME_PAT_DELTANEG, false, SVResetItemOwner );
-	RegisterEmbeddedObject(&msv_dpatAngleDeltaPos, SVpatAngleDeltaPosObjectGuid, IDS_OBJECTNAME_PAT_DELTAPOS, false, SVResetItemOwner );
-	RegisterEmbeddedObject(&msv_dpatAngleTolerance, SVpatAngleToleranceObjectGuid, IDS_OBJECTNAME_PAT_ANGLETOLERANCE, false, SVResetItemOwner );
-	RegisterEmbeddedObject(&msv_dpatAngleAccuracy, SVpatAngleAccuracyObjectGuid, IDS_OBJECTNAME_PAT_ANGLEACCURACY, false, SVResetItemOwner );
-	RegisterEmbeddedObject(&msv_dpatAngleInterpolation, SVpatAngleInterpolationObjectGuid, IDS_OBJECTNAME_PAT_INTERPOLATION, false, SVResetItemOwner );
+	RegisterEmbeddedObject(&msv_dpatSearchAngle, SVpatSearchAngleObjectGuid, IDS_OBJECTNAME_PAT_SEARCHANGLE, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject(&msv_dpatAngleDeltaNeg, SVpatAngleDeltaNegObjectGuid, IDS_OBJECTNAME_PAT_DELTANEG, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject(&msv_dpatAngleDeltaPos, SVpatAngleDeltaPosObjectGuid, IDS_OBJECTNAME_PAT_DELTAPOS, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject(&msv_dpatAngleTolerance, SVpatAngleToleranceObjectGuid, IDS_OBJECTNAME_PAT_ANGLETOLERANCE, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject(&msv_dpatAngleAccuracy, SVpatAngleAccuracyObjectGuid, IDS_OBJECTNAME_PAT_ANGLEACCURACY, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject(&msv_dpatAngleInterpolation, SVpatAngleInterpolationObjectGuid, IDS_OBJECTNAME_PAT_INTERPOLATION, false, SvOi::SVResetItemOwner );
 
-	RegisterEmbeddedObject(&msv_bpatCircularOverscan, SVpatCircularOverscanObjectGuid, IDS_OBJECTNAME_PAT_CIRCULAROVERSCAN, false, SVResetItemOwner );
-	RegisterEmbeddedObject(&m_bpatDontCare, SVpatDontCareObjectGuid, IDS_OBJECTNAME_PAT_USE_DONT_CARE, false, SVResetItemOwner );
+	RegisterEmbeddedObject(&msv_bpatCircularOverscan, SVpatCircularOverscanObjectGuid, IDS_OBJECTNAME_PAT_CIRCULAROVERSCAN, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject(&m_bpatDontCare, SVpatDontCareObjectGuid, IDS_OBJECTNAME_PAT_USE_DONT_CARE, false, SvOi::SVResetItemOwner );
 
-	RegisterEmbeddedObject(&msv_dpatPreliminaryAcceptanceThreshold, SVpatPreliminaryAcceptanceThresholdObjectGuid, IDS_OBJECTNAME_PAT_PRELIMINARYACCEPTANCETHRESHOLD, false, SVResetItemOwner );
-	RegisterEmbeddedObject(&msv_lpatFastFind, SVpatFastFindObjectGuid, IDS_OBJECTNAME_PAT_FASTFIND, false, SVResetItemOwner );
-	RegisterEmbeddedObject(&msv_lpatModelStep, SVpatModelStepObjectGuid, IDS_OBJECTNAME_PAT_MODELSTEP, false, SVResetItemOwner );
-	RegisterEmbeddedObject(&msv_lpatBeginningResolutionLevel, SVpatBeginningResolutionLevelObjectGuid, IDS_OBJECTNAME_PAT_BEGINNINGRESOLUTIONLEVEL, false, SVResetItemOwner );
-	RegisterEmbeddedObject(&msv_lpatFinalResolutionLevel, SVpatFinalResolutionLevelObjectGuid, IDS_OBJECTNAME_PAT_FINALRESOLUTIONLEVEL, false, SVResetItemOwner );
-	RegisterEmbeddedObject(&msv_lpatAdditionalCandidates, SVpatAdditionalCandidatesObjectGuid, IDS_OBJECTNAME_PAT_ADDITIONALCANDIDATES, false, SVResetItemOwner );
-	RegisterEmbeddedObject(&msv_dpatCandidateSpacingXMin, SVpatCandidateSpacingXMinObjectGuid, IDS_OBJECTNAME_PAT_CANDIDATESPACINGXMIN, false, SVResetItemOwner );
-	RegisterEmbeddedObject(&msv_dpatCandidateSpacingYMin, SVpatCandidateSpacingYMinObjectGuid, IDS_OBJECTNAME_PAT_CANDIDATESPACINGYMIN, false, SVResetItemOwner );
+	RegisterEmbeddedObject(&msv_dpatPreliminaryAcceptanceThreshold, SVpatPreliminaryAcceptanceThresholdObjectGuid, IDS_OBJECTNAME_PAT_PRELIMINARYACCEPTANCETHRESHOLD, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject(&msv_lpatFastFind, SVpatFastFindObjectGuid, IDS_OBJECTNAME_PAT_FASTFIND, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject(&msv_lpatModelStep, SVpatModelStepObjectGuid, IDS_OBJECTNAME_PAT_MODELSTEP, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject(&msv_lpatBeginningResolutionLevel, SVpatBeginningResolutionLevelObjectGuid, IDS_OBJECTNAME_PAT_BEGINNINGRESOLUTIONLEVEL, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject(&msv_lpatFinalResolutionLevel, SVpatFinalResolutionLevelObjectGuid, IDS_OBJECTNAME_PAT_FINALRESOLUTIONLEVEL, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject(&msv_lpatAdditionalCandidates, SVpatAdditionalCandidatesObjectGuid, IDS_OBJECTNAME_PAT_ADDITIONALCANDIDATES, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject(&msv_dpatCandidateSpacingXMin, SVpatCandidateSpacingXMinObjectGuid, IDS_OBJECTNAME_PAT_CANDIDATESPACINGXMIN, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject(&msv_dpatCandidateSpacingYMin, SVpatCandidateSpacingYMinObjectGuid, IDS_OBJECTNAME_PAT_CANDIDATESPACINGYMIN, false, SvOi::SVResetItemOwner );
 
-	RegisterEmbeddedObject(&msv_dpatResultMatchScore, SVpatResultMatchScoreObjectGuid, IDS_OBJECTNAME_PAT_MATCHSCORE, false, SVResetItemNone );
-	RegisterEmbeddedObject(&msv_dpatResultX, SVpatResultXObjectGuid, IDS_OBJECTNAME_PAT_RESULTX, false, SVResetItemNone );
-	RegisterEmbeddedObject(&msv_dpatResultY, SVpatResultYObjectGuid, IDS_OBJECTNAME_PAT_RESULTY, false, SVResetItemNone );
-	RegisterEmbeddedObject(&msv_dpatResultAngle, SVpatResultAngleObjectGuid, IDS_OBJECTNAME_PAT_RESULTANGLE, false, SVResetItemNone );
+	RegisterEmbeddedObject(&msv_dpatResultMatchScore, SVpatResultMatchScoreObjectGuid, IDS_OBJECTNAME_PAT_MATCHSCORE, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject(&msv_dpatResultX, SVpatResultXObjectGuid, IDS_OBJECTNAME_PAT_RESULTX, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject(&msv_dpatResultY, SVpatResultYObjectGuid, IDS_OBJECTNAME_PAT_RESULTY, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject(&msv_dpatResultAngle, SVpatResultAngleObjectGuid, IDS_OBJECTNAME_PAT_RESULTANGLE, false, SvOi::SVResetItemNone );
 
-	RegisterEmbeddedObject(&msv_lpatNumFoundOccurances, SVpatResultNumFoundOccurancesObjectGuid, IDS_OBJECTNAME_PAT_NBRFOUNDOCCURANCES, false, SVResetItemNone );
-	RegisterEmbeddedObject(&m_lpatModelWidth, SVpatModelWidthObjectGuid, IDS_OBJECTNAME_PAT_MODELWIDTH, false, SVResetItemOwner );
-	RegisterEmbeddedObject(&m_lpatModelHeight, SVpatModelHeightObjectGuid, IDS_OBJECTNAME_PAT_MODELHEIGHT, false, SVResetItemOwner );
-	RegisterEmbeddedObject(&m_lpatModelCenterX, SVpatModelCenterXObjectGuid, IDS_OBJECTNAME_PAT_MODELCENTERX, false, SVResetItemOwner );
-	RegisterEmbeddedObject(&m_lpatModelCenterY, SVpatModelCenterYObjectGuid, IDS_OBJECTNAME_PAT_MODELCENTERY, false, SVResetItemOwner );
-	RegisterEmbeddedObject(&m_dontCareWidth, SVpatDontCareWidthObjectGuid, IDS_OBJECTNAME_PAT_DONTCAREWIDTH, false, SVResetItemOwner);
-	RegisterEmbeddedObject(&m_dontCareHeight, SVpatDontCareHeightObjectGuid, IDS_OBJECTNAME_PAT_DONTCAREHEIGHT, false, SVResetItemOwner);
+	RegisterEmbeddedObject(&msv_lpatNumFoundOccurances, SVpatResultNumFoundOccurancesObjectGuid, IDS_OBJECTNAME_PAT_NBRFOUNDOCCURANCES, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject(&m_lpatModelWidth, SVpatModelWidthObjectGuid, IDS_OBJECTNAME_PAT_MODELWIDTH, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject(&m_lpatModelHeight, SVpatModelHeightObjectGuid, IDS_OBJECTNAME_PAT_MODELHEIGHT, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject(&m_lpatModelCenterX, SVpatModelCenterXObjectGuid, IDS_OBJECTNAME_PAT_MODELCENTERX, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject(&m_lpatModelCenterY, SVpatModelCenterYObjectGuid, IDS_OBJECTNAME_PAT_MODELCENTERY, false, SvOi::SVResetItemOwner );
+	RegisterEmbeddedObject(&m_dontCareWidth, SVpatDontCareWidthObjectGuid, IDS_OBJECTNAME_PAT_DONTCAREWIDTH, false, SvOi::SVResetItemOwner);
+	RegisterEmbeddedObject(&m_dontCareHeight, SVpatDontCareHeightObjectGuid, IDS_OBJECTNAME_PAT_DONTCAREHEIGHT, false, SvOi::SVResetItemOwner);
 
   // Set default values for search parameters
 	SetDefaultSearchValues ();
@@ -196,11 +196,11 @@ void SVPatternAnalyzerClass::CreateResult()
 			Add(pResult);
 			pAnalyzerResult = pResult; //
 			
-			pRange->FailLow.SetDefaultValue(1, true);
-			pRange->WarnLow.SetDefaultValue(1, true);
+			pRange->FailLow.SetDefaultValue(1.0, true);
+			pRange->WarnLow.SetDefaultValue(1.0, true);
 
-			pRange->FailLow.SetValue(1, 1.0);
-			pRange->WarnLow.SetValue(1, 1.0);
+			pRange->FailLow.SetValue(1.0, 1);
+			pRange->WarnLow.SetValue(1.0, 1);
 
 			break;
 		}
@@ -209,19 +209,19 @@ void SVPatternAnalyzerClass::CreateResult()
 
 void SVPatternAnalyzerClass::SetDefaultSearchValues()
 {
-	msv_dpatAcceptanceThreshold.SetDefaultValue(70.0, TRUE); // Acceptance level 70%
-	msv_dpatCertaintyThreshold.SetDefaultValue(80.0, TRUE);	 // Certainty level 80%
-	msv_lpatAccuracy.SetDefaultValue(SVValueMedium, TRUE);
-	msv_lpatMaxOccurances.SetDefaultValue(1, TRUE);
-	msv_bpatSearchAngleMode.SetDefaultValue(FALSE, TRUE);
-	msv_lpatSpeed.SetDefaultValue(SVValueMedium, TRUE);
-	msv_dpatSearchAngle.SetDefaultValue(0.0, TRUE);
-	msv_dpatAngleDeltaNeg.SetDefaultValue(0.0, TRUE);
-	msv_dpatAngleDeltaPos.SetDefaultValue(0.0, TRUE);
-	msv_dpatAngleTolerance.SetDefaultValue(5.0, TRUE);
-	msv_dpatAngleAccuracy.SetDefaultValue(SVValueDisable, TRUE);
+	msv_dpatAcceptanceThreshold.SetDefaultValue(70.0, true); // Acceptance level 70%
+	msv_dpatCertaintyThreshold.SetDefaultValue(80.0, true);	 // Certainty level 80%
+	msv_lpatAccuracy.SetDefaultValue(SVValueMedium, true);
+	msv_lpatMaxOccurances.SetDefaultValue(1, true);
+	msv_bpatSearchAngleMode.SetDefaultValue(FALSE, true);
+	msv_lpatSpeed.SetDefaultValue(SVValueMedium, true);
+	msv_dpatSearchAngle.SetDefaultValue(0.0, true);
+	msv_dpatAngleDeltaNeg.SetDefaultValue(0.0, true);
+	msv_dpatAngleDeltaPos.SetDefaultValue(0.0, true);
+	msv_dpatAngleTolerance.SetDefaultValue(5.0, true);
+	msv_dpatAngleAccuracy.SetDefaultValue(SVValueDisable, true);
 	m_bAngleAccuracy = FALSE;
-	msv_dpatAngleInterpolation.SetDefaultValue(SVNearestNeighbor, TRUE);
+	msv_dpatAngleInterpolation.SetDefaultValue(SVNearestNeighbor, true);
 
 	msv_bpatCircularOverscan.SetDefaultValue(false, true);
 	m_bpatDontCare.SetDefaultValue(false, true);
@@ -244,7 +244,7 @@ void SVPatternAnalyzerClass::SetDefaultSearchValues()
 
 bool SVPatternAnalyzerClass::UpdateModelFromInputImage(long posX, long posY, long modelWidth, long modelHeight)
 {
-	if ( S_OK == m_lpatModelWidth.SetValue(1, modelWidth) && S_OK == m_lpatModelHeight.SetValue(1, modelHeight) )
+	if ( S_OK == m_lpatModelWidth.SetValue(modelWidth, 1) && S_OK == m_lpatModelHeight.SetValue(modelHeight, 1) )
 	{
 		return UpdateModelFromInputImage(posX, posY);
 	}
@@ -334,12 +334,12 @@ bool SVPatternAnalyzerClass::UpdateModelFromBuffer()
 		
 		if (l_Code == SVMEE_STATUS_OK)
 		{
-			m_lpatModelWidth.SetValue(1, modelWidth);
+			m_lpatModelWidth.SetValue( modelWidth, 1 );
 			l_Code = SVMatroxBufferInterface::Get( l_PatMilHandle.GetBuffer(), SVSizeY, modelHeight );
 			if (l_Code == SVMEE_STATUS_OK)
 			{
-				m_lpatModelHeight.SetValue(1, modelHeight);
-		}
+				m_lpatModelHeight.SetValue( modelHeight, 1 );
+			}
 		}
 
 		if (l_Code == SVMEE_STATUS_OK)
@@ -351,10 +351,10 @@ bool SVPatternAnalyzerClass::UpdateModelFromBuffer()
 			}
 		
 			// Check if Circular Overscan is enabled
-			bool bCircularScan;
-			msv_bpatCircularOverscan.GetValue(bCircularScan);
+			BOOL bCircularScan;
+			msv_bpatCircularOverscan.GetValue( bCircularScan );
 
-			if (bCircularScan)
+			if( bCircularScan )
 			{
 				POINT pos = { 0, 0 };
 				SIZE size = { modelWidth, modelHeight };
@@ -409,7 +409,7 @@ bool SVPatternAnalyzerClass::RestorePattern (const SVString& rImageFile, SvStl::
 
 	if ( bOk )
 	{
-		if(  S_OK != msv_szModelImageFile.SetValue( 1, rImageFile ) )
+		if(  S_OK != msv_szModelImageFile.SetValue( rImageFile, 1 ) )
 		{
 			bOk = false;
 			if (nullptr != pErrorMessages)
@@ -716,43 +716,44 @@ BOOL SVPatternAnalyzerClass::CreateObject(SVObjectLevelCreateStruct* pCreateStru
 	BOOL bOk = SVImageAnalyzerClass::CreateObject(pCreateStructure);
 
 	// Set / Reset Printable Flags
-	msv_dpatAcceptanceThreshold.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_REMOTELY_SETABLE;
-	msv_dpatCertaintyThreshold.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_REMOTELY_SETABLE;
-	msv_lpatAccuracy.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_REMOTELY_SETABLE;
-	msv_lpatMaxOccurances.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
-	msv_bpatSearchAngleMode.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
-	msv_lpatSpeed.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_REMOTELY_SETABLE;
+	const UINT cAttributes = SV_PRINTABLE | SV_REMOTELY_SETABLE;
+	msv_dpatAcceptanceThreshold.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
+	msv_dpatCertaintyThreshold.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
+	msv_lpatAccuracy.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
+	msv_lpatMaxOccurances.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	msv_bpatSearchAngleMode.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	msv_lpatSpeed.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 
-	msv_dpatSearchAngle.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
-	msv_dpatAngleDeltaNeg.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
-	msv_dpatAngleDeltaPos.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
-	msv_dpatAngleTolerance.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
-	msv_dpatAngleAccuracy.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
-	msv_dpatAngleInterpolation.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
+	msv_dpatSearchAngle.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	msv_dpatAngleDeltaNeg.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	msv_dpatAngleDeltaPos.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	msv_dpatAngleTolerance.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	msv_dpatAngleAccuracy.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	msv_dpatAngleInterpolation.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
 
-	msv_dpatResultMatchScore.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	msv_dpatResultX.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	msv_dpatResultY.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	msv_dpatResultAngle.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
+	msv_dpatResultMatchScore.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	msv_dpatResultX.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	msv_dpatResultY.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	msv_dpatResultAngle.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 
-	msv_szModelImageFile.ObjectAttributesAllowedRef() |= SV_PRINTABLE| SV_REMOTELY_SETABLE; // Name of the Model Image File
+	msv_szModelImageFile.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 
-	msv_bpatCircularOverscan.ObjectAttributesAllowedRef() |= SV_REMOTELY_SETABLE;
-	msv_bpatCircularOverscan.ObjectAttributesAllowedRef() &= (~SV_SETABLE_ONLINE);
-	m_bpatDontCare.ObjectAttributesAllowedRef() |= SV_REMOTELY_SETABLE;
-	m_bpatDontCare.ObjectAttributesAllowedRef() &= (~SV_SETABLE_ONLINE);
-	m_DontCareImageFile.ObjectAttributesAllowedRef() |= SV_PRINTABLE| SV_REMOTELY_SETABLE;
+	msv_bpatCircularOverscan.SetObjectAttributesAllowed( SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
+	msv_bpatCircularOverscan.SetObjectAttributesAllowed( SV_SETABLE_ONLINE, SvOi::SetAttributeType::RemoveAttribute );
+	m_bpatDontCare.SetObjectAttributesAllowed(SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute);
+	m_bpatDontCare.SetObjectAttributesAllowed(SV_SETABLE_ONLINE, SvOi::SetAttributeType::RemoveAttribute);
+	m_DontCareImageFile.SetObjectAttributesAllowed(cAttributes, SvOi::SetAttributeType::AddAttribute);
 	
-	msv_dpatPreliminaryAcceptanceThreshold.ObjectAttributesAllowedRef() |= (SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE);
-	msv_lpatFastFind.ObjectAttributesAllowedRef() |= (SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE);
-	msv_lpatModelStep.ObjectAttributesAllowedRef() |= (SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE);
-	msv_lpatBeginningResolutionLevel.ObjectAttributesAllowedRef() |= (SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE);
-	msv_lpatFinalResolutionLevel.ObjectAttributesAllowedRef() |= (SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE);
-	msv_lpatAdditionalCandidates.ObjectAttributesAllowedRef() |= (SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE);
-	msv_dpatCandidateSpacingXMin.ObjectAttributesAllowedRef() |= (SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE);
-	msv_dpatCandidateSpacingYMin.ObjectAttributesAllowedRef() |= (SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE);
+	msv_dpatPreliminaryAcceptanceThreshold.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
+	msv_lpatFastFind.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
+	msv_lpatModelStep.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
+	msv_lpatBeginningResolutionLevel.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
+	msv_lpatFinalResolutionLevel.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
+	msv_lpatAdditionalCandidates.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
+	msv_dpatCandidateSpacingXMin.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
+	msv_dpatCandidateSpacingYMin.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 
-	msv_lpatNumFoundOccurances.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
+	msv_lpatNumFoundOccurances.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 
 	// Check if Result is present
 	SVResultClass* pResult = GetResultObject();
@@ -785,16 +786,16 @@ BOOL SVPatternAnalyzerClass::CloseObject()
 void SVPatternAnalyzerClass::ResetResultValues()
 {
 // Reset the results to its default values (for the current index, which is One based).
-	msv_dpatResultMatchScore.SetValue(1, 0.0);
-	msv_dpatResultX.SetValue(1, 0.0);
-	msv_dpatResultY.SetValue(1, 0.0);
-	msv_dpatResultAngle.SetValue(1, 0.0);
+	msv_dpatResultMatchScore.SetValue( 0.0, 1 );
+	msv_dpatResultX.SetValue( 0.0, 1 );
+	msv_dpatResultY.SetValue( 0.0, 1 );
+	msv_dpatResultAngle.SetValue( 0.0, 1 );
 }
 
-bool SVPatternAnalyzerClass::onRun (SVRunStatusClass &RRunStatus, SvStl::MessageContainerVector *pErrorMessages)
+bool SVPatternAnalyzerClass::onRun (SVRunStatusClass &rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	//@WARNING[MZA][7.50][17.01.2017] Not sure if we need to check ValidateLocal in Run-mode, maybe it is enough to check it in ResetObject
-	bool Result = __super::onRun(RRunStatus, pErrorMessages) && ValidateLocal(pErrorMessages);
+	bool Result = __super::onRun(rRunStatus, pErrorMessages) && ValidateLocal(pErrorMessages);
 	try
 	{
 		if (Result)
@@ -810,7 +811,7 @@ bool SVPatternAnalyzerClass::onRun (SVRunStatusClass &RRunStatus, SvStl::Message
 				}
 
 				SVMatroxBuffer ImageBufId = l_MilHandle.GetBuffer();
-				SVMatroxPatternInterface::SVStatusCode l_Code = executePatternAndSetResults(ImageBufId, RRunStatus.m_lResultDataIndex);
+				SVMatroxPatternInterface::SVStatusCode l_Code = executePatternAndSetResults(ImageBufId, rRunStatus.m_lResultDataIndex);
 
 				// check if one of the matrox calls failed
 				if( l_Code != SVMEE_STATUS_OK )
@@ -821,7 +822,7 @@ bool SVPatternAnalyzerClass::onRun (SVRunStatusClass &RRunStatus, SvStl::Message
 						SvStl::MessageContainer Msg( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 						pErrorMessages->push_back(Msg);
 					}
-					RRunStatus.SetFailed();
+					rRunStatus.SetFailed();
 				}
 			}
 			else
@@ -832,7 +833,7 @@ bool SVPatternAnalyzerClass::onRun (SVRunStatusClass &RRunStatus, SvStl::Message
 					SvStl::MessageContainer Msg( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16206, GetUniqueObjectID() );
 					pErrorMessages->push_back(Msg);
 				}
-				RRunStatus.SetInvalid();
+				rRunStatus.SetInvalid();
 			}
 		}
 	}
@@ -844,7 +845,7 @@ bool SVPatternAnalyzerClass::onRun (SVRunStatusClass &RRunStatus, SvStl::Message
 			SvStl::MessageContainer Msg( SVMSG_SVO_UNHANDLED_EXCEPTION, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 			pErrorMessages->push_back(Msg);
 		}
-		RRunStatus.SetInvalid();
+		rRunStatus.SetInvalid();
 	}
 
 	if (!Result)
@@ -882,7 +883,7 @@ bool SVPatternAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMe
 				if( !FileName.empty() )
 				{
 					Result = ResetPattern(pErrorMessages) && Result;
-				}
+						}
 				else if( UpdateModelFromInputImage() ) // create a new model
 				{
 					SetDefaultSearchValues();
@@ -982,7 +983,7 @@ bool SVPatternAnalyzerClass::getSpecialImage(const SVString& rName, SvOi::Matrox
 	return false;
 }
 
-SvStl::MessageContainerVector SVPatternAnalyzerClass::validateAndSetEmmeddedValues(const SvOi::SetValuePairVector& rValueVector, bool shouldSet)
+SvStl::MessageContainerVector SVPatternAnalyzerClass::validateAndSetEmmeddedValues(const SvOi::SetValueObjectPairVector& rValueVector, bool shouldSet)
 {
 	SvStl::MessageContainerVector messages;
 	bool isModelFileNameToSet = false;
@@ -1012,7 +1013,7 @@ SvStl::MessageContainerVector SVPatternAnalyzerClass::validateAndSetEmmeddedValu
 	return messages;
 }
 
-HRESULT SVPatternAnalyzerClass::onCollectOverlays(SVImageClass* p_pImage, SVExtentMultiLineStructCArray& p_rMultiLineArray )
+HRESULT SVPatternAnalyzerClass::onCollectOverlays(SVImageClass* p_pImage, SVExtentMultiLineStructVector& p_rMultiLineArray )
 {
 	// only if ToolSet/Tool was not Disabled
 	SVToolClass* pTool = dynamic_cast<SVToolClass*>(GetTool());
@@ -1098,26 +1099,26 @@ void SVPatternAnalyzerClass::DisplayAnalyzerResult()
 	BOOL bValue;
 	msv_bpatSearchAngleMode.GetValue(bValue);
 
-	double dResultAngle;
-	msv_dpatResultAngle.GetValue(msv_dpatResultAngle.GetLastSetIndex(), m_nPatternIndex, dResultAngle);
+	double dResultAngle( 0.0 );;
+	msv_dpatResultAngle.GetValue( dResultAngle, -1, m_nPatternIndex );
 	if(bValue && dResultAngle > 0.0)
 	{
 		Value= SvUl_SF::Format(_T("%3.1lf"), dResultAngle);
 		resultDlg.m_strAngle = Value.c_str();
 	}
 
-	double dMatchScore;
-	msv_dpatResultMatchScore.GetValue(msv_dpatResultMatchScore.GetLastSetIndex(), m_nPatternIndex, dMatchScore);
+	double dMatchScore( 0.0 );
+	msv_dpatResultMatchScore.GetValue( dMatchScore, -1, m_nPatternIndex );
 	Value = SvUl_SF::Format(_T("%3.1lf"), dMatchScore);
 	resultDlg.m_strScore = Value.c_str();
 
-	double dResultXPos;
-	msv_dpatResultX.GetValue(msv_dpatResultX.GetLastSetIndex(), m_nPatternIndex, dResultXPos);
+	double dResultXPos( 0.0 );
+	msv_dpatResultX.GetValue( dResultXPos, -1, m_nPatternIndex );
 	Value = SvUl_SF::Format(_T("%4.1lf"), dResultXPos);
 	resultDlg.m_strXPos = Value.c_str();
 
-	double dResultYPos;
-	msv_dpatResultY.GetValue(msv_dpatResultY.GetLastSetIndex(), m_nPatternIndex, dResultYPos);
+	double dResultYPos( 0.0 );
+	msv_dpatResultY.GetValue( dResultYPos, -1, m_nPatternIndex );
 	Value = SvUl_SF::Format(_T("%4.1lf"), dResultYPos);
 	resultDlg.m_strYPos = Value.c_str();
 	
@@ -1195,9 +1196,9 @@ std::vector<SVExtentFigureStruct> SVPatternAnalyzerClass::GetResultExtentFigureL
 				m_lpatModelHeight.GetValue(lpatModelHeight);
 
 				// Check if CircularOverscan was used
-				bool bCircularScan;
+				BOOL bCircularScan;
 				msv_bpatCircularOverscan.GetValue(bCircularScan);
-				if (bCircularScan)
+				if( bCircularScan )
 				{
 					POINT pos = { 0, 0 };
 					SIZE size = { lpatModelWidth, lpatModelHeight};
@@ -1223,9 +1224,9 @@ std::vector<SVExtentFigureStruct> SVPatternAnalyzerClass::GetResultExtentFigureL
 					double dResultYPos = 0;
 					double dResultAngle = 0.0;
 
-					msv_dpatResultX.GetValue(msv_dpatResultX.GetLastSetIndex(), i, dResultXPos);
-					msv_dpatResultY.GetValue(msv_dpatResultY.GetLastSetIndex(), i, dResultYPos);
-					msv_dpatResultAngle.GetValue(msv_dpatResultAngle.GetLastSetIndex(), i, dResultAngle);
+					msv_dpatResultX.GetValue( dResultXPos, -1, i );
+					msv_dpatResultY.GetValue( dResultYPos, -1, i );
+					msv_dpatResultAngle.GetValue( dResultAngle, -1, i );
 					SVExtentPointStruct moveVector = SVRotatePoint(SVExtentPointStruct(0, 0), SVExtentPointStruct(centerX, centerY), -dResultAngle);
 					dResultXPos -= moveVector.m_dPositionX;
 					dResultYPos -= moveVector.m_dPositionY;
@@ -1265,7 +1266,7 @@ SVMatroxPatternInterface::SVStatusCode SVPatternAnalyzerClass::executePatternAnd
 		statusCode = SVMatroxPatternInterface::GetNumber( m_patResultHandle, lOccurances );
 		if( statusCode == SVMEE_STATUS_OK )
 		{
-			msv_lpatNumFoundOccurances.SetValue(index, lOccurances);
+			msv_lpatNumFoundOccurances.SetValue( lOccurances, index );
 
 			if( lOccurances > 0 )
 			{
@@ -1279,7 +1280,7 @@ SVMatroxPatternInterface::SVStatusCode SVPatternAnalyzerClass::executePatternAnd
 				matchArray.resize( lOccurances );
 
 				double* pdResultMatchScore = &(matchArray[0]);
-				// SEJ - not sure if this is neccessary
+				// SEJ - not sure if this is necessary
 				memset( pdResultMatchScore, 0L, sizeof( double ) * matchArray.size() );
 
 				//
@@ -1287,7 +1288,7 @@ SVMatroxPatternInterface::SVStatusCode SVPatternAnalyzerClass::executePatternAnd
 				angleArray.resize( lOccurances );
 
 				double* pdResultAngle = &(angleArray[0]);
-				// SEJ - not sure if this is neccessary
+				// SEJ - not sure if this is necessary
 				memset( pdResultAngle, 0L, sizeof( double ) * angleArray.size() );
 
 				//
@@ -1295,14 +1296,14 @@ SVMatroxPatternInterface::SVStatusCode SVPatternAnalyzerClass::executePatternAnd
 				xPosArray.resize( lOccurances );
 
 				double* pdResultXPos = &(xPosArray[0]);
-				// SEJ - not sure if this is neccessary
+				// SEJ - not sure if this is necessary
 				memset( pdResultXPos, 0L, sizeof( double ) * xPosArray.size() );
 
 				//
 				vector2d<double>::row_type& yPosArray = m_vec2dPatResults[SV_PATTERN_RESULT_YPOS];
 				yPosArray.resize( lOccurances );
 
-				// SEJ - not sure if this is neccessary
+				// SEJ - not sure if this is necessary
 				double* pdResultYPos = &(yPosArray[0]);
 				memset( pdResultYPos, 0L, sizeof( double ) * yPosArray.size() );
 
@@ -1330,7 +1331,7 @@ SVMatroxPatternInterface::SVStatusCode SVPatternAnalyzerClass::executePatternAnd
 						// populate results values
 						for (int i = 0; i < lOccurances; i++)
 						{
-							msv_dpatResultMatchScore.SetValue( index, i, ((double)((int)(pdResultMatchScore[i] * 10.0)) / 10.0));
+							msv_dpatResultMatchScore.SetValue( static_cast<double> ((int)(pdResultMatchScore[i] * 10.0)) / 10.0, index, i );
 							if (bAngleMode)
 							{
 								if (pdResultAngle[i] < 0.0)
@@ -1338,15 +1339,15 @@ SVMatroxPatternInterface::SVStatusCode SVPatternAnalyzerClass::executePatternAnd
 									pdResultAngle[i] = 0.0;
 								}
 
-								msv_dpatResultAngle.SetValue( index, i, ((double)((int)(pdResultAngle[i] * 10.0)) / 10.0));
+								msv_dpatResultAngle.SetValue( static_cast<double> ((int)(pdResultAngle[i] * 10.0)) / 10.0, index, i );
 							}
 							else
 							{
-								msv_dpatResultAngle.SetValue( index, i, 0.0 );
+								msv_dpatResultAngle.SetValue( 0.0, index, i );
 							}
 
-							msv_dpatResultX.SetValue( index, i, pdResultXPos[i]);
-							msv_dpatResultY.SetValue( index, i, pdResultYPos[i]);
+							msv_dpatResultX.SetValue( pdResultXPos[i], index, i );
+							msv_dpatResultY.SetValue( pdResultYPos[i], index, i );
 						}
 					}
 				}
@@ -1392,12 +1393,12 @@ bool SVPatternAnalyzerClass::RestoreDontCareImage(SvStl::MessageContainerVector 
 		else
 		{
 			Result = false;
-			if (nullptr != pErrorMessages)
-			{
+		if (nullptr != pErrorMessages)
+		{
 				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_DontCareInvalidFilename, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
-				pErrorMessages->push_back(Msg);
-			}
+			pErrorMessages->push_back(Msg);
 		}
+	}
 	}
 	else
 	{
@@ -1411,10 +1412,10 @@ bool SVPatternAnalyzerClass::RestoreDontCareImage(SvStl::MessageContainerVector 
 	return Result;
 }
 
-bool SVPatternAnalyzerClass::getNewUseDontCareValue(const SvOi::SetValuePairVector &rValueVector)
+bool SVPatternAnalyzerClass::getNewUseDontCareValue(const SvOi::SetValueObjectPairVector &rValueVector)
 {
 	BOOL useDontCare = false;
-	SvOi::SetValuePairVector::const_iterator iter = std::find_if(rValueVector.begin(), rValueVector.end(), [&](const SvOi::SetValuePairVector::value_type& entry)->bool
+	SvOi::SetValueObjectPairVector::const_iterator iter = std::find_if(rValueVector.begin(), rValueVector.end(), [&](const SvOi::SetValueObjectPairVector::value_type& entry)->bool
 	{
 		return entry.first == &m_bpatDontCare;
 	}
@@ -1431,10 +1432,10 @@ bool SVPatternAnalyzerClass::getNewUseDontCareValue(const SvOi::SetValuePairVect
 	return (TRUE == useDontCare);
 }
 
-bool SVPatternAnalyzerClass::validateNewDontCareFileName(const SvOi::SetValuePairVector &rValueVector, long& rDontCareWidth, long& rDontCareHeight, SvStl::MessageContainerVector& rMessages)
+bool SVPatternAnalyzerClass::validateNewDontCareFileName(const SvOi::SetValueObjectPairVector &rValueVector, long& rDontCareWidth, long& rDontCareHeight, SvStl::MessageContainerVector& rMessages)
 {
 	bool isValueToSet = false;
-	SvOi::SetValuePairVector::const_iterator iter = std::find_if(rValueVector.begin(), rValueVector.end(), [&](const SvOi::SetValuePairVector::value_type& entry)->bool
+	SvOi::SetValueObjectPairVector::const_iterator iter = std::find_if(rValueVector.begin(), rValueVector.end(), [&](const SvOi::SetValueObjectPairVector::value_type& entry)->bool
 	{
 		return entry.first == &m_DontCareImageFile;
 	}
@@ -1476,10 +1477,10 @@ bool SVPatternAnalyzerClass::validateNewDontCareFileName(const SvOi::SetValuePai
 	return isValueToSet;
 }
 
-bool SVPatternAnalyzerClass::validateNewModelFileName(const SvOi::SetValuePairVector &rValueVector, long& rModelWidth, long& rModelHeight, SvStl::MessageContainerVector &messages)
+bool SVPatternAnalyzerClass::validateNewModelFileName(const SvOi::SetValueObjectPairVector &rValueVector, long& rModelWidth, long& rModelHeight, SvStl::MessageContainerVector &messages)
 {
 	bool isValueToSet = false;
-	SvOi::SetValuePairVector::const_iterator iter = std::find_if(rValueVector.begin(), rValueVector.end(), [&](const SvOi::SetValuePairVector::value_type& entry)->bool
+	SvOi::SetValueObjectPairVector::const_iterator iter = std::find_if(rValueVector.begin(), rValueVector.end(), [&](const SvOi::SetValueObjectPairVector::value_type& entry)->bool
 	{
 		return entry.first == &msv_szModelImageFile;
 	}
@@ -1622,11 +1623,11 @@ bool SVPatternAnalyzerClass::ReloadImage(const SVString& rImageFile, SVLongValue
 		milErrorCode = SVMatroxBufferInterface::Get(importHandle, SVSizeX, width);
 		if (milErrorCode == SVMEE_STATUS_OK)
 		{
-			rWidthValueObject.SetValue(1, width);
+			rWidthValueObject.SetValue(width, 1);
 			milErrorCode = SVMatroxBufferInterface::Get(importHandle, SVSizeY, height);
 			if (milErrorCode == SVMEE_STATUS_OK)
 			{
-				rHeightValueObject.SetValue(1, height);
+				rHeightValueObject.SetValue(height, 1);
 			}
 		}
 		if (milErrorCode == SVMEE_STATUS_OK)
@@ -1682,5 +1683,6 @@ bool SVPatternAnalyzerClass::ReloadImage(const SVString& rImageFile, SVLongValue
 			SvStl::MessageContainer Msg(SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16205, GetUniqueObjectID());
 			pErrorMessages->push_back(Msg);
 		}
-	}	return bOk;
+	}
+	return bOk;
 }

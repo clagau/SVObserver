@@ -53,5 +53,5 @@ protected:
 
 };
 
-typedef SVVector < SVInObjectInfoStruct, SVInObjectInfoStruct& > SVVectorSVInObjectInfoStruct; 
+typedef SVVector<SVInObjectInfoStruct> SVInObjectInfoStructVector; 
 

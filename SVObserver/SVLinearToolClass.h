@@ -15,6 +15,7 @@
 #include "SVTool.h"
 #include "SVOCore/SVImageClass.h"
 #include "SVUtilityLibrary/SVString.h"
+#include "SVValueObjectLibrary/SVStringValueObjectClass.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -52,7 +53,7 @@ public:
 	virtual EAutoSize GetAutoSizeEnabled() override;
 	BOOL IsToolRotated();
 
-	virtual SVStaticStringValueObjectClass* GetInputImageNames() override;
+	virtual SVStringValueObjectClass* GetInputImageNames() override;
 #pragma endregion Public Methods
 
 	//Embedded Object : Profile Orientation
@@ -74,7 +75,7 @@ private:
 
 #pragma region Member Variables
 private:
-	SVStaticStringValueObjectClass m_svSourceImageNames;
+	SVStringValueObjectClass m_SourceImageNames;
 #pragma endregion Member Variables
 };
 

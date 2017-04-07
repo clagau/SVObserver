@@ -61,7 +61,7 @@ void SVEquationSymbolTableClass::ClearAll()
 	for( int i = m_toolsetSymbolTable.GetSize() - 1; i >= 0; i-- )
 	{
 		SVInObjectInfoStruct* pInObjectInfo = m_toolsetSymbolTable.GetAt( i );
-		SVObjectManagerClass::Instance().DisconnectObjectInput(pInObjectInfo->GetInputObjectInfo().UniqueObjectID, pInObjectInfo);
+		SVObjectManagerClass::Instance().DisconnectObjectInput(pInObjectInfo->GetInputObjectInfo().m_UniqueObjectID, pInObjectInfo);
 	}
 	// Empty the ToolSet Symbol table 
 	m_toolsetSymbolTable.RemoveAll();
@@ -162,19 +162,17 @@ int SVEquationSymbolTableClass::AddSymbol(LPCTSTR name, SVObjectClass* pRequesto
 	pSymbolStruct->Name = name;
 	// Set who wants to use the variable
 	pSymbolStruct->InObjectInfo.SetObject( pRequestor->GetObjectInfo() );
-
 	// Set the variable to be used
-	pSymbolStruct->InObjectInfo.SetInputObjectType( ObjectReference->GetObjectOutputInfo().ObjectTypeInfo);
-	pSymbolStruct->InObjectInfo.SetInputObject( ObjectReference->GetObjectOutputInfo().UniqueObjectID );
-
+	pSymbolStruct->InObjectInfo.SetInputObjectType( ObjectReference.getObject()->GetObjectOutputInfo().m_ObjectTypeInfo);
+	pSymbolStruct->InObjectInfo.SetInputObject( ObjectReference.getObject()->GetObjectOutputInfo().m_UniqueObjectID );
 	// Try to Connect at this point
-	bool rc = SVObjectManagerClass::Instance().ConnectObjectInput(ObjectReference->GetObjectOutputInfo().UniqueObjectID, &pSymbolStruct->InObjectInfo);
+	bool rc = SVObjectManagerClass::Instance().ConnectObjectInput(ObjectReference.getObject()->GetObjectOutputInfo().m_UniqueObjectID, &pSymbolStruct->InObjectInfo);
+	assert(rc);
 	if( rc )
 	{
 		pSymbolStruct->IsValid = TRUE;
 	}
-	ASSERT(rc);
-	
+
 	symbolIndex = Add( pSymbolStruct );
 	// add it to the top
 	m_toolsetSymbolTable.Add( &pSymbolStruct->InObjectInfo );
@@ -193,100 +191,62 @@ SVInputInfoListClass& SVEquationSymbolTableClass::GetToolSetSymbolTable()
 /////////////////////////////////////////////////////////////////
 // Get the data from either a Input Symbol or a ToolSet Symbol
 /////////////////////////////////////////////////////////////////
-HRESULT SVEquationSymbolTableClass::GetData( int iSymbolIndex, double& value, long lBufferIndex )
+HRESULT SVEquationSymbolTableClass::GetData( int SymbolIndex, double& rValue, int Index )
 {
-	if( iSymbolIndex >= 0 && iSymbolIndex < GetSize() )
+	if( SymbolIndex >= 0 && SymbolIndex < GetSize() )
 	{
-		SVEquationSymbolStruct* pSymbolStruct = GetAt( iSymbolIndex );
+		SVEquationSymbolStruct* pSymbolStruct = GetAt( SymbolIndex );
+		bool isValidObject( false );
 
-		if( pSymbolStruct->Type == SV_TOOLSET_SYMBOL_TYPE )
+		if( SV_TOOLSET_SYMBOL_TYPE == pSymbolStruct->Type )
 		{
-			// Get the Data
-			if( pSymbolStruct->InObjectInfo.IsConnected() && pSymbolStruct->InObjectInfo.GetInputObjectInfo().PObject )
-			{
-				SVValueObjectClass* pValueObject = static_cast <SVValueObjectClass*>(pSymbolStruct->InObjectInfo.GetInputObjectInfo().PObject);
-				HRESULT hr = pValueObject->GetValue( value );
-				return hr;
-			}
+			isValidObject = pSymbolStruct->InObjectInfo.IsConnected() && nullptr != pSymbolStruct->InObjectInfo.GetInputObjectInfo().m_pObject;
 		}
-
 		else	
 		{
-			// Get the Data
-			SVObjectClass *object = pSymbolStruct->InObjectInfo.GetInputObjectInfo().PObject;
-			if( SVValueObjectClass* pValueObject = dynamic_cast<SVValueObjectClass*> (object) )
+			if(nullptr != pSymbolStruct->InObjectInfo.GetInputObjectInfo().m_pObject)
 			{
-				return pValueObject->GetValue( value );
-			}
-			else if( BasicValueObject* pBasicValueObject = dynamic_cast<BasicValueObject*> (object) )
-			{
-				return pBasicValueObject->getValue( value );
+				isValidObject = (nullptr != pSymbolStruct->InObjectInfo.GetInputObjectInfo().m_pObject);
 			}
 			else
 			{
-				return S_FALSE;
+				return E_FAIL;
 			}
 		}
+		if( isValidObject )
+		{
+			HRESULT hr = pSymbolStruct->InObjectInfo.GetInputObjectInfo().m_pObject->getValue( rValue, -1, Index );
+			return hr;
+		}
 	}
-	return S_FALSE;
+	return E_FAIL;
 }
 
-HRESULT SVEquationSymbolTableClass::GetData( int iSymbolIndex, int iIndex, double& value, long lBufferIndex )
+HRESULT SVEquationSymbolTableClass::GetData(int SymbolIndex, std::vector<double>& rValues )
 {
-	if( iSymbolIndex >= 0 && iSymbolIndex < GetSize() )
-	{
-		SVEquationSymbolStruct* pSymbolStruct = GetAt( iSymbolIndex );
+	HRESULT Result ( E_FAIL );
 
-		if( pSymbolStruct->Type == SV_INPUT_SYMBOL_TYPE )
+	if( SymbolIndex >= 0 && SymbolIndex < GetSize() )
+	{
+		SVEquationSymbolStruct* pSymbolStruct = GetAt( SymbolIndex );
+		bool isValidObject( false );
+
+		if( SV_TOOLSET_SYMBOL_TYPE == pSymbolStruct->Type )
 		{
-			// Get the Data
-			if( SVValueObjectClass* pValueObject = dynamic_cast<SVValueObjectClass*> (pSymbolStruct->InObjectInfo.GetInputObjectInfo().PObject) )
-			{
-				return pValueObject->GetValue( pValueObject->GetLastSetIndex(), iIndex, value );
-			}
-			else
-				return S_FALSE;
+			isValidObject = pSymbolStruct->InObjectInfo.IsConnected() && nullptr != pSymbolStruct->InObjectInfo.GetInputObjectInfo().m_pObject;
 		}
-		else if( pSymbolStruct->Type == SV_TOOLSET_SYMBOL_TYPE )
+		else if( SV_INPUT_SYMBOL_TYPE == pSymbolStruct->Type )
 		{
-			// Get the Data
-			if( pSymbolStruct->InObjectInfo.IsConnected() && pSymbolStruct->InObjectInfo.GetInputObjectInfo().PObject )
-			{
-				SVValueObjectClass* pValueObject = static_cast<SVValueObjectClass*>(pSymbolStruct->InObjectInfo.GetInputObjectInfo().PObject);
-				return pValueObject->GetValue( pValueObject->GetLastSetIndex(), iIndex, value );
-			}
+			isValidObject = nullptr != pSymbolStruct->InObjectInfo.GetInputObjectInfo().m_pObject;
+		}
+
+		if( isValidObject )
+		{
+			Result = pSymbolStruct->InObjectInfo.GetInputObjectInfo().m_pObject->getValues( rValues );
 		}
 	}
-	return S_FALSE;
-}
 
-HRESULT SVEquationSymbolTableClass::GetData(int iSymbolIndex, std::vector<double>& values, long lBufferIndex )
-{
-	if( iSymbolIndex >= 0 && iSymbolIndex < GetSize() )
-	{
-		SVEquationSymbolStruct* pSymbolStruct = GetAt( iSymbolIndex );
-
-		if( pSymbolStruct->Type == SV_INPUT_SYMBOL_TYPE )
-		{
-			// Get the Data
-			if( SVValueObjectClass* pValueObject = dynamic_cast<SVValueObjectClass*> (pSymbolStruct->InObjectInfo.GetInputObjectInfo().PObject) )
-			{
-				return pValueObject->GetValues( pValueObject->GetLastSetIndex(), values );
-			}
-			else
-				return S_FALSE;
-		}
-		else if( pSymbolStruct->Type == SV_TOOLSET_SYMBOL_TYPE )
-		{
-			// Get the Data
-			if( pSymbolStruct->InObjectInfo.IsConnected() && pSymbolStruct->InObjectInfo.GetInputObjectInfo().PObject )
-			{
-				SVValueObjectClass* pValueObject = static_cast<SVValueObjectClass*>(pSymbolStruct->InObjectInfo.GetInputObjectInfo().PObject);
-				return pValueObject->GetValues( pValueObject->GetLastSetIndex(), values );
-			}
-		}
-	}
-	return S_FALSE;
+	return Result;
 }
 
 SV_IMPLEMENT_CLASS( SVEquationClass, SVEquationClassGuid );
@@ -298,8 +258,8 @@ SVEquationClass::SVEquationClass( SVObjectClass* POwner, int StringResourceID )
 :SVTaskObjectClass( POwner, StringResourceID )
 {
 	// Give SVEquationLexClass and SVEquationYaccClass a pointer to us
-	lex.pEquation = this;
-	yacc.pEquation = this;
+	m_Lex.pEquation = this;
+	m_Yacc.pEquation = this;
 
 	init();
 }
@@ -312,7 +272,7 @@ void SVEquationClass::init()
 	m_bUseOverlays = false;
 
 	// Identify our output type
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVEquationObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVEquationObjectType;
 
 	// Identify our input type needs - this is a bit different here
 	// Since out inputs are dynamic via the script specified
@@ -321,7 +281,7 @@ void SVEquationClass::init()
 	// SetObjectDepth() already called in SVObjectClass Ctor
 
 	// Register Embedded Objects
-	RegisterEmbeddedObject( &enabled, SVEquationEnabledObjectGuid, IDS_OBJECTNAME_ENABLED, false, SVResetItemNone );
+	RegisterEmbeddedObject( &enabled, SVEquationEnabledObjectGuid, IDS_OBJECTNAME_ENABLED, false, SvOi::SVResetItemNone );
 
 	// Set Embedded defaults
 	enabled.SetDefaultValue( TRUE, TRUE );
@@ -330,9 +290,7 @@ void SVEquationClass::init()
 	addDefaultInputObjects();
 
 	// Set local defaults
-	isDataValid = TRUE;
-
-	m_lCurrentRunIndex = -1;
+	m_isDataValid = true;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -355,7 +313,7 @@ BOOL SVEquationClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure 
 	}
 
 	// Set / Reset Printable Flag
-	enabled.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
+	enabled.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
 
 	SVObjectClass *owner = enabled.GetOwner();
 	if (nullptr != owner)
@@ -365,7 +323,7 @@ BOOL SVEquationClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure 
 		if( owner->GetName() == conditionalString )
 		{
 			// Set / Reset Remotely Setable Flag, if owner is conditional class.
-			enabled.ObjectAttributesAllowedRef() |= SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE;
+			enabled.SetObjectAttributesAllowed( SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE, SvOi::SetAttributeType::AddAttribute );
 		}
 	}
 
@@ -376,46 +334,40 @@ BOOL SVEquationClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure 
 
 BOOL SVEquationClass::HasCondition()
 {
-	return !equationStruct.EquationBuffer.empty();
+	return !m_equationStruct.EquationBuffer.empty();
 }
 
 double SVEquationClass::GetYACCResult() const
 {
-	return yacc.equationResult;
+	return m_Yacc.equationResult;
 }
 
 const SVString& SVEquationClass::GetEquationText() const
 {
-	return equationStruct.GetEquationText();
+	return m_equationStruct.GetEquationText();
 }
 
 void SVEquationClass::SetEquationText(const SVString& rText)
 {
-	equationStruct.SetEquationText( rText );
+	m_equationStruct.SetEquationText( rText );
 	if( rText.empty() )
 	{
-		symbols.ClearAll();
-		yacc.equationResult = 0.0;
+		m_Symbols.ClearAll();
+		m_Yacc.equationResult = 0.0;
 	}
 }
 
-HRESULT SVEquationClass::GetObjectValue( const SVString& p_rValueName, VARIANT& p_rVariantValue ) const
+HRESULT SVEquationClass::GetObjectValue( const SVString& rValueName, _variant_t& rValue ) const
 {
 	HRESULT hr = S_OK;
 
-	if( p_rValueName == _T("EquationBuffer") )
+	if( _T("EquationBuffer") == rValueName )
 	{
-		_variant_t l_TempVariant;
-
-		l_TempVariant.Attach( p_rVariantValue );
-
-		l_TempVariant.SetString( equationStruct.GetEquationText().c_str() );
-
-		l_TempVariant.Detach();
+		rValue.SetString( m_equationStruct.GetEquationText().c_str() );
 	}
 	else
 	{
-		hr = SVTaskObjectClass::GetObjectValue( p_rValueName, p_rVariantValue );
+		hr = SVTaskObjectClass::GetObjectValue( rValueName, rValue );
 	}
 
 	return hr;
@@ -426,7 +378,7 @@ void SVEquationClass::Persist( SVObjectWriter& rWriter )
 	SVTaskObjectClass::Persist(rWriter);
 	
 	// Get the Data Values (Member Info, Values)
-	SVString Temp = equationStruct.EquationBuffer;
+	SVString Temp = m_equationStruct.EquationBuffer;
 	
 	SvUl::AddEscapeSpecialCharacters( Temp, true );
 
@@ -450,9 +402,9 @@ HRESULT SVEquationClass::SetObjectValue( SVObjectAttributeClass* pDataObject )
 	{
 		for( int i = 0;i < AttributeList.GetSize();i++ )
 		{
-			equationStruct.EquationBuffer = AttributeList.GetAt( i );
+			m_equationStruct.EquationBuffer = AttributeList.GetAt( i );
 
-			SvUl::RemoveEscapedSpecialCharacters( equationStruct.EquationBuffer, true );
+			SvUl::RemoveEscapedSpecialCharacters( m_equationStruct.EquationBuffer, true );
 		}
 	}
 	else
@@ -482,8 +434,7 @@ BOOL SVEquationClass::IsEnabled()
 SvOi::EquationTestResult SVEquationClass::Test( SvStl::MessageContainerVector *pErrorMessages/*=nullptr */ )
 {
 	SvOi::EquationTestResult ret;
-	m_lCurrentRunIndex = -1;
-	isDataValid = TRUE;
+	m_isDataValid = true;
 	errContainer.clearMessage();
 
 	if( HasCondition() && IsEnabled() )
@@ -495,8 +446,8 @@ SvOi::EquationTestResult SVEquationClass::Test( SvStl::MessageContainerVector *p
 		
 	
 		// Clear the symbol Tables
-		symbols.ClearAll();
-		symbols.Init(this);
+		m_Symbols.ClearAll();
+		m_Symbols.Init(this);
 		
 
 		SVString equationText = GetEquationText();
@@ -507,8 +458,8 @@ SvOi::EquationTestResult SVEquationClass::Test( SvStl::MessageContainerVector *p
 		if( result.bPassed )
 		{
 			// Parse the equation
-			yacc.sIndex = 0;
-			yacc.yacc_err = 0;
+			m_Yacc.sIndex = 0;
+			m_Yacc.yacc_err = 0;
 
 			try
 			{
@@ -524,7 +475,7 @@ SvOi::EquationTestResult SVEquationClass::Test( SvStl::MessageContainerVector *p
 				// Set the control word.   
 				_controlfp( newCw, MCW_EM );
 
-				yacc.yyparse();
+				m_Yacc.yyparse();
 
 				// Reset it back
 				_controlfp( cw, MCW_EM );
@@ -534,27 +485,27 @@ SvOi::EquationTestResult SVEquationClass::Test( SvStl::MessageContainerVector *p
 			{
 				_clearfp();
 
-				isDataValid = FALSE;
+				m_isDataValid = false;
 			}
 
 			//yacc.yyparse();
 	
-			if (yacc.yacc_err)
+			if (m_Yacc.yacc_err)
 			{
 				SVString fullObjectName = GetCompleteObjectNameToObjectType( nullptr, SVInspectionObjectType );
 				SVStringVector msgList;
 				msgList.push_back(fullObjectName);
-				if( S_OK != yacc.m_StatusCode )
+				if( S_OK != m_Yacc.m_StatusCode )
 				{
 					errContainer.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_TooManyVariables, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10046, GetUniqueObjectID() );
 				}
 				else
 				{
-					ret.iPositionFailed = yacc.lex_stack[yacc.sIndex-1].position+1;
+					ret.iPositionFailed = m_Yacc.lex_stack[m_Yacc.sIndex-1].position+1;
 					msgList.push_back(SvUl_SF::Format(_T("%d"), ret.iPositionFailed));
 					errContainer.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_EquationParserError, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10047, GetUniqueObjectID() );
 				}
-				isDataValid = FALSE;
+				m_isDataValid = false;
 			}
 			else
 			{
@@ -567,7 +518,7 @@ SvOi::EquationTestResult SVEquationClass::Test( SvStl::MessageContainerVector *p
 			ret = result;
 		}
 		
-		m_isObjectValid.SetValue( 1, ret.bPassed );
+		m_isObjectValid.SetValue( BOOL(ret.bPassed), 1 );
 	}
 	// return true if no equation or disabled
 	if( !HasCondition() || !IsEnabled() )
@@ -594,58 +545,58 @@ SvOi::EquationTestResult SVEquationClass::lexicalScan(LPCTSTR inBuffer)
 	ret.bPassed = true;
 
 	// Initialize the lexical scanner
-	lex.lex_err = 0;
-	lex.syntax_check = 1;
-	lex.currentPos = 0;
-	lex.position = 0;
+	m_Lex.lex_err = 0;
+	m_Lex.syntax_check = 1;
+	m_Lex.currentPos = 0;
+	m_Lex.position = 0;
 	
 	// Initialize the parser
-	yacc.yacc_err = 0;
-	yacc.sIndex = 0;
+	m_Yacc.yacc_err = 0;
+	m_Yacc.sIndex = 0;
 
 	// For lexical scanner
 	struct yy_buffer_state* b;
 	int yychar;
 	int sIndex = 0;
 	// Scan the input buffer
-	b = lex.yy_scan_string(inBuffer);
+	b = m_Lex.yy_scan_string(inBuffer);
 
 	// Find the Tokens and build the token stack for YACC
-	while ((yychar = lex.yylex()) > 0)
+	while ((yychar = m_Lex.yylex()) > 0)
 	{
-		yacc.lex_stack[sIndex].position = static_cast< int >( lex.position );
-		yacc.lex_stack[sIndex].token = yychar;
+		m_Yacc.lex_stack[sIndex].position = static_cast< int >( m_Lex.position );
+		m_Yacc.lex_stack[sIndex].token = yychar;
 		if( yychar == SV_IDENTIFIER )
-			yacc.lex_stack[sIndex].value.index = lex.yylval.index;
+			m_Yacc.lex_stack[sIndex].value.index = m_Lex.yylval.index;
 		else
-			yacc.lex_stack[sIndex].value.val = lex.yylval.val;
+			m_Yacc.lex_stack[sIndex].value.val = m_Lex.yylval.val;
 		sIndex++;
 	}
 		
-	yacc.lex_stack[sIndex].position = static_cast< int >( lex.position );
-	yacc.lex_stack[sIndex].token = yychar;
+	m_Yacc.lex_stack[sIndex].position = static_cast< int >( m_Lex.position );
+	m_Yacc.lex_stack[sIndex].token = yychar;
 	if( yychar == SV_IDENTIFIER )
-		yacc.lex_stack[sIndex].value.index = lex.yylval.index;
+		m_Yacc.lex_stack[sIndex].value.index = m_Lex.yylval.index;
 	else
-		yacc.lex_stack[sIndex].value.val = lex.yylval.val;
+		m_Yacc.lex_stack[sIndex].value.val = m_Lex.yylval.val;
 	sIndex++;
 
-	yacc.numTokens = sIndex;
+	m_Yacc.numTokens = sIndex;
 
-	if (lex.lex_err)
+	if (m_Lex.lex_err)
 	{
 		SVString fullObjectName = GetCompleteObjectNameToObjectType( nullptr, SVInspectionObjectType );
 		ret.bPassed = false;
-		ret.iPositionFailed = static_cast< int >( lex.position + 1 );
+		ret.iPositionFailed = static_cast< int >( m_Lex.position + 1 );
 		SVStringVector msgList;
 		msgList.push_back(fullObjectName);
 		msgList.push_back(SvUl_SF::Format(_T("%d"), ret.iPositionFailed));
 		errContainer.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_EquationParserError, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10198, GetUniqueObjectID() );
 
-		isDataValid = FALSE;
+		m_isDataValid = false;
 	}
 	// Release the buffer
-	lex.yy_delete_buffer(b);
+	m_Lex.yy_delete_buffer(b);
 
 	return ret;
 }
@@ -655,11 +606,11 @@ SvOi::EquationTestResult SVEquationClass::lexicalScan(LPCTSTR inBuffer)
 ////////////////////////////////////////////////////////////////////////////////
 int SVEquationClass::AddSymbol( LPCTSTR name )
 {
-	int index = symbols.AddSymbol( name, this );
+	int index = m_Symbols.AddSymbol( name, this );
 
 	if( -1 == index )
 	{
-		isDataValid = FALSE;
+		m_isDataValid = false;
 	}
 
 	return index;
@@ -670,7 +621,7 @@ bool SVEquationClass::DisconnectObjectInput( SVInObjectInfoStruct* pInObjectInfo
 	// Update ToolSet Symbol table - Gets called when one of our inputs goes away
 	if( pInObjectInfo )
 	{
-		SVInputInfoListClass& toolSetSymbols = symbols.GetToolSetSymbolTable();
+		SVInputInfoListClass& toolSetSymbols = m_Symbols.GetToolSetSymbolTable();
 
 		for( int i = 0;i < toolSetSymbols.GetSize(); i++ )
 		{
@@ -678,7 +629,7 @@ bool SVEquationClass::DisconnectObjectInput( SVInObjectInfoStruct* pInObjectInfo
 
 			if( pSymbolInputObjectInfo )
 			{
-				if( pInObjectInfo->GetInputObjectInfo().UniqueObjectID == pSymbolInputObjectInfo->GetInputObjectInfo().UniqueObjectID )
+				if( pInObjectInfo->GetInputObjectInfo().m_UniqueObjectID == pSymbolInputObjectInfo->GetInputObjectInfo().m_UniqueObjectID )
 				{
 					pSymbolInputObjectInfo->SetInputObject( nullptr );
 					break;
@@ -694,11 +645,9 @@ bool SVEquationClass::DisconnectObjectInput( SVInObjectInfoStruct* pInObjectInfo
 ////////////////////////////////////////////////////////////////////////////////
 // If Conditional is disabled equation.Run() returns always TRUE.
 // Otherwise the return value depends on the Conditional equation result!
-bool SVEquationClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVEquationClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
-	bool retVal = __super::onRun( RRunStatus, pErrorMessages );
-
-	m_lCurrentRunIndex = RRunStatus.m_lResultDataIndex;
+	bool retVal = __super::onRun( rRunStatus, pErrorMessages );
 
 	if ( HasCondition() && IsEnabled() )
 	{
@@ -706,10 +655,10 @@ bool SVEquationClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContain
 		// The lexical Stack must be valid at this point
 		// And the yacc parsing must not have any errors
 		/////////////////////////////////////////////////////
-		isDataValid = TRUE;
+		m_isDataValid = true;
 
-		yacc.sIndex = 0;
-		yacc.yacc_err = 0;
+		m_Yacc.sIndex = 0;
+		m_Yacc.yacc_err = 0;
 
 		try
 		{
@@ -725,7 +674,7 @@ bool SVEquationClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContain
 			// Set the control word.   
 			_controlfp( newCw, MCW_EM );
 
-			yacc.yyparse();
+			m_Yacc.yyparse();
 
 			// Reset it back
 			_controlfp( cw, MCW_EM );
@@ -735,13 +684,13 @@ bool SVEquationClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContain
 		{
 			_clearfp();
 
-			isDataValid = FALSE;
+			m_isDataValid = false;
 		}
 
 		/////////////////////////////////////////////////////
 		// Check for Valid Data
 		/////////////////////////////////////////////////////
-		if( !isDataValid || yacc.yacc_err )
+		if( !m_isDataValid || m_Yacc.yacc_err )
 		{
 			retVal = false;
 			if (nullptr != pErrorMessages)
@@ -750,13 +699,13 @@ bool SVEquationClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContain
 				pErrorMessages->push_back(Msg);
 			}
 			SetInvalid();
-			RRunStatus.SetInvalid();
+			rRunStatus.SetInvalid();
 		}
 	}
 	if( retVal )
-		RRunStatus.SetPassed();
+		rRunStatus.SetPassed();
 	else
-		RRunStatus.SetFailed();
+		rRunStatus.SetFailed();
 
 	return retVal;
 }
@@ -771,15 +720,12 @@ double SVEquationClass::GetPropertyValue( int iSymbolIndex )
 
 	if( iSymbolIndex != -1 )
 	{
-		if( m_lCurrentRunIndex != -1 )
-			hr = symbols.GetData( iSymbolIndex, value, m_lCurrentRunIndex );
-		else
-			hr = symbols.GetData( iSymbolIndex, value, 1 );
+		hr = m_Symbols.GetData( iSymbolIndex, value );
 	}// end if
 
 	if ( S_OK != hr )
 	{
-		isDataValid = FALSE;
+		m_isDataValid = false;
 	}
 	return value;
 }
@@ -791,66 +737,35 @@ HRESULT SVEquationClass::GetArrayValues( int iSymbolIndex, std::vector< double >
 
 	if( iSymbolIndex != -1 )
 	{
-		if( m_lCurrentRunIndex != -1 )
-			hr = symbols.GetData( iSymbolIndex, values, m_lCurrentRunIndex );
-		else
-			hr = symbols.GetData( iSymbolIndex, values, 1 );
+		hr = m_Symbols.GetData( iSymbolIndex, values );
 	}// end if
 
 	if ( S_OK != hr )
 	{
-		isDataValid = FALSE;
+		m_isDataValid = false;
 	}
 
 	return hr;
 }
 
-double SVEquationClass::GetSubscriptedPropertyValue( int iSymbolIndex, int iIndex, double dDefault )	// user specifies a default
+double SVEquationClass::GetSubscriptedPropertyValue( int SymbolIndex, int Index, double Default /*= 0.0*/ )
 {
 	HRESULT hr = S_FALSE;
-	double value = dDefault;
+	double Value = Default;
 
-	if( iSymbolIndex != -1 )
+	if( SymbolIndex != -1 )
 	{
-		if( m_lCurrentRunIndex != -1 )
-			hr = symbols.GetData( iSymbolIndex, iIndex, value, m_lCurrentRunIndex );
-		else
-			hr = symbols.GetData( iSymbolIndex, iIndex, value, 1 );
-	}// end if
+		hr = m_Symbols.GetData( SymbolIndex, Value, Index );
+	}
 
 	if ( S_OK != hr )
 	{
-		value = dDefault;
+		Value = Default;
 	}
 
-	return value;
+	return Value;
 }
 
-double SVEquationClass::GetSubscriptedPropertyValue( int iSymbolIndex, int iIndex )	// user doesn't specify a default; use internal default of the value object
-{
-	HRESULT hr = S_FALSE;
-	const double dDefault = 0.0;
-	double value = dDefault;
-
-	if( iSymbolIndex != -1 )
-	{
-		if( m_lCurrentRunIndex != -1 )
-			hr = symbols.GetData( iSymbolIndex, iIndex, value, m_lCurrentRunIndex );
-		else
-			hr = symbols.GetData( iSymbolIndex, iIndex, value, 1 );
-	}// end if
-
-	if ( hr == S_FALSE )	// all other return codes use what value is set to (value object default value)
-	{
-		value = dDefault;
-	}
-
-	return value;
-}
-
-////////////////////////////////////////////////////////////////////////////////
-// 
-////////////////////////////////////////////////////////////////////////////////
 bool SVEquationClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = __super::ResetObject(pErrorMessages);
@@ -874,13 +789,13 @@ void SVEquationClass::OnObjectRenamed(const SVObjectClass& rRenamedObject, const
 	{
 		newPrefix = _T( "." ) + pInspection->GetCompleteObjectNameToObjectType( nullptr, SVInspectionObjectType ) + _T( "." );
 	}// end if
-	else if( const BasicValueObject* pBasicValueObject = dynamic_cast<const BasicValueObject*> (&rRenamedObject) )
+	else if( nullptr != dynamic_cast<const BasicValueObject*> (&rRenamedObject) )
 	{
-		newPrefix = _T( "\"" ) + pBasicValueObject->GetCompleteObjectNameToObjectType( nullptr, SVRootObjectType ) + _T( "\"" );
+		newPrefix = _T( "\"" ) + rRenamedObject.GetCompleteObjectNameToObjectType( nullptr, SVRootObjectType ) + _T( "\"" );
 	}
-	else if( const SVValueObjectClass* pValueObject = dynamic_cast<const SVValueObjectClass*> (&rRenamedObject) )
+	else if( nullptr != dynamic_cast<const SvOi::IValueObject*> (&rRenamedObject) )
 	{
-		newPrefix = _T( "\"" ) + pValueObject->GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType ) + _T( "\"" );
+		newPrefix = _T( "\"" ) + rRenamedObject.GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType ) + _T( "\"" );
 	}
 	else
 	{

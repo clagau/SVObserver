@@ -15,11 +15,10 @@
 #include "SVOResource/resource.h"
 #include "SVUtilityLibrary/SVString.h"
 #include "SVUtilityLibrary/SVPOINT.h"
-#include "SVValueObjectClassImpl.h"
-#include "SVValueObjectGlobals.h"
+#include "SVValueObjectClass.h"
 #pragma endregion Includes
 
-class SVPointValueObjectClass : public SVValueObjectClassImpl< SVPOINT >
+class SVPointValueObjectClass : public SVValueObjectClass<SVPOINT>
 {
 	SV_DECLARE_CLASS( SVPointValueObjectClass );
 
@@ -33,28 +32,22 @@ public:
 
 	virtual void Persist(SVObjectWriter& rWriter) override;
 
-	HRESULT GetDefaultValue( POINT& rPoint ) const;
-
-	IMPLEMENT_VALUE_OBJECT_GET_SET()
-
 protected:
-	virtual HRESULT SetValueAt( int iBucket, int iIndex, const SVString& rValue );
-	virtual HRESULT SetValueAt( int iBucket, int iIndex, POINT Value );
-	virtual HRESULT SetValueAt( int iBucket, int iIndex, double Value );
-
-	virtual HRESULT GetValueAt( int iBucket, int iIndex, POINT& rPoint ) const;
-	virtual HRESULT GetValueAt( int iBucket, int iIndex, double& rValue ) const;
-	virtual HRESULT GetValueAt( int iBucket, int iIndex, SVString& rValue ) const;
-	virtual HRESULT GetValueAt( int iBucket, int iIndex, VARIANT& rValue ) const;
-
-	virtual void ValidateValue( int iBucket, int iIndex, const SVString& rValue ) const override;
-
-private:
-	void LocalInitialize();
+	virtual double ValueType2Double(const SVPOINT& rValue) const override { return E_NOTIMPL; };
+	virtual _variant_t ValueType2Variant( const SVPOINT& rValue ) const override;
+	virtual SVPOINT Variant2ValueType( const _variant_t& rValue ) const override;
 
 	/// Convert a string in a SVPOINT. Throw an exception if the string isn't convertible into a SVPOINT
 	/// \param strValue [in] The input string
-	/// \returns char Return value.
-	SVPOINT convertString2Point(const SVString& rValue ) const;
+	/// \returns the converted.
+	virtual SVPOINT ConvertString2Type(const SVString& rValue ) const override;
+
+	//! Convert SVDPointClass to SVString 
+	//! \param rValue [in] Type to convert
+	/// \returns the SVString
+	virtual SVString ConvertType2String( const SVPOINT& rValue ) const override;
+
+private:
+	void LocalInitialize();
 };
 

@@ -20,7 +20,7 @@
 struct SVIPImageDataElement
 {
 	SVByteVector m_ImageDIB;
-	SVExtentMultiLineStructCArray m_OverlayData;
+	SVExtentMultiLineStructVector m_OverlayData;
 
 	SVIPImageDataElement() : m_ImageDIB(), m_OverlayData() {}
 };

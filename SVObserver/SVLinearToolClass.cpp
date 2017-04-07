@@ -64,17 +64,18 @@ BOOL SVLinearToolClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructur
 			bOk &= S_OK == m_svToolExtent.SetTranslation( SVExtentTranslationProfileShift );
 		}
 	}
+	UINT Attributes = SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE | SV_PRINTABLE;
+	m_svRotationAngle.SetObjectAttributesAllowed( Attributes, SvOi::SetAttributeType::AddAttribute );
+	m_svRotationPointX.SetObjectAttributesAllowed( Attributes, SvOi::SetAttributeType::AddAttribute );
+	m_svRotationPointY.SetObjectAttributesAllowed( Attributes, SvOi::SetAttributeType::AddAttribute );
+	m_voProfileOrientation.SetObjectAttributesAllowed( Attributes, SvOi::SetAttributeType::AddAttribute );
+	m_voUseProfileRotation.SetObjectAttributesAllowed( Attributes, SvOi::SetAttributeType::AddAttribute );
 
-	m_svRotationAngle.ObjectAttributesAllowedRef() |= SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE | SV_PRINTABLE; 
-	m_svRotationPointX.ObjectAttributesAllowedRef() |= SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE | SV_PRINTABLE;
-	m_svRotationPointY.ObjectAttributesAllowedRef() |= SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE | SV_PRINTABLE;
-	m_voProfileOrientation.ObjectAttributesAllowedRef() |= SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE | SV_PRINTABLE;
-	m_voUseProfileRotation.ObjectAttributesAllowedRef() |= SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE | SV_PRINTABLE;
-
-	m_svSourceImageNames.ObjectAttributesAllowedRef() &=~SV_REMOTELY_SETABLE & ~SV_SETABLE_ONLINE;
-
-	m_ExtentLeft.ObjectAttributesAllowedRef() &= ~SV_REMOTELY_SETABLE & ~SV_SETABLE_ONLINE;
-	m_ExtentTop.ObjectAttributesAllowedRef() &= ~SV_REMOTELY_SETABLE & ~SV_SETABLE_ONLINE;
+	Attributes = SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE;
+	m_SourceImageNames.setStatic( true );
+	m_SourceImageNames.SetObjectAttributesAllowed( Attributes, SvOi::SetAttributeType::RemoveAttribute );
+	m_ExtentLeft.SetObjectAttributesAllowed( Attributes, SvOi::SetAttributeType::RemoveAttribute );
+	m_ExtentTop.SetObjectAttributesAllowed( Attributes, SvOi::SetAttributeType::RemoveAttribute );
 
 
 	if(bOk)
@@ -96,30 +97,30 @@ BOOL SVLinearToolClass::CloseObject()
 
 bool SVLinearToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
-	bool Result = true;
-	BOOL l_bValue = FALSE;
+	bool Result( true );
+	BOOL UseProfileRotation( false );
 
-	HRESULT l_hrOk = m_voUseProfileRotation.GetValue( l_bValue );
-	if( S_OK == l_hrOk )
+	HRESULT hrOk = m_voUseProfileRotation.GetValue( UseProfileRotation );
+	if( S_OK == hrOk )
 	{
-		long l_DataIndex = m_voUseProfileRotation.GetLastSetIndex();
+		long DataIndex = m_voUseProfileRotation.GetLastSetIndex();
 
-		if( l_bValue )
+		if( UseProfileRotation )
 		{
 			if( m_svToolExtent.GetTranslation() != SVExtentTranslationProfile )
 			{
-				m_voProfileOrientation.SetValue( l_DataIndex, "Horizontal" );
+				m_voProfileOrientation.setValue( SVString( _T("Horizontal") ), DataIndex );
 
-				l_hrOk = m_svToolExtent.SetTranslation( SVExtentTranslationProfile, l_DataIndex );
+				hrOk = m_svToolExtent.SetTranslation( SVExtentTranslationProfile, DataIndex );
 			}
 		}
 		else
 		{
 			if( m_svToolExtent.GetTranslation() != SVExtentTranslationProfileShift )
 			{
-				m_svRotationAngle.SetValue( l_DataIndex, 0.0 );
+				m_svRotationAngle.SetValue( 0.0, DataIndex );
 
-				l_hrOk = m_svToolExtent.SetTranslation( SVExtentTranslationProfileShift, l_DataIndex );
+				hrOk = m_svToolExtent.SetTranslation( SVExtentTranslationProfileShift, DataIndex );
 			}
 		}
 
@@ -127,20 +128,20 @@ bool SVLinearToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessage
 
 		if( S_OK == m_svToolExtent.GetExtentPropertyInfo( SVExtentPropertyRotationAngle, info ) )
 		{
-			info.bHidden = ! l_bValue;
+			info.bHidden = ! UseProfileRotation;
 
 			if( S_OK != m_svToolExtent.SetExtentPropertyInfo( SVExtentPropertyRotationAngle, info ) )
 			{
-				l_hrOk = S_FALSE;
+				hrOk = S_FALSE;
 			}
 		}
 		else
 		{
-			l_hrOk = S_FALSE;
+			hrOk = S_FALSE;
 		}
 	}
 
-	if ( S_OK != l_hrOk )
+	if ( S_OK != hrOk )
 	{
 		Result = false;
 		if (nullptr != pErrorMessages)
@@ -164,12 +165,12 @@ bool SVLinearToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessage
 			{
 				if( m_ExtentLeft.ObjectAttributesAllowed() != SV_NO_ATTRIBUTES )
 				{
-					m_ExtentLeft.SetValue( 1, l_svFigure.m_svTopLeft.m_dPositionX );
+					m_ExtentLeft.SetValue( l_svFigure.m_svTopLeft.m_dPositionX, 1 );
 				}
 				
 				if( m_ExtentTop.ObjectAttributesAllowed() != SV_NO_ATTRIBUTES )
 				{
-					m_ExtentTop.SetValue( 1, l_svFigure.m_svTopLeft.m_dPositionY );
+					m_ExtentTop.SetValue( l_svFigure.m_svTopLeft.m_dPositionY, 1 );
 				}
 			}
 		}
@@ -227,7 +228,7 @@ SVString SVLinearToolClass::GetProfileOrientation()
 {
 	SVString Result;
 
-	m_voProfileOrientation.GetValue( Result );
+	m_voProfileOrientation.getValue( Result );
 
 	return Result;
 }
@@ -269,9 +270,9 @@ BOOL SVLinearToolClass::IsToolRotated()
 	return bRet;
 }
 
-SVStaticStringValueObjectClass* SVLinearToolClass::GetInputImageNames()
+SVStringValueObjectClass* SVLinearToolClass::GetInputImageNames()
 {
-	return &m_svSourceImageNames;
+	return &m_SourceImageNames;
 }
 #pragma endregion Public Methods
 
@@ -282,16 +283,21 @@ SVStaticStringValueObjectClass* SVLinearToolClass::GetInputImageNames()
 void SVLinearToolClass::init()
 {
 	// Set up your type...
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVToolObjectType;
-	m_outObjectInfo.ObjectTypeInfo.SubType    = SVLinearToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SVLinearToolObjectType;
 
+	//Special type names for extents
+	m_svRotationPointX.SetTypeName( _T("Extent X") );
+	m_svRotationPointY.SetTypeName( _T("Extent Y") );
+	m_svRotationAngle.SetTypeName( _T("Extent Angle") );
+	m_voUseProfileRotation.SetTypeName( _T("Extent Angle") );
 	// Register Embedded Objects
-	RegisterEmbeddedObject( &m_svRotationAngle, SVRotationAngleObjectGuid, IDS_OBJECTNAME_ROTATION_ANGLE, false, SVResetItemTool, _T("Extent Angle") );
-	RegisterEmbeddedObject( &m_svRotationPointX, SVRotationPointXObjectGuid, IDS_OBJECTNAME_ROTATION_POINT_X, false, SVResetItemTool, _T("Extent X") );
-	RegisterEmbeddedObject( &m_svRotationPointY, SVRotationPointYObjectGuid, IDS_OBJECTNAME_ROTATION_POINT_Y, false, SVResetItemTool, _T("Extent Y") );
-	RegisterEmbeddedObject( &m_voProfileOrientation, SVProfileOrientationGuid,IDS_OBJECTNAME_LINEARTOOL_ORIENTATION, false, SVResetItemTool );
-	RegisterEmbeddedObject( &m_voUseProfileRotation, SVLinearToolUseRotationGuid, IDS_OBJECTNAME_LINEAR_TOOL_USE_ROTATION, false, SVResetItemTool, _T("Extent Angle") );
-	RegisterEmbeddedObject( &m_svSourceImageNames, SVSourceImageNamesGuid, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SVResetItemTool );
+	RegisterEmbeddedObject( &m_svRotationAngle, SVRotationAngleObjectGuid, IDS_OBJECTNAME_ROTATION_ANGLE, false, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &m_svRotationPointX, SVRotationPointXObjectGuid, IDS_OBJECTNAME_ROTATION_POINT_X, false, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &m_svRotationPointY, SVRotationPointYObjectGuid, IDS_OBJECTNAME_ROTATION_POINT_Y, false, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &m_voProfileOrientation, SVProfileOrientationGuid,IDS_OBJECTNAME_LINEARTOOL_ORIENTATION, false, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &m_voUseProfileRotation, SVLinearToolUseRotationGuid, IDS_OBJECTNAME_LINEAR_TOOL_USE_ROTATION, false, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &m_SourceImageNames, SVSourceImageNamesGuid, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SvOi::SVResetItemTool );
 
 	// Set Embedded defaults
 	m_svRotationAngle.SetDefaultValue( 0.0, TRUE );

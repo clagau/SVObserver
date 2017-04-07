@@ -46,7 +46,7 @@ public:
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	virtual HRESULT IsInputImage( SVImageClass *p_psvImage ) override;
-	virtual HRESULT onCollectOverlays(SVImageClass *p_Image, SVExtentMultiLineStructCArray& p_rMultiLineArray ) override;
+	virtual HRESULT onCollectOverlays(SVImageClass *p_Image, SVExtentMultiLineStructVector& p_rMultiLineArray ) override;
 
 	BOOL Refresh();
 	HRESULT GetFillProperties( SVMaskFillPropertiesStruct& rsvFillStruct );
@@ -55,7 +55,7 @@ public:
 
 	virtual void Persist(SVObjectWriter& rWriter) override;
 
-	virtual HRESULT GetObjectValue( const SVString& p_rValueName, VARIANT& p_rVariantValue ) const override;
+	virtual HRESULT GetObjectValue( const SVString& rValueName, _variant_t& rValue ) const override;
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* PDataObject ) override;
 
 	SVShapeMaskHelperClass* GetShapeHelper();
@@ -79,7 +79,7 @@ public:
 	};
 
 protected:
-	virtual bool onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+	virtual bool onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 	virtual bool hasToAskFriendForConnection( const SVObjectTypeInfoStruct& rInfo, SVObjectClass*& rPOwner ) const override;
 	
 	SVImageInfoClass      m_MaskBufferInfo;

@@ -35,8 +35,8 @@ void SVMathEquationClass::init()
 	m_bUseOverlays = false;
 
 	// Identify our output type
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVEquationObjectType;
-	m_outObjectInfo.ObjectTypeInfo.SubType = SVMathEquationObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVEquationObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVMathEquationObjectType;
 
 	// Identify our input type needs - this is a bit different here
 	// Since out inputs are dynamic via the script specified
@@ -45,7 +45,7 @@ void SVMathEquationClass::init()
 	// SetObjectDepth() already called in SVObjectClass Ctor
 
 	// Register Embedded Objects
-	RegisterEmbeddedObject( &result, SVMathEquationResultObjectGuid, IDS_OBJECTNAME_RESULT, false, SVResetItemNone );
+	RegisterEmbeddedObject( &result, SVMathEquationResultObjectGuid, IDS_OBJECTNAME_RESULT, false, SvOi::SVResetItemNone );
 
 	// Set Embedded defaults
 	result.SetDefaultValue( 0.0, TRUE );
@@ -59,7 +59,7 @@ BOOL SVMathEquationClass::CreateObject(SVObjectLevelCreateStruct *PCreateStruct)
 	m_isCreated = SVEquationClass::CreateObject(PCreateStruct);
 
 	// Set / Reset Printable Flag
-	result.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
+	result.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 
 	return m_isCreated;
 }
@@ -75,25 +75,25 @@ SVMathEquationClass::~SVMathEquationClass()
 ////////////////////////////////////////////////////////////////////////////////
 // If Conditional is disabled conditional.Run() returns always TRUE.
 // Otherwise the return value depends on the Conditional equation result!
-bool SVMathEquationClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVMathEquationClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	double value = 0.0;
 
-	bool retVal = __super::onRun( RRunStatus, pErrorMessages );
+	bool retVal = __super::onRun( rRunStatus, pErrorMessages );
 	
 	if( !retVal )
 	{
 		SetInvalid();
-		RRunStatus.SetInvalid();
+		rRunStatus.SetInvalid();
 	}
 	else
 	{
 		if( HasCondition() && IsEnabled() )
 		{
-			value = yacc.equationResult;
+			value = getResult();
 		}
 	}
-	result.SetValue( RRunStatus.m_lResultDataIndex, value );
+	result.SetValue( value, rRunStatus.m_lResultDataIndex  );
 
 	return retVal;
 }

@@ -8,7 +8,8 @@
 #pragma region Includes
 //Moved to precompiled header: #include <vector>
 #include "SVTool.h"
-#include "SVValueObjectLibrary\LinkedValue.h"
+#include "SVValueObjectLibrary/SVStringValueObjectClass.h"
+#include "SVValueObjectLibrary/LinkedValue.h"
 #include "ObjectInterfaces\GlobalConst.h"
 #pragma endregion Includes
 
@@ -31,7 +32,7 @@ public:
 
 	virtual bool DoesObjectHaveExtents() const override;
 
-	virtual SVStaticStringValueObjectClass* GetInputImageNames() override;
+	virtual SVStringValueObjectClass* GetInputImageNames() override;
 
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
@@ -43,7 +44,7 @@ public:
 protected:
 	virtual HRESULT IsInputImage( SVImageClass *p_psvImage ) override;
 	
-	virtual bool onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+	virtual bool onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 #pragma endregion Protected Methods
 
 #pragma region Private Methods
@@ -82,7 +83,7 @@ private:
 #pragma region Member Variables
 private:
 	// Source Image Name - embedded
-	SVStaticStringValueObjectClass m_svSourceImageName;
+	SVStringValueObjectClass m_SourceImageNames;
 	// Output Image - embedded
 	SVImageClass m_OutputImages[SvOi::cRingBufferNumberOutputImages];
 

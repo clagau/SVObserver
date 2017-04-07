@@ -20,7 +20,7 @@ SVMathContainerClass::SVMathContainerClass( SVObjectClass* POwner, int StringRes
 					 :SVTaskObjectClass( POwner, StringResourceID ) 
 {
 	// Identify yourself
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVMathContainerObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVMathContainerObjectType;
 
 	// Identify our input type needs...
 
@@ -94,8 +94,8 @@ bool SVMathContainerClass::ResetObject(SvStl::MessageContainerVector *pErrorMess
 
 SVDoubleValueObjectClass* SVMathContainerClass::getInputMathResult()
 {
-	if( inputMathResult.IsConnected() && inputMathResult.GetInputObjectInfo().PObject )
-		return ( SVDoubleValueObjectClass* ) inputMathResult.GetInputObjectInfo().PObject;
+	if( inputMathResult.IsConnected() && inputMathResult.GetInputObjectInfo().m_pObject )
+		return ( SVDoubleValueObjectClass* ) inputMathResult.GetInputObjectInfo().m_pObject;
 
 	return nullptr;
 }

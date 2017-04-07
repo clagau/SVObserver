@@ -16,9 +16,8 @@
 #include "SVImageLibrary/SVImageExtentClass.h"
 #include "SVTimerLibrary/SVClock.h"
 #include "SVOCore/SVExtentPropertiesInfoStruct.h"
+#include "ObjectInterfaces/IValueObject.h"
 #pragma endregion Includes
-
-class SVValueObjectClass;
 
 class SVToolExtentPropertiesClass
 {
@@ -28,19 +27,19 @@ public:
 
 	HRESULT Initialize();
 
-	HRESULT GetProperties( SVImageExtentClass &p_rsvExtents ) const;
-	HRESULT GetProperties( unsigned long p_ulIndex, SVImageExtentClass &p_rsvExtents ) const;
+	HRESULT GetProperties( SVImageExtentClass &rExtents ) const;
+	HRESULT GetProperties( unsigned long Index, SVImageExtentClass &rExtents ) const;
 
-	HRESULT GetExtentObject( SVExtentPropertyEnum p_eProperty, SVValueObjectClass *&p_rpsvValue ) const;
-	HRESULT SetExtentObject( SVExtentPropertyEnum p_eProperty, SVValueObjectClass *p_psvValue );
+	HRESULT GetExtentObject( SVExtentPropertyEnum eProperty, SvOi::IValueObject *&rpValueObject ) const;
+	HRESULT SetExtentObject( SVExtentPropertyEnum eProperty, SvOi::IValueObject *pValueObject );
 
-	HRESULT GetPropertyInfo( SVExtentPropertyEnum p_eProperty, SVExtentPropertyInfoStruct& p_rInfo ) const;
-	HRESULT SetPropertyInfo( SVExtentPropertyEnum p_eProperty, const SVExtentPropertyInfoStruct& p_rInfo );
+	HRESULT GetPropertyInfo( SVExtentPropertyEnum eProperty, SVExtentPropertyInfoStruct& rInfo ) const;
+	HRESULT SetPropertyInfo( SVExtentPropertyEnum eProperty, const SVExtentPropertyInfoStruct& rInfo );
 
 private:
 	struct SVExtentPropertyInfoStructImpl
 	{
-		SVValueObjectClass*  pValueObject;
+		SvOi::IValueObject*  pValueObject;
 		SVExtentPropertyInfoStruct info;
 	};
 	typedef std::map< SVExtentPropertyEnum, SVExtentPropertyInfoStructImpl > SVToolExtentPropertiesMap;

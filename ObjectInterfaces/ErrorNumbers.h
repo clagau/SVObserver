@@ -193,7 +193,6 @@ namespace Seidenader { namespace ObjectInterfaces
 	static const int Err_10203 = Maz_ErrorBase + 203;
 	static const int Err_10204 = Maz_ErrorBase + 204;
 	static const int Err_10205 = Maz_ErrorBase + 205;
-	static const int Err_10206 = Maz_ErrorBase + 206;
 	static const int Err_10207 = Maz_ErrorBase + 207;
 	static const int Err_10208 = Maz_ErrorBase + 208;
 	static const int Err_10209 = Maz_ErrorBase + 209;

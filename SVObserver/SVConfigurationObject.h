@@ -350,8 +350,7 @@ protected:
 	SVOutputObjectList* m_pOutputObjectList;
 
 private:
-	typedef SVVector< SVInspectionProcess* > SVInspectionProcessVector;
-	typedef std::set< SVInspectionProcess* > SVInspectionSet;
+	typedef std::set<SVInspectionProcess*> SVInspectionSet;
 
 	void SaveEnvironment(SVObjectXMLWriter& rWriter) const;
 	void SaveIO(SVObjectXMLWriter& rWriter) const;
@@ -420,9 +419,9 @@ private:
 	//************************************
 	HRESULT LoadMonitoredObjectList( SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent, const SVString& listName, MonitoredObjectList& rList );
 
-	SvTi::SVTriggerObjectArray        m_arTriggerArray;
-	SVPPQObjectArray            m_arPPQArray;
-	SVVirtualCameraArray        m_arCameraArray;
+	SvTi::SVTriggerObjectPtrVector        m_arTriggerArray;
+	SVPPQObjectPtrVector            m_arPPQArray;
+	SVVirtualCameraPtrVector        m_arCameraArray;
 	SVInspectionProcessVector   m_arInspectionArray;
 	SVIMProductEnum             m_eProductType;
 	unsigned long				m_ulVersion;

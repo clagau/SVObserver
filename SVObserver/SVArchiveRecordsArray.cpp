@@ -9,6 +9,7 @@
 #include "SVArchiveTool.h"
 #include "SVInspectionProcess.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
+#include "ObjectInterfaces/IValueObject.h"
 #pragma endregion Includes
 
 #pragma region Constructor
@@ -59,7 +60,7 @@ void SVArchiveRecordsArray::ClearArray()
 }
 
 
-HRESULT SVArchiveRecordsArray::InitializeObjects(SVArchiveTool* p_pToolArchive, SVStringValueObjectClass& p_svoObjects )	// use array capability of string vo
+HRESULT SVArchiveRecordsArray::InitializeObjects(SVArchiveTool* pToolArchive, SVStringValueObjectClass& rObjects )	// use array capability of string vo
 {
 	HRESULT hr = S_OK;
 	ASSERT( nullptr != m_pArchiveTool );
@@ -67,31 +68,31 @@ HRESULT SVArchiveRecordsArray::InitializeObjects(SVArchiveTool* p_pToolArchive, 
 	SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess *>(m_pArchiveTool->GetInspection());
 	ASSERT( pInspection );
 
-	int iSize = p_svoObjects.GetResultSize();
+	int iSize = rObjects.getResultSize();
 	for ( int i = 0; i < iSize; i++ )
 	{
-		SVString sName;
-		long l_lIndex = p_svoObjects.GetLastSetIndex();
-		p_svoObjects.GetValue( l_lIndex, i, sName );
-		if ( !sName.empty() )
+		SVString Name;
+		long l_lIndex = rObjects.GetLastSetIndex();
+		rObjects.GetValue( Name, l_lIndex, i );
+		if ( !Name.empty() )
 		{
 			SVArchiveRecord* pArchiveRecord = new SVArchiveRecord;
-			SVObjectReference ref;
-			size_t Pos = sName.find('.');
+			SVObjectReference ObjectRef;
+			size_t Pos = Name.find('.');
 			if( SVString::npos != Pos )	// This assumes that the first part of the dotted name is the inspection.
 			{				// Build the object name with the current inspection name.
-				SVString sNewName = p_pToolArchive->GetInspection()->GetName();
-				sNewName += SvUl_SF::Mid( sName, Pos );
-				HRESULT hrGetObject = SVObjectManagerClass::Instance().GetObjectByDottedName( sNewName.c_str(), ref );
+				SVString NewName = pToolArchive->GetInspection()->GetName();
+				NewName += SvUl_SF::Mid( Name, Pos );
+				HRESULT hrGetObject = SVObjectManagerClass::Instance().GetObjectByDottedName( NewName.c_str(), ObjectRef );
 				if( S_OK == hrGetObject )
 				{
 					/// names in m_svoArchiveResultNames are zero based!!!
-					ref.IncrementIndex();
+					ObjectRef.IncrementIndex();
 
-					if( sNewName != sName )
+					if( NewName != Name )
 					{
 						// Set value with new inspection name.
-						p_svoObjects.SetValue(l_lIndex, i, sNewName);
+						rObjects.SetValue(NewName, l_lIndex, i );
 					}
 				}
 			}
@@ -100,15 +101,15 @@ HRESULT SVArchiveRecordsArray::InitializeObjects(SVArchiveTool* p_pToolArchive, 
 				ASSERT(FALSE);
 			}
 
-			if ( nullptr == ref.Object() )
+			if ( nullptr == ObjectRef.getObject() )
 			{
 #if defined (TRACE_THEM_ALL) || defined (TRACE_ARCHIVE)
-				TRACE( _T( "SVArchiveRecordsArray::InitializeObjects-ToolName=%s-ObjectName=%s\n" ), m_pArchiveTool->GetCompleteName(), sName );
+				TRACE( _T( "SVArchiveRecordsArray::InitializeObjects-ToolName=%s-ObjectName=%s\n" ), m_pArchiveTool->GetCompleteName(), Name );
 #endif
 			}
 			else
 			{
-				pArchiveRecord->InitArchiveRecord( p_pToolArchive, ref );
+				pArchiveRecord->InitArchiveRecord( pToolArchive, ObjectRef );
 			}
 			m_vecRecords.push_back(pArchiveRecord);
 		}
@@ -172,7 +173,7 @@ SVStringVector SVArchiveRecordsArray::RemoveDisconnectedObject( const SVObjectIn
 		SVArchiveRecord* pImageRecord = *iter;
 		if ( pImageRecord )
 		{
-			if( p_rInfoObject.UniqueObjectID == pImageRecord->m_svObjectReference.Guid() )
+			if( p_rInfoObject.m_UniqueObjectID == pImageRecord->m_svObjectReference.Guid() )
 			{
 				Result.push_back( pImageRecord->m_svObjectReference.GetCompleteName() );
 				delete pImageRecord;
@@ -263,34 +264,28 @@ BOOL SVArchiveRecordsArray::WriteArchiveImageFiles( )
 //
 int SVArchiveRecordsArray::ValidateResultsObjects()
 {
-	// Effective STL Item 9 p46: forward iterate / erase
-
 	RecordsType::iterator iter;
 	for ( iter = m_vecRecords.begin(); iter != m_vecRecords.end(); )
 	{
 		SVArchiveRecord* pResultRecord = *iter;
 		pResultRecord->DisconnectInputObject();
 		
-		SVValueObjectClass* pValueObject = nullptr;
-
 		GUID guid = pResultRecord->m_svObjectReference.Guid();
 
-		pValueObject = dynamic_cast <SVValueObjectClass*> (SVObjectManagerClass::Instance().GetObject(guid));
+		SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject(guid);
 
 		bool bRecordOK = false;
-		if (pValueObject)
+		if( nullptr != pObject )
 		{
-			if ( static_cast <SVObjectClass*> (pValueObject) != pResultRecord->m_svObjectReference.Object() )
+			if ( pObject != pResultRecord->m_svObjectReference.getObject() )
 			{
 				long lArrayIndex = pResultRecord->m_svObjectReference.ArrayIndex();
-				pResultRecord->m_svObjectReference = pValueObject;
+				pResultRecord->m_svObjectReference = SVObjectReference( pObject );
 				pResultRecord->m_svObjectReference.SetArrayIndex( lArrayIndex );
 			}
 
-			SVValueObjectReference voref( pResultRecord->m_svObjectReference );
-
-			SVString sTemp;
-			if ( voref.GetValue(0, sTemp) != SVMSG_SVO_33_OBJECT_INDEX_INVALID )
+			double Value;
+			if( pObject->getValue( Value, 0 ) != SVMSG_SVO_33_OBJECT_INDEX_INVALID )
 			{
 				bRecordOK = true;
 				pResultRecord->ConnectInputObject();
@@ -308,7 +303,7 @@ int SVArchiveRecordsArray::ValidateResultsObjects()
 	//
 	// return the count of objects to archive.
 	//
-	return static_cast< int >( m_vecRecords.size() );
+	return static_cast<int> (m_vecRecords.size());
 }
 
 SVString SVArchiveRecordsArray::BuildResultsArchiveString()
@@ -324,15 +319,13 @@ SVString SVArchiveRecordsArray::BuildResultsArchiveString()
 		//
 		// We assume all archivable objects are Value Objects.
 		//
-		SVValueObjectReference voref( pResultRecord->m_svObjectReference );
+		SvOi::IValueObject* pValueObject = pResultRecord->m_svObjectReference.getValueObject();
+		assert( nullptr != pValueObject );
 
-		ASSERT( voref.Object() );
-
-		if ( voref.Object() )
+		if ( nullptr != pValueObject )
 		{
 			SVString Temp;
-
-			HRESULT hr = voref.GetValue( Temp );
+			HRESULT hr = pValueObject->getValue( Temp );
 			if ( S_OK == hr || SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE == hr )
 			{
 				if ( bFirst )

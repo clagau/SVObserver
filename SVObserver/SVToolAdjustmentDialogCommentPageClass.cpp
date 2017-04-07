@@ -54,11 +54,11 @@ BOOL SVToolAdjustmentDialogCommentPageClass::OnInitDialog()
 	if( pSheet && ( pTool = pSheet->GetTool() ) )
 	{
 		SetTaskObject( pTool );
-		SVValueObjectClass* l_psvComment = pTool->GetToolComment();
-		if( l_psvComment )
+		SvOi::IValueObject* pValueObject = dynamic_cast<SvOi::IValueObject*> (pTool->GetToolComment());
+		if( nullptr != pValueObject )
 		{
 			SVString Value;
-			l_psvComment->GetValue( Value );
+			pValueObject->getValue( Value );
 			m_strComment = Value.c_str();
 		}
 		UpdateData(FALSE);
@@ -74,7 +74,7 @@ HRESULT SVToolAdjustmentDialogCommentPageClass::SetInspectionData()
 	UpdateData( TRUE ); // get data from dialog
 
 
-	l_hrOk = AddInputRequest( pTool->GetToolComment(), m_strComment );
+	l_hrOk = AddInputRequest( SVObjectReference( pTool->GetToolComment() ), _variant_t(m_strComment) );
 	
 	if( S_OK == l_hrOk )
 	{

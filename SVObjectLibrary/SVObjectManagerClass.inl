@@ -53,9 +53,9 @@ HRESULT SVObjectManagerClass::GetObjectByDottedName( const SVString& rFullName, 
 
 	Result = GetObjectByDottedName( rFullName, ObjRef );
 
-	if( nullptr != ObjRef.Object() )
+	if( nullptr != ObjRef.getObject() )
 	{
-		rpObject = dynamic_cast<SVObjectTypeName*> ( ObjRef.Object() );
+		rpObject = dynamic_cast<SVObjectTypeName*> ( ObjRef.getObject() );
 	}
 	else
 	{
@@ -262,6 +262,26 @@ HRESULT SVObjectManagerClass::UpdateObservers( const SVString& rSubjectDataName,
 	}
 
 	return Result;
+}
+
+template< typename DataType >
+bool SVObjectManagerClass::createBucket( std::unique_ptr<std::vector<DataType>>& rpBucket, const DataType& rDefault, int NumberOfBuckets )
+{
+	if(nullptr != rpBucket.get())
+	{
+		rpBucket.reset();
+	}
+	
+	try
+	{
+		rpBucket = std::unique_ptr<std::vector<DataType>> (new std::vector<DataType>);
+		rpBucket->resize( NumberOfBuckets, rDefault );
+		return true;
+	}
+	catch( std::exception& )
+	{
+		return false;
+	}
 }
 
 template<typename ObjectVisitor>

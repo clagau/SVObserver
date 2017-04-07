@@ -17,10 +17,10 @@ SVEvaluateCenterYClass::SVEvaluateCenterYClass( SVObjectClass* pOwner, int Strin
 : SVEvaluateClass( pOwner, StringResourceID )
 {
 	// Identify yourself
-	m_outObjectInfo.ObjectTypeInfo.SubType = SVEvaluateCenterYObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVEvaluateCenterYObjectType;
 
 	// Register Embedded Objects
-	RegisterEmbeddedObject( &m_outputMathResult, SVOutputEvaluateCenterYResultObjectGuid, IDS_OBJECTNAME_RESULT, false, SVResetItemNone );
+	RegisterEmbeddedObject( &m_outputMathResult, SVOutputEvaluateCenterYResultObjectGuid, IDS_OBJECTNAME_RESULT, false, SvOi::SVResetItemNone );
 
 	// Set Embedded defaults
 	m_outputMathResult.SetDefaultValue( 0.0, true );

@@ -23,7 +23,6 @@
 #include "SVInspectionProcess.h"
 #include "SVIPDoc.h"
 #include "SVObserver.h"
-#include "RootObject.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -436,8 +435,23 @@ HRESULT SVDisplayObject::FinishInspection( const SVInspectionCompleteInfoStruct&
 	bool ImageUpdate = true;
 	bool ResultUpdate = true;
 
-	RootObject::getRootChildValue( SvOl::FqnEnvironmentImageUpdate, ImageUpdate );
-	RootObject::getRootChildValue( SvOl::FqnEnvironmentResultUpdate, ResultUpdate );
+	SVObjectClass* pObject(nullptr);
+	double Value;
+	SVObjectManagerClass::Instance().GetObjectByIdentifier(EnvironmentImageUpdateUidGuid, pObject);
+	if (nullptr != pObject)
+	{
+		//Use the getValue with double as it is faster (no dynamic casting)
+		pObject->getValue(Value);
+		ImageUpdate = 0.0 < Value ? true : false;
+	}
+	pObject = nullptr;
+	SVObjectManagerClass::Instance().GetObjectByIdentifier(EnvironmentResultUpdateUidGuid, pObject);
+	if (nullptr != pObject)
+	{
+		//Use the getValue with double as it is faster (no dynamic casting)
+		pObject->getValue(Value);
+		ResultUpdate = 0.0 < Value ? true : false;
+	}
 
 	if( ImageUpdate || ResultUpdate  || !SVSVIMStateClass::CheckState( SV_STATE_RUNNING ))
 	{

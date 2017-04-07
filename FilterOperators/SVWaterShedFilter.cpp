@@ -41,11 +41,11 @@ SVWatershedFilterClass::~SVWatershedFilterClass()
 
 void SVWatershedFilterClass::init()
 {
-	m_outObjectInfo.ObjectTypeInfo.SubType = SVWatershedFilterObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVWatershedFilterObjectType;
 
-	RegisterEmbeddedObject( &m_lvoMinVariation,		SVWatershedFilterMinVariationGuid, IDS_OBJECTNAME_WATERSHEDFILTER_MINVARIATION, false, SVResetItemNone );
-	RegisterEmbeddedObject( &m_lvoControlFlag,		SVWatershedFilterControlFlagGuid, IDS_OBJECTNAME_WATERSHEDFILTER_CONTROLFLAG, false, SVResetItemNone );
-	RegisterEmbeddedObject( &m_bvoUseMarker,        SVWatershedFilterUseMarkerGuid,    IDS_OBJECTNAME_WATERSHEDFILTER_USEMARKER, false, SVResetItemNone );
+	RegisterEmbeddedObject( &m_lvoMinVariation,		SVWatershedFilterMinVariationGuid, IDS_OBJECTNAME_WATERSHEDFILTER_MINVARIATION, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_lvoControlFlag,		SVWatershedFilterControlFlagGuid, IDS_OBJECTNAME_WATERSHEDFILTER_CONTROLFLAG, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_bvoUseMarker,        SVWatershedFilterUseMarkerGuid,    IDS_OBJECTNAME_WATERSHEDFILTER_USEMARKER, false, SvOi::SVResetItemNone );
 
 
 	// Default Values
@@ -54,9 +54,10 @@ void SVWatershedFilterClass::init()
 	m_lvoControlFlag.SetDefaultValue( SVImageWSWatershed + SVImageWSMinimaFill + SVImageWSRegular + SVImage4Connected, TRUE );
 
 	// Set Attributes
-	m_bvoUseMarker.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
-	m_lvoMinVariation.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE;
-	m_lvoControlFlag.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE;
+	const UINT cAttributes = SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE;
+	m_bvoUseMarker.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_lvoMinVariation.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
+	m_lvoControlFlag.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 
 	m_MarkerImageInfo.SetInputObjectType( SVImageObjectType );
 	m_MarkerImageInfo.SetObject( GetObjectInfo() );
@@ -95,11 +96,11 @@ bool SVWatershedFilterClass::ResetObject(SvStl::MessageContainerVector *pErrorMe
 // .Description : Runs this operator.
 //              : Returns FALSE, if operator cannot run ( may be deactivated ! )
 ////////////////////////////////////////////////////////////////////////////////
-bool SVWatershedFilterClass::onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVWatershedFilterClass::onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	// Force a copy forward to keep the display correct
-	m_lvoMinVariation.CopyLastSetValue( RRunStatus.m_lResultDataIndex );
-	m_lvoControlFlag.CopyLastSetValue( RRunStatus.m_lResultDataIndex );
+	m_lvoMinVariation.CopyLastSetValue( rRunStatus.m_lResultDataIndex );
+	m_lvoControlFlag.CopyLastSetValue( rRunStatus.m_lResultDataIndex );
 
 	long lMinVariation;
 	long lControlFlag;
@@ -121,7 +122,7 @@ bool SVWatershedFilterClass::onRun( bool First, SVSmartHandlePointer RInputImage
 		SVMatroxImageInterface::SVStatusCode l_Code;
 		if( bUseMarker && m_MarkerImageInfo.IsConnected() )
 		{
-			SVImageClass* pInputImage = ( SVImageClass* )m_MarkerImageInfo.GetInputObjectInfo().PObject;
+			SVImageClass* pInputImage = ( SVImageClass* )m_MarkerImageInfo.GetInputObjectInfo().m_pObject;
 			if( pInputImage )
 			{
 				pInputImage->GetImageHandle( ImageHandle );
@@ -164,7 +165,7 @@ bool SVWatershedFilterClass::onRun( bool First, SVSmartHandlePointer RInputImage
 			}
 			// Signal that something was wrong...
 			SetInvalid();
-			RRunStatus.SetInvalid();
+			rRunStatus.SetInvalid();
 			return false;
 		}
 
@@ -182,7 +183,7 @@ bool SVWatershedFilterClass::onRun( bool First, SVSmartHandlePointer RInputImage
 
 	// Signal that something was wrong...
 	SetInvalid();
-	RRunStatus.SetInvalid();
+	rRunStatus.SetInvalid();
 	return false;
 }
 
@@ -194,7 +195,7 @@ bool SVWatershedFilterClass::ValidateLocal( SvStl::MessageContainerVector * pErr
 	{
 		if( bUseMarker )
 		{
-			if (!m_MarkerImageInfo.IsConnected() || nullptr == m_MarkerImageInfo.GetInputObjectInfo().PObject)
+			if (!m_MarkerImageInfo.IsConnected() || nullptr == m_MarkerImageInfo.GetInputObjectInfo().m_pObject)
 			{
 				Result = false;
 				if (nullptr != pErrorMessages)

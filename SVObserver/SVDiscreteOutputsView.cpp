@@ -147,7 +147,7 @@ void SVDiscreteOutputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHi
 		int k;
 		SVPPQObject* pPPQ( nullptr );
 		SVDigitalOutputObject *pDigOutput( nullptr );
-		SVIOEntryHostStructPtrList ppIOEntries;
+		SVIOEntryHostStructPtrVector ppIOEntries;
 		SVIOEntryHostStructPtr pIOEntry;
 
 		SVConfigurationObject* pConfig( nullptr );
@@ -411,7 +411,7 @@ void SVDiscreteOutputsView::OnLButtonDblClk( UINT nFlags, CPoint point )
 							else
 							{
 								dlg.m_pIOEntry->m_Enabled = TRUE;
-								dlg.m_pDigOutput->SetName( dlg.m_pIOEntry->m_pValueObject->GetCompleteName().c_str() );
+								dlg.m_pDigOutput->SetName( dlg.m_pIOEntry->getObject()->GetCompleteName().c_str() );
 								if( pIOEntry.empty() )
 								{
 									pOutputList->AttachOutput( pDigOutput );

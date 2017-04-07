@@ -13,11 +13,10 @@
 #pragma region Includes
 #include "SVOResource/resource.h"
 #include "SVUtilityLibrary/SVString.h"
-#include "SVValueObjectClassImpl.h"
-#include "SVValueObjectGlobals.h"
+#include "SVValueObjectClass.h"
 #pragma endregion Includes
 
-class SVDoubleValueObjectClass : public SVValueObjectClassImpl <double>
+class SVDoubleValueObjectClass : public SVValueObjectClass<double>
 {
 	SV_DECLARE_CLASS( SVDoubleValueObjectClass );
 
@@ -32,22 +31,17 @@ public:
 
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* pDataObject ) override;	// for compat loading legacy SVDoubleVectorObjectClass
 
-	IMPLEMENT_VALUE_OBJECT_GET_SET()
-
 protected:
+	virtual double ValueType2Double(const double& rValue) const override { return rValue; };
+	virtual _variant_t ValueType2Variant( const double& rValue ) const override { return _variant_t( rValue ); };
+	virtual double Variant2ValueType( const _variant_t& rValue ) const override { return double( rValue ); };
 
-	virtual HRESULT SetValueAt( int iBucket, int iIndex, const SVString& rValue );
-	virtual HRESULT SetValueAt( int iBucket, int iIndex, const VARIANT& rValue );
-	virtual HRESULT SetValueAt( int iBucket, int iIndex, int Value );
-	virtual HRESULT SetValueAt( int iBucket, int iIndex, long Value );
+	//! Convert a string in a double. Throw an exception if the string isn't convertible into a double
+	//! \param rValue [in] The input string
+	//! \returns double value.
+	virtual double ConvertString2Type( const SVString& rValue ) const override;
 
-	virtual HRESULT GetValueAt( int iBucket, int iIndex, long& rValue ) const;
-	virtual HRESULT GetValueAt( int iBucket, int iIndex, DWORD& rValue ) const;
-	virtual HRESULT GetValueAt( int iBucket, int iIndex, SVString& rValue ) const;
-	virtual HRESULT GetValueAt( int iBucket, int iIndex, VARIANT& rValue ) const;
-
-	virtual void ValidateValue( int iBucket, int iIndex, const SVString& rValue ) const override;
-
+	virtual SVString ConvertType2String( const double& rValue ) const override { return FormatOutput(rValue); };
 private:
 	void LocalInitialize();
 };

@@ -16,14 +16,14 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <vector>
-#include "SVObjectLibrary\SVObjectClass.h"
-#include "SVUtilityLibrary\SVString.h"
-#include "ObjectInterfaces/IBasicValueObject.h"
+#include "ObjectInterfaces/IValueObject.h"
+#include "SVObjectLibrary/SVObjectClass.h"
+#include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 class SVDeviceParam;
 
-class BasicValueObject : public SVObjectClass, public SvOi::IBasicValueObject
+class BasicValueObject : public SVObjectClass, public SvOi::IValueObject
 {
 public:
 #pragma region Constructor
@@ -48,19 +48,97 @@ public:
 	//************************************
 	bool operator ==(const BasicValueObject& rRhs) const;
 
-	//************************************
-	//! The method sets the value object
-	//! \param rValue <in> a reference of the variant to set
-	//! \returns SOK on success
-	//************************************
-	HRESULT setValue( const _variant_t& rValue );
+#pragma region virtual method (IValueObject)
+	//! Gets the value for Value object NOTE this comes from IObjectClass
+	//! \param rValue [out] The reference to write the value to
+	//! \param Bucket [in] The corresponding bucket index to get, if required
+	//! \param Index [in] The corresponding array index to write to, if required
+	//! \returns S_OK if succeeded
+	virtual HRESULT getValue(double& rValue, int Bucket = -1, int Index = -1) const override;
+
+	//! Gets the default value for the Value object
+	//! \returns the default value as a variant
+	virtual _variant_t getDefaultValue() const override { return _variant_t(); };
 
 	//************************************
 	//! The method sets the value object
-	//! \param Value <in> a value of type string to set
+	//! \param rValue <in> a reference of the variant to set
+	//! \param Bucket <in> standard value object parameter
+	//! \param Index <in> standard value object parameter
 	//! \returns SOK on success
 	//************************************
-	HRESULT setValue( const LPCTSTR Value );
+	virtual HRESULT setValue( const _variant_t& rValue, int Bucket = -1, int Index = -1 ) override;
+
+	//************************************
+	//! The method gets the value object
+	//! \param rValue <out> a reference to the variant to get
+	//! \param Bucket <in> standard value object parameter
+	//! \param Index <in> standard value object parameter
+	//! \returns SOK on success
+	//************************************
+	virtual HRESULT getValue( _variant_t& rValue, int Bucket = -1, int Index = -1 ) const override;
+
+	//! Gets the values for Value object
+	//! \param rValue [out] The reference to _variant_t vector to store the values
+	//! \param Bucket [in] The corresponding bucket index to get, if required
+	//! \returns S_OK if succeeded
+	virtual HRESULT getValues( std::vector<_variant_t>& rValues, int Bucket = -1 ) const override { return E_NOTIMPL; };
+
+	//************************************
+	//! The method sets the value object
+	//! \param rValue <in> a reference of the string to set
+	//! \param Bucket <in> standard value object parameter
+	//! \param Index <in> standard value object parameter
+	//! \returns SOK on success
+	//************************************
+	virtual HRESULT setValue( const SVString& rValue, int Bucket = -1, int Index = -1 ) override;
+
+	//************************************
+	//! The method gets the value object
+	//! \param Value <out> a value of type string to get
+	//! \param Bucket <in> standard value object parameter
+	//! \param Index <in> standard value object parameter
+	//! \returns SOK on success
+	//************************************
+	virtual HRESULT getValue( SVString& rValue, int Bucket = -1, int Index = -1 ) const override;
+
+	//! Set the value object bucketized flag
+	//! \param isBucketized [in] true if bucketized
+	virtual void setBucketized( bool isBucketized ) override {};
+
+	/// Set the reset options for the value object
+	/// \param bResetAlways [in] 
+	/// \param eResetItem [in] Which item to reset
+	virtual void setResetOptions( bool bResetAlways, SvOi::SVResetItemEnum eResetItem ) override {};
+
+	/// Validate the value. If value invalid an exception message will be thrown.
+	/// \param rValue [in] The value to validate
+	virtual void validateValue( const _variant_t& rValue ) const override {};
+
+	/// Checks if the value object is an array
+	/// \returns true if an array
+	virtual bool isArray() const override { return false; };
+
+	/// Gets the size of the value object array
+	/// \returns size 0 of not an array
+	virtual int getArraySize() const override { return 0; };
+
+	/// Gets the result size of the value object
+	/// \returns size
+	virtual int getResultSize( int Bucket = -1 ) const override { return 0; };
+
+	/// Gets the reset item type
+	/// \returns the reset item enum type
+	virtual SvOi::SVResetItemEnum getResetItem() const override { return SvOi::SVResetItemNone; };
+
+	//! Gets the reset always value object flag
+	//! \returns true if reset always
+	virtual bool ResetAlways() const override { return false; };
+
+	//! Copies the last set value to the destination bucket
+	//! \returns the result of copying
+	virtual HRESULT CopyLastSetValue( int DestBucket ) { return E_NOTIMPL; };
+#pragma endregion virtual method (IObjectClass)
 
 	//************************************
 	//! The method sets the value object
@@ -69,20 +147,6 @@ public:
 	//************************************
 	template <typename ELEMENT_TYPE>
 	HRESULT setValue( const ELEMENT_TYPE Value );
-
-	//************************************
-	//! The method gets the value object
-	//! \param rValue <out> a reference to the variant to get
-	//! \returns SOK on success
-	//************************************
-	HRESULT getValue( _variant_t& rValue ) const;
-
-	//************************************
-	//! The method gets the value object
-	//! \param Value <out> a value of type string to get
-	//! \returns SOK on success
-	//************************************
-	HRESULT getValue( SVString& rValue ) const;
 
 	//************************************
 	//! The method gets the value object
@@ -135,7 +199,7 @@ public:
 	//! \returns The objects description
 	//************************************
 	inline LPCTSTR getDescription();
-#pragma endregion Public Methods
+	#pragma endregion Public Methods
 
 private:
 #pragma region Private Methods

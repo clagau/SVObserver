@@ -51,7 +51,7 @@ BOOL TableSortAnalyzer::CreateObject( SVObjectLevelCreateStruct* pCreateStructur
 {
 	BOOL l_bOk = __super::CreateObject( pCreateStructure );
 
-	m_isASC.ObjectAttributesAllowedRef() |= SV_REMOTELY_SETABLE;
+	m_isASC.SetObjectAttributesAllowed( SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
 
 	return l_bOk;
 }
@@ -60,10 +60,10 @@ bool TableSortAnalyzer::ResetObject(SvStl::MessageContainerVector *pErrorMessage
 {
 	bool Result = __super::ResetObject(pErrorMessages);
 
-	SVObjectClass* pObject = m_sortColumnObjectInfo.GetInputObjectInfo().PObject;
-	if (!m_sortColumnObjectInfo.IsConnected() || nullptr == dynamic_cast<DoubleSortValueObject*>(pObject)
+	SVObjectClass* pObject = m_sortColumnObjectInfo.GetInputObjectInfo().m_pObject;
+	if (!m_sortColumnObjectInfo.IsConnected() || nullptr == dynamic_cast<DoubleSortValueObject*> (pObject)
 		//check if column part of the right table object (The object must be from same tool as this analyzer.)
-		|| nullptr == pObject->GetOwner() || pObject->GetOwner()->GetOwner() != m_ownerObjectInfo.PObject)
+		|| nullptr == pObject->GetOwner() || pObject->GetOwner()->GetOwner() != m_ownerObjectInfo.m_pObject)
 	{
 		Result = false;
 		if (nullptr != pErrorMessages)
@@ -77,7 +77,7 @@ bool TableSortAnalyzer::ResetObject(SvStl::MessageContainerVector *pErrorMessage
 	if (Result)
 	{
 		//allocate m_tmpValues
-		DoubleSortValueObject* pColumnValues = dynamic_cast<DoubleSortValueObject*>(m_sortColumnObjectInfo.GetInputObjectInfo().PObject);
+		DoubleSortValueObject* pColumnValues = dynamic_cast<DoubleSortValueObject*> (m_sortColumnObjectInfo.GetInputObjectInfo().m_pObject);
 		if (nullptr != pColumnValues)
 		{
 			ValueObjectSortContainer sortContainer = pColumnValues->getSortContainer();
@@ -97,10 +97,10 @@ bool TableSortAnalyzer::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageConta
 	
 	if (returnValue)
 	{
-		bool isASC = true;
-		m_isASC.GetValue(isASC);
-		TableAnalyzerTool* pTool = dynamic_cast<TableAnalyzerTool*>(m_ownerObjectInfo.PObject);
-		DoubleSortValueObject* pColumnValues = dynamic_cast<DoubleSortValueObject*>(m_sortColumnObjectInfo.GetInputObjectInfo().PObject);
+		BOOL isASC( true );
+		m_isASC.GetValue( isASC );
+		TableAnalyzerTool* pTool = dynamic_cast<TableAnalyzerTool*> (m_ownerObjectInfo.m_pObject);
+		DoubleSortValueObject* pColumnValues = dynamic_cast<DoubleSortValueObject*> (m_sortColumnObjectInfo.GetInputObjectInfo().m_pObject);
 		if (nullptr != pTool && nullptr != pColumnValues)
 		{
 			ValueObjectSortContainer sortContainer = pColumnValues->getSortContainer(rRunStatus.m_lResultDataIndex);
@@ -112,19 +112,19 @@ bool TableSortAnalyzer::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageConta
 				double* pValues = m_tmpValues.get();
 				for (int i=0; i< sizeValues; ++i)
 				{
-					pColumnValues->GetValue(rRunStatus.m_lResultDataIndex, i, pValues[i]);
+					pColumnValues->GetValue(pValues[i], rRunStatus.m_lResultDataIndex, i );
 				}
 
 				bool isSwitched = false;
 				do
 				{ 
 					isSwitched = false;
-					for(int n=0;n<sizeValues-1;n++)
+					for( int n=0; n<sizeValues-1; n++ )
 					{
-						if((pValues[n]>pValues[n+1] && isASC) || (pValues[n]<pValues[n+1] && !isASC))
+						if((pValues[n] > pValues[n+1] && isASC) || (pValues[n] < pValues[n+1] && !isASC))
 						{
-							std::swap(pValues[n], pValues[n+1]);
-							std::swap(sortContainer[n], sortContainer[n+1]);
+							std::swap( pValues[n], pValues[n+1] );
+							std::swap( sortContainer[n], sortContainer[n+1] );
 							isSwitched=true;
 						}
 					}
@@ -151,8 +151,8 @@ bool TableSortAnalyzer::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageConta
 void TableSortAnalyzer::Initialize()
 {
 	// Set up your type
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = TableAnalyzerType;
-	m_outObjectInfo.ObjectTypeInfo.SubType    = TableAnalyzerSortType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = TableAnalyzerType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType    = TableAnalyzerSortType;
 
 	BuildInputObjectList();
 	BuildEmbeddedObjectList();
@@ -160,7 +160,7 @@ void TableSortAnalyzer::Initialize()
 
 void TableSortAnalyzer::BuildEmbeddedObjectList()
 {
-	RegisterEmbeddedObject( &m_isASC, TableAnaylzerSortIsASCGuid, IDS_OBJECTNAME_TABLEANALYZER_ISASC, true, SVResetItemTool );
+	RegisterEmbeddedObject( &m_isASC, TableAnaylzerSortIsASCGuid, IDS_OBJECTNAME_TABLEANALYZER_ISASC, true, SvOi::SVResetItemTool );
 	m_isASC.SetDefaultValue( true, TRUE );
 }
 

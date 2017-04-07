@@ -88,10 +88,10 @@ public:
 	//************************************
 	// Description:  retrieve the direct value string for Erange
 	// Parameter: enum ERange
-	// Parameter: double & ref
+	// Parameter: double rValue reference to the value 
 	// Returns:  HRESULT:  S_OK if successful
 	//************************************
-	HRESULT GetValue(RangeEnum::ERange, double &ref);
+	HRESULT GetValue(RangeEnum::ERange, double& rValue);
 	
 	//************************************
 	// Description:  retrieve the indirect object for ERange
@@ -144,7 +144,7 @@ public:
 protected:
 	void init();
 	BOOL getInputValue( double& RVal );
-	virtual bool onRun(SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
+	virtual bool onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	//************************************
 	//! return a reference to the range value 

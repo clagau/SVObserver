@@ -1351,8 +1351,8 @@ STDMETHODIMP CSVCommand::SVRegisterStream(SAFEARRAY* psaName, VARIANT vtInterfac
 						pstData->m_InspectionID = pInspection->GetUniqueObjectID();
 						pstData->strValueName = Temp;
 
-						SVValueObjectReference ref;
-						HRESULT hrFind = SVObjectManagerClass::Instance().GetObjectByDottedName( Temp.c_str(), ref );
+						SVObjectReference ObjectRef;
+						HRESULT hrFind = SVObjectManagerClass::Instance().GetObjectByDottedName( Temp.c_str(), ObjectRef );
 						if( S_OK != hrFind )
 						{
 							pstData->pValueObject = nullptr;
@@ -1362,11 +1362,11 @@ STDMETHODIMP CSVCommand::SVRegisterStream(SAFEARRAY* psaName, VARIANT vtInterfac
 						}// end if
 						else
 						{
-							if ( ref.Object() )
+							if( nullptr != ObjectRef.getValueObject() )
 							{
 								hrStatus = S_OK;
-								pstData->pValueObject = ref.Object();
-								pstData->arrayIndex = ref.ArrayIndex();
+								pstData->pValueObject = ObjectRef.getObject();
+								pstData->arrayIndex = ObjectRef.ArrayIndex();
 								m_arStreamList.Add( pstData );
 							}// end if
 							else
@@ -1570,21 +1570,22 @@ HRESULT CSVCommand::StreamingDataCallback( const SVInspectionCompleteInfoStruct&
 
 			SVGUIDSVInspectionInfoStructMap::const_iterator l_Iter = p_rData.m_ProductInfo.m_svInspectionInfos.find( p_rData.m_InspectionID );
 
-			if( l_Iter != p_rData.m_ProductInfo.m_svInspectionInfos.end() )
+			if( p_rData.m_ProductInfo.m_svInspectionInfos.end() != l_Iter )
 			{
 				oPacketData.lState = l_Iter->second.oInspectedState;
 				oPacketData.pValueObject = pStreamData->pValueObject;
-				if( oPacketData.pValueObject )
+				SvOi::IValueObject* pValueObject = dynamic_cast<SvOi::IValueObject*> (oPacketData.pValueObject);
+				if( nullptr != pValueObject )
 				{
 					if (pStreamData->arrayIndex > 0)
 					{
 						// Ensure valueObject is an Array
-						if (oPacketData.pValueObject->IsArray())
+						if( pValueObject->isArray())
 						{
 							// Ensure index is not ot of bounds
-							if (pStreamData->arrayIndex < oPacketData.pValueObject->GetArraySize())
+							if (pStreamData->arrayIndex < pValueObject->getArraySize())
 							{
-								oPacketData.pValueObject->GetValue( p_rData.m_ProductInfo.oPPQInfo.m_ResultDataDMIndexHandle.GetIndex(), pStreamData->arrayIndex, oPacketData.strValue );
+								pValueObject->getValue( oPacketData.strValue, p_rData.m_ProductInfo.oPPQInfo.m_ResultDataDMIndexHandle.GetIndex(), pStreamData->arrayIndex );
 							}
 							else
 							{
@@ -1598,7 +1599,7 @@ HRESULT CSVCommand::StreamingDataCallback( const SVInspectionCompleteInfoStruct&
 					}
 					else
 					{
-						oPacketData.pValueObject->GetValue( p_rData.m_ProductInfo.oPPQInfo.m_ResultDataDMIndexHandle.GetIndex(), oPacketData.strValue );
+						pValueObject->getValue( oPacketData.strValue, p_rData.m_ProductInfo.oPPQInfo.m_ResultDataDMIndexHandle.GetIndex() );
 					}
 				}// end if
 				else
@@ -1864,8 +1865,8 @@ STDMETHODIMP CSVCommand::SVGetProductDataList(long lProcessCount, SAFEARRAY* psa
 
 	BSTR bstr;
 	SVStringVector ValueNames;
-	SVInspectionProcessArray aInspections;
-	SVValueObjectReferenceVector aValueObjects;
+	SVInspectionProcessVector aInspections;
+	SVObjectReferenceVector aValueObjects;
 	BOOL l_bItemNotExist = FALSE;
 
 	//check to see if in Run Mode.  if not return SVMSG_53_SVIM_NOT_IN_RUN_MODE
@@ -1923,11 +1924,11 @@ STDMETHODIMP CSVCommand::SVGetProductDataList(long lProcessCount, SAFEARRAY* psa
 		{
 			aInspections.Add(pInspection);	// add inspection object to list
 
-			SVObjectReference ref;
-			SVObjectManagerClass::Instance().GetObjectByDottedName( ValueNames[i].c_str(), ref );
-			if( ref.Object() )
+			SVObjectReference ObjectRef;
+			SVObjectManagerClass::Instance().GetObjectByDottedName( ValueNames[i].c_str(), ObjectRef );
+			if( ObjectRef.getObject() )
 			{
-				aValueObjects.push_back(ref);	// add data object pointer to the list
+				aValueObjects.push_back(ObjectRef);	// add data object pointer to the list
 
 				if ( l_PPQId.empty() ) //set the first PPQ name as the comparison standard
 				{
@@ -1949,7 +1950,7 @@ STDMETHODIMP CSVCommand::SVGetProductDataList(long lProcessCount, SAFEARRAY* psa
 			}
 			else	// couldn't find data object
 			{
-				aValueObjects.push_back( SVValueObjectReference() );
+				aValueObjects.push_back( SVObjectReference() );
 				hrOK = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
 				HRESULT hrTemp = SafeArrayPutElement(*ppsaStatus, &i, (void*) &hrOK);
 			}
@@ -1957,7 +1958,7 @@ STDMETHODIMP CSVCommand::SVGetProductDataList(long lProcessCount, SAFEARRAY* psa
 		else	// couldn't find inspection
 		{
 			aInspections.Add( nullptr );
-			aValueObjects.push_back( SVValueObjectReference() );
+			aValueObjects.push_back( SVObjectReference() );
 			hrOK = SVMSG_ONE_OR_MORE_INSPECTIONS_DO_NOT_EXIST;
 			HRESULT hrTemp = SafeArrayPutElement(*ppsaStatus, &i, (void*) &hrOK);
 		}
@@ -1982,19 +1983,19 @@ STDMETHODIMP CSVCommand::SVGetProductDataList(long lProcessCount, SAFEARRAY* psa
 
 		for (long i=0; i < lNumberOfElements; i++)
 		{
-			SVValueObjectReference ref = aValueObjects[i];
+			SVObjectReference ObjectRef = aValueObjects[i];
 			SVString Value;
 			HRESULT hrStatus = S_OK;
 
-			if ( nullptr != ref.Object() )
+			if ( nullptr != ObjectRef.getObject() )
 			{
 				SVDataManagerHandle	l_BucketHandle;
 
 				l_ProductInfo.GetResultDataIndex( l_BucketHandle );
 
-				if ( !ref.IsEntireArray() )
+				if ( !ObjectRef.isEntireArray() )
 				{
-					HRESULT hrGet = ref.GetValue(l_BucketHandle.GetIndex(), Value);
+					HRESULT hrGet = ObjectRef.getValueObject()->getValue(Value, l_BucketHandle.GetIndex(), ObjectRef.getValidArrayIndex() );
 					if ( S_OK == hrGet )
 					{
 						// put value in return array
@@ -2009,7 +2010,7 @@ STDMETHODIMP CSVCommand::SVGetProductDataList(long lProcessCount, SAFEARRAY* psa
 					{
 						hrStatus = hrGet;
 						// did not get value.  set value to default
-						Value = ref.DefaultValue();
+						Value = ObjectRef.DefaultValue();
 						if ( Value.empty() )
 						{
 							Value = _T("-1");
@@ -2036,12 +2037,11 @@ STDMETHODIMP CSVCommand::SVGetProductDataList(long lProcessCount, SAFEARRAY* psa
 				else	// GET ENTIRE ARRAY
 				{
 					// get all results and put them into a parsable string
-					int iNumResults = 0;
-					ref.Object()->GetResultSize(l_BucketHandle.GetIndex(), iNumResults);
+					int NumResults = ObjectRef.getValueObject()->getResultSize( l_BucketHandle.GetIndex() );
 					SVString ArrayValues;
-					for ( int iArrayIndex = 0; iArrayIndex < iNumResults; iArrayIndex++ )
+					for ( int iArrayIndex = 0; iArrayIndex < NumResults; iArrayIndex++ )
 					{
-						HRESULT hrGet = ref.Object()->GetValue( l_BucketHandle.GetIndex(), iArrayIndex, Value );
+						HRESULT hrGet = ObjectRef.getValueObject()->getValue( Value, l_BucketHandle.GetIndex(), iArrayIndex );
 						if ( S_OK == hrGet )
 						{
 							if ( iArrayIndex > 0 )
@@ -2118,8 +2118,8 @@ STDMETHODIMP CSVCommand::SVGetProductImageList(long lProcessCount, SAFEARRAY* ps
 		ASSERT( (*ppsaOverlays)->rgsabound[0].cElements == lNumberOfElements );
 
 		BSTR bstr = nullptr;
-		SVImageClassArray aImageObjects;
-		SVInspectionProcessArray aInspections;
+		SVImageClassPtrVector aImageObjects;
+		SVInspectionProcessVector aInspections;
 		bool l_bItemNotFound = false;
 		bool l_bInspectionNotFound = false;
 		BSTR bstrOverlay = nullptr;
@@ -2722,13 +2722,13 @@ HRESULT CSVCommand::SVGetDataList(SAFEARRAY* psaNames, SAFEARRAY** ppsaValues, S
 
 		SVObjectManagerClass::Instance().GetObjectByDottedName( Name.c_str(), ObjectRef );
 
-		if ( nullptr != ObjectRef.Object() || nullptr != pInspection )
+		if ( nullptr != ObjectRef.getObject() || nullptr != pInspection )
 		{
 			//If inspection  is nullptr then object is of type BasicValueObject
 			if( nullptr == pInspection )
 			{
-				BasicValueObject* pValueObject = dynamic_cast< BasicValueObject* >( ObjectRef.Object() );
-				if( nullptr != pValueObject && !ObjectRef.IsEntireArray() )
+				BasicValueObject* pValueObject = dynamic_cast< BasicValueObject* >( ObjectRef.getObject() );
+				if( nullptr != pValueObject && !ObjectRef.isEntireArray() )
 				{
 					if ( S_OK != pValueObject->getValue( Value ) )
 					{
@@ -2742,18 +2742,17 @@ HRESULT CSVCommand::SVGetDataList(SAFEARRAY* psaNames, SAFEARRAY** ppsaValues, S
 			}
 			else
 			{
-				SVValueObjectReference ValueObjectRef;
-				SVObjectManagerClass::Instance().GetObjectByDottedName( Name.c_str(), ValueObjectRef );
+				SVObjectReference ObjectRef;
+				SVObjectManagerClass::Instance().GetObjectByDottedName( Name.c_str(), ObjectRef );
 
-				if( nullptr != ValueObjectRef.Object() )
+				if( nullptr != ObjectRef.getObject() )
 				{
-					int iBucket = ValueObjectRef->GetLastSetIndex();
 					ProcessCount = pInspection->LastProductGet( SV_OTHER ).ProcessCount();
 
-					if ( !ValueObjectRef.IsEntireArray() )
+					if( !ObjectRef.isEntireArray() )
 					{
 						// was able to find the object
-						HRESULT hrGet = ValueObjectRef.GetValue(iBucket, Value);
+						HRESULT hrGet = ObjectRef.getValueObject()->getValue( Value, -1, ObjectRef.getValidArrayIndex() );
 						if ( S_OK == hrGet )
 						{
 							//got value
@@ -2764,7 +2763,7 @@ HRESULT CSVCommand::SVGetDataList(SAFEARRAY* psaNames, SAFEARRAY** ppsaValues, S
 						{
 							Status = hrGet;
 							// did not get value.  set value to default
-							Value = ValueObjectRef.DefaultValue();
+							Value = ObjectRef.DefaultValue();
 							if ( Value.empty() )
 							{
 								Value = _T("-1");
@@ -2783,12 +2782,11 @@ HRESULT CSVCommand::SVGetDataList(SAFEARRAY* psaNames, SAFEARRAY** ppsaValues, S
 					else	// GET ENTIRE ARRAY
 					{
 						// get all results and put them into a parsable string
-						int iNumResults = 0;
-						ValueObjectRef->GetResultSize(iBucket, iNumResults);
+						int NumResults = ObjectRef.getValueObject()->getResultSize();
 						SVString ArrayValues;
-						for ( int iArrayIndex = 0; iArrayIndex < iNumResults; iArrayIndex++ )
+						for ( int iArrayIndex = 0; iArrayIndex < NumResults; iArrayIndex++ )
 						{
-							HRESULT hrGet = ValueObjectRef->GetValue( iBucket, iArrayIndex, Value );
+							HRESULT hrGet = ObjectRef.getValueObject()->getValue( Value, -1, iArrayIndex  );
 							if ( S_OK == hrGet )
 							{
 								if ( iArrayIndex > 0 )
@@ -2914,8 +2912,7 @@ STDMETHODIMP CSVCommand::SVSetInputs(SAFEARRAY* psaNames, SAFEARRAY* psaValues, 
 	HRESULT                hr = S_OK;
 	HRESULT                hrStatus = S_OK;
 	SVInspectionProcess*   pInspection( nullptr );
-	SVValueObjectClass*    pValueObject( nullptr );
-	SVValueObjectReference ref;
+	SVObjectReference	   ObjectRef;
 	BSTR                   bstrName;
 	BSTR                   bstrValue;
 	SVString               TmpName;
@@ -2954,11 +2951,10 @@ STDMETHODIMP CSVCommand::SVSetInputs(SAFEARRAY* psaNames, SAFEARRAY* psaValues, 
 			if ( nullptr != pConfig && pConfig->GetInspectionObject(TmpName.c_str(), &pInspection) )
 			{
 				//got the inspection.
-				SVObjectManagerClass::Instance().GetObjectByDottedName( TmpName.c_str(), ref );
-				pValueObject = ref.Object();
-				if( nullptr != pValueObject )
+				SVObjectManagerClass::Instance().GetObjectByDottedName( TmpName.c_str(), ObjectRef );
+				if( nullptr != ObjectRef.getValueObject() )
 				{
-					SVObjectClass* pOwnerObject = pValueObject->GetOwner();
+					SVObjectClass* pOwnerObject = ObjectRef.getObject()->GetOwner();
 
 					if( SV_IS_KIND_OF(pOwnerObject, SVInspectionProcess) )
 					{
@@ -2990,7 +2986,7 @@ STDMETHODIMP CSVCommand::SVSetInputs(SAFEARRAY* psaNames, SAFEARRAY* psaValues, 
 			if ( bAddRequest )
 			{
 				//add request to inspection process
-				pInspection->AddInputRequest( ref, W2T( bstrValue ) );
+				pInspection->AddInputRequest( ObjectRef, W2T( bstrValue ) );
 
 				bool l_bFound = false;
 				long lSize = static_cast< long >( l_arInspections.GetSize() );
@@ -3223,9 +3219,9 @@ HRESULT CSVCommand::SVSetToolParameterList(SAFEARRAY* psaNames, SAFEARRAY* psaVa
 		}
 		HRESULT hrFind = SVObjectManagerClass::Instance().GetObjectByDottedName( Name.c_str(), ObjectRef );
 
-		if ( nullptr != ObjectRef.Object() || nullptr != pInspection )
+		if ( nullptr != ObjectRef.getObject() || nullptr != pInspection )
 		{
-			if ( S_OK == hrFind && ObjectRef.ArrayIndex() < 0 && !ObjectRef->IsArray())
+			if ( S_OK == hrFind && ObjectRef.ArrayIndex() < 0 && !ObjectRef.isArray())
 			{
 				Name = StripBrackets(Name);
 				hrFind = SVObjectManagerClass::Instance().GetObjectByDottedName( Name.c_str(), ObjectRef );
@@ -3238,7 +3234,7 @@ HRESULT CSVCommand::SVSetToolParameterList(SAFEARRAY* psaNames, SAFEARRAY* psaVa
 			if ( S_OK == hrFind )
 			{
 				// Check if item is already in the list
-				if( nullptr != ObjectRef.Object() )
+				if( nullptr != ObjectRef.getObject() )
 				{
 					HRESULT hres = S_OK;
 					SVString strCompleteObjectName( ObjectRef.GetCompleteName() );
@@ -3262,7 +3258,7 @@ HRESULT CSVCommand::SVSetToolParameterList(SAFEARRAY* psaNames, SAFEARRAY* psaVa
 						::SafeArrayPutElement(*ppsaStatus, &l, &Status);
 						ItemErrorCount++;
 					}
-					else if(RangeClassHelper::IsOwnedByRangeObject((*ObjectRef.Object())) && !RangeClassHelper::IsAllowedToSet(*ObjectRef.Object(),Value,StateOnline, hres))
+					else if(RangeClassHelper::IsOwnedByRangeObject((*ObjectRef.getObject())) && !RangeClassHelper::IsAllowedToSet(*ObjectRef.getObject(),Value,StateOnline, hres))
 					{
 						Status = hres;
 						::SafeArrayPutElement(*ppsaStatus, &l, &Status);
@@ -3635,7 +3631,7 @@ STDMETHODIMP CSVCommand::SVSetRemoteInput(long lIndex, VARIANT vtValue)
 		if( nullptr != pConfig )
 		{
 			SVInputObjectList* pInputObjectList = pConfig->GetInputObjectList( );
-			if( nullptr != pInputObjectList && pInputObjectList->SetRemoteInput( lIndex, vtValue ) )
+			if( nullptr != pInputObjectList && pInputObjectList->SetRemoteInput( lIndex, _variant_t(vtValue) ) )
 			{
 				bSuccess = TRUE;
 			}
@@ -4850,16 +4846,16 @@ HRESULT CSVCommand::RebuildStreamingDataList()
 				{
 					SVObjectManagerClass::Instance().GetObjectByDottedName(l_NameInfo.GetObjectName(), pTempObject);
 
-					pStreamData->pValueObject = dynamic_cast <SVValueObjectClass*> ( pTempObject );
-
+					pStreamData->pValueObject = pTempObject;
+					SvOi::IValueObject* pValueObject = dynamic_cast<SvOi::IValueObject*> (pStreamData->pValueObject);
 					// Validate Array Objects
-					if (pStreamData->arrayIndex > 0 && pStreamData->pValueObject)
+					if (pStreamData->arrayIndex > 0 && nullptr != pValueObject )
 					{
 						// Ensure valueObject is an Array
-						if (pStreamData->pValueObject->IsArray())
+						if( pValueObject->isArray())
 						{
 							// Ensure index is within bounds
-							if (pStreamData->arrayIndex >= pStreamData->pValueObject->GetArraySize()) 
+							if (pStreamData->arrayIndex >= pValueObject->getArraySize()) 
 							{
 								pStreamData->pValueObject = nullptr;
 							}
@@ -4975,7 +4971,7 @@ STDMETHODIMP CSVCommand::SVGetTransferValueDefinitionList(BSTR bstrInspectionNam
 		SVToolSetClass* pToolSet = pInspection->GetToolSet();
 		SVTaskObjectListClass* pTaskObjectList = static_cast <SVTaskObjectListClass*> ( pToolSet );
 
-		std::vector<SVValueObjectClass*> l_pSelectedObjects;
+		SVObjectPtrVector SelectedObjects;
 
 		SVOutputInfoListClass l_OutputList;
 
@@ -4990,10 +4986,10 @@ STDMETHODIMP CSVCommand::SVGetTransferValueDefinitionList(BSTR bstrInspectionNam
 
 			pInfoItem = l_OutputList.GetAt(i);
 
-			SVObjectReference object;
+			SVObjectReference ObjectRef;
 			if( pInfoItem )
 			{
-				object = pInfoItem->GetObjectReference();
+				ObjectRef = pInfoItem->GetObjectReference();
 			}
 			else
 			{
@@ -5001,17 +4997,13 @@ STDMETHODIMP CSVCommand::SVGetTransferValueDefinitionList(BSTR bstrInspectionNam
 				break;
 			}
 
-			SVObjectClass* pObject = object.Object();
+			SVObjectClass* pObject = ObjectRef.getObject();
 
-			if( pObject )
+			if( nullptr != dynamic_cast<SvOi::IValueObject*> (pObject) )
 			{
 				if( pObject->ObjectAttributesSet() & SV_DD_VALUE ) // if Data Definition List set.
 				{
-					SVValueObjectClass* l_pValueObject = dynamic_cast<SVValueObjectClass*>(pObject);
-					if( nullptr != l_pValueObject )
-					{
-						l_pSelectedObjects.push_back( l_pValueObject );
-					}
+					SelectedObjects.push_back( pObject );
 				}
 			}
 		}
@@ -5024,7 +5016,7 @@ STDMETHODIMP CSVCommand::SVGetTransferValueDefinitionList(BSTR bstrInspectionNam
 		SAFEARRAYBOUND l_saBounds[2];
 
 		// First Dimension number of objects in list..
-		l_saBounds[0].cElements = static_cast< ULONG >( l_pSelectedObjects.size() );
+		l_saBounds[0].cElements = static_cast< ULONG >( SelectedObjects.size() );
 		l_saBounds[0].lLbound = 0;
 
 		// Second Dimension is the parts fo the Transfer Definition
@@ -5035,18 +5027,18 @@ STDMETHODIMP CSVCommand::SVGetTransferValueDefinitionList(BSTR bstrInspectionNam
 		SAFEARRAY* l_psaData;	//( VT_VARIANT, l_saBounds);
 		l_psaData = ::SafeArrayCreate( VT_VARIANT, 2, &l_saBounds[0] );
 		long  l_Index[2];
-		for( size_t i = 0 ; i < l_pSelectedObjects.size() ; i++ )
+		for( size_t i = 0 ; i < SelectedObjects.size() ; i++ )
 		{
 			l_Index[0] = static_cast< long >( i );
 			// Name
 			l_Index[1] = 0;
 			_variant_t Value;
-			Value.SetString( l_pSelectedObjects[i]->GetCompleteName().c_str() );
+			Value.SetString( SelectedObjects[i]->GetCompleteName().c_str() );
 			hr = ::SafeArrayPutElement( l_psaData, l_Index, &Value);
 
 			// Writable
 			l_Index[1] = 1;
-			bool l_bWritable = (l_pSelectedObjects[i]->ObjectAttributesAllowed() & SV_REMOTELY_SETABLE) == SV_REMOTELY_SETABLE;
+			bool l_bWritable = (SelectedObjects[i]->ObjectAttributesAllowed() & SV_REMOTELY_SETABLE) == SV_REMOTELY_SETABLE;
 			Value.Clear();
 			Value.ChangeType(VT_BOOL);
 			Value = l_bWritable;
@@ -5055,16 +5047,20 @@ STDMETHODIMP CSVCommand::SVGetTransferValueDefinitionList(BSTR bstrInspectionNam
 			// Data Type
 			l_Index[1] = 2;
 			Value.Clear();
-			Value.SetString( l_pSelectedObjects[i]->GetTypeName().c_str() );
+			SvOi::IValueObject* pValueObject = dynamic_cast<SvOi::IValueObject*> (SelectedObjects[i]);
+			if( nullptr != pValueObject )
+			{
+				Value.SetString( pValueObject->getTypeName().c_str() );
+			}
 			hr = ::SafeArrayPutElement( l_psaData, l_Index, &Value );
 
 			// Enumeration List.
 			l_Index[1] = 3;
 			Value.Clear();
-			if( l_pSelectedObjects[i]->GetObjectType() == SVEnumValueObjectType)
+			if( SelectedObjects[i]->GetObjectType() == SVEnumValueObjectType)
 			{
 				// Get the strings from the enumeration value object class.
-				SVEnumerateValueObjectClass* l_pEnumVO = dynamic_cast<SVEnumerateValueObjectClass*>(l_pSelectedObjects[i]);
+				SVEnumerateValueObjectClass* l_pEnumVO = dynamic_cast<SVEnumerateValueObjectClass*>(SelectedObjects[i]);
 				if( nullptr != l_pEnumVO )
 				{
 					SVEnumerateVector l_enumVect;
@@ -5083,10 +5079,10 @@ STDMETHODIMP CSVCommand::SVGetTransferValueDefinitionList(BSTR bstrInspectionNam
 					Value.parray = l_psaTemp;
 				}
 			}
-			else if( l_pSelectedObjects[i]->GetObjectType() == SVBoolValueObjectType)
+			else if( SelectedObjects[i]->GetObjectType() == SVBoolValueObjectType)
 			{
 				// Get the strings from the enumeration value object class.
-				SVBoolValueObjectClass* l_pBoolVO = dynamic_cast<SVBoolValueObjectClass*>(l_pSelectedObjects[i]);
+				SVBoolValueObjectClass* l_pBoolVO = dynamic_cast<SVBoolValueObjectClass*>(SelectedObjects[i]);
 				if( nullptr != l_pBoolVO )
 				{
 					SVStringVector ValidTypes;
@@ -5209,25 +5205,23 @@ STDMETHODIMP CSVCommand::SVGetTransferImageDefinitionList(BSTR bstrInspectionNam
 			hr = ::SafeArrayPutElement( l_psaData, l_Index, &Value );
 
 			// Fully Qualified Source Image Name
-			SVToolClass* l_pTool = dynamic_cast<SVToolClass*>(objectList[i]->GetTool());
+			SVToolClass* pTool = dynamic_cast<SVToolClass*>(objectList[i]->GetTool());
 			l_Index[1] = 3;
 			Value.Clear();
-			if( l_pTool )
+			if( nullptr != pTool )
 			{
-				SVStaticStringValueObjectClass* l_psvSourceNames = l_pTool->GetInputImageNames();
-				if( l_psvSourceNames )
+				SVStringValueObjectClass* pSourceNames = pTool->GetInputImageNames();
+				if( nullptr != pSourceNames )
 				{
 					SAFEARRAYBOUND l_rgsabound[1];
-					long l_lSize = l_psvSourceNames->GetArraySize();
+					long l_lSize = pSourceNames->getArraySize();
 					l_rgsabound[0].cElements = l_lSize;
 					l_rgsabound[0].lLbound = 0;
 					SAFEARRAY *l_psaTemp = SafeArrayCreate( VT_BSTR, 1, l_rgsabound );
 					for( long l_lIndex = 0; l_lIndex < l_lSize ; l_lIndex++ )
 					{
 						SVString strTmp;
-						HRESULT l_hr = l_psvSourceNames->GetValue( l_psvSourceNames->GetLastSetIndex(),
-							l_lIndex,
-							strTmp );
+						HRESULT l_hr = pSourceNames->getValue( strTmp, -1, l_lIndex );
 						_bstr_t bstTmp = strTmp.c_str();
 						SafeArrayPutElement(l_psaTemp, &l_lIndex, bstTmp.GetBSTR() );
 					}

@@ -388,17 +388,15 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 			if ( nullptr != pObject )
 			{
 				int ObjectIndex = Iter->isArray() ? Iter->getArrayIndex() : 0;
-				UINT AttributesSet = pObject->ObjectAttributesSet( ObjectIndex );
 
 				if ( Iter->isSelected() )
 				{
-					AttributesSet |= m_AttributesFilter;
+					pObject->SetObjectAttributesSet( m_AttributesFilter, SvOi::SetAttributeType::AddAttribute, ObjectIndex );
 				}
 				else
 				{
-					AttributesSet &= ~m_AttributesFilter;
+					pObject->SetObjectAttributesSet( m_AttributesFilter, SvOi::SetAttributeType::RemoveAttribute, ObjectIndex );
 				}
-				pObject->ObjectAttributesSetRef( ObjectIndex ) = AttributesSet;
 			}
 		}
 	}

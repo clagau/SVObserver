@@ -76,7 +76,7 @@ BasicValueObjects::vt_const_iterator BasicValueObjects::createValueObject( LPCTS
 				//If default object type then check parent
 				if( nullptr != pParent && SVBasicValueObjectType == ObjectType )
 				{
-					ObjectType = pParent->GetObjectInfo().ObjectTypeInfo.ObjectType;
+					ObjectType = pParent->GetObjectInfo().m_ObjectTypeInfo.ObjectType;
 				}
 				BasicValueObjectPtr pValue(nullptr);
 				bool Node( false );

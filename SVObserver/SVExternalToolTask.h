@@ -90,8 +90,8 @@ public:
 
 	
 	HRESULT Initialize(SVDllLoadLibraryCallback fnNotify = SVDllLoadLibraryCallbackDefault() );
-	virtual HRESULT DisconnectInputsOutputs(SVObjectVector& rListOfObjects) override;
-	virtual HRESULT HideInputsOutputs(SVObjectVector& rListOfObjects) override;
+	virtual HRESULT DisconnectInputsOutputs(SVObjectPtrVector& rListOfObjects) override;
+	virtual HRESULT HideInputsOutputs(SVObjectPtrVector& rListOfObjects) override;
 
 	HRESULT SetPathName( const SVString& rPath );
 	HRESULT SetDependencies( const SVStringVector& rDependencies );
@@ -115,7 +115,7 @@ public:
 		FIND_VALUES = 2,
 		FIND_ALL_OBJECTS = FIND_IMAGES | FIND_VALUES
 	};
-	HRESULT FindInvalidatedObjects(SVObjectVector& rList, const SVCancelData* pOriginalData, FindEnum eWhich );
+	HRESULT FindInvalidatedObjects(SVObjectPtrVector& rList, const SVCancelData* pOriginalData, FindEnum eWhich );
 	void GetDLLMessageString(HRESULT hr, BSTR* bstrMessage) const;
 
 #pragma region Methods to replace processMessage
@@ -129,7 +129,7 @@ protected:
 	HRESULT Uninitialize();
 	HRESULT ClearData();
 	HRESULT SetDefaultValues();
-	virtual bool onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
+	virtual bool onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 	HRESULT InspectionInputsToVariantArray();
 
 	SVImageClass* GetInputImage(int iIndex);

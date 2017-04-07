@@ -152,7 +152,7 @@ BOOL SVCylindricalWarpDlg::OnInitDialog()
 			m_cbOrientation.SetEnumTypes( EnumList.c_str() );
 
 			SVString strEnum;
-			m_pWarpType->GetValue( strEnum );
+			m_pWarpType->getValue( strEnum );
 			m_cbOrientation.SelectString( -1, strEnum.c_str() );
 		}
 		m_pWarpType->GetValue( m_lLastWarpType );
@@ -168,7 +168,7 @@ BOOL SVCylindricalWarpDlg::OnInitDialog()
 			m_cbInterpolation.SetEnumTypes( EnumList.c_str() );
 
 			SVString EnumString;
-			m_pInterpolationMode->GetValue( EnumString );
+			m_pInterpolationMode->getValue( EnumString );
 			m_cbInterpolation.SelectString( -1, EnumString.c_str() );
 		}
 		m_pWarpType->GetValue( m_lLastWarpType );

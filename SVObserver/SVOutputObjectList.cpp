@@ -23,6 +23,7 @@
 #include "SVInputObjectList.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVMessage\SVMessage.h"
+#include "TextDefinesSvO.h"
 #pragma endregion Includes
 
 SVOutputObjectList::SVOutputObjectList( LPCSTR ObjectName )
@@ -45,7 +46,7 @@ SVOutputObjectList::~SVOutputObjectList()
 
 BOOL SVOutputObjectList::Create()
 {
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVOutputObjectListType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVOutputObjectListType;
 
 	try
 	{
@@ -83,29 +84,86 @@ BOOL SVOutputObjectList::Destroy()
 	return TRUE;
 }// end Destroy
 
-BOOL SVOutputObjectList::Lock() const
+SVOutputObject* SVOutputObjectList::GetOutput(const SVGUID& rOutputID ) const
 {
-	if( m_bCreated )
+	SVOutputObject* pResult(nullptr);
+
+	if (Lock())
 	{
-		::EnterCriticalSection( const_cast< LPCRITICAL_SECTION >( &m_hCriticalSection ) );
+		SVGuidSVOutputObjectPtrMap::const_iterator l_Iter = m_OutputObjects.find(rOutputID);
 
-		return TRUE;
-	}// end if
+		if (l_Iter != m_OutputObjects.end())
+		{
+			pResult = l_Iter->second;
+		}
+		Unlock();
+	}
 
-	return FALSE;
-}// end Lock
+	return pResult;
+}
 
-BOOL SVOutputObjectList::Unlock() const
+SVOutputObject* SVOutputObjectList::GetOutput(const SVString& rName) const
 {
-	if( m_bCreated )
+	SVOutputObject* pResult(nullptr);
+
+	if (Lock())
 	{
-		::LeaveCriticalSection( const_cast< LPCRITICAL_SECTION >( &m_hCriticalSection ) );
+		SVGuidSVOutputObjectPtrMap::const_iterator l_Iter = m_OutputObjects.begin();
 
-		return TRUE;
-	}// end if
+		while (nullptr == pResult && l_Iter != m_OutputObjects.end())
+		{
+			SVOutputObject* pOutput = l_Iter->second;
 
-	return FALSE;
-}// end Unlock
+			if (nullptr != pOutput && rName == pOutput->GetName())
+			{
+				pResult = pOutput;
+			}
+
+			++l_Iter;
+		}
+
+		Unlock();
+	}
+
+	return pResult;
+}
+
+SVOutputObject* SVOutputObjectList::GetOutputFlyweight(const SVString& rName, SVObjectSubTypeEnum ObjectSubType)
+{
+	SVOutputObject* pResult(nullptr);
+
+	if (Lock())
+	{
+		pResult = GetOutput(rName);
+
+		if (nullptr == pResult)
+		{
+			switch (ObjectSubType)
+			{
+			case SVDigitalOutputObjectType:
+				pResult = new SVDigitalOutputObject;
+				break;
+			case SVRemoteOutputObjectType:
+				pResult = new SVRemoteOutputObject;
+			}
+
+			if (nullptr != pResult)
+			{
+				pResult->SetName(rName.c_str());
+
+				if(S_OK != AttachOutput(pResult))
+				{
+					delete pResult;
+					pResult = nullptr;
+				}
+			}
+		}
+
+		Unlock();
+	}
+
+	return pResult;
+}
 
 HRESULT SVOutputObjectList::AttachOutput( SVOutputObject *pOutput )
 {
@@ -137,13 +195,13 @@ HRESULT SVOutputObjectList::AttachOutput( SVOutputObject *pOutput )
 	return l_Status;
 }
 
-HRESULT SVOutputObjectList::DetachOutput( const SVGUID& p_rOutputID )
+HRESULT SVOutputObjectList::DetachOutput( const SVGUID& rOutputID )
 {
 	HRESULT l_Status = S_OK;
 
 	if( Lock() )
 	{
-		SVGuidSVOutputObjectPtrMap::iterator l_Iter = m_OutputObjects.find( p_rOutputID );
+		SVGuidSVOutputObjectPtrMap::iterator l_Iter = m_OutputObjects.find( rOutputID );
 
 		if( l_Iter != m_OutputObjects.end() )
 		{
@@ -167,12 +225,12 @@ HRESULT SVOutputObjectList::DetachOutput( const SVGUID& p_rOutputID )
 	return l_Status;
 }
 
-BOOL SVOutputObjectList::WriteOutputs( SVIOEntryStructVector& p_IOEntries, long lDataIndex, bool p_ACK, bool p_NAK )
+BOOL SVOutputObjectList::WriteOutputs( SVIOEntryStructVector& rIOEntries, long lDataIndex, bool p_ACK, bool p_NAK )
 {
 	
 	SVOutputObject	*pStateOutput = nullptr;
 	SVDigitalOutputObject	*pDigOutput = nullptr;
-	_variant_t l_Variant;
+	_variant_t OutputValue;
 	BOOL bValue = false;
 	double dValue = 0.0;
 	DWORD dwValue = 0;
@@ -183,9 +241,9 @@ BOOL SVOutputObjectList::WriteOutputs( SVIOEntryStructVector& p_IOEntries, long 
 	{
 		pStateOutput = nullptr;
 
-		for( size_t i = 0; i < p_IOEntries.size(); i++ )
+		for( size_t i = 0; i < rIOEntries.size(); i++ )
 		{
-			SVIOEntryStruct& pIOEntry = p_IOEntries[i];
+			SVIOEntryStruct& pIOEntry = rIOEntries[i];
 
 			// Check if output is enabled for this call
 			if( !( pIOEntry.empty() ) && pIOEntry.m_IOEntryPtr->m_Enabled )
@@ -205,16 +263,19 @@ BOOL SVOutputObjectList::WriteOutputs( SVIOEntryStructVector& p_IOEntries, long 
 						pOutput = l_Iter->second;
 					}
 					
-					if( lDataIndex == -1 )
+					if( nullptr != pIOEntry.m_IOEntryPtr->getValueObject())
 					{
-						((SVVariantValueObjectClass*)pIOEntry.m_IOEntryPtr->m_pValueObject)->GetDefaultValue( l_Variant );
-					}
-					else
-					{
-						pIOEntry.m_IOEntryPtr->m_pValueObject->GetValue( lDataIndex, l_Variant );
+						if( lDataIndex == -1 )
+						{
+							OutputValue = pIOEntry.m_IOEntryPtr->getValueObject()->getDefaultValue();
+						}
+						else
+						{
+							pIOEntry.m_IOEntryPtr->getValueObject()->getValue( OutputValue, lDataIndex );
+						}
 					}
 					
-					pOutput->Write( &l_Variant );
+					pOutput->Write( &OutputValue );
 				}// end else if
 
 			}// end if
@@ -237,12 +298,12 @@ BOOL SVOutputObjectList::WriteOutputs( SVIOEntryStructVector& p_IOEntries, long 
 	return FALSE;
 }// end WriteOutputs
 
-BOOL SVOutputObjectList::WriteOutputs( SVIOEntryHostStructPtrList& p_IOEntries, long lDataIndex, bool p_ACK, bool p_NAK )
+BOOL SVOutputObjectList::WriteOutputs( SVIOEntryHostStructPtrVector& rIOEntries, long lDataIndex, bool p_ACK, bool p_NAK )
 {
 	
 	SVOutputObject	*pStateOutput = nullptr;
 	SVDigitalOutputObject	*pDigOutput = nullptr;
-	_variant_t l_Variant;
+	_variant_t OutputValue;
 	BOOL bValue = false;
 	double dValue = 0.0;
 	DWORD dwValue = 0;
@@ -253,9 +314,9 @@ BOOL SVOutputObjectList::WriteOutputs( SVIOEntryHostStructPtrList& p_IOEntries, 
 	{
 		pStateOutput = nullptr;
 
-		for( size_t i = 0; i < p_IOEntries.size(); i++ )
+		for( size_t i = 0; i < rIOEntries.size(); i++ )
 		{
-			SVIOEntryHostStructPtr pIOEntry = p_IOEntries[i];
+			SVIOEntryHostStructPtr pIOEntry = rIOEntries[i];
 
 			// Check if output is enabled for this call
 			if( !( pIOEntry.empty() ) && pIOEntry->m_Enabled )
@@ -280,16 +341,19 @@ BOOL SVOutputObjectList::WriteOutputs( SVIOEntryHostStructPtrList& p_IOEntries, 
 						pOutput = l_Iter->second;
 					}
 					
-					if( lDataIndex == -1 )
+					if( nullptr != pIOEntry->getValueObject())
 					{
-						((SVVariantValueObjectClass*)pIOEntry->m_pValueObject)->GetDefaultValue( l_Variant );
-					}
-					else
-					{
-						pIOEntry->m_pValueObject->GetValue( lDataIndex, l_Variant );
+						if( lDataIndex == -1 )
+						{
+							OutputValue = pIOEntry->getValueObject()->getDefaultValue();
+						}
+						else
+						{
+							pIOEntry->getValueObject()->getValue( OutputValue, lDataIndex );
+						}
 					}
 					
-					pOutput->Write( &l_Variant );
+					pOutput->Write( &OutputValue );
 				}// end else if
 
 			}// end if
@@ -300,7 +364,7 @@ BOOL SVOutputObjectList::WriteOutputs( SVIOEntryHostStructPtrList& p_IOEntries, 
 		{
 			dwValue = 0;
 
-			SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputState( sizeof dwValue, (unsigned char *)&dwValue );
+			SVIOConfigurationInterfaceClass::Instance().GetDigitalOutputState( sizeof dwValue, (unsigned char*)&dwValue );
 			pStateOutput->Write( SvUl::AsString(dwValue).c_str() );
 		}// end if
 
@@ -312,13 +376,13 @@ BOOL SVOutputObjectList::WriteOutputs( SVIOEntryHostStructPtrList& p_IOEntries, 
 	return FALSE;
 }// end WriteOutputs
 
-BOOL SVOutputObjectList::ResetOutputs( SVIOEntryStructVector& p_IOEntries )
+BOOL SVOutputObjectList::ResetOutputs( SVIOEntryStructVector& rIOEntries )
 {
 	if( Lock() )
 	{
-		for( size_t i = 0; i < p_IOEntries.size(); i++ )
+		for( size_t i = 0; i < rIOEntries.size(); i++ )
 		{
-			SVIOEntryStruct pIOEntry = p_IOEntries[i];
+			SVIOEntryStruct pIOEntry = rIOEntries[i];
 
 			// Check if output is enabled for this call
 			if( !( pIOEntry.empty() ) && pIOEntry.m_IOEntryPtr->m_Enabled )
@@ -344,13 +408,13 @@ BOOL SVOutputObjectList::ResetOutputs( SVIOEntryStructVector& p_IOEntries )
 	return FALSE;
 }// end ResetOutputs
 
-BOOL SVOutputObjectList::ResetOutputs( SVIOEntryHostStructPtrList& p_IOEntries )
+BOOL SVOutputObjectList::ResetOutputs( SVIOEntryHostStructPtrVector& rIOEntries )
 {
 	if( Lock() )
 	{
-		for( size_t i = 0; i < p_IOEntries.size(); i++ )
+		for( size_t i = 0; i < rIOEntries.size(); i++ )
 		{
-			SVIOEntryHostStructPtr pIOEntry = p_IOEntries[i];
+			SVIOEntryHostStructPtr pIOEntry = rIOEntries[i];
 
 			// Check if output is enabled for this call
 			if( !( pIOEntry.empty() ) && pIOEntry->m_Enabled )
@@ -376,42 +440,45 @@ BOOL SVOutputObjectList::ResetOutputs( SVIOEntryHostStructPtrList& p_IOEntries )
 	return FALSE;
 }// end ResetOutputs
 
-BOOL SVOutputObjectList::WriteOutput( SVIOEntryStruct pIOEntry, long lDataIndex, bool p_ACK, bool p_NAK )
+BOOL SVOutputObjectList::WriteOutput( SVIOEntryStruct IOEntry, long lDataIndex, bool p_ACK, bool p_NAK )
 {
 	bool Result( false );
-	_variant_t l_Variant;
+	_variant_t OutputValue;
 
 	if( Lock() )
 	{
 
 		// We are only writing one output, don't worry if it is marked enabled for this call
-		if( !( pIOEntry.empty() ) )
+		if( !( IOEntry.empty() ) )
 		{
-			if( pIOEntry.m_IOEntryPtr->m_ObjectType == IO_DIGITAL_OUTPUT )
+			if( IOEntry.m_IOEntryPtr->m_ObjectType == IO_DIGITAL_OUTPUT )
 			{
-				Result = (S_OK == WriteDigitalOutput( pIOEntry, lDataIndex, p_ACK, p_NAK ));
+				Result = (S_OK == WriteDigitalOutput( IOEntry, lDataIndex, p_ACK, p_NAK ));
 			}// end if
-			else if( pIOEntry.m_IOEntryPtr->m_ObjectType == IO_REMOTE_OUTPUT )
+			else if( IOEntry.m_IOEntryPtr->m_ObjectType == IO_REMOTE_OUTPUT )
 			{
 				SVOutputObject* pOutput = nullptr;
 
-				SVGuidSVOutputObjectPtrMap::iterator l_Iter = m_OutputObjects.find( pIOEntry.m_IOEntryPtr->m_IOId );
+				SVGuidSVOutputObjectPtrMap::iterator l_Iter = m_OutputObjects.find( IOEntry.m_IOEntryPtr->m_IOId );
 
 				if( l_Iter != m_OutputObjects.end() )
 				{
 					pOutput	= l_Iter->second;
 				}
 				
-				if( lDataIndex == -1 )
+				if(nullptr != IOEntry.m_IOEntryPtr->getValueObject())
 				{
-					((SVVariantValueObjectClass*)pIOEntry.m_IOEntryPtr->m_pValueObject)->GetDefaultValue( l_Variant );
-				}
-				else
-				{
-					pIOEntry.m_IOEntryPtr->m_pValueObject->GetValue( lDataIndex, l_Variant );
+					if( lDataIndex == -1 )
+					{
+						OutputValue = IOEntry.m_IOEntryPtr->getValueObject()->getDefaultValue();
+					}
+					else
+					{
+						IOEntry.m_IOEntryPtr->getValueObject()->getValue( OutputValue, lDataIndex );
+					}
 				}
 
-				Result = ( S_OK ==  pOutput->Write( &l_Variant ) );
+				Result = ( S_OK ==  pOutput->Write( OutputValue ) );
 			}// end else if
 
 		}// end if
@@ -426,7 +493,7 @@ BOOL SVOutputObjectList::WriteOutput( SVIOEntryStruct pIOEntry, long lDataIndex,
 BOOL SVOutputObjectList::WriteOutput( SVIOEntryHostStructPtr pIOEntry, long lDataIndex, bool p_ACK, bool p_NAK )
 {
 	bool Result( false );
-	_variant_t l_Variant;
+	_variant_t OutputValue;
 
 	if( Lock() )
 	{
@@ -454,16 +521,19 @@ BOOL SVOutputObjectList::WriteOutput( SVIOEntryHostStructPtr pIOEntry, long lDat
 					pOutput	= l_Iter->second;
 				}
 				
-				if( lDataIndex == -1 )
+				if( nullptr != pIOEntry->getValueObject())
 				{
-					((SVVariantValueObjectClass*)pIOEntry->m_pValueObject)->GetDefaultValue( l_Variant );
-				}
-				else
-				{
-					pIOEntry->m_pValueObject->GetValue( lDataIndex, l_Variant );
+					if( lDataIndex == -1 )
+					{
+						OutputValue = pIOEntry->getValueObject()->getDefaultValue();
+					}
+					else
+					{
+						pIOEntry->getValueObject()->getValue( OutputValue, lDataIndex );
+					}
 				}
 
-				Result = (S_OK == pOutput->Write( &l_Variant ));
+				Result = (S_OK == pOutput->Write( &OutputValue ));
 			}// end else if
 
 		}// end if
@@ -520,7 +590,7 @@ BOOL SVOutputObjectList::ResetOutput( SVIOEntryHostStructPtr pIOEntry )
 			if( !l_bEnable )	// Act as if enabled when Module Ready or Raid Error 
 			{
 				SVString Name = pOutput->GetName();
-				if( _T("Module Ready") == Name || _T("Raid Error Indicator") == Name )
+				if(SvO::cModuleReady == Name || SvO::cRaidErrorIndicator == Name )
 				{
 					l_bEnable = true;
 				}
@@ -541,14 +611,15 @@ BOOL SVOutputObjectList::ResetOutput( SVIOEntryHostStructPtr pIOEntry )
 }// end ResetOutput
 
 
-BOOL SVOutputObjectList::FillOutputs( SVIOEntryHostStructPtrList& ppIOEntries )
+BOOL SVOutputObjectList::FillOutputs( SVIOEntryHostStructPtrVector& rIOEntries )
 {
-	ppIOEntries.clear();
+	bool Result(false);
+	rIOEntries.clear();
 
 	if( Lock() )
 	{
 		SVGuidSVOutputObjectPtrMap::const_iterator l_Iter = m_OutputObjects.begin();
-
+		Result = true;
 		while( l_Iter != m_OutputObjects.end() )
 		{
 			SVOutputObject* pOutput = l_Iter->second;
@@ -559,22 +630,28 @@ BOOL SVOutputObjectList::FillOutputs( SVIOEntryHostStructPtrList& ppIOEntries )
 
 			pIOEntry->m_IOId = pOutput->GetUniqueObjectID();
 			
-			if( SV_IS_KIND_OF( pOutput, SVDigitalOutputObject ) )
+			switch (pOutput->GetObjectSubType())
+			{
+			case SVDigitalOutputObjectType:
 				pIOEntry->m_ObjectType = IO_DIGITAL_OUTPUT;
-			else if( SV_IS_KIND_OF( pOutput, SVRemoteOutputObject ) )
+				break;
+			case SVRemoteOutputObjectType:
 				pIOEntry->m_ObjectType = IO_REMOTE_OUTPUT;
+				break;
+			default:
+				Result = false;
+				break;
+			}
 
-			ppIOEntries.push_back( pIOEntry );
+			rIOEntries.push_back( pIOEntry );
 
 			++l_Iter;
 		}// end for
 
 		Unlock();
-
-		return TRUE;
 	}// end if
 
-	return FALSE;
+	return Result;
 }// end FillOutputs
 
 bool SVOutputObjectList::RenameInspection( LPCTSTR OldInspection, LPCTSTR NewInspectionName)
@@ -682,8 +759,8 @@ HRESULT SVOutputObjectList::RemoveUnusedOutputs( const SVStringVector& rInspecti
 						}
 					}
 
-					l_Skip = l_Skip || ( _T("Module Ready") == OutputName );
-					l_Skip = l_Skip || ( _T("Raid Error Indicator") == OutputName );
+					l_Skip = l_Skip || (SvO::cModuleReady == OutputName );
+					l_Skip = l_Skip || (SvO::cRaidErrorIndicator == OutputName );
 
 					if( ! l_Skip )
 					{
@@ -735,7 +812,7 @@ HRESULT SVOutputObjectList::RemoveUnusedOutputs( const SVStringVector& rInspecti
 				{
 					SVDigitalOutputObject* l_pOutput = *l_OutputIter;
 
-					if( nullptr != l_pOutput && SVString( _T("Module Ready") ) == l_pOutput->GetName() )
+					if( nullptr != l_pOutput && SVString(SvO::cModuleReady ) == l_pOutput->GetName() )
 					{
 						l_pOutput->SetChannel( -1 );
 
@@ -771,12 +848,12 @@ HRESULT SVOutputObjectList::RemoveUnusedOutputs( const SVStringVector& rInspecti
 	return l_Status;
 }
 
-bool SVOutputObjectList::OutputIsNotValid( SVString p_strName )
+bool SVOutputObjectList::OutputIsNotValid( SVString Name )
 {
 	bool l_bRet = true;
 	
 	SVObjectClass* l_pObject;
-	HRESULT l_hr = SVObjectManagerClass::Instance().GetObjectByDottedName( p_strName, l_pObject );
+	HRESULT l_hr = SVObjectManagerClass::Instance().GetObjectByDottedName( Name, l_pObject );
 	// Check if the object exists.
 	if( nullptr != l_pObject )
 	{
@@ -827,9 +904,7 @@ HRESULT SVOutputObjectList::WriteDigitalOutput( SVIOEntryStruct& pIOEntry, long 
 {
 	HRESULT Result = S_OK;
 
-	SVDigitalOutputObject* pOutput = nullptr;
-
-	Result = GetOutput( pIOEntry.m_IOEntryPtr->m_IOId, pOutput );
+	SVOutputObject* pOutput = GetOutput(pIOEntry.m_IOEntryPtr->m_IOId);
 
 	if( nullptr != pOutput )
 	{
@@ -837,19 +912,27 @@ HRESULT SVOutputObjectList::WriteDigitalOutput( SVIOEntryStruct& pIOEntry, long 
 
 		if( 0 <= lDataIndex )
 		{
-			double dValue = 0.0;
+			_variant_t Value( false );
 
 			SVString l_String = pOutput->GetName();
 
 			if( p_ACK || l_String.substr( 0, 3 ).compare( _T( "PPQ" ) ) == 0 )
 			{
-				pIOEntry.m_IOEntryPtr->m_pValueObject->GetValue( lDataIndex, dValue );
+				SvOi::IValueObject* pValueObject = pIOEntry.m_IOEntryPtr->getValueObject();
+				if( nullptr != pValueObject )
+				{
+					pValueObject->getValue( Value, lDataIndex );
+				}
 
-				bValue = ( dValue != 0.0 );
+				bValue = Value ? true : false;
 			}
 			else
 			{
-				pIOEntry.m_IOEntryPtr->m_pValueObject->SetValue( lDataIndex, dValue );
+				SvOi::IValueObject* pValueObject = pIOEntry.m_IOEntryPtr->getValueObject();
+				if( nullptr != pValueObject )
+				{
+					pValueObject->setValue( Value, lDataIndex );
+				}
 			}
 
 			if( pOutput->IsCombined() )
@@ -867,11 +950,14 @@ HRESULT SVOutputObjectList::WriteDigitalOutput( SVIOEntryStruct& pIOEntry, long 
 
 		if( lDataIndex == -1 )
 		{
-			BOOL l_Temp = false;
+			_variant_t Value(false);
 
-			((SVBoolValueObjectClass*)pIOEntry.m_IOEntryPtr->m_pValueObject)->GetDefaultValue( l_Temp );
+			if( nullptr != pIOEntry.m_IOEntryPtr->getValueObject())
+			{
+				Value = pIOEntry.m_IOEntryPtr->getValueObject()->getDefaultValue();
+			}
 
-			bValue = ( l_Temp != FALSE );
+			bValue = Value ? true : false;
 		}
 		else if( pOutput->IsCombined() )
 		{
@@ -879,9 +965,12 @@ HRESULT SVOutputObjectList::WriteDigitalOutput( SVIOEntryStruct& pIOEntry, long 
 		}
 		else
 		{
-			double dValue;
-			pIOEntry.m_IOEntryPtr->m_pValueObject->GetValue( lDataIndex, dValue );
-			bValue = ( dValue != 0.0 );
+			double Value(0.0);
+			if( nullptr != pIOEntry.m_IOEntryPtr->getObject())
+			{
+				pIOEntry.m_IOEntryPtr->getObject()->getValue( Value, lDataIndex );
+			}
+			bValue = 0.0 < Value ? true : false;
 		}
 
 		Result = pOutput->Write( bValue );
@@ -907,3 +996,26 @@ void SVOutputObjectList::ClearOutputList()
 	}
 }
 
+bool SVOutputObjectList::Lock() const
+{
+	if (m_bCreated)
+	{
+		::EnterCriticalSection(const_cast<LPCRITICAL_SECTION>(&m_hCriticalSection));
+
+		return true;
+	}
+
+	return false;
+}
+
+bool SVOutputObjectList::Unlock() const
+{
+	if (m_bCreated)
+	{
+		::LeaveCriticalSection(const_cast<LPCRITICAL_SECTION>(&m_hCriticalSection));
+
+		return true;
+	}
+
+	return false;
+}

@@ -19,7 +19,7 @@
 #include "SVImageLibrary/SVDrawContext.h"
 #pragma endregion Includes
 
-typedef SVVector< CPoint > SVCPointArray;
+typedef SVVector<CPoint> CPointVector;
 
 enum 
 {
@@ -54,7 +54,7 @@ public:
  
 	CPoint GetPointAt( int Index );
 
-	const SVCPointArray& GetPointArray();
+	const CPointVector& GetPointArray();
 	
 	HGDIOBJ GetDrawPen();
 
@@ -62,8 +62,8 @@ protected:
 	BOOL beginDraw( SVDrawContext* PDrawContext );
 	void endDraw( HDC DC );
 	
-	SVCPointArray	 points;
-	SVCPointArray	 calcPoints;
+	CPointVector	 points;
+	CPointVector	 calcPoints;
 
 	HGDIOBJ drawPen;	// If nullptr the current selected pen of the DC
 						// will be used!
@@ -76,7 +76,7 @@ protected:
 	COLORREF m_PenColor;
 };
 
-typedef SVVector< SVDrawObjectClass > SVDrawObjectClassArray;
+typedef SVVector<SVDrawObjectClass> SVDrawObjectClassVector;
 
 
 /////////////////////////////////////////////////////////////////////////////
@@ -178,5 +178,5 @@ public:
 	bool m_bDrawFigureHatched;
 
 protected:
-	SVDrawObjectClassArray m_svDrawObjectArray;
+	SVDrawObjectClassVector m_svDrawObjectArray;
 };

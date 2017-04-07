@@ -48,12 +48,12 @@ void SVResultClass::init()
 	m_bUseOverlays = false;
 
 	// Identify our type in the Output List
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVResultObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
 
 	// Register Embedded Objects
-	RegisterEmbeddedObject( &failed, SVFailedObjectGuid, IDS_OBJECTNAME_FAILED, false, SVResetItemNone );
-	RegisterEmbeddedObject( &warned, SVWarnedObjectGuid, IDS_OBJECTNAME_WARNED, false, SVResetItemNone );
-	RegisterEmbeddedObject( &passed, SVPassedObjectGuid, IDS_OBJECTNAME_PASSED, false, SVResetItemNone );
+	RegisterEmbeddedObject( &failed, SVFailedObjectGuid, IDS_OBJECTNAME_FAILED, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &warned, SVWarnedObjectGuid, IDS_OBJECTNAME_WARNED, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &passed, SVPassedObjectGuid, IDS_OBJECTNAME_PASSED, false, SvOi::SVResetItemNone );
 
 	// Set Embedded defaults
 	passed.SetDefaultValue( FALSE, TRUE );			// Default for Passed is FALSE !!!
@@ -78,9 +78,9 @@ BOOL SVResultClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 	}
 
 	// Set / Reset Printable Flags
-	failed.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	warned.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	passed.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
+	failed.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	warned.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	passed.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 
 	m_isCreated = bOk;
 
@@ -121,14 +121,14 @@ SVRangeClass* SVResultClass::GetResultRange()
 	return pRange;
 }
 
-bool SVResultClass::Run( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVResultClass::Run( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
-	SVValueObjectClass* pValue = getInput();
+	const SvOi::IValueObject* pValueObject = dynamic_cast<const SvOi::IValueObject*> (getInput());
 	
 	long	resultSize = -1;
-	if (nullptr != pValue)
+	if( nullptr != pValueObject )
 	{
-		resultSize = pValue->GetResultSize();
+		resultSize = pValueObject->getResultSize();
 	}
 
 	// This is testing to verify that a result was found.  Analyzers such as 
@@ -143,57 +143,57 @@ bool SVResultClass::Run( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVe
 		// to pass.
 
 		//make sure the statusColor is set correctly
-		DWORD dwColor = RRunStatus.GetStatusColor();
-		m_statusColor.SetValue(RRunStatus.m_lResultDataIndex, dwColor);
+		DWORD dwColor = rRunStatus.GetStatusColor();
+		m_statusColor.SetValue(dwColor, rRunStatus.m_lResultDataIndex );
 
-		passed.SetValue( RRunStatus.m_lResultDataIndex, true );
-		failed.SetValue( RRunStatus.m_lResultDataIndex, false );
-		warned.SetValue( RRunStatus.m_lResultDataIndex, false );
+		passed.SetValue( BOOL(true), rRunStatus.m_lResultDataIndex );
+		failed.SetValue( BOOL(false), rRunStatus.m_lResultDataIndex );
+		warned.SetValue( BOOL(false), rRunStatus.m_lResultDataIndex );
 		return true;
 	}
 	else
 	{
 		// valid results to process.
-		if( SVTaskObjectListClass::Run(RRunStatus, pErrorMessages) )
+		if( SVTaskObjectListClass::Run( rRunStatus, pErrorMessages ) )
 		{
 			//make sure statusColor is set correctly
-			DWORD dwColor = RRunStatus.GetStatusColor();
-			m_statusColor.SetValue(RRunStatus.m_lResultDataIndex, dwColor);
+			DWORD dwColor = rRunStatus.GetStatusColor();
+			m_statusColor.SetValue(dwColor, rRunStatus.m_lResultDataIndex );
 
 			// set our state according to the runStatus
-			passed.SetValue( RRunStatus.m_lResultDataIndex, RRunStatus.IsPassed() );
-			failed.SetValue( RRunStatus.m_lResultDataIndex, RRunStatus.IsFailed() );
-			warned.SetValue( RRunStatus.m_lResultDataIndex, RRunStatus.IsWarned() );
+			passed.SetValue( BOOL(rRunStatus.IsPassed()), rRunStatus.m_lResultDataIndex );
+			failed.SetValue( BOOL(rRunStatus.IsFailed()), rRunStatus.m_lResultDataIndex );
+			warned.SetValue( BOOL(rRunStatus.IsWarned()), rRunStatus.m_lResultDataIndex );
 
 			return true;
 		}
 	}
 
 	SetInvalid();
-	RRunStatus.SetInvalid();
+	rRunStatus.SetInvalid();
 	return false;
 }
 
-SVValueObjectClass* SVResultClass::getInput()
+const SVObjectClass* SVResultClass::getInput() const
 {
 	if( m_inputObjectInfo.IsConnected() )
 	{
-		return dynamic_cast <SVValueObjectClass*> ( m_inputObjectInfo.GetInputObjectInfo().PObject);
+		return m_inputObjectInfo.GetInputObjectInfo().m_pObject;
 	}
 
 	return nullptr;
 }
 
-bool SVResultClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	//@WARNING[MZA][7.50][17.01.2017] Not sure if we need to check ValidateLocal in Run-mode, maybe it is enough to check it in ResetObject
-	if( __super::onRun( RRunStatus, pErrorMessages ) && ValidateLocal(pErrorMessages) )
+	if( __super::onRun( rRunStatus, pErrorMessages ) && ValidateLocal(pErrorMessages) )
 	{
 		return true;
 	}
 
 	SetInvalid();
-	RRunStatus.SetInvalid();
+	rRunStatus.SetInvalid();
 	return false;
 }
 
@@ -238,7 +238,7 @@ HRESULT SVResultClass::SetCancelData(SVCancelData* pCancelData)
 
 bool SVResultClass::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) const
 {
-	if( !m_inputObjectInfo.IsConnected() || nullptr == m_inputObjectInfo.GetInputObjectInfo().PObject ) 
+	if( !m_inputObjectInfo.IsConnected() || nullptr == m_inputObjectInfo.GetInputObjectInfo().m_pObject ) 
 	{
 		if (nullptr != pErrorMessages)
 		{

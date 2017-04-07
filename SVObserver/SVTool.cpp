@@ -37,65 +37,61 @@ SVToolClass::SVToolClass( BOOL BCreateDefaultTaskList, SVObjectClass* POwner, in
 void SVToolClass::init()
 {
 	// Indentify our type in the Output List
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVToolObjectType;
 
 	// Register Embedded Objects
-	RegisterEmbeddedObject( &enabled, SVToolEnabledObjectGuid, IDS_OBJECTNAME_ENABLED, false, SVResetItemNone );
-	RegisterEmbeddedObject( &m_Passed, SVPassedObjectGuid, IDS_OBJECTNAME_PASSED, false, SVResetItemNone );
-	RegisterEmbeddedObject( &m_Failed, SVFailedObjectGuid, IDS_OBJECTNAME_FAILED, false, SVResetItemNone );
-	RegisterEmbeddedObject( &m_Warned, SVWarnedObjectGuid, IDS_OBJECTNAME_WARNED, false, SVResetItemNone );
-	RegisterEmbeddedObject( &m_ExplicitFailed, SVExplicitFailedObjectGuid, IDS_OBJECTNAME_EXPLICIT_FAILED, false, SVResetItemNone );
+	RegisterEmbeddedObject( &enabled, SVToolEnabledObjectGuid, IDS_OBJECTNAME_ENABLED, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_Passed, SVPassedObjectGuid, IDS_OBJECTNAME_PASSED, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_Failed, SVFailedObjectGuid, IDS_OBJECTNAME_FAILED, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_Warned, SVWarnedObjectGuid, IDS_OBJECTNAME_WARNED, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_ExplicitFailed, SVExplicitFailedObjectGuid, IDS_OBJECTNAME_EXPLICIT_FAILED, false, SvOi::SVResetItemNone );
 
-	RegisterEmbeddedObject( &m_PassedCount, SVPassedCountObjectGuid, IDS_OBJECTNAME_PASSED_COUNT, false, SVResetItemNone );
-	RegisterEmbeddedObject( &m_FailedCount, SVFailedCountObjectGuid, IDS_OBJECTNAME_FAILED_COUNT, false, SVResetItemNone );
-	RegisterEmbeddedObject( &m_WarnedCount, SVWarnedCountObjectGuid, IDS_OBJECTNAME_WARNED_COUNT, false, SVResetItemNone );
+	RegisterEmbeddedObject( &m_PassedCount, SVPassedCountObjectGuid, IDS_OBJECTNAME_PASSED_COUNT, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_FailedCount, SVFailedCountObjectGuid, IDS_OBJECTNAME_FAILED_COUNT, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_WarnedCount, SVWarnedCountObjectGuid, IDS_OBJECTNAME_WARNED_COUNT, false, SvOi::SVResetItemNone );
 
-	RegisterEmbeddedObject( &m_EnabledCount, SVEnabledCountObjectGuid, IDS_OBJECTNAME_ENABLED_COUNT, false, SVResetItemNone );
-	RegisterEmbeddedObject( &m_ProcessedCount, SVProcessedCountObjectGuid, IDS_OBJECTNAME_PROCESSED_COUNT, false, SVResetItemNone );
-	RegisterEmbeddedObject( &m_ToolPosition, SVToolPositionGuid, IDS_OBJECTNAME_TOOL_POSITION, false, SVResetItemNone );
+	RegisterEmbeddedObject( &m_EnabledCount, SVEnabledCountObjectGuid, IDS_OBJECTNAME_ENABLED_COUNT, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_ProcessedCount, SVProcessedCountObjectGuid, IDS_OBJECTNAME_PROCESSED_COUNT, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_ToolPosition, SVToolPositionGuid, IDS_OBJECTNAME_TOOL_POSITION, false, SvOi::SVResetItemNone );
 
-	RegisterEmbeddedObject ( &m_ToolTime, SVToolTimeGuid, IDS_OBJECTNAME_TOOLTIME, false, SVResetItemNone );
+	RegisterEmbeddedObject ( &m_ToolTime, SVToolTimeGuid, IDS_OBJECTNAME_TOOLTIME, false, SvOi::SVResetItemNone );
 
 	/////////////////////////////////////////////////////////////////////////
 	// Extents - These are shadows of the extents in the SVImageInfoClass,
 	// so that they can be exposed and be used by other objects in the system.
 	// They are not updated directly (at this point in time).
 	/////////////////////////////////////////////////////////////////////////
-	RegisterEmbeddedObject( &m_ExtentLeft, SVExtentRelativeLeftPositionObjectGuid, IDS_OBJECTNAME_EXTENT_LEFT, false, SVResetItemTool, _T("Extent X") );
-	RegisterEmbeddedObject( &m_ExtentTop, SVExtentRelativeTopPositionObjectGuid, IDS_OBJECTNAME_EXTENT_TOP, false, SVResetItemTool, _T("Extent Y") );
-	RegisterEmbeddedObject( &m_ExtentRight, SVExtentRelativeRightPositionObjectGuid, IDS_OBJECTNAME_EXTENT_RIGHT, false, SVResetItemNone, _T("Extent X") );
-	RegisterEmbeddedObject( &m_ExtentBottom, SVExtentRelativeBottomPositionObjectGuid, IDS_OBJECTNAME_EXTENT_BOTTOM, false, SVResetItemNone, _T("Extent Y") );
-	RegisterEmbeddedObject( &m_ExtentWidth, SVExtentWidthObjectGuid, IDS_OBJECTNAME_EXTENT_WIDTH, false, SVResetItemTool, _T("Extent Width") );
-	RegisterEmbeddedObject( &m_ExtentHeight, SVExtentHeightObjectGuid, IDS_OBJECTNAME_EXTENT_HEIGHT, false, SVResetItemTool, _T("Extent Height") );
-	RegisterEmbeddedObject( &m_ExtentHeightScaleFactor, 
-							SVExtentHeightScaleFactorObjectGuid, 
-							IDS_OBJECTNAME_EXTENT_HEIGHTSF, 
-							false, 
-							SVResetItemTool,
-							_T("Extent Height Scale Factor") );
+	//Special type names for extents
+	m_ExtentWidth.SetTypeName( _T("Extent Width") );
+	m_ExtentHeight.SetTypeName( _T("Extent Height") );
+	m_ExtentLeft.SetTypeName( _T("Extent X") );
+	m_ExtentTop.SetTypeName( _T("Extent Y") );
+	m_ExtentRight.SetTypeName( _T("Extent X") );
+	m_ExtentBottom.SetTypeName( _T("Extent Y") );
+	m_svAuxiliarySourceX.SetTypeName( _T("Extent X") );
+	m_svAuxiliarySourceY.SetTypeName( _T("Extent Y") );
+	m_svAuxiliarySourceAngle.SetTypeName( _T("Extent Angle") );
+	m_ExtentHeightScaleFactor.SetTypeName( _T("Extent Height Scale Factor") );
+	m_ExtentWidthScaleFactor.SetTypeName( _T("Extent Width Scale Factor") );
 
-	RegisterEmbeddedObject( &m_ExtentWidthScaleFactor, 
-							SVExtentWidthScaleFactorObjectGuid, 
-							IDS_OBJECTNAME_EXTENT_WIDTHSF, 
-
-							// the only place that this is ever set to true is for the color HSI 
-							// conversion value (Color Tool) and it is probably not necessary there.
-							false,   
-							SVResetItemTool,
-							_T("Extent Width Scale Factor") );
-
-	RegisterEmbeddedObject( &ToolSelectedForOperatorMove, SVToolSelectedForOperatorMoveObjectGuid, IDS_OBJECTNAME_TOOL_SELECTED_FOR_OPERATOR_MOVE, false, SVResetItemNone);
-
-	RegisterEmbeddedObject( &drawToolFlag, SVConditionalToolDrawFlagObjectGuid, IDS_OBJECTNAME_DRAWTOOL_FLAG, false, SVResetItemNone );
-
-	RegisterEmbeddedObject( &m_svUpdateAuxiliaryExtents, SVUpdateAuxiliaryExtentsObjectGuid, IDS_OBJECTNAME_UPDATE_AUXILIARY_EXTENTS_OBJECT, false, SVResetItemTool );
-	RegisterEmbeddedObject( &m_svAuxiliarySourceX, SVAuxiliarySourceXObjectGuid, IDS_OBJECTNAME_AUXILIARY_SOURCE_X, false, SVResetItemNone, _T("Extent X") );
-	RegisterEmbeddedObject( &m_svAuxiliarySourceY, SVAuxiliarySourceYObjectGuid, IDS_OBJECTNAME_AUXILIARY_SOURCE_Y, false, SVResetItemNone, _T("Extent Y") );
-	RegisterEmbeddedObject( &m_svAuxiliarySourceAngle, SVAuxiliarySourceAngleObjectGuid, IDS_OBJECTNAME_AUXILIARY_SOURCE_ANGLE, false, SVResetItemNone, _T("Extent Angle") );
-	RegisterEmbeddedObject( &m_svAuxiliarySourceImageName, SVAuxiliarySourceImageNameObjectGuid, IDS_OBJECTNAME_AUXILIARY_SOURCE_IMAGE_NAME, false, SVResetItemNone );
-	RegisterEmbeddedObject( &m_svAuxiliaryDrawType, SVAuxiliaryDrawTypeObjectGuid, IDS_OBJECTNAME_AUXILIARY_DRAW_TYPE_NAME, false, SVResetItemNone );
+	RegisterEmbeddedObject( &m_ExtentLeft, SVExtentRelativeLeftPositionObjectGuid, IDS_OBJECTNAME_EXTENT_LEFT, false, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &m_ExtentTop, SVExtentRelativeTopPositionObjectGuid, IDS_OBJECTNAME_EXTENT_TOP, false, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &m_ExtentRight, SVExtentRelativeRightPositionObjectGuid, IDS_OBJECTNAME_EXTENT_RIGHT, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_ExtentBottom, SVExtentRelativeBottomPositionObjectGuid, IDS_OBJECTNAME_EXTENT_BOTTOM, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_ExtentWidth, SVExtentWidthObjectGuid, IDS_OBJECTNAME_EXTENT_WIDTH, false, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &m_ExtentHeight, SVExtentHeightObjectGuid, IDS_OBJECTNAME_EXTENT_HEIGHT, false, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &m_ExtentHeightScaleFactor, SVExtentHeightScaleFactorObjectGuid, IDS_OBJECTNAME_EXTENT_HEIGHTSF, false, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &m_ExtentWidthScaleFactor, SVExtentWidthScaleFactorObjectGuid, IDS_OBJECTNAME_EXTENT_WIDTHSF, false, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &ToolSelectedForOperatorMove, SVToolSelectedForOperatorMoveObjectGuid, IDS_OBJECTNAME_TOOL_SELECTED_FOR_OPERATOR_MOVE, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject( &drawToolFlag, SVConditionalToolDrawFlagObjectGuid, IDS_OBJECTNAME_DRAWTOOL_FLAG, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_svUpdateAuxiliaryExtents, SVUpdateAuxiliaryExtentsObjectGuid, IDS_OBJECTNAME_UPDATE_AUXILIARY_EXTENTS_OBJECT, false, SvOi::SVResetItemTool );
+	RegisterEmbeddedObject( &m_svAuxiliarySourceX, SVAuxiliarySourceXObjectGuid, IDS_OBJECTNAME_AUXILIARY_SOURCE_X, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_svAuxiliarySourceY, SVAuxiliarySourceYObjectGuid, IDS_OBJECTNAME_AUXILIARY_SOURCE_Y, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_svAuxiliarySourceAngle, SVAuxiliarySourceAngleObjectGuid, IDS_OBJECTNAME_AUXILIARY_SOURCE_ANGLE, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_svAuxiliarySourceImageName, SVAuxiliarySourceImageNameObjectGuid, IDS_OBJECTNAME_AUXILIARY_SOURCE_IMAGE_NAME, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_svAuxiliaryDrawType, SVAuxiliaryDrawTypeObjectGuid, IDS_OBJECTNAME_AUXILIARY_DRAW_TYPE_NAME, false, SvOi::SVResetItemNone );
 	// Tool Comment...
-	RegisterEmbeddedObject( &m_svToolComment, SVToolCommentTypeObjectGuid, IDS_OBJECTNAME_TOOL_COMMENT, false, SVResetItemNone );
+	RegisterEmbeddedObject( &m_ToolComment, SVToolCommentTypeObjectGuid, IDS_OBJECTNAME_TOOL_COMMENT, false, SvOi::SVResetItemNone );
 	
 	m_svToolExtent.SetTool( this );
 	m_svToolExtent.SetImageType( SVImageTypeLogicalAndPhysical );
@@ -110,44 +106,44 @@ void SVToolClass::init()
 
 	//
 	// Set Embedded defaults
-	enabled.SetDefaultValue( TRUE, TRUE );
-	m_Passed.SetDefaultValue( FALSE, TRUE );			// Default for Passed is FALSE !!!
-	m_Failed.SetDefaultValue( TRUE, TRUE );			// Default for Failed is TRUE !!!
-	m_Warned.SetDefaultValue( TRUE, TRUE );			// Default for Warned is TRUE !!!
-	m_ExplicitFailed.SetDefaultValue( FALSE, TRUE );	// Default for Explicit Failed is FALSE !!!
+	enabled.SetDefaultValue( BOOL(true), true );
+	m_Passed.SetDefaultValue( BOOL(false), true );			// Default for Passed is FALSE !!!
+	m_Failed.SetDefaultValue( BOOL(true), true );			// Default for Failed is TRUE !!!
+	m_Warned.SetDefaultValue( BOOL(true), true );			// Default for Warned is TRUE !!!
+	m_ExplicitFailed.SetDefaultValue( BOOL(false), true );	// Default for Explicit Failed is FALSE !!!
 
-	m_PassedCount.SetDefaultValue( 0, TRUE );
-	m_FailedCount.SetDefaultValue( 0, TRUE );
-	m_WarnedCount.SetDefaultValue( 0, TRUE );
+	m_PassedCount.SetDefaultValue( 0L, true );
+	m_FailedCount.SetDefaultValue( 0L, true );
+	m_WarnedCount.SetDefaultValue( 0L, true );
 
-	m_EnabledCount.SetDefaultValue( 0, TRUE );
-	m_ProcessedCount.SetDefaultValue( 0, TRUE );
+	m_EnabledCount.SetDefaultValue( 0L, true );
+	m_ProcessedCount.SetDefaultValue( 0L, true );
 
 	m_ToolPosition.SetDefaultValue( -1L, true );
-	m_ToolTime.SetDefaultValue(0,TRUE);
+	m_ToolTime.SetDefaultValue( 0LL, true);
 
 	/////////////////////////////////////////////////////////////////////////
 	// Set Default values for Shadowed Extents
 	/////////////////////////////////////////////////////////////////////////
-	m_ExtentLeft.SetDefaultValue( SvOi::cDefaultWindowToolLeft, TRUE );
-	m_ExtentTop.SetDefaultValue( SvOi::cDefaultWindowToolTop, TRUE );
-	m_ExtentRight.SetDefaultValue( SvOi::cDefaultWindowToolLeft + SvOi::cDefaultWindowToolWidth, TRUE );
-	m_ExtentBottom.SetDefaultValue( SvOi::cDefaultWindowToolTop + SvOi::cDefaultWindowToolHeight, TRUE );
-	m_ExtentWidth.SetDefaultValue( SvOi::cDefaultWindowToolWidth, TRUE );
-	m_ExtentHeight.SetDefaultValue( SvOi::cDefaultWindowToolHeight, TRUE );
-	m_ExtentWidthScaleFactor.SetDefaultValue( SvOi::cDefaultWindowToolWidthScaleFactor, TRUE );
-	m_ExtentHeightScaleFactor.SetDefaultValue( SvOi::cDefaultWindowToolHeightScaleFactor, TRUE );
+	m_ExtentLeft.SetDefaultValue( SvOi::cDefaultWindowToolLeft, true );
+	m_ExtentTop.SetDefaultValue( SvOi::cDefaultWindowToolTop, true );
+	m_ExtentRight.SetDefaultValue( SvOi::cDefaultWindowToolLeft + SvOi::cDefaultWindowToolWidth, true );
+	m_ExtentBottom.SetDefaultValue( SvOi::cDefaultWindowToolTop + SvOi::cDefaultWindowToolHeight, true );
+	m_ExtentWidth.SetDefaultValue( SvOi::cDefaultWindowToolWidth, true );
+	m_ExtentHeight.SetDefaultValue( SvOi::cDefaultWindowToolHeight, true );
+	m_ExtentWidthScaleFactor.SetDefaultValue( SvOi::cDefaultWindowToolWidthScaleFactor, true );
+	m_ExtentHeightScaleFactor.SetDefaultValue( SvOi::cDefaultWindowToolHeightScaleFactor, true );
 
 	drawToolFlag.SetEnumTypes( IDS_TOOLDRAW_ENUMOBJECT_LIST );
-	drawToolFlag.SetDefaultValue( ( const long ) 0, TRUE ); // 0 Should be show tool 'Always'
+	drawToolFlag.SetDefaultValue( 0L, true );
 
-	m_svUpdateAuxiliaryExtents.SetDefaultValue( FALSE, TRUE );
+	m_svUpdateAuxiliaryExtents.SetDefaultValue( BOOL(false), true );
 
-	m_svAuxiliarySourceX.SetDefaultValue( 0.0, TRUE );
-	m_svAuxiliarySourceY.SetDefaultValue( 0.0, TRUE );
-	m_svAuxiliarySourceAngle.SetDefaultValue( 0.0, TRUE );
-	m_svAuxiliarySourceImageName.SetDefaultValue( "", TRUE );
-	m_svAuxiliaryDrawType.SetDefaultValue( "", TRUE );
+	m_svAuxiliarySourceX.SetDefaultValue( 0.0, true );
+	m_svAuxiliarySourceY.SetDefaultValue( 0.0, true );
+	m_svAuxiliarySourceAngle.SetDefaultValue( 0.0, true );
+	m_svAuxiliarySourceImageName.SetDefaultValue( _T(""), true );
+	m_svAuxiliaryDrawType.SetDefaultValue( "", true );
 
 	m_pCurrentToolSet = nullptr;
 
@@ -189,44 +185,45 @@ BOOL SVToolClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 
 	for( size_t j = 0;nullptr ==  m_pToolConditional && j < m_friendList.size(); j++ )
 	{
-		m_pToolConditional = dynamic_cast<SVConditionalClass *>(m_friendList[j].PObject);
+		m_pToolConditional = dynamic_cast<SVConditionalClass *>(m_friendList[j].m_pObject);
 	}
 
 	// Set / Reset Printable Flags
-	enabled.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE;
-	m_Passed.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	m_Failed.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	m_Warned.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	m_ExplicitFailed.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
+	enabled.SetObjectAttributesAllowed( SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
+	m_Passed.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_Failed.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_Warned.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_ExplicitFailed.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 
-	m_PassedCount.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	m_FailedCount.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	m_WarnedCount.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
+	m_PassedCount.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_FailedCount.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_WarnedCount.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 
-	m_EnabledCount.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	m_ProcessedCount.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
-	m_ToolTime.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
+	m_EnabledCount.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_ProcessedCount.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_ToolTime.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 
-	m_ExtentLeft.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE | SV_EXTENT_OBJECT;
-	m_ExtentTop.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE | SV_EXTENT_OBJECT;
-	m_ExtentRight.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
-	m_ExtentBottom.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
-	m_ExtentWidth.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_REMOTELY_SETABLE | SV_EXTENT_OBJECT | SV_SETABLE_ONLINE;
-	m_ExtentHeight.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_REMOTELY_SETABLE | SV_EXTENT_OBJECT | SV_SETABLE_ONLINE;
+	m_ExtentLeft.SetObjectAttributesAllowed( SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE | SV_EXTENT_OBJECT, SvOi::SetAttributeType::AddAttribute );
+	m_ExtentTop.SetObjectAttributesAllowed( SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE | SV_EXTENT_OBJECT, SvOi::SetAttributeType::AddAttribute );
+	m_ExtentRight.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_ExtentBottom.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_ExtentWidth.SetObjectAttributesAllowed( SV_PRINTABLE | SV_REMOTELY_SETABLE | SV_EXTENT_OBJECT | SV_SETABLE_ONLINE, SvOi::SetAttributeType::AddAttribute );
+	m_ExtentHeight.SetObjectAttributesAllowed( SV_PRINTABLE | SV_REMOTELY_SETABLE | SV_EXTENT_OBJECT | SV_SETABLE_ONLINE, SvOi::SetAttributeType::AddAttribute );
 	
 	// Defaults for the Scale Factors should be hidden (but NOT removed at this time, so 
 	// don't use hideEmbeddedObject() here).
-	m_ExtentWidthScaleFactor.ObjectAttributesAllowedRef() &=(~SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES);
-	m_ExtentHeightScaleFactor.ObjectAttributesAllowedRef() &=(~SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES);
+	m_ExtentWidthScaleFactor.SetObjectAttributesAllowed( SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute );
+	m_ExtentHeightScaleFactor.SetObjectAttributesAllowed( SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute );
 
 	// Auxiliary Tool Source Extent
-	m_svUpdateAuxiliaryExtents.ObjectAttributesAllowedRef() |= SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE;
+	m_svUpdateAuxiliaryExtents.SetObjectAttributesAllowed( SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
 	
-	drawToolFlag.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
+	drawToolFlag.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
 
 	// Tool Comment attributes...
-	m_svToolComment.ObjectAttributesAllowedRef() |= SV_PRINTABLE;
-	m_svToolComment.ObjectAttributesAllowedRef() &= ~SV_VIEWABLE;	// We do not want this to show up in the results picker.
+	m_ToolComment.setStatic( true );
+	m_ToolComment.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_ToolComment.SetObjectAttributesAllowed( SV_VIEWABLE, SvOi::SetAttributeType::RemoveAttribute );	// We do not want this to show up in the results picker.
 
 	m_isCreated = bOk;
 
@@ -247,12 +244,12 @@ bool SVToolClass::DisconnectObjectInput( SVInObjectInfoStruct* pInObjectInfo )
 
 	if( nullptr != pInObjectInfo )
 	{
-		if( pInObjectInfo->GetInputObjectInfo().PObject == m_svToolExtent.GetToolImage() )
+		if( pInObjectInfo->GetInputObjectInfo().m_pObject == m_svToolExtent.GetToolImage() )
 		{
 			m_svToolExtent.SetToolImage( nullptr );
 		}
 
-		if( pInObjectInfo->GetInputObjectInfo().PObject == m_svToolExtent.GetSelectedImage() )
+		if( pInObjectInfo->GetInputObjectInfo().m_pObject == m_svToolExtent.GetSelectedImage() )
 		{
 			m_svToolExtent.SetSelectedImage( nullptr );
 		}
@@ -263,10 +260,10 @@ bool SVToolClass::DisconnectObjectInput( SVInObjectInfoStruct* pInObjectInfo )
 
 bool SVToolClass::IsEnabled() const
 {
-	bool bEnabled = true;
+	BOOL bEnabled( true );
 	enabled.GetValue( bEnabled );
 
-	return bEnabled;
+	return bEnabled ? true : false;
 }
 
 bool SVToolClass::WasEnabled() const
@@ -346,11 +343,11 @@ void SVToolClass::UpdateAuxiliaryExtents(long resultDataIndex)
 			SVImageClass* pAuxSourceImage = GetAuxSourceImage();
 			if( nullptr != pAuxSourceImage )
 			{
-				m_svAuxiliarySourceImageName.SetValue( resultDataIndex, SVString(pAuxSourceImage->GetCompleteName()) );
+				m_svAuxiliarySourceImageName.SetValue( pAuxSourceImage->GetCompleteName(), resultDataIndex );
 			}
 
 			SVString DrawType = m_svToolExtent.GetAuxiliaryDrawTypeString();
-			m_svAuxiliaryDrawType.SetValue( resultDataIndex, DrawType );
+			m_svAuxiliaryDrawType.SetValue( DrawType, resultDataIndex );
 			
 			SVExtentPointStruct pt;
 			SVImageClass* pImage = m_svToolExtent.GetToolImage();
@@ -358,19 +355,19 @@ void SVToolClass::UpdateAuxiliaryExtents(long resultDataIndex)
 			{
 				pImage->TranslateFromOutputSpaceToImage(pAuxSourceImage, pt, pt);
 			}
-			m_svAuxiliarySourceX.SetValue( resultDataIndex, pt.m_dPositionX );
-			m_svAuxiliarySourceY.SetValue( resultDataIndex, pt.m_dPositionY );
+			m_svAuxiliarySourceX.SetValue( pt.m_dPositionX, resultDataIndex );
+			m_svAuxiliarySourceY.SetValue(  pt.m_dPositionY, resultDataIndex );
 
-			m_svAuxiliarySourceAngle.SetValue( resultDataIndex, l_svOffsetData.m_dRotationAngle );
+			m_svAuxiliarySourceAngle.SetValue( l_svOffsetData.m_dRotationAngle, resultDataIndex );
 		}
 	}
 }
 
-bool SVToolClass::Run( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVToolClass::Run( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	bool retVal = true;
 	long lCount;
-	BOOL bIsValid = FALSE;
+	BOOL bIsValid( false );
 
 	clearRunErrorMessages();
 
@@ -381,119 +378,119 @@ bool SVToolClass::Run( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVect
 		// First Set the old stuff forward for the counts
 		m_isObjectValid.GetValue( bIsValid );
 
-		m_isObjectValid.SetValue( RRunStatus.m_lResultDataIndex, bIsValid );
+		m_isObjectValid.SetValue( bIsValid, rRunStatus.m_lResultDataIndex );
 
 		m_PassedCount.GetValue( lCount );
-		m_PassedCount.SetValue( RRunStatus.m_lResultDataIndex, lCount );
+		m_PassedCount.SetValue( lCount, rRunStatus.m_lResultDataIndex );
 		m_FailedCount.GetValue( lCount );
-		m_FailedCount.SetValue( RRunStatus.m_lResultDataIndex, lCount );
+		m_FailedCount.SetValue( lCount, rRunStatus.m_lResultDataIndex );
 		m_WarnedCount.GetValue( lCount );
-		m_WarnedCount.SetValue( RRunStatus.m_lResultDataIndex, lCount );
+		m_WarnedCount.SetValue( lCount, rRunStatus.m_lResultDataIndex );
 		m_ProcessedCount.GetValue( lCount );
-		m_ProcessedCount.SetValue( RRunStatus.m_lResultDataIndex, lCount );
+		m_ProcessedCount.SetValue( lCount, rRunStatus.m_lResultDataIndex );
 		m_EnabledCount.GetValue( lCount );
-		m_EnabledCount.SetValue( RRunStatus.m_lResultDataIndex, lCount );
+		m_EnabledCount.SetValue( lCount, rRunStatus.m_lResultDataIndex );
 
 		if( IsEnabled() )
 		{
 			SVImageClassPtrSet::iterator l_oImageIter;
 
-			for( l_oImageIter = m_svImageObjectSet.begin(); l_oImageIter != m_svImageObjectSet.end(); ++l_oImageIter )
+			for( l_oImageIter = m_ImageObjectSet.begin(); l_oImageIter != m_ImageObjectSet.end(); ++l_oImageIter )
 			{
-				(*l_oImageIter)->CopyImageTo( RRunStatus.Images );
+				(*l_oImageIter)->CopyImageTo( rRunStatus.Images );
 			}
 
-			if( RRunStatus.m_UpdateCounters )
+			if( rRunStatus.m_UpdateCounters )
 			{
 				// Set Processed Count...
 				long lCount = 0;
 				m_ProcessedCount.GetValue( lCount );
-				m_ProcessedCount.SetValue( RRunStatus.m_lResultDataIndex, ++lCount );
+				m_ProcessedCount.SetValue( ++lCount, rRunStatus.m_lResultDataIndex );
 			}
 
-			retVal = __super::Run( RRunStatus, &m_RunErrorMessages );
+			retVal = __super::Run( rRunStatus, &m_RunErrorMessages );
 
 			if( retVal )
 			{
-				RRunStatus.SetValid();
+				rRunStatus.SetValid();
 			}
 			else
 			{
-				RRunStatus.SetInvalid();
+				rRunStatus.SetInvalid();
 				SetInvalid();
 			}
 		}
 		else
 		{
-			retVal = !( RRunStatus.m_UpdateCounters );
+			retVal = !( rRunStatus.m_UpdateCounters );
 
-			RRunStatus.SetDisabled();
+			rRunStatus.SetDisabled();
 			// To set disabled color for any part of this tool ( embeddeds, children, etc. )
 			SetDisabled();
 		}
 
 		// if disabled or disabled by condition
 		// leave in previous state
-		if( !RRunStatus.IsDisabled() && !RRunStatus.IsDisabledByCondition() )
+		if( !rRunStatus.IsDisabled() && !rRunStatus.IsDisabledByCondition() )
 		{
-			if( RRunStatus.m_UpdateCounters )
+			if( rRunStatus.m_UpdateCounters )
 			{
 				// Set Enabled Count...
 				long lCount = 0;
 				m_EnabledCount.GetValue( lCount );
-				m_EnabledCount.SetValue( RRunStatus.m_lResultDataIndex, ++lCount );
+				m_EnabledCount.SetValue( ++lCount, rRunStatus.m_lResultDataIndex );
 			}
 
 			// set our state according to the runStatus
-			m_Passed.SetValue( RRunStatus.m_lResultDataIndex, RRunStatus.IsPassed() );
-			m_Failed.SetValue( RRunStatus.m_lResultDataIndex, RRunStatus.IsFailed() );
-			m_ExplicitFailed.SetValue( RRunStatus.m_lResultDataIndex, RRunStatus.IsFailed() );
-			m_Warned.SetValue( RRunStatus.m_lResultDataIndex, RRunStatus.IsWarned() );
+			m_Passed.SetValue( BOOL(rRunStatus.IsPassed()), rRunStatus.m_lResultDataIndex );
+			m_Failed.SetValue( BOOL(rRunStatus.IsFailed()), rRunStatus.m_lResultDataIndex );
+			m_ExplicitFailed.SetValue( BOOL(rRunStatus.IsFailed()), rRunStatus.m_lResultDataIndex );
+			m_Warned.SetValue( BOOL(rRunStatus.IsWarned()), rRunStatus.m_lResultDataIndex );
 
-			if( RRunStatus.m_UpdateCounters )
+			if( rRunStatus.m_UpdateCounters )
 			{
 				// Set Counts...
 				lCount = 0;
-				if( RRunStatus.IsPassed() )
+				if( rRunStatus.IsPassed() )
 				{
 					m_PassedCount.GetValue( lCount );
-					m_PassedCount.SetValue( RRunStatus.m_lResultDataIndex, ++lCount );
+					m_PassedCount.SetValue( ++lCount, rRunStatus.m_lResultDataIndex );
 				}
 				lCount = 0;
-				if( RRunStatus.IsFailed() )
+				if( rRunStatus.IsFailed() )
 				{
 					m_FailedCount.GetValue( lCount );
-					m_FailedCount.SetValue( RRunStatus.m_lResultDataIndex, ++lCount );
+					m_FailedCount.SetValue( ++lCount, rRunStatus.m_lResultDataIndex );
 				}
 				lCount = 0;
-				if( RRunStatus.IsWarned() )
+				if( rRunStatus.IsWarned() )
 				{
 					m_WarnedCount.GetValue( lCount );
-					m_WarnedCount.SetValue( RRunStatus.m_lResultDataIndex, ++lCount );
+					m_WarnedCount.SetValue( ++lCount, rRunStatus.m_lResultDataIndex );
 				}
 			}
 		}
 		
 		// Get Status Color...
-		DWORD dwValue = RRunStatus.GetStatusColor();
-		m_statusColor.SetValue( RRunStatus.m_lResultDataIndex, dwValue );
+		DWORD dwValue = rRunStatus.GetStatusColor();
+		m_statusColor.SetValue( dwValue, rRunStatus.m_lResultDataIndex );
 
 		// Get Status...
-		dwValue = RRunStatus.GetState();
-		m_statusTag.SetValue( RRunStatus.m_lResultDataIndex, dwValue );
+		dwValue = rRunStatus.GetState();
+		m_statusTag.SetValue( dwValue, rRunStatus.m_lResultDataIndex );
 	}// end if
 	else
 	{
-		retVal = RunWithNewDisable( RRunStatus, &m_RunErrorMessages );
+		retVal = RunWithNewDisable( rRunStatus, &m_RunErrorMessages );
 	}// end else
 
 	//
 	if( dynamic_cast<SVInspectionProcess*>(GetInspection())->GetEnableAuxiliaryExtent() )
 	{
-		UpdateAuxiliaryExtents(RRunStatus.m_lResultDataIndex);
+		UpdateAuxiliaryExtents(rRunStatus.m_lResultDataIndex);
 	}
 	
-	m_ToolTime.Stop( RRunStatus.m_lResultDataIndex );
+	m_ToolTime.Stop( rRunStatus.m_lResultDataIndex );
 
 	if (nullptr != pErrorMessages && !m_RunErrorMessages.empty())
 	{
@@ -503,7 +500,7 @@ bool SVToolClass::Run( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVect
 	return retVal;
 }// end Run
 
-bool SVToolClass::RunWithNewDisable( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVToolClass::RunWithNewDisable( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	bool Return = true;
 	long lCount = 0;
@@ -512,110 +509,108 @@ bool SVToolClass::RunWithNewDisable( SVRunStatusClass& RRunStatus, SvStl::Messag
 
 	if( IsEnabled() )
 	{
-		SVValueObjectClassPtrSet::iterator l_oValueIter;
-
-		for( l_oValueIter = m_svValueObjectSet.begin(); l_oValueIter != m_svValueObjectSet.end(); ++l_oValueIter )
+		SvOi::IValueObjectPtrSet::iterator ValueIter( m_ValueObjectSet.begin() );
+		for( ; m_ValueObjectSet.end() != ValueIter; ++ValueIter )
 		{
-			(*l_oValueIter)->CopyLastSetValue( RRunStatus.m_lResultDataIndex );
+			(*ValueIter)->CopyLastSetValue( rRunStatus.m_lResultDataIndex );
 		}
 
-		SVImageClassPtrSet::iterator l_oImageIter;
-
-		for( l_oImageIter = m_svImageObjectSet.begin(); l_oImageIter != m_svImageObjectSet.end(); ++l_oImageIter )
+		SVImageClassPtrSet::iterator ImageIter( m_ImageObjectSet.begin() );
+		for( ; m_ImageObjectSet.end() != ImageIter ; ++ImageIter )
 		{
-			(*l_oImageIter)->CopyImageTo( RRunStatus.Images );
+			(*ImageIter)->CopyImageTo( rRunStatus.Images );
 		}
 
 		if( m_pToolConditional )
 		{
-			m_pToolConditional->onRun( RRunStatus );
+			m_pToolConditional->onRun( rRunStatus );
 		}
 
 		if( !m_pToolConditional || getConditionalResult() )
 		{
-			if( RRunStatus.m_UpdateCounters )
+			if( rRunStatus.m_UpdateCounters )
 			{
 				// Set Processed Count...
 				m_ProcessedCount.GetValue( lCount );
-				m_ProcessedCount.SetValue( RRunStatus.m_lResultDataIndex, ++lCount );
+				m_ProcessedCount.SetValue( ++lCount, rRunStatus.m_lResultDataIndex );
 			}
 
-			Return = SVTaskObjectListClass::Run( RRunStatus, pErrorMessages );
+			Return = SVTaskObjectListClass::Run( rRunStatus, pErrorMessages );
 
 			if( Return )
 			{
-				RRunStatus.SetValid();
+				rRunStatus.SetValid();
 			}
 			else
 			{
-				RRunStatus.SetInvalid();
+				rRunStatus.SetInvalid();
 				SetInvalid();
 			}// end else
 
 		}// end if
 		else
 		{
-			RRunStatus.SetDisabledByCondition();
+			rRunStatus.SetDisabledByCondition();
 			bDisabled = TRUE;
 		}// end else
 
 	}// end if
 	else
 	{
-		Return = !( RRunStatus.m_UpdateCounters );
+		Return = !( rRunStatus.m_UpdateCounters );
 		SetDisabled();
-		RRunStatus.SetDisabled();
+		rRunStatus.SetDisabled();
 		bDisabled = TRUE;
 	}// end else
 
 	// if disabled or disabled by condition
 	// leave in previous state
-	if( !bDisabled && !RRunStatus.IsDisabled() && !RRunStatus.IsDisabledByCondition() )
+	if( !bDisabled && !rRunStatus.IsDisabled() && !rRunStatus.IsDisabledByCondition() )
 	{
-		if( RRunStatus.m_UpdateCounters )
+		if( rRunStatus.m_UpdateCounters )
 		{
 			// Set Enabled Count...
 			m_EnabledCount.GetValue( lCount );
-			m_EnabledCount.SetValue( RRunStatus.m_lResultDataIndex, ++lCount );
+			m_EnabledCount.SetValue( ++lCount, rRunStatus.m_lResultDataIndex );
 		}
 
 		// set our state according to the runStatus
-		m_Passed.SetValue( RRunStatus.m_lResultDataIndex, RRunStatus.IsPassed() );
-		m_Failed.SetValue( RRunStatus.m_lResultDataIndex, RRunStatus.IsFailed() );
-		m_ExplicitFailed.SetValue( RRunStatus.m_lResultDataIndex, RRunStatus.IsFailed() );
-		m_Warned.SetValue( RRunStatus.m_lResultDataIndex, RRunStatus.IsWarned() );
+		m_Passed.SetValue( BOOL(rRunStatus.IsPassed()), rRunStatus.m_lResultDataIndex );
+		m_Failed.SetValue( BOOL(rRunStatus.IsFailed()), rRunStatus.m_lResultDataIndex );
+		m_ExplicitFailed.SetValue( BOOL(rRunStatus.IsFailed()), rRunStatus.m_lResultDataIndex );
+		m_Warned.SetValue( BOOL(rRunStatus.IsWarned()), rRunStatus.m_lResultDataIndex );
 
-		if( RRunStatus.m_UpdateCounters )
+		if( rRunStatus.m_UpdateCounters )
 		{
 			// Set Counts...
-			if( RRunStatus.IsPassed() )
+			if( rRunStatus.IsPassed() )
 			{
 				m_PassedCount.GetValue( lCount );
-				m_PassedCount.SetValue( RRunStatus.m_lResultDataIndex, ++lCount );
+				m_PassedCount.SetValue( ++lCount, rRunStatus.m_lResultDataIndex );
 				m_FailedCount.GetValue( lCount );
-				m_FailedCount.SetValue( RRunStatus.m_lResultDataIndex, lCount );
+				m_FailedCount.SetValue( lCount, rRunStatus.m_lResultDataIndex );
 				m_WarnedCount.GetValue( lCount );
-				m_WarnedCount.SetValue( RRunStatus.m_lResultDataIndex, lCount );
+				m_WarnedCount.SetValue( lCount, rRunStatus.m_lResultDataIndex );
 			}// end if
 
-			if( RRunStatus.IsFailed() )
+			if( rRunStatus.IsFailed() )
 			{
 				m_PassedCount.GetValue( lCount );
-				m_PassedCount.SetValue( RRunStatus.m_lResultDataIndex, lCount );
+				m_PassedCount.SetValue( lCount, rRunStatus.m_lResultDataIndex );
 				m_FailedCount.GetValue( lCount );
-				m_FailedCount.SetValue( RRunStatus.m_lResultDataIndex, ++lCount );
+				m_FailedCount.SetValue( ++lCount, rRunStatus.m_lResultDataIndex );
 				m_WarnedCount.GetValue( lCount );
-				m_WarnedCount.SetValue( RRunStatus.m_lResultDataIndex, lCount );
+				m_WarnedCount.SetValue( lCount, rRunStatus.m_lResultDataIndex );
 			}// end if
 
-			if( RRunStatus.IsWarned() )
+			if( rRunStatus.IsWarned() )
 			{
 				m_PassedCount.GetValue( lCount );
-				m_PassedCount.SetValue( RRunStatus.m_lResultDataIndex, lCount );
+				m_PassedCount.SetValue( lCount, rRunStatus.m_lResultDataIndex );
 				m_FailedCount.GetValue( lCount );
-				m_FailedCount.SetValue( RRunStatus.m_lResultDataIndex, lCount );
+				m_FailedCount.SetValue( lCount, rRunStatus.m_lResultDataIndex );
 				m_WarnedCount.GetValue( lCount );
-				m_WarnedCount.SetValue( RRunStatus.m_lResultDataIndex, ++lCount );
+				m_WarnedCount.SetValue( ++lCount, rRunStatus.m_lResultDataIndex );
 			}// end if
 		}
 	}// end if
@@ -623,52 +618,52 @@ bool SVToolClass::RunWithNewDisable( SVRunStatusClass& RRunStatus, SvStl::Messag
 	{
 		// Set Enabled Count...
 		m_EnabledCount.GetValue( lCount );
-		m_EnabledCount.SetValue( RRunStatus.m_lResultDataIndex, lCount );
+		m_EnabledCount.SetValue( lCount, rRunStatus.m_lResultDataIndex );
 	}// end else
 	
 	// Get Status Color...
-	DWORD dwValue = RRunStatus.GetStatusColor();
-	m_statusColor.SetValue( RRunStatus.m_lResultDataIndex, dwValue );
+	DWORD dwValue = rRunStatus.GetStatusColor();
+	m_statusColor.SetValue( dwValue, rRunStatus.m_lResultDataIndex );
 
 	// Get Status...
-	dwValue = RRunStatus.GetState();
-	m_statusTag.SetValue( RRunStatus.m_lResultDataIndex, dwValue );
+	dwValue = rRunStatus.GetState();
+	m_statusTag.SetValue( dwValue, rRunStatus.m_lResultDataIndex );
 
 	return Return;
 }// end RunWithNewDisable
 
-bool SVToolClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVToolClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
-	bool bRetVal = __super::onRun( RRunStatus, pErrorMessages );
+	bool Result = __super::onRun( rRunStatus, pErrorMessages );
 
-	if( bRetVal )
+	if( Result )
 	{
 		if( SV_NO_ATTRIBUTES != ( m_ExtentTop.ObjectAttributesAllowed() & SV_NO_ATTRIBUTES )  )
 		{
-			bRetVal = ( S_OK == m_ExtentTop.CopyLastSetValue( RRunStatus.m_lResultDataIndex ) ) && bRetVal;
+			Result = ( S_OK == m_ExtentTop.CopyLastSetValue( rRunStatus.m_lResultDataIndex ) ) && Result;
 		}
 		if( SV_NO_ATTRIBUTES != ( m_ExtentLeft.ObjectAttributesAllowed() & SV_NO_ATTRIBUTES ) )
 		{
-			bRetVal = ( S_OK == m_ExtentLeft.CopyLastSetValue( RRunStatus.m_lResultDataIndex ) ) && bRetVal;
+			Result = ( S_OK == m_ExtentLeft.CopyLastSetValue( rRunStatus.m_lResultDataIndex ) ) && Result;
 		}
 		if( SV_NO_ATTRIBUTES != ( m_ExtentWidth.ObjectAttributesAllowed() & SV_NO_ATTRIBUTES ) )
 		{
-			bRetVal = ( S_OK == m_ExtentWidth.CopyLastSetValue( RRunStatus.m_lResultDataIndex ) ) && bRetVal;
+			Result = ( S_OK == m_ExtentWidth.CopyLastSetValue( rRunStatus.m_lResultDataIndex ) ) && Result;
 		}
 		if( SV_NO_ATTRIBUTES != ( m_ExtentHeight.ObjectAttributesAllowed() & SV_NO_ATTRIBUTES ) )
 		{
-			bRetVal = ( S_OK == m_ExtentHeight.CopyLastSetValue( RRunStatus.m_lResultDataIndex ) ) && bRetVal;
+			Result = ( S_OK == m_ExtentHeight.CopyLastSetValue( rRunStatus.m_lResultDataIndex ) ) && Result;
 		}
 		if( SV_NO_ATTRIBUTES != ( m_ExtentWidthScaleFactor.ObjectAttributesAllowed() & SV_NO_ATTRIBUTES ) )
 		{
-			bRetVal = ( S_OK == m_ExtentWidthScaleFactor.CopyLastSetValue( RRunStatus.m_lResultDataIndex ) ) && bRetVal;
+			Result = ( S_OK == m_ExtentWidthScaleFactor.CopyLastSetValue( rRunStatus.m_lResultDataIndex ) ) && Result;
 		}
 		if( SV_NO_ATTRIBUTES != ( m_ExtentHeightScaleFactor.ObjectAttributesAllowed() & SV_NO_ATTRIBUTES ) )
 		{
-			bRetVal = ( S_OK == m_ExtentHeightScaleFactor.CopyLastSetValue( RRunStatus.m_lResultDataIndex ) ) && bRetVal;
+			Result = ( S_OK == m_ExtentHeightScaleFactor.CopyLastSetValue( rRunStatus.m_lResultDataIndex ) ) && Result;
 		}
 
-		if( !bRetVal )
+		if( !Result )
 		{
 			if (nullptr != pErrorMessages)
 			{
@@ -681,44 +676,44 @@ bool SVToolClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVe
 		// Check conditional execution
 		if ( !getConditionalResult() )
 		{
-			RRunStatus.SetDisabledByCondition();
+			rRunStatus.SetDisabledByCondition();
 		}
 	}
 
-	return bRetVal;
+	return Result;
 }
 
 bool SVToolClass::getConditionalResult() const
 {
-	bool value = false;
+	BOOL Value( false );
 	SVBoolValueObjectClass* pBoolObject;
 
 	if( inputConditionBoolObjectInfo.IsConnected() &&
-		inputConditionBoolObjectInfo.GetInputObjectInfo().PObject )
+		inputConditionBoolObjectInfo.GetInputObjectInfo().m_pObject )
 	{
-		pBoolObject = ( SVBoolValueObjectClass* )inputConditionBoolObjectInfo.GetInputObjectInfo().PObject;
-		pBoolObject->GetValue( value );
+		pBoolObject = ( SVBoolValueObjectClass* )inputConditionBoolObjectInfo.GetInputObjectInfo().m_pObject;
+		pBoolObject->GetValue( Value );
 	}
-	return value;
+	return Value ? true : false;
 }
 
-bool SVToolClass::getConditionalResult(long p_lIndex) const
+bool SVToolClass::getConditionalResult(long Index) const
 {
-	bool value = false;
+	BOOL Value( false );
 	SVBoolValueObjectClass* pBoolObject;
 
 	if( inputConditionBoolObjectInfo.IsConnected() &&
-		inputConditionBoolObjectInfo.GetInputObjectInfo().PObject )
+		inputConditionBoolObjectInfo.GetInputObjectInfo().m_pObject )
 	{
-		pBoolObject = ( SVBoolValueObjectClass* )inputConditionBoolObjectInfo.GetInputObjectInfo().PObject;
-		pBoolObject->GetValue( p_lIndex, value );
+		pBoolObject = ( SVBoolValueObjectClass* )inputConditionBoolObjectInfo.GetInputObjectInfo().m_pObject;
+		pBoolObject->GetValue( Value, Index );
 	}
-	return value;
+	return Value ? true : false;
 }
 
-HRESULT SVToolClass::SetImageExtentProperty( SVExtentPropertyEnum p_eProperty, SVValueObjectClass *p_psvValue )
+HRESULT SVToolClass::SetImageExtentProperty( SVExtentPropertyEnum p_eProperty, SvOi::IValueObject* pValueObject )
 {
-	return m_svToolExtent.SetExtentObject( p_eProperty, p_psvValue );
+	return m_svToolExtent.SetExtentObject( p_eProperty, pValueObject );
 }
 
 HRESULT SVToolClass::GetRootOffsetData( SVExtentOffsetStruct& p_rsvOffsetData )
@@ -744,49 +739,43 @@ HRESULT SVToolClass::TranslatePointToSource( SVExtentPointStruct p_svIn, SVExten
 
 HRESULT SVToolClass::EnableAuxiliaryExtents( bool p_bEnable )
 {
-	HRESULT l_hr = S_OK;
-
-	DWORD l_dwAttributes = SV_VIEWABLE
-							| SV_ARCHIVABLE
-							| SV_SELECTABLE_FOR_EQUATION
-							| SV_SELECTABLE_FOR_STATISTICS
-							| SV_PUBLISHABLE;
+	const UINT cAttributes = SV_VIEWABLE | SV_ARCHIVABLE | SV_SELECTABLE_FOR_EQUATION | SV_SELECTABLE_FOR_STATISTICS | SV_PUBLISHABLE;
 
 	if( p_bEnable )
 	{
-		m_svAuxiliarySourceX.ObjectAttributesAllowedRef() |= l_dwAttributes;
-		m_svAuxiliarySourceY.ObjectAttributesAllowedRef() |= l_dwAttributes;
-		m_svAuxiliarySourceAngle.ObjectAttributesAllowedRef() |= l_dwAttributes;
-		m_svAuxiliaryDrawType.ObjectAttributesAllowedRef() |= l_dwAttributes;
-		m_svAuxiliarySourceImageName.ObjectAttributesAllowedRef() |= l_dwAttributes;
+		m_svAuxiliarySourceX.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
+		m_svAuxiliarySourceY.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
+		m_svAuxiliarySourceAngle.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
+		m_svAuxiliaryDrawType.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
+		m_svAuxiliarySourceImageName.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 
-		SvUl::SetBits( m_svAuxiliarySourceX.ObjectAttributesAllowedRef(), SV_HIDDEN, false );
-		SvUl::SetBits( m_svAuxiliarySourceY.ObjectAttributesAllowedRef(), SV_HIDDEN, false );
-		SvUl::SetBits( m_svAuxiliarySourceAngle.ObjectAttributesAllowedRef(), SV_HIDDEN, false );
-		SvUl::SetBits( m_svAuxiliaryDrawType.ObjectAttributesAllowedRef(), SV_HIDDEN, false );
-		SvUl::SetBits( m_svAuxiliarySourceImageName.ObjectAttributesAllowedRef(), SV_HIDDEN, false );
+		m_svAuxiliarySourceX.SetObjectAttributesAllowed( SV_HIDDEN, SvOi::SetAttributeType::RemoveAttribute );
+		m_svAuxiliarySourceY.SetObjectAttributesAllowed( SV_HIDDEN, SvOi::SetAttributeType::RemoveAttribute );
+		m_svAuxiliarySourceAngle.SetObjectAttributesAllowed( SV_HIDDEN, SvOi::SetAttributeType::RemoveAttribute );
+		m_svAuxiliaryDrawType.SetObjectAttributesAllowed( SV_HIDDEN, SvOi::SetAttributeType::RemoveAttribute );
+		m_svAuxiliarySourceImageName.SetObjectAttributesAllowed( SV_HIDDEN, SvOi::SetAttributeType::RemoveAttribute );
 	}
 	else
 	{
-		m_svAuxiliarySourceX.ObjectAttributesAllowedRef() &= ~l_dwAttributes;
-		m_svAuxiliarySourceY.ObjectAttributesAllowedRef() &= ~l_dwAttributes;
-		m_svAuxiliarySourceAngle.ObjectAttributesAllowedRef() &= ~l_dwAttributes;
-		m_svAuxiliaryDrawType.ObjectAttributesAllowedRef() &= ~l_dwAttributes;
-		m_svAuxiliarySourceImageName.ObjectAttributesAllowedRef() &= ~l_dwAttributes;
+		m_svAuxiliarySourceX.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::RemoveAttribute );
+		m_svAuxiliarySourceY.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::RemoveAttribute );
+		m_svAuxiliarySourceAngle.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::RemoveAttribute );
+		m_svAuxiliaryDrawType.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::RemoveAttribute );
+		m_svAuxiliarySourceImageName.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::RemoveAttribute );
 
-		m_svAuxiliarySourceX.ObjectAttributesSetRef() &= (UINT)~l_dwAttributes;
-		m_svAuxiliarySourceY.ObjectAttributesSetRef() &= (UINT)~l_dwAttributes;
-		m_svAuxiliarySourceAngle.ObjectAttributesSetRef() &= (UINT)~l_dwAttributes;
-		m_svAuxiliaryDrawType.ObjectAttributesSetRef() &= (UINT)~l_dwAttributes;
-		m_svAuxiliarySourceImageName.ObjectAttributesSetRef() &= (UINT)~l_dwAttributes;
+		m_svAuxiliarySourceX.SetObjectAttributesSet( cAttributes, SvOi::SetAttributeType::RemoveAttribute );;
+		m_svAuxiliarySourceY.SetObjectAttributesSet( cAttributes, SvOi::SetAttributeType::RemoveAttribute );
+		m_svAuxiliarySourceAngle.SetObjectAttributesSet( cAttributes, SvOi::SetAttributeType::RemoveAttribute );
+		m_svAuxiliaryDrawType.SetObjectAttributesSet( cAttributes, SvOi::SetAttributeType::RemoveAttribute );
+		m_svAuxiliarySourceImageName.SetObjectAttributesSet( cAttributes, SvOi::SetAttributeType::RemoveAttribute );
 
-		SvUl::SetBits( m_svAuxiliarySourceX.ObjectAttributesAllowedRef(), SV_HIDDEN, true );
-		SvUl::SetBits( m_svAuxiliarySourceY.ObjectAttributesAllowedRef(), SV_HIDDEN, true );
-		SvUl::SetBits( m_svAuxiliarySourceAngle.ObjectAttributesAllowedRef(), SV_HIDDEN, true );
-		SvUl::SetBits( m_svAuxiliaryDrawType.ObjectAttributesAllowedRef(), SV_HIDDEN, true );
-		SvUl::SetBits( m_svAuxiliarySourceImageName.ObjectAttributesAllowedRef(), SV_HIDDEN, true );
+		m_svAuxiliarySourceX.SetObjectAttributesAllowed( SV_HIDDEN, SvOi::SetAttributeType::AddAttribute );
+		m_svAuxiliarySourceY.SetObjectAttributesAllowed( SV_HIDDEN, SvOi::SetAttributeType::AddAttribute );
+		m_svAuxiliarySourceAngle.SetObjectAttributesAllowed( SV_HIDDEN, SvOi::SetAttributeType::AddAttribute );
+		m_svAuxiliaryDrawType.SetObjectAttributesAllowed( SV_HIDDEN, SvOi::SetAttributeType::AddAttribute );
+		m_svAuxiliarySourceImageName.SetObjectAttributesAllowed( SV_HIDDEN, SvOi::SetAttributeType::AddAttribute );
 	}
-	return l_hr;
+	return S_OK;
 }
 
 bool SVToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
@@ -815,37 +804,23 @@ bool SVToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	}
 
 	// Auxiliary Extents
-	double l_dValue = 0;
+	BOOL bValue( false );
+	const UINT cAttributes = SV_VIEWABLE | SV_ARCHIVABLE | SV_SELECTABLE_FOR_EQUATION | SV_SELECTABLE_FOR_STATISTICS | SV_PUBLISHABLE;
 	
 	if( dynamic_cast<SVInspectionProcess*>(GetInspection())->GetEnableAuxiliaryExtent() )
 	{
-		m_svUpdateAuxiliaryExtents.ObjectAttributesAllowedRef() |=  SV_VIEWABLE 
-			| SV_ARCHIVABLE
-			| SV_SELECTABLE_FOR_EQUATION
-			| SV_SELECTABLE_FOR_STATISTICS 
-			| SV_PUBLISHABLE;
-		m_svUpdateAuxiliaryExtents.GetValue( l_dValue );
-
-		SvUl::SetBits( m_svUpdateAuxiliaryExtents.ObjectAttributesAllowedRef(), SV_HIDDEN, false );
+		m_svUpdateAuxiliaryExtents.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
+		m_svUpdateAuxiliaryExtents.SetObjectAttributesAllowed( SV_HIDDEN, SvOi::SetAttributeType::RemoveAttribute );
+		m_svUpdateAuxiliaryExtents.GetValue( bValue );
 	}
 	else
 	{
-		m_svUpdateAuxiliaryExtents.ObjectAttributesAllowedRef() &= ~( SV_VIEWABLE 
-			| SV_ARCHIVABLE
-			| SV_SELECTABLE_FOR_EQUATION
-			| SV_SELECTABLE_FOR_STATISTICS 
-			| SV_PUBLISHABLE);
-
-		m_svUpdateAuxiliaryExtents.ObjectAttributesSetRef() &= ~( SV_VIEWABLE 
-			| SV_ARCHIVABLE
-			| SV_SELECTABLE_FOR_EQUATION
-			| SV_SELECTABLE_FOR_STATISTICS 
-			| SV_PUBLISHABLE);
-
-		SvUl::SetBits( m_svUpdateAuxiliaryExtents.ObjectAttributesAllowedRef(), SV_HIDDEN, true );
+		m_svUpdateAuxiliaryExtents.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::RemoveAttribute );
+		m_svUpdateAuxiliaryExtents.SetObjectAttributesAllowed( SV_HIDDEN, SvOi::SetAttributeType::AddAttribute );
+		m_svUpdateAuxiliaryExtents.SetObjectAttributesSet( cAttributes, SvOi::SetAttributeType::RemoveAttribute );
 	}
 
-	EnableAuxiliaryExtents( l_dValue > 0 );
+	EnableAuxiliaryExtents( bValue ? true : false );
 
 	return Result;
 }
@@ -864,14 +839,14 @@ void SVToolClass::UpdateBottomAndRight()
 			{
 				long l_lValue = static_cast<long>(l_svFigure.m_svBottomRight.m_dPositionX);
 
-				m_ExtentRight.SetValue( 1, l_lValue );
+				m_ExtentRight.SetValue( l_lValue, 1 );
 			}
 
 			if( SV_NO_ATTRIBUTES != m_ExtentBottom.ObjectAttributesAllowed() )
 			{
 				long l_lValue = static_cast<long>(l_svFigure.m_svBottomRight.m_dPositionY);
 
-				m_ExtentBottom.SetValue( 1, l_lValue );
+				m_ExtentBottom.SetValue( l_lValue, 1 );
 			}
 		}
 	}
@@ -1028,7 +1003,7 @@ HRESULT SVToolClass::UpdateOverlayIDs( SVExtentMultiLineStruct& p_rMultiLine )
 	return l_Status;
 }
 
-HRESULT SVToolClass::CollectOverlays( SVImageClass *p_Image, SVExtentMultiLineStructCArray &p_MultiLineArray )
+HRESULT SVToolClass::CollectOverlays( SVImageClass *p_Image, SVExtentMultiLineStructVector &p_MultiLineArray )
 {
 	HRESULT l_Status = S_OK;
 
@@ -1057,17 +1032,17 @@ void SVToolClass::UpdateTaskObjectOutputListAttributes( SVObjectReference refTar
 	int nCount = static_cast<int>(vecObjects.size());
 	for (int i = 0; i < nCount; i++)
 	{
-		SVObjectReference ref = vecObjects.at(i);
+		SVObjectReference ObjectRef = vecObjects.at(i);
 		
 		// Clear the existing bit
-		ref.ObjectAttributesSetRef() &= ~uAttributes;
+		ObjectRef.SetObjectAttributesSet( uAttributes, SvOi::SetAttributeType::RemoveAttribute );
 		
 		// Compare and set the attribute set if a match.
-		if ( ref == refTarget )
+		if ( ObjectRef == refTarget )
 		{
-			if ( ref.ObjectAttributesAllowed() & uAttributes )
+			if ( ObjectRef.ObjectAttributesAllowed() & uAttributes )
 			{
-				ref.ObjectAttributesSetRef() |= uAttributes;
+				ObjectRef.SetObjectAttributesSet( uAttributes, SvOi::SetAttributeType::AddAttribute);
 			}
 		}
 	}
@@ -1104,9 +1079,9 @@ HRESULT SVToolClass::GetSourceImages( SVImageListClass* p_psvImageList ) const
 SVImageClass* SVToolClass::GetAuxSourceImage() const
 {
 	SVImageClass* l_pImage = nullptr;
-	if( m_AuxSourceImageObjectInfo.IsConnected() && m_AuxSourceImageObjectInfo.GetInputObjectInfo().PObject )
+	if( m_AuxSourceImageObjectInfo.IsConnected() && m_AuxSourceImageObjectInfo.GetInputObjectInfo().m_pObject )
 	{
-		l_pImage = static_cast<SVImageClass*>(m_AuxSourceImageObjectInfo.GetInputObjectInfo().PObject);
+		l_pImage = static_cast<SVImageClass*>(m_AuxSourceImageObjectInfo.GetInputObjectInfo().m_pObject);
 	}
 	return l_pImage;
 }
@@ -1243,7 +1218,7 @@ long SVToolClass::getToolPosition() const
 };
 #pragma endregion ITool methods
 
-SVStaticStringValueObjectClass* SVToolClass::GetInputImageNames( )
+SVStringValueObjectClass* SVToolClass::GetInputImageNames( )
 {
 	return nullptr;
 }
@@ -1251,11 +1226,11 @@ SVStaticStringValueObjectClass* SVToolClass::GetInputImageNames( )
 
 bool SVToolClass::SetFirstInputImageName( LPCTSTR FirstName )
 {
-	SVStaticStringValueObjectClass* lstrVO = GetInputImageNames();
+	SVStringValueObjectClass* lstrVO = GetInputImageNames();
 
 	if( lstrVO )
 	{
-		lstrVO->SetValue( 0/*Static value, this parameter will not used*/, FirstName);
+		lstrVO->SetValue( FirstName, 0 );
 		return true;
 	}
 	return false;
@@ -1263,9 +1238,9 @@ bool SVToolClass::SetFirstInputImageName( LPCTSTR FirstName )
 
 
 
-SVValueObjectClass* SVToolClass::GetToolComment()
+SVObjectClass* SVToolClass::GetToolComment()
 {
-	return &m_svToolComment;
+	return &m_ToolComment;
 }
 
 bool SVToolClass::createAllObjectsFromChild( SVObjectClass& rChildObject )
@@ -1385,8 +1360,7 @@ bool SVToolClass::IsAllowedLocation(const SVExtentLocationPropertyEnum Location 
 
 bool SVToolClass::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) const
 {
-	if( inputConditionBoolObjectInfo.IsConnected() &&
-		inputConditionBoolObjectInfo.GetInputObjectInfo().PObject )
+	if( inputConditionBoolObjectInfo.IsConnected() && inputConditionBoolObjectInfo.GetInputObjectInfo().m_pObject )
 	{
 		return true;
 	}

@@ -28,7 +28,7 @@ SVImageArithmeticClass::SVImageArithmeticClass( SVObjectClass* POwner, int Strin
 {
 
 	// Identify yourself
-	m_outObjectInfo.ObjectTypeInfo.ObjectType = SVImageArithmeticObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVImageArithmeticObjectType;
 
 	// Identify our input type needs...
 
@@ -92,7 +92,7 @@ BOOL SVImageArithmeticClass::CreateObject( SVObjectLevelCreateStruct* PCreateStr
 	bOk &= ( S_OK == outputImageObject.InitializeImage( getInputImageA() ) );
 
 	// Reset Printable flag
-	outputImageObject.ObjectAttributesAllowedRef() &= ~SV_PRINTABLE;
+	outputImageObject.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 
 	m_isCreated = bOk;
 
@@ -143,56 +143,56 @@ HRESULT SVImageArithmeticClass::IsInputImage( SVImageClass *p_psvImage )
 
 SVImageClass* SVImageArithmeticClass::getInputImageA() const
 {
-	if( inputImageAInfo.IsConnected() && inputImageAInfo.GetInputObjectInfo().PObject )
-		return ( SVImageClass* ) inputImageAInfo.GetInputObjectInfo().PObject;
+	if( inputImageAInfo.IsConnected() && inputImageAInfo.GetInputObjectInfo().m_pObject )
+		return ( SVImageClass* ) inputImageAInfo.GetInputObjectInfo().m_pObject;
 
 	return nullptr;
 }
 
 SVBoolValueObjectClass* SVImageArithmeticClass::getInputEnableOffsetA() const
 {
-	if( inputEnableOffsetAInfo.IsConnected() && inputEnableOffsetAInfo.GetInputObjectInfo().PObject )
-		return ( SVBoolValueObjectClass* ) inputEnableOffsetAInfo.GetInputObjectInfo().PObject;
+	if( inputEnableOffsetAInfo.IsConnected() && inputEnableOffsetAInfo.GetInputObjectInfo().m_pObject )
+		return ( SVBoolValueObjectClass* ) inputEnableOffsetAInfo.GetInputObjectInfo().m_pObject;
 
 	return nullptr;
 }
 
 SVPointValueObjectClass* SVImageArithmeticClass::getInputOffsetAPoint() const
 {
-	if( inputOffsetAPointInfo.IsConnected() && inputOffsetAPointInfo.GetInputObjectInfo().PObject )
-		return ( SVPointValueObjectClass* ) inputOffsetAPointInfo.GetInputObjectInfo().PObject;
+	if( inputOffsetAPointInfo.IsConnected() && inputOffsetAPointInfo.GetInputObjectInfo().m_pObject )
+		return ( SVPointValueObjectClass* ) inputOffsetAPointInfo.GetInputObjectInfo().m_pObject;
 
 	return nullptr;
 }
 
 SVImageClass* SVImageArithmeticClass::getInputImageB() const
 {
-	if( inputImageBInfo.IsConnected() && inputImageBInfo.GetInputObjectInfo().PObject )
-		return ( SVImageClass* ) inputImageBInfo.GetInputObjectInfo().PObject;
+	if( inputImageBInfo.IsConnected() && inputImageBInfo.GetInputObjectInfo().m_pObject )
+		return ( SVImageClass* ) inputImageBInfo.GetInputObjectInfo().m_pObject;
 
 	return nullptr;
 }
 
 SVBoolValueObjectClass* SVImageArithmeticClass::getInputEnableOffsetB() const
 {
-	if( inputEnableOffsetBInfo.IsConnected() && inputEnableOffsetBInfo.GetInputObjectInfo().PObject )
-		return ( SVBoolValueObjectClass* ) inputEnableOffsetBInfo.GetInputObjectInfo().PObject;
+	if( inputEnableOffsetBInfo.IsConnected() && inputEnableOffsetBInfo.GetInputObjectInfo().m_pObject )
+		return ( SVBoolValueObjectClass* ) inputEnableOffsetBInfo.GetInputObjectInfo().m_pObject;
 
 	return nullptr;
 }
 
 SVPointValueObjectClass* SVImageArithmeticClass::getInputOffsetBPoint() const
 {
-	if( inputOffsetBPointInfo.IsConnected() && inputOffsetBPointInfo.GetInputObjectInfo().PObject )
-		return ( SVPointValueObjectClass* ) inputOffsetBPointInfo.GetInputObjectInfo().PObject;
+	if( inputOffsetBPointInfo.IsConnected() && inputOffsetBPointInfo.GetInputObjectInfo().m_pObject )
+		return ( SVPointValueObjectClass* ) inputOffsetBPointInfo.GetInputObjectInfo().m_pObject;
 
 	return nullptr;
 }
 
 SVLongValueObjectClass* SVImageArithmeticClass::getInputArithOperator() const
 {
-	if( inputArithOperatorInfo.IsConnected() && inputArithOperatorInfo.GetInputObjectInfo().PObject )
-		return ( SVLongValueObjectClass* ) inputArithOperatorInfo.GetInputObjectInfo().PObject;
+	if( inputArithOperatorInfo.IsConnected() && inputArithOperatorInfo.GetInputObjectInfo().m_pObject )
+		return ( SVLongValueObjectClass* ) inputArithOperatorInfo.GetInputObjectInfo().m_pObject;
 
 	return nullptr;
 }
@@ -202,11 +202,11 @@ SVImageClass* SVImageArithmeticClass::getOutputImage()
 	return &outputImageObject;
 }
 
-bool SVImageArithmeticClass::onRun( SVRunStatusClass& RRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVImageArithmeticClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	// All inputs and outputs must be validated first
 	//@WARNING[MZA][7.50][17.01.2017] Not sure if we need to check ValidateLocal in Run-mode, maybe it is enough to check it in ResetObject
-	bool Return = SVTaskObjectClass::onRun(RRunStatus) && ValidateLocal(pErrorMessages);
+	bool Return = SVTaskObjectClass::onRun(rRunStatus) && ValidateLocal(pErrorMessages);
 	if (Return)
 	{
 		SVImageClass*			 pImageA		= getInputImageA();
@@ -226,7 +226,7 @@ bool SVImageArithmeticClass::onRun( SVRunStatusClass& RRunStatus, SvStl::Message
 		SVImageClass*            pOutputImage   = getOutputImage();
 		ASSERT( pOutputImage );
 
-		if ( ! pOutputImage->SetImageHandleIndex( RRunStatus.Images ) )
+		if ( ! pOutputImage->SetImageHandleIndex( rRunStatus.Images ) )
 		{
 			if (nullptr != pErrorMessages)
 			{
@@ -234,7 +234,7 @@ bool SVImageArithmeticClass::onRun( SVRunStatusClass& RRunStatus, SvStl::Message
 				pErrorMessages->push_back(Msg);
 			}
 			SetInvalid();
-			RRunStatus.SetInvalid();
+			rRunStatus.SetInvalid();
 			return false;
 		}
 
@@ -247,11 +247,11 @@ bool SVImageArithmeticClass::onRun( SVRunStatusClass& RRunStatus, SvStl::Message
 				pErrorMessages->push_back(Msg);
 			}
 			SetInvalid();
-			RRunStatus.SetInvalid();
+			rRunStatus.SetInvalid();
 			return false;
 		}
 
-		POINT offsetA;
+		SVPOINT offsetA;
 		if( S_OK != pOffsetAPoint->GetValue( offsetA ) )
 		{
 			if (nullptr != pErrorMessages)
@@ -260,7 +260,7 @@ bool SVImageArithmeticClass::onRun( SVRunStatusClass& RRunStatus, SvStl::Message
 				pErrorMessages->push_back(Msg);
 			}
 			SetInvalid();
-			RRunStatus.SetInvalid();
+			rRunStatus.SetInvalid();
 			return false;
 		}
 
@@ -273,11 +273,11 @@ bool SVImageArithmeticClass::onRun( SVRunStatusClass& RRunStatus, SvStl::Message
 				pErrorMessages->push_back(Msg);
 			}
 			SetInvalid();
-			RRunStatus.SetInvalid();
+			rRunStatus.SetInvalid();
 			return false;
 		}
 
-		POINT offsetB;
+		SVPOINT offsetB;
 		if( S_OK != pOffsetBPoint->GetValue( offsetB ) )
 		{
 			if (nullptr != pErrorMessages)
@@ -286,7 +286,7 @@ bool SVImageArithmeticClass::onRun( SVRunStatusClass& RRunStatus, SvStl::Message
 				pErrorMessages->push_back(Msg);
 			}
 			SetInvalid();
-			RRunStatus.SetInvalid();
+			rRunStatus.SetInvalid();
 			return false;
 		}
 
@@ -299,7 +299,7 @@ bool SVImageArithmeticClass::onRun( SVRunStatusClass& RRunStatus, SvStl::Message
 				pErrorMessages->push_back(Msg);
 			}
 			SetInvalid();
-			RRunStatus.SetInvalid();
+			rRunStatus.SetInvalid();
 			return false;
 		}
 
@@ -508,21 +508,21 @@ void SVImageArithmeticClass::ScaleWithAveraging( SVImageClass* pInputImage, SVIm
 HRESULT SVImageArithmeticClass::CollectInputImageNames( )
 {
 	HRESULT l_hr = S_FALSE;
-	SVImageClass* l_pInputImage = getInputImageA();
 	SVImageToolClass* pTool = dynamic_cast<SVImageToolClass*>(GetTool());
 	if (nullptr != pTool)
 	{
-		SVStaticStringValueObjectClass* imageNames = pTool->GetInputImageNames();
-		if( l_pInputImage && nullptr != imageNames )
+		SVImageClass* pInputImage = getInputImageA();
+		SVStringValueObjectClass* pImageNames = pTool->GetInputImageNames();
+		if( nullptr != pInputImage && nullptr != pImageNames )
 		{
-			imageNames->SetValue( 0/*Static value, this parameter will not used*/, 0, l_pInputImage->GetCompleteName() );
+			pImageNames->SetValue( pInputImage->GetCompleteName(), 0, 0 );
 			l_hr = S_OK;
 		}
 
-		l_pInputImage = getInputImageB();
-		if( l_pInputImage && nullptr != imageNames)
+		pInputImage = getInputImageB();
+		if( nullptr != pInputImage && nullptr != pImageNames)
 		{
-			imageNames->SetValue( 0/*Static value, this parameter will not used*/, 1, l_pInputImage->GetCompleteName() );
+			pImageNames->SetValue( pInputImage->GetCompleteName(), 0, 1 );
 		}
 	}
 	return l_hr;

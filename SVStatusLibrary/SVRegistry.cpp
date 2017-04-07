@@ -311,7 +311,7 @@ BOOL SVRegistryClass::SetRegistryValue( LPCTSTR szValueName, DWORD dwValue )
 	return FALSE;
 }
 
-BOOL SVRegistryClass::GetRegistryValue( LPCTSTR szValueName, SVByteArray& baValue)
+BOOL SVRegistryClass::GetRegistryValue( LPCTSTR szValueName, SVByteVector& baValue)
 {
 	DWORD dwType = 0L, dwSize = 0L;
 
@@ -340,7 +340,7 @@ BOOL SVRegistryClass::GetRegistryValue( LPCTSTR szValueName, SVByteArray& baValu
 	return FALSE;
 }
 
-BOOL SVRegistryClass::SetRegistryValue( LPCTSTR szValueName, SVByteArray& baValue )
+BOOL SVRegistryClass::SetRegistryValue( LPCTSTR szValueName, SVByteVector& baValue )
 {
 	DWORD dwType = 0L;
 	DWORD dwSize = 0L;
@@ -367,7 +367,7 @@ BOOL SVRegistryClass::SetRegistryValue( LPCTSTR szValueName, SVByteArray& baValu
 	return FALSE;
 }
 
-BOOL SVRegistryClass::SetRegistryValue( LPCTSTR szValueName, SVByteArray& baValue, DWORD dwType, DWORD dwLength )
+BOOL SVRegistryClass::SetRegistryValue( LPCTSTR szValueName, SVByteVector& baValue, DWORD dwType, DWORD dwLength )
 {
 	LONG lResult;
 
@@ -601,7 +601,7 @@ BOOL SVRegistryClass::ImportKeys(FILE * pFile)
 {
 	BOOL rc = TRUE;
 	SVString szName;
-	SVByteArray baValue;
+	SVByteVector baValue;
 	DWORD dwType;
 	int iResult;
 
@@ -641,7 +641,7 @@ BOOL SVRegistryClass::ImportKeys(FILE * pFile)
 	return rc;
 }
 
-int SVRegistryClass::GetImportString(FILE * pFile, SVString& rName, SVByteArray & baValue, DWORD * pdwType)
+int SVRegistryClass::GetImportString(FILE * pFile, SVString& rName, SVByteVector & baValue, DWORD * pdwType)
 {
 	TCHAR tBuffer;
 	int i;

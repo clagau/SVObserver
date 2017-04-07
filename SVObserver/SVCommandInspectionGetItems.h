@@ -21,7 +21,6 @@
 #pragma endregion Includes
 
 class SVObjectReference;
-class SVValueObjectReference;
 
 struct SVCommandInspectionGetItems
 {
@@ -41,7 +40,7 @@ struct SVCommandInspectionGetItems
 
 protected:
 	HRESULT UpdateResultsWithImageData(const SVString& rItemName, const SVObjectReference& rImageRef, unsigned long TriggerCount);
-	HRESULT UpdateResultsWithValueData(const SVString& rItemName, const SVValueObjectReference& rValueRef, unsigned long TriggerCount);
+	HRESULT UpdateResultsWithValueData(const SVString& rItemName, const SVObjectReference& rValueRef, unsigned long TriggerCount);
 	HRESULT UpdateResultsWithErrorData(const SVString& rItemName, HRESULT errorStatus, unsigned long TriggerCount);
 
 private:

@@ -28,7 +28,6 @@
 #include "SVUtilityLibrary/SVSharedPtr.h"
 #include "SVUtilityLibrary/SVString.h"
 #include "SVLibrary/SVIOEntryHostStruct.h"
-#include "SVValueObjectLibrary/SVValueObjectReference.h"
 #include "SVRunControlLibrary/ProductWorkloadInformation.h" 
 #include "TriggerInformation/SVTriggerObject.h"
 #include "TriggerInformation/SVTriggerInfoStruct.h"
@@ -57,7 +56,6 @@ class SVPPQObject;
 class SVImageClass;
 class SVVirtualCamera;
 class SVInspectionProcess;
-class SVValueObjectClass;
 class SVObjectClass;
 
 struct SVIOEntryStruct 
@@ -340,19 +338,19 @@ struct SVRemoveSubjectStruct
 struct SVInputRequestInfoStruct
 {
 	SVInputRequestInfoStruct();
-	SVInputRequestInfoStruct( const SVValueObjectReference& p_rValueObject, const _variant_t& p_rValue );
+	SVInputRequestInfoStruct( const SVObjectReference& rValueObject, const _variant_t& rValue );
 	virtual ~SVInputRequestInfoStruct();
 
 	void Reset();
 	void Init();
 
-  SVValueObjectReference refValueObject;
+	SVObjectReference m_ValueObjectRef;
 	_variant_t m_Value;
 
 private:
-	SVInputRequestInfoStruct( const SVInputRequestInfoStruct& p_rsvObject );
+	SVInputRequestInfoStruct( const SVInputRequestInfoStruct& rObject );
 
-	const SVInputRequestInfoStruct& operator=( const SVInputRequestInfoStruct& p_rsvObject );
+	const SVInputRequestInfoStruct& operator=( const SVInputRequestInfoStruct& rObject );
 
 };
 
@@ -395,8 +393,6 @@ struct SVOutputRequestInfoStruct
 	void *pOwner;
 	LPSVFINISHPROC pCallback;
 };
-
-typedef SVVector< SVOutputRequestInfoStruct*, SVOutputRequestInfoStruct* > SVOutputRequestInfoStructArray;
 
 struct SVProductInfoRequestStruct
 {
