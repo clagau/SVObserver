@@ -53,9 +53,6 @@
     <ClCompile Include="SVMatroxBufferCreateStruct.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVMatroxBufferFacade.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVMatroxBufferInterface.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -185,9 +182,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVMatroxBufferCreateStruct.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVMatroxBufferFacade.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVMatroxBufferInterface.h">

@@ -147,7 +147,6 @@
     </ClCompile>
     <ClCompile Include="SVMatroxBufferCreateStruct.cpp">
     </ClCompile>
-    <ClCompile Include="SVMatroxBufferFacade.cpp" />
     <ClCompile Include="SVMatroxBufferInterface.cpp" />
     <ClCompile Include="SVMatroxBufferTemplate.cpp" />
     <ClCompile Include="SVMatroxCommandDataImage.cpp" />
@@ -193,7 +192,6 @@
     <ClInclude Include="SVMatroxBufferCreateExtStruct.h" />
     <ClInclude Include="SVMatroxBufferCreateLineStruct.h" />
     <ClInclude Include="SVMatroxBufferCreateStruct.h" />
-    <ClInclude Include="SVMatroxBufferFacade.h" />
     <ClInclude Include="SVMatroxBufferInterface.h" />
     <ClInclude Include="SVMatroxBufferTemplate.h" />
     <ClInclude Include="SVMatroxCommandDataImage.h" />

@@ -8,32 +8,41 @@
 //* .Current Version : $Revision:   1.0  $
 //* .Check In Date   : $Date:   22 Apr 2013 15:02:28  $
 //******************************************************************************
-
 #pragma once
 
 #pragma region Includes
 #include "SVUtilityLibrary/SVString.h"
-#include "SVMatroxBufferFacade.h"
+#include "SVUtilityLibrary/SVSharedPtr.h"
+#include "SVMatroxTypedefs.h"
 #pragma endregion Includes
 
-class SVMatroxBufferTemplate : public SVMatroxBufferFacade
+class SVMatroxBufferTemplate
 {
 public:
+	friend class SVMatroxDisplayBuffer;
 	friend class SVMatroxDisplayInterface;
 
 	virtual ~SVMatroxBufferTemplate();
 
-	virtual bool empty() const override;
+	bool empty() const { return (m_Identifier == 0); };
+	SVMatroxIdentifier GetIdentifier() const { return m_Identifier; };
 
 protected:
 	SVMatroxBufferTemplate();
 	SVMatroxBufferTemplate( SVMatroxIdentifier p_Identifier, const SVString& p_rCreatorName );
 
-	virtual SVMatroxIdentifier GetIdentifier() const override;
+	// Do not implement this method
+	SVMatroxBufferTemplate(const SVMatroxBufferTemplate& p_rObject) = delete;
 
-	SVMatroxIdentifier m_StartIdentifier;
+	// Do not implement this method
+	const SVMatroxBufferTemplate& operator=(const SVMatroxBufferTemplate& p_rObject) = delete;
+
+	virtual void freeBuffer();
+
+private:
 	SVMatroxIdentifier m_Identifier;
 	SVString m_CreatorName;
-
 };
+
+typedef SVSharedPtr< SVMatroxBufferTemplate > SVMatroxBufferPtr;
 

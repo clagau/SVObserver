@@ -23,29 +23,26 @@ SVMatroxImageChildBuffer::SVMatroxImageChildBuffer()
 
 SVMatroxImageChildBuffer::~SVMatroxImageChildBuffer()
 {
-	assert( m_StartIdentifier == m_Identifier );
-
-	if( 0 != m_Identifier )
+	SVMatroxIdentifier Identifier = GetIdentifier();
+	if( 0 != Identifier )
 	{
 		SVMatroxResourceMonitor::SVAutoLock l_AutoLock;
 
 		if( SVMEE_STATUS_OK == SVMatroxResourceMonitor::GetAutoLock( l_AutoLock )  )
 		{
-			MIL_ID l_SystemID = MbufInquire( m_Identifier, M_OWNER_SYSTEM, nullptr );
+			MIL_ID l_SystemID = MbufInquire( Identifier, M_OWNER_SYSTEM, nullptr );
 
 			if( M_NULL != l_SystemID && S_OK == SVMatroxApplicationInterface::GetLastStatus()  )
 			{
-				SVMatroxResourceMonitor::EraseIdentifier( SVChildBufferID, m_Identifier );
+				SVMatroxResourceMonitor::EraseIdentifier( SVChildBufferID, Identifier );
 			}
 			else
 			{
 				assert( false );
 			}
-
-			MbufFree( m_Identifier );
 		}
 
-		m_Identifier = 0;
+		freeBuffer();
 	}
 
 	m_ParentPtr.clear();
@@ -54,6 +51,6 @@ SVMatroxImageChildBuffer::~SVMatroxImageChildBuffer()
 SVMatroxImageChildBuffer::SVMatroxImageChildBuffer( SVMatroxBufferPtr p_ParentPtr, SVMatroxIdentifier p_Identifier, const SVString& p_rCreatorName )
 : m_ParentPtr( p_ParentPtr ), SVMatroxBufferTemplate( p_Identifier, p_rCreatorName )
 {
-	SVMatroxResourceMonitor::InsertIdentifier( SVChildBufferID, m_Identifier );
+	SVMatroxResourceMonitor::InsertIdentifier( SVChildBufferID, p_Identifier );
 }
 

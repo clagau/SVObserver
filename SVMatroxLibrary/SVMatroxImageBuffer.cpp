@@ -24,36 +24,30 @@ SVMatroxImageBuffer::SVMatroxImageBuffer()
 SVMatroxImageBuffer::SVMatroxImageBuffer( SVMatroxIdentifier p_Identifier, const SVString& p_rCreatorName )
 : SVMatroxBufferTemplate( p_Identifier, p_rCreatorName )
 {
-	SVMatroxResourceMonitor::InsertIdentifier( SVBufferID, m_Identifier );
+	SVMatroxResourceMonitor::InsertIdentifier( SVBufferID, p_Identifier );
 }
 
 SVMatroxImageBuffer::~SVMatroxImageBuffer()
 {
-	#ifdef _DEBUG
-		assert( m_StartIdentifier == m_Identifier );
-	#endif
-
-	if( 0 != m_Identifier )
+	SVMatroxIdentifier Identifier = GetIdentifier();
+	if( 0 != Identifier )
 	{
 		SVMatroxResourceMonitor::SVAutoLock l_AutoLock;
 
 		if( SVMEE_STATUS_OK == SVMatroxResourceMonitor::GetAutoLock( l_AutoLock ) )
 		{
-			MIL_ID l_SystemID = MbufInquire( m_Identifier, M_OWNER_SYSTEM, nullptr );
+			MIL_ID l_SystemID = MbufInquire( Identifier, M_OWNER_SYSTEM, nullptr );
 
 			if( M_NULL != l_SystemID && S_OK == SVMatroxApplicationInterface::GetLastStatus() )
 			{
-				SVMatroxResourceMonitor::EraseIdentifier( SVBufferID, m_Identifier );
+				SVMatroxResourceMonitor::EraseIdentifier( SVBufferID, Identifier );
 			}
 			else
 			{
 				assert( false );
 			}
-
-			MbufFree( m_Identifier );
 		}
-
-		m_Identifier = 0;
+		freeBuffer();
 	}
 }
 

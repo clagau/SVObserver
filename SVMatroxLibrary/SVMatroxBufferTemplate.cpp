@@ -13,12 +13,12 @@
 #include "SVMatroxBufferTemplate.h"
 
 SVMatroxBufferTemplate::SVMatroxBufferTemplate()
-: SVMatroxBufferFacade(), m_StartIdentifier( 0 ), m_Identifier( 0 ), m_CreatorName( "Unknown" )
+: m_Identifier( 0 ), m_CreatorName( "Unknown" )
 {
 }
 
 SVMatroxBufferTemplate::SVMatroxBufferTemplate( SVMatroxIdentifier p_Identifier, const SVString& p_rCreatorName )
-: SVMatroxBufferFacade(), m_StartIdentifier( p_Identifier ), m_Identifier( p_Identifier ), m_CreatorName( p_rCreatorName )
+: m_Identifier( p_Identifier ), m_CreatorName( p_rCreatorName )
 {
 }
 
@@ -27,13 +27,12 @@ SVMatroxBufferTemplate::~SVMatroxBufferTemplate()
 	m_Identifier = 0;
 }
 
-bool SVMatroxBufferTemplate::empty() const
+void SVMatroxBufferTemplate::freeBuffer()
 {
-	return ( m_Identifier == 0 );
-}
-
-SVMatroxIdentifier SVMatroxBufferTemplate::GetIdentifier() const
-{
-	return m_Identifier;
+	if (0 != m_Identifier)
+	{
+		MbufFree(m_Identifier);
+		m_Identifier = 0;
+	}
 }
 

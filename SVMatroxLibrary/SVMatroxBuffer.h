@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include "SVMatroxBufferFacade.h"
+#include "SVMatroxBufferTemplate.h"
 
 /**
 @SVObjectName Matrox Buffer
