@@ -1088,12 +1088,12 @@ void SVPatModelPageClass::setCircularOverscanCheckboxState()
 
 HRESULT SVPatModelPageClass::SetValuesToAnalyzer(SvStl::MessageContainerVector *pErrorMessages, bool shouldResetTask)
 {
-	m_values.Set(ModelImageFileTag, m_strModelName);
-	m_values.Set(UseCircularOverscanTag, m_bCircularOverscan);
-	m_values.Set(ModelCenterXTag, m_CenterX);
-	m_values.Set(ModelCenterYTag, m_CenterY);
-	m_values.Set(DontCareImageFileTag, m_strDontCareName);
-	m_values.Set(UseDontCareTag, m_bDontCare);
+	m_values.Set<CString>(ModelImageFileTag, m_strModelName);
+	m_values.Set<bool>(UseCircularOverscanTag, m_bCircularOverscan ? true : false);
+	m_values.Set<long>(ModelCenterXTag, m_CenterX);
+	m_values.Set<long>(ModelCenterYTag, m_CenterY);
+	m_values.Set<CString>(DontCareImageFileTag, m_strDontCareName);
+	m_values.Set<bool>(UseDontCareTag, m_bDontCare ? true : false);
 	HRESULT result = m_values.Commit(shouldResetTask);
 	if (S_OK != result && nullptr != pErrorMessages)
 	{

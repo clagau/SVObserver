@@ -1422,7 +1422,7 @@ bool SVPatternAnalyzerClass::getNewUseDontCareValue(const SvOi::SetValueObjectPa
 	);
 	if (rValueVector.end() != iter)
 	{
-		assert(VT_INT == iter->second.vt);
+		assert(VT_BOOL == iter->second.vt);
 		useDontCare = iter->second.boolVal;
 	}
 	else

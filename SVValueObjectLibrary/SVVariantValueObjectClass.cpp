@@ -384,7 +384,21 @@ double SVVariantValueObjectClass::ValueType2Double(const _variant_t& rValue) con
 
 _variant_t SVVariantValueObjectClass::ConvertString2Type( const SVString& rValue ) const
 {
-	return _variant_t( rValue.c_str() );
+	_variant_t Result(rValue.c_str());
+
+	if (VT_EMPTY != GetDefaultType())
+	{
+		if (S_OK != ::VariantChangeType(&Result, &Result, 0, GetDefaultType()))
+		{
+			SVStringVector msgList;
+			msgList.push_back(GetName());
+			SvStl::MessageMgrStd Exception(SvStl::LogOnly);
+			Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_ValueObject_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+			Exception.Throw();
+		}
+	}
+
+	return Result;
 }
 
 SVString SVVariantValueObjectClass::ConvertType2String( const _variant_t& rValue ) const

@@ -122,8 +122,8 @@ _variant_t LinkedValue::ConvertString2Type( const SVString& rValue ) const
 	{
 		if( CheckLinkedObject( pLinkedObject ) )
 		{
-			//This must use the base class otherwise causes recursive call to ValidateValue
-			Result = SVVariantValueObjectClass::ConvertString2Type( pLinkedObject->GetUniqueObjectID().ToString() );
+			//Change the value directly as the default value may have a different variant type
+			Result = _variant_t(pLinkedObject->GetUniqueObjectID().ToString().c_str());
 		}
 		else
 		{
@@ -143,8 +143,7 @@ _variant_t LinkedValue::ConvertString2Type( const SVString& rValue ) const
 
 		if( GetDefaultValue().vt != VT_EMPTY )
 		{
-			HRESULT Result = ::VariantChangeType( &vtTemp, &vtTemp, 0, GetDefaultValue().vt );
-			if ( S_OK != Result) //object index out of range will not throw
+			if ( S_OK != ::VariantChangeType(&vtTemp, &vtTemp, 0, GetDefaultValue().vt))
 			{
 				SVStringVector msgList;
 				msgList.push_back(GetName());
@@ -152,9 +151,12 @@ _variant_t LinkedValue::ConvertString2Type( const SVString& rValue ) const
 				Exception.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_LinkedValue_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 				Exception.Throw();
 			}
+			Result = vtTemp;
 		}
-
-		Result = SVVariantValueObjectClass::ConvertString2Type( rValue );
+		else
+		{
+			Result = SVVariantValueObjectClass::ConvertString2Type(rValue);
+		}
 	}
 	return Result;
 }
