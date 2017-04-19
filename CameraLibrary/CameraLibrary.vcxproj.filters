@@ -92,5 +92,8 @@
     <ClInclude Include="SVTemplate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SVVisitor.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

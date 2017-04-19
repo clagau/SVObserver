@@ -10,6 +10,7 @@
 //******************************************************************************
 
 #pragma region Includes
+//Moved to precompiled header: #include <boost/bind>
 #include "stdafx.h"
 #include "svobserver.h"
 #include "SVExternalToolDlg.h"
@@ -22,7 +23,6 @@
 #include "SVInspectionProcess.h"
 #include "SVIPDoc.h"
 #include "SVMFCControls\SVFileDialog.h"
-#include "SVLoki\Functor.h"
 #include "SVStatusLibrary\MessageContainer.h"
 #include "SVStatusLibrary\GlobalPath.h"
 #include "SVUtilityLibrary/SVString.h"
@@ -390,7 +390,8 @@ void SVExternalToolDlg::InitializeDll()
 	{
 		m_strStatus.Empty();
 		UpdateData(FALSE);
-		m_pTask->Initialize( SVDllLoadLibraryCallback(this, &SVExternalToolDlg::NotifyProgress) );
+		m_pTask->Initialize(boost::bind(&SVExternalToolDlg::NotifyProgress, this, _1));
+
 		m_pTask->resetAllObjects();
 
 

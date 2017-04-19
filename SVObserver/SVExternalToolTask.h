@@ -89,7 +89,7 @@ public:
 	virtual bool ConnectAllInputs() override;
 
 	
-	HRESULT Initialize(SVDllLoadLibraryCallback fnNotify = SVDllLoadLibraryCallbackDefault() );
+	HRESULT Initialize(SVDllLoadLibraryCallback fnNotify = [](LPCTSTR) {});
 	virtual HRESULT DisconnectInputsOutputs(SVObjectPtrVector& rListOfObjects) override;
 	virtual HRESULT HideInputsOutputs(SVObjectPtrVector& rListOfObjects) override;
 

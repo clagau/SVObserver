@@ -37,7 +37,7 @@
 
 #pragma once
 
-namespace Loki
+namespace SvCam
 {
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -115,7 +115,7 @@ struct DefaultCatchAll
 
 //    virtual ReturnType Accept(BaseVisitor& guest) 
 #define DEFINE_VISITABLE() \
-    virtual ReturnType Accept(Loki::BaseVisitor& guest) \
+    virtual ReturnType Accept(SvCam::BaseVisitor& guest) \
     { return AcceptImpl(*this, guest); }
 
-} // namespace Loki
+} // namespace SvCam

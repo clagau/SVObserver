@@ -15,8 +15,8 @@
 #pragma warning (disable : 4290)
 
 #pragma region Includes
+//Moved to precompiled header: #include <boost/function>
 #include "SVDLLToolDefinitionStructs.h"
-#include "SVLoki/functor.h"
 #include "SVMessage\SVMessage.h"
 #include "SVStatusLibrary\MessageManager.h"
 #pragma endregion Includes
@@ -71,8 +71,9 @@ typedef HRESULT (__stdcall *SetMILResultImagesPtr) (GUID tool, long lArraySize, 
 typedef HRESULT (__stdcall *GetResultImageDefinitionsPtr) (GUID tool, long* plArraySize, SVImageDefinitionStruct** ppaImageDefinitions);
 typedef HRESULT (__stdcall *DestroyImageDefinitionStructurePtr) ( SVImageDefinitionStruct* paStructs);
 
-typedef Loki::Functor<void, TYPELIST_1( LPCTSTR ) > SVDllLoadLibraryCallback;
-typedef Loki::DefaultFunctor< void, TYPELIST_1( LPCTSTR ) > SVDllLoadLibraryCallbackDefault;
+
+typedef boost::function< void(LPCTSTR) > SVDllLoadLibraryCallback;
+
 
 class SVDLLToolLoadLibraryClass  
 {
@@ -80,7 +81,7 @@ public:
 	SVDLLToolLoadLibraryClass();
 	~SVDLLToolLoadLibraryClass();
 
-	HRESULT Open( LPCTSTR p_szLibrary, SVDllLoadLibraryCallback fnNotifyProgress = SVDllLoadLibraryCallbackDefault() );
+	HRESULT Open( LPCTSTR p_szLibrary, SVDllLoadLibraryCallback fnNotifyProgress = [](LPCTSTR) {});
 	HRESULT Close();
 	bool IsOpen();
 

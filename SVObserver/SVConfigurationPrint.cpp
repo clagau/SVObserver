@@ -148,17 +148,17 @@ std::pair<GUID **, size_t> NonPrintGuids()
 }
 
 class SVDeviceParamConfigPrintHelper :
-	public Loki::BaseVisitor,
-	public Loki::Visitor<SVDeviceParam>,
-	public Loki::Visitor<SVLongValueDeviceParam>,
-	public Loki::Visitor<SVi64ValueDeviceParam>,
-	public Loki::Visitor<SVBoolValueDeviceParam>,
-	public Loki::Visitor<SVStringValueDeviceParam>,
-	public Loki::Visitor<SVParamListDeviceParam>,
-	public Loki::Visitor<SVLutDeviceParam>,
-	public Loki::Visitor<SVLightReferenceDeviceParam>,
-	public Loki::Visitor<SVCameraFormatsDeviceParam>,
-	public Loki::Visitor<SVCustomDeviceParam>
+	public SvCam::BaseVisitor,
+	public SvCam::Visitor<SVDeviceParam>,
+	public SvCam::Visitor<SVLongValueDeviceParam>,
+	public SvCam::Visitor<SVi64ValueDeviceParam>,
+	public SvCam::Visitor<SVBoolValueDeviceParam>,
+	public SvCam::Visitor<SVStringValueDeviceParam>,
+	public SvCam::Visitor<SVParamListDeviceParam>,
+	public SvCam::Visitor<SVLutDeviceParam>,
+	public SvCam::Visitor<SVLightReferenceDeviceParam>,
+	public SvCam::Visitor<SVCameraFormatsDeviceParam>,
+	public SvCam::Visitor<SVCustomDeviceParam>
 {
 public:
 	SVDeviceParamConfigPrintHelper(SVConfigurationPrint* pPrint, SVDeviceParamCollection& rCamFileParams, CDC* pDC, CPoint& ptCurPos, int nIndentLevel);

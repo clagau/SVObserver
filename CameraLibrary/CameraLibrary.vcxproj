@@ -113,6 +113,7 @@
     <ClInclude Include="SVParamListDeviceParam.h" />
     <ClInclude Include="SVStringValueDeviceParam.h" />
     <ClInclude Include="SVTemplate.h" />
+    <ClInclude Include="SVVisitor.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

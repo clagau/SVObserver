@@ -1631,7 +1631,7 @@ bool SVExternalToolTask::ResetObject(SvStl::MessageContainerVector *pErrorMessag
 
 	try
 	{
-		HRESULT hr = Initialize( SVDllLoadLibraryCallbackDefault() );
+		HRESULT hr = Initialize([](LPCTSTR) {});
 		if (S_OK != hr)
 		{
 			Result = false;

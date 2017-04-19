@@ -13,7 +13,7 @@
 
 #pragma warning( disable: 4786 )	// identifier truncation 255 chars
 
-#include "SVLoki/SVVisitor.h"
+#include "SVVisitor.h"
 #include "SVTemplate.h"
 #include "SVUtilityLibrary/SVString.h"
 
@@ -155,7 +155,7 @@ enum SVDeviceParamEnum	// do not change exitsing param numbers!
 	// be sure to register the create function in SVDeviceParams.cpp if you add a parameter
 };
 
-class SVDeviceParam : public SVClonable, public Loki::BaseVisitable<HRESULT>
+class SVDeviceParam : public SVClonable, public SvCam::BaseVisitable<HRESULT>
 {
 public:
 	SVDeviceParam();
