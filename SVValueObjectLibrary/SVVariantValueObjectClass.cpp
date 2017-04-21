@@ -76,7 +76,8 @@ void SVVariantValueObjectClass::Persist(SVObjectWriter& rWriter)
 	// for all elements in the array
 	for (int i = 0; i < getArraySize(); i++)
 	{
-		GetValue( Value, GetLastSetIndex(), i );
+		//Make sure this is not a derived virtual method which is called
+		SVVariantValueObjectClass::GetValue( Value, GetLastSetIndex(), i );
 
 		// The parser does not like reading in empty safe array.
 		// Therefore if an empty array is detected then set the variant type to VT_EMPTY.

@@ -81,7 +81,8 @@ void SVPointValueObjectClass::Persist(SVObjectWriter& rWriter)
 	for (int i = 0; i < getArraySize(); i++)
 	{
 		SVPOINT PointValue;
-		GetValue( PointValue, GetLastSetIndex(), i);
+		//Make sure this is not a derived virtual method which is called
+		SVPointValueObjectClass::GetValue( PointValue, GetLastSetIndex(), i);
 		TempValue = SvUl_SF::Format(_T("%d, %d"), PointValue.x(), PointValue.y());
 		Value.SetString( TempValue.c_str() );
 		list.push_back( Value );

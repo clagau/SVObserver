@@ -77,7 +77,8 @@ void SVByteValueObjectClass::Persist(SVObjectWriter& rWriter)
 	// for all elements in the array
 	for( int i = 0; i < getArraySize(); i++ )
 	{
-		GetValue( Value.bVal, GetLastSetIndex(), i );
+		//Make sure this is not a derived virtual method which is called
+		SVByteValueObjectClass::GetValue( Value.bVal, GetLastSetIndex(), i );
 		list.push_back(Value);
 	}
 	rWriter.WriteAttribute(scElementTag, list);

@@ -75,7 +75,8 @@ void SVDPointValueObjectClass::Persist(SVObjectWriter& rWriter)
 	for( int i = 0; i < getArraySize(); i++ )
 	{
 		SVDPointClass Value;
-		GetValue( Value, GetLastSetIndex(), i );
+		//Make sure this is not a derived virtual method which is called
+		SVDPointValueObjectClass::GetValue( Value, GetLastSetIndex(), i );
 		tmp = SvUl_SF::Format( _T("%lf, %lf"), Value.x, Value.y );
 		value.SetString(tmp.c_str());
 		list.push_back(value);

@@ -157,7 +157,7 @@ SVString SVObjectReference::GetZeroBasedIndexString() const
 		{
 			Result = SvUl_SF::Format(_T("[%d]"), m_ArrayIndex );
 		}
-		else
+		else if (isEntireArray())
 		{
 			Result = _T("[ ]");
 		}
@@ -175,7 +175,7 @@ SVString SVObjectReference::GetOneBasedIndexString() const
 		{
 			Result = SvUl_SF::Format(_T("[%d]"), m_ArrayIndex + 1);
 		}
-		else
+		else if(isEntireArray())
 		{
 			Result = _T("[ ]");
 		}

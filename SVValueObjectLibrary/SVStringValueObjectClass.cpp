@@ -84,7 +84,8 @@ void SVStringValueObjectClass::Persist(SVObjectWriter& rWriter)
 	// for all elements in the array
 	for (int i = 0; i < getArraySize(); i++)
 	{
-		GetValue( TempValue, GetLastSetIndex(), i );
+		//Make sure this is not a derived virtual method which is called
+		SVStringValueObjectClass::GetValue( TempValue, GetLastSetIndex(), i );
 		SvUl::AddEscapeSpecialCharacters( TempValue, true );
 		Value.SetString( TempValue.c_str() );
 		list.push_back( Value );

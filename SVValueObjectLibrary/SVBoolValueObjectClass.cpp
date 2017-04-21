@@ -80,7 +80,8 @@ void SVBoolValueObjectClass::Persist(SVObjectWriter& rWriter)
 	for( int i = 0; i < getArraySize(); i++ )
 	{
 		BOOL Temp(false);
-		GetValue( Temp, GetLastSetIndex(), i);
+		//Make sure this is not a derived virtual method which is called
+		SVBoolValueObjectClass::GetValue( Temp, GetLastSetIndex(), i);
 		Value.boolVal = Temp ? VARIANT_TRUE : VARIANT_FALSE;
 		list.push_back( Value );
 	}

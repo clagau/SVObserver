@@ -31,7 +31,6 @@ LinkedValue::LinkedValue() :
  m_pLinkedObject(nullptr)
 ,m_pLinkedValueObject(nullptr)
 ,m_CircularReference(false)
-,m_getNonLinkedValue(false)
 {
 	m_LinkedName.setStatic( true );
 }
@@ -44,12 +43,6 @@ LinkedValue::~LinkedValue()
 #pragma region Public Methods
 HRESULT LinkedValue::GetValue( _variant_t& rValue,  int Bucket /*= -1*/, int Index /*= -1*/ ) const
 {
-	//If get non linked value call base class method
-	if( m_getNonLinkedValue )
-	{
-		return __super::GetValue( rValue, Bucket, Index );
-	}
-
 	Bucket = (-1 == Bucket) ? GetLastSetIndex() : Bucket;
 	HRESULT Result( ValidateIndexes(Bucket,Index) );
 
@@ -168,13 +161,12 @@ bool LinkedValue::UpdateConnection(SvStl::MessageContainerVector *pErrorMessages
 	bool Result = true;
 	SVObjectClass* pLinkedObject( nullptr );
 	bool ConvertDottedName( false );
-	SVString Value;
+	_variant_t Value;
 
-	m_getNonLinkedValue = true;
-	getValue( Value );
-	m_getNonLinkedValue = false;
+	//! Here we need the non linked value (SVGUID as string or constant value)
+	__super::GetValue( Value );
 
-	SVGUID LinkedUid( _bstr_t( Value.c_str() ) );
+	SVGUID LinkedUid( Value );
 
 	//If valid GUID then should be able to get the linked value from the object manager
 	if( SV_GUID_NULL != LinkedUid  )
@@ -195,16 +187,16 @@ bool LinkedValue::UpdateConnection(SvStl::MessageContainerVector *pErrorMessages
 		ToolSetName = SvUl_SF::LoadSVString( IDS_CLASSNAME_SVTOOLSET );
 
 		//Default name
-		ObjectName = Value;
+		ObjectName = SvUl_SF::createSVString(Value);
 		//If the tool set name is at the start then add the inspection name at the beginning
-		if( 0 == Value.find( ToolSetName ) )
+		if( 0 == ObjectName.find( ToolSetName ) )
 		{
 			SvOi::IObjectClass* pInspection = GetAncestorInterface( SVInspectionObjectType );
 			if( nullptr != pInspection )
 			{
 				ObjectName = pInspection->GetName();
 				ObjectName += _T(".");
-				ObjectName += Value;
+				ObjectName += SvUl_SF::createSVString(Value);
 			}
 		}
 		if( S_OK == SVObjectManagerClass::Instance().GetObjectByDottedName( ObjectName, pLinkedObject ) )
@@ -246,11 +238,7 @@ bool LinkedValue::UpdateConnection(SvStl::MessageContainerVector *pErrorMessages
 		{
 			DisconnectInput();
 
-			_variant_t VariantValue;
-			m_getNonLinkedValue = true;
-			GetValue( VariantValue );
-			m_getNonLinkedValue = false;
-			if ( GetDefaultType() != VariantValue.vt)
+			if ( GetDefaultType() != Value.vt)
 			{
 				Result = false;
 				if (nullptr != pErrorMessages)

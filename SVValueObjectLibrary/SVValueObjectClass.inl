@@ -951,8 +951,7 @@ void SVValueObjectClass<T>::Initialize()
 template <typename T>
 HRESULT SVValueObjectClass<T>::SetVariantValue( const _variant_t& rValue, int Bucket, int Index )
 {
-	VARTYPE ValueObjectType = ValueType2Variant(m_Value).vt;
-	if(ValueObjectType == rValue.vt || ValueObjectType == VT_EMPTY )
+	if(ValueType2Variant(m_DefaultValue).vt == rValue.vt || ValueType2Variant(m_Value).vt == VT_EMPTY )
 	{
 		return SetValue( Variant2ValueType( rValue ), Bucket, Index );
 	}

@@ -104,6 +104,5 @@ private:
 	SvOi::IValueObject* m_pLinkedValueObject;
 	SVGUID m_LinkedUid;
 	mutable bool m_CircularReference;					//! Use this flag during GetValue to make sure no circular references are present
-	bool m_getNonLinkedValue;
 #pragma endregion Member Variables
 };

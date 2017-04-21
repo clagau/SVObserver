@@ -80,7 +80,8 @@ void SVDWordValueObjectClass::Persist(SVObjectWriter& rWriter)
 	for( int i = 0; i < getArraySize(); i++ )
 	{
 		DWORD Temp( 0 );
-		GetValue( Temp, GetLastSetIndex(), i );
+		//Make sure this is not a derived virtual method which is called
+		SVDWordValueObjectClass::GetValue( Temp, GetLastSetIndex(), i );
 		Value.ulVal = static_cast<ULONG> (Temp);
 		list.push_back(Value);
 	}

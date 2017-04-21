@@ -68,7 +68,8 @@ void SVEnumerateValueObjectClass::Persist(SVObjectWriter& rWriter)
 	// for all elements in the array
 	for( int i = 0; i < getArraySize(); i++ )
 	{
-		GetValue( Value.lVal, GetLastSetIndex(), i);
+		//Make sure this is not a derived virtual method which is called
+		SVEnumerateValueObjectClass::GetValue( Value.lVal, GetLastSetIndex(), i);
 		list.push_back(Value);
 	}
 	rWriter.WriteAttribute(scElementTag, list);

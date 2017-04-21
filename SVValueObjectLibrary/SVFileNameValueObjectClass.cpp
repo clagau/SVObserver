@@ -86,7 +86,8 @@ void SVFileNameValueObjectClass::Persist(SVObjectWriter& rWriter)
 	// for all elements in the array
 	for( int i = 0; i < getArraySize(); i++ )
 	{
-		GetValue( TempValue, GetLastSetIndex(), i );
+		//Make sure this is not a derived virtual method which is called
+		SVFileNameValueObjectClass::GetValue( TempValue, GetLastSetIndex(), i );
 		Value.SetString( TempValue.c_str() );
 		list.push_back( Value );
 		Value.Clear();
