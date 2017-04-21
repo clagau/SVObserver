@@ -9,6 +9,7 @@
 
 #pragma region Includes
 #include "SVObjectLibrary\SVInObjectInfoStruct.h"
+#include "SVObjectLibrary\SVObjectReference.h"
 #include "SVUtilityLibrary\SVString.h"
 #include "SVStringValueObjectClass.h"
 #include "SVVariantValueObjectClass.h"
@@ -54,7 +55,7 @@ public:
 
 	SVStringValueObjectClass& getLinkedName() { return m_LinkedName; };
 
-	bool isIndirectValue() { return ( nullptr != m_pLinkedObject ); };
+	bool isIndirectValue() { return ( nullptr != m_LinkedObjectRef.getObject() ); };
 
 #pragma region Methods to replace processMessage
 	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const SVString& rOldName) override { UpdateLinkedName(); };
@@ -87,8 +88,8 @@ private:
 
 	/// Convert a string (dotted name) to an object.
 	/// \param rValue [in] Input string
-	/// \returns SVObjectClass* The found object. If object not found, return a nullptr.
-	SVObjectClass* ConvertStringInObject( const SVString& rValue ) const;
+	/// \returns SVObjectReference A reference to the found object. 
+	SVObjectReference ConvertStringInObject( const SVString& rValue ) const;
 
 	/// Checks if the linked object is valid.
 	/// \param pLinkedObject [in]  Pointer to the indirect object
@@ -100,9 +101,7 @@ private:
 #pragma region Member Variables
 private:
 	SVStringValueObjectClass m_LinkedName;
-	SVObjectClass* m_pLinkedObject;
-	SvOi::IValueObject* m_pLinkedValueObject;
-	SVGUID m_LinkedUid;
+	SVObjectReference m_LinkedObjectRef;
 	mutable bool m_CircularReference;					//! Use this flag during GetValue to make sure no circular references are present
 #pragma endregion Member Variables
 };

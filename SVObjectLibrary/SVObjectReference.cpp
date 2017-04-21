@@ -13,22 +13,23 @@
 #include "stdafx.h"
 #include "SVObjectClass.h"
 #include "SVObjectReference.h"
+#include "SVObjectManagerClass.h"
 #pragma endregion Includes
 
 SVObjectReference::SVObjectReference( SVObjectClass* pObject ):
 	m_ArrayIndex(-1)
+, m_pValueObject(nullptr)
 {
 	m_pObject = pObject;
-	m_pValueObject = nullptr;
 	m_Guid = m_pObject ? m_pObject->GetUniqueObjectID() : SV_GUID_NULL;
 	m_NameInfo.clear();
 }
 
 SVObjectReference::SVObjectReference( SVObjectClass* pObject, long lArrayIndex, SVString strDefaultValue ):
-	m_ArrayIndex(lArrayIndex)  
+	m_ArrayIndex(lArrayIndex) 
+, m_pValueObject(nullptr)
 {
 	m_pObject = pObject;
-	m_pValueObject = nullptr;
 	m_Guid = m_pObject ? m_pObject->GetUniqueObjectID() : SV_GUID_NULL;
 	if( nullptr != m_pObject )
 	{
@@ -41,12 +42,36 @@ SVObjectReference::SVObjectReference( SVObjectClass* pObject, long lArrayIndex, 
 }
 
 SVObjectReference::SVObjectReference( SVObjectClass* pObject, const SVObjectNameInfo& p_rNameInfo )
+	: m_pValueObject (nullptr)
 {
 	m_pObject = pObject;
-	m_pValueObject = nullptr;
 	m_Guid = m_pObject ? m_pObject->GetUniqueObjectID() : SV_GUID_NULL;
 	m_NameInfo = p_rNameInfo;
 	m_ArrayIndex = p_rNameInfo.GetIndexValue();
+}
+
+SVObjectReference::SVObjectReference(const SVString& guidAndIndexString)
+	: m_pValueObject(nullptr)
+{
+	SVString::size_type Pos = guidAndIndexString.find_first_of(_T("["));
+	SVString guidString = guidAndIndexString.substr(0, Pos);
+	m_Guid = SVGUID(_bstr_t(guidString.c_str()));
+	SVObjectManagerClass::Instance().GetObjectByIdentifier(m_Guid, m_pObject);
+	if (nullptr != m_pObject)
+	{
+		SVString tmpName = m_pObject->GetCompleteName();
+		if (SVString::npos != Pos)
+		{
+			tmpName += guidAndIndexString.substr(Pos, SVString::npos);
+		}
+		m_NameInfo.ParseObjectName(m_NameInfo, tmpName);
+		m_ArrayIndex = m_NameInfo.GetIndexValue();
+	}
+	else
+	{
+		m_NameInfo.clear();
+		m_ArrayIndex = -1;
+	}
 }
 
 const SVObjectReference& SVObjectReference::operator = ( const SVObjectReference& rhs )
@@ -142,6 +167,18 @@ SVString SVObjectReference::GetCompleteOneBasedObjectName() const
 	return Result;
 }
 
+SVString SVObjectReference::GetGuidAndIndexOneBased() const
+{
+	SVString Result;
+
+	if (nullptr != m_pObject)
+	{
+		Result = m_pObject->GetUniqueObjectID().ToString();
+		Result += GetOneBasedIndexString();
+	}
+	return Result;
+}
+
 const SVObjectNameInfo& SVObjectReference::GetObjectNameInfo() const
 {
 	return m_NameInfo;
@@ -181,6 +218,16 @@ SVString SVObjectReference::GetOneBasedIndexString() const
 		}
 	}
 	return Result;
+}
+
+HRESULT SVObjectReference::getValue(_variant_t& rValue, int Bucket) const
+{
+	SvOi::IValueObject* pValueObject = getValueObject();
+	if (nullptr != pValueObject)
+	{
+		return pValueObject->getValue(rValue, Bucket, ArrayIndex());
+	}
+	return E_POINTER;
 }
 
 const SVString& SVObjectReference::GetIndex() const

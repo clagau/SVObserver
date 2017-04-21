@@ -28,9 +28,7 @@ static char THIS_FILE[] = __FILE__;
 
 #pragma region Constructor
 LinkedValue::LinkedValue() : 
- m_pLinkedObject(nullptr)
-,m_pLinkedValueObject(nullptr)
-,m_CircularReference(false)
+ m_CircularReference(false)
 {
 	m_LinkedName.setStatic( true );
 }
@@ -57,9 +55,9 @@ HRESULT LinkedValue::GetValue( _variant_t& rValue,  int Bucket /*= -1*/, int Ind
 	{
 		//! When getting the value from an indirect value make sure it is not referencing this object
 		m_CircularReference = true;
-		if( nullptr != m_pLinkedValueObject )
+		if (nullptr != m_LinkedObjectRef.getValueObject())
 		{
-			Result = m_pLinkedValueObject->getValue( rValue, Bucket, Index );
+			Result = m_LinkedObjectRef.getValue(rValue, Bucket);
 		}
 		else
 		{
@@ -81,7 +79,7 @@ HRESULT LinkedValue::GetValue( _variant_t& rValue,  int Bucket /*= -1*/, int Ind
 
 bool LinkedValue::DisconnectObjectInput( SVInObjectInfoStruct* pObjectInInfo )
 {
-	if ( nullptr != pObjectInInfo && pObjectInInfo->GetInputObjectInfo().m_pObject == m_pLinkedObject )
+	if ( nullptr != pObjectInInfo && pObjectInInfo->GetInputObjectInfo().m_pObject == m_LinkedObjectRef.getObject())
 	{
 		DisconnectInput();
 	}
@@ -90,9 +88,9 @@ bool LinkedValue::DisconnectObjectInput( SVInObjectInfoStruct* pObjectInInfo )
 
 void LinkedValue::UpdateLinkedName()
 {
-	if( nullptr != m_pLinkedObject && SV_GUID_NULL != m_LinkedUid )
+	if( nullptr != m_LinkedObjectRef.getObject() )
 	{
-		m_LinkedName.SetValue( SVString(m_pLinkedObject->GetCompleteObjectNameToObjectType()) );
+		m_LinkedName.SetValue( m_LinkedObjectRef.GetCompleteOneBasedObjectName() );
 		m_LinkedName.SetObjectAttributesAllowed( SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::OverwriteAttribute );
 	}
 	else
@@ -109,18 +107,17 @@ _variant_t LinkedValue::ConvertString2Type( const SVString& rValue ) const
 {
 	_variant_t Result;
 
-	SVObjectClass* pLinkedObject = ConvertStringInObject(rValue);
+	SVObjectReference LinkedObjectRef = ConvertStringInObject(rValue);
 
-	if ( nullptr != pLinkedObject )
+	if (nullptr != LinkedObjectRef.getObject())
 	{
-		if( CheckLinkedObject( pLinkedObject ) )
+		if( CheckLinkedObject( LinkedObjectRef.getObject()) )
 		{
 			//Change the value directly as the default value may have a different variant type
-			Result = _variant_t(pLinkedObject->GetUniqueObjectID().ToString().c_str());
+			Result = _variant_t(LinkedObjectRef.GetGuidAndIndexOneBased().c_str());
 		}
 		else
 		{
-			pLinkedObject = nullptr;
 			//! This means the linked object is invalid
 			SVStringVector msgList;
 			msgList.push_back( GetName() );
@@ -159,28 +156,25 @@ _variant_t LinkedValue::ConvertString2Type( const SVString& rValue ) const
 bool LinkedValue::UpdateConnection(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = true;
-	SVObjectClass* pLinkedObject( nullptr );
 	bool ConvertDottedName( false );
 	_variant_t Value;
 
 	//! Here we need the non linked value (SVGUID as string or constant value)
 	__super::GetValue( Value );
 
-	SVGUID LinkedUid( Value );
-
+	SVObjectReference LinkedObjectRef(SvUl_SF::createSVString(Value));
+	
 	//If valid GUID then should be able to get the linked value from the object manager
-	if( SV_GUID_NULL != LinkedUid  )
+	if( nullptr != LinkedObjectRef.getObject() )
 	{
-		SVObjectManagerClass::Instance().GetObjectByIdentifier( LinkedUid, pLinkedObject );
-		
-		Result = CheckLinkedObject( pLinkedObject, pErrorMessages );
+		Result = CheckLinkedObject(LinkedObjectRef.getObject(), pErrorMessages );
 		if( !Result )
 		{
-			pLinkedObject = nullptr;
+			LinkedObjectRef = SVObjectReference();
 		}
 	}
 	else
-	{
+	{	//this part is only for backward compatibility, because in older version the name was saved and not the GUID.
 		SVString ToolSetName;
 		SVString ObjectName;
 
@@ -199,25 +193,24 @@ bool LinkedValue::UpdateConnection(SvStl::MessageContainerVector *pErrorMessages
 				ObjectName += SvUl_SF::createSVString(Value);
 			}
 		}
-		if( S_OK == SVObjectManagerClass::Instance().GetObjectByDottedName( ObjectName, pLinkedObject ) )
+		if( S_OK == SVObjectManagerClass::Instance().GetObjectByDottedName( ObjectName, LinkedObjectRef) && nullptr != LinkedObjectRef.getObject() )
 		{
 			ConvertDottedName = true;
 		}
 	}
-	if ( nullptr != pLinkedObject )	// input is another VO
+	if ( nullptr != LinkedObjectRef.getObject())	// input is another VO
 	{
 		//disconnect old object and connect new object if old and new different.
-		if( m_pLinkedObject != pLinkedObject )
+		if( LinkedObjectRef.getObject() != m_LinkedObjectRef.getObject() )
 		{
 			//First disconnect and then set the new Linked object
 			DisconnectInput();
-			m_pLinkedObject = pLinkedObject;
-			m_pLinkedValueObject = dynamic_cast<SvOi::IValueObject*> (m_pLinkedObject);
-			m_LinkedUid = m_pLinkedObject->GetUniqueObjectID();
+			m_LinkedObjectRef = LinkedObjectRef;
+			
 			//Convert old dotted name format to Unique GUID
 			if( ConvertDottedName )
 			{
-				SVVariantValueObjectClass::setValue( m_LinkedUid.ToString() );
+				SVVariantValueObjectClass::setValue( m_LinkedObjectRef.GetCompleteOneBasedObjectName() );
 			}
 			bool messageReturn = ConnectInput();
 			assert( messageReturn );
@@ -230,6 +223,10 @@ bool LinkedValue::UpdateConnection(SvStl::MessageContainerVector *pErrorMessages
 					pErrorMessages->push_back(Msg);
 				}
 			}
+		}
+		else
+		{
+			m_LinkedObjectRef = LinkedObjectRef;
 		}
 	}
 	else	// plain data
@@ -256,15 +253,13 @@ bool LinkedValue::UpdateConnection(SvStl::MessageContainerVector *pErrorMessages
 
 void LinkedValue::DisconnectInput()
 {
-	if( nullptr != m_pLinkedObject )
+	if( nullptr != m_LinkedObjectRef.getObject())
 	{
 		SVInObjectInfoStruct InputConnectionInfo;
-		InputConnectionInfo.SetInputObject( m_pLinkedObject );
+		InputConnectionInfo.SetInputObject(m_LinkedObjectRef.getObject());
 		InputConnectionInfo.SetObject( this );
-		m_pLinkedObject->DisconnectObjectInput(&InputConnectionInfo);
-		m_LinkedUid = SV_GUID_NULL;
-		m_pLinkedObject = nullptr;
-		m_pLinkedValueObject = nullptr;
+		m_LinkedObjectRef.getObject()->DisconnectObjectInput(&InputConnectionInfo);
+		m_LinkedObjectRef = SVObjectReference();
 	}
 }
 
@@ -272,11 +267,11 @@ bool LinkedValue::ConnectInput()
 {
 	bool Result = false;
 	SVInObjectInfoStruct InputConnectionInfo;
-	InputConnectionInfo.SetInputObject( m_pLinkedObject );
+	InputConnectionInfo.SetInputObject(m_LinkedObjectRef.getObject());
 	InputConnectionInfo.SetObject( this );
-	if (nullptr != m_pLinkedObject)
+	if (nullptr != m_LinkedObjectRef.getObject())
 	{
-		Result = m_pLinkedObject->ConnectObjectInput(&InputConnectionInfo);
+		Result = m_LinkedObjectRef.getObject()->ConnectObjectInput(&InputConnectionInfo);
 	}
 	return Result;
 }
@@ -289,7 +284,7 @@ bool LinkedValue::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	return Result;
 }
 
-SVObjectClass* LinkedValue::ConvertStringInObject( const SVString& rValue ) const
+SVObjectReference LinkedValue::ConvertStringInObject( const SVString& rValue ) const
 {
 	SVString ToolSetName;
 	SVString ObjectName;
@@ -312,9 +307,9 @@ SVObjectClass* LinkedValue::ConvertStringInObject( const SVString& rValue ) cons
 		ObjectName = rValue;
 	}
 
-	SVObjectClass* pNewLinkedObject( nullptr );
-	SVObjectManagerClass::Instance().GetObjectByDottedName( ObjectName, pNewLinkedObject );
-	return pNewLinkedObject;
+	SVObjectReference objectRef;
+	SVObjectManagerClass::Instance().GetObjectByDottedName( ObjectName, objectRef);
+	return objectRef;
 }
 
 bool LinkedValue::CheckLinkedObject( const SVObjectClass* const pLinkedObject, SvStl::MessageContainerVector *pErrorMessages ) const

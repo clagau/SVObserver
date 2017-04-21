@@ -51,10 +51,19 @@ namespace Seidenader
 							bFound = true;
 
 							_variant_t Value;
-							hr = pValueObject->getValue( Value );
-							if (S_OK == hr)
+							HRESULT tmpHr = pValueObject->getValue( Value );
+							if (S_OK == tmpHr)
 							{
 								it->second = Items::mapped_type(objectInfo.EmbeddedID, pObject->GetUniqueObjectID(), Value, ownerInfo, it->second.isReadOnly());
+							}
+							else if (E_BOUNDS == tmpHr)
+							{
+								Value.Clear();
+								it->second = Items::mapped_type(objectInfo.EmbeddedID, pObject->GetUniqueObjectID(), Value, ownerInfo, it->second.isReadOnly());
+							}
+							else
+							{
+								hr = tmpHr;
 							}
 						}
 						else

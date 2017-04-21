@@ -43,6 +43,9 @@ public:
 	SVObjectReference( SVObjectClass* pObject, const SVObjectNameInfo& p_rNameInfo );
 	SVObjectReference( SVObjectClass* pObject );
 	SVObjectReference( GUID guid );
+	/// This constructor create an object depending of a GUID and if required an index. 
+	/// \param guidAndIndexString [in] A string with a GUID and if required an index (e.g.{7407F882-3AA5-48E2-B2E9-542538CB1650}[1])
+	SVObjectReference(const SVString& guidAndIndexString);
 	const SVObjectReference& operator = ( const SVObjectReference& rhs );
 	bool operator == ( const SVObjectReference& rhs ) const;
 
@@ -87,6 +90,10 @@ public:
 	SVString GetOneBasedName() const;
 	SVString GetCompleteOneBasedObjectName() const;
 
+	/// Get a string first with the GUID and if array and index this attached. (e.g.{7407F882-3AA5-48E2-B2E9-542538CB1650}[1])
+	/// \returns SVString
+	SVString GetGuidAndIndexOneBased() const;
+
 	const SVObjectNameInfo& GetObjectNameInfo() const;
 
 	const UINT ObjectAttributesAllowed() const;
@@ -98,6 +105,12 @@ public:
 
 	SVString GetOneBasedIndexString() const;
 	SVString GetZeroBasedIndexString() const;
+
+	/// Get the value of object depend of the index. If object is not a value object, it will return an error.
+	/// \param rValue [out] The return value.
+	/// \param Bucket [in] The bucket. Default = -1
+	/// \returns HRESULT
+	HRESULT getValue(_variant_t& rValue, int Bucket = -1) const;
 
 	//************************************
 	//! Increments the array index if the reference points to a single array variable. 

@@ -109,9 +109,16 @@ HRESULT DoubleSortValueObject::SetValue(const double& rValue, int Bucket, int In
 HRESULT DoubleSortValueObject::GetValue( double& rValue, int Bucket, int Index ) const
 {
 	Bucket = (-1 == Bucket) ? GetLastSetIndex() : Bucket;
-	if( 0 <= Bucket && Bucket < getNumberOfBuckets() && 0 <= Index && m_sortContainerArray[Bucket].size() > Index)
+	if( 0 <= Bucket && Bucket < getNumberOfBuckets() && 0 <= Index )
 	{
-		return SVValueObjectClass<double>::GetValue( rValue, Bucket, m_sortContainerArray[Bucket][Index] );
+		if (m_sortContainerArray[Bucket].size() > Index)
+		{
+			return SVValueObjectClass<double>::GetValue(rValue, Bucket, m_sortContainerArray[Bucket][Index]);
+		}
+		else
+		{
+			return E_BOUNDS;
+		}
 	}
 	return E_FAIL;
 }
