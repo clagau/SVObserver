@@ -105,12 +105,7 @@ namespace Seidenader { namespace SVUtilityLibrary { namespace StringFunctions
 
 	SVString Left( const SVString& rStringValue, size_t count )
 	{
-		size_t size = rStringValue.size();
-		if (size && size >= count)
-		{
-			return rStringValue.substr(0, count);
-		}
-		return SVString();
+		return rStringValue.substr(0, count);
 	}
 
 	SVString Mid( const SVString& rStringValue, size_t count ) 
