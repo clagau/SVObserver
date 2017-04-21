@@ -136,7 +136,7 @@ BOOL SVOPPQObj::DetachInspectionFromPPQ(LPCTSTR InspectName)
 {
 	bool Result( false );
 	
-	if (!m_AttachedCameraList.empty())
+	if (!m_AttachedInspectList.empty())
 	{
 		SVString AttachedInspection( InspectName );
 		SVStringVector::const_iterator Iter = std::find( m_AttachedInspectList.begin(), m_AttachedInspectList.end(), AttachedInspection );
