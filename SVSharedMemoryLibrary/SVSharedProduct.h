@@ -31,9 +31,9 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 
 		const SVSharedProduct& operator=(const SVSharedProduct& rData);
 	};
-	typedef boost::interprocess::allocator<SVSharedProduct, segment_manager_t> SVSharedProductAllocator;
-	typedef boost::interprocess::vector<SVSharedProduct, SVSharedProductAllocator> SVSharedProductVector;
-	typedef boost::interprocess::allocator<SVSharedProductVector, segment_manager_t> SVSharedProductVectorAllocator;
+	typedef bip::allocator<SVSharedProduct, segment_manager_t> SVSharedProductAllocator;
+	typedef bip::vector<SVSharedProduct, SVSharedProductAllocator> SVSharedProductVector;
+	typedef bip::allocator<SVSharedProductVector, segment_manager_t> SVSharedProductVectorAllocator;
 } /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
 
 namespace SvSml = Seidenader::SVSharedMemoryLibrary;

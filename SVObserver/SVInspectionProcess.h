@@ -70,7 +70,7 @@ class SVInspectionProcess :
 public:
 	typedef SVBiUniqueMap< SVString, SVObjectClass* >::type SVValueObjectMap;
 	typedef SVTQueueObject< SVOutputRequestInfoStruct > SVOutputRequestQueue;
-	typedef SVVector<SVPPQObject*> SVPPQObjectPtrVector;
+	typedef SVVector< SVPPQObject* > SVPPQObjectPtrVector;
 	//************************************
 	//! FunctionPointer as Argument for LoopOverTool
 	//! negative return values indicate an error 
@@ -442,6 +442,8 @@ private:
 	HRESULT FindPPQInputObjectByName( SVObjectClass*& p_rpObject, LPCTSTR p_FullName ) const;
 
 	void FillSharedData(long sharedSlotIndex, SvSml::SVSharedData& rData, const SVNameObjectMap& rValues, const SVNameObjectMap& rImages, SVProductInfoStruct& rProductInfo, SvSml::SVSharedInspectionWriter& rWriter);
+	
+	/// Set the name and Image Name in the shared memory structs. 
 	void InitSharedMemoryItemNames(const long ProductSlots, const long RejectSlots);
 
 	SVCriticalSectionPtr m_LastRunLockPtr;

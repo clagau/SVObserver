@@ -26,6 +26,7 @@
 #include "SVMatroxBufferCreateStruct.h"
 #include "SVMatroxSystem.h"
 #pragma endregion Includes
+#include "MatroxImageProps.h"
 
 class SVImageCopyUtility;
 /**
@@ -172,6 +173,10 @@ public:
 	static bool IsChildBuffer(const SVMatroxBuffer& p_rBuffer);
 	static bool IsColorBandBuffer(const SVMatroxBuffer& p_rBuffer);
 	static bool IsColorBuffer(const SVMatroxBuffer& p_rBuffer);
+
+	static SVStatusCode InquireBufferProperties(const SVMatroxBuffer& p_rBuffer, MatroxImageProps& rImageProps );
+	static SVStatusCode CreateBuffer(SVMatroxBuffer& p_rBuffer, MatroxImageProps& rImageProps , void *Memory);
+
 
 protected:
 	static SVStatusCode CopyBuffer( SVMatroxBuffer& p_rTo, SVMatroxIdentifier p_From );

@@ -108,9 +108,9 @@ namespace Seidenader { namespace SVSocketLibrary
 	}
 
 	template<typename API>
-	inline std::basic_string<TCHAR> SVSocket<API>::Log(const std::basic_string<TCHAR> & msg, bool full) const
+	inline void  SVSocket<API>::Log(const std::basic_string<TCHAR> & msg, bool full) const
 	{
-	//#ifdef LOG_ENABLED
+#if defined (TRACE_THEM_ALL) || defined (TRACE_SOCKET)
 		static int tick = 0;
 		static double start = currentTime();
 		char buff[256];
@@ -131,12 +131,8 @@ namespace Seidenader { namespace SVSocketLibrary
 				m_sockNum, ++tick, msg.c_str(), currentTime() - start);
 		}
 		#pragma warning (pop)
-
-#if defined (TRACE_THEM_ALL) || defined (TRACE_OTHER)
 		::OutputDebugStringA(buff);
 #endif
-		return buff;
-	//#endif
 	}
 
 	template<typename API> // is this really a good idea?

@@ -22,9 +22,9 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 	// for details see boost::interprocess and/or std library documentation
 	
 	typedef std::pair<const bip_string, SVSharedMonitorList> MonitorMapValue;
-	typedef boost::interprocess::allocator<MonitorMapValue, segment_manager_t> MonitorMapValueAllocator;
-	typedef boost::interprocess::map<bip_string, SVSharedMonitorList, std::less< bip_string >, MonitorMapValueAllocator> MonitorMap;
-	typedef boost::interprocess::allocator<MonitorMap, segment_manager_t> MonitorMapAllocator;
+	typedef bip::allocator<MonitorMapValue, segment_manager_t> MonitorMapValueAllocator;
+	typedef bip::map<bip_string, SVSharedMonitorList, std::less< bip_string >, MonitorMapValueAllocator> MonitorMap;
+	typedef bip::allocator<MonitorMap, segment_manager_t> MonitorMapAllocator;
 
 	class SVMonitorListStore
 	{
@@ -37,7 +37,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		const SVSharedMonitorList & operator[](const SVString & listName) const;
 
 		const SVStringVector GetListNames() const;
-		bool Open(boost::interprocess::managed_shared_memory & share);
+		bool Open(bip::managed_shared_memory & share);
 		void Clear();
 		bool HasList(const SVString & name) const;
 		void Add(const SVSharedMonitorList & list);

@@ -28,6 +28,11 @@
 #include "SocketTraits.h"
 #pragma endregion Includes
 
+#ifdef _DEBUG
+#define TRACE_SOCKET TRUE 
+#endif 
+
+
 typedef boost::shared_array<BYTE> bytes;
 
 extern volatile long g_sn;
@@ -90,7 +95,7 @@ namespace Seidenader { namespace SVSocketLibrary
 		virtual void Destroy();
 
 		ULONG GetAddr() const;
-		std::basic_string<TCHAR> Log(const std::basic_string<TCHAR> & msg, bool full = false) const;
+		void  Log(const std::basic_string<TCHAR> & msg, bool full = false) const;
 
 		Err SetNonBlocking();
 		Err SetBlocking();

@@ -12,6 +12,8 @@
 #pragma once
 #include "SVSharedMemoryLibrary\SVMonitorListReader.h"
 #include "SVSharedMemoryLibrary\MonitorListCpy.h"
+#include "SVSharedMemoryLibrary\SharedImageStore.h"
+#include "SVSharedMemoryLibrary\MLCpyContainer.h"
 
 
 
@@ -32,16 +34,22 @@ public:
 
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
+	void UpdateControls(bool ready);
 
-	enum ECOL {eName=0, ePPQ, eIsActive, eRejectDepth, eProductFilter,ePcount };
+
+	enum ECOL {eName=0, ePPQ, eIsActive, eRejectDepth, eProductFilter,eImageCount,ePcount, };
 	static LPCTSTR ColHeader[ePcount+1];
+
 
 	// Implementation
 protected:
 	
 	
 	SvSml::SVMonitorListReader m_mlReader;
-	SvSml::MonitorListCpyMap m_monitorMap;
+	SvSml::MLCpyContainer m_MLContainer;
+
+	std::vector<SvSml::ImageStorePointer> m_ImageStoresLast;
+	std::vector<SvSml::ImageStorePointer> m_ImageStoresReject;
 
 	HICON m_hIcon;
 
@@ -58,4 +66,5 @@ public:
 	CStatic m_ReadyValueCtrl;
 	CListCtrl m_MonListsCtrl;
 	afx_msg void OnBnClickedButtonShow();
+	afx_msg void OnBnClickedButtonExit();
 };

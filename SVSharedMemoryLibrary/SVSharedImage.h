@@ -18,20 +18,19 @@
 
 namespace Seidenader { namespace SVSharedMemoryLibrary
 {
+	//!This structure holds the path information which are stored in SharedMemory 
 	struct SVSharedImage
 	{
-		bip_string m_ElementName;
-		char m_Filename[statics::max_result_size];
-		long m_Status;
-		void_allocator m_Allocator;
-
 		SVSharedImage(const void_allocator& rAlloc);
-	
 		SVSharedImage(const SVSharedImage& rData);
 		const SVSharedImage& operator=(const SVSharedImage& rData);
 		void SetName(const SVString& NameName);
-		void SetFileName(const SVString& Filename);
-		void SetData(const SVString& Filename, int Status);
+		
+		void SetImageStoreProperties(LPCTSTR Name ,DWORD imageStoreIndex ,DWORD ImageIndex,DWORD slotindex,bool isreject);
+		void SetImageStoreStatus( int Status );
+	
+		void SetFileName(LPCTSTR  Filename);
+		void SetData(LPCTSTR Filename, int Status);
 		
 		//! Build a filename 
 		//! \param filename [in,out] filename
@@ -41,10 +40,27 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		//! \param bReject [in]
 		//! \param type [in]
 		//! \returns void
-		static void  BuildImageFileName(LPTSTR filename, int filenamelen, LPCTSTR name, long slotnumber, bool bReject = false, SVMatroxFileTypeEnum type = SVFileBitmap );
+		//static void  BuildImageFileName(LPTSTR filename, int filenamelen, LPCTSTR name, long slotnumber, bool bReject = false, SVMatroxFileTypeEnum type = SVFileBitmap );
+
+	
+		static LPCTSTR  BuildImageFileName(DWORD ImageIndex, DWORD ImageStoreIndex, DWORD SlotIndex, bool bReject);  
+
+		bip_string m_ElementName;
+		char m_Filename[statics::max_result_size];
+		DWORD m_ImageIndex;
+		DWORD m_ImageStoreIndex;
+		bool m_IsReject;
+		DWORD m_SlotIndex;
+		long m_Status;
+		void_allocator m_Allocator;
 	};
 
-typedef boost::interprocess::allocator<SVSharedImage, segment_manager_t> SVSharedImageAllocator;
+typedef bip::allocator<SVSharedImage, segment_manager_t> SVSharedImageAllocator;
+typedef bip::vector< SVSharedImage, SVSharedImageAllocator > SVSharedImageVector;
+typedef bip::allocator< SVSharedImageVector, segment_manager_t > SVSharedImageVectorAllocator;
+
+///only copy the status
+void  CopySharedImages(SVSharedImageVector& rTo, const SVSharedImageVector& rFrom );
 
 } /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
 

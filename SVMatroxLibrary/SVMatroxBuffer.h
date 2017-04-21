@@ -50,3 +50,6 @@ public:
 protected:
 	SVMatroxBufferPtr m_BufferPtr;
 };
+
+
+

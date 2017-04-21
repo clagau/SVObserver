@@ -32,7 +32,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		{}
 	};
 	typedef std::vector<InspectionWriterCreationInfo> InspectionWriterCreationInfos;
-	typedef std::vector<SVSharedInspectionWriter> InspectionWriters;
+	
 
 	class SVSharedPPQWriter // one writer per ppq
 	{
@@ -62,14 +62,14 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		void ClearHeld(SVSharedProductStore* share);
 		void ReleaseAll();
 
-		SVSharedProductStore* sh; // product queue
-		SVSharedProductStore* rsh; // reject queue
+		SVSharedProductStore* m_pProductStore; // product queue
+		SVSharedProductStore* m_pRejectStore; // reject queue
 		SVString m_ShareName;
-		InspectionWriters m_writers;
-
-		typedef std::shared_ptr< boost::interprocess::managed_shared_memory > managed_shared_memory_shared_ptr;
-		managed_shared_memory_shared_ptr shm;
+		std::vector<SVSharedInspectionWriter> m_writers; //< one writer per inspection
+		std::shared_ptr<bip::managed_shared_memory> m_pManagedSharedMemory;
 	};
+
+
 } /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
 
 namespace SvSml = Seidenader::SVSharedMemoryLibrary;

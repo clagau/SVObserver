@@ -25,24 +25,22 @@
 
 namespace Seidenader { namespace SVSharedMemoryLibrary
 {
-	typedef std::shared_ptr<boost::interprocess::managed_shared_memory> DataSharedMemPtr;
-
-	typedef SVValue Value;
-	typedef std::vector<Value> Values;
-	// maps trigger count into collection of fully qualified name/value pairs
-	typedef std::map<long, Values > FailStatusMap;
-
-	// holds product and its inspections
+	typedef std::vector<SVValue> SVValueVector; 
+	
+	/// maps trigger count into collection of fully qualified name/value pairs
+	typedef std::map<long, SVValueVector > FailStatusMap; 
+	
+	/// holds product and its inspections
 	struct SVProductBundle
 	{
 		const SVSharedProduct& product;
-		typedef std::map<SVString, InspectionDataPtr> InspectionDataPtrMap;
-		InspectionDataPtrMap inspections;
+		typedef std::map<SVString,  SVSharedData*> SVSharedDataPtrMap;
+		SVSharedDataPtrMap inspections;
 		SVProductBundle(const SVSharedProduct& prod)
 		: product(prod), inspections()
 		{
 		}
-		Value find(const SVString& name) const;
+		SVValue find(const SVString& name) const;
 	};
 
 	typedef std::shared_ptr<SVProductBundle> ProductPtr;
@@ -64,13 +62,18 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		ProductPtr RequestReject(long trig, long& idx) const;
 		void ReleaseReject(const ProductPtr product, long idx) const;
 
-		FailStatusMap GetFailStatus(const SvSml::MonitorEntryVector& Entries) const;
+		FailStatusMap GetFailStatus(const SvSml::MonitorEntries& Entries) const;
 		
+		
+		const SharedImageStore*  GetImageStore(LPCTSTR InspectionName, SharedImageStore::StoreType t ) const;
+		void AdInspectionReader(LPCTSTR InspectionName);
+
+
 	private:
 		long next_readable() const;
 		long next_reject_readable() const;
 
-		DataSharedMemPtr m_DataSharedMemPtr;
+		std::shared_ptr<bip::managed_shared_memory> m_DataSharedMemPtr;
 
 		SVSharedProductStore* m_SharedProductStorePPQ;
 		SVSharedProductStore* m_SharedProductStorePPQReject;
@@ -98,6 +101,10 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 			_InterlockedDecrement16((volatile short *)&(prod.m_Flags));		
 		}
 	};
+
+	///unique Ptr to SVSharedPPQReader
+	typedef std::unique_ptr<SVSharedPPQReader> upSharedPPQReader;         
+
 } /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
 
 namespace SvSml = Seidenader::SVSharedMemoryLibrary;

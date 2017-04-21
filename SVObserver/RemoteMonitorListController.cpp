@@ -19,7 +19,7 @@
 #include "SVConfigurationObject.h"
 #include "SVIODoc.h"
 #include "SVIOTabbedView.h"
-#include "SVSharedMemoryLibrary/SVSharedMemorySingleton.h"
+#include "SVSharedMemoryLibrary/SharedMemWriter.h"
 #include "SVObserver.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVUtilityLibrary/SVGUID.h"
@@ -234,8 +234,8 @@ void RemoteMonitorListController::ValidateInputs()
 ////////////////////////////////////////////////////////////////////////////
 HRESULT RemoteMonitorListController::InitMonitorListInSharedMemory(size_t size)
 {
-	const SvSml::SVSharedMemorySettings& rSettings =SvSml::SVSharedMemorySingleton::Instance().GetSettings();
-	SvSml::SVMonitorListWriter& rWriter =SvSml::SVSharedMemorySingleton::Instance().GetMonitorListWriter();
+	const SvSml::SVSharedMemorySettings& rSettings =SvSml::SharedMemWriter::Instance().GetSettings();
+	SvSml::SVMonitorListWriter& rWriter =SvSml::SharedMemWriter::Instance().GetMonitorListWriter();
 	HRESULT hr = rWriter.Create(rSettings, size);
 	if (S_OK != hr)
 	{
@@ -256,24 +256,21 @@ size_t RemoteMonitorListController::CalcSharedMemorySize(const RemoteMonitorList
 		bool isActive = remoteMonitorNamedList.IsActive();
 		if (isActive)
 		{
-			SvSml::MonitorListCpy  monitorListCpy;
-			RemoteMonitorListHelper::InsertRemotMonitorNamedList2MonitorListcpy(remoteMonitorNamedList,monitorListCpy); 
-			size += monitorListCpy.CalcMemorySize();
+			SvSml::MonitorListCpyPointer  MLCpPtr = RemoteMonitorListHelper::CreateMLcopy(remoteMonitorNamedList);
+			size += MLCpPtr->CalcMemorySize();
 		}
 	}
 	return size;
 }
 
 
-void RemoteMonitorListController::WriteMonitorListToSharedMemory(const std::string& name, const RemoteMonitorNamedList& remoteMonitorNamedlist)
+void RemoteMonitorListController::WriteMonitorListToMLContainer(const std::string& name, const RemoteMonitorNamedList& remoteMonitorNamedlist)
 {
-	
-	const SvSml::SVSharedMemorySettings& rSettings = SvSml::SVSharedMemorySingleton::Instance().GetSettings();
-	SvSml::SVMonitorListWriter& rWriter = SvSml::SVSharedMemorySingleton::Instance().GetMonitorListWriter();
-	SvSml::MonitorListCpy  monitorListCpy;
-	RemoteMonitorListHelper::InsertRemotMonitorNamedList2MonitorListcpy(remoteMonitorNamedlist,monitorListCpy); 
-	SvSml::MonitorListCpyHelper::WriteMonitorList(rWriter, monitorListCpy);
-	
+	SvSml::MonitorListCpy*  pMonitorListCpy = new SvSml::MonitorListCpy;
+	const SvSml::SVSharedMemorySettings& rSettings = SvSml::SharedMemWriter::Instance().GetSettings();
+	SvSml::SVMonitorListWriter& rWriter = SvSml::SharedMemWriter::Instance().GetMonitorListWriter();
+	SvSml::MonitorListCpyPointer  MLCpPtr = RemoteMonitorListHelper::CreateMLcopy(remoteMonitorNamedlist);
+	SvSml::SharedMemWriter::Instance().Insert(MLCpPtr);
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -293,9 +290,14 @@ HRESULT RemoteMonitorListController::BuildPPQMonitorList(PPQMonitorList& ppqMoni
 	if (S_OK == hr)
 	{
 		// combine the lists by PPQName
+		SvSml::SharedMemWriter::Instance().ClearMonitorListCpyVector();
+
 		for (RemoteMonitorList::const_iterator it = m_list.begin();it != m_list.end();++it)
 		{
 			// Only Activated Lists are sent to the Inspections and Monitor Lists can only be activated when Offline
+
+			///Insert Monitorlistcpy to singelton 
+			
 			bool bActive = it->second.IsActive();
 			if (bActive)
 			{
@@ -306,7 +308,7 @@ HRESULT RemoteMonitorListController::BuildPPQMonitorList(PPQMonitorList& ppqMoni
 				const SVString& ppqName = it->second.GetPPQName();
 
 				// write the monitorlist to shared memory...
-				WriteMonitorListToSharedMemory(it->first.c_str(), it->second);
+				WriteMonitorListToMLContainer(it->first.c_str(), it->second);
 
 				SVMonitorItemList remoteValueList;
 				SVMonitorItemList remoteImageList;

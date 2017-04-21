@@ -480,6 +480,7 @@ namespace Seidenader { namespace ObjectInterfaces
 		Tid_RunLutFailed,
 		Tid_StringTooLarge,
 		Tid_ErrorMcodeGetResult,
+		Tid_StdException
 	};
 } /* namespace ObjectInterfaces */ } /* namespace Seidenader */
 

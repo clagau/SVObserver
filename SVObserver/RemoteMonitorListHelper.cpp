@@ -15,6 +15,7 @@
 #include "SVOCore/SVImageClass.h"
 #include "SVSharedMemoryLibrary/MonitorEntry.h"
 #include "SVSharedMemoryLibrary/MonitorListCpy.h"
+#include "SVImageLibrary/SVImageBufferHandleImage.h"
 
 #pragma endregion Includes
 
@@ -48,13 +49,13 @@ SVString RemoteMonitorListHelper::GetNameFromMonitoredObject(const MonitoredObje
 	return Result;
 }
 
-DWORD RemoteMonitorListHelper::GetTypeFromFromMonitoredObject(const MonitoredObject& rMonitoredObject)
+DWORD RemoteMonitorListHelper::GetTypeFromMonitoredObject(const MonitoredObject& rMonitoredObject)
 {
 	SVObjectReference objectRef(SVObjectManagerClass::Instance().GetObject(rMonitoredObject.guid));
 	return  objectRef.getObject()->GetObjectType();
 }
 
-DWORD RemoteMonitorListHelper::GetSizeFromFromMonitoredObject(const MonitoredObject& rMonitoredObject)
+DWORD RemoteMonitorListHelper::GetSizeFromMonitoredObject(const MonitoredObject& rMonitoredObject)
 {
 	DWORD size(0);
 	SVObjectReference ObjectRef(SVObjectManagerClass::Instance().GetObject(rMonitoredObject.guid));
@@ -67,7 +68,26 @@ DWORD RemoteMonitorListHelper::GetSizeFromFromMonitoredObject(const MonitoredObj
 		size = height * width;
 	}
 	return size;
-	
+}
+
+void RemoteMonitorListHelper::GetImagePropertiesFromMonitoredObject(const MonitoredObject& rMonitoredObject,MatroxImageProps& Imageprops)
+{
+	SVObjectReference objectRef(SVObjectManagerClass::Instance().GetObject(rMonitoredObject.guid));
+	SVImageClass* pImageObject = dynamic_cast<SVImageClass*>(objectRef.getObject());
+	if( nullptr !=  pImageObject)
+	{
+		SVSmartHandlePointer imageHandlePtr;
+		// Special check for Color Tool's RGBMainImage which is HSI ???
+		pImageObject->GetImageHandle(imageHandlePtr);
+		if(!imageHandlePtr.empty())
+		{
+			SVImageBufferHandleImage MilHandle;
+			imageHandlePtr->GetData( MilHandle );
+			SVMatroxBufferInterface::InquireBufferProperties(MilHandle.GetBuffer(),Imageprops); 
+		}
+		
+		
+	}
 }
 
 
@@ -105,38 +125,65 @@ MonitoredObject RemoteMonitorListHelper::GetMonitoredObjectFromName(const SVStri
 	return Result;
 }
 
-void RemoteMonitorListHelper::AddMonitorObjects2MoListEntryVector(const MonitoredObjectList& values, SvSml::MonitorEntryVector  &ListEntries )
+void RemoteMonitorListHelper::AddMonitorObject2MonitorListcpy(const MonitoredObjectList& values, SvSml::ListType::typ listtype,SvSml::MonitorListCpy& molcpy )
 {
+	///TODO CALCULATE OFFSET and Image Store Index!!!!
 	MonitoredObjectList::const_iterator it;
 	SvSml::MonitorEntry Entry;
 	for(it = values.begin(); it != values.end() ; ++it)
 	{
-		Entry.name =  RemoteMonitorListHelper::GetNameFromMonitoredObject(*it).c_str();
-		Entry.size = RemoteMonitorListHelper::GetSizeFromFromMonitoredObject(*it);
-		Entry.type = RemoteMonitorListHelper::GetTypeFromFromMonitoredObject(*it);
-		ListEntries.push_back(Entry);	
+		SVString name = RemoteMonitorListHelper::GetNameFromMonitoredObject(*it);
+		DWORD type =	RemoteMonitorListHelper::GetTypeFromMonitoredObject(*it);
+		SvSml::MonitorEntryPointer MeP  = molcpy.AddEntry(listtype,name,type);
+		if(listtype == SvSml::ListType::productItemsImage)
+		{
+			assert(type == SVObjectTypeEnum::SVImageObjectType );
+			MatroxImageProps ImageProperties;
+			RemoteMonitorListHelper::GetImagePropertiesFromMonitoredObject(*it,ImageProperties);
+			MeP->SetMatroxImageProps(ImageProperties);
+		}
+		else
+		{
+			MeP->size =  RemoteMonitorListHelper::GetSizeFromMonitoredObject(*it);
+		}
+		
 	}
 
 }
 
 
-void RemoteMonitorListHelper::InsertRemotMonitorNamedList2MonitorListcpy(const RemoteMonitorNamedList& remoteMonitorNamedlist,SvSml::MonitorListCpy  &monitorListCpy )
+SvSml::MonitorListCpyPointer  RemoteMonitorListHelper::CreateMLcopy(const RemoteMonitorNamedList& remoteMonitorNamedlist)
 {
-
-	monitorListCpy.m_name = remoteMonitorNamedlist.GetName(); 
-	monitorListCpy.m_rejectDepth = remoteMonitorNamedlist.GetRejectDepthQueue(); 
-	monitorListCpy.m_IsActive = remoteMonitorNamedlist.IsActive();
-	monitorListCpy.m_ppq = remoteMonitorNamedlist.GetPPQName();;
-	monitorListCpy.m_ProductFilter = remoteMonitorNamedlist.GetProductFilter();
-
-	monitorListCpy.prodItems.clear();
-	monitorListCpy.failStats.clear();
-	monitorListCpy.rejctCond.clear();
-	AddMonitorObjects2MoListEntryVector(remoteMonitorNamedlist.GetProductValuesList(),monitorListCpy.prodItems);
-	AddMonitorObjects2MoListEntryVector(remoteMonitorNamedlist.GetProductImagesList(),monitorListCpy.prodItems);
-	AddMonitorObjects2MoListEntryVector(remoteMonitorNamedlist.GetFailStatusList(),monitorListCpy.failStats);
-	AddMonitorObjects2MoListEntryVector(remoteMonitorNamedlist.GetRejectConditionList(),monitorListCpy.rejctCond);
-
+	SvSml::MonitorListCpyPointer  MLCpPtr  = SvSml::MonitorListCpyPointer(new SvSml::MonitorListCpy);
+	MLCpPtr->SetMonitorlistname(remoteMonitorNamedlist.GetName()); 
+	MLCpPtr->SetRejectDepth(remoteMonitorNamedlist.GetRejectDepthQueue()); 
+	MLCpPtr->SetIsActive(remoteMonitorNamedlist.IsActive());
+	MLCpPtr->SetPPQname(remoteMonitorNamedlist.GetPPQName());
+	MLCpPtr->SetProductFilter(remoteMonitorNamedlist.GetProductFilter());
 	
+	AddMonitorObject2MonitorListcpy(remoteMonitorNamedlist.GetProductValuesList(),SvSml::ListType::productItemsData,*(MLCpPtr.get()));
+	AddMonitorObject2MonitorListcpy(remoteMonitorNamedlist.GetFailStatusList(),SvSml::ListType::failStatus,*(MLCpPtr.get()));
+	AddMonitorObject2MonitorListcpy(remoteMonitorNamedlist.GetRejectConditionList(),SvSml::ListType::rejectCondition,*(MLCpPtr.get()));
+	AddMonitorObject2MonitorListcpy(remoteMonitorNamedlist.GetProductImagesList(),SvSml::ListType::productItemsImage,*(MLCpPtr.get()));
+
+	return MLCpPtr;
+}
+
+				  
+void RemoteMonitorListHelper::RemotMonitorNamedList2MonitorListcpy(const RemoteMonitorNamedList& remoteMonitorNamedlist,SvSml::MonitorListCpy&  monitorListCpy )
+{
+	monitorListCpy.ClearAll();
+	monitorListCpy.SetMonitorlistname(remoteMonitorNamedlist.GetName()); 
+	monitorListCpy.SetRejectDepth(remoteMonitorNamedlist.GetRejectDepthQueue()); 
+	monitorListCpy.SetIsActive(remoteMonitorNamedlist.IsActive());
+	monitorListCpy.SetPPQname(remoteMonitorNamedlist.GetPPQName());
+	monitorListCpy.SetProductFilter(remoteMonitorNamedlist.GetProductFilter());
+
+	AddMonitorObject2MonitorListcpy(remoteMonitorNamedlist.GetProductValuesList(),SvSml::ListType::productItemsData,monitorListCpy);
+	AddMonitorObject2MonitorListcpy(remoteMonitorNamedlist.GetFailStatusList(),SvSml::ListType::failStatus,monitorListCpy);
+	AddMonitorObject2MonitorListcpy(remoteMonitorNamedlist.GetRejectConditionList(),SvSml::ListType::rejectCondition,monitorListCpy);
+	AddMonitorObject2MonitorListcpy(remoteMonitorNamedlist.GetProductImagesList(),SvSml::ListType::productItemsImage,monitorListCpy);
+
 
 }
+

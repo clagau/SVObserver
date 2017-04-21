@@ -12,13 +12,15 @@
 #include "StdAfx.h"
 #include "SVSharedMonitorList.h"
 #include "SVSharedConfiguration.h"
+#include "SVMonitorListWriter.h"
 #pragma endregion Includes
 
 namespace Seidenader { namespace SVSharedMemoryLibrary
 {
 	SVSharedMonitorList::SVSharedMonitorList(const void_allocator & allocator)
 	: m_allocator(allocator)
-	, prodItems(allocator)
+	, prodItemsData(allocator)
+	, prodItemsImage(allocator)
 	, rejctCond(allocator)
 	, failStats(allocator)
 	, m_name("", allocator)
@@ -32,7 +34,8 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 
 	SVSharedMonitorList::SVSharedMonitorList(const SVSharedMonitorList & rho)
 	: m_allocator(rho.m_allocator)
-	, prodItems(rho.prodItems)
+	, prodItemsData(rho.prodItemsData)
+	, prodItemsImage(rho.prodItemsImage)
 	, rejctCond(rho.rejctCond)
 	, failStats(rho.failStats)
 	, m_name(rho.m_name.c_str(), rho.m_allocator)
@@ -49,7 +52,8 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		if (&rho != this)
 		{
 			SVSharedConfiguration::Log("SVSharedMonitorList::operator=");
-			prodItems = rho.prodItems;
+			prodItemsData = rho.prodItemsData;
+			prodItemsImage = rho.prodItemsImage;
 			rejctCond = rho.rejctCond;
 			failStats = rho.failStats;
 			m_name = rho.m_name;
@@ -66,82 +70,76 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		SVSharedConfiguration::Log("SVSharedMonitorList::Destructor");
 	}
 
-	const  ShMoListEntryVector& SVSharedMonitorList::GetProductItems() const
+	
+	const  ShMoListEntryVector& SVSharedMonitorList::GetShMoListEntryVector(ListType::typ ltype) const
 	{
-		SVSharedConfiguration::Log("SVSharedMonitorList::GetProductItems");
-		return prodItems;
-	}
-
-	const ShMoListEntryVector& SVSharedMonitorList::GetRejectCond() const
-	{
-		SVSharedConfiguration::Log("SVSharedMonitorList::GetRejectCond");
-		return rejctCond;
-	}
-
-	const ShMoListEntryVector&  SVSharedMonitorList::GetFailStatus() const
-	{
-		SVSharedConfiguration::Log("SVSharedMonitorList::GetFailStatus");
-		return failStats;
-	}
-
-	void SVSharedMonitorList::SetProductItems(const std::vector<MonitorEntry> & items)
-	{
-		SVSharedConfiguration::Log("SVSharedMonitorList::SetProductItems");
-		prodItems.clear();
-		prodItems.reserve(items.size());
-		for (std::vector<MonitorEntry>::const_iterator it = items.begin(); it != items.end(); ++it)
+		switch (ltype)
 		{
-			ShMonitorEntry  SEntry(m_allocator);
-			SEntry.name =  bip_string(it->name.c_str(), m_allocator);
-			SEntry.size =  it->size;
-			SEntry.type =  it->type;
-			prodItems.push_back(SEntry);
+		case ListType::productItemsData:
+			return prodItemsData;
+			break;
+		case ListType::productItemsImage:
+			return prodItemsImage;
+			break;
+		case ListType::failStatus:
+			return failStats;
+			break;
+		case ListType::rejectCondition:
+			return rejctCond;
+			break;
+		default:
+			throw std::exception("wrong listtype");
+
 		}
+
 	}
 
-	void SVSharedMonitorList::SetRejectCond(const std::vector<MonitorEntry> & items)
+
+
+	void SVSharedMonitorList::SetEntries(ListType::typ ltype,  const MonitorEntries & items)
 	{
-		SVSharedConfiguration::Log("SVSharedMonitorList::SetRejectCond");
-		rejctCond.clear();
-		rejctCond.reserve(items.size());
-		for (std::vector<MonitorEntry>::const_iterator it = items.begin(); it != items.end(); ++it)
+		
+		ShMoListEntryVector*  pEntryVector  = nullptr;
+		switch(ltype)
 		{
-			ShMonitorEntry  SEntry(m_allocator);
-			SEntry.name =  bip_string(it->name.c_str(), m_allocator);
-			SEntry.size =  it->size;
-			SEntry.type =  it->type;
-			rejctCond.push_back(SEntry);
+		case ListType::failStatus:
+			pEntryVector = &failStats;
+			break;
+		case ListType::productItemsImage:
+			pEntryVector = &prodItemsImage;
+			break;
+		case ListType::productItemsData:
+			pEntryVector = &prodItemsData;
+			break;
+		case ListType::rejectCondition:
+			pEntryVector = &rejctCond;
+			break;
 		}
-	}
-
-	void SVSharedMonitorList::SetFailStatus(const std::vector<MonitorEntry> & items)
-	{
-		SVSharedConfiguration::Log("SVSharedMonitorList::SetFailStatus");
-		failStats.clear();
-		failStats.reserve(items.size());
-		for (std::vector<MonitorEntry>::const_iterator it = items.begin(); it != items.end(); ++it)
+		if(pEntryVector)
 		{
-			ShMonitorEntry  SEntry(m_allocator);
-			SEntry.name =  bip_string(it->name.c_str(), m_allocator);
-			SEntry.size =  it->size;
-			SEntry.type =  it->type;
-			failStats.push_back(SEntry);
+			pEntryVector->clear();
+			pEntryVector->reserve(items.size());
+			for (MonitorEntries::const_iterator it = items.begin(); it != items.end(); ++it)
+			{
+				ShMonitorEntry  SEntry(m_allocator, *(it->get()));
+				pEntryVector->push_back(SEntry);
+			}
 		}
 	}
 
 
-	MonitorEntryVector::const_iterator  SVSharedMonitorList::FindInMoListVector(SVString const &name, const MonitorEntryVector &entryVector )
+		MonitorEntries::const_iterator  SVSharedMonitorList::FindInMoListVector(SVString const &name, const MonitorEntries &entryVector )
 	{
-		MonitorEntryVector::const_iterator ret; 
+		MonitorEntries::const_iterator ret; 
 		for( ret =  entryVector.begin(); ret != entryVector.end(); ++ret )
 		{
-			if(ret->name == name)
+			if(ret->get()->name == name)
 				break;
 		}
 		return ret;
 	}
 
-	bool SVSharedMonitorList::IsInMoListVector(SVString const &name, const MonitorEntryVector &entryVector )
+	bool SVSharedMonitorList::IsInMoListVector(SVString const &name, const MonitorEntries &entryVector )
 	{
 		return FindInMoListVector(name,entryVector ) != entryVector.end();
 	}

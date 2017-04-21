@@ -3,8 +3,6 @@
 /// \file ShareEvents.h 
 /// All Rights Reserved 
 //*****************************************************************************
-
-
 //Singleton class handles two global events 
 ///The events are used to signal status of shared memory  
 //******************************************************************************
@@ -45,23 +43,18 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		bool StartWatch();
 		//!callbackfunction for watch thread 
 		void SetCallbackFunction(boost::function<bool(DWORD )>cbFct);  
-		
-		////! callbackfunction for watch thread 
-		//void SetChangeFunction(boost::function<bool ()> CF);
-		////! callbackfunction for watch thread 
-		//void SetReadyFunction(boost::function<bool ()> RF);
-		////! callbackfunction for watch thread 
-		//void SetUpdateFunction(boost::function<void ()> RF);
+
 		//! True if InitEventIsSet
 		bool GetIsReady() const;
 		
 		//! The Ready counter is incremented when the ready flag is set to true
+		//!The ready Counter is used in RRS because there exist two Nonitorlistcopies 
 		long ShareEvents::GetReadyCounter() const;
 
 		//!True if Init Flag isSet
 		bool GetIsInit() const;
 		
-		//!Set Init flag. The init flag will bee reseted when changeing event occurs
+		//!Set Init flag. The init flag will bee reseted when changing event occurs
 		void SetIsInit();
 
 	private:

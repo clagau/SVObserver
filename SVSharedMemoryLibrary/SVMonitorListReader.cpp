@@ -36,10 +36,10 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		try
 		{
 			m_ShareName = g_shName + "." + SVSharedConfiguration::GetShareName();
-			shm = DataSharedMemPtr(new boost::interprocess::managed_shared_memory(boost::interprocess::open_read_only, m_ShareName.c_str()));
+			m_pManagedSharedMemory = std::shared_ptr<bip::managed_shared_memory>(new bip::managed_shared_memory(bip::open_read_only, m_ShareName.c_str()));
 
 			// get a pointer to the monitor list segment
-			auto store = shm->find<SVMonitorListStore>(g_shName.c_str());
+			auto store = m_pManagedSharedMemory->find<SVMonitorListStore>(g_shName.c_str());
 			//if (store.second)
 			if (store.first)
 			{	
@@ -47,8 +47,13 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 				retVal = true;
 				m_isOpen = true;
 			}
+			else
+			{
+				m_isOpen = false;
+				m_store = nullptr;
+			}
 		}
-		catch (boost::interprocess::interprocess_exception & e)
+		catch (bip::interprocess_exception & e)
 		{
 			SVSharedConfiguration::Log(e.what());
 			m_isOpen = false;
@@ -62,12 +67,12 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		SVSharedConfiguration::Log("SVMonitorListReader::Close");
 		try
 		{
-			if (shm)
+			if (m_pManagedSharedMemory)
 			{
-				shm.reset();
+				m_pManagedSharedMemory.reset();
 			}
 		}
-		catch(boost::interprocess::interprocess_exception& e)
+		catch(bip::interprocess_exception& e)
 		{
 			SVSharedConfiguration::Log(e.what());
 		}

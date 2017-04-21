@@ -27,7 +27,7 @@
 #include "SVUtilityLibrary/SVDottedName.h"
 #include "SVSharedMemoryLibrary/SVSharedPPQWriter.h"
 #include "SVSharedMemoryLibrary/SVSharedConfiguration.h"
-#include "SVSharedMemoryLibrary/SVSharedMemorySingleton.h"
+#include "SVSharedMemoryLibrary/SharedMemWriter.h"
 #include "SVGlobal.h"
 #include "SVObserver.h"
 #include "SVOutputObjectList.h"
@@ -746,10 +746,10 @@ BOOL SVPPQObject::Destroy()
 	m_pResultDataCircleBuffer.clear();
 	m_pResultImagePublishedCircleBuffer.clear();
 
-	if (SvSml::SVSharedMemorySingleton::HasShares())
+	if (SvSml::SharedMemWriter::Instance().HasShares())
 	{
 		SvSml::ShareEvents::GetInstance().QuiesceSharedMemory();
-		SvSml::SVSharedMemorySingleton::Instance().ErasePPQSharedMemory(GetUniqueObjectID());
+		SvSml::SharedMemWriter::Instance().ErasePPQSharedMemory(GetUniqueObjectID());
 	}
 
 	m_isCreated = false;
@@ -1307,12 +1307,45 @@ void SVPPQObject::PrepareGoOnline()
 	{
 		// Get List of Inspections for this PPQ
 		// SVSharedPPQWriter will create the inspection shares
-		HRESULT hr = SvSml::SVSharedMemorySingleton::Instance().InsertPPQSharedMemory(GetName(), GetUniqueObjectID(), m_numProductSlots, m_numRejectSlots, m_InspectionWriterCreationInfos);
+		HRESULT hr  = S_OK;
+		try 
+		{
+			hr = SvSml::SharedMemWriter::Instance().InsertPPQSharedMemory(GetName(), GetUniqueObjectID(), m_numProductSlots, m_numRejectSlots, m_InspectionWriterCreationInfos);
+			if(S_OK == hr)
+			{
+				//insert ImageStore for every inspection
+				SvSml::InspectionWriterCreationInfos::iterator it;
+				for(it = m_InspectionWriterCreationInfos.begin(); it != m_InspectionWriterCreationInfos.end(); ++it )
+				{
+
+					long size = SvSml::SharedMemWriter::Instance().GetInspectionImageSize(it->inspectionID.first);
+					long numRejectSlots(m_numRejectSlots);
+
+					//@Todo[MEC][7.50] [21.02.2017] this part is copied from  SVSharedPPQWriter::Create to have  one number for NumrRejectslot. But this should be removed
+					if (numRejectSlots)
+					{
+						numRejectSlots += static_cast<long>(std::ceil(static_cast<float>(numRejectSlots) * 0.5f)) + 4; // allow 50% extra + 4 additional slots
+					}
+
+					SvSml::SharedMemWriter::Instance().CreateImageStores(it->inspectionID.first,m_numProductSlots,numRejectSlots);
+				}
+
+			}
+		}
+		catch(const std::exception &ex)
+		{
+			TRACE1("Build SHARED MEMORY FAILED: %s",ex.what() );
+			SVStringVector msgList;
+			msgList.push_back(ex.what());
+			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
+			MesMan.setMessage( SVMSG_SVO_44_SHARED_MEMORY, SvOi::Tid_StdException, msgList ,SvStl::SourceFileParams(StdMessageParams));
+			hr = E_FAIL;
+		}
 		if (S_OK != hr)
 		{
 			// clear the list
 			SetMonitorList(ActiveMonitorList(false, RejectDepthAndMonitorList()));
-			SvSml::SVSharedMemorySingleton::Instance().ErasePPQSharedMemory(GetUniqueObjectID());
+			SvSml::SharedMemWriter::Instance().ErasePPQSharedMemory(GetUniqueObjectID());
 
 			SVStringVector msgList;
 			msgList.push_back(GetName());
@@ -4119,7 +4152,7 @@ HRESULT SVPPQObject::ProcessTrigger( bool& p_rProcessed )
 						{
 							try
 							{
-								SvSml::SVSharedPPQWriter& rWriter =SvSml::SVSharedMemorySingleton::Instance().GetPPQWriter(GetUniqueObjectID());
+								SvSml::SVSharedPPQWriter& rWriter =SvSml::SharedMemWriter::Instance().GetPPQWriter(GetUniqueObjectID());
 								long idx = 0;
 								SvSml::SVSharedProduct& rSharedProduct = rWriter.RequestNextProductSlot(idx);
 #if defined (TRACE_THEM_ALL) || defined (TRACE_SHARED)
@@ -4918,6 +4951,7 @@ void SVPPQObject::SetMonitorList(const ActiveMonitorList& rActiveList)
 	m_InspectionWriterCreationInfos.clear();
 	if (m_bActiveMonitorList)
 	{
+		//@Todo[MEC][7.50] [14.03.2017] clean up the mess with this numbers 
 		// Flawed design, eash list can have a reject depth, when in reality they must be the same for the PPQ
 		m_numRejectSlots = std::max(m_numRejectSlots, static_cast<long>(rActiveList.second.rejectDepth)); 
 
@@ -5239,7 +5273,7 @@ void SVPPQObject::ReleaseSharedMemory(const SVProductInfoStruct& rProduct)
 		try
 		{
 			// Release Shared Product
-			SvSml::SVSharedPPQWriter& rWriter =SvSml::SVSharedMemorySingleton::Instance().GetPPQWriter(GetUniqueObjectID());
+			SvSml::SVSharedPPQWriter& rWriter =SvSml::SharedMemWriter::Instance().GetPPQWriter(GetUniqueObjectID());
 			SvSml::SVSharedProduct& rSharedProduct = rWriter.GetProductSlot(rProduct.m_lastInspectedSlot);
 			rSharedProduct.m_TriggerCount = -1;
 			rSharedProduct.m_Inspections.clear();
@@ -5271,7 +5305,7 @@ void SVPPQObject::CommitSharedMemory(const SVProductInfoStruct& rProduct)
 		try
 		{
 			long shareSlotIndex = rProduct.m_lastInspectedSlot;
-			SvSml::SVSharedPPQWriter& rWriter =SvSml::SVSharedMemorySingleton::Instance().GetPPQWriter(GetUniqueObjectID());
+			SvSml::SVSharedPPQWriter& rWriter =SvSml::SharedMemWriter::Instance().GetPPQWriter(GetUniqueObjectID());
 
 			// Get next Available Product Slot
 			SvSml::SVSharedProduct& rSharedProduct = rWriter.GetProductSlot(shareSlotIndex);

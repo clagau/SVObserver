@@ -1173,4 +1173,3 @@ HRESULT SVImageProcessingClass::CreateImageBuffer( int pixelDepth, int bandNumbe
 	}	
 	return Result;
 }
-

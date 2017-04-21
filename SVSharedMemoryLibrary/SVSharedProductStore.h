@@ -23,7 +23,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		
 		SVSharedProductStore(const void_allocator& allocator, size_t cache_size);
 	};
-	typedef boost::interprocess::allocator<SVSharedProductStore, segment_manager_t> ProductStoreAllocator;
+	typedef bip::allocator<SVSharedProductStore, segment_manager_t> ProductStoreAllocator;
 } /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
 
 namespace SvSml = Seidenader::SVSharedMemoryLibrary;

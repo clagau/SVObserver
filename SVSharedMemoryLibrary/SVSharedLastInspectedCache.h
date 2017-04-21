@@ -24,7 +24,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		SVSharedLastInspectedCache(const void_allocator& rAlloc, size_t cache_size, size_t num_images, size_t num_values );
 	};
 
-	typedef boost::interprocess::allocator<SVSharedLastInspectedCache, segment_manager_t> SVSharedLastInspectedCacheAllocator;
+	typedef bip::allocator<SVSharedLastInspectedCache, segment_manager_t> SVSharedLastInspectedCacheAllocator;
 
 } /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
 

@@ -30,9 +30,11 @@ Traces can also be activated in groups by #defining any or all of the following,
 	TRACE_IP
 	TRACE_ARCHIVE
 	TRACE_DESTRUCT
+	TRACE_SOCKET
+	TRACE_MATROX_FUNCTION
 	
 If new TRACEs or ::OutputDebugString()s are added please enclose them in 
-	#if defined (TRACE_EVERYTING) || defined (TRACE_<whatever>)
+	#if defined (TRACE_THEM_ALL) || defined (TRACE_<whatever>)
 and
 	#endif
 	

@@ -516,6 +516,8 @@ MessageTextMap g_MessageTextMap = boost::assign::map_list_of
 	(SvOi::Tid_RunLutFailed, _T("Run Lut failed."))
 	(SvOi::Tid_StringTooLarge, _T("String too large."))
 	(SvOi::Tid_ErrorMcodeGetResult, _T("Function McodeGetResult return error: %s"))
+	(SvOi::Tid_StdException, _T("Sdt:Exception  what: %s"))
+
 	;
 } /* namespace SVStatusLibrary */ } /* namespace Seidenader */
 

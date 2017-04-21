@@ -66,6 +66,15 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 	{
 		enum type { bmp, png, jpg };
 	}
+	
+	
+	namespace ListType
+	{
+		//! enum for monitorlist sublist type	
+		enum  typ { productItemsData =0 ,productItemsImage, rejectCondition, failStatus, Count };
+	}
+	
+
 
 } /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
 

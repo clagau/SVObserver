@@ -30,13 +30,13 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		const SVSharedInspection& operator=(const SVSharedInspection& rData);
 	};
 
-	typedef boost::interprocess::allocator<SVSharedInspection, segment_manager_t> SVSharedInspectionAllocator;
+	typedef bip::allocator<SVSharedInspection, segment_manager_t> SVSharedInspectionAllocator;
 	// The first item in the pair is the Inspection Share Name
 	typedef std::pair<bip_string, SVSharedInspection> SVSharedInspectionPair; // non const key for flt map
-	typedef boost::interprocess::allocator<SVSharedInspectionPair, segment_manager_t> SVSharedInspectionPairAllocator;
+	typedef bip::allocator<SVSharedInspectionPair, segment_manager_t> SVSharedInspectionPairAllocator;
 	// The Key is the Inspection Share Name
-	typedef boost::interprocess::flat_map<bip_string, SVSharedInspection, std::less<bip_string>, SVSharedInspectionPairAllocator> SVSharedInspectionMap;
-	typedef boost::interprocess::allocator<SVSharedInspectionMap, segment_manager_t> SVSharedInspectionMapAllocator;
+	typedef bip::flat_map<bip_string, SVSharedInspection, std::less<bip_string>, SVSharedInspectionPairAllocator> SVSharedInspectionMap;
+	typedef bip::allocator<SVSharedInspectionMap, segment_manager_t> SVSharedInspectionMapAllocator;
 
 } /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
 

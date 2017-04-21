@@ -70,11 +70,8 @@ public:
 	//************************************
 	static bool IsValidMonitoredObject(const SVObjectClass* pObject);
 
-
-
-
 	static size_t CalcSharedMemorySize(const RemoteMonitorList& rList);
-
+	
 	static LPCTSTR s_DefaultMonitorListName;
 
 
@@ -87,7 +84,7 @@ private:
 	//! \param name [in] name of monitorlist
 	//! \param remoteMonitorNamedlist [in] monitorlist
 	//! \returns void
-	static void WriteMonitorListToSharedMemory(const std::string& name, const RemoteMonitorNamedList& remoteMonitorNamedlist);
+	static void WriteMonitorListToMLContainer(const std::string& name, const RemoteMonitorNamedList& remoteMonitorNamedlist);
 	
 	//! Initialize the monitor writer 
 	static HRESULT InitMonitorListInSharedMemory(size_t size);

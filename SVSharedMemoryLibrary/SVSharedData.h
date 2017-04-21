@@ -12,19 +12,22 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <memory>
-#include "SVSharedImageContainer.h"
-#include "SVSharedValueContainer.h"
+//#include "SVSharedImageContainer.h"
+//#include "SVSharedValueContainer.h"
+#include "SVSharedImage.h"
+#include "SVSharedValue.h"
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
 namespace Seidenader { namespace SVSharedMemoryLibrary
 {
+	///struct used in InspectionShare  ImagePathes  and values for one triggercount 
 	struct SVSharedData
 	{
 		mutable volatile long m_Flags;
 		volatile long m_TriggerCount;
-		SVSharedImageContainer m_Images;
-		SVSharedValueContainer m_Values;
+		SVSharedImageVector m_Images;
+		SVSharedValueVector m_Values;
 
 		void_allocator m_Allocator;
 
@@ -36,11 +39,11 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		SVValue FindValue(const SVString& name) const;
 	};
 
-	typedef boost::interprocess::allocator< SVSharedData, segment_manager_t > SVSharedDataAllocator;
-	typedef boost::interprocess::vector< SVSharedData, SVSharedDataAllocator > SVSharedDataVector;
-	typedef boost::interprocess::allocator< SVSharedDataVector, segment_manager_t > SVSharedDataVectorAllocator;
+	typedef bip::allocator< SVSharedData, segment_manager_t > SVSharedDataAllocator;
+	typedef bip::vector< SVSharedData, SVSharedDataAllocator > SVSharedDataVector;
+	typedef bip::allocator< SVSharedDataVector, segment_manager_t > SVSharedDataVectorAllocator;
 
-	typedef SVSharedData* InspectionDataPtr;
+	
 
 } /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
 

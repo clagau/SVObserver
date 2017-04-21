@@ -15,6 +15,8 @@
 #include "SVSharedMemoryLibrary\ShareEvents.h"
 #include "SVSharedMemoryLibrary\MonitorListCpy.h"
 #include "MonitorLIstDlg.h"
+#include "SVSharedMemoryLibrary\SharedImageStore.h"
+#include <boost\date_time\c_time.hpp>
 //Moved to precompiled header: #include <boost/function.hpp> 
 //Moved to precompiled header:  #include <boost/bind.hpp>
 
@@ -79,10 +81,11 @@ BEGIN_MESSAGE_MAP(CRRSViewDlg, CDialogEx)
 	ON_MESSAGE(WM_REFRESH, OnRefresh)
 
 	ON_BN_CLICKED(IDC_BUTTON_SHOW, &CRRSViewDlg::OnBnClickedButtonShow)
+	ON_BN_CLICKED(IDC_BUTTON_EXIT, &CRRSViewDlg::OnBnClickedButtonExit)
 END_MESSAGE_MAP()
 
 
-LPCTSTR CRRSViewDlg::ColHeader[] = {_T("Name"),_T("PPQ"), _T("IsActive"), _T("RejectDepth"), _T("Filter"), _T("PCount")};
+LPCTSTR CRRSViewDlg::ColHeader[] = {_T("Name"),_T("PPQ"), _T("IsActive"), _T("RejectDepth"), _T("Filter"), _T("ImCount"), _T("PCount")};
 // CShareViewDlg message handlers
 
 bool  CRRSViewDlg::PostRefresh(DWORD par)
@@ -183,6 +186,44 @@ void CRRSViewDlg::OnPaint()
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
+ void CRRSViewDlg::UpdateControls(bool isready)
+ {
+	 if(isready)
+	 {
+		 m_MonListsCtrl.DeleteAllItems();
+		 SvSml::MonitorListCpyMap::const_iterator it;  
+		 int item(0);
+		 for(it = m_MLContainer.m_MonitorListCpyMap.begin(); it !=  m_MLContainer.m_MonitorListCpyMap.end(); ++it)
+		 {
+			 m_MonListsCtrl.InsertItem(item, it->second->m_MonitorListName.c_str());
+
+			 //enum ECOL {eName=0, ePPQ, eIsActive, eRejectDepth, eProductFilter,ePcount };
+			 m_MonListsCtrl.SetItemText(item,ePPQ,it->second->m_ppqName.c_str() );
+
+			 SVString text = it->second->GetIsActive()? _T("true") : _T("false");
+			 m_MonListsCtrl.SetItemText(item,eIsActive,text.c_str() );
+
+			 text = SvUl_SF::Format(_T("%i"),it->second->m_rejectDepth );
+			 m_MonListsCtrl.SetItemText(item,eRejectDepth,text.c_str());
+
+			 text = SvUl_SF::Format(_T("%i"),it->second->m_ProductFilter );
+			 m_MonListsCtrl.SetItemText(item,eProductFilter,text.c_str() );
+
+
+			 //monitorListCpy.m_MonitorEntries[list]
+			 text = SvUl_SF::Format(_T("%i"),it->second->m_MonitorEntries[SvSml::ListType::productItemsImage].size() );
+			 m_MonListsCtrl.SetItemText(item,eImageCount,text.c_str() ); 
+
+			 text = SvUl_SF::Format(_T("%i"),it->second->m_MonitorEntries[SvSml::ListType::productItemsData].size() );
+			 m_MonListsCtrl.SetItemText(item,ePcount,text.c_str() );
+			 item++;
+		 }
+	 }
+	 CString csready = isready ? _T("true") : _T("false");
+	 m_ReadyValueCtrl.SetWindowText(csready);
+
+
+ }
 LRESULT  CRRSViewDlg::OnRefresh(WPARAM wParam, LPARAM lParam)
 {
 	UNREFERENCED_PARAMETER(wParam);
@@ -191,39 +232,34 @@ LRESULT  CRRSViewDlg::OnRefresh(WPARAM wParam, LPARAM lParam)
 	bool isready = SvSml::ShareEvents::GetInstance().GetIsReady() ;
 	if(isready)
 	{
-		SvSml::MonitorListCpyHelper::ReloadMonitorMap(m_mlReader,  m_monitorMap);
-		m_MonListsCtrl.DeleteAllItems();
-		SvSml::MonitorListCpyMap::const_iterator it;  
-		int item(0);
-		for(it = m_monitorMap.begin(); it !=  m_monitorMap.end(); ++it)
-		{
-			m_MonListsCtrl.InsertItem(item, it->second.m_name.c_str());
+		SvSml::MLInspectionInfoMap InspectionInfoMap;
+		SVStringVector PPQVector;
+		int inspectionCount(0);
+		DWORD version(0);
+		m_MLContainer.ReloadMonitorMap(m_mlReader,version);
 		
-			//enum ECOL {eName=0, ePPQ, eIsActive, eRejectDepth, eProductFilter,ePcount };
-			m_MonListsCtrl.SetItemText(item,ePPQ,it->second.m_ppq.c_str() );
-			
-			SVString text = it->second.m_IsActive? _T("true") : _T("false");
-			m_MonListsCtrl.SetItemText(item,eIsActive,text.c_str() );
+		SvSml::MLInspectionInfoMap::iterator it;
+		
+		for(it = InspectionInfoMap.begin(); it != InspectionInfoMap.end() ; ++it  )
+		{
+			if(it->second->TotalImageSize > 0)
+			{
+				m_ImageStoresLast.push_back(SvSml::ImageStorePointer (new SvSml::SharedImageStore));
+				m_ImageStoresLast.back()->OpenImageStore(it->first.c_str(),SvSml::SharedImageStore::last);
+					
+				m_ImageStoresReject.push_back(SvSml::ImageStorePointer (new SvSml::SharedImageStore));
+				m_ImageStoresReject.back()->OpenImageStore(it->first.c_str(),SvSml::SharedImageStore::reject);
 
-			text = SvUl_SF::Format(_T("%i"),it->second.m_rejectDepth );
-			m_MonListsCtrl.SetItemText(item,eRejectDepth,text.c_str());
-
-			text = SvUl_SF::Format(_T("%i"),it->second.m_ProductFilter );
-			m_MonListsCtrl.SetItemText(item,eProductFilter,text.c_str() );
-			
-			text = SvUl_SF::Format(_T("%i"),it->second.prodItems.size() );
-			m_MonListsCtrl.SetItemText(item,ePcount,text.c_str() );
-			item++;
+			}
 		}
-	
+		
 	}
-	
-
-	CString csready = isready ? _T("true") : _T("false");
-	m_ReadyValueCtrl.SetWindowText(csready);
-	
-	
-
+	else
+	{
+		m_ImageStoresLast.clear();
+		m_ImageStoresReject.clear();
+	}
+	UpdateControls(isready);
 	return 0;
 }
 
@@ -237,4 +273,10 @@ void CRRSViewDlg::OnBnClickedButtonShow()
 		dlg.DoModal();
 	}
 	
+}
+
+void CRRSViewDlg::OnBnClickedButtonExit()
+{
+		
+	EndDialog(0);
 }

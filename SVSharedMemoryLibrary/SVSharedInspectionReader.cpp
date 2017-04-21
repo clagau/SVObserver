@@ -22,8 +22,8 @@
 namespace Seidenader { namespace SVSharedMemoryLibrary
 {
 	SVSharedInspectionReader::SVSharedInspectionReader()
-	: sh(nullptr)
-	, rsh(nullptr)
+	: m_pSharedLastInspectedCache(nullptr)
+	, m_pSharedRejectCache(nullptr)
 	, m_bOpened(false)
 	{
 	}
@@ -39,18 +39,24 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		try
 		{
 			m_ShareName = name + "." + SVSharedConfiguration::GetShareName();
-			shm = DataSharedMemPtr(new boost::interprocess::managed_shared_memory(boost::interprocess::open_only, m_ShareName.c_str()));
+			m_pManagedSharedMemory = std::shared_ptr<bip::managed_shared_memory>(new bip::managed_shared_memory(bip::open_only, m_ShareName.c_str()));
 
 			// get pointers to last_inspected/reject segments
-			sh = shm->find<SVSharedLastInspectedCache>(SVSharedConfiguration::GetLastInspectedName().c_str()).first;
-			rsh = shm->find<SVSharedRejectCache>(SVSharedConfiguration::GetRejectsName().c_str()).first;
-			if (sh && rsh)
+			m_pSharedLastInspectedCache = m_pManagedSharedMemory->find<SVSharedLastInspectedCache>(SVSharedConfiguration::GetLastInspectedName().c_str()).first;
+			m_pSharedRejectCache = m_pManagedSharedMemory->find<SVSharedRejectCache>(SVSharedConfiguration::GetRejectsName().c_str()).first;
+			
+			bool ok = m_RejectImages.OpenImageStore(name.c_str(), SharedImageStore::reject);
+			ok= ok && m_ProductImages.OpenImageStore(name.c_str(), SharedImageStore::last);
+			assert(ok);
+			
+			
+			if (ok && m_pSharedLastInspectedCache && m_pSharedRejectCache)
 			{
 				bRetVal = true;
 				m_bOpened = true;
 			}
 		}
-		catch (boost::interprocess::interprocess_exception& e)
+		catch (bip::interprocess_exception& e)
 		{
 			SVSharedConfiguration::Log(e.what());
 			m_bOpened = false;
@@ -62,18 +68,20 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 	{
 		try
 		{
-			if (shm)
+			if (m_pManagedSharedMemory)
 			{
-				shm.reset();
+				m_pManagedSharedMemory.reset();
 			}
 		}
-		catch(boost::interprocess::interprocess_exception& e)
+		catch(bip::interprocess_exception& e)
 		{
 			SVSharedConfiguration::Log(e.what());
 		}
-		sh = nullptr;
-		rsh = nullptr;
+		m_pSharedLastInspectedCache = nullptr;
+		m_pSharedRejectCache = nullptr;
 
+		m_RejectImages.CloseConnection();
+		m_ProductImages.CloseConnection();
 		m_bOpened = false;
 	}
 
@@ -85,13 +93,13 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 	// get Last Inspected Run data
 	SVSharedData& SVSharedInspectionReader::GetInspectedSlot(long index)
 	{
-		return sh->data[ index ];
+		return m_pSharedLastInspectedCache->data[ index ];
 	}
 
 	// get Reject Run data
 	SVSharedData& SVSharedInspectionReader::GetRejectSlot(long index)
 	{
-		return rsh->data[ index ];
+		return m_pSharedRejectCache->data[ index ];
 	}
 
 } /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/

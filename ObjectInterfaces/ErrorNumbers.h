@@ -523,7 +523,10 @@ namespace Seidenader { namespace ObjectInterfaces
 
 	static const int Err_16221_FailToCreateEvent   =  Mec_ErrorBase + 221;	
 	static const int Err_16222_FailToCreateEvent   =  Mec_ErrorBase + 222;	
-
+	///Replace REWORK SHARED MEMORY
+	static const int Err_16223  =  Mec_ErrorBase + 223;	
+	static const int Err_16224  =  Mec_ErrorBase + 224;	
+	static const int Err_16225  =  Mec_ErrorBase + 225;	
 	
 	// Ben Walter
 	static const int BRW_ErrorBase = 17000;

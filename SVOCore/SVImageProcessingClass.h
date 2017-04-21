@@ -54,7 +54,6 @@ public:
 	static HRESULT ResizeDataBuffer( SVDataBufferInfoClass* pDataInfo, long lNewLength );
 	
 	static HRESULT CreateBarCodeBuffer( SVBarCodeBufferInfoClass* pDataInfo );
-
 private:
 	static HRESULT GetOutputImageCreateData( const SVImageInfoClass &p_rsvInfo,
 															      SVImageFormatEnum &p_reFormat,

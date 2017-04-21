@@ -119,6 +119,8 @@
     </Bscmake>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="MatroxBuffer2D.cpp" />
+    <ClCompile Include="MatroxSharedBuffer.cpp" />
     <ClCompile Include="StdAfx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -178,6 +180,9 @@
     <ClCompile Include="SVMatroxSystemInterface.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="MatroxBuffer2D.h" />
+    <ClInclude Include="MatroxImageProps.h" />
+    <ClInclude Include="MatroxSharedBuffer.h" />
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="SVBufferResource.h" />
     <ClInclude Include="SVMatroxApplicationInterface.h" />

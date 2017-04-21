@@ -121,6 +121,7 @@
     <None Include="res\RRSView.rc2" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="MonEntryDlg.h" />
     <ClInclude Include="MonitorLIstDlg.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="RRSView.h" />
@@ -129,6 +130,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="MonEntryDlg.cpp" />
     <ClCompile Include="MonitorLIstDlg.cpp" />
     <ClCompile Include="RRSView.cpp" />
     <ClCompile Include="RRSViewDlg.cpp" />

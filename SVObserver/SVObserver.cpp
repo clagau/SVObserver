@@ -106,7 +106,7 @@
 #include "RootObject.h"
 #include "SVMonitorList.h"
 #include "SVThreadInfoDlg.h"
-#include "SVSharedMemoryLibrary/SVSharedMemorySingleton.h"
+#include "SVSharedMemoryLibrary/SharedMemWriter.h"
 #include "SVUtilityLibrary\LoadDll.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "ObjectInterfaces\ErrorNumbers.h"
@@ -2523,7 +2523,7 @@ int SVObserverApp::ExitInstance()
 	SVSocketRemoteCommandManager::Instance().Shutdown();
 
 	SvSol::SVSocketLibrary::Destroy();
-	SvSml::SVSharedMemorySingleton::Destroy();
+	SvSml::SharedMemWriter::Instance().Destroy();
 	ValidateMRUList();
 
 	// Destroy still open message windows
@@ -5516,29 +5516,35 @@ void SVObserverApp::Start()
 		l_trgrDlg.ClearTriggers();
 
 		
-		if (SvSml::SVSharedMemorySingleton::HasShares())
+		if (SvSml::SharedMemWriter::Instance().HasShares())
 		{
 			SvSml::ShareEvents::GetInstance().QuiesceSharedMemory();
 			
 		}
 		
 		PPQMonitorList ppqMonitorList;
-		pConfig->BuildPPQMonitorList(ppqMonitorList);
+		pConfig->BuildPPQMonitorList(ppqMonitorList); //CREATE MONITORLISTCOPIES 
+	
 		
-		if (SvSml::SVSharedMemorySingleton::HasShares())
+		SvSml::SharedMemWriter::Instance().CalculateStoreIds();
+		SvSml::SharedMemWriter::Instance().WriteMonitorList();
+		
+
+		if (SvSml::SharedMemWriter::Instance().HasShares())
 		{
-			//[mec] clear the shared memory.
+			//clear the shared memory.
 			//to clear the shared memory is only real necessary when the Monitorlist has changed
-			SvSml::SVSharedMemorySingleton::ClearPPQSharedMemory();
+			SvSml::SharedMemWriter::Instance().ClearPPQSharedMemory();
 		}
 
+		///In this loop the ImageStores are created 
 		for( long l = 0; S_OK == Result && l < lSize; l++ )
 		{
 			pPPQ =  pConfig->GetPPQ( l );
 			//Returns true when pointer valid
 			if( nullptr != pPPQ )
 			{
-				///Set NAK Behviour
+				///Set NAK Behavior
 				pPPQ->SetNAKMode( m_NAKMode, m_NAKParameter); 
 
 				// Do this before calling CanGoOnline
@@ -5554,11 +5560,14 @@ void SVObserverApp::Start()
 				}
 			}
 		}// end for
+		SvSml::SharedMemWriter::Instance().CreateSharedMatroxBuffer();
+		
 		if (l_trgrDlg.HasTriggers())
 		{
 			l_trgrDlg.SelectTrigger();
 		}
 	}
+	
 	catch (const SvStl::MessageContainer& rExp)
 	{
 		//cleanup goOnline, after fail, before exception leave this method
@@ -5567,6 +5576,8 @@ void SVObserverApp::Start()
 
 		throw rExp;
 	}// end if
+
+	//SvSml::SharedMemWriter::Instance().RebuildMonitorEntryMap();
 
 	if( SVSVIMStateClass::CheckState( SV_STATE_READY ) )
 	{

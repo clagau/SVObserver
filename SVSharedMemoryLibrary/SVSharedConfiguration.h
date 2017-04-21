@@ -20,14 +20,14 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 	class SVSharedConfiguration
 	{
 	public:
-		static const SVString GetSharedDrive();
-		static const SVString GetControlShareName();
-		static const SVString GetShareName();
-		static const SVString GetLastInspectedName();
-		static const SVString GetRejectsName();
-		static const SVString GetPPQName();
-		static const SVString GetPPQRejectsName();
-		static const SVString GetMonitorListName();
+		static const SVString GetSharedDrive(); //<return "V:";
+		static const SVString GetControlShareName(); //<return "ControlSegment"
+		static const SVString GetShareName(); //<return "SVSharedMemory";
+		static const SVString GetLastInspectedName(); //<return "last_inspected";
+		static const SVString GetRejectsName(); //< return "rejects";
+		static const SVString GetPPQName();  //< return "PPQs";
+		static const SVString GetPPQRejectsName(); //< return "PPQrejects";
+		static const SVString GetMonitorListName(); //< return "monitor_list";
 
 		static const SVString GetSharedMemoryDirectoryName();
 		static const SVString GetImageDirectoryName();

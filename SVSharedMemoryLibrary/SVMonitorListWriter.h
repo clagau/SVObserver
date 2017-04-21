@@ -19,14 +19,12 @@
 
 namespace Seidenader { namespace SVSharedMemoryLibrary
 {
-	enum listType { productItems, rejectCondition, failStatus };
-
+	class SVMonitorListStore;
 	class SVMonitorListWriter
 	{
 		SVString m_ShareName;
 		SVMonitorListStore* m_lists;
 		void Init();
-
 	public:
 		SVMonitorListWriter();
 		~SVMonitorListWriter();
@@ -37,16 +35,13 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		/////////////////////////////////////////////////////////////////////////////////
 		HRESULT Create(const SVSharedMemorySettings& settings, size_t requiredSize);
 		void AddList(const SVString& listName, const SVString& ppqName, int rejectDepth, bool isActive);
-		void FillList(const SVString& listName, listType type, const SvSml::MonitorEntryVector& list);
+		void FillList(const SVString& listName, ListType::typ type, const SvSml::MonitorEntries& list);
 		void SetProductFilter(const SVString& listName, SVProductFilterEnum filter);
-
-		void Release();
-
-		typedef std::shared_ptr< boost::interprocess::managed_shared_memory > managed_shared_memory_shared_ptr;
-		managed_shared_memory_shared_ptr shm;
+		void Release(); //<Destroy sharedMemory
+		std::shared_ptr<bip::managed_shared_memory> m_pManagedSharedMemory;
 	};
 
-	typedef boost::interprocess::allocator<SVMonitorListStore, segment_manager_t> MonitorListStoreAllocator;
+	typedef bip::allocator<SVMonitorListStore, segment_manager_t> MonitorListStoreAllocator;
 } /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
 
 namespace SvSml = Seidenader::SVSharedMemoryLibrary;

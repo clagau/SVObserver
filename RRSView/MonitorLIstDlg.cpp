@@ -11,6 +11,7 @@
 #include "MonitorLIstDlg.h"
 #include "RRSViewDlg.h"
 #include "SVSharedMemoryLibrary\MonitorListCpy.h"
+#include "MonEntryDlg.h"
 
 IMPLEMENT_DYNAMIC(MonitorListDlg, CDialog)
 
@@ -101,38 +102,30 @@ void MonitorListDlg::FillControl()
 		return;
 	}
 	CString MonitorListName = pView->m_MonListsCtrl.GetItemText(sel,0); 
-	SvSml::MonitorListCpyMap::const_iterator  MoLiit = pView->m_monitorMap.find(MonitorListName.GetString());
-	if(MoLiit == pView->m_monitorMap.end())
+
+	const SvSml:: MonitorListCpy*   pML= pView->m_MLContainer.GetMonitorListCpyPointer(MonitorListName.GetString());
+
+	//SvSml::MonitorListCpyMap::const_iterator  MoLiit = pView->m_monitorMap.find(MonitorListName.GetString());
+	if(pML == nullptr)
 	{
 		return ;
 	}
 	m_ListCtrl.DeleteAllItems();
-	SvSml::MonitorEntryVector::const_iterator  Eit; 
-	int item(0);
-	for(Eit = MoLiit->second.prodItems.begin(); Eit != MoLiit->second.prodItems.end(); Eit++)
+	SvSml::MonitorEntries::const_iterator  Eit; 
+	int item(0); 
+	LPCTSTR Typename[ SvSml::ListType::Count] = {_T("Prod"),_T("Image"), _T("Rej"), _T("Fail") };
+	for(int list  =  0; list  < SvSml::ListType::Count; list++)
 	{
-		m_ListCtrl.InsertItem(item, _T("Prod"));
-		m_ListCtrl.SetItemText(item,Name,Eit->name.c_str());
-		m_ListCtrl.SetItemText(item,Type,Type2String( Eit->type) );
-		m_ListCtrl.SetItemText(item,ECOL_Size,Size2String( Eit->size));
-		item++;
+		for(Eit = pML->m_MonitorEntries[list].begin(); Eit != pML->m_MonitorEntries[list].end(); Eit++)
+		{
+			m_ListCtrl.InsertItem(item, Typename[list]);
+			m_ListCtrl.SetItemText(item,Name,Eit->get()->name.c_str());
+			m_ListCtrl.SetItemText(item,Type,Type2String( Eit->get()->ObjectType) );
+			m_ListCtrl.SetItemText(item,ECOL_Size,Size2String(static_cast<DWORD>( Eit->get()->size)));
+			item++;
+		}
 	}
-	for(Eit = MoLiit->second.rejctCond.begin(); Eit != MoLiit->second.rejctCond.end(); Eit++)
-	{
-		m_ListCtrl.InsertItem(item, _T("Rej"));
-		m_ListCtrl.SetItemText(item,Name,Eit->name.c_str());
-		m_ListCtrl.SetItemText(item,Type,Type2String( Eit->type) );
-		m_ListCtrl.SetItemText(item,ECOL_Size,Size2String( Eit->size));
-		item++;
-	}
-	for(Eit = MoLiit->second.failStats.begin(); Eit != MoLiit->second.failStats.end(); Eit++)
-	{
-		m_ListCtrl.InsertItem(item, _T("Fail"));
-		m_ListCtrl.SetItemText(item,Name,Eit->name.c_str());
-		m_ListCtrl.SetItemText(item,Type,Type2String( Eit->type) );
-		m_ListCtrl.SetItemText(item,ECOL_Size,Size2String( Eit->size));
-		item++;
-	}
+	
 }
 
 
@@ -147,7 +140,49 @@ BOOL MonitorListDlg::OnInitDialog()
 	return TRUE;
 }
 
+void MonitorListDlg::OnBnClickedButtonProperties()
+{
+	int sel  =  m_ListCtrl.GetSelectionMark();
+	if(sel < 0 || sel >=  m_ListCtrl.GetItemCount() )
+	{	
+		return;
+	}
+	CString objectName = m_ListCtrl.GetItemText(sel,1); 
+	SVString name = objectName.GetString();
+
+	CRRSViewDlg *pView = dynamic_cast<CRRSViewDlg *>(AfxGetMainWnd());
+	if(!pView)
+	{
+		return;
+	}
+	
+	const SvSml::MonitorEntryPointer pMe   = pView->m_MLContainer.GetMonitorEntryPointer( name);
+
+	if(pMe.get())
+	{
+
+	MonEntryDlg ME_Dlg;
+	ME_Dlg.m_Name = pMe->name.c_str();
+	ME_Dlg.m_Height = (DWORD)pMe->sizeY;
+	ME_Dlg.m_InspectionStoreId = pMe->InspectionStoreId;
+	ME_Dlg.m_ItemId = pMe->ItemId;
+	ME_Dlg.m_Pitch = (DWORD) pMe->Pitch;
+	ME_Dlg.m_Type = pMe->ObjectType;
+	ME_Dlg.m_Size = (DWORD) pMe->size;
+	ME_Dlg.m_SToreOffset = (DWORD) pMe->Store_Offset;
+	ME_Dlg.m_Width = (DWORD) pMe->sizeX;
+
+	ME_Dlg.DoModal();
+	
+	}
+
+	
+
+}
+
 BEGIN_MESSAGE_MAP(MonitorListDlg, CDialog)
+	ON_BN_CLICKED(IDC_BUTTON_Properties, &MonitorListDlg::OnBnClickedButtonProperties)
+
 END_MESSAGE_MAP()
 
 

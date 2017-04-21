@@ -18,8 +18,8 @@
 namespace Seidenader { namespace SVSharedMemoryLibrary
 {
 	SVSharedPPQWriter::SVSharedPPQWriter()
-		: sh(nullptr)
-		, rsh(nullptr)
+		: m_pProductStore(nullptr)
+		, m_pRejectStore(nullptr)
 	{
 	}
 
@@ -30,21 +30,21 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 
 	SVSharedProduct& SVSharedPPQWriter::RequestNextProductSlot(long& idx)
 	{
-		idx = next_writable(sh);
-		return sh->data[idx];
+		idx = next_writable(m_pProductStore);
+		return m_pProductStore->data[idx];
 	}
 
 	SVSharedProduct& SVSharedPPQWriter::RequestNextRejectSlot(long& idx)
 	{
-		idx = next_writable(rsh, true);
-		return rsh->data[idx];
+		idx = next_writable(m_pRejectStore, true);
+		return m_pRejectStore->data[idx];
 	}
 
 	SVSharedProduct& SVSharedPPQWriter::GetProductSlot(long idx)
 	{
-		if (idx >= 0 && idx < static_cast<long>(sh->data.size()))
+		if (idx >= 0 && idx < static_cast<long>(m_pProductStore->data.size()))
 		{
-			return sh->data[idx];
+			return m_pProductStore->data[idx];
 		}
 		throw (std::exception("GetProductSlot Bad Index"));
 	}
@@ -113,7 +113,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		// remove previous share
 		if (!m_ShareName.empty())
 		{
-			boost::interprocess::shared_memory_object::remove(m_ShareName.c_str());
+			bip::shared_memory_object::remove(m_ShareName.c_str());
 		}
 	}
 
@@ -127,10 +127,12 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		{
 			Init();
 
-			// Adjust Number of Reject slots
+			//@Todo[MEC][7.50] [21.02.2017] find out why this number was changed and try to avoid it 
+			// Adjust Number of Reject slots 
 			long numRejectSlots(RejectSlots);
 			if (numRejectSlots)
 			{
+				
 				numRejectSlots += static_cast<long>(std::ceil(static_cast<float>(numRejectSlots) * 0.5f)) + 4; // allow 50% extra + 4 additional slots
 			}
 			// check required size
@@ -141,13 +143,13 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 			if (requiredSize < managedShareSize)
 			{
 				// Allocate new repositories
-				shm = managed_shared_memory_shared_ptr(new boost::interprocess::managed_shared_memory(boost::interprocess::create_only, m_ShareName.c_str(), managedShareSize));
+				m_pManagedSharedMemory = std::shared_ptr<bip::managed_shared_memory>(new bip::managed_shared_memory(bip::create_only, m_ShareName.c_str(), managedShareSize));
 
 				// Allocate product store
-				ProductStoreAllocator salloc = shm->get_allocator<SVSharedProductStore>();
-				shm->construct<SVSharedProductStore>(SVSharedConfiguration::GetPPQName().c_str())(salloc, ProductSlots);
+				ProductStoreAllocator salloc = m_pManagedSharedMemory->get_allocator<SVSharedProductStore>();
+				m_pManagedSharedMemory->construct<SVSharedProductStore>(SVSharedConfiguration::GetPPQName().c_str())(salloc, ProductSlots);
 			
-				shm->construct<SVSharedProductStore>(SVSharedConfiguration::GetPPQRejectsName().c_str())(salloc, numRejectSlots);
+				m_pManagedSharedMemory->construct<SVSharedProductStore>(SVSharedConfiguration::GetPPQRejectsName().c_str())(salloc, numRejectSlots);
 				try
 				{
 					m_writers.resize(inspections.size());
@@ -170,8 +172,8 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 				if (S_OK == l_result)
 				{
 					// get pointers to the product and reject queues
-					sh = shm->find<SVSharedProductStore>(SVSharedConfiguration::GetPPQName().c_str()).first;
-					rsh = shm->find<SVSharedProductStore>(SVSharedConfiguration::GetPPQRejectsName().c_str()).first;
+					m_pProductStore = m_pManagedSharedMemory->find<SVSharedProductStore>(SVSharedConfiguration::GetPPQName().c_str()).first;
+					m_pRejectStore = m_pManagedSharedMemory->find<SVSharedProductStore>(SVSharedConfiguration::GetPPQRejectsName().c_str()).first;
 				}
 			}
 			else
@@ -179,7 +181,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 				l_result = E_INVALIDARG;
 			}
 		}
-		catch (const boost::interprocess::interprocess_exception& bex)
+		catch (const bip::interprocess_exception& bex)
 		{
 			SVSharedConfiguration::Log(bex.what());
 			Destroy();
@@ -191,21 +193,21 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 	void SVSharedPPQWriter::Destroy()
 	{
 		m_writers.clear();
-		if (nullptr != shm.get())
+		if (nullptr != m_pManagedSharedMemory.get())
 		{
 			ReleaseAll();
-			if (rsh)
+			if (m_pRejectStore)
 			{
-				shm->destroy_ptr(rsh);
-				rsh = nullptr;
+				m_pManagedSharedMemory->destroy_ptr(m_pRejectStore);
+				m_pRejectStore = nullptr;
 			}
-			if (sh)
+			if (m_pProductStore)
 			{
-				shm->destroy_ptr(sh);
-				sh = nullptr;
+				m_pManagedSharedMemory->destroy_ptr(m_pProductStore);
+				m_pProductStore = nullptr;
 			}
 			// release managed_shared_memory
-			shm.reset();
+			m_pManagedSharedMemory.reset();
 		}
 		Init();
 		m_ShareName.clear();
@@ -213,7 +215,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 
 	SVSharedInspectionWriter& SVSharedPPQWriter::operator[](const SVString& shareName)
 	{
-		InspectionWriters::iterator it = std::find_if(m_writers.begin(), m_writers.end(), 
+		std::vector<SVSharedInspectionWriter>::iterator it = std::find_if(m_writers.begin(), m_writers.end(), 
 			[&shareName](SVSharedInspectionWriter& iw)->bool 
 		{ return iw.GetShareName() == shareName; });
 		if (it != m_writers.end())
@@ -225,7 +227,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 
 	SVSharedInspectionWriter& SVSharedPPQWriter::operator[](const GUID& guid)
 	{
-		InspectionWriters::iterator it = std::find_if(m_writers.begin(), m_writers.end(), 
+		std::vector<SVSharedInspectionWriter>::iterator it = std::find_if(m_writers.begin(), m_writers.end(), 
 			[&guid](SVSharedInspectionWriter& iw)->bool 
 		{ return std::memcmp(&iw.GetGuid(), &guid, sizeof(GUID)) == 0; });
 		if (it != m_writers.end())
@@ -274,7 +276,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 	void SVSharedPPQWriter::ReleaseAll()
 	{
 		// free all resources
-		ClearHeld(sh);
-		ClearHeld(rsh);
+		ClearHeld(m_pProductStore);
+		ClearHeld(m_pRejectStore);
 	}
 } /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/

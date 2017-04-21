@@ -589,6 +589,11 @@ SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::Arithmetic( const S
 	{
 		if( !p_rDestId.empty() && !p_dSource1.empty() && !p_dSource2.empty())
 		{
+#if defined (TRACE_THEM_ALL) || defined (TRACE_MATROX_FUNCTION)		
+			TCHAR buf[1024];
+			_stprintf_s(buf, 1024, _T("DestId %i  Source1Id %i Source2Id %i \n" ), int(p_rDestId.GetIdentifier()), int(p_dSource1.GetIdentifier()), int(p_dSource2.GetIdentifier()));
+			::OutputDebugString(buf);
+#endif
 			long l_lMatroxFlags = Convert2MatroxType( p_eOperation );
 			if( l_lMatroxFlags !=0 )
 			{

@@ -22,16 +22,20 @@ public:
 	MonitorListDlg(CWnd* pParent = NULL);   // standard constructor
 	virtual ~MonitorListDlg();
 
+	afx_msg void OnBnClickedButtonProperties();
+
 // Dialog Data
 	enum { IDD = IDD_MONITORLIST };
 
+		
 protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 	virtual BOOL OnInitDialog();
 	void FillControl();
 	DECLARE_MESSAGE_MAP()
 
-	
-public:
+protected:
 	CListCtrl m_ListCtrl;
+	
 };
+

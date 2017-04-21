@@ -15,6 +15,7 @@
 //Moved to precompiled header: #include <boost/utility.hpp>
 #include "SVSharedLastInspectedCache.h"
 #include "SVSharedRejectCache.h"
+#include "SharedImageStore.h"
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
@@ -22,9 +23,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 {
 	class SVSharedInspectionReader : public boost::noncopyable // one reader per inspection
 	{
-		bool m_bOpened;
-		typedef std::shared_ptr<boost::interprocess::managed_shared_memory> DataSharedMemPtr;
-
+		
 	public:
 		SVSharedInspectionReader();
 		~SVSharedInspectionReader();
@@ -36,12 +35,17 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		SVSharedData& GetInspectedSlot(long index); // for the product reader's use
 		SVSharedData& GetRejectSlot(long index);
 
+		
 	private:
 		void Init();
-	
-		DataSharedMemPtr shm;
-		SVSharedLastInspectedCache* sh;
-		SVSharedRejectCache* rsh;
+		
+		bool m_bOpened;
+		std::shared_ptr<bip::managed_shared_memory> m_pManagedSharedMemory;
+		SVSharedLastInspectedCache* m_pSharedLastInspectedCache;
+		SVSharedRejectCache* m_pSharedRejectCache;
+		
+		SharedImageStore  m_ProductImages; //< shared image buffer for the inspection
+		SharedImageStore  m_RejectImages;   //<shared reject image buffer for the inspection
 
 		SVString m_ShareName;
 	};

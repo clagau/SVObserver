@@ -28,17 +28,20 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 			FloatType = 3,
 			BooleanType = 4
 		};
+		
+		SVSharedValue(const void_allocator& rAlloc);
+		SVSharedValue(const SVSharedValue& rData);
+		const SVSharedValue& operator=(const SVSharedValue& rData);
+		void SetName(const SVString& Name);
+		void SetData(ResultTypeEnum ResultType, const SVString& Result, int Status);
+
+
 		bip_string m_ElementName;
 		ResultTypeEnum m_ResultType;	// this is the native type
 		char m_Result[statics::max_result_size];
 		int m_Status;
 		void_allocator m_Allocator;
 
-		SVSharedValue(const void_allocator& rAlloc);
-		SVSharedValue(const SVSharedValue& rData);
-		const SVSharedValue& operator=(const SVSharedValue& rData);
-		void SetName(const SVString& Name);
-		void SetData(ResultTypeEnum ResultType, const SVString& Result, int Status);
 	};
 
 	// local memory structure
@@ -57,8 +60,11 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 
 		bool empty() const { return name.empty(); }
 	};
-	typedef boost::interprocess::allocator< SVSharedValue, segment_manager_t > SVSharedValueAllocator;
+	typedef bip::allocator< SVSharedValue, segment_manager_t > SVSharedValueAllocator;
+	typedef bip::vector< SVSharedValue, SVSharedValueAllocator > SVSharedValueVector;
+	typedef bip::allocator< SVSharedValueVector, segment_manager_t > SVSharedValueVectorAllocator;
 
+	void  CopySharedValues( SVSharedValueVector& rTo  , const SVSharedValueVector& rfrom);
 } /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
 
 namespace SvSml = Seidenader::SVSharedMemoryLibrary;

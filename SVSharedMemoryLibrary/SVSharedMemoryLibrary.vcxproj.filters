@@ -58,13 +58,28 @@
     <ClCompile Include="SVMonitorListWriter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVSharedMemorySingleton.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="ShareEvents.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="MonitorListCpy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SharedImageStore.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MonitorEntry.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MLCpyContainer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SharedMemWriter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SharedImageContainer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SharedMemReader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -132,15 +147,6 @@
     <ClInclude Include="SVProductFilterEnum.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVSharedValueContainer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVSharedImageContainer.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVSharedMemorySingleton.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="ShareEvents.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -148,6 +154,24 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MonitorEntry.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SharedImageStore.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MLInspectionInfo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MLCpyContainer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SharedMemWriter.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SharedImageContainer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SharedMemReader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

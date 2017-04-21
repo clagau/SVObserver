@@ -33,14 +33,14 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 	void SVMonitorListWriter::Release()
 	{
 		SVSharedConfiguration::Log("SVMonitorListWriter::Release");
-		if (nullptr != shm.get())
+		if (nullptr != m_pManagedSharedMemory.get())
 		{
 			if (m_lists)
 			{
-				shm->destroy_ptr(m_lists);
+				m_pManagedSharedMemory->destroy_ptr(m_lists);
 				m_lists = nullptr;
 			}
-			shm.reset();
+			m_pManagedSharedMemory.reset();
 		}
 		Init();
 	}
@@ -56,14 +56,14 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 				m_lists->Clear();
 				m_lists = nullptr;
 			}
-			boost::interprocess::shared_memory_object::remove(m_ShareName.c_str());
+			bip::shared_memory_object::remove(m_ShareName.c_str());
 		}
 	}
 
 	bool SVMonitorListWriter::IsCreated() const
 	{
 		SVSharedConfiguration::Log("SVMonitorListWriter::IsCreated");
-		return (nullptr != shm.get() && m_lists);
+		return (nullptr != m_pManagedSharedMemory.get() && m_lists);
 	}
 
 	HRESULT SVMonitorListWriter::Create(const SVSharedMemorySettings& settings, size_t requiredSize)
@@ -81,16 +81,16 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 			if (requiredSize < managedShareSize)
 			{
 				// Allocate new repositories
-				shm = managed_shared_memory_shared_ptr(new boost::interprocess::managed_shared_memory(boost::interprocess::create_only, m_ShareName.c_str(), managedShareSize));
+				m_pManagedSharedMemory = std::shared_ptr<bip::managed_shared_memory>(new bip::managed_shared_memory(bip::create_only, m_ShareName.c_str(), managedShareSize));
 
 				// Allocate monitor list store
-				MonitorListStoreAllocator salloc = shm->get_allocator<MonitorListStoreAllocator>();
-				auto rslt = shm->construct<SVMonitorListStore>("MonitorListStore")(salloc);
+				MonitorListStoreAllocator salloc = m_pManagedSharedMemory->get_allocator<MonitorListStoreAllocator>();
+				auto rslt = m_pManagedSharedMemory->construct<SVMonitorListStore>("MonitorListStore")(salloc);
 
 				if (rslt)
 				{
 					// get pointer to the monitor list store
-					m_lists = shm->find<SVMonitorListStore>("MonitorListStore").first;
+					m_lists = m_pManagedSharedMemory->find<SVMonitorListStore>("MonitorListStore").first;
 				}
 				else
 				{
@@ -103,7 +103,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 				l_result = E_INVALIDARG;
 			}
 		}
-		catch (const boost::interprocess::interprocess_exception& e)
+		catch (const bip::interprocess_exception& e)
 		{
 			SVSharedConfiguration::Log(e.what());
 			Release();
@@ -119,7 +119,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		{
 			throw std::exception("MonitorListStore not created yet.");
 		}
-		MonitorListAllocator alloc = shm->get_allocator<SVSharedMonitorList>();
+		MonitorListAllocator alloc = m_pManagedSharedMemory->get_allocator<SVSharedMonitorList>();
 		SVSharedMonitorList list(alloc);
 		isActive?   list.Activate(): list.Deactivate();  
 		list.SetNames(listName, ppqName);
@@ -127,7 +127,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		m_lists->Add(list);
 	}
 
-	void SVMonitorListWriter::FillList(const SVString & listName, listType type, const std::vector<MonitorEntry> & list)
+	void SVMonitorListWriter::FillList(const SVString & listName, ListType::typ type, const MonitorEntries & monEntries)
 	{
 		SVSharedConfiguration::Log("SVMonitorListWriter::FillList");
 		if (!m_lists)
@@ -138,14 +138,17 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		SVSharedMonitorList & mlist = (*m_lists)[listName];
 		switch(type)
 		{
-			case productItems:
-				mlist.SetProductItems(list);
+			case  ListType::productItemsData:
+				mlist.SetEntries(ListType::productItemsData,monEntries);
 				break;
-			case rejectCondition:
-				mlist.SetRejectCond(list);
+			case ListType::productItemsImage:
+				mlist.SetEntries(ListType::productItemsImage,monEntries);
 				break;
-			case failStatus:
-				mlist.SetFailStatus(list);
+			case ListType::rejectCondition:
+				mlist.SetEntries(ListType::rejectCondition,monEntries);
+				break;
+			case ListType::failStatus:
+				mlist.SetEntries(ListType::failStatus,monEntries);
 				break;
 			default:
 				throw std::exception("Invalid list type.");
@@ -168,13 +171,13 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 			mlist.SetProductFilter(filter);
 		}
 #if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
-		catch (boost::interprocess::interprocess_exception& e)
+		catch (bip::interprocess_exception& e)
 		{
 			::OutputDebugString(e.what());
 
 		}
 #else
-		catch (boost::interprocess::interprocess_exception& )
+		catch (bip::interprocess_exception& )
 		{
 			throw std::exception("MonitorList SetProductFilter failed.");
 		}

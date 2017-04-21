@@ -60,7 +60,11 @@
 #include <boost/interprocess/offset_ptr.hpp>				//Used by static library
 #include <boost/interprocess/sync/interprocess_mutex.hpp>	//Used by static library
 #include <boost/interprocess/sync/scoped_lock.hpp>			//Used by static library
+#include <boost/multi_index_container.hpp>				//Used by static library
+#include <boost/multi_index/member.hpp>					//Used by static library
+#include <boost/multi_index/ordered_index.hpp>			//Used by static library
 #include <boost/shared_array.hpp>							//Used by static library
 #include <boost/scoped_array.hpp>
 #include <boost/utility.hpp>								//Used by static library
 #pragma endregion Precompiled Headers
+#define TRACE_FAILURE true

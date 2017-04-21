@@ -19,6 +19,7 @@
 #include "SVMatroxDisplay.h"
 #include "SVMatroxImagingLibrary.h"  // has MIL includes
 #include "SVMatroxResourceMonitor.h"
+#include "MatroxSharedBuffer.h"
 #pragma endregion Includes
 
 enum ImageBands
@@ -1582,6 +1583,11 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::CopyBuffer(SVMatr
 	{
 		if (!p_rTo.empty() && !p_rFrom.empty())
 		{
+#if defined (TRACE_THEM_ALL) || defined (TRACE_MATROX_FUNCTION)		
+			TCHAR buf[1024];
+			_stprintf_s(buf, 1024, _T("copy   From  %i To  %i \n"), int(p_rFrom.GetIdentifier()), int(p_rTo.GetIdentifier()));
+			::OutputDebugString(buf);
+#endif 			
 			MbufCopy(p_rFrom.GetIdentifier(),
 				p_rTo.GetIdentifier());
 
@@ -1602,6 +1608,70 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::CopyBuffer(SVMatr
 	assert(SVMEE_STATUS_OK == l_Code);
 	return l_Code;
 }
+
+SVMatroxBufferInterface::SVStatusCode  SVMatroxBufferInterface::InquireBufferProperties(const SVMatroxBuffer& rBuffer, MatroxImageProps& rImageProps )
+{
+	SVStatusCode Code(SVMEE_STATUS_OK); 
+	Code = SVMatroxApplicationInterface::GetFirstError();
+	MIL_INT PitchByte = MbufInquire(rBuffer.GetIdentifier(), M_PITCH_BYTE, M_NULL);
+	MIL_INT Pitch = MbufInquire(rBuffer.GetIdentifier(), M_PITCH, M_NULL);
+	MIL_INT BandSize = MbufInquire(rBuffer.GetIdentifier(), M_SIZE_BAND, M_NULL);
+	MIL_INT SizeX = MbufInquire(rBuffer.GetIdentifier(), M_SIZE_X , M_NULL);
+	MIL_INT SizeY = MbufInquire(rBuffer.GetIdentifier(), M_SIZE_Y ,M_NULL);
+	MIL_INT Type = MbufInquire(rBuffer.GetIdentifier(), M_TYPE ,M_NULL);
+	MIL_INT Attrib = MbufInquire(rBuffer.GetIdentifier(), M_EXTENDED_ATTRIBUTE , M_NULL);
+	
+	rImageProps.Matrox_type = Type;
+	rImageProps.Pitch  = Pitch;
+	rImageProps.PitchByte  = PitchByte;
+	rImageProps.sizeX = SizeX;
+	rImageProps.sizeY = SizeY;
+	rImageProps.Attrib = Attrib;
+	
+	Code = SVMatroxApplicationInterface::GetLastStatus();
+	return Code;
+}
+
+SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::CreateBuffer(SVMatroxBuffer& p_rBuffer, MatroxImageProps& rImageProps , void *pMemory)
+{
+
+	SVStatusCode Code(SVMEE_STATUS_OK); 
+	if(pMemory == nullptr || rImageProps.Attrib == 0  || rImageProps.Matrox_type == 0)
+	{
+		std::exception ex("CreateBuffer Invalid Parameter");
+		throw ex;
+	}
+
+	MIL_ID NewBuf = M_NULL;
+	//@Todo[MEC][7.50] [14.03.2017] Color Buffer
+	NewBuf = MbufCreate2d(M_DEFAULT_HOST
+		,rImageProps.sizeX,
+		rImageProps.sizeY,
+		rImageProps.Matrox_type,
+		rImageProps.Attrib,
+		M_HOST_ADDRESS + M_PITCH_BYTE, 
+		rImageProps.PitchByte,
+		pMemory,
+		M_NULL);
+
+	Code = SVMatroxApplicationInterface::GetLastStatus();
+
+	if (SVMEE_STATUS_OK == Code)
+	{
+		p_rBuffer.m_BufferPtr = new MatroxSharedBuffer(NewBuf, "SVMatroxBufferInterface::CreateBuffer");
+	}
+
+
+	else
+	{
+		Code = SVMEE_INVALID_PARAMETER;
+	}
+
+
+	assert(SVMEE_STATUS_OK == Code);
+	return Code;
+}
+
 
 SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::CopyBuffer(SVMatroxBuffer& p_rTo, SVMatroxIdentifier p_From)
 {
@@ -1973,6 +2043,14 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::CopyBuffer(SVByte
 
 		if (nullptr != l_pHostBuffer)
 		{
+			
+
+#if defined (TRACE_THEM_ALL) || defined (TRACE_MATROX_FUNCTION)			
+			TCHAR buf[1024];
+			_stprintf_s(buf, 1024, _T("copyBuffer Memory   From  %i  \n"), int(p_rFromId.GetIdentifier()));
+			::OutputDebugString(buf);
+#endif
+			
 			size_t l_InfoSize = l_Info.GetBitmapInfoSizeInBytes();
 			size_t l_ImageSize = l_Info.GetBitmapImageSizeInBytes();
 

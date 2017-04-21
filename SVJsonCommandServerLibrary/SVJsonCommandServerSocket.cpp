@@ -9,6 +9,10 @@
 //* .Check In Date   : $Date:   01 Dec 2014 12:22:52  $
 //******************************************************************************
 
+#ifdef _DEBUG
+#define TRACE_SOCKET TRUE 
+#endif 
+
 #include "stdafx.h"
 //Moved to precompiled header: #include <boost/bind.hpp>
 #include "SVJsonCommandServerSocket.h"
@@ -155,14 +159,20 @@ void SVJsonCommandServerSocket::CheckConnection()
 					m_client.SetLingerOption( false, 0 );
 					m_client.SetKeepAliveOption( true );
 					m_client.DisableDelay();
-/*
-					// debug for now...
-					printf("Client Accepted: %s\n", inet_ntoa(addr.sin_addr));
-*/
+#if defined (TRACE_THEM_ALL) || defined (TRACE_SOCKET)
+					char msg[200];
+					snprintf(msg,200, "Client Accepted: %s port: %i \n", inet_ntoa(addr.sin_addr),addr.sin_port );
+					::OutputDebugString(msg);
+#endif 					
 					OnAccept();
 				}
 				else
 				{
+#if defined (TRACE_THEM_ALL) || defined (TRACE_SOCKET)
+					char msg[200];
+					snprintf(msg, 200, "CloseSocket: %s port: %i \n", inet_ntoa(addr.sin_addr), addr.sin_port);
+					::OutputDebugString(msg);
+#endif 		
 					closesocket(socket);
 				}
 			}
@@ -231,6 +241,14 @@ void SVJsonCommandServerSocket::ThreadProcessHandler(bool& bWaitEvents)
 								if( l_Sleep )
 								{
 									// @TODO - need to log something
+#if defined (TRACE_THEM_ALL) || defined (TRACE_SOCKET)
+									sockaddr_in addr;
+									int len = sizeof(addr);
+									getpeername(m_client, (SOCKADDR *)&addr, &len);
+									char msg[200];
+									snprintf(msg, 200, "Client Closed: %s port: %i \n", inet_ntoa(addr.sin_addr), addr.sin_port);
+									::OutputDebugString(msg);
+#endif 					
 									CloseClient();
 								}
 							}
@@ -259,13 +277,14 @@ void SVJsonCommandServerSocket::ThreadProcessHandler(bool& bWaitEvents)
 					l_Sleep = ( amtRead <= 0 );
 					if (l_Sleep)
 					{
-						/*
+#if defined (TRACE_THEM_ALL) || defined (TRACE_SOCKET)
 						sockaddr_in addr;
 						int len = sizeof(addr);
 						getpeername(m_client, (SOCKADDR *)&addr, &len);
-
-						printf("Client Closed: %s\n", inet_ntoa(addr.sin_addr));
-						*/
+						char msg[200];
+						snprintf(msg, 200, "Client Closed: %s port: %i \n", inet_ntoa(addr.sin_addr), addr.sin_port);
+						::OutputDebugString(msg);
+#endif 					
 						// client socket closed...
 						CloseClient();
 					}
