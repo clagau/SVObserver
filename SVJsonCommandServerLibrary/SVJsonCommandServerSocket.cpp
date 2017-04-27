@@ -9,9 +9,7 @@
 //* .Check In Date   : $Date:   01 Dec 2014 12:22:52  $
 //******************************************************************************
 
-#ifdef _DEBUG
-#define TRACE_SOCKET TRUE 
-#endif 
+
 
 #include "stdafx.h"
 //Moved to precompiled header: #include <boost/bind.hpp>

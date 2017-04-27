@@ -28,10 +28,6 @@
 #include "SocketTraits.h"
 #pragma endregion Includes
 
-#ifdef _DEBUG
-#define TRACE_SOCKET TRUE 
-#endif 
-
 
 typedef boost::shared_array<BYTE> bytes;
 

@@ -67,4 +67,4 @@
 #include <boost/scoped_array.hpp>
 #include <boost/utility.hpp>								//Used by static library
 #pragma endregion Precompiled Headers
-#define TRACE_FAILURE true
+//#define TRACE_FAILURE true
