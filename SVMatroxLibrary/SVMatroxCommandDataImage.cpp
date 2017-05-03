@@ -99,18 +99,18 @@ HRESULT SVMatroxCommandDataImage::Convert( HBITMAP hBitmap, SVMatroxBuffer& rIma
 	BITMAP bmp;
 	::GetObject(hBitmap, sizeof(BITMAP), &bmp);
 
-	SVMatroxBufferInterface::SVStatusCode status = SVMatroxBufferInterface::Create(srcBuffer, hBitmap);
+	HRESULT status = SVMatroxBufferInterface::Create(srcBuffer, hBitmap);
 	
-	if (status == SVMEE_STATUS_OK)
+	if (status == S_OK)
 	{
 		hr = CreateGrayscaleImage(bmp.bmWidth, bmp.bmHeight, dstBuffer);
 	
-		if (status == SVMEE_STATUS_OK)
+		if (status == S_OK)
 		{
 			// check that the image is single banded
 			long numBands;
 			status = SVMatroxBufferInterface::Get(dstBuffer, SVSizeBand, numBands);
-			if (status == SVMEE_STATUS_OK)
+			if (status == S_OK)
 			{
 				if (numBands > 1)
 				{
@@ -120,7 +120,7 @@ HRESULT SVMatroxCommandDataImage::Convert( HBITMAP hBitmap, SVMatroxBuffer& rIma
 					{
 						// flip it
 						status = SVMatroxImageInterface::Flip(srcBuffer, dstBuffer, SVImageFlipVertical);
-						if (status == SVMEE_STATUS_OK)
+						if (status == S_OK)
 						{
 							//
 							rImage = srcBuffer;
@@ -139,7 +139,7 @@ HRESULT SVMatroxCommandDataImage::Convert( HBITMAP hBitmap, SVMatroxBuffer& rIma
 				{
 					// flip it
 					status = SVMatroxImageInterface::Flip(dstBuffer, srcBuffer, SVImageFlipVertical);
-					if (status == SVMEE_STATUS_OK)
+					if (status == S_OK)
 					{
 						//
 						rImage = dstBuffer;
@@ -173,7 +173,7 @@ HRESULT SVMatroxCommandDataImage::Convert( HBITMAP hBitmap, SVMatroxBuffer& rIma
 
 HRESULT SVMatroxCommandDataImage::Convert( const SVMatroxBuffer& rImage, HBITMAP& hBitmap )
 {
-	SVMatroxBufferInterface::SVStatusCode status = SVMatroxBufferInterface::Create( hBitmap, rImage );
+	HRESULT status = SVMatroxBufferInterface::Create( hBitmap, rImage );
 
 	return status;
 }
@@ -188,14 +188,14 @@ HRESULT SVMatroxCommandDataImage::CreateGrayscaleImage( long width, long height,
 	createStruct.m_eType = SV8BitUnsigned;
 	createStruct.m_eAttribute = SVBufAttImageProcDib;
 
-	SVMatroxBufferInterface::SVStatusCode status = SVMatroxBufferInterface::Create(dstBuffer, createStruct);
+	HRESULT status = SVMatroxBufferInterface::Create(dstBuffer, createStruct);
 	HRESULT hr = status;
 	return hr;
 }
 				
 HRESULT SVMatroxCommandDataImage::ConvertToGrayscale( SVMatroxBuffer& rDstImage, const SVMatroxBuffer& rSrcImage )
 {
-	SVMatroxImageInterface::SVStatusCode status = SVMatroxImageInterface::Convert(rDstImage, rSrcImage, SVImageRGBToL);
+	HRESULT status = SVMatroxImageInterface::Convert(rDstImage, rSrcImage, SVImageRGBToL);
 	HRESULT hr = status;
 	return hr;
 }

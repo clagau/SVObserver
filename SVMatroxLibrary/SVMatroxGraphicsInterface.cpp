@@ -28,9 +28,9 @@ double SVMatroxGraphicsInterface::CreateRGB888( unsigned char p_Red, unsigned ch
 	return M_RGB888( p_Red, p_Green, p_Blue );
 }
 
-SVMatroxGraphicsInterface::SVStatusCode SVMatroxGraphicsInterface::Clear( SVMatroxGraphics& p_rGraphicsID, SVMatroxBuffer& p_rBuffer )
+HRESULT SVMatroxGraphicsInterface::Clear( SVMatroxGraphics& p_rGraphicsID, SVMatroxBuffer& p_rBuffer )
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -53,13 +53,13 @@ SVMatroxGraphicsInterface::SVStatusCode SVMatroxGraphicsInterface::Clear( SVMatr
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(l_Code == SVMEE_STATUS_OK );
+	assert(l_Code == S_OK );
 	return l_Code;
 }
 
-SVMatroxGraphicsInterface::SVStatusCode SVMatroxGraphicsInterface::RectangleFill( SVMatroxGraphics& p_rGraphicsID, SVMatroxBuffer& p_rBuffer, const RECT& p_rRectangle )
+HRESULT SVMatroxGraphicsInterface::RectangleFill( SVMatroxGraphics& p_rGraphicsID, SVMatroxBuffer& p_rBuffer, const RECT& p_rRectangle )
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -84,13 +84,13 @@ SVMatroxGraphicsInterface::SVStatusCode SVMatroxGraphicsInterface::RectangleFill
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(l_Code == SVMEE_STATUS_OK );
+	assert(l_Code == S_OK );
 	return l_Code;
 }
 
-SVMatroxGraphicsInterface::SVStatusCode SVMatroxGraphicsInterface::Color( SVMatroxGraphics& p_rGraphicsID, double p_Color )
+HRESULT SVMatroxGraphicsInterface::Color( SVMatroxGraphics& p_rGraphicsID, double p_Color )
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -113,13 +113,13 @@ SVMatroxGraphicsInterface::SVStatusCode SVMatroxGraphicsInterface::Color( SVMatr
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(l_Code == SVMEE_STATUS_OK );
+	assert(l_Code == S_OK );
 	return l_Code;
 }
 
-SVMatroxGraphicsInterface::SVStatusCode SVMatroxGraphicsInterface::BackColor( SVMatroxGraphics& p_rGraphicsID, double p_Color )
+HRESULT SVMatroxGraphicsInterface::BackColor( SVMatroxGraphics& p_rGraphicsID, double p_Color )
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -142,13 +142,13 @@ SVMatroxGraphicsInterface::SVStatusCode SVMatroxGraphicsInterface::BackColor( SV
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(l_Code == SVMEE_STATUS_OK );
+	assert(l_Code == S_OK );
 	return l_Code;
 }
 
-SVMatroxGraphicsInterface::SVStatusCode SVMatroxGraphicsInterface::Create( SVMatroxGraphics& p_rGraphicsID )
+HRESULT SVMatroxGraphicsInterface::Create( SVMatroxGraphics& p_rGraphicsID )
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -157,7 +157,7 @@ SVMatroxGraphicsInterface::SVStatusCode SVMatroxGraphicsInterface::Create( SVMat
 
 		l_Code = SVMatroxResourceMonitor::GetAutoLock( l_AutoLock );
 
-		if( l_Code == SVMEE_STATUS_OK )
+		if( l_Code == S_OK )
 		{
 			MIL_ID l_NewID = M_NULL;
 
@@ -166,7 +166,7 @@ SVMatroxGraphicsInterface::SVStatusCode SVMatroxGraphicsInterface::Create( SVMat
 			// Check For errors
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 
-			if( l_Code == SVMEE_STATUS_OK )
+			if( l_Code == S_OK )
 			{// Free handle if already filled.
 				SVMatroxResourceMonitor::InsertIdentifier( SVGraphicsID, l_NewID );
 
@@ -186,13 +186,13 @@ SVMatroxGraphicsInterface::SVStatusCode SVMatroxGraphicsInterface::Create( SVMat
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(l_Code == SVMEE_STATUS_OK );
+	assert(l_Code == S_OK );
 	return l_Code;
 }
 
-SVMatroxGraphicsInterface::SVStatusCode SVMatroxGraphicsInterface::Destroy( SVMatroxGraphics& p_rGraphicsID )
+HRESULT SVMatroxGraphicsInterface::Destroy( SVMatroxGraphics& p_rGraphicsID )
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -203,12 +203,12 @@ SVMatroxGraphicsInterface::SVStatusCode SVMatroxGraphicsInterface::Destroy( SVMa
 
 			l_Code = SVMatroxResourceMonitor::GetAutoLock( l_AutoLock );
 
-			if( l_Code == SVMEE_STATUS_OK )
+			if( l_Code == S_OK )
 			{
 				MgraFree( p_rGraphicsID.m_GraphicsId );
 
 				l_Code = SVMatroxApplicationInterface::GetLastStatus();
-				if( l_Code == SVMEE_STATUS_OK )
+				if( l_Code == S_OK )
 				{
 					SVMatroxResourceMonitor::EraseIdentifier( SVGraphicsID, p_rGraphicsID.m_GraphicsId );
 
@@ -224,7 +224,7 @@ SVMatroxGraphicsInterface::SVStatusCode SVMatroxGraphicsInterface::Destroy( SVMa
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(l_Code == SVMEE_STATUS_OK );
+	assert(l_Code == S_OK );
 	return l_Code;
 }
 

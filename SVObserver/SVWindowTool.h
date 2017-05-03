@@ -15,7 +15,7 @@
 #include "SVValueObjectLibrary/SVStringValueObjectClass.h"
 #pragma endregion Includes
 
-class SVWindowToolClass : public SVToolClass, public AllowResizeToParent
+class SVWindowToolClass : public SVToolClass
 {
 	SV_DECLARE_CLASS( SVWindowToolClass );
 

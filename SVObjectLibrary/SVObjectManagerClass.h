@@ -94,6 +94,8 @@ public:
 
 	SVGUID GetObjectIdFromCompleteName( LPCTSTR Name );
 
+	void getObjectsOfType(SVObjectPtrVectorInserter Inserter, SVObjectTypeEnum ObjectType, SVObjectSubTypeEnum ObjectSubType=SVNotSetSubObjectType) const;
+
 	SVString GetCompleteObjectName( const SVGUID& rGuid );
 
 	HRESULT SubmitCommand( const SVGUID& rObjectID, const SVCommandTemplatePtr& rCommandPtr );

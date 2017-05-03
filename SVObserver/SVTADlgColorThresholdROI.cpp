@@ -121,9 +121,9 @@ BOOL SVTADlgColorThresholdROI::OnInitDialog()
 		m_pExtentHeight->GetValue( value );
 		m_pSheet->m_rectROI.bottom = (long)(value) + m_pSheet->m_rectROI.top;
 
-		SVImageClass* pImage = m_pTool->GetRGBImage();
+		SVImageClass* pImage = m_pTool->getOutputImage();
 
-		if( pImage )
+		if( nullptr != pImage )
 		{
 			SVImageInfoClass l_ImageInfo = pImage->GetImageInfo();
 

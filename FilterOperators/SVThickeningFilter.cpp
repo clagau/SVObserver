@@ -95,13 +95,13 @@ bool SVThickeningFilterClass::onRun( bool First, SVSmartHandlePointer RInputImag
 		RInputImageHandle->GetData( l_InMilHandle );
 		ROutputImageHandle->GetData( l_OutMilHandle );
 		
-		SVMatroxImageInterface::SVStatusCode l_Code;
+		HRESULT l_Code;
 		l_Code = SVMatroxImageInterface::Thick( l_OutMilHandle.GetBuffer(), 
 			First ? l_InMilHandle.GetBuffer() : l_OutMilHandle.GetBuffer(), 
 						lItterations,
 						static_cast<SVImageOperationTypeEnum>(lMode));	
 
-		if( l_Code != SVMEE_STATUS_OK )
+		if( l_Code != S_OK )
 		{
 			if (nullptr != pErrorMessages)
 			{

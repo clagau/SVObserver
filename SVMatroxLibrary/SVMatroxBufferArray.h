@@ -22,8 +22,6 @@ public:
 	friend class SVMatroxBufferInterface;
 	friend class SVMatroxDigitizerInterface;
 
-	typedef SVMatroxStatusInformation::SVStatusCode SVStatusCode;
-
 	SVMatroxBufferArray();
 	SVMatroxBufferArray(const SVMatroxBufferArray& p_rBufArray);
 
@@ -33,7 +31,7 @@ public:
 
 	SVMatroxBufferArray& operator=( const SVMatroxBufferArray& p_rBufArray );
 
-	SVStatusCode Create(const SVMatroxSystem& rSystem, const SVMatroxBufferCreateStruct& rCreateStruct, long count);
+	HRESULT Create(const SVMatroxSystem& rSystem, const SVMatroxBufferCreateStruct& rCreateStruct, long count);
 	void Destroy();
 
 	bool empty() const;

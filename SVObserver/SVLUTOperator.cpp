@@ -165,7 +165,7 @@ BOOL SVLUTOperatorClass::RecalcLUT( SVRunStatusClass& rRunStatus )
 	{
 		long pixelDepth = getReferenceImage()->getPixelDepth();
 
-		SVMatroxBufferInterface::SVStatusCode l_Code;
+		HRESULT l_Code;
 		
 		// Check Pixel depth...
 		m_lutElementNumber = 1 << (  pixelDepth & SVBufferSize );
@@ -460,14 +460,10 @@ bool SVLUTOperatorClass::onRun( bool First, SVSmartHandlePointer RInputImageHand
 		m_bForceLUTRecalc = false;
 	}
 
-	SVMatroxImageInterface::SVStatusCode l_Code;
-
 	// Do LUT...
-	l_Code = SVMatroxImageInterface::LutMap( l_OutMilHandle.GetBuffer(),
-		First ? l_InMilHandle.GetBuffer() :	l_OutMilHandle.GetBuffer(), 
-			m_lutBufID);
+	HRESULT MatroxCode = SVMatroxImageInterface::LutMap( l_OutMilHandle.GetBuffer(), First ? l_InMilHandle.GetBuffer() : l_OutMilHandle.GetBuffer(), m_lutBufID);
 
-	if( l_Code != SVMEE_STATUS_OK )
+	if (S_OK != MatroxCode)
 	{
 		if (nullptr != pErrorMessages)
 		{

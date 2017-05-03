@@ -19,8 +19,8 @@ HRESULT SVGigeReadIPAddress::operator()(SVMatroxDigitizerRef Digitizer, const SV
 	//SVMatroxString value;
 	__int64 value;
 	SVString sTmp;
-	SVMatroxDigitizerInterface::SVStatusCode l_Code = SVMatroxDigitizerInterface::GetGigeIPAddress(*(Digitizer.get()), value);
-	if (l_Code == SVMEE_STATUS_OK)
+	HRESULT l_Code = SVMatroxDigitizerInterface::GetGigeIPAddress(*(Digitizer.get()), value);
+	if (l_Code == S_OK)
 	{
 		sTmp = SvUl_SF::Format("%u.%u.%u.%u", 
 					static_cast<unsigned char>(value),

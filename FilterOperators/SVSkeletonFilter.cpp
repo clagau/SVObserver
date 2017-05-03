@@ -42,13 +42,13 @@ bool SVSkeletonFilterClass::onRun( bool First, SVSmartHandlePointer RInputImageH
 		RInputImageHandle->GetData( l_InMilHandle );
 		ROutputImageHandle->GetData( l_OutMilHandle );
 
-		SVMatroxImageInterface::SVStatusCode l_Code;
+		HRESULT l_Code;
 		l_Code = SVMatroxImageInterface::Thin( l_OutMilHandle.GetBuffer(),
 			First ? l_InMilHandle.GetBuffer() : l_OutMilHandle.GetBuffer(),
 			SVValueImageToSkeleton,
 			SVImageBinary);
 
-		if( l_Code != SVMEE_STATUS_OK )
+		if( l_Code != S_OK )
 		{
 			if (nullptr != pErrorMessages)
 			{

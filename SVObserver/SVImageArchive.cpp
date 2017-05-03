@@ -96,7 +96,7 @@ BOOL SVImageArchiveClass::LoadImageArchiveFile( SVSmartHandlePointer p_HandlePtr
 	SVString FileName;
 	HCURSOR hCursor;
 	
-	SVMatroxBufferInterface::SVStatusCode l_Code;
+	HRESULT MatroxCode(S_OK);
 	
 	NextFileName ();
 	
@@ -112,15 +112,15 @@ BOOL SVImageArchiveClass::LoadImageArchiveFile( SVSmartHandlePointer p_HandlePtr
 		SVImageBufferHandleImage l_MilHandle;
 		p_HandlePtr->GetData( l_MilHandle );
 
-		l_Code = SVMatroxBufferInterface::Import(l_MilHandle.GetBuffer(), FileName, SVFileBitmap, false );
+		MatroxCode = SVMatroxBufferInterface::Import(l_MilHandle.GetBuffer(), FileName, SVFileBitmap, false );
 		SetCursor (hCursor);
-		if( l_Code == SVMEE_STATUS_OK )
+		if (S_OK == MatroxCode)
 		{
-			return TRUE;
+			return true;
 		}
 	}
 	ResetFileNumber();
-	return FALSE;
+	return false;
 }
 
 BOOL SVImageArchiveClass::LoadImageArchiveFile(SVImageClass *pImage)
@@ -154,7 +154,7 @@ BOOL SVImageArchiveClass::LoadImageArchiveFile( SVImageObjectClassPtr p_Acquisit
 	if ( !( l_ImageHandlePtr.empty() ) )
 	{
 		
-		SVMatroxBufferInterface::SVStatusCode l_Code;
+		HRESULT l_Code;
 
 		SVImageBufferHandleImage l_MilHandle;
 		l_ImageHandlePtr->GetData( l_MilHandle );

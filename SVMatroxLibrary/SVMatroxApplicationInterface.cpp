@@ -175,17 +175,17 @@ void SVMatroxApplicationInterface::Startup()
 @SVOperationDescription
 
 */
-SVMatroxApplicationInterface::SVStatusCode SVMatroxApplicationInterface::GetLastStatus()
+HRESULT SVMatroxApplicationInterface::GetLastStatus()
 {
-	SVStatusCode l_Status( SVMEE_STATUS_OK );
+	HRESULT Result(S_OK);
 	SVMatroxInt appID = MappInquire( M_CURRENT_APPLICATION, M_NULL );
 
 	if( appID != M_NULL )
 	{
-		l_Status = SVMatroxIntToHRESULT( MappGetError( M_THREAD_CURRENT + M_CURRENT, nullptr ) );
+		Result = SVMatroxIntToHRESULT( MappGetError( M_THREAD_CURRENT + M_CURRENT, nullptr ) );
 
 		#ifdef _DEBUG
-		if( l_Status != M_NULL_ERROR )
+		if( Result != M_NULL_ERROR )
 		{
 			SVMatroxStatusInformation l_info;
 			SVMatroxApplicationInterface::GetLastStatus( l_info );
@@ -197,17 +197,17 @@ SVMatroxApplicationInterface::SVStatusCode SVMatroxApplicationInterface::GetLast
 		}
 		#endif
 
-		if (l_Status != 0)
+		if (Result != 0)
 		{
-			l_Status = l_Status | SVMEE_MATROX_ERROR;
+			Result = Result | SVMEE_MATROX_ERROR;
 		}	
 	}
 	else
 	{
-		l_Status = SVMEE_INVALID_HANDLE;
+		Result = SVMEE_INVALID_HANDLE;
 	}
 
-	return l_Status;
+	return Result;
 }
 
 /**
@@ -216,9 +216,9 @@ SVMatroxApplicationInterface::SVStatusCode SVMatroxApplicationInterface::GetLast
 @SVOperationDescription
 
 */
-SVMatroxApplicationInterface::SVStatusCode SVMatroxApplicationInterface::GetLastStatus( SVMatroxStatusInformation& p_rStatus )
+HRESULT SVMatroxApplicationInterface::GetLastStatus( SVMatroxStatusInformation& p_rStatus )
 {
-	SVStatusCode l_Status( M_NULL_ERROR );
+	HRESULT l_Status( M_NULL_ERROR );
 	SVMatroxInt appID = MappInquire( M_CURRENT_APPLICATION, M_NULL );
 
 	if( appID != M_NULL )
@@ -288,21 +288,21 @@ SVMatroxApplicationInterface::SVStatusCode SVMatroxApplicationInterface::GetLast
 @SVOperationDescription
 
 */
-SVMatroxApplicationInterface::SVStatusCode SVMatroxApplicationInterface::GetFirstError()
+HRESULT SVMatroxApplicationInterface::GetFirstError()
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT Result(S_OK);
 	SVMatroxInt appID = MappInquire( M_CURRENT_APPLICATION, M_NULL );
 
 	if( appID != M_NULL )
 	{
-		l_Code = SVMatroxIntToHRESULT( MappGetError( M_THREAD_CURRENT + M_GLOBAL, nullptr ) );
+		Result = SVMatroxIntToHRESULT( MappGetError( M_THREAD_CURRENT + M_GLOBAL, nullptr ) );
 	}
 	else
 	{
-		l_Code = SVMEE_INVALID_HANDLE;
+		Result = SVMEE_INVALID_HANDLE;
 	}
 
-	return l_Code;
+	return Result;
 }
 
 /**
@@ -311,9 +311,9 @@ SVMatroxApplicationInterface::SVStatusCode SVMatroxApplicationInterface::GetFirs
 @SVOperationDescription Gets the error and extended information for the last Matrox operation.
 
 */
-SVMatroxApplicationInterface::SVStatusCode SVMatroxApplicationInterface::GetFirstError( SVMatroxStatusInformation& p_rStatus )
+HRESULT SVMatroxApplicationInterface::GetFirstError( SVMatroxStatusInformation& p_rStatus )
 {
-	SVStatusCode l_Status( M_NULL_ERROR );
+	HRESULT l_Status( M_NULL_ERROR );
 	SVMatroxInt appID = MappInquire(M_CURRENT_APPLICATION, M_NULL);
 
 	if( appID != M_NULL )
@@ -375,9 +375,9 @@ SVMatroxApplicationInterface::SVStatusCode SVMatroxApplicationInterface::GetFirs
 	return l_Status;
 }
 
-SVMatroxApplicationInterface::SVStatusCode SVMatroxApplicationInterface::GetSystemCount( long& p_lCount )
+HRESULT SVMatroxApplicationInterface::GetSystemCount( long& p_lCount )
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT Result(S_OK);
 
 	SVMatroxInt appID = MappInquire( M_CURRENT_APPLICATION, M_NULL );
 	if( appID != M_NULL )
@@ -387,29 +387,29 @@ SVMatroxApplicationInterface::SVStatusCode SVMatroxApplicationInterface::GetSyst
 		#endif
 		{
 			p_lCount = static_cast< long >( MappInquire( M_INSTALLED_SYSTEM_COUNT, M_NULL ) );
-			l_Code = SVMatroxApplicationInterface::GetLastStatus();
+			Result = SVMatroxApplicationInterface::GetLastStatus();
 		}
 		#ifdef USE_TRY_BLOCKS
 		catch(...)
 		{
-			l_Code = SVMEE_MATROX_THREW_EXCEPTION;
+			Result = SVMEE_MATROX_THREW_EXCEPTION;
 			SVMatroxApplicationInterface::LogMatroxException();
 		}
 		#endif
 
-		assert( l_Code == SVMEE_STATUS_OK );
+		assert(S_OK == Result);
 	}
 	else
 	{
-		l_Code = SVMEE_INVALID_HANDLE;
+		Result = SVMEE_INVALID_HANDLE;
 	}
 
-	return l_Code;
+	return Result;
 }
 
-SVMatroxApplicationInterface::SVStatusCode SVMatroxApplicationInterface::GetSystemName( SVMatroxInt p_lSystemNumber, SVString& p_rSystemName )
+HRESULT SVMatroxApplicationInterface::GetSystemName( SVMatroxInt p_lSystemNumber, SVString& p_rSystemName )
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT Result(S_OK);
 	SVMatroxInt appID = MappInquire( M_CURRENT_APPLICATION, M_NULL );
 
 	if( appID != M_NULL )
@@ -420,8 +420,8 @@ SVMatroxApplicationInterface::SVStatusCode SVMatroxApplicationInterface::GetSyst
 		{
 			char name[256];
 			MappInquire(M_INSTALLED_SYSTEM_DESCRIPTOR + p_lSystemNumber, &name);
-			l_Code = SVMatroxApplicationInterface::GetLastStatus();
-			if ( l_Code == SVMEE_STATUS_OK )
+			Result = SVMatroxApplicationInterface::GetLastStatus();
+			if ( S_OK == Result )
 			{
 				p_rSystemName = name;
 			}
@@ -429,19 +429,19 @@ SVMatroxApplicationInterface::SVStatusCode SVMatroxApplicationInterface::GetSyst
 		#ifdef USE_TRY_BLOCKS
 		catch(...)
 		{
-			l_Code = SVMEE_MATROX_THREW_EXCEPTION;
+			Result = SVMEE_MATROX_THREW_EXCEPTION;
 			SVMatroxApplicationInterface::LogMatroxException();
 		}
 		#endif
 
-		assert( l_Code == SVMEE_STATUS_OK );
+		assert( Result == S_OK );
 	}
 	else
 	{
-		l_Code = SVMEE_INVALID_HANDLE;
+		Result = SVMEE_INVALID_HANDLE;
 	}
 
-	return l_Code;
+	return Result;
 }
 /**
 @SVOperationName Local Initialize

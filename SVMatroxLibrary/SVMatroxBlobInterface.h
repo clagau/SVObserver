@@ -41,8 +41,6 @@ The BlobSelectFeature function selects the feature(s) to be calculated by Execut
 class SVMatroxBlobInterface
 {
 public:
-	typedef SVMatroxApplicationInterface::SVStatusCode SVStatusCode;
-
 	struct SVBlob
 	{
 		POINT centerOfGravity;
@@ -72,41 +70,41 @@ public:
 	virtual ~SVMatroxBlobInterface();
 
 	// This function replaces MblobAllocFeatureList
-	static SVStatusCode Create( SVMatroxBlobFeatureList& p_rFeatureListId );
+	static HRESULT Create( SVMatroxBlobFeatureList& p_rFeatureListId );
 	// This function replaces MblobAllocResult
-	static SVStatusCode Create( SVMatroxBlobResult& p_rResultId );
+	static HRESULT Create( SVMatroxBlobResult& p_rResultId );
 
 	// This function replaces MblobFree
-	static SVStatusCode Destroy( SVMatroxBlobFeatureList& p_rResultId );
-	static SVStatusCode Destroy( SVMatroxBlobResult& p_rResultId );
+	static HRESULT Destroy( SVMatroxBlobFeatureList& p_rResultId );
+	static HRESULT Destroy( SVMatroxBlobResult& p_rResultId );
 
 
 	// This function replaces MblobCalculate( 
-	static SVStatusCode Execute( const SVMatroxBlobResult& p_rResult, const SVMatroxBuffer& p_rIdentId,  const SVMatroxBlobFeatureList& p_rFeatureListId );
+	static HRESULT Execute( const SVMatroxBlobResult& p_rResult, const SVMatroxBuffer& p_rIdentId,  const SVMatroxBlobFeatureList& p_rFeatureListId );
 
-	static SVStatusCode Get( const SVMatroxBlobResult& p_rResultId, SVBlobControlEnum p_lControlType, long& p_lControlValue) ;
-	static SVStatusCode Get( const SVMatroxBlobResult& p_rResultId, SVBlobControlEnum p_lControlType, double& p_lControlValue) ;
-	static SVStatusCode GetNumber( const SVMatroxBlobResult& p_rResultId, long& p_rNumber ) ;
-	static SVStatusCode GetResult( const SVMatroxBlobResult& p_rResultId, SVBlobSelectionEnum p_lControlType, double* p_pdResultsArray ) ;
-	static SVStatusCode GetResult( const SVMatroxBlobResult& p_rResultId, SVBlobSelectionEnum p_lControlType, long* p_plResultsArray );
+	static HRESULT Get( const SVMatroxBlobResult& p_rResultId, SVBlobControlEnum p_lControlType, long& p_lControlValue) ;
+	static HRESULT Get( const SVMatroxBlobResult& p_rResultId, SVBlobControlEnum p_lControlType, double& p_lControlValue) ;
+	static HRESULT GetNumber( const SVMatroxBlobResult& p_rResultId, long& p_rNumber ) ;
+	static HRESULT GetResult( const SVMatroxBlobResult& p_rResultId, SVBlobSelectionEnum p_lControlType, double* p_pdResultsArray ) ;
+	static HRESULT GetResult( const SVMatroxBlobResult& p_rResultId, SVBlobSelectionEnum p_lControlType, long* p_plResultsArray );
 
 
 	// These functions replace MblobControl
-	static SVStatusCode Set( const SVMatroxBlobResult& p_rResultId, SVBlobControlEnum p_lControlType, const long p_lControlValue);
-	static SVStatusCode Set( const SVMatroxBlobResult& p_rResultId, SVBlobControlEnum p_lControlType, const double p_lControlValue);
+	static HRESULT Set( const SVMatroxBlobResult& p_rResultId, SVBlobControlEnum p_lControlType, const long p_lControlValue);
+	static HRESULT Set( const SVMatroxBlobResult& p_rResultId, SVBlobControlEnum p_lControlType, const double p_lControlValue);
 
 	//
-	static SVStatusCode GetForeground( const SVMatroxBlobResult& p_rResultId, bool& rIsDarkForeground);
-	static SVStatusCode SetForeground( const SVMatroxBlobResult& p_rResultId, bool isDarkForeground);
-	static SVStatusCode GetIdentifier( const SVMatroxBlobResult& p_rResultId, bool& p_bBinary);
-	static SVStatusCode SetIdentifier( const SVMatroxBlobResult& p_rResultId, bool p_bBinary);
+	static HRESULT GetForeground( const SVMatroxBlobResult& p_rResultId, bool& rIsDarkForeground);
+	static HRESULT SetForeground( const SVMatroxBlobResult& p_rResultId, bool isDarkForeground);
+	static HRESULT GetIdentifier( const SVMatroxBlobResult& p_rResultId, bool& p_bBinary);
+	static HRESULT SetIdentifier( const SVMatroxBlobResult& p_rResultId, bool p_bBinary);
 
 	// This function replaces MblobFill
-	static SVStatusCode BlobFill( const SVMatroxBlobResult& p_rResult, const SVMatroxBuffer& p_rImageID, SVBlobControlEnum p_eCriterion, const long& p_lColor);
+	static HRESULT BlobFill( const SVMatroxBlobResult& p_rResult, const SVMatroxBuffer& p_rImageID, SVBlobControlEnum p_eCriterion, const long& p_lColor);
 	// This function replaces MblobSelect
-	static SVStatusCode BlobSelect( const SVMatroxBlobResult& p_rResult, SVBlobOperationEnum p_eOperation, SVBlobSelectionEnum p_eSelection, SVConditionEnum p_eCondition, const double& p_dCondLow, const double& p_dCondHigh);
+	static HRESULT BlobSelect( const SVMatroxBlobResult& p_rResult, SVBlobOperationEnum p_eOperation, SVBlobSelectionEnum p_eSelection, SVConditionEnum p_eCondition, const double& p_dCondLow, const double& p_dCondHigh);
 	// This function replaces MblobSelectFeature
-	static SVStatusCode BlobSelectFeature( const SVMatroxBlobFeatureList& p_rFeatureList, SVBlobSelectionEnum p_eFeature);
+	static HRESULT BlobSelectFeature( const SVMatroxBlobFeatureList& p_rFeatureList, SVBlobSelectionEnum p_eFeature);
 
 	static bool Compare(int criteria, const SVBlob& lBlob, const SVBlob& rBlob);
 

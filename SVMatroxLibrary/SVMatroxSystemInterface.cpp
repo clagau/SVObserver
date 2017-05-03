@@ -24,9 +24,9 @@
 
 */
 
-SVMatroxSystemInterface::SVStatusCode SVMatroxSystemInterface::Allocate(const SVString& SystemDescriptor, SVMatroxInt SystemNum, SVMatroxSystem& p_rSystem)
+HRESULT SVMatroxSystemInterface::Allocate(const SVString& SystemDescriptor, SVMatroxInt SystemNum, SVMatroxSystem& p_rSystem)
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -35,7 +35,7 @@ SVMatroxSystemInterface::SVStatusCode SVMatroxSystemInterface::Allocate(const SV
 
 		l_Code = SVMatroxResourceMonitor::GetAutoLock( l_AutoLock );
 
-		if( l_Code == SVMEE_STATUS_OK )
+		if( l_Code == S_OK )
 		{
 			SVMatroxIdentifier systemID;
 
@@ -49,7 +49,7 @@ SVMatroxSystemInterface::SVStatusCode SVMatroxSystemInterface::Allocate(const SV
 			l_Code =  SVMatroxApplicationInterface::GetLastStatus();
 			delete [] tmp;
 
-			if( l_Code == SVMEE_STATUS_OK )
+			if( l_Code == S_OK )
 			{
 				p_rSystem.m_SystemIdentifier = systemID;
 				SVMatroxResourceMonitor::InsertIdentifier( SVSystemID, p_rSystem.m_SystemIdentifier );
@@ -73,9 +73,9 @@ SVMatroxSystemInterface::SVStatusCode SVMatroxSystemInterface::Allocate(const SV
 
 */
 
-SVMatroxSystemInterface::SVStatusCode SVMatroxSystemInterface::Release(SVMatroxSystem& SystemId)
+HRESULT SVMatroxSystemInterface::Release(SVMatroxSystem& SystemId)
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -86,7 +86,7 @@ SVMatroxSystemInterface::SVStatusCode SVMatroxSystemInterface::Release(SVMatroxS
 
 			l_Code = SVMatroxResourceMonitor::GetAutoLock( l_AutoLock );
 
-			if( l_Code == SVMEE_STATUS_OK )
+			if( l_Code == S_OK )
 			{
 				MsysFree( SystemId.m_SystemIdentifier );
 				l_Code = SVMatroxApplicationInterface::GetLastStatus();
@@ -112,9 +112,9 @@ SVMatroxSystemInterface::SVStatusCode SVMatroxSystemInterface::Release(SVMatroxS
 
 */
 
-SVMatroxSystemInterface::SVStatusCode SVMatroxSystemInterface::Get(const SVMatroxSystem& SystemId, SVMatroxSystemInquire::SVMatroxSystemInquireEnum InquireType, double& value)
+HRESULT SVMatroxSystemInterface::Get(const SVMatroxSystem& SystemId, SVMatroxSystemInquire::SVMatroxSystemInquireEnum InquireType, double& value)
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -141,9 +141,9 @@ SVMatroxSystemInterface::SVStatusCode SVMatroxSystemInterface::Get(const SVMatro
 
 */
 
-SVMatroxSystemInterface::SVStatusCode SVMatroxSystemInterface::Get(const SVMatroxSystem& SystemId, SVMatroxSystemInquire::SVMatroxSystemInquireEnum InquireType, SVString& value)
+HRESULT SVMatroxSystemInterface::Get(const SVMatroxSystem& SystemId, SVMatroxSystemInquire::SVMatroxSystemInquireEnum InquireType, SVString& value)
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -151,7 +151,7 @@ SVMatroxSystemInterface::SVStatusCode SVMatroxSystemInterface::Get(const SVMatro
 		MIL_TEXT_CHAR l_String[256];
 		MsysInquire( SystemId.m_SystemIdentifier, InquireType, reinterpret_cast<void *>(l_String));
 		l_Code =  SVMatroxApplicationInterface::GetLastStatus();
-		if (l_Code == SVMEE_STATUS_OK)
+		if (l_Code == S_OK)
 		{
 			value = l_String;
 		}
@@ -173,9 +173,9 @@ SVMatroxSystemInterface::SVStatusCode SVMatroxSystemInterface::Get(const SVMatro
 
 */
 
-SVMatroxSystemInterface::SVStatusCode SVMatroxSystemInterface::Get(const SVMatroxSystem& SystemId, SVMatroxSystemInquire::SVMatroxSystemInquireEnum InquireType, long& InquireValue)
+HRESULT SVMatroxSystemInterface::Get(const SVMatroxSystem& SystemId, SVMatroxSystemInquire::SVMatroxSystemInquireEnum InquireType, long& InquireValue)
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -211,9 +211,9 @@ SVMatroxSystemInterface::SVStatusCode SVMatroxSystemInterface::Get(const SVMatro
 
 */
 
-SVMatroxSystemInterface::SVStatusCode SVMatroxSystemInterface::Set(const SVMatroxSystem& SystemId, SVMatroxSystemControl::SVMatroxSystemControlEnum ControlType, long ControlValue)
+HRESULT SVMatroxSystemInterface::Set(const SVMatroxSystem& SystemId, SVMatroxSystemControl::SVMatroxSystemControlEnum ControlType, long ControlValue)
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -248,9 +248,9 @@ SVMatroxSystemInterface::SVStatusCode SVMatroxSystemInterface::Set(const SVMatro
 
 */
 
-SVMatroxSystemInterface::SVStatusCode SVMatroxSystemInterface::Destroy(SVMatroxSystem& p_rSystem)
+HRESULT SVMatroxSystemInterface::Destroy(SVMatroxSystem& p_rSystem)
 {
-	SVStatusCode l_Code( SVMatroxSystemInterface::Release(p_rSystem) );
+	HRESULT l_Code( SVMatroxSystemInterface::Release(p_rSystem) );
 	
 	// Clear the handle ?
 	p_rSystem.m_SystemIdentifier = 0;
@@ -265,9 +265,9 @@ SVMatroxSystemInterface::SVStatusCode SVMatroxSystemInterface::Destroy(SVMatroxS
 
 */
 
-SVMatroxSystemInterface::SVStatusCode SVMatroxSystemInterface::SetHookFunction(const SVMatroxSystem& SystemId, SVMatroxSystemHook::SVMatroxSystemHookEnum HookType, SVMatroxHookFunctionPtr HookHandlerPtr, void* UserDataPtr)
+HRESULT SVMatroxSystemInterface::SetHookFunction(const SVMatroxSystem& SystemId, SVMatroxSystemHook::SVMatroxSystemHookEnum HookType, SVMatroxHookFunctionPtr HookHandlerPtr, void* UserDataPtr)
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT l_Code( S_OK );
 
 	// Convert Enum
 	SVMatroxInt l_MatroxType = 0;
@@ -291,9 +291,9 @@ SVMatroxSystemInterface::SVStatusCode SVMatroxSystemInterface::SetHookFunction(c
 @SVOperationDescription This method unsets the hook function for the Matrox System.
 
 */
-SVMatroxSystemInterface::SVStatusCode SVMatroxSystemInterface::ReleaseHookFunction(const SVMatroxSystem& SystemId, SVMatroxSystemHook::SVMatroxSystemHookEnum HookType, SVMatroxHookFunctionPtr HookHandlerPtr, void* UserDataPtr)
+HRESULT SVMatroxSystemInterface::ReleaseHookFunction(const SVMatroxSystem& SystemId, SVMatroxSystemHook::SVMatroxSystemHookEnum HookType, SVMatroxHookFunctionPtr HookHandlerPtr, void* UserDataPtr)
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT l_Code( S_OK );
 
 	// Convert Enum
 	SVMatroxInt l_MatroxType = 0;
@@ -317,9 +317,9 @@ SVMatroxSystemInterface::SVStatusCode SVMatroxSystemInterface::ReleaseHookFuncti
 @SVOperationDescription This method gets the hook info for the Matrox System.
 
 */
-SVMatroxSystemInterface::SVStatusCode SVMatroxSystemInterface::GetHookInfo(const SVMatroxSystem& SystemId, SVMatroxIdentifier p_EventId, SVMatroxSystemHookInfo::SVMatroxSystemHookInfoEnum HookInfoType, long& value)
+HRESULT SVMatroxSystemInterface::GetHookInfo(const SVMatroxSystem& SystemId, SVMatroxIdentifier p_EventId, SVMatroxSystemHookInfo::SVMatroxSystemHookInfoEnum HookInfoType, long& value)
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT l_Code( S_OK );
 	
 	// Convert Enum
 	SVMatroxInt l_MatroxType = 0;
@@ -345,9 +345,9 @@ SVMatroxSystemInterface::SVStatusCode SVMatroxSystemInterface::GetHookInfo(const
 @SVOperationDescription This method gets the hook info for the Matrox System.
 
 */
-SVMatroxSystemInterface::SVStatusCode SVMatroxSystemInterface::GetHookInfo(const SVMatroxSystem& SystemId, SVMatroxIdentifier p_EventId, SVMatroxSystemHookInfo::SVMatroxSystemHookInfoEnum HookInfoType, unsigned __int64& value)
+HRESULT SVMatroxSystemInterface::GetHookInfo(const SVMatroxSystem& SystemId, SVMatroxIdentifier p_EventId, SVMatroxSystemHookInfo::SVMatroxSystemHookInfoEnum HookInfoType, unsigned __int64& value)
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT l_Code( S_OK );
 
 	// Convert Enum
 	SVMatroxInt l_MatroxType = 0;

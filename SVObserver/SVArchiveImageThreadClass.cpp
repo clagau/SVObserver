@@ -74,21 +74,21 @@ HRESULT SVArchiveImageThreadClass::GoOffline()
 // executes in the Inspection thread 
 HRESULT SVArchiveImageThreadClass::QueueImage( BufferInfo p_BufferInfo )
 {
-	HRESULT hr = S_OK;
+	HRESULT Result = S_OK;
 
 	// perform this code in the inspection thread, not the archive tool thread
 
 	{// begin lock scope block
 		
-		SVMatroxBufferInterface::SVStatusCode l_Code;
-
 		CSingleLock lock( &m_mtxQueue, TRUE );
 
 		QueueType::iterator iter;
 		for ( iter = m_Queue.begin(); iter != m_Queue.end(); ++iter )
 		{
-			if ( iter->m_FileName == p_BufferInfo.m_FileName )
+			if (iter->m_FileName == p_BufferInfo.m_FileName)
+			{
 				break;
+			}
 		}
 
 		if ( iter != m_Queue.end() )	// found filename
@@ -107,7 +107,7 @@ HRESULT SVArchiveImageThreadClass::QueueImage( BufferInfo p_BufferInfo )
 				if ( !l_MilBuffer.empty() )
 				{
 
-					l_Code = SVMatroxBufferInterface::CopyBuffer(l_MilBuffer.GetBuffer(), p_BufferInfo.id );
+					SVMatroxBufferInterface::CopyBuffer(l_MilBuffer.GetBuffer(), p_BufferInfo.id );
 					// at this point, p_BufferInfo.id is the source buffer
 
 					rBufferInfo.id = l_MilBuffer.GetBuffer();	// switch over to copy
@@ -135,15 +135,15 @@ HRESULT SVArchiveImageThreadClass::QueueImage( BufferInfo p_BufferInfo )
 					pImageObject->ResetObject(&errorMessages);
 					if (!errorMessages.empty())
 					{
-						hr = errorMessages[0].getMessage().m_MessageCode;
+						Result = errorMessages[0].getMessage().m_MessageCode;
 					}
 				}
 				else
 				{
-					hr = E_FAIL;
+					Result = E_FAIL;
 				}
 
-				if ( S_OK == hr )
+				if ( S_OK == Result )
 				{
 					p_BufferInfo.pImageObject = pImageObject;
 

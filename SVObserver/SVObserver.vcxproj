@@ -482,7 +482,6 @@ echo %time%
       <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</MultiProcessorCompilation>
       <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</MultiProcessorCompilation>
     </ClCompile>
-    <ClCompile Include="SVRGBMainImage.cpp" />
     <ClCompile Include="SVROIFigureEditor.cpp" />
     <ClCompile Include="SVSetupDialogManager.cpp" />
     <ClCompile Include="SVShiftTool.cpp" />
@@ -862,7 +861,6 @@ echo %time%
     <ClInclude Include="SVResultPointY.h" />
     <ClInclude Include="SVResultString.h" />
     <ClInclude Include="SVResultView.h" />
-    <ClInclude Include="SVRGBMainImage.h" />
     <ClInclude Include="SVROIFigureEditor.h" />
     <ClInclude Include="SVSetupDialogManager.h" />
     <ClInclude Include="SVShiftTool.h" />

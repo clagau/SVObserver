@@ -168,7 +168,7 @@ bool SVShiftTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVe
 			{
 				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 				pErrorMessages->push_back(Msg);
-	}
+			}
 		}
 	}
 
@@ -335,11 +335,9 @@ bool SVShiftTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVe
 						m_OutputImage.SetTranslationOffset(l_OffsetX, l_OffsetY);
 					}
 
-					SVMatroxImageInterface::SVStatusCode l_Code;
+					HRESULT MatroxCode = SVMatroxBufferInterface::CopyBuffer( l_OutMilHandle.GetBuffer(), l_InMilHandle.GetBuffer(), static_cast< long >( -l_OffsetX ), static_cast< long >( -l_OffsetY ) );
 
-					l_Code = SVMatroxBufferInterface::CopyBuffer( l_OutMilHandle.GetBuffer(), l_InMilHandle.GetBuffer(), static_cast< long >( -l_OffsetX ), static_cast< long >( -l_OffsetY ) );
-
-					if ( SVMEE_STATUS_OK != l_Code )
+					if (S_OK != MatroxCode)
 					{
 						Result = false;
 						if (nullptr != pErrorMessages)
@@ -416,6 +414,7 @@ SVDoubleValueObjectClass* SVShiftTool::GetTranslationYInput() const
 #pragma region Private Methods
 void SVShiftTool::LocalInitialize()
 {
+	m_canResizeToParent = true;
 	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVToolObjectType;
 	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVShiftToolObjectType;
 

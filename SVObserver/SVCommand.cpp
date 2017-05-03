@@ -2428,7 +2428,7 @@ HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo, SVSmartHandlePoin
 
 	if ( S_OK == hr )
 	{
-		SVMatroxBufferInterface::SVStatusCode l_Code;
+		HRESULT l_Code;
 
 		SVImageInfoClass oChildInfo;
 		SVSmartHandlePointer oChildHandle;
@@ -2599,14 +2599,7 @@ HRESULT CSVCommand::SafeImageToBSTR( SVImageClass *p_pImage, SVImageIndexStruct 
 
 		SVImageProcessingClass::CreateImageBuffer( oChildInfo, oChildHandle );
 
-		if( SV_IS_KIND_OF( p_pImage, SVRGBMainImageClass ) )
-		{
-			p_pImage->SafeImageConvertToHandle( p_svIndex, oChildHandle, SVImageHLSToRGB );
-		}
-		else
-		{
-			p_pImage->SafeImageCopyToHandle( p_svIndex, oChildHandle );
-		}
+		p_pImage->SafeImageCopyToHandle( p_svIndex, oChildHandle );
 
 		hr = ImageToBSTR( oChildInfo, oChildHandle, pbstr);
 	}
@@ -3473,7 +3466,7 @@ HRESULT CSVCommand::SVLockImage(long p_lProcessCount, long p_lIndex, BSTR p_bsNa
 					SVImageBufferHandleImage l_AxlsMilBuffer;
 					SVaxls.m_ImageHandlePtr->GetData( l_AxlsMilBuffer );
 
-					SVMatroxBufferInterface::SVStatusCode l_Code;
+					HRESULT l_Code;
 					l_Code = SVMatroxBufferInterface::CopyBuffer( l_AxlsMilBuffer.GetBuffer(), l_MilBuffer.GetBuffer() );
 
 					// Add locked image to Lock array
@@ -3922,7 +3915,7 @@ STDMETHODIMP CSVCommand::SVLoadFont(long lFontIdentifier, BSTR bstrFontFile, BST
 			SVString ConstraintsFileName	= SvStl::GlobalPath::Inst().GetTempPath(_T("svlfstra.mfo"));
 			CFile oFile;
 
-			SVMatroxOcrInterface::SVStatusCode l_Code;
+			HRESULT MatroxCode;
 
 			if( nullptr != bstrFontFile )
 			{
@@ -3932,21 +3925,21 @@ STDMETHODIMP CSVCommand::SVLoadFont(long lFontIdentifier, BSTR bstrFontFile, BST
 
 				if ( !lFontHandle.empty() )
 				{
-					l_Code = SVMatroxOcrInterface::Destroy( lFontHandle );
+					MatroxCode = SVMatroxOcrInterface::Destroy( lFontHandle );
 				}
 				SVString l_strFontFileName = FontFileName;
 
-				l_Code = SVMatroxOcrInterface::RestoreFont( lFontHandle, l_strFontFileName, SVOcrRestore );
+				MatroxCode = SVMatroxOcrInterface::RestoreFont( lFontHandle, l_strFontFileName, SVOcrRestore );
 
 				TheSVObserverApp.m_mgrRemoteFonts.UpdateFontHandle( lFontIdentifier, lFontHandle );
 
-				if ( l_Code != SVMEE_STATUS_OK )
+				if (S_OK != MatroxCode)
 				{
 					SVMatroxStatusInformation l_info;
 					SVMatroxApplicationInterface::GetLastStatus( l_info );
 					SVStringVector msgList;
 					msgList.push_back(_T("SVLoadFont"));
-					msgList.push_back(SvUl_SF::Format(_T("%d"), l_Code));
+					msgList.push_back(SvUl_SF::Format(_T("%d"), MatroxCode));
 					msgList.push_back(l_info.m_StatusString);
 					hr = SVMSG_46_LOADFONT_ERROR;
 					Exception.setMessage( hr, SvOi::Tid_ErrorMIL, msgList, SvStl::SourceFileParams(StdMessageParams) );
@@ -3960,14 +3953,14 @@ STDMETHODIMP CSVCommand::SVLoadFont(long lFontIdentifier, BSTR bstrFontFile, BST
 				oFile.Close();
 
 				SVString l_strControlsFileName = ControlsFileName;
-				l_Code = SVMatroxOcrInterface::RestoreFont( lFontHandle, l_strControlsFileName, SVOcrLoadControl );
-				if( l_Code != SVMEE_STATUS_OK )
+				MatroxCode = SVMatroxOcrInterface::RestoreFont( lFontHandle, l_strControlsFileName, SVOcrLoadControl );
+				if (S_OK != MatroxCode)
 				{
 					SVMatroxStatusInformation l_info;
 					SVMatroxApplicationInterface::GetLastStatus( l_info );
 					SVStringVector msgList;
 					msgList.push_back(_T("SVLoadFont"));
-					msgList.push_back(SvUl_SF::Format(_T("%d"), l_Code));
+					msgList.push_back(SvUl_SF::Format(_T("%d"), MatroxCode));
 					msgList.push_back(l_info.m_StatusString);
 					hr = SVMSG_46_LOADFONT_ERROR;
 					Exception.setMessage( hr, SvOi::Tid_ErrorMIL, msgList, SvStl::SourceFileParams(StdMessageParams) );
@@ -3979,14 +3972,14 @@ STDMETHODIMP CSVCommand::SVLoadFont(long lFontIdentifier, BSTR bstrFontFile, BST
 				oFile.Open( ConstraintsFileName.c_str(), CFile::modeCreate | CFile::modeWrite );
 				oFile.Write( bstrFontConstraints, ::SysStringByteLen( bstrFontConstraints ) );
 				oFile.Close();
-				l_Code = SVMatroxOcrInterface::RestoreFont( lFontHandle, ConstraintsFileName, SVOcrLoadConstraint );
-				if( l_Code != SVMEE_STATUS_OK )
+				MatroxCode = SVMatroxOcrInterface::RestoreFont( lFontHandle, ConstraintsFileName, SVOcrLoadConstraint );
+				if (S_OK != MatroxCode )
 				{
 					SVMatroxStatusInformation l_info;
 					SVMatroxApplicationInterface::GetLastStatus( l_info );
 					SVStringVector msgList;
 					msgList.push_back(_T("SVLoadFont"));
-					msgList.push_back(SvUl_SF::Format(_T("%d"), l_Code));
+					msgList.push_back(SvUl_SF::Format(_T("%d"), MatroxCode));
 					msgList.push_back(l_info.m_StatusString);
 					hr = SVMSG_46_LOADFONT_ERROR;
 					Exception.setMessage( hr, SvOi::Tid_ErrorMIL, msgList, SvStl::SourceFileParams(StdMessageParams) );
@@ -3995,9 +3988,9 @@ STDMETHODIMP CSVCommand::SVLoadFont(long lFontIdentifier, BSTR bstrFontFile, BST
 
 			// fill the character's / ID mapping for the font
 			double NbChar;
-			l_Code = SVMatroxOcrInterface::Get( lFontHandle, SVCharNumberInFont, NbChar );
+			MatroxCode = SVMatroxOcrInterface::Get( lFontHandle, SVCharNumberInFont, NbChar );
 			SVString l_strCharacters;
-			l_Code = SVMatroxOcrInterface::Get( lFontHandle, SVCharInFont, l_strCharacters );
+			MatroxCode = SVMatroxOcrInterface::Get( lFontHandle, SVCharInFont, l_strCharacters );
 
 			TheSVObserverApp.m_mgrRemoteFonts.CreateCharMapping(lFontIdentifier, CString(l_strCharacters.c_str()));
 		}// end if
@@ -4031,19 +4024,19 @@ STDMETHODIMP CSVCommand::SVSaveFont(long lFontIdentifier, BSTR* bstrFontFile, BS
 			CFileStatus rStatus;
 			CFile oFile;
 
-			SVMatroxOcrInterface::SVStatusCode l_Code;
+			HRESULT MatroxCode;
 
 			if( nullptr != *bstrFontFile )
 			{
-				l_Code = SVMatroxOcrInterface::SaveFont( lFontHandle, strFontFileName, SVOcrSave );
-				if ( l_Code != SVMEE_STATUS_OK )
+				MatroxCode = SVMatroxOcrInterface::SaveFont( lFontHandle, strFontFileName, SVOcrSave );
+				if (S_OK != MatroxCode )
 				{
 
 					SVMatroxStatusInformation l_info;
 					SVMatroxApplicationInterface::GetLastStatus( l_info );
 					SVStringVector msgList;
 					msgList.push_back(_T("SVSaveFont"));
-					msgList.push_back(SvUl_SF::Format(_T("%d"), l_Code));
+					msgList.push_back(SvUl_SF::Format(_T("%d"), MatroxCode));
 					msgList.push_back(l_info.m_StatusString);
 					hr = SVMSG_47_SAVEFONT_ERROR;
 					Exception.setMessage( hr, SvOi::Tid_ErrorMIL, msgList, SvStl::SourceFileParams(StdMessageParams) );
@@ -4060,14 +4053,14 @@ STDMETHODIMP CSVCommand::SVSaveFont(long lFontIdentifier, BSTR* bstrFontFile, BS
 
 			if( nullptr != *bstrFontControls )
 			{
-				l_Code = SVMatroxOcrInterface::SaveFont( lFontHandle,  strControlsFileName, SVOcrSaveControl );
-				if ( l_Code != SVMEE_STATUS_OK )
+				MatroxCode = SVMatroxOcrInterface::SaveFont( lFontHandle,  strControlsFileName, SVOcrSaveControl );
+				if (S_OK !=  MatroxCode)
 				{
 					SVMatroxStatusInformation l_info;
 					SVMatroxApplicationInterface::GetLastStatus( l_info );
 					SVStringVector msgList;
 					msgList.push_back(_T("SVSaveFont"));
-					msgList.push_back(SvUl_SF::Format(_T("%d"), l_Code));
+					msgList.push_back(SvUl_SF::Format(_T("%d"), MatroxCode));
 					msgList.push_back(l_info.m_StatusString);
 					hr = SVMSG_47_SAVEFONT_ERROR;
 					Exception.setMessage( hr, SvOi::Tid_ErrorMIL, msgList, SvStl::SourceFileParams(StdMessageParams) );
@@ -4085,14 +4078,14 @@ STDMETHODIMP CSVCommand::SVSaveFont(long lFontIdentifier, BSTR* bstrFontFile, BS
 
 			if( nullptr != *bstrFontConstraints )
 			{
-				l_Code = SVMatroxOcrInterface::SaveFont( lFontHandle, strConstraintsFileName, SVOcrSaveConstraint );
-				if ( l_Code != SVMEE_STATUS_OK )
+				MatroxCode = SVMatroxOcrInterface::SaveFont( lFontHandle, strConstraintsFileName, SVOcrSaveConstraint );
+				if (S_OK != MatroxCode)
 				{
 					SVMatroxStatusInformation l_info;
 					SVMatroxApplicationInterface::GetLastStatus( l_info );
 					SVStringVector msgList;
 					msgList.push_back(_T("SVSaveFont"));
-					msgList.push_back(SvUl_SF::Format(_T("%d"), l_Code));
+					msgList.push_back(SvUl_SF::Format(_T("%d"), MatroxCode));
 					msgList.push_back(l_info.m_StatusString);
 					hr = SVMSG_47_SAVEFONT_ERROR;
 					Exception.setMessage( hr, SvOi::Tid_ErrorMIL, msgList, SvStl::SourceFileParams(StdMessageParams) );
@@ -4137,7 +4130,7 @@ STDMETHODIMP CSVCommand::SVCalibrateFont(long lFontIdentifier,
 
 	if ( S_OK == hr )
 	{
-		SVMatroxOcrInterface::SVStatusCode l_Code;
+		HRESULT MatroxCode(S_OK);
 		SVMatroxOcr lFontHandle;
 
 		if (TheSVOLicenseManager().HasMatroxIdentificationLicense())
@@ -4157,33 +4150,20 @@ STDMETHODIMP CSVCommand::SVCalibrateFont(long lFontIdentifier,
 				l_CalStruct.m_TargetCharSizeXStep = dXStepSize;
 				l_CalStruct.m_TargetCharSizeYStep = dYStepSize;
 
-				l_Code = SVMatroxOcrInterface::CalibrateFont( lFontHandle, l_CalStruct );
-				if( l_Code != SVMEE_STATUS_OK )
+				MatroxCode = SVMatroxOcrInterface::CalibrateFont( lFontHandle, l_CalStruct );
+				if (S_OK !=  MatroxCode )
 				{
 					SVMatroxStatusInformation l_info;
 					SVMatroxApplicationInterface::GetLastStatus( l_info );
 					SVStringVector msgList;
 					msgList.push_back(_T("SVCalibrateFont"));
-					msgList.push_back(SvUl_SF::Format(_T("%d"), l_Code));
+					msgList.push_back(SvUl_SF::Format(_T("%d"), MatroxCode));
 					msgList.push_back(l_info.m_StatusString);
 					hr = SVMSG_45_CALIBRATEFONT_ERROR;
 					Exception.setMessage( hr, SvOi::Tid_ErrorMIL, msgList, SvStl::SourceFileParams(StdMessageParams) );
 					//return some mil error
 				}
 				l_milImage.clear();
-
-				// BRW - Who could have changed l_Code since the previous if?
-				if( l_Code != SVMEE_STATUS_OK )
-				{
-					SVMatroxStatusInformation l_info;
-					SVMatroxApplicationInterface::GetLastStatus( l_info );
-					SVStringVector msgList;
-					msgList.push_back(_T("SVCalibrateFont"));
-					msgList.push_back(SvUl_SF::Format(_T("%d"), l_Code));
-					msgList.push_back(l_info.m_StatusString);
-					hr = SVMSG_45_CALIBRATEFONT_ERROR;
-					Exception.setMessage( hr, SvOi::Tid_ErrorMIL, msgList, SvStl::SourceFileParams(StdMessageParams) );
-				}
 			}// end if
 			else
 			{
@@ -4210,22 +4190,22 @@ STDMETHODIMP CSVCommand::SVReadString(long lFontIdentifier, BSTR* bstrFoundStrin
 		if( TheSVObserverApp.m_mgrRemoteFonts.IsValidFont( lFontIdentifier, lFontHandle ) &&
 			TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime( lFontIdentifier ) )
 		{
-			SVMatroxOcrInterface::SVStatusCode l_Code;
+			HRESULT MatroxCode;
 			SVMatroxBuffer l_milImage = CreateImageFromBSTR( bstrReadImage );
 			SVMatroxOcrResult l_milResult;
-			l_Code = SVMatroxOcrInterface::Create( l_milResult );
+			MatroxCode = SVMatroxOcrInterface::Create( l_milResult );
 			// BRW - This l_Code is never checked.
 
 			lFontHandle.m_bVerify = false;
-			l_Code = SVMatroxOcrInterface::Execute( l_milResult, lFontHandle, l_milImage );
+			MatroxCode = SVMatroxOcrInterface::Execute( l_milResult, lFontHandle, l_milImage );
 
-			if( l_Code != SVMEE_STATUS_OK )
+			if (S_OK != MatroxCode)
 			{
 				SVMatroxStatusInformation l_info;
 				SVMatroxApplicationInterface::GetLastStatus( l_info );
 				SVStringVector msgList;
 				msgList.push_back(_T("SVReadString"));
-				msgList.push_back(SvUl_SF::Format(_T("%d"), l_Code));
+				msgList.push_back(SvUl_SF::Format(_T("%d"), MatroxCode));
 				msgList.push_back(l_info.m_StatusString);
 				hr = SVMSG_48_READSTRING_ERROR;
 				Exception.setMessage( hr, SvOi::Tid_ErrorMIL, msgList, SvStl::SourceFileParams(StdMessageParams) );
@@ -4234,14 +4214,14 @@ STDMETHODIMP CSVCommand::SVReadString(long lFontIdentifier, BSTR* bstrFoundStrin
 			// Process the OCR chars returned from MocrReadString();
 			long l_lLength = 0L;
 
-			l_Code = SVMatroxOcrInterface::GetResult( l_milResult, SVOcrResultStringSize, l_lLength );
+			MatroxCode = SVMatroxOcrInterface::GetResult( l_milResult, SVOcrResultStringSize, l_lLength );
 
 			if( l_lLength != 0 )
 			{
-				l_Code = SVMatroxOcrInterface::GetResult(l_milResult, SVOcrStringScore, *dMatchScore );
+				MatroxCode = SVMatroxOcrInterface::GetResult(l_milResult, SVOcrStringScore, *dMatchScore );
 				// BRW - This l_Code is never checked.
 				SVString Text;
-				l_Code = SVMatroxOcrInterface::GetResult(l_milResult, SVOcrString, Text );
+				MatroxCode = SVMatroxOcrInterface::GetResult(l_milResult, SVOcrString, Text );
 				*bstrFoundString = _bstr_t(Text.c_str()).Detach();
 			}// end if
 			else
@@ -4251,26 +4231,26 @@ STDMETHODIMP CSVCommand::SVReadString(long lFontIdentifier, BSTR* bstrFoundStrin
 			}// end else
 
 			l_milImage.clear();
-			if( l_Code != SVMEE_STATUS_OK )
+			if (S_OK !=  MatroxCode)
 			{
 				SVMatroxStatusInformation l_info;
 				SVMatroxApplicationInterface::GetLastStatus( l_info );
 				SVStringVector msgList;
 				msgList.push_back(_T("SVReadString"));
-				msgList.push_back(SvUl_SF::Format(_T("%d"), l_Code));
+				msgList.push_back(SvUl_SF::Format(_T("%d"), MatroxCode));
 				msgList.push_back(l_info.m_StatusString);
 				hr = SVMSG_48_READSTRING_ERROR;
 				Exception.setMessage( hr, SvOi::Tid_ErrorMIL, msgList, SvStl::SourceFileParams(StdMessageParams) );
 			}
 
-			l_Code = SVMatroxOcrInterface::Destroy( l_milResult );
-			if( l_Code != SVMEE_STATUS_OK )
+			MatroxCode = SVMatroxOcrInterface::Destroy( l_milResult );
+			if (S_OK !=  MatroxCode)
 			{
 				SVMatroxStatusInformation l_info;
 				SVMatroxApplicationInterface::GetLastStatus( l_info );
 				SVStringVector msgList;
 				msgList.push_back(_T("SVReadString"));
-				msgList.push_back(SvUl_SF::Format(_T("%d"), l_Code));
+				msgList.push_back(SvUl_SF::Format(_T("%d"), MatroxCode));
 				msgList.push_back(l_info.m_StatusString);
 				hr = SVMSG_48_READSTRING_ERROR;
 				Exception.setMessage( hr, SvOi::Tid_ErrorMIL, msgList, SvStl::SourceFileParams(StdMessageParams) );
@@ -4304,18 +4284,18 @@ STDMETHODIMP CSVCommand::SVVerifyString(long lFontIdentifier, BSTR bstrVerifyStr
 			if( TheSVObserverApp.m_mgrRemoteFonts.IsValidFont( lFontIdentifier, lFontHandle ) &&
 				TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime( lFontIdentifier ) )
 			{
-				SVMatroxOcrInterface::SVStatusCode l_Code;
+				HRESULT MatroxCode(S_OK);
 				SVMatroxBuffer l_milImage = CreateImageFromBSTR( bstrVerifyImage );
 				SVMatroxOcrResult l_milResult;
-				l_Code = SVMatroxOcrInterface::Create( l_milResult );
+				MatroxCode = SVMatroxOcrInterface::Create( l_milResult );
 
-				if( l_Code != SVMEE_STATUS_OK )
+				if (S_OK !=  MatroxCode)
 				{
 					SVMatroxStatusInformation l_info;
 					SVMatroxApplicationInterface::GetLastStatus( l_info );
 					SVStringVector msgList;
 					msgList.push_back(_T("SVVerifyString"));
-					msgList.push_back(SvUl_SF::Format(_T("%d"), l_Code));
+					msgList.push_back(SvUl_SF::Format(_T("%d"), MatroxCode));
 					msgList.push_back(l_info.m_StatusString);
 					hr = SVMSG_49_VERIFYSTRING_ERROR;
 					Exception.setMessage( hr, SvOi::Tid_ErrorMIL, msgList, SvStl::SourceFileParams(StdMessageParams) );
@@ -4326,13 +4306,13 @@ STDMETHODIMP CSVCommand::SVVerifyString(long lFontIdentifier, BSTR bstrVerifyStr
 
 				SVMatroxOcrInterface::Execute( l_milResult, lFontHandle, l_milImage );
 
-				if( l_Code != SVMEE_STATUS_OK )
+				if (S_OK != MatroxCode )
 				{
 					SVMatroxStatusInformation l_info;
 					SVMatroxApplicationInterface::GetLastStatus( l_info );
 					SVStringVector msgList;
 					msgList.push_back(_T("SVVerifyString"));
-					msgList.push_back(SvUl_SF::Format(_T("%d"), l_Code));
+					msgList.push_back(SvUl_SF::Format(_T("%d"), MatroxCode));
 					msgList.push_back(l_info.m_StatusString);
 					hr = SVMSG_49_VERIFYSTRING_ERROR;
 					Exception.setMessage( hr, SvOi::Tid_ErrorMIL, msgList, SvStl::SourceFileParams(StdMessageParams) );
@@ -4341,11 +4321,11 @@ STDMETHODIMP CSVCommand::SVVerifyString(long lFontIdentifier, BSTR bstrVerifyStr
 				// Process the OCV chars returned from MocrVerifyString();
 				long l_lLength = 0L;
 
-				l_Code = SVMatroxOcrInterface::GetResult( l_milResult, SVOcrResultStringSize, l_lLength);
+				MatroxCode = SVMatroxOcrInterface::GetResult( l_milResult, SVOcrResultStringSize, l_lLength);
 
 				if( l_lLength != 0L )
 				{
-					l_Code = SVMatroxOcrInterface::GetResult( l_milResult, SVOcrStringScore, *dMatchScore );
+					MatroxCode = SVMatroxOcrInterface::GetResult( l_milResult, SVOcrStringScore, *dMatchScore );
 				}// end if
 				else
 				{
@@ -4354,27 +4334,27 @@ STDMETHODIMP CSVCommand::SVVerifyString(long lFontIdentifier, BSTR bstrVerifyStr
 
 				l_milImage.clear();
 
-				if( l_Code != SVMEE_STATUS_OK )
+				if( S_OK != MatroxCode )
 				{
 					SVMatroxStatusInformation l_info;
 					SVMatroxApplicationInterface::GetLastStatus( l_info );
 					SVStringVector msgList;
 					msgList.push_back(_T("SVVerifyString"));
-					msgList.push_back(SvUl_SF::Format(_T("%d"), l_Code));
+					msgList.push_back(SvUl_SF::Format(_T("%d"), MatroxCode));
 					msgList.push_back(l_info.m_StatusString);
 					hr = SVMSG_49_VERIFYSTRING_ERROR;
 					Exception.setMessage( hr, SvOi::Tid_ErrorMIL, msgList, SvStl::SourceFileParams(StdMessageParams) );
 				}
 
-				l_Code = SVMatroxOcrInterface::Destroy( l_milResult );
+				MatroxCode = SVMatroxOcrInterface::Destroy( l_milResult );
 
-				if( l_Code != SVMEE_STATUS_OK )
+				if( S_OK != MatroxCode )
 				{
 					SVMatroxStatusInformation l_info;
 					SVMatroxApplicationInterface::GetLastStatus( l_info );
 					SVStringVector msgList;
 					msgList.push_back(_T("SVVerifyString"));
-					msgList.push_back(SvUl_SF::Format(_T("%d"), l_Code));
+					msgList.push_back(SvUl_SF::Format(_T("%d"), MatroxCode));
 					msgList.push_back(l_info.m_StatusString);
 					hr = SVMSG_49_VERIFYSTRING_ERROR;
 					Exception.setMessage( hr, SvOi::Tid_ErrorMIL, msgList, SvStl::SourceFileParams(StdMessageParams) );
@@ -4471,13 +4451,13 @@ STDMETHODIMP CSVCommand::SVAddCharacter(long lFontIdentifier, long lXPosition, l
 			SVMatroxBuffer milFontImage;
 			if ( TheSVObserverApp.m_mgrRemoteFonts.GetFontImage(lFontIdentifier, milFontImage) )
 			{
-				SVMatroxOcrInterface::SVStatusCode l_Code;
+				HRESULT MatroxCode;
 
 				long lOcrWidth;
 				long lOcrHeight;
 
-				l_Code = SVMatroxOcrInterface::Get(lFontHandle, SVOcrCharSizeX, lOcrWidth );
-				KeepPrevError( l_Code,SVMatroxOcrInterface::Get(lFontHandle, SVOcrCharSizeY, lOcrHeight ));
+				MatroxCode = SVMatroxOcrInterface::Get(lFontHandle, SVOcrCharSizeX, lOcrWidth );
+				KeepPrevError( MatroxCode,SVMatroxOcrInterface::Get(lFontHandle, SVOcrCharSizeY, lOcrHeight ));
 
 				SVMatroxBuffer milTmpID;
 				SVMatroxBufferCreateChildStruct l_Create(milFontImage);
@@ -4497,8 +4477,8 @@ STDMETHODIMP CSVCommand::SVAddCharacter(long lFontIdentifier, long lXPosition, l
 							long lId;
 							SVString Text = SvUl_SF::createSVString( _bstr_t(bstrLabel) );
 
-							KeepPrevError( l_Code, SVMatroxOcrInterface::CopyFont(milNewFontID, milTmpID, SVOcrCopytoFont, Text));
-							if ( l_Code == SVMEE_STATUS_OK )
+							KeepPrevError( MatroxCode, SVMatroxOcrInterface::CopyFont(milNewFontID, milTmpID, SVOcrCopytoFont, Text));
+							if ( S_OK != MatroxCode )
 							{
 								TheSVObserverApp.m_mgrRemoteFonts.UpdateFontHandle( lFontIdentifier,milNewFontID);
 								TheSVObserverApp.m_mgrRemoteFonts.AddFontChar( lFontIdentifier, Text[0], &lId);
@@ -4620,7 +4600,7 @@ STDMETHODIMP CSVCommand::SVGetFontCharacter(long lFontIdentifier, long  lCharID,
 {
 	HRESULT hr = SVMSG_FONT_INVALID;
 	SVMatroxOcr lFontHandle;
-	SVMatroxBufferInterface::SVStatusCode l_Code;
+	HRESULT l_Code;
 
 	if (TheSVOLicenseManager().HasMatroxIdentificationLicense())
 	{
@@ -4805,7 +4785,7 @@ STDMETHODIMP CSVCommand::SVGetFontCharacterSize(long p_lFontIdentifier, long *pl
 		if( TheSVObserverApp.m_mgrRemoteFonts.IsValidFont( p_lFontIdentifier, lFontHandle ) &&
 			TheSVObserverApp.m_mgrRemoteFonts.UpdateFontTime( p_lFontIdentifier ) )
 		{
-			SVMatroxOcrInterface::SVStatusCode l_Code;
+			HRESULT l_Code;
 
 			l_Code = SVMatroxOcrInterface::Get( lFontHandle, SVCharCellSizeX, *plWidth);
 			l_Code = SVMatroxOcrInterface::Get( lFontHandle, SVCharCellSizeY, *plHeight);

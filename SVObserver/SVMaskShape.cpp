@@ -71,10 +71,8 @@ HRESULT SVMaskShape::Draw( SVMatroxBuffer mil )
 	HRESULT hr = S_OK;
 	if ( !mil.empty() )
 	{
-		
-		SVMatroxBufferInterface::SVStatusCode l_Code;
-		l_Code = SVMatroxBufferInterface::CopyBuffer(  mil, m_dib.hbm );
-		hr = (l_Code != SVMEE_STATUS_OK) ? l_Code | SVMEE_MATROX_ERROR : S_OK;
+		HRESULT MatroxCode = SVMatroxBufferInterface::CopyBuffer(  mil, m_dib.hbm );
+		hr = (S_OK != MatroxCode) ? MatroxCode | SVMEE_MATROX_ERROR : S_OK;
 	}
 	return hr;
 }

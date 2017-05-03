@@ -272,9 +272,9 @@ MatroxType SVMatroxBarCodeInterface::Convert2MatroxType(SVBarCodeTypesEnum p_eTy
 @SVOperationDescription Uses McodeControl to set the control type with value.
 
 */
-SVMatroxBarCodeInterface::SVStatusCode SVMatroxBarCodeInterface::Set( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, const double& p_dValue )
+HRESULT SVMatroxBarCodeInterface::Set( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, const double& p_dValue )
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT Result(S_OK);
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -311,24 +311,24 @@ SVMatroxBarCodeInterface::SVStatusCode SVMatroxBarCodeInterface::Set( const SVMa
 					}
 					else
 					{
-						l_Code = SVMEE_INVALID_PARAMETER;
+						Result = SVMEE_INVALID_PARAMETER;
 					}
 				}
-				l_Code = SVMatroxApplicationInterface::GetLastStatus();
+				Result = SVMatroxApplicationInterface::GetLastStatus();
 		}
 		else
 		{
-			l_Code = SVMEE_INVALID_HANDLE;
+			Result = SVMEE_INVALID_HANDLE;
 		}
 	}
 #ifdef USE_TRY_BLOCKS
 	catch(...)
 	{
-		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
+		Result = SVMEE_MATROX_THREW_EXCEPTION;
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	return l_Code;
+	return Result;
 }
 
 
@@ -339,7 +339,7 @@ SVMatroxBarCodeInterface::SVStatusCode SVMatroxBarCodeInterface::Set( const SVMa
 @SVOperationDescription Uses McodeControl to set the control type with value.
 
 */
-SVMatroxBarCodeInterface::SVStatusCode SVMatroxBarCodeInterface::Set( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, const long& p_lValue )
+HRESULT SVMatroxBarCodeInterface::Set( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, const long& p_lValue )
 {
 	return Set( p_rCodeID, p_eType, static_cast<double>( p_lValue ) );
 }
@@ -350,7 +350,7 @@ SVMatroxBarCodeInterface::SVStatusCode SVMatroxBarCodeInterface::Set( const SVMa
 
 @SVOperationDescription Uses McodeControl to set the control type with value.
 
-*/SVMatroxBarCodeInterface::SVStatusCode SVMatroxBarCodeInterface::Set( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, const SVString& p_dValue )
+*/HRESULT SVMatroxBarCodeInterface::Set( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, const SVString& p_dValue )
 {
 	// Currently there are no strings to set.
 	return SVMEE_INVALID_PARAMETER;
@@ -364,9 +364,9 @@ SVMatroxBarCodeInterface::SVStatusCode SVMatroxBarCodeInterface::Set( const SVMa
 @SVOperationDescription Uses McodeInquire to get the control type with value.
 
 */
-SVMatroxBarCodeInterface::SVStatusCode SVMatroxBarCodeInterface::Get( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, double& p_dValue ) 
+HRESULT SVMatroxBarCodeInterface::Get( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, double& p_dValue ) 
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT Result( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -379,32 +379,32 @@ SVMatroxBarCodeInterface::SVStatusCode SVMatroxBarCodeInterface::Get( const SVMa
 				if( l_lControlType != M_UNINITIALIZED )
 				{
 					McodeInquire( p_rCodeID.m_BarCodeId, l_lControlType , &p_dValue);
-					l_Code = SVMatroxApplicationInterface::GetLastStatus();
+					Result = SVMatroxApplicationInterface::GetLastStatus();
 				}
 				else
 				{
-					l_Code = SVMEE_INVALID_PARAMETER;
+					Result = SVMEE_INVALID_PARAMETER;
 				}
 			}
 			else
 			{
-				l_Code = SVMEE_INVALID_PARAMETER;
+				Result = SVMEE_INVALID_PARAMETER;
 			}
 		}
 		else
 		{
-			l_Code = SVMEE_INVALID_HANDLE;
+			Result = SVMEE_INVALID_HANDLE;
 		}
 	}
 #ifdef USE_TRY_BLOCKS
 	catch(...)
 	{
-		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
+		Result = SVMEE_MATROX_THREW_EXCEPTION;
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(l_Code == SVMEE_STATUS_OK );
-	return l_Code;
+	assert(S_OK == Result);
+	return Result;
 }
 
 
@@ -414,9 +414,9 @@ SVMatroxBarCodeInterface::SVStatusCode SVMatroxBarCodeInterface::Get( const SVMa
 @SVOperationDescription Get returns the selected control value from the provided SVMatroxBarCode handle.
 
 */
-SVMatroxBarCodeInterface::SVStatusCode SVMatroxBarCodeInterface::Get( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, long& p_rlValue ) 
+HRESULT SVMatroxBarCodeInterface::Get( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, long& p_rlValue ) 
 {
-	SVStatusCode l_Code;
+	HRESULT l_Code;
 	double l_dValue = 0.0;
 	l_Code = Get( p_rCodeID, p_eType, l_dValue);
 	p_rlValue = static_cast<long>( l_dValue );
@@ -430,7 +430,7 @@ SVMatroxBarCodeInterface::SVStatusCode SVMatroxBarCodeInterface::Get( const SVMa
 @SVOperationDescription Get returns the selected control value from the provided SVMatroxBarCode handle.
 
 */
-SVMatroxBarCodeInterface::SVStatusCode SVMatroxBarCodeInterface::Get( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, SVString& p_rstrValue ) 
+HRESULT SVMatroxBarCodeInterface::Get( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, SVString& p_rstrValue ) 
 {
 	// Currently there are no strings to Get.
 	return SVMEE_INVALID_PARAMETER;
@@ -457,14 +457,14 @@ bool SVMatroxBarCodeInterface::GetResult( const SVMatroxBarCode& p_rCodeID, SVBa
 			if( l_lControlType != M_UNINITIALIZED )
 			{
 				McodeGetResult( p_rCodeID.m_BarCodeId, l_lControlType , &p_rdValue);
-				SVStatusCode l_Code = SVMatroxApplicationInterface::GetLastStatus();
-				if( SVMEE_STATUS_OK != l_Code )
+				HRESULT MatroxCode = SVMatroxApplicationInterface::GetLastStatus();
+				if( S_OK != MatroxCode )
 				{
 					RetValue = false;
 					if (nullptr != pErrorMessages)
 					{
 						SVMatroxStatusInformation l_info;
-						l_Code = SVMatroxApplicationInterface::GetLastStatus(l_info);
+						MatroxCode = SVMatroxApplicationInterface::GetLastStatus(l_info);
 						SVStringVector messageList;
 						messageList.push_back(l_info.m_StatusString);
 						SvStl::MessageContainer Msg( SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, SvOi::Tid_ErrorMcodeGetResult, messageList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10250);//, GetUniqueObjectID() );
@@ -551,8 +551,8 @@ bool SVMatroxBarCodeInterface::GetResult( const SVMatroxBarCode& p_rCodeID, SVBa
 						MIL_TEXT_CHAR* l_pChars = nullptr;
 						l_Resource.GetBuffer( l_pChars );
 						McodeGetResult( p_rCodeID.m_BarCodeId, l_lControlType , l_pChars );
-						SVStatusCode l_Code = SVMatroxApplicationInterface::GetLastStatus();
-						if( l_Code == SVMEE_STATUS_OK )
+						HRESULT MatroxCode = SVMatroxApplicationInterface::GetLastStatus();
+						if( S_OK == MatroxCode )
 						{
 							p_rstrValue = l_pChars;
 						}
@@ -562,7 +562,7 @@ bool SVMatroxBarCodeInterface::GetResult( const SVMatroxBarCode& p_rCodeID, SVBa
 							if (nullptr != pErrorMessages)
 							{
 								SVMatroxStatusInformation l_info;
-								l_Code = SVMatroxApplicationInterface::GetLastStatus(l_info);
+								MatroxCode = SVMatroxApplicationInterface::GetLastStatus(l_info);
 								SVStringVector messageList;
 								messageList.push_back(l_info.m_StatusString);
 								SvStl::MessageContainer Msg( SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, SvOi::Tid_ErrorMcodeGetResult, messageList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10250);//, GetUniqueObjectID() );
@@ -642,14 +642,14 @@ bool SVMatroxBarCodeInterface::Execute( const SVMatroxBarCode& p_rCodeID, const 
 		if( !p_rCodeID.empty() && !p_rSourceId.empty() )
 		{
 			McodeRead(p_rCodeID.m_BarCodeId, p_rSourceId.GetIdentifier(), M_DEFAULT);
-			SVStatusCode l_Code = SVMatroxApplicationInterface::GetLastStatus();
-			if( SVMEE_STATUS_OK != l_Code )
+			HRESULT MatroxCode = SVMatroxApplicationInterface::GetLastStatus();
+			if( S_OK != MatroxCode )
 			{
 				retValue = false;
 				if (nullptr != pErrorMessages)
 				{
 					SVMatroxStatusInformation l_info;
-					l_Code = SVMatroxApplicationInterface::GetLastStatus(l_info);
+					MatroxCode = SVMatroxApplicationInterface::GetLastStatus(l_info);
 					SVStringVector messageList;
 					messageList.push_back(l_info.m_StatusString);
 					SvStl::MessageContainer Msg( SVMSG_SVMATROXLIBRARY_GERNEAL_WARNING, SvOi::Tid_ErrorMcodeGetResult, messageList, SvStl::SourceFileParams(StdMessageParams));
@@ -689,9 +689,9 @@ bool SVMatroxBarCodeInterface::Execute( const SVMatroxBarCode& p_rCodeID, const 
 @SVOperationDescription This function creates a barcode object from the supplied SVBarCodeTypeEnum. This object is used for reading barcodes.
 
 */
-SVMatroxBarCodeInterface::SVStatusCode SVMatroxBarCodeInterface::Create( SVMatroxBarCode& p_rCodeID, SVBarCodeTypesEnum p_eType )
+HRESULT SVMatroxBarCodeInterface::Create( SVMatroxBarCode& p_rCodeID, SVBarCodeTypesEnum p_eType )
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT Result( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -701,16 +701,16 @@ SVMatroxBarCodeInterface::SVStatusCode SVMatroxBarCodeInterface::Create( SVMatro
 
 		SVMatroxResourceMonitor::SVAutoLock l_AutoLock;
 
-		l_Code = SVMatroxResourceMonitor::GetAutoLock( l_AutoLock );
+		Result = SVMatroxResourceMonitor::GetAutoLock( l_AutoLock );
 
-		if( l_Code == SVMEE_STATUS_OK )
+		if (S_OK == Result)
 		{
 			l_NewID = McodeAlloc( M_DEFAULT_HOST , l_lCodeType, M_DEFAULT, M_NULL );
 			// Check For errors
-			l_Code = SVMatroxApplicationInterface::GetLastStatus();
+			Result = SVMatroxApplicationInterface::GetLastStatus();
 
 
-			if( l_Code == SVMEE_STATUS_OK )
+			if (S_OK == Result)
 			{// Free handle if already filled.
 				long l_ID = SVMatroxApplicationInterface::SVMatroxIntToHRESULT( l_NewID );
 				SVMatroxResourceMonitor::InsertIdentifier( SVBarCodeID, l_ID );
@@ -727,12 +727,12 @@ SVMatroxBarCodeInterface::SVStatusCode SVMatroxBarCodeInterface::Create( SVMatro
 #ifdef USE_TRY_BLOCKS
 	catch(...)
 	{
-		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
+		Result = SVMEE_MATROX_THREW_EXCEPTION;
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(l_Code == SVMEE_STATUS_OK );
-	return l_Code;
+	assert(S_OK == Result);
+	return Result;
 }
 
 
@@ -742,9 +742,9 @@ SVMatroxBarCodeInterface::SVStatusCode SVMatroxBarCodeInterface::Create( SVMatro
 @SVOperationDescription This function creates a barcode object from an existing SVMatroxBarCode.
 
 */
-SVMatroxBarCodeInterface::SVStatusCode SVMatroxBarCodeInterface::Create( SVMatroxBarCode& p_rCodeID, const SVMatroxBarCode& p_FromCodeID )
+HRESULT SVMatroxBarCodeInterface::Create( SVMatroxBarCode& p_rCodeID, const SVMatroxBarCode& p_FromCodeID )
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT Result(S_OK);
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -756,9 +756,9 @@ SVMatroxBarCodeInterface::SVStatusCode SVMatroxBarCodeInterface::Create( SVMatro
 		{
 			SVMatroxResourceMonitor::SVAutoLock l_AutoLock;
 
-			l_Code = SVMatroxResourceMonitor::GetAutoLock( l_AutoLock );
+			Result = SVMatroxResourceMonitor::GetAutoLock( l_AutoLock );
 
-			if( l_Code == SVMEE_STATUS_OK )
+			if (S_OK == Result)
 			{
 				long l_lValue;
 
@@ -766,12 +766,12 @@ SVMatroxBarCodeInterface::SVStatusCode SVMatroxBarCodeInterface::Create( SVMatro
 				l_NewID = McodeAlloc(M_DEFAULT_HOST, l_lValue, M_DEFAULT, M_NULL );
 
 				// Check For errors
-				l_Code = SVMatroxApplicationInterface::GetLastStatus();
+				Result = SVMatroxApplicationInterface::GetLastStatus();
 
 				// If new code is ok then copy parameters from reference to new code.
-				if( l_Code == SVMEE_STATUS_OK )
+				if (S_OK == Result)
 				{
-					l_Code = SVMatroxApplicationInterface::GetFirstError();
+					Result = SVMatroxApplicationInterface::GetFirstError();
 					McodeInquire( p_FromCodeID.m_BarCodeId, M_ERROR_CORRECTION , &l_lValue );
 					McodeControl( l_NewID, M_ERROR_CORRECTION, l_lValue );
 
@@ -789,10 +789,10 @@ SVMatroxBarCodeInterface::SVStatusCode SVMatroxBarCodeInterface::Create( SVMatro
 
 					McodeInquire( p_FromCodeID.m_BarCodeId, M_CELL_NUMBER_X  , &l_lValue );
 					McodeControl( l_NewID, M_CELL_NUMBER_X , l_lValue );
-					l_Code = SVMatroxApplicationInterface::GetFirstError();
+					Result = SVMatroxApplicationInterface::GetFirstError();
 				}
 
-				if( l_Code == SVMEE_STATUS_OK )
+				if (S_OK == Result)
 				{// Free handle if already filled.
 					SVMatroxResourceMonitor::InsertIdentifier( SVBarCodeID, l_NewID );
 
@@ -807,18 +807,18 @@ SVMatroxBarCodeInterface::SVStatusCode SVMatroxBarCodeInterface::Create( SVMatro
 		}
 		else
 		{
-			l_Code = SVMEE_INVALID_HANDLE;
+			Result = SVMEE_INVALID_HANDLE;
 		}
 	}
 #ifdef USE_TRY_BLOCKS
 	catch(...)
 	{
-		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
+		Result = SVMEE_MATROX_THREW_EXCEPTION;
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(l_Code == SVMEE_STATUS_OK );
-	return l_Code;
+	assert(S_OK == Result);
+	return Result;
 	
 }
 
@@ -830,9 +830,9 @@ SVMatroxBarCodeInterface::SVStatusCode SVMatroxBarCodeInterface::Create( SVMatro
 @SVOperationDescription Destroys the Bar Code handle.
 
 */
-SVMatroxBarCodeInterface::SVStatusCode SVMatroxBarCodeInterface::Destroy( SVMatroxBarCode& p_rCodeID )
+HRESULT SVMatroxBarCodeInterface::Destroy( SVMatroxBarCode& p_rCodeID )
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT Result(S_OK);
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -841,13 +841,13 @@ SVMatroxBarCodeInterface::SVStatusCode SVMatroxBarCodeInterface::Destroy( SVMatr
 		{
 			SVMatroxResourceMonitor::SVAutoLock l_AutoLock;
 
-			l_Code = SVMatroxResourceMonitor::GetAutoLock( l_AutoLock );
+			Result = SVMatroxResourceMonitor::GetAutoLock( l_AutoLock );
 
-			if( l_Code == SVMEE_STATUS_OK )
+			if(S_OK == Result)
 			{
 				McodeFree( p_rCodeID.m_BarCodeId );
-				l_Code = SVMatroxApplicationInterface::GetLastStatus();
-				if( l_Code == SVMEE_STATUS_OK )
+				Result = SVMatroxApplicationInterface::GetLastStatus();
+				if (S_OK == Result)
 				{
 					SVMatroxResourceMonitor::EraseIdentifier( SVBarCodeID, p_rCodeID.m_BarCodeId );
 
@@ -859,12 +859,12 @@ SVMatroxBarCodeInterface::SVStatusCode SVMatroxBarCodeInterface::Destroy( SVMatr
 #ifdef USE_TRY_BLOCKS
 	catch(...)
 	{
-		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
+		Result = SVMEE_MATROX_THREW_EXCEPTION;
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(l_Code == SVMEE_STATUS_OK );
-	return l_Code;
+	assert(S_OK == Result);
+	return Result;
 }
 
 

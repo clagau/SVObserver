@@ -218,7 +218,7 @@ bool SVCustomFilterClass::ResetObject(SvStl::MessageContainerVector *pErrorMessa
 ////////////////////////////////////////////////////////////////////////////////
 void SVCustomFilterClass::RebuildKernel()
 {
-	SVMatroxBufferInterface::SVStatusCode l_Code;
+	HRESULT l_Code;
 
 	// First free old kernel
 	m_milKernel.clear();
@@ -344,7 +344,7 @@ bool SVCustomFilterClass::onRun( bool First, SVSmartHandlePointer RInputImageHan
 		m_plvoKernelCells[l]->CopyLastSetValue( rRunStatus.m_lResultDataIndex );
 	}// end for
 
-	SVMatroxImageInterface::SVStatusCode l_Code;
+	HRESULT l_Code;
 
 	m_lvoKernelWidth.CopyLastSetValue( rRunStatus.m_lResultDataIndex );
 	m_lvoKernelHeight.CopyLastSetValue( rRunStatus.m_lResultDataIndex );
@@ -366,7 +366,7 @@ bool SVCustomFilterClass::onRun( bool First, SVSmartHandlePointer RInputImageHan
 
 
 		long l_MILError( 0 );
-		if( l_Code != SVMEE_STATUS_OK )
+		if( l_Code != S_OK )
 		{
 			if (nullptr != pErrorMessages)
 			{

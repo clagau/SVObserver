@@ -396,9 +396,9 @@ long SVMatroxBufferInterface::Convert2MatroxType(SVMatroxBufferInfoEnum p_eType)
 @SVOperationDescription This function creates a Matrox buffer using a SVMatroxBufferCreateLineStruct.
 
 */
-SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Create(SVMatroxBuffer& p_rBuffer, const SVMatroxBufferCreateLineStruct& p_CreateLineStruct)
+HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& p_rBuffer, const SVMatroxBufferCreateLineStruct& p_CreateLineStruct)
 {
-	SVStatusCode l_Code(SVMEE_STATUS_OK);
+	HRESULT l_Code(S_OK);
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -412,7 +412,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Create(SVMatroxBu
 
 			l_Code = SVMatroxResourceMonitor::GetAutoLock(l_AutoLock);
 
-			if (SVMEE_STATUS_OK == l_Code)
+			if (S_OK == l_Code)
 			{
 				MIL_ID l_NewBuf = MbufAlloc1d(M_DEFAULT_HOST,
 					p_CreateLineStruct.m_lSizeX,
@@ -421,7 +421,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Create(SVMatroxBu
 					M_NULL);
 				l_Code = SVMatroxApplicationInterface::GetLastStatus();
 
-				if (SVMEE_STATUS_OK == l_Code)
+				if (S_OK == l_Code)
 				{
 					p_rBuffer.m_BufferPtr = new SVMatroxImageBuffer(l_NewBuf, "SVMatroxBufferInterface::Create-CreateLine");
 				}
@@ -439,7 +439,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Create(SVMatroxBu
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(SVMEE_STATUS_OK == l_Code);
+	assert(S_OK == l_Code);
 	return l_Code;
 }
 
@@ -449,9 +449,9 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Create(SVMatroxBu
 @SVOperationDescription This function creates a Matrox buffer using a LPBITMAPINFO, it does not copy any pixels.
 
 */
-SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Create(SVMatroxBuffer& p_rBuffer, const LPBITMAPINFO p_pBitmapInfo)
+HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& p_rBuffer, const LPBITMAPINFO p_pBitmapInfo)
 {
-	SVStatusCode l_Code(SVMEE_STATUS_OK);
+	HRESULT l_Code(S_OK);
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -489,7 +489,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Create(SVMatroxBu
 
 			l_Code = SVMatroxResourceMonitor::GetAutoLock(l_AutoLock);
 
-			if (SVMEE_STATUS_OK == l_Code)
+			if (S_OK == l_Code)
 			{
 				// Allocate a multi or single band image buffer
 				MIL_ID l_NewID = MbufAllocColor(M_DEFAULT_HOST,
@@ -502,7 +502,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Create(SVMatroxBu
 
 				l_Code = SVMatroxApplicationInterface::GetLastStatus();
 
-				if (SVMEE_STATUS_OK == l_Code)
+				if (S_OK == l_Code)
 				{
 					p_rBuffer.m_BufferPtr = new SVMatroxImageBuffer(l_NewID, "SVMatroxBufferInterface::Create-LPBITMAPINFO");
 				}
@@ -521,7 +521,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Create(SVMatroxBu
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(SVMEE_STATUS_OK == l_Code);
+	assert(S_OK == l_Code);
 	return l_Code;
 }
 
@@ -531,9 +531,9 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Create(SVMatroxBu
 @SVOperationDescription This function creates a Matrox buffer using a SVMatroxSystem and a SVMatroxBufferCreateStruct.
 
 */
-SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Create(const SVMatroxSystem& p_rSystem, SVMatroxBuffer& p_rBuffer, const SVMatroxBufferCreateStruct& p_CreateStruct)
+HRESULT SVMatroxBufferInterface::Create(const SVMatroxSystem& p_rSystem, SVMatroxBuffer& p_rBuffer, const SVMatroxBufferCreateStruct& p_CreateStruct)
 {
-	SVStatusCode l_Code(SVMEE_STATUS_OK);
+	HRESULT l_Code(S_OK);
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -547,7 +547,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Create(const SVMa
 
 			l_Code = SVMatroxResourceMonitor::GetAutoLock(l_AutoLock);
 
-			if (SVMEE_STATUS_OK == l_Code)
+			if (S_OK == l_Code)
 			{
 				MIL_ID MilSystemID = p_rSystem.empty() ? M_DEFAULT_HOST : p_rSystem.m_SystemIdentifier;
 				MIL_ID l_NewBuf = M_NULL;
@@ -587,7 +587,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Create(const SVMa
 				}
 				l_Code = SVMatroxApplicationInterface::GetLastStatus();
 
-				if (SVMEE_STATUS_OK == l_Code)
+				if (S_OK == l_Code)
 				{
 					p_rBuffer.m_BufferPtr = new SVMatroxImageBuffer(l_NewBuf, "SVMatroxBufferInterface::Create-SystemID,BufferCreate");
 				}
@@ -605,7 +605,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Create(const SVMa
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(SVMEE_STATUS_OK == l_Code);
+	assert(S_OK == l_Code);
 	return l_Code;
 }
 
@@ -615,9 +615,9 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Create(const SVMa
 @SVOperationDescription This function creates a Matrox buffer using a SVMatroxBufferCreateStruct.
 
 */
-SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Create(SVMatroxBuffer& p_rBuffer, const SVMatroxBufferCreateStruct& p_CreateStruct)
+HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& p_rBuffer, const SVMatroxBufferCreateStruct& p_CreateStruct)
 {
-	SVStatusCode l_Code(SVMEE_STATUS_OK);
+	HRESULT l_Code(S_OK);
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -631,7 +631,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Create(SVMatroxBu
 
 			l_Code = SVMatroxResourceMonitor::GetAutoLock(l_AutoLock);
 
-			if (SVMEE_STATUS_OK == l_Code)
+			if (S_OK == l_Code)
 			{
 				MIL_ID l_NewBuf = M_NULL;
 				if (MaxColorBands == p_CreateStruct.m_lSizeBand)
@@ -661,7 +661,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Create(SVMatroxBu
 				}
 				l_Code = SVMatroxApplicationInterface::GetLastStatus();
 
-				if (SVMEE_STATUS_OK == l_Code)
+				if (S_OK == l_Code)
 				{
 					p_rBuffer.m_BufferPtr = new SVMatroxImageBuffer(l_NewBuf, "SVMatroxBufferInterface::Create-BufferCreate");
 				}
@@ -680,7 +680,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Create(SVMatroxBu
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(SVMEE_STATUS_OK == l_Code);
+	assert(S_OK == l_Code);
 	return l_Code;
 }
 
@@ -690,9 +690,9 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Create(SVMatroxBu
 @SVOperationDescription This function creates a Matrox child buffer using a SVMatroxBufferCreateChildStruct.
 
 */
-SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Create(SVMatroxBuffer& p_rNewBuffer, const SVMatroxBufferCreateChildStruct& p_CreateChildStruct)
+HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& p_rNewBuffer, const SVMatroxBufferCreateChildStruct& p_CreateChildStruct)
 {
-	SVStatusCode l_Code(SVMEE_STATUS_OK);
+	HRESULT l_Code(S_OK);
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -703,7 +703,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Create(SVMatroxBu
 
 			l_Code = SVMatroxResourceMonitor::GetAutoLock(l_AutoLock);
 
-			if (SVMEE_STATUS_OK == l_Code)
+			if (S_OK == l_Code)
 			{
 				MIL_ID childBufID(M_NULL);
 				MIL_ID parentBufID = p_CreateChildStruct.m_ParentBufId.GetIdentifier();
@@ -735,7 +735,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Create(SVMatroxBu
 
 				l_Code = SVMatroxApplicationInterface::GetLastStatus();
 
-				if (SVMEE_STATUS_OK == l_Code)
+				if (S_OK == l_Code)
 				{
 					p_rNewBuffer.m_BufferPtr = new SVMatroxImageChildBuffer(p_CreateChildStruct.m_ParentBufId.m_BufferPtr, childBufID, "SVMatroxBufferInterface::Create-CreateChildBuffer");
 				}
@@ -754,7 +754,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Create(SVMatroxBu
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(SVMEE_STATUS_OK == l_Code);
+	assert(S_OK == l_Code);
 	return l_Code;
 }
 
@@ -765,9 +765,9 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Create(SVMatroxBu
 
 */
 // MbufCreateColor -  Caution	 : Uses external data buffer that you must manage.
-SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Create(SVMatroxBuffer& p_rBuffer, SVMatroxBufferCreateExtStruct p_CreateColorStruct)
+HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& p_rBuffer, SVMatroxBufferCreateExtStruct p_CreateColorStruct)
 {
-	SVStatusCode l_Code(SVMEE_STATUS_OK);
+	HRESULT l_Code(S_OK);
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -781,7 +781,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Create(SVMatroxBu
 
 			l_Code = SVMatroxResourceMonitor::GetAutoLock(l_AutoLock);
 
-			if (SVMEE_STATUS_OK == l_Code)
+			if (S_OK == l_Code)
 			{
 				MIL_ID l_NewBuf = M_NULL;
 				if (p_CreateColorStruct.m_lSizeBand > 1)
@@ -817,7 +817,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Create(SVMatroxBu
 
 				l_Code = SVMatroxApplicationInterface::GetLastStatus();
 
-				if (SVMEE_STATUS_OK == l_Code)
+				if (S_OK == l_Code)
 				{
 					p_rBuffer.m_BufferPtr = new SVMatroxImageBuffer(l_NewBuf, "SVMatroxBufferInterface::Create-BufferCreateExt");
 				}
@@ -836,7 +836,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Create(SVMatroxBu
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(SVMEE_STATUS_OK == l_Code);
+	assert(S_OK == l_Code);
 	return l_Code;
 }
 
@@ -846,9 +846,9 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Create(SVMatroxBu
 @SVOperationDescription This function creates a Matrox buffer using a SVMatroxBuffer.
 
 */
-SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Create(SVMatroxBuffer& p_rNewBuffer, const SVMatroxBuffer& p_CreateFrom)
+HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& p_rNewBuffer, const SVMatroxBuffer& p_CreateFrom)
 {
-	SVStatusCode l_Code(SVMEE_STATUS_OK);
+	HRESULT l_Code(S_OK);
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -869,13 +869,13 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Create(SVMatroxBu
 
 		l_Code = SVMatroxApplicationInterface::GetFirstError();
 
-		if (SVMEE_STATUS_OK == l_Code)
+		if (S_OK == l_Code)
 		{
 			SVMatroxResourceMonitor::SVAutoLock l_AutoLock;
 
 			l_Code = SVMatroxResourceMonitor::GetAutoLock(l_AutoLock);
 
-			if (SVMEE_STATUS_OK == l_Code)
+			if (S_OK == l_Code)
 			{
 				MIL_ID l_NewBuf = M_NULL;
 				if (MaxColorBands == l_lBandSize)
@@ -905,7 +905,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Create(SVMatroxBu
 
 				l_Code = SVMatroxApplicationInterface::GetLastStatus();
 
-				if (SVMEE_STATUS_OK == l_Code)
+				if (S_OK == l_Code)
 				{
 					p_rNewBuffer.m_BufferPtr = new SVMatroxImageBuffer(l_NewBuf, "SVMatroxBufferInterface::Create-MatroxBuffer");
 				}
@@ -920,7 +920,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Create(SVMatroxBu
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(SVMEE_STATUS_OK == l_Code);
+	assert(S_OK == l_Code);
 	return l_Code;
 }
 
@@ -930,9 +930,9 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Create(SVMatroxBu
 @SVOperationDescription This function creates a SVMatroxBuffer from a HBitmap.
 
 */
-SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Create(SVMatroxBuffer& p_rNewMilId, HBITMAP& p_rHbm)
+HRESULT SVMatroxBufferInterface::Create(SVMatroxBuffer& p_rNewMilId, HBITMAP& p_rHbm)
 {
-	SVStatusCode l_Code(SVMEE_STATUS_OK);
+	HRESULT l_Code(S_OK);
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -1000,7 +1000,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Create(SVMatroxBu
 
 			l_Code = SVMatroxResourceMonitor::GetAutoLock(l_AutoLock);
 
-			if (SVMEE_STATUS_OK == l_Code)
+			if (S_OK == l_Code)
 			{
 				MIL_ID l_NewBuf = M_NULL;
 
@@ -1044,7 +1044,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Create(SVMatroxBu
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(SVMEE_STATUS_OK == l_Code);
+	assert(S_OK == l_Code);
 	return l_Code;
 }
 
@@ -1054,9 +1054,9 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Create(SVMatroxBu
 @SVOperationDescription This function creates a new HBITMAP from a SVMatroxBuffer.
 
 */
-SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Create(HBITMAP& p_rHbm, const SVMatroxBuffer& p_rFromId)
+HRESULT SVMatroxBufferInterface::Create(HBITMAP& p_rHbm, const SVMatroxBuffer& p_rFromId)
 {	// MilHandleToNewHBitmap
-	SVStatusCode l_Code(SVMEE_STATUS_OK);
+	HRESULT l_Code(S_OK);
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -1193,7 +1193,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Create(HBITMAP& p
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(SVMEE_STATUS_OK == l_Code);
+	assert(S_OK == l_Code);
 	return l_Code;
 }
 
@@ -1203,9 +1203,9 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Create(HBITMAP& p
 @SVOperationDescription This function generates a ramp, inverse ramp, or a constant in the specified LUT buffer region (StartIndex to EndIndex). The increment between LUT entries is the difference between StartValue and EndValue, divided by the number of entries. 
 
 */
-SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::GenLutRamp(SVMatroxBuffer& p_rMilId, long StartIndex, double StartValue, long EndIndex, double EndValue)
+HRESULT SVMatroxBufferInterface::GenLutRamp(SVMatroxBuffer& p_rMilId, long StartIndex, double StartValue, long EndIndex, double EndValue)
 {
-	SVStatusCode l_Code(SVMEE_STATUS_OK);
+	HRESULT l_Code(S_OK);
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -1228,13 +1228,13 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::GenLutRamp(SVMatr
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(SVMEE_STATUS_OK == l_Code);
+	assert(S_OK == l_Code);
 	return l_Code;
 }
 
-SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::IsParent(const SVMatroxBuffer& p_rParentBuffer, const SVMatroxBuffer& p_rChildBuffer)
+HRESULT SVMatroxBufferInterface::IsParent(const SVMatroxBuffer& p_rParentBuffer, const SVMatroxBuffer& p_rChildBuffer)
 {
-	SVStatusCode l_Status(SVMEE_STATUS_OK);
+	HRESULT l_Status(S_OK);
 
 	if (!(p_rParentBuffer.empty()) && !(p_rChildBuffer.empty()))
 	{
@@ -1242,7 +1242,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::IsParent(const SV
 
 		l_Status = SVMatroxBufferInterface::Get(p_rChildBuffer, SVParentID, l_ParentID);
 
-		if (SVMEE_STATUS_OK == l_Status)
+		if (S_OK == l_Status)
 		{
 			if (l_ParentID != p_rParentBuffer.GetIdentifier())
 			{
@@ -1258,9 +1258,9 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::IsParent(const SV
 	return l_Status;
 }
 
-SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::GetPositionPoint(POINT& p_rPoint, const SVMatroxBuffer& p_rBuffer)
+HRESULT SVMatroxBufferInterface::GetPositionPoint(POINT& p_rPoint, const SVMatroxBuffer& p_rBuffer)
 {
-	SVStatusCode l_Status(SVMEE_STATUS_OK);
+	HRESULT l_Status(S_OK);
 
 	SVPOINT l_Point;
 
@@ -1271,9 +1271,9 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::GetPositionPoint(
 	return l_Status;
 }
 
-SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::GetPositionPoint(SVPOINT& p_rPoint, const SVMatroxBuffer& p_rBuffer)
+HRESULT SVMatroxBufferInterface::GetPositionPoint(SVPOINT& p_rPoint, const SVMatroxBuffer& p_rBuffer)
 {
-	SVStatusCode l_Status(SVMEE_STATUS_OK);
+	HRESULT l_Status(S_OK);
 
 	p_rPoint = SVPOINT(0, 0);
 
@@ -1283,7 +1283,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::GetPositionPoint(
 
 		l_Status = SVMatroxBufferInterface::Get(p_rBuffer, SVParentID, l_ParentID);
 
-		if (SVMEE_STATUS_OK == l_Status)
+		if (S_OK == l_Status)
 		{
 			if (0 != l_ParentID)
 			{
@@ -1294,12 +1294,12 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::GetPositionPoint(
 
 					l_Status = SVMatroxBufferInterface::Get(p_rBuffer, SVParentOffsetX, l_OffsetX);
 
-					if (SVMEE_STATUS_OK == l_Status)
+					if (S_OK == l_Status)
 					{
 						l_Status = SVMatroxBufferInterface::Get(p_rBuffer, SVParentOffsetY, l_OffsetY);
 					}
 
-					if (SVMEE_STATUS_OK == l_Status)
+					if (S_OK == l_Status)
 					{
 						p_rPoint = SVPOINT(static_cast< long >(l_OffsetX), static_cast< long >(l_OffsetY));
 					}
@@ -1325,9 +1325,9 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::GetPositionPoint(
 @SVOperationDescription This function returns a pointer (LPBITMAPINFO) to the header of the DIB associated with the MIL buffer (if any) or NULL.
 
 */
-SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::GetBitmapInfo(LPBITMAPINFO& p_rpBitmapInfo, const SVMatroxBuffer& p_rBuffer)
+HRESULT SVMatroxBufferInterface::GetBitmapInfo(LPBITMAPINFO& p_rpBitmapInfo, const SVMatroxBuffer& p_rBuffer)
 {
-	SVStatusCode l_Code(SVMEE_STATUS_OK);
+	HRESULT l_Code(S_OK);
 	if (!p_rBuffer.empty())
 	{
 		l_Code = GetBitmapInfo(p_rpBitmapInfo, p_rBuffer.GetIdentifier());
@@ -1336,7 +1336,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::GetBitmapInfo(LPB
 	{
 		l_Code = SVMEE_INVALID_HANDLE;
 	}
-	assert(SVMEE_STATUS_OK == l_Code);
+	assert(S_OK == l_Code);
 	return l_Code;
 }
 
@@ -1346,9 +1346,9 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::GetBitmapInfo(LPB
 @SVOperationDescription This function returns a pointer (LPBITMAPINFO) to the header of the DIB associated with the MIL buffer (if any) or NULL.
 
 */
-SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::GetBitmapInfo(LPBITMAPINFO& p_rpBitmapInfo, SVMatroxIdentifier p_Identifier)
+HRESULT SVMatroxBufferInterface::GetBitmapInfo(LPBITMAPINFO& p_rpBitmapInfo, SVMatroxIdentifier p_Identifier)
 {
-	SVStatusCode l_Code(SVMEE_STATUS_OK);
+	HRESULT l_Code(S_OK);
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -1371,13 +1371,13 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::GetBitmapInfo(LPB
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(SVMEE_STATUS_OK == l_Code);
+	assert(S_OK == l_Code);
 	return l_Code;
 }
 
-SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::GetBitmapInfo(SVBitmapInfo& p_rBitmapInfo, const SVMatroxBuffer& p_rBuffer)
+HRESULT SVMatroxBufferInterface::GetBitmapInfo(SVBitmapInfo& p_rBitmapInfo, const SVMatroxBuffer& p_rBuffer)
 {
-	SVStatusCode l_Status = S_OK;
+	HRESULT l_Status = S_OK;
 
 	BITMAPINFO* l_pBitmapInfo = nullptr;
 
@@ -1385,7 +1385,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::GetBitmapInfo(SVB
 
 	l_Status = GetBitmapInfo(l_pBitmapInfo, p_rBuffer);
 
-	if (SVMEE_STATUS_OK == l_Status && nullptr != l_pBitmapInfo)
+	if (S_OK == l_Status && nullptr != l_pBitmapInfo)
 	{
 		p_rBitmapInfo.Assign(*l_pBitmapInfo);
 	}
@@ -1397,28 +1397,28 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::GetBitmapInfo(SVB
 
 		l_Status = SVMatroxBufferInterface::Get(p_rBuffer, SVSizeX, l_Width);
 
-		if (SVMEE_STATUS_OK == l_Status)
+		if (S_OK == l_Status)
 		{
 			l_Status = SVMatroxBufferInterface::Get(p_rBuffer, SVSizeY, l_Height);
 		}
 
-		if (SVMEE_STATUS_OK == l_Status)
+		if (S_OK == l_Status)
 		{
 			long l_PixelDepth = 0;
 			long l_BandSize = 0;
 
 			l_Status = SVMatroxBufferInterface::Get(p_rBuffer, SVType, l_PixelDepth);
 
-			if (SVMEE_STATUS_OK == l_Status)
+			if (S_OK == l_Status)
 			{
 				l_Status = SVMatroxBufferInterface::Get(p_rBuffer, SVSizeBand, l_BandSize);
 			}
 
-			if (SVMEE_STATUS_OK == l_Status)
+			if (S_OK == l_Status)
 			{
 				long l_DataFormat = 0;
 
-				if (SVMEE_STATUS_OK == SVMatroxBufferInterface::Get(p_rBuffer, SVDataFormat, l_DataFormat))
+				if (S_OK == SVMatroxBufferInterface::Get(p_rBuffer, SVDataFormat, l_DataFormat))
 				{
 						NB_OF_BITS_PER_PIXEL(l_DataFormat, l_BitCount);
 				}
@@ -1430,7 +1430,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::GetBitmapInfo(SVB
 			}
 		}
 
-		if (SVMEE_STATUS_OK == l_Status)
+		if (S_OK == l_Status)
 		{
 			p_rBitmapInfo = SVBitmapInfo(static_cast< long >(l_Width), static_cast< long >(-l_Height), l_BitCount, SVBitmapInfo::GetDefaultColorTable(l_BitCount));
 		}
@@ -1443,15 +1443,15 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::GetBitmapInfo(SVB
 	return l_Status;
 }
 
-SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::GetBitmapInfo(SVBitmapInfo& p_rBitmapInfo, SVMatroxIdentifier p_Identifier)
+HRESULT SVMatroxBufferInterface::GetBitmapInfo(SVBitmapInfo& p_rBitmapInfo, SVMatroxIdentifier p_Identifier)
 {
 	BITMAPINFO* l_pBitmapInfo = nullptr;
 
 	p_rBitmapInfo.clear();
 
-	SVStatusCode l_Status = GetBitmapInfo(l_pBitmapInfo, p_Identifier);
+	HRESULT l_Status = GetBitmapInfo(l_pBitmapInfo, p_Identifier);
 
-	if (SVMEE_STATUS_OK == l_Status && nullptr != l_pBitmapInfo)
+	if (S_OK == l_Status && nullptr != l_pBitmapInfo)
 	{
 		p_rBitmapInfo.Assign(*l_pBitmapInfo);
 	}
@@ -1468,9 +1468,9 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::GetBitmapInfo(SVB
 @SVOperationDescription This function returns the Host address of the buffer, if the buffer is visible from the Host address space and is not a planar 3-band buffer
 
 */
-SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::GetHostAddress(LPVOID p_rpHostAddress, const SVMatroxBuffer& p_rBuffer)
+HRESULT SVMatroxBufferInterface::GetHostAddress(LPVOID p_rpHostAddress, const SVMatroxBuffer& p_rBuffer)
 {
-	SVStatusCode l_Code(SVMEE_STATUS_OK);
+	HRESULT l_Code(S_OK);
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -1497,13 +1497,13 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::GetHostAddress(LP
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(SVMEE_STATUS_OK == l_Code);
+	assert(S_OK == l_Code);
 	return l_Code;
 }
 
-SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::GetDDSurfaceInterfacePtr(LPVOID& p_rpSurface, const SVMatroxBuffer& p_rBuffer)
+HRESULT SVMatroxBufferInterface::GetDDSurfaceInterfacePtr(LPVOID& p_rpSurface, const SVMatroxBuffer& p_rBuffer)
 {
-	SVStatusCode l_Code(SVMEE_STATUS_OK);
+	HRESULT l_Code(S_OK);
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -1530,7 +1530,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::GetDDSurfaceInter
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(SVMEE_STATUS_OK == l_Code);
+	assert(S_OK == l_Code);
 	return l_Code;
 }
  
@@ -1574,9 +1574,9 @@ bool SVMatroxBufferInterface::IsColorBuffer(const SVMatroxBuffer& p_rBuffer)
 @SVOperationDescription This function copies the data from a SVMatroxBuffer to a SVMatroxBuffer.
 
 */
-SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::CopyBuffer(SVMatroxBuffer& p_rTo, const SVMatroxBuffer& p_rFrom)
+HRESULT SVMatroxBufferInterface::CopyBuffer(SVMatroxBuffer& p_rTo, const SVMatroxBuffer& p_rFrom)
 {
-	SVStatusCode l_Code(SVMEE_STATUS_OK);
+	HRESULT l_Code(S_OK);
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -1605,13 +1605,13 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::CopyBuffer(SVMatr
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(SVMEE_STATUS_OK == l_Code);
+	assert(S_OK == l_Code);
 	return l_Code;
 }
 
-SVMatroxBufferInterface::SVStatusCode  SVMatroxBufferInterface::InquireBufferProperties(const SVMatroxBuffer& rBuffer, MatroxImageProps& rImageProps )
+HRESULT  SVMatroxBufferInterface::InquireBufferProperties(const SVMatroxBuffer& rBuffer, MatroxImageProps& rImageProps )
 {
-	SVStatusCode Code(SVMEE_STATUS_OK); 
+	HRESULT Code(S_OK); 
 	Code = SVMatroxApplicationInterface::GetFirstError();
 	MIL_INT PitchByte = MbufInquire(rBuffer.GetIdentifier(), M_PITCH_BYTE, M_NULL);
 	MIL_INT Pitch = MbufInquire(rBuffer.GetIdentifier(), M_PITCH, M_NULL);
@@ -1632,10 +1632,10 @@ SVMatroxBufferInterface::SVStatusCode  SVMatroxBufferInterface::InquireBufferPro
 	return Code;
 }
 
-SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::CreateBuffer(SVMatroxBuffer& p_rBuffer, MatroxImageProps& rImageProps , void *pMemory)
+HRESULT SVMatroxBufferInterface::CreateBuffer(SVMatroxBuffer& p_rBuffer, MatroxImageProps& rImageProps , void *pMemory)
 {
 
-	SVStatusCode Code(SVMEE_STATUS_OK); 
+	HRESULT Code(S_OK); 
 	if(pMemory == nullptr || rImageProps.Attrib == 0  || rImageProps.Matrox_type == 0)
 	{
 		std::exception ex("CreateBuffer Invalid Parameter");
@@ -1656,7 +1656,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::CreateBuffer(SVMa
 
 	Code = SVMatroxApplicationInterface::GetLastStatus();
 
-	if (SVMEE_STATUS_OK == Code)
+	if (S_OK == Code)
 	{
 		p_rBuffer.m_BufferPtr = new MatroxSharedBuffer(NewBuf, "SVMatroxBufferInterface::CreateBuffer");
 	}
@@ -1668,14 +1668,14 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::CreateBuffer(SVMa
 	}
 
 
-	assert(SVMEE_STATUS_OK == Code);
+	assert(S_OK == Code);
 	return Code;
 }
 
 
-SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::CopyBuffer(SVMatroxBuffer& p_rTo, SVMatroxIdentifier p_From)
+HRESULT SVMatroxBufferInterface::CopyBuffer(SVMatroxBuffer& p_rTo, SVMatroxIdentifier p_From)
 {
-	SVStatusCode l_Code(SVMEE_STATUS_OK);
+	HRESULT l_Code(S_OK);
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -1698,13 +1698,13 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::CopyBuffer(SVMatr
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(SVMEE_STATUS_OK == l_Code);
+	assert(S_OK == l_Code);
 	return l_Code;
 }
 
-SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::CopyBuffer(SVMatroxIdentifier p_To, const SVMatroxBuffer& p_rFrom)
+HRESULT SVMatroxBufferInterface::CopyBuffer(SVMatroxIdentifier p_To, const SVMatroxBuffer& p_rFrom)
 {
-	SVStatusCode l_Code(SVMEE_STATUS_OK);
+	HRESULT l_Code(S_OK);
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -1727,7 +1727,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::CopyBuffer(SVMatr
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(SVMEE_STATUS_OK == l_Code);
+	assert(S_OK == l_Code);
 	return l_Code;
 }
 
@@ -1737,9 +1737,9 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::CopyBuffer(SVMatr
 @SVOperationDescription This function copies the data from a SVMatroxDisplayBuffer to a SVMatroxBuffer.
 
 */
-SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::CopyBuffer(SVMatroxDisplayBuffer& p_rTo, const SVMatroxBuffer& p_rFrom)
+HRESULT SVMatroxBufferInterface::CopyBuffer(SVMatroxDisplayBuffer& p_rTo, const SVMatroxBuffer& p_rFrom)
 {
-	SVStatusCode l_Code(SVMEE_STATUS_OK);
+	HRESULT l_Code(S_OK);
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -1763,7 +1763,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::CopyBuffer(SVMatr
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(SVMEE_STATUS_OK == l_Code);
+	assert(S_OK == l_Code);
 	return l_Code;
 }
 
@@ -1773,9 +1773,9 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::CopyBuffer(SVMatr
 @SVOperationDescription This function copies the data from a SVMatroxBuffer to a SVMatroxBuffer with x and y offsets.  If the destination is not large enough to put the source with its offsets then it is clipped.
 
 */
-SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::CopyBuffer(SVMatroxBuffer& p_rTo, const SVMatroxBuffer& p_rFrom, long p_lXOffset, long p_lYOffset)
+HRESULT SVMatroxBufferInterface::CopyBuffer(SVMatroxBuffer& p_rTo, const SVMatroxBuffer& p_rFrom, long p_lXOffset, long p_lYOffset)
 {
-	SVStatusCode l_Code(SVMEE_STATUS_OK);
+	HRESULT l_Code(S_OK);
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -1801,7 +1801,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::CopyBuffer(SVMatr
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(SVMEE_STATUS_OK == l_Code);
+	assert(S_OK == l_Code);
 	return l_Code;
 }
 
@@ -1811,9 +1811,9 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::CopyBuffer(SVMatr
 @SVOperationDescription This function copies the data from a SVMatroxBuffer to a SVMatroxBuffer with x and y offsets.  If the destination is not large enough to put the source with its offsets then it is clipped.
 
 */
-SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::CopyBuffer(SVMatroxBuffer& p_rTo, const SVMatroxBuffer& p_rFrom, long p_lBand)
+HRESULT SVMatroxBufferInterface::CopyBuffer(SVMatroxBuffer& p_rTo, const SVMatroxBuffer& p_rFrom, long p_lBand)
 {
-	SVStatusCode l_Code(SVMEE_STATUS_OK);
+	HRESULT l_Code(S_OK);
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -1838,7 +1838,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::CopyBuffer(SVMatr
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(SVMEE_STATUS_OK == l_Code);
+	assert(S_OK == l_Code);
 	return l_Code;
 }
 
@@ -1848,9 +1848,9 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::CopyBuffer(SVMatr
 @SVOperationDescription This function copies the data from a HBitmap to a SVMatroxBuffer.
 
 */
-SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::CopyBuffer(SVMatroxBuffer& p_rMilId, HBITMAP& p_rHbm)
+HRESULT SVMatroxBufferInterface::CopyBuffer(SVMatroxBuffer& p_rMilId, HBITMAP& p_rHbm)
 {	// HBitmapToMilHandle
-	SVStatusCode l_Code(SVMEE_STATUS_OK);
+	HRESULT l_Code(S_OK);
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -1907,7 +1907,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::CopyBuffer(SVMatr
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(SVMEE_STATUS_OK == l_Code);
+	assert(S_OK == l_Code);
 	return l_Code;
 }
 
@@ -1917,9 +1917,9 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::CopyBuffer(SVMatr
 @SVOperationDescription This function copies the data from a SVMatroxBuffer to a HBITMAP.  It is assumed that the MIL handle and HBITMAP are compatible buffer formats.
 
 */
-SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::CopyBuffer(HBITMAP& p_rBitmap, SVMatroxBuffer& p_rFromId)
+HRESULT SVMatroxBufferInterface::CopyBuffer(HBITMAP& p_rBitmap, SVMatroxBuffer& p_rFromId)
 {	// MilHandleToExistingDIB
-	SVStatusCode l_Code(SVMEE_STATUS_OK);
+	HRESULT l_Code(S_OK);
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -2023,13 +2023,13 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::CopyBuffer(HBITMA
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(SVMEE_STATUS_OK == l_Code);
+	assert(S_OK == l_Code);
 	return l_Code;
 }
 
-SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::CopyBuffer(SVByteVector& p_rToDIB, const SVMatroxBuffer& p_rFromId)
+HRESULT SVMatroxBufferInterface::CopyBuffer(SVByteVector& p_rToDIB, const SVMatroxBuffer& p_rFromId)
 {
-	SVStatusCode l_Code = SVMEE_STATUS_OK;
+	HRESULT l_Code = S_OK;
 
 	SVBitmapInfo l_Info;
 
@@ -2037,7 +2037,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::CopyBuffer(SVByte
 
 	l_Code = GetBitmapInfo(l_Info, p_rFromId);
 
-	if (SVMEE_STATUS_OK == l_Code)
+	if (S_OK == l_Code)
 	{
 		void* l_pHostBuffer = reinterpret_cast< void* >(MbufInquire(p_rFromId.GetIdentifier(), M_HOST_ADDRESS, M_NULL));
 
@@ -2071,7 +2071,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::CopyBuffer(SVByte
 			{
 				l_Code = CopyBuffer(l_ToId, p_rFromId);
 
-				if (SVMEE_STATUS_OK == l_Code)
+				if (S_OK == l_Code)
 				{
 					l_Code = CopyBuffer(p_rToDIB, l_ToId);
 				}
@@ -2086,9 +2086,9 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::CopyBuffer(SVByte
 	return l_Code;
 }
 
-SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::CopyBuffer(SVByteVector& p_rToDIB, const SVBitmapInfo& p_rToBitmapInfo, const SVMatroxBuffer& p_rFromId)
+HRESULT SVMatroxBufferInterface::CopyBuffer(SVByteVector& p_rToDIB, const SVBitmapInfo& p_rToBitmapInfo, const SVMatroxBuffer& p_rFromId)
 {
-	SVStatusCode l_Code = SVMEE_STATUS_OK;
+	HRESULT l_Code = S_OK;
 
 	SVMatroxBuffer l_ToId;
 
@@ -2100,7 +2100,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::CopyBuffer(SVByte
 	{
 		l_Code = CopyBuffer(l_ToId, p_rFromId);
 
-		if (SVMEE_STATUS_OK == l_Code)
+		if (S_OK == l_Code)
 		{
 			l_Code = CopyBuffer(p_rToDIB, l_ToId);
 		}
@@ -2113,20 +2113,20 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::CopyBuffer(SVByte
 	return l_Code;
 }
 
-SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::CopyBuffer(const SVBitmapInfo& dstInfo, unsigned char* p_rTo, const SVMatroxBuffer& p_rFrom)
+HRESULT SVMatroxBufferInterface::CopyBuffer(const SVBitmapInfo& dstInfo, unsigned char* p_rTo, const SVMatroxBuffer& p_rFrom)
 {
 	return CopyBuffer(dstInfo, p_rTo, p_rFrom.GetIdentifier());
 }
 
-SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::CopyBuffer(const SVBitmapInfo& dstInfo, unsigned char* p_rTo, const SVMatroxIdentifier& p_rFromId)
+HRESULT SVMatroxBufferInterface::CopyBuffer(const SVBitmapInfo& dstInfo, unsigned char* p_rTo, const SVMatroxIdentifier& p_rFromId)
 {
-	SVStatusCode l_Code(SVMEE_STATUS_OK);
+	HRESULT l_Code(S_OK);
 
 	SVBitmapInfo l_Info;
 
 	l_Code = GetBitmapInfo(l_Info, p_rFromId);
 
-	if (SVMEE_STATUS_OK == l_Code)
+	if (S_OK == l_Code)
 	{
 		void* l_pHostBuffer = reinterpret_cast< void* >(MbufInquire(p_rFromId, M_HOST_ADDRESS, M_NULL));
 
@@ -2145,9 +2145,9 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::CopyBuffer(const 
 	return l_Code;
 }
 
-SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::CopyBufferToFileDIB(SVByteVector& p_rToDIB, const SVMatroxBuffer& p_rFromId)
+HRESULT SVMatroxBufferInterface::CopyBufferToFileDIB(SVByteVector& p_rToDIB, const SVMatroxBuffer& p_rFromId)
 {
-	SVStatusCode l_Code(SVMEE_STATUS_OK);
+	HRESULT l_Code(S_OK);
 
 	SVBitmapInfo l_Info;
 
@@ -2155,7 +2155,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::CopyBufferToFileD
 
 	l_Code = GetBitmapInfo(l_Info, p_rFromId);
 
-	if (SVMEE_STATUS_OK == l_Code)
+	if (S_OK == l_Code)
 	{
 		void* l_pHostBuffer = reinterpret_cast< void* >(MbufInquire(p_rFromId.GetIdentifier(), M_HOST_ADDRESS, M_NULL));
 
@@ -2213,7 +2213,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::CopyBufferToFileD
 	return l_Code;
 }
 
-SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::CopyDIBBufferToMemory(SVImageCopyUtility& p_rImageCopier, const SVMatroxBuffer& p_rFromId)
+HRESULT SVMatroxBufferInterface::CopyDIBBufferToMemory(SVImageCopyUtility& p_rImageCopier, const SVMatroxBuffer& p_rFromId)
 {
 	SVBitmapInfo l_Info;
 	HRESULT l_Status = SVMatroxBufferInterface::GetBitmapInfo(l_Info, p_rFromId);
@@ -2239,10 +2239,10 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::CopyDIBBufferToMe
 @SVOperationDescription This function copies the data from a user array to a MatroxBuffer.
 
 */
-SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::PutBuffer(SVMatroxBuffer& p_rTo, 
+HRESULT SVMatroxBufferInterface::PutBuffer(SVMatroxBuffer& p_rTo, 
 																		 const unsigned char* p_pcArrayData)
 {
-	SVStatusCode l_Code(SVMEE_STATUS_OK);
+	HRESULT l_Code(S_OK);
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -2266,7 +2266,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::PutBuffer(SVMatro
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(SVMEE_STATUS_OK == l_Code);
+	assert(S_OK == l_Code);
 	return l_Code;
 }
 
@@ -2276,9 +2276,9 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::PutBuffer(SVMatro
 @SVOperationDescription This function copies the data from a user array to a MatroxBuffer.
 
 */
-SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::PutBuffer(SVMatroxBuffer& p_rTo, const long* p_plArrayData)
+HRESULT SVMatroxBufferInterface::PutBuffer(SVMatroxBuffer& p_rTo, const long* p_plArrayData)
 {
-	SVStatusCode l_Code(SVMEE_STATUS_OK);
+	HRESULT l_Code(S_OK);
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -2302,7 +2302,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::PutBuffer(SVMatro
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(SVMEE_STATUS_OK == l_Code);
+	assert(S_OK == l_Code);
 	return l_Code;
 }
 
@@ -2313,10 +2313,10 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::PutBuffer(SVMatro
 @SVOperationDescription This function copies the data from a user array to a MatroxBuffer.
 
 */
-SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::PutColor(SVMatroxBuffer& p_rTo, 
+HRESULT SVMatroxBufferInterface::PutColor(SVMatroxBuffer& p_rTo, 
 																		const unsigned char* p_pArrayData)
 {
-	SVStatusCode l_Code(SVMEE_STATUS_OK);
+	HRESULT l_Code(S_OK);
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -2342,7 +2342,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::PutColor(SVMatrox
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(SVMEE_STATUS_OK == l_Code);
+	assert(S_OK == l_Code);
 	return l_Code;
 }
 
@@ -2352,11 +2352,11 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::PutColor(SVMatrox
 @SVOperationDescription This function copies the data from a user array to a MatroxBuffer.
 
 */
-SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::PutLine(SVMatroxBuffer& p_rTo, 
+HRESULT SVMatroxBufferInterface::PutLine(SVMatroxBuffer& p_rTo, 
 																	   long p_lCount, 
 																	   const unsigned char* p_pArrayData)
 {
-	SVStatusCode l_Code(SVMEE_STATUS_OK);
+	HRESULT l_Code(S_OK);
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -2383,7 +2383,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::PutLine(SVMatroxB
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(SVMEE_STATUS_OK == l_Code);
+	assert(S_OK == l_Code);
 	return l_Code;
 }
 
@@ -2393,7 +2393,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::PutLine(SVMatroxB
 @SVOperationDescription This function reads the series of pixels along a theoretical line (defined by coordinates) from an image and stores their values in a user-defined array. 
 
 */
-SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::GetLine(SVMatroxBuffer& p_rBuf, 
+HRESULT SVMatroxBufferInterface::GetLine(SVMatroxBuffer& p_rBuf, 
 																	   SVMatroxInt p_lXStart, 
 																	   SVMatroxInt p_lYStart, 
 																	   SVMatroxInt p_lXEnd, 
@@ -2401,12 +2401,12 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::GetLine(SVMatroxB
 																	   SVMatroxInt& p_rlNbrPixels, 
 																	   void* p_pUserArray)
 {
-	SVStatusCode l_Code(SVMEE_STATUS_OK);
+	HRESULT l_Code(S_OK);
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
 	{
-		SVStatusCode l_Code;
+		HRESULT l_Code;
 		if (!p_rBuf.empty())
 		{
 	//		long l_lLength;
@@ -2446,7 +2446,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::GetLine(SVMatroxB
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(SVMEE_STATUS_OK == l_Code);
+	assert(S_OK == l_Code);
 	return l_Code;
 }
 
@@ -2456,9 +2456,9 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::GetLine(SVMatroxB
 @SVOperationDescription This function uses MbufInquire to get information about a SVMatroxBuffer and stores it in a double.
 
 */
-SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Get(const SVMatroxBuffer& p_rBuf, SVMatroxBufferInfoEnum p_eWhat, double& rResult) 
+HRESULT SVMatroxBufferInterface::Get(const SVMatroxBuffer& p_rBuf, SVMatroxBufferInfoEnum p_eWhat, double& rResult) 
 {
-	SVStatusCode l_Code(SVMEE_STATUS_OK);
+	HRESULT l_Code(S_OK);
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -2502,7 +2502,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Get(const SVMatro
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(SVMEE_STATUS_OK == l_Code);
+	assert(S_OK == l_Code);
 	return l_Code;
 }
 
@@ -2512,9 +2512,9 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Get(const SVMatro
 @SVOperationDescription This function uses MbufInquire to get information about a SVMatroxBuffer and stores it in a LONGLONG.
 
 */
-SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Get(const SVMatroxBuffer& p_rBuf, SVMatroxBufferInfoEnum p_eWhat, LONGLONG& rResult)  
+HRESULT SVMatroxBufferInterface::Get(const SVMatroxBuffer& p_rBuf, SVMatroxBufferInfoEnum p_eWhat, LONGLONG& rResult)  
 {
-	SVStatusCode l_Code(SVMEE_STATUS_OK);
+	HRESULT l_Code(S_OK);
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -2549,14 +2549,14 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Get(const SVMatro
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(SVMEE_STATUS_OK == l_Code);
+	assert(S_OK == l_Code);
 	return l_Code;
 }
 
 //! This method is required for backward compatibility the LONGLONG version is required when getting the hDC
-SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Get(const SVMatroxBuffer& p_rBuf, SVMatroxBufferInfoEnum p_eWhat, long& rResult)  
+HRESULT SVMatroxBufferInterface::Get(const SVMatroxBuffer& p_rBuf, SVMatroxBufferInfoEnum p_eWhat, long& rResult)  
 {
-	SVStatusCode l_Code(SVMEE_STATUS_OK);
+	HRESULT l_Code(S_OK);
 
 	LONGLONG Value;
 	
@@ -2572,11 +2572,11 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Get(const SVMatro
 @SVOperationDescription This function allows you to control a specified data buffer settings with a supplied double. 
 
 */
-SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Set(const SVMatroxBuffer& p_rBuf, 
+HRESULT SVMatroxBufferInterface::Set(const SVMatroxBuffer& p_rBuf, 
 																   SVMatroxBufferInfoEnum p_eWhat, 
 																   const double p_rdValue)
 {
-	SVStatusCode l_Code(SVMEE_STATUS_OK);
+	HRESULT l_Code(S_OK);
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -2609,7 +2609,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Set(const SVMatro
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(SVMEE_STATUS_OK == l_Code);
+	assert(S_OK == l_Code);
 	return l_Code;
 }
 
@@ -2619,7 +2619,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Set(const SVMatro
 @SVOperationDescription This function allows you to control a specified data buffer settings with a supplied long. 
 
 */
-SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Set(const SVMatroxBuffer& p_rBuf, 
+HRESULT SVMatroxBufferInterface::Set(const SVMatroxBuffer& p_rBuf, 
 																   SVMatroxBufferInfoEnum p_eWhat, 
 																   const SVMatroxInt p_rlValue)
 {
@@ -2632,11 +2632,11 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Set(const SVMatro
 @SVOperationDescription This function changes the setting of an operation control type of the specified kernel buffer or structuring element buffer. 
 
 */
-SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::ControlNeighborhood(SVMatroxBuffer& p_rBuf, 
+HRESULT SVMatroxBufferInterface::ControlNeighborhood(SVMatroxBuffer& p_rBuf, 
 																				   SVMatroxBufferInfoEnum p_eWhat, 
 																				   long p_lValue)
 {
-	SVStatusCode l_Code(SVMEE_STATUS_OK);
+	HRESULT l_Code(S_OK);
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -2669,7 +2669,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::ControlNeighborho
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(SVMEE_STATUS_OK == l_Code);
+	assert(S_OK == l_Code);
 	return l_Code;
 }
 
@@ -2679,10 +2679,10 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::ControlNeighborho
 @SVOperationDescription This function clears the entire specified buffer to the specified color.
 
 */
-SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::ClearBuffer(SVMatroxDisplay& p_rBuffer, 
+HRESULT SVMatroxBufferInterface::ClearBuffer(SVMatroxDisplay& p_rBuffer, 
 																		   double p_dColor)
 {
-	SVStatusCode l_Code;
+	HRESULT l_Code;
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -2705,7 +2705,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::ClearBuffer(SVMat
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(SVMEE_STATUS_OK == l_Code);
+	assert(S_OK == l_Code);
 	return l_Code;
 
 }
@@ -2716,10 +2716,10 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::ClearBuffer(SVMat
 @SVOperationDescription This function clears the entire specified buffer to the specified color.
 
 */
-SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::ClearBuffer(SVMatroxBuffer& p_rBuffer, 
+HRESULT SVMatroxBufferInterface::ClearBuffer(SVMatroxBuffer& p_rBuffer, 
 																		   double p_dColor)
 {
-	SVStatusCode l_Code;
+	HRESULT l_Code;
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -2742,15 +2742,15 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::ClearBuffer(SVMat
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(SVMEE_STATUS_OK == l_Code);
+	assert(S_OK == l_Code);
 	return l_Code;
 
 }
 
-SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::GetImageSize(const SVString& rFileName, long &rWidth, long &rHeight)
+HRESULT SVMatroxBufferInterface::GetImageSize(const SVString& rFileName, long &rWidth, long &rHeight)
 {
 	MIL_INT  M_Width(0), M_Height(0);
-	SVStatusCode  Code(SVMEE_STATUS_OK);
+	HRESULT  Code(S_OK);
 	if (M_INVALID == MbufDiskInquire(const_cast<MIL_TEXT_CHAR*>(rFileName.c_str()), M_SIZE_X,  &M_Width))
 	{
 		Code = M_INVALID; 
@@ -2759,7 +2759,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::GetImageSize(cons
 	{
 		Code = M_INVALID; 
 	}
-	if (SVMEE_STATUS_OK == Code)
+	if (S_OK == Code)
 	{
 		rWidth = static_cast<long>(M_Width);
 		rHeight = static_cast<long>(M_Height);
@@ -2773,7 +2773,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::GetImageSize(cons
 @SVOperationDescription This function imports data from a file into an existing or automatically allocated MIL data buffer. 
 
 */
-SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Import(SVMatroxBuffer& p_rBuf, 
+HRESULT SVMatroxBufferInterface::Import(SVMatroxBuffer& p_rBuf, 
 																	  const SVString& p_rFileName, 
 																	  SVMatroxFileTypeEnum p_eFileType,
 																	  bool p_bRestore)
@@ -2806,7 +2806,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Import(SVMatroxBu
 		l_lOperation = M_LOAD;
 	}
 
-	SVStatusCode l_Code(SVMEE_STATUS_OK);
+	HRESULT l_Code(S_OK);
 
 #ifdef USE_TRY_BLOCKS
 	try
@@ -2816,7 +2816,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Import(SVMatroxBu
 
 		l_Code = SVMatroxResourceMonitor::GetAutoLock(l_AutoLock);
 
-		if (SVMEE_STATUS_OK == l_Code)
+		if (S_OK == l_Code)
 		{
 			if (p_bRestore)
 			{	// Restore Operation creates a new Mil handle.
@@ -2827,7 +2827,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Import(SVMatroxBu
 					M_DEFAULT_HOST,
 					&l_NewId);
 				l_Code = SVMatroxApplicationInterface::GetLastStatus();
-				if (SVMEE_STATUS_OK == l_Code)
+				if (S_OK == l_Code)
 				{
 					p_rBuf.m_BufferPtr = new SVMatroxImageBuffer(l_NewId, "SVMatroxBufferInterface::Import");
 				}
@@ -2858,7 +2858,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Import(SVMatroxBu
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(SVMEE_STATUS_OK == l_Code);
+	assert(S_OK == l_Code);
 	return l_Code;
 }
 
@@ -2868,7 +2868,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Import(SVMatroxBu
 @SVOperationDescription This function exports a data buffer to a file, in the specified output file format. 
 
 */
-SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Export(const SVMatroxBuffer& rBuffer, 
+HRESULT SVMatroxBufferInterface::Export(const SVMatroxBuffer& rBuffer, 
 																	  const SVString& rFileName, 
 																	  SVMatroxFileTypeEnum p_eFileType)
 {
@@ -2880,7 +2880,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Export(const SVMa
 		l_lFileFormat |= M_BMP;
 	}
 
-	SVStatusCode l_Code(SVMEE_STATUS_OK);
+	HRESULT l_Code(S_OK);
 
 #ifdef USE_TRY_BLOCKS
 	try
@@ -2906,7 +2906,7 @@ SVMatroxBufferInterface::SVStatusCode SVMatroxBufferInterface::Export(const SVMa
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert(SVMEE_STATUS_OK == l_Code);
+	assert(S_OK == l_Code);
 	return l_Code;
 }
 

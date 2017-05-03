@@ -1104,6 +1104,7 @@ extern /*const*/ GUID SVBand0ImageObjectGuid;
 extern /*const*/ GUID SVBand1ImageObjectGuid;
 extern /*const*/ GUID SVBand2ImageObjectGuid;
 extern /*const*/ GUID SVConvertToHSIObjectGuid;
+extern /*const*/ GUID SVHasROIObjectGuid;
 
 // GUIDs for Color Threshold
 extern /*const*/ GUID SVColorThresholdClassGuid;

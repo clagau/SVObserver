@@ -76,7 +76,7 @@ HBITMAP MatroxImageData::GetHBitmap() const
 	m_ImageHandle->GetData(BufferHandle);
 	const SVMatroxBuffer& buffer = BufferHandle.GetBuffer();
 	HBITMAP hBitmap = nullptr;
-	SVMatroxBufferInterface::SVStatusCode status = SVMatroxBufferInterface::Create(hBitmap, buffer);
+	HRESULT status = SVMatroxBufferInterface::Create(hBitmap, buffer);
 
 	return hBitmap;
 }

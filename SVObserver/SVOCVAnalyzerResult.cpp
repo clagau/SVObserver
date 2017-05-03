@@ -196,7 +196,7 @@ SVOCVAnalyzeResultClass::~SVOCVAnalyzeResultClass()
 
 	if ( !m_bHasLicenseError )
 	{
-		SVMatroxOcrInterface ::SVStatusCode l_Code;
+		HRESULT l_Code;
 
 		if( !m_milFontID.empty() )
 		{
@@ -312,7 +312,7 @@ BOOL SVOCVAnalyzeResultClass::CloseObject()
 	{
 		bOk = TRUE;
 		
-		SVMatroxOcrInterface ::SVStatusCode l_Code;
+		HRESULT l_Code;
 
 		// First destroy the MIL font and result buffer
 		if( !m_milFontID.empty() )
@@ -350,158 +350,150 @@ BOOL SVOCVAnalyzeResultClass::GenerateFontModel()
 {
 	long	l_lIsFontPreprocessed = 0;
 
-		SVMatroxOcrInterface ::SVStatusCode l_Code;
-		// First destroy the MIL font and result buffer
-		if( !m_milFontID.empty() )
-		{
-			l_Code = SVMatroxOcrInterface::Destroy( m_milFontID );
-		}// end if
+	HRESULT MatroxCode;
+	// First destroy the MIL font and result buffer
+	if( !m_milFontID.empty() )
+	{
+		MatroxCode = SVMatroxOcrInterface::Destroy( m_milFontID );
+	}// end if
 
-		if( !m_milResultID.empty() )
-		{
-			l_Code = SVMatroxOcrInterface::Destroy( m_milResultID );
-		}// end if
+	if( !m_milResultID.empty() )
+	{
+		MatroxCode = SVMatroxOcrInterface::Destroy( m_milResultID );
+	}// end if
 
-		// Now recreate the MIL font and result buffer
-		CFileStatus rStatus;
-		SVString FontFileName;
-		SVString ConstraintsFileName;
-		SVString ControlsFileName;
+	// Now recreate the MIL font and result buffer
+	CFileStatus rStatus;
+	SVString FontFileName;
+	SVString ConstraintsFileName;
+	SVString ControlsFileName;
 
-		m_fnvoFontFileName.GetValue( FontFileName );
+	m_fnvoFontFileName.GetValue( FontFileName );
 	BOOL bOk = CFile::GetStatus( FontFileName.c_str(), rStatus );
-		if ( bOk )
-		{
-			bOk = 0L < rStatus.m_size;
-		}// end if
+	if ( bOk )
+	{
+		bOk = 0L < rStatus.m_size;
+	}// end if
 
-		if( bOk )
+	if( bOk )
+	{
+		m_fnvoControlsFileName.GetValue( ControlsFileName );
+		if( !ControlsFileName.empty() )
 		{
-			m_fnvoControlsFileName.GetValue( ControlsFileName );
-			if( !ControlsFileName.empty() )
+			bOk = CFile::GetStatus( ControlsFileName.c_str(), rStatus );
+			if ( bOk )
 			{
-				bOk = CFile::GetStatus( ControlsFileName.c_str(), rStatus );
-				if ( bOk )
-				{
-					bOk = 0L < rStatus.m_size;
-				}// end if
+				bOk = 0L < rStatus.m_size;
 			}// end if
 		}// end if
+	}// end if
 
-		if( bOk )
+	if( bOk )
+	{
+		m_fnvoConstraintsFileName.GetValue( ConstraintsFileName );
+		if( !ConstraintsFileName.empty() )
 		{
-			m_fnvoConstraintsFileName.GetValue( ConstraintsFileName );
-			if( !ConstraintsFileName.empty() )
+			bOk = CFile::GetStatus( ConstraintsFileName.c_str(), rStatus );
+			if ( bOk )
 			{
-				bOk = CFile::GetStatus( ConstraintsFileName.c_str(), rStatus );
-				if ( bOk )
-				{
-					bOk = 0L < rStatus.m_size;
-				}// end if
+				bOk = 0L < rStatus.m_size;
 			}// end if
 		}// end if
+	}// end if
 
-		if ( bOk )
+	if ( bOk )
+	{
+		SVString Path;
+		Path = FontFileName;
+
+		MatroxCode = SVMatroxOcrInterface::RestoreFont( m_milFontID, Path, SVOcrRestore );
+		if( m_milFontID.empty() )
 		{
-			// Allocate a MIL kernel.
-			SVMatroxOcrInterface ::SVStatusCode l_Code;
+			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
+		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16126, GetUniqueObjectID());
 
-			SVString Path;
-			Path = FontFileName;
+		}// end if
 
-			l_Code = SVMatroxOcrInterface::RestoreFont( m_milFontID, Path, SVOcrRestore );
+		if( !ControlsFileName.empty() )
+		{
+			Path = ControlsFileName;
+			MatroxCode = SVMatroxOcrInterface::RestoreFont( m_milFontID, Path, SVOcrLoadControl );
 			if( m_milFontID.empty() )
 			{
 				SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16126, GetUniqueObjectID());
-
+			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16127, GetUniqueObjectID());
 			}// end if
-
-			if( !ControlsFileName.empty() )
-			{
-				Path = ControlsFileName;
-				l_Code = SVMatroxOcrInterface::RestoreFont( m_milFontID, Path, SVOcrLoadControl );
-				if( m_milFontID.empty() )
-				{
-					SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-				MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16127, GetUniqueObjectID());
-				}// end if
-			}// end if
-
-			if( !ConstraintsFileName.empty() )
-			{
-				Path = ConstraintsFileName;
-				l_Code = SVMatroxOcrInterface::RestoreFont( m_milFontID, Path, SVOcrLoadConstraint );
-
-				if( m_milFontID.empty() )
-				{
-					SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-				MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16128, GetUniqueObjectID());
-				}// end if
-			}// end if
-
-		//-			JAB111208
-			l_Code = SVMatroxOcrInterface::Get (m_milFontID, 
-												SVOcrIsFontPreprocessed,
-												l_lIsFontPreprocessed);
-			if (l_Code != SVMEE_STATUS_OK)
-			{
-				SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16129, GetUniqueObjectID());
-			}
-
-			if (l_lIsFontPreprocessed == 0)
-			{
-				l_Code = SVMatroxOcrInterface::Preprocess( m_milFontID );
-
-				if (l_Code != SVMEE_STATUS_OK)
-				{
-					SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-				MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16130, GetUniqueObjectID());
-				}
-			}
-
-			l_Code = SVMatroxOcrInterface::Create( m_milResultID );
-			if( m_milResultID.empty() )
-			{
-				SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16131, GetUniqueObjectID());
-			}// end if
-
-				l_Code = SVMatroxOcrInterface::Get( m_milFontID, SVOcrStringSize, m_lFontStringLength );
-				if( m_lFontStringLength < 1 )
-				{
-					SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16132, GetUniqueObjectID());
-				}// end if
-
-				l_Code = SVMatroxOcrInterface::Get( m_milFontID, SVOcrStringSizeMax, m_lFontStringLengthMax );
-				if( m_lFontStringLengthMax < 1 )
-				{
-					SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16133, GetUniqueObjectID());
-				}// end if
-
-			if( m_lFontStringLength == SVValueAny )
-			{
-				m_lFontStringLength = m_lFontStringLengthMax;
-			}// end if
-
-			if ( 0 < m_lMatchStringLength &&
-				   m_lMatchStringLength != m_lFontStringLength && 
-			     m_lMatchStringLength <= m_lFontStringLengthMax )
-			{
-					l_Code = SVMatroxOcrInterface::Set( m_milFontID, SVOcrStringSize, m_lMatchStringLength);
-
-					l_Code = SVMatroxOcrInterface::Get( m_milFontID, SVOcrStringSize, m_lFontStringLength );
-					if( m_lFontStringLength < 1 )
-					{
-						SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-				MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16134, GetUniqueObjectID());
-					}// end if
-			}
-
 		}// end if
+
+		if( !ConstraintsFileName.empty() )
+		{
+			Path = ConstraintsFileName;
+			MatroxCode = SVMatroxOcrInterface::RestoreFont( m_milFontID, Path, SVOcrLoadConstraint );
+
+			if( m_milFontID.empty() )
+			{
+				SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
+			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16128, GetUniqueObjectID());
+			}// end if
+		}// end if
+
+		HRESULT MatroxCode = SVMatroxOcrInterface::Get (m_milFontID, SVOcrIsFontPreprocessed, l_lIsFontPreprocessed);
+		if (S_OK != MatroxCode)
+		{
+			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
+			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16129, GetUniqueObjectID());
+		}
+
+		if (l_lIsFontPreprocessed == 0)
+		{
+			MatroxCode = SVMatroxOcrInterface::Preprocess( m_milFontID );
+
+			if (S_OK != MatroxCode)
+			{
+				SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
+				MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16130, GetUniqueObjectID());
+			}
+		}
+
+		MatroxCode = SVMatroxOcrInterface::Create( m_milResultID );
+		if( m_milResultID.empty() )
+		{
+			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
+			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16131, GetUniqueObjectID());
+		}// end if
+
+		MatroxCode = SVMatroxOcrInterface::Get( m_milFontID, SVOcrStringSize, m_lFontStringLength );
+		if( m_lFontStringLength < 1 )
+		{
+			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
+			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16132, GetUniqueObjectID());
+		}// end if
+
+		MatroxCode = SVMatroxOcrInterface::Get( m_milFontID, SVOcrStringSizeMax, m_lFontStringLengthMax );
+		if( m_lFontStringLengthMax < 1 )
+		{
+			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
+			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16133, GetUniqueObjectID());
+		}// end if
+
+		if( m_lFontStringLength == SVValueAny )
+		{
+			m_lFontStringLength = m_lFontStringLengthMax;
+		}// end if
+
+		if ( 0 < m_lMatchStringLength && m_lMatchStringLength != m_lFontStringLength && m_lMatchStringLength <= m_lFontStringLengthMax )
+		{
+			MatroxCode = SVMatroxOcrInterface::Set( m_milFontID, SVOcrStringSize, m_lMatchStringLength);
+
+			MatroxCode = SVMatroxOcrInterface::Get( m_milFontID, SVOcrStringSize, m_lFontStringLength );
+			if( m_lFontStringLength < 1 )
+			{
+				SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
+				MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16134, GetUniqueObjectID());
+			}// end if
+		}
+
+	}// end if
 
 	HideResults();
 	return bOk;
@@ -695,7 +687,7 @@ bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messag
 	SVString FoundString;
 	SVString MatchString;
 	 
-	SVMatroxOcrInterface ::SVStatusCode l_Code = SVMEE_STATUS_OK;
+	HRESULT MatroxCode(S_OK);
   
 	bool bOk = __super::onRun( rRunStatus, pErrorMessages );
 
@@ -817,7 +809,7 @@ bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messag
 						bOk = !m_milFontID.empty();
 						if (!bOk)
 						{
-							l_Code = -12395;
+							MatroxCode = -12395;
 							break;
 						}
 
@@ -825,11 +817,11 @@ bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messag
 						{
 							m_milFontID.m_bVerify = false;
 							strFunctionName = _T("MocrReadString"); iProgramCode = -12383;
-							l_Code = SVMatroxOcrInterface::Execute( m_milResultID , m_milFontID, l_milImageID );
+							MatroxCode = SVMatroxOcrInterface::Execute( m_milResultID , m_milFontID, l_milImageID );
 
-							if ((l_Code & 0xc0000000) != 0)
+							if ((MatroxCode & 0xc0000000) != 0)
 							{
-								l_Code = -12396;
+								MatroxCode = -12396;
 								break;
 							}
 						}// if( l_bOperation )
@@ -848,12 +840,12 @@ bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messag
 							strFunctionName = _T("MocrVerifyString"); iProgramCode = -12384;
 							m_milFontID.m_VerifyString = MatchString;
 							m_milFontID.m_bVerify = true;
-							l_Code = SVMatroxOcrInterface::Execute( m_milResultID , 
+							MatroxCode = SVMatroxOcrInterface::Execute( m_milResultID , 
 								                                    m_milFontID, 
 																	l_milImageID );
-							if ((l_Code & 0xc0000000) != 0)
+							if ((MatroxCode & 0xc0000000) != 0)
 							{
-								l_Code = -12397;
+								MatroxCode = -12397;
 								break;
 							}
 						}// end else //verify
@@ -872,7 +864,7 @@ bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messag
 
 						// Before we try to get any additional results we MUST make sure that
 						// we have a string to get results from. Otherwise Matrox gets flaky.
-						l_Code = SVMatroxOcrInterface::GetResult(  m_milResultID, 
+						MatroxCode = SVMatroxOcrInterface::GetResult(  m_milResultID, 
 							                                      SVOcrNbrString, 
 																  dNbrString );
 						if( dNbrString < 1 )
@@ -882,10 +874,10 @@ bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messag
 							break;
 						}
 
-						l_Code = SVMatroxOcrInterface::GetResult( m_milResultID, 
+						MatroxCode = SVMatroxOcrInterface::GetResult( m_milResultID, 
 							                                      SVOcrStringValidFlag, 
 																  dValidString );
-						if ((l_Code & ~0xcf000000) == 23002)
+						if ((MatroxCode & ~0xcf000000) == 23002)
 						{
 //-							JAB111008 - This represents... Specified result 
 //-							does not contain valid read or verify result 
@@ -896,14 +888,14 @@ bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messag
 //-							However, MIL 8 manual says no match string should
 //-							give back an l_dValidString value of 0.  Why do 
 //-							we get a MIL error?
-							l_Code = 0;
+							MatroxCode = 0;
 
 //-							It is assumed that l_lStringFound still equals 
 //-							false.
 							break;
 						}
 
-						if ((l_Code & 0xc0000000) != 0)
+						if ((MatroxCode & 0xc0000000) != 0)
 						{
 							break;
 						}
@@ -911,14 +903,14 @@ bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messag
 //-						A string was found!
 
 						iProgramCode = -12385;
-						l_Code = SVMatroxOcrInterface::GetResult( m_milResultID, 
+						MatroxCode = SVMatroxOcrInterface::GetResult( m_milResultID, 
 																  SVOcrResultStringSize, 
 																  dLength );
 
 
-						if ((l_Code & 0xc0000000) != 0)
+						if ((MatroxCode & 0xc0000000) != 0)
 						{
-							l_Code = -12398;
+							MatroxCode = -12398;
 							break;
 						}
 
@@ -937,71 +929,71 @@ bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messag
 
 						strFunctionName = _T("MocrGetResult");
 						iProgramCode = -12387;
-						l_Code = SVMatroxOcrInterface::GetResult( m_milResultID, SVOcrStringScore, dScore);
-						if ((l_Code & 0xc0000000) != 0)
+						MatroxCode = SVMatroxOcrInterface::GetResult( m_milResultID, SVOcrStringScore, dScore);
+						if ((MatroxCode & 0xc0000000) != 0)
 						{
-							l_Code = -12399;
+							MatroxCode = -12399;
 							break;
 						}
 
 						iProgramCode = -12388;
-						l_Code = SVMatroxOcrInterface::GetResult( m_milResultID, SVOcrString, l_strLabel);
-						if ((l_Code & 0xc0000000) != 0)
+						MatroxCode = SVMatroxOcrInterface::GetResult( m_milResultID, SVOcrString, l_strLabel);
+						if ((MatroxCode & 0xc0000000) != 0)
 						{
-							l_Code = -12400;
+							MatroxCode = -12400;
 							break;
 						}
 
 						iProgramCode = -12389;
-						l_Code = SVMatroxOcrInterface::GetResult( m_milResultID, SVOcrCharScore, l_adScores);
+						MatroxCode = SVMatroxOcrInterface::GetResult( m_milResultID, SVOcrCharScore, l_adScores);
 
-						if ((l_Code & 0xc0000000) != 0)
+						if ((MatroxCode & 0xc0000000) != 0)
 						{
-							l_Code = -12401;
+							MatroxCode = -12401;
 							break;
 						}
 
 						iProgramCode = -12390;
-						l_Code = SVMatroxOcrInterface::GetResult( m_milResultID, SVOcrCharPosX, l_adXCoords);
+						MatroxCode = SVMatroxOcrInterface::GetResult( m_milResultID, SVOcrCharPosX, l_adXCoords);
 
-						if ((l_Code & 0xc0000000) != 0)
+						if ((MatroxCode & 0xc0000000) != 0)
 						{
-							l_Code = -12402;
+							MatroxCode = -12402;
 							break;
 						}
 
 						iProgramCode = -12391;
-						l_Code = SVMatroxOcrInterface::GetResult( m_milResultID, SVOcrCharPosY, l_adYCoords);
+						MatroxCode = SVMatroxOcrInterface::GetResult( m_milResultID, SVOcrCharPosY, l_adYCoords);
 
-						if ((l_Code & 0xc0000000) != 0)
+						if ((MatroxCode & 0xc0000000) != 0)
 						{
-							l_Code = -12403;
+							MatroxCode = -12403;
 							break;
 						}
 
 						iProgramCode = -12392;
-						l_Code = SVMatroxOcrInterface::GetResult( m_milResultID, SVOcrCharValidFlag, l_adValidChars);
-						if ((l_Code & 0xc0000000) != 0)
+						MatroxCode = SVMatroxOcrInterface::GetResult( m_milResultID, SVOcrCharValidFlag, l_adValidChars);
+						if ((MatroxCode & 0xc0000000) != 0)
 						{
-							l_Code = -12404;
+							MatroxCode = -12404;
 							break;
 						}
 
 						strFunctionName = _T("MocrInquire");
 						iProgramCode = -12393;
-						l_Code = SVMatroxOcrInterface::Get( m_milFontID, SVCharCellSizeX, dCharBoxSizeX);
-						if ((l_Code & 0xc0000000) != 0)
+						MatroxCode = SVMatroxOcrInterface::Get( m_milFontID, SVCharCellSizeX, dCharBoxSizeX);
+						if ((MatroxCode & 0xc0000000) != 0)
 						{
-							l_Code = -12405;
+							MatroxCode = -12405;
 							break;
 						}
 
 						strFunctionName = _T("MocrInquire");
 						iProgramCode = -12394;
-						l_Code = SVMatroxOcrInterface::Get( m_milFontID, SVCharCellSizeY, dCharBoxSizeY);
-						if ((l_Code & 0xc0000000) != 0)
+						MatroxCode = SVMatroxOcrInterface::Get( m_milFontID, SVCharCellSizeY, dCharBoxSizeY);
+						if ((MatroxCode & 0xc0000000) != 0)
 						{
-							l_Code = -12406;
+							MatroxCode = -12406;
 							break;
 						}
 
@@ -1253,7 +1245,7 @@ bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messag
 
 	}// end if
 
-	if (l_Code & SV_ARC_ERROR)
+	if (MatroxCode & SV_ARC_ERROR)
 	{
 		assert (0);
 		SetInvalid();
@@ -1264,7 +1256,7 @@ bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messag
 
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( static_cast<DWORD> (l_Code), SvOi::Tid_ErrorIn, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg( static_cast<DWORD> (MatroxCode), SvOi::Tid_ErrorIn, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 			pErrorMessages->push_back(Msg);
 		}
 		bOk = false;

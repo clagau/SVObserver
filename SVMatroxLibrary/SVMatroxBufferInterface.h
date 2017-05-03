@@ -65,124 +65,121 @@ class SVMatroxBufferInterface
 public:
 	friend class SVMatroxGige;
 
-	typedef SVMatroxApplicationInterface::SVStatusCode SVStatusCode;
-
 	SVMatroxBufferInterface();
 
 	virtual ~SVMatroxBufferInterface();
 
 	//******* Create Functions *********
 	// MbuffAlloc1d or Line
-	static SVStatusCode Create( SVMatroxBuffer& p_rBuffer, const SVMatroxBufferCreateLineStruct& p_CreateLineStruct);
+	static HRESULT Create( SVMatroxBuffer& p_rBuffer, const SVMatroxBufferCreateLineStruct& p_CreateLineStruct);
 	// CreateBuffer LPBitmapInfo..
-	static SVStatusCode Create( SVMatroxBuffer& p_rBuffer, const LPBITMAPINFO p_pBitmapInfo );
+	static HRESULT Create( SVMatroxBuffer& p_rBuffer, const LPBITMAPINFO p_pBitmapInfo );
 	// Mainly for Grab Buffers
-	static SVStatusCode Create( const SVMatroxSystem& p_rSystem, SVMatroxBuffer& p_rBuffer, const SVMatroxBufferCreateStruct& p_CreateStruct);
+	static HRESULT Create( const SVMatroxSystem& p_rSystem, SVMatroxBuffer& p_rBuffer, const SVMatroxBufferCreateStruct& p_CreateStruct);
 	// MbufAllocColor - Standard buffer..
-	static SVStatusCode Create( SVMatroxBuffer& p_rBuffer, const SVMatroxBufferCreateStruct& p_CreateStruct);
+	static HRESULT Create( SVMatroxBuffer& p_rBuffer, const SVMatroxBufferCreateStruct& p_CreateStruct);
 	// MbufChildColor2d - CreateChild buffer
-	static SVStatusCode Create( SVMatroxBuffer& p_rNewBuffer, const SVMatroxBufferCreateChildStruct& p_CreateChildStruct);
+	static HRESULT Create( SVMatroxBuffer& p_rNewBuffer, const SVMatroxBufferCreateChildStruct& p_CreateChildStruct);
 	// MbufCreateColor -  Caution	 : Uses external data buffer that you must manage.
-	static SVStatusCode Create( SVMatroxBuffer& p_rBuffer, SVMatroxBufferCreateExtStruct p_CreateColorStruct);
+	static HRESULT Create( SVMatroxBuffer& p_rBuffer, SVMatroxBufferCreateExtStruct p_CreateColorStruct);
 
-	static SVStatusCode Create( SVMatroxBuffer& p_rNewBuffer, const SVMatroxBuffer& p_CreateFrom );
+	static HRESULT Create( SVMatroxBuffer& p_rNewBuffer, const SVMatroxBuffer& p_CreateFrom );
 
 	// HBitmapToNewMilHandle
-	static SVStatusCode Create( SVMatroxBuffer& p_rNewMilId, HBITMAP& p_rHbm );
+	static HRESULT Create( SVMatroxBuffer& p_rNewMilId, HBITMAP& p_rHbm );
 	// MilHandleToNewHBitmap
-	static SVStatusCode Create( HBITMAP& p_rHbm, const SVMatroxBuffer& p_rFromId );
+	static HRESULT Create( HBITMAP& p_rHbm, const SVMatroxBuffer& p_rFromId );
 
 
 	// ****** Copy Buffer  **********
 	// MbufCopy
-	static SVStatusCode CopyBuffer( SVMatroxBuffer& p_rTo, const SVMatroxBuffer& p_rFrom );
-	static SVStatusCode CopyBuffer( SVMatroxDisplayBuffer& p_rTo, const SVMatroxBuffer& p_rFrom );
+	static HRESULT CopyBuffer( SVMatroxBuffer& p_rTo, const SVMatroxBuffer& p_rFrom );
+	static HRESULT CopyBuffer( SVMatroxDisplayBuffer& p_rTo, const SVMatroxBuffer& p_rFrom );
 	// MbufCopyClip
-	static SVStatusCode CopyBuffer( SVMatroxBuffer& p_rTo, const SVMatroxBuffer& p_rFrom, long p_lXOffset, long p_lYOffset);
+	static HRESULT CopyBuffer( SVMatroxBuffer& p_rTo, const SVMatroxBuffer& p_rFrom, long p_lXOffset, long p_lYOffset);
 	// MbufCopyColor
-	static SVStatusCode CopyBuffer( SVMatroxBuffer& p_rTo, const SVMatroxBuffer& p_rFrom, long p_lBand );
+	static HRESULT CopyBuffer( SVMatroxBuffer& p_rTo, const SVMatroxBuffer& p_rFrom, long p_lBand );
 
 	// HBitmapToMilHandle
-	static SVStatusCode CopyBuffer( SVMatroxBuffer& p_rMilId, HBITMAP& p_rHbm );
-	static SVStatusCode CopyBuffer( HBITMAP& p_rsvDestDIB, SVMatroxBuffer& p_rFromId );
+	static HRESULT CopyBuffer( SVMatroxBuffer& p_rMilId, HBITMAP& p_rHbm );
+	static HRESULT CopyBuffer( HBITMAP& p_rsvDestDIB, SVMatroxBuffer& p_rFromId );
 
 	// MilHandleToDIB
-	static SVStatusCode CopyBuffer( SVByteVector& p_rToDIB, const SVMatroxBuffer& p_rFromId );
-	static SVStatusCode CopyBuffer( SVByteVector& p_rToDIB, const SVBitmapInfo& p_rToBitmapInfo, const SVMatroxBuffer& p_rFromId );
-	static SVStatusCode CopyBufferToFileDIB( SVByteVector& p_rToDIB, const SVMatroxBuffer& p_rFromId );
-	static SVStatusCode CopyDIBBufferToMemory( SVImageCopyUtility& p_rImageCopier, const SVMatroxBuffer& p_rFromId );
+	static HRESULT CopyBuffer( SVByteVector& p_rToDIB, const SVMatroxBuffer& p_rFromId );
+	static HRESULT CopyBuffer( SVByteVector& p_rToDIB, const SVBitmapInfo& p_rToBitmapInfo, const SVMatroxBuffer& p_rFromId );
+	static HRESULT CopyBufferToFileDIB( SVByteVector& p_rToDIB, const SVMatroxBuffer& p_rFromId );
+	static HRESULT CopyDIBBufferToMemory( SVImageCopyUtility& p_rImageCopier, const SVMatroxBuffer& p_rFromId );
 
 	// ****** Information 
-	static SVStatusCode IsParent( const SVMatroxBuffer& p_rParentBuffer, const SVMatroxBuffer& p_rChildBuffer );
+	static HRESULT IsParent( const SVMatroxBuffer& p_rParentBuffer, const SVMatroxBuffer& p_rChildBuffer );
 
-	static SVStatusCode GetPositionPoint( POINT& p_rPoint, const SVMatroxBuffer& p_rBuffer );
-	static SVStatusCode GetPositionPoint( SVPOINT& p_rPoint, const SVMatroxBuffer& p_rBuffer );
+	static HRESULT GetPositionPoint( POINT& p_rPoint, const SVMatroxBuffer& p_rBuffer );
+	static HRESULT GetPositionPoint( SVPOINT& p_rPoint, const SVMatroxBuffer& p_rBuffer );
 
-	static SVStatusCode GetBitmapInfo( LPBITMAPINFO& p_rpBitmapInfo, const SVMatroxBuffer& p_rBuffer );
-	static SVStatusCode GetBitmapInfo( LPBITMAPINFO& p_rpBitmapInfo, SVMatroxIdentifier p_Identifier);
-	static SVStatusCode GetBitmapInfo( SVBitmapInfo& p_rBitmapInfo, const SVMatroxBuffer& p_rBuffer );
-	static SVStatusCode GetBitmapInfo( SVBitmapInfo& p_rBitmapInfo, SVMatroxIdentifier p_Identifier );
+	static HRESULT GetBitmapInfo( LPBITMAPINFO& p_rpBitmapInfo, const SVMatroxBuffer& p_rBuffer );
+	static HRESULT GetBitmapInfo( LPBITMAPINFO& p_rpBitmapInfo, SVMatroxIdentifier p_Identifier);
+	static HRESULT GetBitmapInfo( SVBitmapInfo& p_rBitmapInfo, const SVMatroxBuffer& p_rBuffer );
+	static HRESULT GetBitmapInfo( SVBitmapInfo& p_rBitmapInfo, SVMatroxIdentifier p_Identifier );
 
-	static SVStatusCode GetHostAddress( LPVOID p_rpHostAddress, const SVMatroxBuffer& p_rBuffer );
+	static HRESULT GetHostAddress( LPVOID p_rpHostAddress, const SVMatroxBuffer& p_rBuffer );
 
-	static SVStatusCode GetDDSurfaceInterfacePtr( LPVOID& p_rpSurface, const SVMatroxBuffer& p_rBuffer );
+	static HRESULT GetDDSurfaceInterfacePtr( LPVOID& p_rpSurface, const SVMatroxBuffer& p_rBuffer );
 
-	static SVStatusCode GenLutRamp( SVMatroxBuffer& p_rMilId, long StartIndex, double StartValue, long EndIndex, double EndValue );
+	static HRESULT GenLutRamp( SVMatroxBuffer& p_rMilId, long StartIndex, double StartValue, long EndIndex, double EndValue );
 
-	static SVStatusCode GetLine( SVMatroxBuffer& p_rBuf, SVMatroxIdentifier p_lXStart, SVMatroxIdentifier p_lYStart, SVMatroxIdentifier p_lXEnd, SVMatroxIdentifier p_lYEnd, SVMatroxIdentifier& p_rlNbrPixels, void* p_pUserArray );
+	static HRESULT GetLine( SVMatroxBuffer& p_rBuf, SVMatroxIdentifier p_lXStart, SVMatroxIdentifier p_lYStart, SVMatroxIdentifier p_lXEnd, SVMatroxIdentifier p_lYEnd, SVMatroxIdentifier& p_rlNbrPixels, void* p_pUserArray );
 
 	// ****** Get and Set Functions **********
-	static SVStatusCode Get( const SVMatroxBuffer& p_rBuf, SVMatroxBufferInfoEnum p_eWhat, double& rResult );
-	static SVStatusCode Get( const SVMatroxBuffer& p_rBuf, SVMatroxBufferInfoEnum p_eWhat, long& rResult );
-	static SVStatusCode Get( const SVMatroxBuffer& p_rBuf, SVMatroxBufferInfoEnum p_eWhat, LONGLONG& rResult );
+	static HRESULT Get( const SVMatroxBuffer& p_rBuf, SVMatroxBufferInfoEnum p_eWhat, double& rResult );
+	static HRESULT Get( const SVMatroxBuffer& p_rBuf, SVMatroxBufferInfoEnum p_eWhat, long& rResult );
+	static HRESULT Get( const SVMatroxBuffer& p_rBuf, SVMatroxBufferInfoEnum p_eWhat, LONGLONG& rResult );
 
 	// ****** Put Functions **********
 	// MbufPut
-	static SVStatusCode PutBuffer( SVMatroxBuffer& p_rTo, const unsigned char* p_pcArrayData );
-	static SVStatusCode PutBuffer( SVMatroxBuffer& p_rTo, const long* p_plArrayData );
+	static HRESULT PutBuffer( SVMatroxBuffer& p_rTo, const unsigned char* p_pcArrayData );
+	static HRESULT PutBuffer( SVMatroxBuffer& p_rTo, const long* p_plArrayData );
 	// MbufPutColor
-	static SVStatusCode PutColor( SVMatroxBuffer& p_rTo, const unsigned char* p_pArrayData );
+	static HRESULT PutColor( SVMatroxBuffer& p_rTo, const unsigned char* p_pArrayData );
 
 	// MbufPut1d
-	static SVStatusCode PutLine( SVMatroxBuffer& p_rTo, long p_lCount, const unsigned char* p_pArrayData);
+	static HRESULT PutLine( SVMatroxBuffer& p_rTo, long p_lCount, const unsigned char* p_pArrayData);
 	// MbufGet1d
 
-	static SVStatusCode Set(const SVMatroxBuffer& p_rBuf, SVMatroxBufferInfoEnum p_eWhat, const double p_rdValue);
-	//static SVStatusCode Set(const SVMatroxBuffer& p_rBuf, SVMatroxBufferInfoEnum p_eWhat, const long p_rlValue);
-	static SVStatusCode Set( const SVMatroxBuffer& p_rBuf, SVMatroxBufferInfoEnum p_eWhat, const SVMatroxInt p_rlValue );
+	static HRESULT Set(const SVMatroxBuffer& p_rBuf, SVMatroxBufferInfoEnum p_eWhat, const double p_rdValue);
+	static HRESULT Set( const SVMatroxBuffer& p_rBuf, SVMatroxBufferInfoEnum p_eWhat, const SVMatroxInt p_rlValue );
 
 	// ****** Miscellaneous *********
-	static SVStatusCode ControlNeighborhood( SVMatroxBuffer& p_rBuf, SVMatroxBufferInfoEnum p_eWhat, const long p_lValue);
+	static HRESULT ControlNeighborhood( SVMatroxBuffer& p_rBuf, SVMatroxBufferInfoEnum p_eWhat, const long p_lValue);
 
-	static SVStatusCode ClearBuffer( SVMatroxBuffer& p_rBuffer, double p_dColor );
-	static SVStatusCode ClearBuffer( SVMatroxDisplay& p_rBuffer, double p_dColor );
+	static HRESULT ClearBuffer( SVMatroxBuffer& p_rBuffer, double p_dColor );
+	static HRESULT ClearBuffer( SVMatroxDisplay& p_rBuffer, double p_dColor );
 
 	// ***** Inport / Export *********
-	static SVStatusCode Import(SVMatroxBuffer& p_rBuf, const SVString& rFileName, SVMatroxFileTypeEnum p_eFileType, bool p_bRestore= false );
-	static SVStatusCode Export(const SVMatroxBuffer& p_rBuf, const SVString& rFileName, SVMatroxFileTypeEnum p_eFileType );
+	static HRESULT Import(SVMatroxBuffer& p_rBuf, const SVString& rFileName, SVMatroxFileTypeEnum p_eFileType, bool p_bRestore= false );
+	static HRESULT Export(const SVMatroxBuffer& p_rBuf, const SVString& rFileName, SVMatroxFileTypeEnum p_eFileType );
 
 	//************************************
 	//! Get  the Dimension  from the Imagefile 
 	//! \param rFileName [in]
 	//! \param Width [out]
 	//! \param Height [out]
-	//! \returns SVMatroxBufferInterface::SVStatusCode  SVMEE_STATUS_OK if no error ocurrs 
+	//! \returns S_OK if no error occur 
 	//************************************
-	static SVStatusCode GetImageSize(const SVString& rFileName, long &rWidth, long &rHeight);
+	static HRESULT GetImageSize(const SVString& rFileName, long &rWidth, long &rHeight);
 
 	static bool IsChildBuffer(const SVMatroxBuffer& p_rBuffer);
 	static bool IsColorBandBuffer(const SVMatroxBuffer& p_rBuffer);
 	static bool IsColorBuffer(const SVMatroxBuffer& p_rBuffer);
 
-	static SVStatusCode InquireBufferProperties(const SVMatroxBuffer& p_rBuffer, MatroxImageProps& rImageProps );
-	static SVStatusCode CreateBuffer(SVMatroxBuffer& p_rBuffer, MatroxImageProps& rImageProps , void *Memory);
+	static HRESULT InquireBufferProperties(const SVMatroxBuffer& p_rBuffer, MatroxImageProps& rImageProps );
+	static HRESULT CreateBuffer(SVMatroxBuffer& p_rBuffer, MatroxImageProps& rImageProps , void *Memory);
 
 
 protected:
-	static SVStatusCode CopyBuffer( SVMatroxBuffer& p_rTo, SVMatroxIdentifier p_From );
-	static SVStatusCode CopyBuffer( SVMatroxIdentifier p_To, const SVMatroxBuffer& p_rFrom );
-	static SVStatusCode CopyBuffer( const SVBitmapInfo& dstInfo, unsigned char* p_rTo, const SVMatroxBuffer& p_rFrom );
-	static SVStatusCode CopyBuffer( const SVBitmapInfo& dstInfo, unsigned char* p_rTo, const SVMatroxIdentifier& p_rFrom );
+	static HRESULT CopyBuffer( SVMatroxBuffer& p_rTo, SVMatroxIdentifier p_From );
+	static HRESULT CopyBuffer( SVMatroxIdentifier p_To, const SVMatroxBuffer& p_rFrom );
+	static HRESULT CopyBuffer( const SVBitmapInfo& dstInfo, unsigned char* p_rTo, const SVMatroxBuffer& p_rFrom );
+	static HRESULT CopyBuffer( const SVBitmapInfo& dstInfo, unsigned char* p_rTo, const SVMatroxIdentifier& p_rFrom );
 
 private:
 	static __int64 Convert2MatroxType( SVMatroxBufferAttributeEnum p_eType );

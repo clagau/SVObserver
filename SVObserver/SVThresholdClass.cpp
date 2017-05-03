@@ -213,8 +213,8 @@ bool SVThresholdClass::onRun( bool First,
 	// Auto Threshold Multiplier Range					--> 0.0 ... 2.0
 
 	
-	SVMatroxImageInterface::SVStatusCode l_Code = 0;
-	SVMatroxImageInterface::SVStatusCode l_RetCode = 0;
+	HRESULT l_Code = 0;
+	HRESULT l_RetCode = 0;
 
 
 	SVImageBufferHandleImage l_InMilHandle;

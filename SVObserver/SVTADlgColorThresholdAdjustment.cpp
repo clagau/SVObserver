@@ -162,62 +162,17 @@ BOOL SVTADlgColorThresholdAdjustment::OnInitDialog()
 		m_pExtentHeight = dynamic_cast<SVDoubleValueObjectClass*> (m_pThreshold->getFirstObject(extentObjectInfo));
 	}
 
-	SVImageClass* pImage = nullptr;
+	SVImageClass* pImage(nullptr);
 	
-	// Get the Threshold variables
-	objectInfo.SubType = SVNotSetSubObjectType;
-
-	if( 0 == m_BandNumber )
+	BandEnum Band = static_cast<BandEnum> (m_BandNumber);
+	// Get the Image to Display
+	BandThreshold* pBandThreshold = m_pThreshold->GetBandThreshold(Band);
+	if (nullptr != pBandThreshold)
 	{
-		// Get the Image to Display
-		pImage = m_pThreshold->GetBand0OutputImage();
-
-		// Get the threshold variables
-		objectInfo.ObjectType = SVLongValueObjectType;
-
-		objectInfo.EmbeddedID = SVBand0UpperThresholdObjectGuid;
-		m_pUpperThreshold = dynamic_cast<SVLongValueObjectClass*> (m_pThreshold->getFirstObject(objectInfo));
-
-		objectInfo.EmbeddedID = SVBand0LowerThresholdObjectGuid;
-		m_pLowerThreshold = dynamic_cast<SVLongValueObjectClass*> (m_pThreshold->getFirstObject(objectInfo));
-
-		objectInfo.ObjectType = SVBoolValueObjectType;
-		objectInfo.EmbeddedID = SVBand0ThresholdExcludeObjectGuid;
-		m_pExclude = dynamic_cast<SVBoolValueObjectClass*> (m_pThreshold->getFirstObject(objectInfo));
-	}
-	else if( 1 == m_BandNumber )
-	{
-		pImage = m_pThreshold->GetBand1OutputImage();
-		
-		// Get the threshold variables
-		objectInfo.ObjectType = SVLongValueObjectType;
-
-		objectInfo.EmbeddedID = SVBand1UpperThresholdObjectGuid;
-		m_pUpperThreshold = dynamic_cast<SVLongValueObjectClass*> (m_pThreshold->getFirstObject(objectInfo));
-
-		objectInfo.EmbeddedID = SVBand1LowerThresholdObjectGuid;
-		m_pLowerThreshold = dynamic_cast<SVLongValueObjectClass*> (m_pThreshold->getFirstObject(objectInfo));
-
-		objectInfo.ObjectType = SVBoolValueObjectType;
-		objectInfo.EmbeddedID = SVBand1ThresholdExcludeObjectGuid;
-		m_pExclude = dynamic_cast<SVBoolValueObjectClass*> (m_pThreshold->getFirstObject(objectInfo));
-	}
-	else
-	{
-		pImage = m_pThreshold->GetBand2OutputImage();
-		
-		// Get the threshold variables
-		objectInfo.ObjectType = SVLongValueObjectType;
-
-		objectInfo.EmbeddedID = SVBand2UpperThresholdObjectGuid;
-		m_pUpperThreshold = dynamic_cast<SVLongValueObjectClass*> (m_pThreshold->getFirstObject(objectInfo));
-
-		objectInfo.EmbeddedID = SVBand2LowerThresholdObjectGuid;
-		m_pLowerThreshold = dynamic_cast<SVLongValueObjectClass*> (m_pThreshold->getFirstObject(objectInfo));
-
-		objectInfo.ObjectType = SVBoolValueObjectType;
-		objectInfo.EmbeddedID = SVBand2ThresholdExcludeObjectGuid;
-		m_pExclude = dynamic_cast<SVBoolValueObjectClass*> (m_pThreshold->getFirstObject(objectInfo));
+		m_pUpperThreshold = &pBandThreshold->m_UpperThreshold;
+		m_pLowerThreshold = &pBandThreshold->m_LowerThreshold;
+		m_pExclude = &pBandThreshold->m_ThresholdExclude;
+		pImage = &pBandThreshold->m_OutputImage;
 	}
 
 	if( pImage )
@@ -231,7 +186,7 @@ BOOL SVTADlgColorThresholdAdjustment::OnInitDialog()
 
 		// Get the Threshold bars from the SVColorThresholdClass
 		// Note: Do this first
-		SVDrawObjectListClass* pThresholdBarsFigure = m_pThreshold->GetThresholdBarsFigure( m_BandNumber );
+		SVDrawObjectListClass* pThresholdBarsFigure = m_pThreshold->GetThresholdBarsFigure(Band);
 		//m_svDlgImage.AddPoints( pThresholdBarsFigure );
 		m_svDlgImage.AddOverlayPoints( pThresholdBarsFigure, options );
 
@@ -240,7 +195,7 @@ BOOL SVTADlgColorThresholdAdjustment::OnInitDialog()
 		options.sizeROI = m_pSheet->m_rectROI.Size();
 		options.bNormalizeY_ROI = true;
 		options.bScaleY = false;
-		SVDrawObjectClass* pGraphFigure = m_pThreshold->GetGraphFigure( m_BandNumber );
+		SVDrawObjectClass* pGraphFigure = m_pThreshold->GetGraphFigure(Band);
 		//m_svDlgImage.AddPoints( *pGraphFigure, SVGraphScale );
 		m_svDlgImage.AddOverlayPoints( *pGraphFigure, options );
 
@@ -354,7 +309,7 @@ void SVTADlgColorThresholdAdjustment::updateGraphDisplay()
 
 		// Get the Threshold bars from the SVColorThresholdClass
 		// Note: Do this first
-		SVDrawObjectListClass* pThresholdBarsFigure = m_pThreshold->GetThresholdBarsFigure( m_BandNumber );
+		SVDrawObjectListClass* pThresholdBarsFigure = m_pThreshold->GetThresholdBarsFigure(static_cast<BandEnum> (m_BandNumber));
 		m_svDlgImage.AddOverlayPoints( pThresholdBarsFigure, options );
 
 		// Get the Graph Figure from the SVColorThresholdClass
@@ -362,7 +317,7 @@ void SVTADlgColorThresholdAdjustment::updateGraphDisplay()
 		options.sizeROI = m_pSheet->m_rectROI.Size();
 		options.bNormalizeY_ROI = true;
 		options.bScaleY = false;
-		SVDrawObjectClass* pGraphFigure = m_pThreshold->GetGraphFigure( m_BandNumber );
+		SVDrawObjectClass* pGraphFigure = m_pThreshold->GetGraphFigure(static_cast<BandEnum> (m_BandNumber));
 		//m_svDlgImage.AddPoints( *pGraphFigure, SVGraphScale );
 		m_svDlgImage.AddOverlayPoints( *pGraphFigure, options );
 

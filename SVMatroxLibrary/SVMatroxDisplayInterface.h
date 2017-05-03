@@ -39,52 +39,50 @@ The Zoom function uses the Matrox MdispZoom. This function associates a zoom fac
 class SVMatroxDisplayInterface
 {
 public:
-	typedef SVMatroxApplicationInterface::SVStatusCode SVStatusCode;
-
 	SVMatroxDisplayInterface();
 
 	virtual ~SVMatroxDisplayInterface();
 
 	// This function replaces MdispAlloc
-	static SVStatusCode Create( SVMatroxDisplay& p_rDispId);
+	static HRESULT Create( SVMatroxDisplay& p_rDispId);
 	// This function replaces MbufAlloc with display flag.
-	static SVStatusCode Create( SVMatroxDisplayBuffer& p_rDispBufId, SVMatroxBufferCreateStruct p_CreateStruct);
+	static HRESULT Create( SVMatroxDisplayBuffer& p_rDispBufId, SVMatroxBufferCreateStruct p_CreateStruct);
 	// This function creates a SVMatroxDisplayBuffer from the attributes from a SVMatroxBuffer.
-	static SVStatusCode Create( SVMatroxDisplayBuffer& p_rNewBuffer, const SVMatroxBuffer& p_CreateFrom );
+	static HRESULT Create( SVMatroxDisplayBuffer& p_rNewBuffer, const SVMatroxBuffer& p_CreateFrom );
 	// This function replaces MdispFree
-	static SVStatusCode Destroy( SVMatroxDisplay& p_rDispId);
-	static SVStatusCode Destroy( SVMatroxDisplayBuffer& p_rDispId );
+	static HRESULT Destroy( SVMatroxDisplay& p_rDispId);
+	static HRESULT Destroy( SVMatroxDisplayBuffer& p_rDispId );
 
 	// This function replaces MdispInquire
-	static SVStatusCode Get( const SVMatroxDisplay& p_rDispId, SVDisplayCntrlEnum p_eDispFlag, double& p_rdData) ;
-	static SVStatusCode Get( const SVMatroxDisplay& p_rDispId, SVDisplayCntrlEnum p_eDispFlag, long& p_rlData) ;
-	static SVStatusCode Get( const SVMatroxDisplay& p_rDispId, SVDisplayCntrlEnum p_eDispFlag, SVMatroxBuffer& p_rBuffer) ;
+	static HRESULT Get( const SVMatroxDisplay& p_rDispId, SVDisplayCntrlEnum p_eDispFlag, double& p_rdData) ;
+	static HRESULT Get( const SVMatroxDisplay& p_rDispId, SVDisplayCntrlEnum p_eDispFlag, long& p_rlData) ;
+	static HRESULT Get( const SVMatroxDisplay& p_rDispId, SVDisplayCntrlEnum p_eDispFlag, SVMatroxBuffer& p_rBuffer) ;
 
 	// This function replaces MdispControl
-	static SVStatusCode Set( const SVMatroxDisplay& p_rDispId, SVDisplayCntrlEnum p_eDispFlag, const double& p_dValue);
-	static SVStatusCode Set( const SVMatroxDisplay& p_rDispId, SVDisplayCntrlEnum p_eDispFlag, const long& p_lValue);
+	static HRESULT Set( const SVMatroxDisplay& p_rDispId, SVDisplayCntrlEnum p_eDispFlag, const double& p_dValue);
+	static HRESULT Set( const SVMatroxDisplay& p_rDispId, SVDisplayCntrlEnum p_eDispFlag, const long& p_lValue);
 
 	// This function replaces MdispLut
-	static SVStatusCode Lut( const SVMatroxDisplay& p_rDispId, const SVMatroxBuffer& p_rLutBufId);
+	static HRESULT Lut( const SVMatroxDisplay& p_rDispId, const SVMatroxBuffer& p_rLutBufId);
 	// This function clears the LUT
-	static SVStatusCode LutClear( const SVMatroxDisplay& p_rDispId);
+	static HRESULT LutClear( const SVMatroxDisplay& p_rDispId);
 
 	// This function replaces MdispPan
-	static SVStatusCode Pan( const SVMatroxDisplay& p_rDispId, const double& p_dXOffset, const double& p_dYOffset);
+	static HRESULT Pan( const SVMatroxDisplay& p_rDispId, const double& p_dXOffset, const double& p_dYOffset);
 	// This function replaces MdispSelect
-	static SVStatusCode Select( const SVMatroxDisplay& p_rDispId, const SVMatroxBuffer& p_rImageId);
+	static HRESULT Select( const SVMatroxDisplay& p_rDispId, const SVMatroxBuffer& p_rImageId);
 
 	// This function replaces MdispSelect
-	static SVStatusCode Deselect( const SVMatroxDisplay& p_rDispId);
+	static HRESULT Deselect( const SVMatroxDisplay& p_rDispId);
 
-	static SVStatusCode GetBitmapInfo( LPBITMAPINFO& p_rpBitmapInfo, const SVMatroxDisplayBuffer& p_rBuffer );
-	static SVStatusCode GetHostAddress( LPVOID p_rpHostAddress, const SVMatroxDisplayBuffer& p_rBuffer );
+	static HRESULT GetBitmapInfo( LPBITMAPINFO& p_rpBitmapInfo, const SVMatroxDisplayBuffer& p_rBuffer );
+	static HRESULT GetHostAddress( LPVOID p_rpHostAddress, const SVMatroxDisplayBuffer& p_rBuffer );
 
 	
 	// This function replaces MdispSelectWindow
-	static SVStatusCode SelectWindow( const SVMatroxDisplay& p_rDispId, const SVMatroxDisplayBuffer& p_rImageId, const HWND& p_hClientWindowHandle );
+	static HRESULT SelectWindow( const SVMatroxDisplay& p_rDispId, const SVMatroxDisplayBuffer& p_rImageId, const HWND& p_hClientWindowHandle );
 	// This function replaces MdispZoom
-	static SVStatusCode Zoom( const SVMatroxDisplay& p_rDispId, const double& p_dXFactor, const double& p_dYFactor );
+	static HRESULT Zoom( const SVMatroxDisplay& p_rDispId, const double& p_dXFactor, const double& p_dYFactor );
 public:
 	static long Convert2MatroxType( SVDisplayCntrlEnum p_eDisp) ;
 

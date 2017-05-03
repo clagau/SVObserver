@@ -163,7 +163,7 @@ bool SVBarCodeAnalyzerClass::InitMil (SvStl::MessageContainerVector *pErrorMessa
 		if ( S_OK == SVImageProcessingClass::CreateBarCodeBuffer( &svData ) )
 		{
 			
-			SVMatroxBarCodeInterface::SVStatusCode l_Code;
+			HRESULT MatroxCode;
 
 			m_MilCodeId = svData.HBuffer.milBarCode;
 
@@ -174,30 +174,30 @@ bool SVBarCodeAnalyzerClass::InitMil (SvStl::MessageContainerVector *pErrorMessa
 			msv_lBarcodeTimeout.GetValue(l_mTimeout);
 			double dL1 = (double) l_mTimeout;
 
-			l_Code = SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCCodeTimeout, dL1 );
+			MatroxCode = SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCCodeTimeout, dL1 );
 			msv_dOrientation.GetValue (dParm);
-			l_Code = SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCSearchAngle, dParm );
+			MatroxCode = SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCSearchAngle, dParm );
 
 			msv_dSkewNegative.GetValue (dParm);
-			l_Code = SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCSearchAngleDeltaNeg, dParm);
+			MatroxCode = SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCSearchAngleDeltaNeg, dParm);
 
 			msv_dSkewPositive.GetValue (dParm);
-			l_Code = SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCSearchAngleDeltaPos, dParm);
+			MatroxCode = SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCSearchAngleDeltaPos, dParm);
 
 			msv_dCellMinSize.GetValue (dParm);
-			l_Code = SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCCellSizeMin, dParm);
+			MatroxCode = SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCCellSizeMin, dParm);
 
 			msv_dCellMaxSize.GetValue (dParm);
-			l_Code = SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCCellSizeMax, dParm);
+			MatroxCode = SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCCellSizeMax, dParm);
 
 			msv_dCellNumberX.GetValue (dParm);
-			l_Code = SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCCellNumberX, dParm);
+			MatroxCode = SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCCellNumberX, dParm);
 
 			msv_dCellNumberY.GetValue (dParm);
-			l_Code = SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCCellNumberY, dParm);
+			MatroxCode = SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCCellNumberY, dParm);
 
 			msv_dSpeed.GetValue (dParm);
-			l_Code = SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCSpeed, dParm);
+			MatroxCode = SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCSpeed, dParm);
 
 			// Threshold
 			long l_lThresholdType ;
@@ -207,19 +207,19 @@ bool SVBarCodeAnalyzerClass::InitMil (SvStl::MessageContainerVector *pErrorMessa
 				case 0:
 				{
 					msv_dThreshold.GetValue (dParm);
-					l_Code = SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCThreshold, dParm);
+					MatroxCode = SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCThreshold, dParm);
 					break;
 				}
 				case 1:	// Auto Threshold
 				{
 					dParm = 0;
-					l_Code = SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCAutoThreshold, dParm );
+					MatroxCode = SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCAutoThreshold, dParm );
 					break;
 				}
 				case 2:	// Adaptive Threshold
 				{
 					dParm = 0;
-					l_Code = SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCAdaptiveThreshold, dParm );
+					MatroxCode = SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCAdaptiveThreshold, dParm );
 					break;
 				}
 			}
@@ -229,20 +229,20 @@ bool SVBarCodeAnalyzerClass::InitMil (SvStl::MessageContainerVector *pErrorMessa
 			{
 				dParm = (double) SVValueAny;		// M_ANY;
 			}
-			l_Code = SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCBarcodeStringSize, dParm);
+			MatroxCode = SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCBarcodeStringSize, dParm);
 
 			msv_dEncoding.GetValue (dParm);
-			l_Code = SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCEncoding, dParm);
+			MatroxCode = SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCEncoding, dParm);
 
 			msv_dErrorCorrection.GetValue (dParm);
-			l_Code = SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCErrorCorrection, dParm);
+			MatroxCode = SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCErrorCorrection, dParm);
 
 			msv_dForegroundColor.GetValue (dParm);
-			l_Code = SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCForeGroundValue, dParm);
+			MatroxCode = SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCForeGroundValue, dParm);
 
 			BOOL bUnevenGrid;
 			msv_bUnEvenGrid.GetValue(bUnevenGrid);
-			l_Code = SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCUnEvenGrid, (long)bUnevenGrid );
+			MatroxCode = SVMatroxBarCodeInterface::Set( m_MilCodeId, SVBCUnEvenGrid, (long)bUnevenGrid );
 			return true;
 		}
 		else

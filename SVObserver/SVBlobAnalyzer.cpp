@@ -709,7 +709,7 @@ BOOL SVBlobAnalyzerClass::CreateObject(SVObjectLevelCreateStruct* PCreateStructu
 	
 	
 	
-	SVMatroxBlobInterface::SVStatusCode l_Code = SVMEE_STATUS_OK;
+	HRESULT MatroxCode(S_OK);
 
 	do
 	{
@@ -775,7 +775,7 @@ BOOL SVBlobAnalyzerClass::CreateObject(SVObjectLevelCreateStruct* PCreateStructu
 		
 		dynamic_cast<SVInspectionProcess*>(GetInspection())->SetDefaultInputs();
 
-		l_Code = SVMatroxBlobInterface::Create( m_ResultBufferID );
+		MatroxCode = SVMatroxBlobInterface::Create( m_ResultBufferID );
 		
 		if ( m_ResultBufferID.empty() )
 		{
@@ -785,17 +785,17 @@ BOOL SVBlobAnalyzerClass::CreateObject(SVObjectLevelCreateStruct* PCreateStructu
 			break;
 		}
 		
-		l_Code = SVMatroxBlobInterface::Set( m_ResultBufferID, SVEBlobIdentifier, static_cast<long>(SVValueBinary) );
+		MatroxCode = SVMatroxBlobInterface::Set( m_ResultBufferID, SVEBlobIdentifier, static_cast<long>(SVValueBinary) );
 
 		BOOL l_bUseFillBlob;
 		m_bvoFillBlobs.GetValue( l_bUseFillBlob );
 		if ( l_bUseFillBlob )
 		{
-			l_Code = SVMatroxBlobInterface::Set( m_ResultBufferID, SVEBlobSaveRuns, static_cast<long>(SVValueEnable) );
+			MatroxCode = SVMatroxBlobInterface::Set( m_ResultBufferID, SVEBlobSaveRuns, static_cast<long>(SVValueEnable) );
 		}
 		else
 		{
-			l_Code = SVMatroxBlobInterface::Set( m_ResultBufferID, SVEBlobSaveRuns, static_cast<long>(SVValueDisable) );
+			MatroxCode = SVMatroxBlobInterface::Set( m_ResultBufferID, SVEBlobSaveRuns, static_cast<long>(SVValueDisable) );
 		}
 
 		//    Restore selected features after recreation. msvFeatureListID get
@@ -976,7 +976,7 @@ bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 
 	SVImageClass* pImage(nullptr);
 
-	SVMatroxBlobInterface::SVStatusCode l_Code;
+	HRESULT MatroxCode;
 
 	do
 	{
@@ -1034,9 +1034,9 @@ bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 		//
 		// Analyze the image for blobs and features of blobs.
 		//
-		l_Code = SVMatroxBlobInterface::Execute( m_ResultBufferID, l_MilBuffer.GetBuffer(), m_FeatureListID );
+		MatroxCode = SVMatroxBlobInterface::Execute( m_ResultBufferID, l_MilBuffer.GetBuffer(), m_FeatureListID );
 
-		if( l_Code != SVMEE_STATUS_OK )
+		if( S_OK != MatroxCode )
 		{
 			ASSERT( FALSE );
 			Result = false;
@@ -1105,7 +1105,7 @@ bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 						dLow = 0;
 						dHigh = 0;
 						// To exclude all blobs, also exclude any blobs which are in the range.
-						l_Code = SVMatroxBlobInterface::BlobSelect( m_ResultBufferID, 
+						MatroxCode = SVMatroxBlobInterface::BlobSelect( m_ResultBufferID, 
 							SVEBlobExclude, 
 							BlobFeatureConstants[eFeature].MILFeatureDef, 
 							SVECondInRange, 
@@ -1114,14 +1114,14 @@ bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 					}
 
 					// Exclude all blobs that are out of the range for this feature.
-					l_Code = SVMatroxBlobInterface::BlobSelect(m_ResultBufferID, 
+					MatroxCode = SVMatroxBlobInterface::BlobSelect(m_ResultBufferID, 
 						SVEBlobExclude, 
 						BlobFeatureConstants[eFeature].MILFeatureDef, 
 						SVECondOutRange, 
 						dLow, 
 						dHigh );
 
-					if( l_Code != SVMEE_STATUS_OK )
+					if( S_OK != MatroxCode )
 					{
 						Result = false;
 						if (nullptr != pErrorMessages)
@@ -1139,9 +1139,9 @@ bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 		//
 		// Get the number blobs found by MblobCalculate()
 		//
-		l_Code = SVMatroxBlobInterface::GetNumber( m_ResultBufferID, m_lNumberOfBlobsFound );
+		MatroxCode = SVMatroxBlobInterface::GetNumber( m_ResultBufferID, m_lNumberOfBlobsFound );
 
-		if( l_Code != SVMEE_STATUS_OK )
+		if( S_OK != MatroxCode )
 		{
 			Result = false;
 			if (nullptr != pErrorMessages)
@@ -1162,7 +1162,7 @@ bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 			//while loop, designed to achieve the correct nbr of blobs, 
 			//below were added to correct this problem.	EJC 07/31/01
 			long l_lValue=0;
-			l_Code = SVMatroxBlobInterface::BlobSelect( m_ResultBufferID,
+			MatroxCode = SVMatroxBlobInterface::BlobSelect( m_ResultBufferID,
 				SVEBlobExclude,
 				SVEBlobLabelValue,
 				SVECondGreater,
@@ -1174,7 +1174,7 @@ bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 			//
 			//check the number of blobs selected
 			long lSelectedNbrOfBlobs = 0;
-			l_Code = SVMatroxBlobInterface::GetNumber( m_ResultBufferID, lSelectedNbrOfBlobs );
+			MatroxCode = SVMatroxBlobInterface::GetNumber( m_ResultBufferID, lSelectedNbrOfBlobs );
 
 			if(lSelectedNbrOfBlobs == m_lBlobSampleSize)
 			{
@@ -1186,14 +1186,14 @@ bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 				while(lSelectedNbrOfBlobs < m_lBlobSampleSize)
 				{
 					x += (m_lBlobSampleSize - lSelectedNbrOfBlobs);
-					l_Code = SVMatroxBlobInterface::BlobSelect( m_ResultBufferID,
+					MatroxCode = SVMatroxBlobInterface::BlobSelect( m_ResultBufferID,
 						SVEBlobExcludeOnly,
 						SVEBlobLabelValue,
 						SVECondGreater,
 						m_lBlobSampleSize + x,
 						l_lValue);
 
-					l_Code = SVMatroxBlobInterface::GetNumber( m_ResultBufferID, lSelectedNbrOfBlobs);
+					MatroxCode = SVMatroxBlobInterface::GetNumber( m_ResultBufferID, lSelectedNbrOfBlobs);
 				}
 				m_lNumberOfBlobsFound = lSelectedNbrOfBlobs;
 
@@ -1210,7 +1210,7 @@ bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 				break;
 			}
 
-			if( l_Code != SVMEE_STATUS_OK )
+			if( S_OK != MatroxCode )
 			{
 				Result = false;
 				if (nullptr != pErrorMessages)
@@ -1302,7 +1302,7 @@ bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 				//
 				if (m_lNumberOfBlobsFound != 0 && ((eFeature != SV_CENTER_X_SOURCE) || (eFeature != SV_CENTER_Y_SOURCE)) )
 				{
-					l_Code = SVMatroxBlobInterface::GetResult( m_ResultBufferID, 
+					MatroxCode = SVMatroxBlobInterface::GetResult( m_ResultBufferID, 
 						BlobFeatureConstants [eFeature]. MILFeatureDef,
 						pData );
 				}
@@ -1432,7 +1432,7 @@ bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 		BOOL FillBlob;
 		m_bvoFillBlobs.GetValue( FillBlob );
 
-		l_Code = SVMatroxBlobInterface::GetNumber( m_ResultBufferID, m_lNumberOfBlobsFound );
+		MatroxCode = SVMatroxBlobInterface::GetNumber( m_ResultBufferID, m_lNumberOfBlobsFound );
 		if ( FillBlob )
 		{
 			long Color;
@@ -1464,7 +1464,7 @@ bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 				}
 			}// end switch( l_lType )
 
-			l_Code = SVMatroxBlobInterface::BlobFill( m_ResultBufferID, l_MilBuffer.GetBuffer(), eCriterion, Color);
+			MatroxCode = SVMatroxBlobInterface::BlobFill( m_ResultBufferID, l_MilBuffer.GetBuffer(), eCriterion, Color);
 		}// end if
 	} while ( false );
 
@@ -1580,14 +1580,14 @@ void SVBlobAnalyzerClass::MapQuickSort (double*    aSortArray,
 //
 DWORD SVBlobAnalyzerClass::BuildFeatureListID ()
 {
-	SVMatroxBlobInterface::SVStatusCode l_Code;
 	DWORD LastError(0);
+	HRESULT MatroxCode(S_OK);
 
 	if ( !m_FeatureListID.empty() )
 	{
-		l_Code = SVMatroxBlobInterface::Destroy( m_FeatureListID );
+		MatroxCode = SVMatroxBlobInterface::Destroy( m_FeatureListID );
 
-		if( l_Code != SVMEE_STATUS_OK )
+		if (S_OK != MatroxCode)
 		{
 			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16148);
@@ -1597,7 +1597,7 @@ DWORD SVBlobAnalyzerClass::BuildFeatureListID ()
 		}
 	}
 
-	l_Code = SVMatroxBlobInterface::Create(m_FeatureListID );
+	MatroxCode = SVMatroxBlobInterface::Create(m_FeatureListID );
 
 	if ( m_FeatureListID.empty() )
 	{
@@ -1616,11 +1616,10 @@ DWORD SVBlobAnalyzerClass::BuildFeatureListID ()
 				continue;
 			}
 
-			l_Code = SVMatroxBlobInterface::BlobSelectFeature( m_FeatureListID, 
-				BlobFeatureConstants [i].MILFeatureDef);
+			MatroxCode = SVMatroxBlobInterface::BlobSelectFeature( m_FeatureListID, BlobFeatureConstants [i].MILFeatureDef);
 
 
-			if( l_Code != SVMEE_STATUS_OK )
+			if (S_OK != MatroxCode)
 			{
 				SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 				MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16150);

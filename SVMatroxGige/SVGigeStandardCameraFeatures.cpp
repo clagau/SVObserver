@@ -30,11 +30,11 @@ struct SVGigeTriggerLineGet
 	// iterate thru the Line Selectors (Line0/Line1) and get the first one whose LineMode is Input
 	HRESULT operator()(SVMatroxDigitizerRef Digitizer, const SVGigeFeature& rFeature, _variant_t& rValue) const
 	{ 
-		SVMatroxDigitizerInterface::SVStatusCode l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), SVString(rFeature.GetName().c_str()), rFeature.GetType(), rValue);
+		HRESULT l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), SVString(rFeature.GetName().c_str()), rFeature.GetType(), rValue);
 		
 		_variant_t value( _T("Input") );
 		l_Code = SVMatroxDigitizerInterface::GetFeature(*(Digitizer.get()), SVString(rFeature.GetName().c_str()), rFeature.GetType(), value);
-		if (l_Code == SVMEE_STATUS_OK)
+		if (l_Code == S_OK)
 		{
 			rValue = _bstr_t(SvUl_SF::createSVString(value).c_str()).Detach();
 		}
@@ -48,8 +48,8 @@ struct SVGigeTriggerLineSet
 	HRESULT operator()(SVMatroxDigitizerRef Digitizer, const SVGigeFeature& rFeature, const _variant_t& rValue) const
 	{ 
 		const SVGigeFeatureSelector& selector = rFeature.GetSelector();
-		SVMatroxDigitizerInterface::SVStatusCode l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), SVString(selector.GetName().c_str()), SVMatroxDigitizerFeature::SVTypeStringEnumeration, rValue);
-		if (l_Code == SVMEE_STATUS_OK)
+		HRESULT l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), SVString(selector.GetName().c_str()), SVMatroxDigitizerFeature::SVTypeStringEnumeration, rValue);
+		if (l_Code == S_OK)
 		{
 			l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), SVString(rFeature.GetName().c_str()), SVMatroxDigitizerFeature::SVTypeStringEnumeration, _variant_t("Input"));
 		}
@@ -65,12 +65,12 @@ struct SVGigeTriggerInvertGetter
 		//
 		// Determine which Line is the Trigger...
 		const SVGigeFeatureSelector& selector = rFeature.GetSelector();
-		SVMatroxDigitizerInterface::SVStatusCode l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), SVString(selector.GetName().c_str()), SVMatroxDigitizerFeature::SVTypeStringEnumeration, rValue);
-		if (l_Code == SVMEE_STATUS_OK)
+		HRESULT l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), SVString(selector.GetName().c_str()), SVMatroxDigitizerFeature::SVTypeStringEnumeration, rValue);
+		if (l_Code == S_OK)
 		{
 			_variant_t value(false);
 			l_Code = SVMatroxDigitizerInterface::GetFeature(*(Digitizer.get()), SVString(rFeature.GetName().c_str()), rFeature.GetType(), value);
-			if (l_Code == SVMEE_STATUS_OK)
+			if (l_Code == S_OK)
 			{
 				rValue = value.Detach();
 			}
@@ -84,7 +84,7 @@ struct SVGigeTriggerInvertSetter
 	// Setter
 	HRESULT operator()(SVMatroxDigitizerRef Digitizer, const SVGigeFeature& rFeature, const _variant_t& rValue) const
 	{ 
-		SVMatroxDigitizerInterface::SVStatusCode l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), SVString(rFeature.GetName().c_str()), rFeature.GetType(), rValue);
+		HRESULT l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), SVString(rFeature.GetName().c_str()), rFeature.GetType(), rValue);
 		return l_Code;
 	}
 };
@@ -95,8 +95,8 @@ struct SVGigeStrobeLineGetter
 	HRESULT operator()(SVMatroxDigitizerRef Digitizer, const SVGigeFeature& feature, _variant_t& rValue) const
 	{ 
 		_variant_t value( _T("Output") );
-		SVMatroxDigitizerInterface::SVStatusCode l_Code = SVMatroxDigitizerInterface::GetFeature(*(Digitizer.get()), SVString(feature.GetName().c_str()), feature.GetType(), value);
-		if (l_Code == SVMEE_STATUS_OK)
+		HRESULT l_Code = SVMatroxDigitizerInterface::GetFeature(*(Digitizer.get()), SVString(feature.GetName().c_str()), feature.GetType(), value);
+		if (l_Code == S_OK)
 		{
 			rValue = _bstr_t(SvUl_SF::createSVString(value).c_str()).Detach();
 		}
@@ -109,8 +109,8 @@ struct SVGigeStrobeLineSetter
 	HRESULT operator()(SVMatroxDigitizerRef Digitizer, const SVGigeFeature& rFeature, const _variant_t& rValue) const
 	{ 
 		const SVGigeFeatureSelector& selector = rFeature.GetSelector();
-		SVMatroxDigitizerInterface::SVStatusCode l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), SVString(selector.GetName().c_str()), SVMatroxDigitizerFeature::SVTypeStringEnumeration, rValue);
-		if (l_Code == SVMEE_STATUS_OK)
+		HRESULT l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), SVString(selector.GetName().c_str()), SVMatroxDigitizerFeature::SVTypeStringEnumeration, rValue);
+		if (l_Code == S_OK)
 		{
 			l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), SVString(rFeature.GetName().c_str()), SVMatroxDigitizerFeature::SVTypeStringEnumeration, _variant_t("Output"));
 		}
@@ -123,11 +123,11 @@ struct SVGigeStrobeInvertGetter
 	HRESULT operator()(SVMatroxDigitizerRef Digitizer, const SVGigeFeature& rFeature, _variant_t& rValue) const
 	{ 
 		// Get which line is the Strobe (LineMode = Output)
-		SVMatroxDigitizerInterface::SVStatusCode l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), SVString(rFeature.GetName().c_str()), rFeature.GetType(), rValue);
+		HRESULT l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), SVString(rFeature.GetName().c_str()), rFeature.GetType(), rValue);
 		
 		_variant_t value( _T("Output") );
 		l_Code = SVMatroxDigitizerInterface::GetFeature(*(Digitizer.get()), SVString(rFeature.GetName().c_str()), rFeature.GetType(), value);
-		if (l_Code == SVMEE_STATUS_OK)
+		if (l_Code == S_OK)
 		{
 			rValue = _bstr_t(SvUl_SF::createSVString(value).c_str()).Detach();
 		}
@@ -142,8 +142,8 @@ struct SVGigeStrobeInvertSetter
 	{
 		// Get which line is the Strobe (LineMode = Output)
 		const SVGigeFeatureSelector& selector = rFeature.GetSelector();
-		SVMatroxDigitizerInterface::SVStatusCode l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), SVString(selector.GetName().c_str()), SVMatroxDigitizerFeature::SVTypeStringEnumeration, rValue);
-		if (l_Code == SVMEE_STATUS_OK)
+		HRESULT l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), SVString(selector.GetName().c_str()), SVMatroxDigitizerFeature::SVTypeStringEnumeration, rValue);
+		if (l_Code == S_OK)
 		{
 			l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), SVString(rFeature.GetName().c_str()), rFeature.GetType(), rValue);
 		}
@@ -157,8 +157,8 @@ struct SVGigeInputLineGetter
 	HRESULT operator()(SVMatroxDigitizerRef Digitizer, const SVGigeFeature& feature, _variant_t& rValue) const
 	{ 
 		_variant_t value( _T("Input") );
-		SVMatroxDigitizerInterface::SVStatusCode l_Code = SVMatroxDigitizerInterface::GetFeature(*(Digitizer.get()), SVString(feature.GetName().c_str()), feature.GetType(), value);
-		if (l_Code == SVMEE_STATUS_OK)
+		HRESULT l_Code = SVMatroxDigitizerInterface::GetFeature(*(Digitizer.get()), SVString(feature.GetName().c_str()), feature.GetType(), value);
+		if (l_Code == S_OK)
 		{
 			rValue = _bstr_t(SvUl_SF::createSVString(value).c_str()).Detach();
 		}
@@ -171,8 +171,8 @@ struct SVGigeInputLineSetter
 	HRESULT operator()(SVMatroxDigitizerRef Digitizer, const SVGigeFeature& rFeature, const _variant_t& rValue) const
 	{ 
 		const SVGigeFeatureSelector& selector = rFeature.GetSelector();
-		SVMatroxDigitizerInterface::SVStatusCode l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), SVString(selector.GetName().c_str()), SVMatroxDigitizerFeature::SVTypeStringEnumeration, rValue);
-		if (l_Code == SVMEE_STATUS_OK)
+		HRESULT l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), SVString(selector.GetName().c_str()), SVMatroxDigitizerFeature::SVTypeStringEnumeration, rValue);
+		if (l_Code == S_OK)
 		{
 			l_Code = SVMatroxDigitizerInterface::SetFeature(*(Digitizer.get()), SVString(rFeature.GetName().c_str()), SVMatroxDigitizerFeature::SVTypeStringEnumeration, _variant_t("Input"));
 		}
@@ -186,7 +186,7 @@ struct SVGigeEventSetter
 	{
 		SVString l_value = SvUl_SF::createSVString(rValue);
 		SVString eventValue = l_value.c_str();
-		SVMatroxDigitizerInterface::SVStatusCode l_Code = SVMatroxDigitizerInterface::SetGigeEvent(*(Digitizer.get()), SVString(rFeature.GetName().c_str()), eventValue.c_str());
+		HRESULT l_Code = SVMatroxDigitizerInterface::SetGigeEvent(*(Digitizer.get()), SVString(rFeature.GetName().c_str()), eventValue.c_str());
 		return l_Code;
 	}
 };

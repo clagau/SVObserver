@@ -28,7 +28,6 @@ class SVMatroxStatusInformation
 {
 public:
 	typedef long SVFunctionCode;
-	typedef SVMatroxStatusCode SVStatusCode;
 
 	SVMatroxStatusInformation();
 	SVMatroxStatusInformation( const SVMatroxStatusInformation& p_rObject );
@@ -43,7 +42,7 @@ public:
 
 	SVString GetCompleteString() const;
 
-	SVStatusCode m_StatusCode;
+	HRESULT m_StatusCode;
 	SVString m_StatusString;
 
 	SVFunctionCode m_FunctionCode;
@@ -51,7 +50,7 @@ public:
 
 	long m_StatusSubCodeCount;
 
-	SVStatusCode m_StatusSubCode[ 3 ];
+	HRESULT m_StatusSubCode[ 3 ];
 	SVString m_StatusSubString[ 3 ];
 
 };

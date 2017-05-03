@@ -22,7 +22,7 @@ MatroxSharedBuffer::~MatroxSharedBuffer(void)
 	{
 		SVMatroxResourceMonitor::SVAutoLock l_AutoLock;
 
-		if (SVMEE_STATUS_OK == SVMatroxResourceMonitor::GetAutoLock(l_AutoLock))
+		if (S_OK == SVMatroxResourceMonitor::GetAutoLock(l_AutoLock))
 		{
 			MIL_ID l_SystemID = MbufInquire(Identifier, M_OWNER_SYSTEM, nullptr);
 

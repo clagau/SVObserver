@@ -105,7 +105,7 @@ bool SVMaxMinusMinFilterClass::onRun( bool First, SVSmartHandlePointer RInputIma
 		RInputImageHandle->GetData( l_InMilHandle );
 		ROutputImageHandle->GetData( l_OutMilHandle );
 		
-		SVMatroxImageInterface::SVStatusCode l_Code;
+		HRESULT l_Code;
 		// Do Min...
 		l_Code = SVMatroxImageInterface::Erode( l_ProcMilHandle.GetBuffer(),
 			First ? l_InMilHandle.GetBuffer() : l_OutMilHandle.GetBuffer(), 
@@ -113,7 +113,7 @@ bool SVMaxMinusMinFilterClass::onRun( bool First, SVSmartHandlePointer RInputIma
 			SVImageGrayScale);
 
 
-		if( l_Code != SVMEE_STATUS_OK )
+		if( l_Code != S_OK )
 		{
 			if (nullptr != pErrorMessages)
 			{
@@ -134,7 +134,7 @@ bool SVMaxMinusMinFilterClass::onRun( bool First, SVSmartHandlePointer RInputIma
 			SVImageGrayScale);
 
 
-		if( l_Code != SVMEE_STATUS_OK )
+		if( l_Code != S_OK )
 		{
 			if (nullptr != pErrorMessages)
 			{
@@ -155,7 +155,7 @@ bool SVMaxMinusMinFilterClass::onRun( bool First, SVSmartHandlePointer RInputIma
 			SVImageSubAbs);
 
 
-		if( l_Code != SVMEE_STATUS_OK )
+		if( l_Code != S_OK )
 		{
 			if (nullptr != pErrorMessages)
 			{

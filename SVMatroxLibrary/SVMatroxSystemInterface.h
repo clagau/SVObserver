@@ -21,24 +21,23 @@
 class SVMatroxSystemInterface
 {
 public:
-	typedef SVMatroxStatusInformation::SVStatusCode SVStatusCode;
 
-	static SVStatusCode Allocate(const SVString& SystemDescriptor, SVMatroxInt SystemNum, SVMatroxSystem& system);
-	static SVStatusCode Release(SVMatroxSystem& SystemId);
+	static HRESULT Allocate(const SVString& SystemDescriptor, SVMatroxInt SystemNum, SVMatroxSystem& system);
+	static HRESULT Release(SVMatroxSystem& SystemId);
 
-	static SVStatusCode Get(const SVMatroxSystem& SystemId, SVMatroxSystemInquire::SVMatroxSystemInquireEnum InquireType, long& value);
-	static SVStatusCode Get(const SVMatroxSystem& SystemId, SVMatroxSystemInquire::SVMatroxSystemInquireEnum InquireType, double& value);
-	static SVStatusCode Get(const SVMatroxSystem& SystemId, SVMatroxSystemInquire::SVMatroxSystemInquireEnum InquireType, SVString& value);
+	static HRESULT Get(const SVMatroxSystem& SystemId, SVMatroxSystemInquire::SVMatroxSystemInquireEnum InquireType, long& value);
+	static HRESULT Get(const SVMatroxSystem& SystemId, SVMatroxSystemInquire::SVMatroxSystemInquireEnum InquireType, double& value);
+	static HRESULT Get(const SVMatroxSystem& SystemId, SVMatroxSystemInquire::SVMatroxSystemInquireEnum InquireType, SVString& value);
 
-	static SVStatusCode Set(const SVMatroxSystem& SystemId, SVMatroxSystemControl::SVMatroxSystemControlEnum ControlType, long ControlValue);
+	static HRESULT Set(const SVMatroxSystem& SystemId, SVMatroxSystemControl::SVMatroxSystemControlEnum ControlType, long ControlValue);
 
-	static SVStatusCode Destroy(SVMatroxSystem& p_rSystem);
+	static HRESULT Destroy(SVMatroxSystem& p_rSystem);
 
-	static SVStatusCode SetHookFunction(const SVMatroxSystem& SystemId, SVMatroxSystemHook::SVMatroxSystemHookEnum HookType, SVMatroxHookFunctionPtr HookHandlerPtr, void* UserDataPtr);
-	static SVStatusCode ReleaseHookFunction(const SVMatroxSystem& SystemId, SVMatroxSystemHook::SVMatroxSystemHookEnum HookType, SVMatroxHookFunctionPtr HookHandlerPtr, void* UserDataPtr);
+	static HRESULT SetHookFunction(const SVMatroxSystem& SystemId, SVMatroxSystemHook::SVMatroxSystemHookEnum HookType, SVMatroxHookFunctionPtr HookHandlerPtr, void* UserDataPtr);
+	static HRESULT ReleaseHookFunction(const SVMatroxSystem& SystemId, SVMatroxSystemHook::SVMatroxSystemHookEnum HookType, SVMatroxHookFunctionPtr HookHandlerPtr, void* UserDataPtr);
 
-	static SVStatusCode GetHookInfo(const SVMatroxSystem& SystemId, SVMatroxIdentifier p_EventId, SVMatroxSystemHookInfo::SVMatroxSystemHookInfoEnum HookInfoType, long& value);
-	static SVStatusCode GetHookInfo(const SVMatroxSystem& SystemId, SVMatroxIdentifier p_EventId, SVMatroxSystemHookInfo::SVMatroxSystemHookInfoEnum HookInfoType, unsigned __int64& value);
+	static HRESULT GetHookInfo(const SVMatroxSystem& SystemId, SVMatroxIdentifier p_EventId, SVMatroxSystemHookInfo::SVMatroxSystemHookInfoEnum HookInfoType, long& value);
+	static HRESULT GetHookInfo(const SVMatroxSystem& SystemId, SVMatroxIdentifier p_EventId, SVMatroxSystemHookInfo::SVMatroxSystemHookInfoEnum HookInfoType, unsigned __int64& value);
 
 	static HRESULT getNonPagedMemory( long long& rMemorySize, long long& rMemoryUsed );
 };

@@ -516,8 +516,8 @@ MessageTextMap g_MessageTextMap = boost::assign::map_list_of
 	(SvOi::Tid_RunLutFailed, _T("Run Lut failed."))
 	(SvOi::Tid_StringTooLarge, _T("String too large."))
 	(SvOi::Tid_ErrorMcodeGetResult, _T("Function McodeGetResult return error: %s"))
-	(SvOi::Tid_StdException, _T("Sdt:Exception  what: %s"))
-
+	(SvOi::Tid_StdException, _T("Std:Exception  what: %s"))
+	(SvOi::Tid_ColorToolExtentsChanged, _T("For backward compatibility: The ROI of at least one Color tool in the configuration has been changed to the size of the Main image"))
 	;
 } /* namespace SVStatusLibrary */ } /* namespace Seidenader */
 

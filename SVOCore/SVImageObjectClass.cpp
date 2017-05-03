@@ -190,7 +190,7 @@ bool SVImageObjectClass::SetCurrentIndex( const SVDataManagerHandle& rDMIndexHan
 
 		if( Result && m_ParentImagePtr.empty() )
 		{
-			SVMatroxImageInterface::SVStatusCode l_Code;
+			HRESULT l_Code;
 
 			SVSmartHandlePointer l_svOutBuffer;
 			
@@ -203,7 +203,7 @@ bool SVImageObjectClass::SetCurrentIndex( const SVDataManagerHandle& rDMIndexHan
 
 				l_Code = SVMatroxBufferInterface::ClearBuffer( l_MilHandle.GetBuffer(), 0.0 );
 				
-				Result = l_Code == SVMEE_STATUS_OK;
+				Result = l_Code == S_OK;
 			}
 		}
 	}
@@ -354,14 +354,14 @@ HRESULT SVImageObjectClass::LoadImage( LPCTSTR p_szFileName, SVDataManagerHandle
 			GetImageHandle( p_rToDMIndexHandle.GetIndex(), l_svHandle ) && !( l_svHandle.empty() ) )
 	{
 		
-		SVMatroxImageInterface::SVStatusCode l_Code;
+		HRESULT l_Code;
 
 		SVImageBufferHandleImage l_MilHandle;
 		l_svHandle->GetData( l_MilHandle );
 		
 		l_Code = SVMatroxBufferInterface::ClearBuffer( l_MilHandle.GetBuffer(), 0 );
 		
-		if( l_Code == SVMEE_STATUS_OK )
+		if( l_Code == S_OK )
 		{
 			if( 0 < strlen( p_szFileName ) )
 			{
@@ -382,7 +382,7 @@ HRESULT SVImageObjectClass::LoadImage( LPCTSTR p_szFileName, SVDataManagerHandle
 					{
 						long l_lWidth = 0;
 						long l_lHeight = 0;
-						SVMatroxBufferInterface::SVStatusCode l_Stat;
+						HRESULT l_Stat;
 						l_Stat = SVMatroxBufferInterface::Get( l_MilHandle.GetBuffer(), SVSizeX, l_lWidth );
 						l_Stat = SVMatroxBufferInterface::Get( l_MilHandle.GetBuffer(), SVSizeY, l_lHeight );
 						m_ImageInfo.SetExtentProperty( SVExtentPropertyEnum::SVExtentPropertyWidth, l_lWidth);
@@ -394,7 +394,7 @@ HRESULT SVImageObjectClass::LoadImage( LPCTSTR p_szFileName, SVDataManagerHandle
 						ResetObject();
 					}
 
-					if( l_Code == SVMEE_STATUS_OK )
+					if( l_Code == S_OK )
 					{
 						l_hrOk = S_OK;
 					}
@@ -413,7 +413,7 @@ HRESULT SVImageObjectClass::LoadImage( LPCTSTR p_szFileName, SVDataManagerHandle
 HRESULT SVImageObjectClass::GetImageExtentFromFile( LPCTSTR pFileName, SVImageExtentClass& rExtent  )
 {
 	HRESULT hrOk = E_FAIL;
-	SVMatroxImageInterface::SVStatusCode Code = E_FAIL; 
+	HRESULT Code = E_FAIL; 
 	long Width(0), Height(0);
 
 	if( 0 < strlen( pFileName ) )
@@ -431,7 +431,7 @@ HRESULT SVImageObjectClass::GetImageExtentFromFile( LPCTSTR pFileName, SVImageEx
 
 	}
 
-	if(Code == SVMEE_STATUS_OK)
+	if(Code == S_OK)
 	{
 		rExtent.SetExtentProperty( SVExtentPropertyEnum::SVExtentPropertyWidth, Width);
 		rExtent.SetExtentProperty( SVExtentPropertyEnum::SVExtentPropertyHeight, Height);
@@ -453,7 +453,7 @@ HRESULT SVImageObjectClass::CopyToHandle( SVSmartHandlePointer &p_rHandle )
 		SVImageBufferHandleImage l_ToMilHandle;
 		p_rHandle->GetData( l_ToMilHandle );
 
-		SVMatroxBufferInterface::SVStatusCode l_Code;
+		HRESULT l_Code;
 
 		SVSmartHandlePointer l_svHandle;
 
@@ -464,7 +464,7 @@ HRESULT SVImageObjectClass::CopyToHandle( SVSmartHandlePointer &p_rHandle )
 
 			l_Code = SVMatroxBufferInterface::CopyBuffer( l_ToMilHandle.GetBuffer(), l_FromMilHandle.GetBuffer() );
 
-			if( l_Code != SVMEE_STATUS_OK )
+			if( l_Code != S_OK )
 			{
 				l_Status = E_FAIL;
 			}
@@ -675,11 +675,11 @@ bool SVImageObjectClass::CreateBufferArrays(SvStl::MessageContainerVector *pErro
 					SVImageBufferHandleImage l_MilHandle;
 					l_svOutBuffer->GetData( l_MilHandle );
 
-					SVMatroxBufferInterface::SVStatusCode l_Code;
+					HRESULT l_Code;
 
 					l_Code = SVMatroxBufferInterface::ClearBuffer( l_MilHandle.GetBuffer(), 0.0 );
 
-					Result = l_Code == SVMEE_STATUS_OK;
+					Result = l_Code == S_OK;
 				}
 			}
 

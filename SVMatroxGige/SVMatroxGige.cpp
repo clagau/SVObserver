@@ -103,8 +103,8 @@ SVMatroxIdentifier SVMatroxGige::ProcessFrame( SVMatroxIdentifier HookType, SVMa
 					}
 					// check for Corrupted first
 					bool bIsCorrupt = false;
-					SVMatroxDigitizerInterface::SVStatusCode l_Code = SVMatroxDigitizerInterface::IsCorruptedFrame(HookId, bIsCorrupt);
-					if (l_Code == SVMEE_STATUS_OK)
+					HRESULT l_Code = SVMatroxDigitizerInterface::IsCorruptedFrame(HookId, bIsCorrupt);
+					if (l_Code == S_OK)
 					{
 						if (!bIsCorrupt) 
 						{
@@ -113,7 +113,7 @@ SVMatroxIdentifier SVMatroxGige::ProcessFrame( SVMatroxIdentifier HookType, SVMa
 							// Retrieve the MIL_ID of the grabbed buffer.
 							l_Code = SVMatroxDigitizerInterface::GetGrabBuffer(HookId, ModifiedBufferId);
 
-							if (l_Code == SVMEE_STATUS_OK && ModifiedBufferId)
+							if (l_Code == S_OK && ModifiedBufferId)
 							{
 								// Copy the data
 								g_svTheApp.m_svSystem.ProcessEndFrame(*l_pCamera, ModifiedBufferId);
@@ -217,8 +217,8 @@ void SVMatroxGige::DoAcquisitionTrigger( const SVMatroxGigeDigitizer& p_rCamera,
 {
 	// Get The Timestamp
 	double timestamp = 0.0;
-	SVMatroxDigitizerInterface::SVStatusCode l_Code = SVMatroxDigitizerInterface::GetGigeCameraTimestamp(HookId, timestamp);
-	if (l_Code == SVMEE_STATUS_OK)
+	HRESULT l_Code = SVMatroxDigitizerInterface::GetGigeCameraTimestamp(HookId, timestamp);
+	if (l_Code == S_OK)
 	{
 		// Simulate Trigger and send Timestamp and Line State...
 		bool lineState = p_rCamera.GetLineState();
@@ -274,8 +274,8 @@ HRESULT SVMatroxGige::CreateSystems()
 	HRESULT hr = S_OK;
 	long l_lSystemCount = 0;
 
-	SVMatroxApplicationInterface::SVStatusCode l_Code = SVMatroxApplicationInterface::GetSystemCount( l_lSystemCount );
-	if (l_Code == SVMEE_STATUS_OK)
+	HRESULT l_Code = SVMatroxApplicationInterface::GetSystemCount( l_lSystemCount );
+	if (l_Code == S_OK)
 	{
 		long gigeSystemID = 0;
 		long soliosGigeSystemID = 0;
@@ -286,7 +286,7 @@ HRESULT SVMatroxGige::CreateSystems()
 
 			l_Code = SVMatroxApplicationInterface::GetSystemName( i, Name );
 			
-			if ( l_Code == SVMEE_STATUS_OK )
+			if ( l_Code == S_OK )
 			{
 				// Check for GIGE system
 				if( SVString::npos != Name.find( _T("GIGE") ) )
@@ -299,7 +299,7 @@ HRESULT SVMatroxGige::CreateSystems()
 					else // GIGE system (dongle ?)
 					{
 						l_Code = AddSystem(Name, gigeSystemID++);
-						if ( SVMEE_STATUS_OK != l_Code )
+						if ( S_OK != l_Code )
 						{
 							hr = l_Code;
 						}
@@ -333,8 +333,8 @@ HRESULT SVMatroxGige::AddSystem(const SVString& rName, long SystemNumber)
 	l_System.m_matroxSystemName = rName;
 
 	// 
-	SVMatroxApplicationInterface::SVStatusCode l_Code = SVMatroxSystemInterface::Allocate(rName, SystemNumber, *(l_System.m_System.get()));
-	if (l_Code == SVMEE_STATUS_OK)
+	HRESULT l_Code = SVMatroxSystemInterface::Allocate(rName, SystemNumber, *(l_System.m_System.get()));
+	if (l_Code == S_OK)
 	{
 		hr = m_Systems.Add(l_System);
 		
@@ -345,7 +345,7 @@ HRESULT SVMatroxGige::AddSystem(const SVString& rName, long SystemNumber)
 			{
 				// Register camera present hook
 				l_Code = SVMatroxSystemInterface::SetHookFunction(*(rSystem.m_System.get()), SVMatroxSystemHook::SVCameraPresent, SVMatroxGige::CameraPresentCallback, reinterpret_cast<void*> (&rSystem.m_Handle)); 
-				if (l_Code == SVMEE_STATUS_OK)
+				if (l_Code == S_OK)
 				{
 					hr = CreateDigitizers(rSystem);
 				}
@@ -391,8 +391,8 @@ HRESULT SVMatroxGige::CreateDigitizers(SVMatroxGigeSystem& system)
 	HRESULT hr = S_OK;
 
 	long l_DigCount = 0;
-	SVMatroxSystemInterface::SVStatusCode l_Code = SVMatroxSystemInterface::Get(*(system.m_System.get()), SVMatroxSystemInquire::SVDigitizerNum, l_DigCount);
-	if (l_Code == SVMEE_STATUS_OK)
+	HRESULT l_Code = SVMatroxSystemInterface::Get(*(system.m_System.get()), SVMatroxSystemInquire::SVDigitizerNum, l_DigCount);
+	if (l_Code == S_OK)
 	{
 		for ( long i = 0; i < l_DigCount; i++ )
 		{
@@ -433,10 +433,10 @@ HRESULT SVMatroxGige::AllocDigitizer(SVMatroxGigeSystem& system, long digitizerI
 	// where to get the data format from? //"gigevision_640x480_mono8.dcf";
 	SVString dataFormat = "gigevision_currentstate.dcf"; // from Matrox Sample code...
 	
-	SVMatroxDigitizerInterface::SVStatusCode l_Code = SVMatroxDigitizerInterface::Allocate(*(system.m_System.get()), digitizerIndex, dataFormat, *(p_rCamera.m_Digitizer.get()));
+	HRESULT l_Code = SVMatroxDigitizerInterface::Allocate(*(system.m_System.get()), digitizerIndex, dataFormat, *(p_rCamera.m_Digitizer.get()));
 	
 	// Read Serial Number if no prior errors
-	if (l_Code == SVMEE_STATUS_OK)
+	if (l_Code == S_OK)
 	{
 		//
 		hr = ReadCameraSerialNumber(p_rCamera);
@@ -444,7 +444,7 @@ HRESULT SVMatroxGige::AllocDigitizer(SVMatroxGigeSystem& system, long digitizerI
 		{
 			hr = ReadCameraIPAddress(p_rCamera);
 		}
-		if (l_Code == SVMEE_STATUS_OK)
+		if (l_Code == S_OK)
 		{
 			p_rCamera.GetGigeEventList();
 		}
@@ -484,7 +484,7 @@ HRESULT SVMatroxGige::DestroyDigitizer(SVMatroxGigeDigitizer& rCamera)
 	// Destroy Digitizer
 	if (!rCamera.m_Digitizer.empty())
 	{
-		SVMatroxDigitizerInterface::SVStatusCode l_Code = SVMatroxDigitizerInterface::Destroy(*(rCamera.m_Digitizer.get()));
+		HRESULT l_Code = SVMatroxDigitizerInterface::Destroy(*(rCamera.m_Digitizer.get()));
 
 		hr = l_Code; 
 	}
@@ -514,11 +514,11 @@ HRESULT SVMatroxGige::DestroySystem(SVMatroxGigeSystem& rSystem)
 {
 	HRESULT hr = S_OK;
 
-	SVMatroxSystemInterface::SVStatusCode l_Code = SVMEE_STATUS_OK;
+	HRESULT l_Code = S_OK;
 	// Unregister camera present hook
 	l_Code = SVMatroxSystemInterface::ReleaseHookFunction(*(rSystem.m_System.get()), SVMatroxSystemHook::SVCameraPresent, SVMatroxGige::CameraPresentCallback, reinterpret_cast<void*> (&rSystem.m_Handle)); 
 	l_Code = SVMatroxSystemInterface::Destroy(*(rSystem.m_System.get()));
-	if (l_Code != SVMEE_STATUS_OK)
+	if (l_Code != S_OK)
 	{
 		hr = l_Code; 
 	}
@@ -576,8 +576,8 @@ HRESULT SVMatroxGige::CameraGetHeight( unsigned long p_Handle, unsigned long &p_
 		SVMatroxGigeDigitizer& l_rCamera = GetDigitizer(p_Handle);
 
 		SIZE size;
-		SVMatroxDigitizerInterface::SVStatusCode l_Code = SVMatroxDigitizerInterface::GetSize(*(l_rCamera.m_Digitizer.get()), size.cx, size.cy);
-		if (l_Code == SVMEE_STATUS_OK)
+		HRESULT l_Code = SVMatroxDigitizerInterface::GetSize(*(l_rCamera.m_Digitizer.get()), size.cx, size.cy);
+		if (l_Code == S_OK)
 		{
 			p_rulHeight = size.cy;
 			hr = S_OK;
@@ -596,8 +596,8 @@ HRESULT SVMatroxGige::CameraGetWidth( unsigned long p_Handle, unsigned long &p_r
 		SVMatroxGigeDigitizer& l_rCamera = GetDigitizer(p_Handle);
 
 		SIZE size;
-		SVMatroxDigitizerInterface::SVStatusCode l_Code = SVMatroxDigitizerInterface::GetSize(*(l_rCamera.m_Digitizer.get()), size.cx, size.cy);
-		if (l_Code == SVMEE_STATUS_OK)
+		HRESULT l_Code = SVMatroxDigitizerInterface::GetSize(*(l_rCamera.m_Digitizer.get()), size.cx, size.cy);
+		if (l_Code == S_OK)
 		{
 			p_rulWidth = size.cx;
 			hr = S_OK;
@@ -1056,7 +1056,7 @@ HRESULT SVMatroxGige::CameraEndFrame( SVMatroxGigeDigitizer& p_rCamera, SVMatrox
 
 			if( !( l_MilBuffer.empty() ) )
 			{
-				SVMatroxBufferInterface::SVStatusCode l_Code = SVMatroxBufferInterface::CopyBuffer( l_MilBuffer.GetBuffer(), p_SrcBufferID );
+				HRESULT l_Code = SVMatroxBufferInterface::CopyBuffer( l_MilBuffer.GetBuffer(), p_SrcBufferID );
 				hr = l_Code;
 
 				if( S_OK == hr)
@@ -1078,11 +1078,11 @@ HRESULT SVMatroxGige::CameraEndFrame( SVMatroxGigeDigitizer& p_rCamera, SVMatrox
 				{
 					// copy the image data
 					SVBitmapInfo bmpInfo;
-					SVMatroxBufferInterface::SVStatusCode sc = SVMatroxBufferInterface::GetBitmapInfo(bmpInfo, p_SrcBufferID);
-					if (sc == SVMEE_STATUS_OK)
+					HRESULT sc = SVMatroxBufferInterface::GetBitmapInfo(bmpInfo, p_SrcBufferID);
+					if (sc == S_OK)
 					{
 						sc = SVMatroxBufferInterface::CopyBuffer(bmpInfo, l_pDstBuffer, p_SrcBufferID);
-						if (sc == SVMEE_STATUS_OK)
+						if (sc == S_OK)
 						{
 							l_Buffer.SetStartFrameTimeStamp( l_StartFrameTimeStamp );
 							l_Buffer.SetEndFrameTimeStamp();
@@ -1118,8 +1118,8 @@ HRESULT SVMatroxGige::ReadCameraSerialNumber(SVMatroxGigeDigitizer& p_rCamera)
 	HRESULT hr = S_FALSE;
 	SVString serialNo;
 
-	SVMatroxDigitizerInterface::SVStatusCode l_Code = SVMatroxDigitizerInterface::GetGigeSerialNumber(*(p_rCamera.m_Digitizer.get()), serialNo);
-	if (l_Code == SVMEE_STATUS_OK)
+	HRESULT l_Code = SVMatroxDigitizerInterface::GetGigeSerialNumber(*(p_rCamera.m_Digitizer.get()), serialNo);
+	if (l_Code == S_OK)
 	{
 		p_rCamera.m_svCameraId.m_serialNo = serialNo;
 
@@ -1133,9 +1133,9 @@ HRESULT SVMatroxGige::ReadCameraIPAddress(SVMatroxGigeDigitizer& p_rCamera)
 	HRESULT hr = S_FALSE;
 	__int64 ipAddress;
 
-	SVMatroxDigitizerInterface::SVStatusCode l_Code = SVMatroxDigitizerInterface::GetGigeIPAddress(*(p_rCamera.m_Digitizer.get()), ipAddress);
+	HRESULT l_Code = SVMatroxDigitizerInterface::GetGigeIPAddress(*(p_rCamera.m_Digitizer.get()), ipAddress);
 
-	if ( l_Code == SVMEE_STATUS_OK )
+	if ( l_Code == S_OK )
 	{
 		p_rCamera.m_svCameraId.m_ipAddress = ipAddress;
 
@@ -1150,9 +1150,9 @@ HRESULT SVMatroxGige::ReadCameraFormat(SVMatroxGigeDigitizer& p_rCamera)
 	HRESULT hr = S_FALSE;
 
 	SVMatroxDigitizerFormat format;
-	SVMatroxDigitizerInterface::SVStatusCode l_Code = SVMatroxDigitizerInterface::GetFormat(*(p_rCamera.m_Digitizer.get()), format);
+	HRESULT l_Code = SVMatroxDigitizerInterface::GetFormat(*(p_rCamera.m_Digitizer.get()), format);
 
-	if (l_Code == SVMEE_STATUS_OK)
+	if (l_Code == S_OK)
 	{
 		p_rCamera.m_params.Width = format.size.cx;
 		p_rCamera.m_params.Height = format.size.cy;
@@ -1300,18 +1300,18 @@ HRESULT SVMatroxGige::GetNextAvailableProcBuffer(SVMatroxGigeDigitizer& p_rCamer
 HRESULT SVMatroxGige::RegisterMatroxDigitizerHooks(const SVMatroxGigeDigitizer& p_rCamera)
 {
 	// Register Matrox Hook callback(s)
-	SVMatroxDigitizerInterface::SVStatusCode l_Code = SVMatroxDigitizerInterface::SetHookFunction(*(p_rCamera.m_Digitizer.get()), SVMatroxDigitizerHook::SVGrabFrameStart, SVMatroxGige::DigitizerStartFrameCallback, (void *)&p_rCamera);
+	HRESULT l_Code = SVMatroxDigitizerInterface::SetHookFunction(*(p_rCamera.m_Digitizer.get()), SVMatroxDigitizerHook::SVGrabFrameStart, SVMatroxGige::DigitizerStartFrameCallback, (void *)&p_rCamera);
 
-	if (l_Code == SVMEE_STATUS_OK)
+	if (l_Code == S_OK)
 	{
 		l_Code = SVMatroxDigitizerInterface::SetHookFunction(*(p_rCamera.m_Digitizer.get()), SVMatroxDigitizerHook::SVGrabFrameEnd, SVMatroxGige::DigitizerEndFrameCallback, (void *)&p_rCamera);
 	}
-	if (l_Code == SVMEE_STATUS_OK)
+	if (l_Code == S_OK)
 	{
 		if (p_rCamera.HasLineInput())
 		{
 			l_Code = SVMatroxDigitizerInterface::SetHookFunction(*(p_rCamera.m_Digitizer.get()), SVMatroxDigitizerHook::SVGigeEvent, SVMatroxGige::LineEdgeEventCallback, (void *)&p_rCamera);
-			if (l_Code == SVMEE_STATUS_OK)
+			if (l_Code == S_OK)
 			{
 				// Enable Gige Event(s)
 				l_Code = EnableGigeEvents(p_rCamera);
@@ -1324,7 +1324,7 @@ HRESULT SVMatroxGige::RegisterMatroxDigitizerHooks(const SVMatroxGigeDigitizer& 
 HRESULT SVMatroxGige::UnRegisterMatroxDigitizerHooks(const SVMatroxGigeDigitizer& p_rCamera)
 {
 	// Unregister Matrox Hook callback
-	SVMatroxDigitizerInterface::SVStatusCode l_Code = SVMEE_STATUS_OK;
+	HRESULT l_Code = S_OK;
 	if (!p_rCamera.m_Digitizer.empty())
 	{
 		l_Code = SVMatroxDigitizerInterface::ReleaseHookFunction(*(p_rCamera.m_Digitizer.get()), SVMatroxDigitizerHook::SVGrabFrameEnd, &SVMatroxGige::DigitizerEndFrameCallback, (void *)&p_rCamera);
@@ -1343,7 +1343,7 @@ HRESULT SVMatroxGige::UnRegisterMatroxDigitizerHooks(const SVMatroxGigeDigitizer
 
 HRESULT SVMatroxGige::EnableGigeEvents(const SVMatroxGigeDigitizer& p_rCamera)
 {
-	SVMatroxDigitizerInterface::SVStatusCode l_Code = SVMEE_STATUS_OK;
+	HRESULT l_Code = S_OK;
 	// Enable the GIGE Event(s)
 	const SVString& risingName =  p_rCamera.GetLineInputRisingEventName();
 	const SVString& fallingName = p_rCamera.GetLineInputFallingEventName();
@@ -1355,7 +1355,7 @@ HRESULT SVMatroxGige::EnableGigeEvents(const SVMatroxGigeDigitizer& p_rCamera)
 		param.accessor.feature.GetGigeFeatureString("Enable", featureValue);
 
 		l_Code = SVMatroxDigitizerInterface::SetGigeEvent(*(p_rCamera.m_Digitizer.get()), risingName.c_str(), featureValue.c_str());
-		if (l_Code == SVMEE_STATUS_OK)
+		if (l_Code == S_OK)
 		{
 			l_Code = SVMatroxDigitizerInterface::SetGigeEvent(*(p_rCamera.m_Digitizer.get()), fallingName.c_str(), featureValue.c_str());
 		}
@@ -1369,7 +1369,7 @@ HRESULT SVMatroxGige::EnableGigeEvents(const SVMatroxGigeDigitizer& p_rCamera)
 
 HRESULT SVMatroxGige::DisableGigeEvents(const SVMatroxGigeDigitizer& p_rCamera)
 {
-	SVMatroxDigitizerInterface::SVStatusCode l_Code = SVMEE_STATUS_OK;
+	HRESULT l_Code = S_OK;
 	// Disable the GIGE Event(s)
 	const SVString& risingName =  p_rCamera.GetLineInputRisingEventName();
 	const SVString& fallingName = p_rCamera.GetLineInputFallingEventName();
@@ -1379,7 +1379,7 @@ HRESULT SVMatroxGige::DisableGigeEvents(const SVMatroxGigeDigitizer& p_rCamera)
 		SVString featureValue;
 		param.accessor.feature.GetGigeFeatureString("Disable", featureValue);
 		l_Code = SVMatroxDigitizerInterface::SetGigeEvent(*(p_rCamera.m_Digitizer.get()), risingName.c_str(), featureValue.c_str());
-		if (l_Code == SVMEE_STATUS_OK)
+		if (l_Code == S_OK)
 		{
 			l_Code = SVMatroxDigitizerInterface::SetGigeEvent(*(p_rCamera.m_Digitizer.get()), fallingName.c_str(), featureValue.c_str());
 		}
@@ -1394,8 +1394,8 @@ HRESULT SVMatroxGige::DisableGigeEvents(const SVMatroxGigeDigitizer& p_rCamera)
 HRESULT SVMatroxGige::SetGrabMode(const SVMatroxGigeDigitizer& p_rCamera)
 {
 	// Set Grab Timeout to Infinite
-	SVMatroxDigitizerInterface::SVStatusCode l_Code = SVMatroxDigitizerInterface::SetInfiniteGrabTimeout(*(p_rCamera.m_Digitizer.get()));
-	if (l_Code == SVMEE_STATUS_OK)
+	HRESULT l_Code = SVMatroxDigitizerInterface::SetInfiniteGrabTimeout(*(p_rCamera.m_Digitizer.get()));
+	if (l_Code == S_OK)
 	{
 		// Set Grab Mode to Asynchronous
 		l_Code = SVMatroxDigitizerInterface::SetGrabMode(*(p_rCamera.m_Digitizer.get()), SVMatroxDigitizerGrab::SVGrabAsynchronous);
@@ -1497,13 +1497,13 @@ SVMatroxIdentifier SVMatroxGige::CameraPresentCallback( SVMatroxIdentifier HookT
 
 	// Inquire the camera present state (present or not present).
 	long IsCamPresent = 0;
-	SVMatroxSystemInterface::SVStatusCode statusCode = SVMatroxSystemInterface::GetHookInfo(l_rMatroxSystem, EventId, SVMatroxSystemHookInfo::SVCameraPresent, IsCamPresent);
-	if (statusCode == SVMEE_STATUS_OK)
+	HRESULT statusCode = SVMatroxSystemInterface::GetHookInfo(l_rMatroxSystem, EventId, SVMatroxSystemHookInfo::SVCameraPresent, IsCamPresent);
+	if (statusCode == S_OK)
 	{
 		// Inquire the camera's digitizer device number.
 		long deviceNumber = 0;
 		statusCode = SVMatroxSystemInterface::GetHookInfo(l_rMatroxSystem, EventId, SVMatroxSystemHookInfo::SVCameraNumber, deviceNumber);
-		if (statusCode == SVMEE_STATUS_OK)
+		if (statusCode == S_OK)
 		{
 			if (IsCamPresent)
 			{

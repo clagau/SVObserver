@@ -144,10 +144,10 @@ bool RemoteMonitorListController::IsValidMonitoredObject(const SVObjectClass* pO
 	{
 		UINT attr = pObject->ObjectAttributesSet();
 		bRetVal = (attr & (SV_PUBLISHABLE | SV_PUBLISH_RESULT_IMAGE) ? true : false);
-		//check to see if MainImageClass or SVRGBMainImageClass
+		//check to see if MainImageClass
 		if (!bRetVal)
 		{
-			if ( SV_IS_KIND_OF(pObject->GetOwner(), const SVToolSetClass) && (SV_IS_KIND_OF(pObject, const SVMainImageClass) || SV_IS_KIND_OF(pObject, const SVRGBMainImageClass)) )
+			if ( SV_IS_KIND_OF(pObject->GetOwner(), const SVToolSetClass) && (SV_IS_KIND_OF(pObject, const SVMainImageClass)) )
 			{
 				bRetVal = true;
 			}

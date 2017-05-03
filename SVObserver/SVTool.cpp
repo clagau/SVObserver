@@ -36,6 +36,7 @@ SVToolClass::SVToolClass( BOOL BCreateDefaultTaskList, SVObjectClass* POwner, in
 
 void SVToolClass::init()
 {
+	m_canResizeToParent = false;
 	// Indentify our type in the Output List
 	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVToolObjectType;
 

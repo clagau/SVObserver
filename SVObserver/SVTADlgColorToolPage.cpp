@@ -17,6 +17,7 @@
 #include "SVIPDoc.h"
 #include "SVSetupDialogManager.h"
 #include "ObjectInterfaces\IObjectManager.h"
+#include "SVColorThreshold.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -119,6 +120,7 @@ BOOL SVTADlgColorToolPageClass::OnInitDialog()
 void SVTADlgColorToolPageClass::OnConvertToHsi() 
 {
 	SetInspectionData();
+	setImages();
 }
 
 void SVTADlgColorToolPageClass::OnTrainColor() 
@@ -131,7 +133,7 @@ void SVTADlgColorToolPageClass::setImages()
 	if (nullptr != m_pTool)
 	{
 		// Get the Image to Display
-		SVImageClass* pImage = m_pTool->GetRGBImage();
+		SVImageClass* pImage = m_pTool->getOutputImage();
 		if( nullptr != pImage )
 		{
 			m_dialogImage.setImage( pImage, 0 );

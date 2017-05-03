@@ -260,9 +260,9 @@ long SVMatroxPatternInterface::Convert2MatroxType( SVPatternResultEnum p_eType )
 @SVOperationDescription This function creates a model, using data from the specified area of the model's source image.
 
 */
-SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::Create( SVMatroxPatternModel& p_rModel, SVMatroxBuffer& p_rSrcImageId,long p_lOffX, long p_lOffY, long p_lSizeX, long p_lSizeY, long p_lType )
+HRESULT SVMatroxPatternInterface::Create( SVMatroxPatternModel& p_rModel, SVMatroxBuffer& p_rSrcImageId,long p_lOffX, long p_lOffY, long p_lSizeX, long p_lSizeY, long p_lType )
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT l_Code( S_OK );
 	long l_lMatroxType = ConvertModelType2MatroxType(p_lType);
 
 #ifdef USE_TRY_BLOCKS
@@ -274,7 +274,7 @@ SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::Create( SVMatro
 
 		l_Code = SVMatroxResourceMonitor::GetAutoLock( l_AutoLock );
 
-		if( l_Code == SVMEE_STATUS_OK )
+		if( l_Code == S_OK )
 		{
 			MIL_ID l_NewId = MpatAllocModel(M_DEFAULT_HOST,
 				p_rSrcImageId.GetIdentifier(),
@@ -286,7 +286,7 @@ SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::Create( SVMatro
 				M_NULL);
 
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
-			if( l_Code == SVMEE_STATUS_OK )
+			if( l_Code == S_OK )
 			{
 				SVMatroxResourceMonitor::InsertIdentifier( SVPatternModelID, l_NewId );
 
@@ -318,9 +318,9 @@ SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::Create( SVMatro
 @SVOperationDescription This function creates a result buffer with the specified number of entries.
 
 */
-SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::Create( SVMatroxPatResult& p_rResultId, long& p_rlNbrEntries )
+HRESULT SVMatroxPatternInterface::Create( SVMatroxPatResult& p_rResultId, long& p_rlNbrEntries )
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -330,12 +330,12 @@ SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::Create( SVMatro
 
 		l_Code = SVMatroxResourceMonitor::GetAutoLock( l_AutoLock );
 
-		if( l_Code == SVMEE_STATUS_OK )
+		if( l_Code == S_OK )
 		{
 			MIL_ID l_NewId = MpatAllocResult(M_DEFAULT_HOST, p_rlNbrEntries, nullptr);
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 
-			if( l_Code == SVMEE_STATUS_OK )
+			if( l_Code == S_OK )
 			{
 				SVMatroxResourceMonitor::InsertIdentifier( SVPatternResultID, l_NewId );
 
@@ -367,9 +367,9 @@ SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::Create( SVMatro
 @SVOperationDescription This function destroys the supplied pattern model.
 
 */
-SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::Destroy( SVMatroxPatternModel& p_rId )
+HRESULT SVMatroxPatternInterface::Destroy( SVMatroxPatternModel& p_rId )
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -381,11 +381,11 @@ SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::Destroy( SVMatr
 
 			l_Code = SVMatroxResourceMonitor::GetAutoLock( l_AutoLock );
 
-			if( l_Code == SVMEE_STATUS_OK )
+			if( l_Code == S_OK )
 			{
 				MpatFree( p_rId.m_ModelId );
 				l_Code = SVMatroxApplicationInterface::GetLastStatus();
-				if( l_Code == SVMEE_STATUS_OK )
+				if( l_Code == S_OK )
 				{
 					SVMatroxResourceMonitor::EraseIdentifier( SVPatternModelID, p_rId.m_ModelId );
 
@@ -410,9 +410,9 @@ SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::Destroy( SVMatr
 @SVOperationDescription This function destroys the supplied pattern result.
 
 */
-SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::Destroy( SVMatroxPatResult& p_rId )
+HRESULT SVMatroxPatternInterface::Destroy( SVMatroxPatResult& p_rId )
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -424,11 +424,11 @@ SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::Destroy( SVMatr
 
 			l_Code = SVMatroxResourceMonitor::GetAutoLock( l_AutoLock );
 
-			if( l_Code == SVMEE_STATUS_OK )
+			if( l_Code == S_OK )
 			{
 				MpatFree( p_rId.m_PatResultId );
 				l_Code = SVMatroxApplicationInterface::GetLastStatus();
-				if( l_Code == SVMEE_STATUS_OK )
+				if( l_Code == S_OK )
 				{
 					SVMatroxResourceMonitor::EraseIdentifier( SVPatternResultID, p_rId.m_PatResultId );
 
@@ -454,9 +454,9 @@ SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::Destroy( SVMatr
  Do Not use with Circular Overscan to try and restore the Image from the Model Pattern.
 
 */
-SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::PatCopy( const SVMatroxBuffer& p_rDestImageId, const SVMatroxPatternModel& p_rSourceModelId )
+HRESULT SVMatroxPatternInterface::PatCopy( const SVMatroxBuffer& p_rDestImageId, const SVMatroxPatternModel& p_rSourceModelId )
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -488,9 +488,9 @@ SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::PatCopy( const 
 @SVOperationDescription This function preprocesses the specified model.
 
 */
-SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::PreProcModel( const SVMatroxPatternModel& p_rModelId, const SVMatroxBuffer& p_rImageId)
+HRESULT SVMatroxPatternInterface::PreProcModel( const SVMatroxPatternModel& p_rModelId, const SVMatroxBuffer& p_rImageId)
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -522,9 +522,9 @@ SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::PreProcModel( c
 @SVOperationDescription This function finds occurrences of the specified model in the given image and returns the position of each occurrence.
 
 */
-SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::Execute( const SVMatroxPatResult& p_rResultId, const SVMatroxBuffer& p_rSourceImageId, const SVMatroxPatternModel& p_rModelId )
+HRESULT SVMatroxPatternInterface::Execute( const SVMatroxPatResult& p_rResultId, const SVMatroxBuffer& p_rSourceImageId, const SVMatroxPatternModel& p_rModelId )
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -558,9 +558,9 @@ SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::Execute( const 
 @SVOperationDescription This function returns information about the specified model or result buffer and stores it in the supplied double.
 
 */
-SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::Get( const SVMatroxPatternModel& p_rModelId, SVPatternTypeEnum p_eType, double& p_rdValue )
+HRESULT SVMatroxPatternInterface::Get( const SVMatroxPatternModel& p_rModelId, SVPatternTypeEnum p_eType, double& p_rdValue )
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -576,7 +576,7 @@ SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::Get( const SVMa
 					l_lMatroxType,
 					&l_dValue );
 				l_Code = SVMatroxApplicationInterface::GetLastStatus();
-				if( l_Code == SVMEE_STATUS_OK )
+				if( l_Code == S_OK )
 				{
 					p_rdValue = l_dValue;
 				}
@@ -607,11 +607,11 @@ SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::Get( const SVMa
 @SVOperationDescription This function returns information about the specified model or result buffer and stores it in the supplied long.
 
 */
-SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::Get( const SVMatroxPatternModel& p_rModelId, const SVPatternTypeEnum p_eType, long& p_rlValue )
+HRESULT SVMatroxPatternInterface::Get( const SVMatroxPatternModel& p_rModelId, const SVPatternTypeEnum p_eType, long& p_rlValue )
 {
 	double l_dValue;
-	SVStatusCode l_Code = Get(p_rModelId, p_eType, l_dValue);
-	if( l_Code == SVMEE_STATUS_OK )
+	HRESULT l_Code = Get(p_rModelId, p_eType, l_dValue);
+	if( l_Code == S_OK )
 	{
 		p_rlValue = static_cast<long>( l_dValue );
 	}
@@ -624,9 +624,9 @@ SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::Get( const SVMa
 @SVOperationDescription This function can be used to set the model's internal search parameters.
 
 */
-SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::Set( const SVMatroxPatternModel& p_rModelId, const SVPatternTypeEnum p_eType, const double& p_rdValue )
+HRESULT SVMatroxPatternInterface::Set( const SVMatroxPatternModel& p_rModelId, const SVPatternTypeEnum p_eType, const double& p_rdValue )
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -668,7 +668,7 @@ SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::Set( const SVMa
 @SVOperationDescription This function can be used to set the model's internal search parameters.
 
 */
-SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::Set( const SVMatroxPatternModel& p_rModelId, const SVPatternTypeEnum p_eType, const long& p_rlValue )
+HRESULT SVMatroxPatternInterface::Set( const SVMatroxPatternModel& p_rModelId, const SVPatternTypeEnum p_eType, const long& p_rlValue )
 {
 	return Set( p_rModelId, p_eType, static_cast<double>(p_rlValue));
 }
@@ -679,9 +679,9 @@ SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::Set( const SVMa
 @SVOperationDescription This function can be used to set the model's internal advanced search parameters.
 
 */
-SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::Set( const SVMatroxPatternModel& p_rModelId, const SVPatternSearchParameterTypeEnum p_eType, const double& p_rdValue )
+HRESULT SVMatroxPatternInterface::Set( const SVMatroxPatternModel& p_rModelId, const SVPatternSearchParameterTypeEnum p_eType, const double& p_rdValue )
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -723,7 +723,7 @@ SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::Set( const SVMa
 @SVOperationDescription This function can be used to set the model's internal advanced search parameters.
 
 */
-SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::Set( const SVMatroxPatternModel& p_rModelId, const SVPatternSearchParameterTypeEnum p_eType, const long& p_rlValue )
+HRESULT SVMatroxPatternInterface::Set( const SVMatroxPatternModel& p_rModelId, const SVPatternSearchParameterTypeEnum p_eType, const long& p_rlValue )
 {
 	return Set( p_rModelId, p_eType, static_cast<double>(p_rlValue));
 }
@@ -734,9 +734,9 @@ SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::Set( const SVMa
 @SVOperationDescription This function retrieves the result(s) of the specified type from a specified pattern matching result buffer.
 
 */
-SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::GetResult( const SVMatroxPatResult& p_rResultId, const SVPatternResultEnum p_eType, double* p_pdValue )
+HRESULT SVMatroxPatternInterface::GetResult( const SVMatroxPatResult& p_rResultId, const SVPatternResultEnum p_eType, double* p_pdValue )
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -779,9 +779,9 @@ SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::GetResult( cons
 @SVOperationDescription This function sets the reference position of the specified model.
 
 */
-SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::SetCenter( const SVMatroxPatternModel& p_rModelId, long p_lXOffset, long p_lYOffset)
+HRESULT SVMatroxPatternInterface::SetCenter( const SVMatroxPatternModel& p_rModelId, long p_lXOffset, long p_lYOffset)
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -809,9 +809,9 @@ SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::SetCenter( cons
 	return l_Code;
 }
 
-SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::SetDontCare( const SVMatroxBuffer& rDontCareImageId, const SVMatroxPatternModel& rModelId )
+HRESULT SVMatroxPatternInterface::SetDontCare( const SVMatroxBuffer& rDontCareImageId, const SVMatroxPatternModel& rModelId )
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -839,9 +839,9 @@ SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::SetDontCare( co
 	return l_Code;
 }
 
-SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::ClearDontCare(const SVMatroxBuffer & rModelImageId, const SVMatroxPatternModel & rModelId)
+HRESULT SVMatroxPatternInterface::ClearDontCare(const SVMatroxBuffer & rModelImageId, const SVMatroxPatternModel & rModelId)
 {
-	SVStatusCode l_Code(SVMEE_STATUS_OK);
+	HRESULT l_Code(S_OK);
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -885,9 +885,9 @@ SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::ClearDontCare(c
 @SVOperationDescription This function sets the number of occurrences of a model for which to search.
 
 */
-SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::SetNumber( const SVMatroxPatternModel& p_rModelId, long p_lNumber )
+HRESULT SVMatroxPatternInterface::SetNumber( const SVMatroxPatternModel& p_rModelId, long p_lNumber )
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -920,9 +920,9 @@ SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::SetNumber( cons
 @SVOperationDescription This function retrieves the number of matches found after searching for a model.
 
 */
-SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::GetNumber( const SVMatroxPatResult& p_rResultId, long& p_rlValue )
+HRESULT SVMatroxPatternInterface::GetNumber( const SVMatroxPatResult& p_rResultId, long& p_rlValue )
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -935,7 +935,7 @@ SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::GetNumber( cons
 			MpatGetNumber( p_rResultId.m_PatResultId, &l_Temp );
 			l_lNumber = SVMatroxApplicationInterface::SVMatroxIntToHRESULT( l_Temp );
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
-			if( l_Code == SVMEE_STATUS_OK )
+			if( l_Code == S_OK )
 			{
 				p_rlValue = l_lNumber;
 			}
@@ -961,9 +961,9 @@ SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::GetNumber( cons
 @SVOperationDescription This function sets the specified model's search region.
 
 */
-SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::SetPosition( const SVMatroxPatternModel& p_rModelId, long p_lXOffset, long p_lYOffset, long p_lSizeX, long p_lSizeY )
+HRESULT SVMatroxPatternInterface::SetPosition( const SVMatroxPatternModel& p_rModelId, long p_lXOffset, long p_lYOffset, long p_lSizeX, long p_lSizeY )
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -999,9 +999,9 @@ SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::SetPosition( co
 @SVOperationDescription This function sets the acceptance level for a match made with the specified model when it is sought in an image.
 
 */
-SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::SetAcceptance( const SVMatroxPatternModel& p_rModelId, const double p_dValue )
+HRESULT SVMatroxPatternInterface::SetAcceptance( const SVMatroxPatternModel& p_rModelId, const double p_dValue )
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -1034,9 +1034,9 @@ SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::SetAcceptance( 
 @SVOperationDescription This function sets the certainty level for a match made with the specified model when it is sought in an image.
 
 */
-SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::SetCertainty( const SVMatroxPatternModel& p_rModelId, const double p_dValue )
+HRESULT SVMatroxPatternInterface::SetCertainty( const SVMatroxPatternModel& p_rModelId, const double p_dValue )
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -1069,9 +1069,9 @@ SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::SetCertainty( c
 @SVOperationDescription This function sets the specified model's search parameter for positional accuracy and the complexity of the image.
 
 */
-SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::SetAccuracy( const SVMatroxPatternModel& p_rModelId, const long p_lValue )
+HRESULT SVMatroxPatternInterface::SetAccuracy( const SVMatroxPatternModel& p_rModelId, const long p_lValue )
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -1104,9 +1104,9 @@ SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::SetAccuracy( co
 @SVOperationDescription This function specifies the required search speed.
 
 */
-SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::SetSpeed( const SVMatroxPatternModel& p_rModelId, const long p_lValue )
+HRESULT SVMatroxPatternInterface::SetSpeed( const SVMatroxPatternModel& p_rModelId, const long p_lValue )
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -1139,9 +1139,9 @@ SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::SetSpeed( const
 @SVOperationDescription This function specifies the required search angle parameters.
 
 */
-SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::SetAngle( const SVMatroxPatternModel& p_rModelId, SVPatternTypeEnum p_eType, double p_dValue )
+HRESULT SVMatroxPatternInterface::SetAngle( const SVMatroxPatternModel& p_rModelId, SVPatternTypeEnum p_eType, double p_dValue )
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -1176,9 +1176,9 @@ SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::SetAngle( const
 @SVOperationDescription This function enables or disables the search angle functionality.
 
 */
-SVMatroxPatternInterface::SVStatusCode SVMatroxPatternInterface::SetAngle( const SVMatroxPatternModel& p_rModelId, bool p_bEnable )
+HRESULT SVMatroxPatternInterface::SetAngle( const SVMatroxPatternModel& p_rModelId, bool p_bEnable )
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif

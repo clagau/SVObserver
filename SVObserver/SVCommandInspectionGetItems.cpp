@@ -127,22 +127,7 @@ HRESULT SVCommandInspectionGetItems::UpdateResultsWithImageData(const SVString& 
 		SVSmartHandlePointer ImageHandlePtr;
 		unsigned long TriggerCount = TriggerCnt;
 
-		// Special check for Color Tool's RGBMainImage which is HSI
-		if (nullptr != dynamic_cast<SVRGBMainImageClass*>(pImage))
-		{
-			SVSmartHandlePointer TempHandlePtr;
-
-			pImage->GetImageHandle(TempHandlePtr);
-
-			if (!(TempHandlePtr.empty()))
-			{
-				SVImageProcessingClass::CreateImageBuffer(TempHandlePtr, SVImageHLSToRGB, ImageHandlePtr);
-			}
-		}
-		else
-		{
-			pImage->GetImageHandle(ImageHandlePtr);
-		}
+		pImage->GetImageHandle(ImageHandlePtr);
 
 		if (!(ImageHandlePtr.empty()))
 		{

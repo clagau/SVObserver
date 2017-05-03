@@ -38,6 +38,7 @@ SVImageToolClass::SVImageToolClass( BOOL BCreateDefaultTaskList, SVObjectClass* 
 ////////////////////////////////////////////////////////////////////////////////
 void SVImageToolClass::init()
 {
+	m_canResizeToParent = true;
 	// Set up your type...
 	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVToolObjectType;
 	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SVToolImageObjectType;

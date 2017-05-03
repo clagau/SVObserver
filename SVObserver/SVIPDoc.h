@@ -106,8 +106,6 @@ public:
 	void RefreshPublishedList();
 	HRESULT GetResults( SVResultsWrapperClass* p_pResults );
 
-	SVImageClass* GetHSIMainImage();
-
 	HRESULT GetCameras( SVVirtualCameraPtrSet& p_rCameras ) const;
 
 	HRESULT UpdateWithLastProduct();

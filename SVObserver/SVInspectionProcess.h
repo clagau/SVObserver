@@ -39,7 +39,7 @@
 #include "SVInspectionProcessResetStruct.h"
 #include "SVPublishList.h"
 #include "SVResetStruct.h"
-#include "SVRGBMainImage.h"
+#include "SVCameraImageTemplate.h"
 #include "SVVirtualCamera.h"
 #include "SVMonitorList.h"
 #include "SVValueObjectLibrary/SVValueObjectClass.h"
@@ -177,9 +177,6 @@ public:
 	SVToolSetClass* GetToolSet() const;
 	SVResultListClass* GetResultList() const;
 
-	SVImageClass* GetRGBMainImage();
-	SVImageClass* GetHSIMainImage();
-
 	virtual void SetInvalid() override;
 
 	HRESULT RebuildInspection();
@@ -191,8 +188,6 @@ public:
 
 	LPCTSTR GetDeviceName() const;
 	void SetDeviceName( LPCTSTR p_szDeviceName );
-
-	BOOL IsColorInspectionDocument() const;
 
 	int UpdateMainImagesByProduct( SVProductInfoStruct* p_psvProduct );
 	virtual bool IsColorCamera() const override;
@@ -402,8 +397,6 @@ protected:
 	volatile long m_lInputRequestMarkerCount;
 	SVInputRequestQueue m_InputRequests;
 	SVInputImageRequestQueue m_InputImageRequests;
-
-	SVRGBMainImageClass m_rgbMainImageObject;
 
 	SVCameraImagePtrSet m_CameraImages;
 

@@ -14,7 +14,7 @@
 #include "SVValueObjectLibrary/SVStringValueObjectClass.h"
 #pragma endregion
 
-class ResizeTool :	public SVToolClass,	public AllowResizeToParent
+class ResizeTool :	public SVToolClass
 {
 	SV_DECLARE_CLASS (ResizeTool);
 

@@ -30,8 +30,7 @@ enum SV_SHIFT_ENUM
 
 #pragma endregion Declarations
 
-class SVShiftTool : public SVToolClass,
-public AllowResizeToParent
+class SVShiftTool : public SVToolClass
 {
 	SV_DECLARE_CLASS( SVShiftTool );
 

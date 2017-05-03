@@ -355,7 +355,7 @@ HRESULT SVUserMaskOperatorClass::BuildMaskLines( SVExtentMultiLineStruct& p_Mult
 			HRESULT l_hr = m_MaskBufferInfo.GetOutputRectangle( l_rec );
 			// User Mask draw with lines 
 
-			SVMatroxBufferInterface::SVStatusCode l_Code;
+			HRESULT l_Code;
 		
 			LPVOID pSrcHostBuffer = nullptr;
 			l_Code = SVMatroxBufferInterface::GetHostAddress( &pSrcHostBuffer, l_MilHandle.GetBuffer() );
@@ -540,7 +540,7 @@ BOOL SVUserMaskOperatorClass::Refresh()
 					// Dump the images to .bmp files
 					try
 					{
-						SVMatroxBufferInterface::SVStatusCode l_Code = 
+						HRESULT l_Code = 
 							SVMatroxBufferInterface::Export( m_MaskBufferHandlePtr.milImage,
 						( char* )_T("C:\\Temp\\MaskBuffer.bmp"),
 						SVFileBitmap );
@@ -724,7 +724,7 @@ bool SVUserMaskOperatorClass::onRun( bool First, SVSmartHandlePointer RInputImag
 			SVImageBufferHandleImage l_MaskMilHandle;
 			m_MaskBufferHandlePtr->GetData( l_MaskMilHandle );
 
-			SVMatroxImageInterface::SVStatusCode l_Code;
+			HRESULT MatroxCode;
 
 			DWORD dwMaskType = MASK_TYPE_STATIC;
 			m_Data.dwvoMaskType.GetValue( dwMaskType );
@@ -748,9 +748,9 @@ bool SVUserMaskOperatorClass::onRun( bool First, SVSmartHandlePointer RInputImag
 					{
 						if ( S_OK != l_pMaskInputImage->ValidateAgainstOutputExtents( l_svExtents ) )
 						{
-							l_Code = SVMatroxBufferInterface::ClearBuffer( l_MaskMilHandle.GetBuffer(), 0.0 );
+							MatroxCode = SVMatroxBufferInterface::ClearBuffer( l_MaskMilHandle.GetBuffer(), 0.0 );
 
-							if( SVMEE_STATUS_OK != l_Code )
+							if (S_OK != MatroxCode)
 							{
 								if (nullptr != pErrorMessages)
 								{
@@ -767,9 +767,9 @@ bool SVUserMaskOperatorClass::onRun( bool First, SVSmartHandlePointer RInputImag
 						SVImageBufferHandleImage l_MaskMilBuffer;
 						l_MaskInputBuffer->GetData( l_MaskMilBuffer );
 
-						l_Code = SVMatroxBufferInterface::CopyBuffer( l_MaskMilHandle.GetBuffer(), l_MaskMilBuffer.GetBuffer(), (long)-l_svPoint.m_dPositionX, (long)-l_svPoint.m_dPositionY );
+						MatroxCode = SVMatroxBufferInterface::CopyBuffer( l_MaskMilHandle.GetBuffer(), l_MaskMilBuffer.GetBuffer(), (long)-l_svPoint.m_dPositionX, (long)-l_svPoint.m_dPositionY );
 
-						if( l_Code != SVMEE_STATUS_OK )
+						if (S_OK != MatroxCode)
 						{
 							if (nullptr != pErrorMessages)
 							{
@@ -806,12 +806,12 @@ bool SVUserMaskOperatorClass::onRun( bool First, SVSmartHandlePointer RInputImag
 			long lMaskOperator = SVImageAnd;
 			m_Data.evoCurrentMaskOperator.GetValue( lMaskOperator );
 
-			l_Code = SVMatroxImageInterface::Arithmetic(l_OutMilHandle.GetBuffer(),
+			MatroxCode = SVMatroxImageInterface::Arithmetic(l_OutMilHandle.GetBuffer(),
 				First ? l_InMilHandle.GetBuffer() : l_OutMilHandle.GetBuffer(),
 				l_MaskMilHandle.GetBuffer(), 
 				static_cast<SVImageOperationTypeEnum>(lMaskOperator) );
 
-			if( l_Code != SVMEE_STATUS_OK )
+			if (S_OK != MatroxCode)
 			{
 				if (nullptr != pErrorMessages)
 				{
@@ -829,17 +829,17 @@ bool SVUserMaskOperatorClass::onRun( bool First, SVSmartHandlePointer RInputImag
 				// Dump the images to .bmp files
 				try
 				{
-					l_Code = SVMatroxBufferInterface::Export( m_MaskBufferHandlePtr.milImage,
+					MatroxCode = SVMatroxBufferInterface::Export( m_MaskBufferHandlePtr.milImage,
 						_T("C:\\Temp\\Mask.bmp"),
 						SVFileBitmap );
 
 
-					l_Code = SVMatroxBufferInterface::Export( RInputImageHandle.milImage,
+					MatroxCode = SVMatroxBufferInterface::Export( RInputImageHandle.milImage,
 						_T("C:\\Temp\\Input.bmp"),
 						SVFileBitmap);
 
 
-					l_Code = SVMatroxBufferInterface::Export( ROutputImageHandle.milImage,
+					MatroxCode = SVMatroxBufferInterface::Export( ROutputImageHandle.milImage,
 						_T("C:\\Temp\\Output.bmp"),
 						SVFileBitmap);
 

@@ -69,13 +69,10 @@ BOOL SVTADlgColorThresholdOutput::OnInitDialog()
 
 	if( m_pThreshold )
 	{
-		SVImageClass* pImage = m_pThreshold->GetOutputImage();
+		SVImageClass& rImage = m_pThreshold->GetOutputImage();
 
-		if( pImage )
-		{
-			m_svDlgImage.UpdateImageInfo( pImage->GetInspection()->GetUniqueObjectID(), pImage->GetUniqueObjectID() );
-			m_svDlgImage.refresh();
-		}
+		m_svDlgImage.UpdateImageInfo( rImage.GetInspection()->GetUniqueObjectID(), rImage.GetUniqueObjectID() );
+		m_svDlgImage.refresh();
 	}
 	
 	return TRUE;  // return TRUE unless you set the focus to a control

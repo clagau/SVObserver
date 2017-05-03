@@ -41,7 +41,7 @@ HRESULT SVMatroxResourceMonitor::InsertIdentifier( SVMatroxIdentifierEnum p_Iden
 
 	l_Status = GetAutoLock( l_AutoLock );
 
-	if( l_Status == SVMEE_STATUS_OK )
+	if( l_Status == S_OK )
 	{
 		SVIdentifierSet::iterator l_AllIter = monitor.m_AllIdentifiers.find( p_Identifier );
 
@@ -95,7 +95,7 @@ HRESULT SVMatroxResourceMonitor::EraseIdentifier(SVMatroxIdentifierEnum p_Identi
 
 	l_Status = GetAutoLock(l_AutoLock);
 
-	if (l_Status == SVMEE_STATUS_OK)
+	if (l_Status == S_OK)
 	{
 		// remove the indentifier from the Set of Type Indentifiers
 		if (0 <= p_IdentifierType && p_IdentifierType < static_cast<int>( monitor.m_Identifiers.size()))
@@ -140,14 +140,14 @@ HRESULT SVMatroxResourceMonitor::EraseIdentifier(SVMatroxIdentifierEnum p_Identi
 	return l_Status;
 }
 
-SVMatroxResourceMonitor::SVStatusCode SVMatroxResourceMonitor::GetAutoLock( SVAutoLock& p_rAutoLock )
+HRESULT SVMatroxResourceMonitor::GetAutoLock( SVAutoLock& p_rAutoLock )
 {
-	SVStatusCode l_Status = SVMEE_STATUS_OK;
+	HRESULT l_Status = S_OK;
 #ifdef MONITOR_MIL_RESOURCES
 	SVMatroxResourceMonitor& monitor = SVMatroxResourceMonitor::Instance();
 	l_Status = monitor.ValidateCriticalSection();
 
-	if( l_Status == SVMEE_STATUS_OK )
+	if( l_Status == S_OK )
 	{
 		if( !( p_rAutoLock.Assign( monitor.m_CriticalSectionPtr.get() ) ) )
 		{
@@ -158,9 +158,9 @@ SVMatroxResourceMonitor::SVStatusCode SVMatroxResourceMonitor::GetAutoLock( SVAu
 	return l_Status;
 }
 
-SVMatroxResourceMonitor::SVStatusCode SVMatroxResourceMonitor::ValidateCriticalSection() const
+HRESULT SVMatroxResourceMonitor::ValidateCriticalSection() const
 {
-	SVStatusCode l_Status = SVMEE_STATUS_OK;
+	HRESULT l_Status = S_OK;
 
 	if( m_CriticalSectionPtr.empty() )
 	{

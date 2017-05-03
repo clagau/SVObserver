@@ -118,7 +118,7 @@ bool SVLinearImageOperatorListClass::Run( SVRunStatusClass& rRunStatus, SvStl::M
 
 	bRetVal = bRetVal && ( S_OK == getUseRotationAngle( UseRotation ) );
 	
-	SVMatroxImageInterface::SVStatusCode l_Code = SVMEE_STATUS_OK;
+	HRESULT MatroxCode(S_OK);
 
 	if( UseRotation )
 	{
@@ -179,7 +179,7 @@ bool SVLinearImageOperatorListClass::Run( SVRunStatusClass& rRunStatus, SvStl::M
 				l_Rotate.m_dDstCenX = l_oOutPoint.x;
 				l_Rotate.m_dDstCenY = l_oOutPoint.y;
 				l_Rotate.m_eInterpolation = SVNearestNeighOverScanClear;
-				l_Code = SVMatroxImageInterface::Rotate( l_OutMilHandle.GetBuffer(), l_Rotate );
+				MatroxCode = SVMatroxImageInterface::Rotate( l_OutMilHandle.GetBuffer(), l_Rotate );
 
 
 				// Run children...
@@ -286,9 +286,9 @@ bool SVLinearImageOperatorListClass::Run( SVRunStatusClass& rRunStatus, SvStl::M
 		{
 			double l_dProjectHeight = 0.0;
 
-			l_Code = SVMatroxImageInterface::Project( rDataBufferInfo.HBuffer.milResult, l_OutMilHandle.GetBuffer(), static_cast<double> (ProjectAngle) );
+			MatroxCode = SVMatroxImageInterface::Project( rDataBufferInfo.HBuffer.milResult, l_OutMilHandle.GetBuffer(), static_cast<double> (ProjectAngle) );
 
-			l_Code = SVMatroxImageInterface::GetResult( rDataBufferInfo.HBuffer.milResult, m_aulLineData );
+			MatroxCode = SVMatroxImageInterface::GetResult( rDataBufferInfo.HBuffer.milResult, m_aulLineData );
 
 			if( 0 == ProjectAngle )
 			{

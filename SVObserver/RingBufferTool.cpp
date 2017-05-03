@@ -332,7 +332,7 @@ int RingBufferTool::SetOutputImage( int outputIndex, int imageIndex, int maxInde
 		}
 		if (!handleToOutputImage.empty() && !handleToIndex.empty())
 		{
-			SVMatroxBufferInterface::SVStatusCode statusCode = SVMatroxBufferInterface::CopyBuffer( handleToOutputImage.GetBuffer(), handleToIndex.GetBuffer());
+			HRESULT statusCode = SVMatroxBufferInterface::CopyBuffer( handleToOutputImage.GetBuffer(), handleToIndex.GetBuffer());
 			if (S_OK == statusCode)
 			{
 				retValue = 1 << outputIndex;

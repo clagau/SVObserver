@@ -119,7 +119,7 @@ bool SVWatershedFilterClass::onRun( bool First, SVSmartHandlePointer RInputImage
 		RInputImageHandle->GetData( l_InMilHandle );
 		ROutputImageHandle->GetData( l_OutMilHandle );
 		
-		SVMatroxImageInterface::SVStatusCode l_Code;
+		HRESULT l_Code;
 		if( bUseMarker && m_MarkerImageInfo.IsConnected() )
 		{
 			SVImageClass* pInputImage = ( SVImageClass* )m_MarkerImageInfo.GetInputObjectInfo().m_pObject;
@@ -156,7 +156,7 @@ bool SVWatershedFilterClass::onRun( bool First, SVSmartHandlePointer RInputImage
 				static_cast<SVImageWaterShedEnum>(lControlFlag));
 		}
 
-		if( l_Code != SVMEE_STATUS_OK )
+		if( l_Code != S_OK )
 		{
 			if (nullptr != pErrorMessages)
 			{

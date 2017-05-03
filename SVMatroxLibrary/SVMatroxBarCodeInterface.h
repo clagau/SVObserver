@@ -38,21 +38,19 @@ class SVMatroxBarCodeInterface
 {
 public:
 
-	typedef SVMatroxApplicationInterface::SVStatusCode SVStatusCode;
-
 	SVMatroxBarCodeInterface();
 
 	virtual ~SVMatroxBarCodeInterface();
 
 	// Use this instead of McodeControl
-	static SVStatusCode Set( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, const double& p_dValue );
-	static SVStatusCode Set( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, const long& p_lValue );
-	static SVStatusCode Set( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, const SVString& p_dValue );
+	static HRESULT Set( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, const double& p_dValue );
+	static HRESULT Set( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, const long& p_lValue );
+	static HRESULT Set( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, const SVString& p_dValue );
 
 	// Use this instead of McodeInquire.
-	static SVStatusCode Get( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, double& p_dValue ) ;
-	static SVStatusCode Get( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, long& p_dValue ) ;
-	static SVStatusCode Get( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, SVString& p_dValue ) ;
+	static HRESULT Get( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, double& p_dValue ) ;
+	static HRESULT Get( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, long& p_dValue ) ;
+	static HRESULT Get( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, SVString& p_dValue ) ;
 
 	// The following functions call McodeGetResult.
 	static bool GetResult( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, double& p_rdValue, SvStl::MessageContainerVector *pErrorMessages=nullptr);
@@ -60,11 +58,11 @@ public:
 	static bool GetResult( const SVMatroxBarCode& p_rCodeID, SVBarCodeControlTypeEnum p_eType, SVString& p_rsValue, SvStl::MessageContainerVector *pErrorMessages=nullptr);
 
 	// Does the work of McodeAllocate 
-	static SVStatusCode Create( SVMatroxBarCode& p_rCodeID, SVBarCodeTypesEnum p_eType );
-	static SVStatusCode Create( SVMatroxBarCode& p_rCodeID, const SVMatroxBarCode& p_eFromCodeID );
+	static HRESULT Create( SVMatroxBarCode& p_rCodeID, SVBarCodeTypesEnum p_eType );
+	static HRESULT Create( SVMatroxBarCode& p_rCodeID, const SVMatroxBarCode& p_eFromCodeID );
 
 	// Does the work of McodeFree 
-	static SVStatusCode Destroy( SVMatroxBarCode& p_rCodeID );
+	static HRESULT Destroy( SVMatroxBarCode& p_rCodeID );
 
 	// McodeRead
 	static bool Execute( const SVMatroxBarCode& p_rCodeID, const SVMatroxBuffer& p_rSourceId, SvStl::MessageContainerVector *pErrorMessages=nullptr );

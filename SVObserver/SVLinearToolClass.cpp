@@ -282,6 +282,7 @@ SVStringValueObjectClass* SVLinearToolClass::GetInputImageNames()
 #pragma region Private Methods
 void SVLinearToolClass::init()
 {
+	m_canResizeToParent = true;
 	// Set up your type...
 	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVToolObjectType;
 	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SVLinearToolObjectType;

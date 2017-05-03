@@ -50,7 +50,7 @@ namespace Seidenader
 						SVMatroxBuffer oldBuffer;
 						pImageData->GetBuffer(oldBuffer);
 
-						SVMatroxBufferInterface::SVStatusCode l_Code = SVMatroxBufferInterface::Create(newBuffer, oldBuffer);
+						HRESULT l_Code = SVMatroxBufferInterface::Create(newBuffer, oldBuffer);
 						if (S_OK == l_Code)
 						{
 							l_Code = SVMatroxBufferInterface::CopyBuffer(newBuffer, oldBuffer);

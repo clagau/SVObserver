@@ -238,7 +238,7 @@ void SVArchiveRecord::DisconnectInputObject()
 HRESULT SVArchiveRecord::QueueImage( SVMatroxBuffer& buf, const SVString& rFileName )
 {
 	ASSERT( !buf.empty() );
-	HRESULT hr = S_OK;
+	HRESULT Result = S_OK;
 
 	if ( m_eArchiveMethod == SVArchiveAsynchronous )
 	{
@@ -261,28 +261,28 @@ HRESULT SVArchiveRecord::QueueImage( SVMatroxBuffer& buf, const SVString& rFileN
 
 				if( !( l_MilBuffer.empty() ) )
 				{
-					SVMatroxBufferInterface::SVStatusCode l_Code = SVMatroxBufferInterface::CopyBuffer(l_MilBuffer.GetBuffer(), buf );
+					Result = SVMatroxBufferInterface::CopyBuffer(l_MilBuffer.GetBuffer(), buf );
 					// SafeImageCopyToHandle	// no... this happens in the inspection, therefore not necessary
 													// No, because we remove all previous duplicate filenames in the Queue function
 													// therefore they are never written out
 				}
 				else
 				{
-					hr = E_FAIL;
+					Result = E_FAIL;
 				}
 			}
 			else
 			{
-				hr = E_FAIL;
+				Result = E_FAIL;
 			}
 		}
 		else
 		{
-			hr = E_FAIL;
+			Result = E_FAIL;
 		}
 	}
 
-	return hr;
+	return Result;
 }
 
 // right now called if method == SVArchiveGoOffline or SVArchiveAsynchronous
@@ -402,7 +402,7 @@ HRESULT SVArchiveRecord::WriteImage( )
 		bOk = pImage->GetImageHandle( ImageHandle ) && !( ImageHandle.empty() );
 		if ( bOk )
 		{
-			SVMatroxBufferInterface::SVStatusCode l_Code;
+			HRESULT l_Code;
 
 			SVImageBufferHandleImage l_MilBuffer;
 			ImageHandle->GetData( l_MilBuffer );
@@ -457,28 +457,26 @@ HRESULT SVArchiveRecord::WriteImage( )
 }
 /*static*/HRESULT SVArchiveRecord::WriteImage( SVMatroxBuffer& milBuffer, const SVString& rFileName )
 {
-	HRESULT hr = S_OK;
+	HRESULT Result = S_OK;
 	
-	SVMatroxBufferInterface::SVStatusCode l_Code;
-
 	if ( !milBuffer.empty() )
 	{
 		try
 		{
-			l_Code = SVMatroxBufferInterface::Export( milBuffer, rFileName, SVFileBitmap);
+			Result = SVMatroxBufferInterface::Export( milBuffer, rFileName, SVFileBitmap);
 
 		}
 		catch (CException& )
 		{
-			hr = E_FAIL;
+			Result = E_FAIL;
 		}
 		catch (...)
 		{
-			hr = E_FAIL;
+			Result = E_FAIL;
 		}
 	}// end if ( bOk )
 
-	return hr;
+	return Result;
 }
 
 void SVArchiveRecord::Init( SVArchiveTool* pTool )

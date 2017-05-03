@@ -199,18 +199,6 @@ HRESULT SVToolExtentClass::UpdateImageWithExtent( unsigned long p_ulIndex, SVToo
 						}
 					}
 
-					if( SVColorToolExtent == p_ToolExtentType )
-					{
-						SVExtentPositionClass l_Position = l_Extent.GetPosition();
-
-						l_Status = l_Position.SetExtentProperty( SVExtentPropertyPositionPoint, 0.0 );
-
-						if( S_OK == l_Status )
-						{
-							l_Status = l_Extent.SetPosition( l_Position );
-						}
-					}
-
 					if( SVTransformationToolExtent == p_ToolExtentType )
 					{
 						double l_Value = 0.0;

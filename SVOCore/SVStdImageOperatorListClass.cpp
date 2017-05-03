@@ -95,10 +95,10 @@ bool SVStdImageOperatorListClass::ResetObject(SvStl::MessageContainerVector *pEr
 {
 	bool Result = true;
 	if (outputImageObject.InitializeImage( getInputImage() ))
-{
+	{
 		Result = false;
 		if (nullptr != pErrorMessages)
-	{
+		{
 			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_InitImageFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 			pErrorMessages->push_back(Msg);
 		}
@@ -349,8 +349,8 @@ bool SVStdImageOperatorListClass::copyBuffer( const SVSmartHandlePointer input, 
 
 	if( bRetVal )
 	{
-		SVMatroxBufferInterface::SVStatusCode  Code = SVMatroxBufferInterface::CopyBuffer( destinationMilHandle.GetBuffer(), sourceMilHandle.GetBuffer() );
-		bRetVal = (SVMEE_STATUS_OK == Code);
+		HRESULT  Code = SVMatroxBufferInterface::CopyBuffer( destinationMilHandle.GetBuffer(), sourceMilHandle.GetBuffer() );
+		bRetVal = (S_OK == Code);
 	}	
 	
 	return bRetVal;

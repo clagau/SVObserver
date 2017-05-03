@@ -40,13 +40,13 @@ bool SVSmoothFilterClass::onRun( bool First, SVSmartHandlePointer RInputImageHan
 		S_OK == RInputImageHandle->GetData( l_InMilHandle ) && !( l_InMilHandle.empty() ) &&
 		S_OK == ROutputImageHandle->GetData( l_OutMilHandle ) && !( l_OutMilHandle.empty() )	)
 	{
-		SVMatroxImageInterface::SVStatusCode l_Code;
+		HRESULT l_Code;
 
 		l_Code = SVMatroxImageInterface::Convolve( l_OutMilHandle.GetBuffer(),
 			First ? l_InMilHandle.GetBuffer() : l_OutMilHandle.GetBuffer(),
 			SVFilterOpSmooth );
 
-		if( SVMEE_STATUS_OK != l_Code )
+		if( S_OK != l_Code )
 		{
 			if (nullptr != pErrorMessages)
 			{

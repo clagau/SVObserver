@@ -37,89 +37,87 @@ GetResult function uses the Matrox MpatGetResult. This function retrieves the re
 class SVMatroxPatternInterface
 {
 public:
-	typedef SVMatroxApplicationInterface::SVStatusCode SVStatusCode;
-
 	SVMatroxPatternInterface();
 
 	virtual ~SVMatroxPatternInterface();
 
 	// This function replaces MpatAllocModel
-	static SVStatusCode Create( SVMatroxPatternModel& p_rModel, SVMatroxBuffer& p_rSrcImageId, 
+	static HRESULT Create( SVMatroxPatternModel& p_rModel, SVMatroxBuffer& p_rSrcImageId, 
 		long p_lOffX, long p_lOffY, long p_lSizeX, long p_lSizeY, long p_lType=SVPatModelTypeNormalized );
 	
 	// This function replaces MpatAllocResult
-	static SVStatusCode Create( SVMatroxPatResult& p_rResultId, long& p_rlNbrEntries );
+	static HRESULT Create( SVMatroxPatResult& p_rResultId, long& p_rlNbrEntries );
 	
 	// This function replaces MpatFree
-	static SVStatusCode Destroy( SVMatroxPatternModel& p_rId );
-	static SVStatusCode Destroy( SVMatroxPatResult& p_rId );
+	static HRESULT Destroy( SVMatroxPatternModel& p_rId );
+	static HRESULT Destroy( SVMatroxPatResult& p_rId );
 
 	// This function replaces MpatCopy
 	// Do Not use with Circular Overscan to try and restore the Image from the Model 
-	static SVStatusCode PatCopy( const SVMatroxBuffer& p_rDestImageId, const SVMatroxPatternModel& p_rSourceModelId );
+	static HRESULT PatCopy( const SVMatroxBuffer& p_rDestImageId, const SVMatroxPatternModel& p_rSourceModelId );
 
 	// This function replaces MpatPreprocModel
-	static SVStatusCode PreProcModel( const SVMatroxPatternModel& p_rModelId, const SVMatroxBuffer& p_rImageId);
+	static HRESULT PreProcModel( const SVMatroxPatternModel& p_rModelId, const SVMatroxBuffer& p_rImageId);
 
 	// This function replaces MpatFindModel
-	static SVStatusCode Execute( const SVMatroxPatResult& p_rResultId, const SVMatroxBuffer& p_rSourceImageId, const SVMatroxPatternModel& p_rModelId );
+	static HRESULT Execute( const SVMatroxPatResult& p_rResultId, const SVMatroxBuffer& p_rSourceImageId, const SVMatroxPatternModel& p_rModelId );
 
 	// Get Functions for model setup (MpatInquire)
-	static SVStatusCode Get( const SVMatroxPatternModel& p_rModelId, const SVPatternTypeEnum p_eType, double& p_rdValue ) ;
-	static SVStatusCode Get( const SVMatroxPatternModel& p_rModelId, const SVPatternTypeEnum p_eType, long& p_rlValue ) ;
+	static HRESULT Get( const SVMatroxPatternModel& p_rModelId, const SVPatternTypeEnum p_eType, double& p_rdValue ) ;
+	static HRESULT Get( const SVMatroxPatternModel& p_rModelId, const SVPatternTypeEnum p_eType, long& p_rlValue ) ;
 	
 	// Results... (MpatGetResult)
-	static SVStatusCode GetResult( const SVMatroxPatResult& p_rResultId, const SVPatternResultEnum p_eType, double* p_pdValue ) ;
+	static HRESULT GetResult( const SVMatroxPatResult& p_rResultId, const SVPatternResultEnum p_eType, double* p_pdValue ) ;
 
 	// (MpatGetNumber)
-	static SVStatusCode GetNumber( const SVMatroxPatResult& p_rModelId, long& p_rlValue ) ;
+	static HRESULT GetNumber( const SVMatroxPatResult& p_rModelId, long& p_rlValue ) ;
 
 	// Set Functions for model setup, general Search parameters (MpatSetSearchParameter)
-	static SVStatusCode Set( const SVMatroxPatternModel& p_rResultId, const SVPatternTypeEnum p_eType, const double& p_rdValue ) ;
-	static SVStatusCode Set( const SVMatroxPatternModel& p_rResultId, const SVPatternTypeEnum p_eType, const long& p_rlValue ) ;
+	static HRESULT Set( const SVMatroxPatternModel& p_rResultId, const SVPatternTypeEnum p_eType, const double& p_rdValue ) ;
+	static HRESULT Set( const SVMatroxPatternModel& p_rResultId, const SVPatternTypeEnum p_eType, const long& p_rlValue ) ;
 	
 	// Set Functions for model setup, advanced Search parameters (MpatSetSearchParameter)
-	static SVStatusCode Set( const SVMatroxPatternModel& p_rResultId, const SVPatternSearchParameterTypeEnum p_eType, const double& p_rdValue ) ;
-	static SVStatusCode Set( const SVMatroxPatternModel& p_rResultId, const SVPatternSearchParameterTypeEnum p_eType, const long& p_rlValue ) ;
+	static HRESULT Set( const SVMatroxPatternModel& p_rResultId, const SVPatternSearchParameterTypeEnum p_eType, const double& p_rdValue ) ;
+	static HRESULT Set( const SVMatroxPatternModel& p_rResultId, const SVPatternSearchParameterTypeEnum p_eType, const long& p_rlValue ) ;
 
 	// (MpatSetCenter)
-	static SVStatusCode SetCenter( const SVMatroxPatternModel& p_rModelId, long p_lXOffset, long p_lYOffset);
+	static HRESULT SetCenter( const SVMatroxPatternModel& p_rModelId, long p_lXOffset, long p_lYOffset);
 
 	/// Set the "don't care" pixels in a model. 
 	/// \param rDontCareImageId [in] Id of the Don't care image
 	/// \param rModelId [in] ID of the model.
-	/// \returns SVMatroxPatternInterface::SVStatusCode
-	static SVStatusCode SetDontCare( const SVMatroxBuffer& rDontCareImageId, const SVMatroxPatternModel& rModelId );
+	/// \returns HRESULT
+	static HRESULT SetDontCare( const SVMatroxBuffer& rDontCareImageId, const SVMatroxPatternModel& rModelId );
 
 	/// Clear the "don't care" pixels in a model.
 	/// \param rModelImageId [in] Id of the model image.
 	/// \param rModelId [in] ID of the model.
-	/// \returns SVMatroxPatternInterface::SVStatusCode
-	static SVStatusCode ClearDontCare(const SVMatroxBuffer& rModelImageId, const SVMatroxPatternModel& rModelId);
+	/// \returns HRESULT
+	static HRESULT ClearDontCare(const SVMatroxBuffer& rModelImageId, const SVMatroxPatternModel& rModelId);
 
 	// (MpatSetNumber)
-	static SVStatusCode SetNumber( const SVMatroxPatternModel& p_rModelId, long p_lNumber );
+	static HRESULT SetNumber( const SVMatroxPatternModel& p_rModelId, long p_lNumber );
 
 	// (MpatSetPosition)
-	static SVStatusCode SetPosition( const SVMatroxPatternModel& p_rModelId, long p_lXOffset, long p_lYOffset, long p_lSizeX, long p_lSizeY );
+	static HRESULT SetPosition( const SVMatroxPatternModel& p_rModelId, long p_lXOffset, long p_lYOffset, long p_lSizeX, long p_lSizeY );
 	
 	// (MpatSetAcceptance)
-	static SVStatusCode SetAcceptance( const SVMatroxPatternModel& p_rModelId, const double p_dValue );
+	static HRESULT SetAcceptance( const SVMatroxPatternModel& p_rModelId, const double p_dValue );
 
 	// (MpatSetCertainty)
-	static SVStatusCode SetCertainty( const SVMatroxPatternModel& p_rModelId, const double p_dValue );
+	static HRESULT SetCertainty( const SVMatroxPatternModel& p_rModelId, const double p_dValue );
 	
 	// (MpatSetAccuracy)
-	static SVStatusCode SetAccuracy( const SVMatroxPatternModel& p_rModelId, const long p_lValue );
+	static HRESULT SetAccuracy( const SVMatroxPatternModel& p_rModelId, const long p_lValue );
 
 	// (MpatSetSpeed)
-	static SVStatusCode SetSpeed( const SVMatroxPatternModel& p_rModelId, const long p_lValue );
+	static HRESULT SetSpeed( const SVMatroxPatternModel& p_rModelId, const long p_lValue );
 	
 	// (MpatSetAngle)
-	static SVStatusCode SetAngle( const SVMatroxPatternModel& p_rModelId, SVPatternTypeEnum p_eType, double p_dValue );
+	static HRESULT SetAngle( const SVMatroxPatternModel& p_rModelId, SVPatternTypeEnum p_eType, double p_dValue );
 	
 	// (MpatSetAngle - M_SEARCH_ANGLE_MODE [M_ENABLE/M_DISABLE])
-	static SVStatusCode SetAngle( const SVMatroxPatternModel& p_rModelId, bool p_bEnable );
+	static HRESULT SetAngle( const SVMatroxPatternModel& p_rModelId, bool p_bEnable );
 
 	// helpers for Circular Overscan
 	static RECT CalculateOverscanOuterRect( const POINT& pos, const SIZE& size );

@@ -758,8 +758,7 @@ bool SVExternalToolTask::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCont
 			// SetMILResultImages()
 			// RunTool()
 			// GetResultValues()
-
-			SVMatroxBufferInterface::SVStatusCode l_Code;
+			HRESULT MatroxCode(S_OK);
 
 			GUID guid = GetUniqueObjectID();
 			int i;
@@ -865,7 +864,7 @@ bool SVExternalToolTask::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCont
 
 								if( ! l_CopyMilHandle.empty() && ! l_MilHandle.empty() )
 								{
-									l_Code = SVMatroxBufferInterface::CopyBuffer( l_CopyMilHandle.GetBuffer(), l_MilHandle.GetBuffer());
+									MatroxCode = SVMatroxBufferInterface::CopyBuffer( l_CopyMilHandle.GetBuffer(), l_MilHandle.GetBuffer());
 									
 									// This cast assumes that a Mil Id will never get larger than 32 bits in size.
 									m_aInspectionInputImages[i] = static_cast<long>(l_CopyMilHandle.GetBuffer().GetIdentifier());	// assign to copy handle
@@ -886,7 +885,7 @@ bool SVExternalToolTask::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCont
 							{
 								l_bOkToRun = false;
 							}
-							l_Code = SVMatroxBufferInterface::CopyBuffer( m_aInspectionInputHBMImages[i].hbm, l_MilHandle.GetBuffer() );
+							MatroxCode = SVMatroxBufferInterface::CopyBuffer( m_aInspectionInputHBMImages[i].hbm, l_MilHandle.GetBuffer() );
 						}
 					}
 				}
@@ -1057,12 +1056,12 @@ bool SVExternalToolTask::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCont
 							l_ImageBuffer->GetData( l_MilHandle );
 						}
 
-						l_Code = SVMatroxBufferInterface::CopyBuffer( l_MilHandle.GetBuffer(), m_aInspectionResultHBMImages[i] );
+						MatroxCode = SVMatroxBufferInterface::CopyBuffer( l_MilHandle.GetBuffer(), m_aInspectionResultHBMImages[i] );
 						if ( S_OK == hr )
 						{
-							if( l_Code != SVMEE_STATUS_OK )
+							if (S_OK != MatroxCode)
 							{
-								hr = l_Code | SVMEE_MATROX_ERROR;
+								hr = MatroxCode | SVMEE_MATROX_ERROR;
 							}
 						}
 						m_aInspectionResultHBMImages[i] = 0;

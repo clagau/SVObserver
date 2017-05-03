@@ -330,8 +330,6 @@ bool SVImageTransformClass::onRun( SVRunStatusClass& runStatus, SvStl::MessageCo
 
 		if( bRetVal )
 		{
-			SVMatroxImageInterface::SVStatusCode l_Code;
-
 			SVMatroxImageRotateStruct l_Rotate(l_InMilHandle.GetBuffer());
 			l_Rotate.m_dAngle = angle;
 			l_Rotate.m_dSrcCenX = srcX + xDisplacement;
@@ -342,9 +340,9 @@ bool SVImageTransformClass::onRun( SVRunStatusClass& runStatus, SvStl::MessageCo
 
 			// Use MimRotate to Rotate, Translate or Copy buffer
 			// Rotate...( and translate image )
-			l_Code = SVMatroxImageInterface::Rotate( l_OutMilHandle.GetBuffer(), l_Rotate );
+			HRESULT MatroxCode = SVMatroxImageInterface::Rotate( l_OutMilHandle.GetBuffer(), l_Rotate );
 
-			if( l_Code != SVMEE_STATUS_OK )
+			if (S_OK != MatroxCode)
 			{
 				bRetVal = false;
 				if (nullptr != pErrorMessages)

@@ -122,7 +122,7 @@ BOOL SVMaskEditorDialogClass::OnInitDialog()
 
 	SVMatroxBufferInterface l_BufIntf;
 	SVMatroxDisplayInterface l_DispIntf;
-	SVMatroxDisplayInterface::SVStatusCode l_Code;
+	HRESULT MatroxCode;
 
     if( HImageBitmap )
     {
@@ -132,8 +132,8 @@ BOOL SVMaskEditorDialogClass::OnInitDialog()
             if( ( milImageBuffer = SVBitmapToMilBuffer( HImageBitmap )).empty() )
                 break;
             // Try to get a mil display handle...
-			l_Code = l_DispIntf.Create( milDisplay );
-			if( l_Code != SVMEE_STATUS_OK )
+			MatroxCode = l_DispIntf.Create( milDisplay );
+			if (S_OK != MatroxCode)
 			{
 				break;
 			}
@@ -142,28 +142,28 @@ BOOL SVMaskEditorDialogClass::OnInitDialog()
 			long width;
 			long height;
 
-			l_Code = l_BufIntf.Get( milImageBuffer, SVSizeX, width );
-			l_Code = l_BufIntf.Get( milImageBuffer, SVSizeY, height );
+			MatroxCode = l_BufIntf.Get( milImageBuffer, SVSizeX, width );
+			MatroxCode = l_BufIntf.Get( milImageBuffer, SVSizeY, height );
 			 
-			l_Code = l_DispIntf.Create( milDisplayBuffer, milImageBuffer );
-			if( l_Code != SVMEE_STATUS_OK )
+			MatroxCode = l_DispIntf.Create( milDisplayBuffer, milImageBuffer );
+			if (S_OK != MatroxCode)
 			{
 				break;
 			}
 
 			// Try to get a mil mask buffer handle...
-			l_Code = l_BufIntf.Create( milMaskBuffer, milImageBuffer );
-			if( l_Code != SVMEE_STATUS_OK )
+			MatroxCode = l_BufIntf.Create( milMaskBuffer, milImageBuffer );
+			if (S_OK != MatroxCode)
 			{
 				break;
 			}
 
 			// Set mil display features...
-			l_Code = l_DispIntf.Set( milDisplay, SVDispWindowScrollbar,(long) SVValueEnable);
-			l_Code = l_DispIntf.Set( milDisplay, SVDispWindowZoom,(long) SVValueEnable);
-			l_Code = l_DispIntf.Set( milDisplay, SVDispUpdate,(long) SVValueEnable);
-			l_Code = l_DispIntf.Set( milDisplay, SVDispWindowMove,(long) SVValueEnable);
-			l_Code = l_DispIntf.Set( milDisplay, SVDispWindowResize,(long) SVValueEnable);
+			MatroxCode = l_DispIntf.Set( milDisplay, SVDispWindowScrollbar,(long) SVValueEnable);
+			MatroxCode = l_DispIntf.Set( milDisplay, SVDispWindowZoom,(long) SVValueEnable);
+			MatroxCode = l_DispIntf.Set( milDisplay, SVDispUpdate,(long) SVValueEnable);
+			MatroxCode = l_DispIntf.Set( milDisplay, SVDispWindowMove,(long) SVValueEnable);
+			MatroxCode = l_DispIntf.Set( milDisplay, SVDispWindowResize,(long) SVValueEnable);
             
             // Create Image Window...
             CRect rect;
@@ -190,7 +190,7 @@ BOOL SVMaskEditorDialogClass::OnInitDialog()
 
 
             // Select Display...
-			l_Code = l_DispIntf.SelectWindow(milDisplay, milDisplayBuffer, DisplayWndCtl.m_hWnd );
+			MatroxCode = l_DispIntf.SelectWindow(milDisplay, milDisplayBuffer, DisplayWndCtl.m_hWnd );
 
             // Update zoom factors and string...
             zoom( 0 );

@@ -73,7 +73,7 @@ namespace Seidenader
 
 						SVMatroxBuffer milBuffer;
 						imageHandle->GetBuffer(milBuffer);
-						SVMatroxBufferInterface::SVStatusCode Code = SVMatroxBufferInterface::Export( milBuffer, strFileName, FileFormatID );
+						HRESULT Code = SVMatroxBufferInterface::Export( milBuffer, strFileName, FileFormatID );
 					}
 					else
 					{

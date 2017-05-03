@@ -439,8 +439,6 @@ void SVInspectionProcess::Init()
 
 SVInspectionProcess::~SVInspectionProcess()
 {
-	m_rgbMainImageObject.CloseObject();
-
 	DestroyInspection();
 
 	m_PPQId.clear();
@@ -1564,16 +1562,6 @@ HRESULT SVInspectionProcess::RebuildInspection()
 				Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_IPDoc_NoCameraColorAttached, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10052);
 			}
 		}
-		else
-		{
-			if (!CreateChildObject(&m_rgbMainImageObject))
-			{
-				l_Status = E_FAIL;
-			}
-
-			m_rgbMainImageObject.UpdateImage(SVImageTypePhysical, SV_GUID_NULL);
-			m_rgbMainImageObject.SetObjectOwner(this);
-		}
 	}
 	////////////////////////
 
@@ -1590,16 +1578,9 @@ HRESULT SVInspectionProcess::RebuildInspection()
 	{
 		//Configuration has changed need to set the modified flag
 		SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
-		if (SVSVIMStateClass::CheckState(SV_STATE_REMOTE_CMD))
-		{
-			SvStl::MessageMgrStd Exception(SvStl::LogOnly);
-			Exception.setMessage(SVMSG_SVO_CONDITIONAL_HISTORY, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
-		}
-		else
-		{
-			SvStl::MessageMgrStd Exception(SvStl::LogAndDisplay);
-			Exception.setMessage(SVMSG_SVO_CONDITIONAL_HISTORY, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
-		}
+		SvStl::MsgTypeEnum  MsgType = SVSVIMStateClass::CheckState(SV_STATE_REMOTE_CMD) ? SvStl::LogOnly : SvStl::LogAndDisplay;
+		SvStl::MessageMgrStd Exception(MsgType);
+		Exception.setMessage(SVMSG_SVO_CONDITIONAL_HISTORY, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
 	}
 
 #if defined (TRACE_THEM_ALL) || defined (TRACE_IP)
@@ -1708,10 +1689,6 @@ bool SVInspectionProcess::resetAllObjects(SvStl::MessageContainerVector *pErrorM
 	}// end for
 
 	bool Result = true;
-	if (IsColorCamera())
-	{
-		Result = m_rgbMainImageObject.resetAllObjects(&ErrorMessages);
-	}
 
 	if (nullptr != m_pCurrentToolset)
 	{
@@ -2407,7 +2384,7 @@ BOOL SVInspectionProcess::ProcessInputImageRequests(SVProductInfoStruct *p_psvPr
 
 			if (m_InputImageRequests.RemoveHead(&l_pInRequest))
 			{
-				SVImageClass *l_psvImage = nullptr;
+				SVImageClass *pImage = nullptr;
 
 				if (l_pInRequest->m_bUsingCameraName) //not using camera name...
 				{
@@ -2417,13 +2394,13 @@ BOOL SVInspectionProcess::ProcessInputImageRequests(SVProductInfoStruct *p_psvPr
 
 					SVCameraImagePtrSet::iterator l_Iter = l_MainImages.begin();
 
-					while (nullptr == l_psvImage && l_Iter != l_MainImages.end())
+					while (nullptr == pImage && l_Iter != l_MainImages.end())
 					{
-						SVCameraImageTemplate* l_pCameraImage = (*l_Iter);
+						SVCameraImageTemplate* pCameraImage = (*l_Iter);
 
-						if ((nullptr != l_pCameraImage) && (SVRGBMainImageObjectType != l_pCameraImage->GetObjectSubType()))
+						if (nullptr != pCameraImage)
 						{
-							l_psvImage = l_pCameraImage;
+							pImage = pCameraImage;
 						}
 						else
 						{
@@ -2437,17 +2414,17 @@ BOOL SVInspectionProcess::ProcessInputImageRequests(SVProductInfoStruct *p_psvPr
 
 					if (GetChildObjectByName(l_pInRequest->m_ObjectName.c_str(), &l_psvObject))
 					{
-						l_psvImage = dynamic_cast<SVImageClass*>(l_psvObject);
+						pImage = dynamic_cast<SVImageClass*>(l_psvObject);
 					}
 				}
 
-				l_bOk = nullptr != l_psvImage;
+				l_bOk = nullptr != pImage;
 
 				if (l_bOk)
 				{
 					SVImageIndexStruct l_svIndex;
 
-					if (SVMainImageClass* l_psvMainImage = dynamic_cast<SVMainImageClass*>(l_psvImage))
+					if (SVMainImageClass* l_psvMainImage = dynamic_cast<SVMainImageClass*>(pImage))
 					{
 						SVGuidSVCameraInfoStructMap::iterator l_svIter;
 
@@ -2469,15 +2446,15 @@ BOOL SVInspectionProcess::ProcessInputImageRequests(SVProductInfoStruct *p_psvPr
 
 					if (l_bOk)
 					{
-						l_bOk = l_psvImage->SetImageHandleIndex(l_svIndex);
+						l_bOk = pImage->SetImageHandleIndex(l_svIndex);
 
 						if (l_bOk)
 						{
 							SVSmartHandlePointer l_ImageHandle;
 
-							if (l_psvImage->GetImageHandle(l_ImageHandle) && !(l_ImageHandle.empty()) && !(l_pInRequest->m_ImageHandlePtr.empty()))
+							if (pImage->GetImageHandle(l_ImageHandle) && !(l_ImageHandle.empty()) && !(l_pInRequest->m_ImageHandlePtr.empty()))
 							{
-								SVMatroxBufferInterface::SVStatusCode l_Code;
+								HRESULT l_Code;
 
 								SVImageBufferHandleImage l_MilHandle;
 								SVImageBufferHandleImage l_RequestMilHandle;
@@ -2811,18 +2788,14 @@ HRESULT SVInspectionProcess::RestoreCameraImages()
 	{
 		SVCameraImageTemplate* l_pMainImage = (*l_Iter);
 
-		if (nullptr == dynamic_cast<SVRGBMainImageClass*>(l_pMainImage))
+		if (nullptr != l_pMainImage)
 		{
-			if (nullptr != l_pMainImage)
-			{
-				::KeepPrevError(l_svOk, l_pMainImage->RestoreMainImage(this));
-			}
-			else
-			{
-				l_svOk = S_FALSE;
-			}
+			::KeepPrevError(l_svOk, l_pMainImage->RestoreMainImage(this));
 		}
-
+		else
+		{
+			l_svOk = S_FALSE;
+		}
 		++l_Iter;
 	}
 
@@ -3522,13 +3495,6 @@ SVInspectionProcess::SVObjectPtrDeque SVInspectionProcess::GetPostProcessObjects
 		}
 	}
 
-	if (IsColorCamera())
-	{
-		SVRGBMainImageClass* l_pImage = const_cast<SVRGBMainImageClass*>(&m_rgbMainImageObject);
-
-		l_Objects.push_back(l_pImage);
-	}
-
 	if (nullptr != GetToolSet())
 	{
 		l_Objects.push_back(GetToolSet());
@@ -3542,30 +3508,6 @@ SVObjectClass *SVInspectionProcess::UpdateObject(const GUID &p_oFriendGuid, SVOb
 	p_psvObject->SetObjectOwner(p_psvNewOwner);
 
 	return p_psvObject; //l_psvObject;
-}
-
-SVImageClass* SVInspectionProcess::GetRGBMainImage()
-{
-	SVImageClass* pResult(nullptr);
-
-	if (IsColorCamera())
-	{
-		pResult = GetToolSet()->getCurrentImage();
-	}
-
-	return pResult;
-}
-
-SVImageClass* SVInspectionProcess::GetHSIMainImage()
-{
-	SVImageClass* pResult(nullptr);
-
-	if (IsColorCamera())
-	{
-		pResult = &m_rgbMainImageObject;
-	}
-
-	return pResult;
 }
 
 LPCTSTR SVInspectionProcess::GetDeviceName() const
@@ -3817,17 +3759,7 @@ void SVInspectionProcess::FillSharedData(long sharedSlotIndex, SvSml::SVSharedDa
 			{
 				SVSmartHandlePointer imageHandlePtr;
 
-				// Special check for Color Tool's RGBMainImage which is HSI
-				if (SV_IS_KIND_OF(pImage, SVRGBMainImageClass))
-				{
-					// this will make a copy...
-					SVImageProcessingClass::CreateImageBuffer(pImage->GetImageInfo(), imageHandlePtr);
-					pImage->SafeImageConvertToHandle(imageHandlePtr, SVImageHLSToRGB);
-				}
-				else
-				{
-					pImage->GetImageHandle(imageHandlePtr);
-				}
+				pImage->GetImageHandle(imageHandlePtr);
 
 				if (!imageHandlePtr.empty())
 				{

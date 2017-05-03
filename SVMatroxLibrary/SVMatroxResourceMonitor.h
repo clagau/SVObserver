@@ -21,12 +21,11 @@
 class SVMatroxResourceMonitor
 {
 public:
-	typedef SVMatroxStatusInformation::SVStatusCode SVStatusCode;
 	typedef SVAutoLockAndReleaseTemplate< SVCriticalSection > SVAutoLock;
 	static HRESULT InsertIdentifier( SVMatroxIdentifierEnum p_IdentifierType, SVMatroxIdentifier p_Identifier );
 	static HRESULT EraseIdentifier( SVMatroxIdentifierEnum p_IdentifierType, SVMatroxIdentifier p_Identifier );
 
-	static SVStatusCode GetAutoLock( SVAutoLock& p_rAutoLock );
+	static HRESULT GetAutoLock( SVAutoLock& p_rAutoLock );
 
 protected:
 	typedef std::set< SVMatroxIdentifier > SVIdentifierSet;

@@ -18,24 +18,22 @@
 class SVMatroxGraphicsInterface
 {
 public:
-	typedef SVMatroxApplicationInterface::SVStatusCode SVStatusCode;
-
 	SVMatroxGraphicsInterface();
 
 	virtual ~SVMatroxGraphicsInterface();
 
 	static double CreateRGB888( unsigned char p_Red, unsigned char p_Green, unsigned char p_Blue );
 
-	static SVStatusCode Clear( SVMatroxGraphics& p_rGraphicsID, SVMatroxBuffer& p_rBuffer );
+	static HRESULT Clear( SVMatroxGraphics& p_rGraphicsID, SVMatroxBuffer& p_rBuffer );
 
-	static SVStatusCode RectangleFill( SVMatroxGraphics& p_rGraphicsID, SVMatroxBuffer& p_rBuffer, const RECT& p_rRectangle );
+	static HRESULT RectangleFill( SVMatroxGraphics& p_rGraphicsID, SVMatroxBuffer& p_rBuffer, const RECT& p_rRectangle );
 
-	static SVStatusCode Color( SVMatroxGraphics& p_rGraphicsID, double p_Color );
-	static SVStatusCode BackColor( SVMatroxGraphics& p_rGraphicsID, double p_Color );
+	static HRESULT Color( SVMatroxGraphics& p_rGraphicsID, double p_Color );
+	static HRESULT BackColor( SVMatroxGraphics& p_rGraphicsID, double p_Color );
 
-	static SVStatusCode Create( SVMatroxGraphics& p_rGraphicsID );
+	static HRESULT Create( SVMatroxGraphics& p_rGraphicsID );
 
-	static SVStatusCode Destroy( SVMatroxGraphics& p_rGraphicsID );
+	static HRESULT Destroy( SVMatroxGraphics& p_rGraphicsID );
 
 };
 

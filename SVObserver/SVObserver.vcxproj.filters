@@ -605,9 +605,6 @@
     <ClCompile Include="SVResultView.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVRGBMainImage.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVROIFigureEditor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -1666,9 +1663,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVResultView.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVRGBMainImage.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVROIFigureEditor.h">

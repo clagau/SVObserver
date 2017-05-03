@@ -23,7 +23,6 @@ const LPCSTR g_strOrientationEnums = _T( "Horizontal=0,Vertical=90" );
 #pragma endregion Declarations
 
 class SVLinearToolClass : public SVToolClass
-, public AllowResizeToParent
 {
 	SV_DECLARE_CLASS( SVLinearToolClass );
 

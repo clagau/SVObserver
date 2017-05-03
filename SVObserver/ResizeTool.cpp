@@ -30,6 +30,7 @@ ResizeTool::ResizeTool( BOOL bCreateDefaultTaskList, SVObjectClass* pOwner, int 
 
 void ResizeTool::LocalInitialize()
 {
+	m_canResizeToParent = true;
 	//  Start of initialize class members.
 	InitializeInterpolationModeMember();
 	InitializeOverscanMember();

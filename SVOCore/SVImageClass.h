@@ -191,12 +191,3 @@ private:
 
 typedef SVVector<SVImageClass*> SVImageClassPtrVector;
 
-class SVRGBImageClass : public SVImageClass
-{
-public:
-	virtual ~SVRGBImageClass() {}
-
-	//Child Buffers on Color Images do not support DIB
-	void setDibBufferFlag(bool flag=false) { m_ImageInfo.setDibBufferFlag(flag); }
-};
-

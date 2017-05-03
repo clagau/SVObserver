@@ -466,9 +466,9 @@ long SVMatroxImageInterface::Convert2MatroxType( SVImageWaterShedEnum p_eType)
 @SVOperationDescription This function creates a SVMatroxImageResult.
 
 */
-SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::Create( SVMatroxImageResult& p_rResultId, const long p_lNbEntries, SVImageOperationTypeEnum p_eResultType)
+HRESULT SVMatroxImageInterface::Create( SVMatroxImageResult& p_rResultId, const long p_lNbEntries, SVImageOperationTypeEnum p_eResultType)
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -480,7 +480,7 @@ SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::Create( SVMatroxIma
 
 		l_Code = SVMatroxResourceMonitor::GetAutoLock( l_AutoLock );
 
-		if( l_Code == SVMEE_STATUS_OK )
+		if( l_Code == S_OK )
 		{
 			MIL_ID l_NewId = MimAllocResult(M_DEFAULT_HOST,
 				p_lNbEntries,
@@ -489,7 +489,7 @@ SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::Create( SVMatroxIma
 
 
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
-			if( l_Code == SVMEE_STATUS_OK )
+			if( l_Code == S_OK )
 			{
 				SVMatroxResourceMonitor::InsertIdentifier( SVImageID, l_NewId );
 
@@ -513,7 +513,7 @@ SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::Create( SVMatroxIma
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert( l_Code == SVMEE_STATUS_OK );
+	assert( l_Code == S_OK );
 	return l_Code;
 }
 
@@ -523,9 +523,9 @@ SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::Create( SVMatroxIma
 @SVOperationDescription This function destroys a SVMatroxImageResult.
 
 */
-SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::Destroy( SVMatroxImageResult& p_rResultId )
+HRESULT SVMatroxImageInterface::Destroy( SVMatroxImageResult& p_rResultId )
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -537,17 +537,17 @@ SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::Destroy( SVMatroxIm
 
 			l_Code = SVMatroxResourceMonitor::GetAutoLock( l_AutoLock );
 
-			if( l_Code == SVMEE_STATUS_OK )
+			if( l_Code == S_OK )
 			{
 				SVMatroxResourceMonitor::SVAutoLock l_AutoLock;
 
 				l_Code = SVMatroxResourceMonitor::GetAutoLock( l_AutoLock );
 
-				if( l_Code == SVMEE_STATUS_OK )
+				if( l_Code == S_OK )
 				{
 					MimFree( p_rResultId.m_ImageResultID );
 					l_Code = SVMatroxApplicationInterface::GetLastStatus();
-					if( l_Code == SVMEE_STATUS_OK )
+					if( l_Code == S_OK )
 					{
 						SVMatroxResourceMonitor::EraseIdentifier( SVImageID, p_rResultId.m_ImageResultID );
 
@@ -564,7 +564,7 @@ SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::Destroy( SVMatroxIm
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert( l_Code == SVMEE_STATUS_OK );
+	assert( l_Code == S_OK );
 	return l_Code;
 }
 
@@ -575,13 +575,13 @@ SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::Destroy( SVMatroxIm
 @SVOperationDescription This function performs the specified point-to-point operation on two images, an image and a constant, an image, or a constant, storing results in the specified destination image buffer.
 
 */
-SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::Arithmetic( const SVMatroxBuffer& p_rDestId, 
+HRESULT SVMatroxImageInterface::Arithmetic( const SVMatroxBuffer& p_rDestId, 
 																		const SVMatroxBuffer& p_dSource1, 
 																		const SVMatroxBuffer& p_dSource2, 
 																		SVImageOperationTypeEnum p_eOperation)
 {
 	// This function Replaces MimArith ( image tool )
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -645,7 +645,7 @@ SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::Arithmetic( const S
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert( l_Code == SVMEE_STATUS_OK );
+	assert( l_Code == S_OK );
 	return l_Code;
 }
 
@@ -655,13 +655,13 @@ SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::Arithmetic( const S
 @SVOperationDescription This function is used to threshold an image.
 
 */
-SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::Binarize( const SVMatroxBuffer& p_rDest,
+HRESULT SVMatroxImageInterface::Binarize( const SVMatroxBuffer& p_rDest,
 																	  const SVMatroxBuffer p_rSource, 
 																	  SVConditionEnum p_eCondition, 
 																	  double p_dCondLow, 
 																	  double p_dCondHigh )
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT l_Code( S_OK );
 	SVMatroxStatusInformation	l_StatusInfo;
 
 #ifdef USE_TRY_BLOCKS
@@ -700,7 +700,7 @@ SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::Binarize( const SVM
 #endif
 
 //-	JAB110708
-	if (l_Code != SVMEE_STATUS_OK)
+	if (l_Code != S_OK)
 	{
 		l_StatusInfo.m_StatusCode = l_Code;
 		l_StatusInfo.m_StatusString = "SVMatroxImageInterface::Binarize error";
@@ -873,20 +873,20 @@ HRESULT SVMatroxImageInterface::AutoThreshold( const SVCommandDataHolder& p_rAtt
 			// Read histogram...
 			SVMatroxImageResult histResult;
 				
-			SVMatroxImageInterface::SVStatusCode l_RetCode = SVMatroxImageInterface::Create(histResult, 256, SVImageHistList);
+			HRESULT l_RetCode = SVMatroxImageInterface::Create(histResult, 256, SVImageHistList);
 
-			if (l_RetCode == SVMEE_STATUS_OK)
+			if (l_RetCode == S_OK)
 			{
 				l_RetCode = SVMatroxImageInterface::Histogram(histResult, l_SourceImage.m_Buffer);
 			}
-			if (l_RetCode == SVMEE_STATUS_OK)
+			if (l_RetCode == S_OK)
 			{
 				SVMatroxLongArray histValueArray;
 
 				__int64 numPixels = l_Width * l_Height;
 
 				l_RetCode = SVMatroxImageInterface::GetResult(histResult, histValueArray);
-				if (l_RetCode == SVMEE_STATUS_OK)
+				if (l_RetCode == S_OK)
 				{
 					if (histValueArray.size() && numPixels)
 					{
@@ -921,7 +921,7 @@ HRESULT SVMatroxImageInterface::AutoThreshold( const SVCommandDataHolder& p_rAtt
 																		SVECondInRange,
 																		l_Lower,
 																		l_Upper);
-							if (l_RetCode != SVMEE_STATUS_OK)
+							if (l_RetCode != S_OK)
 							{
 								l_Status = l_RetCode;
 							}
@@ -934,7 +934,7 @@ HRESULT SVMatroxImageInterface::AutoThreshold( const SVCommandDataHolder& p_rAtt
 																		l_Upper,
 																		l_Lower);
 
-							if (l_RetCode != SVMEE_STATUS_OK)
+							if (l_RetCode != S_OK)
 							{
 								l_Status = l_RetCode;
 							}
@@ -1035,7 +1035,7 @@ HRESULT SVMatroxImageInterface::FixedThreshold( const SVCommandDataHolder& p_rAt
 
 		if( S_OK == l_Status )
 		{
-			SVMatroxImageInterface::SVStatusCode l_RetCode(SVMEE_STATUS_OK);
+			HRESULT l_RetCode(S_OK);
 
 			if( (unsigned char)l_Lower <= (unsigned char)l_Upper )
 			{
@@ -1044,7 +1044,7 @@ HRESULT SVMatroxImageInterface::FixedThreshold( const SVCommandDataHolder& p_rAt
 															SVECondInRange,
 															l_Lower,
 															l_Upper);
-				if (l_RetCode != SVMEE_STATUS_OK)
+				if (l_RetCode != S_OK)
 				{
 					l_Status = l_RetCode;
 				}
@@ -1057,7 +1057,7 @@ HRESULT SVMatroxImageInterface::FixedThreshold( const SVCommandDataHolder& p_rAt
 															l_Upper,
 															l_Lower);
 
-				if (l_RetCode != SVMEE_STATUS_OK)
+				if (l_RetCode != S_OK)
 				{
 					l_Status = l_RetCode;
 				}
@@ -1090,12 +1090,12 @@ HRESULT SVMatroxImageInterface::FixedThreshold( const SVCommandDataHolder& p_rAt
 @SVOperationDescription This function performs a binary or grayscale closing operation on the given source image for the specified number of iterations.
 
 */
-SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::Close( const SVMatroxBuffer& p_rDest, 
+HRESULT SVMatroxImageInterface::Close( const SVMatroxBuffer& p_rDest, 
 																   const SVMatroxBuffer& p_rSource, 
 																   long p_lItters, 
 																   SVImageOperationTypeEnum p_eOp)
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -1129,7 +1129,7 @@ SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::Close( const SVMatr
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert( l_Code == SVMEE_STATUS_OK );
+	assert( l_Code == S_OK );
 	return l_Code;
 }
 
@@ -1139,11 +1139,11 @@ SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::Close( const SVMatr
 @SVOperationDescription This function is used to convert image types.
 
 */
-SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::Convert( const SVMatroxBuffer& p_rDest, 
+HRESULT SVMatroxImageInterface::Convert( const SVMatroxBuffer& p_rDest, 
 																	 const SVMatroxBuffer& p_rSource, 
 																	 SVImageOperationTypeEnum p_eOperation)
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -1183,7 +1183,7 @@ SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::Convert( const SVMa
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert( l_Code == SVMEE_STATUS_OK );
+	assert( l_Code == S_OK );
 	return l_Code;
 }
 
@@ -1195,11 +1195,11 @@ SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::Convert( const SVMa
 @SVOperationDescription This function performs a general convolution operation on the source buffer using the supplied kernel.
 
 */
-SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::Convolve( const SVMatroxBuffer& p_rDest, 
+HRESULT SVMatroxImageInterface::Convolve( const SVMatroxBuffer& p_rDest, 
 																	  const SVMatroxBuffer& p_rSource, 
 																	  const SVMatroxBuffer& p_Kernel )
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -1225,7 +1225,7 @@ SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::Convolve( const SVM
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert( l_Code == SVMEE_STATUS_OK );
+	assert( l_Code == S_OK );
 	return l_Code;
 }
 
@@ -1235,9 +1235,9 @@ SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::Convolve( const SVM
 @SVOperationDescription This function performs a general convolution operation on the source buffer using the specified filter.
 
 */
-SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::Convolve( const SVMatroxBuffer& p_rDest, const SVMatroxBuffer& p_rSource, SVFilterOperationEnum p_eFilterOperation )
+HRESULT SVMatroxImageInterface::Convolve( const SVMatroxBuffer& p_rDest, const SVMatroxBuffer& p_rSource, SVFilterOperationEnum p_eFilterOperation )
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -1265,7 +1265,7 @@ SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::Convolve( const SVM
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert( l_Code == SVMEE_STATUS_OK );
+	assert( l_Code == S_OK );
 	return l_Code;
 }
 
@@ -1275,12 +1275,12 @@ SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::Convolve( const SVM
 @SVOperationDescription This function performs a binary or grayscale dilation on the given source image for the specified number of iterations.
 
 */
-SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::Dilate( const SVMatroxBuffer& p_rDest, 
+HRESULT SVMatroxImageInterface::Dilate( const SVMatroxBuffer& p_rDest, 
 																	const SVMatroxBuffer& p_rSource, 
 																	long p_lItters, 
 																	SVImageOperationTypeEnum p_eOp)
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -1314,7 +1314,7 @@ SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::Dilate( const SVMat
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert( l_Code == SVMEE_STATUS_OK );
+	assert( l_Code == S_OK );
 	return l_Code;
 }
 
@@ -1324,12 +1324,12 @@ SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::Dilate( const SVMat
 @SVOperationDescription This function performs a binary or grayscale erosion on the given source image for the specified number of iterations.
 
 */
-SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::Erode( const SVMatroxBuffer& p_rDest, 
+HRESULT SVMatroxImageInterface::Erode( const SVMatroxBuffer& p_rDest, 
 																   const SVMatroxBuffer& p_rSource, 
 																   long p_lItters, 
 																   SVImageOperationTypeEnum p_eOp)
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -1363,7 +1363,7 @@ SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::Erode( const SVMatr
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert( l_Code == SVMEE_STATUS_OK );
+	assert( l_Code == S_OK );
 	return l_Code;
 }
 
@@ -1373,11 +1373,11 @@ SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::Erode( const SVMatr
 @SVOperationDescription This function flips the source image to the destination image according to the specified operation.
 
 */
-SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::Flip( const SVMatroxBuffer& p_rDest, 
+HRESULT SVMatroxImageInterface::Flip( const SVMatroxBuffer& p_rDest, 
 																  const SVMatroxBuffer& p_rSource, 
 																  SVImageFlipEnum p_eOperation)
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -1416,7 +1416,7 @@ SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::Flip( const SVMatro
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert( l_Code == SVMEE_STATUS_OK );
+	assert( l_Code == S_OK );
 	return l_Code;
 }
 
@@ -1427,10 +1427,10 @@ SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::Flip( const SVMatro
 @SVOperationDescription This function retrieves all the results of the specified type from the specified result buffer and stores them in the specified one-dimensional destination user array.
 
 */
-SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::GetResult( const SVMatroxImageResult& p_rResultID, 
+HRESULT SVMatroxImageInterface::GetResult( const SVMatroxImageResult& p_rResultID, 
 																	   SVMatroxDoubleArray& p_adArray)
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -1445,7 +1445,7 @@ SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::GetResult( const SV
 
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 
-			if( l_Code == SVMEE_STATUS_OK && l_lSize > 0)
+			if( l_Code == S_OK && l_lSize > 0)
 			{
 				p_adArray.resize( l_lSize );
 				MimGetResult( p_rResultID.m_ImageResultID,
@@ -1466,7 +1466,7 @@ SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::GetResult( const SV
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert( l_Code == SVMEE_STATUS_OK );
+	assert( l_Code == S_OK );
 	return l_Code;	
 }
 
@@ -1476,10 +1476,10 @@ SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::GetResult( const SV
 @SVOperationDescription This function retrieves all the results of the specified type from the specified result buffer and stores them in the specified one-dimensional destination user array.
 
 */
-SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::GetResult( const SVMatroxImageResult& p_rResultID, 
+HRESULT SVMatroxImageInterface::GetResult( const SVMatroxImageResult& p_rResultID, 
 																	   SVMatroxLongArray& p_alArray)
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -1494,7 +1494,7 @@ SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::GetResult( const SV
 
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 
-			if( l_Code == SVMEE_STATUS_OK && l_lSize > 0)
+			if( l_Code == S_OK && l_lSize > 0)
 			{
 				p_alArray.resize( l_lSize );
 				MimGetResult( p_rResultID.m_ImageResultID,
@@ -1515,7 +1515,7 @@ SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::GetResult( const SV
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert( l_Code == SVMEE_STATUS_OK );
+	assert( l_Code == S_OK );
 	return l_Code;	
 }
 /**
@@ -1524,10 +1524,10 @@ SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::GetResult( const SV
 @SVOperationDescription This function retrieves all the results of the specified type from the specified result buffer and stores them in the specified one-dimensional destination user array.
 
 */
-SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::GetResult( const SVMatroxImageResult& p_rResultID, 
+HRESULT SVMatroxImageInterface::GetResult( const SVMatroxImageResult& p_rResultID, 
 																	   SVMatroxByteArray& p_acArray)
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -1542,7 +1542,7 @@ SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::GetResult( const SV
 
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 
-			if( l_Code == SVMEE_STATUS_OK && l_lSize > 0)
+			if( l_Code == S_OK && l_lSize > 0)
 			{
 				p_acArray.resize( l_lSize );
 				MimGetResult( p_rResultID.m_ImageResultID,
@@ -1563,7 +1563,7 @@ SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::GetResult( const SV
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert( l_Code == SVMEE_STATUS_OK );
+	assert( l_Code == S_OK );
 	return l_Code;	
 }
 
@@ -1573,9 +1573,9 @@ SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::GetResult( const SV
 @SVOperationDescription This function retrieves all the results of the specified type from the specified result buffer and stores them in the specified one-dimensional destination user array.
 
 */
-SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::GetResult( const SVMatroxImageResult& p_rResultID, void * p_pArray)
+HRESULT SVMatroxImageInterface::GetResult( const SVMatroxImageResult& p_rResultID, void * p_pArray)
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -1601,7 +1601,7 @@ SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::GetResult( const SV
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert( l_Code == SVMEE_STATUS_OK );
+	assert( l_Code == S_OK );
 	return l_Code;	
 }
 
@@ -1612,10 +1612,10 @@ SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::GetResult( const SV
 @SVOperationDescription This function calculates the histogram (or pixel intensity distribution) of the specified source buffer and stores results in the specified histogram result buffer.
 
 */
-SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::Histogram( const SVMatroxImageResult& p_rHistResult, 
+HRESULT SVMatroxImageInterface::Histogram( const SVMatroxImageResult& p_rHistResult, 
 																	   const SVMatroxBuffer& p_rSource)
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -1639,7 +1639,7 @@ SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::Histogram( const SV
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert( l_Code == SVMEE_STATUS_OK );
+	assert( l_Code == S_OK );
 	return l_Code;
 }
 
@@ -1649,11 +1649,11 @@ SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::Histogram( const SV
 @SVOperationDescription This function maps each pixel in the specified source image to values determined by the specified lookup table (LUT).
 
 */
-SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::LutMap( const SVMatroxBuffer& p_rDest, 
+HRESULT SVMatroxImageInterface::LutMap( const SVMatroxBuffer& p_rDest, 
 																	const SVMatroxBuffer& p_rSource, 
 																	const SVMatroxBuffer& p_rLut)
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -1679,7 +1679,7 @@ SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::LutMap( const SVMat
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert( l_Code == SVMEE_STATUS_OK );
+	assert( l_Code == S_OK );
 	return l_Code;
 }
 
@@ -1689,9 +1689,9 @@ SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::LutMap( const SVMat
 @SVOperationDescription This function performs a binary or grayscale opening operation on the given source image for the specified number of iterations.
 
 */
-SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::Open( const SVMatroxBuffer& p_rDest, const SVMatroxBuffer& p_rSource, long p_lItters, SVImageOperationTypeEnum p_eOp)
+HRESULT SVMatroxImageInterface::Open( const SVMatroxBuffer& p_rDest, const SVMatroxBuffer& p_rSource, long p_lItters, SVImageOperationTypeEnum p_eOp)
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -1725,7 +1725,7 @@ SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::Open( const SVMatro
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert( l_Code == SVMEE_STATUS_OK );
+	assert( l_Code == S_OK );
 	return l_Code;
 }
 
@@ -1735,10 +1735,10 @@ SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::Open( const SVMatro
 @SVOperationDescription This function performs a rectangular-to-polar or polar-to-rectangular transformation.
 
 */
-SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::PolarTransform( const SVMatroxBuffer& p_rDest, 
+HRESULT SVMatroxImageInterface::PolarTransform( const SVMatroxBuffer& p_rDest, 
 																			SVMatroxPolarTransformStruct& p_rTransformStruct)
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -1792,7 +1792,7 @@ SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::PolarTransform( con
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert( l_Code == SVMEE_STATUS_OK );
+	assert( l_Code == S_OK );
 	return l_Code;
 }
 
@@ -1802,11 +1802,11 @@ SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::PolarTransform( con
 @SVOperationDescription This function projects a two-dimensional buffer into a one-dimensional buffer from the specified angle, and writes results to the specified projection result buffer.
 
 */
-SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::Project( const SVMatroxImageResult& p_rProjDest, 
+HRESULT SVMatroxImageInterface::Project( const SVMatroxImageResult& p_rProjDest, 
 																	 const SVMatroxBuffer& p_rSource, 
 																	 double p_dAngle)
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -1831,7 +1831,7 @@ SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::Project( const SVMa
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert( l_Code == SVMEE_STATUS_OK );
+	assert( l_Code == S_OK );
 	return l_Code;
 }
 
@@ -1841,12 +1841,12 @@ SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::Project( const SVMa
 @SVOperationDescription This function performs a rank filter operation on the specified source buffer. 
 
 */
-SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::Rank( const SVMatroxBuffer& p_rDest, 
+HRESULT SVMatroxImageInterface::Rank( const SVMatroxBuffer& p_rDest, 
 																  const SVMatroxBuffer& p_rSource, 
 																  const SVMatroxBuffer& p_rStructElem, 
 																  long p_lRank)
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -1873,7 +1873,7 @@ SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::Rank( const SVMatro
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert( l_Code == SVMEE_STATUS_OK );
+	assert( l_Code == S_OK );
 	return l_Code;
 }
 
@@ -1883,10 +1883,10 @@ SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::Rank( const SVMatro
 @SVOperationDescription This function rotates an image by the specified angle of rotation, using the specified interpolation mode.
 
 */
-SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::Rotate( const SVMatroxBuffer& p_rProjDest, 
+HRESULT SVMatroxImageInterface::Rotate( const SVMatroxBuffer& p_rProjDest, 
 																	const SVMatroxImageRotateStruct& p_RotateStruct )
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -1924,7 +1924,7 @@ SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::Rotate( const SVMat
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert( l_Code == SVMEE_STATUS_OK );
+	assert( l_Code == S_OK );
 	return l_Code;
 }
 
@@ -1935,12 +1935,12 @@ SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::Rotate( const SVMat
 @SVOperationDescription This function performs a binary or grayscale thickening on the specified source image for the specified number of iterations.
 
 */
-SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::Thick( const SVMatroxBuffer& p_rDest, 
+HRESULT SVMatroxImageInterface::Thick( const SVMatroxBuffer& p_rDest, 
 																   const SVMatroxBuffer& p_rSource, 
 																   long p_lItters, 
 																   SVImageOperationTypeEnum p_eOp)
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -1974,7 +1974,7 @@ SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::Thick( const SVMatr
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert( l_Code == SVMEE_STATUS_OK );
+	assert( l_Code == S_OK );
 	return l_Code;
 }
 
@@ -1984,12 +1984,12 @@ SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::Thick( const SVMatr
 @SVOperationDescription This function performs a binary or grayscale thinning on the specified source image for the specified number of iterations.
 
 */
-SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::Thin( const SVMatroxBuffer& p_rDest, 
+HRESULT SVMatroxImageInterface::Thin( const SVMatroxBuffer& p_rDest, 
 																  const SVMatroxBuffer& p_rSource, 
 																  long p_lItters, 
 																  SVImageOperationTypeEnum p_eOp)
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -2023,7 +2023,7 @@ SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::Thin( const SVMatro
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert( l_Code == SVMEE_STATUS_OK );
+	assert( l_Code == S_OK );
 	return l_Code;
 }
 
@@ -2033,13 +2033,13 @@ SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::Thin( const SVMatro
 @SVOperationDescription This function warps an image through lookup tables (LUTs). 
 
 */
-SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::Warp( const SVMatroxBuffer& p_rDest, 
+HRESULT SVMatroxImageInterface::Warp( const SVMatroxBuffer& p_rDest, 
 																  const SVMatroxBuffer& p_rSource, 
 																  const SVMatroxBuffer& p_rLut1, 
 																  const SVMatroxBuffer& p_rLut2, 
 																  SVImageOperationTypeEnum p_eInterpMode)
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -2075,7 +2075,7 @@ SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::Warp( const SVMatro
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert( l_Code == SVMEE_STATUS_OK );
+	assert( l_Code == S_OK );
 	return l_Code;
 }
 
@@ -2085,13 +2085,13 @@ SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::Warp( const SVMatro
 @SVOperationDescription This function performs a watershed transformation on the specified source buffer.
 
 */
-SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::Watershed( const SVMatroxBuffer& p_rDest, 
+HRESULT SVMatroxImageInterface::Watershed( const SVMatroxBuffer& p_rDest, 
 																	   const SVMatroxBuffer& p_rSource, 
 																	   const SVMatroxBuffer& p_rMarker, 
 																	   long p_lMinVariation, 
 																	   SVImageWaterShedEnum p_lControlFlag)
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT l_Code( S_OK );
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -2126,7 +2126,7 @@ SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::Watershed( const SV
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert( l_Code == SVMEE_STATUS_OK );
+	assert( l_Code == S_OK );
 	return l_Code;
 }
 
@@ -2136,7 +2136,7 @@ SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::Watershed( const SV
 @SVOperationDescription This function performs a scaling transformation on the specified source buffer.
 
 */
-SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::Resize( const SVMatroxBuffer&		p_rDest,
+HRESULT SVMatroxImageInterface::Resize( const SVMatroxBuffer&		p_rDest,
 																	 const SVMatroxBuffer&		p_rSource,
 																	 const double				p_dScaleFactorX,
 																	 const double				p_dScaleFactorY,
@@ -2144,7 +2144,7 @@ SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::Resize( const SVMat
 																	 const SVOverscanOptions::SVOverscanOptionsEnum	overscan,
 																	 const SVPerformanceOptions::SVPerformanceOptionsEnum	performance)
 {
-	SVStatusCode l_Code( SVMEE_STATUS_OK );
+	HRESULT l_Code( S_OK );
 
 #ifdef USE_TRY_BLOCKS
 	try
@@ -2170,14 +2170,14 @@ SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::Resize( const SVMat
 
 			l_Code = SVInterpolationModeOptions::m_Convertor.ConvertBitSetToMatroxType(interpolationMode, matroxInterpolationMode);
 
-			if (SVMEE_STATUS_OK != l_Code)
+			if (S_OK != l_Code)
 			{
 				break;
 			}
 
 			l_Code = SVOverscanOptions::m_Convertor.ConvertBitSetToMatroxType(overscan, matroxOverscan);
 
-			if (SVMEE_STATUS_OK != l_Code)
+			if (S_OK != l_Code)
 			{
 				break;
 			}
@@ -2199,7 +2199,7 @@ SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::Resize( const SVMat
 				}
 			}
 
-			if (SVMEE_STATUS_OK != l_Code)
+			if (S_OK != l_Code)
 			{
 				break;
 			}
@@ -2223,7 +2223,7 @@ SVMatroxImageInterface::SVStatusCode SVMatroxImageInterface::Resize( const SVMat
 		SVMatroxApplicationInterface::LogMatroxException();
 	}
 #endif
-	assert( l_Code == SVMEE_STATUS_OK );
+	assert( l_Code == S_OK );
 	return l_Code;
 }
 

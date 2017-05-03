@@ -31,7 +31,6 @@ public:
 		SVUnknownToolExtent        = 0,
 		SVToolExtent               = 1,
 		SVTransformationToolExtent = 2,
-		SVColorToolExtent          = 3,
 	};
 
 	SVToolExtentClass();

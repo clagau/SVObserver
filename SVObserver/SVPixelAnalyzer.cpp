@@ -86,7 +86,7 @@ BOOL SVPixelAnalyzerClass::CloseObject()
 
 	if ( !m_histResultID.empty() )
 	{
-		SVMatroxImageInterface::SVStatusCode l_Code;
+		HRESULT l_Code;
 		l_Code = SVMatroxImageInterface::Destroy( m_histResultID );
 	}
 	return SVImageAnalyzerClass::CloseObject();
@@ -181,8 +181,6 @@ bool SVPixelAnalyzerClass::onRun(SVRunStatusClass &rRunStatus, SvStl::MessageCon
 	{
 		SVSmartHandlePointer ImageHandle;
 
-		SVMatroxImageInterface::SVStatusCode l_Code;
-
 		pInputImage = getInputImage ();
 
 		if( ! pInputImage )
@@ -210,9 +208,9 @@ bool SVPixelAnalyzerClass::onRun(SVRunStatusClass &rRunStatus, SvStl::MessageCon
 		SVImageBufferHandleImage l_MilHandle;
 		ImageHandle->GetData( l_MilHandle );
 
-		l_Code = SVMatroxImageInterface::Histogram( m_histResultID, l_MilHandle.GetBuffer() );
+		HRESULT MatroxCode = SVMatroxImageInterface::Histogram( m_histResultID, l_MilHandle.GetBuffer() );
 
-		if( l_Code != SVMEE_STATUS_OK )
+		if (S_OK != MatroxCode)
 		{
 			Result = false;
 			if (nullptr != pErrorMessages)
@@ -223,9 +221,9 @@ bool SVPixelAnalyzerClass::onRun(SVRunStatusClass &rRunStatus, SvStl::MessageCon
 			break;
 		}
 
-		l_Code = SVMatroxImageInterface::GetResult( m_histResultID, m_alHistValues );
+		MatroxCode = SVMatroxImageInterface::GetResult( m_histResultID, m_alHistValues );
 
-		if( l_Code != SVMEE_STATUS_OK )
+		if (S_OK != MatroxCode)
 		{
 			Result = false;
 			if (nullptr != pErrorMessages)

@@ -354,10 +354,7 @@ HRESULT SVAcquisitionClass::LoadFiles(SVFileNameArrayClass &rArray)
 	{
 		if ( ! SVFileNameManagerClass::Instance().AddItem( &(mFiles[l]) ) )
 		{
-			if( SVSVIMStateClass::CheckState( SV_STATE_REMOTE_CMD ) )
-			{
-				LogOnly = true;
-			}
+			LogOnly = SVSVIMStateClass::CheckState(SV_STATE_REMOTE_CMD);
 			if( LogOnly )
 			{
 				SvStl::MessageMgrStd Exception( SvStl::LogOnly );

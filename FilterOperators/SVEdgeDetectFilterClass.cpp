@@ -42,11 +42,11 @@ bool SVEdgeDetectFilterClass::onRun( bool First, SVSmartHandlePointer RInputImag
 		RInputImageHandle->GetData( l_InMilHandle );
 		ROutputImageHandle->GetData( l_OutMilHandle );
 
-		SVMatroxImageInterface::SVStatusCode l_Code;
+		HRESULT l_Code;
 		l_Code = SVMatroxImageInterface::Convolve( l_OutMilHandle.GetBuffer(),
 			First ? l_InMilHandle.GetBuffer() : l_OutMilHandle.GetBuffer(),
 				SVFilterOpEdge );
-		if( l_Code != SVMEE_STATUS_OK )
+		if( l_Code != S_OK )
 		{
 			if (nullptr != pErrorMessages)
 			{

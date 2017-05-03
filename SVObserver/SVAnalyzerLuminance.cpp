@@ -249,7 +249,7 @@ bool SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messa
 	long             lNbrPixels(0);
 	double			 value = 0.0;
 
-	SVMatroxImageInterface::SVStatusCode l_Code;
+	HRESULT MatroxResult;
 	bool  LastError(false);
 
 	while (1)
@@ -310,8 +310,8 @@ bool SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messa
 
 		SVMatroxImageInterface l_lImageIntf;
 
-		l_Code = l_lImageIntf.Histogram(msvHistResultID, l_MilBuffer.GetBuffer() );
-		if( l_Code != SVMEE_STATUS_OK )
+		MatroxResult = l_lImageIntf.Histogram(msvHistResultID, l_MilBuffer.GetBuffer() );
+		if( S_OK != MatroxResult )
 		{
 			//          35 = Invalid MIL ID, for others see milerr.h
 			LastError = true;
@@ -323,10 +323,10 @@ bool SVLuminanceAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messa
 			break;
 		}
 
-		l_Code = l_lImageIntf.GetResult(msvHistResultID,  msvplHistValues );
+		MatroxResult = l_lImageIntf.GetResult(msvHistResultID,  msvplHistValues );
 
 
-		if( l_Code != SVMEE_STATUS_OK )
+		if( S_OK != MatroxResult )
 		{
 			LastError = true;
 			if (nullptr != pErrorMessages)

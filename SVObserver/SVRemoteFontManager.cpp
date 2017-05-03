@@ -203,7 +203,6 @@ bool SVRemoteFontManager::AddFont( long &lIdentifier )
 		m_arRemoteFontIdentifiers.Add( dwTick );
 
 		
-		SVMatroxOcrInterface::SVStatusCode l_Code;
 		SVMatroxOcr milHandle;
 		SVMatroxOcrCreateStruct l_Create;
 
@@ -219,8 +218,8 @@ bool SVRemoteFontManager::AddFont( long &lIdentifier )
 		l_Create.m_lCharThickness = 3;
 		l_Create.m_lStringLength = 10;
 
-		l_Code = SVMatroxOcrInterface::Create( milHandle, l_Create );
-		if( l_Code == SVMEE_STATUS_OK )
+		HRESULT MatroxCode = SVMatroxOcrInterface::Create( milHandle, l_Create );
+		if( S_OK == MatroxCode )
 		{
 			m_arRemoteFontHandles.Add( milHandle );
 			
@@ -513,7 +512,7 @@ bool SVRemoteFontManager::CopyFont( SVMatroxOcr& p_CurrentFont, SVMatroxOcr& p_N
 	long lCharInCurrFont;
 	long lMaxStringLength;
 	
-	SVMatroxOcrInterface::SVStatusCode l_Code;
+	HRESULT l_Code;
 	SVMatroxOcrCreateStruct l_Create;
 
 	l_Code = SVMatroxOcrInterface::Get( p_CurrentFont, SVCharNumberInFont, lCharInCurrFont );
@@ -565,7 +564,7 @@ bool SVRemoteFontManager::CopyFont( SVMatroxOcr& p_CurrentFont, SVMatroxOcr& p_N
 	for(long i=0; i<lCharInCurrFont; i++)
 	{
 		
-		SVMatroxBufferInterface::SVStatusCode l_Code;
+		HRESULT l_Code;
 		SVMatroxBufferCreateStruct l_Create;
 		
 
@@ -812,7 +811,7 @@ bool SVRemoteFontManager::DeleteFontChar(long lIdentifier, SVMatroxOcr lCurrentF
 		if ( cIter != l_Map.end() )
 		{
 			
-			SVMatroxOcrInterface ::SVStatusCode l_Code;
+			HRESULT l_Code;
 			char cTmp;
 			cTmp = cIter->second;
 			l_Code = SVMatroxOcrInterface::Set( lCurrentFont, SVOcrCharErase, (double)cTmp);

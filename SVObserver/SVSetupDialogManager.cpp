@@ -459,7 +459,7 @@ HRESULT SVSetupDialogManager::SVColorToolClassSetupDialog( const SVGUID& p_rObje
 				SVColorThresholdClass* pThreshold = ( SVColorThresholdClass * )l_pTool->GetAt(0);
 				if (pThreshold)
 				{
-					pThreshold->bShowHistogram = true;
+					pThreshold->setShowHistogram(true);
 				}
 				if( ID_OK == dlg.DoModal() )
 				{
@@ -472,7 +472,7 @@ HRESULT SVSetupDialogManager::SVColorToolClassSetupDialog( const SVGUID& p_rObje
 				}
 				if (pThreshold)
 				{			
-					pThreshold->bShowHistogram = false;
+					pThreshold->setShowHistogram(false);
 				}
 				pIPDoc->UpdateAllViews( nullptr );
 			}

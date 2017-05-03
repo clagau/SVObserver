@@ -29,21 +29,20 @@ The GetFirstError returns a SVMatroxStatusInformation which is filled with infor
 class SVMatroxApplicationInterface
 {
 public:
-	typedef SVMatroxStatusInformation::SVStatusCode SVStatusCode;
 
 	static void Startup();
 	static void Shutdown();
 
-	static SVStatusCode GetLastStatus();
-	static SVStatusCode GetLastStatus( SVMatroxStatusInformation& p_rStatus );
+	static HRESULT GetLastStatus();
+	static HRESULT GetLastStatus( SVMatroxStatusInformation& p_rStatus );
 
-	static SVStatusCode GetFirstError();
-	static SVStatusCode GetFirstError( SVMatroxStatusInformation& p_rStatus );
+	static HRESULT GetFirstError();
+	static HRESULT GetFirstError( SVMatroxStatusInformation& p_rStatus );
 
 	static void Log( SVMatroxStatusInformation& p_rStatusInfo );
 	static void LogMatroxException();
-	static SVStatusCode GetSystemCount( long& p_lCount );
-	static SVStatusCode GetSystemName( SVMatroxInt p_lSystemNumber, SVString& p_rSystemName );
+	static HRESULT GetSystemCount( long& p_lCount );
+	static HRESULT GetSystemName( SVMatroxInt p_lSystemNumber, SVString& p_rSystemName );
 	static HRESULT SVMatroxIntToHRESULT( SVMatroxIdentifier p_Int );
 
 protected:

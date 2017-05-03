@@ -26,30 +26,30 @@ SVMatroxBufferArray::~SVMatroxBufferArray()
 	// Destroy(); // can this be called here or is the Framework too far gone at this point ?
 }
 
-SVMatroxBufferArray::SVStatusCode SVMatroxBufferArray::Create(const SVMatroxSystem& rSystem, const SVMatroxBufferCreateStruct& p_rCreateStruct, long count)
+HRESULT SVMatroxBufferArray::Create(const SVMatroxSystem& rSystem, const SVMatroxBufferCreateStruct& p_rCreateStruct, long count)
 {
 	LocalClear();
 	
-	SVStatusCode statusCode( SVMEE_STATUS_OK );
+	HRESULT Result(S_OK);
 	m_BufferIdentifierList.resize(count);	// reserve storage
 
 	SVMatroxBufferInterface l_Interface;
 	SVMatroxBuffer l_Buffer;
 	for (int i = 0;i < count;i++)
 	{
-		SVMatroxBufferInterface::SVStatusCode l_Code = l_Interface.Create(rSystem, l_Buffer, p_rCreateStruct);
-		if (l_Code == SVMEE_STATUS_OK)
+		HRESULT MatroxCode = l_Interface.Create(rSystem, l_Buffer, p_rCreateStruct);
+		if (S_OK == MatroxCode)
 		{
 			m_BufferIdentifierList[i] = l_Buffer;
 		}
 		else
 		{
-			statusCode = l_Code;
+			Result = MatroxCode;
 			break;
 		}
 	}
 	
-	return statusCode;
+	return Result;
 }
 
 void SVMatroxBufferArray::Destroy()

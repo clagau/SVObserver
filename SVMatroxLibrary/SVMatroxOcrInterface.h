@@ -49,63 +49,61 @@ The SaveFont function uses the Matrox MocrSaveFont. This function saves an exist
 class SVMatroxOcrInterface
 {
 public:
-	typedef SVMatroxApplicationInterface::SVStatusCode SVStatusCode;
-
 	SVMatroxOcrInterface();
 
 	virtual ~SVMatroxOcrInterface();
 
 	// This function replaces MocrAllocFont
-	static SVStatusCode Create( SVMatroxOcr& p_rFontId, const SVMatroxOcrCreateStruct& p_rCreateStruct );
+	static HRESULT Create( SVMatroxOcr& p_rFontId, const SVMatroxOcrCreateStruct& p_rCreateStruct );
 	// This function replaces MocrAllocResult
-	static SVStatusCode Create( SVMatroxOcrResult& p_rFontResult);
+	static HRESULT Create( SVMatroxOcrResult& p_rFontResult);
 	// This function replaces MocrAllocFont
-	static SVStatusCode Destroy( SVMatroxOcr& p_rId );
-	static SVStatusCode Destroy( SVMatroxOcrResult& p_rId );
+	static HRESULT Destroy( SVMatroxOcr& p_rId );
+	static HRESULT Destroy( SVMatroxOcrResult& p_rId );
 
 	// This function replaces MocrCalibrateFont
-	static SVStatusCode CalibrateFont( const SVMatroxOcr& p_rFontId, const SVMatroxOcrCalibrateStruct& p_rCalStruct );
+	static HRESULT CalibrateFont( const SVMatroxOcr& p_rFontId, const SVMatroxOcrCalibrateStruct& p_rCalStruct );
 	static HRESULT CalibrateFontCommand( const SVCommandDataHolder& p_rAttributes, SVCommandDataHolder& p_rResults );
 
 	// This function replaces MocrVerifyString and MocrReadString
-	static SVStatusCode Execute( const SVMatroxOcrResult& p_rResultId, const SVMatroxOcr& p_rFontId, const SVMatroxBuffer& p_rImage );
+	static HRESULT Execute( const SVMatroxOcrResult& p_rResultId, const SVMatroxOcr& p_rFontId, const SVMatroxBuffer& p_rImage );
 	static HRESULT ReadString( const SVCommandDataHolder& p_rAttributes, SVCommandDataHolder& p_rResults );
 	static HRESULT VerifyString( const SVCommandDataHolder& p_rAttributes, SVCommandDataHolder& p_rResults );
 	
 	// This function replaces MocrCopyFont
-	static SVStatusCode CopyFont(const SVMatroxOcr& p_rFontId, const SVMatroxBuffer& p_rImageBufId,
+	static HRESULT CopyFont(const SVMatroxOcr& p_rFontId, const SVMatroxBuffer& p_rImageBufId,
 		SVOcrOperationEnum p_eOperation, SVString& p_String);
 
 	// This function replaces MocrPreprocess
-	static SVStatusCode Preprocess( const SVMatroxOcr& p_rFontId );
+	static HRESULT Preprocess( const SVMatroxOcr& p_rFontId );
 
-	static SVStatusCode SetVerify( SVMatroxOcr& p_rFontId, const SVString& p_strVerifyString, const bool p_bVerifyOn );
-
-	// These functions use MocrControl
-	static SVStatusCode Set( const SVMatroxOcr& p_rFontId, SVOcrControlEnum, const double& p_dValue );
-	static SVStatusCode Set( const SVMatroxOcr& p_rFontId, SVOcrControlEnum, const long& p_lValue );
-
-	// This function replaces MocrInquire
-	static SVStatusCode Get( const SVMatroxOcr& p_rFontId, SVOcrControlEnum InquireType, double& p_rdValue) ;
-	static SVStatusCode Get( const SVMatroxOcr& p_rFontId, SVOcrControlEnum InquireType, long& p_rlValue) ;
-	static SVStatusCode Get( const SVMatroxOcr& p_rFontId, SVOcrControlEnum InquireType, SVString& p_rStrValue) ;
+	static HRESULT SetVerify( SVMatroxOcr& p_rFontId, const SVString& p_strVerifyString, const bool p_bVerifyOn );
 
 	// These functions use MocrControl
-	static SVStatusCode SetResult( const SVMatroxOcrResult& p_rFontId, SVOcrControlEnum, const double& p_dValue );
-	static SVStatusCode SetResult( const SVMatroxOcrResult& p_rFontId, SVOcrControlEnum, const long& p_lValue );
+	static HRESULT Set( const SVMatroxOcr& p_rFontId, SVOcrControlEnum, const double& p_dValue );
+	static HRESULT Set( const SVMatroxOcr& p_rFontId, SVOcrControlEnum, const long& p_lValue );
 
 	// This function replaces MocrInquire
-	static SVStatusCode GetResult( const SVMatroxOcrResult& p_rFontId, SVOcrResultEnum InquireType, double& p_rdValue) ;
-	static SVStatusCode GetResult( const SVMatroxOcrResult& p_rFontId, SVOcrResultEnum InquireType, long& p_rlValue) ;
-	static SVStatusCode GetResult( const SVMatroxOcrResult& p_rFontId, SVOcrResultEnum InquireType, SVString& p_rStrValue) ;
-	static SVStatusCode GetResult( const SVMatroxOcrResult& p_rFontId, SVOcrResultEnum InquireType, SVMatroxDoubleArray& p_adValues ) ;
+	static HRESULT Get( const SVMatroxOcr& p_rFontId, SVOcrControlEnum InquireType, double& p_rdValue) ;
+	static HRESULT Get( const SVMatroxOcr& p_rFontId, SVOcrControlEnum InquireType, long& p_rlValue) ;
+	static HRESULT Get( const SVMatroxOcr& p_rFontId, SVOcrControlEnum InquireType, SVString& p_rStrValue) ;
+
+	// These functions use MocrControl
+	static HRESULT SetResult( const SVMatroxOcrResult& p_rFontId, SVOcrControlEnum, const double& p_dValue );
+	static HRESULT SetResult( const SVMatroxOcrResult& p_rFontId, SVOcrControlEnum, const long& p_lValue );
+
+	// This function replaces MocrInquire
+	static HRESULT GetResult( const SVMatroxOcrResult& p_rFontId, SVOcrResultEnum InquireType, double& p_rdValue) ;
+	static HRESULT GetResult( const SVMatroxOcrResult& p_rFontId, SVOcrResultEnum InquireType, long& p_rlValue) ;
+	static HRESULT GetResult( const SVMatroxOcrResult& p_rFontId, SVOcrResultEnum InquireType, SVString& p_rStrValue) ;
+	static HRESULT GetResult( const SVMatroxOcrResult& p_rFontId, SVOcrResultEnum InquireType, SVMatroxDoubleArray& p_adValues ) ;
 
 	// This function replaces MocrRestoreFont
-	static SVStatusCode RestoreFont( SVMatroxOcr& p_rFontId, const SVString& p_sFileName, SVOcrOperationEnum p_eOperation);
+	static HRESULT RestoreFont( SVMatroxOcr& p_rFontId, const SVString& p_sFileName, SVOcrOperationEnum p_eOperation);
 	static HRESULT RestoreFont( const SVCommandDataHolder& p_rAttributes, SVCommandDataHolder& p_rResults );
 
 	// This function replaces MocrSaveFont
-	static SVStatusCode SaveFont( const SVMatroxOcr& p_rFontId, const SVString& p_sFileName, SVOcrOperationEnum p_eOperation);
+	static HRESULT SaveFont( const SVMatroxOcr& p_rFontId, const SVString& p_sFileName, SVOcrOperationEnum p_eOperation);
 	static HRESULT SaveFont( const SVCommandDataHolder& p_rAttributes, SVCommandDataHolder& p_rResults );
 
 	static HRESULT FindFontCharacters( const SVCommandDataHolder& p_rAttributes, SVCommandDataHolder& p_rResults );

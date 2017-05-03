@@ -201,7 +201,7 @@ bool SVRankingFilterClass::ResetObject(SvStl::MessageContainerVector *pErrorMess
 ////////////////////////////////////////////////////////////////////////////////
 void SVRankingFilterClass::RebuildRanking()
 {
-	SVMatroxBufferInterface::SVStatusCode l_Code;
+	HRESULT l_Code;
 	// First free old ranking
 
 	m_milRanking.clear();
@@ -318,13 +318,13 @@ bool SVRankingFilterClass::onRun( bool First, SVSmartHandlePointer RInputImageHa
 		RInputImageHandle->GetData( l_InMilHandle );
 		ROutputImageHandle->GetData( l_OutMilHandle );
 		
-		SVMatroxImageInterface::SVStatusCode l_Code;
+		HRESULT l_Code;
 
 		m_lvoRankingRank.GetValue( lRank );
 		l_Code = SVMatroxImageInterface::Rank( l_OutMilHandle.GetBuffer(),
 				First ? l_InMilHandle.GetBuffer() : l_OutMilHandle.GetBuffer(),
 				m_milRanking, lRank );
-	    if( SVMEE_STATUS_OK != l_Code )
+	    if( S_OK != l_Code )
 		{
 			if (nullptr != pErrorMessages)
 			{

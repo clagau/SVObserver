@@ -14,7 +14,7 @@
 #include "SVTool.h"
 #include "SVOCore/SVImageClass.h"
 
-class SVLoadImageToolClass : public SVToolClass, public AllowResizeToParent
+class SVLoadImageToolClass : public SVToolClass
 {
 	SV_DECLARE_CLASS( SVLoadImageToolClass );
 

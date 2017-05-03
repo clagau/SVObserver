@@ -246,6 +246,9 @@ public:
 	HRESULT AttachAcqToTriggers();
 	HRESULT ValidateOutputList();
 
+	//! Method makes changes to the loaded configuration as required to upgrade it to the newer version
+	void UpgradeConfiguration();
+
 	SVIMProductEnum GetProductType() const;
 	void SetProductType( SVIMProductEnum eProductType );
 	bool IsConfigurationLoaded() const;

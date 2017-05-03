@@ -339,7 +339,7 @@ bool SVPerspectiveToolClass::onRun( SVRunStatusClass &p_rRunStatus, SvStl::Messa
 				l_InputHandle->GetData( l_InMilHandle );
 				l_OutputHandle->GetData( l_OutMilHandle );
 
-				SVMatroxImageInterface::SVStatusCode l_Code;
+				HRESULT l_Code;
 				l_Code = SVMatroxImageInterface::Warp( l_OutMilHandle.GetBuffer(), 
 					l_InMilHandle.GetBuffer(), m_LutX, m_LutY, static_cast<SVImageOperationTypeEnum>(Interpolation) );
 
@@ -437,7 +437,7 @@ HRESULT SVPerspectiveToolClass::CreateLUT()
 	
 	SVImageExtentClass l_svOutputExtents;
 
-	SVMatroxImageInterface::SVStatusCode l_Code;
+	HRESULT l_Code;
 
 	long l_lWidth = 100;
 	long l_lHeight = 100;

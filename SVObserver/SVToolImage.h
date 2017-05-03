@@ -14,7 +14,7 @@
 #include "SVTool.h"
 #pragma region Includes
 
-class SVImageToolClass : public SVToolClass, public AllowResizeToParent
+class SVImageToolClass : public SVToolClass
 {
 	SV_DECLARE_CLASS( SVImageToolClass );
 

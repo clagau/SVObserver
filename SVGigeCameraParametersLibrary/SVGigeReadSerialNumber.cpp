@@ -17,8 +17,8 @@
 HRESULT SVGigeReadSerialNumber::operator()(SVMatroxDigitizerRef Digitizer, const SVGigeFeature& rFeature, _variant_t& rValue) const
 { 
 	SVString value;
-	SVMatroxDigitizerInterface::SVStatusCode l_Code = SVMatroxDigitizerInterface::GetGigeSerialNumber(*(Digitizer.get()), value);
-	if (l_Code == SVMEE_STATUS_OK)
+	HRESULT l_Code = SVMatroxDigitizerInterface::GetGigeSerialNumber(*(Digitizer.get()), value);
+	if (l_Code == S_OK)
 	{
 		rValue = _bstr_t(SVString(value).c_str()).Detach();
 	}

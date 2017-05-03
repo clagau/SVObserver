@@ -1367,7 +1367,7 @@ BOOL SVImageClass::SafeImageCopyToHandle( SVSmartHandlePointer &p_rHandle )
 	{
 		if ( Lock() )
 		{
-			SVMatroxBufferInterface::SVStatusCode l_Code;
+			HRESULT l_Code;
 
 			SVImageBufferHandleImage l_ToMilHandle;
 			p_rHandle->GetData( l_ToMilHandle );
@@ -1388,7 +1388,7 @@ BOOL SVImageClass::SafeImageCopyToHandle( SVSmartHandlePointer &p_rHandle )
 				l_Code = SVMatroxBufferInterface::ClearBuffer( l_ToMilHandle.GetBuffer(), 0.0 );
 			}
 
-			l_bOk = Unlock() && l_bOk && SVMEE_STATUS_OK == l_Code;
+			l_bOk = Unlock() && l_bOk && S_OK == l_Code;
 		}
 	}
 	return l_bOk;
@@ -1402,7 +1402,7 @@ BOOL SVImageClass::SafeImageCopyToHandle( SVImageIndexStruct p_svFromIndex, SVSm
 	{
 		if ( Lock() )
 		{
-			SVMatroxBufferInterface::SVStatusCode l_Code;
+			HRESULT l_Code;
 
 			SVImageBufferHandleImage l_ToMilHandle;
 			p_rHandle->GetData( l_ToMilHandle );
@@ -1423,7 +1423,7 @@ BOOL SVImageClass::SafeImageCopyToHandle( SVImageIndexStruct p_svFromIndex, SVSm
 				l_Code = SVMatroxBufferInterface::ClearBuffer( l_ToMilHandle.GetBuffer(), 0.0 );
 			}
 
-			l_bOk = Unlock() && l_bOk && SVMEE_STATUS_OK == l_Code;
+			l_bOk = Unlock() && l_bOk && S_OK == l_Code;
 		}
 	}
 	return l_bOk;
@@ -1440,7 +1440,7 @@ BOOL SVImageClass::SafeImageConvertToHandle( SVSmartHandlePointer &p_rHandle, SV
 			SVImageBufferHandleImage l_ToMilHandle;
 			p_rHandle->GetData( l_ToMilHandle );
 						
-			SVMatroxImageInterface::SVStatusCode l_Code;
+			HRESULT l_Code;
 
 			SVSmartHandlePointer l_svHandle;
 
@@ -1458,7 +1458,7 @@ BOOL SVImageClass::SafeImageConvertToHandle( SVSmartHandlePointer &p_rHandle, SV
 				l_Code = SVMatroxBufferInterface::ClearBuffer( l_ToMilHandle.GetBuffer(), 0.0 );
 			}
 
-			l_bOk = Unlock() && l_bOk && SVMEE_STATUS_OK == l_Code;
+			l_bOk = Unlock() && l_bOk && S_OK == l_Code;
 		}
 	}
 	return l_bOk;
@@ -1475,7 +1475,7 @@ BOOL SVImageClass::SafeImageConvertToHandle( SVImageIndexStruct p_svFromIndex, S
 			SVImageBufferHandleImage l_ToMilHandle;
 			p_rHandle->GetData( l_ToMilHandle );
 			
-			SVMatroxImageInterface::SVStatusCode l_Code;
+			HRESULT l_Code;
 
 			SVSmartHandlePointer l_svHandle;
 
@@ -2421,7 +2421,7 @@ HRESULT SVImageClass::Save(const SVString& rFilename)
 		if (efileformat != SVFileUnknown)
 		{
 			SVString strPath = rFilename.c_str();
-			SVMatroxBufferInterface::SVStatusCode l_Code = SVMatroxBufferInterface::Export(MilHandle.GetBuffer(), strPath, efileformat);
+			HRESULT l_Code = SVMatroxBufferInterface::Export(MilHandle.GetBuffer(), strPath, efileformat);
 		}
 		else
 		{

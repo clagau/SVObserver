@@ -163,35 +163,34 @@ HRESULT SVCommandInspectionCollectImageData::UpdateResults( SVInspectionProcess*
 	return hRet;
 }
 
-HRESULT SVCommandInspectionCollectImageData::UpdateBuffer(const SVGUID& p_rImageId, SVGuidSVCameraInfoStructMap& p_rsvCameraInfos,
-										 SVImageIndexStruct p_svResultImageIndex, long p_ResultDataIndex,
-										 SVByteVector& p_rImageDIB, SVExtentMultiLineStructVector& p_rMultiLineArray)
+HRESULT SVCommandInspectionCollectImageData::UpdateBuffer(const SVGUID& rImageId, SVGuidSVCameraInfoStructMap& rCameraInfos,
+										 SVImageIndexStruct ResultImageIndex, long ResultDataIndex,
+										 SVByteVector& rImageDIB, SVExtentMultiLineStructVector& rMultiLineArray)
 {
 	HRESULT l_Status = S_OK;
 
-	SVImageClass* l_pImage = dynamic_cast< SVImageClass* >( SVObjectManagerClass::Instance().GetObject( p_rImageId.ToGUID() ) );
+	SVImageClass* pImage = dynamic_cast<SVImageClass*> ( SVObjectManagerClass::Instance().GetObject( rImageId.ToGUID() ) );
 
-	if( nullptr != l_pImage )
+	if( nullptr != pImage )
 	{
 		SVDataManagerHandle	l_SourceImageDMIndexHandle;
 
-		SVImageIndexStruct svResultImageIndex = p_svResultImageIndex;
+		SVImageIndexStruct svResultImageIndex = ResultImageIndex;
 
-		SVCameraImageTemplate* l_psvMainImage = dynamic_cast< SVCameraImageTemplate* >( l_pImage );
-		SVRGBImageClass* l_psvRGBImage = dynamic_cast< SVRGBImageClass* >( l_pImage );
+		SVCameraImageTemplate* pMainImage = dynamic_cast<SVCameraImageTemplate*> (pImage);
 
-		if( nullptr == l_psvMainImage && nullptr != l_psvRGBImage )
+		if( nullptr == pMainImage)
 		{
-			l_psvMainImage = dynamic_cast< SVCameraImageTemplate* >( l_pImage->GetParentImage() );
+			pMainImage = dynamic_cast<SVCameraImageTemplate*> ( pImage->GetParentImage() );
 		}
 
-		if( nullptr != l_psvMainImage )
+		if( nullptr != pMainImage )
 		{
 			SVGuidSVCameraInfoStructMap::const_iterator l_svIter;
 
-			l_svIter = p_rsvCameraInfos.find( l_psvMainImage->GetCamera()->GetUniqueObjectID() );
+			l_svIter = rCameraInfos.find( pMainImage->GetCamera()->GetUniqueObjectID() );
 
-			if( l_svIter != p_rsvCameraInfos.end() )
+			if( l_svIter != rCameraInfos.end() )
 			{
 				l_SourceImageDMIndexHandle.Assign( l_svIter->second.GetSourceImageDMIndexHandle(), SV_DISPLAY );
 			}
@@ -199,33 +198,25 @@ HRESULT SVCommandInspectionCollectImageData::UpdateBuffer(const SVGUID& p_rImage
 
 		svResultImageIndex.m_CameraDMIndexHandle.Assign( l_SourceImageDMIndexHandle, SV_DISPLAY );
 
-		SVSmartHandlePointer l_ImageBuffer;
+		SVSmartHandlePointer ImageBuffer;
 
-		l_pImage->GetImageHandle( svResultImageIndex, l_ImageBuffer );
+		pImage->GetImageHandle( svResultImageIndex, ImageBuffer );
 
-		if( !( l_ImageBuffer.empty() ) )
+		if( !( ImageBuffer.empty() ) )
 		{
-			// Special check for Color Tool's RGBMainImage which is HSI
-			if( SV_IS_KIND_OF( l_pImage, SVRGBMainImageClass ) )
+			SVBitmapInfo BitmapInfo;
+
+			BITMAPINFOHEADER l_Header = pImage->GetImageInfo().GetBitmapInfoHeader();
+
+			BitmapInfo.Assign( l_Header.biWidth, l_Header.biHeight, l_Header.biBitCount, SVBitmapInfo::GetDefaultColorTable( l_Header.biBitCount ) );
+
+			if( BitmapInfo == ImageBuffer->GetBitmapInfo() )
 			{
-				l_Status = SVImageProcessingClass::ConvertImageBuffer( p_rImageDIB, l_ImageBuffer, SVImageHLSToRGB );
+				l_Status = SVImageProcessingClass::CopyImageBuffer( rImageDIB, ImageBuffer );
 			}
 			else
 			{
-				SVBitmapInfo l_Info;
-
-				BITMAPINFOHEADER l_Header = l_pImage->GetImageInfo().GetBitmapInfoHeader();
-
-				l_Info.Assign( l_Header.biWidth, l_Header.biHeight, l_Header.biBitCount, SVBitmapInfo::GetDefaultColorTable( l_Header.biBitCount ) );
-
-				if( l_Info == l_ImageBuffer->GetBitmapInfo() )
-				{
-					l_Status = SVImageProcessingClass::CopyImageBuffer( p_rImageDIB, l_ImageBuffer );
-				}
-				else
-				{
-					l_Status = SVImageProcessingClass::CopyImageBuffer( p_rImageDIB, l_Info, l_ImageBuffer );
-				}
+				l_Status = SVImageProcessingClass::CopyImageBuffer( rImageDIB, BitmapInfo, ImageBuffer );
 			}
 		}
 		else
@@ -235,9 +226,9 @@ HRESULT SVCommandInspectionCollectImageData::UpdateBuffer(const SVGUID& p_rImage
 
 		if( S_OK == l_Status )
 		{
-			if( nullptr != l_pImage->GetInspection() )
+			if( nullptr != pImage->GetInspection() )
 			{
-				dynamic_cast<SVInspectionProcess*>(l_pImage->GetInspection())->CollectOverlays( l_pImage, p_rMultiLineArray );
+				dynamic_cast<SVInspectionProcess*>(pImage->GetInspection())->CollectOverlays( pImage, rMultiLineArray );
 			}
 			else
 			{

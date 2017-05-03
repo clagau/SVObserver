@@ -34,8 +34,8 @@ HRESULT SVMatroxGigeBufferCreator<Attribute>::Create(const SVMatroxSystem& rSyst
 	
 	if (S_OK == l_hr)
 	{
-		SVMatroxBufferInterface::SVStatusCode l_Code = SVMatroxBufferInterface::Create( rSystem, *(rBufferStruct.m_Buffer.get()), createStruct);
-		if (l_Code == SVMEE_STATUS_OK)
+		HRESULT l_Code = SVMatroxBufferInterface::Create( rSystem, *(rBufferStruct.m_Buffer.get()), createStruct);
+		if (l_Code == S_OK)
 		{
 			l_Code = SVMatroxBufferInterface::GetHostAddress(&(rBufferStruct.m_ulAddress), *(rBufferStruct.m_Buffer.get()));
 		}

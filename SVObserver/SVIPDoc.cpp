@@ -2714,18 +2714,6 @@ void SVIPDoc::RefreshPublishedList()
 	SetModifiedFlag();
 }
 
-SVImageClass* SVIPDoc::GetHSIMainImage()
-{
-	SVImageClass* l_pImage = nullptr;
-
-	if( nullptr != GetInspectionProcess() )
-	{
-		l_pImage = GetInspectionProcess()->GetHSIMainImage();
-	}
-
-	return l_pImage;
-}
-
 HRESULT SVIPDoc::GetCameras( SVVirtualCameraPtrSet& p_rCameras ) const
 {
 	HRESULT l_Status = S_OK;
@@ -3865,26 +3853,15 @@ HRESULT SVIPDoc::UpdateExtentsToFit( SVTaskObjectClass* p_pTask, const SVImageEx
 
 SVImageClass* SVIPDoc::GetImageByName( LPCTSTR ImageName ) const
 {
-	SVImageClass* l_pImage = nullptr;
+	SVImageClass* pImage = nullptr;
 	SVInspectionProcess* pInspection = GetInspectionProcess();
 
 	if( nullptr != pInspection )
 	{
-		if( IsColorInspectionDocument() && nullptr != pInspection->GetHSIMainImage() )
-		{
-			if( ImageName == pInspection->GetHSIMainImage()->GetCompleteName() )
-			{
-				l_pImage = pInspection->GetHSIMainImage();
-			}
-		}
-
-		if( nullptr == l_pImage )
-		{
-			SVObjectManagerClass::Instance().GetObjectByDottedName( ImageName, l_pImage );
-		}
+		SVObjectManagerClass::Instance().GetObjectByDottedName( ImageName, pImage );
 	}
 
-	return l_pImage;
+	return pImage;
 }
 
 HRESULT SVIPDoc::UpdateWithLastProduct()

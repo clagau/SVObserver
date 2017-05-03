@@ -65,7 +65,7 @@ bool Custom2Filter::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 #pragma region Protected Methods
 void Custom2Filter::RebuildKernel()
 {
-	SVMatroxBufferInterface::SVStatusCode StatusCode;
+	HRESULT StatusCode;
 
 	// First free old kernel
 	m_milKernel.clear();
@@ -136,7 +136,7 @@ void Custom2Filter::RebuildKernel()
 bool Custom2Filter::onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	bool Result( false );
-	SVMatroxImageInterface::SVStatusCode StatusCode;
+	HRESULT StatusCode;
 
 	m_KernelWidth.CopyLastSetValue( rRunStatus.m_lResultDataIndex );
 	m_KernelHeight.CopyLastSetValue( rRunStatus.m_lResultDataIndex );
@@ -157,7 +157,7 @@ bool Custom2Filter::onRun( bool First, SVSmartHandlePointer RInputImageHandle, S
 			First ? InMilHandle.GetBuffer() : MilHandle.GetBuffer(), 
 			m_milKernel );
 
-		if( StatusCode == SVMEE_STATUS_OK )
+		if( StatusCode == S_OK )
 		{
 			Result = true;
 		}

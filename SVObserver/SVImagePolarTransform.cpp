@@ -617,7 +617,7 @@ bool SVImagePolarTransformClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Mes
 				try
 				{
 					
-					SVMatroxImageInterface::SVStatusCode l_Code;
+					HRESULT MatroxCode;
 
 					// Get the default control word.   
 					int cw = _controlfp( 0,0 );
@@ -651,7 +651,7 @@ bool SVImagePolarTransformClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Mes
 					l_Polar.m_eInterpMode = static_cast<SVImageOperationTypeEnum>(l_lInterpolationMode);
 					l_Polar.m_eOpMode = SVRectToPolar;
 
-					l_Code = SVMatroxImageInterface::PolarTransform(l_OutMilHandle.GetBuffer(), l_Polar );
+					MatroxCode = SVMatroxImageInterface::PolarTransform(l_OutMilHandle.GetBuffer(), l_Polar );
 
 
 
@@ -662,19 +662,19 @@ bool SVImagePolarTransformClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Mes
 
 						if( l_dPartialWidth >= 1.0 )
 						{
-							l_Code = SVMatroxBufferInterface::CopyBuffer( l_OutMilHandle.GetBuffer(), l_OutMilHandle.GetBuffer(), (long) l_Polar.m_dDestSizeX,  0L);
+							MatroxCode = SVMatroxBufferInterface::CopyBuffer( l_OutMilHandle.GetBuffer(), l_OutMilHandle.GetBuffer(), (long) l_Polar.m_dDestSizeX,  0L);
 						}
 					}
 
 
-					if( l_Code != SVMEE_STATUS_OK )
+					if (S_OK != MatroxCode)
 					{
 						l_bOk = false;
 						if (nullptr != pErrorMessages)
 						{
 							SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_RunImagePolarFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 							pErrorMessages->push_back(Msg);
-					}
+						}
 					}
 
 

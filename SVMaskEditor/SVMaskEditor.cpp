@@ -105,7 +105,7 @@ SVMatroxBuffer SVBitmapToMilBuffer( HBITMAP HBM )
 
     // Try to create mil buffer...
 	SVMatroxBufferInterface l_BufIntf;
-	SVMatroxBufferInterface::SVStatusCode l_Code;
+	HRESULT l_Code;
 	SVMatroxBufferCreateStruct l_Create;
 
 	l_Create.m_eAttribute = SVBufAttImageProcDispDib;

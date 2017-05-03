@@ -29,8 +29,6 @@ class SVThresholdClass;
 class SVConditionalClass;
 class SVToolClass;
 
-struct AllowResizeToParent{};
-
 enum EAutoSize 
 {
 	EnableNone = 0x0, 
@@ -116,26 +114,24 @@ public:
 	virtual HRESULT UpdateImageWithExtent( unsigned long p_Index ) override;
 	virtual HRESULT GetParentExtent( SVImageExtentClass& p_rParent ) const;
 
-	//************************************
 	//!  Return false  if the input location 
 	//! is not allowed for the tool 
 	//! \param Location [in]
 	//! \param Direction 
 	//! \returns bool
-	//************************************
 	bool IsAllowedLocation(const SVExtentLocationPropertyEnum Location, SVExtentDirectionsEnum Direction  = SVExtentDirectionBoth ) const;
 
-	//************************************
 	//! Calculates bottom and Right 
 	//! \returns void
-	//************************************
 	void UpdateBottomAndRight();
 
-	//************************************
 	//! Sets the tool position index (One based)
 	//! \param Position
-	//************************************
 	void setToolPosition(long ToolPosition) { m_ToolPosition.SetValue(ToolPosition, 1); };
+
+	//! Check if tool can be resized to parent extents
+	//! \returns true if tool can resize to parent
+	bool canResizeToParent() { return m_canResizeToParent; };
 
 	//
 	// Flag to indicate this tool is selected for SVIM operator move.
@@ -233,7 +229,8 @@ protected:
 	// Tool Comments
 	SVStringValueObjectClass m_ToolComment;
 
-protected:
 	SVToolExtentClass m_svToolExtent;
+
+	bool m_canResizeToParent;
 };
 

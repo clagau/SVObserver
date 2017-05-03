@@ -470,9 +470,9 @@ MatroxType SVMatroxOcrInterface::Convert2MatroxOperationType( SVOcrOperationEnum
 @SVOperationDescription Creates a SVMatroxOcr font object.
 
 */
-SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::Create( SVMatroxOcr& p_rFontId, const SVMatroxOcrCreateStruct& p_rCreateStruct )
+HRESULT SVMatroxOcrInterface::Create( SVMatroxOcr& p_rFontId, const SVMatroxOcrCreateStruct& p_rCreateStruct )
 {
-	SVStatusCode l_Code;
+	HRESULT l_Code;
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -482,7 +482,7 @@ SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::Create( SVMatroxOcr& p_
 
 		l_Code = SVMatroxResourceMonitor::GetAutoLock( l_AutoLock );
 
-		if( l_Code == SVMEE_STATUS_OK )
+		if( l_Code == S_OK )
 		{
 			MIL_ID l_NewID = M_NULL;
 			MatroxType l_lCreateType = Convert2MatroxCreateType( p_rCreateStruct.m_eFontType );
@@ -503,7 +503,7 @@ SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::Create( SVMatroxOcr& p_
 					M_NULL);
 
 				l_Code = SVMatroxApplicationInterface::GetLastStatus();
-				if( l_Code == SVMEE_STATUS_OK )
+				if( l_Code == S_OK )
 				{
 					SVMatroxResourceMonitor::InsertIdentifier( SVOCRID, l_NewID );
 
@@ -537,10 +537,10 @@ SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::Create( SVMatroxOcr& p_
 @SVOperationDescription Creates a SVMatroxOcrResult.
 
 */
-SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::Create( SVMatroxOcrResult& p_rFontResult )
+HRESULT SVMatroxOcrInterface::Create( SVMatroxOcrResult& p_rFontResult )
 {
 	// This function replaces MocrAllocResult
-	SVStatusCode l_Code;
+	HRESULT l_Code;
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -550,12 +550,12 @@ SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::Create( SVMatroxOcrResu
 
 		l_Code = SVMatroxResourceMonitor::GetAutoLock( l_AutoLock );
 
-		if( l_Code == SVMEE_STATUS_OK )
+		if( l_Code == S_OK )
 		{
 			MIL_ID l_NewID;
 			l_NewID = MocrAllocResult( M_DEFAULT_HOST, M_DEFAULT, M_NULL );
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
-			if( l_Code == SVMEE_STATUS_OK )
+			if( l_Code == S_OK )
 			{
 				SVMatroxResourceMonitor::InsertIdentifier( SVOCRResultID, l_NewID );
 
@@ -583,9 +583,9 @@ SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::Create( SVMatroxOcrResu
 @SVOperationDescription Destroys a SVMatroxOcr.
 
 */
-SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::Destroy( SVMatroxOcr& p_rId )
+HRESULT SVMatroxOcrInterface::Destroy( SVMatroxOcr& p_rId )
 {
-	SVStatusCode l_Code = SVMEE_STATUS_OK;
+	HRESULT l_Code = S_OK;
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -597,17 +597,17 @@ SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::Destroy( SVMatroxOcr& p
 
 			l_Code = SVMatroxResourceMonitor::GetAutoLock( l_AutoLock );
 
-			if( l_Code == SVMEE_STATUS_OK )
+			if( l_Code == S_OK )
 			{
 				SVMatroxResourceMonitor::SVAutoLock l_AutoLock;
 
 				l_Code = SVMatroxResourceMonitor::GetAutoLock( l_AutoLock );
 
-				if( l_Code == SVMEE_STATUS_OK )
+				if( l_Code == S_OK )
 				{
 					MocrFree( p_rId.m_OcrFontID );
 					l_Code = SVMatroxApplicationInterface::GetLastStatus();
-					if( l_Code == SVMEE_STATUS_OK )
+					if( l_Code == S_OK )
 					{
 						SVMatroxResourceMonitor::EraseIdentifier( SVOCRID, p_rId.m_OcrFontID );
 
@@ -633,9 +633,9 @@ SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::Destroy( SVMatroxOcr& p
 @SVOperationDescription Destroys a SVMatroxOcrResult.
 
 */
-SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::Destroy( SVMatroxOcrResult& p_rId )
+HRESULT SVMatroxOcrInterface::Destroy( SVMatroxOcrResult& p_rId )
 {
-	SVStatusCode l_Code = SVMEE_STATUS_OK;
+	HRESULT l_Code = S_OK;
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -647,11 +647,11 @@ SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::Destroy( SVMatroxOcrRes
 
 			l_Code = SVMatroxResourceMonitor::GetAutoLock( l_AutoLock );
 
-			if( l_Code == SVMEE_STATUS_OK )
+			if( l_Code == S_OK )
 			{
 				MocrFree( p_rId.m_OcrResultID);
 				l_Code = SVMatroxApplicationInterface::GetLastStatus();
-				if( l_Code == SVMEE_STATUS_OK )
+				if( l_Code == S_OK )
 				{
 					SVMatroxResourceMonitor::EraseIdentifier( SVOCRResultID, p_rId.m_OcrResultID );
 
@@ -678,9 +678,9 @@ SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::Destroy( SVMatroxOcrRes
 @SVOperationDescription This function automatically calibrates the X and Y size and spacing of the font of a specified OCR font context to match that of a string in the sample target image.
 
 */
-SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::CalibrateFont( const SVMatroxOcr& p_rFontId, const SVMatroxOcrCalibrateStruct& p_rCalStruct )
+HRESULT SVMatroxOcrInterface::CalibrateFont( const SVMatroxOcr& p_rFontId, const SVMatroxOcrCalibrateStruct& p_rCalStruct )
 {
-	SVStatusCode l_Code;
+	HRESULT l_Code;
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -848,10 +848,10 @@ HRESULT SVMatroxOcrInterface::CalibrateFontCommand( const SVCommandDataHolder& p
 @SVOperationDescription This function copies a character representation of one, or many, font characters to/from the specified image buffer.
 
 */
-SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::CopyFont(const SVMatroxOcr& p_rFontId, const SVMatroxBuffer& p_rImageBufId,
+HRESULT SVMatroxOcrInterface::CopyFont(const SVMatroxOcr& p_rFontId, const SVMatroxBuffer& p_rImageBufId,
 		SVOcrOperationEnum p_eOperation, SVString& p_String)
 {
-	SVStatusCode l_Code;
+	HRESULT l_Code;
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -897,9 +897,9 @@ SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::CopyFont(const SVMatrox
 @SVOperationDescription This function preprocesses the specified OCR font context.
 
 */
-SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::Preprocess( const SVMatroxOcr& p_rFontId )
+HRESULT SVMatroxOcrInterface::Preprocess( const SVMatroxOcr& p_rFontId )
 {
-	SVStatusCode l_Code;
+	HRESULT l_Code;
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -934,9 +934,9 @@ SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::Preprocess( const SVMat
 @SVOperationDescription This function restores an OCR font context, previously saved with SaveFont(), from a file. 
 
 */
-SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::RestoreFont( SVMatroxOcr& p_rFontId, const SVString& p_sFileName, SVOcrOperationEnum p_eOperation)
+HRESULT SVMatroxOcrInterface::RestoreFont( SVMatroxOcr& p_rFontId, const SVString& p_sFileName, SVOcrOperationEnum p_eOperation)
 {
-	SVStatusCode l_Code;
+	HRESULT l_Code;
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -950,7 +950,7 @@ SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::RestoreFont( SVMatroxOc
 			l_NewId = MocrRestoreFont( const_cast<MIL_TEXT_CHAR*>( p_sFileName.c_str()), l_lOperation, M_DEFAULT_HOST, M_NULL );
 			l_Code = SVMatroxApplicationInterface::GetLastStatus();
 
-			if( l_Code == SVMEE_STATUS_OK )
+			if( l_Code == S_OK )
 			{
 				SVMatroxResourceMonitor::InsertIdentifier( SVOCRID, l_NewId );
 
@@ -1062,9 +1062,9 @@ HRESULT SVMatroxOcrInterface::RestoreFont( const SVCommandDataHolder& p_rAttribu
 @SVOperationDescription This function saves an existing OCR font context to disk using the MIL font file format.
 
 */
-SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::SaveFont( const SVMatroxOcr& p_rFontId, const SVString& p_sFileName, SVOcrOperationEnum p_eOperation)
+HRESULT SVMatroxOcrInterface::SaveFont( const SVMatroxOcr& p_rFontId, const SVString& p_sFileName, SVOcrOperationEnum p_eOperation)
 {
-	SVStatusCode l_Code;
+	HRESULT l_Code;
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -1376,7 +1376,7 @@ HRESULT SVMatroxOcrInterface::CharacterThickness( const SVCommandDataHolder& p_r
 					l_CreateStruct.m_lParentBandCount = 1;
 
 					SVMatroxBuffer ROIBuf;
-					SVMatroxBufferInterface::SVStatusCode l_Code = SVMatroxBufferInterface::Create( ROIBuf, l_CreateStruct);
+					HRESULT l_Code = SVMatroxBufferInterface::Create( ROIBuf, l_CreateStruct);
 
 					long l_tmp;
 					if( S_OK == ThicknessCalculation( ROIBuf, l_BackgroundType, l_tmp ) )
@@ -1415,9 +1415,9 @@ HRESULT SVMatroxOcrInterface::CharacterThickness( const SVCommandDataHolder& p_r
 @SVOperationDescription This function sets the verify string and the verify flag which determine the operation is used during the execute.
 
 */
-SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::SetVerify( SVMatroxOcr& p_rFontId, const SVString& p_strVerifyString, const bool p_bVerifyOn )
+HRESULT SVMatroxOcrInterface::SetVerify( SVMatroxOcr& p_rFontId, const SVString& p_strVerifyString, const bool p_bVerifyOn )
 {
-	SVStatusCode l_Code;
+	HRESULT l_Code;
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -1427,7 +1427,7 @@ SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::SetVerify( SVMatroxOcr&
 		{
 			p_rFontId.m_bVerify = p_bVerifyOn;
 			p_rFontId.m_VerifyString = p_strVerifyString;
-			l_Code = SVMEE_STATUS_OK;
+			l_Code = S_OK;
 		}
 		else
 		{
@@ -1452,9 +1452,9 @@ SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::SetVerify( SVMatroxOcr&
 @SVOperationDescription This function sets various OCR controls for a read/verify operation.
 
 */
-SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::Set( const SVMatroxOcr& p_rFontId, SVOcrControlEnum p_eControlType, const double& p_dValue )
+HRESULT SVMatroxOcrInterface::Set( const SVMatroxOcr& p_rFontId, SVOcrControlEnum p_eControlType, const double& p_dValue )
 {
-	SVStatusCode l_Code;
+	HRESULT l_Code;
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -1494,7 +1494,7 @@ SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::Set( const SVMatroxOcr&
 @SVOperationDescription This function sets various OCR controls for a read/verify operation.
 
 */
-SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::Set( const SVMatroxOcr& p_rFontId, SVOcrControlEnum p_eControlType, const long& p_lValue )
+HRESULT SVMatroxOcrInterface::Set( const SVMatroxOcr& p_rFontId, SVOcrControlEnum p_eControlType, const long& p_lValue )
 {
 	return Set(p_rFontId, p_eControlType, static_cast<double>(p_lValue));
 }
@@ -1506,9 +1506,9 @@ SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::Set( const SVMatroxOcr&
 @SVOperationDescription This function inquires about an OCR font context or an OCR result buffer setting.
 
 */
-SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::Get( const SVMatroxOcr& p_rFontId, SVOcrControlEnum  p_eControlType, double& p_rdValue) 
+HRESULT SVMatroxOcrInterface::Get( const SVMatroxOcr& p_rFontId, SVOcrControlEnum  p_eControlType, double& p_rdValue) 
 {
-	SVStatusCode l_Code;
+	HRESULT l_Code;
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -1548,11 +1548,11 @@ SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::Get( const SVMatroxOcr&
 @SVOperationDescription This function inquires about an OCR font context or an OCR result buffer setting.
 
 */
-SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::Get( const SVMatroxOcr& p_rFontId, SVOcrControlEnum  p_eControlType, long& p_rlValue) 
+HRESULT SVMatroxOcrInterface::Get( const SVMatroxOcr& p_rFontId, SVOcrControlEnum  p_eControlType, long& p_rlValue) 
 {
 	double l_dValue;
-	SVStatusCode l_Code = Get( p_rFontId, p_eControlType, l_dValue);
-	if( l_Code == SVMEE_STATUS_OK )
+	HRESULT l_Code = Get( p_rFontId, p_eControlType, l_dValue);
+	if( l_Code == S_OK )
 	{
 		p_rlValue = static_cast<long>(l_dValue);
 	}
@@ -1566,9 +1566,9 @@ SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::Get( const SVMatroxOcr&
 @SVOperationDescription This function inquires about an OCR font context or an OCR result buffer setting.
 
 */
-SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::Get( const SVMatroxOcr& p_rFontId, SVOcrControlEnum  p_eControlType, SVString& p_rStrValue) 
+HRESULT SVMatroxOcrInterface::Get( const SVMatroxOcr& p_rFontId, SVOcrControlEnum  p_eControlType, SVString& p_rStrValue) 
 {
-	SVStatusCode l_Code;
+	HRESULT l_Code;
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -1581,7 +1581,7 @@ SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::Get( const SVMatroxOcr&
 			{
 				MocrInquire( p_rFontId.m_OcrFontID, M_STRING_SIZE, &l_dSize );
 				l_Code = SVMatroxApplicationInterface::GetLastStatus();
-				if( l_Code == SVMEE_STATUS_OK && l_dSize > 0)
+				if( l_Code == S_OK && l_dSize > 0)
 				{
 					p_rStrValue.resize( static_cast<long>(l_dSize) );
 					MocrInquire(p_rFontId.m_OcrFontID, M_STRING, &p_rStrValue[0]);
@@ -1599,7 +1599,7 @@ SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::Get( const SVMatroxOcr&
 			{
 				MocrInquire( p_rFontId.m_OcrFontID, M_CHAR_NUMBER_IN_FONT, &l_dSize );
 				l_Code = SVMatroxApplicationInterface::GetLastStatus();
-				if( l_Code == SVMEE_STATUS_OK && l_dSize > 0 )
+				if( l_Code == S_OK && l_dSize > 0 )
 				{
 					p_rStrValue.resize( static_cast<long>(l_dSize) );
 					MocrInquire(p_rFontId.m_OcrFontID, M_CHAR_IN_FONT, &p_rStrValue[0]);
@@ -1633,9 +1633,9 @@ SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::Get( const SVMatroxOcr&
 @SVOperationDescription This function sets various OCR controls for a read/verify operation.
 
 */
-SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::SetResult( const SVMatroxOcrResult& p_rFontId, SVOcrControlEnum p_eControlType, const double& p_dValue )
+HRESULT SVMatroxOcrInterface::SetResult( const SVMatroxOcrResult& p_rFontId, SVOcrControlEnum p_eControlType, const double& p_dValue )
 {
-	SVStatusCode l_Code;
+	HRESULT l_Code;
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -1675,7 +1675,7 @@ SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::SetResult( const SVMatr
 @SVOperationDescription This function sets various OCR controls for a read/verify operation.
 
 */
-SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::SetResult( const SVMatroxOcrResult& p_rFontId, SVOcrControlEnum p_eControlType, const long& p_lValue )
+HRESULT SVMatroxOcrInterface::SetResult( const SVMatroxOcrResult& p_rFontId, SVOcrControlEnum p_eControlType, const long& p_lValue )
 {
 	return SetResult(p_rFontId, p_eControlType, static_cast<double>(p_lValue));
 }
@@ -1688,9 +1688,9 @@ SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::SetResult( const SVMatr
 @SVOperationDescription This function retrieves the result(s) of the specified type from an OCR
 
 */
-SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::GetResult( const SVMatroxOcrResult& p_rFontId, SVOcrResultEnum  p_eControlType, double& p_rdValue) 
+HRESULT SVMatroxOcrInterface::GetResult( const SVMatroxOcrResult& p_rFontId, SVOcrResultEnum  p_eControlType, double& p_rdValue) 
 {
-	SVStatusCode l_Code;
+	HRESULT l_Code;
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -1730,11 +1730,11 @@ SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::GetResult( const SVMatr
 @SVOperationDescription This function retrieves the result(s) of the specified type from an OCR
 
 */
-SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::GetResult( const SVMatroxOcrResult& p_rFontId, SVOcrResultEnum  p_eControlType, long& p_rlValue) 
+HRESULT SVMatroxOcrInterface::GetResult( const SVMatroxOcrResult& p_rFontId, SVOcrResultEnum  p_eControlType, long& p_rlValue) 
 {
 	double l_dValue;
-	SVStatusCode l_Code = GetResult( p_rFontId, p_eControlType, l_dValue);
-	if( l_Code == SVMEE_STATUS_OK )
+	HRESULT l_Code = GetResult( p_rFontId, p_eControlType, l_dValue);
+	if( l_Code == S_OK )
 	{
 		p_rlValue = static_cast<long>(l_dValue);
 	}
@@ -1747,9 +1747,9 @@ SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::GetResult( const SVMatr
 @SVOperationDescription This function retrieves the result(s) of the specified type from an OCR
 
 */
-SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::GetResult( const SVMatroxOcrResult& p_rFontId, SVOcrResultEnum  p_eControlType, SVString& p_rStrValue) 
+HRESULT SVMatroxOcrInterface::GetResult( const SVMatroxOcrResult& p_rFontId, SVOcrResultEnum  p_eControlType, SVString& p_rStrValue) 
 {
-	SVStatusCode l_Code;
+	HRESULT l_Code;
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -1763,7 +1763,7 @@ SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::GetResult( const SVMatr
 				MIL_TEXT_CHAR l_cBuf[256];
 				MocrGetResult(p_rFontId.m_OcrResultID, l_lControlType, &l_cBuf);
 				l_Code = SVMatroxApplicationInterface::GetLastStatus();
-				if( l_Code == SVMEE_STATUS_OK )
+				if( l_Code == S_OK )
 				{
 					p_rStrValue = l_cBuf;
 				}
@@ -1794,9 +1794,9 @@ SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::GetResult( const SVMatr
 @SVOperationDescription This function retrieves the result(s) of the specified type from an OCR
 
 */
-SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::GetResult( const SVMatroxOcrResult& p_rFontId, SVOcrResultEnum InquireType, SVMatroxDoubleArray& p_adValues ) 
+HRESULT SVMatroxOcrInterface::GetResult( const SVMatroxOcrResult& p_rFontId, SVOcrResultEnum InquireType, SVMatroxDoubleArray& p_adValues ) 
 {
-	SVStatusCode l_Code;
+	HRESULT l_Code;
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -1837,9 +1837,9 @@ SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::GetResult( const SVMatr
 @SVOperationDescription If the verify flag is off this function reads an unknown string from the specified target image using the specified OCR font context. If the verify flag is on this function determines whether a known string is present in the target image, and evaluates the quality of the string. 
 
 */
-SVMatroxOcrInterface::SVStatusCode SVMatroxOcrInterface::Execute( const SVMatroxOcrResult& p_rResultId, const SVMatroxOcr& p_rFontId, const SVMatroxBuffer& p_rImage )
+HRESULT SVMatroxOcrInterface::Execute( const SVMatroxOcrResult& p_rResultId, const SVMatroxOcr& p_rFontId, const SVMatroxBuffer& p_rImage )
 {
-	SVStatusCode l_Code;
+	HRESULT l_Code;
 #ifdef USE_TRY_BLOCKS
 	try
 #endif
@@ -3028,10 +3028,10 @@ HRESULT SVMatroxOcrInterface::ThicknessCalculation( SVMatroxBuffer p_ThresholdIm
 	SVMatroxBuffer l_WorkingBuffer;
 
 	// copy image to buffer
-	SVMatroxBufferInterface::SVStatusCode l_Code = SVMatroxBufferInterface::Create( l_WorkingBuffer, p_ThresholdImage);
+	HRESULT l_Code = SVMatroxBufferInterface::Create( l_WorkingBuffer, p_ThresholdImage);
 	SVMatroxBufferInterface::CopyBuffer( l_WorkingBuffer, p_ThresholdImage );
 
-	if( l_Code == SVMEE_STATUS_OK)
+	if( l_Code == S_OK)
 	{
 		bool bEroding = true;
 		bool bEnableBeforeCount = true;

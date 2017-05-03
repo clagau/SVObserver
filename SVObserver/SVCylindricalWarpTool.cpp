@@ -343,7 +343,7 @@ bool SVCylindricalWarpToolClass::onRun( SVRunStatusClass& p_rRunStatus, SvStl::M
 		SVImageExtentClass l_svToolExtents;
 		l_bOk = S_OK == GetImageExtent(l_svToolExtents);
 		
-		SVMatroxImageInterface::SVStatusCode l_Code;
+		HRESULT MatroxCode;
 
 		SVImageExtentClass l_svInputExtents = l_pInputImage->GetImageExtents();
 		long l_dInputWidth, l_dToolWidth, l_dInputHeight, l_dToolHeight;
@@ -387,14 +387,14 @@ bool SVCylindricalWarpToolClass::onRun( SVRunStatusClass& p_rRunStatus, SvStl::M
 
 			if( !( l_InMilHandle.empty() ) && !( l_OutMilHandle.empty() ) )
 			{
-				l_Code = SVMatroxImageInterface::Warp(l_OutMilHandle.GetBuffer(), 
+				MatroxCode = SVMatroxImageInterface::Warp(l_OutMilHandle.GetBuffer(), 
 					l_InMilHandle.GetBuffer(), 
 					m_LutX, 
 					m_LutY,
 					static_cast<SVImageOperationTypeEnum>(Interpolation));
 					
 
-				if ( l_Code != SVMEE_STATUS_OK )
+				if (S_OK != MatroxCode)
 				{
 					l_bOk = false;
 					if (nullptr != pErrorMessages)
@@ -420,7 +420,7 @@ bool SVCylindricalWarpToolClass::onRun( SVRunStatusClass& p_rRunStatus, SvStl::M
 bool SVCylindricalWarpToolClass::CreateLUT()
 {
 	SVImageExtentClass l_OutputExtents;
-	SVMatroxImageInterface::SVStatusCode l_Code;
+	HRESULT l_Code;
 	long l_lOutputWidth = 100;
 	long l_lOutputHeight = 100;
 	l_OutputExtents = m_OutputImage.GetImageExtents();

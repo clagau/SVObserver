@@ -121,7 +121,8 @@ BOOL SVAdjustToolSizePositionDlg::OnInitDialog()
 	SetWindowText(m_Title.c_str());
 
 	createIcons();
-	bool l_bShow = ( nullptr != dynamic_cast< AllowResizeToParent* >( m_pToolTask ) );
+	SVToolClass* pTool = dynamic_cast<SVToolClass*> (m_pToolTask);
+	bool bShow =  (nullptr != pTool) ? pTool->canResizeToParent() : false;
 
 	bool bShowEditTool =  (nullptr !=	ToolSizeAdjustTask::GetToolSizeAdjustTask(m_pToolTask));
 	GetDlgItem(IDC_BUT_EDIT_TOOL)->ShowWindow( bShowEditTool? SW_SHOW : SW_HIDE );
@@ -133,11 +134,11 @@ BOOL SVAdjustToolSizePositionDlg::OnInitDialog()
 		BOOL rotation = lt->GetRotation();
 		if ( rotation )
 		{
-			l_bShow = false;
+			bShow = false;
 		}
 	}
 
-	GetDlgItem(IDC_FULL_ROI_BTN)->ShowWindow( l_bShow ? SW_SHOW : SW_HIDE );
+	GetDlgItem(IDC_FULL_ROI_BTN)->ShowWindow( bShow ? SW_SHOW : SW_HIDE );
 	GetDlgItem(IDC_FULL_ROI_BTN)->EnableWindow( !IsFullSize() && IsFullSizeAllowed());
 
 	GetDlgItem(IDC_BUTTON_PROPAGATE)->EnableWindow( UsePropagate());

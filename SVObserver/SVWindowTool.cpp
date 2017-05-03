@@ -37,16 +37,17 @@ SVWindowToolClass::SVWindowToolClass( BOOL BCreateDefaultTaskList, SVObjectClass
 
 void SVWindowToolClass::init()
 {
+	m_canResizeToParent = true;
+	// Set up your type... in this case this will reference that this tool is a 
+	// Window Tool.
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVToolObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVWindowToolObjectType;
+
 	BuildEmbeddedObjectList ();
 
 	BuildAvailableAnalyzerList (); 
 
 	AddUnaryImageOperatorListAsChild ();
-
-	// Set up your type... in this case this will reference that this tool is a 
-	// Window Tool.
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVToolObjectType;
-	m_outObjectInfo.m_ObjectTypeInfo.SubType    = SVWindowToolObjectType;
 }
 
 void SVWindowToolClass::BuildEmbeddedObjectList ()

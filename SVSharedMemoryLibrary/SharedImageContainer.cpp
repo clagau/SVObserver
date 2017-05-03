@@ -186,14 +186,14 @@ void SharedImageContainer::CreateSharedMatroxBuffer( const MLCpyContainer&  rmlC
 			{
 				BYTE* ptr =  GetImageBufferPtr( Slotindex, Last, StoreId ,StoreOffset); 
 				SVMatroxBuffer& MBuffer = m_ProductImageBuffer[StoreId]->GetAt(Slotindex ,ItemId);
-				SVMatroxBufferInterface::SVStatusCode code; 
+				HRESULT code; 
 				code = 	SVMatroxBufferInterface::CreateBuffer(MBuffer,ImageProps, ptr);
 			}
 			for(DWORD RejectSlot = 0;RejectSlot < Rejectcount; RejectSlot++ )
 			{
 				BYTE* ptr =  GetImageBufferPtr( RejectSlot, Reject, StoreId ,StoreOffset); 
 				SVMatroxBuffer& MBuffer = m_RejectImageBuffer[StoreId]->GetAt(RejectSlot ,ItemId);
-				SVMatroxBufferInterface::SVStatusCode code; 
+				HRESULT code; 
 				code = 	SVMatroxBufferInterface::CreateBuffer(MBuffer,ImageProps, ptr);
 			}
 		}

@@ -626,7 +626,7 @@ bool SVHistogramAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messa
 	bool Result = true;
 	SVImageClass     *pInputImage;
 
-	SVMatroxImageInterface::SVStatusCode l_Code;
+	HRESULT MatroxCode;
 
 	pInputImage = nullptr;
 	
@@ -694,8 +694,8 @@ bool SVHistogramAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messa
 			break;
 		}
 
-		l_Code = l_lImageIntf.Histogram(msvHistResultID, l_MilHandle.GetBuffer() );
-		if( l_Code != SVMEE_STATUS_OK )
+		MatroxCode = l_lImageIntf.Histogram(msvHistResultID, l_MilHandle.GetBuffer() );
+		if (S_OK != MatroxCode)
 		{
 			Result = false;
 			if (nullptr != pErrorMessages)
@@ -706,9 +706,9 @@ bool SVHistogramAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messa
 			break;
 		}
 
-		l_Code = l_lImageIntf.GetResult(msvHistResultID,  msvplHistValues );
+		MatroxCode = l_lImageIntf.GetResult(msvHistResultID,  msvplHistValues );
 
-		if( l_Code != SVMEE_STATUS_OK )
+		if (S_OK != MatroxCode)
 		{
 			Result = false;
 			if (nullptr != pErrorMessages)
@@ -1067,7 +1067,7 @@ bool SVHistogramAnalyzerClass::calcHistogram()
 {
 	bool LastError(false);
 	SVImageClass     *pInputImage(nullptr);
-	SVMatroxImageInterface::SVStatusCode l_Code(0);
+	HRESULT MatroxCode(S_OK);
 
 	pInputImage = getInputImage();
 	if(nullptr== pInputImage)
@@ -1102,8 +1102,8 @@ bool SVHistogramAnalyzerClass::calcHistogram()
 
 	if(!LastError)
 	{
-		l_Code = l_lImageIntf.Histogram(msvHistResultID, l_MilHandle.GetBuffer() );
-		if( l_Code != SVMEE_STATUS_OK )
+		MatroxCode = l_lImageIntf.Histogram(msvHistResultID, l_MilHandle.GetBuffer() );
+		if (S_OK != MatroxCode)
 		{
 			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16203);
@@ -1113,8 +1113,8 @@ bool SVHistogramAnalyzerClass::calcHistogram()
 
 	if(!LastError)
 	{
-		l_Code = l_lImageIntf.GetResult(msvHistResultID,  msvplHistValues );
-		if( l_Code != SVMEE_STATUS_OK )
+		MatroxCode = l_lImageIntf.GetResult(msvHistResultID,  msvplHistValues );
+		if (S_OK != MatroxCode)
 		{
 			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16204);

@@ -322,7 +322,7 @@ bool SVImageArithmeticClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Message
 
 		if( !( l_MilAHandle.empty() ) &&  !( l_MilBHandle.empty() ) && !( l_MilOutHandle.empty() ) )
 		{
-			SVMatroxImageInterface::SVStatusCode l_Code;
+			HRESULT l_Code;
 
 			// Filter for special image arithmetic operators...
 			// e.g. SV_IMGOP_AVERAGE ( not defined by MIL )
@@ -427,7 +427,7 @@ void SVImageArithmeticClass::ScaleWithAveraging( SVImageClass* pInputImage, SVIm
 		
 		if( pSrcHostBuffer && pDstHostBuffer && !( l_InMilHandle.empty() ) && !( l_OutMilHandle.empty() ) )
 		{
-			SVMatroxImageInterface::SVStatusCode l_Code;
+			HRESULT l_Code;
 			
 			if( l_oOutputRect.bottom && l_oInputRect.bottom )
 			{

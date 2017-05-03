@@ -650,6 +650,47 @@ SVGUID SVObjectManagerClass::GetObjectIdFromCompleteName( LPCTSTR Name )
 
 	return Result;
 }
+void SVObjectManagerClass::getObjectsOfType(SVObjectPtrVectorInserter Inserter, SVObjectTypeEnum ObjectType, SVObjectSubTypeEnum ObjectSubType) const
+{
+	SVAutoLockAndReleaseTemplate< SVCriticalSection > AutoLock;
+
+	bool Status = true;
+
+	if (ReadWrite == m_State)
+	{
+		Status = AutoLock.Assign(&m_Lock);
+	}
+
+	if (Status)
+	{
+		SVUniqueObjectEntryMap::const_iterator Iter(m_UniqueObjectEntries.begin());
+
+		for( ; m_UniqueObjectEntries.end() != Iter; ++Iter )
+		{
+			SVObjectClass* pObject = Iter->second->m_pObject;
+
+			if (nullptr != pObject)
+			{
+				//Check only 
+				if (SVNotSetSubObjectType != ObjectSubType)
+				{
+					if(pObject->GetObjectType() == ObjectType && pObject->GetObjectSubType() == ObjectSubType )
+					{
+						Inserter = pObject;
+					}
+				}
+				else
+				{
+					if (pObject->GetObjectType() == ObjectType)
+					{
+						Inserter = pObject;
+					}
+				}
+			}
+		}
+	}
+}
+
 
 SVString SVObjectManagerClass::GetCompleteObjectName( const SVGUID& rGuid )
 {

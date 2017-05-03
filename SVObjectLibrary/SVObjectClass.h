@@ -13,6 +13,7 @@
 #pragma region Includes
 //Moved to precompiled header: #include <set>
 //Moved to precompiled header: #include <vector>
+//Moved to precompiled header: #include <iterator>
 
 #include "ObjectInterfaces/IObjectClass.h"
 #include "SVUtilityLibrary/SVGUID.h"
@@ -279,6 +280,7 @@ private:
 
 #pragma region Declarations
 typedef std::vector<SVObjectClass*> SVObjectPtrVector;
+typedef std::back_insert_iterator<SVObjectPtrVector> SVObjectPtrVectorInserter;
 typedef std::set<SVObjectClass*> SVObjectPtrSet;
 #pragma region Declarations
 

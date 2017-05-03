@@ -68,7 +68,7 @@
 #include "ObjectInterfaces\ErrorNumbers.h"
 #include "ObjectInterfaces\GlobalConst.h"
 #include "TextDefinesSvO.h"
-
+#include "SVColorTool.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -2397,6 +2397,33 @@ HRESULT SVConfigurationObject::ValidateOutputList( )
 	l_Status = m_pOutputObjectList->RemoveUnusedOutputs( InspectionNames, PPQNames );
 
 	return l_Status;
+}
+
+void SVConfigurationObject::UpgradeConfiguration()
+{
+	bool ConfigChanged(false);
+
+	SVObjectPtrVector ColorTools;
+	SVObjectManagerClass::Instance().getObjectsOfType(std::back_inserter(ColorTools), SVToolObjectType, SVColorToolObjectType);
+	SVObjectPtrVector::iterator Iter = ColorTools.begin();
+	for (; ColorTools.end() != Iter; ++Iter)
+	{
+		SVColorToolClass* pColorTool = dynamic_cast<SVColorToolClass*> (*Iter);
+		if (pColorTool->isConverted())
+		{
+			ConfigChanged = true;
+		}
+	}
+	if (ConfigChanged)
+	{
+		SvStl::MsgTypeEnum  MsgType = SVSVIMStateClass::CheckState(SV_STATE_REMOTE_CMD) ? SvStl::LogOnly : SvStl::LogAndDisplay;
+		SvStl::MessageMgrStd Exception(MsgType);
+		Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_ColorToolExtentsChanged, SvStl::SourceFileParams(StdMessageParams));
+	}
+	if (ConfigChanged)
+	{
+		SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
+	}
 }
 
 HRESULT SVConfigurationObject::LoadAcquisitionDeviceFilename(SVTreeType& rTree, SVTreeType::SVBranchHandle hDig, SVFileNameArrayClass& rFileArray)

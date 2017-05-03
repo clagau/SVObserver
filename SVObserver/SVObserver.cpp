@@ -2679,16 +2679,9 @@ HRESULT SVObserverApp::OpenSVXFile(LPCTSTR PathName)
 				}
 				catch( const SvStl::MessageContainer& rExp )
 				{
-					if( SVSVIMStateClass::CheckState( SV_STATE_REMOTE_CMD ) )
-					{
-						SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-						Exception.setMessage(rExp.getMessage());
-					}
-					else
-					{
-						SvStl::MessageMgrStd Exception( SvStl::LogAndDisplay );
-						Exception.setMessage(rExp.getMessage());
-					}
+					SvStl::MsgTypeEnum  MsgType = SVSVIMStateClass::CheckState(SV_STATE_REMOTE_CMD) ? SvStl::LogOnly : SvStl::LogAndDisplay;
+					SvStl::MessageMgrStd Exception( MsgType );
+					Exception.setMessage(rExp.getMessage());
 					hr = E_FAIL;
 					break;
 				}
@@ -2702,16 +2695,9 @@ HRESULT SVObserverApp::OpenSVXFile(LPCTSTR PathName)
 				hr = SvXml::CheckObsoleteItems( XMLTree, configVer, itemType, errorCode );
 				if (hr & SV_ERROR_CONDITION)
 				{
-					if( SVSVIMStateClass::CheckState( SV_STATE_REMOTE_CMD ) )
-					{
-						SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-						Exception.setMessage( SVMSG_SVO_76_CONFIGURATION_HAS_OBSOLETE_ITEMS, itemType.c_str(), SvStl::SourceFileParams(StdMessageParams), errorCode );
-					}
-					else
-					{
-						SvStl::MessageMgrStd Exception( SvStl::LogAndDisplay );
-						Exception.setMessage( SVMSG_SVO_76_CONFIGURATION_HAS_OBSOLETE_ITEMS, itemType.c_str(), SvStl::SourceFileParams(StdMessageParams), errorCode );
-					}
+					SvStl::MsgTypeEnum  MsgType = SVSVIMStateClass::CheckState(SV_STATE_REMOTE_CMD) ? SvStl::LogOnly : SvStl::LogAndDisplay;
+					SvStl::MessageMgrStd Exception( MsgType );
+					Exception.setMessage( SVMSG_SVO_76_CONFIGURATION_HAS_OBSOLETE_ITEMS, itemType.c_str(), SvStl::SourceFileParams(StdMessageParams), errorCode );
 					break;
 				}
 
@@ -2800,14 +2786,16 @@ HRESULT SVObserverApp::OpenSVXFile(LPCTSTR PathName)
 				{
 					pConfig->RebuildInputOutputLists();
 
-					// Removes any invalid entries in the output list.
-					if( pConfig->IsConfigurationLoaded() )
+					if (pConfig->IsConfigurationLoaded())
 					{
-						if( SVMSG_SVO_70_DUPLICATE_DISCRETE_OUTPUT == pConfig->ValidateOutputList() )
+						// Removes any invalid entries in the output list.
+						if (SVMSG_SVO_70_DUPLICATE_DISCRETE_OUTPUT == pConfig->ValidateOutputList())
 						{
-							SvStl::MessageMgrStd Exception( SvStl::LogAndDisplay );
-							Exception.setMessage( SVMSG_SVO_70_DUPLICATE_DISCRETE_OUTPUT, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
+							SvStl::MessageMgrStd Exception(SvStl::LogAndDisplay);
+							Exception.setMessage(SVMSG_SVO_70_DUPLICATE_DISCRETE_OUTPUT, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
 						}
+						// Upgrade the configuration depending on the version being loaded
+						pConfig->UpgradeConfiguration();
 					}
 				}
 

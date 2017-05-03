@@ -52,70 +52,68 @@ The Watershed uses the Matrox MimWatershed. This function performs a watershed t
 class SVMatroxImageInterface
 {
 public:
-	typedef SVMatroxApplicationInterface::SVStatusCode SVStatusCode;
-
 	SVMatroxImageInterface();
 
 	virtual ~SVMatroxImageInterface();
 
 	// This function replaces MimAllocResult.
-	static SVStatusCode Create( SVMatroxImageResult& p_rResultId, const long NbEntries, SVImageOperationTypeEnum ResultType);
+	static HRESULT Create( SVMatroxImageResult& p_rResultId, const long NbEntries, SVImageOperationTypeEnum ResultType);
 	// This function replaces MimFree.
-	static SVStatusCode Destroy( SVMatroxImageResult& p_rResultId );
+	static HRESULT Destroy( SVMatroxImageResult& p_rResultId );
 	
 	// This function Replaces MimArith and MimArithMultiple( image tool )
-	static SVStatusCode Arithmetic( const SVMatroxBuffer& p_rDestId, const SVMatroxBuffer& p_dSource1, const SVMatroxBuffer& p_dSource2, SVImageOperationTypeEnum p_lOperation);
+	static HRESULT Arithmetic( const SVMatroxBuffer& p_rDestId, const SVMatroxBuffer& p_dSource1, const SVMatroxBuffer& p_dSource2, SVImageOperationTypeEnum p_lOperation);
 	// This function replaces MimBinarize ( threshold )
-	static SVStatusCode Binarize( const SVMatroxBuffer& p_rDestID, const SVMatroxBuffer p_rSource, SVConditionEnum p_eCondition, double p_dCondLow, double p_dCondHigh );
+	static HRESULT Binarize( const SVMatroxBuffer& p_rDestID, const SVMatroxBuffer p_rSource, SVConditionEnum p_eCondition, double p_dCondLow, double p_dCondHigh );
 	static HRESULT AdaptiveThreshold( const SVCommandDataHolder& p_rAttributes, SVCommandDataHolder& p_rResults );
 	static HRESULT AutoThreshold( const SVCommandDataHolder& p_rAttributes, SVCommandDataHolder& p_rResults );
 	static HRESULT FixedThreshold( const SVCommandDataHolder& p_rAttributes, SVCommandDataHolder& p_rResults );
 
 	// This function replaces MimClose ( filter)
-	static SVStatusCode Close( const SVMatroxBuffer& p_rDest, const SVMatroxBuffer& p_rSource, long p_lItters, SVImageOperationTypeEnum p_eOp);
+	static HRESULT Close( const SVMatroxBuffer& p_rDest, const SVMatroxBuffer& p_rSource, long p_lItters, SVImageOperationTypeEnum p_eOp);
 	// This function replaces MimConvert ( RGB to HSI)
-	static SVStatusCode Convert( const SVMatroxBuffer& p_rDest, const SVMatroxBuffer& p_rSource, SVImageOperationTypeEnum p_eOperation);
+	static HRESULT Convert( const SVMatroxBuffer& p_rDest, const SVMatroxBuffer& p_rSource, SVImageOperationTypeEnum p_eOperation);
 	// This function replaces MimConvolve ( filter)
-	static SVStatusCode Convolve( const SVMatroxBuffer& p_rDest, const SVMatroxBuffer& p_rSource, const SVMatroxBuffer& p_Kernel );
-	static SVStatusCode Convolve( const SVMatroxBuffer& p_rDest, const SVMatroxBuffer& p_rSource, SVFilterOperationEnum p_eFilterOperation );
+	static HRESULT Convolve( const SVMatroxBuffer& p_rDest, const SVMatroxBuffer& p_rSource, const SVMatroxBuffer& p_Kernel );
+	static HRESULT Convolve( const SVMatroxBuffer& p_rDest, const SVMatroxBuffer& p_rSource, SVFilterOperationEnum p_eFilterOperation );
 	// This function replaces MimDilate
-	static SVStatusCode Dilate( const SVMatroxBuffer& p_rDest, const SVMatroxBuffer& p_rSource, long p_lItters, SVImageOperationTypeEnum p_eOp);
+	static HRESULT Dilate( const SVMatroxBuffer& p_rDest, const SVMatroxBuffer& p_rSource, long p_lItters, SVImageOperationTypeEnum p_eOp);
 	// This function replaces MimErode
-	static SVStatusCode Erode( const SVMatroxBuffer& p_rDest, const SVMatroxBuffer& p_rSource, long p_lItters, SVImageOperationTypeEnum p_eOp);
+	static HRESULT Erode( const SVMatroxBuffer& p_rDest, const SVMatroxBuffer& p_rSource, long p_lItters, SVImageOperationTypeEnum p_eOp);
 	// This function replaces MimFlip
-	static SVStatusCode Flip( const SVMatroxBuffer& p_rDest, const SVMatroxBuffer& p_rSource, SVImageFlipEnum p_lOperation);
+	static HRESULT Flip( const SVMatroxBuffer& p_rDest, const SVMatroxBuffer& p_rSource, SVImageFlipEnum p_lOperation);
 
 	// This function replaces MimGetResult
-	static SVStatusCode GetResult( const SVMatroxImageResult& p_rResultID, SVMatroxDoubleArray& p_adArray);
-	static SVStatusCode GetResult( const SVMatroxImageResult& p_rResultID, SVMatroxLongArray& p_alArray);
-	static SVStatusCode GetResult( const SVMatroxImageResult& p_rResultID, SVMatroxByteArray& p_acArray);
-	static SVStatusCode GetResult( const SVMatroxImageResult& p_rResultID, void * p_pArray);
+	static HRESULT GetResult( const SVMatroxImageResult& p_rResultID, SVMatroxDoubleArray& p_adArray);
+	static HRESULT GetResult( const SVMatroxImageResult& p_rResultID, SVMatroxLongArray& p_alArray);
+	static HRESULT GetResult( const SVMatroxImageResult& p_rResultID, SVMatroxByteArray& p_acArray);
+	static HRESULT GetResult( const SVMatroxImageResult& p_rResultID, void * p_pArray);
 
 	// This function replaces MimHistogram
-	static SVStatusCode Histogram( const SVMatroxImageResult& p_rHistResult, const SVMatroxBuffer& p_rSource);
+	static HRESULT Histogram( const SVMatroxImageResult& p_rHistResult, const SVMatroxBuffer& p_rSource);
 	// This function replaces MimLutMap
-	static SVStatusCode LutMap( const SVMatroxBuffer& p_rDest, const SVMatroxBuffer& p_rSource, const SVMatroxBuffer& p_rLut);
+	static HRESULT LutMap( const SVMatroxBuffer& p_rDest, const SVMatroxBuffer& p_rSource, const SVMatroxBuffer& p_rLut);
 	// This function replaces MimOpen
-	static SVStatusCode Open( const SVMatroxBuffer& p_rDest, const SVMatroxBuffer& p_rSource, long p_lItters, SVImageOperationTypeEnum p_eOp);
+	static HRESULT Open( const SVMatroxBuffer& p_rDest, const SVMatroxBuffer& p_rSource, long p_lItters, SVImageOperationTypeEnum p_eOp);
 	// This function replaces MimPolarTransform
-	static SVStatusCode PolarTransform( const SVMatroxBuffer& p_rDest, SVMatroxPolarTransformStruct& p_rTransformStruct);
+	static HRESULT PolarTransform( const SVMatroxBuffer& p_rDest, SVMatroxPolarTransformStruct& p_rTransformStruct);
 	// This function replaces MimProject (Linear tool)
-	static SVStatusCode Project( const SVMatroxImageResult& p_rProjDest, const SVMatroxBuffer& p_rSource, double p_dAngle);
+	static HRESULT Project( const SVMatroxImageResult& p_rProjDest, const SVMatroxBuffer& p_rSource, double p_dAngle);
 	// This function replaces MimRank
-	static SVStatusCode Rank( const SVMatroxBuffer& p_rDest, const SVMatroxBuffer& p_rSource, const SVMatroxBuffer& p_rStructElem, long p_lRank);
+	static HRESULT Rank( const SVMatroxBuffer& p_rDest, const SVMatroxBuffer& p_rSource, const SVMatroxBuffer& p_rStructElem, long p_lRank);
 	// This function replaces MimRotate
-	static SVStatusCode Rotate( const SVMatroxBuffer& p_rProjDest, const SVMatroxImageRotateStruct& p_RotateStruct );
+	static HRESULT Rotate( const SVMatroxBuffer& p_rProjDest, const SVMatroxImageRotateStruct& p_RotateStruct );
 	// This function replaces MimThick (filter)
-	static SVStatusCode Thick( const SVMatroxBuffer& p_rDest, const SVMatroxBuffer& p_rSource, long p_lItters, SVImageOperationTypeEnum p_eOp);
+	static HRESULT Thick( const SVMatroxBuffer& p_rDest, const SVMatroxBuffer& p_rSource, long p_lItters, SVImageOperationTypeEnum p_eOp);
 	// This function replaces MimThin (filter)
-	static SVStatusCode Thin( const SVMatroxBuffer& p_rDest, const SVMatroxBuffer& p_rSource, long p_lItters, SVImageOperationTypeEnum p_eOp);
+	static HRESULT Thin( const SVMatroxBuffer& p_rDest, const SVMatroxBuffer& p_rSource, long p_lItters, SVImageOperationTypeEnum p_eOp);
 	// This function replaces MimWarp (Warp Tools)
-	static SVStatusCode Warp( const SVMatroxBuffer& p_rDest, const SVMatroxBuffer& p_rSource, const SVMatroxBuffer& p_rLut1, const SVMatroxBuffer& p_rLut2, SVImageOperationTypeEnum p_eInterpMode);
+	static HRESULT Warp( const SVMatroxBuffer& p_rDest, const SVMatroxBuffer& p_rSource, const SVMatroxBuffer& p_rLut1, const SVMatroxBuffer& p_rLut2, SVImageOperationTypeEnum p_eInterpMode);
 	// This function replaces MimWatershed
-	static SVStatusCode Watershed( const SVMatroxBuffer& p_rDest, const SVMatroxBuffer& p_rSource, const SVMatroxBuffer& p_rMarker, long p_lMinVariation, SVImageWaterShedEnum p_lControlFlag);
+	static HRESULT Watershed( const SVMatroxBuffer& p_rDest, const SVMatroxBuffer& p_rSource, const SVMatroxBuffer& p_rMarker, long p_lMinVariation, SVImageWaterShedEnum p_lControlFlag);
 	// This function replaces MimResize
 	// It is assumed that parameters are verified before entering Resize.  They are not checked again inside Resize.
-	static SVStatusCode Resize( const SVMatroxBuffer& p_rDest, 
+	static HRESULT Resize( const SVMatroxBuffer& p_rDest, 
 								const SVMatroxBuffer& p_rSource, 
 								const double p_dScaleFactorX, 
 								const double p_dScaleFactorY, 
