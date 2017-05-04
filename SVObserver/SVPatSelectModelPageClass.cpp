@@ -205,7 +205,7 @@ BOOL SVPatModelPageClass::OnInitDialog()
 
 	m_dialogImage.AddTab(_T("Tool Image")); 
 	m_dialogImage.AddTab(_T("Model Image")); 
-	m_dialogImage.AddTab(_T("Dont Care Image"));
+	m_dialogImage.AddTab(_T("Don't Care Image"));
 
 	InitializeData();
 	BuildPropertyList();
@@ -299,7 +299,7 @@ void SVPatModelPageClass::OnKillModelFileName()
 
 void SVPatModelPageClass::OnKillDontCareFileName()
 {
-	if (GetFocus() && (GetFocus()->GetDlgCtrlID() == IDC_PAT_DONT_CARE_FILE_BUTTON))
+	if (GetFocus() && (GetFocus()->GetDlgCtrlID() == IDC_PAT_DONT_CARE_FILE_BUTTON || GetFocus()->GetDlgCtrlID() == IDC_PAT_USE_DONT_CARE))
 	{
 		return;
 	}

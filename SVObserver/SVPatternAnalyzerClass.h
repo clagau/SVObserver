@@ -198,7 +198,6 @@ private:
 	SVLongValueObjectClass m_dontCareHeight;	// Don't Care Height.
 	SVSmartHandlePointer m_DontCareBufferHandlePtr;
 	bool m_bReloadModelFromFile;
-	bool m_bReloadDonCareFromFile;
 
 	int m_nPatternIndex; // index of pattern moused over, for displaying results
 };

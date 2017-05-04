@@ -82,7 +82,6 @@ SV_IMPLEMENT_CLASS(SVPatternAnalyzerClass, SVPatternAnalyzerClassGuid);
 SVPatternAnalyzerClass::SVPatternAnalyzerClass(BOOL BCreateDefaultTaskList, SVObjectClass* POwner, int StringResourceID)
   : SVImageAnalyzerClass(BCreateDefaultTaskList, POwner, StringResourceID)
   , m_bReloadModelFromFile(false)
-  , m_bReloadDonCareFromFile(false)
 {
 	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVPatternAnalyzerObjectType;
 	m_nPatternIndex = -1;
@@ -923,13 +922,7 @@ bool SVPatternAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMe
 			{
 				if (useDontCare)
 				{
-					if (m_DontCareBufferHandlePtr.empty() || m_bReloadDonCareFromFile)
-					{
-						m_bReloadDonCareFromFile = false;
-
-						Result = RestoreDontCareImage(pErrorMessages);
-					}
-
+					Result = RestoreDontCareImage(pErrorMessages);
 				}
 			}
 			else
@@ -1006,7 +999,6 @@ SvStl::MessageContainerVector SVPatternAnalyzerClass::validateAndSetEmmeddedValu
 	if (messages.empty())
 	{
 		m_bReloadModelFromFile = isModelFileNameToSet;
-		m_bReloadDonCareFromFile = isDonCareFileNameToSet;
 		return __super::validateAndSetEmmeddedValues(rValueVector, shouldSet);
 	}
 	return messages;
@@ -1428,7 +1420,7 @@ bool SVPatternAnalyzerClass::getNewUseDontCareValue(const SvOi::SetValueObjectPa
 	{
 		m_bpatDontCare.GetValue(useDontCare);
 	}
-	return (TRUE == useDontCare);
+	return useDontCare ? true : false;
 }
 
 bool SVPatternAnalyzerClass::validateNewDontCareFileName(const SvOi::SetValueObjectPairVector &rValueVector, long& rDontCareWidth, long& rDontCareHeight, SvStl::MessageContainerVector& rMessages)
@@ -1442,31 +1434,21 @@ bool SVPatternAnalyzerClass::validateNewDontCareFileName(const SvOi::SetValueObj
 	if (rValueVector.end() != iter)
 	{
 		assert(VT_BSTR == iter->second.vt);
-		SVString fileName;
-		m_DontCareImageFile.GetValue(fileName);
 		SVString newFileName = SvUl_SF::createSVString(iter->second.bstrVal);
 
-		if (fileName != newFileName)
+		SVMatroxBuffer importHandle;
+		if (S_OK != SVMatroxBufferInterface::Import(importHandle, newFileName, SVFileBitmap, true) ||
+			S_OK != SVMatroxBufferInterface::Get(importHandle, SVSizeX, rDontCareWidth) ||
+			S_OK != SVMatroxBufferInterface::Get(importHandle, SVSizeY, rDontCareHeight))
 		{
-			SVMatroxBuffer importHandle;
-			if (S_OK != SVMatroxBufferInterface::Import(importHandle, newFileName, SVFileBitmap, true) ||
-				S_OK != SVMatroxBufferInterface::Get(importHandle, SVSizeX, rDontCareWidth) ||
-				S_OK != SVMatroxBufferInterface::Get(importHandle, SVSizeY, rDontCareHeight))
-			{
-				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_DontCareInvalidFilename, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
-				rMessages.push_back(Msg);
-			}
-			else
-			{
-				isValueToSet = true;
-			}
-			importHandle.clear();
+			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_DontCareInvalidFilename, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+			rMessages.push_back(Msg);
 		}
 		else
 		{
-			m_dontCareWidth.GetValue(rDontCareWidth);
-			m_dontCareHeight.GetValue(rDontCareHeight);
+			isValueToSet = true;
 		}
+		importHandle.clear();
 	}
 	else
 	{
