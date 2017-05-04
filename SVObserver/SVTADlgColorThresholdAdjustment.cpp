@@ -9,13 +9,12 @@
 //* .Check In Date   : $Date:   15 May 2014 12:50:36  $
 //******************************************************************************
 
+#pragma region Includes
 #include "stdafx.h"
 #include "SVTADlgColorThresholdAdjustment.h"
 
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVObjectLibrary/SVObjectSynchronousCommandTemplate.h"
-#include "GuiCommands/InspectionRunOnce.h"
 #include "SVColorTool.h"
 #include "SVColorThreshold.h"
 #include "SVTADlgColorThresholdSheet.h"
@@ -23,17 +22,22 @@
 #include "SVIPDoc.h"
 #include "SVSVIMStateClass.h"
 
+#pragma endregion Includes
+
+#pragma region Declarations
 #ifdef _DEBUG
 #define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
+#pragma endregion Declarations
 
 IMPLEMENT_DYNCREATE(SVTADlgColorThresholdAdjustment, SVTADlgColorThresholdBasePage)
 
 BEGIN_MESSAGE_MAP(SVTADlgColorThresholdAdjustment, SVTADlgColorThresholdBasePage)
 	//{{AFX_MSG_MAP(SVTADlgColorThresholdAdjustment)
 	ON_BN_CLICKED(IDC_EXCLUDE_COLOR_THRESHOLD, OnExcludeColorThreshold)
+	ON_BN_CLICKED(IDC_ENABLED_COLOR_THRESHOLD, OnEnabledThreshold)
 	ON_WM_VSCROLL()
 	ON_WM_MOUSEMOVE()
 	//}}AFX_MSG_MAP
@@ -44,6 +48,7 @@ SVTADlgColorThresholdAdjustment::SVTADlgColorThresholdAdjustment()
 , m_pUpperThreshold(nullptr)
 , m_pLowerThreshold(nullptr)
 , m_pExclude(nullptr)
+, m_pEnabled(nullptr)
 , m_pCurrentDocument(nullptr)
 , m_BandNumber(0)
 {
@@ -67,9 +72,14 @@ HRESULT SVTADlgColorThresholdAdjustment::SetInspectionData()
 		l_hrOk = AddInputRequest( m_pUpperThreshold, m_upperThreshold );
 	}
 
-	if( S_OK == l_hrOk )
+	if (S_OK == l_hrOk)
 	{
-		l_hrOk = AddInputRequest( m_pExclude, m_exclude );
+		l_hrOk = AddInputRequest(m_pExclude, m_exclude);
+	}
+
+	if (S_OK == l_hrOk)
+	{
+		l_hrOk = AddInputRequest(m_pEnabled, m_Enabled);
 	}
 
 	if( S_OK == l_hrOk )
@@ -114,6 +124,7 @@ void SVTADlgColorThresholdAdjustment::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_UPPER_THRESHOLD_STATIC, StrUpper);
 	DDX_Text(pDX, IDC_LOWER_THRESHOLD_STATIC, StrLower);
 	DDX_Check(pDX, IDC_EXCLUDE_COLOR_THRESHOLD, m_exclude);
+	DDX_Check(pDX, IDC_ENABLED_COLOR_THRESHOLD, m_Enabled);
 	//}}AFX_DATA_MAP
 	DDX_Control(pDX, IDC_COLOR_THRESHOLD_IMAGE, m_svDlgImage);
 }
@@ -172,6 +183,7 @@ BOOL SVTADlgColorThresholdAdjustment::OnInitDialog()
 		m_pUpperThreshold = &pBandThreshold->m_UpperThreshold;
 		m_pLowerThreshold = &pBandThreshold->m_LowerThreshold;
 		m_pExclude = &pBandThreshold->m_ThresholdExclude;
+		m_pEnabled = &pBandThreshold->m_ThresholdEnabled;
 		pImage = &pBandThreshold->m_OutputImage;
 	}
 
@@ -213,7 +225,7 @@ BOOL SVTADlgColorThresholdAdjustment::OnInitDialog()
 void SVTADlgColorThresholdAdjustment::getThresholdParams()
 {
 	// Update DDX variables
-	if( m_pUpperThreshold && m_pLowerThreshold && m_pExclude )
+	if(nullptr != m_pUpperThreshold && nullptr != m_pLowerThreshold && nullptr != m_pExclude && nullptr != m_pEnabled)
 	{
 		long value;
 	
@@ -223,7 +235,8 @@ void SVTADlgColorThresholdAdjustment::getThresholdParams()
 		m_pUpperThreshold->GetValue( value );
 		m_upperThreshold = (unsigned char)value;
 
-		m_pExclude->GetValue( m_exclude );
+		m_pExclude->GetValue(m_exclude);
+		m_pEnabled->GetValue(m_Enabled);
 
 		UpdateData( FALSE );
 	}
@@ -292,13 +305,7 @@ void SVTADlgColorThresholdAdjustment::updateGraphDisplay()
 
 		m_pTool->resetAllObjects();
 
-		if( nullptr != pInspection )
-		{
-			GuiCmd::InspectionRunOncePtr l_CommandPtr = new GuiCmd::InspectionRunOnce( pInspection->GetUniqueObjectID() );
-			SVObjectSynchronousCommandTemplate< GuiCmd::InspectionRunOncePtr > l_Command( pInspection->GetUniqueObjectID(), l_CommandPtr );
-
-			l_Command.Execute( TWO_MINUTE_CMD_TIMEOUT );
-		}
+		RunOnce(m_pTool->GetUniqueObjectID());
 
 		m_svDlgImage.ClearOverlayPoints();
 
@@ -317,15 +324,28 @@ void SVTADlgColorThresholdAdjustment::updateGraphDisplay()
 		options.sizeROI = m_pSheet->m_rectROI.Size();
 		options.bNormalizeY_ROI = true;
 		options.bScaleY = false;
-		SVDrawObjectClass* pGraphFigure = m_pThreshold->GetGraphFigure(static_cast<BandEnum> (m_BandNumber));
-		//m_svDlgImage.AddPoints( *pGraphFigure, SVGraphScale );
-		m_svDlgImage.AddOverlayPoints( *pGraphFigure, options );
+		//! Only draw overlays when enabled
+		if (m_Enabled)
+		{
+			SVDrawObjectClass* pGraphFigure = m_pThreshold->GetGraphFigure(static_cast<BandEnum> (m_BandNumber));
+			m_svDlgImage.AddOverlayPoints(*pGraphFigure, options);
+		}
 
 		m_svDlgImage.refresh();
 	}
 }
 
-void SVTADlgColorThresholdAdjustment::OnExcludeColorThreshold() 
+void SVTADlgColorThresholdAdjustment::OnExcludeColorThreshold()
+{
+	UpdateData();
+	setThresholdParams();
+
+	updateControls();
+
+	updateGraphDisplay();
+}
+
+void SVTADlgColorThresholdAdjustment::OnEnabledThreshold()
 {
 	UpdateData();
 	setThresholdParams();

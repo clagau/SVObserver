@@ -156,9 +156,21 @@ bool SVColorThresholdClass::ResetObject(SvStl::MessageContainerVector *pErrorMes
 
 	createImages();
 
+	//If no enabled Threshold Bands then disable Output Threshold Image as well
+	int EnabledThresholdCount(0);
 	for (BandEnum Band : BandList)
 	{
 		GetBandHistogramImage(Band).ResetObject();
+		BOOL Enabled(false);
+		m_BandThreshold[Band].m_ThresholdEnabled.GetValue(Enabled);
+		if (Enabled)
+		{
+			EnabledThresholdCount++;
+		}
+	}
+	if (0 == EnabledThresholdCount)
+	{
+		m_OutputThresholdEnabled.SetValue(BOOL(false));
 	}
 
 	bool Result = ValidateLocal();
@@ -213,6 +225,8 @@ bool SVColorThresholdClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageCo
 	long LowerThreshold[BandEnum::BandNumber] = { 0L, 0L, 0L };
 	long UpperThreshold[BandEnum::BandNumber] = { 0L, 0L, 0L };
 	BOOL ThresholdExclude[BandEnum::BandNumber] = { FALSE, FALSE, FALSE };
+	BOOL ThresholdEnabled[BandEnum::BandNumber] = { FALSE, FALSE, FALSE };
+	std::vector<BandEnum> ThresholdEnabledVector;
 
 	for (BandEnum Band : BandList)
 	{
@@ -220,6 +234,11 @@ bool SVColorThresholdClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageCo
 		m_BandThreshold[Band].m_LowerThreshold.GetValue(LowerThreshold[Band]);
 		m_BandThreshold[Band].m_UpperThreshold.GetValue(UpperThreshold[Band]);
 		m_BandThreshold[Band].m_ThresholdExclude.GetValue(ThresholdExclude[Band]);
+		m_BandThreshold[Band].m_ThresholdEnabled.GetValue(ThresholdEnabled[Band]);
+		if (ThresholdEnabled[Band])
+		{
+			ThresholdEnabledVector.push_back(Band);
+		}
 	}
 
 	for (BandEnum Band : BandList)
@@ -254,7 +273,11 @@ bool SVColorThresholdClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageCo
 
 		for (BandEnum Band : BandList)
 		{
-			isBinarize &= Binarize(LowerThreshold[Band], UpperThreshold[Band], ThresholdExclude[Band], Band);
+			//! Binarize only if band is enabled
+			if (ThresholdEnabled[Band])
+			{
+				isBinarize &= Binarize(LowerThreshold[Band], UpperThreshold[Band], ThresholdExclude[Band], Band);
+			}
 		}
 
 		if (!isBinarize)
@@ -306,10 +329,30 @@ bool SVColorThresholdClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageCo
 		}
 		else
 		{
-			//! The Output image is a bitwise AND of all 3 Threshold images
-			SVMatroxImageInterface::Arithmetic(l_OutputMilBuffer.GetBuffer(), BandMilBuffer[BandEnum::Band0].GetBuffer(), BandMilBuffer[BandEnum::Band1].GetBuffer(), SVImageAnd);
-			SVMatroxImageInterface::Arithmetic(l_OutputMilBuffer.GetBuffer(), BandMilBuffer[BandEnum::Band2].GetBuffer(), l_OutputMilBuffer.GetBuffer(), SVImageAnd);
-			// Do Image Arithmetic - AND the 3 outputs together
+			BOOL OutputThresholdEnabled;
+			m_OutputThresholdEnabled.GetValue(OutputThresholdEnabled);
+			if (OutputThresholdEnabled)
+			{
+				switch (ThresholdEnabledVector.size())
+				{
+				case 1LL:
+					//If only one Threshold image enabled then just copy it to Output image
+					SVMatroxBufferInterface::CopyBuffer(l_OutputMilBuffer.GetBuffer(), BandMilBuffer[ThresholdEnabledVector[0]].GetBuffer());
+					break;
+				case 2LL:
+					//! The Output image is a bitwise AND of 2 Threshold images
+					SVMatroxImageInterface::Arithmetic(l_OutputMilBuffer.GetBuffer(), BandMilBuffer[ThresholdEnabledVector[0]].GetBuffer(), BandMilBuffer[ThresholdEnabledVector[1]].GetBuffer(), SVImageAnd);
+					break;
+				case 3LL:
+					//! The Output image is a bitwise AND of all 3 Threshold images
+					SVMatroxImageInterface::Arithmetic(l_OutputMilBuffer.GetBuffer(), BandMilBuffer[BandEnum::Band0].GetBuffer(), BandMilBuffer[BandEnum::Band1].GetBuffer(), SVImageAnd);
+					SVMatroxImageInterface::Arithmetic(l_OutputMilBuffer.GetBuffer(), BandMilBuffer[BandEnum::Band2].GetBuffer(), l_OutputMilBuffer.GetBuffer(), SVImageAnd);
+					break;
+				default:
+					assert(false);
+					break;
+				}
+			}
 
 			if (m_ShowHistogram)
 			{
@@ -327,35 +370,38 @@ bool SVColorThresholdClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageCo
 
 				for (BandEnum Band : BandList)
 				{
-					GetBandHistogramImage(Band).SetImageHandleIndex(rRunStatus.Images);
-
-					if (nullptr != GetBandInputImage(Band) && GetBandInputImage(Band)->GetImageHandle(InputImageHandle) &&
-						!(InputImageHandle.empty()) && GetBandHistogramImage(Band).GetImageHandle(ImageHandle) && !(ImageHandle.empty()))
+					if (ThresholdEnabled[Band])
 					{
-						SVImageBufferHandleImage FromMilBuffer;
-						SVImageBufferHandleImage ToMilBuffer;
+						GetBandHistogramImage(Band).SetImageHandleIndex(rRunStatus.Images);
 
-						InputImageHandle->GetData(FromMilBuffer);
-						ImageHandle->GetData(ToMilBuffer);
-
-						if (!(FromMilBuffer.empty()) && !(ToMilBuffer.empty()))
+						if (nullptr != GetBandInputImage(Band) && GetBandInputImage(Band)->GetImageHandle(InputImageHandle) &&
+							!(InputImageHandle.empty()) && GetBandHistogramImage(Band).GetImageHandle(ImageHandle) && !(ImageHandle.empty()))
 						{
-							HRESULT MatroxCode = SVMatroxBufferInterface::CopyBuffer(ToMilBuffer.GetBuffer(), FromMilBuffer.GetBuffer(), -lLeft, -lTop);
-							if (S_OK != MatroxCode)
+							SVImageBufferHandleImage FromMilBuffer;
+							SVImageBufferHandleImage ToMilBuffer;
+
+							InputImageHandle->GetData(FromMilBuffer);
+							ImageHandle->GetData(ToMilBuffer);
+
+							if (!(FromMilBuffer.empty()) && !(ToMilBuffer.empty()))
 							{
-								Result = false;
-								if (nullptr != pErrorMessages)
+								HRESULT MatroxCode = SVMatroxBufferInterface::CopyBuffer(ToMilBuffer.GetBuffer(), FromMilBuffer.GetBuffer(), -lLeft, -lTop);
+								if (S_OK != MatroxCode)
 								{
-									SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_CopyImagesFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
-									pErrorMessages->push_back(Msg);
+									Result = false;
+									if (nullptr != pErrorMessages)
+									{
+										SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_CopyImagesFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+										pErrorMessages->push_back(Msg);
+									}
 								}
 							}
 						}
+						// Update Histogram graph
+						getHistogram(Band);
+						// Update threshold bars
+						updateThresholdBars(LowerThreshold[Band], UpperThreshold[Band], Band);
 					}
-					// Update Histogram graph
-					getHistogram(Band);
-					// Update threshold bars
-					updateThresholdBars(LowerThreshold[Band], UpperThreshold[Band], Band);
 				}
 			}
 		}
@@ -387,6 +433,7 @@ void SVColorThresholdClass::LocalInitialize()
 	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVColorThresholdObjectType;
 
 	// Register Embedded Object(s)
+	RegisterEmbeddedObject(&m_OutputThresholdEnabled, SVColorThresholdEnabledObjectGuid, IDS_OBJECTNAME_OUTPUT_THRESHOLDENABLED, false, SvOi::SVResetItemNone);
 
 	/////////////////////////////////////////////////////////////////////////
 	// Image Outputs
@@ -402,6 +449,7 @@ void SVColorThresholdClass::LocalInitialize()
 	RegisterEmbeddedObject(&m_BandThreshold[BandEnum::Band0].m_UpperThreshold, SVBand0UpperThresholdObjectGuid, IDS_OBJECTNAME_BAND0_UPPERTHRESHOLD, false, SvOi::SVResetItemNone);
 	RegisterEmbeddedObject(&m_BandThreshold[BandEnum::Band0].m_LowerThreshold, SVBand0LowerThresholdObjectGuid, IDS_OBJECTNAME_BAND0_LOWERTHRESHOLD, false, SvOi::SVResetItemNone);
 	RegisterEmbeddedObject(&m_BandThreshold[BandEnum::Band0].m_ThresholdExclude, SVBand0ThresholdExcludeObjectGuid, IDS_OBJECTNAME_BAND0_THRESHOLDEXCLUDE, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_BandThreshold[BandEnum::Band0].m_ThresholdEnabled, SVBand0ThresholdEnabledObjectGuid, IDS_OBJECTNAME_BAND0_THRESHOLDENABLED, false, SvOi::SVResetItemNone);
 
 	/////////////////////////////////////////////////////////////////////////
 	// Band 1 Threshold
@@ -409,6 +457,7 @@ void SVColorThresholdClass::LocalInitialize()
 	RegisterEmbeddedObject(&m_BandThreshold[BandEnum::Band1].m_UpperThreshold, SVBand1UpperThresholdObjectGuid, IDS_OBJECTNAME_BAND1_UPPERTHRESHOLD, false, SvOi::SVResetItemNone);
 	RegisterEmbeddedObject(&m_BandThreshold[BandEnum::Band1].m_LowerThreshold, SVBand1LowerThresholdObjectGuid, IDS_OBJECTNAME_BAND1_LOWERTHRESHOLD, false, SvOi::SVResetItemNone);
 	RegisterEmbeddedObject(&m_BandThreshold[BandEnum::Band1].m_ThresholdExclude, SVBand1ThresholdExcludeObjectGuid, IDS_OBJECTNAME_BAND1_THRESHOLDEXCLUDE, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_BandThreshold[BandEnum::Band1].m_ThresholdEnabled, SVBand1ThresholdEnabledObjectGuid, IDS_OBJECTNAME_BAND1_THRESHOLDENABLED, false, SvOi::SVResetItemNone);
 
 	/////////////////////////////////////////////////////////////////////////
 	// Band 2 Threshold
@@ -416,6 +465,7 @@ void SVColorThresholdClass::LocalInitialize()
 	RegisterEmbeddedObject(&m_BandThreshold[BandEnum::Band2].m_UpperThreshold, SVBand2UpperThresholdObjectGuid, IDS_OBJECTNAME_BAND2_UPPERTHRESHOLD, false, SvOi::SVResetItemNone);
 	RegisterEmbeddedObject(&m_BandThreshold[BandEnum::Band2].m_LowerThreshold, SVBand2LowerThresholdObjectGuid, IDS_OBJECTNAME_BAND2_LOWERTHRESHOLD, false, SvOi::SVResetItemNone);
 	RegisterEmbeddedObject(&m_BandThreshold[BandEnum::Band2].m_ThresholdExclude, SVBand2ThresholdExcludeObjectGuid, IDS_OBJECTNAME_BAND2_THRESHOLDEXCLUDE, false, SvOi::SVResetItemNone);
+	RegisterEmbeddedObject(&m_BandThreshold[BandEnum::Band2].m_ThresholdEnabled, SVBand2ThresholdEnabledObjectGuid, IDS_OBJECTNAME_BAND2_THRESHOLDENABLED, false, SvOi::SVResetItemNone);
 
 	/////////////////////////////////////////////////////////////////////////
 	// Train Color ROI extents
@@ -593,9 +643,7 @@ bool SVColorThresholdClass::Binarize( long lower, long upper, BOOL bExclude, Ban
 			}
 
 			SVConditionEnum  BinirizeType = bExclude ? SVECondOutRange : SVECondInRange;
-			MatroxCode = SVMatroxImageInterface::Binarize( OutputMilBuffer.GetBuffer(),  
-					InputMilBuffer.GetBuffer(), 
-					BinirizeType, minVal, maxVal );
+			MatroxCode = SVMatroxImageInterface::Binarize( OutputMilBuffer.GetBuffer(),  InputMilBuffer.GetBuffer(), BinirizeType, minVal, maxVal );
 			
 			Result = (S_OK == MatroxCode) ? true : false;
 		}

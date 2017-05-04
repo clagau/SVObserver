@@ -48,6 +48,7 @@ public:
 	BYTE	m_lowerThreshold;
 	BYTE	m_upperThreshold;
 	BOOL	m_exclude;
+	BOOL	m_Enabled;
 	//}}AFX_DATA
 
 // Overrides
@@ -65,6 +66,7 @@ protected:
 	//{{AFX_MSG(SVTADlgColorThresholdAdjustment)
 	virtual BOOL OnInitDialog() override;
 	afx_msg void OnExcludeColorThreshold();
+	afx_msg void OnEnabledThreshold();
 	afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 	afx_msg void OnMouseMove(UINT nFlags, CPoint point);
 	//}}AFX_MSG
@@ -89,6 +91,7 @@ protected:
 	SVLongValueObjectClass* m_pUpperThreshold;
 	SVLongValueObjectClass* m_pLowerThreshold;
 	SVBoolValueObjectClass* m_pExclude;
+	SVBoolValueObjectClass* m_pEnabled;
 
 	SVValueBaseNormalizerClass m_Normalizer;
 };

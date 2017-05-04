@@ -1108,17 +1108,21 @@ extern /*const*/ GUID SVHasROIObjectGuid;
 
 // GUIDs for Color Threshold
 extern /*const*/ GUID SVColorThresholdClassGuid;
+extern /*const*/ GUID SVColorThresholdEnabledObjectGuid;
 
 // GUIDs for the Embeddeds of the SVColorThresholdClass
 extern /*const*/ GUID SVBand0UpperThresholdObjectGuid;
 extern /*const*/ GUID SVBand0LowerThresholdObjectGuid;
 extern /*const*/ GUID SVBand0ThresholdExcludeObjectGuid;
+extern /*const*/ GUID SVBand0ThresholdEnabledObjectGuid;
 extern /*const*/ GUID SVBand1UpperThresholdObjectGuid;
 extern /*const*/ GUID SVBand1LowerThresholdObjectGuid;
 extern /*const*/ GUID SVBand1ThresholdExcludeObjectGuid;
+extern /*const*/ GUID SVBand1ThresholdEnabledObjectGuid;
 extern /*const*/ GUID SVBand2UpperThresholdObjectGuid;
 extern /*const*/ GUID SVBand2LowerThresholdObjectGuid;
 extern /*const*/ GUID SVBand2ThresholdExcludeObjectGuid;
+extern /*const*/ GUID SVBand2ThresholdEnabledObjectGuid;
 
 // GUIDs for the Embeddeds of the SVLinearEdgeProcessing
 extern /*const*/ GUID SVEdgeUpperThresholdValueGuid;

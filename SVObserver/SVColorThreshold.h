@@ -26,6 +26,7 @@ struct BandThreshold
 	SVLongValueObjectClass	m_UpperThreshold;		//! The upper threshold limit for the band
 	SVLongValueObjectClass	m_LowerThreshold;		//! The lower threshold limit for the band
 	SVBoolValueObjectClass	m_ThresholdExclude;		//! When this is set then the color is excluded
+	SVBoolValueObjectClass	m_ThresholdEnabled;		//! Enables or disables the threshold band
 
 	SVInObjectInfoStruct	m_InputImage;			//! The structure to the input image (band image of the color tool)
 	SVImageClass			m_OutputImage;			//! The result image of the threshold
@@ -57,6 +58,7 @@ public:
 	SVDrawObjectListClass* GetThresholdBarsFigure(BandEnum Band);
 	SVImageClass& GetOutputImage() { return m_OutputImage; };
 	BandThreshold* GetBandThreshold(BandEnum Band);
+	SVBoolValueObjectClass* GetOutputThresholdEnabled() { return &m_OutputThresholdEnabled; };
 
 	void setShowHistogram(bool Show) { m_ShowHistogram = Show; };
 #pragma endregion Public Methods
@@ -74,7 +76,7 @@ private:
 	bool createOutputImage(SVImageClass* pInputImage, SVImageClass* pOutputImage);
 	bool createHistogramImage(SVImageClass* pInputImage, SVImageClass* pOutputImage);
 
-	bool Binarize(long lower, long upper, BOOL bExclude, BandEnum Band);
+	bool Binarize(long Lower, long Upper, BOOL Exclude, BandEnum Band);
 	bool getHistogram(BandEnum Band);
 	bool updateThresholdBars(long lMinThresholdValue, long lMaxThresholdValue, BandEnum Band);
 	bool ValidateLocal() const;
@@ -101,6 +103,8 @@ private:
 	SVDoubleValueObjectClass	m_ExtentTop;
 	SVDoubleValueObjectClass	m_ExtentWidth;
 	SVDoubleValueObjectClass	m_ExtentHeight;
+	
+	SVBoolValueObjectClass		m_OutputThresholdEnabled;
 
 	SVImageClass  m_OutputImage;
 	BandThreshold m_BandThreshold[BandEnum::BandNumber];

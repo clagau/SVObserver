@@ -76,8 +76,33 @@ BOOL SVColorToolClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure
 				//! If this is true then we need to convert it
 				if (m_ConvertTool)
 				{
+					//! This is required to receive the correct extents when the camera image has an ROI set
+					m_pInputImage->ResetObject();
+					//! Converting configuration without ROI has to set the image to the full parent extents
 					SetImageExtentToParent(1);
+					// Converting configuration without ROI has to set all the thresholds to enabled
+					SVObjectTypeInfoStruct objectInfo;
+					objectInfo.ObjectType = SVOperatorObjectType;
+					objectInfo.SubType = SVColorThresholdObjectType;
+					SVColorThresholdClass* pColorThreshold = dynamic_cast<SVColorThresholdClass*> (getFirstObject(objectInfo));
+					if (nullptr != pColorThreshold)
+					{
+						for (BandEnum Band : BandList)
+						{
+							BandThreshold* pBandThreshold = pColorThreshold->GetBandThreshold(Band);
+							if (nullptr != pBandThreshold)
+							{
+								pBandThreshold->m_ThresholdEnabled.SetValue(BOOL(true));
+							}
+						}
+						SVBoolValueObjectClass* pOutputThresholdEnabled = pColorThreshold->GetOutputThresholdEnabled();
+						if (nullptr != pOutputThresholdEnabled)
+						{
+							pOutputThresholdEnabled->SetValue(BOOL(true));
+						}
+					}
 				}
+				//! Now set the value to ROI so no further conversion takes place
 				m_hasROI.SetValue(BOOL(true));
 			}
 		}
@@ -294,7 +319,7 @@ void SVColorToolClass::LocalInitialize()
 
 	//// Add the Color Threshold class object
 	SVColorThresholdClass* pColorThreshold = new SVColorThresholdClass;
-	if (pColorThreshold)
+	if(pColorThreshold)
 	{
 		Add(pColorThreshold);
 	}

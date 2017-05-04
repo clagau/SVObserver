@@ -13,14 +13,12 @@
 
 #pragma region Includes
 #include "SVTADlgColorThresholdBasePage.h"
+#include "SVLibrary/SVTaskObjectValueInterface.h"
 #pragma endregion Includes
 
-class SVColorThresholdClass;
+class SVBoolValueObjectClass;
 
-/////////////////////////////////////////////////////////////////////////////
-// SVTADlgColorThresholdOutput dialog
-
-class SVTADlgColorThresholdOutput : public SVTADlgColorThresholdBasePage
+class SVTADlgColorThresholdOutput : public SVTADlgColorThresholdBasePage, public SVTaskObjectValueInterface
 {
 	DECLARE_DYNCREATE(SVTADlgColorThresholdOutput)
 
@@ -29,14 +27,12 @@ public:
 	SVTADlgColorThresholdOutput();
 	virtual ~SVTADlgColorThresholdOutput();
 
-// Dialog Data
 	//{{AFX_DATA(SVTADlgColorThresholdOutput)
 	enum { IDD = IDD_TA_COLOR_THRESHOLD_OUTPUT_DIALOG };
+	BOOL	m_Enabled;
 	//}}AFX_DATA
 
 
-// Overrides
-	// ClassWizard generate virtual function overrides
 	//{{AFX_VIRTUAL(SVTADlgColorThresholdOutput)
 	protected:
 	virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
@@ -47,10 +43,9 @@ protected:
 	// Generated message map functions
 	//{{AFX_MSG(SVTADlgColorThresholdOutput)
 	virtual BOOL OnInitDialog() override;
+	afx_msg void OnEnabledThreshold();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
 
+	SVBoolValueObjectClass* m_pEnabled;
 };
-
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
