@@ -121,6 +121,7 @@ DoubleSortValueObject* TableObject::updateOrCreateColumn(const GUID& rEmbeddedId
 				pValueObject->SetName(newName.c_str());
 				GetInspection()->OnObjectRenamed(*pValueObject, OldName);
 			}
+			pValueObject->SetArraySize(arraysize);
 		}
 		return pValueObject;
 	}
