@@ -14,22 +14,21 @@
 #include "svobserver.h"
 #include "SVGlobal.h"
 #include "SVExternalToolInputSelectPage.h"
-#include "SVExternalToolDetailsSheet.h"
-#include "SVToolSet.h"
 #include "SVIPDoc.h"
-#include "SVExternalTool.h"
 #include "SVExternalToolTask.h"
-#include "SVInspectionProcess.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "ObjectSelectorLibrary\ObjectTreeGenerator.h"
 #include "SVPPQObject.h"
 #include "SVObjectLibrary\GlobalConst.h"
 #include "RootObject.h"
+#include "SVOGui/BoundValue.h"
 #include "SVOGui/GlobalSelector.h"
 #include "SVOGui/PPQSelector.h"
 #include "SVOGui/ToolSetItemSelector.h"
 #include "SVOGui/NoSelector.h"
 #include "TextDefinesSvO.h"
+#include "GuiCommands/GetObjectName.h"
+#include "GuiCommands/GetTaskObjectInstanceID.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -56,20 +55,53 @@ BEGIN_MESSAGE_MAP(SVExternalToolInputSelectPage, CPropertyPage)
     ON_NOTIFY(PTN_ITEMBUTTONCLICK, IDC_INPUT_LIST_TREE, OnItemButtonClick)
 END_MESSAGE_MAP()
 
-
-SVExternalToolInputSelectPage::SVExternalToolInputSelectPage( LPCTSTR Title, SVExternalToolDetailsSheet* pParent, int id ) 
-: CPropertyPage( id )
+SVString getInputValueTag(int index)
 {
-	ASSERT( m_pParentDialog );
+	return SvUl_SF::Format(_T("InputValue%d"), index);
+}
 
-	m_pParentDialog = pParent;
-	m_pTool = m_pParentDialog->m_pTool;
-	m_pTask = m_pParentDialog->m_pTask;
-	m_bTabbed = false;
-	m_sGroupName = Title;
-    m_psp.pszTitle = m_sGroupName.c_str();
+SVString getInputValueLinkTag(int index)
+{
+	return SvUl_SF::Format(_T("InputValueLink%d"), index);
+}
+
+SVString getInputNameTag(int index)
+{
+	return SvUl_SF::Format(_T("InputName%d"), index);
+}
+
+std::map<std::string, SvOg::BoundValue> createValueMap()
+{
+	std::map<std::string, SvOg::BoundValue> retValue;
+	for (int i = 0; i < COUNT_OF_INPUT_OUTPUT_GUIDs; i++)
+	{
+		retValue[getInputValueTag(i)] = aInputObjectGUID[i];
+		retValue[getInputValueLinkTag(i)] = aInputObject_LinkedGUID[i];
+		retValue[getInputNameTag(i)] = aInputObjectNameGuid[i];
+	}
+	return retValue;
+}
+
+
+SVExternalToolInputSelectPage::SVExternalToolInputSelectPage( LPCTSTR Title, const SVGUID& rInspectionID, const SVGUID& rToolObjectID, const SVGUID& rTaskObjectID, int id )
+: CPropertyPage( id )
+, m_InspectionID( rInspectionID )
+, m_ToolObjectID( rToolObjectID )
+, m_TaskObjectID( rTaskObjectID )
+, m_Values(SvOg::BoundValues(rInspectionID, rTaskObjectID, createValueMap() ))
+{
+	SVObjectClass* pObject = nullptr;
+	SVObjectManagerClass::Instance().GetObjectByIdentifier(m_TaskObjectID, pObject);
+	m_pTask = dynamic_cast<SVExternalToolTask*>(pObject);
+	ASSERT(m_pTask);
+    m_psp.pszTitle = Title;
     m_psp.dwFlags |= PSP_USETITLE;
-
+	m_inputValueCount = m_pTask->m_Data.m_lNumInputValues;
+	if (m_inputValueCount > COUNT_OF_INPUT_OUTPUT_GUIDs)
+	{
+		m_inputValueCount = COUNT_OF_INPUT_OUTPUT_GUIDs;
+	}
+ 
 	//{{AFX_DATA_INIT(SVExternalToolInputSelectPage)
 	//}}AFX_DATA_INIT
 }
@@ -96,7 +128,9 @@ BOOL SVExternalToolInputSelectPage::OnInitDialog()
 	DWORD dwStyle;
 	CRect rc;
 
-	if( m_pTask->m_Data.m_lNumInputValues > 0 )
+	m_Values.Init();
+
+	if( m_inputValueCount > 0 )
 	{
 		// Hide the text if we have inputs
 		GetDlgItem( IDC_NO_INPUT_TXT )->ShowWindow( SW_HIDE );
@@ -124,29 +158,17 @@ BOOL SVExternalToolInputSelectPage::OnInitDialog()
 
 		SVRPropertyItem* pGroupItem = nullptr;
 
-		if( m_bTabbed )
-		{	// create dummy group for the items; OnOK expects groups to exist
-			pGroupItem = m_Tree.InsertItem(new SVRPropertyItem(), pRoot);
-			pGroupItem->SetCanShrink(false);
-			pGroupItem->SetLabelText(_T("Inputs"));
-			pGroupItem->SetInfoText(_T(""));
-			pGroupItem->Expand();
-		}
-		
 		int iItemCount = 0;
 
-		for( int i = 0 ; i < m_pTask->m_Data.m_lNumInputValues ; i++ )
+		for( int i = 0 ; i < m_inputValueCount; i++ )
 		{
-			SVStringValueObjectClass& rName = m_pTask->m_Data.m_aInputObjectNames[i];
-			SVVariantValueObjectClass& rValue = m_pTask->m_Data.m_aInputObjects[i];
 			InputValueDefinitionStruct& rDefinition = m_pTask->m_Data.m_aInputValueDefinitions[i];
 
 			iID++;
 
 			SVString GroupName = SvUl_SF::createSVString( rDefinition.m_bGroup );
-			if( !m_bTabbed )
-			{
-				if ( (iterGroup = mapGroupItems.find(GroupName)) == mapGroupItems.end() )
+
+			if ((iterGroup = mapGroupItems.find(GroupName)) == mapGroupItems.end())
 				{	// if group does not already exist
 
 					bool bTreeStyle = true;	// false = list-style
@@ -159,7 +181,7 @@ BOOL SVExternalToolInputSelectPage::OnInitDialog()
 
 					pGroupItem->SetBold(true);
 
-					if ( !bTreeStyle )
+				if (!bTreeStyle)
 					{
 						pGroupItem->SetBackColor(::GetSysColor(COLOR_INACTIVECAPTION));
 						pGroupItem->SetForeColor(::GetSysColor(COLOR_HIGHLIGHTTEXT));
@@ -172,15 +194,6 @@ BOOL SVExternalToolInputSelectPage::OnInitDialog()
 				{
 					pGroupItem = iterGroup->second;
 				}
-			}// end if(!m_bTabbed)
-
-			else	// if tabbed, filter out everything that is not in our tab (group)
-			{
-				if( GroupName != m_sGroupName)
-				{
-					continue;	// skip this item; it's not in our group
-				}
-			}
 
 			iItemCount++;
 
@@ -195,11 +208,7 @@ BOOL SVExternalToolInputSelectPage::OnInitDialog()
 			pEdit->SetCtrlID( iID );
 
 			// display name like: "Input 01 (Translation-X)"
-			SVString Temp;
-			rName.GetValue(Temp);
-
-			SVString sLabel = SvUl_SF::Format( _T("%s (%s)"), rValue.GetName(), Temp.c_str() );
-
+			SVString sLabel = SvUl_SF::Format( _T("%s (%s)"), m_Values.GetName(getInputValueTag(i)).c_str(), m_Values.Get<CString>(getInputNameTag(i)) );
 			pEdit->SetLabelText( sLabel.c_str() );
 
 			SVString Type;
@@ -216,8 +225,11 @@ BOOL SVExternalToolInputSelectPage::OnInitDialog()
 			Description = _T(" (Type : ") + Type +_T(")  ") + Description;
 			pEdit->SetInfoText( Description.c_str() ) ;
 
-			SVString Value;
-			rValue.getValue( Value );
+			SVString Value(m_Values.Get<CString>(getInputValueLinkTag(i)));
+			if (Value.empty())
+			{
+				Value = m_Values.Get<CString>(getInputValueTag(i));
+			}
 			pEdit->SetItemValue( Value.c_str() );
 			pEdit->OnRefresh();
 		}
@@ -276,22 +288,12 @@ void SVExternalToolInputSelectPage::OnItemButtonClick(NMHDR* pNotifyStruct, LRES
 // display VO picker dialog and return selection
 int SVExternalToolInputSelectPage::SelectObject( SVString& rObjectName, SVRPropertyItem* pItem )
 {
-	if( nullptr == m_pTool ) { return 0; }
-
-	SVToolSetClass* pToolSet = dynamic_cast<SVToolSetClass*> ( m_pTool->GetAncestor( SVToolSetObjectType ) );
-
-	if( nullptr == pToolSet ) { return 0; }
-
-	SVString InspectionName;
-	if( nullptr != pToolSet->GetInspection() )
-	{
-		InspectionName = pToolSet->GetInspection()->GetName();
-	}
+	SVString InspectionName = GetName(m_InspectionID);
 
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject );
 	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
 
-	SvOsl::SelectorOptions BuildOptions( pToolSet->GetInspection()->GetUniqueObjectID(), SV_ARCHIVABLE, pToolSet->GetUniqueObjectID() );
+	SvOsl::SelectorOptions BuildOptions( m_InspectionID, SV_ARCHIVABLE, GetToolSetGUID() );
 	SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::GlobalSelector, SvOg::PPQSelector, SvOg::ToolSetItemSelector<>>( BuildOptions );
 
 	SVStringSet Items;
@@ -307,7 +309,7 @@ int SVExternalToolInputSelectPage::SelectObject( SVString& rObjectName, SVRPrope
 
 	SVString Filter = SvUl_SF::LoadSVString( IDS_FILTER );
 	SVString ToolsetOutput = SvUl_SF::LoadSVString( IDS_SELECT_TOOLSET_OUTPUT );
-	SVString Title = SvUl_SF::Format( _T("%s - %s"), ToolsetOutput.c_str(), m_pTool->GetName() );
+	SVString Title = SvUl_SF::Format( _T("%s - %s"), ToolsetOutput.c_str(),GetName(m_ToolObjectID) );
 
 	INT_PTR Result = SvOsl::ObjectTreeGenerator::Instance().showDialog( Title.c_str(), ToolsetOutput.c_str(), Filter.c_str(), this );
 
@@ -369,37 +371,14 @@ void SVExternalToolInputSelectPage::OnOK()
 			while ( pItem )
 			{
 				int iIndex = GetItemIndex(pItem);
-				ASSERT( iIndex >= 0 );
-				SVVariantValueObjectClass& rValue = m_pTask->m_Data.m_aInputObjects[iIndex];
-				int iBucket = 1;
-
-				SVObjectClass* pObject = FindObject(pItem);
-
-				SVString Value;
-				pItem->GetItemValue( Value );
-
-				SVInObjectInfoStruct& rInfo = m_pTask->m_Data.m_aInputObjectInfo[iIndex];
-				if ( rInfo.GetInputObjectInfo().m_pObject )
-				{	// disconnect existing connection
-					rInfo.GetInputObjectInfo().m_pObject->DisconnectObjectInput(&rInfo);
-					rInfo.SetInputObject( nullptr );
-				}
-
-				if ( nullptr != pObject )
+				ASSERT( iIndex >= 0 && iIndex < m_inputValueCount );
+				if (iIndex >= 0 && iIndex < m_inputValueCount)
 				{
-					rValue.setValue( Value, iBucket );
-					rInfo.SetInputObject( pObject );
-					bool bSuccess = false;
-					if ( rInfo.GetInputObjectInfo().m_pObject )
-					{
-						bSuccess = rInfo.GetInputObjectInfo().m_pObject->ConnectObjectInput(&rInfo);
-					}
-					ASSERT( bSuccess );
-				}
-				else
-				{
-					rValue.SetType( m_pTask->m_Data.m_aInputValueDefinitions[iIndex].m_VT);
-					rValue.SetValueKeepType(iBucket, Value.c_str());
+					SVObjectClass* pObject = FindObject(pItem);
+
+					SVString Value;
+					pItem->GetItemValue(Value);
+					m_Values.Set<CString>(getInputValueTag(iIndex), Value.c_str());
 				}
 
 				pItem = pItem->GetSibling();
@@ -407,6 +386,7 @@ void SVExternalToolInputSelectPage::OnOK()
 			pGroup = pGroup->GetSibling();
 		}
 		m_Tree.SaveState( m_pTask->m_Data.m_PropTreeState );
+		m_Values.Commit(true);
 		CPropertyPage::OnOK();
 	}
 }
@@ -415,18 +395,10 @@ SVObjectClass* SVExternalToolInputSelectPage::FindObject(SVRPropertyItem* pItem)
 {
 	SVObjectClass* pObject = nullptr;
 
-	SVString CompleteObjectName;
+	SVString CompleteObjectName = GetName(m_InspectionID);
 	SVString Name;
 	pItem->GetItemValue(Name);
 	
-	SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*> ( m_pTool->GetAncestor( SVInspectionObjectType ) );
-	ASSERT( pInspection );
-
-	//If pointer is a nullptr then name is empty
-	if( nullptr != pInspection )
-	{ 
-		CompleteObjectName = pInspection->GetCompleteName(); 
-	}
 	SVString ToolSetName = SvUl_SF::LoadSVString( IDS_CLASSNAME_SVTOOLSET );
 
 	// if object name starts with tool set, inspection name must be added
@@ -475,7 +447,7 @@ HRESULT SVExternalToolInputSelectPage::ValidateItem(SVRPropertyItem* pItem)
 	else
 	{
 		// CALL DLL TO VALIDATE RANGE
-		hr = m_pTask->m_dll.ValidateValueParameter( m_pTask->GetUniqueObjectID(), (long) iIndex, vtNew );
+		hr = m_pTask->m_dll.ValidateValueParameter(m_TaskObjectID, (long) iIndex, vtNew );
 		if ( S_OK != hr )
 		{
 			_bstr_t bMessage;
@@ -495,3 +467,37 @@ int SVExternalToolInputSelectPage::GetItemIndex(SVRPropertyItem* pItem)
 	return pItem->GetCtrlID() - ID_BASE;
 }
 
+SVString SVExternalToolInputSelectPage::GetName(const SVGUID& guid) const
+{
+	SVString inspectionName;
+	typedef GuiCmd::GetObjectName Command;
+	typedef SVSharedPtr<Command> CommandPtr;
+
+	CommandPtr commandPtr(new Command(guid));
+	SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
+	HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+	if (S_OK == hr)
+	{
+		inspectionName = commandPtr->GetName();
+	}
+	return inspectionName;
+}
+
+GUID SVExternalToolInputSelectPage::GetToolSetGUID() const
+{
+	GUID toolsetGUID = GUID_NULL;
+
+	typedef GuiCmd::GetTaskObjectInstanceID Command;
+	typedef SVSharedPtr<Command> CommandPtr;
+
+	SVObjectTypeInfoStruct info(SVToolSetObjectType);
+	CommandPtr commandPtr = CommandPtr(new Command(m_InspectionID, info));
+	SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
+	HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+	if (S_OK == hr)
+	{
+		toolsetGUID = commandPtr->GetInstanceID();
+	}
+
+	return toolsetGUID;
+}

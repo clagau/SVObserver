@@ -17,6 +17,7 @@
 #include "GuiCommands/ValueObjectGetEnums.h"
 #include "GuiCommands/InspectionRunOnce.h"
 #include "GuiCommands/ResetObject.h"
+#include "GuiCommands/GetObjectName.h"
 #pragma endregion Includes
 
 namespace Seidenader
@@ -105,6 +106,22 @@ namespace Seidenader
 					return commandPtr->GetEnumList();
 				}
 				return SvOi::NameValueList();
+			}
+
+			SVString GetObjectName(const GUID& rInspectionID, const GUID& rObjectID) const
+			{
+				typedef GuiCmd::GetObjectName Command;
+				typedef SVSharedPtr<Command> CommandPtr;
+
+				CommandPtr commandPtr(new Command(rObjectID));
+				SVObjectSynchronousCommandTemplate<CommandPtr> cmd(rInspectionID, commandPtr);
+				HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+
+				if (S_OK == hr)
+				{
+					return commandPtr->GetName();
+				}
+				return SVString();
 			}
 
 			SvStl::MessageContainerVector getSetFailedMessageList() { return m_setMessageFailList; };

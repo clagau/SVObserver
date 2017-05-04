@@ -14,7 +14,6 @@
 #include "svobserver.h"
 #include "SVExternalToolResultPage.h"
 #include "SVGlobal.h"
-#include "SVExternalToolDetailsSheet.h"
 #include "SVToolSet.h"
 #include "SVIPDoc.h"
 #include "SVExternalTool.h"
@@ -30,14 +29,12 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-IMPLEMENT_DYNCREATE(SVExternalToolResultPage, CPropertyPage)
-
-SVExternalToolResultPage::SVExternalToolResultPage( LPCTSTR Title, SVExternalToolDetailsSheet* pParent, int id ) 
+SVExternalToolResultPage::SVExternalToolResultPage(LPCTSTR Title, const SVGUID& rInspectionID, const SVGUID& rTaskObjectID,  int id )
 	: CPropertyPage(SVExternalToolResultPage::IDD)
+	, m_InspectionID(rInspectionID)
+	, m_TaskObjectID(rTaskObjectID)
 {
-	m_pParentDialog = pParent;
-	m_pTool = m_pParentDialog->m_pTool;
-	m_pTask = m_pParentDialog->m_pTask;
+	m_pTask = dynamic_cast<SVExternalToolTask*>(SVObjectManagerClass::Instance().GetObject(m_TaskObjectID));
 
 	m_sTitle = Title;
     m_psp.pszTitle = m_sTitle.c_str();
@@ -220,7 +217,7 @@ int SVExternalToolResultPage::SelectObject(int iIndex)
 
 	if( pResult )
 	{
-		SVSetupDialogManager::Instance().SetupDialog( pResult->GetClassID(), pResult->GetUniqueObjectID(), this->m_pParentDialog );
+		SVSetupDialogManager::Instance().SetupDialog( pResult->GetClassID(), pResult->GetUniqueObjectID(), this );
 	}
 
 	return 0;

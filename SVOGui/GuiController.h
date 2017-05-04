@@ -51,6 +51,11 @@ namespace Seidenader
 				return GetEnums(m_Data.GetInspectionID(), m_Data.GetObjectID(rName));
 			}
 
+			SVString GetName(const SVString& rName) const
+			{
+				return GetObjectName(m_Data.GetInspectionID(), m_Data.GetObjectID(rName));
+			}
+
 			HRESULT Commit(bool bReset = false)
 			{
 				return SetValues(m_Data, bReset);

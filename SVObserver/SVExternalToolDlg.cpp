@@ -16,7 +16,6 @@
 #include "SVExternalToolDlg.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
-#include "SVExternalTool.h"
 #include "SVExternalToolTask.h"
 #include "SVExternalToolDetailsSheet.h"
 #include "SVOGui/SVShowDependentsDialog.h"
@@ -26,6 +25,7 @@
 #include "SVStatusLibrary\MessageContainer.h"
 #include "SVStatusLibrary\GlobalPath.h"
 #include "SVUtilityLibrary/SVString.h"
+#include "GuiCommands/GetTaskObjectInstanceID.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -68,19 +68,28 @@ BEGIN_MESSAGE_MAP(SVExternalToolDlg, CPropertyPage)
     ON_MESSAGE(WM_UPDATE_STATUS, OnUpdateStatus)
 END_MESSAGE_MAP()
 
-SVExternalToolDlg::SVExternalToolDlg( const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* pSheet )
+SVExternalToolDlg::SVExternalToolDlg( const SVGUID& rInspectionID, const SVGUID& rToolObjectID, SVToolAdjustmentDialogSheetClass* pSheet )
 : CPropertyPage(IDD)
 , m_InspectionID(rInspectionID)
-, m_TaskObjectID(rTaskObjectID) 
+, m_ToolObjectID(rToolObjectID)
+, m_TaskObjectID(SV_GUID_NULL)
 {
 	m_pSheet = pSheet;
-	m_pTool = dynamic_cast<SVExternalTool*> (pSheet->GetTool());
-	ASSERT( m_pTool );
 
-	SVObjectTypeInfoStruct info;
-	info.ObjectType = SVExternalToolTaskObjectType;
+	typedef GuiCmd::GetTaskObjectInstanceID Command;
+	typedef SVSharedPtr<Command> CommandPtr;
 
-	m_pTask = dynamic_cast<SVExternalToolTask*>( m_pTool->getFirstObject( info ) );
+	SVObjectTypeInfoStruct info(SVExternalToolTaskObjectType, SVNotSetSubObjectType);
+
+	CommandPtr commandPtr = CommandPtr(new Command(m_ToolObjectID, info));
+	SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
+	HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+	if (S_OK == hr)
+	{
+		m_TaskObjectID = commandPtr->GetInstanceID();
+	}
+
+	m_pTask = dynamic_cast<SVExternalToolTask*>(SVObjectManagerClass::Instance().GetObject(m_TaskObjectID));
 	ASSERT( m_pTask );
 
 	m_pCancelData = nullptr;
@@ -197,12 +206,9 @@ void SVExternalToolDlg::OnOK()
 void SVExternalToolDlg::OnDetails() 
 {
 	// Add new property sheet to adjust Input Images, Input Value Objects..
-	SVExternalToolDetailsSheet sheet(m_InspectionID, m_TaskObjectID, m_pTask->m_Data.m_lNumInputImages, _T("External Tool Details"), this, 0);
+	SVExternalToolDetailsSheet sheet(m_InspectionID, m_ToolObjectID, m_TaskObjectID, m_pTask->m_Data.m_lNumInputImages, _T("External Tool Details"), this, 0);
 
 	SVCancelData* pCancelData = nullptr;
-
-	sheet.m_pTool = m_pTool;
-	sheet.m_pTask = m_pTask;
 
 	if ( sheet.CanCancel() )
 		sheet.GetCancelData(pCancelData);

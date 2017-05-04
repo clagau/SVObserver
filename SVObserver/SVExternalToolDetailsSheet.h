@@ -12,8 +12,8 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <map>
+#include "SVUtilityLibrary\SVGUID.h"
 #include "SVLibrary\ISVCancel.h"
-#include "SVExternalTool.h"
 #pragma endregion Includes
 
 class SVExternalToolTask;
@@ -26,7 +26,7 @@ class SVExternalToolDetailsSheet : public CPropertySheet, public ISVCancel
 
 // Construction
 public:
-	SVExternalToolDetailsSheet(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, long numImages, LPCTSTR pszCaption, SVExternalToolDlg* pParentWnd = nullptr, UINT iSelectPage = 0 );
+	SVExternalToolDetailsSheet(const SVGUID& rInspectionID, const SVGUID& rToolObjectID, const SVGUID& rTaskObjectID, long numImages, LPCTSTR pszCaption, SVExternalToolDlg* pParentWnd = nullptr, UINT iSelectPage = 0 );
 	HRESULT CreatePages();
 
 	SVIPDoc* GetIPDoc() const;
@@ -38,8 +38,6 @@ public:
 
 // Attributes
 public:
-	SVExternalTool* m_pTool;
-	SVExternalToolTask* m_pTask;
 	SVExternalToolDlg* m_pSVExternalToolDlgParent;
 // Operations
 public:
@@ -64,7 +62,9 @@ protected:
 	DECLARE_MESSAGE_MAP()
 	void DestroyPages();
 
+	SVExternalToolTask* m_pTask;
 	SVGUID m_InspectionID;
+	SVGUID m_ToolObjectID;
 	SVGUID m_TaskObjectID;
 	long m_numImages;
 };

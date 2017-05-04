@@ -13,10 +13,10 @@
 #pragma region Includes
 #include "SVRPropertyTree/SVRPropTree.h"
 #include "SVUtilityLibrary/SVString.h"
+#include "SVOGui/ValuesAccessor.h"
+#include "SVOGui/GuiController.h"
 #pragma endregion Includes
 
-class SVExternalToolDetailsSheet;
-class SVExternalTool;
 class SVExternalToolTask;
 class SVObjectClass;
 
@@ -26,11 +26,8 @@ class SVExternalToolInputSelectPage : public CPropertyPage
 
 // Construction
 public:
-	SVExternalToolInputSelectPage( LPCTSTR Title, SVExternalToolDetailsSheet* pParent = nullptr, int id = IDD );
+	SVExternalToolInputSelectPage( LPCTSTR Title, const SVGUID& rInspectionID, const SVGUID& rToolObjectID, const SVGUID& rTaskObjectID, int id = IDD );
 	virtual ~SVExternalToolInputSelectPage();
-
-	SVString	m_sGroupName;
-	bool		m_bTabbed;
 
 // Dialog Data
 	//{{AFX_DATA(SVExternalToolInputSelectPage)
@@ -54,16 +51,10 @@ protected:
 	HRESULT ValidateItem(SVRPropertyItem* pItem);
 	int GetItemIndex(SVRPropertyItem* pItem);
 
-	SVExternalToolDetailsSheet*		m_pParentDialog;
-	SVExternalToolTask*				m_pTask;
-	SVExternalTool*					m_pTool;
-
 	enum
 	{
 		ID_BASE = 100,
 	};
-
-	SVRPropTree	m_Tree;
 
 	// Generated message map functions
 	//{{AFX_MSG(SVExternalToolInputSelectPage)
@@ -75,6 +66,22 @@ protected:
     afx_msg void OnItemButtonClick(NMHDR* pNotifyStruct, LRESULT* plResult);
 	
 	DECLARE_MESSAGE_MAP()
+
+private:
+	SVString GetName(const SVGUID& guid) const;
+	GUID GetToolSetGUID() const;
+
+private:
+	SVExternalToolTask*				m_pTask;
+	SVRPropTree	m_Tree;
+	int m_inputValueCount;
+
+	SVGUID m_InspectionID;
+	SVGUID m_ToolObjectID;
+	SVGUID m_TaskObjectID;
+
+	typedef SvOg::ValuesAccessor<SvOg::BoundValues> ValueCommand;
+	SvOg::GuiController<ValueCommand, ValueCommand::value_type> m_Values;
 };
 
 

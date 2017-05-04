@@ -16,16 +16,13 @@
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
-class SVExternalToolDetailsSheet;
 class SVExternalTool;
 class SVExternalToolTask;
 
 class SVExternalToolResultPage : public CPropertyPage
 {
-	DECLARE_DYNCREATE(SVExternalToolResultPage)
-
 public:
-	SVExternalToolResultPage(LPCTSTR Title = nullptr, SVExternalToolDetailsSheet* pParent = nullptr, int id = IDD );
+	SVExternalToolResultPage(LPCTSTR Title, const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, int id = IDD );
 	virtual ~SVExternalToolResultPage();
 
 	//{{AFX_DATA(SVExternalToolResultPage)
@@ -46,9 +43,9 @@ protected:
 	int SelectObject(int iIndex);
 	int GetItemIndex(SVRPropertyItem* pItem);
 
-	SVExternalToolDetailsSheet*		m_pParentDialog;
 	SVExternalToolTask*				m_pTask;
-	SVExternalTool*					m_pTool;
+	SVGUID m_InspectionID;
+	SVGUID m_TaskObjectID;
 	SVString						m_sTitle;
 	
 	enum

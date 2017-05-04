@@ -44,16 +44,16 @@ BEGIN_MESSAGE_MAP(SVExternalToolDetailsSheet, CPropertySheet)
 END_MESSAGE_MAP()
 
 
-SVExternalToolDetailsSheet::SVExternalToolDetailsSheet( const SVGUID& rInspectionID, const SVGUID& rTaskObjectID,long numImages, LPCTSTR pszCaption, SVExternalToolDlg* pParentWnd, UINT iSelectPage)
+SVExternalToolDetailsSheet::SVExternalToolDetailsSheet( const SVGUID& rInspectionID, const SVGUID& rToolObjectID, const SVGUID& rTaskObjectID, long numImages, LPCTSTR pszCaption, SVExternalToolDlg* pParentWnd, UINT iSelectPage)
 : CPropertySheet(pszCaption, pParentWnd, iSelectPage)
 , ISVCancel()
 , m_InspectionID(rInspectionID)
+, m_ToolObjectID(rToolObjectID)
 , m_TaskObjectID(rTaskObjectID)
 , m_numImages(numImages)
 {
 	m_pSVExternalToolDlgParent = pParentWnd;
-	m_pTask = nullptr;
-	m_pTool = nullptr;
+	m_pTask = dynamic_cast<SVExternalToolTask*>(SVObjectManagerClass::Instance().GetObject(m_TaskObjectID));
 	m_psh.dwFlags |= PSH_NOAPPLYNOW;
 }
 
@@ -61,51 +61,19 @@ SVExternalToolDetailsSheet::~SVExternalToolDetailsSheet()
 {
 	DestroyPages();
 	m_pTask = nullptr;
-	m_pTool = nullptr;
 }
 
 HRESULT SVExternalToolDetailsSheet::CreatePages()
 {
 	ASSERT( m_pTask );
-	ASSERT( m_pTool );
 
-	SvOg::SVExternalToolImageSelectPage* pImageDlg = new SvOg::SVExternalToolImageSelectPage(m_InspectionID, m_TaskObjectID, m_numImages);
+	SvOg::SVExternalToolImageSelectPage* pImageDlg = new SvOg::SVExternalToolImageSelectPage(m_InspectionID, m_ToolObjectID, m_numImages);
 	AddPage(pImageDlg);
 
-	const bool bTabbed = false;
-	if ( !bTabbed )
-	{
-		SVExternalToolInputSelectPage* pInputDlg = new SVExternalToolInputSelectPage( _T("External Tool Inputs"), this );
-		AddPage(pInputDlg);
-	}
-	else
-	{// If Tabbed then find all unique groups and create a page for each group.
+	SVExternalToolInputSelectPage* pInputDlg = new SVExternalToolInputSelectPage( _T("External Tool Inputs"), m_InspectionID, m_ToolObjectID, m_TaskObjectID);
+	AddPage(pInputDlg);
 
-		std::map<SVString, SVRPropertyItem*> mapGroupItems;
-		std::map<SVString, SVRPropertyItem*>::iterator iterGroup;
-
-		for( int i = 0 ; i < m_pTask->m_Data.m_lNumInputValues ; i++ )
-		{
-			SVStringValueObjectClass& rName = m_pTask->m_Data.m_aInputObjectNames[i];
-			SVVariantValueObjectClass& rValue = m_pTask->m_Data.m_aInputObjects[i];
-			InputValueDefinitionStruct& rDefinition = m_pTask->m_Data.m_aInputValueDefinitions[i];
-
-			SVString GroupName = SvUl_SF::createSVString( rDefinition.m_bGroup );
-			SVRPropertyItem* pGroupItem = nullptr;
-			if ( (iterGroup = mapGroupItems.find(GroupName)) == mapGroupItems.end() )
-			{	// if new group, add tab
-
-				SVExternalToolInputSelectPage* pInputDlg = new SVExternalToolInputSelectPage(GroupName.c_str(), this);
-				AddPage(pInputDlg);
-				pInputDlg->m_sGroupName = GroupName;
-				pInputDlg->m_bTabbed = bTabbed;
-				
-				mapGroupItems[GroupName] = pGroupItem;
-			}
-		}// end for( int i = 0 ; i < m_pTask->m_Data.m_iNumInputValues ; i++ )
-	}// end else
-
-	SVExternalToolResultPage* pResultsDlg = new SVExternalToolResultPage( _T("External Tool Results"), this);
+	SVExternalToolResultPage* pResultsDlg = new SVExternalToolResultPage( _T("External Tool Results"), m_InspectionID, m_TaskObjectID);
 	AddPage(pResultsDlg);
 
 	return S_OK;

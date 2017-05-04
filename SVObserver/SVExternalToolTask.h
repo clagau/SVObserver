@@ -24,6 +24,7 @@
 #include "SVRPropertyTree/SVRPropTreeState.h"
 #include "SVMatroxLibrary/SVMatroxTypedefs.h"
 #include "SVUtilityLibrary/SVString.h"
+#include "SVValueObjectLibrary/LinkedValue.h"
 #pragma endregion Includes
 
 class SVToolClass;
@@ -55,8 +56,7 @@ struct SVExternalToolTaskData : public SVCancelData
 
 	// Inputs
 	std::vector<SVInObjectInfoStruct>      m_aInputImageInfo; //[NUM_INPUT_IMAGES]; // used to connect to other images
-	std::vector<SVInObjectInfoStruct>      m_aInputObjectInfo; //[NUM_INPUT_OBJECTS];	// used to connect to other value objects
-	std::vector<SVVariantValueObjectClass> m_aInputObjects; //[NUM_INPUT_OBJECTS]; // our own value objects
+	std::vector<LinkedValue> m_aInputObjects; //[NUM_INPUT_OBJECTS]; // our own value objects
 	std::vector<SVStringValueObjectClass>  m_aInputObjectNames; //[NUM_INPUT_OBJECTS]; // our value object names
 
 	std::vector<SVVariantValueObjectClass> m_aResultObjects; //[NUM_RESULT_OBJECTS];
@@ -120,11 +120,9 @@ public:
 
 #pragma region Methods to replace processMessage
 	virtual bool DisconnectObjectInput( SVInObjectInfoStruct* pObjectInInfo ) override;
-	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const SVString& rOldName) override;
 #pragma endregion Methods to replace processMessage
 
 protected:
-	HRESULT ConnectInputs();
 	HRESULT ConnectInputImages();
 	HRESULT Uninitialize();
 	HRESULT ClearData();
@@ -135,20 +133,13 @@ protected:
 	SVImageClass* GetInputImage(int iIndex);
 	SVImageClass* GetResultImage(int iIndex);
 
-	//************************************
-	// Method:    GetInputValue
-	// Description:  Get a variant value of a requested input.
-	// Parameter: int iIndex Index of the requested input.
-	// Returns:   _variant_t
-	//************************************
-	_variant_t GetInputValue(int iIndex);
-
 	SVVariantValueObjectClass* GetResultValueObject(int iIndex);
 	SVResultClass* GetResultRangeObject(int iIndex);
 	std::vector<SVResultClass*> GetResultRangeObjects();
 
 	HRESULT AllocateResult (int iIndex);
 
+private:
 	SVDLLToolLoadLibraryClass m_dll;
 
 	SVExternalToolTaskData m_Data;	// this is our cancelable data
@@ -178,7 +169,6 @@ public:
 	friend class SVExternalToolDlg;
 	friend class SVExternalToolInputSelectPage;
 	friend class SVExternalToolResultPage;
-	friend class SVExternalToolDetailsSheet;
 };
 #pragma warning (pop)
 

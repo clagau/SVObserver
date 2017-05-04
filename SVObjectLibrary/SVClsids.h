@@ -1156,11 +1156,13 @@ extern /*const*/ GUID SVResizeOverscanGuid;
 extern /*const*/ GUID SVResizePerformanceGuid;
 extern /*const*/ GUID SVLogicalROIImageGuid;
 
-extern /*const*/ GUID aSVVariantInputObjectGuid[];
-extern /*const*/ GUID aSVVariantInputObjectNameGuid[];
+const int COUNT_OF_INPUT_OUTPUT_GUIDs = 50;
+extern /*const*/ GUID aInputObjectGUID[COUNT_OF_INPUT_OUTPUT_GUIDs];
+extern /*const*/ GUID aInputObject_LinkedGUID[COUNT_OF_INPUT_OUTPUT_GUIDs];
+extern /*const*/ GUID aInputObjectNameGuid[COUNT_OF_INPUT_OUTPUT_GUIDs];
 extern /*const*/ GUID aSVVariantResultImageObjectGuid[];
-extern /*const*/ GUID aSVVariantResultObjectGuid[];
-extern /*const*/ GUID aSVVariantResultObjectNameGuid[];
+extern /*const*/ GUID aSVVariantResultObjectGuid[COUNT_OF_INPUT_OUTPUT_GUIDs];
+extern /*const*/ GUID aSVVariantResultObjectNameGuid[COUNT_OF_INPUT_OUTPUT_GUIDs];
 extern /*const*/ GUID aSVDllDependencyFileNameGuid[];
 extern /*const*/ GUID SVDllFileNameGuid;
 extern /*const*/ GUID SVDllToolNameGuid;

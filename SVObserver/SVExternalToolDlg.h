@@ -18,13 +18,12 @@
 #pragma endregion Includes
 
 class SVToolAdjustmentDialogSheetClass;
-class SVExternalTool;
 class SVExternalToolTask;
 
 class SVExternalToolDlg : public CPropertyPage, public SvOg::ISVPropertyPageDialog
 {
 public:
-	SVExternalToolDlg(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, SVToolAdjustmentDialogSheetClass* pSheet);   // standard constructor
+	SVExternalToolDlg(const SVGUID& rInspectionID, const SVGUID& rToolObjectID, SVToolAdjustmentDialogSheetClass* pSheet);   // standard constructor
 	virtual ~SVExternalToolDlg();
 
 	// ISVPropertyPageDialog
@@ -68,12 +67,12 @@ protected:
 
 
 	SVToolAdjustmentDialogSheetClass* m_pSheet;
-	SVExternalTool* m_pTool;
 	SVExternalToolTask* m_pTask;
 	CString m_strLastDllPath;
 	CToolTipCtrl m_ToolTip;
 	SVCancelData* m_pCancelData;
 	SVGUID m_InspectionID;
+	SVGUID m_ToolObjectID;
 	SVGUID m_TaskObjectID;
 
 	// Generated message map functions
