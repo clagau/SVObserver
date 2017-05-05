@@ -9,8 +9,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "DependencyManager.h"
-#include "SVObjectManagerClass.h"
-#include "ObjectInterfaces/ITool.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -67,9 +65,9 @@ namespace Seidenader { namespace SVObjectLibrary
 				}
 
 
-				std::vector<Dependency> DependencySort;
+				std::vector<Dependency> DependencyVector;
 				//! This filters dependencies which are dependent on the same tool
-				std::copy_if(ObjectDependencies.begin(), ObjectDependencies.end(), std::back_inserter(DependencySort), [](const Dependency &rDependency)
+				std::copy_if(ObjectDependencies.begin(), ObjectDependencies.end(), std::back_inserter(DependencyVector), [](const Dependency &rDependency)
 				{
 					bool CopyItem( false );
 					//! Check if same Tool
@@ -90,37 +88,12 @@ namespace Seidenader { namespace SVObjectLibrary
 					return CopyItem;
 				});
 
-				std::sort(DependencySort.begin(), DependencySort.end(), [](const Dependency &rLhs, const Dependency &rRhs)
-				{
-					bool isSmaller = false;
+				//! First sort the supplier then the clients
+				std::sort(DependencyVector.begin(), DependencyVector.end(), DependencySort(true));
+				std::sort(DependencyVector.begin(), DependencyVector.end(), DependencySort(false));
 
-					SVObjectClass* pClientLhs = SVObjectManagerClass::Instance().GetObject( rLhs.second );
-					SVObjectClass* pClientRhs = SVObjectManagerClass::Instance().GetObject( rRhs.second );
-					if( nullptr != pClientLhs && nullptr != pClientRhs )
-					{
-						bool isClient = pClientLhs->GetObjectType() == SVToolObjectType;
-						SvOi::ITool* pToolClientLhs = dynamic_cast<SvOi::ITool*> (isClient ? pClientLhs : pClientLhs->GetAncestor(SVToolObjectType));
-						isClient = pClientRhs->GetObjectType() == SVToolObjectType;
-						SvOi::ITool* pToolClientRhs = dynamic_cast<SvOi::ITool*> (isClient ? pClientRhs : pClientRhs->GetAncestor(SVToolObjectType));
-						if( nullptr != pToolClientLhs && nullptr != pToolClientRhs )
-						{
-							long LhsPosition = pToolClientLhs->getToolPosition();
-							long RhsPosition = pToolClientRhs->getToolPosition();
-							if( -1 != LhsPosition && -1 != RhsPosition && LhsPosition < RhsPosition )
-							{
-								isSmaller = true;
-							}
-							else
-							{
-								isSmaller = false;
-							}
-						}
-					}
-					return isSmaller;
-				});
-
-				std::vector<Dependency>::const_iterator IterDependency(DependencySort.begin());
-				for( ; DependencySort.end() != IterDependency; ++IterDependency )
+				std::vector<Dependency>::const_iterator IterDependency(DependencyVector.begin());
+				for( ; DependencyVector.end() != IterDependency; ++IterDependency )
 				{
 					SVObjectClass* pSupplier = SVObjectManagerClass::Instance().GetObject( IterDependency->first );
 					SVObjectClass* pClient = SVObjectManagerClass::Instance().GetObject( IterDependency->second );

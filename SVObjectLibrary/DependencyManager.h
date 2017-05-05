@@ -10,6 +10,8 @@
 #pragma region Includes
 #include "JoinType.h"
 #include "ObjectInterfaces/IDependencyManager.h"
+#include "ObjectInterfaces/ITool.h"
+#include "SVObjectManagerClass.h"
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVContainerLibrary/ObjectGraph.h"
 #pragma endregion Includes
@@ -41,6 +43,47 @@ namespace Seidenader { namespace SVObjectLibrary
 	void getToolDependency( SvOi::StringPairInserter Inserter, const SVGuidSet& rSourceSet, SVObjectTypeEnum nameToObjectType, SvOi::ToolDependencyEnum ToolDependency = SvOi::ToolDependencyEnum::Client ) const;
 
 	#pragma endregion Public Methods
+
+	#pragma region Private Methods
+	private:
+	struct DependencySort
+	{
+		DependencySort(bool SortRight) : m_SortRight(SortRight) {};
+
+		bool operator()(const Dependency &rLhs, const Dependency &rRhs)
+		{
+			bool isSmaller = false;
+			SVGUID GuidLhs = m_SortRight ? rLhs.second : rLhs.first;
+			SVGUID GuidRhs = m_SortRight ? rRhs.second : rRhs.first;
+			SVObjectClass* pLhs = SVObjectManagerClass::Instance().GetObject(GuidLhs);
+			SVObjectClass* pRhs = SVObjectManagerClass::Instance().GetObject(GuidRhs);
+			if (nullptr != pLhs && nullptr != pRhs)
+			{
+				bool isSupplier = pLhs->GetObjectType() == SVToolObjectType;
+				SvOi::ITool* pToolLhs = dynamic_cast<SvOi::ITool*> (isSupplier ? pLhs : pLhs->GetAncestor(SVToolObjectType));
+				isSupplier = pRhs->GetObjectType() == SVToolObjectType;
+				SvOi::ITool* pToolRhs = dynamic_cast<SvOi::ITool*> (isSupplier ? pRhs : pRhs->GetAncestor(SVToolObjectType));
+				if (nullptr != pToolLhs && nullptr != pToolRhs)
+				{
+					long LhsPosition = pToolLhs->getToolPosition();
+					long RhsPosition = pToolRhs->getToolPosition();
+					if (-1 != LhsPosition && -1 != RhsPosition && LhsPosition < RhsPosition)
+					{
+						isSmaller = true;
+					}
+					else
+					{
+						isSmaller = false;
+					}
+				}
+			}
+			return isSmaller;
+		}
+
+	private:
+		bool m_SortRight;
+	};
+	#pragma endregion Private Methods
 	};
 } /* namespace SVObjectLibrary */ } /* namespace Seidenader */
 
