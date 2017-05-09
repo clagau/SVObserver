@@ -121,6 +121,7 @@
     <ClInclude Include="SVIMCommand.h" />
     <ClInclude Include="SVObjectTypeInfoStruct.h" />
     <ClInclude Include="SVPPQEnums.h" />
+    <ClInclude Include="SVResetStruct.h" />
     <ClInclude Include="SVUserMessage.h" />
     <ClInclude Include="TextDefineSvOi.h" />
   </ItemGroup>

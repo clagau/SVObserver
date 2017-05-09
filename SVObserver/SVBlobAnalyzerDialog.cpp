@@ -17,7 +17,7 @@
 #include "SVInspectionProcess.h"
 #include "SVIPDoc.h"
 #include "SVResultLong.h"
-#include "SVTool.h"
+#include "SVOCore/SVTool.h"
 #include "SVResult.h"
 #include "SVFillBlobDlg.h"
 #include "SVBlobFeaturePropertiesDlg.h"
@@ -402,7 +402,7 @@ void SVBlobAnalyzeFeatureDialogClass::OnButtonSetRange()
 {
 
 	SVBlobFeatureEnum index;
-	SVResultClass *pAnalyzerResult(nullptr);
+	SvOi::IObjectClass* pAnalyzerResult(nullptr);
 
 	index = (SVBlobFeatureEnum) m_lbSelectedFeatures.GetItemData( m_lbSelectedFeatures.GetCurSel());
 

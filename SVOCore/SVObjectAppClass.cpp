@@ -73,10 +73,19 @@ void SVObjectAppClass::ConnectObject(const SVObjectLevelCreateStruct& rCreateStr
 		SVObjectClass::ConnectObject( rCreateStruct );
 	}
 }
+
+
 SVObjectClass* SVObjectAppClass::GetInspection() const
 {
 	return m_psvInspection;
 }
+
+
+SvOi::IInspectionProcess* SVObjectAppClass::GetInspectionInterface() const
+{
+	return dynamic_cast<SvOi::IInspectionProcess*>(m_psvInspection);
+}
+
 
 SVObjectClass* SVObjectAppClass::GetTool() const
 {
@@ -87,6 +96,7 @@ SVObjectClass* SVObjectAppClass::GetAnalyzer() const
 {
 	return m_psvAnalyzer;
 }
+
 
 #pragma region virtual methods (IObjectAppClass)
 bool SVObjectAppClass::CreateChildObject(SvOi::IObjectClass& rChildObject, DWORD context)

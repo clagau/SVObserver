@@ -14,9 +14,10 @@
 #pragma region Includes
 #include "ObjectInterfaces/ITool.h"
 #include "ObjectInterfaces/IObjectClass.h"
-#include "SVOCore/SVTaskObjectList.h"
+#include "ObjectInterfaces\IToolSet.h"
+#include "SVTaskObjectList.h"
 #include "SVToolExtentClass.h"
-#include "SVOCore/SVImageClass.h"
+#include "SVImageClass.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVUtilityLibrary/SVString.h"
 #include "SVValueObjectLibrary/SVStringValueObjectClass.h"
@@ -180,7 +181,7 @@ private:
 	bool ValidateLocal(SvStl::MessageContainerVector *pErrorMessages=nullptr) const;
 
 protected:
-	SVToolSetClass* m_pCurrentToolSet;
+	SvOi::IToolSet* m_pCurrentToolSet;
 	// Conditional input
 	SVInObjectInfoStruct inputConditionBoolObjectInfo;
 

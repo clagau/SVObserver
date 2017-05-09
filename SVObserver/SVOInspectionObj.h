@@ -31,7 +31,7 @@ public:
     const SVString& GetToolsetImage() const;
     void SetToolsetImage(LPCTSTR Image);
 
-	const SVString& GetNewDisableMethod() const;
+	const SVString& GetNewDisableMethodString() const;
 	void SetNewDisableMethod(LPCTSTR Disable);
 
 	bool GetShowAuxExtent() const;

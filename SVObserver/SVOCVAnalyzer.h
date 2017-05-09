@@ -29,7 +29,7 @@ public:
 
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
 
-	SVResultClass* GetResultObject();
+	SvOi::IObjectClass* GetResultObject();
 
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 

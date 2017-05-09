@@ -18,7 +18,7 @@
 #include "SVUtilityIniClass.h"
 #include "SVObserver.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "ObjectInterfaces/ErrorNumbers.h"
+#include "SVMessage/ErrorNumbers.h"
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #pragma endregion Includes

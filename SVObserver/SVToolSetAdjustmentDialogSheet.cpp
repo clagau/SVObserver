@@ -15,7 +15,7 @@
 #include "SVOGui/FormulaController.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVOGui/TextDefinesSvOg.h"
-#include "ObjectInterfaces/ErrorNumbers.h"
+#include "SVMessage/ErrorNumbers.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG

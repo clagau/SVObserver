@@ -19,7 +19,7 @@
 #include "SVSetupDialogManager.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "TextDefinesSvO.h"
-#include "ObjectInterfaces/ErrorNumbers.h"
+#include "SVMessage/ErrorNumbers.h"
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
@@ -201,7 +201,7 @@ void SVHistogramAnalyzerSetupClass::OnBnClickedRadiofixed()
 
 inline void SVHistogramAnalyzerSetupClass::SetResultRange(const GUID & resultGuid)
 {
-	SVResultClass * pAnalyzerResult = m_pAnalyzer->GetResultObject(resultGuid);
+	SvOi::IObjectClass* pAnalyzerResult = m_pAnalyzer->GetResultObject(resultGuid);
 	if (pAnalyzerResult)
 	{
 		SVSetupDialogManager::Instance().SetupDialog( pAnalyzerResult->GetClassID(), pAnalyzerResult->GetUniqueObjectID(), this );

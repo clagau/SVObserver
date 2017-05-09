@@ -15,7 +15,7 @@
 #include "SVOIntelRAIDStatusClass.h"
 #include "ModelessMessageBox.h"
 #include "SVStatusLibrary/SVEventLogClass.h"
-#include "SVSVIMStateClass.h"
+#include "SVOCore/SVSVIMStateClass.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #pragma endregion Includes
 

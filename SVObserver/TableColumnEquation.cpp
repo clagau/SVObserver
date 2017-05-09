@@ -8,7 +8,7 @@
 
 #include "stdafx.h"
 #include "TableColumnEquation.h"
-#include "SVSVIMStateClass.h"
+#include "SVOCore/SVSVIMStateClass.h"
 
 
 SV_IMPLEMENT_CLASS( TableColumnEquation, TableColumnEquationGuid );

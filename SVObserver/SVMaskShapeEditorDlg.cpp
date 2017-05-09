@@ -18,7 +18,7 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVMaskShape.h"
 #include "SVObserver.h"
-#include "SVTool.h"
+#include "SVOCore/SVTool.h"
 #include "SVIPDoc.h"
 #include "SVLibrary/SVWinUtility.h"	// for SVYieldPaintMessages
 #include "SVUserMaskOperatorClass.h"

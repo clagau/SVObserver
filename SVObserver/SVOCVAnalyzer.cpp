@@ -16,7 +16,7 @@
 #include "SVOCVDialog.h"
 #include "SVInspectionProcess.h"
 #include "SVToolSet.h"
-#include "SVTool.h"
+#include "SVOCore/SVTool.h"
 #include "SVOLicenseManager/SVOLicenseManager.h"
 
 #ifdef _DEBUG
@@ -93,7 +93,7 @@ BOOL SVOCVAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructu
 }
 
 ////////////////////////////////////////////////////////////////////////////////
-SVResultClass* SVOCVAnalyzerClass::GetResultObject()
+SvOi::IObjectClass* SVOCVAnalyzerClass::GetResultObject()
 {
 	SVResultClass* pAnalyzerResult = nullptr;
 

@@ -10,7 +10,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVTool.h"  // SVToolClass
+#include "SVOCore/SVTool.h"  // SVToolClass
 #include "SVValueObjectLibrary/SVStringValueObjectClass.h"
 #pragma endregion
 

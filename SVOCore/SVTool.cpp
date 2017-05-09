@@ -12,6 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVTool.h"
+#include "SVObjectLibrary/SVClsids.h"
 #include "ObjectInterfaces/IObjectManager.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVObjectLibrary/SVAnalyzerLevelCreateStruct.h"
@@ -19,10 +20,6 @@
 #include "SVAnalyzer.h"
 #include "SVConditional.h"
 #include "ObjectInterfaces/GlobalConst.h"
-#include "SVInspectionProcess.h"
-#include "SVToolImage.h"
-#include "SVToolSet.h"
-#include "ToolSizeAdjustTask.h"
 #pragma endregion Includes
 
 SV_IMPLEMENT_CLASS( SVToolClass, SVToolClassGuid );
@@ -153,7 +150,7 @@ void SVToolClass::init()
 	m_AuxSourceImageObjectInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_AuxSourceImageObjectInfo, _T( "ToolAuxSourceImage" ) );
 
-	// instaniate the Conditional class
+	// instantiate the Conditional class
 	SVConditionalClass* pCondition = new SVConditionalClass( this );
 	AddFriend( pCondition->GetUniqueObjectID() );
 
@@ -176,11 +173,12 @@ BOOL SVToolClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 
 	if( SVTaskObjectListClass::CreateObject( PCreateStructure ) )
 	{
-		if( GetInspection() )
+		if( GetInspectionInterface() )
 		{
 			bOk = TRUE;
 
-			m_pCurrentToolSet = dynamic_cast<SVInspectionProcess*>(GetInspection())->GetToolSet();
+			SvOi::IInspectionProcess* iIP = GetInspectionInterface();
+			m_pCurrentToolSet = dynamic_cast<SvOi::IToolSet*>(iIP->GetToolSetInterface());
 		}
 	}
 
@@ -322,11 +320,11 @@ HRESULT SVToolClass::GetDrawInfo( SVExtentMultiLineStruct& p_rMultiLine )
 
 void SVToolClass::UpdateAuxiliaryExtents(long resultDataIndex)
 {
-	if( dynamic_cast<SVInspectionProcess*>(GetInspection())->GetEnableAuxiliaryExtent() )
+	if( GetInspectionInterface()->GetEnableAuxiliaryExtent() )
 	{
 		BOOL l_bUpdateSourceExtents = false;
 
-		bool l_bForceOffsetReset = dynamic_cast<SVInspectionProcess*>(GetInspection())->m_bForceOffsetUpdate;
+		bool l_bForceOffsetReset = GetInspectionInterface()->IsOffsetUpdateForced();
 
 		m_svToolExtent.UpdateOffsetData( l_bForceOffsetReset );
 
@@ -374,7 +372,7 @@ bool SVToolClass::Run( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVect
 
 	m_ToolTime.Start();
 
-	if( !dynamic_cast<SVInspectionProcess*>(GetInspection())->GetNewDisableMethod() )
+	if( !GetInspectionInterface()->IsNewDisableMethodSet() )
 	{
 		// First Set the old stuff forward for the counts
 		m_isObjectValid.GetValue( bIsValid );
@@ -486,7 +484,7 @@ bool SVToolClass::Run( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVect
 	}// end else
 
 	//
-	if( dynamic_cast<SVInspectionProcess*>(GetInspection())->GetEnableAuxiliaryExtent() )
+	if( GetInspectionInterface()->GetEnableAuxiliaryExtent() )
 	{
 		UpdateAuxiliaryExtents(rRunStatus.m_lResultDataIndex);
 	}
@@ -724,10 +722,10 @@ HRESULT SVToolClass::GetRootOffsetData( SVExtentOffsetStruct& p_rsvOffsetData )
 
 HRESULT SVToolClass::UpdateOffsetData( SVImageClass* p_svToolImage )
 {
-	SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(GetInspection());
+	SvOi::IInspectionProcess* pInspection = GetInspectionInterface();
 	if( nullptr != pInspection  )
 	{
-		pInspection->m_bForceOffsetUpdate = true;
+		pInspection->ForceOffsetUpdate();
 	}
 
 	return m_svToolExtent.UpdateOffsetData( true, p_svToolImage );
@@ -784,20 +782,23 @@ bool SVToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	bool Result = __super::ResetObject(pErrorMessages) && ValidateLocal(pErrorMessages);
 
 	bool l_bReset = false;
-	SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(GetInspection());
-	if ( nullptr != pInspection && 
-		 nullptr != pInspection->GetToolSet() && 
-		 ( S_OK == pInspection->GetToolSet()->getResetCounts( l_bReset ) ) &&
-		 l_bReset )
+	SvOi::IInspectionProcess* pInspection = GetInspectionInterface();
+	if ( nullptr != pInspection)
 	{
-		// Reset Counter...
-		m_PassedCount.SetDefaultValue( 0, TRUE );
-		m_FailedCount.SetDefaultValue( 0, TRUE );
-		m_WarnedCount.SetDefaultValue( 0, TRUE );
-		m_EnabledCount.SetDefaultValue( 0, TRUE );
-		m_ProcessedCount.SetDefaultValue( 0, TRUE );
+		SvOi::IToolSet* pToolSet = dynamic_cast<SvOi::IToolSet*>(pInspection->GetToolSetInterface());
+		if (nullptr != pToolSet)
+		{
+			if(S_OK == pToolSet->getResetCounts(l_bReset) && l_bReset )
+				{
+					// Reset Counter...
+					m_PassedCount.SetDefaultValue(0, TRUE);
+					m_FailedCount.SetDefaultValue(0, TRUE);
+					m_WarnedCount.SetDefaultValue(0, TRUE);
+					m_EnabledCount.SetDefaultValue(0, TRUE);
+					m_ProcessedCount.SetDefaultValue(0, TRUE);
+				}
+		}
 	}
-
 	///UpdateBottomAndRight is called again when imageExtents are changed by ToolsizeAdjust
 	if ( Result )
 	{
@@ -808,7 +809,7 @@ bool SVToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	BOOL bValue( false );
 	const UINT cAttributes = SV_VIEWABLE | SV_ARCHIVABLE | SV_SELECTABLE_FOR_EQUATION | SV_SELECTABLE_FOR_STATISTICS | SV_PUBLISHABLE;
 	
-	if( dynamic_cast<SVInspectionProcess*>(GetInspection())->GetEnableAuxiliaryExtent() )
+	if( GetInspectionInterface()->GetEnableAuxiliaryExtent() )
 	{
 		m_svUpdateAuxiliaryExtents.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 		m_svUpdateAuxiliaryExtents.SetObjectAttributesAllowed( SV_HIDDEN, SvOi::SetAttributeType::RemoveAttribute );
@@ -1018,8 +1019,7 @@ HRESULT SVToolClass::CollectOverlays( SVImageClass *p_Image, SVExtentMultiLineSt
 
 void SVToolClass::UpdateTaskObjectOutputListAttributes( SVObjectReference refTarget, UINT uAttributes )
 {
-	SVToolSetClass* pToolSet = dynamic_cast<SVInspectionProcess*>(GetInspection())->GetToolSet();
-	ASSERT( pToolSet );
+	SvOi::ITaskObject* pToolSet = GetInspectionInterface()->GetToolSetInterface();
 	SVOutputInfoListClass l_ToolSetOutputList;
 	SVObjectReferenceVector vecObjects;
 	
@@ -1118,13 +1118,13 @@ HRESULT SVToolClass::SetAuxSourceImage( SVImageClass* p_psvImage )
 
 		m_svToolExtent.SetSelectedImage( GetAuxSourceImage() );
 
-		SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(GetInspection());
+		SvOi::IInspectionProcess* pInspection = GetInspectionInterface();
 		if ( nullptr != pInspection )
 		{
-			pInspection->m_bForceOffsetUpdate = true;
+			pInspection->ForceOffsetUpdate();
 		}
 		UpdateAuxiliaryExtents(1);
-		GetInspection()->resetAllObjects();
+		dynamic_cast<SVObjectClass*>(GetInspectionInterface())->resetAllObjects();
 	}
 
 	return l_hr;
@@ -1161,7 +1161,7 @@ bool SVToolClass::areAuxExtentsAvailable() const
 	bool bRetVal = true;
 	// check inspection, and has image input!
 	if (nullptr == GetToolImage() || 
-		0 == dynamic_cast<SVInspectionProcess*>(GetInspection())->GetEnableAuxiliaryExtent())
+		0 == GetInspectionInterface()->GetEnableAuxiliaryExtent())
 	{
 		bRetVal = false;
 	}
@@ -1249,7 +1249,7 @@ bool SVToolClass::createAllObjectsFromChild( SVObjectClass& rChildObject )
 	SVToolLevelCreateStruct createStruct;
 	createStruct.OwnerObjectInfo        = this;
 	createStruct.ToolObjectInfo			= this;
-	createStruct.InspectionObjectInfo	= GetInspection();
+	createStruct.InspectionObjectInfo = dynamic_cast<SVObjectClass*>(GetInspectionInterface());
 
 	return rChildObject.createAllObjects(createStruct);
 }
@@ -1259,7 +1259,7 @@ void SVToolClass::connectChildObject( SVTaskObjectClass& rChildObject )
 	SVToolLevelCreateStruct createStruct;
 	createStruct.OwnerObjectInfo        = this;
 	createStruct.ToolObjectInfo			= this;
-	createStruct.InspectionObjectInfo	= GetInspection();
+	createStruct.InspectionObjectInfo	= dynamic_cast<SVObjectClass*>(GetInspectionInterface());
 
 	rChildObject.ConnectObject(createStruct);
 }

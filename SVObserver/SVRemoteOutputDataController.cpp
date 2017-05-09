@@ -25,7 +25,7 @@
 #include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVObserver.h"
 #include "SVOutputStreamManager.h"
-#include "SVSVIMStateClass.h"
+#include "SVOCore/SVSVIMStateClass.h"
 
 SV_IMPLEMENT_CLASS( SVRemoteOutputDataController, SVRemoteOutputDataControllerGUID );
 

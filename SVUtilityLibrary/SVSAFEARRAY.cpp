@@ -10,7 +10,7 @@
 //******************************************************************************
 
 #include "stdafx.h"
-#include "SVSAFEARRAY.H"
+#include "SVSafeArray.h"
 
 SVSAFEARRAY::SVSAFEARRAY()
 : m_pSafeArray( nullptr )

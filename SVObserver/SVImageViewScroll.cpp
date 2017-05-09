@@ -17,7 +17,7 @@
 #include "SVObjectLibrary/SVObjectWriter.h"
 #include "ObjectInterfaces/GlobalConst.h"
 #include "SVImageView.h"
-#include "SVSVIMStateClass.h"
+#include "SVOCore/SVSVIMStateClass.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVIPChildFrm.h"
 #include "SVMainFrm.h"

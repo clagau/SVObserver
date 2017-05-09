@@ -20,11 +20,11 @@
 #include "SVOCore/SVImageClass.h"
 #include "SVOCVAnalyzer.h"
 #include "SVOCVAnalyzerResult.h"
-#include "SVTool.h"
+#include "SVOCore/SVTool.h"
 #include "SVOLicenseManager/SVOLicenseManager.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "TextDefinesSvO.h"
-#include "ObjectInterfaces\ErrorNumbers.h"
+#include "SVMessage/ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
 #pragma endregion Includes
 

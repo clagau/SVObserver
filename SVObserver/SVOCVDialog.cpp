@@ -12,7 +12,7 @@
 #include "stdafx.h"
 #include "SVOCVDialog.h"
 #include "SVIPDoc.h"
-#include "SVTool.h"
+#include "SVOCore/SVTool.h"
 #include "SVOCore/SVUnaryImageOperatorList.h"
 #include "SVOCVAnalyzerResult.h"
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"

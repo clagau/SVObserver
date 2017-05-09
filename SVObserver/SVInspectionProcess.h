@@ -18,6 +18,8 @@
 //Moved to precompiled header: #include <boost/type_traits.hpp>
 
 #include "ObjectInterfaces/IInspectionProcess.h"
+#include "ObjectInterfaces/IToolSet.h"
+#include "ObjectInterfaces/SVResetStruct.h"
 #include "SVCommandLibrary/SVCommandTemplate.h"
 #include "SVContainerLibrary/SVBiUniqueMap.h"
 #include "SVDataManagerLibrary/DataManager.h"
@@ -38,7 +40,6 @@
 #include "SVInfoStructs.h"
 #include "SVInspectionProcessResetStruct.h"
 #include "SVPublishList.h"
-#include "SVResetStruct.h"
 #include "SVCameraImageTemplate.h"
 #include "SVVirtualCamera.h"
 #include "SVMonitorList.h"
@@ -121,6 +122,7 @@ public:
 
 	bool IsCameraInInspection( const SVString& rCameraName ) const;
 
+	///Checks whether the reset state is set
 	bool IsResetStateSet( unsigned long p_State ) const;
 	void AddResetState( unsigned long p_State );
 	void RemoveResetState( unsigned long p_State );
@@ -156,7 +158,8 @@ public:
 	BOOL DisconnectToolSetMainImage();
 	BOOL ConnectToolSetMainImage();
 
-	BOOL GetNewDisableMethod();
+	/// is the new disable method set?
+	BOOL IsNewDisableMethodSet() override;
 	void SetNewDisableMethod( BOOL bNewDisableMethod ); 
 
 	virtual long GetEnableAuxiliaryExtent() const override;
@@ -175,6 +178,7 @@ public:
 	void DumpDMInfo( LPCTSTR p_szName ) const;
 
 	SVToolSetClass* GetToolSet() const;
+
 	SVResultListClass* GetResultList() const;
 
 	virtual void SetInvalid() override;
@@ -252,6 +256,11 @@ public:
 	void getToolMessages( SvStl::MessageContainerInserter& rInserter ) const;
 
 	virtual bool DisconnectObjectInput( SVInObjectInfoStruct* pObjectInInfo ) override;
+
+	/// sets the flag that forces the global extent data to update
+	void ForceOffsetUpdate() override { m_bForceOffsetUpdate = true; }
+	/// will global extent data be forced to update?
+	bool IsOffsetUpdateForced() override { return m_bForceOffsetUpdate; }
 
 #pragma region Methods to replace processMessage
 	virtual bool createAllObjects( const SVObjectLevelCreateStruct& rCreateStructure ) override;

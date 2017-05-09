@@ -12,11 +12,9 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVAnalyzer.h"
-#include "SVInspectionProcess.h"
-#include "SVTool.h"
-#include "SVResult.h"
+#include "SVObjectLibrary/SVClsIds.h"
 #include "SVImageLibrary/SVImageInfoClass.h"
-#include "SVOCore/SVImageClass.h"
+#include "SVImageClass.h"
 #include "SVObjectLibrary/SVAnalyzerLevelCreateStruct.h"
 #pragma endregion Includes
 
@@ -76,11 +74,12 @@ BOOL SVAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure 
 	return bOk;
 }
 
-SVResultClass* SVAnalyzerClass::GetResultObject()
+
+SvOi::IObjectClass* SVAnalyzerClass::GetResultObject()
 {
 	SVObjectTypeInfoStruct info;
 	info.ObjectType = SVResultObjectType;
-	SVResultClass* pResult = dynamic_cast<SVResultClass*>( getFirstObject( info ) );
+	SvOi::IObjectClass* pResult = getFirstObject( info );
 	return pResult;
 }
 

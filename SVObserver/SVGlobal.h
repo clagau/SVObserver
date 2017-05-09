@@ -265,17 +265,5 @@ bool EnableParentMenu(CMenu* pMenu, UINT ID, bool Enable, int start =0);
 
 extern TCHAR	SVRCCurrentSVCPathName[];
 
-enum svModeEnum
-{
-	SVIM_MODE_UNKNOWN = 0,
-	SVIM_MODE_ONLINE,
-	SVIM_MODE_OFFLINE,
-	SVIM_MODE_REGRESSION,
-	SVIM_MODE_TEST,
-	SVIM_MODE_EDIT,
-	SVIM_MODE_CHANGING = 100,
-	SVIM_MODE_REMOVE = 0x8000,
-};
-
 
 #define SV_ERROR_CONDITION     0xc0000000

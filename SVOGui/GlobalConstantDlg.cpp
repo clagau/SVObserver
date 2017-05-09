@@ -16,7 +16,7 @@
 #include "SVObjectLibrary/GlobalConst.h"
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "ObjectInterfaces/ErrorNumbers.h"
+#include "SVMessage/ErrorNumbers.h"
 #pragma endregion Includes
 
 namespace Seidenader { namespace SVOGui

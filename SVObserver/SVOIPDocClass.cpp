@@ -15,7 +15,7 @@
 #include "SVOIPDocClass.h"
 #include "SVSystemLibrary/SVFileNameManagerClass.h"
 #include "SVStatusLibrary\MessageManager.h"
-#include "ObjectInterfaces\ErrorNumbers.h"
+#include "SVMessage/ErrorNumbers.h"
 #include "TextDefinesSvO.h"
 #pragma endregion Includes
 

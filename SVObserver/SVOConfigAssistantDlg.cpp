@@ -46,7 +46,7 @@
 #include "TextDefinesSvO.h"
 #include "SVOGui\GlobalConstantConflictDlg.h"
 #include "SVStatusLibrary\MessageManager.h"
-#include "ObjectInterfaces\ErrorNumbers.h"
+#include "SVMessage/ErrorNumbers.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -2014,7 +2014,7 @@ BOOL CSVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 				Key = pInspectionObj->GetInspectionLabelName();
 				FileName = pInspectionObj->GetInspectionName();
 				ToolsetImage = pInspectionObj->GetToolsetImage();
-				NewDisableMethod = pInspectionObj->GetNewDisableMethod();
+				NewDisableMethod = pInspectionObj->GetNewDisableMethodString();
 				lEnableAuxiliaryExtent = pInspectionObj->GetEnableAuxiliaryExtent();
 
 				lCfgInsCnt = pConfig->GetInspectionCount();
@@ -2077,7 +2077,7 @@ BOOL CSVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 										pPPQObj->SetImportedInputList(importer.info.m_inputList);
 									}
 
-									BOOL bNewDisableMethod = pInspection->GetNewDisableMethod();
+									BOOL bNewDisableMethod = pInspection->IsNewDisableMethodSet();
 									NewDisableMethod = (bNewDisableMethod) ? _T( "Method 2" ): _T( "Method 1" );
 									lEnableAuxiliaryExtent = pInspection->GetEnableAuxiliaryExtent();
 								}
@@ -2717,7 +2717,7 @@ BOOL CSVOConfigAssistantDlg::GetConfigurationForExisting()
 			
 			m_InspectList.SetColor( InspectLabel.c_str(), pcfgInspection->IsColorCamera() );
 
-			if( pcfgInspection->GetNewDisableMethod() )
+			if( pcfgInspection->IsNewDisableMethodSet() )
 			{
 				sDisable = _T( "Method 2" );
 			}// end if

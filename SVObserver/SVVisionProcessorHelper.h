@@ -103,8 +103,6 @@ public:
 	//************************************
 	HRESULT SetItems( const SVNameStorageMap& rItems, SVNameStatusMap& rStatusItems,  bool IsOneBased );
 
-	HRESULT SetLastModifiedTime();
-	HRESULT FireModeChanged(svModeEnum mode);
 	//************************************
 	//! Starts an Message notification via SVRC
 	//! \param type 
@@ -143,8 +141,6 @@ protected:
 	typedef boost::function< HRESULT ( const SVNameStorageMap&, SVNameStatusMap& ) > SVSetItemsFunctor;
 	typedef std::map< SVString, SVGetItemsFunctor > SVGetItemsFunctorMap;
 	typedef std::map< SVString, SVSetItemsFunctor > SVSetItemsFunctorMap;
-	typedef void ( CALLBACK * SVAPCSignalHandler )( DWORD_PTR );
-	typedef boost::function<void ( bool& )> SVThreadProcessHandler;
 
 	static void CALLBACK APCThreadProcess( DWORD_PTR dwParam );
 
@@ -168,13 +164,6 @@ protected:
 	SVGetItemsFunctorMap m_GetItemsFunctors;
 	SVSetItemsFunctorMap m_SetItemsFunctors;
 
-	__time32_t m_PrevModifiedTime;
-	__time32_t m_LastModifiedTime;
-	svModeEnum m_prevMode;
-	svModeEnum m_lastMode;
-
-	SVAsyncProcedure< SVAPCSignalHandler, SVThreadProcessHandler > m_AsyncProcedure;
-	
 private:
 #pragma region Private Methods
 	SVVisionProcessorHelper();

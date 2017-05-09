@@ -135,7 +135,6 @@
     <ClCompile Include="SVObserverNotificationFunctor.cpp" />
     <ClCompile Include="SVOutObjectInfoStruct.cpp" />
     <ClCompile Include="SVOutputInfoListClass.cpp" />
-    <ClCompile Include="SVPublicAttributeEntryStruct.cpp" />
     <ClCompile Include="SVToolLevelCreateStruct.cpp" />
   </ItemGroup>
   <ItemGroup>

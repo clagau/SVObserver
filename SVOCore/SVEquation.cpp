@@ -13,37 +13,36 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <float.h>
 #include "SVEquation.h"
+#include "SVObjectLibrary/SVClsIds.h"
 #include "SVObjectLibrary/SVAnalyzerLevelCreateStruct.h"
 #include "SVObjectLibrary/SVObjectAttributeClass.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVUtilityLibrary/SVSAFEARRAY.h"
-#include "SVInfoStructs.h"
-#include "SVInspectionProcess.h"
-#include "SVPPQObject.h"
-#include "SVToolSet.h"
-#include "SVObjectLibrary\SVToolsetScriptTags.h"
-#include "SVObjectLibrary\GlobalConst.h"
-#include "RootObject.h"
-#include "TextDefinesSvO.h"
-#include "ObjectInterfaces\ErrorNumbers.h"
+#include "SVUtilityLibrary/SVSafeArray.h"
+#include "SVValueObjectLibrary/BasicValueObject.h"
+
+#include "SVObjectLibrary/SVToolsetScriptTags.h"
+#include "SVObjectLibrary/GlobalConst.h"
+#include "SVMessage/ErrorNumbers.h"
 #include "SVUtilityLibrary/SVStringConversions.h"
 #pragma endregion Includes
 
 #pragma region Declarations
 #ifdef _DEBUG
-#define new DEBUG_NEW
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
 
+const TCHAR* const DIOInput = _T("DIO.Input");
+const TCHAR* const Remote_Input = _T("Remote Input");
+
 SVEquationSymbolTableClass::SVEquationSymbolTableClass()
 {
 	m_ToolSetName = SvUl_SF::LoadSVString( IDS_CLASSNAME_SVTOOLSET );
 	m_ToolSetName +=  "."; 
-	m_DIOInputName = SvO::DIOInput;
-	m_RemoteInputName = SvO::Remote_Input;
+	m_DIOInputName = DIOInput;
+	m_RemoteInputName = Remote_Input;
 }
 
 SVEquationSymbolTableClass::~SVEquationSymbolTableClass()
@@ -201,7 +200,7 @@ HRESULT SVEquationSymbolTableClass::GetData( int SymbolIndex, double& rValue, in
 		if( SV_TOOLSET_SYMBOL_TYPE == pSymbolStruct->Type )
 		{
 			isValidObject = pSymbolStruct->InObjectInfo.IsConnected() && nullptr != pSymbolStruct->InObjectInfo.GetInputObjectInfo().m_pObject;
-		}
+			}
 		else	
 		{
 			if(nullptr != pSymbolStruct->InObjectInfo.GetInputObjectInfo().m_pObject)
@@ -218,7 +217,7 @@ HRESULT SVEquationSymbolTableClass::GetData( int SymbolIndex, double& rValue, in
 			HRESULT hr = pSymbolStruct->InObjectInfo.GetInputObjectInfo().m_pObject->getValue( rValue, -1, Index );
 			return hr;
 		}
-	}
+		}
 	return E_FAIL;
 }
 
@@ -785,22 +784,13 @@ void SVEquationClass::OnObjectRenamed(const SVObjectClass& rRenamedObject, const
 	SVString newPrefix;
 	SVString oldPrefix;
 
-	if( const SVInspectionProcess* pInspection = dynamic_cast<const SVInspectionProcess*> (&rRenamedObject) )
-	{
-		newPrefix = _T( "." ) + pInspection->GetCompleteObjectNameToObjectType( nullptr, SVInspectionObjectType ) + _T( "." );
-	}// end if
-	else if( nullptr != dynamic_cast<const BasicValueObject*> (&rRenamedObject) )
-	{
-		newPrefix = _T( "\"" ) + rRenamedObject.GetCompleteObjectNameToObjectType( nullptr, SVRootObjectType ) + _T( "\"" );
-	}
-	else if( nullptr != dynamic_cast<const SvOi::IValueObject*> (&rRenamedObject) )
-	{
-		newPrefix = _T( "\"" ) + rRenamedObject.GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType ) + _T( "\"" );
-	}
-	else
-	{
-		newPrefix = _T( "\"" ) + rRenamedObject.GetCompleteObjectNameToObjectType( nullptr, SVToolSetObjectType ) + _T( "." );
-	}// end else
+	SVObjectTypeEnum type = rRenamedObject.GetObjectType();
+
+	auto prepre = (SVInspectionObjectType == type) ? _T(".") : _T("\"");
+	auto prepost = (SVRootObjectType == type || SVToolSetObjectType == type) ? _T("\"") : _T(".");
+
+	newPrefix = prepre + rRenamedObject.GetCompleteObjectNameToObjectType(nullptr, type) + prepost;
+
 	oldPrefix = newPrefix;
 	SvUl_SF::searchAndReplace( oldPrefix, rRenamedObject.GetName(), rOldName.c_str() );
 

@@ -41,7 +41,7 @@
 #include "SVConfigurationObject.h"
 #include "SVRemoteInputObject.h"
 #include "SVPPQConstants.h"
-#include "ObjectInterfaces\ErrorNumbers.h"
+#include "SVMessage/ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "TextDefinesSvO.h"
 #include "SVRunControlLibrary\SVRunControlLibrary.h"

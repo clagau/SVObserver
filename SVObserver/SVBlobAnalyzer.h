@@ -176,7 +176,7 @@ public:
 /*- Each enabled feature is associated with its own result. This function      */
 /*- will hand back the associated with the feature which is referenced by      */ 
 /*- aFeatureIndex. ------------------------------------------------------------*/
-	SVResultClass* GetResultObject(SVBlobFeatureEnum aFeatureIndex);
+	SvOi::IObjectClass* GetResultObject(SVBlobFeatureEnum aFeatureIndex);
 	SVLongResultClass* GetBlobResultObject();
 
 	virtual bool onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;

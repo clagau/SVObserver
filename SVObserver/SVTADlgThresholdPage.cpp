@@ -21,7 +21,7 @@
 #include "SVLowerThresholdEquation.h"
 #include "SVObserver.h"
 #include "SVThresholdClass.h"
-#include "SVTool.h"
+#include "SVOCore/SVTool.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "SVUpperThresholdEquation.h"
 #include "SVMFCControls\SVHistogram.h"

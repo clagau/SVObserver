@@ -29,8 +29,8 @@
 #include "SVPatSelectModelPageClass.h"
 #include "SVRange.h"
 #include "SVResultLong.h"
-#include "SVSVIMStateClass.h"
-#include "SVTool.h"
+#include "SVOCore/SVSVIMStateClass.h"
+#include "SVOCore/SVTool.h"
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
@@ -755,7 +755,7 @@ BOOL SVPatternAnalyzerClass::CreateObject(SVObjectLevelCreateStruct* pCreateStru
 	msv_lpatNumFoundOccurances.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 
 	// Check if Result is present
-	SVResultClass* pResult = GetResultObject();
+	SvOi::IObjectClass* pResult = GetResultObject();
 	if (nullptr == pResult)
 	{
 		pAnalyzerResult = nullptr;

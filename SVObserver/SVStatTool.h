@@ -11,7 +11,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVTool.h" 
+#include "SVOCore/SVTool.h" 
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
@@ -69,7 +69,7 @@ public:
 	/// \param aFeatureIndex [in] The Index of the feature with should allocated.
 	void AllocateResult( SVStatisticsFeatureEnum aFeatureIndex );
 	DWORD FreeResult( SVStatisticsFeatureEnum aFeatureIndex );
-	SVResultClass* GetResultObject( SVStatisticsFeatureEnum aFeatureIndex );
+	SVResultClass* GetResult( SVStatisticsFeatureEnum aFeatureIndex );
 
 	void UpdateTaskObjectOutputListAttributes();
 	virtual bool DisconnectObjectInput( SVInObjectInfoStruct* pObjectInInfo ) override;

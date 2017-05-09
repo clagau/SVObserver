@@ -11,7 +11,7 @@
 #include "LinkedValue.h"
 #include "BasicValueObject.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
-#include "ObjectInterfaces\ErrorNumbers.h"
+#include "SVMessage/ErrorNumbers.h"
 #include "ObjectInterfaces\IObjectClass.h"
 #include "ObjectInterfaces\TextDefineSvOi.h"
 #include "SVObjectLibrary\GlobalConst.h"

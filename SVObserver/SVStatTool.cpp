@@ -20,7 +20,7 @@
 #include "SVInspectionProcess.h"
 #include "SVResultDouble.h"
 #include "SVToolSet.h"
-#include "ObjectInterfaces\ErrorNumbers.h"
+#include "SVMessage/ErrorNumbers.h"
 #include "TextDefinesSvO.h"
 #include "SVStatusLibrary\MessageManager.h"
 #pragma endregion Includes
@@ -395,7 +395,7 @@ DWORD SVStatisticsToolClass::FreeResult (SVStatisticsFeatureEnum aFeatureIndex)
 	
 	while (1)
 	{
-		pResult = GetResultObject (aFeatureIndex);
+		pResult = GetResult(aFeatureIndex);
 		
 		if (!pResult)
 		{
@@ -413,7 +413,7 @@ DWORD SVStatisticsToolClass::FreeResult (SVStatisticsFeatureEnum aFeatureIndex)
 	return LastError;
 }
 
-SVResultClass* SVStatisticsToolClass::GetResultObject(SVStatisticsFeatureEnum aFeatureIndex)
+SVResultClass* SVStatisticsToolClass::GetResult(SVStatisticsFeatureEnum aFeatureIndex)
 {
 	SVInputInfoListClass	resultInputList;
 	SVOutputInfoListClass	resultOutputList;

@@ -17,7 +17,7 @@
 #include "SVValueObjectLibrary/SVEnumerateValueObjectClass.h"
 #include "SVValueObjectLibrary/SVStringValueObjectClass.h"
 #include "SVOCore/SVImageClass.h"
-#include "SVTool.h"
+#include "SVOCore/SVTool.h"
 #pragma endregion Includes
 
 #pragma region Declarations

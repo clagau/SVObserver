@@ -14,7 +14,7 @@
 #include "BasicValueObject.h"
 
 #include "SVObjectLibrary\SVObjectLevelCreateStruct.h"
-#include "SVUtilityLibrary\SVSAFEARRAY.h"
+#include "SVUtilityLibrary\SVSafeArray.h"
 #include "CameraLibrary\SVBoolValueDeviceParam.h"
 #include "CameraLibrary\SVLongValueDeviceParam.h"
 #include "CameraLibrary\SVStringValueDeviceParam.h"

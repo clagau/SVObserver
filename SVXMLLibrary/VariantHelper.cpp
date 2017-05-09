@@ -16,9 +16,8 @@
 #include "SVVariantCustomTypes.h"
 #include "SVStatusLibrary/MessageContainer.h"
 #include "SVMessage/SVMessage.h"
-#include "ObjectInterfaces/ICustom2Filter.h"
 #include "SVVariantConverter.h"
-#include "ObjectInterfaces/ErrorNumbers.h"
+#include "SVMessage/ErrorNumbers.h"
 #pragma endregion Includes
 
 #pragma region Declarations

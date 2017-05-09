@@ -38,7 +38,7 @@
 #include "SVIPDoc.h"
 #include "SVRemoteCommand.h"
 #include "SVResultView.h"
-#include "SVSVIMStateClass.h"
+#include "SVOCore/SVSVIMStateClass.h"
 #include "SVToolSet.h"
 #include "SVOCore/SVImageBuffer.h"	//SVImageOverlayClass
 #include "SVConfigurationPrint.h"
@@ -48,7 +48,7 @@
 #include "SVInputObjectList.h"
 #include "SVStreamCommandFactory.h"
 #include "SVInputStreamManager.h"
-#include "SVTool.h"
+#include "SVOCore/SVTool.h"
 #include "SVCommandStreamManager.h"
 #include "SVCommandInspectionCollectImageData.h"
 #include "GuiCommands/InspectionRunOnce.h"

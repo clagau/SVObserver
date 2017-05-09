@@ -33,7 +33,7 @@ public:
 /*- and from derived functions CloseObject () functions. ----*/
 	virtual BOOL  CloseObject() override;
 
-    SVResultClass* GetResultObject();
+	SvOi::IObjectClass* GetResultObject();
    
 	 virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 

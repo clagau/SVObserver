@@ -3,7 +3,7 @@
 //* All Rights Reserved
 //******************************************************************************
 //* .Module Name     : SVSVIMStateClass
-//* .File Name       : $Workfile:   SVSVIMStateClass.h  $
+//* .File Name       : $Workfile:   SVSVIMStateClass.h
 //* ----------------------------------------------------------------------------
 //* .Current Version : $Revision:   1.3  $
 //* .Check In Date   : $Date:   09 Dec 2014 10:12:42  $
@@ -11,7 +11,21 @@
 
 #pragma once
 
-#include "SVGlobal.h"
+#include "SVSystemLibrary/SVAsyncProcedure.h"
+
+enum svModeEnum
+{
+	SVIM_MODE_UNKNOWN = 0,
+	SVIM_MODE_ONLINE,
+	SVIM_MODE_OFFLINE,
+	SVIM_MODE_REGRESSION,
+	SVIM_MODE_TEST,
+	SVIM_MODE_EDIT,
+	SVIM_MODE_CHANGING = 100,
+	SVIM_MODE_REMOVE = 0x8000,
+};
+
+
 
 #define SV_STATE_UNKNOWN		0x00000000
 
@@ -78,6 +92,23 @@ public:
 	//************************************
 	static svModeEnum GetMode();
 
+	static HRESULT SetLastModifiedTime();
+	static HRESULT FireModeChanged(svModeEnum mode);
+
+	static bool IsAutoSaveRequired() { return m_AutoSaveRequired; }
+	static void SetAutoSaveRequired(bool required) { m_AutoSaveRequired = required; }
+
+
+	typedef void (CALLBACK * SVAPCSignalHandler)(DWORD_PTR);
+	typedef boost::function<void(bool&)> SVThreadProcessHandler;
+
+	static SVAsyncProcedure< SVAPCSignalHandler, SVThreadProcessHandler > m_AsyncProcedure;
+
+	static __time32_t m_LastModifiedTime;
+	static __time32_t m_PrevModifiedTime;
+	static svModeEnum m_prevMode;
+	static svModeEnum m_lastMode;
+
 private:
 	//************************************
 	// Method: CheckModeNotify
@@ -103,5 +134,9 @@ private:
 
 	//This attribute contain the SVIM state value.
 	static long m_SVIMState;
+
+	static bool m_AutoSaveRequired; ///< should an autosave be performed at the next appropriate time?
+
+
 };
 

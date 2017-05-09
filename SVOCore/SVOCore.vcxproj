@@ -86,10 +86,13 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="SVAnalyzer.h" />
     <ClInclude Include="SVBarCodeBuffer.h" />
     <ClInclude Include="SVCameraInfoStruct.h" />
     <ClInclude Include="SVClassInfoStruct.h" />
+    <ClInclude Include="SVConditional.h" />
     <ClInclude Include="SVDataBuffer.h" />
+    <ClInclude Include="SVEquation.h" />
     <ClInclude Include="SVExtentPropertiesInfoStruct.h" />
     <ClInclude Include="SVImageBuffer.h" />
     <ClInclude Include="SVImageChildStruct.h" />
@@ -101,8 +104,12 @@
     <ClInclude Include="SVObjectAppClass.h" />
     <ClInclude Include="SVOperator.h" />
     <ClInclude Include="SVStdImageOperatorListClass.h" />
+    <ClInclude Include="SVSVIMStateClass.h" />
     <ClInclude Include="SVTaskObject.h" />
     <ClInclude Include="SVTaskObjectList.h" />
+    <ClInclude Include="SVTool.h" />
+    <ClInclude Include="SVToolExtentClass.h" />
+    <ClInclude Include="SVToolExtentPropertiesClass.h" />
     <ClInclude Include="SVUnaryImageOperatorClass.h" />
     <ClInclude Include="SVUnaryImageOperatorList.h" />
     <ClInclude Include="targetver.h" />
@@ -112,10 +119,13 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="SVAnalyzer.cpp" />
     <ClCompile Include="SVBarCodeBuffer.cpp" />
     <ClCompile Include="SVCameraInfoStruct.cpp" />
     <ClCompile Include="SVClassInfoStruct.cpp" />
+    <ClCompile Include="SVConditional.cpp" />
     <ClCompile Include="SVDataBuffer.cpp" />
+    <ClCompile Include="SVEquation.cpp" />
     <ClCompile Include="SVImageBuffer.cpp" />
     <ClCompile Include="SVImageChildStruct.cpp" />
     <ClCompile Include="SVImageClass.cpp" />
@@ -126,10 +136,17 @@
     <ClCompile Include="SVObjectAppClass.cpp" />
     <ClCompile Include="SVOperator.cpp" />
     <ClCompile Include="SVStdImageOperatorListClass.cpp" />
+    <ClCompile Include="SVSVIMStateClass.cpp" />
     <ClCompile Include="SVTaskObject.cpp" />
     <ClCompile Include="SVTaskObjectList.cpp" />
+    <ClCompile Include="SVTool.cpp" />
+    <ClCompile Include="SVToolExtentClass.cpp" />
+    <ClCompile Include="SVToolExtentPropertiesClass.cpp" />
     <ClCompile Include="SVUnaryImageOperatorClass.cpp" />
     <ClCompile Include="SVUnaryImageOperatorList.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="SVToolExtentClass.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

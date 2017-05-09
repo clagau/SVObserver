@@ -8,8 +8,13 @@
 #pragma once
 #pragma region Includes
 #include "IObjectClass.h"
+#include "IEnumerateValueObject.h"
 #include "SVUtilityLibrary\SVGUID.h"
+#include "SVValueObjectLibrary/SVEnumerateValueObjectClass.h"
+#include "ISVImage.h"
+
 #pragma endregion Includes
+
 
 namespace Seidenader
 {
@@ -32,6 +37,16 @@ namespace Seidenader
 			 \return Pointer to the Band0 image object
 			***********/
 			virtual IObjectClass* getBand0Image() const = 0;
+
+			virtual bool WasEnabled() const = 0; 
+
+			virtual HRESULT getResetCounts(bool& rResetCounts) const = 0;
+
+			virtual ISVImage* getCurrentImageInterface() = 0;
+
+			virtual SVEnumerateValueObjectClass* GetDrawFlagObject() = 0;
+
+
 		};
 	}
 }

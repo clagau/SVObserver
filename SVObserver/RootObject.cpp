@@ -21,7 +21,7 @@
 #include "SVMessage\SVMessage.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "ObjectInterfaces\IRootObject.h"
-#include "ObjectInterfaces\ErrorNumbers.h"
+#include "SVMessage/ErrorNumbers.h"
 #include "ObjectSelectorLibrary/SelectorItemVector.h"
 #pragma endregion Includes
 
@@ -71,7 +71,7 @@ HRESULT RootObject::RefreshObject( const SVObjectClass* const pSender, RefreshOb
 
 	if( PostRefresh == Type )
 	{
-		//When its of type Global Constant we need to update the IO view
+		//When it is of type Global Constant we need to update the IO view
 		if( SVGlobalConstantObjectType == pSender->GetObjectInfo().m_ObjectTypeInfo.ObjectType )
 		{
 			SVIODoc* pIODoc = TheSVObserverApp.GetIODoc();
@@ -312,6 +312,14 @@ void SvOi::addRootChildObjects(SVOutputInfoListClass& rList)
 		rList.Add( &((*iter)->GetObjectOutputInfo()) );
 	}
 }
+
+
+template <typename ELEMENT_TYPE> 
+void SvOi::setRootChildValue(LPCTSTR DottedName, const ELEMENT_TYPE& rValue)
+{
+	RootObject::setRootChildValue<ELEMENT_TYPE>(DottedName, rValue);
+}
+
 
 #pragma endregion IRootObject-function
 

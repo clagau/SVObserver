@@ -16,12 +16,12 @@
 #include "SVObjectLibrary/SVInspectionLevelCreateStruct.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 
-#include "SVAnalyzer.h"
-#include "SVConditional.h"
+#include "SVOCore/SVAnalyzer.h"
+#include "SVOCore/SVConditional.h"
 #include "SVOCore/SVImageListClass.h"
 #include "SVInspectionProcess.h"
-#include "SVSVIMStateClass.h"
-#include "SVTool.h"
+#include "SVOCore/SVSVIMStateClass.h"
+#include "SVOCore/SVTool.h"
 #include "SVTimerLibrary/SVClock.h"
 #include "SVColorTool.h"
 #pragma endregion Includes
@@ -304,14 +304,19 @@ SVImageClass* SVToolSetClass::getCurrentImage()
 	return &m_MainImageObject;
 }
 
-bool SVToolSetClass::getConditionalResult(long Index) const
+SvOi::ISVImage* SVToolSetClass::getCurrentImageInterface()
+{
+	return &m_MainImageObject;
+}
+
+bool SVToolSetClass::getConditionalResult(long index) const
 {
 	BOOL Value( false );
 
 	if( inputConditionBoolObjectInfo.IsConnected() && inputConditionBoolObjectInfo.GetInputObjectInfo().m_pObject )
 	{
 		SVBoolValueObjectClass* pBoolObject = ( SVBoolValueObjectClass* )inputConditionBoolObjectInfo.GetInputObjectInfo().m_pObject;
-		pBoolObject->GetValue( Value, Index  );
+		pBoolObject->GetValue( Value, index  );
 	}
 	return Value ? true : false;
 }
@@ -366,7 +371,7 @@ void SVToolSetClass::GetToolIds( SVToolIdDeque& p_rToolIds ) const
 	}
 }
 
-HRESULT SVToolSetClass::getResetCounts( bool& rResetCounts )
+HRESULT SVToolSetClass::getResetCounts( bool& rResetCounts )  const
 {
 	BOOL Value( false );
 	HRESULT Result = m_ResetCounts.GetValue( Value );
@@ -463,7 +468,7 @@ bool SVToolSetClass::Run( SVRunStatusClass& rRunStatus, SvStl::MessageContainerV
 	BOOL bDisabled = FALSE;
 	clearRunErrorMessages();
 
-	if( !dynamic_cast<SVInspectionProcess*>(GetInspection())->GetNewDisableMethod() )
+	if (!dynamic_cast<SVInspectionProcess*>(GetInspection())->IsNewDisableMethodSet())
 	{
 		SVRunStatusClass ToolRunStatus;
 

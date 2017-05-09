@@ -25,7 +25,7 @@
 #include "SVOutputObjectList.h"
 #include "SVOutputStreamManager.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
-#include "SVSVIMStateClass.h"
+#include "SVOCore/SVSVIMStateClass.h"
 #include "TextDefinesSvO.h"
 #pragma endregion Includes
 

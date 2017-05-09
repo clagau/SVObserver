@@ -26,7 +26,7 @@
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVMessage/SVMessage.h"
-#include "ObjectInterfaces/ErrorNumbers.h"
+#include "SVMessage/ErrorNumbers.h"
 #include "TextDefinesSvOl.h"
 #pragma warning (pop)
 #pragma endregion Includes

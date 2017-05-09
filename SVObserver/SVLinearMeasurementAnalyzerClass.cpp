@@ -18,7 +18,7 @@
 #include "SVOCore/SVImageClass.h"
 #include "SVLinearEdgeAProcessingClass.h"
 #include "SVLinearEdgeBProcessingClass.h"
-#include "SVTool.h"
+#include "SVOCore/SVTool.h"
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 

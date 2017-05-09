@@ -14,8 +14,8 @@
 #include "SVRunControlLibrary/SVRunControlLibrary.h"
 #include "ObjectInterfaces/GlobalConst.h"
 #include "SVOCore/SVImageClass.h"
-#include "SVTool.h"
-#include "SVAnalyzer.h"
+#include "SVOCore/SVTool.h"
+#include "SVOCore/SVAnalyzer.h"
 #include "SVGlobal.h"
 
 #ifdef _DEBUG

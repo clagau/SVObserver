@@ -16,11 +16,11 @@
 #include "SVPPQEntryDialogDigInPage.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVPPQEntryDialog.h"
-#include "SVSVIMStateClass.h"
+#include "SVOCore/SVSVIMStateClass.h"
 #include "SVDigitalInputObject.h"
 #include "SVInfoStructs.h"
 #include "SVPPQObject.h"
-#include "ObjectInterfaces\ErrorNumbers.h"
+#include "SVMessage/ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "TextDefinesSvO.h"
 #pragma endregion Includes

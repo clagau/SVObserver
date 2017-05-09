@@ -65,7 +65,7 @@ void SVOInspectionObj::SetToolsetImage(LPCTSTR Image)
     m_ToolsetImage = Image;
 } 
 
-const SVString& SVOInspectionObj::GetNewDisableMethod() const
+const SVString& SVOInspectionObj::GetNewDisableMethodString() const
 {
     return m_NewDisableMethod;
 }

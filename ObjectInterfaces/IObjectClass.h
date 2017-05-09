@@ -123,6 +123,9 @@ namespace Seidenader
 			/// \returns bool
 			virtual bool resetAllObjects(SvStl::MessageContainerVector *pErrorMessages=nullptr) = 0;
 
+			/// Get the object class ID
+			virtual SVGUID GetClassID() = 0;
+			
 			//! Gets the value for Value object NOTE: This is placed here instead of IValueObject for performance reasons !
 			//! \param rValue [out] The reference to write the value to
 			//! \param Bucket [in] The corresponding bucket index to get, if required

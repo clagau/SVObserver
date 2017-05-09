@@ -11,8 +11,8 @@
 #include "SVCommandInspectionExtentUpdater.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVInspectionProcess.h"
-#include "SVTool.h"
-#include "ObjectInterfaces\ErrorNumbers.h"
+#include "SVOCore/SVTool.h"
+#include "SVMessage/ErrorNumbers.h"
 #include "SVToolSet.h"
 #include "ToolSizeAdjustTask.h"
 #pragma endregion Includes

@@ -21,7 +21,7 @@
 #include "SVUtilityLibrary/LoadDll.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVMessage/SVMessage.h"
-#include "ObjectInterfaces/ErrorNumbers.h"
+#include "SVMessage/ErrorNumbers.h"
 #include "Scintilla.h"
 #include "SciLexer.h"
 #include "TextDefinesSvOg.h"

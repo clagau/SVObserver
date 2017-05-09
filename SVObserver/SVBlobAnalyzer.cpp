@@ -23,12 +23,14 @@
 #include "SVResultDouble.h"
 #include "SVResultLong.h"
 #include "SVRange.h"
-#include "SVTool.h"
-#include "SVSVIMStateClass.h"
+#include "SVGlobal.h"
+#include "SVOCore/SVTool.h"
+#include "SVOCore/SVSVIMStateClass.h"
 #include "TextDefinesSvO.h"
-#include "ObjectInterfaces\ErrorNumbers.h"
+#include "SVMessage/ErrorNumbers.h"
 #include "ObjectInterfaces\TextDefineSvOi.h"
 #include "SVUtilityLibrary/SVString.h"
+
 #pragma endregion Includes
 
 struct SVBlobFeatureConstants BlobFeatureConstants[]=
@@ -573,7 +575,7 @@ DWORD SVBlobAnalyzerClass::AllocateBlobResult ()
 
 DWORD SVBlobAnalyzerClass::FreeResult (SVBlobFeatureEnum aFeatureIndex)
 {
-	SVResultClass*    pResult(nullptr);
+	SvOi::IObjectClass* pResult(nullptr);
 	DWORD LastError(0);
 	
 	pResult = GetResultObject (aFeatureIndex);
@@ -587,11 +589,9 @@ DWORD SVBlobAnalyzerClass::FreeResult (SVBlobFeatureEnum aFeatureIndex)
 	}
 	else
 	{
-
-
 		m_guidResults[ aFeatureIndex ] = SV_GUID_NULL;
 
-		DestroyChildObject(pResult, SVMFSetDefaultInputs);
+		DestroyChildObject(dynamic_cast<SVTaskObjectClass*>(pResult), SVMFSetDefaultInputs);
 
 		pResult = nullptr;
 	}
@@ -600,10 +600,12 @@ DWORD SVBlobAnalyzerClass::FreeResult (SVBlobFeatureEnum aFeatureIndex)
 	
 }
 
-SVResultClass* SVBlobAnalyzerClass::GetResultObject(SVBlobFeatureEnum aFeatureIndex)
+
+SvOi::IObjectClass* SVBlobAnalyzerClass::GetResultObject(SVBlobFeatureEnum aFeatureIndex)
 {
-	return static_cast <SVResultClass*> ( SVObjectManagerClass::Instance().GetObject(m_guidResults[aFeatureIndex]) );
+	return static_cast <IObjectClass*> ( SVObjectManagerClass::Instance().GetObject(m_guidResults[aFeatureIndex]) );
 }
+
 
 void SVBlobAnalyzerClass::RebuildResultObjectArray()
 {
@@ -815,7 +817,7 @@ BOOL SVBlobAnalyzerClass::CreateObject(SVObjectLevelCreateStruct* PCreateStructu
 				m_FeaturesEnabled [i] = _T('1');
 				EnableFeature (i);
 				
-				SVResultClass *pResult = GetResultObject (i);
+				SvOi::IObjectClass* pResult = GetResultObject (i);
 				if(!pResult)
 				{
 					SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
@@ -824,7 +826,7 @@ BOOL SVBlobAnalyzerClass::CreateObject(SVObjectLevelCreateStruct* PCreateStructu
 					break; // Break out of for loop 
 				}
 				
-				SVRangeClass *pRange = pResult->GetResultRange();
+				SVRangeClass *pRange = dynamic_cast<SVResultClass*>(pResult)->GetResultRange();
 				if(!pRange)
 				{
 					SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
@@ -1067,7 +1069,7 @@ bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 						continue;
 					}
 					
-					SVResultClass* pResult = GetResultObject(eFeature);
+					SVResultClass* pResult = dynamic_cast<SVResultClass*>(GetResultObject(eFeature));
 					if(!pResult)
 					{
 						Result = false;

@@ -8,7 +8,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVEquation.h"
+#include "SVOCore/SVEquation.h"
 #pragma endregion Includes
 
 #pragma region Declarations

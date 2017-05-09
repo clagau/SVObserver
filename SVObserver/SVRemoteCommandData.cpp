@@ -20,7 +20,7 @@
 #include "SVCommandLibrary/SVCommandDataContainer.h"
 #include "SVCommandLibrary/SVCommandDataImage.h"
 #include "SVCommandLibrary/SVCommandDataValue.h"
-#include "SVUtilityLibrary/SVSAFEARRAY.h"
+#include "SVUtilityLibrary/SVSafeArray.h"
 #pragma endregion Includes
 
 SVRemoteCommandData::SVRemoteCommandData()

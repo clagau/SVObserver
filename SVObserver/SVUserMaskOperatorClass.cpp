@@ -16,7 +16,7 @@
 #include "SVUtilityLibrary/SetBits.h"
 #include "SVObjectLibrary/SVObjectAttributeClass.h"
 #include "SVObjectLibrary/SVToolsetScriptTags.h"
-#include "SVTool.h"
+#include "SVOCore/SVTool.h"
 #include "SVOCore/SVImageProcessingClass.h"
 #include "SVGlobal.h" // For ConvertToHex
 #include "SVInspectionProcess.h"

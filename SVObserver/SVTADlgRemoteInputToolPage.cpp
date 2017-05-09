@@ -15,7 +15,7 @@
 
 #include "SVInspectionProcess.h"
 #include "SVRemoteInputTool.h"
-#include "SVTool.h"
+#include "SVOCore/SVTool.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "SVToolset.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"

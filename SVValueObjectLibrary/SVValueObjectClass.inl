@@ -170,7 +170,7 @@ HRESULT SVValueObjectClass<T>::SetArraySize(int iSize)
 
 	if( m_ArraySize != iSize )
 	{
-		m_ArraySize = std::max(iSize, 1);	// minimum one array element
+		m_ArraySize = (std::max)(iSize, 1);	// minimum one array element //parentheses around std::max avoid problems if a max macro has beed defined somewhere (e.g. in windows.h)
 
 		if( m_ArraySize <= 1 )
 		{

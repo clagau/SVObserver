@@ -16,7 +16,7 @@
 #include "SVResult.h"
 #include "SVSetupDialogManager.h"
 #include "SVStatusLibrary\MessageManager.h"
-#include "ObjectInterfaces\ErrorNumbers.h"
+#include "SVMessage/ErrorNumbers.h"
 #pragma endregion Includes
 
 SVLuminanceAnalyzerSetupClass::SVLuminanceAnalyzerSetupClass(CWnd* pParent /*=nullptr*/)
@@ -85,7 +85,7 @@ void SVLuminanceAnalyzerSetupClass::OnCancel()
 
 void SVLuminanceAnalyzerSetupClass::OnRange() 
 {
-	SVResultClass* pAnalyzerResult;
+	SvOi::IObjectClass* pAnalyzerResult;
 
    
 	pAnalyzerResult = m_pAnalyzer->GetResultObject();

@@ -8,7 +8,7 @@
  
 #pragma region Includes
 #include "SVOCore/SVTaskObject.h"
-#include "SVTool.h"
+#include "SVOCore/SVTool.h"
 #pragma endregion Includes
 
 //! \brief Set Tool position and Size of a tool during resetObject

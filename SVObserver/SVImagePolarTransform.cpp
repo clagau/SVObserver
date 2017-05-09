@@ -21,7 +21,7 @@
 #include "SVEvaluateEndRadiusClass.h"
 #include "SVEvaluateStartAngleClass.h"
 #include "SVEvaluateEndAngleClass.h"
-#include "SVEquation.h"
+#include "SVOCore/SVEquation.h"
 #include "ObjectInterfaces/GlobalConst.h"
 #include "SVOCore/SVImageProcessingClass.h"
 #include "SVPolarTransformationTool.h"

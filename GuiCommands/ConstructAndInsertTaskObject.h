@@ -13,7 +13,7 @@
 #include "ObjectInterfaces\ITaskObjectListClass.h"
 #include "ObjectInterfaces\IObjectAppClass.h"
 #include "ObjectInterfaces\ObjectDefines.h"
-#include "ObjectInterfaces\ErrorNumbers.h"
+#include "SVMessage/ErrorNumbers.h"
 #pragma endregion Includes
 
 namespace Seidenader

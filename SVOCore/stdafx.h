@@ -33,8 +33,6 @@
 //************************************
 #pragma region Precompiled Headers
 #include "targetver.h"
-#include <Windows.h>
-
 #include <algorithm>
 #include <concrt.h>
 #include <ctime>
@@ -55,7 +53,7 @@
 #include <comdef.h>
 
 #include <boost/any.hpp>
-
+#include <boost/assign.hpp>
 #include <boost/bind.hpp>
 #include <boost/config.hpp>
 #include <boost/function.hpp>

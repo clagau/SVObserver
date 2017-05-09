@@ -21,7 +21,7 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
 #include "ObjectInterfaces\IObjectManager.h"
-#include "ObjectInterfaces\ErrorNumbers.h"
+#include "SVMessage/ErrorNumbers.h"
 #include "SVOGui/NoSelector.h"
 #include "SVOGui/ToolSetItemSelector.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
@@ -261,7 +261,7 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnSetRange()
 		if( item != LB_ERR )
 		{
 			DWORD_PTR index = m_lbSelectedList.GetItemData( item );
-			pResult = m_pTool->GetResultObject( (SVStatisticsFeatureEnum)index );
+			pResult = m_pTool->GetResult( (SVStatisticsFeatureEnum)index );
 
 			if (nullptr == pResult)
 			{

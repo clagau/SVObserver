@@ -13,7 +13,7 @@
 #include "stdafx.h"
 #include "SVWindowTool.h"
 
-#include "SVAnalyzer.h"
+#include "SVOCore/SVAnalyzer.h"
 #include "SVInspectionProcess.h"
 #include "SVLUTEquation.h"
 #include "SVLUTOperator.h"

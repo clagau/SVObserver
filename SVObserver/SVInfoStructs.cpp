@@ -15,7 +15,7 @@
 #include "SVTimerLibrary/SVClock.h"
 #include "SVInspectionProcess.h"
 #include "SVPPQObject.h"
-#include "SVSVIMStateClass.h"
+#include "SVOCore/SVSVIMStateClass.h"
 
 
 SVIOEntryStruct::SVIOEntryStruct()

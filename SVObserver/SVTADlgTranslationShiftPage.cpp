@@ -16,11 +16,11 @@
 #include "SVEvaluate.h"
 #include "SvOGui/SVFormulaEditorSheet.h"
 #include "SVIPDoc.h"
-#include "SVTool.h"
+#include "SVOCore/SVTool.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "SVShiftTool.h"
 #include "SVShiftToolUtility.h"
-#include "ObjectInterfaces\ErrorNumbers.h"
+#include "SVMessage/ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes

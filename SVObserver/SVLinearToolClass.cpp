@@ -12,7 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVLinearToolClass.h"
-#include "SVAnalyzer.h"
+#include "SVOCore/SVAnalyzer.h"
 #include "SVInspectionProcess.h"
 #include "SVLinearImageOperatorList.h"
 #include "SVThresholdClass.h"

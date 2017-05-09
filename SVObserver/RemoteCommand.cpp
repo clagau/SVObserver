@@ -15,7 +15,7 @@
 #include "SVLibrary/SVFileNameClass.h"
 #include "SVObserver.h"
 #include "ObjectInterfaces/SVUserMessage.h"
-#include "SVSVIMStateClass.h"
+#include "SVOCore/SVSVIMStateClass.h"
 #include "SVGlobal.h"
 #include "ObjectInterfaces/SVIMCommand.h"
 #include "SVStatusLibrary/GlobalPath.h"

@@ -10,6 +10,7 @@
 #include "IObjectClass.h"
 #include "ITaskObject.h"
 #include "ISelectorItemVector.h"
+
 #pragma endregion Includes
 
 namespace Seidenader
@@ -71,6 +72,18 @@ namespace Seidenader
 			This method adds an input request marker
 			***********/
 			virtual bool AddInputRequestMarker() = 0;
+
+			///Checks whether the reset state is set 
+			virtual bool IsResetStateSet(unsigned long p_State) const = 0;
+
+			/// sets the flag that forces the global extent data to update
+			virtual void ForceOffsetUpdate() = 0;
+
+			/// will global extent data be forced to update?
+			virtual bool IsOffsetUpdateForced() = 0;
+
+			/// is the new disable method set?
+			virtual BOOL IsNewDisableMethodSet() = 0;
 		};
 	}
 }

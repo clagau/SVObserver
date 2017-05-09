@@ -7,7 +7,7 @@
 #pragma once
  
 #pragma region Includes
-#include "SVEquation.h"
+#include "SVOCore/SVEquation.h"
 #pragma endregion Includes
 
 //! \brief  Base class for Formulas for Tool Width Height and Positions for ToolsSizeAdjust 

@@ -16,7 +16,7 @@
 #include "ObjectInterfaces/IObjectManager.h"
 #include "ObjectInterfaces/IObjectClass.h"
 #include "ObjectInterfaces/ISVImage.h"
-#include "ObjectInterfaces/ErrorNumbers.h"
+#include "SVMessage/ErrorNumbers.h"
 #include "SVSystemLibrary/SVAutoLockAndReleaseTemplate.h"
 #include "SVImageLibrary\SVImageInfoClass.h"
 #include "SVClassRegisterListClass.h"

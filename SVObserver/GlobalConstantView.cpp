@@ -15,7 +15,7 @@
 #include "SVIPDoc.h"
 #include "SVToolSet.h"
 #include "SVConfigurationObject.h"
-#include "SVSVIMStateClass.h"
+#include "SVOCore/SVSVIMStateClass.h"
 #include "RootObject.h"
 #include "TextDefinesSvO.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"

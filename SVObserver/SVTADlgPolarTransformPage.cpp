@@ -15,7 +15,7 @@
 #include "SvOGui/SVFormulaEditorSheet.h"
 #include "SVEvaluate.h"
 #include "SVIPDoc.h"
-#include "SVTool.h"
+#include "SVOCore/SVTool.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes

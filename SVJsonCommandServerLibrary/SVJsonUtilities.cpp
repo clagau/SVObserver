@@ -13,7 +13,7 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <fstream>
 #include "SVJsonUtilities.h"
-#include "SVUtilityLibrary/SVSAFEARRAY.h"
+#include "SVUtilityLibrary/SVSafeArray.h"
 #include "SVUtilityLibrary/SVStringConversions.h"
 #pragma endregion Includes
 

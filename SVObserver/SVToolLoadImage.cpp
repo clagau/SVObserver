@@ -13,7 +13,7 @@
 #include "stdafx.h"
 #include "SVHBitmapUtilitiesLibrary\SVImageFormatEnum.h"
 #include "SVToolLoadImage.h"
-#include "SVAnalyzer.h"
+#include "SVOCore/SVAnalyzer.h"
 #include "SVUtilityLibrary/SVUtilityGlobals.h"
 #include "SVUtilityLibrary\SVString.h"
 #include "SVOCore/SVImageProcessingClass.h"
@@ -195,7 +195,7 @@ HRESULT SVLoadImageToolClass::IsInputImage(SVImageClass *p_psvImage)
 
 	if ( nullptr != p_psvImage )
 	{
-		if ( p_psvImage == m_pCurrentToolSet->getCurrentImage() )
+		if (p_psvImage == dynamic_cast<SVToolSetClass*>(m_pCurrentToolSet)->getCurrentImageInterface())
 		{
 			l_hrOk = S_OK;
 		}

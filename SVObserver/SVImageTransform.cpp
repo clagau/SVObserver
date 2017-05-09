@@ -16,7 +16,7 @@
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
 #include "SVObjectLibrary/SVAnalyzerLevelCreateStruct.h"
 #include "ObjectInterfaces/GlobalConst.h"
-#include "SVTool.h"
+#include "SVOCore/SVTool.h"
 #include "SVTransformationTool.h"
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes

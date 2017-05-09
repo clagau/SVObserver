@@ -16,7 +16,7 @@
 #include "SVIPDoc.h"
 #include "SVLutOperator.h"
 #include "SVLutEquation.h"
-#include "SVTool.h"
+#include "SVOCore/SVTool.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "ObjectInterfaces/SVUserMessage.h"
 #include "SVUtilityLibrary/SVString.h"

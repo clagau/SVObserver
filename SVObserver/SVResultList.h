@@ -34,7 +34,7 @@ class SVResultListClass
 public:
 #pragma region Constructor
 	SVResultListClass();
-	virtual ~SVResultListClass();	// no heirarchy; but so we can have RTTI
+	virtual ~SVResultListClass();	// no hierarchy; but so we can have RTTI
 #pragma endregion Constructor
 
 #pragma region Public Methods

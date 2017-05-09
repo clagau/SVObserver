@@ -74,9 +74,6 @@ public:
 	/// \param SourceDir [in] the path of the directory the contents of which are to be copied
 	void CopyDirectoryToTempDirectory( LPCTSTR SourceDir) const ;
 
-	bool IsAutoSaveRequired(){return m_AutoSaveRequired;}
-	void SetAutoSaveRequired(bool required){m_AutoSaveRequired=required;}
-
 #pragma endregion Public Methods
 
 #pragma region Private Methods
@@ -101,7 +98,6 @@ private:
 	double m_AutoSaveDeltaTime_s; ///< the minimum (for most purposes) autosave interval in seconds
 	time_t  m_lastAutoSaveTimestamp; ///< when was the latest automatic configuration backup done?
 	bool m_AutoSaveEnabled; ///< is automatic saving of configurations enabled?
-	bool m_AutoSaveRequired ; ///< should an autosave be performed at the next appropriate time?
 
 	bool m_FbwfAvailable;		///< is FBWF functionality available (i..e installed and DLL found)? 
 	bool m_IsFbwfSelected;		///< is FBWF functionality selected to be available after the next bootup

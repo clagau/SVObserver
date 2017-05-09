@@ -20,7 +20,7 @@
 #include "SVUtilityLibrary/SVString.h"
 #include "ToolSizeAdjustTask.h"
 #include "SVImageLibrary\SVImageBufferHandleImage.h"
-#include "SVSVIMStateClass.h"
+#include "SVOCore/SVSVIMStateClass.h"
 #pragma endregion Includes
 
 #pragma region Declarations

@@ -610,13 +610,15 @@ BOOL SVHistogramAnalyzerClass::CloseObject()
    
 }
 
-SVResultClass* SVHistogramAnalyzerClass::GetResultObject(const GUID & guid)
+SvOi::IObjectClass* SVHistogramAnalyzerClass::GetResultObject(const GUID & guid)
 {
 	for(int i = 0; i < GetSize(); ++i)
 	{
-		SVLongResultClass * l_result = dynamic_cast<SVLongResultClass *>(GetAt(i));
-		if (l_result && l_result->GetInputEmbeddedID() == guid)
+		SvOi::IObjectClass* l_result = dynamic_cast<SVLongResultClass *>(GetAt(i));
+		if (l_result && dynamic_cast<SVLongResultClass *>(l_result)->GetInputEmbeddedID() == guid)
+		{
 			return l_result;
+		}
 	}
 	return nullptr;
 }

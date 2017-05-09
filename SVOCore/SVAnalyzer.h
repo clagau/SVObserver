@@ -11,7 +11,7 @@
 
 #pragma once
 #pragma region Includes
-#include "SVOCore/SVTaskObjectList.h"
+#include "SVTaskObjectList.h"
 #pragma endregion Includes
 
 class SVResultClass;
@@ -28,7 +28,7 @@ public:
 	virtual BOOL CloseObject() override;
 	virtual void DisconnectImages() {};
 
-	virtual SVResultClass* GetResultObject();
+	virtual SvOi::IObjectClass* GetResultObject();
 	
 // used in pattern and Blob Analyzers.
 	virtual bool IsPtOverResult( const POINT& rPoint ){ return false;}

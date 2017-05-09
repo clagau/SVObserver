@@ -12,7 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVToolImage.h"
-#include "SVAnalyzer.h"
+#include "SVOCore/SVAnalyzer.h"
 #include "SVImageArithmetic.h"
 #include "SVInspectionProcess.h"
 #include "SVOCore/SVInplaceImageOperatorListClass.h"

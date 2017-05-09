@@ -11,7 +11,7 @@
 //Moved to precompiled header: #include <Guiddef.h>
 #include "ObjectInterfaces\IObjectManager.h"
 #include "ObjectInterfaces\ITaskObjectListClass.h"
-#include "ObjectInterfaces\ErrorNumbers.h"
+#include "SVMessage/ErrorNumbers.h"
 #pragma endregion Includes
 
 namespace Seidenader

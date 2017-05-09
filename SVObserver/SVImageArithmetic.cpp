@@ -17,7 +17,7 @@
 #include "SVObjectLibrary/SVAnalyzerLevelCreateStruct.h"
 
 #include "SVOCore/SVImageClass.h"
-#include "SVTool.h"
+#include "SVOCore/SVTool.h"
 #include "SVToolImage.h"
 #pragma endregion Includes
 

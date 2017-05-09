@@ -11,7 +11,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVEquation.h"
+#include "SVOCore/SVEquation.h"
 #pragma endregion Includes
 
 class SVLowerThresholdEquationClass : public SVEquationClass

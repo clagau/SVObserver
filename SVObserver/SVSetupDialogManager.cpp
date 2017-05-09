@@ -48,7 +48,7 @@
 #include "SVProfileEdgeMarkerAdjustmentPage.h"
 #include "SVResult.h"
 #include "SVTADlgColorThresholdSheet.h"
-#include "SVTool.h"
+#include "SVOCore/SVTool.h"
 #include "SVOLicenseManager/SVOLicenseManager.h"
 #include "RangeXDialogClass.h"
 #include "SVRange.h"

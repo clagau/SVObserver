@@ -15,7 +15,7 @@
 #include "SVPatternAnalyzerClass.h"
 #include "SVResult.h"
 #include "SVSetupDialogManager.h"
-#include "ObjectInterfaces\ErrorNumbers.h"
+#include "SVMessage/ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "TextDefinesSvO.h"
 #pragma endregion Includes
@@ -485,7 +485,7 @@ void SVPatGeneralPageClass::OnSetRangeClicked()
 	// Show result dlg
 	if ( m_pPatAnalyzer )
 	{
-		SVResultClass* pAnalyzerResult = m_pPatAnalyzer->GetResultObject();
+		SvOi::IObjectClass* pAnalyzerResult = m_pPatAnalyzer->GetResultObject();
 
 		if (pAnalyzerResult)
 		{

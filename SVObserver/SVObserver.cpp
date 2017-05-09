@@ -38,7 +38,8 @@
 #include "SVDiscreteInputsView.h"
 #include "SVMultiDocTemplate.h"
 #include "SVStartWindow.h"
-#include "SVSVIMStateClass.h"
+#include "SVGlobal.h"
+#include "SVOCore/SVSVIMStateClass.h"
 #include "SVUtilities.h"
 #include "SVIPDoc.h"
 #include "SVIODoc.h"
@@ -109,7 +110,7 @@
 #include "SVSharedMemoryLibrary/SharedMemWriter.h"
 #include "SVUtilityLibrary\LoadDll.h"
 #include "SVStatusLibrary\MessageManager.h"
-#include "ObjectInterfaces\ErrorNumbers.h"
+#include "SVMessage/ErrorNumbers.h"
 #include "ObjectInterfaces\TextDefineSvOi.h"
 #include "TextDefinesSvO.h"
 #include "SVXMLLibrary\SVObjectXMLWriter.h"
@@ -119,6 +120,7 @@
 #include "SVObjectLibrary\GlobalConst.h"
 #include "SVMatroxLibrary\SVMatroxSystemInterface.h"
 #include "SVSharedMemoryLibrary\ShareEvents.h"
+
 #pragma endregion Includes
 
 #pragma region Declarations

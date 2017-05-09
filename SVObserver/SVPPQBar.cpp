@@ -18,7 +18,7 @@
 #include "SVMessage/SVMessage.h"
 #include "SVPPQEntryDialog.h"
 #include "SVIPDoc.h"
-#include "SVSVIMStateClass.h"
+#include "SVOCore/SVSVIMStateClass.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW

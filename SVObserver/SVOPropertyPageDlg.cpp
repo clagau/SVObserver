@@ -769,7 +769,7 @@ void CSVOPropertyPageDlg::SetupInspection()
 			iInsIndex = pCombo->AddString( _T( "Method 2" ) );
 			pCombo->SetItemData( iInsIndex, 1 );
 			
-			long lWhere = pCombo->SelectString( -1, m_InspectionObj.GetNewDisableMethod().c_str() );
+			long lWhere = pCombo->SelectString( -1, m_InspectionObj.GetNewDisableMethodString().c_str() );
 			bool bResult = pCombo->SetItemValue( pCombo->GetItemData( lWhere ) );
 		}// end if
 

@@ -14,6 +14,7 @@
 #include "ObjectInterfaces/IToolSet.h"
 #include "SVStatusLibrary/MessageContainer.h"
 #include "SVMainImageClass.h"
+#include "SVOCore/SVTool.h"
 #include "SVResultList.h"
 #include "SVOCore/SVTaskObjectList.h"
 #pragma region Includes
@@ -61,11 +62,13 @@ public:
 	
 	SVResultListClass* GetResultList();
 
-	SVImageClass* getCurrentImage();
+	SVImageClass* getCurrentImage();////@TODO[Arvid][7.50][08.05.2017] all occurrences of this function should be replaced by getCurrentImageInterface() when possible
+
+	SvOi::ISVImage* getCurrentImageInterface() override;
 
 	int GetIndex( SVToolClass* PTool );
 
-	SVEnumerateValueObjectClass* GetDrawFlagObject();
+	SVEnumerateValueObjectClass* GetDrawFlagObject(); 
 
 	bool getConditionalResult() const;
 	bool getConditionalResult(long p_lIndex) const;
@@ -74,7 +77,7 @@ public:
 
 	void GetToolIds( SVToolIdDeque& p_rToolIds ) const;
 
-	HRESULT getResetCounts( bool& rResetCounts );
+	HRESULT getResetCounts( bool& rResetCounts ) const override;
 
 	virtual void goingOffline() override;
 #pragma region virtual method (IToolSet)

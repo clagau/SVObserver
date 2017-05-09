@@ -16,7 +16,7 @@
 #include "CameraLibrary\SVGraphix.h"
 #include "SVUtilityLibrary/SVStringConversions.h"
 #include "SVUtilityLibrary/SVString.h"
-#include "ObjectInterfaces\ErrorNumbers.h"
+#include "SVMessage/ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVStatusLibrary\GlobalPath.h"
 #include "SVOGui/DisplayHelper.h"

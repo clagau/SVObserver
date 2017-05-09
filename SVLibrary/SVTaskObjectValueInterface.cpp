@@ -13,7 +13,7 @@
 #include "SVTaskObjectValueInterface.h"
 
 #include "SVObjectLibrary/SVObjectSynchronousCommandTemplate.h"
-#include "ObjectInterfaces/ErrorNumbers.h"
+#include "SVMessage/ErrorNumbers.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "GuiCommands/InspectionRunOnce.h"
 #include "SVOCore/SVTaskObject.h"

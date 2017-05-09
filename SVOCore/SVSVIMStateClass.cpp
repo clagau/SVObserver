@@ -13,14 +13,19 @@
 //Moved to precompiled header: #include <intrin.h>
 #include "SVSVIMStateClass.h"
 #include "SVObjectLibrary/GlobalConst.h"
-#include "SVVisionProcessorHelper.h"
-#include "RootObject.h"
-#include "ExtrasEngine.h"
+#include "ObjectInterfaces/IRootObject.h"
 
 #pragma intrinsic(_InterlockedAnd)
 #pragma intrinsic(_InterlockedOr)
 
 long SVSVIMStateClass::m_SVIMState = SV_STATE_AVAILABLE;
+
+bool SVSVIMStateClass::m_AutoSaveRequired = false; ///< should an autosave be performed at the next appropriate time?
+__time32_t SVSVIMStateClass::m_LastModifiedTime = 0;
+__time32_t SVSVIMStateClass::m_PrevModifiedTime = 0;
+svModeEnum SVSVIMStateClass::m_prevMode = SVIM_MODE_UNKNOWN;
+svModeEnum SVSVIMStateClass::m_lastMode = SVIM_MODE_UNKNOWN;
+SVAsyncProcedure< SVSVIMStateClass::SVAPCSignalHandler, SVSVIMStateClass::SVThreadProcessHandler > SVSVIMStateClass::m_AsyncProcedure;
 
 SVSVIMStateClass::SVSVIMStateClass()
 {
@@ -36,8 +41,8 @@ bool SVSVIMStateClass::AddState( DWORD dwState )
 
 	if( dwState & SV_STATE_MODIFIED )
 	{
-		SVVisionProcessorHelper::Instance().SetLastModifiedTime();
-		ExtrasEngine::Instance().SetAutoSaveRequired(true);
+		SetLastModifiedTime();
+		SetAutoSaveRequired(true);
 	}
 	svModeEnum mode = GetMode();
 	CheckModeNotify(mode);
@@ -114,7 +119,7 @@ void SVSVIMStateClass::CheckModeNotify(svModeEnum mode)
 	if (mode != currentMode)
 	{
 		currentMode = mode;
-		SVVisionProcessorHelper::Instance().FireModeChanged(mode);
+		FireModeChanged(mode);
 	}
 }
 
@@ -122,11 +127,36 @@ void SVSVIMStateClass::setEnvironmentParameters(svModeEnum mode)
 {
 	long modeValue = static_cast<long>(mode);
 
-	RootObject::setRootChildValue( SvOl::FqnEnvironmentModeValue, modeValue );
-	RootObject::setRootChildValue( SvOl::FqnEnvironmentModeIsRun, ( SVIM_MODE_ONLINE == mode ) );
-	RootObject::setRootChildValue( SvOl::FqnEnvironmentModeIsStop, ( SVIM_MODE_OFFLINE == mode ) );
-	RootObject::setRootChildValue( SvOl::FqnEnvironmentModeIsRegressionTest, ( SVIM_MODE_REGRESSION == mode ) );
-	RootObject::setRootChildValue( SvOl::FqnEnvironmentModeIsTest, ( SVIM_MODE_TEST == mode ) );
-	RootObject::setRootChildValue( SvOl::FqnEnvironmentModeIsEdit, ( SVIM_MODE_EDIT == mode ) );
+	SvOi::setRootChildValue( SvOl::FqnEnvironmentModeValue, modeValue );
+	SvOi::setRootChildValue( SvOl::FqnEnvironmentModeIsRun, ( SVIM_MODE_ONLINE == mode ) );
+	SvOi::setRootChildValue( SvOl::FqnEnvironmentModeIsStop, ( SVIM_MODE_OFFLINE == mode ) );
+	SvOi::setRootChildValue( SvOl::FqnEnvironmentModeIsRegressionTest, ( SVIM_MODE_REGRESSION == mode ) );
+	SvOi::setRootChildValue( SvOl::FqnEnvironmentModeIsTest, ( SVIM_MODE_TEST == mode ) );
+	SvOi::setRootChildValue( SvOl::FqnEnvironmentModeIsEdit, ( SVIM_MODE_EDIT == mode ) );
 }
 
+
+HRESULT SVSVIMStateClass::SetLastModifiedTime()
+{
+	HRESULT l_Status = S_OK;
+
+	__time32_t l_LastModifiedTime = SVSVIMStateClass::m_LastModifiedTime;
+
+	::InterlockedExchange(&SVSVIMStateClass::m_LastModifiedTime, ::_time32(nullptr));
+
+	if (l_LastModifiedTime != SVSVIMStateClass::m_LastModifiedTime)
+	{
+		l_Status = SVSVIMStateClass::m_AsyncProcedure.Signal(nullptr);
+	}
+
+	return l_Status;
+}
+
+
+HRESULT SVSVIMStateClass::FireModeChanged(svModeEnum mode)
+{
+	::InterlockedExchange((long *)&m_lastMode, mode);
+
+	HRESULT status = SVSVIMStateClass::m_AsyncProcedure.Signal(nullptr);
+	return status;
+}

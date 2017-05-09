@@ -4,7 +4,7 @@
 //*****************************************************************************
 #pragma once
 #pragma region Includes
-#include "SVAnalyzer.h"
+#include "SVOCore/SVAnalyzer.h"
 #pragma endregion Includes
 
 class SVImageClass;

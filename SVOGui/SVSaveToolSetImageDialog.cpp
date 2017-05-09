@@ -14,7 +14,7 @@
 #include "SVSaveToolSetImageDialog.h"
 #include "SVLibrary/SVFileNameClass.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "ObjectInterfaces/ErrorNumbers.h"
+#include "SVMessage/ErrorNumbers.h"
 #include "TextDefinesSvOg.h"
 #include "SVMessage/SVMessage.h"
 #include "SVUtilityLibrary/SVString.h"

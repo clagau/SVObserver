@@ -18,7 +18,7 @@
 #include "SVCommandLibrary/SVCommandDataContainer.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVSystemLibrary/SVAutoLockAndReleaseTemplate.h"
-#include "SVUtilityLibrary/SVSAFEARRAY.h"
+#include "SVUtilityLibrary/SVSafeArray.h"
 #include "SVUtilityLibrary/SVString.h"
 #include "SVObjectCommandDataJson.h"
 #pragma endregion Includes

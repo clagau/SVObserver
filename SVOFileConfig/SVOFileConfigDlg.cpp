@@ -22,7 +22,7 @@
 #include "SVXMLLibrary\LoadConfiguration.h"
 
 #include "SVOLibrary/SVOLibrary.h"
-#include "SVUtilityLibrary/SVSAFEARRAY.h"
+#include "SVUtilityLibrary/SVSafeArray.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "AutoBuild/AutoBuild.h"
 #include "SVStatusLibrary/GlobalPath.h"

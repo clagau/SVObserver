@@ -94,7 +94,6 @@
     <ClCompile Include="SVODataDeviceClass.cpp" />
     <ClCompile Include="SVODataResponseClass.cpp" />
     <ClCompile Include="SVODeviceClass.cpp" />
-    <ClCompile Include="SVOLibrary.cpp" />
     <ClCompile Include="SVORequestClass.cpp" />
     <ClCompile Include="SVOResponseClass.cpp" />
     <ClCompile Include="SVQueueObject.cpp" />

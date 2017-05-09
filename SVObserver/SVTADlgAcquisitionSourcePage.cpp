@@ -14,7 +14,7 @@
 #include "SVTADlgAcquisitionSourcePage.h"
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVToolSet.h"
-#include "SVTool.h"
+#include "SVOCore/SVTool.h"
 #include "SVVirtualCamera.h"
 #include "SVToolAcquisition.h"
 #include "SVAcquisitionClass.h"

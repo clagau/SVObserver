@@ -26,7 +26,7 @@
 #include "SVMFCControls/SVFileDialog.h"
 #include "SVGlobal.h"
 #include "SVStatusLibrary\MessageManager.h"
-#include "ObjectInterfaces\ErrorNumbers.h"
+#include "SVMessage/ErrorNumbers.h"
 #include "TextDefinesSvO.h"
 #include "SVOResource\ConstGlobalSvOr.h"
 #include "SVInspectionProcess.h"

@@ -20,7 +20,7 @@
 #include "SVObserver.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "TextDefinesSvO.h"
-#include "ObjectInterfaces\ErrorNumbers.h"
+#include "SVMessage/ErrorNumbers.h"
 #include "SVUtilityLibrary/SVStringConversions.h"
 #pragma endregion Includes
 

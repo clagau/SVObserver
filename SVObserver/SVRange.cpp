@@ -14,10 +14,10 @@
 #include "SVRange.h"
 #include "SVObjectLibrary/SVAnalyzerLevelCreateStruct.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVTool.h"
+#include "SVOCore/SVTool.h"
 #include "SVInspectionProcess.h"
 #include "RangeClassHelper.h"
-#include "ObjectInterfaces\ErrorNumbers.h"
+#include "SVMessage/ErrorNumbers.h"
 #include "SVValueObjectLibrary/BasicValueObject.h"
 #pragma endregion Includes
 

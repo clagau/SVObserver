@@ -15,7 +15,7 @@
 #include "SVInspectionProcess.h"
 #include "SVLinearEdgeAProcessingClass.h"
 #include "SVOCore/SVImageClass.h"
-#include "SVTool.h"
+#include "SVOCore/SVTool.h"
 
 #ifdef _DEBUG
 #undef THIS_FILE

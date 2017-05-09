@@ -15,7 +15,7 @@
 #include "SVObserver.h" //needed only for one call to SVObserverApp::fileSaveAsSVX()
 #include "SVMainFrm.h"
 #include "SVLibrary/DirectoryUtilities.h"
-#include "SVSVIMStateClass.h"
+#include "SVOCore/SVSVIMStateClass.h"
 #include "ExtrasEngine.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVTimerLibrary/SVClock.h"
@@ -41,11 +41,9 @@ const TCHAR* const FbwfEnableBatchName=
 const TCHAR* const FbwfDisableBatchName= 
 	_T("fbwf Disable for next session.bat");///< name of the batch file that disables the file based write filter after the next reboot
 
-
-
 #pragma region Constructor
 
-ExtrasEngine::ExtrasEngine():m_lastAutoSaveTimestamp(0), m_AutoSaveEnabled(true), m_AutoSaveRequired(false), 
+ExtrasEngine::ExtrasEngine():m_lastAutoSaveTimestamp(0), m_AutoSaveEnabled(true), 
 	m_AutoSaveDeltaTime_s(ms_defaultDeltaTimeInMinutes*SVClock::c_secondsPerMinute),
 	m_FbwfAvailable(false), m_IsFbwfSelected(false), m_FbwfActive(false), m_FbwfActiveChanging(false)
 {
@@ -72,7 +70,7 @@ ExtrasEngine& ExtrasEngine::Instance()
 
 void ExtrasEngine::ExecuteAutoSaveIfAppropriate(bool always)
 {
-	if(!(IsEnabled() && IsAutoSaveRequired()))
+	if(!(IsEnabled() && SVSVIMStateClass::IsAutoSaveRequired()))
 	{
 		return; //not enabled by user (or configuration not modified):do nothing
 	}
@@ -120,7 +118,7 @@ void ExtrasEngine::ExecuteAutoSaveIfAppropriate(bool always)
 void ExtrasEngine::ResetAutoSaveInformation()
 {
 	time(&m_lastAutoSaveTimestamp);
-	SetAutoSaveRequired(false);
+	SVSVIMStateClass::SetAutoSaveRequired(false);
 }
 
 

@@ -14,8 +14,9 @@
 //Moved to precompiled header: #include <boost/config.hpp>
 //Moved to precompiled header: #include <boost/assign.hpp>
 #include "SVToolExtentClass.h"
-#include "SVOCore/SVImageClass.h"
-#include "SVInspectionProcess.h"
+#include "SVImageClass.h"
+#include "ObjectInterfaces/IInspectionProcess.h"
+#include "ObjectInterfaces/SVResetStruct.h"
 #include "SVTool.h"
 #include "SVValueObjectLibrary/SVValueObject.h"
 #pragma endregion Includes
@@ -184,7 +185,7 @@ HRESULT SVToolExtentClass::UpdateImageWithExtent( unsigned long p_ulIndex, SVToo
 				{
 					l_Status = GetImageExtent( l_Extent );
 
-					SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(m_psvToolImage->GetInspection());
+					SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess*>(m_psvToolImage->GetInspectionInterface());
 
 					if ( nullptr != pInspection && pInspection->IsResetStateSet( SVResetAutoMoveAndResize ) )
 					{
@@ -242,10 +243,10 @@ HRESULT SVToolExtentClass::UpdateImageWithExtent( unsigned long p_ulIndex, SVToo
 			{
 				if( nullptr != m_psvTool )
 				{
-					SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(m_psvTool->GetInspection());
+					SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess*>(m_psvTool->GetInspectionInterface());
 					if (pInspection)
 					{
-						pInspection->m_bForceOffsetUpdate = true;
+						pInspection->ForceOffsetUpdate();
 					}
 				}
 

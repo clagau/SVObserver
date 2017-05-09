@@ -28,7 +28,7 @@
 #include "SVOCore/SVImageObjectClass.h"
 #include "SVOCore/SVImageProcessingClass.h"
 #include "SVStatusLibrary\MessageManager.h"
-#include "SVSVIMStateClass.h"
+#include "SVOCore/SVSVIMStateClass.h"
 #pragma endregion Includes
 
 #pragma region Declarations

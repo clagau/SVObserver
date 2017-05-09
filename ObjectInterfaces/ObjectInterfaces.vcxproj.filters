@@ -135,6 +135,9 @@
     <ClInclude Include="IDependencyManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SVResetStruct.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="GlobalConstantData.inl">

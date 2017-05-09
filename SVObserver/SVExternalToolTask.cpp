@@ -25,7 +25,7 @@
 #include "SVInspectionProcess.h"
 #include "SVRange.h"
 #include "SVOCore/SVTaskObject.h"
-#include "SVTool.h"
+#include "SVOCore/SVTool.h"
 #include "SVToolSet.h"
 #include "SVValueObjectLibrary/BasicValueObject.h"
 #include "SVStatusLibrary\GlobalPath.h"

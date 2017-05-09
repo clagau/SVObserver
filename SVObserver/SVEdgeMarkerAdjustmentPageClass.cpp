@@ -13,7 +13,7 @@
 #include "stdafx.h"
 #include "SVEdgeMarkerAdjustmentPageClass.h"
 #include "SVGlobal.h"
-#include "SVAnalyzer.h"
+#include "SVOCore/SVAnalyzer.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG

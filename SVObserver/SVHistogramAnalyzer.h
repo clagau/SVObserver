@@ -66,7 +66,7 @@ public:
 
 	virtual BOOL   CloseObject() override;
 
-   SVResultClass* GetResultObject(const GUID & guid);
+	SvOi::IObjectClass* GetResultObject(const GUID & guid);
    
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 

@@ -15,7 +15,7 @@
 #include "SVEvaluate.h"
 #include "SvOGui/SVFormulaEditorSheet.h"
 #include "SVIPDoc.h"
-#include "SVTool.h"
+#include "SVOCore/SVTool.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "SVTransformationTool.h"
 #include "SVUtilityLibrary/SVString.h"

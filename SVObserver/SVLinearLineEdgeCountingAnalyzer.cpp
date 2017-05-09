@@ -15,7 +15,7 @@
 #include "SVProfileEdgeMarkerAdjustmentPage.h"
 #include "SVLinearEdgeAProcessingClass.h"
 #include "SVGlobal.h"
-#include "SVTool.h"
+#include "SVOCore/SVTool.h"
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 

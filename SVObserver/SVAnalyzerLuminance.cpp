@@ -21,7 +21,7 @@
 #include "SVOCore/SVImageClass.h"
 #include "SVOCore/SVImageProcessingClass.h"
 #include "SVResultLong.h"
-#include "ObjectInterfaces\ErrorNumbers.h"
+#include "SVMessage/ErrorNumbers.h"
 #include "SVStatusLibrary/MessageManager.h"
 
 #pragma endregion Includes
@@ -231,12 +231,12 @@ BOOL SVLuminanceAnalyzerClass::CloseObject()
 }
 
 
-SVResultClass* SVLuminanceAnalyzerClass::GetResultObject()
+SvOi::IObjectClass* SVLuminanceAnalyzerClass::GetResultObject()
 {
-	SVResultClass* pAnalyzerResult = nullptr;
+	SvOi::IObjectClass* pAnalyzerResult = nullptr;
 
 	// Find the result Object in Our List
-	pAnalyzerResult = (SVResultClass *)GetAt(0);
+	pAnalyzerResult = GetAt(0);
 
 	return( pAnalyzerResult );
 }

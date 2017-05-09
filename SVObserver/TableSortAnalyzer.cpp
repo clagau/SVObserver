@@ -9,7 +9,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "TableSortAnalyzer.h"
-#include "SVTool.h"
+#include "SVOCore/SVTool.h"
 #include "SVObjectLibrary\SVClsids.h"
 #include "TableAnalyzerTool.h"
 #include "TextDefinesSvO.h"

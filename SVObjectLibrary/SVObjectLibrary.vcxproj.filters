@@ -68,9 +68,6 @@
     <ClCompile Include="SVOutputInfoListClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVPublicAttributeEntryStruct.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVToolLevelCreateStruct.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>

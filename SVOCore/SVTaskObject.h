@@ -72,7 +72,8 @@ public:
 	virtual BOOL CloseObject() override;
 	void Disconnect();
 	virtual bool DisconnectObjectInput(SVInObjectInfoStruct* pInObjectInfo) override;
-	virtual HRESULT GetOutputList( SVOutputInfoListClass& p_rOutputInfoList ) const;
+	virtual HRESULT GetOutputList(SVOutputInfoListClass& p_rOutputInfoList ) const override;
+	
 	virtual HRESULT DisconnectInputsOutputs(SVObjectPtrVector& rListOfObjects);
 	virtual HRESULT HideInputsOutputs(SVObjectPtrVector& rListOfObjects);
 

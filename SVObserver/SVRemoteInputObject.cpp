@@ -12,7 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVRemoteInputObject.h"
-#include "SVUtilityLibrary/SVSAFEARRAY.h"
+#include "SVUtilityLibrary/SVSafeArray.h"
 #pragma endregion Includes
 
 SVRemoteInputObject::SVRemoteInputObject( LPCSTR strObjectName )

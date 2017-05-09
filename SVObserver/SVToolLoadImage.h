@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include "SVTool.h"
+#include "SVOCore/SVTool.h"
 #include "SVOCore/SVImageClass.h"
 
 class SVLoadImageToolClass : public SVToolClass

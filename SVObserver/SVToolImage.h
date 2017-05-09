@@ -11,7 +11,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVTool.h"
+#include "SVOCore/SVTool.h"
 #pragma region Includes
 
 class SVImageToolClass : public SVToolClass

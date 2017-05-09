@@ -7,7 +7,7 @@
 #pragma once
 #pragma region Includes
 //Moved to precompiled header: #include <vector>
-#include "SVTool.h"
+#include "SVOCore/SVTool.h"
 #include "SVValueObjectLibrary/SVStringValueObjectClass.h"
 #include "SVValueObjectLibrary/LinkedValue.h"
 #include "ObjectInterfaces\GlobalConst.h"

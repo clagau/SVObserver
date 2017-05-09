@@ -14,6 +14,7 @@
 #pragma region Includes
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "ObjectInterfaces/IObjectAppClass.h"
+#include "ObjectInterfaces/IInspectionProcess.h"
 #include "SVOResource/resource.h"
 #pragma endregion Includes
 
@@ -30,6 +31,8 @@ public:
 	virtual void ConnectObject( const SVObjectLevelCreateStruct& rCreateStruct ) override;
 
 	SVObjectClass* GetInspection() const;
+	SvOi::IInspectionProcess* GetInspectionInterface() const;
+
 	SVObjectClass* GetTool() const;
 	SVObjectClass* GetAnalyzer() const;
 

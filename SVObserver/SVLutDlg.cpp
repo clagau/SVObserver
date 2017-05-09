@@ -18,7 +18,7 @@
 #include "ObjectInterfaces/SVUserMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "TextDefinesSvO.h"
-#include "ObjectInterfaces/ErrorNumbers.h"
+#include "SVMessage/ErrorNumbers.h"
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 

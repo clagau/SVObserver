@@ -23,7 +23,7 @@
 #include "SVTaskObject.h"
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "ObjectInterfaces/ErrorNumbers.h"
+#include "SVMessage/ErrorNumbers.h"
 #pragma endregion Includes
 
 SVImageObjectClass::SVImageObjectClass()

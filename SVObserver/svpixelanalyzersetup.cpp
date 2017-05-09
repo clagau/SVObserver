@@ -16,7 +16,7 @@
 #include "SVIPDoc.h"
 #include "SVInspectionProcess.h"
 #include "SVPixelAnalyzer.h"        // Required for SVPixelAnalyzerClass
-#include "SVTool.h"
+#include "SVOCore/SVTool.h"
 #include "SVToolSet.h"              // Required for scripting
 #include "SVResult.h"
 #include "SVSetupDialogManager.h"
@@ -303,8 +303,7 @@ void SVPixelAnalyzerSetupClass::OnCancel()
 
 void SVPixelAnalyzerSetupClass::OnPixelSetRange() 
 {
-	// TODO: Add your control notification handler code here
-	SVResultClass* pAnalyzerResult;
+	SvOi::IObjectClass* pAnalyzerResult;
 
 	pAnalyzerResult = m_pAnalyzer->GetResultObject();
 

@@ -13,6 +13,7 @@
 #include "stdafx.h"
 #include "SVConditional.h"
 #include "SVSVIMStateClass.h"
+#include "SVObjectLibrary/SVClsIds.h"
 #pragma endregion Includes
 
 SV_IMPLEMENT_CLASS( SVConditionalClass, SVConditionalClassGuid );

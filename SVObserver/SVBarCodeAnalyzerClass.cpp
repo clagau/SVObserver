@@ -354,7 +354,7 @@ BOOL SVBarCodeAnalyzerClass::CloseObject ()
 	return SVImageAnalyzerClass::CloseObject();
 }
 
-SVResultClass* SVBarCodeAnalyzerClass::GetResultObject()
+SvOi::IObjectClass* SVBarCodeAnalyzerClass::GetResultObject()
 {
 	SVResultClass* pAnalyzerResult = nullptr;
 

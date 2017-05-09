@@ -19,7 +19,7 @@
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVOCore/SVDataBuffer.h"
 #include "SVOCore/SVImageProcessingClass.h"
-#include "SVTool.h"
+#include "SVOCore/SVTool.h"
 #include "SVStatusLibrary\MessageManager.h"
 #pragma endregion Includes
 

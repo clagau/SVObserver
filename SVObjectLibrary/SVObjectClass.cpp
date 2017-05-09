@@ -14,7 +14,7 @@
 #include "SVObjectClass.h"
 #include "SVRunControlLibrary/SVRunControlLibrary.h"
 #include "SVSystemLibrary/SVAutoLockAndReleaseTemplate.h"
-#include "SVUtilityLibrary/SVSAFEARRAY.h"
+#include "SVUtilityLibrary/SVSafeArray.h"
 #include "SVObjectAttributeClass.h"
 #include "SVObjectLevelCreateStruct.h"
 #include "SVObjectManagerClass.h"
@@ -22,7 +22,7 @@
 #include "SVToolsetScriptTags.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVMessage/SVMessage.h"
-#include "ObjectInterfaces/ErrorNumbers.h"
+#include "SVMessage/ErrorNumbers.h"
 #pragma endregion Includes
 
 #pragma region Declarations

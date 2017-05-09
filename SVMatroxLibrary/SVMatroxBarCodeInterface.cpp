@@ -17,7 +17,7 @@
 #include "SVMatroxResourceMonitor.h"
 #include "SVBufferResource.h"
 #include "SVStatusLibrary\MessageContainer.h"
-#include "ObjectInterfaces\ErrorNumbers.h"
+#include "SVMessage/ErrorNumbers.h"
 #include "ObjectInterfaces\MessageTextEnum.h"
 #include "SVMessage\SVMessage.h"
 #pragma endregion Includes

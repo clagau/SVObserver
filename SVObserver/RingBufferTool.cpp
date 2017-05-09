@@ -8,10 +8,10 @@
 #pragma region Includes
 #include "StdAfx.h"
 #include "RingBufferTool.h"
-#include "SVAnalyzer.h"
+#include "SVOCore/SVAnalyzer.h"
 #include "SVOCore/SVImageProcessingClass.h"
 #include "SVImageLibrary\SVImageBufferHandleImage.h"
-#include "ObjectInterfaces\ErrorNumbers.h"
+#include "SVMessage/ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "TextDefinesSvO.h"
 #include "SVUtilityLibrary/SVString.h"

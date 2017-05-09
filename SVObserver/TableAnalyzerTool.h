@@ -8,7 +8,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVTool.h"
+#include "SVOCore/SVTool.h"
 #include "TableCopyObject.h"
 #pragma endregion Includes
 

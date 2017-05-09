@@ -26,7 +26,7 @@
 #include "SVObserver.h"
 #include "SVSocketRemoteCommandManager.h"
 #include "SVRemoteControlConstants.h"
-#include "SVSVIMStateClass.h"
+#include "SVOCore/SVSVIMStateClass.h"
 #include "SVValueObjectLibrary/BasicValueObject.h"
 #include "RemoteMonitorListHelper.h"
 #include "SVObjectLibrary\GlobalConst.h"
@@ -51,11 +51,6 @@ SVVisionProcessorHelper& SVVisionProcessorHelper::Instance()
 
 #pragma region Constructor
 SVVisionProcessorHelper::SVVisionProcessorHelper()
-: m_LastModifiedTime( 0 )
-, m_PrevModifiedTime( 0 )
-, m_prevMode(SVIM_MODE_UNKNOWN)
-, m_lastMode(SVIM_MODE_UNKNOWN)
-
 {
 
 	m_GetItemsFunctors = (boost::assign::map_list_of< SVString, SVGetItemsFunctor >
@@ -1166,7 +1161,7 @@ HRESULT SVVisionProcessorHelper::RegisterMonitorList( const SVString& rListName,
 
 void SVVisionProcessorHelper::Startup()
 {
-	m_AsyncProcedure.Create( &SVVisionProcessorHelper::APCThreadProcess, boost::bind(&SVVisionProcessorHelper::ThreadProcess, this, _1), "SVVisionProcessorHelper", SVNone );
+	SVSVIMStateClass::m_AsyncProcedure.Create( &SVVisionProcessorHelper::APCThreadProcess, boost::bind(&SVVisionProcessorHelper::ThreadProcess, this, _1), "SVVisionProcessorHelper", SVNone );
 
 	SvStl::MessageMgrStd::setNotificationFunction( boost::bind( &SVVisionProcessorHelper::FireMessageNotification, this, _1, _2, _3 ) );
 }
@@ -1175,38 +1170,15 @@ void SVVisionProcessorHelper::Shutdown()
 {
 	SvStl::MessageMgrStd::setNotificationFunction( SvStl::NotifyFunctor() );
 
-	m_AsyncProcedure.Destroy();
+	SVSVIMStateClass::m_AsyncProcedure.Destroy();
 }
 
-HRESULT SVVisionProcessorHelper::SetLastModifiedTime()
-{
-	HRESULT l_Status = S_OK;
-
-	__time32_t l_LastModifiedTime = m_LastModifiedTime;
-
-	::InterlockedExchange( &m_LastModifiedTime, ::_time32( nullptr ) );
-
-	if( l_LastModifiedTime != m_LastModifiedTime )
-	{
-		l_Status = m_AsyncProcedure.Signal( nullptr );
-	}
-
-	return l_Status;
-}
-
-HRESULT SVVisionProcessorHelper::FireModeChanged(svModeEnum mode)
-{
-	::InterlockedExchange((long *)&m_lastMode, mode);
-
-	HRESULT status = m_AsyncProcedure.Signal(nullptr);
-	return status;
-}
 HRESULT SVVisionProcessorHelper::FireMessageNotification( int Type, int MessageNumber, LPCTSTR MessageText )
 {
 	SvStl::NotificationEnum NotificationType( SvStl::NotificationEnum::MsgUknown );
 	NotificationType = static_cast<SvStl::NotificationEnum> (Type);
 	m_MessageNotification.SetNotification( NotificationType, MessageNumber, MessageText );
-	HRESULT status = m_AsyncProcedure.Signal(nullptr);
+	HRESULT status = SVSVIMStateClass::m_AsyncProcedure.Signal(nullptr);
 	return status;
 }
 
@@ -1223,14 +1195,14 @@ void SVVisionProcessorHelper::ThreadProcess( bool& rWaitForEvents )
 
 void SVVisionProcessorHelper::ProcessLastModified( bool& rWaitForEvents )
 {
-	if( m_PrevModifiedTime != m_LastModifiedTime )
+	if(SVSVIMStateClass::m_PrevModifiedTime != SVSVIMStateClass::m_LastModifiedTime )
 	{
 		std::string l_JsonNotification;
 		Json::FastWriter l_Writer;
 		Json::Value l_Object(Json::objectValue);
 		Json::Value l_ElementObject(Json::objectValue);
 
-		l_ElementObject[ SVRC::notification::timestamp ] = m_LastModifiedTime;
+		l_ElementObject[ SVRC::notification::timestamp ] = SVSVIMStateClass::m_LastModifiedTime;
 
 		l_Object[ SVRC::notification::notification ] = SVRC::notification::lastmodified;
 		l_Object[ SVRC::notification::dataitems ] = l_ElementObject;
@@ -1239,7 +1211,7 @@ void SVVisionProcessorHelper::ProcessLastModified( bool& rWaitForEvents )
 
 		SVSocketRemoteCommandManager::Instance().ProcessJsonNotification( l_JsonNotification );
 
-		m_PrevModifiedTime = m_LastModifiedTime;
+		SVSVIMStateClass::m_PrevModifiedTime = SVSVIMStateClass::m_LastModifiedTime;
 	}
 }
 
@@ -1273,14 +1245,14 @@ void SVVisionProcessorHelper::ProcessNotification( bool& rWaitForEvents )
 
 void SVVisionProcessorHelper::NotifyModeChanged( bool& rWaitForEvents )
 {
-	if( m_prevMode != m_lastMode )
+	if(SVSVIMStateClass::m_prevMode != SVSVIMStateClass::m_lastMode )
 	{
 		std::string l_JsonNotification;
 		Json::FastWriter l_Writer;
 		Json::Value l_Object(Json::objectValue);
 		Json::Value l_ElementObject(Json::objectValue);
 
-		l_ElementObject[SVRC::notification::mode] = m_lastMode;
+		l_ElementObject[SVRC::notification::mode] = SVSVIMStateClass::m_lastMode;
 
 		l_Object[SVRC::notification::notification ] = SVRC::notification::currentmode;
 		l_Object[SVRC::notification::dataitems] = l_ElementObject;
@@ -1289,7 +1261,7 @@ void SVVisionProcessorHelper::NotifyModeChanged( bool& rWaitForEvents )
 
 		SVSocketRemoteCommandManager::Instance().ProcessJsonNotification( l_JsonNotification );
 
-		m_prevMode = m_lastMode;
+		SVSVIMStateClass::m_prevMode = SVSVIMStateClass::m_lastMode;
 	}
 }
 

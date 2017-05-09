@@ -14,7 +14,7 @@
 #include "SVCommandInspectionGetItems.h"
 
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVUtilityLibrary/SVSAFEARRAY.h"
+#include "SVUtilityLibrary/SVSafeArray.h"
 
 #include "SVOCore/SVImageProcessingClass.h"
 #include "SVInfoStructs.h"

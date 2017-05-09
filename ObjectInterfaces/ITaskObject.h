@@ -17,6 +17,7 @@
 #include "SVStatusLibrary\MessageContainer.h"
 #include "SVUtilityLibrary\NameGuidList.h"
 #include "SVUtilityLibrary/SVString.h"
+#include "SVObjectLibrary/SVOutputInfoListClass.h"
 #pragma endregion Includes
 
 namespace Seidenader
@@ -99,6 +100,8 @@ namespace Seidenader
 			/// \param rImagePtr [out] Pointer to the image.
 			/// \returns bool return true if setting of this image was succeeded.
 			virtual bool getSpecialImage(const SVString& rName, MatroxImageSmartHandlePtr& rImagePtr) const = 0;
+
+			virtual HRESULT GetOutputList(SVOutputInfoListClass& p_rOutputInfoList) const = 0;
 		};
 	}
 }

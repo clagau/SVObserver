@@ -29,7 +29,7 @@
 #include "SVObjectLibrary\SVToolsetScriptTags.h"
 #include "SVImageLibrary\MatroxImageData.h"
 #include "SVStatusLibrary\MessageManager.h"
-#include "ObjectInterfaces\ErrorNumbers.h"
+#include "SVMessage/ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "ObjectInterfaces\ISVOApp_Helper.h"
 #pragma endregion Includes
