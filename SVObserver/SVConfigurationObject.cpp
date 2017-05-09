@@ -808,6 +808,7 @@ HRESULT SVConfigurationObject::AddRemoteInput(SVPPQObject* pPPQ, const SVString&
 	pValueObject->SetObjectOwner(pPPQ);
 	pValueObject->SetObjectDepth( 10 );
 	pValueObject->setResetOptions( false, SvOi::SVResetItemNone );
+	pValueObject->setBucketized(true);
 	pValueObject->ResetObject();
 
 	SVIOEntryHostStructPtr pIOEntry = new SVIOEntryHostStruct;
@@ -847,6 +848,7 @@ HRESULT SVConfigurationObject::AddDigitalInput(SVPPQObject* pPPQ, const SVString
 	pValueObject->SetObjectOwner(pPPQ);
 	pValueObject->SetObjectDepth(10);
 	pValueObject->setResetOptions(false, SvOi::SVResetItemNone);
+	pValueObject->setBucketized(true);
 	pValueObject->ResetObject();
 
 	SVIOEntryHostStructPtr pIOEntry = new SVIOEntryHostStruct;

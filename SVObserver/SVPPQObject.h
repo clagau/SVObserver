@@ -130,8 +130,8 @@ public:
 
 	BOOL AddInput( SVIOEntryHostStructPtr pInput );
 	BOOL RemoveInput( SVIOEntryHostStructPtr pInput );
-	HRESULT GetInputIOValues( SVVariantBoolVector& p_rInputValues ) const;
-	BOOL AssignInputs( const SVVariantBoolVector& p_rInputValues );
+	HRESULT GetInputIOValues( SVVariantBoolVector& rInputValues ) const;
+	BOOL AssignInputs( const SVVariantBoolVector& rInputValues );
 	BOOL RebuildInputList(bool bHasCameraTrigger);
 	BOOL GetAvailableInputs( SVIOEntryHostStructPtrVector& p_IOEntries ) const;
 	BOOL GetAllInputs( SVIOEntryHostStructPtrVector& p_IOEntries ) const;

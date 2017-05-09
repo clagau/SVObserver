@@ -311,7 +311,7 @@ void SVBlobAnalyzeFeatureDialogClass::OnButtonAdd()
 	{
 		if (lCurrentIndex == LB_ERR)
 		{
-			m_pCurrentAnalyzer->m_SortFeature.SetValue (1, lAvailableIndex);
+			m_pCurrentAnalyzer->m_SortFeature.SetValue (lAvailableIndex, 1);
 			m_SortFeatureEdt.Format ("%s", m_pCurrentAnalyzer->m_Value [lAvailableIndex].GetName ());
 		}
 
@@ -360,12 +360,12 @@ void SVBlobAnalyzeFeatureDialogClass::OnButtonRemove()
 				long newIndex = static_cast< long >( m_lbSelectedFeatures.GetItemData( 0 ) );
 				if( newIndex == LB_ERR)
 				{
-					m_pCurrentAnalyzer->m_SortFeature.SetValue (1, -1L);
+					m_pCurrentAnalyzer->m_SortFeature.SetValue (-1L, 1);
 					m_SortFeatureEdt.Empty ();
 				}
 				else
 				{
-					m_pCurrentAnalyzer->m_SortFeature.SetValue (1, newIndex);
+					m_pCurrentAnalyzer->m_SortFeature.SetValue (newIndex, 1);
 					m_SortFeatureEdt.Format ("%s", m_pCurrentAnalyzer->m_Value [newIndex].GetName ());
 				}
 			}
@@ -374,7 +374,7 @@ void SVBlobAnalyzeFeatureDialogClass::OnButtonRemove()
 		{
 			if( !count ) // truly empty list
 			{
-				m_pCurrentAnalyzer->m_SortFeature.SetValue (1, -1L);
+				m_pCurrentAnalyzer->m_SortFeature.SetValue (-1L, 1);
 				m_SortFeatureEdt.Empty ();
 			}
 			// Only one Entry and it may be the "No Feature" string
@@ -454,12 +454,12 @@ void SVBlobAnalyzeFeatureDialogClass::OnSetSortBtn()
 
 	if( lCurrentIndex != LB_ERR && lCurrentIndex >= 0)
 	{
-		m_pCurrentAnalyzer->m_SortFeature.SetValue (1, lCurrentIndex);
+		m_pCurrentAnalyzer->m_SortFeature.SetValue (lCurrentIndex, 1);
 		m_SortFeatureEdt.Format ("%s", m_pCurrentAnalyzer->m_Value [lCurrentIndex].GetName ());
 	}
 	else
 	{
-		m_pCurrentAnalyzer->m_SortFeature.SetValue (1, -1L);
+		m_pCurrentAnalyzer->m_SortFeature.SetValue (-1L, 1);
 		m_SortFeatureEdt.Empty();
 	}
 	UpdateData (FALSE);

@@ -1864,14 +1864,29 @@ BOOL SVPPQObject::AssignInputs( const SVVariantBoolVector& rInputValues )
 	return true;
 }
 
-HRESULT SVPPQObject::GetInputIOValues( SVVariantBoolVector& p_rInputValues ) const
+HRESULT SVPPQObject::GetInputIOValues( SVVariantBoolVector& rInputValues ) const
 {
 	HRESULT l_Status( S_OK );
 
-	if( !m_pInputList->ReadInputs( m_UsedInputs, p_rInputValues ) )
+	if( !m_pInputList->ReadInputs( m_UsedInputs, rInputValues ) )
 	{
 		l_Status = E_FAIL;
 	}
+
+#if defined (TRACE_THEM_ALL) || defined (TRACE_INPUT_VALUES)
+	SVVariantBoolVector::const_iterator Iter = rInputValues.begin();
+	SVString DebugString = _T("Inputs");
+	for (; rInputValues.end() != Iter; ++Iter)
+	{
+		//Only valid if second is true
+		if (Iter->second)
+		{
+			DebugString += Iter->first ? _T(", 1") : _T(", 0");
+		}
+	}
+	DebugString += _T("\r\n");
+	::OutputDebugString(DebugString.c_str());
+#endif
 
 	return l_Status;
 }

@@ -280,6 +280,7 @@ void SVIODoc::OnExtrasEditRemoteInputs()
 									pValueObject->SetName( RemoteInputName.c_str() );
 									pValueObject->SetObjectOwner(GetIOController());
 									pValueObject->setResetOptions( false, SvOi::SVResetItemNone );
+									pValueObject->setBucketized(true);
 									pIOEntry->m_IOId = pRemoteInput->GetUniqueObjectID();
 									pIOEntry->m_Enabled = FALSE;
 									pIOEntry->m_ObjectType = IO_REMOTE_INPUT;

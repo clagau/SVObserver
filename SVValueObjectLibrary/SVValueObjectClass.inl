@@ -414,6 +414,10 @@ __forceinline HRESULT SVValueObjectClass<T>::SetValue( const T& rValue, int Buck
 		}
 	}
 
+#if defined (TRACE_THEM_ALL) || defined (TRACE_VALUE_OBJECT)
+	SVString DebugString = SvUl_SF::Format(_T("SetValue, %s, %s, %d, %d\r\n"), GetName(), ConvertType2String(rValue).c_str(), Bucket, Index);
+	::OutputDebugString(DebugString.c_str());
+#endif
 	return Result;
 }
 
@@ -480,6 +484,10 @@ __forceinline HRESULT SVValueObjectClass<T>::GetValue( T& rValue, int Bucket, in
 		rValue = m_DefaultValue;
 		m_isObjectValid = false;
 	}
+#if defined (TRACE_THEM_ALL) || defined (TRACE_VALUE_OBJECT)
+	SVString DebugString = SvUl_SF::Format(_T("GetValue, %s, %s, %d, %d\r\n"), GetName(), ConvertType2String(rValue).c_str(), Bucket, Index);
+	::OutputDebugString(DebugString.c_str());
+#endif
 	return Result;
 }
 
