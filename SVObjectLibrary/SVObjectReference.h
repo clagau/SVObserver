@@ -96,10 +96,10 @@ public:
 
 	const SVObjectNameInfo& GetObjectNameInfo() const;
 
-	const UINT ObjectAttributesAllowed() const;
-	const UINT ObjectAttributesSet() const;
-	void SetObjectAttributesAllowed( UINT Attributes, SvOi::SetAttributeType Type );
-	void SetObjectAttributesSet( UINT Attributes, SvOi::SetAttributeType Type );
+	const UINT& ObjectAttributesAllowed() const;
+	const UINT& ObjectAttributesSet() const;
+	const UINT& SetObjectAttributesAllowed( UINT Attributes, SvOi::SetAttributeType Type );
+	const UINT& SetObjectAttributesSet( UINT Attributes, SvOi::SetAttributeType Type );
 
 	bool operator < ( const SVObjectReference& rhs ) const;
 

@@ -82,7 +82,7 @@ public:
 	void setStatic( bool isStatic ) { m_isStatic = isStatic; };
 	
 #pragma region virtual method
-	virtual void SetObjectAttributesSet( UINT Attributes, SvOi::SetAttributeType Type, int iIndex=0 ) override;
+	virtual const UINT& SetObjectAttributesSet( UINT Attributes, SvOi::SetAttributeType Type, int iIndex=0 ) override;
 
 	//! Gets the value for Value object NOTE this comes from IObjectClass
 	//! \param rValue [out] The reference to write the value to

@@ -425,6 +425,11 @@ template <typename T>
 __forceinline HRESULT SVValueObjectClass<T>::GetValue( T& rValue, int Bucket, int Index ) const
 {
 	Bucket = (-1 == Bucket) ? m_LastSetIndex : Bucket;
+	//! When Value Object is an array and index not in range use the first index
+	if (isArray() && (0 > Index || m_ArraySize <= Index))
+	{
+		Index = 0;
+	}
 	HRESULT Result = ValidateIndexes( Bucket, Index );
 
 	// is the index valid?
@@ -693,15 +698,26 @@ bool SVValueObjectClass<T>::CompareWithCurrentValue( const SVString& rCompare ) 
 
 #pragma region  virtual method
 template <typename T>
-void SVValueObjectClass<T>::SetObjectAttributesSet( UINT Attributes, SvOi::SetAttributeType Type, int Index )
+const UINT& SVValueObjectClass<T>::SetObjectAttributesSet( UINT Attributes, SvOi::SetAttributeType Type, int Index )
 {
-	__super::SetObjectAttributesSet( Attributes, Type, Index );
+	const UINT& rNewAttribute = __super::SetObjectAttributesSet( Attributes, Type, Index );
 
-	const UINT cAttributes = SV_PUBLISHABLE | SV_ARCHIVABLE;
-	if( 0 != ( ObjectAttributesSet() & cAttributes )  )
+	const UINT cBucketizedAttributes = SV_PUBLISHABLE | SV_ARCHIVABLE;
+	if (0 != (cBucketizedAttributes & Attributes))
 	{
-		setBucketized(true);
+		if (0 != (cBucketizedAttributes & rNewAttribute))
+		{
+			setBucketized(true);
+		}
+		else if (SvOi::SetAttributeType::RemoveAttribute == Type)
+		{
+			//! Set this only if attributes are being removed as other objects may be set to bucketized for other reasons
+			setBucketized(false);
+		}
+		//! We need to reset the object to create or delete the buckets
+		ResetObject();
 	}
+	return rNewAttribute;
 }
 
 template <typename T>

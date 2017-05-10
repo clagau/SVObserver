@@ -172,9 +172,9 @@ public:
 	virtual SvOi::IObjectClass* GetAncestorInterface(SVObjectTypeEnum ancestorObjectType) override;
 	virtual const SvOi::IObjectClass* GetAncestorInterface(SVObjectTypeEnum ancestorObjectType) const override;
 	virtual const UINT& ObjectAttributesAllowed() const override;
-	virtual void SetObjectAttributesAllowed( UINT Attributes, SvOi::SetAttributeType Type ) override;
+	virtual const UINT& SetObjectAttributesAllowed( UINT Attributes, SvOi::SetAttributeType Type ) override;
 	virtual const UINT& ObjectAttributesSet(int iIndex=0) const override;
-	virtual void SetObjectAttributesSet( UINT Attributes, SvOi::SetAttributeType Type, int iIndex=0 ) override;
+	virtual const UINT& SetObjectAttributesSet( UINT Attributes, SvOi::SetAttributeType Type, int iIndex=0 ) override;
 	virtual const SVGUID& GetUniqueObjectID() const override;
 	virtual bool is_Created() const override;
 	virtual SvUl::NameGuidList GetCreatableObjects(const SVObjectTypeInfoStruct& rObjectTypeInfo) const override;

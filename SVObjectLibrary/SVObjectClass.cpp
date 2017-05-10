@@ -1081,7 +1081,7 @@ const UINT& SVObjectClass::ObjectAttributesAllowed() const
 /*
 This method returns a reference to the allowed attributes of this object.
 */
-void SVObjectClass::SetObjectAttributesAllowed( UINT Attributes, SvOi::SetAttributeType Type )
+const UINT& SVObjectClass::SetObjectAttributesAllowed( UINT Attributes, SvOi::SetAttributeType Type )
 {
 	switch( Type )
 	{
@@ -1095,6 +1095,7 @@ void SVObjectClass::SetObjectAttributesAllowed( UINT Attributes, SvOi::SetAttrib
 		m_ObjectAttributesAllowed = Attributes;
 		break;
 	}
+	return m_ObjectAttributesAllowed;
 }
 
 /*
@@ -1108,7 +1109,7 @@ const UINT& SVObjectClass::ObjectAttributesSet(int iIndex) const
 /*
 This method sets attributes of this object.
 */
-void SVObjectClass::SetObjectAttributesSet( UINT Attributes, SvOi::SetAttributeType Type, int Index )
+const UINT& SVObjectClass::SetObjectAttributesSet( UINT Attributes, SvOi::SetAttributeType Type, int Index )
 {
 	assert( static_cast<int> (m_ObjectAttributesSet.size()) > Index );
 	UINT& rAttributesSet = m_ObjectAttributesSet.at(Index);
@@ -1124,6 +1125,7 @@ void SVObjectClass::SetObjectAttributesSet( UINT Attributes, SvOi::SetAttributeT
 		rAttributesSet = Attributes;
 		break;
 	}
+	return rAttributesSet;
 }
 
 /*

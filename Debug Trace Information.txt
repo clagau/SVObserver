@@ -32,6 +32,8 @@ Traces can also be activated in groups by #defining any or all of the following,
 	TRACE_DESTRUCT
 	TRACE_SOCKET
 	TRACE_MATROX_FUNCTION
+	TRACE_INPUT_VALUES
+	TRACE_VALUE_OBJECT
 	
 If new TRACEs or ::OutputDebugString()s are added please enclose them in 
 	#if defined (TRACE_THEM_ALL) || defined (TRACE_<whatever>)

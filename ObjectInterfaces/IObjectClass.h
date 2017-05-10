@@ -81,13 +81,13 @@ namespace Seidenader
 			This method gets the attributes allowed for the object.
 			***********/
 			virtual const UINT& ObjectAttributesAllowed() const = 0;
-			virtual void SetObjectAttributesAllowed( UINT Attributes, SetAttributeType Type ) = 0;
+			virtual const UINT& SetObjectAttributesAllowed( UINT Attributes, SetAttributeType Type ) = 0;
 
 			/**********
 			This method gets the attributes set for the object.
 			***********/
 			virtual const UINT& ObjectAttributesSet(int iIndex=0) const = 0;
-			virtual void SetObjectAttributesSet( UINT Attributes, SetAttributeType Type, int Index=0 ) = 0;
+			virtual const UINT& SetObjectAttributesSet( UINT Attributes, SetAttributeType Type, int Index=0 ) = 0;
 
 			/*
 			This method returns the object's Global Unique Identifier (GUID) of this object instance.

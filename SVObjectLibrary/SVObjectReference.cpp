@@ -236,25 +236,25 @@ const SVString& SVObjectReference::GetIndex() const
 	return m_NameInfo.GetIndex();
 }
 
-const UINT SVObjectReference::ObjectAttributesAllowed() const
+const UINT& SVObjectReference::ObjectAttributesAllowed() const
 {
 	assert( nullptr != m_pObject );
 	return m_pObject->ObjectAttributesAllowed();
 }
 
-const UINT SVObjectReference::ObjectAttributesSet() const
+const UINT& SVObjectReference::ObjectAttributesSet() const
 {
 	assert( nullptr != m_pObject );
 	return m_pObject->ObjectAttributesSet(m_ArrayIndex >= 0 ? m_ArrayIndex : 0  );
 }
 
-void SVObjectReference::SetObjectAttributesAllowed( UINT Attributes, SvOi::SetAttributeType Type )
+const UINT& SVObjectReference::SetObjectAttributesAllowed( UINT Attributes, SvOi::SetAttributeType Type )
 {
 	assert( nullptr != m_pObject );
 	return m_pObject->SetObjectAttributesAllowed( Attributes, Type );
 }
 
-void SVObjectReference::SetObjectAttributesSet( UINT Attributes, SvOi::SetAttributeType Type )
+const UINT& SVObjectReference::SetObjectAttributesSet( UINT Attributes, SvOi::SetAttributeType Type )
 {
 	assert( nullptr != m_pObject );
 	return m_pObject->SetObjectAttributesSet( Attributes, Type,  m_ArrayIndex >= 0 ? m_ArrayIndex : 0 );
