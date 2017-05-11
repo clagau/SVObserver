@@ -9,7 +9,7 @@
 //Moved to precompiled header: #include <limits>
 #include "SVOResource\resource.h"
 #include "SVMessage\SVMessage.h"
-#include "SVMessage/ErrorNumbers.h"
+#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVImageLibrary\SVImageBufferHandleImage.h"
 #include "SVRPropertyTree/SVRPropTree.h"

@@ -14,7 +14,7 @@
 #include "SVOFileConfig.h"
 #include "SVOIPDocClass.h"
 #include "SVOFileConfigDlg.h"
-#include "SVMessage/ErrorNumbers.h"
+#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
 #pragma endregion Includes
 

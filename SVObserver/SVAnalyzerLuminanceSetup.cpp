@@ -16,7 +16,7 @@
 #include "SVResult.h"
 #include "SVSetupDialogManager.h"
 #include "SVStatusLibrary\MessageManager.h"
-#include "SVMessage/ErrorNumbers.h"
+#include "SVStatusLibrary/ErrorNumbers.h"
 #pragma endregion Includes
 
 SVLuminanceAnalyzerSetupClass::SVLuminanceAnalyzerSetupClass(CWnd* pParent /*=nullptr*/)

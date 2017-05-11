@@ -29,7 +29,7 @@
 #include "CameraLibrary/SVCustomDeviceParam.h"
 #include "SVImageLibrary/SVDigitizerLoadLibraryClass.h"
 #include "SVMatroxGigeAcquisitionClass.h"
-#include "SVMessage/ErrorNumbers.h"
+#include "SVStatusLibrary/ErrorNumbers.h"
 #include "TextDefinesSvO.h"
 #pragma warning (pop)
 #pragma region Includes

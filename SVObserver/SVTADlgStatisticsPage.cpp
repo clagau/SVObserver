@@ -21,7 +21,7 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "ObjectSelectorLibrary/ObjectTreeGenerator.h"
 #include "ObjectInterfaces\IObjectManager.h"
-#include "SVMessage/ErrorNumbers.h"
+#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVOGui/NoSelector.h"
 #include "SVOGui/ToolSetItemSelector.h"
 #include "SVToolAdjustmentDialogSheetClass.h"

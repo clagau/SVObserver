@@ -11,7 +11,7 @@
 #include "SVOCore/SVAnalyzer.h"
 #include "SVOCore/SVImageProcessingClass.h"
 #include "SVImageLibrary\SVImageBufferHandleImage.h"
-#include "SVMessage/ErrorNumbers.h"
+#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "TextDefinesSvO.h"
 #include "SVUtilityLibrary/SVString.h"

@@ -18,7 +18,7 @@
 #include "SVOCore/SVInplaceImageOperatorListClass.h"
 #include "SVLUTEquation.h"
 #include "SVLUTOperator.h"
-#include "SVThresholdClass.h"
+#include "SVOCore/SVThresholdClass.h"
 #include "SVUserMaskOperatorClass.h"
 #include "ToolSizeAdjustTask.h"
 #pragma endregion Includes

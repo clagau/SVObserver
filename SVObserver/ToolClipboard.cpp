@@ -33,7 +33,7 @@
 #include "SVParserProgressDialog.h"
 #include "SVInspectionTreeParser.h"
 #include "SVIPDoc.h"
-#include "SVMessage/ErrorNumbers.h"
+#include "SVStatusLibrary/ErrorNumbers.h"
 #include "TextDefinesSvO.h"
 #include "SVXMLLibrary/SaxXMLHandler.h"
 #include "SVUtilityLibrary/SVGUID.h"

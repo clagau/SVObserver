@@ -12,7 +12,7 @@
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVInspectionProcess.h"
 #include "SVOCore/SVTool.h"
-#include "SVMessage/ErrorNumbers.h"
+#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVToolSet.h"
 #include "ToolSizeAdjustTask.h"
 #pragma endregion Includes

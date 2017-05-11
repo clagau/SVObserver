@@ -15,7 +15,7 @@
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #include "SVResultList.h"
-#include "SVIPResultData.h"
+#include "SVOCore/SVIPResultData.h"
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 

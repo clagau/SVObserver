@@ -13,7 +13,7 @@
 #include "stdafx.h"
 #include "SVTADlgPolarTransformPage.h"
 #include "SvOGui/SVFormulaEditorSheet.h"
-#include "SVEvaluate.h"
+#include "SVOCore/SVEvaluate.h"
 #include "SVIPDoc.h"
 #include "SVOCore/SVTool.h"
 #include "SVToolAdjustmentDialogSheetClass.h"

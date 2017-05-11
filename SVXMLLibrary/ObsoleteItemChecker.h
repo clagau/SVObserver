@@ -9,7 +9,7 @@
 #pragma region Includes
 //Moved to precompiled header: #include <boost/assign/list_of.hpp>
 #include "SVConfigurationTags.h"
-#include "SVMessage/ErrorNumbers.h"
+#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVNavigateTree.h"
 #include "SVUtilityLibrary/SVString.h"
 #include "SVUtilityLibrary/SVStringConversions.h"

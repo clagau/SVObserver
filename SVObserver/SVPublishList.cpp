@@ -21,7 +21,7 @@
 #include "SVInspectionProcess.h"
 #include "SVConfigurationObject.h"
 #include "SVPPQObject.h"
-#include "SVMessage/ErrorNumbers.h"
+#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "TextDefinesSvO.h"
 #pragma endregion Includes

@@ -30,7 +30,7 @@
 #include "GuiCommands/ConstructAndInsertTaskObject.h"
 #include "GuiCommands/DestroyChildObject.h"
 #include "GuiCommands/ShouldInspectionReset.h"
-#include "SVMessage/ErrorNumbers.h"
+#include "SVStatusLibrary/ErrorNumbers.h"
 #include "TextDefinesSvOg.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVMessage/SVMessage.h"

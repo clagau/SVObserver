@@ -16,7 +16,7 @@
 #include "SVAcquisitionClass.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "TextDefinesSvO.h"
-#include "SVMessage/ErrorNumbers.h"
+#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 

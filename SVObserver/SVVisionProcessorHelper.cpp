@@ -26,7 +26,7 @@
 #include "SVObserver.h"
 #include "SVSocketRemoteCommandManager.h"
 #include "SVRemoteControlConstants.h"
-#include "SVOCore/SVSVIMStateClass.h"
+#include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVValueObjectLibrary/BasicValueObject.h"
 #include "RemoteMonitorListHelper.h"
 #include "SVObjectLibrary\GlobalConst.h"

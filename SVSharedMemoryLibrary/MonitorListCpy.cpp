@@ -5,7 +5,7 @@
 #include "SVMonitorListWriter.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVMessage/SVMessage.h"
-#include "SVMessage/ErrorNumbers.h"
+#include "SVStatusLibrary/ErrorNumbers.h"
 #include "ObjectInterfaces\SVObjectTypeInfoStruct.h"
 namespace Seidenader { namespace SVSharedMemoryLibrary
 {

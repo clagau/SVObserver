@@ -26,10 +26,10 @@
 #include "SVVisionProcessorHelper.h"
 #include "ObjectInterfaces/SVUserMessage.h"
 #include "RemoteMonitorNamedList.h"
-#include "SVMessage/ErrorNumbers.h"
+#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "TextDefinesSvO.h"
-#include "SVOCore/SVSVIMStateClass.h"
+#include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVStatusLibrary\GlobalPath.h"
 #pragma endregion Includes
 

@@ -1,7 +1,7 @@
 #pragma region Includes
 #include "StdAfx.h"
 #include "SVStatusLibrary\MessageManager.h"
-#include "SVMessage\ErrorNumbers.h"
+#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVMessage\SVMessage.h"
 #include "SVUtilityLibrary\SVString.h"
 #include "SharedImageStore.h"

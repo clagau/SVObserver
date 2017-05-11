@@ -19,7 +19,7 @@
 #include "SaxEncryptionHandler.h"
 #include "SVNavigateTree.h"
 #include "VariantHelper.h"
-#include "SVMessage/ErrorNumbers.h"
+#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVMessage/SVMessage.h"
 #include "SVUtilityLibrary/SVString.h"

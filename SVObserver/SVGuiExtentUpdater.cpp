@@ -17,7 +17,7 @@
 #include "SVOCore/SVTool.h"
 #include "SVObjectLibrary/SVObjectSynchronousCommandTemplate.h"
 #include "SVCommandInspectionExtentUpdater.h"
-#include "SVMessage/ErrorNumbers.h"
+#include "SVStatusLibrary/ErrorNumbers.h"
 #pragma endregion Includes
 
 HRESULT SVGuiExtentUpdater::SetImageExtent(SVTaskObjectClass* pTaskObject, const SVImageExtentClass& rExtents, SVCommandExtentResetModeEnum resetMode )

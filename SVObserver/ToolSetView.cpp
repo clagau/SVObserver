@@ -26,7 +26,7 @@
 #include "ObjectInterfaces/SVUserMessage.h"
 #include "SVMessage/SVMessage.h"
 #include "SVIPChildFrm.h"
-#include "SVOCore/SVSVIMStateClass.h"
+#include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVOutputObjectList.h"
 #include "SVOGui/SVTextEditDialog.h"

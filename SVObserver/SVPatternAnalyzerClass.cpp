@@ -29,7 +29,7 @@
 #include "SVPatSelectModelPageClass.h"
 #include "SVRange.h"
 #include "SVResultLong.h"
-#include "SVOCore/SVSVIMStateClass.h"
+#include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVOCore/SVTool.h"
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes

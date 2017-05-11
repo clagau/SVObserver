@@ -17,7 +17,7 @@
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
 #include "SVTimerLibrary/SVClock.h"
 #include "SVUtilityLibrary/SVString.h"
-#include "ResultViewItemDef.h"
+#include "SVOCore/ResultViewItemDef.h"
 #pragma endregion Includes
 
 #pragma region Declarations

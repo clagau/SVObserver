@@ -45,6 +45,12 @@
     <ClCompile Include="MessageNotification.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="SVOIntelRAIDStatusClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVSVIMStateClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -84,6 +90,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="MessageNotification.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVOIntelRAIDStatusClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ErrorNumbers.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVSVIMStateClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

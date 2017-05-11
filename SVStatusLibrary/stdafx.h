@@ -58,6 +58,7 @@
 #include <exception>
 #include <iterator>
 #include <limits.h>
+#include <list>
 #include <locale>
 #include <map>
 #include <set>					//Used by static library

@@ -10,7 +10,7 @@
 //******************************************************************************
 
 #include "SVStatusLibrary\MessageManager.h"
-#include "SVMessage/ErrorNumbers.h"
+#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVMessage\SVMessage.h"
 
 template<typename SVAPCSignalHandler, typename SVThreadSignalHandler>

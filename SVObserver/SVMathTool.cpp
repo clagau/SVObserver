@@ -13,7 +13,7 @@
 #include "stdafx.h"
 #include "SVMathTool.h"
 #include "SVGlobal.h"
-#include "SVMathEquation.h"
+#include "SVOCore/SVMathEquation.h"
 #include "SVResultDouble.h"
 #include "SVInspectionProcess.h"
 #pragma endregion Includes

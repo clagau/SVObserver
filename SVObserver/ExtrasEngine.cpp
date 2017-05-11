@@ -15,7 +15,7 @@
 #include "SVObserver.h" //needed only for one call to SVObserverApp::fileSaveAsSVX()
 #include "SVMainFrm.h"
 #include "SVLibrary/DirectoryUtilities.h"
-#include "SVOCore/SVSVIMStateClass.h"
+#include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "ExtrasEngine.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVTimerLibrary/SVClock.h"

@@ -18,7 +18,7 @@
 #include "SVMessage/SVMessage.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVObjectLibrary/GlobalConst.h"
-#include "SVOCore/SVSVIMStateClass.h"
+#include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVTimerLibrary/SVClock.h"
 #include "SVInspectionProcess.h"
 #include "SVIPDoc.h"

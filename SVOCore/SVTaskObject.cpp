@@ -28,7 +28,7 @@
 #include "ObjectInterfaces/IInspectionProcess.h"
 #include "ObjectInterfaces/ITaskObjectListClass.h"
 #include "ObjectInterfaces/IToolSet.h"
-#include "SVMessage/ErrorNumbers.h"
+#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVObjectLibrary/DependencyManager.h"
 #pragma endregion Includes
 

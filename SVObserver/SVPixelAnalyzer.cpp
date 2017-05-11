@@ -21,7 +21,7 @@
 #include "SVOCore/SVImageProcessingClass.h"
 #include "SVPixelAnalyzerSetup.h" // Required by SVPixelAnalyzerSetupClass
 #include "SVResultLong.h"   // Required by SVLongResultClass
-#include "SVMessage/ErrorNumbers.h"
+#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/MessageManager.h"
 #pragma endregion Includes
 

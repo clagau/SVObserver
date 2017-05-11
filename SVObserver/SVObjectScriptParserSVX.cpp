@@ -20,7 +20,7 @@
 #include "SVBarCodeAnalyzerClass.h"
 #include "SVTimerLibrary/SVFunctionProfiler.h"
 #include "SVObjectLibrary/GlobalConst.h"
-#include "SVMessage/ErrorNumbers.h"
+#include "SVStatusLibrary/ErrorNumbers.h"
 #include "TextDefinesSvO.h"
 #include "CameraLibrary/SVDeviceParams.h"
 #pragma endregion Includes

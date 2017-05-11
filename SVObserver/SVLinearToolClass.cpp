@@ -15,7 +15,7 @@
 #include "SVOCore/SVAnalyzer.h"
 #include "SVInspectionProcess.h"
 #include "SVLinearImageOperatorList.h"
-#include "SVThresholdClass.h"
+#include "SVOCore/SVThresholdClass.h"
 #include "SVUserMaskOperatorClass.h"
 #include "ToolSizeAdjustTask.h"
 #include "ObjectInterfaces/GlobalConst.h"

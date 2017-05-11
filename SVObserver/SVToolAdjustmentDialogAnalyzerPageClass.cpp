@@ -30,7 +30,7 @@
 #include "SVOGui/NoSelector.h"
 #include "SVOGui/ToolSetItemSelector.h"
 #include "GuiCommands/GetCreatableObjects.h"
-#include "SVMessage/ErrorNumbers.h"
+#include "SVStatusLibrary/ErrorNumbers.h"
 #include "TextDefinesSvO.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVUtilityLibrary/SVString.h"

@@ -15,7 +15,7 @@
 #include "SVThreadManager.h"
 #include "SVMessage\SVMessage.h"
 #include "SVStatusLibrary\GlobalPath.h"
-#include "SVMessage/ErrorNumbers.h"
+#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 

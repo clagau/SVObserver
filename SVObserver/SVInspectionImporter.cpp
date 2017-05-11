@@ -30,7 +30,7 @@
 #include "SVInspectionProcess.h"
 
 #include "SVConfigurationObject.h"
-#include "SVMessage/ErrorNumbers.h"
+#include "SVStatusLibrary/ErrorNumbers.h"
 #include "RootObject.h"
 #include "SVXMLLibrary/SaxXMLHandler.h"
 #include "SVStatusLibrary/GlobalPath.h"

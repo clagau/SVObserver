@@ -18,7 +18,7 @@
 #include "SVObjectLibrary\SVObjectSynchronousCommandTemplate.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVInspectionProcess.h"
-#include "SVMessage/ErrorNumbers.h"
+#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVOCore/SVTaskObjectList.h"
 #include "ObjectSelectorLibrary\ObjectTreeGenerator.h"
 #include "SVObjectLibrary\GlobalConst.h"

@@ -15,7 +15,7 @@
 #include "SVRegressionFileSelectDlg.h"
 #include "SVMFCControls/SVFileDialog.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "SVMessage/ErrorNumbers.h"
+#include "SVStatusLibrary/ErrorNumbers.h"
 #include "TextDefinesSvO.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #pragma endregion Includes

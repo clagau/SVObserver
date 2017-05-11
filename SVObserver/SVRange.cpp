@@ -17,7 +17,7 @@
 #include "SVOCore/SVTool.h"
 #include "SVInspectionProcess.h"
 #include "RangeClassHelper.h"
-#include "SVMessage/ErrorNumbers.h"
+#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVValueObjectLibrary/BasicValueObject.h"
 #pragma endregion Includes
 

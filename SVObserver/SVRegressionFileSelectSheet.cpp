@@ -18,7 +18,7 @@
 #include "SVVirtualCamera.h"
 #include "TextDefinesSvO.h"
 #include "SVStatusLibrary\MessageManager.h"
-#include "SVMessage/ErrorNumbers.h"
+#include "SVStatusLibrary/ErrorNumbers.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG

@@ -13,8 +13,8 @@
 #include "stdafx.h"
 #include "SVTADlgTransformationLearnPage.h"
 
-#include "SVEvaluate.h"
-#include "SVImageTransform.h"
+#include "SVOCore/SVEvaluate.h"
+#include "SVOCore/SVImageTransform.h"
 #include "SVIPDoc.h"
 #include "SVOCore/SVTool.h"
 #include "SVToolAdjustmentDialogSheetClass.h"

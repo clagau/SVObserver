@@ -15,7 +15,7 @@
 #include "SVPatternAnalyzerClass.h"
 #include "SVResult.h"
 #include "SVSetupDialogManager.h"
-#include "SVMessage/ErrorNumbers.h"
+#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "TextDefinesSvO.h"
 #pragma endregion Includes

@@ -19,7 +19,7 @@
 #include "SVToolAdjustmentDialogSheetClass.h"
 #include "TextDefinesSvO.h"
 #include "SVStatusLibrary\MessageManager.h"
-#include "SVMessage/ErrorNumbers.h"
+#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 

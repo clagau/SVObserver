@@ -24,7 +24,7 @@
 #include "SVObserver.h"
 #include "SVParserProgressDialog.h"
 #include "SVToolSet.h"
-#include "SVOCore/SVSVIMStateClass.h"
+#include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "ObjectInterfaces/SVUserMessage.h"
 #include "SVMessage/SVMessage.h"
 #include "SVInspectionProcess.h"
@@ -32,7 +32,7 @@
 #include "SVConfigurationObject.h"
 #include "SVRegressionRunDlg.h"
 #include "SVDirectX.h"
-#include "ModelessMessageBox.h"
+#include "SVMFCControls/ModelessMessageBox.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVXMLLibrary/SVConfigurationTags.h"
 #include "SVObjectScriptParserSVX.h"
@@ -1317,7 +1317,7 @@ LRESULT SVMainFrame::OnDisplayChange(WPARAM p_p1, LPARAM p_p2)
 					"Images may not display correctly until this configuration is reopened.") );
 				HANDLE hMessage = ::CreateEvent( nullptr, true, false, nullptr );
 				::SetEvent( hMessage );
-				ModelessMessageBox( Message, hMessage );
+				CallModelessMessageBox( Message, hMessage );
 				::CloseHandle(hMessage);
 			}
 			::SetEvent( m_hDisplayChangedEvent );

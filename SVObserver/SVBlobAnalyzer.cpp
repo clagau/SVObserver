@@ -25,9 +25,9 @@
 #include "SVRange.h"
 #include "SVGlobal.h"
 #include "SVOCore/SVTool.h"
-#include "SVOCore/SVSVIMStateClass.h"
+#include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "TextDefinesSvO.h"
-#include "SVMessage/ErrorNumbers.h"
+#include "SVStatusLibrary/ErrorNumbers.h"
 #include "ObjectInterfaces\TextDefineSvOi.h"
 #include "SVUtilityLibrary/SVString.h"
 

@@ -20,7 +20,7 @@
 #include "SVTADlgColorThresholdSheet.h"
 #include "SVInspectionProcess.h"
 #include "SVIPDoc.h"
-#include "SVOCore/SVSVIMStateClass.h"
+#include "SVStatusLibrary/SVSVIMStateClass.h"
 
 #pragma endregion Includes
 

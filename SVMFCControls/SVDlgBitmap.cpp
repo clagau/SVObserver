@@ -12,7 +12,7 @@
 #include "stdafx.h"
 //Moved to precompiled header: #include <io.h>
 #include "SVDlgBitmap.h"
-#include "SVMessage/ErrorNumbers.h"
+#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVMessage\SVMessage.h"
 

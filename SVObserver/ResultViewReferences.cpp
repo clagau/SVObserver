@@ -17,8 +17,8 @@
 #include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVValueObjectLibrary/BasicValueObject.h"
 #include "ResultViewReferences.h"
-#include "SVIPResultData.h"
-#include "SVIPResultItemDefinition.h"
+#include "SVOCore/SVIPResultData.h"
+#include "SVOCore/SVIPResultItemDefinition.h"
 #include "SVToolSet.h"
 #include "SVInspectionProcess.h"
 #pragma endregion Includes

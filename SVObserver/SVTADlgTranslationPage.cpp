@@ -12,12 +12,12 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVTADlgTranslationPage.h"
-#include "SVEvaluate.h"
+#include "SVOCore/SVEvaluate.h"
 #include "SvOGui/SVFormulaEditorSheet.h"
 #include "SVIPDoc.h"
 #include "SVOCore/SVTool.h"
 #include "SVToolAdjustmentDialogSheetClass.h"
-#include "SVTransformationTool.h"
+#include "SVOCore/SVTransformationTool.h"
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion
 

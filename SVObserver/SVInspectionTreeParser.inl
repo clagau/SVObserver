@@ -22,7 +22,7 @@
 #include "SVObjectLibrary\SVToolsetScriptTags.h"
 #include "SVInspectionProcess.h"
 #include "SVStatusLibrary\MessageManager.h"
-#include "SVMessage/ErrorNumbers.h"
+#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVUtilityLibrary\SVGUID.h"
 #pragma endregion Includes
 

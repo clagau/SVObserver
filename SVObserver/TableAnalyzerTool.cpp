@@ -10,7 +10,7 @@
 #include "stdafx.h"
 #include "TableAnalyzerTool.h"
 #include "SVObjectLibrary\SVClsids.h"
-#include "SVMessage/ErrorNumbers.h"
+#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "ObjectInterfaces\TextDefineSvOi.h"
 #include "SVGlobal.h"

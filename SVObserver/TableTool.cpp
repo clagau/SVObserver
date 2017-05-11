@@ -9,11 +9,11 @@
 #include "stdafx.h"
 #include "TableTool.h"
 #include "SVObjectLibrary\SVClsids.h"
-#include "SVMessage/ErrorNumbers.h"
+#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVOCore/SVEquation.h"
 #include "ObjectInterfaces\TextDefineSvOi.h"
-#include "TableColumnEquation.h"
+#include "SVOCore/TableColumnEquation.h"
 #include "ObjectInterfaces\GlobalConst.h"
 #include "SVUtilityLibrary\SVString.h"
 #pragma endregion Includes

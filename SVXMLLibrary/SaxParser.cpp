@@ -12,7 +12,7 @@
 //Moved to precompiled header: #include <comutil.h>
 #include "SaxParser.h"
 #include "SVStatusLibrary\MessageManager.h"
-#include "SVMessage/ErrorNumbers.h"
+#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVMessage\SVMessage.h"
 #pragma endregion Includes
 

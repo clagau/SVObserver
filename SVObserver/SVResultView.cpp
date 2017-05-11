@@ -16,7 +16,7 @@
 #include "SVIPDoc.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVObjectLibrary/GlobalConst.h"
-#include "SVOCore/SVSVIMStateClass.h"
+#include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVToolSet.h"
 #include "SVInspectionProcess.h"
 #include "SVXMLLibrary/SVNavigateTree.h"
@@ -24,7 +24,7 @@
 #include "SVIPChildFrm.h"
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/MessageManager.h"
-#include "SVMessage/ErrorNumbers.h"
+#include "SVStatusLibrary/ErrorNumbers.h"
 #include "TextDefinesSvO.h"
 #pragma endregion Includes
 

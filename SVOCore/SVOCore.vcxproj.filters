@@ -96,7 +96,109 @@
     <ClInclude Include="SVEquation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVSVIMStateClass.h">
+    <ClInclude Include="SVAutoThresholdEquation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVLowerThresholdEquation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVThresholdClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVUpperThresholdEquation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EQAdjustSize.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EQAdjustSizeHeight.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EQAdjustSizePositionX.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EQAdjustSizePositionY.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EQAdjustSizeWidth.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ResultViewItemDef.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVIPResultData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVIPResultItemData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVIPResultItemDefinition.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVEvaluate.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVMathContainer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVMathEquation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="TableColumnEquation.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVEvaluateCenterXClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVEvaluateCenterYClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVEValuateEndAngleClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVEvaluateEndRadiusClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVEvaluateStartAngleClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVEvaluateStartRadiusClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVImagePolarTransform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVPolarTransform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVPolarTransformationTool.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVEvaluateRotationAngleClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVEvaluateRotationXClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVEvaluateRotationYClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVEvaluateTranslationXClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVEvaluateTranslationYClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVImageTransform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVTransformationTool.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVTransform.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVUtilityIniClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -176,7 +278,109 @@
     <ClCompile Include="SVEquation.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVSVIMStateClass.cpp">
+    <ClCompile Include="SVAutoThresholdEquation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVLowerThresholdEquation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVThresholdClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVUpperThresholdEquation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EQAdjustSize.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EQAdjustSizeHeight.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EQAdjustSizePositionX.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EQAdjustSizePositionY.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="EQAdjustSizeWidth.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ResultViewItemDef.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVIPResultData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVIPResultItemData.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVIPResultItemDefinition.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVEvaluate.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVMathContainer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVMathEquation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="TableColumnEquation.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVEvaluateCenterXClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVEvaluateCenterYClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVEvaluateEndAngleClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVEvaluateEndRadiusClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVEvaluateStartAngleClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVEvaluateStartRadiusClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVImagePolarTransform.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVPolarTransform.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVPolarTransformationTool.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVEvaluateRotationAngleClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVEvaluateRotationXClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVEvaluateRotationYClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVEvaluateTranslationXClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVEvaluateTranslationYClass.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVImageTransform.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVTransformationTool.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVTransform.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVUtilityIniClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

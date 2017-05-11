@@ -12,7 +12,7 @@
 
 #pragma region Includes
 #include "SVIPImageDataElement.h"
-#include "SVIPResultData.h"
+#include "SVOCore/SVIPResultData.h"
 #pragma endregion Includes
 
 struct SVIPProductStruct

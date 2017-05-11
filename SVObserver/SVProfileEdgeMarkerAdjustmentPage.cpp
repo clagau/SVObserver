@@ -17,7 +17,7 @@
 #include "SVLinearEdgeProcessingClass.h"
 #include "SVIPDoc.h"
 #include "SVInspectionProcess.h"
-#include "SVOCore/SVSVIMStateClass.h"
+#include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVOCore/SVTool.h"
 #include "SVOGui/DisplayHelper.h"
 #pragma endregion Includes

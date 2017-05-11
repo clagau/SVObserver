@@ -14,7 +14,7 @@
 #include "SVUtilitiesCustomizeDialog.h"
 #include "SVLibrary/SVFileNameClass.h"
 #include "SVObserver.h"
-#include "SVUtilityIniClass.h"
+#include "SVOCore/SVUtilityIniClass.h"
 #include "SVLibrary/SVOIniClass.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVUtilityLibrary\SVString.h"

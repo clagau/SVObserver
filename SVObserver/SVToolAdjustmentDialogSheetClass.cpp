@@ -49,7 +49,7 @@
 #include "SVOGui\SVTADlgFileImageSourcePage.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "TextDefinesSvO.h"
-#include "SVMessage/ErrorNumbers.h"
+#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVOGui\TextDefinesSvOg.h"
 #include "SVOGui\TADialogTableParameterPage.h"

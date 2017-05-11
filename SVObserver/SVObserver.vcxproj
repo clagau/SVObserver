@@ -179,14 +179,8 @@ echo %time%
     <ClCompile Include="ArchiveToolHelper.cpp" />
     <ClCompile Include="Custom2Filter_ImportExport.cpp" />
     <ClCompile Include="DummyFilter.cpp" />
-    <ClCompile Include="EQAdjustSize.cpp" />
-    <ClCompile Include="EQAdjustSizeHeight.cpp" />
-    <ClCompile Include="EQAdjustSizePositionX.cpp" />
-    <ClCompile Include="EQAdjustSizePositionY.cpp" />
-    <ClCompile Include="EQAdjustSizeWidth.cpp" />
     <ClCompile Include="ExtrasEngine.cpp" />
     <ClCompile Include="GlobalConstantView.cpp" />
-    <ClCompile Include="ModelessMessageBox.cpp" />
     <ClCompile Include="MonitorListBasePage.cpp" />
     <ClCompile Include="MonitorListImagesPage.cpp" />
     <ClCompile Include="MonitorListSheet.cpp" />
@@ -198,10 +192,6 @@ echo %time%
     <ClCompile Include="RemoteMonitorListHelper.cpp" />
     <ClCompile Include="RemoteMonitorNamedList.cpp" />
     <ClCompile Include="ResizeTool.cpp" />
-    <ClCompile Include="ResultViewItemDef.cpp">
-      <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</MultiProcessorCompilation>
-      <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</MultiProcessorCompilation>
-    </ClCompile>
     <ClCompile Include="ResultViewReferences.cpp">
       <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</MultiProcessorCompilation>
       <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</MultiProcessorCompilation>
@@ -230,17 +220,6 @@ echo %time%
     <ClCompile Include="SVCommandInspectionExtentUpdater.cpp" />
     <ClCompile Include="SVDataDefinitionStruct.cpp" />
     <ClCompile Include="SVDLLToolLoadLibraryClass.cpp" />
-    <ClCompile Include="SVEvaluateCenterXClass.cpp" />
-    <ClCompile Include="SVEvaluateCenterYClass.cpp" />
-    <ClCompile Include="SVEvaluateEndAngleClass.cpp" />
-    <ClCompile Include="SVEvaluateEndRadiusClass.cpp" />
-    <ClCompile Include="SVEvaluateRotationAngleClass.cpp" />
-    <ClCompile Include="SVEvaluateRotationXClass.cpp" />
-    <ClCompile Include="SVEvaluateRotationYClass.cpp" />
-    <ClCompile Include="SVEvaluateStartAngleClass.cpp" />
-    <ClCompile Include="SVEvaluateStartRadiusClass.cpp" />
-    <ClCompile Include="SVEvaluateTranslationXClass.cpp" />
-    <ClCompile Include="SVEvaluateTranslationYClass.cpp" />
     <ClCompile Include="SVFailStatusStream.cpp" />
     <ClCompile Include="SVFailStatusStreamManager.cpp" />
     <ClCompile Include="SVGigeCameraROIDlg.cpp" />
@@ -262,7 +241,6 @@ echo %time%
     <ClCompile Include="SVTADlgArchiveImagePage.cpp" />
     <ClCompile Include="SVTADlgTranslationResizePage.cpp" />
     <ClCompile Include="SVThreadInfoDlg.cpp" />
-    <ClCompile Include="SVThresholdClass.cpp" />
     <ClCompile Include="SVToolAdjustmentDialogSizePage.cpp" />
     <ClCompile Include="SVToolGrouping.cpp" />
     <ClCompile Include="SVTriggerSelectionDlg.cpp" />
@@ -278,7 +256,6 @@ echo %time%
     <ClCompile Include="SVAnalyzerResultDlg.cpp" />
     <ClCompile Include="SVArchiveTool.cpp" />
     <ClCompile Include="SVArchiveWritingDlg.cpp" />
-    <ClCompile Include="SVAutoThresholdEquation.cpp" />
     <ClCompile Include="SVBarCodeResult.cpp" />
     <ClCompile Include="SVBlobAnalyzer.cpp" />
     <ClCompile Include="SVBlobAnalyzerDialog.cpp" />
@@ -316,7 +293,6 @@ echo %time%
     <ClCompile Include="SVEdgeMarkerAdjustmentPageClass.cpp" />
     <ClCompile Include="SVEnumerateCombo.cpp" />
     <ClCompile Include="SVEnvironmentSettingsDialog.cpp" />
-    <ClCompile Include="SVEvaluate.cpp" />
     <ClCompile Include="SVExternalTool.cpp" />
     <ClCompile Include="SVExternalToolDetailsSheet.cpp" />
     <ClCompile Include="SVExternalToolDlg.cpp" />
@@ -333,8 +309,6 @@ echo %time%
     <ClCompile Include="SVHistogramAnalyzerSetup.cpp" />
     <ClCompile Include="SVImageArchive.cpp" />
     <ClCompile Include="SVImageArithmetic.cpp" />
-    <ClCompile Include="SVImagePolarTransform.cpp" />
-    <ClCompile Include="SVImageTransform.cpp" />
     <ClCompile Include="SVImageView.cpp" />
     <ClCompile Include="SVImageViewScroll.cpp" />
     <ClCompile Include="SVInfoStructs.cpp" />
@@ -351,9 +325,6 @@ echo %time%
       <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</MultiProcessorCompilation>
       <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</MultiProcessorCompilation>
     </ClCompile>
-    <ClCompile Include="SVIPResultData.cpp" />
-    <ClCompile Include="SVIPResultItemData.cpp" />
-    <ClCompile Include="SVIPResultItemDefinition.cpp" />
     <ClCompile Include="SVLightReferenceDialog.cpp" />
     <ClCompile Include="SVLinearAnalyzerClass.cpp" />
     <ClCompile Include="SVLinearEdgeAProcessingClass.cpp" />
@@ -368,7 +339,6 @@ echo %time%
     <ClCompile Include="SVLinearLinePixelCountingAnalyzer.cpp" />
     <ClCompile Include="SVLinearMeasurementAnalyzerClass.cpp" />
     <ClCompile Include="SVLinearToolClass.cpp" />
-    <ClCompile Include="SVLowerThresholdEquation.cpp" />
     <ClCompile Include="SVLutDlg.cpp" />
     <ClCompile Include="SVLUTEquation.cpp" />
     <ClCompile Include="SVLUTOperator.cpp" />
@@ -376,8 +346,6 @@ echo %time%
     <ClCompile Include="SVMainImageClass.cpp" />
     <ClCompile Include="SVMaskShape.cpp" />
     <ClCompile Include="SVMaskShapeEditorDlg.cpp" />
-    <ClCompile Include="SVMathContainer.cpp" />
-    <ClCompile Include="SVMathEquation.cpp" />
     <ClCompile Include="SVMathTool.cpp" />
     <ClCompile Include="SVMatroxGigeAcquisitionClass.cpp" />
     <ClCompile Include="SVMatroxGigeCameraProxy.cpp" />
@@ -405,7 +373,6 @@ echo %time%
     <ClCompile Include="SVOInspectionList.cpp" />
     <ClCompile Include="SVOInspectionObj.cpp" />
     <ClCompile Include="SVOInspectionSourceDlg.cpp" />
-    <ClCompile Include="SVOIntelRAIDStatusClass.cpp" />
     <ClCompile Include="SVOIODocClass.cpp">
       <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</MultiProcessorCompilation>
       <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</MultiProcessorCompilation>
@@ -437,8 +404,6 @@ echo %time%
     <ClCompile Include="SVPerspectiveWarpDlg.cpp" />
     <ClCompile Include="SVPixelAnalyzer.cpp" />
     <ClCompile Include="svpixelanalyzersetup.cpp" />
-    <ClCompile Include="SVPolarTransform.cpp" />
-    <ClCompile Include="SVPolarTransformationTool.cpp" />
     <ClCompile Include="SVPPQBar.cpp" />
     <ClCompile Include="SVPPQEntryDialog.cpp" />
     <ClCompile Include="SVPPQEntryDialogDigInPage.cpp" />
@@ -512,19 +477,13 @@ echo %time%
     <ClCompile Include="SVToolSet.cpp" />
     <ClCompile Include="SVToolSetAdjustmentDialogSheet.cpp" />
     <ClCompile Include="SVToolSetListCtrl.cpp" />
-    <ClCompile Include="SVTransform.cpp" />
-    <ClCompile Include="SVTransformationTool.cpp" />
-    <ClCompile Include="SVUpperThresholdEquation.cpp" />
     <ClCompile Include="SVUtilities.cpp" />
     <ClCompile Include="SVUtilitiesCustomizeDialog.cpp" />
-    <ClCompile Include="SVUtilityArgumentDialog.cpp" />
-    <ClCompile Include="SVUtilityIniClass.cpp" />
     <ClCompile Include="SVValueBaseNormalizerClass.cpp" />
     <ClCompile Include="SVVariantResultClass.cpp" />
     <ClCompile Include="SVVirtualCamera.cpp" />
     <ClCompile Include="SVWindowTool.cpp" />
     <ClCompile Include="TableAnalyzerTool.cpp" />
-    <ClCompile Include="TableColumnEquation.cpp" />
     <ClCompile Include="TableCopyObject.cpp" />
     <ClCompile Include="TableExcludeAnalyzer.cpp" />
     <ClCompile Include="TableFillByEquationObject.cpp" />
@@ -553,14 +512,8 @@ echo %time%
     <ClInclude Include="..\AutoBuild\AutoBuild.h" />
     <ClInclude Include="ArchiveMethodEnum.h" />
     <ClInclude Include="ArchiveToolHelper.h" />
-    <ClInclude Include="EQAdjustSize.h" />
-    <ClInclude Include="EQAdjustSizeHeight.h" />
-    <ClInclude Include="EQAdjustSizePositionX.h" />
-    <ClInclude Include="EQAdjustSizePositionY.h" />
-    <ClInclude Include="EQAdjustSizeWidth.h" />
     <ClInclude Include="ExtrasEngine.h" />
     <ClInclude Include="GlobalConstantView.h" />
-    <ClInclude Include="ModelessMessageBox.h" />
     <ClInclude Include="MonitorListBasePage.h" />
     <ClInclude Include="MonitorListImagesPage.h" />
     <ClInclude Include="MonitorListSheet.h" />
@@ -575,7 +528,6 @@ echo %time%
     <ClInclude Include="RemoteMonitorListHelper.h" />
     <ClInclude Include="RemoteMonitorNamedList.h" />
     <ClInclude Include="ResizeTool.h" />
-    <ClInclude Include="ResultViewItemDef.h" />
     <ClInclude Include="ResultViewReferences.h" />
     <ClInclude Include="RingBufferTool.h" />
     <ClInclude Include="RootChildren.h" />
@@ -594,17 +546,6 @@ echo %time%
     <ClInclude Include="SVCommandInspectionExtentUpdater.h" />
     <ClInclude Include="SVConfigXMLPrint.h" />
     <ClInclude Include="SVDataDefinitionStruct.h" />
-    <ClInclude Include="SVEvaluateCenterXClass.h" />
-    <ClInclude Include="SVEvaluateCenterYClass.h" />
-    <ClInclude Include="SVEValuateEndAngleClass.h" />
-    <ClInclude Include="SVEvaluateEndRadiusClass.h" />
-    <ClInclude Include="SVEvaluateRotationAngleClass.h" />
-    <ClInclude Include="SVEvaluateRotationXClass.h" />
-    <ClInclude Include="SVEvaluateRotationYClass.h" />
-    <ClInclude Include="SVEvaluateStartAngleClass.h" />
-    <ClInclude Include="SVEvaluateStartRadiusClass.h" />
-    <ClInclude Include="SVEvaluateTranslationXClass.h" />
-    <ClInclude Include="SVEvaluateTranslationYClass.h" />
     <ClInclude Include="SVFailStatusStream.h" />
     <ClInclude Include="SVFailStatusStreamManager.h" />
     <ClInclude Include="SVGigeCameraROIDlg.h" />
@@ -628,11 +569,9 @@ echo %time%
     <ClInclude Include="SVTADlgArchiveImagePage.h" />
     <ClInclude Include="SVTADlgTranslationResizePage.h" />
     <ClInclude Include="SVThreadInfoDlg.h" />
-    <ClInclude Include="SVThresholdClass.h" />
     <ClInclude Include="SVToolAdjustmentDialogSizePage.h" />
     <ClInclude Include="SVToolGrouping.h" />
     <ClInclude Include="TableAnalyzerTool.h" />
-    <ClInclude Include="TableColumnEquation.h" />
     <ClInclude Include="TableCopyObject.h" />
     <ClInclude Include="TableExcludeAnalyzer.h" />
     <ClInclude Include="TableFillByEquationObject.h" />
@@ -654,7 +593,6 @@ echo %time%
     <ClInclude Include="SVAnalyzerResultDlg.h" />
     <ClInclude Include="SVArchiveTool.h" />
     <ClInclude Include="SVArchiveWritingDlg.h" />
-    <ClInclude Include="SVAutoThresholdEquation.h" />
     <ClInclude Include="SVBarCodeAnalyzerClass.h" />
     <ClInclude Include="SVBarCodeResult.h" />
     <ClInclude Include="SVBlobAnalyzer.h" />
@@ -692,7 +630,6 @@ echo %time%
     <ClInclude Include="SVEdgeMarkerAdjustmentPageClass.h" />
     <ClInclude Include="SVEnumerateCombo.h" />
     <ClInclude Include="SVEnvironmentSettingsDialog.h" />
-    <ClInclude Include="SVEvaluate.h" />
     <ClInclude Include="SVExternalTool.h" />
     <ClInclude Include="SVExternalToolDetailsSheet.h" />
     <ClInclude Include="SVExternalToolDlg.h" />
@@ -709,7 +646,6 @@ echo %time%
     <ClInclude Include="SVHistogramAnalyzerSetup.h" />
     <ClInclude Include="SVImageArchive.h" />
     <ClInclude Include="SVImageArithmetic.h" />
-    <ClInclude Include="SVImagePolarTransform.h" />
     <ClInclude Include="SVImageTransform.h" />
     <ClInclude Include="SVImageView.h" />
     <ClInclude Include="SVImageViewScroll.h" />
@@ -727,9 +663,6 @@ echo %time%
     <ClInclude Include="SVIPDoc.h" />
     <ClInclude Include="SVIPImageDataElement.h" />
     <ClInclude Include="SVIPProductStruct.h" />
-    <ClInclude Include="SVIPResultData.h" />
-    <ClInclude Include="SVIPResultItemData.h" />
-    <ClInclude Include="SVIPResultItemDefinition.h" />
     <ClInclude Include="SVIProgress.h" />
     <ClInclude Include="SVLightReferenceDialog.h" />
     <ClInclude Include="SVLinearAnalyzerClass.h" />
@@ -745,7 +678,6 @@ echo %time%
     <ClInclude Include="SVLinearLinePixelCountingAnalyzer.h" />
     <ClInclude Include="SVLinearMeasurementAnalyzerClass.h" />
     <ClInclude Include="SVLinearToolClass.h" />
-    <ClInclude Include="SVLowerThresholdEquation.h" />
     <ClInclude Include="SVLutDlg.h" />
     <ClInclude Include="SVLUTEquation.h" />
     <ClInclude Include="SVLUTOperator.h" />
@@ -753,8 +685,6 @@ echo %time%
     <ClInclude Include="SVMainImageClass.h" />
     <ClInclude Include="SVMaskShape.h" />
     <ClInclude Include="SVMaskShapeEditorDlg.h" />
-    <ClInclude Include="SVMathContainer.h" />
-    <ClInclude Include="SVMathEquation.h" />
     <ClInclude Include="SVMathTool.h" />
     <ClInclude Include="SVMatroxGigeAcquisitionClass.h" />
     <ClInclude Include="SVMatroxGigeCameraProxy.h" />
@@ -781,7 +711,6 @@ echo %time%
     <ClInclude Include="SVOInspectionList.h" />
     <ClInclude Include="SVOInspectionObj.h" />
     <ClInclude Include="SVOInspectionSourceDlg.h" />
-    <ClInclude Include="SVOIntelRAIDStatusClass.h" />
     <ClInclude Include="SVOIODocClass.h" />
     <ClInclude Include="SVOIOFrameWndClass.h" />
     <ClInclude Include="SVOIOViewClass.h" />
@@ -808,8 +737,6 @@ echo %time%
     <ClInclude Include="SVPerspectiveWarpDlg.h" />
     <ClInclude Include="SVPixelAnalyzer.h" />
     <ClInclude Include="SVPixelAnalyzerSetup.h" />
-    <ClInclude Include="SVPolarTransform.h" />
-    <ClInclude Include="SVPolarTransformationTool.h" />
     <ClInclude Include="SVPPQBar.h" />
     <ClInclude Include="SVPPQEntryDialog.h" />
     <ClInclude Include="SVPPQEntryDialogDigInPage.h" />
@@ -883,11 +810,8 @@ echo %time%
     <ClInclude Include="SVToolSetListCtrl.h" />
     <ClInclude Include="SVTransform.h" />
     <ClInclude Include="SVTransformationTool.h" />
-    <ClInclude Include="SVUpperThresholdEquation.h" />
     <ClInclude Include="SVUtilities.h" />
     <ClInclude Include="SVUtilitiesCustomizeDialog.h" />
-    <ClInclude Include="SVUtilityArgumentDialog.h" />
-    <ClInclude Include="SVUtilityIniClass.h" />
     <ClInclude Include="SVValueBaseNormalizerClass.h" />
     <ClInclude Include="SVVariantResultClass.h" />
     <ClInclude Include="SVVirtualCamera.h" />

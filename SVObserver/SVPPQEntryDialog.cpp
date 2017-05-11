@@ -12,7 +12,7 @@
 #include "stdafx.h"
 #include "SVPPQEntryDialog.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVOCore/SVSVIMStateClass.h"
+#include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVVirtualCamera.h"
 #include "SVPPQObject.h"
 

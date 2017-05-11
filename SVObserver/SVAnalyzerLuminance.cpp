@@ -21,7 +21,7 @@
 #include "SVOCore/SVImageClass.h"
 #include "SVOCore/SVImageProcessingClass.h"
 #include "SVResultLong.h"
-#include "SVMessage/ErrorNumbers.h"
+#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/MessageManager.h"
 
 #pragma endregion Includes

@@ -9,7 +9,7 @@
 //Moved to precompiled header: #include <boost\assign\list_of.hpp>
 #include "SVOResource/resource.h"
 #include "RangeValidator.h"
-#include "SVMessage/ErrorNumbers.h"
+#include "SVStatusLibrary/ErrorNumbers.h"
 #include "GuiCommands\GetInstanceIDByDottedName.h"
 #include "GuiCommands\GetAttributesAllowed.h"
 #include "SVObjectLibrary\SVObjectSynchronousCommandTemplate.h"

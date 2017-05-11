@@ -21,7 +21,7 @@
 #include "SVMessage\SVMessage.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "ObjectInterfaces\IRootObject.h"
-#include "SVMessage/ErrorNumbers.h"
+#include "SVStatusLibrary/ErrorNumbers.h"
 #include "ObjectSelectorLibrary/SelectorItemVector.h"
 #pragma endregion Includes
 

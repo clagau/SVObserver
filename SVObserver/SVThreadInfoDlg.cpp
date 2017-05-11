@@ -15,7 +15,7 @@
 #include "SVThreadInfoDlg.h"
 #include "afxdialogex.h"
 #include "SVSystemLibrary/SVThreadManager.h"
-#include "SVOCore/SVSVIMStateClass.h"
+#include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVStatusLibrary/GlobalPath.h"
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes

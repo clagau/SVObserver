@@ -20,7 +20,7 @@
 #include "SVObserver.h"
 #include "SVOCore/SVStdImageOperatorListClass.h"
 #include "SVOLicenseManager/SVOLicenseManager.h"
-#include "SVThresholdClass.h"
+#include "SVOCore/SVThresholdClass.h"
 #include "SVUserMaskOperatorClass.h"
 #include "ToolSizeAdjustTask.h"
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"

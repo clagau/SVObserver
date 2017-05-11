@@ -17,7 +17,7 @@
 #include "SVStatusLibrary/MessageContainer.h"
 #include "SVMessage/SVMessage.h"
 #include "SVVariantConverter.h"
-#include "SVMessage/ErrorNumbers.h"
+#include "SVStatusLibrary/ErrorNumbers.h"
 #pragma endregion Includes
 
 #pragma region Declarations

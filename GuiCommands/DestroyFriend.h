@@ -12,7 +12,7 @@
 //Moved to precompiled header: #include <Guiddef.h>
 #include "SVObjectLibrary\SVObjectBuilder.h"
 #include "ObjectInterfaces\ITaskObjectListClass.h"
-#include "SVMessage/ErrorNumbers.h"
+#include "SVStatusLibrary/ErrorNumbers.h"
 #include "ObjectInterfaces\IObjectManager.h"
 #pragma endregion Includes
 

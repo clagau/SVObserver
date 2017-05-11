@@ -17,7 +17,7 @@
 #include "SVObserver.h"
 #include "SVIODoc.h"
 #include "SVConfigurationObject.h"
-#include "SVOCore/SVSVIMStateClass.h"
+#include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "MonitorListSheet.h"
 #include "MonitorListPropertyDlg.h"
 #include "RemoteMonitorListHelper.h"

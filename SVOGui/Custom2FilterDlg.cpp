@@ -21,7 +21,7 @@
 #include "SVObjectLibrary\SVClsids.h"
 #include "GuiValueHelper.h"
 #include "SVStatusLibrary\MessageManager.h"
-#include "SVMessage/ErrorNumbers.h"
+#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVMessage\SVMessage.h"
 #pragma endregion Includes
 

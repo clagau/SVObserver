@@ -19,7 +19,7 @@
 #include "SVFileNameManagerClass.h"
 #include "SVLibrary/SVFileNameClass.h"
 #include "SVStatusLibrary/GlobalPath.h"
-#include "SVMessage/ErrorNumbers.h"
+#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVStatusLibrary/MessageManager.h"
 #pragma endregion Includes
 

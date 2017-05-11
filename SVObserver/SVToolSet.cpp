@@ -20,7 +20,7 @@
 #include "SVOCore/SVConditional.h"
 #include "SVOCore/SVImageListClass.h"
 #include "SVInspectionProcess.h"
-#include "SVOCore/SVSVIMStateClass.h"
+#include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVOCore/SVTool.h"
 #include "SVTimerLibrary/SVClock.h"
 #include "SVColorTool.h"

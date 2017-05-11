@@ -11,7 +11,7 @@
 //Moved to precompiled header: #include <Guiddef.h>
 #include "ObjectInterfaces\IObjectManager.h"
 #include "ObjectInterfaces\ISVFilter.h"
-#include "SVMessage/ErrorNumbers.h"
+#include "SVStatusLibrary/ErrorNumbers.h"
 #pragma endregion Includes
 
 

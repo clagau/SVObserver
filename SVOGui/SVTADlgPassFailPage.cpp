@@ -16,7 +16,7 @@
 #include "SVStatusLibrary\MessageContainer.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "ObjectSelectorLibrary\ObjectTreeGenerator.h"
-#include "SVMessage/ErrorNumbers.h"
+#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVMessage\SVMessage.h"
 #include "ObjectInterfaces\MessageTextEnum.h"
 #include "GuiCommands\GetSelectorList.h"

@@ -24,7 +24,7 @@
 #include "SVRegressionTestStruct.h"
 #include "SVIPImageDataElement.h"
 #include "SVIPProductStruct.h"
-#include "SVIPResultData.h"
+#include "SVOCore/SVIPResultData.h"
 #include "SVValueObjectLibrary/SVValueObject.h"
 #include "SVToolGrouping.h"
 #include "SVUtilityLibrary/SVString.h"

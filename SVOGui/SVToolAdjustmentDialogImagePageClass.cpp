@@ -17,7 +17,7 @@
 #include "SVObjectLibrary\SVClsIDs.h"
 #include "SVStatusLibrary\MessageManager.h"
 #include "TextDefinesSvOg.h"
-#include "SVMessage/ErrorNumbers.h"
+#include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVMessage\SVMessage.h"
 #pragma endregion Includes
 

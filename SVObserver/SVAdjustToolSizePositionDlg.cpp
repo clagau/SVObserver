@@ -22,7 +22,7 @@
 #include "SVGuiExtentUpdater.h"
 #include "SVOCore/SVImageListClass.h"
 #include "SVOCore/SVTool.h"
-#include "SVOCore/SVSVIMStateClass.h"
+#include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVOResource/ConstGlobalSvOr.h"
 #include "SVLinearToolClass.h"
 #include "SVOCore/SVExtentPropertiesInfoStruct.h"

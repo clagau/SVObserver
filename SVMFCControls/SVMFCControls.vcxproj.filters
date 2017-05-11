@@ -119,6 +119,12 @@
     <ClCompile Include="ResizablePropertySheet.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ModelessMessageBox.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVUtilityArgumentDialog.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StdAfx.h">
@@ -230,6 +236,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ResizablePropertySheet.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelessMessageBox.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVUtilityArgumentDialog.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

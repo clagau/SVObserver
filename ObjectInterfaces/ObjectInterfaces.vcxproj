@@ -85,7 +85,6 @@
   <ItemGroup>
     <ClInclude Include="GlobalConstantData.h" />
     <ClInclude Include="EquationTestResult.h" />
-    <ClInclude Include="ErrorNumbers.h" />
     <ClInclude Include="GlobalConst.h" />
     <ClInclude Include="IBlobAnalyzer.h" />
     <ClInclude Include="ICustom2Filter.h" />
