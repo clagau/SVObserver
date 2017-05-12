@@ -166,7 +166,7 @@ echo %time%
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
-      <AdditionalOptions>/WHOLEARCHIVE:SVOCore.lib /WHOLEARCHIVE:FilterOperators.lib /WHOLEARCHIVE: SVValueObjectLibrary.lib %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>/WHOLEARCHIVE:SVOCore.lib /WHOLEARCHIVE:FilterOperators.lib /WHOLEARCHIVE:SVValueObjectLibrary.lib %(AdditionalOptions)</AdditionalOptions>
     </Link>
     <Bscmake>
       <SuppressStartupBanner>true</SuppressStartupBanner>
