@@ -648,7 +648,6 @@ echo %time%
     <ClInclude Include="SVHistogramAnalyzerSetup.h" />
     <ClInclude Include="SVImageArchive.h" />
     <ClInclude Include="SVImageArithmetic.h" />
-    <ClInclude Include="SVImageTransform.h" />
     <ClInclude Include="SVImageView.h" />
     <ClInclude Include="SVImageViewScroll.h" />
     <ClInclude Include="SVInputObject.h" />
@@ -810,8 +809,6 @@ echo %time%
     <ClInclude Include="SVToolSet.h" />
     <ClInclude Include="SVToolSetAdjustmentDialogSheet.h" />
     <ClInclude Include="SVToolSetListCtrl.h" />
-    <ClInclude Include="SVTransform.h" />
-    <ClInclude Include="SVTransformationTool.h" />
     <ClInclude Include="SVUtilities.h" />
     <ClInclude Include="SVUtilitiesCustomizeDialog.h" />
     <ClInclude Include="SVValueBaseNormalizerClass.h" />

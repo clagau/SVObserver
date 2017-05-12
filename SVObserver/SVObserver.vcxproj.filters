@@ -1098,9 +1098,6 @@
     <ClInclude Include="SVImageArithmetic.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVImageTransform.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVImageView.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1579,12 +1576,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVToolSetListCtrl.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVTransform.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVTransformationTool.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVUtilities.h">
