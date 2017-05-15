@@ -28,7 +28,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-namespace Seidenader { namespace SVOGui {
+namespace SvOg {
 	static const int cHeaderSize = 1;
 	static const int cNameColumnSize = 150;
 	static const int cFormulaColumnSize = 500;
@@ -108,9 +108,9 @@ namespace Seidenader { namespace SVOGui {
 			{
 				if(m_Grid.IsCellSelected( i, j ) )
 				{
-					typedef GuiCmd::DestroyFriend Command;
+					typedef SvCmd::DestroyFriend Command;
 					typedef SVSharedPtr<Command> CommandPtr;
-					CommandPtr commandPtr = new Command(m_TaskObjectID, m_gridList[i-1].second, GuiCmd::DestroyFriend::Flag_ResetInspection);
+					CommandPtr commandPtr = new Command(m_TaskObjectID, m_gridList[i-1].second, SvCmd::DestroyFriend::Flag_ResetInspection);
 					SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 					HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 					if (S_OK != hr)
@@ -118,7 +118,7 @@ namespace Seidenader { namespace SVOGui {
 						SVStringVector msgList;
 						msgList.push_back(SvUl_SF::Format(_T("%d"), hr));
 						SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-						Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_TableColumn_RemovingFailed, msgList, SvStl::SourceFileParams(StdMessageParams) );
+						Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_TableColumn_RemovingFailed, msgList, SvStl::SourceFileParams(StdMessageParams) );
 					}
 					break;
 				}
@@ -145,7 +145,7 @@ namespace Seidenader { namespace SVOGui {
 			name = SvUl_SF::Format(_T("%s %d"), cEquationName, number);
 		}
 		// Construct and Create the Filter Class Object
-		typedef GuiCmd::ConstructAndInsertFriend Command;
+		typedef SvCmd::ConstructAndInsertFriend Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 		CommandPtr commandPtr = new Command(m_TaskObjectID, TableColumnEquationGuid, name.c_str(), addPreGuid);
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
@@ -155,7 +155,7 @@ namespace Seidenader { namespace SVOGui {
 			SVStringVector msgList;
 			msgList.push_back(SvUl_SF::Format(_T("%d"), hr));
 			SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_TableColumn_AddingFailed, msgList, SvStl::SourceFileParams(StdMessageParams) );
+			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_TableColumn_AddingFailed, msgList, SvStl::SourceFileParams(StdMessageParams) );
 		}
 		ValidateData(); //validate the new line (this does a reset and add the column to the tableObject)
 		FillGridControl();
@@ -200,7 +200,7 @@ namespace Seidenader { namespace SVOGui {
 			{
 				if ( isTableNameUnique(newName) )
 				{
-					typedef GuiCmd::SetObjectName Command;
+					typedef SvCmd::SetObjectName Command;
 					typedef SVSharedPtr<Command> CommandPtr;
 					CommandPtr commandPtr = new Command(m_gridList[pItem->iRow-1].second.ToGUID(), newName.c_str());
 					SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
@@ -211,7 +211,7 @@ namespace Seidenader { namespace SVOGui {
 						SVStringVector msgList;
 						msgList.push_back(SvUl_SF::Format(_T("%d"), hr));
 						SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-						Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_TableColumn_RenamingFailed, msgList, SvStl::SourceFileParams(StdMessageParams) );
+						Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_TableColumn_RenamingFailed, msgList, SvStl::SourceFileParams(StdMessageParams) );
 					}
 					else
 					{
@@ -224,14 +224,14 @@ namespace Seidenader { namespace SVOGui {
 					SVStringVector msgList;
 					msgList.push_back(newName);
 					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_TableColumnName_NotUnique, msgList, SvStl::SourceFileParams(StdMessageParams) );
+					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_TableColumnName_NotUnique, msgList, SvStl::SourceFileParams(StdMessageParams) );
 				}
 			}
 			else
 			{
 				bAcceptChange = false;
 				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_TableColumnName_Empty, SvStl::SourceFileParams(StdMessageParams) );
+				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_TableColumnName_Empty, SvStl::SourceFileParams(StdMessageParams) );
 			}
 		}
 
@@ -245,15 +245,15 @@ namespace Seidenader { namespace SVOGui {
 		UpdateData(TRUE);
 		HRESULT hResult = S_OK;
 		// Do a reset of the Tool
-		typedef SVSharedPtr<GuiCmd::ResetObject> ResetObjectCommandPtr;
-		ResetObjectCommandPtr commandPtr(new GuiCmd::ResetObject(m_InspectionID));
+		typedef SVSharedPtr<SvCmd::ResetObject> ResetObjectCommandPtr;
+		ResetObjectCommandPtr commandPtr(new SvCmd::ResetObject(m_InspectionID));
 		SVObjectSynchronousCommandTemplate<ResetObjectCommandPtr> cmd(m_InspectionID, commandPtr);
 
 		hResult = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		if (S_OK != hResult)
 		{
-			typedef SVSharedPtr<GuiCmd::GetErrorMessageList> GetErrorMessageListCommandPtr;
-			GetErrorMessageListCommandPtr errorCommandPtr(new GuiCmd::GetErrorMessageList(m_TaskObjectID));
+			typedef SVSharedPtr<SvCmd::GetErrorMessageList> GetErrorMessageListCommandPtr;
+			GetErrorMessageListCommandPtr errorCommandPtr(new SvCmd::GetErrorMessageList(m_TaskObjectID));
 			SVObjectSynchronousCommandTemplate<GetErrorMessageListCommandPtr> errorCmd(m_InspectionID, errorCommandPtr);
 			errorCmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 			SvStl::MessageContainerVector errorMessageList = errorCommandPtr->GetMessageList();
@@ -294,7 +294,7 @@ namespace Seidenader { namespace SVOGui {
 
 	void TADialogTableDefinesPage::FillGridControl()
 	{
-		typedef GuiCmd::GetAvailableObjects Command;
+		typedef SvCmd::GetAvailableObjects Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 		m_gridList.clear();
 		CommandPtr commandPtr = new Command(m_TaskObjectID, SVObjectTypeInfoStruct(SVEquationObjectType, TableColumnEquationObjectType));
@@ -361,4 +361,4 @@ namespace Seidenader { namespace SVOGui {
 		}
 	}
 #pragma endregion Private Mehods
-}}
+} //namespace SvOg

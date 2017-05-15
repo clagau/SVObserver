@@ -35,12 +35,12 @@ struct SVIOTriggerDataStruct
 
 	long lTriggerCount;
 
-	SVClock::SVTimeStamp m_TimeStamp[100];
+	SvTl::SVTimeStamp m_TimeStamp[100];
 
-	SVClock::SVTimeStamp m_LastTime;
-	SVClock::SVTimeStamp m_TotalTime;
-	SVClock::SVTimeStamp m_MinTime;
-	SVClock::SVTimeStamp m_MaxTime;
+	SvTl::SVTimeStamp m_LastTime;
+	SvTl::SVTimeStamp m_TotalTime;
+	SvTl::SVTimeStamp m_MinTime;
+	SvTl::SVTimeStamp m_MaxTime;
 
 	void OnTriggerStart();
 

@@ -11,7 +11,8 @@
 
 #pragma once
 
-namespace Seidenader { namespace SVUtilityLibrary {
+namespace SvUl
+{
 	namespace histogram
 	{
 		enum bound_state { unknown = 0x00, shown = 0x01, active = 0x02, state_mask = 0x03 };
@@ -165,8 +166,6 @@ namespace Seidenader { namespace SVUtilityLibrary {
 			return valleys[valleys.size()/2];
 		}
 	};
-}
-}
+} // namespace SvUl
 
-namespace SvUl = Seidenader::SVUtilityLibrary;
-namespace histogram = Seidenader::SVUtilityLibrary::histogram;
+namespace histogram = SvUl::histogram;

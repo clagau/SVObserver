@@ -11,7 +11,7 @@
 
 #pragma once
 
-namespace Sv { namespace Container
+namespace SvCl
 {
 	template<typename Key, typename Data>
 	class SVCompareKeys : public std::unary_function< std::pair<Key, Data >, bool>
@@ -28,8 +28,7 @@ namespace Sv { namespace Container
 	private:
 		Key m_elementKey;
 	};
-} /* namespace SVContainerLibrary */ } /* namespace Seidenader */
+} //namespace SvCl
 
-namespace SvCl = Sv::Container;
 
 

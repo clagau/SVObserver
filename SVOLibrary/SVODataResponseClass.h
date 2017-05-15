@@ -42,11 +42,11 @@ public:
 	HRESULT GetOwner( void **pvOwner ) const;
 	HRESULT SetOwner( void *pvOwner );
 
-	HRESULT GetStartTick( SVClock::SVTimeStamp& p_rTick ) const;
-	HRESULT SetStartTick( const SVClock::SVTimeStamp& p_rTick );
+	HRESULT GetStartTick( SvTl::SVTimeStamp& p_rTick ) const;
+	HRESULT SetStartTick( const SvTl::SVTimeStamp& p_rTick );
 
-	HRESULT GetEndTick( SVClock::SVTimeStamp& p_rTick ) const;
-	HRESULT SetEndTick( const SVClock::SVTimeStamp& p_rTick );
+	HRESULT GetEndTick( SvTl::SVTimeStamp& p_rTick ) const;
+	HRESULT SetEndTick( const SvTl::SVTimeStamp& p_rTick );
 
 
 
@@ -64,9 +64,9 @@ private:
 	void *mpvOwner;
 
 	//This attribute holds the start time stamp the response.
-	SVClock::SVTimeStamp m_StartTick;
+	SvTl::SVTimeStamp m_StartTick;
 	//This attribute holds the end time stamp the response.
-	SVClock::SVTimeStamp m_EndTick;
+	SvTl::SVTimeStamp m_EndTick;
 
 };
 

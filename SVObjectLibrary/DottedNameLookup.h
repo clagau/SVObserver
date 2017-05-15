@@ -12,7 +12,7 @@
 #include "SVObjectManagerClass.h"
 #include "SVObjectClass.h"
 
-namespace Seidenader { namespace SVObjectLibrary
+namespace SvOl
 {
 	class DottedNameLookup : public SvCl::IGraphNameLookup
 	{
@@ -46,6 +46,4 @@ namespace Seidenader { namespace SVObjectLibrary
 		mutable SVString m_LabelName;
 	#pragma endregion Member Variables
 	};
-} /* namespace SVObjectLibrary */ } /* namespace Seidenader */
-
-namespace SvOl = Seidenader::SVObjectLibrary;
+} //namespace SvOl

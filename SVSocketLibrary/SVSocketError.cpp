@@ -134,7 +134,7 @@ HRESULT Hresults[] =
 	E_UNEXPECTED, 					//	Unknown
 };
 
-namespace Seidenader { namespace SVSocketLibrary
+namespace SvSol
 {
 	SVSocketError::ErrorEnum SVSocketError::GetLastSocketError()
 	{
@@ -446,5 +446,4 @@ namespace Seidenader { namespace SVSocketLibrary
 		}
 		return error;
 	}
-
-} /*namespace SVSocketLibrary*/ } /*namespace Seidenader*/
+} //namespace SvSol

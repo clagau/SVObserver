@@ -15,8 +15,8 @@
 #include "SVCameraTriggerData.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace TriggerHandling {
-
+namespace SvTh
+{
 	SVCameraTriggerData::SVCameraTriggerData()
 	: SVObjectClass(nullptr, IDS_OBJECTNAME_CAMERA_TRIGGER_DATA)
 	{
@@ -63,7 +63,7 @@ namespace Seidenader { namespace TriggerHandling {
 		RegisterEmbeddedObject(&m_timestamp, SVCameraTriggerTimestampGuid, IDS_OBJECTNAME_CAMERA_TRIGGER_TIMESTAMP, false, SvOi::SVResetItemNone);
 		RegisterEmbeddedObject(&m_lineInState, SVCameraTriggerLineInStateGuid, IDS_OBJECTNAME_CAMERA_TRIGGER_LINEINSTATE, false, SvOi::SVResetItemNone);
 	*/
-		const UINT cAttributes = SV_VIEWABLE | SV_PUBLISHABLE | SV_ARCHIVABLE;
+		const UINT cAttributes = SvOi::SV_VIEWABLE | SvOi::SV_PUBLISHABLE | SvOi::SV_ARCHIVABLE;
 		m_timestamp.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::OverwriteAttribute );
 		m_lineInState.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::OverwriteAttribute );
 	}
@@ -117,4 +117,4 @@ namespace Seidenader { namespace TriggerHandling {
 	{
 		return m_lineInState.GetName();
 	}
-} /* namespace TriggerHandling */ } /* namespace Seidenader */
+} //namespace SvTh

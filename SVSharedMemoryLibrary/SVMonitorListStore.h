@@ -16,7 +16,7 @@
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace SVSharedMemoryLibrary
+namespace SvSml
 {
 	// typedef for std/boost containers to be used with shared memory and corresponding allocators
 	// for details see boost::interprocess and/or std library documentation
@@ -44,7 +44,5 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 
 		void_allocator m_allocator;
 	};
-} /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
-
-namespace SvSml = Seidenader::SVSharedMemoryLibrary;
+} //namespace SvSml
 

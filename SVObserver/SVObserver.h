@@ -403,7 +403,7 @@ public:
 private:
 	HANDLE m_hAppThread;
 
-	SVOIntelRAIDStatusClass m_IntelRAID;
+	SvStl::SVOIntelRAIDStatusClass m_IntelRAID;
 
 	SVIPDoc* m_pCurrentDocument;
 	long m_OfflineCount;
@@ -506,7 +506,7 @@ private:
 
 	unsigned char m_forcedImageUpdateTimeInSeconds;
 
-	NakGeneration m_NAKMode; ///Different Mode for NAK Behavior 
+	SvOi::NakGeneration m_NAKMode; ///Different Mode for NAK Behavior 
 	int m_NAKParameter;
 #pragma endregion Member variables
 };

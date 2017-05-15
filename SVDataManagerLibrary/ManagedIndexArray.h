@@ -141,7 +141,7 @@ protected:
 	// This attribute manages the lock for multi-threaded access to this container.
 	mutable SVCriticalSection m_Lock;
 	
-	SVClock::SVTimeStamp m_LastMessageTimeStamp;
+	SvTl::SVTimeStamp m_LastMessageTimeStamp;
 
 private:
 	SVManagedIndexArray( const SVManagedIndexArray& p_rObject );

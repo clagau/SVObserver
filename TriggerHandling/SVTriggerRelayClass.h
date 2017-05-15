@@ -15,8 +15,8 @@
 #include "SVIOLibrary/SVIOTriggerLoadLibraryClass.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace TriggerHandling {
-
+namespace SvTh
+{
 	template<typename TriggerHandler>
 	class SVTriggerRelayClass
 	{
@@ -33,10 +33,7 @@ namespace Seidenader { namespace TriggerHandling {
 		HRESULT UnregisterTriggerRelay();
 	};
 
-#include "SVTriggerRelayClass.inl"
+	#include "SVTriggerRelayClass.inl"
 
-} /* namespace TriggerHandling */ } /* namespace Seidenader */
-
-namespace SvTh = Seidenader::TriggerHandling;
-
+} //namespace SvTh
 

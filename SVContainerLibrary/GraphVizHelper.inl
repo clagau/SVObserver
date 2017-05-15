@@ -7,7 +7,7 @@
 /// GraphViz .dot format
 //******************************************************************************
 
-namespace Sv { namespace Container
+namespace SvCl
 {
 	//! Retrieve vertex name template class
 	template< typename NameFunction, typename Graph, typename VertexName >
@@ -122,5 +122,5 @@ namespace Sv { namespace Container
 		}
 		return Result;
 	}
-} /* namespace SVContainerLibrary */ } /* namespace Seidenader */
+} //namespace SvCl
 

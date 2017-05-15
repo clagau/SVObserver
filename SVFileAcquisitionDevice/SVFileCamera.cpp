@@ -363,16 +363,16 @@ void SVFileCamera::OnAPCEvent( ULONG_PTR data )
 	{
 		// add to event log
 		SVStringVector msgList;
-		SvOi::MessageTextEnum id = SvOi::Tid_Empty;
+		SvStl::MessageTextEnum id = SvStl::Tid_Empty;
 		if (filename.empty())
 		{
 			msgList.push_back(pCamera->GetDirectory());
-			id = SvOi::Tid_FileCamera_NoImageFile;
+			id = SvStl::Tid_FileCamera_NoImageFile;
 		}
 		else
 		{
 			msgList.push_back(filename);
-			id = SvOi::Tid_FileCamera_LoadFailed;
+			id = SvStl::Tid_FileCamera_LoadFailed;
 		}
 		SvStl::MessageMgrStd Exception( SvStl::LogOnly );
 		Exception.setMessage( SVMSG_IMAGE_LOAD_ERROR, id, msgList, SvStl::SourceFileParams(StdMessageParams) );

@@ -45,7 +45,7 @@
 //      mailto:chinajoe@aol.com
 //      http://users.aol.com/chinajoe
 
-namespace Seidenader { namespace GridCtrlLibrary
+namespace SvGcl
 {
 	class CCellID
 	{    
@@ -158,6 +158,6 @@ namespace Seidenader { namespace GridCtrlLibrary
 							std::min<int>(m_nMaxRow,rhs.m_nMaxRow), std::min<int>(m_nMaxCol,rhs.m_nMaxCol));
 	}
 
-} /*namespace GridCtrlLibrary*/ } /*namespace Seidenader*/
+} // namespace SvGcl
 
-namespace SvGcl = Seidenader::GridCtrlLibrary;
+

@@ -10,7 +10,7 @@
 //******************************************************************************
 
 
-namespace Seidenader { namespace SVXMLLibrary
+namespace SvXml
 {
 	template<typename SVT_BRANCH_HANDLE, typename SVT_LEAF_HANDLE>
 	SVXMLTree< SVT_BRANCH_HANDLE, SVT_LEAF_HANDLE >::SVXMLTree()
@@ -44,5 +44,5 @@ namespace Seidenader { namespace SVXMLLibrary
 		}
 		return l_Status;
 	}
-} /* namespace SVXMLLibrary */ } /* namespace Seidenader */
+} //namespace SvXml
 

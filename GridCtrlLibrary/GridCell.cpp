@@ -59,7 +59,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-namespace Seidenader { namespace GridCtrlLibrary
+namespace SvGcl
 {
 	IMPLEMENT_DYNCREATE(CGridCell, CGridCellBase)
 	IMPLEMENT_DYNCREATE(CGridDefaultCell, CGridCell)
@@ -301,4 +301,4 @@ namespace Seidenader { namespace GridCtrlLibrary
 		return (CFont*) &m_Font; 
 	}
 
-} /*namespace GridCtrlLibrary*/ } /*namespace Seidenader*/
+} // namespace SvGcl

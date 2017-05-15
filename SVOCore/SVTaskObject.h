@@ -90,7 +90,7 @@ public:
 	BOOL RegisterEmbeddedObject( SVObjectClass* pEmbeddedObject, const GUID& rGuidEmbeddedID, LPCTSTR strName, bool p_bResetAlways, SvOi::SVResetItemEnum eRequiredReset );
 	BOOL RegisterInputObject( SVInObjectInfoStruct* PInObjectInfo, const SVString& p_rInputName );
 
-	HRESULT GetOutputListFiltered( SVObjectReferenceVector& rvecObjects, UINT uiAttributes = SV_NO_ATTRIBUTES, bool bAND = true ); /* true means AND, false means OR */
+	HRESULT GetOutputListFiltered( SVObjectReferenceVector& rvecObjects, UINT uiAttributes = SvOi::SV_NO_ATTRIBUTES, bool bAND = true ); /* true means AND, false means OR */
 
 	HRESULT GetNonToolsetOutputList( SVOutputInfoListClass& p_rOutputInfoList ) const;
 
@@ -167,7 +167,7 @@ public:
 
 	void GetPrivateInputList( SVInputInfoListClass& RInputInterface ) const;
 
-	HRESULT GetImageList( SVImageListClass& p_rImageList, UINT uiAttributes = SV_NO_ATTRIBUTES, bool bAND = true );
+	HRESULT GetImageList( SVImageListClass& p_rImageList, UINT uiAttributes = SvOi::SV_NO_ATTRIBUTES, bool bAND = true );
 
 	virtual HRESULT RegisterSubObject( SVObjectClass* pObject ) override;
 	virtual HRESULT UnregisterSubObject( SVObjectClass* pObject ) override;

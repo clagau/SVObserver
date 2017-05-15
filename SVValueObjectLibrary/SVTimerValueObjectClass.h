@@ -32,6 +32,6 @@ public:
 private:
 	void LocalInitialize();
 
-	SVClock::SVTimeStamp m_Start;  // Time Stamp in Milliseconds
+	SvTl::SVTimeStamp m_Start;  // Time Stamp in Milliseconds
 };
 

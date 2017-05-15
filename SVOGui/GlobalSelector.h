@@ -13,19 +13,14 @@
 #include "ObjectInterfaces\IRootObject.h"
 #pragma endregion Includes
 
-namespace Seidenader
+namespace SvOg
 {
-	namespace SVOGui
+	class GlobalSelector
 	{
-		class GlobalSelector
+	public:
+		SvOi::ISelectorItemVectorPtr operator()(UINT attribute)
 		{
-		public:
-			SvOi::ISelectorItemVectorPtr operator()(UINT attribute)
-			{
-				return SvOi::getRootChildSelectorList(_T(""), attribute);
-			}
-		};
-	}
-}
-
-namespace SvOg = Seidenader::SVOGui;
+			return SvOi::getRootChildSelectorList(_T(""), attribute);
+		}
+	};
+} //namespace SvOg

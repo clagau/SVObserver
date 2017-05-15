@@ -11,14 +11,9 @@
 #include "SVString.h"
 #include "SVUtilityLibrary\SVGUID.h"
 #pragma endregion Includes
-namespace Seidenader
+namespace SvUl
 {
-	namespace SVUtilityLibrary
-	{
-		typedef std::pair<SVString, SVGUID> NameGuidPair;
-		typedef std::deque<NameGuidPair> NameGuidList;
-		typedef std::map<SVString, NameGuidPair> InputNameGuidPairList;
-	}
-}
-
-namespace SvUl = Seidenader::SVUtilityLibrary;
+	typedef std::pair<SVString, SVGUID> NameGuidPair;
+	typedef std::deque<NameGuidPair> NameGuidList;
+	typedef std::map<SVString, NameGuidPair> InputNameGuidPairList;
+} // namespace SvUl

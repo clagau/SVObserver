@@ -35,7 +35,7 @@ public:
 #pragma region Public Methods
 public:
 	HRESULT Assign( const SVCameraInfoStruct& rCameraInfo, SVDataManagerLockTypeEnum LockType );
-	HRESULT Assign( SVClock::SVTimeStamp p_StartFrameTS, SVClock::SVTimeStamp p_EndFrameTS, const SVDataManagerHandle& p_rIndexHandle, SVDataManagerLockTypeEnum p_LockType );
+	HRESULT Assign( SvTl::SVTimeStamp p_StartFrameTS, SvTl::SVTimeStamp p_EndFrameTS, const SVDataManagerHandle& p_rIndexHandle, SVDataManagerLockTypeEnum p_LockType );
 
 	void Reset();
 	void ClearInfo();
@@ -47,9 +47,9 @@ public:
 	const void setCamera( const SVGUID& rCameraGuid, NextImageHandleIndexFunctor NextImageHandleIndex );
 	const SVGUID& getCameraGuid() const { return m_CameraGuid; };
 
-	SVClock::SVTimeStamp m_StartFrameTimeStamp;
-	SVClock::SVTimeStamp m_EndFrameTimeStamp;
-	SVClock::SVTimeStamp m_CallbackTimeStamp;
+	SvTl::SVTimeStamp m_StartFrameTimeStamp;
+	SvTl::SVTimeStamp m_EndFrameTimeStamp;
+	SvTl::SVTimeStamp m_CallbackTimeStamp;
 #pragma endregion Public Methods
 
 protected:

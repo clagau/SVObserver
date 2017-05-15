@@ -28,7 +28,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-namespace Seidenader { namespace SVOGui
+namespace SvOg
 {
 	SVFormulaEditorSheetClass::SVFormulaEditorSheetClass(const GUID& rInspectionID, const GUID& rTaskObjectID, const SVObjectTypeInfoStruct& rInfo, LPCTSTR pCaption, CWnd* pParentWnd, UINT iSelectPage)
 	: CPropertySheet(pCaption, pParentWnd, iSelectPage)
@@ -111,7 +111,7 @@ namespace Seidenader { namespace SVOGui
 					{
 						// Equation must be valid or disabled
 						SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-						Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_InvalidFormula, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10224 );
+						Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_InvalidFormula, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10224 );
 						return;
 					}
 				}
@@ -134,5 +134,5 @@ namespace Seidenader { namespace SVOGui
 				break;
 		}
 	}
-} /* namespace SVOGui */ } /* namespace Seidenader */
+} //namespace SvOg
 

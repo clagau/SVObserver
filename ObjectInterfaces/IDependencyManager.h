@@ -13,7 +13,7 @@
 #include "SVUtilityLibrary\SVGUID.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace ObjectInterfaces
+namespace SvOi
 {
 	typedef std::back_insert_iterator<StringPairVector> StringPairInserter;
 
@@ -29,7 +29,4 @@ namespace Seidenader { namespace ObjectInterfaces
 	//! \param rSourceSet [in] reference to the source set of GUIDs
 	//! \param nameToObjectType [in] Object type to define the dotted name start
 	void getToolDependency( StringPairInserter Inserter, const SVGuidSet& rSourceSet, SVObjectTypeEnum nameToObjectType, ToolDependencyEnum ToolDependency = Client );
-
-} /* namespace ObjectInterfaces */ } /* namespace Seidenader */
-
-namespace SvOi = Seidenader::ObjectInterfaces;
+} //namespace SvOi

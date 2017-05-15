@@ -14,7 +14,7 @@
 #include "SVSharedData.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace SVSharedMemoryLibrary
+namespace SvSml
 {
 	struct SVSharedRejectCache
 	{
@@ -26,6 +26,4 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 
 	typedef bip::allocator< SVSharedRejectCache, segment_manager_t > SVSharedRejectCacheAllocator;
 
-} /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
-
-namespace SvSml = Seidenader::SVSharedMemoryLibrary;
+} //namespace SvSml

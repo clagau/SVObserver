@@ -18,38 +18,33 @@
 #include "GuiController.h"
 #pragma endregion Includes
 
-namespace Seidenader
+namespace SvOg
 {
-	namespace SVOGui
+	class AuxiliaryExtentsController : public boost::noncopyable
 	{
-		class AuxiliaryExtentsController : public boost::noncopyable
-		{
-			typedef ValuesAccessor<BoundValues> Values;
-			typedef GuiController<Values, Values::value_type> ValuesController;
-			SVGUID m_InspectionID;
-			SVGUID m_TaskObjectID;
-			ImageController m_ImageController;
-			ValuesController m_Values;
-			SvUl::NameGuidList m_auxSourceImages;
+		typedef ValuesAccessor<BoundValues> Values;
+		typedef GuiController<Values, Values::value_type> ValuesController;
+		SVGUID m_InspectionID;
+		SVGUID m_TaskObjectID;
+		ImageController m_ImageController;
+		ValuesController m_Values;
+		SvUl::NameGuidList m_auxSourceImages;
 
-			public:
-				AuxiliaryExtentsController(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID);
-				virtual ~AuxiliaryExtentsController() {}
-				HRESULT Init();
-				HRESULT Commit();
-				bool AreAuxiliaryExtentsAvailable() const;
-				bool IsUpdateAuxExtentsEnabled() const;
-				void EnableAuxExtents(bool bEnable);
-				const SvUl::NameGuidList& GetAvailableImageList() const;
-				SVString GetAuxSourceImageName() const;
-				HRESULT SetAuxSourceImage(const SVString& rName);
-				SvUl::NameGuidPair GetAuxSourceImage() const;
+		public:
+			AuxiliaryExtentsController(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID);
+			virtual ~AuxiliaryExtentsController() {}
+			HRESULT Init();
+			HRESULT Commit();
+			bool AreAuxiliaryExtentsAvailable() const;
+			bool IsUpdateAuxExtentsEnabled() const;
+			void EnableAuxExtents(bool bEnable);
+			const SvUl::NameGuidList& GetAvailableImageList() const;
+			SVString GetAuxSourceImageName() const;
+			HRESULT SetAuxSourceImage(const SVString& rName);
+			SvUl::NameGuidPair GetAuxSourceImage() const;
 
-		private:
-			HRESULT FindAuxSourceImages();
-			HRESULT RunOnce();
-		};
-	}
-}
-
-namespace SvOg = Seidenader::SVOGui;
+	private:
+		HRESULT FindAuxSourceImages();
+		HRESULT RunOnce();
+	};
+} //namespace SvOg

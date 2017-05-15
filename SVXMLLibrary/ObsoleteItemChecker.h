@@ -15,7 +15,7 @@
 #include "SVUtilityLibrary/SVStringConversions.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace  SVXMLLibrary
+namespace SvXml
 {
 	template<typename TreeType>
 	static HRESULT HasObsoleteItem(TreeType& rTree, SVString& rItemType, int& errorCode);
@@ -24,8 +24,6 @@ namespace Seidenader { namespace  SVXMLLibrary
 	template< typename SVTreeType >
 	HRESULT CheckObsoleteItems( SVTreeType& rTree, const unsigned long& ulSVOConfigVersion, SVString& rItemType, int& errorCode );
 	
-} /* namespace SVXMLLibrary */ } /* namespace Seidenader */
+} //namespace SvXml
 
 #include "ObsoleteItemChecker.inl"
-
-namespace SvXml = Seidenader::SVXMLLibrary;

@@ -11,51 +11,45 @@
 
 #pragma once
 
-namespace Seidenader
+namespace SvMc
 {
-	namespace SVMFCControls
+	#define SV_TOOLBAR_BORDER_W 4
+	#define SV_TOOLBAR_BORDER_H	4
+
+	class SVToolBarClass : public CToolBarCtrl
 	{
-		#define SV_TOOLBAR_BORDER_W 4
-		#define SV_TOOLBAR_BORDER_H	4
+		// Construction
+	public:
+		SVToolBarClass();
 
-		class SVToolBarClass : public CToolBarCtrl
-		{
-			// Construction
-		public:
-			SVToolBarClass();
+		// Attributes
+	public:
 
-			// Attributes
-		public:
+	private:
+		int         m_nButtonCount;
+		TBBUTTON    *m_pTBButtons;
 
-		private:
-			int         m_nButtonCount;
-			TBBUTTON    *m_pTBButtons;
+		// Operations
+	public:
 
-			// Operations
-		public:
+		virtual BOOL Create(	DWORD dwStyle, const RECT& rect, 
+			CWnd* pParentWnd, UINT nID, 
+			UINT nBaseID, int nCount,const SIZE &size);
+		// Overrides
+		// ClassWizard generated virtual function overrides
+		//{{AFX_VIRTUAL(SVToolBarClass)
+		//}}AFX_VIRTUAL
 
-			virtual BOOL Create(	DWORD dwStyle, const RECT& rect, 
-				CWnd* pParentWnd, UINT nID, 
-				UINT nBaseID, int nCount,const SIZE &size);
-			// Overrides
-			// ClassWizard generated virtual function overrides
-			//{{AFX_VIRTUAL(SVToolBarClass)
-			//}}AFX_VIRTUAL
+		// Implementation
+	public:
+		virtual ~SVToolBarClass();
 
-			// Implementation
-		public:
-			virtual ~SVToolBarClass();
+		// Generated message map functions
+	protected:
+		//{{AFX_MSG(SVToolBarClass)
+		// NOTE - the ClassWizard will add and remove member functions here.
+		//}}AFX_MSG
 
-			// Generated message map functions
-		protected:
-			//{{AFX_MSG(SVToolBarClass)
-			// NOTE - the ClassWizard will add and remove member functions here.
-			//}}AFX_MSG
-
-			DECLARE_MESSAGE_MAP()
-		};
-	}
-}
-
-namespace SvMc = Seidenader::SVMFCControls;
-
+		DECLARE_MESSAGE_MAP()
+	};
+} //namespace SvMc

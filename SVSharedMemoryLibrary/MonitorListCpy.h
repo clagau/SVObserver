@@ -17,7 +17,7 @@
 #pragma endregion Includes
 
 
-namespace Seidenader { namespace SVSharedMemoryLibrary
+namespace SvSml
 {
 	
 	class SVMonitorListWriter;
@@ -71,14 +71,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		bool m_IsActive;
 		SVProductFilterEnum m_ProductFilter;
 	};
-
-	
 	typedef std::unique_ptr<MonitorListCpy> MonitorListCpyPointer;          /// unique Ptr to MonitorListCpy
 	typedef std::map<SVString, MonitorListCpyPointer> MonitorListCpyMap;    ///map Monitorlistname MonitorlistcpyPtr 
 	
-	
-
-
-} /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
-
-namespace SvSml = Seidenader::SVSharedMemoryLibrary;
+} //namespace SvSml

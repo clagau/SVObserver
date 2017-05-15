@@ -9,14 +9,13 @@
 #include "SVUtilityLibrary\SVString.h"
 #pragma endregion Includes
 
-namespace Seidenader 
-{ namespace SVSharedMemoryLibrary {
-
-	 const LPCTSTR ShareEvents::GNameChangeEvent  = _T("Global\\Seidenader_ChangeEvent");
-	 const LPCTSTR ShareEvents::GNameReadyEvent  = _T("Global\\Seidenader_ReadyEvent");
+namespace SvSml
+{
+	const LPCTSTR ShareEvents::GNameChangeEvent  = _T("Global\\Seidenader_ChangeEvent");
+	const LPCTSTR ShareEvents::GNameReadyEvent  = _T("Global\\Seidenader_ReadyEvent");
 	const  DWORD ShareEvents::DELAY =  30;
 	
-	 ShareEvents::ShareEvents(): m_StopEvent(NULL), m_hWatchThread(NULL),m_IsReady(false), m_IsInit(false),m_ReadyCounter(0)
+	ShareEvents::ShareEvents(): m_StopEvent(NULL), m_hWatchThread(NULL),m_IsReady(false), m_IsInit(false),m_ReadyCounter(0)
 	{
 		
 		PSECURITY_DESCRIPTOR psd = (PSECURITY_DESCRIPTOR) LocalAlloc(LPTR, SECURITY_DESCRIPTOR_MIN_LENGTH); 
@@ -35,7 +34,7 @@ namespace Seidenader
 			errorCode = GetLastError();
 			SVString  text = SvUl_SF::Format(_T("Create Change event  Failed Errorcode: %x"),errorCode); 
 			SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-			Exception.setMessage( SVMSG_SVO_44_SHARED_MEMORY, text.c_str(), SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16221_FailToCreateEvent );
+			Exception.setMessage( SVMSG_SVO_44_SHARED_MEMORY, text.c_str(), SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16221_FailToCreateEvent );
 			
 		}
 		m_hReadyEvent = ::CreateEvent(&sa,true,false,GNameReadyEvent);
@@ -44,7 +43,7 @@ namespace Seidenader
 			errorCode = GetLastError();
 			SVString  text = SvUl_SF::Format(_T("Create Ready event  Failed Errorcode: %x"),errorCode); 
 			SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-			Exception.setMessage( SVMSG_SVO_44_SHARED_MEMORY, text.c_str(), SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16222_FailToCreateEvent );
+			Exception.setMessage( SVMSG_SVO_44_SHARED_MEMORY, text.c_str(), SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16222_FailToCreateEvent );
 		}
 
 		LocalFree(psd);
@@ -200,8 +199,4 @@ namespace Seidenader
 		CloseHandle(m_StopEvent);
 		CloseHandle(m_hWatchThread);
 	}
-
-
-
-
-} /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
+} //namespace SvSml

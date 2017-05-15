@@ -12,36 +12,35 @@
 #include "SVSharedPPQReader.h"
 #include "SVMonitorListReader.h"
 
-namespace Seidenader { namespace SVSharedMemoryLibrary{
-
-class SharedMemReader
+namespace SvSml
 {
-public:
-	SharedMemReader(void);
-	~SharedMemReader(void);
+
+	class SharedMemReader
+	{
+	public:
+		SharedMemReader(void);
+		~SharedMemReader(void);
 		
-	///Function call to m_MLContainer
-	bool IsActiveMonitorList(const SVString& Monitorlistname ) const;
-	DWORD GetVersion() const; 
+		///Function call to m_MLContainer
+		bool IsActiveMonitorList(const SVString& Monitorlistname ) const;
+		DWORD GetVersion() const; 
 
-	/**Reload MonitorMap, PPQReader, Open Imagestores and create the imageBuffer   */
-	void Reload( DWORD version);
+		/**Reload MonitorMap, PPQReader, Open Imagestores and create the imageBuffer   */
+		void Reload( DWORD version);
 	
-	void Clear();
+		void Clear();
 
-	///returns an unique ptr the ppqreader  
-	upSharedPPQReader&  GetPPQReaderPtr(const SVString& ppqname); 
+		///returns an unique ptr the ppqreader  
+		upSharedPPQReader&  GetPPQReaderPtr(const SVString& ppqname); 
 
-//private:
-	typedef std::map<SVString, upSharedPPQReader>  PPQReaderMap; ///map SVString upSharedPPQReader
+	//private:
+		typedef std::map<SVString, upSharedPPQReader>  PPQReaderMap; ///map SVString upSharedPPQReader
 
-	SVMonitorListReader m_monitorListReader;
-	PPQReaderMap m_PPQSReaderMap; 
-	SharedImageContainer m_ImageContainer;
-	MLCpyContainer m_MLContainer;  //Container holds MonitorlistInformation  
+		SVMonitorListReader m_monitorListReader;
+		PPQReaderMap m_PPQSReaderMap; 
+		SharedImageContainer m_ImageContainer;
+		MLCpyContainer m_MLContainer;  //Container holds MonitorlistInformation  
 	
 
-};
-
-} /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
-namespace SvSml = Seidenader::SVSharedMemoryLibrary;
+	};
+} //namespace SvSml

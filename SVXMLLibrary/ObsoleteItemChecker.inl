@@ -5,7 +5,7 @@
 // This is the Configuration Obsolete Item checker
 //******************************************************************************
 
-namespace Seidenader { namespace  SVXMLLibrary
+namespace SvXml
 {
 	#pragma region String Defines
 	LPCWSTR const TAG_ALIAS = L"alias ";
@@ -161,7 +161,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 				if (!SvTi::SVHardwareManifest::IsValidProductType(static_cast<SVIMProductEnum>(iType)))
 				{
 					bInvalid = true;
-					rErrorCode = SvOi::Err_15043_UnknownProductType;
+					rErrorCode = SvStl::Err_15043_UnknownProductType;
 					rItemType = ITEM_PRODUCTTYPE;
 				}
 			}
@@ -173,14 +173,14 @@ namespace Seidenader { namespace  SVXMLLibrary
 	HRESULT HasObsoleteItem(TreeType& rTree, SVString& rItemType, int& rErrorCode)
 	{
 		ObsoleteItems cameraItems = boost::assign::list_of<>
-			( ObsoleteItem(TAG_VIPER, ITEM_ANALOG_CAMERA, SvOi::Err_15038_AnalogCamera) )
-			( ObsoleteItem(TAG_1394, ITEM_1394_CAMERA, SvOi::Err_15039_1394Camera) )
+			( ObsoleteItem(TAG_VIPER, ITEM_ANALOG_CAMERA, SvStl::Err_15038_AnalogCamera) )
+			( ObsoleteItem(TAG_1394, ITEM_1394_CAMERA, SvStl::Err_15039_1394Camera) )
 		;
 		ObsoleteItems taskItems = boost::assign::list_of<>
-			( ObsoleteItem(TAG_GAGETOOL, ITEM_GAGE_TOOL, SvOi::Err_15040_GageTool) )
-			( ObsoleteItem(TAG_PROFILETOOL, ITEM_PROFILE_TOOL, SvOi::Err_15041_ProfileTool) )
-			( ObsoleteItem(TAG_OCROCVANALYZER, ITEM_FAST_OCR, SvOi::Err_15042_FastOCR) )
-			( ObsoleteItem(TAG_OCROCVGRAYANALYZER, ITEM_FAST_OCR, SvOi::Err_15042_FastOCR) )
+			( ObsoleteItem(TAG_GAGETOOL, ITEM_GAGE_TOOL, SvStl::Err_15040_GageTool) )
+			( ObsoleteItem(TAG_PROFILETOOL, ITEM_PROFILE_TOOL, SvStl::Err_15041_ProfileTool) )
+			( ObsoleteItem(TAG_OCROCVANALYZER, ITEM_FAST_OCR, SvStl::Err_15042_FastOCR) )
+			( ObsoleteItem(TAG_OCROCVGRAYANALYZER, ITEM_FAST_OCR, SvStl::Err_15042_FastOCR) )
 		;
 		HRESULT hr = S_OK;
 		rErrorCode = 0;
@@ -197,4 +197,4 @@ namespace Seidenader { namespace  SVXMLLibrary
 		}
 		return hr;
 	}
-} /* namespace SVXMLLibrary */ } /* namespace Seidenader */
+} //namespace SvXml

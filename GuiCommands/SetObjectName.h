@@ -15,39 +15,34 @@
 #include "SVUtilityLibrary/SVGUID.h"
 #pragma endregion Includes
 
-namespace Seidenader
+namespace SvCmd
 {
-	namespace GuiCommand
+	struct SetObjectName : public boost::noncopyable
 	{
-		struct SetObjectName : public boost::noncopyable
+		SetObjectName(const SVGUID& rInstanceID, LPCTSTR name) : m_InstanceID(rInstanceID), m_Name(name) {}
+
+		// This method is where the real separation would occur by using sockets/named pipes/shared memory
+		// The logic contained within this method would be moved to the "Server" side of a Client/Server architecture
+		// and replaced with the building and sending of the command
+		HRESULT Execute()
 		{
-			SetObjectName(const SVGUID& rInstanceID, LPCTSTR name) : m_InstanceID(rInstanceID), m_Name(name) {}
+			HRESULT hr = S_OK;
 
-			// This method is where the real separation would occur by using sockets/named pipes/shared memory
-			// The logic contained within this method would be moved to the "Server" side of a Client/Server architecture
-			// and replaced with the building and sending of the command
-			HRESULT Execute()
+			SvOi::IObjectClass* pObject = SvOi::getObject(m_InstanceID);
+			if (pObject)
 			{
-				HRESULT hr = S_OK;
-
-				SvOi::IObjectClass* pObject = SvOi::getObject(m_InstanceID);
-				if (pObject)
-				{
-					pObject->SetName(m_Name);
-				}
-				else
-				{
-					hr = E_POINTER;
-				}
-				return hr;
+				pObject->SetName(m_Name);
 			}
-			bool empty() const { return false; }
+			else
+			{
+				hr = E_POINTER;
+			}
+			return hr;
+		}
+		bool empty() const { return false; }
 
-		private:
-			SVGUID m_InstanceID;
-			LPCTSTR m_Name;
-		};
-	}
+	private:
+		SVGUID m_InstanceID;
+		LPCTSTR m_Name;
+	};
 }
-
-namespace GuiCmd = Seidenader::GuiCommand;

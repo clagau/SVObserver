@@ -44,21 +44,21 @@ BOOL SVTimerValueObjectClass::Start()
 {
 	BOOL bOk = true;
 
-	m_Start = SVClock::GetTimeStamp();
+	m_Start = SvTl::GetTimeStamp();
 
 	return bOk;
 }
 
 BOOL SVTimerValueObjectClass::Stop(long lIndex)
 {
-	double Value = SVClock::ConvertTo( SVClock::Microseconds, ( SVClock::GetTimeStamp() - m_Start ) );
+	double Value = SvTl::ConvertTo( SvTl::Microseconds, ( SvTl::GetTimeStamp() - m_Start ) );
 
 	return S_OK == SetValue(static_cast<__int64> (Value), GetLastSetIndex(), lIndex );
 }
 
 void SVTimerValueObjectClass::LocalInitialize()
 {
-	m_Start = SVClock::GetTimeStamp();
+	m_Start = SvTl::GetTimeStamp();
 	SetTypeName(_T("Timer"));
 	setOutputFormat(_T("%I64u (µs)"));
 }

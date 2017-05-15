@@ -12,7 +12,7 @@
 #include "stdafx.h"
 #include "SVTextEditDialog.h"
 
-namespace Seidenader { namespace SVOGui
+namespace SvOg
 {
 	#pragma region Declarations
 	#ifdef _DEBUG
@@ -54,5 +54,5 @@ namespace Seidenader { namespace SVOGui
 		return true;
 	}
 	#pragma endregion Private Methods
-} /* namespace SVOGui */ } /* namespace Seidenader */
+} //namespace SvOg
 

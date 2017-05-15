@@ -15,53 +15,48 @@
 #include "SVContainerLibrary/SVList.h"
 #pragma endregion Includes
 
-namespace Seidenader
+namespace SvMc
 {
-	namespace SVMFCControls
+	class CSVOSelectItemListDlg : public CDialog
 	{
-		class CSVOSelectItemListDlg : public CDialog
-		{
-			// Construction
-		public:
-			void AddListBoxItem(CString sItem);
-			CSVOSelectItemListDlg(CWnd* pParent = nullptr);   // standard constructor
-			virtual ~CSVOSelectItemListDlg();
+		// Construction
+	public:
+		void AddListBoxItem(CString sItem);
+		CSVOSelectItemListDlg(CWnd* pParent = nullptr);   // standard constructor
+		virtual ~CSVOSelectItemListDlg();
 
-			void SetDisplayName(LPCTSTR sDisplayName);
-			int m_iSelectedItemPosition;
-			// Dialog Data
-			//{{AFX_DATA(CSVOSelectItemListDlg)
-			enum { IDD = IDD_DLG_AA_SELECT_ITEM_DLG };
-			CListBox	m_ctlSelectItemList;
-			CString	m_sSelectItemListValue;
-			//}}AFX_DATA
+		void SetDisplayName(LPCTSTR sDisplayName);
+		int m_iSelectedItemPosition;
+		// Dialog Data
+		//{{AFX_DATA(CSVOSelectItemListDlg)
+		enum { IDD = IDD_DLG_AA_SELECT_ITEM_DLG };
+		CListBox	m_ctlSelectItemList;
+		CString	m_sSelectItemListValue;
+		//}}AFX_DATA
 
 
-			// Overrides
-			// ClassWizard generated virtual function overrides
-			//{{AFX_VIRTUAL(CSVOSelectItemListDlg)
-		protected:
-			virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
-			//}}AFX_VIRTUAL
+		// Overrides
+		// ClassWizard generated virtual function overrides
+		//{{AFX_VIRTUAL(CSVOSelectItemListDlg)
+	protected:
+		virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
+		//}}AFX_VIRTUAL
 
-			// Implementation
-		protected:
+		// Implementation
+	protected:
 
-			// Generated message map functions
-			//{{AFX_MSG(CSVOSelectItemListDlg)
-			virtual BOOL OnInitDialog() override;
-			virtual void OnOK() override;
-			//}}AFX_MSG
-			DECLARE_MESSAGE_MAP()
+		// Generated message map functions
+		//{{AFX_MSG(CSVOSelectItemListDlg)
+		virtual BOOL OnInitDialog() override;
+		virtual void OnOK() override;
+		//}}AFX_MSG
+		DECLARE_MESSAGE_MAP()
 
-		private:
-			typedef SVList< CString > SVDisplayList;
+	private:
+		typedef SVList< CString > SVDisplayList;
 
-			SVDisplayList m_DisplayList;
+		SVDisplayList m_DisplayList;
 
-			CString m_sDisplay;
-		};
-	} //SVMFCControls
-} //Seidenader
-
-namespace SvMc = Seidenader::SVMFCControls;
+		CString m_sDisplay;
+	};
+} //namespace SvMc

@@ -152,10 +152,10 @@ BOOL SVIOController::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandl
 	_variant_t svVariant;
 
 	SVTreeType::SVBranchHandle htiIODoc = nullptr;
-	BOOL bTmp = SVNavigateTree::GetItemBranch( rTree, CTAG_IODOC, htiParent, htiIODoc );
+	BOOL bTmp = SvXml::SVNavigateTree::GetItemBranch( rTree, SvXml::CTAG_IODOC, htiParent, htiIODoc );
 	if( bTmp )
 	{
-		bOk = SVNavigateTree::GetItem( rTree, CTAG_UNIQUE_REFERENCE_ID, htiIODoc, svVariant );
+		bOk = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_UNIQUE_REFERENCE_ID, htiIODoc, svVariant );
 		if ( bOk )
 		{
 			SVGUID ObjectID( svVariant );
@@ -189,14 +189,14 @@ BOOL SVIOController::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandl
 
 // Sets up tree - Gets Data from SVIODoc
 // Creates Tree items branches so data will be ready to save...
-bool SVIOController::GetParameters( SVObjectXMLWriter& rWriter ) const
+bool SVIOController::GetParameters( SvXml::SVObjectXMLWriter& rWriter ) const
 {
 	bool bOk = true;
 
 	_variant_t svVariant;
 
 	svVariant = SVGUID( m_outObjectInfo.m_UniqueObjectID ).ToVARIANT();
-	rWriter.WriteAttribute( CTAG_UNIQUE_REFERENCE_ID, svVariant );
+	rWriter.WriteAttribute( SvXml::CTAG_UNIQUE_REFERENCE_ID, svVariant );
 
 	if( nullptr != m_pRemoteOutputController )
 	{
@@ -265,7 +265,7 @@ bool SVIOController::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_InvalidModuleReadyPointer, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidModuleReadyPointer, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 			pErrorMessages->push_back(Msg);
 	}
 	}
@@ -278,7 +278,7 @@ bool SVIOController::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_InvalidRaidBitPointer, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidRaidBitPointer, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -294,7 +294,7 @@ bool SVIOController::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 		Result = false;
 		if (nullptr != pErrorMessages)
 	{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_IoController_RebuildOutpuListFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_IoController_RebuildOutpuListFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 			pErrorMessages->push_back(Msg);
 	}
 	}

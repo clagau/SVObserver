@@ -18,7 +18,7 @@
 #include "SVLibrary/SVTaskObjectValueInterface.h"
 #include "SVOCore/SVTaskObjectList.h"
 #include "ObjectInterfaces\RangeEnum.h"
-#include "ObjectInterfaces\MessageTextEnum.h"
+#include "SVStatusLibrary/MessageTextEnum.h"
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
@@ -61,7 +61,7 @@ public:
 	/// \param messageList [out] additionalText to message text
 	/// \returns HRESULT S_OK if successful
 	//************************************
-	HRESULT CheckInternalData(SvOi::MessageTextEnum &messageId, SVStringVector &messageList) const;
+	HRESULT CheckInternalData(SvStl::MessageTextEnum &messageId, SVStringVector &messageList) const;
 
 	//************************************
 	// Description:  Set the data
@@ -69,7 +69,7 @@ public:
 	// Parameter:  lp <in>:  string what to set
 	// Returns:  void, but throw an Exception from type ExceptionMgr1 if set failed
 	//************************************
-	 void SetInternalData(SvOi::MessageTextEnum er, LPCTSTR lp);
+	 void SetInternalData(SvStl::MessageTextEnum er, LPCTSTR lp);
 
 	//************************************
 	// Description:  set m_pRange as TaskObject

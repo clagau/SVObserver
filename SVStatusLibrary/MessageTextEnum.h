@@ -6,7 +6,7 @@
 //******************************************************************************
 #pragma once
 
-namespace Seidenader { namespace ObjectInterfaces
+namespace SvStl
 {
 	enum MessageTextEnum
 	{
@@ -483,6 +483,4 @@ namespace Seidenader { namespace ObjectInterfaces
 		Tid_StdException,
 		Tid_ColorToolExtentsChanged,
 	};
-} /* namespace ObjectInterfaces */ } /* namespace Seidenader */
-
-namespace SvOi = Seidenader::ObjectInterfaces;
+} //namespace SvStl

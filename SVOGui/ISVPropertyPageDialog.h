@@ -11,14 +11,12 @@
 
 #pragma once
 
-namespace Seidenader {	namespace SVOGui	{
+namespace SvOg
+{
 	class ISVPropertyPageDialog
 	{
 	public:
 		virtual ~ISVPropertyPageDialog() {}
 		virtual bool QueryAllowExit() = 0;
 	};
-}}  //namespace Seidenader::SVOGui
-
-namespace SvOg = Seidenader::SVOGui;
-
+} //namespace SvOg

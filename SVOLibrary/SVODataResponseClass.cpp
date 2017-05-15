@@ -25,8 +25,8 @@ SVODataResponseClass::SVODataResponseClass()
 , m_EndTick( 0.0 )
 
 {
-	m_StartTick = SVClock::GetTimeStamp();
-	m_EndTick = SVClock::GetTimeStamp();
+	m_StartTick = SvTl::GetTimeStamp();
+	m_EndTick = SvTl::GetTimeStamp();
 }
 
 /*
@@ -78,8 +78,8 @@ HRESULT SVODataResponseClass::Reset()
 	mbIsValid = false;
 	mbIsComplete = false;
 
-	m_StartTick = SVClock::GetTimeStamp();
-	m_EndTick = SVClock::GetTimeStamp();
+	m_StartTick = SvTl::GetTimeStamp();
+	m_EndTick = SvTl::GetTimeStamp();
 
 	return hrOk;
 }
@@ -111,7 +111,7 @@ HRESULT SVODataResponseClass::SetOwner( void *pvOwner )
 /*
 This method returns the start time stamp of this object.
 */
-HRESULT SVODataResponseClass::GetStartTick( SVClock::SVTimeStamp& p_rTick ) const
+HRESULT SVODataResponseClass::GetStartTick( SvTl::SVTimeStamp& p_rTick ) const
 {
 	HRESULT hrOk = S_OK;
 
@@ -123,7 +123,7 @@ HRESULT SVODataResponseClass::GetStartTick( SVClock::SVTimeStamp& p_rTick ) cons
 /*
 This method sets the start time stamp of this object.
 */
-HRESULT SVODataResponseClass::SetStartTick( const SVClock::SVTimeStamp& p_rTick )
+HRESULT SVODataResponseClass::SetStartTick( const SvTl::SVTimeStamp& p_rTick )
 {
 	HRESULT hrOk = S_OK;
 
@@ -135,7 +135,7 @@ HRESULT SVODataResponseClass::SetStartTick( const SVClock::SVTimeStamp& p_rTick 
 /*
 This method returns the end time stamp of this object.
 */
-HRESULT SVODataResponseClass::GetEndTick( SVClock::SVTimeStamp& p_rTick ) const
+HRESULT SVODataResponseClass::GetEndTick( SvTl::SVTimeStamp& p_rTick ) const
 {
 	HRESULT hrOk = S_OK;
 
@@ -147,7 +147,7 @@ HRESULT SVODataResponseClass::GetEndTick( SVClock::SVTimeStamp& p_rTick ) const
 /*
 This method sets the end time stamp of this object.
 */
-HRESULT SVODataResponseClass::SetEndTick( const SVClock::SVTimeStamp& p_rTick )
+HRESULT SVODataResponseClass::SetEndTick( const SvTl::SVTimeStamp& p_rTick )
 {
 	HRESULT hrOk = S_OK;
 

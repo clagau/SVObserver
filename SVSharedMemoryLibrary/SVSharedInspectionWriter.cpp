@@ -17,7 +17,7 @@
 #include "SharedMemWriter.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace SVSharedMemoryLibrary
+namespace SvSml
 {
 	SVSharedInspectionWriter::SVSharedInspectionWriter()
 		: m_pSharedLastInspectedCache(nullptr)
@@ -273,5 +273,5 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		}
 		return hr;
 	}
-} /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
+} //namespace SvSml
 

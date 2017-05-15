@@ -25,7 +25,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-namespace Seidenader { namespace  SVXMLLibrary
+namespace SvXml
 {
 	SaxParser::SaxParser():
 	  m_ParseTime(0),
@@ -43,7 +43,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 		{
 			ASSERT(false);
 			SvStl::MessageMgrStd Exception(SvStl::LogOnly);
-			Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR, SvOi::Tid_Sax_ConInitializeExFailed, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16073_COINITIALIZE_ );
+			Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR, SvStl::Tid_Sax_ConInitializeExFailed, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16073_COINITIALIZE_ );
 		}
 		else if(S_FALSE == hr)
 		{
@@ -325,5 +325,5 @@ namespace Seidenader { namespace  SVXMLLibrary
 
 		return hr;
 	}
-} /* namespace SVXMLLibrary */ } /* namespace Seidenader */
+} //namespace SvXml
 

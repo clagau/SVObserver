@@ -24,7 +24,7 @@ public:
 	unsigned long m_ulDigitizerHandle;
 	unsigned long m_ulBufferIndex;
 
-	SVClock::SVTimeStamp m_StartFrameTimeStamp;
+	SvTl::SVTimeStamp m_StartFrameTimeStamp;
 
 };
 

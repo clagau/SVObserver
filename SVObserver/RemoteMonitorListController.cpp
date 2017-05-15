@@ -143,7 +143,7 @@ bool RemoteMonitorListController::IsValidMonitoredObject(const SVObjectClass* pO
 	if (nullptr != pObject)
 	{
 		UINT attr = pObject->ObjectAttributesSet();
-		bRetVal = (attr & (SV_PUBLISHABLE | SV_PUBLISH_RESULT_IMAGE) ? true : false);
+		bRetVal = (attr & (SvOi::SV_PUBLISHABLE | SvOi::SV_PUBLISH_RESULT_IMAGE) ? true : false);
 		//check to see if MainImageClass
 		if (!bRetVal)
 		{
@@ -240,7 +240,7 @@ HRESULT RemoteMonitorListController::InitMonitorListInSharedMemory(size_t size)
 	if (S_OK != hr)
 	{
 		SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-		Exception.setMessage( SVMSG_SVO_44_SHARED_MEMORY, SvOi::Tid_ErrorInitMonitorListInSharedMemory, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_15044_InitMonitorListInSharedMemory );
+		Exception.setMessage( SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_ErrorInitMonitorListInSharedMemory, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_15044_InitMonitorListInSharedMemory );
 	}
 	return hr;
 }

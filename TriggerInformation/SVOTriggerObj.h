@@ -18,8 +18,8 @@
 #pragma endregion Includes
 
 
-namespace Seidenader { namespace TriggerInformation {
-
+namespace SvTi
+{
 	class SVOTriggerObj  
 	{
 	public:
@@ -47,7 +47,4 @@ namespace Seidenader { namespace TriggerInformation {
 
 	typedef SVSharedPtr< SVOTriggerObj > SVOTriggerObjPtr;
 
-
-} /* namespace TriggerInformation */ } /* namespace Seidenader */
-
-namespace SvTi = Seidenader::TriggerInformation;
+} //namespace SvTi

@@ -15,40 +15,35 @@
 #include "SVUtilityLibrary\NameGuidList.h"
 #pragma endregion Includes
 
-namespace Seidenader
+namespace SvCmd
 {
-	namespace GuiCommand
+	struct GetAvailableAuxSourceImages: public boost::noncopyable
 	{
-		struct GetAvailableAuxSourceImages: public boost::noncopyable
+		GetAvailableAuxSourceImages(const GUID& rObjectID) : m_InstanceID(rObjectID) {}
+
+		// This method is where the real separation would occur by using sockets/named pipes/shared memory
+		// The logic contained within this method would be moved to the "Server" side of a Client/Server architecture
+		// and replaced with the building and sending of the command
+		HRESULT Execute()
 		{
-			GetAvailableAuxSourceImages(const GUID& rObjectID) : m_InstanceID(rObjectID) {}
-
-			// This method is where the real separation would occur by using sockets/named pipes/shared memory
-			// The logic contained within this method would be moved to the "Server" side of a Client/Server architecture
-			// and replaced with the building and sending of the command
-			HRESULT Execute()
+			HRESULT hr = S_OK;
+			
+			SvOi::ITool* pTool = dynamic_cast<SvOi::ITool *>(SvOi::getObject(m_InstanceID));
+			if (pTool)
 			{
-				HRESULT hr = S_OK;
-				
-				SvOi::ITool* pTool = dynamic_cast<SvOi::ITool *>(SvOi::getObject(m_InstanceID));
-				if (pTool)
-				{
-					m_list = pTool->getAvailableAuxSourceImages();
-				}
-				else
-				{
-					hr = E_POINTER;
-				}
-				return hr;
+				m_list = pTool->getAvailableAuxSourceImages();
 			}
-			bool empty() const { return false; }
-			const SvUl::NameGuidList& AvailableImages() const { return m_list; }
+			else
+			{
+				hr = E_POINTER;
+			}
+			return hr;
+		}
+		bool empty() const { return false; }
+		const SvUl::NameGuidList& AvailableImages() const { return m_list; }
 
-		private:
-			SvUl::NameGuidList m_list;
-			GUID m_InstanceID;
-		};
-	}
-}
-
-namespace GuiCmd = Seidenader::GuiCommand;
+	private:
+		SvUl::NameGuidList m_list;
+		GUID m_InstanceID;
+	};
+} //namespace SvCmd

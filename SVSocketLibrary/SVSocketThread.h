@@ -22,7 +22,7 @@ ThreadFunc must have the following prototype:
      void ThreadFunc();
 */
 
-namespace Seidenader { namespace SVSocketLibrary
+namespace SvSol
 {
 	template <typename ThreadFunc>
 	class SVSocketThread
@@ -51,9 +51,7 @@ namespace Seidenader { namespace SVSocketLibrary
 		bool IsActive() const;
 		HANDLE GetThreadHandle() const;
 	};
-} /*namespace SVSocketLibrary*/ } /*namespace Seidenader*/
-
-namespace SvSol = Seidenader::SVSocketLibrary;
+} //namespace SvSol
 
 #include "SVSocketThread.inl"
 

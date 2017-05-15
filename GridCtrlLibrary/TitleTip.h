@@ -38,7 +38,7 @@
 
 #pragma once
 
-namespace Seidenader { namespace GridCtrlLibrary
+namespace SvGcl
 {
 	#define TITLETIP_CLASSNAME _T("ZTitleTip")
 
@@ -88,6 +88,6 @@ namespace Seidenader { namespace GridCtrlLibrary
 		DECLARE_MESSAGE_MAP()
 	};
 
-} /*namespace GridCtrlLibrary*/ } /*namespace Seidenader*/
+} // namespace SvGcl
 
-namespace SvGcl = Seidenader::GridCtrlLibrary;
+

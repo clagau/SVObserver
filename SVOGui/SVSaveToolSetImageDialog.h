@@ -17,45 +17,36 @@
 #include "ImageController.h"
 #pragma endregion Includes
 
-namespace Seidenader
+namespace SvOg
 {
-	namespace SVOGui
+	class SVSaveToolSetImageDialogClass : public CDialog
 	{
-		class SVSaveToolSetImageDialogClass : public CDialog
-		{
-		public:
-			SVSaveToolSetImageDialogClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, CWnd* pParent = nullptr);   // standard constructor
+	public:
+		SVSaveToolSetImageDialogClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, CWnd* pParent = nullptr);   // standard constructor
 
-			//{{AFX_VIRTUAL(SVSaveToolSetImageDialogClass)
-			protected:
-			virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
-			//}}AFX_VIRTUAL
-
+		//{{AFX_VIRTUAL(SVSaveToolSetImageDialogClass)
 		protected:
-			// Generated message map functions
-			//{{AFX_MSG(SVSaveToolSetImageDialogClass)
-			afx_msg void OnSaveButton();
-			virtual BOOL OnInitDialog() override;
-			afx_msg void OnSelchangeAvailableImagesCombo();
-			//}}AFX_MSG
-			DECLARE_MESSAGE_MAP()
+		virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
+		//}}AFX_VIRTUAL
 
-			void setImages();
+	protected:
+		// Generated message map functions
+		//{{AFX_MSG(SVSaveToolSetImageDialogClass)
+		afx_msg void OnSaveButton();
+		virtual BOOL OnInitDialog() override;
+		afx_msg void OnSelchangeAvailableImagesCombo();
+		//}}AFX_MSG
+		DECLARE_MESSAGE_MAP()
 
-		private:
-			//{{AFX_DATA(SVSaveToolSetImageDialogClass)
-			enum { IDD = IDD_SELECT_TOOLSET_IMAGE_TO_SAVE_DIALOG };
-			PictureDisplay m_currentSelectedImageCtrl;
-			CComboBox m_availableImagesComboCtrl;
-			//}}AFX_DATA
+		void setImages();
 
-			ImageController m_ImageController;
-		};
-	}
-}
+	private:
+		//{{AFX_DATA(SVSaveToolSetImageDialogClass)
+		enum { IDD = IDD_SELECT_TOOLSET_IMAGE_TO_SAVE_DIALOG };
+		PictureDisplay m_currentSelectedImageCtrl;
+		CComboBox m_availableImagesComboCtrl;
+		//}}AFX_DATA
 
-namespace SvOg = Seidenader::SVOGui;
-
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
+		ImageController m_ImageController;
+	};
+} //namespace SvOg

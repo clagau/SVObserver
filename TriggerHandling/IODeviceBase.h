@@ -13,8 +13,8 @@
 #include "CallbackStructContainers.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace TriggerHandling {
-
+namespace SvTh
+{
 	/// the base class for all trigger-generating DLLs.
 	/// not supposed to be instantiated itself
 	class IODeviceBase
@@ -62,8 +62,4 @@ namespace Seidenader { namespace TriggerHandling {
 			return (rDispatcher.getCallback()== pCallback);
 		}
 	};
-
-
-} /* namespace TriggerHandling */ } /* namespace Seidenader */
-
-namespace SvTh = Seidenader::TriggerHandling;
+} //namespace SvTh

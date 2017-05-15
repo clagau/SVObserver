@@ -23,7 +23,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-namespace Seidenader { namespace SVOResource
+namespace SvOr
 {
 	SVOResourceApp theApp;
 
@@ -48,5 +48,4 @@ namespace Seidenader { namespace SVOResource
 		return TRUE;
 	}
 	#pragma endregion Public Methods
-} /*namespace SVOResource*/ } /*namespace Seidenader*/
-
+} //namespace SvOr

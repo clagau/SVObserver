@@ -80,7 +80,7 @@ protected:
 	long m_IPDocDisplayComplete;
 
 	long m_FrameRate;
-	SVClock::SVTimeStamp m_NextDisplayEvent;
-	SVClock::SVTimeStamp m_LastUpdateTime;
+	SvTl::SVTimeStamp m_NextDisplayEvent;
+	SvTl::SVTimeStamp m_LastUpdateTime;
 	SVIPDoc* m_pDoc;
 };

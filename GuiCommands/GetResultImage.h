@@ -15,43 +15,38 @@
 #include "SVUtilityLibrary\NameGuidList.h"
 #pragma endregion Includes
 
-namespace Seidenader
+namespace SvCmd
 {
-	namespace GuiCommand
+	struct GetResultImage: public boost::noncopyable
 	{
-		struct GetResultImage: public boost::noncopyable
+		GetResultImage(const GUID& rObjectID) : m_InstanceID(rObjectID) {}
+
+		// This method is where the real separation would occur by using sockets/named pipes/shared memory
+		// The logic contained within this method would be moved to the "Server" side of a Client/Server architecture
+		// and replaced with the building and sending of the command
+		HRESULT Execute()
 		{
-			GetResultImage(const GUID& rObjectID) : m_InstanceID(rObjectID) {}
+			HRESULT hr = S_OK;
 
-			// This method is where the real separation would occur by using sockets/named pipes/shared memory
-			// The logic contained within this method would be moved to the "Server" side of a Client/Server architecture
-			// and replaced with the building and sending of the command
-			HRESULT Execute()
+			SVObjectTypeInfoStruct imageObjectInfo(SVImageObjectType);
+			SvOi::ISVImage* pImage = SvOi::FindImageObject(m_InstanceID, imageObjectInfo);
+			if (pImage)
 			{
-				HRESULT hr = S_OK;
-
-				SVObjectTypeInfoStruct imageObjectInfo(SVImageObjectType);
-				SvOi::ISVImage* pImage = SvOi::FindImageObject(m_InstanceID, imageObjectInfo);
-				if (pImage)
-				{
-					SVString name = pImage->getDisplayedName();
-					SvOi::IObjectClass* pObject = dynamic_cast<SvOi::IObjectClass *>(pImage);
-					m_list.push_back(std::make_pair(name, pObject->GetUniqueObjectID()));
-				}
-				else
-				{
-					hr = E_POINTER;
-				}
-				return hr;
+				SVString name = pImage->getDisplayedName();
+				SvOi::IObjectClass* pObject = dynamic_cast<SvOi::IObjectClass *>(pImage);
+				m_list.push_back(std::make_pair(name, pObject->GetUniqueObjectID()));
 			}
-			bool empty() const { return false; }
-			const SvUl::NameGuidList& ResultImages() const { return m_list; }
+			else
+			{
+				hr = E_POINTER;
+			}
+			return hr;
+		}
+		bool empty() const { return false; }
+		const SvUl::NameGuidList& ResultImages() const { return m_list; }
 
-		private:
-			SvUl::NameGuidList m_list;
-			GUID m_InstanceID;
-		};
-	}
-}
-
-namespace GuiCmd = Seidenader::GuiCommand;
+	private:
+		SvUl::NameGuidList m_list;
+		GUID m_InstanceID;
+	};
+} //namespace SvCmd

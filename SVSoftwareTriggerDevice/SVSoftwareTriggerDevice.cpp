@@ -46,7 +46,7 @@ HRESULT SVSoftwareTriggerDevice::Initialize(bool bInit)
 	HRESULT hr = S_OK;
 	if (!bInit)
 	{
-		SVMMTimer::Stop();
+		SvTl::SVMMTimer::Stop();
 
 		// Clear all callbacks
 		m_triggerDispatcherMap.clear();
@@ -67,7 +67,7 @@ HRESULT SVSoftwareTriggerDevice::Initialize(bool bInit)
 			(4, timerStruct)).convert_to_container<TimerList>();
 
 
-		//SVMMTimer::Start();
+		//SvTl::SVMMTimer::Start();
 	}
 	return hr;
 }
@@ -247,7 +247,7 @@ HRESULT SVSoftwareTriggerDevice::SetTriggerPeriod( unsigned long handle, long p_
 		Iterator nameIt = m_nameHandleList.get<to>().find(handle);
 		if (nameIt != m_nameHandleList.get<to>().end())
 		{
-			SVMMTimer::SetInterval(nameIt->first, p_lPeriod);
+			SvTl::SVMMTimer::SetInterval(nameIt->first, p_lPeriod);
 		}
 		hr = S_OK;
 	}
@@ -272,7 +272,7 @@ HRESULT SVSoftwareTriggerDevice::SetTimerCallback(unsigned long handle)
 		Iterator nameIt = m_nameHandleList.get<to>().find(handle);
 		if (nameIt != m_nameHandleList.get<to>().end())
 		{
-			SVMMTimer::Subscribe(nameIt->first, timerInfo.timerPeriod, &timerInfo.timerCallback);
+			SvTl::SVMMTimer::Subscribe(nameIt->first, timerInfo.timerPeriod, &timerInfo.timerCallback);
 			hr = S_OK;
 		}
 	}
@@ -292,7 +292,7 @@ HRESULT SVSoftwareTriggerDevice::RemoveTimerCallback(unsigned long handle)
 		Iterator nameIt = m_nameHandleList.get<to>().find(handle);
 		if (nameIt != m_nameHandleList.get<to>().end())
 		{
-			SVMMTimer::UnSubscribe(nameIt->first);
+			SvTl::SVMMTimer::UnSubscribe(nameIt->first);
 			hr = S_OK;
 		}
 	}

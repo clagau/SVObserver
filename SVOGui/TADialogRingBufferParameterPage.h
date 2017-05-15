@@ -19,7 +19,7 @@
 #include "ObjectSelectorController.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace SVOGui
+namespace SvOg
 {
 	class TADialogRingBufferParameterPage : public CPropertyPage, public ISVPropertyPageDialog
 	{
@@ -90,6 +90,4 @@ namespace Seidenader { namespace SVOGui
 		ObjectSelectorController m_objectSelector;
 #pragma endregion Member Variables
 	};
-} /* namespace SVOGui */ } /* namespace Seidenader */
-
-namespace SvOg = Seidenader::SVOGui;
+} //namespace SvOg

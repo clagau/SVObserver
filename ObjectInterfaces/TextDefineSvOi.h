@@ -8,7 +8,7 @@
 
 #pragma once
 
-namespace Seidenader { namespace ObjectInterfaces
+namespace SvOi
 {
 	const TCHAR* const WatershedMarkerImageConnectionName = _T( "WatershedFilterMarkerImage" );
 	const TCHAR* const ImageAnalyzerImageName = _T( "ImageAnalyzerImage" );
@@ -31,6 +31,4 @@ namespace Seidenader { namespace ObjectInterfaces
 	const TCHAR* const cDefaultTag = _T("Default");
 	const TCHAR* const cBucketTag = _T("Array");			// for backwards compatibility
 	const TCHAR* const cArrayTag = _T("Array_Elements");	// new style; one bucket, all array values
-} /* namespace ObjectInterfaces */ } /* namespace Seidenader */
-
-namespace SvOi = Seidenader::ObjectInterfaces;
+} //namespace SvOi

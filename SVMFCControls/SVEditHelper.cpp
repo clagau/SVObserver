@@ -18,66 +18,62 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-namespace Seidenader
+namespace SvMc
 {
-	namespace SVMFCControls
+	SVEditHelper::SVEditHelper()
 	{
-		SVEditHelper::SVEditHelper()
+	}
+
+	SVEditHelper::~SVEditHelper()
+	{
+	}
+
+	BEGIN_MESSAGE_MAP(SVEditHelper, CEdit)
+		//{{AFX_MSG_MAP(SVEditHelper)
+		ON_WM_KEYUP()
+		ON_WM_KILLFOCUS()
+		//}}AFX_MSG_MAP
+	END_MESSAGE_MAP()
+
+	/////////////////////////////////////////////////////////////////////////////
+	// SVEditHelper message handlers
+
+	void SVEditHelper::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags) 
+	{
+		switch( nChar )
 		{
-		}
-
-		SVEditHelper::~SVEditHelper()
-		{
-		}
-
-		BEGIN_MESSAGE_MAP(SVEditHelper, CEdit)
-			//{{AFX_MSG_MAP(SVEditHelper)
-			ON_WM_KEYUP()
-			ON_WM_KILLFOCUS()
-			//}}AFX_MSG_MAP
-		END_MESSAGE_MAP()
-
-		/////////////////////////////////////////////////////////////////////////////
-		// SVEditHelper message handlers
-
-		void SVEditHelper::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags) 
-		{
-			switch( nChar )
-			{
-			case VK_RETURN:
-				GetParent()->SendMessage( WM_APP_ED_EDIT_FINISHED, (WPARAM)TRUE );	// Commit changes
-				break;
-
-			case VK_ESCAPE:
-				GetParent()->SendMessage( WM_APP_ED_EDIT_FINISHED, (WPARAM)FALSE );	// Disregard changes
-				break;
-			}
-
-			CEdit::OnKeyUp(nChar, nRepCnt, nFlags);
-		}
-
-		void SVEditHelper::OnKillFocus(CWnd* pNewWnd) 
-		{
+		case VK_RETURN:
 			GetParent()->SendMessage( WM_APP_ED_EDIT_FINISHED, (WPARAM)TRUE );	// Commit changes
+			break;
 
-			CEdit::OnKillFocus(pNewWnd);
+		case VK_ESCAPE:
+			GetParent()->SendMessage( WM_APP_ED_EDIT_FINISHED, (WPARAM)FALSE );	// Disregard changes
+			break;
 		}
 
+		CEdit::OnKeyUp(nChar, nRepCnt, nFlags);
+	}
 
-		BOOL SVEditHelper::PreTranslateMessage(MSG* pMsg)
+	void SVEditHelper::OnKillFocus(CWnd* pNewWnd) 
+	{
+		GetParent()->SendMessage( WM_APP_ED_EDIT_FINISHED, (WPARAM)TRUE );	// Commit changes
+
+		CEdit::OnKillFocus(pNewWnd);
+	}
+
+
+	BOOL SVEditHelper::PreTranslateMessage(MSG* pMsg)
+	{
+		if( pMsg->message == WM_KEYDOWN )
 		{
-			if( pMsg->message == WM_KEYDOWN )
+			UINT nChar = static_cast<UINT>(pMsg->wParam);
+			if (nChar == VK_ESCAPE || nChar == VK_RETURN || nChar == VK_TAB)
 			{
-				UINT nChar = static_cast<UINT>(pMsg->wParam);
-				if (nChar == VK_ESCAPE || nChar == VK_RETURN || nChar == VK_TAB)
-				{
-					GetParent()->SetFocus();
-					return TRUE;
-				}
+				GetParent()->SetFocus();
+				return TRUE;
 			}
-
-			return CEdit::PreTranslateMessage(pMsg);
 		}
-	} //SVMFCControls
-} //Seidenader
 
+		return CEdit::PreTranslateMessage(pMsg);
+	}
+} //namespace SvMc

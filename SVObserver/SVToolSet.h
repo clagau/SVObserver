@@ -114,13 +114,13 @@ protected:
 
 	long m_SetNumber;
 
-	SVClock::SVTimeStamp m_StartTime;
-	SVClock::SVTimeStamp m_EndTime;
-	SVClock::SVTimeStamp m_AverageTime;
-	SVClock::SVTimeStamp m_ProcessTime;
+	SvTl::SVTimeStamp m_StartTime;
+	SvTl::SVTimeStamp m_EndTime;
+	SvTl::SVTimeStamp m_AverageTime;
+	SvTl::SVTimeStamp m_ProcessTime;
 
-	SVClock::SVTimeStamp m_TimeStampStart;
-	SVClock::SVTimeStamp m_TimeStampEnd;
+	SvTl::SVTimeStamp m_TimeStampStart;
+	SvTl::SVTimeStamp m_TimeStampEnd;
 
 	SVBoolValueObjectClass m_Enabled;
 	SVBoolValueObjectClass m_ResetCounts;

@@ -8,9 +8,8 @@
 //******************************************************************************
 #pragma once
 
-namespace Seidenader { namespace SVSharedMemoryLibrary
+namespace SvSml
 {
-	
 	//!Singleton class handles two global events 
 	///The events are used to signal status of shared memory  
 	class ShareEvents
@@ -77,6 +76,4 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		HANDLE m_hWatchThread;
 		DWORD m_ThreadId;
 	};
-} /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
-
-namespace SvSml = Seidenader::SVSharedMemoryLibrary;
+} //namespace SvSml

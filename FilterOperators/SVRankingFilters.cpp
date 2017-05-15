@@ -154,7 +154,7 @@ void SVRankingFilterClass::init()
 	m_lvoRankingHeight.SetDefaultValue( 3L, TRUE );
 	m_lvoRankingRank.SetDefaultValue( SVValueMedian, TRUE );
 
-	const UINT cAttributes = SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE;
+	const UINT cAttributes = SvOi::SV_PRINTABLE | SvOi::SV_SETABLE_ONLINE | SvOi::SV_REMOTELY_SETABLE;
 	for( l = 0; l < 49; l++ )
 	{
 		m_plvoRankingCells[l]->SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
@@ -280,13 +280,13 @@ void SVRankingFilterClass::RebuildRanking()
 	delete [] pRankingData;	
 	for( l = 0; l < lWidth * lHeight; l++ )
 	{
-		m_plvoRankingCells[l]->SetObjectAttributesAllowed( SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES | SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE, SvOi::SetAttributeType::OverwriteAttribute );
+		m_plvoRankingCells[l]->SetObjectAttributesAllowed( SvOi::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES | SvOi::SV_PRINTABLE | SvOi::SV_SETABLE_ONLINE | SvOi::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::OverwriteAttribute );
 	}// end for
 
 	for( l = lWidth * lHeight; l < 49; l++ )
 	{
-		m_plvoRankingCells[l]->SetObjectAttributesAllowed( SV_EMBEDABLE, SvOi::SetAttributeType::OverwriteAttribute );
-		m_plvoRankingCells[l]->SetObjectAttributesSet( SV_EMBEDABLE, SvOi::SetAttributeType::OverwriteAttribute );
+		m_plvoRankingCells[l]->SetObjectAttributesAllowed( SvOi::SV_EMBEDABLE, SvOi::SetAttributeType::OverwriteAttribute );
+		m_plvoRankingCells[l]->SetObjectAttributesSet( SvOi::SV_EMBEDABLE, SvOi::SetAttributeType::OverwriteAttribute );
 	}// end for
 }
 
@@ -328,7 +328,7 @@ bool SVRankingFilterClass::onRun( bool First, SVSmartHandlePointer RInputImageHa
 		{
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_RunFilterFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_RunFilterFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 				pErrorMessages->push_back(Msg);
 			}
 			// Signal that something was wrong...
@@ -344,7 +344,7 @@ bool SVRankingFilterClass::onRun( bool First, SVSmartHandlePointer RInputImageHa
 	{
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -368,7 +368,7 @@ bool SVRankingFilterClass::ValidateLocal(SvStl::MessageContainerVector *pErrorMe
 			SVStringVector msgList;
 			msgList.push_back(SvUl_SF::Format(_T("%d"), lWidth));
 			msgList.push_back(SvUl_SF::Format(_T("%d"), 7));
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_DataInvalidKernelWidth, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_DataInvalidKernelWidth, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -383,7 +383,7 @@ bool SVRankingFilterClass::ValidateLocal(SvStl::MessageContainerVector *pErrorMe
 			SVStringVector msgList;
 			msgList.push_back(SvUl_SF::Format(_T("%d"), lHeight));
 			msgList.push_back(SvUl_SF::Format(_T("%d"), 7));
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_DataInvalidKernelHeight, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_DataInvalidKernelHeight, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 			pErrorMessages->push_back(Msg);
 		}
 	}

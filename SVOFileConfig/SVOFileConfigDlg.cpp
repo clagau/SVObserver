@@ -233,7 +233,7 @@ void SVOFileConfigDlg::OnButtonloadSvx()
 		bstrFileName = dlg.GetPathName();
 
 		m_XMLCTree.Clear();
-		SVOCMLoadConfiguration(m_ulCurrentVersion, bstrFileName, m_XMLCTree);
+		SvXml::SVOCMLoadConfiguration(m_ulCurrentVersion, bstrFileName, m_XMLCTree);
 		if( m_ulCurrentVersion >= 0x50100)
 		{
 			CheckConfiguration();
@@ -270,7 +270,7 @@ void SVOFileConfigDlg::OnButtonsaveSvx()
 		XMLOutFile.open( dlg.GetPathName());
 		if (XMLOutFile.is_open())
 		{
-			SVObjectXMLWriter writer(XMLOutFile);
+			SvXml::SVObjectXMLWriter writer(XMLOutFile);
 			writer.setNewLine( true );
 			SVString RootName( SvOl::FqnRoot );
 			writer.WriteRootElement( RootName.c_str() );

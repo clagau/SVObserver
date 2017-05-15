@@ -11,7 +11,7 @@
 
 #pragma once
 
-namespace Seidenader { namespace SVSocketLibrary
+namespace SvSol
 {
 	class SVSocketError
 	{
@@ -84,9 +84,7 @@ namespace Seidenader { namespace SVSocketLibrary
 		SVSocketError();
 		~SVSocketError();
 	};
-} /*namespace SVSocketLibrary*/ } /*namespace Seidenader*/
-
-namespace SvSol = Seidenader::SVSocketLibrary;
+} //namespace SvSol
 
 #if _MSC_VER < 1700
 #define INET_E_INVALID_URL					_HRESULT_TYPEDEF_(0x800C0002L)

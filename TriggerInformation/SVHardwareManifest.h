@@ -20,8 +20,8 @@
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace TriggerInformation {
-
+namespace SvTi
+{
 	class SVHardwareManifest
 	{
 	public:
@@ -141,7 +141,4 @@ namespace Seidenader { namespace TriggerInformation {
 		typedef std::map< SVIMProductEnum, SVIMTypeInfoStruct > SVIMTypeMap;
 		static const SVIMTypeMap m_SVIMTypeMap;
 	};
-
-} /* namespace TriggerInformation */ } /* namespace Seidenader */
-
-namespace SvTi = Seidenader::TriggerInformation;
+} //namespace SvTi

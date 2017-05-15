@@ -21,208 +21,207 @@
 
 static int i = 0;
 
-namespace Seidenader { namespace TriggerInformation {
+namespace SvTi
+{
+	SVTriggerProcessingClass& SVTriggerProcessingClass::Instance()
+	{
+		static SVTriggerProcessingClass l_Object;
 
-		SVTriggerProcessingClass& SVTriggerProcessingClass::Instance()
+		return l_Object;
+	}
+
+	SVTriggerProcessingClass::SVTriggerProcessingClass()
+	{
+	}
+
+	SVTriggerProcessingClass::~SVTriggerProcessingClass()
+	{
+		Shutdown();
+	}
+
+	void SVTriggerProcessingClass::Startup()
+	{
+		const SVTriggerDeviceParamsVector& l_rTriggerParams = SVHardwareManifest::Instance().GetTriggerDeviceParams();
+
+		SVTriggerDeviceParamsVector::const_iterator l_Iter = l_rTriggerParams.begin();
+
+		while( l_Iter != l_rTriggerParams.end() )
 		{
-			static SVTriggerProcessingClass l_Object;
+			SvTh::SVTriggerClass* l_pTrigger = nullptr;
 
-			return l_Object;
-		}
-
-		SVTriggerProcessingClass::SVTriggerProcessingClass()
-		{
-		}
-
-		SVTriggerProcessingClass::~SVTriggerProcessingClass()
-		{
-			Shutdown();
-		}
-
-		void SVTriggerProcessingClass::Startup()
-		{
-			const SVTriggerDeviceParamsVector& l_rTriggerParams = SVHardwareManifest::Instance().GetTriggerDeviceParams();
-
-			SVTriggerDeviceParamsVector::const_iterator l_Iter = l_rTriggerParams.begin();
-
-			while( l_Iter != l_rTriggerParams.end() )
+			if( 0 == l_Iter->m_Name.find( SvTh::SoftwareTriggerName ) )
 			{
-				SvTh::SVTriggerClass* l_pTrigger = nullptr;
+				l_pTrigger = new SvTh::SVSoftwareTriggerClass( l_Iter->m_Name.c_str() );
+			}
+			else if( 0 == l_Iter->m_Name.find( _T( "IO_Board" ) ) )
+			{
+				l_pTrigger = new SvTh::SVTriggerClass( l_Iter->m_Name.c_str() );
+			}
+			else if( 0 == l_Iter->m_Name.find( SvTh::CameraTriggerName ) )
+			{
+				l_pTrigger = new SvTh::SVCameraTriggerClass( l_Iter->m_Name.c_str() );
+			}
 
-				if( 0 == l_Iter->m_Name.find( SvTh::SoftwareTriggerName ) )
-				{
-					l_pTrigger = new SvTh::SVSoftwareTriggerClass( l_Iter->m_Name.c_str() );
-				}
-				else if( 0 == l_Iter->m_Name.find( _T( "IO_Board" ) ) )
-				{
-					l_pTrigger = new SvTh::SVTriggerClass( l_Iter->m_Name.c_str() );
-				}
-				else if( 0 == l_Iter->m_Name.find( SvTh::CameraTriggerName ) )
-				{
-					l_pTrigger = new SvTh::SVCameraTriggerClass( l_Iter->m_Name.c_str() );
-				}
+			if( nullptr != l_pTrigger )
+			{
+				l_pTrigger->miChannelNumber = l_Iter->m_Channel;
+
+				m_Triggers[ l_Iter->m_Name ] = l_pTrigger;
+			}
+
+			++l_Iter;
+		}
+	}
+
+	void SVTriggerProcessingClass::Shutdown()
+	{
+		clear();
+
+		if( !( m_Triggers.empty() ) )
+		{
+			SVNameTriggerMap::iterator l_Iter = m_Triggers.begin();
+
+			while( l_Iter != m_Triggers.end() )
+			{
+				SvTh::SVTriggerClass* l_pTrigger = l_Iter->second;
 
 				if( nullptr != l_pTrigger )
 				{
-					l_pTrigger->miChannelNumber = l_Iter->m_Channel;
-
-					m_Triggers[ l_Iter->m_Name ] = l_pTrigger;
+					delete l_pTrigger;
 				}
 
+				l_Iter = m_Triggers.erase( l_Iter );
+			}
+		}
+	}
+
+	void SVTriggerProcessingClass::clear()
+	{
+		if( !( m_Triggers.empty() ) )
+		{
+			SVNameTriggerMap::iterator l_Iter = m_Triggers.begin();
+
+			while( l_Iter != m_Triggers.end() )
+			{
+				if( nullptr != l_Iter->second )
+				{
+					l_Iter->second->m_pDLLTrigger = nullptr;
+					l_Iter->second->m_triggerchannel = 0;
+				}
 				++l_Iter;
 			}
 		}
 
-		void SVTriggerProcessingClass::Shutdown()
+		if( !( m_Subsystems.empty() ) )
 		{
-			clear();
-
-			if( !( m_Triggers.empty() ) )
-			{
-				SVNameTriggerMap::iterator l_Iter = m_Triggers.begin();
-
-				while( l_Iter != m_Triggers.end() )
-				{
-					SvTh::SVTriggerClass* l_pTrigger = l_Iter->second;
-
-					if( nullptr != l_pTrigger )
-					{
-						delete l_pTrigger;
-					}
-
-					l_Iter = m_Triggers.erase( l_Iter );
-				}
-			}
+			m_Subsystems.clear();
 		}
 
-		void SVTriggerProcessingClass::clear()
+		if( !( m_TriggerSubsystems.empty() ) )
 		{
-			if( !( m_Triggers.empty() ) )
-			{
-				SVNameTriggerMap::iterator l_Iter = m_Triggers.begin();
-
-				while( l_Iter != m_Triggers.end() )
-				{
-					if( nullptr != l_Iter->second )
-					{
-						l_Iter->second->m_pDLLTrigger = nullptr;
-						l_Iter->second->m_triggerchannel = 0;
-					}
-					++l_Iter;
-				}
-			}
-
-			if( !( m_Subsystems.empty() ) )
-			{
-				m_Subsystems.clear();
-			}
-
-			if( !( m_TriggerSubsystems.empty() ) )
-			{
-				m_TriggerSubsystems.clear();
-			}
+			m_TriggerSubsystems.clear();
 		}
+	}
 
-		HRESULT SVTriggerProcessingClass::UpdateTriggerSubsystem( SVIOTriggerLoadLibraryClass* p_pDLLTrigger )
+	HRESULT SVTriggerProcessingClass::UpdateTriggerSubsystem( SVIOTriggerLoadLibraryClass* p_pDLLTrigger )
+	{
+		HRESULT l_hrOk = S_OK;
+
+		if (nullptr != p_pDLLTrigger )
 		{
-			HRESULT l_hrOk = S_OK;
+			unsigned long l_ulSize = 0;
 
-			if (nullptr != p_pDLLTrigger )
+			l_hrOk = p_pDLLTrigger->GetCount( &l_ulSize );
+
+			for ( unsigned long i = 0; S_OK == l_hrOk && i < l_ulSize; i++ )
 			{
-				unsigned long l_ulSize = 0;
+				SVString l_Name;
 
-				l_hrOk = p_pDLLTrigger->GetCount( &l_ulSize );
+				unsigned long triggerchannel = 0;
 
-				for ( unsigned long i = 0; S_OK == l_hrOk && i < l_ulSize; i++ )
+				l_hrOk = p_pDLLTrigger->GetHandle( &triggerchannel, i );
+
+				if ( S_OK == l_hrOk )
 				{
-					SVString l_Name;
+					BSTR l_bstrName = nullptr;
 
-					unsigned long triggerchannel = 0;
-
-					l_hrOk = p_pDLLTrigger->GetHandle( &triggerchannel, i );
-
-					if ( S_OK == l_hrOk )
-					{
-						BSTR l_bstrName = nullptr;
-
-						l_hrOk = p_pDLLTrigger->GetName( triggerchannel, &l_bstrName );
-
-						if( S_OK == l_hrOk )
-						{
-							l_Name = SvUl_SF::createSVString(l_bstrName);
-
-							if ( nullptr != l_bstrName )
-							{
-								::SysFreeString( l_bstrName );
-
-								l_bstrName = nullptr;
-							}
-						}
-					}
-					else
-					{
-						l_hrOk = S_FALSE;
-					}
+					l_hrOk = p_pDLLTrigger->GetName( triggerchannel, &l_bstrName );
 
 					if( S_OK == l_hrOk )
 					{
-						l_hrOk = AddTrigger( l_Name.c_str(), p_pDLLTrigger, triggerchannel );
+						l_Name = SvUl_SF::createSVString(l_bstrName);
+
+						if ( nullptr != l_bstrName )
+						{
+							::SysFreeString( l_bstrName );
+
+							l_bstrName = nullptr;
+						}
 					}
 				}
-			}
-			else
-			{
-				l_hrOk = S_FALSE;
-			}
-
-			return l_hrOk;
-		}
-
-		SvTh::SVTriggerClass* SVTriggerProcessingClass::GetTrigger( LPCTSTR szName ) const
-		{
-			SvTh::SVTriggerClass* l_pTrigger = nullptr;
-
-			SVNameTriggerMap::const_iterator l_Iter = m_Triggers.find( szName );
-
-			if( l_Iter != m_Triggers.end() )
-			{
-				l_pTrigger = l_Iter->second;
-			}
-
-			return l_pTrigger;
-		}
-
-		HRESULT SVTriggerProcessingClass::AddTrigger( LPCTSTR p_szName, SVIOTriggerLoadLibraryClass* p_pTriggerSubsystem, unsigned long p_Handle )
-		{
-			HRESULT l_Status = S_OK;
-
-			SVNameTriggerMap::iterator l_Iter = m_Triggers.find( p_szName );
-
-			if( l_Iter != m_Triggers.end() && nullptr != l_Iter->second )
-			{
-				if( l_Iter->second->m_pDLLTrigger != p_pTriggerSubsystem )
+				else
 				{
-					l_Iter->second->m_pDLLTrigger = p_pTriggerSubsystem;
-					l_Iter->second->m_triggerchannel = p_Handle;
+					l_hrOk = S_FALSE;
+				}
 
-					SVNameTriggerSubsystemMap::iterator l_SubsystemIter = m_TriggerSubsystems.find( p_szName );
-
-					if( l_SubsystemIter != m_TriggerSubsystems.end() )
-					{
-						l_SubsystemIter->second = p_pTriggerSubsystem;
-					}
-					else
-					{
-						m_TriggerSubsystems[ p_szName ] = p_pTriggerSubsystem;
-					}
+				if( S_OK == l_hrOk )
+				{
+					l_hrOk = AddTrigger( l_Name.c_str(), p_pDLLTrigger, triggerchannel );
 				}
 			}
-			else
-			{
-				l_Status = E_FAIL;
-			}
-
-			return l_Status;
+		}
+		else
+		{
+			l_hrOk = S_FALSE;
 		}
 
-} /* namespace TriggerInformation */ } /* namespace Seidenader */
+		return l_hrOk;
+	}
+
+	SvTh::SVTriggerClass* SVTriggerProcessingClass::GetTrigger( LPCTSTR szName ) const
+	{
+		SvTh::SVTriggerClass* l_pTrigger = nullptr;
+
+		SVNameTriggerMap::const_iterator l_Iter = m_Triggers.find( szName );
+
+		if( l_Iter != m_Triggers.end() )
+		{
+			l_pTrigger = l_Iter->second;
+		}
+
+		return l_pTrigger;
+	}
+
+	HRESULT SVTriggerProcessingClass::AddTrigger( LPCTSTR p_szName, SVIOTriggerLoadLibraryClass* p_pTriggerSubsystem, unsigned long p_Handle )
+	{
+		HRESULT l_Status = S_OK;
+
+		SVNameTriggerMap::iterator l_Iter = m_Triggers.find( p_szName );
+
+		if( l_Iter != m_Triggers.end() && nullptr != l_Iter->second )
+		{
+			if( l_Iter->second->m_pDLLTrigger != p_pTriggerSubsystem )
+			{
+				l_Iter->second->m_pDLLTrigger = p_pTriggerSubsystem;
+				l_Iter->second->m_triggerchannel = p_Handle;
+
+				SVNameTriggerSubsystemMap::iterator l_SubsystemIter = m_TriggerSubsystems.find( p_szName );
+
+				if( l_SubsystemIter != m_TriggerSubsystems.end() )
+				{
+					l_SubsystemIter->second = p_pTriggerSubsystem;
+				}
+				else
+				{
+					m_TriggerSubsystems[ p_szName ] = p_pTriggerSubsystem;
+				}
+			}
+		}
+		else
+		{
+			l_Status = E_FAIL;
+		}
+
+		return l_Status;
+	}
+} //namespace SvTi

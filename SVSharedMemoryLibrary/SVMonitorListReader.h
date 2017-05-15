@@ -16,7 +16,7 @@
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace SVSharedMemoryLibrary
+namespace SvSml
 {
 	class SVMonitorListReader
 	{
@@ -37,7 +37,5 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		const SVSharedMonitorList& operator[](const SVString& listName) const;
 		const SVStringVector GetListNames() const;
 	};
-} /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
-
-namespace SvSml = Seidenader::SVSharedMemoryLibrary;
+} //namespace SvSml
 

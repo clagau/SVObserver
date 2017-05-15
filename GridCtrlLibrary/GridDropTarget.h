@@ -40,7 +40,7 @@
 
 //Moved to precompiled header:  #include <afxole.h>
 
-namespace Seidenader { namespace GridCtrlLibrary
+namespace SvGcl
 {
 	class CGridCtrl;
 
@@ -81,6 +81,6 @@ namespace Seidenader { namespace GridCtrlLibrary
 		DECLARE_MESSAGE_MAP()
 	};
 
-} /*namespace GridCtrlLibrary*/ } /*namespace Seidenader*/
+} // namespace SvGcl
 
-namespace SvGcl = Seidenader::GridCtrlLibrary;
+

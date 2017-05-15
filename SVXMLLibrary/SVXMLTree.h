@@ -24,7 +24,7 @@
 @SVObjectOperations
 
 */
-namespace Seidenader { namespace SVXMLLibrary
+namespace SvXml
 {
 	template<typename SVT_BRANCH_HANDLE, typename SVT_LEAF_HANDLE>
 	class SVXMLTree  
@@ -228,9 +228,7 @@ namespace Seidenader { namespace SVXMLLibrary
 		virtual HRESULT	setLeafData( const SVLeafHandle pLeaf, const _variant_t& rData ) = 0;
 	#pragma endregion Public Methods
 	};
-} /* namespace SVXMLLibrary */ } /* namespace Seidenader */
+} //namespace SvXml
 
 #include "SVXMLTree.inl"
-
-namespace SvXml = Seidenader::SVXMLLibrary;
 

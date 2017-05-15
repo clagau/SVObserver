@@ -9,89 +9,86 @@
 #include "ObjectsListBox.h"
 #pragma endregion Includes
 
-namespace Seidenader
+namespace SvMc
 {
-	namespace SVMFCControls
+	BEGIN_MESSAGE_MAP(ObjectsListBox, CListBox)
+		//{{AFX_MSG_MAP(ObjectsListBox)
+		ON_WM_CREATE()
+		//}}AFX_MSG_MAP
+	END_MESSAGE_MAP()
+
+	ObjectsListBox::ObjectsListBox()
 	{
-		BEGIN_MESSAGE_MAP(ObjectsListBox, CListBox)
-			//{{AFX_MSG_MAP(ObjectsListBox)
-			ON_WM_CREATE()
-			//}}AFX_MSG_MAP
-		END_MESSAGE_MAP()
+	}
 
-		ObjectsListBox::ObjectsListBox()
+	ObjectsListBox::~ObjectsListBox()
+	{
+	}
+
+	void ObjectsListBox::init(const SvUl::NameGuidList& rList, const SVString& rEmptyListText)
+	{
+		int index;
+
+		ResetContent();
+
+		m_List = rList;
+
+		// Generate new list...
+		for (SvUl::NameGuidList::const_iterator it = rList.begin(); it != rList.end(); ++it)
 		{
+			if (!it->first.empty())
+			{
+				AddString(it->first.c_str());
+			}
 		}
 
-		ObjectsListBox::~ObjectsListBox()
+		if (GetCount() <= 0)
 		{
+			SetItemData(AddString(rEmptyListText.c_str()), 0);
+			index = 0;
+		}
+		else
+		{
+			index = AddString(_T("--------------------------------------------"));
 		}
 
-		void ObjectsListBox::init( const SvUl::NameGuidList& rList, const SVString& rEmptyListText )
+		if (index >= GetCount())
 		{
-			int index;
-
-			ResetContent();
-
-			m_List = rList;
-
-			// Generate new list...
-			for (SvUl::NameGuidList::const_iterator it = rList.begin(); it != rList.end();++it)
-			{
-				if (!it->first.empty())
-				{
-					AddString(it->first.c_str());
-				}
-			}
-
-			if( GetCount() <= 0 )
-			{
-				SetItemData( AddString( rEmptyListText.c_str() ), 0 );
-				index = 0;
-			}
-			else
-			{
-				index = AddString( _T( "--------------------------------------------" ) );
-			}
-
-			if( index >= GetCount() )
-			{
-				index = GetCount() - 1;
-			}
-
-			if( LB_ERR == index ) // First init, but existing entry
-			{
-				index = 0;
-			}
-
-			SetCurSel( index );
+			index = GetCount() - 1;
 		}
 
-		SVGUID ObjectsListBox::getGUID(int index) const
+		if (LB_ERR == index) // First init, but existing entry
 		{
-			SVGUID Result = SV_GUID_NULL;
-			if (0 <= index && m_List.size() > index)
-			{
-				Result = m_List[index].second;
-			}
-			return Result;
+			index = 0;
 		}
 
-		BOOL ObjectsListBox::PreCreateWindow(CREATESTRUCT& cs) 
+		SetCurSel(index);
+	}
+
+	SVGUID ObjectsListBox::getGUID(int index) const
+	{
+		SVGUID Result = SV_GUID_NULL;
+		if (0 <= index && m_List.size() > index)
 		{
-			cs.style ^= LBS_SORT;
-			return CListBox::PreCreateWindow(cs);
+			Result = m_List[index].second;
 		}
+		return Result;
+	}
 
-		int ObjectsListBox::OnCreate(LPCREATESTRUCT lpCreateStruct) 
-		{
-			if (CListBox::OnCreate(lpCreateStruct) == -1)
-				return -1;
+	BOOL ObjectsListBox::PreCreateWindow(CREATESTRUCT& cs)
+	{
+		cs.style ^= LBS_SORT;
+		return CListBox::PreCreateWindow(cs);
+	}
 
-			lpCreateStruct->style ^= LBS_SORT;
+	int ObjectsListBox::OnCreate(LPCREATESTRUCT lpCreateStruct)
+	{
+		if (CListBox::OnCreate(lpCreateStruct) == -1)
+			return -1;
+
+		lpCreateStruct->style ^= LBS_SORT;
 
 
-			return 0;
-		}
-	}  //end namespace SVOGUI
-}  //end namespace Seidenader
+		return 0;
+	}
+} //namespace SvMc

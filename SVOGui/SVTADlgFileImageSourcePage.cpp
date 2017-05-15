@@ -23,7 +23,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-namespace Seidenader { namespace SVOGui
+namespace SvOg
 {
 	static LPCSTR PathNameTag = "PathName";
 	static LPCSTR ContinuousReloadTag = "ContinuousReload";
@@ -160,5 +160,5 @@ namespace Seidenader { namespace SVOGui
 			m_imageCtrl.Refresh();
 		}
 	}
-} /* namespace SVOGui */ } /* namespace Seidenader */
+} //namespace SvOg
 

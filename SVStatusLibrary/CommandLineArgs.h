@@ -13,7 +13,7 @@
 #pragma region Declarations
 #pragma endregion Declarations
 
-namespace Seidenader { namespace SVStatusLibrary
+namespace SvStl
 {
 	/// \briefClass for Parsing the command line 
 	class CommandLineArgs
@@ -57,5 +57,4 @@ namespace Seidenader { namespace SVStatusLibrary
 #pragma endregion privat member 
 	};
 
-} /* namespace SVStatusLibrary */ } /* namespace Seidenader */
-namespace SvStl = Seidenader::SVStatusLibrary;
+} //namespace SvStl

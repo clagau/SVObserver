@@ -48,7 +48,7 @@ public:
 
 	virtual HRESULT GetChildObject( SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index = 0 ) const override;
 
-	const SVClock::SVTimeStamp& GetLastListUpdateTimestamp() const;
+	const SvTl::SVTimeStamp& GetLastListUpdateTimestamp() const;
 
 	int GetSize() const;
 	void InsertAt( int nIndex, SVTaskObjectClass* PTaskObject, int nCount = 1 );
@@ -132,7 +132,7 @@ protected:
 private:
 	/// The method destroy a taskObject
 	/// \param rTaskObject [in] This object will destroyed.
-	/// \param context [in] Bits define action (e.g. SVMFSetDefaultInputs = set default inputs, SVMFResetInspection = reset inspection)
+	/// \param context [in] Bits define action (e.g. SvOi::SVMFSetDefaultInputs = set default inputs, SvOi::SVMFResetInspection = reset inspection)
 	void DestroyTaskObject(SVTaskObjectClass& rTaskObject, DWORD context);
 
 	SvOi::IObjectClass* getFirstObjectWithRequestor( const SVObjectTypeInfoStruct& rObjectTypeInfo, bool useFriends, const SvOi::IObjectClass* pRequestor ) const;
@@ -143,7 +143,7 @@ protected:
 	typedef SVVector<SVTaskObjectClass*> SVTaskObjectPtrVector;
 	SVClassInfoStructListClass m_availableChildren; // available children classes (not instantiated)
 
-	SVClock::SVTimeStamp m_LastListUpdateTimestamp;
+	SvTl::SVTimeStamp m_LastListUpdateTimestamp;
 	SVTaskObjectPtrVector m_aTaskObjects;
 #pragma endregion Member Variables
 };

@@ -16,7 +16,7 @@
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace SVSharedMemoryLibrary
+namespace SvSml
 {
 	struct SVSharedProduct
 	{
@@ -34,7 +34,5 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 	typedef bip::allocator<SVSharedProduct, segment_manager_t> SVSharedProductAllocator;
 	typedef bip::vector<SVSharedProduct, SVSharedProductAllocator> SVSharedProductVector;
 	typedef bip::allocator<SVSharedProductVector, segment_manager_t> SVSharedProductVectorAllocator;
-} /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
-
-namespace SvSml = Seidenader::SVSharedMemoryLibrary;
+} //namespace SvSml
 

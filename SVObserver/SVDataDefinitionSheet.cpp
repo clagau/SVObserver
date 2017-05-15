@@ -53,13 +53,13 @@ SVDataDefinitionSheet::~SVDataDefinitionSheet()
 #pragma region Private Methods
 HRESULT SVDataDefinitionSheet::CreatePages()
 {
-	initSelectedList( &m_ValueList, SV_DD_VALUE );
-	initSelectedList( &m_ImageList, SV_DD_IMAGE );
+	initSelectedList( &m_ValueList, SvOi::SV_DD_VALUE );
+	initSelectedList( &m_ImageList, SvOi::SV_DD_IMAGE );
 
-	SelectedObjectsPage* pValuesDlg = new SelectedObjectsPage( m_InspectionName, m_InspectionID, _T("Value Names"), m_ValueList, SV_DD_VALUE );
+	SelectedObjectsPage* pValuesDlg = new SelectedObjectsPage( m_InspectionName, m_InspectionID, _T("Value Names"), m_ValueList, SvOi::SV_DD_VALUE );
 	AddPage(pValuesDlg);
 
-	SelectedObjectsPage* pImagesDlg = new SelectedObjectsPage( m_InspectionName, m_InspectionID, _T("Image Names"), m_ImageList, SV_DD_IMAGE );
+	SelectedObjectsPage* pImagesDlg = new SelectedObjectsPage( m_InspectionName, m_InspectionID, _T("Image Names"), m_ImageList, SvOi::SV_DD_IMAGE );
 	AddPage(pImagesDlg);
 
 	return S_OK;
@@ -118,7 +118,7 @@ void SVDataDefinitionSheet::initSelectedList( SvOsl::SelectorItemVector* pList, 
 	if( nullptr != pList )
 	{
 		SvOsl::SelectorOptions BuildOptions( m_InspectionID, Attribute );
-		SvOg::ToolSetItemSelector<GuiCmd::AttributesSetFilterType> toolsetItemSelector;
+		SvOg::ToolSetItemSelector<SvCmd::AttributesSetFilterType> toolsetItemSelector;
 		SvOi::ISelectorItemVectorPtr pToolsetList =  toolsetItemSelector( BuildOptions );
 		//Copy list to member variable for easier use
 		if( !pToolsetList.empty() )
@@ -147,10 +147,10 @@ bool SVDataDefinitionSheet::setChangedData( SelectedObjectsPage* const pPage )
 
 		switch( pPage->getAttributeFilter() )
 		{
-		case SV_DD_VALUE:
+		case SvOi::SV_DD_VALUE:
 			pList = &m_ValueList;
 			break;
-		case SV_DD_IMAGE:
+		case SvOi::SV_DD_IMAGE:
 			pList = &m_ImageList;
 			break;
 		default:

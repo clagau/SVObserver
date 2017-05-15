@@ -634,7 +634,7 @@ bool ToolSetView::ShowDuplicateNameMessage(const SVString& rName) const
 	SVStringVector msgList;
 	msgList.push_back(rName);
 	SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay);
-	INT_PTR res  = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_RenameError_DuplicateName, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10221, SV_GUID_NULL,MB_RETRYCANCEL );
+	INT_PTR res  = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_RenameError_DuplicateName, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10221, SV_GUID_NULL,MB_RETRYCANCEL );
 	return (IDRETRY == res);
 }
 
@@ -759,7 +759,7 @@ BOOL ToolSetView::SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle ht
 	CSize l_Size;
 	_variant_t svVariant;
 
-	bOk = SVNavigateTree::GetItem(rTree, CTAG_CELL_HEIGHT, htiParent, svVariant);
+	bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_CELL_HEIGHT, htiParent, svVariant);
 	if (bOk)
 	{
 		l_Size.cy = svVariant;
@@ -767,7 +767,7 @@ BOOL ToolSetView::SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle ht
 
 	if (bOk)
 	{
-		bOk = SVNavigateTree::GetItem(rTree, CTAG_CELL_WIDTH, htiParent, svVariant);
+		bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_CELL_WIDTH, htiParent, svVariant);
 		if (bOk)
 		{
 			l_Size.cx = svVariant;
@@ -790,7 +790,7 @@ BOOL ToolSetView::CheckParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle 
 	CRect l_cRect;
 	GetWindowRect(l_cRect);
 
-	bOk = SVNavigateTree::GetItem(rTree, CTAG_CELL_HEIGHT, htiParent, svVariant);
+	bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_CELL_HEIGHT, htiParent, svVariant);
 	if (bOk)
 	{
 		l_Size.cy = svVariant;
@@ -798,7 +798,7 @@ BOOL ToolSetView::CheckParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle 
 
 	if (bOk)
 	{
-		bOk = SVNavigateTree::GetItem(rTree, CTAG_CELL_WIDTH, htiParent, svVariant);
+		bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_CELL_WIDTH, htiParent, svVariant);
 		if (bOk)
 		{
 			l_Size.cx = svVariant;
@@ -837,11 +837,11 @@ BOOL ToolSetView::GetParameters(SVObjectWriter& rWriter)
 	_variant_t svVariant;
 
 	svVariant = l_cRect.Height();
-	rWriter.WriteAttribute(CTAG_CELL_HEIGHT, svVariant);
+	rWriter.WriteAttribute(SvXml::CTAG_CELL_HEIGHT, svVariant);
 	svVariant.Clear();
 
 	svVariant = l_cRect.Width();
-	rWriter.WriteAttribute(CTAG_CELL_WIDTH, svVariant);
+	rWriter.WriteAttribute(SvXml::CTAG_CELL_WIDTH, svVariant);
 	svVariant.Clear();
 
 	return bOk;

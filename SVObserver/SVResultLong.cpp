@@ -77,7 +77,7 @@ BOOL SVLongResultClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructur
 		bOk = nullptr != getInput();
 	}
 
-	m_Value.SetObjectAttributesAllowed(SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_Value.SetObjectAttributesAllowed(SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 
 	m_isCreated = bOk;
 

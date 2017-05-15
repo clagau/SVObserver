@@ -14,7 +14,7 @@
 #include "SVJsonPacket.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace SVSocketLibrary
+namespace SvSol
 {
 	SVJsonPacket::SVJsonPacket()
 	: m_count(0)
@@ -120,5 +120,4 @@ namespace Seidenader { namespace SVSocketLibrary
 		m_pending.clear();
 		m_count = 0;
 	}
-
-} /*namespace SVSocketLibrary*/ } /*namespace Seidenader*/
+} //namespace SvSol

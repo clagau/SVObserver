@@ -306,7 +306,7 @@ void SVConfigurationPrint::DoPrintConfig()
 					CString message;
 					message.Format(AFX_IDP_FAILED_TO_START_PRINT);
 					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, message, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10238 );
+					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, message, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10238 );
 					return;
 				}  // end if( nullptr == printInfo.m_pPD->m_pd.hDC  )
 			}  // end if( pCmdInfo->m_nShellCommand == CCommandLineInfo::FilePrintTo )
@@ -415,7 +415,7 @@ void SVConfigurationPrint::DoPrintConfig()
 			CString message;
 			message.Format(AFX_IDP_FAILED_TO_START_PRINT);
 			SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, message, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10239 );
+			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, message, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10239 );
 			return;
 		}  // end if( printDC.StartDoc( &docInfo ) == SP_ERROR )
 		
@@ -681,7 +681,7 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObject, CPoin
 	SvOi::IValueObject* pValueObject = dynamic_cast<SvOi::IValueObject*> (pObject);
 	if( nullptr != pValueObject )
 	{
-		if ( pObject->ObjectAttributesAllowed() & SV_PRINTABLE )
+		if ( pObject->ObjectAttributesAllowed() & SvOi::SV_PRINTABLE )
 		{
 			BOOL bGotValue = FALSE;
 
@@ -710,7 +710,7 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObject, CPoin
 				
 			ptCurPos.x   = (nIndentLevel + 1) * m_shortTabPixels;
 			PrintValueObject(pDC, ptCurPos, sLabel.c_str(), sValue.c_str());
-		}   // end if ( pObj->uObjectAttributesAllowed & SV_PRINTABLE )
+		}   // end if ( pObj->uObjectAttributesAllowed & SvOi::SV_PRINTABLE )
 	}  // end if( nullptr != pValueObject )
 	else
 	{
@@ -718,7 +718,7 @@ void SVConfigurationPrint::PrintDetails( CDC* pDC, SVObjectClass* pObject, CPoin
 		{
 			if ( nullptr != dynamic_cast <SVShapeMaskHelperClass*> (pObject) )
 			{
-				if ( !( pObject->ObjectAttributesAllowed() & SV_PRINTABLE) )	// EB 20050818 - hack this instead of doing it right
+				if ( !( pObject->ObjectAttributesAllowed() & SvOi::SV_PRINTABLE) )	// EB 20050818 - hack this instead of doing it right
 				{
 					break;
 				}
@@ -1876,7 +1876,7 @@ void SVConfigurationPrint::PrintPPQSummary(CDC* pDC, CPoint& ptCurPos, int nInde
 			ptTemp       = ptCurPos;
 			ptCurPos.y  += PrintString(pDC, ptTemp, pPPQ->GetName());
 			
-			SVPPQOutputModeEnum	enumPPQOutputMode;
+			SvOi::SVPPQOutputModeEnum	enumPPQOutputMode;
 			long	lPPQLength  = 0;	// PPQLength
 			long	lResetDelay = 0;	// PPQOutputResetDelay
 			long	lDelayTime  = 0;	// PPQOutputDelayTime
@@ -1890,22 +1890,22 @@ void SVConfigurationPrint::PrintPPQSummary(CDC* pDC, CPoint& ptCurPos, int nInde
 			SVString Value;
 			switch (enumPPQOutputMode)
 			{
-				case SVPPQNextTriggerMode:	// Resets outputs on trigger. Writes outputs immediately.
+				case SvOi::SVPPQNextTriggerMode:	// Resets outputs on trigger. Writes outputs immediately.
 					Value = _T("NextTrigger");
 					break;
-				case SVPPQTimeDelayMode:	// Resets outputs on trigger. Writes outputs after delay time is over, even if data isn't complete.
+				case SvOi::SVPPQTimeDelayMode:	// Resets outputs on trigger. Writes outputs after delay time is over, even if data isn't complete.
 					// Aborts waiting if new trigger occurs.
 					Value = _T("TimeDelay");
 					break;
-				case SVPPQTimeDelayAndDataCompleteMode:	// Resets outputs on trigger. Writes outputs after delay time is over and data is complete.
+				case SvOi::SVPPQTimeDelayAndDataCompleteMode:	// Resets outputs on trigger. Writes outputs after delay time is over and data is complete.
 					// Aborts waiting if new trigger occurs.
 					Value = _T("TimeDelayDataCompletion");
 					break;
-				case SVPPQExtendedTimeDelayMode:		// Doesn't reset outputs on trigger. Writes outputs after delay time is over, even if data isn't complete.
+				case SvOi::SVPPQExtendedTimeDelayMode:		// Doesn't reset outputs on trigger. Writes outputs after delay time is over, even if data isn't complete.
 																	// Aborts waiting if product leaves PPQ.
 					Value = _T("ExtendedTimeDelayMode");
 					break;
-				case SVPPQExtendedTimeDelayAndDataCompleteMode: // Doesn't reset outputs on trigger. Writes outputs after delay time is over and data is complete.
+				case SvOi::SVPPQExtendedTimeDelayAndDataCompleteMode: // Doesn't reset outputs on trigger. Writes outputs after delay time is over and data is complete.
 					// Aborts waiting if product leaves PPQ.
 					Value = _T("ExtendedTimeDelayDataCompletion");
 					break;
@@ -2008,7 +2008,7 @@ void SVConfigurationPrint::PrintPPQBarSection(CDC* pDC, CPoint& ptCurPos, int nI
 		if ( nullptr == pPPQ )
 		{
 			SvStl::MessageMgrStd e( SvStl::LogOnly );
-			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvOi::Tid_ErrorGettingPPQ, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_17000_ErrorGettingPPQ );
+			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorGettingPPQ, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17000_ErrorGettingPPQ );
 			DebugBreak();
 			continue;
 		}
@@ -2206,13 +2206,13 @@ void SVConfigurationPrint::PrintModuleIO(CDC* pDC, CPoint& ptCurPos, int nIndent
 		if ( nullptr == pInputList )
 		{
 			SvStl::MessageMgrStd e( SvStl::LogOnly );
-			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvOi::Tid_ErrorGettingInputObjectList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_17001_ErrorGettingInputObjectList );
+			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorGettingInputObjectList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17001_ErrorGettingInputObjectList );
 			DebugBreak();
 		}
 		else if (!pInputList->FillInputs( ppIOEntries ))
 		{
 			SvStl::MessageMgrStd e( SvStl::LogOnly );
-			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvOi::Tid_ErrorFillingInputs, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_17002_ErrorFillingInputs );
+			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorFillingInputs, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17002_ErrorFillingInputs );
 			DebugBreak();
 		}
 
@@ -2328,7 +2328,7 @@ void SVConfigurationPrint::PrintResultIO(CDC* pDC, CPoint& ptCurPos, int nIndent
 	else
 	{
 		SvStl::MessageMgrStd e( SvStl::LogOnly );
-		e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvOi::Tid_ErrorGettingPPQCount, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_17003_ErrorGettingPPQCount );
+		e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorGettingPPQCount, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17003_ErrorGettingPPQCount );
 		DebugBreak();
 	}
 
@@ -2372,7 +2372,7 @@ void SVConfigurationPrint::PrintResultIO(CDC* pDC, CPoint& ptCurPos, int nIndent
 				if ( nullptr == pPPQ )
 				{
 					SvStl::MessageMgrStd e( SvStl::LogOnly );
-					e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvOi::Tid_ErrorGettingPPQ, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_17004_ErrorGettingPPQ );
+					e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorGettingPPQ, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17004_ErrorGettingPPQ );
 					DebugBreak();
 				}
 
@@ -2381,7 +2381,7 @@ void SVConfigurationPrint::PrintResultIO(CDC* pDC, CPoint& ptCurPos, int nIndent
 				if ( !pPPQ->GetAllOutputs( ppIOEntries ) )
 				{
 					SvStl::MessageMgrStd e( SvStl::LogOnly );
-					e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvOi::Tid_ErrorGettingOutputs, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_17005_ErrorGettingOutputs );
+					e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorGettingOutputs, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17005_ErrorGettingOutputs );
 					DebugBreak();
 				}
 

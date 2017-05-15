@@ -23,7 +23,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-namespace Seidenader { namespace SVOGui
+namespace SvOg
 {
 	BEGIN_MESSAGE_MAP(SVShowDependentsDialog, CDialog)
 		ON_WM_PAINT()
@@ -285,4 +285,4 @@ namespace Seidenader { namespace SVOGui
 			}
 		}
 	}
-} /* namespace SVOGui */ } /* namespace Seidenader */
+} //namespace SvOg

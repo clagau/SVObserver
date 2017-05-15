@@ -64,7 +64,7 @@ BOOL SVAutoThresholdEquationClass::CreateObject( SVObjectLevelCreateStruct* PCre
 	m_isCreated = SVEquationClass::CreateObject( PCreateStructure );
 
 	// Set/Reset printable Flags
-	result.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	result.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 
 	return m_isCreated;
 }

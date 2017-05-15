@@ -82,7 +82,7 @@ static const TCHAR* const TaskCategory[CategoryNr]= {
 
 #pragma endregion Declarations
 
-namespace Seidenader { namespace SVStatusLibrary
+namespace SvStl
 {
 #pragma region Constructor
 	MessageContainer::MessageContainer() :
@@ -98,12 +98,12 @@ namespace Seidenader { namespace SVStatusLibrary
 	{
 	}
 
-	MessageContainer::MessageContainer( long MessageCode, SvOi::MessageTextEnum AdditionalTextId, SourceFileParams SourceFile, DWORD ProgramCode /*=0*/, const GUID& rObjectId /*=SV_GUID_NULL*/ )
+	MessageContainer::MessageContainer( long MessageCode, MessageTextEnum AdditionalTextId, SourceFileParams SourceFile, DWORD ProgramCode /*=0*/, const GUID& rObjectId /*=SV_GUID_NULL*/ )
 	{
 		setMessage( MessageCode, AdditionalTextId, SVStringVector(), SourceFile, ProgramCode, rObjectId );
 	}
 
-	MessageContainer::MessageContainer( long MessageCode, SvOi::MessageTextEnum AdditionalTextId, const SVStringVector& rAdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode /*=0*/, const GUID& rObjectId /*=SV_GUID_NULL*/  )
+	MessageContainer::MessageContainer( long MessageCode, MessageTextEnum AdditionalTextId, const SVStringVector& rAdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode /*=0*/, const GUID& rObjectId /*=SV_GUID_NULL*/  )
 	{
 		setMessage( MessageCode, AdditionalTextId, rAdditionalTextList, SourceFile, ProgramCode, rObjectId );
 	}
@@ -137,12 +137,12 @@ namespace Seidenader { namespace SVStatusLibrary
 #endif
 	}
 
-	void MessageContainer::setMessage( long MessageCode, SvOi::MessageTextEnum AdditionalTextId, SourceFileParams SourceFile, DWORD ProgramCode /*=0*/, const GUID& rObjectId /*=SV_GUID_NULL*/  )
+	void MessageContainer::setMessage( long MessageCode, MessageTextEnum AdditionalTextId, SourceFileParams SourceFile, DWORD ProgramCode /*=0*/, const GUID& rObjectId /*=SV_GUID_NULL*/  )
 	{
 		setMessage( MessageCode, AdditionalTextId, SVStringVector(), SourceFile, ProgramCode, rObjectId );
 	}
 
-	void MessageContainer::setMessage( long MessageCode, SvOi::MessageTextEnum AdditionalTextId, const SVStringVector& rAdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode /*=0*/, const GUID& rObjectId /*=SV_GUID_NULL*/  )
+	void MessageContainer::setMessage( long MessageCode, MessageTextEnum AdditionalTextId, const SVStringVector& rAdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode /*=0*/, const GUID& rObjectId /*=SV_GUID_NULL*/  )
 	{
 		clearMessage();
 		m_Message.m_MessageCode = MessageCode;
@@ -184,7 +184,7 @@ namespace Seidenader { namespace SVStatusLibrary
 		}
 	}
 
-	void MessageContainer::addMessage( long MessageCode, SvOi::MessageTextEnum AdditionalTextId, SVStringVector AdditionalTextList, SourceFileParams SourceFile , DWORD ProgramCode )
+	void MessageContainer::addMessage( long MessageCode, MessageTextEnum AdditionalTextId, SVStringVector AdditionalTextList, SourceFileParams SourceFile , DWORD ProgramCode )
 	{
 		//Save the current message to the additional messages
 		m_AdditionalMessages.push_back( m_Message );
@@ -529,4 +529,4 @@ namespace Seidenader { namespace SVStatusLibrary
 		return Result;
 	}
 #pragma endregion Private Methods
-} /* namespace SVStatusLibrary */ } /* namespace Seidenader */
+} //namespace SvStl

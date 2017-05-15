@@ -54,8 +54,8 @@ BOOL SVShiftTool::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 
 	l_Status &= (S_OK == m_OutputImage.InitializeImage( GetImageInput() ) );
 
-	const UINT cAttributes = SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE | SV_PRINTABLE;
-	m_SourceImageName.SetObjectAttributesAllowed( SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE, SvOi::SetAttributeType::RemoveAttribute );
+	const UINT cAttributes = SvOi::SV_REMOTELY_SETABLE | SvOi::SV_SETABLE_ONLINE | SvOi::SV_PRINTABLE;
+	m_SourceImageName.SetObjectAttributesAllowed( SvOi::SV_REMOTELY_SETABLE | SvOi::SV_SETABLE_ONLINE, SvOi::SetAttributeType::RemoveAttribute );
 	m_TranslationX.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::RemoveAttribute );
 	m_TranslationY.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::RemoveAttribute );
 	m_LearnedTranslationX.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
@@ -65,14 +65,14 @@ BOOL SVShiftTool::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 	m_LeftResult.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::RemoveAttribute );
 	m_TopResult.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::RemoveAttribute );
 
-	m_ExtentRight.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-	m_ExtentBottom.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_ExtentRight.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_ExtentBottom.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 	
-	m_LearnedTranslationX.SetObjectAttributesAllowed( SV_EXTENT_OBJECT, SvOi::SetAttributeType::RemoveAttribute );
-	m_LearnedTranslationY.SetObjectAttributesAllowed( SV_EXTENT_OBJECT, SvOi::SetAttributeType::RemoveAttribute );
+	m_LearnedTranslationX.SetObjectAttributesAllowed( SvOi::SV_EXTENT_OBJECT, SvOi::SetAttributeType::RemoveAttribute );
+	m_LearnedTranslationY.SetObjectAttributesAllowed( SvOi::SV_EXTENT_OBJECT, SvOi::SetAttributeType::RemoveAttribute );
 
 	// This value object is obsolete, hide it.
-	m_EnableSourceImageExtents.SetObjectAttributesAllowed( SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
+	m_EnableSourceImageExtents.SetObjectAttributesAllowed( SvOi::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
 
 	m_isCreated = l_Status;
 
@@ -166,7 +166,7 @@ bool SVShiftTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVe
 		{
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 				pErrorMessages->push_back(Msg);
 			}
 		}
@@ -189,7 +189,7 @@ bool SVShiftTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVe
 				Result = false;
 				if (nullptr != pErrorMessages)
 				{
-					SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+					SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 					pErrorMessages->push_back(Msg);
 				}
 			}
@@ -202,7 +202,7 @@ bool SVShiftTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVe
 				Result = false;
 				if (nullptr != pErrorMessages)
 				{
-					SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+					SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 					pErrorMessages->push_back(Msg);
 				}
 			}
@@ -232,7 +232,7 @@ bool SVShiftTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVe
 					{
 						if (nullptr != pErrorMessages)
 						{
-							SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+							SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 							pErrorMessages->push_back(Msg);
 						}
 					}
@@ -342,7 +342,7 @@ bool SVShiftTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVe
 						Result = false;
 						if (nullptr != pErrorMessages)
 						{
-							SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_CopyImagesFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+							SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_CopyImagesFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 							pErrorMessages->push_back(Msg);
 				}
 			}
@@ -351,7 +351,7 @@ bool SVShiftTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVe
 				{
 					if (nullptr != pErrorMessages)
 					{
-						SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+						SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 						pErrorMessages->push_back(Msg);
 					}
 				}
@@ -470,8 +470,8 @@ void SVShiftTool::LocalInitialize()
 	RegisterEmbeddedObject( &m_OutputImage, SVOutputImageObjectGuid, IDS_OBJECTNAME_IMAGE1 );
 	RegisterEmbeddedObject( &m_EnableSourceImageExtents, SVShiftToolEnableSourceImageExtentsGuid, IDS_OBJECTNAME_SHIFTTOOL_ENABLE_SOURCE_IMAGE_EXTENTS, false, SvOi::SVResetItemTool);
 
-	m_LearnedTranslationX.SetObjectAttributesAllowed( SV_EXTENT_OBJECT, SvOi::SetAttributeType::RemoveAttribute );
-	m_LearnedTranslationY.SetObjectAttributesAllowed( SV_EXTENT_OBJECT, SvOi::SetAttributeType::RemoveAttribute );
+	m_LearnedTranslationX.SetObjectAttributesAllowed( SvOi::SV_EXTENT_OBJECT, SvOi::SetAttributeType::RemoveAttribute );
+	m_LearnedTranslationY.SetObjectAttributesAllowed( SvOi::SV_EXTENT_OBJECT, SvOi::SetAttributeType::RemoveAttribute );
 
 	//Set Extent Information
 	m_svToolExtent.SetExtentObject( SVExtentPropertyTranslationOffsetX, &m_DisplacementX );
@@ -497,7 +497,7 @@ void SVShiftTool::LocalInitialize()
 
 	m_EnableSourceImageExtents.SetDefaultValue(true, true); // this embedded value object is not used anymore
 
-	m_OutputImage.InitializeImage( SVImageTypePhysical );
+	m_OutputImage.InitializeImage( SvOi::SVImageTypeEnum::SVImageTypePhysical );
 
 	m_evoShiftMode.SetEnumTypes(g_strShiftToolEnum);
 	m_evoShiftMode.SetDefaultValue(SV_SHIFT_NONE, true);
@@ -606,7 +606,7 @@ bool SVShiftTool::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) c
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_NoSourceImage, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_NoSourceImage, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -615,7 +615,7 @@ bool SVShiftTool::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) c
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 			pErrorMessages->push_back(Msg);
 		}
 	}

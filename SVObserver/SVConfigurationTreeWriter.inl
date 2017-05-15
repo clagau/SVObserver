@@ -32,7 +32,7 @@ void SVConfigurationTreeWriter< SVTreeType >::WriteAttribute(LPCTSTR pName, cons
 		SVTreeType::SVBranchHandle hItem = m_nodes[0];
 		_variant_t v(value);
 		
-		SVNavigateTree::AddItem(m_rTree, hItem, pName, v);
+		SvXml::SVNavigateTree::AddItem(m_rTree, hItem, pName, v);
 	}
 	else
 	{
@@ -54,7 +54,7 @@ void SVConfigurationTreeWriter< SVTreeType >::StartElement(LPCTSTR pName)
 {
 	SVTreeType::SVBranchHandle hItem;
 	SVTreeType::SVBranchHandle hParentItem = (m_nodes.size()) ? m_nodes[0] : m_htiParent;
-	SVNavigateTree::AddBranch(m_rTree, hParentItem, pName, &hItem);
+	SvXml::SVNavigateTree::AddBranch(m_rTree, hParentItem, pName, &hItem);
 	m_nodes.push_front(hItem);
 }
 

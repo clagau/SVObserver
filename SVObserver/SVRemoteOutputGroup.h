@@ -50,7 +50,7 @@ public:
 
 	BOOL SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent );
 
-	BOOL GetParameters( SVObjectXMLWriter& rWriter ) const;
+	BOOL GetParameters(SvXml::SVObjectXMLWriter& rWriter ) const;
 
 	// RemoteOutput Identifier and new output object will be managed by SVRemoteOutputGroup
 	HRESULT AddOutput( SVRemoteOutputObject* p_pOutputEntry );

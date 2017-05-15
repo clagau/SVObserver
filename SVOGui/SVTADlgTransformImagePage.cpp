@@ -22,7 +22,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-namespace Seidenader { namespace SVOGui
+namespace SvOg
 {
 	static LPCSTR UseExtentsOnlyTag = "UseExtentsOnly";
 
@@ -136,5 +136,5 @@ namespace Seidenader { namespace SVOGui
 	{
 		SetInspectionData();
 	}
-} /* namespace SVOGui */ } /* namespace Seidenader */
+} //namespace SvOg
 

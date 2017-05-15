@@ -14,7 +14,7 @@
 #include "SVUtilityLibrary/SVSharedPtr.h"
 #pragma endregion Includes
 
-namespace Sv { namespace Container
+namespace SvCl
 {
 	template <typename Key, typename Data>
 	class SVTree: public tcl::sequential_tree< std::pair<Key, SVSharedPtr<Data> > >
@@ -75,8 +75,6 @@ namespace Sv { namespace Container
 		static const_iterator find( const SVTreeContainer& rTree, const Key& rKey );
 	#pragma endregion Public Methods
 	};
-} /* namespace SVContainerLibrary */ } /* namespace Seidenader */
+} //namespace SvCl
 
 #include "SVTree.inl"
-
-namespace SvCl = Sv::Container;

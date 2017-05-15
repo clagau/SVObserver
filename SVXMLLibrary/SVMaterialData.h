@@ -11,45 +11,43 @@
 
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <comutil.h>
 #include "SVUtilityLibrary/SVSharedPtr.h"
+#pragma endregion Includes
 
-/**
-@SVObjectName Material Data
-
-@SVObjectOverview
-
-@SVObjectOperations
-
-*/
-class SVMaterialData
+namespace  SvXml
 {
-public:
-	SVMaterialData();
-	SVMaterialData( const SVMaterialData& rObject );
-	SVMaterialData( const _variant_t& rVariant );
+	class SVMaterialData
+	{
+	public:
+		SVMaterialData();
+		SVMaterialData( const SVMaterialData& rObject );
+		SVMaterialData( const _variant_t& rVariant );
 
-	virtual ~SVMaterialData();
+		virtual ~SVMaterialData();
 
-	bool empty() const;
+		bool empty() const;
 
-	void clear();
+		void clear();
 
-	VARIANT GetVARIANT();
+		VARIANT GetVARIANT();
 
-	operator const _variant_t & () const;
+		operator const _variant_t & () const;
 
-	const SVMaterialData& operator=( const SVMaterialData& rObject );
-	const SVMaterialData& operator=( const _variant_t& rVariant );
+		const SVMaterialData& operator=( const SVMaterialData& rObject );
+		const SVMaterialData& operator=( const _variant_t& rVariant );
 
-  bool operator==( const SVMaterialData& rObject ) const;
+	  bool operator==( const SVMaterialData& rObject ) const;
 
-  bool operator!=( const SVMaterialData& rObject ) const;
+	  bool operator!=( const SVMaterialData& rObject ) const;
 
-protected:
-	_variant_t m_Variant;
+	protected:
+		_variant_t m_Variant;
 
-};
+	};
 
-typedef SVSharedPtr< SVMaterialData > SVMaterialDataPtr;
+	typedef SVSharedPtr< SVMaterialData > SVMaterialDataPtr;
+} //namespace SvXml
+
 

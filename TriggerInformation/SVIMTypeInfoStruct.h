@@ -11,7 +11,8 @@
 
 #pragma once
 
-namespace Seidenader { namespace TriggerInformation {
+namespace SvTi
+{
 
 	struct SVIMTypeInfoStruct
 	{
@@ -26,7 +27,4 @@ namespace Seidenader { namespace TriggerInformation {
 		{
 		}
 	};
-
-} /* namespace TriggerInformation */ } /* namespace Seidenader */
-
-namespace SvTi = Seidenader::TriggerInformation;
+} //namespace SvTi

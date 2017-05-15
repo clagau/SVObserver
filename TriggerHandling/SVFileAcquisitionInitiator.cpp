@@ -11,7 +11,8 @@
 #include "stdafx.h"
 #include "SVFileAcquisitionInitiator.h"
 
-namespace Seidenader { namespace TriggerHandling {
+namespace SvTh
+{
 	SVFileAcquisitionInitiator::SVFileAcquisitionInitiator()
 	{
 	}
@@ -58,7 +59,4 @@ namespace Seidenader { namespace TriggerHandling {
 		}
 		return hrOk;
 	}
-
-} /* namespace TriggerHandling */ } /* namespace Seidenader */
-
-namespace SvTh = Seidenader::TriggerHandling;
+} //namespace SvTh

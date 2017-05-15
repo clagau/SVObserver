@@ -37,14 +37,14 @@ ResultViewReferences::~ResultViewReferences()
 }
 #pragma endregion Constructor
 
-SVClock::SVTimeStamp ResultViewReferences::getUpdateTimeStamp()
+SvTl::SVTimeStamp ResultViewReferences::getUpdateTimeStamp()
 {
 	return m_LastUpdateTimeStamp;
 }
 
 bool ResultViewReferences::IsViewable(const SVObjectReference& objectRef) const
 {
-	return (objectRef.ObjectAttributesAllowed() & SV_VIEWABLE);
+	return (objectRef.ObjectAttributesAllowed() & SvOi::SV_VIEWABLE);
 }
 
 bool ResultViewReferences::Load( SVTreeType& rTree, SVTreeType::SVBranchHandle hParent, LPCTSTR TagName )
@@ -52,7 +52,7 @@ bool ResultViewReferences::Load( SVTreeType& rTree, SVTreeType::SVBranchHandle h
 
 	SVString BranchName =  (nullptr == TagName) ?  m_TagName: TagName;
 	SVTreeType::SVBranchHandle hVariables = nullptr;
-	bool bOK = SVNavigateTree::GetItemBranch(rTree, BranchName.c_str(), hParent, hVariables);
+	bool bOK = SvXml::SVNavigateTree::GetItemBranch(rTree, BranchName.c_str(), hParent, hVariables);
 
 	if (bOK)
 	{
@@ -66,7 +66,7 @@ bool ResultViewReferences::Load( SVTreeType& rTree, SVTreeType::SVBranchHandle h
 			bContinue = bContinue && rTree.isValidLeaf( hVariables, hVariable );
 		}
 	}
-	m_LastUpdateTimeStamp = SVClock::GetTimeStamp();
+	m_LastUpdateTimeStamp = SvTl::GetTimeStamp();
 	return bOK;
 }
 
@@ -74,7 +74,7 @@ bool ResultViewReferences::LoadResultViewItemDef( SVTreeType& rTree, SVTreeType:
 {
 	SVString Name( rTree.getLeafName( htiLeaf ) );
 
-	bool bOK = ( 0 == Name.compare( CTAG_COMPLETENAME ) );
+	bool bOK = ( 0 == Name.compare( SvXml::CTAG_COMPLETENAME ) );
 
 	_variant_t Value;
 	rTree.getLeafData( htiLeaf, Value );
@@ -122,7 +122,7 @@ bool ResultViewReferences::Save(SVObjectWriter& rWriter)
 		{
 			_variant_t Value;
 			Value.SetString( it->GetCompleteOneBasedObjectName().c_str() );
-			rWriter.WriteAttribute(CTAG_COMPLETENAME, Value);
+			rWriter.WriteAttribute(SvXml::CTAG_COMPLETENAME, Value);
 		}
 	}
 	rWriter.EndElement();
@@ -138,7 +138,7 @@ void ResultViewReferences::Clear()
 {
 	m_ReferenceVector.clear();
 	m_ResultViewItemDefList.clear();
-	m_LastUpdateTimeStamp = SVClock::GetTimeStamp();
+	m_LastUpdateTimeStamp = SvTl::GetTimeStamp();
 }
 
 
@@ -176,7 +176,7 @@ void ResultViewReferences::RebuildReferenceVector( SVInspectionProcess* pIProces
 			it = m_ResultViewItemDefList.erase(eit);
 		}
 	}
-	m_LastUpdateTimeStamp = SVClock::GetTimeStamp();
+	m_LastUpdateTimeStamp = SvTl::GetTimeStamp();
 }
 
 HRESULT  ResultViewReferences::GetResultData( SVIPResultData& p_rResultData) const
@@ -294,11 +294,11 @@ void ResultViewReferences::InsertFromOutputList(SVInspectionProcess* pInspection
 	// Find all outputs marked as selected for viewing
 	SVOutputInfoListClass OutputList;
 	pToolSet->GetOutputList( OutputList );
-	OutputList.GetSetAttributesList( SV_VIEWABLE, RefVector );
+	OutputList.GetSetAttributesList( SvOi::SV_VIEWABLE, RefVector );
 
 	for(SVObjectReferenceVector::const_iterator iter = RefVector.begin(); iter != RefVector.end(); ++iter)
 	{
-		if( nullptr != iter->getObject() && iter->ObjectAttributesSet() & SV_VIEWABLE )
+		if( nullptr != iter->getObject() && iter->ObjectAttributesSet() & SvOi::SV_VIEWABLE )
 		{
 			m_ReferenceVector.push_back(*iter);
 			ResultViewItemDef item(*iter);
@@ -306,7 +306,7 @@ void ResultViewReferences::InsertFromOutputList(SVInspectionProcess* pInspection
 		}
 	}
 
-	m_LastUpdateTimeStamp = SVClock::GetTimeStamp();
+	m_LastUpdateTimeStamp = SvTl::GetTimeStamp();
 }
 
 
@@ -322,7 +322,7 @@ void ResultViewReferences::InsertFromPPQInputs(SVInspectionProcess* pInspection)
 		{
 			SVIOEntryStruct pIOEntry = pInspection->m_PPQInputs[l];
 			SVObjectClass* pObject  = pIOEntry.m_IOEntryPtr->getObject();
-			if( nullptr != pObject && pObject->ObjectAttributesSet() & SV_VIEWABLE )
+			if( nullptr != pObject && pObject->ObjectAttributesSet() & SvOi::SV_VIEWABLE )
 			{
 				SVObjectReference ObjectRef(pObject);
 				ResultViewItemDef item(ObjectRef);
@@ -331,7 +331,7 @@ void ResultViewReferences::InsertFromPPQInputs(SVInspectionProcess* pInspection)
 			}
 		}
 	}
-	m_LastUpdateTimeStamp = SVClock::GetTimeStamp();
+	m_LastUpdateTimeStamp = SvTl::GetTimeStamp();
 }
 
 

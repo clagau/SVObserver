@@ -20,7 +20,8 @@
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace TriggerInformation {
+namespace SvTi
+{
 	HRESULT CALLBACK SVOTriggerObjectCallbackPtr( void *pvOwner, void *pvCaller, void *pvResponse )
 	{
 		HRESULT hrOk = S_OK;
@@ -301,5 +302,4 @@ namespace Seidenader { namespace TriggerInformation {
 			}
 		}
 	}
-
-} /* namespace TriggerInformation */ } /* namespace Seidenader */
+} //namespace SvTi

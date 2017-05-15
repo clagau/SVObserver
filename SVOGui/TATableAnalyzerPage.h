@@ -19,7 +19,8 @@
 #include "ISVPropertyPageDialog.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace SVOGui {
+namespace SvOg
+{
 	class TaTableAnalyzerPage : public CPropertyPage, public ISVPropertyPageDialog
 	{
 #pragma region Declarations
@@ -122,6 +123,4 @@ namespace Seidenader { namespace SVOGui {
 		SVSharedPtr<Controller> m_Values;
 #pragma endregion Member Variables
 	};
-}}
-
-namespace SvOg = Seidenader::SVOGui;
+} //namespace SvOg

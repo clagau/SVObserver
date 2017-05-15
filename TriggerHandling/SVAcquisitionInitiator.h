@@ -21,8 +21,8 @@
 
 class SVDigitizerLoadLibraryClass;
 
-namespace Seidenader { namespace TriggerHandling {
-
+namespace SvTh
+{
 	typedef std::vector<unsigned long> SVAcquisitionInitiatorHandleList;
 	typedef std::map<SVDigitizerLoadLibraryClass*, SVAcquisitionInitiatorHandleList> SVAcquisitionInitiatorList;
 
@@ -43,6 +43,4 @@ namespace Seidenader { namespace TriggerHandling {
 		HRESULT UnRegisterCallback(const SvTh::TriggerDispatcher& rDispatcher );
 		HRESULT UnRegisterAllCallbacks();
 	};
-} /* namespace TriggerHandling */ } /* namespace Seidenader */
-
-namespace SvTh = Seidenader::TriggerHandling;
+} //namespace SvTh

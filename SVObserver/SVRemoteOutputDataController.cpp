@@ -152,7 +152,7 @@ HRESULT SVRemoteOutputDataController::GetItem( const SVString& rRemoteGroupId, l
 }
 
 // Parameters >> Tree ( Save )
-bool SVRemoteOutputDataController::GetParameters( SVObjectXMLWriter& rWriter )
+bool SVRemoteOutputDataController::GetParameters(SvXml::SVObjectXMLWriter& rWriter )
 {
 	_variant_t svVariant;
 
@@ -160,10 +160,10 @@ bool SVRemoteOutputDataController::GetParameters( SVObjectXMLWriter& rWriter )
 
 	if( m_RemoteGroupParameters.size() > 0 )
 	{
-		rWriter.StartElement( CTAG_REMOTE_OUTPUT_PARAMETERS );
+		rWriter.StartElement( SvXml::CTAG_REMOTE_OUTPUT_PARAMETERS );
 		
 		svVariant = SVGUID( m_outObjectInfo.m_UniqueObjectID ).ToVARIANT();
-		rWriter.WriteAttribute(  CTAG_UNIQUE_REFERENCE_ID, svVariant );
+		rWriter.WriteAttribute(  SvXml::CTAG_UNIQUE_REFERENCE_ID, svVariant );
 
 		// Remote Output Parameters
 		SVRemoteOutputGroupMap::iterator l_it;
@@ -172,7 +172,7 @@ bool SVRemoteOutputDataController::GetParameters( SVObjectXMLWriter& rWriter )
 		for( l_it = m_RemoteGroupParameters.begin(); l_it != m_RemoteGroupParameters.end() ; ++l_it )
 		{
 			lIndex++;
-			SVString Branch = SvUl_SF::Format( "%s_%d", CTAG_REMOTE_GROUP_ID, lIndex );
+			SVString Branch = SvUl_SF::Format( "%s_%d", SvXml::CTAG_REMOTE_GROUP_ID, lIndex );
 			rWriter.StartElement( Branch.c_str() );
 			l_it->second->GetParameters( rWriter );
 			rWriter.EndElement();
@@ -192,11 +192,11 @@ BOOL SVRemoteOutputDataController::SetParameters( SVTreeType& p_rTree, SVTreeTyp
 
 	SVTreeType::SVBranchHandle htiIORemoteOutput = nullptr;
 
-	BOOL l_bTmp = SVNavigateTree::GetItemBranch( p_rTree, CTAG_REMOTE_OUTPUT_PARAMETERS,p_htiParent, htiIORemoteOutput ) ;
+	BOOL l_bTmp = SvXml::SVNavigateTree::GetItemBranch( p_rTree, SvXml::CTAG_REMOTE_OUTPUT_PARAMETERS,p_htiParent, htiIORemoteOutput ) ;
 
 	if( l_bTmp )
 	{
-		bOk = SVNavigateTree::GetItem( p_rTree, CTAG_UNIQUE_REFERENCE_ID, htiIORemoteOutput, svVariant );
+		bOk = SvXml::SVNavigateTree::GetItem( p_rTree, SvXml::CTAG_UNIQUE_REFERENCE_ID, htiIORemoteOutput, svVariant );
 		if ( bOk )
 		{
 			SVOutputStreamManager::Instance().EraseOutputController();
@@ -222,8 +222,8 @@ BOOL SVRemoteOutputDataController::SetParameters( SVTreeType& p_rTree, SVTreeTyp
 				SVTreeType::SVBranchHandle htiBranch = nullptr;
 				SVString GroupID;
 
-				SVString Entry = SvUl_SF::Format( _T("%s_%d"), CTAG_REMOTE_GROUP_ID, ++l_lEntryNum );
-				l_bTmp = SVNavigateTree::GetItemBranch( p_rTree, Entry.c_str(), htiIORemoteOutput, htiBranch );
+				SVString Entry = SvUl_SF::Format( _T("%s_%d"), SvXml::CTAG_REMOTE_GROUP_ID, ++l_lEntryNum );
+				l_bTmp = SvXml::SVNavigateTree::GetItemBranch( p_rTree, Entry.c_str(), htiIORemoteOutput, htiBranch );
 
 				if ( l_bTmp )
 				{

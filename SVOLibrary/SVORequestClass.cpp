@@ -76,7 +76,7 @@ HRESULT SVORequestClass::Reset()
 	mbIsValid = false;
 	mbIsComplete = false;
 
-	m_StartTick = SVClock::GetTimeStamp();
+	m_StartTick = SvTl::GetTimeStamp();
 
 	if ( S_OK != mResponse.Reset() )
 	{
@@ -227,7 +227,7 @@ HRESULT SVORequestClass::SetExtraData( void *pvExtraData )
 /*
 This method returns the start time stamp of this object.
 */
-HRESULT SVORequestClass::GetStartTick( SVClock::SVTimeStamp& p_rTick )
+HRESULT SVORequestClass::GetStartTick( SvTl::SVTimeStamp& p_rTick )
 {
 	HRESULT hrOk = S_OK;
 
@@ -239,7 +239,7 @@ HRESULT SVORequestClass::GetStartTick( SVClock::SVTimeStamp& p_rTick )
 /*
 This method sets the start time stamp of this object.
 */
-HRESULT SVORequestClass::SetStartTick( const SVClock::SVTimeStamp& p_rTick )
+HRESULT SVORequestClass::SetStartTick( const SvTl::SVTimeStamp& p_rTick )
 {
 	HRESULT hrOk = S_OK;
 

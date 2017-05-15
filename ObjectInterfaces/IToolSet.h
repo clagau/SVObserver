@@ -16,39 +16,32 @@
 #pragma endregion Includes
 
 
-namespace Seidenader
+namespace SvOi
 {
-	namespace ObjectInterfaces
-	{	
-		//this class is a interface. It should only have pure virtual public method and no member variables
-		class IToolSet
-		{
-		public:
-			virtual ~IToolSet() {}
+	//this class is a interface. It should only have pure virtual public method and no member variables
+	class IToolSet
+	{
+	public:
+		virtual ~IToolSet() {}
 
-			/**********
-			 The method determines if it is previous to another in the list.
-			 \param rToolID <in>: tool id
-			***********/
-			virtual bool IsToolPreviousToSelected( const SVGUID& rToolID ) const = 0;
+		/**********
+			The method determines if it is previous to another in the list.
+			\param rToolID <in>: tool id
+		***********/
+		virtual bool IsToolPreviousToSelected( const SVGUID& rToolID ) const = 0;
 
-			/**********
-			 The method retrieves the band 0 of a color tool else nullptr
-			 \return Pointer to the Band0 image object
-			***********/
-			virtual IObjectClass* getBand0Image() const = 0;
+		/**********
+			The method retrieves the band 0 of a color tool else nullptr
+			\return Pointer to the Band0 image object
+		***********/
+		virtual IObjectClass* getBand0Image() const = 0;
 
-			virtual bool WasEnabled() const = 0; 
+		virtual bool WasEnabled() const = 0; 
 
-			virtual HRESULT getResetCounts(bool& rResetCounts) const = 0;
+		virtual HRESULT getResetCounts(bool& rResetCounts) const = 0;
 
-			virtual ISVImage* getCurrentImageInterface() = 0;
+		virtual ISVImage* getCurrentImageInterface() = 0;
 
-			virtual SVEnumerateValueObjectClass* GetDrawFlagObject() = 0;
-
-
-		};
-	}
-}
-
-namespace SvOi = Seidenader::ObjectInterfaces;
+		virtual SVEnumerateValueObjectClass* GetDrawFlagObject() = 0;
+	};
+} //namespace SvOi

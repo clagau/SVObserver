@@ -14,40 +14,35 @@
 #include "ObjectInterfaces\IObjectManager.h"
 #pragma endregion Includes
 
-namespace Seidenader
+namespace SvCmd
 {
-	namespace GuiCommand
+	struct AreAuxiliaryExtentsAvailable : public boost::noncopyable
 	{
-		struct AreAuxiliaryExtentsAvailable : public boost::noncopyable
+		AreAuxiliaryExtentsAvailable(const GUID& rObjectID) : m_InstanceID(rObjectID), m_bAvailable(false) {}
+
+		// This method is where the real separation would occur by using sockets/named pipes/shared memory
+		// The logic contained within this method would be moved to the "Server" side of a Client/Server architecture
+		// and replaced with the building and sending of the command
+		HRESULT Execute()
 		{
-			AreAuxiliaryExtentsAvailable(const GUID& rObjectID) : m_InstanceID(rObjectID), m_bAvailable(false) {}
-
-			// This method is where the real separation would occur by using sockets/named pipes/shared memory
-			// The logic contained within this method would be moved to the "Server" side of a Client/Server architecture
-			// and replaced with the building and sending of the command
-			HRESULT Execute()
+			HRESULT hr = S_OK;
+			
+			SvOi::ITool* pTool = dynamic_cast<SvOi::ITool *>(SvOi::getObject(m_InstanceID));
+			if (pTool)
 			{
-				HRESULT hr = S_OK;
-				
-				SvOi::ITool* pTool = dynamic_cast<SvOi::ITool *>(SvOi::getObject(m_InstanceID));
-				if (pTool)
-				{
-					m_bAvailable = pTool->areAuxExtentsAvailable();
-				}
-				else
-				{
-					hr = E_POINTER;
-				}
-				return hr;
+				m_bAvailable = pTool->areAuxExtentsAvailable();
 			}
-			bool empty() const { return false; }
-			bool AuxExtentsAvailable() const { return m_bAvailable; }
+			else
+			{
+				hr = E_POINTER;
+			}
+			return hr;
+		}
+		bool empty() const { return false; }
+		bool AuxExtentsAvailable() const { return m_bAvailable; }
 
-		private:
-			bool m_bAvailable;
-			GUID m_InstanceID;
-		};
-	}
-}
-
-namespace GuiCmd = Seidenader::GuiCommand;
+	private:
+		bool m_bAvailable;
+		GUID m_InstanceID;
+	};
+} //namespace SvCmd

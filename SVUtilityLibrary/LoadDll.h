@@ -16,7 +16,7 @@
 #include "SVString.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace SVUtilityLibrary
+namespace SvUl
 {
 	#pragma region Declarations
 		//Loadable Dlls
@@ -69,7 +69,5 @@ namespace Seidenader { namespace SVUtilityLibrary
 			DllMap m_DllsLoaded;						//The list of Dlls loaded
 	#pragma endregion Member Variables
 	};
-} /* namespace SVUtilityLibrary */ } /* namespace Seidenader */
-
-namespace SvUl = Seidenader::SVUtilityLibrary;
+} // namespace SvUl
 

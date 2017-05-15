@@ -97,7 +97,7 @@ HRESULT ToolClipboard::writeToClipboard( const SVGUID& rToolGuid ) const
 						{
 							Result = S_FALSE;
 							SvStl::MessageMgrStd e( SvStl::DataOnly );
-							e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvOi::Tid_SetClipboardDataFailed, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_25000_SetClipboardData );
+							e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_SetClipboardDataFailed, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25000_SetClipboardData );
 							e.Throw();
 						}
 					}
@@ -105,7 +105,7 @@ HRESULT ToolClipboard::writeToClipboard( const SVGUID& rToolGuid ) const
 					{
 						Result = S_FALSE;
 						SvStl::MessageMgrStd e( SvStl::DataOnly );
-						e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvOi::Tid_ClipboardMemoryFailed, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_25001_ClipboardMemory );
+						e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ClipboardMemoryFailed, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25001_ClipboardMemory );
 						e.Throw();
 					}
 				}
@@ -226,20 +226,20 @@ HRESULT ToolClipboard::streamToolToZip( const SVString rFileName, const SVGUID& 
 	{
 		Result = S_FALSE;
 		SvStl::MessageMgrStd e( SvStl::DataOnly );
-		e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvOi::Tid_ToolInvalid, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_25002_ToolInvalid );
+		e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ToolInvalid, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25002_ToolInvalid );
 		e.Throw();
 	}
 	else
 	{
 		std::ostringstream MemoryStream;
-		SVObjectXMLWriter XmlWriter( MemoryStream );
+		SvXml::SVObjectXMLWriter XmlWriter( MemoryStream );
 
-		SVString rootNodeName( ToolCopyTag );
+		SVString rootNodeName( SvXml::ToolCopyTag );
 		XmlWriter.WriteRootElement( rootNodeName.c_str() );
 		XmlWriter.WriteSchema();
 		writeBaseAndEnvironmentNodes( XmlWriter );
 
-		XmlWriter.StartElement( ToolsTag );
+		XmlWriter.StartElement(SvXml::ToolsTag );
 		writeSourceGuids( XmlWriter, *pTool );
 		pTool->Persist( XmlWriter );
 
@@ -261,7 +261,7 @@ HRESULT ToolClipboard::streamToolToZip( const SVString rFileName, const SVGUID& 
 	return Result;
 }
 
-void ToolClipboard::writeBaseAndEnvironmentNodes( SVObjectXMLWriter& rXmlWriter ) const
+void ToolClipboard::writeBaseAndEnvironmentNodes(SvXml::SVObjectXMLWriter& rXmlWriter ) const
 {
 	_variant_t xmlnsValue;
 	_variant_t Value;
@@ -270,19 +270,19 @@ void ToolClipboard::writeBaseAndEnvironmentNodes( SVObjectXMLWriter& rXmlWriter 
 
 	Value.SetString( SvO::SV_BaseNode );
 
-	rXmlWriter.StartElement( BaseTag );
+	rXmlWriter.StartElement(SvXml::BaseTag );
 	rXmlWriter.ElementAttribute( SvO::XmlNameSpace, xmlnsValue );
-	rXmlWriter.ElementAttribute(TypeTag, Value );
+	rXmlWriter.ElementAttribute(SvXml::TypeTag, Value );
 
 	Value.Clear();
 	Value = TheSVObserverApp.getCurrentVersion();
 
-	rXmlWriter.StartElement( CTAG_ENVIRONMENT  );
-	rXmlWriter.WriteAttribute( CTAG_VERSION_NUMBER, Value );
+	rXmlWriter.StartElement( SvXml::CTAG_ENVIRONMENT  );
+	rXmlWriter.WriteAttribute( SvXml::CTAG_VERSION_NUMBER, Value );
 	rXmlWriter.EndElement();
 }
 
-void ToolClipboard::writeSourceGuids( SVObjectXMLWriter& rXmlWriter, SVToolClass& rTool ) const
+void ToolClipboard::writeSourceGuids(SvXml::SVObjectXMLWriter& rXmlWriter, SVToolClass& rTool ) const
 {
 	_variant_t Value;
 
@@ -292,7 +292,7 @@ void ToolClipboard::writeSourceGuids( SVObjectXMLWriter& rXmlWriter, SVToolClass
 
 	Value.Clear();
 	Value = SVGUID( rTool.GetClassID() ).ToVARIANT();
-	rXmlWriter.WriteAttribute( ToolTypeTag, Value );
+	rXmlWriter.WriteAttribute(SvXml::ToolTypeTag, Value );
 
 	SVGUID ToolImageGuid( GUID_NULL );
 	SVInObjectInfoStruct* pImageInfo = nullptr;
@@ -315,7 +315,7 @@ void ToolClipboard::writeSourceGuids( SVObjectXMLWriter& rXmlWriter, SVToolClass
 	}
 	Value.Clear();
 	Value = ToolImageGuid.ToVARIANT();
-	rXmlWriter.WriteAttribute( ToolImageTag, Value );
+	rXmlWriter.WriteAttribute(SvXml::ToolImageTag, Value );
 }
 
 void ToolClipboard::findDependencyFiles( const std::string& rToolXmlString, SVStringSet& rDependencyFiles ) const
@@ -328,7 +328,7 @@ void ToolClipboard::findDependencyFiles( const std::string& rToolXmlString, SVSt
 	StartPos = rToolXmlString.find( SearchString.c_str(), EndPos );
 	while( std::string::npos != StartPos )
 	{
-		EndPos = rToolXmlString.find( DataTag, StartPos );
+		EndPos = rToolXmlString.find(SvXml::DataTag, StartPos );
 		if( std::string::npos != EndPos )
 		{
 			SVString FileName;
@@ -393,7 +393,7 @@ HRESULT ToolClipboard::convertClipboardDataToString( SVString& rClipboardData )
 
 			Result = S_FALSE;
 			SvStl::MessageMgrStd e( SvStl::DataOnly );
-			e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvOi::Tid_GetClipboardDataFailed, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_25003_GetClipboardData );
+			e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_GetClipboardDataFailed, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25003_GetClipboardData );
 			e.Throw();
 		}
 		else
@@ -454,7 +454,7 @@ HRESULT ToolClipboard::convertXmlToTree( const SVString& rXmlData, SVTreeType& r
 	if( false == SUCCEEDED(Result))
 	{
 		SvStl::MessageMgrStd e( SvStl::DataOnly );
-		e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvOi::Tid_ClipboardDataConverionFailed, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_25004_ClipboardDataConversion );
+		e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ClipboardDataConverionFailed, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25004_ClipboardDataConversion );
 		e.Throw();
 	}
 	return Result;
@@ -466,11 +466,11 @@ HRESULT ToolClipboard::checkVersion( SVTreeType& rTree ) const
 
 	SVTreeType::SVBranchHandle EnvironmentItem = nullptr;
 
-	if( SVNavigateTree::GetItemBranch( rTree, CTAG_ENVIRONMENT, nullptr, EnvironmentItem ) )
+	if( SvXml::SVNavigateTree::GetItemBranch( rTree, SvXml::CTAG_ENVIRONMENT, nullptr, EnvironmentItem ) )
 	{
 		_variant_t ClipboardVersion;
 
-		SVNavigateTree::GetItem( rTree, CTAG_VERSION_NUMBER, EnvironmentItem, ClipboardVersion );
+		SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_VERSION_NUMBER, EnvironmentItem, ClipboardVersion );
 
 		//Clipboard SVObserver version and current version must be the same
 		if ( VT_UI4 == ClipboardVersion.vt && TheSVObserverApp.getCurrentVersion() == ClipboardVersion.ulVal )
@@ -482,7 +482,7 @@ HRESULT ToolClipboard::checkVersion( SVTreeType& rTree ) const
 	if( S_OK != Result )
 	{
 		SvStl::MessageMgrStd e( SvStl::DataOnly );
-		e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvOi::Tid_Clipboard_VersionMismatch, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_25005_VersionMismatch );
+		e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_Clipboard_VersionMismatch, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25005_VersionMismatch );
 		e.Throw();
 	}
 	return Result;
@@ -494,15 +494,15 @@ HRESULT ToolClipboard::validateGuids( SVString& rXmlData, SVTreeType& rTree, int
 
 	SVTreeType::SVBranchHandle ToolsItem = nullptr;
 
-	if( SVNavigateTree::GetItemBranch( rTree, ToolsTag, nullptr, ToolsItem ) )
+	if( SvXml::SVNavigateTree::GetItemBranch( rTree, SvXml::ToolsTag, nullptr, ToolsItem ) )
 	{
 		_variant_t Inspection;
 		_variant_t ToolType;
 		_variant_t ToolImage;
 
-		SVNavigateTree::GetItem( rTree, m_rInspection.GetObjectName(), ToolsItem, Inspection );
-		SVNavigateTree::GetItem( rTree, ToolTypeTag, ToolsItem, ToolType );
-		SVNavigateTree::GetItem( rTree, ToolImageTag, ToolsItem, ToolImage );
+		SvXml::SVNavigateTree::GetItem( rTree, m_rInspection.GetObjectName(), ToolsItem, Inspection );
+		SvXml::SVNavigateTree::GetItem( rTree, SvXml::ToolTypeTag, ToolsItem, ToolType );
+		SvXml::SVNavigateTree::GetItem( rTree, SvXml::ToolImageTag, ToolsItem, ToolImage );
 
 		SVGUID InspectionGuid( Inspection );
 		SVGUID ToolTypeGuid( ToolType );
@@ -513,7 +513,7 @@ HRESULT ToolClipboard::validateGuids( SVString& rXmlData, SVTreeType& rTree, int
 		{
 			Result = S_FALSE;
 			SvStl::MessageMgrStd e( SvStl::DataOnly );
-			e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvOi::Tid_ColorToolInsertFailed, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_25006_ColorToolInsert );
+			e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ColorToolInsertFailed, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25006_ColorToolInsert );
 			e.Throw();
 		}
 		//Only color tools are allowed to be the first tool in a color system
@@ -521,7 +521,7 @@ HRESULT ToolClipboard::validateGuids( SVString& rXmlData, SVTreeType& rTree, int
 		{
 			Result = S_FALSE;
 			SvStl::MessageMgrStd e( SvStl::DataOnly );
-			e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvOi::Tid_NonColorToolInsertFailed, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_25007_NonColorToolInsert );
+			e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_NonColorToolInsertFailed, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25007_NonColorToolInsert );
 			e.Throw();
 		}
 		else
@@ -574,7 +574,7 @@ HRESULT ToolClipboard::validateGuids( SVString& rXmlData, SVTreeType& rTree, int
 	{
 		Result = S_FALSE;
 		SvStl::MessageMgrStd e( SvStl::DataOnly );
-		e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvOi::Tid_ClipboardDataConverionFailed, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_25008_ClipboardDataConversion );
+		e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ClipboardDataConverionFailed, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25008_ClipboardDataConversion );
 		e.Throw();
 	}
 
@@ -587,7 +587,7 @@ HRESULT ToolClipboard::replaceToolName( SVString& rXmlData, SVTreeType& rTree ) 
 
 	SVTreeType::SVBranchHandle ToolsItem( nullptr );
 
-	if( SVNavigateTree::GetItemBranch( rTree, ToolsTag, nullptr, ToolsItem ) )
+	if( SvXml::SVNavigateTree::GetItemBranch( rTree, SvXml::ToolsTag, nullptr, ToolsItem ) )
 	{
 		SVTreeType::SVBranchHandle ToolItem( nullptr );
 
@@ -597,7 +597,7 @@ HRESULT ToolClipboard::replaceToolName( SVString& rXmlData, SVTreeType& rTree ) 
 		{
 			_variant_t ObjectName;
 
-			SVNavigateTree::GetItem( rTree, scObjectNameTag, ToolItem, ObjectName);
+			SvXml::SVNavigateTree::GetItem( rTree, scObjectNameTag, ToolItem, ObjectName);
 			SVString ToolName = SvUl_SF::createSVString( ObjectName.bstrVal );
 			SVString NewName;
 
@@ -618,7 +618,7 @@ HRESULT ToolClipboard::replaceToolName( SVString& rXmlData, SVTreeType& rTree ) 
 	if( S_OK != Result )
 	{
 		SvStl::MessageMgrStd e( SvStl::DataOnly );
-		e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvOi::Tid_ClipboardDataConverionFailed, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_25009_ClipboardDataConversion );
+		e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ClipboardDataConverionFailed, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25009_ClipboardDataConversion );
 		e.Throw();
 	}
 
@@ -631,7 +631,7 @@ HRESULT ToolClipboard::replaceUniqueGuids( SVString& rXmlData, SVTreeType& rTree
 
 	SVTreeType::SVBranchHandle ToolsItem = nullptr;
 
-	if( SVNavigateTree::GetItemBranch( rTree, ToolsTag, nullptr, ToolsItem ) )
+	if( SvXml::SVNavigateTree::GetItemBranch( rTree, SvXml::ToolsTag, nullptr, ToolsItem ) )
 	{
 		SVStringSet UniqueIDList;
 
@@ -653,7 +653,7 @@ HRESULT ToolClipboard::replaceUniqueGuids( SVString& rXmlData, SVTreeType& rTree
 	{
 		Result = S_FALSE;
 		SvStl::MessageMgrStd e( SvStl::DataOnly );
-		e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvOi::Tid_ClipboardDataConverionFailed, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_25010_ClipboardDataConversion );
+		e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ClipboardDataConverionFailed, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25010_ClipboardDataConversion );
 		e.Throw();
 	}
 
@@ -666,7 +666,7 @@ HRESULT ToolClipboard::parseTreeToTool( SVTreeType& rTree, SVGUID& rToolGuid )
 
 	SVTreeType::SVBranchHandle ToolsItem( nullptr );
 
-	if( SVNavigateTree::GetItemBranch( rTree, ToolsTag, nullptr, ToolsItem ) )
+	if( SvXml::SVNavigateTree::GetItemBranch( rTree, SvXml::ToolsTag, nullptr, ToolsItem ) )
 	{
 		SVTreeType::SVBranchHandle ToolItem( nullptr );
 
@@ -676,7 +676,7 @@ HRESULT ToolClipboard::parseTreeToTool( SVTreeType& rTree, SVGUID& rToolGuid )
 		{
 			_variant_t UniqueID;
 
-			SVNavigateTree::GetItem( rTree, scUniqueReferenceIDTag, ToolItem, UniqueID);
+			SvXml::SVNavigateTree::GetItem( rTree, scUniqueReferenceIDTag, ToolItem, UniqueID);
 
 			SVToolSetClass* pToolset( m_rInspection.GetToolSet() );
 			if( nullptr != pToolset )
@@ -702,7 +702,7 @@ HRESULT ToolClipboard::parseTreeToTool( SVTreeType& rTree, SVGUID& rToolGuid )
 	if( S_OK != Result )
 	{
 		SvStl::MessageMgrStd e( SvStl::DataOnly );
-		e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvOi::Tid_ClipboardDataConverionFailed, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_25011_ClipboardDataConversion );
+		e.setMessage( SVMSG_SVO_51_CLIPBOARD_WARNING, SvStl::Tid_ClipboardDataConverionFailed, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25011_ClipboardDataConversion );
 		e.Throw();
 	}
 	return Result;

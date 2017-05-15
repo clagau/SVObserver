@@ -38,7 +38,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-namespace Seidenader { namespace SVOGui
+namespace SvOg
 {
 	// Constant types
 	enum
@@ -127,7 +127,7 @@ namespace Seidenader { namespace SVOGui
 		if (S_OK != hOK || nullptr == ScintillaInstance)
 		{
 			SvStl::MessageMgrStd Exception( SvStl::LogAndDisplay );
-			Exception.setMessage( SVMSG_SVO_88_LOADING_SCINTILLA_DLL_ERROR, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10028_LoadOfScintillaDllFailed );
+			Exception.setMessage( SVMSG_SVO_88_LOADING_SCINTILLA_DLL_ERROR, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10028_LoadOfScintillaDllFailed );
 		}
 		else
 		{
@@ -680,20 +680,20 @@ namespace Seidenader { namespace SVOGui
 		}
 		if( result == SvOi::IFormulaController::validateSuccessful )
 		{
-			SvOi::MessageTextEnum id = SvOi::Tid_Empty;
+			SvStl::MessageTextEnum id = SvStl::Tid_Empty;
 			SVStringVector msgList;
 			if (m_isConditionalPage)
 			{
-				msgList.push_back(SvStl::MessageData::convertId2AddtionalText(( value ) ? SvOi::Tid_True : SvOi::Tid_False));
-				id = SvOi::Tid_ConditionalValidated;
+				msgList.push_back(SvStl::MessageData::convertId2AddtionalText(( value ) ? SvStl::Tid_True : SvStl::Tid_False));
+				id = SvStl::Tid_ConditionalValidated;
 			}
 			else
 			{
 				msgList.push_back(SvUl_SF::Format(_T("%lf"), value));
-				id = SvOi::Tid_FormulaValidated;
+				id = SvStl::Tid_FormulaValidated;
 			}
 			SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, id, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10223 );
+			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, id, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10223 );
 		}
 		else // Something is wrong
 		{
@@ -733,7 +733,7 @@ namespace Seidenader { namespace SVOGui
 		{
 			// Equation must be valid or disabled
 			SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_InvalidFormula, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10222 );
+			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_InvalidFormula, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10222 );
 			return FALSE;
 		}
 		else
@@ -891,5 +891,5 @@ namespace Seidenader { namespace SVOGui
 		}
 	}
 
-} /* namespace SVOGui */ } /* namespace Seidenader */
+} //namespace SvOg
 

@@ -151,32 +151,32 @@ BOOL SVToolSetClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 	BOOL bOk = SVTaskObjectListClass::CreateObject( PCreateStructure );
 
 	// Set / Reset Printable Flags
-	m_Enabled.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
-	m_Passed.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-	m_Failed.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-	m_Warned.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-	m_ExplicitFailed.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-	m_PassedCount.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-	m_FailedCount.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-	m_WarnedCount.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-	m_EnabledCount.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-	m_ProcessedCount.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-	m_RegressionTestMode.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
-	m_DrawFlag.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
-	m_ToolTime.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-	m_ResetCounts.SetObjectAttributesAllowed( SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE | SV_EMBEDABLE, SvOi::SetAttributeType::OverwriteAttribute );
-	m_TriggerCount.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-	m_latestCompletionPPQIndex.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-	m_TriggerDelta.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-	m_LastTriggerToPPQCompletion.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-	m_LastTriggerToStart.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_Enabled.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_Passed.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_Failed.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_Warned.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_ExplicitFailed.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_PassedCount.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_FailedCount.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_WarnedCount.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_EnabledCount.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_ProcessedCount.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_RegressionTestMode.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_DrawFlag.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_ToolTime.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_ResetCounts.SetObjectAttributesAllowed( SvOi::SV_REMOTELY_SETABLE | SvOi::SV_SETABLE_ONLINE | SvOi::SV_EMBEDABLE, SvOi::SetAttributeType::OverwriteAttribute );
+	m_TriggerCount.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_latestCompletionPPQIndex.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_TriggerDelta.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_LastTriggerToPPQCompletion.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_LastTriggerToStart.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 
-	m_MinToolsetTime.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-	m_MaxToolsetTime.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-	m_Width.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-	m_Height.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_MinToolsetTime.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_MaxToolsetTime.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_Width.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_Height.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 
-	m_MainImageObject.SetObjectAttributesAllowed( SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
+	m_MainImageObject.SetObjectAttributesAllowed( SvOi::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
 
 	m_isCreated = bOk;
 
@@ -236,7 +236,7 @@ void SVToolSetClass::moveTool( int NewIndex, SVToolClass* pTool )
 		//Remove first because inserting causes list to change!
 		m_aTaskObjects.RemoveAt(Index);
 		m_aTaskObjects.InsertAt( NewIndex, ( SVTaskObjectClass* ) pTool );
-		m_LastListUpdateTimestamp = SVClock::GetTimeStamp();
+		m_LastListUpdateTimestamp = SvTl::GetTimeStamp();
 	}
 }
 
@@ -432,11 +432,11 @@ bool SVToolSetClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContaine
 
 	//before calculating the trigger delta: make sure both trigger times are valid:
 	bool bothTriggersValid = (rRunStatus.m_CurrentTriggerTime * rRunStatus.m_PreviousTriggerTime > 0.1);
-	__int64 Value = bothTriggersValid ? static_cast<__int64>(SVClock::c_MicrosecondsPerMillisecond * (rRunStatus.m_CurrentTriggerTime - rRunStatus.m_PreviousTriggerTime)) : 0LL;
+	__int64 Value = bothTriggersValid ? static_cast<__int64>(SvTl::c_MicrosecondsPerMillisecond * (rRunStatus.m_CurrentTriggerTime - rRunStatus.m_PreviousTriggerTime)) : 0LL;
 	m_TriggerDelta.SetValue( Value, rRunStatus.m_lResultDataIndex );
-	Value = static_cast<__int64> (rRunStatus.m_WorkloadInfoRsc.TriggerToCompletionInMilliseconds() * SVClock::c_MicrosecondsPerMillisecond);
+	Value = static_cast<__int64> (rRunStatus.m_WorkloadInfoRsc.TriggerToCompletionInMilliseconds() * SvTl::c_MicrosecondsPerMillisecond);
 	m_LastTriggerToPPQCompletion.SetValue( Value, rRunStatus.m_lResultDataIndex );
-	Value = static_cast<__int64> (rRunStatus.m_WorkloadInfoRsc.TriggerToStartInMilliseconds() * SVClock::c_MicrosecondsPerMillisecond);
+	Value = static_cast<__int64> (rRunStatus.m_WorkloadInfoRsc.TriggerToStartInMilliseconds() * SvTl::c_MicrosecondsPerMillisecond);
 	m_LastTriggerToStart.SetValue( Value, rRunStatus.m_lResultDataIndex );
 
 	bool Result = __super::onRun( rRunStatus, pErrorMessages );
@@ -497,7 +497,7 @@ bool SVToolSetClass::Run( SVRunStatusClass& rRunStatus, SvStl::MessageContainerV
 		{
 			++m_SetNumber;
 
-			SVClock::SVTimeStamp l_Timer = SVClock::GetTimeStamp();
+			SvTl::SVTimeStamp l_Timer = SvTl::GetTimeStamp();
 
 			m_ToolTime.Start();
 
@@ -553,8 +553,8 @@ bool SVToolSetClass::Run( SVRunStatusClass& rRunStatus, SvStl::MessageContainerV
 			// set our state according to the runStatus
 			// rRunStatus.SetValid();
 
-			SVClock::SVTimeStamp l_Elapsed = ( SVClock::GetTimeStamp() - l_Timer );
-			m_EndTime = SVClock::ConvertTo( SVClock::Seconds, l_Elapsed );
+			SvTl::SVTimeStamp l_Elapsed = ( SvTl::GetTimeStamp() - l_Timer );
+			m_EndTime = SvTl::ConvertTo( SvTl::Seconds, l_Elapsed );
 			m_AverageTime = ( m_AverageTime + m_EndTime ) / 2.0;
 
 			if( 0 < m_SetNumber )
@@ -653,14 +653,14 @@ bool SVToolSetClass::Run( SVRunStatusClass& rRunStatus, SvStl::MessageContainerV
 	}// end if
 	else
 	{
-		SVClock::SVTimeStamp l_Timer = SVClock::GetTimeStamp();
+		SvTl::SVTimeStamp l_Timer = SvTl::GetTimeStamp();
 
 		m_ToolTime.Start();
 
 		bRetVal = RunWithNewDisable( rRunStatus, &m_RunErrorMessages );
 
-		SVClock::SVTimeStamp l_Elapsed = ( SVClock::GetTimeStamp() - l_Timer );
-		m_EndTime = SVClock::ConvertTo( SVClock::Seconds, l_Elapsed );
+		SvTl::SVTimeStamp l_Elapsed = ( SvTl::GetTimeStamp() - l_Timer );
+		m_EndTime = SvTl::ConvertTo( SvTl::Seconds, l_Elapsed );
 		m_AverageTime = ( m_AverageTime + m_EndTime ) / 2.0;
 
 		if( 0 < m_SetNumber )
@@ -1018,7 +1018,7 @@ bool SVToolSetClass::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages
 		{
 			SVStringVector msgList;
 			msgList.push_back(GetName());
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ConditionalValue_Invalid, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ConditionalValue_Invalid, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 			pErrorMessages->push_back(Msg);
 		}
 		return false;

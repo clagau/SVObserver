@@ -18,7 +18,7 @@
 #include "SVObjectLibrary\SVClsids.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace SVOGui
+namespace SvOg
 {
 	static LPCSTR UpdateAuxiliaryExtentsTag = "UpdateAuxiliaryExtents";
 
@@ -45,7 +45,7 @@ namespace Seidenader { namespace SVOGui
 	{
 		bool bRetVal = false;
 
-		typedef GuiCmd::AreAuxiliaryExtentsAvailable Command;
+		typedef SvCmd::AreAuxiliaryExtentsAvailable Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 		CommandPtr commandPtr(new Command(m_TaskObjectID));
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
@@ -80,7 +80,7 @@ namespace Seidenader { namespace SVOGui
 	HRESULT AuxiliaryExtentsController::FindAuxSourceImages()
 	{
 		// Need to do pTool->GetSourceImages
-		typedef GuiCmd::GetAvailableAuxSourceImages Command;
+		typedef SvCmd::GetAvailableAuxSourceImages Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 		CommandPtr commandPtr(new Command(m_TaskObjectID));
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
@@ -117,7 +117,7 @@ namespace Seidenader { namespace SVOGui
 		}
 		if (!imageID.empty())
 		{
-			typedef GuiCmd::SetAuxSourceImage Command;
+			typedef SvCmd::SetAuxSourceImage Command;
 			typedef SVSharedPtr<Command> CommandPtr;
 			CommandPtr commandPtr(new Command(m_TaskObjectID, imageID));
 			SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
@@ -132,7 +132,7 @@ namespace Seidenader { namespace SVOGui
 
 	SvUl::NameGuidPair AuxiliaryExtentsController::GetAuxSourceImage() const
 	{
-		typedef GuiCmd::GetAuxSourceImage Command;
+		typedef SvCmd::GetAuxSourceImage Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 		CommandPtr commandPtr(new Command(m_TaskObjectID));
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
@@ -146,11 +146,11 @@ namespace Seidenader { namespace SVOGui
 	
 	HRESULT AuxiliaryExtentsController::RunOnce()
 	{
-		typedef GuiCmd::InspectionRunOnce Command;
+		typedef SvCmd::InspectionRunOnce Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 		CommandPtr commandPtr = new Command(m_InspectionID, m_TaskObjectID);
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		return hr;
 	}
-} /* namespace SVOGui */ } /* namespace Seidenader */
+} //namespace SvOg

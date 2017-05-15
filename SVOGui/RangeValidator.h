@@ -8,31 +8,26 @@
 
 #pragma region Includes
 #include "SVUtilityLibrary\SVString.h"
-#include "ObjectInterfaces\MessageTextEnum.h"
+#include "SVStatusLibrary/MessageTextEnum.h"
 #pragma endregion Includes
 
-namespace Seidenader
+namespace SvOg
 {
-	namespace SVOGui
+	class RangeValidator
 	{
-		class RangeValidator
-		{
-		public:
-			static void IsFieldValid(SvOi::MessageTextEnum fieldName, const SVString& value);
+	public:
+		static void IsFieldValid(SvStl::MessageTextEnum fieldName, const SVString& value);
 
-			static void Validate( const SVString& InspectionName, 
-							const SVString& FailHighIndirectValue, 
-							const SVString& FailLowIndirectValue, 
-							const SVString& WarnHighIndirectValue, 
-							const SVString& WarnLowIndirectValue, 
-							double FailHighValue, 
-							double FailLowValue, 
-							double WarnHighValue, 
-							double WarnLowValue, 
-							const GUID& rInspectionID);
+		static void Validate( const SVString& InspectionName, 
+						const SVString& FailHighIndirectValue, 
+						const SVString& FailLowIndirectValue, 
+						const SVString& WarnHighIndirectValue, 
+						const SVString& WarnLowIndirectValue, 
+						double FailHighValue, 
+						double FailLowValue, 
+						double WarnHighValue, 
+						double WarnLowValue, 
+						const GUID& rInspectionID);
 
-		};
-	}
-}
-
-namespace SvOg = Seidenader::SVOGui;
+	};
+} //namespace SvOg

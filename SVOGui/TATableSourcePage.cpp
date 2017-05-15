@@ -25,7 +25,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-namespace Seidenader { namespace SVOGui
+namespace SvOg
 {
 	static LPCTSTR NoTableTag = _T("(No Table Available)");
 
@@ -64,7 +64,7 @@ namespace Seidenader { namespace SVOGui
 		RetrieveAvailableList();
 	
 		SVString selectedTableName;
-		typedef GuiCmd::GetInputs Command;
+		typedef SvCmd::GetInputs Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 		CommandPtr commandPtr = new Command(m_TaskObjectID, SVObjectTypeInfoStruct(TableObjectType, SVNotSetSubObjectType), SVToolObjectType);
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
@@ -109,7 +109,7 @@ namespace Seidenader { namespace SVOGui
 					msgList.push_back(m_inputName);
 					msgList.push_back(SVString(tableName));
 					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_ConnectTableSourceFailed, msgList, SvStl::SourceFileParams(StdMessageParams) );
+					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ConnectTableSourceFailed, msgList, SvStl::SourceFileParams(StdMessageParams) );
 				}
 			}
 		}
@@ -119,10 +119,10 @@ namespace Seidenader { namespace SVOGui
 #pragma region Private Methods
 	HRESULT TATableSourcePage::RetrieveAvailableList()
 	{ 
-		typedef GuiCmd::GetAvailableObjects Command;
+		typedef SvCmd::GetAvailableObjects Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 
-		CommandPtr commandPtr = new Command(m_InspectionID, SVObjectTypeInfoStruct(TableObjectType, SVNotSetSubObjectType), GuiCmd::IsObjectFromPriorTool(m_TaskObjectID), SVToolObjectType);
+		CommandPtr commandPtr = new Command(m_InspectionID, SVObjectTypeInfoStruct(TableObjectType, SVNotSetSubObjectType), SvCmd::IsObjectFromPriorTool(m_TaskObjectID), SVToolObjectType);
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		if (S_OK == hr)
@@ -143,7 +143,7 @@ namespace Seidenader { namespace SVOGui
 	HRESULT TATableSourcePage::ConnectToObject(const SVString& inputName, const SVString& name)
 	{ 
 		HRESULT hr = E_INVALIDARG;
-		typedef GuiCmd::ConnectToObject Command;
+		typedef SvCmd::ConnectToObject Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 		SvUl::NameGuidList::const_iterator it = std::find_if(m_availableList.begin(), m_availableList.end(), ByName(name));
 		if (it != m_availableList.end())
@@ -155,5 +155,5 @@ namespace Seidenader { namespace SVOGui
 		return hr; 
 	}
 #pragma endregion Private Methods
-} /* namespace SVOGui */ } /* namespace Seidenader */
+} //namespace SvOg
 

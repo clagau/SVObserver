@@ -59,7 +59,7 @@ HRESULT SVTaskObjectValueInterface::AddInputRequest( const SVObjectReference& rO
 	catch( ... )
 	{
 		SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_Error_CannotAddInputRequest, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10205 );
+		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Error_CannotAddInputRequest, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10205 );
 	}
 
 	return Result;
@@ -98,7 +98,7 @@ HRESULT SVTaskObjectValueInterface::AddInputRequestMarker()
 	catch( ... )
 	{
 		SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_Error_CannotAddInputRequestMarker, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10207 );
+		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Error_CannotAddInputRequestMarker, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10207 );
 	}
 
 	return l_hrOk;
@@ -111,15 +111,15 @@ HRESULT SVTaskObjectValueInterface::RunOnce( const SVGUID& rToolID)
 	try
 	{
 		const SVGUID& rInspectionID = m_pTaskObject->GetInspection()->GetUniqueObjectID();
-		GuiCmd::InspectionRunOncePtr l_CommandPtr = new GuiCmd::InspectionRunOnce( rInspectionID, rToolID );
-		SVObjectSynchronousCommandTemplate< GuiCmd::InspectionRunOncePtr > l_Command( rInspectionID, l_CommandPtr );
+		SvCmd::InspectionRunOncePtr l_CommandPtr = new SvCmd::InspectionRunOnce( rInspectionID, rToolID );
+		SVObjectSynchronousCommandTemplate< SvCmd::InspectionRunOncePtr > l_Command( rInspectionID, l_CommandPtr );
 
 		l_hrOk = l_Command.Execute( TWO_MINUTE_CMD_TIMEOUT );
 	}
 	catch( ... )
 	{
 		SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_Error_CannotRunOnce, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10208 );
+		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Error_CannotRunOnce, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10208 );
 	}
 
 	return l_hrOk;

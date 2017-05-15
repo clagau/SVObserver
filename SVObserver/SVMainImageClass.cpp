@@ -35,7 +35,7 @@ void SVMainImageClass::init()
 {
 	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVMainImageObjectType;
 
-	m_ImageType = SVImageTypeMain;
+	m_ImageType = SvOi::SVImageTypeEnum::SVImageTypeMain;
 }
 
 SVMainImageClass::~SVMainImageClass()
@@ -104,7 +104,7 @@ bool SVMainImageClass::ValidateImage()
 	return (TRUE == m_isObjectValid);
 }
 
-const SVClock::SVTimeStamp& SVMainImageClass::GetLastResetTimeStamp() const
+const SvTl::SVTimeStamp& SVMainImageClass::GetLastResetTimeStamp() const
 {
 	if( nullptr != GetCameraBufferArrayPtr() )
 	{
@@ -126,7 +126,7 @@ BOOL SVMainImageClass::CreateBuffers( const SVImageInfoClass& p_rImageInfo, SVIm
 		// Set up necessary main image info...
 		m_ImageInfo.SetOwnerImage( GetUniqueObjectID() );
 
-		m_LastUpdate = SVClock::GetTimeStamp();
+		m_LastUpdate = SvTl::GetTimeStamp();
 	}
 
 	return bOk;      

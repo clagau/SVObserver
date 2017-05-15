@@ -63,7 +63,7 @@ namespace
 		if ( m_vecLog.size() > 0 )
 		{
 			::OutputDebugString( _T("\n") );
-			__int64 iTimestamp = static_cast< __int64 >( SVClock::GetTimeStamp() );
+			__int64 iTimestamp = static_cast< __int64 >( SvTl::GetTimeStamp() );
 			SVString strBegin;
 			strBegin = SvUl_SF::Format(_T("--> %s  :  %I64u\n"), m_strFunction.c_str(), iTimestamp );
 			::OutputDebugString( strBegin.c_str() );

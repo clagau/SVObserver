@@ -20,46 +20,37 @@
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
-namespace Seidenader
+namespace SvOg
 {
-	namespace SVOGui
+	class SVToolAdjustmentDialogImagePageClass : public CPropertyPage, protected ImageController
 	{
-		class SVToolAdjustmentDialogImagePageClass : public CPropertyPage, protected ImageController
-		{
-		public:
-			SVToolAdjustmentDialogImagePageClass(const SVGUID & rInspectionID, const SVGUID& rTaskObjectID, int id = IDD );
-			virtual ~SVToolAdjustmentDialogImagePageClass();
-			HRESULT SetInspectionData();
+	public:
+		SVToolAdjustmentDialogImagePageClass(const SVGUID & rInspectionID, const SVGUID& rTaskObjectID, int id = IDD );
+		virtual ~SVToolAdjustmentDialogImagePageClass();
+		HRESULT SetInspectionData();
 
-		protected:
-			void refresh();
+	protected:
+		void refresh();
 
-			//{{AFX_MSG(SVToolAdjustmentDialogImagePageClass)
-			virtual BOOL OnInitDialog() override;
-			afx_msg void OnSelchangeCombo1();
-			//}}AFX_MSG
+		//{{AFX_MSG(SVToolAdjustmentDialogImagePageClass)
+		virtual BOOL OnInitDialog() override;
+		afx_msg void OnSelchangeCombo1();
+		//}}AFX_MSG
 
-			DECLARE_MESSAGE_MAP()
+		DECLARE_MESSAGE_MAP()
 
-			//{{AFX_VIRTUAL(SVToolAdjustmentDialogImagePageClass)
-			virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV
-			//}}AFX_VIRTUAL
+		//{{AFX_VIRTUAL(SVToolAdjustmentDialogImagePageClass)
+		virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV
+		//}}AFX_VIRTUAL
 
-			//{{AFX_DATA(SVToolAdjustmentDialogImagePageClass)
-			enum { IDD = IDD_TA_IMAGE_DIALOG };
-			SvMc::AvailableObjectListComboBox m_availableSourceImageListBox;
-			PictureDisplay m_dialogImage;
-			//}}AFX_DATA
+		//{{AFX_DATA(SVToolAdjustmentDialogImagePageClass)
+		enum { IDD = IDD_TA_IMAGE_DIALOG };
+		SvMc::AvailableObjectListComboBox m_availableSourceImageListBox;
+		PictureDisplay m_dialogImage;
+		//}}AFX_DATA
 	
-			SVGUID m_InspectionID;
-			SVGUID m_TaskObjectID;
-			SVString m_inputName;
-		};
-	}
-}
-
-namespace SvOg = Seidenader::SVOGui;
-
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
+		SVGUID m_InspectionID;
+		SVGUID m_TaskObjectID;
+		SVString m_inputName;
+	};
+} //namespace SvOg

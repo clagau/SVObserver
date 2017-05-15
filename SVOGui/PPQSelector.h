@@ -14,31 +14,26 @@
 #include "SVObjectLibrary\SVObjectSynchronousCommandTemplate.h"
 #pragma endregion Includes
 
-namespace Seidenader
+namespace SvOg
 {
-	namespace SVOGui
+	class PPQSelector
 	{
-		class PPQSelector
+	public:
+		SvOi::ISelectorItemVectorPtr operator()(const GUID& rInspectionID, UINT Attribute )
 		{
-		public:
-			SvOi::ISelectorItemVectorPtr operator()(const GUID& rInspectionID, UINT Attribute )
+			SvOi::ISelectorItemVectorPtr SelectorList;
+
+			typedef SvCmd::GetPPQSelectorList Command;
+			typedef SVSharedPtr<Command> CommandPtr;
+
+			CommandPtr commandPtr = new Command(rInspectionID, Attribute);
+			SVObjectSynchronousCommandTemplate<CommandPtr> cmd(rInspectionID, commandPtr);
+			HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+			if (S_OK == hr)
 			{
-				SvOi::ISelectorItemVectorPtr SelectorList;
-
-				typedef GuiCmd::GetPPQSelectorList Command;
-				typedef SVSharedPtr<Command> CommandPtr;
-
-				CommandPtr commandPtr = new Command(rInspectionID, Attribute);
-				SVObjectSynchronousCommandTemplate<CommandPtr> cmd(rInspectionID, commandPtr);
-				HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-				if (S_OK == hr)
-				{
-					SelectorList = commandPtr->GetResults();
-				}
-				return SelectorList;
+				SelectorList = commandPtr->GetResults();
 			}
-		};
-	}
-}
-
-namespace SvOg = Seidenader::SVOGui;
+			return SelectorList;
+		}
+	};
+} //namespace SvOg

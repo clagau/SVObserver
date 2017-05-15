@@ -26,7 +26,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-namespace Seidenader { namespace SVOGui
+namespace SvOg
 {
 	static LPCSTR DrawFlagTag = "DrawFlag";
 
@@ -255,5 +255,5 @@ namespace Seidenader { namespace SVOGui
 
 		return CPropertyPage::OnSetActive();
 	}
-} /* namespace SVOGui */ } /* namespace Seidenader */
+} //namespace SvOg
 

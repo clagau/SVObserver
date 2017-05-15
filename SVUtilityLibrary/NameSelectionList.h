@@ -17,15 +17,10 @@
 #include "SVString.h"
 #pragma endregion Includes
 
-namespace Seidenader
+namespace SvUl
 {
-	namespace SVUtilityLibrary
-	{
-		// first in the pair is the inspection object (image/value) name, second is a boolean for whether it's selected or not
-		typedef std::pair<SVString, bool> NameSelection;
-		typedef std::deque<NameSelection> NameSelectionList;
-	} //SVUtilityLibrary
-} //Seidenader
-
-namespace SvUl = Seidenader::SVUtilityLibrary;
+	// first in the pair is the inspection object (image/value) name, second is a boolean for whether it's selected or not
+	typedef std::pair<SVString, bool> NameSelection;
+	typedef std::deque<NameSelection> NameSelectionList;
+} // namespace SvUl
 

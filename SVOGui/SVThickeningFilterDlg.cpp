@@ -21,14 +21,11 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-namespace Seidenader
+namespace SvOg
 {
-	namespace SVOGui
-	{
-		static const std::string GrayOnTag("GrayOn");
-		static const std::string IterationTag("Iteration");
-		/////////////////////////////////////////////////////////////////////////////
-		// SVThickeningFilterDlg dialog
+	static const std::string GrayOnTag("GrayOn");
+	static const std::string IterationTag("Iteration");
+
 	SVThickeningFilterDlg::SVThickeningFilterDlg(const SVGUID& rInspectionID, const SVGUID& rFilterID, CWnd* pParent): 
 		CDialog(SVThickeningFilterDlg::IDD)
 		,m_filterID(rFilterID)
@@ -104,6 +101,5 @@ namespace Seidenader
 	{
 		CDialog::OnCancel();
 	}
-	}  //end namespace SVOGUI
-}  //end namespace Seidenader
+}  //namespace SvOg
 

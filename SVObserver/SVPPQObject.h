@@ -54,7 +54,7 @@ public:
 	virtual ~SVPPQObject();
 
 public:
-	void SetNAKMode(NakGeneration  NAKMode, int NAKPar);
+	void SetNAKMode(SvOi::NakGeneration  NAKMode, int NAKPar);
 	virtual HRESULT GetChildObject( SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index = 0 ) const override;
 	
 	virtual HRESULT ObserverUpdate( const SVInspectionCompleteInfoStruct& p_rData ) override;
@@ -64,7 +64,7 @@ public:
 	BOOL Destroy();
 	BOOL DetachAll();
 
-	BOOL SetPPQOutputMode( SVPPQOutputModeEnum ePPQOutputMode );
+	BOOL SetPPQOutputMode( SvOi::SVPPQOutputModeEnum ePPQOutputMode );
 	BOOL SetOutputDelay( long lDelayTime );
 	BOOL SetResetDelay( long lResetTime );
 	BOOL SetPPQLength( long lPPQLength );
@@ -72,7 +72,7 @@ public:
 	BOOL SetInspectionTimeout( long lTimeoutMillisec );
 	void SetConditionalOutputName( const SVString& conditionName );
 
-	BOOL GetPPQOutputMode( SVPPQOutputModeEnum& rePPQOutputMode ) const;
+	BOOL GetPPQOutputMode( SvOi::SVPPQOutputModeEnum& rePPQOutputMode ) const;
 	BOOL GetOutputDelay( long& rlDelayTime ) const;
 	BOOL GetResetDelay( long& rlResetTime ) const;
 	BOOL GetPPQLength( long& rlPPQLength ) const;
@@ -359,9 +359,9 @@ protected:
 	HRESULT ProcessTimeDelayAndDataCompleteOutputs( SVProductInfoStruct& p_rProduct, bool& p_rProcessed );
 
 	HRESULT GetProductInfoStruct( SVProductInfoStruct*& p_rpProduct, long lProcessCount ) const;
-	HRESULT GetProductInfoStruct( SVProductInfoStruct*& p_rpProduct, SVClock::SVTimeStamp p_TimeStamp ) const;
+	HRESULT GetProductInfoStruct( SVProductInfoStruct*& p_rpProduct, SvTl::SVTimeStamp p_TimeStamp ) const;
 	HRESULT GetProductIndex( long& p_rIndex, long lProcessCount ) const;
-	HRESULT GetProductIndex( long& p_rIndex, SVClock::SVTimeStamp p_TimeStamp ) const;
+	HRESULT GetProductIndex( long& p_rIndex, SvTl::SVTimeStamp p_TimeStamp ) const;
 
 	SVProductInfoStruct* IndexPPQ( SvTi::SVTriggerInfoStruct& p_rTriggerInfo );
 	BOOL InitializeProduct( SVProductInfoStruct* p_pNewProduct, const SVVariantBoolVector& p_rInputValues );
@@ -393,13 +393,13 @@ protected:
 	mutable SVAsyncProcedure< SVAPCSignalHandler, SVThreadProcessHandler > m_AsyncProcedure;
 
 	long m_ProcessingOutputDelay;
-	SVClock::SVTimeStamp m_NextOutputDelayTimestamp;
+	SvTl::SVTimeStamp m_NextOutputDelayTimestamp;
 
 	long m_ProcessingOutputReset;
-	SVClock::SVTimeStamp m_NextOutputResetTimestamp;
+	SvTl::SVTimeStamp m_NextOutputResetTimestamp;
 
 	long m_ProcessingDataValidDelay;
-	SVClock::SVTimeStamp m_NextDataValidDelayTimestamp;
+	SvTl::SVTimeStamp m_NextDataValidDelayTimestamp;
 
 	// Queues for the PPQ's threads to store incoming objects to be processed
 	SVTriggerInfoQueue m_oTriggerQueue; ///< A ring buffer containing SVTriggerQueueElement s, i.e. SvTi::SVTriggerInfoStruct s and SVVariantBoolVector s
@@ -521,7 +521,7 @@ private:
 
 	BasicValueObjects	m_PpqValues;
 
-	SVPPQOutputModeEnum m_oOutputMode;
+	SvOi::SVPPQOutputModeEnum m_oOutputMode;
 	long m_lOutputDelay;
 	long m_lResetDelay;
 	long m_DataValidDelay;
@@ -531,7 +531,7 @@ private:
 
 	UINT m_uOutputTimer;
 
-	NakGeneration  m_NAKMode;			//!Different Mode for NAK Behavior Legacy, Bursts,RepairedLegacy,FixedMaximum
+	SvOi::NakGeneration  m_NAKMode;			//!Different Mode for NAK Behavior Legacy, Bursts,RepairedLegacy,FixedMaximum
 	int m_NAKParameter;						//!Additional Parameter for NAK Behavior 	
 	long m_NAKCount;
 	long m_FirstNAKProcessCount;		///only trigger >= m_FirstNAKProcessCount will be inspected 

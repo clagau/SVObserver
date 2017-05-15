@@ -77,7 +77,7 @@ BOOL SVPointXResultClass::CreateObject( SVObjectLevelCreateStruct* PCreateStruct
 		bOk = nullptr != getInputPoint();
 	}
 	
-	m_X.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_X.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 
 	m_isCreated = bOk;
 

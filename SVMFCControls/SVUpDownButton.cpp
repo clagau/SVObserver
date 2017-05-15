@@ -12,46 +12,42 @@
 #include "stdafx.h"
 #include "SVUpDownButton.h"
 
-namespace Seidenader
+namespace SvMc
 {
-	namespace SVMFCControls
+	BEGIN_MESSAGE_MAP(SVUpDownButton, CButton)
+		ON_WM_LBUTTONDOWN()
+		ON_WM_LBUTTONUP()
+		ON_WM_KILLFOCUS()
+	END_MESSAGE_MAP()
+
+	SVUpDownButton::SVUpDownButton() : m_bLButtonDown(false)
 	{
-		BEGIN_MESSAGE_MAP(SVUpDownButton, CButton)
-			ON_WM_LBUTTONDOWN()
-			ON_WM_LBUTTONUP()
-			ON_WM_KILLFOCUS()
-		END_MESSAGE_MAP()
+	}
 
-		SVUpDownButton::SVUpDownButton() : m_bLButtonDown(false)
+	void SVUpDownButton::OnLButtonDown(UINT nFlags, CPoint point)
+	{
+		ASSERT(GetParent());
+		m_bLButtonDown = true;
+		SetFocus();
+		CButton::OnLButtonDown(nFlags, point);
+		GetParent()->SendMessage(WM_SV_NOTIFY_LBUTTONDOWN, nFlags, (LPARAM) this);
+	}
+
+	void SVUpDownButton::OnLButtonUp(UINT nFlags, CPoint point)
+	{
+		ASSERT(GetParent());
+		m_bLButtonDown = false;
+		CButton::OnLButtonUp(nFlags, point);
+		GetParent()->SendMessage(WM_SV_NOTIFY_LBUTTONUP, nFlags, (LPARAM) this);
+	}
+
+	void SVUpDownButton::OnKillFocus(CWnd* pNewWnd)
+	{
+		if (m_bLButtonDown)
 		{
+			ASSERT(GetParent());
+			CButton::OnKillFocus(pNewWnd);
+			GetParent()->SendMessage(WM_SV_NOTIFY_LBUTTONUP, 0, (LPARAM) this);
 		}
-
-		void SVUpDownButton::OnLButtonDown( UINT nFlags, CPoint point )
-		{
-			ASSERT( GetParent() );
-			m_bLButtonDown = true;
-			SetFocus();
-			CButton::OnLButtonDown( nFlags, point );
-			GetParent()->SendMessage( WM_SV_NOTIFY_LBUTTONDOWN, nFlags, (LPARAM) this );
-		}
-
-		void SVUpDownButton::OnLButtonUp( UINT nFlags, CPoint point )
-		{
-			ASSERT( GetParent() );
-			m_bLButtonDown = false;
-			CButton::OnLButtonUp( nFlags, point );
-			GetParent()->SendMessage( WM_SV_NOTIFY_LBUTTONUP, nFlags, (LPARAM) this );
-		}
-
-		void SVUpDownButton::OnKillFocus( CWnd* pNewWnd )
-		{
-			if ( m_bLButtonDown )
-			{
-				ASSERT( GetParent() );
-				CButton::OnKillFocus(pNewWnd);
-				GetParent()->SendMessage( WM_SV_NOTIFY_LBUTTONUP, 0, (LPARAM) this );
-			}
-		}
-	} //SVMFCControls
-} //Seidenader
-
+	}
+} //namespace SvMc

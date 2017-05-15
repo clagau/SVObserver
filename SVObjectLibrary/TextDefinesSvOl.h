@@ -8,9 +8,7 @@
 
 #pragma once
 
-namespace Seidenader { namespace SVObjectLibrary
+namespace SvOl
 {
 	const TCHAR* const	 ToolSetName = _T("Tool Set");
-} /* namespace SVObjectLibrary */ } /* namespace Seidenader */
-
-namespace SvOl = Seidenader::SVObjectLibrary;
+} //namespace SvOl

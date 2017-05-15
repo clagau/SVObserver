@@ -64,14 +64,14 @@ BOOL SVLinearToolClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructur
 			bOk &= S_OK == m_svToolExtent.SetTranslation( SVExtentTranslationProfileShift );
 		}
 	}
-	UINT Attributes = SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE | SV_PRINTABLE;
+	UINT Attributes = SvOi::SV_REMOTELY_SETABLE | SvOi::SV_SETABLE_ONLINE | SvOi::SV_PRINTABLE;
 	m_svRotationAngle.SetObjectAttributesAllowed( Attributes, SvOi::SetAttributeType::AddAttribute );
 	m_svRotationPointX.SetObjectAttributesAllowed( Attributes, SvOi::SetAttributeType::AddAttribute );
 	m_svRotationPointY.SetObjectAttributesAllowed( Attributes, SvOi::SetAttributeType::AddAttribute );
 	m_voProfileOrientation.SetObjectAttributesAllowed( Attributes, SvOi::SetAttributeType::AddAttribute );
 	m_voUseProfileRotation.SetObjectAttributesAllowed( Attributes, SvOi::SetAttributeType::AddAttribute );
 
-	Attributes = SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE;
+	Attributes = SvOi::SV_REMOTELY_SETABLE | SvOi::SV_SETABLE_ONLINE;
 	m_SourceImageNames.setStatic( true );
 	m_SourceImageNames.SetObjectAttributesAllowed( Attributes, SvOi::SetAttributeType::RemoveAttribute );
 	m_ExtentLeft.SetObjectAttributesAllowed( Attributes, SvOi::SetAttributeType::RemoveAttribute );
@@ -146,7 +146,7 @@ bool SVLinearToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessage
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_UpdateLinearToolDataFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UpdateLinearToolDataFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -163,12 +163,12 @@ bool SVLinearToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessage
 
 			if ( S_OK == l_svExtents.GetFigure( l_svFigure ) )
 			{
-				if( m_ExtentLeft.ObjectAttributesAllowed() != SV_NO_ATTRIBUTES )
+				if( m_ExtentLeft.ObjectAttributesAllowed() != SvOi::SV_NO_ATTRIBUTES )
 				{
 					m_ExtentLeft.SetValue( l_svFigure.m_svTopLeft.m_dPositionX, 1 );
 				}
 				
-				if( m_ExtentTop.ObjectAttributesAllowed() != SV_NO_ATTRIBUTES )
+				if( m_ExtentTop.ObjectAttributesAllowed() != SvOi::SV_NO_ATTRIBUTES )
 				{
 					m_ExtentTop.SetValue( l_svFigure.m_svTopLeft.m_dPositionY, 1 );
 				}
@@ -179,7 +179,7 @@ bool SVLinearToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessage
 			Result = false;
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_GetImageExtentFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_GetImageExtentFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 				pErrorMessages->push_back(Msg);
 			}
 		}
@@ -308,7 +308,7 @@ void SVLinearToolClass::init()
 	m_voProfileOrientation.SetDefaultValue( "Horizontal", TRUE );
 	m_voUseProfileRotation.SetDefaultValue(TRUE,TRUE);
 
-	m_svToolExtent.SetImageType( SVImageTypePhysical );
+	m_svToolExtent.SetImageType( SvOi::SVImageTypeEnum::SVImageTypePhysical );
 	m_svToolExtent.SetTranslation( SVExtentTranslationProfile );
 	m_svToolExtent.SetExtentObject( SVExtentPropertyPositionPointX, &m_svRotationPointX );
 	m_svToolExtent.SetExtentObject( SVExtentPropertyPositionPointY, &m_svRotationPointY );

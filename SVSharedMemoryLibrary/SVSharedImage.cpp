@@ -14,7 +14,7 @@
 #include "SVSharedConfiguration.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace SVSharedMemoryLibrary
+namespace SvSml
 {
 	SVSharedImage::SVSharedImage(const void_allocator& rAlloc)
 	: m_Status(E_FAIL)
@@ -115,4 +115,4 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		}
 	
 	}
-} /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
+} //namespace SvSml

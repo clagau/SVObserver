@@ -17,62 +17,54 @@
 #include "GuiController.h"
 #pragma endregion Includes
 
-namespace Seidenader
+namespace SvOg
 {
-	namespace SVOGui
+	class SVRankingFilterDlg : public CDialog
 	{
-		/////////////////////////////////////////////////////////////////////////////
-		// SVRankingFilterDlg dialog
-		class SVRankingFilterDlg : public CDialog
-		{
-			// Construction
-		public:
-			SVRankingFilterDlg(const SVGUID& rInspectionID, const SVGUID& rFilterID, CWnd* pParent = nullptr);   // standard constructor
-			virtual ~SVRankingFilterDlg();
+		// Construction
+	public:
+		SVRankingFilterDlg(const SVGUID& rInspectionID, const SVGUID& rFilterID, CWnd* pParent = nullptr);   // standard constructor
+		virtual ~SVRankingFilterDlg();
 
-			HRESULT SetInspectionData();
-			void EnableCells();
+		HRESULT SetInspectionData();
+		void EnableCells();
 
-			// Dialog Data
-			//{{AFX_DATA(SVRankingFilterDlg)
-		public:
-			enum { IDD = IDD_RANKING_FILTER };
-			CComboBox	m_ctlRankingWidth;
-			CComboBox	m_ctlRankingHeight;
-			CComboBox	m_ctlRankingRank;
-			long	m_lRankingWidth;
-			long	m_lRankingHeight;	
-			long	m_lRankingRank;
-			//}}AFX_DATA
+		// Dialog Data
+		//{{AFX_DATA(SVRankingFilterDlg)
+	public:
+		enum { IDD = IDD_RANKING_FILTER };
+		CComboBox	m_ctlRankingWidth;
+		CComboBox	m_ctlRankingHeight;
+		CComboBox	m_ctlRankingRank;
+		long	m_lRankingWidth;
+		long	m_lRankingHeight;
+		long	m_lRankingRank;
+		//}}AFX_DATA
 
-			// Overrides
-			// ClassWizard generated virtual function overrides
-			//{{AFX_VIRTUAL(SVRankingFilterDlg)
-		protected:
-			virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
-			//}}AFX_VIRTUAL
+		// Overrides
+		// ClassWizard generated virtual function overrides
+		//{{AFX_VIRTUAL(SVRankingFilterDlg)
+	protected:
+		virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
+		//}}AFX_VIRTUAL
 
-			// Generated message map functions
-			//{{AFX_MSG(SVRankingFilterDlg)
-		protected:
-			virtual BOOL OnInitDialog() override;
-			virtual void OnOK() override;
-			afx_msg void OnSelchangeRankingWidth();
-			afx_msg void OnSelchangeRankingHeight();
-			afx_msg void OnSelchangeRankingRank();
-			//}}AFX_MSG
-			DECLARE_MESSAGE_MAP()
+		// Generated message map functions
+		//{{AFX_MSG(SVRankingFilterDlg)
+	protected:
+		virtual BOOL OnInitDialog() override;
+		virtual void OnOK() override;
+		afx_msg void OnSelchangeRankingWidth();
+		afx_msg void OnSelchangeRankingHeight();
+		afx_msg void OnSelchangeRankingRank();
+		//}}AFX_MSG
+		DECLARE_MESSAGE_MAP()
 
-		private:
-			long m_lRankingCells[49];
-			const SVGUID& m_rInspectionID;
-			const SVGUID& m_filterID;
-			typedef SvOg::ValuesAccessor<SvOg::BoundValues> ValueCommand;
-			typedef SvOg::GuiController<ValueCommand, ValueCommand::value_type> Controller;
-			Controller m_Values;
-		};
-	}  //end namespace SVOGUI
-}  //end namespace Seidenader
-
-namespace SvOg = Seidenader::SVOGui;
-
+	private:
+		long m_lRankingCells[49];
+		const SVGUID& m_rInspectionID;
+		const SVGUID& m_filterID;
+		typedef SvOg::ValuesAccessor<SvOg::BoundValues> ValueCommand;
+		typedef SvOg::GuiController<ValueCommand, ValueCommand::value_type> Controller;
+		Controller m_Values;
+	};
+} //namespace SvOg

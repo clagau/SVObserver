@@ -18,8 +18,8 @@
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace TriggerHandling {
-
+namespace SvTh
+{
 	class SVCameraTriggerData : public SVObjectClass 
 	{
 	public:
@@ -46,7 +46,4 @@ namespace Seidenader { namespace TriggerHandling {
 		void destroy();
 		void SetLineState(long index, double timeStamp, bool state);
 	};
-
-} /* namespace TriggerHandling */ } /* namespace Seidenader */
-
-namespace SvTh = Seidenader::TriggerHandling;
+} //namespace SvTh

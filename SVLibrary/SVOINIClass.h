@@ -14,7 +14,7 @@
 //Moved to precompiled header: #include <io.h>
 #include "SVUtilityLibrary/SVString.h"
 
-namespace Seidenader { namespace SVLibrary
+namespace SvLib
 {
 	class SVOINIClass
 	{
@@ -32,8 +32,6 @@ namespace Seidenader { namespace SVLibrary
 	protected:
 		SVString m_FileName;
 	};
-} /* namespace SVLibrary */ } /* namespace Seidenader */
+} //namespace SvLib
 
 #include "SVOINIClass.inl"
-
-namespace SvLib = Seidenader::SVLibrary;

@@ -17,41 +17,36 @@
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
-namespace Seidenader
+namespace SvCmd
 {
-	namespace GuiCommand
+	struct GetPPQObjectName : public boost::noncopyable
 	{
-		struct GetPPQObjectName : public boost::noncopyable
+		GetPPQObjectName(const SVGUID& rInspectionID) : m_InspectionID(rInspectionID) {}
+
+		// This method is where the real separation would occur by using sockets/named pipes/shared memory
+		// The logic contained within this method would be moved to the "Server" side of a Client/Server architecture
+		// and replaced with the building and sending of the command
+		HRESULT Execute()
 		{
-			GetPPQObjectName(const SVGUID& rInspectionID) : m_InspectionID(rInspectionID) {}
+			HRESULT hr = E_POINTER;
 
-			// This method is where the real separation would occur by using sockets/named pipes/shared memory
-			// The logic contained within this method would be moved to the "Server" side of a Client/Server architecture
-			// and replaced with the building and sending of the command
-			HRESULT Execute()
+			SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess *>(SvOi::getObject(m_InspectionID));
+			if (pInspection)
 			{
-				HRESULT hr = E_POINTER;
-
-				SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess *>(SvOi::getObject(m_InspectionID));
-				if (pInspection)
+				SvOi::IObjectClass* pPPQ = pInspection->GetPPQInterface();
+				if (pPPQ)
 				{
-					SvOi::IObjectClass* pPPQ = pInspection->GetPPQInterface();
-					if (pPPQ)
-					{
-						m_Name = pPPQ->GetName();
-						hr = S_OK;
-					}
+					m_Name = pPPQ->GetName();
+					hr = S_OK;
 				}
-				return hr;
 			}
-			bool empty() const { return false; }
-			const SVString& GetName() const { return m_Name; }
+			return hr;
+		}
+		bool empty() const { return false; }
+		const SVString& GetName() const { return m_Name; }
 
-		private:
-			SVGUID m_InspectionID;
-			SVString m_Name;
-		};
-	}
-}
-
-namespace GuiCmd = Seidenader::GuiCommand;
+	private:
+		SVGUID m_InspectionID;
+		SVString m_Name;
+	};
+} //namespace SvCmd

@@ -88,15 +88,15 @@ BOOL SVValueObjectClass<T>::CreateObject( SVObjectLevelCreateStruct* pCreateStru
 	BOOL l_bOk = SVObjectClass::CreateObject( pCreateStructure );
 
 	SVObjectManagerClass::Instance().RegisterSubObject(GetUniqueObjectID());
-	SetObjectAttributesAllowed( SV_DD_VALUE, SvOi::SetAttributeType::AddAttribute );	// derived classes need to reset this
+	SetObjectAttributesAllowed( SvOi::SV_DD_VALUE, SvOi::SetAttributeType::AddAttribute );	// derived classes need to reset this
 
 	if ( m_NumberOfBuckets < 2 )
 	{
 		l_bOk = l_bOk && SetObjectDepth( 2 );
 	}
 
-	//A ValueObject with SV_PUBLISHABLE or SV_ARCHIVABLE set needs to be bucketized
-	const UINT cAttributes = SV_PUBLISHABLE | SV_ARCHIVABLE;
+	//A ValueObject with SvOi::SV_PUBLISHABLE or SvOi::SV_ARCHIVABLE set needs to be bucketized
+	const UINT cAttributes = SvOi::SV_PUBLISHABLE | SvOi::SV_ARCHIVABLE;
 	if( 0 != ( ObjectAttributesSet() & cAttributes )  )
 	{
 		setBucketized(true);
@@ -702,7 +702,7 @@ const UINT& SVValueObjectClass<T>::SetObjectAttributesSet( UINT Attributes, SvOi
 {
 	const UINT& rNewAttribute = __super::SetObjectAttributesSet( Attributes, Type, Index );
 
-	const UINT cBucketizedAttributes = SV_PUBLISHABLE | SV_ARCHIVABLE;
+	const UINT cBucketizedAttributes = SvOi::SV_PUBLISHABLE | SvOi::SV_ARCHIVABLE;
 	if (0 != (cBucketizedAttributes & Attributes))
 	{
 		if (0 != (cBucketizedAttributes & rNewAttribute))
@@ -789,7 +789,7 @@ HRESULT SVValueObjectClass<T>::setValue( const _variant_t& rValue, int Bucket /*
 		}
 		else
 		{
-			hr = SvOi::Err_10029_ValueObject_Parameter_WrongSize;
+			hr = SvStl::Err_10029_ValueObject_Parameter_WrongSize;
 		}
 	}
 
@@ -923,7 +923,7 @@ void SVValueObjectClass<T>::validateValue( const _variant_t& rValue ) const
 					SVStringVector msgList;
 					msgList.push_back(SvUl_SF::Format(_T("%d"), tempHr));
 					SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-					Exception.setMessage( SVMSG_SVO_93_GENERAL_WARNING , SvOi::Tid_ValidateValue_InvalidElementInVariantArray, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+					Exception.setMessage( SVMSG_SVO_93_GENERAL_WARNING , SvStl::Tid_ValidateValue_InvalidElementInVariantArray, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 					Exception.Throw();
 				}
 
@@ -933,7 +933,7 @@ void SVValueObjectClass<T>::validateValue( const _variant_t& rValue ) const
 		else
 		{
 			SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-			Exception.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_ValidateValue_ArraySizeInvalid, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10029_ValueObject_Parameter_WrongSize, GetUniqueObjectID() );
+			Exception.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ValidateValue_ArraySizeInvalid, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10029_ValueObject_Parameter_WrongSize, GetUniqueObjectID() );
 			Exception.Throw();
 		}
 	}
@@ -969,7 +969,7 @@ void SVValueObjectClass<T>::Initialize()
 	m_isBucketized = false;
 	m_isStatic = false;
 
-	SetObjectAttributesAllowed( SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::OverwriteAttribute );
+	SetObjectAttributesAllowed( SvOi::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::OverwriteAttribute );
 }
 
 template <typename T>
@@ -1163,7 +1163,7 @@ void SVValueObjectClass<T>::ValidateValue( int Bucket, int Index, const SVString
 	if ( S_OK != hr && SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE != hr ) //object index out of range will not throw
 	{
 		SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-		Exception.setMessage( hr, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+		Exception.setMessage( hr, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 		Exception.Throw();
 	}
 

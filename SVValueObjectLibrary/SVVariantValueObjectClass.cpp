@@ -394,7 +394,7 @@ _variant_t SVVariantValueObjectClass::ConvertString2Type( const SVString& rValue
 			SVStringVector msgList;
 			msgList.push_back(GetName());
 			SvStl::MessageMgrStd Exception(SvStl::LogOnly);
-			Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_ValueObject_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+			Exception.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ValueObject_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
 			Exception.Throw();
 		}
 	}

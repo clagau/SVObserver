@@ -104,7 +104,6 @@
     <ClCompile Include="SVVariantConverter.cpp" />
     <ClCompile Include="SVXMLCTreeCtrl.cpp" />
     <ClCompile Include="SVXMLEncryptionClass.cpp" />
-    <ClCompile Include="SVXMLLibraryGlobals.cpp" />
     <ClCompile Include="SVXMLMaterialsTree.cpp" />
     <ClCompile Include="VariantHelper.cpp" />
   </ItemGroup>
@@ -128,7 +127,6 @@
     <ClInclude Include="SVVariantCustomTypes.h" />
     <ClInclude Include="SVXMLCTreeCtrl.h" />
     <ClInclude Include="SVXMLEncryptionClass.h" />
-    <ClInclude Include="SVXMLLibraryGlobals.h" />
     <ClInclude Include="SVXMLMaterialsTree.h" />
     <ClInclude Include="SVXMLTree.h" />
     <ClInclude Include="TreeToXml.h" />

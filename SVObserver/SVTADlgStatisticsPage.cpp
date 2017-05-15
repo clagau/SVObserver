@@ -176,14 +176,14 @@ void SVToolAdjustmentDialogStatisticsPageClass::initListBox(CListBox* pListBox, 
                 
                 if (lReturned == LB_ERR || lReturned == LB_ERRSPACE)
                 {
-                    lError = -SvOi::Err_15005;
+                    lError = -SvStl::Err_15005;
                     break;
                 }
 
     			lReturned = pListBox->SetItemData( lReturned, static_cast<DWORD_PTR>(i) );
                 if (lReturned == LB_ERR)
                 {
-                    lError = -SvOi::Err_15006;
+                    lError = -SvStl::Err_15006;
                     break;
                 }
                 lEmpty = FALSE;
@@ -266,7 +266,7 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnSetRange()
 			if (nullptr == pResult)
 			{
 				SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-				MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16089);
+				MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16089);
 				
 
 			}
@@ -274,7 +274,7 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnSetRange()
 			{
 				
 				SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-				MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16090);
+				MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16090);
 			}
     }
 }
@@ -291,7 +291,7 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnPublishButton()
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSetAttributes );
 	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, SVString(pInspection->GetToolSet()->GetCompleteName()), SVString( _T("") ) );
 
-	SvOsl::SelectorOptions BuildOptions( pInspection->GetUniqueObjectID(), SV_PUBLISHABLE, m_pTool->GetUniqueObjectID() );
+	SvOsl::SelectorOptions BuildOptions( pInspection->GetUniqueObjectID(), SvOi::SV_PUBLISHABLE, m_pTool->GetUniqueObjectID() );
 	SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::NoSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<>>(BuildOptions);
 
 	SVString PublishableResults = SvUl_SF::LoadSVString( IDS_PUBLISHABLE_RESULTS );
@@ -332,7 +332,7 @@ void SVToolAdjustmentDialogStatisticsPageClass::OnBtnObjectPicker()
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SelectorType );
 	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
 
-	SvOsl::SelectorOptions BuildOptions( pInspection->GetUniqueObjectID(), SV_SELECTABLE_FOR_STATISTICS, m_pToolSet->GetUniqueObjectID() );
+	SvOsl::SelectorOptions BuildOptions( pInspection->GetUniqueObjectID(), SvOi::SV_SELECTABLE_FOR_STATISTICS, m_pToolSet->GetUniqueObjectID() );
 	SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::NoSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<>>( BuildOptions );
 
 	SVString ToolsetOutput = SvUl_SF::LoadSVString( IDS_SELECT_TOOLSET_OUTPUT );

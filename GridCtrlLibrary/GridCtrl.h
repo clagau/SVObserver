@@ -162,7 +162,7 @@ typedef bool (*PVIRTUALCOMPARE)(int, int);
 #pragma endregion Declarations
 
 
-namespace Seidenader { namespace GridCtrlLibrary
+namespace SvGcl
 {
 	///////////////////////////////////////////////////////////////////////////////////
 	// Structures
@@ -912,6 +912,6 @@ namespace Seidenader { namespace GridCtrlLibrary
 		return TRUE;
 	}
 
-} /*namespace GridCtrlLibrary*/ } /*namespace Seidenader*/
+} // namespace SvGcl
 
-namespace SvGcl = Seidenader::GridCtrlLibrary;
+

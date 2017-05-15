@@ -16,8 +16,8 @@
 #include "CallbackStructContainers.h"
 #include "IODeviceBase.h"
 
-namespace Seidenader { namespace TriggerHandling {
-
+namespace SvTh
+{
 	class AcquisitionTriggers
 	{
 	private:
@@ -30,8 +30,4 @@ namespace Seidenader { namespace TriggerHandling {
 
 		HRESULT Dispatch(unsigned long p_ulIndex);
 	};
-
-
-}}
-
-namespace SvTh = Seidenader::TriggerHandling;
+} //namespace SvTh

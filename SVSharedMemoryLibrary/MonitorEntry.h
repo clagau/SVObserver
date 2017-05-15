@@ -17,10 +17,7 @@
 //Moved to precompiled header: #include <map>
 #pragma endregion Includes
 
-
-
-
-namespace Seidenader { namespace SVSharedMemoryLibrary
+namespace SvSml
 {
 		
 	struct ShMonitorEntry; 
@@ -84,7 +81,4 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 	typedef bip::allocator<ShMonitorEntry, segment_manager_t>     ShMoListEntry_allocator;
 	typedef bip::vector<ShMonitorEntry, ShMoListEntry_allocator> ShMoListEntryVector;
 	
-	
-} } 
-
-namespace SvSml = Seidenader::SVSharedMemoryLibrary;
+} //namespace SvSml

@@ -25,9 +25,8 @@ static char THIS_FILE[] = __FILE__;
 #pragma endregion Declarations
 
 
-namespace Seidenader { namespace SVStatusLibrary
+namespace SvStl
 {
-
 	///defaultValue 
 	static const TCHAR* const DefaultLastValidFolder =   _T( "C:\\Last Valid" );	
 	static const TCHAR* const DefaultTempFolder = _T( "C:\\Temp" );
@@ -274,16 +273,4 @@ namespace Seidenader { namespace SVStatusLibrary
 		}
 
 	}
-
-
-
-
-
-
-
-}
-}
-
-
-
-
+} //namespace SvStl

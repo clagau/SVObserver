@@ -12,7 +12,7 @@
 #include "SelectorItem.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace ObjectSelectorLibrary
+namespace SvOsl
 {
 	class SelectorItemVector : public SvOi::ISelectorItemVector, public SVVector<SelectorItem> 
 	{
@@ -24,6 +24,4 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 	#pragma endregion Constructor
 	};
 
-} /* namespace ObjectSelectorLibrary */ } /* namespace Seidenader */
-
-namespace SvOsl = Seidenader::ObjectSelectorLibrary;
+} //namespace SvOsl

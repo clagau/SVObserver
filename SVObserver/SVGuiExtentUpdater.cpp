@@ -24,7 +24,7 @@ HRESULT SVGuiExtentUpdater::SetImageExtent(SVTaskObjectClass* pTaskObject, const
 {
 	CWaitCursor wait;
 
-	HRESULT status = SvOi::Err_10001_SetImageExtent_InvalidParameter;
+	HRESULT status = SvStl::Err_10001_SetImageExtent_InvalidParameter;
 	if ( nullptr != pTaskObject )
 	{
 		SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(pTaskObject->GetInspection());
@@ -43,7 +43,7 @@ HRESULT SVGuiExtentUpdater::SetImageExtent(SVTaskObjectClass* pTaskObject, const
 HRESULT SVGuiExtentUpdater::SetImageExtentToParent(SVTaskObjectClass* pTaskObject,SVCommandExtentResetModeEnum resetMode)
 {
 	CWaitCursor wait;
-	HRESULT status = SvOi::Err_10002_SetImageExtentToParent_InvalidParameter;
+	HRESULT status = SvStl::Err_10002_SetImageExtentToParent_InvalidParameter;
 
 	if ( nullptr != pTaskObject )
 	{
@@ -64,7 +64,7 @@ HRESULT SVGuiExtentUpdater::SetImageExtentToParent(SVTaskObjectClass* pTaskObjec
 HRESULT SVGuiExtentUpdater::SetImageExtentToFit(SVTaskObjectClass* pTaskObject, const SVImageExtentClass& rExtents ,SVCommandExtentResetModeEnum resetMode )
 {
 	CWaitCursor wait;
-	HRESULT status = SvOi::Err_10003_SetImageExtentToFit_InvalidParameter;
+	HRESULT status = SvStl::Err_10003_SetImageExtentToFit_InvalidParameter;
 
 	if ( nullptr != pTaskObject )
 	{
@@ -85,7 +85,7 @@ HRESULT SVGuiExtentUpdater::SetImageExtentToFit(SVTaskObjectClass* pTaskObject, 
 HRESULT SVGuiExtentUpdater::ForwardSizeAndPosition(SVTaskObjectClass* pTaskObject,SVCommandExtentResetModeEnum resetMode )
 {
 	CWaitCursor wait;
-	HRESULT status = SvOi::Err_10002_SetImageExtentToParent_InvalidParameter;
+	HRESULT status = SvStl::Err_10002_SetImageExtentToParent_InvalidParameter;
 
 	if ( nullptr != pTaskObject )
 	{

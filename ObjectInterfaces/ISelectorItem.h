@@ -10,7 +10,7 @@
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace ObjectInterfaces
+namespace SvOi
 {
 	interface ISelectorItem abstract
 	{
@@ -117,6 +117,4 @@ namespace Seidenader { namespace ObjectInterfaces
 
 	#pragma endregion Public Methods
 	};
-} /* namespace ObjectInterfaces */ } /* namespace Seidenader */
-
-namespace SvOi = Seidenader::ObjectInterfaces;
+} //namespace SvOi

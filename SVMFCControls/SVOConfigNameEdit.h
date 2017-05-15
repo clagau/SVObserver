@@ -10,44 +10,38 @@
 //******************************************************************************
 #pragma once
 
-namespace Seidenader
+namespace SvMc
 {
-	namespace SVMFCControls
+	class CSVOConfigNameEdit : public CEdit
 	{
-		class CSVOConfigNameEdit : public CEdit
-		{
-			// Construction
-		public:
-			CSVOConfigNameEdit(LPCTSTR const sExcludedChars);
+		// Construction
+	public:
+		CSVOConfigNameEdit(LPCTSTR const sExcludedChars);
 
-			// Attributes
-		public:
+		// Attributes
+	public:
 
-			// Operations
-		public:
+		// Operations
+	public:
 
-			// Overrides
-			// ClassWizard generated virtual function overrides
-			//{{AFX_VIRTUAL(CSVOConfigNameEdit)
-			//}}AFX_VIRTUAL
+		// Overrides
+		// ClassWizard generated virtual function overrides
+		//{{AFX_VIRTUAL(CSVOConfigNameEdit)
+		//}}AFX_VIRTUAL
 
-			// Implementation
-		public:
-			virtual ~CSVOConfigNameEdit();
+		// Implementation
+	public:
+		virtual ~CSVOConfigNameEdit();
 
-			// Generated message map functions
-		protected:
-			//{{AFX_MSG(CSVOConfigNameEdit)
-			afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);
-			//}}AFX_MSG
+		// Generated message map functions
+	protected:
+		//{{AFX_MSG(CSVOConfigNameEdit)
+		afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);
+		//}}AFX_MSG
 
-		private:
-			CString m_sExcludedChars;
+	private:
+		CString m_sExcludedChars;
 
-			DECLARE_MESSAGE_MAP()
-		};
-	} //SVMFCControls
-} //Seidenader
-
-namespace SvMc = Seidenader::SVMFCControls;
-
+		DECLARE_MESSAGE_MAP()
+	};
+} //namespace SvMc

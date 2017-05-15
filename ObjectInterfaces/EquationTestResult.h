@@ -6,19 +6,14 @@
 //******************************************************************************
 #pragma once
 
-namespace Seidenader
+namespace SvOi
 {
-	namespace ObjectInterfaces
+	class EquationTestResult
 	{
-		class EquationTestResult
-		{
-		public:
-			bool bPassed;
-			int iPositionFailed;
+	public:
+		bool bPassed;
+		int iPositionFailed;
 
-			EquationTestResult() : bPassed(false), iPositionFailed(0) {}
-		};
-	}
-}
-
-namespace SvOi = Seidenader::ObjectInterfaces;
+		EquationTestResult() : bPassed(false), iPositionFailed(0) {}
+	};
+} //namespace SvOi

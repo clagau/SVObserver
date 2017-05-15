@@ -65,7 +65,7 @@ BOOL SVColorThresholdClass::CreateObject( SVObjectLevelCreateStruct* pCreateStru
       
 			long l_lPixelDepth = 0;
 
-			ImageInfo.GetImageProperty( SVImagePropertyPixelDepth, l_lPixelDepth );
+			ImageInfo.GetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyPixelDepth, l_lPixelDepth );
 			
 			m_HistogramValueArraySize = 1 << ( l_lPixelDepth & SVBufferSize );
 
@@ -107,7 +107,7 @@ BOOL SVColorThresholdClass::CreateObject( SVObjectLevelCreateStruct* pCreateStru
 			m_HistogramValueArraySize = 0;
 		}
 	}
-	const UINT cAttributes = SV_PRINTABLE | SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE;
+	const UINT cAttributes = SvOi::SV_PRINTABLE | SvOi::SV_REMOTELY_SETABLE | SvOi::SV_SETABLE_ONLINE;
 	// Set / Reset Printable Flags 
 	for (BandEnum Band : BandList)
 	{
@@ -116,10 +116,10 @@ BOOL SVColorThresholdClass::CreateObject( SVObjectLevelCreateStruct* pCreateStru
 		m_BandThreshold[Band].m_ThresholdExclude.SetObjectAttributesAllowed(cAttributes, SvOi::SetAttributeType::AddAttribute);
 	}
 
-	m_ExtentLeft.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
-	m_ExtentTop.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
-	m_ExtentWidth.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
-	m_ExtentHeight.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_ExtentLeft.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_ExtentTop.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_ExtentWidth.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_ExtentHeight.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
 
 	m_isCreated = bOk;
 
@@ -178,7 +178,7 @@ bool SVColorThresholdClass::ResetObject(SvStl::MessageContainerVector *pErrorMes
 	{
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -248,7 +248,7 @@ bool SVColorThresholdClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageCo
 			Result = false;
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_SetImageHandleIndexFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SetImageHandleIndexFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
 				pErrorMessages->push_back(Msg);
 			}
 		}
@@ -261,7 +261,7 @@ bool SVColorThresholdClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageCo
 			Result = false;
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_SetImageHandleIndexFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SetImageHandleIndexFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
 				pErrorMessages->push_back(Msg);
 			}
 		}
@@ -285,7 +285,7 @@ bool SVColorThresholdClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageCo
 			Result = false;
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_BinarizeFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_BinarizeFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
 				pErrorMessages->push_back(Msg);
 			}
 		}
@@ -323,7 +323,7 @@ bool SVColorThresholdClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageCo
 		{
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
 				pErrorMessages->push_back(Msg);
 			}
 		}
@@ -391,7 +391,7 @@ bool SVColorThresholdClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageCo
 									Result = false;
 									if (nullptr != pErrorMessages)
 									{
-										SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_CopyImagesFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+										SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_CopyImagesFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
 										pErrorMessages->push_back(Msg);
 									}
 								}
@@ -493,11 +493,11 @@ void SVColorThresholdClass::LocalInitialize()
 		m_BandThreshold[Band].m_UpperThreshold.SetDefaultValue(SvOi::cDefaultToolUpperThreshold, true);
 		m_BandThreshold[Band].m_LowerThreshold.SetDefaultValue(SvOi::cDefaultToolLowerThreshold, true);
 		m_BandThreshold[Band].m_ThresholdExclude.SetDefaultValue(BOOL(false), true);
-		GetBandHistogramImage(Band).InitializeImage(SVImageTypeIndependent);
-		GetBandOutputImage(Band).InitializeImage(SVImageTypeIndependent);
+		GetBandHistogramImage(Band).InitializeImage(SvOi::SVImageTypeEnum::SVImageTypeIndependent);
+		GetBandOutputImage(Band).InitializeImage(SvOi::SVImageTypeEnum::SVImageTypeIndependent);
 	}
 
-	m_OutputImage.InitializeImage(SVImageTypeIndependent);
+	m_OutputImage.InitializeImage(SvOi::SVImageTypeEnum::SVImageTypeIndependent);
 
 	// Identify our input type needs...
 	m_BandThreshold[BandEnum::Band0].m_InputImage.SetInputObjectType(SVBand0ImageObjectGuid, SVImageObjectType);
@@ -549,9 +549,9 @@ bool SVColorThresholdClass::createOutputImage( SVImageClass* pInputImage, SVImag
 	// Setup...
 	ImageInfo.SetOwner( GetOwnerID() );
 
-	ImageInfo.SetImageProperty( SVImagePropertyFormat, SVImageFormatMono8 );
-	ImageInfo.SetImageProperty( SVImagePropertyBandLink, 0 );
-	ImageInfo.SetImageProperty( SVImagePropertyBandNumber, 1 );
+	ImageInfo.SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyFormat, SVImageFormatMono8 );
+	ImageInfo.SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandLink, 0 );
+	ImageInfo.SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandNumber, 1 );
 
 	Result = ( S_OK == pOutputImage->UpdateImage( InputID, ImageInfo ) );
 
@@ -589,9 +589,9 @@ bool SVColorThresholdClass::createHistogramImage( SVImageClass* pInputImage, SVI
 	ImageInfo.SetOwner( GetOwnerID() );
 	ImageInfo.SetOwnerImage( pOutputImage->GetUniqueObjectID() );
 
-	ImageInfo.SetImageProperty( SVImagePropertyFormat, SVImageFormatMono8 );
-	ImageInfo.SetImageProperty( SVImagePropertyBandLink, 0 );
-	ImageInfo.SetImageProperty( SVImagePropertyBandNumber, 1 );
+	ImageInfo.SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyFormat, SVImageFormatMono8 );
+	ImageInfo.SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandLink, 0 );
+	ImageInfo.SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandNumber, 1 );
 
 	ImageInfo.SetExtentProperty( SVExtentPropertyPositionPoint, 0 );
 	ImageInfo.SetExtentProperty( SVExtentPropertyWidth, l_dWidth );

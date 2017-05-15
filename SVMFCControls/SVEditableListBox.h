@@ -12,41 +12,35 @@
 #include "afxwin.h"
 #include "SVEditHelper.h"
 
-namespace Seidenader
+namespace SvMc
 {
-	namespace SVMFCControls
+	#define		WM_APP_LB_ITEM_EDITED			( WM_APP + 04100 )
+
+	class SVEditableListBox :
+		public CListBox
 	{
-		#define		WM_APP_LB_ITEM_EDITED			( WM_APP + 04100 )
+	public:
+		SVEditableListBox(void);
+		~SVEditableListBox(void);
 
-		class SVEditableListBox :
-			public CListBox
-		{
-		public:
-			SVEditableListBox(void);
-			~SVEditableListBox(void);
+	protected:
+		void    EditStarts  ();
+		void    EditEnds    ( BOOL bCommitText = TRUE );
 
-		protected:
-			void    EditStarts  ();
-			void    EditEnds    ( BOOL bCommitText = TRUE );
+		SVEditHelper   m_ceEdit;
+		int     m_iItemBeingEdited;
+		int     m_iLastSelected;
 
-			SVEditHelper   m_ceEdit;
-			int     m_iItemBeingEdited;
-			int     m_iLastSelected;
+		//{{AFX_MSG(SVEditableListBox)
+		afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
+		afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
+		//}}AFX_MSG
+		afx_msg LRESULT OnEditFinished(WPARAM wParam, LPARAM lParam);
+		DECLARE_MESSAGE_MAP()
 
-			//{{AFX_MSG(SVEditableListBox)
-			afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
-			afx_msg void OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
-			//}}AFX_MSG
-			afx_msg LRESULT OnEditFinished(WPARAM wParam, LPARAM lParam);
-			DECLARE_MESSAGE_MAP()
-
-		public:
-			afx_msg void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags);
-			afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
-			afx_msg void OnSetFocus(CWnd* pOldWnd);
-		};
-	} //SVMFCControls
-} //Seidenader
-
-namespace SvMc = Seidenader::SVMFCControls;
-
+	public:
+		afx_msg void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags);
+		afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
+		afx_msg void OnSetFocus(CWnd* pOldWnd);
+	};
+} //namespace SvMc

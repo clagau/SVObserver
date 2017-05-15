@@ -15,7 +15,8 @@
 #include "GuiController.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace SVOGui {
+namespace SvOg
+{
 	class FormulaController;
 
 	class TADialogTableParameterPage : public CPropertyPage, public ISVPropertyPageDialog
@@ -30,7 +31,7 @@ namespace Seidenader { namespace SVOGui {
 #pragma region Constructor
 	public:
 		// Standard constructor
-		TADialogTableParameterPage( const GUID& rInspectionID, const GUID& rTaskObjectID );
+		TADialogTableParameterPage(const GUID& rInspectionID, const GUID& rTaskObjectID);
 
 		// Standard destructor
 		virtual ~TADialogTableParameterPage();
@@ -51,7 +52,7 @@ namespace Seidenader { namespace SVOGui {
 	protected:
 		//{{AFX_MSG(TADialogTableParameterPage)
 		virtual BOOL OnInitDialog() override;
-		virtual BOOL OnKillActive( ) override;
+		virtual BOOL OnKillActive() override;
 		void OnBnClickedButtonFormula();
 		//}}AFX_MSG
 
@@ -85,6 +86,4 @@ namespace Seidenader { namespace SVOGui {
 		Controller m_Values;
 #pragma endregion Member Variables
 	};
-}}
-
-namespace SvOg = Seidenader::SVOGui;
+} //namespace SvOg

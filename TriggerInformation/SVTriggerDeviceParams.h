@@ -15,8 +15,8 @@
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace TriggerInformation {
-
+namespace SvTi
+{
 	struct SVTriggerDeviceParams
 	{
 		SVTriggerDeviceParams();
@@ -29,6 +29,4 @@ namespace Seidenader { namespace TriggerInformation {
 
 	typedef std::vector< SVTriggerDeviceParams > SVTriggerDeviceParamsVector;
 
-} /* namespace TriggerInformation */ } /* namespace Seidenader */
-
-namespace SvTi = Seidenader::TriggerInformation;
+} //namespace SvTi

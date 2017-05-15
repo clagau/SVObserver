@@ -11,10 +11,10 @@
 
 #pragma once
 
-namespace SVClock
+namespace SvTl
 {
-	static const double c_MicrosecondsPerMillisecond=1000.0; ///< the number of microseconds per millisecond: one thousand
-	static const int c_secondsPerMinute=60; ///< the number of seconds per minute: sixty
+	static const double c_MicrosecondsPerMillisecond = 1000.0; ///< the number of microseconds per millisecond: one thousand
+	static const int c_secondsPerMinute = 60; ///< the number of seconds per minute: sixty
 
 	enum SVConversionEnum
 	{
@@ -29,14 +29,12 @@ namespace SVClock
 	typedef double SVFrequency; // SVTimeStamp / SVFrequency = Seconds
 	typedef double SVTimeStamp; // In Milliseconds
 
-	SVFrequency GetFrequency(); 
+	SVFrequency GetFrequency();
 
 	SVTimeStamp GetTimeStamp();
 	SVTimeStamp GetMaxTimeStamp();
 	SVTimeStamp GetMinTimeStamp();
 
-	double ConvertTo( SVConversionEnum p_Units, const SVTimeStamp& p_rTimeStamp );
-	SVTimeStamp ConvertFrom( SVConversionEnum p_Units, double p_Time );
-
-};
-
+	double ConvertTo(SVConversionEnum p_Units, const SVTimeStamp& p_rTimeStamp);
+	SVTimeStamp ConvertFrom(SVConversionEnum p_Units, double p_Time);
+} //namespace SvTl

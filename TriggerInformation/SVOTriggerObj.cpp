@@ -19,8 +19,8 @@
 static char THIS_FILE[]=__FILE__;
 #endif
 
-namespace Seidenader { namespace TriggerInformation {
-
+namespace SvTi
+{
 	SVOTriggerObj::SVOTriggerObj(const SVString& name, int nDig)
 	: m_sTriggerDisplayName(name)
 	, m_iDigNumber(nDig)
@@ -70,5 +70,4 @@ namespace Seidenader { namespace TriggerInformation {
 		bool bRet = ( 0 ==m_sTriggerDisplayName.find(SvTh::CameraTriggerName) );
 		return bRet;
 	}
-
-} /* namespace TriggerInformation */ } /* namespace Seidenader */
+} //namespace SvTi

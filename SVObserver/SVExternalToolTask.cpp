@@ -188,8 +188,8 @@ SVExternalToolTask::SVExternalToolTask( SVObjectClass* POwner, int StringResourc
 			imageInfo.SetOwner( GetTool()->GetUniqueObjectID() );
 		}
 
-		imageInfo.SetImageProperty( SVImagePropertyPixelDepth, 8 );
-		imageInfo.SetImageProperty( SVImagePropertyFormat, SVImageFormatMono8 ); 
+		imageInfo.SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyPixelDepth, 8 );
+		imageInfo.SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyFormat, SVImageFormatMono8 ); 
 
 		imageInfo.SetExtentProperty( SVExtentPropertyOutputPositionPoint, 0 );
 		imageInfo.SetExtentProperty( SVExtentPropertyWidth, 100 );
@@ -197,7 +197,7 @@ SVExternalToolTask::SVExternalToolTask( SVObjectClass* POwner, int StringResourc
 
 		SVImageClass* pImage = &(m_aResultImages[i]);
 
-		pImage->UpdateImage( SVImageTypePhysical, SV_GUID_NULL, imageInfo );
+		pImage->UpdateImage( SvOi::SVImageTypeEnum::SVImageTypePhysical, SV_GUID_NULL, imageInfo );
 	}
 
 	// Result Objects
@@ -235,41 +235,41 @@ void SVExternalToolTask::SetAllAttributes()
 	for ( i = 0; i < SVExternalToolTaskData::NUM_INPUT_OBJECTS; i++)
 	{
 		SvOi::SetAttributeType AddRemoveType = (i < m_Data.m_lNumInputValues) ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
-		m_Data.m_aInputObjects[i].SetObjectAttributesAllowed( SV_REMOTELY_SETABLE | SV_VIEWABLE | SV_PRINTABLE | SV_SETABLE_ONLINE, AddRemoveType );
-		m_Data.m_aInputObjectNames[i].SetObjectAttributesAllowed( SV_VIEWABLE, SvOi::SetAttributeType::RemoveAttribute );
-		m_Data.m_aInputObjectNames[i].SetObjectAttributesAllowed( SV_PRINTABLE, AddRemoveType );
-		m_Data.m_aInputObjects[i].SetObjectAttributesAllowed( SV_SELECTABLE_FOR_EQUATION , AddRemoveType );
+		m_Data.m_aInputObjects[i].SetObjectAttributesAllowed( SvOi::SV_REMOTELY_SETABLE | SvOi::SV_VIEWABLE | SvOi::SV_PRINTABLE | SvOi::SV_SETABLE_ONLINE, AddRemoveType );
+		m_Data.m_aInputObjectNames[i].SetObjectAttributesAllowed( SvOi::SV_VIEWABLE, SvOi::SetAttributeType::RemoveAttribute );
+		m_Data.m_aInputObjectNames[i].SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, AddRemoveType );
+		m_Data.m_aInputObjects[i].SetObjectAttributesAllowed( SvOi::SV_SELECTABLE_FOR_EQUATION , AddRemoveType );
 	}
 
 	for ( i = 0; i < SVExternalToolTaskData::NUM_RESULT_IMAGES; i++)
 	{
 		SvOi::SetAttributeType AddRemoveType = (i >= m_Data.m_lNumResultImages) ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
-		m_aResultImages[i].SetObjectAttributesAllowed( SV_HIDDEN, AddRemoveType );
+		m_aResultImages[i].SetObjectAttributesAllowed( SvOi::SV_HIDDEN, AddRemoveType );
 		AddRemoveType = (i < m_Data.m_lNumResultImages) ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
-		m_aResultImages[i].SetObjectAttributesAllowed( SV_ARCHIVABLE_IMAGE, AddRemoveType );
+		m_aResultImages[i].SetObjectAttributesAllowed( SvOi::SV_ARCHIVABLE_IMAGE, AddRemoveType );
 	}
 
 	for ( i = 0; i < SVExternalToolTaskData::NUM_RESULT_OBJECTS; i++)
 	{
 		SvOi::SetAttributeType AddRemoveType = (i < m_Data.m_lNumResultValues) ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
-		m_Data.m_aResultObjects[i].SetObjectAttributesAllowed( SV_VIEWABLE, AddRemoveType );
-		m_Data.m_aResultObjects[i].SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-		m_Data.m_aResultObjectNames[i].SetObjectAttributesAllowed( SV_VIEWABLE | SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-		m_Data.m_aResultObjects[i].SetObjectAttributesAllowed( SV_SELECTABLE_FOR_EQUATION, AddRemoveType );
+		m_Data.m_aResultObjects[i].SetObjectAttributesAllowed( SvOi::SV_VIEWABLE, AddRemoveType );
+		m_Data.m_aResultObjects[i].SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+		m_Data.m_aResultObjectNames[i].SetObjectAttributesAllowed( SvOi::SV_VIEWABLE | SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+		m_Data.m_aResultObjects[i].SetObjectAttributesAllowed( SvOi::SV_SELECTABLE_FOR_EQUATION, AddRemoveType );
 	}
 
 	for ( i=0; i < static_cast<long>(m_Data.m_aDllDependencies.size()); i++)
 	{
-		m_Data.m_aDllDependencies[i].SetObjectAttributesAllowed( SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
-		m_Data.m_aDllDependencies[i].SetObjectAttributesAllowed( SV_VIEWABLE, SvOi::SetAttributeType::RemoveAttribute );
+		m_Data.m_aDllDependencies[i].SetObjectAttributesAllowed( SvOi::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
+		m_Data.m_aDllDependencies[i].SetObjectAttributesAllowed( SvOi::SV_VIEWABLE, SvOi::SetAttributeType::RemoveAttribute );
 		SVString Temp;
 		m_Data.m_aDllDependencies[i].GetValue( Temp );
 		SvOi::SetAttributeType AddRemoveType = !Temp.empty() ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
-		m_Data.m_aDllDependencies[i].SetObjectAttributesAllowed( SV_PRINTABLE, AddRemoveType );
+		m_Data.m_aDllDependencies[i].SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, AddRemoveType );
 	}
-	m_Data.m_voToolVersion.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
-	m_Data.m_voToolName.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
-	m_Data.m_voDllPath.SetObjectAttributesAllowed( SV_PRINTABLE | SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
+	m_Data.m_voToolVersion.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_Data.m_voToolName.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_Data.m_voDllPath.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE | SvOi::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
 }
 
 SVExternalToolTask::~SVExternalToolTask()
@@ -444,7 +444,7 @@ HRESULT SVExternalToolTask::Initialize(	SVDllLoadLibraryCallback fnNotify )
 
 								// create buffer
 								SVImageClass* pImageCopy = &(m_aInputImagesCopy[i]);
-								pImageCopy->UpdateImage( SVImageTypePhysical, SV_GUID_NULL, imageInfoCopy );
+								pImageCopy->UpdateImage( SvOi::SVImageTypeEnum::SVImageTypePhysical, SV_GUID_NULL, imageInfoCopy );
 								pImageCopy->SetImageDepth( 1 );
 							}
 						}
@@ -589,7 +589,7 @@ HRESULT SVExternalToolTask::Initialize(	SVDllLoadLibraryCallback fnNotify )
 					// create buffer
 					SVImageClass* pImage = &(m_aResultImages[i]);
 
-					pImage->UpdateImage( SVImageTypePhysical, SV_GUID_NULL, imageInfo );
+					pImage->UpdateImage( SvOi::SVImageTypeEnum::SVImageTypePhysical, SV_GUID_NULL, imageInfo );
 				}// end block
 				if ( m_bUseImageCopies )
 				{
@@ -607,7 +607,7 @@ HRESULT SVExternalToolTask::Initialize(	SVDllLoadLibraryCallback fnNotify )
 					// create buffer
 					SVImageClass* pImage = &(m_aResultImagesCopy[i]);
 
-					pImage->UpdateImage( SVImageTypePhysical, SV_GUID_NULL, imageInfo );
+					pImage->UpdateImage( SvOi::SVImageTypeEnum::SVImageTypePhysical, SV_GUID_NULL, imageInfo );
 					pImage->SetImageDepth( 1 );
 				}// end if ( m_bUseImageCopies )
 
@@ -621,8 +621,8 @@ HRESULT SVExternalToolTask::Initialize(	SVDllLoadLibraryCallback fnNotify )
 				{
 					imageInfo.SetOwner( GetTool()->GetUniqueObjectID() );
 				}
-				imageInfo.SetImageProperty( SVImagePropertyPixelDepth, 8 );
-				imageInfo.SetImageProperty( SVImagePropertyFormat, SVImageFormatMono8 ); 
+				imageInfo.SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyPixelDepth, 8 );
+				imageInfo.SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyFormat, SVImageFormatMono8 ); 
 
 				imageInfo.SetExtentProperty( SVExtentPropertyOutputPositionPoint, 0 );
 				imageInfo.SetExtentProperty( SVExtentPropertyWidth, 100 );
@@ -631,7 +631,7 @@ HRESULT SVExternalToolTask::Initialize(	SVDllLoadLibraryCallback fnNotify )
 				// create buffer
 				SVImageClass* pImage = &(m_aResultImages[i]);
 
-				pImage->UpdateImage( SVImageTypePhysical, SV_GUID_NULL, imageInfo );
+				pImage->UpdateImage( SvOi::SVImageTypeEnum::SVImageTypePhysical, SV_GUID_NULL, imageInfo );
 			}
 
 			hr = m_dll.DestroyImageDefinitionStructure(paResultImageDefs);
@@ -731,7 +731,7 @@ bool SVExternalToolTask::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCont
 	{
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_InitExternalTaskFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InitExternalTaskFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 			pErrorMessages->push_back(Msg);
 		}
 		rRunStatus.SetInvalid();
@@ -1073,7 +1073,7 @@ bool SVExternalToolTask::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCont
 				l_bOk = false;
 				if (nullptr != pErrorMessages)
 				{
-					SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ExternalTask_CheckToRunFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+					SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ExternalTask_CheckToRunFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 					pErrorMessages->push_back(Msg);
 				}
 			}
@@ -1097,7 +1097,7 @@ bool SVExternalToolTask::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCont
 			{
 				SVStringVector msgList;
 				msgList.push_back(SvUl_SF::Format(_T("%X"), hr));
-				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ExternalTask_UnknownException, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ExternalTask_UnknownException, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 				pErrorMessages->push_back(Msg);
 			}
 		}
@@ -1109,7 +1109,7 @@ bool SVExternalToolTask::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCont
 			{
 				SVStringVector msgList;
 				msgList.push_back(_T(""));
-				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ExternalTask_UnknownException, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ExternalTask_UnknownException, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 				pErrorMessages->push_back(Msg);
 			}
 		}
@@ -1322,8 +1322,8 @@ HRESULT SVExternalToolTask::GetImageInfo(const SVImageDefinitionStruct* pDefinit
 {
 	HRESULT hr = S_OK;
 
-	rInfo.SetImageProperty( SVImagePropertyPixelDepth, 8 ); 
-	rInfo.SetImageProperty( SVImagePropertyFormat, pDefinitionStruct->eImageFormat ); 
+	rInfo.SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyPixelDepth, 8 ); 
+	rInfo.SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyFormat, pDefinitionStruct->eImageFormat ); 
 
 	rInfo.SetExtentProperty( SVExtentPropertyOutputPositionPoint, 0 );
 	rInfo.SetExtentProperty( SVExtentPropertyWidth, pDefinitionStruct->lWidth );
@@ -1333,10 +1333,10 @@ HRESULT SVExternalToolTask::GetImageInfo(const SVImageDefinitionStruct* pDefinit
 	{
 		case SVImageFormatRGB888:
 		case SVImageFormatRGB8888:
-			rInfo.SetImageProperty( SVImagePropertyBandNumber, 3 ); 
+			rInfo.SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandNumber, 3 ); 
 			break;
 		default:
-			rInfo.SetImageProperty( SVImagePropertyBandNumber, 1 ); 
+			rInfo.SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandNumber, 1 ); 
 			break;
 	}
 
@@ -1351,8 +1351,8 @@ HRESULT SVExternalToolTask::GetImageDefinitionStruct( SVImageDefinitionStruct& r
 	rInfo.GetExtentProperty( SVExtentPropertyWidth, rImageDef.lWidth );
 	rInfo.GetExtentProperty( SVExtentPropertyHeight, rImageDef.lHeight );
 
-	rInfo.GetImageProperty( SVImagePropertyFormat, l_lFormat ); 
-	rInfo.GetImageProperty( SVImagePropertyBandNumber, l_lBandNumber ); 
+	rInfo.GetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyFormat, l_lFormat ); 
+	rInfo.GetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandNumber, l_lBandNumber ); 
 
 	if( ( rImageDef.eImageFormat == SVImageFormatRGB888 ||
 		rImageDef.eImageFormat == SVImageFormatRGB8888 ) &&
@@ -1414,7 +1414,7 @@ HRESULT SVExternalToolTask::AllocateResult (int iIndex)
 			throw -12347;
 		}
 		
-		pValue->SetObjectAttributesAllowed( SV_DEFAULT_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute );
+		pValue->SetObjectAttributesAllowed( SvOi::SV_DEFAULT_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute );
 		
 		// Ensure this Object's inputs get connected
 		pResult->ConnectAllInputs();
@@ -1424,7 +1424,7 @@ HRESULT SVExternalToolTask::AllocateResult (int iIndex)
 		if( ! pResult->IsCreated() )
 		{
 			// And finally try to create the child object...
-			if( !CreateChildObject(pResult, SVMFResetObject ) )
+			if( !CreateChildObject(pResult, SvOi::SVMFResetObject ) )
 			{
 				// Remove it from the TaskObjectList ( Destruct it )
 				GUID objectID = pResult->GetUniqueObjectID();
@@ -1596,7 +1596,7 @@ bool SVExternalToolTask::ResetObject(SvStl::MessageContainerVector *pErrorMessag
 			Result = false;
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_InitExternalTaskFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InitExternalTaskFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 				pErrorMessages->push_back(Msg);
 			}
 		}

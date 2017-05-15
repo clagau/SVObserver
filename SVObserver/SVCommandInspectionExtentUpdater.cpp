@@ -107,7 +107,7 @@ HRESULT SVCommandInspectionExtentUpdater::Execute()
 			break;
 		
 		default:
-			retVal = SvOi::Err_10004_SVCommandInspectionExtentUpdater_InvalidMode;
+			retVal = SvStl::Err_10004_SVCommandInspectionExtentUpdater_InvalidMode;
 			break;
 		}
 
@@ -117,7 +117,7 @@ HRESULT SVCommandInspectionExtentUpdater::Execute()
 			if(ResetModeAuto)
 			{
 				/// correct tool size when it does not fit to the parent image 
-				pInspection->AddResetState( SVResetAutoMoveAndResize );
+				pInspection->AddResetState( SvOi::SVResetAutoMoveAndResize );
 			}
 			
 			SVToolClass* pToolRun(nullptr); 
@@ -156,24 +156,24 @@ HRESULT SVCommandInspectionExtentUpdater::Execute()
 
 			if ( result )
 			{
-				retVal = pInspection->RunOnce( pToolRun ) ? S_OK : SvOi::Err_10006_SVCommandInspectionExtentUpdater_RunOnce;
+				retVal = pInspection->RunOnce( pToolRun ) ? S_OK : SvStl::Err_10006_SVCommandInspectionExtentUpdater_RunOnce;
 				
 			}
 			else
 			{
-				retVal = SvOi::Err_10005_SVCommandInspectionExtentUpdater_ResetAllObjects;
+				retVal = SvStl::Err_10005_SVCommandInspectionExtentUpdater_ResetAllObjects;
 			}
 
 			if(ResetModeAuto)
 			{
-				pInspection->RemoveResetState( SVResetAutoMoveAndResize );
+				pInspection->RemoveResetState(SvOi::SVResetAutoMoveAndResize );
 			}
 			
 		}
 	}
 	else
 	{
-		retVal = SvOi::Err_10007_SVCommandInspectionExtentUpdater_InvalidParameter;
+		retVal = SvStl::Err_10007_SVCommandInspectionExtentUpdater_InvalidParameter;
 	}
 
 	return retVal;

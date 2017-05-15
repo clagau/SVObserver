@@ -16,10 +16,8 @@
 #include "SVMessage/SVMessage.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace SVSharedMemoryLibrary
+namespace SvSml
 {
-	
-
 	SVSharedPPQReader::SVSharedPPQReader()
 	: m_DataSharedMemPtr(nullptr), m_SharedProductStorePPQ(nullptr), m_SharedProductStorePPQReject(nullptr), m_ShareName(""), m_isOpen(false)
 	{
@@ -143,7 +141,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 					{
 						// log exception
 						SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-						Exception.setMessage(SVMSG_SHAREDMEMORY_READER_RELEASE_NO_READER_LOCK, SvOi::Tid_ErrorReleaseProductNoReaderLock, SvStl::SourceFileParams(StdMessageParams), SVMSG_SHAREDMEMORY_READER_RELEASE_NO_READER_LOCK );
+						Exception.setMessage(SVMSG_SHAREDMEMORY_READER_RELEASE_NO_READER_LOCK, SvStl::Tid_ErrorReleaseProductNoReaderLock, SvStl::SourceFileParams(StdMessageParams), SVMSG_SHAREDMEMORY_READER_RELEASE_NO_READER_LOCK );
 					}
 				}
 			}
@@ -307,7 +305,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 					{
 						// log exception
 						SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-						Exception.setMessage(SVMSG_SHAREDMEMORY_READER_RELEASE_NO_READER_LOCK, SvOi::Tid_ErrorReleaseProductNoReaderLock, SvStl::SourceFileParams(StdMessageParams), SVMSG_SHAREDMEMORY_READER_RELEASE_NO_READER_LOCK );
+						Exception.setMessage(SVMSG_SHAREDMEMORY_READER_RELEASE_NO_READER_LOCK, SvStl::Tid_ErrorReleaseProductNoReaderLock, SvStl::SourceFileParams(StdMessageParams), SVMSG_SHAREDMEMORY_READER_RELEASE_NO_READER_LOCK );
 					}
 				}
 			}
@@ -379,5 +377,5 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		}
 		return val;
 	}
-} /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
+} //namespace SvSml
 

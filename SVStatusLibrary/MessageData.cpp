@@ -18,7 +18,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-namespace Seidenader { namespace SVStatusLibrary
+namespace SvStl
 {
 #pragma region Constructor
 	MessageData::MessageData() :
@@ -29,7 +29,7 @@ namespace Seidenader { namespace SVStatusLibrary
 	{
 	}
 
-	MessageData::MessageData( DWORD MessageCode, SvOi::MessageTextEnum AdditionalTextId, const SVStringVector& rAdditionalTextList ) :
+	MessageData::MessageData( DWORD MessageCode, MessageTextEnum AdditionalTextId, const SVStringVector& rAdditionalTextList ) :
 	m_Logged( false )
 	, m_Displayed( false )
 	, m_MessageCode( MessageCode )
@@ -80,7 +80,7 @@ namespace Seidenader { namespace SVStatusLibrary
 		m_Logged = false;
 		m_Displayed = false;
 		m_MessageCode = 0;
-		m_AdditionalTextId = SvOi::Tid_Empty;
+		m_AdditionalTextId = SvStl::Tid_Empty;
 		m_AdditionalTextList.clear();
 		m_SourceFile.clear();
 		m_ProgramCode = 0;
@@ -92,9 +92,9 @@ namespace Seidenader { namespace SVStatusLibrary
 		return MessageTextGenerator::Instance().getText(m_AdditionalTextId, m_AdditionalTextList);
 	}
 
-	SVString MessageData::convertId2AddtionalText(SvOi::MessageTextEnum id)
+	SVString MessageData::convertId2AddtionalText(MessageTextEnum id)
 	{
 		return MessageTextGenerator::convertId2AddtionalText(id);
 	}
 #pragma endregion Public Methods
-} /* namespace SVStatusLibrary */ } /* namespace Seidenader */
+} //namespace SvStl

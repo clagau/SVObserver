@@ -9,7 +9,7 @@
 //* .Check In Date   : $Date:   17 Jul 2014 16:54:28  $
 //******************************************************************************
 
-namespace Sv { namespace Container
+namespace SvCl
 {
 	template<typename Key, typename Data>
 	SVTree<Key, Data>::SVTree( )
@@ -89,4 +89,4 @@ namespace Sv { namespace Container
 
 		return Result;
 	}
-} /* namespace SVContainerLibrary */ } /* namespace Seidenader */
+} //namespace SvCl

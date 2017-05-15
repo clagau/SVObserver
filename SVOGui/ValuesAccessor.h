@@ -20,116 +20,111 @@
 #include "GuiCommands/GetObjectName.h"
 #pragma endregion Includes
 
-namespace Seidenader
+namespace SvOg
 {
-	namespace SVOGui
+	template<typename Values>
+	class ValuesAccessor
 	{
-		template<typename Values>
-		class ValuesAccessor
+	public:
+		typedef Values value_type;
+
+		ValuesAccessor() {}
+		virtual ~ValuesAccessor() {}
+
+		HRESULT GetValues(Values& rValues) 
 		{
-		public:
-			typedef Values value_type;
+			const GUID& inspectionID = rValues.GetInspectionID();
+			const GUID& ownerID = rValues.GetOwnerID();
+	
+			typedef SvCmd::TaskObjectGetEmbeddedValues<Values> Command;
+			typedef SVSharedPtr<Command> CommandPtr;
 
-			ValuesAccessor() {}
-			virtual ~ValuesAccessor() {}
-
-			HRESULT GetValues(Values& rValues) 
+			CommandPtr commandPtr(new Command(ownerID, rValues));
+			SVObjectSynchronousCommandTemplate<CommandPtr> cmd(inspectionID, commandPtr);
+			HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+			if (S_OK == hr)
 			{
-				const GUID& inspectionID = rValues.GetInspectionID();
-				const GUID& ownerID = rValues.GetOwnerID();
-		
-				typedef GuiCmd::TaskObjectGetEmbeddedValues<Values> Command;
-				typedef SVSharedPtr<Command> CommandPtr;
-
-				CommandPtr commandPtr(new Command(ownerID, rValues));
-				SVObjectSynchronousCommandTemplate<CommandPtr> cmd(inspectionID, commandPtr);
-				HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-				if (S_OK == hr)
-				{
-					rValues = commandPtr->GetItems();
-				}
-				return hr;
+				rValues = commandPtr->GetItems();
 			}
+			return hr;
+		}
 
-			HRESULT SetValues(const SvOg::BoundValues& rValues, bool bReset) 
+		HRESULT SetValues(const SvOg::BoundValues& rValues, bool bReset) 
+		{
+			m_setMessageFailList.clear();
+			const GUID& ownerID = rValues.GetOwnerID();
+			const GUID& inspectionID = rValues.GetInspectionID();
+	
+			typedef SvCmd::TaskObjectSetEmbeddedValues<Values> Command;
+			typedef SVSharedPtr<Command> CommandPtr;
+
+			CommandPtr commandPtr(new Command(rValues));
+			SVObjectSynchronousCommandTemplate<CommandPtr> cmd(inspectionID, commandPtr);
+			HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+			m_setMessageFailList = commandPtr->getErrorMessages();
+
+			if (S_OK == hr)
 			{
-				m_setMessageFailList.clear();
-				const GUID& ownerID = rValues.GetOwnerID();
-				const GUID& inspectionID = rValues.GetInspectionID();
-		
-				typedef GuiCmd::TaskObjectSetEmbeddedValues<Values> Command;
-				typedef SVSharedPtr<Command> CommandPtr;
-
-				CommandPtr commandPtr(new Command(rValues));
-				SVObjectSynchronousCommandTemplate<CommandPtr> cmd(inspectionID, commandPtr);
-				HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-				m_setMessageFailList = commandPtr->getErrorMessages();
-
-				if (S_OK == hr)
+				if (bReset)
 				{
-					if (bReset)
-					{
-						// Do a reset of the Tool
-						typedef SVSharedPtr<GuiCmd::ResetObject> ResetObjectCommandPtr;
-						ResetObjectCommandPtr commandPtr(new GuiCmd::ResetObject(ownerID));
-						SVObjectSynchronousCommandTemplate<ResetObjectCommandPtr> cmd(inspectionID, commandPtr);
+					// Do a reset of the Tool
+					typedef SVSharedPtr<SvCmd::ResetObject> ResetObjectCommandPtr;
+					ResetObjectCommandPtr commandPtr(new SvCmd::ResetObject(ownerID));
+					SVObjectSynchronousCommandTemplate<ResetObjectCommandPtr> cmd(inspectionID, commandPtr);
 
-						hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-						if (S_OK != hr)
-						{
-							m_setMessageFailList = commandPtr->getErrorMessages();
-						}
-					}
-					if (S_OK == hr)
+					hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+					if (S_OK != hr)
 					{
-						// Do a run once of the Tool/Inspection ?
-						GuiCmd::InspectionRunOncePtr commandPtr(new GuiCmd::InspectionRunOnce(inspectionID, ownerID));
-						SVObjectSynchronousCommandTemplate<GuiCmd::InspectionRunOncePtr> cmd(inspectionID, commandPtr);
-
-						hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+						m_setMessageFailList = commandPtr->getErrorMessages();
 					}
 				}
-				return hr;
-			}
-
-			SvOi::NameValueList GetEnums(const GUID& rInspectionID, const GUID& rObjectID) const
-			{
-				typedef GuiCmd::ValueObjectGetEnums Command;
-				typedef SVSharedPtr<Command> CommandPtr;
-
-				CommandPtr commandPtr(new Command(rObjectID));
-				SVObjectSynchronousCommandTemplate<CommandPtr> cmd(rInspectionID, commandPtr);
-				HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-
 				if (S_OK == hr)
 				{
-					return commandPtr->GetEnumList();
-				}
-				return SvOi::NameValueList();
-			}
+					// Do a run once of the Tool/Inspection ?
+					SvCmd::InspectionRunOncePtr commandPtr(new SvCmd::InspectionRunOnce(inspectionID, ownerID));
+					SVObjectSynchronousCommandTemplate<SvCmd::InspectionRunOncePtr> cmd(inspectionID, commandPtr);
 
-			SVString GetObjectName(const GUID& rInspectionID, const GUID& rObjectID) const
+					hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+				}
+			}
+			return hr;
+		}
+
+		SvOi::NameValueList GetEnums(const GUID& rInspectionID, const GUID& rObjectID) const
+		{
+			typedef SvCmd::ValueObjectGetEnums Command;
+			typedef SVSharedPtr<Command> CommandPtr;
+
+			CommandPtr commandPtr(new Command(rObjectID));
+			SVObjectSynchronousCommandTemplate<CommandPtr> cmd(rInspectionID, commandPtr);
+			HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+
+			if (S_OK == hr)
 			{
-				typedef GuiCmd::GetObjectName Command;
-				typedef SVSharedPtr<Command> CommandPtr;
-
-				CommandPtr commandPtr(new Command(rObjectID));
-				SVObjectSynchronousCommandTemplate<CommandPtr> cmd(rInspectionID, commandPtr);
-				HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-
-				if (S_OK == hr)
-				{
-					return commandPtr->GetName();
-				}
-				return SVString();
+				return commandPtr->GetEnumList();
 			}
+			return SvOi::NameValueList();
+		}
 
-			SvStl::MessageContainerVector getSetFailedMessageList() { return m_setMessageFailList; };
+		SVString GetObjectName(const GUID& rInspectionID, const GUID& rObjectID) const
+		{
+			typedef SvCmd::GetObjectName Command;
+			typedef SVSharedPtr<Command> CommandPtr;
 
-		protected:
-			SvStl::MessageContainerVector m_setMessageFailList;
-		};
-	}
-}
+			CommandPtr commandPtr(new Command(rObjectID));
+			SVObjectSynchronousCommandTemplate<CommandPtr> cmd(rInspectionID, commandPtr);
+			HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 
-namespace SvOg = Seidenader::SVOGui;
+			if (S_OK == hr)
+			{
+				return commandPtr->GetName();
+			}
+			return SVString();
+		}
+
+		SvStl::MessageContainerVector getSetFailedMessageList() { return m_setMessageFailList; };
+
+	protected:
+		SvStl::MessageContainerVector m_setMessageFailList;
+	};
+} //namespace SvOg

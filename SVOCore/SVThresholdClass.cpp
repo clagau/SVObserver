@@ -115,20 +115,20 @@ BOOL SVThresholdClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure
 	BOOL bOk = SVUnaryImageOperatorClass::CreateObject( PCreateStructure );
 
 	// Set / Reset Printable Flag
-	m_threshActivate.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
-	m_blackBackground.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_threshActivate.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_blackBackground.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
 
-	m_upperThreshActivate.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
-	m_lowerThreshActivate.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
-	m_useExternalLT.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
-	m_useExternalUT.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_upperThreshActivate.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_lowerThreshActivate.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_useExternalLT.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_useExternalUT.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
 	
-	m_autoThreshold.SetObjectAttributesAllowed( SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
-	m_useExternalATM.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_autoThreshold.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE | SvOi::SV_SETABLE_ONLINE | SvOi::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
+	m_useExternalATM.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
 
-	m_upperThresh.SetObjectAttributesAllowed( SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
-	m_lowerThresh.SetObjectAttributesAllowed( SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
-	m_dAutoThresholdMultiplier.SetObjectAttributesAllowed( SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
+	m_upperThresh.SetObjectAttributesAllowed( SvOi::SV_SETABLE_ONLINE | SvOi::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
+	m_lowerThresh.SetObjectAttributesAllowed( SvOi::SV_SETABLE_ONLINE | SvOi::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
+	m_dAutoThresholdMultiplier.SetObjectAttributesAllowed( SvOi::SV_SETABLE_ONLINE | SvOi::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
 
 	bOk = Rebuild();
 
@@ -160,7 +160,7 @@ bool SVThresholdClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_RebuildFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_RebuildFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -444,7 +444,7 @@ bool SVThresholdClass::onRun( bool First,
 		
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( static_cast<DWORD> (l_Code), SvOi::Tid_ErrorIn, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg( static_cast<DWORD> (l_Code), SvStl::Tid_ErrorIn, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 			pErrorMessages->push_back(Msg);
 		}
 		rRunStatus.SetCriticalFailure();
@@ -542,13 +542,13 @@ bool SVThresholdClass::Rebuild()
 	m_useExternalUT.GetValue( l_bUTValue );
 
 	SvOi::SetAttributeType AddRemoveType = l_bATMValue ? SvOi::SetAttributeType::RemoveAttribute : SvOi::SetAttributeType::AddAttribute;
-	m_dAutoThresholdMultiplier.SetObjectAttributesAllowed( SV_PRINTABLE, AddRemoveType );
+	m_dAutoThresholdMultiplier.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, AddRemoveType );
 
 	AddRemoveType = (l_bAutoValue || l_bLTValue) ? SvOi::SetAttributeType::RemoveAttribute : SvOi::SetAttributeType::AddAttribute;
-	m_lowerThresh.SetObjectAttributesAllowed( SV_PRINTABLE, AddRemoveType );
+	m_lowerThresh.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, AddRemoveType );
 
 	AddRemoveType = (l_bAutoValue || l_bUTValue) ? SvOi::SetAttributeType::RemoveAttribute : SvOi::SetAttributeType::AddAttribute;
-	m_upperThresh.SetObjectAttributesAllowed( SV_PRINTABLE, AddRemoveType );
+	m_upperThresh.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, AddRemoveType );
 
 	return Result;
 }

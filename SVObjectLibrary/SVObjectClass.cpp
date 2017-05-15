@@ -94,10 +94,10 @@ void SVObjectClass::init()
 
 	m_outObjectInfo.m_pObject = this;
 
-	m_ObjectAttributesAllowed = SV_NO_ATTRIBUTES; 
+	m_ObjectAttributesAllowed = SvOi::SV_NO_ATTRIBUTES; 
 	m_ObjectAttributesSet.resize( 1 );
-	m_ObjectAttributesSet[0]  = SV_NO_ATTRIBUTES;
-	m_DefaultObjectAttributesSet = SV_NO_ATTRIBUTES;
+	m_ObjectAttributesSet[0]  = SvOi::SV_NO_ATTRIBUTES;
+	m_DefaultObjectAttributesSet = SvOi::SV_NO_ATTRIBUTES;
 }
 
 /*
@@ -146,7 +146,7 @@ bool SVObjectClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	{
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_NotCreated, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_NotCreated, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 			pErrorMessages->push_back(Msg);
 		}
 		return false;
@@ -956,7 +956,7 @@ bool SVObjectClass::createAllObjects(const SVObjectLevelCreateStruct& rCreateStr
 		msgList.push_back( GetName() );
 		msgList.push_back( GetCompleteName() );
 		SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_CreationOf2Failed, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10209 );
+		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_CreationOf2Failed, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10209 );
 
 		return false;
 	}

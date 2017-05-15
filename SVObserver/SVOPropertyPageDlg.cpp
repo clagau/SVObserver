@@ -1748,7 +1748,7 @@ void CSVOPropertyPageDlg::OnItemQueryShowButton(NMHDR* pNotifyStruct, LRESULT* p
 					else
 					{
 						SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-						Exception.setMessage( SVMSG_SVO_NULL_POINTER, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
+						Exception.setMessage( SVMSG_SVO_NULL_POINTER, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
 					}
 				}
 			}

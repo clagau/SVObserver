@@ -16,7 +16,7 @@
 #include <Mstcpip.h>
 #pragma endregion Includes
 
-namespace Seidenader { namespace SVSocketLibrary
+namespace SvSol
 {
 	class TcpApi
 	{
@@ -57,6 +57,4 @@ namespace Seidenader { namespace SVSocketLibrary
 			return WSAIoctl(u, SIO_KEEPALIVE_VALS, &alive, sizeof(alive), nullptr, 0, &dwBytesRet, nullptr, nullptr);
 		}
 	};
-} /*namespace SVSocketLibrary*/ } /*namespace Seidenader*/
-
-namespace SvSol = Seidenader::SVSocketLibrary;
+} //namespace SvSol

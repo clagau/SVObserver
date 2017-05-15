@@ -89,7 +89,7 @@ BOOL SVVariantResultClass::CreateObject( SVObjectLevelCreateStruct* PCreateStruc
 		bOk = nullptr != GetInputValue();
 	}
 
-	m_Value.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_Value.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 
 	m_isCreated = bOk;
 

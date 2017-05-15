@@ -15,7 +15,6 @@
 //Moved to precompiled header: #include <boost/assign/list_of.hpp>
 #include "SVObjectXMLWriter.h"
 #include "SVUtilityLibrary/SVStringConversions.h"
-#include "SVXMLLibraryGlobals.h"
 #include "SVUtilityLibrary/SVSafeArray.h"
 #include "SVXMLEncryptionClass.h"
 
@@ -32,6 +31,11 @@ static SVString scElementTypeTag(_T("ElementType"));
 static SVString scAttributeTypeTag(_T("AttributeType"));
 static SVString scElementTag(_T("element"));
 static SVString scAttributeTag(_T("attribute"));
+
+const TCHAR* const	cRevisionHistory = _T("RevisionHistory");
+const WCHAR* const	cRevision = L"Revision";
+const WCHAR* const	cFormat = L"Format";
+const WCHAR* const	cFormatVersion = L"FormatVersion";
 
 typedef std::map<VARTYPE, std::string> VariantTypeToStringLookup;
 
@@ -62,565 +66,568 @@ static VariantTypeToStringLookup var_types = boost::assign::map_list_of<>
 (VT_UI8, Stringtize(VT_UI8))		// unsigned 64-bit int
 ;
 
-
-std::string to_utf8(const wchar_t* buffer, int len)
+namespace  SvXml
 {
-	int nChars = ::WideCharToMultiByte(
-		CP_UTF8,
-		0,
-		buffer,
-		len,
-		NULL,
-		0,
-		NULL,
-		NULL);
-	if (nChars == 0) return "";
-
-	std::string newbuffer;
-	newbuffer.resize(nChars) ;
-	::WideCharToMultiByte(
-		CP_UTF8,
-		0,
-		buffer,
-		len,
-		const_cast< char* >(newbuffer.c_str()),
-		nChars,
-		NULL,
-		NULL); 
-
-	return newbuffer;
-}
-
-std::string to_utf8(const std::wstring& str)
-{
-	return to_utf8(str.c_str(), (int)str.size());
-}
-
-static std::string BSTRToUTF8(BSTR value)
-{
-	return SvUl::to_utf8(_bstr_t(value));
-}
-
-static std::string VariantTypeToString(VARTYPE vt)
-{
-	return var_types[vt];
-}
-
-static std::string VariantToString(_variant_t value)
-{
-	SVString strValue;
-
-	switch (value.vt)
+	std::string to_utf8(const wchar_t* buffer, int len)
 	{
-	case VT_EMPTY:
-		break;
+		int nChars = ::WideCharToMultiByte(
+			CP_UTF8,
+			0,
+			buffer,
+			len,
+			NULL,
+			0,
+			NULL,
+			NULL);
+		if (nChars == 0) return "";
 
-	case VT_NULL:
-		break;
+		std::string newbuffer;
+		newbuffer.resize(nChars) ;
+		::WideCharToMultiByte(
+			CP_UTF8,
+			0,
+			buffer,
+			len,
+			const_cast< char* >(newbuffer.c_str()),
+			nChars,
+			NULL,
+			NULL); 
 
-	case VT_I2:
-		strValue = SvUl_SF::Format("%d", value.iVal);
-		break;
-
-	case VT_INT:
-	case VT_I4:
-		strValue = SvUl_SF::Format("%ld", value.lVal);
-		break;
-
-	case VT_R4:
-		strValue = SvUl_SF::Format("%f", value.fltVal);
-		break;
-
-	case VT_R8:
-		strValue = SvUl_SF::Format("%lf", value.dblVal);
-		break;
-
-	case VT_BSTR:
-		strValue = BSTRToUTF8(value.bstrVal);
-		break;
-
-	case VT_BOOL:
-		strValue = SvUl_SF::Format("%s", (value.boolVal == VARIANT_TRUE) ? "TRUE" : "FALSE");
-		break;
-
-	case VT_I1:
-		strValue = SvUl_SF::Format("%02X", value.cVal);
-		break;
-
-	case VT_UI1:
-		strValue = SvUl_SF::Format("%02X", value.bVal);
-		break;
-
-	case VT_UI2:
-		strValue = SvUl_SF::Format("%u", value.uiVal);
-		break;
-
-	case VT_UINT:
-	case VT_UI4:
-		strValue = SvUl_SF::Format("%lu", value.ulVal);
-		break;
-
-	case VT_I8:
-		strValue = SvUl_SF::Format("%I64d", value.llVal);
-		break;
-
-	case VT_UI8:
-		strValue = SvUl_SF::Format("%I64u", value.ullVal);
-		break;
-
-	default:
-		break;
+		return newbuffer;
 	}
-	return std::string(strValue.c_str());
-}
 
-static XMLElementPtr Element(const SVString& name, xml::writer& writer)
-{
-	XMLElementPtr pNode(new xml::element(name.c_str(), writer));
-	return pNode;
-}
-
-static void Attribute(const SVString& name, const SVString& value, XMLElementPtr pNode)
-{
-	pNode->attr(name.c_str(), value.c_str());
-}
-
-static void Attribute(const wchar_t* name, const SVString& value, XMLElementPtr pNode)
-{
-	pNode->attr(SvUl_SF::createSVString(name).c_str(), value.c_str());
-}
-
-static void Attribute(const wchar_t* name, const _variant_t& value, XMLElementPtr pNode)
-{
-	pNode->attr(SvUl_SF::createSVString(name).c_str(), SvUl_SF::createSVString(value).c_str());
-}
-
-SVObjectXMLWriter::SVObjectXMLWriter(std::ostream& os)
-{
-	m_pWriter = XMLWriterPtr(new xml::writer(os));
-	m_pEncryption = nullptr;
-}
-
-SVObjectXMLWriter::~SVObjectXMLWriter()
-{
-	m_pWriter.reset();
-}
-
-
-
-void SVObjectXMLWriter::WriteAttribute(LPCTSTR rName, const variant_t& value)
-{
-	if (0 == (VT_ARRAY & value.vt))
+	std::string to_utf8(const std::wstring& str)
 	{
-		const std::string& varTypeStr = VariantTypeToString(value.vt);
-		const std::string& valueStr = VariantToString(value);
+		return to_utf8(str.c_str(), (int)str.size());
+	}
 
-		if (!varTypeStr.empty())
+	static std::string BSTRToUTF8(BSTR value)
+	{
+		return SvUl::to_utf8(_bstr_t(value));
+	}
+
+	static std::string VariantTypeToString(VARTYPE vt)
+	{
+		return var_types[vt];
+	}
+
+	static std::string VariantToString(_variant_t value)
+	{
+		SVString strValue;
+
+		switch (value.vt)
 		{
-			if(m_pEncryption && m_pEncryption->GetIsEncrypted()== TRUE)
-			{
-						_bstr_t Name(rName);
-						_bstr_t Type( varTypeStr.c_str());
-						_bstr_t content(valueStr.c_str());
-						SVBStr EnName;
-						SVBStr EnType;
-						SVBStr EnContent;
-						
-						
-						if(m_pEncryption->m_lEncryptionMethod == -1)
-						{
-							m_pEncryption->EncryptString(1,Name,&EnName );
-							m_pEncryption->EncryptString(1,Type,&EnType );
-							m_pEncryption->EncryptString(1,content,&EnContent );
-						}
-						else
-						{
-								long encryption = m_pEncryption->m_lEncryptionMethod;
-								m_pEncryption->EncryptNameAttribute(Name,&EnName );
-								m_pEncryption->EncryptString(encryption,Type,&EnType );
-								m_pEncryption->EncryptString(encryption,content,&EnContent );
+		case VT_EMPTY:
+			break;
 
-						}
+		case VT_NULL:
+			break;
+
+		case VT_I2:
+			strValue = SvUl_SF::Format("%d", value.iVal);
+			break;
+
+		case VT_INT:
+		case VT_I4:
+			strValue = SvUl_SF::Format("%ld", value.lVal);
+			break;
+
+		case VT_R4:
+			strValue = SvUl_SF::Format("%f", value.fltVal);
+			break;
+
+		case VT_R8:
+			strValue = SvUl_SF::Format("%lf", value.dblVal);
+			break;
+
+		case VT_BSTR:
+			strValue = BSTRToUTF8(value.bstrVal);
+			break;
+
+		case VT_BOOL:
+			strValue = SvUl_SF::Format("%s", (value.boolVal == VARIANT_TRUE) ? "TRUE" : "FALSE");
+			break;
+
+		case VT_I1:
+			strValue = SvUl_SF::Format("%02X", value.cVal);
+			break;
+
+		case VT_UI1:
+			strValue = SvUl_SF::Format("%02X", value.bVal);
+			break;
+
+		case VT_UI2:
+			strValue = SvUl_SF::Format("%u", value.uiVal);
+			break;
+
+		case VT_UINT:
+		case VT_UI4:
+			strValue = SvUl_SF::Format("%lu", value.ulVal);
+			break;
+
+		case VT_I8:
+			strValue = SvUl_SF::Format("%I64d", value.llVal);
+			break;
+
+		case VT_UI8:
+			strValue = SvUl_SF::Format("%I64u", value.ullVal);
+			break;
+
+		default:
+			break;
+		}
+		return std::string(strValue.c_str());
+	}
+
+	static XMLElementPtr Element(const SVString& name, xml::writer& writer)
+	{
+		XMLElementPtr pNode(new xml::element(name.c_str(), writer));
+		return pNode;
+	}
+
+	static void Attribute(const SVString& name, const SVString& value, XMLElementPtr pNode)
+	{
+		pNode->attr(name.c_str(), value.c_str());
+	}
+
+	static void Attribute(const wchar_t* name, const SVString& value, XMLElementPtr pNode)
+	{
+		pNode->attr(SvUl_SF::createSVString(name).c_str(), value.c_str());
+	}
+
+	static void Attribute(const wchar_t* name, const _variant_t& value, XMLElementPtr pNode)
+	{
+		pNode->attr(SvUl_SF::createSVString(name).c_str(), SvUl_SF::createSVString(value).c_str());
+	}
+
+	SVObjectXMLWriter::SVObjectXMLWriter(std::ostream& os)
+	{
+		m_pWriter = XMLWriterPtr(new xml::writer(os));
+		m_pEncryption = nullptr;
+	}
+
+	SVObjectXMLWriter::~SVObjectXMLWriter()
+	{
+		m_pWriter.reset();
+	}
+
+
+
+	void SVObjectXMLWriter::WriteAttribute(LPCTSTR rName, const variant_t& value)
+	{
+		if (0 == (VT_ARRAY & value.vt))
+		{
+			const std::string& varTypeStr = VariantTypeToString(value.vt);
+			const std::string& valueStr = VariantToString(value);
+
+			if (!varTypeStr.empty())
+			{
+				if(m_pEncryption && m_pEncryption->GetIsEncrypted()== TRUE)
+				{
+							_bstr_t Name(rName);
+							_bstr_t Type( varTypeStr.c_str());
+							_bstr_t content(valueStr.c_str());
+							SVBStr EnName;
+							SVBStr EnType;
+							SVBStr EnContent;
 						
-						std::wstring encryptedName =  (LPWSTR) EnName;
-						std::wstring encyptedType = (LPWSTR) EnType;
-						std::wstring encryptedContent =  (LPWSTR) EnContent;
 						
-						xml::element data(scDataTag.c_str(), *m_pWriter);
-						data.attr(scNameTag.c_str(), to_utf8(encryptedName.c_str()));
-						data.attr(scTypeTag.c_str(), to_utf8(encyptedType.c_str()));
-						data.contents( to_utf8(encryptedContent.c_str()));
+							if(m_pEncryption->m_lEncryptionMethod == -1)
+							{
+								m_pEncryption->EncryptString(1,Name,&EnName );
+								m_pEncryption->EncryptString(1,Type,&EnType );
+								m_pEncryption->EncryptString(1,content,&EnContent );
+							}
+							else
+							{
+									long encryption = m_pEncryption->m_lEncryptionMethod;
+									m_pEncryption->EncryptNameAttribute(Name,&EnName );
+									m_pEncryption->EncryptString(encryption,Type,&EnType );
+									m_pEncryption->EncryptString(encryption,content,&EnContent );
+
+							}
 						
+							std::wstring encryptedName =  (LPWSTR) EnName;
+							std::wstring encyptedType = (LPWSTR) EnType;
+							std::wstring encryptedContent =  (LPWSTR) EnContent;
+						
+							xml::element data(scDataTag.c_str(), *m_pWriter);
+							data.attr(scNameTag.c_str(), to_utf8(encryptedName.c_str()));
+							data.attr(scTypeTag.c_str(), to_utf8(encyptedType.c_str()));
+							data.contents( to_utf8(encryptedContent.c_str()));
+						
+			
+				}
+				else
+				{
+					xml::element data(scDataTag.c_str(), *m_pWriter);
+					data.attr(scNameTag.c_str(), rName);
+					data.attr(scTypeTag.c_str(), varTypeStr.c_str());
+					data.contents(valueStr.c_str());
+				}
 			
 			}
 			else
 			{
-				xml::element data(scDataTag.c_str(), *m_pWriter);
-				data.attr(scNameTag.c_str(), rName);
-				data.attr(scTypeTag.c_str(), varTypeStr.c_str());
-				data.contents(valueStr.c_str());
+				// throw an exception
 			}
-			
 		}
 		else
 		{
-			// throw an exception
+			StartElement(rName);
+			ElementAttribute("Type", "VT_ARRAY");
+			SVSAFEARRAY arrayValue = value;
+			for (int i=0; i < arrayValue.size(); ++i)
+			{
+				SVString attName = SvUl_SF::Format("DataIndex_%d", i+1);
+				_variant_t lVal;
+				arrayValue.GetElement( i, lVal );
+				WriteAttribute(attName.c_str(), lVal);
+			}		
+			EndElement();
 		}
 	}
-	else
+
+	void SVObjectXMLWriter::WriteAttribute(LPCTSTR rName, const SVVariantList& rValues)
 	{
-		StartElement(rName);
-		ElementAttribute("Type", "VT_ARRAY");
-		SVSAFEARRAY arrayValue = value;
-		for (int i=0; i < arrayValue.size(); ++i)
+		BOOST_FOREACH(_variant_t value, rValues)
 		{
-			SVString attName = SvUl_SF::Format("DataIndex_%d", i+1);
-			_variant_t lVal;
-			arrayValue.GetElement( i, lVal );
-			WriteAttribute(attName.c_str(), lVal);
-		}		
-		EndElement();
+			WriteAttribute(rName, value);
+		}
 	}
-}
 
-void SVObjectXMLWriter::WriteAttribute(LPCTSTR rName, const SVVariantList& rValues)
-{
-	BOOST_FOREACH(_variant_t value, rValues)
+	void SVObjectXMLWriter::StartElement(LPCTSTR rName)
 	{
-		WriteAttribute(rName, value);
-	}
-}
-
-void SVObjectXMLWriter::StartElement(LPCTSTR rName)
-{
-	XMLElementPtr pNode(new xml::element(scNodeTag.c_str(), *m_pWriter));
-	m_elements.push_front(pNode);
+		XMLElementPtr pNode(new xml::element(scNodeTag.c_str(), *m_pWriter));
+		m_elements.push_front(pNode);
 	
-	if(m_pEncryption && m_pEncryption->GetIsEncrypted()== TRUE)
-	{
-		_bstr_t Name(rName);
-		SVBStr EnName;
+		if(m_pEncryption && m_pEncryption->GetIsEncrypted()== TRUE)
+		{
+			_bstr_t Name(rName);
+			SVBStr EnName;
 		
-		if(m_pEncryption->m_lEncryptionMethod == -1)
-		{
-			m_pEncryption->EncryptString(1,Name,&EnName );
-		}
-		else
-		{
-			long encryption = m_pEncryption->m_lEncryptionMethod;
-			m_pEncryption->EncryptNameAttribute(Name,&EnName );
-		}
-		std::wstring encryptedName =  (LPWSTR) EnName;
+			if(m_pEncryption->m_lEncryptionMethod == -1)
+			{
+				m_pEncryption->EncryptString(1,Name,&EnName );
+			}
+			else
+			{
+				long encryption = m_pEncryption->m_lEncryptionMethod;
+				m_pEncryption->EncryptNameAttribute(Name,&EnName );
+			}
+			std::wstring encryptedName =  (LPWSTR) EnName;
 		
-		pNode->attr(scNameTag.c_str(), to_utf8(encryptedName.c_str() ) );
-	}
+			pNode->attr(scNameTag.c_str(), to_utf8(encryptedName.c_str() ) );
+		}
 	
-	else 
-	{
-		pNode->attr(scNameTag.c_str(), rName);
-	}
+		else 
+		{
+			pNode->attr(scNameTag.c_str(), rName);
+		}
 	
-}
+	}
 
-void SVObjectXMLWriter::EndElement()
-{
-	m_elements.pop_front();
-}
-
-void SVObjectXMLWriter::EndAllElements()
-{
-	//Order is important that is why we need to do them one by one
-	while( 0 < m_elements.size() )
+	void SVObjectXMLWriter::EndElement()
 	{
 		m_elements.pop_front();
 	}
-}
 
-void SVObjectXMLWriter::ElementAttribute(LPCTSTR rAttrName, const variant_t& value)
-{
-	m_elements[0]->attr(rAttrName, VariantToString(value));
-}
+	void SVObjectXMLWriter::EndAllElements()
+	{
+		//Order is important that is why we need to do them one by one
+		while( 0 < m_elements.size() )
+		{
+			m_elements.pop_front();
+		}
+	}
 
-void SVObjectXMLWriter::WriteRootElement(LPCTSTR rName)
-{
-	XMLElementPtr pNode(new xml::element(rName, *m_pWriter));
-	m_elements.push_front(pNode);
-}
+	void SVObjectXMLWriter::ElementAttribute(LPCTSTR rAttrName, const variant_t& value)
+	{
+		m_elements[0]->attr(rAttrName, VariantToString(value));
+	}
 
-void SVObjectXMLWriter::WriteSchema()
-{
-/*
-	<Schema xmlns="urn:schemas-microsoft-com:xml-data" name="SVR00001" xmlns:dt="urn:schemas-microsoft-com:datatypes">
-    <AttributeType name="Name" dt:type="string"/>
-    <AttributeType name="Value" dt:type="string"/>
-    <AttributeType name="Type" dt:type="string"/>
-    <ElementType name="DATA" content="mixed" model="closed">
-      <attribute type="Name" required="yes"/>
-      <attribute type="Type" required="yes"/>
-    </ElementType>
-    <ElementType name="NODE" content="mixed" model="closed">
-      <attribute type="Name" required="yes"/>
-      <attribute type="Type" required="no"/>
-      <element type="NODE" minOccurs="0" maxOccurs="*"/>
-      <element type="DATA" minOccurs="0" maxOccurs="1"/>
-    </ElementType>
-    <AttributeType name="Format" dt:type="string"/>
-    <AttributeType name="FormatVersion" dt:type="string"/>
-    <AttributeType name="Revision" dt:type="string"/>
-    <ElementType name="Revision" content="mixed" model="closed">
-      <attribute type="Format" required="yes"/>
-      <attribute type="FormatVersion" required="yes"/>
-      <attribute type="Revision" required="yes"/>
-      <element type="DATA" minOccurs="0" maxOccurs="1"/>
-    </ElementType>
-    <ElementType name="RevisionHistory" content="mixed" model="closed">
-      <element type="Revision" minOccurs="1" maxOccurs="*"/>
-    <element type="DATA" minOccurs="0" maxOccurs="1"/>
-    </ElementType><AttributeType name="IsActive" dt:type="string"/>
-    <ElementType name="Encryption" content="mixed" model="closed">
-      <attribute type="IsActive" required="yes"/>
-      <element type="DATA" minOccurs="0" maxOccurs="1"/>
-    </ElementType>
-  </Schema>
-*/
-	XMLElementPtr pSchemaNode = Element(scSchemaTag, *m_pWriter);
-	Attribute("xmlns", "urn:schemas-microsoft-com:xml-data", pSchemaNode);
-	Attribute("name", "SVR00001", pSchemaNode);
-	Attribute("xmlns:dt", "urn:schemas-microsoft-com:datatypes", pSchemaNode);
+	void SVObjectXMLWriter::WriteRootElement(LPCTSTR rName)
+	{
+		XMLElementPtr pNode(new xml::element(rName, *m_pWriter));
+		m_elements.push_front(pNode);
+	}
 
-	XMLElementPtr pNode = Element(scAttributeTypeTag, *m_pWriter);
-	Attribute("name", "Name", pNode);
-	Attribute("dt:type", "string", pNode);
-	pNode.reset();
+	void SVObjectXMLWriter::WriteSchema()
+	{
+	/*
+		<Schema xmlns="urn:schemas-microsoft-com:xml-data" name="SVR00001" xmlns:dt="urn:schemas-microsoft-com:datatypes">
+		<AttributeType name="Name" dt:type="string"/>
+		<AttributeType name="Value" dt:type="string"/>
+		<AttributeType name="Type" dt:type="string"/>
+		<ElementType name="DATA" content="mixed" model="closed">
+		  <attribute type="Name" required="yes"/>
+		  <attribute type="Type" required="yes"/>
+		</ElementType>
+		<ElementType name="NODE" content="mixed" model="closed">
+		  <attribute type="Name" required="yes"/>
+		  <attribute type="Type" required="no"/>
+		  <element type="NODE" minOccurs="0" maxOccurs="*"/>
+		  <element type="DATA" minOccurs="0" maxOccurs="1"/>
+		</ElementType>
+		<AttributeType name="Format" dt:type="string"/>
+		<AttributeType name="FormatVersion" dt:type="string"/>
+		<AttributeType name="Revision" dt:type="string"/>
+		<ElementType name="Revision" content="mixed" model="closed">
+		  <attribute type="Format" required="yes"/>
+		  <attribute type="FormatVersion" required="yes"/>
+		  <attribute type="Revision" required="yes"/>
+		  <element type="DATA" minOccurs="0" maxOccurs="1"/>
+		</ElementType>
+		<ElementType name="RevisionHistory" content="mixed" model="closed">
+		  <element type="Revision" minOccurs="1" maxOccurs="*"/>
+		<element type="DATA" minOccurs="0" maxOccurs="1"/>
+		</ElementType><AttributeType name="IsActive" dt:type="string"/>
+		<ElementType name="Encryption" content="mixed" model="closed">
+		  <attribute type="IsActive" required="yes"/>
+		  <element type="DATA" minOccurs="0" maxOccurs="1"/>
+		</ElementType>
+	  </Schema>
+	*/
+		XMLElementPtr pSchemaNode = Element(scSchemaTag, *m_pWriter);
+		Attribute("xmlns", "urn:schemas-microsoft-com:xml-data", pSchemaNode);
+		Attribute("name", "SVR00001", pSchemaNode);
+		Attribute("xmlns:dt", "urn:schemas-microsoft-com:datatypes", pSchemaNode);
+
+		XMLElementPtr pNode = Element(scAttributeTypeTag, *m_pWriter);
+		Attribute("name", "Name", pNode);
+		Attribute("dt:type", "string", pNode);
+		pNode.reset();
     
-	pNode = Element(scAttributeTypeTag, *m_pWriter);
-	Attribute("name", "Value", pNode);
-	Attribute("dt:type", "string", pNode);
-    pNode.reset();
+		pNode = Element(scAttributeTypeTag, *m_pWriter);
+		Attribute("name", "Value", pNode);
+		Attribute("dt:type", "string", pNode);
+		pNode.reset();
 
-	pNode = Element(scAttributeTypeTag, *m_pWriter);
-	Attribute("name", "Type", pNode);
-	Attribute("dt:type", "string", pNode);
-    pNode.reset();
+		pNode = Element(scAttributeTypeTag, *m_pWriter);
+		Attribute("name", "Type", pNode);
+		Attribute("dt:type", "string", pNode);
+		pNode.reset();
 
-	pNode = Element(scElementTypeTag, *m_pWriter);
-	Attribute("name", "DATA", pNode);
-	Attribute("content", "mixed", pNode);
-	Attribute("model", "closed", pNode);
+		pNode = Element(scElementTypeTag, *m_pWriter);
+		Attribute("name", "DATA", pNode);
+		Attribute("content", "mixed", pNode);
+		Attribute("model", "closed", pNode);
 
-    XMLElementPtr pAttrNode = Element(scAttributeTag, *m_pWriter);
-	Attribute("type", "Name", pAttrNode);
-	Attribute("required", "yes", pAttrNode);
-    pAttrNode.reset();
+		XMLElementPtr pAttrNode = Element(scAttributeTag, *m_pWriter);
+		Attribute("type", "Name", pAttrNode);
+		Attribute("required", "yes", pAttrNode);
+		pAttrNode.reset();
 
-	pAttrNode = Element(scAttributeTag, *m_pWriter);
-	Attribute("type", "Type", pAttrNode);
-	Attribute("required", "yes", pAttrNode);
-	pAttrNode.reset(); 
-    pNode.reset();
+		pAttrNode = Element(scAttributeTag, *m_pWriter);
+		Attribute("type", "Type", pAttrNode);
+		Attribute("required", "yes", pAttrNode);
+		pAttrNode.reset(); 
+		pNode.reset();
 
-	pNode = Element(scElementTypeTag, *m_pWriter);
-	Attribute("name", "NODE", pNode);
-	Attribute("content", "mixed", pNode);
-	Attribute("model", "closed", pNode);
+		pNode = Element(scElementTypeTag, *m_pWriter);
+		Attribute("name", "NODE", pNode);
+		Attribute("content", "mixed", pNode);
+		Attribute("model", "closed", pNode);
 
-	pAttrNode = Element(scAttributeTag, *m_pWriter);
-	Attribute("type", "Name", pAttrNode);
-	Attribute("required", "yes", pAttrNode);
-	pAttrNode.reset();
+		pAttrNode = Element(scAttributeTag, *m_pWriter);
+		Attribute("type", "Name", pAttrNode);
+		Attribute("required", "yes", pAttrNode);
+		pAttrNode.reset();
 
-	pAttrNode = Element(scAttributeTag, *m_pWriter);
-	Attribute("type", "Type", pAttrNode);
-	Attribute("required", "no", pAttrNode);
-	pAttrNode.reset();
+		pAttrNode = Element(scAttributeTag, *m_pWriter);
+		Attribute("type", "Type", pAttrNode);
+		Attribute("required", "no", pAttrNode);
+		pAttrNode.reset();
 
-	XMLElementPtr pElemNode = Element(scElementTag, *m_pWriter);
-	Attribute("type", "NODE", pElemNode);
-	Attribute("minOccurs", "0", pElemNode);
-	Attribute("maxOccurs", "*", pElemNode);
-    pElemNode.reset();
+		XMLElementPtr pElemNode = Element(scElementTag, *m_pWriter);
+		Attribute("type", "NODE", pElemNode);
+		Attribute("minOccurs", "0", pElemNode);
+		Attribute("maxOccurs", "*", pElemNode);
+		pElemNode.reset();
 
-	pElemNode = Element(scElementTag, *m_pWriter);
-	Attribute("type", "DATA", pElemNode);
-	Attribute("minOccurs", "0", pElemNode);
-	Attribute("maxOccurs", "1", pElemNode);
-	pElemNode.reset();
-	pNode.reset();
+		pElemNode = Element(scElementTag, *m_pWriter);
+		Attribute("type", "DATA", pElemNode);
+		Attribute("minOccurs", "0", pElemNode);
+		Attribute("maxOccurs", "1", pElemNode);
+		pElemNode.reset();
+		pNode.reset();
 
-	pNode = Element(scAttributeTypeTag, *m_pWriter);
-	Attribute("name", "Format", pNode);
-	Attribute("dt:type", "string", pNode);
-	pNode.reset();
+		pNode = Element(scAttributeTypeTag, *m_pWriter);
+		Attribute("name", "Format", pNode);
+		Attribute("dt:type", "string", pNode);
+		pNode.reset();
     
-	pNode = Element(scAttributeTypeTag, *m_pWriter);
-	Attribute("name", "FormatVersion", pNode);
-	Attribute("dt:type", "string", pNode);
-	pNode.reset();
+		pNode = Element(scAttributeTypeTag, *m_pWriter);
+		Attribute("name", "FormatVersion", pNode);
+		Attribute("dt:type", "string", pNode);
+		pNode.reset();
     
-	pNode = Element(scAttributeTypeTag, *m_pWriter);
-	Attribute("name", "Revision", pNode);
-	Attribute("dt:type", "string", pNode);
-	pNode.reset();
+		pNode = Element(scAttributeTypeTag, *m_pWriter);
+		Attribute("name", "Revision", pNode);
+		Attribute("dt:type", "string", pNode);
+		pNode.reset();
 
-	pNode = Element(scElementTypeTag, *m_pWriter);
-	Attribute("name", "Revision", pNode);
-	Attribute("content", "mixed", pNode);
-	Attribute("model", "closed", pNode);
+		pNode = Element(scElementTypeTag, *m_pWriter);
+		Attribute("name", "Revision", pNode);
+		Attribute("content", "mixed", pNode);
+		Attribute("model", "closed", pNode);
     
-	pAttrNode = Element(scAttributeTag, *m_pWriter);
-	Attribute("type", "Format", pAttrNode);
-	Attribute("required", "yes", pAttrNode);
-	pAttrNode.reset();
+		pAttrNode = Element(scAttributeTag, *m_pWriter);
+		Attribute("type", "Format", pAttrNode);
+		Attribute("required", "yes", pAttrNode);
+		pAttrNode.reset();
 
-	pAttrNode = Element(scAttributeTag, *m_pWriter);
-	Attribute("type", "FormatVersion", pAttrNode);
-	Attribute("required", "yes", pAttrNode);
-	pAttrNode.reset();
+		pAttrNode = Element(scAttributeTag, *m_pWriter);
+		Attribute("type", "FormatVersion", pAttrNode);
+		Attribute("required", "yes", pAttrNode);
+		pAttrNode.reset();
 
-	pAttrNode = Element(scAttributeTag, *m_pWriter);
-	Attribute("type", "Revision", pAttrNode);
-	Attribute("required", "yes", pAttrNode);
-	pAttrNode.reset();
+		pAttrNode = Element(scAttributeTag, *m_pWriter);
+		Attribute("type", "Revision", pAttrNode);
+		Attribute("required", "yes", pAttrNode);
+		pAttrNode.reset();
 
-	pElemNode = Element(scElementTag, *m_pWriter);
-	Attribute("type", "DATA", pElemNode);
-	Attribute("minOccurs", "0", pElemNode);
-	Attribute("maxOccurs", "1", pElemNode);
-	pElemNode.reset();
-	pNode.reset();
+		pElemNode = Element(scElementTag, *m_pWriter);
+		Attribute("type", "DATA", pElemNode);
+		Attribute("minOccurs", "0", pElemNode);
+		Attribute("maxOccurs", "1", pElemNode);
+		pElemNode.reset();
+		pNode.reset();
 		
-    pNode = Element(scElementTypeTag, *m_pWriter);
-	Attribute("name", "RevisionHistory", pNode);
-	Attribute("content", "mixed", pNode);
-	Attribute("model", "closed", pNode);
+		pNode = Element(scElementTypeTag, *m_pWriter);
+		Attribute("name", "RevisionHistory", pNode);
+		Attribute("content", "mixed", pNode);
+		Attribute("model", "closed", pNode);
     
-	pElemNode = Element(scElementTag, *m_pWriter);
-	Attribute("type", "Revision", pElemNode);
-	Attribute("minOccurs", "1", pElemNode);
-	Attribute("maxOccurs", "*", pElemNode);
-	pElemNode.reset();
+		pElemNode = Element(scElementTag, *m_pWriter);
+		Attribute("type", "Revision", pElemNode);
+		Attribute("minOccurs", "1", pElemNode);
+		Attribute("maxOccurs", "*", pElemNode);
+		pElemNode.reset();
 
-	pElemNode = Element(scElementTag, *m_pWriter);
-	Attribute("type", "DATA", pElemNode);
-	Attribute("minOccurs", "0", pElemNode);
-	Attribute("maxOccurs", "1", pElemNode);
-	pElemNode.reset();
-	pNode.reset();
+		pElemNode = Element(scElementTag, *m_pWriter);
+		Attribute("type", "DATA", pElemNode);
+		Attribute("minOccurs", "0", pElemNode);
+		Attribute("maxOccurs", "1", pElemNode);
+		pElemNode.reset();
+		pNode.reset();
 
-	pNode = Element(scAttributeTypeTag, *m_pWriter);
-	Attribute("name", "IsActive", pNode);
-	Attribute("dt:type", "string", pNode);
-	pNode.reset();
+		pNode = Element(scAttributeTypeTag, *m_pWriter);
+		Attribute("name", "IsActive", pNode);
+		Attribute("dt:type", "string", pNode);
+		pNode.reset();
 	
-	pNode = Element(scElementTypeTag, *m_pWriter);
-	Attribute("name", "Encryption", pNode);
-	Attribute("content", "mixed", pNode);
-	Attribute("model", "closed", pNode);
+		pNode = Element(scElementTypeTag, *m_pWriter);
+		Attribute("name", "Encryption", pNode);
+		Attribute("content", "mixed", pNode);
+		Attribute("model", "closed", pNode);
 
-	pAttrNode = Element(scAttributeTag, *m_pWriter);
-	Attribute("type", "IsActive", pAttrNode);
-	Attribute("required", "yes", pAttrNode);
-	pAttrNode.reset();
+		pAttrNode = Element(scAttributeTag, *m_pWriter);
+		Attribute("type", "IsActive", pAttrNode);
+		Attribute("required", "yes", pAttrNode);
+		pAttrNode.reset();
 
-	pElemNode = Element(scElementTag, *m_pWriter);
-	Attribute("type", "DATA", pElemNode);
-	Attribute("minOccurs", "0", pElemNode);
-	Attribute("maxOccurs", "1", pElemNode);
-	pElemNode.reset();
-	pNode.reset();
+		pElemNode = Element(scElementTag, *m_pWriter);
+		Attribute("type", "DATA", pElemNode);
+		Attribute("minOccurs", "0", pElemNode);
+		Attribute("maxOccurs", "1", pElemNode);
+		pElemNode.reset();
+		pNode.reset();
  
-	pSchemaNode.reset();
-}
-
-
-void SVObjectXMLWriter::SetEncryption(SVXMLEncryptionClass*  pEncryption)
-{
-
-	m_pEncryption = pEncryption;
-
-}
-
-void SVObjectXMLWriter::WriteEncryption()
-{
-	
-	long isEncrypted(FALSE);
-	if(m_pEncryption)
-	{
-		m_pEncryption->GetIsEncrypted(&isEncrypted);
+		pSchemaNode.reset();
 	}
-	///<Encryption xmlns="x-schema:#SVR00001" IsActive="TRUE">
-	SVString EncryptionString( _T("Encryption"));
-	XMLElementPtr pEncryptionNode = Element(EncryptionString, *m_pWriter);
-	Attribute("xmlns", "x-schema:#SVR00001", pEncryptionNode);
-	Attribute("IsActive", (isEncrypted == TRUE)?  "TRUE": "FALSE", pEncryptionNode);
-	
-	if(isEncrypted)
+
+
+	void SVObjectXMLWriter::SetEncryption(SVXMLEncryptionClass*  pEncryption)
 	{
-		m_pEncryption->SetEncryptionMethod(-1);
+
+		m_pEncryption = pEncryption;
+
+	}
+
+	void SVObjectXMLWriter::WriteEncryption()
+	{
+	
+		long isEncrypted(FALSE);
+		if(m_pEncryption)
+		{
+			m_pEncryption->GetIsEncrypted(&isEncrypted);
+		}
+		///<Encryption xmlns="x-schema:#SVR00001" IsActive="TRUE">
+		SVString EncryptionString( _T("Encryption"));
+		XMLElementPtr pEncryptionNode = Element(EncryptionString, *m_pWriter);
+		Attribute("xmlns", "x-schema:#SVR00001", pEncryptionNode);
+		Attribute("IsActive", (isEncrypted == TRUE)?  "TRUE": "FALSE", pEncryptionNode);
+	
+		if(isEncrypted)
+		{
+			m_pEncryption->SetEncryptionMethod(-1);
 		
-		_variant_t content( m_pEncryption->GetNameSeed()); 
-		WriteAttribute( _T("NameSeed"), content);
-		m_pEncryption->SetEncryptionMethod(1);
+			_variant_t content( m_pEncryption->GetNameSeed()); 
+			WriteAttribute( _T("NameSeed"), content);
+			m_pEncryption->SetEncryptionMethod(1);
+		}
+		pEncryptionNode.reset();
+
 	}
-	pEncryptionNode.reset();
 
-}
-
-void SVObjectXMLWriter::WriteStartOfBase()
-{
-	//<NODE xmlns="x-schema:#SVR00001" Name="Base" Type="SV_BASENODE">
-	_variant_t xmlnsValue;
-	_variant_t value;
-	xmlnsValue.SetString("x-schema:#SVR00001");
+	void SVObjectXMLWriter::WriteStartOfBase()
+	{
+		//<NODE xmlns="x-schema:#SVR00001" Name="Base" Type="SV_BASENODE">
+		_variant_t xmlnsValue;
+		_variant_t value;
+		xmlnsValue.SetString("x-schema:#SVR00001");
 	
 	
-	if(m_pEncryption && m_pEncryption->GetIsEncrypted()== TRUE) 
-	{
-		_bstr_t basenode("SV_BASENODE");
-		SVBStr  Enbasenode;
-		m_pEncryption->EncryptString (2, basenode, &Enbasenode);
-		value.SetString( (LPCTSTR) Enbasenode);
-	}
-	else
-	{
-		value.SetString("SV_BASENODE");
-	}
+		if(m_pEncryption && m_pEncryption->GetIsEncrypted()== TRUE) 
+		{
+			_bstr_t basenode("SV_BASENODE");
+			SVBStr  Enbasenode;
+			m_pEncryption->EncryptString (2, basenode, &Enbasenode);
+			value.SetString( (LPCTSTR) Enbasenode);
+		}
+		else
+		{
+			value.SetString("SV_BASENODE");
+		}
 	
 	
-	StartElement("Base");
-	ElementAttribute("xmlns", xmlnsValue);
-	ElementAttribute("Type", value);
-}
-
-void SVObjectXMLWriter::WriteRevisionHistory(const _variant_t formatVersionValue, const _variant_t revisionValue)
-{
-	SVString revisionHistoryString(g_csRevisionHistory);
-	XMLElementPtr pRevisionHistoryNode = Element(revisionHistoryString, *m_pWriter);
-	Attribute("xmlns", "x-schema:#SVR00001", pRevisionHistoryNode);
-
-	SVString revisionString = SvUl_SF::createSVString(g_wcsRevision);
-	XMLElementPtr pRevisionNode = Element(revisionString, *m_pWriter);
-	Attribute(g_wcsFormat, SVString("SVObserver"), pRevisionNode);
-	Attribute(g_wcsFormatVersion, formatVersionValue, pRevisionNode);
-	Attribute(g_wcsRevisionAtt, revisionValue, pRevisionNode);
-	pRevisionNode.reset();
-
-	pRevisionHistoryNode.reset();
-}
-
-void SVObjectXMLWriter::setNewLine( bool NewLine )
-{
-	if( nullptr != m_pWriter )
-	{
-		m_pWriter->setNewLine( NewLine );
+		StartElement("Base");
+		ElementAttribute("xmlns", xmlnsValue);
+		ElementAttribute("Type", value);
 	}
-}
 
-
-void SVObjectXMLWriter::setHeader(LPCTSTR header)
-{
-	if( nullptr != m_pWriter )
+	void SVObjectXMLWriter::WriteRevisionHistory(const _variant_t formatVersionValue, const _variant_t revisionValue)
 	{
-		m_pWriter->setHeader( header );
+		SVString revisionHistoryString(cRevisionHistory);
+		XMLElementPtr pRevisionHistoryNode = Element(revisionHistoryString, *m_pWriter);
+		Attribute("xmlns", "x-schema:#SVR00001", pRevisionHistoryNode);
+
+		SVString revisionString = SvUl_SF::createSVString(cRevision);
+		XMLElementPtr pRevisionNode = Element(revisionString, *m_pWriter);
+		Attribute(cFormat, SVString("SVObserver"), pRevisionNode);
+		Attribute(cFormatVersion, formatVersionValue, pRevisionNode);
+		Attribute(cRevision, revisionValue, pRevisionNode);
+		pRevisionNode.reset();
+
+		pRevisionHistoryNode.reset();
 	}
-}
+
+	void SVObjectXMLWriter::setNewLine( bool NewLine )
+	{
+		if( nullptr != m_pWriter )
+		{
+			m_pWriter->setNewLine( NewLine );
+		}
+	}
+
+
+	void SVObjectXMLWriter::setHeader(LPCTSTR header)
+	{
+		if( nullptr != m_pWriter )
+		{
+			m_pWriter->setHeader( header );
+		}
+	}
+
+} //namespace SvXml

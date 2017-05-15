@@ -11,7 +11,7 @@
 #include "SVUtilityLibrary\SVSharedPtr.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace ObjectInterfaces
+namespace SvOi
 {
 	class ISelectorItemVector
 	{
@@ -31,9 +31,6 @@ namespace Seidenader { namespace ObjectInterfaces
 		//************************************
 		//virtual const ISelectorItem* getAt(int Index) const = 0;
 	};
-
 	typedef SVSharedPtr<ISelectorItemVector> ISelectorItemVectorPtr;
 
-} /* namespace ObjectInterfaces */ } /* namespace Seidenader */
-
-namespace SvOi = Seidenader::ObjectInterfaces;
+} //namespace SvOi

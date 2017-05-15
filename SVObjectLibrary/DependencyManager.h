@@ -16,7 +16,7 @@
 #include "SVContainerLibrary/ObjectGraph.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace SVObjectLibrary
+namespace SvOl
 {
 	class DependencyManager : public SvCl::ObjectGraph<SVGUID, JoinType>
 	{
@@ -85,6 +85,4 @@ namespace Seidenader { namespace SVObjectLibrary
 	};
 	#pragma endregion Private Methods
 	};
-} /* namespace SVObjectLibrary */ } /* namespace Seidenader */
-
-namespace SvOl = Seidenader::SVObjectLibrary;
+} //namespace SvOl

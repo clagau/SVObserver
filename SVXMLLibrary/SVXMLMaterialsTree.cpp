@@ -14,7 +14,7 @@
 #include "SVXMLMaterialsTree.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace SVXMLLibrary
+namespace SvXml
 {
 	#pragma region Constructor
 	SVXMLMaterialsTree::SVXMLMaterialsTree() :
@@ -617,6 +617,6 @@ namespace Seidenader { namespace SVXMLLibrary
 		return Result;
 	}
 	#pragma endregion Private Methods
-} /* namespace SVXMLLibrary */ } /* namespace Seidenader */
+} //namespace SvXml
 
 

@@ -32,7 +32,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-namespace Seidenader { namespace SVOGui {
+namespace SvOg {
 
 	static LPCTSTR NoColumnTag = _T("(No Column Available)");
 	static const std::string IsAscTag(_T("IsAsc"));
@@ -108,7 +108,7 @@ namespace Seidenader { namespace SVOGui {
 	{
 		CPropertyPage::OnInitDialog();
 
-		typedef GuiCmd::GetCreatableObjects Command;
+		typedef SvCmd::GetCreatableObjects Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 
 		SvUl::NameGuidList availableList;
@@ -141,7 +141,7 @@ namespace Seidenader { namespace SVOGui {
 	void TaTableAnalyzerPage::OnButtonClearAll() 
 	{
 		// For all Items in the Selected (Instantiated) Analyzer list
-		typedef GuiCmd::GetAvailableObjects Command;
+		typedef SvCmd::GetAvailableObjects Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 		SvUl::NameGuidList availableList;
 		CommandPtr commandPtr = new Command(m_TaskObjectID, SVObjectTypeInfoStruct(TableAnalyzerType, SVNotSetSubObjectType));
@@ -159,9 +159,9 @@ namespace Seidenader { namespace SVOGui {
 			SVGUID analyzerGUID = availableList[i].second;
 			if( SV_GUID_NULL != analyzerGUID )
 			{
-				GuiCmd::DestroyChildObject::FlagEnum flag = GuiCmd::DestroyChildObject::Flag_None;
+				SvCmd::DestroyChildObject::FlagEnum flag = SvCmd::DestroyChildObject::Flag_None;
 				// Close, Disconnect and Delete it
-				typedef GuiCmd::DestroyChildObject DestroyCommand;
+				typedef SvCmd::DestroyChildObject DestroyCommand;
 				typedef SVSharedPtr<DestroyCommand> DestroyCommandPtr;
 				DestroyCommandPtr destroyCommandPtr = new DestroyCommand(m_TaskObjectID, analyzerGUID, flag);
 				SVObjectSynchronousCommandTemplate<DestroyCommandPtr> destroyCmd(m_InspectionID, destroyCommandPtr);
@@ -180,7 +180,7 @@ namespace Seidenader { namespace SVOGui {
 		if( SV_GUID_NULL != m_selectedAnalyzerID ) 
 		{
 			// Close, Disconnect and Delete it
-			typedef GuiCmd::DestroyChildObject DestroyCommand;
+			typedef SvCmd::DestroyChildObject DestroyCommand;
 			typedef SVSharedPtr<DestroyCommand> DestroyCommandPtr;
 			DestroyCommandPtr destroyCommandPtr = new DestroyCommand(m_TaskObjectID, m_selectedAnalyzerID);
 			SVObjectSynchronousCommandTemplate<DestroyCommandPtr> destroyCmd(m_InspectionID, destroyCommandPtr);
@@ -212,7 +212,7 @@ namespace Seidenader { namespace SVOGui {
 			}
 
 			// Construct and Create the Analyzer Class Object
-			typedef GuiCmd::ConstructAndInsertTaskObject Command;
+			typedef SvCmd::ConstructAndInsertTaskObject Command;
 			typedef SVSharedPtr<Command> CommandPtr;
 			CommandPtr commandPtr = new Command(m_TaskObjectID, classID, destinyIndex);
 			SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
@@ -220,7 +220,7 @@ namespace Seidenader { namespace SVOGui {
 			if (S_OK != hr)
 			{
 				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_CreationAnalyzerFailed, SvStl::SourceFileParams(StdMessageParams) );
+				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_CreationAnalyzerFailed, SvStl::SourceFileParams(StdMessageParams) );
 			}
 
 			// Refresh Dialog...
@@ -250,7 +250,7 @@ namespace Seidenader { namespace SVOGui {
 		if (SV_GUID_NULL != columnGuid && SV_GUID_NULL != m_selectedAnalyzerID)
 		{
 			HRESULT hr = E_INVALIDARG;
-			typedef GuiCmd::ConnectToObject Command;
+			typedef SvCmd::ConnectToObject Command;
 			typedef SVSharedPtr<Command> CommandPtr;
 			CommandPtr commandPtr = new Command(m_selectedAnalyzerID, m_inputName, columnGuid, DoubleSortValueObjectType);
 			SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
@@ -260,7 +260,7 @@ namespace Seidenader { namespace SVOGui {
 				SVStringVector msgList;
 				msgList.push_back(m_inputName);
 				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_ConnectFailed, msgList, SvStl::SourceFileParams(StdMessageParams) );
+				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ConnectFailed, msgList, SvStl::SourceFileParams(StdMessageParams) );
 			}
 		}
 	}
@@ -377,7 +377,7 @@ namespace Seidenader { namespace SVOGui {
 				SVStringVector msgList;
 				msgList.push_back(SvUl_SF::Format(_T("%d"), hrOk));
 				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_SetTableAnalyzerData, msgList, SvStl::SourceFileParams(StdMessageParams) );
+				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_SetTableAnalyzerData, msgList, SvStl::SourceFileParams(StdMessageParams) );
 			}
 		}
 
@@ -388,7 +388,7 @@ namespace Seidenader { namespace SVOGui {
 #pragma region Private Methods
 	void TaTableAnalyzerPage::refresh()
 	{
-		typedef GuiCmd::GetAvailableObjects Command;
+		typedef SvCmd::GetAvailableObjects Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 
 		SvUl::NameGuidList availableList;
@@ -413,7 +413,7 @@ namespace Seidenader { namespace SVOGui {
 		m_selectedSubType = SVNotSetSubObjectType;
 		if( SV_GUID_NULL != m_selectedAnalyzerID ) 
 		{
-			typedef GuiCmd::GetObjectTypeInfo Command;
+			typedef SvCmd::GetObjectTypeInfo Command;
 			typedef SVSharedPtr<Command> CommandPtr;
 			CommandPtr commandPtr = new Command(m_selectedAnalyzerID);
 			SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
@@ -444,7 +444,7 @@ namespace Seidenader { namespace SVOGui {
 
 	HRESULT TaTableAnalyzerPage::RetrieveAvailableColumnList()
 	{ 
-		typedef GuiCmd::GetAvailableObjects Command;
+		typedef SvCmd::GetAvailableObjects Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 
 		CommandPtr commandPtr = new Command(m_TaskObjectID, SVObjectTypeInfoStruct(DoubleSortValueObjectType, SVNotSetSubObjectType));
@@ -549,7 +549,7 @@ namespace Seidenader { namespace SVOGui {
 	void TaTableAnalyzerPage::setColumnSelectionCB()
 	{
 		SVString selectedTableName;
-		typedef GuiCmd::GetInputs Command;
+		typedef SvCmd::GetInputs Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 		CommandPtr commandPtr = new Command(m_selectedAnalyzerID, SVObjectTypeInfoStruct(DoubleSortValueObjectType, SVNotSetSubObjectType));
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
@@ -597,8 +597,8 @@ namespace Seidenader { namespace SVOGui {
 			if ( SV_GUID_NULL != analyzerGUID && analyzerGUID != m_selectedAnalyzerID)
 			{
 				// Do a reset of the analyzer
-				typedef SVSharedPtr<GuiCmd::ResetObject> ResetObjectCommandPtr;
-				ResetObjectCommandPtr commandPtr(new GuiCmd::ResetObject(analyzerGUID));
+				typedef SVSharedPtr<SvCmd::ResetObject> ResetObjectCommandPtr;
+				ResetObjectCommandPtr commandPtr(new SvCmd::ResetObject(analyzerGUID));
 				SVObjectSynchronousCommandTemplate<ResetObjectCommandPtr> cmd(m_InspectionID, commandPtr);
 
 				hrOk = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
@@ -612,7 +612,7 @@ namespace Seidenader { namespace SVOGui {
 					}
 					else
 					{
-						Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams) );
+						Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams) );
 					}
 
 					m_analyzerListBox.SetCurSel(i);
@@ -624,5 +624,5 @@ namespace Seidenader { namespace SVOGui {
 		return hrOk;
 	}
 #pragma endregion Private Methods
-}}  //end namespaces
+} //namespace SvOg
 

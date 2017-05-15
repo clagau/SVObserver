@@ -21,7 +21,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-namespace Seidenader { namespace SVStatusLibrary
+namespace SvStl
 {
 	
 	const LPCTSTR   CommandLineArgs::IniDirFlag = _T( "-iniFile" );
@@ -91,6 +91,4 @@ namespace Seidenader { namespace SVStatusLibrary
 		}
 		m_IsParsed = true;
 	}
-
-}
-}
+} //namespace SvStl

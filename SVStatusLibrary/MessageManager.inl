@@ -77,24 +77,24 @@ template <typename M_Container, typename M_Data>
 INT_PTR MessageManager<M_Container, M_Data>::setMessage( DWORD MessageCode, LPCTSTR AdditionalText, SourceFileParams SourceFile, DWORD ProgramCode /*= 0*/, const GUID& rObjectId /*= SV_GUID_NULL*/, UINT MsgBoxType /*= MB_OK*/ )
 {
 	SVStringVector textList;
-	SvOi::MessageTextEnum id = SvOi::Tid_Empty;
+	MessageTextEnum id = SvStl::Tid_Empty;
 	if (nullptr != AdditionalText)
 	{
 		textList.push_back(AdditionalText);
-		id = SvOi::Tid_Default;
+		id = SvStl::Tid_Default;
 	}
 
 	return setMessage( MessageCode, id, textList, SourceFile, ProgramCode, rObjectId, MsgBoxType );
 }
 
 template <typename M_Container, typename M_Data>
-INT_PTR MessageManager<M_Container, M_Data>::setMessage( DWORD MessageCode, SvOi::MessageTextEnum AdditionalTextId, SourceFileParams SourceFile, DWORD ProgramCode /*= 0*/, const GUID& rObjectId /*= SV_GUID_NULL*/, UINT MsgBoxType /*= MB_OK*/)
+INT_PTR MessageManager<M_Container, M_Data>::setMessage( DWORD MessageCode, MessageTextEnum AdditionalTextId, SourceFileParams SourceFile, DWORD ProgramCode /*= 0*/, const GUID& rObjectId /*= SV_GUID_NULL*/, UINT MsgBoxType /*= MB_OK*/)
 {
 	return setMessage( MessageCode, AdditionalTextId, SVStringVector(), SourceFile, ProgramCode, rObjectId, MsgBoxType );
 }
 
 template <typename M_Container, typename M_Data>
-INT_PTR MessageManager<M_Container, M_Data>::setMessage( DWORD MessageCode, SvOi::MessageTextEnum AdditionalTextId, const SVStringVector& rAdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode /*= 0*/, const GUID& rObjectId /*= SV_GUID_NULL*/ , UINT MsgBoxType /*= MB_OK*/ )
+INT_PTR MessageManager<M_Container, M_Data>::setMessage( DWORD MessageCode, MessageTextEnum AdditionalTextId, const SVStringVector& rAdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode /*= 0*/, const GUID& rObjectId /*= SV_GUID_NULL*/ , UINT MsgBoxType /*= MB_OK*/ )
 {
 	INT_PTR Result( IDCANCEL );
 

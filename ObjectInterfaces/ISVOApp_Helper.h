@@ -6,28 +6,23 @@
 //******************************************************************************
 #pragma once
 
-namespace Seidenader
+namespace SvOi
 {
-	namespace ObjectInterfaces
-	{	
-		//************************************
-		/// Return if the application has unrestricted file access.
-		/// \returns bool
-		//************************************
-		bool isUnrestrictedFileAccess();
+	//************************************
+	/// Return if the application has unrestricted file access.
+	/// \returns bool
+	//************************************
+	bool isUnrestrictedFileAccess();
 
-		//************************************
-		/// Return if the application is ready and valid for editing.
-		/// \returns bool
-		//************************************
-		bool isOkToEdit();
+	//************************************
+	/// Return if the application is ready and valid for editing.
+	/// \returns bool
+	//************************************
+	bool isOkToEdit();
 
-		//************************************
-		/// Return the source image depth
-		/// \returns long
-		//************************************
-		long GetSourceImageDepth();
-	}
-}
-
-namespace SvOi = Seidenader::ObjectInterfaces;
+	//************************************
+	/// Return the source image depth
+	/// \returns long
+	//************************************
+	long GetSourceImageDepth();
+} //namespace SvOi

@@ -18,7 +18,7 @@
 #include "SaxErrorHandler.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace  SVXMLLibrary
+namespace SvXml
 {
 	/// \brief Wrapper class for SAX2 parsing
 	class SaxParser
@@ -142,6 +142,4 @@ namespace Seidenader { namespace  SVXMLLibrary
 		bool m_ComInit;
 	#pragma endregion Member variables
 	};
-} /* namespace SVXMLLibrary */ } /* namespace Seidenader */
-
-namespace SvXml = Seidenader::SVXMLLibrary;
+} //namespace SvXml

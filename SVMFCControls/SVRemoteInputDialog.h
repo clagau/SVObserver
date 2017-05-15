@@ -15,41 +15,35 @@
 #include "SVOResource\resource.h"
 #pragma endregion Includes
 
-namespace Seidenader
+namespace SvMc
 {
-	namespace SVMFCControls
+	class SVRemoteInputDialog : public CDialog
 	{
-		class SVRemoteInputDialog : public CDialog
-		{
-			// Construction
-		public:
-			SVRemoteInputDialog(CWnd* pParent = nullptr);   // standard constructor
-			virtual ~SVRemoteInputDialog();
-			// Dialog Data
-			//{{AFX_DATA(SVRemoteInputDialog)
-			enum { IDD = IDD_REMOTE_INPUTS };
-			long	m_lRemoteInputCount;
-			//}}AFX_DATA
+		// Construction
+	public:
+		SVRemoteInputDialog(CWnd* pParent = nullptr);   // standard constructor
+		virtual ~SVRemoteInputDialog();
+		// Dialog Data
+		//{{AFX_DATA(SVRemoteInputDialog)
+		enum { IDD = IDD_REMOTE_INPUTS };
+		long	m_lRemoteInputCount;
+		//}}AFX_DATA
 
 
-			// Overrides
-			// ClassWizard generated virtual function overrides
-			//{{AFX_VIRTUAL(SVRemoteInputDialog)
-		protected:
-			virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
-			//}}AFX_VIRTUAL
+		// Overrides
+		// ClassWizard generated virtual function overrides
+		//{{AFX_VIRTUAL(SVRemoteInputDialog)
+	protected:
+		virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
+		//}}AFX_VIRTUAL
 
-			// Implementation
-		protected:
+		// Implementation
+	protected:
 
-			// Generated message map functions
-			//{{AFX_MSG(SVRemoteInputDialog)
-			virtual BOOL OnInitDialog() override;
-			//}}AFX_MSG
-			DECLARE_MESSAGE_MAP()
-		};
-	} //SVMFCControls
-} //Seidenader
-
-namespace SvMc = Seidenader::SVMFCControls;
-
+		// Generated message map functions
+		//{{AFX_MSG(SVRemoteInputDialog)
+		virtual BOOL OnInitDialog() override;
+		//}}AFX_MSG
+		DECLARE_MESSAGE_MAP()
+	};
+} //namespace SvMc

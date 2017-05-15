@@ -160,7 +160,7 @@ BOOL SVWindowToolClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructur
 	BOOL bOk = SVToolClass::CreateObject( PCreateStructure );
 	
 	m_SourceImageNames.setStatic( true );
-	m_SourceImageNames.SetObjectAttributesAllowed( SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE, SvOi::SetAttributeType::RemoveAttribute );
+	m_SourceImageNames.SetObjectAttributesAllowed( SvOi::SV_REMOTELY_SETABLE | SvOi::SV_SETABLE_ONLINE, SvOi::SetAttributeType::RemoveAttribute );
 	
 	if(bOk)
 	{

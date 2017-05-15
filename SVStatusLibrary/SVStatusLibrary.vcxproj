@@ -106,6 +106,7 @@
     <ClInclude Include="MessageManager.h" />
     <ClInclude Include="MessageData.h" />
     <ClInclude Include="MessageNotification.h" />
+    <ClInclude Include="MessageTextEnum.h" />
     <ClInclude Include="MessageTextGenerator.h" />
     <ClInclude Include="MessageTextMap.h" />
     <ClInclude Include="SourceFileParams.h" />

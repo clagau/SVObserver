@@ -151,7 +151,7 @@ HRESULT SVPPQObject::ProcessDelayOutputs( bool& p_rProcessed )
 
 	SVProductInfoStruct* l_pProduct = nullptr;
 
-	SVClock::SVTimeStamp l_CurrentTime = SVClock::GetTimeStamp();
+	SvTl::SVTimeStamp l_CurrentTime = SvTl::GetTimeStamp();
 
 	while( 0 < m_oOutputsDelayQueue.GetCount() && nullptr == l_pProduct )
 	{
@@ -207,21 +207,21 @@ HRESULT SVPPQObject::ProcessDelayOutputs( bool& p_rProcessed )
 
 	if( p_rProcessed )
 	{
-		SVPPQOutputModeEnum oOutputMode = SVPPQUnknownMode;
+		SvOi::SVPPQOutputModeEnum oOutputMode = SvOi::SVPPQUnknownMode;
 
 		if( GetPPQOutputMode( oOutputMode ) )
 		{
 			switch( oOutputMode )
 			{
-			case SVPPQTimeDelayMode:
-			case SVPPQExtendedTimeDelayMode:
+			case SvOi::SVPPQTimeDelayMode:
+			case SvOi::SVPPQExtendedTimeDelayMode:
 				{
 					l_Status = ProcessTimeDelayOutputs( *l_pProduct );
 
 					break;
 				}
-			case SVPPQTimeDelayAndDataCompleteMode:
-			case SVPPQExtendedTimeDelayAndDataCompleteMode:
+			case SvOi::SVPPQTimeDelayAndDataCompleteMode:
+			case SvOi::SVPPQExtendedTimeDelayAndDataCompleteMode:
 				{
 					l_Status = ProcessTimeDelayAndDataCompleteOutputs( *l_pProduct, p_rProcessed );
 
@@ -258,7 +258,7 @@ HRESULT SVPPQObject::ProcessTimeDelayOutputs( SVProductInfoStruct& p_rProduct )
 		{
 			if( lResetDelay )
 			{
-				p_rProduct.oOutputsInfo.m_EndProcess = SVClock::GetTimeStamp();
+				p_rProduct.oOutputsInfo.m_EndProcess = SvTl::GetTimeStamp();
 
 				p_rProduct.oOutputsInfo.m_EndResetDelay = p_rProduct.oOutputsInfo.m_EndProcess + 
 					p_rProduct.oOutputsInfo.lResetDelay;
@@ -305,9 +305,9 @@ HRESULT SVPPQObject::ProcessTimeDelayAndDataCompleteOutputs( SVProductInfoStruct
 SVPPQObject::SVPPQObject( LPCSTR ObjectName )
 	: SVObjectClass( ObjectName )
 	, m_oTriggerQueue( 10 )
-	,m_NAKParameter(DefaultNakParameter)
+	,m_NAKParameter(SvOi::DefaultNakParameter)
 	, m_NAKCount( 0 )
-	,m_NAKMode(Bursts)
+	,m_NAKMode(SvOi::Bursts)
 	,m_FirstNAKProcessCount(0)
 	, m_NewNAKCount(0)
 	,m_ReducedPPQPosition(MinReducedPPQPosition)
@@ -323,9 +323,9 @@ SVPPQObject::SVPPQObject( LPCSTR ObjectName )
 SVPPQObject::SVPPQObject( SVObjectClass* POwner, int StringResourceID )
 	: SVObjectClass( POwner, StringResourceID )
 	, m_oTriggerQueue( 10 )
-	,m_NAKParameter(DefaultNakParameter)
+	,m_NAKParameter(SvOi::DefaultNakParameter)
 	, m_NAKCount( 0 )
-	,m_NAKMode(Bursts)
+	,m_NAKMode(SvOi::Bursts)
 	,m_FirstNAKProcessCount(0)
 	, m_NewNAKCount(0)
 	,m_ReducedPPQPosition(MinReducedPPQPosition)
@@ -367,7 +367,7 @@ SVPPQObject::~SVPPQObject()
 
 void SVPPQObject::init()
 {
-	m_oOutputMode                = SVPPQNextTriggerMode;
+	m_oOutputMode                = SvOi::SVPPQNextTriggerMode;
 	m_isCreated                  = false;
 	m_bOnline                    = false;
 	m_bMaintainSourceImages      = false;
@@ -388,15 +388,15 @@ void SVPPQObject::init()
 	m_pInputList			= nullptr;
 	m_pOutputList			= nullptr;
 
-	m_voTriggerToggle.SetObjectAttributesAllowed( SV_EMBEDABLE | SV_PRINTABLE, SvOi::SetAttributeType::OverwriteAttribute );
-	m_voOutputToggle.SetObjectAttributesAllowed( SV_EMBEDABLE | SV_PRINTABLE, SvOi::SetAttributeType::OverwriteAttribute );
-	m_voACK.SetObjectAttributesAllowed( SV_EMBEDABLE | SV_PRINTABLE, SvOi::SetAttributeType::OverwriteAttribute );
-	m_voNAK.SetObjectAttributesAllowed( SV_EMBEDABLE | SV_PRINTABLE, SvOi::SetAttributeType::OverwriteAttribute );
-	m_voMasterFault.SetObjectAttributesAllowed( SV_EMBEDABLE | SV_PRINTABLE, SvOi::SetAttributeType::OverwriteAttribute );
-	m_voMasterWarning.SetObjectAttributesAllowed( SV_EMBEDABLE | SV_PRINTABLE, SvOi::SetAttributeType::OverwriteAttribute );
-	m_voNotInspected.SetObjectAttributesAllowed( SV_EMBEDABLE | SV_PRINTABLE, SvOi::SetAttributeType::OverwriteAttribute );
-	m_voDataValid.SetObjectAttributesAllowed( SV_EMBEDABLE | SV_PRINTABLE, SvOi::SetAttributeType::OverwriteAttribute );
-	m_voOutputState.SetObjectAttributesAllowed( SV_EMBEDABLE | SV_PRINTABLE, SvOi::SetAttributeType::OverwriteAttribute );
+	m_voTriggerToggle.SetObjectAttributesAllowed( SvOi::SV_EMBEDABLE | SvOi::SV_PRINTABLE, SvOi::SetAttributeType::OverwriteAttribute );
+	m_voOutputToggle.SetObjectAttributesAllowed( SvOi::SV_EMBEDABLE | SvOi::SV_PRINTABLE, SvOi::SetAttributeType::OverwriteAttribute );
+	m_voACK.SetObjectAttributesAllowed( SvOi::SV_EMBEDABLE | SvOi::SV_PRINTABLE, SvOi::SetAttributeType::OverwriteAttribute );
+	m_voNAK.SetObjectAttributesAllowed( SvOi::SV_EMBEDABLE | SvOi::SV_PRINTABLE, SvOi::SetAttributeType::OverwriteAttribute );
+	m_voMasterFault.SetObjectAttributesAllowed( SvOi::SV_EMBEDABLE | SvOi::SV_PRINTABLE, SvOi::SetAttributeType::OverwriteAttribute );
+	m_voMasterWarning.SetObjectAttributesAllowed( SvOi::SV_EMBEDABLE | SvOi::SV_PRINTABLE, SvOi::SetAttributeType::OverwriteAttribute );
+	m_voNotInspected.SetObjectAttributesAllowed( SvOi::SV_EMBEDABLE | SvOi::SV_PRINTABLE, SvOi::SetAttributeType::OverwriteAttribute );
+	m_voDataValid.SetObjectAttributesAllowed( SvOi::SV_EMBEDABLE | SvOi::SV_PRINTABLE, SvOi::SetAttributeType::OverwriteAttribute );
+	m_voOutputState.SetObjectAttributesAllowed( SvOi::SV_EMBEDABLE | SvOi::SV_PRINTABLE, SvOi::SetAttributeType::OverwriteAttribute );
 
 	BasicValueObjectPtr pPpqLength =  m_PpqValues.setValueObject( SvOl::FqnPpqLength, StandardPpqLength, this );
 	SVObjectManagerClass::Instance().IncrementShortPPQIndicator();
@@ -453,7 +453,7 @@ HRESULT SVPPQObject::ObserverUpdate( const SVInspectionCompleteInfoStruct& p_rDa
 	{
 		SVInspectionInfoStruct l_InspectInfo = l_Iter->second;
 
-		l_InspectInfo.m_CallbackReceived = SVClock::GetTimeStamp();
+		l_InspectInfo.m_CallbackReceived = SvTl::GetTimeStamp();
 
 		l_InspectInfo.ClearIndexes();
 
@@ -570,15 +570,15 @@ BOOL SVPPQObject::Create()
 		}// end for
 	}
 
-	m_voTriggerToggle.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-	m_voOutputToggle.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-	m_voACK.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-	m_voNAK.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-	m_voMasterFault.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-	m_voMasterWarning.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-	m_voNotInspected.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-	m_voDataValid.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-	m_voOutputState.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_voTriggerToggle.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_voOutputToggle.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_voACK.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_voNAK.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_voMasterFault.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_voMasterWarning.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_voNotInspected.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_voDataValid.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_voOutputState.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 
 	m_TriggerToggle = false;
 	m_OutputToggle = false;
@@ -784,7 +784,7 @@ BOOL SVPPQObject::DetachAll()
 	return TRUE;
 }
 
-BOOL SVPPQObject::SetPPQOutputMode( SVPPQOutputModeEnum oPPQOutputMode )
+BOOL SVPPQObject::SetPPQOutputMode( SvOi::SVPPQOutputModeEnum oPPQOutputMode )
 {
 	m_oOutputMode = oPPQOutputMode;
 	return TRUE;
@@ -839,7 +839,7 @@ BOOL SVPPQObject::SetInspectionTimeout( long lTimeoutMillisec )
 	return TRUE;
 }
 
-BOOL SVPPQObject::GetPPQOutputMode( SVPPQOutputModeEnum &oPPQOutputMode ) const
+BOOL SVPPQObject::GetPPQOutputMode( SvOi::SVPPQOutputModeEnum &oPPQOutputMode ) const
 {
 	oPPQOutputMode = m_oOutputMode;
 	return TRUE;
@@ -1205,7 +1205,7 @@ void SVPPQObject::PrepareGoOnline()
 		SVStringVector msgList;
 		msgList.push_back(m_pTrigger->GetCompleteName());
 
-		SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_CanGoOnlineFailure_Trigger, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10185 );
+		SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_CanGoOnlineFailure_Trigger, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10185 );
 		throw Msg;
 	}
 
@@ -1216,7 +1216,7 @@ void SVPPQObject::PrepareGoOnline()
 			SVStringVector msgList;
 			msgList.push_back(l_svIter->first->GetCompleteName());
 
-			SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_CanGoOnlineFailure_Acquisition, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10185 );
+			SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_CanGoOnlineFailure_Acquisition, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10185 );
 			throw Msg;
 		}
 	}
@@ -1229,7 +1229,7 @@ void SVPPQObject::PrepareGoOnline()
 		{
 			if( !RecycleProductInfo( l_pProduct ) )
 			{
-				SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_GoOnlineFailure_RecycleProduct, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10185 );
+				SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_GoOnlineFailure_RecycleProduct, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10185 );
 				throw Msg;
 			}
 
@@ -1256,13 +1256,13 @@ void SVPPQObject::PrepareGoOnline()
 			{
 				SVStringVector msgList;
 				msgList.push_back(SvUl_SF::Format(_T("%X"), hRTemp));
-				SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_GoOnlineFailure_RecycleProduct, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10185 );
+				SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_GoOnlineFailure_RecycleProduct, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10185 );
 				throw Msg;
 			}
 		}
 		else
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_GoOnlineFailure_RecycleProduct, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10185 );
+			SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_GoOnlineFailure_RecycleProduct, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10185 );
 			throw Msg;
 		}
 	}// end for
@@ -1272,7 +1272,7 @@ void SVPPQObject::PrepareGoOnline()
 	{
 		if ( ! m_arInspections[i]->CanGoOnline() )
 		{
-			SvOi::MessageTextEnum messageId = SvOi::Tid_Empty;
+			SvStl::MessageTextEnum messageId = SvStl::Tid_Empty;
 			SVStringVector msgList;
 
 			//@TODO[gra][7.40][25.05.2016]: This should at a later stage show all the tool errors not only the first error
@@ -1285,22 +1285,22 @@ void SVPPQObject::PrepareGoOnline()
 				SVString sToolName = SVObjectManagerClass::Instance().GetCompleteObjectName( Iter->getObjectId() );
 				msgList.push_back( sToolName );
 				msgList.push_back( SVString( Iter->what() ) );
-				messageId = SvOi::Tid_CanGoOnlineFailure_InspectionTool;
+				messageId = SvStl::Tid_CanGoOnlineFailure_InspectionTool;
 				sourceFileParam = Iter->getMessage().m_SourceFile;
 			}
 			else
 			{
-				messageId = SvOi::Tid_CanGoOnlineFailure_Inspection;
+				messageId = SvStl::Tid_CanGoOnlineFailure_Inspection;
 				msgList.push_back(m_arInspections[i]->GetCompleteName());
 			}
-			SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, messageId, msgList, sourceFileParam, SvOi::Err_10185 );
+			SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, messageId, msgList, sourceFileParam, SvStl::Err_10185 );
 			throw Msg;
 		}
 	}// end for
 
 	if (!ResolveConditionalOutput())
 	{
-		SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_CanGoOnlineFailure_ConditionalOutput, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10185 );
+		SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_CanGoOnlineFailure_ConditionalOutput, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10185 );
 		throw Msg;
 	}
 	if (HasActiveMonitorList())
@@ -1338,7 +1338,7 @@ void SVPPQObject::PrepareGoOnline()
 			SVStringVector msgList;
 			msgList.push_back(ex.what());
 			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
-			MesMan.setMessage( SVMSG_SVO_44_SHARED_MEMORY, SvOi::Tid_StdException, msgList ,SvStl::SourceFileParams(StdMessageParams));
+			MesMan.setMessage( SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_StdException, msgList ,SvStl::SourceFileParams(StdMessageParams));
 			hr = E_FAIL;
 		}
 		if (S_OK != hr)
@@ -1349,7 +1349,7 @@ void SVPPQObject::PrepareGoOnline()
 
 			SVStringVector msgList;
 			msgList.push_back(GetName());
-			SvStl::MessageContainer Exception( SVMSG_SVO_46_SHARED_MEMORY_DISK_SPACE, SvOi::Tid_ErrorNotEnoughDiskSpace, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_15025 );
+			SvStl::MessageContainer Exception( SVMSG_SVO_46_SHARED_MEMORY_DISK_SPACE, SvStl::Tid_ErrorNotEnoughDiskSpace, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_15025 );
 			throw Exception;
 		}
 		else
@@ -1443,7 +1443,7 @@ void SVPPQObject::GoOnline()
 		SVStringVector msgList;
 		msgList.push_back( FailureObjectName );
 
-		SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_GoOnlineFailure_Inspection, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10185 );
+		SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_GoOnlineFailure_Inspection, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10185 );
 		throw Msg;
 	}// end if
 
@@ -1456,7 +1456,7 @@ void SVPPQObject::GoOnline()
 			SVStringVector msgList;
 			msgList.push_back(SvUl_SF::Format(_T("%X"), hr));
 
-			SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_GoOnlineFailure_InternalTrigger, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10185 );
+			SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_GoOnlineFailure_InternalTrigger, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10185 );
 			throw Msg;
 		}
 	}
@@ -1490,7 +1490,7 @@ void SVPPQObject::GoOnline()
 		SVStringVector msgList;
 		msgList.push_back(FailureObjectName);
 
-		SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_GoOnlineFailure_Acquisition, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10185 );
+		SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_GoOnlineFailure_Acquisition, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10185 );
 		throw Msg;
 	}// end if
 
@@ -1515,19 +1515,19 @@ void SVPPQObject::GoOnline()
 		SVStringVector msgList;
 		msgList.push_back(FailureObjectName);
 
-		SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_GoOnlineFailure_Trigger, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10185 );
+		SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_GoOnlineFailure_Trigger, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10185 );
 		throw Msg;
 	}// end if
 
 	// Create a multimedia timer thread for the output and reset time delays
 	if( TIMERR_NOERROR != ::timeBeginPeriod( 1 ) )
 	{
-		SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_GoOnlineFailure_CreateTimerThread, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10185 );
+		SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_GoOnlineFailure_CreateTimerThread, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10185 );
 		throw Msg;
 	}
 
 	//The timer should start when not "Next Trigger Mode" or when reset or data valid delay are not 0
-	bool StartTimer( SVPPQNextTriggerMode != m_oOutputMode );
+	bool StartTimer(SvOi::SVPPQNextTriggerMode != m_oOutputMode );
 	StartTimer |= 0 < m_lResetDelay;
 	StartTimer |= 0 < m_DataValidDelay;
 	if( StartTimer )
@@ -1539,7 +1539,7 @@ void SVPPQObject::GoOnline()
 	// Create the PPQ's threads
 	if ( S_OK != m_AsyncProcedure.Create( &SVPPQObject::APCThreadProcess, boost::bind(&SVPPQObject::ThreadProcess, this, _1), GetName(), SVAffinityPPQ ) )
 	{
-		SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_GoOnlineFailure_CreatePPQThread, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10185 );
+		SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_GoOnlineFailure_CreatePPQThread, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10185 );
 		throw Msg;
 	}
 	
@@ -1557,7 +1557,7 @@ void SVPPQObject::GoOnline()
 		void* l_pInit = nullptr != pObject ? dynamic_cast<SVPPQObject*>( pObject->GetOwner() ) : nullptr;
 	}
 
-	if( SVPPQNextTriggerMode == m_oOutputMode )
+	if(SvOi::SVPPQNextTriggerMode == m_oOutputMode )
 	{
 		m_NAKCount = -static_cast< long >( m_ppPPQPositions.size() );
 	}
@@ -1569,7 +1569,7 @@ void SVPPQObject::GoOnline()
 	m_FirstNAKProcessCount =0;
 	m_ReducedPPQPosition = MinReducedPPQPosition;
 	const int HundredPercent = 100;
-	if((m_NAKMode == FixedMaximum || m_NAKMode == RepairedLegacy ) && m_NAKParameter > 0 && m_NAKParameter <= HundredPercent)
+	if((SvOi::FixedMaximum == m_NAKMode  || SvOi::RepairedLegacy == m_NAKMode ) && m_NAKParameter > 0 && m_NAKParameter <= HundredPercent)
 	{
 		m_ReducedPPQPosition =  ( long(m_ppPPQPositions.size()) * m_NAKParameter) /HundredPercent ;
 		if(m_ReducedPPQPosition < MinReducedPPQPosition)
@@ -2307,7 +2307,7 @@ BOOL SVPPQObject::WriteOutputs( SVProductInfoStruct *pProduct )
 		TriggerCount = pProduct->ProcessCount();
 		bTriggerToggle = pProduct->oTriggerInfo.m_ToggleState;
 
-		pProduct->oTriggerInfo.m_PushedOutputs = SVClock::GetTimeStamp();
+		pProduct->oTriggerInfo.m_PushedOutputs = SvTl::GetTimeStamp();
 
 		DataIndex = pProduct->oPPQInfo.m_ResultDataDMIndexHandle.GetIndex();
 
@@ -2397,11 +2397,11 @@ BOOL SVPPQObject::WriteOutputs( SVProductInfoStruct *pProduct )
 				pProduct->oOutputsInfo.DataValidResult = bValue ? true : false;
 				pProduct->oOutputsInfo.OutputToggleResult = m_OutputToggle;
 				// Set output data valid expire time
-				pProduct->oOutputsInfo.m_EndDataValidDelay = SVClock::GetTimeStamp() + pProduct->oOutputsInfo.lDataValidDelay;
+				pProduct->oOutputsInfo.m_EndDataValidDelay = SvTl::GetTimeStamp() + pProduct->oOutputsInfo.lDataValidDelay;
 				m_DataValidDelayQueue.AddTail( pProduct->ProcessCount() );
 			}
 		}
-		pProduct->oTriggerInfo.m_PushedOutputs = SVClock::GetTimeStamp();
+		pProduct->oTriggerInfo.m_PushedOutputs = SvTl::GetTimeStamp();
 		long l_lTime = static_cast<long>(pProduct->oTriggerInfo.m_PushedOutputs - pProduct->oTriggerInfo.m_ToggleTimeStamp);
 		// Caution! enabling the logging here will cause thread contention because
 		// the tracking class is not lock-less. It needs more work before we can use it here.
@@ -2804,7 +2804,7 @@ SVProductInfoStruct* SVPPQObject::IndexPPQ( SvTi::SVTriggerInfoStruct& p_rTrigge
 		m_ppPPQPositions.SetProductAt( 0, l_pNewProduct );
 	}
 
-	if( m_oOutputMode == SVPPQNextTriggerMode )
+	if(SvOi::SVPPQNextTriggerMode == m_oOutputMode)
 	{
 		l_pProduct = m_ppPPQPositions.GetProductAt( m_ppPPQPositions.size() - 1 );
 	}
@@ -2822,7 +2822,7 @@ SVProductInfoStruct* SVPPQObject::IndexPPQ( SvTi::SVTriggerInfoStruct& p_rTrigge
 		if( !RecycleProductInfo( l_pLastProduct ) )
 		{
 			SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-			Exception.setMessage( SVMSG_SVO_69_PPQ_INDEX_NOT_RELEASED, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
+			Exception.setMessage( SVMSG_SVO_69_PPQ_INDEX_NOT_RELEASED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
 		}
 	}
 
@@ -2875,14 +2875,14 @@ BOOL SVPPQObject::InitializeProduct( SVProductInfoStruct* p_pNewProduct, const S
 	// ************************************************************************
 	// Now we need to read the inputs. Make sure that we record the timestamps
 	// Begin reading the inputs
-	p_pNewProduct->oInputsInfo.m_BeginProcess = SVClock::GetTimeStamp();
+	p_pNewProduct->oInputsInfo.m_BeginProcess = SvTl::GetTimeStamp();
 
 	if( !AssignInputs( p_rInputValues ) )
 	{
 		p_pNewProduct->hrPPQStatus = -12387;
 	}
 
-	p_pNewProduct->oInputsInfo.m_EndProcess = SVClock::GetTimeStamp();
+	p_pNewProduct->oInputsInfo.m_EndProcess = SvTl::GetTimeStamp();
 
 	// End reading the inputs
 	// ************************************************************************
@@ -2981,7 +2981,7 @@ HRESULT SVPPQObject::StartInspection( const SVGUID& p_rInspectionID )
 
 	switch(m_NAKMode)
 	{
-	case Legacy: ///old Behavior 
+	case SvOi::Legacy: ///old Behavior 
 	if( 0 < m_NAKCount )
 	{
 		long l_NAKCount = m_NAKCount;
@@ -2995,14 +2995,14 @@ HRESULT SVPPQObject::StartInspection( const SVGUID& p_rInspectionID )
 		}
 		}
 		break;
-	case Bursts: 
+	case SvOi::Bursts:
 		if(m_FirstNAKProcessCount && !IsProductAlive(m_FirstNAKProcessCount))
 		{
 			m_FirstNAKProcessCount =0;
 		}
 		break;
 	
-	case RepairedLegacy: 
+	case SvOi::RepairedLegacy:
 		if( 0 < m_NewNAKCount )
 		{
 			long l_NAKCount = m_NewNAKCount;
@@ -3017,7 +3017,7 @@ HRESULT SVPPQObject::StartInspection( const SVGUID& p_rInspectionID )
 		}
 		break;
 
-	case FixedMaximum: 
+	case SvOi::FixedMaximum:
 		l_Count = m_ReducedPPQPosition; 
 		break;
 
@@ -3041,7 +3041,7 @@ HRESULT SVPPQObject::StartInspection( const SVGUID& p_rInspectionID )
 				{
 					l_pProduct = pTempProduct; // product info
 					l_ProductIndex = i;
-					if(m_NAKMode == Bursts)
+					if(SvOi::Bursts == m_NAKMode)
 					{
 						if( (m_NewNAKCount > 2 && m_FirstNAKProcessCount == 0) )
 						{
@@ -3065,7 +3065,7 @@ HRESULT SVPPQObject::StartInspection( const SVGUID& p_rInspectionID )
 	if( nullptr != l_pProduct && nullptr != l_pProduct->m_svInspectionInfos[ p_rInspectionID ].pInspection )
 	{
 
-		l_pProduct->m_WorkloadInfo.m_ProcessingStartTime = SVClock::GetTimeStamp(); //ProductWorkloadInformation may be incorrect if there are several inspections per product
+		l_pProduct->m_WorkloadInfo.m_ProcessingStartTime = SvTl::GetTimeStamp(); //ProductWorkloadInformation may be incorrect if there are several inspections per product
 #ifdef _DEBUG_PERFORMANCE_INFO //Arvid 160212 this is helpful for debugging the creation of Performance Information
 
 		SVString infostring = SvUl_SF::Format(_T("set m_ProcessingStartTime, trID = %ld"),l_pProduct->ProcessCount());
@@ -3104,22 +3104,22 @@ BOOL SVPPQObject::StartOutputs( SVProductInfoStruct* p_pProduct )
 {
 	if( p_pProduct )
 	{
-		p_pProduct->oOutputsInfo.m_BeginProcess = SVClock::GetTimeStamp();
+		p_pProduct->oOutputsInfo.m_BeginProcess = SvTl::GetTimeStamp();
 		p_pProduct->oOutputsInfo.lOutputDelay = m_lOutputDelay;
 		p_pProduct->oOutputsInfo.lResetDelay  = m_lResetDelay;
 		p_pProduct->oOutputsInfo.lDataValidDelay  = m_DataValidDelay;
-		p_pProduct->oOutputsInfo.m_EndOutputDelay = SVClock::GetMinTimeStamp();
-		p_pProduct->oOutputsInfo.m_EndResetDelay  = SVClock::GetMinTimeStamp();
-		p_pProduct->oOutputsInfo.m_EndDataValidDelay  = SVClock::GetMinTimeStamp();
+		p_pProduct->oOutputsInfo.m_EndOutputDelay = SvTl::GetMinTimeStamp();
+		p_pProduct->oOutputsInfo.m_EndResetDelay  = SvTl::GetMinTimeStamp();
+		p_pProduct->oOutputsInfo.m_EndDataValidDelay  = SvTl::GetMinTimeStamp();
 
 		switch( m_oOutputMode )
 		{
-		case SVPPQNextTriggerMode :
+		case SvOi::SVPPQNextTriggerMode :
 			{
 				// The trigger has come, time to write the outputs
 				WriteOutputs( p_pProduct );
 
-				p_pProduct->oOutputsInfo.m_EndProcess = SVClock::GetTimeStamp();
+				p_pProduct->oOutputsInfo.m_EndProcess = SvTl::GetTimeStamp();
 
 				// Check if we should fire up the reset outputs thread
 				if( 0 < m_lResetDelay )
@@ -3135,12 +3135,12 @@ BOOL SVPPQObject::StartOutputs( SVProductInfoStruct* p_pProduct )
 
 				break;
 			}
-		case SVPPQTimeDelayMode :
-		case SVPPQTimeDelayAndDataCompleteMode :
-		case SVPPQExtendedTimeDelayMode :
-		case SVPPQExtendedTimeDelayAndDataCompleteMode :
+		case SvOi::SVPPQTimeDelayMode :
+		case SvOi::SVPPQTimeDelayAndDataCompleteMode :
+		case SvOi::SVPPQExtendedTimeDelayMode :
+		case SvOi::SVPPQExtendedTimeDelayAndDataCompleteMode :
 			{
-				SVClock::SVTimeStamp l_Offset = p_pProduct->oOutputsInfo.lOutputDelay;
+				SvTl::SVTimeStamp l_Offset = p_pProduct->oOutputsInfo.lOutputDelay;
 
 				// Set output delay expire time
 				p_pProduct->oOutputsInfo.m_EndOutputDelay = p_pProduct->oTriggerInfo.m_ToggleTimeStamp + l_Offset;
@@ -3330,8 +3330,8 @@ bool SVPPQObject::SetInspectionComplete( long p_PPQIndex )
 
 	if( pProduct->bDataComplete )
 	{
-		if( ( SVPPQTimeDelayAndDataCompleteMode == m_oOutputMode ) ||
-			( SVPPQExtendedTimeDelayAndDataCompleteMode == m_oOutputMode ) )
+		if( (SvOi::SVPPQTimeDelayAndDataCompleteMode == m_oOutputMode ) ||
+			(SvOi::SVPPQExtendedTimeDelayAndDataCompleteMode == m_oOutputMode ) )
 		{
 			NotifyProcessTimerOutputs();
 		}
@@ -3349,7 +3349,7 @@ bool SVPPQObject::SetProductComplete( long p_PPQIndex )
 	if( nullptr != pProduct )
 	{
 		// record the current time and PPQ position for later display
-		pProduct->m_WorkloadInfo.m_CompletionTime = SVClock::GetTimeStamp();
+		pProduct->m_WorkloadInfo.m_CompletionTime = SvTl::GetTimeStamp();
 		pProduct->m_WorkloadInfo.m_PPQIndexAtCompletion = p_PPQIndex;
 
 		pProduct->m_WorkloadInfo.m_TriggerTime = pProduct->oTriggerInfo.m_BeginProcess;
@@ -3483,7 +3483,7 @@ HRESULT SVPPQObject::ProcessCameraResponse( const SVCameraQueueElement& p_rEleme
 
 	if( ( nullptr != p_rElement.m_pCamera ) && ( 0 <= p_rElement.m_Data.mDMHandle.GetIndex() ) )
 	{
-		SVClock::SVTimeStamp l_StartTick = 0;
+		SvTl::SVTimeStamp l_StartTick = 0;
 		size_t l_CameraPositionOnPPQ = -1;
 		size_t l_ProductIndex = -1;
 		SVProductInfoStruct* l_pProduct = nullptr;
@@ -3552,7 +3552,7 @@ HRESULT SVPPQObject::ProcessCameraResponse( const SVCameraQueueElement& p_rEleme
 			if( IterCamera != l_pProduct->m_svCameraInfos.end() )
 			{
 
-				SVClock::SVTimeStamp	priorCameraSF = IterCamera->second.m_StartFrameTimeStamp;
+				SvTl::SVTimeStamp	priorCameraSF = IterCamera->second.m_StartFrameTimeStamp;
 				long					productComplete = l_pProduct->bDataComplete;
 
 				// Attempting to make sure we don't have the previous trigger 
@@ -3562,7 +3562,7 @@ HRESULT SVPPQObject::ProcessCameraResponse( const SVCameraQueueElement& p_rEleme
 				// Queue notification.
 				if (( priorCameraSF == 0 ) && (1 != productComplete))
 				{
-					SVClock::SVTimeStamp iEF=0;
+					SvTl::SVTimeStamp iEF=0;
 
 					p_rElement.m_Data.GetEndTick( iEF );
 
@@ -3612,7 +3612,7 @@ HRESULT SVPPQObject::ProcessCameraResponse( const SVCameraQueueElement& p_rEleme
 								{
 									break;
 								}
-								IterCamera2->second.m_CallbackTimeStamp = SVClock::GetTimeStamp();
+								IterCamera2->second.m_CallbackTimeStamp = SvTl::GetTimeStamp();
 							}
 #ifdef EnableTracking
 							SVString l_Title = p_rElement.m_pCamera->GetName();
@@ -3627,7 +3627,7 @@ HRESULT SVPPQObject::ProcessCameraResponse( const SVCameraQueueElement& p_rEleme
 						}
 					}
 
-					IterCamera->second.m_CallbackTimeStamp  = SVClock::GetTimeStamp();
+					IterCamera->second.m_CallbackTimeStamp  = SvTl::GetTimeStamp();
 
 					if( m_oCamerasQueue.AddTail( l_pProduct->ProcessCount() ) )
 					{
@@ -3716,14 +3716,14 @@ BOOL SVPPQObject::FinishTrigger( void *pCaller, SvTi::SVTriggerInfoStruct& p_rTr
 
 		l_TriggerInfo.m_TriggerInfo = p_rTriggerInfo;
 
-		l_TriggerInfo.m_TriggerInfo.m_CallbackReceived = SVClock::GetTimeStamp();
+		l_TriggerInfo.m_TriggerInfo.m_CallbackReceived = SvTl::GetTimeStamp();
 
 		GetInputIOValues( l_TriggerInfo.m_Inputs );
 
 		switch( m_oOutputMode )
 		{
-		case SVPPQTimeDelayMode :
-		case SVPPQTimeDelayAndDataCompleteMode :
+		case SvOi::SVPPQTimeDelayMode :
+		case SvOi::SVPPQTimeDelayAndDataCompleteMode :
 			{
 				ResetOutputs();
 				break;
@@ -3738,7 +3738,7 @@ BOOL SVPPQObject::FinishTrigger( void *pCaller, SvTi::SVTriggerInfoStruct& p_rTr
 		}
 
 		l_TriggerInfo.m_TriggerInfo.m_ToggleState = m_TriggerToggle;
-		l_TriggerInfo.m_TriggerInfo.m_ToggleTimeStamp = SVClock::GetTimeStamp();
+		l_TriggerInfo.m_TriggerInfo.m_ToggleTimeStamp = SvTl::GetTimeStamp();
 
 		// Caution! enabling the logging here will cause thread contention because
 		// the tracking class is not lock-less. It needs more work before we can use it here.
@@ -3791,15 +3791,15 @@ HRESULT SVPPQObject::GetProductIndex( long& p_rIndex, long lProcessCount ) const
 	return l_Status;
 }
 
-HRESULT SVPPQObject::GetProductIndex( long& p_rIndex, SVClock::SVTimeStamp p_TimeStamp ) const
+HRESULT SVPPQObject::GetProductIndex( long& p_rIndex, SvTl::SVTimeStamp p_TimeStamp ) const
 {
 	HRESULT l_Status = S_OK;
 
 	bool l_SkipUpperThreshold = false;
 
 	l_SkipUpperThreshold = l_SkipUpperThreshold || ( GetPPQLength() == 1 );
-	l_SkipUpperThreshold = l_SkipUpperThreshold || ( m_oOutputMode == SVPPQExtendedTimeDelayAndDataCompleteMode );
-	l_SkipUpperThreshold = l_SkipUpperThreshold || ( ( m_oOutputMode == SVPPQNextTriggerMode ) && ( GetPPQLength() == 2 ) );
+	l_SkipUpperThreshold = l_SkipUpperThreshold || ( m_oOutputMode == SvOi::SVPPQExtendedTimeDelayAndDataCompleteMode );
+	l_SkipUpperThreshold = l_SkipUpperThreshold || ( ( m_oOutputMode == SvOi::SVPPQNextTriggerMode ) && ( GetPPQLength() == 2 ) );
 
 	if( l_SkipUpperThreshold )
 	{
@@ -3820,7 +3820,7 @@ HRESULT SVPPQObject::GetProductInfoStruct( SVProductInfoStruct*& p_rpProduct, lo
 	return l_Status;
 }
 
-HRESULT SVPPQObject::GetProductInfoStruct( SVProductInfoStruct*& p_rpProduct, SVClock::SVTimeStamp p_TimeStamp ) const
+HRESULT SVPPQObject::GetProductInfoStruct( SVProductInfoStruct*& p_rpProduct, SvTl::SVTimeStamp p_TimeStamp ) const
 {
 	HRESULT l_Status = S_OK;
 	long l_Index = -1;
@@ -3906,10 +3906,10 @@ bool SVPPQObject::IsObjectInPPQ( const SVObjectClass& object ) const
 
 bool SVPPQObject::IsProductExpired( const SVProductInfoStruct* pProduct ) const
 {
-	if ( m_oOutputMode == SVPPQExtendedTimeDelayMode && m_lInspectionTimeoutMillisec > 0 )
+	if (SvOi::SVPPQExtendedTimeDelayMode == m_oOutputMode && 0 < m_lInspectionTimeoutMillisec)
 	{
-		SVClock::SVTimeStamp l_CurrentTimestamp = SVClock::GetTimeStamp();
-		SVClock::SVTimeStamp l_ProductTimestamp = pProduct->oTriggerInfo.m_BeginProcess;
+		SvTl::SVTimeStamp l_CurrentTimestamp = SvTl::GetTimeStamp();
+		SvTl::SVTimeStamp l_ProductTimestamp = pProduct->oTriggerInfo.m_BeginProcess;
 		return ( ( l_CurrentTimestamp - l_ProductTimestamp ) > static_cast< double >( m_lOutputDelay - m_lInspectionTimeoutMillisec ) );
 	}
 	else
@@ -3981,7 +3981,7 @@ HRESULT SVPPQObject::MarkProductInspectionsMissingAcquisiton( SVProductInfoStruc
 				l_InspectInfo.m_CanProcess = false;
 				l_InspectInfo.m_InProcess = true;
 
-				l_InspectInfo.m_EndInspection  = SVClock::GetTimeStamp();
+				l_InspectInfo.m_EndInspection  = SvTl::GetTimeStamp();
 
 				SVInspectionInfoPair l_Info( p_rProduct.ProcessCount(), l_InspectInfo );
 
@@ -4078,7 +4078,7 @@ HRESULT SVPPQObject::NotifyProcessTimerOutputs()
 
 	if( 0 < m_lOutputDelay && ::InterlockedCompareExchange( &( m_ProcessingOutputDelay ), 1, 0 ) == 0 )
 	{
-		SVClock::SVTimeStamp l_CurrentTime = SVClock::GetTimeStamp();
+		SvTl::SVTimeStamp l_CurrentTime = SvTl::GetTimeStamp();
 
 		if( 0 < m_oOutputsDelayQueue.GetCount() || ( 0 < m_NextOutputDelayTimestamp && m_NextOutputDelayTimestamp <= l_CurrentTime ) )
 		{
@@ -4092,7 +4092,7 @@ HRESULT SVPPQObject::NotifyProcessTimerOutputs()
 
 	if( 0 < m_lResetDelay && ::InterlockedCompareExchange( &( m_ProcessingOutputReset ), 1, 0 ) == 0 )
 	{
-		SVClock::SVTimeStamp l_CurrentTime = SVClock::GetTimeStamp();
+		SvTl::SVTimeStamp l_CurrentTime = SvTl::GetTimeStamp();
 
 		if( 0 < m_oOutputsResetQueue.GetCount() || ( 0 < m_NextOutputResetTimestamp && m_NextOutputResetTimestamp <= l_CurrentTime ) )
 		{
@@ -4106,7 +4106,7 @@ HRESULT SVPPQObject::NotifyProcessTimerOutputs()
 
 	if( 0 < m_DataValidDelay && ::InterlockedCompareExchange( &( m_ProcessingDataValidDelay ), 1, 0 ) == 0 )
 	{
-		SVClock::SVTimeStamp l_CurrentTime = SVClock::GetTimeStamp();
+		SvTl::SVTimeStamp l_CurrentTime = SvTl::GetTimeStamp();
 
 		if( 0 < m_DataValidDelayQueue.GetCount() || ( 0 < m_NextDataValidDelayTimestamp && m_NextDataValidDelayTimestamp <= l_CurrentTime ) )
 		{
@@ -4183,14 +4183,14 @@ HRESULT SVPPQObject::ProcessTrigger( bool& p_rProcessed )
 								SVStringVector msgList;
 								msgList.push_back(e.what());
 								SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-								Exception.setMessage( SVMSG_SVO_44_SHARED_MEMORY, SvOi::Tid_ProcessTrigger, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_15026 );
+								Exception.setMessage( SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_ProcessTrigger, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_15026 );
 							}
 							catch (...)
 							{
 								SVStringVector msgList;
-								msgList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_Unknown));
+								msgList.push_back(SvStl::MessageData::convertId2AddtionalText(SvStl::Tid_Unknown));
 								SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-								Exception.setMessage( SVMSG_SVO_44_SHARED_MEMORY, SvOi::Tid_ProcessTrigger, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_15027 );
+								Exception.setMessage( SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_ProcessTrigger, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_15027 );
 							}
 						} // if (HasActiveMonitorList())
 					}
@@ -4335,7 +4335,7 @@ HRESULT SVPPQObject::ProcessResetOutputs( bool& p_rProcessed )
 		{
 			SVProductInfoStruct* l_pProduct = nullptr;
 
-			SVClock::SVTimeStamp l_CurrentTime = SVClock::GetTimeStamp();
+			SvTl::SVTimeStamp l_CurrentTime = SvTl::GetTimeStamp();
 
 			while( 0 < m_oOutputsResetQueue.GetCount() && nullptr == l_pProduct )
 			{
@@ -4417,7 +4417,7 @@ HRESULT SVPPQObject::ProcessDataValidDelay( bool& rProcessed )
 		{
 			SVProductInfoStruct* pProduct(nullptr);
 
-			SVClock::SVTimeStamp CurrentTime = SVClock::GetTimeStamp();
+			SvTl::SVTimeStamp CurrentTime = SvTl::GetTimeStamp();
 
 			while( 0 < m_DataValidDelayQueue.GetCount() && nullptr == pProduct )
 			{
@@ -4701,7 +4701,7 @@ HRESULT SVPPQObject::ProcessCompleteInspections( bool& p_rProcessed )
 
 					l_rPPQInspectInfo.ClearIndexes();
 
-					l_rPPQInspectInfo.m_CallbackReceived = SVClock::GetTimeStamp();
+					l_rPPQInspectInfo.m_CallbackReceived = SvTl::GetTimeStamp();
 
 					l_pPPQProduct->m_ProductState += _T( "|" );
 					l_pPPQProduct->m_ProductState += l_rInspectInfo.pInspection->GetName();
@@ -4853,7 +4853,7 @@ void SVPPQObject::PersistInputs(SVObjectWriter& rWriter)
 	_variant_t l_svValue;
 	SVString l_svName;
 
-	rWriter.StartElement(CTAG_INPUT);
+	rWriter.StartElement(SvXml::CTAG_INPUT);
 
 	GetAllInputs( ppIOEntries );
 
@@ -4865,7 +4865,7 @@ void SVPPQObject::PersistInputs(SVObjectWriter& rWriter)
 		if( !pIOEntry.empty() 
 			&& pIOEntry->m_ObjectType != IO_CAMERA_DATA_INPUT ) 
 		{
-			l_svName = SvUl_SF::Format(CTAGF_INPUT_X, lInput);
+			l_svName = SvUl_SF::Format(SvXml::CTAGF_INPUT_X, lInput);
 			rWriter.StartElement(l_svName.c_str());
 
 			switch (pIOEntry->m_ObjectType)
@@ -4873,19 +4873,19 @@ void SVPPQObject::PersistInputs(SVObjectWriter& rWriter)
 			case IO_DIGITAL_INPUT:
 				{
 					l_svValue.SetString( _T("Digital") );
-					rWriter.WriteAttribute(CTAG_IO_TYPE, l_svValue);
+					rWriter.WriteAttribute(SvXml::CTAG_IO_TYPE, l_svValue);
 					l_svValue.Clear();
 
 					l_svValue.SetString( pIOEntry->getObject()->GetName() );
-					rWriter.WriteAttribute(CTAG_ITEM_NAME, l_svValue);
+					rWriter.WriteAttribute(SvXml::CTAG_ITEM_NAME, l_svValue);
 					l_svValue.Clear();
 
 					l_svValue = -1;
-					rWriter.WriteAttribute(CTAG_ATTRIBUTE, l_svValue);
+					rWriter.WriteAttribute(SvXml::CTAG_ATTRIBUTE, l_svValue);
 					l_svValue.Clear();
 
 					l_svValue = pIOEntry->m_PPQIndex;
-					rWriter.WriteAttribute(CTAG_PPQ_POSITION, l_svValue);
+					rWriter.WriteAttribute(SvXml::CTAG_PPQ_POSITION, l_svValue);
 					l_svValue.Clear();
 				}
 				break;
@@ -4893,11 +4893,11 @@ void SVPPQObject::PersistInputs(SVObjectWriter& rWriter)
 			case IO_REMOTE_INPUT:
 				{
 					l_svValue.SetString( _T("Remote") );
-					rWriter.WriteAttribute(CTAG_IO_TYPE, l_svValue);
+					rWriter.WriteAttribute(SvXml::CTAG_IO_TYPE, l_svValue);
 					l_svValue.Clear();
 
 					l_svValue.SetString( pIOEntry->getObject()->GetName() );
-					rWriter.WriteAttribute(CTAG_ITEM_NAME, l_svValue);
+					rWriter.WriteAttribute(SvXml::CTAG_ITEM_NAME, l_svValue);
 					l_svValue.Clear();
 
 					SVRemoteInputObject* pRemote = nullptr;
@@ -4907,12 +4907,12 @@ void SVPPQObject::PersistInputs(SVObjectWriter& rWriter)
 					if( nullptr != pRemote )
 					{
 						l_svValue = pRemote->m_lIndex;
-						rWriter.WriteAttribute(CTAG_REMOTE_INDEX, l_svValue);
+						rWriter.WriteAttribute(SvXml::CTAG_REMOTE_INDEX, l_svValue);
 						l_svValue.Clear();
 					}
 
 					l_svValue = pIOEntry->m_PPQIndex;
-					rWriter.WriteAttribute(CTAG_PPQ_POSITION, l_svValue);
+					rWriter.WriteAttribute(SvXml::CTAG_PPQ_POSITION, l_svValue);
 					l_svValue.Clear();
 
 					if( nullptr != pRemote )
@@ -4921,7 +4921,7 @@ void SVPPQObject::PersistInputs(SVObjectWriter& rWriter)
 
 						if( l_svValue.vt != VT_EMPTY )
 						{
-							rWriter.WriteAttribute(CTAG_REMOTE_INITIAL_VALUE, l_svValue);
+							rWriter.WriteAttribute(SvXml::CTAG_REMOTE_INITIAL_VALUE, l_svValue);
 						}
 					}
 				}
@@ -5276,7 +5276,7 @@ void SVPPQObject::SetRejectConditionList(const SVMonitorItemList& rRejectCondLis
 	if (bNotFound)
 	{
 		SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-		Exception.setMessage( SVMSG_SVO_45_SHARED_MEMORY_SETUP_LISTS, SvOi::Tid_ErrorNotAllRejectConditionItemsFound, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_15028 );
+		Exception.setMessage( SVMSG_SVO_45_SHARED_MEMORY_SETUP_LISTS, SvStl::Tid_ErrorNotAllRejectConditionItemsFound, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_15028 );
 	}
 }
 
@@ -5300,14 +5300,14 @@ void SVPPQObject::ReleaseSharedMemory(const SVProductInfoStruct& rProduct)
 			SVStringVector msgList;
 			msgList.push_back(e.what());
 			SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-			Exception.setMessage( SVMSG_SVO_44_SHARED_MEMORY, SvOi::Tid_ReleaseProduct, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_15029 );
+			Exception.setMessage( SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_ReleaseProduct, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_15029 );
 		}
 		catch (...)
 		{
 			SVStringVector msgList;
-			msgList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_Unknown));
+			msgList.push_back(SvStl::MessageData::convertId2AddtionalText(SvStl::Tid_Unknown));
 			SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-			Exception.setMessage( SVMSG_SVO_44_SHARED_MEMORY, SvOi::Tid_ReleaseProduct, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_15030 );
+			Exception.setMessage( SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_ReleaseProduct, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_15030 );
 		}
 	}
 }
@@ -5345,7 +5345,7 @@ void SVPPQObject::CommitSharedMemory(const SVProductInfoStruct& rProduct)
 				if (S_OK != hr)
 				{
 					SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-					Exception.setMessage( SVMSG_SVO_50_SHARED_MEMORY_COPY_LASTINSPECTED_TO_REJECT, SvOi::Tid_ErrorCopyLastInspectedToReject, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_15031 );
+					Exception.setMessage( SVMSG_SVO_50_SHARED_MEMORY_COPY_LASTINSPECTED_TO_REJECT, SvStl::Tid_ErrorCopyLastInspectedToReject, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_15031 );
 				}
 			}
 			// Mark Product Share as ready for reading
@@ -5359,14 +5359,14 @@ void SVPPQObject::CommitSharedMemory(const SVProductInfoStruct& rProduct)
 			SVStringVector msgList;
 			msgList.push_back(e.what());
 			SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-			Exception.setMessage( SVMSG_SVO_44_SHARED_MEMORY, SvOi::Tid_CommitSharedMemory, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_15032 );
+			Exception.setMessage( SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_CommitSharedMemory, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_15032 );
 		}
 		catch (...)
 		{
 			SVStringVector msgList;
-			msgList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_Unknown));
+			msgList.push_back(SvStl::MessageData::convertId2AddtionalText(SvStl::Tid_Unknown));
 			SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-			Exception.setMessage( SVMSG_SVO_44_SHARED_MEMORY, SvOi::Tid_CommitSharedMemory, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_15033 );
+			Exception.setMessage( SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_CommitSharedMemory, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_15033 );
 		}
 	}
 }
@@ -5430,7 +5430,7 @@ DWORD SVPPQObject::GetObjectColor() const
 {
 	return SV_DEFAULT_WHITE_COLOR;
 }
-void SVPPQObject::SetNAKMode(NakGeneration nakMode, int NAKPar)
+void SVPPQObject::SetNAKMode(SvOi::NakGeneration nakMode, int NAKPar)
 {
 	m_NAKMode= nakMode;
 	m_NAKParameter = NAKPar;

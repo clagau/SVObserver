@@ -33,7 +33,7 @@
 
 #pragma once
 
-namespace Seidenader { namespace GridCtrlLibrary
+namespace SvGcl
 {
 	class CGridMemDC : public CDC
 	{
@@ -110,6 +110,6 @@ namespace Seidenader { namespace GridCtrlLibrary
 		BOOL     m_bMemDC;      // TRUE if CDC really is a Memory DC.
 	};
 
-} /*namespace GridCtrlLibrary*/ } /*namespace Seidenader*/
+} // namespace SvGcl
 
-namespace SvGcl = Seidenader::GridCtrlLibrary;
+

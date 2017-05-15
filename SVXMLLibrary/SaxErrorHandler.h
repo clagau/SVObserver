@@ -11,7 +11,7 @@
 #pragma endregion Includes
 
 
-namespace Seidenader { namespace  SVXMLLibrary
+namespace SvXml
 {
 	/// /brief Implement ISAXerrorHandler
 	/// events are delegated to IXMLElementHandler
@@ -71,6 +71,4 @@ namespace Seidenader { namespace  SVXMLLibrary
 		ISaxElementHandler* m_pElementHandler; 
 	#pragma endregion Member variables
 	};
-} /* namespace SVXMLLibrary */ } /* namespace Seidenader */
-
-namespace SvXml = Seidenader::SVXMLLibrary;
+} //namespace SvXml

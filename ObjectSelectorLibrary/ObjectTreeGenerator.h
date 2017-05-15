@@ -25,7 +25,7 @@
 #include "SelectorOptions.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace ObjectSelectorLibrary
+namespace SvOsl
 {
 	class ObjectTreeGenerator
 	{
@@ -197,10 +197,8 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 		long m_LeafCount;							//The number of leafs in the selector (only as debug information)
 	#pragma endregion Member Variables
 	};
-} /* namespace ObjectSelectorLibrary */ } /* namespace Seidenader */
+} //namespace SvOsl
 
 #pragma region Inline
 #include "ObjectTreeGenerator.inl"
 #pragma endregion Inline
-
-namespace SvOsl = Seidenader::ObjectSelectorLibrary;

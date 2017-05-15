@@ -170,7 +170,7 @@ HRESULT SVAccessClass::PasswordDialog(SVString& rUser, SVString& rPassword, LPCT
 					msgList.push_back( NewUser );
 					msgList.push_back( SVString(Attempt) );
 					SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-					Exception.setMessage( SVMSG_SVS_ACCESS_DENIED, SvOi::Tid_Security_Access_Denied, msgList, SvStl::SourceFileParams(StdMessageParams) );
+					Exception.setMessage( SVMSG_SVS_ACCESS_DENIED, SvStl::Tid_Security_Access_Denied, msgList, SvStl::SourceFileParams(StdMessageParams) );
 
 					NewUser.clear();
 					NewPassword.clear();
@@ -187,7 +187,7 @@ HRESULT SVAccessClass::PasswordDialog(SVString& rUser, SVString& rPassword, LPCT
 				msgList.push_back( dlg.getUser() );
 				msgList.push_back( SVString(Attempt) );
 				SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-				Exception.setMessage( SVMSG_SVS_ACCESS_DENIED, SvOi::Tid_Security_Access_Denied, msgList, SvStl::SourceFileParams(StdMessageParams) );
+				Exception.setMessage( SVMSG_SVS_ACCESS_DENIED, SvStl::Tid_Security_Access_Denied, msgList, SvStl::SourceFileParams(StdMessageParams) );
 
 				Result = SVMSG_SVS_ACCESS_DENIED;
 			}
@@ -437,17 +437,17 @@ HRESULT SVAccessClass::Validate(  long lId1 )
 					// Event viewer
 					// Application Log Gained Access...Category - SVAccess
 					SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-					Exception.setMessage( SVMSG_SVS_ACCESS_GRANTED, SvOi::Tid_Security_Access_Granted, msgList, SvStl::SourceFileParams(StdMessageParams) );
+					Exception.setMessage( SVMSG_SVS_ACCESS_GRANTED, SvStl::Tid_Security_Access_Granted, msgList, SvStl::SourceFileParams(StdMessageParams) );
 
 					msgList.clear();
 					msgList.push_back( TmpUser );
-					Exception.setMessage( lId1, SvOi::Tid_Security_GainedAccess, msgList, SvStl::SourceFileParams(StdMessageParams) );
+					Exception.setMessage( lId1, SvStl::Tid_Security_GainedAccess, msgList, SvStl::SourceFileParams(StdMessageParams) );
 					break;
 				}
 				if( UserValidated )
 				{
 					SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-					Exception.setMessage( SVMSG_SVS_ACCESS_DENIED, SvOi::Tid_Security_Access_Denied, msgList, SvStl::SourceFileParams(StdMessageParams) );
+					Exception.setMessage( SVMSG_SVS_ACCESS_DENIED, SvStl::Tid_Security_Access_Denied, msgList, SvStl::SourceFileParams(StdMessageParams) );
 
 					Status = _T("User Does Not Have Rights to This Function");
 				}
@@ -459,10 +459,10 @@ HRESULT SVAccessClass::Validate(  long lId1 )
 	else
 	{
 		SVStringVector msgList;
-		msgList.push_back( SvStl::MessageData::convertId2AddtionalText( SvOi::Tid_Security_Disabled) );
+		msgList.push_back( SvStl::MessageData::convertId2AddtionalText( SvStl::Tid_Security_Disabled) );
 		
 		SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-		Exception.setMessage( lId1, SvOi::Tid_Security_GainedAccess, msgList, SvStl::SourceFileParams(StdMessageParams) );
+		Exception.setMessage( lId1, SvStl::Tid_Security_GainedAccess, msgList, SvStl::SourceFileParams(StdMessageParams) );
 		hr = S_OK;
 	}
 	
@@ -484,7 +484,7 @@ HRESULT SVAccessClass::Validate(  long lId1, long lId2)
 {
 	HRESULT hr = S_FALSE;
 	SVString Status;
-	SvOi::MessageTextEnum msgId = SvOi::Tid_Empty;
+	SvStl::MessageTextEnum msgId = SvStl::Tid_Empty;
 	SVStringVector msgList;
 
 	SVString NTGroup1;
@@ -557,7 +557,7 @@ HRESULT SVAccessClass::Validate(  long lId1, long lId2)
 				if( (l_lLastState == l_lState) && l_bUserValidated)
 				{
 					Status = _T("User Does Not Have Rights to This Function");
-					msgId = SvOi::Tid_Security_UserNoRights;
+					msgId = SvStl::Tid_Security_UserNoRights;
 					msgList.clear();
 				}
 				else
@@ -568,7 +568,7 @@ HRESULT SVAccessClass::Validate(  long lId1, long lId2)
 						{
 							SVString tmpString = Name1 + _T(" , ") + Name2;
 							Status = _T("Access - ") + tmpString;
-							msgId = SvOi::Tid_Security_Access;
+							msgId = SvStl::Tid_Security_Access;
 							msgList.clear();
 							msgList.push_back(SVString(tmpString));
 							break;
@@ -576,7 +576,7 @@ HRESULT SVAccessClass::Validate(  long lId1, long lId2)
 						case 1:
 						{
 							Status = _T("Access - ") + Name2;
-							msgId = SvOi::Tid_Security_Access;
+							msgId = SvStl::Tid_Security_Access;
 							msgList.clear();
 							msgList.push_back(SVString(Name2));
 							break;
@@ -584,7 +584,7 @@ HRESULT SVAccessClass::Validate(  long lId1, long lId2)
 						case 2:
 						{
 							Status = _T("Access - ") + Name1;
-							msgId = SvOi::Tid_Security_Access;
+							msgId = SvStl::Tid_Security_Access;
 							msgList.clear();
 							msgList.push_back(SVString(Name1));
 							break;
@@ -647,9 +647,9 @@ HRESULT SVAccessClass::Validate(  long lId1, long lId2)
 					msgList.clear();
 					msgList.push_back( TmpUser );
 					SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-					Exception.setMessage( lId1, SvOi::Tid_Security_GainedAccess, msgList, SvStl::SourceFileParams(StdMessageParams) );
+					Exception.setMessage( lId1, SvStl::Tid_Security_GainedAccess, msgList, SvStl::SourceFileParams(StdMessageParams) );
 
-					Exception.setMessage( lId2, SvOi::Tid_Security_GainedAccess, msgList, SvStl::SourceFileParams(StdMessageParams) );
+					Exception.setMessage( lId2, SvStl::Tid_Security_GainedAccess, msgList, SvStl::SourceFileParams(StdMessageParams) );
 
 					break;
 				}
@@ -661,7 +661,7 @@ HRESULT SVAccessClass::Validate(  long lId1, long lId2)
 						msgList.push_back( TmpUser );
 						msgList.push_back( Name1 );
 						SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-						Exception.setMessage( SVMSG_SVS_ACCESS_DENIED, SvOi::Tid_Security_Access_Denied, msgList, SvStl::SourceFileParams(StdMessageParams) );
+						Exception.setMessage( SVMSG_SVS_ACCESS_DENIED, SvStl::Tid_Security_Access_Denied, msgList, SvStl::SourceFileParams(StdMessageParams) );
 					}
 
 				}
@@ -672,9 +672,9 @@ HRESULT SVAccessClass::Validate(  long lId1, long lId2)
 	else
 	{
 		msgList.clear();
-		msgList.push_back( SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_Security_Disabled) );
+		msgList.push_back( SvStl::MessageData::convertId2AddtionalText(SvStl::Tid_Security_Disabled) );
 		SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-		Exception.setMessage( lId1, SvOi::Tid_Security_GainedAccess, msgList, SvStl::SourceFileParams(StdMessageParams) );
+		Exception.setMessage( lId1, SvStl::Tid_Security_GainedAccess, msgList, SvStl::SourceFileParams(StdMessageParams) );
 		hr = S_OK;
 	}
 	
@@ -789,7 +789,7 @@ HRESULT SVAccessClass::Logout()
 	SVStringVector msgList;
 	msgList.push_back( m_svStorage.GetCurrentUser() );
 	SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-	Exception.setMessage( SVMSG_SVS_ACCESS_LOGGED_OUT, SvOi::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams) );
+	Exception.setMessage( SVMSG_SVS_ACCESS_LOGGED_OUT, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams) );
 
 	m_svStorage.ClearUser();
 	m_svStorage.ClearPW();
@@ -808,7 +808,7 @@ HRESULT SVAccessClass::Logon()
 
 	HRESULT hr;
 	SVString Status;
-	SVString Attempt = SvStl::MessageTextGenerator::Instance().getText(SvOi::Tid_Security_Login);
+	SVString Attempt = SvStl::MessageTextGenerator::Instance().getText(SvStl::Tid_Security_Login);
 	while( (hr = PasswordDialog( TmpUser, TmpPW, Attempt.c_str(), Status.c_str() )) == SVMSG_SVS_ACCESS_DENIED )
 	{
 		Status = _T("Invalid User or Password");
@@ -821,7 +821,7 @@ HRESULT SVAccessClass::Logon()
 		msgList.push_back( Attempt );
 
 		SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-		Exception.setMessage( SVMSG_SVS_ACCESS_GRANTED, SvOi::Tid_Security_Access_Granted, msgList, SvStl::SourceFileParams(StdMessageParams) );
+		Exception.setMessage( SVMSG_SVS_ACCESS_GRANTED, SvStl::Tid_Security_Access_Granted, msgList, SvStl::SourceFileParams(StdMessageParams) );
 
 		m_svStorage.SetUser( TmpUser.c_str() );
 		m_svStorage.SetPW( TmpPW.c_str() );

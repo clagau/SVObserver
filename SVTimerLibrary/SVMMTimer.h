@@ -20,33 +20,35 @@
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
-class SVMMTimer
+namespace SvTl
 {
-	typedef void (CALLBACK *APCSignalHandler)( ULONG_PTR );
-	typedef boost::function<void ( bool& )> ThreadSignalHandler;
+	class SVMMTimer
+	{
+		typedef void (CALLBACK *APCSignalHandler)( ULONG_PTR );
+		typedef boost::function<void ( bool& )> ThreadSignalHandler;
 
-public:
-	static SVMMTimer& Instance();
+	public:
+		static SVMMTimer& Instance();
 	
-	static void Start();
-	static void Stop();
+		static void Start();
+		static void Stop();
 
-	static void Subscribe(const SVString& receiverTag, unsigned long interval, SVTimerCallback* pCallback);
-	static void SetInterval(const SVString& receiverTag, unsigned long interval);
-	static void UnSubscribe(const SVString& receiverTag);
+		static void Subscribe(const SVString& receiverTag, unsigned long interval, SVTimerCallback* pCallback);
+		static void SetInterval(const SVString& receiverTag, unsigned long interval);
+		static void UnSubscribe(const SVString& receiverTag);
 
-private:
-	SVAsyncProcedure<APCSignalHandler, ThreadSignalHandler> m_asyncProcedure;
-	SVTimerEventListeners m_eventListeners;
-	unsigned int m_timerID;
+	private:
+		SVAsyncProcedure<APCSignalHandler, ThreadSignalHandler> m_asyncProcedure;
+		SVTimerEventListeners m_eventListeners;
+		unsigned int m_timerID;
 
-	SVMMTimer();
-	~SVMMTimer();
+		SVMMTimer();
+		~SVMMTimer();
 
-	static void CALLBACK TimerProc( UINT uTimerID, UINT uRsvd, DWORD_PTR dwUser, DWORD_PTR dwRsvd1, DWORD_PTR dwRsvd2 );
-	static void CALLBACK TimerAPCProc( ULONG_PTR dwParam );
+		static void CALLBACK TimerProc( UINT uTimerID, UINT uRsvd, DWORD_PTR dwUser, DWORD_PTR dwRsvd1, DWORD_PTR dwRsvd2 );
+		static void CALLBACK TimerAPCProc( ULONG_PTR dwParam );
 
-	void Dispatch( bool& p_WaitForEvents );
-	SVCriticalSection m_CritSec;
-};
-
+		void Dispatch( bool& p_WaitForEvents );
+		SVCriticalSection m_CritSec;
+	};
+} //namespace SvTl

@@ -85,32 +85,32 @@ unsigned char* SVImageBufferInterface::GetBufferAddress() const
 	return l_pBuffer;
 }
 
-const SVClock::SVTimeStamp& SVImageBufferInterface::GetStartFrameTimeStamp() const
+const SvTl::SVTimeStamp& SVImageBufferInterface::GetStartFrameTimeStamp() const
 {
 	return m_StartTimeStamp;
 }
 
 void SVImageBufferInterface::SetStartFrameTimeStamp()
 {
-	m_StartTimeStamp = SVClock::GetTimeStamp();
+	m_StartTimeStamp = SvTl::GetTimeStamp();
 }
 
-void SVImageBufferInterface::SetStartFrameTimeStamp( const SVClock::SVTimeStamp& p_rTimeStamp )
+void SVImageBufferInterface::SetStartFrameTimeStamp( const SvTl::SVTimeStamp& p_rTimeStamp )
 {
 	m_StartTimeStamp = p_rTimeStamp;
 }
 
-const SVClock::SVTimeStamp& SVImageBufferInterface::GetEndFrameTimeStamp() const
+const SvTl::SVTimeStamp& SVImageBufferInterface::GetEndFrameTimeStamp() const
 {
 	return m_EndTimeStamp;
 }
 
 void SVImageBufferInterface::SetEndFrameTimeStamp()
 {
-	m_EndTimeStamp = SVClock::GetTimeStamp();
+	m_EndTimeStamp = SvTl::GetTimeStamp();
 }
 
-void SVImageBufferInterface::SetEndFrameTimeStamp( const SVClock::SVTimeStamp& p_rTimeStamp )
+void SVImageBufferInterface::SetEndFrameTimeStamp( const SvTl::SVTimeStamp& p_rTimeStamp )
 {
 	m_EndTimeStamp = p_rTimeStamp;
 }

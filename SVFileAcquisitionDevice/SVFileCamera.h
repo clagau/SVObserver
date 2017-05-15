@@ -113,7 +113,7 @@ public:
 
 	SVAcquisitionBufferInterface* m_pBufferInterface;
 
-	SVClock::SVTimeStamp m_StartTimeStamp;
+	SvTl::SVTimeStamp m_StartTimeStamp;
 	SvTh::TriggerDispatcher m_dispatcher;
 };
 

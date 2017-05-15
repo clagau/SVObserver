@@ -147,7 +147,7 @@ BOOL SVToolAdjustmentDialogAnalyzerPageClass::OnInitDialog()
 		}
 
 		
-		typedef GuiCmd::GetCreatableObjects Command;
+		typedef SvCmd::GetCreatableObjects Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 
 		SvUl::NameGuidList availableList;
@@ -220,8 +220,8 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnButtonDetails()
 					l_ToolId = m_pTool->GetUniqueObjectID();
 				}
 
-				GuiCmd::InspectionRunOncePtr l_CommandPtr = new GuiCmd::InspectionRunOnce( pInspection->GetUniqueObjectID(), l_ToolId );
-				SVObjectSynchronousCommandTemplate< GuiCmd::InspectionRunOncePtr > l_Command( pInspection->GetUniqueObjectID(), l_CommandPtr );
+				SvCmd::InspectionRunOncePtr l_CommandPtr = new SvCmd::InspectionRunOnce( pInspection->GetUniqueObjectID(), l_ToolId );
+				SVObjectSynchronousCommandTemplate< SvCmd::InspectionRunOncePtr > l_Command( pInspection->GetUniqueObjectID(), l_CommandPtr );
 
 				l_Command.Execute( TWO_MINUTE_CMD_TIMEOUT );
 			}
@@ -230,7 +230,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnButtonDetails()
 	else
 	{
 		SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-		Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvOi::Tid_Error_NoAnalyzerDetails, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10210 );
+		Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_Error_NoAnalyzerDetails, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10210 );
 	}
 }
 
@@ -275,10 +275,10 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnSelchangeCurrentAnalyzer()
 				if( ! m_pCurrentAnalyzer->IsCreated() )
 				{
 					// And finally try to create the child object...
-					if( !m_pTool->CreateChildObject(m_pCurrentAnalyzer, SVMFSetDefaultInputs | SVMFResetInspection ) )
+					if( !m_pTool->CreateChildObject(m_pCurrentAnalyzer, SvOi::SVMFSetDefaultInputs | SvOi::SVMFResetInspection ) )
 					{
 						SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-						Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_Error_AnalyzerCreationFailed, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10211 );
+						Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Error_AnalyzerCreationFailed, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10211 );
 
 						// Remove it from the Tool TaskObjectList ( Destruct it )
 						GUID objectID = m_pCurrentAnalyzer->GetUniqueObjectID();
@@ -298,7 +298,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnSelchangeCurrentAnalyzer()
 			else
 			{
 				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-				Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_Error_AnalyzerInstantiationFailed, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10212 );
+				Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Error_AnalyzerInstantiationFailed, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10212 );
 			}
 		}
 	}
@@ -322,8 +322,8 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnSelchangeCurrentAnalyzer()
 				l_ToolId = m_pTool->GetUniqueObjectID();
 			}
 
-			GuiCmd::InspectionRunOncePtr l_CommandPtr = new GuiCmd::InspectionRunOnce( pInspection->GetUniqueObjectID(), l_ToolId );
-			SVObjectSynchronousCommandTemplate< GuiCmd::InspectionRunOncePtr > l_Command( pInspection->GetUniqueObjectID(), l_CommandPtr );
+			SvCmd::InspectionRunOncePtr l_CommandPtr = new SvCmd::InspectionRunOnce( pInspection->GetUniqueObjectID(), l_ToolId );
+			SVObjectSynchronousCommandTemplate< SvCmd::InspectionRunOncePtr > l_Command( pInspection->GetUniqueObjectID(), l_CommandPtr );
 
 			l_Command.Execute( TWO_MINUTE_CMD_TIMEOUT );
 		}
@@ -347,7 +347,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::DestroyAnalyzer()
 		m_pCurrentAnalyzer->DisconnectImages();
 
 		// Close, Disconnect and Delete the Object
-		m_pTool->DestroyChildObject(m_pCurrentAnalyzer, SVMFSetDefaultInputs | SVMFResetInspection );
+		m_pTool->DestroyChildObject(m_pCurrentAnalyzer, SvOi::SVMFSetDefaultInputs | SvOi::SVMFResetInspection );
 
 		m_pCurrentAnalyzer = nullptr;
 	}
@@ -407,7 +407,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnResultButton()
 		SVClassInfoStructListClass	availableResults;
 		SVObjectTypeInfoStruct		resultTypeInfo;
 		resultTypeInfo.ObjectType = SVResultObjectType;
-		//@TODO[MZA][7.40][14.10.2016] The getAvailableObject method should be replaced by the GuiCmd::GetAvailableObjects
+		//@TODO[MZA][7.40][14.10.2016] The getAvailableObject method should be replaced by the SvCmd::GetAvailableObjects
 		m_pCurrentAnalyzer->getAvailableObjects(&availableResults, &resultTypeInfo);
 
 		// Get Dialog Title...
@@ -452,7 +452,7 @@ void SVToolAdjustmentDialogAnalyzerPageClass::OnPublishButton()
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSetAttributes );
 	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, SVString(m_pTool->GetCompleteName()), SVString( _T("") ) );
 
-	SvOsl::SelectorOptions BuildOptions( pInspection->GetUniqueObjectID(), SV_PUBLISHABLE, m_pCurrentAnalyzer->GetUniqueObjectID() );
+	SvOsl::SelectorOptions BuildOptions( pInspection->GetUniqueObjectID(), SvOi::SV_PUBLISHABLE, m_pCurrentAnalyzer->GetUniqueObjectID() );
 	SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::NoSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<>>( BuildOptions );
 
 	SVString PublishableResults = SvUl_SF::LoadSVString( IDS_PUBLISHABLE_RESULTS );

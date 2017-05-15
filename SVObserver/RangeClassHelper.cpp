@@ -116,7 +116,7 @@ HRESULT RangeClassHelper::GetAllInspectionData()
 	return hr;
 }
 
-void RangeClassHelper::SetInternalData(SvOi::MessageTextEnum er, LPCTSTR lp)
+void RangeClassHelper::SetInternalData(SvStl::MessageTextEnum er, LPCTSTR lp)
 {
 	SVString Text = lp;
 	double val = 0.0;
@@ -130,7 +130,7 @@ void RangeClassHelper::SetInternalData(SvOi::MessageTextEnum er, LPCTSTR lp)
 		SVStringVector msgList;
 		msgList.push_back(SvStl::MessageData::convertId2AddtionalText(er));
 		SvStl::MessageMgrStd Exception( SvStl::DataOnly );
-		Exception.setMessage( SVMSG_SVO_68_RANGE_VALUE_SET_FAILED, SvOi::Tid_RangeValue_EmptyString, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16022 );
+		Exception.setMessage( SVMSG_SVO_68_RANGE_VALUE_SET_FAILED, SvStl::Tid_RangeValue_EmptyString, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16022 );
 		Exception.Throw();
 	}
 
@@ -145,38 +145,38 @@ void RangeClassHelper::SetInternalData(SvOi::MessageTextEnum er, LPCTSTR lp)
 			msgList.push_back(SvUl_SF::Format("%d", static_cast<int>(s_RangeMin)));
 			msgList.push_back(SvUl_SF::Format("%d", static_cast<int>(s_RangeMax)));
 			SvStl::MessageMgrStd Exception( SvStl::DataOnly );
-			Exception.setMessage( SVMSG_SVO_68_RANGE_VALUE_SET_FAILED, SvOi::Tid_RangeValue_WrongRange, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16023 );
+			Exception.setMessage( SVMSG_SVO_68_RANGE_VALUE_SET_FAILED, SvStl::Tid_RangeValue_WrongRange, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16023 );
 			Exception.Throw();
 		}
 	}
 
 	switch (er)
 	{
-	case SvOi::Tid_FailHigh:
+	case SvStl::Tid_FailHigh:
 		m_FailHigh = val;
 		m_FailHighIndirect = Text;
 		break;
-	case SvOi::Tid_WarnHigh:
+	case SvStl::Tid_WarnHigh:
 		m_WarnHigh = val;
 		m_WarnHighIndirect = Text;
 		break;
-	case SvOi::Tid_FailLow:
+	case SvStl::Tid_FailLow:
 		m_FailLow = val;
 		m_FailLowIndirect = Text;
 		break;
-	case SvOi::Tid_WarnLow:
+	case SvStl::Tid_WarnLow:
 		m_WarnLow = val;
 		m_WarnLowIndirect = Text;
 		break;
 	default:
 		SvStl::MessageMgrStd Exception( SvStl::DataOnly );
-		Exception.setMessage( SVMSG_SVO_68_RANGE_VALUE_SET_FAILED, SvOi::Tid_ErrorUnknownEnum, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16024 );
+		Exception.setMessage( SVMSG_SVO_68_RANGE_VALUE_SET_FAILED, SvStl::Tid_ErrorUnknownEnum, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16024 );
 		Exception.Throw();
 		break;
 	}
 }
 
-HRESULT RangeClassHelper::CheckInternalData(SvOi::MessageTextEnum &messageId, SVStringVector &messageList) const
+HRESULT RangeClassHelper::CheckInternalData(SvStl::MessageTextEnum &messageId, SVStringVector &messageList) const
 {
 	SVString InspectionName;
 	if( nullptr != m_pRange)
@@ -191,60 +191,60 @@ HRESULT RangeClassHelper::CheckInternalData(SvOi::MessageTextEnum &messageId, SV
 
 	if( m_FailHighIndirect.empty() && m_WarnHighIndirect.empty() && m_FailHigh < m_WarnHigh )
 	{
-		messageId = SvOi::Tid_IsLessThan;
-		messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_FailHigh));
-		messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_WarnHigh));
-		return -SvOi::Err_16012;
+		messageId = SvStl::Tid_IsLessThan;
+		messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvStl::Tid_FailHigh));
+		messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvStl::Tid_WarnHigh));
+		return -SvStl::Err_16012;
 	}
 
 	if( m_FailHighIndirect.empty() && m_WarnLowIndirect.empty() && m_FailHigh < m_WarnLow )
 	{
-		messageId = SvOi::Tid_IsLessThan;
-		messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_FailHigh));
-		messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_WarnLow));
-		return -SvOi::Err_16013;
+		messageId = SvStl::Tid_IsLessThan;
+		messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvStl::Tid_FailHigh));
+		messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvStl::Tid_WarnLow));
+		return -SvStl::Err_16013;
 	}
 
 	if( m_FailHighIndirect.empty() && m_FailLowIndirect.empty() && m_FailHigh < m_FailLow )
 	{
-		messageId = SvOi::Tid_IsLessThan;
-		messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_FailHigh));
-		messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_FailLow));
-		return -SvOi::Err_16014;
+		messageId = SvStl::Tid_IsLessThan;
+		messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvStl::Tid_FailHigh));
+		messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvStl::Tid_FailLow));
+		return -SvStl::Err_16014;
 	}
 
 	if( m_WarnHighIndirect.empty() && m_WarnLowIndirect.empty() && m_WarnHigh < m_WarnLow )
 	{
-		messageId = SvOi::Tid_IsLessThan;
-		messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_WarnHigh));
-		messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_WarnLow));
-		return -SvOi::Err_16015;
+		messageId = SvStl::Tid_IsLessThan;
+		messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvStl::Tid_WarnHigh));
+		messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvStl::Tid_WarnLow));
+		return -SvStl::Err_16015;
 	}
 
 	if( m_WarnHighIndirect.empty() && m_FailLowIndirect.empty() && m_WarnHigh < m_FailLow )
 	{
-		messageId = SvOi::Tid_IsLessThan;
-		messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_WarnHigh));
-		messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_FailLow));
-		return -SvOi::Err_16016;
+		messageId = SvStl::Tid_IsLessThan;
+		messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvStl::Tid_WarnHigh));
+		messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvStl::Tid_FailLow));
+		return -SvStl::Err_16016;
 	}
 
 	if( m_WarnLowIndirect.empty() && m_FailLowIndirect.empty() && m_WarnLow < m_FailLow )
 	{
-		messageId = SvOi::Tid_IsLessThan;
-		messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_WarnLow));
-		messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_FailLow));
-		return -SvOi::Err_16017;
+		messageId = SvStl::Tid_IsLessThan;
+		messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvStl::Tid_WarnLow));
+		messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvStl::Tid_FailLow));
+		return -SvStl::Err_16017;
 	}
 
 	if( !m_FailHighIndirect.empty() )
 	{
 		if( !isValidReference( InspectionName, m_FailHighIndirect ) )
 		{
-			messageId = SvOi::Tid_IsInvalidRef;
-			messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_FailHigh));
+			messageId = SvStl::Tid_IsInvalidRef;
+			messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvStl::Tid_FailHigh));
 			messageList.push_back(SVString(m_FailHighIndirect));
-			return -SvOi::Err_16018;
+			return -SvStl::Err_16018;
 		}
 	}
 
@@ -252,10 +252,10 @@ HRESULT RangeClassHelper::CheckInternalData(SvOi::MessageTextEnum &messageId, SV
 	{
 		if( !isValidReference( InspectionName, m_WarnHighIndirect ) )
 		{
-			messageId = SvOi::Tid_IsInvalidRef;
-			messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_WarnHigh));
+			messageId = SvStl::Tid_IsInvalidRef;
+			messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvStl::Tid_WarnHigh));
 			messageList.push_back(SVString(m_WarnHighIndirect));
-			return -SvOi::Err_16019;
+			return -SvStl::Err_16019;
 		}
 	}
 
@@ -263,10 +263,10 @@ HRESULT RangeClassHelper::CheckInternalData(SvOi::MessageTextEnum &messageId, SV
 	{
 		if( !isValidReference( InspectionName, m_WarnLowIndirect ) )
 		{
-			messageId = SvOi::Tid_IsInvalidRef;
-			messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_WarnLow));
+			messageId = SvStl::Tid_IsInvalidRef;
+			messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvStl::Tid_WarnLow));
 			messageList.push_back(SVString(m_WarnLowIndirect));
-			return -SvOi::Err_16020;
+			return -SvStl::Err_16020;
 		}
 	}
 
@@ -274,10 +274,10 @@ HRESULT RangeClassHelper::CheckInternalData(SvOi::MessageTextEnum &messageId, SV
 	{
 		if( !isValidReference( InspectionName, m_FailLowIndirect ) )
 		{
-			messageId = SvOi::Tid_IsInvalidRef;
-			messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_FailLow));
+			messageId = SvStl::Tid_IsInvalidRef;
+			messageList.push_back(SvStl::MessageData::convertId2AddtionalText(SvStl::Tid_FailLow));
 			messageList.push_back(SVString(m_FailLowIndirect));
-			return -SvOi::Err_16021;
+			return -SvStl::Err_16021;
 		}
 	}
 
@@ -286,14 +286,14 @@ HRESULT RangeClassHelper::CheckInternalData(SvOi::MessageTextEnum &messageId, SV
 
 HRESULT RangeClassHelper::SetInspectionData()
 {
-	HRESULT hr = -SvOi::Err_16011;
+	HRESULT hr = -SvStl::Err_16011;
 	if( m_pRange )
 	{
 		hr = AddInputRequest( &( m_pRange->FailHigh ), m_FailHigh );
 
 		if( S_OK != hr )
 		{
-			hr = -SvOi::Err_16001;
+			hr = -SvStl::Err_16001;
 		}
 		else
 		{
@@ -302,7 +302,7 @@ HRESULT RangeClassHelper::SetInspectionData()
 
 		if( S_OK != hr )
 		{
-			hr = -SvOi::Err_16002;
+			hr = -SvStl::Err_16002;
 		}
 		else
 		{
@@ -311,7 +311,7 @@ HRESULT RangeClassHelper::SetInspectionData()
 
 		if( S_OK != hr )
 		{
-			hr = -SvOi::Err_16003;
+			hr = -SvStl::Err_16003;
 		}
 		else
 		{
@@ -320,7 +320,7 @@ HRESULT RangeClassHelper::SetInspectionData()
 
 		if( S_OK != hr )
 		{
-			hr = -SvOi::Err_16004;
+			hr = -SvStl::Err_16004;
 		}
 		else
 		{
@@ -329,7 +329,7 @@ HRESULT RangeClassHelper::SetInspectionData()
 
 		if( S_OK != hr )
 		{
-			hr = -SvOi::Err_16005;
+			hr = -SvStl::Err_16005;
 		}
 		else
 		{
@@ -338,7 +338,7 @@ HRESULT RangeClassHelper::SetInspectionData()
 
 		if( S_OK != hr )
 		{
-			hr = -SvOi::Err_16006;
+			hr = -SvStl::Err_16006;
 		}
 		else
 		{
@@ -347,7 +347,7 @@ HRESULT RangeClassHelper::SetInspectionData()
 
 		if( S_OK != hr )
 		{
-			hr = -SvOi::Err_16007;
+			hr = -SvStl::Err_16007;
 		}
 		else
 		{
@@ -356,7 +356,7 @@ HRESULT RangeClassHelper::SetInspectionData()
 
 		if( S_OK != hr )
 		{
-			hr = -SvOi::Err_16008;
+			hr = -SvStl::Err_16008;
 		}
 		else
 		{
@@ -365,7 +365,7 @@ HRESULT RangeClassHelper::SetInspectionData()
 
 		if( S_OK != hr )
 		{
-			hr = -SvOi::Err_16009;
+			hr = -SvStl::Err_16009;
 		}
 		else
 		{
@@ -374,7 +374,7 @@ HRESULT RangeClassHelper::SetInspectionData()
 
 		if( S_OK != hr )
 		{
-			hr = -SvOi::Err_16010;
+			hr = -SvStl::Err_16010;
 		}
 	}
 
@@ -524,8 +524,8 @@ bool RangeClassHelper::FillObjectSelector()
 				SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterOutput, PPQName, SVString( _T("")  ));
 				SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject );
 
-				SvOsl::SelectorOptions BuildOptions( pInspectionProcess->GetUniqueObjectID(), SV_SELECTABLE_FOR_EQUATION, m_pRange->GetUniqueObjectID() );
-				SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::GlobalSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<GuiCmd::RangeSelectorFilterType>>( BuildOptions );
+				SvOsl::SelectorOptions BuildOptions( pInspectionProcess->GetUniqueObjectID(), SvOi::SV_SELECTABLE_FOR_EQUATION, m_pRange->GetUniqueObjectID() );
+				SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::GlobalSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<SvCmd::RangeSelectorFilterType>>( BuildOptions );
 				bRetVal = true;
 			}//@TODO return meaningful error on else
 		}//@TODO return meaningful error on else
@@ -571,7 +571,7 @@ bool RangeClassHelper::isValidReference( const SVString& rInspectionName, const 
 	{
 		Result = false;
 	}
-	else if( 0 == ( ObjectRef.ObjectAttributesAllowed() & SV_SELECTABLE_FOR_EQUATION ) )
+	else if( 0 == ( ObjectRef.ObjectAttributesAllowed() & SvOi::SV_SELECTABLE_FOR_EQUATION ) )
 	{
 		Result = false;
 	}

@@ -928,7 +928,7 @@ HRESULT SVMainFrame::ParseToolsetScripts( SVTreeType& p_rTree )
 	SVTreeType::SVBranchHandle hItemToolset = nullptr;
 	SVTreeType::SVBranchHandle htiChild = nullptr;
 
-	if( SVNavigateTree::GetItemBranch( p_rTree, CTAG_INSPECTION, nullptr, htiChild ) )
+	if( SvXml::SVNavigateTree::GetItemBranch( p_rTree, SvXml::CTAG_INSPECTION, nullptr, htiChild ) )
 	{
 		// Set the Caption
 		CString title = _T( "Loading Toolset(s) ..." );
@@ -949,19 +949,19 @@ HRESULT SVMainFrame::ParseToolsetScripts( SVTreeType& p_rTree )
 			{
 				SVString DataName = p_rTree.getBranchName( htiDataChild );
 
-				if ( 0 == DataName.compare( CTAG_INSPECTION_PROCESS ) )
+				if ( 0 == DataName.compare( SvXml::CTAG_INSPECTION_PROCESS ) )
 				{
-					if( SVNavigateTree::GetItemBranch( p_rTree, CTAG_TOOLSET_SET, htiDataChild, hItemToolset ) )
+					if( SvXml::SVNavigateTree::GetItemBranch( p_rTree, SvXml::CTAG_TOOLSET_SET, htiDataChild, hItemToolset ) )
 					{
 						_variant_t svVariant;
 
-						if( SVNavigateTree::GetItem( p_rTree, CTAG_UNIQUE_REFERENCE_ID, htiDataChild, svVariant ) )
+						if( SvXml::SVNavigateTree::GetItem( p_rTree, SvXml::CTAG_UNIQUE_REFERENCE_ID, htiDataChild, svVariant ) )
 						{
 							ownerGuid = svVariant;
 						}
 					}
 				}
-				else if ( 0 == DataName.compare( CTAG_SVIPDOC ) )
+				else if ( 0 == DataName.compare( SvXml::CTAG_SVIPDOC ) )
 				{
 					htiSVIPDoc = htiDataChild;
 				}
@@ -975,7 +975,7 @@ HRESULT SVMainFrame::ParseToolsetScripts( SVTreeType& p_rTree )
 
 				if( ownerGuid.empty() )
 				{
-					if( SVNavigateTree::GetItem( p_rTree, CTAG_UNIQUE_REFERENCE_ID, htiSVIPDoc, svVariant ) )
+					if( SvXml::SVNavigateTree::GetItem( p_rTree, SvXml::CTAG_UNIQUE_REFERENCE_ID, htiSVIPDoc, svVariant ) )
 					{
 						ownerGuid = svVariant;
 					}
@@ -987,7 +987,7 @@ HRESULT SVMainFrame::ParseToolsetScripts( SVTreeType& p_rTree )
 
 				if( S_OK == l_Status )
 				{
-					if( SVNavigateTree::GetItem( p_rTree, CTAG_TOOLSET_SCRIPT, htiSVIPDoc, svVariant ) )
+					if( SvXml::SVNavigateTree::GetItem( p_rTree, SvXml::CTAG_TOOLSET_SCRIPT, htiSVIPDoc, svVariant ) )
 					{
 						SVString NewString = SvUl_SF::LoadSVString( IDS_OBJECTNAME_PAT_DELTAPOS );
 

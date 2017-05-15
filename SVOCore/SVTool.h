@@ -70,7 +70,7 @@ public:
 	BOOL IsOkToEdit();
 	virtual bool SetDefaultFormulas(SvStl::MessageContainerVector *pErrorMessages=nullptr);
 	
-	SVImageTypeEnum GetImageType();
+	SvOi::SVImageTypeEnum GetImageType();
 
 	HRESULT SetImageExtentProperty( SVExtentPropertyEnum p_eProperty, SvOi::IValueObject* pValueObject );
 

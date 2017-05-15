@@ -22,7 +22,8 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-namespace Seidenader { namespace SVOGui {
+namespace SvOg
+{
 
 	const int SVDlgImageClass::m_iScrollBarSize = 12;
 
@@ -37,9 +38,9 @@ namespace Seidenader { namespace SVOGui {
 		CWnd* pParent = GetParent();
 		ClientToScreen(&point);
 		pParent->ScreenToClient(&point);
-		pParent->PostMessage(WM_MOUSEMOVE, nFlags, MAKELPARAM(point.x, point.y) );
+		pParent->PostMessage(WM_MOUSEMOVE, nFlags, MAKELPARAM(point.x, point.y));
 	}
-		
+
 	BEGIN_MESSAGE_MAP(SVDlgImageClass, CStatic)
 		//{{AFX_MSG_MAP(SVDlgImageClass)
 		ON_WM_PAINT()
@@ -50,8 +51,8 @@ namespace Seidenader { namespace SVOGui {
 	END_MESSAGE_MAP()
 
 	SVDlgImageClass::SVDlgImageClass()
-		: m_inspectionId (SV_GUID_NULL)
-		,m_imageId (SV_GUID_NULL)
+		: m_inspectionId(SV_GUID_NULL)
+		, m_imageId(SV_GUID_NULL)
 	{
 		mbInit = false;
 		m_dZoomX = 1.0;
@@ -68,14 +69,14 @@ namespace Seidenader { namespace SVOGui {
 
 	}
 
-	void SVDlgImageClass::UpdateImageInfo( const SVGUID& inspectionId, const SVGUID& imageId )
+	void SVDlgImageClass::UpdateImageInfo(const SVGUID& inspectionId, const SVGUID& imageId)
 	{
-		ASSERT( SV_GUID_NULL != inspectionId || SV_GUID_NULL != imageId );	// if no source image, must supply info & handle
+		ASSERT(SV_GUID_NULL != inspectionId || SV_GUID_NULL != imageId);	// if no source image, must supply info & handle
 
 		m_inspectionId = inspectionId;
 		m_imageId = imageId;
 
-		if ( nullptr == m_sbHorizontal.m_hWnd )
+		if (nullptr == m_sbHorizontal.m_hWnd)
 		{
 			CRect rect;
 			CRect rectClient;
@@ -90,25 +91,25 @@ namespace Seidenader { namespace SVOGui {
 			m_sbVertical.Create(WS_CHILD | SBS_VERT, rectV, this, 101);
 		}
 
-		GetClientRect( &m_ClientRect );
+		GetClientRect(&m_ClientRect);
 		m_OriginalClientRect = m_ClientRect;
 
 		bool bSetZoom = false;
 		CRect rectTemp = GetOutputRectFromImage();
 
-		if ( m_SourceRect != rectTemp )
+		if (m_SourceRect != rectTemp)
 		{
 			m_ViewportRect = m_SourceRect;
 			bSetZoom = true;
 		}
 		m_SourceRect = rectTemp;
-		m_dFullSizeZoomFactor = (double) m_ClientRect.Width() / (double) m_SourceRect.Width();
-		m_dFullSizeZoomFactorY = (double) m_ClientRect.Height() / (double) m_SourceRect.Height();
-		m_dFullSizeZoomFactorScrollX = (double) (m_ClientRect.Width() - m_iScrollBarSize) / (double) m_SourceRect.Width();
-		m_dFullSizeZoomFactorScrollY = (double) (m_ClientRect.Height() - m_iScrollBarSize) / (double) m_SourceRect.Height();
-		if ( bSetZoom )
+		m_dFullSizeZoomFactor = (double)m_ClientRect.Width() / (double)m_SourceRect.Width();
+		m_dFullSizeZoomFactorY = (double)m_ClientRect.Height() / (double)m_SourceRect.Height();
+		m_dFullSizeZoomFactorScrollX = (double)(m_ClientRect.Width() - m_iScrollBarSize) / (double)m_SourceRect.Width();
+		m_dFullSizeZoomFactorScrollY = (double)(m_ClientRect.Height() - m_iScrollBarSize) / (double)m_SourceRect.Height();
+		if (bSetZoom)
 			SetZoom(0);
-		if ( m_bShowScrollBars )
+		if (m_bShowScrollBars)
 		{
 			m_ClientRect.bottom = m_OriginalClientRect.bottom - m_iScrollBarSize;
 			m_ClientRect.right = m_OriginalClientRect.right - m_iScrollBarSize;
@@ -122,7 +123,7 @@ namespace Seidenader { namespace SVOGui {
 	void SVDlgImageClass::refresh()
 	{
 		//	RedrawWindow();
-		InvalidateRect( ( LPCRECT ) &m_ClientRect, TRUE );
+		InvalidateRect((LPCRECT)&m_ClientRect, TRUE);
 		UpdateWindow();
 	}
 
@@ -133,7 +134,7 @@ namespace Seidenader { namespace SVOGui {
 
 	HRESULT SVDlgImageClass::SetZoom(double dPercent)
 	{
-		if ( dPercent == 0 )
+		if (dPercent == 0)
 		{
 			dPercent = m_dFullSizeZoomFactor;
 			m_ViewportRect.left = 0;
@@ -141,7 +142,7 @@ namespace Seidenader { namespace SVOGui {
 		}
 
 
-		if ( dPercent > m_dFullSizeZoomFactor )
+		if (dPercent > m_dFullSizeZoomFactor)
 		{
 			m_dZoomX = dPercent / m_dFullSizeZoomFactorScrollX;
 			m_dZoomY = dPercent / m_dFullSizeZoomFactorScrollY;
@@ -163,7 +164,7 @@ namespace Seidenader { namespace SVOGui {
 			SCROLLINFO info;
 			m_sbHorizontal.GetScrollInfo(&info);
 			double dPagePercent = (double)m_ViewportRect.Width() / (double)m_SourceRect.Width();
-			info.nPage = static_cast<unsigned int >(rect.Width() * dPagePercent);
+			info.nPage = static_cast<unsigned int>(rect.Width() * dPagePercent);
 			info.fMask = SIF_PAGE;
 			m_sbHorizontal.SetScrollInfo(&info);
 			dPagePercent = (double)m_ViewportRect.Height() / (double)m_SourceRect.Height();
@@ -200,7 +201,7 @@ namespace Seidenader { namespace SVOGui {
 		return S_OK;
 	}
 
-	HRESULT SVDlgImageClass::SetViewportOrigin( CPoint ptOrigin, bool bRedraw )
+	HRESULT SVDlgImageClass::SetViewportOrigin(CPoint ptOrigin, bool bRedraw)
 	{
 		CSize size = m_ViewportRect.Size();
 		m_ViewportRect.top = ptOrigin.y;
@@ -208,10 +209,10 @@ namespace Seidenader { namespace SVOGui {
 		m_ViewportRect.right = ptOrigin.x + size.cx;
 		m_ViewportRect.bottom = ptOrigin.y + size.cy;
 
-		if ( bRedraw )
+		if (bRedraw)
 		{
-			m_sbHorizontal.SetScrollPos( ptOrigin.x );
-			m_sbVertical.SetScrollPos( ptOrigin.y );
+			m_sbHorizontal.SetScrollPos(ptOrigin.x);
+			m_sbVertical.SetScrollPos(ptOrigin.y);
 		}
 
 		return S_OK;
@@ -222,26 +223,26 @@ namespace Seidenader { namespace SVOGui {
 		return m_ViewportRect.TopLeft();
 	}
 
-	HRESULT SVDlgImageClass::SetViewportRect( CRect rect )	// sets origin and zoom
+	HRESULT SVDlgImageClass::SetViewportRect(CRect rect)	// sets origin and zoom
 	{
 		m_ViewportRect = rect;
 		// calculate zoom
-		m_dZoomX = (double) m_SourceRect.Width() / (double) m_ViewportRect.Width();
-		m_dZoomY = (double) m_SourceRect.Height() / (double) m_ViewportRect.Height();
+		m_dZoomX = (double)m_SourceRect.Width() / (double)m_ViewportRect.Width();
+		m_dZoomY = (double)m_SourceRect.Height() / (double)m_ViewportRect.Height();
 		return S_OK;
 	}
 
 
-	void SVDlgImageClass::OnPaint() 
+	void SVDlgImageClass::OnPaint()
 	{
 		CPaintDC dc(this); // device context for painting
 
-		if ( mbInit )
+		if (mbInit)
 		{
 			HBITMAP hbm = nullptr;
 			CComPtr<IPicture> picture;
 
-			typedef GuiCmd::GetImage Command;
+			typedef SvCmd::GetImage Command;
 			typedef SVSharedPtr<Command> CommandPtr;
 			CommandPtr commandPtr = new Command(m_imageId);
 			SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_inspectionId, commandPtr);
@@ -251,10 +252,10 @@ namespace Seidenader { namespace SVOGui {
 				CComPtr<IPictureDisp> picDisp = commandPtr->Image();
 				if (picDisp)
 				{
-					picDisp.QueryInterface<IPicture>( &picture );
-					if( picture )
+					picDisp.QueryInterface<IPicture>(&picture);
+					if (picture)
 					{
-						hr = picture->get_Handle( (OLE_HANDLE*)&hbm );
+						hr = picture->get_Handle((OLE_HANDLE*)&hbm);
 #if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
 						if (S_OK != hr)
 						{
@@ -266,33 +267,33 @@ namespace Seidenader { namespace SVOGui {
 			}
 
 			CDC memDC;
-			memDC.CreateCompatibleDC( &dc );
+			memDC.CreateCompatibleDC(&dc);
 
 			//
 			// Render the device independent bitmap (DIB) (stretching as required).
 			//
-			if ( nullptr != hbm )
+			if (nullptr != hbm)
 			{
-				HBITMAP hOld = ( HBITMAP ) ::SelectObject( memDC.m_hDC, hbm );
-				if ( m_ViewportRect.Width() * m_dFullSizeZoomFactor > m_ClientRect.Width() )
+				HBITMAP hOld = (HBITMAP) ::SelectObject(memDC.m_hDC, hbm);
+				if (m_ViewportRect.Width() * m_dFullSizeZoomFactor > m_ClientRect.Width())
 				{
 					int iRegionX = static_cast<int>(m_SourceRect.Width() * m_dFullSizeZoomFactor * m_dZoomX);
 					int iRegionY = static_cast<int>(m_SourceRect.Height() * m_dFullSizeZoomFactorY * m_dZoomY);
-					CRect rectRight( iRegionX, 0, m_ClientRect.Width(), m_ClientRect.Height() );
-					CRect rectBottom( 0, min(iRegionY, m_ClientRect.Height()), m_ClientRect.Width(), m_ClientRect.Height() );
-					dc.StretchBlt(  0, 0, m_ClientRect.Width(),  m_ClientRect.Height(), 
+					CRect rectRight(iRegionX, 0, m_ClientRect.Width(), m_ClientRect.Height());
+					CRect rectBottom(0, min(iRegionY, m_ClientRect.Height()), m_ClientRect.Width(), m_ClientRect.Height());
+					dc.StretchBlt(0, 0, m_ClientRect.Width(), m_ClientRect.Height(),
 						&memDC, m_ViewportRect.left, m_ViewportRect.top,
-						m_ViewportRect.Width(), m_ViewportRect.Height(), SRCCOPY );
-					dc.FillSolidRect(&rectRight, RGB(64,64,128));
-					dc.FillSolidRect(&rectBottom, RGB(64,64,128));
+						m_ViewportRect.Width(), m_ViewportRect.Height(), SRCCOPY);
+					dc.FillSolidRect(&rectRight, RGB(64, 64, 128));
+					dc.FillSolidRect(&rectBottom, RGB(64, 64, 128));
 				}
 				else
 				{
-					dc.StretchBlt(  0, 0, m_ClientRect.Width(),  m_ClientRect.Height(), 
+					dc.StretchBlt(0, 0, m_ClientRect.Width(), m_ClientRect.Height(),
 						&memDC, m_ViewportRect.left, m_ViewportRect.top,
-						m_ViewportRect.Width(), m_ViewportRect.Height(), SRCCOPY );			
+						m_ViewportRect.Width(), m_ViewportRect.Height(), SRCCOPY);
 				}
-				::SelectObject( memDC.m_hDC, hOld );
+				::SelectObject(memDC.m_hDC, hOld);
 			}
 			memDC.DeleteDC();
 		}
@@ -305,7 +306,7 @@ namespace Seidenader { namespace SVOGui {
 	{
 	}
 
-	void SVDlgImageClass::OnDestroy() 
+	void SVDlgImageClass::OnDestroy()
 	{
 		CStatic::OnDestroy();
 	}
@@ -314,11 +315,11 @@ namespace Seidenader { namespace SVOGui {
 	{
 	}
 
-	void SVDlgImageClass::OnHScroll( UINT nSBCode, UINT nPos, CScrollBar* pBar )
+	void SVDlgImageClass::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pBar)
 	{
 		int iPos = pBar->GetScrollPos();
 		SCROLLINFO info;
-		switch ( nSBCode )
+		switch (nSBCode)
 		{
 		case SB_THUMBTRACK:
 		case SB_THUMBPOSITION:
@@ -349,11 +350,11 @@ namespace Seidenader { namespace SVOGui {
 		refresh();
 	}
 
-	void SVDlgImageClass::OnVScroll( UINT nSBCode, UINT nPos, CScrollBar* pBar )
+	void SVDlgImageClass::OnVScroll(UINT nSBCode, UINT nPos, CScrollBar* pBar)
 	{
 		int iPos = pBar->GetScrollPos();
 		SCROLLINFO info;
-		switch ( nSBCode )
+		switch (nSBCode)
 		{
 		case SB_THUMBTRACK:
 		case SB_THUMBPOSITION:
@@ -391,7 +392,7 @@ namespace Seidenader { namespace SVOGui {
 	CRect SVDlgImageClass::GetOutputRectFromImage()
 	{
 		CRect rect;
-		typedef GuiCmd::GetOutputRectangle Command;
+		typedef SvCmd::GetOutputRectangle Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 		CommandPtr commandPtr = new Command(m_imageId);
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_inspectionId, commandPtr);
@@ -402,6 +403,4 @@ namespace Seidenader { namespace SVOGui {
 		}
 		return rect;
 	}
-
-}}
-
+} //namespace SvOg

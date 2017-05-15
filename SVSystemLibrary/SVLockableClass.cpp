@@ -17,7 +17,7 @@
 static char THIS_FILE[]=__FILE__;
 #endif
 
-namespace Seidenader { namespace SVSystemLibrary
+namespace SvSyl
 {
 	SVLockableClass::SVLockableClass()
 		: hProtectionMutex( nullptr )
@@ -57,6 +57,5 @@ namespace Seidenader { namespace SVSystemLibrary
 
 		return l_Status;
 	}
-
-} /*SVSystemLibrary*/ } /*Seidenader*/
+} //namespace SvSyl
 

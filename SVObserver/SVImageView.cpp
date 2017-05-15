@@ -628,7 +628,7 @@ void SVImageViewClass::SaveViewOrImageToDisk(bool ViewOnly, bool showOverlays)
 	if (nullptr == pCurrentImage)
 	{
 		SvStl::MessageMgrStd NullImageWarning( SvStl::LogAndDisplay );
-		NullImageWarning.setMessage(SVMSG_SVO_5018_NULLIMAGE, SvOi::Tid_DisplayedImageIsUnavailable, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_30000_NullImageOnSave);
+		NullImageWarning.setMessage(SVMSG_SVO_5018_NULLIMAGE, SvStl::Tid_DisplayedImageIsUnavailable, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_30000_NullImageOnSave);
 		return;
 	}
 
@@ -1857,18 +1857,18 @@ BOOL SVImageViewClass::GetParameters(SVObjectWriter& rWriter)
 	SVImageClass* l_pImage = dynamic_cast< SVImageClass* >( SVObjectManagerClass::Instance().GetObject( m_ImageId.ToGUID() ) );
 
 	l_svVariant = ( nullptr != l_pImage );
-	rWriter.WriteAttribute(CTAG_VIEW_INITIALIZED, l_svVariant);
+	rWriter.WriteAttribute(SvXml::CTAG_VIEW_INITIALIZED, l_svVariant);
 	l_svVariant.Clear();
 
 	double zoom = m_ZoomHelper.GetZoom();
 	l_svVariant = zoom;
-	rWriter.WriteAttribute(CTAG_IMAGE_ZOOM_FACTOR_EX, l_svVariant);
+	rWriter.WriteAttribute(SvXml::CTAG_IMAGE_ZOOM_FACTOR_EX, l_svVariant);
 	l_svVariant.Clear();
 
 	if( nullptr != l_pImage )
 	{
 		l_svVariant.SetString( l_pImage->GetCompleteObjectNameToObjectType( nullptr, SVInspectionObjectType ).c_str() );
-		rWriter.WriteAttribute(CTAG_IMAGE_NAME, l_svVariant);
+		rWriter.WriteAttribute(SvXml::CTAG_IMAGE_NAME, l_svVariant);
 		l_svVariant.Clear();
 	}
 
@@ -1884,7 +1884,7 @@ BOOL SVImageViewClass::SetParameters( SVTreeType& p_tree, SVTreeType::SVBranchHa
 
 	bool l_bUseImageView = false;
 
-	l_bOk = SVNavigateTree::GetItem( p_tree, CTAG_VIEW_INITIALIZED, p_parent, Value );
+	l_bOk = SvXml::SVNavigateTree::GetItem( p_tree, SvXml::CTAG_VIEW_INITIALIZED, p_parent, Value );
 	if( l_bOk )
 	{
 		l_bUseImageView = Value;
@@ -1892,7 +1892,7 @@ BOOL SVImageViewClass::SetParameters( SVTreeType& p_tree, SVTreeType::SVBranchHa
 
 	if( l_bOk )
 	{
-		bZoomExOK = SVNavigateTree::GetItem( p_tree, CTAG_IMAGE_ZOOM_FACTOR_EX, p_parent, Value );
+		bZoomExOK = SvXml::SVNavigateTree::GetItem( p_tree, SvXml::CTAG_IMAGE_ZOOM_FACTOR_EX, p_parent, Value );
 		if(bZoomExOK)
 		{
 			double dZoom = Value;
@@ -1905,7 +1905,7 @@ BOOL SVImageViewClass::SetParameters( SVTreeType& p_tree, SVTreeType::SVBranchHa
 
 	if( l_bOk && !bZoomExOK )
 	{
-		l_bOk = SVNavigateTree::GetItem( p_tree, CTAG_IMAGE_ZOOM_FACTOR, p_parent, Value );
+		l_bOk = SvXml::SVNavigateTree::GetItem( p_tree, SvXml::CTAG_IMAGE_ZOOM_FACTOR, p_parent, Value );
 		if( l_bOk )
 		{
 			long l_index = 0;
@@ -1930,7 +1930,7 @@ BOOL SVImageViewClass::SetParameters( SVTreeType& p_tree, SVTreeType::SVBranchHa
 
 	if( l_bOk && l_bUseImageView )
 	{
-		l_bOk = SVNavigateTree::GetItem( p_tree, CTAG_IMAGE_NAME, p_parent, Value );
+		l_bOk = SvXml::SVNavigateTree::GetItem( p_tree, SvXml::CTAG_IMAGE_NAME, p_parent, Value );
 		if( l_bOk )
 		{
 			_bstr_t l_String( Value.bstrVal );
@@ -1962,7 +1962,7 @@ BOOL SVImageViewClass::CheckParameters( SVTreeType& p_tree, SVTreeType::SVBranch
 	bool l_bUseImageView = false;
 	bool bZoomExOK = false;
 
-	l_bOk = SVNavigateTree::GetItem( p_tree, CTAG_VIEW_INITIALIZED, p_parent, Value );
+	l_bOk = SvXml::SVNavigateTree::GetItem( p_tree, SvXml::CTAG_VIEW_INITIALIZED, p_parent, Value );
 	if( l_bOk )
 	{
 		l_bUseImageView = Value;
@@ -1970,7 +1970,7 @@ BOOL SVImageViewClass::CheckParameters( SVTreeType& p_tree, SVTreeType::SVBranch
 
 	if( l_bOk )
 	{
-		bZoomExOK = SVNavigateTree::GetItem( p_tree, CTAG_IMAGE_ZOOM_FACTOR_EX, p_parent, Value );
+		bZoomExOK = SvXml::SVNavigateTree::GetItem( p_tree, SvXml::CTAG_IMAGE_ZOOM_FACTOR_EX, p_parent, Value );
 		if(bZoomExOK)
 		{
 			double dZoom = Value;
@@ -1987,7 +1987,7 @@ BOOL SVImageViewClass::CheckParameters( SVTreeType& p_tree, SVTreeType::SVBranch
 
 	if( l_bOk && !bZoomExOK )
 	{
-		l_bOk = SVNavigateTree::GetItem( p_tree, CTAG_IMAGE_ZOOM_FACTOR, p_parent, Value );
+		l_bOk = SvXml::SVNavigateTree::GetItem( p_tree, SvXml::CTAG_IMAGE_ZOOM_FACTOR, p_parent, Value );
 		if( l_bOk )
 		{
 			long l_index = 0;
@@ -2015,7 +2015,7 @@ BOOL SVImageViewClass::CheckParameters( SVTreeType& p_tree, SVTreeType::SVBranch
 
 	if( l_bOk && l_bUseImageView )
 	{
-		l_bOk = SVNavigateTree::GetItem( p_tree, CTAG_IMAGE_NAME, p_parent, Value );
+		l_bOk = SvXml::SVNavigateTree::GetItem( p_tree, SvXml::CTAG_IMAGE_NAME, p_parent, Value );
 		if( l_bOk )
 		{
 			_bstr_t l_String( Value.bstrVal );

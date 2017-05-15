@@ -11,7 +11,7 @@
 
 #pragma once
 
-namespace Seidenader { namespace SVSocketLibrary
+namespace SvSol
 {
 	template<typename SOCK>
 	struct Traits;
@@ -45,7 +45,5 @@ namespace Seidenader { namespace SVSocketLibrary
 		static const size_t buffer_size = 1450;
 		static const bool needsHeader = true;
 	};
-} /*namespace SVSocketLibrary*/ } /*namespace Seidenader*/
-
-namespace SvSol = Seidenader::SVSocketLibrary;
+} //namespace SvSol
 

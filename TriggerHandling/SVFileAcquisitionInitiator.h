@@ -15,8 +15,8 @@
 #include "SVAcquisitionInitiator.h"
 #pragma region Includes
 
-namespace Seidenader { namespace TriggerHandling {
-
+namespace SvTh
+{
 	class SVFileAcquisitionInitiator
 	{
 	private:
@@ -34,7 +34,4 @@ namespace Seidenader { namespace TriggerHandling {
 
 		static HRESULT CALLBACK TriggerCallback(SvTh::TriggerParameters triggerparams);
 	};
-
-} /* namespace TriggerHandling */ } /* namespace Seidenader */
-
-namespace SvTh = Seidenader::TriggerHandling;
+} //namespace SvTh

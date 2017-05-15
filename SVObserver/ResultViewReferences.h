@@ -112,9 +112,9 @@ public:
 
 	//************************************
 	// Description:  Gets the value of the member variable m_LastUpdateTimeStamp
-	// Returns:  SVClock::SVTimeStamp:  the value of the member variable m_LastUpdateTimeStamp
+	// Returns:  SvTl::SVTimeStamp:  the value of the member variable m_LastUpdateTimeStamp
 	//************************************
-	SVClock::SVTimeStamp getUpdateTimeStamp();
+	SvTl::SVTimeStamp getUpdateTimeStamp();
 
 	//************************************
 	/// Check if the Object is Viewable
@@ -156,7 +156,7 @@ protected:
 	SVString m_TagName; // Branch name in the config file
 	SVObjectReferenceVector m_ReferenceVector;
 	std::list<ResultViewItemDef> m_ResultViewItemDefList;
-	SVClock::SVTimeStamp m_LastUpdateTimeStamp; // Most recent time when m_ReferenceVector changed.
+	SvTl::SVTimeStamp m_LastUpdateTimeStamp; // Most recent time when m_ReferenceVector changed.
 #pragma endregion Member Variables
 };
 

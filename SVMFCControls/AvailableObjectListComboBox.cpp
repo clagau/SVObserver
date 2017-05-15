@@ -12,7 +12,7 @@
 #include "AvailableObjectListComboBox.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace SVMFCControls
+namespace SvMc
 {
 	BEGIN_MESSAGE_MAP(AvailableObjectListComboBox, CComboBox)
 		//{{AFX_MSG_MAP(AvailableObjectListComboBox)
@@ -33,16 +33,16 @@ namespace Seidenader { namespace SVMFCControls
 		ResetContent();
 
 		m_List = rList;
-	
+
 		// Generate new list...
-		for (SvUl::NameGuidList::const_iterator it = rList.begin(); it != rList.end();++it)
+		for (SvUl::NameGuidList::const_iterator it = rList.begin(); it != rList.end(); ++it)
 		{
 			if (!it->first.empty())
 			{
 				AddString(it->first.c_str());
 			}
 		}
-		
+
 		// Empty List in Combobox...
 		if (!GetCount())
 		{
@@ -67,15 +67,15 @@ namespace Seidenader { namespace SVMFCControls
 	{
 		SVGUID Result = SV_GUID_NULL;
 		int index = GetCurSel();
-		
+
 		if (CB_ERR != index)
 		{
 			CString name;
 			GetLBText(index, name);
-			SvUl::NameGuidList::const_iterator iter = std::find_if(m_List.begin(), m_List.end(), [&](const SvUl::NameGuidPair& rVal)->bool 
-			{ 
-				return (!rVal.first.empty() && 0 == rVal.first.compare(name)); 
-			} );
+			SvUl::NameGuidList::const_iterator iter = std::find_if(m_List.begin(), m_List.end(), [&](const SvUl::NameGuidPair& rVal)->bool
+			{
+				return (!rVal.first.empty() && 0 == rVal.first.compare(name));
+			});
 
 			if (m_List.cend() != iter)
 			{
@@ -88,15 +88,15 @@ namespace Seidenader { namespace SVMFCControls
 
 	void AvailableObjectListComboBox::remove(const SVString& rItemName)
 	{
-		int iIndex = FindString(0,rItemName.c_str());
+		int iIndex = FindString(0, rItemName.c_str());
 
-		if ( iIndex != LB_ERR )
+		if (iIndex != LB_ERR)
 		{
 			DeleteString(iIndex);
-			SvUl::NameGuidList::const_iterator iter = std::find_if(m_List.begin(), m_List.end(), [&](const SvUl::NameGuidPair& rVal)->bool 
-			{ 
-				return (!rVal.first.empty() && 0 == rVal.first.compare(rItemName)); 
-			} );
+			SvUl::NameGuidList::const_iterator iter = std::find_if(m_List.begin(), m_List.end(), [&](const SvUl::NameGuidPair& rVal)->bool
+			{
+				return (!rVal.first.empty() && 0 == rVal.first.compare(rItemName));
+			});
 
 			if (m_List.cend() != iter)
 			{
@@ -104,4 +104,4 @@ namespace Seidenader { namespace SVMFCControls
 			}
 		}
 	}
-} /* namespace SVOGui */ } /* namespace Seidenader */
+} //namespace SvMc

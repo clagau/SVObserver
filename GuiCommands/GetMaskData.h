@@ -15,39 +15,36 @@
 #include "SVUtilityLibrary\SVString.h"
 #pragma endregion Includes
 
-namespace Seidenader
+namespace SvCmd
 {
-	namespace GuiCommand
+	struct GetMaskData : public boost::noncopyable
 	{
-		struct GetMaskData : public boost::noncopyable
+		GetMaskData(const GUID& rObjectID) 
+			: m_InstanceID(rObjectID) {}
+
+		// This method is where the real separation would occur by using sockets/named pipes/shared memory
+		// The logic contained within this method would be moved to the "Server" side of a Client/Server architecture
+		// and replaced with the building and sending of the command
+		HRESULT Execute()
 		{
-			GetMaskData(const GUID& rObjectID) 
-				: m_InstanceID(rObjectID) {}
+			HRESULT hr = S_OK;
 
-			// This method is where the real separation would occur by using sockets/named pipes/shared memory
-			// The logic contained within this method would be moved to the "Server" side of a Client/Server architecture
-			// and replaced with the building and sending of the command
-			HRESULT Execute()
+			SvOi::IMask* pObject = dynamic_cast<SvOi::IMask *>(SvOi::getObject(m_InstanceID));
+			if (pObject)
 			{
-				HRESULT hr = S_OK;
-
-				SvOi::IMask* pObject = dynamic_cast<SvOi::IMask *>(SvOi::getObject(m_InstanceID));
-				if (pObject)
-				{
-					m_hGlobal = pObject->GetMaskData();
-				}
-				else
-				{
-					hr = E_POINTER;
-				}
-				return hr;
+				m_hGlobal = pObject->GetMaskData();
 			}
-			bool empty() const { return false; }
-			HGLOBAL GetDataHandle() const { return m_hGlobal; }
+			else
+			{
+				hr = E_POINTER;
+			}
+			return hr;
+		}
+		bool empty() const { return false; }
+		HGLOBAL GetDataHandle() const { return m_hGlobal; }
 
-		private:
-			GUID m_InstanceID;
-			HGLOBAL m_hGlobal;
-		};
-	}
-}
+	private:
+		GUID m_InstanceID;
+		HGLOBAL m_hGlobal;
+	};
+} //namespace SvCmd

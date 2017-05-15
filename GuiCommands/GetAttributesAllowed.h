@@ -15,40 +15,35 @@
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
-namespace Seidenader
+namespace SvCmd
 {
-	namespace GuiCommand
+	struct GetAttributesAllowed : public boost::noncopyable
 	{
-		struct GetAttributesAllowed : public boost::noncopyable
+		GetAttributesAllowed(const GUID& rObjectID) : m_InstanceID(rObjectID), m_attributes(0) {}
+
+		// This method is where the real separation would occur by using sockets/named pipes/shared memory
+		// The logic contained within this method would be moved to the "Server" side of a Client/Server architecture
+		// and replaced with the building and sending of the command
+		HRESULT Execute()
 		{
-			GetAttributesAllowed(const GUID& rObjectID) : m_InstanceID(rObjectID), m_attributes(0) {}
+			HRESULT hr = S_OK;
 
-			// This method is where the real separation would occur by using sockets/named pipes/shared memory
-			// The logic contained within this method would be moved to the "Server" side of a Client/Server architecture
-			// and replaced with the building and sending of the command
-			HRESULT Execute()
+			SvOi::IObjectClass* pObject = SvOi::getObject(m_InstanceID);
+			if (pObject)
 			{
-				HRESULT hr = S_OK;
-
-				SvOi::IObjectClass* pObject = SvOi::getObject(m_InstanceID);
-				if (pObject)
-				{
-					m_attributes = pObject->ObjectAttributesAllowed();
-				}
-				else
-				{
-					hr = E_POINTER;
-				}
-				return hr;
+				m_attributes = pObject->ObjectAttributesAllowed();
 			}
-			bool empty() const { return false; }
-			UINT AttributesAllowed() const { return m_attributes; }
+			else
+			{
+				hr = E_POINTER;
+			}
+			return hr;
+		}
+		bool empty() const { return false; }
+		UINT AttributesAllowed() const { return m_attributes; }
 
-		private:
-			UINT m_attributes;
-			GUID m_InstanceID;
-		};
-	}
-}
-
-namespace GuiCmd = Seidenader::GuiCommand;
+	private:
+		UINT m_attributes;
+		GUID m_InstanceID;
+	};
+} //namespace SvCmd

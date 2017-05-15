@@ -38,7 +38,7 @@
 
 #pragma once
 
-namespace Seidenader { namespace GridCtrlLibrary
+namespace SvGcl
 {
 	class CInPlaceEdit : public CEdit
 	{
@@ -86,6 +86,6 @@ namespace Seidenader { namespace GridCtrlLibrary
 		CRect   m_Rect;
 	};
 
-} /*namespace GridCtrlLibrary*/ } /*namespace Seidenader*/
+} // namespace SvGcl
 
-namespace SvGcl = Seidenader::GridCtrlLibrary;
+

@@ -19,7 +19,7 @@
 #include "SVHistogramStats.h"
 
 
-namespace Seidenader { namespace SVUtilityLibrary {
+namespace SvUl {
 	enum {no_clip = 257};
 
 	class SVHistogramBase
@@ -133,7 +133,5 @@ namespace Seidenader { namespace SVUtilityLibrary {
 
 #include "SVHistogramBase.inl"
 
-} }
-
-namespace SvUl = Seidenader::SVUtilityLibrary;
+} // namespace SvUl
 

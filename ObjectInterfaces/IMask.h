@@ -12,22 +12,17 @@
 #include "SVUtilityLibrary\SVString.h"
 #pragma endregion Includes
 
-namespace Seidenader
+namespace SvOi
 {
-	namespace ObjectInterfaces
+	class IMask
 	{
-		class IMask
-		{
-		public:
-			virtual ~IMask() {}
-			virtual MatroxImageSmartHandlePtr GetReferenceImage() const = 0;
-			virtual MatroxImageSmartHandlePtr GetMaskImage() const = 0;
-			virtual HRESULT Import(const SVString& filename) = 0;
-			virtual HRESULT Export(const SVString& filename) = 0;
-			virtual HGLOBAL GetMaskData() const = 0;
-			virtual bool SetMaskData(HGLOBAL hGlobal) = 0;
-		};
-	}
-}
-
-namespace SvOi = Seidenader::ObjectInterfaces;
+	public:
+		virtual ~IMask() {}
+		virtual MatroxImageSmartHandlePtr GetReferenceImage() const = 0;
+		virtual MatroxImageSmartHandlePtr GetMaskImage() const = 0;
+		virtual HRESULT Import(const SVString& filename) = 0;
+		virtual HRESULT Export(const SVString& filename) = 0;
+		virtual HGLOBAL GetMaskData() const = 0;
+		virtual bool SetMaskData(HGLOBAL hGlobal) = 0;
+	};
+} //namespace SvOi

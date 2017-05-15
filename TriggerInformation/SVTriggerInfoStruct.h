@@ -8,7 +8,8 @@
 //******************************************************************************
 
 #pragma once
-namespace Seidenader { namespace TriggerInformation {
+namespace SvTi
+{
 	struct SVTriggerInfoStruct 
 	{
 		SVTriggerInfoStruct();
@@ -24,13 +25,11 @@ namespace Seidenader { namespace TriggerInformation {
 		class SVTriggerObject* pTrigger;
 		long lTriggerCount;
 		bool m_ToggleState;
-		SVClock::SVTimeStamp m_BeginProcess;
-		SVClock::SVTimeStamp m_ToggleTimeStamp;
-		SVClock::SVTimeStamp m_CallbackReceived;
-		SVClock::SVTimeStamp m_PushedOutputs;
-		SVClock::SVTimeStamp m_PreviousTrigger;
+		SvTl::SVTimeStamp m_BeginProcess;
+		SvTl::SVTimeStamp m_ToggleTimeStamp;
+		SvTl::SVTimeStamp m_CallbackReceived;
+		SvTl::SVTimeStamp m_PushedOutputs;
+		SvTl::SVTimeStamp m_PreviousTrigger;
 		boost::any m_Data;
 	};
-} /* namespace TriggerInformation */ } /* namespace Seidenader */
-
-namespace SvTi = Seidenader::TriggerInformation;
+} //namespace SvTi

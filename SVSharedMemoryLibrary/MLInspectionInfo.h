@@ -10,7 +10,7 @@
 #pragma once
 
 
-namespace Seidenader { namespace SVSharedMemoryLibrary
+namespace SvSml
 {
 	///struct with size Information for Imagestore
 	struct MLInspectionInfo
@@ -22,9 +22,6 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		DWORD TotalDataSize; //<size of all datas 
 		DWORD StoreIndex;
 	};
-
-
 	typedef std::unique_ptr<MLInspectionInfo> MLInspectionInfoPointer;
 	typedef  std::map<SVString, MLInspectionInfoPointer>  MLInspectionInfoMap; //< map InspectionName  InspectionInfoPtr
-
-}}
+} //namespace SvSml

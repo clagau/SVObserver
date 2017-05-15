@@ -19,203 +19,198 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-namespace Seidenader
+namespace SvMc
 {
-	namespace SVMFCControls
+	IMPLEMENT_DYNCREATE(SVDottedNameTreeCtrlClass, CTreeCtrl)
+
+	BEGIN_MESSAGE_MAP(SVDottedNameTreeCtrlClass, CTreeCtrl)
+		//{{AFX_MSG_MAP(SVDottedNameTreeCtrlClass)
+		//}}AFX_MSG_MAP
+	END_MESSAGE_MAP()
+
+	SVDottedNameTreeCtrlClass::SVDottedNameTreeCtrlClass()
 	{
-		IMPLEMENT_DYNCREATE(SVDottedNameTreeCtrlClass, CTreeCtrl)
+	}
 
-			SVDottedNameTreeCtrlClass::SVDottedNameTreeCtrlClass()
+	SVDottedNameTreeCtrlClass::~SVDottedNameTreeCtrlClass()
+	{
+	}
+
+
+	////////////////////////////////////////////////////////////////////////////////
+	// .Title       : AddItem
+	// -----------------------------------------------------------------------------
+	// .Description : Add Item which has a dotted name and apply a Value to him 
+	//				: ( Value could also be a pointer, e.g. SVObjectClass* )
+	//				: Expand Item if BExpand is TRUE ( default )
+	////////////////////////////////////////////////////////////////////////////////
+	BOOL SVDottedNameTreeCtrlClass::AddItem( LPCTSTR DottedItemName, DWORD_PTR DwItemValue, BOOL BExpand )
+	{
+		LPTSTR Source = _tcsdup( DottedItemName );
+		if( Source )
 		{
-		}
+			HTREEITEM hRoot = nullptr;
 
-		SVDottedNameTreeCtrlClass::~SVDottedNameTreeCtrlClass()
-		{
-		}
+			TCHAR sep[] = _T( "." );
+			LPTSTR tStrToken = _tcstok( Source, sep );
+			LPTSTR tStrNextToken = _tcstok( nullptr, sep );
 
-
-		////////////////////////////////////////////////////////////////////////////////
-		// .Title       : AddItem
-		// -----------------------------------------------------------------------------
-		// .Description : Add Item which has a dotted name and apply a Value to him 
-		//				: ( Value could also be a pointer, e.g. SVObjectClass* )
-		//				: Expand Item if BExpand is TRUE ( default )
-		////////////////////////////////////////////////////////////////////////////////
-		BOOL SVDottedNameTreeCtrlClass::AddItem( LPCTSTR DottedItemName, DWORD_PTR DwItemValue, BOOL BExpand )
-		{
-			LPTSTR Source = _tcsdup( DottedItemName );
-			if( Source )
+			while( nullptr != tStrToken )
 			{
-				HTREEITEM hRoot = nullptr;
+				// Note:
+				// If there is no next token ( nullptr == tStrNextToken ), 
+				// we assume the current token ( tStrToken )
+				// is the object itself and DwItemValue is set for him !!!
 
-				TCHAR sep[] = _T( "." );
-				LPTSTR tStrToken = _tcstok( Source, sep );
-				LPTSTR tStrNextToken = _tcstok( nullptr, sep );
-
-				while( nullptr != tStrToken )
+				// Try to find token in current tree level...
+				HTREEITEM hSibling = GetChildItem( hRoot );
+				do
 				{
-					// Note:
-					// If there is no next token ( nullptr == tStrNextToken ), 
-					// we assume the current token ( tStrToken )
-					// is the object itself and DwItemValue is set for him !!!
+					CString strItem = GetItemText( hSibling );
+					if( strItem.CompareNoCase( tStrToken ) == 0 )
+						break;
+				} while( hSibling = GetNextItem( hSibling, TVGN_NEXT ) );
 
-					// Try to find token in current tree level...
-					HTREEITEM hSibling = GetChildItem( hRoot );
-					do
+				if( nullptr == hSibling )
+				{
+					// There were no leaf which was refered by the token at this
+					// tree level yet.
+
+					// Put in a new leaf...
+					if( nullptr == tStrNextToken )
 					{
-						CString strItem = GetItemText( hSibling );
-						if( strItem.CompareNoCase( tStrToken ) == 0 )
-							break;
-					} while( hSibling = GetNextItem( hSibling, TVGN_NEXT ) );
-
-					if( nullptr == hSibling )
-					{
-						// There were no leaf which was refered by the token at this
-						// tree level yet.
-
-						// Put in a new leaf...
-						if( nullptr == tStrNextToken )
-						{
-							// We stick the object itself inside...
-							hSibling = InsertItem( TVIF_TEXT | TVIF_PARAM, // UINT nMask, 
-								( LPCTSTR ) tStrToken,  // LPCTSTR lpszItem, 
-								0,                     // int nImage, 
-								0,                     // int nSelectedImage, 
-								0, //INDEXTOSTATEIMAGEMASK( nIndex ),	// UINT nState, 
-								0, //TVIS_STATEIMAGEMASK,        // UINT nStateMask, 
-								DwItemValue,            // LPARAM lParam,  See SetItemData() below
-								hRoot,					// HTREEITEM hParent, 
-								TVI_LAST				//HTREEITEM hInsertAfter 
-								);
-
-
-							if( BExpand )
-								Expand( hRoot, TVE_EXPAND );
-
-							free( Source );
-							return( nullptr != hSibling );
-						}
-
-						// We build just another sibling...
-						hSibling = InsertItem( TVIF_TEXT,				// UINT nMask, 
+						// We stick the object itself inside...
+						hSibling = InsertItem( TVIF_TEXT | TVIF_PARAM, // UINT nMask, 
 							( LPCTSTR ) tStrToken,  // LPCTSTR lpszItem, 
 							0,                     // int nImage, 
 							0,                     // int nSelectedImage, 
 							0, //INDEXTOSTATEIMAGEMASK( nIndex ),	// UINT nState, 
 							0, //TVIS_STATEIMAGEMASK,        // UINT nStateMask, 
-							0,			            // LPARAM lParam,  See SetItemData() below
+							DwItemValue,            // LPARAM lParam,  See SetItemData() below
 							hRoot,					// HTREEITEM hParent, 
 							TVI_LAST				//HTREEITEM hInsertAfter 
 							);
 
-					}
 
-					if( nullptr != hSibling )
-					{
 						if( BExpand )
 							Expand( hRoot, TVE_EXPAND );
 
-						// We walk down the root...
-						hRoot = hSibling;
-
-						// And get the next token...
-						tStrToken = tStrNextToken;
-						tStrNextToken = _tcstok( nullptr, sep );
-
-						continue;
+						free( Source );
+						return( nullptr != hSibling );
 					}
 
-					break;
-				}	
+					// We build just another sibling...
+					hSibling = InsertItem( TVIF_TEXT,				// UINT nMask, 
+						( LPCTSTR ) tStrToken,  // LPCTSTR lpszItem, 
+						0,                     // int nImage, 
+						0,                     // int nSelectedImage, 
+						0, //INDEXTOSTATEIMAGEMASK( nIndex ),	// UINT nState, 
+						0, //TVIS_STATEIMAGEMASK,        // UINT nStateMask, 
+						0,			            // LPARAM lParam,  See SetItemData() below
+						hRoot,					// HTREEITEM hParent, 
+						TVI_LAST				//HTREEITEM hInsertAfter 
+						);
 
-				free( Source );
-			}
+				}
 
-			return FALSE;
-		}
-
-		////////////////////////////////////////////////////////////////////////////////
-		// .Title       : GetItem
-		// -----------------------------------------------------------------------------
-		// .Description : Get Item using dotted name. Starts always at the root.
-		//				: Returns nullptr, if Item not exists.
-		////////////////////////////////////////////////////////////////////////////////
-		HTREEITEM SVDottedNameTreeCtrlClass::GetItem( LPCTSTR DottedItemName )
-		{
-			LPTSTR tStrSource = _tcsdup( DottedItemName );
-			if( tStrSource )
-			{
-				HTREEITEM hRoot = nullptr;
-
-				TCHAR sep[] = _T( "." );
-				LPTSTR tStrToken = _tcstok( tStrSource, sep );
-				LPTSTR tStrNextToken = _tcstok( nullptr, sep );
-
-				while( nullptr != tStrToken )   
+				if( nullptr != hSibling )
 				{
-					// Note:
-					// If there is no next token ( nullptr == tStrNextToken ), 
-					// we assume the current token ( tStrToken )
-					// is the object itself !!!
+					if( BExpand )
+						Expand( hRoot, TVE_EXPAND );
 
-					// Try to find token in current tree level...
-					HTREEITEM hSibling = GetChildItem( hRoot );
-					do
+					// We walk down the root...
+					hRoot = hSibling;
+
+					// And get the next token...
+					tStrToken = tStrNextToken;
+					tStrNextToken = _tcstok( nullptr, sep );
+
+					continue;
+				}
+
+				break;
+			}	
+
+			free( Source );
+		}
+
+		return FALSE;
+	}
+
+	////////////////////////////////////////////////////////////////////////////////
+	// .Title       : GetItem
+	// -----------------------------------------------------------------------------
+	// .Description : Get Item using dotted name. Starts always at the root.
+	//				: Returns nullptr, if Item not exists.
+	////////////////////////////////////////////////////////////////////////////////
+	HTREEITEM SVDottedNameTreeCtrlClass::GetItem( LPCTSTR DottedItemName )
+	{
+		LPTSTR tStrSource = _tcsdup( DottedItemName );
+		if( tStrSource )
+		{
+			HTREEITEM hRoot = nullptr;
+
+			TCHAR sep[] = _T( "." );
+			LPTSTR tStrToken = _tcstok( tStrSource, sep );
+			LPTSTR tStrNextToken = _tcstok( nullptr, sep );
+
+			while( nullptr != tStrToken )   
+			{
+				// Note:
+				// If there is no next token ( nullptr == tStrNextToken ), 
+				// we assume the current token ( tStrToken )
+				// is the object itself !!!
+
+				// Try to find token in current tree level...
+				HTREEITEM hSibling = GetChildItem( hRoot );
+				do
+				{
+					CString strItem = GetItemText( hSibling );
+					if( strItem.CompareNoCase( tStrToken ) == 0 )
+						break;
+				} while( hSibling = GetNextItem( hSibling, TVGN_NEXT ) );
+
+				if( nullptr != hSibling )
+				{
+					if( nullptr == tStrNextToken )
 					{
-						CString strItem = GetItemText( hSibling );
-						if( strItem.CompareNoCase( tStrToken ) == 0 )
-							break;
-					} while( hSibling = GetNextItem( hSibling, TVGN_NEXT ) );
-
-					if( nullptr != hSibling )
-					{
-						if( nullptr == tStrNextToken )
-						{
-							// We found the item...
-							free( tStrSource );
-							return hSibling;
-						}
-
-						// We walk down the root...
-						hRoot = hSibling;
-
-						// And get the next token...
-						tStrToken = tStrNextToken;
-						tStrNextToken = _tcstok( nullptr, sep );
-
-						continue;
+						// We found the item...
+						free( tStrSource );
+						return hSibling;
 					}
 
-					break;
-				}	
+					// We walk down the root...
+					hRoot = hSibling;
 
-				free( tStrSource );
-			}
+					// And get the next token...
+					tStrToken = tStrNextToken;
+					tStrNextToken = _tcstok( nullptr, sep );
 
-			return nullptr;
+					continue;
+				}
+
+				break;
+			}	
+
+			free( tStrSource );
 		}
 
+		return nullptr;
+	}
 
-		////////////////////////////////////////////////////////////////////////////////
-		// .Title       : GetSelectedItemValue
-		// -----------------------------------------------------------------------------
-		// .Description : Returns applied Value of the currently selected Item.
-		//				: Returns 0, if nothing is selected.
-		////////////////////////////////////////////////////////////////////////////////
-		DWORD_PTR SVDottedNameTreeCtrlClass::GetSelectedItemValue()
-		{
-			HTREEITEM hItem = GetSelectedItem();
-			if( nullptr != hItem )
-				return GetItemData( hItem );
 
-			return 0;
-		}
+	////////////////////////////////////////////////////////////////////////////////
+	// .Title       : GetSelectedItemValue
+	// -----------------------------------------------------------------------------
+	// .Description : Returns applied Value of the currently selected Item.
+	//				: Returns 0, if nothing is selected.
+	////////////////////////////////////////////////////////////////////////////////
+	DWORD_PTR SVDottedNameTreeCtrlClass::GetSelectedItemValue()
+	{
+		HTREEITEM hItem = GetSelectedItem();
+		if( nullptr != hItem )
+			return GetItemData( hItem );
 
-		BEGIN_MESSAGE_MAP(SVDottedNameTreeCtrlClass, CTreeCtrl)
-			//{{AFX_MSG_MAP(SVDottedNameTreeCtrlClass)
-			// NOTE - the ClassWizard will add and remove mapping macros here.
-			//}}AFX_MSG_MAP
-		END_MESSAGE_MAP()
-	} //SVMFCControls
-} //Seidenader
-
+		return 0;
+	}
+} //namespace SvMc

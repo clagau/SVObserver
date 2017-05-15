@@ -16,65 +16,62 @@
 #include "SVStatusLibrary/ErrorNumbers.h"
 #pragma endregion Includes
 
-namespace Seidenader
+namespace SvCmd
 {
-	namespace GuiCommand
+	struct ConstructAndInsertTaskObject : public boost::noncopyable
 	{
-		struct ConstructAndInsertTaskObject : public boost::noncopyable
+		ConstructAndInsertTaskObject(const GUID& rTaskObjectID, const GUID& rClassID, int pos) 
+			: m_InstanceID(rTaskObjectID), m_ClassID(rClassID), m_pos(pos) {}
+
+		// This method is where the real separation would occur by using sockets/named pipes/shared memory
+		// The logic contained within this method would be moved to the "Server" side of a Client/Server architecture
+		// and replaced with the building and sending of the command
+		HRESULT Execute()
 		{
-			ConstructAndInsertTaskObject(const GUID& rTaskObjectID, const GUID& rClassID, int pos) 
-				: m_InstanceID(rTaskObjectID), m_ClassID(rClassID), m_pos(pos) {}
+			HRESULT hr = S_OK;
 
-			// This method is where the real separation would occur by using sockets/named pipes/shared memory
-			// The logic contained within this method would be moved to the "Server" side of a Client/Server architecture
-			// and replaced with the building and sending of the command
-			HRESULT Execute()
+			SvOi::ITaskObjectListClass* pTaskObjectList = dynamic_cast<SvOi::ITaskObjectListClass*>(SvOi::getObject(m_InstanceID));
+			SvOi::IObjectAppClass* pObjectApp = dynamic_cast<SvOi::IObjectAppClass*>(pTaskObjectList);
+
+			SvOi::ITaskObject* pTaskObject = dynamic_cast<SvOi::ITaskObject*>(SvOi::ConstructObject( m_ClassID ));
+			SvOi::IObjectClass* pObject = dynamic_cast<SvOi::IObjectClass*>(pTaskObject);
+			
+			if( nullptr != pTaskObjectList && nullptr != pTaskObject && nullptr != pObjectApp && nullptr != pObject)
 			{
-				HRESULT hr = S_OK;
+				pTaskObjectList->InsertAt( m_pos, *pTaskObject );
 
-				SvOi::ITaskObjectListClass* pTaskObjectList = dynamic_cast<SvOi::ITaskObjectListClass*>(SvOi::getObject(m_InstanceID));
-				SvOi::IObjectAppClass* pObjectApp = dynamic_cast<SvOi::IObjectAppClass*>(pTaskObjectList);
-
-				SvOi::ITaskObject* pTaskObject = dynamic_cast<SvOi::ITaskObject*>(SvOi::ConstructObject( m_ClassID ));
-				SvOi::IObjectClass* pObject = dynamic_cast<SvOi::IObjectClass*>(pTaskObject);
-				
-				if( nullptr != pTaskObjectList && nullptr != pTaskObject && nullptr != pObjectApp && nullptr != pObject)
+				// And last - Create (initialize) it
+				if( ! pObject->is_Created() )
 				{
-					pTaskObjectList->InsertAt( m_pos, *pTaskObject );
-
-					// And last - Create (initialize) it
-					if( ! pObject->is_Created() )
+					// And finally try to create the child object...
+					if( !pObjectApp->CreateChildObject(*pObject, SvOi::SVMFResetObject ) )
 					{
-						// And finally try to create the child object...
-						if( !pObjectApp->CreateChildObject(*pObject, SVMFResetObject ) )
-						{
-							hr = SvOi::Err_10021_InsertTaskObject_CreateObjectFailed;
+						hr = SvStl::Err_10021_InsertTaskObject_CreateObjectFailed;
 
-							// Remove it from the Tool TaskObjectList ( Destruct it )
-							GUID objectID = pObject->GetUniqueObjectID();
-							if( SV_GUID_NULL != objectID )
-							{
-								pTaskObjectList->Delete( objectID );
-							}
-							else
-							{
-								delete pTaskObject;
-							}
+						// Remove it from the Tool TaskObjectList ( Destruct it )
+						GUID objectID = pObject->GetUniqueObjectID();
+						if( SV_GUID_NULL != objectID )
+						{
+							pTaskObjectList->Delete( objectID );
+						}
+						else
+						{
+							delete pTaskObject;
 						}
 					}
 				}
-				else
-				{
-					hr = SvOi::Err_10020_InsertTaskObject_InvalidParameter;
-				}
-				return hr;
 			}
-			bool empty() const { return false; }
+			else
+			{
+				hr = SvStl::Err_10020_InsertTaskObject_InvalidParameter;
+			}
+			return hr;
+		}
+		bool empty() const { return false; }
 
-		private:
-			GUID m_InstanceID;
-			GUID m_ClassID;
-			int m_pos;
-		};
-	}
-}
+	private:
+		GUID m_InstanceID;
+		GUID m_ClassID;
+		int m_pos;
+	};
+} //namespace SvCmd

@@ -31,7 +31,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-namespace Seidenader { namespace GridCtrlLibrary
+namespace SvGcl
 {
 	IMPLEMENT_DYNCREATE(CGridURLCell, CGridCell)
 
@@ -232,4 +232,4 @@ namespace Seidenader { namespace GridCtrlLibrary
 		return HasUrl(strURL);
 	}
 
-} /*namespace GridCtrlLibrary*/ } /*namespace Seidenader*/
+} // namespace SvGcl

@@ -11,7 +11,7 @@
 #pragma endregion Includes
 
 
-namespace Seidenader { namespace  SVXMLLibrary
+namespace SvXml
 {
 	/// \brief SaxContentHandler implements ISAXContentHandler
 	/// Receive content events during parsing and delegate
@@ -103,6 +103,4 @@ namespace Seidenader { namespace  SVXMLLibrary
 		ISaxElementHandler* m_pElementHandler; 
 	#pragma endregion Member variables
 	};
-} /* namespace SVXMLLibrary */ } /* namespace Seidenader */
-
-namespace SvXml = Seidenader::SVXMLLibrary;
+} //namespace SvXml

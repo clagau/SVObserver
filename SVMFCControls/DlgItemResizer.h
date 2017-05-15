@@ -15,59 +15,65 @@
 
 #pragma once
 
-namespace Seidenader { namespace SVMFCControls
+namespace SvMc
 {
-	#pragma region Declarations
-		const UINT RESIZE_LOCKLEFT        = 0x0001; // Distance to left is fixed
-		const UINT RESIZE_LOCKRIGHT       = 0x0002; // Distance to right is fixed
-		const UINT RESIZE_LOCKTOP         = 0x0004; // Distance to top is fixed
-		const UINT RESIZE_LOCKBOTTOM      = 0x0008; // Distance to bottom is fixed
-		const UINT RESIZE_SHOWHIDE        = 0x0010; // Show/hide if not fully visible
+#pragma region Declarations
+	const UINT RESIZE_LOCKLEFT = 0x0001; // Distance to left is fixed
+	const UINT RESIZE_LOCKRIGHT = 0x0002; // Distance to right is fixed
+	const UINT RESIZE_LOCKTOP = 0x0004; // Distance to top is fixed
+	const UINT RESIZE_LOCKBOTTOM = 0x0008; // Distance to bottom is fixed
+	const UINT RESIZE_SHOWHIDE = 0x0010; // Show/hide if not fully visible
 
-		const UINT RESIZE_LOCKALL         = RESIZE_LOCKLEFT|RESIZE_LOCKRIGHT|RESIZE_LOCKTOP|RESIZE_LOCKBOTTOM;
-		const UINT RESIZE_LOCKTOPLEFT     = RESIZE_LOCKLEFT|RESIZE_LOCKTOP;
-		const UINT RESIZE_LOCKBOTTOMRIGHT = RESIZE_LOCKBOTTOM|RESIZE_LOCKRIGHT;
-	#pragma endregion Declarations
+	const UINT RESIZE_LOCKALL = RESIZE_LOCKLEFT | RESIZE_LOCKRIGHT | RESIZE_LOCKTOP | RESIZE_LOCKBOTTOM;
+	const UINT RESIZE_LOCKTOPLEFT = RESIZE_LOCKLEFT | RESIZE_LOCKTOP;
+	const UINT RESIZE_LOCKBOTTOMRIGHT = RESIZE_LOCKBOTTOM | RESIZE_LOCKRIGHT;
+#pragma endregion Declarations
 
 	class DlgItemResizer
 	{
 
 	public:
-	#pragma region Constructor
+#pragma region Constructor
 		DlgItemResizer();
 		virtual ~DlgItemResizer();
-	#pragma endregion Constructor
+#pragma endregion Constructor
 
 	public:
-	#pragma region Public Methods
+#pragma region Public Methods
 		// Adds a control to the resize list
 		void Add(CWnd *pControl, UINT uFlags);
 
 		void Add(CWnd *pWnd, INT nCtrlID, UINT uFlags)
-		{ Add(pWnd->GetDlgItem(nCtrlID), uFlags); }
+		{
+			Add(pWnd->GetDlgItem(nCtrlID), uFlags);
+		}
 
 		// Resizes the controls in the window
 		void Resize(CWnd *pWnd);
 
 		// Sets the original size of the parent
 		void SetInitialSize(INT cx, INT cy)
-		{ m_szInitial = CSize(cx, cy); }
+		{
+			m_szInitial = CSize(cx, cy);
+		}
 
 		// Sets the original size of the parent
 		void SetInitialSize(const CSize &size)
-		{ m_szInitial = size; }
+		{
+			m_szInitial = size;
+		}
 
 		// Returns the initial size
 		CSize GetInitialSize() const
-		{ return m_szInitial; }
-	#pragma endregion Public Methods
+		{
+			return m_szInitial;
+		}
+#pragma endregion Public Methods
 
 	private:
-	#pragma region Member Variables
+#pragma region Member Variables
 		CPtrArray m_Controls;
 		CSize m_szInitial;
-	#pragma endregion Member Variables
+#pragma endregion Member Variables
 	};
-} /*namespace SVMFCControls*/ } /*namespace Seidenader*/
-
-namespace SvMc = Seidenader::SVMFCControls;
+} //namespace SvMc

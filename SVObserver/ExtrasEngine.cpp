@@ -44,7 +44,7 @@ const TCHAR* const FbwfDisableBatchName=
 #pragma region Constructor
 
 ExtrasEngine::ExtrasEngine():m_lastAutoSaveTimestamp(0), m_AutoSaveEnabled(true), 
-	m_AutoSaveDeltaTime_s(ms_defaultDeltaTimeInMinutes*SVClock::c_secondsPerMinute),
+	m_AutoSaveDeltaTime_s(ms_defaultDeltaTimeInMinutes*SvTl::c_secondsPerMinute),
 	m_FbwfAvailable(false), m_IsFbwfSelected(false), m_FbwfActive(false), m_FbwfActiveChanging(false)
 {
 
@@ -135,7 +135,7 @@ void ExtrasEngine::ToggleEnableFbwf()
 	m_FbwfActiveChanging = (m_FbwfActive != m_IsFbwfSelected);
 
 	SVString RequiredBatchFileName(SvO::NoneString);
-	SvOi::MessageTextEnum msgId = SvOi::Tid_Empty;
+	SvStl::MessageTextEnum msgId = SvStl::Tid_Empty;
 	SVStringVector msgList;
 
 	if(m_IsFbwfSelected)
@@ -143,11 +143,11 @@ void ExtrasEngine::ToggleEnableFbwf()
 		RequiredBatchFileName = FbwfEnableBatchName;
 		if(m_FbwfActiveChanging)
 		{
-			msgId = SvOi::Tid_ActivatingDiskProtection;
+			msgId = SvStl::Tid_ActivatingDiskProtection;
 		}
 		else
 		{
-			msgId = SvOi::Tid_DiskProtectionRemainsActive;
+			msgId = SvStl::Tid_DiskProtectionRemainsActive;
 		}
 	}
 	else
@@ -155,11 +155,11 @@ void ExtrasEngine::ToggleEnableFbwf()
 		RequiredBatchFileName = FbwfDisableBatchName;
 		if(m_FbwfActiveChanging)
 		{
-			msgId = SvOi::Tid_DeactivatingDiskProtection;
+			msgId = SvStl::Tid_DeactivatingDiskProtection;
 		}
 		else
 		{
-			msgId = SvOi::Tid_DiskProtectionRemainsInactive;
+			msgId = SvStl::Tid_DiskProtectionRemainsInactive;
 		}
 	}
 
@@ -167,7 +167,7 @@ void ExtrasEngine::ToggleEnableFbwf()
 	auto ret = system( BatchfilePath.c_str() );
 	if(ret)
 	{
-		msgId = SvOi::Tid_CouldNotExecuteFormatString;
+		msgId = SvStl::Tid_CouldNotExecuteFormatString;
 		msgList.push_back( BatchfilePath );
 		// undo selection in this case
 		m_IsFbwfSelected = !m_IsFbwfSelected; 

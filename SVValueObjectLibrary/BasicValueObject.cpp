@@ -357,7 +357,7 @@ BOOL BasicValueObject::Create( SVObjectClass* pOwner )
 	SetObjectDepth( 1 );
 	if( !m_Node )
 	{
-		SetObjectAttributesAllowed( SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::OverwriteAttribute );
+		SetObjectAttributesAllowed( SvOi::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::OverwriteAttribute );
 	}
 	if( nullptr != pOwner )
 	{

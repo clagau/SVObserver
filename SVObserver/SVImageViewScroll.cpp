@@ -323,38 +323,38 @@ BOOL SVImageViewScroll::GetParameters(SVObjectWriter& rWriter)
 
 	_variant_t svVariant;
 
-	rWriter.StartElement(CTAG_IMAGE_VIEW);
+	rWriter.StartElement(SvXml::CTAG_IMAGE_VIEW);
 	bOk = m_pView->GetParameters(rWriter) && bOk;
 	rWriter.EndElement();
 
-	rWriter.StartElement(CTAG_SCROLL_SIZE);
+	rWriter.StartElement(SvXml::CTAG_SCROLL_SIZE);
 	svVariant = l_ScrollSize.cx;
-	rWriter.WriteAttribute(CTAG_CX, svVariant);
+	rWriter.WriteAttribute(SvXml::CTAG_CX, svVariant);
 	svVariant.Clear();
 
 	svVariant = l_ScrollSize.cy;
-	rWriter.WriteAttribute(CTAG_CY, svVariant);
+	rWriter.WriteAttribute(SvXml::CTAG_CY, svVariant);
 	svVariant.Clear();
 
 	rWriter.EndElement();
 
-	rWriter.StartElement(CTAG_SCROLL_POINT);
+	rWriter.StartElement(SvXml::CTAG_SCROLL_POINT);
 	svVariant = l_ScrollPoint.x;
-	rWriter.WriteAttribute(CTAG_X, svVariant);
+	rWriter.WriteAttribute(SvXml::CTAG_X, svVariant);
 	svVariant.Clear();
 
 	svVariant = l_ScrollPoint.y;
-	rWriter.WriteAttribute(CTAG_Y, svVariant);
+	rWriter.WriteAttribute(SvXml::CTAG_Y, svVariant);
 	svVariant.Clear();
 
 	rWriter.EndElement();
 
 	svVariant = l_WindowRect.Height();
-	rWriter.WriteAttribute(CTAG_CELL_HEIGHT, svVariant);
+	rWriter.WriteAttribute(SvXml::CTAG_CELL_HEIGHT, svVariant);
 	svVariant.Clear();
 
 	svVariant = l_WindowRect.Width();
-	rWriter.WriteAttribute(CTAG_CELL_WIDTH, svVariant);
+	rWriter.WriteAttribute(SvXml::CTAG_CELL_WIDTH, svVariant);
 	svVariant.Clear();
 
 	return bOk;
@@ -372,7 +372,7 @@ BOOL SVImageViewScroll::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHa
 	CSize l_ScrollSize;
 	CPoint l_ScrollPoint;
 
-	bOk = SVNavigateTree::GetItemBranch( rTree, CTAG_IMAGE_VIEW, htiParent, htiData );
+	bOk = SvXml::SVNavigateTree::GetItemBranch( rTree, SvXml::CTAG_IMAGE_VIEW, htiParent, htiData );
 	if ( bOk )
 	{
 		bOk = m_pView->SetParameters( rTree, htiData );
@@ -380,7 +380,7 @@ BOOL SVImageViewScroll::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHa
 
 	if ( bOk )
 	{
-		bOk = SVNavigateTree::GetItem( rTree, CTAG_CELL_HEIGHT, htiParent, svVariant );
+		bOk = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_CELL_HEIGHT, htiParent, svVariant );
 		if ( bOk )
 		{
 			l_ViewSize.cy = svVariant;
@@ -389,7 +389,7 @@ BOOL SVImageViewScroll::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHa
 
 	if ( bOk )
 	{
-		bOk = SVNavigateTree::GetItem( rTree, CTAG_CELL_WIDTH, htiParent, svVariant );
+		bOk = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_CELL_WIDTH, htiParent, svVariant );
 		if ( bOk )
 		{
 			l_ViewSize.cx = svVariant;
@@ -407,10 +407,10 @@ BOOL SVImageViewScroll::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHa
 
 	if ( bOk )
 	{
-		bOk = SVNavigateTree::GetItemBranch( rTree, CTAG_SCROLL_SIZE, htiParent, htiData );
+		bOk = SvXml::SVNavigateTree::GetItemBranch( rTree, SvXml::CTAG_SCROLL_SIZE, htiParent, htiData );
 		if ( bOk )
 		{
-			bOk = SVNavigateTree::GetItem( rTree, CTAG_CX, htiData, svVariant );
+			bOk = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_CX, htiData, svVariant );
 			if ( bOk )
 			{
 				l_ScrollSize.cx = svVariant;
@@ -418,7 +418,7 @@ BOOL SVImageViewScroll::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHa
 
 			if ( bOk )
 			{
-				bOk = SVNavigateTree::GetItem( rTree, CTAG_CY, htiData, svVariant );
+				bOk = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_CY, htiData, svVariant );
 				if ( bOk )
 				{
 					l_ScrollSize.cy = svVariant;
@@ -434,10 +434,10 @@ BOOL SVImageViewScroll::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHa
 
 	if ( bOk )
 	{
-		bOk = SVNavigateTree::GetItemBranch( rTree, CTAG_SCROLL_POINT, htiParent, htiData );
+		bOk = SvXml::SVNavigateTree::GetItemBranch( rTree, SvXml::CTAG_SCROLL_POINT, htiParent, htiData );
 		if ( bOk )
 		{
-			bOk = SVNavigateTree::GetItem( rTree, CTAG_X, htiData, svVariant );
+			bOk = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_X, htiData, svVariant );
 			if ( bOk )
 			{
 				l_ScrollPoint.x = svVariant;
@@ -445,7 +445,7 @@ BOOL SVImageViewScroll::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHa
 
 			if ( bOk )
 			{
-				bOk = SVNavigateTree::GetItem( rTree, CTAG_Y, htiData, svVariant );
+				bOk = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_Y, htiData, svVariant );
 				if ( bOk )
 				{
 					l_ScrollPoint.y = svVariant;
@@ -481,7 +481,7 @@ BOOL SVImageViewScroll::CheckParameters( SVTreeType& rTree, SVTreeType::SVBranch
 
 	GetWindowRect( l_CheckWindowRect );
 
-	bOk = SVNavigateTree::GetItemBranch( rTree, CTAG_IMAGE_VIEW, htiParent, htiData );
+	bOk = SvXml::SVNavigateTree::GetItemBranch( rTree, SvXml::CTAG_IMAGE_VIEW, htiParent, htiData );
 	if ( bOk )
 	{
 		bOk = m_pView->SetParameters( rTree, htiData );
@@ -489,7 +489,7 @@ BOOL SVImageViewScroll::CheckParameters( SVTreeType& rTree, SVTreeType::SVBranch
 
 	if ( bOk )
 	{
-		bOk = SVNavigateTree::GetItem( rTree, CTAG_CELL_HEIGHT, htiParent, svVariant );
+		bOk = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_CELL_HEIGHT, htiParent, svVariant );
 		if ( bOk )
 		{
 			l_ViewSize.cy = svVariant;
@@ -498,7 +498,7 @@ BOOL SVImageViewScroll::CheckParameters( SVTreeType& rTree, SVTreeType::SVBranch
 
 	if ( bOk )
 	{
-		bOk = SVNavigateTree::GetItem( rTree, CTAG_CELL_WIDTH, htiParent, svVariant );
+		bOk = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_CELL_WIDTH, htiParent, svVariant );
 		if ( bOk )
 		{
 			l_ViewSize.cx = svVariant;
@@ -518,10 +518,10 @@ BOOL SVImageViewScroll::CheckParameters( SVTreeType& rTree, SVTreeType::SVBranch
 
 	if ( bOk )
 	{
-		bOk = SVNavigateTree::GetItemBranch( rTree, CTAG_SCROLL_SIZE, htiParent, htiData );
+		bOk = SvXml::SVNavigateTree::GetItemBranch( rTree, SvXml::CTAG_SCROLL_SIZE, htiParent, htiData );
 		if ( bOk )
 		{
-			bOk = SVNavigateTree::GetItem( rTree, CTAG_CX, htiData, svVariant );
+			bOk = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_CX, htiData, svVariant );
 			if ( bOk )
 			{
 				l_ScrollSize.cx = svVariant;
@@ -529,7 +529,7 @@ BOOL SVImageViewScroll::CheckParameters( SVTreeType& rTree, SVTreeType::SVBranch
 
 			if ( bOk )
 			{
-				bOk = SVNavigateTree::GetItem( rTree, CTAG_CY, htiData, svVariant );
+				bOk = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_CY, htiData, svVariant );
 				if ( bOk )
 				{
 					l_ScrollSize.cy = svVariant;
@@ -548,10 +548,10 @@ BOOL SVImageViewScroll::CheckParameters( SVTreeType& rTree, SVTreeType::SVBranch
 
 	if ( bOk )
 	{
-		bOk = SVNavigateTree::GetItemBranch( rTree, CTAG_SCROLL_POINT, htiParent, htiData );
+		bOk = SvXml::SVNavigateTree::GetItemBranch( rTree, SvXml::CTAG_SCROLL_POINT, htiParent, htiData );
 		if ( bOk )
 		{
-			bOk = SVNavigateTree::GetItem( rTree, CTAG_X, htiData, svVariant );
+			bOk = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_X, htiData, svVariant );
 			if ( bOk )
 			{
 				l_ScrollPoint.x = svVariant;
@@ -559,7 +559,7 @@ BOOL SVImageViewScroll::CheckParameters( SVTreeType& rTree, SVTreeType::SVBranch
 
 			if ( bOk )
 			{
-				bOk = SVNavigateTree::GetItem( rTree, CTAG_Y, htiData, svVariant );
+				bOk = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_Y, htiData, svVariant );
 				if ( bOk )
 				{
 					l_ScrollPoint.y = svVariant;

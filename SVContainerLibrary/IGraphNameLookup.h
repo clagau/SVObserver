@@ -11,7 +11,7 @@
 #include "SVUtilityLibrary/SVGUID.h"
 #pragma endregion Includes
 
-namespace Sv { namespace Container
+namespace SvCl
 {
 	class IGraphNameLookup
 	{
@@ -24,6 +24,4 @@ namespace Sv { namespace Container
 		//! \returns the name of the vertex
 		virtual LPCTSTR getVertexName( const SVGUID& rGuid ) const = 0;
 	};
-} /* namespace SVContainerLibrary */ } /* namespace Seidenader */
-
-namespace SvCl = Sv::Container;
+} //namespace SvCl

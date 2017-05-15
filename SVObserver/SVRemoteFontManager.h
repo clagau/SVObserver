@@ -56,7 +56,7 @@ public:
 protected:
 	bool GetStatusHandles( unsigned long &rulSize, HANDLE **pphArray );
 	
-	bool RemoveFontsOlderThan( SVClock::SVTimeStamp p_Age );
+	bool RemoveFontsOlderThan( SvTl::SVTimeStamp p_Age );
 	
 private:
 	bool m_bIsOnline;
@@ -71,7 +71,7 @@ private:
 	
 	SVVector<long> m_arRemoteFontIdentifiers;
 	SVVector<SVMatroxOcr> m_arRemoteFontHandles;
-	SVVector<SVClock::SVTimeStamp> m_arRemoteFontTimestamps;
+	SVVector<SvTl::SVTimeStamp> m_arRemoteFontTimestamps;
 	SVVector<SVMatroxBuffer> m_arRemoteFontImageHandles;
 	SVVector<long> m_arLastCharIds;
 

@@ -33,7 +33,7 @@ class SVSoftwareTriggerDevice : public SvTh::IODeviceBase
 	struct SVSoftwareTimerStruct
 	{
 		long timerPeriod;
-		SVTimerCallbackImpl<SVSoftwareTriggerDevice, void> timerCallback;
+		SvTl::SVTimerCallbackImpl<SVSoftwareTriggerDevice, void> timerCallback;
 	};
 	typedef std::map<unsigned long, SVSoftwareTimerStruct> TimerList;
 

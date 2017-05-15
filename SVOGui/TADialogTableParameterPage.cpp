@@ -26,7 +26,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-namespace Seidenader { namespace SVOGui {
+namespace SvOg {
 	static const std::string MaxRowTag("MaxRow");
 
 	BEGIN_MESSAGE_MAP(TADialogTableParameterPage, CPropertyPage)
@@ -76,7 +76,7 @@ namespace Seidenader { namespace SVOGui {
 
 		m_Values.Init();
 
-		typedef GuiCmd::GetAvailableObjects Command;
+		typedef SvCmd::GetAvailableObjects Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 		SvUl::NameGuidList availableList;
 		CommandPtr commandPtr = new Command(m_TaskObjectID, SVObjectTypeInfoStruct(SVEquationObjectType));
@@ -178,15 +178,15 @@ namespace Seidenader { namespace SVOGui {
 
 	void TADialogTableParameterPage::resetInspection()
 	{
-		typedef SVSharedPtr<GuiCmd::ResetObject> ResetObjectCommandPtr;
-		ResetObjectCommandPtr commandPtr(new GuiCmd::ResetObject(m_InspectionID));
+		typedef SVSharedPtr<SvCmd::ResetObject> ResetObjectCommandPtr;
+		ResetObjectCommandPtr commandPtr(new SvCmd::ResetObject(m_InspectionID));
 		SVObjectSynchronousCommandTemplate<ResetObjectCommandPtr> cmd(m_InspectionID, commandPtr);
 
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		if (S_OK != hr)
 		{
-			typedef SVSharedPtr<GuiCmd::GetErrorMessageList> GetErrorMessageListCommandPtr;
-			GetErrorMessageListCommandPtr errorCommandPtr(new GuiCmd::GetErrorMessageList(m_TaskObjectID));
+			typedef SVSharedPtr<SvCmd::GetErrorMessageList> GetErrorMessageListCommandPtr;
+			GetErrorMessageListCommandPtr errorCommandPtr(new SvCmd::GetErrorMessageList(m_TaskObjectID));
 			SVObjectSynchronousCommandTemplate<GetErrorMessageListCommandPtr> errorCmd(m_InspectionID, errorCommandPtr);
 			errorCmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 			SvStl::MessageContainerVector messages = errorCommandPtr->GetMessageList();
@@ -198,4 +198,4 @@ namespace Seidenader { namespace SVOGui {
 		}
 	}
 #pragma endregion Private Mehods
-}}
+} //namespace SvOg

@@ -14,46 +14,41 @@
 #include "SVUtilityLibrary\NameGuidList.h"
 #pragma endregion Includes
 
-namespace Seidenader
+namespace SvMc
 {
-	namespace SVMFCControls
+	class AvailableObjectListComboBox : public CComboBox
 	{
-		class AvailableObjectListComboBox : public CComboBox
-		{
-		public:
-			AvailableObjectListComboBox();
-			virtual ~AvailableObjectListComboBox();
+	public:
+		AvailableObjectListComboBox();
+		virtual ~AvailableObjectListComboBox();
 
-			//************************************
-			/// Initialized Combobox
-			/// \param List [in] Name-guid list to add to the combobox
-			/// \param rSelectedItem [in] Name of selected Item, if "" no selection.
-			/// \param rEmptyListText [in] Text in the combobox if list is empty.
-			/// \param rFirstListText [in] First entry in the combobox for an non selection (e.g. No Analyzer), if "" non selection will added.
-			//************************************
-			void Init(const SvUl::NameGuidList& List, const SVString& rSelectedItem, const SVString& rEmptyListText, const SVString& rFirstListText = _T(""));
+		//************************************
+		/// Initialized Combobox
+		/// \param List [in] Name-guid list to add to the combobox
+		/// \param rSelectedItem [in] Name of selected Item, if "" no selection.
+		/// \param rEmptyListText [in] Text in the combobox if list is empty.
+		/// \param rFirstListText [in] First entry in the combobox for an non selection (e.g. No Analyzer), if "" non selection will added.
+		//************************************
+		void Init(const SvUl::NameGuidList& List, const SVString& rSelectedItem, const SVString& rEmptyListText, const SVString& rFirstListText = _T(""));
 
-			//************************************
-			/// Return the guid of the selected item. If no item selected or an error it return SV_GUID_NULL.
-			/// \returns SVGUID
-			//************************************
-			SVGUID getSelectedGUID() const;
+		//************************************
+		/// Return the guid of the selected item. If no item selected or an error it return SV_GUID_NULL.
+		/// \returns SVGUID
+		//************************************
+		SVGUID getSelectedGUID() const;
 
-			void remove(const SVString& rItemName);
+		void remove(const SVString& rItemName);
 
-		protected:
-			//{{AFX_MSG(AvailableObjectListComboBox)
-			//}}AFX_MSG
+	protected:
+		//{{AFX_MSG(AvailableObjectListComboBox)
+		//}}AFX_MSG
 
-			DECLARE_MESSAGE_MAP()
+		DECLARE_MESSAGE_MAP()
 
-			//{{AFX_VIRTUAL(AvailableObjectListComboBox)
-			//}}AFX_VIRTUAL
+		//{{AFX_VIRTUAL(AvailableObjectListComboBox)
+		//}}AFX_VIRTUAL
 
-		private:
-			SvUl::NameGuidList m_List;
-		};
-	}
-}
-
-namespace SvMc = Seidenader::SVMFCControls;
+	private:
+		SvUl::NameGuidList m_List;
+	};
+} //namespace SvMc

@@ -23,7 +23,7 @@
 #include "GridCellBase.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace GridCtrlLibrary
+namespace SvGcl
 {
 	typedef struct 
 	{
@@ -65,6 +65,6 @@ namespace Seidenader { namespace GridCtrlLibrary
 		CRect    m_Rect;
 	};
 
-} /*namespace GridCtrlLibrary*/ } /*namespace Seidenader*/
+} // namespace SvGcl
 
-namespace SvGcl = Seidenader::GridCtrlLibrary;
+

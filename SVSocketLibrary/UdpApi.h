@@ -15,7 +15,7 @@
 #include "TcpApi.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace SVSocketLibrary
+namespace SvSol
 {
 	typedef u_int uint32;
 	typedef u_short uint16;
@@ -78,6 +78,4 @@ namespace Seidenader { namespace SVSocketLibrary
 	{
 		return header(htonl(h.id), htonl(h.len), htonl(h.tot), htons(h.cnt), htons(h.seq));
 	}
-} /*namespace SVSocketLibrary*/ } /*namespace Seidenader*/
-
-namespace SvSol = Seidenader::SVSocketLibrary;
+} //namespace SvSol

@@ -28,7 +28,8 @@
 #define ID_BOUND_ACTIVE  257
 #define ID_BOUND_PASSIVE 258
 
-namespace Seidenader { namespace SVMFCControls {
+namespace SvMc
+{
 	class SVHistogram : public CStatic, public HistogramLabels, public SvUl::SVHistogramBase
 	{
 		DECLARE_DYNAMIC(SVHistogram)
@@ -87,10 +88,7 @@ namespace Seidenader { namespace SVMFCControls {
 		bool SetScale(histogram::scale s);
 	};
 
-#include "SVHistogram.inl"
+	#include "SVHistogram.inl"
 
-#define HISTOGRAM_CLASSNAME _T("SVHistogram")
-}
-}
-
-namespace SvMc = Seidenader::SVMFCControls;
+	#define HISTOGRAM_CLASSNAME _T("SVHistogram")
+} //namespace SvMc

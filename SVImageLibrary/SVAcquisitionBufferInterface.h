@@ -19,7 +19,7 @@ class SVAcquisitionBufferInterface
 public:
 	virtual ~SVAcquisitionBufferInterface();
 
-	virtual SVClock::SVTimeStamp GetTimeStamp() const = 0;
+	virtual SvTl::SVTimeStamp GetTimeStamp() const = 0;
 	
 	virtual unsigned long GetBufferWidth() const = 0;
 	virtual unsigned long GetBufferHeight() const = 0;

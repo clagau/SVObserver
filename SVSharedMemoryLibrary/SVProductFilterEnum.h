@@ -10,7 +10,7 @@
 //******************************************************************************
 #pragma once
 
-namespace Seidenader { namespace SVSharedMemoryLibrary
+namespace SvSml
 {
 	enum SVProductFilterEnum
 	{
@@ -18,6 +18,4 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		LastRejectFilter = 2
 	};
 
-} /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
-
-namespace SvSml = Seidenader::SVSharedMemoryLibrary;
+} //namespace SvSml

@@ -119,7 +119,7 @@ HRESULT SVToolExtentClass::UpdateExtentAgainstParentImage( unsigned long p_ulInd
 	{
 		SVImageExtentClass l_Extent = p_rImageExtent;
 
-		SVImageTypeEnum l_Type = m_psvToolImage->GetImageType();
+		SvOi::SVImageTypeEnum l_Type = m_psvToolImage->GetImageType();
 
 		SVImageClass* l_pParent = m_psvToolImage->GetParentImage();
 
@@ -151,20 +151,20 @@ HRESULT SVToolExtentClass::UpdateImageWithExtent( unsigned long p_ulIndex, SVToo
 		{
 			SVImageExtentClass l_Extent;
 
-			SVImageTypeEnum l_Type = m_psvToolImage->GetImageType();
+			SvOi::SVImageTypeEnum l_Type = m_psvToolImage->GetImageType();
 
 			SVImageClass* l_pParent = m_psvToolImage->GetParentImage();
 
 			if( nullptr != l_pParent )
 			{
-				if( ( SVImageTypeLogicalAndPhysical == l_Type ) && ( SVExtentTranslationProfile == GetTranslation() ) )
+				if( ( SvOi::SVImageTypeEnum::SVImageTypeLogicalAndPhysical == l_Type ) && ( SVExtentTranslationProfile == GetTranslation() ) )
 				{
-					l_Type = SVImageTypePhysical;
+					l_Type = SvOi::SVImageTypeEnum::SVImageTypePhysical;
 
 					m_psvToolImage->UpdateImage( l_Type );
 				}
 
-				if( SVImageTypeDependent == l_Type || SVImageTypeVirtual == l_Type )
+				if( SvOi::SVImageTypeEnum::SVImageTypeDependent == l_Type || SvOi::SVImageTypeEnum::SVImageTypeVirtual == l_Type )
 				{
 					l_Extent = l_pParent->GetImageExtents();
 
@@ -187,7 +187,7 @@ HRESULT SVToolExtentClass::UpdateImageWithExtent( unsigned long p_ulIndex, SVToo
 
 					SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess*>(m_psvToolImage->GetInspectionInterface());
 
-					if ( nullptr != pInspection && pInspection->IsResetStateSet( SVResetAutoMoveAndResize ) )
+					if ( nullptr != pInspection && pInspection->IsResetStateSet( SvOi::SVResetAutoMoveAndResize ) )
 					{
 						if( l_Extent != m_psvToolImage->GetImageExtents() )
 						{

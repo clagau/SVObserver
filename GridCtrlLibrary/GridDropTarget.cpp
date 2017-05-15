@@ -57,7 +57,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-namespace Seidenader { namespace GridCtrlLibrary
+namespace SvGcl
 {
 	/////////////////////////////////////////////////////////////////////////////
 	// CGridDropTarget
@@ -179,7 +179,7 @@ namespace Seidenader { namespace GridCtrlLibrary
 			return FALSE;
 	}
 
-} /*namespace GridCtrlLibrary*/ } /*namespace Seidenader*/
+} // namespace SvGcl
 
 #endif // GRIDCONTROL_NO_DRAGDROP
 

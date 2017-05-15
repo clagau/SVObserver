@@ -11,11 +11,8 @@
 
 #include "TriggerBasics.h"
 
-namespace Seidenader { namespace TriggerHandling {
-
+namespace SvTh
+{
 	typedef std::vector<TriggerDispatcher> DispatcherVector;
 	typedef std::map<unsigned long, DispatcherVector> TriggerDispatcherMap;
-
-} /* namespace TriggerHandling */ } /* namespace Seidenader */
-
-namespace SvTh = Seidenader::TriggerHandling;
+} //namespace SvTh

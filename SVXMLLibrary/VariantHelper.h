@@ -11,7 +11,7 @@
 #include "comutil.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace  SVXMLLibrary
+namespace SvXml
 {
 	class VariantHelper
 	{
@@ -48,6 +48,5 @@ namespace Seidenader { namespace  SVXMLLibrary
 		const static WCHAR*  pWhitespace;
 	#pragma endregion Member variables
 	};
-} /* namespace SVXMLLibrary */ } /* namespace Seidenader */
+} //namespace SvXml
 
-namespace SvXml = Seidenader::SVXMLLibrary;

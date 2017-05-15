@@ -163,7 +163,7 @@ static SvUl::NameSelectionList BuildSelectionList(const SVString& PPQName, const
 						if (pToolSet)
 						{
 							SVImageListClass imageList;
-							pToolSet->GetImageList(imageList, SV_PUBLISH_RESULT_IMAGE);
+							pToolSet->GetImageList(imageList, SvOi::SV_PUBLISH_RESULT_IMAGE);
 						
 							const SVImageClass* pMainImage = pToolSet->getCurrentImage();
 							if (pMainImage)

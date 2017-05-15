@@ -20,7 +20,7 @@
 //Moved to precompiled header: #include <boost/static_assert.hpp>
 #include "SVString.h"
 #pragma endregion Includes
-namespace Seidenader { namespace SVUtilityLibrary
+namespace SvUl
 {
 	template<typename T>
 	std::string to_utf8(const T& rUtf16)
@@ -54,10 +54,8 @@ namespace Seidenader { namespace SVUtilityLibrary
 	////////////////////////////////////////////////////////////////////////////////
 	bool RemoveEscapedSpecialCharacters( SVString& rString, bool bConvertCtrl );
 
-} /* namespace SVUtilityLibrary */ } /* namespace Seidenader */
+} // namespace SvUl
 
 #pragma region Inline
 #include "SVStringConversions.inl"
 #pragma endregion Inline
-
-namespace SvUl = Seidenader::SVUtilityLibrary;

@@ -14,8 +14,8 @@
 #include "SVImageLibrary/SVDigitizerLoadLibraryClass.h"
 #include "SVAcquisitionInitiator.h"
 
-namespace Seidenader { namespace TriggerHandling {
-
+namespace SvTh
+{
 	SVAcquisitionInitiator::SVAcquisitionInitiator()
 	{
 	}
@@ -161,5 +161,4 @@ namespace Seidenader { namespace TriggerHandling {
 		}
 		return hr;
 	}
-
-} /* namespace TriggerHandling */ } /* namespace Seidenader */
+} //namespace SvTh

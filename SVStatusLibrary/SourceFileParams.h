@@ -12,7 +12,7 @@
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace SVStatusLibrary
+namespace SvStl
 {
 	#pragma region Declarations
 	//This is a define because it uses the standard macros
@@ -65,6 +65,4 @@ namespace Seidenader { namespace SVStatusLibrary
 		SVString m_FileDateTime;			//Last file modification date/time
 	#pragma endregion Member Variables
 	};
-} /* namespace SVStatusLibrary */ } /* namespace Seidenader */
-
-namespace SvStl = Seidenader::SVStatusLibrary;
+} //namespace SvStl

@@ -21,73 +21,70 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-namespace Seidenader { namespace SVTimerLibrary
+namespace SvTl
 {
+	#ifdef _DEBUG_PERFORMANCE_INFO //Arvid 160212 this is helpful for debugging the creation of Performance Information
 
-
-#ifdef _DEBUG_PERFORMANCE_INFO //Arvid 160212 this is helpful for debugging the creation of Performance Information
-
-	SVClock::SVTimeStamp ReferenceTime = SVClock::GetTimeStamp();
+	SvTl::SVTimeStamp ReferenceTime = SvTl::GetTimeStamp();
 
 	double setReferenceTime()
 	{
-		SVClock::SVTimeStamp now  = SVClock::GetTimeStamp();
+		SvTl::SVTimeStamp now  = SvTl::GetTimeStamp();
 		double delta = now - ReferenceTime;
-		ReferenceTime= SVClock::GetTimeStamp();
+		ReferenceTime= SvTl::GetTimeStamp();
 
 		return delta;
 	}
 
 
-	SVClock::SVTimeStamp  getReferenceTime()
+	SvTl::SVTimeStamp  getReferenceTime()
 	{
 		return ReferenceTime;
 	}
 
-	SVClock::SVTimeStamp GetRelTimeStamp()
+	SvTl::SVTimeStamp GetRelTimeStamp()
 	{
-		SVClock::SVTimeStamp ts = SVClock::GetTimeStamp();
+		SvTl::SVTimeStamp ts = SvTl::GetTimeStamp();
 		return ts - ReferenceTime;
 	}
 
 
-#endif
+	#endif
 
 
 
 
-#pragma region Constructor
+	#pragma region Constructor
 	SVProfiler::SVProfiler()
 	: m_startTime(0)
 	, m_endTime(0)
 	{
 	}
-#pragma endregion Constructor
+	#pragma endregion Constructor
 
-#pragma region Public Methods
+	#pragma region Public Methods
 	void SVProfiler::Start()
 	{
-		m_startTime = SVClock::GetTimeStamp();
+		m_startTime = SvTl::GetTimeStamp();
 	}
 
 	void SVProfiler::End()
 	{
-		m_endTime = SVClock::GetTimeStamp();
+		m_endTime = SvTl::GetTimeStamp();
 	}
 
 	// in Milliseconds
 	double SVProfiler::ElapsedMilliSeconds()
 	{
-		double iElapsed = SVClock::ConvertTo(SVClock::Milliseconds, (m_endTime - m_startTime));
+		double iElapsed = SvTl::ConvertTo(SvTl::Milliseconds, (m_endTime - m_startTime));
 		return iElapsed;
 	}
 
 	// in Microseconds
 	double SVProfiler::ElapsedMicroSeconds()
 	{
-		double iElapsed = SVClock::ConvertTo(SVClock::Microseconds, (m_endTime - m_startTime));
+		double iElapsed = SvTl::ConvertTo(SvTl::Microseconds, (m_endTime - m_startTime));
 		return iElapsed;
 	}
-#pragma endregion Public Methods
-} /* namespace SVStatusLibrary */ } /* namespace Seidenader */
-
+	#pragma endregion Public Methods
+} //namespace SvTl

@@ -38,7 +38,7 @@
 
 #pragma once
 
-namespace Seidenader { namespace GridCtrlLibrary
+namespace SvGcl
 {
 	#pragma region Declarations
 
@@ -195,6 +195,6 @@ namespace Seidenader { namespace GridCtrlLibrary
 		DWORD    m_nState;      // Cell state (selected/focus etc)
 	};
 
-} /*namespace GridCtrlLibrary*/ } /*namespace Seidenader*/
+} // namespace SvGcl
 
-namespace SvGcl = Seidenader::GridCtrlLibrary;
+

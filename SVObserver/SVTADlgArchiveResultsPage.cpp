@@ -99,7 +99,7 @@ bool SVTADlgArchiveResultsPage::QueryAllowExit()
 		{
 			//don't allow to exit with invalid path
 			SvStl::MessageMgrStd Exception( SvStl::LogAndDisplay );
-			Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvOi::Tid_InvalidFileName, SvStl::SourceFileParams(StdMessageParams) );
+			Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvStl::Tid_InvalidFileName, SvStl::SourceFileParams(StdMessageParams) );
 			return false;
 		}
 	}
@@ -114,7 +114,7 @@ bool SVTADlgArchiveResultsPage::QueryAllowExit()
 		SVStringVector msgList;
 		msgList.push_back( Drive );
 		SvStl::MessageMgrStd Exception( SvStl::LogAndDisplay );
-		Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvOi::Tid_InvalidDrive, msgList, SvStl::SourceFileParams(StdMessageParams) );
+		Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvStl::Tid_InvalidDrive, msgList, SvStl::SourceFileParams(StdMessageParams) );
 
 		return false; 
 	}
@@ -130,7 +130,7 @@ bool SVTADlgArchiveResultsPage::QueryAllowExit()
 		SVStringVector msgList;
 		msgList.push_back(SVString(ArchiveFileName));
 		SvStl::MessageMgrStd Exception( SvStl::LogAndDisplay );
-		Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvOi::Tid_AP_InvalidFile, msgList, SvStl::SourceFileParams(StdMessageParams) );
+		Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvStl::Tid_AP_InvalidFile, msgList, SvStl::SourceFileParams(StdMessageParams) );
 		return false;   // Property is ready to exit.
 	}
 
@@ -154,7 +154,7 @@ bool SVTADlgArchiveResultsPage::QueryAllowExit()
 			{
 				ObjectRef.SetArrayIndex( Iter->getArrayIndex() );
 			}
-			ObjectRef.SetObjectAttributesSet( SV_ARCHIVABLE, SvOi::SetAttributeType::AddAttribute );
+			ObjectRef.SetObjectAttributesSet( SvOi::SV_ARCHIVABLE, SvOi::SetAttributeType::AddAttribute );
 		}
 	}
 	// Now make a list of archivable objects from the SVOutputInfoListClass.
@@ -244,8 +244,8 @@ BOOL SVTADlgArchiveResultsPage::OnInitDialog()
 		GetDlgItem(IDC_HEADER_BTN)->EnableWindow(FALSE);
 	}
 
-	SvOsl::SelectorOptions BuildOptions( m_pTool->GetInspection()->GetUniqueObjectID(), SV_ARCHIVABLE );
-	SvOg::ToolSetItemSelector<GuiCmd::AttributesSetFilterType> toolsetItemSelector;
+	SvOsl::SelectorOptions BuildOptions( m_pTool->GetInspection()->GetUniqueObjectID(), SvOi::SV_ARCHIVABLE );
+	SvOg::ToolSetItemSelector<SvCmd::AttributesSetFilterType> toolsetItemSelector;
 	SvOi::ISelectorItemVectorPtr pToolsetList = toolsetItemSelector( BuildOptions );
 	//Copy list to member variable for easier use
 	if( !pToolsetList.empty() )
@@ -289,7 +289,7 @@ void SVTADlgArchiveResultsPage::OnRemoveAllItems()
 			{
 				ObjectRef.SetArrayIndex( Iter->getArrayIndex() );
 			}
-			ObjectRef.SetObjectAttributesSet( SV_ARCHIVABLE, SvOi::SetAttributeType::RemoveAttribute );
+			ObjectRef.SetObjectAttributesSet( SvOi::SV_ARCHIVABLE, SvOi::SetAttributeType::RemoveAttribute );
 		}
 	}
 	m_List.clear();
@@ -324,7 +324,7 @@ void SVTADlgArchiveResultsPage::OnRemoveItem()
 			{
 				ObjectRef.SetArrayIndex( SelectedIter->getArrayIndex() );
 			}
-			ObjectRef.SetObjectAttributesSet( SV_ARCHIVABLE, SvOi::SetAttributeType::RemoveAttribute );
+			ObjectRef.SetObjectAttributesSet( SvOi::SV_ARCHIVABLE, SvOi::SetAttributeType::RemoveAttribute );
 		}
 
 		m_List.erase( SelectedIter );
@@ -366,7 +366,7 @@ void SVTADlgArchiveResultsPage::ShowObjectSelector()
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject );
 	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
 
-	SvOsl::SelectorOptions BuildOptions( InspectionGuid, SV_ARCHIVABLE );
+	SvOsl::SelectorOptions BuildOptions( InspectionGuid, SvOi::SV_ARCHIVABLE );
 	SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::NoSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<>>( BuildOptions );
 
 	SvOsl::SelectorItemVector::const_iterator Iter;
@@ -408,7 +408,7 @@ void SVTADlgArchiveResultsPage::ShowObjectSelector()
 					{
 						ObjectRef.SetArrayIndex( Iter->getArrayIndex() );
 					}
-					ObjectRef.SetObjectAttributesSet( SV_ARCHIVABLE, SvOi::SetAttributeType::RemoveAttribute );
+					ObjectRef.SetObjectAttributesSet( SvOi::SV_ARCHIVABLE, SvOi::SetAttributeType::RemoveAttribute );
 				}
 			}
 		}
@@ -438,7 +438,7 @@ void SVTADlgArchiveResultsPage::OnBrowse()
 		{
 			//don't allow to exit with invalid path
 			SvStl::MessageMgrStd Exception( SvStl::LogAndDisplay );
-			Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvOi::Tid_InvalidFileName, SvStl::SourceFileParams(StdMessageParams) );
+			Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvStl::Tid_InvalidFileName, SvStl::SourceFileParams(StdMessageParams) );
 			return;
 		}
 	}

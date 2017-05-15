@@ -28,7 +28,7 @@ static const int IconNumber = 8;
 static const int IconGrowBy = 1;
 #pragma endregion Declarations
 
-namespace Seidenader { namespace ObjectSelectorLibrary
+namespace SvOsl
 {
 	BEGIN_MESSAGE_MAP(ObjectSelectorPpg, CPropertyPage)
 		ON_COMMAND(ID_HELP, OnHelp)
@@ -145,4 +145,4 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 	}
 	#pragma endregion Protected Methods
 
-} /*namespace ObjectSelectorLibrary*/ } /*namespace Seidenader*/
+} //namespace SvOsl

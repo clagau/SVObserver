@@ -16,8 +16,9 @@
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-namespace Seidenader { namespace TriggerHandling {
-		TriggerDispatcher::TriggerDispatcher(const SVTriggerCallbackPtr callback, const TriggerParameters &tp): 
+namespace SvTh
+{
+	TriggerDispatcher::TriggerDispatcher(const SVTriggerCallbackPtr callback, const TriggerParameters &tp): 
 			m_pCallback(callback), m_TriggerParameters(tp),
 				m_IsStarted(false)
 	{
@@ -61,7 +62,5 @@ namespace Seidenader { namespace TriggerHandling {
 		m_pCallback = nullptr;
 		m_TriggerParameters = TriggerParameters();
 	}
+} //namespace SvTh
 
-} /* namespace TriggerHandling */ } /* namespace Seidenader */
-
-namespace SvTh = Seidenader::TriggerHandling;

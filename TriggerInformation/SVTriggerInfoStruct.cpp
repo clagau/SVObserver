@@ -12,7 +12,8 @@
 #include "SVTriggerInfoStruct.h"
 
 
-namespace Seidenader { namespace TriggerInformation {
+namespace SvTi
+{
 	SVTriggerInfoStruct::SVTriggerInfoStruct()
 	: bValid( FALSE )
 	, pTrigger( nullptr )
@@ -102,7 +103,4 @@ namespace Seidenader { namespace TriggerInformation {
 		m_Data = boost::any();
 	}// end Init
 
-
-} /* namespace TriggerInformation */ } /* namespace Seidenader */
-
-namespace SvTi = Seidenader::TriggerInformation;
+} //namespace SvTi

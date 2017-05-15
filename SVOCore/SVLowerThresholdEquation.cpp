@@ -56,7 +56,7 @@ BOOL SVLowerThresholdEquationClass::CreateObject( SVObjectLevelCreateStruct* PCr
 	m_isCreated = SVEquationClass::CreateObject( PCreateStructure );
 
 	// Set / Reset Printable Flag
-	result.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	result.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 
 	return m_isCreated;
 }

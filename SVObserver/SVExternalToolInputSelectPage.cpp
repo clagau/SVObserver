@@ -293,7 +293,7 @@ int SVExternalToolInputSelectPage::SelectObject( SVString& rObjectName, SVRPrope
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject );
 	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
 
-	SvOsl::SelectorOptions BuildOptions( m_InspectionID, SV_ARCHIVABLE, GetToolSetGUID() );
+	SvOsl::SelectorOptions BuildOptions( m_InspectionID, SvOi::SV_ARCHIVABLE, GetToolSetGUID() );
 	SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::GlobalSelector, SvOg::PPQSelector, SvOg::ToolSetItemSelector<>>( BuildOptions );
 
 	SVStringSet Items;
@@ -442,7 +442,7 @@ HRESULT SVExternalToolInputSelectPage::ValidateItem(SVRPropertyItem* pItem)
 	if ( S_OK != hr )
 	{
 		SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_InvalidData, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10048 ); 
+		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_InvalidData, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10048 ); 
 	}
 	else
 	{
@@ -454,7 +454,7 @@ HRESULT SVExternalToolInputSelectPage::ValidateItem(SVRPropertyItem* pItem)
 			m_pTask->GetDLLMessageString(hr, bMessage.GetAddress());
 			SVString Message = SvUl_SF::createSVString( bMessage);
 			SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, Message.c_str(), SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10049 ); 
+			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, Message.c_str(), SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10049 ); 
 		}
 	}
 
@@ -470,7 +470,7 @@ int SVExternalToolInputSelectPage::GetItemIndex(SVRPropertyItem* pItem)
 SVString SVExternalToolInputSelectPage::GetName(const SVGUID& guid) const
 {
 	SVString inspectionName;
-	typedef GuiCmd::GetObjectName Command;
+	typedef SvCmd::GetObjectName Command;
 	typedef SVSharedPtr<Command> CommandPtr;
 
 	CommandPtr commandPtr(new Command(guid));
@@ -487,7 +487,7 @@ GUID SVExternalToolInputSelectPage::GetToolSetGUID() const
 {
 	GUID toolsetGUID = GUID_NULL;
 
-	typedef GuiCmd::GetTaskObjectInstanceID Command;
+	typedef SvCmd::GetTaskObjectInstanceID Command;
 	typedef SVSharedPtr<Command> CommandPtr;
 
 	SVObjectTypeInfoStruct info(SVToolSetObjectType);

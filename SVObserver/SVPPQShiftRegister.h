@@ -39,8 +39,8 @@ public:
 	HRESULT GetIndexByTriggerCount( long& p_rIndex, long p_TriggerCount ) const;
 	HRESULT GetProductByTriggerCount( SVProductInfoStruct*& p_rpProduct, long p_TriggerCount ) const;
 
-	HRESULT GetIndexByTriggerTimeStamp( long& p_rIndex, SVClock::SVTimeStamp p_TimeStamp, SVClock::SVTimeStamp p_LowerThresholdInMilliseconds = 0.0 ) const;
-	HRESULT GetIndexByTriggerTimeStamp( long& p_rIndex, SVClock::SVTimeStamp p_TimeStamp, SVClock::SVTimeStamp p_LowerThresholdInMilliseconds, SVClock::SVTimeStamp p_UpperThresholdInMilliseconds ) const;
+	HRESULT GetIndexByTriggerTimeStamp( long& p_rIndex, SvTl::SVTimeStamp p_TimeStamp, SvTl::SVTimeStamp p_LowerThresholdInMilliseconds = 0.0 ) const;
+	HRESULT GetIndexByTriggerTimeStamp( long& p_rIndex, SvTl::SVTimeStamp p_TimeStamp, SvTl::SVTimeStamp p_LowerThresholdInMilliseconds, SvTl::SVTimeStamp p_UpperThresholdInMilliseconds ) const;
 
 	HRESULT GetProductStates( SVString& p_rProductStates ) const;
 

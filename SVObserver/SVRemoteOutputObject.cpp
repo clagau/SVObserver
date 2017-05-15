@@ -57,24 +57,24 @@ SVString SVRemoteOutputObject::GetGroupID( ) const
 
 
 // Parameters >> Tree
-bool SVRemoteOutputObject::GetParameters( SVObjectXMLWriter& rWriter ) const
+bool SVRemoteOutputObject::GetParameters(SvXml::SVObjectXMLWriter& rWriter ) const
 {
 	_variant_t svVariant;
 
 	svVariant = SVGUID( m_outObjectInfo.m_UniqueObjectID ).ToVARIANT();
-	rWriter.WriteAttribute( CTAG_UNIQUE_REFERENCE_ID, svVariant );
+	rWriter.WriteAttribute( SvXml::CTAG_UNIQUE_REFERENCE_ID, svVariant );
 	svVariant.Clear();
 
 	svVariant = SVGUID( m_InputObjectId ).ToVARIANT();
-	rWriter.WriteAttribute( CTAG_REMOTE_OUTPUT_INPUT_OBJECT_GUID, svVariant );
+	rWriter.WriteAttribute( SvXml::CTAG_REMOTE_OUTPUT_INPUT_OBJECT_GUID, svVariant );
 	svVariant.Clear();
 
 	svVariant = _variant_t(m_strGroupID.c_str());
-	rWriter.WriteAttribute( CTAG_REMOTE_GROUP_ID, svVariant );
+	rWriter.WriteAttribute( SvXml::CTAG_REMOTE_GROUP_ID, svVariant );
 	svVariant.Clear();
 
 	svVariant = _variant_t(m_strObjectName.c_str());
-	rWriter.WriteAttribute( CTAG_REMOTE_OUTPUT_NAME, svVariant );
+	rWriter.WriteAttribute( SvXml::CTAG_REMOTE_OUTPUT_NAME, svVariant );
 	svVariant.Clear();
 
 	return true;
@@ -86,7 +86,7 @@ BOOL SVRemoteOutputObject::SetParameters( SVTreeType& rTree, SVTreeType::SVBranc
 	BOOL bOk = FALSE;
 	_variant_t svVariant;
 
-	bOk = SVNavigateTree::GetItem( rTree, CTAG_UNIQUE_REFERENCE_ID, htiParent, svVariant );
+	bOk = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_UNIQUE_REFERENCE_ID, htiParent, svVariant );
 	if ( bOk )
 	{
 		SVGUID ObjectID = svVariant;
@@ -109,7 +109,7 @@ BOOL SVRemoteOutputObject::SetParameters( SVTreeType& rTree, SVTreeType::SVBranc
 	{
 		if ( bOk )
 		{
-			bOk = SVNavigateTree::GetItem( rTree, CTAG_REMOTE_OUTPUT_INPUT_OBJECT_GUID, htiParent, svVariant );
+			bOk = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_REMOTE_OUTPUT_INPUT_OBJECT_GUID, htiParent, svVariant );
 			if ( bOk )
 			{
 				m_InputObjectId = SVGUID( svVariant );
@@ -118,7 +118,7 @@ BOOL SVRemoteOutputObject::SetParameters( SVTreeType& rTree, SVTreeType::SVBranc
 
 		if ( bOk )
 		{
-			bOk = SVNavigateTree::GetItem( rTree, CTAG_REMOTE_GROUP_ID, htiParent, svVariant );
+			bOk = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_REMOTE_GROUP_ID, htiParent, svVariant );
 			if ( bOk )
 			{
 				m_strGroupID = SvUl_SF::createSVString(svVariant);
@@ -127,7 +127,7 @@ BOOL SVRemoteOutputObject::SetParameters( SVTreeType& rTree, SVTreeType::SVBranc
 
 		if ( bOk )
 		{
-			bOk = SVNavigateTree::GetItem( rTree, CTAG_REMOTE_OUTPUT_NAME, htiParent, svVariant );
+			bOk = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_REMOTE_OUTPUT_NAME, htiParent, svVariant );
 			if ( bOk )
 			{
 				m_strObjectName = SvUl_SF::createSVString(svVariant);

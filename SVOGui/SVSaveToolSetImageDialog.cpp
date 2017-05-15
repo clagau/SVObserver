@@ -26,7 +26,7 @@ static char THIS_FILE[]=__FILE__;
 #define new DEBUG_NEW
 #endif
 
-namespace Seidenader { namespace SVOGui
+namespace SvOg
 {
 	SVSaveToolSetImageDialogClass::SVSaveToolSetImageDialogClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, CWnd* pParent /*=nullptr*/)
 	: CDialog(SVSaveToolSetImageDialogClass::IDD, pParent)
@@ -116,12 +116,12 @@ namespace Seidenader { namespace SVOGui
 						if (E_INVALIDARG == hr)
 						{
 							SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-							Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_UnKnownFileFormat, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10071 );
+							Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_UnKnownFileFormat, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10071 );
 						}
 						else
 						{
 							SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-							Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_FailedToSaveImage, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10072 );
+							Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_FailedToSaveImage, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10072 );
 						}
 					}
 				}
@@ -144,5 +144,5 @@ namespace Seidenader { namespace SVOGui
 			m_currentSelectedImageCtrl.Refresh();
 		}
 	}
-} /* namespace SVOGui */ } /* namespace Seidenader */
+} //namespace SvOg
 

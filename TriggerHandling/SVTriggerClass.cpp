@@ -18,7 +18,8 @@
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace TriggerHandling {
+namespace SvTh
+{
 	HRESULT CALLBACK TriggerCallbackSvtc(SvTh::TriggerParameters triggerparams)
 	{
 		HRESULT hrOk = S_OK;
@@ -211,6 +212,4 @@ namespace Seidenader { namespace TriggerHandling {
 	{
 		return E_NOTIMPL;
 	}
-} /* namespace TriggerHandling */ } /* namespace Seidenader */
-
-namespace SvTh = Seidenader::TriggerHandling;
+} //namespace SvTh

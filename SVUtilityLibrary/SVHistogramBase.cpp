@@ -12,7 +12,8 @@
 #include "stdafx.h"
 #include "SVHistogramBase.h"
 
-namespace Seidenader { namespace SVUtilityLibrary {
+namespace SvUl
+{
 
 	SVHistogramBase::SVHistogramBase():
 		scale(1.0),
@@ -41,5 +42,5 @@ namespace Seidenader { namespace SVUtilityLibrary {
 	SVHistogramBase::~SVHistogramBase()
 	{
 	}
-}}
+} // namespace SvUl
 

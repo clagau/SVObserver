@@ -14,7 +14,7 @@
 #pragma region Includes 
 #include "SVAccessPointNode.h"
 #include "SVSecurityStorage.h"
-#include "ObjectInterfaces\MessageTextEnum.h"
+#include "SVStatusLibrary/MessageTextEnum.h"
 #include "SVUtilityLibrary\SVString.h"
 #pragma endregion Includes
 

@@ -23,28 +23,25 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-namespace Seidenader
+namespace SvOg
 {
-	namespace SVOGui
-	{
-		static const std::string WidthTag("Width");
-		static const std::string HeidghtTag("Height");
-		static const std::string RankValueTag("RankValue");
-		static const std::string CellValueTag("CellValue");
+	static const std::string WidthTag("Width");
+	static const std::string HeidghtTag("Height");
+	static const std::string RankValueTag("RankValue");
+	static const std::string CellValueTag("CellValue");
 
-		static const std::vector<std::string> CellValueTagList = 
-			boost::assign::list_of(CellValueTag+"1") (CellValueTag+"2") (CellValueTag+"3") (CellValueTag+"4") (CellValueTag+"5") (CellValueTag+"6") (CellValueTag+"7")
-									(CellValueTag+"8")  (CellValueTag+"9")  (CellValueTag+"10") (CellValueTag+"11") (CellValueTag+"12") (CellValueTag+"13") (CellValueTag+"14")
-									(CellValueTag+"15") (CellValueTag+"16") (CellValueTag+"17") (CellValueTag+"18") (CellValueTag+"19") (CellValueTag+"20") (CellValueTag+"21")
-									(CellValueTag+"22") (CellValueTag+"23") (CellValueTag+"24") (CellValueTag+"25") (CellValueTag+"26") (CellValueTag+"27") (CellValueTag+"28")
-									(CellValueTag+"29") (CellValueTag+"30") (CellValueTag+"31") (CellValueTag+"32") (CellValueTag+"33") (CellValueTag+"34") (CellValueTag+"35")
-									(CellValueTag+"36") (CellValueTag+"37") (CellValueTag+"38") (CellValueTag+"39") (CellValueTag+"40") (CellValueTag+"41") (CellValueTag+"42")
-									(CellValueTag+"43") (CellValueTag+"44") (CellValueTag+"45") (CellValueTag+"46") (CellValueTag+"47") (CellValueTag+"48") (CellValueTag+"49");
+	static const std::vector<std::string> CellValueTagList = 
+		boost::assign::list_of(CellValueTag+"1") (CellValueTag+"2") (CellValueTag+"3") (CellValueTag+"4") (CellValueTag+"5") (CellValueTag+"6") (CellValueTag+"7")
+								(CellValueTag+"8")  (CellValueTag+"9")  (CellValueTag+"10") (CellValueTag+"11") (CellValueTag+"12") (CellValueTag+"13") (CellValueTag+"14")
+								(CellValueTag+"15") (CellValueTag+"16") (CellValueTag+"17") (CellValueTag+"18") (CellValueTag+"19") (CellValueTag+"20") (CellValueTag+"21")
+								(CellValueTag+"22") (CellValueTag+"23") (CellValueTag+"24") (CellValueTag+"25") (CellValueTag+"26") (CellValueTag+"27") (CellValueTag+"28")
+								(CellValueTag+"29") (CellValueTag+"30") (CellValueTag+"31") (CellValueTag+"32") (CellValueTag+"33") (CellValueTag+"34") (CellValueTag+"35")
+								(CellValueTag+"36") (CellValueTag+"37") (CellValueTag+"38") (CellValueTag+"39") (CellValueTag+"40") (CellValueTag+"41") (CellValueTag+"42")
+								(CellValueTag+"43") (CellValueTag+"44") (CellValueTag+"45") (CellValueTag+"46") (CellValueTag+"47") (CellValueTag+"48") (CellValueTag+"49");
 
-		/////////////////////////////////////////////////////////////////////////////
-		// SVRankingFilterDlg dialog
-		SVRankingFilterDlg::SVRankingFilterDlg(const SVGUID& rInspectionID, const SVGUID& rFilterID, CWnd* pParent): 
-	CDialog(SVRankingFilterDlg::IDD, pParent)
+	/////////////////////////////////////////////////////////////////////////////
+	// SVRankingFilterDlg dialog
+	SVRankingFilterDlg::SVRankingFilterDlg(const SVGUID& rInspectionID, const SVGUID& rFilterID, CWnd* pParent) : CDialog(SVRankingFilterDlg::IDD, pParent)
 		,m_filterID(rFilterID)
 		,m_rInspectionID(rInspectionID)
 		, m_Values(SvOg::BoundValues(rInspectionID, rFilterID, boost::assign::map_list_of
@@ -297,7 +294,6 @@ namespace Seidenader
 		SetInspectionData();
 
 		CDialog::OnOK();
-	}// end OnOK
-	}  //end namespace SVOGUI
-}  //end namespace Seidenader
+	}
+}  //namespace SvOg
 

@@ -119,7 +119,7 @@ void SVPatModelPageClass::OnOK()
 		//Now that we have caught the exception we would like to display it
 		SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 		Msg.setMessage( rSvE.getMessage() );
-		INT_PTR result = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Pattern_Invalid_ShouldLeave, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10184, SV_GUID_NULL, MB_YESNO ); 
+		INT_PTR result = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Pattern_Invalid_ShouldLeave, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10184, SV_GUID_NULL, MB_YESNO ); 
 		if (IDYES == result)
 		{
 			m_bAllowExit = false;
@@ -257,8 +257,8 @@ void SVPatModelPageClass::OnCreateModel()
 
 	if ( GetModelFile( false, m_strModelName ) ) // false parameter is mode for save file.
 	{
-		SVSharedPtr<GuiCmd::CreateModel> commandPtr = new GuiCmd::CreateModel(m_rAnalyzerID, m_nXPos, m_nYPos, m_lModelWidth, m_lModelHeight, SVString(m_strModelName));
-		SVObjectSynchronousCommandTemplate<SVSharedPtr<GuiCmd::CreateModel>> cmd(m_rInspectionID, commandPtr);
+		SVSharedPtr<SvCmd::CreateModel> commandPtr = new SvCmd::CreateModel(m_rAnalyzerID, m_nXPos, m_nYPos, m_lModelWidth, m_lModelHeight, SVString(m_strModelName));
+		SVObjectSynchronousCommandTemplate<SVSharedPtr<SvCmd::CreateModel>> cmd(m_rInspectionID, commandPtr);
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		if (S_OK == hr)
 		{
@@ -267,7 +267,7 @@ void SVPatModelPageClass::OnCreateModel()
 			if (!ErrorMessages.empty())
 			{
 				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-				Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_PatAllocModelFailed, SvStl::SourceFileParams(StdMessageParams), 0, m_rAnalyzerID );
+				Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_PatAllocModelFailed, SvStl::SourceFileParams(StdMessageParams), 0, m_rAnalyzerID );
 			}
 		}
 		else
@@ -520,7 +520,7 @@ void SVPatModelPageClass::ValidateModelWidth()
 	
 	if (!bRetVal)
 	{
-		SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_PatModelSizeErr, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10245 );
+		SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_PatModelSizeErr, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10245 );
 		throw Msg;
 	}
 }
@@ -544,7 +544,7 @@ void SVPatModelPageClass::ValidateModelHeight()
 	bool bRetVal = (m_lModelHeight >= minHeight && m_lModelHeight <= lMaxPixels);
 	if (!bRetVal)
 	{
-		SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_PatModelSizeErr, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10244 );
+		SvStl::MessageContainer Msg( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_PatModelSizeErr, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10244 );
 		throw Msg;
 	}
 }

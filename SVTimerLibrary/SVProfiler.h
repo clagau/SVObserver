@@ -17,35 +17,34 @@
 
 //@TODO This is not a profiler! Class and files should be renamed to something like "TimeDelta"
 
-namespace Seidenader { namespace SVTimerLibrary
+namespace SvTl
 {
-#ifdef _DEBUG_PERFORMANCE_INFO //Arvid 160212 this is helpful for debugging the creation of Performance Information
-	double setReferenceTime(); ///< sets the current time as reference TimeStamp
-	double getReferenceTime(); ///< returns the reference TimeStamp
-	SVClock::SVTimeStamp GetRelTimeStamp();
-#endif
+	#ifdef _DEBUG_PERFORMANCE_INFO //Arvid 160212 this is helpful for debugging the creation of Performance Information
+		double setReferenceTime(); ///< sets the current time as reference TimeStamp
+		double getReferenceTime(); ///< returns the reference TimeStamp
+		SvTl::SVTimeStamp GetRelTimeStamp();
+	#endif
 
 	class SVProfiler
 	{
+	#pragma region Constructor
 	public:
-#pragma region Constructor
 		SVProfiler();
-#pragma endregion Constructor
+	#pragma endregion Constructor
 
-#pragma region Public Methods
+	#pragma region Public Methods
+	public:
 		void Start();
 		void End();
 		double ElapsedMilliSeconds();
 		double ElapsedMicroSeconds();
-#pragma endregion Public Methods
+	#pragma endregion Public Methods
 
-#pragma region Member Variables
+	#pragma region Member Variables
 	private:
-		SVClock::SVTimeStamp m_startTime;
-		SVClock::SVTimeStamp m_endTime;
-#pragma endregion Member Variables
+		SvTl::SVTimeStamp m_startTime;
+		SvTl::SVTimeStamp m_endTime;
+	#pragma endregion Member Variables
 	};
-} /* namespace SVStatusLibrary */ } /* namespace Seidenader */
-
-namespace SvTl = Seidenader::SVTimerLibrary;
+} //namespace SvTl
 

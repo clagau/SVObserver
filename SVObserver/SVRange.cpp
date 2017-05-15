@@ -103,7 +103,7 @@ BOOL SVRangeClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 	m_isCreated = SVTaskObjectClass::CreateObject( PCreateStructure );
 
 	// Set / Reset Printable Flags
-	const UINT cAttributes = SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE;
+	const UINT cAttributes = SvOi::SV_PRINTABLE | SvOi::SV_SETABLE_ONLINE | SvOi::SV_REMOTELY_SETABLE;
 	FailHigh.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 	WarnHigh.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 	FailLow.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
@@ -111,7 +111,7 @@ BOOL SVRangeClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 
 	for(int i = 0; i < RangeEnum::ER_COUNT; i++)
 	{
-		m_ValueIndirect[i].SetObjectAttributesAllowed( SV_PRINTABLE | SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
+		m_ValueIndirect[i].SetObjectAttributesAllowed( SvOi::SV_PRINTABLE | SvOi::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
 	}
 
 	return m_isCreated;
@@ -142,7 +142,7 @@ bool SVRangeClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 			pErrorMessages->push_back(Msg);
 	}
 	}
@@ -179,7 +179,7 @@ bool SVRangeClass::InitReferencesAndInputs(SvStl::MessageContainerVector *pError
 	{
 		ValueIndirect.clear();
 		m_ValueObjectReferences[i] = SVObjectReference();
-		m_ValueIndirect[i].SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+		m_ValueIndirect[i].SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 		m_ValueIndirect[i].GetValue( ValueIndirect );
 		if( !ValueIndirect.empty() )
 		{
@@ -201,12 +201,12 @@ bool SVRangeClass::InitReferencesAndInputs(SvStl::MessageContainerVector *pError
 					SvStl::MessageContainer message;
 					SVStringVector msgList;
 					msgList.push_back(SVString(GetCompleteObjectNameToObjectType( nullptr, SVInspectionObjectType )));
-					message.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_InvalidReference, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16025 ); 
+					message.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_InvalidReference, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16025 ); 
 					pErrorMessages->push_back( message );
 			}
 			}
 			//check if we have an valid but disabled input
-			else if( FALSE == (m_ValueObjectReferences[i].ObjectAttributesAllowed() & SV_SELECTABLE_FOR_EQUATION ) )
+			else if( FALSE == (m_ValueObjectReferences[i].ObjectAttributesAllowed() & SvOi::SV_SELECTABLE_FOR_EQUATION ) )
 			{
 				Result = false;
 				if (nullptr != pErrorMessages)
@@ -214,13 +214,13 @@ bool SVRangeClass::InitReferencesAndInputs(SvStl::MessageContainerVector *pError
 					SvStl::MessageContainer message;
 					SVStringVector msgList;
 					msgList.push_back(SVString(GetCompleteObjectNameToObjectType( nullptr, SVInspectionObjectType )));
-					message.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_InvalidReference, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16026 ); 
+					message.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_InvalidReference, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16026 ); 
 					pErrorMessages->push_back( message );
 			}
 			}
 			else
 			{
-				m_ValueIndirect[i].SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+				m_ValueIndirect[i].SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
 			}
 		}
 	}
@@ -332,7 +332,7 @@ bool SVRangeClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVe
 		ret = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_InvalidRange, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidRange, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 			pErrorMessages->push_back(Msg);
 		}
 	}

@@ -15,7 +15,7 @@
 #include "SVMonitorListWriter.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace SVSharedMemoryLibrary
+namespace SvSml
 {
 	SVSharedMonitorList::SVSharedMonitorList(const void_allocator & allocator)
 	: m_allocator(allocator)
@@ -143,6 +143,4 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 	{
 		return FindInMoListVector(name,entryVector ) != entryVector.end();
 	}
-
-
-} /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
+} //namespace SvSml

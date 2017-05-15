@@ -13,9 +13,9 @@
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace SVStatusLibrary
+namespace SvStl
 {
-#pragma region Declarations
+	#pragma region Declarations
 		/**********
 			The message type enumeration
 		***********/
@@ -34,7 +34,7 @@ namespace Seidenader { namespace SVStatusLibrary
 				MsgLog			=3
 		};
 	
-#pragma endregion Declarations
+	#pragma endregion Declarations
 
 	//************************************
 	//! This is the message manager template class
@@ -44,7 +44,7 @@ namespace Seidenader { namespace SVStatusLibrary
 	template <typename M_Container, typename M_Data>
 	class MessageManager
 	{
-#pragma region Constructor
+	#pragma region Constructor
 	public:
 		//No default constructor
 
@@ -55,9 +55,9 @@ namespace Seidenader { namespace SVStatusLibrary
 		MessageManager( const MsgTypeEnum Type );
 
 		virtual ~MessageManager();
-#pragma endregion Constructor
+	#pragma endregion Constructor
 
-#pragma region Public Methods
+	#pragma region Public Methods
 	public:
 		//************************************
 		//! Sets the show display function
@@ -111,7 +111,7 @@ namespace Seidenader { namespace SVStatusLibrary
 		//! \param MsgBoxType [in] is the display message box type
 		//! \returns the result of the message box or IDCANCEL if not displayed
 		//************************************
-		INT_PTR setMessage( DWORD MessageCode, SvOi::MessageTextEnum AdditionalTextId, SourceFileParams SourceFile, DWORD ProgramCode = 0, const GUID& rObjectId=SV_GUID_NULL, const UINT MsgBoxType = MB_OK );
+		INT_PTR setMessage( DWORD MessageCode, MessageTextEnum AdditionalTextId, SourceFileParams SourceFile, DWORD ProgramCode = 0, const GUID& rObjectId=SV_GUID_NULL, const UINT MsgBoxType = MB_OK );
 
 		//************************************
 		//! Sets the message data
@@ -124,7 +124,7 @@ namespace Seidenader { namespace SVStatusLibrary
 		//! \param MsgBoxType [in] is the display message box type
 		//! \returns the result of the message box or IDCANCEL if not displayed
 		//************************************
-		INT_PTR setMessage( DWORD MessageCode, SvOi::MessageTextEnum AdditionalTextId, const SVStringVector& rAdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode = 0, const GUID& rObjectId=SV_GUID_NULL, const UINT MsgBoxType = MB_OK );
+		INT_PTR setMessage( DWORD MessageCode, MessageTextEnum AdditionalTextId, const SVStringVector& rAdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode = 0, const GUID& rObjectId=SV_GUID_NULL, const UINT MsgBoxType = MB_OK );
 
 		//************************************
 		//! Sets the message data
@@ -140,9 +140,9 @@ namespace Seidenader { namespace SVStatusLibrary
 		//! \returns a reference to the container
 		//************************************
 		M_Container& getMessageContainer();
-#pragma endregion Public Methods
+	#pragma endregion Public Methods
 
-#pragma region Private Methods
+	#pragma region Private Methods
 	private:
 		static void Initialize();
 
@@ -166,24 +166,21 @@ namespace Seidenader { namespace SVStatusLibrary
 		MsgTypeEnum m_Type;							//! The message type
 		static ShowDisplayFunctor* m_pShowDisplay;
 		static NotifyFunctor* m_pNotify;
-#pragma endregion Member variables
+	#pragma endregion Member variables
 	};
 
-#pragma region Inline
+	#pragma region Inline
 	#include "MessageManager.inl"
-#pragma endregion Inline
+	#pragma endregion Inline
 
-#pragma region Declarations
+	#pragma region Declarations
 	//This declares message manager standard which uses MessageContainer, MessageData as the template parameters
 	typedef MessageManager<MessageContainer, MessageData> MessageMgrStd;
 
 	//! The static functor as pointers so that different instances ( exe dlls can still use one common functor)
 	ShowDisplayFunctor* MessageMgrStd::m_pShowDisplay( nullptr );
 	NotifyFunctor* MessageMgrStd::m_pNotify( nullptr );
-#pragma endregion Declarations
+	#pragma endregion Declarations
 
-} /* namespace SVStatusLibrary */ } /* namespace Seidenader */
-
-namespace SvStl = Seidenader::SVStatusLibrary;
-
+} //namespace SvStl
  

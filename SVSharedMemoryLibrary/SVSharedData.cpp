@@ -13,7 +13,7 @@
 #include "SVSharedData.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace SVSharedMemoryLibrary
+namespace SvSml
 {
 	SVSharedData::SVSharedData( const void_allocator& rAlloc, size_t numImages, size_t numValues )
 	: m_Flags( ds::none )
@@ -59,4 +59,4 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		}
 		throw std::exception((name + " not found.").c_str());
 	}
-} /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
+} //namespace SvSml

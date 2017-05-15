@@ -23,7 +23,7 @@
 
 #define 	BUFFER_REJECT_IMAGE_FILENAME_LEN 1024
 
-namespace Seidenader { namespace SVSharedMemoryLibrary
+namespace SvSml
 {
 	
 	class SVSharedInspectionWriter // one writer per inspection
@@ -75,7 +75,5 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 
 
 	};
-} /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
-
-namespace SvSml = Seidenader::SVSharedMemoryLibrary;
+} //namespace SvSml
 

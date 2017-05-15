@@ -9,7 +9,7 @@
 //* .Check In Date   : $Date:   04 Dec 2014 03:23:44  $
 //******************************************************************************
 
-namespace Seidenader { namespace ObjectSelectorLibrary
+namespace SvOsl
 {
 	#pragma region Public Methods
 	inline bool ObjectTreeCtrl::isSingleSelect() const
@@ -51,4 +51,4 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 
 	#pragma endregion Protected Methods
 
-} /*namespace ObjectSelectorLibrary*/ } /*namespace Seidenader*/
+} //namespace SvOsl

@@ -21,233 +21,229 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-namespace Seidenader
+namespace SvMc
 {
-	namespace SVMFCControls
+	static SvSyl::SVLockableClass SVSlideBarLock;
+
+	SVSlideBarClass::SVSlideBarClass()
 	{
-		static SvSyl::SVLockableClass SVSlideBarLock;
+		bTracking = false;
+		dwSlideBarType	= SV_SLIDEBAR_VERT;
+		trackRect.SetRectEmpty();
+	}
 
-		SVSlideBarClass::SVSlideBarClass()
+	SVSlideBarClass::~SVSlideBarClass()
+	{
+	}
+
+	BEGIN_MESSAGE_MAP(SVSlideBarClass, CWnd)
+		//{{AFX_MSG_MAP(SVSlideBarClass)
+		ON_WM_MOUSEMOVE()
+		ON_WM_LBUTTONDOWN()
+		ON_WM_LBUTTONUP()
+		ON_WM_WINDOWPOSCHANGED()
+		//}}AFX_MSG_MAP
+	END_MESSAGE_MAP()
+
+	/////////////////////////////////////////////////////////////////////////////
+	// SVSlideBarClass message handlers
+
+	void SVSlideBarClass::OnMouseMove(UINT nFlags, CPoint point) 
+	{
+		if( SVSlideBarLock.Lock() )
 		{
-			bTracking = false;
-			dwSlideBarType	= SV_SLIDEBAR_VERT;
-			trackRect.SetRectEmpty();
-		}
-
-		SVSlideBarClass::~SVSlideBarClass()
-		{
-		}
-
-		BEGIN_MESSAGE_MAP(SVSlideBarClass, CWnd)
-			//{{AFX_MSG_MAP(SVSlideBarClass)
-			ON_WM_MOUSEMOVE()
-			ON_WM_LBUTTONDOWN()
-			ON_WM_LBUTTONUP()
-			ON_WM_WINDOWPOSCHANGED()
-			//}}AFX_MSG_MAP
-		END_MESSAGE_MAP()
-
-		/////////////////////////////////////////////////////////////////////////////
-		// SVSlideBarClass message handlers
-
-		void SVSlideBarClass::OnMouseMove(UINT nFlags, CPoint point) 
-		{
-			if( SVSlideBarLock.Lock() )
+			if( bTracking )
 			{
-				if( bTracking )
-				{
-					invertTracker( trackRect );
+				invertTracker( trackRect );
 
-					ClientToScreen( &point );
-					if( SV_SLIDEBAR_VERT == dwSlideBarType )
-					{
-						trackRect.left  = point.x;
-						trackRect.right = trackRect.left + SV_SLIDEBAR_WIDTH;
-					}
-					else if( SV_SLIDEBAR_HORZ == dwSlideBarType)
-					{
-						trackRect.top    = point.y;
-						trackRect.bottom = trackRect.top + SV_SLIDEBAR_HEIGHT;
-					}
-
-					invertTracker( trackRect );
-				}
-				else
+				ClientToScreen( &point );
+				if( SV_SLIDEBAR_VERT == dwSlideBarType )
 				{
-					// Set cursor...
-					if( SV_SLIDEBAR_VERT == dwSlideBarType)
-					{
-						SetCursor( AfxGetApp()->LoadCursor( AFX_IDC_VSPLITBAR ) );
-					}
-					else if( SV_SLIDEBAR_HORZ == dwSlideBarType )
-					{
-						SetCursor( AfxGetApp()->LoadCursor( AFX_IDC_HSPLITBAR ) );
-					}
+					trackRect.left  = point.x;
+					trackRect.right = trackRect.left + SV_SLIDEBAR_WIDTH;
 				}
+				else if( SV_SLIDEBAR_HORZ == dwSlideBarType)
+				{
+					trackRect.top    = point.y;
+					trackRect.bottom = trackRect.top + SV_SLIDEBAR_HEIGHT;
+				}
+
+				invertTracker( trackRect );
+			}
+			else
+			{
+				// Set cursor...
+				if( SV_SLIDEBAR_VERT == dwSlideBarType)
+				{
+					SetCursor( AfxGetApp()->LoadCursor( AFX_IDC_VSPLITBAR ) );
+				}
+				else if( SV_SLIDEBAR_HORZ == dwSlideBarType )
+				{
+					SetCursor( AfxGetApp()->LoadCursor( AFX_IDC_HSPLITBAR ) );
+				}
+			}
+
+			SVSlideBarLock.Unlock();
+
+			CWnd::OnMouseMove(nFlags, point);
+		}
+	}
+
+	void SVSlideBarClass::OnLButtonDown(UINT nFlags, CPoint point) 
+	{
+		if( SVSlideBarLock.Lock() )
+		{
+			if( !bTracking )
+			{
+				bTracking = true;
+
+				SetCapture();
+
+				GetWindowRect( &trackRect );
+
+				invertTracker( trackRect );
 
 				SVSlideBarLock.Unlock();
 
-				CWnd::OnMouseMove(nFlags, point);
+				CWnd::OnLButtonDown(nFlags, point);
 			}
 		}
+	}
 
-		void SVSlideBarClass::OnLButtonDown(UINT nFlags, CPoint point) 
+	void SVSlideBarClass::OnLButtonUp(UINT nFlags, CPoint point) 
+	{
+		if( SVSlideBarLock.Lock() )
 		{
-			if( SVSlideBarLock.Lock() )
+			if( bTracking )
 			{
-				if( !bTracking )
-				{
-					bTracking = true;
+				bTracking = false;
 
-					SetCapture();
+				invertTracker( trackRect );
 
-					GetWindowRect( &trackRect );
+				ReleaseCapture();
 
-					invertTracker( trackRect );
+				trackRect.SetRectEmpty();
 
-					SVSlideBarLock.Unlock();
+				SVSlideBarLock.Unlock();
 
-					CWnd::OnLButtonDown(nFlags, point);
-				}
+				CWnd::OnLButtonUp(nFlags, point);
 			}
 		}
+	}
 
-		void SVSlideBarClass::OnLButtonUp(UINT nFlags, CPoint point) 
+	void SVSlideBarClass::OnWindowPosChanged(WINDOWPOS FAR* lpwndpos) 
+	{
+		CWnd::OnWindowPosChanged(lpwndpos);
+
+		CControlBar* pParent = ( CControlBar* ) GetParent();
+		if( pParent )
 		{
-			if( SVSlideBarLock.Lock() )
+			DWORD dwParentStyle = pParent->GetBarStyle();
+			BOOL bVisible = IsWindowVisible();
+
+			if( dwParentStyle & CBRS_FLOATING )
 			{
-				if( bTracking )
+				// No drawing if parent control bar is floating ( not docked ! )
+				if( bVisible )
 				{
-					bTracking = false;
+					ShowWindow( SW_HIDE );
+				}
+				return;
+			}
 
-					invertTracker( trackRect );
+			if( ! bVisible )
+			{
+				ShowWindow( SW_SHOW );
+			}
 
-					ReleaseCapture();
+			CRect oldRect;
+			GetWindowRect( &oldRect );
+			pParent->ScreenToClient( &oldRect );
 
-					trackRect.SetRectEmpty();
+			CRect rect;
+			pParent->GetClientRect( &rect );
 
-					SVSlideBarLock.Unlock();
+			if( dwParentStyle & CBRS_TOP )
+			{
+				// Horizontal slide bar...
+				dwSlideBarType = SV_SLIDEBAR_HORZ;
 
-					CWnd::OnLButtonUp(nFlags, point);
+				// Show slide bar on the bottom of parent control bar...
+				rect.top = rect.bottom - SV_SLIDEBAR_HEIGHT;
+				if( rect != oldRect || ! bVisible )
+				{
+					MoveWindow( &rect );
+					BringWindowToTop();
+				}
+				return;
+			}
+
+			if( dwParentStyle & CBRS_BOTTOM )
+			{
+				// Horizontal slide bar...
+				dwSlideBarType = SV_SLIDEBAR_HORZ;
+
+				// Show slide bar on the top of parent control bar...
+				rect.bottom = rect.top + SV_SLIDEBAR_HEIGHT;
+				if( rect != oldRect || ! bVisible )
+				{
+					MoveWindow( &rect );
+					BringWindowToTop();
+				}
+				return;
+			}
+
+			if( dwParentStyle & CBRS_LEFT )
+			{
+				// Vertical slide bar...
+				dwSlideBarType = SV_SLIDEBAR_VERT;
+
+				// Show slide bar on the right of parent control bar...
+				rect.left = rect.right - SV_SLIDEBAR_WIDTH;
+				if( rect != oldRect || ! bVisible )
+				{
+					MoveWindow( &rect );
+					BringWindowToTop();
+				}
+				return;
+			}
+
+			if( dwParentStyle & CBRS_RIGHT )
+			{
+				// Vertical slide bar...
+				dwSlideBarType = SV_SLIDEBAR_VERT;
+
+				// Show slide bar on the left of parent control bar...
+				rect.right = rect.left + SV_SLIDEBAR_WIDTH;
+				if( rect != oldRect || ! bVisible )
+				{
+					MoveWindow( &rect );
+					BringWindowToTop();
 				}
 			}
 		}
+	}
 
-		void SVSlideBarClass::OnWindowPosChanged(WINDOWPOS FAR* lpwndpos) 
+	void SVSlideBarClass::invertTracker( const CRect& rect )
+	{
+		ASSERT_VALID(this);
+		ASSERT(!rect.IsRectEmpty());
+		ASSERT((GetStyle() & WS_CLIPCHILDREN) == 0);
+
+		// pat-blt without clip children on
+		CDC* pDC = GetDC();
+		// invert the brush pattern (looks just like frame window sizing)
+		CBrush* pBrush = CDC::GetHalftoneBrush();
+		HBRUSH hOldBrush = nullptr;
+		if (nullptr != pBrush )
 		{
-			CWnd::OnWindowPosChanged(lpwndpos);
-
-			CControlBar* pParent = ( CControlBar* ) GetParent();
-			if( pParent )
-			{
-				DWORD dwParentStyle = pParent->GetBarStyle();
-				BOOL bVisible = IsWindowVisible();
-
-				if( dwParentStyle & CBRS_FLOATING )
-				{
-					// No drawing if parent control bar is floating ( not docked ! )
-					if( bVisible )
-					{
-						ShowWindow( SW_HIDE );
-					}
-					return;
-				}
-
-				if( ! bVisible )
-				{
-					ShowWindow( SW_SHOW );
-				}
-
-				CRect oldRect;
-				GetWindowRect( &oldRect );
-				pParent->ScreenToClient( &oldRect );
-
-				CRect rect;
-				pParent->GetClientRect( &rect );
-
-				if( dwParentStyle & CBRS_TOP )
-				{
-					// Horizontal slide bar...
-					dwSlideBarType = SV_SLIDEBAR_HORZ;
-
-					// Show slide bar on the bottom of parent control bar...
-					rect.top = rect.bottom - SV_SLIDEBAR_HEIGHT;
-					if( rect != oldRect || ! bVisible )
-					{
-						MoveWindow( &rect );
-						BringWindowToTop();
-					}
-					return;
-				}
-
-				if( dwParentStyle & CBRS_BOTTOM )
-				{
-					// Horizontal slide bar...
-					dwSlideBarType = SV_SLIDEBAR_HORZ;
-
-					// Show slide bar on the top of parent control bar...
-					rect.bottom = rect.top + SV_SLIDEBAR_HEIGHT;
-					if( rect != oldRect || ! bVisible )
-					{
-						MoveWindow( &rect );
-						BringWindowToTop();
-					}
-					return;
-				}
-
-				if( dwParentStyle & CBRS_LEFT )
-				{
-					// Vertical slide bar...
-					dwSlideBarType = SV_SLIDEBAR_VERT;
-
-					// Show slide bar on the right of parent control bar...
-					rect.left = rect.right - SV_SLIDEBAR_WIDTH;
-					if( rect != oldRect || ! bVisible )
-					{
-						MoveWindow( &rect );
-						BringWindowToTop();
-					}
-					return;
-				}
-
-				if( dwParentStyle & CBRS_RIGHT )
-				{
-					// Vertical slide bar...
-					dwSlideBarType = SV_SLIDEBAR_VERT;
-
-					// Show slide bar on the left of parent control bar...
-					rect.right = rect.left + SV_SLIDEBAR_WIDTH;
-					if( rect != oldRect || ! bVisible )
-					{
-						MoveWindow( &rect );
-						BringWindowToTop();
-					}
-				}
-			}
+			hOldBrush = (HBRUSH)SelectObject(pDC->m_hDC, pBrush->m_hObject);
 		}
-
-		void SVSlideBarClass::invertTracker( const CRect& rect )
+		pDC->PatBlt(rect.left, rect.top, rect.Width(), rect.Height(), PATINVERT);
+		if (nullptr != hOldBrush)
 		{
-			ASSERT_VALID(this);
-			ASSERT(!rect.IsRectEmpty());
-			ASSERT((GetStyle() & WS_CLIPCHILDREN) == 0);
-
-			// pat-blt without clip children on
-			CDC* pDC = GetDC();
-			// invert the brush pattern (looks just like frame window sizing)
-			CBrush* pBrush = CDC::GetHalftoneBrush();
-			HBRUSH hOldBrush = nullptr;
-			if (nullptr != pBrush )
-			{
-				hOldBrush = (HBRUSH)SelectObject(pDC->m_hDC, pBrush->m_hObject);
-			}
-			pDC->PatBlt(rect.left, rect.top, rect.Width(), rect.Height(), PATINVERT);
-			if (nullptr != hOldBrush)
-			{
-				SelectObject(pDC->m_hDC, hOldBrush);
-			}
-			ReleaseDC(pDC);
+			SelectObject(pDC->m_hDC, hOldBrush);
 		}
-	} //SVMFCControls
-} //Seidenader
-
+		ReleaseDC(pDC);
+	}
+} //namespace SvMc

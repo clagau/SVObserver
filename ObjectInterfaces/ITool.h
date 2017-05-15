@@ -11,26 +11,21 @@
 #include "SVUtilityLibrary\NameGuidList.h"
 #pragma endregion Includes
 
-namespace Seidenader
+namespace SvOi
 {
-	namespace ObjectInterfaces
-	{	
-		//this class is a interface. It should only have pure virtual public method and no member variables
-		class ITool
-		{
-		public:
-			virtual ~ITool() {}
+	//this class is a interface. It should only have pure virtual public method and no member variables
+	class ITool
+	{
+	public:
+		virtual ~ITool() {}
 
-			virtual bool areAuxExtentsAvailable() const = 0;
-			virtual SvUl::NameGuidList getAvailableAuxSourceImages() const = 0;
-			virtual SvUl::NameGuidPair getAuxSourceImage() const = 0;
-			virtual HRESULT setAuxSourceImage(const SVGUID& rObjectID) = 0;
-			virtual void SetToolImage( const SVGUID& rObjectID ) = 0;
-			virtual HRESULT UpdateImageWithExtent( unsigned long p_Index ) = 0;
-			virtual bool SetFirstInputImageName( LPCTSTR FirstName) = 0;
-			virtual long getToolPosition() const = 0;
-		};
-	}
-}
-
-namespace SvOi = Seidenader::ObjectInterfaces;
+		virtual bool areAuxExtentsAvailable() const = 0;
+		virtual SvUl::NameGuidList getAvailableAuxSourceImages() const = 0;
+		virtual SvUl::NameGuidPair getAuxSourceImage() const = 0;
+		virtual HRESULT setAuxSourceImage(const SVGUID& rObjectID) = 0;
+		virtual void SetToolImage( const SVGUID& rObjectID ) = 0;
+		virtual HRESULT UpdateImageWithExtent( unsigned long p_Index ) = 0;
+		virtual bool SetFirstInputImageName( LPCTSTR FirstName) = 0;
+		virtual long getToolPosition() const = 0;
+	};
+} //namespace SvOi

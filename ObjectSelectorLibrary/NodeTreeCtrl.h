@@ -18,7 +18,7 @@
 #include "ObjectTreeCtrl.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace ObjectSelectorLibrary
+namespace SvOsl
 {
 	#pragma region Declarations
 	//Forward declarations
@@ -102,6 +102,4 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 		void UpdateNode( SvCl::ObjectSelectorItem& rItem );
 	#pragma endregion Protected Methods
 	};
-} /*namespace ObjectSelectorLibrary*/ } /*namespace Seidenader*/
-
-namespace SvOsl = Seidenader::ObjectSelectorLibrary;
+} //namespace SvOsl

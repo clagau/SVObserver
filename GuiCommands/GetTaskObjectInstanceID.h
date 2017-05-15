@@ -17,41 +17,36 @@
 #include "SVUtilityLibrary/SVGUID.h"
 #pragma endregion Includes
 
-namespace Seidenader
+namespace SvCmd
 {
-	namespace GuiCommand
+	struct GetTaskObjectInstanceID: public boost::noncopyable
 	{
-		struct GetTaskObjectInstanceID: public boost::noncopyable
+		GetTaskObjectInstanceID(const SVGUID& ownerID, const SVObjectTypeInfoStruct& info) : m_ownerID(ownerID), m_info(info), m_instanceID(GUID_NULL) {}
+
+		// This method is where the real separation would occur by using sockets/named pipes/shared memory
+		// The logic contained within this method would be moved to the "Server" side of a Client/Server architecture
+		// and replaced with the building and sending of the command
+		HRESULT Execute()
 		{
-			GetTaskObjectInstanceID(const SVGUID& ownerID, const SVObjectTypeInfoStruct& info) : m_ownerID(ownerID), m_info(info), m_instanceID(GUID_NULL) {}
-	
-			// This method is where the real separation would occur by using sockets/named pipes/shared memory
-			// The logic contained within this method would be moved to the "Server" side of a Client/Server architecture
-			// and replaced with the building and sending of the command
-			HRESULT Execute()
+			HRESULT hr = S_OK;
+
+			SvOi::IObjectClass* pObject = SvOi::FindObject(m_ownerID, m_info);
+			if (pObject)
 			{
-				HRESULT hr = S_OK;
-
-				SvOi::IObjectClass* pObject = SvOi::FindObject(m_ownerID, m_info);
-				if (pObject)
-				{
-					m_instanceID = pObject->GetUniqueObjectID();
-				}
-				else
-				{
-					hr = E_POINTER;
-				}
-				return hr;
+				m_instanceID = pObject->GetUniqueObjectID();
 			}
-			bool empty() const { return false; }
-			const GUID& GetInstanceID() const { return m_instanceID; }
+			else
+			{
+				hr = E_POINTER;
+			}
+			return hr;
+		}
+		bool empty() const { return false; }
+		const GUID& GetInstanceID() const { return m_instanceID; }
 
-		private:
-			GUID m_ownerID;
-			SVObjectTypeInfoStruct m_info;
-			GUID m_instanceID;
-		};
-	}
-}
-
-namespace GuiCmd = Seidenader::GuiCommand;
+	private:
+		GUID m_ownerID;
+		SVObjectTypeInfoStruct m_info;
+		GUID m_instanceID;
+	};
+} //namespace SvCmd

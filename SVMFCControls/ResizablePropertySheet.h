@@ -18,7 +18,7 @@
 #include "DlgItemResizer.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace SVMFCControls
+namespace SvMc
 {
 	class ResizablePropertySheet : public CPropertySheet
 	{
@@ -63,6 +63,4 @@ namespace Seidenader { namespace SVMFCControls
 		CRect m_rcGripper;
 	#pragma endregion Member Variables
 	};
-} /*namespace SVMFCControls*/ } /*namespace Seidenader*/
-
-namespace SvMc = Seidenader::SVMFCControls;
+} //namespace SvMc

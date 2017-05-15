@@ -133,7 +133,7 @@ BOOL SVPackedFile::PackFiles( LPCTSTR Files, LPCTSTR PackedFileName )
 				{
 					PackedFile.Close();
 					FindClose (hFindFile);
-					Exception.setMessage( SVMSG_LIB_PACKFILE_IO_ERROR, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
+					Exception.setMessage( SVMSG_LIB_PACKFILE_IO_ERROR, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
 					Exception.Throw();
 				}
 			}

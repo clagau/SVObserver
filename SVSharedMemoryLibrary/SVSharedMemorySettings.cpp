@@ -13,7 +13,7 @@
 #include "SVSharedMemorySettings.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace SVSharedMemoryLibrary
+namespace SvSml
 {
 	SVSharedMemorySettings::SVSharedMemorySettings()
 	: m_monitorStoreSize(DefaultMonitorStoreSize)
@@ -61,4 +61,4 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 	{
 		return m_monitorStoreSize;
 	}
-} /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
+} //namespace SvSml

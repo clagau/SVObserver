@@ -39,7 +39,7 @@
 
 namespace bip = boost::interprocess;
 
-namespace Seidenader { namespace SVSharedMemoryLibrary
+namespace SvSml
 {
 	//Typedefs of allocators and containers
 	typedef bip::managed_shared_memory::segment_manager                       segment_manager_t;
@@ -74,8 +74,4 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		enum  typ { productItemsData =0 ,productItemsImage, rejectCondition, failStatus, Count };
 	}
 	
-
-
-} /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
-
-namespace SvSml = Seidenader::SVSharedMemoryLibrary;
+} //namespace SvSml

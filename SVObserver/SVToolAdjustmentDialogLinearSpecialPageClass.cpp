@@ -163,7 +163,7 @@ void SVToolAdjustmentDialogLinearSpecialPageClass::OnCheckRotation()
 			if ( _T("Vertical") == Text  )
 			{
 				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-				INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvOi::Tid_LinearSpecial_OrientationVertical, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10213, SV_GUID_NULL, MB_YESNO );
+				INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_LinearSpecial_OrientationVertical, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10213, SV_GUID_NULL, MB_YESNO );
 				l_bUpdateRotation = (IDYES == result);
 
 				if( ! l_bUpdateRotation )
@@ -182,7 +182,7 @@ void SVToolAdjustmentDialogLinearSpecialPageClass::OnCheckRotation()
 				if ( bIsRotated )
 				{
 					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-					INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvOi::Tid_LinearSpecial_IsRotated, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10214, SV_GUID_NULL, MB_YESNO );
+					INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_LinearSpecial_IsRotated, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10214, SV_GUID_NULL, MB_YESNO );
 					l_bUpdateRotation = (IDYES == result);
 					if( ! l_bUpdateRotation )
 					{

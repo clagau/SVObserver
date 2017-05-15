@@ -21,7 +21,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-namespace Seidenader { namespace SVOGui {
+namespace SvOg {
 
 	#pragma region Constructor
 	ObjectSelectorController::ObjectSelectorController(const SVGUID& rInspectionID, const SVGUID& rInstanceID) 
@@ -37,7 +37,7 @@ namespace Seidenader { namespace SVOGui {
 	SVString ObjectSelectorController::GetInspectionName() const
 	{
 		SVString inspectionName;
-		typedef GuiCmd::GetObjectName Command;
+		typedef SvCmd::GetObjectName Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 
 		CommandPtr commandPtr(new Command(m_InspectionID));
@@ -53,7 +53,7 @@ namespace Seidenader { namespace SVOGui {
 	SVString ObjectSelectorController::GetPPQName() const
 	{
 		SVString PPQName;
-		typedef GuiCmd::GetPPQObjectName Command;
+		typedef SvCmd::GetPPQObjectName Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 
 		CommandPtr commandPtr(new Command(m_InspectionID));
@@ -70,7 +70,7 @@ namespace Seidenader { namespace SVOGui {
 	{
 		GUID toolsetGUID = GUID_NULL;
 
-		typedef GuiCmd::GetTaskObjectInstanceID Command;
+		typedef SvCmd::GetTaskObjectInstanceID Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 
 		SVObjectTypeInfoStruct info(SVToolSetObjectType);
@@ -85,4 +85,4 @@ namespace Seidenader { namespace SVOGui {
 		return toolsetGUID;
 	}
 #pragma endregion Private Methods
-}}
+} //namespace SvOg

@@ -15,7 +15,7 @@
 #include "DisplayHelper.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace SVOGui
+namespace SvOg
 {
 	#pragma region Public Methods
 	long DisplayHelper::CreateSafeArrayFromMap(const LongParamMap& map, COleSafeArray& sPar, COleSafeArray& saVal)
@@ -111,4 +111,4 @@ namespace Seidenader { namespace SVOGui
 	}
 	#pragma endregion Public Methods
 
-} /* namespace SVOGui */ } /* namespace Seidenader */
+} //namespace SvOg

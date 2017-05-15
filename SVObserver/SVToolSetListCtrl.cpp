@@ -111,7 +111,7 @@ void SVToolSetListCtrl::Rebuild()
 
 		DeleteAllItems();
 
-		typedef GuiCmd::GetTaskObjects Command;
+		typedef SvCmd::GetTaskObjects Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 
 		CommandPtr commandPtr = new Command(m_ToolSetId);
@@ -282,7 +282,7 @@ bool SVToolSetListCtrl::IsEmptyStringPlaceHolder( const SVString& rName ) const
 
 bool SVToolSetListCtrl::displayErrorBox(const SVGUID& rGuid) const
 {
-	typedef GuiCmd::GetErrorMessageList Command;
+	typedef SvCmd::GetErrorMessageList Command;
 	typedef SVSharedPtr<Command> CommandPtr;
 	CommandPtr commandPtr = new Command(rGuid);
 	SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionId, commandPtr);
@@ -303,7 +303,7 @@ bool SVToolSetListCtrl::displayErrorBox(const SVGUID& rGuid) const
 bool SVToolSetListCtrl::isToolValid(const SVGUID& tool) const
 {
 	bool isToolValid = false;
-	typedef GuiCmd::IsValid Command;
+	typedef SvCmd::IsValid Command;
 	typedef SVSharedPtr<Command> CommandPtr;
 	CommandPtr commandPtr = new Command(tool);
 	SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionId, commandPtr);

@@ -19,7 +19,7 @@
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace SVSharedMemoryLibrary
+namespace SvSml
 {
 	///struct used in InspectionShare  ImagePathes  and values for one triggercount 
 	struct SVSharedData
@@ -43,8 +43,4 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 	typedef bip::vector< SVSharedData, SVSharedDataAllocator > SVSharedDataVector;
 	typedef bip::allocator< SVSharedDataVector, segment_manager_t > SVSharedDataVectorAllocator;
 
-	
-
-} /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
-
-namespace SvSml = Seidenader::SVSharedMemoryLibrary;
+} //namespace SvSml

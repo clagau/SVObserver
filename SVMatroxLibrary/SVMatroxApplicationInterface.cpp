@@ -123,19 +123,19 @@ void SVMatroxApplicationInterface::Log( SVMatroxStatusInformation &p_rStatusInfo
 		if( SUCCEEDED( p_rStatusInfo.m_StatusCode ) ) 
 		{
 			MessageCode = SVMSG_SVMATROXLIBRARY_NO_ERROR;
-			ProgramCode = SvOi::Err_25020_MatroxLibraryNone;
+			ProgramCode = SvStl::Err_25020_MatroxLibraryNone;
 		}
 		else
 		{
 			MessageCode = SVMSG_SVMATROXLIBRARY_UNKNOWN_FATAL_ERROR;
-			ProgramCode = SvOi::Err_25021_MatroxLibraryFatal;
+			ProgramCode = SvStl::Err_25021_MatroxLibraryFatal;
 		}
 		SVStringVector msgList;
 		msgList.push_back( SvUl_SF::Format( _T("%d"), OsError ));
 		msgList.push_back( SvUl_SF::Format( _T("0X%08X"), OsError ));
 		msgList.push_back( p_rStatusInfo.GetCompleteString() );
 		SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-		Exception.setMessage( MessageCode, SvOi::Tid_OS_Error_Message, msgList, SvStl::SourceFileParams(StdMessageParams), ProgramCode);
+		Exception.setMessage( MessageCode, SvStl::Tid_OS_Error_Message, msgList, SvStl::SourceFileParams(StdMessageParams), ProgramCode);
 	}
 }
 
@@ -487,7 +487,7 @@ void SVMatroxApplicationInterface::LocalInitialize()
 				msgList.push_back(SvUl_SF::Format(_T("%4.2f"), l_MilVersion));
 				
 				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-				Msg.setMessage( SVMSG_SVMATROXLIBRARY_GERNEAL_ERROR, SvOi::Tid_MilVersion_Error, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10249 );
+				Msg.setMessage( SVMSG_SVMATROXLIBRARY_GERNEAL_ERROR, SvStl::Tid_MilVersion_Error, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10249 );
 				::exit( EXIT_FAILURE );
 			}
 		}

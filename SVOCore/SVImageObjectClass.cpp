@@ -65,7 +65,7 @@ void SVImageObjectClass::resize( unsigned long p_NewSize )
 	{
 		m_HandleCount = p_NewSize;
 
-		m_LastUpdate = SVClock::GetTimeStamp();
+		m_LastUpdate = SvTl::GetTimeStamp();
 	}
 }
 
@@ -80,7 +80,7 @@ void SVImageObjectClass::SetParentImageObject( SVImageObjectClassPtr p_ParentPtr
 	{
 		m_ParentImagePtr = p_ParentPtr;
 
-		m_LastUpdate = SVClock::GetTimeStamp();
+		m_LastUpdate = SvTl::GetTimeStamp();
 	}
 }
 
@@ -95,11 +95,11 @@ void SVImageObjectClass::SetImageInfo( const SVImageInfoClass& p_rImageInfo )
 	{
 		m_ImageInfo = p_rImageInfo;
 
-		m_LastUpdate = SVClock::GetTimeStamp();
+		m_LastUpdate = SvTl::GetTimeStamp();
 	}
 }
 
-const SVClock::SVTimeStamp& SVImageObjectClass::GetLastResetTimeStamp() const
+const SvTl::SVTimeStamp& SVImageObjectClass::GetLastResetTimeStamp() const
 {
 	return m_LastReset;
 }
@@ -118,7 +118,7 @@ bool SVImageObjectClass::ResetObject( SvStl::MessageContainerVector *pErrorConta
 
 void SVImageObjectClass::UpdateTimeStamp()
 {
-	m_LastReset = SVClock::GetTimeStamp();
+	m_LastReset = SvTl::GetTimeStamp();
 }
 
 bool SVImageObjectClass::Clear( long lIndex, unsigned long ulValue )
@@ -686,7 +686,7 @@ bool SVImageObjectClass::CreateBufferArrays(SvStl::MessageContainerVector *pErro
 			if (!Result && nullptr != pErrorContainer)
 			{
 				SvStl::MessageContainer message;
-				message.setMessage( SVMSG_SVO_5065_COULDNOTCREATEIMAGEBUFFER, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
+				message.setMessage( SVMSG_SVO_5065_COULDNOTCREATEIMAGEBUFFER, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
 				pErrorContainer->push_back(message);
 			}
 		}
@@ -720,13 +720,13 @@ bool SVImageObjectClass::CreateImageBuffer(SVImageInfoClass &rInfo, long p_Index
 			if (SVMSG_SVO_5067_IMAGEALLOCATIONFAILED == hr)
 			{
 				SvStl::MessageContainer message;
-				message.setMessage( hr, SvOi::Tid_Default, SvStl::SourceFileParams(StdMessageParams) );
+				message.setMessage( hr, SvStl::Tid_Default, SvStl::SourceFileParams(StdMessageParams) );
 				pErrorContainer->push_back(message);
 			}
 			else 
 			{
 				SvStl::MessageContainer message;
-				message.setMessage( SVMSG_SVO_5065_COULDNOTCREATEIMAGEBUFFER, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
+				message.setMessage( SVMSG_SVO_5065_COULDNOTCREATEIMAGEBUFFER, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
 				pErrorContainer->push_back(message);
 			}
 		}
@@ -742,7 +742,7 @@ bool SVImageObjectClass::CreateImageBuffer(SVImageInfoClass &rInfo, long p_Index
 			if (nullptr != pErrorContainer)
 			{
 				SvStl::MessageContainer message;
-				message.setMessage( SVMSG_SVO_5065_COULDNOTCREATEIMAGEBUFFER, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
+				message.setMessage( SVMSG_SVO_5065_COULDNOTCREATEIMAGEBUFFER, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
 				pErrorContainer->push_back(message);
 			}
 		}
@@ -852,7 +852,7 @@ bool SVImageObjectClass::CreateImageHandleArray( long lSize, SvStl::MessageConta
 			if (!Result && nullptr != pErrorContainer)
 			{
 				SvStl::MessageContainer message;
-				message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_CreateChildBufferFailed, SvStl::SourceFileParams(StdMessageParams) );
+				message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_CreateChildBufferFailed, SvStl::SourceFileParams(StdMessageParams) );
 				pErrorContainer->push_back(message);
 			}
 		}
@@ -884,7 +884,7 @@ bool SVImageObjectClass::CreateImageHandleArray( long lSize, SvStl::MessageConta
 		if( ! Result && nullptr != pErrorContainer )
 		{
 			SvStl::MessageContainer message;
-			message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_CreateImageHandleArrayFailed, SvStl::SourceFileParams(StdMessageParams) );
+			message.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_CreateImageHandleArrayFailed, SvStl::SourceFileParams(StdMessageParams) );
 			pErrorContainer->push_back(message);
 		}
 	}

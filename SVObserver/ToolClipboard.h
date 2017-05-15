@@ -22,7 +22,10 @@
 class SVGUID;
 class SVInspectionProcess;
 class SVToolClass;
-class SVObjectXMLWriter;
+namespace SvXml
+{
+	class SVObjectXMLWriter;
+}
 
 class ToolClipboard
 {
@@ -82,14 +85,14 @@ protected:
 	// Description: This method writes the Base and Environment nodes
 	// Parameter: rXmlWriter <in> Reference to the XML writer
 	//************************************
-	void writeBaseAndEnvironmentNodes( SVObjectXMLWriter& rXmlWriter ) const;
+	void writeBaseAndEnvironmentNodes(SvXml::SVObjectXMLWriter& rXmlWriter ) const;
 
 	//************************************
 	// Description: This method writes the Guids of sources like Inspection and Image
 	// Parameter: rXmlWriter <in> Reference to the XML writer
 	// Parameter: rTool <in> Reference to the tool to save
 	//************************************
-	void writeSourceGuids( SVObjectXMLWriter& rXmlWriter, SVToolClass& rTool ) const;
+	void writeSourceGuids(SvXml::SVObjectXMLWriter& rXmlWriter, SVToolClass& rTool ) const;
 
 	//************************************
 	// Description: This method finds the dependency files in the tool Xml string

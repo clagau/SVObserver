@@ -16,8 +16,8 @@
 #include "SVIOLibrary/SVIOTriggerLoadLibraryClass.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace TriggerHandling {
-
+namespace SvTh
+{
 	class SVTriggerClass : public SVODeviceClass  
 	{
 	public:
@@ -45,7 +45,4 @@ namespace Seidenader { namespace TriggerHandling {
 			SVStatusDeque m_StatusLog;
 		#endif
 	};
-
-} /* namespace TriggerHandling */ } /* namespace Seidenader */
-
-namespace SvTh = Seidenader::TriggerHandling;
+} //namespace SvTh

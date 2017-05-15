@@ -14,7 +14,7 @@
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace SVOGui
+namespace SvOg
 {
 	class GlobalConstantConflictDlg : public CDialog
 	{
@@ -50,6 +50,4 @@ namespace Seidenader { namespace SVOGui
 		SvOi::GlobalConflictPairVector& m_rGlobalPairs;  //This is the conflict Global Data as data pair
 	#pragma endregion Member variables
 	};
-} /* namespace SVOGui */ } /* namespace Seidenader */
-
-namespace SvOg = Seidenader::SVOGui;
+} //namespace SvOg

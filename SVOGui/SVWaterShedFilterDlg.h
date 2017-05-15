@@ -18,64 +18,58 @@
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
-namespace Seidenader
+namespace SvOg
 {
-	namespace SVOGui
+	class SVWatershedFilterDlg : public CDialog, protected SvOg::ImageController
 	{
-		class SVWatershedFilterDlg : public CDialog, protected SvOg::ImageController
-		{
-			// Construction
-		public:
-			SVWatershedFilterDlg(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, const SVGUID& rFilterID, CWnd* pParent = nullptr);   // standard constructor
-			virtual ~SVWatershedFilterDlg();
+		// Construction
+	public:
+		SVWatershedFilterDlg(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, const SVGUID& rFilterID, CWnd* pParent = nullptr);   // standard constructor
+		virtual ~SVWatershedFilterDlg();
 
-			HRESULT SetInspectionData();
+		HRESULT SetInspectionData();
 
-			// Dialog Data
-			//{{AFX_DATA(SVWatershedFilterDlg)
-			enum { IDD = IDD_WATERSHED_FILTER };
-			CComboBox	m_SVSourceImageCombo;
-			BOOL	m_bUseBasin;
-			BOOL	m_bSkipLastLevel;
-			long	m_lMinVariation;
-			BOOL	m_bUseWatershed;
-			int		m_iEightWatershedLines;
-			int		m_iMinFillBasin;
-			int		m_iRegularWatershedLines;
-			int		m_iVariationType;
-			BOOL	m_bUseMarker;
-			//}}AFX_DATA
+		// Dialog Data
+		//{{AFX_DATA(SVWatershedFilterDlg)
+		enum { IDD = IDD_WATERSHED_FILTER };
+		CComboBox	m_SVSourceImageCombo;
+		BOOL	m_bUseBasin;
+		BOOL	m_bSkipLastLevel;
+		long	m_lMinVariation;
+		BOOL	m_bUseWatershed;
+		int		m_iEightWatershedLines;
+		int		m_iMinFillBasin;
+		int		m_iRegularWatershedLines;
+		int		m_iVariationType;
+		BOOL	m_bUseMarker;
+		//}}AFX_DATA
 
-			// Overrides
-			// ClassWizard generated virtual function overrides
-			//{{AFX_VIRTUAL(SVWatershedFilterDlg)
-		protected:
-			virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
-			//}}AFX_VIRTUAL
+		// Overrides
+		// ClassWizard generated virtual function overrides
+		//{{AFX_VIRTUAL(SVWatershedFilterDlg)
+	protected:
+		virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
+		//}}AFX_VIRTUAL
 
-		protected:
-			// Generated message map functions
-			//{{AFX_MSG(SVWatershedFilterDlg)
-			virtual BOOL OnInitDialog() override;
-			virtual void OnOK() override;
-			virtual void OnCancel() override;
-			afx_msg void OnSETVarRadio();
-			afx_msg void OnSelchangeSourceImageCombo();
-			//}}AFX_MSG
-			DECLARE_MESSAGE_MAP()
+	protected:
+		// Generated message map functions
+		//{{AFX_MSG(SVWatershedFilterDlg)
+		virtual BOOL OnInitDialog() override;
+		virtual void OnOK() override;
+		virtual void OnCancel() override;
+		afx_msg void OnSETVarRadio();
+		afx_msg void OnSelchangeSourceImageCombo();
+		//}}AFX_MSG
+		DECLARE_MESSAGE_MAP()
 
-		private:
-			std::vector<SVString*>    m_AvailableImages;
+	private:
+		std::vector<SVString*>    m_AvailableImages;
 
-			const SVGUID& m_rInspectionID;
-			const SVGUID& m_rTaskObjectID;
-			const SVGUID& m_filterID;
-			typedef SvOg::ValuesAccessor<SvOg::BoundValues> ValueCommand;
-			typedef SvOg::GuiController<ValueCommand, ValueCommand::value_type> Controller;
-			Controller m_Values;
-		};
-	}  //end namespace SVOGUI
-}  //end namespace Seidenader
-
-namespace SvOg = Seidenader::SVOGui;
-
+		const SVGUID& m_rInspectionID;
+		const SVGUID& m_rTaskObjectID;
+		const SVGUID& m_filterID;
+		typedef SvOg::ValuesAccessor<SvOg::BoundValues> ValueCommand;
+		typedef SvOg::GuiController<ValueCommand, ValueCommand::value_type> Controller;
+		Controller m_Values;
+	};
+} //namespace SvOg

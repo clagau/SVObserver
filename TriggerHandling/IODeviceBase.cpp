@@ -10,8 +10,8 @@
 #include "stdafx.h"
 #include "IODeviceBase.h"
 
-namespace Seidenader { namespace TriggerHandling {
-
+namespace SvTh
+{
 	HRESULT IODeviceBase::AddTriggerCallback(unsigned long handle, const TriggerDispatcher &rDispatcher)
 	{
 		HRESULT hr = S_FALSE;
@@ -136,6 +136,4 @@ namespace Seidenader { namespace TriggerHandling {
 		return hr;
 	}
 
-
-
-} /* namespace TriggerHandling */ } /* namespace Seidenader */
+} //namespace SvTh

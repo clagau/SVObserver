@@ -14,7 +14,7 @@
 #include "SVOResource/resource.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace SVOGui
+namespace SvOg
 {
 	class SVTextEditDialog : public CDialog
 	{
@@ -57,7 +57,4 @@ namespace Seidenader { namespace SVOGui
 		CString			m_Text;					//The text to be edited
 	#pragma endregion Member variables
 	};
-} /* namespace SVOGui */ } /* namespace Seidenader */
-
-namespace SvOg = Seidenader::SVOGui;
-
+} //namespace SvOg

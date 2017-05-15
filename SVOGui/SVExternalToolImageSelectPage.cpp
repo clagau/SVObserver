@@ -21,7 +21,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-namespace Seidenader { namespace SVOGui
+namespace SvOg
 {
 	BEGIN_MESSAGE_MAP(SVExternalToolImageSelectPage, CPropertyPage)
 		//{{AFX_MSG_MAP(SVExternalToolImageSelectPage)
@@ -212,4 +212,4 @@ namespace Seidenader { namespace SVOGui
 	}
 
 	#pragma endregion Private Methods
-} /* namespace SVOGui */ } /* namespace Seidenader */
+} //namespace SvOg

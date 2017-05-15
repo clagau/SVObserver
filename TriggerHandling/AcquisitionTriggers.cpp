@@ -11,8 +11,8 @@
 #include "stdafx.h"
 #include "AcquisitionTriggers.h"
 
-namespace Seidenader { namespace TriggerHandling {
-
+namespace SvTh
+{
 	void AcquisitionTriggers::Add(unsigned long p_ulIndex, const TriggerDispatcher& rDispatcher)
 	{
 		DispatcherVector& callbacks = m_dispatcherVectorCollection[p_ulIndex];
@@ -75,5 +75,4 @@ namespace Seidenader { namespace TriggerHandling {
 		}
 		return hr;
 	}
-
-}}
+} //namespace SvTh

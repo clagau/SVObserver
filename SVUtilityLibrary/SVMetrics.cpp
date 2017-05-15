@@ -15,7 +15,7 @@
 #include "SVMetrics.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace SVUtilityLibrary 
+namespace SvUl
 {
 	SVMetrics::SVMetrics()
 	{
@@ -52,4 +52,4 @@ namespace Seidenader { namespace SVUtilityLibrary
 
 		if (bAvg) { avgTime /= 2.0; }
 	}
-} /* namespace SVUtilityLibrary */ } /* namespace Seidenader */
+} // namespace SvUl

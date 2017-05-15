@@ -349,7 +349,7 @@ void CSVOConfigAssistantDlg::OnSelchangeComboAvalSys()
 				(!SvTi::SVHardwareManifest::IsNonIOSVIM(l_ConfigurationType) && SvTi::SVHardwareManifest::IsNonIOSVIM(CurrentSvimType)))
 			{
 				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-				INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvOi::Tid_Config_SwitchResetQuestion, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10138, SV_GUID_NULL, MB_YESNO);
+				INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_Config_SwitchResetQuestion, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10138, SV_GUID_NULL, MB_YESNO);
 				if ( IDYES == result )
 				{
 					m_lConfigurationType = l_ConfigurationType;
@@ -360,7 +360,7 @@ void CSVOConfigAssistantDlg::OnSelchangeComboAvalSys()
 			else
 			{
 				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-				INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvOi::Tid_Config_SwitchInvalidQuestion, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10139, SV_GUID_NULL, MB_YESNO);
+				INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_Config_SwitchInvalidQuestion, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10139, SV_GUID_NULL, MB_YESNO);
 				if ( IDYES == result )
 				{
 					m_lConfigurationType = l_ConfigurationType;
@@ -2089,7 +2089,7 @@ BOOL CSVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 							SVStringVector msgList;
 							msgList.push_back(SvUl_SF::Format(_T("%d"), hr));
 							SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-							INT_PTR result = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Config_InspectionImportFailed, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10140);
+							INT_PTR result = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Config_InspectionImportFailed, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10140);
 						}
 						pInspectionObj->ClearImportFilename();
 					}
@@ -2210,7 +2210,7 @@ BOOL CSVOConfigAssistantDlg::SendPPQAttachmentsToConfiguration(SVPPQObjectPtrVec
 				SVString PPQCameraName;
 				long lSize = 0;
 
-				bRet = pPPQ->SetPPQOutputMode((SVPPQOutputModeEnum)pPPQObj->GetPPQMode()) && bRet;
+				bRet = pPPQ->SetPPQOutputMode((SvOi::SVPPQOutputModeEnum)pPPQObj->GetPPQMode()) && bRet;
 
 				// EB 20050225
 				long lOldPPQLength=0;
@@ -2808,7 +2808,7 @@ BOOL CSVOConfigAssistantDlg::GetConfigurationForExisting()
 				long lPPQDelayTime;
 				bool bPPQMaintainSrcImg;
 				long lInspectionTimeout;
-				SVPPQOutputModeEnum ePPQMode;
+				SvOi::SVPPQOutputModeEnum ePPQMode;
 				pcfgPPQ->GetPPQLength(lPPQLength);
 				pcfgPPQ->GetPPQOutputMode(ePPQMode);
 				pcfgPPQ->GetOutputDelay(lPPQDelayTime);
@@ -4233,10 +4233,10 @@ void CSVOConfigAssistantDlg::resolveGlobalConflicts( SvOi::GlobalConflictPairVec
 					{
 						pGlobalObject->setValue( Iter->second.m_Value );
 						pGlobalObject->setDescription( Iter->second.m_Description.c_str() );
-						pGlobalObject->SetObjectAttributesAllowed( SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::OverwriteAttribute );
+						pGlobalObject->SetObjectAttributesAllowed( SvOi::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::OverwriteAttribute );
 						if( Iter->second.m_Value.vt == VT_BSTR )
 						{
-							pGlobalObject->SetObjectAttributesAllowed( SV_SELECTABLE_FOR_EQUATION, SvOi::SetAttributeType::RemoveAttribute );
+							pGlobalObject->SetObjectAttributesAllowed( SvOi::SV_SELECTABLE_FOR_EQUATION, SvOi::SetAttributeType::RemoveAttribute );
 						}
 					}
 				}

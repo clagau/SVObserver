@@ -11,31 +11,25 @@
 
 #pragma once
 
-namespace Seidenader
+namespace SvMc
 {
-	namespace SVMFCControls
+	enum
 	{
-		enum
-		{
-			WM_SV_NOTIFY_LBUTTONDOWN = WM_APP + 200,
-			WM_SV_NOTIFY_LBUTTONUP   = WM_APP + 201,
-		};
+		WM_SV_NOTIFY_LBUTTONDOWN = WM_APP + 200,
+		WM_SV_NOTIFY_LBUTTONUP   = WM_APP + 201,
+	};
 
-		class SVUpDownButton : public CButton
-		{
-		public:
-			SVUpDownButton();
-			afx_msg void OnLButtonDown( UINT nFlags, CPoint point );
-			afx_msg void OnLButtonUp( UINT nFlags, CPoint point );
-			afx_msg void OnKillFocus( CWnd* pNewWnd );
+	class SVUpDownButton : public CButton
+	{
+	public:
+		SVUpDownButton();
+		afx_msg void OnLButtonDown( UINT nFlags, CPoint point );
+		afx_msg void OnLButtonUp( UINT nFlags, CPoint point );
+		afx_msg void OnKillFocus( CWnd* pNewWnd );
 
-		protected:
-			bool m_bLButtonDown;
+	protected:
+		bool m_bLButtonDown;
 
-			DECLARE_MESSAGE_MAP()
-		};
-	} //SVMFCControls
-} //Seidenader
-
-namespace SvMc = Seidenader::SVMFCControls;
-
+		DECLARE_MESSAGE_MAP()
+	};
+} //namespace SvMc

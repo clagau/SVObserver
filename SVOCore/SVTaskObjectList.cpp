@@ -232,7 +232,7 @@ HRESULT SVTaskObjectListClass::GetChildObject( SVObjectClass*& rpObject, const S
 	return l_Status;
 }
 
-const SVClock::SVTimeStamp& SVTaskObjectListClass::GetLastListUpdateTimestamp() const
+const SvTl::SVTimeStamp& SVTaskObjectListClass::GetLastListUpdateTimestamp() const
 {
 	return m_LastListUpdateTimestamp;
 }
@@ -256,7 +256,7 @@ void SVTaskObjectListClass::InsertAt(int nIndex, SVTaskObjectClass* PTaskObject,
 	
 	m_aTaskObjects.InsertAt(nIndex, PTaskObject, nCount);
 
-	m_LastListUpdateTimestamp = SVClock::GetTimeStamp();
+	m_LastListUpdateTimestamp = SvTl::GetTimeStamp();
 }
 
 // Use this if You want to set list entry to nullptr!
@@ -277,7 +277,7 @@ void SVTaskObjectListClass::SetAt(int nIndex, SVTaskObjectClass* PTaskObject)
 	
 	m_aTaskObjects.SetAt(nIndex, PTaskObject);
 
-	m_LastListUpdateTimestamp = SVClock::GetTimeStamp();
+	m_LastListUpdateTimestamp = SvTl::GetTimeStamp();
 }
 
 SVTaskObjectClass* SVTaskObjectListClass::GetAt( int nIndex ) const 
@@ -289,7 +289,7 @@ void SVTaskObjectListClass::RemoveAt( int nIndex, int nCount )
 {
 	m_aTaskObjects.RemoveAt(nIndex, nCount);
 
-	m_LastListUpdateTimestamp = SVClock::GetTimeStamp();
+	m_LastListUpdateTimestamp = SvTl::GetTimeStamp();
 }
 
 int SVTaskObjectListClass::Add(SVTaskObjectClass* pTaskObject, bool atBegin)
@@ -307,7 +307,7 @@ int SVTaskObjectListClass::Add(SVTaskObjectClass* pTaskObject, bool atBegin)
 	}
 	pTaskObject->SetObjectOwner(this);
 
-	m_LastListUpdateTimestamp = SVClock::GetTimeStamp();
+	m_LastListUpdateTimestamp = SvTl::GetTimeStamp();
 
 	if (!atBegin)
 	{
@@ -322,7 +322,7 @@ HRESULT SVTaskObjectListClass::RemoveChild( SVTaskObjectClass* pChildObject )
 {
 	HRESULT Result( S_OK );
 
-	if ( !DestroyChildObject(pChildObject, SVMFSetDefaultInputs) )
+	if ( !DestroyChildObject(pChildObject, SvOi::SVMFSetDefaultInputs) )
 	{
 		Result = S_FALSE;
 	}
@@ -544,7 +544,7 @@ void SVTaskObjectListClass::Delete(GUID& objectID)
 
 		if (pTaskObject && pTaskObject->GetUniqueObjectID() == objectID)
 		{
-			m_LastListUpdateTimestamp = SVClock::GetTimeStamp();
+			m_LastListUpdateTimestamp = SvTl::GetTimeStamp();
 
 			m_aTaskObjects.RemoveAt(i);
 			// Delete object not till it is removed from list!!!
@@ -609,12 +609,12 @@ bool SVTaskObjectListClass::DestroyFriendObject(SvOi::IObjectClass& rObject, DWO
 	SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess*> (GetInspection());
 	if( nullptr != pInspection )
 	{
-		if( SVMFSetDefaultInputs == ( context & SVMFSetDefaultInputs ) )
+		if( SvOi::SVMFSetDefaultInputs == ( context & SvOi::SVMFSetDefaultInputs ) )
 		{
 			pInspection->SetDefaultInputs();
 		}
 
-		if( SVMFResetInspection == ( context & SVMFResetInspection ) )
+		if( SvOi::SVMFResetInspection == ( context & SvOi::SVMFResetInspection ) )
 		{
 			GetInspection()->resetAllObjects();
 		}
@@ -776,7 +776,7 @@ bool SVTaskObjectListClass::replaceObject(SVObjectClass* pObject, const GUID& rN
 				// Replace list member...
 				m_aTaskObjects.SetAt(i, pTaskObject);
 
-				m_LastListUpdateTimestamp = SVClock::GetTimeStamp();
+				m_LastListUpdateTimestamp = SvTl::GetTimeStamp();
 
 				// Set unique object ID...
 				if (SVObjectManagerClass::Instance().ChangeUniqueObjectID(pTaskObject, rNewGuid))
@@ -877,7 +877,7 @@ void SVTaskObjectListClass::DeleteAll()
 {
 	DeleteAt(0, m_aTaskObjects.GetSize());
 
-	m_LastListUpdateTimestamp = SVClock::GetTimeStamp();
+	m_LastListUpdateTimestamp = SvTl::GetTimeStamp();
 }
 
 HRESULT SVTaskObjectListClass::onCollectOverlays(SVImageClass* p_Image, SVExtentMultiLineStructVector &p_MultiLineArray )
@@ -902,7 +902,7 @@ SVObjectClass* SVTaskObjectListClass::UpdateObject( const GUID &p_oFriendGuid, S
 		{
 			m_aTaskObjects.RemoveAt(i);
 
-			m_LastListUpdateTimestamp = SVClock::GetTimeStamp();
+			m_LastListUpdateTimestamp = SvTl::GetTimeStamp();
 		}
 		else
 		{
@@ -1099,12 +1099,12 @@ void SVTaskObjectListClass::DestroyTaskObject(SVTaskObjectClass& rTaskObject, DW
 	SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess*>(GetInspection());
 	if( nullptr != pInspection )
 	{
-		if( SVMFSetDefaultInputs == ( context & SVMFSetDefaultInputs ) )
+		if( SvOi::SVMFSetDefaultInputs == ( context & SvOi::SVMFSetDefaultInputs ) )
 		{
 			pInspection->SetDefaultInputs();
 		}
 
-		if( SVMFResetInspection == ( context & SVMFResetInspection ) )
+		if( SvOi::SVMFResetInspection == ( context & SvOi::SVMFResetInspection ) )
 		{
 			GetInspection()->resetAllObjects();
 		}

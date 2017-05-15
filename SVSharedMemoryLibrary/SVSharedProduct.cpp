@@ -13,7 +13,7 @@
 #include "SVSharedProduct.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace SVSharedMemoryLibrary
+namespace SvSml
 {
 	SVSharedProduct::SVSharedProduct(const void_allocator & allocator)
 	: m_Flags(ds::none)
@@ -52,5 +52,4 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		}
 		throw std::exception("Key not found");
 	}
-
-} /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
+} //namespace SvSml

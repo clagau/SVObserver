@@ -11,46 +11,40 @@
 
 #pragma once
 
-namespace Seidenader
+namespace SvMc
 {
-	namespace SVMFCControls
+	class SVDottedNameTreeCtrlClass : public CTreeCtrl
 	{
-		class SVDottedNameTreeCtrlClass : public CTreeCtrl
-		{
-			DECLARE_DYNCREATE(SVDottedNameTreeCtrlClass)
+		DECLARE_DYNCREATE(SVDottedNameTreeCtrlClass)
 
-			// Construction
-		public:
-			SVDottedNameTreeCtrlClass();
+		// Construction
+	public:
+		SVDottedNameTreeCtrlClass();
 
-			// Attributes
-		public:
-			BOOL		AddItem( LPCTSTR DottedName, DWORD_PTR DwItemValue = 0, BOOL BExpand = true );
-			HTREEITEM	GetItem( LPCTSTR DottedName );
-			DWORD_PTR	GetSelectedItemValue();
+		// Attributes
+	public:
+		BOOL		AddItem( LPCTSTR DottedName, DWORD_PTR DwItemValue = 0, BOOL BExpand = true );
+		HTREEITEM	GetItem( LPCTSTR DottedName );
+		DWORD_PTR	GetSelectedItemValue();
 
-			// Operations
-		public:
+		// Operations
+	public:
 
-			// Overrides
-			// ClassWizard generated virtual function overrides
-			//{{AFX_VIRTUAL(SVDottedNameTreeCtrlClass)
-			//}}AFX_VIRTUAL
+		// Overrides
+		// ClassWizard generated virtual function overrides
+		//{{AFX_VIRTUAL(SVDottedNameTreeCtrlClass)
+		//}}AFX_VIRTUAL
 
-			// Implementation
-		public:
-			virtual ~SVDottedNameTreeCtrlClass();
+		// Implementation
+	public:
+		virtual ~SVDottedNameTreeCtrlClass();
 
-			// Generated message map functions
-		protected:
-			//{{AFX_MSG(SVDottedNameTreeCtrlClass)
-			// NOTE - the ClassWizard will add and remove member functions here.
-			//}}AFX_MSG
+		// Generated message map functions
+	protected:
+		//{{AFX_MSG(SVDottedNameTreeCtrlClass)
+		// NOTE - the ClassWizard will add and remove member functions here.
+		//}}AFX_MSG
 
-			DECLARE_MESSAGE_MAP()
-		};
-	} //SVMFCControls
-} //Seidenader
-
-namespace SvMc = Seidenader::SVMFCControls;
-
+		DECLARE_MESSAGE_MAP()
+	};
+} //namespace SvMc

@@ -11,14 +11,11 @@
 
 #pragma once
 
-namespace Seidenader { namespace TriggerHandling { //AB namespace used only for forward declaration
-
+//namespace used only for forward declaration
+namespace SvTh
+{
 	struct TriggerDispatcher;
-
-} /* namespace TriggerHandling */ } /* namespace Seidenader */
-
-namespace SvTh = Seidenader::TriggerHandling;
-;
+} //namespace SvTh
 
 typedef HRESULT (WINAPI *SVCreatePtr)( void );
 typedef HRESULT (WINAPI *SVDestroyPtr)( void );

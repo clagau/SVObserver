@@ -12,13 +12,8 @@
 #include "SVUtilityLibrary\SVString.h"
 #pragma endregion Includes
 
-namespace Seidenader
+namespace SvOi
 {
-	namespace ObjectInterfaces
-	{
-		typedef std::pair<SVString, long> NameValuePair;
-		typedef std::deque<NameValuePair> NameValueList;
-	}
-}
-
-namespace SvOi = Seidenader::ObjectInterfaces;
+	typedef std::pair<SVString, long> NameValuePair;
+	typedef std::deque<NameValuePair> NameValueList;
+} //namespace SvOi

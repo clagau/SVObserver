@@ -14,39 +14,34 @@
 #include "ObjectInterfaces\IObjectManager.h"
 #pragma endregion Includes
 
-namespace Seidenader
+namespace SvCmd
 {
-	namespace GuiCommand
+	struct SetAuxSourceImage: public boost::noncopyable
 	{
-		struct SetAuxSourceImage: public boost::noncopyable
+		SetAuxSourceImage(const GUID& rObjectID, const GUID& rImageID) : m_InstanceID(rObjectID), m_ImageID(rImageID) {}
+
+		// This method is where the real separation would occur by using sockets/named pipes/shared memory
+		// The logic contained within this method would be moved to the "Server" side of a Client/Server architecture
+		// and replaced with the building and sending of the command
+		HRESULT Execute()
 		{
-			SetAuxSourceImage(const GUID& rObjectID, const GUID& rImageID) : m_InstanceID(rObjectID), m_ImageID(rImageID) {}
-
-			// This method is where the real separation would occur by using sockets/named pipes/shared memory
-			// The logic contained within this method would be moved to the "Server" side of a Client/Server architecture
-			// and replaced with the building and sending of the command
-			HRESULT Execute()
+			HRESULT hr = S_OK;
+			
+			SvOi::ITool* pTool = dynamic_cast<SvOi::ITool *>(SvOi::getObject(m_InstanceID));
+			if (pTool)
 			{
-				HRESULT hr = S_OK;
-				
-				SvOi::ITool* pTool = dynamic_cast<SvOi::ITool *>(SvOi::getObject(m_InstanceID));
-				if (pTool)
-				{
-					hr = pTool->setAuxSourceImage(m_ImageID);
-				}
-				else
-				{
-					hr = E_POINTER;
-				}
-				return hr;
+				hr = pTool->setAuxSourceImage(m_ImageID);
 			}
-			bool empty() const { return false; }
+			else
+			{
+				hr = E_POINTER;
+			}
+			return hr;
+		}
+		bool empty() const { return false; }
 
-		private:
-			GUID m_InstanceID;
-			GUID m_ImageID;
-		};
-	}
-}
-
-namespace GuiCmd = Seidenader::GuiCommand;
+	private:
+		GUID m_InstanceID;
+		GUID m_ImageID;
+	};
+} //namespace SvCmd

@@ -54,7 +54,7 @@ BOOL TableObject::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
 	BOOL l_bOk = SVTaskObjectClass::CreateObject( pCreateStructure );
 
-	m_NumberOfRows.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_NumberOfRows.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 
 	return l_bOk;
 }
@@ -206,7 +206,7 @@ DoubleSortValueObject* TableObject::createColumnObject(SVGUID embeddedID, LPCTST
 		pObject = nullptr;
 		ASSERT(FALSE);
 		SvStl::MessageMgrStd e( SvStl::DataOnly );
-		e.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_TableObject_createColumnValueObjectFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+		e.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_TableObject_createColumnValueObjectFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 		e.Throw();
 	}
 	return pObject;

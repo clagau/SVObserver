@@ -131,7 +131,7 @@ public:
 	
 	void DumpDMInfo( LPCTSTR p_szName ) const;
 
-	virtual SVClock::SVTimeStamp GetTimeStamp() const override;
+	virtual SvTl::SVTimeStamp GetTimeStamp() const override;
 
 	virtual unsigned long GetBufferWidth() const override;
 	virtual unsigned long GetBufferHeight() const override;

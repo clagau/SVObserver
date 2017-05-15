@@ -121,9 +121,9 @@ HRESULT SVSecurityStorage::Save( LPCTSTR pFileName )
 	XMLSecurityFile.open( pFileName);
 	if (XMLSecurityFile.is_open())
 	{
-		SVObjectXMLWriter writer(XMLSecurityFile);
+		SvXml::SVObjectXMLWriter writer(XMLSecurityFile);
 		writer.setHeader(_T("<?xml version=\"1.0\"  standalone=\"yes\"?>"));
-		SVXMLEncryptionClass Encryption;
+		SvXml::SVXMLEncryptionClass Encryption;
 
 		Encryption.SetIsEncryption(TRUE);
 		Encryption.CreateNameSeed();
@@ -233,21 +233,21 @@ HRESULT SVSecurityStorage::GetMaterialsTree( SVMaterialsTree::SVTreeContainer& r
 	{
 		if( S_OK == l_Status )
 		{
-			rTree.set( SVMaterialsTree::SVTreeElement( _T( "Root" ), SVMaterialDataPtr( nullptr ) ) );
-			SVMaterialDataPtr pMaterial;
-			pMaterial = new SVMaterialData( _variant_t( GetUseLogon() ) );
+			rTree.set( SVMaterialsTree::SVTreeElement( _T( "Root" ), SvXml::SVMaterialDataPtr( nullptr ) ) );
+			SvXml::SVMaterialDataPtr pMaterial;
+			pMaterial = new SvXml::SVMaterialData( _variant_t( GetUseLogon() ) );
 			rTree.insert( SVMaterialsTree::SVTreeElement( SVString( _T("Use Logon") ), pMaterial ) );
 			pMaterial.clear();
-			pMaterial = new SVMaterialData( _variant_t( GetUserTimeout() ) );
+			pMaterial = new SvXml::SVMaterialData( _variant_t( GetUserTimeout() ) );
 			rTree.insert( SVMaterialsTree::SVTreeElement( SVString( _T("Logon Timeout") ), pMaterial ) );
 			pMaterial.clear();
-			pMaterial = new SVMaterialData( _variant_t( GetCurrentUser().c_str() ) );
+			pMaterial = new SvXml::SVMaterialData( _variant_t( GetCurrentUser().c_str() ) );
 			rTree.insert( SVMaterialsTree::SVTreeElement( SVString( _T("Current User") ), pMaterial ) );
 			pMaterial.clear();
-			pMaterial = new SVMaterialData( _variant_t( GetCurrentPassword().c_str() ) );
+			pMaterial = new SvXml::SVMaterialData( _variant_t( GetCurrentPassword().c_str() ) );
 			rTree.insert( SVMaterialsTree::SVTreeElement( SVString( _T("Current PW") ), pMaterial ) );
 			pMaterial.clear();
-			pMaterial = new SVMaterialData( _variant_t( GetAutoEdit() ) );
+			pMaterial = new SvXml::SVMaterialData( _variant_t( GetAutoEdit() ) );
 			rTree.insert( SVMaterialsTree::SVTreeElement( SVString( _T("Use Auto Edit") ), pMaterial ) );
 		}
 
@@ -260,7 +260,7 @@ HRESULT SVSecurityStorage::GetMaterialsTree( SVMaterialsTree::SVTreeContainer& r
 				if( !l_NodeIter->m_bHasData )
 				{
 					SVString l_Name( l_NodeIter->m_Name );
-					SVMaterialsTree::SVTreeElement Element( l_Name, SVMaterialDataPtr(nullptr) );
+					SVMaterialsTree::SVTreeElement Element( l_Name, SvXml::SVMaterialDataPtr(nullptr) );
 					SVMaterialsTree::iterator l_Iter( rTree.insert( Element ) );
 
 					if( l_Iter != rTree.end() && nullptr != l_Iter.node() )
@@ -289,7 +289,7 @@ HRESULT SVSecurityStorage::GetChildMaterialsTree( SVMaterialsTree::SVTreeContain
 		if( S_OK == l_Status )
 		{
 			SVString l_Name( p_rNodeIter->m_Name );
-			SVMaterialsTree::SVTreeElement Element( l_Name, SVMaterialDataPtr(nullptr) );
+			SVMaterialsTree::SVTreeElement Element( l_Name, SvXml::SVMaterialDataPtr(nullptr) );
 			SVMaterialsTree::iterator Iter( rTree.insert( Element ) );
 
 			if( rTree.end() != Iter )
@@ -304,14 +304,14 @@ HRESULT SVSecurityStorage::GetChildMaterialsTree( SVMaterialsTree::SVTreeContain
 		}
 		if( nullptr != pNode )
 		{
-			SVMaterialDataPtr pMaterial;
-			pMaterial =new SVMaterialData( _variant_t( p_rNodeIter->m_bForcePrompt ) );
+			SvXml::SVMaterialDataPtr pMaterial;
+			pMaterial =new SvXml::SVMaterialData( _variant_t( p_rNodeIter->m_bForcePrompt ) );
 			pNode->insert( SVMaterialsTree::SVTreeElement( SVString( _T("Force Prompt") ), pMaterial ) );
 			pMaterial.clear();
-			pMaterial = new SVMaterialData( _variant_t( p_rNodeIter->m_NTGroup.c_str() ) );
+			pMaterial = new SvXml::SVMaterialData( _variant_t( p_rNodeIter->m_NTGroup.c_str() ) );
 			pNode->insert( SVMaterialsTree::SVTreeElement( SVString( _T("NT Group") ), pMaterial ) );
 			pMaterial.clear();
-			pMaterial = new SVMaterialData( _variant_t( p_rNodeIter->m_lID ) );
+			pMaterial = new SvXml::SVMaterialData( _variant_t( p_rNodeIter->m_lID ) );
 			pNode->insert( SVMaterialsTree::SVTreeElement( SVString( _T("ID") ), pMaterial ) );
 		}
 		

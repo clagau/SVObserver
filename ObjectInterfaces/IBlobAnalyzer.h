@@ -10,18 +10,13 @@
 #include "NameValueList.h"
 #pragma endregion Includes
 
-namespace Seidenader
+namespace SvOi
 {
-	namespace ObjectInterfaces
+	class IBlobAnalyzer
 	{
-		class IBlobAnalyzer
-		{
-		public:
-			virtual ~IBlobAnalyzer() {}
+	public:
+		virtual ~IBlobAnalyzer() {}
 
-			virtual NameValueList getFeatureList(bool isSelected) const = 0;
-		};
-	}
-}
-
-namespace SvOi = Seidenader::ObjectInterfaces;
+		virtual NameValueList getFeatureList(bool isSelected) const = 0;
+	};
+} //namespace SvOi

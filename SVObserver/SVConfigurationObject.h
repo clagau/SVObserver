@@ -36,14 +36,12 @@
 #pragma endregion Includes
 
 
-namespace Seidenader { namespace TriggerHandling {//namespace used only for forward declarations
-
+//Namespace used only for forward declaration
+namespace SvTh
+{
 	class SVSoftwareTriggerClass;
 	class SVCameraTriggerClass;
-
-} /* namespace TriggerHandling */ } /* namespace Seidenader */
-
-namespace SvTh = Seidenader::TriggerHandling;
+} //namespace SvTh
 
 
 
@@ -99,7 +97,7 @@ public:
 
 	unsigned long GetSVXFileVersion(SVTreeType& rTree);
 
-	BOOL SaveConfiguration(SVObjectXMLWriter& rWriter) const;
+	BOOL SaveConfiguration(SvXml::SVObjectXMLWriter& rWriter) const;
 
 	//************************************
 	//! Load Configuration 
@@ -355,24 +353,24 @@ protected:
 private:
 	typedef std::set<SVInspectionProcess*> SVInspectionSet;
 
-	void SaveEnvironment(SVObjectXMLWriter& rWriter) const;
-	void SaveIO(SVObjectXMLWriter& rWriter) const;
-	void SaveAcquisitionDevice(SVObjectXMLWriter& rWriter) const;
-	void SaveAcquistionConfiguration(SVObjectXMLWriter& rWriter, const SVLightReference& rLight, const SVLut& rLut, const SVDeviceParamCollection& rDeviceParams) const;
-	void SaveCamera(SVObjectXMLWriter& rWriter) const;
-	void SaveTrigger(SVObjectXMLWriter& rWriter) const;
-	void SaveInspection(SVObjectXMLWriter& rWriter) const;
-	void SavePPQ(SVObjectXMLWriter& rWriter) const;
-	void SavePPQ_Attributes( SVObjectXMLWriter &rWriter, const SVPPQObject& rPPQ ) const;
-	void SavePPQ_Cameras( SVObjectXMLWriter &rWriter, const SVPPQObject& rPPQ ) const;
-	void SavePPQ_Inspections( SVObjectXMLWriter &rWriter, const SVPPQObject& rPPQ ) const;
+	void SaveEnvironment(SvXml::SVObjectXMLWriter& rWriter) const;
+	void SaveIO(SvXml::SVObjectXMLWriter& rWriter) const;
+	void SaveAcquisitionDevice(SvXml::SVObjectXMLWriter& rWriter) const;
+	void SaveAcquistionConfiguration(SvXml::SVObjectXMLWriter& rWriter, const SVLightReference& rLight, const SVLut& rLut, const SVDeviceParamCollection& rDeviceParams) const;
+	void SaveCamera(SvXml::SVObjectXMLWriter& rWriter) const;
+	void SaveTrigger(SvXml::SVObjectXMLWriter& rWriter) const;
+	void SaveInspection(SvXml::SVObjectXMLWriter& rWriter) const;
+	void SavePPQ(SvXml::SVObjectXMLWriter& rWriter) const;
+	void SavePPQ_Attributes(SvXml::SVObjectXMLWriter& rWriter, const SVPPQObject& rPPQ ) const;
+	void SavePPQ_Cameras(SvXml::SVObjectXMLWriter& rWriter, const SVPPQObject& rPPQ ) const;
+	void SavePPQ_Inspections(SvXml::SVObjectXMLWriter& rWriter, const SVPPQObject& rPPQ ) const;
 
 	//************************************
 	//! Add the current monitor lists to the xml-file.
 	//! \param rWriter reference to the xml-writer.
 	//! \returns true on success
 	//************************************
-	bool SaveRemoteMonitorList( SVObjectXMLWriter &rWriter ) const;
+	bool SaveRemoteMonitorList(SvXml::SVObjectXMLWriter& rWriter ) const;
 
 	//************************************
 	//! Add the current sub monitor lists to the tree
@@ -381,13 +379,13 @@ private:
 	//! \param subList The sublist which should saved.
 	//! \returns true on success
 	//************************************
-	bool SaveMonitoredObjectList( SVObjectXMLWriter &rWriter, const SVString& listName, const MonitoredObjectList& subList ) const;
+	bool SaveMonitoredObjectList(SvXml::SVObjectXMLWriter& rWriter, const SVString& listName, const MonitoredObjectList& subList ) const;
 
 	//************************************
 	//! The method saves the Global Constant list
 	//! \param rWriter <in> a reference to the xml-writer
 	//************************************
-	void SaveGlobalConstants( SVObjectXMLWriter &rWriter ) const;
+	void SaveGlobalConstants(SvXml::SVObjectXMLWriter& rWriter ) const;
 
 	//************************************
 	//! The method checks and if necessary converts the product type to a mixed type
@@ -397,13 +395,13 @@ private:
 
 	HRESULT LoadAcquisitionDeviceFilename( SVTreeType& rTree, SVTreeType::SVBranchHandle hDig, SVFileNameArrayClass& rFileArray );
 
-	void SaveFileAcquisitionConfiguration( SVObjectXMLWriter& rWriter, const SVDeviceParamCollection& rDeviceParams ) const;
+	void SaveFileAcquisitionConfiguration( SvXml::SVObjectXMLWriter& rWriter, const SVDeviceParamCollection& rDeviceParams ) const;
 	HRESULT LoadFileAcquisitionConfiguration( SVTreeType& rTree, SVTreeType::SVBranchHandle htiBoardChild, long& lNumAcqDig );
 
-	void SaveDeviceParameters( SVObjectXMLWriter& rWriter, const SVDeviceParamCollection& rDeviceParams ) const;
+	void SaveDeviceParameters( SvXml::SVObjectXMLWriter& rWriter, const SVDeviceParamCollection& rDeviceParams ) const;
 	HRESULT LoadDeviceParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiDataChild, SVDeviceParamCollection& svDeviceParams );
 
-	void SaveDeviceParamSpecial( SVObjectXMLWriter& rWriter, const SVDeviceParam* pParam ) const;
+	void SaveDeviceParamSpecial( SvXml::SVObjectXMLWriter& rWriter, const SVDeviceParam* pParam ) const;
 	HRESULT LoadDeviceParamSpecial( SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent, SVDeviceParam* pParam );
 
 	void SetupSoftwareTrigger(SvTh::SVSoftwareTriggerClass* pTriggerDevice, int iDigNum, long triggerPeriod, SVPPQObject* pPPQ);

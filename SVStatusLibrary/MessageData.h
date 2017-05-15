@@ -12,10 +12,10 @@
 //Moved to precompiled header: #include <ctime>
 #include "SourceFileParams.h"
 #include "SVUtilityLibrary/SVString.h"
-#include "ObjectInterfaces/MessageTextEnum.h"
+#include "SVStatusLibrary/MessageTextEnum.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace SVStatusLibrary
+namespace SvStl
 {
 	struct MessageData
 	{
@@ -29,7 +29,7 @@ namespace Seidenader { namespace SVStatusLibrary
 		//! \param AdditionalTextId <in> Id for the additional text
 		//! \param rAdditionalTextList <in> Reference to list of strings for the additional text
 		//************************************
-		MessageData( DWORD MessageCode, SvOi::MessageTextEnum AdditionalTextId = SvOi::Tid_Empty, const SVStringVector& rAdditionalTextList = SVStringVector() );
+		MessageData( DWORD MessageCode, MessageTextEnum AdditionalTextId = SvStl::Tid_Empty, const SVStringVector& rAdditionalTextList = SVStringVector() );
 
 		//************************************
 		//! This is the copy constructor
@@ -64,7 +64,7 @@ namespace Seidenader { namespace SVStatusLibrary
 	/// \param id [in] the id
 	/// \returns SVString
 	//************************************
-		static SVString convertId2AddtionalText(SvOi::MessageTextEnum id);
+		static SVString convertId2AddtionalText(MessageTextEnum id);
 	#pragma endregion Public Methods
 
 	#pragma region Member Variables
@@ -72,7 +72,7 @@ namespace Seidenader { namespace SVStatusLibrary
 		mutable bool m_Logged;				//Flag indicating if the message was written to the event log
 		mutable bool m_Displayed;			//Flag indicating if the message has been displayed
 		DWORD m_MessageCode;				//Number identifying the message
-		SvOi::MessageTextEnum m_AdditionalTextId; //The main additional text id
+		MessageTextEnum m_AdditionalTextId; //The main additional text id
 		SVStringVector m_AdditionalTextList; //String list to be inserted in the main additional text id
 		SourceFileParams m_SourceFile;		//The source file standard parameters
 		DWORD m_ProgramCode;				//Program specific code.
@@ -83,6 +83,4 @@ namespace Seidenader { namespace SVStatusLibrary
 	#pragma region Declarations
 		typedef std::vector< MessageData > Messages;
 	#pragma endregion Declarations
-} /* namespace SVStatusLibrary */ } /* namespace Seidenader */
-
-namespace SvStl = Seidenader::SVStatusLibrary;
+} //namespace SvStl

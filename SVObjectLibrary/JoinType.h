@@ -7,7 +7,7 @@
 //******************************************************************************
 #pragma once
 
-namespace Seidenader { namespace SVObjectLibrary
+namespace SvOl
 {
 	struct JoinType
 	{
@@ -95,7 +95,4 @@ namespace Seidenader { namespace SVObjectLibrary
 	{
 		return rLhs.Flags() == rRhs.Flags();
 	}
-
-} /* namespace SVObjectLibrary */ } /* namespace Seidenader */
-
-namespace SvOl = Seidenader::SVObjectLibrary;
+} //namespace SvOl

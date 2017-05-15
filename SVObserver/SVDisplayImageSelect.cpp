@@ -97,7 +97,7 @@ BOOL SVDisplayImageSelect::OnInitDialog()
 		{
 			SVImageClass* pImage = dynamic_cast< SVImageClass* >( const_cast< SVObjectClass* >( *l_Iter ) );
 
-			if ( nullptr != pImage && !(pImage->ObjectAttributesAllowed() & SV_HIDDEN) )
+			if ( nullptr != pImage && !(pImage->ObjectAttributesAllowed() & SvOi::SV_HIDDEN) )
 			{
 				index = m_ImageSelectList.AddString( pImage->GetCompleteName().c_str() );
 				m_ImageSelectList.SetItemData( index, reinterpret_cast<DWORD_PTR>(pImage) );

@@ -169,7 +169,7 @@ void SVCustomFilterClass::init()
 	m_bvoAbsoluteValue.SetDefaultValue( TRUE, TRUE );
 	m_lvoTransformationFactor.SetDefaultValue( 1, TRUE );
 
-	const UINT cAttributes = SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE;
+	const UINT cAttributes = SvOi::SV_PRINTABLE | SvOi::SV_SETABLE_ONLINE | SvOi::SV_REMOTELY_SETABLE;
 	for( l = 0; l < 49; l++ )
 	{
 		m_plvoKernelCells[l]->SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
@@ -320,13 +320,13 @@ void SVCustomFilterClass::RebuildKernel()
 	delete [] pKernelData;	
 	for( l = 0; l < lWidth * lHeight; l++ )
 	{
-		m_plvoKernelCells[l]->SetObjectAttributesAllowed( SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES | SV_PRINTABLE | SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE, SvOi::SetAttributeType::OverwriteAttribute );
+		m_plvoKernelCells[l]->SetObjectAttributesAllowed( SvOi::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES | SvOi::SV_PRINTABLE | SvOi::SV_SETABLE_ONLINE | SvOi::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::OverwriteAttribute );
 	}// end for
 
 	for( l = lWidth * lHeight; l < 49; l++ )
 	{
-		m_plvoKernelCells[l]->SetObjectAttributesAllowed( SV_EMBEDABLE, SvOi::SetAttributeType::OverwriteAttribute );
-		m_plvoKernelCells[l]->SetObjectAttributesSet( SV_EMBEDABLE, SvOi::SetAttributeType::OverwriteAttribute );
+		m_plvoKernelCells[l]->SetObjectAttributesAllowed( SvOi::SV_EMBEDABLE, SvOi::SetAttributeType::OverwriteAttribute );
+		m_plvoKernelCells[l]->SetObjectAttributesSet( SvOi::SV_EMBEDABLE, SvOi::SetAttributeType::OverwriteAttribute );
 	}// end for
 }
 
@@ -370,7 +370,7 @@ bool SVCustomFilterClass::onRun( bool First, SVSmartHandlePointer RInputImageHan
 		{
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_RunFilterFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_RunFilterFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 				pErrorMessages->push_back(Msg);
 			}
 			// Signal that something was wrong...
@@ -386,7 +386,7 @@ bool SVCustomFilterClass::onRun( bool First, SVSmartHandlePointer RInputImageHan
 	{
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -410,7 +410,7 @@ bool SVCustomFilterClass::ValidateLocal(SvStl::MessageContainerVector *pErrorMes
 			SVStringVector msgList;
 			msgList.push_back(SvUl_SF::Format(_T("%d"), lWidth));
 			msgList.push_back(SvUl_SF::Format(_T("%d"), 7));
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_DataInvalidKernelWidth, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_DataInvalidKernelWidth, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -425,7 +425,7 @@ bool SVCustomFilterClass::ValidateLocal(SvStl::MessageContainerVector *pErrorMes
 			SVStringVector msgList;
 			msgList.push_back(SvUl_SF::Format(_T("%d"), lHeight));
 			msgList.push_back(SvUl_SF::Format(_T("%d"), 7));
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_DataInvalidKernelHeight, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_DataInvalidKernelHeight, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 			pErrorMessages->push_back(Msg);
 		}
 	}

@@ -39,11 +39,11 @@ public:
 	HRESULT GetOwner( void **pvOwner );
 	HRESULT SetOwner( void *pvOwner );
 
-	HRESULT GetStartTick( SVClock::SVTimeStamp& p_rTick );
-	HRESULT SetStartTick( const SVClock::SVTimeStamp& p_rTick );
+	HRESULT GetStartTick( SvTl::SVTimeStamp& p_rTick );
+	HRESULT SetStartTick( const SvTl::SVTimeStamp& p_rTick );
 
-	HRESULT GetEndTick( SVClock::SVTimeStamp& p_rTick );
-	HRESULT SetEndTick( const SVClock::SVTimeStamp& p_rTick );
+	HRESULT GetEndTick( SvTl::SVTimeStamp& p_rTick );
+	HRESULT SetEndTick( const SvTl::SVTimeStamp& p_rTick );
 
 	HRESULT GetExtraData( boost::any& p_rExtraData );
 	HRESULT SetExtraData( const boost::any& p_rExtraData );
@@ -61,9 +61,9 @@ private:
 	void *mpvOwner;
 
 	//This attribute holds the start time stamp the response.
-	SVClock::SVTimeStamp m_StartTick;
+	SvTl::SVTimeStamp m_StartTick;
 	//This attribute holds the end time stamp the response.
-	SVClock::SVTimeStamp m_EndTick;
+	SvTl::SVTimeStamp m_EndTick;
 
 	//This attribute holds context data of the response. 
 	boost::any mExtraData;  //used by SVCameraTriggerClass::TriggerCallback() only

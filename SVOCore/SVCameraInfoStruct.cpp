@@ -86,7 +86,7 @@ HRESULT SVCameraInfoStruct::Assign( const SVCameraInfoStruct &rCameraInfo, SVDat
 	return l_Status;
 }
 
-HRESULT SVCameraInfoStruct::Assign( SVClock::SVTimeStamp p_StartFrameTS, SVClock::SVTimeStamp p_EndFrameTS, const SVDataManagerHandle& p_rIndexHandle, SVDataManagerLockTypeEnum p_LockType )
+HRESULT SVCameraInfoStruct::Assign( SvTl::SVTimeStamp p_StartFrameTS, SvTl::SVTimeStamp p_EndFrameTS, const SVDataManagerHandle& p_rIndexHandle, SVDataManagerLockTypeEnum p_LockType )
 {
 	HRESULT l_Status = S_OK;
 
@@ -95,7 +95,7 @@ HRESULT SVCameraInfoStruct::Assign( SVClock::SVTimeStamp p_StartFrameTS, SVClock
 	m_StartFrameTimeStamp = p_StartFrameTS;
 	m_EndFrameTimeStamp = p_EndFrameTS;
 
-	m_CallbackTimeStamp = SVClock::GetTimeStamp();
+	m_CallbackTimeStamp = SvTl::GetTimeStamp();
 
 	l_Status = m_SourceImageDMIndexHandle.Assign( p_rIndexHandle, p_LockType );
 

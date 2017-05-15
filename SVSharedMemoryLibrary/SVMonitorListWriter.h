@@ -17,7 +17,7 @@
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace SVSharedMemoryLibrary
+namespace SvSml
 {
 	class SVMonitorListStore;
 	class SVMonitorListWriter
@@ -40,8 +40,6 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		void Release(); //<Destroy sharedMemory
 		std::shared_ptr<bip::managed_shared_memory> m_pManagedSharedMemory;
 	};
-
 	typedef bip::allocator<SVMonitorListStore, segment_manager_t> MonitorListStoreAllocator;
-} /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
 
-namespace SvSml = Seidenader::SVSharedMemoryLibrary;
+} //namespace SvSml

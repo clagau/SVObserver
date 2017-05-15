@@ -15,7 +15,7 @@
 
 #pragma comment (lib, "version.lib")
 
-namespace Seidenader { namespace SVSystemLibrary
+namespace SvSyl
 {
 	SVString SVVersionInfo::GetVersion()
 	{
@@ -212,6 +212,5 @@ namespace Seidenader { namespace SVSystemLibrary
 
 		return Result;
 	}
-
-} /*SVSystemLibrary*/ } /*Seidenader*/
+} //namespace SvSyl
 

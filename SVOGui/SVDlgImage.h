@@ -13,8 +13,8 @@
 
 #include "SVUtilityLibrary/SVGUID.h"
 
-namespace Seidenader { namespace SVOGui {
-
+namespace SvOg
+{
 	class SVDlgImageScrollBar : public CScrollBar
 	{
 	public:
@@ -86,8 +86,5 @@ namespace Seidenader { namespace SVOGui {
 
 		DECLARE_MESSAGE_MAP()
 	};
-
-}}
-
-namespace SvOg = Seidenader::SVOGui;
+} //namespace SvOg
 

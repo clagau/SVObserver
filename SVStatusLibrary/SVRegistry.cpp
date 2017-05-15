@@ -628,7 +628,7 @@ BOOL SVRegistryClass::ImportKeys(FILE * pFile)
 		case SV_ISGARBAGE :
 			{
 				SvStl::MessageMgrStd Exception( SvStl::DataOnly );
-				Exception.setMessage( SVMSG_LIB_REGISTRY_IMPORT_EXPECTED_KEY, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
+				Exception.setMessage( SVMSG_LIB_REGISTRY_IMPORT_EXPECTED_KEY, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
 				Exception.Throw();
 			}
 			break;
@@ -657,7 +657,7 @@ int SVRegistryClass::GetImportString(FILE * pFile, SVString& rName, SVByteVector
 	if (ferror (pFile))
 	{
 		SvStl::MessageMgrStd Exception( SvStl::DataOnly );
-		Exception.setMessage( SVMSG_LIB_REGISTRY_IMPORT_FILE_IO_ERROR, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
+		Exception.setMessage( SVMSG_LIB_REGISTRY_IMPORT_FILE_IO_ERROR, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
 		Exception.Throw();
 	}
 
@@ -672,7 +672,7 @@ int SVRegistryClass::GetImportString(FILE * pFile, SVString& rName, SVByteVector
 		if (ferror (pFile))
 		{
 			SvStl::MessageMgrStd Exception( SvStl::DataOnly );
-			Exception.setMessage( SVMSG_LIB_REGISTRY_IMPORT_FILE_IO_ERROR, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
+			Exception.setMessage( SVMSG_LIB_REGISTRY_IMPORT_FILE_IO_ERROR, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
 			Exception.Throw();
 		}
 

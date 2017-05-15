@@ -18,7 +18,7 @@ static char THIS_FILE[] = __FILE__;
 #pragma endregion Declarations
 
 
-namespace Seidenader { namespace  SVXMLLibrary
+namespace SvXml
 {
 	SaxContentHandler::SaxContentHandler(void)
 	{
@@ -158,4 +158,4 @@ namespace Seidenader { namespace  SVXMLLibrary
 	{
 		m_pElementHandler  = pElementHandler;
 	}
-} /* namespace SVXMLLibrary */ } /* namespace Seidenader */
+} //namespace SvXml

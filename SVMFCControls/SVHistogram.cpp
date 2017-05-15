@@ -15,7 +15,8 @@
 
 // SVHistogram
 
-namespace Seidenader { namespace SVMFCControls {
+namespace SvMc
+{
 	namespace
 	{
 		class GDICanvas
@@ -445,6 +446,4 @@ namespace Seidenader { namespace SVMFCControls {
 		dc.SelectObject(tmp_pen);
 		dc.SetBkMode(tmp_mode);
 	}
-
-}
-}
+} //namespace SvMc

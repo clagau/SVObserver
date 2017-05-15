@@ -27,9 +27,6 @@
     <ClCompile Include="SVXMLEncryptionClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVXMLLibraryGlobals.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVXMLMaterialsTree.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -75,9 +72,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVXMLEncryptionClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVXMLLibraryGlobals.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVXMLMaterialsTree.h">

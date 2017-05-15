@@ -17,7 +17,7 @@
 #pragma region Declarations
 #pragma endregion Declarations
 
-namespace Seidenader { namespace  SVXMLLibrary
+namespace SvXml
 {
 	/// Class  implements  a static functions to write an xml file from a SVtree 
 	class TreeToXMl
@@ -84,7 +84,4 @@ namespace Seidenader { namespace  SVXMLLibrary
 			return true;
 		}
 	};
-
-} /* namespace SVXMLLibrary */ } /* namespace Seidenader */
-
-namespace SvXml = Seidenader::SVXMLLibrary;
+} //namespace SvXml

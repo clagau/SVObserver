@@ -244,10 +244,10 @@ HRESULT SVFileAcquisitionClass::GetCameraImageInfo(SVImageInfoClass *pImageInfo)
 		}
 	}
 
-	pImageInfo->SetImageProperty( SVImagePropertyFormat, iFormat );
-	pImageInfo->SetImageProperty( SVImagePropertyPixelDepth, 8 );
-	pImageInfo->SetImageProperty( SVImagePropertyBandNumber, uiBandNumber );
-	pImageInfo->SetImageProperty( SVImagePropertyBandLink, 0 );
+	pImageInfo->SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyFormat, iFormat );
+	pImageInfo->SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyPixelDepth, 8 );
+	pImageInfo->SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandNumber, uiBandNumber );
+	pImageInfo->SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandLink, 0 );
 
 	pImageInfo->SetExtentProperty( SVExtentPropertyOutputPositionPoint, 0 );
 	pImageInfo->SetExtentProperty( SVExtentPropertyWidth, bufWidth );
@@ -258,7 +258,7 @@ HRESULT SVFileAcquisitionClass::GetCameraImageInfo(SVImageInfoClass *pImageInfo)
 	if ( S_OK != hrOk )
 	{
 		SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Acquisition_SourceInformationFailed, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10050 ); 
+		Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Acquisition_SourceInformationFailed, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10050 ); 
 	}
 
 	return hrOk;

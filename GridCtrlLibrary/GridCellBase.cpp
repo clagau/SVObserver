@@ -70,7 +70,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-namespace Seidenader { namespace GridCtrlLibrary
+namespace SvGcl
 {
 	IMPLEMENT_DYNAMIC(CGridCellBase, CObject)
 
@@ -802,4 +802,4 @@ namespace Seidenader { namespace GridCtrlLibrary
 			return 0;
 	}
 
-} /*namespace GridCtrlLibrary*/ } /*namespace Seidenader*/
+} // namespace SvGcl

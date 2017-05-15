@@ -13,83 +13,77 @@
 
 #include "SVContainerLibrary/SVVector.h"
 
-namespace Seidenader
+namespace SvMc
 {
-	namespace SVMFCControls
+	struct SVDlgBitmapTextStruct
 	{
-		struct SVDlgBitmapTextStruct
+		SVDlgBitmapTextStruct()
 		{
-			SVDlgBitmapTextStruct()
-			{
-				BAbsCoord = TRUE;
-				X = 0.0;
-				Y = 0.0;
-				Color = 0;
-				StrText = _T( "" );
-			};
-
-			BOOL BAbsCoord;
-			double X;
-			double Y;
-			COLORREF Color;
-			CString StrText;
+			BAbsCoord = TRUE;
+			X = 0.0;
+			Y = 0.0;
+			Color = 0;
+			StrText = _T( "" );
 		};
 
-
-		class SVDlgBitmapTextListClass : public SVVector< SVDlgBitmapTextStruct* >
-		{
-		public:
-			SVDlgBitmapTextListClass() {};
-
-			virtual ~SVDlgBitmapTextListClass() 
-			{ 
-				for( int i = GetSize() - 1; i >= 0; --i )
-					if( GetAt( i ) )
-						delete( GetAt( i ) );
-
-				RemoveAll();
-			}
-		};
+		BOOL BAbsCoord;
+		double X;
+		double Y;
+		COLORREF Color;
+		CString StrText;
+	};
 
 
-		class SVDlgBitmapClass : public CStatic
-		{
-		protected:
-			//{{AFX_MSG(SVDlgBitmapClass)
-			afx_msg void OnPaint();
-			afx_msg void OnPaletteIsChanging(CWnd* pRealizeWnd);
-			//}}AFX_MSG
+	class SVDlgBitmapTextListClass : public SVVector< SVDlgBitmapTextStruct* >
+	{
+	public:
+		SVDlgBitmapTextListClass() {};
 
-			DECLARE_MESSAGE_MAP()
+		virtual ~SVDlgBitmapTextListClass() 
+		{ 
+			for( int i = GetSize() - 1; i >= 0; --i )
+				if( GetAt( i ) )
+					delete( GetAt( i ) );
 
-		public:
-			SVDlgBitmapClass();
-			virtual ~SVDlgBitmapClass();
+			RemoveAll();
+		}
+	};
 
-			BOOL Init( LPCTSTR lpszResourceName );
-			BOOL Init( UINT nIDResource );
 
-			CSize GetDimensions() const;
+	class SVDlgBitmapClass : public CStatic
+	{
+	protected:
+		//{{AFX_MSG(SVDlgBitmapClass)
+		afx_msg void OnPaint();
+		afx_msg void OnPaletteIsChanging(CWnd* pRealizeWnd);
+		//}}AFX_MSG
 
-			BOOL TextOut( int X, int Y, COLORREF Color, LPCTSTR StrText );
-			BOOL TextOut( double X, double Y, COLORREF Color, LPCTSTR StrText );
+		DECLARE_MESSAGE_MAP()
 
-		public:
-			BOOL OEMMode;
+	public:
+		SVDlgBitmapClass();
+		virtual ~SVDlgBitmapClass();
 
-		protected:
-			HBITMAP InitFromFile();
+		BOOL Init( LPCTSTR lpszResourceName );
+		BOOL Init( UINT nIDResource );
 
-			//{{AFX_VIRTUAL(SVDlgBitmapClass)
-			//}}AFX_VIRTUAL	
+		CSize GetDimensions() const;
 
-		protected:
-			mutable CBitmap	bitmap;
-			SVDlgBitmapTextListClass textList;
+		BOOL TextOut( int X, int Y, COLORREF Color, LPCTSTR StrText );
+		BOOL TextOut( double X, double Y, COLORREF Color, LPCTSTR StrText );
 
-		};
-	} //SVMFCControls
-} //Seidenader
+	public:
+		BOOL OEMMode;
 
-namespace SvMc = Seidenader::SVMFCControls;
+	protected:
+		HBITMAP InitFromFile();
 
+		//{{AFX_VIRTUAL(SVDlgBitmapClass)
+		//}}AFX_VIRTUAL	
+
+	protected:
+		mutable CBitmap	bitmap;
+		SVDlgBitmapTextListClass textList;
+
+	};
+} //namespace SvMc

@@ -76,7 +76,7 @@ SVExternalToolDlg::SVExternalToolDlg( const SVGUID& rInspectionID, const SVGUID&
 {
 	m_pSheet = pSheet;
 
-	typedef GuiCmd::GetTaskObjectInstanceID Command;
+	typedef SvCmd::GetTaskObjectInstanceID Command;
 	typedef SVSharedPtr<Command> CommandPtr;
 
 	SVObjectTypeInfoStruct info(SVExternalToolTaskObjectType, SVNotSetSubObjectType);

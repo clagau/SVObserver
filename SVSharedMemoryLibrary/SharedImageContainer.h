@@ -9,6 +9,7 @@
 
 
 #pragma once
+
 #pragma region Includes
 //Moved to precompiled header: #include <map>
 #include "SVUtilityLibrary/SVGUID.h"
@@ -24,9 +25,8 @@
 #pragma endregion Includes
 
 
-namespace Seidenader { namespace SVSharedMemoryLibrary
+namespace SvSml
 {
-#pragma once
 	//!class holds the ImageStores and the ImageBuffer for Handling the Images in Shared Memory 
 	class SharedImageContainer
 	{
@@ -59,5 +59,4 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		std::vector<UP_MatroxBuffer2D> m_ProductImageBuffer;
 		std::vector<UP_MatroxBuffer2D> m_RejectImageBuffer;
 	};
-
-}}
+} //namespace SvSml

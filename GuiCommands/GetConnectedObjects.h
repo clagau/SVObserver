@@ -20,57 +20,52 @@
 #include "SVObjectLibrary\SVGetObjectDequeByTypeVisitor.h"
 #pragma endregion Includes
 
-namespace Seidenader
+namespace SvCmd
 {
-	namespace GuiCommand
+	struct GetConnectedObjects: public boost::noncopyable
 	{
-		struct GetConnectedObjects: public boost::noncopyable
+		GetConnectedObjects(const GUID& rObjectID, const SVObjectTypeInfoStruct& typeInfo, int maxRequested) : m_InstanceID(rObjectID), m_typeInfo(typeInfo), m_maxRequested(maxRequested) {}
+
+		// This method is where the real separation would occur by using sockets/named pipes/shared memory
+		// The logic contained within this method would be moved to the "Server" side of a Client/Server architecture
+		// and replaced with the building and sending of the command
+		HRESULT Execute()
 		{
-			GetConnectedObjects(const GUID& rObjectID, const SVObjectTypeInfoStruct& typeInfo, int maxRequested) : m_InstanceID(rObjectID), m_typeInfo(typeInfo), m_maxRequested(maxRequested) {}
+			HRESULT hr = S_OK;
 
-			// This method is where the real separation would occur by using sockets/named pipes/shared memory
-			// The logic contained within this method would be moved to the "Server" side of a Client/Server architecture
-			// and replaced with the building and sending of the command
-			HRESULT Execute()
+			SvOi::IObjectClass* pObject = SvOi::getObject(m_InstanceID);
+			if (nullptr != pObject)
 			{
-				HRESULT hr = S_OK;
-
-				SvOi::IObjectClass* pObject = SvOi::getObject(m_InstanceID);
-				if (nullptr != pObject)
+				if (SVImageObjectType == m_typeInfo.ObjectType)
 				{
-					if (SVImageObjectType == m_typeInfo.ObjectType)
+					SvOi::ITaskObject* pTaskObject  = dynamic_cast<SvOi::ITaskObject *>(pObject);
+					if (nullptr != pTaskObject)
 					{
-						SvOi::ITaskObject* pTaskObject  = dynamic_cast<SvOi::ITaskObject *>(pObject);
-						if (nullptr != pTaskObject)
-						{
-							pTaskObject->GetConnectedImages(m_list, m_maxRequested);
-						}
-						else
-						{
-							hr = E_POINTER;
-						}
+						pTaskObject->GetConnectedImages(m_list, m_maxRequested);
 					}
 					else
 					{
-						hr = E_INVALIDARG;
+						hr = E_POINTER;
 					}
 				}
 				else
 				{
-					hr = E_POINTER;
+					hr = E_INVALIDARG;
 				}
-				return hr;
 			}
-			bool empty() const { return false; }
-			const SvUl::InputNameGuidPairList& ConnectedObjects() const { return m_list; }
+			else
+			{
+				hr = E_POINTER;
+			}
+			return hr;
+		}
+		bool empty() const { return false; }
+		const SvUl::InputNameGuidPairList& ConnectedObjects() const { return m_list; }
 
-		private:
-			SVObjectTypeInfoStruct m_typeInfo;
-			SvUl::InputNameGuidPairList m_list;
-			GUID m_InstanceID;
-			int m_maxRequested;
-		};
-	}
-}
-
-namespace GuiCmd = Seidenader::GuiCommand;
+	private:
+		SVObjectTypeInfoStruct m_typeInfo;
+		SvUl::InputNameGuidPairList m_list;
+		GUID m_InstanceID;
+		int m_maxRequested;
+	};
+} //namespace SvCmd

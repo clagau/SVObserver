@@ -16,7 +16,7 @@
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace SVXMLLibrary
+namespace SvXml
 {
 	class SVXMLCTreeCtrl : public SVXMLTree< HTREEITEM, HTREEITEM >  
 	//Note in this case the Template arguments HTREEITEM = SVBranchHandle and HTREEITEM = SVLeafHandle
@@ -233,7 +233,5 @@ namespace Seidenader { namespace SVXMLLibrary
 		HTREEITEM m_Root;		//Handle to the root item
 	#pragma endregion Member variables
 	};
-} /* namespace SVXMLLibrary */ } /* namespace Seidenader */
-
-namespace SvXml = Seidenader::SVXMLLibrary;
+} //namespace SvXml
 

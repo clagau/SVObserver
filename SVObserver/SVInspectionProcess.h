@@ -304,7 +304,7 @@ protected:
 
 		void clear();
 
-		SVClock::SVTimeStamp m_StartTime;
+		SvTl::SVTimeStamp m_StartTime;
 		SVTimeCountMap m_Start;
 		SVTimeCountMap m_End;
 		SVTimeCountMap m_Duration;
@@ -326,7 +326,7 @@ protected:
 		void EventStart( const SVString& p_rName );
 		void EventEnd( const SVString& p_rName );
 
-		SVClock::SVTimeStamp m_StartTime;
+		SvTl::SVTimeStamp m_StartTime;
 		SVEventTrackingMap m_EventCounts;
 	};
 #endif //EnableTracking
@@ -426,7 +426,7 @@ protected:
 	// Map of All Value Objects
 	SVValueObjectMap m_mapValueObjects;
 
-	SVResetStruct m_svReset;
+	SvOi::SVResetStruct m_svReset;
 
 	SvOi::IValueObjectPtrSet m_ValueObjectSet;
 	SVImageClassPtrSet m_ImageObjectSet;

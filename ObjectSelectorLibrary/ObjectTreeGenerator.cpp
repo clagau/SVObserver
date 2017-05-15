@@ -31,7 +31,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-namespace Seidenader { namespace ObjectSelectorLibrary
+namespace SvOsl
 {
 	#pragma region Constructor
 	ObjectTreeGenerator::ObjectTreeGenerator()
@@ -41,7 +41,7 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 		, m_LocationInputFilters()
 		, m_LocationOutputFilters()
 		, m_SelectorType( ObjectTreeGenerator::TypeNone )
-		, m_AttributesFilter( SV_NO_ATTRIBUTES )
+		, m_AttributesFilter( SvOi::SV_NO_ATTRIBUTES )
 		, m_LeafCount( 0 )
 	{
 	}
@@ -70,7 +70,7 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 		m_LocationInputFilters.clear();
 		m_LocationOutputFilters.clear();
 		m_SelectorType = ObjectTreeGenerator::TypeNone;
-		m_AttributesFilter = SV_NO_ATTRIBUTES;
+		m_AttributesFilter = SvOi::SV_NO_ATTRIBUTES;
 	}
 		
 	void ObjectTreeGenerator::insertTreeObjects( const SelectorItemVector& rSelectorItems )
@@ -118,11 +118,11 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 		}
 		else
 		{
-			if( SV_VIEWABLE == m_AttributesFilter )
+			if( SvOi::SV_VIEWABLE == m_AttributesFilter )
 			{
 				HelpID = IDD_RESULTS_PICKER;
 			}
-			else if( SV_PUBLISHABLE == m_AttributesFilter )
+			else if( SvOi::SV_PUBLISHABLE == m_AttributesFilter )
 			{
 				HelpID = IDD_PUBLISHED_RESULTS;
 			}
@@ -458,5 +458,5 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 	}
 	#pragma endregion Private Methods
 
-} /* namespace ObjectSelectorLibrary */ } /* namespace Seidenader */
+} //namespace SvOsl
 

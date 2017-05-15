@@ -16,7 +16,7 @@
 #include "SVObjectLibrary\SVObjectSynchronousCommandTemplate.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace SVOGui
+namespace SvOg
 {
 
 	MaskController::MaskController(const GUID& rInspectionID, const GUID& rTaskObjectID)
@@ -28,7 +28,7 @@ namespace Seidenader { namespace SVOGui
 	void MaskController::Init()
 	{
 		// Get Instance GUID for the Mask Operator...
-		typedef GuiCmd::GetTaskObjectInstanceID Command;
+		typedef SvCmd::GetTaskObjectInstanceID Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 	
 		SVObjectTypeInfoStruct info(SVUnaryImageOperatorObjectType, SVUserMaskOperatorObjectType);
@@ -50,7 +50,7 @@ namespace Seidenader { namespace SVOGui
 
 	IPictureDisp* MaskController::GetReferenceImage() const
 	{
-		typedef GuiCmd::GetReferenceImage Command;
+		typedef SvCmd::GetReferenceImage Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 
 		CommandPtr commandPtr = new Command(m_maskOperatorID);
@@ -65,7 +65,7 @@ namespace Seidenader { namespace SVOGui
 
 	IPictureDisp* MaskController::GetMaskImage() const
 	{
-		typedef GuiCmd::GetMaskImage Command;
+		typedef SvCmd::GetMaskImage Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 
 		CommandPtr commandPtr = new Command(m_maskOperatorID);
@@ -80,7 +80,7 @@ namespace Seidenader { namespace SVOGui
 
 	HRESULT MaskController::ImportMask(const SVString& filename)
 	{
-		typedef GuiCmd::ImportMask Command;
+		typedef SvCmd::ImportMask Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 
 		CommandPtr commandPtr = new Command(m_maskOperatorID, filename);
@@ -91,7 +91,7 @@ namespace Seidenader { namespace SVOGui
 
 	HRESULT MaskController::ExportMask(const SVString& filename)
 	{
-		typedef GuiCmd::ExportMask Command;
+		typedef SvCmd::ExportMask Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 
 		CommandPtr commandPtr = new Command(m_maskOperatorID, filename);
@@ -102,7 +102,7 @@ namespace Seidenader { namespace SVOGui
 
 	HGLOBAL MaskController::GetMaskData() const
 	{
-		typedef GuiCmd::GetMaskData Command;
+		typedef SvCmd::GetMaskData Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 
 		CommandPtr commandPtr = new Command(m_maskOperatorID);
@@ -117,7 +117,7 @@ namespace Seidenader { namespace SVOGui
 
 	bool MaskController::SetMaskData(HGLOBAL hGlobal)
 	{
-		typedef GuiCmd::SetMaskData Command;
+		typedef SvCmd::SetMaskData Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 
 		CommandPtr commandPtr = new Command(m_maskOperatorID, hGlobal);
@@ -125,4 +125,4 @@ namespace Seidenader { namespace SVOGui
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		return (S_OK == hr) ? true : false;
 	}
-} /* namespace SVOGui */ } /* namespace Seidenader */
+} //namespace SvOg

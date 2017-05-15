@@ -24,12 +24,12 @@ public:
 
 	HRESULT Initialize();
 
-	HRESULT DisableImageProperty( SVImagePropertyEnum p_eProperty );
+	HRESULT DisableImageProperty( SvOi::SVImagePropertyEnum p_eProperty );
 
-	HRESULT GetImageProperty( SVImagePropertyEnum p_eProperty, int &p_riValue ) const;
-	HRESULT GetImageProperty( SVImagePropertyEnum p_eProperty, long &p_rlValue ) const;
+	HRESULT GetImageProperty( SvOi::SVImagePropertyEnum p_eProperty, int &p_riValue ) const;
+	HRESULT GetImageProperty( SvOi::SVImagePropertyEnum p_eProperty, long &p_rlValue ) const;
 
-	HRESULT SetImageProperty( SVImagePropertyEnum p_eProperty, long p_lValue );
+	HRESULT SetImageProperty( SvOi::SVImagePropertyEnum p_eProperty, long p_lValue );
 
 	bool operator==( const SVImagePropertiesClass &p_rsvValue ) const;
 	bool operator!=( const SVImagePropertiesClass &p_rsvValue ) const;

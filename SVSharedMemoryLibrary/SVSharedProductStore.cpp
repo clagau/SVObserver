@@ -13,10 +13,10 @@
 #include "SVSharedProductStore.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace SVSharedMemoryLibrary
+namespace SvSml
 {
 	SVSharedProductStore::SVSharedProductStore(const void_allocator& rAllocator, size_t cache_size)
 	: current_idx(-1), data(cache_size, SVSharedProduct(rAllocator), rAllocator)
 	{
 	}
-} /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
+} //namespace SvSml

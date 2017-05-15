@@ -18,9 +18,9 @@
 #include "SVContainerLibrary/SVTree.h"
 #pragma endregion Includes
 
-typedef SvCl::SVTree<SVString, SVMaterialData> SVMaterialsTree;
+typedef SvCl::SVTree<SVString, SvXml::SVMaterialData> SVMaterialsTree;
 
-namespace Seidenader { namespace SVXMLLibrary
+namespace SvXml
 {
 	class SVXMLMaterialsTree : public SVXMLTree< SVMaterialsTree::SVTreeContainer*, SVMaterialsTree::iterator >
 	//Note in this case the Template arguments SVMaterialsTree::SVTreeContainer* = SVBranchHandle and SVMaterialsTree::iterator = SVLeafHandle
@@ -246,7 +246,4 @@ namespace Seidenader { namespace SVXMLLibrary
 		mutable SVLeaves m_ChildLeaves;				//Handle to the current child leaves
 	#pragma endregion Member variables
 	};
-} /* namespace SVXMLLibrary */ } /* namespace Seidenader */
-
-namespace SvXml = Seidenader::SVXMLLibrary;
-
+} //namespace SvXml

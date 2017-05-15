@@ -16,7 +16,7 @@
 #include "MonitorListCpy.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace SVSharedMemoryLibrary
+namespace SvSml
 {
 	class SVMonitorListReader;
 	class SVMonitorListWriter;
@@ -55,7 +55,5 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		DWORD m_Version;							//< VersionsNumber used from RRS
 		MonitorListCpyMap m_MonitorListCpyMap;		//<map Monitorlistname active MonitorListCpyPointer   
 		MLInspectionInfoMap	  m_InspectionInfoMap;	//<Map inspection-nname and InspectionInfos
-};
-
-}}
-namespace SvSml = Seidenader::SVSharedMemoryLibrary;
+	};
+} //namespace SvSml

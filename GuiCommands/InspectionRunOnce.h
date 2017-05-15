@@ -17,62 +17,58 @@
 #include "ObjectInterfaces\IInspectionProcess.h"
 #pragma endregion Includes
 
-namespace Seidenader
+namespace SvCmd
 {
-	namespace GuiCommand
+	class InspectionRunOnce : public boost::noncopyable
 	{
-		class InspectionRunOnce : public boost::noncopyable
+	public:
+		InspectionRunOnce(const SVGUID& rInspectionID, const SVGUID& rToolID = SVGUID())
+		: m_InspectionID(rInspectionID), m_ToolID(rToolID) {}
+
+		virtual ~InspectionRunOnce() {}
+
+		HRESULT Execute()
 		{
-		public:
-			InspectionRunOnce(const SVGUID& rInspectionID, const SVGUID& rToolID = SVGUID())
-			: m_InspectionID(rInspectionID), m_ToolID(rToolID) {}
-	
-			virtual ~InspectionRunOnce() {}
+			HRESULT hr = S_OK;
 
-			HRESULT Execute()
+			SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess *>(SvOi::getObject(m_InspectionID));
+			if (nullptr != pInspection)
 			{
-				HRESULT hr = S_OK;
-
-				SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess *>(SvOi::getObject(m_InspectionID));
-				if (nullptr != pInspection)
+				SvOi::ITaskObject* pTool(nullptr);
+				if (GUID_NULL != m_ToolID)
 				{
-					SvOi::ITaskObject* pTool(nullptr);
-					if (GUID_NULL != m_ToolID)
-					{
-						pTool = dynamic_cast<SvOi::ITaskObject *>(SvOi::getObject(m_ToolID));
-					}
-					hr = pInspection->RunOnce(pTool);
+					pTool = dynamic_cast<SvOi::ITaskObject *>(SvOi::getObject(m_ToolID));
+				}
+				hr = pInspection->RunOnce(pTool);
 
-					// Get additional Error Info if the run once was for the tool
-					if (pTool && (SUCCEEDED(hr) || E_FAIL == hr))
+				// Get additional Error Info if the run once was for the tool
+				if (pTool && (SUCCEEDED(hr) || E_FAIL == hr))
+				{
+					HRESULT	hrTemp = pTool->getFirstTaskMessage().getMessage().m_MessageCode;
+					if (!SUCCEEDED (hrTemp))
 					{
-						HRESULT	hrTemp = pTool->getFirstTaskMessage().getMessage().m_MessageCode;
-						if (!SUCCEEDED (hrTemp))
-						{
-							hr = hrTemp; // overwrite hr only if hrTemp contains error information.
-						}
+						hr = hrTemp; // overwrite hr only if hrTemp contains error information.
 					}
 				}
-				else
-				{
-					hr = E_POINTER;
-				}
-				return hr;
 			}
-
-			bool empty() const
+			else
 			{
-				bool bEmpty = m_InspectionID.empty();
-				//bEmpty = bEmpty && m_ToolID.empty(); //m_ToolID is optional
-				return bEmpty;
+				hr = E_POINTER;
 			}
+			return hr;
+		}
 
-		private:
-			SVGUID m_InspectionID;
-			SVGUID m_ToolID;
-		};
-		typedef SVSharedPtr<InspectionRunOnce> InspectionRunOncePtr;
-	}
-}
+		bool empty() const
+		{
+			bool bEmpty = m_InspectionID.empty();
+			//bEmpty = bEmpty && m_ToolID.empty(); //m_ToolID is optional
+			return bEmpty;
+		}
 
-namespace GuiCmd = Seidenader::GuiCommand;
+	private:
+		SVGUID m_InspectionID;
+		SVGUID m_ToolID;
+	};
+	typedef SVSharedPtr<InspectionRunOnce> InspectionRunOncePtr;
+
+} //namespace SvCmd

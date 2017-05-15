@@ -14,7 +14,7 @@
 #include "SVSharedConfiguration.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace SVSharedMemoryLibrary
+namespace SvSml
 {
 	const SVString g_shName = "MonitorListStore.";
 
@@ -183,5 +183,4 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		}
 #endif
 	}
-
-} /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
+} //namespace SvSml

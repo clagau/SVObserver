@@ -294,7 +294,7 @@ DWORD WINAPI SVEventThread<SVEventThreadSignalHandler>::ThreadProc( LPVOID lpPar
 	}
 	else
 	{
-		SVString UnknownThread( SvStl::MessageData::convertId2AddtionalText( SvOi::Tid_UnknowThread ) );
+		SVString UnknownThread( SvStl::MessageData::convertId2AddtionalText( SvStl::Tid_UnknowThread ) );
 		SVThreadManager::setThreadError( static_cast<DWORD> (SVMSG_THREAD_EXIT_ERROR), UnknownThread.c_str(), SvStl::SourceFileParams(StdMessageParams) );
 	}
 

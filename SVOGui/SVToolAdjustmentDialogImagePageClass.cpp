@@ -27,7 +27,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-namespace Seidenader { namespace SVOGui
+namespace SvOg
 {
 	static LPCTSTR ImageTag = _T("Image");
 	static LPCTSTR NoImageTag = _T("(No Image Available)");
@@ -124,10 +124,10 @@ namespace Seidenader { namespace SVOGui
 				if (bIsValid && S_OK != result)
 				{
 					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_ToolPositionError, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10232 );
+					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_ToolPositionError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10232 );
 				}
 			}
 		}
 	}
-} /* namespace SVOGui */ } /* namespace Seidenader */
+} //namespace SvOg
 

@@ -15,40 +15,35 @@
 #include "SVUtilityLibrary/SVGUID.h"
 #pragma endregion Includes
 
-namespace Seidenader
+namespace SvCmd
 {
-	namespace GuiCommand
+	struct GetObjectTypeInfo : public boost::noncopyable
 	{
-		struct GetObjectTypeInfo : public boost::noncopyable
+		GetObjectTypeInfo(const SVGUID& rInstanceID) : m_InstanceID(rInstanceID) {}
+
+		// This method is where the real separation would occur by using sockets/named pipes/shared memory
+		// The logic contained within this method would be moved to the "Server" side of a Client/Server architecture
+		// and replaced with the building and sending of the command
+		HRESULT Execute()
 		{
-			GetObjectTypeInfo(const SVGUID& rInstanceID) : m_InstanceID(rInstanceID) {}
+			HRESULT hr = S_OK;
 
-			// This method is where the real separation would occur by using sockets/named pipes/shared memory
-			// The logic contained within this method would be moved to the "Server" side of a Client/Server architecture
-			// and replaced with the building and sending of the command
-			HRESULT Execute()
+			SvOi::IObjectClass* pObject = SvOi::getObject(m_InstanceID);
+			if (pObject)
 			{
-				HRESULT hr = S_OK;
-
-				SvOi::IObjectClass* pObject = SvOi::getObject(m_InstanceID);
-				if (pObject)
-				{
-					m_TypeInfo = SVObjectTypeInfoStruct(pObject->GetObjectType(), pObject->GetObjectSubType());
-				}
-				else
-				{
-					hr = E_POINTER;
-				}
-				return hr;
+				m_TypeInfo = SVObjectTypeInfoStruct(pObject->GetObjectType(), pObject->GetObjectSubType());
 			}
-			bool empty() const { return false; }
-			const SVObjectTypeInfoStruct& GetTypeInfo() const { return m_TypeInfo; }
+			else
+			{
+				hr = E_POINTER;
+			}
+			return hr;
+		}
+		bool empty() const { return false; }
+		const SVObjectTypeInfoStruct& GetTypeInfo() const { return m_TypeInfo; }
 
-		private:
-			SVGUID m_InstanceID;
-			SVObjectTypeInfoStruct m_TypeInfo;
-		};
-	}
-}
-
-namespace GuiCmd = Seidenader::GuiCommand;
+	private:
+		SVGUID m_InstanceID;
+		SVObjectTypeInfoStruct m_TypeInfo;
+	};
+} //namespace SvCmd

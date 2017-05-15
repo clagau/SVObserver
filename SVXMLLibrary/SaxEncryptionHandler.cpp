@@ -22,7 +22,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-namespace Seidenader { namespace  SVXMLLibrary
+namespace SvXml
 {
 	SaxEncryptionHandler::SaxEncryptionHandler() : m_IsActive(false)
 	{
@@ -76,4 +76,4 @@ namespace Seidenader { namespace  SVXMLLibrary
 
 		return m_IsActive;		
 	}
-} /* namespace SVXMLLibrary */ } /* namespace Seidenader */
+} //namespace SvXml

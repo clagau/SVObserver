@@ -12,9 +12,9 @@
 #pragma region Includes
 #include "stdafx.h"
 
-#undef SV_HIDDEN //@TODO[Arvid][7.50][20.12.2016] this had to be added when this source file was moved to SVLibrary 
-//					to avoid problems with lmserver.h where SV_HIDDEN is #def'd as 1
-//					however, in ObjectInterfaces\ObjectDefines.h,  const UINT SV_HIDDEN = 0x00000800;
+#undef SvOi::SV_HIDDEN //@TODO[Arvid][7.50][20.12.2016] this had to be added when this source file was moved to SVLibrary 
+//					to avoid problems with lmserver.h where SvOi::SV_HIDDEN is #def'd as 1
+//					however, in ObjectInterfaces\ObjectDefines.h,  const UINT SvOi::SV_HIDDEN = 0x00000800;
 //					if (when, hopefully) this file is removed from SVLibrary, this #undef should be removed again
 
 #include "SVIOEntryHostStruct.h"

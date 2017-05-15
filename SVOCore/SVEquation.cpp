@@ -149,7 +149,7 @@ int SVEquationSymbolTableClass::AddSymbol(LPCTSTR name, SVObjectClass* pRequesto
 		return -1;
 	}
 
-	if( FALSE == (ObjectReference.ObjectAttributesAllowed() & SV_SELECTABLE_FOR_EQUATION) )
+	if( FALSE == (ObjectReference.ObjectAttributesAllowed() & SvOi::SV_SELECTABLE_FOR_EQUATION) )
 	{
 		return -1;
 	}
@@ -312,7 +312,7 @@ BOOL SVEquationClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure 
 	}
 
 	// Set / Reset Printable Flag
-	enabled.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	enabled.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
 
 	SVObjectClass *owner = enabled.GetOwner();
 	if (nullptr != owner)
@@ -322,7 +322,7 @@ BOOL SVEquationClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure 
 		if( owner->GetName() == conditionalString )
 		{
 			// Set / Reset Remotely Setable Flag, if owner is conditional class.
-			enabled.SetObjectAttributesAllowed( SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE, SvOi::SetAttributeType::AddAttribute );
+			enabled.SetObjectAttributesAllowed( SvOi::SV_REMOTELY_SETABLE | SvOi::SV_SETABLE_ONLINE, SvOi::SetAttributeType::AddAttribute );
 		}
 	}
 
@@ -496,13 +496,13 @@ SvOi::EquationTestResult SVEquationClass::Test( SvStl::MessageContainerVector *p
 				msgList.push_back(fullObjectName);
 				if( S_OK != m_Yacc.m_StatusCode )
 				{
-					errContainer.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_TooManyVariables, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10046, GetUniqueObjectID() );
+					errContainer.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_TooManyVariables, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10046, GetUniqueObjectID() );
 				}
 				else
 				{
 					ret.iPositionFailed = m_Yacc.lex_stack[m_Yacc.sIndex-1].position+1;
 					msgList.push_back(SvUl_SF::Format(_T("%d"), ret.iPositionFailed));
-					errContainer.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_EquationParserError, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10047, GetUniqueObjectID() );
+					errContainer.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_EquationParserError, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10047, GetUniqueObjectID() );
 				}
 				m_isDataValid = false;
 			}
@@ -590,7 +590,7 @@ SvOi::EquationTestResult SVEquationClass::lexicalScan(LPCTSTR inBuffer)
 		SVStringVector msgList;
 		msgList.push_back(fullObjectName);
 		msgList.push_back(SvUl_SF::Format(_T("%d"), ret.iPositionFailed));
-		errContainer.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_EquationParserError, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10198, GetUniqueObjectID() );
+		errContainer.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_EquationParserError, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10198, GetUniqueObjectID() );
 
 		m_isDataValid = false;
 	}
@@ -694,7 +694,7 @@ bool SVEquationClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContain
 			retVal = false;
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_InvalidData, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidData, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 				pErrorMessages->push_back(Msg);
 			}
 			SetInvalid();

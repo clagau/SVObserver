@@ -533,11 +533,11 @@ SvStl::MessageContainerVector SVTaskObjectClass::validateAndSetEmmeddedValues(co
 				//! Check if general error or specific error for detailed information
 				if( E_FAIL ==  Result || S_FALSE == Result )
 				{
-					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_SetEmbeddedValueFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_SetEmbeddedValueFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 				}
 				else
 				{
-					Msg.setMessage( Result, SvOi::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+					Msg.setMessage( Result, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 				}
 				messages.push_back(Msg.getMessageContainer());
 			}
@@ -1031,11 +1031,11 @@ HRESULT SVTaskObjectClass::ConnectToObject( SVInObjectInfoStruct* p_psvInputInfo
 				}
 				else
 				{
-					msgList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_UnknownString));
+					msgList.push_back(SvStl::MessageData::convertId2AddtionalText(SvStl::Tid_UnknownString));
 				}
 				// Should we really be doing this here?
 				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_CriticalUnableToConnectTo, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10203 ); 
+				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_CriticalUnableToConnectTo, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10203 ); 
 
 				// Try to recover old state...
 				if( nullptr != pOldObject )
@@ -1109,9 +1109,9 @@ BOOL SVTaskObjectClass::CreateObject(SVObjectLevelCreateStruct* PCreateStruct)
 		}
 	}
 
-	m_isObjectValid.SetObjectAttributesAllowed( SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
-	m_statusTag.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-	m_statusColor.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_isObjectValid.SetObjectAttributesAllowed( SvOi::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
+	m_statusTag.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_statusColor.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 	
 	m_isCreated = Result;
 	
@@ -1301,7 +1301,7 @@ BOOL SVTaskObjectClass::RegisterEmbeddedObjectAsClass(SVObjectClass* pEmbeddedOb
 				if( rGuidEmbeddedID == pObject->GetEmbeddedID() )
 				{
 					SvStl::MessageMgrStd Msg( SvStl::LogOnly );
-					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Error_DuplicateEmbeddedId, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10204 ); 
+					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_DuplicateEmbeddedId, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10204 ); 
 					assert(false);
 					return FALSE;
 				}
@@ -1801,7 +1801,7 @@ void SVTaskObjectClass::RemoveEmbeddedObject( SVObjectClass* pObjectToRemove )
 void SVTaskObjectClass::hideEmbeddedObject(SVObjectClass& rObjectToHide)
 {
 	// Restrict selection (picked for resultView, published, used in an Equation, or selected for Archiving)
-	rObjectToHide.SetObjectAttributesAllowed( SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute );
+	rObjectToHide.SetObjectAttributesAllowed( SvOi::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute );
 	
 	// Reset any selection
 	rObjectToHide.SetObjectAttributesSet( 0, SvOi::SetAttributeType::OverwriteAttribute );
@@ -2005,7 +2005,7 @@ HRESULT SVTaskObjectClass::HideInputsOutputs(SVObjectPtrVector& rListOfObjects)
 	SVObjectPtrVector::iterator iter;
 	for ( iter = rListOfObjects.begin(); iter != rListOfObjects.end(); ++iter )
 	{
-		(*iter)->SetObjectAttributesSet( SV_VIEWABLE , SvOi::SetAttributeType::RemoveAttribute );
+		(*iter)->SetObjectAttributesSet( SvOi::SV_VIEWABLE , SvOi::SetAttributeType::RemoveAttribute );
 	}
 	return S_OK;
 }

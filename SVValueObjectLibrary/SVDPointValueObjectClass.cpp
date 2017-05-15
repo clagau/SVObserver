@@ -134,7 +134,7 @@ SVDPointClass SVDPointValueObjectClass::ConvertString2Type( const SVString& rVal
 	msgList.push_back( rValue );
 	msgList.push_back( GetName() );
 	SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-	Exception.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_ValueObject_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+	Exception.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ValueObject_ValidateStringFailed, msgList, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 	Exception.Throw();
 	return SVDPointClass(); //will never reached, because the exception will throw before. But this line avoid a warning
 }
@@ -158,7 +158,7 @@ void SVDPointValueObjectClass::LocalInitialize()
 		m_sLegacyScriptDefaultName = _T("defaultPoint");
 		m_sLegacyScriptArrayName = _T("pArray");
 	}	
-	SetObjectAttributesAllowed( SV_VIEWABLE | SV_ARCHIVABLE | SV_EMBEDABLE | SV_PRINTABLE | SV_DD_VALUE, SvOi::SetAttributeType::OverwriteAttribute );
+	SetObjectAttributesAllowed( SvOi::SV_VIEWABLE | SvOi::SV_ARCHIVABLE | SvOi::SV_EMBEDABLE | SvOi::SV_PRINTABLE | SvOi::SV_DD_VALUE, SvOi::SetAttributeType::OverwriteAttribute );
 
 	SetTypeName( _T("Point") );
 

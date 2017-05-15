@@ -162,7 +162,7 @@ void SVDiscreteOutputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHi
 		else
 		{
 			SvStl::MessageMgrStd e( SvStl::LogOnly );
-			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvOi::Tid_ErrorGettingPPQCount, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_17010_ErrorGettingPPQCount );
+			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorGettingPPQCount, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17010_ErrorGettingPPQCount );
 			DebugBreak();
 		}
 
@@ -246,7 +246,7 @@ void SVDiscreteOutputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHi
 				if( nullptr == pPPQ )
 				{
 					SvStl::MessageMgrStd e( SvStl::LogOnly );
-					e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvOi::Tid_ErrorGettingPPQ, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_17011_ErrorGettingPPQ );
+					e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorGettingPPQ, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17011_ErrorGettingPPQ );
 					DebugBreak();
 				}
 
@@ -254,7 +254,7 @@ void SVDiscreteOutputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHi
 				if( !pPPQ->GetAllOutputs( ppIOEntries ) )
 				{
 					SvStl::MessageMgrStd e( SvStl::LogOnly );
-					e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvOi::Tid_ErrorGettingOutputs, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_17012_ErrorGettingOutputs );
+					e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorGettingOutputs, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17012_ErrorGettingOutputs );
 					DebugBreak();
 				}
 

@@ -8,7 +8,7 @@
 
 #pragma once
 
-namespace Seidenader { namespace SVObserver
+namespace SvO
 {
 	const TCHAR* const ToolClipboardFormat = _T( "SVO-Tool" );
 	const TCHAR* const ClipboardFileName = _T( "ClipboardFile" );
@@ -71,6 +71,4 @@ namespace Seidenader { namespace SVObserver
 	const TCHAR* const cTrue = _T( "True" );
 	const TCHAR* const cFalse = _T( "False" );
 
-} /* namespace SVObserver */ } /* namespace Seidenader */
-
-namespace SvO = Seidenader::SVObserver;
+} //namespace SvO

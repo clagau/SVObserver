@@ -16,42 +16,37 @@
 #include "SVObjectLibrary/SVObjectLibrary.h"
 #pragma endregion Includes
 
-namespace Seidenader
+namespace SvCmd
 {
-	namespace GuiCommand
+	struct ResetObject : public boost::noncopyable
 	{
-		struct ResetObject : public boost::noncopyable
+		ResetObject(const SVGUID& rInstanceID) : m_InstanceID(rInstanceID) {}
+
+		// This method is where the real separation would occur by using sockets/named pipes/shared memory
+		// The logic contained within this method would be moved to the "Server" side of a Client/Server architecture
+		// and replaced with the building and sending of the command
+		HRESULT Execute()
 		{
-			ResetObject(const SVGUID& rInstanceID) : m_InstanceID(rInstanceID) {}
+			HRESULT hr = S_OK;
+			m_messages.clear();
+			SvOi::IObjectClass* pObject = SvOi::getObject(m_InstanceID);
 
-			// This method is where the real separation would occur by using sockets/named pipes/shared memory
-			// The logic contained within this method would be moved to the "Server" side of a Client/Server architecture
-			// and replaced with the building and sending of the command
-			HRESULT Execute()
+			bool Result = false;
+			if (nullptr != pObject)
 			{
-				HRESULT hr = S_OK;
-				m_messages.clear();
-				SvOi::IObjectClass* pObject = SvOi::getObject(m_InstanceID);
-
-				bool Result = false;
-				if (nullptr != pObject)
-				{
-					Result = pObject->resetAllObjects(&m_messages);
-				}
-				if (!Result)
-				{
-					hr = E_FAIL;
-				}
-				return hr;
+				Result = pObject->resetAllObjects(&m_messages);
 			}
-			bool empty() const { return false; }
-			SvStl::MessageContainerVector getErrorMessages() {return m_messages; };
+			if (!Result)
+			{
+				hr = E_FAIL;
+			}
+			return hr;
+		}
+		bool empty() const { return false; }
+		SvStl::MessageContainerVector getErrorMessages() {return m_messages; };
 
-		private:
-			SVGUID m_InstanceID;
-			SvStl::MessageContainerVector m_messages;
-		};
-	}
-}
-
-namespace GuiCmd = Seidenader::GuiCommand;
+	private:
+		SVGUID m_InstanceID;
+		SvStl::MessageContainerVector m_messages;
+	};
+} //namespace SvCmd

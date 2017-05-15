@@ -40,7 +40,7 @@ BOOL SVCriticalSection::Lock( DWORD p_TimeOutMilliseconds ) const
 	}
 	else
 	{
-		SVClock::SVTimeStamp l_Start = SVClock::GetTimeStamp();
+		SvTl::SVTimeStamp l_Start = SvTl::GetTimeStamp();
 
 		do
 		{
@@ -48,9 +48,9 @@ BOOL SVCriticalSection::Lock( DWORD p_TimeOutMilliseconds ) const
 
 			if( !l_Status )
 			{
-				SVClock::SVTimeStamp l_Current = SVClock::GetTimeStamp(); 
+				SvTl::SVTimeStamp l_Current = SvTl::GetTimeStamp(); 
 
-				DWORD l_Diff = static_cast< DWORD >( SVClock::ConvertTo( SVClock::Milliseconds, ( l_Current - l_Start ) ) );
+				DWORD l_Diff = static_cast< DWORD >( SvTl::ConvertTo( SvTl::Milliseconds, ( l_Current - l_Start ) ) );
 
 				if( l_Diff < p_TimeOutMilliseconds )
 				{

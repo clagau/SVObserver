@@ -6,7 +6,7 @@
 /// This is the object graph template for dependencies
 //******************************************************************************
 
-namespace Sv { namespace Container
+namespace SvCl
 {
 	#pragma region Constructor
 	template< typename VertexName, typename EdgeType >
@@ -327,5 +327,5 @@ namespace Sv { namespace Container
 			boost::get( edge_type_t(), m_Graph)[rEdge] += rEdgeType;
 		}
 	}
-} /* namespace SVContainerLibrary */ } /* namespace Seidenader */
+} //namespace SvCl
 

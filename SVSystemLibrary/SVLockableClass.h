@@ -11,7 +11,7 @@
 
 #pragma once
 
-namespace Seidenader { namespace SVSystemLibrary
+namespace SvSyl
 {
 	class SVLockableClass
 	{
@@ -26,7 +26,5 @@ namespace Seidenader { namespace SVSystemLibrary
 	protected:
 		HANDLE hProtectionMutex; 
 	};
-} /*SVSystemLibrary*/ } /*Seidenader*/
-
-namespace SvSyl = Seidenader::SVSystemLibrary;
+} //namespace SvSyl
 

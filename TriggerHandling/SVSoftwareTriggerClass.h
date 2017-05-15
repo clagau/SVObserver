@@ -14,8 +14,8 @@
 #include "SVAcquisitionInitiator.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace TriggerHandling {
-
+namespace SvTh
+{
 	class SVSoftwareTriggerClass : public SvTh::SVTriggerClass
 	{
 	private:
@@ -36,7 +36,4 @@ namespace Seidenader { namespace TriggerHandling {
 		virtual HRESULT EnableInternalTrigger() override;
 		HRESULT FireAcquisitionTrigger();
 	};
-
-} /* namespace TriggerHandling */ } /* namespace Seidenader */
-
-namespace SvTh = Seidenader::TriggerHandling;
+} //namespace SvTh

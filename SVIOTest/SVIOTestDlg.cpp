@@ -596,7 +596,7 @@ void CSVIOTESTDlg::OnTestOutputs()
 
 HRESULT CALLBACK SVCallback( SvTh::TriggerParameters triggerparams)
 {
-	SVClock::SVTimeStamp l_TimeStamp = SVClock::GetTimeStamp();
+	SvTl::SVTimeStamp l_TimeStamp = SvTl::GetTimeStamp();
 
 	if ( nullptr != triggerparams.m_pData )
 	{
@@ -651,8 +651,8 @@ void SVIOTriggerDataStruct::OnTriggerStart()
 	lTriggerCount = 0;
 	m_LastTime = 0;
 	m_TotalTime = 0;
-	m_MaxTime = SVClock::GetMinTimeStamp();
-	m_MinTime = SVClock::GetMaxTimeStamp();
+	m_MaxTime = SvTl::GetMinTimeStamp();
+	m_MinTime = SvTl::GetMaxTimeStamp();
 }
 
 void CSVIOTESTDlg::StartTrigger(int triggerchannel) 

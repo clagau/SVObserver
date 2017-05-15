@@ -21,22 +21,20 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-namespace Seidenader
+namespace SvOg
 {
-	namespace SVOGui
-	{
-		static const std::string GrayOnTag("GrayOn");
-		static const std::string IterationTag("Iteration");
+	static const std::string GrayOnTag("GrayOn");
+	static const std::string IterationTag("Iteration");
 
-		/////////////////////////////////////////////////////////////////////////////
-		// SVThinningFilterDlg dialog
-		SVThinningFilterDlg::SVThinningFilterDlg(const SVGUID& rInspectionID, const SVGUID& rFilterID, CWnd* pParent) : 
-			CDialog(SVThinningFilterDlg::IDD, pParent)
-			,m_filterID(rFilterID)
-			,m_rInspectionID(rInspectionID)
-			, m_Values(SvOg::BoundValues(rInspectionID, rFilterID, boost::assign::map_list_of
-			(GrayOnTag, SVThinningFilterGrayOnGuid)
-			(IterationTag, SVThinningFilterItterationsGuid)))
+	/////////////////////////////////////////////////////////////////////////////
+	// SVThinningFilterDlg dialog
+	SVThinningFilterDlg::SVThinningFilterDlg(const SVGUID& rInspectionID, const SVGUID& rFilterID, CWnd* pParent) : 
+		CDialog(SVThinningFilterDlg::IDD, pParent)
+		,m_filterID(rFilterID)
+		,m_rInspectionID(rInspectionID)
+		, m_Values(SvOg::BoundValues(rInspectionID, rFilterID, boost::assign::map_list_of
+		(GrayOnTag, SVThinningFilterGrayOnGuid)
+		(IterationTag, SVThinningFilterItterationsGuid)))
 	{
 		//{{AFX_DATA_INIT(SVThinningFilterDlg)
 		m_bGrayScale = FALSE;
@@ -105,6 +103,5 @@ namespace Seidenader
 	{
 		CDialog::OnCancel();
 	}
-	}  //end namespace SVOGUI
-}  //end namespace Seidenader
+}  //namespace SvOg
 

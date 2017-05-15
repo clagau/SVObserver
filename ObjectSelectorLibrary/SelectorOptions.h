@@ -10,7 +10,7 @@
 #include "SVUtilityLibrary/SVGUID.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace ObjectSelectorLibrary
+namespace SvOsl
 {
 	struct SelectorOptions
 	{
@@ -63,6 +63,4 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 	#pragma endregion Member Variables
 	};
 
-} /* namespace ObjectSelectorLibrary */ } /* namespace Seidenader */
-
-namespace SvOsl = Seidenader::ObjectSelectorLibrary;
+} //namespace SvOsl

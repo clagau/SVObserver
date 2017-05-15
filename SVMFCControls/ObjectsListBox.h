@@ -12,41 +12,35 @@
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
-namespace Seidenader
+namespace SvMc
 {
-	namespace SVMFCControls
+	class ObjectsListBox : public CListBox
 	{
-		class ObjectsListBox : public CListBox
-		{
-		public:
-			ObjectsListBox();
-			virtual ~ObjectsListBox();
+	public:
+		ObjectsListBox();
+		virtual ~ObjectsListBox();
 
-			void init( const SvUl::NameGuidList& rList, const SVString& rEmptyListText );
+		void init( const SvUl::NameGuidList& rList, const SVString& rEmptyListText );
 
-			//************************************
-			/// Return the guid of an entry. If invalid index of the selected item has on GUID it return SV_GUID_NULL.
-			/// \param index [in] Index of the entry
-			/// \returns SVGUID
-			//************************************
-			SVGUID getGUID(int index) const;
+		//************************************
+		/// Return the guid of an entry. If invalid index of the selected item has on GUID it return SV_GUID_NULL.
+		/// \param index [in] Index of the entry
+		/// \returns SVGUID
+		//************************************
+		SVGUID getGUID(int index) const;
 
-			//{{AFX_VIRTUAL(ObjectsListBox)
-		protected:
-			virtual BOOL PreCreateWindow(CREATESTRUCT& cs) override;
-			//}}AFX_VIRTUAL
-		protected:
-			//{{AFX_MSG(ObjectsListBox)
-			afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
-			//}}AFX_MSG
+		//{{AFX_VIRTUAL(ObjectsListBox)
+	protected:
+		virtual BOOL PreCreateWindow(CREATESTRUCT& cs) override;
+		//}}AFX_VIRTUAL
+	protected:
+		//{{AFX_MSG(ObjectsListBox)
+		afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
+		//}}AFX_MSG
 
-			DECLARE_MESSAGE_MAP()
+		DECLARE_MESSAGE_MAP()
 
-		private:
-			SvUl::NameGuidList m_List;
-		};
-	}  //end namespace SVOGUI
-}  //end namespace Seidenader
-
-namespace SvMc = Seidenader::SVMFCControls;
-
+	private:
+		SvUl::NameGuidList m_List;
+	};
+} //namespace SvMc

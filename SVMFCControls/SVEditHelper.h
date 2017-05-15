@@ -11,41 +11,35 @@
 
 #pragma once
 
-namespace Seidenader
+namespace SvMc
 {
-	namespace SVMFCControls
+	#define		WM_APP_ED_EDIT_FINISHED			( WM_APP + 04101 )		
+
+	class SVEditHelper : public CEdit
 	{
-		#define		WM_APP_ED_EDIT_FINISHED			( WM_APP + 04101 )		
+		// Construction
+	public:
+		SVEditHelper();
 
-		class SVEditHelper : public CEdit
-		{
-			// Construction
-		public:
-			SVEditHelper();
+		// Attributes
+	public:
 
-			// Attributes
-		public:
+		// Operations
+	public:
 
-			// Operations
-		public:
+		// Implementation
+	public:
+		virtual ~SVEditHelper();
 
-			// Implementation
-		public:
-			virtual ~SVEditHelper();
+		// Generated message map functions
+	protected:
+		//{{AFX_MSG(SVEditHelper)
+		afx_msg void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags);
+		afx_msg void OnKillFocus(CWnd* pNewWnd);
+		//}}AFX_MSG
 
-			// Generated message map functions
-		protected:
-			//{{AFX_MSG(SVEditHelper)
-			afx_msg void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags);
-			afx_msg void OnKillFocus(CWnd* pNewWnd);
-			//}}AFX_MSG
-
-			DECLARE_MESSAGE_MAP()
-		public:
-			virtual BOOL PreTranslateMessage(MSG* pMsg) override;
-		};
-	} //SVMFCControls
-} //Seidenader
-
-namespace SvMc = Seidenader::SVMFCControls;
-
+		DECLARE_MESSAGE_MAP()
+	public:
+		virtual BOOL PreTranslateMessage(MSG* pMsg) override;
+	};
+} //namespace SvMc

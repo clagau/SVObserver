@@ -215,7 +215,7 @@ HRESULT SVRemoteCommandFunctions::GetTempFileNameFromFilePath( std::string& p_rT
 
 	if( !( l_FileName.empty() ) )
 	{
-		__int64 l_TimeStamp = static_cast< __int64 >( SVClock::GetTimeStamp() );
+		__int64 l_TimeStamp = static_cast< __int64 >( SvTl::GetTimeStamp() );
 
 		SVString l_TempString = SvUl_SF::Format( "%I64d", l_TimeStamp );
 
@@ -800,7 +800,7 @@ HRESULT SVRemoteCommandFunctions::GetConfig( const std::string& p_rJsonCommand, 
 	{
 		// Log Exception (in case no one else did...)
 		SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-		Exception.setMessage( l_Status, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_25018_Json_GetConfig );
+		Exception.setMessage( l_Status, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25018_Json_GetConfig );
 		
 		if (errText.empty())
 		{
@@ -1304,7 +1304,7 @@ HRESULT SVRemoteCommandFunctions::PutConfig( const std::string& p_rJsonCommand, 
 	{
 		// Log Exception (in case no one else did...)
 		SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-		Exception.setMessage( l_Status, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_25019_Json_PutConfig );
+		Exception.setMessage( l_Status, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25019_Json_PutConfig );
 
 		if (errText.empty())
 		{

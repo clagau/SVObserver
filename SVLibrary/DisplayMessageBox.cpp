@@ -24,7 +24,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-namespace Seidenader { namespace SVLibrary
+namespace SvLib
 {
 	static const int Button1 = 0;
 	static const int Button2 = 1;
@@ -402,5 +402,4 @@ namespace Seidenader { namespace SVLibrary
 		SendMessageToDescendants(WM_SETFONT, (WPARAM) m_DlgFont.GetSafeHandle(), MAKELPARAM(FALSE, 0), TRUE);
 	}
 	#pragma endregion Private Methods
-
-} /* namespace SVLibrary */ } /* namespace Seidenader */
+} //namespace SvLib

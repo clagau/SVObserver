@@ -21,7 +21,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-namespace Seidenader { namespace SVOGui
+namespace SvOg
 {
 #pragma region Declarations
 	static const int cHeaderSize = 1;
@@ -185,4 +185,4 @@ namespace Seidenader { namespace SVOGui
 	}
 
 #pragma endregion Protected Methods
-} /* namespace SVOGui */ } /* namespace Seidenader */
+} //namespace SvOg

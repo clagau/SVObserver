@@ -223,7 +223,7 @@ bool SVRemoteFontManager::AddFont( long &lIdentifier )
 		{
 			m_arRemoteFontHandles.Add( milHandle );
 			
-			SVClock::SVTimeStamp tsNow = SVClock::GetTimeStamp();
+			SvTl::SVTimeStamp tsNow = SvTl::GetTimeStamp();
 			m_arRemoteFontTimestamps.Add( tsNow );
 			
 			lIdentifier = dwTick;
@@ -306,7 +306,7 @@ bool SVRemoteFontManager::UpdateFontTime( long lIdentifier )
 		{
 			if( lIdentifier == m_arRemoteFontIdentifiers[l] )
 			{
-				SVClock::SVTimeStamp tsNow = SVClock::GetTimeStamp();
+				SvTl::SVTimeStamp tsNow = SvTl::GetTimeStamp();
 				m_arRemoteFontTimestamps.SetAt( l, tsNow );
 				
 				bRet = true;
@@ -381,20 +381,20 @@ bool SVRemoteFontManager::GetStatusHandles( unsigned long &p_rulSize, HANDLE **p
 	return l_bOk;
 }
 
-bool SVRemoteFontManager::RemoveFontsOlderThan( SVClock::SVTimeStamp p_Age )
+bool SVRemoteFontManager::RemoveFontsOlderThan( SvTl::SVTimeStamp p_Age )
 {
 	bool bRet = false;
 
 	if ( nullptr != m_hShutdown && m_bLockCreated && 
 	     ::TryEnterCriticalSection( &m_csLock ) )
 	{
-		SVClock::SVTimeStamp tsNow = SVClock::GetTimeStamp();
+		SvTl::SVTimeStamp tsNow = SvTl::GetTimeStamp();
 		
 		long lSize = m_arRemoteFontTimestamps.GetSize();
 		for( long l = lSize - 1L; l >= 0L; l-- )
 		{
-			SVClock::SVTimeStamp tsThen = m_arRemoteFontTimestamps[l];
-			SVClock::SVTimeStamp tsDiff = tsNow - tsThen;
+			SvTl::SVTimeStamp tsThen = m_arRemoteFontTimestamps[l];
+			SvTl::SVTimeStamp tsDiff = tsNow - tsThen;
 			if( tsDiff > p_Age )
 			{
 				long l_lIdentifier = m_arRemoteFontIdentifiers[l];
@@ -613,8 +613,8 @@ bool SVRemoteFontManager::GetFontCharImage( long p_lFontIdentifier, SVMatroxOcr 
 	ImageInfo.SetExtentProperty(SVExtentPropertyWidth, dCharBoxSizeX );
 	ImageInfo.SetExtentProperty(SVExtentPropertyHeight, dCharBoxSizeY );
 
-	ImageInfo.SetImageProperty(SVImagePropertyBandNumber,1 );
-	ImageInfo.SetImageProperty(SVImagePropertyPixelDepth,  SV8BitUnsigned );
+	ImageInfo.SetImageProperty(SvOi::SVImagePropertyEnum::SVImagePropertyBandNumber,1 );
+	ImageInfo.SetImageProperty(SvOi::SVImagePropertyEnum::SVImagePropertyPixelDepth,  SV8BitUnsigned );
 
 	hrRet = SVImageProcessingClass::CreateImageBuffer( ImageInfo, ImageBufferHandle );
 

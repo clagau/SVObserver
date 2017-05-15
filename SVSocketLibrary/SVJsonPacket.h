@@ -14,7 +14,7 @@
 //Moved to precompiled header: #include <string>
 #pragma endregion Includes
 
-namespace Seidenader { namespace SVSocketLibrary
+namespace SvSol
 {
 	class SVJsonPacket
 	{
@@ -32,6 +32,4 @@ namespace Seidenader { namespace SVSocketLibrary
 		void Clear();
 		void Reset();
 	};
-} /*namespace SVSocketLibrary*/ } /*namespace Seidenader*/
-
-namespace SvSol = Seidenader::SVSocketLibrary;
+} //namespace SvSol

@@ -28,7 +28,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-namespace Seidenader { namespace  SVXMLLibrary
+namespace SvXml
 {
 	static std::map<std::wstring, UINT>  map_wstring2Type = boost::assign::map_list_of<>
 		(L"VT_EMPTY",		(UINT)VT_EMPTY)
@@ -75,7 +75,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 			SVStringVector messageList;
 			messageList.push_back(SvUl_SF::Format(_T("%d"), hres));
 			SvStl::MessageContainer Exception;
-			Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR, SvOi::Tid_RestoreVariantError, messageList, SvStl::SourceFileParams(StdMessageParams),SvOi::Err_16064_RESTOREVARIANT  );
+			Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR, SvStl::Tid_RestoreVariantError, messageList, SvStl::SourceFileParams(StdMessageParams),SvStl::Err_16064_RESTOREVARIANT  );
 			throw Exception;
 		}
 
@@ -315,9 +315,9 @@ namespace Seidenader { namespace  SVXMLLibrary
 		if(bInvalidArgument)
 		{
 			SvStl::MessageContainer Exception;
-			Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR,SvOi::Tid_ToVariant_InvalidArgument, SvStl::SourceFileParams(StdMessageParams),SvOi::Err_16066_TOVARIANT  );
+			Exception.setMessage(SVMSG_SVO_84_SAX_PARSER_UNEXPECTED_ERROR,SvStl::Tid_ToVariant_InvalidArgument, SvStl::SourceFileParams(StdMessageParams),SvStl::Err_16066_TOVARIANT  );
 			throw Exception;
 		}
 
 	}
-} /* namespace SVXMLLibrary */ } /* namespace Seidenader */
+} //namespace SvXml

@@ -13,7 +13,7 @@
 #include "ObjectInterfaces/GlobalConstantData.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace SVOGui
+namespace SvOg
 {
 	class GlobalConstantDlg : public CDialog
 	{
@@ -69,6 +69,4 @@ namespace Seidenader { namespace SVOGui
 		CString					m_Value;					//The string value of the constant
 	#pragma endregion Member variables
 	};
-} /* namespace SVOGui */ } /* namespace Seidenader */
-
-namespace SvOg = Seidenader::SVOGui;
+} //namespace SvOg

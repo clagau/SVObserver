@@ -17,9 +17,8 @@
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
-
-namespace Seidenader { namespace TriggerInformation {
-
+namespace SvTi
+{
 	struct SVAcquisitionConstructParams
 	{
 		SVAcquisitionConstructParams();
@@ -48,6 +47,4 @@ namespace Seidenader { namespace TriggerInformation {
 
 	typedef std::vector< SVAcquisitionConstructParams > SVAcquisitionConstructParamsVector;
 
-} /* namespace TriggerInformation */ } /* namespace Seidenader */
-
-namespace SvTi = Seidenader::TriggerInformation;
+} //namespace SvTi

@@ -68,7 +68,7 @@ static const TCHAR* const FileAcquisitionDeviceFilename = _T("SVFileAcquisitionD
 static const TCHAR* const SoftwareTriggerDeviceFilename = _T("SVSoftwareTriggerDevice.DLL");
 #pragma endregion Declarations
 
-namespace Seidenader { namespace SVLibrary
+namespace SvLib
 {
 	SVOIniLoader::SVOIniLoader() 
 	: m_bUseCorrectListRecursion( false )
@@ -76,8 +76,8 @@ namespace Seidenader { namespace SVLibrary
 	, m_gigePacketSize( 0 )
 	, m_bSingleCameraModel( false )
 	, m_forcedImageUpdateTimeInSeconds(0) // zero means no forced image update
-	, m_NAKMode(NakGeneration::Bursts)
-	,m_NAKParameter(DefaultNakParameter) 
+	, m_NAKMode(SvOi::NakGeneration::Bursts)
+	,m_NAKParameter(SvOi::DefaultNakParameter)
 	{
 	}
 
@@ -166,8 +166,8 @@ namespace Seidenader { namespace SVLibrary
 		// Force Image Update Time (in seconds)
 		int forcedImageUpdateTime = SvimIni.GetValueInt( DisplaySectionTag, ForcedImageUpdateTimeInSecondsTag, 0 );
 		m_forcedImageUpdateTimeInSeconds = static_cast<unsigned char> (forcedImageUpdateTime);
-		m_NAKMode = static_cast<NakGeneration>( SvimIni.GetValueInt(NAKSectionTag, NAKMode, NakGeneration::Bursts));
-		m_NAKParameter = SvimIni.GetValueInt(NAKSectionTag, NAKParameter, DefaultNakParameter);	  
+		m_NAKMode = static_cast<SvOi::NakGeneration>( SvimIni.GetValueInt(NAKSectionTag, NAKMode, SvOi::NakGeneration::Bursts));
+		m_NAKParameter = SvimIni.GetValueInt(NAKSectionTag, NAKParameter, SvOi::DefaultNakParameter);
 		return Result;
 	}
 
@@ -401,20 +401,15 @@ namespace Seidenader { namespace SVLibrary
 		return m_forcedImageUpdateTimeInSeconds;
 	}
 
-NakGeneration  SVOIniLoader::GetNAKMode() const
-{
+	SvOi::NakGeneration  SVOIniLoader::GetNAKMode() const
+	{
 
-	return m_NAKMode;
-}
+		return m_NAKMode;
+	}
 
-int  SVOIniLoader::GetNAKPar() const
-{
+	int  SVOIniLoader::GetNAKPar() const
+	{
 
-	return m_NAKParameter;
-}
-
-
-
-
-
-} /* namespace SVLibrary */ } /* namespace Seidenader */
+		return m_NAKParameter;
+	}
+} //namespace SvLib

@@ -456,7 +456,7 @@ BOOL SVIPDoc::AddTool(SVToolClass* pTool)
 									!SV_IS_KIND_OF(pTool, SVColorToolClass))
 					{
 						SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-						Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_ColorToolMustBeFirstMessage, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10055 );
+						Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ColorToolMustBeFirstMessage, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10055 );
 						return false;
 					}
 				}
@@ -676,7 +676,7 @@ BOOL SVIPDoc::CanCloseFrame(CFrameWnd* pFrame)
 	if (!bCanClose)
 	{
 		SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_SVIPDoc_ClosingImpossible, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10056 );
+		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SVIPDoc_ClosingImpossible, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10056 );
 	}
 
 	return bCanClose;
@@ -1213,7 +1213,7 @@ void SVIPDoc::OnEditDelete()
 						pNextTool && !SV_IS_KIND_OF(pNextTool, SVColorToolClass))
 					{
 						SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-						Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_ColorToolMustBeFirstMessage, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10057 );
+						Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_ColorToolMustBeFirstMessage, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10057 );
 						return;
 					}
 				}
@@ -1547,7 +1547,7 @@ void SVIPDoc::OnResultsPicker()
 			SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeMultipleObject);
 			SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
 
-			SvOsl::SelectorOptions BuildOptions( GetInspectionID(), SV_VIEWABLE, GUID_NULL, true );
+			SvOsl::SelectorOptions BuildOptions( GetInspectionID(), SvOi::SV_VIEWABLE, GUID_NULL, true );
 			SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::GlobalSelector, SvOg::PPQSelector, SvOg::ToolSetItemSelector<>>( BuildOptions );
 			
 			const SVObjectReferenceVector& rSelectedObjects( pResultList->GetSelectedObjects() );
@@ -1591,7 +1591,7 @@ void SVIPDoc::OnPublishedResultsPicker()
 		SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSetAttributes );
 		SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, InspectionName, SVString( _T("") ) );
 
-		SvOsl::SelectorOptions BuildOptions( GetInspectionID(), SV_PUBLISHABLE );
+		SvOsl::SelectorOptions BuildOptions( GetInspectionID(), SvOi::SV_PUBLISHABLE );
 		SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::NoSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<>>( BuildOptions );
 
 		SVString PublishableResults = SvUl_SF::LoadSVString( IDS_PUBLISHABLE_RESULTS );
@@ -1645,7 +1645,7 @@ void SVIPDoc::OnPublishedResultImagesPicker()
 		SVString RootName = SvUl_SF::LoadSVString( IDS_CLASSNAME_ROOTOBJECT );
 		SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, RootName, SVString( _T("") ) );
 
-		SvOsl::SelectorOptions BuildOptions( GetInspectionID(), SV_PUBLISH_RESULT_IMAGE );
+		SvOsl::SelectorOptions BuildOptions( GetInspectionID(), SvOi::SV_PUBLISH_RESULT_IMAGE );
 		SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::NoSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<>>( BuildOptions );
 
 		SVString PublishableImages = SvUl_SF::LoadSVString( IDS_PUBLISHABLE_RESULT_IMAGES );
@@ -1733,7 +1733,7 @@ HRESULT SVIPDoc::GetResultDefinitions( SVResultDefinitionDeque& p_rDefinitions )
 
 	if( S_OK == hres )
 	{ 
-		m_ResultDefinitionsTimestamp = SVClock::GetTimeStamp(); 
+		m_ResultDefinitionsTimestamp = SvTl::GetTimeStamp(); 
 	}
 
 	return hres;
@@ -1759,7 +1759,7 @@ HRESULT SVIPDoc::IsToolSetListUpdated() const
 		}
 		else
 		{
-			m_ToolSetListTimestamp = SVClock::GetTimeStamp();
+			m_ToolSetListTimestamp = SvTl::GetTimeStamp();
 		}
 	}
 	else
@@ -1874,7 +1874,7 @@ void SVIPDoc::RunRegressionTest()
 	else
 	{
 		SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_SVIPDoc_GoIntoRegTestFailed, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10058 );
+		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SVIPDoc_GoIntoRegTestFailed, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10058 );
 	}
 }
 
@@ -2185,7 +2185,7 @@ void SVIPDoc::SaveViewedVariables(SVObjectWriter& rWriter)
 	SVResultListClass* pResultList = GetResultList();
 
 	
-	rWriter.StartElement(CTAG_VIEWEDVARIABLES);
+	rWriter.StartElement(SvXml::CTAG_VIEWEDVARIABLES);
 	if(pResultList)
 	{
 		pResultList->Save(rWriter);
@@ -2209,8 +2209,8 @@ void SVIPDoc::SaveViews(SVObjectWriter& rWriter)
 {
 	SVViewUnion View;
 	_variant_t svVariant;
-	rWriter.StartElement(CTAG_IPDOC_VIEWS);
-	rWriter.StartElement(CTAG_VIEWS);
+	rWriter.StartElement(SvXml::CTAG_IPDOC_VIEWS);
+	rWriter.StartElement(SvXml::CTAG_VIEWS);
 
 	POSITION vPos = GetFirstViewPosition();
 
@@ -2223,7 +2223,7 @@ void SVIPDoc::SaveViews(SVObjectWriter& rWriter)
 			rWriter.StartElement(View.pView->GetRuntimeClass()->m_lpszClassName);
 
 			svVariant = ++ViewNumber;
-			rWriter.WriteAttribute(CTAG_VIEW_NUMBER, svVariant);
+			rWriter.WriteAttribute(SvXml::CTAG_VIEW_NUMBER, svVariant);
 			svVariant.Clear();
 
 			if (View.pView->IsKindOf(RUNTIME_CLASS(SVImageViewScroll)))
@@ -2250,12 +2250,12 @@ void SVIPDoc::SaveViews(SVObjectWriter& rWriter)
 
 	// save height of the Result View
 	svVariant = m_nHeightResultView;
-	rWriter.WriteAttribute(CTAG_HEIGHT_RESULT_VIEW, svVariant);
+	rWriter.WriteAttribute(SvXml::CTAG_HEIGHT_RESULT_VIEW, svVariant);
 	svVariant.Clear();
 
 	// save width of the Toolset View
 	svVariant = m_nWidthToolSetView;
-	rWriter.WriteAttribute(CTAG_WIDTH_TOOLSET_VIEW, svVariant);
+	rWriter.WriteAttribute(SvXml::CTAG_WIDTH_TOOLSET_VIEW, svVariant);
 	svVariant.Clear();
 }
 
@@ -2290,58 +2290,58 @@ void SVIPDoc::SaveViewPlacements(SVObjectWriter& rWriter)
 	}
 
 	// Save Window Placement
-	rWriter.StartElement(CTAG_WINDOW_PLACEMENT);
+	rWriter.StartElement(SvXml::CTAG_WINDOW_PLACEMENT);
 
 	svVariant = wndpl.length;
-	rWriter.WriteAttribute(CTAG_LENGTH, svVariant);
+	rWriter.WriteAttribute(SvXml::CTAG_LENGTH, svVariant);
 	svVariant.Clear();
 
 	svVariant = wndpl.flags;
-	rWriter.WriteAttribute(CTAG_FLAGS, svVariant);
+	rWriter.WriteAttribute(SvXml::CTAG_FLAGS, svVariant);
 	svVariant.Clear();
 
 	svVariant = wndpl.showCmd;
-	rWriter.WriteAttribute(CTAG_SHOW_COMMAND, svVariant);
+	rWriter.WriteAttribute(SvXml::CTAG_SHOW_COMMAND, svVariant);
 	svVariant.Clear();
 
 	// Save Minimum Position
-	rWriter.StartElement(CTAG_MINIMUM_POSITION);
+	rWriter.StartElement(SvXml::CTAG_MINIMUM_POSITION);
 	svVariant = wndpl.ptMinPosition.x;
-	rWriter.WriteAttribute(CTAG_X, svVariant);
+	rWriter.WriteAttribute(SvXml::CTAG_X, svVariant);
 	svVariant.Clear();
 
 	svVariant = wndpl.ptMinPosition.y;
-	rWriter.WriteAttribute(CTAG_Y, svVariant);
+	rWriter.WriteAttribute(SvXml::CTAG_Y, svVariant);
 	svVariant.Clear();
 	rWriter.EndElement();
 
 	// Save Maximum Position
-	rWriter.StartElement(CTAG_MAXIMUM_POSITION);
+	rWriter.StartElement(SvXml::CTAG_MAXIMUM_POSITION);
 	svVariant = wndpl.ptMaxPosition.x;
-	rWriter.WriteAttribute(CTAG_X, svVariant);
+	rWriter.WriteAttribute(SvXml::CTAG_X, svVariant);
 	svVariant.Clear();
 
 	svVariant = wndpl.ptMaxPosition.y;
-	rWriter.WriteAttribute(CTAG_Y, svVariant);
+	rWriter.WriteAttribute(SvXml::CTAG_Y, svVariant);
 	svVariant.Clear();
 	rWriter.EndElement();
 
 	// Save Normal Position
-	rWriter.StartElement(CTAG_NORMAL_POSITION);
+	rWriter.StartElement(SvXml::CTAG_NORMAL_POSITION);
 	svVariant = wndpl.rcNormalPosition.left;
-	rWriter.WriteAttribute(CTAG_LEFT, svVariant);
+	rWriter.WriteAttribute(SvXml::CTAG_LEFT, svVariant);
 	svVariant.Clear();
 
 	svVariant = wndpl.rcNormalPosition.top;
-	rWriter.WriteAttribute(CTAG_TOP, svVariant);
+	rWriter.WriteAttribute(SvXml::CTAG_TOP, svVariant);
 	svVariant.Clear();
 
 	svVariant = wndpl.rcNormalPosition.right;
-	rWriter.WriteAttribute(CTAG_RIGHT, svVariant);
+	rWriter.WriteAttribute(SvXml::CTAG_RIGHT, svVariant);
 	svVariant.Clear();
 
 	svVariant = wndpl.rcNormalPosition.bottom;
-	rWriter.WriteAttribute(CTAG_BOTTOM, svVariant);
+	rWriter.WriteAttribute(SvXml::CTAG_BOTTOM, svVariant);
 	svVariant.Clear();
 	rWriter.EndElement();
 
@@ -2364,12 +2364,12 @@ BOOL SVIPDoc::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiPa
 
 	if( nullptr == pInspection ) { return false; }
 
-	bOk = SVNavigateTree::GetItem( rTree, CTAG_HEIGHT_RESULT_VIEW, htiParent, svVariant );
+	bOk = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_HEIGHT_RESULT_VIEW, htiParent, svVariant );
 	if ( bOk )
 	{
 		m_nHeightResultView = svVariant;
 
-		bOk = SVNavigateTree::GetItem( rTree, CTAG_WIDTH_TOOLSET_VIEW, htiParent, svVariant );
+		bOk = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_WIDTH_TOOLSET_VIEW, htiParent, svVariant );
 		if ( bOk )
 		{
 			m_nWidthToolSetView = svVariant;
@@ -2382,21 +2382,21 @@ BOOL SVIPDoc::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiPa
 
 		SVTreeType::SVBranchHandle htiWindow = nullptr;
 
-		bOk = SVNavigateTree::GetItemBranch( rTree, CTAG_WINDOW_PLACEMENT, htiParent, htiWindow );
+		bOk = SvXml::SVNavigateTree::GetItemBranch( rTree, SvXml::CTAG_WINDOW_PLACEMENT, htiParent, htiWindow );
 		if ( bOk )
 		{
-			bOk = SVNavigateTree::GetItem( rTree, CTAG_LENGTH, htiWindow, svVariant );
+			bOk = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_LENGTH, htiWindow, svVariant );
 			if ( bOk ) { wndpl.length = svVariant; }
 
 			if ( bOk )
 			{
-				bOk = SVNavigateTree::GetItem( rTree, CTAG_FLAGS, htiWindow, svVariant );
+				bOk = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_FLAGS, htiWindow, svVariant );
 				if ( bOk ) { wndpl.flags = svVariant; }
 			}
 
 			if ( bOk )
 			{
-				bOk = SVNavigateTree::GetItem( rTree, CTAG_SHOW_COMMAND, htiWindow, svVariant );
+				bOk = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_SHOW_COMMAND, htiWindow, svVariant );
 				if ( bOk ) { wndpl.showCmd = svVariant; }
 			}
 
@@ -2404,15 +2404,15 @@ BOOL SVIPDoc::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiPa
 			{
 				SVTreeType::SVBranchHandle htiData = nullptr;
 
-				bOk = SVNavigateTree::GetItemBranch( rTree, CTAG_MINIMUM_POSITION, htiWindow, htiData );
+				bOk = SvXml::SVNavigateTree::GetItemBranch( rTree, SvXml::CTAG_MINIMUM_POSITION, htiWindow, htiData );
 				if ( bOk )
 				{
-					bOk = SVNavigateTree::GetItem( rTree, CTAG_X, htiData, svVariant );
+					bOk = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_X, htiData, svVariant );
 					if ( bOk ) { wndpl.ptMinPosition.x = svVariant; }
 
 					if ( bOk )
 					{
-						bOk = SVNavigateTree::GetItem( rTree, CTAG_Y, htiData, svVariant );
+						bOk = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_Y, htiData, svVariant );
 						if ( bOk ) { wndpl.ptMinPosition.y = svVariant; }
 					}
 				}
@@ -2422,15 +2422,15 @@ BOOL SVIPDoc::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiPa
 			{
 				SVTreeType::SVBranchHandle htiData = nullptr;
 
-				bOk = SVNavigateTree::GetItemBranch( rTree, CTAG_MAXIMUM_POSITION, htiWindow, htiData );
+				bOk = SvXml::SVNavigateTree::GetItemBranch( rTree, SvXml::CTAG_MAXIMUM_POSITION, htiWindow, htiData );
 				if ( bOk )
 				{
-					bOk = SVNavigateTree::GetItem( rTree, CTAG_X, htiData, svVariant );
+					bOk = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_X, htiData, svVariant );
 					if ( bOk ) { wndpl.ptMaxPosition.x = svVariant; }
 
 					if ( bOk )
 					{
-						bOk = SVNavigateTree::GetItem( rTree, CTAG_Y, htiData, svVariant );
+						bOk = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_Y, htiData, svVariant );
 						if ( bOk ) { wndpl.ptMaxPosition.y = svVariant; }
 					}
 				}
@@ -2440,27 +2440,27 @@ BOOL SVIPDoc::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiPa
 			{
 				SVTreeType::SVBranchHandle htiData = nullptr;
 
-				bOk = SVNavigateTree::GetItemBranch( rTree, CTAG_NORMAL_POSITION, htiWindow, htiData );
+				bOk = SvXml::SVNavigateTree::GetItemBranch( rTree, SvXml::CTAG_NORMAL_POSITION, htiWindow, htiData );
 				if ( bOk )
 				{
-					bOk = SVNavigateTree::GetItem( rTree, CTAG_LEFT, htiData, svVariant );
+					bOk = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_LEFT, htiData, svVariant );
 					if ( bOk ) { wndpl.rcNormalPosition.left = svVariant; }
 
 					if ( bOk )
 					{
-						bOk = SVNavigateTree::GetItem( rTree, CTAG_TOP, htiData, svVariant );
+						bOk = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_TOP, htiData, svVariant );
 						if ( bOk ) { wndpl.rcNormalPosition.top = svVariant; }
 					}
 
 					if ( bOk )
 					{
-						bOk = SVNavigateTree::GetItem( rTree, CTAG_RIGHT, htiData, svVariant );
+						bOk = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_RIGHT, htiData, svVariant );
 						if ( bOk ) { wndpl.rcNormalPosition.right = svVariant; }
 					}
 
 					if ( bOk )
 					{
-						bOk = SVNavigateTree::GetItem( rTree, CTAG_BOTTOM, htiData, svVariant );
+						bOk = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_BOTTOM, htiData, svVariant );
 						if ( bOk ) { wndpl.rcNormalPosition.bottom = svVariant; }
 					}
 				}
@@ -2503,7 +2503,7 @@ BOOL SVIPDoc::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiPa
 		SVTreeType::SVBranchHandle htiIPViews = nullptr;
 		SVTreeType::SVBranchHandle htiViews = nullptr;
 
-		bOk = SVNavigateTree::GetItemBranch( rTree, CTAG_IPDOC_VIEWS, htiParent, htiIPViews );
+		bOk = SvXml::SVNavigateTree::GetItemBranch( rTree, SvXml::CTAG_IPDOC_VIEWS, htiParent, htiIPViews );
 		if ( bOk )
 		{
 			// Serialze View Data...
@@ -2517,7 +2517,7 @@ BOOL SVIPDoc::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiPa
 
 			SVTreeType::SVBranchHandle htiBranch = nullptr;
 
-			bOk = SVNavigateTree::GetItemBranch( rTree, CTAG_VIEWS, htiIPViews, htiViews );
+			bOk = SvXml::SVNavigateTree::GetItemBranch( rTree, SvXml::CTAG_VIEWS, htiIPViews, htiViews );
 			if ( bOk )
 			{
 				SVTreeType::SVBranchHandle htiItem( nullptr ); 
@@ -2529,9 +2529,9 @@ BOOL SVIPDoc::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiPa
 					Name = rTree.getBranchName( htiItem );
 
 					// The class SVToolSetTabView was changed to ToolSetView when the Tool Set Tree View was removed.
-					SvUl_SF::searchAndReplace( Name, CTAG_SVTOOLSET_TAB_VIEW_CLASS, CTAG_TOOLSET_VIEW );
+					SvUl_SF::searchAndReplace( Name, SvXml::CTAG_SVTOOLSET_TAB_VIEW_CLASS, SvXml::CTAG_TOOLSET_VIEW );
 
-					bOk = SVNavigateTree::GetItem( rTree, CTAG_VIEW_NUMBER, htiItem, svVariant );
+					bOk = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_VIEW_NUMBER, htiItem, svVariant );
 					if ( bOk ) { lViewNumber = svVariant; }
 
 					if ( bOk )
@@ -2583,7 +2583,7 @@ BOOL SVIPDoc::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiPa
 				}
 			}
 
-			bOk = SVNavigateTree::GetItemBranch( rTree, CTAG_VIEWS, htiIPViews, htiViews );
+			bOk = SvXml::SVNavigateTree::GetItemBranch( rTree, SvXml::CTAG_VIEWS, htiIPViews, htiViews );
 			if ( bOk )
 			{
 				SVTreeType::SVBranchHandle htiItem( nullptr );
@@ -2594,7 +2594,7 @@ BOOL SVIPDoc::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiPa
 				{
 					Name = rTree.getBranchName( htiItem );
 
-					bOk = SVNavigateTree::GetItem( rTree, CTAG_VIEW_NUMBER, htiItem, svVariant );
+					bOk = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_VIEW_NUMBER, htiItem, svVariant );
 					if ( bOk ) { lViewNumber = svVariant; }
 
 					if ( bOk )
@@ -3893,8 +3893,8 @@ BOOL SVIPDoc::RunOnce( SVToolClass* p_pTool )
 
 		if( nullptr != p_pTool ) { l_ToolId = p_pTool->GetUniqueObjectID(); }
 
-		GuiCmd::InspectionRunOncePtr l_CommandPtr = new GuiCmd::InspectionRunOnce( pInspection->GetUniqueObjectID(), l_ToolId );
-		SVObjectSynchronousCommandTemplate< GuiCmd::InspectionRunOncePtr > l_Command( pInspection->GetUniqueObjectID(), l_CommandPtr );
+		SvCmd::InspectionRunOncePtr l_CommandPtr = new SvCmd::InspectionRunOnce( pInspection->GetUniqueObjectID(), l_ToolId );
+		SVObjectSynchronousCommandTemplate< SvCmd::InspectionRunOncePtr > l_Command( pInspection->GetUniqueObjectID(), l_CommandPtr );
 
 		l_Status = ( S_OK == l_Command.Execute( TWO_MINUTE_CMD_TIMEOUT ) );
 	}

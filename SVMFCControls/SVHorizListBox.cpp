@@ -22,132 +22,128 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-namespace Seidenader
+namespace SvMc
 {
-	namespace SVMFCControls
+	static const int margin_padding = 6;
+
+	SVHorizListBox::SVHorizListBox()
 	{
-		static const int margin_padding = 6;
+	}
 
-		SVHorizListBox::SVHorizListBox()
+	SVHorizListBox::~SVHorizListBox()
+	{
+	}
+
+	BEGIN_MESSAGE_MAP(SVHorizListBox, CListBox)
+		//{{AFX_MSG_MAP(SVHorizListBox)
+		//}}AFX_MSG_MAP
+		ON_MESSAGE(LB_ADDSTRING, OnAddString)
+		ON_MESSAGE(LB_INSERTSTRING, OnInsertString)
+		ON_MESSAGE(LB_DELETESTRING, OnDeleteString)
+		ON_MESSAGE(LB_SETTABSTOPS, OnSetTabStops)
+		ON_MESSAGE(LB_RESETCONTENT, OnResetContent)
+	END_MESSAGE_MAP()
+
+	int SVHorizListBox::CalcHorizExtent(CDC* pDC, LPCTSTR text) const
+	{
+		CSize size;
+		if (0 == (GetStyle() & LBS_USETABSTOPS))
 		{
+			size = pDC->GetTextExtent(text, static_cast<int>(_tcslen(text)));
 		}
-
-		SVHorizListBox::~SVHorizListBox()
+		else
 		{
+			// Expand tabs as well
+			size = pDC->GetTabbedTextExtent(text, static_cast<int>(_tcslen(text)), 0, nullptr);
 		}
+		size.cx += margin_padding;
+		return size.cx;
+	}
 
-		BEGIN_MESSAGE_MAP(SVHorizListBox, CListBox)
-			//{{AFX_MSG_MAP(SVHorizListBox)
-			//}}AFX_MSG_MAP
-			ON_MESSAGE(LB_ADDSTRING, OnAddString)
-			ON_MESSAGE(LB_INSERTSTRING, OnInsertString)
-			ON_MESSAGE(LB_DELETESTRING, OnDeleteString)
-			ON_MESSAGE(LB_SETTABSTOPS, OnSetTabStops)
-			ON_MESSAGE(LB_RESETCONTENT, OnResetContent)
-		END_MESSAGE_MAP()
-
-		int SVHorizListBox::CalcHorizExtent(CDC* pDC, LPCTSTR text) const
+	void SVHorizListBox::ResetHorizExtent()
+	{
+		if (!GetCount())
 		{
-			CSize size;
-			if (0 == (GetStyle() & LBS_USETABSTOPS))
-			{
-				size = pDC->GetTextExtent(text, static_cast<int>(_tcslen(text)));
-			}
-			else
-			{
-				// Expand tabs as well
-				size = pDC->GetTabbedTextExtent(text, static_cast<int>(_tcslen(text)), 0, nullptr);
-			}
-			size.cx += margin_padding;
-			return size.cx;
+			SetHorizontalExtent(0);
 		}
-
-		void SVHorizListBox::ResetHorizExtent()
+		else
 		{
-			if (!GetCount())
-			{
-				SetHorizontalExtent(0);
-			}
-			else
-			{
-				CWaitCursor waitCursor;
-				CDC *pDC = GetDC();
-				ASSERT(pDC);
-
-				CFont* pOldFont = pDC->SelectObject(GetFont());
-
-				int extent = 0;
-				for (int i = 0; i < GetCount(); i++)
-				{
-					CString text;
-					GetText(i, text);
-					extent = std::max(extent, CalcHorizExtent(pDC, text));
-				}
-				pDC->SelectObject(pOldFont);
-				ReleaseDC(pDC);
-				SetHorizontalExtent(extent);
-			}
-		}
-
-		void SVHorizListBox::CalcNewHorizExtent(LPCTSTR text)
-		{
+			CWaitCursor waitCursor;
 			CDC *pDC = GetDC();
+			ASSERT(pDC);
+
 			CFont* pOldFont = pDC->SelectObject(GetFont());
-			int extent = CalcHorizExtent(pDC, text);
+
+			int extent = 0;
+			for (int i = 0; i < GetCount(); i++)
+			{
+				CString text;
+				GetText(i, text);
+				extent = std::max(extent, CalcHorizExtent(pDC, text));
+			}
 			pDC->SelectObject(pOldFont);
 			ReleaseDC(pDC);
-			if (extent > GetHorizontalExtent())
-			{
-				SetHorizontalExtent(extent);
-			}
+			SetHorizontalExtent(extent);
 		}
+	}
 
-		LRESULT SVHorizListBox::OnAddString(WPARAM wParam, LPARAM lParam)
+	void SVHorizListBox::CalcNewHorizExtent(LPCTSTR text)
+	{
+		CDC *pDC = GetDC();
+		CFont* pOldFont = pDC->SelectObject(GetFont());
+		int extent = CalcHorizExtent(pDC, text);
+		pDC->SelectObject(pOldFont);
+		ReleaseDC(pDC);
+		if (extent > GetHorizontalExtent())
 		{
-			LRESULT lResult = Default();
-			if (LB_ERR != lResult && LB_ERRSPACE != lResult)
-			{
-				CalcNewHorizExtent(reinterpret_cast<LPCTSTR>(lParam));
-			}
-			return lResult;
+			SetHorizontalExtent(extent);
 		}
+	}
 
-		LRESULT SVHorizListBox::OnInsertString(WPARAM wParam, LPARAM lParam)
+	LRESULT SVHorizListBox::OnAddString(WPARAM wParam, LPARAM lParam)
+	{
+		LRESULT lResult = Default();
+		if (LB_ERR != lResult && LB_ERRSPACE != lResult)
 		{
-			LRESULT lResult = Default();
-			if (LB_ERR != lResult && LB_ERRSPACE != lResult)
-			{
-				CalcNewHorizExtent(reinterpret_cast<LPCTSTR>(lParam));
-			}
-			return lResult;
+			CalcNewHorizExtent(reinterpret_cast<LPCTSTR>(lParam));
 		}
+		return lResult;
+	}
 
-		LRESULT SVHorizListBox::OnDeleteString(WPARAM wParam, LPARAM lParam)
+	LRESULT SVHorizListBox::OnInsertString(WPARAM wParam, LPARAM lParam)
+	{
+		LRESULT lResult = Default();
+		if (LB_ERR != lResult && LB_ERRSPACE != lResult)
 		{
-			LRESULT lResult = Default();
-			if (LB_ERR != lResult && LB_ERRSPACE != lResult)
-			{
-				ResetHorizExtent();
-			}
-			return lResult;
+			CalcNewHorizExtent(reinterpret_cast<LPCTSTR>(lParam));
 		}
+		return lResult;
+	}
 
-		LRESULT SVHorizListBox::OnSetTabStops(WPARAM wParam, LPARAM lParam)
+	LRESULT SVHorizListBox::OnDeleteString(WPARAM wParam, LPARAM lParam)
+	{
+		LRESULT lResult = Default();
+		if (LB_ERR != lResult && LB_ERRSPACE != lResult)
 		{
-			LRESULT lResult = Default();
-			if (LB_ERR != lResult && LB_ERRSPACE != lResult)
-			{
-				ResetHorizExtent();
-			}
-			return lResult;
+			ResetHorizExtent();
 		}
+		return lResult;
+	}
 
-		LRESULT SVHorizListBox::OnResetContent(WPARAM wParam, LPARAM lParam)
+	LRESULT SVHorizListBox::OnSetTabStops(WPARAM wParam, LPARAM lParam)
+	{
+		LRESULT lResult = Default();
+		if (LB_ERR != lResult && LB_ERRSPACE != lResult)
 		{
-			LRESULT lResult = Default();
-			SetHorizontalExtent(0);
-			return lResult;
+			ResetHorizExtent();
 		}
-	} //SVMFCControls
-} //Seidenader
+		return lResult;
+	}
 
+	LRESULT SVHorizListBox::OnResetContent(WPARAM wParam, LPARAM lParam)
+	{
+		LRESULT lResult = Default();
+		SetHorizontalExtent(0);
+		return lResult;
+	}
+} //namespace SvMc

@@ -42,7 +42,7 @@
 #include "GridCellBase.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace GridCtrlLibrary
+namespace SvGcl
 {
 	class CGridCtrl;
 
@@ -147,7 +147,7 @@ namespace Seidenader { namespace GridCtrlLibrary
 		DWORD m_dwStyle;    // Cell Style - unused
 	};
 
-} /*namespace GridCtrlLibrary*/ } /*namespace Seidenader*/
+} // namespace SvGcl
 
-namespace SvGcl = Seidenader::GridCtrlLibrary;
+
 

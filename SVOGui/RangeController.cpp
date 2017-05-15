@@ -23,7 +23,7 @@
 #include "RangeValidator.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace SVOGui
+namespace SvOg
 {
 	#pragma region Declarations
 	const std::string RangeController::FailHigh = "FailHigh";
@@ -201,7 +201,7 @@ namespace Seidenader { namespace SVOGui
 	SVString RangeController::GetOwnerName() const
 	{
 		SVString name;
-		typedef GuiCmd::GetObjectName Command;
+		typedef SvCmd::GetObjectName Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 
 		CommandPtr commandPtr(new Command(m_TaskObjectID));
@@ -218,7 +218,7 @@ namespace Seidenader { namespace SVOGui
 	SVString RangeController::GetInspectionName() const
 	{
 		SVString inspectionName;
-		typedef GuiCmd::GetObjectName Command;
+		typedef SvCmd::GetObjectName Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 
 		CommandPtr commandPtr(new Command(m_InspectionID));
@@ -234,7 +234,7 @@ namespace Seidenader { namespace SVOGui
 	SVString RangeController::GetPPQName() const
 	{
 		SVString PPQName;
-		typedef GuiCmd::GetPPQObjectName Command;
+		typedef SvCmd::GetPPQObjectName Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 
 		CommandPtr commandPtr(new Command(m_InspectionID));
@@ -247,7 +247,7 @@ namespace Seidenader { namespace SVOGui
 		return PPQName;
 	}
 
-	void RangeController::IsFieldValid(SvOi::MessageTextEnum fieldName, const SVString& rValue)
+	void RangeController::IsFieldValid(SvStl::MessageTextEnum fieldName, const SVString& rValue)
 	{
 		RangeValidator::IsFieldValid(fieldName, rValue);
 	}
@@ -267,4 +267,4 @@ namespace Seidenader { namespace SVOGui
 
 		RangeValidator::Validate(InspectionName, FailHighIndirectValue, FailLowIndirectValue, WarnHighIndirectValue, WarnLowIndirectValue, FailHighValue, FailLowValue, WarnHighValue, WarnLowValue, m_InspectionID);
 	}
-} /* namespace SVOGui */ } /* namespace Seidenader */
+} //namespace SvOg

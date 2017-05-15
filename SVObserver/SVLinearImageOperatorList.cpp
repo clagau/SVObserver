@@ -49,18 +49,18 @@ BOOL SVLinearImageOperatorListClass::CreateObject( SVObjectLevelCreateStruct* PC
 
 	if( ( S_OK == getUseRotationAngle( UseRotation ) ) && !UseRotation )
 	{
-		outputImageObject.InitializeImage( SVImageTypeLogicalAndPhysical );
+		outputImageObject.InitializeImage( SvOi::SVImageTypeEnum::SVImageTypeLogicalAndPhysical );
 	}
 	else
 	{
-		outputImageObject.InitializeImage( SVImageTypePhysical );
+		outputImageObject.InitializeImage( SvOi::SVImageTypeEnum::SVImageTypePhysical );
 	}
 
 	l_bOk &= S_OK == UpdateLineExtentData();
-	m_svLinearData.SetObjectAttributesAllowed( SV_VIEWABLE | SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_svLinearData.SetObjectAttributesAllowed( SvOi::SV_VIEWABLE | SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 
-	m_svMaxThreshold.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-	m_svMinThreshold.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_svMaxThreshold.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_svMinThreshold.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 
 
 	return l_bOk;
@@ -81,11 +81,11 @@ bool SVLinearImageOperatorListClass::ResetObject(SvStl::MessageContainerVector *
 
 	if( (S_OK == getUseRotationAngle( UseRotation )) && !UseRotation )
 	{
-		outputImageObject.InitializeImage( SVImageTypeLogicalAndPhysical );
+		outputImageObject.InitializeImage( SvOi::SVImageTypeEnum::SVImageTypeLogicalAndPhysical );
 	}
 	else
 	{
-		outputImageObject.InitializeImage( SVImageTypePhysical );
+		outputImageObject.InitializeImage( SvOi::SVImageTypeEnum::SVImageTypePhysical );
 	}
 
 	bool Result = __super::ResetObject(pErrorMessages);
@@ -97,7 +97,7 @@ bool SVLinearImageOperatorListClass::ResetObject(SvStl::MessageContainerVector *
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_UpdateLineExtentDataFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UpdateLineExtentDataFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -126,7 +126,7 @@ bool SVLinearImageOperatorListClass::Run( SVRunStatusClass& rRunStatus, SvStl::M
 
 		if (!bRetVal)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 			m_RunErrorMessages.push_back(Msg);
 		}
 
@@ -144,7 +144,7 @@ bool SVLinearImageOperatorListClass::Run( SVRunStatusClass& rRunStatus, SvStl::M
 		{
 			// Signal something is wrong...
 			bRetVal = false;
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 			m_RunErrorMessages.push_back(Msg);
 		}
 		
@@ -195,7 +195,7 @@ bool SVLinearImageOperatorListClass::Run( SVRunStatusClass& rRunStatus, SvStl::M
 					else
 					{
 						bRetVal = false;
-						SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+						SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 						m_RunErrorMessages.push_back(Msg);
 					}
 					
@@ -226,7 +226,7 @@ bool SVLinearImageOperatorListClass::Run( SVRunStatusClass& rRunStatus, SvStl::M
 			else
 			{
 				bRetVal = false;
-				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_SetImageHandleIndexFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SetImageHandleIndexFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 				m_RunErrorMessages.push_back(Msg);
 			}
 		}
@@ -244,7 +244,7 @@ bool SVLinearImageOperatorListClass::Run( SVRunStatusClass& rRunStatus, SvStl::M
 		else
 		{
 			clearRunErrorMessages();
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 			m_RunErrorMessages.push_back(Msg);
 			if (nullptr != pErrorMessages)
 			{
@@ -271,7 +271,7 @@ bool SVLinearImageOperatorListClass::Run( SVRunStatusClass& rRunStatus, SvStl::M
 		if ( 0 == m_aulLineData.size()|| S_OK != getInputProfileOrientation( ProjectAngle ) )
 		{
 			bRetVal = false;
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 			m_RunErrorMessages.push_back(Msg);
 			if (nullptr != pErrorMessages)
 			{
@@ -331,7 +331,7 @@ bool SVLinearImageOperatorListClass::Run( SVRunStatusClass& rRunStatus, SvStl::M
 			ASSERT( bRetVal );
 			if (!bRetVal)
 			{
-				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_SetValueFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SetValueFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 				m_RunErrorMessages.push_back(Msg);
 				if (nullptr != pErrorMessages)
 				{
@@ -414,7 +414,7 @@ void SVLinearImageOperatorListClass::init()
 
 	m_ulLineLength = 0;
 
-	outputImageObject.InitializeImage( SVImageTypePhysical );
+	outputImageObject.InitializeImage( SvOi::SVImageTypeEnum::SVImageTypePhysical );
 
 	// Set default inputs and outputs
 	addDefaultInputObjects();

@@ -22,61 +22,52 @@
 #include "BoundValue.h"
 #pragma endregion Includes
 
-namespace Seidenader
+namespace SvOg
 {
-	namespace SVOGui
+	class SVToolAdjustmentDialogFileImageSourcePageClass : public CPropertyPage
 	{
-		class SVToolAdjustmentDialogFileImageSourcePageClass : public CPropertyPage
-		{
-			typedef SvOg::ValuesAccessor<SvOg::BoundValues> Values;
-			typedef SvOg::GuiController<Values, Values::value_type> ValueController;
+		typedef SvOg::ValuesAccessor<SvOg::BoundValues> Values;
+		typedef SvOg::GuiController<Values, Values::value_type> ValueController;
 
-		#pragma region Constructor
-		public:
-			SVToolAdjustmentDialogFileImageSourcePageClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID);
-			virtual ~SVToolAdjustmentDialogFileImageSourcePageClass();
-		#pragma endregion Constructor
+	#pragma region Constructor
+	public:
+		SVToolAdjustmentDialogFileImageSourcePageClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID);
+		virtual ~SVToolAdjustmentDialogFileImageSourcePageClass();
+	#pragma endregion Constructor
 
-		#pragma region Protected Methods
+	#pragma region Protected Methods
+	protected:
+		//{{AFX_MSG(SVToolAdjustmentDialogFileImageSourcePageClass)
+		afx_msg void OnBrowseButton();
+		afx_msg void OnReloadCheck();
+		//}}AFX_MSG
+		DECLARE_MESSAGE_MAP()
+
+		//{{AFX_VIRTUAL(SVToolAdjustmentDialogFileImageSourcePageClass)
 		protected:
-			//{{AFX_MSG(SVToolAdjustmentDialogFileImageSourcePageClass)
-			afx_msg void OnBrowseButton();
-			afx_msg void OnReloadCheck();
-			//}}AFX_MSG
-			DECLARE_MESSAGE_MAP()
+		virtual BOOL OnInitDialog() override;
+		virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV-Unterstützung
+		//}}AFX_VIRTUAL
 
-			//{{AFX_VIRTUAL(SVToolAdjustmentDialogFileImageSourcePageClass)
-			protected:
-			virtual BOOL OnInitDialog() override;
-			virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV-Unterstützung
-			//}}AFX_VIRTUAL
+	protected:
+		void GetData();
+		void SetData();
+		HRESULT SetInspectionData();
+		void refresh();
+		void setImages();
+	#pragma endregion Protected Methods
 
-		protected:
-			void GetData();
-			void SetData();
-			HRESULT SetInspectionData();
-			void refresh();
-			void setImages();
-		#pragma endregion Protected Methods
-
-		#pragma region Member variables
-		private:
-			SVFileNameClass m_svfncImageSourceFile;
-			SvOg::ImageController m_ImageController;
-			ValueController m_Values;
-			//{{AFX_DATA(SVToolAdjustmentDialogFileImageSourcePageClass)
-			enum { IDD = IDD_TA_FILE_IMAGE_DIALOG };
-			SvOg::PictureDisplay m_imageCtrl;
-			CString	m_PathName;
-			BOOL m_BContinuousReload;
-			//}}AFX_DATA
-		#pragma endregion Member variables
-		};
-	}
-}
-
-namespace SvOg = Seidenader::SVOGui;
-
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
+	#pragma region Member variables
+	private:
+		SVFileNameClass m_svfncImageSourceFile;
+		SvOg::ImageController m_ImageController;
+		ValueController m_Values;
+		//{{AFX_DATA(SVToolAdjustmentDialogFileImageSourcePageClass)
+		enum { IDD = IDD_TA_FILE_IMAGE_DIALOG };
+		SvOg::PictureDisplay m_imageCtrl;
+		CString	m_PathName;
+		BOOL m_BContinuousReload;
+		//}}AFX_DATA
+	#pragma endregion Member variables
+	};
+} //namespace SvOg

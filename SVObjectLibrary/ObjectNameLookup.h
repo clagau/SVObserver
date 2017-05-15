@@ -12,7 +12,7 @@
 #include "SVObjectManagerClass.h"
 #include "SVObjectClass.h"
 
-namespace Seidenader { namespace SVObjectLibrary
+namespace SvOl
 {
 	class ObjectNameLookup : public SvCl::IGraphNameLookup
 	{
@@ -45,6 +45,4 @@ namespace Seidenader { namespace SVObjectLibrary
 		}
 	#pragma endregion Public Methods
 	};
-} /* namespace SVObjectLibrary */ } /* namespace Seidenader */
-
-namespace SvOl = Seidenader::SVObjectLibrary;
+} //namespace SvOl

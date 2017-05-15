@@ -117,7 +117,7 @@ public:
 	SVMatroxDigitizerRef m_Digitizer;
 	SVMatroxGigeCameraId m_svCameraId;
 
-	SVClock::SVTimeStamp m_StartFrameTimeStamp;
+	SvTl::SVTimeStamp m_StartFrameTimeStamp;
 
 	SVMatroxGigeAcqParams m_params;
 

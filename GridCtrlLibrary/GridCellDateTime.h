@@ -28,7 +28,7 @@
 #include "afxdtctl.h"	// for CDateTimeCtrl
 #pragma endregion Includes
 
-namespace Seidenader { namespace GridCtrlLibrary
+namespace SvGcl
 {
 	class CGridCellDateTime : public CGridCell  
 	{
@@ -102,6 +102,6 @@ namespace Seidenader { namespace GridCtrlLibrary
 		COLORREF m_crForeClr, m_crBackClr;
 	};
 
-} /*namespace GridCtrlLibrary*/ } /*namespace Seidenader*/
+} // namespace SvGcl
 
-namespace SvGcl = Seidenader::GridCtrlLibrary;
+

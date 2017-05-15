@@ -18,67 +18,62 @@
 #include "SVMFCControls\SVBitmap.h"
 #pragma endregion Includes
 
-namespace Seidenader
+namespace SvCmd
 {
-	namespace GuiCommand
+	struct GetMaskImage: public boost::noncopyable
 	{
-		struct GetMaskImage: public boost::noncopyable
+		GetMaskImage(const GUID& rObjectID) : m_InstanceID(rObjectID) {}
+
+		// This method is where the real separation would occur by using sockets/named pipes/shared memory
+		// The logic contained within this method would be moved to the "Server" side of a Client/Server architecture
+		// and replaced with the building and sending of the command
+		HRESULT Execute()
 		{
-			GetMaskImage(const GUID& rObjectID) : m_InstanceID(rObjectID) {}
+			HRESULT hr = S_OK;
 
-			// This method is where the real separation would occur by using sockets/named pipes/shared memory
-			// The logic contained within this method would be moved to the "Server" side of a Client/Server architecture
-			// and replaced with the building and sending of the command
-			HRESULT Execute()
+			SvOi::IMask* pMask = dynamic_cast<SvOi::IMask *>(SvOi::getObject(m_InstanceID));
+			if (pMask)
 			{
-				HRESULT hr = S_OK;
-
-				SvOi::IMask* pMask = dynamic_cast<SvOi::IMask *>(SvOi::getObject(m_InstanceID));
-				if (pMask)
+				SvOi::MatroxImageSmartHandlePtr data = pMask->GetMaskImage();
+				SvOi::IMatroxImageData *imageData = data.get();
+				if( nullptr != imageData && !imageData->empty())
 				{
-					SvOi::MatroxImageSmartHandlePtr data = pMask->GetMaskImage();
-					SvOi::IMatroxImageData *imageData = data.get();
-					if( nullptr != imageData && !imageData->empty())
-					{
-						SVBitmapInfo dibInfo = imageData->getBitmapInfo();
-						BYTE* pMilBuffer = static_cast< BYTE* >( imageData->getBufferAddress() );
+					SVBitmapInfo dibInfo = imageData->getBitmapInfo();
+					BYTE* pMilBuffer = static_cast< BYTE* >( imageData->getBufferAddress() );
 
-						if (nullptr != pMilBuffer && !dibInfo.empty())
+					if (nullptr != pMilBuffer && !dibInfo.empty())
+					{
+						SVBitmap bitmap;
+						HRESULT hr = bitmap.LoadDIBitmap(dibInfo.GetBitmapInfo(), pMilBuffer);
+				
+						if (S_OK == hr)
 						{
-							SVBitmap bitmap;
-							HRESULT hr = bitmap.LoadDIBitmap(dibInfo.GetBitmapInfo(), pMilBuffer);
-					
-							if (S_OK == hr)
+							//convert the hbitmap to an IPictureDisp.
+							CPictureHolder pic;
+							BOOL bRet = pic.CreateFromBitmap(static_cast<HBITMAP>(bitmap.Detach()));
+							if (bRet)
 							{
-								//convert the hbitmap to an IPictureDisp.
-								CPictureHolder pic;
-								BOOL bRet = pic.CreateFromBitmap(static_cast<HBITMAP>(bitmap.Detach()));
-								if (bRet)
-								{
-									m_picture = pic.GetPictureDispatch();
-								}
-								else
-								{
-									hr = E_HANDLE;
-								}
+								m_picture = pic.GetPictureDispatch();
+							}
+							else
+							{
+								hr = E_HANDLE;
 							}
 						}
 					}
 				}
-				else
-				{
-					hr = E_POINTER;
-				}
-				return hr;
 			}
-			bool empty() const { return false; }
-			IPictureDisp* Image() const { return m_picture; }
+			else
+			{
+				hr = E_POINTER;
+			}
+			return hr;
+		}
+		bool empty() const { return false; }
+		IPictureDisp* Image() const { return m_picture; }
 
-		private:
-			CComPtr<IPictureDisp> m_picture;
-			GUID m_InstanceID;
-		};
-	}
-}
-
-namespace GuiCmd = Seidenader::GuiCommand;
+	private:
+		CComPtr<IPictureDisp> m_picture;
+		GUID m_InstanceID;
+	};
+} //namespace SvCmd

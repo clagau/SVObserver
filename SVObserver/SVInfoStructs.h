@@ -94,8 +94,8 @@ struct SVInputsInfoStruct
 	void Init();
 
 	SVInputObjectList	*pInputsList;
-	SVClock::SVTimeStamp m_BeginProcess;
-	SVClock::SVTimeStamp m_EndProcess;
+	SvTl::SVTimeStamp m_BeginProcess;
+	SvTl::SVTimeStamp m_EndProcess;
 };
 
 
@@ -116,11 +116,11 @@ struct SVOutputsInfoStruct
 	long lDataValidDelay;
 	bool DataValidResult;
 	bool OutputToggleResult;
-	SVClock::SVTimeStamp m_EndOutputDelay;
-	SVClock::SVTimeStamp m_EndResetDelay;
-	SVClock::SVTimeStamp m_EndDataValidDelay;
-	SVClock::SVTimeStamp m_BeginProcess;
-	SVClock::SVTimeStamp m_EndProcess;
+	SvTl::SVTimeStamp m_EndOutputDelay;
+	SvTl::SVTimeStamp m_EndResetDelay;
+	SvTl::SVTimeStamp m_EndDataValidDelay;
+	SvTl::SVTimeStamp m_BeginProcess;
+	SvTl::SVTimeStamp m_EndProcess;
 };
 
 
@@ -172,11 +172,11 @@ struct SVInspectionInfoStruct
 	bool m_InProcess;
 	bool m_HasBeenQueued;
 	
-	SVClock::SVTimeStamp m_BeginInspection;
-	SVClock::SVTimeStamp m_EndInspection;
-	SVClock::SVTimeStamp m_BeginToolset;
-	SVClock::SVTimeStamp m_EndToolset;
-	SVClock::SVTimeStamp m_CallbackReceived;
+	SvTl::SVTimeStamp m_BeginInspection;
+	SvTl::SVTimeStamp m_EndInspection;
+	SvTl::SVTimeStamp m_BeginToolset;
+	SvTl::SVTimeStamp m_EndToolset;
+	SvTl::SVTimeStamp m_CallbackReceived;
 
 	double m_ToolSetEndTime;
 	double m_ToolSetAvgTime;
@@ -206,7 +206,7 @@ struct SVProductInfoStruct
 	HRESULT GetNextAvailableIndexes( SVDataManagerLockTypeEnum p_LockType );
 
 	inline long ProcessCount() const {return oTriggerInfo.lTriggerCount;}
-	inline const SVClock::SVTimeStamp& TimeStamp() const {return oTriggerInfo.m_BeginProcess;}
+	inline const SvTl::SVTimeStamp& TimeStamp() const {return oTriggerInfo.m_BeginProcess;}
 
 	bool IsAlive() const;
 

@@ -318,9 +318,9 @@ protected:
 
 	BOOL checkOkToDelete( SVTaskObjectClass* pTaskObject );
 
-	mutable SVClock::SVTimeStamp m_ToolSetListTimestamp;
-	mutable SVClock::SVTimeStamp m_PPQListTimestamp;
-	mutable SVClock::SVTimeStamp m_ResultDefinitionsTimestamp;
+	mutable SvTl::SVTimeStamp m_ToolSetListTimestamp;
+	mutable SvTl::SVTimeStamp m_PPQListTimestamp;
+	mutable SvTl::SVTimeStamp m_ResultDefinitionsTimestamp;
 
 	bool m_bAllowRefresh;
 	SVProductDataQueue m_NewProductData;

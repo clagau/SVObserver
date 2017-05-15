@@ -14,7 +14,7 @@
 #include "SVSocketLibrary.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace SVSocketLibrary
+namespace SvSol
 {
 	SVSocketError::ErrorEnum SVSocketLibrary::Init()
 	{
@@ -38,4 +38,4 @@ namespace Seidenader { namespace SVSocketLibrary
 		}
 		return error;
 	}
-} /*namespace SVSocketLibrary*/ } /*namespace Seidenader*/
+} //namespace SvSol

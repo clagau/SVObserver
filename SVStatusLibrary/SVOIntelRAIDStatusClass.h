@@ -13,24 +13,26 @@
 
 #include "SVUtilityLibrary/SVString.h"
 
-class SVOIntelRAIDStatusClass  
+namespace SvStl
 {
-public:
-	SVOIntelRAIDStatusClass();
-	virtual ~SVOIntelRAIDStatusClass();
+	class SVOIntelRAIDStatusClass
+	{
+	public:
+		SVOIntelRAIDStatusClass();
+		virtual ~SVOIntelRAIDStatusClass();
 
-	HRESULT UpdateStatus();
-	HRESULT CheckStatus();
+		HRESULT UpdateStatus();
+		HRESULT CheckStatus();
 
-	const SVString& GetRaidStatus();
-	const SVString& GetErrorStatus();
+		const SVString& GetRaidStatus();
+		const SVString& GetErrorStatus();
 
-	const HANDLE GetCheckEvent();
+		const HANDLE GetCheckEvent();
 
-protected:
-	HANDLE m_hCheckEvent;
+	protected:
+		HANDLE m_hCheckEvent;
 
-	SVString m_RaidStatus;
-	SVString m_ErrorStatus;
-};
-
+		SVString m_RaidStatus;
+		SVString m_ErrorStatus;
+	};
+} //namespace SvStl

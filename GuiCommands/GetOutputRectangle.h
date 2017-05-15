@@ -14,40 +14,35 @@
 #include "ObjectInterfaces\IObjectManager.h"
 #pragma endregion Includes
 
-namespace Seidenader
+namespace SvCmd
 {
-	namespace GuiCommand
+	struct GetOutputRectangle: public boost::noncopyable
 	{
-		struct GetOutputRectangle: public boost::noncopyable
+		GetOutputRectangle(const GUID& rObjectID) : m_InstanceID(rObjectID) {}
+
+		// This method is where the real separation would occur by using sockets/named pipes/shared memory
+		// The logic contained within this method would be moved to the "Server" side of a Client/Server architecture
+		// and replaced with the building and sending of the command
+		HRESULT Execute()
 		{
-			GetOutputRectangle(const GUID& rObjectID) : m_InstanceID(rObjectID) {}
+			HRESULT hr = S_OK;
 
-			// This method is where the real separation would occur by using sockets/named pipes/shared memory
-			// The logic contained within this method would be moved to the "Server" side of a Client/Server architecture
-			// and replaced with the building and sending of the command
-			HRESULT Execute()
+			SvOi::ISVImage* pImage = dynamic_cast<SvOi::ISVImage*>(SvOi::getObject(m_InstanceID));
+			if (pImage)
 			{
-				HRESULT hr = S_OK;
-
-				SvOi::ISVImage* pImage = dynamic_cast<SvOi::ISVImage*>(SvOi::getObject(m_InstanceID));
-				if (pImage)
-				{
-					m_rect = pImage->GetOutputRectangle();
-				}
-				else
-				{
-					hr = E_POINTER;
-				}
-				return hr;
+				m_rect = pImage->GetOutputRectangle();
 			}
-			bool empty() const { return false; }
-			const RECT& getRectangle() const { return m_rect; }
+			else
+			{
+				hr = E_POINTER;
+			}
+			return hr;
+		}
+		bool empty() const { return false; }
+		const RECT& getRectangle() const { return m_rect; }
 
-		private:
-			RECT m_rect;
-			GUID m_InstanceID;
-		};
-	}
-}
-
-namespace GuiCmd = Seidenader::GuiCommand;
+	private:
+		RECT m_rect;
+		GUID m_InstanceID;
+	};
+} //namespace SvCmd

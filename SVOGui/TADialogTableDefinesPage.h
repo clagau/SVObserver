@@ -16,7 +16,8 @@
 #include "ISVPropertyPageDialog.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace SVOGui {
+namespace SvOg
+{
 	class FormulaController;
 
 	class TADialogTableDefinesPage : public CPropertyPage, public ISVPropertyPageDialog
@@ -95,6 +96,4 @@ namespace Seidenader { namespace SVOGui {
 		SvUl::NameGuidList m_gridList;
 #pragma endregion Member Variables
 	};
-}}
-
-namespace SvOg = Seidenader::SVOGui;
+} //namespace SvOg

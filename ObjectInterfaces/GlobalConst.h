@@ -11,9 +11,9 @@
 #include "Windef.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace ObjectInterfaces
+namespace SvOi
 {
-	#pragma region Declarations
+#pragma region Declarations
 	const int			cRingBufferDepthMin = 2;
 	const int			cRingBufferDepthMax = 30;
 	const int			cRingBufferNumberOutputImages = 2;
@@ -57,7 +57,5 @@ namespace Seidenader { namespace ObjectInterfaces
 	const long			cDefaultPolarTransformEndAngle = 330L;
 
 	const int			cMaximumCameras = 4;
-	#pragma endregion Declarations
-} /* namespace ObjectInterfaces */ } /* namespace Seidenader */
-
-namespace SvOi = Seidenader::ObjectInterfaces;
+#pragma endregion Declarations
+} //namespace SvOi

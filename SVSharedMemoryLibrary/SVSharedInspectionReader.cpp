@@ -19,7 +19,7 @@
 #pragma intrinsic (_InterlockedIncrement16)
 #pragma intrinsic (_InterlockedCompareExchange)
 
-namespace Seidenader { namespace SVSharedMemoryLibrary
+namespace SvSml
 {
 	SVSharedInspectionReader::SVSharedInspectionReader()
 	: m_pSharedLastInspectedCache(nullptr)
@@ -101,5 +101,4 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 	{
 		return m_pSharedRejectCache->data[ index ];
 	}
-
-} /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
+} //namespace SvSml

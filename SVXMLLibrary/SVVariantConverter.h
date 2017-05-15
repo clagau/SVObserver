@@ -10,29 +10,32 @@
 //******************************************************************************
 #pragma once
 
-class SVVariantConverter
+namespace  SvXml
 {
-public:
-	// TranslateVariant () ------------------------------------------------------
-	// This function will allocate the associated BSTRs.
-	// avpVariant - input -
-	// abstrpValue - output -
-	// abstrpType - output - 
-	//
-	//	Return Value - 
-	//   2 - avpValue equals NULL
-	//
-	static HRESULT TranslateVariant(VARIANT* avpValue, BSTR* abstrpValue, BSTR* abstrpType);
+	class SVVariantConverter
+	{
+	public:
+		// TranslateVariant () ------------------------------------------------------
+		// This function will allocate the associated BSTRs.
+		// avpVariant - input -
+		// abstrpValue - output -
+		// abstrpType - output - 
+		//
+		//	Return Value - 
+		//   2 - avpValue equals NULL
+		//
+		static HRESULT TranslateVariant(VARIANT* avpValue, BSTR* abstrpValue, BSTR* abstrpType);
 
-	// RestoreVariant () ------------------------------------------------------
-	// If necessary, this function will allocate BSTRs for VT_BSTR types.
-	// abstrValue - input -
-	// abstrType - input - 
-	// avpVariant - output -
-	static HRESULT RestoreVariant(BSTR abstrValue, BSTR abstrType, VARIANT* avpValue);
+		// RestoreVariant () ------------------------------------------------------
+		// If necessary, this function will allocate BSTRs for VT_BSTR types.
+		// abstrValue - input -
+		// abstrType - input - 
+		// avpVariant - output -
+		static HRESULT RestoreVariant(BSTR abstrValue, BSTR abstrType, VARIANT* avpValue);
 
-private:
-	SVVariantConverter(); // Non constructable
-	~SVVariantConverter();
-};
+	private:
+		SVVariantConverter(); // Non constructable
+		~SVVariantConverter();
+	};
+} //namespace SvXml
 

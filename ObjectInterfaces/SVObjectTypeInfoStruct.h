@@ -13,10 +13,8 @@
 
 //TODO (MZA:2015/01/09): Add namespace to fit to the code rules. 
 //								Not edit yet to avoid to change to much code in this prototype.
-//namespace Seidenader
+//namespace SvOi
 //{
-//	namespace ObjectInterfaces
-//	{
 		enum SVObjectTypeEnum
 		{
 			SVNotSetObjectType						= 0x00000000,
@@ -292,6 +290,5 @@
 			// Embedded ID, if any.
 			GUID				EmbeddedID;
 		};
-//	}  //namespace ObjectInterfaces
-//} //namespace Seidenader
+//} //namespace SvOi
 

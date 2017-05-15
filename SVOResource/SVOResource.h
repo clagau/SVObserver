@@ -16,7 +16,7 @@
 #include "resource.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace SVOResource
+namespace SvOr
 {
 	class SVOResourceApp : public CWinApp
 	{
@@ -40,6 +40,4 @@ namespace Seidenader { namespace SVOResource
 		virtual BOOL InitInstance() override;
 	#pragma endregion Public Methods
 	};
-} /*namespace SVOResource*/ } /*namespace Seidenader*/
-
-namespace SvOr = Seidenader::SVOResource;
+} //namespace SvOr

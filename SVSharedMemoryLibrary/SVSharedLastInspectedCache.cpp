@@ -13,11 +13,11 @@
 #include "SVSharedLastInspectedCache.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace SVSharedMemoryLibrary
+namespace SvSml
 {
 	SVSharedLastInspectedCache::SVSharedLastInspectedCache( const void_allocator& rAlloc, size_t cache_size, size_t num_images, size_t num_values )
 	: current_idx( -1 ), data( cache_size, SVSharedData( rAlloc, num_images, num_values ), rAlloc ) 
 	{
 	}
-} /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
+} //namespace SvSml
 

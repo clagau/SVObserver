@@ -17,35 +17,39 @@
 
 static const unsigned long SV_EVENT_RECORD_STRUCT_RECORD_SIZE = 0x0008000;
 
-struct SVEventRecordStruct
+namespace SvStl
 {
-	SVEventRecordStruct();
-	virtual ~SVEventRecordStruct();
+	struct SVEventRecordStruct
+	{
+		SVEventRecordStruct();
+		virtual ~SVEventRecordStruct();
 
-	void SetBuffer( unsigned char* p_pucBuffer, unsigned long p_ulSize );
+		void SetBuffer( unsigned char* p_pucBuffer, unsigned long p_ulSize );
 
-	EVENTLOGRECORD* GetEventLogRecord();
+		EVENTLOGRECORD* GetEventLogRecord();
 
-	LPCTSTR GetSourceName();
-	LPCTSTR GetComputerName();
+		LPCTSTR GetSourceName();
+		LPCTSTR GetComputerName();
 
-	LPCTSTR GetFirstString();
-	LPCTSTR GetNextString();
-	LPCTSTR GetType();
-	SVString GetDateTime();
+		LPCTSTR GetFirstString();
+		LPCTSTR GetNextString();
+		LPCTSTR GetType();
+		SVString GetDateTime();
 
-private:
-	HRESULT LocalInitialize(unsigned long p_ulSize);
-	HRESULT LocalDestroy();
+	private:
+		HRESULT LocalInitialize(unsigned long p_ulSize);
+		HRESULT LocalDestroy();
 
-	unsigned char *m_pucBuffer;
-	unsigned long m_ulBufferSize;
+		unsigned char *m_pucBuffer;
+		unsigned long m_ulBufferSize;
 
-	EVENTLOGRECORD* m_poRecord;
+		EVENTLOGRECORD* m_poRecord;
 
-	LPCTSTR m_szSourceName;
-	LPCTSTR m_szComputerName;
+		LPCTSTR m_szSourceName;
+		LPCTSTR m_szComputerName;
 
-	LPCTSTR m_szCurrentString;
-	unsigned long m_ulStringIndex;
-};
+		LPCTSTR m_szCurrentString;
+		unsigned long m_ulStringIndex;
+	};
+} //namespace SvStl
+

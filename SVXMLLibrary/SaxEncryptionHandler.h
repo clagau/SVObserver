@@ -10,7 +10,7 @@
 #include "SVXMLEncryptionClass.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace  SVXMLLibrary
+namespace SvXml
 {
 	class SaxTreeElement;
 	/// \brief Class encapsulate Decryption functionality for the SAX Parser
@@ -63,6 +63,4 @@ namespace Seidenader { namespace  SVXMLLibrary
 		mutable SVXMLEncryptionClass m_Encryptionclass;
 	#pragma endregion Member variables
 	};
-} /* namespace SVXMLLibrary */ } /* namespace Seidenader */
-
-namespace SvXml = Seidenader::SVXMLLibrary;
+} //namespace SvXml

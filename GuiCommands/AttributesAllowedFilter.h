@@ -11,32 +11,27 @@
 #include "ObjectInterfaces/IObjectClass.h"
 #pragma endregion Includes
 
-namespace Seidenader
+namespace SvCmd
 {
-	namespace GuiCommand
+	class AttributesAllowedFilter
 	{
-		class AttributesAllowedFilter
+	public:
+		bool operator()( const SvOi::IObjectClass* pObject, unsigned int Attribute, int ArrayIndex ) const
 		{
-		public:
-			bool operator()( const SvOi::IObjectClass* pObject, unsigned int Attribute, int ArrayIndex ) const
+			bool Result(false);
+
+			if( SvOi::SV_NO_ATTRIBUTES == Attribute )
 			{
-				bool Result(false);
-
-				if( SV_NO_ATTRIBUTES == Attribute )
-				{
-					Result = true;
-				}
-				else
-				{
-					if( nullptr != pObject )
-					{
-						Result = ( Attribute == ( pObject->ObjectAttributesAllowed() & Attribute ) );
-					}
-				}
-				return Result;
+				Result = true;
 			}
-		};
-	}
-}
-
-namespace GuiCmd = Seidenader::GuiCommand;
+			else
+			{
+				if( nullptr != pObject )
+				{
+					Result = ( Attribute == ( pObject->ObjectAttributesAllowed() & Attribute ) );
+				}
+			}
+			return Result;
+		}
+	};
+} //namespace SvCmd

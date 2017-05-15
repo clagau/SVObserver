@@ -1146,7 +1146,7 @@ void AFXAPI DDX_SVThresholdText( CDataExchange* pDX, int nIDC, DWORD& Value )
 		if ( !GetThreshold( hWndCtrl, Value ) )
 		{
 			SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_Threshold_OutOfRange, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10202 ); 
+			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Threshold_OutOfRange, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10202 ); 
 			pDX->Fail();
 		}
 	}

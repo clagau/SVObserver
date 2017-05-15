@@ -13,7 +13,7 @@
 #include "SVSharedInspections.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace SVSharedMemoryLibrary
+namespace SvSml
 {
 	SVSharedInspection::SVSharedInspection(const char* inspectionShareName, long index, const void_allocator& rAlloc)
 	: m_ShareName(inspectionShareName, rAlloc)
@@ -45,5 +45,4 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		}
 		return *this;
 	}
-
-} /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
+} //namespace SvSml

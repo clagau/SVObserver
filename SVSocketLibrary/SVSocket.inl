@@ -12,7 +12,7 @@
 #pragma warning(push)
 #pragma warning(disable: 4482)
 
-namespace Seidenader { namespace SVSocketLibrary
+namespace SvSol
 {
 	inline std::basic_string<TCHAR> addr2s(const sockaddr_in & addr)
 	{
@@ -691,7 +691,7 @@ namespace Seidenader { namespace SVSocketLibrary
 		}
 		return retVal;
 	}
-} /*namespace SVSocketLibrary*/ } /*namespace Seidenader*/
+} //namespace SvSol
 
 #pragma warning(pop)
 

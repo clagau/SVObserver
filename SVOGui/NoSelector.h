@@ -11,23 +11,18 @@
 #include "ObjectInterfaces\ISelectorItemVector.h"
 #pragma endregion Includes
 
-namespace Seidenader
+namespace SvOg
 {
-	namespace SVOGui
+	class NoSelector
 	{
-		class NoSelector
+	public:
+		SvOi::ISelectorItemVectorPtr operator()(const GUID& rGuid, UINT attribute)
 		{
-		public:
-			SvOi::ISelectorItemVectorPtr operator()(const GUID& rGuid, UINT attribute)
-			{
-				return SvOi::ISelectorItemVectorPtr();
-			}
-			SvOi::ISelectorItemVectorPtr operator()(UINT attribute)
-			{
-				return SvOi::ISelectorItemVectorPtr();
-			}
-		};
-	}
-}
-
-namespace SvOg = Seidenader::SVOGui;
+			return SvOi::ISelectorItemVectorPtr();
+		}
+		SvOi::ISelectorItemVectorPtr operator()(UINT attribute)
+		{
+			return SvOi::ISelectorItemVectorPtr();
+		}
+	};
+} //namespace SvOg

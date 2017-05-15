@@ -10,7 +10,7 @@
 #include "SVStringConversions.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace SVUtilityLibrary
+namespace SvUl
 {
 	typedef std::map<int, SVStringPair > IntStringPairMap;
 
@@ -132,4 +132,4 @@ namespace Seidenader { namespace SVUtilityLibrary
 		}
 		return bRemoved;
 	}
-} /* namespace SVUtilityLibrary */ } /* namespace Seidenader */
+} // namespace SvUl

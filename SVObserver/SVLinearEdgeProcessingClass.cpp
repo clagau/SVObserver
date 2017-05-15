@@ -119,13 +119,13 @@ BOOL SVLinearEdgeProcessingClass::CreateObject( SVObjectLevelCreateStruct *PCrea
 	}
 
 	//set attributes for Upper and Lower Threshold values.
-	m_svUpperThresholdValue.SetObjectAttributesAllowed( SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE, SvOi::SetAttributeType::AddAttribute );
-	m_svUpperThresholdValue.SetObjectAttributesAllowed( SV_EXTENT_OBJECT, SvOi::SetAttributeType::RemoveAttribute );
+	m_svUpperThresholdValue.SetObjectAttributesAllowed( SvOi::SV_REMOTELY_SETABLE | SvOi::SV_SETABLE_ONLINE, SvOi::SetAttributeType::AddAttribute );
+	m_svUpperThresholdValue.SetObjectAttributesAllowed( SvOi::SV_EXTENT_OBJECT, SvOi::SetAttributeType::RemoveAttribute );
 
-	m_svLowerThresholdValue.SetObjectAttributesAllowed( SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE, SvOi::SetAttributeType::AddAttribute );
-	m_svLowerThresholdValue.SetObjectAttributesAllowed( SV_EXTENT_OBJECT, SvOi::SetAttributeType::RemoveAttribute );
+	m_svLowerThresholdValue.SetObjectAttributesAllowed( SvOi::SV_REMOTELY_SETABLE | SvOi::SV_SETABLE_ONLINE, SvOi::SetAttributeType::AddAttribute );
+	m_svLowerThresholdValue.SetObjectAttributesAllowed( SvOi::SV_EXTENT_OBJECT, SvOi::SetAttributeType::RemoveAttribute );
 
-	m_svLinearEdges.SetObjectAttributesAllowed( SV_VIEWABLE | SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_svLinearEdges.SetObjectAttributesAllowed( SvOi::SV_VIEWABLE | SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 
 
 	BOOL bUpper = FALSE;
@@ -135,10 +135,10 @@ BOOL SVLinearEdgeProcessingClass::CreateObject( SVObjectLevelCreateStruct *PCrea
 	m_svUseUpperThresholdSelectable.GetValue(bUpper);
 
 	SvOi::SetAttributeType AddRemoveType = bLower ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
-	m_svLowerThresholdValue.SetObjectAttributesAllowed( SV_PRINTABLE, AddRemoveType );
+	m_svLowerThresholdValue.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, AddRemoveType );
 
 	AddRemoveType = bUpper ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
-	m_svUpperThresholdValue.SetObjectAttributesAllowed( SV_PRINTABLE, AddRemoveType );
+	m_svUpperThresholdValue.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, AddRemoveType );
 
 
 	if ( SVDoubleValueObjectClass* pdvoLinearData = GetInputLinearData() )
@@ -160,17 +160,17 @@ bool SVLinearEdgeProcessingClass::ResetObject(SvStl::MessageContainerVector *pEr
 	m_svUseUpperThresholdSelectable.GetValue(bUpper);
 
 	SvOi::SetAttributeType AddRemoveType = bLower ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
-	m_svLowerThresholdValue.SetObjectAttributesAllowed( SV_PRINTABLE, AddRemoveType );
+	m_svLowerThresholdValue.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, AddRemoveType );
 
 	AddRemoveType = bUpper ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
-	m_svUpperThresholdValue.SetObjectAttributesAllowed( SV_PRINTABLE, AddRemoveType );
+	m_svUpperThresholdValue.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, AddRemoveType );
 
 	if( S_OK != GetPixelDepth() )
 	{
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_GetPixelDepthFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_GetPixelDepthFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -184,7 +184,7 @@ bool SVLinearEdgeProcessingClass::ResetObject(SvStl::MessageContainerVector *pEr
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ConnectInputFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ConnectInputFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -203,7 +203,7 @@ bool SVLinearEdgeProcessingClass::onRun( SVRunStatusClass &p_rsvRunStatus, SvStl
 		l_bOk = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_RunLinearEdgeFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_RunLinearEdgeFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -280,7 +280,7 @@ HRESULT SVLinearEdgeProcessingClass::GetPixelDepth()
 	{
 	  SVImageInfoClass ImageInfo = GetInputImage()->GetImageInfo();
 
-		l_hrOk = ImageInfo.GetImageProperty( SVImagePropertyPixelDepth, m_lPixelDepth );
+		l_hrOk = ImageInfo.GetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyPixelDepth, m_lPixelDepth );
 	}
 
 	return l_hrOk;

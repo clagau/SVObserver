@@ -15,7 +15,7 @@
 #include <msxml2.h>
 #pragma endregion Includes
 
-namespace Seidenader { namespace  SVXMLLibrary
+namespace SvXml
 {
 	///Describes  status of the Sax Parser 
 	enum EPARSING 
@@ -208,6 +208,4 @@ namespace Seidenader { namespace  SVXMLLibrary
 	};
 	typedef   std::shared_ptr<SaxTreeElement> SpTreeElement;  
 
-} /* namespace SVXMLLibrary */ } /* namespace Seidenader */
-
-namespace SvXml = Seidenader::SVXMLLibrary;
+} //namespace SvXml

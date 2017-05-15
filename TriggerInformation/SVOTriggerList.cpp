@@ -22,8 +22,8 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-namespace Seidenader { namespace TriggerInformation {
-
+namespace SvTi
+{
 	SVOTriggerList::SVOTriggerList()
 	{
 	}
@@ -147,5 +147,4 @@ namespace Seidenader { namespace TriggerInformation {
 	{
 		m_TriggerList.RemoveAll();
 	}
-
-} /* namespace TriggerInformation */ } /* namespace Seidenader */
+} //namespace SvTi

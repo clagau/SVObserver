@@ -8,9 +8,8 @@
 
 #pragma endregion Includes
 
-namespace Seidenader 
-{ namespace SVSharedMemoryLibrary {
-
+namespace SvSml
+{
 	const LPCTSTR ShareNames[] = {".Images.Reject", ".Images.Last"};
 	SharedImageStore::SharedImageStore():m_pSharedMemoryObject(NULL), 
 											m_pMappedRegion(NULL),
@@ -163,4 +162,4 @@ namespace Seidenader
 	{
 		return m_slotSize;
 	}
-} /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
+} //namespace SvSml

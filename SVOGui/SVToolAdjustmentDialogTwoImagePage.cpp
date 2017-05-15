@@ -24,7 +24,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-namespace Seidenader { namespace SVOGui
+namespace SvOg
 {
 	static LPCTSTR FirstImageTag = _T("First Image");
 	static LPCTSTR SecondImageTag = _T("Second Image");
@@ -268,5 +268,5 @@ namespace Seidenader { namespace SVOGui
 		}
 	}
 	#pragma endregion Private Methods
-} /* namespace SVOGui */ } /* namespace Seidenader */
+} //namespace SvOg
 

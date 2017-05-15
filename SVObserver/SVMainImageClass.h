@@ -33,7 +33,7 @@ public:
 	virtual BOOL GetImageHandle( SVSmartHandlePointer& p_rHandlePtr ) override;
 	virtual BOOL GetImageHandle( SVImageIndexStruct svIndex, SVSmartHandlePointer& rHandle ) override;
 
-	virtual const SVClock::SVTimeStamp& GetLastResetTimeStamp() const override;
+	virtual const SvTl::SVTimeStamp& GetLastResetTimeStamp() const override;
 	
 protected:
 	virtual bool ValidateImage() override;

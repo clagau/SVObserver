@@ -68,7 +68,7 @@ void SVPublishListClass::Refresh(SVTaskObjectClass * pRootObject)
 
 	pRootObject->GetOutputList( l_OutputList );
 
-	l_OutputList.GetSetAttributesList( SV_PUBLISHABLE, &newList );
+	l_OutputList.GetSetAttributesList( SvOi::SV_PUBLISHABLE, &newList );
 
 	SVPPQObject* pPPQ( nullptr );
 	SVOutputObjectList* pOutputList ( nullptr );
@@ -143,7 +143,7 @@ void SVPublishListClass::Refresh(SVTaskObjectClass * pRootObject)
 			if( !found )
 			{
 				SvStl::MessageMgrStd e( SvStl::LogOnly );
-				e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvOi::Tid_ErrorFindingPPQEntries, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_17043_ErrorFindingPPQEntries );
+				e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorFindingPPQEntries, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17043_ErrorFindingPPQEntries );
 				DebugBreak();
 			}
 		}// end if

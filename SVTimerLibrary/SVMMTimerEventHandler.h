@@ -17,43 +17,46 @@
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
-namespace dummy
+namespace SvTl
 {
-	class Callback: public SVTimerCallback
+	namespace dummy
 	{
-		void Notify(const SVString&) {}
-	};
-}
-struct SVMMTimerEventHandler
-{
-	unsigned long interval;
-	//unsigned long newInterval; 
-	unsigned long tickCount;
-	SVTimerCallback* pCallback;
-	dummy::Callback dummy;
-
-	SVMMTimerEventHandler(unsigned long interval_, SVTimerCallback* pCallback_)
-	: interval(interval_), pCallback(pCallback_), tickCount(0)//, newInterval(0)
-	{}
-
-	SVMMTimerEventHandler()
-	: interval(0), pCallback(0), tickCount(0)//, newInterval(0)
-	{ pCallback = &dummy; }
-
-	void tick(const SVString & str)
-	{
-		if (++tickCount >= interval)
+		class Callback: public SVTimerCallback
 		{
-			tickCount = 0;
-			pCallback->Notify(str);
-		}
+			void Notify(const SVString&) {}
+		};
 	}
-
-	void setInterval(unsigned long intrvl)
+	
+	struct SVMMTimerEventHandler
 	{
-		interval = intrvl;
-	}
-};
+		unsigned long interval;
+		//unsigned long newInterval; 
+		unsigned long tickCount;
+		SVTimerCallback* pCallback;
+		dummy::Callback dummy;
 
-typedef std::map<SVString, SVMMTimerEventHandler> SVTimerEventListeners;
+		SVMMTimerEventHandler(unsigned long interval_, SVTimerCallback* pCallback_)
+		: interval(interval_), pCallback(pCallback_), tickCount(0)//, newInterval(0)
+		{}
 
+		SVMMTimerEventHandler()
+		: interval(0), pCallback(0), tickCount(0)//, newInterval(0)
+		{ pCallback = &dummy; }
+
+		void tick(const SVString & str)
+		{
+			if (++tickCount >= interval)
+			{
+				tickCount = 0;
+				pCallback->Notify(str);
+			}
+		}
+
+		void setInterval(unsigned long intrvl)
+		{
+			interval = intrvl;
+		}
+	};
+	typedef std::map<SVString, SVMMTimerEventHandler> SVTimerEventListeners;
+
+} //namespace SvTl

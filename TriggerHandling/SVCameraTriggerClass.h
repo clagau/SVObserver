@@ -15,8 +15,8 @@
 #include "SVSoftwareTriggerClass.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace TriggerHandling {
-
+namespace SvTh
+{
 	class SVCameraTriggerClass : public SVTriggerClass
 	{
 	private:
@@ -44,7 +44,4 @@ namespace Seidenader { namespace TriggerHandling {
 		static HRESULT CALLBACK SoftwareTriggerCompleteCallback(void *p_pvOwner, void *p_pvData, void * p_pvResponse);
 		static HRESULT CALLBACK TriggerCallback(TriggerParameters triggerparams);
 	};
-
-} /* namespace TriggerHandling */ } /* namespace Seidenader */
-
-namespace SvTh = Seidenader::TriggerHandling;
+} //namespace SvTh

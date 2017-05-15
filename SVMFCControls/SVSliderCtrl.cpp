@@ -7,48 +7,45 @@
 #include "stdafx.h"
 #include "SVSliderCtrl.h"
 
-namespace Seidenader
+namespace SvMc
 {
-	namespace SVMFCControls
+	BEGIN_MESSAGE_MAP(SVSliderCtrl, CSliderCtrl)
+		//{{AFX_MSG_MAP(SVSliderCtrl)
+		//}}AFX_MSG_MAP
+	END_MESSAGE_MAP()
+
+
+	SVSliderCtrl::SVSliderCtrl()
+		: m_bInvertVerticalArrowKeys(false)
+		, m_isClicked(false)
 	{
-		BEGIN_MESSAGE_MAP(SVSliderCtrl, CSliderCtrl)
-			//{{AFX_MSG_MAP(SVSliderCtrl)
-			//}}AFX_MSG_MAP
-		END_MESSAGE_MAP()
+	}
 
+	SVSliderCtrl::~SVSliderCtrl()
+	{
+	}
 
-		SVSliderCtrl::SVSliderCtrl()
-			: m_bInvertVerticalArrowKeys(false)
-			, m_isClicked(false)
+	void SVSliderCtrl::SetInvertVerticalArrowKeys(bool bInvert)
+	{
+		m_bInvertVerticalArrowKeys = bInvert;
+	}
+
+	BOOL SVSliderCtrl::PreTranslateMessage(MSG* pMsg)
+	{
+		if (m_bInvertVerticalArrowKeys)
 		{
-		}
-
-		SVSliderCtrl::~SVSliderCtrl()
-		{
-		}
-
-		void SVSliderCtrl::SetInvertVerticalArrowKeys(bool bInvert)
-		{
-			m_bInvertVerticalArrowKeys = bInvert;
-		}
-
-		BOOL SVSliderCtrl::PreTranslateMessage(MSG* pMsg)
-		{
-			if (m_bInvertVerticalArrowKeys)
+			if (pMsg->message == WM_KEYDOWN)
 			{
-				if (pMsg->message == WM_KEYDOWN)
+				if (pMsg->wParam == VK_UP)
 				{
-					if (pMsg->wParam == VK_UP)
-					{
-						pMsg->wParam = VK_DOWN;
-					}
-					else if (pMsg->wParam == VK_DOWN)
-					{
-						pMsg->wParam = VK_UP;
-					}
+					pMsg->wParam = VK_DOWN;
+				}
+				else if (pMsg->wParam == VK_DOWN)
+				{
+					pMsg->wParam = VK_UP;
 				}
 			}
-			return CSliderCtrl::PreTranslateMessage(pMsg);
 		}
-	} //SVMFCControls
-} //Seidenader
+		return CSliderCtrl::PreTranslateMessage(pMsg);
+	}
+} //namespace SvMc

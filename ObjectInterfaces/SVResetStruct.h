@@ -11,25 +11,27 @@
 
 #pragma once
 
-enum SVResetStateEnum : unsigned long
+namespace SvOi
 {
-	SVResetStateEmpty                  = 0x00000000,
-	SVResetStateAll                    = 0xFFFFFFFF,
-	SVResetStateInitializeOnReset      = 0x00000001,
-	SVResetStateArchiveToolCreateFiles = 0x00000002,
-	SVResetStateLoadFiles              = 0x00000004,
-	SVResetAutoMoveAndResize           = 0x00000008,
-};
+	enum SVResetStateEnum : unsigned long
+	{
+		SVResetStateEmpty = 0x00000000,
+		SVResetStateAll = 0xFFFFFFFF,
+		SVResetStateInitializeOnReset = 0x00000001,
+		SVResetStateArchiveToolCreateFiles = 0x00000002,
+		SVResetStateLoadFiles = 0x00000004,
+		SVResetAutoMoveAndResize = 0x00000008,
+	};
 
-struct SVResetStruct
-{
-	unsigned long m_State;
+	struct SVResetStruct
+	{
+		unsigned long m_State;
 
-	SVResetStruct() : m_State( SVResetStateEmpty ) {}
+		SVResetStruct() : m_State( SVResetStateEmpty ) {}
 
-	bool IsStateSet( unsigned long p_State ) const { return ( ( m_State & p_State ) == p_State ); }
+		bool IsStateSet( unsigned long p_State ) const { return ( ( m_State & p_State ) == p_State ); }
 
-	void AddState( unsigned long p_State ) { m_State = ( m_State | p_State ); }
-	void RemoveState( unsigned long p_State ) { m_State = ( m_State & ~( p_State ) ); }
-};
-
+		void AddState( unsigned long p_State ) { m_State = ( m_State | p_State ); }
+		void RemoveState( unsigned long p_State ) { m_State = ( m_State & ~( p_State ) ); }
+	};
+} //namespace SvOi

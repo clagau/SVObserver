@@ -38,143 +38,139 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-namespace Seidenader
+namespace SvMc
 {
-	namespace SVMFCControls
+	SVActiveDisableButton::SVActiveDisableButton()
 	{
-		SVActiveDisableButton::SVActiveDisableButton()
+	}
+
+	SVActiveDisableButton::~SVActiveDisableButton()
+	{
+	}
+
+	BEGIN_MESSAGE_MAP(SVActiveDisableButton, CButton)
+		//{{AFX_MSG_MAP(SVActiveDisableButton)
+		ON_WM_PAINT()
+		ON_WM_LBUTTONDOWN()
+		ON_WM_LBUTTONDBLCLK()
+		ON_WM_KEYDOWN()
+		ON_WM_KEYUP()
+		ON_WM_CHAR()
+		ON_WM_ACTIVATE()
+		ON_WM_SETFOCUS()
+		ON_WM_MOUSEACTIVATE()
+		//}}AFX_MSG_MAP
+	END_MESSAGE_MAP()
+
+	/////////////////////////////////////////////////////////////////////////////
+	// SVActiveDisableButton message handlers
+
+	void SVActiveDisableButton::OnPaint() 
+	{
+		CButton::OnPaint();
+		if( m_bDisabled )
 		{
+			CDC* pDC = GetWindowDC();
+			CRect rec;
+			GetClientRect( &rec );
+			rec.DeflateRect(3,3,3,3);
+			Emboss( *pDC, rec );
 		}
+	}
 
-		SVActiveDisableButton::~SVActiveDisableButton()
-		{
-		}
+	void SVActiveDisableButton::OnLButtonDown(UINT nFlags, CPoint point) 
+	{
+		if ( !m_bDisabled )
+			CButton::OnLButtonDown(nFlags, point);
+	}
 
-		BEGIN_MESSAGE_MAP(SVActiveDisableButton, CButton)
-			//{{AFX_MSG_MAP(SVActiveDisableButton)
-			ON_WM_PAINT()
-			ON_WM_LBUTTONDOWN()
-			ON_WM_LBUTTONDBLCLK()
-			ON_WM_KEYDOWN()
-			ON_WM_KEYUP()
-			ON_WM_CHAR()
-			ON_WM_ACTIVATE()
-			ON_WM_SETFOCUS()
-			ON_WM_MOUSEACTIVATE()
-			//}}AFX_MSG_MAP
-		END_MESSAGE_MAP()
+	BOOL SVActiveDisableButton::EnableWindow( BOOL bEnable )
+	{
+		bool bTmp = m_bDisabled;
+		m_bDisabled = bEnable ? false : true;
+		Invalidate();
+		return bTmp ? FALSE : TRUE;
+	}
 
-		/////////////////////////////////////////////////////////////////////////////
-		// SVActiveDisableButton message handlers
+	void SVActiveDisableButton::Emboss( CDC& dc, const CRect& rc ) const
+	{
+		// create a monochrome memory DC
+		CDC ddc;
+		ddc.CreateCompatibleDC(0);
+		CBitmap bmp;
+		bmp.CreateCompatibleBitmap(&ddc, rc.Width(), rc.Height());
+		CBitmap * pOldBmp = ddc.SelectObject(&bmp);
 
-		void SVActiveDisableButton::OnPaint() 
-		{
-			CButton::OnPaint();
-			if( m_bDisabled )
-			{
-				CDC* pDC = GetWindowDC();
-				CRect rec;
-				GetClientRect( &rec );
-				rec.DeflateRect(3,3,3,3);
-				Emboss( *pDC, rec );
-			}
-		}
+		// build a mask
+		ddc.PatBlt(0, 0, rc.Width(), rc.Height(), WHITENESS);
 
-		void SVActiveDisableButton::OnLButtonDown(UINT nFlags, CPoint point) 
-		{
-			if ( !m_bDisabled )
-				CButton::OnLButtonDown(nFlags, point);
-		}
+		dc.SetBkColor(::GetSysColor( COLOR_BTNFACE ));
+		ddc.BitBlt(0, 0, rc.Width(), rc.Height(), &dc, rc.left, rc.top, SRCCOPY);
+		dc.SetBkColor(::GetSysColor(COLOR_BTNHIGHLIGHT));
+		ddc.BitBlt(0, 0, rc.Width(), rc.Height(), &dc, rc.left, rc.top, SRCPAINT);
 
-		BOOL SVActiveDisableButton::EnableWindow( BOOL bEnable )
-		{
-			bool bTmp = m_bDisabled;
-			m_bDisabled = bEnable ? false : true;
-			Invalidate();
-			return bTmp ? FALSE : TRUE;
-		}
+		// Copy the image from the toolbar into the memory DC
+		// and draw it (grayed) back into the toolbar.
+		dc.FillSolidRect(rc.left, rc.top, rc.Width(), rc.Height(), ::GetSysColor( COLOR_BTNFACE ));
+		dc.SetBkColor(RGB(0, 0, 0));
+		dc.SetTextColor(RGB(255, 255, 255));
+		CBrush brShadow, brHilight;
+		brHilight.CreateSolidBrush(::GetSysColor(COLOR_BTNHIGHLIGHT));
+		brShadow.CreateSolidBrush(::GetSysColor(COLOR_BTNSHADOW));
+		CBrush * pOldBrush = dc.SelectObject(&brHilight);
+		dc.BitBlt(rc.left+1, rc.top+1, rc.Width(), rc.Height(), &ddc, 0, 0, 0x00E20746L);
+		dc.SelectObject(&brShadow);
+		dc.BitBlt(rc.left, rc.top, rc.Width(), rc.Height(), &ddc, 0, 0, 0x00E20746L);
 
-		void SVActiveDisableButton::Emboss( CDC& dc, const CRect& rc ) const
-		{
-			// create a monochrome memory DC
-			CDC ddc;
-			ddc.CreateCompatibleDC(0);
-			CBitmap bmp;
-			bmp.CreateCompatibleBitmap(&ddc, rc.Width(), rc.Height());
-			CBitmap * pOldBmp = ddc.SelectObject(&bmp);
+		// reset DCs
+		dc.SelectObject(pOldBrush);
+		ddc.SelectObject(pOldBmp);
+		ddc.DeleteDC();
 
-			// build a mask
-			ddc.PatBlt(0, 0, rc.Width(), rc.Height(), WHITENESS);
+		bmp.DeleteObject();
+	}
 
-			dc.SetBkColor(::GetSysColor( COLOR_BTNFACE ));
-			ddc.BitBlt(0, 0, rc.Width(), rc.Height(), &dc, rc.left, rc.top, SRCCOPY);
-			dc.SetBkColor(::GetSysColor(COLOR_BTNHIGHLIGHT));
-			ddc.BitBlt(0, 0, rc.Width(), rc.Height(), &dc, rc.left, rc.top, SRCPAINT);
+	void SVActiveDisableButton::OnLButtonDblClk(UINT nFlags, CPoint point) 
+	{
+		if ( !m_bDisabled )
+			CButton::OnLButtonDblClk(nFlags, point);
+	}
 
-			// Copy the image from the toolbar into the memory DC
-			// and draw it (grayed) back into the toolbar.
-			dc.FillSolidRect(rc.left, rc.top, rc.Width(), rc.Height(), ::GetSysColor( COLOR_BTNFACE ));
-			dc.SetBkColor(RGB(0, 0, 0));
-			dc.SetTextColor(RGB(255, 255, 255));
-			CBrush brShadow, brHilight;
-			brHilight.CreateSolidBrush(::GetSysColor(COLOR_BTNHIGHLIGHT));
-			brShadow.CreateSolidBrush(::GetSysColor(COLOR_BTNSHADOW));
-			CBrush * pOldBrush = dc.SelectObject(&brHilight);
-			dc.BitBlt(rc.left+1, rc.top+1, rc.Width(), rc.Height(), &ddc, 0, 0, 0x00E20746L);
-			dc.SelectObject(&brShadow);
-			dc.BitBlt(rc.left, rc.top, rc.Width(), rc.Height(), &ddc, 0, 0, 0x00E20746L);
+	void SVActiveDisableButton::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) 
+	{
+		if ( !m_bDisabled )
+			CButton::OnKeyDown(nChar, nRepCnt, nFlags);
+	}
 
-			// reset DCs
-			dc.SelectObject(pOldBrush);
-			ddc.SelectObject(pOldBmp);
-			ddc.DeleteDC();
+	void SVActiveDisableButton::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags) 
+	{
+		if ( !m_bDisabled )
+			CButton::OnKeyUp(nChar, nRepCnt, nFlags);
+	}
 
-			bmp.DeleteObject();
-		}
+	void SVActiveDisableButton::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) 
+	{
+		if ( !m_bDisabled )
+			CButton::OnChar(nChar, nRepCnt, nFlags);
+	}
 
-		void SVActiveDisableButton::OnLButtonDblClk(UINT nFlags, CPoint point) 
-		{
-			if ( !m_bDisabled )
-				CButton::OnLButtonDblClk(nFlags, point);
-		}
+	void SVActiveDisableButton::OnActivate(UINT nState, CWnd* pWndOther, BOOL bMinimized) 
+	{
+		if ( !m_bDisabled )
+			CButton::OnActivate(nState, pWndOther, bMinimized);
+	}
 
-		void SVActiveDisableButton::OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags) 
-		{
-			if ( !m_bDisabled )
-				CButton::OnKeyDown(nChar, nRepCnt, nFlags);
-		}
+	void SVActiveDisableButton::OnSetFocus(CWnd* pOldWnd) 
+	{
+		if ( !m_bDisabled )
+			CButton::OnSetFocus(pOldWnd);
+	}
 
-		void SVActiveDisableButton::OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags) 
-		{
-			if ( !m_bDisabled )
-				CButton::OnKeyUp(nChar, nRepCnt, nFlags);
-		}
-
-		void SVActiveDisableButton::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) 
-		{
-			if ( !m_bDisabled )
-				CButton::OnChar(nChar, nRepCnt, nFlags);
-		}
-
-		void SVActiveDisableButton::OnActivate(UINT nState, CWnd* pWndOther, BOOL bMinimized) 
-		{
-			if ( !m_bDisabled )
-				CButton::OnActivate(nState, pWndOther, bMinimized);
-		}
-
-		void SVActiveDisableButton::OnSetFocus(CWnd* pOldWnd) 
-		{
-			if ( !m_bDisabled )
-				CButton::OnSetFocus(pOldWnd);
-		}
-
-		int SVActiveDisableButton::OnMouseActivate(CWnd* pDesktopWnd, UINT nHitTest, UINT message) 
-		{
-			if ( !m_bDisabled )
-				return CButton::OnMouseActivate(pDesktopWnd, nHitTest, message);
-			else
-				return MA_NOACTIVATEANDEAT;
-		}
-	} //SVMFCControls
-} //Seidenader
-
+	int SVActiveDisableButton::OnMouseActivate(CWnd* pDesktopWnd, UINT nHitTest, UINT message) 
+	{
+		if ( !m_bDisabled )
+			return CButton::OnMouseActivate(pDesktopWnd, nHitTest, message);
+		else
+			return MA_NOACTIVATEANDEAT;
+	}
+} //namespace SvMc

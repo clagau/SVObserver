@@ -14,38 +14,32 @@
 #include "SVFileDialog.h"
 #pragma endregion Includes
 
-namespace Seidenader
+namespace SvMc
 {
-	namespace SVMFCControls
+	class SVDlgFolder : public SVFileDialog
 	{
-		class SVDlgFolder : public SVFileDialog
-		{
-			DECLARE_DYNAMIC(SVDlgFolder)
+		DECLARE_DYNAMIC(SVDlgFolder)
 
-		public:
-			SVDlgFolder(bool bFullAccess, LPCTSTR initialDir=nullptr);
-			virtual ~SVDlgFolder();
-			void InitDlgFolder(LPCTSTR csTextOKButton, LPCTSTR csTextCaptionBar);
+	public:
+		SVDlgFolder(bool bFullAccess, LPCTSTR initialDir=nullptr);
+		virtual ~SVDlgFolder();
+		void InitDlgFolder(LPCTSTR csTextOKButton, LPCTSTR csTextCaptionBar);
 
-			virtual void OnInitDone() override;
-			CString GetPathName() const;
-			void SetSelectedPath(LPCTSTR path);
+		virtual void OnInitDone() override;
+		CString GetPathName() const;
+		void SetSelectedPath(LPCTSTR path);
 
-			CString m_csTextOKButton;
-			CString m_csTextCaptionBar;
-			static WNDPROC m_wndProc;
+		CString m_csTextOKButton;
+		CString m_csTextCaptionBar;
+		static WNDPROC m_wndProc;
 
-		protected:
-			virtual void OnFolderChange() override;
+	protected:
+		virtual void OnFolderChange() override;
 
-			//{{AFX_MSG(SVDlgFolder)
-			//}}AFX_MSG
-			DECLARE_MESSAGE_MAP()
+		//{{AFX_MSG(SVDlgFolder)
+		//}}AFX_MSG
+		DECLARE_MESSAGE_MAP()
 
-			CString m_path;
-		};
-	} //SVMFCControls
-} //Seidenader
-
-namespace SvMc = Seidenader::SVMFCControls;
-
+		CString m_path;
+	};
+} //namespace SvMc

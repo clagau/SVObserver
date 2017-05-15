@@ -81,19 +81,19 @@ const SVImageInfoClass &SVImageInfoClass::operator=( const BITMAPINFOHEADER& p_r
 	{
 		l_iFormat = SVImageFormatRGB8888;
 	}
-	SetImageProperty( SVImagePropertyFormat, l_iFormat );
+	SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyFormat, l_iFormat );
 
-	SetImageProperty( SVImagePropertyPixelDepth, p_rBitmapHeader.biBitCount );
-	SetImageProperty( SVImagePropertyBandNumber, 1 );
-	SetImageProperty( SVImagePropertyBandLink, 0 );
+	SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyPixelDepth, p_rBitmapHeader.biBitCount );
+	SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandNumber, 1 );
+	SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandLink, 0 );
 
 	SetExtentProperty( SVExtentPropertyHeight, abs(p_rBitmapHeader.biHeight) );
 	SetExtentProperty( SVExtentPropertyWidth, p_rBitmapHeader.biWidth );
 
 	if( p_rBitmapHeader.biBitCount == 24 )
 	{
-		SetImageProperty( SVImagePropertyPixelDepth, 8 );
-		SetImageProperty( SVImagePropertyBandNumber, 3 );
+		SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyPixelDepth, 8 );
+		SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandNumber, 3 );
 	}
 
 	return *this;
@@ -153,27 +153,27 @@ HRESULT SVImageInfoClass::Initialize()
 		l_hrOk = S_FALSE;
 	}
 
-	if ( S_OK != SetImageProperty( SVImagePropertyFormat, SVImageFormatMono8 ) )
+	if ( S_OK != SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyFormat, SVImageFormatMono8 ) )
 	{
 		l_hrOk = S_FALSE;
 	}
 
-	if ( S_OK != SetImageProperty( SVImagePropertyPixelDepth, 8 ) )
+	if ( S_OK != SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyPixelDepth, 8 ) )
 	{
 		l_hrOk = S_FALSE;
 	}
 
-	if ( S_OK != SetImageProperty( SVImagePropertyBandNumber, 1 ) )
+	if ( S_OK != SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandNumber, 1 ) )
 	{
 		l_hrOk = S_FALSE;
 	}
 
-	if ( S_OK != SetImageProperty( SVImagePropertyBandLink, 0 ) )
+	if ( S_OK != SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandLink, 0 ) )
 	{
 		l_hrOk = S_FALSE;
 	}
 
-	if ( S_OK != SetImageProperty( SVImagePropertyResetOwner, false ) )
+	if ( S_OK != SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyResetOwner, false ) )
 	{
 		l_hrOk = S_FALSE;
 	}
@@ -224,7 +224,7 @@ HRESULT SVImageInfoClass::SetTranslation( SVExtentTranslationEnum p_eTranslation
 	return l_hrOk;
 }
 
-HRESULT SVImageInfoClass::GetImageProperty( SVImagePropertyEnum p_eProperty, int &p_riValue ) const
+HRESULT SVImageInfoClass::GetImageProperty( SvOi::SVImagePropertyEnum p_eProperty, int &p_riValue ) const
 {
 	HRESULT l_hrOk = S_FALSE;
 
@@ -233,7 +233,7 @@ HRESULT SVImageInfoClass::GetImageProperty( SVImagePropertyEnum p_eProperty, int
 	return l_hrOk;
 }
 
-HRESULT SVImageInfoClass::GetImageProperty( SVImagePropertyEnum p_eProperty, long &p_rlValue ) const
+HRESULT SVImageInfoClass::GetImageProperty( SvOi::SVImagePropertyEnum p_eProperty, long &p_rlValue ) const
 {
 	HRESULT l_hrOk = S_FALSE;
 
@@ -242,7 +242,7 @@ HRESULT SVImageInfoClass::GetImageProperty( SVImagePropertyEnum p_eProperty, lon
 	return l_hrOk;
 }
 
-HRESULT SVImageInfoClass::SetImageProperty( SVImagePropertyEnum p_eProperty, long p_lValue )
+HRESULT SVImageInfoClass::SetImageProperty( SvOi::SVImagePropertyEnum p_eProperty, long p_lValue )
 {
 	HRESULT l_hrOk = S_FALSE;
 
@@ -487,7 +487,7 @@ long SVImageInfoClass::GetBufferSize()
 	long lHeight = abs(rect.top - rect.bottom);
 	long lWidth = abs(rect.right - rect.left);
 	long lFormat;
-	m_svProperties.GetImageProperty( SVImagePropertyFormat, lFormat );
+	m_svProperties.GetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyFormat, lFormat );
 
 	switch ( lFormat )
 	{
@@ -519,11 +519,11 @@ BITMAPINFOHEADER SVImageInfoClass::GetBitmapInfoHeader() const
 	int l_iFormat = 0;
 	int l_iBands = 0;
 
-	l_hr = GetImageProperty( SVImagePropertyPixelDepth, l_iPixelDepth );
+	l_hr = GetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyPixelDepth, l_iPixelDepth );
 	l_hr = m_svExtents.GetExtentProperty( SVExtentPropertyOutputWidth, l_iWidth );
 	l_hr = m_svExtents.GetExtentProperty( SVExtentPropertyOutputHeight, l_iHeight );
-	l_hr = GetImageProperty( SVImagePropertyFormat, l_iFormat );
-	l_hr = GetImageProperty( SVImagePropertyBandNumber, l_iBands );
+	l_hr = GetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyFormat, l_iFormat );
+	l_hr = GetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandNumber, l_iBands );
 
 
 	l_info.biWidth = l_iWidth;

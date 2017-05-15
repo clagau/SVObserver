@@ -755,9 +755,9 @@ bool SVManagedIndexArray::LogEventMessage()
 {
 	m_MessageCounter++;
 
-	SVClock::SVTimeStamp l_CurrentTime = SVClock::GetTimeStamp();
+	SvTl::SVTimeStamp l_CurrentTime = SvTl::GetTimeStamp();
 
-	bool l_Status = ( ( m_LastMessageTimeStamp + SVClock::ConvertFrom( SVClock::Seconds, 60 ) ) < l_CurrentTime );
+	bool l_Status = ( ( m_LastMessageTimeStamp + SvTl::ConvertFrom( SvTl::Seconds, 60 ) ) < l_CurrentTime );
 
 	if( l_Status )
 	{

@@ -18,8 +18,8 @@
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace TriggerHandling {
-
+namespace SvTh
+{
 	SVCameraTriggerClass::SVCameraTriggerClass(LPCTSTR deviceName)
 	: SVTriggerClass(deviceName)
 	, m_pSoftwareTrigger(nullptr)
@@ -192,5 +192,4 @@ namespace Seidenader { namespace TriggerHandling {
 		}
 		return S_FALSE;
 	}
-		
-} /* namespace TriggerHandling */ } /* namespace Seidenader */
+} //namespace SvTh

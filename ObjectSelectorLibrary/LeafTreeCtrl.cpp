@@ -23,7 +23,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-namespace Seidenader { 	namespace ObjectSelectorLibrary
+namespace SvOsl
 {
 	BEGIN_MESSAGE_MAP(LeafTreeCtrl, ObjectTreeCtrl)
 		//{{AFX_MSG_MAP(NodeTreeCtrl)
@@ -204,4 +204,4 @@ namespace Seidenader { 	namespace ObjectSelectorLibrary
 	}
 	#pragma endregion Protected Methods
 
-} /*namespace ObjectSelectorLibrary*/ } /*namespace Seidenader*/
+} //namespace SvOsl

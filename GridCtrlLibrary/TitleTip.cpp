@@ -63,7 +63,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-namespace Seidenader { namespace GridCtrlLibrary
+namespace SvGcl
 {
 	/////////////////////////////////////////////////////////////////////////////
 	// CTitleTip
@@ -358,7 +358,7 @@ namespace Seidenader { namespace GridCtrlLibrary
 		return CWnd::PreTranslateMessage(pMsg);
 	}
 
-} /*namespace GridCtrlLibrary*/ } /*namespace Seidenader*/
+} // namespace SvGcl
 
 #endif // GRIDCONTROL_NO_TITLETIPS
 

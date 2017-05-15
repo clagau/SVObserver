@@ -14,8 +14,8 @@
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace SVOGui {
-
+namespace SvOg
+{
 	class TATableSourcePage : public CPropertyPage//, protected ImageController
 	{
 #pragma region Declarations
@@ -73,7 +73,6 @@ namespace Seidenader { namespace SVOGui {
 		SvUl::NameGuidList m_availableList;
 #pragma endregion Member Variables
 	};
-}}
+} //namespace SvOg
 
-namespace SvOg = Seidenader::SVOGui;
 

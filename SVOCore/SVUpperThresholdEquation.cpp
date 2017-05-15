@@ -93,7 +93,7 @@ BOOL SVUpperThresholdEquationClass::CreateObject( SVObjectLevelCreateStruct* PCr
 	BOOL bOk = SVEquationClass::CreateObject( PCreateStructure );
 
 	// Set/Reset printable Flags
-	result.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	result.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 
 	return bOk;
 }

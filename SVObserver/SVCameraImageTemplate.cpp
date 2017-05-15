@@ -32,7 +32,7 @@ SVCameraImageTemplate::SVCameraImageTemplate( LPCSTR ObjectName )
 
 	// SVMainImageClass is not a result image.
 	// We need to remove the PUBLISH attribute.
-	SetObjectAttributesAllowed( SV_PUBLISH_RESULT_IMAGE, SvOi::SetAttributeType::RemoveAttribute );
+	SetObjectAttributesAllowed( SvOi::SV_PUBLISH_RESULT_IMAGE, SvOi::SetAttributeType::RemoveAttribute );
 }
 
 SVCameraImageTemplate::SVCameraImageTemplate( SVObjectClass* POwner, int StringResourceID )
@@ -46,7 +46,7 @@ SVCameraImageTemplate::SVCameraImageTemplate( SVObjectClass* POwner, int StringR
 
 	// SVMainImageClass is not a result image.
 	// We need to remove the PUBLISH attribute.
-	SetObjectAttributesAllowed( SV_PUBLISH_RESULT_IMAGE, SvOi::SetAttributeType::RemoveAttribute );
+	SetObjectAttributesAllowed( SvOi::SV_PUBLISH_RESULT_IMAGE, SvOi::SetAttributeType::RemoveAttribute );
 }
 
 SVCameraImageTemplate::~SVCameraImageTemplate()
@@ -97,8 +97,8 @@ BOOL SVCameraImageTemplate::CreateObject(SVObjectLevelCreateStruct* PCreateStruc
 
 	// SVMainImageClass is not a result image.
 	// We need to remove the PUBLISH attribute.
-	SetObjectAttributesAllowed( SV_PUBLISH_RESULT_IMAGE, SvOi::SetAttributeType::RemoveAttribute );
-	SetObjectAttributesAllowed( SV_DD_IMAGE, SvOi::SetAttributeType::AddAttribute );
+	SetObjectAttributesAllowed( SvOi::SV_PUBLISH_RESULT_IMAGE, SvOi::SetAttributeType::RemoveAttribute );
+	SetObjectAttributesAllowed( SvOi::SV_DD_IMAGE, SvOi::SetAttributeType::AddAttribute );
 	
 	m_isCreated = l_bOk;
 	
@@ -217,12 +217,12 @@ HRESULT SVCameraImageTemplate::SetObjectValue( SVObjectAttributeClass* PDataObje
 	{
 		hr = SVImageClass::SetObjectValue( PDataObject );
 
-		m_ObjectAttributesAllowed |= SV_REMOTELY_SETABLE;
+		m_ObjectAttributesAllowed |= SvOi::SV_REMOTELY_SETABLE;
 
 		return hr;
 	}
 
-	m_LastUpdate = SVClock::GetTimeStamp();
+	m_LastUpdate = SvTl::GetTimeStamp();
 
 	hr = bOk ? S_OK : S_FALSE;
 	return hr;
@@ -277,7 +277,7 @@ HRESULT SVCameraImageTemplate::ReconnectBuffers()
 
 		m_ImageInfo.SetOwnerImage( GetUniqueObjectID() );
 
-		m_LastUpdate = SVClock::GetTimeStamp();
+		m_LastUpdate = SvTl::GetTimeStamp();
 
 		if ( !ResetObject() )
 		{

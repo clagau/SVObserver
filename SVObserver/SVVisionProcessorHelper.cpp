@@ -259,22 +259,22 @@ HRESULT SVVisionProcessorHelper::GetDataDefinitionList( const SVString& rInspect
 
 	if(0 != ( rListType & SelectedValues ))
 	{
-		l_ValueFilter = SV_DD_VALUE;
+		l_ValueFilter = SvOi::SV_DD_VALUE;
 	}
 
 	if(0 != ( rListType & AllValues))
 	{
-		l_ValueFilter = SV_DD_VALUE | SV_VIEWABLE;
+		l_ValueFilter = SvOi::SV_DD_VALUE | SvOi::SV_VIEWABLE;
 	}
 
 	if(0 != ( rListType & SelectedImages))
 	{
-		l_ImageFilter = SV_DD_IMAGE;
+		l_ImageFilter = SvOi::SV_DD_IMAGE;
 	}
 
 	if(0 != ( rListType & AllImages))
 	{
-		l_ImageFilter = SV_DD_IMAGE | SV_VIEWABLE;
+		l_ImageFilter = SvOi::SV_DD_IMAGE | SvOi::SV_VIEWABLE;
 	}
 
 	SVInspectionProcess* pInspection = nullptr;
@@ -677,11 +677,11 @@ HRESULT SVVisionProcessorHelper::SetStandardItems( const SVNameStorageMap& rItem
 
 			if( nullptr != pValueObject )
 			{
-				bool Attribute = ( ( pValueObject->ObjectAttributesAllowed() & SV_REMOTELY_SETABLE ) == SV_REMOTELY_SETABLE );
+				bool Attribute = ( ( pValueObject->ObjectAttributesAllowed() & SvOi::SV_REMOTELY_SETABLE ) == SvOi::SV_REMOTELY_SETABLE );
 
 				if( Attribute )
 				{
-					Attribute = !Online || ( ( pValueObject->ObjectAttributesAllowed() & SV_SETABLE_ONLINE ) == SV_SETABLE_ONLINE );
+					Attribute = !Online || ( ( pValueObject->ObjectAttributesAllowed() & SvOi::SV_SETABLE_ONLINE ) == SvOi::SV_SETABLE_ONLINE );
 
 					if( Attribute )
 					{
@@ -783,7 +783,7 @@ HRESULT SVVisionProcessorHelper::GetObjectDefinition( const SVObjectClass& rObje
 
 	//Check using the filter if object should be included
 	bool l_bValueIncluded = false;
-	if((SV_DD_VALUE == Filter) || (SV_DD_IMAGE == Filter))
+	if((SvOi::SV_DD_VALUE == Filter) || (SvOi::SV_DD_IMAGE == Filter))
 	{
 		//This is called when selected values or images
 		l_bValueIncluded = (rObject.ObjectAttributesSet() & Filter) != 0;
@@ -793,14 +793,14 @@ HRESULT SVVisionProcessorHelper::GetObjectDefinition( const SVObjectClass& rObje
 		//This is called when all values or all images
 		l_bValueIncluded = (rObject.ObjectAttributesAllowed() & Filter) != 0;
 	}
-	l_bValueIncluded = l_bValueIncluded && ( (rObject.ObjectAttributesAllowed() & SV_HIDDEN) == 0 );
+	l_bValueIncluded = l_bValueIncluded && ( (rObject.ObjectAttributesAllowed() & SvOi::SV_HIDDEN) == 0 );
 	if( l_bValueIncluded )
 	{
 		SVString Temp;
 		Temp = _T("Inspections.") + rObject.GetCompleteName();
 		rDataDef.m_Name = Temp;
-		rDataDef.m_Writable = (rObject.ObjectAttributesAllowed() & SV_REMOTELY_SETABLE) == SV_REMOTELY_SETABLE;
-		rDataDef.m_Published = (rObject.ObjectAttributesSet() & SV_PUBLISHABLE) != 0;
+		rDataDef.m_Writable = (rObject.ObjectAttributesAllowed() & SvOi::SV_REMOTELY_SETABLE) == SvOi::SV_REMOTELY_SETABLE;
+		rDataDef.m_Published = (rObject.ObjectAttributesSet() & SvOi::SV_PUBLISHABLE) != 0;
 		//If null we assume its an image
 		const SvOi::IValueObject* pValueObject = dynamic_cast<const SvOi::IValueObject*> (&rObject);
 		if( nullptr != pValueObject )

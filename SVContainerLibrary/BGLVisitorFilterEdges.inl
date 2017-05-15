@@ -8,7 +8,7 @@
 /// filters and in out edges
 //******************************************************************************
 
-namespace Sv { namespace Container
+namespace SvCl
 {
 	//! Edge style filter template class
 	template< typename EdgeTypeMapConst, typename EdgeType >
@@ -152,5 +152,5 @@ namespace Sv { namespace Container
 			*Inserter++ = *outEdgeIt;
 		}
 	}
-} /* namespace SVContainerLibrary */ } /* namespace Seidenader */
+} //namespace SvCl
 

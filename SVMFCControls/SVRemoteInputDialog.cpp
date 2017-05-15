@@ -20,47 +20,43 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-namespace Seidenader
+namespace SvMc
 {
-	namespace SVMFCControls
+	SVRemoteInputDialog::SVRemoteInputDialog(CWnd* pParent /*=nullptr*/)
+		: CDialog(SVRemoteInputDialog::IDD, pParent)
 	{
-		SVRemoteInputDialog::SVRemoteInputDialog(CWnd* pParent /*=nullptr*/)
-			: CDialog(SVRemoteInputDialog::IDD, pParent)
-		{
-			//{{AFX_DATA_INIT(SVRemoteInputDialog)
-			m_lRemoteInputCount = 0;
-			//}}AFX_DATA_INIT
-		}
+		//{{AFX_DATA_INIT(SVRemoteInputDialog)
+		m_lRemoteInputCount = 0;
+		//}}AFX_DATA_INIT
+	}
 
-		SVRemoteInputDialog::~SVRemoteInputDialog()
-		{
-		}
+	SVRemoteInputDialog::~SVRemoteInputDialog()
+	{
+	}
 
-		void SVRemoteInputDialog::DoDataExchange(CDataExchange* pDX)
-		{
-			CDialog::DoDataExchange(pDX);
-			//{{AFX_DATA_MAP(SVRemoteInputDialog)
-			DDX_Text(pDX, IDC_NUMBER, m_lRemoteInputCount);
-			DDV_MinMaxLong(pDX, m_lRemoteInputCount, 0, 128);
-			//}}AFX_DATA_MAP
-		}
+	void SVRemoteInputDialog::DoDataExchange(CDataExchange* pDX)
+	{
+		CDialog::DoDataExchange(pDX);
+		//{{AFX_DATA_MAP(SVRemoteInputDialog)
+		DDX_Text(pDX, IDC_NUMBER, m_lRemoteInputCount);
+		DDV_MinMaxLong(pDX, m_lRemoteInputCount, 0, 128);
+		//}}AFX_DATA_MAP
+	}
 
 
-		BEGIN_MESSAGE_MAP(SVRemoteInputDialog, CDialog)
-			//{{AFX_MSG_MAP(SVRemoteInputDialog)
-			//}}AFX_MSG_MAP
-		END_MESSAGE_MAP()
+	BEGIN_MESSAGE_MAP(SVRemoteInputDialog, CDialog)
+		//{{AFX_MSG_MAP(SVRemoteInputDialog)
+		//}}AFX_MSG_MAP
+	END_MESSAGE_MAP()
 
-		/////////////////////////////////////////////////////////////////////////////
-		// SVRemoteInputDialog message handlers
+	/////////////////////////////////////////////////////////////////////////////
+	// SVRemoteInputDialog message handlers
 
-		BOOL SVRemoteInputDialog::OnInitDialog() 
-		{
-			CDialog::OnInitDialog();
+	BOOL SVRemoteInputDialog::OnInitDialog() 
+	{
+		CDialog::OnInitDialog();
 
-			return TRUE;  // return TRUE unless you set the focus to a control
-			// EXCEPTION: OCX Property Pages should return FALSE
-		}// end OnInitDialog
-	} //SVMFCControls
-} //Seidenader
-
+		return TRUE;  // return TRUE unless you set the focus to a control
+		// EXCEPTION: OCX Property Pages should return FALSE
+	}// end OnInitDialog
+} //namespace SvMc

@@ -11,78 +11,73 @@
 
 #pragma once
 
-namespace Seidenader
+namespace SvMc
 {
-	namespace SVMFCControls
+	class CEditNumbers : public CEdit
 	{
-		class CEditNumbers : public CEdit
-		{
-			// Construction
-		public:
-			CEditNumbers();
+		// Construction
+	public:
+		CEditNumbers();
 
-			// Attributes
-		public:
+		// Attributes
+	public:
 
-			// Operations
-		public:
+		// Operations
+	public:
 
-			// Overrides
-			// ClassWizard generated virtual function overrides
-			//{{AFX_VIRTUAL(CEditNumbers)
-			//}}AFX_VIRTUAL
+		// Overrides
+		// ClassWizard generated virtual function overrides
+		//{{AFX_VIRTUAL(CEditNumbers)
+		//}}AFX_VIRTUAL
 
-			// Implementation
-		public:
-			virtual ~CEditNumbers();
+		// Implementation
+	public:
+		virtual ~CEditNumbers();
 
-			// Generated message map functions
-		protected:
-			//{{AFX_MSG(CEditNumbers)
-			afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);
-			afx_msg void OnSetFocus(CWnd* pOldWnd);
-			//}}AFX_MSG
+		// Generated message map functions
+	protected:
+		//{{AFX_MSG(CEditNumbers)
+		afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);
+		afx_msg void OnSetFocus(CWnd* pOldWnd);
+		//}}AFX_MSG
 
-			DECLARE_MESSAGE_MAP()
-		};
+		DECLARE_MESSAGE_MAP()
+	};
 
-		//{{AFX_INSERT_LOCATION}}
-		// Microsoft Developer Studio will insert additional declarations immediately before the previous line.
+	//{{AFX_INSERT_LOCATION}}
+	// Microsoft Developer Studio will insert additional declarations immediately before the previous line.
 
-		/////////////////////////////////////////////////////////////////////////////
-		// CEditNumbersFloat window
+	/////////////////////////////////////////////////////////////////////////////
+	// CEditNumbersFloat window
 
-		class CEditNumbersFloat : public CEdit
-		{
-			// Construction
-		public:
-			CEditNumbersFloat();
+	class CEditNumbersFloat : public CEdit
+	{
+		// Construction
+	public:
+		CEditNumbersFloat();
 
-			// Attributes
-		public:
+		// Attributes
+	public:
 
-			// Operations
-		public:
+		// Operations
+	public:
 
-			// Overrides
-			// ClassWizard generated virtual function overrides
-			//{{AFX_VIRTUAL(CEditNumbersFloat)
-			//}}AFX_VIRTUAL
+		// Overrides
+		// ClassWizard generated virtual function overrides
+		//{{AFX_VIRTUAL(CEditNumbersFloat)
+		//}}AFX_VIRTUAL
 
-			// Implementation
-		public:
-			virtual ~CEditNumbersFloat();
+		// Implementation
+	public:
+		virtual ~CEditNumbersFloat();
 
-			// Generated message map functions
-		protected:
-			//{{AFX_MSG(CEditNumbersFloat)
-			afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);
-			afx_msg void OnSetFocus(CWnd* pOldWnd);
-			//}}AFX_MSG
+		// Generated message map functions
+	protected:
+		//{{AFX_MSG(CEditNumbersFloat)
+		afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);
+		afx_msg void OnSetFocus(CWnd* pOldWnd);
+		//}}AFX_MSG
 
-			DECLARE_MESSAGE_MAP()
-		};
-	} //SVMFCControls
-} //Seidenader
-
-namespace SvMc = Seidenader::SVMFCControls;
+		DECLARE_MESSAGE_MAP()
+	};
+} //namespace SvMc

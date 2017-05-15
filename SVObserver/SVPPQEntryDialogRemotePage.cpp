@@ -88,7 +88,7 @@ BOOL SVPPQEntryDialogRemotePageClass::OnInitDialog()
 	if( !m_pSheet->m_pPPQ->GetAllInputs( ppIOEntries ) )
 	{
 		SvStl::MessageMgrStd e( SvStl::LogOnly );
-		e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_17042_ErrorGettingInputs );
+		e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17042_ErrorGettingInputs );
 		DebugBreak();
 	}
 

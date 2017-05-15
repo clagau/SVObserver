@@ -8,7 +8,7 @@
 
 #pragma once
 
-namespace Seidenader { namespace SVOGui
+namespace SvOg
 {
 	const TCHAR* const GlobalConstantTypes[] = {_T( "Decimal" ), _T( "Text" )};
 	const TCHAR* const GlobalConflictHeader[] = {_T( "" ), _T( "Current Name" ), _T( "Current Type" ), _T( "Current Value" ), _T(""),  _T( "Imported name" ), _T( "Imported Type" ), _T( "Imported Value" ) };
@@ -19,6 +19,4 @@ namespace Seidenader { namespace SVOGui
 	const TCHAR* const Analyzer_NoAnalyzerAvailable = _T( "(No Analyzer Available)" );
 	const TCHAR* const Analyzer_NoAnalyzer = _T( "(No Analyzer)" );
 	const TCHAR* const ScintillaControlName = _T("Scintilla");
-} /* namespace SVOGui */ } /* namespace Seidenader */
-
-namespace SvOg = Seidenader::SVOGui;
+} //namespace SvOg

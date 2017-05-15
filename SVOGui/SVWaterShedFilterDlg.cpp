@@ -31,24 +31,22 @@ enum
 	OffVarRadioEnum_Varation
 } OffVarRadioEnum;
 
-namespace Seidenader
+namespace SvOg
 {
-	namespace SVOGui
-	{
-		static const std::string ControlFlagTag("ControlFlag");
-		static const std::string MinVariationTag("MinVariation");
-		static const std::string UseMarkerTag("UseMarker");
+	static const std::string ControlFlagTag("ControlFlag");
+	static const std::string MinVariationTag("MinVariation");
+	static const std::string UseMarkerTag("UseMarker");
 
-		SVWatershedFilterDlg::SVWatershedFilterDlg(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, const SVGUID& rFilterID, CWnd* pParent): 
-				CDialog(SVWatershedFilterDlg::IDD, pParent)
-				,m_filterID(rFilterID)
-				,m_rInspectionID(rInspectionID)
-				,m_rTaskObjectID(rTaskObjectID)
-				, SvOg::ImageController(rInspectionID, rTaskObjectID)
-				, m_Values(SvOg::BoundValues(rInspectionID, rFilterID, boost::assign::map_list_of
-				(ControlFlagTag, SVWatershedFilterControlFlagGuid)
-				(MinVariationTag, SVWatershedFilterMinVariationGuid)
-				(UseMarkerTag, SVWatershedFilterUseMarkerGuid)))
+	SVWatershedFilterDlg::SVWatershedFilterDlg(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID, const SVGUID& rFilterID, CWnd* pParent): 
+			CDialog(SVWatershedFilterDlg::IDD, pParent)
+			,m_filterID(rFilterID)
+			,m_rInspectionID(rInspectionID)
+			,m_rTaskObjectID(rTaskObjectID)
+			, SvOg::ImageController(rInspectionID, rTaskObjectID)
+			, m_Values(SvOg::BoundValues(rInspectionID, rFilterID, boost::assign::map_list_of
+			(ControlFlagTag, SVWatershedFilterControlFlagGuid)
+			(MinVariationTag, SVWatershedFilterMinVariationGuid)
+			(UseMarkerTag, SVWatershedFilterUseMarkerGuid)))
 	{
 
 		//{{AFX_DATA_INIT(SVWatershedFilterDlg)
@@ -209,5 +207,4 @@ namespace Seidenader
 			ConnectToImage(SvOi::WatershedMarkerImageConnectionName, SVString(currentImageName), m_filterID);
 		}
 	}
-	}  //end namespace SVOGUI
-}  //end namespace Seidenader
+}  //namespace SvOg

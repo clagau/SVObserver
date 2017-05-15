@@ -42,7 +42,7 @@
 #include "GridCell.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace GridCtrlLibrary
+namespace SvGcl
 {
 	class CGridCellCheck : public CGridCell
 	{
@@ -71,6 +71,6 @@ namespace Seidenader { namespace GridCtrlLibrary
 		CRect m_Rect;
 	};
 
-} /*namespace GridCtrlLibrary*/ } /*namespace Seidenader*/
+} // namespace SvGcl
 
-namespace SvGcl = Seidenader::GridCtrlLibrary;
+

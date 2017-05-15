@@ -19,86 +19,77 @@
 #include "SVMFCControls\ObjectsListBox.h"
 #pragma endregion Includes
 
-namespace Seidenader
+namespace SvOg
 {
-	namespace SVOGui
+	class SVToolAdjustmentDialogFilterPageClass : public CPropertyPage
 	{
-		class SVToolAdjustmentDialogFilterPageClass : public CPropertyPage
-		{
-			//******************************************************************************
-			// Class Wizard Generated Message Map Entries:
-			//******************************************************************************
-			// Generated message map functions
-		protected:
-			//{{AFX_MSG(SVToolAdjustmentDialogFilterPageClass)
-			virtual BOOL OnInitDialog() override;
-			afx_msg void OnButtonProperties();
-			afx_msg void OnButtonClearAll();
-			afx_msg void OnButtonDeleteCurrentFilter();
-			afx_msg void OnButtonInsertNewFilter();
-			afx_msg void OnSelchangeList1();
-			//}}AFX_MSG
+		//******************************************************************************
+		// Class Wizard Generated Message Map Entries:
+		//******************************************************************************
+		// Generated message map functions
+	protected:
+		//{{AFX_MSG(SVToolAdjustmentDialogFilterPageClass)
+		virtual BOOL OnInitDialog() override;
+		afx_msg void OnButtonProperties();
+		afx_msg void OnButtonClearAll();
+		afx_msg void OnButtonDeleteCurrentFilter();
+		afx_msg void OnButtonInsertNewFilter();
+		afx_msg void OnSelchangeList1();
+		//}}AFX_MSG
 
-			DECLARE_MESSAGE_MAP()
+		DECLARE_MESSAGE_MAP()
 
-		public:
-			SVToolAdjustmentDialogFilterPageClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID);
-			virtual ~SVToolAdjustmentDialogFilterPageClass();
+	public:
+		SVToolAdjustmentDialogFilterPageClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID);
+		virtual ~SVToolAdjustmentDialogFilterPageClass();
 
-			//************************************
-			// Method:    setImages
-			// Description: Set image to the activeX-control. 
-			// Returns:   bool -false when image not exist
-			//************************************
-			bool setImages();
+		//************************************
+		// Method:    setImages
+		// Description: Set image to the activeX-control. 
+		// Returns:   bool -false when image not exist
+		//************************************
+		bool setImages();
 
-		protected:
-			HRESULT SetInspectionData();
-			void refresh();
+	protected:
+		HRESULT SetInspectionData();
+		void refresh();
 
-			//******************************************************************************
-			// Class Wizard Generated Virtual Function(s):
-			//******************************************************************************
-			//{{AFX_VIRTUAL(SVToolAdjustmentDialogFilterPageClass)
-		protected:
-			virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV-Unterstützung
-			//}}AFX_VIRTUAL
+		//******************************************************************************
+		// Class Wizard Generated Virtual Function(s):
+		//******************************************************************************
+		//{{AFX_VIRTUAL(SVToolAdjustmentDialogFilterPageClass)
+	protected:
+		virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV-Unterstützung
+		//}}AFX_VIRTUAL
 
-			//************************************
-			// Method:    OnSetActive
-			// Description: is called when propertypage get active. set the image 
-			// Access:    public 
-			// Returns:   BOOL 
-			//************************************
-			virtual BOOL OnSetActive() override;
+		//************************************
+		// Method:    OnSetActive
+		// Description: is called when propertypage get active. set the image 
+		// Access:    public 
+		// Returns:   BOOL 
+		//************************************
+		virtual BOOL OnSetActive() override;
 
-			//******************************************************************************
-			// Class Wizard Generated Dialog Data:
-			//******************************************************************************
-		protected:
-			//{{AFX_DATA(SVToolAdjustmentDialogFilterPageClass)
-			enum { IDD = IDD_TA_FILTER_DIALOG };
-			CButton	m_btnProperties;
-			CButton	insertFilter;
-			SvMc::ObjectsListBox m_filterListBox;
-			PictureDisplay	dialogImage;
-			SvMc::AvailableObjectListComboBox m_availableFilterCB;
-			//}}AFX_DATA
+		//******************************************************************************
+		// Class Wizard Generated Dialog Data:
+		//******************************************************************************
+	protected:
+		//{{AFX_DATA(SVToolAdjustmentDialogFilterPageClass)
+		enum { IDD = IDD_TA_FILTER_DIALOG };
+		CButton	m_btnProperties;
+		CButton	insertFilter;
+		SvMc::ObjectsListBox m_filterListBox;
+		PictureDisplay	dialogImage;
+		SvMc::AvailableObjectListComboBox m_availableFilterCB;
+		//}}AFX_DATA
 
-			//******************************************************************************
-			// Data Element(s):
-			//******************************************************************************
-		protected:
-			const SVGUID m_InspectionID;
-			const SVGUID m_TaskObjectID;
-			SVGUID m_UnaryImageOperatorID;
-			ImageController m_ImageController;
-		};
-	}
-}
-
-namespace SvOg = Seidenader::SVOGui;
-
-//{{AFX_INSERT_LOCATION}}
-// Microsoft Visual C++ will insert additional declarations immediately before the previous line.
-
+		//******************************************************************************
+		// Data Element(s):
+		//******************************************************************************
+	protected:
+		const SVGUID m_InspectionID;
+		const SVGUID m_TaskObjectID;
+		SVGUID m_UnaryImageOperatorID;
+		ImageController m_ImageController;
+	};
+} //namespace SvOg

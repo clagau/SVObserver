@@ -4,7 +4,7 @@
 //*****************************************************************************
 #pragma once
 
-namespace Seidenader {	namespace SVUtilityLibrary	
+namespace SvUl
 {
 	/*
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -24,6 +24,4 @@ namespace Seidenader {	namespace SVUtilityLibrary
 			rDest &= ~bits;
 		}
 	}
-} /* namespace SVUtilityLibrary */ } /* namespace Seidenader */
-
-namespace SvUl = Seidenader::SVUtilityLibrary;
+} // namespace SvUl

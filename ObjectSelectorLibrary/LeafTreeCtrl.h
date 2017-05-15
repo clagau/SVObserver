@@ -19,7 +19,7 @@
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
-namespace Seidenader { 	namespace ObjectSelectorLibrary
+namespace SvOsl
 {
 	//Forward declarations
 	class ObjectSelectorPpg;
@@ -85,7 +85,5 @@ namespace Seidenader { 	namespace ObjectSelectorLibrary
 		SVString m_NodeLocation;						//The current node location
 	#pragma endregion Member Variables
 	};
-} /*namespace ObjectSelectorLibrary*/ } /*namespace Seidenader*/
-
-namespace SvOsl = Seidenader::ObjectSelectorLibrary;
+} //namespace SvOsl
 

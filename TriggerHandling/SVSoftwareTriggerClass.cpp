@@ -14,8 +14,8 @@
 #include "TriggerBasics.h"
 #include "SVIOLibrary/SVIOTriggerLoadLibraryClass.h"
 
-namespace Seidenader { namespace TriggerHandling {
-
+namespace SvTh
+{
 	SVSoftwareTriggerClass::SVSoftwareTriggerClass(LPCTSTR deviceName)
 	: SVTriggerClass(deviceName)
 	{
@@ -150,4 +150,4 @@ namespace Seidenader { namespace TriggerHandling {
 		return m_acquisitionInitiator.Exec();
 	}
 
-} /* namespace TriggerHandling */ } /* namespace Seidenader */
+} //namespace SvTh

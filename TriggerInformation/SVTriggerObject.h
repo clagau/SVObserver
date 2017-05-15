@@ -22,16 +22,14 @@ typedef HRESULT (CALLBACK *LPSVFINISHPROC)(void*,void*,void*);
 
 class SVOResponseClass; //defined in SVOLibrary/SVOResponseClass.cpp
 
-namespace Seidenader { namespace TriggerHandling {//AB namespace used only for forward declaration
+//Namespace used only for forward declaration
+namespace SvTh
+{
+	class SVTriggerClass;
+} //namespace SvTh
 
-class SVTriggerClass;
-
-} /* namespace TriggerHandling */ } /* namespace Seidenader */
-
-namespace SvTh = Seidenader::TriggerHandling;
-
-namespace Seidenader { namespace TriggerInformation {
-
+namespace SvTi
+{
 	class SVTriggerObject : public SVObjectClass
 	{
 	public:
@@ -77,6 +75,5 @@ namespace Seidenader { namespace TriggerInformation {
 		#endif
 	};
 	typedef SVVector<SVTriggerObject*> SVTriggerObjectPtrVector;
-} /* namespace TriggerInformation */ } /* namespace Seidenader */
 
-namespace SvTi = Seidenader::TriggerInformation;
+} //namespace SvTi

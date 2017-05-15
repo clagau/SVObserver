@@ -18,7 +18,7 @@
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace ObjectSelectorLibrary
+namespace SvOsl
 {
 	#pragma region Declarations
 	//Forward declarations
@@ -197,10 +197,8 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 	#pragma endregion Member Variables
 	};
 
-} /*namespace ObjectSelectorLibrary*/ } /*namespace Seidenader*/
+} //namespace SvOsl
 
 #pragma region Inline
 #include "ObjectTreeCtrl.inl"
 #pragma endregion Inline
-
-namespace SvOsl = Seidenader::ObjectSelectorLibrary;

@@ -7,7 +7,7 @@
 #include "SVMessage/SVMessage.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "ObjectInterfaces\SVObjectTypeInfoStruct.h"
-namespace Seidenader { namespace SVSharedMemoryLibrary
+namespace SvSml
 {
 	const DWORD MonitorListCpy::ImageBufferHeaderSize = 1024; 
 
@@ -212,8 +212,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		else
 		{
 			SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-			Exception.setMessage( SVMSG_SVO_44_SHARED_MEMORY, SvOi::Tid_ErrorWriteMonitorListNoSharedMemory, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_15020 );
+			Exception.setMessage( SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_ErrorWriteMonitorListNoSharedMemory, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_15020 );
 		}
 	}
-
-}}
+} //namespace SvSml

@@ -9,9 +9,9 @@
 
 #pragma once
 
-namespace Seidenader { namespace SVSharedMemoryLibrary{
-
-///class for holding memory for the imageBufferes in SharedMemory
+namespace SvSml
+{
+	///class for holding memory for the imageBufferes in SharedMemory
 	class SharedImageStore
 	{
 
@@ -47,8 +47,6 @@ namespace Seidenader { namespace SVSharedMemoryLibrary{
 		bip::shared_memory_object* m_pSharedMemoryObject;
 		bip::mapped_region*  m_pMappedRegion;
 	};
+	typedef  std::unique_ptr<SharedImageStore> ImageStorePointer;
 
-typedef  std::unique_ptr<SharedImageStore> ImageStorePointer;
-	
-} /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
-namespace SvSml = Seidenader::SVSharedMemoryLibrary;
+} //namespace SvSml

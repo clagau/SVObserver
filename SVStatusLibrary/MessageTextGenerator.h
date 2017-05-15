@@ -7,13 +7,13 @@
 #pragma once
 #pragma region Includes
 #include "SVUtilityLibrary\SVString.h"
-#include "ObjectInterfaces\MessageTextEnum.h"
+#include "SVStatusLibrary/MessageTextEnum.h"
 #pragma endregion Includes
 
 #pragma region Declarations
 #pragma endregion Declarations
 
-namespace Seidenader { namespace SVStatusLibrary
+namespace SvStl
 {
 	class MessageTextGenerator
 	{
@@ -33,14 +33,14 @@ namespace Seidenader { namespace SVStatusLibrary
 		/// \param additionalList [in] A list of the additional text parts
 		/// \returns SVString
 		//************************************
-		SVString getText(SvOi::MessageTextEnum messageId, const SVStringVector &additionalList = SVStringVector()) const;
+		SVString getText(MessageTextEnum messageId, const SVStringVector &additionalList = SVStringVector()) const;
 
 		//************************************
 		/// Convert an enum id to a string for setting it to the addtionalTextList.
 		/// \param id [in] the id
 		/// \returns SVString
 		//************************************
-		static SVString convertId2AddtionalText(SvOi::MessageTextEnum id);
+		static SVString convertId2AddtionalText(MessageTextEnum id);
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
@@ -63,6 +63,4 @@ namespace Seidenader { namespace SVStatusLibrary
 
 #pragma endregion Member Variables
 	};
-} /* namespace SVStatusLibrary */ } /* namespace Seidenader */
-
-namespace SvStl = Seidenader::SVStatusLibrary;
+} //namespace SvStl

@@ -23,9 +23,9 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-namespace Seidenader { namespace SVUtilityLibrary
+namespace SvUl
 {
-#pragma region Constructor
+	#pragma region Constructor
 	LoadDll::LoadDll()
 	{
 	}
@@ -34,9 +34,9 @@ namespace Seidenader { namespace SVUtilityLibrary
 	{
 		freeDlls();
 	}
-#pragma endregion Constructor
+	#pragma endregion Constructor
 
-#pragma region Public Methods
+	#pragma region Public Methods
 	LoadDll& LoadDll::Instance()
 	{
 		static LoadDll Object;
@@ -82,6 +82,6 @@ namespace Seidenader { namespace SVUtilityLibrary
 		}
 		m_DllsLoaded.clear();
 	}
-#pragma endregion Public Methods
-} /* namespace SVUtilityLibrary */ } /* namespace Seidenader */
+	#pragma endregion Public Methods
+} // namespace SvUl
 

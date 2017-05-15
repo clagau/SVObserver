@@ -358,12 +358,12 @@ HRESULT SVAcquisitionClass::LoadFiles(SVFileNameArrayClass &rArray)
 			if( LogOnly )
 			{
 				SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-				Exception.setMessage( SVMSG_SVO_74_LOAD_FILE, mFiles[l].GetFullFileName().c_str(), SvStl::SourceFileParams(StdMessageParams), SvOi::Err_25047_LoadFileFailed );
+				Exception.setMessage( SVMSG_SVO_74_LOAD_FILE, mFiles[l].GetFullFileName().c_str(), SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25047_LoadFileFailed );
 			}
 			else
 			{
 				SvStl::MessageMgrStd Exception( SvStl::LogAndDisplay );
-				if( IDYES == Exception.setMessage( SVMSG_SVO_74_LOAD_FILE, mFiles[l].GetFullFileName().c_str(), SvStl::SourceFileParams(StdMessageParams), SvOi::Err_25047_LoadFileFailed, SV_GUID_NULL, MB_YESNO ) )
+				if( IDYES == Exception.setMessage( SVMSG_SVO_74_LOAD_FILE, mFiles[l].GetFullFileName().c_str(), SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25047_LoadFileFailed, SV_GUID_NULL, MB_YESNO ) )
 				{
 					//All other missing files will only be logged
 					LogOnly = true;
@@ -730,7 +730,7 @@ HRESULT SVAcquisitionClass::GetNextIndex( SVDataManagerHandle &rDMHandle, SVData
 		SVStringVector msgList;
 		msgList.push_back(GetDeviceName());
 		SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-		Exception.setMessage( static_cast<DWORD> (hrOk), SvOi::Tid_SVAcquisitionClass_GetNextIndex, msgList, SvStl::SourceFileParams(StdMessageParams) );
+		Exception.setMessage( static_cast<DWORD> (hrOk), SvStl::Tid_SVAcquisitionClass_GetNextIndex, msgList, SvStl::SourceFileParams(StdMessageParams) );
 	}
 	
 	return hrOk;
@@ -858,9 +858,9 @@ void SVAcquisitionClass::DumpDMInfo( LPCTSTR p_szName ) const
 	}
 }
 
-SVClock::SVTimeStamp SVAcquisitionClass::GetTimeStamp() const
+SvTl::SVTimeStamp SVAcquisitionClass::GetTimeStamp() const
 {
-	SVClock::SVTimeStamp l_TimeStamp = SVClock::GetTimeStamp();
+	SvTl::SVTimeStamp l_TimeStamp = SvTl::GetTimeStamp();
 	return l_TimeStamp;
 }
 
@@ -894,7 +894,7 @@ int SVAcquisitionClass::GetBufferFormat() const
 {
 	int l_Format = SVImageFormatUnknown;
 
-	msvImageInfo.GetImageProperty( SVImagePropertyFormat, l_Format );
+	msvImageInfo.GetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyFormat, l_Format );
 
 	return l_Format;
 }

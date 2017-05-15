@@ -31,7 +31,7 @@ public:
 		SVArchiveRecord* pRecord;
 
 		// maintained by the thread class
-		SVClock::SVTimeStamp m_Timestamp;
+		SvTl::SVTimeStamp m_Timestamp;
 		SVImageObjectClassPtr pImageObject;
 
 		BufferInfo() : lBufferSize(0), m_Timestamp(0), pRecord(nullptr), pImageObject(nullptr) {}

@@ -28,7 +28,8 @@ typedef std::vector<SVString> SVStringVector;
 typedef std::vector<SVStringPair> StringPairVector;
 typedef std::map<SVString, SVString> TranslateMap;
 
-namespace Seidenader { namespace SVUtilityLibrary { namespace StringFunctions {
+namespace SvUl { namespace StringFunctions
+{
 
 	//************************************
 	/// Function to create a SVString from other objects
@@ -153,7 +154,6 @@ namespace Seidenader { namespace SVUtilityLibrary { namespace StringFunctions {
 	/// \returns SVString Created string with the loaded string
 	//************************************
 	SVString LoadSVString( UINT ResourceID );
-} /* namespace StringFunctions */ } /* namespace SVUtilityLibrary */ } /* namespace Seidenader */
+} /* namespace StringFunctions */ } /* namespace SvUl*/
 
-namespace SvUl = Seidenader::SVUtilityLibrary;
-namespace SvUl_SF = Seidenader::SVUtilityLibrary::StringFunctions;
+namespace SvUl_SF = SvUl::StringFunctions;

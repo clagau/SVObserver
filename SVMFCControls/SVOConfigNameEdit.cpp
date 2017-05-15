@@ -18,48 +18,44 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-namespace Seidenader
+namespace SvMc
 {
-	namespace SVMFCControls
+	CSVOConfigNameEdit::CSVOConfigNameEdit(LPCTSTR const sExcludedChars)
 	{
-		CSVOConfigNameEdit::CSVOConfigNameEdit(LPCTSTR const sExcludedChars)
+		m_sExcludedChars = sExcludedChars;
+	}
+
+	CSVOConfigNameEdit::~CSVOConfigNameEdit()
+	{
+	}
+
+
+	BEGIN_MESSAGE_MAP(CSVOConfigNameEdit, CEdit)
+		//{{AFX_MSG_MAP(CSVOConfigNameEdit)
+		ON_WM_CHAR()
+		//}}AFX_MSG_MAP
+	END_MESSAGE_MAP()
+
+	/////////////////////////////////////////////////////////////////////////////
+	// CSVOConfigNameEdit message handlers
+
+	void CSVOConfigNameEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) 
+	{
+		switch (nChar)
 		{
-			m_sExcludedChars = sExcludedChars;
-		}
-
-		CSVOConfigNameEdit::~CSVOConfigNameEdit()
-		{
-		}
-
-
-		BEGIN_MESSAGE_MAP(CSVOConfigNameEdit, CEdit)
-			//{{AFX_MSG_MAP(CSVOConfigNameEdit)
-			ON_WM_CHAR()
-			//}}AFX_MSG_MAP
-		END_MESSAGE_MAP()
-
-		/////////////////////////////////////////////////////////////////////////////
-		// CSVOConfigNameEdit message handlers
-
-		void CSVOConfigNameEdit::OnChar(UINT nChar, UINT nRepCnt, UINT nFlags) 
-		{
-			switch (nChar)
+		case VK_BACK:
 			{
-			case VK_BACK:
+				break;
+			}
+		default:
+			{
+				if (::_tcschr(m_sExcludedChars,nChar) )
 				{
-					break;
-				}
-			default:
-				{
-					if (::_tcschr(m_sExcludedChars,nChar) )
-					{
-						return;
-					}
+					return;
 				}
 			}
-
-			CEdit::OnChar(nChar, nRepCnt, nFlags);
 		}
-	} //SVMFCControls
-} //Seidenader
 
+		CEdit::OnChar(nChar, nRepCnt, nFlags);
+	}
+} //namespace SvMc

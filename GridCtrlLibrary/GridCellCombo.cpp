@@ -63,7 +63,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-namespace Seidenader { namespace GridCtrlLibrary
+namespace SvGcl
 {
 	/////////////////////////////////////////////////////////////////////////////
 	// CComboEdit
@@ -503,4 +503,4 @@ namespace Seidenader { namespace GridCtrlLibrary
 			m_Strings.Add(ar[i]);
 	}
 
-} /*namespace GridCtrlLibrary*/ } /*namespace Seidenader*/
+} // namespace SvGcl

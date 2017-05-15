@@ -25,7 +25,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-namespace Seidenader { namespace SVMFCControls
+namespace SvMc
 {
 	IMPLEMENT_DYNAMIC(ResizablePropertySheet, CPropertySheet)
 
@@ -253,6 +253,5 @@ namespace Seidenader { namespace SVMFCControls
 		return nRes;
 	}
 	#pragma endregion Protected Methods
-
-} /*namespace SVMFCControls*/ } /*namespace Seidenader*/
+} //namespace SvMc
 

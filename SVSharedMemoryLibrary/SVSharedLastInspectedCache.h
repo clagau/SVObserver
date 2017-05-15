@@ -14,7 +14,7 @@
 #include "SVSharedData.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace SVSharedMemoryLibrary
+namespace SvSml
 {
 	struct SVSharedLastInspectedCache
 	{
@@ -23,9 +23,6 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 
 		SVSharedLastInspectedCache(const void_allocator& rAlloc, size_t cache_size, size_t num_images, size_t num_values );
 	};
-
 	typedef bip::allocator<SVSharedLastInspectedCache, segment_manager_t> SVSharedLastInspectedCacheAllocator;
 
-} /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
-
-namespace SvSml = Seidenader::SVSharedMemoryLibrary;
+} //namespace SvSml

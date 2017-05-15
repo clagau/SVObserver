@@ -221,12 +221,12 @@ void SVChildrenSetupDialogClass::OnAddButton()
 					pObject->ConnectAllInputs();
 
 					// And finally try to create the child object...
-					if( !m_pParentObject->CreateChildObject(pObject, SVMFSetDefaultInputs | SVMFResetInspection ) )
+					if( !m_pParentObject->CreateChildObject(pObject, SvOi::SVMFSetDefaultInputs | SvOi::SVMFResetInspection ) )
 					{
 						SVStringVector msgList;
 						msgList.push_back(SVString(pObject->GetName()));
 						SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-						Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_CreationFailed, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10043 ); 
+						Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_CreationFailed, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10043 ); 
 
 						// Remove it from the Tool TaskObjectList ( Destruct it )
 						GUID objectID = pObject->GetUniqueObjectID();
@@ -269,7 +269,7 @@ void SVChildrenSetupDialogClass::OnRemoveButton()
 				if( rc )
 				{
 					// Close, Disconnect and Delete Children...
-					m_pParentObject->DestroyChildObject(pTaskObject, SVMFSetDefaultInputs | SVMFResetInspection );
+					m_pParentObject->DestroyChildObject(pTaskObject, SvOi::SVMFSetDefaultInputs | SvOi::SVMFResetInspection );
 				}
 			}
 		}
@@ -322,7 +322,7 @@ void SVChildrenSetupDialogClass::OnPublishButton()
 	SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSetAttributes );
 	SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterInput, SVString(m_pParentOwner->GetCompleteName()), SVString( _T("") ) );
 
-	SvOsl::SelectorOptions BuildOptions( m_pDocument->GetInspectionID(), SV_PUBLISHABLE, m_pParentObject->GetUniqueObjectID() );
+	SvOsl::SelectorOptions BuildOptions( m_pDocument->GetInspectionID(), SvOi::SV_PUBLISHABLE, m_pParentObject->GetUniqueObjectID() );
 	SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::NoSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<>>( BuildOptions );
 
 	SVString PublishableResults = SvUl_SF::LoadSVString( IDS_PUBLISHABLE_RESULTS );

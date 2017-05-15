@@ -33,7 +33,7 @@ typedef boost::shared_array<BYTE> bytes;
 
 extern volatile long g_sn;
 
-namespace Seidenader { namespace SVSocketLibrary
+namespace SvSol
 {
 	typedef SVSocketError::ErrorEnum Err;
 
@@ -150,9 +150,7 @@ namespace Seidenader { namespace SVSocketLibrary
 			return bDataAvail;
 		}
 	};
-} /*namespace SVSocketLibrary*/ } /*namespace Seidenader*/
-
-namespace SvSol = Seidenader::SVSocketLibrary;
+} //namespace SvSol
 
 #include "SVSocket.inl"
 

@@ -14,7 +14,7 @@
 #include "ObjectSelectorItem.h"
 #pragma endregion Includes
 
-namespace Sv { namespace Container
+namespace SvCl
 {
 	#pragma region Constructor
 	ObjectSelectorItem::ObjectSelectorItem()
@@ -234,4 +234,4 @@ namespace Sv { namespace Container
 	}
 	#pragma endregion Public Methods
 
-} /*namespace SVContainerLibrary*/ } /*namespace Seidenader*/
+} //namespace SvCl

@@ -87,7 +87,7 @@ static SVMaterialsTree::iterator GetBaseNode(SVMaterialsTree& rTree, const SVStr
 	SVMaterialsTree::iterator it( SVMaterialsTree::find( rTree, SearchKey ));
 	if (it == rTree.end())
 	{
-		SVMaterialsTree::SVTreeElement Element( SearchKey, SVMaterialDataPtr( nullptr ) );
+		SVMaterialsTree::SVTreeElement Element( SearchKey, SvXml::SVMaterialDataPtr( nullptr ) );
 		SVMaterialsTree::iterator Iter( rTree.insert(Element) );
 		return Iter;
 	}
@@ -112,7 +112,7 @@ static SVMaterialsTree::iterator GetOptionNode(SVMaterialsTree& rTree, const SVS
 			}
 			else
 			{
-				SVMaterialsTree::SVTreeElement Element(Key, SVMaterialDataPtr( nullptr ) );
+				SVMaterialsTree::SVTreeElement Element(Key, SvXml::SVMaterialDataPtr( nullptr ) );
 				SVMaterialsTree::iterator NewIter( pSubTree->insert( Element ) );
 				if( pSubTree->end() != NewIter )
 				{
@@ -263,7 +263,7 @@ HRESULT SVGigeCameraFileReader::ReadCustomParams(const SVString& filename, SVDev
 						SVMaterialsTree::iterator it = GetBaseNode(customParams, splitContainer[0]);
 						if( customParams.end() != it )
 						{
-							SVMaterialDataPtr pMaterial = new SVMaterialData( _variant_t( splitContainer[1].c_str() ) );
+							SvXml::SVMaterialDataPtr pMaterial = new SvXml::SVMaterialData( _variant_t( splitContainer[1].c_str() ) );
 							it.node()->insert( SVMaterialsTree::SVTreeElement( SVString(cValue), pMaterial ));
 						}
 					}
@@ -274,8 +274,8 @@ HRESULT SVGigeCameraFileReader::ReadCustomParams(const SVString& filename, SVDev
 						SVMaterialsTree::iterator it = GetBaseNode(customParams, splitContainer[0]);
 						if( customParams.end() != it )
 						{
-							SVMaterialDataPtr pMaterial = new SVMaterialData( _variant_t( splitContainer[2].c_str() ) );
-							it.node()->insert( SVMaterialsTree::SVTreeElement( SVString(splitContainer[1].c_str()), pMaterial ));
+							SvXml::SVMaterialDataPtr pMaterial = new SvXml::SVMaterialData( _variant_t( splitContainer[2].c_str() ) );
+							it.node()->insert(SVMaterialsTree::SVTreeElement( SVString(splitContainer[1].c_str()), pMaterial ));
 						}
 					}
 					break;
@@ -285,7 +285,7 @@ HRESULT SVGigeCameraFileReader::ReadCustomParams(const SVString& filename, SVDev
 						SVMaterialsTree::iterator it = GetOptionNode(customParams, splitContainer[0], splitContainer[1] + "_" + splitContainer[2]);
 						if( customParams.end() != it )
 						{
-							SVMaterialDataPtr pMaterial = new SVMaterialData( _variant_t( splitContainer[3].c_str() ) );
+							SvXml::SVMaterialDataPtr pMaterial = new SvXml::SVMaterialData( _variant_t( splitContainer[3].c_str() ) );
 							it.node()->insert( SVMaterialsTree::SVTreeElement( SVString(cValue), pMaterial ));
 						}
 					}
@@ -296,7 +296,7 @@ HRESULT SVGigeCameraFileReader::ReadCustomParams(const SVString& filename, SVDev
 						SVMaterialsTree::iterator it = GetOptionNode(customParams, splitContainer[0], splitContainer[1] + "_" + splitContainer[2]);
 						if( customParams.end() != it )
 						{
-							SVMaterialDataPtr pMaterial = new SVMaterialData( _variant_t( splitContainer[4].c_str() ) );
+							SvXml::SVMaterialDataPtr pMaterial = new SvXml::SVMaterialData( _variant_t( splitContainer[4].c_str() ) );
 							it.node()->insert( SVMaterialsTree::SVTreeElement( SVString(splitContainer[3].c_str()), pMaterial ));
 						}
 					}

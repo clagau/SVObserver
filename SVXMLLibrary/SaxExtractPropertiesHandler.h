@@ -22,9 +22,8 @@
 #pragma region Declarations
 #pragma endregion Declarations
 
-namespace Seidenader { namespace  SVXMLLibrary
+namespace SvXml
 {
-
 	struct SaxProperty
 	{
 		SaxProperty(): Type(VT_I4),
@@ -167,6 +166,4 @@ namespace Seidenader { namespace  SVXMLLibrary
 
 #pragma endregion Member variables
 	};
-} /* namespace SVXMLLibrary */ } /* namespace Seidenader */
-
-namespace SvXml = Seidenader::SVXMLLibrary;
+} //namespace SvXml

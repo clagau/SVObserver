@@ -1037,7 +1037,7 @@ HRESULT SVMatroxGige::CameraEndFrame( SVMatroxGigeDigitizer& p_rCamera, SVMatrox
 {
 	HRESULT hr = S_OK;
 
-	SVClock::SVTimeStamp l_StartFrameTimeStamp = p_rCamera.m_StartFrameTimeStamp;
+	SvTl::SVTimeStamp l_StartFrameTimeStamp = p_rCamera.m_StartFrameTimeStamp;
 
 	p_rCamera.m_StartFrameTimeStamp = 0;
 
@@ -1511,7 +1511,7 @@ SVMatroxIdentifier SVMatroxGige::CameraPresentCallback( SVMatroxIdentifier HookT
 				SVStringVector msgList;
 				msgList.push_back(SvUl_SF::Format(_T("%d"), deviceNumber));
 				SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-				Exception.setMessage( SVMSG_SVMATROXGIGE_NO_ERROR, SvOi::Tid_MatroxGigE_Connect, msgList, SvStl::SourceFileParams(StdMessageParams) );
+				Exception.setMessage( SVMSG_SVMATROXGIGE_NO_ERROR, SvStl::Tid_MatroxGigE_Connect, msgList, SvStl::SourceFileParams(StdMessageParams) );
 
 				g_svTheApp.m_svSystem.HandleConnect(system, static_cast<unsigned char>(deviceNumber));
 			}
@@ -1521,7 +1521,7 @@ SVMatroxIdentifier SVMatroxGige::CameraPresentCallback( SVMatroxIdentifier HookT
 				SVStringVector msgList;
 				msgList.push_back(SvUl_SF::Format(_T("%d"), deviceNumber));
 				SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-				Exception.setMessage( SVMSG_SVMATROXGIGE_NO_ERROR, SvOi::Tid_MatroxGigE_Disconnect, msgList, SvStl::SourceFileParams(StdMessageParams) );
+				Exception.setMessage( SVMSG_SVMATROXGIGE_NO_ERROR, SvStl::Tid_MatroxGigE_Disconnect, msgList, SvStl::SourceFileParams(StdMessageParams) );
 
 				g_svTheApp.m_svSystem.HandleDisconnect(system, deviceNumber);
 			}
@@ -1575,7 +1575,7 @@ void SVMatroxGige::HandleConnect(SVMatroxGigeSystem& p_rSystem, long deviceNumbe
 										msgList.push_back(SvUl_SF::Format(_T("%d"), hr));
 										msgList.push_back(SvUl_SF::Format(_T("%d"), deviceNumber));
 										SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-										Exception.setMessage( SVMSG_MATROX_GIGE_RECONNECT_ERROR, SvOi::Tid_MatroxGigE_Connect_StartDigitizerError, msgList, SvStl::SourceFileParams(StdMessageParams) );
+										Exception.setMessage( SVMSG_MATROX_GIGE_RECONNECT_ERROR, SvStl::Tid_MatroxGigE_Connect_StartDigitizerError, msgList, SvStl::SourceFileParams(StdMessageParams) );
 									}
 								}
 								else
@@ -1585,7 +1585,7 @@ void SVMatroxGige::HandleConnect(SVMatroxGigeSystem& p_rSystem, long deviceNumbe
 									msgList.push_back(SvUl_SF::Format(_T("%d"), hr));
 									msgList.push_back(SvUl_SF::Format(_T("%d"), deviceNumber));
 									SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-									Exception.setMessage( SVMSG_MATROX_GIGE_RECONNECT_ERROR, SvOi::Tid_MatroxGigE_Connect_ReloadError, msgList, SvStl::SourceFileParams(StdMessageParams) );
+									Exception.setMessage( SVMSG_MATROX_GIGE_RECONNECT_ERROR, SvStl::Tid_MatroxGigE_Connect_ReloadError, msgList, SvStl::SourceFileParams(StdMessageParams) );
 								}
 							}
 							else
@@ -1595,7 +1595,7 @@ void SVMatroxGige::HandleConnect(SVMatroxGigeSystem& p_rSystem, long deviceNumbe
 								msgList.push_back(SvUl_SF::Format(_T("%d"), hr));
 								msgList.push_back(SvUl_SF::Format(_T("%d"), deviceNumber));
 								SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-								Exception.setMessage( SVMSG_MATROX_GIGE_RECONNECT_ERROR, SvOi::Tid_MatroxGigE_Connect_CreateError, msgList, SvStl::SourceFileParams(StdMessageParams) );
+								Exception.setMessage( SVMSG_MATROX_GIGE_RECONNECT_ERROR, SvStl::Tid_MatroxGigE_Connect_CreateError, msgList, SvStl::SourceFileParams(StdMessageParams) );
 							}
 						}
 						else
@@ -1605,7 +1605,7 @@ void SVMatroxGige::HandleConnect(SVMatroxGigeSystem& p_rSystem, long deviceNumbe
 							msgList.push_back(SvUl_SF::Format(_T("%d"), hr));
 							msgList.push_back(SvUl_SF::Format(_T("%d"), deviceNumber));
 							SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-							Exception.setMessage( SVMSG_MATROX_GIGE_RECONNECT_ERROR, SvOi::Tid_MatroxGigE_Connect_ReadError, msgList, SvStl::SourceFileParams(StdMessageParams) );
+							Exception.setMessage( SVMSG_MATROX_GIGE_RECONNECT_ERROR, SvStl::Tid_MatroxGigE_Connect_ReadError, msgList, SvStl::SourceFileParams(StdMessageParams) );
 						}
 					}
 				}
@@ -1616,7 +1616,7 @@ void SVMatroxGige::HandleConnect(SVMatroxGigeSystem& p_rSystem, long deviceNumbe
 					msgList.push_back(SvUl_SF::Format(_T("%d"), hr));
 					msgList.push_back(SvUl_SF::Format(_T("%d"), deviceNumber));
 					SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-					Exception.setMessage( SVMSG_MATROX_GIGE_RECONNECT_ERROR, SvOi::Tid_MatroxGigE_Connect_AllocError, msgList, SvStl::SourceFileParams(StdMessageParams) );
+					Exception.setMessage( SVMSG_MATROX_GIGE_RECONNECT_ERROR, SvStl::Tid_MatroxGigE_Connect_AllocError, msgList, SvStl::SourceFileParams(StdMessageParams) );
 				}
 			}
 		}
@@ -1627,7 +1627,7 @@ void SVMatroxGige::HandleConnect(SVMatroxGigeSystem& p_rSystem, long deviceNumbe
 			msgList.push_back(SvUl_SF::Format(_T("%d"), hr));
 			msgList.push_back(SvUl_SF::Format(_T("%d"), deviceNumber));
 			SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-			Exception.setMessage( SVMSG_MATROX_GIGE_RECONNECT_ERROR, SvOi::Tid_MatroxGigE_Connect_GetDigitizerError, msgList, SvStl::SourceFileParams(StdMessageParams) );
+			Exception.setMessage( SVMSG_MATROX_GIGE_RECONNECT_ERROR, SvStl::Tid_MatroxGigE_Connect_GetDigitizerError, msgList, SvStl::SourceFileParams(StdMessageParams) );
 		}
 	}
 	else
@@ -1637,7 +1637,7 @@ void SVMatroxGige::HandleConnect(SVMatroxGigeSystem& p_rSystem, long deviceNumbe
 		msgList.push_back(SvUl_SF::Format(_T("%d"), hr));
 		msgList.push_back(SvUl_SF::Format(_T("%d"), deviceNumber));
 		SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-		Exception.setMessage( SVMSG_MATROX_GIGE_RECONNECT_ERROR, SvOi::Tid_MatroxGigE_Connect_FindCameraError, msgList, SvStl::SourceFileParams(StdMessageParams) );
+		Exception.setMessage( SVMSG_MATROX_GIGE_RECONNECT_ERROR, SvStl::Tid_MatroxGigE_Connect_FindCameraError, msgList, SvStl::SourceFileParams(StdMessageParams) );
 	}
 }
 
@@ -1670,7 +1670,7 @@ void SVMatroxGige::HandleDisconnect(SVMatroxGigeSystem& p_rSystem, long deviceNu
 			msgList.push_back(SvUl_SF::Format(_T("%d"), hr));
 			msgList.push_back(SvUl_SF::Format(_T("%d"), deviceNumber));
 			SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-			Exception.setMessage( SVMSG_MATROX_GIGE_DISCONNECT_ERROR, SvOi::Tid_MatroxGigE_Disconnect_GetDigitizerError, msgList, SvStl::SourceFileParams(StdMessageParams) );
+			Exception.setMessage( SVMSG_MATROX_GIGE_DISCONNECT_ERROR, SvStl::Tid_MatroxGigE_Disconnect_GetDigitizerError, msgList, SvStl::SourceFileParams(StdMessageParams) );
 		}
 	}
 	else
@@ -1680,7 +1680,7 @@ void SVMatroxGige::HandleDisconnect(SVMatroxGigeSystem& p_rSystem, long deviceNu
 		msgList.push_back(SvUl_SF::Format(_T("%d"), hr));
 		msgList.push_back(SvUl_SF::Format(_T("%d"), deviceNumber));
 		SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-		Exception.setMessage( SVMSG_MATROX_GIGE_DISCONNECT_ERROR, SvOi::Tid_MatroxGigE_Disconnect_FindCameraError, msgList, SvStl::SourceFileParams(StdMessageParams) );
+		Exception.setMessage( SVMSG_MATROX_GIGE_DISCONNECT_ERROR, SvStl::Tid_MatroxGigE_Disconnect_FindCameraError, msgList, SvStl::SourceFileParams(StdMessageParams) );
 	}
 }
 

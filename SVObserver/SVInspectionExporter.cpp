@@ -45,7 +45,7 @@ static LPCTSTR scExportExt = _T(".bxp");
 static LPCTSTR scColorExportExt = _T(".cxp");
 #pragma endregion Declarations
 
-static void WriteBaseNode(SVObjectXMLWriter& rWriter)
+static void WriteBaseNode(SvXml::SVObjectXMLWriter& rWriter)
 {
 	//<NODE xmlns="x-schema:#SVR00001" Name="Base" Type="SV_BASENODE">
 	_variant_t xmlnsValue;
@@ -59,18 +59,18 @@ static void WriteBaseNode(SVObjectXMLWriter& rWriter)
 	rWriter.ElementAttribute("Type", value);
 }
 
-static void WriteVersion(SVObjectXMLWriter& rWriter, unsigned long p_version)
+static void WriteVersion(SvXml::SVObjectXMLWriter& rWriter, unsigned long p_version)
 {
 	_variant_t version(p_version);
 
-	rWriter.StartElement(CTAG_ENVIRONMENT);
-	rWriter.WriteAttribute(CTAG_VERSION_NUMBER, version);
+	rWriter.StartElement(SvXml::CTAG_ENVIRONMENT);
+	rWriter.WriteAttribute(SvXml::CTAG_VERSION_NUMBER, version);
 	rWriter.EndElement();
 }
 
-static void WritePPQInputs(SVObjectXMLWriter& rWriter, SVObjectClass* pObject)
+static void WritePPQInputs(SvXml::SVObjectXMLWriter& rWriter, SVObjectClass* pObject)
 {
-	rWriter.StartElement(CTAG_PPQ);
+	rWriter.StartElement(SvXml::CTAG_PPQ);
 
 	SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*> (pObject);
 	if ( nullptr != pInspection )
@@ -84,9 +84,9 @@ static void WritePPQInputs(SVObjectXMLWriter& rWriter, SVObjectClass* pObject)
 	rWriter.EndElement();
 }
 
-static void WriteGlobalConstants(SVObjectXMLWriter& rWriter, SVObjectClass* pObject)
+static void WriteGlobalConstants(SvXml::SVObjectXMLWriter& rWriter, SVObjectClass* pObject)
 {
-	rWriter.StartElement(CTAG_GLOBAL_CONSTANTS);
+	rWriter.StartElement(SvXml::CTAG_GLOBAL_CONSTANTS);
 
 	SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*> (pObject);
 	if ( nullptr != pInspection && nullptr != pInspection->GetToolSet() )
@@ -126,13 +126,13 @@ static void WriteGlobalConstants(SVObjectXMLWriter& rWriter, SVObjectClass* pObj
 
 				_variant_t Value;
 				pGlobalConstant->getValue( Value );
-				rWriter.WriteAttribute( CTAG_VALUE, Value );
+				rWriter.WriteAttribute( SvXml::CTAG_VALUE, Value );
 				Value.Clear();
 				SVString Description( pGlobalConstant->getDescription() );
 				//This is needed to remove any CR LF in the description
 				SvUl::AddEscapeSpecialCharacters( Description, true );
 				Value.SetString( Description.c_str() );
-				rWriter.WriteAttribute( CTAG_DESCRIPTION, Value );
+				rWriter.WriteAttribute( SvXml::CTAG_DESCRIPTION, Value );
 
 				rWriter.EndElement();
 			}
@@ -159,7 +159,7 @@ static bool ShouldExcludeFile(LPCTSTR filename)
 	return bRetVal;
 }
 
-static void WriteDependentFileList(SVObjectXMLWriter& rWriter, const SVString& dstZipFile)
+static void WriteDependentFileList(SvXml::SVObjectXMLWriter& rWriter, const SVString& dstZipFile)
 {
 	// remove existing file
 	if (::_access(dstZipFile.c_str(), 0) == 0)
@@ -174,7 +174,7 @@ static void WriteDependentFileList(SVObjectXMLWriter& rWriter, const SVString& d
 	{
 		SVStringSet DependencyFileNames;
 
-		rWriter.StartElement(CTAG_DEPENDENT_FILES);
+		rWriter.StartElement(SvXml::CTAG_DEPENDENT_FILES);
 		do
 		{
 			if (!(findFileData.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) &&
@@ -194,7 +194,7 @@ static void WriteDependentFileList(SVObjectXMLWriter& rWriter, const SVString& d
 				{
 					_variant_t value;
 					value.SetString(findFileData.cFileName);
-					rWriter.WriteAttribute(CTAG_FILENAME, value);
+					rWriter.WriteAttribute(SvXml::CTAG_FILENAME, value);
 
 					SVString srcFile = SvStl::GlobalPath::Inst().GetRunPath().c_str();
 					srcFile += "\\";
@@ -240,7 +240,7 @@ static void PersistDocument(const SVGUID& inspectionGuid, SVObjectWriter& rWrite
 	SVIPDoc* pDoc =  TheSVObserverApp.GetIPDoc(inspectionGuid);
 	if (pDoc)
 	{
-		rWriter.StartElement(CTAG_SVIPDOC);
+		rWriter.StartElement(SvXml::CTAG_SVIPDOC);
 
 		// Save the View Info
 		pDoc->SaveViews(rWriter);
@@ -277,7 +277,7 @@ HRESULT SVInspectionExporter::Export(const SVString& filename, const SVString& i
 			os.open( dstXmlFile.c_str() );
 			if (os.is_open())
 			{
-				SVObjectXMLWriter writer(os);
+				SvXml::SVObjectXMLWriter writer(os);
 
 				writer.WriteRootElement(_T("Inspection_Export"));
 				writer.WriteSchema();

@@ -35,7 +35,7 @@ static char THIS_FILE[] = __FILE__;
 
 #pragma region Constructor
 SVResultListClass::SVResultListClass()
-: m_ResultViewReferences(CTAG_VIEWEDRESULTS)
+: m_ResultViewReferences(SvXml::CTAG_VIEWEDRESULTS)
 {
 }
 
@@ -81,7 +81,7 @@ void SVResultListClass::Refresh(SVTaskObjectClass* pRootObject)
 	m_ResultViewReferences.RebuildReferenceVector(dynamic_cast<SVInspectionProcess*>(m_pToolSet->GetInspection()));
 }
 
-SVClock::SVTimeStamp SVResultListClass::getUpdateTimeStamp()
+SvTl::SVTimeStamp SVResultListClass::getUpdateTimeStamp()
 {
 	return m_ResultViewReferences.getUpdateTimeStamp();
 }
@@ -105,14 +105,14 @@ bool SVResultListClass::LoadViewedVariables(ResultViewReferences::SVTreeType& rT
 
 	ResultViewReferences::SVTreeType::SVBranchHandle htiChild = nullptr;
 
-	if (SVNavigateTree::GetItemBranch(rTree, CTAG_VIEWEDVARIABLES, htiParent, htiChild))
+	if (SvXml::SVNavigateTree::GetItemBranch(rTree, SvXml::CTAG_VIEWEDVARIABLES, htiParent, htiChild))
 	{
 		SevenTwoCfg = m_ResultViewReferences.Load( rTree, htiChild );
 		if ( false == SevenTwoCfg )
 		{
 			///older configurations may have a ViewedEnvVariables entry! 
-			m_ResultViewReferences.Load( rTree, htiChild, CTAG_VIEWEDENVARIABLES);
-			SevenOneCfg = m_ResultViewReferences.Load( rTree, htiChild, CTAG_VIEWEDTOOLVARIABLES);
+			m_ResultViewReferences.Load( rTree, htiChild, SvXml::CTAG_VIEWEDENVARIABLES);
+			SevenOneCfg = m_ResultViewReferences.Load( rTree, htiChild, SvXml::CTAG_VIEWEDTOOLVARIABLES);
 		}
 	}
 	

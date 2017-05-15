@@ -38,7 +38,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-namespace Seidenader { namespace SVOGui
+namespace SvOg
 {
 #pragma region Declarations
 	static const std::string RingDepthTag("RingDepth");
@@ -201,7 +201,7 @@ bool TADialogRingBufferParameterPage::QueryAllowExit()
 			msgList.push_back( SvUl_SF::Format(_T("%d"), SvOi::cRingBufferDepthMin) );
 			msgList.push_back( SvUl_SF::Format(_T("%d"), SvOi::cRingBufferDepthMax) );
 			msgList.push_back( Value );
-			Exception.setMessage( SVMSG_SVO_62_RINGBUFFER_INVALID_VALUE, SvOi::Tid_RingBuffer_Depth_Invalid_ValueString, msgList, SvStl::SourceFileParams(StdMessageParams), Result );
+			Exception.setMessage( SVMSG_SVO_62_RINGBUFFER_INVALID_VALUE, SvStl::Tid_RingBuffer_Depth_Invalid_ValueString, msgList, SvStl::SourceFileParams(StdMessageParams), Result );
 			Result = E_FAIL;
 		}
 
@@ -222,4 +222,4 @@ bool TADialogRingBufferParameterPage::QueryAllowExit()
 		return Result;
 	}
 #pragma endregion Private Methods
-} /* namespace SVOGui */ } /* namespace Seidenader */
+} //namespace SvOg

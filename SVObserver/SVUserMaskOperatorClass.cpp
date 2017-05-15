@@ -129,9 +129,9 @@ BOOL SVUserMaskOperatorClass::CreateObject( SVObjectLevelCreateStruct* PCreateSt
 {
 	BOOL bOk = SVUnaryImageOperatorClass::CreateObject( PCreateStructure );
 
-	const UINT cAttributes = SV_PRINTABLE | SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE;
+	const UINT cAttributes = SvOi::SV_PRINTABLE | SvOi::SV_REMOTELY_SETABLE | SvOi::SV_SETABLE_ONLINE;
 	// Set / Reset Printable Flag
-	m_Data.bvoActivated.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_Data.bvoActivated.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
 	m_Data.evoDrawCriteria.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 	m_Data.dwvoMaskType.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
 	m_Data.evoCurrentMaskOperator.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );
@@ -159,21 +159,21 @@ bool SVUserMaskOperatorClass::ResetObject(SvStl::MessageContainerVector *pErrorM
 		Result = pShapeHelper->ResetObject(pErrorMessages) && Result;
 
 		SvOi::SetAttributeType AddRemoveType = (dwMaskType == MASK_TYPE_SHAPE) ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
-		pShapeHelper->SetObjectAttributesAllowed( SV_PRINTABLE | SV_VIEWABLE, AddRemoveType );
-		pShapeHelper->SetObjectAttributesSet( SV_PRINTABLE, AddRemoveType );
-		pShapeHelper->SetObjectAttributesAllowed( SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
-		pShapeHelper->SetObjectAttributesSet( SV_SETABLE_ONLINE | SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
+		pShapeHelper->SetObjectAttributesAllowed( SvOi::SV_PRINTABLE | SvOi::SV_VIEWABLE, AddRemoveType );
+		pShapeHelper->SetObjectAttributesSet( SvOi::SV_PRINTABLE, AddRemoveType );
+		pShapeHelper->SetObjectAttributesAllowed( SvOi::SV_SETABLE_ONLINE | SvOi::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
+		pShapeHelper->SetObjectAttributesSet( SvOi::SV_SETABLE_ONLINE | SvOi::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
 		AddRemoveType = (dwMaskType == MASK_TYPE_SHAPE) && bActive ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
-		m_Data.evoFillArea.SetObjectAttributesAllowed( SV_PRINTABLE | SV_VIEWABLE, AddRemoveType  );
-		m_Data.evoFillArea.SetObjectAttributesSet( SV_PRINTABLE, AddRemoveType );
-		m_Data.lvoFillColor.SetObjectAttributesAllowed( SV_PRINTABLE | SV_VIEWABLE, AddRemoveType  );
-		m_Data.lvoFillColor.SetObjectAttributesSet( SV_PRINTABLE, AddRemoveType  );
+		m_Data.evoFillArea.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE | SvOi::SV_VIEWABLE, AddRemoveType  );
+		m_Data.evoFillArea.SetObjectAttributesSet( SvOi::SV_PRINTABLE, AddRemoveType );
+		m_Data.lvoFillColor.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE | SvOi::SV_VIEWABLE, AddRemoveType  );
+		m_Data.lvoFillColor.SetObjectAttributesSet( SvOi::SV_PRINTABLE, AddRemoveType  );
 
 		if ( !bActive )
 		{
 			//turn off items.
-			m_Data.evoFillArea.SetObjectAttributesSet( SV_PRINTABLE| SV_VIEWABLE, SvOi::SetAttributeType::RemoveAttribute );
-			m_Data.lvoFillColor.SetObjectAttributesSet( SV_PRINTABLE| SV_VIEWABLE, SvOi::SetAttributeType::RemoveAttribute );
+			m_Data.evoFillArea.SetObjectAttributesSet( SvOi::SV_PRINTABLE| SvOi::SV_VIEWABLE, SvOi::SetAttributeType::RemoveAttribute );
+			m_Data.lvoFillColor.SetObjectAttributesSet( SvOi::SV_PRINTABLE| SvOi::SV_VIEWABLE, SvOi::SetAttributeType::RemoveAttribute );
 		}
 	}
 	else
@@ -181,7 +181,7 @@ bool SVUserMaskOperatorClass::ResetObject(SvStl::MessageContainerVector *pErrorM
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_NoShapeHelper, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_NoShapeHelper, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -199,7 +199,7 @@ bool SVUserMaskOperatorClass::ResetObject(SvStl::MessageContainerVector *pErrorM
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_CreateBufferFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_CreateBufferFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -754,7 +754,7 @@ bool SVUserMaskOperatorClass::onRun( bool First, SVSmartHandlePointer RInputImag
 							{
 								if (nullptr != pErrorMessages)
 								{
-									SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_UpdateBufferFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+									SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UpdateBufferFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 									pErrorMessages->push_back(Msg);
 								}
 								// Signal that something was wrong...
@@ -773,7 +773,7 @@ bool SVUserMaskOperatorClass::onRun( bool First, SVSmartHandlePointer RInputImag
 						{
 							if (nullptr != pErrorMessages)
 							{
-								SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_CopyImagesFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+								SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_CopyImagesFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 								pErrorMessages->push_back(Msg);
 							}
 							// Signal that something was wrong...
@@ -786,7 +786,7 @@ bool SVUserMaskOperatorClass::onRun( bool First, SVSmartHandlePointer RInputImag
 					{
 						if (nullptr != pErrorMessages)
 						{
-							SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+							SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 							pErrorMessages->push_back(Msg);
 						}
 						// Signal that something was wrong...
@@ -815,7 +815,7 @@ bool SVUserMaskOperatorClass::onRun( bool First, SVSmartHandlePointer RInputImag
 			{
 				if (nullptr != pErrorMessages)
 				{
-					SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_RunArithmeticFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+					SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_RunArithmeticFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 					pErrorMessages->push_back(Msg);
 				}
 				// Signal that something was wrong...
@@ -867,7 +867,7 @@ bool SVUserMaskOperatorClass::onRun( bool First, SVSmartHandlePointer RInputImag
 		{
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 				pErrorMessages->push_back(Msg);
 			}
 		}
@@ -923,7 +923,7 @@ SvOi::MatroxImageSmartHandlePtr SVUserMaskOperatorClass::GetReferenceImage() con
 	SVImageClass* pImage = const_cast<SVUserMaskOperatorClass*>(this)->getReferenceImage();
 	if (pImage)
 	{
-		if (SVImageTypePhysical == pImage->GetImageType())
+		if (SvOi::SVImageTypeEnum::SVImageTypePhysical == pImage->GetImageType())
 		{
 			handlePtr = pImage->GetParentImageInterface()->getImageData();
 		}

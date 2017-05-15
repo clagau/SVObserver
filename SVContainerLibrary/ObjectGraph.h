@@ -26,7 +26,7 @@
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
-namespace Sv { namespace Container
+namespace SvCl
 {
 	#pragma region Declarations
 	struct edge_type_t 
@@ -188,12 +188,10 @@ namespace Sv { namespace Container
 		SVString m_DotGraph;
 	#pragma endregion Member Variables
 	};
-} /* namespace SVContainerLibrary */ } /* namespace Seidenader */
+} //namespace SvCl
 
 #pragma region Inline
 #include "GraphVizHelper.inl"
 #include "BGLVisitorFilterEdges.inl"
 #include "ObjectGraph.inl"
 #pragma endregion Inline
-
-namespace SvCl = Sv::Container;

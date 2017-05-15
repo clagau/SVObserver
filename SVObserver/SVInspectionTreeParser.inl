@@ -78,7 +78,7 @@ template< typename SVTreeType >
 bool SVInspectionTreeParser< SVTreeType >::GetItemValue(const SVString& tag, typename SVTreeType::SVBranchHandle hItem, _variant_t& rValue)
 {
 	m_count++;
-	return SVNavigateTree::GetItem(m_rTree, tag.c_str(), hItem, rValue) ? true : false;
+	return SvXml::SVNavigateTree::GetItem(m_rTree, tag.c_str(), hItem, rValue) ? true : false;
 }
 
 template< typename SVTreeType >
@@ -87,7 +87,7 @@ bool SVInspectionTreeParser< SVTreeType >::GetValues(typename SVTreeType::SVBran
 	bool bRetVal = false;
 
 	SVTreeType::SVBranchHandle hBranch = nullptr;
-	SVNavigateTree::GetItemBranch(m_rTree, tag.c_str(), hItem, hBranch);
+	SvXml::SVNavigateTree::GetItemBranch(m_rTree, tag.c_str(), hItem, hBranch);
 	if(nullptr != hBranch)
 	{
 		bRetVal = true;
@@ -124,15 +124,15 @@ HRESULT SVInspectionTreeParser< SVTreeType >::Process(typename SVTreeType::SVBra
 		_variant_t classID;
 		_variant_t uniqueID;
 		
-		SVNavigateTree::GetItem(m_rTree, scObjectNameTag, hItem, objectName);
+		SvXml::SVNavigateTree::GetItem(m_rTree, scObjectNameTag, hItem, objectName);
 		m_count++;
 
-		SVNavigateTree::GetItem(m_rTree, scClassIDTag, hItem, classID);
+		SvXml::SVNavigateTree::GetItem(m_rTree, scClassIDTag, hItem, classID);
 		m_count++;
 
 		if( m_ReplaceUniqueID )
 		{
-			SVNavigateTree::GetItem(m_rTree, scUniqueReferenceIDTag, hItem, uniqueID);
+			SvXml::SVNavigateTree::GetItem(m_rTree, scUniqueReferenceIDTag, hItem, uniqueID);
 		}
 		m_count++;
 		
@@ -176,12 +176,12 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessChildren(typename SVTreeTyp
 
 	_variant_t value;
 
-	if (SVNavigateTree::GetItem(m_rTree, scEquationBufferTag, hParentItem, value))
+	if (SvXml::SVNavigateTree::GetItem(m_rTree, scEquationBufferTag, hParentItem, value))
 	{
 		hr = ProcessEquation(ownerID, value);
 	}
 
-	if (SVNavigateTree::GetItem(m_rTree, scMaskDataTag, hParentItem, value))
+	if (SvXml::SVNavigateTree::GetItem(m_rTree, scMaskDataTag, hParentItem, value))
 	{
 		hr = ProcessMaskData(ownerID, value);
 	}
@@ -212,7 +212,7 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessChildren(typename SVTreeTyp
 			else 
 			{
 				// process this node
-				if (SVNavigateTree::HasChildren(m_rTree, hItem))
+				if (SvXml::SVNavigateTree::HasChildren(m_rTree, hItem))
 				{
 					hr = Process(hItem, ownerID);
 				}
@@ -378,7 +378,7 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessBranchObjectValues(typename
 {
 	HRESULT hr = S_OK;
 
-	if( nullptr != hItem && SVNavigateTree::HasChildren( m_rTree, hItem ) )
+	if( nullptr != hItem && SvXml::SVNavigateTree::HasChildren( m_rTree, hItem ) )
 	{
 		SVTreeType::SVBranchHandle hValue( nullptr );
 
@@ -394,7 +394,7 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessBranchObjectValues(typename
 
 			if( g_ObjectAttributeFilter.find( DataName.c_str() ) == g_ObjectAttributeFilter.end() )
 			{
-				if( SVNavigateTree::HasChildren( m_rTree, hValue ) )
+				if( SvXml::SVNavigateTree::HasChildren( m_rTree, hValue ) )
 				{
 					SVTreeType::SVLeafHandle hChildValue;
 
@@ -446,7 +446,7 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessLeafObjectValues(typename S
 {
 	HRESULT hr = S_OK;
 
-	if( nullptr != hItem && SVNavigateTree::HasChildren( m_rTree, hItem ) )
+	if( nullptr != hItem && SvXml::SVNavigateTree::HasChildren( m_rTree, hItem ) )
 	{
 		SVTreeType::SVLeafHandle hValue( m_rTree.getFirstLeaf(hItem) );
 
@@ -599,11 +599,11 @@ HRESULT SVInspectionTreeParser< SVTreeType >::CreateInspectionObject(GUID& inspe
 	SVString name;
 
 	name = p_rTree.getBranchName(hItem);
-	SVNavigateTree::GetItem(p_rTree, scObjectNameTag, hItem, objectName);
-	SVNavigateTree::GetItem(p_rTree, scClassIDTag, hItem, classID);
-	SVNavigateTree::GetItem(p_rTree, scUniqueReferenceIDTag, hItem, uniqueID);
-	SVNavigateTree::GetItem(p_rTree, CTAG_INSPECTION_NEW_DISABLE_METHOD, hItem, newDisableMethod);
-	SVNavigateTree::GetItem(p_rTree, CTAG_INSPECTION_ENABLE_AUXILIARY_EXTENT, hItem, enableAuxiliaryExtent);
+	SvXml::SVNavigateTree::GetItem(p_rTree, scObjectNameTag, hItem, objectName);
+	SvXml::SVNavigateTree::GetItem(p_rTree, scClassIDTag, hItem, classID);
+	SvXml::SVNavigateTree::GetItem(p_rTree, scUniqueReferenceIDTag, hItem, uniqueID);
+	SvXml::SVNavigateTree::GetItem(p_rTree, SvXml::CTAG_INSPECTION_NEW_DISABLE_METHOD, hItem, newDisableMethod);
+	SvXml::SVNavigateTree::GetItem(p_rTree, SvXml::CTAG_INSPECTION_ENABLE_AUXILIARY_EXTENT, hItem, enableAuxiliaryExtent);
 
 	SVString sNewDisableMethod = SvUl_SF::createSVString(newDisableMethod);
 	SVString sEnableAuxiliaryExtent = SvUl_SF::createSVString(enableAuxiliaryExtent);
@@ -625,8 +625,8 @@ HRESULT SVInspectionTreeParser< SVTreeType >::CreateInspectionObject(GUID& inspe
 		else
 		{
 			SvStl::MessageMgrStd e( SvStl::LogOnly );
-			e.setMessage( SVMSG_SVO_57_PARSERTREE_INSPECTIONCREATE_ERROR, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10010_TreeParser_InspectionCreateFailed );
-			hr = -SvOi::Err_10010_TreeParser_InspectionCreateFailed;
+			e.setMessage( SVMSG_SVO_57_PARSERTREE_INSPECTIONCREATE_ERROR, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10010_TreeParser_InspectionCreateFailed );
+			hr = -SvStl::Err_10010_TreeParser_InspectionCreateFailed;
 		}
 	}
 	return hr;

@@ -16,7 +16,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-namespace Seidenader { namespace SVStatusLibrary
+namespace SvStl
 {
 	MessageNotification::MessageNotification() :
 	 m_Type( SvStl::MsgUknown )
@@ -35,4 +35,4 @@ namespace Seidenader { namespace SVStatusLibrary
 		SvUl_SF::searchAndReplace( m_MessageText, "\r\n","\n" );
 		m_IsProcessed = false; 
 	}
-} /* namespace SVStatusLibrary */ } /* namespace Seidenader */
+} //namespace SvStl

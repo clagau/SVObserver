@@ -23,7 +23,7 @@
 #pragma intrinsic (_InterlockedDecrement16)
 #pragma intrinsic (_InterlockedIncrement16)
 
-namespace Seidenader { namespace SVSharedMemoryLibrary
+namespace SvSml
 {
 	typedef std::vector<SVValue> SVValueVector; 
 	
@@ -105,7 +105,4 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 	///unique Ptr to SVSharedPPQReader
 	typedef std::unique_ptr<SVSharedPPQReader> upSharedPPQReader;         
 
-} /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
-
-namespace SvSml = Seidenader::SVSharedMemoryLibrary;
-
+} //namespace SvSml

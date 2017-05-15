@@ -19,7 +19,7 @@
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace SVSharedMemoryLibrary
+namespace SvSml
 {
 	class SVSharedInspectionReader : public boost::noncopyable // one reader per inspection
 	{
@@ -49,9 +49,6 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 
 		SVString m_ShareName;
 	};
-
 	typedef std::shared_ptr<SVSharedInspectionReader> InspectionReaderPtr;
-} /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
 
-namespace SvSml = Seidenader::SVSharedMemoryLibrary;
-
+} //namespace SvSml

@@ -28,7 +28,7 @@ static char THIS_FILE[] = __FILE__;
 
 static const long cBufferSize = 1024;
 
-namespace Seidenader { namespace SVUtilityLibrary { namespace StringFunctions
+namespace SvUl { namespace StringFunctions
 {
 	SVString createSVString( const wchar_t* pString )
 	{
@@ -272,4 +272,4 @@ namespace Seidenader { namespace SVUtilityLibrary { namespace StringFunctions
 
 		return Result;
 	}
-} /* namespace StringFunctions */ } /* namespace SVUtilityLibrary */ } /* namespace Seidenader */
+} /* namespace StringFunctions */ } /* namespace SvUl */

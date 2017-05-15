@@ -19,7 +19,7 @@
 #include "SVStatusLibrary/ErrorNumbers.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace SVOGui
+namespace SvOg
 {
 	#pragma region Declarations
 	#ifdef _DEBUG
@@ -166,7 +166,7 @@ namespace Seidenader { namespace SVOGui
 					if( !std::regex_match( NewValue.cbegin(), NewValue.cend(), std::regex( RegExp_AllRealNumbers ) ) )
 					{
 						SvStl::MessageMgrStd Exception( SvStl::LogAndDisplay );
-						Exception.setMessage( SVMSG_SVO_65_ENTERED_VALUE_INVALID, m_Value, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_25014_GlobalConstantNumber );
+						Exception.setMessage( SVMSG_SVO_65_ENTERED_VALUE_INVALID, m_Value, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25014_GlobalConstantNumber );
 						pDX->Fail();
 					}
 				}
@@ -191,7 +191,7 @@ namespace Seidenader { namespace SVOGui
 				if( rName == *Iter )
 				{
 					SvStl::MessageMgrStd Exception( SvStl::LogAndDisplay );
-					Exception.setMessage( SVMSG_SVO_66_GLOBAL_NAME_INVALID, rName.c_str(), SvStl::SourceFileParams(StdMessageParams), SvOi::Err_25015_GlobalNameAlreadyUsed );
+					Exception.setMessage( SVMSG_SVO_66_GLOBAL_NAME_INVALID, rName.c_str(), SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25015_GlobalNameAlreadyUsed );
 					Failed = true;
 					break;
 				}
@@ -206,7 +206,7 @@ namespace Seidenader { namespace SVOGui
 				if( !std::regex_match( NewName.cbegin(), NewName.cend(), std::regex( RegExp_Name ) ) )
 				{
 					SvStl::MessageMgrStd Exception( SvStl::LogAndDisplay );
-					Exception.setMessage( SVMSG_SVO_65_ENTERED_VALUE_INVALID, NewName.c_str(), SvStl::SourceFileParams(StdMessageParams), SvOi::Err_25016_GlobalNameInvalid );
+					Exception.setMessage( SVMSG_SVO_65_ENTERED_VALUE_INVALID, NewName.c_str(), SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25016_GlobalNameInvalid );
 					Failed = true;
 				}
 			}
@@ -218,4 +218,4 @@ namespace Seidenader { namespace SVOGui
 	}
 
 	#pragma endregion Private Methods
-} /* namespace SVOGui */ } /* namespace Seidenader */
+} //namespace SvOg

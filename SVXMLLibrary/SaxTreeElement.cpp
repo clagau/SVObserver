@@ -26,7 +26,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-namespace Seidenader { namespace  SVXMLLibrary
+namespace SvXml
 {
 	const std::wstring  SaxTreeElement::ElementName[Unknown_Element +1]  = 
 	{	
@@ -332,5 +332,4 @@ namespace Seidenader { namespace  SVXMLLibrary
 	{
 		m_Content = name;
 	}
-
-} /* namespace SVXMLLibrary */ } /* namespace Seidenader */
+} //namespace SvXml

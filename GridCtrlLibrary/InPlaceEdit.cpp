@@ -72,7 +72,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-namespace Seidenader { namespace GridCtrlLibrary
+namespace SvGcl
 {
 	/////////////////////////////////////////////////////////////////////////////
 	// CInPlaceEdit
@@ -281,4 +281,4 @@ namespace Seidenader { namespace GridCtrlLibrary
 		bAlreadyEnding = FALSE;
 	}
 
-} /*namespace GridCtrlLibrary*/ } /*namespace Seidenader*/
+} // namespace SvGcl

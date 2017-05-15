@@ -22,7 +22,7 @@
 #include "LeafTreeCtrl.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace ObjectSelectorLibrary
+namespace SvOsl
 {
 	class ObjectSelectorPpg : public CPropertyPage
 	{
@@ -109,11 +109,9 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 		int m_HelpID;									//The help id used to identify the property page
 	#pragma endregion Member Variables
 	};
-} /*namespace ObjectSelectorLibrary*/ } /*namespace Seidenader*/
+} //namespace SvOsl
 
 #pragma region Inline
 #include "ObjectSelectorPpg.inl"
 #pragma endregion Inline
-
-namespace SvOsl = Seidenader::ObjectSelectorLibrary;
 

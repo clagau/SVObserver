@@ -15,7 +15,7 @@
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace SVLibrary
+namespace SvLib
 {
 	#pragma region Declarations
 	const int MaxTriggers = 4;
@@ -73,16 +73,13 @@ namespace Seidenader { namespace SVLibrary
 		HRESULT LoadHardwareIni(LPCTSTR hardwareIniFile);
 		HRESULT DecodeModelNumber(LPCTSTR modelNumber);
 		unsigned char GetForcedImageUpdateTime() const;
-		NakGeneration GetNAKMode() const;
+		SvOi::NakGeneration GetNAKMode() const;
 		int GetNAKPar() const;
 
 	protected:
 		bool m_bSingleCameraModel;
 		unsigned char m_forcedImageUpdateTimeInSeconds;
-		NakGeneration m_NAKMode;
+		SvOi::NakGeneration m_NAKMode;
 		int m_NAKParameter; 
 	};
-} /* namespace SVLibrary */ } /* namespace Seidenader */
-
-namespace SvLib = Seidenader::SVLibrary;
-
+} //namespace SvLib

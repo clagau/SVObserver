@@ -5,17 +5,17 @@
 /// Global constant data structure for comparing
 //******************************************************************************
 
-namespace Seidenader { namespace ObjectInterfaces
+namespace SvOi
 {
-	#pragma region Constructor
+#pragma region Constructor
 	GlobalConstantData::GlobalConstantData():
 		m_Guid( SV_GUID_NULL )
 		,m_Selected( false )
 	{
 	}
-	#pragma endregion Constructor
+#pragma endregion Constructor
 
-	#pragma region Public Methods
+#pragma region Public Methods
 	bool GlobalConstantData::operator<( const GlobalConstantData& Rhs ) const
 	{
 		bool Result( false );
@@ -44,7 +44,7 @@ namespace Seidenader { namespace ObjectInterfaces
 			break;
 		}
 		Result = std::tie(m_Guid, m_DottedName, m_Value.vt, LhsValue, m_Description, m_Selected) < 
-				 std::tie(Rhs.m_Guid, Rhs.m_DottedName, Rhs.m_Value.vt, RhsValue, Rhs.m_Description, Rhs.m_Selected);
+					std::tie(Rhs.m_Guid, Rhs.m_DottedName, Rhs.m_Value.vt, RhsValue, Rhs.m_Description, Rhs.m_Selected);
 		return Result;
 	}
 
@@ -73,8 +73,5 @@ namespace Seidenader { namespace ObjectInterfaces
 
 		return Result;
 	}
-	#pragma endregion Public Methods
-
-} /* namespace ObjectInterfaces */ } /* namespace Seidenader */
-
-
+#pragma endregion Public Methods
+} //namespace SvOi

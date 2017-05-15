@@ -168,9 +168,9 @@ void SelectedObjectsPage::ShowObjectSelector()
 	//For values and conditions only use viewable objects
 	switch( AttributeFilters )
 	{
-	case SV_DD_VALUE:
+	case SvOi::SV_DD_VALUE:
 		{
-			AttributeFilters |= SV_VIEWABLE;
+			AttributeFilters |= SvOi::SV_VIEWABLE;
 		}
 		break;
 	default:

@@ -459,7 +459,7 @@ HRESULT SVToolGrouping::LoadTools(SVTreeType& rTree, SVTreeType::SVBranchHandle 
 		while (S_OK == hr && rTree.isValidLeaf( htiTools, htiLeaf ) )
 		{
 			SVString leafName = rTree.getLeafName( htiLeaf );
-			if (CTAG_TOOL == leafName)
+			if (SvXml::CTAG_TOOL == leafName)
 			{
 				_variant_t Value;
 				rTree.getLeafData( htiLeaf, Value );
@@ -496,7 +496,7 @@ HRESULT SVToolGrouping::SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHan
 	HRESULT hr = S_OK;
 	SVToolGrouping groupings;
 	SVTreeType::SVBranchHandle htiChild = nullptr;
-	if (SVNavigateTree::GetItemBranch(rTree, CTAG_TOOLGROUPINGS, htiParent, htiChild))
+	if (SvXml::SVNavigateTree::GetItemBranch(rTree, SvXml::CTAG_TOOLGROUPINGS, htiParent, htiChild))
 	{
 		_variant_t svValue;
 		SVTreeType::SVBranchHandle htiSubChild( rTree.getFirstBranch( htiChild ) );
@@ -505,29 +505,29 @@ HRESULT SVToolGrouping::SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHan
 		{
 			// Will be either Tools or Group
 			SVString name = rTree.getBranchName( htiSubChild );
-			if (CTAG_GROUP == name)
+			if (SvXml::CTAG_GROUP == name)
 			{
 				// Read the Group data
-				if (SVNavigateTree::GetItem(rTree, CTAG_STARTGROUP, htiSubChild, svValue))
+				if (SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_STARTGROUP, htiSubChild, svValue))
 				{
 					SVString groupName = SvUl_SF::createSVString( svValue );
 					SVString endGroupName;
 					SVString startGroupComment;
 					SVString endGroupComment;
 					bool bCollapsed = false;
-					if (SVNavigateTree::GetItem(rTree, CTAG_COLLAPSED, htiSubChild, svValue))
+					if (SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_COLLAPSED, htiSubChild, svValue))
 					{
 						bCollapsed = (VARIANT_TRUE == svValue.boolVal);
 
-						if (SVNavigateTree::GetItem(rTree, CTAG_STARTGROUP_COMMENT, htiSubChild, svValue))
+						if (SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_STARTGROUP_COMMENT, htiSubChild, svValue))
 						{
 							startGroupComment = SvUl_SF::createSVString( svValue );
 							SvUl::RemoveEscapedSpecialCharacters(startGroupComment, true);
 						}
-						if (SVNavigateTree::GetItem(rTree, CTAG_ENDGROUP, htiSubChild, svValue))
+						if (SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_ENDGROUP, htiSubChild, svValue))
 						{
 							endGroupName = SvUl_SF::createSVString( svValue );
-							if (SVNavigateTree::GetItem(rTree, CTAG_ENDGROUP_COMMENT, htiSubChild, svValue))
+							if (SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_ENDGROUP_COMMENT, htiSubChild, svValue))
 							{
 								endGroupComment = SvUl_SF::createSVString( svValue );
 								SvUl::RemoveEscapedSpecialCharacters(endGroupComment, true);
@@ -568,7 +568,7 @@ HRESULT SVToolGrouping::SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHan
 					hr = SVMSG_SVO_49_LOAD_CONFIGURATION_TOOLGROUPING;
 				}
 			}
-			else if (CTAG_TOOLS == name)
+			else if (SvXml::CTAG_TOOLS == name)
 			{
 				// Read The Tools
 				hr = LoadTools(rTree, htiSubChild, groupings);
@@ -585,34 +585,34 @@ HRESULT SVToolGrouping::SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHan
 
 // Save the Groupings
 /*
-<NODE Name="CTAG_TOOLGROUPINGS">
-  <NODE Name="CTAG_TOOLS">
-	<DATA Name=CTAG_TOOL Type="VT_BSTR">Dotted.Name</DATA>
-	<DATA Name=CTAG_TOOL Type="VT_BSTR">Dotted.Name</DATA>
+<NODE Name="SvXml::CTAG_TOOLGROUPINGS">
+  <NODE Name="SvXml::CTAG_TOOLS">
+	<DATA Name=SvXml::CTAG_TOOL Type="VT_BSTR">Dotted.Name</DATA>
+	<DATA Name=SvXml::CTAG_TOOL Type="VT_BSTR">Dotted.Name</DATA>
   </NODE>
-  <NODE Name="CTAG_GROUP">
-	<DATA Name=CTAG_STARTGROUP Type="VT_BSTR">Group1</DATA>
-    <DATA Name=CTAG_COLLAPSED Type="VT_BOOL">TRUE</DATA>
-	<DATA Name=CTAG_STARTGROUP_COMMENT Type="VT_BSTR">Optional Comment</DATA>
-    <NODE Name="CTAG_TOOLS">
-	  <DATA Name=CTAG_TOOL Type="VT_BSTR">Dotted.Name</DATA>
-	  <DATA Name=CTAG_TOOL Type="VT_BSTR">Dotted.Name</DATA>
+  <NODE Name="SvXml::CTAG_GROUP">
+	<DATA Name=SvXml::CTAG_STARTGROUP Type="VT_BSTR">Group1</DATA>
+    <DATA Name=SvXml::CTAG_COLLAPSED Type="VT_BOOL">TRUE</DATA>
+	<DATA Name=SvXml::CTAG_STARTGROUP_COMMENT Type="VT_BSTR">Optional Comment</DATA>
+    <NODE Name="SvXml::CTAG_TOOLS">
+	  <DATA Name=SvXml::CTAG_TOOL Type="VT_BSTR">Dotted.Name</DATA>
+	  <DATA Name=SvXml::CTAG_TOOL Type="VT_BSTR">Dotted.Name</DATA>
 	</NODE>
-	<DATA Name=CTAG_ENDGROUP Type="VT_BSTR">EndGroup1</DATA>
-	<DATA Name=CTAG_ENDGROUP_COMMENT Type="VT_BSTR">Optional Comment</DATA>
+	<DATA Name=SvXml::CTAG_ENDGROUP Type="VT_BSTR">EndGroup1</DATA>
+	<DATA Name=SvXml::CTAG_ENDGROUP_COMMENT Type="VT_BSTR">Optional Comment</DATA>
   </NODE>
-  <NODE Name="CTAG_GROUP">
-	<DATA Name=CTAG_NAME Type="VT_BSTR">Group2</DATA>
-    <DATA Name=CTAG_COLLAPSED Type="VT_BOOL">TRUE</DATA>
-    <NODE Name="CTAG_TOOLS">
-	  <DATA Name=CTAG_TOOL Type="VT_BSTR">Dotted.Name</DATA>
-	  <DATA Name=CTAG_TOOL Type="VT_BSTR">Dotted.Name</DATA>
+  <NODE Name="SvXml::CTAG_GROUP">
+	<DATA Name=SvXml::CTAG_NAME Type="VT_BSTR">Group2</DATA>
+    <DATA Name=SvXml::CTAG_COLLAPSED Type="VT_BOOL">TRUE</DATA>
+    <NODE Name="SvXml::CTAG_TOOLS">
+	  <DATA Name=SvXml::CTAG_TOOL Type="VT_BSTR">Dotted.Name</DATA>
+	  <DATA Name=SvXml::CTAG_TOOL Type="VT_BSTR">Dotted.Name</DATA>
 	</NODE>
-  <NODE Name="CTAG_GROUP">
-	<DATA Name=CTAG_STARTGROUP Type="VT_BSTR">Group3</DATA>
-    <DATA Name=CTAG_COLLAPSED Type="VT_BOOL">FALSE</DATA>
-    <NODE Name="CTAG_TOOLS">
-	  <DATA Name=CTAG_TOOL Type="VT_BSTR">Dotted.Name</DATA>
+  <NODE Name="SvXml::CTAG_GROUP">
+	<DATA Name=SvXml::CTAG_STARTGROUP Type="VT_BSTR">Group3</DATA>
+    <DATA Name=SvXml::CTAG_COLLAPSED Type="VT_BOOL">FALSE</DATA>
+    <NODE Name="SvXml::CTAG_TOOLS">
+	  <DATA Name=SvXml::CTAG_TOOL Type="VT_BSTR">Dotted.Name</DATA>
   </NODE>
 </NODE>
 
@@ -624,7 +624,7 @@ bool SVToolGrouping::GetParameters(SVObjectWriter& rWriter)
 	{
 		bool bGroupActive = false;
 		bool bToolListActive = false;
-		rWriter.StartElement(CTAG_TOOLGROUPINGS);
+		rWriter.StartElement(SvXml::CTAG_TOOLGROUPINGS);
 		for (ToolGroupList::const_iterator it = m_list.begin(); it != m_list.end(); ++it)
 		{
 			if (ToolGroupData::StartOfGroup == it->second.m_type)
@@ -639,20 +639,20 @@ bool SVToolGrouping::GetParameters(SVObjectWriter& rWriter)
 					rWriter.EndElement();
 					bGroupActive = false;
 				}
-				rWriter.StartElement(CTAG_GROUP);
+				rWriter.StartElement(SvXml::CTAG_GROUP);
 				bGroupActive = true;
 
 				_bstr_t name(it->first.c_str());
 				_variant_t value(name);
-				rWriter.WriteAttribute(CTAG_STARTGROUP, value);
+				rWriter.WriteAttribute(SvXml::CTAG_STARTGROUP, value);
 
 				SVString tmp( it->second.m_comment );
 				SvUl::AddEscapeSpecialCharacters(tmp, true);
 				_variant_t commentValue( tmp.c_str() );
-				rWriter.WriteAttribute(CTAG_STARTGROUP_COMMENT, commentValue);
+				rWriter.WriteAttribute(SvXml::CTAG_STARTGROUP_COMMENT, commentValue);
 				
 				_variant_t collapsedValue(it->second.m_bCollapsed);
-				rWriter.WriteAttribute(CTAG_COLLAPSED, collapsedValue);
+				rWriter.WriteAttribute(SvXml::CTAG_COLLAPSED, collapsedValue);
 			}
 			else if (ToolGroupData::EndOfGroup == it->second.m_type)
 			{
@@ -664,12 +664,12 @@ bool SVToolGrouping::GetParameters(SVObjectWriter& rWriter)
 
 				_bstr_t name(it->second.m_endName.c_str());
 				_variant_t value(name);
-				rWriter.WriteAttribute(CTAG_ENDGROUP, value);
+				rWriter.WriteAttribute(SvXml::CTAG_ENDGROUP, value);
 
 				SVString tmp( it->second.m_comment );
 				SvUl::AddEscapeSpecialCharacters(tmp, true);
 				_variant_t commentValue( tmp.c_str() );
-				rWriter.WriteAttribute(CTAG_ENDGROUP_COMMENT, commentValue);
+				rWriter.WriteAttribute(SvXml::CTAG_ENDGROUP_COMMENT, commentValue);
 
 				if (bGroupActive)
 				{
@@ -681,12 +681,12 @@ bool SVToolGrouping::GetParameters(SVObjectWriter& rWriter)
 			{
 				if (!bToolListActive)
 				{
-					rWriter.StartElement(CTAG_TOOLS);
+					rWriter.StartElement(SvXml::CTAG_TOOLS);
 					bToolListActive = true;
 				}
 				_bstr_t name(it->first.c_str());
 				_variant_t value(name);
-				rWriter.WriteAttribute(CTAG_TOOL, value);
+				rWriter.WriteAttribute(SvXml::CTAG_TOOL, value);
 			}
 		}
 		if (bToolListActive)

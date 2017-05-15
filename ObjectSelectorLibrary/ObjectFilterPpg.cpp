@@ -35,7 +35,7 @@ static const int CheckColWidthDefault = 50;
 static const int TypeColWidthDefault = 72;
 #pragma endregion Declarations
 
-namespace Seidenader { namespace ObjectSelectorLibrary
+namespace SvOsl
 {
 	BEGIN_MESSAGE_MAP(ObjectFilterPpg, CPropertyPage)
 		ON_WM_SIZE()
@@ -363,7 +363,7 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 		}
 	}
 
-	void Seidenader::ObjectSelectorLibrary::ObjectFilterPpg::changeCheckState( const SVString& rLocation, bool isChecked, int rowNumber )
+	void ObjectFilterPpg::changeCheckState( const SVString& rLocation, bool isChecked, int rowNumber )
 	{
 		SvCl::ObjectTreeItems::iterator iter = m_rTreeContainer.findItem(rLocation);
 		if( m_rTreeContainer.end() != iter )
@@ -401,4 +401,4 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 	}
 	#pragma endregion Protected Methods
 
-} /*namespace ObjectSelectorLibrary*/ } /*namespace Seidenader*/
+} //namespace SvOsl

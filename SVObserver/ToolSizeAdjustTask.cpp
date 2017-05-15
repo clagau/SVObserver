@@ -69,7 +69,7 @@ ToolSizeAdjustTask::ToolSizeAdjustTask(bool AllowFullsize , bool AllowAdjustSize
 	{
 		m_InputModes[vType].SetEnumTypes( vec );
 		m_InputModes[vType].SetDefaultValue( TSModes::TSNone, true );
-		m_InputModes[vType].SetObjectAttributesAllowed( SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE, SvOi::SetAttributeType::RemoveAttribute );
+		m_InputModes[vType].SetObjectAttributesAllowed( SvOi::SV_REMOTELY_SETABLE | SvOi::SV_SETABLE_ONLINE, SvOi::SetAttributeType::RemoveAttribute );
 	}
 
 	//Add Evaluation Objects 
@@ -166,11 +166,11 @@ HRESULT ToolSizeAdjustTask::GetModes(long &rModeWidth,long &rModeHeight,long &rM
 		{
 			if( ( rModeWidth != TSFullSize)  ||   (rModeHeight != TSFullSize)  ||  (rModePosX != TSFullSize)  ||  (rModePosY != TSFullSize))
 			{
-				hresult = SvOi::Err_16028_InvalidMode;
+				hresult = SvStl::Err_16028_InvalidMode;
 			}
 			if( false == m_AllowFullSize )
 			{
-				hresult = 	SvOi::Err_16034_InvalidMode;
+				hresult = 	SvStl::Err_16034_InvalidMode;
 			}
 		}
 	}
@@ -178,11 +178,11 @@ HRESULT ToolSizeAdjustTask::GetModes(long &rModeWidth,long &rModeHeight,long &rM
 	{
 		if( ((rModeWidth == TSFormula) ||  (rModeHeight == TSFormula) ) && false == m_AllowAdjustSize)
 		{
-			hresult = 	SvOi::Err_16035_InvalidMode;
+			hresult = 	SvStl::Err_16035_InvalidMode;
 		}
 		if( ((rModePosX == TSFormula) ||  (rModePosY == TSFormula) ) && false== m_AllowAdjustPosition)
 		{
-			hresult = 	SvOi::Err_16036_InvalidMode;
+			hresult = 	SvStl::Err_16036_InvalidMode;
 		}
 	}
 	return hresult;
@@ -190,7 +190,7 @@ HRESULT ToolSizeAdjustTask::GetModes(long &rModeWidth,long &rModeHeight,long &rM
 
 HRESULT ToolSizeAdjustTask::GetResultValue( TSValues val, long& rValue) const
 {
-	HRESULT hresult = SvOi::Err_16030_InvalidValuePointer;
+	HRESULT hresult = SvStl::Err_16030_InvalidValuePointer;
 	SVDoubleValueObjectClass* pValueObject =GetDResultObjects(val);
 	if (nullptr != pValueObject)
 	{
@@ -204,22 +204,22 @@ HRESULT ToolSizeAdjustTask::GetResultValue( TSValues val, long& rValue) const
 		{
 			if (rValue < MinToolSize)
 			{
-				hresult = SvOi::Err_16031_InvalidSize;
+				hresult = SvStl::Err_16031_InvalidSize;
 			}
 			else if (rValue > MaxToolSize)
 			{
-				hresult = SvOi::Err_16032_InvalidSize;
+				hresult = SvStl::Err_16032_InvalidSize;
 			}
 		}
 		else
 		{
 			if (rValue < 0)
 			{
-				hresult = SvOi::Err_16039_NegativePosition;
+				hresult = SvStl::Err_16039_NegativePosition;
 			}
 			else if (rValue > MaxToolSize)
 			{
-				hresult = SvOi::Err_16040_ToLargePosition;
+				hresult = SvStl::Err_16040_ToLargePosition;
 			}
 		}
 	}
@@ -252,7 +252,7 @@ bool ToolSizeAdjustTask::ResetObject(SvStl::MessageContainerVector *pErrorMessag
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_InvalidOwner, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+			SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_InvalidOwner, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -355,7 +355,7 @@ bool ToolSizeAdjustTask::ResetObject(SvStl::MessageContainerVector *pErrorMessag
 			long  PosX;
 			hresult =  GetResultValue(TSPositionX,PosX);
 			
-			if (SvOi::Err_16039_NegativePosition == hresult && bAllowNegativePostion)
+			if (SvStl::Err_16039_NegativePosition == hresult && bAllowNegativePostion)
 			{
 				hresult = S_OK;
 			}
@@ -371,7 +371,7 @@ bool ToolSizeAdjustTask::ResetObject(SvStl::MessageContainerVector *pErrorMessag
 			long  PosY;
 			hresult = GetResultValue(TSPositionY, PosY);
 			
-			if (SvOi::Err_16039_NegativePosition == hresult && bAllowNegativePostion)
+			if (SvStl::Err_16039_NegativePosition == hresult && bAllowNegativePostion)
 			{
 				hresult = S_OK;
 			}
@@ -403,11 +403,11 @@ bool ToolSizeAdjustTask::ResetObject(SvStl::MessageContainerVector *pErrorMessag
 	{
 		Result = false;
 
-		SvOi::MessageTextEnum messageId = SvOi::Tid_ErrorInReset;
+		SvStl::MessageTextEnum messageId = SvStl::Tid_ErrorInReset;
 		SVStringVector msgList;
 		if(GetTool()->GetName())
 		{
-			messageId = SvOi::Tid_InValidNewExtents;
+			messageId = SvStl::Tid_InValidNewExtents;
 			msgList.push_back(GetTool()->GetName());
 		}
 		SvStl::MessageContainer message;
@@ -470,7 +470,7 @@ HRESULT ToolSizeAdjustTask::GetExtentValues( TSValues val, long &value) const
 	if (nullptr == pTool)
 	{
 		ASSERT(false);
-		hresult = SvOi::Err_16027_InvalidOwner;
+		hresult = SvStl::Err_16027_InvalidOwner;
 	}
 
 	SVImageExtentClass ImageExtent;
@@ -496,7 +496,7 @@ HRESULT ToolSizeAdjustTask::GetExtentValues( TSValues val, long &value) const
 			hresult = ImageExtent.GetExtentProperty( SVExtentPropertyHeight, value );
 			break;
 		default:
-			hresult = SvOi::Err_16037_InvalidSelection;
+			hresult = SvStl::Err_16037_InvalidSelection;
 		}
 	}
 	return hresult;
@@ -509,7 +509,7 @@ HRESULT ToolSizeAdjustTask::GetParentExtentOutputValues( TSValues val, long &val
 	if (nullptr == pTool)
 	{
 		ASSERT(false);
-		hresult = SvOi::Err_16027_InvalidOwner;
+		hresult = SvStl::Err_16027_InvalidOwner;
 	}
 
 	SVImageExtentClass ParentImageExtent;
@@ -535,7 +535,7 @@ HRESULT ToolSizeAdjustTask::GetParentExtentOutputValues( TSValues val, long &val
 			hresult = ParentImageExtent.GetExtentProperty( SVExtentPropertyOutputHeight, value );
 			break;
 		default:
-			hresult = SvOi::Err_16037_InvalidSelection;
+			hresult = SvStl::Err_16037_InvalidSelection;
 		}
 	}
 	return hresult;
@@ -548,7 +548,7 @@ HRESULT ToolSizeAdjustTask::SetExtendPropertyAutoReset()
 	if (nullptr == pTool)
 	{
 		ASSERT(false);
-		hresult = SvOi::Err_16027_InvalidOwner;
+		hresult = SvStl::Err_16027_InvalidOwner;
 	}
 
 	long ModeWidth(TSNone), ModeHeight(TSNone), ModeX(TSNone), ModeY(TSNone);

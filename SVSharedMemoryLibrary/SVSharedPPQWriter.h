@@ -18,7 +18,7 @@
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace SVSharedMemoryLibrary
+namespace SvSml
 {
 	typedef std::pair<SVString, GUID> InspectionID;
 	struct InspectionWriterCreationInfo
@@ -69,8 +69,4 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		std::shared_ptr<bip::managed_shared_memory> m_pManagedSharedMemory;
 	};
 
-
-} /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
-
-namespace SvSml = Seidenader::SVSharedMemoryLibrary;
-
+} //namespace SvSml

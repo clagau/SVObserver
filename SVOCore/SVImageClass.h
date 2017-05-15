@@ -47,7 +47,7 @@ public:
 	const GUID& GetParentImageID() const;
 	const SVImageInfoClass& GetImageInfo() const; //@TODO: Change the logic so that this is never needed outside this class
 
-	HRESULT InitializeImage( SVImageTypeEnum p_ImageType );
+	HRESULT InitializeImage( SvOi::SVImageTypeEnum p_ImageType );
 	HRESULT InitializeImage( SVImageClass* p_pParentImage );
 	HRESULT InitializeImage( const GUID& p_rParentID );
 	HRESULT InitializeImage( const GUID& p_rParentID, const SVImageInfoClass& p_rImageInfo );
@@ -61,14 +61,14 @@ public:
 	HRESULT UpdateImage( const GUID& p_rParentID );
 	HRESULT UpdateImage( const GUID& p_rParentID, const SVImageExtentClass& p_rExtent );
 	HRESULT UpdateImage( const GUID& p_rParentID, const SVImageInfoClass& p_rImageInfo );
-	HRESULT UpdateImage( SVImageTypeEnum p_ImageType );
-	HRESULT UpdateImage( SVImageTypeEnum p_ImageType, const SVImageInfoClass& p_rImageInfo );
-	HRESULT UpdateImage( SVImageTypeEnum p_ImageType, const GUID& p_rParentID );
-	HRESULT UpdateImage( SVImageTypeEnum p_ImageType, const GUID& p_rParentID, const SVImageInfoClass& p_rImageInfo );
+	HRESULT UpdateImage( SvOi::SVImageTypeEnum p_ImageType );
+	HRESULT UpdateImage( SvOi::SVImageTypeEnum p_ImageType, const SVImageInfoClass& p_rImageInfo );
+	HRESULT UpdateImage( SvOi::SVImageTypeEnum p_ImageType, const GUID& p_rParentID );
+	HRESULT UpdateImage( SvOi::SVImageTypeEnum p_ImageType, const GUID& p_rParentID, const SVImageInfoClass& p_rImageInfo );
 
 	virtual BOOL SetImageDepth( long lDepth );
 
-	virtual const SVClock::SVTimeStamp& GetLastResetTimeStamp() const;
+	virtual const SvTl::SVTimeStamp& GetLastResetTimeStamp() const;
 	
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 	
@@ -116,7 +116,7 @@ public:
 	void SetTranslationOffset(double offsetX, double offsetY);
 
 #pragma region virtual method (ISVImage)
-	virtual SVImageTypeEnum GetImageType() const override;
+	virtual SvOi::SVImageTypeEnum GetImageType() const override;
 	virtual SvOi::ISVImage* GetParentImageInterface() const override;
 	virtual SvOi::MatroxImageSmartHandlePtr getImageData() override;
 	virtual SvOi::MatroxImageSmartHandlePtr getParentImageData() override;
@@ -171,11 +171,11 @@ protected:
 
 	virtual bool ValidateImage();
 
-	mutable SVClock::SVTimeStamp m_LastUpdate;
-	mutable SVClock::SVTimeStamp m_LastReset;
+	mutable SvTl::SVTimeStamp m_LastUpdate;
+	mutable SvTl::SVTimeStamp m_LastReset;
 
 	mutable SVParentObjectPair m_ParentImageInfo;
-	SVImageTypeEnum m_ImageType;
+	SvOi::SVImageTypeEnum m_ImageType;
 	SVImageInfoClass m_ImageInfo;
 	
 	SVImageObjectClassPtr m_BufferArrayPtr;

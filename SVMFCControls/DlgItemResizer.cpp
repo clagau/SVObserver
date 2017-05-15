@@ -35,7 +35,7 @@ struct DLGITEMINFO
 };
 #pragma endregion Declarations
 
-namespace Seidenader { namespace SVMFCControls
+namespace SvMc
 {
 #pragma region Constructor
 	DlgItemResizer::DlgItemResizer() :
@@ -175,6 +175,4 @@ namespace Seidenader { namespace SVMFCControls
 		}
 	}
 	#pragma endregion Public Methods
-
-} /*namespace SVMFCControls*/ } /*namespace Seidenader*/
-
+} //namespace SvMc

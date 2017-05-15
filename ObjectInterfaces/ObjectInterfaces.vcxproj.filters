@@ -105,9 +105,6 @@
     <ClInclude Include="IBlobAnalyzer.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="MessageTextEnum.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="GlobalConst.h">
       <Filter>Header Files</Filter>
     </ClInclude>

@@ -12,54 +12,49 @@
 #include "ValuesAccessor.h"
 #include "BoundValue.h"
 #include "GuiController.h"
-#include "ObjectInterfaces\MessageTextEnum.h"
+#include "SVStatusLibrary/MessageTextEnum.h"
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
-namespace Seidenader
+namespace SvOg
 {
-	namespace SVOGui
+	class RangeController
 	{
-		class RangeController
-		{
-			typedef SvOg::ValuesAccessor<SvOg::BoundValues> Values;
-			typedef SvOg::GuiController<Values, Values::value_type> ValueController;
+		typedef SvOg::ValuesAccessor<SvOg::BoundValues> Values;
+		typedef SvOg::GuiController<Values, Values::value_type> ValueController;
 
-		public:
-			RangeController(const GUID& rInspectionID, const GUID& rTaskObjectID);
-			virtual ~RangeController();
+	public:
+		RangeController(const GUID& rInspectionID, const GUID& rTaskObjectID);
+		virtual ~RangeController();
 
-			void Init();
-			void Commit();
+		void Init();
+		void Commit();
 	
-			std::string Get(const std::string& rName) const;
-			void Set(const std::string& rName, const std::string& rValue);
+		std::string Get(const std::string& rName) const;
+		void Set(const std::string& rName, const std::string& rValue);
 
-			SVString GetOwnerName() const;
-			void IsFieldValid(SvOi::MessageTextEnum fieldName, const SVString& rValue);
-			void Validate();
+		SVString GetOwnerName() const;
+		void IsFieldValid(SvStl::MessageTextEnum fieldName, const SVString& rValue);
+		void Validate();
 
-			static const std::string FailHigh;
-			static const std::string FailLow;
-			static const std::string WarnHigh;
-			static const std::string WarnLow;
+		static const std::string FailHigh;
+		static const std::string FailLow;
+		static const std::string WarnHigh;
+		static const std::string WarnLow;
 
-		private:
-			std::string GetIndirectValue(const std::string& rName) const;
-			std::string GetDirectValue(const std::string& rName) const;
-			void SetIndirectValue(const std::string& rName, const std::string& rValue);
-			void SetDirectValue(const std::string& rName, const std::string& rValue);
+	private:
+		std::string GetIndirectValue(const std::string& rName) const;
+		std::string GetDirectValue(const std::string& rName) const;
+		void SetIndirectValue(const std::string& rName, const std::string& rValue);
+		void SetDirectValue(const std::string& rName, const std::string& rValue);
 
-			SVString GetInspectionName() const;
-			SVString GetPPQName() const;
-			SVString GetToolName() const;
+		SVString GetInspectionName() const;
+		SVString GetPPQName() const;
+		SVString GetToolName() const;
 
-			GUID m_InspectionID;
-			GUID m_TaskObjectID;
-			ValueController m_directRangeValues;
-			ValueController m_indirectRangeValues;
-		};
-	}
-}
-
-namespace SvOg = Seidenader::SVOGui;
+		GUID m_InspectionID;
+		GUID m_TaskObjectID;
+		ValueController m_directRangeValues;
+		ValueController m_indirectRangeValues;
+	};
+} //namespace SvOg

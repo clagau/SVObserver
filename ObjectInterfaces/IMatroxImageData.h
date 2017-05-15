@@ -10,48 +10,42 @@
 #include "SVMatroxLibrary\SVMatroxBuffer.h"
 #pragma endregion Includes
 
-namespace Seidenader
+namespace SvOi
 {
-	namespace ObjectInterfaces
-	{	
-		//this class is a interface. It should only have pure virtual public method and no member variables
-		class IMatroxImageData
-		{
-		public:
-			virtual ~IMatroxImageData() {}
+	class IMatroxImageData
+	{
+	public:
+		virtual ~IMatroxImageData() {}
 
-			//************************************
-			//! Return true if data container empty.
-			//! \returns bool
-			//************************************
-			virtual bool empty() const = 0;
+		//************************************
+		//! Return true if data container empty.
+		//! \returns bool
+		//************************************
+		virtual bool empty() const = 0;
 
-			//************************************
-			//! Get bitmap info. If empty() == true, empty bitmap info is returned.
-			//! \returns SVBitmapInfo
-			//************************************
-			virtual SVBitmapInfo getBitmapInfo() const = 0;
+		//************************************
+		//! Get bitmap info. If empty() == true, empty bitmap info is returned.
+		//! \returns SVBitmapInfo
+		//************************************
+		virtual SVBitmapInfo getBitmapInfo() const = 0;
 
-			//************************************
-			//! get buffer address. If empty()==true, return value is nullptr.
-			//! \returns BYTE*
-			//************************************
-			virtual BYTE* getBufferAddress() const = 0;
+		//************************************
+		//! get buffer address. If empty()==true, return value is nullptr.
+		//! \returns BYTE*
+		//************************************
+		virtual BYTE* getBufferAddress() const = 0;
 
-			//************************************
-			//! Return a matrox buffer
-			//! \param buffer [out] The matrox buffer
-			//! \returns bool If matrox buffer is set, return value is true.
-			//************************************
-			virtual bool GetBuffer(SVMatroxBuffer& buffer) const = 0;
+		//************************************
+		//! Return a matrox buffer
+		//! \param buffer [out] The matrox buffer
+		//! \returns bool If matrox buffer is set, return value is true.
+		//************************************
+		virtual bool GetBuffer(SVMatroxBuffer& buffer) const = 0;
 
-			//************************************
-			//! GetHBitmap - convert matrox buffer into a HBITMAP
-			//! \returns a HBITMAP handle.
-			//************************************
-			virtual HBITMAP GetHBitmap() const =0;
-		};
-	}
-}
-
-namespace SvOi = Seidenader::ObjectInterfaces;
+		//************************************
+		//! GetHBitmap - convert matrox buffer into a HBITMAP
+		//! \returns a HBITMAP handle.
+		//************************************
+		virtual HBITMAP GetHBitmap() const =0;
+	};
+} //namespace SvOi

@@ -19,7 +19,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-namespace Seidenader { namespace ObjectSelectorLibrary
+namespace SvOsl
 {
 
 	#pragma region Constructor
@@ -106,5 +106,5 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 		}
 	}
 	#pragma endregion Public Methods
-} /* namespace ObjectSelectorLibrary */ } /* namespace Seidenader */
+} //namespace SvOsl
 

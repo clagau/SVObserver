@@ -626,7 +626,7 @@ HRESULT SVFileAcquisitionDevice::CameraProcessEndFrame( unsigned long p_ulIndex 
 #endif
 
 						SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-						Exception.setMessage( SVMSG_IMAGE_FORMAT_ERROR, SvOi::Tid_FileAcquisition_FormatError, SvStl::SourceFileParams(StdMessageParams) );
+						Exception.setMessage( SVMSG_IMAGE_FORMAT_ERROR, SvStl::Tid_FileAcquisition_FormatError, SvStl::SourceFileParams(StdMessageParams) );
 					}
 				}
 #if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
@@ -943,7 +943,7 @@ HRESULT SVFileAcquisitionDevice::SetAcquisitionTriggered(unsigned long triggerch
 
 void SVFileAcquisitionDevice::DoAcquisitionTrigger(SVFileCamera& p_rCamera)
 {
-	SVClock::SVTimeStamp timestamp = SVClock::GetTimeStamp();
+	SvTl::SVTimeStamp timestamp = SvTl::GetTimeStamp();
 	// Simulate Trigger and send Timestamp and Line State...
 	bool lineState = p_rCamera.GetLineState(); // could simulate line state via a socket connection
 

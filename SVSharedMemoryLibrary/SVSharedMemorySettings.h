@@ -10,7 +10,7 @@
 //******************************************************************************
 #pragma once
 
-namespace Seidenader { namespace SVSharedMemoryLibrary
+namespace SvSml
 {
 	class SVSharedMemorySettings
 	{
@@ -46,6 +46,4 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 	
 		CreationInfo(size_t numEntries, size_t namesSize) : num_entries(numEntries), names_size(namesSize) {}
 	};
-} /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
-
-namespace SvSml = Seidenader::SVSharedMemoryLibrary;
+} //namespace SvSml

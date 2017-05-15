@@ -21,7 +21,7 @@
 #include "SVMFCControls/DlgItemResizer.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace ObjectSelectorLibrary
+namespace SvOsl
 {
 	class ObjectFilterPpg : public CPropertyPage
 	{
@@ -117,7 +117,5 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 		CComboBox m_TypeControl;						//Control to filter objects based on their types
 	#pragma endregion Member Variables
 	};
-} /*namespace ObjectSelectorLibrary*/ } /*namespace Seidenader*/
-
-namespace SvOsl = Seidenader::ObjectSelectorLibrary;
+} //namespace SvOsl
 

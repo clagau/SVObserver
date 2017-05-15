@@ -132,7 +132,7 @@ BOOL SVTADlgTranslationResizePage::OnInitDialog()
 	if (S_OK != hr)
 	{
 		SvStl::MessageMgrStd Exception(  SvStl::LogAndDisplay );
-		Exception.setMessage( hr, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 5015);
+		Exception.setMessage( hr, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 5015);
 	}
 
 	UpdateData(FALSE); // dialog being initialized.
@@ -990,7 +990,7 @@ HRESULT	SVTADlgTranslationResizePage::ExitTabValidation ()
 	if (!SUCCEEDED (message.getMessage().m_MessageCode))
 	{
 		SvStl::MessageMgrStd Exception(  SvStl::LogAndDisplay );
-		Exception.setMessage( message.getMessage().m_MessageCode, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), SvOi::ProgCode_5068_ValidateTabData );
+		Exception.setMessage( message.getMessage().m_MessageCode, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), SvStl::ProgCode_5068_ValidateTabData );
 	}
 
 	return message.getMessage().m_MessageCode;
@@ -1108,7 +1108,7 @@ HRESULT SVTADlgTranslationResizePage::ValidateCurrentTreeData (SVRPropertyItem* 
 
 				SVStringVector msgList;
 				msgList.push_back(item->GetLabelText());
-				message.setMessage( hr, SvOi::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams) );
+				message.setMessage( hr, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams) );
 			}
 		}
 		else

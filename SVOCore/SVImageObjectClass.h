@@ -44,7 +44,7 @@ public:
 	const SVImageInfoClass& GetImageInfo() const;
 	void SetImageInfo( const SVImageInfoClass& p_rImageInfo );
 
-	const SVClock::SVTimeStamp& GetLastResetTimeStamp() const;
+	const SvTl::SVTimeStamp& GetLastResetTimeStamp() const;
 	
 	bool ResetObject(SvStl::MessageContainerVector *pErrorContainer=nullptr);
 	void UpdateTimeStamp();
@@ -137,8 +137,8 @@ private:
 	// Do not implement
 	const SVImageObjectClass& operator=( const SVImageObjectClass& p_rObject );
 
-	SVClock::SVTimeStamp m_LastUpdate;
-	SVClock::SVTimeStamp m_LastReset;
+	SvTl::SVTimeStamp m_LastUpdate;
+	SvTl::SVTimeStamp m_LastReset;
 
 	long m_HandleCount;
 

@@ -13,7 +13,7 @@
 #include "SVSharedValue.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace SVSharedMemoryLibrary
+namespace SvSml
 {
 	SVSharedValue::SVSharedValue(const void_allocator& rAlloc)
 	: m_ResultType(SVSharedValue::UnknownType)
@@ -66,17 +66,15 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 	}
 
 
-void  CopySharedValues( SVSharedValueVector& rTo  , const SVSharedValueVector& rfrom)
-{
-	SVSharedValueVector::const_iterator itFrom;
-	SVSharedValueVector::iterator itTo;
-	for(itFrom = rfrom.begin(),  itTo  = rTo.begin();  itFrom != rfrom.end() &&  itTo != rTo.end(); ++itFrom,++itTo)
+	void  CopySharedValues( SVSharedValueVector& rTo  , const SVSharedValueVector& rfrom)
 	{
-		strcpy_s( itTo->m_Result, statics::max_result_size, itFrom->m_Result);
-		itTo->m_ResultType = itFrom->m_ResultType;
-		itTo->m_Status = itFrom->m_Status;
+		SVSharedValueVector::const_iterator itFrom;
+		SVSharedValueVector::iterator itTo;
+		for(itFrom = rfrom.begin(),  itTo  = rTo.begin();  itFrom != rfrom.end() &&  itTo != rTo.end(); ++itFrom,++itTo)
+		{
+			strcpy_s( itTo->m_Result, statics::max_result_size, itFrom->m_Result);
+			itTo->m_ResultType = itFrom->m_ResultType;
+			itTo->m_Status = itFrom->m_Status;
+		}
 	}
-}
-
-
-} /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
+} //namespace SvSml

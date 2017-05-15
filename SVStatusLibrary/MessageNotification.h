@@ -12,7 +12,7 @@
 #include "SVUtilityLibrary\SVString.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace SVStatusLibrary
+namespace SvStl
 {
 	class MessageNotification
 	{
@@ -43,6 +43,4 @@ namespace Seidenader { namespace SVStatusLibrary
 		int m_MessageNumber;
 		SVString m_MessageText;
 	};
-} /* namespace SVStatusLibrary */ } /* namespace Seidenader */
-
-namespace SvStl = Seidenader::SVStatusLibrary;
+} //namespace SvStl

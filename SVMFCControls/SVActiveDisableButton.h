@@ -11,45 +11,39 @@
 
 #pragma once
 
-namespace Seidenader
+namespace SvMc
 {
-	namespace SVMFCControls
+	class SVActiveDisableButton : public CButton
 	{
-		class SVActiveDisableButton : public CButton
-		{
-			// Construction
-		public:
-			SVActiveDisableButton();
-			virtual ~SVActiveDisableButton();
+		// Construction
+	public:
+		SVActiveDisableButton();
+		virtual ~SVActiveDisableButton();
 
-			BOOL EnableWindow(BOOL bEnable = TRUE);
+		BOOL EnableWindow(BOOL bEnable = TRUE);
 
-			// Overrides
+		// Overrides
 
-			// ClassWizard generated virtual function overrides
-			//{{AFX_VIRTUAL(SVActiveDisableButton)
-			//}}AFX_VIRTUAL
+		// ClassWizard generated virtual function overrides
+		//{{AFX_VIRTUAL(SVActiveDisableButton)
+		//}}AFX_VIRTUAL
 
-			// Generated message map functions
-		protected:
-			//{{AFX_MSG(SVActiveDisableButton)
-			afx_msg void OnPaint();
-			afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
-			afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
-			afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
-			afx_msg void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags);
-			afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);
-			afx_msg void OnActivate(UINT nState, CWnd* pWndOther, BOOL bMinimized);
-			afx_msg void OnSetFocus(CWnd* pOldWnd);
-			afx_msg int OnMouseActivate(CWnd* pDesktopWnd, UINT nHitTest, UINT message);
-			//}}AFX_MSG
-			void Emboss( CDC& dc, const CRect& rc ) const;
+		// Generated message map functions
+	protected:
+		//{{AFX_MSG(SVActiveDisableButton)
+		afx_msg void OnPaint();
+		afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
+		afx_msg void OnLButtonDblClk(UINT nFlags, CPoint point);
+		afx_msg void OnKeyDown(UINT nChar, UINT nRepCnt, UINT nFlags);
+		afx_msg void OnKeyUp(UINT nChar, UINT nRepCnt, UINT nFlags);
+		afx_msg void OnChar(UINT nChar, UINT nRepCnt, UINT nFlags);
+		afx_msg void OnActivate(UINT nState, CWnd* pWndOther, BOOL bMinimized);
+		afx_msg void OnSetFocus(CWnd* pOldWnd);
+		afx_msg int OnMouseActivate(CWnd* pDesktopWnd, UINT nHitTest, UINT message);
+		//}}AFX_MSG
+		void Emboss( CDC& dc, const CRect& rc ) const;
 
-			bool m_bDisabled;
-			DECLARE_MESSAGE_MAP()
-		};
-	} //SVMFCControls
-} //Seidenader
-
-namespace SvMc = Seidenader::SVMFCControls;
-
+		bool m_bDisabled;
+		DECLARE_MESSAGE_MAP()
+	};
+} //namespace SvMc

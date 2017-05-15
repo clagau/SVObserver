@@ -13,11 +13,9 @@
 
 #pragma once
 
-namespace Seidenader { namespace ObjectInterfaces
+namespace SvStl
 {
 	// Jim Brown Program code.
-	static const unsigned long ProgCode_5066_CreateImageBuffer = 5066;
-	static const unsigned long ProgCode_5067_ValidateCurrentTreeData = 5067;
 	static const unsigned long ProgCode_5068_ValidateTabData = 5068;
 
 	//Marc Ziegler error base
@@ -632,7 +630,5 @@ namespace Seidenader { namespace ObjectInterfaces
 	static const int Err_45000 = Rpy_ErrorBase + 0;
 	static const int Memory_Log_45001 = Rpy_ErrorBase + 1;
 
-} /* namespace ObjectInterfaces */ } /* namespace Seidenader */
-
-namespace SvOi = Seidenader::ObjectInterfaces;
+} //namespace SvStl
 

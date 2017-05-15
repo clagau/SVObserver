@@ -48,7 +48,7 @@ public:
 
 	typedef SvXml::SVXMLMaterialsTree SVTreeType;
 
-	bool GetParameters( SVObjectXMLWriter& rWriter ) const;
+	bool GetParameters(SvXml::SVObjectXMLWriter& rWriter ) const;
 
 	// Set Functions
 	HRESULT SetInputObject( SVObjectClass* p_pObject );

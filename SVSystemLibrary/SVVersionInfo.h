@@ -12,7 +12,7 @@
 
 #include "SVUtilityLibrary/SVString.h"
 
-namespace Seidenader { namespace SVSystemLibrary
+namespace SvSyl
 {
 	class SVVersionInfo
 	{
@@ -26,6 +26,4 @@ namespace Seidenader { namespace SVSystemLibrary
 		SVVersionInfo();
 		~SVVersionInfo();
 	};
-} /*SVSystemLibrary*/ } /*Seidenader*/
-
-namespace SvSyl = Seidenader::SVSystemLibrary;
+} //namespace SvSyl

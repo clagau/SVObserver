@@ -11,7 +11,7 @@
 
 #pragma once
 
-namespace Seidenader { namespace SVUtilityLibrary 
+namespace SvUl 
 {
 	//************************************
 	/// SVMetrics is usually not used but should stay in the utility library to be able to use when needed
@@ -27,7 +27,5 @@ namespace Seidenader { namespace SVUtilityLibrary
 		void Clear();
 		void Update(double elapsed);
 	};
-} /* namespace SVUtilityLibrary */ } /* namespace Seidenader */
-
-namespace SvUl = Seidenader::SVUtilityLibrary;
+} // namespace SvUl
 

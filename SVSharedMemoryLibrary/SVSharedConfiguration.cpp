@@ -19,7 +19,7 @@
 // Uncommnet to enable logging
 //	#define ENABLE_LOG
 
-namespace Seidenader { namespace SVSharedMemoryLibrary
+namespace SvSml
 {
 	const SVString SVSharedConfiguration::GetControlShareName()
 	{
@@ -204,6 +204,4 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 			}
 		}
 	}
-
-	
-} /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
+} //namespace SvSml

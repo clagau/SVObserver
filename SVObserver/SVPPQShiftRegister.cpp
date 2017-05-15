@@ -245,7 +245,7 @@ HRESULT SVPPQShiftRegister::GetProductByTriggerCount( SVProductInfoStruct*& p_rp
 struct SVTriggerTimeStampCompare
 {
 	SVTriggerTimeStampCompare() : m_LowerThresholdInMilliseconds( 0 ) {}
-	SVTriggerTimeStampCompare( SVClock::SVTimeStamp p_LowerThresholdInMilliseconds ) : m_LowerThresholdInMilliseconds( p_LowerThresholdInMilliseconds ) {}
+	SVTriggerTimeStampCompare( SvTl::SVTimeStamp p_LowerThresholdInMilliseconds ) : m_LowerThresholdInMilliseconds( p_LowerThresholdInMilliseconds ) {}
 	SVTriggerTimeStampCompare( const SVTriggerTimeStampCompare& p_rObject ) : m_LowerThresholdInMilliseconds( p_rObject.m_LowerThresholdInMilliseconds ) {}
 
 	bool operator()( const SVProductInfoStruct* l_pLeft, const SVProductInfoStruct* l_pRight )
@@ -254,8 +254,8 @@ struct SVTriggerTimeStampCompare
 
 		if( nullptr != l_pLeft && nullptr != l_pRight )
 		{
-			SVClock::SVTimeStamp l_RightTimeStamp = l_pRight->TimeStamp();
-			SVClock::SVTimeStamp l_LeftTimeStamp = l_pLeft->TimeStamp() + m_LowerThresholdInMilliseconds;
+			SvTl::SVTimeStamp l_RightTimeStamp = l_pRight->TimeStamp();
+			SvTl::SVTimeStamp l_LeftTimeStamp = l_pLeft->TimeStamp() + m_LowerThresholdInMilliseconds;
 			//l_Status = (l_RightTimeStamp < l_LeftTimeStamp);
 			l_Status = (l_RightTimeStamp - l_LeftTimeStamp) < 0;
 		}
@@ -269,10 +269,10 @@ struct SVTriggerTimeStampCompare
 		return l_Status;
 	}
 
-	SVClock::SVTimeStamp m_LowerThresholdInMilliseconds;
+	SvTl::SVTimeStamp m_LowerThresholdInMilliseconds;
 };
 
-HRESULT SVPPQShiftRegister::GetIndexByTriggerTimeStamp( long& p_rIndex, SVClock::SVTimeStamp p_TimeStamp, SVClock::SVTimeStamp p_LowerThresholdInMilliseconds ) const
+HRESULT SVPPQShiftRegister::GetIndexByTriggerTimeStamp( long& p_rIndex, SvTl::SVTimeStamp p_TimeStamp, SvTl::SVTimeStamp p_LowerThresholdInMilliseconds ) const
 {
 	HRESULT l_Status = S_OK;
 
@@ -290,7 +290,7 @@ HRESULT SVPPQShiftRegister::GetIndexByTriggerTimeStamp( long& p_rIndex, SVClock:
 
 		if( l_Iter != m_Products.end() && nullptr != ( *l_Iter ) )
 		{
-			SVClock::SVTimeStamp l_ProductTS = ( *l_Iter )->TimeStamp();
+			SvTl::SVTimeStamp l_ProductTS = ( *l_Iter )->TimeStamp();
 
 			if( p_TimeStamp >= ( l_ProductTS + p_LowerThresholdInMilliseconds ) )
 			{
@@ -314,7 +314,7 @@ HRESULT SVPPQShiftRegister::GetIndexByTriggerTimeStamp( long& p_rIndex, SVClock:
 	return l_Status;
 }
 
-HRESULT SVPPQShiftRegister::GetIndexByTriggerTimeStamp( long& p_rIndex, SVClock::SVTimeStamp p_TimeStamp, SVClock::SVTimeStamp p_LowerThresholdInMilliseconds, SVClock::SVTimeStamp p_UpperThresholdInMilliseconds ) const
+HRESULT SVPPQShiftRegister::GetIndexByTriggerTimeStamp( long& p_rIndex, SvTl::SVTimeStamp p_TimeStamp, SvTl::SVTimeStamp p_LowerThresholdInMilliseconds, SvTl::SVTimeStamp p_UpperThresholdInMilliseconds ) const
 {
 	HRESULT l_Status = S_OK;
 
@@ -325,8 +325,8 @@ HRESULT SVPPQShiftRegister::GetIndexByTriggerTimeStamp( long& p_rIndex, SVClock:
 		SVProductVector::const_iterator l_Iter;
 		SVProductInfoStruct l_Product;
 
-		SVClock::SVTimeStamp l_LowerThreshold = p_LowerThresholdInMilliseconds;
-		SVClock::SVTimeStamp l_UpperThreshold = p_UpperThresholdInMilliseconds;
+		SvTl::SVTimeStamp l_LowerThreshold = p_LowerThresholdInMilliseconds;
+		SvTl::SVTimeStamp l_UpperThreshold = p_UpperThresholdInMilliseconds;
 
 		l_Product.oTriggerInfo.m_BeginProcess = p_TimeStamp;
 
@@ -334,10 +334,10 @@ HRESULT SVPPQShiftRegister::GetIndexByTriggerTimeStamp( long& p_rIndex, SVClock:
 
 		if( l_Iter != m_Products.end() && nullptr != ( *l_Iter ) )
 		{
-			SVClock::SVTimeStamp l_ProductTS = ( *l_Iter )->TimeStamp();
-			SVClock::SVTimeStamp l_Upper = l_ProductTS + l_UpperThreshold;
-			SVClock::SVTimeStamp l_Lower = l_ProductTS + l_LowerThreshold;
-			SVClock::SVTimeStamp l_Distance = p_TimeStamp - l_ProductTS;
+			SvTl::SVTimeStamp l_ProductTS = ( *l_Iter )->TimeStamp();
+			SvTl::SVTimeStamp l_Upper = l_ProductTS + l_UpperThreshold;
+			SvTl::SVTimeStamp l_Lower = l_ProductTS + l_LowerThreshold;
+			SvTl::SVTimeStamp l_Distance = p_TimeStamp - l_ProductTS;
 
 			if( l_Iter == m_Products.begin() && p_TimeStamp > l_Upper )
 			{

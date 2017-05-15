@@ -149,7 +149,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-namespace Seidenader { namespace GridCtrlLibrary
+namespace SvGcl
 {
 	// Spit out some messages as a sanity check for programmers
 	#ifdef GRIDCONTROL_NO_TITLETIPS
@@ -7545,4 +7545,4 @@ namespace Seidenader { namespace GridCtrlLibrary
 
 	}
 
-} /*namespace GridCtrlLibrary*/ } /*namespace Seidenader*/
+} // namespace SvGcl

@@ -26,7 +26,7 @@
 #include "GuiCommands\ResetObject.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace SVOGui
+namespace SvOg
 {
 	ImageController::ImageController(const GUID& rInspectionID, const GUID& rTaskObjectID, SVObjectSubTypeEnum subType, bool bAllowColor)
 	: m_InspectionID(rInspectionID)
@@ -43,7 +43,7 @@ namespace Seidenader { namespace SVOGui
 
 	HRESULT ImageController::RetrieveAvailableImageList()
 	{ 
-		typedef GuiCmd::GetAllowedImageList Command;
+		typedef SvCmd::GetAllowedImageList Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 
 		CommandPtr commandPtr = new Command(m_InspectionID, SVObjectTypeInfoStruct(SVImageObjectType, SVNotSetSubObjectType), m_TaskObjectID, m_subType, m_bAllowColor);
@@ -71,7 +71,7 @@ namespace Seidenader { namespace SVOGui
 	{
 		SvUl::NameGuidList list;
 
-		typedef GuiCmd::GetResultImage Command;
+		typedef SvCmd::GetResultImage Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 	
 		CommandPtr commandPtr = new Command(m_TaskObjectID);
@@ -86,7 +86,7 @@ namespace Seidenader { namespace SVOGui
 
 	const SvUl::InputNameGuidPairList& ImageController::GetConnectedImageList(const GUID& rInstanceID, int maxImages) const
 	{
-		typedef GuiCmd::GetConnectedObjects Command;
+		typedef SvCmd::GetConnectedObjects Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 
 		GUID objectID = m_TaskObjectID;
@@ -131,7 +131,7 @@ namespace Seidenader { namespace SVOGui
 			std::vector<SVString>::const_iterator itVector = std::find_if(m_specialImageList.begin(), m_specialImageList.end(), ByName(name));
 			if (itVector != m_specialImageList.end())
 			{
-				typedef GuiCmd::GetImage Command;
+				typedef SvCmd::GetImage Command;
 				typedef SVSharedPtr<Command> CommandPtr;
 
 				CommandPtr commandPtr = new Command(*itVector, m_TaskObjectID);
@@ -157,7 +157,7 @@ namespace Seidenader { namespace SVOGui
 
 	IPictureDisp* ImageController::GetImage(const GUID& rImageID, long& rWidth, long& rHeight) const 
 	{
-		typedef GuiCmd::GetImage Command;
+		typedef SvCmd::GetImage Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 	
 		CommandPtr commandPtr = new Command(rImageID);
@@ -175,7 +175,7 @@ namespace Seidenader { namespace SVOGui
 	HRESULT ImageController::ConnectToImage(const SVString& inputName, const SVString& name, const GUID& rInstanceID) const 
 	{ 
 		HRESULT hr = E_INVALIDARG;
-		typedef GuiCmd::ConnectToObject Command;
+		typedef SvCmd::ConnectToObject Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 		SvUl::NameGuidList::const_iterator it = std::find_if(m_availableList.begin(), m_availableList.end(), ByName(name));
 		if (it != m_availableList.end())
@@ -195,7 +195,7 @@ namespace Seidenader { namespace SVOGui
 	HRESULT ImageController::SaveImage(const SVString& rImageName, const SVString& rFilename)
 	{
 		HRESULT hr = E_INVALIDARG;
-		typedef GuiCmd::SaveImage Command;
+		typedef SvCmd::SaveImage Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 		SvUl::NameGuidList::const_iterator it = std::find_if(m_availableList.begin(), m_availableList.end(), ByName(rImageName));
 		if (it != m_availableList.end())
@@ -210,7 +210,7 @@ namespace Seidenader { namespace SVOGui
 	bool ImageController::IsToolValid() const
 	{
 		bool bIsValid = false;
-		typedef GuiCmd::IsValid Command;
+		typedef SvCmd::IsValid Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 		CommandPtr commandPtr = new Command(m_TaskObjectID);
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
@@ -225,7 +225,7 @@ namespace Seidenader { namespace SVOGui
 	HRESULT ImageController::ResetTask(SvStl::MessageContainerVector& messages) const
 	{
 		bool bIsValid = false;
-		typedef GuiCmd::ResetObject Command;
+		typedef SvCmd::ResetObject Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 		CommandPtr commandPtr = new Command(m_TaskObjectID);
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
@@ -239,7 +239,7 @@ namespace Seidenader { namespace SVOGui
 
 	HRESULT ImageController::ToolRunOnce()
 	{
-		typedef GuiCmd::InspectionRunOnce Command;
+		typedef SvCmd::InspectionRunOnce Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 		CommandPtr commandPtr = new Command(m_InspectionID, m_TaskObjectID);
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
@@ -249,7 +249,7 @@ namespace Seidenader { namespace SVOGui
 
 	SVObjectTypeInfoStruct ImageController::GetImageTypeInfo(const GUID& imageID) const
 	{
-		typedef GuiCmd::GetObjectTypeInfo Command;
+		typedef SvCmd::GetObjectTypeInfo Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 		CommandPtr commandPtr = new Command(imageID);
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
@@ -260,4 +260,4 @@ namespace Seidenader { namespace SVOGui
 		}
 		return SVObjectTypeInfoStruct();
 	}
-} /* namespace SVOGui */ } /* namespace Seidenader */
+} //namespace SvOg

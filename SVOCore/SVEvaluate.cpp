@@ -44,7 +44,7 @@ BOOL SVEvaluateClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure 
 	m_isCreated = SVMathContainerClass::CreateObject( PCreateStructure );
 
 	// Set / Reset Printable flag
-	m_outputMathResult.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_outputMathResult.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 
 	return m_isCreated;
 }
@@ -78,7 +78,7 @@ bool SVEvaluateClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContain
 		{
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 				pErrorMessages->push_back(Msg);
 			}
 			SetInvalid();

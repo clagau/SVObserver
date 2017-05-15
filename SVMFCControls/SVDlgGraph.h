@@ -13,82 +13,76 @@
 
 #include "SVContainerLibrary\SVObjectArrayClassTemplate.h"
 
-namespace Seidenader
+namespace SvMc
 {
-	namespace SVMFCControls
+	// Use this to define a function which is called,
+	// while somebody pushes the left mouse button.
+	typedef BOOL(CALLBACK* SVProcMousePointFunc) (POINT, LPVOID);
+
+	// Normalize Modes...
+	enum SVNormalizeModeEnum
 	{
-		// Use this to define a function which is called,
-		// while somebody pushes the left mouse button.
-		typedef BOOL ( CALLBACK* SVProcMousePointFunc ) ( POINT, LPVOID );
-
-		// Normalize Modes...
-		enum SVNormalizeModeEnum
-		{
-			SVNormalize1D,	// Normalize x and y separately
-			SVNormalize2D,	// Normalize x and y together ( square )
-			SVNormalizeXYMinMax,// Normalize on specified X and Y max values
-		};
+		SVNormalize1D,	// Normalize x and y separately
+		SVNormalize2D,	// Normalize x and y together ( square )
+		SVNormalizeXYMinMax,// Normalize on specified X and Y max values
+	};
 
 
-		class SVDlgGraphClass : public CStatic
-		{
-		public:
-			SVDlgGraphClass();
+	class SVDlgGraphClass : public CStatic
+	{
+	public:
+		SVDlgGraphClass();
 
-			virtual ~SVDlgGraphClass();
+		virtual ~SVDlgGraphClass();
 
-			BOOL SetColor(COLORREF rgb, BOOL bRedraw=TRUE);
+		BOOL SetColor(COLORREF rgb, BOOL bRedraw = TRUE);
 
-			BOOL SetPoints( const SvCl::SVObjectByteArrayClass& RByteVec );
-			BOOL SetPoints( const SvCl::SVObjectLongArrayClass& RLongVec );
-			BOOL SetPoints( const SvCl::SVObjectDoubleArrayClass& RDoubleVec );
-			BOOL SetPoints( const SvCl::SVObjectPointArrayClass& RPointVec );
+		BOOL SetPoints(const SvCl::SVObjectByteArrayClass& RByteVec);
+		BOOL SetPoints(const SvCl::SVObjectLongArrayClass& RLongVec);
+		BOOL SetPoints(const SvCl::SVObjectDoubleArrayClass& RDoubleVec);
+		BOOL SetPoints(const SvCl::SVObjectPointArrayClass& RPointVec);
 
-			BOOL SetMousePointProcFunc( SVProcMousePointFunc PFunc, LPVOID PUserData );	
-			void SetNormalizeMode( SVNormalizeModeEnum NormalizeMode );
-			void SetXYMinMax(long lXMin, long lYMin, long lXMax, long lYMax);
+		BOOL SetMousePointProcFunc(SVProcMousePointFunc PFunc, LPVOID PUserData);
+		void SetNormalizeMode(SVNormalizeModeEnum NormalizeMode);
+		void SetXYMinMax(long lXMin, long lYMin, long lXMax, long lYMax);
 
-			BOOL Normalize();
-			void Retransform( CPoint& RPoint );
+		BOOL Normalize();
+		void Retransform(CPoint& RPoint);
 
 
-			//{{AFX_VIRTUAL(SVDlgGraphClass)
-			//}}AFX_VIRTUAL
+		//{{AFX_VIRTUAL(SVDlgGraphClass)
+		//}}AFX_VIRTUAL
 
-		protected:
-			//{{AFX_MSG(SVDlgGraphClass)
-			afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
-			afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
-			afx_msg void OnMouseMove(UINT nFlags, CPoint point);
-			afx_msg void OnPaint();
-			//}}AFX_MSG
+	protected:
+		//{{AFX_MSG(SVDlgGraphClass)
+		afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
+		afx_msg void OnLButtonUp(UINT nFlags, CPoint point);
+		afx_msg void OnMouseMove(UINT nFlags, CPoint point);
+		afx_msg void OnPaint();
+		//}}AFX_MSG
 
-			DECLARE_MESSAGE_MAP()
+		DECLARE_MESSAGE_MAP()
 
-		protected:
+	protected:
 
-			SvCl::SVObjectPointArrayClass pointVec;
-			SVProcMousePointFunc pProcFunc;
-			LPVOID pUserData;
+		SvCl::SVObjectPointArrayClass pointVec;
+		SVProcMousePointFunc pProcFunc;
+		LPVOID pUserData;
 
-			double xMult;
-			double yMult;
-			long xDisp;
-			long yDisp;
-			long yClient;
-			long m_lXMin;
-			long m_lYMin;
-			long m_lXMax;
-			long m_lYMax;
+		double xMult;
+		double yMult;
+		long xDisp;
+		long yDisp;
+		long yClient;
+		long m_lXMin;
+		long m_lYMin;
+		long m_lXMax;
+		long m_lYMax;
 
-			COLORREF mrgbGraphColor;
+		COLORREF mrgbGraphColor;
 
-			BOOL bButtonDown;
+		BOOL bButtonDown;
 
-			SVNormalizeModeEnum normalizeMode;
-		};
-	} //SVMFCControls
-} //Seidenader
-
-namespace SvMc = Seidenader::SVMFCControls;
-
+		SVNormalizeModeEnum normalizeMode;
+	};
+} //namespace SvMc

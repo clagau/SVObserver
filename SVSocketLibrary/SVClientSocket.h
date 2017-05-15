@@ -24,7 +24,7 @@ typedef boost::xpressive::sregex regrex;
 typedef boost::xpressive::smatch match;
 #pragma endregion Declarations
 
-namespace Seidenader { namespace SVSocketLibrary
+namespace SvSol
 {
 	template<typename API>
 	class SVClientSocket : public SVSocket<API>
@@ -108,9 +108,7 @@ namespace Seidenader { namespace SVSocketLibrary
 		Destroy();
 		m_isConnected = false;
 	}
-} /*namespace SVSocketLibrary*/ } /*namespace Seidenader*/
-
-namespace SvSol = Seidenader::SVSocketLibrary;
+} //namespace SvSol
 
 #pragma warning (pop)
 

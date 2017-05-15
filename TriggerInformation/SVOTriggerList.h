@@ -17,8 +17,8 @@
 #include "SVOTriggerObj.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace TriggerInformation {
-
+namespace SvTi
+{
 	class SVOTriggerList  
 	{
 	public:
@@ -44,8 +44,4 @@ namespace Seidenader { namespace TriggerInformation {
 		SVTriggerList m_TriggerList;
 		iterator FindTriggerPosition(const SVString& sTriggerName);
 	};
-
-
-} /* namespace TriggerInformation */ } /* namespace Seidenader */
-
-namespace SvTi = Seidenader::TriggerInformation;
+} //namespace SvTi

@@ -21,7 +21,7 @@
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
-namespace Sv { namespace Container
+namespace SvCl
 {
 	class ObjectSelectorItem : public IObjectSelectorItem
 	{
@@ -253,7 +253,5 @@ namespace Sv { namespace Container
 	};
 
 	typedef SVSharedPtr< ObjectSelectorItem > ObjectSelectorItemPtr;
-} /*namespace SVContainerLibrary*/ } /*namespace Seidenader*/
-
-namespace SvCl = Sv::Container;
+} //namespace SvCl
 

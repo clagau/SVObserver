@@ -81,7 +81,7 @@ BOOL SVDPointXResultClass::CreateObject( SVObjectLevelCreateStruct* PCreateStruc
 	}
 
 	// Set / Reset Printable Flag
-	x.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	x.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 	
 	m_isCreated = bOk;
 

@@ -693,14 +693,14 @@ BOOL SVDataManager::Lock( unsigned long Timeout ) const
 		}
 		else
 		{
-			SVClock::SVTimeStamp l_CurrentTime = 0.0;
-			SVClock::SVTimeStamp l_EndTime = 0.0;
+			SvTl::SVTimeStamp l_CurrentTime = 0.0;
+			SvTl::SVTimeStamp l_EndTime = 0.0;
 			
 			BOOL l_LockAcquired = false;
 			
-			l_CurrentTime = SVClock::GetTimeStamp();
+			l_CurrentTime = SvTl::GetTimeStamp();
 			
-			l_EndTime = l_CurrentTime + SVClock::ConvertFrom( SVClock::Milliseconds, Timeout );
+			l_EndTime = l_CurrentTime + SvTl::ConvertFrom( SvTl::Milliseconds, Timeout );
 			
 			while( ! l_LockAcquired && l_CurrentTime <= l_EndTime )
 			{
@@ -709,7 +709,7 @@ BOOL SVDataManager::Lock( unsigned long Timeout ) const
 				if( ! l_LockAcquired && l_CurrentTime < l_EndTime)
 				{
 					::Sleep( 1 );
-					l_CurrentTime = SVClock::GetTimeStamp();
+					l_CurrentTime = SvTl::GetTimeStamp();
 				}
 			}
 			

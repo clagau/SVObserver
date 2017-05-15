@@ -19,8 +19,8 @@
 
 class SVIOTriggerLoadLibraryClass;
 
-namespace Seidenader { namespace TriggerInformation {
-
+namespace SvTi
+{
 	class SvTh::SVTriggerClass;
 
 	class SVTriggerProcessingClass
@@ -64,6 +64,4 @@ namespace Seidenader { namespace TriggerInformation {
 
 		SVNameTriggerSubsystemMap m_TriggerSubsystems;
 	};
-} /* namespace TriggerHandling */ } /* namespace Seidenader */
-
-namespace SvTi = Seidenader::TriggerInformation;
+} //namespace SvTi

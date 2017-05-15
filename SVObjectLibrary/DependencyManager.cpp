@@ -18,7 +18,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-namespace Seidenader { namespace SVObjectLibrary
+namespace SvOl
 {
 	#pragma region Constructor
 	DependencyManager::DependencyManager() 
@@ -109,7 +109,7 @@ namespace Seidenader { namespace SVObjectLibrary
 		}
 	}
 	#pragma endregion Public Methods
-} /* namespace SVObjectLibrary */ } /* namespace Seidenader */
+} //namespace SvOl
 
 #pragma region IDependencyManager
 void SvOi::getToolDependency( StringPairInserter Inserter, const SVGuidSet& rSourceSet, SVObjectTypeEnum nameToObjectType, SvOi::ToolDependencyEnum ToolDependency /*= SvOi::ToolDependencyEnum::Client*/ )

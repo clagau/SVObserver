@@ -18,86 +18,79 @@
 #include "SVMatroxLibrary\SVMatroxBufferInterface.h"
 #pragma endregion Includes
 
-namespace Seidenader
+namespace SvCmd
 {
-	namespace GuiCommand
+	struct GetImage: public boost::noncopyable
 	{
-		struct GetImage: public boost::noncopyable
+		/// Constructor to get an image with a GUID.
+		/// \param rObjectID [in] The GUID of the requested Image.
+		GetImage(const GUID& rObjectID) : m_InstanceID(rObjectID)
+			, m_Name()
+			, m_ParentID( SV_GUID_NULL)
+			, m_Width ( 0 )
+			, m_Height ( 0 )
+		{}
+
+		/// Constructor to get an image from a taskObject with a name.
+		/// \param rName [in] Name of the image.
+		/// \param rParentID [in] The GUID of the taskObject which is the parent of the image.
+		GetImage(const SVString& rName, const GUID& rParentID) : m_InstanceID( SV_GUID_NULL )
+			, m_Name(rName)
+			, m_ParentID( rParentID )
+			, m_Width ( 0 )
+			, m_Height ( 0 )
+		{}
+
+		// This method is where the real separation would occur by using sockets/named pipes/shared memory
+		// The logic contained within this method would be moved to the "Server" side of a Client/Server architecture
+		// and replaced with the building and sending of the command
+		HRESULT Execute()
 		{
-			/// Constructor to get an image with a GUID.
-			/// \param rObjectID [in] The GUID of the requested Image.
-			GetImage(const GUID& rObjectID) : m_InstanceID(rObjectID)
-				, m_Name()
-				, m_ParentID( SV_GUID_NULL)
-				, m_Width ( 0 )
-				, m_Height ( 0 )
-			{}
+			HRESULT hr = S_OK;
+			SvOi::MatroxImageSmartHandlePtr data;
 
-			/// Constructor to get an image from a taskObject with a name.
-			/// \param rName [in] Name of the image.
-			/// \param rParentID [in] The GUID of the taskObject which is the parent of the image.
-			GetImage(const SVString& rName, const GUID& rParentID) : m_InstanceID( SV_GUID_NULL )
-				, m_Name(rName)
-				, m_ParentID( rParentID )
-				, m_Width ( 0 )
-				, m_Height ( 0 )
-			{}
-
-			// This method is where the real separation would occur by using sockets/named pipes/shared memory
-			// The logic contained within this method would be moved to the "Server" side of a Client/Server architecture
-			// and replaced with the building and sending of the command
-			HRESULT Execute()
+			if (SV_GUID_NULL != m_InstanceID)
 			{
-				HRESULT hr = S_OK;
-				SvOi::MatroxImageSmartHandlePtr data;
-
-				if (SV_GUID_NULL != m_InstanceID)
+				SvOi::ISVImage* pImage = dynamic_cast<SvOi::ISVImage*>(SvOi::getObject(m_InstanceID));
+				if (pImage)
 				{
-					SvOi::ISVImage* pImage = dynamic_cast<SvOi::ISVImage*>(SvOi::getObject(m_InstanceID));
-					if (pImage)
-					{
-						data = pImage->getImageData();
-					}
+					data = pImage->getImageData();
 				}
-				else if ( !m_Name.empty() && SV_GUID_NULL != m_ParentID )
+			}
+			else if ( !m_Name.empty() && SV_GUID_NULL != m_ParentID )
+			{
+				SvOi::ITaskObject* pObject = dynamic_cast<SvOi::ITaskObject*>(SvOi::getObject(m_ParentID));
+				if (nullptr != pObject)
 				{
-					SvOi::ITaskObject* pObject = dynamic_cast<SvOi::ITaskObject*>(SvOi::getObject(m_ParentID));
-					if (nullptr != pObject)
+					if ( !pObject->getSpecialImage(m_Name, data) )
 					{
-						if ( !pObject->getSpecialImage(m_Name, data) )
-						{
-							return E_FAIL;
-						}
-					}
-					else
-					{
-						return E_POINTER;
+						return E_FAIL;
 					}
 				}
 				else
 				{
 					return E_POINTER;
 				}
-				
-				SvOi::IMatroxImageData* pImageData = data.get();
-				if (nullptr != pImageData && !pImageData->empty())
+			}
+			else
+			{
+				return E_POINTER;
+			}
+			
+			SvOi::IMatroxImageData* pImageData = data.get();
+			if (nullptr != pImageData && !pImageData->empty())
+			{
+				m_Width = abs(pImageData->getBitmapInfo().GetWidth());
+				m_Height = abs(pImageData->getBitmapInfo().GetHeight());
+				HBITMAP hBitmap = pImageData->GetHBitmap();
+				if (hBitmap)
 				{
-					m_Width = abs(pImageData->getBitmapInfo().GetWidth());
-					m_Height = abs(pImageData->getBitmapInfo().GetHeight());
-					HBITMAP hBitmap = pImageData->GetHBitmap();
-					if (hBitmap)
+					//convert the hbitmap to an IPictureDisp for the activeX-control.
+					CPictureHolder pic;
+					BOOL bRet = pic.CreateFromBitmap(hBitmap);
+					if (bRet)
 					{
-						//convert the hbitmap to an IPictureDisp for the activeX-control.
-						CPictureHolder pic;
-						BOOL bRet = pic.CreateFromBitmap(hBitmap);
-						if (bRet)
-						{
-							m_picture = pic.GetPictureDispatch();
-						}
-						else
-						{
-							hr = E_HANDLE;
-						}
+						m_picture = pic.GetPictureDispatch();
 					}
 					else
 					{
@@ -106,24 +99,26 @@ namespace Seidenader
 				}
 				else
 				{
-					hr = E_POINTER;
+					hr = E_HANDLE;
 				}
-				return hr;
 			}
-			bool empty() const { return false; }
-			IPictureDisp* Image() const { return m_picture; }
-			int getWidth() const { return m_Width; }
-			int getHeight() const { return m_Height; }
+			else
+			{
+				hr = E_POINTER;
+			}
+			return hr;
+		}
+		bool empty() const { return false; }
+		IPictureDisp* Image() const { return m_picture; }
+		int getWidth() const { return m_Width; }
+		int getHeight() const { return m_Height; }
 
-		private:
-			CComPtr<IPictureDisp> m_picture;
-			GUID m_InstanceID;
-			GUID m_ParentID;
-			SVString m_Name;
-			int m_Width;
-			int m_Height;
-		};
-	}
-}
-
-namespace GuiCmd = Seidenader::GuiCommand;
+	private:
+		CComPtr<IPictureDisp> m_picture;
+		GUID m_InstanceID;
+		GUID m_ParentID;
+		SVString m_Name;
+		int m_Width;
+		int m_Height;
+	};
+} //namespace SvCmd

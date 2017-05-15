@@ -198,7 +198,7 @@ HRESULT SVToolAdjustmentDialogSizePage::SetInspectionData()
 			}
 			else
 			{
-				hresult = SvOi::Err_16029_InvalidSelection;
+				hresult = SvStl::Err_16029_InvalidSelection;
 			}
 			if ( S_OK != hresult)
 			{
@@ -445,7 +445,7 @@ bool SVToolAdjustmentDialogSizePage::QueryAllowExit()
 					if( pEQ->GetEquationText().empty() )
 					{
 						SvStl::MessageMgrStd Exception( SvStl::LogAndDisplay );
-						Exception.setMessage( SVMSG_SVO_64_EMPTY_FORMULAS_ARE_NOT_ALLOWED, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16038_EmptyFormula );
+						Exception.setMessage( SVMSG_SVO_64_EMPTY_FORMULAS_ARE_NOT_ALLOWED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16038_EmptyFormula );
 						return false;
 					}
 				}

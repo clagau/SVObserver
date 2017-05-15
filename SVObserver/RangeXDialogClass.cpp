@@ -70,7 +70,7 @@ void RangeXDialogClass::OnBnClickedOk()
 
 	if(bOK)
 	{
-		SvOi::MessageTextEnum messageId;
+		SvStl::MessageTextEnum messageId;
 		SVStringVector messageList;
 		HRESULT hres = m_RangeClassHelper.CheckInternalData(messageId, messageList);
 		if( S_OK != hres)
@@ -152,13 +152,13 @@ bool RangeXDialogClass::GetDlgData()
 	{
 		CString Text;
 		m_EditFailHigh.GetWindowText(Text);
-		m_RangeClassHelper.SetInternalData(SvOi::Tid_FailHigh, Text);
+		m_RangeClassHelper.SetInternalData(SvStl::Tid_FailHigh, Text);
 		m_EditWarnHigh.GetWindowText(Text);
-		m_RangeClassHelper.SetInternalData(SvOi::Tid_WarnHigh, Text);
+		m_RangeClassHelper.SetInternalData(SvStl::Tid_WarnHigh, Text);
 		m_EditFailLow.GetWindowText(Text);
-		m_RangeClassHelper.SetInternalData(SvOi::Tid_FailLow, Text);
+		m_RangeClassHelper.SetInternalData(SvStl::Tid_FailLow, Text);
 		m_EditWarnLow.GetWindowText(Text);
-		m_RangeClassHelper.SetInternalData(SvOi::Tid_WarnLow, Text);
+		m_RangeClassHelper.SetInternalData(SvStl::Tid_WarnLow, Text);
 		Result = true;
 	}
 	catch ( const SvStl::MessageContainer& rSvE )

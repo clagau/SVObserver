@@ -17,89 +17,83 @@
 #include "ObjectInterfaces\IObjectManager.h"
 #include "SVMFCControls\SVBitmap.h"
 #include "SVMatroxLibrary\SVMatroxBufferInterface.h"
-
 #pragma endregion Includes
 
-namespace Seidenader
+namespace SvCmd
 {
-	namespace GuiCommand
+	struct GetReferenceImage: public boost::noncopyable
 	{
-		struct GetReferenceImage: public boost::noncopyable
+		GetReferenceImage(const GUID& rObjectID) : m_InstanceID(rObjectID) {}
+
+		// This method is where the real separation would occur by using sockets/named pipes/shared memory
+		// The logic contained within this method would be moved to the "Server" side of a Client/Server architecture
+		// and replaced with the building and sending of the command
+		HRESULT Execute()
 		{
-			GetReferenceImage(const GUID& rObjectID) : m_InstanceID(rObjectID) {}
+			HRESULT hr = S_OK;
 
-			// This method is where the real separation would occur by using sockets/named pipes/shared memory
-			// The logic contained within this method would be moved to the "Server" side of a Client/Server architecture
-			// and replaced with the building and sending of the command
-			HRESULT Execute()
+			SvOi::IMask* pMask = dynamic_cast<SvOi::IMask *>(SvOi::getObject(m_InstanceID));
+			if (pMask)
 			{
-				HRESULT hr = S_OK;
+				SvOi::MatroxImageSmartHandlePtr data = pMask->GetReferenceImage();
+				SvOi::IMatroxImageData* pImageData = data.get();
 
-				SvOi::IMask* pMask = dynamic_cast<SvOi::IMask *>(SvOi::getObject(m_InstanceID));
-				if (pMask)
+				if (nullptr != pImageData && !pImageData->empty())
 				{
-					SvOi::MatroxImageSmartHandlePtr data = pMask->GetReferenceImage();
-					SvOi::IMatroxImageData* pImageData = data.get();
+					SVBitmapInfo dibInfo;
+					BYTE* pBits(nullptr);
+					//copy the image buffer, as the source doesn't have a DIB
+					SVMatroxBuffer newBuffer;
+					SVMatroxBuffer oldBuffer;
+					pImageData->GetBuffer(oldBuffer);
 
-					if (nullptr != pImageData && !pImageData->empty())
+					HRESULT l_Code = SVMatroxBufferInterface::Create(newBuffer, oldBuffer);
+					if (S_OK == l_Code)
 					{
-						SVBitmapInfo dibInfo;
-						BYTE* pBits(nullptr);
-						//copy the image buffer, as the source doesn't have a DIB
-						SVMatroxBuffer newBuffer;
-						SVMatroxBuffer oldBuffer;
-						pImageData->GetBuffer(oldBuffer);
-
-						HRESULT l_Code = SVMatroxBufferInterface::Create(newBuffer, oldBuffer);
+						l_Code = SVMatroxBufferInterface::CopyBuffer(newBuffer, oldBuffer);
 						if (S_OK == l_Code)
 						{
-							l_Code = SVMatroxBufferInterface::CopyBuffer(newBuffer, oldBuffer);
-							if (S_OK == l_Code)
-							{
-								l_Code = SVMatroxBufferInterface::GetBitmapInfo(dibInfo, newBuffer);
-							}
-							if (S_OK == l_Code)
-							{
-								l_Code = SVMatroxBufferInterface::GetHostAddress(&pBits, newBuffer);
-							}
+							l_Code = SVMatroxBufferInterface::GetBitmapInfo(dibInfo, newBuffer);
 						}
-
-						if (nullptr != pBits && !dibInfo.empty())
+						if (S_OK == l_Code)
 						{
-							SVBitmap bitmap;
-							HRESULT hr = bitmap.LoadDIBitmap(dibInfo.GetBitmapInfo(), pBits);
-							if (S_OK == hr)
+							l_Code = SVMatroxBufferInterface::GetHostAddress(&pBits, newBuffer);
+						}
+					}
+
+					if (nullptr != pBits && !dibInfo.empty())
+					{
+						SVBitmap bitmap;
+						HRESULT hr = bitmap.LoadDIBitmap(dibInfo.GetBitmapInfo(), pBits);
+						if (S_OK == hr)
+						{
+							//convert the hbitmap to an IPictureDisp.
+							CPictureHolder pic;
+							BOOL bRet = pic.CreateFromBitmap(static_cast<HBITMAP>(bitmap.Detach()));
+							if (bRet)
 							{
-								//convert the hbitmap to an IPictureDisp.
-								CPictureHolder pic;
-								BOOL bRet = pic.CreateFromBitmap(static_cast<HBITMAP>(bitmap.Detach()));
-								if (bRet)
-								{
-									m_picture = pic.GetPictureDispatch();
-								}
-								else
-								{
-									hr = E_HANDLE;
-								}
+								m_picture = pic.GetPictureDispatch();
+							}
+							else
+							{
+								hr = E_HANDLE;
 							}
 						}
-						newBuffer.clear();
 					}
+					newBuffer.clear();
 				}
-				else
-				{
-					hr = E_POINTER;
-				}
-				return hr;
 			}
-			bool empty() const { return false; }
-			IPictureDisp* Image() const { return m_picture; }
+			else
+			{
+				hr = E_POINTER;
+			}
+			return hr;
+		}
+		bool empty() const { return false; }
+		IPictureDisp* Image() const { return m_picture; }
 
-		private:
-			CComPtr<IPictureDisp> m_picture;
-			GUID m_InstanceID;
-		};
-	}
-}
-
-namespace GuiCmd = Seidenader::GuiCommand;
+	private:
+		CComPtr<IPictureDisp> m_picture;
+		GUID m_InstanceID;
+	};
+} //namespace SvCmd

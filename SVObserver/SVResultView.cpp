@@ -90,7 +90,7 @@ void SVResultViewClass::OnInitialUpdate()
 	if( nullptr == GetIPDoc() )
 	{
 		SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ResultView_InitFailed, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10197 ); 
+		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ResultView_InitFailed, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10197 ); 
 		return;
 	}
 
@@ -525,7 +525,7 @@ void SVResultViewClass::DrawItem( LPDRAWITEMSTRUCT lpDrawItemStruct )
 	else
 	{
 		SvStl::MessageMgrStd Msg( SvStl::LogOnly );
-		Msg.setMessage( SVMSG_SVO_NULL_POINTER, SvOi::Tid_Unknown, SvStl::SourceFileParams(StdMessageParams) ); 
+		Msg.setMessage( SVMSG_SVO_NULL_POINTER, SvStl::Tid_Unknown, SvStl::SourceFileParams(StdMessageParams) ); 
 	}
 }// end DrawItem
 
@@ -584,11 +584,11 @@ BOOL SVResultViewClass::GetParameters(SVObjectWriter& rWriter)
 	_variant_t svVariant;
 
 	svVariant = l_cRect.Height();
-	rWriter.WriteAttribute(CTAG_CELL_HEIGHT, svVariant);
+	rWriter.WriteAttribute(SvXml::CTAG_CELL_HEIGHT, svVariant);
 	svVariant.Clear();
 
 	svVariant = l_cRect.Width();
-	rWriter.WriteAttribute(CTAG_CELL_WIDTH, svVariant);
+	rWriter.WriteAttribute(SvXml::CTAG_CELL_WIDTH, svVariant);
 	svVariant.Clear();
 
 	return bOk;
@@ -602,7 +602,7 @@ BOOL SVResultViewClass::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHa
 
 	_variant_t svVariant;
 
-	bOk = SVNavigateTree::GetItem( rTree, CTAG_CELL_HEIGHT, htiParent, svVariant );
+	bOk = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_CELL_HEIGHT, htiParent, svVariant );
 	if ( bOk )
 	{
 		l_Size.cy = svVariant;
@@ -610,7 +610,7 @@ BOOL SVResultViewClass::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHa
 
 	if ( bOk )
 	{
-		bOk = SVNavigateTree::GetItem( rTree, CTAG_CELL_WIDTH, htiParent, svVariant );
+		bOk = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_CELL_WIDTH, htiParent, svVariant );
 		if ( bOk )
 		{
 			l_Size.cx = svVariant;
@@ -637,7 +637,7 @@ BOOL SVResultViewClass::CheckParameters( SVTreeType& rTree, SVTreeType::SVBranch
 
 	GetWindowRect( l_cRect );
 
-	bOk = SVNavigateTree::GetItem( rTree, CTAG_CELL_HEIGHT, htiParent, svVariant );
+	bOk = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_CELL_HEIGHT, htiParent, svVariant );
 	if ( bOk )
 	{
 		l_Size.cy = svVariant;
@@ -645,7 +645,7 @@ BOOL SVResultViewClass::CheckParameters( SVTreeType& rTree, SVTreeType::SVBranch
 
 	if ( bOk )
 	{
-		bOk = SVNavigateTree::GetItem( rTree, CTAG_CELL_WIDTH, htiParent, svVariant );
+		bOk = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_CELL_WIDTH, htiParent, svVariant );
 		if ( bOk )
 		{
 			l_Size.cx = svVariant;

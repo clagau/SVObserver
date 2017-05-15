@@ -42,7 +42,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-namespace Seidenader { namespace GridCtrlLibrary
+namespace SvGcl
 {
 	//////////////////////////////////////////////////////////////////////
 	// CGridCellDateTime
@@ -288,4 +288,4 @@ namespace Seidenader { namespace GridCtrlLibrary
 		CDateTimeCtrl::OnKeyUp(nChar, nRepCnt, nFlags);
 	}
 
-} /*namespace GridCtrlLibrary*/ } /*namespace Seidenader*/
+} // namespace SvGcl

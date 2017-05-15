@@ -16,55 +16,47 @@
 #include "GuiController.h"
 #pragma region Includes
 
-namespace Seidenader
+namespace SvOg
 {
-	namespace SVOGui
+	class SVThinningFilterDlg : public CDialog
 	{
-		/////////////////////////////////////////////////////////////////////////////
-		// SVThinningFilterDlg dialog
-		class SVThinningFilterDlg : public CDialog
-		{
-			// Construction
-		public:
-			SVThinningFilterDlg(const SVGUID& rInspectionID, const SVGUID& rFilterID, CWnd* pParent = nullptr);   // standard constructor
-			virtual ~SVThinningFilterDlg();
+		// Construction
+	public:
+		SVThinningFilterDlg(const SVGUID& rInspectionID, const SVGUID& rFilterID, CWnd* pParent = nullptr);   // standard constructor
+		virtual ~SVThinningFilterDlg();
 
-			HRESULT SetInspectionData();
+		HRESULT SetInspectionData();
 
-			// Dialog Data
-			//{{AFX_DATA(SVThinningFilterDlg)
-			enum { IDD = IDD_THINNING_FILTER };
-			BOOL	m_bGrayScale;
-			long	m_lIterations;
-			//}}AFX_DATA
+		// Dialog Data
+		//{{AFX_DATA(SVThinningFilterDlg)
+		enum { IDD = IDD_THINNING_FILTER };
+		BOOL	m_bGrayScale;
+		long	m_lIterations;
+		//}}AFX_DATA
 
 
-			// Overrides
-			// ClassWizard generated virtual function overrides
-			//{{AFX_VIRTUAL(SVThinningFilterDlg)
-		protected:
-			virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
-			//}}AFX_VIRTUAL
+		// Overrides
+		// ClassWizard generated virtual function overrides
+		//{{AFX_VIRTUAL(SVThinningFilterDlg)
+	protected:
+		virtual void DoDataExchange(CDataExchange* pDX) override;    // DDX/DDV support
+		//}}AFX_VIRTUAL
 
-		protected:
+	protected:
 
-			// Generated message map functions
-			//{{AFX_MSG(SVThinningFilterDlg)
-			virtual BOOL OnInitDialog() override;
-			virtual void OnOK() override;
-			virtual void OnCancel() override;
-			//}}AFX_MSG
-			DECLARE_MESSAGE_MAP()
+		// Generated message map functions
+		//{{AFX_MSG(SVThinningFilterDlg)
+		virtual BOOL OnInitDialog() override;
+		virtual void OnOK() override;
+		virtual void OnCancel() override;
+		//}}AFX_MSG
+		DECLARE_MESSAGE_MAP()
 
-		private:
-			const SVGUID& m_rInspectionID;
-			const SVGUID& m_filterID;
-			typedef SvOg::ValuesAccessor<SvOg::BoundValues> ValueCommand;
-			typedef SvOg::GuiController<ValueCommand, ValueCommand::value_type> Controller;
-			Controller m_Values;
-		};
-	}  //end namespace SVOGUI
-}  //end namespace Seidenader
-
-namespace SvOg = Seidenader::SVOGui;
-
+	private:
+		const SVGUID& m_rInspectionID;
+		const SVGUID& m_filterID;
+		typedef SvOg::ValuesAccessor<SvOg::BoundValues> ValueCommand;
+		typedef SvOg::GuiController<ValueCommand, ValueCommand::value_type> Controller;
+		Controller m_Values;
+	};
+} //namespace SvOg

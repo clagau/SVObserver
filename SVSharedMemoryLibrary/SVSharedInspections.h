@@ -14,7 +14,7 @@
 #include "SVShared.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace SVSharedMemoryLibrary
+namespace SvSml
 {
 	struct SVSharedInspection
 	{
@@ -38,6 +38,4 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 	typedef bip::flat_map<bip_string, SVSharedInspection, std::less<bip_string>, SVSharedInspectionPairAllocator> SVSharedInspectionMap;
 	typedef bip::allocator<SVSharedInspectionMap, segment_manager_t> SVSharedInspectionMapAllocator;
 
-} /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
-
-namespace SvSml = Seidenader::SVSharedMemoryLibrary;
+} //namespace SvSml

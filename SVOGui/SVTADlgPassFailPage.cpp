@@ -18,7 +18,7 @@
 #include "ObjectSelectorLibrary\ObjectTreeGenerator.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "SVMessage\SVMessage.h"
-#include "ObjectInterfaces\MessageTextEnum.h"
+#include "SVStatusLibrary/MessageTextEnum.h"
 #include "GuiCommands\GetSelectorList.h"
 #include "ToolSetItemSelector.h"
 #pragma endregion Includes
@@ -30,7 +30,7 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-namespace Seidenader { namespace SVOGui
+namespace SvOg
 {
 	BEGIN_MESSAGE_MAP(SVToolAdjustmentDialogPassFailPageClass, CPropertyPage)
 		//{{AFX_MSG_MAP(SVToolAdjustmentDialogPassFailPageClass)
@@ -70,10 +70,10 @@ namespace Seidenader { namespace SVOGui
 		UpdateData(true); // get data from dialog
 
 		// Validate Entered data for existance and if within bounds		
-		IsFieldValid(SvOi::Tid_FailHigh, static_cast<LPCSTR>(m_FailHigh));
-		IsFieldValid(SvOi::Tid_FailLow, static_cast<LPCSTR>(m_FailLow));
-		IsFieldValid(SvOi::Tid_WarnHigh, static_cast<LPCSTR>(m_WarnHigh));
-		IsFieldValid(SvOi::Tid_WarnLow, static_cast<LPCSTR>(m_WarnLow));
+		IsFieldValid(SvStl::Tid_FailHigh, static_cast<LPCSTR>(m_FailHigh));
+		IsFieldValid(SvStl::Tid_FailLow, static_cast<LPCSTR>(m_FailLow));
+		IsFieldValid(SvStl::Tid_WarnHigh, static_cast<LPCSTR>(m_WarnHigh));
+		IsFieldValid(SvStl::Tid_WarnLow, static_cast<LPCSTR>(m_WarnLow));
 		
 		Set(FailHigh, static_cast<LPCSTR>(m_FailHigh));
 		Set(FailLow, static_cast<LPCSTR>(m_FailLow));
@@ -221,9 +221,9 @@ namespace Seidenader { namespace SVOGui
 		Title += _T(": ");
 		Title += RangeEnum::ERange2String(fieldEnum);
 
-		return m_objectSelector.Show<ToolSetItemSelector<GuiCmd::RangeSelectorFilterType>>( rName, Title, this);
+		return m_objectSelector.Show<ToolSetItemSelector<SvCmd::RangeSelectorFilterType>>( rName, Title, this);
 	}
 
 	#pragma endregion Private Methods
-} /* namespace SVOGui */ } /* namespace Seidenader */
+} //namespace SvOg
 

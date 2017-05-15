@@ -54,7 +54,7 @@ void SVLoadImageToolClass::init()
 	m_currentPathName.SetDefaultValue( _T( "" ), true );
 	m_continuousReload.SetDefaultValue( false, true );
 
-	m_fileImage.InitializeImage( SVImageTypePhysical );
+	m_fileImage.InitializeImage( SvOi::SVImageTypeEnum::SVImageTypePhysical );
 
 	// Default taskObjectList items:
 
@@ -82,18 +82,18 @@ BOOL SVLoadImageToolClass::CreateObject( SVObjectLevelCreateStruct* PCreateStruc
 
 		// Setup...
 		l_svImageInfo.SetOwner( GetUniqueObjectID() );
-		l_svImageInfo.SetImageProperty( SVImagePropertyFormat, SVImageFormatMono8 );
-		l_svImageInfo.SetImageProperty( SVImagePropertyBandNumber, 1 );
-		l_svImageInfo.SetImageProperty( SVImagePropertyBandLink, 0 );
-		l_svImageInfo.SetImageProperty(SVImagePropertyPixelDepth,8);
+		l_svImageInfo.SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyFormat, SVImageFormatMono8 );
+		l_svImageInfo.SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandNumber, 1 );
+		l_svImageInfo.SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandLink, 0 );
+		l_svImageInfo.SetImageProperty(SvOi::SVImagePropertyEnum::SVImagePropertyPixelDepth,8);
 
 		bOk = ( S_OK == m_fileImage.UpdateImage( l_svImageInfo ) );
 	}
 
 	// Set / Reset Printable Flags
-	m_fileImage.SetObjectAttributesAllowed( SV_REMOTELY_SETABLE | SV_SETABLE_ONLINE, SvOi::SetAttributeType::AddAttribute );
-	m_currentPathName.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
-	m_continuousReload.SetObjectAttributesAllowed( SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_fileImage.SetObjectAttributesAllowed( SvOi::SV_REMOTELY_SETABLE | SvOi::SV_SETABLE_ONLINE, SvOi::SetAttributeType::AddAttribute );
+	m_currentPathName.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
+	m_continuousReload.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
 
 	if (bOk)
 	{
@@ -130,7 +130,7 @@ bool SVLoadImageToolClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCo
 		{
 			if (nullptr != pErrorMessages)
 			{
-					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
 				pErrorMessages->push_back(Msg);
 			}
 			rRunStatus.SetInvalid();
@@ -144,7 +144,7 @@ bool SVLoadImageToolClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCo
 			{
 				if (nullptr != pErrorMessages)
 				{
-						SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_FailedToLoadImage, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+						SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_FailedToLoadImage, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
 					pErrorMessages->push_back(Msg);
 				}
 				rRunStatus.SetInvalid();
@@ -161,7 +161,7 @@ bool SVLoadImageToolClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCo
 			{
 				if (nullptr != pErrorMessages)
 				{
-						SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_CopyImagesFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+						SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_CopyImagesFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
 					pErrorMessages->push_back(Msg);
 				}
 				rRunStatus.SetInvalid();
@@ -298,7 +298,7 @@ bool SVLoadImageToolClass::ValidateLocal(SvStl::MessageContainerVector *pErrorMe
 
 	if (nullptr != pErrorMessages)
 	{
-		SvStl::MessageContainer message( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_FailedToLoadImage, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+		SvStl::MessageContainer message( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_FailedToLoadImage, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 		pErrorMessages->push_back(message);
 	}
 	return false;

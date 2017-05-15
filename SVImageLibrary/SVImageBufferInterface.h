@@ -31,19 +31,19 @@ struct SVImageBufferInterface
 
 	unsigned char* GetBufferAddress() const;
 
-	const SVClock::SVTimeStamp& GetStartFrameTimeStamp() const;
+	const SvTl::SVTimeStamp& GetStartFrameTimeStamp() const;
 	void SetStartFrameTimeStamp();
-	void SetStartFrameTimeStamp( const SVClock::SVTimeStamp& p_rTimeStamp );
+	void SetStartFrameTimeStamp( const SvTl::SVTimeStamp& p_rTimeStamp );
 
-	const SVClock::SVTimeStamp& GetEndFrameTimeStamp() const;
+	const SvTl::SVTimeStamp& GetEndFrameTimeStamp() const;
 	void SetEndFrameTimeStamp();
-	void SetEndFrameTimeStamp( const SVClock::SVTimeStamp& p_rTimeStamp );
+	void SetEndFrameTimeStamp( const SvTl::SVTimeStamp& p_rTimeStamp );
 
 	SVSmartHandlePointer m_ImageHandle;
 	SVDataManagerHandle m_IndexHandle;
 
-	SVClock::SVTimeStamp m_StartTimeStamp;
-	SVClock::SVTimeStamp m_EndTimeStamp;
+	SvTl::SVTimeStamp m_StartTimeStamp;
+	SvTl::SVTimeStamp m_EndTimeStamp;
 
 };
 

@@ -7,63 +7,60 @@
 #include "stdafx.h"
 #include "svmaskeditor.h"
 
-namespace Seidenader
+namespace SvMc
 {
-	namespace SVMFCControls
+	IMPLEMENT_DYNCREATE(CSVMaskEditor, CWnd)
+
+	LPUNKNOWN CSVMaskEditor::GetImageDIBHandle()
 	{
-		IMPLEMENT_DYNCREATE(CSVMaskEditor, CWnd)
+		LPUNKNOWN result;
+		GetProperty(0x1, VT_UNKNOWN, (void*)&result);
+		return result;
+	}
 
-			LPUNKNOWN CSVMaskEditor::GetImageDIBHandle()
-		{
-			LPUNKNOWN result;
-			GetProperty(0x1, VT_UNKNOWN, (void*)&result);
-			return result;
-		}
+	void CSVMaskEditor::SetImageDIBHandle(LPUNKNOWN propVal)
+	{
+		SetProperty(0x1, VT_UNKNOWN, propVal);
+	}
 
-		void CSVMaskEditor::SetImageDIBHandle(LPUNKNOWN propVal)
-		{
-			SetProperty(0x1, VT_UNKNOWN, propVal);
-		}
+	long CSVMaskEditor::GetMaskOperator()
+	{
+		long result;
+		GetProperty(0x2, VT_I4, (void*)&result);
+		return result;
+	}
 
-		long CSVMaskEditor::GetMaskOperator()
-		{
-			long result;
-			GetProperty(0x2, VT_I4, (void*)&result);
-			return result;
-		}
+	void CSVMaskEditor::SetMaskOperator(long propVal)
+	{
+		SetProperty(0x2, VT_I4, propVal);
+	}
 
-		void CSVMaskEditor::SetMaskOperator(long propVal)
-		{
-			SetProperty(0x2, VT_I4, propVal);
-		}
-
-		LPUNKNOWN CSVMaskEditor::GetMaskData()
-		{
-			LPUNKNOWN result;
-			GetProperty(0x3, VT_UNKNOWN, (void*)&result);
-			return result;
-		}
-		void CSVMaskEditor::SetMaskData(LPUNKNOWN propVal)
-		{
-			SetProperty(0x3, VT_UNKNOWN, propVal);
-		}
+	LPUNKNOWN CSVMaskEditor::GetMaskData()
+	{
+		LPUNKNOWN result;
+		GetProperty(0x3, VT_UNKNOWN, (void*)&result);
+		return result;
+	}
+	void CSVMaskEditor::SetMaskData(LPUNKNOWN propVal)
+	{
+		SetProperty(0x3, VT_UNKNOWN, propVal);
+	}
 
 
-		void CSVMaskEditor::Refresh()
-		{
-			InvokeHelper(DISPID_REFRESH, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
-		}
+	void CSVMaskEditor::Refresh()
+	{
+		InvokeHelper(DISPID_REFRESH, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
+	}
 
-		long CSVMaskEditor::DoEditMaskModal()
-		{
-			long result;
-			InvokeHelper(0x4, DISPATCH_METHOD, VT_I4, (void*)&result, nullptr);
-			return result;
-		}
+	long CSVMaskEditor::DoEditMaskModal()
+	{
+		long result;
+		InvokeHelper(0x4, DISPATCH_METHOD, VT_I4, (void*)&result, nullptr);
+		return result;
+	}
 
-		void CSVMaskEditor::AboutBox()
-		{
-			InvokeHelper(0xfffffdd8, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
-		}
-	} //SVMFCControls
-} //Seidenader
+	void CSVMaskEditor::AboutBox()
+	{
+		InvokeHelper(0xfffffdd8, DISPATCH_METHOD, VT_EMPTY, nullptr, nullptr);
+	}
+} //namespace SvMc

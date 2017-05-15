@@ -10,8 +10,8 @@
 
 #pragma once
 
-namespace Seidenader { namespace TriggerHandling {
-
+namespace SvTh
+{
 	//! This struct was introduced to facilitate the passing of further parameters 
 	//! (beyond 'Owner' and 'Data') - in particular in preparation for the SVPLCIO.dll.
 
@@ -55,8 +55,4 @@ namespace Seidenader { namespace TriggerHandling {
 		SVTriggerCallbackPtr m_pCallback;
 		TriggerParameters m_TriggerParameters;
 	};
-
-} /* namespace TriggerHandling */ } /* namespace Seidenader */
-
-namespace SvTh = Seidenader::TriggerHandling;
-
+} //namespace SvTh

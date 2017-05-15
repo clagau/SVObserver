@@ -192,7 +192,7 @@ BOOL SVIODoc::CanCloseFrame(CFrameWnd* pFrame)
 	if (!bCanClose)
 	{
 		SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_SVIODoc_ClosingImpossible, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10054 );
+		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SVIODoc_ClosingImpossible, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10054 );
 	}
 
 	return bCanClose;
@@ -237,7 +237,7 @@ void SVIODoc::OnExtrasEditRemoteInputs()
 		if( !pInputList->FillInputs( ppIOEntries ) )
 		{
 			SvStl::MessageMgrStd e( SvStl::LogOnly );
-			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvOi::Tid_ErrorFillingInputs, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_17032_ErrorFillingInputs );
+			e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorFillingInputs, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17032_ErrorFillingInputs );
 			DebugBreak();
 		}
 		long lPPQSize = pConfig->GetPPQCount( );
@@ -324,7 +324,7 @@ void SVIODoc::OnExtrasEditRemoteInputs()
 							if( S_OK != pInputList->DetachInput( pRemoteInput->GetUniqueObjectID() ) )
 							{
 								SvStl::MessageMgrStd e( SvStl::LogOnly );
-								e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvOi::Tid_ErrorDetachingInput, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_17033_ErrorDetachingInput );
+								e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorDetachingInput, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17033_ErrorDetachingInput );
 								DebugBreak();
 							}
 

@@ -124,17 +124,17 @@ bool SVObjectAppClass::CreateChildObject( SVObjectClass* pChildObject, DWORD con
 
 		bool Result = createAllObjectsFromChild( *pChildObject );
 
-		if( SVMFResetObject == ( context & SVMFResetObject ) )
+		if( SvOi::SVMFResetObject == ( context & SvOi::SVMFResetObject ) )
 		{
 			pChildObject->resetAllObjects();
 		}
 
-		if( SVMFSetDefaultInputs == ( context & SVMFSetDefaultInputs ) )
+		if( SvOi::SVMFSetDefaultInputs == ( context & SvOi::SVMFSetDefaultInputs ) )
 		{
 			pInspection->SetDefaultInputs();
 		}
 
-		if( SVMFResetInspection == ( context & SVMFResetInspection ) )
+		if( SvOi::SVMFResetInspection == ( context & SvOi::SVMFResetInspection ) )
 		{
 			GetInspection()->resetAllObjects();
 		}

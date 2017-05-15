@@ -14,7 +14,7 @@
 #include "SVXMLCTreeCtrl.h"
 #include "SVUtilityLibrary/SVString.h"
 
-namespace Seidenader { namespace SVXMLLibrary
+namespace SvXml
 {
 	SVXMLCTreeCtrl::SVXMLCTreeCtrl( CTreeCtrl& rTree )
 	: m_rTree( rTree ), m_Root( TVI_ROOT )
@@ -432,7 +432,6 @@ namespace Seidenader { namespace SVXMLLibrary
 
 		return l_Status;
 	}
-
-} /* namespace SVXMLLibrary */ } /* namespace Seidenader */
+} //namespace SvXml
 
 

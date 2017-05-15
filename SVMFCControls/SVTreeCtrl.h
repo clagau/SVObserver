@@ -11,49 +11,43 @@
 
 #pragma once
 
-namespace Seidenader
+namespace SvMc
 {
-	namespace SVMFCControls
+	class SVTreeCtrlClass : public CTreeCtrl
 	{
-		class SVTreeCtrlClass : public CTreeCtrl
-		{
-			DECLARE_DYNCREATE(SVTreeCtrlClass)
+		DECLARE_DYNCREATE(SVTreeCtrlClass)
 
-			// Construction
-		public:
-			SVTreeCtrlClass();
-			BOOL InitTreeCtrl();
+		// Construction
+	public:
+		SVTreeCtrlClass();
+		BOOL InitTreeCtrl();
 
-			// Attributes
+		// Attributes
 
-		protected:
-			CImageList StateImageList;
+	protected:
+		CImageList StateImageList;
 
-			// Operations
-		public:
-			BOOL GetCheckState(	HTREEITEM hItem	);
+		// Operations
+	public:
+		BOOL GetCheckState(	HTREEITEM hItem	);
 
-			BOOL SetCheckState(	HTREEITEM hItem, BOOL fCheck );
+		BOOL SetCheckState(	HTREEITEM hItem, BOOL fCheck );
 
-			// Overrides
-			// ClassWizard generated virtual function overrides
-			//{{AFX_VIRTUAL(SVTreeCtrlClass)
-			//}}AFX_VIRTUAL
+		// Overrides
+		// ClassWizard generated virtual function overrides
+		//{{AFX_VIRTUAL(SVTreeCtrlClass)
+		//}}AFX_VIRTUAL
 
-			// Implementation
-		public:
-			virtual ~SVTreeCtrlClass();
+		// Implementation
+	public:
+		virtual ~SVTreeCtrlClass();
 
-			// Generated message map functions
-		protected:
-			//{{AFX_MSG(SVTreeCtrlClass)
-			afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
-			//}}AFX_MSG
+		// Generated message map functions
+	protected:
+		//{{AFX_MSG(SVTreeCtrlClass)
+		afx_msg void OnLButtonDown(UINT nFlags, CPoint point);
+		//}}AFX_MSG
 
-			DECLARE_MESSAGE_MAP()
-		};
-	} //SVMFCControls
-} //Seidenader
-
-namespace SvMc = Seidenader::SVMFCControls;
-
+		DECLARE_MESSAGE_MAP()
+	};
+} //namespace SvMc

@@ -46,7 +46,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-namespace Seidenader { namespace SVOGui
+namespace SvOg
 {
 	static const std::string EnabledTag("Enabled");
 
@@ -86,7 +86,7 @@ namespace Seidenader { namespace SVOGui
 	{
 		SVString equationText;
 	
-		typedef GuiCmd::GetEquation Command;
+		typedef SvCmd::GetEquation Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 
 		CommandPtr commandPtr = new Command(m_EquationID);
@@ -101,7 +101,7 @@ namespace Seidenader { namespace SVOGui
 			SVStringVector msgList;
 			msgList.push_back(SvUl_SF::Format(_T("%d"), hr));
 			SvStl::MessageMgrStd e( SvStl::LogOnly );
-			e.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_UnknownCommandError, SvStl::SourceFileParams(StdMessageParams) );
+			e.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UnknownCommandError, SvStl::SourceFileParams(StdMessageParams) );
 			ASSERT(false);
 		}
 		return equationText;
@@ -109,7 +109,7 @@ namespace Seidenader { namespace SVOGui
 
 	void FormulaController::BuildSelectableItems()
 	{
-		SvOsl::SelectorOptions BuildOptions( m_InspectionID, SV_SELECTABLE_FOR_EQUATION, m_InspectionID, true );
+		SvOsl::SelectorOptions BuildOptions( m_InspectionID, SvOi::SV_SELECTABLE_FOR_EQUATION, m_InspectionID, true );
 		SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::GlobalSelector, SvOg::PPQSelector, SvOg::ToolSetItemSelector<>>( BuildOptions );
 	}
 
@@ -136,7 +136,7 @@ namespace Seidenader { namespace SVOGui
 	int FormulaController::ValidateEquation( const SVString& equationString, double& result, bool bSetValue, SvStl::MessageContainerVector& rErrorMessages ) const
 	{
 		int retValue = validateSuccessful;
-		typedef GuiCmd::ValidateAndSetEquation Command;
+		typedef SvCmd::ValidateAndSetEquation Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 
 		CommandPtr commandPtr(new Command(m_EquationID, equationString, bSetValue));
@@ -150,7 +150,7 @@ namespace Seidenader { namespace SVOGui
 
 			if (validateSuccessful == retValue && bSetValue)
 			{
-				typedef GuiCmd::ResetObject ResetCommand;
+				typedef SvCmd::ResetObject ResetCommand;
 				typedef SVSharedPtr<ResetCommand> ResetCommandPtr;
 
 				ResetCommandPtr commandPtr(new ResetCommand(m_TaskObjectID));
@@ -167,7 +167,7 @@ namespace Seidenader { namespace SVOGui
 			SVStringVector msgList;
 			msgList.push_back(SvUl_SF::Format(_T("%d"), hr));
 			SvStl::MessageMgrStd e( SvStl::LogOnly );
-			e.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_UnknownCommandError, SvStl::SourceFileParams(StdMessageParams) );
+			e.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UnknownCommandError, SvStl::SourceFileParams(StdMessageParams) );
 			ASSERT(false);
 		}
 		return retValue;
@@ -175,7 +175,7 @@ namespace Seidenader { namespace SVOGui
 
 	HRESULT FormulaController::SetDefaultInputs()
 	{
-		typedef GuiCmd::SetDefaultInputs<SvOi::IInspectionProcess> Command;
+		typedef SvCmd::SetDefaultInputs<SvOi::IInspectionProcess> Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 
 		CommandPtr commandPtr(new Command(m_InspectionID));
@@ -189,7 +189,7 @@ namespace Seidenader { namespace SVOGui
 	SVString FormulaController::GetOwnerName() const
 	{
 		SVString name;
-		typedef GuiCmd::GetObjectName Command;
+		typedef SvCmd::GetObjectName Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 
 		CommandPtr commandPtr(new Command(m_TaskObjectID));
@@ -207,7 +207,7 @@ namespace Seidenader { namespace SVOGui
 	SVString FormulaController::GetInspectionName() const
 	{
 		SVString inspectionName;
-		typedef GuiCmd::GetObjectName Command;
+		typedef SvCmd::GetObjectName Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 
 		CommandPtr commandPtr(new Command(m_InspectionID));
@@ -223,7 +223,7 @@ namespace Seidenader { namespace SVOGui
 	SVString FormulaController::GetPPQName() const
 	{
 		SVString PPQName;
-		typedef GuiCmd::GetPPQObjectName Command;
+		typedef SvCmd::GetPPQObjectName Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 
 		CommandPtr commandPtr(new Command(m_InspectionID));
@@ -245,7 +245,7 @@ namespace Seidenader { namespace SVOGui
 
 		if (SV_GUID_NULL == m_EquationID)
 		{
-			typedef GuiCmd::GetTaskObjectInstanceID Command;
+			typedef SvCmd::GetTaskObjectInstanceID Command;
 			typedef SVSharedPtr<Command> CommandPtr;
 			// check for Math Container...
 			if (SVMathContainerObjectType == m_info.ObjectType)
@@ -283,11 +283,11 @@ namespace Seidenader { namespace SVOGui
 					SVStringVector msgList;
 					msgList.push_back(SvUl_SF::Format(_T("%d"), hr));
 					SvStl::MessageMgrStd e( SvStl::LogOnly );
-					e.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_UnknownCommandError, SvStl::SourceFileParams(StdMessageParams) );
+					e.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UnknownCommandError, SvStl::SourceFileParams(StdMessageParams) );
 					ASSERT(false);
 				}
 			}
 		}
 	}
-} /* namespace SVOGui */ } /* namespace Seidenader */
+} //namespace SvOg
 

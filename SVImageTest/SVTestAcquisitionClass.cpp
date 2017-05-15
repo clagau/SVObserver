@@ -28,9 +28,9 @@ SVTestAcquisitionClass::~SVTestAcquisitionClass()
 {
 }
 
-SVClock::SVTimeStamp SVTestAcquisitionClass::GetTimeStamp() const
+SvTl::SVTimeStamp SVTestAcquisitionClass::GetTimeStamp() const
 {
-	SVClock::SVTimeStamp l_TimeStamp = SVClock::GetTimeStamp();
+	SvTl::SVTimeStamp l_TimeStamp = SvTl::GetTimeStamp();
 	return l_TimeStamp;
 }
 

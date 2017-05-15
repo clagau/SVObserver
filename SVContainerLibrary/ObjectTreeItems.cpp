@@ -16,7 +16,7 @@
 #include "SVStatusLibrary/MessageManager.h"
 #pragma endregion Includes
 
-namespace Sv { namespace Container
+namespace SvCl
 {
 	#pragma region Constructor
 	ObjectTreeItems::ObjectTreeItems() : SVTree<SVString, ObjectSelectorItem>()
@@ -310,5 +310,5 @@ namespace Sv { namespace Container
 		return Iter;
 	}
 	#pragma endregion Private Methods
-} /* namespace SVContainerLibrary */ } /* namespace Seidenader */
+} //namespace SvCl
 

@@ -16,7 +16,7 @@
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace SVSharedMemoryLibrary
+namespace SvSml
 {
 	//!This structure holds the path information which are stored in SharedMemory 
 	struct SVSharedImage
@@ -55,13 +55,11 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		void_allocator m_Allocator;
 	};
 
-typedef bip::allocator<SVSharedImage, segment_manager_t> SVSharedImageAllocator;
-typedef bip::vector< SVSharedImage, SVSharedImageAllocator > SVSharedImageVector;
-typedef bip::allocator< SVSharedImageVector, segment_manager_t > SVSharedImageVectorAllocator;
+	typedef bip::allocator<SVSharedImage, segment_manager_t> SVSharedImageAllocator;
+	typedef bip::vector< SVSharedImage, SVSharedImageAllocator > SVSharedImageVector;
+	typedef bip::allocator< SVSharedImageVector, segment_manager_t > SVSharedImageVectorAllocator;
 
-///only copy the status
-void  CopySharedImages(SVSharedImageVector& rTo, const SVSharedImageVector& rFrom );
+	///only copy the status
+	void  CopySharedImages(SVSharedImageVector& rTo, const SVSharedImageVector& rFrom );
 
-} /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
-
-namespace SvSml = Seidenader::SVSharedMemoryLibrary;
+} //namespace SvSml

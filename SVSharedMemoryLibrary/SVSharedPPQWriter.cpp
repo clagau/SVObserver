@@ -15,7 +15,7 @@
 #include "SVSharedConfiguration.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace SVSharedMemoryLibrary
+namespace SvSml
 {
 	SVSharedPPQWriter::SVSharedPPQWriter()
 		: m_pProductStore(nullptr)
@@ -279,4 +279,4 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		ClearHeld(m_pProductStore);
 		ClearHeld(m_pRejectStore);
 	}
-} /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
+} //namespace SvSml

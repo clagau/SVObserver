@@ -52,7 +52,7 @@ BOOL TableLimitAnalyzer::CreateObject( SVObjectLevelCreateStruct* pCreateStructu
 {
 	BOOL l_bOk = __super::CreateObject( pCreateStructure );
 
-	m_LimitValue.SetObjectAttributesAllowed( SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
+	m_LimitValue.SetObjectAttributesAllowed( SvOi::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
 	
 	return l_bOk;
 }
@@ -86,7 +86,7 @@ bool TableLimitAnalyzer::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCont
 			returnValue = false;
 			if (nullptr != pErrorMessages)
 			{
-				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
+				SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
 				pErrorMessages->push_back(Msg);
 			}
 		}

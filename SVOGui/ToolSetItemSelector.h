@@ -17,34 +17,30 @@
 #include "ObjectSelectorLibrary\SelectorOptions.h"
 #include "SVObjectLibrary\SVObjectSynchronousCommandTemplate.h"
 #pragma endregion Includes
-namespace Seidenader
+
+namespace SvOg
 {
-	namespace SVOGui
+	//Note the default filter uses the object attribute if in rOptions if it is 0 then all objects are listed
+	template<SvCmd::SelectorFilterTypeEnum FilterType=SvCmd::AttributesAllowedFilterType>
+	class ToolSetItemSelector
 	{
-		//Note the default filter uses the object attribute if in rOptions if it is 0 then all objects are listed
-		template<GuiCmd::SelectorFilterTypeEnum FilterType=GuiCmd::AttributesAllowedFilterType>
-		class ToolSetItemSelector
+	public:
+		SvOi::ISelectorItemVectorPtr operator()(const SvOsl::SelectorOptions& rOptions)
 		{
-		public:
-			SvOi::ISelectorItemVectorPtr operator()(const SvOsl::SelectorOptions& rOptions)
-			{
-				SvOi::ISelectorItemVectorPtr SelectorList;
+			SvOi::ISelectorItemVectorPtr SelectorList;
 
-				typedef GuiCmd::GetSelectorList<SvOi::ISelectorItemVectorPtr> Command;
-				typedef SVSharedPtr<Command> CommandPtr;
+			typedef SvCmd::GetSelectorList<SvOi::ISelectorItemVectorPtr> Command;
+			typedef SVSharedPtr<Command> CommandPtr;
 		
-				const SVGUID& rGuid = (GUID_NULL != rOptions.getInstanceID() ) ? rOptions.getInstanceID() : rOptions.getInspectionID();
-				CommandPtr commandPtr(new Command(rGuid, FilterType, rOptions.getAttributesFilter(), rOptions.getWholeArray()));
-				SVObjectSynchronousCommandTemplate<CommandPtr> cmd(rOptions.getInspectionID(), commandPtr);
-				HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
-				if (S_OK == hr)
-				{
-					SelectorList = commandPtr->GetResults();
-				}
-				return SelectorList;
+			const SVGUID& rGuid = (GUID_NULL != rOptions.getInstanceID() ) ? rOptions.getInstanceID() : rOptions.getInspectionID();
+			CommandPtr commandPtr(new Command(rGuid, FilterType, rOptions.getAttributesFilter(), rOptions.getWholeArray()));
+			SVObjectSynchronousCommandTemplate<CommandPtr> cmd(rOptions.getInspectionID(), commandPtr);
+			HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+			if (S_OK == hr)
+			{
+				SelectorList = commandPtr->GetResults();
 			}
-		};
-	}
-}
-
-namespace SvOg = Seidenader::SVOGui;
+			return SelectorList;
+		}
+	};
+} //namespace SvOg

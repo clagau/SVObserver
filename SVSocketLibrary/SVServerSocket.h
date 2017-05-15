@@ -15,7 +15,7 @@
 #include "SVSocket.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace SVSocketLibrary
+namespace SvSol
 {
 	template<typename API>
 	class SVServerSocket : public SVSocket<API>
@@ -91,6 +91,4 @@ namespace Seidenader { namespace SVSocketLibrary
 		}
 		return error;
 	}
-} /*namespace SVSocketLibrary*/ } /*namespace Seidenader*/
-
-namespace SvSol = Seidenader::SVSocketLibrary;
+} //namespace SvSol

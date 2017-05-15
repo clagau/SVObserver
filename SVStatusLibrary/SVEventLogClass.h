@@ -14,36 +14,38 @@
 #include "SVEventRecordStruct.h"
 #include "SVUtilityLibrary/SVString.h"
 
-class SVEventLogClass  
+namespace SvStl
 {
-public:
-	SVEventLogClass();
-	virtual ~SVEventLogClass();
+	class SVEventLogClass
+	{
+	public:
+		SVEventLogClass();
+		virtual ~SVEventLogClass();
 
-	HRESULT Open( LPCTSTR p_pszName );
-	HRESULT Close();
+		HRESULT Open( LPCTSTR p_pszName );
+		HRESULT Close();
 
-	HRESULT GetRecordCount( unsigned long& p_rulCount );
+		HRESULT GetRecordCount( unsigned long& p_rulCount );
 
-	HRESULT ReadLast( SVEventRecordStruct& p_rsvRecord );
-	HRESULT ReadPrevious( SVEventRecordStruct& p_rsvRecord );
+		HRESULT ReadLast( SVEventRecordStruct& p_rsvRecord );
+		HRESULT ReadPrevious( SVEventRecordStruct& p_rsvRecord );
 
-private:
+	private:
 
-	HRESULT LocalInitialize();
-	HRESULT LocalDestroy();
+		HRESULT LocalInitialize();
+		HRESULT LocalDestroy();
 
-	SVString m_csName; // Should be one of the following: "Application", "Security", or "System"
+		SVString m_csName; // Should be one of the following: "Application", "Security", or "System"
 
-	HANDLE m_hHandle;
+		HANDLE m_hHandle;
 
-	unsigned char *m_pucBuffer;
-	unsigned long m_ulBufferSize;
+		unsigned char *m_pucBuffer;
+		unsigned long m_ulBufferSize;
 
-	unsigned long m_ulBytesRead;
+		unsigned long m_ulBytesRead;
 
-	unsigned char* m_pucPrevious;
-	unsigned char* m_pucCurrent;
-};
-
+		unsigned char* m_pucPrevious;
+		unsigned char* m_pucCurrent;
+	};
+} //namespace SvStl
 

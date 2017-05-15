@@ -25,7 +25,7 @@
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace  SVXMLLibrary
+namespace SvXml
 {
 	#pragma region Declarations 
 		class SaxEncryptionHandler;
@@ -216,9 +216,7 @@ namespace Seidenader { namespace  SVXMLLibrary
 		SaxEncryptionHandler *m_pSaxEncryptionHandler;
 	#pragma endregion Member variables
 	};
-} /* namespace SVXMLLibrary */ } /* namespace Seidenader */
-
-namespace SvXml = Seidenader::SVXMLLibrary;
+} //namespace SvXml
 
 #pragma region Inline
 #include "SaxXMLHandler.inl"

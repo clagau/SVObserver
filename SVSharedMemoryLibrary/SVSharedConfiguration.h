@@ -15,7 +15,7 @@
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace SVSharedMemoryLibrary
+namespace SvSml
 {
 	class SVSharedConfiguration
 	{
@@ -49,6 +49,4 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		}
 		static bool SharedDriveSizeOk();
 	};
-} /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
-
-namespace SvSml = Seidenader::SVSharedMemoryLibrary;
+} //namespace SvSml

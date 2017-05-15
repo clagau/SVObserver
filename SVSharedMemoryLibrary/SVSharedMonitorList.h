@@ -17,7 +17,7 @@
 //#include "SVMonitorListWriter.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace SVSharedMemoryLibrary
+namespace SvSml
 {
 	class SVSharedMonitorList
 	{
@@ -70,9 +70,7 @@ namespace Seidenader { namespace SVSharedMemoryLibrary
 		bool m_active; // set when activated
 
 	};
-
 	typedef bip::allocator<SVSharedMonitorList, segment_manager_t> MonitorListAllocator;
-} /*namespace SVSharedMemoryLibrary*/ } /*namespace Seidenader*/
 
-namespace SvSml = Seidenader::SVSharedMemoryLibrary;
+} //namespace SvSml
 

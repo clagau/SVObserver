@@ -17,7 +17,7 @@
 #include "SVMFCControls/DlgItemResizer.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace SVOGui
+namespace SvOg
 {
 	class SVShowDependentsDialog : public CDialog
 	{
@@ -70,4 +70,4 @@ namespace Seidenader { namespace SVOGui
 		DialogType m_DialogType;
 		SVStringSet m_SourceNames;
 	};
-} /* namespace SVOGui */ } /* namespace Seidenader */
+} //namespace SvOg

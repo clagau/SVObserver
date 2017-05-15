@@ -657,10 +657,10 @@ HRESULT SVMatroxGigeAcquisitionClass::GetCameraImageInfo( SVImageInfoClass &pIma
 		uiBandNumber = 3; // Only RGB uses more than 1 band.
 	}
 
-	pImageInfo.SetImageProperty( SVImagePropertyFormat, iFormat );
-	pImageInfo.SetImageProperty( SVImagePropertyPixelDepth, SV8BitUnsigned );
-	pImageInfo.SetImageProperty( SVImagePropertyBandNumber, uiBandNumber );
-	pImageInfo.SetImageProperty( SVImagePropertyBandLink, 0 );
+	pImageInfo.SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyFormat, iFormat );
+	pImageInfo.SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyPixelDepth, SV8BitUnsigned );
+	pImageInfo.SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandNumber, uiBandNumber );
+	pImageInfo.SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandLink, 0 );
 
 	pImageInfo.SetExtentProperty( SVExtentPropertyOutputPositionPoint, 0 );
 	pImageInfo.SetExtentProperty( SVExtentPropertyWidth, bufWidth );

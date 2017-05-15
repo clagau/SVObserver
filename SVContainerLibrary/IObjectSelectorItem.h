@@ -16,7 +16,7 @@
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
-namespace Sv { namespace Container
+namespace SvCl
 {
 	interface IObjectSelectorItem abstract
 	{
@@ -216,7 +216,5 @@ namespace Sv { namespace Container
 		virtual bool isModified() const = 0;
 	#pragma endregion Public Methods
 	};
-} /* namespace SVContainerLibrary */ } /* namespace Seidenader */
-
-namespace SvCl = Sv::Container;
+} //namespace SvCl
 

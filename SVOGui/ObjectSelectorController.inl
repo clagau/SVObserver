@@ -5,7 +5,9 @@
 //*****************************************************************************
 /// Controller to display the object selector and return the selected result.
 //******************************************************************************
-namespace Seidenader { namespace SVOGui {
+
+namespace SvOg
+{
 
 #pragma region Public Methods
 	template <typename ToolsetItemSelector>
@@ -25,7 +27,7 @@ namespace Seidenader { namespace SVOGui {
 		{
 			InstanceGuid = GetToolSetGUID();
 		}
-		SvOsl::SelectorOptions BuildOptions( m_InspectionID, SV_SELECTABLE_FOR_EQUATION, InstanceGuid );
+		SvOsl::SelectorOptions BuildOptions( m_InspectionID, SvOi::SV_SELECTABLE_FOR_EQUATION, InstanceGuid );
 		SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<GlobalSelector, NoSelector, ToolsetItemSelector>( BuildOptions );
 
 		if(!rName.empty())
@@ -49,4 +51,4 @@ namespace Seidenader { namespace SVOGui {
 		return result;
 	}
 #pragma endregion Public Methods
-}}
+} //namespace SvOg

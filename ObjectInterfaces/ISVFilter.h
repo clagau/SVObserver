@@ -7,21 +7,16 @@
 
 #pragma once
 
-namespace Seidenader
+namespace SvOi
 {
-	namespace ObjectInterfaces
-	{	
-		class ISVFilter
-		{
-		public:
-			virtual ~ISVFilter() {}
+	class ISVFilter
+	{
+	public:
+		virtual ~ISVFilter() {}
 
-			/**********
-			 The method gets if the inspection should reset if this filter is destroyed.
-			***********/
-			virtual bool shouldResetInspection() const = 0;
-		};
-	}
-}
-
-namespace SvOi = Seidenader::ObjectInterfaces;
+		/**********
+			The method gets if the inspection should reset if this filter is destroyed.
+		***********/
+		virtual bool shouldResetInspection() const = 0;
+	};
+} //namespace SvOi

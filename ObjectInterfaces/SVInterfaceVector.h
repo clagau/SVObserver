@@ -12,11 +12,7 @@
 #include "SVContainerLibrary/SVVector.h"
 #pragma endregion Includes
 
-namespace Seidenader
+namespace SvOi
 {
-	namespace ObjectInterfaces
-	{
-		typedef SVVector<SVObjectTypeInfoStruct> SVInterfaceVector;
-	}
-}
-namespace SvOi = Seidenader::ObjectInterfaces;
+	typedef SVVector<SVObjectTypeInfoStruct> SVInterfaceVector;
+} //namespace SvOi

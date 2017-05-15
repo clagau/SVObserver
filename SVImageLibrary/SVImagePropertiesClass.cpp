@@ -60,36 +60,36 @@ HRESULT SVImagePropertiesClass::Initialize()
 	return l_hrOk;
 }
 
-HRESULT SVImagePropertiesClass::DisableImageProperty( SVImagePropertyEnum p_eProperty )
+HRESULT SVImagePropertiesClass::DisableImageProperty( SvOi::SVImagePropertyEnum p_eProperty )
 {
 	HRESULT l_hrOk = S_OK;
 
-	if ( ( p_eProperty & ~SVImagePropertyAll ) == 0 )
+	if ( ( p_eProperty & ~SvOi::SVImagePropertyEnum::SVImagePropertyAll ) == 0 )
 	{
-		if ( ( p_eProperty & SVImagePropertyFormat ) != 0 )
+		if ( ( p_eProperty & SvOi::SVImagePropertyEnum::SVImagePropertyFormat ) != 0 )
 		{
-			m_ulProperties &= ~SVImagePropertyFormat;
+			m_ulProperties &= ~SvOi::SVImagePropertyEnum::SVImagePropertyFormat;
 
 			l_hrOk = S_OK;
 		}
 
-		if ( ( p_eProperty & SVImagePropertyPixelDepth ) != 0 )
+		if ( ( p_eProperty & SvOi::SVImagePropertyEnum::SVImagePropertyPixelDepth ) != 0 )
 		{
-			m_ulProperties &= ~SVImagePropertyPixelDepth;
+			m_ulProperties &= ~SvOi::SVImagePropertyEnum::SVImagePropertyPixelDepth;
 
 			l_hrOk = S_OK;
 		}
 
-		if ( ( p_eProperty & SVImagePropertyBandNumber ) != 0 )
+		if ( ( p_eProperty & SvOi::SVImagePropertyEnum::SVImagePropertyBandNumber ) != 0 )
 		{
-			m_ulProperties &= ~SVImagePropertyBandNumber;
+			m_ulProperties &= ~SvOi::SVImagePropertyEnum::SVImagePropertyBandNumber;
 
 			l_hrOk = S_OK;
 		}
 
-		if ( ( p_eProperty & SVImagePropertyBandLink ) != 0 )
+		if ( ( p_eProperty & SvOi::SVImagePropertyEnum::SVImagePropertyBandLink ) != 0 )
 		{
-			m_ulProperties &= ~SVImagePropertyBandLink;
+			m_ulProperties &= ~SvOi::SVImagePropertyEnum::SVImagePropertyBandLink;
 
 			l_hrOk = S_OK;
 		}
@@ -98,7 +98,7 @@ HRESULT SVImagePropertiesClass::DisableImageProperty( SVImagePropertyEnum p_ePro
 	return l_hrOk;
 }
 
-HRESULT SVImagePropertiesClass::GetImageProperty( SVImagePropertyEnum p_eProperty, int &p_riValue ) const
+HRESULT SVImagePropertiesClass::GetImageProperty( SvOi::SVImagePropertyEnum p_eProperty, int &p_riValue ) const
 {
 	long l_lValue = 0;
 
@@ -112,13 +112,13 @@ HRESULT SVImagePropertiesClass::GetImageProperty( SVImagePropertyEnum p_ePropert
 	return l_hrOk;
 }
 
-HRESULT SVImagePropertiesClass::GetImageProperty( SVImagePropertyEnum p_eProperty, long &p_rlValue ) const
+HRESULT SVImagePropertiesClass::GetImageProperty( SvOi::SVImagePropertyEnum p_eProperty, long &p_rlValue ) const
 {
 	HRESULT l_hrOk = S_OK;
 
 	switch( p_eProperty )
 	{
-		case SVImagePropertyFormat:
+		case SvOi::SVImagePropertyEnum::SVImagePropertyFormat:
 		{
 			switch( p_rlValue )
 			{
@@ -147,19 +147,19 @@ HRESULT SVImagePropertiesClass::GetImageProperty( SVImagePropertyEnum p_ePropert
 
 			break;
 		}
-		case SVImagePropertyPixelDepth:
+		case SvOi::SVImagePropertyEnum::SVImagePropertyPixelDepth:
 		{
 			p_rlValue = m_iPixelDepth;
 
 			break;
 		}
-		case SVImagePropertyBandNumber:
+		case SvOi::SVImagePropertyEnum::SVImagePropertyBandNumber:
 		{
 			p_rlValue = m_iBandNumber;
 
 			break;
 		}
-		case SVImagePropertyBandLink:
+		case SvOi::SVImagePropertyEnum::SVImagePropertyBandLink:
 		{
 			p_rlValue = m_iBandLink;
 
@@ -176,13 +176,13 @@ HRESULT SVImagePropertiesClass::GetImageProperty( SVImagePropertyEnum p_ePropert
 	return l_hrOk;
 }
 
-HRESULT SVImagePropertiesClass::SetImageProperty( SVImagePropertyEnum p_eProperty, long p_lValue )
+HRESULT SVImagePropertiesClass::SetImageProperty( SvOi::SVImagePropertyEnum p_eProperty, long p_lValue )
 {
 	HRESULT l_hrOk = S_FALSE;
 
-	if ( ( p_eProperty & ~SVImagePropertyAll ) == 0 )
+	if ( ( p_eProperty & ~SvOi::SVImagePropertyEnum::SVImagePropertyAll ) == 0 )
 	{
-		if ( ( p_eProperty & SVImagePropertyFormat ) != 0 )
+		if ( ( p_eProperty & SvOi::SVImagePropertyEnum::SVImagePropertyFormat ) != 0 )
 		{
 			switch( p_lValue )
 			{
@@ -199,7 +199,7 @@ HRESULT SVImagePropertiesClass::SetImageProperty( SVImagePropertyEnum p_ePropert
 				{
 					m_iFormat = (int)p_lValue;
 
-					m_ulProperties |= SVImagePropertyFormat;
+					m_ulProperties |= SvOi::SVImagePropertyEnum::SVImagePropertyFormat;
 
 					l_hrOk = S_OK;
 
@@ -212,29 +212,29 @@ HRESULT SVImagePropertiesClass::SetImageProperty( SVImagePropertyEnum p_ePropert
 			}
 		}
 
-		if ( ( p_eProperty & SVImagePropertyPixelDepth ) != 0 )
+		if ( ( p_eProperty & SvOi::SVImagePropertyEnum::SVImagePropertyPixelDepth ) != 0 )
 		{
 			m_iPixelDepth = (int)p_lValue;
 
-			m_ulProperties |= SVImagePropertyPixelDepth;
+			m_ulProperties |= SvOi::SVImagePropertyEnum::SVImagePropertyPixelDepth;
 
 			l_hrOk = S_OK;
 		}
 
-		if ( ( p_eProperty & SVImagePropertyBandNumber ) != 0 )
+		if ( ( p_eProperty & SvOi::SVImagePropertyEnum::SVImagePropertyBandNumber ) != 0 )
 		{
 			m_iBandNumber = (int)p_lValue;
 
-			m_ulProperties |= SVImagePropertyBandNumber;
+			m_ulProperties |= SvOi::SVImagePropertyEnum::SVImagePropertyBandNumber;
 
 			l_hrOk = S_OK;
 		}
 
-		if ( ( p_eProperty & SVImagePropertyBandLink ) != 0 )
+		if ( ( p_eProperty & SvOi::SVImagePropertyEnum::SVImagePropertyBandLink ) != 0 )
 		{
 			m_iBandLink = (int)p_lValue;
 
-			m_ulProperties |= SVImagePropertyBandLink;
+			m_ulProperties |= SvOi::SVImagePropertyEnum::SVImagePropertyBandLink;
 
 			l_hrOk = S_OK;
 		}
@@ -248,22 +248,22 @@ bool SVImagePropertiesClass::operator==( const SVImagePropertiesClass &p_rsvValu
 {
 	bool l_bOk = m_ulProperties == p_rsvValue.m_ulProperties;
 
-	if ( ( m_ulProperties & SVImagePropertyFormat ) != 0 )
+	if ( ( m_ulProperties & SvOi::SVImagePropertyEnum::SVImagePropertyFormat ) != 0 )
 	{
 		l_bOk = l_bOk && m_iFormat == p_rsvValue.m_iFormat;
 	}
 
-	if ( ( m_ulProperties & SVImagePropertyPixelDepth ) != 0 )
+	if ( ( m_ulProperties & SvOi::SVImagePropertyEnum::SVImagePropertyPixelDepth ) != 0 )
 	{
 		l_bOk = l_bOk && m_iPixelDepth == p_rsvValue.m_iPixelDepth;
 	}
 
-	if ( ( m_ulProperties & SVImagePropertyBandNumber ) != 0 )
+	if ( ( m_ulProperties & SvOi::SVImagePropertyEnum::SVImagePropertyBandNumber ) != 0 )
 	{
 		l_bOk = l_bOk && m_iBandNumber == p_rsvValue.m_iBandNumber;
 	}
 
-	if ( ( m_ulProperties & SVImagePropertyBandLink ) != 0 )
+	if ( ( m_ulProperties & SvOi::SVImagePropertyEnum::SVImagePropertyBandLink ) != 0 )
 	{
 		l_bOk = l_bOk && m_iBandLink == p_rsvValue.m_iBandLink;
 	}

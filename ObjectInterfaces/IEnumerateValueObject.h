@@ -10,15 +10,12 @@
 #include "NameValueList.h"
 #pragma endregion Includes
 
-namespace Seidenader
+namespace SvOi
 {
-	namespace ObjectInterfaces
+	class IEnumerateValueObject
 	{
-		class IEnumerateValueObject
-		{
-		public:
-			virtual ~IEnumerateValueObject() {}
-			virtual NameValueList GetEnumList() const = 0;
-		};
-	}
-}
+	public:
+		virtual ~IEnumerateValueObject() {}
+		virtual NameValueList GetEnumList() const = 0;
+	};
+} //namespace SvOi

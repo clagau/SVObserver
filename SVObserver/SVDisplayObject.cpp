@@ -40,7 +40,7 @@ SVDisplayObject::SVDisplayObject( LPCSTR ObjectName )
 , m_DisplayedTrigger( -1 )
 , m_IPDocDisplayComplete( 1 )
 , m_FrameRate( 10 )
-, m_LastUpdateTime(std::numeric_limits<SVClock::SVTimeStamp>::max())
+, m_LastUpdateTime(std::numeric_limits<SvTl::SVTimeStamp>::max())
 , m_pDoc(nullptr)
 , m_hStartEvent(nullptr)
 , m_hStopEvent(nullptr)
@@ -269,7 +269,7 @@ void SVDisplayObject::SetIPDocDisplayComplete()
 	::InterlockedExchange( &m_IPDocDisplayComplete, 1 );
 
 	::SetEvent( m_hStartEvent );
-	m_LastUpdateTime = SVClock::GetTimeStamp();
+	m_LastUpdateTime = SvTl::GetTimeStamp();
 }
 
 DWORD WINAPI SVDisplayObject::SVDisplayThreadFunc( LPVOID lpParam )
@@ -360,7 +360,7 @@ HRESULT SVDisplayObject::ProcessNotifyIPDoc( bool& p_rProcessed )
 		{
 			::Sleep( 0 );
 
-			l_Process = ( m_NextDisplayEvent < SVClock::GetTimeStamp() );
+			l_Process = ( m_NextDisplayEvent < SvTl::GetTimeStamp() );
 
 			if( l_Process )
 			{
@@ -388,8 +388,8 @@ HRESULT SVDisplayObject::ProcessNotifyIPDoc( bool& p_rProcessed )
 			// check if forcedUpdate is active
 			if (!l_Process && TheSVObserverApp.IsForcedImageUpdateActive())
 			{
-				double elapsed = SVClock::GetTimeStamp() - m_LastUpdateTime;
-				double interval = SVClock::ConvertFrom(SVClock::Seconds, TheSVObserverApp.GetForcedImageUpdateTimeInSeconds());
+				double elapsed = SvTl::GetTimeStamp() - m_LastUpdateTime;
+				double interval = SvTl::ConvertFrom(SvTl::Seconds, TheSVObserverApp.GetForcedImageUpdateTimeInSeconds());
 				// check last update time and if current time is greater than last update time + ForcedImageUpdateTime then Update
 				l_Process = (elapsed >= interval);
 #if defined (TRACE_THEM_ALL) || defined (TRACE_OTHER)
@@ -492,7 +492,7 @@ void SVDisplayObject::UpdateNextDisplayEvent()
 {
 	double l_OffsetInSeconds = 1.0 / static_cast< double >( m_FrameRate );
 
-	m_NextDisplayEvent = SVClock::GetTimeStamp() + SVClock::ConvertFrom( SVClock::Seconds, l_OffsetInSeconds );
+	m_NextDisplayEvent = SvTl::GetTimeStamp() + SvTl::ConvertFrom( SvTl::Seconds, l_OffsetInSeconds );
 
 	m_FrameRate = SVObjectManagerClass::Instance().GetNextFrameRate( m_FrameRate );
 }

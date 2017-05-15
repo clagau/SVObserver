@@ -17,47 +17,42 @@
 #include "SVUtilityLibrary\NameGuidList.h"
 #pragma endregion Includes
 
-namespace Seidenader
+namespace SvCmd
 {
-	namespace GuiCommand
+	struct GetInputs: public boost::noncopyable
 	{
-		struct GetInputs: public boost::noncopyable
+		/// \param rObjectID [in] Object Id to the task object.
+		/// \param typeInfo [in] Type of the requested inputs. SVNotSetObjectType return all inputs
+		/// \param objectTypeToInclude [in] Object type until the name of the connected object will set. SVNotSetObjectType means only object name and e.g. SVToolSetObjectType means "Tool Set.Window Tool....". This parameter will not used for image objects.
+		/// \param func [in]
+		GetInputs(const GUID& rObjectID, const SVObjectTypeInfoStruct& typeInfo = SVObjectTypeInfoStruct(SVNotSetObjectType), SVObjectTypeEnum objectTypeToInclude = SVNotSetObjectType) 
+			: m_InstanceID(rObjectID), m_typeInfo(typeInfo), m_objectTypeToInclude(objectTypeToInclude) {}
+
+		// This method is where the real separation would occur by using sockets/named pipes/shared memory
+		// The logic contained within this method would be moved to the "Server" side of a Client/Server architecture
+		// and replaced with the building and sending of the command
+		HRESULT Execute()
 		{
-			/// \param rObjectID [in] Object Id to the task object.
-			/// \param typeInfo [in] Type of the requested inputs. SVNotSetObjectType return all inputs
-			/// \param objectTypeToInclude [in] Object type until the name of the connected object will set. SVNotSetObjectType means only object name and e.g. SVToolSetObjectType means "Tool Set.Window Tool....". This parameter will not used for image objects.
-			/// \param func [in]
-			GetInputs(const GUID& rObjectID, const SVObjectTypeInfoStruct& typeInfo = SVObjectTypeInfoStruct(SVNotSetObjectType), SVObjectTypeEnum objectTypeToInclude = SVNotSetObjectType) 
-				: m_InstanceID(rObjectID), m_typeInfo(typeInfo), m_objectTypeToInclude(objectTypeToInclude) {}
+			HRESULT hr = S_OK;
 
-			// This method is where the real separation would occur by using sockets/named pipes/shared memory
-			// The logic contained within this method would be moved to the "Server" side of a Client/Server architecture
-			// and replaced with the building and sending of the command
-			HRESULT Execute()
+			SvOi::ITaskObject* pTaskObject = dynamic_cast<SvOi::ITaskObject *>(SvOi::getObject(m_InstanceID));
+			if (nullptr != pTaskObject)
 			{
-				HRESULT hr = S_OK;
-
-				SvOi::ITaskObject* pTaskObject = dynamic_cast<SvOi::ITaskObject *>(SvOi::getObject(m_InstanceID));
-				if (nullptr != pTaskObject)
-				{
-					pTaskObject->GetInputs(m_list, m_typeInfo, m_objectTypeToInclude);
-				}
-				else
-				{
-					hr = E_POINTER;
-				}
-				return hr;
+				pTaskObject->GetInputs(m_list, m_typeInfo, m_objectTypeToInclude);
 			}
-			bool empty() const { return false; }
-			const SvUl::InputNameGuidPairList& ConnectedObjects() const { return m_list; }
+			else
+			{
+				hr = E_POINTER;
+			}
+			return hr;
+		}
+		bool empty() const { return false; }
+		const SvUl::InputNameGuidPairList& ConnectedObjects() const { return m_list; }
 
-		private:
-			SVObjectTypeInfoStruct m_typeInfo;
-			SvUl::InputNameGuidPairList m_list;
-			SVObjectTypeEnum m_objectTypeToInclude;
-			GUID m_InstanceID;
-		};
-	}
-}
-
-namespace GuiCmd = Seidenader::GuiCommand;
+	private:
+		SVObjectTypeInfoStruct m_typeInfo;
+		SvUl::InputNameGuidPairList m_list;
+		SVObjectTypeEnum m_objectTypeToInclude;
+		GUID m_InstanceID;
+	};
+} //namespace SvCmd

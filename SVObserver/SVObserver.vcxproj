@@ -405,7 +405,7 @@ echo %time%
     <ClCompile Include="SVPerspectiveTool.cpp" />
     <ClCompile Include="SVPerspectiveWarpDlg.cpp" />
     <ClCompile Include="SVPixelAnalyzer.cpp" />
-    <ClCompile Include="svpixelanalyzersetup.cpp" />
+    <ClCompile Include="SVPixelAnalyzerSetup.cpp" />
     <ClCompile Include="SVPPQBar.cpp" />
     <ClCompile Include="SVPPQEntryDialog.cpp" />
     <ClCompile Include="SVPPQEntryDialogDigInPage.cpp" />

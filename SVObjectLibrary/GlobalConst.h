@@ -13,7 +13,7 @@
 
 #pragma once
 
-namespace Seidenader { namespace SVObjectLibrary
+namespace SvOl
 {
 	#pragma region Declarations
 	//! Fully qualified names
@@ -51,7 +51,5 @@ namespace Seidenader { namespace SVObjectLibrary
 
 	static const LCID LCID_USA = MAKELCID(MAKELANGID(LANG_ENGLISH, SUBLANG_ENGLISH_US), SORT_DEFAULT);
 	#pragma endregion Declarations
-} /* namespace SVObjectLibrary */ } /* namespace Seidenader */
-
-namespace SvOl = Seidenader::SVObjectLibrary;
+} //namespace SvOl
 

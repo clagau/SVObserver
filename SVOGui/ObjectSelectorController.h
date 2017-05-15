@@ -18,7 +18,8 @@
 #include "ObjectSelectorController.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace SVOGui {
+namespace SvOg
+{
 	class ObjectSelectorController
 	{
 #pragma region Constructor
@@ -54,11 +55,8 @@ namespace Seidenader { namespace SVOGui {
 		SVGUID m_InstanceID;
 #pragma region Member Variables
 	};
-
-}}
+} //namespace SvOg
 
 #pragma region Inline
 #include "ObjectSelectorController.inl"
 #pragma endregion Inline
-
-namespace SvOg = Seidenader::SVOGui;

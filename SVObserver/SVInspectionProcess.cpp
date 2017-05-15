@@ -78,12 +78,12 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed, SVProductInfoSt
 			SVStringVector msgList;
 			msgList.push_back(GetName());
 			SvStl::MessageMgrStd Exception(SvStl::LogOnly);
-			Exception.setMessage(static_cast<DWORD> (hr), SvOi::Tid_InspThreadGetResultImageIndexError, msgList, SvStl::SourceFileParams(StdMessageParams));
+			Exception.setMessage(static_cast<DWORD> (hr), SvStl::Tid_InspThreadGetResultImageIndexError, msgList, SvStl::SourceFileParams(StdMessageParams));
 		}
 
 		if (l_Process)
 		{
-			pIPInfo->m_BeginInspection = SVClock::GetTimeStamp();
+			pIPInfo->m_BeginInspection = SvTl::GetTimeStamp();
 
 			// Copy inputs to Inspection Process's Value objects
 			for (size_t iList = 0; iList < m_PPQInputs.size(); iList++)
@@ -178,7 +178,7 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed, SVProductInfoSt
 				{
 					pIPInfo->oInspectedState = GetToolSet()->GetResultList()->GetInspectionState();
 
-					pIPInfo->m_EndInspection = SVClock::GetTimeStamp();
+					pIPInfo->m_EndInspection = SvTl::GetTimeStamp();
 
 #ifdef _DEBUG
 					//					SVString l_TempStateString = SvUl_SF::Format( _T( "SVInspectionProcess::ProcessInspection|%s|TRI=%ld\n" ),
@@ -285,7 +285,7 @@ HRESULT SVInspectionProcess::ProcessMonitorLists()
 		if (bNotFound)
 		{
 			SvStl::MessageMgrStd Exception(SvStl::LogOnly);
-			Exception.setMessage(SVMSG_SVO_45_SHARED_MEMORY_SETUP_LISTS, SvOi::Tid_ErrorNotAllDataItemsFound, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_15021);
+			Exception.setMessage(SVMSG_SVO_45_SHARED_MEMORY_SETUP_LISTS, SvStl::Tid_ErrorNotAllDataItemsFound, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_15021);
 		}
 		bNotFound = false;
 
@@ -308,7 +308,7 @@ HRESULT SVInspectionProcess::ProcessMonitorLists()
 		if (bNotFound)
 		{
 			SvStl::MessageMgrStd Exception(SvStl::LogOnly);
-			Exception.setMessage(SVMSG_SVO_45_SHARED_MEMORY_SETUP_LISTS, SvOi::Tid_ErrorNotAllImageItemsFound, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_15022);
+			Exception.setMessage(SVMSG_SVO_45_SHARED_MEMORY_SETUP_LISTS, SvStl::Tid_ErrorNotAllImageItemsFound, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_15022);
 		}
 		::InterlockedIncrement(&m_NotifyWithLastInspected);
 	}
@@ -343,14 +343,14 @@ HRESULT SVInspectionProcess::ProcessNotifyWithLastInspected(bool& p_rProcessed, 
 				SVStringVector msgList;
 				msgList.push_back(e.what());
 				SvStl::MessageMgrStd Exception(SvStl::LogOnly);
-				Exception.setMessage(SVMSG_SVO_44_SHARED_MEMORY, SvOi::Tid_ErrorProcessNotifyLastInspected, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_15023);
+				Exception.setMessage(SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_ErrorProcessNotifyLastInspected, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_15023);
 			}
 			catch (...)
 			{
 				SVStringVector msgList;
-				msgList.push_back(SvStl::MessageData::convertId2AddtionalText(SvOi::Tid_Unknown));
+				msgList.push_back(SvStl::MessageData::convertId2AddtionalText(SvStl::Tid_Unknown));
 				SvStl::MessageMgrStd Exception(SvStl::LogOnly);
-				Exception.setMessage(SVMSG_SVO_44_SHARED_MEMORY, SvOi::Tid_ErrorProcessNotifyLastInspected, msgList, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_15024);
+				Exception.setMessage(SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_ErrorProcessNotifyLastInspected, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_15024);
 			}
 		}
 		SVInspectionCompleteInfoStruct l_Data(GetUniqueObjectID(), l_Product);
@@ -423,7 +423,7 @@ void SVInspectionProcess::Init()
 	m_bInspecting = false;
 	m_dwThreadId = 0;
 
-	m_svReset.RemoveState(SVResetStateAll);
+	m_svReset.RemoveState(SvOi::SVResetStateAll);
 
 	m_bForceOffsetUpdate = true;
 
@@ -712,11 +712,11 @@ BOOL SVInspectionProcess::CanGoOnline()
 	CWaitCursor l_cwcMouse;
 
 	SetResetCounts();
-	m_svReset.AddState(SVResetStateInitializeOnReset | SVResetStateArchiveToolCreateFiles | SVResetStateLoadFiles);
+	m_svReset.AddState(SvOi::SVResetStateInitializeOnReset | SvOi::SVResetStateArchiveToolCreateFiles | SvOi::SVResetStateLoadFiles);
 
 	l_bOk = (S_OK == InitializeRunOnce());
 
-	m_svReset.RemoveState(SVResetStateInitializeOnReset | SVResetStateArchiveToolCreateFiles | SVResetStateLoadFiles);
+	m_svReset.RemoveState(SvOi::SVResetStateInitializeOnReset | SvOi::SVResetStateArchiveToolCreateFiles | SvOi::SVResetStateLoadFiles);
 
 	ClearResetCounts();
 
@@ -730,11 +730,11 @@ BOOL SVInspectionProcess::CanRegressionGoOnline()
 	CWaitCursor l_cwcMouse;
 
 	SetResetCounts();
-	m_svReset.AddState(SVResetStateInitializeOnReset | SVResetStateArchiveToolCreateFiles | SVResetStateLoadFiles);
+	m_svReset.AddState(SvOi::SVResetStateInitializeOnReset | SvOi::SVResetStateArchiveToolCreateFiles | SvOi::SVResetStateLoadFiles);
 
 	l_bOk = resetAllObjects();
 
-	m_svReset.RemoveState(SVResetStateInitializeOnReset | SVResetStateArchiveToolCreateFiles | SVResetStateLoadFiles);
+	m_svReset.RemoveState(SvOi::SVResetStateInitializeOnReset | SvOi::SVResetStateArchiveToolCreateFiles | SvOi::SVResetStateLoadFiles);
 
 	ClearResetCounts();
 
@@ -774,14 +774,14 @@ BOOL SVInspectionProcess::GoOnline()
 		{
 
 			SvStl::MessageMgrStd Msg(SvStl::LogAndDisplay);
-			Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, e.what(), SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16223);
+			Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, e.what(), SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16223);
 			return false;
 		}
 
 		catch (...)
 		{
 			SvStl::MessageMgrStd Msg(SvStl::LogAndDisplay);
-			Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, _T("Unknown error Handler"), SvStl::SourceFileParams(StdMessageParams), SvOi::Err_16223);
+			Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, _T("Unknown error Handler"), SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16223);
 			return false;
 		}
 
@@ -1139,7 +1139,7 @@ BOOL SVInspectionProcess::RebuildInspectionInputList()
 					SVBoolValueObjectClass* pIOObject = new SVBoolValueObjectClass(this);
 				pIOObject->setResetOptions(false, SvOi::SVResetItemNone);
 					pObject = dynamic_cast<SVObjectClass*> (pIOObject);
-				pObject->SetObjectAttributesAllowed(SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute);
+				pObject->SetObjectAttributesAllowed(SvOi::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute);
 					break;
 				}
 				case IO_REMOTE_INPUT:
@@ -1147,7 +1147,7 @@ BOOL SVInspectionProcess::RebuildInspectionInputList()
 					SVVariantValueObjectClass* pIOObject = new SVVariantValueObjectClass(this);
 				pIOObject->setResetOptions(false, SvOi::SVResetItemNone);
 					pObject = dynamic_cast<SVObjectClass*> (pIOObject);
-				pObject->SetObjectAttributesAllowed(SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute);
+				pObject->SetObjectAttributesAllowed(SvOi::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute);
 					break;
 				}
 				default:
@@ -1162,7 +1162,7 @@ BOOL SVInspectionProcess::RebuildInspectionInputList()
 			pObject->SetName(l_pObject->GetName());
 			pObject->SetObjectOwner(this);
 			pObject->SetObjectDepth(lLength + 50);
-			pObject->SetObjectAttributesSet(pObject->ObjectAttributesSet() & SV_PUBLISHABLE, SvOi::SetAttributeType::OverwriteAttribute);
+			pObject->SetObjectAttributesSet(pObject->ObjectAttributesSet() & SvOi::SV_PUBLISHABLE, SvOi::SetAttributeType::OverwriteAttribute);
 			pObject->ResetObject();
 
 			CreateChildObject(pObject);
@@ -1184,7 +1184,7 @@ BOOL SVInspectionProcess::RebuildInspectionInputList()
 			if (nullptr != m_PPQInputs[iList].m_IOEntryPtr->getObject() &&
 				m_PPQInputs[iList].m_IOEntryPtr->getObject()->GetCompleteName() == m_arViewedInputNames[l])
 			{
-				m_PPQInputs[iList].m_IOEntryPtr->getObject()->SetObjectAttributesSet(SV_VIEWABLE, SvOi::SetAttributeType::AddAttribute);
+				m_PPQInputs[iList].m_IOEntryPtr->getObject()->SetObjectAttributesSet(SvOi::SV_VIEWABLE, SvOi::SetAttributeType::AddAttribute);
 				bFound = TRUE;
 				break;
 			}// end if
@@ -1192,11 +1192,11 @@ BOOL SVInspectionProcess::RebuildInspectionInputList()
 
 		if (!bFound || !m_PPQInputs[iList].m_IOEntryPtr->m_Enabled)
 		{
-			m_PPQInputs[iList].m_IOEntryPtr->getObject()->SetObjectAttributesSet(SV_VIEWABLE, SvOi::SetAttributeType::RemoveAttribute);
+			m_PPQInputs[iList].m_IOEntryPtr->getObject()->SetObjectAttributesSet(SvOi::SV_VIEWABLE, SvOi::SetAttributeType::RemoveAttribute);
 		}// end if
 
 		SvOi::SetAttributeType AddRemoveType = m_PPQInputs[iList].m_IOEntryPtr->m_Enabled ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
-		m_PPQInputs[iList].m_IOEntryPtr->getObject()->SetObjectAttributesAllowed(SV_SELECTABLE_FOR_EQUATION, AddRemoveType);
+		m_PPQInputs[iList].m_IOEntryPtr->getObject()->SetObjectAttributesAllowed(SvOi::SV_SELECTABLE_FOR_EQUATION, AddRemoveType);
 
 	}// end for
 
@@ -1233,7 +1233,7 @@ bool SVInspectionProcess::AddInputRequest(SVInputRequestInfoStructPtr p_pInReque
 	if (!m_InputRequests.Lock())
 	{
 		SvStl::MessageMgrStd e(SvStl::LogOnly);
-		e.setMessage(SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvOi::Tid_ErrorLockingInputRequests, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_17013_ErrorLockingInputRequests);
+		e.setMessage(SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorLockingInputRequests, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17013_ErrorLockingInputRequests);
 		DebugBreak();
 	}
 
@@ -1242,7 +1242,7 @@ bool SVInspectionProcess::AddInputRequest(SVInputRequestInfoStructPtr p_pInReque
 		if (!m_InputRequests.Unlock())
 		{
 			SvStl::MessageMgrStd e(SvStl::LogOnly);
-			e.setMessage(SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvOi::Tid_ErrorUnlockingInputRequests, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_17014_ErrorUnlockingInputRequests);
+			e.setMessage(SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorUnlockingInputRequests, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17014_ErrorUnlockingInputRequests);
 			DebugBreak();
 		}
 
@@ -1265,7 +1265,7 @@ bool SVInspectionProcess::AddInputRequest(SVInputRequestInfoStructPtr p_pInReque
 	if (!m_InputRequests.Unlock())
 	{
 		SvStl::MessageMgrStd e(SvStl::LogOnly);
-		e.setMessage(SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvOi::Tid_ErrorUnlockingInputRequests, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_17015_ErrorUnlockingInputRequests);
+		e.setMessage(SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorUnlockingInputRequests, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17015_ErrorUnlockingInputRequests);
 		DebugBreak();
 	}
 
@@ -1381,7 +1381,7 @@ HRESULT SVInspectionProcess::AddInputImageRequest(SVInputImageRequestInfoStructP
 	if (!m_InputImageRequests.Lock())
 	{
 		SvStl::MessageMgrStd e(SvStl::LogOnly);
-		e.setMessage(SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvOi::Tid_ErrorLockingInputImageRequests, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_17016_ErrorLockingInputImageRequests);
+		e.setMessage(SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorLockingInputImageRequests, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17016_ErrorLockingInputImageRequests);
 		DebugBreak();
 	}
 
@@ -1390,7 +1390,7 @@ HRESULT SVInspectionProcess::AddInputImageRequest(SVInputImageRequestInfoStructP
 		if (!m_InputImageRequests.Unlock())
 		{
 			SvStl::MessageMgrStd e(SvStl::LogOnly);
-			e.setMessage(SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvOi::Tid_ErrorUnlockingInputImageRequests, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_17017_ErrorUnlockingInputImageRequests);
+			e.setMessage(SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorUnlockingInputImageRequests, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17017_ErrorUnlockingInputImageRequests);
 			DebugBreak();
 		}
 
@@ -1400,7 +1400,7 @@ HRESULT SVInspectionProcess::AddInputImageRequest(SVInputImageRequestInfoStructP
 	if (!m_InputImageRequests.Unlock())
 	{
 		SvStl::MessageMgrStd e(SvStl::LogOnly);
-		e.setMessage(SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvOi::Tid_ErrorUnlockingInputImageRequests, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_17018_ErrorUnlockingInputImageRequests);
+		e.setMessage(SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorUnlockingInputImageRequests, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17018_ErrorUnlockingInputImageRequests);
 		DebugBreak();
 	}
 
@@ -1412,42 +1412,42 @@ BOOL SVInspectionProcess::RemoveAllInputRequests()
 	if (!m_InputRequests.Lock())
 	{
 		SvStl::MessageMgrStd e(SvStl::LogOnly);
-		e.setMessage(SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvOi::Tid_ErrorLockingInputRequests, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_17019_ErrorLockingInputRequests);
+		e.setMessage(SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorLockingInputRequests, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17019_ErrorLockingInputRequests);
 		DebugBreak();
 	}
 
 	if (!m_InputRequests.RemoveAll())
 	{
 		SvStl::MessageMgrStd e(SvStl::LogOnly);
-		e.setMessage(SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvOi::Tid_ErrorRemovingAllInputRequests, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_17020_ErrorRemovingAllInputRequests);
+		e.setMessage(SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorRemovingAllInputRequests, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17020_ErrorRemovingAllInputRequests);
 		DebugBreak();
 	}
 
 	if (!m_InputRequests.Unlock())
 	{
 		SvStl::MessageMgrStd e(SvStl::LogOnly);
-		e.setMessage(SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvOi::Tid_ErrorUnlockingInputRequests, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_17021_ErrorUnlockingInputRequests);
+		e.setMessage(SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorUnlockingInputRequests, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17021_ErrorUnlockingInputRequests);
 		DebugBreak();
 	}
 
 	if (!m_InputImageRequests.Lock())
 	{
 		SvStl::MessageMgrStd e(SvStl::LogOnly);
-		e.setMessage(SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvOi::Tid_ErrorLockingInputImageRequests, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_17022_ErrorLockingInputImageRequests);
+		e.setMessage(SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorLockingInputImageRequests, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17022_ErrorLockingInputImageRequests);
 		DebugBreak();
 	}
 
 	if (!m_InputImageRequests.RemoveAll())
 	{
 		SvStl::MessageMgrStd e(SvStl::LogOnly);
-		e.setMessage(SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvOi::Tid_ErrorRemovingAllInputImageRequests, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_17023_ErrorRemovingAllInputImageRequests);
+		e.setMessage(SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorRemovingAllInputImageRequests, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17023_ErrorRemovingAllInputImageRequests);
 		DebugBreak();
 	}
 
 	if (!m_InputImageRequests.Unlock())
 	{
 		SvStl::MessageMgrStd e(SvStl::LogOnly);
-		e.setMessage(SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvOi::Tid_ErrorUnlockingInputImageRequests, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_17024_ErrorUnlockingInputImageRequests);
+		e.setMessage(SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorUnlockingInputImageRequests, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17024_ErrorUnlockingInputImageRequests);
 		DebugBreak();
 	}
 
@@ -1560,7 +1560,7 @@ HRESULT SVInspectionProcess::RebuildInspection()
 				l_Status = E_FAIL;
 
 				SvStl::MessageMgrStd Msg(SvStl::LogAndDisplay);
-				Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvOi::Tid_IPDoc_NoCameraColorAttached, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_10052);
+				Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_IPDoc_NoCameraColorAttached, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10052);
 			}
 		}
 			}
@@ -1581,7 +1581,7 @@ HRESULT SVInspectionProcess::RebuildInspection()
 		SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
 		SvStl::MsgTypeEnum  MsgType = SVSVIMStateClass::CheckState(SV_STATE_REMOTE_CMD) ? SvStl::LogOnly : SvStl::LogAndDisplay;
 		SvStl::MessageMgrStd Exception(MsgType);
-		Exception.setMessage(SVMSG_SVO_CONDITIONAL_HISTORY, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
+		Exception.setMessage(SVMSG_SVO_CONDITIONAL_HISTORY, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
 		}
 
 #if defined (TRACE_THEM_ALL) || defined (TRACE_IP)
@@ -1619,7 +1619,7 @@ void SVInspectionProcess::ValidateAndInitialize(bool p_Validate, bool p_IsNew)
 	{
 		SetResetCounts();
 
-		m_svReset.AddState(SVResetAutoMoveAndResize | SVResetStateInitializeOnReset | SVResetStateArchiveToolCreateFiles | SVResetStateLoadFiles);
+		m_svReset.AddState(SvOi::SVResetAutoMoveAndResize | SvOi::SVResetStateInitializeOnReset | SvOi::SVResetStateArchiveToolCreateFiles | SvOi::SVResetStateLoadFiles);
 
 		SVStdMapSVToolClassPtrSVInspectionProcessResetStruct l_svToolMap;
 
@@ -1627,7 +1627,7 @@ void SVInspectionProcess::ValidateAndInitialize(bool p_Validate, bool p_IsNew)
 
 		BOOL bok = ProcessInputRequests(1, eResetItem, l_svToolMap);
 
-		m_svReset.RemoveState(SVResetAutoMoveAndResize | SVResetStateInitializeOnReset | SVResetStateArchiveToolCreateFiles | SVResetStateLoadFiles);
+		m_svReset.RemoveState(SvOi::SVResetAutoMoveAndResize | SvOi::SVResetStateInitializeOnReset | SvOi::SVResetStateArchiveToolCreateFiles | SvOi::SVResetStateLoadFiles);
 	}
 
 	if (!p_IsNew)
@@ -1698,7 +1698,7 @@ bool SVInspectionProcess::resetAllObjects(SvStl::MessageContainerVector *pErrorM
 	else
 	{
 		Result = false;
-		SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ToolsetNotCreated, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+		SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ToolsetNotCreated, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
 		ErrorMessages.push_back(Msg);
 	}
 
@@ -1801,7 +1801,7 @@ HRESULT SVInspectionProcess::ObserverUpdate(const SVAddTool& p_rData)
 		GetToolSet()->InsertAt(p_rData.m_Index, p_rData.m_pTool);
 
 		// And finally try to create the object...
-		if (GetToolSet()->CreateChildObject(p_rData.m_pTool, SVMFResetObject))
+		if (GetToolSet()->CreateChildObject(p_rData.m_pTool, SvOi::SVMFResetObject))
 		{
 			BuildValueObjectMap();
 
@@ -2012,7 +2012,7 @@ BOOL SVInspectionProcess::ProcessInputRequests(long DataIndex, SvOi::SVResetItem
 	if (!m_InputRequests.Lock())
 	{
 		SvStl::MessageMgrStd e(SvStl::LogOnly);
-		e.setMessage(SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvOi::Tid_ErrorLockingInputRequests, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_17025_ErrorLockingInputRequests);
+		e.setMessage(SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorLockingInputRequests, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17025_ErrorLockingInputRequests);
 		DebugBreak();
 	}
 
@@ -2361,7 +2361,7 @@ BOOL SVInspectionProcess::ProcessInputRequests(long DataIndex, SvOi::SVResetItem
 	if (!m_InputRequests.Unlock())
 	{
 		SvStl::MessageMgrStd e(SvStl::LogOnly);
-		e.setMessage(SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvOi::Tid_ErrorUnlockingInputRequests, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_17026_ErrorUnlockingInputRequests);
+		e.setMessage(SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorUnlockingInputRequests, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17026_ErrorUnlockingInputRequests);
 		DebugBreak();
 	}
 
@@ -2538,7 +2538,7 @@ BOOL SVInspectionProcess::ConnectToolSetMainImage()
 {
 	BOOL bRet = true;
 
-	m_svReset.AddState(SVResetAutoMoveAndResize);
+	m_svReset.AddState(SvOi::SVResetAutoMoveAndResize);
 
 	SVCameraImagePtrSet::iterator l_Iter = m_CameraImages.begin();
 
@@ -2558,7 +2558,7 @@ BOOL SVInspectionProcess::ConnectToolSetMainImage()
 		}
 	}
 
-	m_svReset.RemoveState(SVResetAutoMoveAndResize);
+	m_svReset.RemoveState(SvOi::SVResetAutoMoveAndResize);
 
 	return bRet;
 }
@@ -2844,26 +2844,26 @@ bool SVInspectionProcess::CheckAndResetConditionalHistory()
 	if (nullptr != pToolSet)
 	{
 		SVObjectReferenceVector vecObjects;
-		pToolSet->GetOutputListFiltered(vecObjects, SV_CH_CONDITIONAL | SV_CH_VALUE, false);
+		pToolSet->GetOutputListFiltered(vecObjects, SvOi::SV_CH_CONDITIONAL | SvOi::SV_CH_VALUE, false);
 		if (0 < vecObjects.size())
 		{
 			SVObjectReferenceVector::iterator iter;
 			for (iter = vecObjects.begin(); iter != vecObjects.end(); ++iter)
 			{
-				iter->SetObjectAttributesSet(SV_CH_CONDITIONAL | SV_CH_VALUE, SvOi::SetAttributeType::RemoveAttribute);
+				iter->SetObjectAttributesSet(SvOi::SV_CH_CONDITIONAL | SvOi::SV_CH_VALUE, SvOi::SetAttributeType::RemoveAttribute);
 			}
 			Result = true;
 		}
 
 		SVImageListClass listImages;
-		pToolSet->GetImageList(listImages, SV_CH_IMAGE);
+		pToolSet->GetImageList(listImages, SvOi::SV_CH_IMAGE);
 		int NumberOfImages = listImages.GetSize();
 		if (0 < NumberOfImages)
 		{
 			for (int i = 0; i < NumberOfImages; i++)
 			{
 				SVObjectReference refImage(listImages.GetAt(i));
-				refImage.getObject()->SetObjectAttributesSet(SV_CH_IMAGE, SvOi::SetAttributeType::RemoveAttribute);
+				refImage.getObject()->SetObjectAttributesSet(SvOi::SV_CH_IMAGE, SvOi::SetAttributeType::RemoveAttribute);
 			}
 			Result = true;
 		}
@@ -3144,7 +3144,7 @@ bool SVInspectionProcess::ResetObject(SvStl::MessageContainerVector *pErrorMessa
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
-			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvOi::Tid_ToolsetNotCreated, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+			SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ToolsetNotCreated, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
 			pErrorMessages->push_back(Msg);
 		}
 	}
@@ -3190,7 +3190,7 @@ int SVInspectionProcess::UpdateMainImagesByProduct(SVProductInfoStruct* p_psvPro
 				{
 					if (Iter->second.GetIndex() < 0)
 					{
-						Result = SvOi::Err_25043_InvalidSourceIndex;
+						Result = SvStl::Err_25043_InvalidSourceIndex;
 					}
 
 					SVImageIndexStruct l_svIndex;
@@ -3199,24 +3199,24 @@ int SVInspectionProcess::UpdateMainImagesByProduct(SVProductInfoStruct* p_psvPro
 
 					if (!(l_pImage->SetImageHandleIndex(l_svIndex)))
 					{
-						Result = SvOi::Err_25042_SetImageHandleIndex;
+						Result = SvStl::Err_25042_SetImageHandleIndex;
 					}
 				}
 				else
 				{
 					l_pImage->ResetImageIndex();
 
-					Result = SvOi::Err_25044_CameraNotFound;
+					Result = SvStl::Err_25044_CameraNotFound;
 				}
 			}
 			else
 			{
-				Result = SvOi::Err_25045_InvalidCamera;
+				Result = SvStl::Err_25045_InvalidCamera;
 			}
 		}
 		else
 		{
-			Result = SvOi::Err_25046_InvalidImage;
+			Result = SvStl::Err_25046_InvalidImage;
 		}
 
 		++l_ImageIter;
@@ -3270,7 +3270,7 @@ bool SVInspectionProcess::Run(SVRunStatusClass& rRunStatus)
 			if (SVRunStatusClass::SV_INVALID == m_runStatus.GetState())
 			{
 				SvStl::MessageMgrStd Exception(SvStl::LogOnly);
-				Exception.setMessage(SVMSG_SVO_37_INVALID_RUN_STATUS, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
+				Exception.setMessage(SVMSG_SVO_37_INVALID_RUN_STATUS, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
 			}
 		}
 	}
@@ -3316,7 +3316,7 @@ BOOL SVInspectionProcess::RunInspection(long lResultDataIndex, SVImageIndexStruc
 		// Process all input requests
 		if (!ProcessInputRequests(lResultDataIndex, m_bForceOffsetUpdate))
 		{
-			Exception.setMessage(SVMSG_SVO_38_INPUT_REQUEST_FAILED, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
+			Exception.setMessage(SVMSG_SVO_38_INPUT_REQUEST_FAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
 
 			l_bInputRequest = TRUE;
 			m_runStatus.SetInvalid();  //sets run.status.valid = false, and since no bits are set = SV_INVALID
@@ -3324,7 +3324,7 @@ BOOL SVInspectionProcess::RunInspection(long lResultDataIndex, SVImageIndexStruc
 
 		if (!ProcessInputImageRequests(pProduct))
 		{
-			Exception.setMessage(SVMSG_SVO_39_IMAGE_REQUEST_FAILED, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
+			Exception.setMessage(SVMSG_SVO_39_IMAGE_REQUEST_FAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
 
 			l_bImageRequest = TRUE;
 			m_runStatus.SetInvalid(); //sets run.status.valid = false, and since no bits are set = SV_INVALID
@@ -3334,7 +3334,7 @@ BOOL SVInspectionProcess::RunInspection(long lResultDataIndex, SVImageIndexStruc
 
 		if (0 != MainImageStatus)
 		{
-			Exception.setMessage(SVMSG_SVO_40_INFO_UPDATE_MAINIMAGE_FAILED, SvOi::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), MainImageStatus);
+			Exception.setMessage(SVMSG_SVO_40_INFO_UPDATE_MAINIMAGE_FAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), MainImageStatus);
 
 			l_bUpdateMainImage = TRUE;
 			m_runStatus.SetInvalid(); //sets run.status.valid = false, and since no bits are set = SV_INVALID
@@ -3368,11 +3368,11 @@ BOOL SVInspectionProcess::RunInspection(long lResultDataIndex, SVImageIndexStruc
 		l_rIPInfo.oInspectedState = PRODUCT_INSPECTION_DISABLED;
 	}// end if
 
-	l_rIPInfo.m_BeginToolset = SVClock::GetTimeStamp();
+	l_rIPInfo.m_BeginToolset = SvTl::GetTimeStamp();
 	if (!l_rIPInfo.m_BeginToolset)
 	{
 		SvStl::MessageMgrStd e(SvStl::LogOnly);
-		e.setMessage(SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvOi::Tid_ErrorGettingTimeStamp, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_17027_ErrorGettingTimeStamp);
+		e.setMessage(SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorGettingTimeStamp, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17027_ErrorGettingTimeStamp);
 		DebugBreak();
 	}
 
@@ -3387,11 +3387,11 @@ BOOL SVInspectionProcess::RunInspection(long lResultDataIndex, SVImageIndexStruc
 
 	m_bForceOffsetUpdate = false;
 
-	l_rIPInfo.m_EndToolset = SVClock::GetTimeStamp();
+	l_rIPInfo.m_EndToolset = SvTl::GetTimeStamp();
 	if (!l_rIPInfo.m_EndToolset)
 	{
 		SvStl::MessageMgrStd e(SvStl::LogOnly);
-		e.setMessage(SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvOi::Tid_ErrorGettingTimeStamp, SvStl::SourceFileParams(StdMessageParams), SvOi::Err_17028_ErrorGettingTimeStamp);
+		e.setMessage(SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorGettingTimeStamp, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17028_ErrorGettingTimeStamp);
 		DebugBreak();
 	}
 
@@ -3863,12 +3863,12 @@ void SVInspectionProcess::SVInspectionTracking::clear()
 
 void SVInspectionProcess::SVInspectionTracking::SetStartTime()
 {
-	m_StartTime = SVClock::GetTimeStamp();
+	m_StartTime = SvTl::GetTimeStamp();
 }
 
 void SVInspectionProcess::SVInspectionTracking::EventStart(const SVString& p_rName)
 {
-	SVClock::SVTimeStamp l_StartTime = SVClock::GetTimeStamp();
+	SvTl::SVTimeStamp l_StartTime = SvTl::GetTimeStamp();
 	__int64 l_EventTime = static_cast<__int64>(l_StartTime - m_StartTime);
 
 	m_EventCounts[p_rName].m_StartTime = l_StartTime;
@@ -3878,7 +3878,7 @@ void SVInspectionProcess::SVInspectionTracking::EventStart(const SVString& p_rNa
 
 void SVInspectionProcess::SVInspectionTracking::EventEnd(const SVString& p_rName)
 {
-	SVClock::SVTimeStamp l_EndTime = SVClock::GetTimeStamp();
+	SvTl::SVTimeStamp l_EndTime = SvTl::GetTimeStamp();
 	__int64 l_Duration = static_cast<__int64>(l_EndTime - m_EventCounts[p_rName].m_StartTime);
 	__int64 l_EventTime = static_cast<__int64>(l_EndTime - m_StartTime);
 
@@ -3897,12 +3897,12 @@ void SVInspectionProcess::Persist(SVObjectWriter& rWriter)
 	_variant_t value;
 	value.ChangeType(VT_I4); // was VT_INT...
 	value.lVal = IsNewDisableMethodSet();
-	rWriter.WriteAttribute(CTAG_INSPECTION_NEW_DISABLE_METHOD, value);
+	rWriter.WriteAttribute(SvXml::CTAG_INSPECTION_NEW_DISABLE_METHOD, value);
 	value.Clear();
 
 	// Save EnableAuxillaryExtents
 	value = GetEnableAuxiliaryExtent();
-	rWriter.WriteAttribute(CTAG_INSPECTION_ENABLE_AUXILIARY_EXTENT, value);
+	rWriter.WriteAttribute(SvXml::CTAG_INSPECTION_ENABLE_AUXILIARY_EXTENT, value);
 	value.Clear();
 
 	// Save the Toolset
@@ -4223,17 +4223,17 @@ bool SVInspectionProcess::CreateChildObject(SVObjectClass* pChildObject, DWORD c
 
 		bool Return = pChildObject->createAllObjects(createStruct);
 
-		if (SVMFResetObject == (context & SVMFResetObject))
+		if (SvOi::SVMFResetObject == (context & SvOi::SVMFResetObject))
 		{
 			pChildObject->resetAllObjects();
 		}
 
-		if (SVMFSetDefaultInputs == (context & SVMFSetDefaultInputs))
+		if (SvOi::SVMFSetDefaultInputs == (context & SvOi::SVMFSetDefaultInputs))
 		{
 			SetDefaultInputs();
 		}
 
-		if (SVMFResetInspection == (context & SVMFResetInspection))
+		if (SvOi::SVMFResetInspection == (context & SvOi::SVMFResetInspection))
 		{
 			resetAllObjects();
 		}

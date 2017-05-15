@@ -14,10 +14,12 @@
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
-class SVTimerCallback
+namespace SvTl
 {
-public:
-	virtual ~SVTimerCallback() {}
-	virtual void Notify(const SVString& listenerTag)=0;
-};
-
+	class SVTimerCallback
+	{
+	public:
+		virtual ~SVTimerCallback() {}
+		virtual void Notify(const SVString& listenerTag)=0;
+	};
+} //namespace SvTl

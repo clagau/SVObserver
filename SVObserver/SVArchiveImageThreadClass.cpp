@@ -113,7 +113,7 @@ HRESULT SVArchiveImageThreadClass::QueueImage( BufferInfo p_BufferInfo )
 					rBufferInfo.id = l_MilBuffer.GetBuffer();	// switch over to copy
 
 					// update timestamp
-					rBufferInfo.m_Timestamp = SVClock::GetTimeStamp();
+					rBufferInfo.m_Timestamp = SvTl::GetTimeStamp();
 				}
 			}
 		}// end if ( iter != m_Queue.end() )	// found filename
@@ -164,7 +164,7 @@ HRESULT SVArchiveImageThreadClass::QueueImage( BufferInfo p_BufferInfo )
 
 
 							// ** ADD NEW BUFFER TO QUEUE **
-							p_BufferInfo.m_Timestamp = SVClock::GetTimeStamp();
+							p_BufferInfo.m_Timestamp = SvTl::GetTimeStamp();
 							lock.Lock();
 							m_Queue.push_back( p_BufferInfo );
 							lock.Unlock();
@@ -176,7 +176,7 @@ HRESULT SVArchiveImageThreadClass::QueueImage( BufferInfo p_BufferInfo )
 			else	// not enough room on queue
 			{
 				// find oldest entry from source AT
-				SVClock::SVTimeStamp iOldest = SVClock::GetTimeStamp();
+				SvTl::SVTimeStamp iOldest = SvTl::GetTimeStamp();
 				QueueType::iterator iterOldest = m_Queue.end();
 				for ( iter = m_Queue.begin(); iter != m_Queue.end(); ++iter )
 				{
@@ -208,7 +208,7 @@ HRESULT SVArchiveImageThreadClass::QueueImage( BufferInfo p_BufferInfo )
 							SVMatroxBufferInterface::CopyBuffer( l_MilBuffer.GetBuffer(), p_BufferInfo.id );
 							rBufferInfo.id = l_MilBuffer.GetBuffer();	// switch over to copy
 							// update timestamp
-							rBufferInfo.m_Timestamp = SVClock::GetTimeStamp();
+							rBufferInfo.m_Timestamp = SvTl::GetTimeStamp();
 						}
 					}
 				}

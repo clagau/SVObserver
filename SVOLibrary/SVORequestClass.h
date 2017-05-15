@@ -51,8 +51,8 @@ public:
 	HRESULT GetExtraData( void **ppvResponse );
 	HRESULT SetExtraData( void *pResponse );
 
-	HRESULT GetStartTick( SVClock::SVTimeStamp& p_rTick );
-	HRESULT SetStartTick( const SVClock::SVTimeStamp& p_rTick );
+	HRESULT GetStartTick( SvTl::SVTimeStamp& p_rTick );
+	HRESULT SetStartTick( const SvTl::SVTimeStamp& p_rTick );
 
 	HRESULT GetResponse( SVOResponseClass& p_rResponse );
 	HRESULT SetResponse( SVOResponseClass p_rResponse );
@@ -75,7 +75,7 @@ private:
 	bool mbIsComplete;
 
 	//This attribute holds the start time stamp the request.
-	SVClock::SVTimeStamp m_StartTick;
+	SvTl::SVTimeStamp m_StartTick;
 
 	//This attribute holds the response data associated with this request.
 	SVOResponseClass mResponse;

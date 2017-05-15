@@ -16,7 +16,7 @@
 #include "SVUtilityLibrary/SVGUID.h"
 #pragma endregion Includes
 
-namespace Seidenader { namespace SVStatusLibrary
+namespace SvStl
 {
 	typedef boost::function<INT_PTR ( HWND, LPCTSTR, LPCTSTR, UINT )> ShowDisplayFunctor;
 	typedef boost::function<HRESULT ( int, int, LPCTSTR )> NotifyFunctor;
@@ -41,7 +41,7 @@ namespace Seidenader { namespace SVStatusLibrary
 		//! \param ProgramCode <in> the unique program ID for the code
 		//! \param rObjectId <in> reference to the unique object ID of the message owner
 		//************************************
-		MessageContainer( long MessageCode, SvOi::MessageTextEnum AdditionalTextId,  SourceFileParams SourceFile, DWORD ProgramCode = 0, const GUID& rObjectId = SV_GUID_NULL );
+		MessageContainer( long MessageCode, MessageTextEnum AdditionalTextId,  SourceFileParams SourceFile, DWORD ProgramCode = 0, const GUID& rObjectId = SV_GUID_NULL );
 
 		//************************************
 		//! This is the constructor to set the data on construction
@@ -52,7 +52,7 @@ namespace Seidenader { namespace SVStatusLibrary
 		//! \param ProgramCode <in> the unique program ID for the code
 		//! \param rObjectId <in> reference to the unique object ID of the message owner
 		//************************************
-		MessageContainer( long MessageCode, SvOi::MessageTextEnum AdditionalTextId, const SVStringVector& rAdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode = 0, const GUID& rObjectId = SV_GUID_NULL );
+		MessageContainer( long MessageCode, MessageTextEnum AdditionalTextId, const SVStringVector& rAdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode = 0, const GUID& rObjectId = SV_GUID_NULL );
 
 		//************************************
 		//! This is the assignment operator
@@ -85,7 +85,7 @@ namespace Seidenader { namespace SVStatusLibrary
 		//! \param ProgramCode <in> the unique program ID for the code
 		//! \param rObjectId <in> reference to the unique object ID of the message owner
 		//************************************
-		void setMessage( long MessageCode, SvOi::MessageTextEnum AdditionalTextId, SourceFileParams SourceFile, DWORD ProgramCode=0, const GUID& rObjectId=SV_GUID_NULL );
+		void setMessage( long MessageCode, MessageTextEnum AdditionalTextId, SourceFileParams SourceFile, DWORD ProgramCode=0, const GUID& rObjectId=SV_GUID_NULL );
 
 		//************************************
 		//! This is the method to set the data this will delete the m_AdditonalMessages list
@@ -96,7 +96,7 @@ namespace Seidenader { namespace SVStatusLibrary
 		//! \param ProgramCode <in> the unique program ID for the code
 		//! \param rObjectId <in> reference to the unique object ID of the message owner
 		//************************************
-		void setMessage( long MessageCode, SvOi::MessageTextEnum AdditionalTextId, const SVStringVector& rAdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode=0, const GUID& rObjectId=SV_GUID_NULL );
+		void setMessage( long MessageCode, MessageTextEnum AdditionalTextId, const SVStringVector& rAdditionalTextList, SourceFileParams SourceFile, DWORD ProgramCode=0, const GUID& rObjectId=SV_GUID_NULL );
 
 		//************************************
 		//! This is the method to set the data this will delete the m_AdditonalMessages list
@@ -115,7 +115,7 @@ namespace Seidenader { namespace SVStatusLibrary
 		//! \param SourceFile <in> the source file standard parameters in which the code set
 		//! \param ProgramCode <in> the unique program ID for the code
 		//************************************
-		void addMessage( long MessageCode, SvOi::MessageTextEnum AdditionalTextId, SVStringVector AdditionalTextList, SourceFileParams SourceFile, DWORD dwProgramCode = 0 );
+		void addMessage( long MessageCode, MessageTextEnum AdditionalTextId, SVStringVector AdditionalTextList, SourceFileParams SourceFile, DWORD dwProgramCode = 0 );
 
 		//************************************
 		//! This method is the same as the addMessage above with a message structure when the flag is true which is the default
@@ -235,6 +235,4 @@ namespace Seidenader { namespace SVStatusLibrary
 		typedef std::vector< MessageContainer > MessageContainerVector;
 		typedef std::back_insert_iterator<MessageContainerVector>  MessageContainerInserter;
 	#pragma endregion Declarations
-} /* namespace SVStatusLibrary */ } /* namespace Seidenader */
-
-namespace SvStl = Seidenader::SVStatusLibrary;
+} //namespace SvStl

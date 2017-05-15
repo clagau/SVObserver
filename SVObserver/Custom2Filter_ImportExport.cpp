@@ -24,7 +24,7 @@
 // Parameter: ResourceID <in> Resource ID containing the tag for the value
 // Parameter: Value <in> Variant value to write into the file
 //************************************
-void writeElement( SVObjectXMLWriter& rXmlWriter, UINT ResourceID, variant_t Value )
+void writeElement(SvXml::SVObjectXMLWriter& rXmlWriter, UINT ResourceID, variant_t Value )
 {
 	SVString Label = SvUl_SF::LoadSVString( ResourceID );
 	rXmlWriter.WriteAttribute( Label.c_str(), Value);
@@ -42,7 +42,7 @@ variant_t readElement( SvXml::SVXMLMaterialsTree& rTree, const SvXml::SVXMLMater
 	variant_t Value;
 
 	SVString Label = SvUl_SF::LoadSVString( ResourceID );
-	if( !SVNavigateTree::GetItem( rTree, Label.c_str(), rBranch, Value ) )
+	if( !SvXml::SVNavigateTree::GetItem( rTree, Label.c_str(), rBranch, Value ) )
 	{
 		Value.Clear();
 	}
@@ -72,7 +72,7 @@ bool readCustom2FilterBranch( SvXml::SVXMLMaterialsTree& rTree,
 	bool Result(false);
 
 	SVString Label = SvUl_SF::LoadSVString( IDS_CLASSNAME_CUSTOM2FILTER );
-	if ( SVNavigateTree::GetItemBranch( rTree, Label.c_str(), nullptr, Branch ) )
+	if ( SvXml::SVNavigateTree::GetItemBranch( rTree, Label.c_str(), nullptr, Branch ) )
 	{
 		_variant_t Value;
 
@@ -84,7 +84,7 @@ bool readCustom2FilterBranch( SvXml::SVXMLMaterialsTree& rTree,
 
 		Label = SvUl_SF::LoadSVString( IDS_OBJECTNAME_CUSTOMFILTER_KERNELCELL );
 		SVTreeType::SVBranchHandle Elements = nullptr;
-		if ( SVNavigateTree::GetItemBranch( rTree, Label.c_str(), Branch, Elements ) )
+		if ( SvXml::SVNavigateTree::GetItemBranch( rTree, Label.c_str(), Branch, Elements ) )
 		{
 			SVTreeType::SVLeafHandle Leaf;
 
@@ -119,7 +119,7 @@ void SvOi::exportCustom2Filter(const SVString &filePath,
 	FileStream.open( filePath.c_str() );
 	if( FileStream.is_open() )
 	{
-		SVObjectXMLWriter XmlWriter( FileStream );
+		SvXml::SVObjectXMLWriter XmlWriter( FileStream );
 
 		XmlWriter.WriteRootElement( _T( "Custom2_Filter_Export") );
 		XmlWriter.WriteSchema();
@@ -138,8 +138,8 @@ void SvOi::exportCustom2Filter(const SVString &filePath,
 		Value.Clear();
 		Value = TheSVObserverApp.getCurrentVersion();
 
-		XmlWriter.StartElement( CTAG_ENVIRONMENT  );
-		XmlWriter.WriteAttribute( CTAG_VERSION_NUMBER, Value );
+		XmlWriter.StartElement( SvXml::CTAG_ENVIRONMENT  );
+		XmlWriter.WriteAttribute( SvXml::CTAG_VERSION_NUMBER, Value );
 		XmlWriter.EndElement();
 		SVString Label = SvUl_SF::LoadSVString( IDS_CLASSNAME_CUSTOM2FILTER );
 		XmlWriter.StartElement( Label.c_str() );
@@ -187,11 +187,11 @@ HRESULT SvOi::importCustom2Filter(const SVString& rFileName,
 	if(SUCCEEDED(Result))
 	{
 		SvXml::SVXMLMaterialsTree::SVBranchHandle Branch;
-		if ( SVNavigateTree::GetItemBranch( Tree, CTAG_ENVIRONMENT, nullptr, Branch ) )
+		if ( SvXml::SVNavigateTree::GetItemBranch( Tree, SvXml::CTAG_ENVIRONMENT, nullptr, Branch ) )
 		{
 			_variant_t Value;
 			//At this moment in time we just check that the version number tag is in the file but do not worry which version saved the file
-			if ( SVNavigateTree::GetItem( Tree, CTAG_VERSION_NUMBER, Branch, Value ) )
+			if ( SvXml::SVNavigateTree::GetItem( Tree, SvXml::CTAG_VERSION_NUMBER, Branch, Value ) )
 			{
 				if( !readCustom2FilterBranch( Tree, kernelWidth, kernelHeight, normalizationFactor, absoluteValue, clippingEnabled, kernelArray ) )
 				{

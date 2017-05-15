@@ -12,7 +12,7 @@
 #pragma endregion Includes
 
 
-namespace Seidenader { namespace SVStatusLibrary
+namespace SvStl
 {
 	/// \brief Singleton which holds all Paths
 	/// the paths are read from SVIM.ini file the ini paths are from command line or current directory
@@ -78,6 +78,4 @@ namespace Seidenader { namespace SVStatusLibrary
 		SVString m_AutosaveTempDirectory3Name;
 #pragma endregion private members
 	};
-
-} /* namespace SVStatusLibrary */ } /* namespace Seidenader */
-namespace SvStl = Seidenader::SVStatusLibrary;
+} //namespace SvStl

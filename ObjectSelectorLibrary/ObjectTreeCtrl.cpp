@@ -27,7 +27,7 @@ SVString SvOsl::ObjectTreeCtrl::m_CurrentSelection( _T("") );
 SVStringSet SvOsl::ObjectTreeCtrl::m_UpdateItems;
 #pragma endregion Declarations
 
-namespace Seidenader { namespace ObjectSelectorLibrary
+namespace SvOsl
 {
 	BEGIN_MESSAGE_MAP(ObjectTreeCtrl, CTreeCtrl)
 		//{{AFX_MSG_MAP(ObjectTreeCtrl)
@@ -327,4 +327,4 @@ namespace Seidenader { namespace ObjectSelectorLibrary
 	}
 	#pragma endregion Protected Methods
 
-} /*namespace ObjectSelectorLibrary*/ } /*namespace Seidenader*/
+} //namespace SvOsl
