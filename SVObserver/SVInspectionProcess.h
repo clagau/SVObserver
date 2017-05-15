@@ -365,8 +365,8 @@ protected:
 
 	BOOL RemoveAllInputRequests();
 
-	BOOL ProcessInputRequests( long p_DataIndex, bool &p_rbForceOffsetUpdate );
-	BOOL ProcessInputRequests( long p_DataIndex, SvOi::SVResetItemEnum& rResetItem, SVStdMapSVToolClassPtrSVInspectionProcessResetStruct &p_svToolMap );
+	BOOL ProcessInputRequests( long Bucket, bool &p_rbForceOffsetUpdate );
+	BOOL ProcessInputRequests( long Bucket, SvOi::SVResetItemEnum& rResetItem, SVStdMapSVToolClassPtrSVInspectionProcessResetStruct &p_svToolMap );
 	BOOL ProcessInputImageRequests( SVProductInfoStruct *p_psvProduct );
 
 	HRESULT ReserveNextResultImage( SVProductInfoStruct *p_pProduct, SVDataManagerLockTypeEnum p_eLockType, bool p_ClearOtherInspections = false );

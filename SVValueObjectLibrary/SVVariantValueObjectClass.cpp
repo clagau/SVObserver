@@ -258,12 +258,12 @@ BOOL SVVariantValueObjectClass::SetType( int vt )
 	return true;
 }
 
-HRESULT SVVariantValueObjectClass::SetValueKeepType( int iBucket, int iIndex, LPCTSTR strValue )
+HRESULT SVVariantValueObjectClass::SetValueKeepType(LPCTSTR Value, int Bucket, int Index)
 {
 	HRESULT hr = S_OK;
 
 	_variant_t vtTemp;
-	vtTemp = strValue;
+	vtTemp = Value;
 
 	if( VT_EMPTY != DefaultValue().vt )
 	{
@@ -272,7 +272,7 @@ HRESULT SVVariantValueObjectClass::SetValueKeepType( int iBucket, int iIndex, LP
 
 	if( S_OK == hr)
 	{
-		hr = __super::SetValue( vtTemp, iBucket, iIndex );
+		hr = __super::SetValue( vtTemp, Bucket, Index );
 	}
 
 	return hr;

@@ -425,8 +425,8 @@ template <typename T>
 __forceinline HRESULT SVValueObjectClass<T>::GetValue( T& rValue, int Bucket, int Index ) const
 {
 	Bucket = (-1 == Bucket) ? m_LastSetIndex : Bucket;
-	//! When Value Object is an array and index not in range use the first index
-	if (isArray() && (0 > Index || m_ArraySize <= Index))
+	//! When Value Object is an array and index is -1 then use first index
+	if (isArray() && 0 > Index)
 	{
 		Index = 0;
 	}

@@ -32,8 +32,8 @@ public:
 	virtual void Persist(SVObjectWriter& rWriter) override;
 
 	BOOL SetType( int vt );
-	HRESULT SetValueKeepType( int iBucket, LPCTSTR value ) {return SetValueKeepType(iBucket, 0, value);}
-	HRESULT SetValueKeepType( int iBucket, int iIndex, LPCTSTR value );
+	HRESULT SetValueKeepType(LPCTSTR Value, int Bucket) {return SetValueKeepType(Value, Bucket, 0);}
+	HRESULT SetValueKeepType(LPCTSTR Value, int Bucket, int Index);
 	VARTYPE GetDefaultType() const;
 
 protected:

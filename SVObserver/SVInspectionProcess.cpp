@@ -1988,20 +1988,20 @@ HRESULT SVInspectionProcess::InitializeRunOnce()
 	return l_Status;
 }
 
-BOOL SVInspectionProcess::ProcessInputRequests(long DataIndex, bool &rForceOffsetUpdate)
+BOOL SVInspectionProcess::ProcessInputRequests(long Bucket, bool &rForceOffsetUpdate)
 {
 	SVStdMapSVToolClassPtrSVInspectionProcessResetStruct l_svToolMap;
 
 	SvOi::SVResetItemEnum eResetItem = SvOi::SVResetItemNone;
 
-	BOOL l_bOk = ProcessInputRequests(DataIndex, eResetItem, l_svToolMap);
+	BOOL l_bOk = ProcessInputRequests(Bucket, eResetItem, l_svToolMap);
 
 	rForceOffsetUpdate |= (eResetItem < SvOi::SVResetItemNone);
 
 	return l_bOk;
 }
 
-BOOL SVInspectionProcess::ProcessInputRequests(long DataIndex, SvOi::SVResetItemEnum &rResetItem, SVStdMapSVToolClassPtrSVInspectionProcessResetStruct &rToolMap)
+BOOL SVInspectionProcess::ProcessInputRequests(long Bucket, SvOi::SVResetItemEnum &rResetItem, SVStdMapSVToolClassPtrSVInspectionProcessResetStruct &rToolMap)
 {
 	bool bRet = true;
 	long l;
@@ -2085,11 +2085,9 @@ BOOL SVInspectionProcess::ProcessInputRequests(long DataIndex, SvOi::SVResetItem
 			HRESULT hrSet = S_OK;
 			if (nullptr != ObjectRef.getValueObject())
 			{
-				long l_iIndex = (0 < DataIndex) ? DataIndex : 1;
+				Bucket = (0 < Bucket) ? Bucket : 1;
 
 				bool bResetObject = ObjectRef.getValueObject()->ResetAlways();
-
-				assert(!ObjectRef.isArray() || ObjectRef.ArrayIndex() < 0);
 
 				// Value objects don't accept each different type for sets
 				// so convert to the appropriate type
@@ -2097,7 +2095,7 @@ BOOL SVInspectionProcess::ProcessInputRequests(long DataIndex, SvOi::SVResetItem
 				{
 					if (ObjectRef.isArray() && ObjectRef.isEntireArray())
 					{
-						hrSet = SetObjectArrayValues<CFile>(ObjectRef, l_iIndex, Value, bResetObject);
+						hrSet = SetObjectArrayValues<CFile>(ObjectRef, Bucket, Value, bResetObject);
 					}
 					else
 					{
@@ -2114,13 +2112,13 @@ BOOL SVInspectionProcess::ProcessInputRequests(long DataIndex, SvOi::SVResetItem
 							if (!bResetObject)
 							{
 								SVString PrevValue;
-
+								
 								hrSet = pFileNameObj->GetValue(PrevValue, -1, ObjectRef.ArrayIndex());
 
 								bResetObject = (PrevValue != Value);
 							}
 
-							hrSet = pFileNameObj->SetValue(Value, l_iIndex);
+							hrSet = pFileNameObj->SetValue(Value, Bucket, ObjectRef.ArrayIndex());
 						}// end if
 					}
 				}// end if SVFileNameValueObjectClass
@@ -2128,7 +2126,7 @@ BOOL SVInspectionProcess::ProcessInputRequests(long DataIndex, SvOi::SVResetItem
 				{
 					if (ObjectRef.isArray() && ObjectRef.isEntireArray())
 					{
-						hrSet = SetObjectArrayValues<SVString>(ObjectRef, l_iIndex, Value, bResetObject);
+						hrSet = SetObjectArrayValues<SVString>(ObjectRef, Bucket, Value, bResetObject);
 					}
 					else
 					{
@@ -2141,7 +2139,7 @@ BOOL SVInspectionProcess::ProcessInputRequests(long DataIndex, SvOi::SVResetItem
 							bResetObject = (PrevValue != Value);
 						}
 
-						hrSet = pStringValueObj->SetValue(Value, l_iIndex);
+						hrSet = pStringValueObj->SetValue(Value, Bucket, ObjectRef.ArrayIndex());
 					}
 				}
 				else if (SVBoolValueObjectClass* pBoolValueObj = dynamic_cast<SVBoolValueObjectClass*> (ObjectRef.getObject()))
@@ -2168,7 +2166,7 @@ BOOL SVInspectionProcess::ProcessInputRequests(long DataIndex, SvOi::SVResetItem
 						bResetObject = NewValue != PrevValue;
 					}
 
-					hrSet = pBoolValueObj->SetValue(NewValue, l_iIndex);
+					hrSet = pBoolValueObj->SetValue(NewValue, Bucket, ObjectRef.ArrayIndex());
 				}// end else if SVBoolValueObjectClass
 				else if (SVVariantValueObjectClass* pvValueObject = dynamic_cast <SVVariantValueObjectClass*> (ObjectRef.getObject()))
 				{
@@ -2179,11 +2177,11 @@ BOOL SVInspectionProcess::ProcessInputRequests(long DataIndex, SvOi::SVResetItem
 
 					if (ObjectRef.isArray())
 					{
-						hrSet = pvValueObject->SetValueKeepType(l_iIndex, ObjectRef.ArrayIndex(), Value.c_str());
+						hrSet = pvValueObject->SetValueKeepType(Value.c_str(), Bucket, ObjectRef.ArrayIndex());
 					}
 					else
 					{
-						hrSet = pvValueObject->SetValueKeepType(l_iIndex, Value.c_str());
+						hrSet = pvValueObject->SetValueKeepType( Value.c_str(), Bucket);
 					}
 				}// end else if SVVariantValueObjectClass
 				else if (SVEnumerateValueObjectClass* pEnumerateValueObj = dynamic_cast <SVEnumerateValueObjectClass*> (ObjectRef.getObject()))
@@ -2197,9 +2195,9 @@ BOOL SVInspectionProcess::ProcessInputRequests(long DataIndex, SvOi::SVResetItem
 						l_bTempReset = !pEnumerateValueObj->CompareWithCurrentValue(Value);
 					}
 
-					if (S_OK == (hrSet = pEnumerateValueObj->SetValue(atol(Value.c_str()), 1)))
+					if (S_OK == (hrSet = pEnumerateValueObj->SetValue(atol(Value.c_str()), 1, ObjectRef.ArrayIndex())))
 					{
-						hrSet = pEnumerateValueObj->SetValue(atol(Value.c_str()), l_iIndex);
+						hrSet = pEnumerateValueObj->SetValue(atol(Value.c_str()), Bucket, ObjectRef.ArrayIndex());
 					}
 					else
 					{
@@ -2214,7 +2212,7 @@ BOOL SVInspectionProcess::ProcessInputRequests(long DataIndex, SvOi::SVResetItem
 									l_bTempReset = !pEnumerateValueObj->CompareWithCurrentValue(Value);
 								}
 
-								hrSet = pEnumerateValueObj->SetValue(EnumValue, l_iIndex);
+								hrSet = pEnumerateValueObj->SetValue(EnumValue, Bucket, ObjectRef.ArrayIndex());
 							}
 						}
 					}
@@ -2225,7 +2223,7 @@ BOOL SVInspectionProcess::ProcessInputRequests(long DataIndex, SvOi::SVResetItem
 				{
 					if (ObjectRef.isArray() && ObjectRef.isEntireArray())
 					{
-						hrSet = SetObjectArrayValues<double>(ObjectRef, l_iIndex, Value.c_str(), bResetObject);
+						hrSet = SetObjectArrayValues<double>(ObjectRef, Bucket, Value.c_str(), bResetObject);
 					}
 					else
 					{
@@ -2240,7 +2238,7 @@ BOOL SVInspectionProcess::ProcessInputRequests(long DataIndex, SvOi::SVResetItem
 							bResetObject = PrevValue != NewValue;
 						}
 
-						hrSet = pDoubleValueObj->SetValue(NewValue, l_iIndex);
+						hrSet = pDoubleValueObj->SetValue(NewValue, Bucket, ObjectRef.ArrayIndex());
 					}
 				}// end else if
 				else // Long, DWord, Byte
@@ -2268,7 +2266,7 @@ BOOL SVInspectionProcess::ProcessInputRequests(long DataIndex, SvOi::SVResetItem
 						bResetObject = static_cast<long> (PrevValue) != lValue;
 					}
 
-					hrSet = ObjectRef.getValueObject()->setValue(Value, l_iIndex);
+					hrSet = ObjectRef.getValueObject()->setValue(Value, Bucket, ObjectRef.ArrayIndex());
 				}// end else if
 
 				if (SvOi::SVResetItemIP != rResetItem && bResetObject && SvOi::SVResetItemNone > ObjectRef.getValueObject()->getResetItem())
