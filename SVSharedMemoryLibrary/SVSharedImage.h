@@ -42,8 +42,13 @@ namespace SvSml
 		//! \returns void
 		//static void  BuildImageFileName(LPTSTR filename, int filenamelen, LPCTSTR name, long slotnumber, bool bReject = false, SVMatroxFileTypeEnum type = SVFileBitmap );
 
-	
+		
+
+		///ImageFilename returns a tupel with 4 indexes 
 		static LPCTSTR  BuildImageFileName(DWORD ImageIndex, DWORD ImageStoreIndex, DWORD SlotIndex, bool bReject);  
+
+		///scans the indexes 
+		static void  ScanImageFileName(LPCTSTR IndexString, DWORD& ImageIndex, DWORD& ImageStoreIndex, DWORD& SlotIndex, DWORD  &Reject);
 
 		bip_string m_ElementName;
 		char m_Filename[statics::max_result_size];

@@ -180,7 +180,7 @@ namespace SvSml
 			switch(it->second->ObjectType)
 			{
 			case  SVImageObjectType:
-				inspectionInfoMap[inspectionName]->TotalImageSize += (DWORD) it->second->size;
+				inspectionInfoMap[inspectionName]->TotalImageSize += (DWORD)it->second->ByteSize;
 				inspectionInfoMap[inspectionName]->TotalImageSize +=  ImageBufferHeaderSize;
 				inspectionInfoMap[inspectionName]->TotalImageCount++; 
 				inspectionInfoMap[inspectionName]->StoreIndex = it->second->InspectionStoreId; 

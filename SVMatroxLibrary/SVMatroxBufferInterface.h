@@ -107,7 +107,12 @@ public:
 	// MilHandleToDIB
 	static HRESULT CopyBuffer( SVByteVector& p_rToDIB, const SVMatroxBuffer& p_rFromId );
 	static HRESULT CopyBuffer( SVByteVector& p_rToDIB, const SVBitmapInfo& p_rToBitmapInfo, const SVMatroxBuffer& p_rFromId );
-	static HRESULT CopyBufferToFileDIB( SVByteVector& p_rToDIB, const SVMatroxBuffer& p_rFromId );
+	
+	///copies ImageBuffer to rToDIB starting with rToDIB[offset], ensures positive height if normalize_y = true   
+	static  HRESULT CopyBufferToFileDIB(SVByteVector& rToDIB, const SVMatroxBuffer& rFromId, DWORD  offset =0, bool normalize_y = true);
+	
+	
+
 	static HRESULT CopyDIBBufferToMemory( SVImageCopyUtility& p_rImageCopier, const SVMatroxBuffer& p_rFromId );
 
 	// ****** Information 

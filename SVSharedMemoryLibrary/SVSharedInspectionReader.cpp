@@ -47,9 +47,6 @@ namespace SvSml
 			
 			bool ok = m_RejectImages.OpenImageStore(name.c_str(), SharedImageStore::reject);
 			ok= ok && m_ProductImages.OpenImageStore(name.c_str(), SharedImageStore::last);
-			assert(ok);
-			
-			
 			if (ok && m_pSharedLastInspectedCache && m_pSharedRejectCache)
 			{
 				bRetVal = true;

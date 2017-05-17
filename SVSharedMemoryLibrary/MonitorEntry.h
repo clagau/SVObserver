@@ -33,23 +33,24 @@ namespace SvSml
 		void SetMatroxImageProps(const MatroxImageProps  &rImageProps);
 	public:	
 		/// fills the inspectioninfomap, with information of the size for Inspection store
-		//int InsertToMLInspectionInfo(MLInspectionInfoMap& inspectionInfoMap ) const;
 		
 		SVString name; //<Full name 
 		DWORD InspectionStoreId; //<Inspection Store Index  
 		DWORD ItemId;	//<Index in the Inspection Store
 		DWORD ObjectType;		//<SVObjectTypeEnum 
-		long long  size;		//Size of the object
 		DWORD Store_Offset;  ///offset in Inspection Store
 		
-
-		long long sizeY;
-		long long sizeX;
-		long long PitchByte; 
-		long long Pitch; 
-		long long Matrox_type; 
-		long long Attrib;
+		//get values  SVMatroxBufferInterface::InquireBufferProperties(const SVMatroxBuffer& rBuffer, MatroxImageProps& rImageProps)
+		long long sizeY;		//< MbufInquire  M_SIZE_Y   
+		long long sizeX;		//< MbufInquire  M_SIZE_Y   
+		long long PitchByte;	//< MbufInquire  M_PITCH_BYTE   
+		long long Pitch;		//< MbufInquire  M_PITCH   
+		long long Matrox_type;  //< MbufInquire  M_TYPE   
+		long long Attrib;		//< MbufInquire  M_EXTENDED_ATTRIBUTE   
+		long long BandSize;		//< MbufInquire  M_SIZE_BAND   
+		long long ByteSize;		//< MbufInquire  M_SIZE_BYTE   
 	};
+
 
 	
 	typedef std::shared_ptr<MonitorEntry>  MonitorEntryPointer; //< shared_ptr MonitorEntry 
@@ -66,7 +67,7 @@ namespace SvSml
 		DWORD InspectionStoreId; //<Inspection Store Index  
 		DWORD ItemId;	//<Index in the Inspection Store
 		DWORD ObjectType;		//<SVObjectTypeEnum
-		long long  size;		//Size of the object
+		//long long  size;		//Size of the object
 		DWORD Store_Offset;  ///offset in Inspection Store
 		
 
@@ -76,6 +77,9 @@ namespace SvSml
 		long long Pitch; 
 		long long Matrox_type; 
 		long long Attrib;
+
+		long long BandSize;
+		long long ByteSize;
 	};
 
 	typedef bip::allocator<ShMonitorEntry, segment_manager_t>     ShMoListEntry_allocator;

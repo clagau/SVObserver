@@ -144,7 +144,7 @@ void RemoteMonitorListHelper::AddMonitorObject2MonitorListcpy(const MonitoredObj
 		}
 		else
 		{
-			MeP->size =  RemoteMonitorListHelper::GetSizeFromMonitoredObject(*it);
+			MeP->ByteSize =  RemoteMonitorListHelper::GetSizeFromMonitoredObject(*it);
 		}
 		
 	}

@@ -121,7 +121,7 @@ void MonitorListDlg::FillControl()
 			m_ListCtrl.InsertItem(item, Typename[list]);
 			m_ListCtrl.SetItemText(item,Name,Eit->get()->name.c_str());
 			m_ListCtrl.SetItemText(item,Type,Type2String( Eit->get()->ObjectType) );
-			m_ListCtrl.SetItemText(item,ECOL_Size,Size2String(static_cast<DWORD>( Eit->get()->size)));
+			m_ListCtrl.SetItemText(item,ECOL_Size,Size2String(static_cast<DWORD>( Eit->get()->ByteSize)));
 			item++;
 		}
 	}
@@ -168,7 +168,7 @@ void MonitorListDlg::OnBnClickedButtonProperties()
 	ME_Dlg.m_ItemId = pMe->ItemId;
 	ME_Dlg.m_Pitch = (DWORD) pMe->Pitch;
 	ME_Dlg.m_Type = pMe->ObjectType;
-	ME_Dlg.m_Size = (DWORD) pMe->size;
+	ME_Dlg.m_Size = (DWORD) pMe->ByteSize;
 	ME_Dlg.m_SToreOffset = (DWORD) pMe->Store_Offset;
 	ME_Dlg.m_Width = (DWORD) pMe->sizeX;
 

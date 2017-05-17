@@ -366,15 +366,80 @@ namespace SvSol
 	}
 
 	template<typename API>
+	uint32 SVSocket<API>::GetMessageId() const
+	{
+			
+		static uint32 id = 0;
+		return id++;
+	}
+
+
+	template<typename API>
+	char*  SVSocket<API>::WriteHeader(u_char * src ,size_t datalen) const
+	{
+		header & head = *reinterpret_cast<header *>(src);
+		bool singlePacket = datalen + sizeof(header) <= m_buff_sz;
+		// header uses uint32 and uint16 regardless of platform.
+		head = header(GetMessageId(),
+			static_cast<uint32>(singlePacket ? datalen : (m_buff_sz - sizeof(header))),
+			static_cast<uint32>(datalen),
+			static_cast<uint16>(singlePacket ? 1 : 1 + (datalen / (m_buff_sz - sizeof(header)))),
+			0);
+		return reinterpret_cast<char*>(src);
+	}
+
+	/// Assumes that the buffer begins with a header the data begin at buffer[sizeof(header) +1]
+	//datasize is Totalen - sizeof(header). 
+	template<>
+	inline Err SVSocket<UdpApi>::WriteWithHeader( unsigned char* buffer, size_t Totallen)
+	{
+		size_t len = Totallen - sizeof(header);
+		Err error = SVSocketError::Success;
+		if (len > 0)
+		{
+			char * buff = WriteHeader(buffer, len);
+			int l_Error;
+
+			uint32 chunk_sz = static_cast<uint32>(m_buff_sz - sizeof(header));
+			header head = *reinterpret_cast<header *>(buff);
+			uint32 left = static_cast<uint32>(len);
+			do
+			{
+				header * hdr = reinterpret_cast<header *>(buff);
+				*hdr = h2n(head);
+				l_Error = UdpApi::sendto(m_socket, buff, head.len + sizeof(header), 0, reinterpret_cast<sockaddr*>(&m_peer), sizeof(sockaddr_in));
+				if (SOCKET_ERROR == l_Error)
+				{
+					Log("write " + head.tostr() + SVSocketError::GetErrorText(SVSocketError::GetLastSocketError()), true);
+				}
+
+				buff += chunk_sz;
+				assert(left >= head.len); // sanity check
+				left -= head.len;
+				head.len = std::min(chunk_sz, left);
+				++head.seq;
+				
+			} while ((l_Error != SOCKET_ERROR) && (left != 0));
+			
+			if (l_Error == SOCKET_ERROR)
+			{
+				error = SVSocketError::GetLastSocketError();
+			}
+		}
+		return error;
+	}
+
+
+	template<typename API>
 	char * SVSocket<API>::dupWithHeader(const u_char * src, std::vector<char> & vec, size_t len) const
 	{
-		static uint32 id = 0;
+		//static uint32 id = 0;
 		vec.resize(len + sizeof(header));
 		memcpy(&vec[sizeof(header)], reinterpret_cast<const char *>(src), len);
 		header & head = *reinterpret_cast<header *>(&vec[0]);
 		bool singlePacket = len + sizeof(header) <= m_buff_sz;
 		// header uses uint32 and uint16 regardless of platform.
-		head = header( ++id, 
+		head = header(GetMessageId(),
 			static_cast< uint32 >( singlePacket ? len : ( m_buff_sz - sizeof( header ) ) ), 
 			static_cast< uint32 >( len ), 
 			static_cast< uint16 >( singlePacket ? 1 : 1 + ( len / ( m_buff_sz - sizeof( header ) ) ) ), 
@@ -382,8 +447,8 @@ namespace SvSol
 		return vec.data();
 	}
 
-	template<typename API>
-	inline Err SVSocket<API>::Write(const unsigned char* buffer, size_t len, bool hasHeader)
+	template<>
+	inline Err SVSocket<UdpApi>::Write(const unsigned char* buffer, size_t len, bool hasHeader)
 	{
 		// Currently, we can only write 2 billion bytes at a time, but Write takes 
 		// len as a size_t because we want to allow for future functionality the 
@@ -395,7 +460,7 @@ namespace SvSol
 			std::vector<char> vec;
 			char * buff = hasHeader ? dupWithHeader( buffer, vec, len ) : ( char* )buffer; // no _cast can convert from const u_char* to char*
 			int l_Error;
-			if (hasHeader && Traits<API>::proto == IPPROTO_UDP) // only split the payload if udp with header.
+			if (hasHeader )//&& Traits<API>::proto == IPPROTO_UDP) // only split the payload if udp with header.
 			{
 				uint32 chunk_sz = static_cast<uint32>( m_buff_sz - sizeof(header) );
 				header head = *reinterpret_cast<header *>(buff);
@@ -404,7 +469,7 @@ namespace SvSol
 				{
 					header * hdr = reinterpret_cast<header *>(buff);
 					*hdr = h2n(head);
-					l_Error = API::sendto( m_socket, buff, head.len + sizeof(header), 0, reinterpret_cast< sockaddr* >( &m_peer ), sizeof(sockaddr_in) );
+					l_Error = UdpApi::sendto( m_socket, buff, head.len + sizeof(header), 0, reinterpret_cast< sockaddr* >( &m_peer ), sizeof(sockaddr_in) );
 					if (SOCKET_ERROR == l_Error)
 					{
 						Log("write " + head.tostr() + SVSocketError::GetErrorText(SVSocketError::GetLastSocketError()), true);
@@ -422,10 +487,10 @@ namespace SvSol
 			else
 			{
 				u_long sz = htonl(static_cast<u_long>(len));
-				l_Error = API::sendto( m_socket, reinterpret_cast<char *>(&sz), static_cast< int >( sizeof(u_long) ), 0, reinterpret_cast< sockaddr* >( &m_peer ), sizeof(sockaddr_in) );
+				l_Error = UdpApi::sendto( m_socket, reinterpret_cast<char *>(&sz), static_cast< int >( sizeof(u_long) ), 0, reinterpret_cast< sockaddr* >( &m_peer ), sizeof(sockaddr_in) );
 				if (SOCKET_ERROR != l_Error)
 				{
-					l_Error = API::sendto( m_socket, buff, static_cast< int >( len ), 0, reinterpret_cast< sockaddr* >( &m_peer ), sizeof(sockaddr_in) );
+					l_Error = UdpApi::sendto( m_socket, buff, static_cast< int >( len ), 0, reinterpret_cast< sockaddr* >( &m_peer ), sizeof(sockaddr_in) );
 				}
 			}
 			if ( l_Error == SOCKET_ERROR)

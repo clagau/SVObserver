@@ -20,6 +20,9 @@
 #include "SVMatroxImagingLibrary.h"  // has MIL includes
 #include "SVMatroxResourceMonitor.h"
 #include "MatroxSharedBuffer.h"
+#include "SVStatusLibrary/MessageContainer.h"
+#include "SVMessage/SVMessage.h"
+#include "SVStatusLibrary/ErrorNumbers.h"
 #pragma endregion Includes
 
 enum ImageBands
@@ -1613,21 +1616,17 @@ HRESULT  SVMatroxBufferInterface::InquireBufferProperties(const SVMatroxBuffer& 
 {
 	HRESULT Code(S_OK); 
 	Code = SVMatroxApplicationInterface::GetFirstError();
-	MIL_INT PitchByte = MbufInquire(rBuffer.GetIdentifier(), M_PITCH_BYTE, M_NULL);
-	MIL_INT Pitch = MbufInquire(rBuffer.GetIdentifier(), M_PITCH, M_NULL);
-	MIL_INT BandSize = MbufInquire(rBuffer.GetIdentifier(), M_SIZE_BAND, M_NULL);
-	MIL_INT SizeX = MbufInquire(rBuffer.GetIdentifier(), M_SIZE_X , M_NULL);
-	MIL_INT SizeY = MbufInquire(rBuffer.GetIdentifier(), M_SIZE_Y ,M_NULL);
-	MIL_INT Type = MbufInquire(rBuffer.GetIdentifier(), M_TYPE ,M_NULL);
-	MIL_INT Attrib = MbufInquire(rBuffer.GetIdentifier(), M_EXTENDED_ATTRIBUTE , M_NULL);
+	rImageProps.PitchByte = MbufInquire(rBuffer.GetIdentifier(), M_PITCH_BYTE, M_NULL);
+	rImageProps.Pitch = MbufInquire(rBuffer.GetIdentifier(), M_PITCH, M_NULL);
+	rImageProps.Bandsize = MbufInquire(rBuffer.GetIdentifier(), M_SIZE_BAND, M_NULL);
+	rImageProps.sizeX = MbufInquire(rBuffer.GetIdentifier(), M_SIZE_X , M_NULL);
+	rImageProps.sizeY = MbufInquire(rBuffer.GetIdentifier(), M_SIZE_Y ,M_NULL);
+	rImageProps.Matrox_type = MbufInquire(rBuffer.GetIdentifier(), M_TYPE ,M_NULL);
+	rImageProps.Attrib = MbufInquire(rBuffer.GetIdentifier(), M_EXTENDED_ATTRIBUTE , M_NULL);
+	rImageProps.Bytesize = MbufInquire(rBuffer.GetIdentifier(), M_SIZE_BYTE, M_NULL);
+
 	
-	rImageProps.Matrox_type = Type;
-	rImageProps.Pitch  = Pitch;
-	rImageProps.PitchByte  = PitchByte;
-	rImageProps.sizeX = SizeX;
-	rImageProps.sizeY = SizeY;
-	rImageProps.Attrib = Attrib;
-	
+
 	Code = SVMatroxApplicationInterface::GetLastStatus();
 	return Code;
 }
@@ -1638,33 +1637,61 @@ HRESULT SVMatroxBufferInterface::CreateBuffer(SVMatroxBuffer& p_rBuffer, MatroxI
 	HRESULT Code(S_OK); 
 	if(pMemory == nullptr || rImageProps.Attrib == 0  || rImageProps.Matrox_type == 0)
 	{
-		std::exception ex("CreateBuffer Invalid Parameter");
-		throw ex;
+		SvStl::MessageContainer message(SVMSG_SVO_5079_CREATEBUFFERFAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16226);
+		throw message;
+	
 	}
 
-	MIL_ID NewBuf = M_NULL;
-	//@Todo[MEC][7.50] [14.03.2017] Color Buffer
-	NewBuf = MbufCreate2d(M_DEFAULT_HOST
-		,rImageProps.sizeX,
-		rImageProps.sizeY,
-		rImageProps.Matrox_type,
-		rImageProps.Attrib,
-		M_HOST_ADDRESS + M_PITCH_BYTE, 
-		rImageProps.PitchByte,
-		pMemory,
-		M_NULL);
 
+	bool mono = M_IS_FORMAT_MONO(rImageProps.Attrib);
+	bool RGB = M_IS_FORMAT_RGB_BGR(rImageProps.Attrib);
+	bool yuv = M_IS_FORMAT_YUV(rImageProps.Attrib);
+	int mi = M_BIT_FIELD_FORMAT(rImageProps.Attrib);
+	MIL_ID NewBuf = M_NULL;
+	if (MaxColorBands == rImageProps.Bandsize  || RGB || yuv)
+	{
+		assert(rImageProps.Attrib & M_PACKED);
+		void* pa[3];
+		pa[0] = pMemory;
+		pa[1] = nullptr;
+		pa[2] = nullptr;
+
+		NewBuf = MbufCreateColor(M_DEFAULT_HOST,
+			MaxColorBands
+			, rImageProps.sizeX,
+			rImageProps.sizeY,
+			rImageProps.Matrox_type,
+			rImageProps.Attrib,
+			M_HOST_ADDRESS + M_PITCH_BYTE,
+			rImageProps.PitchByte,
+			pa,
+			M_NULL);
+	}
+	else
+	{
+		NewBuf = MbufCreate2d(M_DEFAULT_HOST
+			, rImageProps.sizeX,
+			rImageProps.sizeY,
+			rImageProps.Matrox_type,
+			rImageProps.Attrib,
+			M_HOST_ADDRESS + M_PITCH_BYTE,
+			rImageProps.PitchByte,
+			pMemory,
+			M_NULL);
+	}
 	Code = SVMatroxApplicationInterface::GetLastStatus();
 
 	if (S_OK == Code)
 	{
 		p_rBuffer.m_BufferPtr = new MatroxSharedBuffer(NewBuf, "SVMatroxBufferInterface::CreateBuffer");
 	}
-
-
 	else
 	{
 		Code = SVMEE_INVALID_PARAMETER;
+
+		SvStl::MessageContainer message(SVMSG_SVO_5079_CREATEBUFFERFAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16227);
+		throw message;
+
 	}
 
 
@@ -2145,20 +2172,21 @@ HRESULT SVMatroxBufferInterface::CopyBuffer(const SVBitmapInfo& dstInfo, unsigne
 	return l_Code;
 }
 
-HRESULT SVMatroxBufferInterface::CopyBufferToFileDIB(SVByteVector& p_rToDIB, const SVMatroxBuffer& p_rFromId)
+HRESULT SVMatroxBufferInterface::CopyBufferToFileDIB(SVByteVector& rToDIB, const SVMatroxBuffer& rFromId, DWORD  offset, bool normalize_y)
 {
 	HRESULT l_Code(S_OK);
-
+	MIL_ID MilId = rFromId.GetIdentifier();
+	if (IsColorBuffer(rFromId))
+	{
+		//This assumes we have attribute M_PACKED 
+		MbufChildColor(rFromId.GetIdentifier(), 0, &MilId);
+	}
 	SVBitmapInfo l_Info;
-
-	p_rToDIB.clear();
-
-	l_Code = GetBitmapInfo(l_Info, p_rFromId);
-
+	rToDIB.clear();
+	l_Code = GetBitmapInfo(l_Info, rFromId);
 	if (S_OK == l_Code)
 	{
-		void* l_pHostBuffer = reinterpret_cast< void* >(MbufInquire(p_rFromId.GetIdentifier(), M_HOST_ADDRESS, M_NULL));
-
+		void* l_pHostBuffer = reinterpret_cast< void* >(MbufInquire(MilId, M_HOST_ADDRESS, M_NULL));
 		if (nullptr != l_pHostBuffer)
 		{
 			size_t l_InfoSize = l_Info.GetBitmapInfoSizeInBytes();
@@ -2172,19 +2200,19 @@ HRESULT SVMatroxBufferInterface::CopyBufferToFileDIB(SVByteVector& p_rToDIB, con
 			hdr.bfReserved2 = 0; 
 			hdr.bfOffBits = static_cast< DWORD >(sizeof(BITMAPFILEHEADER) + l_InfoSize);
 
-			p_rToDIB.resize(hdr.bfSize);
+			rToDIB.resize(hdr.bfSize +offset);
 
-			::memcpy(&(p_rToDIB[ 0 ]), &hdr, sizeof(BITMAPFILEHEADER));
-			::memcpy(&(p_rToDIB[ sizeof(BITMAPFILEHEADER) ]), l_Info.GetBitmapInfo(), l_InfoSize);
+			::memcpy(&(rToDIB[ offset ]), &hdr, sizeof(BITMAPFILEHEADER));
+			::memcpy(&(rToDIB[ offset + sizeof(BITMAPFILEHEADER) ]), l_Info.GetBitmapInfo(), l_InfoSize);
 
-			BITMAPINFO* l_pBitmapInfo = reinterpret_cast< BITMAPINFO* >(&(p_rToDIB[ sizeof(BITMAPFILEHEADER) ]));
+			BITMAPINFO* l_pBitmapInfo = reinterpret_cast< BITMAPINFO* >(&(rToDIB[ sizeof(BITMAPFILEHEADER) ]));
 
-			if (l_pBitmapInfo->bmiHeader.biHeight < 0)
+			if (normalize_y && l_pBitmapInfo->bmiHeader.biHeight < 0)
 			{
 				size_t l_Stride = l_Info.GetBitmapImageStrideInBytes();
 
 				unsigned char* l_pFrom = reinterpret_cast< unsigned char* >(l_pHostBuffer);
-				unsigned char* l_pTo = reinterpret_cast< unsigned char* >(&(p_rToDIB[ sizeof(BITMAPFILEHEADER) + l_InfoSize ]));
+				unsigned char* l_pTo = reinterpret_cast< unsigned char* >(&(rToDIB[offset + sizeof(BITMAPFILEHEADER) + l_InfoSize ]));
 
 				l_pBitmapInfo->bmiHeader.biHeight = ::labs(l_pBitmapInfo->bmiHeader.biHeight);
 				l_pBitmapInfo->bmiHeader.biXPelsPerMeter = 0;
@@ -2201,7 +2229,7 @@ HRESULT SVMatroxBufferInterface::CopyBufferToFileDIB(SVByteVector& p_rToDIB, con
 			}
 			else
 			{
-				::memcpy(&(p_rToDIB[ sizeof(BITMAPFILEHEADER) + l_InfoSize ]), l_pHostBuffer, l_ImageSize);
+				::memcpy(&(rToDIB[offset + sizeof(BITMAPFILEHEADER) + l_InfoSize ]), l_pHostBuffer, l_ImageSize);
 			}
 		}
 		else

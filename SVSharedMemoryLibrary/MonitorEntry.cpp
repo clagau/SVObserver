@@ -5,21 +5,23 @@
 #include "SVMatroxLibrary\MatroxImageProps.h"
 #pragma endregion Includes
 
-namespace SvSml
+namespace SvSml 
 {
 	MonitorEntry::MonitorEntry()
 	{
-		ObjectType =0 ;		//<SVObjectTypeEnum
+		ObjectType = 0;		//<SVObjectTypeEnum
 		InspectionStoreId = -1;
 		ItemId = -1;	//<Index in the Inspection Store
-		size =0;		//Size of the object
-		Store_Offset =0 ;  ///offset in Inspection Store
+		Store_Offset = 0;  ///offset in Inspection Store
+
 		//Images 
-		sizeX=0; 
-		sizeY=0; 
-		PitchByte=0;
+		sizeX = 0;
+		sizeY = 0;
+		PitchByte = 0;
 		Matrox_type = 0;
-		Attrib  = 0;
+		Attrib = 0;
+		BandSize = 0;
+		ByteSize = 0;
 	};
 
 	MonitorEntry::MonitorEntry(const SVString& na, DWORD ty)
@@ -28,45 +30,51 @@ namespace SvSml
 		ObjectType = ty;
 		InspectionStoreId = -1;
 		ItemId = -1;	//<Index in the Inspection Store
-		size =0;		//Size of the object
-		Store_Offset =0 ;  ///offset in Inspection Store
-		Pitch=0; 
-		sizeX=0; 
-		sizeY=0; 
-		PitchByte=0;
+		Store_Offset = 0;  ///offset in Inspection Store
+		Pitch = 0;
+		sizeX = 0;
+		sizeY = 0;
+		PitchByte = 0;
 		Matrox_type = 0;
-		Attrib  = 0;
+		Attrib = 0;
+		BandSize = 0;
+		ByteSize = 0;
 
 	};
 
-	MonitorEntry::MonitorEntry(const ShMonitorEntry &rentry )
+	MonitorEntry::MonitorEntry(const ShMonitorEntry &rentry)
 	{
 		name = rentry.name.c_str();
 		ObjectType = rentry.ObjectType;
 		InspectionStoreId = rentry.InspectionStoreId; ///no store Id in ShMonitorEntry
 		ItemId = rentry.ItemId;
-		size =  rentry.size;
-		Store_Offset =rentry.Store_Offset;
+		Store_Offset = rentry.Store_Offset;
 		//Images 
-		Pitch  =rentry.Pitch;
-		sizeX  =rentry.sizeX;
-		sizeY  =rentry.sizeY;
-		PitchByte  =rentry.PitchByte; 
-		Matrox_type =rentry.Matrox_type; 
-		Attrib  =rentry.Attrib;
+		Pitch = rentry.Pitch;
+		sizeX = rentry.sizeX;
+		sizeY = rentry.sizeY;
+		PitchByte = rentry.PitchByte;
+		Matrox_type = rentry.Matrox_type;
+		Attrib = rentry.Attrib;
+
+		BandSize = rentry.BandSize;
+		ByteSize = rentry.ByteSize;
 	}
 
 	bool MonitorEntry::GetMatroxImageProps(MatroxImageProps &ImageProps)
 	{
-		if(ObjectType != SVImageObjectType)
+		if (ObjectType != SVImageObjectType)
 			return false;
 
 		ImageProps.Pitch = Pitch;
 		ImageProps.sizeX = sizeX;
 		ImageProps.sizeY = sizeY;
-		ImageProps.PitchByte = PitchByte; 
-		ImageProps.Matrox_type = Matrox_type; 
+		ImageProps.PitchByte = PitchByte;
+		ImageProps.Matrox_type = Matrox_type;
 		ImageProps.Attrib = Attrib;
+
+		ImageProps.Bandsize = BandSize;
+		ImageProps.Bytesize = ByteSize;
 		return true;
 
 	}
@@ -76,38 +84,45 @@ namespace SvSml
 		Pitch = rImageProps.Pitch;
 		sizeX = rImageProps.sizeX;
 		sizeY = rImageProps.sizeY;
-		PitchByte = rImageProps.PitchByte; 
-		Matrox_type = rImageProps.Matrox_type; 
+		PitchByte = rImageProps.PitchByte;
+		Matrox_type = rImageProps.Matrox_type;
 		Attrib = rImageProps.Attrib;
-		size = sizeX* sizeY;
+
+		ByteSize = rImageProps.Bytesize;
+		BandSize = rImageProps.Bandsize;
 	}
 
-	ShMonitorEntry::ShMonitorEntry(const void_allocator &allocator):name(allocator)
+	ShMonitorEntry::ShMonitorEntry(const void_allocator &allocator) :name(allocator)
 	{
-		ObjectType =0 ;		//<SVObjectTypeEnum
+		ObjectType = 0;		//<SVObjectTypeEnum
 		ItemId = -1;	//<Index in the Inspection Store
-		size =0;		//Size of the object
-		Store_Offset =0 ;  ///offset in Inspection Store
-		//Images 
-		sizeX=0; 
-		sizeY=0; 
-		PitchByte=0;
+		Store_Offset = 0;  ///offset in Inspection Store
+
+		sizeX = 0;
+		sizeY = 0;
+		PitchByte = 0;
 		Matrox_type = 0;
-		Attrib  = 0;
+		Attrib = 0;
+		BandSize = 0;
+		ByteSize = 0;
 	}
-	ShMonitorEntry::ShMonitorEntry(const void_allocator &allocator, const MonitorEntry &rentry ):name( rentry.name.c_str(),allocator)
+	ShMonitorEntry::ShMonitorEntry(const void_allocator &allocator, const MonitorEntry &rentry) :name(rentry.name.c_str(), allocator)
 	{
 		ObjectType = rentry.ObjectType;
 		InspectionStoreId = rentry.InspectionStoreId; ///no store Id in ShMonitorEntry
 		ItemId = rentry.ItemId;
-		size =  rentry.size;
-		Store_Offset =rentry.Store_Offset;
+
+		Store_Offset = rentry.Store_Offset;
 		//Images 
-		Pitch  =rentry.Pitch;
-		sizeX  =rentry.sizeX;
-		sizeY  =rentry.sizeY;
-		PitchByte  =rentry.PitchByte; 
-		Matrox_type =rentry.Matrox_type; 
-		Attrib  =rentry.Attrib;
+		Pitch = rentry.Pitch;
+		sizeX = rentry.sizeX;
+		sizeY = rentry.sizeY;
+		PitchByte = rentry.PitchByte;
+		Matrox_type = rentry.Matrox_type;
+		Attrib = rentry.Attrib;
+
+		ByteSize = rentry.ByteSize;
+		BandSize = rentry.BandSize;
 	};
-} //namespace SvSml
+
+}

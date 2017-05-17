@@ -315,6 +315,8 @@ namespace SvStl
 	static const int Err_16024 = Mec_ErrorBase + 24;
 	static const int Err_16025 = Mec_ErrorBase + 25;
 	static const int Err_16026 = Mec_ErrorBase + 26;
+	
+
 	////Errornumbers for Adjust ToolsSize 
 	static const int FirstErrorAdjustTool  = Mec_ErrorBase + 27;
 	static const int Err_16027_InvalidOwner = Mec_ErrorBase + 27;
@@ -525,6 +527,17 @@ namespace SvStl
 	static const int Err_16223  =  Mec_ErrorBase + 223;	
 	static const int Err_16224  =  Mec_ErrorBase + 224;	
 	static const int Err_16225  =  Mec_ErrorBase + 225;	
+	static const int Err_16226 = Mec_ErrorBase + 226;
+	static const int Err_16227 = Mec_ErrorBase + 227;
+	static const int Err_16228 = Mec_ErrorBase + 228;
+	static const int Err_16229 = Mec_ErrorBase + 229;
+	static const int Err_16230 = Mec_ErrorBase + 230;
+	static const int Err_16231 = Mec_ErrorBase + 231;
+	static const int Err_16232 = Mec_ErrorBase + 232;
+	static const int Err_16233 = Mec_ErrorBase + 233;
+	static const int Err_16234 = Mec_ErrorBase + 234;
+	static const int Err_16235 = Mec_ErrorBase + 235;
+
 	
 	// Ben Walter
 	static const int BRW_ErrorBase = 17000;

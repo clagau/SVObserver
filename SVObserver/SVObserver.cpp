@@ -5558,14 +5558,25 @@ void SVObserverApp::Start()
 		}
 	}
 	
+
 	catch (const SvStl::MessageContainer& rExp)
 	{
 		//cleanup goOnline, after fail, before exception leave this method
 		SVSVIMStateClass::RemoveState( SV_STATE_START_PENDING );
 		RunAllIPDocuments();
-
 		throw rExp;
-	}// end if
+	}
+	catch (std::exception& ex)
+	{
+		//cleanup goOnline, after fail, before exception leave this method
+		SVSVIMStateClass::RemoveState(SV_STATE_START_PENDING);
+		RunAllIPDocuments();
+		SVStringVector msgList;
+		msgList.push_back(ex.what());
+		SvStl::MessageMgrStd MesMan(SvStl::LogOnly);
+		MesMan.setMessage(SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_StdException, msgList, SvStl::SourceFileParams(StdMessageParams));
+		MesMan.Throw();
+	}
 
 	//SvSml::SharedMemWriter::Instance().RebuildMonitorEntryMap();
 

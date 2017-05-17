@@ -1,6 +1,8 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 11.00
-# Visual Studio 2010
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 14
+VisualStudioVersion = 14.0.25420.1
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SVSocketLibrary", "SVSocketLibrary\SVSocketLibrary.vcxproj", "{3275BAC6-AC2C-4D44-BCE3-6A7131D0F59D}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "JsonLib", "JsonLib\JsonLib.vcxproj", "{C16749CD-4A36-46CF-BD75-9BCABB510A70}"
@@ -24,6 +26,9 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SVMessage", "SVMessage\SVMe
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RunRejectServer", "RunRejectServer\RunRejectServer.vcxproj", "{9B0560C0-FEE5-4806-9594-CFED40E28A18}"
 	ProjectSection(ProjectDependencies) = postProject
+		{91C2B904-B670-4ED1-A991-8418EF11E26B} = {91C2B904-B670-4ED1-A991-8418EF11E26B}
+		{A511C66F-36A3-4590-9CB4-A0CB6CA1D702} = {A511C66F-36A3-4590-9CB4-A0CB6CA1D702}
+		{722A6C78-28FC-4870-B7F8-30AF53C0BB46} = {722A6C78-28FC-4870-B7F8-30AF53C0BB46}
 		{B022279A-59CD-41C3-9EA5-F9721FECAFDD} = {B022279A-59CD-41C3-9EA5-F9721FECAFDD}
 		{AA20BDB8-15C0-43EB-83B5-6FC716849F13} = {AA20BDB8-15C0-43EB-83B5-6FC716849F13}
 		{3275BAC6-AC2C-4D44-BCE3-6A7131D0F59D} = {3275BAC6-AC2C-4D44-BCE3-6A7131D0F59D}
@@ -32,6 +37,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RunRejectServer", "RunRejec
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SVStatusLibrary", "SVStatusLibrary\SVStatusLibrary.vcxproj", "{AA20BDB8-15C0-43EB-83B5-6FC716849F13}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SVMatroxLibrary", "SVMatroxLibrary\SVMatroxLibrary.vcxproj", "{91C2B904-B670-4ED1-A991-8418EF11E26B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -103,6 +110,14 @@ Global
 		{AA20BDB8-15C0-43EB-83B5-6FC716849F13}.Unicode Debug|x64.Build.0 = Debug|x64
 		{AA20BDB8-15C0-43EB-83B5-6FC716849F13}.Unicode Release|x64.ActiveCfg = Release|x64
 		{AA20BDB8-15C0-43EB-83B5-6FC716849F13}.Unicode Release|x64.Build.0 = Release|x64
+		{91C2B904-B670-4ED1-A991-8418EF11E26B}.Debug|x64.ActiveCfg = Debug|x64
+		{91C2B904-B670-4ED1-A991-8418EF11E26B}.Debug|x64.Build.0 = Debug|x64
+		{91C2B904-B670-4ED1-A991-8418EF11E26B}.Release|x64.ActiveCfg = Release|x64
+		{91C2B904-B670-4ED1-A991-8418EF11E26B}.Release|x64.Build.0 = Release|x64
+		{91C2B904-B670-4ED1-A991-8418EF11E26B}.Unicode Debug|x64.ActiveCfg = Debug|x64
+		{91C2B904-B670-4ED1-A991-8418EF11E26B}.Unicode Debug|x64.Build.0 = Debug|x64
+		{91C2B904-B670-4ED1-A991-8418EF11E26B}.Unicode Release|x64.ActiveCfg = Release|x64
+		{91C2B904-B670-4ED1-A991-8418EF11E26B}.Unicode Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -86,15 +86,19 @@ namespace SvSml
 		m_Status = Status;
 	}
 
+	
 	LPCTSTR  SVSharedImage::BuildImageFileName( DWORD ImageIndex, DWORD ImageStoreIndex, DWORD SlotIndex, bool bReject)
 	{
-		static SVString RejectPath =  SVSharedConfiguration::GetRejectImageDirectoryName()  + "\\R";
-		static SVString LastPath =  SVSharedConfiguration::GetImageDirectoryName() + "\\L";
-		static LPCTSTR pRejectPath = RejectPath.c_str();
-		static LPCTSTR pLastPath = LastPath.c_str();
+		
 		static TCHAR Buffer[statics::max_result_size];
-		_stprintf_s(Buffer,statics::max_result_size,_T("%s%i_%i_%i.bmp"),bReject? pRejectPath : pLastPath,ImageStoreIndex,ImageIndex,SlotIndex);   
+		_stprintf_s(Buffer,statics::max_result_size,_T("%u %u %u  %u"), bReject? 1:0  ,ImageStoreIndex,ImageIndex,SlotIndex);   
 		return Buffer;
+	}
+
+	void   SVSharedImage::ScanImageFileName(LPCTSTR IndexString, DWORD& ImageIndex, DWORD& ImageStoreIndex, DWORD& SlotIndex, DWORD& isReject)
+	{
+		_stscanf(IndexString, _T("%u %u %u  %u"), &isReject , &ImageStoreIndex, &ImageIndex, &SlotIndex );
+	
 	}
 
 	
@@ -103,15 +107,10 @@ namespace SvSml
 		if(rTo.size() != rfrom.size())
 		{
 			assert(false);
-			throw std::exception("internal error 1");
 		}
 		for(int i =0 ; i <rTo.size(); i++ )
 		{
 			rTo[i].m_Status = rfrom[i].m_Status;
-			/* SVString elementnameTo =  rTo[i].m_ElementName.c_str();
-			SVString elementnameFrom  = rfrom[i].m_ElementName.c_str();
-			assert(elementnameTo == elementnameFrom);*/
-		
 		}
 	
 	}

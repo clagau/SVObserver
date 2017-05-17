@@ -114,21 +114,23 @@ DWORD WINAPI servimg(LPVOID ptr)
 		typedef UdpServerSocket ServerSocket;
 		typedef UdpSocket Socket;
 		typedef SvSol::header header;
+		const DWORD DefaultImageBufferSize = 0xA00000;
+		const DWORD SocketBufferSize = 0x100000;
+
+		SVByteVector ByteVector;
+		ByteVector.reserve(DefaultImageBufferSize);
 		
 		SvSml::SharedMemReader*  pSharedMemReader = static_cast<SvSml::SharedMemReader*>(  ptr);
 		ServerSocket sok;
 		sok.Create();
-		sok.SetBufferSize(1024*1024);
+		sok.SetBufferSize(SocketBufferSize);
 		sok.Listen(imgPort);
-		const size_t buflen = 1024*48;
-		boost::scoped_array<u_char> arr(new u_char[buflen]);
 		long cnt = 0;
 		while( WAIT_OBJECT_0 != WaitForSingleObject(g_ServiceStopEvent, 0) )
 		{
 			if (sok.ClientConnecting())
 			{
 				sockaddr addr;
-				u_char *buf = arr.get();
 				int len = sizeof(sockaddr);
 				Socket client = sok.Accept(&addr, &len); // this never blocks for udp...
 				if (client.IsValidSocket())
@@ -138,25 +140,17 @@ DWORD WINAPI servimg(LPVOID ptr)
 					u_long sz;
 					if (SvSol::SVSocketError::Success == client.ReadAll(buf, sz, true))
 					{
-						SVString filename = SVString(reinterpret_cast<char *>(buf.get()), sz);
 						try
 						{
-							std::ifstream is;
-							is.open(filename, std::ios::in | std::ios::binary);
-							if (!is.is_open())
-							{
-								SvStl::MessageContainer MsgCont;
-								SVStringVector msgList;
-								msgList.push_back( filename );
-								MsgCont.setMessage( SVMSG_RRS_3_GENERAL_ERROR, SvStl::Tid_Error_CannotOpenFile, msgList, SvStl::SourceFileParams(StdMessageParams) );
-								throw MsgCont;
-							}
-							is.seekg(0, std::ios::end);
-							std::streamsize sz = is.tellg();
-							is.seekg(0, std::ios::beg);
-							std::vector<u_char> vec(static_cast<unsigned int>(sz));
-							is.read(reinterpret_cast<char *>(&vec[0]), sz);
-							client.Write(&vec[0], static_cast<size_t>(sz), true);
+							SVString filename = SVString(reinterpret_cast<char *>(buf.get()), sz);
+							DWORD ImageIndex, ImageStoreIndex, SlotIndex, IsReject;
+							SvSml::SVSharedImage::ScanImageFileName(filename.c_str(), ImageIndex, ImageStoreIndex, SlotIndex, IsReject);
+							SvSml::SharedImageStore::StoreType t = IsReject ? SvSml::SharedImageStore::reject : SvSml::SharedImageStore::last;
+							DWORD offset = sizeof(header);
+							
+							SVMatroxBufferInterface::CopyBufferToFileDIB(ByteVector, pSharedMemReader->m_ImageContainer.GetImageBuffer(SlotIndex, t, ImageStoreIndex, ImageIndex), offset,false);
+							
+							client.WriteWithHeader(&ByteVector[0], ByteVector.size());
 						}
 						catch( const SvStl::MessageContainer& rExp )
 						{
@@ -194,6 +188,7 @@ DWORD WINAPI servimg(LPVOID ptr)
 		msgList.push_back( rExp.what() );
 		Exception.setMessage( SVMSG_RRS_2_STD_EXCEPTION, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams) );
 	}
+	
 	return 0;
 }
 
@@ -246,34 +241,22 @@ JsonCmd ReadCommand(UdpSocket & sok)
 	return val;
 }
 
-SVString EncodeImg(const SVString& rName)
-{
-	HANDLE hFile = ::CreateFile( rName.c_str(), GENERIC_READ, 0, nullptr, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr );
-	if (hFile == INVALID_HANDLE_VALUE)
-	{
-		SvStl::MessageContainer MsgCont;
-		SVStringVector msgList;
-		msgList.push_back( rName );
-		MsgCont.setMessage( SVMSG_RRS_3_GENERAL_ERROR, SvStl::Tid_Error_CannotOpenFile, msgList, SvStl::SourceFileParams(StdMessageParams) );
-		throw MsgCont;
-	}
-	else
-	{
-		DWORD file_sz;
-		file_sz = ::GetFileSize(hFile, nullptr);
 
-		HANDLE hMapping = ::CreateFileMapping(hFile, nullptr, PAGE_READONLY, 0, file_sz, nullptr);
-		BYTE * buff = (BYTE *)::MapViewOfFile(hMapping, FILE_MAP_READ, 0, 0, file_sz);
-		int enc_len = ::Base64EncodeGetRequiredLength(file_sz, ATL_BASE64_FLAG_NOCRLF);
-		boost::scoped_array<char>  enc_buff( new char[enc_len + 1]);
-		enc_buff[enc_len] = '\0';
-		::Base64Encode(buff, file_sz, enc_buff.get(), &enc_len, ATL_BASE64_FLAG_NOCRLF);
-		::UnmapViewOfFile(buff);
-		::CloseHandle(hMapping);
-		::CloseHandle(hFile);
-		return enc_buff.get();
-	}
+
+//@Todo[MEC][7.50] [15.05.2017] for performance reason Bytevector is static. 
+//Function must not be called from more then one Thread
+SVString EncodeImg(SVMatroxBuffer& rMatroxBuffer)
+{
+	static SVByteVector G_ByteVector;
+	SVMatroxBufferInterface::CopyBufferToFileDIB(G_ByteVector, rMatroxBuffer);
+	DWORD len = static_cast<DWORD>( G_ByteVector.size());
+	int enc_len = ::Base64EncodeGetRequiredLength(len, ATL_BASE64_FLAG_NOCRLF);
+	boost::scoped_array<char>  enc_buff(new char[enc_len + 1]);
+	enc_buff[enc_len] = '\0';
+	::Base64Encode(&(G_ByteVector[0]), len, enc_buff.get(), &enc_len, ATL_BASE64_FLAG_NOCRLF);
+	return enc_buff.get();
 }
+
 
 Json::Value NewResponse(const JsonCmd & cmd)
 {
@@ -327,53 +310,52 @@ Json::Value & GenerateErrors(Json::Value & arr, const SvSml:: SVSharedData* data
 	return arr;
 }
 
-template<typename API>
-void AppendImageContents( Json::Value& rValue, const SVString& rFilePath );
-
-template<>
-void AppendImageContents<SvSol::UdpApi>( Json::Value& rValue, const SVString& rFilePath )
-{
-	rValue[SVRC::io::imageFileName] = rFilePath;
-	rValue[SVRC::io::fetch] = 1;
-}
-
-template<>
-void AppendImageContents<SvSol::TcpApi>( Json::Value& rValue, const SVString& rFilePath )
-{
-	 rValue[SVRC::io::image] = EncodeImg(rFilePath);
-}
 
 template<typename API>
-Json::Value & GenerateImages(Json::Value & rArr, SvSml:: SVSharedData* data, const SvSml::MonitorEntries& rProductItemNames, SvSml::SharedMemReader  *pMemReader)
+Json::Value & GenerateImages(Json::Value & rArr, SvSml::SVSharedData* data, const SvSml::MonitorEntries& rProductItemNames, SvSml::SharedMemReader  *pMemReader);
+
+template<>
+Json::Value & GenerateImages<SvSol::UdpApi>(Json::Value & rArr, SvSml::SVSharedData* data, const SvSml::MonitorEntries& rProductItemNames, SvSml::SharedMemReader  *pMemReader)
 {
 	int count = data->m_TriggerCount;
 	for (SvSml::SVSharedImageVector::iterator it = data->m_Images.begin(); it != data->m_Images.end(); ++it)
 	{
 		const SvSml::SVSharedImageVector::value_type& sharedImage = *it;
-
-		//@TODO[MEC][7.50][30.01.2017] 
-		// Is this lookup really necessary? 		
-		// The MonitorList should be in sync with SVObserver, so what is written to shared memory would be correct
-
-		if(SvSml::SVSharedMonitorList::IsInMoListVector( sharedImage.m_ElementName.c_str(), rProductItemNames))
-		{
-			//Export the Images to V drive: 
-			SVString filename = sharedImage.m_Filename; 
-			DWORD slotIndex = sharedImage.m_SlotIndex;
-			SvSml::SharedImageStore::StoreType t  = sharedImage.m_IsReject?  SvSml::SharedImageStore::reject : SvSml::SharedImageStore::last;
-			DWORD StoreIndex = sharedImage.m_ImageStoreIndex;
-			DWORD ImageIndex =  sharedImage.m_ImageIndex;
-			SVMatroxBufferInterface::Export( pMemReader->m_ImageContainer.GetImageBuffer(slotIndex,t,StoreIndex,ImageIndex ),filename,SVFileBitmap);
-			Json::Value val(Json::objectValue);
-			val[SVRC::io::name] = sharedImage.m_ElementName.c_str();
-			val[SVRC::io::status] = sharedImage.m_Status;
-			val[SVRC::io::count] = count;
-			AppendImageContents<API>(val, sharedImage.m_Filename);
-			rArr.append(val);
-		}
+		SVString filename = sharedImage.m_Filename;
+		Json::Value val(Json::objectValue);
+		val[SVRC::io::name] = sharedImage.m_ElementName.c_str();
+		val[SVRC::io::status] = sharedImage.m_Status;
+		val[SVRC::io::count] = count;
+		val[SVRC::io::imageFileName] = filename;
+		val[SVRC::io::fetch] = 1;
+		rArr.append(val);
 	}
 	return rArr;
 }
+
+template<>
+Json::Value & GenerateImages<SvSol::TcpApi>(Json::Value & rArr, SvSml::SVSharedData* data, const SvSml::MonitorEntries& rProductItemNames, SvSml::SharedMemReader  *pMemReader)
+{
+	int count = data->m_TriggerCount;
+	for (SvSml::SVSharedImageVector::iterator it = data->m_Images.begin(); it != data->m_Images.end(); ++it)
+	{
+		const SvSml::SVSharedImageVector::value_type& sharedImage = *it;
+		SVString filename = sharedImage.m_Filename;
+		DWORD slotIndex = sharedImage.m_SlotIndex;
+		SvSml::SharedImageStore::StoreType t = sharedImage.m_IsReject ? SvSml::SharedImageStore::reject : SvSml::SharedImageStore::last;
+		DWORD StoreIndex = sharedImage.m_ImageStoreIndex;
+		DWORD ImageIndex = sharedImage.m_ImageIndex;
+		Json::Value val(Json::objectValue);
+		val[SVRC::io::name] = sharedImage.m_ElementName.c_str();
+		val[SVRC::io::status] = sharedImage.m_Status;
+		val[SVRC::io::count] = count;
+		val[SVRC::io::image] = EncodeImg(pMemReader->m_ImageContainer.GetImageBuffer(slotIndex, t, StoreIndex, ImageIndex));
+		rArr.append(val);
+		
+	}
+	return rArr;
+}
+
 
 
 template<typename API>
@@ -1075,7 +1057,8 @@ void StartThreads( DWORD argc, LPTSTR  *argv )
 		HANDLE threads[3];
 		SvSml::SharedMemReader  MemReader[3];
 
-		threads[0] = CreateThread(nullptr, 0, servimg, LPVOID(&MemReader[0]) , 0, &threadIds[0]);
+		//threads[0] = CreateThread(nullptr, 0, servimg, LPVOID(&MemReader[0]) , 0, &threadIds[0]);
+		threads[0] = CreateThread(nullptr, 0, servimg, LPVOID(&MemReader[2]), 0, &threadIds[0]); ///TODO  
 		threads[1] = CreateThread(nullptr, 0, servcmd<SvSol::TcpApi>, LPVOID(&MemReader[1]), 0, &threadIds[1]);
 		threads[2] = CreateThread(nullptr, 0, servcmd<SvSol::UdpApi>, LPVOID(&MemReader[2]), 0, &threadIds[2]);
 

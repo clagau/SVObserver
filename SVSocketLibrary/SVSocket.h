@@ -52,7 +52,14 @@ namespace SvSol
 		bool m_isConnected;
 		bool m_hasOwner;
 		int m_sockNum;
-		char * dupWithHeader(const unsigned char * src, std::vector<char> & vec, size_t len) const;
+		
+		///returns the next messageId
+		uint32 GetMessageId() const;
+
+		
+		char*  WriteHeader( u_char * src, size_t datalen) const;
+		
+		char*  dupWithHeader(const unsigned char * src, std::vector<char> & vec, size_t len) const;
 	public:
 		SVSocket(Socket_t sok = InvalidSock)
 			: m_socket(sok), m_hasOwner(false), m_isConnected(false), m_buff_sz(Traits<API>::buffer_size)
@@ -78,7 +85,7 @@ namespace SvSol
 			}
 			memset(&m_peer, 0, sizeof(sockaddr_in));
 		}
-
+		
 		virtual ~SVSocket()
 		{
 			if ( m_hasOwner )
@@ -109,6 +116,9 @@ namespace SvSol
 
 		Err Write(const std::basic_string<TCHAR>& data, bool hasHeader = false); // Use for non-JSON data.
 		Err Write(const unsigned char* buffer, size_t len, bool hasHeader = false); // Use for non-JSON data.
+		
+		Err WriteWithHeader( unsigned char* buffer, size_t len);
+
 		Err Read(unsigned char* buffer, size_t len, size_t& amtRead, bool hasHeader = false);
 		Err Select(int & nfds, FdSet_t * readfds, FdSet_t * writefds, FdSet_t * exceptfds, const timeval *timeout);
 		Err ReadFrom(unsigned char * buffer, size_t len, size_t & amtRead, sockaddr_in & from, size_t & fromLen, bool hasHeader = false);

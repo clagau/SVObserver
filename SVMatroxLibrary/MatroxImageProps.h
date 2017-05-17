@@ -7,5 +7,7 @@ struct MatroxImageProps
 	long long Pitch; 
 	long long Matrox_type; 
 	long long Attrib;
+	long long Bandsize;
+	long long Bytesize;
 };
 

@@ -17,6 +17,12 @@ namespace SvSml
 
 	public:
 		enum StoreType {reject, last};
+		struct ISHeader
+		{
+			DWORD slotCount; //<number of slots 
+			DWORD  slotSize; //<size per slot
+		};
+
 
 		SharedImageStore();
 		~SharedImageStore();
@@ -27,7 +33,7 @@ namespace SvSml
 
 		BYTE* GetPtr(DWORD slot, DWORD offset );	
 		static LPCTSTR StoreType2Name(StoreType t );
-		LPCTSTR GetShareName() const;
+		LPCTSTR GetMapFileName() const;
 		DWORD GetSlotCount() const;
 		DWORD GetSlotSize() const;
 		const SVString & GetInspectionName() const
@@ -39,13 +45,19 @@ namespace SvSml
 		//Not implemented don't  allow copyconstructor 
 		SharedImageStore(const SharedImageStore& imstore); 
 		
-		void SetShareName(const SVString &InspectionName, StoreType t);
+		void BuildMapFileName();
 		DWORD m_slotCount; //<number of slots 
-		DWORD   m_slotSize; //<size per slot
-		SVString m_ShareName;
+		DWORD  m_slotSize; //<size per slot
+		DWORD m_ISHeadersize;
+		StoreType m_StoreType;
+		SVString m_MapFileName;
 		SVString m_InspectionName;
-		bip::shared_memory_object* m_pSharedMemoryObject;
-		bip::mapped_region*  m_pMappedRegion;
+		HANDLE m_hMapFileImage;
+		
+		void* m_pViewHeader;
+		std::vector<void*> m_pViewImagesVector;
+		DWORD m_AllocationGranularity;
+		
 	};
 	typedef  std::unique_ptr<SharedImageStore> ImageStorePointer;
 

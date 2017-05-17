@@ -4966,12 +4966,9 @@ void SVPPQObject::SetMonitorList(const ActiveMonitorList& rActiveList)
 	m_InspectionWriterCreationInfos.clear();
 	if (m_bActiveMonitorList)
 	{
-		//@Todo[MEC][7.50] [14.03.2017] clean up the mess with this numbers 
-		// Flawed design, eash list can have a reject depth, when in reality they must be the same for the PPQ
-		m_numRejectSlots = std::max(m_numRejectSlots, static_cast<long>(rActiveList.second.rejectDepth)); 
-
-		// Flawed design, the number of last inspected slots shouldn't mimic the PPQ in SVObserver, it should be some fixed size like 32 or 64...
-		m_numProductSlots = GetPPQLength() + g_lPPQExtraBufferSize;
+		
+		m_numRejectSlots = rActiveList.second.rejectDepth;
+		m_numProductSlots = SVMonitorList::NumProductSlots;
 
 		const SVMonitorList& rList = rActiveList.second.monitorList;
 

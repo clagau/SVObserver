@@ -16,7 +16,7 @@ namespace SvSml
 {
 	MLCpyContainer::MLCpyContainer(void)
 	{
-		m_Version=0;
+		m_Version = 0;
 	}
 
 
@@ -26,7 +26,7 @@ namespace SvSml
 
 	void MLCpyContainer::Clear()
 	{
-		m_Version=0;
+		m_Version = 0;
 		m_InspectionInfoMap.clear();
 		m_MonitorListCpyMap.clear();
 
@@ -34,42 +34,42 @@ namespace SvSml
 	//! Load MonitorLists from Shared  Memory
 	//! \param mlReader [in]
 	//! \returns void
-	void MLCpyContainer::ReloadMonitorMap(SVMonitorListReader& rmlReader, DWORD version )
+	void MLCpyContainer::ReloadMonitorMap(SVMonitorListReader& rmlReader, DWORD version)
 	{
-			rmlReader.Open();
-			Clear();
-			std::vector<SVString> mlNames = rmlReader.GetListNames();
-			std::vector<SVString>::const_iterator it;
-			for(it = mlNames.begin(); it != mlNames.end(); it++)
-			{
-				m_MonitorListCpyMap[*it]  =  MonitorListCpyPointer ( new MonitorListCpy(rmlReader[*it]));
-				m_MonitorListCpyMap[*it]->InsertToMLInspectionInfoMap(m_InspectionInfoMap);
-			}
-			rmlReader.Close();
-			m_Version = version;
+		rmlReader.Open();
+		Clear();
+		std::vector<SVString> mlNames = rmlReader.GetListNames();
+		std::vector<SVString>::const_iterator it;
+		for (it = mlNames.begin(); it != mlNames.end(); it++)
+		{
+			m_MonitorListCpyMap[*it] = MonitorListCpyPointer(new MonitorListCpy(rmlReader[*it]));
+			m_MonitorListCpyMap[*it]->InsertToMLInspectionInfoMap(m_InspectionInfoMap);
+		}
+		rmlReader.Close();
+		m_Version = version;
 	}
 
 
-	DWORD MLCpyContainer::GetVersion()  const 
+	DWORD MLCpyContainer::GetVersion()  const
 	{
 		return m_Version;
 	}
 
-	bool MLCpyContainer::IsActiveMonitorList(const SVString& Monitorlistname ) const
+	bool MLCpyContainer::IsActiveMonitorList(const SVString& Monitorlistname) const
 	{
-		MonitorListCpyMap::const_iterator it;   
+		MonitorListCpyMap::const_iterator it;
 		it = m_MonitorListCpyMap.find(Monitorlistname);
-		if(it != m_MonitorListCpyMap.end())
+		if (it != m_MonitorListCpyMap.end())
 			return it->second->GetIsActive();
 		else
 			return false;
 	}
 
-	const MonitorListCpy*  MLCpyContainer::GetMonitorListCpyPointer(const SVString& Monitorlistname )  const
+	const MonitorListCpy*  MLCpyContainer::GetMonitorListCpyPointer(const SVString& Monitorlistname)  const
 	{
-		MonitorListCpyMap::const_iterator it =  m_MonitorListCpyMap.find(Monitorlistname);
+		MonitorListCpyMap::const_iterator it = m_MonitorListCpyMap.find(Monitorlistname);
 
-		if( it !=  m_MonitorListCpyMap.end())
+		if (it != m_MonitorListCpyMap.end())
 			return it->second.get();
 		else
 			return nullptr;
@@ -85,10 +85,10 @@ namespace SvSml
 
 
 
-	DWORD MLCpyContainer::GetInspectionImageSize(const SVString& inspectionName   )
+	DWORD MLCpyContainer::GetInspectionImageSize(const SVString& inspectionName)
 	{
-		SvSml::MLInspectionInfoMap::const_iterator it = m_InspectionInfoMap.find(inspectionName); 
-		if (it !=  m_InspectionInfoMap.end()  && it->second.get())
+		SvSml::MLInspectionInfoMap::const_iterator it = m_InspectionInfoMap.find(inspectionName);
+		if (it != m_InspectionInfoMap.end() && it->second.get())
 		{
 			return it->second->TotalImageSize;
 		}
@@ -98,14 +98,14 @@ namespace SvSml
 		}
 	}
 
-	void MLCpyContainer::WriteMonitorList(SVMonitorListWriter& rWriter)  
+	void MLCpyContainer::WriteMonitorList(SVMonitorListWriter& rWriter)
 	{
-		MonitorListCpyMap::const_iterator  it; 
-		for(it = m_MonitorListCpyMap.begin(); it != m_MonitorListCpyMap.end(); ++it) 
+		MonitorListCpyMap::const_iterator  it;
+		for (it = m_MonitorListCpyMap.begin(); it != m_MonitorListCpyMap.end(); ++it)
 		{
-			if(it->second.get() && it->second->GetIsActive())
+			if (it->second.get() && it->second->GetIsActive())
 			{
-				it->second->WriteMonitorList(rWriter); 
+				it->second->WriteMonitorList(rWriter);
 			}
 		}
 	}
@@ -113,18 +113,18 @@ namespace SvSml
 
 	MonitorEntryPointer MLCpyContainer::GetMonitorEntryPointer(const SVString& rname)
 	{
-		MonitorListCpyMap::iterator  it; 
-		for(it = m_MonitorListCpyMap.begin(); it != m_MonitorListCpyMap.end(); ++it) 
+		MonitorListCpyMap::iterator  it;
+		for (it = m_MonitorListCpyMap.begin(); it != m_MonitorListCpyMap.end(); ++it)
 		{
-			MonitorEntriesMap::iterator MEMIt = it->second->m_EntriesMap.find(rname); 
-			if( MEMIt !=  it->second->m_EntriesMap.end())
+			MonitorEntriesMap::iterator MEMIt = it->second->m_EntriesMap.find(rname);
+			if (MEMIt != it->second->m_EntriesMap.end())
 			{
 				return MEMIt->second;
 			}
 		}
-	
+
 		throw std::exception("Cant find name in Monitorentrymap");
-	
+
 	}
 
 	void MLCpyContainer::CalculateStoreIds()
@@ -132,52 +132,52 @@ namespace SvSml
 		std::vector<DWORD> ImageItemoffsets;
 		std::vector<DWORD> ImageItemIndexes;
 		DWORD Storeindex(0);
-		MLInspectionInfoMap::iterator it; 
-		for(Storeindex =0,it = m_InspectionInfoMap.begin();it != m_InspectionInfoMap.end(); ++it,++Storeindex)
+		MLInspectionInfoMap::iterator it;
+		for (Storeindex = 0, it = m_InspectionInfoMap.begin(); it != m_InspectionInfoMap.end(); ++it, ++Storeindex)
 		{
 			it->second->StoreIndex = Storeindex;
 			ImageItemoffsets.push_back(0);
 			ImageItemIndexes.push_back(0);
 		}
-		MonitorListCpyMap::iterator  MLCPyIt; 
-		for(MLCPyIt = m_MonitorListCpyMap.begin(); MLCPyIt != m_MonitorListCpyMap.end(); ++MLCPyIt)
+		MonitorListCpyMap::iterator  MLCPyIt;
+		for (MLCPyIt = m_MonitorListCpyMap.begin(); MLCPyIt != m_MonitorListCpyMap.end(); ++MLCPyIt)
 		{
-			if(!MLCPyIt->second.get())
+			if (!MLCPyIt->second.get())
 				continue;
-			 MonitorEntriesMap::iterator MEMIt  = MLCPyIt->second->m_EntriesMap.begin();
-			 for(; MEMIt !=  MLCPyIt->second->m_EntriesMap.end();++MEMIt )
-			 {
+			MonitorEntriesMap::iterator MEMIt = MLCPyIt->second->m_EntriesMap.begin();
+			for (; MEMIt != MLCPyIt->second->m_EntriesMap.end(); ++MEMIt)
+			{
 				assert(MEMIt->second.get());
 				SVString inspectionName;
 				std::size_t pos = MEMIt->first.find_first_of('.');
-				if(pos != SVString::npos) 
-					inspectionName  = MEMIt->first.substr(0,pos);
-				else 
+				if (pos != SVString::npos)
+					inspectionName = MEMIt->first.substr(0, pos);
+				else
 					inspectionName = MEMIt->first;
-			
-				assert(m_InspectionInfoMap.find(inspectionName)  != m_InspectionInfoMap.end());
+
+				assert(m_InspectionInfoMap.find(inspectionName) != m_InspectionInfoMap.end());
 				assert(MEMIt->second->name == MEMIt->first);
-			
-				switch(MEMIt->second->ObjectType)
+
+				switch (MEMIt->second->ObjectType)
 				{
 				case SVImageObjectType:
-					{
-					DWORD storeId =   m_InspectionInfoMap[inspectionName]->StoreIndex;
+				{
+					DWORD storeId = m_InspectionInfoMap[inspectionName]->StoreIndex;
 					MEMIt->second->InspectionStoreId = storeId;
 					MEMIt->second->ItemId = ImageItemIndexes[storeId]++;
 					MEMIt->second->Store_Offset = ImageItemoffsets[storeId];
-					ImageItemoffsets[storeId]+= MonitorListCpy::ImageBufferHeaderSize; 
-					ImageItemoffsets[storeId]+= (DWORD) MEMIt->second->size;
-					}
-					break;
-			
+					ImageItemoffsets[storeId] += MonitorListCpy::ImageBufferHeaderSize;
+					ImageItemoffsets[storeId] += (DWORD)MEMIt->second->ByteSize;
+				}
+				break;
+
 				default:
 					continue;
 					break;
-			
+
 				}
-			 
-			 }
+
+			}
 		}
 
 	}

@@ -25,6 +25,8 @@ class SVMonitorList
 	SVMonitorItemList m_conditionalDataList;	// for reject determination
 
 public:
+	static const int  NumProductSlots = 32;
+	
 	SVMonitorList();
 	SVMonitorList(const SVMonitorItemList& dataList, const SVMonitorItemList& imageList, const SVMonitorItemList& rejectDataList, const SVMonitorItemList& rejectImageList, const SVMonitorItemList& conditionalDataList);
 	const SVMonitorItemList& GetImageList() const;
