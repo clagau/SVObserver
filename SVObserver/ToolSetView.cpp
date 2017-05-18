@@ -408,15 +408,18 @@ void ToolSetView::OnBeginLabelEditToolSetList(NMHDR* pNMHDR, LRESULT* pResult)
 		return;
 	}
 
-	// Save the current 'label' in case it needs to be restored.
-	CEdit* pEdit = m_toolSetListCtrl.GetEditControl();
-	ASSERT_VALID(pEdit);
-	CString Text;
-	pEdit->GetWindowText( Text );
-	m_LabelSaved = Text;
-	m_isLabeling = true;
-	
-	SetCapture(); 
+	if (m_LabelSaved.empty())
+	{
+		// Save the current 'label' in case it needs to be restored.
+		CEdit* pEdit = m_toolSetListCtrl.GetEditControl();
+		ASSERT_VALID(pEdit);
+		CString Text;
+		pEdit->GetWindowText(Text);
+		m_LabelSaved = Text;
+		m_isLabeling = true;
+
+		SetCapture();
+	}
 
 	*pResult = 0;
 }
@@ -448,7 +451,7 @@ void ToolSetView::RenameItem(int item, const SVString& rOldName, const SVString&
 			SVGUID toolId = m_toolSetListCtrl.getToolGuid(m_labelingIndex);
 			if (SV_GUID_NULL != toolId) // it's a Tool
 			{
-				TheSVObserverApp.OnObjectRenamed(SVString(m_LabelSaved), toolId);
+				TheSVObserverApp.OnObjectRenamed(m_LabelSaved, toolId);
 			}
 			SVIPDoc* pDoc = GetIPDoc();
 			if (pDoc)
@@ -492,8 +495,9 @@ void ToolSetView::OnEditLabelEnds()
 		{
 			PostMessage(WM_COMMAND, ID_EDIT_NAME);
 		}
-		m_duplicateName.empty();
 	}
+	m_duplicateName.clear();
+	m_LabelSaved.clear();
 }
 
 bool ToolSetView::EditToolGroupingComment()
@@ -939,25 +943,25 @@ bool ToolSetView::enterSelectedEntry()
 {
 	if ( TheSVObserverApp.OkToEdit() && !IsLabelEditing() )
 	{
-	SVIPDoc* pCurrentDocument = GetIPDoc();
-	if (nullptr != pCurrentDocument)
-	{
-		const SVGUID& rGuid = m_toolSetListCtrl.GetSelectedTool();
-		if (!rGuid.empty())
+		SVIPDoc* pCurrentDocument = GetIPDoc();
+		if (nullptr != pCurrentDocument)
 		{
-			pCurrentDocument->OnEditTool();
-			SetSelectedTool(rGuid);
-		}
-		else
-		{
-			// check if tool group is selected
-			if (!EditToolGroupingComment())
+			const SVGUID& rGuid = m_toolSetListCtrl.GetSelectedTool();
+			if (!rGuid.empty())
 			{
-				// Deselect all...
-				m_toolSetListCtrl.SetSelectedTool(SVGUID());
+				pCurrentDocument->OnEditTool();
+				SetSelectedTool(rGuid);
+			}
+			else
+			{
+				// check if tool group is selected
+				if (!EditToolGroupingComment())
+				{
+					// Deselect all...
+					m_toolSetListCtrl.SetSelectedTool(SVGUID());
+				}
 			}
 		}
-	}
 		return true;
 	}
 	else

@@ -620,9 +620,10 @@ BOOL SVToolSetListCtrl::PreTranslateMessage(MSG* pMsg)
 		// This allows copy, cut and paste using the control key combinations.
 		if (GetEditControl() && 
 			(VK_DELETE == pMsg->wParam ||
-			VK_RETURN == pMsg->wParam ||
-			VK_ESCAPE == pMsg->wParam ||
-			GetKeyState(VK_CONTROL)))
+				VK_F2 == pMsg->wParam ||
+				VK_RETURN == pMsg->wParam ||
+				VK_ESCAPE == pMsg->wParam ||
+				GetKeyState(VK_CONTROL)))
 		{
 			::TranslateMessage(pMsg);
 			::DispatchMessage(pMsg);
