@@ -566,25 +566,7 @@ HRESULT SVObjectClass::GetObjectValue( const SVString& rValueName, _variant_t& r
 {
 	HRESULT Result( S_OK );
 
-	if( _T("Friend") == rValueName )
-	{
-		SVSAFEARRAY l_SafeArray;
-
-		// for all friends in the list - get GUIDs
-		for( size_t i = 0;i < m_friendList.size();i++ )
-		{
-			SVGUID friendGuid = m_friendList[ i ].m_UniqueObjectID;
-
-			l_SafeArray.Add( friendGuid.ToVARIANT() );
-		}
-
-		rValue = l_SafeArray;
-	}
-	else if( _T( "AttributesAllowed" ) == rValueName )
-	{
-		rValue = m_ObjectAttributesAllowed;
-	}
-	else if( _T("AttributesSet") == rValueName )
+	if( _T("AttributesSet") == rValueName )
 	{
 		SVSAFEARRAY l_SafeArray;
 
@@ -622,7 +604,7 @@ HRESULT SVObjectClass::SetValuesForAnObject( const GUID& rAimObjectID, SVObjectA
 }
 
 /*
-Must override this in the derived class if you wish to set any values upon restoration from a script.  This method will only handle the "friend" member assignment.
+Must override this in the derived class if you wish to set any values upon restoration from a script.
 */
 HRESULT SVObjectClass::SetObjectValue( SVObjectAttributeClass* pDataObject )
 {
@@ -634,28 +616,7 @@ HRESULT SVObjectClass::SetObjectValue( SVObjectAttributeClass* pDataObject )
 		SvCl::SVObjectDWordArrayClass svDWordArray;
 		SvCl::SVObjectSVStringArrayClass StringArray;
 
-		if ( ( bOk = pDataObject->GetAttributeData( _T("DataLinkID"), StringArray ) ) )
-		{
-			; // Do nothing as it's obsolete
-		}
-		else if ( ( bOk = pDataObject->GetAttributeData( _T("Friend"), StringArray ) ) )
-		{
-			for( int i = 0; i < StringArray.GetSize(); i++ )
-			{
-				SVGUID friendGuid( _bstr_t( StringArray[i].c_str() ) );
-
-				// call AddFriend
-				AddFriend( friendGuid );
-			}
-		}
-		else if ( ( bOk = pDataObject->GetAttributeData( _T("AttributesAllowed"), svDWordArray ) ) )
-		{
-			for( int i = 0; i < svDWordArray.GetSize(); i++ )
-			{
-				m_ObjectAttributesAllowed = svDWordArray[i];
-			}
-		}
-		else if ( ( bOk = pDataObject->GetAttributeData( _T("AttributesSet"), svDWordArray ) ) )
+		if ( ( bOk = pDataObject->GetAttributeData( _T("AttributesSet"), svDWordArray ) ) )
 		{
 			int iSize = svDWordArray.GetSize();
 			{
@@ -665,6 +626,10 @@ HRESULT SVObjectClass::SetObjectValue( SVObjectAttributeClass* pDataObject )
 					m_ObjectAttributesSet.at(i) = svDWordArray[i];
 				}
 			}
+		}
+		else if ((bOk = pDataObject->GetAttributeData(_T("AttributesAllowed"), svDWordArray)))
+		{
+			; // Do nothing as it's obsolete
 		}
 	}
 	

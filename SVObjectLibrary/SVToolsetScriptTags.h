@@ -12,7 +12,6 @@
 
 namespace 
 {
-	const TCHAR* const scAttributesAllowedTag(_T( "AttributesAllowed" ));
 	const TCHAR* const scAttributesSetTag(_T( "AttributesSet" ));
 	const TCHAR* const scAttributeTag(_T( "Attribute" ));
 	const TCHAR* const scDefaultTag(_T("Default"));
