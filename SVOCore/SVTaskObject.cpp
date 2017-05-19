@@ -43,12 +43,14 @@ SV_IMPLEMENT_CLASS(SVTaskObjectClass, SVTaskObjectClassGuid)
 
 SVTaskObjectClass::SVTaskObjectClass(LPCSTR ObjectName)
 : SVObjectAppClass(ObjectName) 
+, m_bSkipFirstFriend(false)
 {
 	LocalInitialize();
 }
 
 SVTaskObjectClass::SVTaskObjectClass(SVObjectClass* pOwner, int StringResourceID)
 : SVObjectAppClass(pOwner, StringResourceID) 
+, m_bSkipFirstFriend(false)
 {
 	LocalInitialize();
 }
@@ -1633,7 +1635,8 @@ bool SVTaskObjectClass::runFriends(SVRunStatusClass& rRunStatus, SvStl::MessageC
 	bool bRetVal = true;
 	
 	// Run your friends
-	for (size_t j = 0; j < m_friendList.size(); ++ j)
+	size_t j = m_bSkipFirstFriend ? 1 : 0;
+	for ( ; j < m_friendList.size(); ++ j)
 	{
 		const SVObjectInfoStruct& rFriend = m_friendList[j];
 		if (SVTaskObjectClass* pTaskObject = dynamic_cast<SVTaskObjectClass*>(rFriend.m_pObject))

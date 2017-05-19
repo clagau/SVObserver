@@ -39,6 +39,7 @@ class SVTaskObjectClass : public SVObjectAppClass, public SvOi::ITaskObject
 	SV_DECLARE_CLASS( SVTaskObjectClass )
 
 	friend class SVTaskObjectListClass; // For access to Run()
+	friend class SVToolClass; // For access to Run()
 	friend class SVToolSetClass; // For access to Run()
 
 public:
@@ -112,6 +113,9 @@ public:
 	virtual void goingOffline() {};
 
 	virtual HRESULT SetValuesForAnObject( const GUID& rAimObjectID, SVObjectAttributeClass* pDataObject ) override;
+
+	/// Set the flag, that the first friend (is normally the conditional task, if it is a tool) should be skipped in runFriends.
+	void setSkipFirstFriendFromRun() { m_bSkipFirstFriend = true; };
 
 #pragma region virtual method (ITaskObject)
 	virtual SvOi::ISelectorItemVectorPtr GetSelectorList(SvOi::IsObjectInfoAllowed func, UINT Attribute, bool WholeArray) const override;
@@ -222,6 +226,7 @@ protected:
 	SVBoolValueObjectClass  m_isObjectValid;	//	Embedded
 	SVDWordValueObjectClass m_statusTag;
 	SVDWordValueObjectClass m_statusColor;
+	bool m_bSkipFirstFriend; //if true first friend will not be "run" by "runFriends". Is used for conditionalTask, because it will be run before the normal run separately.
 
 	//////////////////////////////////////////////////////////////////////////////////////////////
 	// .Description : Contains pointer to SVObjectClass items, but doesn't owns these

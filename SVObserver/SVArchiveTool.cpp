@@ -658,81 +658,78 @@ bool SVArchiveTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainer
 			return true;
 		}
 		
-		if ( ! rRunStatus.IsDisabled() && ! rRunStatus.IsDisabledByCondition() )
+		if (!m_bInitializedForRun)
 		{
-			if ( !m_bInitializedForRun )
+			rRunStatus.SetFailed();
+			if (nullptr != pErrorMessages)
 			{
-				rRunStatus.SetFailed();
-				if (nullptr != pErrorMessages)
-				{
-					SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ArchiveTool_InitFlagFalse, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
-					pErrorMessages->push_back(Msg);
-				}
-				return false;
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ArchiveTool_InitFlagFalse, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+				pErrorMessages->push_back(Msg);
 			}
-			
-			//
-			// Iterate the array of objects to archive and build a string.
-			//
-			SVString Archive = m_arrayResultsInfoObjectsToArchive.BuildResultsArchiveString();
+			return false;
+		}
 
-			if ( !Archive.empty() )
+		//
+		// Iterate the array of objects to archive and build a string.
+		//
+		SVString Archive = m_arrayResultsInfoObjectsToArchive.BuildResultsArchiveString();
+
+		if (!Archive.empty())
+		{
+			Archive += _T("\r\n");
+
+
+			if (true)	// always do this for now (never buffer text) see FR00100.007.0460.xxx
 			{
-				Archive += _T("\r\n");
-				
-
-				if ( true )	// always do this for now (never buffer text) see FR00100.007.0460.xxx
+				//
+				// Write the result to the archive file.
+				// The file may not be open at this time if a test 'run'
+				// is active for one cycle.
+				//
+				if (m_fileArchive.m_hFile != CFile::hFileNull)
 				{
-					//
-					// Write the result to the archive file.
-					// The file may not be open at this time if a test 'run'
-					// is active for one cycle.
-					//
-					if (m_fileArchive.m_hFile != CFile::hFileNull)
+					try
 					{
-						try
-						{
-							m_fileArchive.Write( Archive.c_str(), static_cast<int> (Archive.size()) );
-						} 
-						catch (CException* e)
-						{
-							rRunStatus.SetFailed();
-							e->Delete();
-							if (nullptr != pErrorMessages)
-							{
-								SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UnknownException, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
-								pErrorMessages->push_back(Msg);
-							}
-							return false;
-						} 
-						catch (...)
-						{
-							if (nullptr != pErrorMessages)
-							{
-								SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UnknownException, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
-								pErrorMessages->push_back(Msg);
-							}
-							rRunStatus.SetFailed();
-							return false;
-						}
+						m_fileArchive.Write(Archive.c_str(), static_cast<int> (Archive.size()));
 					}
-				}// end if ( !bBufferText || m_eArchiveMethod != SVArchiveGoOffline )
-				else if ( m_eArchiveMethod == SVArchiveGoOffline )
-				{
-					QueueArchiveString( Archive );
+					catch (CException* e)
+					{
+						rRunStatus.SetFailed();
+						e->Delete();
+						if (nullptr != pErrorMessages)
+						{
+							SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UnknownException, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+							pErrorMessages->push_back(Msg);
+						}
+						return false;
+					}
+					catch (...)
+					{
+						if (nullptr != pErrorMessages)
+						{
+							SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_UnknownException, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+							pErrorMessages->push_back(Msg);
+						}
+						rRunStatus.SetFailed();
+						return false;
+					}
 				}
+			}// end if ( !bBufferText || m_eArchiveMethod != SVArchiveGoOffline )
+			else if (m_eArchiveMethod == SVArchiveGoOffline)
+			{
+				QueueArchiveString(Archive);
 			}
+		}
 
 #if defined (TRACE_THEM_ALL) || defined (TRACE_ARCHIVE)
-			TRACE( _T( "SVArchiveTool::onRun-WriteArchiveImageFiles-Name=%s\n" ), GetCompleteName() );
+		TRACE(_T("SVArchiveTool::onRun-WriteArchiveImageFiles-Name=%s\n"), GetCompleteName());
 #endif
-			//
-			// Iterate the list of images to archive.
-			//
-			m_arrayImagesInfoObjectsToArchive.WriteArchiveImageFiles( );
+		//
+		// Iterate the list of images to archive.
+		//
+		m_arrayImagesInfoObjectsToArchive.WriteArchiveImageFiles();
 
-			rRunStatus.SetPassed();
-		}
+		rRunStatus.SetPassed();
 
 		return true;
 	}

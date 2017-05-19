@@ -619,146 +619,143 @@ BOOL SVStatisticsToolClass::HasVariable() const
 	return bRetVal;
 }
 
-bool SVStatisticsToolClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVStatisticsToolClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
-	bool Result = __super::onRun( rRunStatus, pErrorMessages ) && ValidateLocal(pErrorMessages);
+	bool Result = __super::onRun(rRunStatus, pErrorMessages) && ValidateLocal(pErrorMessages);
 
-	if( Result )
+	if (Result)
 	{
-		if( !rRunStatus.IsDisabled() && !rRunStatus.IsDisabledByCondition() )
+		// check which result to calculate
+		SVString FeatureString;
+		m_PersistantFeaturesEnabled.GetValue(FeatureString);
+
+		// Calculate Average and Number of Occurences always
+		// Since they are use in other calculations
+		double averageValue;
+		double value, count, numberOfSamples;
+
+		double dInputValue = getInputValue();
+
+		numberOfSamples = getNumberOfSamples();
+
+		// Calculate Average (Mean)
+		value = dInputValue;
+		m_AccumulatedTotal += value;
+		if (0 < numberOfSamples)
 		{
-			// check which result to calculate
-			SVString FeatureString;
-			m_PersistantFeaturesEnabled.GetValue( FeatureString );
-
-			// Calculate Average and Number of Occurences always
-			// Since they are use in other calculations
-			double averageValue;
-			double value,count,numberOfSamples;
-			
-			double dInputValue = getInputValue();
-			
-			numberOfSamples = getNumberOfSamples();
-
-			// Calculate Average (Mean)
-			value = dInputValue;
-			m_AccumulatedTotal += value;
-			if( 0 < numberOfSamples )
-			{
-				averageValue = m_AccumulatedTotal / numberOfSamples;
-			}
-			else
-			{
-				averageValue = m_AccumulatedTotal;
-			}
-
-			// Accumulate the Squares of the value
-			m_AccumulatedSquares += (value * value);
-
-			// Update the Average value
-			m_Value[SV_STATS_AVERAGEOF_VALUES].SetValue( averageValue, rRunStatus.m_lResultDataIndex );
-
-			// increment number of matched occurences
-			SVString occurenceValueStr;
-			m_OccurenceValue.GetValue( occurenceValueStr );
-			if( !occurenceValueStr.empty() )
-			{
-				value = atof( occurenceValueStr.c_str() );
-				if( value == dInputValue )
-				{
-					m_Value[SV_STATS_NUMBEROF_OCCURANCES].GetValue( count );
-					count++;
-					m_Value[SV_STATS_NUMBEROF_OCCURANCES].SetValue( count, rRunStatus.m_lResultDataIndex );
-				}
-			}
-
-			// Set Embedded defaults
-			for (int i = SV_STATS_MIN_VALUE; i < SV_STATS_TOPOF_LIST; i = (SVStatisticsFeatureEnum) (i + 1))
-			{
-				if( FeatureString[i] == '1' )
-				{
-					switch (i)
-					{
-						case SV_STATS_MIN_VALUE:
-							m_Value[SV_STATS_MIN_VALUE].GetValue( value );
-							
-							if( numberOfSamples > 1 )
-							{
-								value = std::min( value, dInputValue );
-							}
-							else
-							{
-								value = dInputValue;
-							}
-							
-							m_Value[SV_STATS_MIN_VALUE].SetValue( value, rRunStatus.m_lResultDataIndex );
-							break;
-
-						case SV_STATS_MAX_VALUE:
-							m_Value[SV_STATS_MAX_VALUE].GetValue( value );
-
-							if( numberOfSamples > 1 )
-							{
-								value = std::max( value, dInputValue );
-							}
-							else
-							{
-								value = dInputValue;
-							}
-							
-							m_Value[SV_STATS_MAX_VALUE].SetValue( value, rRunStatus.m_lResultDataIndex );
-							break;
-
-						case SV_STATS_VARIANCEIN_VALUES:
-							// Variance is a cumulative measure of the
-							// Squares of the difference of all the data values
-							// from the Mean
-							// using Sample Variance not Population Variance
-							if( numberOfSamples > 1 )
-							{
-								value = calculateVariance( numberOfSamples, averageValue );
-
-								m_Value[SV_STATS_VARIANCEIN_VALUES].SetValue( value, rRunStatus.m_lResultDataIndex );
-							}
-							break;
-
-						case SV_STATS_STANDARD_DEVIATION:
-							// if variance is already calculated
-							if( numberOfSamples > 1 )
-							{
-								if( FeatureString[SV_STATS_VARIANCEIN_VALUES] == '1' )
-								{
-									m_Value[SV_STATS_VARIANCEIN_VALUES].GetValue( value );
-								}
-								else
-								{
-									value = calculateVariance( numberOfSamples, averageValue );
-								}
-								// Standard Deviation is the positive square root of the Variance
-								if( value )
-									value = fabs( sqrt( value ) );
-
-								m_Value[SV_STATS_STANDARD_DEVIATION].SetValue(value, rRunStatus.m_lResultDataIndex );
-							}
-							break;
-
-						case SV_STATS_PERCENTOF_OCCURANCES:
-							if( !occurenceValueStr.empty() && numberOfSamples )
-							{
-								m_Value[SV_STATS_NUMBEROF_OCCURANCES].GetValue( count );
-								
-								// Calculate percentile
-								value = (count / numberOfSamples ) * 100.0;
-
-								m_Value[SV_STATS_PERCENTOF_OCCURANCES].SetValue( value, rRunStatus.m_lResultDataIndex );
-							}
-							break;
-					}
-				}
-			}
-
-			rRunStatus.SetPassed();
+			averageValue = m_AccumulatedTotal / numberOfSamples;
 		}
+		else
+		{
+			averageValue = m_AccumulatedTotal;
+		}
+
+		// Accumulate the Squares of the value
+		m_AccumulatedSquares += (value * value);
+
+		// Update the Average value
+		m_Value[SV_STATS_AVERAGEOF_VALUES].SetValue(averageValue, rRunStatus.m_lResultDataIndex);
+
+		// increment number of matched occurences
+		SVString occurenceValueStr;
+		m_OccurenceValue.GetValue(occurenceValueStr);
+		if (!occurenceValueStr.empty())
+		{
+			value = atof(occurenceValueStr.c_str());
+			if (value == dInputValue)
+			{
+				m_Value[SV_STATS_NUMBEROF_OCCURANCES].GetValue(count);
+				count++;
+				m_Value[SV_STATS_NUMBEROF_OCCURANCES].SetValue(count, rRunStatus.m_lResultDataIndex);
+			}
+		}
+
+		// Set Embedded defaults
+		for (int i = SV_STATS_MIN_VALUE; i < SV_STATS_TOPOF_LIST; i = (SVStatisticsFeatureEnum)(i + 1))
+		{
+			if (FeatureString[i] == '1')
+			{
+				switch (i)
+				{
+				case SV_STATS_MIN_VALUE:
+					m_Value[SV_STATS_MIN_VALUE].GetValue(value);
+
+					if (numberOfSamples > 1)
+					{
+						value = std::min(value, dInputValue);
+					}
+					else
+					{
+						value = dInputValue;
+					}
+
+					m_Value[SV_STATS_MIN_VALUE].SetValue(value, rRunStatus.m_lResultDataIndex);
+					break;
+
+				case SV_STATS_MAX_VALUE:
+					m_Value[SV_STATS_MAX_VALUE].GetValue(value);
+
+					if (numberOfSamples > 1)
+					{
+						value = std::max(value, dInputValue);
+					}
+					else
+					{
+						value = dInputValue;
+					}
+
+					m_Value[SV_STATS_MAX_VALUE].SetValue(value, rRunStatus.m_lResultDataIndex);
+					break;
+
+				case SV_STATS_VARIANCEIN_VALUES:
+					// Variance is a cumulative measure of the
+					// Squares of the difference of all the data values
+					// from the Mean
+					// using Sample Variance not Population Variance
+					if (numberOfSamples > 1)
+					{
+						value = calculateVariance(numberOfSamples, averageValue);
+
+						m_Value[SV_STATS_VARIANCEIN_VALUES].SetValue(value, rRunStatus.m_lResultDataIndex);
+					}
+					break;
+
+				case SV_STATS_STANDARD_DEVIATION:
+					// if variance is already calculated
+					if (numberOfSamples > 1)
+					{
+						if (FeatureString[SV_STATS_VARIANCEIN_VALUES] == '1')
+						{
+							m_Value[SV_STATS_VARIANCEIN_VALUES].GetValue(value);
+						}
+						else
+						{
+							value = calculateVariance(numberOfSamples, averageValue);
+						}
+						// Standard Deviation is the positive square root of the Variance
+						if (value)
+							value = fabs(sqrt(value));
+
+						m_Value[SV_STATS_STANDARD_DEVIATION].SetValue(value, rRunStatus.m_lResultDataIndex);
+					}
+					break;
+
+				case SV_STATS_PERCENTOF_OCCURANCES:
+					if (!occurenceValueStr.empty() && numberOfSamples)
+					{
+						m_Value[SV_STATS_NUMBEROF_OCCURANCES].GetValue(count);
+
+						// Calculate percentile
+						value = (count / numberOfSamples) * 100.0;
+
+						m_Value[SV_STATS_PERCENTOF_OCCURANCES].SetValue(value, rRunStatus.m_lResultDataIndex);
+					}
+					break;
+				}
+			}
+		}
+
+		rRunStatus.SetPassed();
 	}
 
 	if( ! Result )

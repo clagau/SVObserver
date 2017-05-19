@@ -107,7 +107,7 @@ BOOL SVLoadImageToolClass::CreateObject( SVObjectLevelCreateStruct* PCreateStruc
 
 BOOL SVLoadImageToolClass::CloseObject()
 {
-	if( SVToolClass::CloseObject() )
+	if (SVToolClass::CloseObject())
 	{
 		BOOL bRetVal = m_fileImage.CloseObject();
 
@@ -116,21 +116,19 @@ BOOL SVLoadImageToolClass::CloseObject()
 	return FALSE;
 }
 
-bool SVLoadImageToolClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
+bool SVLoadImageToolClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)
 {
 	// All inputs and outputs must be validated first
-	if( ValidateLocal(pErrorMessages) && __super::onRun( rRunStatus, pErrorMessages ) )
+	if (ValidateLocal(pErrorMessages) && __super::onRun(rRunStatus, pErrorMessages))
 	{
-		if (!rRunStatus.IsDisabled() && !rRunStatus.IsDisabledByCondition())
-		{
 		BOOL bReload = false;
 		SVString ImagePathName;
 
-			if (S_OK != m_continuousReload.GetValue(bReload) || S_OK != m_currentPathName.GetValue(ImagePathName))
+		if (S_OK != m_continuousReload.GetValue(bReload) || S_OK != m_currentPathName.GetValue(ImagePathName))
 		{
 			if (nullptr != pErrorMessages)
 			{
-					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ErrorGettingInputs, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
 				pErrorMessages->push_back(Msg);
 			}
 			rRunStatus.SetInvalid();
@@ -138,13 +136,13 @@ bool SVLoadImageToolClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCo
 			return false;
 		}
 
-			if (bReload || m_bResetFileImage)
+		if (bReload || m_bResetFileImage)
 		{
-			if( S_OK != m_fileImage.LoadImage( ImagePathName.c_str(), rRunStatus.Images ) )
+			if (S_OK != m_fileImage.LoadImage(ImagePathName.c_str(), rRunStatus.Images))
 			{
 				if (nullptr != pErrorMessages)
 				{
-						SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_FailedToLoadImage, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_FailedToLoadImage, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
 					pErrorMessages->push_back(Msg);
 				}
 				rRunStatus.SetInvalid();
@@ -157,18 +155,17 @@ bool SVLoadImageToolClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCo
 		else
 		{
 			//copy forward
-			if( ! m_fileImage.CopyImageTo( rRunStatus.Images ) )
+			if (!m_fileImage.CopyImageTo(rRunStatus.Images))
 			{
 				if (nullptr != pErrorMessages)
 				{
-						SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_CopyImagesFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_CopyImagesFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
 					pErrorMessages->push_back(Msg);
 				}
 				rRunStatus.SetInvalid();
 				SetInvalid();
 				return false;
 			}
-		}
 		}
 		
 		return true;

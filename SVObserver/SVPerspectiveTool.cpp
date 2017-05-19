@@ -296,7 +296,7 @@ bool SVPerspectiveToolClass::onRun( SVRunStatusClass &p_rRunStatus, SvStl::Messa
 {
 	bool l_bOk = SVToolClass::onRun( p_rRunStatus, pErrorMessages );
 
-	if ( l_bOk && !p_rRunStatus.IsDisabled() && !p_rRunStatus.IsDisabledByCondition())
+	if ( l_bOk )
 	{
 		SVImageClass *l_pInputImage = GetInputImage();
 

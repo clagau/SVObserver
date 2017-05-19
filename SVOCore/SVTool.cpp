@@ -184,7 +184,10 @@ BOOL SVToolClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 
 	for( size_t j = 0;nullptr ==  m_pToolConditional && j < m_friendList.size(); j++ )
 	{
+		//conditional must be the first friend because it will be blocked in runFriends if tool
+		assert(0 == j);
 		m_pToolConditional = dynamic_cast<SVConditionalClass *>(m_friendList[j].m_pObject);
+		setSkipFirstFriendFromRun();
 	}
 
 	// Set / Reset Printable Flags
@@ -407,17 +410,30 @@ bool SVToolClass::Run( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVect
 				m_ProcessedCount.SetValue( ++lCount, rRunStatus.m_lResultDataIndex );
 			}
 
-			retVal = __super::Run( rRunStatus, &m_RunErrorMessages );
-
-			if( retVal )
+			if (m_pToolConditional)
 			{
-				rRunStatus.SetValid();
+				m_pToolConditional->Run(rRunStatus, &m_RunErrorMessages);
+			}
+
+			if (!m_pToolConditional || getConditionalResult())
+			{
+				retVal = __super::Run(rRunStatus, &m_RunErrorMessages);
+
+				if (retVal)
+				{
+					rRunStatus.SetValid();
+				}
+				else
+				{
+					rRunStatus.SetInvalid();
+					SetInvalid();
+				}
 			}
 			else
 			{
-				rRunStatus.SetInvalid();
-				SetInvalid();
-			}
+				rRunStatus.SetDisabledByCondition();
+				//bDisabled = TRUE;
+			}// end else
 		}
 		else
 		{
@@ -522,7 +538,7 @@ bool SVToolClass::RunWithNewDisable( SVRunStatusClass& rRunStatus, SvStl::Messag
 
 		if( m_pToolConditional )
 		{
-			m_pToolConditional->onRun( rRunStatus );
+			m_pToolConditional->Run( rRunStatus, pErrorMessages );
 		}
 
 		if( !m_pToolConditional || getConditionalResult() )

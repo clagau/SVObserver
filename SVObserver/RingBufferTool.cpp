@@ -189,7 +189,7 @@ HRESULT RingBufferTool::IsInputImage( SVImageClass *p_psvImage )
 bool RingBufferTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	bool returnValue = SVToolClass::onRun( rRunStatus, pErrorMessages );
-	if (returnValue && !rRunStatus.IsDisabled() && !rRunStatus.IsDisabledByCondition())
+	if (returnValue)
 	{
 		//-----	Execute this objects run functionality. -----------------------------
 		int imageOutputFlag = 0;

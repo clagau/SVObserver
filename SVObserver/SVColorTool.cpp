@@ -218,45 +218,42 @@ bool SVColorToolClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContain
 
 	m_convertToHSI.GetValue(convertToHSI);
 
-	if (!rRunStatus.IsDisabled() && !rRunStatus.IsDisabledByCondition())
+	SVSmartHandlePointer OutputImageHandle;
+	if (m_OutputImage.SetImageHandleIndex(rRunStatus.Images) && m_OutputImage.GetImageHandle(OutputImageHandle))
 	{
-		SVSmartHandlePointer OutputImageHandle;
-		if (m_OutputImage.SetImageHandleIndex(rRunStatus.Images) && m_OutputImage.GetImageHandle(OutputImageHandle))
-		{
-			SVImageBufferHandleImage milHandleTo;
-			SVImageBufferHandleImage milHandleFrom;
+		SVImageBufferHandleImage milHandleTo;
+		SVImageBufferHandleImage milHandleFrom;
 
-			OutputImageHandle->GetData(milHandleTo);
-			SVImageClass* pInputImage = getInputImage();
-			if(m_LogicalROIImage.GetLastResetTimeStamp() <= pInputImage->GetLastResetTimeStamp())
+		OutputImageHandle->GetData(milHandleTo);
+		SVImageClass* pInputImage = getInputImage();
+		if (m_LogicalROIImage.GetLastResetTimeStamp() <= pInputImage->GetLastResetTimeStamp())
+		{
+			UpdateImageWithExtent(rRunStatus.m_lResultDataIndex);
+		}
+		SVSmartHandlePointer inputImageHandle;
+		m_LogicalROIImage.GetParentImageHandle(inputImageHandle);
+		if (!(inputImageHandle.empty()))
+		{
+			inputImageHandle->GetData(milHandleFrom);
+		}
+		if (!milHandleTo.empty() && !milHandleFrom.empty())
+		{
+			HRESULT MatroxCode(S_OK);
+			if (convertToHSI)
 			{
-				UpdateImageWithExtent(rRunStatus.m_lResultDataIndex);
+				MatroxCode = SVMatroxImageInterface::Convert(milHandleTo.GetBuffer(), milHandleFrom.GetBuffer(), SVImageRGBToHLS);
 			}
-			SVSmartHandlePointer inputImageHandle;
-			m_LogicalROIImage.GetParentImageHandle(inputImageHandle);
-			if (!(inputImageHandle.empty()))
+			else
 			{
-				inputImageHandle->GetData(milHandleFrom);
+				MatroxCode = SVMatroxBufferInterface::CopyBuffer(milHandleTo.GetBuffer(), milHandleFrom.GetBuffer());
 			}
-			if (!milHandleTo.empty() && !milHandleFrom.empty())
+			if (S_OK != MatroxCode)
 			{
-				HRESULT MatroxCode(S_OK);
-				if (convertToHSI)
+				Result = false;
+				if (nullptr != pErrorMessages)
 				{
-					MatroxCode = SVMatroxImageInterface::Convert(milHandleTo.GetBuffer(), milHandleFrom.GetBuffer(), SVImageRGBToHLS);
-				}
-				else
-				{
-					MatroxCode = SVMatroxBufferInterface::CopyBuffer(milHandleTo.GetBuffer(), milHandleFrom.GetBuffer());
-				}
-				if (S_OK != MatroxCode)
-				{
-					Result = false;
-					if (nullptr != pErrorMessages)
-					{
-						SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_CopyImagesFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
-						pErrorMessages->push_back(Msg);
-					}
+					SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_CopyImagesFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+					pErrorMessages->push_back(Msg);
 				}
 			}
 		}

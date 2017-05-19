@@ -572,31 +572,29 @@ bool ResizeTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVec
 {
 	bool Result = __super::onRun( rRunStatus, pErrorMessages );
 
-	if (!rRunStatus.IsDisabled() && !rRunStatus.IsDisabledByCondition())
+	if (!m_OutputImage.SetImageHandleIndex(rRunStatus.Images))
 	{
-		if (!m_OutputImage.SetImageHandleIndex(rRunStatus.Images))
-		{
 		Result = false;
 		if (nullptr != pErrorMessages)
 		{
-				SvStl::MessageContainer Msg(SVMSG_SVO_5021_SETIMAGEHANDLEFAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+			SvStl::MessageContainer Msg(SVMSG_SVO_5021_SETIMAGEHANDLEFAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
 			pErrorMessages->push_back(Msg);
 		}
 	}
 
 	SVSmartHandlePointer	roiImageHandle;
-		if (Result)
+	if (Result)
 	{
 		// The following logic was extrapolated from the StdImageOperatorList Run method.
 		// It corrects an issue where the output image is black while running when using the toolset image.
 		if (m_LogicalROIImage.GetLastResetTimeStamp() <= getInputImage()->GetLastResetTimeStamp())
 		{
-			if ( !SUCCEEDED( UpdateImageWithExtent(rRunStatus.m_lResultDataIndex) ) )
+			if (!SUCCEEDED(UpdateImageWithExtent(rRunStatus.m_lResultDataIndex)))
 			{
 				Result = false;
 				if (nullptr != pErrorMessages)
 				{
-						SvStl::MessageContainer Msg(SVMSG_SVO_5022_UPDATEIMAGEEXTENTSFAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+					SvStl::MessageContainer Msg(SVMSG_SVO_5022_UPDATEIMAGEEXTENTSFAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
 					pErrorMessages->push_back(Msg);
 				}
 			}
@@ -604,7 +602,7 @@ bool ResizeTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVec
 	}
 
 	//-----	Execute this objects run functionality. -----------------------------
-		if (Result)
+	if (Result)
 	{
 		m_LogicalROIImage.GetImageHandle(roiImageHandle);
 		if (roiImageHandle.empty())
@@ -612,14 +610,14 @@ bool ResizeTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVec
 			Result = false;
 			if (nullptr != pErrorMessages)
 			{
-					SvStl::MessageContainer Msg(SVMSG_SVO_5023_ROIGETIMAGEHANDLEFAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+				SvStl::MessageContainer Msg(SVMSG_SVO_5023_ROIGETIMAGEHANDLEFAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
 				pErrorMessages->push_back(Msg);
 			}
 		}
 	}
 
 	SVImageBufferHandleImage roiMilHandle;
-		if (Result)
+	if (Result)
 	{
 		roiImageHandle->GetData(roiMilHandle);
 		if (roiMilHandle.empty())
@@ -627,13 +625,13 @@ bool ResizeTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVec
 			Result = false;
 			if (nullptr != pErrorMessages)
 			{
-					SvStl::MessageContainer Msg(SVMSG_SVO_5024_ROIGETDATAFAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+				SvStl::MessageContainer Msg(SVMSG_SVO_5024_ROIGETDATAFAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
 				pErrorMessages->push_back(Msg);
 			}
 		}
 	}
 
-		if (Result)
+	if (Result)
 	{
 		const SVMatroxBuffer& roiMilBuffer = roiMilHandle.GetBuffer();
 
@@ -642,14 +640,14 @@ bool ResizeTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVec
 			Result = false;
 			if (nullptr != pErrorMessages)
 			{
-					SvStl::MessageContainer Msg(SVMSG_SVO_5025_ROIGETBUFFERFAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+				SvStl::MessageContainer Msg(SVMSG_SVO_5025_ROIGETBUFFERFAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
 				pErrorMessages->push_back(Msg);
 			}
 		}
 
 		SVSmartHandlePointer outputImageHandle;
 
-			if (Result)
+		if (Result)
 		{
 			m_OutputImage.GetImageHandle(outputImageHandle);
 			if (outputImageHandle.empty())
@@ -657,7 +655,7 @@ bool ResizeTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVec
 				Result = false;
 				if (nullptr != pErrorMessages)
 				{
-						SvStl::MessageContainer Msg(SVMSG_SVO_5026_OUTPUTGETIMAGEHANDLEFAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+					SvStl::MessageContainer Msg(SVMSG_SVO_5026_OUTPUTGETIMAGEHANDLEFAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
 					pErrorMessages->push_back(Msg);
 				}
 			}
@@ -665,7 +663,7 @@ bool ResizeTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVec
 
 		SVImageBufferHandleImage outputMilHandle;
 
-			if (Result)
+		if (Result)
 		{
 			outputImageHandle->GetData(outputMilHandle);
 
@@ -674,12 +672,12 @@ bool ResizeTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVec
 				Result = false;
 				if (nullptr != pErrorMessages)
 				{
-						SvStl::MessageContainer Msg(SVMSG_SVO_5027_OUTPUTGETDATAFAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+					SvStl::MessageContainer Msg(SVMSG_SVO_5027_OUTPUTGETDATAFAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
 					pErrorMessages->push_back(Msg);
 				}
 			}
 
-				if (Result)
+			if (Result)
 			{
 				const SVMatroxBuffer& outputMilBuffer = outputMilHandle.GetBuffer();
 
@@ -688,118 +686,117 @@ bool ResizeTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVec
 					Result = false;
 					if (nullptr != pErrorMessages)
 					{
-							SvStl::MessageContainer Msg(SVMSG_SVO_5028_OUTPUTGETBUFFERFAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+						SvStl::MessageContainer Msg(SVMSG_SVO_5028_OUTPUTGETBUFFERFAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
 						pErrorMessages->push_back(Msg);
 					}
 				}
 
 				SVImageExtentClass toolImageExtents;
 
-					if (Result)
+				if (Result)
 				{
-						if (!SUCCEEDED(GetImageExtent(toolImageExtents)))
+					if (!SUCCEEDED(GetImageExtent(toolImageExtents)))
 					{
 						Result = false;
 						if (nullptr != pErrorMessages)
 						{
-								SvStl::MessageContainer Msg(SVMSG_SVO_5029_GETEXTENTSFAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+							SvStl::MessageContainer Msg(SVMSG_SVO_5029_GETEXTENTSFAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
 							pErrorMessages->push_back(Msg);
 						}
 					}
 				}
 
-					double heightScaleFactor = 0.0;
-					if (Result)
+				double heightScaleFactor = 0.0;
+				if (Result)
 				{
-						if (!SUCCEEDED(toolImageExtents.GetExtentProperty(SVExtentPropertyHeightScaleFactor, heightScaleFactor)))
+					if (!SUCCEEDED(toolImageExtents.GetExtentProperty(SVExtentPropertyHeightScaleFactor, heightScaleFactor)))
 					{
 						Result = false;
 						if (nullptr != pErrorMessages)
 						{
-								SvStl::MessageContainer Msg(SVMSG_SVO_5030_GETHEIGHTSFFAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+							SvStl::MessageContainer Msg(SVMSG_SVO_5030_GETHEIGHTSFFAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
 							pErrorMessages->push_back(Msg);
 						}
 					}
 				}
 
 				double widthScaleFactor = 0.0;
-					if (Result)
+				if (Result)
 				{
-						if (!SUCCEEDED(toolImageExtents.GetExtentProperty(SVExtentPropertyWidthScaleFactor, widthScaleFactor)))
+					if (!SUCCEEDED(toolImageExtents.GetExtentProperty(SVExtentPropertyWidthScaleFactor, widthScaleFactor)))
 					{
 						Result = false;
 						if (nullptr != pErrorMessages)
 						{
-								SvStl::MessageContainer Msg(SVMSG_SVO_5031_GETWIDTHSFFAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+							SvStl::MessageContainer Msg(SVMSG_SVO_5031_GETWIDTHSFFAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
 							pErrorMessages->push_back(Msg);
 						}
 					}
 				}
 
 				long interpolationMode = 0;
-					if (Result)
+				if (Result)
 				{
-						if (!SUCCEEDED(m_ResizeInterpolationMode.GetValue(interpolationMode)))
+					if (!SUCCEEDED(m_ResizeInterpolationMode.GetValue(interpolationMode)))
 					{
 						Result = false;
 						if (nullptr != pErrorMessages)
 						{
-								SvStl::MessageContainer Msg(SVMSG_SVO_5032_GETINTERPOLATIONMODEFAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+							SvStl::MessageContainer Msg(SVMSG_SVO_5032_GETINTERPOLATIONMODEFAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
 							pErrorMessages->push_back(Msg);
 						}
 					}
 				}
 
 				long overscan = 0;
-					if (Result)
+				if (Result)
 				{
-						if (!SUCCEEDED(m_ResizeOverscan.GetValue(overscan)))
+					if (!SUCCEEDED(m_ResizeOverscan.GetValue(overscan)))
 					{
 						Result = false;
 						if (nullptr != pErrorMessages)
 						{
-								SvStl::MessageContainer Msg(SVMSG_SVO_5033_GETOVERSCANFAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+							SvStl::MessageContainer Msg(SVMSG_SVO_5033_GETOVERSCANFAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
 							pErrorMessages->push_back(Msg);
 						}
 					}
 				}
 
 				long performance = 0;
-					if (Result)
+				if (Result)
 				{
-						if (!SUCCEEDED(m_ResizePerformance.GetValue(performance)))
+					if (!SUCCEEDED(m_ResizePerformance.GetValue(performance)))
 					{
 						Result = false;
 						if (nullptr != pErrorMessages)
 						{
-								SvStl::MessageContainer Msg(SVMSG_SVO_5034_GETPERFORMANCEFAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+							SvStl::MessageContainer Msg(SVMSG_SVO_5034_GETPERFORMANCEFAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
 							pErrorMessages->push_back(Msg);
 						}
 					}
 				}
 
-					if (Result)
+				if (Result)
 				{
-						HRESULT hr = SVMatroxImageInterface::Resize(outputMilBuffer,
+					HRESULT hr = SVMatroxImageInterface::Resize(outputMilBuffer,
 						roiMilBuffer,
 						widthScaleFactor,
 						heightScaleFactor,
 						static_cast <SVInterpolationModeOptions::SVInterpolationModeOptionsEnum>(interpolationMode),
 						static_cast <SVOverscanOptions::SVOverscanOptionsEnum> (overscan),
 						static_cast <SVPerformanceOptions::SVPerformanceOptionsEnum> (performance));
-						if (!SUCCEEDED(hr))
+					if (!SUCCEEDED(hr))
 					{
 						Result = false;
 						if (nullptr != pErrorMessages)
 						{
-								SvStl::MessageContainer Msg(hr, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+							SvStl::MessageContainer Msg(hr, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
 							pErrorMessages->push_back(Msg);
 						}
 					}
 				}
 			}
 		}
-	}
 	}
 
 	if (!Result)
