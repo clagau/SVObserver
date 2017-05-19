@@ -27,6 +27,7 @@
 #include "SVMatroxLibrary/SVMatroxPatternInterface.h"
 #include "SVImageLibrary/SVExtentPointStruct.h"
 #include "SVImageLibrary/SVImageExtentClass.h"
+#include "ObjectInterfaces/GlobalConst.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -34,8 +35,6 @@
 #define new DEBUG_NEW
 #endif
 
-static const int SVMinModelWidth = 4;
-static const int SVMinModelHeight = 4;
 static const int SVMinModelWidthWithCircular = 25;
 static const int SVMinModelHeightWithCircular = 25;
 static const int ToolImageTab = 0;
@@ -351,7 +350,7 @@ void SVPatModelPageClass::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
 		switch (pItem->GetCtrlID())
 		{
 		case ModelWidth_Property:
-			if (lNewValue >= SVMinModelWidth && lNewValue <= m_sourceImageWidth-m_nXPos)
+			if (lNewValue >= SvOi::cMinPatternModelNewSize && lNewValue <= m_sourceImageWidth-m_nXPos)
 			{
 				m_lModelWidth = lNewValue;
 				setCircularOverscanCheckboxState();
@@ -363,7 +362,7 @@ void SVPatModelPageClass::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
 			}
 			break;
 		case ModelHeight_Property:
-			if (lNewValue >= SVMinModelHeight && lNewValue <= m_sourceImageHeight-m_nYPos)
+			if (lNewValue >= SvOi::cMinPatternModelNewSize && lNewValue <= m_sourceImageHeight-m_nYPos)
 			{
 				m_lModelHeight = lNewValue;
 				setCircularOverscanCheckboxState();
@@ -505,13 +504,13 @@ void SVPatModelPageClass::ValidateModelWidth()
 	UpdateData(true);
 
 	long lMaxPixels = m_sourceImageWidth;
-	long minWidth = SVMinModelWidth;
+	long minWidth = SvOi::cMinPatternModelLoadSize;
 
 	// Check for Circular Overscan as the Minimum applies to the Inner Rectangle Width
 	if (m_bCircularOverscan)
 	{
 		// Get the Outer Rectangle
-		CRect outerRect = SVMatroxPatternInterface::CalculateOverscanOuterRect(CPoint(SVMinModelWidth << 1, SVMinModelHeight << 1), CSize(SVMinModelWidth, SVMinModelHeight));
+		CRect outerRect = SVMatroxPatternInterface::CalculateOverscanOuterRect(CPoint(minWidth << 1, minWidth << 1), CSize(minWidth, minWidth));
 
 		minWidth = outerRect.Width();
 	}
@@ -530,13 +529,13 @@ void SVPatModelPageClass::ValidateModelHeight()
 	UpdateData(true);
 
 	long lMaxPixels = m_sourceImageHeight;
-	long minHeight = SVMinModelHeight;
+	long minHeight = SvOi::cMinPatternModelLoadSize;
 	
 	// Check for Circular Overscan as the Minimum applies to the Inner Rectangle height
 	if (m_bCircularOverscan)
 	{
 		// Get the Outer Rectangle
-		CRect outerRect = SVMatroxPatternInterface::CalculateOverscanOuterRect(CPoint(SVMinModelWidth << 1, SVMinModelHeight << 1), CSize(SVMinModelWidth, SVMinModelHeight));
+		CRect outerRect = SVMatroxPatternInterface::CalculateOverscanOuterRect(CPoint(minHeight << 1, minHeight << 1), CSize(minHeight, minHeight));
 
 		minHeight = outerRect.Height();
 	}
@@ -813,7 +812,7 @@ HRESULT SVPatModelPageClass::BuildPropertyList()
 	pItem->SetCtrlID( ModelWidth_Property );
 	pItem->SetBold( false );
 	pItem->SetHeight(16);
-	Text= SvUl_SF::Format(_T("Width (%d - %d)"),  SVMinModelWidth, m_sourceImageWidth);
+	Text= SvUl_SF::Format(_T("Width (%d - %d)"), SvOi::cMinPatternModelNewSize, m_sourceImageWidth);
 	pItem->SetLabelText( Text.c_str() );
 	pItem->OnRefresh();
 
@@ -823,7 +822,7 @@ HRESULT SVPatModelPageClass::BuildPropertyList()
 	pItem->SetCtrlID( ModelHeight_Property );
 	pItem->SetBold( false );
 	pItem->SetHeight(16);
-	Text= SvUl_SF::Format(_T("Height (%d - %d)"), SVMinModelHeight, m_sourceImageHeight);
+	Text= SvUl_SF::Format(_T("Height (%d - %d)"), SvOi::cMinPatternModelNewSize, m_sourceImageHeight);
 	pItem->SetLabelText( Text.c_str() );
 	pItem->OnRefresh();
 

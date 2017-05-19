@@ -32,6 +32,7 @@
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVOCore/SVTool.h"
 #include "SVUtilityLibrary/SVString.h"
+#include "ObjectInterfaces/GlobalConst.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -233,16 +234,25 @@ void SVPatternAnalyzerClass::SetDefaultSearchValues()
 	msv_lpatAdditionalCandidates.SetDefaultValue(SVValueDefault, true);
 	msv_dpatCandidateSpacingXMin.SetDefaultValue(SVValueDefault, true);
 	msv_dpatCandidateSpacingYMin.SetDefaultValue(SVValueDefault, true);
-	m_lpatModelWidth.SetDefaultValue(4, true);
-	m_lpatModelHeight.SetDefaultValue(4, true);
-	m_dontCareWidth.SetDefaultValue(4, true);
-	m_dontCareHeight.SetDefaultValue(4, true);
+	m_lpatModelWidth.SetDefaultValue(SvOi::cMinPatternModelNewSize, true);
+	m_lpatModelHeight.SetDefaultValue(SvOi::cMinPatternModelNewSize, true);
+	m_dontCareWidth.SetDefaultValue(SvOi::cMinPatternModelNewSize, true);
+	m_dontCareHeight.SetDefaultValue(SvOi::cMinPatternModelNewSize, true);
 
 	m_vec2dPatResults.fill(0.0);
 }
 
 bool SVPatternAnalyzerClass::UpdateModelFromInputImage(long posX, long posY, long modelWidth, long modelHeight)
 {
+	if (SvOi::cMinPatternModelNewSize > modelWidth)
+	{
+		modelWidth = SvOi::cMinPatternModelNewSize;
+	}
+	if (SvOi::cMinPatternModelNewSize > modelHeight)
+	{
+		modelHeight = SvOi::cMinPatternModelNewSize;
+	}
+
 	if ( S_OK == m_lpatModelWidth.SetValue(modelWidth, 1) && S_OK == m_lpatModelHeight.SetValue(modelHeight, 1) )
 	{
 		return UpdateModelFromInputImage(posX, posY);
@@ -882,7 +892,7 @@ bool SVPatternAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMe
 				if( !FileName.empty() )
 				{
 					Result = ResetPattern(pErrorMessages) && Result;
-						}
+				}
 				else if( UpdateModelFromInputImage() ) // create a new model
 				{
 					SetDefaultSearchValues();

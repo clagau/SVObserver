@@ -57,5 +57,7 @@ namespace SvOi
 	const long			cDefaultPolarTransformEndAngle = 330L;
 
 	const int			cMaximumCameras = 4;
+	const int			cMinPatternModelNewSize = 8;
+	const int			cMinPatternModelLoadSize = 4;
 #pragma endregion Declarations
 } //namespace SvOi
