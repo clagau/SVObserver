@@ -109,6 +109,12 @@ HRESULT DoubleSortValueObject::SetValue(const double& rValue, int Bucket, int In
 HRESULT DoubleSortValueObject::GetValue( double& rValue, int Bucket, int Index ) const
 {
 	Bucket = (-1 == Bucket) ? GetLastSetIndex() : Bucket;
+	//! When Value Object is an array and index is -1 then use first index
+	if (isArray() && 0 > Index)
+	{
+		Index = 0;
+	}
+	rValue = 0.0;
 	if( 0 <= Bucket && Bucket < getNumberOfBuckets() && 0 <= Index )
 	{
 		if (m_sortContainerArray[Bucket].size() > Index)

@@ -702,7 +702,7 @@ const UINT& SVValueObjectClass<T>::SetObjectAttributesSet( UINT Attributes, SvOi
 {
 	const UINT& rNewAttribute = __super::SetObjectAttributesSet( Attributes, Type, Index );
 
-	const UINT cBucketizedAttributes = SvOi::SV_PUBLISHABLE | SvOi::SV_ARCHIVABLE;
+	const UINT cBucketizedAttributes = SvOi::SV_PUBLISHABLE;
 	if (0 != (cBucketizedAttributes & Attributes))
 	{
 		if (0 != (cBucketizedAttributes & rNewAttribute))
@@ -816,25 +816,34 @@ HRESULT SVValueObjectClass<T>::getValues( std::vector<_variant_t>&  rValues, int
 		rValues.resize( ResultSize );
 		if( 1 == m_ArraySize )
 		{
-			rValues[0] = ValueType2Variant( m_Value );
+			ValueType Value;
+			Result = GetValue(Value, Bucket);
+			if (S_OK == Result)
+			{
+				rValues[0] = ValueType2Variant(Value);
+			}
 		}
 		else
 		{
-			ValueVector::const_iterator FromIter( m_ValueArray.begin() );
-
-			std::vector<_variant_t>::iterator ToIter( rValues.begin() );
-
-			while( ToIter != rValues.end() && 
-				FromIter != m_ValueArray.end() && 
-				FromIter != m_ValueArray.begin() + ResultSize )
+			ValueVector ValueArray;
+			Result = GetArrayValues(ValueArray, Bucket);
+			if (S_OK == Result)
 			{
-				*ToIter = ValueType2Variant( *FromIter );
+				ValueVector::const_iterator FromIter(ValueArray.begin());
 
-				++FromIter;
-				++ToIter;
+				std::vector<_variant_t>::iterator ToIter(rValues.begin());
+
+				while (ToIter != rValues.end() &&
+					FromIter != ValueArray.end() &&
+					FromIter != ValueArray.begin() + ResultSize)
+				{
+					*ToIter = ValueType2Variant(*FromIter);
+
+					++FromIter;
+					++ToIter;
+				}
 			}
 		}
-		Result = S_OK;
 	}
 
 	return Result;
