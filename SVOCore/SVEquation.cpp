@@ -722,7 +722,8 @@ double SVEquationClass::GetPropertyValue( int iSymbolIndex )
 		hr = m_Symbols.GetData( iSymbolIndex, value );
 	}// end if
 
-	if ( S_OK != hr )
+	//E_BOUNDS is return if a Sort value object is used and no value is set yet. In this case it should not set to invalid, but return 0.0
+	if ( S_OK != hr && E_BOUNDS != hr )
 	{
 		m_isDataValid = false;
 	}
