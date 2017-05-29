@@ -22,6 +22,8 @@ namespace SvSml
 		
 
 	public:
+		const static DWORD Delay_Before_CreateShare;
+		const  static DWORD Delay_Before_ClearShare;
 		typedef enum  {Change, Ready,UKnown} CallBackParam;
 
 		static ShareEvents& GetInstance()
@@ -60,7 +62,7 @@ namespace SvSml
 		static const LPCTSTR GNameChangeEvent;
 		static const LPCTSTR GNameReadyEvent;
 		
-		const static DWORD DELAY;
+		
 		
 		mutable bool m_IsReady;
 		mutable bool m_IsInit;

@@ -595,6 +595,11 @@ void SVIOController::GetActiveRemoteMonitorList(RemoteMonitorList& rActiveList) 
 	m_RemoteMonitorListController.GetActiveRemoteMonitorList(rActiveList);
 }
 
+int SVIOController::GetActiveMonitorListCount() const
+{
+	return m_RemoteMonitorListController.GetActiveMonitorListCount();
+}
+
 void SVIOController::BuildPPQMonitorList(PPQMonitorList& ppqMonitorList) const
 {
 	m_RemoteMonitorListController.BuildPPQMonitorList(ppqMonitorList);

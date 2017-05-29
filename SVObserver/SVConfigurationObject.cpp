@@ -5172,6 +5172,17 @@ void SVConfigurationObject::GetActiveRemoteMonitorList(RemoteMonitorList& rActiv
 	}
 }
 
+int SVConfigurationObject::GetActiveMonitorListCount() const
+{
+	if (nullptr != m_pIOController)
+	{
+		return m_pIOController->GetActiveMonitorListCount();
+	}
+
+	return 0;
+}
+
+
 HRESULT SVConfigurationObject::GetRemoteMonitorListProductFilter(const SVString& listName, SvSml::SVProductFilterEnum& rFilter) const
 {
 	HRESULT hr = E_POINTER;

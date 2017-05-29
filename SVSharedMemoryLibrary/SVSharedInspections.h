@@ -11,6 +11,8 @@
 #pragma once
 
 #pragma region Includes
+//Moved to precompiled header: #include <boost/interprocess/containers/flat_map.hpp>
+
 #include "SVShared.h"
 #pragma endregion Includes
 

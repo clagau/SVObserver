@@ -5550,8 +5550,15 @@ void SVObserverApp::Start()
 				}
 			}
 		}// end for
-		SvSml::SharedMemWriter::Instance().CreateSharedMatroxBuffer();
 		
+		
+		if( pConfig->GetActiveMonitorListCount() > 0) 
+		{
+			SvSml::SharedMemWriter::Instance().CreateSharedMatroxBuffer();
+			SvSml::ShareEvents::GetInstance().SignaltReadyStatus();
+		}
+
+
 		if (l_trgrDlg.HasTriggers())
 		{
 			l_trgrDlg.SelectTrigger();

@@ -1352,11 +1352,7 @@ void SVPPQObject::PrepareGoOnline()
 			SvStl::MessageContainer Exception( SVMSG_SVO_46_SHARED_MEMORY_DISK_SPACE, SvStl::Tid_ErrorNotEnoughDiskSpace, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_15025 );
 			throw Exception;
 		}
-		else
-		{
-			
-			SvSml::ShareEvents::GetInstance().SignaltReadyStatus();
-		}
+		
 	}
 }// end PrepareGoOnline
 

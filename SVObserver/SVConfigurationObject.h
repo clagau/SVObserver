@@ -309,6 +309,10 @@ public:
 	//! \returns true if at least one default monitorlist was activated 
 	bool ActivateDefaultMonitorList();
 	void GetActiveRemoteMonitorList(RemoteMonitorList& rActiveList) const;
+	
+	//Return the number of active Monitorlist
+	int GetActiveMonitorListCount() const;
+
 	HRESULT GetRemoteMonitorListProductFilter(const SVString& listName, SvSml::SVProductFilterEnum& rFilter) const;
 	HRESULT SetRemoteMonitorListProductFilter(const SVString& listName, SvSml::SVProductFilterEnum filter);
 	void BuildPPQMonitorList(PPQMonitorList& ppqMonitorList) const;

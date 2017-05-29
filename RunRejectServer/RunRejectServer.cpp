@@ -48,16 +48,17 @@
 #pragma endregion Includes
 
 #pragma region Declarations
-DWORD threadIds[3] = {0};
-HANDLE threads[3] = {0};
-
-const u_short imgPort = 28963;
 
 #ifdef _DEBUG
 #undef THIS_FILE
 static char THIS_FILE[] = __FILE__;
 #endif
+
+
 #pragma endregion Declarations
+
+const u_short imgPort = 28963;
+const DWORD Timeout_Thread_Functions = 0;
 
 template<typename API>
 struct port;
@@ -75,18 +76,13 @@ struct port<SvSol::UdpApi>
 };
 
 typedef Json::Value JsonCmd;
-
-
-
 typedef SvSol::SVServerSocket<SvSol::UdpApi> UdpServerSocket;
 typedef SvSol::SVSocket<SvSol::UdpApi> UdpSocket;
-
 typedef SvSol::SVServerSocket<SvSol::TcpApi> TcpServerSocket;
 typedef SvSol::SVSocket<SvSol::TcpApi> TcpSocket;
-
-
-
 typedef std::pair<SvSml::ProductPtr, long> ProductPtrPair;
+typedef void(*SignalHandlerPointer)(int);
+
 
 /// For last held product from GetProduct cmd. Map with ppqnames, (productPtr, Index) 
 static std::map<SVString, ProductPtrPair> g_LastProductMap;  
@@ -95,14 +91,77 @@ static std::map<SVString, ProductPtrPair> g_lastRejectProductMap;
 // For last held Reject from GetReject cmd. Map with ppqnames, (productPtr, Index) 
 static std::map<SVString, ProductPtrPair> g_lastRejectMap; 
 
-typedef void (*SignalHandlerPointer)(int);
+template<typename API>
+void ClearHeld();
+
+template<>
+void ClearHeld<SvSol::TcpApi>()
+{
+	g_lastRejectMap.clear();
+}
+
+template<>
+void ClearHeld<SvSol::UdpApi>()
+{
+	g_LastProductMap.clear();
+	g_lastRejectProductMap.clear();
+}
+
 SignalHandlerPointer previousHandler(nullptr);
 
-using SvSml::SVSharedConfiguration;
+static DWORD g_threadIds[3] = { 0 };
+static HANDLE g_threads[3] = { 0 };
+static SvSml::SharedMemReader   g_MemReader;
+
+bool EventHandler(DWORD event)
+{
+	bool res(false);
+	switch (event)
+	{
+	case SvSml::ShareEvents::Change:
+		try
+		{
+			Sleep(SvSml::ShareEvents::Delay_Before_ClearShare);
+			g_MemReader.Clear();
+			res = true;
+		}
+		catch (std::exception& rExp)
+		{
+			SvStl::MessageMgrStd Exception(SvStl::LogOnly);
+			SVStringVector msgList;
+			msgList.push_back(rExp.what());
+			Exception.setMessage(SVMSG_RRS_2_STD_EXCEPTION, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams));
+		}
+		break;
+	case SvSml::ShareEvents::Ready:
+	{
+		try
+		{
+			DWORD version = SvSml::ShareEvents::GetInstance().GetReadyCounter();
+			g_MemReader.Reload(version);
+			ClearHeld<SvSol::TcpApi>();
+			ClearHeld<SvSol::UdpApi>();
+			res = true;
+		}
+		catch (std::exception& rExp)
+		{
+			SvStl::MessageMgrStd Exception(SvStl::LogOnly);
+			SVStringVector msgList;
+			msgList.push_back(rExp.what());
+			Exception.setMessage(SVMSG_RRS_2_STD_EXCEPTION, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams));
+		}
+		break;
+	}
+	default:
+		break;
+	}
+	return res;
+}
+
 
 void AccessViolationHandler(int signal)
 {
-	SVSharedConfiguration::Log("Access Violation");
+	SvSml::SVSharedConfiguration::Log("Access Violation");
 	throw std::exception("Access Violation");
 }
 
@@ -111,9 +170,6 @@ DWORD WINAPI servimg(LPVOID ptr)
 {
 	try
 	{
-		typedef UdpServerSocket ServerSocket;
-		typedef UdpSocket Socket;
-		typedef SvSol::header header;
 		const DWORD DefaultImageBufferSize = 0xA00000;
 		const DWORD SocketBufferSize = 0x100000;
 
@@ -121,18 +177,18 @@ DWORD WINAPI servimg(LPVOID ptr)
 		ByteVector.reserve(DefaultImageBufferSize);
 		
 		SvSml::SharedMemReader*  pSharedMemReader = static_cast<SvSml::SharedMemReader*>(  ptr);
-		ServerSocket sok;
+		UdpServerSocket sok;
 		sok.Create();
 		sok.SetBufferSize(SocketBufferSize);
 		sok.Listen(imgPort);
 		long cnt = 0;
-		while( WAIT_OBJECT_0 != WaitForSingleObject(g_ServiceStopEvent, 0) )
+		while( WAIT_OBJECT_0 != WaitForSingleObject(g_ServiceStopEvent, Timeout_Thread_Functions) )
 		{
 			if (sok.ClientConnecting())
 			{
 				sockaddr addr;
 				int len = sizeof(sockaddr);
-				Socket client = sok.Accept(&addr, &len); // this never blocks for udp...
+				UdpSocket client = sok.Accept(&addr, &len); // this never blocks for udp...
 				if (client.IsValidSocket())
 				{
 					// read file name
@@ -142,15 +198,17 @@ DWORD WINAPI servimg(LPVOID ptr)
 					{
 						try
 						{
-							SVString filename = SVString(reinterpret_cast<char *>(buf.get()), sz);
-							DWORD ImageIndex, ImageStoreIndex, SlotIndex, IsReject;
-							SvSml::SVSharedImage::ScanImageFileName(filename.c_str(), ImageIndex, ImageStoreIndex, SlotIndex, IsReject);
-							SvSml::SharedImageStore::StoreType t = IsReject ? SvSml::SharedImageStore::reject : SvSml::SharedImageStore::last;
-							DWORD offset = sizeof(header);
-							
-							SVMatroxBufferInterface::CopyBufferToFileDIB(ByteVector, pSharedMemReader->m_ImageContainer.GetImageBuffer(SlotIndex, t, ImageStoreIndex, ImageIndex), offset,false);
-							
-							client.WriteWithHeader(&ByteVector[0], ByteVector.size());
+							bool isready = SvSml::ShareEvents::GetInstance().GetIsReady();
+							if (isready)
+							{
+								SVString filename = SVString(reinterpret_cast<char *>(buf.get()), sz);
+								DWORD ImageIndex, ImageStoreIndex, SlotIndex, IsReject;
+								SvSml::SVSharedImage::ScanImageFileName(filename.c_str(), ImageIndex, ImageStoreIndex, SlotIndex, IsReject);
+								SvSml::SharedImageStore::StoreType t = IsReject ? SvSml::SharedImageStore::reject : SvSml::SharedImageStore::last;
+								DWORD offset = sizeof(SvSol::header);
+								SVMatroxBufferInterface::CopyBufferToFileDIB(ByteVector, pSharedMemReader->m_ImageContainer.GetImageBuffer(SlotIndex, t, ImageStoreIndex, ImageIndex), offset, true);
+								client.WriteWithHeader(&ByteVector[0], ByteVector.size());
+							}
 						}
 						catch( const SvStl::MessageContainer& rExp )
 						{
@@ -457,21 +515,7 @@ Json::Value GetLastInspectedProduct(SvSml::SVSharedPPQReader& rReader, long trig
 	return rslt;
 }
 
-template<typename API>
-void ClearHeld();
 
-template<>
-void ClearHeld<SvSol::TcpApi>()
-{
-	g_lastRejectMap.clear();
-}
-
-template<>
-void ClearHeld<SvSol::UdpApi>()
-{
-	g_LastProductMap.clear();
-	g_lastRejectProductMap.clear();
-}
 
 //! for trig == -1 Get the values for the last saved reject   and store the product in lastRejectProduct
 //! for trig  > -1 return  product  from lastRejectProduct  if it has the tigger number trig
@@ -828,17 +872,9 @@ void Handler<SvSol::UdpApi, UdpServerSocket>(UdpServerSocket& sok,  SvSml::Share
 		{
 
 			bool isready = SvSml::ShareEvents::GetInstance().GetIsReady(); 
+
 			if(isready)
 			{
-				if(SvSml::ShareEvents::GetInstance().GetReadyCounter() !=  pMemRead->GetVersion())
-				{
-					DWORD version  = SvSml::ShareEvents::GetInstance().GetReadyCounter();
-					/* Reload Monitorlist ppqreader imagestore and creates imagebuffer*/				
-					pMemRead->Reload(version);
-					ClearHeld<API>();
-				}
-				
-				//@TODO[MEC][7.50][07.02.2017] Check if copying could be avoided 
 				SVString rResponse = GenerateResponse<API>(cmd, pMemRead);
 				client.Write(rResponse, SvSol::Traits<API>::needsHeader);
 			}
@@ -885,7 +921,7 @@ void Handler<SvSol::TcpApi, TcpServerSocket>(TcpServerSocket& sok,SvSml::SharedM
 		client.DisableDelay(); // turn off nagle
 	}
 
-	while( WAIT_OBJECT_0 != WaitForSingleObject(g_ServiceStopEvent, 0) && client.IsValidSocket() && client.IsConnected())
+	while( WAIT_OBJECT_0 != WaitForSingleObject(g_ServiceStopEvent, Timeout_Thread_Functions) && client.IsValidSocket() && client.IsConnected())
 	{
 		if (client.DataAvailable())
 		{
@@ -895,18 +931,10 @@ void Handler<SvSol::TcpApi, TcpServerSocket>(TcpServerSocket& sok,SvSml::SharedM
 				if (!cmd.isNull())
 				{
 					bool isready = SvSml::ShareEvents::GetInstance().GetIsReady(); 
+					
 					if(isready)
 					{
-						if(SvSml::ShareEvents::GetInstance().GetReadyCounter() != pMemRead->GetVersion() )
-						{
-							DWORD Version = SvSml::ShareEvents::GetInstance().GetReadyCounter();
-							/* Reload Monitorlist ppqreader imagestore and creates imagebuffer*/				
-							pMemRead->Reload(Version);
-
-							ClearHeld<API>();
-						}
 						
-						//@TODO[MEC][7.50][07.02.2017] Check if copying could be avoided 
 						SVString  rResponse = GenerateResponse<API>(cmd, pMemRead);
 						client.Write(rResponse, SvSol::Traits<API>::needsHeader);
 						break;
@@ -917,8 +945,6 @@ void Handler<SvSol::TcpApi, TcpServerSocket>(TcpServerSocket& sok,SvSml::SharedM
 						// check for version command
 						if (cmd[SVRC::cmd::name] == SVRC::cmdName::getVersion)
 						{
-					
-							//@TODO[MEC][7.50][07.02.2017] Check if copying could be avoided 
 							SVString rResponse = GenerateResponse<API>(cmd, pMemRead);
 							client.Write(rResponse, SvSol::Traits<API>::needsHeader);
 						}
@@ -959,7 +985,7 @@ DWORD WINAPI servcmd(LPVOID ptr)
 		sok.Create();
 		sok.SetBlocking();
 		sok.Listen(port<API>::number);
-		while( WAIT_OBJECT_0 != WaitForSingleObject(g_ServiceStopEvent, 0)  )
+		while( WAIT_OBJECT_0 != WaitForSingleObject(g_ServiceStopEvent, Timeout_Thread_Functions)  )
 		{
 			if (sok.ClientConnecting())
 			{
@@ -1042,10 +1068,13 @@ void StartThreads( DWORD argc, LPTSTR  *argv )
 	}
 	try
 	{
+		
 
 		
-		///Start watching ReadyEvent
+		SvSml::ShareEvents::GetInstance().SetCallbackFunction(EventHandler);
 		SvSml::ShareEvents::GetInstance().StartWatch();
+
+
 
 		previousHandler = signal(SIGSEGV, AccessViolationHandler);
 
@@ -1053,17 +1082,15 @@ void StartThreads( DWORD argc, LPTSTR  *argv )
 		title += RRSVersionString::Get();
 		SetConsoleTitle( title.c_str() );
 		SvSol::SVSocketLibrary::Init();
-		DWORD threadIds[3];
-		HANDLE threads[3];
-		SvSml::SharedMemReader  MemReader[3];
+		
 
-		//threads[0] = CreateThread(nullptr, 0, servimg, LPVOID(&MemReader[0]) , 0, &threadIds[0]);
-		threads[0] = CreateThread(nullptr, 0, servimg, LPVOID(&MemReader[2]), 0, &threadIds[0]); ///TODO  
-		threads[1] = CreateThread(nullptr, 0, servcmd<SvSol::TcpApi>, LPVOID(&MemReader[1]), 0, &threadIds[1]);
-		threads[2] = CreateThread(nullptr, 0, servcmd<SvSol::UdpApi>, LPVOID(&MemReader[2]), 0, &threadIds[2]);
+		
+		g_threads[0] = CreateThread(nullptr, 0, servimg, LPVOID(&g_MemReader), 0, &g_threadIds[0]); ///TODO  
+		g_threads[1] = CreateThread(nullptr, 0, servcmd<SvSol::TcpApi>, LPVOID(&g_MemReader), 0, &g_threadIds[1]);
+		g_threads[2] = CreateThread(nullptr, 0, servcmd<SvSol::UdpApi>, LPVOID(&g_MemReader), 0, &g_threadIds[2]);
 
 		// stop the threads...
-		::WaitForMultipleObjects(3, threads, true, INFINITE);
+		::WaitForMultipleObjects(3, g_threads, true, INFINITE);
 		signal(SIGSEGV, previousHandler);
 		
 	}

@@ -14,6 +14,7 @@
 #include "SVSharedMemoryLibrary\MonitorListCpy.h"
 #include "SVSharedMemoryLibrary\SharedImageStore.h"
 #include "SVSharedMemoryLibrary\MLCpyContainer.h"
+#include "SVSharedMemoryLibrary\SharedImageContainer.h"
 
 
 
@@ -47,10 +48,7 @@ protected:
 	
 	SvSml::SVMonitorListReader m_mlReader;
 	SvSml::MLCpyContainer m_MLContainer;
-
-	std::vector<SvSml::ImageStorePointer> m_ImageStoresLast;
-	std::vector<SvSml::ImageStorePointer> m_ImageStoresReject;
-
+	SvSml::SharedImageContainer m_ImageContainer;
 	HICON m_hIcon;
 
 	bool	 PostRefresh(DWORD par);

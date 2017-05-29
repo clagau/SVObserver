@@ -1,5 +1,6 @@
 #include "StdAfx.h"
 #include "SharedMemReader.h"
+#include "ShareEvents.h"
 
 namespace SvSml
 {
@@ -11,6 +12,15 @@ namespace SvSml
 	SharedMemReader::~SharedMemReader(void)
 	{
 	}
+	
+	void SharedMemReader::Clear(void)
+	{
+		m_ImageContainer.Clear();
+		m_MLContainer.Clear();
+		m_PPQSReaderMap.clear();
+	}
+
+
 
 	void SharedMemReader::Reload( DWORD version)
 	{

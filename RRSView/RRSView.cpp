@@ -13,6 +13,7 @@
 #include "stdafx.h"
 #include "RRSView.h"
 #include "RRSViewDlg.h"
+#include <mil.h>
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -54,6 +55,14 @@ BOOL CRRSViewApp::InitInstance()
 	InitCtrls.dwICC = ICC_WIN95_CLASSES;
 	InitCommonControlsEx(&InitCtrls);
 
+	/// Allocate MilSystem
+	MIL_ID AppId = MappAlloc(M_DEFAULT, M_NULL);
+	if (AppId == M_NULL)
+	{
+		AfxMessageBox(_T("Mil System could not be allocated. RRSView will be closed"));
+		return FALSE;
+	}
+
 	CWinApp::InitInstance();
 
 
@@ -91,6 +100,8 @@ BOOL CRRSViewApp::InitInstance()
 	{
 		delete pShellManager;
 	}
+
+	MappFree(AppId);
 
 	// Since the dialog has been closed, return FALSE so that we exit the
 	//  application, rather than start the application's message pump.

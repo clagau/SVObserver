@@ -13,8 +13,9 @@ namespace SvSml
 {
 	const LPCTSTR ShareEvents::GNameChangeEvent  = _T("Global\\Seidenader_ChangeEvent");
 	const LPCTSTR ShareEvents::GNameReadyEvent  = _T("Global\\Seidenader_ReadyEvent");
-	const  DWORD ShareEvents::DELAY =  30;
-	
+	const  DWORD ShareEvents::Delay_Before_CreateShare =  60; //SVObserver waittime after setting Change Event
+	const  DWORD ShareEvents::Delay_Before_ClearShare = 30; 
+
 	ShareEvents::ShareEvents(): m_StopEvent(NULL), m_hWatchThread(NULL),m_IsReady(false), m_IsInit(false),m_ReadyCounter(0)
 	{
 		
@@ -68,7 +69,7 @@ namespace SvSml
 	void ShareEvents::QuiesceSharedMemory()
 	{
 		SignalChangingStatus();
-		::Sleep(DELAY);
+		::Sleep(Delay_Before_CreateShare);
 	}
 
 	bool ShareEvents::GetIsReady()  const
@@ -110,8 +111,10 @@ namespace SvSml
 		HReady[1] = pShareEvent->m_hReadyEvent;
 		bool Continue(true);
 		DWORD Event(0);
+		bool Sucess(true);
 		while(Continue)
 		{
+			Sucess = true;
 			Event =  WaitForMultipleObjects(2,HReady,false,INFINITE);
 			switch (Event)
 			{
@@ -121,16 +124,19 @@ namespace SvSml
 					break;
 				}
 			case 	WAIT_OBJECT_0 +1:
-				pShareEvent->m_IsReady = true;
-				pShareEvent->m_ReadyCounter++;
 				if(pShareEvent->m_CallBackFct)
 				{
-					pShareEvent->m_CallBackFct(Ready );
+					Sucess =   pShareEvent->m_CallBackFct(Ready );
+				}
+				if (Sucess)
+				{
+					pShareEvent->m_IsReady = true;
+					pShareEvent->m_ReadyCounter++;
 				}
 				break;
 			default:
 				{
-					Continue = false;
+					//Continue = false;
 					break;
 				}
 			}
@@ -149,10 +155,11 @@ namespace SvSml
 			case 	WAIT_OBJECT_0 +1:
 				pShareEvent->m_IsReady = false;
 				pShareEvent->m_IsInit = false;
-				
+				Sucess = true;
+
 				if(pShareEvent->m_CallBackFct)
 				{
-					pShareEvent->m_CallBackFct(Change );
+					Sucess = pShareEvent->m_CallBackFct(Change );
 				}
 				
 				break;

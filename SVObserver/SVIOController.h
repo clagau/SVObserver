@@ -97,6 +97,10 @@ public:
 	//! \returns S_OK when unsuccessfully 
 	HRESULT ActivateRemoteMonitorList(const SVString& rListName, bool bActivate);
 	void GetActiveRemoteMonitorList(RemoteMonitorList& rActiveList) const;
+	
+	//Return the number of active Monitorlist
+	int GetActiveMonitorListCount() const; 
+
 	HRESULT SetRemoteMonitorListProductFilter(const SVString& rListName, SvSml::SVProductFilterEnum rFilter);
 	HRESULT GetRemoteMonitorListProductFilter(const SVString& rListName, SvSml::SVProductFilterEnum& rFilter) const;
 	void BuildPPQMonitorList(PPQMonitorList& ppqMonitorList) const;

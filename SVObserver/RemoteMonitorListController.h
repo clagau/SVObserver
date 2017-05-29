@@ -59,6 +59,9 @@ public:
 
 	void GetActiveRemoteMonitorList(RemoteMonitorList& rActiveList) const;
 
+	//Return the number of active Monitorlist
+	int GetActiveMonitorListCount() const;
+	
 	HRESULT SetRemoteMonitorListProductFilter(const SVString& listName, SvSml::SVProductFilterEnum filter);
 	HRESULT GetRemoteMonitorListProductFilter(const SVString& listName, SvSml::SVProductFilterEnum& rFilter) const;
 

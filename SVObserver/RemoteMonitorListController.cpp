@@ -386,6 +386,19 @@ HRESULT RemoteMonitorListController::ActivateRemoteMonitorList(const SVString& l
 	}
 }
 
+ int RemoteMonitorListController::GetActiveMonitorListCount() const
+ {
+	 int ret(0);
+	 for (const auto &y : m_list)
+	 {
+		 if (y.second.IsActive())
+		 {
+			 ret++;
+		 }
+	 }
+	 return ret;
+ }
+
 HRESULT RemoteMonitorListController::SetRemoteMonitorListProductFilter(const SVString& listName, SvSml::SVProductFilterEnum filter)
 {
 	HRESULT hr = S_OK;

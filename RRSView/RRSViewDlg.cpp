@@ -226,10 +226,9 @@ void CRRSViewDlg::OnPaint()
  }
 LRESULT  CRRSViewDlg::OnRefresh(WPARAM wParam, LPARAM lParam)
 {
-	UNREFERENCED_PARAMETER(wParam);
-	UNREFERENCED_PARAMETER(lParam);
 
-	bool isready = SvSml::ShareEvents::GetInstance().GetIsReady() ;
+	UNREFERENCED_PARAMETER(lParam);
+	bool isready = (wParam == SvSml::ShareEvents::Ready);
 	if(isready)
 	{
 		SvSml::MLInspectionInfoMap InspectionInfoMap;
@@ -238,26 +237,15 @@ LRESULT  CRRSViewDlg::OnRefresh(WPARAM wParam, LPARAM lParam)
 		DWORD version(0);
 		m_MLContainer.ReloadMonitorMap(m_mlReader,version);
 		
-		SvSml::MLInspectionInfoMap::iterator it;
-		
-		for(it = InspectionInfoMap.begin(); it != InspectionInfoMap.end() ; ++it  )
-		{
-			if(it->second->TotalImageSize > 0)
-			{
-				m_ImageStoresLast.push_back(SvSml::ImageStorePointer (new SvSml::SharedImageStore));
-				m_ImageStoresLast.back()->OpenImageStore(it->first.c_str(),SvSml::SharedImageStore::last);
-					
-				m_ImageStoresReject.push_back(SvSml::ImageStorePointer (new SvSml::SharedImageStore));
-				m_ImageStoresReject.back()->OpenImageStore(it->first.c_str(),SvSml::SharedImageStore::reject);
+		m_ImageContainer.OpenImageStores(m_MLContainer);
+		m_ImageContainer.CreateSharedMatroxBuffer(m_MLContainer);
 
-			}
-		}
-		
+	
 	}
 	else
 	{
-		m_ImageStoresLast.clear();
-		m_ImageStoresReject.clear();
+		m_ImageContainer.Clear();
+		m_MLContainer.Clear();
 	}
 	UpdateControls(isready);
 	return 0;

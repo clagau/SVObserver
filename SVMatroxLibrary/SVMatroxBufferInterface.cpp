@@ -1687,8 +1687,6 @@ HRESULT SVMatroxBufferInterface::CreateBuffer(SVMatroxBuffer& p_rBuffer, MatroxI
 	}
 	else
 	{
-		Code = SVMEE_INVALID_PARAMETER;
-
 		SvStl::MessageContainer message(SVMSG_SVO_5079_CREATEBUFFERFAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16227);
 		throw message;
 
@@ -2205,7 +2203,7 @@ HRESULT SVMatroxBufferInterface::CopyBufferToFileDIB(SVByteVector& rToDIB, const
 			::memcpy(&(rToDIB[ offset ]), &hdr, sizeof(BITMAPFILEHEADER));
 			::memcpy(&(rToDIB[ offset + sizeof(BITMAPFILEHEADER) ]), l_Info.GetBitmapInfo(), l_InfoSize);
 
-			BITMAPINFO* l_pBitmapInfo = reinterpret_cast< BITMAPINFO* >(&(rToDIB[ sizeof(BITMAPFILEHEADER) ]));
+			BITMAPINFO* l_pBitmapInfo = reinterpret_cast< BITMAPINFO* >(&(rToDIB[ offset + sizeof(BITMAPFILEHEADER) ]));
 
 			if (normalize_y && l_pBitmapInfo->bmiHeader.biHeight < 0)
 			{
