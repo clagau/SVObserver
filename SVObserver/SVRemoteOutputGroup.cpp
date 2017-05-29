@@ -31,6 +31,7 @@ SV_IMPLEMENT_CLASS( SVRemoteOutputGroup, SVRemoteOutputGroupGUID );
 
 SVRemoteOutputGroup::SVRemoteOutputGroup( LPCTSTR ObjectName )
 : SVObjectClass( ObjectName )
+, m_CriticalSection()
 , m_StreamDataItems( 0 )
 {
 	Create();
@@ -38,6 +39,7 @@ SVRemoteOutputGroup::SVRemoteOutputGroup( LPCTSTR ObjectName )
 
 SVRemoteOutputGroup::SVRemoteOutputGroup( SVObjectClass* POwner, int StringResourceID )
 : SVObjectClass( POwner, StringResourceID )
+, m_CriticalSection()
 , m_StreamDataItems( 0 )
 {
 	Create();
@@ -523,7 +525,7 @@ public:
 	}
 };
 
-SVRemoteOutputObject* SVRemoteOutputGroup::GetItem( long l_lIndex )
+SVRemoteOutputObject* SVRemoteOutputGroup::GetItem( long l_lIndex ) const
 {
 	if( m_RemoteOutputs.size() > (size_t)l_lIndex )
 	{
@@ -532,7 +534,7 @@ SVRemoteOutputObject* SVRemoteOutputGroup::GetItem( long l_lIndex )
 	return nullptr;
 }
 
-SVRemoteOutputObject* SVRemoteOutputGroup::GetLastObject( )
+SVRemoteOutputObject* SVRemoteOutputGroup::GetLastObject( ) const
 {
 	if( m_RemoteOutputs.size() > 0 )
 	{
@@ -541,7 +543,7 @@ SVRemoteOutputObject* SVRemoteOutputGroup::GetLastObject( )
 	return nullptr;
 }
 
-SVRemoteOutputObject* SVRemoteOutputGroup::GetFirstObject( )
+SVRemoteOutputObject* SVRemoteOutputGroup::GetFirstObject( ) const
 {
 	if( m_RemoteOutputs.size() > 0 )
 	{
@@ -566,16 +568,18 @@ HRESULT SVRemoteOutputGroup::Find( SVRemoteOutputObject* p_pObject, long& p_rlIn
 	return l_hr;
 }
 
-SVString SVRemoteOutputGroup::GetGroupName()
+SVString SVRemoteOutputGroup::GetGroupName() const
 {
-	SVString l_strName = GetPPQName();
+	SVString Result = GetPPQName();
 
 	SVRemoteOutputObject* pFirst = GetFirstObject();
 
-	if( nullptr != pFirst )
-		l_strName = pFirst->GetGroupID();
+	if (nullptr != pFirst)
+	{
+		Result = pFirst->GetGroupID();
+	}
 
-	return l_strName;
+	return Result;
 }
 
 const SVGUID& SVRemoteOutputGroup::GetPPQObjectId() const

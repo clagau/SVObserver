@@ -56,15 +56,15 @@ public:
 	HRESULT AddOutput( SVRemoteOutputObject* p_pOutputEntry );
 	size_t RemoteOutputListSize();
 	HRESULT GetItem( long l_lIndex, SVRemoteOutputObject*& p_rItem );
-	SVRemoteOutputObject* GetItem( long l_lIndex );
-	SVRemoteOutputObject* GetLastObject( );
-	SVRemoteOutputObject* GetFirstObject( );
+	SVRemoteOutputObject* GetItem( long l_lIndex ) const;
+	SVRemoteOutputObject* GetLastObject( ) const;
+	SVRemoteOutputObject* GetFirstObject( ) const;
 
 	const SVGUID& GetPPQObjectId() const;
 	SVString GetPPQName() const;
 	HRESULT SetPPQName( const SVString& p_rPPQ );
 
-	SVString GetGroupName();
+	SVString GetGroupName() const;
 
 	HRESULT Delete( SVRemoteOutputObject* );
 
@@ -74,7 +74,7 @@ public:
 	HRESULT SetGroupName( const SVString& p_rPPQ );
 
 protected:
-	SVCriticalSection m_CriticalSection;
+	mutable SVCriticalSection m_CriticalSection;
 
 	BOOL m_bCreated;
 

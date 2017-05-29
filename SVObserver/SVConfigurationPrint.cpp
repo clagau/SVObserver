@@ -227,15 +227,15 @@ SVConfigurationPrint::SVConfigurationPrint()
 	
 	// Set SVFileNameClass for Print to File
 	
-	m_svfnFileName.SetDefaultFileExtension( MAKEINTRESOURCE(AFX_IDS_PRINTDEFAULTEXT) );
+	m_svfnFileName.SetDefaultFileExtension(SVString(CString(MAKEINTRESOURCE(AFX_IDS_PRINTDEFAULTEXT))));
 	
-	m_svfnFileName.SetDefaultFileName( MAKEINTRESOURCE(AFX_IDS_PRINTDEFAULT) );
+	m_svfnFileName.SetDefaultFileName(SVString(CString(MAKEINTRESOURCE(AFX_IDS_PRINTDEFAULT))));
 	
 	m_svfnFileName.SetFileSaveFlags(OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT);
 	
-	m_svfnFileName.SetFileExtensionFilterList( MAKEINTRESOURCE(AFX_IDS_PRINTFILTER) );
+	m_svfnFileName.SetFileExtensionFilterList(SVString(CString(MAKEINTRESOURCE(AFX_IDS_PRINTFILTER))));
 	
-	m_svfnFileName.SetFileSaveDialogTitle( MAKEINTRESOURCE(AFX_IDS_PRINTCAPTION) );
+	m_svfnFileName.SetFileSaveDialogTitle(CString(MAKEINTRESOURCE(AFX_IDS_PRINTCAPTION)).GetString());
 }
 
 SVConfigurationPrint::~SVConfigurationPrint()

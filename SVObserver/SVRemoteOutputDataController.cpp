@@ -86,7 +86,7 @@ HRESULT SVRemoteOutputDataController::AddItem( const SVString& rRemoteGroupId, S
 			Temp += pObject->GetCompleteName();
 			OutputDebugString( Temp.c_str() );
 		}
-		if( m_RemoteGroupParameters.end() != m_RemoteGroupParameters.find( rRemoteGroupId ) )
+		if( m_RemoteGroupParameters.end() == m_RemoteGroupParameters.find( rRemoteGroupId ) )
 		{
 			SVRemoteOutputGroup* l_par = new SVRemoteOutputGroup( rRemoteGroupId.c_str() );
 

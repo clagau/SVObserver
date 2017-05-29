@@ -120,7 +120,7 @@ void SVRemoteOutputGroupAddRemoveDlg::OnBnClickedRemoveBtn()
 		m_UsedList.DeleteString( l_lRemoveSel );
 		for( SVGroupDefVect::iterator it = m_SetupGroup.begin() ; it != m_SetupGroup.end() ; ++it )
 		{
-			if( Delete.GetString() == it->m_Name )
+			if( 0 == Delete.Find(it->m_Name.c_str()) )
 			{
 				m_SetupGroup.erase( it );
 				break;
