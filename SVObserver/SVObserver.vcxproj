@@ -180,7 +180,6 @@ echo %time%
   <ItemGroup>
     <ClCompile Include="ArchiveToolHelper.cpp" />
     <ClCompile Include="Custom2Filter_ImportExport.cpp" />
-    <ClCompile Include="DummyFilter.cpp" />
     <ClCompile Include="ExtrasEngine.cpp" />
     <ClCompile Include="GlobalConstantView.cpp" />
     <ClCompile Include="MonitorListBasePage.cpp" />

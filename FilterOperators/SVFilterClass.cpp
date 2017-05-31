@@ -38,29 +38,6 @@
 #pragma endregion Includes
 
 SV_IMPLEMENT_CLASS( SVFilterClass, SVFilterClassGuid )
-SV_IMPLEMENT_CLASS( Custom2Filter, Custom2FilterClassGuid )
-SV_IMPLEMENT_CLASS( SVClosingFilterClass, SVClosingFilterClassGuid )
-SV_IMPLEMENT_CLASS( SVCustomFilterClass, SVCustomFilterClassGuid )
-SV_IMPLEMENT_CLASS( SVDilationFilterClass, SVDilationFilterClassGuid )
-SV_IMPLEMENT_CLASS( SVEdgeDetect2FilterClass, SVEdgeDetect2FilterClassGuid )
-SV_IMPLEMENT_CLASS( SVEdgeDetectFilterClass, SVEdgeDetectFilterClassGuid )
-SV_IMPLEMENT_CLASS( SVErosionFilterClass, SVErosionFilterClassGuid )
-SV_IMPLEMENT_CLASS( SVHorizEdgeFilterClass, SVHorizEdgeFilterClassGuid )
-SV_IMPLEMENT_CLASS( SVLaplacianEdge2FilterClass, SVLaplacianEdge2FilterClassGuid )
-SV_IMPLEMENT_CLASS( SVLaplacianEdgeFilterClass, SVLaplacianEdgeFilterClassGuid )
-SV_IMPLEMENT_CLASS( SVMaxMinusMinFilterClass, SVMaxMinusMinFilterClassGuid )
-SV_IMPLEMENT_CLASS( SVOpeningFilterClass, SVOpeningFilterClassGuid )
-SV_IMPLEMENT_CLASS( SVRankingFilterClass, SVRankingFilterClassGuid )
-SV_IMPLEMENT_CLASS( SVSharpen2FilterClass, SVSharpen2FilterClassGuid )
-SV_IMPLEMENT_CLASS( SVSharpenFilterClass, SVSharpenFilterClassGuid )
-SV_IMPLEMENT_CLASS( SVSkeletonFilterClass, SVSkeletonFilterClassGuid )
-SV_IMPLEMENT_CLASS( SVSmoothFilterClass, SVSmoothFilterClassGuid )
-SV_IMPLEMENT_CLASS( SVThickeningFilterClass, SVThickeningFilterClassGuid )
-SV_IMPLEMENT_CLASS( SVThinningFilterClass, SVThinningFilterClassGuid )
-SV_IMPLEMENT_CLASS( SVVertEdgeFilterClass, SVVertEdgeFilterClassGuid )
-SV_IMPLEMENT_CLASS( SVWatershedFilterClass, SVWatershedFilterClassGuid )
-
-
 
 
 

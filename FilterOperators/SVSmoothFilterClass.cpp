@@ -16,6 +16,8 @@
 #pragma endregion Includes
 
 
+SV_IMPLEMENT_CLASS(SVSmoothFilterClass, SVSmoothFilterClassGuid)
+
 SVSmoothFilterClass::SVSmoothFilterClass( SVObjectClass* POwner, int StringResourceID )
 					:SVFilterClass( POwner, StringResourceID ) 
 {

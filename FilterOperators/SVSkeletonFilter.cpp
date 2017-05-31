@@ -22,6 +22,8 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 
+SV_IMPLEMENT_CLASS(SVSkeletonFilterClass, SVSkeletonFilterClassGuid)
+
 SVSkeletonFilterClass::SVSkeletonFilterClass( SVObjectClass* POwner, int StringResourceID )
 					: SVFilterClass( POwner, StringResourceID )
 {

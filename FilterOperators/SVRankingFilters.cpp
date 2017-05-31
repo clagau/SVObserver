@@ -24,6 +24,8 @@ static char THIS_FILE[] = __FILE__;
 #define RANKING_BIT_DEPTH SV32BitSigned
 
 
+SV_IMPLEMENT_CLASS(SVRankingFilterClass, SVRankingFilterClassGuid)
+
 SVRankingFilterClass::SVRankingFilterClass( SVObjectClass* POwner, int StringResourceID )
 					: SVFilterClass( POwner, StringResourceID )
 {

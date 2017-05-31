@@ -26,6 +26,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
+SV_IMPLEMENT_CLASS(Custom2Filter, Custom2FilterClassGuid)
 
 #pragma region Constructor
 Custom2Filter::Custom2Filter( SVObjectClass* pOwner, int StringResourceID )

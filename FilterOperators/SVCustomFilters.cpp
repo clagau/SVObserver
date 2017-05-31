@@ -32,6 +32,8 @@ static char THIS_FILE[] = __FILE__;
 #define KERNEL_BIT_DEPTH     8L
 
 
+SV_IMPLEMENT_CLASS(SVCustomFilterClass, SVCustomFilterClassGuid)
+
 //******************************************************************************
 // Constructor(s):
 //******************************************************************************

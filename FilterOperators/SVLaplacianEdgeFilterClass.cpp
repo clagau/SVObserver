@@ -16,6 +16,8 @@
 #pragma endregion Includes
 
 
+SV_IMPLEMENT_CLASS(SVLaplacianEdgeFilterClass, SVLaplacianEdgeFilterClassGuid)
+
 SVLaplacianEdgeFilterClass::SVLaplacianEdgeFilterClass( SVObjectClass* POwner, int StringResourceID )
 						   :SVFilterClass( POwner, StringResourceID ) 
 {

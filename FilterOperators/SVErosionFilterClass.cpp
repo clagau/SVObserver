@@ -15,6 +15,8 @@
 #include "SVObjectLibrary/SVClsids.h"
 #pragma endregion Includes
 
+SV_IMPLEMENT_CLASS(SVErosionFilterClass, SVErosionFilterClassGuid)
+
 SVErosionFilterClass::SVErosionFilterClass( SVObjectClass* POwner, int StringResourceID )
 					 :SVFilterClass( POwner, StringResourceID ) 
 {

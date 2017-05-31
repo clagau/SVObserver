@@ -29,6 +29,8 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 
+SV_IMPLEMENT_CLASS(SVWatershedFilterClass, SVWatershedFilterClassGuid)
+
 SVWatershedFilterClass::SVWatershedFilterClass( SVObjectClass* POwner, int StringResourceID )
 					: SVFilterClass( POwner, StringResourceID )
 {

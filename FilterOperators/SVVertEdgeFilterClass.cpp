@@ -16,6 +16,8 @@
 #pragma endregion Includes
 
 
+SV_IMPLEMENT_CLASS(SVVertEdgeFilterClass, SVVertEdgeFilterClassGuid)
+
 SVVertEdgeFilterClass::SVVertEdgeFilterClass( SVObjectClass* POwner, int StringResourceID )
 					  :SVFilterClass( POwner, StringResourceID ) 
 {

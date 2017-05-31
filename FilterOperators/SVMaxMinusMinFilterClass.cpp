@@ -19,6 +19,8 @@
 #pragma endregion Includes
 
 
+SV_IMPLEMENT_CLASS(SVMaxMinusMinFilterClass, SVMaxMinusMinFilterClassGuid)
+
 SVMaxMinusMinFilterClass::SVMaxMinusMinFilterClass( SVObjectClass* POwner, int StringResourceID )
 							 :SVFilterClass( POwner, StringResourceID ) 
 {

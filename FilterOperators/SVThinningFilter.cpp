@@ -22,6 +22,8 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 
+SV_IMPLEMENT_CLASS(SVThinningFilterClass, SVThinningFilterClassGuid)
+
 SVThinningFilterClass::SVThinningFilterClass( SVObjectClass* POwner, int StringResourceID )
 					: SVFilterClass( POwner, StringResourceID )
 {

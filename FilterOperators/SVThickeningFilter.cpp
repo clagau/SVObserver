@@ -22,6 +22,8 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 
+SV_IMPLEMENT_CLASS(SVThickeningFilterClass, SVThickeningFilterClassGuid)
+
 SVThickeningFilterClass::SVThickeningFilterClass( SVObjectClass* POwner, int StringResourceID )
 					: SVFilterClass( POwner, StringResourceID )
 {
