@@ -34,8 +34,7 @@ namespace SvSml
 		m_pViewHeader = nullptr;
 		for (auto &vp : m_pViewImagesVector)
 		{
-			bool unmap = UnmapViewOfFile(vp);
-			if (unmap)
+			if (UnmapViewOfFile(vp))
 			{
 				vp = nullptr;
 			}
@@ -51,8 +50,7 @@ namespace SvSml
 		}
 		if (m_hMapFileImage ) 
 		{ 
-			bool close =  CloseHandle(m_hMapFileImage);
-			if (close)
+			if (CloseHandle(m_hMapFileImage))
 			{
 				m_hMapFileImage = NULL;
 
@@ -97,11 +95,11 @@ namespace SvSml
 		CloseConnection();
 		m_slotSize = (slotsize / m_AllocationGranularity + 1) *  m_AllocationGranularity;
 		DWORD SharedSize = m_slotCount * m_slotSize + m_ISHeadersize;
-		DWORD Timeout(1000);
+		int Timeout(1000);
 	
 		for(int time = 0; time < Timeout; time+= 30)
 		{
-			SetLastError(0);
+			SetLastError(0x0);
 			m_hMapFileImage = CreateFileMapping(INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, 0, SharedSize, m_MapFileName.c_str());
 			if (nullptr != m_hMapFileImage &&  GetLastError() != ERROR_ALREADY_EXISTS)
 			{
