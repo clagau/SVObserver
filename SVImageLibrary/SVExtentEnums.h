@@ -27,20 +27,6 @@ enum SVExtentPropertyEnum
 	SVExtentPropertyOutputPositionPointY    = 0x00000200,
 	SVExtentPropertyOutputPositionPoint     = 0x00000300,
 
-	SVExtentPropertyOldRotationAngle        = 0x00000020,
-	SVExtentPropertyOldPositionPointX       = 0x00000400,
-	SVExtentPropertyOldPositionPointY       = 0x00000800,
-	SVExtentPropertyOldPositionPoint        = 0x00000C00,
-	SVExtentPropertyOldAbsPositionPointX    = 0x00001000,
-	SVExtentPropertyOldAbsPositionPointY    = 0x00002000,
-	SVExtentPropertyOldAbsPositionPoint     = 0x00003000,
-	SVExtentPropertyOldRotationPointX       = 0x00004000,
-	SVExtentPropertyOldRotationPointY       = 0x00008000,
-	SVExtentPropertyOldRotationPoint        = 0x0000C000,
-	SVExtentPropertyOldTranslationOffsetX   = 0x00010000,
-	SVExtentPropertyOldTranslationOffsetY   = 0x00020000,
-	SVExtentPropertyOldTranslationOffset    = 0x00030000,
-
 	SVExtentPropertyHeightScaleFactor		= 0x00040000, ///< Used by Resize Tool and the Image Tool Height Doubling operation
 	
 	SVExtentPropertyWidthScaleFactor		= 0x00080000, ///< Used by Resize Tool
@@ -94,22 +80,7 @@ enum SVExtentPropertyEnum
 	                    | SVExtentPropertyOuterRadius
 						| SVExtentPropertyDimentionsOutput,
 
-	SVExtentPropertyOldPositionsAll = SVExtentPropertyOldRotationAngle
-	                                  | SVExtentPropertyOldPositionPointX
-		                              | SVExtentPropertyOldPositionPointY
-		                              | SVExtentPropertyOldPositionPoint
-		                              | SVExtentPropertyOldAbsPositionPointX
-		                              | SVExtentPropertyOldAbsPositionPointY
-		                              | SVExtentPropertyOldAbsPositionPoint
-		                              | SVExtentPropertyOldRotationPointX
-		                              | SVExtentPropertyOldRotationPointY
-		                              | SVExtentPropertyOldRotationPoint
-		                              | SVExtentPropertyOldTranslationOffsetX
-		                              | SVExtentPropertyOldTranslationOffsetY
-		                              | SVExtentPropertyOldTranslationOffset,
-
-	SVExtentPropertyPositionsAll = SVExtentPropertyOldPositionsAll
-	                             | SVExtentPropertyPositionsInput
+	SVExtentPropertyPositionsAll = SVExtentPropertyPositionsInput
 	                             | SVExtentPropertyPositionsOutput,
 
 	SVExtentPropertyDimensionsAll = SVExtentPropertyDimensionsInput
@@ -123,10 +94,9 @@ enum SVExtentPropertyEnum
 
 //This parameter define how many decimal places the property have in the display
 const unsigned long g_SVExtentPropertyNoDecimalPlaces = SVExtentPropertyPositionPoint|SVExtentPropertyPositionPointEndOfLine|SVExtentPropertyTranslationOffset|
-														SVExtentPropertyOldPositionPoint|SVExtentPropertyOldAbsPositionPoint|SVExtentPropertyOldTranslationOffset|
-														SVExtentPropertyOutputPositionPoint|SVExtentPropertyOldRotationPoint|SVExtentPropertyWidth|SVExtentPropertyHeight|
+														SVExtentPropertyOutputPositionPoint|SVExtentPropertyWidth|SVExtentPropertyHeight|
 														SVExtentPropertyOutputWidth|SVExtentPropertyOutputHeight;
-const unsigned long g_SVExtentProperty2DecimalPlaces = SVExtentPropertyRotationAngle|SVExtentPropertyOldRotationAngle|SVExtentPropertyStartAngle|
+const unsigned long g_SVExtentProperty2DecimalPlaces = SVExtentPropertyRotationAngle|SVExtentPropertyStartAngle|
 														SVExtentPropertyEndAngle|SVExtentPropertyInnerRadius|SVExtentPropertyOuterRadius;
 	
 

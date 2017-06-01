@@ -32,15 +32,6 @@ ExtentPropertyMapInit::ExtentPropertyMapInit()
 	map[ SVExtentPropertyRotationAngle ]         = _T("Rotation Angle");
 	map[ SVExtentPropertyOutputPositionPointX ]  = _T("Output X Position");
 	map[ SVExtentPropertyOutputPositionPointY ]  = _T("Output Y Position");
-	map[ SVExtentPropertyOldRotationAngle ]      = _T("");
-	map[ SVExtentPropertyOldPositionPointX ]     = _T("");
-	map[ SVExtentPropertyOldPositionPointY ]     = _T("");
-	map[ SVExtentPropertyOldAbsPositionPointX ]  = _T("");
-	map[ SVExtentPropertyOldAbsPositionPointY ]  = _T("");
-	map[ SVExtentPropertyOldRotationPointX ]     = _T("");
-	map[ SVExtentPropertyOldRotationPointY ]     = _T("");
-	map[ SVExtentPropertyOldTranslationOffsetX ] = _T("");
-	map[ SVExtentPropertyOldTranslationOffsetY ] = _T("");
 	map[ SVExtentPropertyWidth ]        = _T("Width");
 	map[ SVExtentPropertyHeight ]       = _T("Height");
 	map[ SVExtentPropertyStartAngle ]   = _T("Start Angle");
@@ -395,11 +386,6 @@ HRESULT SVImageExtentClass::SetPosition( SVExtentPositionClass p_svPosition )
 		}
 	}
 	return l_hrOk;
-}
-
-HRESULT SVImageExtentClass::ClearOldProperties()
-{
-	return m_svPosition.DisableExtentProperty( SVExtentPropertyOldPositionsAll );
 }
 
 HRESULT SVImageExtentClass::DisableExtentProperty( SVExtentPropertyEnum p_eProperty )

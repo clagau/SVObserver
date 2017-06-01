@@ -58,8 +58,6 @@ public:
 	const SVExtentPositionClass &GetPosition() const;
 	HRESULT SetPosition( SVExtentPositionClass p_svPosition );
 
-	HRESULT ClearOldProperties();
-
 	HRESULT DisableExtentProperty( SVExtentPropertyEnum p_eProperty );
 
 	HRESULT GetExtentProperty( SVExtentPropertyEnum p_eProperty, long &p_rlValue ) const;

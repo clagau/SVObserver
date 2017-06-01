@@ -49,13 +49,5 @@ private:
 	SVExtentPointStruct m_svPositionPointEndOfLine;
 	SVExtentPointStruct m_svTranslationOffset;
 	SVExtentPointStruct m_svOutputPositionPoint;
-
-	// Old Extent Data
-	double m_dOldRotationAngle;
-
-	SVExtentPointStruct m_svOldPositionPoint;
-	SVExtentPointStruct m_svOldAbsPositionPoint;
-	SVExtentPointStruct m_svOldRotationPoint;
-	SVExtentPointStruct m_svOldTranslationOffset;
 };
 

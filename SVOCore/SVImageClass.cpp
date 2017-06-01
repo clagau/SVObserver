@@ -1785,94 +1785,7 @@ HRESULT SVImageClass::SetObjectValue( SVObjectAttributeClass* PDataObject )
 	SvCl::SVObjectLongArrayClass svLongArray;
 	SVObjectSVPointArrayClass svPointArray;
 
-	if ( ( bOk = PDataObject->GetAttributeData( "ExtentLeft", svDoubleArray	) ) )
-	{
-
-//@HACK ?? JAB 26.03.15 - Not sure why these properties are being 
-// 		itteratively set to each array element. It looks to me like the 
-//		final value will alway be svDoubleArray [GetSize() - 1].  Don't have 
-//		time to look into now.  Many identical cases in this method.
-		for ( int i = 0; i < svDoubleArray.GetSize(); i++ )
-		{
-			m_ImageInfo.SetExtentProperty( SVExtentPropertyOldPositionPointX, svDoubleArray[i] );
-		}
-	}
-	else if ( ( bOk = PDataObject->GetAttributeData( "ExtentTop", svDoubleArray	) ) )
-	{
-		for ( int i = 0; i < svDoubleArray.GetSize(); i++ )
-		{
-			m_ImageInfo.SetExtentProperty( SVExtentPropertyOldPositionPointY, svDoubleArray[i] );
-		}
-	}
-	else if ( ( bOk = PDataObject->GetAttributeData( "ExtentWidth", svDoubleArray	) ) )
-	{
-		for ( int i = 0; i < svDoubleArray.GetSize(); i++ )
-		{
-			m_ImageInfo.SetExtentProperty( SVExtentPropertyWidth, svDoubleArray[i] );
-		}
-	}
-	else if ( ( bOk = PDataObject->GetAttributeData( "ExtentHeight", svDoubleArray	) ) )
-	{
-		for ( int i = 0; i < svDoubleArray.GetSize(); i++ )
-		{
-			m_ImageInfo.SetExtentProperty( SVExtentPropertyHeight, svDoubleArray[i] );
-		}
-	}
-	else if ( ( bOk = PDataObject->GetAttributeData( "AbsExtentLeft", svDoubleArray	) ) )
-	{
-		for ( int i = 0; i < svDoubleArray.GetSize(); i++ )
-		{
-			m_ImageInfo.SetExtentProperty( SVExtentPropertyOldAbsPositionPointX, svDoubleArray[i] );
-		}
-	}
-	else if ( ( bOk = PDataObject->GetAttributeData( "AbsExtentTop", svDoubleArray	) ) )
-	{
-		for ( int i = 0; i < svDoubleArray.GetSize(); i++ )
-		{
-			m_ImageInfo.SetExtentProperty( SVExtentPropertyOldAbsPositionPointY, svDoubleArray[i] );
-		}
-	}
-	else if ( ( bOk = PDataObject->GetAttributeData( "AbsExtentWidth", svDoubleArray	) ) )
-	{
-		//   This value is no longer scripted.
-	}
-	else if ( ( bOk = PDataObject->GetAttributeData( "AbsExtentHeight", svDoubleArray	) ) )
-	{
-		//   This value is no longer scripted.
-	}
-	else if ( ( bOk = PDataObject->GetAttributeData( "RotationAngle", svDoubleArray	) ) )
-	{
-		if( 0 < svDoubleArray.GetSize() )
-		{
-			double l_dValue = svDoubleArray[svDoubleArray.GetSize() - 1];
-
-			m_ImageInfo.SetExtentProperty( SVExtentPropertyOldRotationAngle, l_dValue );
-		}
-	}
-	else if ( ( bOk = PDataObject->GetAttributeData( "RotationCenter", svPointArray	) ) )
-	{
-		for ( int i = 0; i < svPointArray.GetSize(); i++ )
-		{
-			m_ImageInfo.SetExtentProperty( SVExtentPropertyOldRotationPoint, SVExtentPointStruct(svPointArray[i]) );
-		}
-	}
-	else if ( ( bOk = PDataObject->GetAttributeData( "HeightScaleFactor", svDoubleArray	) ) )
-	{
-		long	size = svDoubleArray.GetSize ();
-		if (size > 0)
-		{
-			m_ImageInfo.SetExtentProperty( SVExtentPropertyHeightScaleFactor, svDoubleArray [size-1] );
-		}
-	}
-	else if ( ( bOk = PDataObject->GetAttributeData( "WidthScaleFactor", svDoubleArray	) ) )
-	{
-		long	size = svDoubleArray.GetSize ();
-		if (size > 0)
-		{
-			m_ImageInfo.SetExtentProperty( SVExtentPropertyWidthScaleFactor, svDoubleArray [size-1] );
-		}
-	}
-	else if ( ( bOk = PDataObject->GetAttributeData( "PixelDepth", svLongArray	) ) )
+	if ( ( bOk = PDataObject->GetAttributeData( "PixelDepth", svLongArray	) ) )
 	{
 		for ( int i = 0; i < svLongArray.GetSize(); i++ )
 		{
@@ -1891,13 +1804,6 @@ HRESULT SVImageClass::SetObjectValue( SVObjectAttributeClass* PDataObject )
 		for ( int i = 0; i < svLongArray.GetSize(); i++ )
 		{
 			m_ImageInfo.SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandLink, svLongArray[i] );
-		}
-	}
-	else if ( ( bOk = PDataObject->GetAttributeData( "Translation", svPointArray	) ) )
-	{
-		for ( int i = 0; i < svPointArray.GetSize(); i++ )
-		{
-			m_ImageInfo.SetExtentProperty( SVExtentPropertyOldTranslationOffset, SVExtentPointStruct(svPointArray[i]) );
 		}
 	}
 	else

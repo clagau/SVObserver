@@ -105,79 +105,6 @@ const SVExtentPositionClass &SVExtentPositionClass::operator=( const SVExtentPos
 				SetExtentProperty( SVExtentPropertyOutputPositionPointY, p_rsvValue.m_svOutputPositionPoint.m_dPositionY );
 			}
 		}
-
-		if ( ( p_rsvValue.m_ulProperties & SVExtentPropertyOldRotationAngle ) != 0 )
-		{
-			SetExtentProperty( SVExtentPropertyOldRotationAngle, p_rsvValue.m_dOldRotationAngle );
-		}
-
-		if ( ( p_rsvValue.m_ulProperties & SVExtentPropertyOldPositionPoint ) != 0 )
-		{
-			SetExtentProperty( SVExtentPropertyOldPositionPoint, p_rsvValue.m_svOldPositionPoint );
-		}
-		else
-		{
-			if ( ( p_rsvValue.m_ulProperties & SVExtentPropertyOldPositionPointX ) != 0 )
-			{
-				SetExtentProperty( SVExtentPropertyOldPositionPointX, p_rsvValue.m_svOldPositionPoint.m_dPositionX );
-			}
-
-			if ( ( p_rsvValue.m_ulProperties & SVExtentPropertyOldPositionPointY ) != 0 )
-			{
-				SetExtentProperty( SVExtentPropertyOldPositionPointY, p_rsvValue.m_svOldPositionPoint.m_dPositionY );
-			}
-		}
-
-		if ( ( p_rsvValue.m_ulProperties & SVExtentPropertyOldAbsPositionPoint ) != 0 )
-		{
-			SetExtentProperty( SVExtentPropertyOldAbsPositionPoint, p_rsvValue.m_svOldAbsPositionPoint );
-		}
-		else
-		{
-			if ( ( p_rsvValue.m_ulProperties & SVExtentPropertyOldAbsPositionPointX ) != 0 )
-			{
-				SetExtentProperty( SVExtentPropertyOldAbsPositionPointX, p_rsvValue.m_svOldAbsPositionPoint.m_dPositionX );
-			}
-
-			if ( ( p_rsvValue.m_ulProperties & SVExtentPropertyOldAbsPositionPointY ) != 0 )
-			{
-				SetExtentProperty( SVExtentPropertyOldAbsPositionPointY, p_rsvValue.m_svOldAbsPositionPoint.m_dPositionY );
-			}
-		}
-
-		if ( ( p_rsvValue.m_ulProperties & SVExtentPropertyOldRotationPoint ) != 0 )
-		{
-			SetExtentProperty( SVExtentPropertyOldRotationPoint, p_rsvValue.m_svOldRotationPoint );
-		}
-		else
-		{
-			if ( ( p_rsvValue.m_ulProperties & SVExtentPropertyOldRotationPointX ) != 0 )
-			{
-				SetExtentProperty( SVExtentPropertyOldRotationPointX, p_rsvValue.m_svOldRotationPoint.m_dPositionX );
-			}
-
-			if ( ( p_rsvValue.m_ulProperties & SVExtentPropertyOldRotationPointY ) != 0 )
-			{
-				SetExtentProperty( SVExtentPropertyOldRotationPointY, p_rsvValue.m_svOldRotationPoint.m_dPositionY );
-			}
-		}
-
-		if ( ( p_rsvValue.m_ulProperties & SVExtentPropertyOldTranslationOffset ) != 0 )
-		{
-			SetExtentProperty( SVExtentPropertyOldTranslationOffset, p_rsvValue.m_svOldTranslationOffset );
-		}
-		else
-		{
-			if ( ( p_rsvValue.m_ulProperties & SVExtentPropertyOldTranslationOffsetX ) != 0 )
-			{
-				SetExtentProperty( SVExtentPropertyOldTranslationOffsetX, p_rsvValue.m_svOldTranslationOffset.m_dPositionX );
-			}
-
-			if ( ( p_rsvValue.m_ulProperties & SVExtentPropertyOldTranslationOffsetY ) != 0 )
-			{
-				SetExtentProperty( SVExtentPropertyOldTranslationOffsetY, p_rsvValue.m_svOldTranslationOffset.m_dPositionY );
-			}
-		}
 	}// end if ( this != p_rsvValue )
 	return *this;
 }
@@ -204,33 +131,11 @@ HRESULT SVExtentPositionClass::Initialize()
 	}
 
 	m_dRotationAngle = 0.0;
-	m_dOldRotationAngle = 0.0;
 
 	if ( S_OK != m_svOutputPositionPoint.Initialize() )
 	{
 		l_hrOk = S_FALSE;
 	}
-
-	if ( S_OK != m_svOldPositionPoint.Initialize() )
-	{
-		l_hrOk = S_FALSE;
-	}
-
-	if ( S_OK != m_svOldAbsPositionPoint.Initialize() )
-	{
-		l_hrOk = S_FALSE;
-	}
-
-	if ( S_OK != m_svOldRotationPoint.Initialize() )
-	{
-		l_hrOk = S_FALSE;
-	}
-
-	if ( S_OK != m_svOldTranslationOffset.Initialize() )
-	{
-		l_hrOk = S_FALSE;
-	}
-
 	return l_hrOk;
 }
 
@@ -285,69 +190,6 @@ HRESULT SVExtentPositionClass::DisableExtentProperty( SVExtentPropertyEnum p_ePr
 		if ( ( p_eProperty & SVExtentPropertyOutputPositionPointY ) != 0 )
 		{
 			m_ulProperties &= ~SVExtentPropertyOutputPositionPointY;
-
-			l_hrOk = S_OK;
-		}
-
-		if ( ( p_eProperty & SVExtentPropertyOldRotationAngle ) != 0 )
-		{
-			m_ulProperties &= ~SVExtentPropertyOldRotationAngle;
-
-			l_hrOk = S_OK;
-		}
-
-		if ( ( p_eProperty & SVExtentPropertyOldPositionPointX ) != 0 )
-		{
-			m_ulProperties &= ~SVExtentPropertyOldPositionPointX;
-
-			l_hrOk = S_OK;
-		}
-
-		if ( ( p_eProperty & SVExtentPropertyOldPositionPointY ) != 0 )
-		{
-			m_ulProperties &= ~SVExtentPropertyOldPositionPointY;
-
-			l_hrOk = S_OK;
-		}
-
-		if ( ( p_eProperty & SVExtentPropertyOldAbsPositionPointX ) != 0 )
-		{
-			m_ulProperties &= ~SVExtentPropertyOldAbsPositionPointX;
-
-			l_hrOk = S_OK;
-		}
-
-		if ( ( p_eProperty & SVExtentPropertyOldAbsPositionPointY ) != 0 )
-		{
-			m_ulProperties &= ~SVExtentPropertyOldAbsPositionPointY;
-
-			l_hrOk = S_OK;
-		}
-
-		if ( ( p_eProperty & SVExtentPropertyOldRotationPointX ) != 0 )
-		{
-			m_ulProperties &= ~SVExtentPropertyOldRotationPointX;
-
-			l_hrOk = S_OK;
-		}
-
-		if ( ( p_eProperty & SVExtentPropertyOldRotationPointY ) != 0 )
-		{
-			m_ulProperties &= ~SVExtentPropertyOldRotationPointY;
-
-			l_hrOk = S_OK;
-		}
-
-		if ( ( p_eProperty & SVExtentPropertyOldTranslationOffsetX ) != 0 )
-		{
-			m_ulProperties &= ~SVExtentPropertyOldTranslationOffsetX;
-
-			l_hrOk = S_OK;
-		}
-
-		if ( ( p_eProperty & SVExtentPropertyOldTranslationOffsetY ) != 0 )
-		{
-			m_ulProperties &= ~SVExtentPropertyOldTranslationOffsetY;
 
 			l_hrOk = S_OK;
 		}
@@ -432,60 +274,6 @@ HRESULT SVExtentPositionClass::GetExtentProperty( SVExtentPropertyEnum p_eProper
 
 				break;
 			}
-			case SVExtentPropertyOldRotationAngle:
-			{
-				p_rdValue = m_dOldRotationAngle;
-
-				break;
-			}
-			case SVExtentPropertyOldPositionPointX:
-			{
-				p_rdValue = m_svOldPositionPoint.m_dPositionX;
-
-				break;
-			}
-			case SVExtentPropertyOldPositionPointY:
-			{
-				p_rdValue = m_svOldPositionPoint.m_dPositionY;
-
-				break;
-			}
-			case SVExtentPropertyOldAbsPositionPointX:
-			{
-				p_rdValue = m_svOldAbsPositionPoint.m_dPositionX;
-
-				break;
-			}
-			case SVExtentPropertyOldAbsPositionPointY:
-			{
-				p_rdValue = m_svOldAbsPositionPoint.m_dPositionY;
-
-				break;
-			}
-			case SVExtentPropertyOldRotationPointX:
-			{
-				p_rdValue = m_svOldRotationPoint.m_dPositionX;
-
-				break;
-			}
-			case SVExtentPropertyOldRotationPointY:
-			{
-				p_rdValue = m_svOldRotationPoint.m_dPositionY;
-
-				break;
-			}
-			case SVExtentPropertyOldTranslationOffsetX:
-			{
-				p_rdValue = m_svOldTranslationOffset.m_dPositionX;
-
-				break;
-			}
-			case SVExtentPropertyOldTranslationOffsetY:
-			{
-				p_rdValue = m_svOldTranslationOffset.m_dPositionY;
-
-				break;
-			}
 			default:
 			{
 				l_hrOk = S_FALSE;
@@ -545,30 +333,6 @@ HRESULT SVExtentPositionClass::GetExtentProperty( SVExtentPropertyEnum p_eProper
 			case SVExtentPropertyOutputPositionPoint:
 			{
 				p_rsvValue = m_svOutputPositionPoint;
-
-				break;
-			}
-			case SVExtentPropertyOldPositionPoint:
-			{
-				p_rsvValue = m_svOldPositionPoint;
-
-				break;
-			}
-			case SVExtentPropertyOldAbsPositionPoint:
-			{
-				p_rsvValue = m_svOldAbsPositionPoint;
-
-				break;
-			}
-			case SVExtentPropertyOldRotationPoint:
-			{
-				p_rsvValue = m_svOldRotationPoint;
-
-				break;
-			}
-			case SVExtentPropertyOldTranslationOffset:
-			{
-				p_rsvValue = m_svOldTranslationOffset;
 
 				break;
 			}
@@ -674,87 +438,6 @@ HRESULT SVExtentPositionClass::SetExtentProperty( SVExtentPropertyEnum p_eProper
 
 			l_hrOk = S_OK;
 		}
-
-		if ( ( p_eProperty & SVExtentPropertyOldRotationAngle ) != 0 )
-		{
-			m_dOldRotationAngle = p_dValue;
-
-			m_ulProperties |= SVExtentPropertyOldRotationAngle;
-
-			l_hrOk = S_OK;
-		}
-
-		if ( ( p_eProperty & SVExtentPropertyOldPositionPointX ) != 0 )
-		{
-			m_svOldPositionPoint.m_dPositionX = p_dValue;
-
-			m_ulProperties |= SVExtentPropertyOldPositionPointX;
-
-			l_hrOk = S_OK;
-		}
-
-		if ( ( p_eProperty & SVExtentPropertyOldPositionPointY ) != 0 )
-		{
-			m_svOldPositionPoint.m_dPositionY = p_dValue;
-
-			m_ulProperties |= SVExtentPropertyOldPositionPointY;
-
-			l_hrOk = S_OK;
-		}
-
-		if ( ( p_eProperty & SVExtentPropertyOldAbsPositionPointX ) != 0 )
-		{
-			m_svOldAbsPositionPoint.m_dPositionX = p_dValue;
-
-			m_ulProperties |= SVExtentPropertyOldAbsPositionPointX;
-
-			l_hrOk = S_OK;
-		}
-
-		if ( ( p_eProperty & SVExtentPropertyOldAbsPositionPointY ) != 0 )
-		{
-			m_svOldAbsPositionPoint.m_dPositionY = p_dValue;
-
-			m_ulProperties |= SVExtentPropertyOldAbsPositionPointY;
-
-			l_hrOk = S_OK;
-		}
-
-		if ( ( p_eProperty & SVExtentPropertyOldRotationPointX ) != 0 )
-		{
-			m_svOldRotationPoint.m_dPositionX = p_dValue;
-
-			m_ulProperties |= SVExtentPropertyOldRotationPointX;
-
-			l_hrOk = S_OK;
-		}
-
-		if ( ( p_eProperty & SVExtentPropertyOldRotationPointY ) != 0 )
-		{
-			m_svOldRotationPoint.m_dPositionY = p_dValue;
-
-			m_ulProperties |= SVExtentPropertyOldRotationPointY;
-
-			l_hrOk = S_OK;
-		}
-
-		if ( ( p_eProperty & SVExtentPropertyOldTranslationOffsetX ) != 0 )
-		{
-			m_svOldTranslationOffset.m_dPositionX = p_dValue;
-
-			m_ulProperties |= SVExtentPropertyOldTranslationOffsetX;
-
-			l_hrOk = S_OK;
-		}
-
-		if ( ( p_eProperty & SVExtentPropertyOldTranslationOffsetY ) != 0 )
-		{
-			m_svOldTranslationOffset.m_dPositionY = p_dValue;
-
-			m_ulProperties |= SVExtentPropertyOldTranslationOffsetY;
-
-			l_hrOk = S_OK;
-		}
 	} // if ( ( p_eProperty & ~SVExtentPropertyPositionsAll ) == 0 )
 
 
@@ -803,42 +486,6 @@ HRESULT SVExtentPositionClass::SetExtentProperty( SVExtentPropertyEnum p_eProper
 			m_svOutputPositionPoint.m_dPositionY = (long)(p_svValue.m_dPositionY);
 
 			m_ulProperties |= SVExtentPropertyOutputPositionPoint;
-
-			l_hrOk = S_OK;
-		}
-
-		if ( ( p_eProperty & SVExtentPropertyOldPositionPoint ) != 0 )
-		{
-			m_svOldPositionPoint = p_svValue;
-
-			m_ulProperties |= SVExtentPropertyOldPositionPoint;
-
-			l_hrOk = S_OK;
-		}
-
-		if ( ( p_eProperty & SVExtentPropertyOldAbsPositionPoint ) != 0 )
-		{
-			m_svOldAbsPositionPoint = p_svValue;
-
-			m_ulProperties |= SVExtentPropertyOldAbsPositionPoint;
-
-			l_hrOk = S_OK;
-		}
-
-		if ( ( p_eProperty & SVExtentPropertyOldTranslationOffset ) != 0 )
-		{
-			m_svOldTranslationOffset = p_svValue;
-
-			m_ulProperties |= SVExtentPropertyOldTranslationOffset;
-
-			l_hrOk = S_OK;
-		}
-
-		if ( ( p_eProperty & SVExtentPropertyOldRotationPoint ) != 0 )
-		{
-			m_svOldRotationPoint = p_svValue;
-
-			m_ulProperties |= SVExtentPropertyOldRotationPoint;
 
 			l_hrOk = S_OK;
 		}
