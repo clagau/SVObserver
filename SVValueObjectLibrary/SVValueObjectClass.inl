@@ -984,14 +984,14 @@ void SVValueObjectClass<T>::Initialize()
 template <typename T>
 HRESULT SVValueObjectClass<T>::SetVariantValue( const _variant_t& rValue, int Bucket, int Index )
 {
-	if(ValueType2Variant(m_DefaultValue).vt == rValue.vt || ValueType2Variant(m_Value).vt == VT_EMPTY )
+	if (VT_BSTR == rValue.vt)
+	{
+		SVString Value = SvUl_SF::createSVString(rValue);
+		return setValue(Value, Bucket, Index);
+	}
+	else if(ValueType2Variant(m_DefaultValue).vt == rValue.vt || ValueType2Variant(m_Value).vt == VT_EMPTY )
 	{
 		return SetValue( Variant2ValueType( rValue ), Bucket, Index );
-	}
-	else if( VT_BSTR == rValue.vt )
-	{
-		SVString Value = SvUl_SF::createSVString( rValue );
-		return setValue( Value, Bucket, Index );
 	}
 	assert(false);
 

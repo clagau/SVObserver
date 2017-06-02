@@ -268,32 +268,9 @@ This method executes the close object method on all objects that use this object
 */
 BOOL SVObjectClass::CloseObject()
 {
-	BOOL bResult = true;
+	m_isCreated = false;
 
-	SVAutoLockAndReleaseTemplate< SVOutObjectInfoStruct > AutoLock;
-
-	long lCount = static_cast<long>(m_outObjectInfo.GetInputSize());
-
-	if( 0 < lCount && AutoLock.Assign( &m_outObjectInfo ) )
-	{
-		for( int i = 0; i < lCount; ++ i )
-		{
-			SVInObjectInfoStruct& rUserInInfo = m_outObjectInfo.GetInputAt( i );
-			SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject( rUserInInfo.m_UniqueObjectID );
-			if( pObject && pObject->IsCreated() )
-			{
-				// Close only user of our output which are still not closed!
-				bResult = pObject->CloseObject() && bResult;
-			}
-		}
-	}
-
-	if( bResult )
-	{
-		m_isCreated = false;
-	}
-
-	return bResult;
+	return true;
 }
 
 /*

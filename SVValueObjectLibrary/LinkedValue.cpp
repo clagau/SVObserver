@@ -162,7 +162,8 @@ bool LinkedValue::UpdateConnection(SvStl::MessageContainerVector *pErrorMessages
 	//! Here we need the non linked value (SVGUID as string or constant value)
 	__super::GetValue( Value );
 
-	SVObjectReference LinkedObjectRef(SvUl_SF::createSVString(Value));
+	SVString guidAndIndexString = SvUl_SF::createSVString(Value);
+	SVObjectReference LinkedObjectRef(guidAndIndexString);
 	
 	//If valid GUID then should be able to get the linked value from the object manager
 	if( nullptr != LinkedObjectRef.getObject() )
@@ -174,29 +175,45 @@ bool LinkedValue::UpdateConnection(SvStl::MessageContainerVector *pErrorMessages
 		}
 	}
 	else
-	{	//this part is only for backward compatibility, because in older version the name was saved and not the GUID.
-		SVString ToolSetName;
-		SVString ObjectName;
-
-		ToolSetName = SvUl_SF::LoadSVString( IDS_CLASSNAME_SVTOOLSET );
-
-		//Default name
-		ObjectName = SvUl_SF::createSVString(Value);
-		//If the tool set name is at the start then add the inspection name at the beginning
-		if( 0 == ObjectName.find( ToolSetName ) )
+	{	
+		//Check if current value is a GUID, but not exist anymore. In this case it is probably an deleted object. Set this value to invalid.
+		SVString::size_type Pos = guidAndIndexString.find_first_of(_T("["));
+		SVString guidString = guidAndIndexString.substr(0, Pos);
+		if (SV_GUID_NULL != SVGUID(_bstr_t(guidString.c_str())))
 		{
-			SvOi::IObjectClass* pInspection = GetAncestorInterface( SVInspectionObjectType );
-			if( nullptr != pInspection )
+			Result = false;
+			if (nullptr != pErrorMessages)
 			{
-				ObjectName = pInspection->GetName();
-				ObjectName += _T(".");
-				ObjectName += SvUl_SF::createSVString(Value);
+				SvStl::MessageContainer Msg(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_ConnectInputFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+				pErrorMessages->push_back(Msg);
 			}
 		}
-		if( S_OK == SVObjectManagerClass::Instance().GetObjectByDottedName( ObjectName, LinkedObjectRef) && nullptr != LinkedObjectRef.getObject() )
+		else
 		{
-			ConvertDottedName = true;
-		}
+			//this part is only for backward compatibility, because in older version the name was saved and not the GUID.
+			SVString ToolSetName;
+			SVString ObjectName;
+
+			ToolSetName = SvUl_SF::LoadSVString(IDS_CLASSNAME_SVTOOLSET);
+
+			//Default name
+			ObjectName = SvUl_SF::createSVString(Value);
+			//If the tool set name is at the start then add the inspection name at the beginning
+			if (0 == ObjectName.find(ToolSetName))
+			{
+				SvOi::IObjectClass* pInspection = GetAncestorInterface(SVInspectionObjectType);
+				if (nullptr != pInspection)
+				{
+					ObjectName = pInspection->GetName();
+					ObjectName += _T(".");
+					ObjectName += SvUl_SF::createSVString(Value);
+				}
+			}
+			if (S_OK == SVObjectManagerClass::Instance().GetObjectByDottedName(ObjectName, LinkedObjectRef) && nullptr != LinkedObjectRef.getObject())
+			{
+				ConvertDottedName = true;
+			}
+		}		
 	}
 	if ( nullptr != LinkedObjectRef.getObject())	// input is another VO
 	{
@@ -246,7 +263,10 @@ bool LinkedValue::UpdateConnection(SvStl::MessageContainerVector *pErrorMessages
 			}
 		}
 	}
-	UpdateLinkedName();
+	if (Result)
+	{
+		UpdateLinkedName();
+	}
 
 	return Result;
 }

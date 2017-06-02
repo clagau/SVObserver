@@ -476,6 +476,9 @@ HRESULT SVExternalToolTask::Initialize(	SVDllLoadLibraryCallback fnNotify )
 			for ( i = 0 ; i < m_Data.m_lNumInputValues ; i++)
 			{
 				LinkedValue& rInputValue = m_Data.m_aInputObjects[i];
+				//The linkedValues must be reset (to set the object reference correctly), before used them for get values (in InspectionInputsToVariantArray). 
+				//But this method will called also in Create-process and there is not a reset called before.
+				rInputValue.resetAllObjects();
 				if( rInputValue.GetDefaultType() == VT_EMPTY )
 				{
 					rInputValue.SetDefaultValue(paInputValueDefs[i].m_DefaultValue, TRUE);
