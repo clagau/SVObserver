@@ -18,6 +18,7 @@
 #include "CameraLibrary\SVBoolValueDeviceParam.h"
 #include "CameraLibrary\SVLongValueDeviceParam.h"
 #include "CameraLibrary\SVStringValueDeviceParam.h"
+#include "SVRunControlLibrary/SVRunControlLibrary.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -347,6 +348,11 @@ HRESULT BasicValueObject::updateDeviceParameter(SVDeviceParam* pDeviceParam)
 		break;
 	}
 	return Status;
+}
+
+DWORD BasicValueObject::GetObjectColor() const
+{
+	return SV_DEFAULT_WHITE_COLOR;
 }
 #pragma endregion Public Methods
 

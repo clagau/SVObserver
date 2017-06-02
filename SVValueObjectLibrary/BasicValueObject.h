@@ -199,7 +199,9 @@ public:
 	//! \returns The objects description
 	//************************************
 	inline LPCTSTR getDescription();
-	#pragma endregion Public Methods
+
+	virtual DWORD GetObjectColor() const override;
+#pragma endregion Public Methods
 
 private:
 #pragma region Private Methods

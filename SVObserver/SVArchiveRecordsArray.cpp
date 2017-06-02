@@ -325,7 +325,7 @@ SVString SVArchiveRecordsArray::BuildResultsArchiveString()
 		if ( nullptr != pValueObject )
 		{
 			SVString Temp;
-			HRESULT hr = pValueObject->getValue( Temp );
+			HRESULT hr = pValueObject->getValue( Temp, -1, pResultRecord->m_svObjectReference.ArrayIndex());
 			if ( S_OK == hr || SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE == hr )
 			{
 				if ( bFirst )
