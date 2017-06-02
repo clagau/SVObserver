@@ -1015,7 +1015,7 @@ HRESULT SVObjectClass::GetChildObject( SVObjectClass*& rpObject, const SVObjectN
 /*
 This method returns the allowed attributes of this object.
 */
-const UINT& SVObjectClass::ObjectAttributesAllowed() const
+UINT SVObjectClass::ObjectAttributesAllowed() const
 {
 	return m_ObjectAttributesAllowed;
 }
@@ -1023,7 +1023,7 @@ const UINT& SVObjectClass::ObjectAttributesAllowed() const
 /*
 This method returns a reference to the allowed attributes of this object.
 */
-const UINT& SVObjectClass::SetObjectAttributesAllowed( UINT Attributes, SvOi::SetAttributeType Type )
+UINT SVObjectClass::SetObjectAttributesAllowed( UINT Attributes, SvOi::SetAttributeType Type )
 {
 	switch( Type )
 	{
@@ -1043,31 +1043,47 @@ const UINT& SVObjectClass::SetObjectAttributesAllowed( UINT Attributes, SvOi::Se
 /*
 This method returns the set attributes of this object.
 */
-const UINT& SVObjectClass::ObjectAttributesSet(int iIndex) const
+UINT SVObjectClass::ObjectAttributesSet(int iIndex) const
 {
-	return m_ObjectAttributesSet.at(iIndex);
+	if (static_cast<int> (m_ObjectAttributesSet.size()) > iIndex)
+	{
+		return m_ObjectAttributesSet.at(iIndex);
+	}
+	else
+	{
+		assert(false);
+		return 0;
+	}
 }
 
 /*
 This method sets attributes of this object.
 */
-const UINT& SVObjectClass::SetObjectAttributesSet( UINT Attributes, SvOi::SetAttributeType Type, int Index )
+UINT SVObjectClass::SetObjectAttributesSet(UINT Attributes, SvOi::SetAttributeType Type, int Index)
 {
-	assert( static_cast<int> (m_ObjectAttributesSet.size()) > Index );
-	UINT& rAttributesSet = m_ObjectAttributesSet.at(Index);
-	switch( Type )
+	if (static_cast<int> (m_ObjectAttributesSet.size()) > Index)
 	{
-	case SvOi::SetAttributeType::AddAttribute:
-		rAttributesSet |= Attributes;
-		break;
-	case SvOi::SetAttributeType::RemoveAttribute:
-		rAttributesSet &= ~Attributes;
-		break;
-	case SvOi::SetAttributeType::OverwriteAttribute:
-		rAttributesSet = Attributes;
-		break;
+
+		UINT& rAttributesSet = m_ObjectAttributesSet.at(Index);
+		switch (Type)
+		{
+		case SvOi::SetAttributeType::AddAttribute:
+			rAttributesSet |= Attributes;
+			break;
+		case SvOi::SetAttributeType::RemoveAttribute:
+			rAttributesSet &= ~Attributes;
+			break;
+		case SvOi::SetAttributeType::OverwriteAttribute:
+			rAttributesSet = Attributes;
+			break;
+		}
+		return rAttributesSet;
 	}
-	return rAttributesSet;
+	else
+	{
+		assert(false);
+		return 0;
+	}
 }
 
 /*

@@ -698,14 +698,14 @@ bool SVValueObjectClass<T>::CompareWithCurrentValue( const SVString& rCompare ) 
 
 #pragma region  virtual method
 template <typename T>
-const UINT& SVValueObjectClass<T>::SetObjectAttributesSet( UINT Attributes, SvOi::SetAttributeType Type, int Index )
+UINT SVValueObjectClass<T>::SetObjectAttributesSet( UINT Attributes, SvOi::SetAttributeType Type, int Index )
 {
-	const UINT& rNewAttribute = __super::SetObjectAttributesSet( Attributes, Type, Index );
+	UINT newAttribute = __super::SetObjectAttributesSet( Attributes, Type, Index );
 
 	const UINT cBucketizedAttributes = SvOi::SV_PUBLISHABLE;
 	if (0 != (cBucketizedAttributes & Attributes))
 	{
-		if (0 != (cBucketizedAttributes & rNewAttribute))
+		if (0 != (cBucketizedAttributes & newAttribute))
 		{
 			setBucketized(true);
 		}
@@ -717,7 +717,7 @@ const UINT& SVValueObjectClass<T>::SetObjectAttributesSet( UINT Attributes, SvOi
 		//! We need to reset the object to create or delete the buckets
 		ResetObject();
 	}
-	return rNewAttribute;
+	return newAttribute;
 }
 
 template <typename T>

@@ -236,28 +236,56 @@ const SVString& SVObjectReference::GetIndex() const
 	return m_NameInfo.GetIndex();
 }
 
-const UINT& SVObjectReference::ObjectAttributesAllowed() const
+UINT SVObjectReference::ObjectAttributesAllowed() const
 {
 	assert( nullptr != m_pObject );
-	return m_pObject->ObjectAttributesAllowed();
+	if (nullptr != m_pObject)
+	{
+		return m_pObject->ObjectAttributesAllowed();
+	}
+	else
+	{
+		return 0;
+	}
 }
 
-const UINT& SVObjectReference::ObjectAttributesSet() const
+UINT SVObjectReference::ObjectAttributesSet() const
 {
 	assert( nullptr != m_pObject );
-	return m_pObject->ObjectAttributesSet(m_ArrayIndex >= 0 ? m_ArrayIndex : 0  );
+	if (nullptr != m_pObject)
+	{
+		return m_pObject->ObjectAttributesSet(m_ArrayIndex >= 0 ? m_ArrayIndex : 0);
+	}
+	else
+	{
+		return 0;
+	}
 }
 
-const UINT& SVObjectReference::SetObjectAttributesAllowed( UINT Attributes, SvOi::SetAttributeType Type )
+UINT SVObjectReference::SetObjectAttributesAllowed( UINT Attributes, SvOi::SetAttributeType Type )
 {
 	assert( nullptr != m_pObject );
-	return m_pObject->SetObjectAttributesAllowed( Attributes, Type );
+	if (nullptr != m_pObject)
+	{
+		return m_pObject->SetObjectAttributesAllowed(Attributes, Type);
+	}
+	else
+	{
+		return 0;
+	}
 }
 
-const UINT& SVObjectReference::SetObjectAttributesSet( UINT Attributes, SvOi::SetAttributeType Type )
+UINT SVObjectReference::SetObjectAttributesSet( UINT Attributes, SvOi::SetAttributeType Type )
 {
 	assert( nullptr != m_pObject );
-	return m_pObject->SetObjectAttributesSet( Attributes, Type,  m_ArrayIndex >= 0 ? m_ArrayIndex : 0 );
+	if (nullptr != m_pObject)
+	{
+		return m_pObject->SetObjectAttributesSet(Attributes, Type, m_ArrayIndex >= 0 ? m_ArrayIndex : 0);
+	}
+	else
+	{
+		return 0;
+	}
 }
 
 long SVObjectReference::IncrementIndex()
