@@ -81,11 +81,6 @@ void SVResultListClass::Refresh(SVTaskObjectClass* pRootObject)
 	m_ResultViewReferences.RebuildReferenceVector(dynamic_cast<SVInspectionProcess*>(m_pToolSet->GetInspection()));
 }
 
-SvTl::SVTimeStamp SVResultListClass::getUpdateTimeStamp()
-{
-	return m_ResultViewReferences.getUpdateTimeStamp();
-}
-
 void SVResultListClass::Save(SVObjectWriter& rWriter)
 {
 	m_ResultViewReferences.Save(rWriter);
@@ -135,9 +130,10 @@ void SVResultListClass::RebuildReferenceVector(SVInspectionProcess* pInspection 
 	return m_ResultViewReferences.RebuildReferenceVector(pInspection);
 }
 
-HRESULT  SVResultListClass::GetResultData( SVIPResultData& p_rResultData) const
+void  SVResultListClass::GetResultData( SVIPResultData& p_rResultData) const
 {
-	return m_ResultViewReferences.GetResultData( p_rResultData);
+	m_ResultViewReferences.GetResultData( p_rResultData);
+	m_ResultViewReferences.GetResultTableData(p_rResultData);
 }
 
 HRESULT SVResultListClass::GetResultDefinitions( ResultViewReferences::SVResultDefinitionDeque& rDefinitions )  const

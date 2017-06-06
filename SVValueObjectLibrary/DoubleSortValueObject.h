@@ -40,7 +40,7 @@ public:
 	virtual HRESULT CopyValue(int iSourceBucket, int iDestBucket) override;
 	virtual HRESULT SetValue( const double& rValue, int Bucket, int Index ) override;
 	virtual HRESULT GetValue( double& rValue, int Bucket, int Index ) const override;
-	virtual HRESULT getValues( std::vector<_variant_t>&  rValues, int Bucket ) const override;
+	virtual HRESULT getValues( std::vector<_variant_t>&  rValues, int Bucket = -1 ) const override;
 #pragma endregion Public Methods
 
 #pragma region Protected Methods

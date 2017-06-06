@@ -41,8 +41,7 @@ class CSVRegressionRunDlg;
 class CSVRegressionFileSelectSheet;
 class SVImageViewClass;
 class ToolSetView;
-class SVResultViewClass;
-class SVResultsWrapperClass;
+class ResultTabbedView;
 class SVObjectWriter;
 #pragma endregion Declarations
 
@@ -53,8 +52,6 @@ class SVIPDoc : public CDocument
 	friend class SVDisplayObject;
 	friend class SVImageViewClass;
 	friend class SVIPSplitterFrame;
-	friend class SVResultViewClass;
-	friend class ToolSetView;
 
 public:
 	enum SVIPViewUpdateHints
@@ -104,7 +101,6 @@ public:
 	HRESULT RemoveImage(const SVGUID& p_rImageId);
 
 	void RefreshPublishedList();
-	HRESULT GetResults( SVResultsWrapperClass* p_pResults );
 
 	HRESULT GetCameras( SVVirtualCameraPtrSet& p_rCameras ) const;
 
@@ -170,6 +166,7 @@ public:
 	afx_msg void OnAddStatisticsTool();
 	afx_msg void OnEditToolSetCondition();
 	afx_msg void OnResultsPicker();
+	afx_msg void OnResultsTablePicker();
 	afx_msg void OnPublishedResultsPicker();
 	afx_msg void OnAddLoadImageTool();
 	afx_msg void RunRegressionTest();
@@ -229,6 +226,14 @@ public:
 	virtual CFile* GetFile( LPCTSTR lpszFileName, UINT nOpenFlags, CFileException* pError ) override;
 	virtual void SetModifiedFlag(BOOL bModified = TRUE) override;
 
+	typedef std::deque< SVIPResultItemDefinition > SVResultDefinitionDeque;
+	HRESULT GetResultDefinitions(SVResultDefinitionDeque& p_rDefinitions) const;
+	HRESULT GetResultData(SVIPResultData& p_rResultData) const;
+
+	HRESULT IsToolSetListUpdated() const;
+	ToolSetView* GetToolSetView() const;
+	SVToolSetClass* GetToolSet() const;
+
 protected:
 	virtual BOOL SaveModified() override;
 	//}}AFX_VIRTUAL
@@ -247,7 +252,6 @@ protected:
 	typedef std::set< SVImageViewClass* > SVImageViewPtrSet;
 	typedef std::map< SVGUID, SVImageViewPtrSet > SVMasterImageRegisterMap;
 	typedef std::map< SVImageViewClass*, SVImageViewStatusStruct > SVImageViewPtrImageViewStatusMap;
-	typedef std::deque< SVIPResultItemDefinition > SVResultDefinitionDeque;
 
 	typedef SVRingBuffer< SVIPProductStruct, SVElementClear > SVProductDataQueue;
 
@@ -273,10 +277,8 @@ protected:
 	bool AddToolGrouping(bool bStartGroup = true);
 
 	CView* getView() const;
-	ToolSetView* GetToolSetView() const;
 	SVImageViewClass* GetImageView( int p_Index = 0 );
-	SVResultViewClass* GetResultView();
-	SVToolSetClass* GetToolSet() const;
+	ResultTabbedView* GetResultView();
 	SVConditionalClass* GetToolSetCondition();
 	SVInspectionProcess* GetInspectionProcess() const;
 	SVResultListClass* GetResultList() const;
@@ -306,16 +308,6 @@ protected:
 	HRESULT UpdateExtentsToFit( SVTaskObjectClass* p_pTask, const SVImageExtentClass& p_rExtents );
 	SVImageClass* GetImageByName( LPCTSTR ImageName ) const;
 
-	//************************************
-	//! return true if the last  values from GetResultDefinitions are not longer valid. 
-	//! \returns bool
-	//************************************
-	bool  IsResultDefinitionsOutdated() const;
-	HRESULT GetResultDefinitions( SVResultDefinitionDeque& p_rDefinitions ) const;
-	HRESULT GetResultData( SVIPResultData& p_rResultData ) const;
-
-	HRESULT IsToolSetListUpdated() const;
-
 	BOOL checkOkToDelete( SVTaskObjectClass* pTaskObject );
 
 	mutable SvTl::SVTimeStamp m_ToolSetListTimestamp;
@@ -340,7 +332,6 @@ private:
 #pragma region Private Methods
 	void init();
 	void InitMenu();
-	void InitializeDirectX();
 
 	void ClearRegressionTestStructures();
 

@@ -89,7 +89,6 @@ bool TableCopyObject::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 				
 				//Object must be deleted, before SetDefaultInputs is called.
 				pValueObject.reset();
-				dynamic_cast<SVInspectionProcess*>(GetInspection())->SetDefaultInputs();
 			}
 		}
 		
@@ -126,7 +125,6 @@ bool TableCopyObject::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 			m_ValueList.pop_back();
 			RemoveEmbeddedObject(pObject.get());
 		}
-		dynamic_cast<SVInspectionProcess*>(GetInspection())->SetDefaultInputs();
 	}
 
 	return TableObject::ResetObject(pErrorMessages);

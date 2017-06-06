@@ -22,7 +22,6 @@
 
 #pragma region Declarations
 class SVResultClass;
-class SVResultViewClass;
 class SVTaskObjectClass;
 class SVToolSetClass;
 
@@ -49,9 +48,11 @@ public:
 	// Description:  Build SVIPResultData from the reference vector.  (Get the values of the variables.)
 	// Parameter:  rResultData <out>:  object containing data from the class's variables.
 	// Parameter:  getColor <in>:  true (default) if the color for the item in the result view should be fetched.
-	// Returns: S_OK if no error occurs   
 	//************************************
-	HRESULT  GetResultData( SVIPResultData& p_rResultData) const;
+	void  GetResultData( SVIPResultData& p_rResultData) const;
+
+	const SVGUID& getTableGuid() const { return m_ResultViewReferences.getTableGuid(); }
+	void setTableGuid(const SVGUID& guid) { m_ResultViewReferences.setTableGuid(guid); }
 
 	//************************************
 	//! Description:  Rebuild the reference vector from the list of GUIDs.
@@ -73,7 +74,6 @@ public:
 	
 	const SVObjectReferenceVector& GetSelectedObjects() const;
 	bool Insert(const SVString& rDottedName);
-	SvTl::SVTimeStamp getUpdateTimeStamp();
 	void Save(SVObjectWriter& rWriter);
 
 #pragma endregion Public Methods

@@ -47,7 +47,7 @@ namespace SvMc
 		if (!GetCount())
 		{
 			AddString(rEmptyListText.c_str());
-			SetCurSel(-1);
+			SetCurSel(0);
 		}
 		else
 		{

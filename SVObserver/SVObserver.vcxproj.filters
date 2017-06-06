@@ -551,9 +551,6 @@
     <ClCompile Include="SVResultString.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVResultView.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVROIFigureEditor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -903,6 +900,15 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVGlobal.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ResultTabbedView.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ResultTableListCtrl.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="ResultListCtrl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1467,9 +1473,6 @@
     <ClInclude Include="SVResultString.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVResultView.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVROIFigureEditor.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1837,6 +1840,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVGlobal.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ResultTabbedView.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ResultTableListCtrl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="ResultListCtrl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

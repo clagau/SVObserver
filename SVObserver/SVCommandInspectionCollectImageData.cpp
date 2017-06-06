@@ -154,9 +154,9 @@ HRESULT SVCommandInspectionCollectImageData::UpdateResults( SVInspectionProcess*
 
 
 	if (nullptr != pResultList)
-	{
-		
-		hRet = pResultList->GetResultData(p_rResultData);
+	{		
+		pResultList->GetResultData(p_rResultData);
+		hRet = S_OK;
 	} 
 
 

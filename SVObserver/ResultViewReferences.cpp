@@ -27,6 +27,8 @@
 ResultViewReferences::ResultViewReferences(LPCTSTR tagname)
 	: m_LastUpdateTimeStamp(0),
 	  m_TagName(tagname)
+	, m_resultTableGuid( SV_GUID_NULL )
+	, m_resultTable(nullptr)
 {
 }
 
@@ -36,11 +38,6 @@ ResultViewReferences::~ResultViewReferences()
 	m_ReferenceVector.clear();
 }
 #pragma endregion Constructor
-
-SvTl::SVTimeStamp ResultViewReferences::getUpdateTimeStamp()
-{
-	return m_LastUpdateTimeStamp;
-}
 
 bool ResultViewReferences::IsViewable(const SVObjectReference& objectRef) const
 {
@@ -74,24 +71,44 @@ bool ResultViewReferences::LoadResultViewItemDef( SVTreeType& rTree, SVTreeType:
 {
 	SVString Name( rTree.getLeafName( htiLeaf ) );
 
-	bool bOK = ( 0 == Name.compare( SvXml::CTAG_COMPLETENAME ) );
-
 	_variant_t Value;
 	rTree.getLeafData( htiLeaf, Value );
-	bOK = bOK && ( VT_EMPTY != Value.vt);
+	bool bOK = ( VT_EMPTY != Value.vt);
 	if ( bOK )
 	{
-		SVObjectReference objRef;
-		SVString dottedName = SvUl_SF::createSVString( Value );
-		bOK = (S_OK == SVObjectManagerClass::Instance().GetObjectByDottedName( dottedName, objRef ));
-		if ( bOK && objRef.getObject() )
+		if (0 == Name.compare(SvXml::CTAG_COMPLETENAME))
 		{
-			if (IsViewable(objRef))
+			SVObjectReference objRef;
+			SVString dottedName = SvUl_SF::createSVString(Value);
+			bOK = (S_OK == SVObjectManagerClass::Instance().GetObjectByDottedName(dottedName, objRef));
+			if (bOK && objRef.getObject())
 			{
-				ResultViewItemDef itemDef(objRef);
-				m_ResultViewItemDefList.push_back(itemDef);
-				m_ReferenceVector.push_back(objRef);
+				if (IsViewable(objRef))
+				{
+					ResultViewItemDef itemDef(objRef);
+					m_ResultViewItemDefList.push_back(itemDef);
+					m_ReferenceVector.push_back(objRef);
+				}
 			}
+		}
+		else if (0 == Name.compare(SvXml::CTAG_VIEWEDTABLE))
+		{
+			SVObjectReference objRef;
+			SVGUID tableGuid(Value);
+			TableObject* table = dynamic_cast<TableObject*>(SVObjectManagerClass::Instance().GetObject(Value));
+			if (nullptr != table)
+			{
+				m_resultTableGuid = tableGuid;
+				m_resultTable = table;
+			}
+			else
+			{
+				bOK = false;
+			}
+		}
+		else
+		{
+			bOK = false;
 		}
 	}
 	return bOK;
@@ -124,6 +141,12 @@ bool ResultViewReferences::Save(SVObjectWriter& rWriter)
 			Value.SetString( it->GetCompleteOneBasedObjectName().c_str() );
 			rWriter.WriteAttribute(SvXml::CTAG_COMPLETENAME, Value);
 		}
+	}
+	if (SV_GUID_NULL != m_resultTableGuid)
+	{
+		_variant_t Value;
+		Value.SetString(m_resultTableGuid.ToBSTR());
+		rWriter.WriteAttribute(SvXml::CTAG_VIEWEDTABLE, Value);
 	}
 	rWriter.EndElement();
 	return true;
@@ -176,10 +199,13 @@ void ResultViewReferences::RebuildReferenceVector( SVInspectionProcess* pIProces
 			it = m_ResultViewItemDefList.erase(eit);
 		}
 	}
+
+	m_resultTable = dynamic_cast<TableObject*>(SVObjectManagerClass::Instance().GetObject(m_resultTableGuid));
+
 	m_LastUpdateTimeStamp = SvTl::GetTimeStamp();
 }
 
-HRESULT  ResultViewReferences::GetResultData( SVIPResultData& p_rResultData) const
+void  ResultViewReferences::GetResultData( SVIPResultData& p_rResultData) const
 {
 	std::vector<SVObjectReference>::const_iterator it = m_ReferenceVector.begin();
 	for( ; it != m_ReferenceVector.end(); ++it)
@@ -239,11 +265,31 @@ HRESULT  ResultViewReferences::GetResultData( SVIPResultData& p_rResultData) con
 		}
 
 		p_rResultData.m_ResultData[ itemDef ] = SVIPResultItemData( Value, Color );
-
+		p_rResultData.m_LastDefinitionUpdateTimeStamp = m_LastUpdateTimeStamp;
 	}
-
-	return S_OK;
 }
+
+
+void ResultViewReferences::GetResultTableData(SVIPResultData &p_rResultData) const
+{
+	if (nullptr != m_resultTable)
+	{
+		const std::vector<DoubleSortValuePtr>& valueList = m_resultTable->getValueList();
+		for (DoubleSortValuePtr valuePtr : valueList)
+		{
+			DoubleSortValueObject* valueObject = valuePtr.get();
+			if (nullptr != valueObject)
+			{
+				IPResultTableData data = IPResultTableData();
+				data.m_columnName = valueObject->GetName();
+				valueObject->getValues(data.m_rowData);
+				p_rResultData.m_ResultTableData.push_back(data);
+			}
+		}
+		p_rResultData.m_LastDefinitionUpdateTimeStamp = m_LastUpdateTimeStamp;
+	}
+}
+
 
 HRESULT  ResultViewReferences::GetResultDefinitions( SVResultDefinitionDeque &rDefinitions ) const
 {
@@ -333,6 +379,3 @@ void ResultViewReferences::InsertFromPPQInputs(SVInspectionProcess* pInspection)
 	}
 	m_LastUpdateTimeStamp = SvTl::GetTimeStamp();
 }
-
-
-

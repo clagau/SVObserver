@@ -183,6 +183,7 @@ namespace  SvXml
 	LPCTSTR const CTAG_VIEWEDRESULTS				= _T("ViewedResults");
 	LPCTSTR const CTAG_VIEWEDPPQINPUTS                = _T("ViewedPPQInputs");
 	LPCTSTR const CTAG_COMPLETENAME                   = _T("CompleteName"); 
+	LPCTSTR const CTAG_VIEWEDTABLE					= _T("ViewedTable");
 
 	LPCTSTR const CTAG_GLOBAL_CONSTANTS               = _T("GlobalConstants");
 

@@ -14,10 +14,10 @@
 #include "SVIPChildFrm.h"
 #include "ObjectInterfaces/GlobalConst.h"
 #include "SVIPDoc.h"
-#include "SVResultView.h"
 #include "ToolSetView.h"
 #include "ObjectInterfaces/SVUserMessage.h"
 #include "SVMainFrm.h"
+#include "ResultTabbedView.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -308,7 +308,7 @@ BOOL SVIPSplitterFrame::OnCreateClient( LPCREATESTRUCT lpcs, CCreateContext* PCo
 	//
 	// SVResultViewClass view window
 	//
-	if( !m_oWndSplitter1.CreateView( 1, 0, RUNTIME_CLASS( SVResultViewClass ), 
+	if( !m_oWndSplitter1.CreateView( 1, 0, RUNTIME_CLASS( ResultTabbedView ),
 									CSize( SvOi::cDefaultResultViewWidth, SvOi::cDefaultResultViewHeight ), 
 									PContext ) )
 	{

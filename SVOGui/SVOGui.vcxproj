@@ -125,6 +125,7 @@
     <ClCompile Include="PictureDisplay.cpp" />
     <ClCompile Include="RangeController.cpp" />
     <ClCompile Include="RangeValidator.cpp" />
+    <ClCompile Include="ResultTableSelectionDlg.cpp" />
     <ClCompile Include="StdAfx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -177,6 +178,7 @@
     <ClInclude Include="PPQSelector.h" />
     <ClInclude Include="RangeController.h" />
     <ClInclude Include="RangeValidator.h" />
+    <ClInclude Include="ResultTableSelectionDlg.h" />
     <ClInclude Include="SciLexer.h" />
     <ClInclude Include="Scintilla.h" />
     <ClInclude Include="Sci_Position.h" />

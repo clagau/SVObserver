@@ -37,7 +37,6 @@
 #include "SVInfoStructs.h"
 #include "SVIPDoc.h"
 #include "SVRemoteCommand.h"
-#include "SVResultView.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
 #include "SVToolSet.h"
 #include "SVOCore/SVImageBuffer.h"	//SVImageOverlayClass

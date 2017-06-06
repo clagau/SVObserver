@@ -17,22 +17,30 @@
 #include "SVIPResultItemDefinition.h"
 #pragma endregion Includes
 
+struct IPResultTableData
+{
+	SVString m_columnName;
+	std::vector<_variant_t> m_rowData;
+};
+
 struct SVIPResultData
 {
 	typedef std::map< SVIPResultItemDefinition, SVIPResultItemData > SVResultDataMap;
 
 	SVIPResultData();
-	SVIPResultData( const SVResultDataMap& p_rResultData, double p_ToolSetEndTime, double p_ToolSetAvgTime, double p_TriggerDistance, double p_ToolSetTime );
+	SVIPResultData( const SVResultDataMap& p_rResultData, const std::vector <IPResultTableData>& rResultTableData, double p_ToolSetEndTime, double p_ToolSetAvgTime, double p_TriggerDistance, double p_ToolSetTime );
 	SVIPResultData( const SVIPResultData& p_rObject );
 
 	void clear();
 
 	SVResultDataMap m_ResultData;
+	std::vector <IPResultTableData> m_ResultTableData;
 
 	double m_ToolSetEndTime;
 	double m_ToolSetAvgTime;
 
 	double m_TriggerDistance;
 	double m_ToolSetTime;
+	double m_LastDefinitionUpdateTimeStamp;
 };
 

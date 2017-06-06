@@ -70,6 +70,7 @@ bool TableObject::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 		(*iter)->setSortContainer(m_sortContainer);
 	}
 	m_NumberOfRows.SetValue(0L, 0);
+	dynamic_cast<SVInspectionProcess*>(GetInspection())->SetDefaultInputs();
 
 	return Result;
 }

@@ -62,6 +62,12 @@
 //! Precompiled headers section
 //************************************
 #pragma region Precompiled Headers
+#include <algorithm>
+namespace Gdiplus
+{
+	using std::min;
+	using std::max;
+}
 #include <afx.h>
 #include <afxwin.h>         // MFC-Kern- und -Standardkomponenten
 #include <afxctl.h>
@@ -71,6 +77,7 @@
 #include <afxodlgs.h>       // MFC OLE-Dialogfeldklassen
 #include <afxdisp.h>        // MFC OLE-Automatisierungsklassen
 #include <afxcview.h>		// MFC CListView Support
+#include <afxtabview.h>
 #include <afxtempl.h>		// MFC Templates
 #include <afxmt.h>
 #include <afxcoll.h>
@@ -80,7 +87,6 @@
 #include <atltypes.h>
 //#include <afxdialogex.h>
 
-#include <algorithm>
 #include <array>
 #include <functional>
 #include <assert.h>

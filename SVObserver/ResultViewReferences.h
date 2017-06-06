@@ -18,12 +18,12 @@
 #include "SVTimerLibrary/SVClock.h"
 #include "SVUtilityLibrary/SVString.h"
 #include "SVOCore/ResultViewItemDef.h"
+#include "TableObject.h"
 #pragma endregion Includes
 
 #pragma region Declarations
 struct SVIPResultData;
 class SVIPResultItemDefinition;
-class SVResultsWrapperClass;
 class SVInspectionProcess;
 #pragma endregion Declarations
 
@@ -82,15 +82,19 @@ public:
 	//************************************
 	HRESULT GetResultDefinitions( SVResultDefinitionDeque& rDefinitions ) const; 
 
+	const SVGUID& getTableGuid() const { return m_resultTableGuid; }
+	void setTableGuid(const SVGUID& guid) { m_resultTableGuid = guid; }
+
 	//************************************
 	// Description:  Build SVIPResultData from the reference vector.  (Get the values of the variables.)
 	// Parameter:  rResultData <out>:  object containing data from the class's variables.
 	// Parameter:  getColor <in>:  true (default) if the color for the item in the result view should be fetched.
-	// Returns: S_OK if no error occurs   
 	//************************************
-	HRESULT GetResultData( SVIPResultData& rResultData) const; 
+	void GetResultData( SVIPResultData& rResultData) const; 
 
-	
+	/// Fill the table data to the result data.
+	/// \param p_rResultData [in,out]
+	void GetResultTableData(SVIPResultData &p_rResultData) const;	
 
 	//************************************
 	// Description:  Clears the lists.
@@ -109,12 +113,6 @@ public:
 	// Returns:  true if successful
 	//************************************
 	bool Insert( const SVString& rDottedName );
-
-	//************************************
-	// Description:  Gets the value of the member variable m_LastUpdateTimeStamp
-	// Returns:  SvTl::SVTimeStamp:  the value of the member variable m_LastUpdateTimeStamp
-	//************************************
-	SvTl::SVTimeStamp getUpdateTimeStamp();
 
 	//************************************
 	/// Check if the Object is Viewable
@@ -154,6 +152,8 @@ protected:
 
 #pragma region Member Variables
 	SVString m_TagName; // Branch name in the config file
+	SVGUID m_resultTableGuid; //The Guid of the table to display in result table view (if no table should displayed it is set to SV_GUID_NULL)
+	TableObject* m_resultTable;
 	SVObjectReferenceVector m_ReferenceVector;
 	std::list<ResultViewItemDef> m_ResultViewItemDefList;
 	SvTl::SVTimeStamp m_LastUpdateTimeStamp; // Most recent time when m_ReferenceVector changed.

@@ -39,8 +39,7 @@
 #include "SVToolSet.h"
 #include "SVToolSetAdjustmentDialogSheet.h"
 #include "ToolSetView.h"
-#include "SVResultView.h"
-//#include "SVResultsWrapperClass.h"
+#include "ResultTabbedView.h"
 #include "SVOCore/SVTool.h"
 #include "SVOGui\SVSaveToolSetImageDialog.h"
 #include "SVOGui\SVShowDependentsDialog.h"
@@ -98,6 +97,9 @@
 #include "SVOGui/ToolSetItemSelector.h"
 #include "TableTool.h"
 #include "TableAnalyzerTool.h"
+#include "SVOGui/ResultTableSelectionDlg.h"
+#include "GuiCommands/GetAvailableObjects.h"
+#include "SVOGui/TextDefinesSvOg.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -114,7 +116,7 @@ union SVViewUnion
 	SVImageViewScroll *pImageScroll;
 	SVImageViewClass *pImageView;
 	ToolSetView *pToolSetView;
-	SVResultViewClass *pResultView;
+	ResultTabbedView *pResultView;
 };
 
 static const int MaxImageViews = 8;
@@ -147,6 +149,7 @@ BEGIN_MESSAGE_MAP(SVIPDoc, CDocument)
 	ON_COMMAND(ID_ADD_STATISTICSTOOL,OnAddStatisticsTool)
 	ON_COMMAND(ID_EDIT_EDITTOOLSETCONDITION, OnEditToolSetCondition)
 	ON_COMMAND(ID_RESULTS_PICKER, OnResultsPicker)
+	ON_COMMAND(ID_RESULTS_TABLE_PICKER, OnResultsTablePicker)
 	ON_COMMAND(ID_PUBLISHED_RESULTS_PICKER, OnPublishedResultsPicker)
 	ON_COMMAND(ID_PUBLISHED_RESULT_IMAGES_PICKER, OnPublishedResultImagesPicker)
 	ON_COMMAND(ID_ADD_LOADIMAGETOOL, OnAddLoadImageTool)
@@ -593,14 +596,14 @@ SVImageViewClass* SVIPDoc::GetImageView( int p_Index )
 	return pReturnView;
 }
 
-SVResultViewClass* SVIPDoc::GetResultView()
+ResultTabbedView* SVIPDoc::GetResultView()
 {
-	SVResultViewClass* pView( nullptr );
+	ResultTabbedView* pView( nullptr );
 	POSITION pos( GetFirstViewPosition() );
 
 	while( nullptr == pView && nullptr != pos )
 	{
-		pView = dynamic_cast<SVResultViewClass*>(GetNextView( pos ));
+		pView = dynamic_cast<ResultTabbedView*>(GetNextView( pos ));
 	}
 
 	return pView;
@@ -1580,6 +1583,51 @@ void SVIPDoc::OnResultsPicker()
 	SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
 }
 
+void SVIPDoc::OnResultsTablePicker()
+{
+	SVSVIMStateClass::AddState(SV_STATE_EDITING); /// do this before calling validate for security as it may display a logon dialog!
+	if (S_OK == TheSVObserverApp.m_svSecurityMgr.SVValidate(SECURITY_POINT_EDIT_MENU_RESULT_PICKER))
+	{
+		SVResultListClass* pResultList(GetResultList());
+		assert(nullptr != pResultList);
+		if (nullptr != pResultList)
+		{
+			typedef SvCmd::GetAvailableObjects Command;
+			typedef SVSharedPtr<Command> CommandPtr;
+
+			SvUl::NameGuidList availableList;
+			SVString selectedItem = SvOg::Table_NoSelected;
+			SVGUID selectedGuid = pResultList->getTableGuid();
+			CommandPtr commandPtr = new Command(GetInspectionID(), SVObjectTypeInfoStruct(TableObjectType, SVNotSetSubObjectType), SvCmd::IsValidObject(), SVToolSetObjectType);
+			SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
+			HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+			if (S_OK == hr)
+			{
+				availableList = commandPtr->AvailableObjects();
+				for (SvUl::NameGuidPair pair : availableList)
+				{
+					if (pair.second == selectedGuid)
+					{
+						selectedItem = pair.first;
+					}
+				}
+			}
+			SvOg::ResultTableSelectionDlg TableSelectDlg(availableList, selectedItem);
+			if (IDOK == TableSelectDlg.DoModal())
+			{
+				pResultList->setTableGuid(TableSelectDlg.getSelectedGuid());
+
+				// Set the Document as modified
+				SetModifiedFlag();
+				RebuildResultsList();
+				UpdateWithLastProduct();
+			}
+		}
+	}
+
+	SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
+}
+
 void SVIPDoc::OnPublishedResultsPicker()
 {
 	SVInspectionProcess* pInspection( GetInspectionProcess() );
@@ -1704,70 +1752,6 @@ void SVIPDoc::RebuildResultsList()
 	{ 
 		pResultList->Refresh( GetToolSet() ); 
 	}
-}
-
-bool  SVIPDoc::IsResultDefinitionsOutdated() const
-{
-	SVResultListClass* pResultList = GetResultList();
-	bool res = true;
-	
-	if( nullptr !=  pResultList  && pResultList->getUpdateTimeStamp() < m_ResultDefinitionsTimestamp )
-	{
-		res  = false;
-	}
-
-	return res ;
-}
-
-HRESULT SVIPDoc::GetResultDefinitions( SVResultDefinitionDeque& p_rDefinitions ) const
-{
-	HRESULT hres = E_FAIL;
-	p_rDefinitions.clear();
-	SVResultListClass* pResultList = GetResultList();
-	if(nullptr != pResultList)
-	{
-		
-		hres = pResultList->GetResultDefinitions(p_rDefinitions);
-		
-	}
-
-	if( S_OK == hres )
-	{ 
-		m_ResultDefinitionsTimestamp = SvTl::GetTimeStamp(); 
-	}
-
-	return hres;
-}
-
-HRESULT SVIPDoc::GetResultData( SVIPResultData& p_rResultData ) const
-{
-	p_rResultData = m_Results;
-
-	return S_OK;
-}
-
-HRESULT SVIPDoc::IsToolSetListUpdated() const
-{
-	HRESULT l_Status = S_OK;
-
-	SVToolSetClass* pToolSet = GetToolSet();
-	if( pToolSet )
-	{
-		if( pToolSet->GetLastListUpdateTimestamp() < m_ToolSetListTimestamp )
-		{
-			l_Status = S_FALSE;
-		}
-		else
-		{
-			m_ToolSetListTimestamp = SvTl::GetTimeStamp();
-		}
-	}
-	else
-	{
-		l_Status = E_FAIL;
-	}
-
-	return l_Status;
 }
 
 BOOL SVIPDoc::checkOkToDelete( SVTaskObjectClass* pTaskObject )
@@ -2238,7 +2222,7 @@ void SVIPDoc::SaveViews(SVObjectWriter& rWriter)
 			{
 				View.pToolSetView->GetParameters( rWriter );
 			}
-			else if (View.pView->IsKindOf(RUNTIME_CLASS(SVResultViewClass)))
+			else if (View.pView->IsKindOf(RUNTIME_CLASS(ResultTabbedView)))
 			{
 				View.pResultView->GetParameters( rWriter );
 			}
@@ -2572,7 +2556,7 @@ BOOL SVIPDoc::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiPa
 								{
 									bOk = View.pToolSetView->SetParameters( rTree, htiItem );
 								}
-								else if (View.pView->IsKindOf(RUNTIME_CLASS(SVResultViewClass)))
+								else if (View.pView->IsKindOf(RUNTIME_CLASS(ResultTabbedView)))
 								{
 									bOk = View.pResultView->SetParameters( rTree, htiItem );
 								}
@@ -2635,7 +2619,7 @@ BOOL SVIPDoc::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiPa
 								{
 									bOk = View.pToolSetView->CheckParameters( rTree, htiItem );
 								}
-								else if (View.pView->IsKindOf(RUNTIME_CLASS(SVResultViewClass)))
+								else if (View.pView->IsKindOf(RUNTIME_CLASS(ResultTabbedView)))
 								{
 									bOk = View.pResultView->CheckParameters( rTree, htiItem );
 								}
@@ -2669,6 +2653,57 @@ void SVIPDoc::SetModifiedFlag(BOOL bModified /*= TRUE*/)
 	{
 		SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
 	}
+}
+
+HRESULT SVIPDoc::GetResultDefinitions(SVResultDefinitionDeque& p_rDefinitions) const
+{
+	HRESULT hres = E_FAIL;
+	p_rDefinitions.clear();
+	SVResultListClass* pResultList = GetResultList();
+	if (nullptr != pResultList)
+	{
+
+		hres = pResultList->GetResultDefinitions(p_rDefinitions);
+
+	}
+
+	if (S_OK == hres)
+	{
+		m_ResultDefinitionsTimestamp = SvTl::GetTimeStamp();
+	}
+
+	return hres;
+}
+
+HRESULT SVIPDoc::GetResultData(SVIPResultData& p_rResultData) const
+{
+	p_rResultData = m_Results;
+
+	return S_OK;
+}
+
+HRESULT SVIPDoc::IsToolSetListUpdated() const
+{
+	HRESULT l_Status = S_OK;
+
+	SVToolSetClass* pToolSet = GetToolSet();
+	if (pToolSet)
+	{
+		if (pToolSet->GetLastListUpdateTimestamp() < m_ToolSetListTimestamp)
+		{
+			l_Status = S_FALSE;
+		}
+		else
+		{
+			m_ToolSetListTimestamp = SvTl::GetTimeStamp();
+		}
+	}
+	else
+	{
+		l_Status = E_FAIL;
+	}
+
+	return l_Status;
 }
 
 void SVIPDoc::OnAddExternalTool()
