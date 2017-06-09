@@ -115,6 +115,10 @@ private:
 
 	/// Set the values from the GUI to the analyzer (business logic)
 	HRESULT SetValuesToAnalyzer(SvStl::MessageContainerVector *pErrorMessages=nullptr, bool shouldResetTask = false);
+
+	/// Set the enable state for the don't care controls.
+	/// \returns void
+	void SetEnableStateDontCareControls();
 #pragma endregion Private Methods
 
 #pragma region Member Variables

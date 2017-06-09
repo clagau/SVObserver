@@ -142,6 +142,8 @@ private:
 	/// \param pErrorMessages [out] A vector of happened error during reloading.
 	/// \returns bool true if reloading was successfully.
 	bool ReloadImage(const SVString& rImageFile, SVLongValueObjectClass& rWidthValueObject, SVLongValueObjectClass& rHeightValueObject, SVSmartHandlePointer& bufferHandle, SvStl::MessageContainerVector * pErrorMessages);
+
+	HRESULT CreateModelHandle(long modelWidth, long modelHeight);
 private:
 	SVMatroxPatternModel m_patModelHandle;		// Model Identifer Handle
 	SVMatroxPatResult m_patResultHandle;	// Pattern matching result buffer identifier handle

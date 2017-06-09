@@ -315,15 +315,20 @@ void SVPatModelPageClass::OnUseDontCareClicked()
 	{
 		ProcessOnKillFocus(IDC_PAT_DONT_CARE_FILE_NAME);
 	}
-	GetDlgItem(IDC_PAT_DONT_CARE_FILE_BUTTON)->EnableWindow(m_bDontCare);
-	GetDlgItem(IDC_PAT_DONT_CARE_FILE_NAME)->EnableWindow(m_bDontCare);
+	SetEnableStateDontCareControls();
 	
 	setImages();
+	setCircularOverscanCheckboxState();
 }
 
 void SVPatModelPageClass::OnCircularOverscanClicked()
 {
 	UpdateData(true);
+	if (m_bCircularOverscan)
+	{
+		m_bDontCare = false;
+	}
+	SetEnableStateDontCareControls();
 	setOverlay();
 }
 
@@ -639,6 +644,7 @@ void SVPatModelPageClass::InitializeData()
 
 	UpdateData( false );
 	setCircularOverscanCheckboxState();
+	SetEnableStateDontCareControls();
 }
 
 BOOL SVPatModelPageClass::ProcessOnKillFocus(UINT nId)
@@ -1075,6 +1081,7 @@ void SVPatModelPageClass::setModelCenterOverlay()
 void SVPatModelPageClass::setCircularOverscanCheckboxState()
 {
 	bool shouldEnable = (SVMinModelWidthWithCircular <= m_lModelWidth && SVMinModelHeightWithCircular <= m_lModelHeight);
+	shouldEnable = shouldEnable && !m_bDontCare;
 
 	m_CircularOverscanCheckbox.EnableWindow(shouldEnable);
 	if (!shouldEnable)
@@ -1099,6 +1106,13 @@ HRESULT SVPatModelPageClass::SetValuesToAnalyzer(SvStl::MessageContainerVector *
 		*pErrorMessages = m_values.getCommitErrorList();
 	}
 	return result;
+}
+
+void SVPatModelPageClass::SetEnableStateDontCareControls()
+{
+	GetDlgItem(IDC_PAT_USE_DONT_CARE)->EnableWindow(!m_bCircularOverscan);
+	GetDlgItem(IDC_PAT_DONT_CARE_FILE_BUTTON)->EnableWindow(!m_bCircularOverscan && m_bDontCare);
+	GetDlgItem(IDC_PAT_DONT_CARE_FILE_NAME)->EnableWindow(!m_bCircularOverscan && m_bDontCare);
 }
 
 #pragma endregion Private Methods

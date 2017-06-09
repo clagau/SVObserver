@@ -839,46 +839,6 @@ HRESULT SVMatroxPatternInterface::SetDontCare( const SVMatroxBuffer& rDontCareIm
 	return l_Code;
 }
 
-HRESULT SVMatroxPatternInterface::ClearDontCare(const SVMatroxBuffer & rModelImageId, const SVMatroxPatternModel & rModelId)
-{
-	HRESULT l_Code(S_OK);
-#ifdef USE_TRY_BLOCKS
-	try
-#endif
-
-	{
-		if (!rModelImageId.empty() && !rModelId.empty())
-		{
-			MIL_INT sizeX, sizeY, type;
-			MIL_INT64 attribute;
-			MbufInquire(rModelImageId.GetIdentifier(), M_SIZE_X, &sizeX);
-			MbufInquire(rModelImageId.GetIdentifier(), M_SIZE_Y, &sizeY);
-			MbufInquire(rModelImageId.GetIdentifier(), M_TYPE, &type);
-			MbufInquire(rModelImageId.GetIdentifier(), M_EXTENDED_ATTRIBUTE, &attribute);
-			MIL_ID clearImageID;
-			MbufAlloc2d(M_DEFAULT_HOST, sizeX, sizeY, type, attribute, &clearImageID);
-			MbufClear(clearImageID, 1);
-			MpatSetDontCare(rModelId.m_ModelId, clearImageID,
-				0, 0,  //Offset
-				0); // Value
-			l_Code = SVMatroxApplicationInterface::GetLastStatus();
-			MbufFree(clearImageID);
-		}
-		else
-		{
-			l_Code = SVMEE_INVALID_HANDLE;
-		}
-	}
-#ifdef USE_TRY_BLOCKS
-	catch (...)
-	{
-		l_Code = SVMEE_MATROX_THREW_EXCEPTION;
-		SVMatroxApplicationInterface::LogMatroxException();
-	}
-#endif
-	return l_Code;
-}
-
 /**
 @SVOperationName SetNumber
 

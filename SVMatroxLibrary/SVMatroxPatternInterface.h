@@ -89,12 +89,6 @@ public:
 	/// \returns HRESULT
 	static HRESULT SetDontCare( const SVMatroxBuffer& rDontCareImageId, const SVMatroxPatternModel& rModelId );
 
-	/// Clear the "don't care" pixels in a model.
-	/// \param rModelImageId [in] Id of the model image.
-	/// \param rModelId [in] ID of the model.
-	/// \returns HRESULT
-	static HRESULT ClearDontCare(const SVMatroxBuffer& rModelImageId, const SVMatroxPatternModel& rModelId);
-
 	// (MpatSetNumber)
 	static HRESULT SetNumber( const SVMatroxPatternModel& p_rModelId, long p_lNumber );
 

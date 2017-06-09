@@ -353,37 +353,8 @@ bool SVPatternAnalyzerClass::UpdateModelFromBuffer()
 
 		if (S_OK == MatroxCode)
 		{
-			// Destroy the pattern
-			if ( !m_patModelHandle.empty() )
-			{
-				MatroxCode = SVMatroxPatternInterface::Destroy( m_patModelHandle );
-			}
-		
-			// Check if Circular Overscan is enabled
-			BOOL bCircularScan;
-			msv_bpatCircularOverscan.GetValue( bCircularScan );
+			MatroxCode = CreateModelHandle(modelWidth, modelHeight);
 
-			if( bCircularScan )
-			{
-				POINT pos = { 0, 0 };
-				SIZE size = { modelWidth, modelHeight };
-				RECT innerRect = SVMatroxPatternInterface::CalculateOverscanInnerRect(pos, size);
-				
-				MatroxCode = SVMatroxPatternInterface::Create( m_patModelHandle, 
-															l_PatMilHandle.GetBuffer(),
-															innerRect.left, 
-															innerRect.top,
-															innerRect.right - innerRect.left, 
-															innerRect.bottom - innerRect.top,
-															SVPatModelTypeNormalized | SVPatModelTypeCircularOverscan );
-			}
-			else
-			{
-				MatroxCode = SVMatroxPatternInterface::Create( m_patModelHandle, 
-															l_PatMilHandle.GetBuffer(),
-															0, 0,
-															modelWidth, modelHeight );
-			}
 		}
 
 		bOk = (!m_patModelHandle.empty() && S_OK == MatroxCode);
@@ -467,6 +438,12 @@ bool SVPatternAnalyzerClass::SetSearchParameters ()
 			}
 
 			SVMatroxBuffer ImageBufId = l_MilHandle.GetBuffer();
+
+			long modelWidth = 0;
+			long modelHeight = 0;
+			m_lpatModelWidth.GetValue(modelWidth);
+			m_lpatModelHeight.GetValue(modelHeight);
+			CreateModelHandle(modelWidth, modelHeight);
 		
 			HRESULT MatroxCode = SVMatroxPatternInterface::SetNumber( m_patModelHandle, lParam );
 
@@ -643,15 +620,6 @@ bool SVPatternAnalyzerClass::SetSearchParameters ()
 								{
 									bOk = false;
 								}
-							}
-						}
-						else
-						{
-							SVImageBufferHandleImage patMilHandle;
-							m_patBufferHandlePtr->GetData(patMilHandle);
-							if (!patMilHandle.empty())
-							{
-								MatroxCode = SVMatroxPatternInterface::ClearDontCare(patMilHandle.GetBuffer(), m_patModelHandle);
 							}
 						}
 					}
@@ -896,22 +864,6 @@ bool SVPatternAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMe
 				else if( UpdateModelFromInputImage() ) // create a new model
 				{
 					SetDefaultSearchValues();
-					
-					long centerX = 0;
-					long centerY = 0;
-					m_lpatModelCenterX.GetValue(centerX);
-					m_lpatModelCenterY.GetValue(centerY);
-					HRESULT MatroxCode = SVMatroxPatternInterface::SetCenter( m_patModelHandle, centerX, centerY );
-
-					if (S_OK != MatroxCode)
-					{
-						Result = false;
-						if (nullptr != pErrorMessages)
-						{
-							SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Pattern_SetCenterFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
-							pErrorMessages->push_back(Msg);
-						}
-					}
 				}
 			}
 			else
@@ -1676,4 +1628,53 @@ bool SVPatternAnalyzerClass::ReloadImage(const SVString& rImageFile, SVLongValue
 		}
 	}
 	return bOk;
+}
+
+HRESULT SVPatternAnalyzerClass::CreateModelHandle(long modelWidth, long modelHeight)
+{
+	HRESULT MatroxCode = S_OK; 
+
+	// Destroy the pattern
+	if (!m_patModelHandle.empty())
+	{
+		SVMatroxPatternInterface::Destroy(m_patModelHandle);
+	}
+
+	SVImageBufferHandleImage imageHandle;
+	m_patBufferHandlePtr->GetData(imageHandle);
+
+	// Check if Circular Overscan is enabled
+	BOOL bCircularScan;
+	msv_bpatCircularOverscan.GetValue(bCircularScan);
+
+	if (bCircularScan)
+	{
+		POINT pos = { 0, 0 };
+		SIZE size = { modelWidth, modelHeight };
+		RECT innerRect = SVMatroxPatternInterface::CalculateOverscanInnerRect(pos, size);
+
+		MatroxCode = SVMatroxPatternInterface::Create(m_patModelHandle,
+			imageHandle.GetBuffer(),
+			innerRect.left,
+			innerRect.top,
+			innerRect.right - innerRect.left,
+			innerRect.bottom - innerRect.top,
+			SVPatModelTypeNormalized | SVPatModelTypeCircularOverscan);
+
+		//if CircularScan, then set Use don't care to false, because it is not possible with it
+		BOOL useDontCare = false;
+		m_bpatDontCare.GetValue(useDontCare);
+		if (useDontCare)
+		{
+			m_bpatDontCare.SetValue(false);
+		}
+	}
+	else
+	{
+		MatroxCode = SVMatroxPatternInterface::Create(m_patModelHandle,
+			imageHandle.GetBuffer(),
+			0, 0,
+			modelWidth, modelHeight);
+	}	
+	return MatroxCode;
 }
