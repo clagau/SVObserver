@@ -52,7 +52,7 @@ private:
 };
 
 
-#if defined(_DEBUG) || defined(_MINDEBUG)
+#if defined(_DEBUG)
 	long& LongValue(SVDeviceParamWrapper& w);
 	long LongValue(const SVDeviceParamWrapper& w);
 	SVDeviceParamWrapper DeviceParam(long l);

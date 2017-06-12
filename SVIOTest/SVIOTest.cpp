@@ -13,6 +13,7 @@
 
 #include "SVIOTEST.h"
 #include "SVIOTESTDlg.h"
+#include "SVLibrary/InitialInformation.h"
 #include "SVLibrary/SVOIniLoader.h"
 #include "SVStatusLibrary/GlobalPath.h"
 
@@ -64,13 +65,15 @@ BOOL CSVIOTESTApp::InitInstance()
 	::GetSystemDirectory( l_szSystemDir, MAX_PATH + 1 );
 	l_csSystemDir.Format( "%s\\OEMINFO.INI", l_szSystemDir );
 
-	SvLib::SVOIniLoader l_iniLoader;
-	HRESULT l_hrOk = l_iniLoader.Load(SvStl::GlobalPath::Inst().GetSVIMIniPath(), l_csSystemDir,  SvStl::GlobalPath::Inst().GetHardwareIniPath());
+	SvLib::InitialInformation initialInfo;
+	SvLib::SVOIniLoader l_iniLoader(initialInfo);
+
+	HRESULT l_hrOk = l_iniLoader.LoadIniFiles(SvStl::GlobalPath::Inst().GetSVIMIniPath(), l_csSystemDir,  SvStl::GlobalPath::Inst().GetHardwareIniPath());
 
 	bool l_bOk = true;
 
-	l_bOk = S_OK == m_svTriggers.Open( l_iniLoader.m_TriggerDLL.c_str() ) && l_bOk;
-	l_bOk = S_OK == SVIOConfigurationInterfaceClass::Instance().OpenDigital( l_iniLoader.m_DigitalDLL.c_str() ) && l_bOk;
+	l_bOk = S_OK == m_svTriggers.Open( l_iniLoader.GetInitialInfo().m_TriggerDLL.c_str() ) && l_bOk;
+	l_bOk = S_OK == SVIOConfigurationInterfaceClass::Instance().OpenDigital( l_iniLoader.GetInitialInfo().m_DigitalDLL.c_str() ) && l_bOk;
 
 	if ( ! l_bOk )
 	{
@@ -83,9 +86,9 @@ BOOL CSVIOTESTApp::InitInstance()
 		m_pMainWnd = &dlg;
 
 		dlg.m_psvTriggers = &m_svTriggers;
-		dlg.m_csDigital = l_iniLoader.m_DigitalDLL.c_str();
-		dlg.m_csTrigger = l_iniLoader.m_Trigger.c_str();
-		dlg.m_lSystemType = atol(l_iniLoader.m_IOBoard.c_str());
+		dlg.m_csDigital = l_iniLoader.GetInitialInfo().m_DigitalDLL.c_str();
+		dlg.m_csTrigger = l_iniLoader.GetInitialInfo().m_Trigger.c_str();
+		dlg.m_lSystemType = atol(l_iniLoader.GetInitialInfo().m_IOBoard.c_str());
 
 		dlg.DoModal();
 	}

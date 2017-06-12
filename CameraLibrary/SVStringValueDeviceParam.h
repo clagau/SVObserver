@@ -45,7 +45,7 @@ public:
 	DEFINE_VISITABLE()
 };
 
-#if defined(_DEBUG) || defined (_MINDEBUG)
+#if defined(_DEBUG)
 	SVString& StringValue(SVDeviceParamWrapper& w);
 	const SVString& StringValue(const SVDeviceParamWrapper& w);
 	SVDeviceParamWrapper DeviceParam(const SVString& s);

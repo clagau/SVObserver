@@ -18,7 +18,8 @@
 //Moved to precompiled header: #include <iostream>
 //Moved to precompiled header: #include <string>
 
-#include "SVLibrary\SVOINILoader.h"
+#include "SVLibrary/InitialInformation.h"
+#include "SVLibrary/SVOINILoader.h"
 #include "SVDriveInitDlg.h"
 #include "cpassdlg.h"
 #include "SVStatusLibrary\GlobalPath.h"
@@ -398,7 +399,8 @@ void SVDriveInitDlg::OnOK()
 
 bool SVDriveInitDlg::IsValidModelNumber() const
 {
-	SvLib::SVOIniLoader iniLoader;
+	SvLib::InitialInformation initialInfo;
+	SvLib::SVOIniLoader iniLoader(initialInfo);
 	bool bValid(true);
 
 	CString Model;
@@ -412,10 +414,10 @@ bool SVDriveInitDlg::IsValidModelNumber() const
 
 		if (S_OK == hr)
 		{
-			if (iniLoader.m_ProcessorBoardName.empty() ||
-				iniLoader.m_TriggerBoardName .empty() ||
-				iniLoader.m_AcquisitionBoardName.empty() ||
-				iniLoader.m_DigitalBoardName.empty())
+			if (iniLoader.GetInitialInfo().m_ProcessorBoardName.empty() || //ABXXXX neue Methode?
+				iniLoader.GetInitialInfo().m_TriggerBoardName .empty() ||
+				iniLoader.GetInitialInfo().m_AcquisitionBoardName.empty() ||
+				iniLoader.GetInitialInfo().m_DigitalBoardName.empty())
 			{
 				bValid = false;
 			}

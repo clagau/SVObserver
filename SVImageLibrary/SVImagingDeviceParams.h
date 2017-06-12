@@ -40,7 +40,7 @@ public:
 	DEFINE_VISITABLE()
 };
 
-#if defined(_DEBUG) || defined (_MINDEBUG)
+#if defined(_DEBUG)
 	SVLut& Lut(SVDeviceParamWrapper& w);
 #else
 	inline SVLut& Lut(SVDeviceParamWrapper& w) {SVLutDeviceParam* p = w.DerivedValue(p); if (nullptr == p) {w = SVLutDeviceParam(); p = w.DerivedValue(p);} assert(p); return p->lut;}
@@ -63,7 +63,7 @@ public:
 	DEFINE_VISITABLE()
 };
 
-#if defined(_DEBUG) || defined (_MINDEBUG)
+#if defined(_DEBUG)
 	SVLightReference& LR(SVDeviceParamWrapper& w);
 #else
 	inline SVLightReference& LR(SVDeviceParamWrapper& w) {SVLightReferenceDeviceParam* p = w.DerivedValue(p); if (nullptr == p) {w = SVLightReferenceDeviceParam(); p = w.DerivedValue(p);} assert(p); return p->lr;}

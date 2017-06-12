@@ -85,7 +85,7 @@ HRESULT SVStringValueDeviceParam::SetMetadata(const SVDeviceParam* pBaseParam )
 	return hr;
 }
 
-#if defined(_DEBUG) || defined(_MINDEBUG)
+#if defined(_DEBUG)
 
 SVString& StringValue(SVDeviceParamWrapper& w) 
 {

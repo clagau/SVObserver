@@ -105,6 +105,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="DisplayMessageBox.cpp" />
+    <ClCompile Include="InitialInformation.cpp" />
     <ClCompile Include="Intersect.cpp" />
     <ClCompile Include="StdAfx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -127,6 +128,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DisplayMessageBox.h" />
+    <ClInclude Include="InitialInformation.h" />
     <ClInclude Include="Intersect.h" />
     <ClInclude Include="ISVCancel.h" />
     <ClInclude Include="StdAfx.h" />

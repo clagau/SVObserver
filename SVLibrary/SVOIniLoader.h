@@ -21,65 +21,44 @@ namespace SvLib
 	const int MaxTriggers = 4;
 	#pragma endregion Declarations
 
+
 	class SVOIniLoader
 	{
+
 	public:
-		SVString m_WinKey;
-		SVString m_ModelNumber;
-		SVString m_SerialNumber;
-		SVString m_Processor;
-		SVString m_FrameGrabber;
-		SVString m_IOBoard;
-		SVString m_Options;
-
-		SVString m_Trigger;
-
-		SVString m_Opto22InputInvert;
-		SVString m_Opto22OutputInvert;
-		SVString m_TriggerEdge[MaxTriggers];
-		SVString m_StrobeEdge[MaxTriggers];
-		SVString m_StartFrameType[MaxTriggers];
-
-		SVString m_ProductName;
-		SVString m_ProcessorBoardName;
-		SVString m_TriggerBoardName;
-		SVString m_AcquisitionBoardName;
-		SVString m_DigitalBoardName;
-		SVString m_RAIDBoardName;
+		SVOIniLoader(InitialInformation &inifileInfo);
 	
-		SVString m_DigitizerDLL;
-		SVString m_TriggerDLL;
-		SVString m_ReloadAcquisitionDLL;
-		SVString m_ReloadTriggerDLL;
-		SVString m_DigitalDLL;
-		SVString m_ReloadDigitalDLL;
-		SVString m_FileAcquisitionDLL;
-		SVString m_SoftwareTriggerDLL;
-		SVString m_AcquisitionTriggerDLL;
-		SVString m_HardwareOptions;
+		const struct InitialInformation &GetInitialInfo() const { return m_rInitialInfo; }
 
-		SVString m_IOBoardOption;
-	
-		long m_gigePacketSize;
-		bool m_bUseCorrectListRecursion;
-	
-		HRESULT m_hrOEMFailure;
-		
-		SVOIniLoader();
-	
-		HRESULT Load(LPCTSTR svimIniFile, LPCTSTR oemIniFile, LPCTSTR hardwareIniFile);
+		HRESULT LoadIniFiles(LPCTSTR svimIniFile, LPCTSTR oemIniFile, LPCTSTR hardwareIniFile);
 		HRESULT LoadOEMIni(LPCTSTR oemIniFile);
 		HRESULT LoadSVIMIni(LPCTSTR svimIniFile);
 		HRESULT LoadHardwareIni(LPCTSTR hardwareIniFile);
 		HRESULT DecodeModelNumber(LPCTSTR modelNumber);
-		unsigned char GetForcedImageUpdateTime() const;
-		SvOi::NakGeneration GetNAKMode() const;
-		int GetNAKPar() const;
 
-	protected:
+		//@TODO [Arvid][7.50][09.06.2017] most of the remaining public data members in this class could be made private with moderate effort
+
+		SVString m_ModelNumber;
+		SVString m_WinKey;
+		SVString m_SerialNumber;
+
+		SVString m_TriggerEdge[MaxTriggers];
+		SVString m_StrobeEdge[MaxTriggers];
+		SVString m_StartFrameType[MaxTriggers];
+
+		bool m_bUseCorrectListRecursion;
+
+		HRESULT m_hrDecodeModelNumber;
+
+	private:
+		struct InitialInformation &m_rInitialInfo;
+
 		bool m_bSingleCameraModel;
-		unsigned char m_forcedImageUpdateTimeInSeconds;
-		SvOi::NakGeneration m_NAKMode;
-		int m_NAKParameter; 
+
+		SVString m_Opto22InputInvert;
+		SVString m_Opto22OutputInvert;
+
+		SVString m_IOBoardOption;
 	};
+
 } //namespace SvLib

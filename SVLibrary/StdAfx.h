@@ -75,6 +75,7 @@
 #include <tchar.h>			//Used by static library
 #include <vector>
 
+#include <boost\algorithm\string.hpp>
 #include <boost\function.hpp> //Used by static library
 
 #include <boost/multi_index_container.hpp> //needed for barcode dialogs

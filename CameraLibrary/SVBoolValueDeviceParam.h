@@ -44,7 +44,7 @@ public:
 	DEFINE_VISITABLE()
 };
 
-#if defined(_DEBUG) || defined (_MINDEBUG)
+#if defined(_DEBUG)
 	bool& BoolValue(SVDeviceParamWrapper& w);
 	bool BoolValue(const SVDeviceParamWrapper& w);
 	SVDeviceParamWrapper DeviceParam(bool b);

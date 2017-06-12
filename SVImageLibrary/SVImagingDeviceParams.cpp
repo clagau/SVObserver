@@ -172,7 +172,7 @@ bool SVCameraFormatsDeviceParam::SupportsColor() const
 	return bSupportsColor;
 }
 
-#if defined(_DEBUG) || defined(_MINDEBUG)
+#if defined(_DEBUG)
 
 SVLut& Lut(SVDeviceParamWrapper& w) 
 {
@@ -198,5 +198,5 @@ SVLightReference& LR(SVDeviceParamWrapper& w)
 	return const_cast<SVLightReferenceDeviceParam*>(p)->lr;
 }
 
-#endif	// #if defined(_DEBUG) || defined(_MINDEBUG)
+#endif	// #if defined(_DEBUG)
 

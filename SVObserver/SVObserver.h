@@ -14,6 +14,7 @@
 #pragma region Includes
 #include "SVImageLibrary/SVDigitizerLoadLibraryClass.h"
 #include "SVIOLibrary/SVIOTriggerLoadLibraryClass.h"
+#include "InitialInformationHandler.h"
 #include "SVSecurity/SVSecurityManager.h"
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVXMLLibrary/SVXMLMaterialsTree.h"
@@ -46,20 +47,6 @@ enum SVConfigFileActionsEnums
 	RENAME = 2,
 	RENAME_CONFIG = RENAME,
 	NUM_CONFIG_FILE_ACTIONS
-};
-
-enum SVHardwareErrorEnums
-{
-	SV_HARDWARE_FAILURE_IO          = 0xC0000001L,
-	SV_HARDWARE_FAILURE_TRIGGER     = 0xC0000004L,
-	SV_HARDWARE_FAILURE_ACQUISITION = 0xC0000008L,
-	SV_HARDWARE_FAILURE_NO_CAMAERAS = 0xC0000010L,
-	SV_HARDWARE_FAILURE_SOFTWARETRIGGER = 0xC0000020L,
-	SV_HARDWARE_FAILURE_FILEACQUISITION = 0xC0000040L,
-	SV_HARDWARE_FAILURE_CAMERATRIGGER = 0xC0000080L,
-	SV_HARDWARE_FAILURE_ALL         = 0xC00000FFL, // this is all the above combined
-
-	SV_CAN_GO_ONLINE_FAILURE_ACQUISITION = 0xC0000200L,
 };
 
 typedef SvXml::SVXMLMaterialsTree SVTreeType;
@@ -306,7 +293,7 @@ public:
 
 
 #pragma region Encapsulation Methods
-	long getGigePacketSize() const { return m_gigePacketSize; }
+	long getGigePacketSize() const { return m_rInitialInfo.m_gigePacketSize; }
 	long getOfflineCount() const { return m_OfflineCount; }
 	SVIPDoc* getCurrentDocument() const { return m_pCurrentDocument; }
 	void setCurrentDocument(SVIPDoc* pIPDoc) { m_pCurrentDocument = pIPDoc; }
@@ -316,8 +303,8 @@ public:
 	void setLoadingVersion(DWORD version) { m_LoadingVersion = version; }
 	long getDataValidDelay() const { return m_DataValidDelay; }
 
-	bool IsForcedImageUpdateActive() const { return (m_forcedImageUpdateTimeInSeconds) ? true : false; }
-	unsigned char GetForcedImageUpdateTimeInSeconds() const { return m_forcedImageUpdateTimeInSeconds; }
+	bool IsForcedImageUpdateActive() const { return (m_rInitialInfo.m_forcedImageUpdateTimeInSeconds) ? true : false; }
+	unsigned char GetForcedImageUpdateTimeInSeconds() const { return m_rInitialInfo.m_forcedImageUpdateTimeInSeconds; }
 #pragma endregion
 #pragma endregion Public Methods
 
@@ -327,32 +314,6 @@ protected:
 	/// Start the configuration (go online).
 	/// In error cases this method throw Exception.
 	void Start();
-
-	HRESULT INILoad();
-	HRESULT INIClose();
-	HRESULT INIReset();
-
-	HRESULT LoadTriggerDLL();
-	HRESULT CloseTriggerDLL();
-
-	HRESULT LoadSoftwareTriggerDLL();
-	HRESULT LoadAcquisitionTriggerDLL();
-
-	HRESULT LoadAcquisitionDLL();
-	HRESULT CloseAcquisitionDLL();
-
-	HRESULT LoadFileAcquisitionDLL();
-
-	HRESULT LoadDigitalDLL();
-	HRESULT CloseDigitalDLL();
-
-	const SVString& GetTriggerBoardName() const;
-	const SVString& GetSoftwareTriggerBoardName() const;
-	const SVString& GetAcquisitionBoardName() const;
-	const SVString& GetFileAcquisitionBoardName() const;
-	const SVString& GetDigitalBoardName() const;
-
-	const SVString& GetRAIDBoardName() const;
 
 	HRESULT DisconnectAllCameraBuffers();
 	HRESULT ConnectCameraBuffers();
@@ -428,18 +389,6 @@ private:
 	//  which SVObserver is now loading
 	DWORD m_LoadingVersion;
 
-	SVString m_DigitizerDLL;
-	SVDigitizerLoadLibraryClass m_svDLLDigitizers;
-
-	SVString m_FileAcquisitionDLL;
-	SVDigitizerLoadLibraryClass m_svDLLFileAcquisition;
-
-	SVIOTriggerLoadLibraryClass m_svDLLTriggers;
-	SVIOTriggerLoadLibraryClass m_svDLLSoftwareTriggers;
-	SVIOTriggerLoadLibraryClass m_svDLLAcquisitionTriggers;
-
-	long m_gigePacketSize; 
-
 	// The Standard Configuration Execution Directory
 	// PN -> Path Name
 	LPCTSTR m_ConfigExePNVariableName;
@@ -464,36 +413,6 @@ private:
 
 	mutable SVFileNameClass m_ConfigFileName;	// JMS - Added for File Management
 
-	SVString m_ProductName;
-
-	SVString m_Processor;
-	SVString m_FrameGrabber;
-	SVString m_IOBoard;
-	SVString m_Options;
-
-	SVString m_Trigger;
-
-	SVString m_TriggerDLL;
-	SVString m_SoftwareTriggerDLL;
-	SVString m_AcquisitionTriggerDLL;
-	SVString m_DigitalDLL;
-	SVString m_DigitalOption;			// TRB - Added to have a parameter to send to Rabbit Board.
-
-
-	SVString m_ReloadTriggerDLL;
-	SVString m_ReloadAcquisitionDLL;
-	SVString m_ReloadDigitalDLL;
-
-	SVString m_ProcessorBoardName;
-	SVString m_TriggerBoardName;
-	SVString m_AcquisitionBoardName;
-	SVString m_FileAcquisitionBoardName;
-	SVString m_DigitalBoardName;
-
-	SVString m_RAIDBoardName;
-
-	HRESULT m_hrHardwareFailure;
-
 	HMENU m_hAddMenu;
 	HANDLE m_hEvent;
 
@@ -504,10 +423,10 @@ private:
 
 	long m_DataValidDelay;
 
-	unsigned char m_forcedImageUpdateTimeInSeconds;
+	InitialInformationHandler m_IniInfoHandler;
 
-	SvOi::NakGeneration m_NAKMode; ///Different Mode for NAK Behavior 
-	int m_NAKParameter;
+	const SvLib::InitialInformation &m_rInitialInfo; // This reference exists to simplify access to InitializationStatusFlags()
+
 #pragma endregion Member variables
 };
 

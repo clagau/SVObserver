@@ -100,7 +100,7 @@ HRESULT SVi64ValueDeviceParam::SetMetadata(const SVDeviceParam* pBaseParam)
 	return hr;
 }
 
-#if defined(_DEBUG) || defined(_MINDEBUG)
+#if defined(_DEBUG)
 
 __int64& i64Value(SVDeviceParamWrapper& w) 
 {

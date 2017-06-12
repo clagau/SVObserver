@@ -241,7 +241,7 @@ namespace SvStl
 
 		//SVObserver
 		Tid_SVObserver_CannotRun_WrongModelNumber,
-		Tid_SVObserver_WrongModelNumber,
+		Tid_SVObserver_InitializationFailure,
 		Tid_SVObserver_ModelNumberInvalid,
 		Tid_SVObserver_AuthorizationFailed_Modification,
 		Tid_SVObserver_AuthorizationFailed_Execution,

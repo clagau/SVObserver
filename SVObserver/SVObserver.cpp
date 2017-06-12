@@ -132,11 +132,8 @@ static const int AsyncDefault16GB = 200;
 static const int GoOfflineDefault4GB = 300;
 static const int GoOfflineDefault16GB = 2000;
 
-static const HRESULT ErrorMatroxServiceNotRunning = 0xcf00116f;
-
 static const double	cNormalNonPageMemoryUsage = 80.0;		 //Value as a percentage of the total Non-Page size
 
-extern bool g_bUseCorrectListRecursion;
 #pragma endregion Declarations
 
 
@@ -337,15 +334,12 @@ BEGIN_MESSAGE_MAP(SVObserverApp, CWinApp)
 
 #pragma region Constructor
 SVObserverApp::SVObserverApp()
-: m_gigePacketSize( 0 )
-, m_InputStreamPortNumber( InputStreamPortNumber )
+: m_InputStreamPortNumber( InputStreamPortNumber )
 , m_OutputStreamPortNumber( OutputStreamPortNumber )
 , m_FailStatusStreamPortNumber( FailStatusStreamPortNumber )
 , m_RemoteCommandsPortNumber( RemoteCommandsPortNumber )
 , m_DataValidDelay( 0 )
-, m_forcedImageUpdateTimeInSeconds(0)
-, m_NAKMode(SvOi::Bursts)
-,m_NAKParameter(SvOi::DefaultNakParameter)
+, m_rInitialInfo(m_IniInfoHandler.GetInitialInfo())
 {
 	free((void*)m_pszHelpFilePath);
 	
@@ -356,24 +350,7 @@ SVObserverApp::SVObserverApp()
 	::OutputDebugString( _T( "Executing => SVObserverApp::SVObserverApp()\n" ) );
 #endif
 
-	m_ProductName.clear();
-
-	m_ProcessorBoardName = _T( "Unknown board" );
-	m_TriggerBoardName = _T( "Unknown board" );
-	m_AcquisitionBoardName = _T( "Unknown board" );
-	m_FileAcquisitionBoardName = _T( "File Acquisition" );
-	m_DigitalBoardName = _T( "Unknown board" );
-
-	m_TriggerDLL.clear();
-	m_SoftwareTriggerDLL.clear();
-	m_AcquisitionTriggerDLL.clear();
-	m_DigitizerDLL.clear();
-	m_FileAcquisitionDLL.clear();
-	m_DigitalDLL.clear();
-
-	m_ReloadTriggerDLL = _T( "Y" );
-	m_ReloadAcquisitionDLL = _T( "Y" );
-	m_ReloadDigitalDLL = _T( "Y" );
+	m_IniInfoHandler.ResetInformation();
 
 	// The Standard Configuration Execution Directory
 	m_ConfigExePNVariableName			= _T( "ConfigurationExecutionPathName" );
@@ -385,14 +362,6 @@ SVObserverApp::SVObserverApp()
 
 	m_LastValidConfigPNVariableValue		= _T( "" );
 
-	m_Processor.clear();
-	m_FrameGrabber.clear();
-	m_IOBoard.clear();
-	m_Options.clear();
-
-	m_Trigger.clear();
-
-	m_hrHardwareFailure = SV_HARDWARE_FAILURE_ALL;
 	m_OfflineCount = 0;
 	m_ShouldRunLastEnvironmentAutomatically = FALSE;
 	m_AutoRunDelayTime = 1000;
@@ -1377,7 +1346,7 @@ void SVObserverApp::OnGoOnline()
 			SVSVIMStateClass::RemoveState( SV_STATE_EDIT );
 			DeselectTool();
 
-			if ( S_OK == m_hrHardwareFailure )
+			if ( S_OK == m_IniInfoHandler.GetInitializationStatusFlags() )
 			{
 				if ( CheckSVIMType() )
 				{
@@ -1394,53 +1363,20 @@ void SVObserverApp::OnGoOnline()
 				}
 				else
 				{
-					SVStringVector	msgList;
-					msgList.push_back(m_Processor );
-					msgList.push_back(m_FrameGrabber );
-					msgList.push_back(m_IOBoard );
-					msgList.push_back( m_Options );
 					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-					Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SVObserver_CannotRun_WrongModelNumber, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10121 );
+					Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SVObserver_CannotRun_WrongModelNumber, m_rInitialInfo.GetModelNumberVector(), SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10121 );
 					SVSVIMStateClass::AddState( l_lPrevState );
 				}
 			}
 			else
 			{
-				SVString ItemText;
-				
-				if ( ( m_hrHardwareFailure & SV_HARDWARE_FAILURE_IO ) == SV_HARDWARE_FAILURE_IO )
-				{
-					ItemText = GetDigitalBoardName();
-				}
-				else if ( ( m_hrHardwareFailure & SV_HARDWARE_FAILURE_TRIGGER ) == SV_HARDWARE_FAILURE_TRIGGER )
-				{
-					ItemText = GetTriggerBoardName();
-				}
-				else if ( ( m_hrHardwareFailure & SV_HARDWARE_FAILURE_SOFTWARETRIGGER ) == SV_HARDWARE_FAILURE_SOFTWARETRIGGER )
-				{
-					ItemText = GetSoftwareTriggerBoardName();
-				}
-				else if ( ( m_hrHardwareFailure & SV_HARDWARE_FAILURE_ACQUISITION ) == SV_HARDWARE_FAILURE_ACQUISITION )
-				{
-					ItemText = GetAcquisitionBoardName();
-				}
-				else if ( ( m_hrHardwareFailure & SV_HARDWARE_FAILURE_FILEACQUISITION ) == SV_HARDWARE_FAILURE_FILEACQUISITION )
-				{
-					ItemText = GetFileAcquisitionBoardName();
-				}
-				else
-				{
-					ItemText = _T( "Unknown Item" );
-				}
-
 				SVStringVector msgList;
-				msgList.push_back( m_Processor );
-				msgList.push_back( m_FrameGrabber );
-				msgList.push_back( m_IOBoard );
-				msgList.push_back( m_Options );
-				msgList.push_back( ItemText );
-				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-				Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SVObserver_WrongModelNumber, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10122 );
+				msgList.push_back(m_rInitialInfo.GetModelNumberString());
+				msgList.push_back(m_rInitialInfo.InitializationFailureDescription(m_IniInfoHandler.GetInitializationStatusFlags()));
+
+				SvStl::MessageMgrStd Msg(SvStl::LogAndDisplay);
+				Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SVObserver_InitializationFailure, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10126);
+
 				SVSVIMStateClass::AddState( l_lPrevState );
 			}
 
@@ -2235,51 +2171,22 @@ BOOL SVObserverApp::InitInstance()
 	SVObjectManagerClass::Instance().ConstructRootObject( RootObjectGuid );
 	// *** // ***
 
-	HRESULT l_hrLoad = INILoad();
-	if ( S_OK != l_hrLoad )
+	m_IniInfoHandler.LoadIniFilesAndDlls();
+
+	if (S_OK != m_IniInfoHandler.GetInitializationStatusFlags())
 	{
-		SVString ItemText;
-
-		if ( ( l_hrLoad & SV_HARDWARE_FAILURE_IO ) == SV_HARDWARE_FAILURE_IO )
-		{
-			ItemText = GetDigitalBoardName();
-		}
-		else if ( ( l_hrLoad & SV_HARDWARE_FAILURE_TRIGGER ) == SV_HARDWARE_FAILURE_TRIGGER )
-		{
-			ItemText = GetTriggerBoardName();
-		}
-		else if ( ( l_hrLoad & SV_HARDWARE_FAILURE_SOFTWARETRIGGER ) == SV_HARDWARE_FAILURE_SOFTWARETRIGGER )
-		{
-			ItemText = GetSoftwareTriggerBoardName();
-		}
-		else if ( ( l_hrLoad & SV_HARDWARE_FAILURE_ACQUISITION ) == SV_HARDWARE_FAILURE_ACQUISITION )
-		{
-			ItemText = GetAcquisitionBoardName();
-		}
-		else if ( ( l_hrLoad & SV_HARDWARE_FAILURE_FILEACQUISITION ) == SV_HARDWARE_FAILURE_FILEACQUISITION )
-		{
-			ItemText = GetFileAcquisitionBoardName();
-		}
-		else
-		{
-			ItemText = _T( "Unknown Item" );
-		}
-
 		SVStringVector msgList;
-		msgList.push_back( m_Processor );
-		msgList.push_back( m_FrameGrabber );
-		msgList.push_back( m_IOBoard );
-		msgList.push_back( m_Options );
-		msgList.push_back( ItemText );
-		#ifndef _DEBUG                    // 23 Mar 1999 - frb.
-		#ifndef _MINDEBUG
-			sWin.ShowWindow( SW_HIDE );
-		#endif
-		#endif //_DEBUG                  // 23 Mar 1999 - frb.
+		msgList.push_back(m_rInitialInfo.GetModelNumberString());
+		msgList.push_back(m_rInitialInfo.InitializationFailureDescription(m_IniInfoHandler.GetInitializationStatusFlags()));
 
-		SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-		Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SVObserver_WrongModelNumber, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10126 );
+#ifndef _DEBUG                    // 23 Mar 1999 - frb.
+		sWin.ShowWindow(SW_HIDE);
+#endif //_DEBUG                  // 23 Mar 1999 - frb.
+
+		SvStl::MessageMgrStd Msg(SvStl::LogAndDisplay);
+		Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SVObserver_InitializationFailure, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10126);
 	}
+
 
 	//check to see what licenses are available before setting up any documents
 	TheSVOLicenseManager().InitLicenseManager();
@@ -2532,7 +2439,7 @@ int SVObserverApp::ExitInstance()
 	// Destroy still open message windows
 	DestroyMessageWindow();
 
-	#if !defined( _DEBUG ) && !defined( _MINDEBUG )
+	#if !defined( _DEBUG )
 		// Display close window	
 		m_pMessageWindow = new SVMessageWindowClass;
 		if( m_pMessageWindow && m_pMessageWindow->Create( IDD_MESSAGE_DIALOG ) )
@@ -2547,7 +2454,7 @@ int SVObserverApp::ExitInstance()
 	SVObjectManagerClass::Instance().DestroyRootObject();
 	// *** // ***
 
-	INIClose();
+	m_IniInfoHandler.INIClose();
 
 	m_mgrRemoteFonts.Shutdown();
 
@@ -3217,7 +3124,7 @@ HRESULT SVObserverApp::DestroyConfig( BOOL AskForSavingOrClosing /* = TRUE */,
 
 				wait.Restore();
 
-				INIReset();
+				m_IniInfoHandler.INIReset();
 			}// end if ( bOk )
 		}// end if ( bClose )
 
@@ -3362,10 +3269,10 @@ bool SVObserverApp::IsMatroxGige() const
 {
 	bool l_bOk = false;
 
-	l_bOk = ( 0 == SvUl_SF::CompareNoCase( m_ProductName, SvOi::SVO_PRODUCT_KONTRON_X2_GD2A )
-		||  0 == SvUl_SF::CompareNoCase( m_ProductName, SvOi::SVO_PRODUCT_KONTRON_X2_GD4A )
-		||  0 == SvUl_SF::CompareNoCase( m_ProductName, SvOi::SVO_PRODUCT_KONTRON_X2_GD8A )
-		||  0 == SvUl_SF::CompareNoCase( m_ProductName, SvOi::SVO_PRODUCT_KONTRON_X2_GD8A_NONIO ) );
+	l_bOk = ( 0 == SvUl_SF::CompareNoCase(m_rInitialInfo.m_ProductName, SvOi::SVO_PRODUCT_KONTRON_X2_GD2A )
+		||  0 == SvUl_SF::CompareNoCase(m_rInitialInfo.m_ProductName, SvOi::SVO_PRODUCT_KONTRON_X2_GD4A )
+		||  0 == SvUl_SF::CompareNoCase(m_rInitialInfo.m_ProductName, SvOi::SVO_PRODUCT_KONTRON_X2_GD8A )
+		||  0 == SvUl_SF::CompareNoCase(m_rInitialInfo.m_ProductName, SvOi::SVO_PRODUCT_KONTRON_X2_GD8A_NONIO ) );
 
 	return l_bOk;
 }
@@ -3433,32 +3340,33 @@ SVIMProductEnum SVObserverApp::GetSVIMType() const
 {
 	SVIMProductEnum eType = SVIM_PRODUCT_TYPE_UNKNOWN;
 
-	if (0 == SvUl_SF::CompareNoCase( m_ProductName, SvOi::SVO_PRODUCT_KONTRON_X2_GD1A))
+	if (0 == SvUl_SF::CompareNoCase(m_rInitialInfo.m_ProductName, SvOi::SVO_PRODUCT_KONTRON_X2_GD1A))
 	{
 		eType = SVIM_PRODUCT_X2_GD1A;
 	}
-	else if (0 == SvUl_SF::CompareNoCase( m_ProductName, SvOi::SVO_PRODUCT_KONTRON_X2_GD2A))
+	else if (0 == SvUl_SF::CompareNoCase(m_rInitialInfo.m_ProductName, SvOi::SVO_PRODUCT_KONTRON_X2_GD2A))
 	{
 		eType = SVIM_PRODUCT_X2_GD2A;
 	}
-	else if (0 == SvUl_SF::CompareNoCase( m_ProductName, SvOi::SVO_PRODUCT_KONTRON_X2_GD4A))
+	else if (0 == SvUl_SF::CompareNoCase(m_rInitialInfo.m_ProductName, SvOi::SVO_PRODUCT_KONTRON_X2_GD4A))
 	{
 		eType = SVIM_PRODUCT_X2_GD4A;
 	}
-	else if (0 == SvUl_SF::CompareNoCase( m_ProductName, SvOi::SVO_PRODUCT_KONTRON_X2_GD8A))
+	else if (0 == SvUl_SF::CompareNoCase(m_rInitialInfo.m_ProductName, SvOi::SVO_PRODUCT_KONTRON_X2_GD8A))
 	{
 		eType = SVIM_PRODUCT_X2_GD8A;
 	}
-	else if (0 == SvUl_SF::CompareNoCase( m_ProductName, SvOi::SVO_PRODUCT_KONTRON_X2_GD8A_NONIO))
+	else if (0 == SvUl_SF::CompareNoCase(m_rInitialInfo.m_ProductName, SvOi::SVO_PRODUCT_KONTRON_X2_GD8A_NONIO))
 	{
 		eType = SVIM_PRODUCT_X2_GD8A_NONIO;
 	}
 	return eType;
 }
 
+
 bool SVObserverApp::IsProductTypeRAID() const
 {
-	bool bRet = ( SvUl_SF::CompareNoCase( m_RAIDBoardName, _T("Intel") ) == 0 );
+	bool bRet = ( SvUl_SF::CompareNoCase(m_rInitialInfo.m_RAIDBoardName, _T("Intel") ) == 0 );
 	return bRet;
 }
 
@@ -4300,19 +4208,19 @@ BOOL SVObserverApp::ShowConfigurationAssistant( int Page /*= 3*/,
 
 	// Special code to determine the inverters 
 	// and triggers based on IO board
-	if( _T("10") == m_IOBoard )
+	if( _T("10") == m_rInitialInfo.m_IOBoard )
 	{
 		l_svCapable.SetStrobeInverters( 1 );
 		l_svCapable.SetTriggerInverters( 1 );
 		l_svCapable.SetTriggerCount( 1 );
 	}
-	else if( _T("12") == m_IOBoard )
+	else if( _T("12") == m_rInitialInfo.m_IOBoard )
 	{
 		l_svCapable.SetStrobeInverters( 1 );
 		l_svCapable.SetTriggerInverters( 1 );
 		l_svCapable.SetTriggerCount( 3 );
 	}
-	else if( _T("00") == m_IOBoard )
+	else if( _T("00") == m_rInitialInfo.m_IOBoard )
 	{
 		// Get Trigger count from the TriggerDLL (in this case the DigitizerDLL)
 		int numTriggers = 0;
@@ -4834,7 +4742,7 @@ HRESULT SVObserverApp::SendCameraParameters()
 			}
 
 			// Send GIGE packet size if was set from hardware.ini
-			if (IsMatroxGige() && m_gigePacketSize != 0)
+			if (IsMatroxGige() && m_rInitialInfo.m_gigePacketSize != 0)
 			{
 				SetGigePacketSizeDeviceParam(pDeviceParams);
 			}
@@ -4855,6 +4763,7 @@ HRESULT SVObserverApp::SendCameraParameters()
 	return hr;
 }
 
+
 void SVObserverApp::SetGigePacketSizeDeviceParam(SVDeviceParamCollection* pDeviceParams)
 {
 	// check if Packet Size Device Param exists
@@ -4863,14 +4772,14 @@ void SVObserverApp::SetGigePacketSizeDeviceParam(SVDeviceParamCollection* pDevic
 	// else - add it
 	if ( nullptr != l_pGigePacketSize )
 	{
-		l_pGigePacketSize->SetValue(_variant_t(m_gigePacketSize));
+		l_pGigePacketSize->SetValue(_variant_t(m_rInitialInfo.m_gigePacketSize));
 	}
 	else // add it
 	{
 		pDeviceParams->SetParameter( DeviceParamGigePacketSize, (const SVDeviceParam*) SVDeviceParamTempWrapper(SVDeviceParam::Create( DeviceParamGigePacketSize )) );
 		SVLongValueDeviceParam* pParam = pDeviceParams->GetParameter( DeviceParamGigePacketSize ).DerivedValue(pParam);
 		ASSERT( pParam );
-		pParam->lValue = m_gigePacketSize;
+		pParam->lValue = m_rInitialInfo.m_gigePacketSize;
 		pParam->SetName(DeviceParamGigePacketSize_String);
 	}
 }
@@ -5536,7 +5445,7 @@ void SVObserverApp::Start()
 			if( nullptr != pPPQ )
 			{
 				///Set NAK Behavior
-				pPPQ->SetNAKMode( m_NAKMode, m_NAKParameter); 
+				pPPQ->SetNAKMode(m_rInitialInfo.m_NAKMode, m_rInitialInfo.m_NAKParameter);
 
 				// Do this before calling CanGoOnline
 				pPPQ->SetMonitorList(ppqMonitorList[pPPQ->GetName()]);
@@ -5709,430 +5618,6 @@ void SVObserverApp::Start()
 	}
 }
 
-HRESULT SVObserverApp::INILoad()
-{
-	SvLib::SVOIniLoader IniLoader;
-
-	TCHAR l_szSystemDir[ MAX_PATH + 1 ];
-	CString l_csSystemDir;
-
-	::GetSystemDirectory( l_szSystemDir, MAX_PATH + 1 );
-	l_csSystemDir.Format( "%s\\OEMINFO.INI", l_szSystemDir );
-
-	// clear these variables
-	m_ProductName.clear();
-
-	m_ProcessorBoardName = _T( "Unknown board" );
-	m_TriggerBoardName = _T( "Unknown board" );
-	m_AcquisitionBoardName = _T( "Unknown board" );
-	m_DigitalBoardName = _T( "Unknown board" );
-	m_RAIDBoardName = _T( "Unknown board" );
-
-	m_Processor.clear();
-	m_FrameGrabber.clear();
-	m_IOBoard.clear();
-	m_Options.clear();
-
-	// load the SVIM.ini, OEMINFO.ini, and HARDWARE.ini
-	HRESULT l_hrOk = IniLoader.Load(SvStl::GlobalPath::Inst().GetSVIMIniPath(), l_csSystemDir,SvStl::GlobalPath::Inst().GetHardwareIniPath());
-
-	if (S_OK == l_hrOk)
-	{
-		// copy settings from the SVOIniLoader class for now
-		m_forcedImageUpdateTimeInSeconds = IniLoader.GetForcedImageUpdateTime();
-		m_NAKMode = IniLoader.GetNAKMode();
-		m_NAKParameter = IniLoader.GetNAKPar();
-
-		g_bUseCorrectListRecursion = IniLoader.m_bUseCorrectListRecursion;
-
-		RootObject::setRootChildValue( SvOl::FqnEnvironmentModelNumber, IniLoader.m_ModelNumber.c_str() );
-		RootObject::setRootChildValue( SvOl::FqnEnvironmentSerialNumber , IniLoader.m_SerialNumber.c_str() );
-		RootObject::setRootChildValue( SvOl::FqnEnvironmentWinKey, IniLoader.m_WinKey.c_str() );
-
-		m_ProductName = IniLoader.m_ProductName;
-
-		m_ProcessorBoardName = IniLoader.m_ProcessorBoardName;
-		m_TriggerBoardName = IniLoader.m_TriggerBoardName;
-		m_AcquisitionBoardName = IniLoader.m_AcquisitionBoardName;
-		m_DigitalBoardName = IniLoader.m_DigitalBoardName;
-		m_RAIDBoardName = IniLoader.m_RAIDBoardName;
-
-		m_DigitalDLL = IniLoader.m_DigitalDLL;
-		m_DigitalOption = IniLoader.m_IOBoardOption;
-		m_DigitizerDLL = IniLoader.m_DigitizerDLL;
-		m_FileAcquisitionDLL = IniLoader.m_FileAcquisitionDLL;
-		m_TriggerDLL = IniLoader.m_TriggerDLL;
-		m_SoftwareTriggerDLL = IniLoader.m_SoftwareTriggerDLL;
-		m_AcquisitionTriggerDLL = IniLoader.m_AcquisitionTriggerDLL;
-
-		m_ReloadDigitalDLL = IniLoader.m_ReloadDigitalDLL;
-		m_ReloadAcquisitionDLL = IniLoader.m_ReloadAcquisitionDLL;
-		m_ReloadTriggerDLL = IniLoader.m_ReloadTriggerDLL;
-
-		m_Options = IniLoader.m_Options;
-		m_Processor = IniLoader.m_Processor;
-		m_FrameGrabber = IniLoader.m_FrameGrabber;
-		m_IOBoard = IniLoader.m_IOBoard;
-
-		m_Trigger = IniLoader.m_Trigger;
-
-		// Get GIGE packet Size
-		m_gigePacketSize = IniLoader.m_gigePacketSize;
-
-		for ( int i = 0; i < SvLib::MaxTriggers; i++ )
-		{
-			bool Value( false );
-			Value = (0 == SvUl_SF::CompareNoCase( IniLoader.m_TriggerEdge[i], SVString( _T("R") ) ) );
-			SVIOConfigurationInterfaceClass::Instance().SetSVIMTriggerValue( i, Value );
-			Value = (0 == SvUl_SF::CompareNoCase( IniLoader.m_StrobeEdge[i], SVString( _T("R") ) ) );
-			SVIOConfigurationInterfaceClass::Instance().SetSVIMStrobeValue( i, Value );
-			Value = (0 == SvUl_SF::CompareNoCase( IniLoader.m_StartFrameType[i], SVString( _T("Y") ) ) );
-			SVIOConfigurationInterfaceClass::Instance().SetSVIMStrobeStartFrameActive( i, Value );
-		}
-
-		l_hrOk = l_hrOk | LoadDigitalDLL();
-		l_hrOk = l_hrOk | LoadTriggerDLL();
-		l_hrOk = l_hrOk | LoadSoftwareTriggerDLL();
-		l_hrOk = l_hrOk | LoadAcquisitionTriggerDLL();
-		l_hrOk = l_hrOk | LoadAcquisitionDLL();
-		l_hrOk = l_hrOk | LoadFileAcquisitionDLL();
-	}
-	else
-	{
-		if (S_OK != IniLoader.m_hrOEMFailure)
-		{
-			ASSERT( FALSE );
-			SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-			Msg.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SVObserver_ModelNumberInvalid, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10236 );
-		}
-
-	}
-	m_hrHardwareFailure = l_hrOk;
-	return l_hrOk;
-}
-
-HRESULT SVObserverApp::INIClose()
-{
-	m_hrHardwareFailure = SV_HARDWARE_FAILURE_ALL;
-
-	m_ProductName.clear();
-
-	m_Processor.clear();
-	m_FrameGrabber.clear();
-	m_IOBoard.clear();
-	m_Options.clear();
-
-	m_ProcessorBoardName = _T( "Unknown board" );
-	m_TriggerBoardName = _T( "Unknown board" );
-	m_AcquisitionBoardName = _T( "Unknown board" );
-	m_DigitalBoardName = _T( "Unknown board" );
-	m_RAIDBoardName = _T( "Unknown board" );
-
-	CloseAcquisitionDLL();
-
-	CloseTriggerDLL();
-
-	CloseDigitalDLL();
-
-	return S_OK;
-}
-
-HRESULT SVObserverApp::INIReset()
-{
-	HRESULT l_hrOk = S_OK;
-
-	if( 0 == SvUl_SF::CompareNoCase( m_ReloadAcquisitionDLL, _T( "Y" ) ) )
-	{
-		CloseAcquisitionDLL();
-	}
-
-	if( 0 == SvUl_SF::CompareNoCase( m_ReloadTriggerDLL, _T( "Y" ) ) )
-	{
-		CloseTriggerDLL();
-	}
-
-	if( 0 == SvUl_SF::CompareNoCase( m_ReloadDigitalDLL, _T( "Y" ) ) )
-	{
-		CloseDigitalDLL();
-	}
-
-	if( 0 == SvUl_SF::CompareNoCase( m_ReloadDigitalDLL, _T( "Y" ) ) )
-	{
-		l_hrOk = l_hrOk | LoadDigitalDLL();
-	}
-
-	if( 0 == SvUl_SF::CompareNoCase( m_ReloadTriggerDLL, _T( "Y" ) ) )
-	{
-		l_hrOk = l_hrOk | LoadTriggerDLL();
-		l_hrOk = l_hrOk | LoadSoftwareTriggerDLL();
-		l_hrOk = l_hrOk | LoadAcquisitionTriggerDLL();
-	}
-
-	if( 0 == SvUl_SF::CompareNoCase( m_ReloadAcquisitionDLL, _T( "Y" ) ) )
-	{
-		l_hrOk = l_hrOk | LoadAcquisitionDLL();
-		l_hrOk = l_hrOk | LoadFileAcquisitionDLL();
-	}
-
-	return l_hrOk;
-}
-
-HRESULT SVObserverApp::LoadTriggerDLL()
-{
-	HRESULT l_hrOk = S_OK ;
-
-	if ( ! m_TriggerDLL.empty() )
-	{
-		VARIANT l_varValue;
-
-		::VariantInit( &l_varValue );
-
-		l_varValue.vt = VT_I4;
-
-		if ( S_OK != m_svDLLTriggers.Open( m_TriggerDLL.c_str() ) )
-		{
-			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_TRIGGER;
-		}
-
-		if ( S_OK != SvTi::SVTriggerProcessingClass::Instance().UpdateTriggerSubsystem( &m_svDLLTriggers ) )
-		{
-			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_TRIGGER;
-		}
-
-		for ( int i = 0; i < 4; i++ )
-		{
-			unsigned long l_ulHandle;
-
-			if ( S_OK == m_svDLLTriggers.GetHandle( &l_ulHandle, i ) )
-			{
-				bool l_bRising;
-
-				SVIOConfigurationInterfaceClass::Instance().GetIOTriggerValue( i, l_bRising );
-
-				if ( l_bRising )
-				{
-					l_varValue.lVal = 1;
-				}
-				else
-				{
-					l_varValue.lVal = -1;
-				}
-				// SVSignalEdge enum is used here to make the code more clear.
-				// however at some time in the future the Dll parameters may be implemented
-				// as an array and therefore this enum may not apply.
-				m_svDLLTriggers.SetParameterValue( l_ulHandle, SVSignalEdge, &l_varValue );
-			}
-		}
-	}
-	else
-	{
-		if( m_Trigger != _T("00") )
-		{
-			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_TRIGGER;
-		}
-	}
-
-	return l_hrOk;
-}
-
-HRESULT SVObserverApp::CloseTriggerDLL()
-{
-	SvTi::SVTriggerProcessingClass::Instance().clear();
-
-	m_svDLLTriggers.Close();
-	m_svDLLSoftwareTriggers.Close();
-	m_svDLLAcquisitionTriggers.Close();
-
-	return S_OK;
-}
-
-HRESULT SVObserverApp::LoadSoftwareTriggerDLL()
-{
-	HRESULT l_hrOk = S_OK;
-
-	if ( ! m_SoftwareTriggerDLL.empty() )
-	{
-		if ( S_OK != m_svDLLSoftwareTriggers.Open( m_SoftwareTriggerDLL.c_str() ) )
-		{
-			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_SOFTWARETRIGGER;
-		}
-
-		if ( S_OK != SvTi::SVTriggerProcessingClass::Instance().UpdateTriggerSubsystem( &m_svDLLSoftwareTriggers ) )
-		{
-			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_SOFTWARETRIGGER;
-		}
-	}
-	return l_hrOk;
-}
-
-HRESULT SVObserverApp::LoadAcquisitionTriggerDLL()
-{
-	HRESULT l_hrOk = S_OK;
-
-	if ( ! m_AcquisitionTriggerDLL.empty() )
-	{
-		HRESULT ResultLoadDLL( m_svDLLAcquisitionTriggers.Open( m_AcquisitionTriggerDLL.c_str() ) );
-		//Do not care about the Matrox service here as it will be handled in the LoadAcquisitionDLL
-		if( S_OK != ResultLoadDLL && ErrorMatroxServiceNotRunning != ResultLoadDLL )
-		{
-			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_CAMERATRIGGER;
-		}
-
-		if( S_OK == ResultLoadDLL )
-		{
-			if( S_OK != SvTi::SVTriggerProcessingClass::Instance().UpdateTriggerSubsystem( &m_svDLLAcquisitionTriggers ) )
-			{
-				l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_CAMERATRIGGER;
-			}
-		}
-	}
-	return l_hrOk;
-}
-
-HRESULT SVObserverApp::LoadAcquisitionDLL()
-{
-	HRESULT l_hrOk = S_OK;
-
-	if( ! m_DigitizerDLL.empty() )
-	{
-		HRESULT ResultLoadDLL( m_svDLLDigitizers.Open( m_DigitizerDLL.c_str() ) );
-		if( S_OK != ResultLoadDLL )
-		{
-			//This is the error result which indicates that the Matrox Gige service is not running
-			if( ErrorMatroxServiceNotRunning == ResultLoadDLL )
-			{
-				SvStl::MessageMgrStd Exception( SvStl::LogAndDisplay );
-				Exception.setMessage( SVMSG_SVO_90_MATROX_SERVICE_NOT_RUNNING, m_DigitizerDLL.c_str(), SvStl::SourceFileParams(StdMessageParams), SvStl::Err_25048_NoMatroxService );
-			}
-			else
-			{
-				l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_ACQUISITION;
-			}
-		}
-		else
-		{
-			if( S_OK != SVDigitizerProcessingClass::Instance().UpdateDigitizerSubsystem( &m_svDLLDigitizers ) )
-			{
-				l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_ACQUISITION;
-			}
-		}
-	}
-	else
-	{
-		if( m_FrameGrabber != _T( "00" ) )
-		{
-			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_ACQUISITION;
-		}
-	}
-
-	return l_hrOk;
-}
-
-HRESULT SVObserverApp::CloseAcquisitionDLL()
-{
-	SVDigitizerProcessingClass::Instance().clear();
-
-	m_svDLLDigitizers.Close();
-
-	m_svDLLFileAcquisition.Close();
-
-	return S_OK;
-}
-
-HRESULT SVObserverApp::LoadFileAcquisitionDLL()
-{
-	HRESULT l_hrOk = S_OK;
-
-	if( ! m_FileAcquisitionDLL.empty() )
-	{
-		if( S_OK != m_svDLLFileAcquisition.Open( m_FileAcquisitionDLL.c_str() ) )
-		{
-			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_FILEACQUISITION;
-		}
-
-		if( S_OK != SVDigitizerProcessingClass::Instance().UpdateDigitizerSubsystem( &m_svDLLFileAcquisition ) )
-		{
-			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_FILEACQUISITION;
-		}
-	}
-	return l_hrOk;
-}
-
-HRESULT SVObserverApp::LoadDigitalDLL()
-{
-	HRESULT l_hrOk = S_OK;
-
-	if ( ! m_DigitalDLL.empty() )
-	{
-		if ( SVIOConfigurationInterfaceClass::Instance().OpenDigital( m_DigitalDLL.c_str() ) != S_OK )
-		{
-			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_IO;
-		}
-		else
-		{	// Send the System type to the IO Board.
-			VARIANT l_vt;
-			l_vt.vt = VT_I4;
-
-			// Hardware.ini has the new IOBoardOption.
-			if( !m_DigitalOption.empty() )
-			{
-				l_vt.lVal = atol( m_DigitalOption.c_str() );
-				SVIOConfigurationInterfaceClass::Instance().SetParameterValue( SVBoardType, &l_vt );
-			}
-			else
-			{	// Legacy behavior.... Hardware.Ini file does not have new entry...
-				l_vt.lVal = atol( m_IOBoard.c_str() );
-				SVIOConfigurationInterfaceClass::Instance().SetParameterValue( SVBoardType, &l_vt );
-			}
-		}
-	}
-	else
-	{
-		if( m_IOBoard != _T("00") )
-		{
-			l_hrOk = l_hrOk | SV_HARDWARE_FAILURE_IO;
-		}
-	}
-
-	return l_hrOk;
-}
-
-HRESULT SVObserverApp::CloseDigitalDLL()
-{
-	SVIOConfigurationInterfaceClass::Instance().CloseDigital();
-
-	return S_OK;
-}
-
-const SVString& SVObserverApp::GetTriggerBoardName() const
-{
-	return m_TriggerBoardName;
-}
-
-const SVString& SVObserverApp::GetSoftwareTriggerBoardName() const
-{
-	return m_SoftwareTriggerDLL;
-}
-
-const SVString& SVObserverApp::GetAcquisitionBoardName() const
-{
-	return m_AcquisitionBoardName;
-}
-
-const SVString& SVObserverApp::GetFileAcquisitionBoardName() const
-{
-	return m_FileAcquisitionBoardName;
-}
-
-const SVString& SVObserverApp::GetDigitalBoardName() const
-{
-	return m_DigitalBoardName;
-}
-
-const SVString& SVObserverApp::GetRAIDBoardName() const
-{
-	return m_RAIDBoardName;
-}
 
 HRESULT SVObserverApp::DisconnectAllCameraBuffers()
 {

@@ -911,6 +911,7 @@
     <ClCompile Include="ResultListCtrl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+
   </ItemGroup>
   <ItemGroup>
     <Midl Include="SVObserver.odl">
@@ -1842,7 +1843,7 @@
     <ClInclude Include="SVGlobal.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="ResultTabbedView.h">
+   <ClInclude Include="ResultTabbedView.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ResultTableListCtrl.h">

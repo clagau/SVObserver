@@ -264,8 +264,7 @@ namespace SvStl
 	//SVObserver
 	(Tid_SVObserver_CannotRun_WrongModelNumber, _T( "Configuration cannot enter Run.  The current configuration hardware does not match system hardware. "
 	"The system's Model Number is ( Model # %s %s %s %s ). Please verify that the shown model number is correct and contact your system administrator."))
-	(Tid_SVObserver_WrongModelNumber, _T( "Hardware configuration error. The SVIM hardware does not match the Model Number ( Model # %s %s %s %s ). "
-	"%s is either not available or malfunctioning. Please verify that the shown model number is correct and contact your system administrator."))
+	(Tid_SVObserver_InitializationFailure, _T("Initialization failure (Model Number %s):\n%s"))
 	(Tid_SVObserver_ModelNumberInvalid, _T("The model number specified in OEMINFO.INI is invalid."))
 	(Tid_SVObserver_AuthorizationFailed_Modification, _T( "Authorization Failed.\n\nUtility Modification requires 'User Manager' privilege." ))
 	(Tid_SVObserver_AuthorizationFailed_Execution, _T("Authorization Failed.\n\nUtility Execution requires 'User Manager' privilege."))

@@ -10,6 +10,7 @@
 // ******************************************************************************
 #pragma region Includes
 #include"stdafx.h"
+#include "InitialInformation.h"
 #include "SVOIniLoader.h"
 #include "SVOIniClass.h"
 #pragma endregion Includes
@@ -40,7 +41,6 @@ static const TCHAR* const NAKSectionTag = _T("NAK_SETTINGS");
 static const TCHAR* const  NAKMode    = _T("NAKMode");
 static const TCHAR* const  NAKParameter    = _T("NAKPar");
 
-static const TCHAR* const UnknownboardTag = _T("Unknown board");
 static const TCHAR* const ProcessorSectionTag = _T("Processor");
 static const TCHAR* const RAIDTag = _T("RAID");
 static const TCHAR* const FrameGrabberSectionTag = _T("Frame Grabber");
@@ -68,21 +68,20 @@ static const TCHAR* const FileAcquisitionDeviceFilename = _T("SVFileAcquisitionD
 static const TCHAR* const SoftwareTriggerDeviceFilename = _T("SVSoftwareTriggerDevice.DLL");
 #pragma endregion Declarations
 
+
+
 namespace SvLib
 {
-	SVOIniLoader::SVOIniLoader() 
-	: m_bUseCorrectListRecursion( false )
-	, m_hrOEMFailure( S_OK )
-	, m_gigePacketSize( 0 )
+	SVOIniLoader::SVOIniLoader(InitialInformation &inifileInfo)
+	: m_rInitialInfo(inifileInfo)
+	, m_bUseCorrectListRecursion( false )
+	, m_hrDecodeModelNumber( S_OK )
 	, m_bSingleCameraModel( false )
-	, m_forcedImageUpdateTimeInSeconds(0) // zero means no forced image update
-	, m_NAKMode(SvOi::NakGeneration::Bursts)
-	,m_NAKParameter(SvOi::DefaultNakParameter)
 	{
 	}
 
-	HRESULT SVOIniLoader::Load(LPCTSTR svimIniFile, LPCTSTR oemIniFile, LPCTSTR hardwareIniFile)
-	{
+	HRESULT SVOIniLoader::LoadIniFiles(LPCTSTR svimIniFile, LPCTSTR oemIniFile, LPCTSTR hardwareIniFile)
+	{ 
 		HRESULT l_hrOk = LoadOEMIni(oemIniFile);
 	
 		if (S_OK == l_hrOk)
@@ -93,12 +92,11 @@ namespace SvLib
 		{
 			l_hrOk = LoadHardwareIni(hardwareIniFile);
 		}
-		return l_hrOk;
+		return l_hrOk;  //@TODO [Arvid][7.50][6.6.2017] hier sollte man besser eine Liste der Dateien zurückgeben, die nicht geladen werden konnten. Das würde die Erzeugung vernünftiger Fehlerbeschreibungen "weiter oben" erleichtern.
 	}
 
 	HRESULT SVOIniLoader::LoadOEMIni(LPCTSTR oemIniFile)
 	{
-		HRESULT Result( S_OK );
 		SVOINIClass OemIni( oemIniFile );
 	
 		SVString  WinKey = OemIni.GetValueString( OEMSpecificSectionTag, ProductIDTag, EmptyString );
@@ -109,8 +107,9 @@ namespace SvLib
 	
 		SVString SerialNumber = OemIni.GetValueString( OEMSpecificSectionTag, SerialNoTag, EmptyString );
 
-		Result = DecodeModelNumber(ModelNumber.c_str());
-		if ( S_OK == Result )
+		m_hrDecodeModelNumber = DecodeModelNumber(ModelNumber.c_str());
+
+		if ( S_OK == m_hrDecodeModelNumber )
 		{
 			m_WinKey = WinKey;
 			m_ModelNumber = ModelNumber;
@@ -130,8 +129,7 @@ namespace SvLib
 			m_SerialNumber.clear();
 		}
 		
-		m_hrOEMFailure = Result;
-		return Result;
+		return m_hrDecodeModelNumber;
 	}
 
 	HRESULT SVOIniLoader::LoadSVIMIni(LPCTSTR svimIniFile)
@@ -165,9 +163,9 @@ namespace SvLib
 
 		// Force Image Update Time (in seconds)
 		int forcedImageUpdateTime = SvimIni.GetValueInt( DisplaySectionTag, ForcedImageUpdateTimeInSecondsTag, 0 );
-		m_forcedImageUpdateTimeInSeconds = static_cast<unsigned char> (forcedImageUpdateTime);
-		m_NAKMode = static_cast<SvOi::NakGeneration>( SvimIni.GetValueInt(NAKSectionTag, NAKMode, SvOi::NakGeneration::Bursts));
-		m_NAKParameter = SvimIni.GetValueInt(NAKSectionTag, NAKParameter, SvOi::DefaultNakParameter);
+		m_rInitialInfo.m_forcedImageUpdateTimeInSeconds = static_cast<unsigned char> (forcedImageUpdateTime);
+		m_rInitialInfo.m_NAKMode = static_cast<SvOi::NakGeneration>( SvimIni.GetValueInt(NAKSectionTag, NAKMode, SvOi::NakGeneration::Bursts));
+		m_rInitialInfo.m_NAKParameter = SvimIni.GetValueInt(NAKSectionTag, NAKParameter, SvOi::DefaultNakParameter);
 		return Result;
 	}
 
@@ -177,98 +175,94 @@ namespace SvLib
 
 		SVOINIClass HardwareINI( hardwareIniFile );
 
-		m_ProductName.clear();
-		m_SoftwareTriggerDLL.clear();
-		m_AcquisitionTriggerDLL.clear();
-		m_FileAcquisitionDLL.clear();
+		m_rInitialInfo.m_ProductName.clear();
+		m_rInitialInfo.m_SoftwareTriggerDLL.clear();
+		m_rInitialInfo.m_AcquisitionTriggerDLL.clear();
+		m_rInitialInfo.m_FileAcquisitionDLL.clear();
 
-		m_ProcessorBoardName = UnknownboardTag;
-		m_TriggerBoardName = UnknownboardTag;
-		m_AcquisitionBoardName = UnknownboardTag;
-		m_DigitalBoardName = UnknownboardTag;
-		m_RAIDBoardName = UnknownboardTag;
+		m_rInitialInfo.ResetBoardNames();
 	
 		m_IOBoardOption = IOBoardModeDefault;
 
 		m_Opto22InputInvert = NTag;
 		m_Opto22OutputInvert = NTag;
 
-		m_ProcessorBoardName = HardwareINI.GetValueString( ProcessorSectionTag, m_Processor.c_str(), EmptyString );
-		if( !m_ProcessorBoardName.empty() )
+		m_rInitialInfo.m_ProcessorBoardName = HardwareINI.GetValueString( ProcessorSectionTag, m_rInitialInfo.m_Processor.c_str(), EmptyString );
+		if( !m_rInitialInfo.m_ProcessorBoardName.empty() )
 		{
-			m_RAIDBoardName = HardwareINI.GetValueString( m_ProcessorBoardName.c_str(), RAIDTag, EmptyString );
+			m_rInitialInfo.m_RAIDBoardName = HardwareINI.GetValueString(m_rInitialInfo.m_ProcessorBoardName.c_str(), RAIDTag, EmptyString );
 
-			m_ProductName = HardwareINI.GetValueString( m_ProcessorBoardName.c_str(), ProductNameTag, EmptyString );
+			m_rInitialInfo.m_ProductName = HardwareINI.GetValueString(m_rInitialInfo.m_ProcessorBoardName.c_str(), ProductNameTag, EmptyString );
 		}
 
-		m_AcquisitionBoardName = HardwareINI.GetValueString( FrameGrabberSectionTag, m_FrameGrabber.c_str(), EmptyString );
-		if( !m_AcquisitionBoardName.empty() )
+		m_rInitialInfo.m_AcquisitionBoardName = HardwareINI.GetValueString( FrameGrabberSectionTag, m_rInitialInfo.m_FrameGrabber.c_str(), EmptyString );
+		if( !m_rInitialInfo.m_AcquisitionBoardName.empty() )
 		{
-			m_DigitizerDLL = HardwareINI.GetValueString( m_AcquisitionBoardName.c_str(), DigitizerDLLTag, EmptyString );
+			m_rInitialInfo.m_DigitizerDLL = HardwareINI.GetValueString(m_rInitialInfo.m_AcquisitionBoardName.c_str(), DigitizerDLLTag, EmptyString );
 
-			m_TriggerDLL = HardwareINI.GetValueString( m_AcquisitionBoardName.c_str(), TriggerDLLTag, EmptyString );
+			m_rInitialInfo.m_TriggerDLL = HardwareINI.GetValueString(m_rInitialInfo.m_AcquisitionBoardName.c_str(), TriggerDLLTag, EmptyString );
 
-			if ( m_ProductName.empty() )
+			if (m_rInitialInfo.m_ProductName.empty() )
 			{
-				m_ProductName = HardwareINI.GetValueString( m_AcquisitionBoardName.c_str(), ProductNameTag, EmptyString );
-				SvUl_SF::TrimLeft( m_ProductName );
-				SvUl_SF::TrimRight( m_ProductName );
-				if ( SVIM_X2_GD2A == m_ProductName || SVIM_X2_GD8A == m_ProductName  )
+				m_rInitialInfo.m_ProductName = HardwareINI.GetValueString(m_rInitialInfo.m_AcquisitionBoardName.c_str(), ProductNameTag, EmptyString );
+				SvUl_SF::TrimLeft(m_rInitialInfo.m_ProductName );
+				SvUl_SF::TrimRight(m_rInitialInfo.m_ProductName );
+				if ( SVIM_X2_GD2A == m_rInitialInfo.m_ProductName || SVIM_X2_GD8A == m_rInitialInfo.m_ProductName  )
 				{
 					if ( m_bSingleCameraModel )
 					{
-						m_ProductName = SVIM_X2_GD1A;
+						m_rInitialInfo.m_ProductName = SVIM_X2_GD1A;
 					}
 				}
 			}
 
-			m_ReloadAcquisitionDLL = HardwareINI.GetValueString( m_AcquisitionBoardName.c_str(), ReloadDLLTag, YTag );
+			m_rInitialInfo.m_ReloadAcquisitionDLL = HardwareINI.GetValueString(m_rInitialInfo.m_AcquisitionBoardName.c_str(), ReloadDLLTag, YTag );
 
-			if( !m_TriggerDLL.empty() )
+			if( !m_rInitialInfo.m_TriggerDLL.empty() )
 			{
-				m_Trigger = m_FrameGrabber;
-				m_TriggerBoardName = m_AcquisitionBoardName;
-				m_ReloadTriggerDLL = m_ReloadAcquisitionDLL;
+				m_rInitialInfo.m_Trigger = m_rInitialInfo.m_FrameGrabber;
+				m_rInitialInfo.m_TriggerBoardName = m_rInitialInfo.m_AcquisitionBoardName;
+				m_rInitialInfo.m_ReloadTriggerDLL = m_rInitialInfo.m_ReloadAcquisitionDLL;
 			}
 		
 			// Matrox Gige - Get Packet Size
 			int packetSize = 0;
-			packetSize = HardwareINI.GetValueInt( m_AcquisitionBoardName.c_str(), PacketSizeTag, 0 );
-			m_gigePacketSize = static_cast<long> (packetSize);
+			packetSize = HardwareINI.GetValueInt(m_rInitialInfo.m_AcquisitionBoardName.c_str(), PacketSizeTag, 0 );
+			m_rInitialInfo.m_gigePacketSize = static_cast<long> (packetSize);
 		}
 
-		m_DigitalBoardName = HardwareINI.GetValueString( IOBoardSectionTag, m_IOBoard.c_str(), EmptyString );
-		if( !m_DigitalBoardName.empty() )
+		m_rInitialInfo.m_DigitalBoardName = HardwareINI.GetValueString( IOBoardSectionTag, m_rInitialInfo.m_IOBoard.c_str(), EmptyString );
+		if( !m_rInitialInfo.m_DigitalBoardName.empty() )
 		{
-			m_DigitalDLL = HardwareINI.GetValueString( m_DigitalBoardName.c_str(), DigitalIODLLTag, EmptyString );
-			m_ReloadDigitalDLL = HardwareINI.GetValueString( m_DigitalBoardName.c_str(), ReloadDLLTag, YTag );
+			m_rInitialInfo.m_DigitalDLL = HardwareINI.GetValueString(m_rInitialInfo.m_DigitalBoardName.c_str(), DigitalIODLLTag, EmptyString );
+			m_rInitialInfo.m_ReloadDigitalDLL = HardwareINI.GetValueString(m_rInitialInfo.m_DigitalBoardName.c_str(), ReloadDLLTag, YTag );
 
-			if ( m_TriggerDLL.empty() )
+			if (m_rInitialInfo.m_TriggerDLL.empty() )
 			{
-				m_TriggerDLL = HardwareINI.GetValueString( m_DigitalBoardName.c_str(), TriggerDLLTag, EmptyString );
+				m_rInitialInfo.m_TriggerDLL = HardwareINI.GetValueString(m_rInitialInfo.m_DigitalBoardName.c_str(), TriggerDLLTag, EmptyString );
 
-				if( !m_TriggerDLL.empty() )
+				if( !m_rInitialInfo.m_TriggerDLL.empty() )
 				{
-					m_TriggerBoardName = m_DigitalBoardName;
+					m_rInitialInfo.m_TriggerBoardName = m_rInitialInfo.m_DigitalBoardName;
 
-					m_ReloadTriggerDLL = m_ReloadAcquisitionDLL;
+					m_rInitialInfo.m_ReloadTriggerDLL = m_rInitialInfo.m_ReloadAcquisitionDLL;
 				}
 			}
 
 			SVString Value;
-			Value = HardwareINI.GetValueString( m_DigitalBoardName.c_str(), IOBoardModeTag, IOBoardModeDefault );
+			Value = HardwareINI.GetValueString(m_rInitialInfo.m_DigitalBoardName.c_str(), IOBoardModeTag, IOBoardModeDefault );
 			if( 0 < Value.size() )
 			{
 				m_IOBoardOption = Value;
 			}
 
-			Value = HardwareINI.GetValueString( m_DigitalBoardName.c_str(), Opto22InputInvertTag, NTag );
+			Value = HardwareINI.GetValueString(m_rInitialInfo.m_DigitalBoardName.c_str(), Opto22InputInvertTag, NTag );
 			if( 0 < Value.size() )
 			{
 				m_Opto22InputInvert = Value;
 			}
 
-			Value = HardwareINI.GetValueString( m_DigitalBoardName.c_str(), Opto22OutputInvertTag, NTag );
+			Value = HardwareINI.GetValueString(m_rInitialInfo.m_DigitalBoardName.c_str(), Opto22OutputInvertTag, NTag );
 			if( 0 < Value.size() )
 			{
 				m_Opto22OutputInvert = Value;
@@ -280,8 +274,8 @@ namespace SvLib
 			// e.g. FrameGrabber2A
 			// The value is the product name (could be anything really as only the presence of the entry is required).
 			// If an Entry is found then the product name is not overridden.
-			SVString frameGrabberEntry (FrameGrabberTag + m_FrameGrabber);
-			Value = HardwareINI.GetValueString( m_DigitalBoardName.c_str(), frameGrabberEntry.c_str(), EmptyString );
+			SVString frameGrabberEntry (FrameGrabberTag + m_rInitialInfo.m_FrameGrabber);
+			Value = HardwareINI.GetValueString(m_rInitialInfo.m_DigitalBoardName.c_str(), frameGrabberEntry.c_str(), EmptyString );
 			// if the entry is not found, apply the product name Rule
 			if( 0 == Value.size() )
 			{
@@ -289,18 +283,18 @@ namespace SvLib
 				// This is an exception to the rule "The first one wins".
 				// This exception was made for the X Series where the IO board model
 				// can dictate the product name.
-				Value = HardwareINI.GetValueString( m_DigitalBoardName.c_str(), ProductNameTag, EmptyString );
+				Value = HardwareINI.GetValueString(m_rInitialInfo.m_DigitalBoardName.c_str(), ProductNameTag, EmptyString );
 				if( 0 < Value.size() )
 				{
-					m_ProductName = Value;
+					m_rInitialInfo.m_ProductName = Value;
 				}
 			}
 		}
 
-		m_HardwareOptions = HardwareINI.GetValueString( OptionsSectionTag, m_Options.c_str(), EmptyString );
+		m_rInitialInfo.m_HardwareOptions = HardwareINI.GetValueString( OptionsSectionTag, m_rInitialInfo.m_Options.c_str(), EmptyString );
 
-		bool l_UseFileAcq = !( m_DigitizerDLL.empty() );
-		bool l_UseSoftTrig = !( m_TriggerDLL.empty() );
+		bool l_UseFileAcq = !(m_rInitialInfo.m_DigitizerDLL.empty() );
+		bool l_UseSoftTrig = !(m_rInitialInfo.m_TriggerDLL.empty() );
 
 		#ifdef _DEBUG
 			l_UseFileAcq = true;
@@ -309,107 +303,82 @@ namespace SvLib
 
 		if( l_UseFileAcq )
 		{
-			m_FileAcquisitionDLL = FileAcquisitionDeviceFilename;
+			m_rInitialInfo.m_FileAcquisitionDLL = FileAcquisitionDeviceFilename;
 		}
 
 		if( l_UseSoftTrig )
 		{
-			m_SoftwareTriggerDLL = SoftwareTriggerDeviceFilename;
+			m_rInitialInfo.m_SoftwareTriggerDLL = SoftwareTriggerDeviceFilename;
 		}
 
-		m_AcquisitionTriggerDLL = m_DigitizerDLL; // Digitizer must be set before triggers..
+		m_rInitialInfo.m_AcquisitionTriggerDLL = m_rInitialInfo.m_DigitizerDLL; // Digitizer must be set before triggers..
 
 		return l_hrOk;
 	}
 
 	HRESULT SVOIniLoader::DecodeModelNumber(LPCTSTR modelNumber)
 	{
-		HRESULT l_hrOk = S_OK;
-	
 		SVString CheckModelNumber( modelNumber );
 		SvUl_SF::TrimLeft( CheckModelNumber );
 		SvUl_SF::TrimRight( CheckModelNumber );
 		SvUl_SF::MakeUpper( CheckModelNumber );
 	
-		if ( 11 != CheckModelNumber.size() || EmptyModelNo == CheckModelNumber )
+		if (11 != CheckModelNumber.size() || EmptyModelNo == CheckModelNumber)
 		{
-			l_hrOk = S_FALSE;
+			return S_FALSE;
 		}
-		else
+
+		m_rInitialInfo.ResetModelNumberInformation();
+
+		m_rInitialInfo.m_Trigger.clear();
+
+		int l_iCount = 0;
+
+		for ( int i = 0; i < CheckModelNumber.size(); i++ )
 		{
-			m_Processor.clear();
-			m_FrameGrabber.clear();
-			m_IOBoard.clear();
-			m_Options.clear();
-			m_Trigger.clear();
-
-			int l_iCount = 0;
-
-			for ( int i = 0; i < CheckModelNumber.size(); i++ )
+			if ( ::isalnum( CheckModelNumber[i] ) )
 			{
-				if ( ::isalnum( CheckModelNumber[i] ) )
+				switch( ++l_iCount )
 				{
-					switch( ++l_iCount )
+					case 1:
+					case 2:
 					{
-						case 1:
-						case 2:
-						{
-							m_Processor += CheckModelNumber[i];
+						m_rInitialInfo.m_Processor += CheckModelNumber[i];
 
-							break;
-						}
-						case 3:
-						case 4:
-						{
-							m_FrameGrabber += CheckModelNumber[i];
+						break;
+					}
+					case 3:
+					case 4:
+					{
+						m_rInitialInfo.m_FrameGrabber += CheckModelNumber[i];
 
-							break;
-						}
-						case 5:
-						case 6:
-						{
-							m_IOBoard += CheckModelNumber[i];
+						break;
+					}
+					case 5:
+					case 6:
+					{
+						m_rInitialInfo.m_IOBoard += CheckModelNumber[i];
 
-							break;
-						}
-						case 7:
-						case 8:
-						{
-							m_Options += CheckModelNumber[i];
+						break;
+					}
+					case 7:
+					case 8:
+					{
+						m_rInitialInfo.m_Options += CheckModelNumber[i];
 
-							break;
-						}
-						default:
-						{
-							break;
-						}
+						break;
+					}
+					default:
+					{
+						break;
 					}
 				}
 			}
-
-			m_Trigger = m_IOBoard;
 		}
-		return l_hrOk;
+
+		m_rInitialInfo.m_Trigger = m_rInitialInfo.m_IOBoard;
+		
+		return S_OK;
 	}
 
-	// The ForcedImageUpdateTimeInSeconds comes from the SVIM.ini file
-	// It is to be placed in the [Display] section and has the following syntax:
-	// ForcedImageUpdateTimeInSeconds=N
-	// Where N is zero to 255, zero means no forced update.
-	unsigned char SVOIniLoader::GetForcedImageUpdateTime() const
-	{
-		return m_forcedImageUpdateTimeInSeconds;
-	}
-
-	SvOi::NakGeneration  SVOIniLoader::GetNAKMode() const
-	{
-
-		return m_NAKMode;
-	}
-
-	int  SVOIniLoader::GetNAKPar() const
-	{
-
-		return m_NAKParameter;
-	}
 } //namespace SvLib

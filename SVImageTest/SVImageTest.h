@@ -19,6 +19,7 @@
 #include "resource.h"		// main symbols
 
 #include "SVTestAcquisitionSubsystem.h"
+#include "SVLibrary/InitialInformation.h"
 #include "SVLibrary/SVOIniLoader.h"
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
@@ -56,6 +57,8 @@ public:
 	DECLARE_MESSAGE_MAP()
 	
 private:
+	SvLib::InitialInformation m_iniFileInfo;
+
 	SVTestAcquisitionSubsystem* m_pSubsystem;
 
 	bool ReadSVIMModelNo();

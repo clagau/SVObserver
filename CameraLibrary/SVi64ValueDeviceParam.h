@@ -50,7 +50,7 @@ private:
 	void init();
 };
 
-#if defined(_DEBUG) || defined (_MINDEBUG)
+#if defined(_DEBUG)
 	__int64& i64Value(SVDeviceParamWrapper& w);
 	__int64 i64Value(const SVDeviceParamWrapper& w);
 	SVDeviceParamWrapper DeviceParam(__int64 i);
