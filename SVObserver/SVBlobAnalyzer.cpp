@@ -835,8 +835,8 @@ BOOL SVBlobAnalyzerClass::CreateObject(SVObjectLevelCreateStruct* PCreateStructu
 					break; // Break out of for loop 
 				}
 				
-				pRange->FailHigh.SetValue( 5000.0, 1 ); // Set some high values, so that it doesn't fail
-				pRange->WarnHigh.SetValue( 4999.0, 1 );
+				pRange->FailHigh.SetValue(Range_defaults::highDef, 1 ); // Set some high values, so that it doesn't fail
+				pRange->WarnHigh.SetValue(Range_defaults::highDef, 1 );
 			}
 		}
 

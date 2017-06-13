@@ -36,12 +36,6 @@ struct SVRangeClassCancelData : public SVCancelData	// this does not need to be 
 	SVDoubleValueObjectClass WarnHigh;
 };
 
-enum defaults
-{
-	lowDef = 0, // Warn/Fail Low Default
-	highDef = 99999 // Warn/Fail High Default
-};
-
 const TCHAR* const ToolSetName = _T( "Tool Set" );
 
 #pragma endregion Declarations

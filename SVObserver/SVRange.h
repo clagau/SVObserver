@@ -18,6 +18,12 @@
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
+enum Range_defaults
+{
+	lowDef = 0, // Warn/Fail Low Default
+	highDef = 9999999 // Warn/Fail High Default
+};
+
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : Class SVRangeClass
 // -----------------------------------------------------------------------------
