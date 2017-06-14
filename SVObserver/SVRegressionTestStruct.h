@@ -17,14 +17,15 @@ enum RegressionFileEnum
 {
 	RegFileList = 0, //For a listing of files
 	RegSingleFile = 1,
-	RegNone = 2
+	RegSingleDirectory = 2,
+	RegSubDirectories = 3,
+	RegNone = 4
 };
 
 struct RegressionTestStruct
 {
 	SVString Camera;
 	SVString FirstFile;
-	SVString FileMask;
 	RegressionFileEnum iFileMethod; 
 	SVStringVector stdVectorFile;
 	SVStringVector::iterator stdIteratorStart;
@@ -61,15 +62,3 @@ enum RegressionPlayModeEnum
 	RunToEnd = 0,
 	Continue = 1
 };
-
-enum RegressionFileSelectCode
-{
-	SelectGood				= 0,
-	SelectionBadList		= 1,
-	SelectionInvalid		= 2,
-	SelectionInvalidMask	= 3,
-	SelectionNoFiles		= 4,
-	SelectionFileNotExist	= 5,
-	SelectionEmptyList		= 6
-};
-

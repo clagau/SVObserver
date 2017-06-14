@@ -18,7 +18,7 @@
 #include "SVVirtualCamera.h"
 #include "TextDefinesSvO.h"
 #include "SVStatusLibrary\MessageManager.h"
-#include "SVStatusLibrary/ErrorNumbers.h"
+#include "SVStatusLibrary/MessageContainer.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -114,7 +114,6 @@ void CSVRegressionFileSelectSheet::OnOK()
 				pStruct->iFileMethod = pPage->GetFileSelectType();
 				pStruct->Camera = pPage->GetPageName();
 				pStruct->FirstFile = pPage->GetSelectedFile();
-				pStruct->FileMask = MakeFileNameMask(pStruct->FirstFile );
 				pStruct->bDone = false;
 				m_pRegressionList->AddTail(pStruct);
 			}
@@ -122,109 +121,53 @@ void CSVRegressionFileSelectSheet::OnOK()
 		//check to make sure that if using file list that all are of same size.
 	}
 
-	switch (ValidateList())
+	try
 	{
-		case SelectGood:
+		ValidateAndFillFileList();
+		for (int i = 0; i < iNumPages; i++)
 		{
-			FillFileList();
-			for ( int i = 0; i < iNumPages; i++ )
+			CSVRegressionFileSelectDlg *pPage = (CSVRegressionFileSelectDlg*)GetPage(i);
+			if ((pPage) && (pPage->GetSafeHwnd()))
 			{
-				CSVRegressionFileSelectDlg *pPage = (CSVRegressionFileSelectDlg*)GetPage(i);
-				if ( (pPage) && (pPage->GetSafeHwnd()) )
-				{
-					pPage->OnOK();
-				}
+				pPage->OnOK();
 			}
-
-			break;
 		}
-		case SelectionBadList:
+	}
+	catch (const SvStl::MessageContainer& rExp)
+	{
+		switch (rExp.getMessage().m_AdditionalTextId)
 		{
-			SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_RegressionTest_WrongListSize, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10188 ); 
+		case SvStl::Tid_RegressionTest_NoFileSelected:
+		case SvStl::Tid_RegressionTest_FileNotExist:
+		case SvStl::Tid_RegressionTest_WrongFormat:
+		case SvStl::Tid_RegressionTest_NoFilesSelected:
+		case SvStl::Tid_RegressionTest_EmptyDirectory:
+		{
+			SvStl::MessageMgrStd Msg(SvStl::LogAndDisplay);
+			INT_PTR result = Msg.setMessage( rExp.getMessage(), SV_GUID_NULL, MB_YESNO);
+			if (IDYES == result)
+			{
+				return;
+			}
+			else
+			{
+				ClearRegressionList();
+				EndDialog(IDCANCEL);
+				return;
+			}
+		}
+		break;
+		case SvStl::Tid_RegressionTest_WrongListSize:
+		default:
+		{
+			SvStl::MessageMgrStd Msg(SvStl::LogAndDisplay);
+			Msg.setMessage(rExp.getMessage());
 			ClearRegressionList();
 			return;
 		}
-		case SelectionInvalid:
-		{
-			SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-			INT_PTR result = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_RegressionTest_NoFileSelected, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10189, SV_GUID_NULL, MB_YESNO ); 
-			if ( IDYES == result )
-			{
-				return;
-			}
-			else
-			{
-				ClearRegressionList();
-				EndDialog(IDCANCEL);
-				return;
-			}
+		break;
 		}
-		case SelectionEmptyList:
-		{
-			SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-			INT_PTR result = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_RegressionTest_WrongFormat, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10190, SV_GUID_NULL, MB_YESNO ); 
-			if ( IDYES == result )
-			{
-				ClearRegressionList();
-				return;
-			}
-			else
-			{
-				ClearRegressionList();
-				EndDialog(IDCANCEL);
-				return;
-			}
-		}
-		case SelectionInvalidMask:
-		{
-			SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-			INT_PTR result = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_RegressionTest_WrongFormat, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10191, SV_GUID_NULL, MB_YESNO ); 
-			if ( IDYES == result )
-			{
-				return;
-			}
-			else
-			{
-				ClearRegressionList();
-				EndDialog(IDCANCEL);
-				return;
-			}
-		}
-		case SelectionNoFiles:
-		{
-			SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-			INT_PTR result = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_RegressionTest_NoFilesSelected, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10192, SV_GUID_NULL, MB_YESNO ); 
-			if ( IDYES == result )
-			{
-				return;
-			}
-			else
-			{
-				ClearRegressionList();
-				EndDialog(IDCANCEL);
-				return;
-			}
-
-		}
-		case SelectionFileNotExist:
-		{
-			SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-			INT_PTR result = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_RegressionTest_FileNotExist, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10193, SV_GUID_NULL, MB_YESNO ); 
-			if ( IDYES == result )
-			{
-				return;
-			}
-			else
-			{
-				ClearRegressionList();
-				EndDialog(IDCANCEL);
-				return;
-			}
-
-		}
-	}//end switch...
-
+	}
 
 	EndDialog(IDOK);
 }
@@ -250,118 +193,135 @@ SVString CSVRegressionFileSelectSheet::MakeFileNameMask( const SVString& rFileNa
 	return Result;
 }
 	
-RegressionFileSelectCode CSVRegressionFileSelectSheet::ValidateList()
+void CSVRegressionFileSelectSheet::ValidateAndFillFileList()
 {
-	BOOL bRet = TRUE;
-	RegressionFileSelectCode l_ReturnCode = SelectGood;
-
-	long l_lTotalNumFiles = 0;
+	long lTotalNumFiles = 0;
 
 	int iCount = static_cast<int>(m_pRegressionList->GetCount());
 	long lListCountSize = 0;
 
 	for ( int i = 0; i < iCount; i++ )
 	{
-		RegressionTestStruct *pStruct;// = new RegressionTestStruct;
+		RegressionTestStruct *pStruct;
 
 		POSITION pos = m_pRegressionList->FindIndex(i);
-		if ( pos )
+		if (pos)
 		{
 			pStruct = m_pRegressionList->GetAt(pos);
 
-			if ( pStruct->iFileMethod == RegSingleFile )
+			switch (pStruct->iFileMethod)
+			{
+			case RegressionFileEnum::RegSingleFile:
 			{
 				//check to see if a selection has been made...
-				if ( pStruct->FirstFile.empty() )
+				if (pStruct->FirstFile.empty())
 				{
-					return SelectionInvalid;
+					SVStringVector msgList;
+					msgList.push_back(pStruct->Camera);
+					SvStl::MessageContainer Exception( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_RegressionTest_NoFileSelected, msgList, SvStl::SourceFileParams(StdMessageParams) );
+					throw Exception;
 				}
-				else 
+				else
 				{
 					//check to make sure name is a file that exists
-					if ( 0 == ::_access( pStruct->FirstFile.c_str(), 0 ) )
+					if (0 != ::_access(pStruct->FirstFile.c_str(), 0))
 					{
-						l_lTotalNumFiles++;
+						SVStringVector msgList;
+						msgList.push_back(pStruct->Camera);
+						SvStl::MessageContainer Exception(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_RegressionTest_FileNotExist, msgList, SvStl::SourceFileParams(StdMessageParams));
+						throw Exception;
 					}
-					else
+
+					if (0 != SvUl_SF::CompareNoCase(SvUl_SF::Right(pStruct->FirstFile.c_str(), 4), SVString(_T(".bmp"))))
 					{
-						return SelectionFileNotExist;
+						SvStl::MessageContainer Exception(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_RegressionTest_NoBmpFileSelected, SvStl::SourceFileParams(StdMessageParams));
+						throw Exception;
 					}
+					pStruct->stdVectorFile.push_back(pStruct->FirstFile);
+					SVStringVector::iterator iter;
+
+					iter = std::find(pStruct->stdVectorFile.begin(), pStruct->stdVectorFile.end(), pStruct->FirstFile);
+
+					//set the structs starting and current position to the start
+					pStruct->stdIteratorStart = iter;
+					pStruct->stdIteratorCurrent = pStruct->stdIteratorStart;
+					lTotalNumFiles++;
 				}
-				
 			}
-
-			if ( pStruct->iFileMethod == RegFileList )
+			break;
+			case RegressionFileEnum::RegFileList:
 			{
-				if( !pStruct->FileMask.empty() )
+				long lNmbFiles = FillFileList(*pStruct);
+				lTotalNumFiles += lNmbFiles;
+
+				if (0 < lNmbFiles)
 				{
-					long lNmbFiles = GetNumberOfFilesMatchingMask(pStruct->FileMask);
-					l_lTotalNumFiles += lNmbFiles;
-
-					if ( 0  < lNmbFiles )
+					//check number of files...
+					if (lListCountSize == 0)
 					{
-						//check number of files...
-						if ( lListCountSize == 0 )
-						{
-							lListCountSize = lNmbFiles;
-						}
-						else // check to make sure that size matches the others
-						{
-							if ( lNmbFiles != lListCountSize )
-							{
-								bRet = FALSE;
-								l_ReturnCode = SelectionBadList;
-
-							}
-						}
+						lListCountSize = lNmbFiles;
 					}
-					else
+					else // check to make sure that size matches the others
 					{
-						bRet = FALSE;
-						l_ReturnCode = SelectionInvalidMask;
+						if (lNmbFiles != lListCountSize)
+						{
+							SvStl::MessageContainer Exception(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_RegressionTest_WrongListSize, SvStl::SourceFileParams(StdMessageParams));
+							throw Exception;
+						}
 					}
 				}
 				else
 				{
-					bRet = FALSE;
-					l_ReturnCode = SelectionEmptyList;
+					SVStringVector msgList;
+					msgList.push_back(pStruct->Camera);
+					SvStl::MessageContainer Exception(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_RegressionTest_WrongFormat, msgList, SvStl::SourceFileParams(StdMessageParams));
+					throw Exception;
 				}
+			}
+			break;
+			case RegressionFileEnum::RegSingleDirectory:
+			case RegressionFileEnum::RegSubDirectories:
+			{
+				long lNmbFiles = FillFileListFromDirectory(*pStruct);
+				lTotalNumFiles += lNmbFiles;
+
+				if (0 < lNmbFiles)
+				{
+					//check number of files...
+					if (lListCountSize == 0)
+					{
+						lListCountSize = lNmbFiles;
+					}
+					else // check to make sure that size matches the others
+					{
+						if (lNmbFiles != lListCountSize)
+						{
+							SvStl::MessageContainer Exception(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_RegressionTest_WrongListSize, SvStl::SourceFileParams(StdMessageParams));
+							throw Exception;
+						}
+					}
+				}
+				else
+				{
+					SVStringVector msgList;
+					msgList.push_back(pStruct->Camera);
+					SvStl::MessageContainer Exception(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_RegressionTest_EmptyDirectory, msgList, SvStl::SourceFileParams(StdMessageParams));
+					throw Exception;
+				}
+			}
+			break;
+			default:
+				break;
 			}
 		}
 	}
 
-	if ( bRet )
+	//check to see if total num of files is > 0
+	if ( lTotalNumFiles == 0 )
 	{
-		//check to see if total num of files is > 0
-		if ( l_lTotalNumFiles == 0 )
-		{
-			bRet = FALSE;
-			l_ReturnCode = SelectionNoFiles;
-		}
-		else
-		{
-			l_ReturnCode = SelectGood;
-		}
+		SvStl::MessageContainer Exception(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_RegressionTest_NoFilesSelected, SvStl::SourceFileParams(StdMessageParams));
+		throw Exception;
 	}
-
-	return l_ReturnCode;
-}
-
-long CSVRegressionFileSelectSheet::GetNumberOfFilesMatchingMask(const SVString& rMask)
-{
-	long lNumCount = 0;
-	CFileFind fileFinder;
-
-	BOOL bFound = fileFinder.FindFile(rMask.c_str());
-
-	while ( bFound )
-	{
-		lNumCount++;
-		bFound = fileFinder.FindNextFile();
-	}
-
-
-	return lNumCount;
 }
 
 void CSVRegressionFileSelectSheet::ClearRegressionList()
@@ -377,56 +337,99 @@ void CSVRegressionFileSelectSheet::ClearRegressionList()
 	}
 }
 
-void CSVRegressionFileSelectSheet::FillFileList()
+int CSVRegressionFileSelectSheet::FillFileList(RegressionTestStruct& rStruct)
 {
-	int iCnt = static_cast<int>(m_pRegressionList->GetCount());
-
-	for ( int i = 0; i <= iCnt; i++ )
+	int count = 0;
+	SVString fileMask = MakeFileNameMask(rStruct.FirstFile);
+	if (fileMask.empty())
 	{
-		RegressionTestStruct *pStruct;
+		return 0;
+	}
+	CFileFind fileFinder;
+	BOOL bFound = fileFinder.FindFile(fileMask.c_str());
 
-		POSITION pos = m_pRegressionList->FindIndex(i);
+	while (bFound)
+	{
+		bFound = fileFinder.FindNextFile();
+		count++;
+		rStruct.stdVectorFile.push_back(SVString(fileFinder.GetFilePath()));
+	}
+	std::sort(rStruct.stdVectorFile.begin(), rStruct.stdVectorFile.end());
+	//find the starting position
+	SVStringVector::iterator iter;
 
-		if ( pos )
+	iter = std::find(rStruct.stdVectorFile.begin(), rStruct.stdVectorFile.end(), rStruct.FirstFile);
+
+	//set the structs starting and current position to the start
+	rStruct.stdIteratorStart = iter;
+	rStruct.stdIteratorCurrent = rStruct.stdIteratorStart;
+	return count;
+}
+
+int CSVRegressionFileSelectSheet::FillFileListFromDirectory(RegressionTestStruct& rStruct)
+{
+	SVString currentPath = rStruct.FirstFile;
+	if (RegressionFileEnum::RegSingleDirectory == rStruct.iFileMethod)
+	{
+		//For Single Directory a bmp-File is selected. For this reason the filename has to be removed.
+		if (0 != SvUl_SF::CompareNoCase(SvUl_SF::Right(currentPath.c_str(), 4), SVString(_T(".bmp"))))
 		{
-			pStruct = m_pRegressionList->GetAt(pos);
+			SvStl::MessageContainer Exception(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_RegressionTest_NoBmpFileSelected, SvStl::SourceFileParams(StdMessageParams));
+			throw Exception;
+		}
+		size_t Pos = currentPath.rfind('\\');
+		if (SVString::npos != Pos)
+		{
+			currentPath = currentPath.substr(0, Pos);
+		}
+	}
+	int count = FillFileListFromDirectory(rStruct, currentPath);
 
-			CFileFind fileFinder;
+	std::sort(rStruct.stdVectorFile.begin(), rStruct.stdVectorFile.end());
 
-			if ( pStruct->iFileMethod == RegSingleFile )
+	//set the structs starting and current position to the start
+	rStruct.stdIteratorStart = rStruct.stdVectorFile.begin();
+	rStruct.stdIteratorCurrent = rStruct.stdIteratorStart;
+	return count;
+}
+
+int CSVRegressionFileSelectSheet::FillFileListFromDirectory(RegressionTestStruct& rStruct, const SVString& rCurrentPath)
+{
+	int count = 0;
+
+	SVString fileMask = rCurrentPath + _T("\\*.bmp");
+	CFileFind fileFinder;
+	BOOL bFound = fileFinder.FindFile(fileMask.c_str());
+
+	while (bFound)
+	{
+		bFound = fileFinder.FindNextFile();
+		count++;
+		rStruct.stdVectorFile.push_back(SVString(fileFinder.GetFilePath()));
+	}
+
+	if (RegressionFileEnum::RegSubDirectories == rStruct.iFileMethod)
+	{
+		fileMask = rCurrentPath + _T("\\*");
+		bFound = fileFinder.FindFile(fileMask.c_str());
+
+		while (bFound)
+		{
+			bFound = fileFinder.FindNextFile();
+			if (fileFinder.IsDirectory() && !fileFinder.IsDots())
 			{
-				pStruct->stdVectorFile.push_back(pStruct->FirstFile);
-				SVStringVector::iterator iter;
-
-				iter = std::find(pStruct->stdVectorFile.begin(),pStruct->stdVectorFile.end(),pStruct->FirstFile);
-
-				//set the structs starting and current position to the start
-				pStruct->stdIteratorStart = iter;
-				pStruct->stdIteratorCurrent = pStruct->stdIteratorStart;
-				m_pRegressionList->SetAt(pos,pStruct);
-				continue;
-			}
-
-			BOOL bFound = fileFinder.FindFile(pStruct->FileMask.c_str());
-
-			while ( bFound )
-			{
-				bFound = fileFinder.FindNextFile();
-				pStruct->stdVectorFile.push_back( SVString(fileFinder.GetFilePath()) );
-			}
-			std::sort(pStruct->stdVectorFile.begin(),pStruct->stdVectorFile.end());
-			//find the starting position
-			SVStringVector::iterator iter;
-
-			iter = std::find(pStruct->stdVectorFile.begin(),pStruct->stdVectorFile.end(),pStruct->FirstFile);
-
-			//set the structs starting and current position to the start
-			pStruct->stdIteratorStart = iter;
-			pStruct->stdIteratorCurrent = pStruct->stdIteratorStart;
-			m_pRegressionList->SetAt(pos,pStruct);
+				//skip directory which start with underscore (e.g. C:/images/_Name)
+				SVString tmpPathName(fileFinder.GetFilePath());
+				if (tmpPathName.size() > rCurrentPath.size()+1 && '_' != tmpPathName[rCurrentPath.size()+1])
+				{
+					char tmp = tmpPathName[rCurrentPath.size()+1];
+					count += FillFileListFromDirectory(rStruct, tmpPathName);
+				}
+			}			
 		}
 	}
 
+	return count;
 }
 
 BOOL CSVRegressionFileSelectSheet::OnInitDialog() 
@@ -470,6 +473,16 @@ BOOL CSVRegressionFileSelectSheet::OnInitDialog()
 			}
 		}
 	}
+	else //No list set yet, set in first tab the mode to RegFileList
+	{
+		pPage = (CSVRegressionFileSelectDlg*)GetPage(0);
+		if (nullptr != pPage)
+		{
+			RegressionTestStruct tmpStruct;
+			tmpStruct.iFileMethod = RegressionFileEnum::RegFileList;
+			pPage->SetRegressionData(&tmpStruct);
+		}
+	}	
 
 	return bResult;
 }

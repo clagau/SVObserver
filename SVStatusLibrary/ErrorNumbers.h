@@ -174,12 +174,6 @@ namespace SvStl
 	static const int Err_10184 = Maz_ErrorBase + 184;
 	static const int Err_10185 = Maz_ErrorBase + 185;
 	static const int Err_10187 = Maz_ErrorBase + 187;
-	static const int Err_10188 = Maz_ErrorBase + 188;
-	static const int Err_10189 = Maz_ErrorBase + 189;
-	static const int Err_10190 = Maz_ErrorBase + 190;
-	static const int Err_10191 = Maz_ErrorBase + 191;
-	static const int Err_10192 = Maz_ErrorBase + 192;
-	static const int Err_10193 = Maz_ErrorBase + 193;
 	static const int Err_10194 = Maz_ErrorBase + 194;
 	static const int Err_10195 = Maz_ErrorBase + 195;
 	static const int Err_10196 = Maz_ErrorBase + 196;

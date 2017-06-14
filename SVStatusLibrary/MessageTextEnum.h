@@ -312,6 +312,7 @@ namespace SvStl
 		Tid_RegressionTest_WrongFormat,
 		Tid_RegressionTest_NoFilesSelected,
 		Tid_RegressionTest_FileNotExist,
+		Tid_RegressionTest_EmptyDirectory,
 		Tid_RemoteOutput_TriggerCountDeleteError,
 		Tid_RemoteOutput_DeletingOutput,
 		Tid_RemoteOutput_DeletingAllOutput,

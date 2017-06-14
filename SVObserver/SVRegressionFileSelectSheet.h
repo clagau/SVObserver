@@ -52,10 +52,25 @@ public:
 
 private: //methods
 	SVString MakeFileNameMask( const SVString& rFileName );
-	RegressionFileSelectCode ValidateList();
-	long GetNumberOfFilesMatchingMask( const SVString& rMask);
+	/// Validate the regression data and fill the list of files for all structs. If it valid it throw an exception.
+	void ValidateAndFillFileList();
 	void ClearRegressionList();
-	void FillFileList();
+
+	/// Fill the list of files with the RegressionFileEnum::RegFileList mode for one struct
+	/// \param rStruct [in,out] The struct which should to be filled
+	/// \returns int Number of images
+	int FillFileList(RegressionTestStruct& rStruct);
+
+	/// Fill the list of files with directory-modi (Main method)
+	/// \param rStruct [in,out] The struct which should to be filled
+	/// \returns int Number of images
+	int FillFileListFromDirectory(RegressionTestStruct& rStruct);
+
+	/// Fill the list of files with directory-modi for recursive call of the subdirectories.
+	/// \param rStruct [in,out] The struct which should to be filled
+	/// \param rCurrentPath [in] The current path of this recursive call.
+	/// \returns int Number of images
+	int FillFileListFromDirectory(RegressionTestStruct& rStruct, const SVString& rCurrentPath);
 
 private: //data members
 	CList<CString, CString&> m_listMasks;

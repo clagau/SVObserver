@@ -58,11 +58,17 @@ protected:
 	//{{AFX_MSG(CSVRegressionFileSelectDlg)
 	afx_msg void OnBtnRegTestBrowseFiles();
 	virtual BOOL OnInitDialog() override;
-	afx_msg void OnRadioRegList();
-	afx_msg void OnRadioRegNone();
-	afx_msg void OnRadioRegSingle();
+	afx_msg void OnRadioRegUpdate();
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()
+
+private:
+	/// Show a dialog to select a file and save the result in m_RegTestFiles if press IDOK.
+	/// \param bFullAccess [in]
+	void ShowSelectFileDlg(bool bFullAccess);
+	/// Show a dialog to select a directory and save the result in m_RegTestFiles if press IDOK.
+	/// \param bFullAccess [in]
+	void ShowSelectDirectoryDlg(bool bFullAccess);
 
 private:
     CSVRegressionFileSelectSheet *m_pParent;

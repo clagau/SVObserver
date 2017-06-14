@@ -18,6 +18,7 @@
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "TextDefinesSvO.h"
 #include "SVStatusLibrary/GlobalPath.h"
+#include "SVMFCControls/SVDlgFolder.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -40,7 +41,7 @@ CSVRegressionFileSelectDlg::CSVRegressionFileSelectDlg(LPCTSTR lptstrDialogName)
 {
 	
 	//{{AFX_DATA_INIT(CSVRegressionFileSelectDlg)
-	m_iSelectFileRadio = 2;
+	m_iSelectFileRadio = RegressionFileEnum::RegNone;
 	m_RegTestFiles = _T("");
 	//}}AFX_DATA_INIT
 	m_strCaption = lptstrDialogName;
@@ -66,9 +67,11 @@ void CSVRegressionFileSelectDlg::DoDataExchange(CDataExchange* pDX)
 BEGIN_MESSAGE_MAP(CSVRegressionFileSelectDlg, CPropertyPage)
 	//{{AFX_MSG_MAP(CSVRegressionFileSelectDlg)
 	ON_BN_CLICKED(IDC_BTN_REG_TEST_BROWSE_FILES, OnBtnRegTestBrowseFiles)
-	ON_BN_CLICKED(IDC_RADIO_REG_LIST, OnRadioRegList)
-	ON_BN_CLICKED(IDC_RADIO_REG_NONE, OnRadioRegNone)
-	ON_BN_CLICKED(IDC_RADIO_REG_SINGLE, OnRadioRegSingle)
+	ON_BN_CLICKED(IDC_RADIO_REG_LIST, OnRadioRegUpdate)
+	ON_BN_CLICKED(IDC_RADIO_REG_NONE, OnRadioRegUpdate)
+	ON_BN_CLICKED(IDC_RADIO_REG_SINGLE, OnRadioRegUpdate)
+	ON_BN_CLICKED(IDC_RADIO_REG_DIRECTORY, OnRadioRegUpdate)
+	ON_BN_CLICKED(IDC_RADIO_REG_SUB_DIRECTORIES, OnRadioRegUpdate)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -82,7 +85,7 @@ void CSVRegressionFileSelectDlg::SetDlgTitle( LPCTSTR lpszTitle )
 
 void CSVRegressionFileSelectDlg::OnBtnRegTestBrowseFiles() 
 {
-	
+	UpdateData(true);
 	int CameraNumber(0); 
 	int  Pos = m_strCaption.ReverseFind(_T('_'));
 	if(Pos != -1)
@@ -94,48 +97,31 @@ void CSVRegressionFileSelectDlg::OnBtnRegTestBrowseFiles()
 	//get last regression path for this camera from registry...
 	SVString KeyName = SvUl_SF::Format( _T("LastPath_%i"), CameraNumber);
 	m_RegistryPath = AfxGetApp()->GetProfileString(_T("RegressionTest"), KeyName.c_str(), SvStl::GlobalPath::Inst().GetTempPath().c_str());
-
-	static TCHAR Filter[] = _T("BMP Files (*.bmp)|*.bmp|Image Files (*.bmp)|*.bmp||");
 	bool bFullAccess = TheSVObserverApp.m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_UNRESTRICTED_FILE_ACCESS);
-	SvMc::SVFileDialog dlg(true, bFullAccess, nullptr, nullptr, 0, Filter, nullptr);
-	dlg.m_ofn.lpstrTitle = _T("Select File");
 
-	TCHAR FileName[PathBufferLen];
-	_tcscpy_s(FileName,PathBufferLen,m_RegTestFiles.GetString()); 
-	if ( m_RegTestFiles.IsEmpty() )
+	switch (m_iSelectFileRadio)
 	{
-		//nothing has been set... use what is in the registry
-		dlg.m_ofn.lpstrInitialDir = m_RegistryPath.c_str();
+	case RegressionFileEnum::RegSingleFile:
+	case RegressionFileEnum::RegFileList:
+	case RegressionFileEnum::RegSingleDirectory:
+		ShowSelectFileDlg(bFullAccess);
+		break;
+	case RegressionFileEnum::RegSubDirectories:
+		ShowSelectDirectoryDlg(bFullAccess);
+		break;
+	default:
+		//nothing to do
+		break;
 	}
-	else
+	
+	int iPos = m_RegTestFiles.ReverseFind(_T('\\'));
+	if (iPos != -1)
 	{
-		///seting lpstrFile instead of lpstrInitialDir avoids strange Windows7 behaviour of CFileDialog
-		dlg.m_ofn.lpstrFile = 	FileName;
-		dlg.m_ofn.nMaxFile = PathBufferLen;
-		dlg.m_ofn.lpstrInitialDir =nullptr;
+		//only write out registry entry if the path is not empty.
+		CString sTmpDirName = m_RegTestFiles.Left(iPos);
+		AfxGetApp()->WriteProfileString(_T("RegressionTest"), KeyName.c_str(), sTmpDirName);
 	}
 
-	if ( dlg.DoModal() == IDOK)
-	{
-		m_RegTestFiles = dlg.GetPathName(); 
-		if ( !m_RegTestFiles.IsEmpty() )
-		{
-			if (0 != m_RegTestFiles.Right(4).CompareNoCase(_T(".bmp")))
-			{
-				SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-				Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_RegressionTest_NoBmpFileSelected, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10187 ); 
-				m_RegTestFiles = _T("");
-			}
-
-			int iPos = m_RegTestFiles.ReverseFind(_T('\\'));
-			if(iPos != -1)
-			{
-				//only write out registry entry if the path is not empty.
-				CString sTmpDirName = m_RegTestFiles.Left(iPos);
-				AfxGetApp()->WriteProfileString(_T("RegressionTest"),  KeyName.c_str(), sTmpDirName);
-			}
-		}
-	}
 	UpdateData(FALSE);
 }
 
@@ -168,23 +154,10 @@ CString CSVRegressionFileSelectDlg::GetPageName()
 }
 
 
-void CSVRegressionFileSelectDlg::OnRadioRegList() 
+void CSVRegressionFileSelectDlg::OnRadioRegUpdate() 
 {
 	UpdateData(TRUE);
 }
-
-
-void CSVRegressionFileSelectDlg::OnRadioRegNone() 
-{
-	UpdateData(TRUE);
-
-}
-
-void CSVRegressionFileSelectDlg::OnRadioRegSingle() 
-{
-	UpdateData(TRUE);
-}
-
 
 void CSVRegressionFileSelectDlg::SetRegressionData(RegressionTestStruct *pDataStruct)
 {
@@ -193,5 +166,54 @@ void CSVRegressionFileSelectDlg::SetRegressionData(RegressionTestStruct *pDataSt
 	m_RegTestFiles = pDataStruct->FirstFile.c_str();
 
 	UpdateData(FALSE);
+}
+
+void CSVRegressionFileSelectDlg::ShowSelectFileDlg(bool bFullAccess)
+{
+	static TCHAR Filter[] = _T("BMP Files (*.bmp)|*.bmp|Image Files (*.bmp)|*.bmp||");
+	SvMc::SVFileDialog dlg(true, bFullAccess, nullptr, nullptr, 0, Filter, nullptr);
+	dlg.m_ofn.lpstrTitle = _T("Select File");
+
+	TCHAR FileName[PathBufferLen];
+	_tcscpy_s(FileName, PathBufferLen, m_RegTestFiles.GetString());
+	if (m_RegTestFiles.IsEmpty())
+	{
+		//nothing has been set... use what is in the registry
+		dlg.m_ofn.lpstrInitialDir = m_RegistryPath.c_str();
+	}
+	else
+	{
+		///setting lpstrFile instead of lpstrInitialDir avoids strange Windows7 behavior of CFileDialog
+		dlg.m_ofn.lpstrFile = FileName;
+		dlg.m_ofn.nMaxFile = PathBufferLen;
+		dlg.m_ofn.lpstrInitialDir = nullptr;
+	}
+
+	if (dlg.DoModal() == IDOK)
+	{
+		m_RegTestFiles = dlg.GetPathName();
+		if (!m_RegTestFiles.IsEmpty())
+		{
+			if (0 != m_RegTestFiles.Right(4).CompareNoCase(_T(".bmp")))
+			{
+				SvStl::MessageMgrStd Msg(SvStl::LogAndDisplay);
+				Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_RegressionTest_NoBmpFileSelected, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10187);
+				m_RegTestFiles = _T("");
+			}
+		}
+	}
+}
+
+void CSVRegressionFileSelectDlg::ShowSelectDirectoryDlg(bool bFullAccess)
+{
+//	CFolderDialog dlg(_T("Select Directories"), m_RegistryPath.c_str(), this);
+	SvMc::SVDlgFolder dlg(bFullAccess, m_RegistryPath.c_str());
+	dlg.InitDlgFolder(_T("OK"), _T("Select Folder"));
+
+	INT_PTR rc = dlg.DoModal();
+	if (IDOK == rc)
+	{
+		m_RegTestFiles = dlg.GetPathName();
+	}
 }
 
