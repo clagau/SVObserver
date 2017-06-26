@@ -258,7 +258,6 @@ void SVIPDoc::init()
 {
 	SVFileNameManagerClass::Instance().AddItem( &msvFileName );
 
-	mbRegressionSingleStep = FALSE;
 	mbInitImagesByName = FALSE;
 
 	IsNew = true;
@@ -271,6 +270,7 @@ void SVIPDoc::init()
 
 	m_bAllowRefresh = false;
 	m_bRegressionTestRunning = false;
+	m_bRegressionTestUsePlayCondition = false;
 
 	m_oDisplay.Create();
 }
@@ -628,6 +628,18 @@ SVToolSetClass* SVIPDoc::GetToolSet() const
 	}
 
 	return l_pObject;
+}
+
+bool SVIPDoc::shouldPauseRegressionTestByCondition()
+{
+	SVInspectionProcess* pInspection(GetInspectionProcess());
+
+	if (nullptr != pInspection && m_bRegressionTestUsePlayCondition)
+	{
+		return pInspection->shouldPauseRegressionTestByCondition();
+	}
+
+	return false;
 }
 
 SVResultListClass* SVIPDoc::GetResultList() const
@@ -1842,7 +1854,8 @@ void SVIPDoc::RunRegressionTest()
 			m_bRegressionTestRunning = true;
 			int iNumCameras = static_cast< int >( m_listRegCameras.GetCount() );
 
-			( ( SVMainFrame* ) AfxGetApp()->m_pMainWnd )->m_pregTestDlg = new CSVRegressionRunDlg;
+			( ( SVMainFrame* ) AfxGetApp()->m_pMainWnd )->m_pregTestDlg = new CSVRegressionRunDlg(m_pRegressionTestPlayEquationController);
+			((SVMainFrame*)AfxGetApp()->m_pMainWnd)->m_pregTestDlg->SetUsePlayCondition(m_bRegressionTestUsePlayCondition);
 
 			( ( SVMainFrame* ) AfxGetApp()->m_pMainWnd )->m_pregTestDlg->SetIPDocParent(this);
 
@@ -2161,6 +2174,8 @@ BOOL SVIPDoc::GetParameters(SVObjectWriter& rWriter)
 
 	SaveViewedVariables(rWriter);
 
+	SaveRegressionTestVariables(rWriter);
+
 	return true;
 }
 
@@ -2187,6 +2202,46 @@ bool SVIPDoc::LoadViewedVariables(SVTreeType& rTree, SVTreeType::SVBranchHandle 
 	}
 	return  pResultList->LoadViewedVariables(rTree, htiParent);
 
+}
+
+void SVIPDoc::SaveRegressionTestVariables(SVObjectWriter& rWriter)
+{
+	rWriter.StartElement(SvXml::CTAG_REGRESSIONTEST);
+	_variant_t Value(m_bRegressionTestUsePlayCondition);
+	rWriter.WriteAttribute(SvXml::CTAG_USE_PLAY_CONDITION, Value);
+	Value = m_pRegressionTestPlayEquationController->GetEquationText().c_str();
+	rWriter.WriteAttribute(SvXml::CTAG_PLAY_CONDITION_EQUATION, Value);
+	rWriter.EndElement();
+}
+
+void SVIPDoc::LoadRegressionTestVariables(SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent)
+{
+	SVTreeType::SVBranchHandle htiRegression = nullptr;
+	SVTreeType::SVBranchHandle htiViews = nullptr;
+
+	bool bOk = SvXml::SVNavigateTree::GetItemBranch(rTree, SvXml::CTAG_REGRESSIONTEST, htiParent, htiRegression);
+	if (bOk)
+	{
+		_variant_t svVariant;
+		bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_USE_PLAY_CONDITION, htiRegression, svVariant);
+		if (bOk) 
+		{ 
+			m_bRegressionTestUsePlayCondition = svVariant; 
+		}
+		bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_PLAY_CONDITION_EQUATION, htiRegression, svVariant);
+		if (bOk)
+		{
+			SVString equation = SvUl_SF::createSVString(svVariant);
+			double value;
+			SvStl::MessageContainerVector errorMessages;
+			m_pRegressionTestPlayEquationController->ValidateEquation(equation, value, true, errorMessages);
+			if (!errorMessages.empty())
+			{
+				SvStl::MessageMgrStd msg(SvStl::LogOnly);
+				msg.setMessage(errorMessages[0].getMessage());
+			}
+		}
+	}
 }
 
 void SVIPDoc::SaveViews(SVObjectWriter& rWriter)
@@ -2376,16 +2431,16 @@ BOOL SVIPDoc::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiPa
 			{
 				bOk = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_FLAGS, htiWindow, svVariant );
 				if ( bOk ) { wndpl.flags = svVariant; }
-			}
+		}
 
 			if ( bOk )
 			{
 				bOk = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_SHOW_COMMAND, htiWindow, svVariant );
 				if ( bOk ) { wndpl.showCmd = svVariant; }
-			}
+	}
 
-			if ( bOk )
-			{
+	if ( bOk )
+	{
 				SVTreeType::SVBranchHandle htiData = nullptr;
 
 				bOk = SvXml::SVNavigateTree::GetItemBranch( rTree, SvXml::CTAG_MINIMUM_POSITION, htiWindow, htiData );
@@ -2487,8 +2542,8 @@ BOOL SVIPDoc::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiPa
 		SVTreeType::SVBranchHandle htiIPViews = nullptr;
 		SVTreeType::SVBranchHandle htiViews = nullptr;
 
-		bOk = SvXml::SVNavigateTree::GetItemBranch( rTree, SvXml::CTAG_IPDOC_VIEWS, htiParent, htiIPViews );
-		if ( bOk )
+		bOk = SvXml::SVNavigateTree::GetItemBranch(rTree, SvXml::CTAG_IPDOC_VIEWS, htiParent, htiIPViews);
+		if (bOk)
 		{
 			// Serialze View Data...
 			mbInitImagesByName = TRUE;
@@ -2501,24 +2556,24 @@ BOOL SVIPDoc::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiPa
 
 			SVTreeType::SVBranchHandle htiBranch = nullptr;
 
-			bOk = SvXml::SVNavigateTree::GetItemBranch( rTree, SvXml::CTAG_VIEWS, htiIPViews, htiViews );
-			if ( bOk )
+			bOk = SvXml::SVNavigateTree::GetItemBranch(rTree, SvXml::CTAG_VIEWS, htiIPViews, htiViews);
+			if (bOk)
 			{
-				SVTreeType::SVBranchHandle htiItem( nullptr ); 
+				SVTreeType::SVBranchHandle htiItem(nullptr);
 
-				htiItem = rTree.getFirstBranch( htiViews );
+				htiItem = rTree.getFirstBranch(htiViews);
 
-				while ( bOk && nullptr != htiItem )
+				while (bOk && nullptr != htiItem)
 				{
-					Name = rTree.getBranchName( htiItem );
+					Name = rTree.getBranchName(htiItem);
 
 					// The class SVToolSetTabView was changed to ToolSetView when the Tool Set Tree View was removed.
-					SvUl_SF::searchAndReplace( Name, SvXml::CTAG_SVTOOLSET_TAB_VIEW_CLASS, SvXml::CTAG_TOOLSET_VIEW );
+					SvUl_SF::searchAndReplace(Name, SvXml::CTAG_SVTOOLSET_TAB_VIEW_CLASS, SvXml::CTAG_TOOLSET_VIEW);
 
-					bOk = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_VIEW_NUMBER, htiItem, svVariant );
-					if ( bOk ) { lViewNumber = svVariant; }
+					bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_VIEW_NUMBER, htiItem, svVariant);
+					if (bOk) { lViewNumber = svVariant; }
 
-					if ( bOk )
+					if (bOk)
 					{
 						vPos = GetFirstViewPosition();
 
@@ -2534,54 +2589,54 @@ BOOL SVIPDoc::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiPa
 
 							// if there were not enough views or the view found is the
 							// wrong class, find the first matching view
-							if ( !View.pView || 
+							if (!View.pView ||
 								Name.compare(View.pView->GetRuntimeClass()->m_lpszClassName))
 							{
 								vPos = GetFirstViewPosition();
-								while( ( View.pView = GetNextView( vPos ) ) && 
-									( Name.compare( View.pView->GetRuntimeClass()->m_lpszClassName ) ) );
+								while ((View.pView = GetNextView(vPos)) &&
+									(Name.compare(View.pView->GetRuntimeClass()->m_lpszClassName)));
 							}
 
 							if (View.pView)  // this should never fail, but if it does, we'll try to continue
 							{
 								if (View.pView->IsKindOf(RUNTIME_CLASS(SVImageViewScroll)))
 								{
-									bOk = View.pImageScroll->SetParameters( rTree, htiItem );
+									bOk = View.pImageScroll->SetParameters(rTree, htiItem);
 								}
 								else if (View.pView->IsKindOf(RUNTIME_CLASS(SVImageViewClass)))
 								{
-									bOk = View.pImageView->SetParameters( rTree, htiItem );
+									bOk = View.pImageView->SetParameters(rTree, htiItem);
 								}
-								else if (View.pView->IsKindOf(RUNTIME_CLASS( ToolSetView )))
+								else if (View.pView->IsKindOf(RUNTIME_CLASS(ToolSetView)))
 								{
-									bOk = View.pToolSetView->SetParameters( rTree, htiItem );
+									bOk = View.pToolSetView->SetParameters(rTree, htiItem);
 								}
 								else if (View.pView->IsKindOf(RUNTIME_CLASS(ResultTabbedView)))
 								{
-									bOk = View.pResultView->SetParameters( rTree, htiItem );
+									bOk = View.pResultView->SetParameters(rTree, htiItem);
 								}
 							}
 						}
 					}
-					htiItem = rTree.getNextBranch( htiViews, htiItem );
+					htiItem = rTree.getNextBranch(htiViews, htiItem);
 				}
 			}
 
-			bOk = SvXml::SVNavigateTree::GetItemBranch( rTree, SvXml::CTAG_VIEWS, htiIPViews, htiViews );
-			if ( bOk )
+			bOk = SvXml::SVNavigateTree::GetItemBranch(rTree, SvXml::CTAG_VIEWS, htiIPViews, htiViews);
+			if (bOk)
 			{
-				SVTreeType::SVBranchHandle htiItem( nullptr );
+				SVTreeType::SVBranchHandle htiItem(nullptr);
 
-				htiItem = rTree.getFirstBranch( htiViews );
+				htiItem = rTree.getFirstBranch(htiViews);
 
-				while ( bOk && nullptr != htiItem )
+				while (bOk && nullptr != htiItem)
 				{
-					Name = rTree.getBranchName( htiItem );
+					Name = rTree.getBranchName(htiItem);
 
-					bOk = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_VIEW_NUMBER, htiItem, svVariant );
-					if ( bOk ) { lViewNumber = svVariant; }
+					bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_VIEW_NUMBER, htiItem, svVariant);
+					if (bOk) { lViewNumber = svVariant; }
 
-					if ( bOk )
+					if (bOk)
 					{
 						vPos = GetFirstViewPosition();
 
@@ -2639,9 +2694,12 @@ BOOL SVIPDoc::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiPa
 		if (bOk)
 		{
 			bOk = LoadViewedVariables(rTree, htiParent);
-
 		}
 
+		if (bOk)
+		{
+			LoadRegressionTestVariables(rTree, htiParent);
+		}
 	}
 	return bOk;
 }
@@ -3054,12 +3112,12 @@ DWORD WINAPI SVIPDoc::SVRegressionTestRunThread( LPVOID lpParam )
 
 					if (pIPDoc->m_regtestRunPlayMode != Continue)
 					{
-						if ( l_bUsingSingleFile )
+						if (l_bUsingSingleFile)
 						{
-							if ( iListCnt == l_iNumSingleFile ) //all using single file
+							if (iListCnt == l_iNumSingleFile) //all using single file
 							{
 								pIPDoc->m_regtestRunMode = RegModePause;
-								SendMessage( hRegressionWnd, WM_REGRESSION_TEST_SET_PLAYPAUSE, reinterpret_cast<LPARAM> (&pIPDoc->m_regtestRunMode), 0 );
+								SendMessage(hRegressionWnd, WM_REGRESSION_TEST_SET_PLAYPAUSE, reinterpret_cast<LPARAM> (&pIPDoc->m_regtestRunMode), 0);
 								bModeReset = true;
 								l_bFirst = true;
 							}
@@ -3067,10 +3125,10 @@ DWORD WINAPI SVIPDoc::SVRegressionTestRunThread( LPVOID lpParam )
 							{
 								//not all using single file...
 								//check to see if at end of list.  if so stop...
-								if ( l_bListDone && ( (iListCnt-1) == i) )
+								if (l_bListDone && ((iListCnt - 1) == i))
 								{
 									pIPDoc->m_regtestRunMode = RegModePause;
-									SendMessage( hRegressionWnd, WM_REGRESSION_TEST_SET_PLAYPAUSE, reinterpret_cast<LPARAM> (&pIPDoc->m_regtestRunMode), 0 );
+									SendMessage(hRegressionWnd, WM_REGRESSION_TEST_SET_PLAYPAUSE, reinterpret_cast<LPARAM> (&pIPDoc->m_regtestRunMode), 0);
 									bModeReset = true;
 									l_bFirst = true;
 									bDisplayFile = FALSE;
@@ -3079,15 +3137,20 @@ DWORD WINAPI SVIPDoc::SVRegressionTestRunThread( LPVOID lpParam )
 						}
 						else
 						{  //not using single files.
-							if ( l_bListDone && ( (iListCnt-1) == i) )
+							if (l_bListDone && ((iListCnt - 1) == i))
 							{
 								pIPDoc->m_regtestRunMode = RegModePause;
-								SendMessage( hRegressionWnd, WM_REGRESSION_TEST_SET_PLAYPAUSE, reinterpret_cast<LPARAM> (&pIPDoc->m_regtestRunMode), 0 );
+								SendMessage(hRegressionWnd, WM_REGRESSION_TEST_SET_PLAYPAUSE, reinterpret_cast<LPARAM> (&pIPDoc->m_regtestRunMode), 0);
 								bModeReset = true;
 								l_bFirst = true;
 								bDisplayFile = FALSE;
 							}
 						}
+					}
+					if (!bModeReset && pIPDoc->shouldPauseRegressionTestByCondition())
+					{
+						pIPDoc->m_regtestRunMode = RegModePause;
+						SendMessage(hRegressionWnd, WM_REGRESSION_TEST_SET_PLAYPAUSE, reinterpret_cast<LPARAM> (&pIPDoc->m_regtestRunMode), 0);
 					}
 
 					ptmpRunFileStruct->FileName = *ptmpRegTestStruct->stdIteratorCurrent;
@@ -3148,7 +3211,7 @@ DWORD WINAPI SVIPDoc::SVRegressionTestRunThread( LPVOID lpParam )
 				}
 			case RegModeResetSettings:
 				{
-					l_bFirst = TRUE;
+					l_bFirst = true;
 					ptmpRegTestStruct->stdIteratorCurrent = ptmpRegTestStruct->stdIteratorStart;
 
 					if ( i == (iListCnt-1) ) //last item in list
@@ -3158,8 +3221,8 @@ DWORD WINAPI SVIPDoc::SVRegressionTestRunThread( LPVOID lpParam )
 					}
 					l_bUsingSingleFile = false; //reset this value
 					l_iNumSingleFile = 0;
-					bDisplayFile = FALSE;
-					bModeReset = TRUE;
+					bDisplayFile = false;
+					bModeReset = true;
 					break;
 				}
 			default:

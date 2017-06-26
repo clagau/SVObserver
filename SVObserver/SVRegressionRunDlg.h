@@ -14,13 +14,14 @@
 #pragma region Includes
 #include "SVMFCControls/SVSliderCtrl.h"
 #include "SVRegressionTestStruct.h"
+#include "ObjectInterfaces/IFormulaController.h"
 #pragma endregion Includes
 
 class CSVRegressionRunDlg : public CDialog
 {
 #pragma region Constructor
 public:
-	CSVRegressionRunDlg(CWnd* pParent = nullptr);   // standard constructor
+	CSVRegressionRunDlg(SvOi::IFormulaControllerPtr pFormulaController, CWnd* pParent = nullptr);   // standard constructor
 	virtual ~CSVRegressionRunDlg();
 #pragma endregion Constructor
 
@@ -44,6 +45,7 @@ protected:
 	afx_msg void OnBtnMode();
 	afx_msg void OnBtnPlay();
 	afx_msg void OnBtnStop();
+	afx_msg void OnCheckPlayCond();
 	afx_msg void OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar);
 	afx_msg void OnShowWindow(BOOL bShow, UINT nStatus);
 	afx_msg void OnClose();
@@ -60,6 +62,7 @@ protected:
 #pragma region Public Methods
 public:
 	void SetIPDocParent(SVIPDoc* pIPDocParent);
+	void SetUsePlayCondition(bool usePlayCondition) { m_bPlayByEquation = usePlayCondition; };
 #pragma endregion Public Methods
 
 #pragma region Private Methods
@@ -74,6 +77,12 @@ private:
 	// Returns:   void
 	//************************************
 	void setDelayTime( int position );
+
+	/// Perform if formula button was pressed.
+	void OnBnClickedButtonFormula();
+
+	/// Set the Equation text to the screen
+	void setEquationText();
 #pragma endregion Private Methods
 
 #pragma region Member variables
@@ -92,6 +101,7 @@ private:
 	CButton	m_btnFrameBack;
 	CButton	m_btnBeginning;
 	CString	m_timeDelayText;
+	CString m_equationString;
 	//}}AFX_DATA
 
 	 // data members
@@ -111,7 +121,10 @@ private:
 
 	SVIPDoc* m_pIPDocParent;
 	BOOL m_bFirst;
+	BOOL m_bPlayByEquation;
 	int	m_timeDelayInMS;
+
+	SvOi::IFormulaControllerPtr m_pFormulaController;
 #pragma endregion Member variables
 };
 

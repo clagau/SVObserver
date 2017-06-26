@@ -125,7 +125,7 @@ namespace SvOg {
 		{
 			CString strCaption = _T("Clear Conditional Formula");
 
-			SvOg::SVFormulaEditorSheetClass dlg(m_InspectionID, m_TaskObjectID, m_ClearEquationID, strCaption);
+			SvOg::SVFormulaEditorSheetClass dlg(m_pFormulaController, strCaption);
 			dlg.DoModal();
 			setEquationText();
 		}
@@ -168,7 +168,7 @@ namespace SvOg {
 	{
 		// Get text from EquationStruct and place into Editor
 		m_clearString = _T("");
-		if (nullptr != m_pFormulaController)
+		if (!m_pFormulaController.empty())
 		{
 			m_clearString = m_pFormulaController->GetEquationText().c_str();
 		}

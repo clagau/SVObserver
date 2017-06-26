@@ -13,12 +13,11 @@
 #include "ISVPropertyPageDialog.h"
 #include "ValuesAccessor.h"
 #include "GuiController.h"
+#include "ObjectInterfaces/IFormulaController.h"
 #pragma endregion Includes
 
 namespace SvOg
 {
-	class FormulaController;
-
 	class TADialogTableParameterPage : public CPropertyPage, public ISVPropertyPageDialog
 	{
 #pragma region Declarations
@@ -78,7 +77,7 @@ namespace SvOg
 		GUID m_ClearEquationID;
 		long m_maxRows;
 
-		FormulaController* m_pFormulaController;
+		SvOi::IFormulaControllerPtr m_pFormulaController;
 		CString m_clearString;
 
 		typedef SvOg::ValuesAccessor<SvOg::BoundValues> ValueCommand;

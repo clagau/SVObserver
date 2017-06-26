@@ -22,8 +22,9 @@ namespace SvOg
 	class SVFormulaEditorSheetClass : public CPropertySheet
 	{
 	public:
-		SVFormulaEditorSheetClass(const GUID& rInspectionID, const GUID& rTaskOjectID, const SVObjectTypeInfoStruct& rInfo, LPCTSTR pCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
-		SVFormulaEditorSheetClass(const GUID& rInspectionID, const GUID& rTaskOjectID, const GUID& rEquationID, LPCTSTR pCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
+		SVFormulaEditorSheetClass(const GUID& rInspectionID, const GUID& rTaskObjectID, const SVObjectTypeInfoStruct& rInfo, LPCTSTR pCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
+		SVFormulaEditorSheetClass(const GUID& rInspectionID, const GUID& rTaskObjectID, const GUID& rEquationID, LPCTSTR pCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
+		SVFormulaEditorSheetClass(SvOi::IFormulaControllerPtr formulaController, LPCTSTR pCaption, CWnd* pParentWnd = nullptr, UINT iSelectPage = 0);
 
 		virtual ~SVFormulaEditorSheetClass();
 
@@ -36,10 +37,12 @@ namespace SvOg
 	protected:
 		/// Initialized the formulaEditorSheetClass 
 		/// \param rInfo [in] info struct of the equation
-		void init(const SVObjectTypeInfoStruct& rInfo);
+		void init(const GUID& rInspectionID, const GUID& rTaskObjectID,const SVObjectTypeInfoStruct& rInfo);
 		/// Initialized the formulaEditorSheetClass 
 		/// \param rEquationId [in] GUID of the equation
-		void init(const GUID& rEquationId);
+		void init(const GUID& rInspectionID, const GUID& rTaskObjectID, const GUID& rEquationId);
+
+		void init(SvOi::IFormulaControllerPtr formulaController);
 
 		//{{AFX_MSG(SVFormulaEditorSheetClass)
 		afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
@@ -51,7 +54,5 @@ namespace SvOg
 
 		typedef SVSharedPtr<SVFormulaEditorPageClass> FormulaEditorPagePtr;
 		FormulaEditorPagePtr m_formulaPage;
-		GUID m_InspectionID;
-		GUID m_TaskObjectID;
 	};
 } //namespace SvOg

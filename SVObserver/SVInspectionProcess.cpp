@@ -41,6 +41,7 @@
 #include "SVSharedMemoryLibrary\SVSharedConfiguration.h"
 #include "SVSharedMemoryLibrary\SharedMemWriter.h"
 #include "SVSharedMemoryLibrary\SVSharedImage.h"
+#include "SVOGui\FormulaController.h"
 #pragma endregion Includes
 
 SV_IMPLEMENT_CLASS(SVInspectionProcess, SVInspectionProcessGuid);
@@ -3128,6 +3129,8 @@ BOOL SVInspectionProcess::CreateObject(SVObjectLevelCreateStruct* PCreateStruct)
 
 	l_bOk = l_bOk && m_pCurrentToolset->createAllObjects(createStruct);
 
+	m_RegressionTestPlayEquation.ConnectObject(createStruct);
+
 	m_isCreated = l_bOk;
 
 	return m_isCreated;
@@ -4408,5 +4411,25 @@ bool SVInspectionProcess::replaceObject(SVObjectClass* pObject, const GUID& rNew
 			return true;
 		}
 	}
+	return false;
+}
+
+SvOi::IFormulaControllerPtr SVInspectionProcess::getRegressionTestPlayConditionController()
+{
+	if (m_pRegressionTestPlayEquationController.empty())
+	{
+		m_pRegressionTestPlayEquationController = new SvOg::FormulaController(GetUniqueObjectID(), GetUniqueObjectID(), static_cast<GUID>(m_RegressionTestPlayEquation.GetUniqueObjectID()));
+	}
+	return m_pRegressionTestPlayEquationController;
+}
+
+bool SVInspectionProcess::shouldPauseRegressionTestByCondition()
+{
+	if (!getRegressionTestPlayConditionController()->GetEquationText().empty())
+	{
+		double value = m_RegressionTestPlayEquation.RunAndGetResult();
+		return 0 == value;
+	}
+	
 	return false;
 }

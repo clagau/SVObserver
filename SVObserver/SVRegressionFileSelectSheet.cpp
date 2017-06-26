@@ -114,7 +114,6 @@ void CSVRegressionFileSelectSheet::OnOK()
 				pStruct->iFileMethod = pPage->GetFileSelectType();
 				pStruct->Camera = pPage->GetPageName();
 				pStruct->FirstFile = pPage->GetSelectedFile();
-				pStruct->bDone = false;
 				m_pRegressionList->AddTail(pStruct);
 			}
 		}

@@ -2867,6 +2867,7 @@ SVIPDoc* SVObserverApp::NewSVIPDoc( LPCTSTR DocName, SVInspectionProcess& Inspec
 			if( nullptr != pDoc )
 			{
 				pDoc->SetInspectionID( Inspection.GetUniqueObjectID() );
+				pDoc->SetRegressionTestPlayEquationController(Inspection.getRegressionTestPlayConditionController());
 
 				pDoc->SetTitle( DocName );
 			}

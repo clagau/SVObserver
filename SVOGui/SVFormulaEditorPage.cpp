@@ -65,7 +65,7 @@ namespace SvOg
 		//}}AFX_MSG_MAP
 	END_MESSAGE_MAP()
 
-	SVFormulaEditorPageClass::SVFormulaEditorPageClass( const GUID& rInspectionID, const GUID& rTaskObjectID, SvOi::IFormulaControllerPtr controller, bool isDisableCheckboxesVisible, UINT captionID, UINT disableExtentionID )
+	SVFormulaEditorPageClass::SVFormulaEditorPageClass( SvOi::IFormulaControllerPtr controller, bool isDisableCheckboxesVisible, UINT captionID, UINT disableExtentionID )
 	: CPropertyPage( SVFormulaEditorPageClass::IDD, captionID )
 	, m_FormulaController( controller )
 	, m_isConditionalPage( isDisableCheckboxesVisible )

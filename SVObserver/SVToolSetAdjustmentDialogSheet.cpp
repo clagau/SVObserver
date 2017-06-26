@@ -58,7 +58,7 @@ SVToolSetAdjustmentDialogSheetClass::~SVToolSetAdjustmentDialogSheetClass()
 
 void SVToolSetAdjustmentDialogSheetClass::init( SVConditionalClass& rCondition )
 {
-	m_formulaPage = FormulaEditorPagePtr(new SvOg::SVFormulaEditorPageClass(m_InspectionID, m_TaskObjectID, 
+	m_formulaPage = FormulaEditorPagePtr(new SvOg::SVFormulaEditorPageClass( 
 		new SvOg::FormulaController(m_InspectionID, m_TaskObjectID, SVObjectTypeInfoStruct(SVEquationObjectType, SVConditionalObjectType), false),
 								true, IDS_CONDITIONAL_STRING, IDS_CLASSNAME_SVTOOLSET));
 

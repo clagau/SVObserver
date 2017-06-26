@@ -32,36 +32,41 @@ namespace SvOg
 {
 	SVFormulaEditorSheetClass::SVFormulaEditorSheetClass(const GUID& rInspectionID, const GUID& rTaskObjectID, const SVObjectTypeInfoStruct& rInfo, LPCTSTR pCaption, CWnd* pParentWnd, UINT iSelectPage)
 	: CPropertySheet(pCaption, pParentWnd, iSelectPage)
-	, m_InspectionID(rInspectionID)
-	, m_TaskObjectID(rTaskObjectID)
 	{
-		init(rInfo);
+		init(rInspectionID, rTaskObjectID, rInfo);
 	}
 
 	SVFormulaEditorSheetClass::SVFormulaEditorSheetClass(const GUID& rInspectionID, const GUID& rTaskObjectID, const GUID& rEquationId, LPCTSTR pCaption, CWnd* pParentWnd, UINT iSelectPage)
 		: CPropertySheet(pCaption, pParentWnd, iSelectPage)
-		, m_InspectionID(rInspectionID)
-		, m_TaskObjectID(rTaskObjectID)
 	{
-		init(rEquationId);
+		init(rInspectionID, rTaskObjectID, rEquationId);
+	}
+
+	SVFormulaEditorSheetClass::SVFormulaEditorSheetClass(SvOi::IFormulaControllerPtr formulaController, LPCTSTR pCaption, CWnd* pParentWnd, UINT iSelectPage)
+		: CPropertySheet(pCaption, pParentWnd, iSelectPage)
+	{
+		init(formulaController);
 	}
 
 	SVFormulaEditorSheetClass::~SVFormulaEditorSheetClass()
 	{
 	}
 
-	void SVFormulaEditorSheetClass::init(const SVObjectTypeInfoStruct& rInfo)
+	void SVFormulaEditorSheetClass::init(const GUID& rInspectionID, const GUID& rTaskObjectID, const SVObjectTypeInfoStruct& rInfo)
 	{
-		m_formulaPage = FormulaEditorPagePtr(new SVFormulaEditorPageClass(m_InspectionID, m_TaskObjectID, new FormulaController(m_InspectionID, m_TaskObjectID, rInfo)));
-		m_psh.dwFlags |= PSH_NOAPPLYNOW;
-		AddPage( m_formulaPage.get() );
+		init(new FormulaController(rInspectionID, rTaskObjectID, rInfo));
 	}
 
-	void SVFormulaEditorSheetClass::init(const GUID& rEquationId)
+	void SVFormulaEditorSheetClass::init(const GUID& rInspectionID, const GUID& rTaskObjectID, const GUID& rEquationId)
 	{
-		m_formulaPage = FormulaEditorPagePtr(new SVFormulaEditorPageClass(m_InspectionID, m_TaskObjectID, new FormulaController(m_InspectionID, m_TaskObjectID, rEquationId)));
+		init(new FormulaController(rInspectionID, rTaskObjectID, rEquationId));
+	}
+
+	void SVFormulaEditorSheetClass::init(SvOi::IFormulaControllerPtr formulaController)
+	{
+		m_formulaPage = FormulaEditorPagePtr(new SVFormulaEditorPageClass(formulaController));
 		m_psh.dwFlags |= PSH_NOAPPLYNOW;
-		AddPage( m_formulaPage.get() );
+		AddPage(m_formulaPage.get());
 	}
 
 	////////////////////////////////////////////////////////////////////////////////

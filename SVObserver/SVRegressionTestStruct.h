@@ -30,7 +30,6 @@ struct RegressionTestStruct
 	SVStringVector stdVectorFile;
 	SVStringVector::iterator stdIteratorStart;
 	SVStringVector::iterator stdIteratorCurrent;
-	bool bDone;
 };
 
 struct RegressionRunFileStruct

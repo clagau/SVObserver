@@ -21,6 +21,7 @@
 #include "SVRegressionFileSelectSheet.h"
 #include "SVRegressionExitDlg.h"
 #include "SVUtilityLibrary/SVString.h"
+#include "SVOGui/SVFormulaEditorSheet.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -30,8 +31,9 @@ static char THIS_FILE[] = __FILE__;
 #endif
 
 #pragma region Constructor
-CSVRegressionRunDlg::CSVRegressionRunDlg(CWnd* pParent /*=nullptr*/)
+CSVRegressionRunDlg::CSVRegressionRunDlg(SvOi::IFormulaControllerPtr pFormulaController, CWnd* pParent /*=nullptr*/)
 	: CDialog(CSVRegressionRunDlg::IDD, pParent)
+	,m_pFormulaController(pFormulaController)
 	,m_iconPlay(nullptr)
 	,m_iconPause(nullptr)
 	,m_iconStop(nullptr)
@@ -68,6 +70,8 @@ void CSVRegressionRunDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_BTN_FRAME_BACK, m_btnFrameBack);
 	DDX_Control(pDX, IDC_BTN_BEGINNING, m_btnBeginning);
 	DDX_Text(pDX, IDC_EDT_DELAY_TIME, m_timeDelayText);
+	DDX_Check(pDX, IDC_CHECK_PLAY_COND, m_bPlayByEquation);
+	DDX_Text(pDX, IDC_EDIT_PAUSE_EQUATION, m_equationString);
 	//}}AFX_DATA_MAP
 }
 
@@ -79,6 +83,7 @@ BEGIN_MESSAGE_MAP(CSVRegressionRunDlg, CDialog)
 	ON_BN_CLICKED(IDC_BTN_MODE, OnBtnMode)
 	ON_BN_CLICKED(IDC_BTN_PLAY, OnBtnPlay)
 	ON_BN_CLICKED(IDC_BTN_STOP, OnBtnStop)
+	ON_BN_CLICKED(IDC_CHECK_PLAY_COND, OnCheckPlayCond)
 	ON_WM_HSCROLL()
 	ON_WM_SHOWWINDOW()
 	ON_WM_CLOSE()
@@ -89,6 +94,7 @@ BEGIN_MESSAGE_MAP(CSVRegressionRunDlg, CDialog)
 	ON_MESSAGE(WM_REGRESSION_TEST_SET_PREVIOUS, SetPreviousFrameBtn)
 	ON_MESSAGE(WM_REGRESSION_TEST_CLOSE_REGRESSION, CloseRegressionTest)
 	ON_BN_CLICKED(IDC_BTN_EXIT, OnBtnExit)
+	ON_BN_CLICKED(IDC_BTN_REG_TEST_PAUSE_EQUATION, OnBnClickedButtonFormula)
 	//}}AFX_MSG_MAP
 END_MESSAGE_MAP()
 
@@ -150,14 +156,22 @@ BOOL CSVRegressionRunDlg::OnInitDialog()
 		m_sliderDelayTime.SetPos( 0 );
 
 		//put in the window placement
-		WINDOWPLACEMENT *lwp;
+		WINDOWPLACEMENT *lwp = nullptr;
 		UINT nl;
 
 		if(app->GetProfileBinary("RegressionTest", "WP", (LPBYTE*)&lwp, &nl))
 		{
-			SetWindowPlacement(lwp);
-			delete [] lwp;
+			WINDOWPLACEMENT lpwndpl;
+			GetWindowPlacement(&lpwndpl);
+			CRect rect(lpwndpl.rcNormalPosition);
+			CRect oldRect(lwp->rcNormalPosition);
+			//Check if size of the window is the same. If not, do not use the position from registry because it is from an old style
+			if (rect.Height() == oldRect.Height() && rect.Width() == oldRect.Width())
+			{
+				SetWindowPlacement(lwp);
+			}
 		}
+		delete[] lwp;
 
 		EnableButtons(m_pIPDocParent->m_listRegCameras.GetCount() > 0);
 
@@ -165,6 +179,8 @@ BOOL CSVRegressionRunDlg::OnInitDialog()
 
 		m_btnSettings.SetFocus();
 	}
+
+	setEquationText();
 
 	return FALSE;  // return TRUE unless you set the focus to a control
 	              // EXCEPTION: OCX Property Pages should return FALSE
@@ -308,6 +324,12 @@ void CSVRegressionRunDlg::OnBtnStop()
 {
 	m_enumPlayPause = Pause;
 	OnBtnBeginning();
+}
+
+void CSVRegressionRunDlg::OnCheckPlayCond()
+{
+	UpdateData(true); // get data from dialog
+	m_pIPDocParent->SetRegressionTestUsePlayCondition(m_bPlayByEquation?true:false);
 }
 
 void CSVRegressionRunDlg::OnHScroll(UINT nSBCode, UINT nPos, CScrollBar* pScrollBar)
@@ -598,5 +620,30 @@ void CSVRegressionRunDlg::setDelayTime( int position )
 	UpdateData(FALSE);
 
 	m_pIPDocParent->SetRegressionTimeoutPeriod(m_timeDelayInMS);
+}
+
+void CSVRegressionRunDlg::OnBnClickedButtonFormula()
+{
+	BOOL updateState = UpdateData(TRUE);
+	if (updateState)
+	{
+		CString strCaption = _T("Play Condition");
+		
+		SvOg::SVFormulaEditorSheetClass dlg(m_pFormulaController, strCaption);
+		dlg.DoModal();
+		setEquationText();
+	}
+}
+
+void CSVRegressionRunDlg::setEquationText()
+{
+	// Get text from EquationStruct and place into Editor
+	m_equationString = _T("");
+	if (!m_pFormulaController.empty())
+	{
+		m_equationString = m_pFormulaController->GetEquationText().c_str();
+	}
+
+	UpdateData(false);
 }
 #pragma endregion Private Methods

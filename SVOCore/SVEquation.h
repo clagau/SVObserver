@@ -182,6 +182,10 @@ public:
 	virtual double GetYACCResult() const override;
 #pragma endregion IEquation
 
+	/// Run equation and return the result
+	/// \returns double
+	double RunAndGetResult();
+
 	virtual int AddSymbol( LPCTSTR name ) override;
 
 	virtual bool DisconnectObjectInput( SVInObjectInfoStruct* pInObjectInfo ) override;
@@ -213,6 +217,9 @@ protected:
 
 private:
 	SvOi::EquationTestResult lexicalScan( LPCTSTR inBuffer );		// perform lexical scan
+
+	/// Parse the equation (calculated the result)
+	void ParseYacc();
 
 	SVEquationLexClass m_Lex;					// scanner class
 	SVEquationYaccClass m_Yacc;				// parser class

@@ -28,6 +28,7 @@
 #include "SVValueObjectLibrary/SVValueObject.h"
 #include "SVToolGrouping.h"
 #include "SVUtilityLibrary/SVString.h"
+#include "ObjectInterfaces/IFormulaController.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -87,7 +88,7 @@ public:
 	void SaveViewPlacements(SVObjectWriter& rWriter);
 	void SaveToolGroupings(SVObjectWriter& rWriter);
 	void SaveViewedVariables(SVObjectWriter& rWriter);
-
+	
 	BOOL GetParameters(SVObjectWriter& rWriter);
 
 	typedef SvXml::SVXMLMaterialsTree SVTreeType;
@@ -233,6 +234,11 @@ public:
 	HRESULT IsToolSetListUpdated() const;
 	ToolSetView* GetToolSetView() const;
 	SVToolSetClass* GetToolSet() const;
+	void SetRegressionTestUsePlayCondition(bool usePlayCondition) { m_bRegressionTestUsePlayCondition = usePlayCondition; };
+	void SetRegressionTestPlayEquationController(SvOi::IFormulaControllerPtr pRegressionTestPlayEquationController) { m_pRegressionTestPlayEquationController = pRegressionTestPlayEquationController; }
+	/// Return true if Regression Test should go to pause because of the Play condition.
+	/// \returns bool
+	bool shouldPauseRegressionTestByCondition();
 
 protected:
 	virtual BOOL SaveModified() override;
@@ -320,7 +326,6 @@ protected:
 	SVImageIdImageDataStructMap m_Images;
 	SVIPResultData m_Results;
 	long m_AllViewsUpdated;
-	BOOL mbRegressionSingleStep;
 
 	//
 	// View windows height and width saved for serialization. 15 Jun 1999 - frb.
@@ -336,6 +341,14 @@ private:
 	void ClearRegressionTestStructures();
 
 	bool LoadViewedVariables(SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent);
+	/// Load the Regression Test variables from configuration.
+	/// \param rTree [in]
+	/// \param htiParent [in]
+	void LoadRegressionTestVariables(SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent);
+
+	/// Save Regression Test variables.
+	/// \param rWriter [in,out]
+	void SaveRegressionTestVariables(SVObjectWriter& rWriter);
 #pragma endregion Private Methods
 
 	RegressionRunModeEnum m_regtestRunMode;
@@ -344,6 +357,8 @@ private:
 	int m_iRegessionTimeoutMS;
 	bool m_bRegressionTestRunning;
 	bool m_bRegressionTestStopping;
+	bool m_bRegressionTestUsePlayCondition;
+	SvOi::IFormulaControllerPtr m_pRegressionTestPlayEquationController;
 
 	SVFileNameClass msvFileName;
 

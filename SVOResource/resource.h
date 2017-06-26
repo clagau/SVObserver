@@ -2184,6 +2184,9 @@
 #define IDC_LIMIT_LABEL                 16117
 #define IDC_EDIT_LIMIT_VALUE            16118
 #define IDC_BUTTON_LIMIT_VALUE          16119
+#define IDC_CHECK_PLAY_COND            16120
+#define IDC_EDIT_PAUSE_EQUATION         16121
+#define IDC_BTN_REG_TEST_PAUSE_EQUATION 16122
 #define ID_TEST                         20000
 #define ID_BROWSE_BUTTON                20001
 #define ID_PLUSBUTTON                   20002
@@ -2402,9 +2405,9 @@
 #ifdef APSTUDIO_INVOKED
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_3D_CONTROLS                     1
-#define _APS_NEXT_RESOURCE_VALUE        11136
+#define _APS_NEXT_RESOURCE_VALUE        11135
 #define _APS_NEXT_COMMAND_VALUE         20356
-#define _APS_NEXT_CONTROL_VALUE         16120
+#define _APS_NEXT_CONTROL_VALUE         16123
 #define _APS_NEXT_SYMED_VALUE           3002
 #endif
 #endif

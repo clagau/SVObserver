@@ -18,8 +18,6 @@
 
 namespace SvOg
 {
-	class FormulaController;
-
 	class TADialogTableDefinesPage : public CPropertyPage, public ISVPropertyPageDialog
 	{
 #pragma region Declarations

@@ -456,38 +456,7 @@ SvOi::EquationTestResult SVEquationClass::Test( SvStl::MessageContainerVector *p
 		SvOi::EquationTestResult result = lexicalScan( equationText.c_str() );
 		if( result.bPassed )
 		{
-			// Parse the equation
-			m_Yacc.sIndex = 0;
-			m_Yacc.yacc_err = 0;
-
-			try
-			{
-				// Get the default control word.   
-				int cw = _controlfp( 0,0 );
-			
-				// This one turns off exception generation
-				int newCw = cw | (EM_OVERFLOW|EM_UNDERFLOW|EM_INEXACT|EM_ZERODIVIDE|EM_DENORMAL);
-
-				// Set the exception masks OFF, turn exceptions on.
-				//int newCw = cw & (~(EM_OVERFLOW|EM_UNDERFLOW|EM_INEXACT|EM_ZERODIVIDE|EM_DENORMAL));
-
-				// Set the control word.   
-				_controlfp( newCw, MCW_EM );
-
-				m_Yacc.yyparse();
-
-				// Reset it back
-				_controlfp( cw, MCW_EM );
-			}
-		
-			catch( ... )
-			{
-				_clearfp();
-
-				m_isDataValid = false;
-			}
-
-			//yacc.yyparse();
+			ParseYacc();
 	
 			if (m_Yacc.yacc_err)
 			{
@@ -600,6 +569,19 @@ SvOi::EquationTestResult SVEquationClass::lexicalScan(LPCTSTR inBuffer)
 	return ret;
 }
 
+double SVEquationClass::RunAndGetResult()
+{
+	m_isDataValid = true;
+
+	ParseYacc();
+
+	if (!m_isDataValid || m_Yacc.yacc_err)
+	{
+		return 0;
+	}
+	return m_Yacc.equationResult;
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // Rebuild Symbol table - Gets Called from lexer during scan of equation
 ////////////////////////////////////////////////////////////////////////////////
@@ -656,35 +638,7 @@ bool SVEquationClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContain
 		/////////////////////////////////////////////////////
 		m_isDataValid = true;
 
-		m_Yacc.sIndex = 0;
-		m_Yacc.yacc_err = 0;
-
-		try
-		{
-			// Get the default control word.   
-			int cw = _controlfp( 0,0 );
-			
-			// This one turns off exception generation
-			int newCw = cw | (EM_OVERFLOW|EM_UNDERFLOW|EM_INEXACT|EM_ZERODIVIDE|EM_DENORMAL);
-
-			// Set the exception masks OFF, turn exceptions on.
-			//int newCw = cw & (~(EM_OVERFLOW|EM_UNDERFLOW|EM_INEXACT|EM_ZERODIVIDE|EM_DENORMAL));
-
-			// Set the control word.   
-			_controlfp( newCw, MCW_EM );
-
-			m_Yacc.yyparse();
-
-			// Reset it back
-			_controlfp( cw, MCW_EM );
-		}
-		
-		catch( ... )
-		{
-			_clearfp();
-
-			m_isDataValid = false;
-		}
+		ParseYacc();
 
 		/////////////////////////////////////////////////////
 		// Check for Valid Data
@@ -804,4 +758,37 @@ void SVEquationClass::OnObjectRenamed(const SVObjectClass& rRenamedObject, const
 	}
 
 	__super::OnObjectRenamed(rRenamedObject, rOldName);
+}
+
+void SVEquationClass::ParseYacc()
+{
+	m_Yacc.sIndex = 0;
+	m_Yacc.yacc_err = 0;
+
+	try
+	{
+		// Get the default control word.   
+		int cw = _controlfp(0, 0);
+
+		// This one turns off exception generation
+		int newCw = cw | (EM_OVERFLOW | EM_UNDERFLOW | EM_INEXACT | EM_ZERODIVIDE | EM_DENORMAL);
+
+		// Set the exception masks OFF, turn exceptions on.
+		//int newCw = cw & (~(EM_OVERFLOW|EM_UNDERFLOW|EM_INEXACT|EM_ZERODIVIDE|EM_DENORMAL));
+
+		// Set the control word.   
+		_controlfp(newCw, MCW_EM);
+
+		m_Yacc.yyparse();
+
+		// Reset it back
+		_controlfp(cw, MCW_EM);
+	}
+
+	catch (...)
+	{
+		_clearfp();
+
+		m_isDataValid = false;
+	}
 }

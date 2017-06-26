@@ -20,6 +20,7 @@
 #include "ObjectInterfaces/IInspectionProcess.h"
 #include "ObjectInterfaces/IToolSet.h"
 #include "ObjectInterfaces/SVResetStruct.h"
+#include "ObjectInterfaces/IFormulaController.h"
 #include "SVCommandLibrary/SVCommandTemplate.h"
 #include "SVContainerLibrary/SVBiUniqueMap.h"
 #include "SVDataManagerLibrary/DataManager.h"
@@ -44,6 +45,7 @@
 #include "SVVirtualCamera.h"
 #include "SVMonitorList.h"
 #include "SVValueObjectLibrary/SVValueObjectClass.h"
+#include "SVOCore/SVEquation.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -278,6 +280,14 @@ public:
 	bool m_bForceOffsetUpdate; // Force Global Extent data to update
 
 	SVStringVector& getViewedInputNames() { return m_arViewedInputNames; };
+
+	/// Get the controller for the play condition equation
+	/// \returns SvOi::IFormulaControllerPtr
+	SvOi::IFormulaControllerPtr getRegressionTestPlayConditionController();
+
+	/// Return true if Regression Test should go to pause because of the Play condition.
+	/// \returns bool
+	bool shouldPauseRegressionTestByCondition();
 	 
 protected:
 	typedef std::map< SVString, SVObjectReference > SVNameObjectMap;
@@ -467,6 +477,10 @@ private:
 	TCHAR* m_SecondPtrImageFileName;  //<pointer to Filename after the path 
 	int	   m_SecondPtrImageFileNameLen; //len 
 	SVStringVector m_arViewedInputNames;
+
+	//For RegressionTest
+	SVEquationClass m_RegressionTestPlayEquation;
+	SvOi::IFormulaControllerPtr m_pRegressionTestPlayEquationController;
 };
 
 typedef SVVector<SVInspectionProcess*> SVInspectionProcessVector;

@@ -186,6 +186,9 @@ namespace  SvXml
 	LPCTSTR const CTAG_VIEWEDTABLE					= _T("ViewedTable");
 
 	LPCTSTR const CTAG_GLOBAL_CONSTANTS               = _T("GlobalConstants");
+	LPCTSTR const CTAG_REGRESSIONTEST = _T("RegressionTest");
+	LPCTSTR const CTAG_USE_PLAY_CONDITION = _T("UsePlayCondition");
+	LPCTSTR const CTAG_PLAY_CONDITION_EQUATION = _T("PlayConditionEquation");
 
 	/// These are tool copy / paste tags
 	const TCHAR* const ToolCopyTag = _T( "Tool-Copy" );
