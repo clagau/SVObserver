@@ -2098,6 +2098,7 @@ BOOL SVPPQObject::AddToAvailableInputs(SVIOObjectType eType, const SVString& rNa
 		pObject->SetName( rName.c_str() );
 		pObject->SetObjectOwner(this);
 		pObject->SetObjectDepth( GetPPQLength() + g_lPPQExtraBufferSize );
+		pObject->SetObjectAttributesAllowed(SvOi::SV_SELECTABLE_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute);
 		pObject->ResetObject();
 
 		SVIOEntryHostStructPtr pIOEntry = new SVIOEntryHostStruct;
