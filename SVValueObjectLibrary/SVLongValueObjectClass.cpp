@@ -55,37 +55,6 @@ SVLongValueObjectClass::~SVLongValueObjectClass()
 {
 }
 
-void SVLongValueObjectClass::Persist(SVObjectWriter& rWriter)
-{
-	rWriter.StartElement(GetObjectName()); // use internal name for node name
-
-	// Get the Heading (Class Info)
-	SVValueObjectClass::Persist( rWriter );
-
-	// Get the Data Values (Member Info, Values)
-	_variant_t Value( GetDefaultValue() );
-	
-	rWriter.WriteAttribute(scDefaultTag, Value);
-
-	rWriter.StartElement(scArrayElementsTag);
-
-	// Where does Object Depth Get put into the Script ??? (maybe at the SVObjectClass)
-	// Object Depth is implicit (it's the count of the values)
-	SVVariantList list;	
-
-	// for all elements in the array
-	for( int i = 0; i < getArraySize(); i++ )
-	{
-		//Make sure this is not a derived virtual method which is called
-		SVLongValueObjectClass::GetValue( Value.lVal, GetLastSetIndex(), i );
-		list.push_back(Value);
-	}
-	rWriter.WriteAttribute(scElementTag, list);
-	rWriter.EndElement();
-
-	rWriter.EndElement();
-}
-
 long SVLongValueObjectClass::ConvertString2Type( const SVString& rValue ) const
 {
 	SVString Digits = SvUl_SF::ValidateString( rValue, _T("-0123456789 .xXabcdefABCDEF") );
@@ -114,15 +83,28 @@ long SVLongValueObjectClass::ConvertString2Type( const SVString& rValue ) const
 	return 0; //will never reached, because the exception will throw before. But this line avoid a warning
 }
 
+void SVLongValueObjectClass::WriteValues(SVObjectWriter& rWriter)
+{
+	// Where does Object Depth Get put into the Script ??? (maybe at the SVObjectClass)
+	// Object Depth is implicit (it's the count of the values)
+	SVVariantList list;
+
+	// for all elements in the array
+	for (int i = 0; i < getArraySize(); i++)
+	{
+		//Make sure this is not a derived virtual method which is called
+		_variant_t Value;
+		Value.ChangeType(VT_I4);
+		SVLongValueObjectClass::GetValue(Value.lVal, GetLastSetIndex(), i);
+		list.push_back(Value);
+	}
+	rWriter.WriteAttribute(scElementTag, list);
+}
+
 void SVLongValueObjectClass::LocalInitialize()
 {
 	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVLongValueObjectType;
 	DefaultValue() = 0;
-	if ( m_sLegacyScriptDefaultName.empty() )
-	{
-		m_sLegacyScriptDefaultName = _T("lDefault");
-		m_sLegacyScriptArrayName = _T("pLArray");
-	}
 	SetTypeName( _T("Integer32") );
 
 	setOutputFormat( _T("%d") );

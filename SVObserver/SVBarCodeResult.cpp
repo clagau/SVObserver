@@ -68,8 +68,10 @@ SVBarCodeResultClass::SVBarCodeResultClass (BOOL BCreateDefaultTaskList, SVObjec
 	msv_bUseSingleMatchString.SetDefaultValue( TRUE, TRUE );
   msv_szMatchStringFileName.SetDefaultValue(_T(""), TRUE);
 	msv_lMatchStringLine.SetDefaultValue( 0, TRUE );
+	msv_lMatchStringLine.setSaveValueFlag(false);
 	msv_bUseMatchStringFile.SetDefaultValue( FALSE, TRUE );
 	m_dReadScore.SetDefaultValue( ( double ) -1.0, TRUE );
+	m_dReadScore.setSaveValueFlag(false);
   // Specify which string SVResultString should require
 	m_inputObjectInfo.SetInputObjectType( SVBarCodeObjectGuid );
 

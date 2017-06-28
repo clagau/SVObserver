@@ -252,6 +252,7 @@ void SVBlobAnalyzerClass::init()
 		SVNbrOfBlobsFoundObjectGuid,
 		IDS_OBJECTNAME_NBROFBLOBSFOUND,
 		false, SvOi::SVResetItemNone );
+	m_lvoNumberOfBlobsFound.setSaveValueFlag(false);
 
 	RegisterEmbeddedObject(
 		&m_SortAscending, 
@@ -298,6 +299,7 @@ void SVBlobAnalyzerClass::init()
 			false, SvOi::SVResetItemNone );
 
 		m_Value[i].SetDefaultValue(0, TRUE);
+		m_Value[i].setSaveValueFlag(false);
 
 		m_FeaturesEnabled [i] = _T('1');             // Not enabled.
 		m_guidResults[i] = SV_GUID_NULL;

@@ -36,7 +36,6 @@ public:
 	const SVByteValueObjectClass& operator = ( const SVByteValueObjectClass& rhs );
 
 	virtual ~SVByteValueObjectClass();
-	virtual void Persist(SVObjectWriter& rWriter) override;
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* pDataObject ) override;	// for compat loading legacy SVByteVectorObjectClass
 
 	virtual HRESULT SetOutputFormat(OutputFormat outputFormat) override;
@@ -53,6 +52,7 @@ protected:
 
 	virtual SVString ConvertType2String(const BYTE& rValue) const override { return FormatOutput(rValue); };
 
+	virtual void WriteValues(SVObjectWriter& rWriter) override;
 private:
 	void LocalInitialize();
 };

@@ -60,7 +60,6 @@ struct SVExternalToolTaskData : public SVCancelData
 	std::vector<SVStringValueObjectClass>  m_aInputObjectNames; //[NUM_INPUT_OBJECTS]; // our value object names
 
 	std::vector<SVVariantValueObjectClass> m_aResultObjects; //[NUM_RESULT_OBJECTS];
-	std::vector<SVStringValueObjectClass>  m_aResultObjectNames; //[NUM_RESULT_OBJECTS];
 
 	SVImageDefinitionStructArray m_aResultImageDefinitions;
 	ResultValueDefinitionStructArray m_aResultValueDefinitions;

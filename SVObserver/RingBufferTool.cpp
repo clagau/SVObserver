@@ -64,6 +64,7 @@ BOOL RingBufferTool::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 	bOk &= (nullptr != GetInspection());
 
 	m_SourceImageNames.setStatic( true );
+	m_SourceImageNames.setSaveValueFlag(false);
 	m_SourceImageNames.SetObjectAttributesAllowed( SvOi::SV_REMOTELY_SETABLE | SvOi::SV_SETABLE_ONLINE, SvOi::SetAttributeType::RemoveAttribute );
 
 	// Override base class exposure of the draw flag
@@ -290,6 +291,7 @@ void RingBufferTool::BuildEmbeddedObjectList ()
 
 	RegisterEmbeddedObject( &m_FlagOfOutputImage, RingBuffer_FlagOfOutputImagesGuid, IDS_OBJECTNAME_RINGBUFFER_FLAG, false, SvOi::SVResetItemNone );
 	m_FlagOfOutputImage.SetDefaultValue( 0, true );
+	m_FlagOfOutputImage.setSaveValueFlag(false);
 
 	int RingbufferIndexNames[SvOi::cRingBufferNumberOutputImages] = { IDS_OBJECTNAME_RINGBUFFER_INDEX1, IDS_OBJECTNAME_RINGBUFFER_INDEX2};
 	int ImageNames[SvOi::cRingBufferNumberOutputImages] = { IDS_OBJECTNAME_IMAGE1, IDS_OBJECTNAME_IMAGE2};

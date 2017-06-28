@@ -128,7 +128,7 @@ SVOutputObject* SVOutputObjectList::GetOutput(const SVString& rName) const
 	return pResult;
 }
 
-SVOutputObject* SVOutputObjectList::GetOutputFlyweight(const SVString& rName, SVObjectSubTypeEnum ObjectSubType)
+SVOutputObject* SVOutputObjectList::GetOutputFlyweight(const SVString& rName, SVObjectSubTypeEnum ObjectSubType, int GuidIndex)
 {
 	SVOutputObject* pResult(nullptr);
 
@@ -141,10 +141,15 @@ SVOutputObject* SVOutputObjectList::GetOutputFlyweight(const SVString& rName, SV
 			switch (ObjectSubType)
 			{
 			case SVDigitalOutputObjectType:
-				pResult = new SVDigitalOutputObject;
+			{
+				SVDigitalOutputObject* pDigOutput = new SVDigitalOutputObject;
+				pDigOutput->updateGuid(GuidIndex);
+				pResult = pDigOutput;
 				break;
+			}
 			case SVRemoteOutputObjectType:
 				pResult = new SVRemoteOutputObject;
+				break;
 			}
 
 			if (nullptr != pResult)

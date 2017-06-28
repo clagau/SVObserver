@@ -29,12 +29,12 @@ public:
 	virtual ~SVVariantValueObjectClass();
 
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* pDataObject ) override;
-	virtual void Persist(SVObjectWriter& rWriter) override;
 
 	BOOL SetType( int vt );
 	HRESULT SetValueKeepType(LPCTSTR Value, int Bucket) {return SetValueKeepType(Value, Bucket, 0);}
 	HRESULT SetValueKeepType(LPCTSTR Value, int Bucket, int Index);
 	VARTYPE GetDefaultType() const;
+	VARTYPE GetValueType() const { return Value().vt; };
 
 protected:
 	static SVString ToString(const VARIANT& rvt, bool bScript = false );
@@ -49,6 +49,8 @@ protected:
 	virtual _variant_t ConvertString2Type( const SVString& rValue ) const override;
 
 	virtual SVString ConvertType2String( const _variant_t& rValue ) const override;
+
+	virtual void WriteValues(SVObjectWriter& rWriter) override;
 private:
 	void LocalInitialize();
 };

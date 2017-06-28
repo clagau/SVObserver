@@ -58,59 +58,6 @@ SVVariantValueObjectClass::~SVVariantValueObjectClass()
 {
 }
 
-void SVVariantValueObjectClass::Persist(SVObjectWriter& rWriter)
-{
-	rWriter.StartElement(GetObjectName()); // use internal name for node name
-
-	SVValueObjectClass::Persist(rWriter);
-	
-	// Get the Data Values (Member Info, Values)
-	_variant_t Value( GetDefaultValue() );
-	rWriter.WriteAttribute( scDefaultTag, Value  );
-	
-	rWriter.StartElement(scArrayElementsTag);
-
-	// Object Depth is implicit (it's the count of the values)
-	SVVariantList list;
-
-	// for all elements in the array
-	for (int i = 0; i < getArraySize(); i++)
-	{
-		//Make sure this is not a derived virtual method which is called
-		SVVariantValueObjectClass::GetValue( Value, GetLastSetIndex(), i );
-
-		// The parser does not like reading in empty safe array.
-		// Therefore if an empty array is detected then set the variant type to VT_EMPTY.
-		// 
-		if( VT_ARRAY == (Value.vt & VT_ARRAY) )
-		{
-			bool bEmpty = true;
-			unsigned int dim = ::SafeArrayGetDim(Value.parray);
-			long lBound = 0;
-			long uBound = 0;
-			if( dim > 0 )
-			{
-				HRESULT hr = ::SafeArrayGetLBound( Value.parray,1,&lBound);
-				hr = ::SafeArrayGetUBound( Value.parray, 1, &uBound);
-				long lSize = uBound-lBound+1;
-				if( S_OK == hr && lSize > 0 )
-				{
-					bEmpty = false;
-				}
-			}
-			if( bEmpty)
-			{
-				Value.Clear();
-			}
-		}
-		list.push_back( Value );
-	}
-	rWriter.WriteAttribute( scElementTag, list );
-	rWriter.EndElement();
-
-	rWriter.EndElement();
-}
-
 HRESULT SVVariantValueObjectClass::SetObjectValue(SVObjectAttributeClass* pDataObject)
 {
 	HRESULT Result( E_FAIL );
@@ -426,6 +373,49 @@ SVString SVVariantValueObjectClass::ConvertType2String( const _variant_t& rValue
 		}
 	}
 	return Result;
+}
+
+void SVVariantValueObjectClass::WriteValues(SVObjectWriter& rWriter)
+{
+	// Object Depth is implicit (it's the count of the values)
+	SVVariantList list;
+
+	// Get the Data Values (Member Info, Values)
+	_variant_t Value;
+
+	// for all elements in the array
+	for (int i = 0; i < getArraySize(); i++)
+	{
+		//Make sure this is not a derived virtual method which is called
+		SVVariantValueObjectClass::GetValue(Value, GetLastSetIndex(), i);
+
+		// The parser does not like reading in empty safe array.
+		// Therefore if an empty array is detected then set the variant type to VT_EMPTY.
+		// 
+		if (VT_ARRAY == (Value.vt & VT_ARRAY))
+		{
+			bool bEmpty = true;
+			unsigned int dim = ::SafeArrayGetDim(Value.parray);
+			long lBound = 0;
+			long uBound = 0;
+			if (dim > 0)
+			{
+				HRESULT hr = ::SafeArrayGetLBound(Value.parray, 1, &lBound);
+				hr = ::SafeArrayGetUBound(Value.parray, 1, &uBound);
+				long lSize = uBound - lBound + 1;
+				if (S_OK == hr && lSize > 0)
+				{
+					bEmpty = false;
+				}
+			}
+			if (bEmpty)
+			{
+				Value.Clear();
+			}
+		}
+		list.push_back(Value);
+	}
+	rWriter.WriteAttribute(scElementTag, list);
 }
 
 void SVVariantValueObjectClass::LocalInitialize()

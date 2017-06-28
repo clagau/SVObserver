@@ -135,6 +135,7 @@ void SVStatisticsToolClass::init(void)
 	{
 		m_Value [i].SetDefaultValue(0.0, TRUE);
 		m_Value [i].SetObjectAttributesAllowed( SvOi::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute );
+		m_Value[i].setSaveValueFlag(false);
 
 		/*----- FEATURE LIST ---------------------------------------------------------*/
 		/*----- The list of enabled features is kept in a string because, of the      */

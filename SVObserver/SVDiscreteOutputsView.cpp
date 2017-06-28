@@ -340,6 +340,7 @@ void SVDiscreteOutputsView::OnLButtonDblClk( UINT nFlags, CPoint point )
 			else
 			{
 				pDigOutput = new SVDigitalOutputObject;
+				pDigOutput->updateGuid(item);
 
 				pDigOutput->SetChannel( item );
 				pDigOutput->SetName( _T("") );

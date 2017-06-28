@@ -36,6 +36,10 @@ public:
 
 	BOOL SetChannel( long lChannel );
 	long GetChannel() const;
+
+	/// Update the GUID to a fix GUID depend of a position (must between 0 and 0x100).
+	/// \param position [in]
+	void updateGuid(int position);
 #pragma endregion Public Methods
 
 #pragma region Private Methods

@@ -37,6 +37,7 @@ SVPointYResultClass::SVPointYResultClass( BOOL BCreateDefaultTaskList, SVObjectC
 
 	// Set Embedded defaults
 	m_Y.SetDefaultValue( 0, TRUE );
+	m_Y.setSaveValueFlag(false);
 
 	// Instantiate Dynamic Objects
 

@@ -76,6 +76,7 @@ SVLinearEdgeProcessingClass::SVLinearEdgeProcessingClass( SVObjectClass* POwner,
 	m_svUseLowerThresholdMaxMinusOffset.SetDefaultValue(FALSE,TRUE);
 	m_svUseLowerThresholdMinPlusOffset.SetDefaultValue(FALSE,TRUE);
 	m_svLowerThresholdValue.SetDefaultValue(SvOi::cDefaultToolLowerThreshold,TRUE);
+	m_svLowerThresholdValue.setSaveValueFlag(false);
 	m_svLowerMaxMinusPercentDiffValue.SetDefaultValue(0,TRUE);
 	m_svLowerMaxMinusOffsetValue.SetDefaultValue(0,TRUE);
 	m_svLowerMinPlusOffsetValue.SetDefaultValue(0,TRUE);
@@ -85,6 +86,7 @@ SVLinearEdgeProcessingClass::SVLinearEdgeProcessingClass( SVObjectClass* POwner,
 	m_svUseUpperThresholdMaxMinusOffset.SetDefaultValue(FALSE,TRUE);
 	m_svUseUpperThresholdMinPlusOffset.SetDefaultValue(FALSE,TRUE);
 	m_svUpperThresholdValue.SetDefaultValue(SvOi::cDefaultToolUpperThreshold,TRUE);
+	m_svUpperThresholdValue.setSaveValueFlag(false);
 	m_svUpperMaxMinusPercentDiffValue.SetDefaultValue(0,TRUE);
 	m_svUpperMaxMinusOffsetValue.SetDefaultValue(0,TRUE);
 	m_svUpperMinPlusOffsetValue.SetDefaultValue(0,TRUE);
@@ -94,6 +96,7 @@ SVLinearEdgeProcessingClass::SVLinearEdgeProcessingClass( SVObjectClass* POwner,
 	m_cfEdges = SV_DEFAULT_SUB_FUNCTION_COLOR_2;
 
 	m_svLinearEdges.SetLegacyVectorObjectCompatibility();
+	m_svLinearEdges.setSaveValueFlag(false);
 
 	// Set default inputs and outputs
 	addDefaultInputObjects();

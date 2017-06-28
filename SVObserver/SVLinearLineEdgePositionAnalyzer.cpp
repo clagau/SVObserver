@@ -37,6 +37,7 @@ void SVLinearEdgePositionLineAnalyzerClass::init()
 
 	RegisterEmbeddedObject( &dpEdge, SVDPEdgeAObjectGuid, IDS_OBJECTNAME_DPEDGE, false, SvOi::SVResetItemNone );
 	RegisterEmbeddedObject( &m_svLinearDistance, SVLinearDistanceEdgeAObjectGuid, IDS_OBJECTNAME_LINEAR_DISTANCE_EDGE_A, false, SvOi::SVResetItemNone );
+	m_svLinearDistance.setSaveValueFlag(false);
 	RegisterEmbeddedObject( &m_svShowAllEdgeAOverlays, SVShowAllEdgeAOverlaysGuid, IDS_OBJECTNAME_SHOW_ALL_EDGE_A_OVERLAYS, false, SvOi::SVResetItemNone );
 
 	m_bEnableDirection = TRUE;
@@ -51,6 +52,7 @@ void SVLinearEdgePositionLineAnalyzerClass::init()
 	defaultPoint.y = 0;
 
 	dpEdge.SetDefaultValue( defaultPoint, TRUE );
+	dpEdge.setSaveValueFlag(false);
 
 	// Populate the available result list
 	SVClassInfoStruct resultClassInfo;

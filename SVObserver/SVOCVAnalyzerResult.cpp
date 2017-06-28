@@ -159,15 +159,20 @@ void SVOCVAnalyzeResultClass::clearAll()
 	// Set Embedded defaults
 	m_svoMatchString.SetDefaultValue( _T( "" ), TRUE );
 	m_svoFoundString.SetDefaultValue( _T( "" ), TRUE );
+	m_svoFoundString.setSaveValueFlag(false);
 
 	m_lvoMatchLineNumber.SetDefaultValue ( (long) -1, TRUE );
+	m_lvoMatchLineNumber.setSaveValueFlag(false);
 	m_bvoPerformOCR.SetDefaultValue ( (long) 1, TRUE );
 	m_bvoUseMatchFile.SetDefaultValue( FALSE, TRUE );
 
 	// Setting exposed OCV Match Score defaults
 	m_dvoHighestMatchScore.SetDefaultValue( (double) -1.0, TRUE );
+	m_dvoHighestMatchScore.setSaveValueFlag(false);
 	m_dvoLowestMatchScore.SetDefaultValue( (double) -1.0, TRUE );
+	m_dvoLowestMatchScore.setSaveValueFlag(false);
 	m_dvoAverageMatchScore.SetDefaultValue( (double) -1.0, TRUE );
+	m_dvoAverageMatchScore.setSaveValueFlag(false);
 
 	// Setting exposed OCV File Name defaults
 	m_fnvoFontFileName.SetDefaultValue( _T(""), TRUE );

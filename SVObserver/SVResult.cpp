@@ -57,8 +57,11 @@ void SVResultClass::init()
 
 	// Set Embedded defaults
 	passed.SetDefaultValue( FALSE, TRUE );			// Default for Passed is FALSE !!!
+	passed.setSaveValueFlag(false);
 	failed.SetDefaultValue( TRUE, TRUE );			// Default for Failed is TRUE !!!
+	failed.setSaveValueFlag(false);
 	warned.SetDefaultValue( TRUE, TRUE );			// Default for Warned is TRUE !!!
+	warned.setSaveValueFlag(false);
 
 	// Set up the Default Inputs/Outputs
 	addDefaultInputObjects();

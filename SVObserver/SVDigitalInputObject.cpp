@@ -5,11 +5,9 @@
 
 #pragma region Includes
 #include "stdafx.h"
-
-
 #include "SVDigitalInputObject.h"
-
 #include "SVIOLibrary/SVIOConfigurationInterfaceClass.h"
+#include "SVObjectLibrary/SVObjectManagerClass.h"
 #pragma endregion Includes
 
 SVDigitalInputObject::SVDigitalInputObject( LPCSTR strObjectName )
@@ -141,6 +139,16 @@ BOOL SVDigitalInputObject::SetChannel( long lChannel )
 long SVDigitalInputObject::GetChannel() const
 {
 	return m_lChannel;
+}
+
+void SVDigitalInputObject::updateGuid(int position)
+{
+	if (0 <= position && 0x100 > position)
+	{
+		SVGUID ParameterUID(DigitalInputUidGuid);
+		ParameterUID.ToGUID().Data1 += position;
+		SVObjectManagerClass::Instance().ChangeUniqueObjectID(this, ParameterUID);
+	}
 }
 
 void SVDigitalInputObject::LocalInitialize()

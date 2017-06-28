@@ -311,7 +311,6 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessEmbedded(typename SVTreeTyp
 	_variant_t uniqueID;
 	_variant_t embeddedID;
 	_variant_t attributesAllowed;
-	_variant_t defaultValue;
 
 	GetItemValue(scObjectNameTag, hItem, objectName);
 	GetItemValue(scEmbeddedIDTag, hItem, embeddedID);
@@ -330,8 +329,7 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessEmbedded(typename SVTreeTyp
 		
 			if (S_OK == hr)
 			{
-				GetItemValue(scDefaultTag, hItem, defaultValue);
-				hr = ProcessEmbeddedValues(hItem, ownerID, objectID, defaultValue, dataType);
+				hr = ProcessEmbeddedValues(hItem, ownerID, objectID, dataType);
 			}
 		}
 		else
@@ -346,6 +344,14 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessEmbedded(typename SVTreeTyp
 			}
 		}
 	}
+	if (S_OK == hr)
+	{
+		_variant_t arraySize;
+		if (GetItemValue(scArraySizeTag, hItem, arraySize))
+		{
+			hr = SVObjectBuilder::SetObjectValue(ownerID, objectID, scArraySizeTag, arraySize, SV_LONG_Type);
+		}
+	}
 	m_count++;
 	UpdateProgress(m_count, m_totalSize);
 
@@ -353,23 +359,17 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessEmbedded(typename SVTreeTyp
 }
 
 template< typename SVTreeType >
-HRESULT SVInspectionTreeParser< SVTreeType >::ProcessEmbeddedValues(typename SVTreeType::SVBranchHandle hItem, const GUID& ownerID, const GUID& objectID, const _variant_t& defaultValue, SVObjectScriptDataObjectTypeEnum dataType)
+HRESULT SVInspectionTreeParser< SVTreeType >::ProcessEmbeddedValues(typename SVTreeType::SVBranchHandle hItem, const GUID& ownerID, const GUID& objectID, SVObjectScriptDataObjectTypeEnum dataType)
 {
 	HRESULT hr = S_OK;
 
-	if (HasTag(hItem, scDefaultTag))
+	SVVariantList values;
+	bool bVal = GetValues(hItem, scArrayElementsTag, values);
+	if (bVal)
 	{
-		hr = SVObjectBuilder::SetObjectValue(ownerID, objectID, scDefaultTag, defaultValue, dataType);
+		hr = SVObjectBuilder::SetObjectValue(ownerID, objectID, scArrayElementsTag, values, dataType);
 	}
-	if (S_OK == hr)
-	{
-		SVVariantList values;
-		bool bVal = GetValues(hItem, scArrayElementsTag, values);
-		if (bVal)
-		{
-			hr = SVObjectBuilder::SetObjectValue(ownerID, objectID, scArrayElementsTag, values, dataType);
-		}
-	}
+
 	return hr;
 }
 

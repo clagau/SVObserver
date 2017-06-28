@@ -73,6 +73,7 @@ BOOL SVLinearToolClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructur
 
 	Attributes = SvOi::SV_REMOTELY_SETABLE | SvOi::SV_SETABLE_ONLINE;
 	m_SourceImageNames.setStatic( true );
+	m_SourceImageNames.setSaveValueFlag(false);
 	m_SourceImageNames.SetObjectAttributesAllowed( Attributes, SvOi::SetAttributeType::RemoveAttribute );
 	m_ExtentLeft.SetObjectAttributesAllowed( Attributes, SvOi::SetAttributeType::RemoveAttribute );
 	m_ExtentTop.SetObjectAttributesAllowed( Attributes, SvOi::SetAttributeType::RemoveAttribute );

@@ -48,6 +48,7 @@ void SVLinearEdgeCountingLineAnalyzerClass::init()
 
 	// Set Embedded defaults
 	m_svEdgeCount.SetDefaultValue( 0, TRUE );
+	m_svEdgeCount.setSaveValueFlag(false);
 	
 	// Set default inputs and outputs
 	addDefaultInputObjects();

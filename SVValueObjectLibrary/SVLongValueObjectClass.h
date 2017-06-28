@@ -27,7 +27,6 @@ public:
 	const SVLongValueObjectClass& operator = (const SVLongValueObjectClass& rhs);
 
 	virtual ~SVLongValueObjectClass();
-	virtual void Persist( SVObjectWriter& rWriter) override;
 
 protected:
 	virtual double ValueType2Double(const long& rValue) const override { return static_cast<double> (rValue); };
@@ -40,6 +39,8 @@ protected:
 	virtual long ConvertString2Type(const SVString& rValue ) const override;
 
 	virtual SVString ConvertType2String(const long& rValue) const override { return FormatOutput(rValue); };
+
+	virtual void WriteValues(SVObjectWriter& rWriter) override;
 private:
 	void LocalInitialize();
 };

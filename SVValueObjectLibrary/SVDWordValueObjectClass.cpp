@@ -57,40 +57,6 @@ SVDWordValueObjectClass::~SVDWordValueObjectClass()
 {
 }
 
-void SVDWordValueObjectClass::Persist(SVObjectWriter& rWriter)
-{
-	rWriter.StartElement(GetObjectName()); // use internal name for node name
-
-	// Get the Heading (Class Info)
-	SVValueObjectClass::Persist( rWriter );
-
-	// Get the Data Values (Member Info, Values)
-	_variant_t Value( GetDefaultValue() );
-	Value.ChangeType(VT_UI4);
-	
-	rWriter.WriteAttribute(scDefaultTag, Value);
-
-	rWriter.StartElement(scArrayElementsTag);
-
-	// Where does Object Depth Get put into the Script ??? (maybe at the SVObjectClass)
-	// Object Depth is implicit (it's the count of the values)
-	SVVariantList list;	
-
-	// for all elements in the array
-	for( int i = 0; i < getArraySize(); i++ )
-	{
-		DWORD Temp( 0 );
-		//Make sure this is not a derived virtual method which is called
-		SVDWordValueObjectClass::GetValue( Temp, GetLastSetIndex(), i );
-		Value.ulVal = static_cast<ULONG> (Temp);
-		list.push_back(Value);
-	}
-	rWriter.WriteAttribute(scElementTag, list);
-	rWriter.EndElement();
-
-	rWriter.EndElement();
-}
-
 HRESULT SVDWordValueObjectClass::SetOutputFormat(OutputFormat outputFormat)
 {
 	HRESULT Result = S_OK;
@@ -137,15 +103,32 @@ DWORD SVDWordValueObjectClass::ConvertString2Type( const SVString& rValue ) cons
 	return 0; //will never be reached, because the exception will throw before. But this line avoids a warning
 }
 
+void SVDWordValueObjectClass::WriteValues(SVObjectWriter& rWriter)
+{
+	// Where does Object Depth Get put into the Script ??? (maybe at the SVObjectClass)
+	// Object Depth is implicit (it's the count of the values)
+	SVVariantList list;
+
+	// Get the Data Values (Member Info, Values)
+	_variant_t Value;
+	Value.ChangeType(VT_UI4);
+
+	// for all elements in the array
+	for (int i = 0; i < getArraySize(); i++)
+	{
+		DWORD Temp(0);
+		//Make sure this is not a derived virtual method which is called
+		SVDWordValueObjectClass::GetValue(Temp, GetLastSetIndex(), i);
+		Value.ulVal = static_cast<ULONG> (Temp);
+		list.push_back(Value);
+	}
+	rWriter.WriteAttribute(scElementTag, list);
+}
+
 void SVDWordValueObjectClass::LocalInitialize()
 {
 	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVDWordValueObjectType;
 	DefaultValue() = 0;
-	if ( m_sLegacyScriptDefaultName.empty() )
-	{
-		m_sLegacyScriptDefaultName = _T("dwDefault");
-		m_sLegacyScriptArrayName = _T("pDwArray");
-	}
 	SetTypeName( _T("Integer32Hex") );
 	InitializeBuckets();
 

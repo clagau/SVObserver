@@ -34,8 +34,6 @@ public:
 
 	virtual ~SVEnumerateValueObjectClass();
 
-	virtual void Persist(SVObjectWriter& rWriter) override;
-
 	//virtual HRESULT GetObjectValue( const SVString& rValueName, _variant_t& rValue ) const override;
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* PDataObject ) override;
 
@@ -78,6 +76,8 @@ protected:
 	virtual long ConvertString2Type( const SVString& rValue ) const override;
 
 	virtual SVString ConvertType2String( const long& rValue ) const override;
+
+	virtual void WriteValues(SVObjectWriter& rWriter) override;
 private:
 	void LocalInitialize();
 	

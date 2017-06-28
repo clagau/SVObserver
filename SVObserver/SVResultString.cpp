@@ -34,6 +34,7 @@ SVStringResultClass::SVStringResultClass( BOOL BCreateDefaultTaskList, SVObjectC
 
 	// Set Embedded defaults
 	m_Value.SetDefaultValue (_T(""), TRUE);
+	m_Value.setSaveValueFlag(false);
 
 	// Add Default Inputs and Outputs
 	addDefaultInputObjects();

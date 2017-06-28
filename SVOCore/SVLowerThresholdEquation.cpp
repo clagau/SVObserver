@@ -46,6 +46,7 @@ void SVLowerThresholdEquationClass::init()
 
 	// Set Embedded defaults
 	result.SetDefaultValue( 0.0, TRUE );
+	result.setSaveValueFlag(false);
 
 	// Set default inputs and outputs
 	addDefaultInputObjects();

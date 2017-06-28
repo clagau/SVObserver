@@ -141,6 +141,7 @@ BOOL SVImageToolClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure
 	outputOperator.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
 
 	m_SourceImageNames.setStatic( true );
+	m_SourceImageNames.setSaveValueFlag(false);
 	m_SourceImageNames.SetObjectAttributesAllowed( SvOi::SV_REMOTELY_SETABLE | SvOi::SV_SETABLE_ONLINE, SvOi::SetAttributeType::RemoveAttribute );
 
 	bOk &= S_OK == UpdateTranslation();

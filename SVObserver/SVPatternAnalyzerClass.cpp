@@ -135,11 +135,16 @@ SVPatternAnalyzerClass::SVPatternAnalyzerClass(BOOL BCreateDefaultTaskList, SVOb
 	msv_szModelImageFile.SetDefaultValue (_T(""), TRUE);
 	m_DontCareImageFile.SetDefaultValue (_T(""), TRUE);
 	msv_dpatResultMatchScore.SetDefaultValue (0.0, TRUE);
+	msv_dpatResultMatchScore.setSaveValueFlag(false);
 	msv_dpatResultX.SetDefaultValue (0.0, TRUE);
+	msv_dpatResultX.setSaveValueFlag(false);
 	msv_dpatResultY.SetDefaultValue (0.0, TRUE);
+	msv_dpatResultY.setSaveValueFlag(false);
 	msv_dpatResultAngle.SetDefaultValue (0.0, TRUE);
+	msv_dpatResultAngle.setSaveValueFlag(false);
 	m_lpatModelCenterX.SetDefaultValue(0, true);
 	m_lpatModelCenterY.SetDefaultValue(0, true);
+	msv_lpatNumFoundOccurances.setSaveValueFlag(false);
 
 	// Setup the result
 	pAnalyzerResult = nullptr;

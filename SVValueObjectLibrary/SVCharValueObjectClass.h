@@ -31,7 +31,6 @@ public:
 	const SVCharValueObjectClass& operator = ( const SVCharValueObjectClass& rhs );
 
 	virtual ~SVCharValueObjectClass();
-	virtual void Persist(SVObjectWriter& rWriter) override;
 
 protected:
 	virtual double ValueType2Double(const TCHAR& rValue) const override { return static_cast<double> (rValue); };
@@ -44,6 +43,8 @@ protected:
 	virtual TCHAR ConvertString2Type(const SVString& rValue ) const override;
 
 	virtual SVString ConvertType2String(const TCHAR& rValue) const override { return FormatOutput(rValue); };
+
+	virtual void WriteValues(SVObjectWriter& rWriter) override;
 private:
 	void LocalInitialize();
 };

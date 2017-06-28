@@ -121,6 +121,7 @@ BOOL SVColorToolClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure
 	m_hasROI.SetObjectAttributesAllowed(SvOi::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute);
 
 	m_SourceImageNames.setStatic( true );
+	m_SourceImageNames.setSaveValueFlag(false);
 	m_SourceImageNames.SetObjectAttributesAllowed( SvOi::SV_REMOTELY_SETABLE | SvOi::SV_SETABLE_ONLINE, SvOi::SetAttributeType::RemoveAttribute );
 
 	m_isCreated = bOk;

@@ -24,7 +24,6 @@ public:
 	SVInt64ValueObjectClass( LPCTSTR ObjectName);
 	SVInt64ValueObjectClass( SVObjectClass* pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVINT64VALUEOBJECT );
 	const SVInt64ValueObjectClass& operator = (const SVInt64ValueObjectClass& rhs );
-	virtual void Persist(SVObjectWriter& rWriter) override;
 
 	virtual ~SVInt64ValueObjectClass();
 
@@ -39,6 +38,8 @@ protected:
 	virtual __int64 ConvertString2Type( const SVString& rValue ) const override;
 
 	virtual SVString ConvertType2String(const __int64& rValue) const override { return FormatOutput(rValue); };
+
+	virtual void WriteValues(SVObjectWriter& rWriter) override;
 private:
 	void LocalInitialize();
 };

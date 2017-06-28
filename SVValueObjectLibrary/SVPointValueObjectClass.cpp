@@ -56,44 +56,6 @@ SVPointValueObjectClass::~SVPointValueObjectClass()
 {
 }
 
-void SVPointValueObjectClass::Persist(SVObjectWriter& rWriter)
-{
-	rWriter.StartElement(GetObjectName()); // use internal name for node name
-
-	// Get the Heading (Class Info)
-	SVValueObjectClass::Persist(rWriter);
-	
-	// Get the Data Values (Member Info, Values)
-	SVString TempValue;
-	TempValue = SvUl_SF::Format(_T("%d, %d"), GetDefaultValue().x(), GetDefaultValue().y());
-	_variant_t Value;
-	Value.SetString(TempValue.c_str());
-	rWriter.WriteAttribute(scDefaultTag, Value);
-	Value.Clear();
-	
-	rWriter.StartElement(scArrayElementsTag);
-
-	// Where does Object Depth Get put into the Script ??? (maybe at the SVObjectClass)
-	// Object Depth is implicit (it's the count of the values)
-	SVVariantList list;
-
-	// for all elements in the array
-	for (int i = 0; i < getArraySize(); i++)
-	{
-		SVPOINT PointValue;
-		//Make sure this is not a derived virtual method which is called
-		SVPointValueObjectClass::GetValue( PointValue, GetLastSetIndex(), i);
-		TempValue = SvUl_SF::Format(_T("%d, %d"), PointValue.x(), PointValue.y());
-		Value.SetString( TempValue.c_str() );
-		list.push_back( Value );
-		Value.Clear();
-	}
-	rWriter.WriteAttribute(scElementTag, list);
-	rWriter.EndElement();
-
-	rWriter.EndElement();
-}
-
 _variant_t SVPointValueObjectClass::ValueType2Variant( const SVPOINT& rValue ) const
 {
 	_variant_t Result;
@@ -155,14 +117,34 @@ SVString SVPointValueObjectClass::ConvertType2String( const SVPOINT& rValue ) co
 	return Result;
 }
 
+void SVPointValueObjectClass::WriteValues(SVObjectWriter& rWriter)
+{
+	// Where does Object Depth Get put into the Script ??? (maybe at the SVObjectClass)
+	// Object Depth is implicit (it's the count of the values)
+	SVVariantList list;
+
+	// Get the Data Values (Member Info, Values)
+	SVString TempValue;
+	_variant_t Value;
+	Value.Clear();
+
+	// for all elements in the array
+	for (int i = 0; i < getArraySize(); i++)
+	{
+		SVPOINT PointValue;
+		//Make sure this is not a derived virtual method which is called
+		SVPointValueObjectClass::GetValue(PointValue, GetLastSetIndex(), i);
+		TempValue = SvUl_SF::Format(_T("%d, %d"), PointValue.x(), PointValue.y());
+		Value.SetString(TempValue.c_str());
+		list.push_back(Value);
+		Value.Clear();
+	}
+	rWriter.WriteAttribute(scElementTag, list);
+}
+
 void SVPointValueObjectClass::LocalInitialize()
 {
 	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVPointValueObjectType;
-	if ( m_sLegacyScriptDefaultName.empty() )
-	{
-		m_sLegacyScriptDefaultName = _T("defaultPoint");
-		m_sLegacyScriptArrayName = _T("pArray");
-	}	
 	SetObjectAttributesAllowed( SvOi::SV_VIEWABLE | SvOi::SV_ARCHIVABLE | SvOi::SV_EMBEDABLE | SvOi::SV_PRINTABLE | SvOi::SV_DD_VALUE, SvOi::SetAttributeType::OverwriteAttribute );
 
 	SetTypeName( _T("Point") );

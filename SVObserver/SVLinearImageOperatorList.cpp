@@ -405,12 +405,14 @@ void SVLinearImageOperatorListClass::init()
 	m_svLinearData.SetLegacyVectorObjectCompatibility();
 
 	RegisterEmbeddedObject(&m_svLinearData, SVLinearDataClassGuid,IDS_CLASSNAME_SVLINEARDATACLASS, false, SvOi::SVResetItemNone );
-
+	m_svLinearData.setSaveValueFlag(false);
 	RegisterEmbeddedObject(&m_svMinThreshold, SVLinearThresholdMinObjectGuid, IDS_OBJECTNAME_LINEAR_THRESHOLD_MINVALUE, false, SvOi::SVResetItemNone );
 	RegisterEmbeddedObject(&m_svMaxThreshold, SVLinearThresholdMaxObjectGuid, IDS_OBJECTNAME_LINEAR_THRESHOLD_MAXVALUE, false, SvOi::SVResetItemNone );
 
 	m_svMinThreshold.SetDefaultValue( 0.0, TRUE );
+	m_svMinThreshold.setSaveValueFlag(false);
 	m_svMaxThreshold.SetDefaultValue( 0.0, TRUE );
+	m_svMaxThreshold.setSaveValueFlag(false);
 
 	m_ulLineLength = 0;
 

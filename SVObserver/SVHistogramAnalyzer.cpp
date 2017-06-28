@@ -357,20 +357,32 @@ void SVHistogramAnalyzerClass::init()
 
 		// Set Embedded defaults
 		msvHistogramValue.SetDefaultValue(0, true);
+		msvHistogramValue.setSaveValueFlag(false);
 		msvStdDevValue.SetDefaultValue(0.0, true);
+		msvStdDevValue.setSaveValueFlag(false);
 		msvMeanValue.SetDefaultValue(0.0, true);
+		msvMeanValue.setSaveValueFlag(false);
 		msvFixedHeightValue.SetDefaultValue(10.0, true);
 
 		msvRangeStartValue.SetDefaultValue(0, true);
+		msvRangeStartValue.setSaveValueFlag(false);
 		msvRangeEndValue.SetDefaultValue(255, true);
+		msvRangeEndValue.setSaveValueFlag(false);
 		msvMaxPixelValue.SetDefaultValue(0, true);
+		msvMaxPixelValue.setSaveValueFlag(false);
 		msvMinPixelValue.SetDefaultValue(0, true);
+		msvMinPixelValue.setSaveValueFlag(false);
 		msvPixelCountValue.SetDefaultValue(0, true);
+		msvPixelCountValue.setSaveValueFlag(false);
 		msvRangeSizeValue.SetDefaultValue(0, true);
+		msvRangeSizeValue.setSaveValueFlag(false);
 		msvScaleValue.SetDefaultValue(0, true);
 		msvHighPeak.SetDefaultValue(0, true);
+		msvHighPeak.setSaveValueFlag(false);
 		msvLowPeak.SetDefaultValue(0, true);
+		msvLowPeak.setSaveValueFlag(false);
 		msvValley.SetDefaultValue(0, true);
+		msvValley.setSaveValueFlag(false);
 		msvPeakThreshold.SetDefaultValue(10, true);
 		msvDefaultPeak.SetDefaultValue(0, true);
 		msvMinPeakHeight.SetDefaultValue(0.5, true);

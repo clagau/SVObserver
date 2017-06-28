@@ -47,7 +47,7 @@ private:
 	
 	HRESULT ProcessEmbeddeds(typename SVTreeType::SVBranchHandle hItem, const GUID& ownerID);
 	HRESULT ProcessEmbedded(typename SVTreeType::SVBranchHandle hItem, const GUID& ownerID);
-	HRESULT ProcessEmbeddedValues(typename SVTreeType::SVBranchHandle hItem, const GUID& ownerID, const GUID& objectID, const _variant_t& defaultValue, SVObjectScriptDataObjectTypeEnum dataType);
+	HRESULT ProcessEmbeddedValues(typename SVTreeType::SVBranchHandle hItem, const GUID& ownerID, const GUID& objectID, SVObjectScriptDataObjectTypeEnum dataType);
 
 	HRESULT ProcessBranchObjectValues(typename SVTreeType::SVBranchHandle hItem, const GUID& ownerID, const GUID& objectID);
 	HRESULT ProcessLeafObjectValues(typename SVTreeType::SVBranchHandle hItem, const GUID& ownerID, const GUID& objectID);

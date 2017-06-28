@@ -4295,7 +4295,7 @@ BOOL SVObserverApp::ShowConfigurationAssistant( int Page /*= 3*/,
 
 						SVString Name = SvUl_SF::Format( _T("DIO.Input%d"), l+1 );
 
-						pInput = dynamic_cast<SVDigitalInputObject*> (pInputObjectList->GetInputFlyweight(Name, SVDigitalInputObjectType));
+						pInput = dynamic_cast<SVDigitalInputObject*> (pInputObjectList->GetInputFlyweight(Name, SVDigitalInputObjectType, l));
 
 						if( nullptr != pInput )
 						{
@@ -4319,18 +4319,19 @@ BOOL SVObserverApp::ShowConfigurationAssistant( int Page /*= 3*/,
 				if (nullptr != pOutputObjectList)
 				{
 					SVDigitalOutputObject* pOutput(nullptr);
-					pOutput = dynamic_cast<SVDigitalOutputObject*> (pOutputObjectList->GetOutputFlyweight(SvO::cModuleReady, SVDigitalOutputObjectType));
+					const int moduleReadyChannel = 15;
+					pOutput = dynamic_cast<SVDigitalOutputObject*> (pOutputObjectList->GetOutputFlyweight(SvO::cModuleReady, SVDigitalOutputObjectType, moduleReadyChannel));
 
 					// @HACK:  JAB082212 HACK!!!!!
 					if( nullptr != pOutput )
 					{
-						pOutput->SetChannel( 15 );
+						pOutput->SetChannel(moduleReadyChannel);
 
 						pConfig->GetModuleReady()->m_IOId = pOutput->GetUniqueObjectID();
 
-						SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputIsInverted (15, pOutput->IsInverted ());
-						SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputIsForced (15, pOutput->IsForced ());
-						SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputForcedValue (15, pOutput->GetForcedValue ());
+						SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputIsInverted (moduleReadyChannel, pOutput->IsInverted ());
+						SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputIsForced (moduleReadyChannel, pOutput->IsForced ());
+						SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputForcedValue (moduleReadyChannel, pOutput->GetForcedValue ());
 					}
 				}
 			}

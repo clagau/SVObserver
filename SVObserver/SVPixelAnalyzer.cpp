@@ -54,6 +54,7 @@ void SVPixelAnalyzerClass::init()
 	// Set Embedded defaults
 	m_pixelCountColor. SetDefaultValue( 255, true ); // White
 	m_pixelCount. SetDefaultValue( 0, true );
+	m_pixelCount.setSaveValueFlag(false);
 
 	// Set default inputs and outputs
 	addDefaultInputObjects();

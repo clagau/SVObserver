@@ -1166,7 +1166,6 @@ extern /*const*/ GUID aInputObject_LinkedGUID[COUNT_OF_INPUT_OUTPUT_GUIDs];
 extern /*const*/ GUID aInputObjectNameGuid[COUNT_OF_INPUT_OUTPUT_GUIDs];
 extern /*const*/ GUID aSVVariantResultImageObjectGuid[];
 extern /*const*/ GUID aSVVariantResultObjectGuid[COUNT_OF_INPUT_OUTPUT_GUIDs];
-extern /*const*/ GUID aSVVariantResultObjectNameGuid[COUNT_OF_INPUT_OUTPUT_GUIDs];
 extern /*const*/ GUID aSVDllDependencyFileNameGuid[];
 extern /*const*/ GUID SVDllFileNameGuid;
 extern /*const*/ GUID SVDllToolNameGuid;
@@ -1249,6 +1248,9 @@ extern /*const*/ GUID CameraBaseShutterUidGuid;
 // Unique base ID GUID for PPQ variables always have 0x100 GUIDS free after the base GUID
 extern /*const*/ GUID PpqBaseLengthUidGuid;
 
+// Unique base ID GUID for IO-Entries variables always have 0x100 GUIDS free after the base GUID
+extern /*const*/ GUID DigitalInputUidGuid;
+extern /*const*/ GUID DigitalOutputUidGuid;
 
 ///////////////////////////////////////////////////
 // GUIDs for the TableAnalyzerTool

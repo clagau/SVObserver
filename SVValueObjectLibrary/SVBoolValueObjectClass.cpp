@@ -57,40 +57,6 @@ const SVBoolValueObjectClass& SVBoolValueObjectClass::operator = (const SVBoolVa
 	return *this;
 }
 
-void SVBoolValueObjectClass::Persist(SVObjectWriter& rWriter)
-{
-	rWriter.StartElement(GetObjectName()); // use internal name for node name
-
-	// Get the Heading (Class Info)
-	SVValueObjectClass::Persist( rWriter );
-
-	// Get the Data Values (Member Info, Values)
-	_variant_t Value;
-	Value.ChangeType(VT_BOOL);
-	Value.boolVal = GetDefaultValue() ? VARIANT_TRUE : VARIANT_FALSE;
-
-	rWriter.WriteAttribute(scDefaultTag, Value);
-
-	rWriter.StartElement(scArrayElementsTag);
-	// Where does Object Depth Get put into the Script ??? (maybe at the SVObjectClass)
-	// Object Depth is implicit (it's the count of the values)
-	SVVariantList list;	
-
-	// for all elements in the array
-	for( int i = 0; i < getArraySize(); i++ )
-	{
-		BOOL Temp(false);
-		//Make sure this is not a derived virtual method which is called
-		SVBoolValueObjectClass::GetValue( Temp, GetLastSetIndex(), i);
-		Value.boolVal = Temp ? VARIANT_TRUE : VARIANT_FALSE;
-		list.push_back( Value );
-	}
-	rWriter.WriteAttribute(scElementTag, list);
-	rWriter.EndElement();
-
-	rWriter.EndElement();
-}
-
 HRESULT SVBoolValueObjectClass::GetValidTypes( SVStringVector& rTypes ) const
 {
 	rTypes.push_back( SvOi::cTrue );
@@ -126,15 +92,32 @@ BOOL SVBoolValueObjectClass::ConvertString2Type( const SVString &rValue ) const
 	return Result;
 }
 
+void SVBoolValueObjectClass::WriteValues(SVObjectWriter& rWriter)
+{
+	// Where does Object Depth Get put into the Script ??? (maybe at the SVObjectClass)
+	// Object Depth is implicit (it's the count of the values)
+	SVVariantList list;
+
+	// Get the Data Values (Member Info, Values)
+	_variant_t Value;
+	Value.ChangeType(VT_BOOL);
+
+	// for all elements in the array
+	for (int i = 0; i < getArraySize(); i++)
+	{
+		BOOL Temp(false);
+		//Make sure this is not a derived virtual method which is called
+		SVBoolValueObjectClass::GetValue(Temp, GetLastSetIndex(), i);
+		Value.boolVal = Temp ? VARIANT_TRUE : VARIANT_FALSE;
+		list.push_back(Value);
+	}
+	rWriter.WriteAttribute(scElementTag, list);
+}
+
 void SVBoolValueObjectClass::LocalInitialize()
 {
 	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVBoolValueObjectType;
 	DefaultValue() = false;
-	if ( m_sLegacyScriptDefaultName.empty() )
-	{
-		m_sLegacyScriptDefaultName = "bDefault";
-		m_sLegacyScriptArrayName = "pBArray";
-	}
 	SetTypeName( _T("Bool") );
 
 	InitializeBuckets();

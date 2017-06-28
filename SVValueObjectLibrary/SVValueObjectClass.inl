@@ -15,6 +15,7 @@ SVValueObjectClass<T>::SVValueObjectClass( LPCSTR ObjectName )
 : SVObjectClass(ObjectName)
 , m_pBucket( nullptr )
 , m_pBucketArray( nullptr )
+, m_shouldSaveValue(true)
 {
 	Initialize();
 }
@@ -24,6 +25,7 @@ SVValueObjectClass<T>::SVValueObjectClass(SVObjectClass* POwner, int StringResou
 : SVObjectClass(POwner, StringResourceID) 
 , m_pBucket( nullptr )
 , m_pBucketArray( nullptr )
+, m_shouldSaveValue(true)
 {
 	Initialize();
 }
@@ -241,18 +243,12 @@ HRESULT SVValueObjectClass<T>::SetObjectValue(SVObjectAttributeClass* pDataObjec
 	HRESULT Result( E_FAIL );
 
 	SvCl::SVObjectArrayClassTemplate<T> ObjectArray;	// for default values
+	SvCl::SVObjectLongArrayClass LongArray;
 	BucketVector BucketArray;
 	ValueVector ValueArray;
 
-	if ( pDataObject->GetAttributeData( SvOi::cDefaultTag, ObjectArray ) )
-	{
-		if ( 0 < ObjectArray.GetSize() )
-		{
-			DefaultValue() = ObjectArray[ ObjectArray.GetSize()-1 ];
-		}
-	}
 	//  BUCKET_TAG_LOAD; get buckets, not array; for backward compatibility;
-	else if ( pDataObject->GetAttributeData( SvOi::cBucketTag, BucketArray, DefaultValue() ) )
+	if (pDataObject->GetAttributeData(SvOi::cBucketTag, BucketArray, DefaultValue()))
 	{
 
 		if( !m_isBucketized )
@@ -308,49 +304,11 @@ HRESULT SVValueObjectClass<T>::SetObjectValue(SVObjectAttributeClass* pDataObjec
 		}
 		m_LastSetIndex = 1;
 	}
-	else if ( pDataObject->GetAttributeData( m_sLegacyScriptDefaultName.c_str(), ObjectArray ) )
+	else if (pDataObject->GetAttributeData(scArraySizeTag, LongArray))
 	{
-		if ( ObjectArray.GetSize() > 0 )
+		if (0 < LongArray.size())
 		{
-			DefaultValue() = ObjectArray[ ObjectArray.GetSize()-1 ];
-		}
-	}
-	else if ( pDataObject->GetAttributeData( m_sLegacyScriptArrayName.c_str(), BucketArray, DefaultValue() ) )
-	{
-		if( !m_isBucketized )
-		{
-			if ( 1 == m_ArraySize )
-			{
-				// In configurations the value are placed in bucket 1
-				m_Value = BucketArray[1][0];
-			}
-			else
-			{
-				// In configurations the values are placed in bucket 1
-				std::swap( m_ValueArray, BucketArray[1] );
-			}
-		}
-		else
-		{
-			if ( 1 == m_ArraySize )
-			{
-				if(nullptr != m_pBucket.get())
-				{
-					m_pBucket->at(0) = BucketArray[0][0];
-					m_pBucket->at(1) = BucketArray[1][0];
-				}
-			}
-			else
-			{
-				if(nullptr != m_pBucketArray.get())
-				{
-					std::swap( *m_pBucketArray, BucketArray );
-				}
-			}
-		}
-		if ( 1 < m_NumberOfBuckets )
-		{
-			m_LastSetIndex = 1;
+			SetArraySize(LongArray[0]);
 		}
 	}
 	else
@@ -961,6 +919,35 @@ int SVValueObjectClass<T>::getResultSize( int Bucket ) const
 	}
 
 	return Result;
+}
+
+template <typename T>
+void SVValueObjectClass<T>::Persist(SVObjectWriter& rWriter)
+{
+	rWriter.StartElement(GetObjectName()); // use internal name for node name
+
+	// Get the Heading (Class Info)
+	__super::Persist(rWriter);
+
+	// Get the Data Values (Member Info, Values)
+	if (shouldSaveValue())
+	{
+		rWriter.StartElement(scArrayElementsTag);
+		WriteValues(rWriter);
+		rWriter.EndElement();
+	}
+	else
+	{
+		int size = getArraySize();
+		if (1 < size)
+		{
+			_variant_t varSize = size;
+			varSize.ChangeType(VT_I4);
+			rWriter.WriteAttribute(scArraySizeTag, varSize);
+		}
+	}
+
+	rWriter.EndElement();
 }
 #pragma endregion virtual method
 #pragma endregion Public Methods

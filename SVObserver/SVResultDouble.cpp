@@ -35,6 +35,7 @@ SVDoubleResultClass::SVDoubleResultClass( BOOL BCreateDefaultTaskList, SVObjectC
 
 	// Set Embedded defaults
 	m_Value.SetDefaultValue( 0, true );
+	m_Value.setSaveValueFlag(false);
 	// Instantiate Dynamic Objects
 
 	// Construct the SVRangeClass via the ClassInfoStruct

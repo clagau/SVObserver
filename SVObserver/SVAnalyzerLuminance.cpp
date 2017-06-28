@@ -90,8 +90,11 @@ void SVLuminanceAnalyzerClass::init()
 
 	// Set Embedded defaults
 	msvLuminanceValue.SetDefaultValue (0, TRUE);
+	msvLuminanceValue.setSaveValueFlag(false);
 	msvVarianceValue.SetDefaultValue (0, TRUE);
+	msvVarianceValue.setSaveValueFlag(false);
 	msvStdDevValue.SetDefaultValue (0, TRUE);
+	msvStdDevValue.setSaveValueFlag(false);
 
 	// Set default inputs and outputs
 	addDefaultInputObjects();

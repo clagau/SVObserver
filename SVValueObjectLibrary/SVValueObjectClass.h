@@ -22,6 +22,7 @@
 #include "SVObjectLibrary/SVObjectAttributeClass.h"
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
+#include "SVObjectLibrary/SVToolsetScriptTags.h"
 #include "SVOResource/resource.h"
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVUtilityLibrary/SVSharedPtr.h"
@@ -175,12 +176,18 @@ public:
 	//! Copies the last set value to the destination bucket
 	//! \returns the result of copying
 	virtual HRESULT CopyLastSetValue( int DestBucket ) override { return CopyValue( m_LastSetIndex, DestBucket ); }
+
+	virtual void Persist(SVObjectWriter& rWriter) override;
 #pragma endregion virtual method
 	
 	const int&  GetLastSetIndex()               const    { return m_LastSetIndex; }
 	void SetLegacyVectorObjectCompatibility() { m_LegacyVectorObjectCompatibility = true; }
 
 	bool isBucketized() { return m_isBucketized; };
+
+	/// getter and setter for ShouldSaveValue-Flag
+	bool shouldSaveValue() { return m_shouldSaveValue; };
+	void setSaveValueFlag(bool isValueSaved) { m_shouldSaveValue = isValueSaved; };
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
@@ -220,6 +227,7 @@ protected:
 
 	ValueType& DefaultValue() { return m_DefaultValue; };
 	ValueType& Value() { return m_Value; };
+	const ValueType& Value() const { return m_Value; };
 	ValueVector& ValueArray() { return m_ValueArray; };
 
 	ValueType* getValuePointer( int Bucket, int Index );
@@ -235,17 +243,17 @@ protected:
 
 	void swap( SVValueObjectClass& rRhs );
 
+	/// Write the Values of this object to the SVObjectWriter
+	/// \param rWriter [in,out] The SVObjectWriter
+	virtual void WriteValues(SVObjectWriter &rWriter) = 0;
 #pragma endregion Protected Methods
 
 #pragma region Member Variables
-protected:
-	//// one set per template type
-	static SVString m_sLegacyScriptDefaultName;
-	static SVString m_sLegacyScriptArrayName;
 private:
 	SVString m_TypeName;					//The data type name
 	bool m_isBucketized;					//This is set to make the value object bucketized
 	bool m_isStatic;						//If this is set then the value object cannot be bucketized (For values that don't change during run)
+	bool m_shouldSaveValue;					//If true, the value will be saved in configuration file, else it will not be saved and after loading the configuration it is default value.
 	bool m_ResetAlways;
 	bool m_LegacyVectorObjectCompatibility;
 	SVString m_OutFormat;					//This is used to format the value object to a string
@@ -265,11 +273,6 @@ private:
 	BucketVectorPtr m_pBucketArray;			//Bucket array pointer
 #pragma endregion Member Variables
 };
-
-template <typename T>
-SVString SVValueObjectClass<T>::m_sLegacyScriptDefaultName;
-template <typename T>
-SVString SVValueObjectClass<T>::m_sLegacyScriptArrayName;
 
 #include "SVValueObjectClass.inl"
 

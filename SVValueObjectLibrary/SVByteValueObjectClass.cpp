@@ -57,36 +57,6 @@ SVByteValueObjectClass::~SVByteValueObjectClass()
 {
 }
 
-void SVByteValueObjectClass::Persist(SVObjectWriter& rWriter)
-{
-	rWriter.StartElement(GetObjectName()); // use internal name for node name
-
-	// Get the Heading (Class Info)
-	SVValueObjectClass::Persist( rWriter );
-
-	// Get the Data Values (Member Info, Values)
-	_variant_t Value( GetDefaultValue() );
-	
-	rWriter.WriteAttribute(scDefaultTag, Value);
-
-	rWriter.StartElement(scArrayElementsTag);
-	// Where does Object Depth Get put into the Script ??? (maybe at the SVObjectClass)
-	// Object Depth is implicit (it's the count of the values)
-	SVVariantList list;	
-
-	// for all elements in the array
-	for( int i = 0; i < getArraySize(); i++ )
-	{
-		//Make sure this is not a derived virtual method which is called
-		SVByteValueObjectClass::GetValue( Value.bVal, GetLastSetIndex(), i );
-		list.push_back(Value);
-	}
-	rWriter.WriteAttribute(scElementTag, list);
-	rWriter.EndElement();
-
-	rWriter.EndElement();
-}
-
 // This override provides the ability to correctly load script data from the legacy SVByteVectorObjectClass
 HRESULT SVByteValueObjectClass::SetObjectValue( SVObjectAttributeClass* pDataObject )
 {
@@ -158,15 +128,28 @@ BYTE SVByteValueObjectClass::ConvertString2Type(const SVString& rValue ) const
 	return 0; //will never be reached, because the exception will throw before. But this line avoids a warning
 }
 
+void SVByteValueObjectClass::WriteValues(SVObjectWriter& rWriter)
+{
+	// Where does Object Depth Get put into the Script ??? (maybe at the SVObjectClass)
+	// Object Depth is implicit (it's the count of the values)
+	SVVariantList list;
+
+	// for all elements in the array
+	for (int i = 0; i < getArraySize(); i++)
+	{
+		//Make sure this is not a derived virtual method which is called
+		_variant_t Value;
+		Value.ChangeType(VT_UI1);
+		SVByteValueObjectClass::GetValue(Value.bVal, GetLastSetIndex(), i);
+		list.push_back(Value);
+	}
+	rWriter.WriteAttribute(scElementTag, list);
+}
+
 void SVByteValueObjectClass::LocalInitialize()
 {
 	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVByteValueObjectType;
 	DefaultValue() = 0;
-	if ( m_sLegacyScriptDefaultName.empty() )
-	{
-		m_sLegacyScriptDefaultName = _T("bDefault");
-		m_sLegacyScriptArrayName = _T("pBArray");
-	}
 	SetTypeName( _T("Integer8") );
 	InitializeBuckets();
 

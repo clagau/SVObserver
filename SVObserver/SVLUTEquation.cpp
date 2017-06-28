@@ -47,6 +47,8 @@ void SVLUTEquationClass::init()
 
 	// Set Embedded defaults
 	m_byteVectorResult.SetDefaultValue( 0, TRUE );
+	m_byteVectorResult.setSaveValueFlag(false);
+	m_lutIndex.setSaveValueFlag(false);
 	m_isLUTFormulaClipped.SetDefaultValue( TRUE, TRUE );
 
 	// NOTE: Vector Size Setting...

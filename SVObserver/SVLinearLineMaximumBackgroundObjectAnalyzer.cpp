@@ -63,7 +63,9 @@ void SVLinearMaximumBackgroundObjectLineAnalyzerClass::init()
 	}
 
 	RegisterEmbeddedObject( &m_svLinearDistanceA, SVLinearDistanceEdgeAObjectGuid, IDS_OBJECTNAME_LINEAR_DISTANCE_EDGE_A, false, SvOi::SVResetItemNone );
+	m_svLinearDistanceA.setSaveValueFlag(false);
 	RegisterEmbeddedObject( &m_svLinearDistanceB, SVLinearDistanceEdgeBObjectGuid, IDS_OBJECTNAME_LINEAR_DISTANCE_EDGE_B, false, SvOi::SVResetItemNone );
+	m_svLinearDistanceB.setSaveValueFlag(false);
 
 	// Register Embedded Objects
 	RegisterEmbeddedObject( &mdpEdgeA, SVDPEdgeAObjectGuid, IDS_OBJECTNAME_DPEDGE_A, false, SvOi::SVResetItemNone );
@@ -82,9 +84,13 @@ void SVLinearMaximumBackgroundObjectLineAnalyzerClass::init()
 	defaultPoint.y = 0;
 	
 	mdpEdgeA.SetDefaultValue( defaultPoint, true );
+	mdpEdgeA.setSaveValueFlag(false);
 	mdpEdgeB.SetDefaultValue( defaultPoint, true );
+	mdpEdgeB.setSaveValueFlag(false);
 	mdpCenter.SetDefaultValue( defaultPoint, true );
+	mdpCenter.setSaveValueFlag(false);
 	mdWidth.SetDefaultValue( 0.0, true );
+	mdWidth.setSaveValueFlag(false);
 
 	// Set default inputs and outputs
 	addDefaultInputObjects();

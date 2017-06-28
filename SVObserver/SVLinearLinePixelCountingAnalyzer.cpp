@@ -54,7 +54,9 @@ void SVLinearPixelCountingLineAnalyzerClass::init()
 
 	// Set Embedded defaults
 	blackPixelCount.SetDefaultValue( 0, true );
+	blackPixelCount.setSaveValueFlag(false);
 	whitePixelCount.SetDefaultValue( 0, true );
+	whitePixelCount.setSaveValueFlag(false);
 
 	// Set default inputs and outputs
 	addDefaultInputObjects();

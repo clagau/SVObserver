@@ -26,9 +26,6 @@ namespace SvOi
 	const TCHAR* const SVO_PRODUCT_KONTRON_X2_GD8A =  _T("SVIM X2-GD8A");
 	const TCHAR* const SVO_PRODUCT_KONTRON_X2_GD8A_NONIO = _T("SVIM Non I/O");
 
-
-
-	const TCHAR* const cDefaultTag = _T("Default");
 	const TCHAR* const cBucketTag = _T("Array");			// for backwards compatibility
 	const TCHAR* const cArrayTag = _T("Array_Elements");	// new style; one bucket, all array values
 } //namespace SvOi

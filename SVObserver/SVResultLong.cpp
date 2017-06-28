@@ -36,6 +36,7 @@ SVLongResultClass::SVLongResultClass( BOOL BCreateDefaultTaskList, SVObjectClass
 
 	// Set Embedded defaults
 	m_Value.SetDefaultValue( 0, true );
+	m_Value.setSaveValueFlag(false);
 
 	// Instantiate Dynamic Objects
 

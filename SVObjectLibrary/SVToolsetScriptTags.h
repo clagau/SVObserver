@@ -14,7 +14,6 @@ namespace
 {
 	const TCHAR* const scAttributesSetTag(_T( "AttributesSet" ));
 	const TCHAR* const scAttributeTag(_T( "Attribute" ));
-	const TCHAR* const scDefaultTag(_T("Default"));
 	const TCHAR* const scArrayElementsTag(_T("Array_Elements"));
 	const TCHAR* const scElementTag(_T("Element"));
 
@@ -34,5 +33,6 @@ namespace
 	const TCHAR* const scBandLinkTag(_T( "BandLink" ));
 	const TCHAR* const scMaskDataTag(_T( "MaskData" ));
 	const TCHAR* const scValueTag(_T( "Value" ));
+	const TCHAR* const scArraySizeTag(_T("Array Size"));
 }
 

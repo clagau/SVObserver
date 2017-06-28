@@ -58,36 +58,6 @@ SVDoubleValueObjectClass::~SVDoubleValueObjectClass()
 {
 }
 
-void SVDoubleValueObjectClass::Persist(SVObjectWriter& rWriter)
-{
-	rWriter.StartElement(GetObjectName()); // use internal name for node name
-
-	// Get the Heading (Class Info)
-	SVValueObjectClass::Persist( rWriter );
-
-	// Get the Data Values (Member Info, Values)
-	_variant_t Value( GetDefaultValue() );
-	
-	rWriter.WriteAttribute(scDefaultTag, Value);
-
-	rWriter.StartElement(scArrayElementsTag);
-	// Where does Object Depth Get put into the Script ??? (maybe at the SVObjectClass)
-	// Object Depth is implicit (it's the count of the values)
-	SVVariantList list;	
-
-	// for all elements in the array
-	for( int i = 0; i < getArraySize(); i++ )
-	{
-		//Make sure this is not a derived virtual method which is called
-		SVDoubleValueObjectClass::GetValue( Value.dblVal, GetLastSetIndex(), i );
-		list.push_back(Value);
-	}
-	rWriter.WriteAttribute(scElementTag, list);
-	rWriter.EndElement();
-
-	rWriter.EndElement();
-}
-
 // This override provides the ability to correctly load script data from the legacy SVDoubleVectorObjectClass
 HRESULT SVDoubleValueObjectClass::SetObjectValue( SVObjectAttributeClass* pDataObject )
 {
@@ -134,17 +104,29 @@ double SVDoubleValueObjectClass::ConvertString2Type( const SVString& rValue ) co
 	return atof( rValue.c_str() );
 }
 
+void SVDoubleValueObjectClass::WriteValues(SVObjectWriter &rWriter)
+{
+	// Where does Object Depth Get put into the Script ??? (maybe at the SVObjectClass)
+	// Object Depth is implicit (it's the count of the values)
+	SVVariantList list;
+
+	// for all elements in the array
+	for (int i = 0; i < getArraySize(); i++)
+	{
+		//Make sure this is not a derived virtual method which is called
+		_variant_t Value;
+		Value.ChangeType(VT_R8);
+		SVDoubleValueObjectClass::GetValue(Value.dblVal, GetLastSetIndex(), i);
+		list.push_back(Value);
+	}
+	rWriter.WriteAttribute(scElementTag, list);
+}
+
 void SVDoubleValueObjectClass::LocalInitialize()
 {
 	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVDoubleValueObjectType;
 	DefaultValue() = 0.0;
-	if ( m_sLegacyScriptDefaultName.empty() )
-	{
-		m_sLegacyScriptDefaultName = _T("dDefault");
-		m_sLegacyScriptArrayName = _T("pDArray");
-	}
 	SetTypeName( _T("Decimal") );
 	setOutputFormat( _T("%lf") );
 	InitializeBuckets();
 }
-

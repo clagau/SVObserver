@@ -32,6 +32,7 @@ SVEvaluateClass::SVEvaluateClass( SVObjectClass* POwner, int StringResourceID )
 
 	// Add Default Inputs and Outputs
 	addDefaultInputObjects();
+	m_outputMathResult.setSaveValueFlag(false);
 }
 
 SVEvaluateClass::~SVEvaluateClass()

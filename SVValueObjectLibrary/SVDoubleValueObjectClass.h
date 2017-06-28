@@ -27,7 +27,6 @@ public:
 	const SVDoubleValueObjectClass& operator = (const SVDoubleValueObjectClass& rhs);
 
 	virtual ~SVDoubleValueObjectClass();
-	virtual void Persist(SVObjectWriter& rWriter) override;
 
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* pDataObject ) override;	// for compat loading legacy SVDoubleVectorObjectClass
 
@@ -42,6 +41,8 @@ protected:
 	virtual double ConvertString2Type( const SVString& rValue ) const override;
 
 	virtual SVString ConvertType2String( const double& rValue ) const override { return FormatOutput(rValue); };
+
+	virtual void WriteValues(SVObjectWriter &rWriter) override;
 private:
 	void LocalInitialize();
 };

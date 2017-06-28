@@ -30,7 +30,6 @@ public:
 	virtual ~SVStringValueObjectClass();
 
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* pDataObject ) override;
-	virtual void Persist(SVObjectWriter& rWriter) override;
 
 protected:
 	virtual double ValueType2Double(const SVString& rValue) const override { return E_NOTIMPL; };
@@ -47,6 +46,7 @@ protected:
 	/// \returns the SVString
 	virtual SVString ConvertType2String( const SVString& rValue ) const override { return rValue; };
 
+	virtual void WriteValues(SVObjectWriter& rWriter) override;
 private:
 	void LocalInitialize();
 };

@@ -69,8 +69,11 @@ HRESULT SVTaskObjectClass::LocalInitialize()
 	
 	// Set Embedded defaults
 	m_statusColor.SetDefaultValue( static_cast<DWORD> (SV_DEFAULT_INACTIVE_COLOR), true);
+	m_statusColor.setSaveValueFlag(false);
 	m_statusTag.SetDefaultValue( DWORD(0), true);
+	m_statusTag.setSaveValueFlag(false);
 	m_isObjectValid.SetDefaultValue( BOOL(false), true);
+	m_isObjectValid.setSaveValueFlag(false);
 	
 	// Add out Default Inputs and Outputs
 	addDefaultInputObjects();

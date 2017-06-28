@@ -1126,7 +1126,7 @@ bool SVConfigurationObject::LoadIO( SVTreeType& rTree )
 			if( bOutput )
 			{
 				SVDigitalOutputObject* pOutput(nullptr);
-				pOutput = dynamic_cast<SVDigitalOutputObject*> (pOutputsList->GetOutputFlyweight(IOName.c_str(), SVDigitalOutputObjectType));
+				pOutput = dynamic_cast<SVDigitalOutputObject*> (pOutputsList->GetOutputFlyweight(IOName.c_str(), SVDigitalOutputObjectType, dwChannel));
 
 				if( nullptr != pOutput )
 				{
@@ -1148,7 +1148,7 @@ bool SVConfigurationObject::LoadIO( SVTreeType& rTree )
 			else
 			{
 				SVDigitalInputObject* pInput = nullptr;
-				pInput = dynamic_cast<SVDigitalInputObject*> (pInputsList->GetInputFlyweight( IOName, SVDigitalInputObjectType));
+				pInput = dynamic_cast<SVDigitalInputObject*> (pInputsList->GetInputFlyweight( IOName, SVDigitalInputObjectType, dwChannel));
 
 				if( nullptr != pInput )
 				{

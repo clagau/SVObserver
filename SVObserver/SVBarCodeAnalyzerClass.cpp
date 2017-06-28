@@ -92,6 +92,7 @@ void SVBarCodeAnalyzerClass::init()
 
 	// Set default values
 	msv_szBarCodeValue.SetDefaultValue (_T(""), TRUE);
+	msv_szBarCodeValue.setSaveValueFlag(false);
 	msv_szRegExpressionValue.SetDefaultValue (_T(""), TRUE);
 	msv_lBarCodeType.SetDefaultValue(SVDataMatrix, TRUE);
 	msv_dOrientation.SetDefaultValue(SVValueDefault, TRUE);
@@ -121,6 +122,7 @@ void SVBarCodeAnalyzerClass::init()
 	msv_eStringFormat.SetDefaultValue( SVBCStringFormatRemoveCharacters, true );
 	msv_lThresholdType.SetDefaultValue( 0, true ); // Default Normal thresholding
 	msv_RawData.SetArraySize(256);
+	msv_RawData.setSaveValueFlag(false);
 
 	//set MIL Timeout default to be what is in the INI file...
 	SvLib::SVOINIClass l_SvimIni(SvStl::GlobalPath::Inst().GetSVIMIniPath());

@@ -55,6 +55,7 @@ BOOL TableObject::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 	BOOL l_bOk = SVTaskObjectClass::CreateObject( pCreateStructure );
 
 	m_NumberOfRows.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_NumberOfRows.setSaveValueFlag(false);
 
 	return l_bOk;
 }
@@ -68,6 +69,7 @@ bool TableObject::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	for (std::vector<DoubleSortValuePtr>::iterator iter = m_ValueList.begin(); iter != m_ValueList.end(); ++iter )
 	{
 		(*iter)->setSortContainer(m_sortContainer);
+		(*iter)->setSaveValueFlag(false);
 	}
 	m_NumberOfRows.SetValue(0L, 0);
 	dynamic_cast<SVInspectionProcess*>(GetInspection())->SetDefaultInputs();

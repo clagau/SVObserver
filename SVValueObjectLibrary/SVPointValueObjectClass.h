@@ -30,8 +30,6 @@ public:
 
 	virtual ~SVPointValueObjectClass();
 
-	virtual void Persist(SVObjectWriter& rWriter) override;
-
 protected:
 	virtual double ValueType2Double(const SVPOINT& rValue) const override { return E_NOTIMPL; };
 	virtual _variant_t ValueType2Variant( const SVPOINT& rValue ) const override;
@@ -47,6 +45,7 @@ protected:
 	/// \returns the SVString
 	virtual SVString ConvertType2String( const SVPOINT& rValue ) const override;
 
+	virtual void WriteValues(SVObjectWriter& rWriter) override;
 private:
 	void LocalInitialize();
 };

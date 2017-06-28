@@ -48,36 +48,6 @@ const SVInt64ValueObjectClass& SVInt64ValueObjectClass::operator = (const SVInt6
 	return *this;
 }
 
-void SVInt64ValueObjectClass::Persist(SVObjectWriter& rWriter)
-{
-	rWriter.StartElement(GetObjectName()); // use internal name for node name
-
-	// Get the Heading (Class Info)
-	SVValueObjectClass::Persist( rWriter );
-
-	// Get the Data Values (Member Info, Values)
-	_variant_t Value( GetDefaultValue() );
-
-	rWriter.WriteAttribute(scDefaultTag, Value);
-
-	rWriter.StartElement(scArrayElementsTag);
-	// Where does Object Depth Get put into the Script ??? (maybe at the SVObjectClass)
-	// Object Depth is implicit (it's the count of the values)
-	SVVariantList list;	
-
-	// for all elements in the array
-	for( int i = 0; i < getArraySize(); i++ )
-	{
-		//Make sure this is not a derived virtual method which is called
-		SVInt64ValueObjectClass::GetValue( Value.llVal, GetLastSetIndex(), i );
-		list.push_back(Value);
-	}
-	rWriter.WriteAttribute(scElementTag, list);
-	rWriter.EndElement();
-
-	rWriter.EndElement();
-}
-
 __int64 SVInt64ValueObjectClass::ConvertString2Type( const SVString& rValue ) const
 {
 	__int64 Result(0LL);
@@ -97,12 +67,28 @@ __int64 SVInt64ValueObjectClass::ConvertString2Type( const SVString& rValue ) co
 	return Result;
 }
 
+void SVInt64ValueObjectClass::WriteValues(SVObjectWriter& rWriter)
+{
+	// Where does Object Depth Get put into the Script ??? (maybe at the SVObjectClass)
+	// Object Depth is implicit (it's the count of the values)
+	SVVariantList list;
+	_variant_t Value;
+	Value.ChangeType(VT_I8);
+
+	// for all elements in the array
+	for (int i = 0; i < getArraySize(); i++)
+	{
+		//Make sure this is not a derived virtual method which is called
+		SVInt64ValueObjectClass::GetValue(Value.llVal, GetLastSetIndex(), i);
+		list.push_back(Value);
+	}
+	rWriter.WriteAttribute(scElementTag, list);
+}
+
 void SVInt64ValueObjectClass::LocalInitialize()
 {
 	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVInt64ValueObjectType;
 	DefaultValue() = 0;
-	m_sLegacyScriptDefaultName = SvOi::cDefaultTag;
-	m_sLegacyScriptArrayName = SvOi::cBucketTag;
 	SetTypeName( _T("Integer64") );
 
 	setOutputFormat( _T("%I64d") );

@@ -55,6 +55,12 @@ void SVOCVCharacterResultClass::init()
 	RegisterEmbeddedObject( &m_dvoOverlayWidth, SVOCVExtentWidthGuid, IDS_OBJECTNAME_EXTENT_WIDTH, false, SvOi::SVResetItemNone );
 	RegisterEmbeddedObject( &m_dvoOverlayHeight, SVOCVExtentHeightGuid, IDS_OBJECTNAME_EXTENT_HEIGHT, false, SvOi::SVResetItemNone );
 	RegisterEmbeddedObject( &m_dvoMatchScore, SVOCVMatchScoreGuid, IDS_OBJECTNAME_OCV_MATCH_SCORE, false, SvOi::SVResetItemNone );
+	m_cvoLabelValue.setSaveValueFlag(false);
+	m_dvoOverlayLeft.setSaveValueFlag(false);
+	m_dvoOverlayTop.setSaveValueFlag(false);
+	m_dvoOverlayWidth.setSaveValueFlag(false);
+	m_dvoOverlayHeight.setSaveValueFlag(false);
+	m_dvoMatchScore.setSaveValueFlag(false);
 }
 
 void SVOCVCharacterResultClass::HideResults()

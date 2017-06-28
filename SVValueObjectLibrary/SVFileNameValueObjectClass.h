@@ -52,6 +52,8 @@ protected:
 	/// \returns the SVString
 	virtual SVString ConvertType2String( const SVString& rValue ) const override { return rValue; };
 
+	virtual void WriteValues(SVObjectWriter& rWriter) override;
+
 private:
 	void LocalInitialize();
 

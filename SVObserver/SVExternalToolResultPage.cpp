@@ -100,10 +100,8 @@ BOOL SVExternalToolResultPage::OnInitDialog()
 	
 		for( int i = 0 ; i < m_pTask->m_Data.m_lNumResultValues ; i++ )
 		{
-			SVStringValueObjectClass& rName = m_pTask->m_Data.m_aResultObjectNames[i];  
 			SVVariantValueObjectClass& rValue = m_pTask->m_Data.m_aResultObjects[i];  
 			ResultValueDefinitionStruct& rDefinition = m_pTask->m_Data.m_aResultValueDefinitions[i]; 
-
 
 			SVRPropertyItemEdit* pEdit = (SVRPropertyItemEdit*)m_Tree.InsertItem(new SVRPropertyItemEdit(), pRoot);
 			if( nullptr == pEdit )
@@ -115,10 +113,7 @@ BOOL SVExternalToolResultPage::OnInitDialog()
 			pEdit->SetCtrlID( iID );
 
 			// display name like: "Result 01 ( )"
-			SVString Temp;
-			rName.GetValue(Temp);
-
-			SVString sLabel = SvUl_SF::Format( _T("%s (%s)"), rValue.GetName(), Temp.c_str());
+			SVString sLabel = SvUl_SF::Format( _T("%s (%s)"), rValue.GetName(), SvUl_SF::createSVString(rDefinition.m_bDisplayName).c_str());
 
 			pEdit->SetLabelText( sLabel.c_str() );
 

@@ -47,6 +47,7 @@ void SVUpperThresholdEquationClass::init()
 
 	// Set Embedded defaults
 	result.SetDefaultValue( 0.0, true );
+	result.setSaveValueFlag(false);
 
 	// Set default inputs and outputs
 	addDefaultInputObjects();

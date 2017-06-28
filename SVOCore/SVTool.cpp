@@ -106,19 +106,30 @@ void SVToolClass::init()
 	// Set Embedded defaults
 	enabled.SetDefaultValue( BOOL(true), true );
 	m_Passed.SetDefaultValue( BOOL(false), true );			// Default for Passed is FALSE !!!
+	m_Passed.setSaveValueFlag(false);
 	m_Failed.SetDefaultValue( BOOL(true), true );			// Default for Failed is TRUE !!!
+	m_Failed.setSaveValueFlag(false);
 	m_Warned.SetDefaultValue( BOOL(true), true );			// Default for Warned is TRUE !!!
+	m_Warned.setSaveValueFlag(false);
 	m_ExplicitFailed.SetDefaultValue( BOOL(false), true );	// Default for Explicit Failed is FALSE !!!
+	m_ExplicitFailed.setSaveValueFlag(false);
 
 	m_PassedCount.SetDefaultValue( 0L, true );
+	m_PassedCount.setSaveValueFlag(false);
 	m_FailedCount.SetDefaultValue( 0L, true );
+	m_FailedCount.setSaveValueFlag(false);
 	m_WarnedCount.SetDefaultValue( 0L, true );
+	m_WarnedCount.setSaveValueFlag(false);
 
 	m_EnabledCount.SetDefaultValue( 0L, true );
+	m_EnabledCount.setSaveValueFlag(false);
 	m_ProcessedCount.SetDefaultValue( 0L, true );
+	m_ProcessedCount.setSaveValueFlag(false);
 
 	m_ToolPosition.SetDefaultValue( -1L, true );
+	m_ToolPosition.setSaveValueFlag(false);
 	m_ToolTime.SetDefaultValue( 0LL, true);
+	m_ToolTime.setSaveValueFlag(false);
 
 	/////////////////////////////////////////////////////////////////////////
 	// Set Default values for Shadowed Extents
@@ -126,7 +137,9 @@ void SVToolClass::init()
 	m_ExtentLeft.SetDefaultValue( SvOi::cDefaultWindowToolLeft, true );
 	m_ExtentTop.SetDefaultValue( SvOi::cDefaultWindowToolTop, true );
 	m_ExtentRight.SetDefaultValue( SvOi::cDefaultWindowToolLeft + SvOi::cDefaultWindowToolWidth, true );
+	m_ExtentRight.setSaveValueFlag(false);
 	m_ExtentBottom.SetDefaultValue( SvOi::cDefaultWindowToolTop + SvOi::cDefaultWindowToolHeight, true );
+	m_ExtentBottom.setSaveValueFlag(false);
 	m_ExtentWidth.SetDefaultValue( SvOi::cDefaultWindowToolWidth, true );
 	m_ExtentHeight.SetDefaultValue( SvOi::cDefaultWindowToolHeight, true );
 	m_ExtentWidthScaleFactor.SetDefaultValue( SvOi::cDefaultWindowToolWidthScaleFactor, true );

@@ -64,38 +64,7 @@ void SVFileNameValueObjectClass::Persist(SVObjectWriter& rWriter)
 {
 	SVFileNameManagerClass::Instance().SaveItem(&m_FileName);
 	
-	rWriter.StartElement(GetObjectName()); // use internal name for node name
-
-	// Get the Heading (Class Info)
-	SVValueObjectClass::Persist( rWriter );
-
-	// Get the Data Values (Member Info, Values)
-	SVString TempValue( GetDefaultValue() );
-	
-	_variant_t Value;
-	Value.SetString(TempValue.c_str());
-	rWriter.WriteAttribute(scDefaultTag, Value);
-	Value.Clear();
-
-	rWriter.StartElement(scArrayElementsTag);
-
-	// Where does Object Depth Get put into the Script ??? (maybe at the SVObjectClass)
-	// Object Depth is implicit (it's the count of the values)
-	SVVariantList list;	
-
-	// for all elements in the array
-	for( int i = 0; i < getArraySize(); i++ )
-	{
-		//Make sure this is not a derived virtual method which is called
-		SVFileNameValueObjectClass::GetValue( TempValue, GetLastSetIndex(), i );
-		Value.SetString( TempValue.c_str() );
-		list.push_back( Value );
-		Value.Clear();
-	}
-	rWriter.WriteAttribute(scElementTag, list);
-	rWriter.EndElement();
-
-	rWriter.EndElement();
+	__super::Persist( rWriter );
 }
 
 HRESULT SVFileNameValueObjectClass::SetObjectValue(SVObjectAttributeClass* pDataObject)
@@ -107,17 +76,7 @@ HRESULT SVFileNameValueObjectClass::SetObjectValue(SVObjectAttributeClass* pData
 	BucketVector BucketArray;
 	ValueVector ReadValueArray;
 	
-	if ( bOk = pDataObject->GetAttributeData( SvOi::cDefaultTag, ObjectArray ) )
-	{
-		if ( 0 < ObjectArray.GetSize() )
-		{
-			DefaultValue() = ObjectArray[ ObjectArray.GetSize()-1 ];
-			SvUl::RemoveEscapedSpecialCharacters( DefaultValue(), false );
-		}
-		
-		SetDefaultValue( GetDefaultValue().c_str(), false );
-	}
-	else if ( bOk = pDataObject->GetAttributeData( SvOi::cBucketTag, BucketArray, DefaultValue() ) )
+	if ( bOk = pDataObject->GetAttributeData( SvOi::cBucketTag, BucketArray, DefaultValue() ) )
 	{
 		for (size_t i = 0; i < BucketArray.size(); i++)
 		{
@@ -282,6 +241,28 @@ HRESULT SVFileNameValueObjectClass::SetDefaultValue( const SVString& rValue, boo
 SVString SVFileNameValueObjectClass::ConvertString2Type( const SVString& rValue ) const
 {
 	return rValue;
+}
+void SVFileNameValueObjectClass::WriteValues(SVObjectWriter& rWriter)
+{
+	// Where does Object Depth Get put into the Script ??? (maybe at the SVObjectClass)
+	// Object Depth is implicit (it's the count of the values)
+	SVVariantList list;
+
+	// Get the Data Values (Member Info, Values)
+	SVString TempValue(_T(""));
+	_variant_t Value;
+	Value.Clear();
+
+	// for all elements in the array
+	for (int i = 0; i < getArraySize(); i++)
+	{
+		//Make sure this is not a derived virtual method which is called
+		SVFileNameValueObjectClass::GetValue(TempValue, GetLastSetIndex(), i);
+		Value.SetString(TempValue.c_str());
+		list.push_back(Value);
+		Value.Clear();
+	}
+	rWriter.WriteAttribute(scElementTag, list);
 }
 
 void SVFileNameValueObjectClass::LocalInitialize()

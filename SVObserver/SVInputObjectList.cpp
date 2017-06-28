@@ -131,7 +131,7 @@ SVInputObject* SVInputObjectList::GetInput(const SVString& rInputName) const
 	return pResult;
 }
 
-SVInputObject* SVInputObjectList::GetInputFlyweight(const SVString& rInputName, SVObjectSubTypeEnum ObjectSubType)
+SVInputObject* SVInputObjectList::GetInputFlyweight(const SVString& rInputName, SVObjectSubTypeEnum ObjectSubType, int GuidIndex)
 {
 	SVInputObject* pResult(nullptr);
 
@@ -154,8 +154,12 @@ SVInputObject* SVInputObjectList::GetInputFlyweight(const SVString& rInputName, 
 			switch (ObjectSubType)
 			{
 			case SVDigitalInputObjectType:
-				pResult = new SVDigitalInputObject;
+			{
+				SVDigitalInputObject* pDigInput = new SVDigitalInputObject;
+				pDigInput->updateGuid(GuidIndex);
+				pResult = pDigInput;
 				break;
+			}
 			case SVRemoteInputObjectType:
 				pResult = new SVRemoteInputObject;
 				break;

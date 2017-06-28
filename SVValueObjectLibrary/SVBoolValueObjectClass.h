@@ -29,7 +29,6 @@ public:
 	const SVBoolValueObjectClass& operator = (const SVBoolValueObjectClass& rhs);
 
 	virtual ~SVBoolValueObjectClass();
-	virtual void Persist(SVObjectWriter& rWriter) override;
 
 	HRESULT GetValidTypes( SVStringVector& rTypes ) const;
 
@@ -45,6 +44,7 @@ protected:
 
 	virtual SVString ConvertType2String( const BOOL& rValue ) const override {	return rValue ? SvOi::cTrue : SvOi::cFalse; };
 
+	virtual void WriteValues(SVObjectWriter& rWriter) override;
 private:
 	void LocalInitialize();
 };

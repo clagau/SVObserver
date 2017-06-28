@@ -477,16 +477,22 @@ void SVShiftTool::LocalInitialize()
 	m_ExtentHeight.SetDefaultValue( 100, true );
 
 	m_TranslationX.SetDefaultValue( 0, true );
+	m_TranslationX.setSaveValueFlag(false);
 	m_TranslationY.SetDefaultValue( 0, true );
+	m_TranslationY.setSaveValueFlag(false);
 
 	m_LearnedTranslationX.SetDefaultValue( 0, true );
 	m_LearnedTranslationY.SetDefaultValue( 0, true );
 
 	m_DisplacementX.SetDefaultValue( 0, true );
+	m_DisplacementX.setSaveValueFlag(false);
 	m_DisplacementY.SetDefaultValue( 0, true );
+	m_DisplacementY.setSaveValueFlag(false);
 
 	m_LeftResult.SetDefaultValue( 10, true );
+	m_LeftResult.setSaveValueFlag(false);
 	m_TopResult.SetDefaultValue( 10, true );
+	m_TopResult.setSaveValueFlag(false);
 
 	m_EnableSourceImageExtents.SetDefaultValue(true, true); // this embedded value object is not used anymore
 

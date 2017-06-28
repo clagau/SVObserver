@@ -91,12 +91,6 @@ const SVExternalToolTaskData& SVExternalToolTaskData::operator = (const SVExtern
 		}
 		std::copy( rhs.m_aResultObjects.begin(), rhs.m_aResultObjects.end(), m_aResultObjects.begin() );
 
-		if ( m_aResultObjectNames.size() != rhs.m_aResultObjectNames.size() )	// if this is only a copy of the original, size will be 0
-		{
-			m_aResultObjectNames.resize( rhs.m_aResultObjectNames.size() );
-		}
-		std::copy( rhs.m_aResultObjectNames.begin(), rhs.m_aResultObjectNames.end(), m_aResultObjectNames.begin() );
-
 		m_aResultImageDefinitions = rhs.m_aResultImageDefinitions;
 		m_aResultValueDefinitions = rhs.m_aResultValueDefinitions;
 		m_aInputValueDefinitions = rhs.m_aInputValueDefinitions;
@@ -149,9 +143,11 @@ SVExternalToolTask::SVExternalToolTask( SVObjectClass* POwner, int StringResourc
 
 	// init Tool Name
 	RegisterEmbeddedObject( &m_Data.m_voToolName, SVDllToolNameGuid, IDS_OBJECTNAME_DLL_TOOL_NAME, false, SvOi::SVResetItemNone );
+	m_Data.m_voToolName.setSaveValueFlag(false);
 
 	// Init Tool Version
 	RegisterEmbeddedObject( &m_Data.m_voToolVersion, SVDllToolVersionGuid, IDS_OBJECTNAME_DLL_TOOL_VERSION, false, SvOi::SVResetItemNone );
+	m_Data.m_voToolVersion.setSaveValueFlag(false);
 
 	// Init Input Object Info array
 	m_Data.m_aInputObjects.resize(SVExternalToolTaskData::NUM_INPUT_OBJECTS);
@@ -172,6 +168,7 @@ SVExternalToolTask::SVExternalToolTask( SVObjectClass* POwner, int StringResourc
 		vtTemp.vt = VT_EMPTY;
 		m_Data.m_aInputObjects[i].SetDefaultValue(vtTemp, TRUE);
 		m_Data.m_aInputObjectNames[i].SetDefaultValue(SVString(), TRUE);
+		m_Data.m_aInputObjectNames[i].setSaveValueFlag(false);
 	}
 
 	int l_pImageNames[] = { IDS_OBJECTNAME_IMAGE1, IDS_OBJECTNAME_IMAGE2, IDS_OBJECTNAME_IMAGE3, IDS_OBJECTNAME_IMAGE4 };
@@ -201,21 +198,19 @@ SVExternalToolTask::SVExternalToolTask( SVObjectClass* POwner, int StringResourc
 	}
 
 	// Result Objects
-	m_Data.m_aResultObjectNames.resize(SVExternalToolTaskData::NUM_RESULT_OBJECTS);
 	m_Data.m_aResultObjects.resize(SVExternalToolTaskData::NUM_RESULT_OBJECTS);
 
 	for ( i=0; i < SVExternalToolTaskData::NUM_RESULT_OBJECTS; i++)
 	{
 		// Register
 		RegisterEmbeddedObject( &m_Data.m_aResultObjects[i], aSVVariantResultObjectGuid[i], IDS_OBJECTNAME_RESULT_01 + static_cast<int>(i), false, SvOi::SVResetItemNone );
-		RegisterEmbeddedObject( &m_Data.m_aResultObjectNames[i], aSVVariantResultObjectNameGuid[i], IDS_OBJECTNAME_RESULT_01_NAME + static_cast<int>(i), false, SvOi::SVResetItemNone );
-
+		
 		// Defaults
 		VARIANT vtTemp;
 		::VariantInit( &vtTemp);
 		vtTemp.vt = VT_EMPTY;
 		m_Data.m_aResultObjects[i].SetDefaultValue(vtTemp, TRUE);
-		m_Data.m_aResultObjectNames[i].SetDefaultValue(SVString(), TRUE);
+		m_Data.m_aResultObjects[i].setSaveValueFlag(false);
 	}
 
 	addDefaultInputObjects();
@@ -254,7 +249,6 @@ void SVExternalToolTask::SetAllAttributes()
 		SvOi::SetAttributeType AddRemoveType = (i < m_Data.m_lNumResultValues) ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
 		m_Data.m_aResultObjects[i].SetObjectAttributesAllowed( SvOi::SV_VIEWABLE, AddRemoveType );
 		m_Data.m_aResultObjects[i].SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-		m_Data.m_aResultObjectNames[i].SetObjectAttributesAllowed( SvOi::SV_VIEWABLE | SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 		m_Data.m_aResultObjects[i].SetObjectAttributesAllowed( SvOi::SV_SELECTABLE_FOR_EQUATION, AddRemoveType );
 	}
 
@@ -476,13 +470,20 @@ HRESULT SVExternalToolTask::Initialize(	SVDllLoadLibraryCallback fnNotify )
 			for ( i = 0 ; i < m_Data.m_lNumInputValues ; i++)
 			{
 				LinkedValue& rInputValue = m_Data.m_aInputObjects[i];
+				if( rInputValue.GetDefaultType() == VT_EMPTY )
+				{
+					if (paInputValueDefs[i].m_DefaultValue.vt != rInputValue.GetValueType())
+					{
+						rInputValue.SetDefaultValue(paInputValueDefs[i].m_DefaultValue, true);
+					}
+					else
+					{
+						rInputValue.SetDefaultValue(paInputValueDefs[i].m_DefaultValue, false);
+					}
+				}
 				//The linkedValues must be reset (to set the object reference correctly), before used them for get values (in InspectionInputsToVariantArray). 
 				//But this method will called also in Create-process and there is not a reset called before.
 				rInputValue.resetAllObjects();
-				if( rInputValue.GetDefaultType() == VT_EMPTY )
-				{
-					rInputValue.SetDefaultValue(paInputValueDefs[i].m_DefaultValue, TRUE);
-				}
 
 				HRESULT hrChangeType = ::VariantChangeType(&m_aInspectionInputValues[i], &m_aInspectionInputValues[i], 0, static_cast<VARTYPE>(paInputValueDefs[i].m_VT) );
 
@@ -1540,7 +1541,6 @@ HRESULT SVExternalToolTask::ClearData()
 	{
 		_variant_t vt;
 		m_Data.m_aResultObjects[i].SetDefaultValue(vt, TRUE);
-		m_Data.m_aResultObjectNames[i].SetDefaultValue(_T(""), TRUE);
 	}
 
 	std::vector< SVResultClass*> apResults = GetResultRangeObjects();
