@@ -634,7 +634,7 @@ bool SVIPDoc::shouldPauseRegressionTestByCondition()
 {
 	SVInspectionProcess* pInspection(GetInspectionProcess());
 
-	if (nullptr != pInspection && m_bRegressionTestUsePlayCondition)
+	if (RegModePlay == m_regtestRunMode && nullptr != pInspection && m_bRegressionTestUsePlayCondition)
 	{
 		return pInspection->shouldPauseRegressionTestByCondition();
 	}
@@ -3037,13 +3037,13 @@ DWORD WINAPI SVIPDoc::SVRegressionTestRunThread( LPVOID lpParam )
 	pIPDoc->m_bRegressionTestStopping = false;
 
 	bool l_bUsingSingleFile = false;
-	BOOL bDisplayFile = FALSE;
-	BOOL bModeReset = FALSE;
+	bool bRunFlag = false;
+	bool bModeReset = false;
 
 	while ( pIPDoc->m_regtestRunMode != RegModeStopExit)
 	{
 		//while in Pause mode, sleep
-		bModeReset = FALSE;
+		bModeReset = false;
 		if ( pIPDoc->m_regtestRunMode == RegModePause )
 		{
 			::Sleep(50);
@@ -3088,7 +3088,7 @@ DWORD WINAPI SVIPDoc::SVRegressionTestRunThread( LPVOID lpParam )
 			{
 			case RegModePlay:
 				{
-					bDisplayFile = TRUE;
+					bRunFlag = true;
 					if ( !l_bFirst )
 					{
 						ptmpRegTestStruct->stdIteratorCurrent++;
@@ -3105,7 +3105,7 @@ DWORD WINAPI SVIPDoc::SVRegressionTestRunThread( LPVOID lpParam )
 							if ( ptmpRegTestStruct->stdIteratorCurrent == ptmpRegTestStruct->stdIteratorStart )
 							{
 								l_bListDone = true;
-								bDisplayFile = FALSE;
+								bRunFlag = false;
 							}
 						}
 					}
@@ -3131,7 +3131,7 @@ DWORD WINAPI SVIPDoc::SVRegressionTestRunThread( LPVOID lpParam )
 									SendMessage(hRegressionWnd, WM_REGRESSION_TEST_SET_PLAYPAUSE, reinterpret_cast<LPARAM> (&pIPDoc->m_regtestRunMode), 0);
 									bModeReset = true;
 									l_bFirst = true;
-									bDisplayFile = FALSE;
+									bRunFlag = false;
 								}
 							}
 						}
@@ -3143,14 +3143,9 @@ DWORD WINAPI SVIPDoc::SVRegressionTestRunThread( LPVOID lpParam )
 								SendMessage(hRegressionWnd, WM_REGRESSION_TEST_SET_PLAYPAUSE, reinterpret_cast<LPARAM> (&pIPDoc->m_regtestRunMode), 0);
 								bModeReset = true;
 								l_bFirst = true;
-								bDisplayFile = FALSE;
+								bRunFlag = false;
 							}
 						}
-					}
-					if (!bModeReset && pIPDoc->shouldPauseRegressionTestByCondition())
-					{
-						pIPDoc->m_regtestRunMode = RegModePause;
-						SendMessage(hRegressionWnd, WM_REGRESSION_TEST_SET_PLAYPAUSE, reinterpret_cast<LPARAM> (&pIPDoc->m_regtestRunMode), 0);
 					}
 
 					ptmpRunFileStruct->FileName = *ptmpRegTestStruct->stdIteratorCurrent;
@@ -3168,7 +3163,7 @@ DWORD WINAPI SVIPDoc::SVRegressionTestRunThread( LPVOID lpParam )
 						ptmpRegTestStruct->stdIteratorCurrent = ptmpRegTestStruct->stdVectorFile.begin();
 					}
 					ptmpRunFileStruct->FileName = *ptmpRegTestStruct->stdIteratorCurrent;
-					bDisplayFile = TRUE;
+					bRunFlag = true;
 					break;
 				}
 			case RegModeSingleStepBack:
@@ -3191,7 +3186,7 @@ DWORD WINAPI SVIPDoc::SVRegressionTestRunThread( LPVOID lpParam )
 					}
 
 					ptmpRunFileStruct->FileName = *ptmpRegTestStruct->stdIteratorCurrent;
-					bDisplayFile = TRUE;
+					bRunFlag = true;
 
 					break;
 				}
@@ -3199,14 +3194,14 @@ DWORD WINAPI SVIPDoc::SVRegressionTestRunThread( LPVOID lpParam )
 				{
 					ptmpRegTestStruct->stdIteratorCurrent = ptmpRegTestStruct->stdIteratorStart;
 					ptmpRunFileStruct->FileName = *ptmpRegTestStruct->stdIteratorCurrent;
-					bDisplayFile = TRUE;
+					bRunFlag = true;
 					break;
 				}
 			case RegModeBackToBeginningStop:
 				{
 					ptmpRegTestStruct->stdIteratorCurrent = ptmpRegTestStruct->stdIteratorStart;
 					ptmpRunFileStruct->FileName = *ptmpRegTestStruct->stdIteratorCurrent;
-					bDisplayFile = TRUE;
+					bRunFlag = true;
 					break;
 				}
 			case RegModeResetSettings:
@@ -3221,7 +3216,7 @@ DWORD WINAPI SVIPDoc::SVRegressionTestRunThread( LPVOID lpParam )
 					}
 					l_bUsingSingleFile = false; //reset this value
 					l_iNumSingleFile = 0;
-					bDisplayFile = false;
+					bRunFlag = false;
 					bModeReset = true;
 					break;
 				}
@@ -3231,7 +3226,7 @@ DWORD WINAPI SVIPDoc::SVRegressionTestRunThread( LPVOID lpParam )
 				}
 			}//end switch
 
-			if ( bDisplayFile )
+			if ( bRunFlag )
 			{
 				pIPDoc->m_listRegCameras.SetAt(posCamera,ptmpRegTestStruct);
 
@@ -3259,9 +3254,9 @@ DWORD WINAPI SVIPDoc::SVRegressionTestRunThread( LPVOID lpParam )
 		}
 		l_bDone = false;
 		//send image info to the dialog...
-		if ( bDisplayFile )
+		if ( bRunFlag )
 		{
-			bDisplayFile = FALSE;
+			bRunFlag = false;
 
 			SendMessage( hRegressionWnd, WM_REGRESSION_TEST_SET_FILENAMES, reinterpret_cast<LPARAM> (&l_lstFileNames) , 0 );
 
@@ -3305,6 +3300,13 @@ DWORD WINAPI SVIPDoc::SVRegressionTestRunThread( LPVOID lpParam )
 		if ( !bModeReset )
 		{
 			l_bFirst = false;
+		}
+
+		if (pIPDoc->shouldPauseRegressionTestByCondition())
+		{
+			pIPDoc->m_regtestRunMode = RegModePause;
+			SendMessage(hRegressionWnd, WM_REGRESSION_TEST_SET_PLAYPAUSE, reinterpret_cast<LPARAM> (&pIPDoc->m_regtestRunMode), 0);
+			bRunFlag = false;
 		}
 	}//end of while loop
 
