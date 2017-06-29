@@ -748,7 +748,9 @@ HRESULT SVConfigurationObject::AddImportedRemoteInput(SVPPQObject* pPPQ, const S
 			pIOEntry->m_Enabled = true;
 
 			SVRemoteInputObject* pRemoteInput = nullptr;
-			pRemoteInput = dynamic_cast<SVRemoteInputObject*> (m_pInputObjectList->GetInputFlyweight( name, SVRemoteInputObjectType));
+			int number = -1;
+			sscanf_s(name.c_str(), SvO::cRemoteInputNumberLabel, &number);
+			pRemoteInput = dynamic_cast<SVRemoteInputObject*> (m_pInputObjectList->GetInputFlyweight( name, SVRemoteInputObjectType, number));
 			if (nullptr != pRemoteInput)
 			{
 				pRemoteInput->m_lIndex = index;
@@ -800,7 +802,9 @@ HRESULT SVConfigurationObject::AddRemoteInput(SVPPQObject* pPPQ, const SVString&
 	// Add Remote Inputs to the InputObjectList
 	//first check to see if remote input is there, check by name...
 	SVRemoteInputObject* pRemoteInput = nullptr;
-	pRemoteInput = dynamic_cast<SVRemoteInputObject*> (m_pInputObjectList->GetInputFlyweight(name, SVRemoteInputObjectType));
+	int number = -1;
+	sscanf_s(name.c_str(), SvO::cRemoteInputNumberLabel, &number);
+	pRemoteInput = dynamic_cast<SVRemoteInputObject*> (m_pInputObjectList->GetInputFlyweight(name, SVRemoteInputObjectType, number));
 
 	// Add Remote Input to the PPQ
 	SVVariantValueObjectClass* pValueObject = new SVVariantValueObjectClass();

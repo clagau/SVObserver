@@ -36,6 +36,9 @@ public:
 
 	HRESULT WriteCache( const _variant_t& p_rValue );
 	HRESULT GetCache( _variant_t& p_rValue );
+	/// Update the GUID to a fix GUID depend of a position (must between 0 and 0x100).
+	/// \param position [in]
+	void updateGuid(int position);
 
 	long m_lIndex;
 #pragma endregion Public Methods

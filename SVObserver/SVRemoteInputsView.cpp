@@ -139,7 +139,7 @@ void SVRemoteInputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHint 
 		// Find each remote input
 		for( j = 0; j < lSize; j++ )
 		{
-			SVString Item = SvUl_SF::Format( _T( "Remote Input %d" ), h + 1 );
+			SVString Item = SvUl_SF::Format(SvO::cRemoteInputNumberLabel, h + 1 );
 
 			bool bFound = false;
 
@@ -162,7 +162,7 @@ void SVRemoteInputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHint 
 			if ( bFound )
 			{
 				// First column: Result I/O
-				//strItem.Format( _T( "Remote Input %d" ), h + 1 );
+				//strItem.Format( SvO::cRemoteInputNumberLabel, h + 1 );
 				GetListCtrl().InsertItem( LVIF_IMAGE | LVIF_TEXT | LVIF_STATE,
 					h , Item.c_str(),
 					INDEXTOSTATEIMAGEMASK( 1 ),	// state

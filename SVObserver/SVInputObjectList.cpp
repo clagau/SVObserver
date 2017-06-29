@@ -161,8 +161,12 @@ SVInputObject* SVInputObjectList::GetInputFlyweight(const SVString& rInputName, 
 				break;
 			}
 			case SVRemoteInputObjectType:
-				pResult = new SVRemoteInputObject;
+			{
+				SVRemoteInputObject* pInput = new SVRemoteInputObject;
+				pInput->updateGuid(GuidIndex);
+				pResult = pInput;
 				break;
+			}
 			case SVCameraDataInputObjectType:
 				pResult = new SVCameraDataInputObject;
 				break;

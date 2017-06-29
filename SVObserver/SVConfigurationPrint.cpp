@@ -2269,7 +2269,7 @@ void SVConfigurationPrint::PrintModuleIO(CDC* pDC, CPoint& ptCurPos, int nIndent
 			{
 				if (ppIOEntries[k]->m_ObjectType != IO_REMOTE_INPUT) { continue; }
 
-				SVString Label = SvUl_SF::Format( _T("Remote Input %d"), (l++) +1 );
+				SVString Label = SvUl_SF::Format(SvO::cRemoteInputNumberLabel, (l++) +1 );
 				PrintIOEntryObject(pDC, ptCurPos, nIndentLevel+1, Label.c_str(), ppIOEntries[k]);
 			}
 		}

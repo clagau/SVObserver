@@ -71,7 +71,7 @@ namespace SvStl
 	SVString MessageTextGenerator::convertAddtionalListTextToString(const SVString& text) const
 	{
 		SVString retString;
-		int number = -1;;
+		int number = -1;
 		if (1 == sscanf_s(text.c_str(), _T("[***%d***]"), &number))
 		{
 			MessageTextEnum id = static_cast<MessageTextEnum>(number);

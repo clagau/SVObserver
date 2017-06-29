@@ -2140,7 +2140,7 @@ BOOL SVPPQObject::AddDefaultInputs()
 	// Create all the default Remote Inputs
 	for( l = 0; l < static_cast<unsigned long>(lCount); l++ )
 	{
-		SVString Name = SvUl_SF::Format( _T("Remote Input %d"), l + 1 );
+		SVString Name = SvUl_SF::Format(SvO::cRemoteInputNumberLabel, l + 1 );
 		AddToAvailableInputs( IO_REMOTE_INPUT, Name );
 	}// end for
 

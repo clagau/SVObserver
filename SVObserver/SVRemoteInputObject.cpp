@@ -13,6 +13,7 @@
 #include "stdafx.h"
 #include "SVRemoteInputObject.h"
 #include "SVUtilityLibrary/SVSafeArray.h"
+#include "SVObjectLibrary/SVObjectManagerClass.h"
 #pragma endregion Includes
 
 SVRemoteInputObject::SVRemoteInputObject( LPCSTR strObjectName )
@@ -131,6 +132,16 @@ HRESULT SVRemoteInputObject::GetCache( _variant_t& p_rValue )
 	::LeaveCriticalSection( &m_hCriticalSection );
 
 	return l_Status;
+}
+
+void SVRemoteInputObject::updateGuid(int position)
+{
+	if (0 <= position && 0x100 > position)
+	{
+		SVGUID ParameterUID(RemoteInputUidGuid);
+		ParameterUID.ToGUID().Data1 += position;
+		SVObjectManagerClass::Instance().ChangeUniqueObjectID(this, ParameterUID);
+	}
 }
 
 void SVRemoteInputObject::LocalInitialize()

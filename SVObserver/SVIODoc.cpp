@@ -258,9 +258,9 @@ void SVIODoc::OnExtrasEditRemoteInputs()
 				{
 					pRemoteInput = nullptr;
 
-					SVString RemoteInputName = SvUl_SF::Format( _T("Remote Input %d"), j + 1 );
+					SVString RemoteInputName = SvUl_SF::Format(SvO::cRemoteInputNumberLabel, j + 1);
 
-					pRemoteInput = dynamic_cast<SVRemoteInputObject*> (pInputList->GetInputFlyweight( RemoteInputName, SVRemoteInputObjectType));
+					pRemoteInput = dynamic_cast<SVRemoteInputObject*> (pInputList->GetInputFlyweight( RemoteInputName, SVRemoteInputObjectType, j));
 
 					if( nullptr != pRemoteInput )
 					{
@@ -299,7 +299,7 @@ void SVIODoc::OnExtrasEditRemoteInputs()
 				j = oDlg.m_lRemoteInputCount;
 				for( i = 0; i < lSize; i++ )
 				{
-					SVString RemoteInputName = SvUl_SF::Format( _T("Remote Input %d"), j + 1 );
+					SVString RemoteInputName = SvUl_SF::Format( SvO::cRemoteInputNumberLabel, j + 1 );
 
 					bool bFound = false;
 

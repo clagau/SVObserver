@@ -1251,6 +1251,7 @@ extern /*const*/ GUID PpqBaseLengthUidGuid;
 // Unique base ID GUID for IO-Entries variables always have 0x100 GUIDS free after the base GUID
 extern /*const*/ GUID DigitalInputUidGuid;
 extern /*const*/ GUID DigitalOutputUidGuid;
+extern /*const*/ GUID RemoteInputUidGuid;
 
 ///////////////////////////////////////////////////
 // GUIDs for the TableAnalyzerTool
