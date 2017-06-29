@@ -472,7 +472,8 @@ HRESULT SVExternalToolTask::Initialize(	SVDllLoadLibraryCallback fnNotify )
 				LinkedValue& rInputValue = m_Data.m_aInputObjects[i];
 				if( rInputValue.GetDefaultType() == VT_EMPTY )
 				{
-					if (paInputValueDefs[i].m_DefaultValue.vt != rInputValue.GetValueType())
+					//! For a new tool set the default and value while a linked value of type VT_BSTR should not be overwritten
+					if (paInputValueDefs[i].m_DefaultValue.vt != rInputValue.GetValueType() && VT_BSTR != rInputValue.GetValueType())
 					{
 						rInputValue.SetDefaultValue(paInputValueDefs[i].m_DefaultValue, true);
 					}
@@ -485,7 +486,7 @@ HRESULT SVExternalToolTask::Initialize(	SVDllLoadLibraryCallback fnNotify )
 				//But this method will called also in Create-process and there is not a reset called before.
 				rInputValue.resetAllObjects();
 
-				HRESULT hrChangeType = ::VariantChangeType(&m_aInspectionInputValues[i], &m_aInspectionInputValues[i], 0, static_cast<VARTYPE>(paInputValueDefs[i].m_VT) );
+				::VariantChangeType(&m_aInspectionInputValues[i], &m_aInspectionInputValues[i], 0, static_cast<VARTYPE>(paInputValueDefs[i].m_VT) );
 
 				m_Data.m_aInputValueDefinitions[i] = paInputValueDefs[i];
 

@@ -66,6 +66,11 @@ HRESULT LinkedValue::GetValue( _variant_t& rValue,  int Bucket /*= -1*/, int Ind
 		m_CircularReference = false;
 		if( S_OK == Result )
 		{
+			//If the Linked Value is of type BOOL and is to be converted to the default type then we need the absolute value
+			if (VT_BOOL == rValue.vt && GetDefaultType() != rValue.vt)
+			{
+				rValue.boolVal = abs(rValue.boolVal);
+			}
 			if (S_OK != ::VariantChangeType( &rValue, &rValue, VARIANT_ALPHABOOL, GetDefaultType() ) )
 			{
 				//empty value if variant can not be converted in the right type
