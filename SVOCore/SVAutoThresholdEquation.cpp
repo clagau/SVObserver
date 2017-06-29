@@ -93,7 +93,7 @@ bool SVAutoThresholdEquationClass::onRun( SVRunStatusClass& rRunStatus, SvStl::M
 			Value = getResult();
 		}
 	}
-	result.SetValue( Value, rRunStatus.m_lResultDataIndex );
+	result.SetValue(Value);
 
 	return retVal;
 }

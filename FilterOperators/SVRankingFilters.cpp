@@ -220,19 +220,19 @@ void SVRankingFilterClass::RebuildRanking()
 	m_lvoRankingWidth.GetValue( lWidth );
 	if( lWidth >= 7 )
 	{
-		m_lvoRankingWidth.SetValue( 7L, 1 );
+		m_lvoRankingWidth.SetValue(7L);
 	}// end if
 	else if( lWidth >= 5 )
 	{
-		m_lvoRankingWidth.SetValue( 5L, 1 );
+		m_lvoRankingWidth.SetValue(5L);
 	}// end else if
 	else if( lWidth >= 3 )
 	{
-		m_lvoRankingWidth.SetValue( 3L, 1 );
+		m_lvoRankingWidth.SetValue(3L);
 	}// end else if
 	else
 	{
-		m_lvoRankingWidth.SetValue( 1L, 1 );
+		m_lvoRankingWidth.SetValue(1L);
 	}// end else
 	m_lvoRankingWidth.GetValue( lWidth );
 
@@ -240,19 +240,19 @@ void SVRankingFilterClass::RebuildRanking()
 	m_lvoRankingHeight.GetValue( lHeight );
 	if( lHeight >= 7 )
 	{
-		m_lvoRankingHeight.SetValue( 7L, 1 );
+		m_lvoRankingHeight.SetValue(7L);
 	}// end if
 	else if( lHeight >= 5 )
 	{
-		m_lvoRankingHeight.SetValue( 5L, 1 );
+		m_lvoRankingHeight.SetValue(5L);
 	}// end else if
 	else if( lHeight >= 3 )
 	{
-		m_lvoRankingHeight.SetValue( 3L, 1 );
+		m_lvoRankingHeight.SetValue(3L);
 	}// end else if
 	else
 	{
-		m_lvoRankingHeight.SetValue( 1L, 1 );
+		m_lvoRankingHeight.SetValue(1L);
 	}// end else
 	m_lvoRankingHeight.GetValue( lHeight );
 
@@ -301,16 +301,6 @@ void SVRankingFilterClass::RebuildRanking()
 bool SVRankingFilterClass::onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 { 
 	long lRank;
-
-	// Force a copy forward to keep the display correct
-	for( long l = 0; l < 49; l++ )
-	{
-		m_plvoRankingCells[l]->CopyLastSetValue( rRunStatus.m_lResultDataIndex );
-	}// end for
-
-	m_lvoRankingWidth.CopyLastSetValue( rRunStatus.m_lResultDataIndex );
-	m_lvoRankingHeight.CopyLastSetValue( rRunStatus.m_lResultDataIndex );
-	m_lvoRankingRank.CopyLastSetValue( rRunStatus.m_lResultDataIndex );
 
 	if( m_pCurrentUIOPL && !( RInputImageHandle.empty() ) && !( ROutputImageHandle.empty() ) )
 	{

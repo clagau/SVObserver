@@ -71,7 +71,7 @@ bool TableObject::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 		(*iter)->setSortContainer(m_sortContainer);
 		(*iter)->setSaveValueFlag(false);
 	}
-	m_NumberOfRows.SetValue(0L, 0);
+	m_NumberOfRows.SetValue(0L);
 	dynamic_cast<SVInspectionProcess*>(GetInspection())->SetDefaultInputs();
 
 	return Result;
@@ -88,9 +88,9 @@ void TableObject::setSortContainer(const ValueObjectSortContainer& sortMap, SVRu
 	m_sortContainer = sortMap;
 	for (int i = 0; i < m_ValueList.size(); ++i)
 	{
-		m_ValueList[i]->setSortContainer(rRunStatus.m_lResultDataIndex, m_sortContainer);
+		m_ValueList[i]->setSortContainer(m_sortContainer);
 	}
-	m_NumberOfRows.SetValue(static_cast<long>(sortMap.size()), rRunStatus.m_lResultDataIndex);
+	m_NumberOfRows.SetValue(static_cast<long>(sortMap.size()));
 }
 
 DoubleSortValueObject* TableObject::updateOrCreateColumn(const GUID& rEmbeddedId, int nameId, int arraysize)

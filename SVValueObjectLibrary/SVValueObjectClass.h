@@ -63,21 +63,20 @@ public:
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
 	virtual BOOL CloseObject() override;
 	virtual bool ResetObject( SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
-	virtual BOOL SetObjectDepth ( int iNewObjectDepth ) override;
 	virtual BOOL SetObjectDepthWithIndex( int NewObjectDepth, int NewLastSetIndex ) override;
 	virtual HRESULT SetArraySize(int iSize);
 	virtual HRESULT SetOutputFormat(OutputFormat outputFormat) { return E_NOTIMPL; };
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* pDataObject );
-	virtual HRESULT SetValue( const T& rValue, int Bucket = -1, int Index = -1 );
-	virtual HRESULT GetValue( T&  rValue, int Bucket = -1, int Index = -1 ) const;
+	virtual HRESULT SetValue( const T& rValue, int Index = -1 );
+	virtual HRESULT GetValue(T&  rValue, int Index = -1, int Bucket = -1) const;
 	virtual HRESULT SetDefaultValue( const T& rValue, bool bResetAll );
 	const ValueType& GetDefaultValue() const { return m_DefaultValue; };
 
-	HRESULT SetArrayValues( typename ValueVector::const_iterator BeginIter, typename ValueVector::const_iterator EndIter, int Bucket = -1 );
-	HRESULT SetArrayValues( const ValueVector& rValues, int Bucket = -1 );
-	virtual HRESULT GetArrayValues( ValueVector& rValues, int Bucket = -1 ) const;
+	HRESULT SetArrayValues(typename ValueVector::const_iterator BeginIter, typename ValueVector::const_iterator EndIter);
+	HRESULT SetArrayValues(const ValueVector& rValues);
+	virtual HRESULT GetArrayValues(ValueVector& rValues, int Bucket = -1) const;
 
-	HRESULT SetResultSize(int iBucket, int  riResultSize);
+	HRESULT SetResultSize(int  ResultSize) { m_ResultSize = (ResultSize <= m_ArraySize) ? ResultSize : 0; return S_OK; };
 	HRESULT SetTypeName( LPCTSTR TypeName );
 	bool CompareWithCurrentValue( const SVString& rCompare ) const;
 	void setStatic( bool isStatic ) { m_isStatic = isStatic; };
@@ -87,10 +86,10 @@ public:
 
 	//! Gets the value for Value object NOTE this comes from IObjectClass
 	//! \param rValue [out] The reference to write the value to
-	//! \param Bucket [in] The corresponding bucket index to get, if required
 	//! \param Index [in] The corresponding array index to write to, if required
+	//! \param Bucket [in] The corresponding bucket index to get, if required
 	//! \returns S_OK if succeeded
-	virtual HRESULT getValue(double& rValue, int Bucket = -1, int Index = -1) const override;
+	virtual HRESULT getValue(double& rValue, int Index = -1, int Bucket = -1) const override;
 
 	//! Gets the values for Value object NOTE this comes from IObjectClass
 	//! \param rValue [out] The reference to double vector to store the values
@@ -104,37 +103,35 @@ public:
 
 	//! Sets the value for Value object
 	//! \param rValue [in] The value to set the Value object to
-	//! \param Bucket [in] The corresponding bucket index to write to, if required
 	//! \param Index [in] The corresponding array index to write to, if required
 	//! \returns S_OK if succeeded
-	virtual HRESULT setValue( const _variant_t& rValue, int Bucket = -1, int Index = -1 ) override;
+	virtual HRESULT setValue(const _variant_t& rValue, int Index = -1) override;
 
 	//! Gets the value for Value object
 	//! \param rValue [out] The reference to write the value to
-	//! \param Bucket [in] The corresponding bucket index to get, if required
 	//! \param Index [in] The corresponding array index to write to, if required
+	//! \param Bucket [in] The corresponding bucket index to get, if required
 	//! \returns S_OK if succeeded
-	virtual HRESULT getValue( _variant_t& rValue, int Bucket = -1, int Index = -1 ) const override;
+	virtual HRESULT getValue(_variant_t& rValue, int Index = -1, int Bucket = -1) const override;
 
 	//! Gets the values for Value object
 	//! \param rValue [out] The reference to _variant_t vector to store the values
 	//! \param Bucket [in] The corresponding bucket index to get, if required
 	//! \returns S_OK if succeeded
-	virtual HRESULT getValues( std::vector<_variant_t>&  rValues, int Bucket = -1 ) const override;
+	virtual HRESULT getValues(std::vector<_variant_t>&  rValues, int Bucket = -1) const override;
 
 	//! Sets the value for Value object
 	//! \param rValue [in] The value to set the Value object to
-	//! \param Bucket [in] The corresponding bucket index to write to, if required
 	//! \param Index [in] The corresponding array index to write to, if required
 	//! \returns S_OK if succeeded
-	virtual HRESULT setValue( const SVString& rValue, int Bucket = -1, int Index = -1 ) override;
+	virtual HRESULT setValue( const SVString& rValue, int Index = -1 ) override;
 
 	//! Gets the value for Value object
 	//! \param rValue [out] The reference to write the value to
-	//! \param Bucket [in] The corresponding bucket index to get, if required
 	//! \param Index [in] The corresponding array index to write to, if required
+	//! \param Bucket [in] The corresponding bucket index to get, if required
 	//! \returns S_OK if succeeded
-	virtual HRESULT getValue( SVString& rValue, int Bucket = -1, int Index = -1 ) const override;
+	virtual HRESULT getValue(SVString& rValue, int Index = -1, int Bucket = -1) const override;
 
 	//! Set the value object bucketized flag
 	//! \param Bucketized [in] true if bucketized (Only set if not a static ValueObject
@@ -163,7 +160,7 @@ public:
 	
 	//! Gets the result size of the value object
 	//! \returns size
-	virtual int getResultSize( int Bucket = -1 ) const override;
+	virtual int getResultSize() const override { return m_ResultSize; };
 
 	//! Gets the reset item type
 	//! \returns the reset item enum type
@@ -175,15 +172,29 @@ public:
 
 	//! Copies the last set value to the destination bucket
 	//! \returns the result of copying
-	virtual HRESULT CopyLastSetValue( int DestBucket ) override { return CopyValue( m_LastSetIndex, DestBucket ); }
+	virtual HRESULT CopyValue( int DestBucket ) override;
+
+	//! Returns the value object byte size
+	//! \returns the number of bytes for the data
+	virtual DWORD GetByteSize() const override;
+
+	//! Returns the variant type of the value object
+	//! \returns the VT type
+	virtual DWORD GetType() const override { return ValueType2Variant(m_Value).vt; };
+
+	//! Copies the value object to the memory block
+	//! \param pMemoryBlock [in] Pointer to the byte address of the memory block
+	//! \param MemByteSize [in] The memory block byte size
+	//! \param Index [in] The index of the array (-1 if no array)
+	//! \returns S_OK if successful
+	virtual HRESULT CopyToMemoryBlock(BYTE* pMemoryBlock, DWORD MemByteSize, int Index = -1) const override;
 
 	virtual void Persist(SVObjectWriter& rWriter) override;
 #pragma endregion virtual method
 	
-	const int&  GetLastSetIndex()               const    { return m_LastSetIndex; }
 	void SetLegacyVectorObjectCompatibility() { m_LegacyVectorObjectCompatibility = true; }
 
-	bool isBucketized() { return m_isBucketized; };
+	bool isBucketized() const { return m_isBucketized; };
 
 	/// getter and setter for ShouldSaveValue-Flag
 	bool shouldSaveValue() { return m_shouldSaveValue; };
@@ -194,23 +205,15 @@ public:
 protected:
 	void Initialize();
 
-	HRESULT SetVariantValue( const _variant_t& rValue, int iBucket = -1, int iIndex = -1 );
-	virtual HRESULT GetVariantValue( _variant_t& rValue, int Bucket = -1, int Index = -1 ) const;
-
-	virtual HRESULT CopyValue( int SourceBucket, int DestBucket );
+	HRESULT SetVariantValue(const _variant_t& rValue, int iIndex = -1);
+	virtual HRESULT GetVariantValue(_variant_t& rValue, int Index = -1, int Bucket = -1) const;
 
 	virtual double ValueType2Double(const T& rValue) const = 0;
-	virtual _variant_t ValueType2Variant( const T& rValue ) const = 0;
-	virtual T Variant2ValueType( const _variant_t& rValue ) const = 0;
+	virtual _variant_t ValueType2Variant(const T& rValue) const = 0;
+	virtual T Variant2ValueType(const _variant_t& rValue) const = 0;
 
 	virtual void CreateBuckets();
 	void InitializeBuckets();
-
-	/// Validate the value. If value invalid an exception message will be thrown.
-	/// \param iBucket [in] 
-	/// \param iIndex [in]
-	/// \param rValue [in]
-	virtual void ValidateValue( int Bucket, int Index, const SVString& rValue ) const;
 
 	//! Convert String to template type 
 	//! If value invalid an exception message will be thrown.
@@ -223,14 +226,21 @@ protected:
 	/// \returns the SVString
 	virtual SVString ConvertType2String( const T& rValue ) const = 0;
 
-	HRESULT ValidateIndexes( int Bucket, int ArrayIndex ) const;
+	HRESULT ValidateIndex(int ArrayIndex) const;
+
+	//! Validates the parameters required for the CopyToMemoryBlock method
+	//! \param pMemoryBlock [in] Pointer to the byte address of the memory block
+	//! \param MemByteSize [in] The memory block byte size
+	//! \param Index [in] The index of the array (-1 if no array)
+	/// \returns S_OK on success
+	HRESULT ValidateMemoryBlockParameters(BYTE* pMemoryBlock, DWORD MemByteSize, int Index) const;
 
 	ValueType& DefaultValue() { return m_DefaultValue; };
 	ValueType& Value() { return m_Value; };
 	const ValueType& Value() const { return m_Value; };
 	ValueVector& ValueArray() { return m_ValueArray; };
 
-	ValueType* getValuePointer( int Bucket, int Index );
+	ValueType* getValuePointer( int Index, int Bucket );
 	BucketPtr& getBucket() { return m_pBucket; };
 	BucketVectorPtr& getBucketArray() { return m_pBucketArray; };
 
@@ -239,7 +249,6 @@ protected:
 	LPCTSTR getOutputFormat() const { return m_OutFormat.c_str(); };
 	const int& getNumberOfBuckets() const { return m_NumberOfBuckets; };
 	bool isLegacyVectorObjectCompatibility() const { return m_LegacyVectorObjectCompatibility; };
-	void setLastSetIndex( const int& rLastSetIndex ) { m_LastSetIndex = rLastSetIndex; };
 
 	void swap( SVValueObjectClass& rRhs );
 
@@ -260,17 +269,16 @@ private:
 
 	SvOi::SVResetItemEnum m_eResetItem;
 
-	int m_LastSetIndex;
 	int m_NumberOfBuckets;
 	int m_ArraySize;
-	std::vector<int> m_ResultSize;			//The result size for each bucket
+	int m_ResultSize;
 
 	ValueType m_DefaultValue;
 	ValueType m_Value;
 	ValueVector m_ValueArray;
 
-	BucketPtr m_pBucket;					//Bucket shared pointer
-	BucketVectorPtr m_pBucketArray;			//Bucket array pointer
+	BucketPtr m_pBucket;					//Bucket unique pointer
+	BucketVectorPtr m_pBucketArray;			//Bucket array unique pointer
 #pragma endregion Member Variables
 };
 

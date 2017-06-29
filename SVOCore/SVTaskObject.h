@@ -54,10 +54,10 @@ public:
 
 	virtual SVTaskObjectClass* GetObjectAtPoint( const SVExtentPointStruct &p_rsvPoint );
 	virtual bool DoesObjectHaveExtents() const;
-	virtual HRESULT GetImageExtent( SVImageExtentClass& p_rsvImageExtent );
-	virtual HRESULT SetImageExtent( unsigned long p_ulIndex, SVImageExtentClass p_svImageExtent );
-	virtual HRESULT SetImageExtentToParent( unsigned long p_ulIndex );
-	virtual HRESULT SetImageExtentToFit( unsigned long p_ulIndex, SVImageExtentClass p_svImageExtent );
+	virtual HRESULT GetImageExtent( SVImageExtentClass& rImageExtent );
+	virtual HRESULT SetImageExtent( const SVImageExtentClass& rImageExtent );
+	virtual HRESULT SetImageExtentToParent( );
+	virtual HRESULT SetImageExtentToFit( const SVImageExtentClass& rImageExtent );
 	virtual HRESULT GetFilteredImageExtentPropertyList( SVExtentPropertyListType& p_rPropertyList );
 	virtual HRESULT GetPropertyInfo( SVExtentPropertyEnum p_eProperty, SVExtentPropertyInfoStruct& p_rInfo ) const;
 

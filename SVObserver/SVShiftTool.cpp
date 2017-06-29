@@ -105,14 +105,14 @@ bool SVShiftTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	return SVToolClass::ResetObject(pErrorMessages) && ValidateLocal(pErrorMessages);
 }
 
-HRESULT SVShiftTool::SetImageExtentToParent( unsigned long p_ulIndex )
+HRESULT SVShiftTool::SetImageExtentToParent()
 {
-	SVImageExtentClass l_NewExtent;
-	HRESULT l_hrOk = m_svToolExtent.UpdateExtentToParentExtents( p_ulIndex, l_NewExtent );
+	SVImageExtentClass NewExtent;
+	HRESULT l_hrOk = m_svToolExtent.UpdateExtentToParentExtents(NewExtent );
 
 	if( S_OK == l_hrOk  )
 	{
-		l_hrOk = SVToolClass::SetImageExtent( p_ulIndex, l_NewExtent );
+		l_hrOk = SVToolClass::SetImageExtent(NewExtent);
 	}
 	return l_hrOk;
 }
@@ -248,40 +248,40 @@ bool SVShiftTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVe
 					double dNewLeft = dLeft + dDisplacementX;
 					double dNewTop = dTop + dDisplacementY;
 
-					m_TranslationX.SetValue(lInputTranslationX, rRunStatus.m_lResultDataIndex);
-					m_TranslationY.SetValue(lInputTranslationY, rRunStatus.m_lResultDataIndex);
-					m_DisplacementX.SetValue(dDisplacementX, rRunStatus.m_lResultDataIndex);
-					m_DisplacementY.SetValue(dDisplacementY, rRunStatus.m_lResultDataIndex);
-					m_LeftResult.SetValue(dNewLeft, rRunStatus.m_lResultDataIndex);
-					m_TopResult.SetValue(dNewTop, rRunStatus.m_lResultDataIndex);
+					m_TranslationX.SetValue(lInputTranslationX);
+					m_TranslationY.SetValue(lInputTranslationY);
+					m_DisplacementX.SetValue(dDisplacementX);
+					m_DisplacementY.SetValue(dDisplacementY);
+					m_LeftResult.SetValue(dNewLeft);
+					m_TopResult.SetValue(dNewTop);
 				}
 				else //Absolute Mode
 				{
 					double dDisplacementX = static_cast<double> (lInputTranslationX);
 					double dDisplacementY = static_cast<double> (lInputTranslationY);
 
-					m_LearnedTranslationX.SetValue(0.0, rRunStatus.m_lResultDataIndex);
-					m_LearnedTranslationY.SetValue(0.0, rRunStatus.m_lResultDataIndex);
+					m_LearnedTranslationX.SetValue(0.0);
+					m_LearnedTranslationY.SetValue(0.0);
 
-					m_TranslationX.SetValue(lInputTranslationX, rRunStatus.m_lResultDataIndex);
-					m_TranslationY.SetValue(lInputTranslationY, rRunStatus.m_lResultDataIndex);
-					m_DisplacementX.SetValue(dDisplacementX, rRunStatus.m_lResultDataIndex);
-					m_DisplacementY.SetValue(dDisplacementY, rRunStatus.m_lResultDataIndex);
-					m_ExtentLeft.SetValue(0.0, rRunStatus.m_lResultDataIndex);
-					m_ExtentTop.SetValue(0.0, rRunStatus.m_lResultDataIndex);
+					m_TranslationX.SetValue(lInputTranslationX);
+					m_TranslationY.SetValue(lInputTranslationY);
+					m_DisplacementX.SetValue(dDisplacementX);
+					m_DisplacementY.SetValue(dDisplacementY);
+					m_ExtentLeft.SetValue(0.0);
+					m_ExtentTop.SetValue(0.0);
 
-					m_LeftResult.SetValue(dDisplacementX, rRunStatus.m_lResultDataIndex);
-					m_TopResult.SetValue(dDisplacementY, rRunStatus.m_lResultDataIndex);
+					m_LeftResult.SetValue(dDisplacementX);
+					m_TopResult.SetValue(dDisplacementY);
 				}
 			}
 			else
 			{
-				m_TranslationX.SetValue(0L, rRunStatus.m_lResultDataIndex);
-				m_TranslationY.SetValue(0L, rRunStatus.m_lResultDataIndex);
-				m_DisplacementX.SetValue(0.0, rRunStatus.m_lResultDataIndex);
-				m_DisplacementY.SetValue(0.0, rRunStatus.m_lResultDataIndex);
-				m_LeftResult.SetValue(dLeft, rRunStatus.m_lResultDataIndex);
-				m_TopResult.SetValue(dTop, rRunStatus.m_lResultDataIndex);
+				m_TranslationX.SetValue(0L);
+				m_TranslationY.SetValue(0L);
+				m_DisplacementX.SetValue(0.0);
+				m_DisplacementY.SetValue(0.0);
+				m_LeftResult.SetValue(dLeft);
+				m_TopResult.SetValue(dTop);
 			}
 
 			SVImageExtentClass l_svExtents;
@@ -292,19 +292,10 @@ bool SVShiftTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVe
 
 				if (S_OK == l_svExtents.GetFigure(l_svFigure))
 				{
-					m_ExtentRight.SetValue(l_svFigure.m_svBottomRight.m_dPositionX, rRunStatus.m_lResultDataIndex);
-					m_ExtentBottom.SetValue(l_svFigure.m_svBottomRight.m_dPositionY, rRunStatus.m_lResultDataIndex);
+					m_ExtentRight.SetValue(l_svFigure.m_svBottomRight.m_dPositionX);
+					m_ExtentBottom.SetValue(l_svFigure.m_svBottomRight.m_dPositionY);
 				}
 			}
-		}
-		else
-		{
-			m_TranslationX.CopyLastSetValue(rRunStatus.m_lResultDataIndex);
-			m_TranslationY.CopyLastSetValue(rRunStatus.m_lResultDataIndex);
-			m_DisplacementX.CopyLastSetValue(rRunStatus.m_lResultDataIndex);
-			m_DisplacementY.CopyLastSetValue(rRunStatus.m_lResultDataIndex);
-			m_LeftResult.CopyLastSetValue(rRunStatus.m_lResultDataIndex);
-			m_TopResult.CopyLastSetValue(rRunStatus.m_lResultDataIndex);
 		}
 
 		if (Result)

@@ -100,10 +100,6 @@ bool SVWatershedFilterClass::ResetObject(SvStl::MessageContainerVector *pErrorMe
 ////////////////////////////////////////////////////////////////////////////////
 bool SVWatershedFilterClass::onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
-	// Force a copy forward to keep the display correct
-	m_lvoMinVariation.CopyLastSetValue( rRunStatus.m_lResultDataIndex );
-	m_lvoControlFlag.CopyLastSetValue( rRunStatus.m_lResultDataIndex );
-
 	long lMinVariation;
 	long lControlFlag;
 	BOOL bUseMarker;

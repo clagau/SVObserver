@@ -155,23 +155,23 @@ bool TableCopyObject::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContain
 					if (m_ValueList.end() != itDest && nullptr != itDest->get())
 					{
 						DoubleSortValueObject* object = itDest->get();
-						object->setSortContainer(rRunStatus.m_lResultDataIndex, m_sortContainer);
+						object->setSortContainer(m_sortContainer);
 						for (int i=0; i<m_sortContainer.size(); ++i)
 						{
 							double Value( 0.0 );
-							if (S_OK == (*itSource)->GetValue( Value, rRunStatus.m_lResultDataIndex, i ))
+							if (S_OK == (*itSource)->GetValue( Value, i ))
 							{
-								object->SetValue( Value, rRunStatus.m_lResultDataIndex, i );
+								object->SetValue( Value, i );
 							}
 						}
 					}
 				}
 				
-				m_NumberOfRows.SetValue(static_cast<long>(m_sortContainer.size()), rRunStatus.m_lResultDataIndex );
+				m_NumberOfRows.SetValue(static_cast<long>(m_sortContainer.size()));
 			}
 			else
 			{
-				m_NumberOfRows.SetValue( 0L, rRunStatus.m_lResultDataIndex );
+				m_NumberOfRows.SetValue(0L);
 				returnValue = false;
 				if (nullptr != pErrorMessages)
 				{

@@ -117,6 +117,24 @@ SVString SVPointValueObjectClass::ConvertType2String( const SVPOINT& rValue ) co
 	return Result;
 }
 
+HRESULT SVPointValueObjectClass::CopyToMemoryBlock(BYTE* pMemoryBlock, DWORD MemByteSize, int Index /* = -1*/) const
+{
+	HRESULT Result = ValidateMemoryBlockParameters(pMemoryBlock, MemByteSize, Index);
+
+	if (S_OK == Result)
+	{
+		SVPOINT Value;
+		SVPointValueObjectClass::GetValue(Value, Index);
+		long PointX = Value.x();
+		long PointY = Value.y();
+
+		memcpy(pMemoryBlock, &PointX, sizeof(PointX));
+		memcpy(pMemoryBlock + sizeof(PointX), &PointY, sizeof(PointY));
+	}
+
+	return Result;
+}
+
 void SVPointValueObjectClass::WriteValues(SVObjectWriter& rWriter)
 {
 	// Where does Object Depth Get put into the Script ??? (maybe at the SVObjectClass)
@@ -133,7 +151,7 @@ void SVPointValueObjectClass::WriteValues(SVObjectWriter& rWriter)
 	{
 		SVPOINT PointValue;
 		//Make sure this is not a derived virtual method which is called
-		SVPointValueObjectClass::GetValue(PointValue, GetLastSetIndex(), i);
+		SVPointValueObjectClass::GetValue(PointValue, i);
 		TempValue = SvUl_SF::Format(_T("%d, %d"), PointValue.x(), PointValue.y());
 		Value.SetString(TempValue.c_str());
 		list.push_back(Value);

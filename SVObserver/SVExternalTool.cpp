@@ -43,17 +43,12 @@ SVTaskObjectClass *SVExternalTool::GetObjectAtPoint( const SVExtentPointStruct &
 	return nullptr;
 }
 
-HRESULT SVExternalTool::GetImageExtent( SVImageExtentClass &p_rsvImageExtent )
+HRESULT SVExternalTool::GetImageExtent(SVImageExtentClass& rImageExtent)
 {
-	return S_FALSE;
+	return E_FAIL;
 }
 
-HRESULT SVExternalTool::GetImageExtent( unsigned long p_ulIndex, SVImageExtentClass &p_rsvImageExtent )
-{
-	return S_FALSE;
-}
-
-HRESULT SVExternalTool::UpdateImageWithExtent( unsigned long p_Index )
+HRESULT SVExternalTool::UpdateImageWithExtent()
 {
 	return S_OK;
 }

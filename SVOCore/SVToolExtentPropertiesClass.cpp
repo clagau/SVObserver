@@ -58,30 +58,6 @@ HRESULT SVToolExtentPropertiesClass::GetProperties( SVImageExtentClass& rExtents
 	return l_hrOk;
 }
 
-HRESULT SVToolExtentPropertiesClass::GetProperties( unsigned long Index, SVImageExtentClass &rExtents ) const
-{
-	HRESULT l_hrOk = S_OK;
-
-	SVToolExtentPropertiesMap::const_iterator iter;
-
-	for ( iter = m_svProperties.begin(); S_OK == l_hrOk && iter != m_svProperties.end(); ++iter )
-	{
-		SvOi::IValueObject* pValueObject = dynamic_cast<SvOi::IValueObject*> (iter->second.pValueObject);
-
-		if ( nullptr != pValueObject )
-		{
-			_variant_t Value;
-
-			if ( S_OK == ( l_hrOk = pValueObject->getValue( Value, Index  ) ) )
-			{
-				l_hrOk = rExtents.SetExtentProperty( iter->first, Value.dblVal );
-			}
-		}
-	}
-
-	return l_hrOk;
-}
-
 HRESULT SVToolExtentPropertiesClass::GetExtentObject( SVExtentPropertyEnum p_eProperty, SvOi::IValueObject*& rpValueObject ) const
 {
 	HRESULT l_hrOk = S_FALSE;

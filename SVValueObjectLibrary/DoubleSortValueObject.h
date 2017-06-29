@@ -33,25 +33,20 @@ public:
 
 #pragma region Public Methods
 public:
-	const ValueObjectSortContainer& getSortContainer(int iBucket) const;
-	const ValueObjectSortContainer& getSortContainer() const { return getSortContainer( GetLastSetIndex() ); };
-	HRESULT setSortContainer(int iBucket, const ValueObjectSortContainer& sortMap);
-	HRESULT setSortContainer(const ValueObjectSortContainer& sortMap) { return setSortContainer( GetLastSetIndex(), sortMap ); };
-	virtual HRESULT CopyValue(int iSourceBucket, int iDestBucket) override;
-	virtual HRESULT SetValue( const double& rValue, int Bucket, int Index ) override;
-	virtual HRESULT GetValue( double& rValue, int Bucket, int Index ) const override;
-	virtual HRESULT getValues( std::vector<_variant_t>&  rValues, int Bucket = -1 ) const override;
+	const ValueObjectSortContainer& getSortContainer() const { return m_sortContainer; };
+	HRESULT setSortContainer(const ValueObjectSortContainer& sortMap);
+	virtual HRESULT CopyValue(int iDestBucket) override;
+	virtual HRESULT SetValue(const double& rValue, int Index) override;
+	virtual HRESULT GetValue(double& rValue, int Index = -1, int Bucket = -1) const override;
+	virtual HRESULT getValues(std::vector<_variant_t>&  rValues, int Bucket = -1) const override;
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
 protected:
-	virtual void CreateBuckets( ) override;
 	/// Return the result size. 
 	/// ATTENTION: Do not use m_aiResultSize, this must be on ArraySize because otherwise ValidateIndexes can failed even if index valid.
-	/// \param iBucket [in]
 	/// \returns int Result size
-	virtual int getResultSize(int Bucket) const override;
-
+	virtual int getResultSize() const override { return static_cast<int> (m_sortContainer.size()); };
 	virtual HRESULT GetArrayValues( std::vector<double>& rValues, int Bucket ) const override;
 
 #pragma endregion Protected Methods
@@ -63,7 +58,7 @@ private:
 
 #pragma region Member Variables
 private:
-	std::vector<ValueObjectSortContainer> m_sortContainerArray;
+	ValueObjectSortContainer m_sortContainer;
 #pragma endregion Member Variables
 };
 

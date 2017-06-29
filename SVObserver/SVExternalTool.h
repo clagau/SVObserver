@@ -27,13 +27,12 @@ public:
 
 	virtual SVTaskObjectClass *GetObjectAtPoint( const SVExtentPointStruct &p_rsvPoint ) override;
 
-	virtual HRESULT GetImageExtent( SVImageExtentClass &p_rsvImageExtent ) override;
-	virtual HRESULT GetImageExtent( unsigned long p_ulIndex, SVImageExtentClass &p_rsvImageExtent ) override;
+	virtual HRESULT GetImageExtent(SVImageExtentClass& rImageExtent) override;
 
 	virtual SVStringValueObjectClass* GetInputImageNames() override;
 
 protected:
-	virtual HRESULT UpdateImageWithExtent( unsigned long p_Index ) override;
+	virtual HRESULT UpdateImageWithExtent() override;
 
 	SVBoolValueObjectClass m_svPerformTranslation;
 

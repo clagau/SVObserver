@@ -63,6 +63,7 @@ static char THIS_FILE[] = __FILE__;
 
 const long g_lPPQExtraBufferSize = 50;
 static const double TwentyPercent = .20;
+static const long cPpqDefaultIndex = 1L;
 
 const long MinReducedPPQPosition =2; 
 #pragma endregion Declarations
@@ -139,7 +140,7 @@ void logWorkloadInformation(const ProductWorkloadInformation &pwi, LPCSTR headin
 #endif
 
 
-HRESULT SVPPQObject::ProcessDelayOutputs( bool& p_rProcessed )
+HRESULT SVPPQObject::ProcessDelayOutputs( bool& rProcessed )
 	/// Used in data completion mode, but not in next trigger mode.
 	/// Retrieves the process (i.e. trigger) count from the m_oOutputsDelayQueue and uses it to get a "product pointer"
 	/// from m_ppPPQPositions via GetProductInfoStruct()
@@ -203,9 +204,9 @@ HRESULT SVPPQObject::ProcessDelayOutputs( bool& p_rProcessed )
 		}
 	}
 
-	p_rProcessed = ( nullptr != l_pProduct );
+	rProcessed = ( nullptr != l_pProduct );
 
-	if( p_rProcessed )
+	if( rProcessed )
 	{
 		SvOi::SVPPQOutputModeEnum oOutputMode = SvOi::SVPPQUnknownMode;
 
@@ -223,7 +224,7 @@ HRESULT SVPPQObject::ProcessDelayOutputs( bool& p_rProcessed )
 			case SvOi::SVPPQTimeDelayAndDataCompleteMode:
 			case SvOi::SVPPQExtendedTimeDelayAndDataCompleteMode:
 				{
-					l_Status = ProcessTimeDelayAndDataCompleteOutputs( *l_pProduct, p_rProcessed );
+					l_Status = ProcessTimeDelayAndDataCompleteOutputs( *l_pProduct, rProcessed );
 
 					break;
 				}
@@ -281,7 +282,7 @@ HRESULT SVPPQObject::ProcessTimeDelayOutputs( SVProductInfoStruct& p_rProduct )
 	return l_Status;
 }
 
-HRESULT SVPPQObject::ProcessTimeDelayAndDataCompleteOutputs( SVProductInfoStruct& p_rProduct, bool& p_rProcessed  )
+HRESULT SVPPQObject::ProcessTimeDelayAndDataCompleteOutputs( SVProductInfoStruct& p_rProduct, bool& rProcessed  )
 {
 	HRESULT l_Status = S_OK;
 
@@ -295,7 +296,7 @@ HRESULT SVPPQObject::ProcessTimeDelayAndDataCompleteOutputs( SVProductInfoStruct
 
 		m_oOutputsDelayQueue.AddHead( p_rProduct.ProcessCount() );
 
-		p_rProcessed = false;
+		rProcessed = false;
 	}
 
 	return l_Status;
@@ -419,7 +420,7 @@ void SVPPQObject::init()
 	m_childObjectsForFillChildObjectList = m_childObjects;
 }
 
-HRESULT SVPPQObject::GetChildObject( SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index ) const
+HRESULT SVPPQObject::GetChildObject(SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index) const
 {
 	HRESULT l_Status = SVObjectClass::GetChildObject( rpObject, rNameInfo, Index );
 
@@ -617,12 +618,6 @@ BOOL SVPPQObject::Rebuild()
 	hr = TheSVDataManager.CreateManagedIndexArray( m_pResultImagePublishedCircleBuffer, bName, TheSVObserverApp.GetSourceImageDepth() );
 	if( S_OK != hr ) { return FALSE; }
 
-	for( i = 0; i < static_cast< long >( m_ppPPQPositions.size() ); ++i )
-	{
-		RecycleProductInfo( m_ppPPQPositions.GetProductAt( i ) );
-
-		m_ppPPQPositions.SetProductAt( i, nullptr );
-	}
 
 	SVGuidSVCameraInfoStructMap l_CameraInfos;
 
@@ -1376,7 +1371,8 @@ void SVPPQObject::GoOnline()
 	if( nullptr != pValueObject )
 	{
 		_variant_t Value( false );
-		pValueObject->setValue( Value, 1 );
+		pValueObject->setValue(Value);
+		pValueObject->CopyValue(cPpqDefaultIndex);
 		m_TriggerToggle = static_cast<bool> (Value);
 	}// end if
 
@@ -1389,7 +1385,8 @@ void SVPPQObject::GoOnline()
 	if( nullptr != pValueObject )
 	{
 		_variant_t Value( false );
-		pValueObject->setValue( Value, 1 );
+		pValueObject->setValue( Value );
+		pValueObject->CopyValue(cPpqDefaultIndex);
 		m_OutputToggle =  static_cast<bool> (Value);
 	}// end if
 
@@ -1838,7 +1835,8 @@ BOOL SVPPQObject::AssignInputs( const SVVariantBoolVector& rInputValues )
 					SvOi::IValueObject* pValueObject = l_pIOEntry.m_IOEntryPtr->getValueObject();
 					if( nullptr != pValueObject )
 					{
-						pValueObject->setValue( rInputValues[ i ].first, lDataIndex );
+						pValueObject->setValue(rInputValues[i].first);
+						pValueObject->CopyValue(lDataIndex);
 					}
 					l_pIOEntry.m_EntryValid = rInputValues[ i ].second;
 				}
@@ -2084,20 +2082,20 @@ BOOL SVPPQObject::AddToAvailableInputs(SVIOObjectType eType, const SVString& rNa
 		{
 			// new variant value object for Remote Inputs.
 			SVVariantValueObjectClass* pRemoteObject = new SVVariantValueObjectClass();
-			pRemoteObject->setBucketized( true );
+			pRemoteObject->setBucketized(true);
 			pObject = dynamic_cast<SVObjectClass*> (pRemoteObject);
 		}
 		else
 		{
 			// new Bool Value Object for Digital Inputs.
 			SVBoolValueObjectClass* pDigitalObject = new SVBoolValueObjectClass();
-			pDigitalObject->setBucketized( true );
+			pDigitalObject->setBucketized(true);
 			pObject = dynamic_cast<SVObjectClass*> (pDigitalObject);
 		}
 
 		pObject->SetName( rName.c_str() );
 		pObject->SetObjectOwner(this);
-		pObject->SetObjectDepth( GetPPQLength() + g_lPPQExtraBufferSize );
+		pObject->SetObjectDepth(GetPPQLength() + g_lPPQExtraBufferSize);
 		pObject->SetObjectAttributesAllowed(SvOi::SV_SELECTABLE_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute);
 		pObject->ResetObject();
 
@@ -2261,7 +2259,7 @@ bool SVPPQObject::AlwaysWriteOutputs() const
 	return (m_conditionalOutputName == PPQ_CONDITIONAL_OUTPUT_ALWAYS);
 }
 
-bool SVPPQObject::EvaluateConditionalOutput(long dataIndex) const
+bool SVPPQObject::EvaluateConditionalOutput(long DataIndex) const
 {
 	bool bRetVal = AlwaysWriteOutputs();
 	if (!bRetVal)
@@ -2271,7 +2269,7 @@ bool SVPPQObject::EvaluateConditionalOutput(long dataIndex) const
 		if (S_OK == hr && nullptr != pObject )
 		{
 			double Value;
-			hr = pObject->getValue( Value, dataIndex );
+			hr = pObject->getValue(Value, -1, DataIndex);
 			if (S_OK == hr )
 			{
 				bRetVal = (std::numeric_limits<double>::epsilon() < Value ) ? true : false;
@@ -2329,34 +2327,29 @@ BOOL SVPPQObject::WriteOutputs( SVProductInfoStruct *pProduct )
 
 	if( 0 <= DataIndex )
 	{
-		m_voACK.GetValue( bACK, DataIndex );
+		m_voACK.GetValue(bACK, -1, DataIndex);
 
-		m_voNAK.GetValue( bNAK, DataIndex );
+		m_voNAK.GetValue(bNAK, -1, DataIndex);
 
 		// First, write the trigger toggle output if it is okay
 		if( !( m_pTriggerToggle.empty() ) && nullptr != m_pTriggerToggle->getValueObject() )
 		{
-			m_pTriggerToggle->getValueObject()->setValue( _variant_t(bTriggerToggle), DataIndex );
+			m_pTriggerToggle->getValueObject()->setValue(_variant_t(bTriggerToggle));
+			m_pTriggerToggle->getValueObject()->CopyValue(DataIndex);
 		}
 
 		// Toggle the Output Toggle if it is okay
 		if( !( m_pOutputToggle.empty() ) && nullptr != m_pOutputToggle->getValueObject() )
 		{
-			m_pOutputToggle->getValueObject()->setValue( _variant_t(m_OutputToggle), DataIndex );
+			m_pOutputToggle->getValueObject()->setValue(_variant_t(m_OutputToggle));
+			m_pOutputToggle->getValueObject()->CopyValue(DataIndex);
 		}
 	}
 	else
 	{
 		if( S_OK == TheSVDataManager.GetNextAvailableBufferIndex( m_pResultDataCircleBuffer, SV_PPQ, Handle )  )
 		{
-			DataIndex = Handle.GetIndex();
-
-			m_voNotInspected.SetValue( BOOL(true), DataIndex );
-			m_voNAK.SetValue( BOOL(true), DataIndex  );
-			m_voMasterWarning.SetValue(	BOOL(true), DataIndex  );
-			m_voMasterFault.SetValue( BOOL(true), DataIndex  );
-			m_voDataValid.SetValue( BOOL(false), DataIndex );
-			m_voACK.SetValue( BOOL(false), DataIndex );
+			ResetOutputValueObjects(Handle.GetIndex());
 		}
 
 		// Caution! enabling the logging here will cause thread contention because
@@ -2377,7 +2370,7 @@ BOOL SVPPQObject::WriteOutputs( SVProductInfoStruct *pProduct )
 
 
 			BOOL bValue=false;
-			m_voDataValid.GetValue( bValue, DataIndex );
+			m_voDataValid.GetValue(bValue, -1, DataIndex);
 			if( 0 == m_DataValidDelay )
 			{
 				if( !m_pDataValid.empty() )
@@ -2562,17 +2555,17 @@ BOOL SVPPQObject::AddDefaultOutputs()
 	// Setup PPQ variables that are available as outputs
 	SVIOEntryHostStructPtr pIOEntry;
 	SVString Name;
-	BOOL	bFound;
+	bool	bFound;
 	size_t	l;
 
 	Name = _T( "Not Inspected" );
-	for( l = 0, bFound = FALSE; !bFound && l < m_AllOutputs.size(); l++ )
+	for( l = 0, bFound = false; !bFound && l < m_AllOutputs.size(); l++ )
 	{
 		pIOEntry = m_AllOutputs[l];
 
 		if( Name == pIOEntry->getObject()->GetName() )
 		{
-			bFound = TRUE;
+			bFound = true;
 			break;
 		}// end if
 	}// end for
@@ -2583,7 +2576,8 @@ BOOL SVPPQObject::AddDefaultOutputs()
 	m_voNotInspected.SetObjectDepth( GetPPQLength() + g_lPPQExtraBufferSize );
 	m_voNotInspected.ResetObject();
 	m_voNotInspected.SetDefaultValue( BOOL(true), true );
-	m_voNotInspected.SetValue( BOOL(true), 1 );
+	m_voNotInspected.SetValue(BOOL(true));
+	m_voNotInspected.CopyValue(cPpqDefaultIndex);
 
 	if( !bFound )
 	{
@@ -2602,7 +2596,8 @@ BOOL SVPPQObject::AddDefaultOutputs()
 	m_voNAK.SetObjectDepth( GetPPQLength() + g_lPPQExtraBufferSize );
 	m_voNAK.ResetObject();
 	m_voNAK.SetDefaultValue( BOOL(true), true );
-	m_voNAK.SetValue( BOOL(true), 1 );
+	m_voNAK.SetValue(BOOL(true));
+	m_voNAK.CopyValue(cPpqDefaultIndex);
 
 	if( !bFound )
 	{
@@ -2621,7 +2616,8 @@ BOOL SVPPQObject::AddDefaultOutputs()
 	m_voMasterWarning.SetObjectDepth( GetPPQLength() + g_lPPQExtraBufferSize );
 	m_voMasterWarning.ResetObject();
 	m_voMasterWarning.SetDefaultValue( BOOL(true), true );
-	m_voMasterWarning.SetValue( BOOL(true), 1 );
+	m_voMasterWarning.SetValue(BOOL(true));
+	m_voMasterWarning.CopyValue(cPpqDefaultIndex);
 
 	if( !bFound )
 	{
@@ -2640,7 +2636,8 @@ BOOL SVPPQObject::AddDefaultOutputs()
 	m_voMasterFault.SetObjectDepth( GetPPQLength() + g_lPPQExtraBufferSize );
 	m_voMasterFault.ResetObject();
 	m_voMasterFault.SetDefaultValue( BOOL(true), true );
-	m_voMasterFault.SetValue( BOOL(true), 1 );
+	m_voMasterFault.SetValue(BOOL(true));
+	m_voMasterFault.CopyValue(cPpqDefaultIndex);
 
 	if( !bFound )
 	{
@@ -2659,7 +2656,8 @@ BOOL SVPPQObject::AddDefaultOutputs()
 	m_voDataValid.SetObjectDepth( GetPPQLength() + g_lPPQExtraBufferSize );
 	m_voDataValid.ResetObject();
 	m_voDataValid.SetDefaultValue( BOOL(false), true );
-	m_voDataValid.SetValue( BOOL(false), 1 );
+	m_voDataValid.SetValue(BOOL(false));
+	m_voDataValid.CopyValue(cPpqDefaultIndex);
 
 	if( !bFound )
 	{
@@ -2678,7 +2676,8 @@ BOOL SVPPQObject::AddDefaultOutputs()
 	m_voACK.SetObjectDepth( GetPPQLength() + g_lPPQExtraBufferSize );
 	m_voACK.ResetObject();
 	m_voACK.SetDefaultValue( BOOL(false), true );
-	m_voACK.SetValue( BOOL(false), 1 );
+	m_voACK.SetValue(BOOL(false));
+	m_voACK.CopyValue(cPpqDefaultIndex);
 
 	if( !bFound )
 	{
@@ -2697,7 +2696,8 @@ BOOL SVPPQObject::AddDefaultOutputs()
 	m_voTriggerToggle.SetObjectDepth( GetPPQLength() + g_lPPQExtraBufferSize );
 	m_voTriggerToggle.ResetObject();
 	m_voTriggerToggle.SetDefaultValue( BOOL(true), true );
-	m_voTriggerToggle.SetValue( BOOL(true), 1 );
+	m_voTriggerToggle.SetValue(BOOL(true));
+	m_voTriggerToggle.CopyValue(cPpqDefaultIndex);
 	m_TriggerToggle = true;
 
 	if( !bFound )
@@ -2717,7 +2717,8 @@ BOOL SVPPQObject::AddDefaultOutputs()
 	m_voOutputToggle.SetObjectDepth( GetPPQLength() + g_lPPQExtraBufferSize );
 	m_voOutputToggle.ResetObject();
 	m_voOutputToggle.SetDefaultValue( BOOL(true), true );
-	m_voOutputToggle.SetValue( BOOL(true), 1 );
+	m_voOutputToggle.SetValue(BOOL(true));
+	m_voOutputToggle.CopyValue(cPpqDefaultIndex);
 	m_OutputToggle = true;
 
 	if( !bFound )
@@ -2738,7 +2739,8 @@ BOOL SVPPQObject::AddDefaultOutputs()
 	m_voTriggerCount.SetObjectDepth( GetPPQLength() + g_lPPQExtraBufferSize );
 	m_voTriggerCount.ResetObject();
 	m_voTriggerCount.SetDefaultValue( 0L, true );
-	m_voTriggerCount.SetValue( 0L, 1 );
+	m_voTriggerCount.SetValue(0L);
+	m_voTriggerCount.CopyValue(cPpqDefaultIndex);
 
 	BasicValueObjectPtr pPpqLength =  m_PpqValues.getValueObject( SvOl::FqnPpqLength );
 	SVGUID PpqLengthUid = PpqBaseLengthUidGuid;
@@ -2859,12 +2861,8 @@ BOOL SVPPQObject::InitializeProduct( SVProductInfoStruct* p_pNewProduct, const S
 	// Set all IO input objects for this product to use the new input data index
 
 	// Reset all IO output objects for this product to use the new output data index
-	m_voNotInspected.SetValue( BOOL(true), p_pNewProduct->oPPQInfo.m_ResultDataDMIndexHandle.GetIndex() );
-	m_voNAK.SetValue( BOOL(true),	p_pNewProduct->oPPQInfo.m_ResultDataDMIndexHandle.GetIndex() );
-	m_voMasterWarning.SetValue( BOOL(true), p_pNewProduct->oPPQInfo.m_ResultDataDMIndexHandle.GetIndex() );
-	m_voMasterFault.SetValue( BOOL(true), p_pNewProduct->oPPQInfo.m_ResultDataDMIndexHandle.GetIndex() );
-	m_voDataValid.SetValue(	BOOL(false), p_pNewProduct->oPPQInfo.m_ResultDataDMIndexHandle.GetIndex() );
-	m_voACK.SetValue( BOOL(false), p_pNewProduct->oPPQInfo.m_ResultDataDMIndexHandle.GetIndex() );
+	ResetOutputValueObjects(p_pNewProduct->oPPQInfo.m_ResultDataDMIndexHandle.GetIndex());
+
 	// End preparing the IO
 	// ************************************************************************
 
@@ -3171,7 +3169,6 @@ bool SVPPQObject::AddResultsToPPQ( long p_PPQIndex )
 
 	if( bValid )
 	{
-		long lIndex = -1;
 		long oState = 0x0000;
 
 		SVGUIDSVInspectionInfoStructMap::iterator l_Iter = pProduct->m_svInspectionInfos.begin();
@@ -3183,48 +3180,46 @@ bool SVPPQObject::AddResultsToPPQ( long p_PPQIndex )
 			++l_Iter;
 		}// end for
 
-		lIndex = pProduct->oPPQInfo.m_ResultDataDMIndexHandle.GetIndex();
-
 		// Set the value objects depending on the inspection state result
 		if( PRODUCT_INSPECTION_NOT_RUN & oState )
 		{
 			if( PRODUCT_NOT_INSPECTED & oState )
 			{
-				m_voACK.SetValue( BOOL(false), lIndex );
-				m_voNAK.SetValue( BOOL(true), lIndex );
-				m_voMasterFault.SetValue( BOOL(true), lIndex );
-				m_voMasterWarning.SetValue( BOOL(true), lIndex );
-				m_voNotInspected.SetValue( BOOL(true), lIndex );
+				m_voACK.SetValue(BOOL(false));
+				m_voNAK.SetValue(BOOL(true));
+				m_voMasterFault.SetValue(BOOL(true));
+				m_voMasterWarning.SetValue(BOOL(true));
+				m_voNotInspected.SetValue(BOOL(true));
 
 				pProduct->m_ProductState += _T( "|NI" );
 			}// end if
 			else if( PRODUCT_NOT_ACKNOWLEDGED & oState )
 			{
-				m_voACK.SetValue( BOOL(false), lIndex );
-				m_voNAK.SetValue( BOOL(true), lIndex );
-				m_voMasterFault.SetValue( BOOL(true), lIndex );
-				m_voMasterWarning.SetValue( BOOL(true), lIndex );
-				m_voNotInspected.SetValue( BOOL(true), lIndex );
+				m_voACK.SetValue(BOOL(false));
+				m_voNAK.SetValue(BOOL(true));
+				m_voMasterFault.SetValue(BOOL(true));
+				m_voMasterWarning.SetValue(BOOL(true));
+				m_voNotInspected.SetValue(BOOL(true));
 
 				pProduct->m_ProductState += _T( "|NAK" );
 			}// end else if
 			else if( PRODUCT_INSPECTION_DISABLED & oState )
 			{
-				m_voACK.SetValue( BOOL(true), lIndex );
-				m_voNAK.SetValue( BOOL(false), lIndex );
-				m_voMasterFault.SetValue( BOOL(true), lIndex );
-				m_voMasterWarning.SetValue( BOOL(true), lIndex );
-				m_voNotInspected.SetValue( BOOL(true), lIndex );
+				m_voACK.SetValue(BOOL(true));
+				m_voNAK.SetValue(BOOL(false));
+				m_voMasterFault.SetValue(BOOL(true));
+				m_voMasterWarning.SetValue(BOOL(true));
+				m_voNotInspected.SetValue(BOOL(true));
 
 				pProduct->m_ProductState += _T( "|DISABLED" );
 			}// end else if
 			else
 			{
-				m_voACK.SetValue( BOOL(false), lIndex );
-				m_voNAK.SetValue( BOOL(true), lIndex );
-				m_voMasterFault.SetValue( BOOL(true), lIndex );
-				m_voMasterWarning.SetValue( BOOL(true), lIndex );
-				m_voNotInspected.SetValue( BOOL(true), lIndex );
+				m_voACK.SetValue(BOOL(false));
+				m_voNAK.SetValue(BOOL(true));
+				m_voMasterFault.SetValue(BOOL(true));
+				m_voMasterWarning.SetValue(BOOL(true));
+				m_voNotInspected.SetValue(BOOL(true));
 
 				pProduct->m_ProductState += _T( "|E_UNKNOWN" );
 			}// end else
@@ -3233,45 +3228,51 @@ bool SVPPQObject::AddResultsToPPQ( long p_PPQIndex )
 		{
 			if( PRODUCT_INSPECTION_FAILED & oState )
 			{
-				m_voACK.SetValue( BOOL(true), lIndex );
-				m_voNAK.SetValue( BOOL(false), lIndex );
-				m_voMasterFault.SetValue( BOOL(true), lIndex );
-				m_voMasterWarning.SetValue( BOOL(true), lIndex );
-				m_voNotInspected.SetValue( BOOL(false), lIndex );
+				m_voACK.SetValue(BOOL(true));
+				m_voNAK.SetValue(BOOL(false));
+				m_voMasterFault.SetValue(BOOL(true));
+				m_voMasterWarning.SetValue(BOOL(true));
+				m_voNotInspected.SetValue(BOOL(false));
 
 				pProduct->m_ProductState += _T( "|FAILED" );
 			}// end if
 			else if( PRODUCT_INSPECTION_WARNING & oState )
 			{
-				m_voACK.SetValue( BOOL(true), lIndex );
-				m_voNAK.SetValue( BOOL(false), lIndex );
-				m_voMasterFault.SetValue( BOOL(false), lIndex );
-				m_voMasterWarning.SetValue( BOOL(true), lIndex );
-				m_voNotInspected.SetValue( BOOL(false), lIndex );
+				m_voACK.SetValue(BOOL(true));
+				m_voNAK.SetValue(BOOL(false));
+				m_voMasterFault.SetValue(BOOL(false));
+				m_voMasterWarning.SetValue(BOOL(true));
+				m_voNotInspected.SetValue(BOOL(false));
 
 				pProduct->m_ProductState += _T( "|WARNING" );
 			}// end else if
 			else if( PRODUCT_INSPECTION_PASSED & oState )
 			{
-				m_voACK.SetValue( BOOL(true), lIndex );
-				m_voNAK.SetValue( BOOL(false), lIndex );
-				m_voMasterFault.SetValue( BOOL(false), lIndex );
-				m_voMasterWarning.SetValue( BOOL(false), lIndex );
-				m_voNotInspected.SetValue( BOOL(false), lIndex );
+				m_voACK.SetValue(BOOL(true));
+				m_voNAK.SetValue(BOOL(false));
+				m_voMasterFault.SetValue(BOOL(false));
+				m_voMasterWarning.SetValue(BOOL(false));
+				m_voNotInspected.SetValue(BOOL(false));
 
 				pProduct->m_ProductState += _T( "|PASSED" );
 			}// end else if
 			else
 			{
-				m_voACK.SetValue( BOOL(false), lIndex );
-				m_voNAK.SetValue( BOOL(true), lIndex );
-				m_voMasterFault.SetValue( BOOL(true), lIndex );
-				m_voMasterWarning.SetValue( BOOL(true), lIndex );
-				m_voNotInspected.SetValue( BOOL(true), lIndex );
+				m_voACK.SetValue(BOOL(false));
+				m_voNAK.SetValue(BOOL(true));
+				m_voMasterFault.SetValue(BOOL(true));
+				m_voMasterWarning.SetValue(BOOL(true));
+				m_voNotInspected.SetValue(BOOL(true));
 
 				pProduct->m_ProductState += _T( "|S_UNKNOWN" );
 			}// end else
 		}// end else
+		long lIndex = pProduct->oPPQInfo.m_ResultDataDMIndexHandle.GetIndex();
+		m_voACK.CopyValue(lIndex);
+		m_voNAK.CopyValue(lIndex);
+		m_voMasterFault.CopyValue(lIndex);
+		m_voMasterWarning.CopyValue(lIndex);
+		m_voNotInspected.CopyValue(lIndex);
 
 		SVGUIDSVInspectionInfoStructMap::iterator l_InspectIter = pProduct->m_svInspectionInfos.begin();
 
@@ -3283,7 +3284,8 @@ bool SVPPQObject::AddResultsToPPQ( long p_PPQIndex )
 		}// end for
 
 		// Set the Data Valid to true
-		m_voDataValid.SetValue( bValid, lIndex );
+		m_voDataValid.SetValue(bValid);
+		m_voDataValid.CopyValue(lIndex);
 	}
 
 	return TRUE;
@@ -3455,12 +3457,7 @@ BOOL SVPPQObject::RecycleProductInfo( SVProductInfoStruct *pProduct )
 	{
 		if( -1 < pProduct->oPPQInfo.m_ResultDataDMIndexHandle.GetIndex() )
 		{
-			m_voNotInspected.SetValue( BOOL(true), pProduct->oPPQInfo.m_ResultDataDMIndexHandle.GetIndex() );
-			m_voNAK.SetValue( BOOL(true), pProduct->oPPQInfo.m_ResultDataDMIndexHandle.GetIndex() );
-			m_voMasterWarning.SetValue( BOOL(true), pProduct->oPPQInfo.m_ResultDataDMIndexHandle.GetIndex() );
-			m_voMasterFault.SetValue( BOOL(true), pProduct->oPPQInfo.m_ResultDataDMIndexHandle.GetIndex() );
-			m_voDataValid.SetValue( BOOL(false), pProduct->oPPQInfo.m_ResultDataDMIndexHandle.GetIndex() );
-			m_voACK.SetValue( BOOL(false), pProduct->oPPQInfo.m_ResultDataDMIndexHandle.GetIndex() );
+			ResetOutputValueObjects(pProduct->oPPQInfo.m_ResultDataDMIndexHandle.GetIndex());
 		}
 
 		pProduct->InitProductInfo();
@@ -4123,7 +4120,7 @@ HRESULT SVPPQObject::NotifyProcessTimerOutputs()
 	return l_Status;
 }
 
-HRESULT SVPPQObject::ProcessTrigger( bool& p_rProcessed )
+HRESULT SVPPQObject::ProcessTrigger( bool& rProcessed )
 {
 	HRESULT l_Status = S_OK;
 
@@ -4133,9 +4130,9 @@ HRESULT SVPPQObject::ProcessTrigger( bool& p_rProcessed )
 	/// (the ProcessCount of which will be added to m_oNotifyInspectionsSet).
 	/// In NextTriggerMode the results of the oldest product will be output through IndexPPQ().
 	/// m_CameraInputData will contain trigger-data including the data index 
-	p_rProcessed = ( 0 < m_oTriggerQueue.size() );
+	rProcessed = ( 0 < m_oTriggerQueue.size() );
 
-	if( p_rProcessed )
+	if( rProcessed )
 	{
 		SVTriggerQueueElement poppedFromQueue;
 
@@ -4151,13 +4148,14 @@ HRESULT SVPPQObject::ProcessTrigger( bool& p_rProcessed )
 					{
 						long lDataIndex = pProduct->oPPQInfo.m_ResultDataDMIndexHandle.GetIndex();
 
-						m_voTriggerCount.SetValue( poppedFromQueue.m_TriggerInfo.lTriggerCount, lDataIndex );
+						m_voTriggerCount.SetValue( poppedFromQueue.m_TriggerInfo.lTriggerCount );
+						m_voTriggerCount.CopyValue(lDataIndex);
 
 						m_oNotifyInspectionsSet.insert( pProduct->ProcessCount() );
 
 						if (!poppedFromQueue.m_TriggerInfo.m_Data.empty())
 						{
-							m_CameraInputData.Set(lDataIndex, boost::any_cast<SvTh::SVCameraTriggerData::NameVariantMap>(poppedFromQueue.m_TriggerInfo.m_Data));
+							m_CameraInputData.Set(boost::any_cast<SvTh::SVCameraTriggerData::NameVariantMap>(poppedFromQueue.m_TriggerInfo.m_Data));
 						}
 						// Get Shared Memory Slot
 						if (HasActiveMonitorList())
@@ -4198,12 +4196,12 @@ HRESULT SVPPQObject::ProcessTrigger( bool& p_rProcessed )
 		{
 			l_Status = E_FAIL;
 		}
-	} // if( p_rProcessed )
+	} // if( rProcessed )
 
 	return l_Status;
 }
 
-HRESULT SVPPQObject::ProcessNotifyInspections( bool& p_rProcessed )
+HRESULT SVPPQObject::ProcessNotifyInspections( bool& rProcessed )
 {
 	/// Does nothing if the trigger queue is nonempty or the m_oNotifyInspectionsSet is empty.
 	/// Otherwise works through m_oNotifyInspectionsSet trying to notify one (and only one) inspection.
@@ -4211,9 +4209,9 @@ HRESULT SVPPQObject::ProcessNotifyInspections( bool& p_rProcessed )
 
 	size_t	triggerQueueSize = m_oTriggerQueue.size();
 
-	p_rProcessed = ( 0 <  triggerQueueSize );
+	rProcessed = ( 0 <  triggerQueueSize );
 
-	if( ! p_rProcessed ) // if there are no triggers remaining on the queue.
+	if( ! rProcessed ) // if there are no triggers remaining on the queue.
 	{
 
 		// Currently, 
@@ -4221,13 +4219,13 @@ HRESULT SVPPQObject::ProcessNotifyInspections( bool& p_rProcessed )
 		// SVPPQOjbect::ProcessTrigger (), and
 		// SVPPQOjbect::ProcessCameraInputs ()
 		// can add items to m_oNotifyInspectionSet.
-		p_rProcessed = ( 0 < m_oNotifyInspectionsSet.size() );
+		rProcessed = ( 0 < m_oNotifyInspectionsSet.size() );
 
-		if( p_rProcessed ) // if there is a request to notify.
+		if( rProcessed ) // if there is a request to notify.
 		{
 			// offset is from the beginning of the PPQ.  
 			long l_Offset = -1;
-			p_rProcessed = false;
+			rProcessed = false;
 
 			SVProcessCountSet::iterator l_Iter( m_oNotifyInspectionsSet.begin() );
 
@@ -4240,9 +4238,9 @@ HRESULT SVPPQObject::ProcessNotifyInspections( bool& p_rProcessed )
 
 				m_ppPPQPositions.GetIndexByTriggerCount( l_Offset, l_ProcessCount );
 
-				p_rProcessed = ( 0 <= l_Offset && l_Offset < static_cast< long >( m_ppPPQPositions.size() ) );
+				rProcessed = ( 0 <= l_Offset && l_Offset < static_cast< long >( m_ppPPQPositions.size() ) );
 
-				if (true == p_rProcessed) // if offset for element is within PPQ.
+				if (true == rProcessed) // if offset for element is within PPQ.
 				{
 					l_Status = NotifyInspections( l_Offset );
 
@@ -4259,7 +4257,7 @@ HRESULT SVPPQObject::ProcessNotifyInspections( bool& p_rProcessed )
 						// because inputs or image were not ready.  
 						// proceed to next inspection.
 						l_Iter++;
-						p_rProcessed = false;
+						rProcessed = false;
 						l_Status = S_OK;
 					}
 				}
@@ -4271,7 +4269,7 @@ HRESULT SVPPQObject::ProcessNotifyInspections( bool& p_rProcessed )
 					l_Iter = m_oNotifyInspectionsSet.erase( l_Iter );
 				}
 
-			} while ((true != p_rProcessed) && 
+			} while ((true != rProcessed) && 
 				 (l_Iter != m_oNotifyInspectionsSet.end ()) &&
 				 SUCCEEDED (l_Status));
 
@@ -4283,7 +4281,7 @@ HRESULT SVPPQObject::ProcessNotifyInspections( bool& p_rProcessed )
 	return l_Status;
 }
 
-HRESULT SVPPQObject::ProcessInspections( bool& p_rProcessed )
+HRESULT SVPPQObject::ProcessInspections( bool& rProcessed )
 	/// Does nothing if there is at least one trigger in the trigger queue.
 	/// Otherwise, extracts all the GUIDs from m_ProcessInspectionsSet and starts the 
 	/// corresponding inspections via StartInspection().
@@ -4291,13 +4289,13 @@ HRESULT SVPPQObject::ProcessInspections( bool& p_rProcessed )
 {
 	HRESULT l_Status = S_OK;
 
-	p_rProcessed = ( 0 < m_oTriggerQueue.size() );
+	rProcessed = ( 0 < m_oTriggerQueue.size() );
 
-	if( ! p_rProcessed )
+	if( ! rProcessed )
 	{
-		p_rProcessed = ( 0 < m_ProcessInspectionsSet.size() );
+		rProcessed = ( 0 < m_ProcessInspectionsSet.size() );
 
-		if( p_rProcessed )
+		if( rProcessed )
 		{
 			SVGuidSet::iterator l_Iter( m_ProcessInspectionsSet.begin() );
 
@@ -4312,7 +4310,7 @@ HRESULT SVPPQObject::ProcessInspections( bool& p_rProcessed )
 	return l_Status;
 }
 
-HRESULT SVPPQObject::ProcessResetOutputs( bool& p_rProcessed )
+HRESULT SVPPQObject::ProcessResetOutputs( bool& rProcessed )
 	/// Removes the "head process count" from the outputs reset queue
 	/// and determines from it the corresponding product pointer.
 	/// If there is a new "head process count" in the outputs reset queue:
@@ -4322,13 +4320,13 @@ HRESULT SVPPQObject::ProcessResetOutputs( bool& p_rProcessed )
 {
 	HRESULT l_Status = S_OK;
 
-	p_rProcessed = ( 0 < m_oTriggerQueue.size() );
+	rProcessed = ( 0 < m_oTriggerQueue.size() );
 
-	if( ! p_rProcessed )
+	if( ! rProcessed )
 	{
-		p_rProcessed = ( 0 < m_oOutputsResetQueue.GetCount() );
+		rProcessed = ( 0 < m_oOutputsResetQueue.GetCount() );
 
-		if( p_rProcessed )
+		if( rProcessed )
 		{
 			SVProductInfoStruct* l_pProduct = nullptr;
 
@@ -4382,9 +4380,9 @@ HRESULT SVPPQObject::ProcessResetOutputs( bool& p_rProcessed )
 				}
 			}
 
-			p_rProcessed = ( nullptr != l_pProduct );
+			rProcessed = ( nullptr != l_pProduct );
 
-			if( p_rProcessed )
+			if( rProcessed )
 			{
 				ResetOutputs();
 			}
@@ -4483,7 +4481,7 @@ HRESULT SVPPQObject::ProcessDataValidDelay( bool& rProcessed )
 	return Status;
 }
 
-HRESULT SVPPQObject::ProcessCameraResponses( bool& p_rProcessed )
+HRESULT SVPPQObject::ProcessCameraResponses( bool& rProcessed )
 	/// If camera responses pending AND trigger queue empty:
 	/// Removes camera responses from m_PendingCameraResponses and tries to process them
 	/// until the first processing succeeds.
@@ -4493,13 +4491,13 @@ HRESULT SVPPQObject::ProcessCameraResponses( bool& p_rProcessed )
 	HRESULT l_Status = S_OK;
 	size_t	triggerQueueSize = 0;
 	size_t	pendingCameraQueueSize = m_PendingCameraResponses.size();
-	p_rProcessed = false;
+	rProcessed = false;
 
 	if( 0 < pendingCameraQueueSize)
 	{
 		SVCameraInfoMap::const_iterator l_CameraIter = m_Cameras.begin();
 
-		while( S_OK == l_Status  && l_CameraIter != m_Cameras.end() && ! p_rProcessed )
+		while( S_OK == l_Status  && l_CameraIter != m_Cameras.end() && ! rProcessed )
 		{
 			SVCameraQueueElement l_Data;
 			triggerQueueSize = m_oTriggerQueue.size();
@@ -4517,7 +4515,7 @@ HRESULT SVPPQObject::ProcessCameraResponses( bool& p_rProcessed )
 
 					SVObjectManagerClass::Instance().DecrementPendingImageIndicator();
 
-					p_rProcessed = ( S_OK == ProcessCameraResponse( l_Data )  );
+					rProcessed = ( S_OK == ProcessCameraResponse( l_Data )  );
 				}
 			}
 
@@ -4525,18 +4523,18 @@ HRESULT SVPPQObject::ProcessCameraResponses( bool& p_rProcessed )
 		}
 	} // if( 0 < m_PendingCameraResponses.size() )
 
-	while( S_OK == l_Status  && 0 < m_CameraResponseQueue.GetCount() && ! p_rProcessed )
+	while( S_OK == l_Status  && 0 < m_CameraResponseQueue.GetCount() && ! rProcessed )
 	{
 		SVCameraQueueElement l_Data;
 
 		triggerQueueSize = m_oTriggerQueue.size();
-		p_rProcessed = ( 0 < m_oTriggerQueue.size() );
+		rProcessed = ( 0 < m_oTriggerQueue.size() );
 
 		if( 0 >= triggerQueueSize )
 		{
 			if( m_CameraResponseQueue.RemoveHead( &l_Data ) )
 			{
-				p_rProcessed = ( S_OK == ProcessCameraResponse( l_Data )  );
+				rProcessed = ( S_OK == ProcessCameraResponse( l_Data )  );
 			}
 			else
 			{
@@ -4550,7 +4548,7 @@ HRESULT SVPPQObject::ProcessCameraResponses( bool& p_rProcessed )
 	return l_Status;
 }
 
-HRESULT SVPPQObject::ProcessCameraInputs( bool& p_rProcessed )
+HRESULT SVPPQObject::ProcessCameraInputs( bool& rProcessed )
 	/// If possible, removes the first item from m_oCamerasQueue and gets its product information.
 	/// Sets the product information's bFinishAcquisition member to true.
 	/// Adds the product's process count to m_oNotifyInspectionsSet.
@@ -4560,16 +4558,16 @@ HRESULT SVPPQObject::ProcessCameraInputs( bool& p_rProcessed )
 	long	triggerCount = -1;
 	long	tmpProcessCount = -1;
 
-	p_rProcessed = false; // p_rProcessed = ( 0 < m_oTriggerQueue.size() );
+	rProcessed = false; // rProcessed = ( 0 < m_oTriggerQueue.size() );
 
 	// if trigger queue size <= 0
-	if( ! p_rProcessed )
+	if( ! rProcessed )
 	{
 
 		cameraCount = m_oCamerasQueue.GetCount();
-		p_rProcessed = ( 0 <  cameraCount);
+		rProcessed = ( 0 <  cameraCount);
 
-		if( p_rProcessed )
+		if( rProcessed )
 		{
 			SVProductInfoStruct* pProduct = nullptr;
 			long l_PPQIndex = static_cast<long>(m_ppPPQPositions.size());
@@ -4595,9 +4593,9 @@ HRESULT SVPPQObject::ProcessCameraInputs( bool& p_rProcessed )
 				}
 			}
 
-			p_rProcessed = ( nullptr != pProduct );
+			rProcessed = ( nullptr != pProduct );
 
-			if( p_rProcessed )
+			if( rProcessed )
 			{
 				if( !( pProduct->bFinishAcquisition ) )
 				{
@@ -4614,14 +4612,14 @@ HRESULT SVPPQObject::ProcessCameraInputs( bool& p_rProcessed )
 				// Doesn't necessarilly have the correct Trigger Count yet.
 				tmpProcessCount = pProduct->ProcessCount ();
 				m_oNotifyInspectionsSet.insert( tmpProcessCount );
-			} // if( p_rProcessed )
-		} // if( p_rProcessed ) - if camera queue > 0
+			} // if( rProcessed )
+		} // if( rProcessed ) - if camera queue > 0
 	}
 
 	return l_Status;
 }
 
-HRESULT SVPPQObject::ProcessCompleteInspections( bool& p_rProcessed )
+HRESULT SVPPQObject::ProcessCompleteInspections( bool& rProcessed )
 	/// Does nothing unless m_oTriggerQueue is empty and m_oInspectionQueue is non-empty.
 	/// If so, gets all SVInspectionInfoPairs from m_oInspectionQueue and inserts all
 	/// inspection GUIDs into m_ProcessInspectionsSet.
@@ -4636,13 +4634,13 @@ HRESULT SVPPQObject::ProcessCompleteInspections( bool& p_rProcessed )
 {
 	HRESULT l_Status = S_OK;
 
-	p_rProcessed = ( 0 < m_oTriggerQueue.size() );
+	rProcessed = ( 0 < m_oTriggerQueue.size() );
 
-	if( ! p_rProcessed )
+	if( ! rProcessed )
 	{
-		p_rProcessed = ( 0 < m_oInspectionQueue.GetCount() );
+		rProcessed = ( 0 < m_oInspectionQueue.GetCount() );
 
-		if( p_rProcessed )
+		if( rProcessed )
 		{
 			SVInspectionInfoPair l_Info;
 			SVProductInfoStruct* l_pPPQProduct = nullptr;
@@ -4685,9 +4683,9 @@ HRESULT SVPPQObject::ProcessCompleteInspections( bool& p_rProcessed )
 				}
 			}
 
-			p_rProcessed = ( nullptr != l_pPPQProduct );
+			rProcessed = ( nullptr != l_pPPQProduct );
 
-			if( p_rProcessed )
+			if( rProcessed )
 			{
 				if( l_pPPQProduct->oOutputsInfo.m_EndProcess == 0.0 )
 				{
@@ -4745,7 +4743,7 @@ HRESULT SVPPQObject::ProcessCompleteInspections( bool& p_rProcessed )
 	return l_Status;
 }
 
-HRESULT SVPPQObject::ProcessProductRequests( bool& p_rProcessed )
+HRESULT SVPPQObject::ProcessProductRequests( bool& rProcessed )
 	/// Does nothing unless both m_oTriggerQueue and m_ProductRequests are nonempty.
 	/// Otherwise extracts the first SVProductRequestPair from m_ProductRequests,
 	/// gets the SVProductInfoStruct specified in the request.
@@ -4754,13 +4752,13 @@ HRESULT SVPPQObject::ProcessProductRequests( bool& p_rProcessed )
 {
 	HRESULT l_Status = S_OK;
 
-	p_rProcessed = ( 0 < m_oTriggerQueue.size() );
+	rProcessed = ( 0 < m_oTriggerQueue.size() );
 
-	if( ! p_rProcessed )
+	if( ! rProcessed )
 	{
-		p_rProcessed = ( 0 < m_ProductRequests.GetCount() );
+		rProcessed = ( 0 < m_ProductRequests.GetCount() );
 
-		if( p_rProcessed )
+		if( rProcessed )
 		{
 			SVProductRequestPair l_Request;
 
@@ -5243,6 +5241,22 @@ static long GetProductInfoInspectionIndex(const SVGUID& rGuid, const SVProductIn
 		index = it->second.m_lastInspectedSlot;
 	}
 	return index;
+}
+
+void SVPPQObject::ResetOutputValueObjects(long DataIndex)
+{
+	m_voNotInspected.SetValue(BOOL(true));
+	m_voNAK.SetValue(BOOL(true));
+	m_voMasterWarning.SetValue(BOOL(true));
+	m_voMasterFault.SetValue(BOOL(true));
+	m_voDataValid.SetValue(BOOL(false));
+	m_voACK.SetValue(BOOL(false));
+	m_voNotInspected.CopyValue(DataIndex);
+	m_voNAK.CopyValue(DataIndex);
+	m_voMasterWarning.CopyValue(DataIndex);
+	m_voMasterFault.CopyValue(DataIndex);
+	m_voDataValid.CopyValue(DataIndex);
+	m_voACK.CopyValue(DataIndex);
 }
 
 void SVPPQObject::SetRejectConditionList(const SVMonitorItemList& rRejectCondList)

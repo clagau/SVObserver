@@ -111,6 +111,22 @@ SVString SVDPointValueObjectClass::ConvertType2String( const SVDPointClass& rVal
 	return Result;
 }
 
+HRESULT SVDPointValueObjectClass::CopyToMemoryBlock(BYTE* pMemoryBlock, DWORD MemByteSize, int Index /* = -1*/) const
+{
+	HRESULT Result = ValidateMemoryBlockParameters(pMemoryBlock, MemByteSize, Index);
+
+	if (S_OK == Result)
+	{
+		SVDPointClass Value;
+		SVDPointValueObjectClass::GetValue(Value, Index);
+
+		memcpy(pMemoryBlock, &Value.x, sizeof(Value.x));
+		memcpy(pMemoryBlock + sizeof(Value.x), &Value.y, sizeof(Value.y));
+	}
+
+	return Result;
+}
+
 void SVDPointValueObjectClass::WriteValues(SVObjectWriter& rWriter)
 {
 	// Get the Data Values (Member Info, Values)
@@ -127,7 +143,7 @@ void SVDPointValueObjectClass::WriteValues(SVObjectWriter& rWriter)
 	{
 		SVDPointClass Value;
 		//Make sure this is not a derived virtual method which is called
-		SVDPointValueObjectClass::GetValue(Value, GetLastSetIndex(), i);
+		SVDPointValueObjectClass::GetValue(Value, i);
 		tmp = SvUl_SF::Format(_T("%lf, %lf"), Value.x, Value.y);
 		value.SetString(tmp.c_str());
 		list.push_back(value);

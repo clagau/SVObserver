@@ -39,10 +39,9 @@ LinkedValue::~LinkedValue()
 #pragma endregion Constructor
 
 #pragma region Public Methods
-HRESULT LinkedValue::GetValue( _variant_t& rValue,  int Bucket /*= -1*/, int Index /*= -1*/ ) const
+HRESULT LinkedValue::GetValue(_variant_t& rValue, int Index /*= -1*/,  int Bucket /*= -1*/) const
 {
-	Bucket = (-1 == Bucket) ? GetLastSetIndex() : Bucket;
-	HRESULT Result( ValidateIndexes(Bucket,Index) );
+	HRESULT Result( ValidateIndex(Index) );
 
 	//! If this flag is still set then this value is trying to reference itself!
 	if( m_CircularReference )
@@ -61,7 +60,7 @@ HRESULT LinkedValue::GetValue( _variant_t& rValue,  int Bucket /*= -1*/, int Ind
 		}
 		else
 		{
-			Result = __super::GetValue( rValue, Bucket, Index );
+			Result = __super::GetValue(rValue, Index, Bucket);
 		}
 		m_CircularReference = false;
 		if( S_OK == Result )

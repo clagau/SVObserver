@@ -128,7 +128,7 @@ bool SVLinearPixelCountingLineAnalyzerClass::onRun( SVRunStatusClass& rRunStatus
 
 	SVLinearEdgeProcessingClass *pEdge = GetEdgeA();
 
-	if ( nullptr == pEdge || S_OK != pEdge->m_svLinearEdges.GetArrayValues( Edges, rRunStatus.m_lResultDataIndex ) )
+	if ( nullptr == pEdge || S_OK != pEdge->m_svLinearEdges.GetArrayValues( Edges ) )
 	{
 		Result = false;
 		if (nullptr != pErrorMessages)
@@ -156,7 +156,7 @@ bool SVLinearPixelCountingLineAnalyzerClass::onRun( SVRunStatusClass& rRunStatus
 		}
 	}
 
-	if ( S_OK != blackPixelCount.SetValue( lBlack, rRunStatus.m_lResultDataIndex )|| S_OK != whitePixelCount.SetValue( lWhite, rRunStatus.m_lResultDataIndex ) )
+	if ( S_OK != blackPixelCount.SetValue(lBlack)|| S_OK != whitePixelCount.SetValue(lWhite) )
 	{
 		Result = false;
 		if (nullptr != pErrorMessages)

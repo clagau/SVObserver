@@ -28,7 +28,7 @@ namespace SvTh
 		destroy();
 	}
 
-	void SVCameraTriggerData::Set(long index, const NameVariantMap& rSettings)
+	void SVCameraTriggerData::Set(const NameVariantMap& rSettings)
 	{
 		_variant_t timeStamp;
 		_variant_t lineState;
@@ -41,15 +41,15 @@ namespace SvTh
 			if( rSettings.end() != Iter  )
 			{
 				lineState = Iter->second;
-				SetLineState(index, timeStamp.dblVal, (lineState.boolVal == VARIANT_TRUE) ? true : false);
+				SetLineState(timeStamp.dblVal, (lineState.boolVal == VARIANT_TRUE) ? true : false);
 			}
 		}
 	}
 
-	void SVCameraTriggerData::SetLineState(long index, double timeStamp, bool state)
+	void SVCameraTriggerData::SetLineState(double timeStamp, bool state)
 	{
-		m_timestamp.SetValue( timeStamp, index );
-		m_lineInState.SetValue( BOOL(state), index );
+		m_timestamp.SetValue( timeStamp);
+		m_lineInState.SetValue( BOOL(state));
 	}
 
 	void SVCameraTriggerData::init()
@@ -77,7 +77,7 @@ namespace SvTh
 		m_lineInState.SetObjectDepth(objectDepth);
 		m_lineInState.SetObjectOwner(this);
 		m_lineInState.SetDefaultValue(BOOL(false), false);
-		m_lineInState.SetValue(BOOL(false), 1);
+		m_lineInState.SetValue(BOOL(false));
 		m_lineInState.ResetObject();
 
 		SVIOEntryHostStructPtr pIOEntry = new SVIOEntryHostStruct;
@@ -95,7 +95,7 @@ namespace SvTh
 		m_timestamp.SetObjectDepth(objectDepth);
 		m_timestamp.SetObjectOwner(this);
 		m_timestamp.SetDefaultValue( 0.0, false );
-		m_timestamp.SetValue( 0.0, 1 );
+		m_timestamp.SetValue(0.0);
 		m_timestamp.ResetObject();
 
 		SVIOEntryHostStructPtr pIOEntry = new SVIOEntryHostStruct;

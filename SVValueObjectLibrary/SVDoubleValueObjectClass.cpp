@@ -80,7 +80,7 @@ HRESULT SVDoubleValueObjectClass::SetObjectValue( SVObjectAttributeClass* pDataO
 		          || pDataObject->GetAttributeData( SvOi::cBucketTag, svArray ) )
 		{
 			SetArraySize( static_cast<int>(svArray.size()) );
-			Result = SetArrayValues( svArray.begin(), svArray.end(), 1);
+			Result = SetArrayValues( svArray.begin(), svArray.end());
 			return Result;
 		}
 	}
@@ -116,7 +116,7 @@ void SVDoubleValueObjectClass::WriteValues(SVObjectWriter &rWriter)
 		//Make sure this is not a derived virtual method which is called
 		_variant_t Value;
 		Value.ChangeType(VT_R8);
-		SVDoubleValueObjectClass::GetValue(Value.dblVal, GetLastSetIndex(), i);
+		SVDoubleValueObjectClass::GetValue(Value.dblVal, i);
 		list.push_back(Value);
 	}
 	rWriter.WriteAttribute(scElementTag, list);

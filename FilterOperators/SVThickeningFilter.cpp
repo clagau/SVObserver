@@ -75,10 +75,6 @@ BOOL SVThickeningFilterClass::CreateObject( SVObjectLevelCreateStruct* PCreateSt
 ////////////////////////////////////////////////////////////////////////////////
 bool SVThickeningFilterClass::onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 { 
-	// Force a copy forward to keep the display correct
-	m_lvoItterations.CopyLastSetValue( rRunStatus.m_lResultDataIndex );
-	m_bvoGrayOn.CopyLastSetValue( rRunStatus.m_lResultDataIndex );
-
 	long lItterations;
 	long lMode;
 	BOOL bGrayOn;

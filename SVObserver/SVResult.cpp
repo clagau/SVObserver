@@ -51,17 +51,17 @@ void SVResultClass::init()
 	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
 
 	// Register Embedded Objects
-	RegisterEmbeddedObject( &failed, SVFailedObjectGuid, IDS_OBJECTNAME_FAILED, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &warned, SVWarnedObjectGuid, IDS_OBJECTNAME_WARNED, false, SvOi::SVResetItemNone );
-	RegisterEmbeddedObject( &passed, SVPassedObjectGuid, IDS_OBJECTNAME_PASSED, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_Failed, SVFailedObjectGuid, IDS_OBJECTNAME_FAILED, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_Warned, SVWarnedObjectGuid, IDS_OBJECTNAME_WARNED, false, SvOi::SVResetItemNone );
+	RegisterEmbeddedObject( &m_Passed, SVPassedObjectGuid, IDS_OBJECTNAME_PASSED, false, SvOi::SVResetItemNone );
 
 	// Set Embedded defaults
-	passed.SetDefaultValue( FALSE, TRUE );			// Default for Passed is FALSE !!!
-	passed.setSaveValueFlag(false);
-	failed.SetDefaultValue( TRUE, TRUE );			// Default for Failed is TRUE !!!
-	failed.setSaveValueFlag(false);
-	warned.SetDefaultValue( TRUE, TRUE );			// Default for Warned is TRUE !!!
-	warned.setSaveValueFlag(false);
+	m_Passed.SetDefaultValue(BOOL(false), true);		// Default for Passed is FALSE !!!
+	m_Passed.setSaveValueFlag(false);
+	m_Failed.SetDefaultValue(BOOL(true), true);			// Default for Failed is TRUE !!!
+	m_Failed.setSaveValueFlag(false);
+	m_Warned.SetDefaultValue(BOOL(true), true);			// Default for Warned is TRUE !!!
+	m_Warned.setSaveValueFlag(false);
 
 	// Set up the Default Inputs/Outputs
 	addDefaultInputObjects();
@@ -81,9 +81,9 @@ BOOL SVResultClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 	}
 
 	// Set / Reset Printable Flags
-	failed.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-	warned.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
-	passed.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_Failed.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_Warned.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_Passed.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 
 	m_isCreated = bOk;
 
@@ -98,21 +98,21 @@ bool SVResultClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 BOOL SVResultClass::IsFailed()
 {
 	BOOL RVal = TRUE;
-	failed.GetValue( RVal );
+	m_Failed.GetValue( RVal );
 	return( RVal );
 }
 
 BOOL SVResultClass::IsWarned()
 {
 	BOOL RVal = TRUE;
-	warned.GetValue( RVal );
+	m_Warned.GetValue( RVal );
 	return( RVal );
 }
 
 BOOL SVResultClass::IsGood()
 {
 	BOOL RVal = TRUE;
-	passed.GetValue( RVal );
+	m_Passed.GetValue( RVal );
 	return( RVal );
 }
 
@@ -147,11 +147,11 @@ bool SVResultClass::Run( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVe
 
 		//make sure the statusColor is set correctly
 		DWORD dwColor = rRunStatus.GetStatusColor();
-		m_statusColor.SetValue(dwColor, rRunStatus.m_lResultDataIndex );
+		m_statusColor.SetValue(dwColor);
 
-		passed.SetValue( BOOL(true), rRunStatus.m_lResultDataIndex );
-		failed.SetValue( BOOL(false), rRunStatus.m_lResultDataIndex );
-		warned.SetValue( BOOL(false), rRunStatus.m_lResultDataIndex );
+		m_Passed.SetValue(BOOL(true));
+		m_Failed.SetValue(BOOL(false));
+		m_Warned.SetValue(BOOL(false));
 		return true;
 	}
 	else
@@ -161,12 +161,12 @@ bool SVResultClass::Run( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVe
 		{
 			//make sure statusColor is set correctly
 			DWORD dwColor = rRunStatus.GetStatusColor();
-			m_statusColor.SetValue(dwColor, rRunStatus.m_lResultDataIndex );
+			m_statusColor.SetValue(dwColor);
 
 			// set our state according to the runStatus
-			passed.SetValue( BOOL(rRunStatus.IsPassed()), rRunStatus.m_lResultDataIndex );
-			failed.SetValue( BOOL(rRunStatus.IsFailed()), rRunStatus.m_lResultDataIndex );
-			warned.SetValue( BOOL(rRunStatus.IsWarned()), rRunStatus.m_lResultDataIndex );
+			m_Passed.SetValue(BOOL(rRunStatus.IsPassed()));
+			m_Failed.SetValue(BOOL(rRunStatus.IsFailed()));
+			m_Warned.SetValue(BOOL(rRunStatus.IsWarned()));
 
 			return true;
 		}

@@ -116,12 +116,6 @@ public:
 
 protected:
 	//************************************
-	//! Result data Index of inspection
-	//! \returns int
-	//************************************
-	int GetIndex();
-	
-	//************************************
 	//! Add SVEquationObject to the Friendlist 
 	//! \param pInfo [in,out] inObjectinfostruct 
 	//! \param GuidClass [in] Guid of the SVEquationObject  

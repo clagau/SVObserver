@@ -105,7 +105,7 @@ bool SVTaskObjectClass::resetAllObjects( SvStl::MessageContainerVector *pErrorMe
 {
 	bool Result = true;
 	clearTaskMessages();
-	m_isObjectValid.SetValue( BOOL(true), 1 );
+	m_isObjectValid.SetValue(BOOL(true));
 
 	// Notify friends...
 	for (size_t i = 0; i < m_friendList.size(); ++ i)
@@ -125,7 +125,7 @@ bool SVTaskObjectClass::resetAllObjects( SvStl::MessageContainerVector *pErrorMe
 	{
 		pErrorMessages->insert(pErrorMessages->end(), m_ResetErrorMessages.begin(), m_ResetErrorMessages.end());
 	}
-	m_isObjectValid.SetValue( BOOL(Result), 1 );
+	m_isObjectValid.SetValue(BOOL(Result));
 	return Result;
 }
 
@@ -785,22 +785,22 @@ bool SVTaskObjectClass::DoesObjectHaveExtents() const
 	return false;
 }
 
-HRESULT SVTaskObjectClass::GetImageExtent( SVImageExtentClass &p_rsvImageExtent )
+HRESULT SVTaskObjectClass::GetImageExtent( SVImageExtentClass& rImageExtent )
 {
 	return S_FALSE;
 }
 
-HRESULT SVTaskObjectClass::SetImageExtent( unsigned long p_ulIndex, SVImageExtentClass p_svImageExtent )
+HRESULT SVTaskObjectClass::SetImageExtent( const SVImageExtentClass& rImageExtent )
 {
 	return S_FALSE;
 }
 
-HRESULT SVTaskObjectClass::SetImageExtentToParent( unsigned long p_ulIndex )
+HRESULT SVTaskObjectClass::SetImageExtentToParent()
 {
 	return S_FALSE;
 }
 
-HRESULT SVTaskObjectClass::SetImageExtentToFit( unsigned long p_ulIndex, SVImageExtentClass p_svImageExtent )
+HRESULT SVTaskObjectClass::SetImageExtentToFit( const SVImageExtentClass& rImageExtent )
 {
 	return S_FALSE;
 }
@@ -1405,7 +1405,7 @@ void SVTaskObjectClass::GetPrivateInputList(SVInputInfoListClass& RInputInterfac
 void SVTaskObjectClass::SetInvalid()
 {
 	// Set yourself to invalid...
-	m_isObjectValid.SetValue( BOOL(false), 1 );
+	m_isObjectValid.SetValue(BOOL(false));
 }
 
 // Override this function to implement object behavior...
@@ -1425,7 +1425,7 @@ void SVTaskObjectClass::SetDisabled()
 	
 	// Special implementation here:
 	// Set just your object color to disabled...
-	m_statusColor.SetValue( SV_DEFAULT_DISABLED_COLOR, 1 );
+	m_statusColor.SetValue(SV_DEFAULT_DISABLED_COLOR);
 	
 	// Set friends to disabled...
 	for (size_t i = 0; i < m_friendList.size(); ++ i)
@@ -1599,11 +1599,11 @@ bool SVTaskObjectClass::Run(SVRunStatusClass& rRunStatus, SvStl::MessageContaine
 	
 	// Get Status Color...
 	DWORD dwValue = rRunStatus.GetStatusColor();
-	m_statusColor.SetValue( dwValue, rRunStatus.m_lResultDataIndex );
+	m_statusColor.SetValue(dwValue);
 	
 	// Get Status...
 	dwValue = rRunStatus.GetState();
-	m_statusTag.SetValue( dwValue, rRunStatus.m_lResultDataIndex );
+	m_statusTag.SetValue(dwValue);
 
 	if (nullptr != pErrorMessages && !m_RunErrorMessages.empty())
 	{
@@ -1621,11 +1621,11 @@ bool SVTaskObjectClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContai
 	// Now Validate yourself...
 	if (bRetVal && IsErrorMessageEmpty())
 	{
-		m_isObjectValid.SetValue( BOOL(true), 1 );
+		m_isObjectValid.SetValue(BOOL(true));
 	}
 	else
 	{
-		m_isObjectValid.SetValue( BOOL(false), 1 );
+		m_isObjectValid.SetValue(BOOL(false));
 		rRunStatus.SetInvalid();
 		bRetVal = false;
 	}

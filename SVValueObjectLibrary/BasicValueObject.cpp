@@ -56,12 +56,12 @@ bool BasicValueObject::operator==(const BasicValueObject& rRhs) const
 	return Result;
 }
 
-HRESULT BasicValueObject::getValue(double& rValue, int Bucket /*= -1*/, int Index /*= -1*/) const
+HRESULT BasicValueObject::getValue(double& rValue, int Index /*= -1*/, int Bucket /*= -1*/) const
 {
 	return getValue<double>(rValue);
 }
 
-HRESULT BasicValueObject::setValue(const _variant_t& rValue, int Bucket /*= -1*/, int Index /*= -1*/ )
+HRESULT BasicValueObject::setValue(const _variant_t& rValue, int Index /*= -1*/ )
 {
 	HRESULT	Result = S_OK;
 
@@ -105,7 +105,7 @@ HRESULT BasicValueObject::setValue(const _variant_t& rValue, int Bucket /*= -1*/
 	return Result;
 }
 
-HRESULT BasicValueObject::setValue( const SVString& rValue, int Bucket /*= -1*/, int Index /*= -1*/ )
+HRESULT BasicValueObject::setValue( const SVString& rValue, int Index /*= -1*/ )
 {
 	HRESULT Result( S_FALSE );
 
@@ -118,7 +118,7 @@ HRESULT BasicValueObject::setValue( const SVString& rValue, int Bucket /*= -1*/,
 	return Result;
 }
 
-HRESULT BasicValueObject::getValue( _variant_t& rValue, int Bucket /*= -1*/, int Index /*= -1*/ ) const
+HRESULT BasicValueObject::getValue(_variant_t& rValue, int Index /*= -1*/, int Bucket /*= -1*/) const
 {
 	RefreshOwner( SVObjectClass::PreRefresh );
 
@@ -127,7 +127,7 @@ HRESULT BasicValueObject::getValue( _variant_t& rValue, int Bucket /*= -1*/, int
 	return S_OK;
 }
 
-HRESULT BasicValueObject::getValue( SVString& rValue, int Bucket /*= -1*/, int Index /*= -1*/ ) const
+HRESULT BasicValueObject::getValue(SVString& rValue, int Index /*= -1*/, int Bucket /*= -1*/ ) const
 {
 	HRESULT	Result = S_OK;
 
@@ -177,6 +177,88 @@ HRESULT BasicValueObject::getValue( SVString& rValue, int Bucket /*= -1*/, int I
 			Result = S_FALSE;
 		}
 		break;
+	}
+
+	return Result;
+}
+
+DWORD BasicValueObject::GetByteSize() const
+{
+	DWORD Result(0);
+
+	switch (GetType())
+	{
+	case VT_BOOL:
+		Result = sizeof(VARIANT::boolVal);
+		break;
+	case VT_I4:
+		Result = sizeof(VARIANT::lVal);
+		break;
+	case VT_I8:
+		Result = sizeof(VARIANT::llVal);
+		break;
+	case VT_INT:
+		Result = sizeof(VARIANT::intVal);
+		break;
+	case VT_R4:
+		Result = sizeof(VARIANT::fltVal);
+		break;
+	case VT_R8:
+		Result = sizeof(VARIANT::dblVal);
+		break;
+	case VT_BSTR:
+		Result = cMaxStringSize;
+		break;
+	default:
+		break;
+	}
+	return Result;
+}
+
+HRESULT BasicValueObject::CopyToMemoryBlock(BYTE* pMemoryBlock, DWORD MemByteSize, int Index /* = -1*/) const
+{
+	HRESULT Result = (nullptr != pMemoryBlock && MemByteSize == GetByteSize()) ? S_OK : E_FAIL;
+
+	if (S_OK == Result)
+	{
+		const void* pValue(nullptr);
+
+		switch (m_Value.vt)
+		{
+		case VT_BOOL:
+			pValue = &m_Value.boolVal;
+			break;
+		case VT_I4:
+			pValue = &m_Value.lVal;
+			break;
+		case VT_I8:
+			pValue = &m_Value.llVal;
+			break;
+		case VT_INT:
+			pValue = &m_Value.intVal;
+			break;
+		case VT_R4:
+			pValue = &m_Value.fltVal;
+			break;
+		case VT_R8:
+			pValue = &m_Value.dblVal;
+			break;
+		case VT_BSTR:
+			{
+				SVString TempString = SvUl_SF::createSVString(m_Value.bstrVal);
+				size_t Size = std::min(static_cast<size_t> (GetByteSize() - 1), TempString.size());
+				pValue = nullptr;
+				memcpy(pMemoryBlock, TempString.c_str(), Size);
+			}
+			break;
+		default:
+			break;
+		}
+		//This is for all types except VT_BSTR
+		if (nullptr != pValue)
+		{
+			memcpy(pMemoryBlock, pValue, GetByteSize());
+		}
 	}
 
 	return Result;

@@ -261,8 +261,6 @@ void SVExternalToolResultPage::OnOK()
 				int iIndex = GetItemIndex(pItem);
 				ASSERT( iIndex >= 0 );
 				SVVariantValueObjectClass& rValue = m_pTask->m_Data.m_aResultObjects[iIndex];
-				int iBucket = rValue.GetLastSetIndex();
-
 
 				pItem = pItem->GetSibling();
 			}

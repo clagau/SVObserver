@@ -244,7 +244,7 @@ bool RingBufferTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContaine
 		}
 
 		//set flag
-		m_FlagOfOutputImage.SetValue( imageOutputFlag, rRunStatus.m_lResultDataIndex );
+		m_FlagOfOutputImage.SetValue(imageOutputFlag);
 	}
 
 	return returnValue;
@@ -357,11 +357,10 @@ void RingBufferTool::SetToolROIExtentToFullInputImage ()
 		inputImageExtents.GetExtentProperty (SVExtentPropertyHeight, inputHeight);
 		inputImageExtents.GetExtentProperty (SVExtentPropertyWidth, inputWidth);
 
-		long scratchpadIndex = 1;
-		m_svToolExtent.SetExtentValue (SVExtentPropertyHeight, scratchpadIndex, inputHeight);
-		m_svToolExtent.SetExtentValue (SVExtentPropertyWidth, scratchpadIndex, inputWidth);
-		m_svToolExtent.SetExtentValue (SVExtentPropertyPositionPointX , scratchpadIndex, 0.0);
-		m_svToolExtent.SetExtentValue (SVExtentPropertyPositionPointY , scratchpadIndex, 0.0);
+		m_svToolExtent.SetExtentValue (SVExtentPropertyHeight, inputHeight);
+		m_svToolExtent.SetExtentValue (SVExtentPropertyWidth, inputWidth);
+		m_svToolExtent.SetExtentValue (SVExtentPropertyPositionPointX, 0.0);
+		m_svToolExtent.SetExtentValue (SVExtentPropertyPositionPointY, 0.0);
 	}
 }
 #pragma endregion Private Methods

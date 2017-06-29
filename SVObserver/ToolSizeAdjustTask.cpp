@@ -127,21 +127,6 @@ bool  ToolSizeAdjustTask::Run( SVRunStatusClass& rRunStatus, SvStl::MessageConta
 	return true;
 }
 
-int ToolSizeAdjustTask::GetIndex()
-{
-	int index = 1;
-	SVToolClass* pTool = GetTool();
-	if (pTool)
-	{
-		SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(pTool->GetInspection());
-		if (pInspection)
-		{
-			index = pInspection->GetResultDataIndex();
-		}
-	}
-	return index;
-}
-
 HRESULT ToolSizeAdjustTask::GetModes(long &rModeWidth,long &rModeHeight,long &rModePosX, long &rModePosY)
 {
 	rModeWidth = rModeHeight = rModePosX = rModePosY = TSModeCount;
@@ -318,7 +303,7 @@ bool ToolSizeAdjustTask::ResetObject(SvStl::MessageContainerVector *pErrorMessag
 			/////Set To Full size (Image Extent = parent Extent)
 			if( ( S_OK  == hresult) && (oldHeight != ParentOutputHeight || oldWidth != ParentOutputWidth || oldPosY != 0 || oldPosX != 0  ))
 			{
-				hresult = pTool->SetImageExtentToParent(GetIndex()); 
+				hresult = pTool->SetImageExtentToParent(); 
 				}
 			bDone = true;
 		}
@@ -385,7 +370,7 @@ bool ToolSizeAdjustTask::ResetObject(SvStl::MessageContainerVector *pErrorMessag
 
 		if ((S_OK == hresult) && bSetImageExtend && (false == bDone))
 		{
-			hresult = pTool->SetImageExtent(GetIndex(), ImageExtent);
+			hresult = pTool->SetImageExtent(ImageExtent);
 		}
 	
 		if (S_OK == hresult)

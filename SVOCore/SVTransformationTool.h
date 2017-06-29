@@ -34,7 +34,7 @@ public:
 	virtual SVStringValueObjectClass* GetInputImageNames() override;
 
 protected:
-	virtual HRESULT UpdateImageWithExtent( unsigned long p_Index ) override;
+	virtual HRESULT UpdateImageWithExtent() override;
 
 private:
 	// NOTE:

@@ -42,7 +42,7 @@ public:
 protected:
 	virtual bool onRun( SVRunStatusClass& runStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
-	HRESULT UpdateTransformData( long p_lIndex );
+	HRESULT UpdateTransformData();
 #pragma endregion
 
 #pragma region Private Methods

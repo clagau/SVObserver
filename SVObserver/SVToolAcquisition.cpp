@@ -50,14 +50,14 @@ BOOL SVAcquisitionToolClass::CreateObject( SVObjectLevelCreateStruct* PCreateStr
 
 	if( SVToolClass::CreateObject( PCreateStructure ) )
 	{
-		bOk = ( S_OK == SetImageExtent( 1, mainImageObject.GetImageExtents() ) );
+		bOk = ( S_OK == SetImageExtent( mainImageObject.GetImageExtents() ) );
 		mainImageObject.SetObjectAttributesAllowed( SvOi::SV_PUBLISH_RESULT_IMAGE, SvOi::SetAttributeType::AddAttribute );
 	}
 
 	m_SourceImageNames.setStatic( true );
 	m_SourceImageNames.setSaveValueFlag(false);
 	m_SourceImageNames.SetObjectAttributesAllowed( SvOi::SV_REMOTELY_SETABLE | SvOi::SV_SETABLE_ONLINE, SvOi::SetAttributeType::RemoveAttribute );
-	m_SourceImageNames.SetValue( mainImageObject.GetCompleteName(), 0 );
+	m_SourceImageNames.SetValue( mainImageObject.GetCompleteName());
 
 	m_isCreated = bOk;
 
@@ -67,7 +67,7 @@ BOOL SVAcquisitionToolClass::CreateObject( SVObjectLevelCreateStruct* PCreateStr
 bool SVAcquisitionToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = __super::ResetObject(pErrorMessages);
-	HRESULT l_Temp = SetImageExtent( 1, mainImageObject.GetImageExtents() );
+	HRESULT l_Temp = SetImageExtent( mainImageObject.GetImageExtents() );
 
 	if( S_OK != l_Temp )
 	{
@@ -79,7 +79,7 @@ bool SVAcquisitionToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMe
 		}
 	}
 
-	UpdateImageWithExtent( 1 );
+	UpdateImageWithExtent();
 
 	if (nullptr == mainImageObject.GetCamera())
 	{

@@ -136,7 +136,7 @@ bool SVTADlgArchiveResultsPage::QueryAllowExit()
 
 	m_pTool->SetFileArchive( ArchiveFileName.c_str() );
 
-	m_pTool->m_dwAppendArchiveFile.SetValue( static_cast<DWORD> (m_AppendArchive), 1 );
+	m_pTool->m_dwAppendArchiveFile.SetValue(static_cast<DWORD> (m_AppendArchive));
 
 	SvOsl::SelectorItemVector::const_iterator Iter;
 	for ( Iter = m_List.begin(); m_List.end() != Iter ; ++Iter )
@@ -560,7 +560,7 @@ void SVTADlgArchiveResultsPage::OnBnClickedHeaderCheck()
 	BOOL bEnable = 0 != m_List.size() && m_ColumnHeaders;
 	GetDlgItem(IDC_HEADER_BTN)->EnableWindow(bEnable);
 
-	m_pTool->m_bvoUseHeaders.SetValue( m_ColumnHeaders, 1 );
+	m_pTool->m_bvoUseHeaders.SetValue(m_ColumnHeaders);
 }
 #pragma endregion Private Methods
 

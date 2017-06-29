@@ -172,8 +172,7 @@ bool SVLinearEdgePositionLineAnalyzerClass::onRun( SVRunStatusClass& rRunStatus,
 	DPoint.x = EdgePoint.m_dPositionX;
 	DPoint.y = EdgePoint.m_dPositionY;
 
-	if( S_OK != m_svLinearDistance.SetValue( Distance, rRunStatus.m_lResultDataIndex ) ||
-		 S_OK != dpEdge.SetValue( DPoint, rRunStatus.m_lResultDataIndex ) ) 
+	if( S_OK != m_svLinearDistance.SetValue(Distance) || S_OK != dpEdge.SetValue(DPoint) ) 
 	{
 		Result = false;
 		if (nullptr != pErrorMessages)

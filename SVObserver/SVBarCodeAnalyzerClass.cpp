@@ -385,7 +385,7 @@ bool SVBarCodeAnalyzerClass::onRun (SVRunStatusClass &rRunStatus, SvStl::Message
 		return false;
 	}
 	
-	msv_szBarCodeValue.SetValue( SVString(), rRunStatus.m_lResultDataIndex );
+	msv_szBarCodeValue.SetValue(SVString());
 	if (SVImageAnalyzerClass::onRun (rRunStatus, pErrorMessages))
 	{
 		SVSmartHandlePointer ImageHandle;
@@ -441,7 +441,7 @@ bool SVBarCodeAnalyzerClass::onRun (SVRunStatusClass &rRunStatus, SvStl::Message
 						double dScore = 0.0;
 						Result &= SVMatroxBarCodeInterface::GetResult( m_MilCodeId, SVBCBarcodeScore, dScore, pErrorMessages );
 
-						pResult->m_dReadScore.SetValue(dScore * 100, rRunStatus.m_lResultDataIndex );
+						pResult->m_dReadScore.SetValue(dScore * 100);
 
 						// To support special DMCs May 2008.
 						// Copy string to Byte Value Object
@@ -454,8 +454,7 @@ bool SVBarCodeAnalyzerClass::onRun (SVRunStatusClass &rRunStatus, SvStl::Message
 						BarCodeValue.resize(BarCodeString.size() );
 						//Convert string character to byte vector
 						std::copy( BarCodeString.begin(), BarCodeString.end(), BarCodeValue.begin() );
-						if ( S_OK != msv_RawData.SetResultSize( rRunStatus.m_lResultDataIndex, static_cast<int> ( BarCodeString.size() ) ) || 
-							S_OK != msv_RawData.SetArrayValues( BarCodeValue.begin(), BarCodeValue.end(), rRunStatus.m_lResultDataIndex ))
+						if ( S_OK != msv_RawData.SetResultSize( static_cast<int> ( BarCodeString.size() ) ) || S_OK != msv_RawData.SetArrayValues( BarCodeValue.begin(), BarCodeValue.end()))
 						{
 							Result = false;
 							if (nullptr != pErrorMessages)
@@ -531,7 +530,7 @@ bool SVBarCodeAnalyzerClass::onRun (SVRunStatusClass &rRunStatus, SvStl::Message
 								break;
 							}
 						}
-						msv_szBarCodeValue.SetValue( BarCodeString, rRunStatus.m_lResultDataIndex );
+						msv_szBarCodeValue.SetValue(BarCodeString);
 						if (!Result)
 						{
 							if (nullptr != pErrorMessages)
@@ -556,7 +555,7 @@ bool SVBarCodeAnalyzerClass::onRun (SVRunStatusClass &rRunStatus, SvStl::Message
 					default:
 					{
 						// Clear The Raw Data if no read.
-						msv_RawData.SetResultSize( rRunStatus.m_lResultDataIndex, 0 );
+						msv_RawData.SetResultSize(0);
 						break;
 					}
 				}
@@ -569,7 +568,7 @@ bool SVBarCodeAnalyzerClass::onRun (SVRunStatusClass &rRunStatus, SvStl::Message
 				{
 					rRunStatus.SetFailed();
 				}
-				pResult->m_dReadScore.SetValue( 0.0, rRunStatus.m_lResultDataIndex );
+				pResult->m_dReadScore.SetValue(0.0);
 				return true;
 			}// end try
 			catch( ... )
@@ -607,7 +606,7 @@ bool SVBarCodeAnalyzerClass::LoadRegExpression( bool DisplayErrorMessage, SvStl:
 			dwFileLen = static_cast<DWORD>(fRegExp.GetLength());
 			RegExp.resize(dwFileLen +1);
 			fRegExp.Read( &RegExp[0], dwFileLen);
-			msv_szRegExpressionValue.SetValue( RegExp );
+			msv_szRegExpressionValue.SetValue(RegExp);
 			fRegExp.Close();
 
 			msv_szRegExpressionValue.GetValue(m_RegExpressionValue);

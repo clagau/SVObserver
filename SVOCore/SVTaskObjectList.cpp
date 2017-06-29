@@ -996,11 +996,11 @@ bool SVTaskObjectListClass::Run(SVRunStatusClass& rRunStatus, SvStl::MessageCont
 
 	// Get Status Color...
 	DWORD dwValue = rRunStatus.GetStatusColor();
-	m_statusColor.SetValue( dwValue, rRunStatus.m_lResultDataIndex );
+	m_statusColor.SetValue(dwValue);
 
 	// Get Status...
 	dwValue = rRunStatus.GetState();
-	m_statusTag.SetValue( dwValue, rRunStatus.m_lResultDataIndex );
+	m_statusTag.SetValue(dwValue);
 
 	if (nullptr != pErrorMessages && !m_RunErrorMessages.empty())
 	{
@@ -1060,7 +1060,7 @@ bool SVTaskObjectListClass::resetAllObjects( SvStl::MessageContainerVector *pErr
 		}
 	}
 
-	m_isObjectValid.SetValue( BOOL(Result), 1 );
+	m_isObjectValid.SetValue(BOOL(Result));
 
 	return Result;
 }

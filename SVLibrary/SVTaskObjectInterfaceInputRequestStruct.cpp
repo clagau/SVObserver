@@ -93,7 +93,7 @@ HRESULT SVInputRequestStructMap::Add( const SVObjectReference& rObjectRef )
 	if ( nullptr != pValueObject )
 	{
 		_variant_t Value;
-		Result = pValueObject->getValue( Value, -1, rObjectRef.ArrayIndex() );
+		Result = pValueObject->getValue( Value, rObjectRef.ArrayIndex() );
 		if ( S_OK == Result )
 		{
 			(*this)[ rObjectRef ] = Value;

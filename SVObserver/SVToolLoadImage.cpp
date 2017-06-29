@@ -181,7 +181,7 @@ bool SVLoadImageToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMess
 	
 	m_bResetFileImage = Result;
 
-	UpdateImageWithExtent( 1 );
+	UpdateImageWithExtent();
 
 	return Result && ValidateLocal(pErrorMessages);
 }
@@ -225,23 +225,46 @@ bool SVLoadImageToolClass::DoesObjectHaveExtents() const
 	return true;
 }
 
-HRESULT SVLoadImageToolClass::SetImageExtent( unsigned long p_ulIndex, SVImageExtentClass p_svImageExtent )
+HRESULT SVLoadImageToolClass::SetImageExtent(const SVImageExtentClass& rImageExtent)
 {
 	HRESULT l_hrOk = S_FALSE;
 
 	SVExtentFigureStruct l_svFigure;
 
-	p_svImageExtent.GetFigure(l_svFigure);
+	rImageExtent.GetFigure(l_svFigure);
 
 	if ( (l_svFigure.m_svTopLeft.m_dPositionX >= 0) && (l_svFigure.m_svTopLeft.m_dPositionY >= 0) )
 	{
-		l_hrOk = SVToolClass::SetImageExtent( p_ulIndex, p_svImageExtent );
+		l_hrOk = SVToolClass::SetImageExtent(rImageExtent);
 	}
 	else
 	{
 		l_hrOk = S_FALSE;
 	}
 
+	return l_hrOk;
+}
+
+HRESULT SVLoadImageToolClass::SetImageExtentToParent()
+{
+	HRESULT l_hrOk = S_OK;
+	SVImageExtentClass NewExtent;
+	SVString ImagePathName;
+
+	if (S_OK == l_hrOk)
+	{
+		l_hrOk = m_currentPathName.GetValue(ImagePathName);
+	}
+
+	if (S_OK == l_hrOk)
+	{
+		l_hrOk = m_fileImage.LoadImageFullSize(ImagePathName.c_str(), NewExtent);
+	}
+
+	if (S_OK == l_hrOk)
+	{
+		l_hrOk = SVToolClass::SetImageExtent(NewExtent);
+	}
 	return l_hrOk;
 }
 
@@ -258,29 +281,6 @@ HRESULT SVLoadImageToolClass::GetParentExtent( SVImageExtentClass& rParentExtent
 		hr = SVImageObjectClass::GetImageExtentFromFile( ImagePathName.c_str(), rParentExtent );
 	}
 	return hr;
-}
-
-HRESULT SVLoadImageToolClass::SetImageExtentToParent(unsigned long p_ulIndex )
-{
-	HRESULT l_hrOk = S_OK;
-	SVImageExtentClass l_NewExtent;
-	SVString ImagePathName;
-
-	if( S_OK == l_hrOk )
-	{
-		l_hrOk = m_currentPathName.GetValue( ImagePathName );
-	}
-
-	if( S_OK == l_hrOk )
-	{
-		l_hrOk = m_fileImage.LoadImageFullSize( ImagePathName.c_str(), l_NewExtent);
-	}
-		
-	if( S_OK == l_hrOk )
-	{
-		l_hrOk = SVToolClass::SetImageExtent( p_ulIndex, l_NewExtent );
-	}
-	return l_hrOk;
 }
 
 bool SVLoadImageToolClass::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) const

@@ -2010,7 +2010,7 @@ void SVIPDoc::OnChangeToolSetDrawFlag( UINT nId )
 				CString Temp;
 				pMenu->GetMenuString( pos, Temp, MF_BYPOSITION );
 				// Set Flag...
-				pEnum->setValue( SVString(Temp), 1 );
+				pEnum->setValue( SVString(Temp) );
 
 				// Update Menu...
 				pMenu->CheckMenuRadioItem( 0, pMenu->GetMenuItemCount() - 1, pos, MF_BYPOSITION );

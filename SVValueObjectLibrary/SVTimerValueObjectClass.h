@@ -27,7 +27,7 @@ public:
 	virtual ~SVTimerValueObjectClass();
 
 	BOOL Start();
-	BOOL Stop(long lIndex);
+	BOOL Stop();
 
 private:
 	void LocalInitialize();

@@ -290,73 +290,73 @@ protected:
 
 	//************************************
 	/// Processes the first element (if available) in the trigger queue and creates a product from it
-	/// \param p_rProcessed [out] false if the trigger queue empty, otherwise true.
+	/// \param rProcessed [out] false if the trigger queue empty, otherwise true.
 	/// \returns S_OK on success, otherwise E_FAIL
 	//************************************
-	HRESULT ProcessTrigger( bool& p_rProcessed );
+	HRESULT ProcessTrigger( bool& rProcessed );
 
 	//************************************
 	/// Extracts the first valid entry in in m_oNotifyInspectionsSet and calls NotifyInspections()
-	/// \param p_rProcessed [out] true if one inspection was successfully notified, otherwise false.
+	/// \param rProcessed [out] true if one inspection was successfully notified, otherwise false.
 	/// \returns S_OK (or E_FAIL if NotifyInspections failed)
 	//************************************
-	HRESULT ProcessNotifyInspections( bool& p_rProcessed );
+	HRESULT ProcessNotifyInspections( bool& rProcessed );
 
 	//************************************
 	/// Empties m_ProcessInspectionsSet and starts all Inspections that were contained in it
-	/// \param p_rProcessed [out] true if an item was removed from m_oCamerasQueue, otherwise false
+	/// \param rProcessed [out] true if an item was removed from m_oCamerasQueue, otherwise false
 	/// \returns S_OK on success, otherwise E_FAIL
 	//************************************
-	HRESULT ProcessInspections( bool& p_rProcessed );
+	HRESULT ProcessInspections( bool& rProcessed );
 
 	//************************************
 	/// Controls the output of completed results that require a delay before they are output.
-	/// \param p_rProcessed [out] true if a SVProductInfoStruct was processed
+	/// \param rProcessed [out] true if a SVProductInfoStruct was processed
 	/// \returns S_OK on success, otherwise E_FAIL
 	//************************************
-	HRESULT ProcessDelayOutputs( bool& p_rProcessed );
+	HRESULT ProcessDelayOutputs( bool& rProcessed );
 
 	//************************************
 	/// If at least two entries in m_oOutputsResetQueue: removes the head and calls ResetOutputs()
-	/// \param p_rProcessed [out] true if ResetOutputs() was called
+	/// \param rProcessed [out] true if ResetOutputs() was called
 	/// \returns S_OK on success, otherwise E_FAIL
 	//************************************
-	HRESULT ProcessResetOutputs( bool& p_rProcessed );
+	HRESULT ProcessResetOutputs( bool& rProcessed );
 
 	//************************************
 	/// If data valid delay is set then processes when the signals are to be set
-	/// \param p_rProcessed [out] true if Data Valid Delay processed
+	/// \param rProcessed [out] true if Data Valid Delay processed
 	/// \returns S_OK on success, otherwise E_FAIL
 	//************************************
-	HRESULT ProcessDataValidDelay( bool& p_rProcessed );
+	HRESULT ProcessDataValidDelay( bool& rProcessed );
 
 	//************************************
 	/// If possible, processes one camera response (either from the pending camera responses or directly from the trigger queue)
-	/// \param p_rProcessed [out] true if a camera response was processed successfully
+	/// \param rProcessed [out] true if a camera response was processed successfully
 	/// \returns S_OK on success, otherwise E_FAIL
 	//************************************
-	HRESULT ProcessCameraResponses( bool& p_rProcessed );
+	HRESULT ProcessCameraResponses( bool& rProcessed );
 	//************************************
 	/// Checks whether all camera acquisitions are complete for the first item in m_oCamerasQueue. If so, moves it into m_oNotifyInspectionsSet
-	/// \param p_rProcessed [out] true if an item was removed from m_oCamerasQueue
+	/// \param rProcessed [out] true if an item was removed from m_oCamerasQueue
 	/// \returns S_OK on success, otherwise E_FAIL
 	//************************************
-	HRESULT ProcessCameraInputs( bool& p_rProcessed );
+	HRESULT ProcessCameraInputs( bool& rProcessed );
 	//************************************
 	/// If all inspections for a product are done, sets the product to complete
-	/// \param p_rProcessed [out] true m_oTriggerQueue is empty or if a product has been set to complete
+	/// \param rProcessed [out] true m_oTriggerQueue is empty or if a product has been set to complete
 	/// \returns S_OK on success, otherwise E_FAIL
 	//************************************
-	HRESULT ProcessCompleteInspections( bool& p_rProcessed );
+	HRESULT ProcessCompleteInspections( bool& rProcessed );
 	//************************************
 	/// Possibly used when results are requested via remote
-	/// \param p_rProcessed [out] true if false otherwise
+	/// \param rProcessed [out] true if false otherwise
 	/// \returns S_OK on success, otherwise E_FAIL
 	//************************************
-	HRESULT ProcessProductRequests( bool& p_rProcessed );
+	HRESULT ProcessProductRequests( bool& rProcessed );
 
 	HRESULT ProcessTimeDelayOutputs( SVProductInfoStruct& p_rProduct );
-	HRESULT ProcessTimeDelayAndDataCompleteOutputs( SVProductInfoStruct& p_rProduct, bool& p_rProcessed );
+	HRESULT ProcessTimeDelayAndDataCompleteOutputs( SVProductInfoStruct& p_rProduct, bool& rProcessed );
 
 	HRESULT GetProductInfoStruct( SVProductInfoStruct*& p_rpProduct, long lProcessCount ) const;
 	HRESULT GetProductInfoStruct( SVProductInfoStruct*& p_rpProduct, SvTl::SVTimeStamp p_TimeStamp ) const;
@@ -467,7 +467,7 @@ private:
 	void AssignCameraToAcquisitionTrigger();
 	bool ResolveConditionalOutput();
 	bool AlwaysWriteOutputs() const;
-	bool EvaluateConditionalOutput(long dataIndex) const;
+	bool EvaluateConditionalOutput(long DataIndex) const;
 	void init();
 
 #ifdef EnableTracking
@@ -514,6 +514,7 @@ private:
 	SVPPQTracking m_PPQTracking;
 #endif // EnableTracking
 
+	void ResetOutputValueObjects(long DataIndex);
 	void SetRejectConditionList(const SVMonitorItemList& rRejectCondList);
 	void ReleaseSharedMemory(const SVProductInfoStruct& rProduct);
 	void CommitSharedMemory(const SVProductInfoStruct& rProduct);

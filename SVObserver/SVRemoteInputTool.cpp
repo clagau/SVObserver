@@ -266,8 +266,8 @@ bool SVRemoteInputTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageConta
 		}
 	}
 
-	m_MatchedValueId.SetValue( l_MatchedStringId, rRunStatus.m_lResultDataIndex  );
-	m_MatchedValue.SetValue( _variant_t(MatchedString.c_str()), rRunStatus.m_lResultDataIndex );
+	m_MatchedValueId.SetValue(l_MatchedStringId);
+	m_MatchedValue.SetValue(_variant_t(MatchedString.c_str()));
 
 	if( Result && ( l_Identifier != 0 ) )
 	{

@@ -85,11 +85,11 @@ public:
 
 protected:
 	// Passed, if TRUE ( Reset Value: FALSE )
-	SVBoolValueObjectClass	passed;
+	SVBoolValueObjectClass	m_Passed;
 	// Warned, if TRUE ( Reset Value: TRUE )
-	SVBoolValueObjectClass	warned;
+	SVBoolValueObjectClass	m_Warned;
 	// Failed, if TRUE ( Reset Value: TRUE )
-	SVBoolValueObjectClass	failed;
+	SVBoolValueObjectClass	m_Failed;
 };
 
 class SVAnalyzeFeatureClass : public SVTaskObjectClass

@@ -74,9 +74,8 @@ public:
 
 	HRESULT SetImageExtentProperty( SVExtentPropertyEnum p_eProperty, SvOi::IValueObject* pValueObject );
 
-	virtual HRESULT GetImageExtent( SVImageExtentClass &p_rsvImageExtent ) override;
-	virtual HRESULT GetImageExtent( unsigned long p_ulIndex, SVImageExtentClass &p_rsvImageExtent );
-	virtual HRESULT SetImageExtent( unsigned long p_ulIndex, SVImageExtentClass p_svImageExtent ) override;
+	virtual HRESULT GetImageExtent(SVImageExtentClass& rImageExtent) override;
+	virtual HRESULT SetImageExtent(const SVImageExtentClass& rImageExtent) override;
 	virtual HRESULT GetFilteredImageExtentPropertyList( SVExtentPropertyListType& p_rPropertyList ) override;
 
 	const SVImageClass* GetToolImage() const;
@@ -112,7 +111,7 @@ public:
 	virtual bool SetFirstInputImageName( LPCTSTR FirstName) override;
 
 
-	virtual HRESULT UpdateImageWithExtent( unsigned long p_Index ) override;
+	virtual HRESULT UpdateImageWithExtent() override;
 	virtual HRESULT GetParentExtent( SVImageExtentClass& p_rParent ) const;
 
 	//!  Return false  if the input location 
@@ -128,7 +127,7 @@ public:
 
 	//! Sets the tool position index (One based)
 	//! \param Position
-	void setToolPosition(long ToolPosition) { m_ToolPosition.SetValue(ToolPosition, 1); };
+	void setToolPosition(long ToolPosition) { m_ToolPosition.SetValue(ToolPosition); };
 
 	//! Check if tool can be resized to parent extents
 	//! \returns true if tool can resize to parent
@@ -159,7 +158,7 @@ public:
 #pragma endregion ITool methods
 
 protected:
-	void UpdateAuxiliaryExtents(long resultDataIndex);
+	void UpdateAuxiliaryExtents();
 	virtual bool Run( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 	bool RunWithNewDisable( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr );
 

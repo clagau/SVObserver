@@ -76,9 +76,8 @@ private:
 
 	/// Execute the matrox pattern command and set the result to the value-objects.
 	/// \param ImageBufId [in] Input image for the excute command.
-	/// \param index [in] Index position in which bucket in the value-objects the result should be stored.
 	/// \returns Status of the execution or the get results.
-	HRESULT executePatternAndSetResults( SVMatroxBuffer ImageBufId, long index = 1 );
+	HRESULT executePatternAndSetResults( SVMatroxBuffer ImageBufId);
 
 	bool ValidateLocal(SvStl::MessageContainerVector *pErrorMessages=nullptr) const;
 

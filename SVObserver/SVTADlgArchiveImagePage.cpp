@@ -152,11 +152,11 @@ bool SVTADlgArchiveImagePage::QueryAllowExit()
 
 	m_pTool->SetImageArchivePath( ImageFolder.c_str() );
 
-	m_pTool->m_dwArchiveStopAtMaxImages.SetValue( static_cast<DWORD> (m_StopAtMaxImages), 1 );
+	m_pTool->m_dwArchiveStopAtMaxImages.SetValue(static_cast<DWORD> (m_StopAtMaxImages));
 
 	int iCurSel = m_Mode.GetCurSel();
 	m_eSelectedArchiveMethod = static_cast <SVArchiveMethodEnum> (m_Mode.GetItemData(iCurSel));
-	m_pTool->m_evoArchiveMethod.SetValue( static_cast<long> (m_eSelectedArchiveMethod), 1 );
+	m_pTool->m_evoArchiveMethod.SetValue(static_cast<long> (m_eSelectedArchiveMethod));
 
 	m_MaxImages.GetWindowText(Text);
 	DWORD dwTemp = atol( Text );
@@ -185,7 +185,7 @@ bool SVTADlgArchiveImagePage::QueryAllowExit()
 		dwTemp = 1L;
 	}
 
-	m_pTool->m_dwArchiveMaxImagesCount.SetValue( dwTemp, 1 );
+	m_pTool->m_dwArchiveMaxImagesCount.SetValue(dwTemp);
 
 	SvOsl::SelectorItemVector::const_iterator Iter;
 	for ( Iter = m_List.begin(); m_List.end() != Iter ; ++Iter )

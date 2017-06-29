@@ -139,13 +139,6 @@ bool Custom2Filter::onRun( bool First, SVSmartHandlePointer RInputImageHandle, S
 	bool Result( false );
 	HRESULT StatusCode;
 
-	m_KernelWidth.CopyLastSetValue( rRunStatus.m_lResultDataIndex );
-	m_KernelHeight.CopyLastSetValue( rRunStatus.m_lResultDataIndex );
-	m_ClippingEnabled.CopyLastSetValue( rRunStatus.m_lResultDataIndex );
-	m_AbsoluteValue.CopyLastSetValue( rRunStatus.m_lResultDataIndex );
-	m_NormalizationFactor.CopyLastSetValue( rRunStatus.m_lResultDataIndex );
-	m_KernelArray.CopyLastSetValue( rRunStatus.m_lResultDataIndex );
-
 	if( m_pCurrentUIOPL && !( ROutputImageHandle.empty() ) && !( RInputImageHandle.empty() ) )
 	{
 		SVImageBufferHandleImage MilHandle;
@@ -245,7 +238,7 @@ long Custom2Filter::validateKernelSize( SVLongValueObjectClass& rKernelSize )
 	{
 		Size = SvOi::ICustom2Filter::MaxKernelSize; 
 	}
-	rKernelSize.SetValue( Size, 1 );
+	rKernelSize.SetValue(Size);
 
 	return Size;
 }

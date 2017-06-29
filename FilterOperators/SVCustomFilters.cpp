@@ -238,19 +238,19 @@ void SVCustomFilterClass::RebuildKernel()
 	m_lvoKernelWidth.GetValue( lWidth );
 	if( lWidth >= 7 )
 	{
-		m_lvoKernelWidth.SetValue( 7L, 1 );
+		m_lvoKernelWidth.SetValue(7L);
 	}// end if
 	else if( lWidth >= 5 )
 	{
-		m_lvoKernelWidth.SetValue( 5L, 1 );
+		m_lvoKernelWidth.SetValue(5L);
 	}// end else if
 	else if( lWidth >= 3 )
 	{
-		m_lvoKernelWidth.SetValue( 3L, 1 );
+		m_lvoKernelWidth.SetValue(3L);
 	}// end else if
 	else
 	{
-		m_lvoKernelWidth.SetValue( 1L, 1 );
+		m_lvoKernelWidth.SetValue(1L);
 	}// end else
 	m_lvoKernelWidth.GetValue( lWidth );
 
@@ -258,19 +258,19 @@ void SVCustomFilterClass::RebuildKernel()
 	m_lvoKernelHeight.GetValue( lHeight );
 	if( lHeight >= 7 )
 	{
-		m_lvoKernelHeight.SetValue( 7L, 1 );
+		m_lvoKernelHeight.SetValue(7L);
 	}// end if
 	else if( lHeight >= 5 )
 	{
-		m_lvoKernelHeight.SetValue( 5L, 1 );
+		m_lvoKernelHeight.SetValue(5L);
 	}// end else if
 	else if( lHeight >= 3 )
 	{
-		m_lvoKernelHeight.SetValue( 3L, 1 );
+		m_lvoKernelHeight.SetValue(3L);
 	}// end else if
 	else
 	{
-		m_lvoKernelHeight.SetValue( 1L, 1 );
+		m_lvoKernelHeight.SetValue(1L);
 	}// end else
 	m_lvoKernelHeight.GetValue( lHeight );
 
@@ -340,19 +340,7 @@ void SVCustomFilterClass::RebuildKernel()
 ////////////////////////////////////////////////////////////////////////////////
 bool SVCustomFilterClass::onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 { 
-	// Force a copy forward to keep the display correct
-	for( long l = 0; l < 49; l++ )
-	{
-		m_plvoKernelCells[l]->CopyLastSetValue( rRunStatus.m_lResultDataIndex );
-	}// end for
-
 	HRESULT l_Code;
-
-	m_lvoKernelWidth.CopyLastSetValue( rRunStatus.m_lResultDataIndex );
-	m_lvoKernelHeight.CopyLastSetValue( rRunStatus.m_lResultDataIndex );
-	m_bvoClippingOn.CopyLastSetValue( rRunStatus.m_lResultDataIndex );
-	m_bvoAbsoluteValue.CopyLastSetValue( rRunStatus.m_lResultDataIndex );
-	m_lvoTransformationFactor.CopyLastSetValue( rRunStatus.m_lResultDataIndex );
 
 	if( m_pCurrentUIOPL && !( ROutputImageHandle.empty() ) && !( RInputImageHandle.empty() ) )
 	{

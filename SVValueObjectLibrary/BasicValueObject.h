@@ -51,10 +51,10 @@ public:
 #pragma region virtual method (IValueObject)
 	//! Gets the value for Value object NOTE this comes from IObjectClass
 	//! \param rValue [out] The reference to write the value to
-	//! \param Bucket [in] The corresponding bucket index to get, if required
 	//! \param Index [in] The corresponding array index to write to, if required
+	//! \param Bucket [in] The corresponding bucket index to get, if required
 	//! \returns S_OK if succeeded
-	virtual HRESULT getValue(double& rValue, int Bucket = -1, int Index = -1) const override;
+	virtual HRESULT getValue(double& rValue, int Index = -1, int Bucket = -1) const override;
 
 	//! Gets the default value for the Value object
 	//! \returns the default value as a variant
@@ -63,44 +63,42 @@ public:
 	//************************************
 	//! The method sets the value object
 	//! \param rValue <in> a reference of the variant to set
-	//! \param Bucket <in> standard value object parameter
 	//! \param Index <in> standard value object parameter
 	//! \returns SOK on success
 	//************************************
-	virtual HRESULT setValue( const _variant_t& rValue, int Bucket = -1, int Index = -1 ) override;
+	virtual HRESULT setValue(const _variant_t& rValue, int Index = -1) override;
 
 	//************************************
 	//! The method gets the value object
 	//! \param rValue <out> a reference to the variant to get
-	//! \param Bucket <in> standard value object parameter
 	//! \param Index <in> standard value object parameter
+	//! \param Bucket <in> standard value object parameter
 	//! \returns SOK on success
 	//************************************
-	virtual HRESULT getValue( _variant_t& rValue, int Bucket = -1, int Index = -1 ) const override;
+	virtual HRESULT getValue(_variant_t& rValue, int Index = -1, int Bucket = -1) const override;
 
 	//! Gets the values for Value object
 	//! \param rValue [out] The reference to _variant_t vector to store the values
 	//! \param Bucket [in] The corresponding bucket index to get, if required
 	//! \returns S_OK if succeeded
-	virtual HRESULT getValues( std::vector<_variant_t>& rValues, int Bucket = -1 ) const override { return E_NOTIMPL; };
+	virtual HRESULT getValues(std::vector<_variant_t>& rValues, int Bucket = -1) const override { return E_NOTIMPL; };
 
 	//************************************
 	//! The method sets the value object
 	//! \param rValue <in> a reference of the string to set
-	//! \param Bucket <in> standard value object parameter
 	//! \param Index <in> standard value object parameter
 	//! \returns SOK on success
 	//************************************
-	virtual HRESULT setValue( const SVString& rValue, int Bucket = -1, int Index = -1 ) override;
+	virtual HRESULT setValue(const SVString& rValue, int Index = -1) override;
 
 	//************************************
 	//! The method gets the value object
 	//! \param Value <out> a value of type string to get
-	//! \param Bucket <in> standard value object parameter
 	//! \param Index <in> standard value object parameter
+	//! \param Bucket <in> standard value object parameter
 	//! \returns SOK on success
 	//************************************
-	virtual HRESULT getValue( SVString& rValue, int Bucket = -1, int Index = -1 ) const override;
+	virtual HRESULT getValue(SVString& rValue, int Index = -1, int Bucket = -1) const override;
 
 	//! Set the value object bucketized flag
 	//! \param isBucketized [in] true if bucketized
@@ -125,7 +123,7 @@ public:
 
 	/// Gets the result size of the value object
 	/// \returns size
-	virtual int getResultSize( int Bucket = -1 ) const override { return 0; };
+	virtual int getResultSize() const override { return 0; };
 
 	/// Gets the reset item type
 	/// \returns the reset item enum type
@@ -137,7 +135,22 @@ public:
 
 	//! Copies the last set value to the destination bucket
 	//! \returns the result of copying
-	virtual HRESULT CopyLastSetValue( int DestBucket ) { return E_NOTIMPL; };
+	virtual HRESULT CopyValue( int DestBucket ) { return E_NOTIMPL; };
+
+	//! Returns he value object byte size
+	//! \returns the number of bytes for the data
+	virtual DWORD GetByteSize() const override;
+
+	//! Returns the variant type of the value object
+	//! \returns the VT type
+	virtual DWORD GetType() const override { return m_Value.vt; };
+
+	//! Copies the value object to the memory block
+	//! \param pMemoryBlock [in] Pointer to the byte address of the memory block
+	//! \param MemByteSize [in] The memory block byte size
+	//! \param Index [in] The index of the array (-1 if no array)
+	//! \returns S_OK if successful
+	virtual HRESULT CopyToMemoryBlock(BYTE* pMemoryBlock, DWORD MemByteSize, int Index = -1) const override;
 #pragma endregion virtual method (IObjectClass)
 
 	//************************************

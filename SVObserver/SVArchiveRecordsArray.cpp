@@ -60,7 +60,7 @@ void SVArchiveRecordsArray::ClearArray()
 }
 
 
-HRESULT SVArchiveRecordsArray::InitializeObjects(SVArchiveTool* pToolArchive, SVStringValueObjectClass& rObjects )	// use array capability of string vo
+HRESULT SVArchiveRecordsArray::InitializeObjects(SVArchiveTool* pToolArchive, SVStringValueObjectClass& rObject )	// use array capability of string vo
 {
 	HRESULT hr = S_OK;
 	ASSERT( nullptr != m_pArchiveTool );
@@ -68,12 +68,11 @@ HRESULT SVArchiveRecordsArray::InitializeObjects(SVArchiveTool* pToolArchive, SV
 	SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess *>(m_pArchiveTool->GetInspection());
 	ASSERT( pInspection );
 
-	int iSize = rObjects.getResultSize();
+	int iSize = rObject.getResultSize();
 	for ( int i = 0; i < iSize; i++ )
 	{
 		SVString Name;
-		long l_lIndex = rObjects.GetLastSetIndex();
-		rObjects.GetValue( Name, l_lIndex, i );
+		rObject.GetValue( Name, i );
 		if ( !Name.empty() )
 		{
 			SVArchiveRecord* pArchiveRecord = new SVArchiveRecord;
@@ -92,7 +91,7 @@ HRESULT SVArchiveRecordsArray::InitializeObjects(SVArchiveTool* pToolArchive, SV
 					if( NewName != Name )
 					{
 						// Set value with new inspection name.
-						rObjects.SetValue(NewName, l_lIndex, i );
+						rObject.SetValue(NewName, i );
 					}
 				}
 			}
@@ -285,7 +284,7 @@ int SVArchiveRecordsArray::ValidateResultsObjects()
 			}
 
 			double Value;
-			if( pObject->getValue( Value, 0 ) != SVMSG_SVO_33_OBJECT_INDEX_INVALID )
+			if( pObject->getValue(Value, 0) != SVMSG_SVO_33_OBJECT_INDEX_INVALID )
 			{
 				bRecordOK = true;
 				pResultRecord->ConnectInputObject();
@@ -325,7 +324,7 @@ SVString SVArchiveRecordsArray::BuildResultsArchiveString()
 		if ( nullptr != pValueObject )
 		{
 			SVString Temp;
-			HRESULT hr = pValueObject->getValue( Temp, -1, pResultRecord->m_svObjectReference.ArrayIndex());
+			HRESULT hr = pValueObject->getValue( Temp, pResultRecord->m_svObjectReference.ArrayIndex());
 			if ( S_OK == hr || SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE == hr )
 			{
 				if ( bFirst )

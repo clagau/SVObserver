@@ -235,8 +235,8 @@ bool SVPixelAnalyzerClass::onRun(SVRunStatusClass &rRunStatus, SvStl::MessageCon
 			break;
 		}
 
-		m_pixelCountColor.GetValue (byIndex);
-		m_pixelCount.SetValue( m_alHistValues[byIndex], rRunStatus.m_lResultDataIndex );
+		m_pixelCountColor.GetValue(byIndex);
+		m_pixelCount.SetValue(m_alHistValues[byIndex]);
 
 		break;
 	}

@@ -325,7 +325,7 @@ HRESULT SVExternalToolTask::Initialize(	SVDllLoadLibraryCallback fnNotify )
 
 	// try to connect to DLL
 	SVString DllPath;
-	m_Data.m_voDllPath.GetValue(DllPath, -1 );
+	m_Data.m_voDllPath.GetValue(DllPath);
 
 	try
 	{
@@ -353,7 +353,7 @@ HRESULT SVExternalToolTask::Initialize(	SVDllLoadLibraryCallback fnNotify )
 			}
 
 			SVString Name = SvUl_SF::createSVString( bstrName );
-			m_Data.m_voToolName.SetValue(Name, 1);
+			m_Data.m_voToolName.SetValue(Name);
 
 			SysFreeString( bstrName );
 			
@@ -364,7 +364,7 @@ HRESULT SVExternalToolTask::Initialize(	SVDllLoadLibraryCallback fnNotify )
 			{
 				throw hr;
 			}
-			m_Data.m_voToolVersion.SetValue( lVersion, 1 );
+			m_Data.m_voToolVersion.SetValue(lVersion);
 
 			///////////////////////////////////////
 			//    Initialize Inputs
@@ -994,7 +994,7 @@ bool SVExternalToolTask::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCont
 
 			for ( i=0; i < m_Data.m_lNumResultValues; i++ )
 			{
-				GetResultValueObject(i)->SetValue( m_aInspectionResultValues[i], rRunStatus.m_lResultDataIndex  );
+				GetResultValueObject(i)->SetValue(m_aInspectionResultValues[i]);
 
 				// Clear OleVariant that was created in Dll.
 				m_aInspectionResultValues[i].Clear();
@@ -1137,7 +1137,7 @@ bool SVExternalToolTask::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCont
 HRESULT SVExternalToolTask::SetPathName( const SVString& rPath )
 {
 	HRESULT hr=S_OK;
-	m_Data.m_voDllPath.SetValue(rPath, 1 );
+	m_Data.m_voDllPath.SetValue(rPath);
 	return hr;
 }
 
@@ -1151,11 +1151,11 @@ HRESULT SVExternalToolTask::SetDependencies( const SVStringVector& rDependencies
 
 		for( i = 0 ; i < iSize ; i++)
 		{
-			m_Data.m_aDllDependencies[i].SetValue( rDependencies[i], 1 );
+			m_Data.m_aDllDependencies[i].SetValue(rDependencies[i]);
 		}
 		for( i = iSize ; i < SVExternalToolTaskData::NUM_TOOL_DEPENDENCIES ; i++)
 		{
-			m_Data.m_aDllDependencies[i].SetValue( SVString(), 1 );
+			m_Data.m_aDllDependencies[i].SetValue(SVString());
 		}
 
 		hr = S_OK;
@@ -1815,7 +1815,7 @@ HRESULT SVExternalToolTask::CollectInputImageNames( )
 				{
 					SVString Name = l_pImage->GetCompleteName();
 
-					pImageNames->SetValue( Name, 0, i ); 
+					pImageNames->SetValue( Name, i );
 				}
 			}
 		}

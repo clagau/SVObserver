@@ -95,8 +95,6 @@ HRESULT SVVariantValueObjectClass::SetObjectValue(SVObjectAttributeClass* pDataO
 				std::swap( ValueArray(), ReadValueArray );
 			}
 		}
-		setLastSetIndex( 1 );
-
 	}
 	else if ( bOk = pDataObject->GetAttributeData(_T("m_vtDefault"), ObjectArray) )
 	{
@@ -151,10 +149,6 @@ HRESULT SVVariantValueObjectClass::SetObjectValue(SVObjectAttributeClass* pDataO
 				}
 			}
 		}
-		if ( 1 < getNumberOfBuckets() )
-		{
-			setLastSetIndex( 1 );
-		}
 	}
 	else
 	{
@@ -189,9 +183,9 @@ BOOL SVVariantValueObjectClass::SetType( int vt )
 	}
 	else
 	{
-		for (int i = 0; i < getNumberOfBuckets(); i++)
+		for (int i = 0; i < getArraySize(); i++)
 		{
-			for (int j=0; j < getArraySize(); j++)
+			for (int j = 0; j < getNumberOfBuckets(); j++)
 			{
 				_variant_t* pValue = getValuePointer( i, j );
 				if ( nullptr != pValue && pValue->vt != vt )
@@ -205,7 +199,7 @@ BOOL SVVariantValueObjectClass::SetType( int vt )
 	return true;
 }
 
-HRESULT SVVariantValueObjectClass::SetValueKeepType(LPCTSTR Value, int Bucket, int Index)
+HRESULT SVVariantValueObjectClass::SetValueKeepType(LPCTSTR Value, int Index)
 {
 	HRESULT hr = S_OK;
 
@@ -219,7 +213,7 @@ HRESULT SVVariantValueObjectClass::SetValueKeepType(LPCTSTR Value, int Bucket, i
 
 	if( S_OK == hr)
 	{
-		hr = __super::SetValue( vtTemp, Bucket, Index );
+		hr = __super::SetValue( vtTemp, Index );
 	}
 
 	return hr;
@@ -375,6 +369,132 @@ SVString SVVariantValueObjectClass::ConvertType2String( const _variant_t& rValue
 	return Result;
 }
 
+DWORD SVVariantValueObjectClass::GetByteSize() const
+{
+	DWORD Result(0);
+
+	switch (GetValueType())
+	{
+	case VT_BOOL:
+		Result = sizeof(VARIANT::boolVal);
+		break;
+	case VT_I1:
+		Result = sizeof(VARIANT::cVal);
+		break;
+	case VT_UI1:
+		Result = sizeof(VARIANT::bVal);
+		break;
+	case VT_I2:
+		Result = sizeof(VARIANT::iVal);
+		break;
+	case VT_UI2:
+		Result = sizeof(VARIANT::uiVal);
+		break;
+	case VT_I4:
+		Result = sizeof(VARIANT::lVal);
+		break;
+	case VT_UI4:
+		Result = sizeof(VARIANT::ulVal);
+		break;
+	case VT_I8:
+		Result = sizeof(VARIANT::llVal);
+		break;
+	case VT_UI8:
+		Result = sizeof(VARIANT::ullVal);
+		break;
+	case VT_INT:
+		Result = sizeof(VARIANT::intVal);
+		break;
+	case VT_UINT:
+		Result = sizeof(VARIANT::uintVal);
+		break;
+	case VT_R4:
+		Result = sizeof(VARIANT::fltVal);
+		break;
+	case VT_R8:
+		Result = sizeof(VARIANT::dblVal);
+		break;
+	case VT_BSTR:
+		Result = cMaxStringSize;
+		break;
+	default:
+		break;
+	}
+	return Result;
+}
+
+HRESULT SVVariantValueObjectClass::CopyToMemoryBlock(BYTE* pMemoryBlock, DWORD MemByteSize, int Index /* = -1*/) const
+{
+	HRESULT Result = ValidateMemoryBlockParameters(pMemoryBlock, MemByteSize, Index);
+
+	if (S_OK == Result)
+	{
+		_variant_t Value;
+		SVVariantValueObjectClass::GetValue(Value, Index);
+		const void* pValue(nullptr);
+
+		switch (Value.vt)
+		{
+		case VT_BOOL:
+			pValue = &Value.boolVal;
+			break;
+		case VT_I1:
+			pValue = &Value.cVal;
+			break;
+		case VT_UI1:
+			pValue = &Value.bVal;
+			break;
+		case VT_I2:
+			pValue = &Value.iVal;
+			break;
+		case VT_UI2:
+			pValue = &Value.uiVal;
+			break;
+		case VT_I4:
+			pValue = &Value.lVal;
+			break;
+		case VT_UI4:
+			pValue = &Value.ulVal;
+			break;
+		case VT_I8:
+			pValue = &Value.llVal;
+			break;
+		case VT_UI8:
+			pValue = &Value.ullVal;
+			break;
+		case VT_INT:
+			pValue = &Value.intVal;
+			break;
+		case VT_UINT:
+			pValue = &Value.uintVal;
+			break;
+		case VT_R4:
+			pValue = &Value.fltVal;
+			break;
+		case VT_R8:
+			pValue = &Value.dblVal;
+			break;
+		case VT_BSTR:
+			{
+				SVString TempString = SvUl_SF::createSVString(Value.bstrVal);
+				size_t Size = std::min(static_cast<size_t> (GetByteSize() - 1), TempString.size());
+				pValue = nullptr;
+				memcpy(pMemoryBlock, TempString.c_str(), Size);
+			}
+			break;
+		default:
+			break;
+		}
+		//This is for all types except VT_BSTR
+		if (nullptr != pValue)
+		{
+			memcpy(pMemoryBlock, pValue, GetByteSize());
+		}
+	}
+
+	return Result;
+}
+
 void SVVariantValueObjectClass::WriteValues(SVObjectWriter& rWriter)
 {
 	// Object Depth is implicit (it's the count of the values)
@@ -387,7 +507,7 @@ void SVVariantValueObjectClass::WriteValues(SVObjectWriter& rWriter)
 	for (int i = 0; i < getArraySize(); i++)
 	{
 		//Make sure this is not a derived virtual method which is called
-		SVVariantValueObjectClass::GetValue(Value, GetLastSetIndex(), i);
+		SVVariantValueObjectClass::GetValue(Value, i);
 
 		// The parser does not like reading in empty safe array.
 		// Therefore if an empty array is detected then set the variant type to VT_EMPTY.

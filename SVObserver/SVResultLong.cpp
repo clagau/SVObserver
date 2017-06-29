@@ -115,7 +115,7 @@ bool SVLongResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageConta
 			double FetchValue(0.0);
 			pObject->getValue( FetchValue );
 			long SetValue = static_cast<long> (FetchValue);
-			m_Value.SetValue(SetValue, rRunStatus.m_lResultDataIndex );
+			m_Value.SetValue(SetValue);
 			return true;
 		}
 	}

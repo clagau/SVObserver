@@ -375,10 +375,10 @@ BOOL SVEnumerateValueObjectClass::GetNextEnumType( int& RIterator, SVString& RSt
 	return bRetVal;
 }
 
-HRESULT SVEnumerateValueObjectClass::GetVariantValue( _variant_t& rValue, int Bucket, int Index ) const
+HRESULT SVEnumerateValueObjectClass::GetVariantValue(_variant_t& rValue, int Index, int Bucket) const
 {
 	long Value;
-	HRESULT Result = GetValue( Value, Bucket, Index );
+	HRESULT Result = GetValue(Value, Index, Bucket);
 	if( S_OK == Result )
 	{
 		rValue.SetString( ConvertType2String( Value ).c_str() );
@@ -428,7 +428,7 @@ void SVEnumerateValueObjectClass::WriteValues(SVObjectWriter& rWriter)
 		//Make sure this is not a derived virtual method which is called
 		_variant_t Value;
 		Value.ChangeType(VT_I4);
-		SVEnumerateValueObjectClass::GetValue(Value.lVal, GetLastSetIndex(), i);
+		SVEnumerateValueObjectClass::GetValue(Value.lVal, i);
 		list.push_back(Value);
 	}
 	rWriter.WriteAttribute(scElementTag, list);

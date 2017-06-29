@@ -79,7 +79,7 @@ BOOL SVColorToolClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure
 					//! This is required to receive the correct extents when the camera image has an ROI set
 					m_pInputImage->ResetObject();
 					//! Converting configuration without ROI has to set the image to the full parent extents
-					SetImageExtentToParent(1);
+					SetImageExtentToParent();
 					// Converting configuration without ROI has to set all the thresholds to enabled
 					SVObjectTypeInfoStruct objectInfo;
 					objectInfo.ObjectType = SVOperatorObjectType;
@@ -147,40 +147,40 @@ bool SVColorToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages
 
 	CollectInputImageNames();
 
-	UpdateImageWithExtent( 1 );
+	UpdateImageWithExtent();
 
 	return Result;
 }
 
-HRESULT SVColorToolClass::SetImageExtent(unsigned long p_ulIndex, SVImageExtentClass p_svImageExtent)
+HRESULT SVColorToolClass::SetImageExtent(const SVImageExtentClass& rImageExtent)
 {
-	HRESULT l_hrOk = m_svToolExtent.ValidExtentAgainstParentImage(p_svImageExtent);
+	HRESULT l_hrOk = m_svToolExtent.ValidExtentAgainstParentImage(rImageExtent);
 
 	if (S_OK == l_hrOk)
 	{
-		l_hrOk = SVToolClass::SetImageExtent(p_ulIndex, p_svImageExtent);
+		l_hrOk = SVToolClass::SetImageExtent(rImageExtent);
 	}
 
 	return l_hrOk;
 }
 
-HRESULT SVColorToolClass::SetImageExtentToParent(unsigned long Index)
+HRESULT SVColorToolClass::SetImageExtentToParent()
 {
 	SVImageExtentClass NewExtent;
-	HRESULT l_hrOk = m_svToolExtent.UpdateExtentToParentExtents(Index, NewExtent);
+	HRESULT l_hrOk = m_svToolExtent.UpdateExtentToParentExtents(NewExtent);
 
 	if (S_OK == l_hrOk)
 	{
-		l_hrOk = SVToolClass::SetImageExtent(Index, NewExtent);
+		l_hrOk = SVToolClass::SetImageExtent(NewExtent);
 	}
 	return l_hrOk;
 }
 
-HRESULT SVColorToolClass::SetImageExtentToFit(unsigned long Index, SVImageExtentClass ImageExtent)
+HRESULT SVColorToolClass::SetImageExtentToFit(const SVImageExtentClass& rImageExtent)
 {
 	HRESULT l_hrOk = S_OK;
 
-	l_hrOk = m_svToolExtent.UpdateExtentAgainstParentImage(Index, ImageExtent);
+	l_hrOk = m_svToolExtent.UpdateExtentAgainstParentImage(rImageExtent);
 
 	return l_hrOk;
 }
@@ -229,7 +229,7 @@ bool SVColorToolClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContain
 		SVImageClass* pInputImage = getInputImage();
 		if (m_LogicalROIImage.GetLastResetTimeStamp() <= pInputImage->GetLastResetTimeStamp())
 		{
-			UpdateImageWithExtent(rRunStatus.m_lResultDataIndex);
+			UpdateImageWithExtent();
 		}
 		SVSmartHandlePointer inputImageHandle;
 		m_LogicalROIImage.GetParentImageHandle(inputImageHandle);

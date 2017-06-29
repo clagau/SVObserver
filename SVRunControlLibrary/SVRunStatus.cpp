@@ -50,7 +50,7 @@ void SVRunStatusClass::ResetRunStateAndToolSetTimes()
 	m_ToolSetAvgTime = 0.0;
 }
 
-DWORD SVRunStatusClass::GetStatusColor()
+DWORD SVRunStatusClass::GetStatusColor() const
 {
 	if( IsDisabled() || IsDisabledByCondition() )
 		return SV_DEFAULT_DISABLED_COLOR;

@@ -54,15 +54,15 @@ public:
 	inline void SetAlwaysUpdate( bool p_bAlwaysUpdate );
 
 	HRESULT ValidExtentAgainstParentImage( const SVImageExtentClass& p_rImageExtent ) const;
-	HRESULT UpdateExtentToParentExtents( unsigned long p_ulIndex, SVImageExtentClass& p_rNewExtent  );
-	HRESULT UpdateExtentAgainstParentImage( unsigned long p_ulIndex, const SVImageExtentClass& p_rImageExtent );
+	HRESULT UpdateExtentToParentExtents( SVImageExtentClass& p_rNewExtent  );
+	HRESULT UpdateExtentAgainstParentImage( const SVImageExtentClass& p_rImageExtent );
 	HRESULT GetParentExtent( SVImageExtentClass& p_rParent ) const;
 
-	HRESULT UpdateImageWithExtent( unsigned long p_ulIndex, SVToolExtentTypeEnum p_ToolExtentType );
+	HRESULT UpdateImageWithExtent( SVToolExtentTypeEnum p_ToolExtentType );
 
 	SVExtentTranslationEnum GetTranslation();
-	HRESULT SetTranslation( SVExtentTranslationEnum p_eTranslation );
-	HRESULT SetTranslation( SVExtentTranslationEnum p_eTranslation, long p_DataIndex );
+	HRESULT SetTranslation( SVExtentTranslationEnum eTranslation );
+	HRESULT SetLinearTranslation(SVExtentTranslationEnum eTranslation);
 
 	HRESULT GetExtentShape( SVExtentPropertyEnum p_eProperty, SVExtentShapeEnum &p_reValue ) const;
 
@@ -70,7 +70,7 @@ public:
 	HRESULT SetExtentObject( SVExtentPropertyEnum p_eProperty, SvOi::IValueObject* pValueObject );
 
 	HRESULT GetExtentValue( SVExtentPropertyEnum p_eProperty, _variant_t& rValue ) const;
-	HRESULT SetExtentValue( SVExtentPropertyEnum p_eProperty, long p_DataIndex, const _variant_t& rValue );
+	HRESULT SetExtentValue( SVExtentPropertyEnum p_eProperty, const _variant_t& rValue );
 
 	HRESULT GetExtentPropertyInfo( SVExtentPropertyEnum p_eProperty, SVExtentPropertyInfoStruct& p_rInfo ) const;
 	HRESULT SetExtentPropertyInfo( SVExtentPropertyEnum p_eProperty, const SVExtentPropertyInfoStruct& p_rInfo );
@@ -81,10 +81,9 @@ public:
 //- and the SVImageExtentClass.  This function appears to attempt to translate  
 //- between the two.  Translating and copying from the SVToolExtentClass based 
 //- structure into the SVImageExtentClass based structure. -------------------
-	HRESULT GetImageExtent( SVImageExtentClass &p_rsvImageExtent )const ;
+	HRESULT GetImageExtent( SVImageExtentClass& rImageExtent )const ;
 
-	HRESULT GetImageExtent( unsigned long p_ulIndex, SVImageExtentClass &p_rsvImageExtent ) const;
-	HRESULT SetImageExtent( unsigned long p_ulIndex, SVImageExtentClass p_svImageExtent );
+	HRESULT SetImageExtent( const SVImageExtentClass& rImageExtent );
 	HRESULT GetFilteredImageExtentPropertyList( SVExtentPropertyListType& p_rPropertyList );
 
 	// ******* Begin Source Extent Data

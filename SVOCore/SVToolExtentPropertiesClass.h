@@ -28,7 +28,6 @@ public:
 	HRESULT Initialize();
 
 	HRESULT GetProperties( SVImageExtentClass &rExtents ) const;
-	HRESULT GetProperties( unsigned long Index, SVImageExtentClass &rExtents ) const;
 
 	HRESULT GetExtentObject( SVExtentPropertyEnum eProperty, SvOi::IValueObject *&rpValueObject ) const;
 	HRESULT SetExtentObject( SVExtentPropertyEnum eProperty, SvOi::IValueObject *pValueObject );

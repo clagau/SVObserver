@@ -44,7 +44,7 @@ public:
 	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
-	virtual HRESULT SetImageExtentToParent( unsigned long p_ulIndex ) override;
+	virtual HRESULT SetImageExtentToParent() override;
 	virtual SVStringValueObjectClass* GetInputImageNames() override;
 
 	virtual HRESULT IsInputImage( SVImageClass *p_psvImage ) override;

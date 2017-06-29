@@ -265,7 +265,7 @@ void SVStatisticsToolClass::EnableFeature (SVStatisticsFeatureEnum aIndex)
 	{
 		FeatureString[aIndex] =  '1';
 	}
-	m_PersistantFeaturesEnabled.SetValue(FeatureString, 1 );
+	m_PersistantFeaturesEnabled.SetValue(FeatureString);
 
 	// ATTENTION: In error case this method throw an exception (const SvStl::MessageContainer&)
 	AllocateResult (aIndex);
@@ -308,7 +308,7 @@ DWORD SVStatisticsToolClass::DisableFeature (SVStatisticsFeatureEnum aIndex)
 	{
 		FeatureString[aIndex] = '0';
 	}
-	m_PersistantFeaturesEnabled.SetValue( FeatureString, 1 );
+	m_PersistantFeaturesEnabled.SetValue( FeatureString);
 
 	FreeResult (aIndex);
 
@@ -471,7 +471,7 @@ SVString SVStatisticsToolClass::GetOccurenceTestValue()
 
 void SVStatisticsToolClass::SetOccurenceTestValue( const SVString& rValue )
 {
-	m_OccurenceValue.SetValue( rValue, 1 );
+	m_OccurenceValue.SetValue( rValue);
 }
 
 SVObjectReference SVStatisticsToolClass::GetVariableSelected() const
@@ -519,12 +519,12 @@ void SVStatisticsToolClass::SetVariableSelected( const SVString& rName )
 			
 			refObject.getObject()->ConnectObjectInput(&m_inputObjectInfo);
 		}// end if( refObject.Object() )
-		m_VariableName.SetValue( rName, 1 );
+		m_VariableName.SetValue(rName);
 	}
 	else
 	{
-		//msvVariableGUID_OBSOLETE.SetValue( guidStr, 1 );
-		m_VariableName.SetValue( SVString(), 1 );
+		//msvVariableGUID_OBSOLETE.SetValue( guidStr );
+		m_VariableName.SetValue(SVString());
 
 		// Clear the Object Info
 		m_inputObjectInfo.SetInputObject( nullptr );
@@ -559,7 +559,7 @@ double SVStatisticsToolClass::getInputValue()
 	if(m_inputObjectInfo.IsConnected() && nullptr != m_inputObjectInfo.GetInputObjectInfo().m_pObject)
 	{
 		const SVObjectReference& rObjectRef = m_inputObjectInfo.GetInputObjectInfo().GetObjectReference();
-		m_inputObjectInfo.GetInputObjectInfo().m_pObject->getValue( Result, -1, rObjectRef.getValidArrayIndex() );
+		m_inputObjectInfo.GetInputObjectInfo().m_pObject->getValue( Result, rObjectRef.getValidArrayIndex() );
 	}
 	return Result;
 }
@@ -575,13 +575,13 @@ double SVStatisticsToolClass::getNumberOfSamples()
 // Reset Statistics values
 void SVStatisticsToolClass::resetValues()
 {
-	m_Value[SV_STATS_MIN_VALUE].SetValue( 0.0, 1 );
-	m_Value[SV_STATS_MAX_VALUE].SetValue( 0.0, 1 );
-	m_Value[SV_STATS_AVERAGEOF_VALUES].SetValue( 0.0, 1 );
-	m_Value[SV_STATS_STANDARD_DEVIATION].SetValue( 0.0, 1 );
-	m_Value[SV_STATS_VARIANCEIN_VALUES].SetValue( 0.0, 1 );
-	m_Value[SV_STATS_NUMBEROF_OCCURANCES].SetValue( 0.0, 1 );
-	m_Value[SV_STATS_PERCENTOF_OCCURANCES].SetValue( 0.0, 1 );
+	m_Value[SV_STATS_MIN_VALUE].SetValue(0.0);
+	m_Value[SV_STATS_MAX_VALUE].SetValue(0.0);
+	m_Value[SV_STATS_AVERAGEOF_VALUES].SetValue(0.0);
+	m_Value[SV_STATS_STANDARD_DEVIATION].SetValue(0.0);
+	m_Value[SV_STATS_VARIANCEIN_VALUES].SetValue(0.0);
+	m_Value[SV_STATS_NUMBEROF_OCCURANCES].SetValue(0.0);
+	m_Value[SV_STATS_PERCENTOF_OCCURANCES].SetValue(0.0);
 	m_AccumulatedSquares = 0.0;
 	m_AccumulatedTotal = 0.0;
 }
@@ -655,7 +655,7 @@ bool SVStatisticsToolClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageCo
 		m_AccumulatedSquares += (value * value);
 
 		// Update the Average value
-		m_Value[SV_STATS_AVERAGEOF_VALUES].SetValue(averageValue, rRunStatus.m_lResultDataIndex);
+		m_Value[SV_STATS_AVERAGEOF_VALUES].SetValue(averageValue);
 
 		// increment number of matched occurences
 		SVString occurenceValueStr;
@@ -667,7 +667,7 @@ bool SVStatisticsToolClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageCo
 			{
 				m_Value[SV_STATS_NUMBEROF_OCCURANCES].GetValue(count);
 				count++;
-				m_Value[SV_STATS_NUMBEROF_OCCURANCES].SetValue(count, rRunStatus.m_lResultDataIndex);
+				m_Value[SV_STATS_NUMBEROF_OCCURANCES].SetValue(count);
 			}
 		}
 
@@ -690,7 +690,7 @@ bool SVStatisticsToolClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageCo
 						value = dInputValue;
 					}
 
-					m_Value[SV_STATS_MIN_VALUE].SetValue(value, rRunStatus.m_lResultDataIndex);
+					m_Value[SV_STATS_MIN_VALUE].SetValue(value);
 					break;
 
 				case SV_STATS_MAX_VALUE:
@@ -705,7 +705,7 @@ bool SVStatisticsToolClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageCo
 						value = dInputValue;
 					}
 
-					m_Value[SV_STATS_MAX_VALUE].SetValue(value, rRunStatus.m_lResultDataIndex);
+					m_Value[SV_STATS_MAX_VALUE].SetValue(value);
 					break;
 
 				case SV_STATS_VARIANCEIN_VALUES:
@@ -717,7 +717,7 @@ bool SVStatisticsToolClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageCo
 					{
 						value = calculateVariance(numberOfSamples, averageValue);
 
-						m_Value[SV_STATS_VARIANCEIN_VALUES].SetValue(value, rRunStatus.m_lResultDataIndex);
+						m_Value[SV_STATS_VARIANCEIN_VALUES].SetValue(value);
 					}
 					break;
 
@@ -737,7 +737,7 @@ bool SVStatisticsToolClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageCo
 						if (value)
 							value = fabs(sqrt(value));
 
-						m_Value[SV_STATS_STANDARD_DEVIATION].SetValue(value, rRunStatus.m_lResultDataIndex);
+						m_Value[SV_STATS_STANDARD_DEVIATION].SetValue(value);
 					}
 					break;
 
@@ -749,7 +749,7 @@ bool SVStatisticsToolClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageCo
 						// Calculate percentile
 						value = (count / numberOfSamples) * 100.0;
 
-						m_Value[SV_STATS_PERCENTOF_OCCURANCES].SetValue(value, rRunStatus.m_lResultDataIndex);
+						m_Value[SV_STATS_PERCENTOF_OCCURANCES].SetValue(value);
 					}
 					break;
 				}
@@ -783,7 +783,7 @@ bool SVStatisticsToolClass::Test(SvStl::MessageContainerVector *pErrorMessages)
 		if( nullptr != ObjectRef.getObject() )
 		{
 			double Value;
-			HRESULT hr = ObjectRef.getObject()->getValue( Value, -1, ObjectRef.getValidArrayIndex() );
+			HRESULT hr = ObjectRef.getObject()->getValue( Value, ObjectRef.getValidArrayIndex() );
 			if ( S_OK == hr || SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE == hr )
 			{
 				return true;

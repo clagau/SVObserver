@@ -116,7 +116,7 @@ bool SVDPointXResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCo
 		pPoint->GetValue( DPoint );
 
 		// Set X
-		x.SetValue( DPoint.x, rRunStatus.m_lResultDataIndex );
+		x.SetValue(DPoint.x);
 
 		return true;
 	}

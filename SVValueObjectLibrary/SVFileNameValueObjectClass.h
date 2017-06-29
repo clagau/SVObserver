@@ -34,7 +34,7 @@ public:
 
 	virtual void Persist(SVObjectWriter& rWriter) override;
 
-	virtual HRESULT SetValue( const SVString& rValue, int Bucket = -1, int Index = -1 ) override;
+	virtual HRESULT SetValue( const SVString& rValue, int Index = -1 ) override;
 	HRESULT SetDefaultValue( const SVString& rValue, bool bResetAll ) override;
 
 protected:
@@ -51,6 +51,13 @@ protected:
 	//! \param rValue [in] Type to convert
 	/// \returns the SVString
 	virtual SVString ConvertType2String( const SVString& rValue ) const override { return rValue; };
+
+	//! Copies the value object to the memory block
+	//! \param pMemoryBlock [in] Pointer to the byte address of the memory block
+	//! \param MemByteSize [in] The memory block byte size
+	//! \param Index [in] The index of the array (-1 if no array)
+	//! \returns S_OK if successful
+	virtual HRESULT CopyToMemoryBlock(BYTE* pMemoryBlock, DWORD MemByteSize, int Index = -1) const override;
 
 	virtual void WriteValues(SVObjectWriter& rWriter) override;
 

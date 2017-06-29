@@ -1584,7 +1584,7 @@ HRESULT CSVCommand::StreamingDataCallback( const SVInspectionCompleteInfoStruct&
 							// Ensure index is not ot of bounds
 							if (pStreamData->arrayIndex < pValueObject->getArraySize())
 							{
-								pValueObject->getValue( oPacketData.strValue, p_rData.m_ProductInfo.oPPQInfo.m_ResultDataDMIndexHandle.GetIndex(), pStreamData->arrayIndex );
+								pValueObject->getValue( oPacketData.strValue, pStreamData->arrayIndex, p_rData.m_ProductInfo.oPPQInfo.m_ResultDataDMIndexHandle.GetIndex() );
 							}
 							else
 							{
@@ -1598,7 +1598,7 @@ HRESULT CSVCommand::StreamingDataCallback( const SVInspectionCompleteInfoStruct&
 					}
 					else
 					{
-						pValueObject->getValue( oPacketData.strValue, p_rData.m_ProductInfo.oPPQInfo.m_ResultDataDMIndexHandle.GetIndex() );
+						pValueObject->getValue( oPacketData.strValue, -1, p_rData.m_ProductInfo.oPPQInfo.m_ResultDataDMIndexHandle.GetIndex() );
 					}
 				}// end if
 				else
@@ -1994,7 +1994,7 @@ STDMETHODIMP CSVCommand::SVGetProductDataList(long lProcessCount, SAFEARRAY* psa
 
 				if ( !ObjectRef.isEntireArray() )
 				{
-					HRESULT hrGet = ObjectRef.getValueObject()->getValue(Value, l_BucketHandle.GetIndex(), ObjectRef.getValidArrayIndex() );
+					HRESULT hrGet = ObjectRef.getValueObject()->getValue(Value, ObjectRef.getValidArrayIndex(), l_BucketHandle.GetIndex());
 					if ( S_OK == hrGet )
 					{
 						// put value in return array
@@ -2036,11 +2036,11 @@ STDMETHODIMP CSVCommand::SVGetProductDataList(long lProcessCount, SAFEARRAY* psa
 				else	// GET ENTIRE ARRAY
 				{
 					// get all results and put them into a parsable string
-					int NumResults = ObjectRef.getValueObject()->getResultSize( l_BucketHandle.GetIndex() );
+					int NumResults = ObjectRef.getValueObject()->getResultSize();
 					SVString ArrayValues;
 					for ( int iArrayIndex = 0; iArrayIndex < NumResults; iArrayIndex++ )
 					{
-						HRESULT hrGet = ObjectRef.getValueObject()->getValue( Value, l_BucketHandle.GetIndex(), iArrayIndex );
+						HRESULT hrGet = ObjectRef.getValueObject()->getValue(Value, iArrayIndex, l_BucketHandle.GetIndex());
 						if ( S_OK == hrGet )
 						{
 							if ( iArrayIndex > 0 )
@@ -2744,7 +2744,7 @@ HRESULT CSVCommand::SVGetDataList(SAFEARRAY* psaNames, SAFEARRAY** ppsaValues, S
 					if( !ObjectRef.isEntireArray() )
 					{
 						// was able to find the object
-						HRESULT hrGet = ObjectRef.getValueObject()->getValue( Value, -1, ObjectRef.getValidArrayIndex() );
+						HRESULT hrGet = ObjectRef.getValueObject()->getValue( Value, ObjectRef.getValidArrayIndex() );
 						if ( S_OK == hrGet )
 						{
 							//got value
@@ -2778,7 +2778,7 @@ HRESULT CSVCommand::SVGetDataList(SAFEARRAY* psaNames, SAFEARRAY** ppsaValues, S
 						SVString ArrayValues;
 						for ( int iArrayIndex = 0; iArrayIndex < NumResults; iArrayIndex++ )
 						{
-							HRESULT hrGet = ObjectRef.getValueObject()->getValue( Value, -1, iArrayIndex  );
+							HRESULT hrGet = ObjectRef.getValueObject()->getValue( Value, iArrayIndex  );
 							if ( S_OK == hrGet )
 							{
 								if ( iArrayIndex > 0 )
@@ -5200,7 +5200,7 @@ STDMETHODIMP CSVCommand::SVGetTransferImageDefinitionList(BSTR bstrInspectionNam
 					for( long l_lIndex = 0; l_lIndex < l_lSize ; l_lIndex++ )
 					{
 						SVString strTmp;
-						HRESULT l_hr = pSourceNames->getValue( strTmp, -1, l_lIndex );
+						HRESULT l_hr = pSourceNames->getValue( strTmp, l_lIndex );
 						_bstr_t bstTmp = strTmp.c_str();
 						SafeArrayPutElement(l_psaTemp, &l_lIndex, bstTmp.GetBSTR() );
 					}

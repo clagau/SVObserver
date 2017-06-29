@@ -104,24 +104,22 @@ bool SVLinearToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessage
 	HRESULT hrOk = m_voUseProfileRotation.GetValue( UseProfileRotation );
 	if( S_OK == hrOk )
 	{
-		long DataIndex = m_voUseProfileRotation.GetLastSetIndex();
-
 		if( UseProfileRotation )
 		{
 			if( m_svToolExtent.GetTranslation() != SVExtentTranslationProfile )
 			{
-				m_voProfileOrientation.setValue( SVString( _T("Horizontal") ), DataIndex );
+				m_voProfileOrientation.setValue( SVString( _T("Horizontal") ) );
 
-				hrOk = m_svToolExtent.SetTranslation( SVExtentTranslationProfile, DataIndex );
+				hrOk = m_svToolExtent.SetLinearTranslation(SVExtentTranslationProfile);
 			}
 		}
 		else
 		{
 			if( m_svToolExtent.GetTranslation() != SVExtentTranslationProfileShift )
 			{
-				m_svRotationAngle.SetValue( 0.0, DataIndex );
+				m_svRotationAngle.SetValue( 0.0 );
 
-				hrOk = m_svToolExtent.SetTranslation( SVExtentTranslationProfileShift, DataIndex );
+				hrOk = m_svToolExtent.SetLinearTranslation(SVExtentTranslationProfileShift);
 			}
 		}
 
@@ -166,12 +164,12 @@ bool SVLinearToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessage
 			{
 				if( m_ExtentLeft.ObjectAttributesAllowed() != SvOi::SV_NO_ATTRIBUTES )
 				{
-					m_ExtentLeft.SetValue( l_svFigure.m_svTopLeft.m_dPositionX, 1 );
+					m_ExtentLeft.SetValue( l_svFigure.m_svTopLeft.m_dPositionX );
 				}
 				
 				if( m_ExtentTop.ObjectAttributesAllowed() != SvOi::SV_NO_ATTRIBUTES )
 				{
-					m_ExtentTop.SetValue( l_svFigure.m_svTopLeft.m_dPositionY, 1 );
+					m_ExtentTop.SetValue( l_svFigure.m_svTopLeft.m_dPositionY );
 				}
 			}
 		}
@@ -186,21 +184,21 @@ bool SVLinearToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessage
 		}
 	}
 
-	UpdateImageWithExtent( 1 );
+	UpdateImageWithExtent();
 
 	return Result;
 }
 
-HRESULT SVLinearToolClass::SetImageExtentToParent( unsigned long p_ulIndex )
+HRESULT SVLinearToolClass::SetImageExtentToParent()
 {
 	HRESULT l_hrOk = S_OK;
-	SVImageExtentClass l_NewExtent;
+	SVImageExtentClass NewExtent;
 
-	l_hrOk = m_svToolExtent.UpdateExtentToParentExtents( p_ulIndex, l_NewExtent );
+	l_hrOk = m_svToolExtent.UpdateExtentToParentExtents( NewExtent );
 
 	if( S_OK == l_hrOk )
 	{
-		l_hrOk = SVToolClass::SetImageExtent( p_ulIndex, l_NewExtent );
+		l_hrOk = SVToolClass::SetImageExtent( NewExtent );
 	}
 	return l_hrOk;
 }

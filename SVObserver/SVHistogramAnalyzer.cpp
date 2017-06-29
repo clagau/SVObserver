@@ -649,15 +649,15 @@ bool SVHistogramAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messa
 		///////////////////////////////////////////////////
 		// Clear values to be calculated
 		///////////////////////////////////////////////////
-		msvStdDevValue.SetValue( 0.0, rRunStatus.m_lResultDataIndex );
-		msvMeanValue.SetValue( 0.0, rRunStatus.m_lResultDataIndex );
+		msvStdDevValue.SetValue(0.0);
+		msvMeanValue.SetValue(0.0);
 
-		msvMaxPixelValue.SetValue( 0L, rRunStatus.m_lResultDataIndex );
-		msvMinPixelValue.SetValue( 0L, rRunStatus.m_lResultDataIndex );
-		msvPixelCountValue.SetValue( 0L, rRunStatus.m_lResultDataIndex );
-		msvHighPeak.SetValue( 0L, rRunStatus.m_lResultDataIndex );
-		msvLowPeak.SetValue( 0L, rRunStatus.m_lResultDataIndex );
-		msvValley.SetValue( 0L, rRunStatus.m_lResultDataIndex );
+		msvMaxPixelValue.SetValue(0L);
+		msvMinPixelValue.SetValue(0L);
+		msvPixelCountValue.SetValue(0L);
+		msvHighPeak.SetValue(0L);
+		msvLowPeak.SetValue(0L);
+		msvValley.SetValue(0L);
 
 		Result = __super::onRun( rRunStatus, pErrorMessages );
 		if (!Result)
@@ -746,7 +746,7 @@ bool SVHistogramAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messa
 		m_histogram.CalcStats();
 
 		msvHistogramValue.SetArraySize(static_cast<int>(msvplHistValues.size()));	
-		if ( S_OK != msvHistogramValue.SetArrayValues( msvplHistValues, rRunStatus.m_lResultDataIndex) )
+		if ( S_OK != msvHistogramValue.SetArrayValues( msvplHistValues) )
 		{
 			Result = false;
 			if (nullptr != pErrorMessages)
@@ -760,7 +760,7 @@ bool SVHistogramAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messa
 		///////////////////////////////////////////////////////////////////
 		// Save range start
 		///////////////////////////////////////////////////////////////////
-		if (S_OK != msvRangeStartValue.SetValue( m_rangeStart, rRunStatus.m_lResultDataIndex ))
+		if (S_OK != msvRangeStartValue.SetValue(m_rangeStart))
 		{
 			Result = false;
 			if (nullptr != pErrorMessages)
@@ -774,7 +774,7 @@ bool SVHistogramAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messa
 		///////////////////////////////////////////////////////////////////
 		// Save range end
 		///////////////////////////////////////////////////////////////////
-		if (S_OK != msvRangeEndValue.SetValue( m_rangeEnd, rRunStatus.m_lResultDataIndex ))
+		if (S_OK != msvRangeEndValue.SetValue(m_rangeEnd))
 		{
 			Result = false;
 			if (nullptr != pErrorMessages)
@@ -788,7 +788,7 @@ bool SVHistogramAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messa
 		///////////////////////////////////////////////////////////////////
 		// Save range size
 		///////////////////////////////////////////////////////////////////
-		if (S_OK != msvRangeSizeValue.SetValue( m_rangeEnd - m_rangeStart + 1L, rRunStatus.m_lResultDataIndex ))
+		if (S_OK != msvRangeSizeValue.SetValue(m_rangeEnd - m_rangeStart + 1L))
 		{
 			Result = false;
 			if (nullptr != pErrorMessages)
@@ -802,7 +802,7 @@ bool SVHistogramAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messa
 		///////////////////////////////////////////////////////////////////
 		// Save scale
 		///////////////////////////////////////////////////////////////////
-		if (S_OK != msvScaleValue.SetValue( m_scale, rRunStatus.m_lResultDataIndex ))
+		if (S_OK != msvScaleValue.SetValue(m_scale))
 		{
 			Result = false;
 			if (nullptr != pErrorMessages)
@@ -816,7 +816,7 @@ bool SVHistogramAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messa
 		///////////////////////////////////////////////////////////////////
 		// Save peak threshold
 		///////////////////////////////////////////////////////////////////
-		if (S_OK != msvPeakThreshold.SetValue( m_threshold, rRunStatus.m_lResultDataIndex ))
+		if (S_OK != msvPeakThreshold.SetValue(m_threshold))
 		{
 			Result = false;
 			if (nullptr != pErrorMessages)
@@ -830,7 +830,7 @@ bool SVHistogramAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messa
 		///////////////////////////////////////////////////////////////////
 		// Save default peak
 		///////////////////////////////////////////////////////////////////
-		if (S_OK != msvDefaultPeak.SetValue( m_default, rRunStatus.m_lResultDataIndex ))
+		if (S_OK != msvDefaultPeak.SetValue(m_default))
 		{
 			Result = false;
 			if (nullptr != pErrorMessages)
@@ -844,7 +844,7 @@ bool SVHistogramAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messa
 		///////////////////////////////////////////////////////////////////
 		// Save min peak height
 		///////////////////////////////////////////////////////////////////
-		if (S_OK != msvMinPeakHeight.SetValue( m_minHeight, rRunStatus.m_lResultDataIndex ))
+		if (S_OK != msvMinPeakHeight.SetValue(m_minHeight))
 		{
 			Result = false;
 			if (nullptr != pErrorMessages)
@@ -858,7 +858,7 @@ bool SVHistogramAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messa
 		///////////////////////////////////////////////////////////////////
 		// Save "use dynamic height" flag
 		///////////////////////////////////////////////////////////////////
-		if (S_OK != msvDynamicHeight.SetValue( m_histogram.IsDynaHeight(), rRunStatus.m_lResultDataIndex ))
+		if (S_OK != msvDynamicHeight.SetValue(m_histogram.IsDynaHeight()))
 		{
 			Result = false;
 			if (nullptr != pErrorMessages)
@@ -872,7 +872,7 @@ bool SVHistogramAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messa
 		///////////////////////////////////////////////////////////////////
 		// Save "accumulate counts" flag
 		///////////////////////////////////////////////////////////////////
-		if (S_OK != msvAccumulateCounts.SetValue( m_accumulate, rRunStatus.m_lResultDataIndex ))
+		if (S_OK != msvAccumulateCounts.SetValue(m_accumulate))
 		{
 			Result = false;
 			if (nullptr != pErrorMessages)
@@ -886,7 +886,7 @@ bool SVHistogramAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messa
 		///////////////////////////////////////////////////////////////////
 		// Save fixed height
 		///////////////////////////////////////////////////////////////////
-		if (S_OK != msvFixedHeightValue.SetValue( m_histogram.GetFixedHeight(), rRunStatus.m_lResultDataIndex ))
+		if (S_OK != msvFixedHeightValue.SetValue(m_histogram.GetFixedHeight()))
 		{
 			Result = false;
 			if (nullptr != pErrorMessages)
@@ -900,7 +900,7 @@ bool SVHistogramAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messa
 		///////////////////////////////////////////////////////////////////
 		// Save valley lower bound
 		///////////////////////////////////////////////////////////////////
-		if (S_OK != msvValleyLowerBound.SetValue( m_histogram.GetValleyLow(), rRunStatus.m_lResultDataIndex ))
+		if (S_OK != msvValleyLowerBound.SetValue(m_histogram.GetValleyLow()))
 		{
 			Result = false;
 			if (nullptr != pErrorMessages)
@@ -914,7 +914,7 @@ bool SVHistogramAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messa
 		///////////////////////////////////////////////////////////////////
 		// Save valley upper bound
 		///////////////////////////////////////////////////////////////////
-		if (S_OK != msvValleyUpperBound.SetValue( m_histogram.GetValleyHigh(), rRunStatus.m_lResultDataIndex ))
+		if (S_OK != msvValleyUpperBound.SetValue(m_histogram.GetValleyHigh()))
 		{
 			Result = false;
 			if (nullptr != pErrorMessages)
@@ -928,7 +928,7 @@ bool SVHistogramAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messa
 		///////////////////////////////////////////////////////////////////
 		// Save valley default
 		///////////////////////////////////////////////////////////////////
-		if (S_OK != msvValleyDefault.SetValue( m_histogram.GetValleyDefault(), rRunStatus.m_lResultDataIndex ))
+		if (S_OK != msvValleyDefault.SetValue(m_histogram.GetValleyDefault()))
 		{
 			Result = false;
 			if (nullptr != pErrorMessages)
@@ -944,7 +944,7 @@ bool SVHistogramAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messa
 			///////////////////////////////////////////////////////////////////
 			// Save Mean Value
 			///////////////////////////////////////////////////////////////////
-			if (S_OK != msvMeanValue.SetValue( m_histogram.mean(), rRunStatus.m_lResultDataIndex ))
+			if (S_OK != msvMeanValue.SetValue(m_histogram.mean()))
 			{
 				Result = false;
 				if (nullptr != pErrorMessages)
@@ -958,7 +958,7 @@ bool SVHistogramAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messa
 			///////////////////////////////////////////////////////////////////
 			// Save Standard Deviation
 			///////////////////////////////////////////////////////////////////
-			if (S_OK != msvStdDevValue.SetValue( m_histogram.stdDev(), rRunStatus.m_lResultDataIndex ))
+			if (S_OK != msvStdDevValue.SetValue(m_histogram.stdDev()))
 			{
 				Result = false;
 				if (nullptr != pErrorMessages)
@@ -972,7 +972,7 @@ bool SVHistogramAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messa
 			///////////////////////////////////////////////////////////////////
 			// Save pixel count
 			///////////////////////////////////////////////////////////////////
-			if (S_OK != msvPixelCountValue.SetValue( m_histogram.pixel_num(), rRunStatus.m_lResultDataIndex ))
+			if (S_OK != msvPixelCountValue.SetValue(m_histogram.pixel_num()))
 			{
 				Result = false;
 				if (nullptr != pErrorMessages)
@@ -986,7 +986,7 @@ bool SVHistogramAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messa
 			///////////////////////////////////////////////////////////////////
 			// Save min pixel
 			///////////////////////////////////////////////////////////////////
-			if (S_OK != msvMinPixelValue.SetValue( m_histogram.min_pixel(), rRunStatus.m_lResultDataIndex ))
+			if (S_OK != msvMinPixelValue.SetValue(m_histogram.min_pixel()))
 			{
 				Result = false;
 				if (nullptr != pErrorMessages)
@@ -1000,7 +1000,7 @@ bool SVHistogramAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messa
 			///////////////////////////////////////////////////////////////////
 			// Save max pixel
 			///////////////////////////////////////////////////////////////////
-			if (S_OK != msvMaxPixelValue.SetValue( m_histogram.max_pixel(), rRunStatus.m_lResultDataIndex ))
+			if (S_OK != msvMaxPixelValue.SetValue(m_histogram.max_pixel()))
 			{
 				Result = false;
 				if (nullptr != pErrorMessages)
@@ -1014,7 +1014,7 @@ bool SVHistogramAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messa
 			///////////////////////////////////////////////////////////////////
 			// Save high peak
 			///////////////////////////////////////////////////////////////////
-			if (S_OK != msvHighPeak.SetValue( m_histogram.high_peak(), rRunStatus.m_lResultDataIndex ))
+			if (S_OK != msvHighPeak.SetValue(m_histogram.high_peak()))
 			{
 				Result = false;
 				if (nullptr != pErrorMessages)
@@ -1028,7 +1028,7 @@ bool SVHistogramAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messa
 			///////////////////////////////////////////////////////////////////
 			// Save low peak
 			///////////////////////////////////////////////////////////////////
-			if (S_OK != msvLowPeak.SetValue( m_histogram.low_peak(), rRunStatus.m_lResultDataIndex ))
+			if (S_OK != msvLowPeak.SetValue(m_histogram.low_peak()))
 			{
 				Result = false;
 				if (nullptr != pErrorMessages)
@@ -1042,7 +1042,7 @@ bool SVHistogramAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messa
 			///////////////////////////////////////////////////////////////////
 			// Save valley
 			///////////////////////////////////////////////////////////////////
-			if (S_OK != msvValley.SetValue( m_histogram.valley(), rRunStatus.m_lResultDataIndex ))
+			if (S_OK != msvValley.SetValue(m_histogram.valley()))
 			{
 				Result = false;
 				if (nullptr != pErrorMessages)

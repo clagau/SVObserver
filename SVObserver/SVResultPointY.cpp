@@ -112,8 +112,8 @@ bool SVPointYResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 		if( nullptr != pValueObject )
 		{
 			SVPOINT Value;
-			pValueObject->GetValue( Value );
-			m_Y.SetValue( Value.y(), rRunStatus.m_lResultDataIndex );
+			pValueObject->GetValue(Value);
+			m_Y.SetValue(Value.y());
 			return true;
 		}
 	}

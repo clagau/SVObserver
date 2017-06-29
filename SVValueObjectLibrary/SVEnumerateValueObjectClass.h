@@ -63,7 +63,7 @@ public:
 
 protected:
 	//This is a specialized version as it is required to return the enum text not value
-	virtual HRESULT GetVariantValue( _variant_t& rValue, int Bucket = -1, int Index = -1 ) const;
+	virtual HRESULT GetVariantValue(_variant_t& rValue, int Index = -1, int Bucket = -1) const override;
 
 	//The variant should have the enum text and not the long value
 	virtual double ValueType2Double(const long& rValue) const override { return static_cast<double> (rValue); };

@@ -859,7 +859,7 @@ HRESULT SVVisionProcessorHelper::GetObjectDefinition( const SVObjectClass& rObje
 						long l_lSize = pSourceNames->getArraySize();
 						for( long l_lIndex = 0; l_lIndex < l_lSize ; l_lIndex++ )
 						{
-							HRESULT l_hr = pSourceNames->GetValue( Temp, pSourceNames->GetLastSetIndex(), l_lIndex );
+							HRESULT l_hr = pSourceNames->GetValue( Temp, l_lIndex );
 							// Prepend the "Inspections." prefix for use with SVRC.
 							Temp = _T( "Inspections." ) + Temp;
 							rDataDef.m_AdditionalInfo.push_back( Temp );

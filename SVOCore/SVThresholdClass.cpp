@@ -326,7 +326,7 @@ bool SVThresholdClass::onRun( bool First,
 							dTemp = 0.0;
 						if( dTemp > 2.0 )
 							dTemp = 2.0;
-						m_dAutoThresholdMultiplier.SetValue( dTemp, rRunStatus.m_lResultDataIndex );
+						m_dAutoThresholdMultiplier.SetValue(dTemp);
 					}
 				}
 
@@ -346,8 +346,8 @@ bool SVThresholdClass::onRun( bool First,
 						upper = 255L;
 					lower = 0L;
 				}
-					m_upperThresh.SetValue( upper, rRunStatus.m_lResultDataIndex );
-					m_lowerThresh.SetValue( lower, rRunStatus.m_lResultDataIndex );
+					m_upperThresh.SetValue(upper);
+					m_lowerThresh.SetValue(lower);
 			} // if( /*m_pHistValueArray &&*/ m_histValueArraySize && m_pixelNumber )
 		} // if( bAutoThreshold )
 		else
@@ -369,7 +369,7 @@ bool SVThresholdClass::onRun( bool First,
 						// Range check...
 						upper = (0 > upper) ? 0 : upper;
 						upper = (255 < upper) ? 255 : upper;
-						m_upperThresh.SetValue( upper, rRunStatus.m_lResultDataIndex );
+						m_upperThresh.SetValue(upper);
 					}
 				}
 			}
@@ -391,7 +391,7 @@ bool SVThresholdClass::onRun( bool First,
 						// Range check...
 						lower = (0 > lower) ? 0 : lower;
 						lower = (255 < lower) ? 255 : lower;
-						m_lowerThresh.SetValue( lower, rRunStatus.m_lResultDataIndex );
+						m_lowerThresh.SetValue(lower);
 					}
 				}
 			}

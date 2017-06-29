@@ -39,11 +39,11 @@ namespace SvTh
 		SVString GetTimestampName() const;
 		SVString GetLineStateName() const;
 
-		void Set(long index, const NameVariantMap& rSettings);
+		void Set(const NameVariantMap& rSettings);
 
 	private:
 		void init();
 		void destroy();
-		void SetLineState(long index, double timeStamp, bool state);
+		void SetLineState(double timeStamp, bool state);
 	};
 } //namespace SvTh

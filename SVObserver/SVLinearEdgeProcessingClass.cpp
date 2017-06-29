@@ -199,9 +199,9 @@ bool SVLinearEdgeProcessingClass::onRun( SVRunStatusClass &p_rsvRunStatus, SvStl
 {
 	bool l_bOk = __super::onRun(p_rsvRunStatus, pErrorMessages);
 
-	if ( S_OK != UpdateUpperThresholdValues( p_rsvRunStatus.m_lResultDataIndex ) ||
-		  S_OK != UpdateLowerThresholdValues( p_rsvRunStatus.m_lResultDataIndex ) ||
-		  S_OK != UpdateEdgeList( p_rsvRunStatus.m_lResultDataIndex ) )
+	if ( S_OK != UpdateUpperThresholdValues() ||
+		  S_OK != UpdateLowerThresholdValues() ||
+		  S_OK != UpdateEdgeList() )
 	{
 		l_bOk = false;
 		if (nullptr != pErrorMessages)
@@ -239,25 +239,25 @@ SVDoubleValueObjectClass* SVLinearEdgeProcessingClass::GetInputLinearData()
 	return pData;
 }
 
-HRESULT SVLinearEdgeProcessingClass::GetInputMinThreshold(double& rMinThreshold, int Index)
+HRESULT SVLinearEdgeProcessingClass::GetInputMinThreshold(double& rMinThreshold)
 {
 	HRESULT Result(E_FAIL);
 
 	if( m_svInputMinThreshold.IsConnected() && nullptr != m_svInputMinThreshold.GetInputObjectInfo().m_pObject )
 	{
-		Result = m_svInputMinThreshold.GetInputObjectInfo().m_pObject->getValue(rMinThreshold, Index);
+		Result = m_svInputMinThreshold.GetInputObjectInfo().m_pObject->getValue(rMinThreshold);
 	}
 
 	return Result;
 }
 
-HRESULT SVLinearEdgeProcessingClass::GetInputMaxThreshold(double& rMaxThreshold, int Index)
+HRESULT SVLinearEdgeProcessingClass::GetInputMaxThreshold(double& rMaxThreshold)
 {
 	HRESULT Result(E_FAIL);
 
 	if( m_svInputMaxThreshold.IsConnected() && nullptr != m_svInputMaxThreshold.GetInputObjectInfo().m_pObject )
 	{
-		Result = m_svInputMaxThreshold.GetInputObjectInfo().m_pObject->getValue(rMaxThreshold, Index);
+		Result = m_svInputMaxThreshold.GetInputObjectInfo().m_pObject->getValue(rMaxThreshold);
 	}
 
 	return Result;
@@ -826,7 +826,7 @@ long SVLinearEdgeProcessingClass::getUpperThresholdValue() const
 	}
 }
 
-HRESULT SVLinearEdgeProcessingClass::UpdateUpperThresholdValues( long Index )
+HRESULT SVLinearEdgeProcessingClass::UpdateUpperThresholdValues()
 {
 	HRESULT Result( S_OK );
 	HRESULT hTemp( S_OK );
@@ -838,12 +838,12 @@ HRESULT SVLinearEdgeProcessingClass::UpdateUpperThresholdValues( long Index )
 
 	double dUpper = 0.0;
 
-	if( ( S_OK != GetInputMinThreshold( dMin, Index ) ) )
+	if( ( S_OK != GetInputMinThreshold(dMin) ) )
 	{
 		Result = S_FALSE;
 	}
 
-	if( S_OK != GetInputMaxThreshold( dMax, Index ) )
+	if( S_OK != GetInputMaxThreshold(dMax) )
 	{
 		Result = S_FALSE;
 	}
@@ -911,7 +911,7 @@ HRESULT SVLinearEdgeProcessingClass::UpdateUpperThresholdValues( long Index )
 				dUpper = 255.0;
 			}
 
-			if( S_OK != ( hTemp = m_svUpperThresholdValue.SetValue( static_cast<DWORD> (dUpper), Index ) ) )
+			if( S_OK != ( hTemp = m_svUpperThresholdValue.SetValue(static_cast<DWORD> (dUpper)) ) )
 			{
 				Result = hTemp;
 			}
@@ -925,7 +925,7 @@ HRESULT SVLinearEdgeProcessingClass::UpdateUpperThresholdValues( long Index )
 	return Result;
 }
 
-HRESULT SVLinearEdgeProcessingClass::UpdateLowerThresholdValues( long Index )
+HRESULT SVLinearEdgeProcessingClass::UpdateLowerThresholdValues()
 {
 	HRESULT Result( S_OK );
 	HRESULT hTemp( S_OK );
@@ -935,12 +935,12 @@ HRESULT SVLinearEdgeProcessingClass::UpdateLowerThresholdValues( long Index )
 	double dMax( 0.0 );
 	double dLower( 0.0 );
 
-	if( S_OK != GetInputMinThreshold( dMin, Index ) )
+	if( S_OK != GetInputMinThreshold(dMin) )
 	{
 		Result = S_FALSE;
 	}
 
-	if( S_OK != GetInputMaxThreshold( dMax, Index ) )
+	if( S_OK != GetInputMaxThreshold(dMax) )
 	{
 		Result = S_FALSE;
 	}
@@ -1008,7 +1008,7 @@ HRESULT SVLinearEdgeProcessingClass::UpdateLowerThresholdValues( long Index )
 				dLower = 255.0;
 			}
 
-			if( S_OK != ( hTemp = m_svLowerThresholdValue.SetValue( static_cast<DWORD> (dLower), Index ) ) )
+			if( S_OK != ( hTemp = m_svLowerThresholdValue.SetValue(static_cast<DWORD> (dLower))))
 			{
 				Result = hTemp;
 			}
@@ -1022,7 +1022,7 @@ HRESULT SVLinearEdgeProcessingClass::UpdateLowerThresholdValues( long Index )
 	return Result;
 }
 
-HRESULT SVLinearEdgeProcessingClass::UpdateEdgeList( long Index )
+HRESULT SVLinearEdgeProcessingClass::UpdateEdgeList()
 {
 	HRESULT Result( S_OK );
 
@@ -1214,7 +1214,7 @@ HRESULT SVLinearEdgeProcessingClass::UpdateEdgeList( long Index )
 	}
 
 	// always do the Set
-	HRESULT hrSet = m_svLinearEdges.SetArrayValues( Edges, Index );
+	HRESULT hrSet = m_svLinearEdges.SetArrayValues(Edges);
 
 	if ( S_OK == Result )
 	{

@@ -75,7 +75,7 @@ bool SVEvaluateClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContain
 		SVDoubleValueObjectClass* pInputResult = getInputMathResult();
 
 		double Value( 0.0 );
-		if( S_OK != pInputResult->GetValue( Value ) || S_OK != pResult->SetValue( Value, rRunStatus.m_lResultDataIndex ))
+		if( S_OK != pInputResult->GetValue(Value) || S_OK != pResult->SetValue(Value))
 		{
 			if (nullptr != pErrorMessages)
 			{

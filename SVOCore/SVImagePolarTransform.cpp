@@ -504,10 +504,10 @@ bool SVImagePolarTransformClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Mes
 
 			if ( l_bOk )
 			{
-				l_bOk = l_bOk && ( S_OK == m_centerX.SetValue( dCenterX, rRunStatus.m_lResultDataIndex ) );
-				l_bOk = l_bOk && ( S_OK == m_centerY.SetValue( dCenterY, rRunStatus.m_lResultDataIndex ) );
-				l_bOk = l_bOk && ( S_OK == m_startRadius.SetValue( dStartRadius, rRunStatus.m_lResultDataIndex ) );
-				l_bOk = l_bOk && ( S_OK == m_endRadius.SetValue( dEndRadius, rRunStatus.m_lResultDataIndex ) );
+				l_bOk = l_bOk && ( S_OK == m_centerX.SetValue(dCenterX) );
+				l_bOk = l_bOk && ( S_OK == m_centerY.SetValue(dCenterY) );
+				l_bOk = l_bOk && ( S_OK == m_startRadius.SetValue(dStartRadius) );
+				l_bOk = l_bOk && ( S_OK == m_endRadius.SetValue(dEndRadius) );
 				if (!l_bOk && nullptr != pErrorMessages)
 				{
 					SvStl::MessageContainer Msg( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_SetValueFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
@@ -541,7 +541,7 @@ bool SVImagePolarTransformClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Mes
 
 
 		// Write back modified angles...
-		if ( S_OK != m_startAngle.SetValue( dStartAngle, rRunStatus.m_lResultDataIndex ) || S_OK != m_endAngle.SetValue( dEndAngle, rRunStatus.m_lResultDataIndex ) )
+		if ( S_OK != m_startAngle.SetValue(dStartAngle) || S_OK != m_endAngle.SetValue(dEndAngle) )
 		{
 			l_bOk = false;
 			if (nullptr != pErrorMessages)
@@ -817,7 +817,7 @@ HRESULT SVImagePolarTransformClass::CollectInputImageNames()
 	{
 		SVString Name = l_pInputImage->GetCompleteName();
 
-		l_pTool->m_SourceImageNames.SetValue( Name, 0 );
+		l_pTool->m_SourceImageNames.SetValue(Name);
 
 		l_hr = S_OK;
 	}

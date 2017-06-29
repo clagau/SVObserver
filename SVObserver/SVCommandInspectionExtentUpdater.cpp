@@ -93,13 +93,13 @@ HRESULT SVCommandInspectionExtentUpdater::Execute()
 		switch (m_mode)
 		{
 		case ExtentUpdaterMode_SetImageExtent:
-			retVal = pTool->SetImageExtent(index, m_ImageExtent);
+			retVal = pTool->SetImageExtent(m_ImageExtent);
 			break;
 		case ExtentUpdaterMode_SetImageExtentToParent:
-			retVal = pTool->SetImageExtentToParent(index);
+			retVal = pTool->SetImageExtentToParent();
 			break;
 		case ExtentUpdaterMode_SetImageExtentToFit:
-			retVal = pTool->SetImageExtentToFit(index, m_ImageExtent);
+			retVal = pTool->SetImageExtentToFit(m_ImageExtent);
 			break;
 		case ExtentUpdaterMode_ForwardExtent:
 			ResetModeAuto = false;

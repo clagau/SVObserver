@@ -46,37 +46,35 @@ namespace SvOi
 
 		//! Sets the value for Value object
 		//! \param rValue [in] The value to set the Value object to
-		//! \param Bucket [in] The corresponding bucket index to write to, if required
 		//! \param Index [in] The corresponding array index to write to, if required
 		//! \returns S_OK if succeeded
-		virtual HRESULT setValue( const _variant_t& rValue, int Bucket = -1, int Index = -1 ) = 0;
+		virtual HRESULT setValue(const _variant_t& rValue, int Index = -1) = 0;
 
 		//! Gets the value for Value object
 		//! \param rValue [out] The reference to write the value to
-		//! \param Bucket [in] The corresponding bucket index to get, if required
 		//! \param Index [in] The corresponding array index to write to, if required
+		//! \param Bucket [in] The corresponding bucket index to get, if required
 		//! \returns S_OK if succeeded
-		virtual HRESULT getValue( _variant_t& rValue, int Bucket = -1, int Index = -1 ) const = 0;
+		virtual HRESULT getValue(_variant_t& rValue, int Index = -1, int Bucket = -1) const = 0;
 
 		//! Gets the values for Value object
 		//! \param rValue [out] The reference to _variant_t vector to store the values
 		//! \param Bucket [in] The corresponding bucket index to get, if required
 		//! \returns S_OK if succeeded
-		virtual HRESULT getValues( std::vector<_variant_t>& rValues, int Bucket = -1 ) const = 0;
+		virtual HRESULT getValues(std::vector<_variant_t>& rValues, int Bucket = -1) const = 0;
 
 		//! Sets the value for Value object
 		//! \param rValue [in] The value to set the Value object to
-		//! \param Bucket [in] The corresponding bucket index to write to, if required
 		//! \param Index [in] The corresponding array index to write to, if required
 		//! \returns S_OK if succeeded
-		virtual HRESULT setValue( const SVString& rValue, int Bucket = -1, int Index = -1 ) = 0;
+		virtual HRESULT setValue(const SVString& rValue, int Index = -1) = 0;
 
 		//! Gets the value for Value object
 		//! \param rValue [out] The reference to write the value to
-		//! \param Bucket [in] The corresponding bucket index to get, if required
 		//! \param Index [in] The corresponding array index to write to, if required
+		//! \param Bucket [in] The corresponding bucket index to get, if required
 		//! \returns S_OK if succeeded
-		virtual HRESULT getValue( SVString& rValue, int Bucket = -1, int Index = -1 ) const = 0;
+		virtual HRESULT getValue(SVString& rValue, int Index = -1, int Bucket = -1) const = 0;
 
 		//! Set the value object bucketized flag
 		//! \param isBucketized [in] true if bucketized
@@ -105,7 +103,7 @@ namespace SvOi
 
 		//! Gets the result size of the value object
 		//! \returns size
-		virtual int getResultSize( int Bucket = -1 ) const = 0;
+		virtual int getResultSize() const = 0;
 
 		//! Gets the reset item type
 		//! \returns the reset item enum type
@@ -115,9 +113,25 @@ namespace SvOi
 		//! \returns true if reset always
 		virtual bool ResetAlways() const = 0;
 
-		//! Copies the last set value to the destination bucket
+		//! Copies the value to the destination bucket
+		//! \param DestBucket [in] The bucket index to copy the value to
 		//! \returns the result of copying
-		virtual HRESULT CopyLastSetValue( int DestBucket ) = 0;
+		virtual HRESULT CopyValue( int DestBucket ) = 0;
+
+		//! Returns he value object byte size
+		//! \returns the number of bytes for the data
+		virtual DWORD GetByteSize() const = 0;
+
+		//! Returns the variant type of the value object
+		//! \returns the VT type
+		virtual DWORD GetType() const = 0;
+
+		//! Copies the value object to memory
+		//! \param pMemoryBlock [in] Pointer to the byte address of the memory block
+		//! \param MemByteSize [in] The memory block byte size
+		//! \param pMemoryBlock [in] The index of the array (-1 if no array)
+		//! \returns S_OK if succesful
+		virtual HRESULT CopyToMemoryBlock(BYTE* pMemoryBlock, DWORD MemByteSize, int Index=-1) const = 0;
 	};
 
 	typedef std::set<IValueObject*> IValueObjectPtrSet;

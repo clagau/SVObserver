@@ -166,7 +166,7 @@ bool SVLUTEquationClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCont
 	do
 	{
 		// Set current m_lutIndex...
-		m_lutIndex.SetValue( lLUTIndex, rRunStatus.m_lResultDataIndex );
+		m_lutIndex.SetValue(lLUTIndex);
 
 		// Run equation.. 
 		bRetVal = __super::onRun( rRunStatus, pErrorMessages );
@@ -197,7 +197,7 @@ bool SVLUTEquationClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCont
 		}
 
 		// Put result into LUT vector at m_lutIndex position...
-		m_byteVectorResult.SetValue( static_cast<BYTE> (dResult), rRunStatus.m_lResultDataIndex, lLUTIndex );
+		m_byteVectorResult.SetValue( static_cast<BYTE> (dResult), lLUTIndex );
 
 		// next index...
 		++lLUTIndex;

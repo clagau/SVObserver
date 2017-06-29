@@ -122,8 +122,8 @@ bool SVVariantResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCo
 		if( nullptr != pValueObject )
 		{
 			_variant_t Value;
-			pValueObject->getValue( Value );
-			m_Value.SetValue( Value, rRunStatus.m_lResultDataIndex );
+			pValueObject->getValue(Value);
+			m_Value.SetValue(Value);
 			return true;
 		}
 	}

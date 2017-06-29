@@ -86,7 +86,7 @@ bool EQAdjustSize::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	{
 		if( HasCondition() && IsEnabled() )
 		{
-			m_result.SetValue( getResult(), 1 );
+			m_result.SetValue(getResult());
 		}
 		
 	}

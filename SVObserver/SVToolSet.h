@@ -71,7 +71,6 @@ public:
 	SVEnumerateValueObjectClass* GetDrawFlagObject(); 
 
 	bool getConditionalResult() const;
-	bool getConditionalResult(long p_lIndex) const;
 
 	SVConditionalClass* GetToolSetConditional() const;
 
@@ -104,6 +103,8 @@ protected:
 #pragma region Private Methods
 private:
 	void init();
+
+	void UpdateRunStatus(SVRunStatusClass& rRunStatus, const SVRunStatusClass& rToolRunStatus) const;
 
 	bool ValidateLocal(SvStl::MessageContainerVector *pErrorMessages=nullptr) const;
 #pragma endregion Private Methods

@@ -33,17 +33,11 @@ public:
 	//************************************
 	/// Return the current value. If a valid linked value this will be returned otherwise it will return the the variant value.
 	/// \param rValue [out] reference to the value to write to
-	/// \param Bucket [in] bucket to get
 	/// \param Index [in]  index of array to get
+	/// \param Bucket [in] bucket to get
 	/// \returns S_OK if successful
 	//************************************
-	virtual HRESULT GetValue( _variant_t& rValue,  int Bucket = -1, int Index = -1 ) const override;
-
-	//************************************
-	/// Set the value. If string a valid dotted name of a value object, it connect it to the linked object.
-	/// \returns HRESULT S_OK, if set was OK.
-	//************************************
-	//virtual HRESULT SetValueAt( int Bucket, int Index, const SVString& rValue ) override;
+	virtual HRESULT GetValue(_variant_t& rValue, int Index = -1, int Bucket = -1) const override;
 
 	virtual bool DisconnectObjectInput( SVInObjectInfoStruct* pObjectInInfo ) override;
 

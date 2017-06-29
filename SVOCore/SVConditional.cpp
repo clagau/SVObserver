@@ -82,7 +82,7 @@ bool SVConditionalClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCont
 	// This is used to initially setup certain objects.
 	if( SVSVIMStateClass::CheckState( SV_STATE_INTERNAL_RUN ) )
 	{
-		result.SetValue( BOOL(true), rRunStatus.m_lResultDataIndex );
+		result.SetValue(BOOL(true));
 		return true;
 	}// end if
 
@@ -100,7 +100,7 @@ bool SVConditionalClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCont
             Value = getResult() ? true : false;
 		}
 	}
-	result.SetValue( Value, rRunStatus.m_lResultDataIndex );
+	result.SetValue(Value);
 
 	return retVal;
 }

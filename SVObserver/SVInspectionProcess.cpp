@@ -104,13 +104,13 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed, SVProductInfoSt
 							{
 								_variant_t Value;
 
-							if (nullptr != pInEntry.m_IOEntryPtr->getValueObject())
+								if (nullptr != pInEntry.m_IOEntryPtr->getValueObject())
 								{
-								pInEntry.m_IOEntryPtr->getValueObject()->getValue(Value, rProduct.oPPQInfo.m_ResultDataDMIndexHandle.GetIndex());
+									pInEntry.m_IOEntryPtr->getValueObject()->getValue(Value, -1, rProduct.oPPQInfo.m_ResultDataDMIndexHandle.GetIndex());
 								}
-							if (nullptr != pListEntry.m_IOEntryPtr->getValueObject())
+								if (nullptr != pListEntry.m_IOEntryPtr->getValueObject())
 								{
-								pListEntry.m_IOEntryPtr->getValueObject()->setValue(Value, rProduct.oPPQInfo.m_ResultDataDMIndexHandle.GetIndex());
+									pListEntry.m_IOEntryPtr->getValueObject()->setValue(Value);
 								}
 
 								++l_InputXferCount;
@@ -122,13 +122,13 @@ HRESULT SVInspectionProcess::ProcessInspection(bool& rProcessed, SVProductInfoSt
 							{
 								_variant_t Value;
 
-							if (nullptr != pInEntry.m_IOEntryPtr->getValueObject())
+								if (nullptr != pInEntry.m_IOEntryPtr->getValueObject())
 								{
-								pInEntry.m_IOEntryPtr->getValueObject()->getValue(Value, rProduct.oPPQInfo.m_ResultDataDMIndexHandle.GetIndex());
+									pInEntry.m_IOEntryPtr->getValueObject()->getValue(Value, -1, rProduct.oPPQInfo.m_ResultDataDMIndexHandle.GetIndex());
 								}
-							if (nullptr != pListEntry.m_IOEntryPtr->getValueObject())
+								if (nullptr != pListEntry.m_IOEntryPtr->getValueObject())
 								{
-								pListEntry.m_IOEntryPtr->getValueObject()->setValue(Value, rProduct.oPPQInfo.m_ResultDataDMIndexHandle.GetIndex());
+									pListEntry.m_IOEntryPtr->getValueObject()->setValue(Value);
 								}
 
 								++l_InputXferCount;
@@ -229,13 +229,11 @@ void SVInspectionProcess::InitSharedMemoryItemNames(const long ProductSlots, con
 		for (int slotindex = 0; slotindex < static_cast<int>(rWriter.GetLastInspectedCacheSize()); slotindex++)
 		{
 			rWriter.GetLastInspectedSlot(slotindex).m_Values[index].SetName(FilterValueMapIt->first);
-	}
+		}
 		for (int rslotindex = 0; rslotindex < static_cast<int>(rWriter.GetRejectCacheSize()); rslotindex++)
-	{
+		{
 			rWriter.GetRejectSlot(rslotindex).m_Values[index].SetName(FilterValueMapIt->first);
-	}
-
-
+		}
 	}
 
 	SVNameObjectMap::iterator FilterImageMapIt = m_SharedMemoryFilters.m_LastInspectedImages.begin();
@@ -247,12 +245,12 @@ void SVInspectionProcess::InitSharedMemoryItemNames(const long ProductSlots, con
 		{
 			rWriter.GetLastInspectedSlot(slotindex).m_Images[index].SetImageStoreProperties(FilterImageMapIt->first.c_str(), mEp->InspectionStoreId, mEp->ItemId, slotindex, false);
 			rWriter.GetLastInspectedSlot(slotindex).m_Images[index].SetFileName(SvSml::SVSharedImage::BuildImageFileName(mEp->ItemId, mEp->InspectionStoreId, slotindex, false));
-	}
+		}
 		for (int rslotindex = 0; rslotindex < static_cast<int>(rWriter.GetRejectCacheSize()); rslotindex++)
-	{
+		{
 			rWriter.GetRejectSlot(rslotindex).m_Images[index].SetImageStoreProperties(FilterImageMapIt->first.c_str(), mEp->InspectionStoreId, mEp->ItemId, rslotindex, true);
 			rWriter.GetRejectSlot(rslotindex).m_Images[index].SetFileName(SvSml::SVSharedImage::BuildImageFileName(mEp->ItemId, mEp->InspectionStoreId, rslotindex, true));
-	}
+		}
 	}
 }
 
@@ -763,8 +761,8 @@ BOOL SVInspectionProcess::GoOnline()
 	{
 		try
 		{
-		InitSharedMemoryItemNames(pPPQ->GetNumProductSlots(), pPPQ->GetNumRejectSlots());
-	}
+			InitSharedMemoryItemNames(pPPQ->GetNumProductSlots(), pPPQ->GetNumRejectSlots());
+		}
 		catch (const SvStl::MessageContainer& rSvE)
 		{
 			//Now that we have caught the exception we would like to display it
@@ -1626,7 +1624,7 @@ void SVInspectionProcess::ValidateAndInitialize(bool p_Validate, bool p_IsNew)
 
 		SvOi::SVResetItemEnum eResetItem = SvOi::SVResetItemIP;
 
-		BOOL bok = ProcessInputRequests(1, eResetItem, l_svToolMap);
+		BOOL bok = ProcessInputRequests(eResetItem, l_svToolMap);
 
 		m_svReset.RemoveState(SvOi::SVResetAutoMoveAndResize | SvOi::SVResetStateInitializeOnReset | SvOi::SVResetStateArchiveToolCreateFiles | SvOi::SVResetStateLoadFiles);
 	}
@@ -1908,7 +1906,7 @@ BOOL SVInspectionProcess::RunOnce(SVToolClass *p_psvTool)
 
 	SvOi::SVResetItemEnum eResetItem = SvOi::SVResetItemNone;
 
-	bRet = ProcessInputRequests(l_Handle.GetIndex(), eResetItem, l_svToolMap);
+	bRet = ProcessInputRequests(eResetItem, l_svToolMap);
 
 	if (SvOi::SVResetItemIP < eResetItem && nullptr != p_psvTool)
 	{
@@ -1989,20 +1987,20 @@ HRESULT SVInspectionProcess::InitializeRunOnce()
 	return l_Status;
 }
 
-BOOL SVInspectionProcess::ProcessInputRequests(long Bucket, bool &rForceOffsetUpdate)
+BOOL SVInspectionProcess::ProcessInputRequests(bool &rForceOffsetUpdate)
 {
 	SVStdMapSVToolClassPtrSVInspectionProcessResetStruct l_svToolMap;
 
 	SvOi::SVResetItemEnum eResetItem = SvOi::SVResetItemNone;
 
-	BOOL l_bOk = ProcessInputRequests(Bucket, eResetItem, l_svToolMap);
+	BOOL l_bOk = ProcessInputRequests(eResetItem, l_svToolMap);
 
 	rForceOffsetUpdate |= (eResetItem < SvOi::SVResetItemNone);
 
 	return l_bOk;
 }
 
-BOOL SVInspectionProcess::ProcessInputRequests(long Bucket, SvOi::SVResetItemEnum &rResetItem, SVStdMapSVToolClassPtrSVInspectionProcessResetStruct &rToolMap)
+BOOL SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum &rResetItem, SVStdMapSVToolClassPtrSVInspectionProcessResetStruct &rToolMap)
 {
 	bool bRet = true;
 	long l;
@@ -2086,8 +2084,6 @@ BOOL SVInspectionProcess::ProcessInputRequests(long Bucket, SvOi::SVResetItemEnu
 			HRESULT hrSet = S_OK;
 			if (nullptr != ObjectRef.getValueObject())
 			{
-				Bucket = (0 < Bucket) ? Bucket : 1;
-
 				bool bResetObject = ObjectRef.getValueObject()->ResetAlways();
 
 				// Value objects don't accept each different type for sets
@@ -2096,7 +2092,7 @@ BOOL SVInspectionProcess::ProcessInputRequests(long Bucket, SvOi::SVResetItemEnu
 				{
 					if (ObjectRef.isArray() && ObjectRef.isEntireArray())
 					{
-						hrSet = SetObjectArrayValues<CFile>(ObjectRef, Bucket, Value, bResetObject);
+						hrSet = SetObjectArrayValues<CFile>(ObjectRef, Value, bResetObject);
 					}
 					else
 					{
@@ -2114,12 +2110,12 @@ BOOL SVInspectionProcess::ProcessInputRequests(long Bucket, SvOi::SVResetItemEnu
 							{
 								SVString PrevValue;
 								
-								hrSet = pFileNameObj->GetValue(PrevValue, -1, ObjectRef.ArrayIndex());
+								hrSet = pFileNameObj->GetValue(PrevValue, ObjectRef.ArrayIndex());
 
 								bResetObject = (PrevValue != Value);
 							}
 
-							hrSet = pFileNameObj->SetValue(Value, Bucket, ObjectRef.ArrayIndex());
+							hrSet = pFileNameObj->SetValue(Value, ObjectRef.ArrayIndex());
 						}// end if
 					}
 				}// end if SVFileNameValueObjectClass
@@ -2127,7 +2123,7 @@ BOOL SVInspectionProcess::ProcessInputRequests(long Bucket, SvOi::SVResetItemEnu
 				{
 					if (ObjectRef.isArray() && ObjectRef.isEntireArray())
 					{
-						hrSet = SetObjectArrayValues<SVString>(ObjectRef, Bucket, Value, bResetObject);
+						hrSet = SetObjectArrayValues<SVString>(ObjectRef, Value, bResetObject);
 					}
 					else
 					{
@@ -2135,12 +2131,12 @@ BOOL SVInspectionProcess::ProcessInputRequests(long Bucket, SvOi::SVResetItemEnu
 						{
 							SVString PrevValue;
 
-							hrSet = pStringValueObj->GetValue(PrevValue, -1, ObjectRef.ArrayIndex());
+							hrSet = pStringValueObj->GetValue(PrevValue, ObjectRef.ArrayIndex());
 
 							bResetObject = (PrevValue != Value);
 						}
 
-						hrSet = pStringValueObj->SetValue(Value, Bucket, ObjectRef.ArrayIndex());
+						hrSet = pStringValueObj->SetValue(Value, ObjectRef.ArrayIndex());
 					}
 				}
 				else if (SVBoolValueObjectClass* pBoolValueObj = dynamic_cast<SVBoolValueObjectClass*> (ObjectRef.getObject()))
@@ -2161,13 +2157,13 @@ BOOL SVInspectionProcess::ProcessInputRequests(long Bucket, SvOi::SVResetItemEnu
 					{
 						BOOL PrevValue(false);
 
-						hrSet = pBoolValueObj->GetValue(PrevValue, -1, ObjectRef.ArrayIndex());
+						hrSet = pBoolValueObj->GetValue(PrevValue, ObjectRef.ArrayIndex());
 
 						// eventually use CompareWithCurrentValueImpl
 						bResetObject = NewValue != PrevValue;
 					}
 
-					hrSet = pBoolValueObj->SetValue(NewValue, Bucket, ObjectRef.ArrayIndex());
+					hrSet = pBoolValueObj->SetValue(NewValue, ObjectRef.ArrayIndex());
 				}// end else if SVBoolValueObjectClass
 				else if (SVVariantValueObjectClass* pvValueObject = dynamic_cast <SVVariantValueObjectClass*> (ObjectRef.getObject()))
 				{
@@ -2178,11 +2174,11 @@ BOOL SVInspectionProcess::ProcessInputRequests(long Bucket, SvOi::SVResetItemEnu
 
 					if (ObjectRef.isArray())
 					{
-						hrSet = pvValueObject->SetValueKeepType(Value.c_str(), Bucket, ObjectRef.ArrayIndex());
+						hrSet = pvValueObject->SetValueKeepType(Value.c_str(), ObjectRef.ArrayIndex());
 					}
 					else
 					{
-						hrSet = pvValueObject->SetValueKeepType( Value.c_str(), Bucket);
+						hrSet = pvValueObject->SetValueKeepType(Value.c_str());
 					}
 				}// end else if SVVariantValueObjectClass
 				else if (SVEnumerateValueObjectClass* pEnumerateValueObj = dynamic_cast <SVEnumerateValueObjectClass*> (ObjectRef.getObject()))
@@ -2196,11 +2192,7 @@ BOOL SVInspectionProcess::ProcessInputRequests(long Bucket, SvOi::SVResetItemEnu
 						l_bTempReset = !pEnumerateValueObj->CompareWithCurrentValue(Value);
 					}
 
-					if (S_OK == (hrSet = pEnumerateValueObj->SetValue(atol(Value.c_str()), 1, ObjectRef.ArrayIndex())))
-					{
-						hrSet = pEnumerateValueObj->SetValue(atol(Value.c_str()), Bucket, ObjectRef.ArrayIndex());
-					}
-					else
+					if (S_OK != (hrSet = pEnumerateValueObj->SetValue(atol(Value.c_str()), ObjectRef.ArrayIndex())))
 					{
 						if (Value.size() > 0)
 						{
@@ -2213,7 +2205,7 @@ BOOL SVInspectionProcess::ProcessInputRequests(long Bucket, SvOi::SVResetItemEnu
 									l_bTempReset = !pEnumerateValueObj->CompareWithCurrentValue(Value);
 								}
 
-								hrSet = pEnumerateValueObj->SetValue(EnumValue, Bucket, ObjectRef.ArrayIndex());
+								hrSet = pEnumerateValueObj->SetValue(EnumValue, ObjectRef.ArrayIndex());
 							}
 						}
 					}
@@ -2224,7 +2216,7 @@ BOOL SVInspectionProcess::ProcessInputRequests(long Bucket, SvOi::SVResetItemEnu
 				{
 					if (ObjectRef.isArray() && ObjectRef.isEntireArray())
 					{
-						hrSet = SetObjectArrayValues<double>(ObjectRef, Bucket, Value.c_str(), bResetObject);
+						hrSet = SetObjectArrayValues<double>(ObjectRef, Value.c_str(), bResetObject);
 					}
 					else
 					{
@@ -2233,13 +2225,13 @@ BOOL SVInspectionProcess::ProcessInputRequests(long Bucket, SvOi::SVResetItemEnu
 						{
 							double PrevValue;
 
-							hrSet = pDoubleValueObj->GetValue(PrevValue, -1, ObjectRef.ArrayIndex());
+							hrSet = pDoubleValueObj->GetValue(PrevValue, ObjectRef.ArrayIndex());
 
 							// eventually use CompareWithCurrentValueImpl
 							bResetObject = PrevValue != NewValue;
 						}
 
-						hrSet = pDoubleValueObj->SetValue(NewValue, Bucket, ObjectRef.ArrayIndex());
+						hrSet = pDoubleValueObj->SetValue(NewValue, ObjectRef.ArrayIndex());
 					}
 				}// end else if
 				else // Long, DWord, Byte
@@ -2248,7 +2240,7 @@ BOOL SVInspectionProcess::ProcessInputRequests(long Bucket, SvOi::SVResetItemEnu
 					{
 						_variant_t PrevValue;
 
-						hrSet = ObjectRef.getValueObject()->getValue(PrevValue, -1, ObjectRef.ArrayIndex());
+						hrSet = ObjectRef.getValueObject()->getValue(PrevValue, ObjectRef.ArrayIndex());
 
 						SVString strNewValue(Value);
 						SvUl_SF::MakeLower(strNewValue);
@@ -2267,7 +2259,7 @@ BOOL SVInspectionProcess::ProcessInputRequests(long Bucket, SvOi::SVResetItemEnu
 						bResetObject = static_cast<long> (PrevValue) != lValue;
 					}
 
-					hrSet = ObjectRef.getValueObject()->setValue(Value, Bucket, ObjectRef.ArrayIndex());
+					hrSet = ObjectRef.getValueObject()->setValue(Value, ObjectRef.ArrayIndex());
 				}// end else if
 
 				if (SvOi::SVResetItemIP != rResetItem && bResetObject && SvOi::SVResetItemNone > ObjectRef.getValueObject()->getResetItem())
@@ -3226,14 +3218,14 @@ int SVInspectionProcess::UpdateMainImagesByProduct(SVProductInfoStruct* p_psvPro
 	return Result;
 }
 
-HRESULT SVInspectionProcess::OnlyCopyForward(SVRunStatusClass& rRunStatus)
+HRESULT SVInspectionProcess::CopyForward(SVRunStatusClass& rRunStatus)
 {
 	HRESULT hRet = S_OK;
 
 	SvOi::IValueObjectPtrSet::iterator ValueIter(m_ValueObjectSet.begin());
 	for (; m_ValueObjectSet.end() != ValueIter; ++ValueIter)
 	{
-		(*ValueIter)->CopyLastSetValue(rRunStatus.m_lResultDataIndex);
+		(*ValueIter)->CopyValue(rRunStatus.m_lResultDataIndex);
 	}
 
 	SVImageClassPtrSet::iterator ImageIter(m_ImageObjectSet.begin());
@@ -3253,10 +3245,6 @@ bool SVInspectionProcess::Run(SVRunStatusClass& rRunStatus)
 
 	if (retVal)
 	{
-		if( !IsNewDisableMethodSet() )
-		{
-			OnlyCopyForward(rRunStatus);
-		}// end if
 
 		// Run the Toolset
 		unsigned long l_state = m_runStatus.GetState();
@@ -3274,6 +3262,10 @@ bool SVInspectionProcess::Run(SVRunStatusClass& rRunStatus)
 				Exception.setMessage(SVMSG_SVO_37_INVALID_RUN_STATUS, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
 			}
 		}
+		if (!IsNewDisableMethodSet())
+		{
+			CopyForward(rRunStatus);
+		}// end if
 	}
 	else
 	{
@@ -3315,7 +3307,7 @@ BOOL SVInspectionProcess::RunInspection(long lResultDataIndex, SVImageIndexStruc
 	if (pProduct->IsAlive())
 	{
 		// Process all input requests
-		if (!ProcessInputRequests(lResultDataIndex, m_bForceOffsetUpdate))
+		if (!ProcessInputRequests(m_bForceOffsetUpdate))
 		{
 			Exception.setMessage(SVMSG_SVO_38_INPUT_REQUEST_FAILED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
 
@@ -3383,7 +3375,7 @@ BOOL SVInspectionProcess::RunInspection(long lResultDataIndex, SVImageIndexStruc
 	}
 	else
 	{
-		OnlyCopyForward(m_runStatus);
+		CopyForward(m_runStatus);
 	}
 
 	m_bForceOffsetUpdate = false;
@@ -3694,7 +3686,7 @@ void SVInspectionProcess::FillSharedData(long sharedSlotIndex, SvSml::SVSharedDa
 				// for now just a single item (no full array)
 				if (!ObjectRef.isEntireArray())
 				{
-					HRESULT hrGet = pValueObject->getValue(Value, dataIndex, ObjectRef.getValidArrayIndex());
+					HRESULT hrGet = pValueObject->getValue(Value, ObjectRef.getValidArrayIndex(), dataIndex);
 					if (SVMSG_SVO_33_OBJECT_INDEX_INVALID == hrGet || SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE == hrGet)
 					{
 						hr = hrGet;
@@ -3717,12 +3709,12 @@ void SVInspectionProcess::FillSharedData(long sharedSlotIndex, SvSml::SVSharedDa
 				else // Get Entire Array
 				{
 					// get all results and put them into a parsable string
-					int NumResults = ObjectRef.getValueObject()->getResultSize(dataIndex);
+					int NumResults = ObjectRef.getValueObject()->getResultSize();
 					SVString ArrayValues;
 					for (int iArrayIndex = 0; iArrayIndex < NumResults && S_OK == hr; iArrayIndex++)
 					{
 						SVString Value;
-						hr = pValueObject->getValue(Value, dataIndex, iArrayIndex);
+						hr = pValueObject->getValue(Value, iArrayIndex, dataIndex);
 						if (S_OK == hr)
 						{
 							if (iArrayIndex > 0)

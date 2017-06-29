@@ -515,14 +515,14 @@ HRESULT SVImageArithmeticClass::CollectInputImageNames( )
 		SVStringValueObjectClass* pImageNames = pTool->GetInputImageNames();
 		if( nullptr != pInputImage && nullptr != pImageNames )
 		{
-			pImageNames->SetValue( pInputImage->GetCompleteName(), 0, 0 );
+			pImageNames->SetValue( pInputImage->GetCompleteName(), 0 );
 			l_hr = S_OK;
 		}
 
 		pInputImage = getInputImageB();
 		if( nullptr != pInputImage && nullptr != pImageNames)
 		{
-			pImageNames->SetValue( pInputImage->GetCompleteName(), 0, 1 );
+			pImageNames->SetValue( pInputImage->GetCompleteName(), 1 );
 		}
 	}
 	return l_hr;

@@ -28,9 +28,9 @@ public:
 
 	virtual bool SetDefaultFormulas(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
-	virtual HRESULT SetImageExtent( unsigned long p_ulIndex, SVImageExtentClass p_svImageExtent ) override;
-	virtual HRESULT SetImageExtentToParent( unsigned long p_ulIndex ) override;
-	virtual HRESULT SetImageExtentToFit( unsigned long p_ulIndex, SVImageExtentClass p_svImageExtent ) override;
+	virtual HRESULT SetImageExtent( const SVImageExtentClass& rImageExtent ) override;
+	virtual HRESULT SetImageExtentToParent() override;
+	virtual HRESULT SetImageExtentToFit( const SVImageExtentClass& rImageExtent ) override;
 
 	virtual SVTaskObjectClass *GetObjectAtPoint( const SVExtentPointStruct &p_rsvPoint ) override;
 	virtual bool DoesObjectHaveExtents() const override;

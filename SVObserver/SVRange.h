@@ -36,7 +36,7 @@ public:
 	SVRangeClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVRANGE );
 	virtual ~SVRangeClass();
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
+	virtual BOOL CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
 
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
@@ -114,33 +114,29 @@ public:
 
 	//************************************
 	// Description:  Gets the updated Fail Low object
-	// Parameter:  bucket <in>:  the bucket index
 	// Returns:  const SVDoubleValueObjectClass&:  const reference to the Fail Low object
 	//************************************
-	const SVDoubleValueObjectClass& getUpdatedFailLow( int bucket );
+	const SVDoubleValueObjectClass& getUpdatedFailLow();
 
 	//************************************
 	// Description:  Gets the value of the updated Fail High object
-	// Parameter:  bucket <in>:  the bucket index
 	// Returns:  const SVDoubleValueObjectClass&:  const reference to the Fail High object
 	//************************************
-	const SVDoubleValueObjectClass& getUpdatedFailHigh( int bucket );
+	const SVDoubleValueObjectClass& getUpdatedFailHigh();
 
 	//************************************
 	// Description:  Gets the value of the selected Range  object
-	// Parameter:  bucket <in>:  the bucket index
 	// Parameter RangeEnum::ERange ra the selected range object 
 	// Returns:  const SVDoubleValueObjectClass&:  const reference to the Fail High object
 	//************************************
-	const SVDoubleValueObjectClass& SVRangeClass::getUpdatedRange( RangeEnum::ERange ra  ,int bucket );
+	const SVDoubleValueObjectClass& SVRangeClass::getUpdatedRange( RangeEnum::ERange ra);
 
 	//************************************
 	//! Updates the range value with the value from the indirect value if an indirect value exist.
-	//! \param bucket [in] the bucket index
 	//! \param range [in ]  enum ERange
 	//! \returns void
 	//************************************
-	void   UpdateRange(int bucket, RangeEnum::ERange  range );
+	void   UpdateRange(RangeEnum::ERange  range );
 
 #pragma region Methods to replace processMessage
 	virtual bool DisconnectObjectInput( SVInObjectInfoStruct* pObjectInInfo ) override;

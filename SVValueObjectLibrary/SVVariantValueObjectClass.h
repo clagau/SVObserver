@@ -31,8 +31,8 @@ public:
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* pDataObject ) override;
 
 	BOOL SetType( int vt );
-	HRESULT SetValueKeepType(LPCTSTR Value, int Bucket) {return SetValueKeepType(Value, Bucket, 0);}
-	HRESULT SetValueKeepType(LPCTSTR Value, int Bucket, int Index);
+	HRESULT SetValueKeepType(LPCTSTR Value) {return SetValueKeepType(Value, 0);}
+	HRESULT SetValueKeepType(LPCTSTR Value, int Index);
 	VARTYPE GetDefaultType() const;
 	VARTYPE GetValueType() const { return Value().vt; };
 
@@ -49,6 +49,17 @@ protected:
 	virtual _variant_t ConvertString2Type( const SVString& rValue ) const override;
 
 	virtual SVString ConvertType2String( const _variant_t& rValue ) const override;
+
+	//! Returns the value object byte size
+	//! \returns the number of bytes for the data
+	virtual DWORD GetByteSize() const override;
+
+	//! Copies the value object to the memory block
+	//! \param pMemoryBlock [in] Pointer to the byte address of the memory block
+	//! \param MemByteSize [in] The memory block byte size
+	//! \param Index [in] The index of the array (-1 if no array)
+	//! \returns S_OK if successful
+	virtual HRESULT CopyToMemoryBlock(BYTE* pMemoryBlock, DWORD MemByteSize, int Index = -1) const override;
 
 	virtual void WriteValues(SVObjectWriter& rWriter) override;
 private:

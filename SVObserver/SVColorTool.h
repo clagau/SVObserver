@@ -58,9 +58,9 @@ public:
 
 	SVBoolValueObjectClass* GetConvertToHSIVariable() { return &m_convertToHSI; };
 
-	virtual HRESULT SetImageExtent(unsigned long lIndex, SVImageExtentClass ImageExtent) override;
-	virtual HRESULT SetImageExtentToParent(unsigned long Index) override;
-	virtual HRESULT SetImageExtentToFit(unsigned long lIndex, SVImageExtentClass ImageExtent) override;
+	virtual HRESULT SetImageExtent(const SVImageExtentClass& rImageExtent) override;
+	virtual HRESULT SetImageExtentToParent() override;
+	virtual HRESULT SetImageExtentToFit(const SVImageExtentClass& rImageExtent) override;
 
 	virtual SVTaskObjectClass* GetObjectAtPoint(const SVExtentPointStruct &rPoint) override;
 	SVImageClass* getOutputImage() { return &m_OutputImage; };

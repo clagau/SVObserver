@@ -33,6 +33,8 @@
 
 #pragma endregion Includes
 
+#pragma region Declarations
+
 struct SVBlobFeatureConstants BlobFeatureConstants[]=
 {
    SVEBlobArea, //M_AREA,
@@ -193,10 +195,8 @@ struct SVBlobFeatureConstants BlobFeatureConstants[]=
 };
 
 SV_IMPLEMENT_CLASS( SVBlobAnalyzerClass, SVBlobAnalyzerClassGuid );
+#pragma endregion Declarations
 
-/////////////////////////////////////////////////////////////////////////////
-//
-//
 SVBlobAnalyzerClass::SVBlobAnalyzerClass( SVObjectClass* POwner, int StringResourceID )
 : SVImageAnalyzerClass(FALSE, POwner, StringResourceID ) 
 , m_pResultTable( nullptr )
@@ -749,8 +749,7 @@ BOOL SVBlobAnalyzerClass::CreateObject(SVObjectLevelCreateStruct* PCreateStructu
 		if ( SV_TOPOF_LIST > static_cast<int> (tempString.size()) )
 		{
 			tempString += _T("00");
-			long l_lTempIndex = m_PersistantFeaturesEnabled.GetLastSetIndex();
-			m_PersistantFeaturesEnabled.SetValue( tempString, l_lTempIndex );
+			m_PersistantFeaturesEnabled.SetValue(tempString);
 		}
 		
 		_tcscpy (m_FeaturesEnabled, tempString.c_str());
@@ -837,8 +836,8 @@ BOOL SVBlobAnalyzerClass::CreateObject(SVObjectLevelCreateStruct* PCreateStructu
 					break; // Break out of for loop 
 				}
 				
-				pRange->FailHigh.SetValue(Range_defaults::highDef, 1 ); // Set some high values, so that it doesn't fail
-				pRange->WarnHigh.SetValue(Range_defaults::highDef, 1 );
+				pRange->FailHigh.SetValue(Range_defaults::highDef); // Set some high values, so that it doesn't fail
+				pRange->WarnHigh.SetValue(Range_defaults::highDef);
 			}
 		}
 
@@ -852,13 +851,13 @@ BOOL SVBlobAnalyzerClass::CreateObject(SVObjectLevelCreateStruct* PCreateStructu
 		// RDS 2002-03-26
 		// Set currently existing features into the persistence string.
 		// Mainly this should be SV_BOXX_MAX thru SV_BOXY_MIN
-		m_PersistantFeaturesEnabled.SetValue ( SVString(m_FeaturesEnabled), 1 );
+		m_PersistantFeaturesEnabled.SetValue(SVString(m_FeaturesEnabled));
 
 		long lSortIndex;
 		m_SortFeature.GetValue (lSortIndex);
 		if(lSortIndex < 0)
 		{
-			m_SortFeature.SetValue( 1L, 1 );
+			m_SortFeature.SetValue(1L);
 		}
 		if(!m_pResultBlob && !(m_pResultBlob = GetBlobResultObject()))
 		{
@@ -874,10 +873,10 @@ BOOL SVBlobAnalyzerClass::CreateObject(SVObjectLevelCreateStruct* PCreateStructu
 				bOk = false;
 				break; 
 			}
-			pRange->FailLow.SetValue( m_defaultResultNumberOfBlobsLowFail, 1 );
-			pRange->WarnLow.SetValue( m_defaultResultNumberOfBlobsLowWarn, 1 );
-			pRange->FailHigh.SetValue( m_defaultResultNumberOfBlobsHighFail, 1 ); 
-			pRange->WarnHigh.SetValue( m_defaultResultNumberOfBlobsHighWarn, 1 );
+			pRange->FailLow.SetValue(m_defaultResultNumberOfBlobsLowFail);
+			pRange->WarnLow.SetValue(m_defaultResultNumberOfBlobsLowWarn);
+			pRange->FailHigh.SetValue(m_defaultResultNumberOfBlobsHighFail); 
+			pRange->WarnHigh.SetValue(m_defaultResultNumberOfBlobsHighWarn);
 		}
 		// End. Sri
 		double Value = m_Value[0].GetDefaultValue ();
@@ -1095,11 +1094,11 @@ bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 					}
 
 					double dLow(0), dHigh(0);
-					pRange->getUpdatedRange(RangeEnum::ER_FailHigh, rRunStatus.m_lResultDataIndex).GetValue(dHigh);
-					pRange->getUpdatedRange(RangeEnum::ER_FailLow, rRunStatus.m_lResultDataIndex).GetValue(dLow);
+					pRange->getUpdatedRange(RangeEnum::ER_FailHigh).GetValue(dHigh);
+					pRange->getUpdatedRange(RangeEnum::ER_FailLow).GetValue(dLow);
 
-					pRange->getUpdatedRange(RangeEnum::ER_WarnLow, rRunStatus.m_lResultDataIndex);
-					pRange->getUpdatedRange(RangeEnum::ER_WarnHigh, rRunStatus.m_lResultDataIndex);
+					pRange->getUpdatedRange(RangeEnum::ER_WarnLow);
+					pRange->getUpdatedRange(RangeEnum::ER_WarnHigh);
 
 					// Now that we have indirect high and low ranges it is possible that dLow is larger than dHigh.
 					// This would cause the MIL function to return an error.  To avoid this exception, we set both to 0.
@@ -1226,7 +1225,7 @@ bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 			}
 		}// end if (m_lNumberOfBlobsFound > m_lBlobSampleSize)
 
-		m_lvoNumberOfBlobsFound.SetValue( m_lNumberOfBlobsFound, rRunStatus.m_lResultDataIndex );
+		m_lvoNumberOfBlobsFound.SetValue(m_lNumberOfBlobsFound);
 
 		// EB 2005 01 28
 		// add array capability to blob results
@@ -1235,7 +1234,7 @@ bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 		{
 			if (m_FeaturesEnabled[iFeature] == _T('1'))
 			{
-				m_Value[iFeature].SetResultSize( rRunStatus.m_lResultDataIndex, m_lNumberOfBlobsToProcess );
+				m_Value[iFeature].SetResultSize(m_lNumberOfBlobsToProcess);
 			}
 		}
 
@@ -1247,7 +1246,7 @@ bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 			{	
 				if (m_FeaturesEnabled[ eFeature ] == _T('1'))
 				{
-					m_Value[ eFeature ].SetValue( 0.0, rRunStatus.m_lResultDataIndex );
+					m_Value[ eFeature ].SetValue(0.0);
 				}
 			}
 		}
@@ -1414,20 +1413,20 @@ bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 				{
 					if (nullptr != m_ResultTableColumnValueObjects[eFeature])
 					{
-						m_ResultTableColumnValueObjects[eFeature]->SetArrayValues(m_vec2dBlobResults[eFeature], rRunStatus.m_lResultDataIndex );
+						m_ResultTableColumnValueObjects[eFeature]->SetArrayValues(m_vec2dBlobResults[eFeature]);
 					}
 					// add array capability to blob results
 					for ( int iBlob = 0; iBlob < m_lNumberOfBlobsToProcess; iBlob++ )
 					{
-						m_Value[eFeature].SetValue( m_vec2dBlobResults[eFeature][msvlSortMap[iBlob]], rRunStatus.m_lResultDataIndex, iBlob );
+						m_Value[eFeature].SetValue(m_vec2dBlobResults[eFeature][msvlSortMap[iBlob]], iBlob );
 					}
 				}
 				else
 				{
 					//Arvid set array size to 1 even if no blobs are present so as not to cause errors in math tools in "old style" configurations
 					//Arvid this will in practice, however, undo the changes of SVO-322
-					m_Value[ eFeature ].SetResultSize( rRunStatus.m_lResultDataIndex, 1 ); 
-					m_Value[ eFeature ].SetValue( 0.0, rRunStatus.m_lResultDataIndex );
+					m_Value[ eFeature ].SetResultSize(1); 
+					m_Value[ eFeature ].SetValue(0.0);
 				}
 			}
 		}
@@ -1441,8 +1440,8 @@ bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 		{
 			long Color;
 			long Type;
-			m_evoBlobFillColor.GetValue( Color, rRunStatus.m_lResultDataIndex );
-			m_evoBlobType.GetValue( Type, rRunStatus.m_lResultDataIndex );
+			m_evoBlobFillColor.GetValue(Color);
+			m_evoBlobType.GetValue(Type);
 			SVBlobControlEnum eCriterion = SVEBlobAll;
 			switch( Type )
 			{
@@ -1806,13 +1805,13 @@ HRESULT SVBlobAnalyzerClass::onCollectOverlays(SVImageClass* p_pImage, SVExtentM
 
 					double Value( 0.0 );
 					// Get Values from Bucketized (managed) data
-					m_Value[SV_BOXX_MIN].GetValue( Value, -1, i );
+					m_Value[SV_BOXX_MIN].GetValue(Value, i);
 					Rect.left = static_cast<long> (Value);
-					m_Value[SV_BOXX_MAX].GetValue( Value, -1, i);
+					m_Value[SV_BOXX_MAX].GetValue(Value, i);
 					Rect.right = static_cast<long> (Value);
-					m_Value[SV_BOXY_MIN].GetValue( Value, -1, i );
+					m_Value[SV_BOXY_MIN].GetValue(Value, i);
 					Rect.top = static_cast<long> (Value);
-					m_Value[SV_BOXY_MAX].GetValue( Value, -1, i);
+					m_Value[SV_BOXY_MAX].GetValue(Value, i);
 					Rect.bottom = static_cast<long> (Value);
 
 					SVExtentFigureStruct l_svFigure = Rect;

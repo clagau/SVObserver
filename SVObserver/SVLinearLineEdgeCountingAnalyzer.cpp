@@ -108,10 +108,10 @@ bool SVLinearEdgeCountingLineAnalyzerClass::onRun( SVRunStatusClass& rRunStatus,
 	{
 		std::vector<double> Edges;
 
-		if ( S_OK == GetEdgeA()->m_svLinearEdges.GetArrayValues( Edges, rRunStatus.m_lResultDataIndex ) )
+		if ( S_OK == GetEdgeA()->m_svLinearEdges.GetArrayValues( Edges ) )
 		{
 			long lCount = static_cast<int>(Edges.size());
-			if ( S_OK != m_svEdgeCount.SetValue( lCount, rRunStatus.m_lResultDataIndex ) )
+			if ( S_OK != m_svEdgeCount.SetValue(lCount) )
 			{
 				Result = false;
 				if (nullptr != pErrorMessages)

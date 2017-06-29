@@ -49,11 +49,11 @@ BOOL SVTimerValueObjectClass::Start()
 	return bOk;
 }
 
-BOOL SVTimerValueObjectClass::Stop(long lIndex)
+BOOL SVTimerValueObjectClass::Stop()
 {
 	double Value = SvTl::ConvertTo( SvTl::Microseconds, ( SvTl::GetTimeStamp() - m_Start ) );
 
-	return S_OK == SetValue(static_cast<__int64> (Value), GetLastSetIndex(), lIndex );
+	return S_OK == SetValue(static_cast<__int64> (Value));
 }
 
 void SVTimerValueObjectClass::LocalInitialize()

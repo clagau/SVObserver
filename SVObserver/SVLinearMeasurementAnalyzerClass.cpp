@@ -301,13 +301,13 @@ bool SVLinearMeasurementAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvSt
 
 		double Width = fabs( DistanceB - DistanceA + 1.0 );
 
-		Result = ( S_OK == m_svLinearDistanceA.SetValue( DistanceA, rRunStatus.m_lResultDataIndex ) ) && Result;
-		Result = ( S_OK == m_svLinearDistanceB.SetValue( DistanceB, rRunStatus.m_lResultDataIndex ) ) && Result;
+		Result = ( S_OK == m_svLinearDistanceA.SetValue(DistanceA) ) && Result;
+		Result = ( S_OK == m_svLinearDistanceB.SetValue(DistanceB) ) && Result;
 		
-		Result = ( S_OK == mdpEdgeA.SetValue( DPointA, rRunStatus.m_lResultDataIndex ) ) && Result;
-		Result = ( S_OK == mdpEdgeB.SetValue( DPointB, rRunStatus.m_lResultDataIndex ) ) && Result;
-		Result = ( S_OK == mdpCenter.SetValue( CenterPoint, rRunStatus.m_lResultDataIndex ) ) && Result;
-		Result = ( S_OK == mdWidth.SetValue( Width, rRunStatus.m_lResultDataIndex ) ) && Result;
+		Result = ( S_OK == mdpEdgeA.SetValue(DPointA) ) && Result;
+		Result = ( S_OK == mdpEdgeB.SetValue(DPointB) ) && Result;
+		Result = ( S_OK == mdpCenter.SetValue(CenterPoint) ) && Result;
+		Result = ( S_OK == mdWidth.SetValue(Width) ) && Result;
 	}
 
 	if ( !Result )

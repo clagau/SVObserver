@@ -181,7 +181,7 @@ public:
 	virtual void SetName( LPCTSTR Name ) override;
 	virtual SvOi::IObjectClass* getFirstObject(const SVObjectTypeInfoStruct& rObjectTypeInfo, bool useFriends = true, const SvOi::IObjectClass* pRequestor = nullptr) const override;
 	virtual bool resetAllObjects( SvStl::MessageContainerVector *pErrorMessages=nullptr ) override { return ResetObject(pErrorMessages); };
-	virtual HRESULT getValue(double& rValue, int Bucket = -1, int Index = -1) const override { return E_NOTIMPL; };
+	virtual HRESULT getValue(double& rValue, int Index = -1, int Bucket = -1) const override { return E_NOTIMPL; };
 	virtual HRESULT getValues(std::vector<double>& rValues, int Bucket = -1) const override { return E_NOTIMPL; };
 #pragma endregion virtual method (IObjectClass)
 

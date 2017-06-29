@@ -38,7 +38,7 @@ public:
 
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
-	virtual HRESULT SetImageExtentToParent( unsigned long p_ulIndex ) override;
+	virtual HRESULT SetImageExtentToParent() override;
 	virtual SVTaskObjectClass *GetObjectAtPoint( const SVExtentPointStruct &p_rsvPoint ) override;
 	virtual bool DoesObjectHaveExtents() const override;
 

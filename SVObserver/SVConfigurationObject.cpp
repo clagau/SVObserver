@@ -810,7 +810,7 @@ HRESULT SVConfigurationObject::AddRemoteInput(SVPPQObject* pPPQ, const SVString&
 	SVVariantValueObjectClass* pValueObject = new SVVariantValueObjectClass();
 	pValueObject->SetName( name.c_str() );
 	pValueObject->SetObjectOwner(pPPQ);
-	pValueObject->SetObjectDepth( 10 );
+	pValueObject->SetObjectDepth(10);
 	pValueObject->setResetOptions( false, SvOi::SVResetItemNone );
 	pValueObject->setBucketized(true);
 	pValueObject->SetObjectAttributesAllowed(SvOi::SV_SELECTABLE_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute);
@@ -5048,7 +5048,7 @@ void SVConfigurationObject::updateConfTreeToNewestVersion(SVTreeType &rTree, SVT
 						SVString Name = SvUl_SF::LoadSVString( IDS_OBJECTNAME_LUT_EQUATION_CLIP );
 						isLUTFormulaClipped.SetObjectEmbedded(SVLUTEquationClipFlagObjectGuid, nullptr, Name.c_str() );
 						isLUTFormulaClipped.SetDefaultValue(BOOL(true), true);
-						isLUTFormulaClipped.SetValue(BOOL(false), 0);
+						isLUTFormulaClipped.SetValue(BOOL(false));
 						isLUTFormulaClipped.Persist(writer);
 					}
 				}

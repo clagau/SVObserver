@@ -95,7 +95,7 @@ void SVLongValueObjectClass::WriteValues(SVObjectWriter& rWriter)
 		//Make sure this is not a derived virtual method which is called
 		_variant_t Value;
 		Value.ChangeType(VT_I4);
-		SVLongValueObjectClass::GetValue(Value.lVal, GetLastSetIndex(), i);
+		SVLongValueObjectClass::GetValue(Value.lVal, i);
 		list.push_back(Value);
 	}
 	rWriter.WriteAttribute(scElementTag, list);

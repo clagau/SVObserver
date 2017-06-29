@@ -168,7 +168,7 @@ bool SVBarCodeResultClass::onRun(SVRunStatusClass &rRunStatus, SvStl::MessageCon
 		if ( bLoad )
 		{
 			long lLine = CheckStringInTable( InputString );
-			msv_lMatchStringLine.SetValue( lLine, rRunStatus.m_lResultDataIndex );
+			msv_lMatchStringLine.SetValue(lLine);
 			if ( 0 < lLine )
 			{
 				rRunStatus.SetPassed();

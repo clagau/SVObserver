@@ -186,7 +186,7 @@ bool SVStdImageOperatorListClass::Run( SVRunStatusClass& rRunStatus, SvStl::Mess
 				SvOi::ITool* pTool = dynamic_cast<SvOi::ITool *>(GetTool());
 				if( pTool && pOutputImage->GetLastResetTimeStamp() <= pInputImage->GetLastResetTimeStamp() )
 				{
-					pTool->UpdateImageWithExtent( rRunStatus.m_lResultDataIndex );
+					pTool->UpdateImageWithExtent();
 				}
 
 				pOutputImage->GetParentImageHandle( input );
@@ -303,11 +303,11 @@ bool SVStdImageOperatorListClass::Run( SVRunStatusClass& rRunStatus, SvStl::Mess
 	
 	// Get Status Color...
 	DWORD dwValue = rRunStatus.GetStatusColor();
-	m_statusColor.SetValue( dwValue, rRunStatus.m_lResultDataIndex );
+	m_statusColor.SetValue(dwValue);
 	
 	// Get Status...
 	dwValue = rRunStatus.GetState();
-	m_statusTag.SetValue( dwValue, rRunStatus.m_lResultDataIndex );
+	m_statusTag.SetValue(dwValue);
 
 	if (nullptr != pErrorMessages && !m_RunErrorMessages.empty())
 	{

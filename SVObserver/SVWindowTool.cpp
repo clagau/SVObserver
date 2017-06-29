@@ -190,38 +190,38 @@ bool SVWindowToolClass::SetDefaultFormulas(SvStl::MessageContainerVector *pError
 }
 
 
-HRESULT SVWindowToolClass::SetImageExtent( unsigned long p_ulIndex, SVImageExtentClass p_svImageExtent )
+HRESULT SVWindowToolClass::SetImageExtent(const SVImageExtentClass& rImageExtent)
 {
-	HRESULT l_hrOk = m_svToolExtent.ValidExtentAgainstParentImage( p_svImageExtent );
+	HRESULT l_hrOk = m_svToolExtent.ValidExtentAgainstParentImage( rImageExtent );
 
 	if( S_OK == l_hrOk )
 	{
-		l_hrOk = SVToolClass::SetImageExtent( p_ulIndex, p_svImageExtent );
+		l_hrOk = SVToolClass::SetImageExtent( rImageExtent );
 	}
 
 	return l_hrOk;
 }
 
-HRESULT SVWindowToolClass::SetImageExtentToParent(unsigned long p_ulIndex )
+HRESULT SVWindowToolClass::SetImageExtentToParent()
 {
 	HRESULT l_hrOk = S_OK;
-	SVImageExtentClass l_NewExtent;
+	SVImageExtentClass NewExtent;
 
-	l_hrOk = m_svToolExtent.UpdateExtentToParentExtents( p_ulIndex, l_NewExtent );
+	l_hrOk = m_svToolExtent.UpdateExtentToParentExtents( NewExtent );
 
 	if( S_OK == l_hrOk )
 	{
-		l_hrOk = SVToolClass::SetImageExtent( p_ulIndex, l_NewExtent );
+		l_hrOk = SVToolClass::SetImageExtent( NewExtent );
 	}
 	return l_hrOk;
 }
 
 
-HRESULT SVWindowToolClass::SetImageExtentToFit( unsigned long p_ulIndex, SVImageExtentClass p_svImageExtent )
+HRESULT SVWindowToolClass::SetImageExtentToFit( const SVImageExtentClass& rImageExtent )
 {
 	HRESULT l_hrOk = S_OK;
 
-	l_hrOk = m_svToolExtent.UpdateExtentAgainstParentImage( p_ulIndex, p_svImageExtent );
+	l_hrOk = m_svToolExtent.UpdateExtentAgainstParentImage( rImageExtent );
 
 	return l_hrOk;
 }
@@ -255,7 +255,7 @@ bool SVWindowToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessage
 {
 	bool Result = SVToolClass::ResetObject(pErrorMessages);
 
-	UpdateImageWithExtent( 1 );
+	UpdateImageWithExtent();
 
 	return Result;
 }

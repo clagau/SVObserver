@@ -185,25 +185,25 @@ void SVPerspectiveWarpDlg::OnDestroy()
 	m_pWarpType->GetValue( l_lType );
 	if( l_lType != m_lLastWarpType )
 	{
-		SVImageExtentClass l_svExtents;
+		SVImageExtentClass Extents;
 		HRESULT l_hr = S_OK;
-		l_hr = m_pTool->GetImageExtent( l_svExtents );
+		l_hr = m_pTool->GetImageExtent( Extents );
 		long lWarpType;
 		m_pWarpType->GetValue( lWarpType );
 		SVPerspectiveToolClass::WarpType eWarpType = (SVPerspectiveToolClass::WarpType) lWarpType;
 
 		if( eWarpType == SVPerspectiveToolClass::WarpTypeVertical )
 		{
-			l_svExtents.SetExtentProperty( SVExtentPropertyTranslationOffsetY, 10 );
-			l_svExtents.SetExtentProperty( SVExtentPropertyTranslationOffsetX, 0 );
+			Extents.SetExtentProperty( SVExtentPropertyTranslationOffsetY, 10 );
+			Extents.SetExtentProperty( SVExtentPropertyTranslationOffsetX, 0 );
 		}
 		else
 		if( eWarpType == SVPerspectiveToolClass::WarpTypeHorizontal  )
 		{
-			l_svExtents.SetExtentProperty( SVExtentPropertyTranslationOffsetX, 10 );
-			l_svExtents.SetExtentProperty( SVExtentPropertyTranslationOffsetY, 0 );
+			Extents.SetExtentProperty( SVExtentPropertyTranslationOffsetX, 10 );
+			Extents.SetExtentProperty( SVExtentPropertyTranslationOffsetY, 0 );
 		}
-		m_pTool->SetImageExtent( 1, l_svExtents );
+		m_pTool->SetImageExtent( Extents );
 	}
 	CDialog::OnDestroy();
 }

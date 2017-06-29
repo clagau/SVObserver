@@ -137,12 +137,12 @@ bool TableFillByEquationObject::onRun( SVRunStatusClass& rRunStatus, SvStl::Mess
 			TableColumnEquation* pEquation = m_equationList[i];
 			if (nullptr != pValueObject && nullptr != pEquation)
 			{
-				pValueObject->setSortContainer(rRunStatus.m_lResultDataIndex, m_sortContainer);
-				pValueObject->SetValue(pEquation->GetYACCResult(), rRunStatus.m_lResultDataIndex, 0 );
+				pValueObject->setSortContainer(m_sortContainer);
+				pValueObject->SetValue(pEquation->GetYACCResult(), 0 );
 			}
 		}
 
-		m_NumberOfRows.SetValue(static_cast<long>(m_sortContainer.size()), rRunStatus.m_lResultDataIndex);
+		m_NumberOfRows.SetValue(static_cast<long>(m_sortContainer.size()));
 	}
 
 	return returnValue;

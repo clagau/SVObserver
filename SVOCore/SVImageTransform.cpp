@@ -114,7 +114,7 @@ BOOL SVImageTransformClass::CreateObject( SVObjectLevelCreateStruct* PCreateStru
 	l_bOk = l_bOk && S_OK == pTool->SetImageExtentProperty( SVExtentPropertyPositionPointY, &m_extentSourceY );
 	l_bOk = l_bOk && S_OK == pTool->SetImageExtentProperty( SVExtentPropertyRotationAngle, &m_extentRotationAngle );
 
-	l_bOk = l_bOk && S_OK == UpdateTransformData( 1 );
+	l_bOk = l_bOk && S_OK == UpdateTransformData();
 
 	m_isCreated = l_bOk;
 
@@ -147,7 +147,7 @@ bool SVImageTransformClass::ResetObject( SvStl::MessageContainerVector *pErrorMe
 {
 	bool Result = true;
 	
-	if (S_OK != UpdateTransformData( 1 ))
+	if (S_OK != UpdateTransformData())
 	{
 		Result = false;
 		if (nullptr != pErrorMessages)
@@ -214,7 +214,7 @@ bool SVImageTransformClass::onRun( SVRunStatusClass& runStatus, SvStl::MessageCo
 		}
 	}
 
-	if (bRetVal && S_OK != UpdateTransformData( runStatus.m_lResultDataIndex ))
+	if (bRetVal && S_OK != UpdateTransformData())
 	{
 		bRetVal = false;
 		if (nullptr != pErrorMessages)
@@ -279,9 +279,9 @@ bool SVImageTransformClass::onRun( SVRunStatusClass& runStatus, SvStl::MessageCo
 			}
 		}
 
-		long intpolType = 0;
-		m_interpolationMode.GetValue( intpolType, runStatus.m_lResultDataIndex );
-		SVImageOperationTypeEnum interpolationType = static_cast<SVImageOperationTypeEnum>(intpolType);
+		long InterpolationType = 0;
+		m_interpolationMode.GetValue(InterpolationType);
+		SVImageOperationTypeEnum interpolationType = static_cast<SVImageOperationTypeEnum>(InterpolationType);
 
 		// Check if using Source Image for Extents only
 		if( bUseExtentsOnly )
@@ -370,7 +370,7 @@ bool SVImageTransformClass::onRun( SVRunStatusClass& runStatus, SvStl::MessageCo
 	return bRetVal;
 }
 
-HRESULT SVImageTransformClass::UpdateTransformData( long p_lIndex )
+HRESULT SVImageTransformClass::UpdateTransformData( )
 {
 	HRESULT l_hrOk = S_OK;
 
@@ -493,12 +493,12 @@ HRESULT SVImageTransformClass::UpdateTransformData( long p_lIndex )
 			::KeepPrevError( l_hrOk, Extents.SetExtentProperty( SVExtentPropertyRotationAngle, angle ) );
 		}
 
-		::KeepPrevError( l_hrOk, pTool->SetImageExtent( p_lIndex, Extents ) );
+		::KeepPrevError( l_hrOk, pTool->SetImageExtent( Extents ) );
 
 		::KeepPrevError( l_hrOk, m_outputImageObject.InitializeImage( getInputImage() ) );
 
 		// Return code for UpdateImageWithExtend not being checked because it may not be valid the first time.
-		pTool->UpdateImageWithExtent( p_lIndex );
+		pTool->UpdateImageWithExtent();
 	}
 	else
 	{
@@ -520,7 +520,7 @@ HRESULT SVImageTransformClass::CollectInputImageNames()
 	{
 		SVString Name = pInputImage->GetCompleteName();
 
-		pTool->GetInputImageNames()->SetValue( Name, 0 );
+		pTool->GetInputImageNames()->SetValue(Name);
 
 		l_hr = S_OK;
 	}

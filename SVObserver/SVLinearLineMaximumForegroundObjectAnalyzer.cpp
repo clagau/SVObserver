@@ -376,13 +376,13 @@ bool SVLinearMaximumForegroundObjectLineAnalyzerClass::onRun( SVRunStatusClass& 
 
 	double Width = fabs( DistanceB - DistanceA );
 
-	l_bOk = ( S_OK == m_svLinearDistanceA.SetValue( DistanceA, rRunStatus.m_lResultDataIndex ) ) && l_bOk;
-	l_bOk = ( S_OK == m_svLinearDistanceB.SetValue( DistanceB, rRunStatus.m_lResultDataIndex ) ) && l_bOk;
+	l_bOk = ( S_OK == m_svLinearDistanceA.SetValue(DistanceA) ) && l_bOk;
+	l_bOk = ( S_OK == m_svLinearDistanceB.SetValue(DistanceB) ) && l_bOk;
 	
-	l_bOk = ( S_OK == mdpEdgeA.SetValue( DPointA, rRunStatus.m_lResultDataIndex ) ) && l_bOk;
-	l_bOk = ( S_OK == mdpEdgeB.SetValue( DPointB, rRunStatus.m_lResultDataIndex ) ) && l_bOk;
-	l_bOk = ( S_OK == mdpCenter.SetValue( CenterPoint, rRunStatus.m_lResultDataIndex ) ) && l_bOk;
-	l_bOk = ( S_OK == mdWidth.SetValue( Width, rRunStatus.m_lResultDataIndex  ) ) && l_bOk;
+	l_bOk = ( S_OK == mdpEdgeA.SetValue(DPointA) ) && l_bOk;
+	l_bOk = ( S_OK == mdpEdgeB.SetValue(DPointB) ) && l_bOk;
+	l_bOk = ( S_OK == mdpCenter.SetValue(CenterPoint) ) && l_bOk;
+	l_bOk = ( S_OK == mdWidth.SetValue(Width) ) && l_bOk;
 
 	if ( !l_bOk )
 	{

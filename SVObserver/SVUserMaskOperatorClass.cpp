@@ -649,7 +649,7 @@ HRESULT SVUserMaskOperatorClass::GetObjectValue( const SVString& rValueName, _va
 }
 
 // Restoration of trivial members
-HRESULT SVUserMaskOperatorClass::SetObjectValue( SVObjectAttributeClass* PDataObject )
+HRESULT SVUserMaskOperatorClass::SetObjectValue( SVObjectAttributeClass* pDataObject )
 {
 	HRESULT hr = S_FALSE;
 	BOOL bOk = FALSE;
@@ -657,14 +657,14 @@ HRESULT SVUserMaskOperatorClass::SetObjectValue( SVObjectAttributeClass* PDataOb
 	SvCl::SVObjectSVStringArrayClass StringArray;
 	SvCl::SVObjectLongArrayClass svLongArray;
 
-	if ( ( bOk = PDataObject->GetAttributeData( _T("MaskOperator"), svLongArray ) ) )
+	if ( ( bOk = pDataObject->GetAttributeData( _T("MaskOperator"), svLongArray ) ) )
 	{
 		for( int i = 0; i < svLongArray.GetSize(); i++ )
 		{
-			m_Data.evoCurrentMaskOperator.SetValue( svLongArray[i], 1 );
+			m_Data.evoCurrentMaskOperator.SetValue(svLongArray[i]);
 		}
 	}
-	else if ( ( bOk = PDataObject->GetAttributeData( _T("MaskData"), StringArray ) ) )
+	else if ( ( bOk = pDataObject->GetAttributeData( _T("MaskData"), StringArray ) ) )
 	{
 		DWORD len;
 		LPBYTE pBuff;
@@ -692,7 +692,7 @@ HRESULT SVUserMaskOperatorClass::SetObjectValue( SVObjectAttributeClass* PDataOb
 	}
 	else
 	{
-		hr = SVUnaryImageOperatorClass::SetObjectValue( PDataObject );
+		hr = SVUnaryImageOperatorClass::SetObjectValue( pDataObject );
 		return hr;
 	}
 
@@ -858,7 +858,7 @@ bool SVUserMaskOperatorClass::onRun( bool First, SVSmartHandlePointer RInputImag
 				{
 					dwShapeColor = rRunStatus.GetStatusColor();
 				}
-				pShapeHelper->m_statusColor.SetValue( dwShapeColor, rRunStatus.m_lResultDataIndex );
+				pShapeHelper->m_statusColor.SetValue(dwShapeColor);
 			}
 			// Success...
 			return true;
@@ -879,7 +879,7 @@ bool SVUserMaskOperatorClass::onRun( bool First, SVSmartHandlePointer RInputImag
 		if ( pShapeHelper )
 		{
 			DWORD dwShapeColor = m_statusColor.GetDefaultValue();
-			pShapeHelper->m_statusColor.SetValue( dwShapeColor, rRunStatus.m_lResultDataIndex );
+			pShapeHelper->m_statusColor.SetValue(dwShapeColor);
 		}
 		return false;
 	}
@@ -890,7 +890,7 @@ bool SVUserMaskOperatorClass::onRun( bool First, SVSmartHandlePointer RInputImag
 	if ( pShapeHelper )
 	{
 		DWORD dwShapeColor = m_statusColor.GetDefaultValue();
-		pShapeHelper->m_statusColor.SetValue( dwShapeColor, rRunStatus.m_lResultDataIndex );
+		pShapeHelper->m_statusColor.SetValue(dwShapeColor);
 	}
 	return false;
 }

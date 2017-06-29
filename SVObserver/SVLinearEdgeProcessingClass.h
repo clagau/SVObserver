@@ -30,8 +30,8 @@ public:
 
 	SVImageClass*             GetInputImage();
 	SVDoubleValueObjectClass* GetInputLinearData();
-	HRESULT GetInputMinThreshold(double& rMinThreshold, int Index);
-	HRESULT GetInputMaxThreshold(double& rMaxThreshold, int Index);
+	HRESULT GetInputMinThreshold(double& rMinThreshold);
+	HRESULT GetInputMaxThreshold(double& rMaxThreshold);
 	HRESULT GetInputLinearData(std::vector<double>& rData);
 
 	HRESULT GetPixelDepth();
@@ -93,9 +93,9 @@ public:
 	DWORD m_dwColorNumber;
 
 protected:
-	HRESULT UpdateUpperThresholdValues( long p_lIndex );
-	HRESULT UpdateLowerThresholdValues( long p_lIndex );
-	HRESULT UpdateEdgeList( long p_lIndex );
+	HRESULT UpdateUpperThresholdValues();
+	HRESULT UpdateLowerThresholdValues();
+	HRESULT UpdateEdgeList();
 	HRESULT IsEdge( double p_dStart, double p_dEnd, DWORD p_dwUpper, DWORD p_dwLower, DWORD p_dwPolarisation );
 	HRESULT GetBlackWhiteEdgeValue( double p_dCurrent, DWORD p_dwUpper, DWORD p_dwLower, double &l_rdValue );
 	HRESULT CalculateSubPixelEdge( double p_dStart, double p_dEnd, DWORD p_dwUpper, DWORD p_dwLower, DWORD p_dwPolarisation, double &p_rdDistance );

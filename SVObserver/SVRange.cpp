@@ -92,9 +92,9 @@ void SVRangeClass::init()
 	addDefaultInputObjects();
 }
 
-BOOL SVRangeClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
+BOOL SVRangeClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
-	m_isCreated = SVTaskObjectClass::CreateObject( PCreateStructure );
+	m_isCreated = SVTaskObjectClass::CreateObject( pCreateStructure );
 
 	// Set / Reset Printable Flags
 	const UINT cAttributes = SvOi::SV_PRINTABLE | SvOi::SV_SETABLE_ONLINE | SvOi::SV_REMOTELY_SETABLE;
@@ -257,7 +257,7 @@ SVDoubleValueObjectClass&  SVRangeClass::GetRange(RangeEnum::ERange range)
 	}
 }
 
-void   SVRangeClass::UpdateRange(int bucket, RangeEnum::ERange  range )
+void   SVRangeClass::UpdateRange(RangeEnum::ERange  range )
 {
 	SVObjectClass* pObject = m_ValueObjectReferences[range].getObject();
 
@@ -267,14 +267,14 @@ void   SVRangeClass::UpdateRange(int bucket, RangeEnum::ERange  range )
 		if(m_ValueObjectReferences[range].isArray())
 		{
 			int index = m_ValueObjectReferences[range].ArrayIndex();
-			pObject->getValue( Value, -1, index );
+			pObject->getValue( Value, index );
 		}
 		else
 		{
 			pObject->getValue( Value );
 		}
 
-		GetRange(range).SetValue( Value, bucket );	
+		GetRange(range).SetValue(Value);	
 	}
 }
 
@@ -339,26 +339,26 @@ bool SVRangeClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVe
 
 		if( nullptr != m_ValueObjectReferences[RangeEnum::ER_FailLow].getObject() )
 		{
-			UpdateRange(rRunStatus.m_lResultDataIndex, RangeEnum::ER_FailLow );
+			UpdateRange(RangeEnum::ER_FailLow);
 		}
 		FailLow.GetValue(failLow);
 
 		if( nullptr != m_ValueObjectReferences[RangeEnum::ER_FailHigh ].getObject() )
 		{
-			UpdateRange(rRunStatus.m_lResultDataIndex, RangeEnum::ER_FailHigh );
+			UpdateRange(RangeEnum::ER_FailHigh);
 		}
 		FailHigh.GetValue(failHigh);
 
 		if( nullptr != m_ValueObjectReferences[RangeEnum::ER_WarnLow  ].getObject() )
 		{
-			UpdateRange(rRunStatus.m_lResultDataIndex, RangeEnum::ER_WarnLow );
+			UpdateRange(RangeEnum::ER_WarnLow);
 		}
 
 		WarnLow.GetValue(warnLow);
 
 		if( nullptr != m_ValueObjectReferences[ RangeEnum::ER_WarnHigh  ].getObject() )
 		{
-			UpdateRange(rRunStatus.m_lResultDataIndex, RangeEnum::ER_WarnHigh );
+			UpdateRange(RangeEnum::ER_WarnHigh);
 		}
 
 		WarnHigh.GetValue(warnHigh);
@@ -526,13 +526,13 @@ void SVRangeClass::InvalidateRange()
 	m_isValidRange = false;
 }
 
-const SVDoubleValueObjectClass& SVRangeClass::getUpdatedRange( RangeEnum::ERange ra  ,int bucket )
+const SVDoubleValueObjectClass& SVRangeClass::getUpdatedRange( RangeEnum::ERange ra)
 {
 	if(m_isValidRange)
 	{
 		if( nullptr != m_ValueObjectReferences[  ra ].getObject() )
 		{
-			UpdateRange(bucket, ra );
+			UpdateRange(ra );
 		}
 	}
 
@@ -559,25 +559,25 @@ const SVDoubleValueObjectClass& SVRangeClass::getUpdatedRange( RangeEnum::ERange
 	}
 }
 
-const SVDoubleValueObjectClass& SVRangeClass::getUpdatedFailLow( int bucket )
+const SVDoubleValueObjectClass& SVRangeClass::getUpdatedFailLow()
 {
 	if(m_isValidRange)
 	{
 		if( nullptr != m_ValueObjectReferences[  RangeEnum::ER_FailLow  ].getObject() )
 		{
-			UpdateRange(bucket, RangeEnum::ER_FailLow );
+			UpdateRange(RangeEnum::ER_FailLow );
 		}
 	}
 	return FailLow;
 }
 
-const SVDoubleValueObjectClass& SVRangeClass::getUpdatedFailHigh( int bucket )
+const SVDoubleValueObjectClass& SVRangeClass::getUpdatedFailHigh()
 {
 	if(m_isValidRange)
 	{
 		if( nullptr != m_ValueObjectReferences[  RangeEnum::ER_FailHigh ].getObject() )
 		{
-			UpdateRange(bucket, RangeEnum::ER_FailHigh );
+			UpdateRange(RangeEnum::ER_FailHigh );
 		}
 	}
 	return FailHigh;

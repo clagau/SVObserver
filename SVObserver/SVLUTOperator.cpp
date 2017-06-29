@@ -204,7 +204,7 @@ BOOL SVLUTOperatorClass::RecalcLUT( SVRunStatusClass& rRunStatus )
 				}
 
 				m_lutVector.SetArraySize(static_cast<int>(byteVec.size()));
-				if( S_OK != m_lutVector.SetArrayValues( byteVec, rRunStatus.m_lResultDataIndex ) )
+				if( S_OK != m_lutVector.SetArrayValues(byteVec) )
 				{
 					return FALSE;
 				}
@@ -222,7 +222,7 @@ BOOL SVLUTOperatorClass::RecalcLUT( SVRunStatusClass& rRunStatus )
 					byteVec[i] = (BYTE) (firstEntry - i);
 				}
 
-				if( S_OK != m_lutVector.SetArrayValues( byteVec, rRunStatus.m_lResultDataIndex ) )
+				if( S_OK != m_lutVector.SetArrayValues(byteVec) )
 				{
 					return FALSE;
 				}
@@ -240,7 +240,7 @@ BOOL SVLUTOperatorClass::RecalcLUT( SVRunStatusClass& rRunStatus )
 					byteVec[i] = (BYTE) (firstEntry + i);
 				}
 
-				if( S_OK != m_lutVector.SetArrayValues( byteVec, rRunStatus.m_lResultDataIndex ) )
+				if( S_OK != m_lutVector.SetArrayValues(byteVec) )
 				{
 					return FALSE;
 				}
@@ -281,7 +281,7 @@ BOOL SVLUTOperatorClass::RecalcLUT( SVRunStatusClass& rRunStatus )
 					}
 				}
 
-				if( S_OK != m_lutVector.SetArrayValues( byteVec, rRunStatus.m_lResultDataIndex ) )
+				if( S_OK != m_lutVector.SetArrayValues(byteVec) )
 				{
 					return FALSE;
 				}
@@ -297,8 +297,8 @@ BOOL SVLUTOperatorClass::RecalcLUT( SVRunStatusClass& rRunStatus )
 				SVByteValueObjectClass* pLUTResult = getInputLUTVectorResult();
 
 				l_bOk = l_bOk && nullptr != pLUTResult;
-				l_bOk = l_bOk && S_OK == pLUTResult->GetArrayValues( byteVector );
-				l_bOk = l_bOk && S_OK == m_lutVector.SetArrayValues( byteVector, rRunStatus.m_lResultDataIndex );
+				l_bOk = l_bOk && S_OK == pLUTResult->GetArrayValues(byteVector);
+				l_bOk = l_bOk && S_OK == m_lutVector.SetArrayValues(byteVector);
 
 				if( ! l_bOk )
 				{

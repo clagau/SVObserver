@@ -225,7 +225,7 @@ HRESULT SVObjectReference::getValue(_variant_t& rValue, int Bucket) const
 	SvOi::IValueObject* pValueObject = getValueObject();
 	if (nullptr != pValueObject)
 	{
-		return pValueObject->getValue(rValue, Bucket, ArrayIndex());
+		return pValueObject->getValue(rValue, ArrayIndex(), Bucket);
 	}
 	return E_POINTER;
 }

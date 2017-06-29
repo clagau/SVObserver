@@ -15,6 +15,12 @@
 //								Not edit yet to avoid to change to much code in this prototype.
 //namespace SvOi
 //{
+		const DWORD cMaxStringSize = 512;
+
+		//! These are special SVObserver variant VT types for SVPointValueObjectClass and SVDPointValueObjectClass
+		const DWORD VT_POINT = 80;
+		const DWORD VT_DPOINT = 81;
+
 		enum SVObjectTypeEnum
 		{
 			SVNotSetObjectType						= 0x00000000,

@@ -107,7 +107,7 @@ void SVCharValueObjectClass::WriteValues(SVObjectWriter& rWriter)
 	for (int i = 0; i < getArraySize(); i++)
 	{
 		//Make sure this is not a derived virtual method which is called
-		SVCharValueObjectClass::GetValue(Value.cVal, GetLastSetIndex(), i);
+		SVCharValueObjectClass::GetValue(Value.cVal, i);
 		list.push_back(Value);
 	}
 	rWriter.WriteAttribute(scElementTag, list);

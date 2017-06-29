@@ -118,7 +118,7 @@ void SVDWordValueObjectClass::WriteValues(SVObjectWriter& rWriter)
 	{
 		DWORD Temp(0);
 		//Make sure this is not a derived virtual method which is called
-		SVDWordValueObjectClass::GetValue(Temp, GetLastSetIndex(), i);
+		SVDWordValueObjectClass::GetValue(Temp, i);
 		Value.ulVal = static_cast<ULONG> (Temp);
 		list.push_back(Value);
 	}

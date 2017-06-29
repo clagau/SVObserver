@@ -36,7 +36,7 @@ protected:
 	virtual _variant_t ValueType2Variant( const SVString& rValue ) const override { return _variant_t( rValue.c_str() ); };
 	virtual SVString Variant2ValueType( const _variant_t& rValue ) const override { return SvUl_SF::createSVString( rValue ); };
 
-	//! This just returns the input value as no coversion is required
+	//! This just returns the input value as no conversion is required
 	//! \param rValue [in] The input string
 	//! \returns converted value.
 	virtual SVString ConvertString2Type( const SVString& rValue ) const override;
@@ -45,6 +45,13 @@ protected:
 	//! \param rValue [in] Type to convert
 	/// \returns the SVString
 	virtual SVString ConvertType2String( const SVString& rValue ) const override { return rValue; };
+
+	//! Copies the value object to the memory block
+	//! \param pMemoryBlock [in] Pointer to the byte address of the memory block
+	//! \param MemByteSize [in] The memory block byte size
+	//! \param Index [in] The index of the array (-1 if no array)
+	//! \returns S_OK if successful
+	virtual HRESULT CopyToMemoryBlock(BYTE* pMemoryBlock, DWORD MemByteSize, int Index = -1) const override;
 
 	virtual void WriteValues(SVObjectWriter& rWriter) override;
 private:

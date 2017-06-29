@@ -105,14 +105,6 @@ HRESULT  SVStringValueObjectClass::SetObjectValue(SVObjectAttributeClass* pDataO
 				}
 			}
 		}
-		if ( 1 < getNumberOfBuckets() )
-		{
-			setLastSetIndex( 1 );
-		}
-
-		SVString  Value;
-		GetValue( Value );
-		SetValue( Value );
 	}
 	// new-style: store all array elements:
 	else if ( bOk = pDataObject->GetArrayData( SvOi::cArrayTag, ReadValueArray, DefaultValue() ) )
@@ -135,8 +127,6 @@ HRESULT  SVStringValueObjectClass::SetObjectValue(SVObjectAttributeClass* pDataO
 				std::swap( ValueArray(), ReadValueArray );
 			}
 		}
-		setLastSetIndex( 1 );
-
 	}
 	else if ( bOk = pDataObject->GetAttributeData(_T("StrDefault"), ObjectArray) )
 	{
@@ -186,10 +176,6 @@ HRESULT  SVStringValueObjectClass::SetObjectValue(SVObjectAttributeClass* pDataO
 				}
 			}
 		}
-		if ( 1 < getNumberOfBuckets() )
-		{
-			setLastSetIndex( 1 );
-		}
 	}
 	else
 	{
@@ -204,6 +190,24 @@ HRESULT  SVStringValueObjectClass::SetObjectValue(SVObjectAttributeClass* pDataO
 SVString SVStringValueObjectClass::ConvertString2Type( const SVString& rValue ) const
 {
 	return rValue;
+}
+
+HRESULT SVStringValueObjectClass::CopyToMemoryBlock(BYTE* pMemoryBlock, DWORD MemByteSize, int Index /* = -1*/) const
+{
+	HRESULT Result = ValidateMemoryBlockParameters(pMemoryBlock, MemByteSize, Index);
+
+	if (S_OK == Result)
+	{
+		SVString Value;
+		SVStringValueObjectClass::GetValue(Value, Index);
+		//! For strings the memory hast to first be cleared
+		memset(pMemoryBlock, 0, GetByteSize());
+		//! Either the whole string or maximum bytes size -1
+		size_t Size = std::min( static_cast<size_t> (GetByteSize() - 1), Value.size());
+		memcpy(pMemoryBlock, Value.c_str(), Size);
+	}
+
+	return Result;
 }
 
 void SVStringValueObjectClass::WriteValues(SVObjectWriter& rWriter)
@@ -224,7 +228,7 @@ void SVStringValueObjectClass::WriteValues(SVObjectWriter& rWriter)
 	for (int i = 0; i < getArraySize(); i++)
 	{
 		//Make sure this is not a derived virtual method which is called
-		SVStringValueObjectClass::GetValue(TempValue, GetLastSetIndex(), i);
+		SVStringValueObjectClass::GetValue(TempValue, i);
 		SvUl::AddEscapeSpecialCharacters(TempValue, true);
 		Value.SetString(TempValue.c_str());
 		list.push_back(Value);

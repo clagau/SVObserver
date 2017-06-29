@@ -576,7 +576,7 @@ HRESULT SVOCVAnalyzeResultClass::LoadMatchString()
 			 
 			 if (0 != LastError)
 			 {
-				 m_svoMatchString.SetValue( SVString(), 1 );
+				 m_svoMatchString.SetValue(SVString());
 			 }
 			 
 			 if ( dwByteNumber > 0 )
@@ -613,7 +613,7 @@ HRESULT SVOCVAnalyzeResultClass::LoadMatchString()
 	
 	if (0 != LastError)
 	{
-	   m_svoMatchString.SetValue( SVString(), 1 );
+	   m_svoMatchString.SetValue(SVString());
 	}
 
 	return hrRet;
@@ -780,19 +780,19 @@ bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messag
 			{
 				long k( 0 );
 				// Reset the 'found' string to nothing.
-				m_svoFoundString.SetValue( SVString(), rRunStatus.m_lResultDataIndex );
-				m_lvoMatchLineNumber.SetValue( -1L, rRunStatus.m_lResultDataIndex );
+				m_svoFoundString.SetValue(SVString());
+				m_lvoMatchLineNumber.SetValue(-1L);
 
 				//
 				// Preset for failure
 				//
-				failed.SetValue( BOOL(true), rRunStatus.m_lResultDataIndex );
-				warned.SetValue( BOOL(true), rRunStatus.m_lResultDataIndex );
-				passed.SetValue( BOOL(false), rRunStatus.m_lResultDataIndex );
+				m_Failed.SetValue(BOOL(true));
+				m_Warned.SetValue(BOOL(true));
+				m_Passed.SetValue(BOOL(false));
 
-				m_dvoHighestMatchScore.SetValue( 0.0, rRunStatus.m_lResultDataIndex );
-				m_dvoLowestMatchScore.SetValue(  0.0, rRunStatus.m_lResultDataIndex );
-				m_dvoAverageMatchScore.SetValue( 0.0, rRunStatus.m_lResultDataIndex );
+				m_dvoHighestMatchScore.SetValue(0.0);
+				m_dvoLowestMatchScore.SetValue(0.0);
+				m_dvoAverageMatchScore.SetValue(0.0);
 
 				//
 				// Get some settings.
@@ -1047,20 +1047,24 @@ bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messag
 				{
 					SVOCVCharacterResultClass *pResult = arrayOCVCharacterResults.GetAt( k );
 
-					pResult->m_cvoLabelValue.SetValue( l_strLabel[k], rRunStatus.m_lResultDataIndex );
+					pResult->m_cvoLabelValue.SetValue(l_strLabel[k]);
 
-					pResult->m_dvoOverlayLeft.SetValue( l_adXCoords[k] - ( dCharBoxSizeX / 2.0 ), rRunStatus.m_lResultDataIndex );
-					pResult->m_dvoOverlayTop.SetValue( l_adYCoords[k] - ( dCharBoxSizeY / 2.0 ), rRunStatus.m_lResultDataIndex );
-					pResult->m_dvoOverlayWidth.SetValue( dCharBoxSizeX, rRunStatus.m_lResultDataIndex );
-					pResult->m_dvoOverlayHeight.SetValue( dCharBoxSizeY, rRunStatus.m_lResultDataIndex );
+					pResult->m_dvoOverlayLeft.SetValue(l_adXCoords[k] - ( dCharBoxSizeX / 2.0 ));
+					pResult->m_dvoOverlayTop.SetValue(l_adYCoords[k] - ( dCharBoxSizeY / 2.0 ));
+					pResult->m_dvoOverlayWidth.SetValue(dCharBoxSizeX);
+					pResult->m_dvoOverlayHeight.SetValue(dCharBoxSizeY);
 
-					pResult->m_dvoMatchScore.SetValue( l_adScores[k], rRunStatus.m_lResultDataIndex );
+					pResult->m_dvoMatchScore.SetValue(l_adScores[k]);
 
-					if( l_adScores[k] > dHigh )
+					if (l_adScores[k] > dHigh)
+					{
 						dHigh = l_adScores[k];
+					}
 
-					if( l_adScores[k] < dLow )
+					if (l_adScores[k] < dLow)
+					{
 						dLow = l_adScores[k];
+					}
 
 					dSum += l_adScores[k];
 
@@ -1071,14 +1075,14 @@ bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messag
 				{
 					SVOCVCharacterResultClass *pResult = arrayOCVCharacterResults.GetAt( l );
 
-					pResult->m_cvoLabelValue.SetValue( 0L, rRunStatus.m_lResultDataIndex );
+					pResult->m_cvoLabelValue.SetValue(0L);
 
-					pResult->m_dvoOverlayLeft.SetValue( 0.0, rRunStatus.m_lResultDataIndex );
-					pResult->m_dvoOverlayTop.SetValue( 0.0, rRunStatus.m_lResultDataIndex );
-					pResult->m_dvoOverlayWidth.SetValue( 0.0, rRunStatus.m_lResultDataIndex );
-					pResult->m_dvoOverlayHeight.SetValue( 0.0, rRunStatus.m_lResultDataIndex );
+					pResult->m_dvoOverlayLeft.SetValue(0.0);
+					pResult->m_dvoOverlayTop.SetValue(0.0);
+					pResult->m_dvoOverlayWidth.SetValue(0.0);
+					pResult->m_dvoOverlayHeight.SetValue(0.0);
 
-					pResult->m_dvoMatchScore.SetValue( -1.0, rRunStatus.m_lResultDataIndex );
+					pResult->m_dvoMatchScore.SetValue(-1.0);
 				}// end for
 
 				if( l_lLength )
@@ -1102,16 +1106,16 @@ bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messag
 
 				// Cleanup results
 
-				m_dvoHighestMatchScore.SetValue( dHigh, rRunStatus.m_lResultDataIndex );
-				m_dvoLowestMatchScore.SetValue(  dLow, rRunStatus.m_lResultDataIndex  );
-				m_dvoAverageMatchScore.SetValue( dAvg, rRunStatus.m_lResultDataIndex );
+				m_dvoHighestMatchScore.SetValue(dHigh);
+				m_dvoLowestMatchScore.SetValue(dLow);
+				m_dvoAverageMatchScore.SetValue(dAvg);
 
 				//
 				// Copy OCV result to a storage array element.
 				//
-				m_svoFoundString.SetValue( FoundString, rRunStatus.m_lResultDataIndex );
+				m_svoFoundString.SetValue(FoundString);
 
-				m_svoMatchString.GetValue( MatchString );
+				m_svoMatchString.GetValue(MatchString);
 
 				//
 				// Is result == matchstring?
@@ -1147,7 +1151,7 @@ bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messag
 
 						}// end else
 
-						m_lvoMatchLineNumber.SetValue( lStringMatch, rRunStatus.m_lResultDataIndex );
+						m_lvoMatchLineNumber.SetValue(lStringMatch);
 					}// end if
 					else // Handle the old way
 					{
@@ -1164,7 +1168,7 @@ bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messag
 						
 							if( m_nTotalCount == 1 )
 							{
-								m_lvoMatchLineNumber.SetValue( 1L, rRunStatus.m_lResultDataIndex );
+								m_lvoMatchLineNumber.SetValue(1L);
 							}// end if
 
 						}// end if
@@ -1217,9 +1221,9 @@ bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messag
 				{
 					case 1: // Passed
 					{
-						failed.SetValue( BOOL(false), rRunStatus.m_lResultDataIndex );
-						warned.SetValue( BOOL(false), rRunStatus.m_lResultDataIndex );
-						passed.SetValue( BOOL(true), rRunStatus.m_lResultDataIndex );
+						m_Failed.SetValue(BOOL(false));
+						m_Warned.SetValue(BOOL(false));
+						m_Passed.SetValue(BOOL(true));
 
 						rRunStatus.SetPassed();
 
@@ -1227,8 +1231,8 @@ bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messag
 					}
 					case 2: // Warned
 					{
-						failed.SetValue( BOOL(false), rRunStatus.m_lResultDataIndex );
-						warned.SetValue( BOOL(true), rRunStatus.m_lResultDataIndex );
+						m_Failed.SetValue(BOOL(false));
+						m_Warned.SetValue(BOOL(true));
 
 						rRunStatus.SetWarned();
 
@@ -1333,7 +1337,7 @@ BOOL SVOCVAnalyzeResultClass::BuildHashTable( char *pBuffer )
 		// If there is only one entry in the file, make it work the old way.   
 		if(m_nTotalCount == 1)
 		{
-			m_svoMatchString.SetValue( SVString(pBuffer), 1 );
+			m_svoMatchString.SetValue(SVString(pBuffer));
 			m_pIndexTable = nullptr;
 			break; // No need to create hash table
 		}

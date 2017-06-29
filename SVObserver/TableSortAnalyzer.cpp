@@ -103,7 +103,7 @@ bool TableSortAnalyzer::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageConta
 		DoubleSortValueObject* pColumnValues = dynamic_cast<DoubleSortValueObject*> (m_sortColumnObjectInfo.GetInputObjectInfo().m_pObject);
 		if (nullptr != pTool && nullptr != pColumnValues)
 		{
-			ValueObjectSortContainer sortContainer = pColumnValues->getSortContainer(rRunStatus.m_lResultDataIndex);
+			ValueObjectSortContainer sortContainer = pColumnValues->getSortContainer();
 			size_t sizeValues = sortContainer.size();
 			if (0 < sizeValues)
 			{
@@ -112,7 +112,7 @@ bool TableSortAnalyzer::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageConta
 				double* pValues = m_tmpValues.get();
 				for (int i=0; i< sizeValues; ++i)
 				{
-					pColumnValues->GetValue(pValues[i], rRunStatus.m_lResultDataIndex, i );
+					pColumnValues->GetValue(pValues[i], i );
 				}
 
 				bool isSwitched = false;

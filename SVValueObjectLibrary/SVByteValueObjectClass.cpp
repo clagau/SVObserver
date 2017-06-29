@@ -70,7 +70,7 @@ HRESULT SVByteValueObjectClass::SetObjectValue( SVObjectAttributeClass* pDataObj
 			|| pDataObject->GetAttributeData( SvOi::cBucketTag, svArray ) )
 		{
 			SetArraySize( static_cast< int >( svArray.size() ) );
-			Result = SetArrayValues( svArray.begin(), svArray.end(), 1 );
+			Result = SetArrayValues( svArray.begin(), svArray.end());
 			return Result;
 		}
 	}
@@ -140,7 +140,7 @@ void SVByteValueObjectClass::WriteValues(SVObjectWriter& rWriter)
 		//Make sure this is not a derived virtual method which is called
 		_variant_t Value;
 		Value.ChangeType(VT_UI1);
-		SVByteValueObjectClass::GetValue(Value.bVal, GetLastSetIndex(), i);
+		SVByteValueObjectClass::GetValue(Value.bVal, i);
 		list.push_back(Value);
 	}
 	rWriter.WriteAttribute(scElementTag, list);

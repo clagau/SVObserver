@@ -176,17 +176,17 @@ bool SVImageToolClass::DoesObjectHaveExtents() const
 	return true;
 }
 
-HRESULT SVImageToolClass::SetImageExtent( unsigned long p_ulIndex, SVImageExtentClass p_svImageExtent )
+HRESULT SVImageToolClass::SetImageExtent(const SVImageExtentClass& rImageExtent)
 {
 	HRESULT l_hrOk = S_FALSE;
 
 	SVExtentFigureStruct l_svFigure;
 
-	p_svImageExtent.GetFigure(l_svFigure);
+	rImageExtent.GetFigure(l_svFigure);
 
 	if ( (l_svFigure.m_svTopLeft.m_dPositionX >= 0) && (l_svFigure.m_svTopLeft.m_dPositionY >= 0) )
 	{
-		l_hrOk = SVToolClass::SetImageExtent( p_ulIndex, p_svImageExtent );
+		l_hrOk = SVToolClass::SetImageExtent( rImageExtent );
 	}
 	else
 	{
@@ -239,7 +239,7 @@ bool SVImageToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages
 
 	Result = SVToolClass::ResetObject(pErrorMessages) && Result;
 
-	UpdateImageWithExtent( 1 );
+	UpdateImageWithExtent();
 
 	return Result;
 } 
@@ -287,7 +287,7 @@ HRESULT SVImageToolClass::UpdateTranslation()
 
 	if ((true == extentChanged) && (S_OK == l_hrOK))
 	{
-		SetImageExtent(1, toolImageExtents);
+		SetImageExtent(toolImageExtents);
 	}
 
 	return l_hrOK;
@@ -298,16 +298,16 @@ SVStringValueObjectClass* SVImageToolClass::GetInputImageNames()
 	return &m_SourceImageNames;
 }
 
-HRESULT SVImageToolClass::SetImageExtentToParent(unsigned long p_ulIndex )
+HRESULT SVImageToolClass::SetImageExtentToParent()
 {
 	HRESULT l_hrOk = S_OK;
-	SVImageExtentClass l_NewExtent;
+	SVImageExtentClass NewExtent;
 
-	l_hrOk = m_svToolExtent.UpdateExtentToParentExtents( p_ulIndex, l_NewExtent );
+	l_hrOk = m_svToolExtent.UpdateExtentToParentExtents( NewExtent );
 
 	if( S_OK == l_hrOk )
 	{
-		l_hrOk = SVToolClass::SetImageExtent( p_ulIndex, l_NewExtent );
+		l_hrOk = SVToolClass::SetImageExtent(NewExtent);
 	}
 	return l_hrOk;
 }

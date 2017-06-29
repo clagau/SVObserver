@@ -236,7 +236,7 @@ void  ResultViewReferences::GetResultData( SVIPResultData& p_rResultData) const
 		if( it->getObject()->GetObjectType() == SVStringValueObjectType )
 		{
 			SVString ValueString;
-			it->getValueObject()->getValue( ValueString, -1, it->getValidArrayIndex() );
+			it->getValueObject()->getValue( ValueString, it->getValidArrayIndex() );
 			// Wrap string in Quotes...
 			Value = SvUl_SF::Format(_T("\042%s\042"), ValueString.c_str());
 		}
@@ -244,7 +244,7 @@ void  ResultViewReferences::GetResultData( SVIPResultData& p_rResultData) const
 		{
 			if( !it->isEntireArray() )
 			{
-				HRESULT hr = it->getValueObject()->getValue( Value, -1, it->getValidArrayIndex() );
+				HRESULT hr = it->getValueObject()->getValue( Value, it->getValidArrayIndex() );
 				if ( hr == SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE )
 				{
 					Value = _T("< ") + Value + _T(" >");

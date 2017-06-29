@@ -91,7 +91,7 @@ bool SVLowerThresholdEquationClass::onRun( SVRunStatusClass& rRunStatus, SvStl::
 			value = getResult();
 		}
 	}
-	result.SetValue( value, rRunStatus.m_lResultDataIndex );
+	result.SetValue(value);
 
 	return retVal;
 }

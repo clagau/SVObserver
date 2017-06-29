@@ -175,7 +175,7 @@ HRESULT SVCommandInspectionGetItems::UpdateResultsWithValueData(const SVString& 
 	if( nullptr != pValueObject && !rValueRef.isEntireArray())
 	{
 		///if this is an Array this is Zero based!!!!
-		GetStatus = pValueObject->getValue( Storage.m_Variant, -1, rValueRef.getValidArrayIndex() );
+		GetStatus = pValueObject->getValue( Storage.m_Variant, rValueRef.getValidArrayIndex() );
 
 		if (S_OK == GetStatus)
 		{

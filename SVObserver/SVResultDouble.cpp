@@ -100,7 +100,7 @@ bool SVDoubleResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 		{
 			double Value;
 			pObject->getValue(Value);
-			m_Value.SetValue(Value, rRunStatus.m_lResultDataIndex );
+			m_Value.SetValue(Value);
 			return true;
 		}
 	}

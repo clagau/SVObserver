@@ -29,8 +29,8 @@ public:
 	virtual BOOL CloseObject() override;
 	virtual BOOL CreateObject(SVObjectLevelCreateStruct* pCreateStructure) override;
 
-	virtual HRESULT SetImageExtentToParent(unsigned long ulIndex) override;
-	virtual HRESULT SetImageExtent( unsigned long p_ulIndex, SVImageExtentClass p_svImageExtent ) override;
+	virtual HRESULT SetImageExtentToParent() override;
+	virtual HRESULT SetImageExtent( const SVImageExtentClass& rImageExtent ) override;
 	
 	/// GetObjectAtPoint
 	///  Tests to see if the passed in point (usually from a mouse location)
@@ -64,9 +64,9 @@ public:
 	SVImageClass* getLogicalROIImage();
 	SVImageClass* getOutputImage(); 
 
-	SVEnumerateValueObjectClass* getInterpolationMode();
-	SVEnumerateValueObjectClass* getOverscan();
-	SVEnumerateValueObjectClass* getPerformance();
+	SVEnumerateValueObjectClass& getInterpolationMode() { return m_ResizeInterpolationMode; };
+	SVEnumerateValueObjectClass& getOverscan() { return m_ResizeOverscan; };
+	SVEnumerateValueObjectClass& getPerformance() { return m_ResizePerformance; };
 #pragma endregion Public Methods
 
 #pragma region Protected Methods

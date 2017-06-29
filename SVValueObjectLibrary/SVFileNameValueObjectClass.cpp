@@ -114,14 +114,10 @@ HRESULT SVFileNameValueObjectClass::SetObjectValue(SVObjectAttributeClass* pData
 				}
 			}
 		}
-		if ( 1 < getNumberOfBuckets() )
-		{
-			setLastSetIndex( 1 );
-		}
-
+		//! Note this is required to set the path correctly as it calls the SetValue version of SVFileNameValueObjectClass
 		SVString  Value;
-		GetValue( Value );
-		SetValue( Value );
+		GetValue(Value);
+		SetValue(Value);
 	}
 	// new-style: store all array elements:
 	else if ( bOk = pDataObject->GetArrayData( SvOi::cArrayTag, ReadValueArray, DefaultValue() ) )
@@ -144,11 +140,10 @@ HRESULT SVFileNameValueObjectClass::SetObjectValue(SVObjectAttributeClass* pData
 				std::swap( ValueArray(), ReadValueArray );
 			}
 		}
-		setLastSetIndex( 1 );
-
-		SVString Temp;
-		GetValue( Temp );
-		SetValue( Temp );
+		//! Note this is required to set the path correctly as it calls the SetValue version of SVFileNameValueObjectClass
+		SVString  Value;
+		GetValue(Value);
+		SetValue(Value);
 	}
 	else if ( bOk = pDataObject->GetAttributeData(_T("StrDefault"), ObjectArray) )
 	{
@@ -198,14 +193,10 @@ HRESULT SVFileNameValueObjectClass::SetObjectValue(SVObjectAttributeClass* pData
 				}
 			}
 		}
-		if ( 1 < getNumberOfBuckets() )
-		{
-			setLastSetIndex( 1 );
-		}
-
+		//! Note this is required to set the path correctly as it calls the SetValue version of SVFileNameValueObjectClass
 		SVString  Value;
-		GetValue( Value );
-		SetValue( Value );
+		GetValue(Value);
+		SetValue(Value);
 	}
 	else
 	{
@@ -217,15 +208,15 @@ HRESULT SVFileNameValueObjectClass::SetObjectValue(SVObjectAttributeClass* pData
 	return Result;
 }
 
-HRESULT SVFileNameValueObjectClass::SetValue( const SVString& rValue, int Bucket /*= -1*/, int Index /*= -1*/ )
+HRESULT SVFileNameValueObjectClass::SetValue( const SVString& rValue, int Index /*= -1*/ )
 {
-	HRESULT Result = ValidateIndexes( Bucket, Index);
+	HRESULT Result = ValidateIndex(Index);
 
 	if ( S_OK == Result || SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE == Result )
 	{
 		m_FileName.SetFullFileName( rValue.c_str() );
 		SVFileNameManagerClass::Instance().LoadItem( &m_FileName );
-		Result = __super::SetValue( m_FileName.GetFullFileName(), Bucket, Index );
+		Result = __super::SetValue( m_FileName.GetFullFileName(), Index );
 	}
 	
 	return Result;
@@ -242,6 +233,25 @@ SVString SVFileNameValueObjectClass::ConvertString2Type( const SVString& rValue 
 {
 	return rValue;
 }
+
+HRESULT SVFileNameValueObjectClass::CopyToMemoryBlock(BYTE* pMemoryBlock, DWORD MemByteSize, int Index /* = -1*/) const
+{
+	HRESULT Result = ValidateMemoryBlockParameters(pMemoryBlock, MemByteSize, Index);
+
+	if (S_OK == Result)
+	{
+		SVString Value;
+		SVFileNameValueObjectClass::GetValue(Value, Index);
+		//! For strings the memory hast to first be cleared
+		memset(pMemoryBlock, 0, GetByteSize());
+		//! Either the whole string or maximum bytes size -1
+		size_t Size = std::min(static_cast<size_t> (GetByteSize() - 1), Value.size());
+		memcpy(pMemoryBlock, Value.c_str(), Size);
+	}
+
+	return Result;
+}
+
 void SVFileNameValueObjectClass::WriteValues(SVObjectWriter& rWriter)
 {
 	// Where does Object Depth Get put into the Script ??? (maybe at the SVObjectClass)
@@ -257,7 +267,7 @@ void SVFileNameValueObjectClass::WriteValues(SVObjectWriter& rWriter)
 	for (int i = 0; i < getArraySize(); i++)
 	{
 		//Make sure this is not a derived virtual method which is called
-		SVFileNameValueObjectClass::GetValue(TempValue, GetLastSetIndex(), i);
+		SVFileNameValueObjectClass::GetValue(TempValue, i);
 		Value.SetString(TempValue.c_str());
 		list.push_back(Value);
 		Value.Clear();

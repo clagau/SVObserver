@@ -107,7 +107,7 @@ void SVBoolValueObjectClass::WriteValues(SVObjectWriter& rWriter)
 	{
 		BOOL Temp(false);
 		//Make sure this is not a derived virtual method which is called
-		SVBoolValueObjectClass::GetValue(Temp, GetLastSetIndex(), i);
+		SVBoolValueObjectClass::GetValue(Temp, i);
 		Value.boolVal = Temp ? VARIANT_TRUE : VARIANT_FALSE;
 		list.push_back(Value);
 	}

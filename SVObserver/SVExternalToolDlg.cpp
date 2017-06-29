@@ -178,7 +178,7 @@ void SVExternalToolDlg::OnOK()
 	UpdateData();
 
 	// set dll path
-	m_pTask->m_Data.m_voDllPath.SetValue( SVString(m_strDLLPath), 1 );
+	m_pTask->m_Data.m_voDllPath.SetValue(SVString(m_strDLLPath));
 
 
 	// Copy DLL Dependents from listbox to Task Class FileNameValueObject List...
@@ -305,7 +305,7 @@ void SVExternalToolDlg::OnBrowse()
 		m_strDLLPath = cfd.GetPathName();
 		UpdateData(FALSE);
 
-		m_pTask->m_Data.m_voDllPath.SetValue( SVString(m_strDLLPath), 1 );
+		m_pTask->m_Data.m_voDllPath.SetValue(SVString(m_strDLLPath));
 
 		HRESULT hr;
 		hr = m_pTask->ClearData();
@@ -361,7 +361,7 @@ void SVExternalToolDlg::SetDependencies()
 		CString Temp;
 		m_lbDependentList.GetText(i, Temp);
 		m_pTask->m_Data.m_aDllDependencies[i].SetDefaultValue( SVString(Temp), true );
-		m_pTask->m_Data.m_aDllDependencies[i].SetValue( SVString(Temp), 1 );
+		m_pTask->m_Data.m_aDllDependencies[i].SetValue( SVString(Temp));
 	}
 
 	m_pTask->SetAllAttributes();	// update dependency attributes

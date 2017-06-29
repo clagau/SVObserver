@@ -193,7 +193,7 @@ bool SVShapeMaskHelperClass::onRun( bool First, SVSmartHandlePointer RInputImage
 
 HRESULT SVShapeMaskHelperClass::SetShape( ShapeTypeEnum eShapeType )
 {
-	HRESULT hr = m_Data.evoShapeType.SetValue( static_cast<long> (eShapeType), 1 );
+	HRESULT hr = m_Data.evoShapeType.SetValue(static_cast<long> (eShapeType));
 	return hr;
 }
 
@@ -210,10 +210,10 @@ HRESULT SVShapeMaskHelperClass::SetProperties( const SVMaskShape::MapType& p_map
 
 	SVMaskShape::MapType l_mapProperties(p_mapProperties);
 
-	m_Data.lvoCenterX.SetValue( l_mapProperties[ SVShapeMaskPropertyCenterXGuid ].value, 1 );
-	m_Data.lvoCenterY.SetValue( l_mapProperties[ SVShapeMaskPropertyCenterYGuid ].value, 1 );
-	m_Data.lvoWidth.SetValue  ( l_mapProperties[ SVShapeMaskPropertyWidthGuid ].value, 1 );
-	m_Data.lvoHeight.SetValue ( l_mapProperties[ SVShapeMaskPropertyHeightGuid ].value, 1 );
+	m_Data.lvoCenterX.SetValue(l_mapProperties[ SVShapeMaskPropertyCenterXGuid ].value);
+	m_Data.lvoCenterY.SetValue(l_mapProperties[ SVShapeMaskPropertyCenterYGuid ].value);
+	m_Data.lvoWidth.SetValue  (l_mapProperties[ SVShapeMaskPropertyWidthGuid ].value);
+	m_Data.lvoHeight.SetValue (l_mapProperties[ SVShapeMaskPropertyHeightGuid ].value);
 
 	ShapeTypeEnum eShapeType;
 	long lShapeType = SVMaskShapeTypeInvalid;
@@ -226,20 +226,20 @@ HRESULT SVShapeMaskHelperClass::SetProperties( const SVMaskShape::MapType& p_map
 	SVMaskShape::MapType::iterator iter;
 	if ( ( iter = l_mapProperties.find( SVShapeMaskPropertySideThicknessGuid )) != l_mapProperties.end() )
 	{
-		m_Data.lvoSideThickness.SetValue(iter->second.value, 1);
+		m_Data.lvoSideThickness.SetValue(iter->second.value);
 	}
 	if ( ( iter = l_mapProperties.find( SVShapeMaskPropertyTopBottomThicknessGuid )) != l_mapProperties.end() )
 	{
-		m_Data.lvoTopBottomThickness.SetValue(iter->second.value, 1);
+		m_Data.lvoTopBottomThickness.SetValue(iter->second.value);
 	}
 	
 	if ( ( iter = l_mapProperties.find( SVShapeMaskPropertyOffsetGuid ) ) != l_mapProperties.end() )
 	{
-		m_Data.lvoOffset.SetValue( iter->second.value, 1 );
+		m_Data.lvoOffset.SetValue( iter->second.value);
 	}
 	if ( ( iter = l_mapProperties.find( SVShapeMaskPropertySymmetryOrientationGuid ) ) != l_mapProperties.end() )
 	{
-		m_Data.evoXYSymmetry.SetValue( iter->second.value, 1 );
+		m_Data.evoXYSymmetry.SetValue(iter->second.value);
 	}
 
 	return hr;	
@@ -307,7 +307,7 @@ bool SVShapeMaskHelperClass::IsAutoResize() const
 
 HRESULT SVShapeMaskHelperClass::SetAutoResize( bool bAutoResize )
 {
-	HRESULT hr = m_Data.bvoAutoResize.SetValue( BOOL(bAutoResize), 1 );
+	HRESULT hr = m_Data.bvoAutoResize.SetValue(BOOL(bAutoResize));
 	return hr;
 }
 

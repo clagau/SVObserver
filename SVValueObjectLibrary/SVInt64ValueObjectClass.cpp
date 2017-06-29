@@ -79,7 +79,7 @@ void SVInt64ValueObjectClass::WriteValues(SVObjectWriter& rWriter)
 	for (int i = 0; i < getArraySize(); i++)
 	{
 		//Make sure this is not a derived virtual method which is called
-		SVInt64ValueObjectClass::GetValue(Value.llVal, GetLastSetIndex(), i);
+		SVInt64ValueObjectClass::GetValue(Value.llVal, i);
 		list.push_back(Value);
 	}
 	rWriter.WriteAttribute(scElementTag, list);

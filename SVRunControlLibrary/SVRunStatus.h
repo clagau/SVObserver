@@ -58,18 +58,18 @@ public:
 	void SetDisabledByCondition();
 	void SetCriticalFailure();
 	
-	bool IsPassed();
-	bool IsFailed();
-	bool IsWarned();
-	bool IsValid();
+	bool IsPassed() const;
+	bool IsFailed() const;
+	bool IsWarned() const;
+	bool IsValid() const;
 
-	bool IsDisabled();
-	bool IsDisabledByCondition();
-	bool IsCriticalFailure();
-	bool HasInspectionStarted();
+	bool IsDisabled() const;
+	bool IsDisabledByCondition() const;
+	bool IsCriticalFailure() const;
+	bool HasInspectionStarted() const;
 
-	DWORD GetState();
-	DWORD GetStatusColor();
+	DWORD GetState() const;
+	DWORD GetStatusColor() const;
 
 	long m_lResultDataIndex;
 	SVImageIndexStruct Images;
@@ -132,47 +132,47 @@ inline void SVRunStatusClass::SetInspectionStarted( bool state )
 	run.status.run = state;
 }
 
-inline bool SVRunStatusClass::IsPassed() 
+inline bool SVRunStatusClass::IsPassed() const
 { 
 	return ( run.status.passed && !run.status.failed && !run.status.warned && run.status.valid );
 }
 
-inline bool SVRunStatusClass::IsFailed() 
+inline bool SVRunStatusClass::IsFailed() const
 { 
 	return ( run.status.failed && !run.status.warned && run.status.valid ); 
 }
 
-inline bool SVRunStatusClass::IsWarned() 
+inline bool SVRunStatusClass::IsWarned() const
 { 
 	return ( run.status.warned && run.status.valid ); 
 }
 
-inline bool SVRunStatusClass::IsValid()  
+inline bool SVRunStatusClass::IsValid() const
 { 
 	return run.status.valid; 
 }
 
-inline bool SVRunStatusClass::IsDisabled()
+inline bool SVRunStatusClass::IsDisabled() const
 {
 	return run.status.disabled;
 }
 
-inline bool SVRunStatusClass::IsDisabledByCondition()
+inline bool SVRunStatusClass::IsDisabledByCondition() const
 {
 	return run.status.disabledByCondition;
 }
 
-inline bool SVRunStatusClass::IsCriticalFailure()
+inline bool SVRunStatusClass::IsCriticalFailure() const
 {
 	return run.status.criticalFailure;
 }
 
-inline bool SVRunStatusClass::HasInspectionStarted()
+inline bool SVRunStatusClass::HasInspectionStarted() const
 {
 	return run.status.run;
 }
 
-inline DWORD SVRunStatusClass::GetState()
+inline DWORD SVRunStatusClass::GetState() const
 {
 	return run.state;
 }

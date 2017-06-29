@@ -214,7 +214,7 @@ HRESULT SVEquationSymbolTableClass::GetData( int SymbolIndex, double& rValue, in
 		}
 		if( isValidObject )
 		{
-			HRESULT hr = pSymbolStruct->InObjectInfo.GetInputObjectInfo().m_pObject->getValue( rValue, -1, Index );
+			HRESULT hr = pSymbolStruct->InObjectInfo.GetInputObjectInfo().m_pObject->getValue( rValue, Index );
 			return hr;
 		}
 		}
@@ -486,7 +486,7 @@ SvOi::EquationTestResult SVEquationClass::Test( SvStl::MessageContainerVector *p
 			ret = result;
 		}
 		
-		m_isObjectValid.SetValue( BOOL(ret.bPassed), 1 );
+		m_isObjectValid.SetValue(BOOL(ret.bPassed));
 	}
 	// return true if no equation or disabled
 	if( !HasCondition() || !IsEnabled() )

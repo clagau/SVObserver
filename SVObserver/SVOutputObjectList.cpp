@@ -276,7 +276,7 @@ BOOL SVOutputObjectList::WriteOutputs( SVIOEntryStructVector& rIOEntries, long l
 						}
 						else
 						{
-							pIOEntry.m_IOEntryPtr->getValueObject()->getValue( OutputValue, lDataIndex );
+							pIOEntry.m_IOEntryPtr->getValueObject()->getValue( OutputValue, -1, lDataIndex );
 						}
 					}
 					
@@ -354,7 +354,7 @@ BOOL SVOutputObjectList::WriteOutputs( SVIOEntryHostStructPtrVector& rIOEntries,
 						}
 						else
 						{
-							pIOEntry->getValueObject()->getValue( OutputValue, lDataIndex );
+							pIOEntry->getValueObject()->getValue( OutputValue, -1, lDataIndex );
 						}
 					}
 					
@@ -479,7 +479,7 @@ BOOL SVOutputObjectList::WriteOutput( SVIOEntryStruct IOEntry, long lDataIndex, 
 					}
 					else
 					{
-						IOEntry.m_IOEntryPtr->getValueObject()->getValue( OutputValue, lDataIndex );
+						IOEntry.m_IOEntryPtr->getValueObject()->getValue( OutputValue, -1, lDataIndex );
 					}
 				}
 
@@ -534,7 +534,7 @@ BOOL SVOutputObjectList::WriteOutput( SVIOEntryHostStructPtr pIOEntry, long lDat
 					}
 					else
 					{
-						pIOEntry->getValueObject()->getValue( OutputValue, lDataIndex );
+						pIOEntry->getValueObject()->getValue( OutputValue, -1, lDataIndex );
 					}
 				}
 
@@ -926,18 +926,10 @@ HRESULT SVOutputObjectList::WriteDigitalOutput( SVIOEntryStruct& pIOEntry, long 
 				SvOi::IValueObject* pValueObject = pIOEntry.m_IOEntryPtr->getValueObject();
 				if( nullptr != pValueObject )
 				{
-					pValueObject->getValue( Value, lDataIndex );
+					pValueObject->getValue( Value, -1, lDataIndex );
 				}
 
 				bValue = Value ? true : false;
-			}
-			else
-			{
-				SvOi::IValueObject* pValueObject = pIOEntry.m_IOEntryPtr->getValueObject();
-				if( nullptr != pValueObject )
-				{
-					pValueObject->setValue( Value, lDataIndex );
-				}
 			}
 
 			if( pOutput->IsCombined() )
@@ -973,12 +965,17 @@ HRESULT SVOutputObjectList::WriteDigitalOutput( SVIOEntryStruct& pIOEntry, long 
 			double Value(0.0);
 			if( nullptr != pIOEntry.m_IOEntryPtr->getObject())
 			{
-				pIOEntry.m_IOEntryPtr->getObject()->getValue( Value, lDataIndex );
+				pIOEntry.m_IOEntryPtr->getObject()->getValue( Value, -1, lDataIndex );
 			}
 			bValue = 0.0 < Value ? true : false;
 		}
 
 		Result = pOutput->Write( bValue );
+
+#if defined (TRACE_THEM_ALL) || defined (TRACE_OUTPUT_VALUES)
+		SVString DebugString = SvUl_SF::Format(_T("%s, %c, %d\r\n"), pOutput->GetName(), bValue ? '1' : '0', lDataIndex);
+		::OutputDebugString(DebugString.c_str());
+#endif
 	}
 
 	return Result;

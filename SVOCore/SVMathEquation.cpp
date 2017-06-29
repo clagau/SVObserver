@@ -95,7 +95,7 @@ bool SVMathEquationClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 			value = getResult();
 		}
 	}
-	result.SetValue( value, rRunStatus.m_lResultDataIndex  );
+	result.SetValue(value);
 
 	return retVal;
 }

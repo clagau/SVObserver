@@ -201,25 +201,25 @@ void SVCylindricalWarpDlg::OnDestroy()
 	m_pWarpType->GetValue( l_lType );
 	if( l_lType != m_lLastWarpType )
 	{
-		SVImageExtentClass l_svExtents;
+		SVImageExtentClass Extents;
 		HRESULT l_hr = S_OK;
-		l_hr = m_pTool->GetImageExtent( l_svExtents );
+		l_hr = m_pTool->GetImageExtent( Extents );
 		long lWarpType;
 		m_pWarpType->GetValue( lWarpType );
 		SVCylindricalWarpToolClass::WarpType eWarpType = (SVCylindricalWarpToolClass::WarpType) lWarpType;
 
 		if( eWarpType == SVCylindricalWarpToolClass::WarpTypeVertical )
 		{
-			l_svExtents.SetTranslation( SVExtentTranslationCylindricalWarpV );
+			Extents.SetTranslation( SVExtentTranslationCylindricalWarpV );
 		}
 		else
 		if( eWarpType == SVCylindricalWarpToolClass::WarpTypeHorizontal )
 		{
-			l_svExtents.SetTranslation( SVExtentTranslationCylindricalWarpH );
+			Extents.SetTranslation( SVExtentTranslationCylindricalWarpH );
 		}
-		HRESULT hrUpdate = l_svExtents.UpdateData();
+		HRESULT hrUpdate = Extents.UpdateData();
 		ASSERT( S_OK == hrUpdate );
-		m_pTool->SetImageExtent( 1, l_svExtents );
+		m_pTool->SetImageExtent( Extents );
 	}
 
 	SetInspectionData();

@@ -324,10 +324,10 @@ bool SVLinearImageOperatorListClass::Run( SVRunStatusClass& rRunStatus, SvStl::M
 				}
 			}
 
-			bRetVal = ( S_OK == m_svMinThreshold.SetValue( dMin, rRunStatus.m_lResultDataIndex ) ) && bRetVal;
-			bRetVal = ( S_OK == m_svMaxThreshold.SetValue( dMax, rRunStatus.m_lResultDataIndex ) ) && bRetVal;
+			bRetVal = ( S_OK == m_svMinThreshold.SetValue(dMin) ) && bRetVal;
+			bRetVal = ( S_OK == m_svMaxThreshold.SetValue(dMax) ) && bRetVal;
 
-			bRetVal = ( S_OK == m_svLinearData.SetArrayValues( m_svArray, rRunStatus.m_lResultDataIndex ) ) && bRetVal;
+			bRetVal = ( S_OK == m_svLinearData.SetArrayValues(m_svArray) ) && bRetVal;
 			ASSERT( bRetVal );
 			if (!bRetVal)
 			{
@@ -351,11 +351,11 @@ bool SVLinearImageOperatorListClass::Run( SVRunStatusClass& rRunStatus, SvStl::M
 	
 	// Get Status Color...
 	DWORD dwValue = rRunStatus.GetStatusColor();
-	m_statusColor.SetValue( dwValue, rRunStatus.m_lResultDataIndex );
+	m_statusColor.SetValue(dwValue);
 	
 	// Get Status...
 	dwValue = rRunStatus.GetState();
-	m_statusTag.SetValue( dwValue, rRunStatus.m_lResultDataIndex );
+	m_statusTag.SetValue(dwValue);
 	
 	return bRetVal;
 }

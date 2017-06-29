@@ -87,8 +87,8 @@ bool SVStringResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 		if( nullptr != pValueObject )
 		{
 			SVString Value;
-			pValueObject->GetValue( Value );
-			m_Value.SetValue( Value, rRunStatus.m_lResultDataIndex );
+			pValueObject->GetValue(Value);
+			m_Value.SetValue(Value);
 			return true;
 		}
 	}

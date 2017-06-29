@@ -516,7 +516,7 @@ void local_remove_items( SVStringVector& rVec, SVStringValueObjectClass& rvo )
 		}
 
 		rvo.SetArraySize( static_cast< int >( NameVector.size() ) );
-		rvo.SetArrayValues( NameVector, 1 );
+		rvo.SetArrayValues( NameVector );
 	}
 }
 
@@ -829,7 +829,7 @@ void SVArchiveTool::RebuildResultsArchiveList()
 		m_arrayResultsInfoObjectsToArchive.Add( pArchiveRecord );
 		pArchiveRecord->ConnectInputObject();
 
-		m_svoArchiveResultNames.SetValue( rObjectRef.GetCompleteName(), -1 , i );
+		m_svoArchiveResultNames.SetValue( rObjectRef.GetCompleteName(), i );
 	}
 
 	m_stringArchiveResultGuids_OBSOLETE.SetValue( SVString() );
@@ -890,7 +890,7 @@ void SVArchiveTool::RebuildImageArchiveList()
 	{
 		const SVObjectReference& rObjectRef = vecImages[i];
 
-		m_svoArchiveImageNames.SetValue( rObjectRef.GetCompleteName(), -1, i  );
+		m_svoArchiveImageNames.SetValue( rObjectRef.GetCompleteName(), i  );
 	}
 
 	m_stringArchiveImageGuids_OBSOLETE.SetValue( SVString() );
@@ -1110,12 +1110,11 @@ void SVArchiveTool::OnObjectRenamed( const SVObjectClass& rRenamedObject, const 
 	SvUl_SF::searchAndReplace( oldPrefix, rRenamedObject.GetName(), rOldName.c_str() );
 
 	int iSize = m_svoArchiveResultNames.getResultSize();
-	int iLastSet = m_svoArchiveResultNames.GetLastSetIndex();
 
 	for (int i = 0; i < iSize; i++ )
 	{
 		SVString Name;
-		m_svoArchiveResultNames.GetValue( Name, iLastSet, i );
+		m_svoArchiveResultNames.GetValue(Name, i);
 
 		if ('.' == oldPrefix[oldPrefix.size()-1])
 		{	//check if part of the name (ends with '.') is to replace
@@ -1135,8 +1134,7 @@ void SVArchiveTool::OnObjectRenamed( const SVObjectClass& rRenamedObject, const 
 				SvUl_SF::searchAndReplace( Name, oldPrefix.c_str(), newPrefix.c_str() );
 			}
 		}
-		m_svoArchiveResultNames.SetValue( Name, iLastSet, i );
-		m_svoArchiveResultNames.GetValue( Name, iLastSet, i );
+		m_svoArchiveResultNames.SetValue( Name, i );
 	}
 
 	__super::OnObjectRenamed(rRenamedObject, rOldName);

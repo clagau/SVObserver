@@ -120,14 +120,14 @@ bool TableExcludeAnalyzer::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCo
 		DoubleSortValueObject* pColumnValues = dynamic_cast<DoubleSortValueObject*>(m_excludeColumnObjectInfo.GetInputObjectInfo().m_pObject);
 		if (nullptr != pTool && nullptr != pColumnValues)
 		{
-			ValueObjectSortContainer sortContainer = pColumnValues->getSortContainer(rRunStatus.m_lResultDataIndex);
+			ValueObjectSortContainer sortContainer = pColumnValues->getSortContainer();
 			size_t sizeValues = sortContainer.size();
 			if (0 < sizeValues)
 			{
 				double Value;
 				for (int i=static_cast<int>(sizeValues)-1; 0 <= i; --i)
 				{
-					pColumnValues->GetValue(Value, rRunStatus.m_lResultDataIndex, i );
+					pColumnValues->GetValue(Value, i);
 					if (excludeHigh<Value || excludeLow>Value)
 					{
 						sortContainer.erase(sortContainer.begin()+i);

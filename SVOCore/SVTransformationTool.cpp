@@ -105,7 +105,7 @@ bool SVTransformationToolClass::ResetObject(SvStl::MessageContainerVector *pErro
 {
 	bool Result = SVToolClass::ResetObject(pErrorMessages);
 
-	UpdateImageWithExtent( 1 );
+	UpdateImageWithExtent();
 
 	return Result;
 }
@@ -126,11 +126,11 @@ HRESULT SVTransformationToolClass::IsInputImage( SVImageClass *p_psvImage )
 	return S_FALSE;
 }
 
-HRESULT SVTransformationToolClass::UpdateImageWithExtent( unsigned long p_Index )
+HRESULT SVTransformationToolClass::UpdateImageWithExtent()
 {
 	HRESULT l_Status = S_OK;
 
-	l_Status = m_svToolExtent.UpdateImageWithExtent( p_Index, SVToolExtentClass::SVTransformationToolExtent );
+	l_Status = m_svToolExtent.UpdateImageWithExtent( SVToolExtentClass::SVTransformationToolExtent );
 
 	return l_Status;
 }

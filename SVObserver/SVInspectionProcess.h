@@ -375,8 +375,8 @@ protected:
 
 	BOOL RemoveAllInputRequests();
 
-	BOOL ProcessInputRequests( long Bucket, bool &p_rbForceOffsetUpdate );
-	BOOL ProcessInputRequests( long Bucket, SvOi::SVResetItemEnum& rResetItem, SVStdMapSVToolClassPtrSVInspectionProcessResetStruct &p_svToolMap );
+	BOOL ProcessInputRequests( bool &rForceOffsetUpdate );
+	BOOL ProcessInputRequests( SvOi::SVResetItemEnum& rResetItem, SVStdMapSVToolClassPtrSVInspectionProcessResetStruct &rToolMap );
 	BOOL ProcessInputImageRequests( SVProductInfoStruct *p_psvProduct );
 
 	HRESULT ReserveNextResultImage( SVProductInfoStruct *p_pProduct, SVDataManagerLockTypeEnum p_eLockType, bool p_ClearOtherInspections = false );
@@ -388,11 +388,11 @@ protected:
 	HRESULT RestoreCameraImages();
 
 	template<typename T>
-	HRESULT SetObjectArrayValues(SVObjectReference& rObjectRef, int bucket, const SVString& rValues, bool & reset);
+	HRESULT SetObjectArrayValues(SVObjectReference& rObjectRef, const SVString& rValues, bool & reset);
 
 	void SingleRunModeLoop( bool p_Refresh = false );
 
-	HRESULT OnlyCopyForward( SVRunStatusClass& rRunStatus );
+	HRESULT CopyForward( SVRunStatusClass& rRunStatus );
 
 	HRESULT CreateResultImageIndexManager() const;
 
@@ -574,7 +574,7 @@ inline HRESULT Parse(std::vector<T> & vec, const SVString& rValues, SVDetail::Va
 }
 
 template<typename T>
-inline HRESULT SVInspectionProcess::SetObjectArrayValues(SVObjectReference& rObjectRef, int bucket, const SVString& rValues, bool & reset)
+inline HRESULT SVInspectionProcess::SetObjectArrayValues(SVObjectReference& rObjectRef, const SVString& rValues, bool & reset)
 {
 	ASSERT(rObjectRef.getObject()->IsCreated() && rObjectRef.getObject()->IsValid() && rObjectRef.isArray() && rObjectRef.isEntireArray());
 	typedef typename SVDetail::ValueObjectTraits<T> Traits;
@@ -587,11 +587,7 @@ inline HRESULT SVInspectionProcess::SetObjectArrayValues(SVObjectReference& rObj
 		HRESULT hr = Parse(vec, rValues, Traits::validate);
 		if (S_OK == hr)
 		{
-			hr = pObjectType->SetArrayValues(vec, 1);
-		}
-		if (S_OK == hr && bucket != 1)
-		{
-			hr = pObjectType->SetArrayValues(vec, bucket);
+			hr = pObjectType->SetArrayValues(vec);
 		}
 		reset = S_OK == hr;
 		return hr;

@@ -37,7 +37,7 @@ public:
 	virtual HRESULT IsInputImage( SVImageClass *p_psvImage ) override;
 	virtual SVTaskObjectClass* GetObjectAtPoint( const SVExtentPointStruct &p_rsvPoint ) override;
 	virtual bool DoesObjectHaveExtents() const override;
-	virtual HRESULT SetImageExtent( unsigned long p_ulIndex, SVImageExtentClass p_svImageExtent ) override;
+	virtual HRESULT SetImageExtent( const SVImageExtentClass& rImageExtent ) override;
 
 	enum WarpType
 	{

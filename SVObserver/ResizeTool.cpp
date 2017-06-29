@@ -249,45 +249,30 @@ SVImageClass* ResizeTool::getLogicalROIImage()
 	return static_cast <SVImageClass*> (&m_LogicalROIImage);
 }
 
-SVEnumerateValueObjectClass* ResizeTool::getInterpolationMode()
-{
-	return &m_ResizeInterpolationMode;
-}
-
-SVEnumerateValueObjectClass* ResizeTool::getOverscan()
-{
-	return &m_ResizeOverscan;
-}
-
-SVEnumerateValueObjectClass* ResizeTool::getPerformance()
-{
-	return &m_ResizePerformance;
-}
-
-HRESULT ResizeTool::SetImageExtentToParent(unsigned long p_ulIndex)
+HRESULT ResizeTool::SetImageExtentToParent()
 {
 	HRESULT l_hrOk = S_OK;
 	SVImageExtentClass l_NewExtent;
 
-	l_hrOk = m_svToolExtent.UpdateExtentToParentExtents( p_ulIndex, l_NewExtent ); // 1 for testing only; should be last index or next index
+	l_hrOk = m_svToolExtent.UpdateExtentToParentExtents( l_NewExtent );
 
 	if( S_OK == l_hrOk )
 	{
 		//@WARNING [Jim][8 July 2015] - Research this.  All tools are calling 
 		// base class which does not validate.  Should probably call the 
 		// derived tool classes explicit version.
-		l_hrOk = SVToolClass::SetImageExtent( p_ulIndex, l_NewExtent );
+		l_hrOk = SVToolClass::SetImageExtent( l_NewExtent );
 	}
 	return l_hrOk;
 }
 
-HRESULT ResizeTool::SetImageExtent( unsigned long p_ulIndex, SVImageExtentClass p_svImageExtent )
+HRESULT ResizeTool::SetImageExtent( const SVImageExtentClass& rImageExtent )
 {
-	HRESULT l_hrOk = m_svToolExtent.ValidExtentAgainstParentImage( p_svImageExtent );
+	HRESULT l_hrOk = m_svToolExtent.ValidExtentAgainstParentImage( rImageExtent );
 
 	if( S_OK == l_hrOk )
 	{
-		l_hrOk = SVToolClass::SetImageExtent( p_ulIndex, p_svImageExtent );
+		l_hrOk = SVToolClass::SetImageExtent( rImageExtent );
 	}
 
 	return l_hrOk;
@@ -404,19 +389,20 @@ bool ResizeTool::ValidateParameters (SvStl::MessageContainerVector *pErrorMessag
 
 bool ResizeTool::ValidateOfflineParameters (SvStl::MessageContainerVector *pErrorMessages)
 {
+	long Value(0L);
+	m_ResizeInterpolationMode.GetValue(Value);
 	SVInterpolationModeOptions::SVInterpolationModeOptionsEnum interpolationValue;
-	SVEnumerateValueObjectClass* interpolationMode = getInterpolationMode ();
-	interpolationMode->GetValue (*(reinterpret_cast <long*> (&interpolationValue)));
+	interpolationValue = static_cast<SVInterpolationModeOptions::SVInterpolationModeOptionsEnum> (Value);
 	bool Result = ValidateInterpolation(interpolationValue, pErrorMessages);
 
+	m_ResizeOverscan.GetValue(Value);
 	SVOverscanOptions::SVOverscanOptionsEnum overscanValue;
-	SVEnumerateValueObjectClass* overscan = getOverscan ();
-	overscan->GetValue (*(reinterpret_cast <long*> (&overscanValue)));
+	overscanValue = static_cast<SVOverscanOptions::SVOverscanOptionsEnum> (Value);
 	Result = ValidateOverscan(overscanValue) && Result;
 
+	m_ResizePerformance.GetValue (Value);
 	SVPerformanceOptions::SVPerformanceOptionsEnum performanceValue;
-	SVEnumerateValueObjectClass* performance = getPerformance ();
-	performance->GetValue (*(reinterpret_cast <long*> (&performanceValue)));
+	performanceValue = static_cast<SVPerformanceOptions::SVPerformanceOptionsEnum> (Value);
 	Result = ValidatePerformance(performanceValue) && Result;
 
 	return Result;
@@ -590,7 +576,7 @@ bool ResizeTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVec
 		// It corrects an issue where the output image is black while running when using the toolset image.
 		if (m_LogicalROIImage.GetLastResetTimeStamp() <= getInputImage()->GetLastResetTimeStamp())
 		{
-			if (!SUCCEEDED(UpdateImageWithExtent(rRunStatus.m_lResultDataIndex)))
+			if (S_OK != UpdateImageWithExtent())
 			{
 				Result = false;
 				if (nullptr != pErrorMessages)
