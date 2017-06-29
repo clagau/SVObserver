@@ -3307,6 +3307,34 @@ DWORD WINAPI SVIPDoc::SVRegressionTestRunThread( LPVOID lpParam )
 			pIPDoc->m_regtestRunMode = RegModePause;
 			SendMessage(hRegressionWnd, WM_REGRESSION_TEST_SET_PLAYPAUSE, reinterpret_cast<LPARAM> (&pIPDoc->m_regtestRunMode), 0);
 			bRunFlag = false;
+			if (pIPDoc->m_regtestRunPlayMode != Continue) 
+			{
+				//Check if end of list reached and if then set it to begin.
+				bool bEndOfList = false;
+				for (INT_PTR i = 0; i < iListCnt; i++)
+				{
+					POSITION posCamera = pIPDoc->m_listRegCameras.FindIndex(i);
+					ptmpRegTestStruct = pIPDoc->m_listRegCameras.GetAt(posCamera);
+					if (ptmpRegTestStruct->iFileMethod != RegSingleFile)
+					{
+						if (ptmpRegTestStruct->stdVectorFile.end() == ptmpRegTestStruct->stdIteratorCurrent + 1)
+						{
+							bEndOfList = true;
+						}
+					}
+				}
+				if (bEndOfList)
+				{
+					l_bFirst = true;
+					for (INT_PTR i = 0; i < iListCnt; i++)
+					{
+						POSITION posCamera = pIPDoc->m_listRegCameras.FindIndex(i);
+						ptmpRegTestStruct = pIPDoc->m_listRegCameras.GetAt(posCamera);
+						ptmpRegTestStruct->stdIteratorCurrent = ptmpRegTestStruct->stdVectorFile.begin();
+					}
+				}
+			}
+			
 		}
 	}//end of while loop
 
