@@ -11,7 +11,7 @@
 #include "ToolSetItemSelector.h"
 #include "GuiCommands/GetObjectName.h"
 #include "GuiCommands/GetPPQObjectName.h"
-#include "GuiCommands/GetTaskObjectInstanceID.h"
+#include "GuiCommands/GetInstanceIDByTypeInfo.h"
 #include "ObjectSelectorController.h"
 #pragma endregion Includes
 
@@ -70,7 +70,7 @@ namespace SvOg {
 	{
 		GUID toolsetGUID = GUID_NULL;
 
-		typedef SvCmd::GetTaskObjectInstanceID Command;
+		typedef SvCmd::GetInstanceIDByTypeInfo Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 
 		SVObjectTypeInfoStruct info(SVToolSetObjectType);

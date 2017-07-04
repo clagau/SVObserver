@@ -23,7 +23,7 @@
 #include "SVObjectLibrary/SVObjectSynchronousCommandTemplate.h"
 #include "TextDefinesSvOg.h"
 #include "GuiCommands/GetCreatableObjects.h"
-#include "GuiCommands/GetTaskObjectInstanceID.h"
+#include "GuiCommands/GetInstanceIDByTypeInfo.h"
 #include "GuiCommands/GetAvailableObjects.h"
 #include "GuiCommands/InspectionRunOnce.h"
 #include "GuiCommands/GetObjectTypeInfo.h"
@@ -61,7 +61,7 @@ namespace SvOg
 	, m_TaskObjectID(rTaskObjectID)
 	{
 		// Get Instance GUID for the Mask Operator...
-		typedef SvCmd::GetTaskObjectInstanceID Command;
+		typedef SvCmd::GetInstanceIDByTypeInfo Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 
 		SVObjectTypeInfoStruct info(SVUnaryImageOperatorListObjectType/*SVUnaryImageOperatorObjectType*/, SVNotSetSubObjectType);

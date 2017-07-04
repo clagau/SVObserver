@@ -17,7 +17,7 @@
 //TODO: MZA(10.Nov 2014): Move this files to SVOGui project and then remove folder from include and Namespace add-on add PictureDisplay declaration.
 #include "PictureDisplay.h"
 #include "ImageController.h"
-#include "GuiController.h"
+#include "DataController.h"
 #include "ValuesAccessor.h"
 #include "BoundValue.h"
 #pragma endregion Includes
@@ -27,7 +27,7 @@ namespace SvOg
 	class SVToolAdjustmentDialogFileImageSourcePageClass : public CPropertyPage
 	{
 		typedef SvOg::ValuesAccessor<SvOg::BoundValues> Values;
-		typedef SvOg::GuiController<Values, Values::value_type> ValueController;
+		typedef SvOg::DataController<Values, Values::value_type> ValueController;
 
 	#pragma region Constructor
 	public:

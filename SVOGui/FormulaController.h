@@ -15,7 +15,7 @@
 
 #pragma region Includes
 #include "ObjectInterfaces/IFormulaController.h"
-#include "GuiController.h"
+#include "DataController.h"
 #include "ValuesAccessor.h"
 #include "BoundValue.h"
 #include "SVUtilityLibrary/SVString.h"
@@ -69,7 +69,7 @@ namespace SvOg
 		GUID m_EquationID; // Instance ID of the Equation
 
 		typedef SvOg::ValuesAccessor<SvOg::BoundValues> FormulaCommand;
-		typedef SvOg::GuiController<FormulaCommand, FormulaCommand::value_type> Controller;
+		typedef SvOg::DataController<FormulaCommand, FormulaCommand::value_type> Controller;
 		Controller m_taskValues;
 		Controller m_equationValues;
 	#pragma endregion Member Variables

@@ -13,7 +13,7 @@
 #pragma region Includes
 #include "BoundValue.h"
 #include "ValuesAccessor.h"
-#include "GuiController.h"
+#include "DataController.h"
 #include "SVToolAdjustmentDialogImagePageClass.h"
 #pragma endregion Includes
 
@@ -22,7 +22,7 @@ namespace SvOg
 	class SVToolAdjustmentDialogTransformImagePageClass : public SVToolAdjustmentDialogImagePageClass
 	{
 		typedef SvOg::ValuesAccessor<SvOg::BoundValues> Values;
-		typedef SvOg::GuiController<Values, Values::value_type> ValuesController;
+		typedef SvOg::DataController<Values, Values::value_type> ValuesController;
 		ValuesController m_Values;
 
 		//{{AFX_VIRTUAL(SVToolAdjustmentDialogTransformImagePageClass)

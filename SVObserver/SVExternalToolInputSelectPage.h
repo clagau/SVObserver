@@ -14,7 +14,7 @@
 #include "SVRPropertyTree/SVRPropTree.h"
 #include "SVUtilityLibrary/SVString.h"
 #include "SVOGui/ValuesAccessor.h"
-#include "SVOGui/GuiController.h"
+#include "SVOGui/DataController.h"
 #pragma endregion Includes
 
 class SVExternalToolTask;
@@ -81,7 +81,7 @@ private:
 	SVGUID m_TaskObjectID;
 
 	typedef SvOg::ValuesAccessor<SvOg::BoundValues> ValueCommand;
-	SvOg::GuiController<ValueCommand, ValueCommand::value_type> m_Values;
+	SvOg::DataController<ValueCommand, ValueCommand::value_type> m_Values;
 };
 
 

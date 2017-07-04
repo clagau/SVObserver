@@ -3,7 +3,7 @@
 // All Rights Reserved
 //*****************************************************************************
 
-// This is the Value Accessor class for use by the GuiController/IObjectManagerCommand.
+// This is the Value Accessor class for use by the DataController/IObjectManagerCommand.
 //******************************************************************************
 #pragma once
 

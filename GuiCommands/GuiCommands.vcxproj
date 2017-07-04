@@ -42,7 +42,7 @@
     <ClInclude Include="GetPPQSelectorList.h" />
     <ClInclude Include="GetReferenceImage.h" />
     <ClInclude Include="GetResultImage.h" />
-    <ClInclude Include="GetTaskObjectInstanceID.h" />
+    <ClInclude Include="GetInstanceIDByTypeInfo.h" />
     <ClInclude Include="GetSelectorList.h" />
     <ClInclude Include="GetTaskObjects.h" />
     <ClInclude Include="ImportMask.h" />

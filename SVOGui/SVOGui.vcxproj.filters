@@ -178,9 +178,6 @@
     <ClInclude Include="BoundValue.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GuiController.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="GlobalConstantDlg.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -302,6 +299,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ResultTableSelectionDlg.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DataController.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -6,7 +6,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "MaskController.h"
-#include "GuiCommands\GetTaskObjectInstanceID.h"
+#include "GuiCommands\GetInstanceIDByTypeInfo.h"
 #include "GuiCommands\GetReferenceImage.h"
 #include "GuiCommands\GetMaskImage.h"
 #include "GuiCommands\ImportMask.h"
@@ -28,7 +28,7 @@ namespace SvOg
 	void MaskController::Init()
 	{
 		// Get Instance GUID for the Mask Operator...
-		typedef SvCmd::GetTaskObjectInstanceID Command;
+		typedef SvCmd::GetInstanceIDByTypeInfo Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 	
 		SVObjectTypeInfoStruct info(SVUnaryImageOperatorObjectType, SVUserMaskOperatorObjectType);

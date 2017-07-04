@@ -13,7 +13,7 @@
 #pragma region Includes
 #include "SVOResource/resource.h"
 #include "ValuesAccessor.h"
-#include "GuiController.h"
+#include "DataController.h"
 #include "ImageController.h"
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
@@ -69,7 +69,7 @@ namespace SvOg
 		const SVGUID& m_rTaskObjectID;
 		const SVGUID& m_filterID;
 		typedef SvOg::ValuesAccessor<SvOg::BoundValues> ValueCommand;
-		typedef SvOg::GuiController<ValueCommand, ValueCommand::value_type> Controller;
+		typedef SvOg::DataController<ValueCommand, ValueCommand::value_type> Controller;
 		Controller m_Values;
 	};
 } //namespace SvOg

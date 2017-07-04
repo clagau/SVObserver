@@ -3,7 +3,7 @@
 // All Rights Reserved
 //*****************************************************************************
 
-// This is the GuiController class for use by the GUI.
+// This is the DataController class for use by the GUI.
 //******************************************************************************
 #pragma once
 
@@ -18,13 +18,13 @@
 namespace SvOg
 {
 	template <typename Command, typename Model>
-	class GuiController : public Command, public boost::noncopyable
+	class DataController : public Command, public boost::noncopyable
 	{
 		mutable Model m_Data;
 		
 	public:
-		GuiController(const Model& rModel) : m_Data(rModel) {}
-		virtual ~GuiController() {}
+		DataController(const Model& rModel) : m_Data(rModel) {}
+		virtual ~DataController() {}
 
 		HRESULT Init()
 		{

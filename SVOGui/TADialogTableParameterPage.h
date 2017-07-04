@@ -12,7 +12,7 @@
 #include "SVOResource/resource.h"
 #include "ISVPropertyPageDialog.h"
 #include "ValuesAccessor.h"
-#include "GuiController.h"
+#include "DataController.h"
 #include "ObjectInterfaces/IFormulaController.h"
 #pragma endregion Includes
 
@@ -81,7 +81,7 @@ namespace SvOg
 		CString m_clearString;
 
 		typedef SvOg::ValuesAccessor<SvOg::BoundValues> ValueCommand;
-		typedef SvOg::GuiController<ValueCommand, ValueCommand::value_type> Controller;
+		typedef SvOg::DataController<ValueCommand, ValueCommand::value_type> Controller;
 		Controller m_Values;
 #pragma endregion Member Variables
 	};

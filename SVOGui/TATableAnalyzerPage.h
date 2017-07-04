@@ -14,7 +14,7 @@
 #include "SVUtilityLibrary\NameGuidList.h"
 #include "SVUtilityLibrary/SVString.h"
 #include "ValuesAccessor.h"
-#include "GuiController.h"
+#include "DataController.h"
 #include "ObjectSelectorController.h"
 #include "ISVPropertyPageDialog.h"
 #pragma endregion Includes
@@ -119,7 +119,7 @@ namespace SvOg
 		SVString m_inputName; 
 
 		typedef SvOg::ValuesAccessor<SvOg::BoundValues> ValueCommand;
-		typedef SvOg::GuiController<ValueCommand, ValueCommand::value_type> Controller;
+		typedef SvOg::DataController<ValueCommand, ValueCommand::value_type> Controller;
 		SVSharedPtr<Controller> m_Values;
 #pragma endregion Member Variables
 	};

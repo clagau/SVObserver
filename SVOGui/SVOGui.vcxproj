@@ -166,7 +166,7 @@
     <ClInclude Include="Custom2FilterDlg.h" />
     <ClInclude Include="FormulaController.h" />
     <ClInclude Include="GlobalSelector.h" />
-    <ClInclude Include="GuiController.h" />
+    <ClInclude Include="DataController.h" />
     <ClInclude Include="GlobalConstantConflictDlg.h" />
     <ClInclude Include="GlobalConstantDlg.h" />
     <ClInclude Include="ImageController.h" />

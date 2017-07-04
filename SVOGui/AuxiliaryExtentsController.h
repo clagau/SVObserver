@@ -15,7 +15,7 @@
 #include "ImageController.h"
 #include "BoundValue.h"
 #include "ValuesAccessor.h"
-#include "GuiController.h"
+#include "DataController.h"
 #pragma endregion Includes
 
 namespace SvOg
@@ -23,7 +23,7 @@ namespace SvOg
 	class AuxiliaryExtentsController : public boost::noncopyable
 	{
 		typedef ValuesAccessor<BoundValues> Values;
-		typedef GuiController<Values, Values::value_type> ValuesController;
+		typedef DataController<Values, Values::value_type> ValuesController;
 		SVGUID m_InspectionID;
 		SVGUID m_TaskObjectID;
 		ImageController m_ImageController;

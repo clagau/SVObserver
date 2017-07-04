@@ -18,9 +18,6 @@
     <ClInclude Include="GetEquation.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="GetTaskObjectInstanceID.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="TaskObjectGetEmbeddedValues.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -163,6 +160,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="CreateModel.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="GetInstanceIDByTypeInfo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

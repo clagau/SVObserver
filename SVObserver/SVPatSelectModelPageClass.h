@@ -18,7 +18,7 @@
 #include "SVOGui/ImageController.h"
 #include "SVStatusLibrary/MessageTextEnum.h"
 #include "SVOGui/ValuesAccessor.h"
-#include "SVOGui/GuiController.h"
+#include "SVOGui/DataController.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -163,7 +163,7 @@ private:
 	const SVGUID& m_rInspectionID;
 	const SVGUID& m_rAnalyzerID;
 	typedef SvOg::ValuesAccessor<SvOg::BoundValues> ValueCommand;
-	typedef SvOg::GuiController<ValueCommand, ValueCommand::value_type> Controller;
+	typedef SvOg::DataController<ValueCommand, ValueCommand::value_type> Controller;
 	Controller m_values;
 #pragma endregion Member Variables
 };

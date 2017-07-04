@@ -16,7 +16,7 @@
 #include "SVUtilityLibrary\SVGUID.h"
 #include "BoundValue.h"
 #include "ValuesAccessor.h"
-#include "GuiController.h"
+#include "DataController.h"
 #include "AuxiliaryExtentsController.h"
 #include "SVMFCControls\AvailableObjectListComboBox.h"
 #pragma endregion Includes
@@ -26,7 +26,7 @@ namespace SvOg
 	class SVToolAdjustmentDialogGeneralPageClass : public CPropertyPage
 	{
 		typedef SvOg::ValuesAccessor<SvOg::BoundValues> Values;
-		typedef SvOg::GuiController<Values, Values::value_type> ValuesController;
+		typedef SvOg::DataController<Values, Values::value_type> ValuesController;
 	public:
 		SVToolAdjustmentDialogGeneralPageClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID);
 		virtual ~SVToolAdjustmentDialogGeneralPageClass();

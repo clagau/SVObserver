@@ -28,7 +28,7 @@
 #include "SVOGui/NoSelector.h"
 #include "TextDefinesSvO.h"
 #include "GuiCommands/GetObjectName.h"
-#include "GuiCommands/GetTaskObjectInstanceID.h"
+#include "GuiCommands/GetInstanceIDByTypeInfo.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -487,7 +487,7 @@ GUID SVExternalToolInputSelectPage::GetToolSetGUID() const
 {
 	GUID toolsetGUID = GUID_NULL;
 
-	typedef SvCmd::GetTaskObjectInstanceID Command;
+	typedef SvCmd::GetInstanceIDByTypeInfo Command;
 	typedef SVSharedPtr<Command> CommandPtr;
 
 	SVObjectTypeInfoStruct info(SVToolSetObjectType);

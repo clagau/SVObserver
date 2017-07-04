@@ -11,7 +11,7 @@
 //Moved to precompiled header: #include <guiddef.h>
 #include "ValuesAccessor.h"
 #include "BoundValue.h"
-#include "GuiController.h"
+#include "DataController.h"
 #include "SVStatusLibrary/MessageTextEnum.h"
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
@@ -21,7 +21,7 @@ namespace SvOg
 	class RangeController
 	{
 		typedef SvOg::ValuesAccessor<SvOg::BoundValues> Values;
-		typedef SvOg::GuiController<Values, Values::value_type> ValueController;
+		typedef SvOg::DataController<Values, Values::value_type> ValueController;
 
 	public:
 		RangeController(const GUID& rInspectionID, const GUID& rTaskObjectID);

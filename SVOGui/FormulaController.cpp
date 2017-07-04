@@ -20,7 +20,7 @@
 #include "GuiCommands/GetObjectName.h"
 #include "GuiCommands/GetPPQObjectName.h"
 #include "GuiCommands/GetPPQSelectorList.h"
-#include "GuiCommands/GetTaskObjectInstanceID.h"
+#include "GuiCommands/GetInstanceIDByTypeInfo.h"
 #include "GuiCommands/GetEquation.h"
 #include "GuiCommands/ValidateAndSetEquation.h"
 #include "GuiCommands/TaskObjectGetEmbeddedValues.h"
@@ -245,7 +245,7 @@ namespace SvOg
 
 		if (SV_GUID_NULL == m_EquationID)
 		{
-			typedef SvCmd::GetTaskObjectInstanceID Command;
+			typedef SvCmd::GetInstanceIDByTypeInfo Command;
 			typedef SVSharedPtr<Command> CommandPtr;
 			// check for Math Container...
 			if (SVMathContainerObjectType == m_info.ObjectType)

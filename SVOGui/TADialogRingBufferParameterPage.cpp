@@ -18,9 +18,6 @@
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVMessage/SVMessage.h"
 #include "TextDefinesSvOg.h"
-#include "GuiCommands/GetObjectName.h"
-#include "GuiCommands/GetPPQObjectName.h"
-#include "GuiCommands/GetTaskObjectInstanceID.h"
 #include "SVObjectLibrary/SVObjectSynchronousCommandTemplate.h"
 #include "SVObjectLibrary/SVClsids.h"
 

@@ -15,7 +15,7 @@
 #include "ISVPropertyPageDialog.h"
 #include "PictureDisplay.h"
 #include "ValuesAccessor.h"
-#include "GuiController.h"
+#include "DataController.h"
 #include "ObjectSelectorController.h"
 #pragma endregion Includes
 
@@ -85,7 +85,7 @@ namespace SvOg
 		CButton m_ButtonImageIndex2;
 		CBitmap m_downArrowBitmap;
 		typedef SvOg::ValuesAccessor<SvOg::BoundValues> ValueCommand;
-		typedef SvOg::GuiController<ValueCommand, ValueCommand::value_type> Controller;
+		typedef SvOg::DataController<ValueCommand, ValueCommand::value_type> Controller;
 		Controller m_Values;
 		ObjectSelectorController m_objectSelector;
 #pragma endregion Member Variables

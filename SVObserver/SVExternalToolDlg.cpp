@@ -25,7 +25,7 @@
 #include "SVStatusLibrary\MessageContainer.h"
 #include "SVStatusLibrary\GlobalPath.h"
 #include "SVUtilityLibrary/SVString.h"
-#include "GuiCommands/GetTaskObjectInstanceID.h"
+#include "GuiCommands/GetInstanceIDByTypeInfo.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -76,7 +76,7 @@ SVExternalToolDlg::SVExternalToolDlg( const SVGUID& rInspectionID, const SVGUID&
 {
 	m_pSheet = pSheet;
 
-	typedef SvCmd::GetTaskObjectInstanceID Command;
+	typedef SvCmd::GetInstanceIDByTypeInfo Command;
 	typedef SVSharedPtr<Command> CommandPtr;
 
 	SVObjectTypeInfoStruct info(SVExternalToolTaskObjectType, SVNotSetSubObjectType);

@@ -20,7 +20,7 @@
 #include "SVOGui\ImageController.h"
 #include "SVOGui\BoundValue.h"
 #include "SVOGui\ValuesAccessor.h"
-#include "SVOGui\GuiController.h"
+#include "SVOGui\DataController.h"
 #include "SVOGui\MaskController.h"
 #include "SVUtilityLibrary\SVGUID.h"
 #include "SVUtilityLibrary/SVString.h"
@@ -29,7 +29,7 @@
 class SVToolAdjustmentDialogMaskPageClass : public CPropertyPage
 {
 	typedef SvOg::ValuesAccessor<SvOg::BoundValues> Values;
-	typedef SvOg::GuiController<Values, Values::value_type> ValueController;
+	typedef SvOg::DataController<Values, Values::value_type> ValueController;
 
 public:
 	SVToolAdjustmentDialogMaskPageClass(const SVGUID& rInspectionID, const SVGUID& rTaskObjectID);
