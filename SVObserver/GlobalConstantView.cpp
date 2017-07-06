@@ -382,12 +382,16 @@ void GlobalConstantView::updateAllIPDocs( bool RunOnce ) const
 	{
 		SVInspectionProcessPtrList Inspections;
 		pConfig->GetInspections( Inspections );
-		SVInspectionProcessPtrList::const_iterator Iter( Inspections.begin() );
+		SVInspectionProcessPtrList::iterator Iter( Inspections.begin() );
 		while( Inspections.end() != Iter )
 		{
 			SVIPDoc* pDoc =  TheSVObserverApp.GetIPDoc( (*Iter)->GetUniqueObjectID() );
 			if( nullptr != pDoc )
 			{
+				if (RunOnce)
+				{
+					(*Iter)->resetAllObjects();
+				}
 				pDoc->RebuildResultsList();
 				pDoc->UpdateWithLastProduct();
 				if( RunOnce )
