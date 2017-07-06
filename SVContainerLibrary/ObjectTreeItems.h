@@ -14,6 +14,7 @@
 #pragma once
 
 #pragma region Includes
+//Moved to precompiled header: #include <map>
 #include "ObjectSelectorItem.h"
 #include "SVTree.h"
 #include "SVUtilityLibrary\SVString.h"
@@ -23,6 +24,7 @@ namespace SvCl
 {
 	class ObjectTreeItems : public SVTree<SVString, ObjectSelectorItem>
 	{
+		typedef std::map<SVString, iterator> BranchIteratorMap;
 	public:
 	#pragma region Constructor
 		/**********
@@ -90,31 +92,28 @@ namespace SvCl
 			\return string set (location names) of changed items.
 		***********/
 		SVStringSet clearItem(const SVString& itemLocation);
-	#pragma endregion Public Methods
+
+		void clearBranchMap() { m_BranchMap.clear(); };
+#pragma endregion Public Methods
 		
 	private:
 	#pragma region Private Methods
 		/**********
 			The method creates a node in the tree container
 			\param rParentIter <in> the parent iterator where the node is to be created
-			\param rDisplayLocation <in> the display node location to create
+			\param rBranch <in> reference to the branch name
+			\param rNodeName <in> the name of the node
 			\return the iterator that was created
 		***********/
-		iterator createNode( iterator& rParentIter, const SVString& rDisplayLocation);
+		iterator createNode( iterator& rParentIter, const SVString& rBranchName, const SVString& rNodeName);
 
-		/**********
-			The method searches the location only in the given level
-			\param rStartIter <in> a reference to start iterator of the level
-			\param rEndIter <in> a reference to end iterator of the level
-			\param rDisplayLocation <in> a reference to the display location of the item
-			\return the iterator to the found item
-		***********/
-		iterator findLevelItem( const iterator& rStartIter, const iterator& rEnd, const SVString& rDisplayLocation );
 	#pragma endregion Private Methods
 
 	private:
 	#pragma region Member Variables
 		bool m_SingleSelect;
+		BranchIteratorMap m_BranchMap;
+
 	#pragma endregion Member Variables
 	};
 } //namespace SvCl

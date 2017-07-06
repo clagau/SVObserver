@@ -42,13 +42,38 @@ namespace SvCl
 
 	ObjectTreeItems::iterator ObjectTreeItems::insertLeaf( const SVString& rDisplayLocation, ObjectSelectorItem& rSelectorItem )
 	{
-		iterator Iter = findItem( rDisplayLocation, true );
+		iterator Iter(end());
+		iterator ParentIter(end());
+		SVString Branch(rDisplayLocation);
+		SVString LeafName;
 
-		if( end() != Iter )
+		SVString::size_type Pos = rDisplayLocation.rfind('.');
+		if (SVString::npos != Pos)
 		{
-			rSelectorItem.setName( Iter->second->getName() );
-			rSelectorItem.setDisplayLocation( Iter->second->getDisplayLocation() );
-			*Iter->second = rSelectorItem;
+			Branch = SvUl_SF::Left(rDisplayLocation, Pos);
+			LeafName = SvUl_SF::Mid(rDisplayLocation, Pos + 1);
+		}
+		BranchIteratorMap::iterator BranchMapIter = m_BranchMap.find(Branch);
+		if (m_BranchMap.end() != BranchMapIter)
+		{
+			ParentIter = BranchMapIter->second;
+		}
+		else
+		{
+			ParentIter = findItem(Branch, true);
+		}
+
+		if (end() != ParentIter)
+		{
+			m_BranchMap[ParentIter->first] = ParentIter;
+			Branch += '.';
+			Iter = createNode(ParentIter, Branch, LeafName);
+			if (end() != Iter)
+			{
+				rSelectorItem.setName(Iter->second->getName());
+				rSelectorItem.setDisplayLocation(Iter->second->getDisplayLocation());
+				*Iter->second = rSelectorItem;
+			}
 		}
 		return Iter;
 	}
@@ -154,33 +179,38 @@ namespace SvCl
 		}
 	}
 
-	ObjectTreeItems::iterator ObjectTreeItems::findItem( const SVString& rDisplayLocation, bool CreateIfNone )
+	ObjectTreeItems::iterator ObjectTreeItems::findItem(const SVString& rDisplayLocation, bool CreateIfNone)
 	{
-		iterator Iter( end() );
-		iterator IterParent( end() );
-		iterator IterStart( begin() );
-		iterator IterEnd( end() );
-		SVString::size_type Pos( 0 );
+		iterator Iter(end());
+		iterator IterParent(end());
+		iterator IterStart(begin());
+		iterator IterEnd(end());
+		SVString::size_type StartPos(0);
+		SVString::size_type EndPos(0);
 
-		while( true )
+		while (true)
 		{
 			SVString Branch;
-			Pos = rDisplayLocation.find( _T("."), Pos );
-			if( SVString::npos == Pos )
+			SVString NodeName;
+			EndPos = rDisplayLocation.find(_T("."), StartPos);
+			if (SVString::npos == EndPos)
 			{
-				Branch = rDisplayLocation;
+				NodeName = SvUl_SF::Mid(rDisplayLocation, StartPos);
+				Branch = rDisplayLocation.substr(0, StartPos);
 			}
 			else
 			{
-				Branch = rDisplayLocation.substr( 0, Pos );
+				NodeName = rDisplayLocation.substr(StartPos, EndPos);
+				Branch = rDisplayLocation.substr(0, StartPos);
 			}
-			Iter = findLevelItem( IterStart, IterEnd, Branch);
+			SVString Item = Branch + NodeName;
+			Iter = std::find_if(IterStart, IterEnd, SVCompareKeys<SVString, SVSharedPtr<ObjectSelectorItem>>(Item));;
 			//Branch not found so create or exit
-			if(IterEnd  == Iter )
+			if (IterEnd == Iter)
 			{
-				if( CreateIfNone )
+				if (CreateIfNone)
 				{
-					Iter = createNode( IterParent, Branch );
+					Iter = createNode(IterParent, Branch, NodeName);
 				}
 				else
 				{
@@ -189,7 +219,7 @@ namespace SvCl
 				}
 			}
 			//Found the search item 
-			if( rDisplayLocation == Iter->first )
+			if (rDisplayLocation == Iter->first)
 			{
 				break;
 			}
@@ -197,7 +227,7 @@ namespace SvCl
 			IterParent = Iter;
 			IterStart = Iter.node()->begin();
 			IterEnd = Iter.node()->end();
-			Pos++;
+			StartPos = EndPos + 1;
 		}
 
 		return Iter;
@@ -241,21 +271,10 @@ namespace SvCl
 	#pragma endregion Public Methods
 
 	#pragma region Private Methods
-	ObjectTreeItems::iterator ObjectTreeItems::createNode( ObjectTreeItems::iterator& rParentIter, const SVString& rDisplayLocation )
+	ObjectTreeItems::iterator ObjectTreeItems::createNode(iterator& rParentIter, const SVString& rBranchName, const SVString& rNodeName)
 	{
 		iterator Iter( end() );
 		ObjectSelectorItemPtr pSelectorItem =  new ObjectSelectorItem;
-		SVString Name;
-
-		SVString::size_type Pos = rDisplayLocation.rfind( _T(".") );
-		if( SVString::npos == Pos )
-		{
-			Name = rDisplayLocation;
-		}
-		else
-		{
-			Name = SvUl_SF::Mid( rDisplayLocation, Pos + 1 );
-		}
 
 		IObjectSelectorItem::CheckedStateEnum CheckedState;
 
@@ -267,8 +286,10 @@ namespace SvCl
 		{
 			CheckedState = IObjectSelectorItem::UncheckedEnabled;
 		}
-		pSelectorItem->setName( Name );
-		pSelectorItem->setDisplayLocation( rDisplayLocation );
+		SVString DisplayLocation(rBranchName);
+		DisplayLocation += rNodeName;
+		pSelectorItem->setName( rNodeName );
+		pSelectorItem->setDisplayLocation(DisplayLocation);
 		pSelectorItem->setAttibute( IObjectSelectorItem::Node );
 		pSelectorItem->setCheckedState( CheckedState );
 		pSelectorItem->setOrgCheckedState( CheckedState );
@@ -276,11 +297,11 @@ namespace SvCl
 		{
 			if( end() == rParentIter )
 			{
-				Iter = insert( SVTreeElement( rDisplayLocation, pSelectorItem ) );
+				Iter = insert( SVTreeElement(DisplayLocation, pSelectorItem) );
 			}
 			else
 			{
-				Iter = rParentIter.node()->insert( SVTreeElement( rDisplayLocation, pSelectorItem ) );
+				Iter = rParentIter.node()->insert( SVTreeElement(DisplayLocation, pSelectorItem) );
 			}
 		}
 		catch( const std::exception& e )
@@ -293,22 +314,6 @@ namespace SvCl
 		return Iter;
 	}
 
-	ObjectTreeItems::iterator ObjectTreeItems::findLevelItem(const iterator& rIter, const iterator& rEnd, const SVString& rDisplayLocation )
-	{
-		iterator Iter( rIter );
-	
-		while( rEnd != Iter )
-		{
-			if( rDisplayLocation == Iter->first )
-			{
-				break;
-			}
-
-			Iter++;
-		}
-
-		return Iter;
-	}
 	#pragma endregion Private Methods
 } //namespace SvCl
 

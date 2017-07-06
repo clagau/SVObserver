@@ -67,6 +67,7 @@ namespace SvOsl
 			m_ModifiedObjects.clear();
 		}
 		m_TreeContainer.clear();
+		m_TreeContainer.clearBranchMap();
 		m_LocationInputFilters.clear();
 		m_LocationOutputFilters.clear();
 		m_SelectorType = ObjectTreeGenerator::TypeNone;
@@ -79,6 +80,8 @@ namespace SvOsl
 		{
 			insertTreeObject( rItem );
 		});
+		m_TreeContainer.clearBranchMap();
+
 	}
 
 	INT_PTR ObjectTreeGenerator::showDialog( LPCTSTR title, LPCTSTR mainTabTitle, LPCTSTR filterTabTitle, CWnd* pParent )
