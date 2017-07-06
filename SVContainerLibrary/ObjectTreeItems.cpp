@@ -65,7 +65,6 @@ namespace SvCl
 
 		if (end() != ParentIter)
 		{
-			m_BranchMap[ParentIter->first] = ParentIter;
 			Branch += '.';
 			Iter = createNode(ParentIter, Branch, LeafName);
 			if (end() != Iter)
@@ -185,9 +184,28 @@ namespace SvCl
 		iterator IterParent(end());
 		iterator IterStart(begin());
 		iterator IterEnd(end());
-		SVString::size_type StartPos(0);
-		SVString::size_type EndPos(0);
+		SVString::size_type StartPos(SVString::npos);
+		SVString::size_type EndPos;
 
+		//! Check if sub branch is available
+		while ( SVString::npos != (EndPos = rDisplayLocation.rfind('.', StartPos)))
+		{
+			SVString Branch = rDisplayLocation.substr(0, EndPos);
+			BranchIteratorMap::iterator BranchMapIter = m_BranchMap.find(Branch);
+			if (m_BranchMap.end() != BranchMapIter)
+			{
+				IterParent = BranchMapIter->second;
+				IterStart = IterParent.node()->begin();
+				IterEnd = IterParent.node()->end();
+				StartPos = EndPos + 1;
+				break;
+			}
+			StartPos = EndPos - 1;
+		}
+		if (SVString::npos == EndPos)
+		{
+			StartPos = 0;
+		}
 		while (true)
 		{
 			SVString Branch;
@@ -200,7 +218,7 @@ namespace SvCl
 			}
 			else
 			{
-				NodeName = rDisplayLocation.substr(StartPos, EndPos);
+				NodeName = rDisplayLocation.substr(StartPos, EndPos - StartPos);
 				Branch = rDisplayLocation.substr(0, StartPos);
 			}
 			SVString Item = Branch + NodeName;
@@ -211,6 +229,7 @@ namespace SvCl
 				if (CreateIfNone)
 				{
 					Iter = createNode(IterParent, Branch, NodeName);
+					m_BranchMap[Iter->first] = Iter;
 				}
 				else
 				{
