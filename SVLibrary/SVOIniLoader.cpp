@@ -182,7 +182,7 @@ namespace SvLib
 
 		m_rInitialInfo.ResetBoardNames();
 	
-		m_IOBoardOption = IOBoardModeDefault;
+		m_rInitialInfo.m_IOBoardOption = IOBoardModeDefault;
 
 		m_Opto22InputInvert = NTag;
 		m_Opto22OutputInvert = NTag;
@@ -253,7 +253,7 @@ namespace SvLib
 			Value = HardwareINI.GetValueString(m_rInitialInfo.m_DigitalBoardName.c_str(), IOBoardModeTag, IOBoardModeDefault );
 			if( 0 < Value.size() )
 			{
-				m_IOBoardOption = Value;
+				m_rInitialInfo.m_IOBoardOption = Value;
 			}
 
 			Value = HardwareINI.GetValueString(m_rInitialInfo.m_DigitalBoardName.c_str(), Opto22InputInvertTag, NTag );

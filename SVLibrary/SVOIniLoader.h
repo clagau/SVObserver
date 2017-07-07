@@ -57,8 +57,6 @@ namespace SvLib
 
 		SVString m_Opto22InputInvert;
 		SVString m_Opto22OutputInvert;
-
-		SVString m_IOBoardOption;
 	};
 
 } //namespace SvLib

@@ -305,9 +305,9 @@ HRESULT InitialInformationHandler::LoadDigitalDLL()
 			l_vt.vt = VT_I4;
 
 			// Hardware.ini has the new IOBoardOption.
-			if (!m_DigitalOption.empty())
+			if (!m_InitialInfo.m_IOBoardOption.empty())
 			{
-				l_vt.lVal = atol(m_DigitalOption.c_str());
+				l_vt.lVal = atol(m_InitialInfo.m_IOBoardOption.c_str());
 				SVIOConfigurationInterfaceClass::Instance().SetParameterValue(SVBoardType, &l_vt);
 			}
 			else

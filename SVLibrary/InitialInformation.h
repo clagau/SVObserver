@@ -71,6 +71,7 @@ namespace SvLib
 		SVString m_ReloadDigitalDLL;
 
 		SVString m_HardwareOptions;
+		SVString m_IOBoardOption;
 		SVString m_Trigger;
 
 		//Elements of SVIM model number:
