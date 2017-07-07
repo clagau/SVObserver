@@ -646,7 +646,7 @@ ToolSizeAdjustTask* ToolSizeAdjustTask::GetToolSizeAdjustTask(SVObjectClass *pOb
 	{
 		SVObjectTypeInfoStruct ToolSizeAdjustTaskInfo;
 		ToolSizeAdjustTaskInfo.ObjectType = SVToolSizeAdjustTaskType;
-		ToolSizeAdjustTaskInfo.SubType = 0;
+		ToolSizeAdjustTaskInfo.SubType = SVNotSetSubObjectType;
 		pToolSizeAdjustTask = dynamic_cast<ToolSizeAdjustTask*>(pObject->GetFriend(ToolSizeAdjustTaskInfo));
 	}
 	return pToolSizeAdjustTask;

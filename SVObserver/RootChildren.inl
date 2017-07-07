@@ -17,7 +17,7 @@ HRESULT RootChildren::getValue( LPCSTR DottedName, ELEMENT_TYPE& rValue ) const
 }
 
 template <typename ELEMENT_TYPE>
-BasicValueObjectPtr RootChildren::setValue( LPCSTR DottedName, const ELEMENT_TYPE Value, SVObjectClass* pOwner, SVObjectTypeEnum ObjectType )
+BasicValueObjectPtr RootChildren::setValue( LPCSTR DottedName, const ELEMENT_TYPE Value, SVObjectClass* pOwner, SVObjectSubTypeEnum ObjectType )
 {
 	return m_RootChildrenValues.setValueObject( DottedName, Value, pOwner, ObjectType );
 }

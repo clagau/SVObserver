@@ -79,11 +79,11 @@ public:
 	//! \param DottedName <in> the dotted name to set
 	//! \param Value <in> the value to set the variable to
 	//! \param pOwner <in> pointer to the owner of the object
-	//! \param ObjectType <in> the object type
+	//! \param ObjectType <in> the object subtype
 	//! \returns reference to the value object
 	//************************************
 	template <typename ELEMENT_TYPE>
-	BasicValueObjectPtr setValue( LPCTSTR DottedName, const ELEMENT_TYPE Value, SVObjectClass* pOwner = nullptr, SVObjectTypeEnum ObjectType = SVBasicValueObjectType );
+	BasicValueObjectPtr setValue(LPCTSTR DottedName, const ELEMENT_TYPE Value, SVObjectClass* pOwner = nullptr, SVObjectSubTypeEnum ObjectType = SVNotSetSubObjectType);
 #pragma endregion Public Methods
 
 #pragma region Member Variables

@@ -21,7 +21,7 @@ static char THIS_FILE[] = __FILE__;
 #endif
 #pragma endregion Declarations
 
-EQAdjustSize::EQAdjustSize( long subType, GUID resultGuid,  SVObjectClass* POwner, int StringResourceID )
+EQAdjustSize::EQAdjustSize(SVObjectSubTypeEnum subType, GUID resultGuid, SVObjectClass* POwner, int StringResourceID)
 : SVEquationClass( POwner, StringResourceID )
 {
 	m_ResultGuid = resultGuid;

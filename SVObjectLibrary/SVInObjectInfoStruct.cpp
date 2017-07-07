@@ -55,12 +55,12 @@ bool SVInObjectInfoStruct::IsConnected() const
 {
 	return m_IsConnected;
 }
-void SVInObjectInfoStruct::SetInputObjectType( SVObjectTypeEnum p_ObjectType, long p_SubType )
+void SVInObjectInfoStruct::SetInputObjectType(SVObjectTypeEnum p_ObjectType, SVObjectSubTypeEnum p_SubType)
 {
 	SetInputObjectType( SVObjectTypeInfoStruct( p_ObjectType, p_SubType ) );
 }
 
-void SVInObjectInfoStruct::SetInputObjectType( const SVGUID& p_rEmbeddedID, SVObjectTypeEnum p_ObjectType, long p_SubType )
+void SVInObjectInfoStruct::SetInputObjectType( const SVGUID& p_rEmbeddedID, SVObjectTypeEnum p_ObjectType, SVObjectSubTypeEnum p_SubType )
 {
 	SetInputObjectType( SVObjectTypeInfoStruct( p_rEmbeddedID, p_ObjectType, p_SubType ) );
 }

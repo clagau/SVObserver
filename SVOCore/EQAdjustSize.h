@@ -15,7 +15,7 @@ class EQAdjustSize : public SVEquationClass
 {
 	
 public:
-	EQAdjustSize( long subType, GUID resultGuid,  SVObjectClass* POwner = nullptr, int StringResourceID = 0 );
+	EQAdjustSize(SVObjectSubTypeEnum subType, GUID resultGuid, SVObjectClass* POwner = nullptr, int StringResourceID = 0);
 	virtual ~EQAdjustSize();
 
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override ;
@@ -35,7 +35,6 @@ protected:
 protected:
 	SVDoubleValueObjectClass m_result;// resultant value
 	GUID m_ResultGuid;
-	long m_SubType;
-	long m_Type;
+	SVObjectSubTypeEnum m_SubType;
 };
 

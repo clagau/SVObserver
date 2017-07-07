@@ -25,7 +25,7 @@ HRESULT BasicValueObjects::getValue( LPCTSTR DottedName, ELEMENT_TYPE& rValue ) 
 }
 
 template <typename ELEMENT_TYPE>
-BasicValueObjectPtr BasicValueObjects::setValueObject( LPCTSTR DottedName, const ELEMENT_TYPE Value, SVObjectClass* pOwner, SVObjectTypeEnum ObjectType )
+BasicValueObjectPtr BasicValueObjects::setValueObject( LPCTSTR DottedName, const ELEMENT_TYPE Value, SVObjectClass* pOwner, SVObjectSubTypeEnum ObjectType )
 {
 	vt_const_iterator Iter = findValueObject( DottedName );
 	if( m_Tree.end() == Iter )
@@ -48,7 +48,7 @@ inline const BasicValueObjects::ValueTree& BasicValueObjects::getTree() const
 
 #pragma region Private Methods
 template <typename ELEMENT_TYPE>
-BasicValueObjects::vt_const_iterator BasicValueObjects::createValueObject( LPCTSTR DottedName, const ELEMENT_TYPE Value, SVObjectClass* pOwner, SVObjectTypeEnum ObjectType )
+BasicValueObjects::vt_const_iterator BasicValueObjects::createValueObject( LPCTSTR DottedName, const ELEMENT_TYPE Value, SVObjectClass* pOwner, SVObjectSubTypeEnum ObjectSubType )
 {
 	vt_const_iterator Iter( m_Tree.end() );
 	vt_iterator IterParent( m_Tree.end() );
@@ -74,9 +74,9 @@ BasicValueObjects::vt_const_iterator BasicValueObjects::createValueObject( LPCTS
 			if( IterEnd == Iter )
 			{
 				//If default object type then check parent
-				if( nullptr != pParent && SVBasicValueObjectType == ObjectType )
+				if (nullptr != pParent && SVNotSetSubObjectType == ObjectSubType)
 				{
-					ObjectType = pParent->GetObjectInfo().m_ObjectTypeInfo.ObjectType;
+					ObjectSubType = pParent->GetObjectInfo().m_ObjectTypeInfo.SubType;
 				}
 				BasicValueObjectPtr pValue(nullptr);
 				bool Node( false );
@@ -86,7 +86,7 @@ BasicValueObjects::vt_const_iterator BasicValueObjects::createValueObject( LPCTS
 					//Generate node and node becomes the new parent object
 					Node = true;
 				}
-				pValue = new BasicValueObject( Name.c_str(), pParent, Node, ObjectType );
+				pValue = new BasicValueObject( Name.c_str(), pParent, Node, ObjectSubType );
 				//Check if this is a dotted name with static unique GUID
 				DottedNameGuidMap::const_iterator StaticUidIter( m_StaticUniqueIDMap.find( BranchName ) );
 				if( m_StaticUniqueIDMap.end() != StaticUidIter )

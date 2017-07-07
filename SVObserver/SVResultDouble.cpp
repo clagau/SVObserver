@@ -49,7 +49,7 @@ SVDoubleResultClass::SVDoubleResultClass( BOOL BCreateDefaultTaskList, SVObjectC
 
 	// Describe the SVRangeClass...
 	rangeClassInfo.m_ObjectTypeInfo.ObjectType = SVRangeObjectType;
-	rangeClassInfo.m_ObjectTypeInfo.SubType	= 0;
+	rangeClassInfo.m_ObjectTypeInfo.SubType = SVNotSetSubObjectType;
 	rangeClassInfo.m_ClassId = SVRangeClassGuid;
 	rangeClassInfo.m_ClassName = SvUl_SF::LoadSVString( IDS_CLASSNAME_SVRANGE );
 

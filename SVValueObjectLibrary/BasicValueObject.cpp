@@ -29,12 +29,13 @@ static char THIS_FILE[] = __FILE__;
 #pragma endregion Declarations
 
 #pragma region Constructor
-BasicValueObject::BasicValueObject( LPCTSTR ObjectName,  SVObjectClass* pOwner, bool Node, SVObjectTypeEnum ObjectType )
+BasicValueObject::BasicValueObject( LPCTSTR ObjectName,  SVObjectClass* pOwner, bool Node, SVObjectSubTypeEnum ObjectSubType )
 : SVObjectClass(ObjectName)
 	, m_Created(false)
 	, m_Node(Node)
 {
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType =  ObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVBasicValueObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType =  ObjectSubType;
 	Create( pOwner );
 }
 

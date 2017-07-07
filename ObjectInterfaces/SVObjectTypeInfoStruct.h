@@ -64,9 +64,6 @@
 			SVIoObjectType							= 0x00000059,
 			SVLinearEdgeProcessingObjectType        = 0x00000060,
 			SVBasicValueObjectType			        = 0x00000061,
-			SVEnvironmentObjectType			        = 0x00000062,
-			SVCameraObjectType				        = 0x00000063,
-			SVGlobalConstantObjectType		        = 0x00000064,
 
 			SVDWordValueObjectType					= 0x00000100,
 			SVLongValueObjectType					= 0x00000101,
@@ -139,6 +136,10 @@
 			SVRingBufferToolObjectType					= 0x0000002a,
 			SVTableToolObjectType						= 0x0000002b,
 			SVTableAnalyzerToolObjectType				= 0x0000002c,
+
+			SVEnvironmentObjectType						= 0x00000062,
+			SVCameraObjectType							= 0x00000063,
+			SVGlobalConstantObjectType					= 0x00000064,
 
 			// Analyzer Subtypes:	
 			SVPixelAnalyzerObjectType				    = 0x00000100,
@@ -280,10 +281,10 @@
 
 		struct SVObjectTypeInfoStruct
 		{
-			SVObjectTypeInfoStruct( SVObjectTypeEnum p_ObjectType=SVNotSetObjectType, long p_SubType=SVNotSetSubObjectType )
+			SVObjectTypeInfoStruct( SVObjectTypeEnum p_ObjectType=SVNotSetObjectType, SVObjectSubTypeEnum p_SubType=SVNotSetSubObjectType )
 				: ObjectType( p_ObjectType ), SubType( p_SubType ), EmbeddedID( SV_GUID_NULL ) {};
 
-			SVObjectTypeInfoStruct( const SVGUID& p_rEmbeddedID, SVObjectTypeEnum p_ObjectType=SVNotSetObjectType, long p_SubType=SVNotSetSubObjectType )
+			SVObjectTypeInfoStruct( const SVGUID& p_rEmbeddedID, SVObjectTypeEnum p_ObjectType=SVNotSetObjectType, SVObjectSubTypeEnum p_SubType=SVNotSetSubObjectType )
 				: ObjectType( p_ObjectType ), SubType( p_SubType ), EmbeddedID( p_rEmbeddedID ){};
 
 			//******************************************************************************
@@ -291,7 +292,7 @@
 			//******************************************************************************
 
 			SVObjectTypeEnum	ObjectType;			// Main Type
-			long				SubType;			// Sub Type  //@TODO[MZA][7.40][10.10.2016] Why is this a long and not a SVObjectSubTypeEnum. Should be changed if there is no reason for the long.
+			SVObjectSubTypeEnum		SubType;		// Sub Type  
 
 			// Embedded ID, if any.
 			GUID				EmbeddedID;

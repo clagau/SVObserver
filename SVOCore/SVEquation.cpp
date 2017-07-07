@@ -740,18 +740,30 @@ void SVEquationClass::OnObjectRenamed(const SVObjectClass& rRenamedObject, const
 	SVString oldPrefix;
 
 	SVObjectTypeEnum type = rRenamedObject.GetObjectType();
+	if (SVInspectionObjectType == type)
+	{
+		newPrefix = _T(".") + rRenamedObject.GetCompleteObjectNameToObjectType(nullptr, SVInspectionObjectType) + _T(".");
+	}
+	else if (SVBasicValueObjectType == type)
+	{
+		newPrefix = _T("\"") + rRenamedObject.GetCompleteObjectNameToObjectType(nullptr, SVRootObjectType) + _T("\"");
+	}
+	else if (nullptr != dynamic_cast<const SvOi::IValueObject*> (&rRenamedObject))
+	{
+		newPrefix = _T("\"") + rRenamedObject.GetCompleteObjectNameToObjectType(nullptr, SVToolSetObjectType) + _T("\"");
+	}
+	else
+	{
+		newPrefix = _T("\"") + rRenamedObject.GetCompleteObjectNameToObjectType(nullptr, SVToolSetObjectType) + _T(".");
+	}
 
-	auto prepre = (SVInspectionObjectType == type) ? _T(".") : _T("\"");
-	auto prepost = (SVRootObjectType == type || SVToolSetObjectType == type) ? _T("\"") : _T(".");
-
-	newPrefix = prepre + rRenamedObject.GetCompleteObjectNameToObjectType(nullptr, type) + prepost;
 
 	oldPrefix = newPrefix;
 	SvUl_SF::searchAndReplace( oldPrefix, rRenamedObject.GetName(), rOldName.c_str() );
 
 	SVString equationBuff = GetEquationText();
 
-	// Replace all occurences
+	// Replace all occurrences
 	if( GetEquationText() != SvUl_SF::searchAndReplace( equationBuff, oldPrefix.c_str(), newPrefix.c_str() ) )
 	{
 		SetEquationText( equationBuff );

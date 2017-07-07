@@ -76,7 +76,7 @@ namespace SvOl
 					if (nullptr != pSupplier && nullptr != pClient)
 					{
 						//Global constant objects don't have tools then use the Global constant object and check if main object is of type ToolObjectType
-						bool isSupplier = pSupplier->GetObjectType() == SVGlobalConstantObjectType || pSupplier->GetObjectType() == SVToolObjectType;
+						bool isSupplier = pSupplier->GetObjectSubType() == SVGlobalConstantObjectType || pSupplier->GetObjectType() == SVToolObjectType;
 						bool isClient = pClient->GetObjectType() == SVToolObjectType;
 						SVObjectClass* pToolSupplier = isSupplier ? pSupplier : pSupplier->GetAncestor(SVToolObjectType);
 						SVObjectClass* pToolClient = isClient ? pClient : pClient->GetAncestor(SVToolObjectType);

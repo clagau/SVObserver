@@ -72,7 +72,7 @@ HRESULT RootObject::RefreshObject( const SVObjectClass* const pSender, RefreshOb
 	if( PostRefresh == Type )
 	{
 		//When it is of type Global Constant we need to update the IO view
-		if( SVGlobalConstantObjectType == pSender->GetObjectInfo().m_ObjectTypeInfo.ObjectType )
+		if( SVGlobalConstantObjectType == pSender->GetObjectInfo().m_ObjectTypeInfo.SubType )
 		{
 			SVIODoc* pIODoc = TheSVObserverApp.GetIODoc();
 			if(nullptr != pIODoc )
@@ -188,11 +188,11 @@ void RootObject::destroyConfigurationObject()
 		SVObjectManagerClass::Instance().GetRootChildObject( pRootChild, Name );
 		if( nullptr != pRootChild )
 		{
-			SVObjectTypeEnum ObjectType = pRootChild->GetObjectInfo().m_ObjectTypeInfo.ObjectType;
+			SVObjectSubTypeEnum ObjectSubType = pRootChild->GetObjectInfo().m_ObjectTypeInfo.SubType;
 			Result = pRoot->m_RootChildren.deleteValue( Name );
 			if( S_OK == Result )
 			{
-				Result = pRoot->createRootChild( Name, ObjectType );
+				Result = pRoot->createRootChild( Name, ObjectSubType );
 			}
 		}
 	}
@@ -246,7 +246,7 @@ bool RootObject::createRootChildren()
 
 	return Result;
 }
-bool RootObject::createRootChild( LPCTSTR ChildName, SVObjectTypeEnum ObjectType ) 
+bool RootObject::createRootChild( LPCTSTR ChildName, SVObjectSubTypeEnum ObjectSubType ) 
 {
 	bool Result( false );
 	_variant_t Node;
@@ -254,7 +254,7 @@ bool RootObject::createRootChild( LPCTSTR ChildName, SVObjectTypeEnum ObjectType
 	//Setting the variant to VT_EMPTY will cause the value to be a node
 	Node.Clear();
 	BasicValueObjectPtr pRootChild( nullptr);
-	pRootChild = m_RootChildren.setValue( ChildName, Node, this, ObjectType );
+	pRootChild = m_RootChildren.setValue( ChildName, Node, this, ObjectSubType );
 	if( !pRootChild.empty() )
 	{
 		SVObjectManagerClass::Instance().setRootChildID( pRootChild->GetName(), pRootChild->GetUniqueObjectID() );
