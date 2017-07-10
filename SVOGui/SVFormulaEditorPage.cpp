@@ -678,7 +678,7 @@ namespace SvOg
 			SvStl::MessageMgrStd message( SvStl::LogAndDisplay );
 			message.setMessage(iter->getMessage());
 		}
-		if( result == SvOi::IFormulaController::validateSuccessful )
+		if(SvOi::IFormulaController::validateSuccessful == result || SvOi::IFormulaController::resetFailed == result)
 		{
 			SvStl::MessageTextEnum id = SvStl::Tid_Empty;
 			SVStringVector msgList;
