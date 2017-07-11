@@ -256,7 +256,8 @@ bool LinkedValue::UpdateConnection(SvStl::MessageContainerVector *pErrorMessages
 		{
 			DisconnectInput();
 
-			if ( GetDefaultType() != Value.vt)
+			VARTYPE defaultType = GetDefaultType();
+			if ( VT_EMPTY != defaultType && Value.vt != defaultType)
 			{
 				Result = false;
 				if (nullptr != pErrorMessages)
