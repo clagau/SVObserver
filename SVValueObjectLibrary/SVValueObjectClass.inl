@@ -720,7 +720,7 @@ HRESULT SVValueObjectClass<T>::getValue(SVString& rValue, int Index /*= -1*/, in
 	{
 		ValueType Value;
 		Result = GetValue(Value, Index, Bucket);
-		if( S_OK == Result )
+		if( S_OK == Result || SVMSG_SVO_34_OBJECT_INDEX_OUT_OF_RANGE == Result)
 		{
 			rValue = ConvertType2String( Value );
 		}
