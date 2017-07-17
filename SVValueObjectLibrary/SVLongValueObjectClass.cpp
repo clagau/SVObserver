@@ -101,6 +101,12 @@ void SVLongValueObjectClass::WriteValues(SVObjectWriter& rWriter)
 	rWriter.WriteAttribute(scElementTag, list);
 }
 
+void SVLongValueObjectClass::WriteDefaultValues(SVObjectWriter& rWriter)
+{
+	_variant_t Value(GetDefaultValue());
+	rWriter.WriteAttribute(scDefaultTag, Value);
+}
+
 void SVLongValueObjectClass::LocalInitialize()
 {
 	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVLongValueObjectType;

@@ -76,7 +76,17 @@ HRESULT SVFileNameValueObjectClass::SetObjectValue(SVObjectAttributeClass* pData
 	BucketVector BucketArray;
 	ValueVector ReadValueArray;
 	
-	if ( bOk = pDataObject->GetAttributeData( SvOi::cBucketTag, BucketArray, DefaultValue() ) )
+	if (bOk = pDataObject->GetAttributeData(scDefaultTag, ObjectArray))
+	{
+		if (0 < ObjectArray.GetSize())
+		{
+			DefaultValue() = ObjectArray[ObjectArray.GetSize() - 1];
+			SvUl::RemoveEscapedSpecialCharacters(DefaultValue(), false);
+		}
+
+		SetDefaultValue(GetDefaultValue().c_str(), false);
+	}
+	else if (bOk = pDataObject->GetAttributeData(SvOi::cBucketTag, BucketArray, DefaultValue()))
 	{
 		for (size_t i = 0; i < BucketArray.size(); i++)
 		{
@@ -273,6 +283,14 @@ void SVFileNameValueObjectClass::WriteValues(SVObjectWriter& rWriter)
 		Value.Clear();
 	}
 	rWriter.WriteAttribute(scElementTag, list);
+}
+
+void SVFileNameValueObjectClass::WriteDefaultValues(SVObjectWriter& rWriter)
+{
+	SVString TempValue(GetDefaultValue());
+	_variant_t Value;
+	Value.SetString(TempValue.c_str());
+	rWriter.WriteAttribute(scDefaultTag, Value);
 }
 
 void SVFileNameValueObjectClass::LocalInitialize()

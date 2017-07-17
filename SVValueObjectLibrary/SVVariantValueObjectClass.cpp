@@ -538,6 +538,12 @@ void SVVariantValueObjectClass::WriteValues(SVObjectWriter& rWriter)
 	rWriter.WriteAttribute(scElementTag, list);
 }
 
+void SVVariantValueObjectClass::WriteDefaultValues(SVObjectWriter& rWriter)
+{
+	_variant_t Value(GetDefaultValue());
+	rWriter.WriteAttribute(scDefaultTag, Value);
+}
+
 void SVVariantValueObjectClass::LocalInitialize()
 {
 	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVVariantValueObjectType;

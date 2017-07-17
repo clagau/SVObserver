@@ -76,7 +76,6 @@ SVLinearEdgeProcessingClass::SVLinearEdgeProcessingClass( SVObjectClass* POwner,
 	m_svUseLowerThresholdMaxMinusOffset.SetDefaultValue(FALSE,TRUE);
 	m_svUseLowerThresholdMinPlusOffset.SetDefaultValue(FALSE,TRUE);
 	m_svLowerThresholdValue.SetDefaultValue(SvOi::cDefaultToolLowerThreshold,TRUE);
-	m_svLowerThresholdValue.setSaveValueFlag(false);
 	m_svLowerMaxMinusPercentDiffValue.SetDefaultValue(0,TRUE);
 	m_svLowerMaxMinusOffsetValue.SetDefaultValue(0,TRUE);
 	m_svLowerMinPlusOffsetValue.SetDefaultValue(0,TRUE);
@@ -86,7 +85,6 @@ SVLinearEdgeProcessingClass::SVLinearEdgeProcessingClass( SVObjectClass* POwner,
 	m_svUseUpperThresholdMaxMinusOffset.SetDefaultValue(FALSE,TRUE);
 	m_svUseUpperThresholdMinPlusOffset.SetDefaultValue(FALSE,TRUE);
 	m_svUpperThresholdValue.SetDefaultValue(SvOi::cDefaultToolUpperThreshold,TRUE);
-	m_svUpperThresholdValue.setSaveValueFlag(false);
 	m_svUpperMaxMinusPercentDiffValue.SetDefaultValue(0,TRUE);
 	m_svUpperMaxMinusOffsetValue.SetDefaultValue(0,TRUE);
 	m_svUpperMinPlusOffsetValue.SetDefaultValue(0,TRUE);
@@ -160,7 +158,9 @@ bool SVLinearEdgeProcessingClass::ResetObject(SvStl::MessageContainerVector *pEr
 	BOOL bLower = FALSE;
 
 	m_svUseLowerThresholdSelectable.GetValue(bLower);
+	m_svLowerThresholdValue.setSaveValueFlag(TRUE == bLower);
 	m_svUseUpperThresholdSelectable.GetValue(bUpper);
+	m_svUpperThresholdValue.setSaveValueFlag(TRUE == bUpper);
 
 	SvOi::SetAttributeType AddRemoveType = bLower ? SvOi::SetAttributeType::AddAttribute : SvOi::SetAttributeType::RemoveAttribute;
 	m_svLowerThresholdValue.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, AddRemoveType );

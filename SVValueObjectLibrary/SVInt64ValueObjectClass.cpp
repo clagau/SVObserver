@@ -85,6 +85,12 @@ void SVInt64ValueObjectClass::WriteValues(SVObjectWriter& rWriter)
 	rWriter.WriteAttribute(scElementTag, list);
 }
 
+void SVInt64ValueObjectClass::WriteDefaultValues(SVObjectWriter& rWriter)
+{
+	_variant_t Value(GetDefaultValue());
+	rWriter.WriteAttribute(scDefaultTag, Value);
+}
+
 void SVInt64ValueObjectClass::LocalInitialize()
 {
 	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVInt64ValueObjectType;

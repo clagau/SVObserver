@@ -47,6 +47,7 @@ protected:
 	virtual SVString ConvertType2String(const DWORD& rValue) const override { return FormatOutput(rValue); };
 
 	virtual void WriteValues(SVObjectWriter& rWriter) override;
+	virtual void WriteDefaultValues(SVObjectWriter& rWriter) override;
 private:
 	void LocalInitialize();
 };

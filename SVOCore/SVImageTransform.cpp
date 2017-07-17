@@ -42,7 +42,9 @@ SVImageTransformClass::SVImageTransformClass( SVObjectClass* POwner, int StringR
 	m_extentWidth.SetTypeName( _T("Extent Width") );
 	m_extentHeight.SetTypeName( _T("Extent Height") );
 	m_extentDisplacementX.SetTypeName( _T("Extent X") );
+	m_extentDisplacementX.setSaveValueFlag(false);
 	m_extentDisplacementY.SetTypeName( _T("Extent Y") );
+	m_extentDisplacementY.setSaveValueFlag(false);
 	m_extentSourceX.SetTypeName( _T("Extent X") );
 	m_extentSourceY.SetTypeName( _T("Extent Y") );
 	m_extentRotationAngle.SetTypeName( _T("Extent Angle") );

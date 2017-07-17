@@ -152,6 +152,15 @@ void SVDPointValueObjectClass::WriteValues(SVObjectWriter& rWriter)
 	rWriter.WriteAttribute(scElementTag, list);
 }
 
+void SVDPointValueObjectClass::WriteDefaultValues(SVObjectWriter& rWriter)
+{
+	SVString tmp;
+	tmp = SvUl_SF::Format(_T("%lf, %lf"), GetDefaultValue().x, GetDefaultValue().y);
+	_variant_t value;
+	value.SetString(tmp.c_str());
+	rWriter.WriteAttribute(scDefaultTag, value);
+}
+
 void SVDPointValueObjectClass::LocalInitialize()
 {
 	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVDPointValueObjectType;

@@ -363,11 +363,20 @@ HRESULT SVInspectionTreeParser< SVTreeType >::ProcessEmbeddedValues(typename SVT
 {
 	HRESULT hr = S_OK;
 
-	SVVariantList values;
-	bool bVal = GetValues(hItem, scArrayElementsTag, values);
-	if (bVal)
+	if (HasTag(hItem, scDefaultTag))
 	{
-		hr = SVObjectBuilder::SetObjectValue(ownerID, objectID, scArrayElementsTag, values, dataType);
+		_variant_t defaultValue;
+		GetItemValue(scDefaultTag, hItem, defaultValue);
+		hr = SVObjectBuilder::SetObjectValue(ownerID, objectID, scDefaultTag, defaultValue, dataType);
+	}
+	if (S_OK == hr)
+	{
+		SVVariantList values;
+		bool bVal = GetValues(hItem, scArrayElementsTag, values);
+		if (bVal)
+		{
+			hr = SVObjectBuilder::SetObjectValue(ownerID, objectID, scArrayElementsTag, values, dataType);
+		}
 	}
 
 	return hr;

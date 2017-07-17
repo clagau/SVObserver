@@ -122,6 +122,12 @@ void SVDoubleValueObjectClass::WriteValues(SVObjectWriter &rWriter)
 	rWriter.WriteAttribute(scElementTag, list);
 }
 
+void SVDoubleValueObjectClass::WriteDefaultValues(SVObjectWriter& rWriter)
+{
+	_variant_t Value(GetDefaultValue());
+	rWriter.WriteAttribute(scDefaultTag, Value);
+}
+
 void SVDoubleValueObjectClass::LocalInitialize()
 {
 	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVDoubleValueObjectType;

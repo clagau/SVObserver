@@ -43,6 +43,7 @@ protected:
 	virtual SVString ConvertType2String( const double& rValue ) const override { return FormatOutput(rValue); };
 
 	virtual void WriteValues(SVObjectWriter &rWriter) override;
+	virtual void WriteDefaultValues(SVObjectWriter& rWriter) override;
 private:
 	void LocalInitialize();
 };

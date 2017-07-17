@@ -434,6 +434,12 @@ void SVEnumerateValueObjectClass::WriteValues(SVObjectWriter& rWriter)
 	rWriter.WriteAttribute(scElementTag, list);
 }
 
+void SVEnumerateValueObjectClass::WriteDefaultValues(SVObjectWriter& rWriter)
+{
+	_variant_t Value(GetDefaultValue());
+	rWriter.WriteAttribute(scDefaultTag, Value);
+}
+
 void SVEnumerateValueObjectClass::LocalInitialize()
 {
 	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVEnumValueObjectType;

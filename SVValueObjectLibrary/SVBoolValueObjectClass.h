@@ -45,6 +45,7 @@ protected:
 	virtual SVString ConvertType2String( const BOOL& rValue ) const override {	return rValue ? SvOi::cTrue : SvOi::cFalse; };
 
 	virtual void WriteValues(SVObjectWriter& rWriter) override;
+	virtual void WriteDefaultValues(SVObjectWriter& rWriter) override;
 private:
 	void LocalInitialize();
 };

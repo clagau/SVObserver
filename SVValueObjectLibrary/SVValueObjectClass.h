@@ -199,6 +199,10 @@ public:
 	/// getter and setter for ShouldSaveValue-Flag
 	bool shouldSaveValue() { return m_shouldSaveValue; };
 	void setSaveValueFlag(bool isValueSaved) { m_shouldSaveValue = isValueSaved; };
+
+	/// getter and setter for ShouldSaveDefaultValue-Flag
+	bool shouldSaveDefaultValue() { return m_shouldSaveDefaultValue; };
+	void setSaveDefaultValueFlag(bool isValueSaved) { m_shouldSaveDefaultValue = isValueSaved; };
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
@@ -255,6 +259,10 @@ protected:
 	/// Write the Values of this object to the SVObjectWriter
 	/// \param rWriter [in,out] The SVObjectWriter
 	virtual void WriteValues(SVObjectWriter &rWriter) = 0;
+
+	/// Write the Default-Values of this object to the SVObjectWriter
+	/// \param rWriter [in,out] The SVObjectWriter
+	virtual void WriteDefaultValues(SVObjectWriter &rWriter) = 0;
 #pragma endregion Protected Methods
 
 #pragma region Member Variables
@@ -263,6 +271,7 @@ private:
 	bool m_isBucketized;					//This is set to make the value object bucketized
 	bool m_isStatic;						//If this is set then the value object cannot be bucketized (For values that don't change during run)
 	bool m_shouldSaveValue;					//If true, the value will be saved in configuration file, else it will not be saved and after loading the configuration it is default value.
+	bool m_shouldSaveDefaultValue;			//If true, the default value will be saved in configuration file, else it will not be saved and after loading the configuration it is default of the default value.
 	bool m_ResetAlways;
 	bool m_LegacyVectorObjectCompatibility;
 	SVString m_OutFormat;					//This is used to format the value object to a string

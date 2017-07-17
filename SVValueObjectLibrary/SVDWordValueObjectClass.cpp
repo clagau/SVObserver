@@ -125,6 +125,13 @@ void SVDWordValueObjectClass::WriteValues(SVObjectWriter& rWriter)
 	rWriter.WriteAttribute(scElementTag, list);
 }
 
+void SVDWordValueObjectClass::WriteDefaultValues(SVObjectWriter& rWriter)
+{
+	_variant_t Value(GetDefaultValue());
+	Value.ChangeType(VT_UI4);
+	rWriter.WriteAttribute(scDefaultTag, Value);
+}
+
 void SVDWordValueObjectClass::LocalInitialize()
 {
 	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVDWordValueObjectType;

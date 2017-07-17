@@ -300,6 +300,7 @@ void SVBlobAnalyzerClass::init()
 
 		m_Value[i].SetDefaultValue(0, TRUE);
 		m_Value[i].setSaveValueFlag(false);
+		m_Value[i].setSaveDefaultValueFlag(true);
 
 		m_FeaturesEnabled [i] = _T('1');             // Not enabled.
 		m_guidResults[i] = SV_GUID_NULL;

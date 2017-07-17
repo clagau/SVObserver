@@ -61,6 +61,7 @@ protected:
 	virtual HRESULT CopyToMemoryBlock(BYTE* pMemoryBlock, DWORD MemByteSize, int Index = -1) const override;
 
 	virtual void WriteValues(SVObjectWriter& rWriter) override;
+	virtual void WriteDefaultValues(SVObjectWriter& rWriter) override;
 private:
 	void LocalInitialize();
 };

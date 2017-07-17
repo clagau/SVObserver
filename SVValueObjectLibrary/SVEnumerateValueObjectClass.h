@@ -78,6 +78,7 @@ protected:
 	virtual SVString ConvertType2String( const long& rValue ) const override;
 
 	virtual void WriteValues(SVObjectWriter& rWriter) override;
+	virtual void WriteDefaultValues(SVObjectWriter& rWriter) override;
 private:
 	void LocalInitialize();
 	

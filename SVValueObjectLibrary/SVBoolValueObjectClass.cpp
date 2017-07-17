@@ -114,6 +114,14 @@ void SVBoolValueObjectClass::WriteValues(SVObjectWriter& rWriter)
 	rWriter.WriteAttribute(scElementTag, list);
 }
 
+void SVBoolValueObjectClass::WriteDefaultValues(SVObjectWriter& rWriter)
+{
+	_variant_t Value;
+	Value.ChangeType(VT_BOOL);
+	Value.boolVal = GetDefaultValue() ? VARIANT_TRUE : VARIANT_FALSE;
+	rWriter.WriteAttribute(scDefaultTag, Value);
+}
+
 void SVBoolValueObjectClass::LocalInitialize()
 {
 	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVBoolValueObjectType;

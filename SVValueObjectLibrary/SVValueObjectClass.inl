@@ -16,6 +16,7 @@ SVValueObjectClass<T>::SVValueObjectClass( LPCSTR ObjectName )
 , m_pBucket( nullptr )
 , m_pBucketArray( nullptr )
 , m_shouldSaveValue(true)
+, m_shouldSaveDefaultValue(false)
 {
 	Initialize();
 }
@@ -26,6 +27,7 @@ SVValueObjectClass<T>::SVValueObjectClass(SVObjectClass* POwner, int StringResou
 , m_pBucket( nullptr )
 , m_pBucketArray( nullptr )
 , m_shouldSaveValue(true)
+, m_shouldSaveDefaultValue(false)
 {
 	Initialize();
 }
@@ -216,8 +218,15 @@ HRESULT SVValueObjectClass<T>::SetObjectValue(SVObjectAttributeClass* pDataObjec
 	BucketVector BucketArray;
 	ValueVector ValueArray;
 
+	if (pDataObject->GetAttributeData(scDefaultTag, ObjectArray))
+	{
+		if (0 < ObjectArray.GetSize())
+		{
+			DefaultValue() = ObjectArray[ObjectArray.GetSize() - 1];
+		}
+	}
 	//  BUCKET_TAG_LOAD; get buckets, not array; for backward compatibility;
-	if (pDataObject->GetAttributeData(SvOi::cBucketTag, BucketArray, DefaultValue()))
+	else if (pDataObject->GetAttributeData(SvOi::cBucketTag, BucketArray, DefaultValue()))
 	{
 
 		if( !m_isBucketized )
@@ -781,6 +790,11 @@ void SVValueObjectClass<T>::Persist(SVObjectWriter& rWriter)
 
 	// Get the Heading (Class Info)
 	__super::Persist(rWriter);
+
+	if (shouldSaveDefaultValue())
+	{
+		WriteDefaultValues(rWriter);
+	}
 
 	// Get the Data Values (Member Info, Values)
 	if (shouldSaveValue())
