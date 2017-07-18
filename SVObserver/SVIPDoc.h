@@ -359,6 +359,8 @@ private:
 	bool m_bRegressionTestStopping;
 	bool m_bRegressionTestUsePlayCondition;
 	SvOi::IFormulaControllerPtr m_pRegressionTestPlayEquationController;
+	SVString m_RegressionTestLoadEquationText;
+	bool m_bRegressionTestInitEquationText;
 
 	SVFileNameClass msvFileName;
 

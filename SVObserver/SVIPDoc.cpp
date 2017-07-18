@@ -206,6 +206,8 @@ SVIPDoc::SVIPDoc()
 , m_ResultDefinitionsTimestamp( 0 )
 , m_ToolSetListTimestamp( 0 )
 , m_PPQListTimestamp( 0 )
+, m_bRegressionTestInitEquationText(false)
+, m_RegressionTestLoadEquationText(_T(""))
 {
 	init();
 }
@@ -1806,6 +1808,19 @@ void SVIPDoc::RunRegressionTest()
 
 	if( nullptr == pInspection ) { return; }
 
+	if (!m_bRegressionTestInitEquationText)
+	{
+		double value;
+		SvStl::MessageContainerVector errorMessages;
+		m_pRegressionTestPlayEquationController->ValidateEquation(m_RegressionTestLoadEquationText, value, true, errorMessages);
+		if (!errorMessages.empty())
+		{
+			SvStl::MessageMgrStd msg(SvStl::LogOnly);
+			msg.setMessage(errorMessages[0].getMessage());
+		}
+		m_bRegressionTestInitEquationText = true;
+	}
+
 	if ( pInspection->CanRegressionGoOnline() )
 	{
 		SVImageArchiveClass svImageArchive;
@@ -2231,15 +2246,7 @@ void SVIPDoc::LoadRegressionTestVariables(SVTreeType& rTree, SVTreeType::SVBranc
 		bOk = SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_PLAY_CONDITION_EQUATION, htiRegression, svVariant);
 		if (bOk)
 		{
-			SVString equation = SvUl_SF::createSVString(svVariant);
-			double value;
-			SvStl::MessageContainerVector errorMessages;
-			m_pRegressionTestPlayEquationController->ValidateEquation(equation, value, true, errorMessages);
-			if (!errorMessages.empty())
-			{
-				SvStl::MessageMgrStd msg(SvStl::LogOnly);
-				msg.setMessage(errorMessages[0].getMessage());
-			}
+			m_RegressionTestLoadEquationText = SvUl_SF::createSVString(svVariant);
 		}
 	}
 }
