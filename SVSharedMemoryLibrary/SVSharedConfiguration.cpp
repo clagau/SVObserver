@@ -175,6 +175,7 @@ namespace SvSml
 
 	HRESULT SVSharedConfiguration::SharedResourcesOk()
 	{
+		//@Todo[MEC][7.50] [06.07.2017] we do need 2 gig any more 
 		HRESULT hr = S_OK;
 		// check if drive exists and at least 2 Gig of space
 		if (SharedDriveExists())

@@ -15,8 +15,9 @@
 #include "SVSharedMemoryLibrary\ShareEvents.h"
 #include "SVSharedMemoryLibrary\MonitorListCpy.h"
 #include "MonitorLIstDlg.h"
-#include "SVSharedMemoryLibrary\SharedImageStore.h"
 #include <boost\date_time\c_time.hpp>
+#include "SVSharedMemoryLibrary\MLProduct.h"
+#include "ProductDlg.h"
 //Moved to precompiled header: #include <boost/function.hpp> 
 //Moved to precompiled header:  #include <boost/bind.hpp>
 
@@ -32,10 +33,10 @@ class CAboutDlg : public CDialogEx
 public:
 	CAboutDlg();
 
-// Dialog Data
+	// Dialog Data
 	enum { IDD = IDD_ABOUTBOX };
 
-	protected:
+protected:
 	virtual void DoDataExchange(CDataExchange* pDX);    // DDX/DDV support
 
 // Implementation
@@ -72,6 +73,7 @@ void CRRSViewDlg::DoDataExchange(CDataExchange* pDX)
 	CDialogEx::DoDataExchange(pDX);
 	DDX_Control(pDX, IDC_READY_VALUE, m_ReadyValueCtrl);
 	DDX_Control(pDX, IDC_LIST_MONLISTS, m_MonListsCtrl);
+	DDX_Control(pDX, IDC_EDIT_TRIGGER, m_EditTrigger);
 }
 
 BEGIN_MESSAGE_MAP(CRRSViewDlg, CDialogEx)
@@ -82,15 +84,18 @@ BEGIN_MESSAGE_MAP(CRRSViewDlg, CDialogEx)
 
 	ON_BN_CLICKED(IDC_BUTTON_SHOW, &CRRSViewDlg::OnBnClickedButtonShow)
 	ON_BN_CLICKED(IDC_BUTTON_EXIT, &CRRSViewDlg::OnBnClickedButtonExit)
+	ON_BN_CLICKED(IDC_BUT_GETPRODUCT, &CRRSViewDlg::OnBnClickedButGetproduct)
+	ON_BN_CLICKED(IDC_BUT_GETFAILSTATUS, &CRRSViewDlg::OnBnClickedButGetfailstatus)
+	ON_BN_CLICKED(IDC_BUT_REJECT, &CRRSViewDlg::OnBnClickedButReject)
 END_MESSAGE_MAP()
 
 
-LPCTSTR CRRSViewDlg::ColHeader[] = {_T("Name"),_T("PPQ"), _T("IsActive"), _T("RejectDepth"), _T("Filter"), _T("ImCount"), _T("PCount")};
+LPCTSTR CRRSViewDlg::ColHeader[] = { _T("Name"),_T("PPQ"), _T("IsActive"), _T("RejectDepth"), _T("Filter"), _T("ImCount"), _T("PCount") };
 // CShareViewDlg message handlers
 
 bool  CRRSViewDlg::PostRefresh(DWORD par)
 {
-	PostMessage(WM_REFRESH,par,0);
+	PostMessage(WM_REFRESH, par, 0);
 	return true;
 
 }
@@ -119,19 +124,19 @@ BOOL CRRSViewDlg::OnInitDialog()
 		}
 	}
 
-
-	boost::function<bool (DWORD)> f =  boost::bind(&CRRSViewDlg::PostRefresh,this,_1);
+	m_EditTrigger.SetWindowText("-1");
+	boost::function<bool(DWORD)> f = boost::bind(&CRRSViewDlg::PostRefresh, this, _1);
 	SvSml::ShareEvents::GetInstance().SetCallbackFunction(f);
 	SvSml::ShareEvents::GetInstance().StartWatch();
 
-	
-	for(int c =0;c<= ePcount; c++)
+
+	for (int c = 0; c <= ePcount; c++)
 	{
-		int ret =	m_MonListsCtrl.InsertColumn(c, ColHeader[c],LVCFMT_LEFT,80);
+		int ret = m_MonListsCtrl.InsertColumn(c, ColHeader[c], LVCFMT_LEFT, 80);
 		int debug = ret;
 	}
-	
-	
+
+
 	PostRefresh(SvSml::ShareEvents::UKnown);
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
@@ -181,71 +186,65 @@ void CRRSViewDlg::OnPaint()
 
 // The system calls this function to obtain the cursor to display while the user drags
 //  the minimized window.
- HCURSOR CRRSViewDlg::OnQueryDragIcon()
+HCURSOR CRRSViewDlg::OnQueryDragIcon()
 {
 	return static_cast<HCURSOR>(m_hIcon);
 }
 
- void CRRSViewDlg::UpdateControls(bool isready)
- {
-	 if(isready)
-	 {
-		 m_MonListsCtrl.DeleteAllItems();
-		 SvSml::MonitorListCpyMap::const_iterator it;  
-		 int item(0);
-		 for(it = m_MLContainer.m_MonitorListCpyMap.begin(); it !=  m_MLContainer.m_MonitorListCpyMap.end(); ++it)
-		 {
-			 m_MonListsCtrl.InsertItem(item, it->second->m_MonitorListName.c_str());
+void CRRSViewDlg::UpdateControls(bool isready)
+{
+	if (isready)
+	{
+		m_MonListsCtrl.DeleteAllItems();
+		SvSml::MonitorListCpyMap::const_iterator it;
+		int item(0);
+		for (it = m_MemReader.m_MLContainer.m_MonitorListCpyMap.begin(); it != m_MemReader.m_MLContainer.m_MonitorListCpyMap.end(); ++it)
+		{
+			m_MonListsCtrl.InsertItem(item, it->second->m_MonitorListName.c_str());
 
-			 //enum ECOL {eName=0, ePPQ, eIsActive, eRejectDepth, eProductFilter,ePcount };
-			 m_MonListsCtrl.SetItemText(item,ePPQ,it->second->m_ppqName.c_str() );
+			//enum ECOL {eName=0, ePPQ, eIsActive, eRejectDepth, eProductFilter,ePcount };
+			m_MonListsCtrl.SetItemText(item, ePPQ, it->second->m_ppqName.c_str());
 
-			 SVString text = it->second->GetIsActive()? _T("true") : _T("false");
-			 m_MonListsCtrl.SetItemText(item,eIsActive,text.c_str() );
+			SVString text = it->second->GetIsActive() ? _T("true") : _T("false");
+			m_MonListsCtrl.SetItemText(item, eIsActive, text.c_str());
 
-			 text = SvUl_SF::Format(_T("%i"),it->second->m_rejectDepth );
-			 m_MonListsCtrl.SetItemText(item,eRejectDepth,text.c_str());
+			text = SvUl_SF::Format(_T("%i"), it->second->m_rejectDepth);
+			m_MonListsCtrl.SetItemText(item, eRejectDepth, text.c_str());
 
-			 text = SvUl_SF::Format(_T("%i"),it->second->m_ProductFilter );
-			 m_MonListsCtrl.SetItemText(item,eProductFilter,text.c_str() );
-
-
-			 //monitorListCpy.m_MonitorEntries[list]
-			 text = SvUl_SF::Format(_T("%i"),it->second->m_MonitorEntries[SvSml::ListType::productItemsImage].size() );
-			 m_MonListsCtrl.SetItemText(item,eImageCount,text.c_str() ); 
-
-			 text = SvUl_SF::Format(_T("%i"),it->second->m_MonitorEntries[SvSml::ListType::productItemsData].size() );
-			 m_MonListsCtrl.SetItemText(item,ePcount,text.c_str() );
-			 item++;
-		 }
-	 }
-	 CString csready = isready ? _T("true") : _T("false");
-	 m_ReadyValueCtrl.SetWindowText(csready);
+			text = SvUl_SF::Format(_T("%i"), it->second->m_ProductFilter);
+			m_MonListsCtrl.SetItemText(item, eProductFilter, text.c_str());
 
 
- }
+			//monitorListCpy.m_MonitorEntries[list]
+			text = SvUl_SF::Format(_T("%i"), it->second->m_MonitorEntries[SvSml::ListType::productItemsImage].size());
+			m_MonListsCtrl.SetItemText(item, eImageCount, text.c_str());
+
+			text = SvUl_SF::Format(_T("%i"), it->second->m_MonitorEntries[SvSml::ListType::productItemsData].size());
+			m_MonListsCtrl.SetItemText(item, ePcount, text.c_str());
+			item++;
+		}
+	}
+	CString csready = isready ? _T("true") : _T("false");
+	m_ReadyValueCtrl.SetWindowText(csready);
+
+
+}
 LRESULT  CRRSViewDlg::OnRefresh(WPARAM wParam, LPARAM lParam)
 {
 
 	UNREFERENCED_PARAMETER(lParam);
 	bool isready = (wParam == SvSml::ShareEvents::Ready);
-	if(isready)
+	if (wParam == SvSml::ShareEvents::Ready)
 	{
 		SvSml::MLInspectionInfoMap InspectionInfoMap;
 		SVStringVector PPQVector;
 		int inspectionCount(0);
 		DWORD version(0);
-		m_MLContainer.ReloadMonitorMap(m_mlReader,version);
-		
-		m_ImageContainer.OpenImageStores(m_MLContainer);
-		m_ImageContainer.CreateSharedMatroxBuffer(m_MLContainer);
-
-	
+		m_MemReader.Reload(version);
 	}
-	else
+	else if (wParam == SvSml::ShareEvents::Change)
 	{
-		m_ImageContainer.Clear();
-		m_MLContainer.Clear();
+		m_MemReader.Clear();
 	}
 	UpdateControls(isready);
 	return 0;
@@ -254,17 +253,69 @@ LRESULT  CRRSViewDlg::OnRefresh(WPARAM wParam, LPARAM lParam)
 
 void CRRSViewDlg::OnBnClickedButtonShow()
 {
-	
-	if(m_MonListsCtrl.GetItemCount() >0 )
+
+	if (m_MonListsCtrl.GetItemCount() > 0)
 	{
 		MonitorListDlg dlg;
 		dlg.DoModal();
 	}
-	
+
 }
 
 void CRRSViewDlg::OnBnClickedButtonExit()
 {
-		
+
 	EndDialog(0);
 }
+void CRRSViewDlg::OnBnClickedButGetproduct()
+{
+	DisplayProduct(false);
+}
+void CRRSViewDlg::OnBnClickedButReject()
+{
+	DisplayProduct(true);
+}
+
+
+void CRRSViewDlg::DisplayProduct(bool isreject)
+{
+	int sel = m_MonListsCtrl.GetSelectionMark();
+	if (sel < 0 || sel >= m_MonListsCtrl.GetItemCount())
+	{
+		return;
+	}
+	CString MonitorListName = m_MonListsCtrl.GetItemText(sel, 0);
+	std::unique_ptr<SvSml::MLProduct> productPtr(new SvSml::MLProduct);
+	CString text;
+	m_EditTrigger.GetWindowTextA(text);
+	int trigger = atoi(text.GetString());
+	text.Format("%i", trigger);
+	m_EditTrigger.SetWindowTextA(text.GetString());
+	if (isreject)
+	{
+		m_MemReader.GetRejectData(MonitorListName.GetString(), trigger, productPtr.get(), 1);
+	}
+	else
+	{
+		m_MemReader.GetProductData(MonitorListName.GetString(), trigger, productPtr.get(), 1);
+	}
+	ProductDlg prod(productPtr.get());
+	prod.DoModal();
+}
+
+
+void CRRSViewDlg::OnBnClickedButGetfailstatus()
+{
+	int sel = m_MonListsCtrl.GetSelectionMark();
+	if (sel < 0 || sel >= m_MonListsCtrl.GetItemCount())
+	{
+		return;
+	}
+	CString MonitorListName = m_MonListsCtrl.GetItemText(sel, 0);
+	SvSml::productPointerVector Failstatus;
+	m_MemReader.GetFailstatus(MonitorListName.GetString(), &Failstatus);
+	ProductDlg prod(&Failstatus);
+	prod.DoModal();
+}
+
+

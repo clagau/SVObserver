@@ -483,5 +483,6 @@ namespace SvStl
 		Tid_ErrorMcodeGetResult,
 		Tid_StdException,
 		Tid_ColorToolExtentsChanged,
+		Tid_FailstatusNotFound
 	};
 } //namespace SvStl

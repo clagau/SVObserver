@@ -16,14 +16,19 @@ namespace SvSml
 		m_rejectDepth =0;
 		m_IsActive = FALSE;;
 		m_ProductFilter = LastInspectedFilter;
+		
 	}
 
-	MonitorEntryPointer  MonitorListCpy::AddEntry(ListType::typ ltype, const SVString& name, DWORD type)
+	MonitorEntryPointer  MonitorListCpy::AddEntry(ListType::typ ltype, const SVString& name)
 	{
 		MonitorEntriesMap::iterator MeMIt =  m_EntriesMap.find(name);
 		if(MeMIt ==  m_EntriesMap.end())
 		{
-			MonitorEntryPointer MEP = MonitorEntryPointer(new MonitorEntry(name,type) );
+			MonitorEntryPointer MEP = MonitorEntryPointer(new MonitorEntry(name) );
+			if (ltype < ListType::Count)
+			{
+				MEP->data.m_MonitorListFlag = ListFlags[ltype];
+			}
 			m_MonitorEntries[ltype].push_back(MEP);
 			m_EntriesMap[name] = MEP;
 			return MEP;
@@ -31,8 +36,11 @@ namespace SvSml
 		else
 		{
 			assert(MeMIt->second->name == name);
-			assert(MeMIt->second->ObjectType == type);
-			m_MonitorEntries[ltype].push_back(MeMIt->second);
+			if (ltype < ListType::Count)
+			{
+				MeMIt->second->data.m_MonitorListFlag |= ListFlags[ltype];
+			}
+				m_MonitorEntries[ltype].push_back(MeMIt->second);
 			return MeMIt->second;
 		}
 	}
@@ -71,9 +79,10 @@ namespace SvSml
 	static size_t CalcMemory(const SvSml::MonitorEntries &ListEntries)
 	{
 		size_t size(0);
+		size_t MonitorEntryDataSize  = sizeof(MonitorEntryData);
 		for (SvSml::MonitorEntries::const_iterator it = ListEntries.begin();it != ListEntries.end();++it)
 		{
-			size += 2* sizeof(DWORD);
+			size += MonitorEntryDataSize;
 			size += it->get()->name.length();
 		}
 		return size;
@@ -153,9 +162,21 @@ namespace SvSml
 	{
 		return m_IsActive;
 	}
-	int  MonitorListCpy::InsertToMLInspectionInfoMap(MLInspectionInfoMap & inspectionInfoMap) const
+	int  MonitorListCpy::InsertToMLInspectionInfoMap(MLInspectionInfoMap & inspectionInfoMap, MLPPQInfoMap& PPQInfoMap) const
 	{
 		int res(0);
+		DWORD PPQIndex = (DWORD)PPQInfoMap.size();
+		if (PPQInfoMap.find(m_ppqName) == PPQInfoMap.end())
+		{
+			MLPPQInfoPointer& rMLPPQInfoP =  PPQInfoMap[m_ppqName] = MLPPQInfoPointer(new MLPPQInfo);
+			rMLPPQInfoP->SlotManagerIndex = PPQIndex;
+			rMLPPQInfoP->RejectSize = m_rejectDepth;
+		}
+		else
+		{
+			PPQIndex = PPQInfoMap[m_ppqName]->SlotManagerIndex;
+		}
+		
 		MonitorEntriesMap::const_iterator it; 
 		for(it = m_EntriesMap.begin(); it !=m_EntriesMap.end(); ++it)
 		{
@@ -168,28 +189,31 @@ namespace SvSml
 				inspectionName  = it->first.substr(0,pos);
 			else 
 				inspectionName = it->first;
-
-
+			
 			if(inspectionInfoMap.find(inspectionName)  == inspectionInfoMap.end())
 			{
 				res++;
-				inspectionInfoMap[inspectionName] = MLInspectionInfoPointer( new MLInspectionInfo) ;
-				
+				auto& newEntry =  inspectionInfoMap[inspectionName] = MLInspectionInfoPointer( new MLInspectionInfo) ;
+				newEntry->PPQName = m_ppqName;
+				newEntry->PPQIndex = PPQIndex;
 			}
+			auto& newEntry = inspectionInfoMap[inspectionName];
 
-			switch(it->second->ObjectType)
+			
+			switch(it->second->data.ObjectType)
 			{
 			case  SVImageObjectType:
-				inspectionInfoMap[inspectionName]->TotalImageSize += (DWORD)it->second->ByteSize;
-				inspectionInfoMap[inspectionName]->TotalImageSize +=  ImageBufferHeaderSize;
-				inspectionInfoMap[inspectionName]->TotalImageCount++; 
-				inspectionInfoMap[inspectionName]->StoreIndex = it->second->InspectionStoreId; 
+				newEntry->TotalImageSize += (DWORD)it->second->data.ByteSize;
+				newEntry->TotalImageSize +=  ImageBufferHeaderSize;
+				newEntry->TotalImageCount++;
+				newEntry->StoreIndex = it->second->data.InspectionStoreId;
 				break;
 			
 			default:
-				inspectionInfoMap[inspectionName]->TotalDataCount++; 
+				newEntry->TotalDataSize += (DWORD)it->second->data.ByteSize;
+				newEntry->TotalDataCount++;
+				newEntry->StoreIndex = it->second->data.InspectionStoreId;
 				break;
-				//@Todo[MEC][7.50] [22.02.2017] ADD other types
 
 			}
 

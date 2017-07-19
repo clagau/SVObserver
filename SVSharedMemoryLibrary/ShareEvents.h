@@ -57,18 +57,14 @@ namespace SvSml
 		
 		//!Set Init flag. The init flag will bee reseted when changing event occurs
 		void SetIsInit();
-
 	private:
 		static const LPCTSTR GNameChangeEvent;
 		static const LPCTSTR GNameReadyEvent;
-		
-		
 		
 		mutable bool m_IsReady;
 		mutable bool m_IsInit;
 		mutable long m_ReadyCounter;
 
-		
 		boost::function<bool(DWORD )> m_CallBackFct;
 		HANDLE m_hChangeEvent;
 		HANDLE m_hReadyEvent;

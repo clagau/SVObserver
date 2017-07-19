@@ -43,6 +43,26 @@ namespace SvSml
 		CheckDirectories();
 	}
 
+	int SharedMemWriter::CreateManagmentAndStores(DWORD Productslot)
+	{
+		m_DataContainer.CreateSlotManagment(Productslot, m_MLContainer);
+		return m_DataContainer.CreateStores(m_MLContainer);
+	}
+
+	RingBufferPointer SharedMemWriter::GetSlotManager(LPCTSTR PPQname)
+	{
+		if (m_MLContainer.m_PPQInfoMap.find(PPQname) != m_MLContainer.m_PPQInfoMap.end() && m_MLContainer.m_PPQInfoMap[PPQname].get())
+		{
+			int index = m_MLContainer.m_PPQInfoMap[PPQname]->SlotManagerIndex;
+			return m_DataContainer.GetSlotManager(index);
+		}
+		else
+		{
+			return nullptr;
+		}
+	}
+
+
 	void SharedMemWriter::ReadSettings()
 	{
 		SvLib::SVOINIClass reader(SvStl::GlobalPath::Inst().GetSVIMIniPath());
@@ -86,84 +106,6 @@ namespace SvSml
 		}
 	}
 
-	////////////////////////////////////////////////////////////////////////////
-	// Calculate the size required to hold the Inspection data in the PPQ Share
-	////////////////////////////////////////////////////////////////////////////
-	static size_t CalcPPQSharedMemorySize(const SVString& rName, const SvSml::InspectionWriterCreationInfos& rCreationInfos)
-	{
-		size_t size = rName.size() + sizeof(SvSml::SVSharedProduct);
-		for (SvSml::InspectionWriterCreationInfos::const_iterator it = rCreationInfos.begin(); it != rCreationInfos.end(); ++it)
-		{
-			SVString name = it->inspectionID.first;
-			SVString shareName = name + "." + SVSharedConfiguration::GetShareName();
-			size += shareName.length() + name.length() + sizeof(SvSml::SVSharedInspection);
-		}
-		size += static_cast<size_t>(static_cast<double>(size) * TwentyPercent);
-		return size;
-	}
-
-	HRESULT SharedMemWriter::InsertPPQSharedMemory(const SVString& rName, const SVGUID& rGuid, const long ProductSlots, const long RejectSlots, const SvSml::InspectionWriterCreationInfos& rCreationInfos)
-	{
-		HRESULT hr = S_OK;
-		PPQSharedMemoryMap::iterator it = m_PPQSharedMemory.find(rGuid);
-		if (it == m_PPQSharedMemory.end())
-		{
-			size_t size = CalcPPQSharedMemorySize(rName, rCreationInfos);
-			m_PPQSharedMemory[rGuid] = std::unique_ptr<SVSharedPPQWriter>(new SVSharedPPQWriter);
-			hr = m_PPQSharedMemory[rGuid]->Create(rName.c_str(), rCreationInfos, m_settings, ProductSlots, RejectSlots, size);
-		}
-		return hr;
-	}
-
-	int SharedMemWriter::CreateImageStores(const SVString& InspName, long ProductSlots, long RejectSlots)
-	{
-		return m_ImageContainer.CreateImageStores(InspName, ProductSlots, RejectSlots, m_MLContainer);
-	}
-
-
-
-	HRESULT SharedMemWriter::ErasePPQSharedMemory(const SVGUID& rGuid)
-	{
-		HRESULT hr = S_OK;
-		PPQSharedMemoryMap::iterator it = m_PPQSharedMemory.find(rGuid);
-		if (it != m_PPQSharedMemory.end())
-		{
-			m_PPQSharedMemory.erase(it);
-		}
-		return hr;
-	}
-
-	SvSml::SVSharedPPQWriter& SharedMemWriter::GetPPQWriter(const SVGUID& rGuid)
-	{
-		PPQSharedMemoryMap::iterator it = m_PPQSharedMemory.find(rGuid);
-
-		if (it != m_PPQSharedMemory.end())
-		{
-			return *(it->second.get());
-		}
-		throw std::exception("SharedPPQWriter Not Found");
-	}
-
-	SvSml::SVSharedInspectionWriter& SharedMemWriter::GetInspectionWriter(const SVGUID& rPPQGuid, const SVGUID& rGuid)
-	{
-		PPQSharedMemoryMap::iterator it = m_PPQSharedMemory.find(rPPQGuid);
-		if (it != m_PPQSharedMemory.end())
-		{
-			return it->second->operator[](rGuid);
-		}
-		throw std::exception("SharedInspectionWriter Not Found");
-	}
-
-	SVString SharedMemWriter::GetInspectionShareName(const SVGUID& rPPQGuid, const SVGUID& rGuid)
-	{
-		PPQSharedMemoryMap::iterator it = m_PPQSharedMemory.find(rPPQGuid);
-		if (it != m_PPQSharedMemory.end())
-		{
-			return it->second->operator[](rGuid).GetShareName();
-			//return it->second[rGuid].GetShareName();
-		}
-		throw std::exception("SharedInspectionWriter Not Found");
-	}
 
 	const SvSml::SVSharedMemorySettings& SharedMemWriter::GetSettings() const
 	{
@@ -179,41 +121,37 @@ namespace SvSml
 	void SharedMemWriter::Destroy()
 	{
 		{
-			ClearPPQSharedMemory();
+			CloseDataConnection();
 			m_monitorListWriter.Release();
 			ClearMonitorListCpyVector();
 		}
 	}
 
-	void SharedMemWriter::ClearPPQSharedMemory()
+	void SharedMemWriter::CloseDataConnection()
 	{
-		m_ImageContainer.DestroySharedMemory();
-		m_PPQSharedMemory.clear();
+		m_DataContainer.CloseConnection();
 	}
 
-	BYTE*  SharedMemWriter::GetImageBufferPtr(DWORD  SlotIndex, SharedImageStore::StoreType Store, DWORD storeIndex, DWORD storeoffset)
+	BYTE*  SharedMemWriter::GetDataBufferPtr(DWORD  SlotIndex, DWORD storeIndex, DWORD storeoffset)
 	{
-		return m_ImageContainer.GetImageBufferPtr(SlotIndex, Store, storeIndex, storeoffset);
-
+		return m_DataContainer.GetDataBufferPtr(SlotIndex, storeIndex, storeoffset);
 	}
-
-
+	
 	///Return the MatroxSharedBuffer;
-	SVMatroxBuffer& SharedMemWriter::GetImageBuffer(DWORD  SlotIndex, SharedImageStore::StoreType t, DWORD storeIndex, DWORD ImageIndex)
+	SVMatroxBuffer& SharedMemWriter::GetImageBuffer(DWORD  SlotIndex,  DWORD storeIndex, DWORD ImageIndex)
 	{
-		return m_ImageContainer.GetImageBuffer(SlotIndex, t, storeIndex, ImageIndex);
+		return m_DataContainer.GetImageBuffer(SlotIndex,  storeIndex, ImageIndex);
 	}
 
 	///Creates a MatroxSharedBuffer for all images in the Monitorlist;
 	void SharedMemWriter::CreateSharedMatroxBuffer()
 	{
-		m_ImageContainer.CreateSharedMatroxBuffer(m_MLContainer);
+		m_DataContainer.CreateSharedMatroxBuffer(m_MLContainer);
+
 	}
 	bool SharedMemWriter::HasShares()
 	{
 		return true;
-		//@Todo[MEC][7.50] [21.02.2017]
-		//return (SVSharedConfiguration::SharedDriveExists() );
 	}
 
 
@@ -246,4 +184,10 @@ namespace SvSml
 	{
 		return m_MLContainer.CalculateStoreIds();
 	}
+	DWORD  SharedMemWriter::GetActiveMonitorListCount() const
+	{
+		return m_MLContainer.GetActiveMonitorlistCount();
+							 
+	}
+
 } //namespace SvSml

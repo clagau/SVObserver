@@ -33,6 +33,7 @@ BasicValueObject::BasicValueObject( LPCTSTR ObjectName,  SVObjectClass* pOwner, 
 : SVObjectClass(ObjectName)
 	, m_Created(false)
 	, m_Node(Node)
+
 {
 	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVBasicValueObjectType;
 	m_outObjectInfo.m_ObjectTypeInfo.SubType =  ObjectSubType;
@@ -438,6 +439,7 @@ DWORD BasicValueObject::GetObjectColor() const
 	return SV_DEFAULT_WHITE_COLOR;
 }
 #pragma endregion Public Methods
+
 
 #pragma region Private Methods
 BOOL BasicValueObject::Create( SVObjectClass* pOwner )

@@ -84,13 +84,15 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="MLCpyContainer.cpp" />
+    <ClCompile Include="MLProduct.cpp" />
     <ClCompile Include="MonitorEntry.cpp" />
     <ClCompile Include="MonitorListCpy.cpp" />
-    <ClCompile Include="SharedImageContainer.cpp" />
-    <ClCompile Include="SharedImageStore.cpp" />
+    <ClCompile Include="SharedDataContainer.cpp" />
+    <ClCompile Include="SharedDataStore.cpp" />
     <ClCompile Include="SharedMemReader.cpp" />
     <ClCompile Include="SharedMemWriter.cpp" />
     <ClCompile Include="ShareEvents.cpp" />
+    <ClCompile Include="SMRingbuffer.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
@@ -99,31 +101,22 @@
     <ClCompile Include="SVMonitorListStore.cpp" />
     <ClCompile Include="SVMonitorListWriter.cpp" />
     <ClCompile Include="SVSharedConfiguration.cpp" />
-    <ClCompile Include="SVSharedData.cpp" />
-    <ClCompile Include="SVSharedImage.cpp" />
-    <ClCompile Include="SVSharedInspections.cpp" />
-    <ClCompile Include="SVSharedLastInspectedCache.cpp" />
-    <ClCompile Include="SVSharedInspectionReader.cpp" />
     <ClCompile Include="SVSharedMemorySettings.cpp" />
-    <ClCompile Include="SVSharedInspectionWriter.cpp" />
     <ClCompile Include="SVSharedMonitorList.cpp" />
-    <ClCompile Include="SVSharedPPQReader.cpp" />
-    <ClCompile Include="SVSharedPPQWriter.cpp" />
-    <ClCompile Include="SVSharedProduct.cpp" />
-    <ClCompile Include="SVSharedProductStore.cpp" />
-    <ClCompile Include="SVSharedRejectCache.cpp" />
-    <ClCompile Include="SVSharedValue.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="MLCpyContainer.h" />
     <ClInclude Include="MLInspectionInfo.h" />
+    <ClInclude Include="MLPPQInfo.h" />
+    <ClInclude Include="MLProduct.h" />
     <ClInclude Include="MonitorEntry.h" />
     <ClInclude Include="MonitorListCpy.h" />
-    <ClInclude Include="SharedImageContainer.h" />
-    <ClInclude Include="SharedImageStore.h" />
+    <ClInclude Include="SharedDataContainer.h" />
+    <ClInclude Include="SharedDataStore.h" />
     <ClInclude Include="SharedMemReader.h" />
     <ClInclude Include="SharedMemWriter.h" />
     <ClInclude Include="ShareEvents.h" />
+    <ClInclude Include="SMRingbuffer.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="SVMonitorListReader.h" />
     <ClInclude Include="SVMonitorListStore.h" />
@@ -131,20 +124,8 @@
     <ClInclude Include="SVProductFilterEnum.h" />
     <ClInclude Include="SVShared.h" />
     <ClInclude Include="SVSharedConfiguration.h" />
-    <ClInclude Include="SVSharedData.h" />
-    <ClInclude Include="SVSharedImage.h" />
-    <ClInclude Include="SVSharedInspections.h" />
-    <ClInclude Include="SVSharedLastInspectedCache.h" />
-    <ClInclude Include="SVSharedInspectionReader.h" />
     <ClInclude Include="SVSharedMemorySettings.h" />
-    <ClInclude Include="SVSharedInspectionWriter.h" />
     <ClInclude Include="SVSharedMonitorList.h" />
-    <ClInclude Include="SVSharedPPQReader.h" />
-    <ClInclude Include="SVSharedPPQWriter.h" />
-    <ClInclude Include="SVSharedProduct.h" />
-    <ClInclude Include="SVSharedProductStore.h" />
-    <ClInclude Include="SVSharedRejectCache.h" />
-    <ClInclude Include="SVSharedValue.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

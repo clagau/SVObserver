@@ -36,14 +36,22 @@ namespace SvSml
 		
 		DWORD GetVersion() const; 
 		
+		DWORD GetActiveMonitorlistCount() const;
+		///return true if a active monitorlist with the name exist 
 		bool IsActiveMonitorList(const SVString& Monitorlistname ) const;
+		///return a pointer to Monitorlistcopy for the Monitorlistname 
 		const MonitorListCpy*  GetMonitorListCpyPointer(const SVString& Monitorlistname )  const;
+		
+		const MonitorListCpy*  GetMonitorListCpyPointerForPPQ(const SVString& PPQName)  const;
+		const MonitorListCpy*  GetMonitorListCpyPointerForPPQ(const GUID& PPQ_guid)  const;
+		DWORD GetInspectionStoreId(const SVString& InspectionName);
+		DWORD GetInspectionStoreId(const GUID& InspectionGUID);
 		void Insert(MonitorListCpyPointer& MLCpyPtr);
 		
 		///Return the total size of the all images for this inspection 
 		DWORD GetInspectionImageSize(const SVString& inspectionName   );
 		
-		///searches all monitorlist for the nane and return the pointer if it is not found throw an exception 
+		///searches all monitorlist for the full dotet nane and return the pointer if it is not found throw an exception 
 		MonitorEntryPointer GetMonitorEntryPointer(const SVString& rname);
 
 		///Writes all Monitorlist to shared memory 
@@ -53,7 +61,8 @@ namespace SvSml
 		void CalculateStoreIds();
 	
 		DWORD m_Version;							//< VersionsNumber used from RRS
-		MonitorListCpyMap m_MonitorListCpyMap;		//<map Monitorlistname active MonitorListCpyPointer   
-		MLInspectionInfoMap	  m_InspectionInfoMap;	//<Map inspection-nname and InspectionInfos
+		MonitorListCpyMap m_MonitorListCpyMap;		//<map Monitorlistname  active MonitorListCpyPointer   
+		MLInspectionInfoMap	  m_InspectionInfoMap;	//<Map inspection-nname  InspectionInfos
+		MLPPQInfoMap   m_PPQInfoMap;				//<Map ppqName PPQInfo 
 	};
 } //namespace SvSml

@@ -561,6 +561,7 @@ echo %time%
     <ClInclude Include="SVImportedInputList.h" />
     <ClInclude Include="SVImportedInspectionInfo.h" />
     <ClInclude Include="SVImportProgress.h" />
+    <ClInclude Include="SVInfoStructs.h" />
     <ClInclude Include="SVInputStreamManager.h" />
     <ClInclude Include="SVInspectionExporter.h" />
     <ClInclude Include="SVInspectionImporter.h" />

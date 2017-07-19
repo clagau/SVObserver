@@ -73,5 +73,15 @@ namespace SvSml
 		//! enum for monitorlist sublist type	
 		enum  typ { productItemsData =0 ,productItemsImage, rejectCondition, failStatus, Count };
 	}
-	
+	const static DWORD ProductItemDataFlag = 0x1;
+	const static DWORD ProductItemImageFlag = 0x2;
+	const static DWORD RejectConditionFlag = 0x4;
+	const static DWORD FailstatusFlag = 0x8;
+
+	const static DWORD ListFlags[ListType::Count] =
+	{
+		ProductItemDataFlag, ProductItemImageFlag, RejectConditionFlag,FailstatusFlag
+	};
+
+
 } //namespace SvSml

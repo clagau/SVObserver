@@ -11,14 +11,12 @@
 #include "SVMonitorListWriter.h"
 #include "ObjectInterfaces\SVObjectTypeInfoStruct.h"
 
-
 namespace SvSml
 {
 	MLCpyContainer::MLCpyContainer(void)
 	{
 		m_Version = 0;
 	}
-
 
 	MLCpyContainer::~MLCpyContainer(void)
 	{
@@ -43,16 +41,26 @@ namespace SvSml
 		for (it = mlNames.begin(); it != mlNames.end(); it++)
 		{
 			m_MonitorListCpyMap[*it] = MonitorListCpyPointer(new MonitorListCpy(rmlReader[*it]));
-			m_MonitorListCpyMap[*it]->InsertToMLInspectionInfoMap(m_InspectionInfoMap);
+			m_MonitorListCpyMap[*it]->InsertToMLInspectionInfoMap(m_InspectionInfoMap, m_PPQInfoMap);
 		}
 		rmlReader.Close();
 		m_Version = version;
 	}
 
-
 	DWORD MLCpyContainer::GetVersion()  const
 	{
 		return m_Version;
+	}
+
+	DWORD MLCpyContainer::GetActiveMonitorlistCount() const
+	{
+		DWORD res(0);
+		for (auto& mlc : m_MonitorListCpyMap)
+		{
+			if (mlc.second->GetIsActive())
+				res++;
+		}
+		return res;
 	}
 
 	bool MLCpyContainer::IsActiveMonitorList(const SVString& Monitorlistname) const
@@ -74,16 +82,33 @@ namespace SvSml
 		else
 			return nullptr;
 	}
-
+	
+	const MonitorListCpy*  MLCpyContainer::GetMonitorListCpyPointerForPPQ(const SVString& PPQName)  const
+	{
+		for (auto& element : m_MonitorListCpyMap)
+		{
+			if (element.second->m_ppqName == PPQName)
+				return element.second.get();
+		}
+		return nullptr;
+	}
+	
+	DWORD MLCpyContainer::GetInspectionStoreId(const SVString& InspectionName)
+	{
+		auto& it = m_InspectionInfoMap.find(InspectionName);
+		if (it != m_InspectionInfoMap.end())
+		{
+			return it->second->StoreIndex;
+		}
+		return -1;
+	}
 
 	void MLCpyContainer::Insert(MonitorListCpyPointer& MLCpyPtr)
 	{
 		SVString monitorlistName = MLCpyPtr->GetMonitorlistname();
-		MLCpyPtr->InsertToMLInspectionInfoMap(m_InspectionInfoMap);
+		MLCpyPtr->InsertToMLInspectionInfoMap(m_InspectionInfoMap, m_PPQInfoMap);
 		m_MonitorListCpyMap[monitorlistName] = std::move(MLCpyPtr);
 	}
-
-
 
 	DWORD MLCpyContainer::GetInspectionImageSize(const SVString& inspectionName)
 	{
@@ -110,7 +135,6 @@ namespace SvSml
 		}
 	}
 
-
 	MonitorEntryPointer MLCpyContainer::GetMonitorEntryPointer(const SVString& rname)
 	{
 		MonitorListCpyMap::iterator  it;
@@ -131,6 +155,9 @@ namespace SvSml
 	{
 		std::vector<DWORD> ImageItemoffsets;
 		std::vector<DWORD> ImageItemIndexes;
+		std::vector<DWORD> DataItemOffset;
+		std::vector<DWORD> DataItemIndex;
+
 		DWORD Storeindex(0);
 		MLInspectionInfoMap::iterator it;
 		for (Storeindex = 0, it = m_InspectionInfoMap.begin(); it != m_InspectionInfoMap.end(); ++it, ++Storeindex)
@@ -138,6 +165,9 @@ namespace SvSml
 			it->second->StoreIndex = Storeindex;
 			ImageItemoffsets.push_back(0);
 			ImageItemIndexes.push_back(0);
+			DataItemOffset.push_back(0);
+			DataItemIndex.push_back(0);
+
 		}
 		MonitorListCpyMap::iterator  MLCPyIt;
 		for (MLCPyIt = m_MonitorListCpyMap.begin(); MLCPyIt != m_MonitorListCpyMap.end(); ++MLCPyIt)
@@ -158,27 +188,32 @@ namespace SvSml
 				assert(m_InspectionInfoMap.find(inspectionName) != m_InspectionInfoMap.end());
 				assert(MEMIt->second->name == MEMIt->first);
 
-				switch (MEMIt->second->ObjectType)
+				DWORD storeId = m_InspectionInfoMap[inspectionName]->StoreIndex;
+				switch (MEMIt->second->data.ObjectType)
 				{
 				case SVImageObjectType:
 				{
-					DWORD storeId = m_InspectionInfoMap[inspectionName]->StoreIndex;
-					MEMIt->second->InspectionStoreId = storeId;
-					MEMIt->second->ItemId = ImageItemIndexes[storeId]++;
-					MEMIt->second->Store_Offset = ImageItemoffsets[storeId];
+					MEMIt->second->data.InspectionStoreId = storeId;
+					MEMIt->second->data.ItemId = ImageItemIndexes[storeId]++;
+					MEMIt->second->data.Store_Offset = ImageItemoffsets[storeId];
 					ImageItemoffsets[storeId] += MonitorListCpy::ImageBufferHeaderSize;
-					ImageItemoffsets[storeId] += (DWORD)MEMIt->second->ByteSize;
+					ImageItemoffsets[storeId] += (DWORD)MEMIt->second->data.ByteSize;
 				}
 				break;
 
 				default:
-					continue;
-					break;
+				{
+					MEMIt->second->data.InspectionStoreId = storeId;
+					MEMIt->second->data.ItemId = DataItemIndex[storeId]++;
+					MEMIt->second->data.Store_Offset = DataItemOffset[storeId];
+					DataItemOffset[storeId] += (DWORD)MEMIt->second->data.ByteSize;
+
+				}
+				break;
 
 				}
 
 			}
 		}
-
 	}
 } //namespace SvSml

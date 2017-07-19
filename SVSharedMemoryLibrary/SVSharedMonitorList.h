@@ -14,7 +14,6 @@
 #include "SVShared.h"
 #include "SVProductFilterEnum.h"
 #include "MonitorEntry.h"
-//#include "SVMonitorListWriter.h"
 #pragma endregion Includes
 
 namespace SvSml
@@ -35,8 +34,6 @@ namespace SvSml
 		SVProductFilterEnum GetProductFilter() const { return m_filter; };
 
 		void SetEntries(ListType::typ ltype,  const MonitorEntries & items);
-		
-		
 
 		void Activate() { m_active = true; }
 		void Deactivate() { m_active = false; }
@@ -50,7 +47,6 @@ namespace SvSml
 		void SetRejectDepth(int depth) { m_rejectDepth = depth; }
 		void SetProductFilter(SVProductFilterEnum filter) { m_filter = filter; }
 	
-
 		static MonitorEntries::const_iterator  FindInMoListVector(SVString const &name, const MonitorEntries &entryVector );
 		static bool IsInMoListVector(SVString const &name, const MonitorEntries &entryVector );
 		
@@ -68,7 +64,6 @@ namespace SvSml
 
 		SVProductFilterEnum m_filter;
 		bool m_active; // set when activated
-
 	};
 	typedef bip::allocator<SVSharedMonitorList, segment_manager_t> MonitorListAllocator;
 

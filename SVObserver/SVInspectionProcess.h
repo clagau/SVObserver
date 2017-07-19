@@ -31,8 +31,6 @@
 #include "SVOLibrary/SVQueueObject.h"
 #include "SVRunControlLibrary/SVImageIndexStruct.h"
 #include "SVRunControlLibrary/SVRunStatus.h"
-#include "SVSharedMemoryLibrary/SVSharedData.h"
-#include "SVSharedMemoryLibrary/SVSharedInspectionWriter.h"
 #include "SVSystemLibrary/SVCriticalSection.h"
 #include "SVUtilityLibrary/SVGUID.h"
 #include "SVUtilityLibrary/SVString.h"
@@ -46,8 +44,9 @@
 #include "SVMonitorList.h"
 #include "SVValueObjectLibrary/SVValueObjectClass.h"
 #include "SVOCore/SVEquation.h"
+#include "SVSharedMemoryLibrary/MonitorEntry.h"
+#include "SVSharedMemoryLibrary/SMRingbuffer.h"
 #pragma endregion Includes
-
 #pragma region Declarations
 class SVCameraImageTemplate;
 class SVConditionalClass;
@@ -110,6 +109,11 @@ public:
 	void SetPPQIdentifier( const SVGUID& p_rPPQId );
 	const SVGUID& GetPPQIdentifier() const;
 	SVPPQObject* GetPPQ() const;
+
+	///Set sharedPointer for m_SlotManager
+	void SetSlotmanager(const SvSml::RingBufferPointer& Slotmanager);
+	///gets the shared Pointer in m_SlotManager
+	SvSml::RingBufferPointer GetSlotmanager();
 
 #pragma region virtual method (IInspectionProcess)
 	virtual SvOi::IObjectClass* GetPPQInterface() const override;
@@ -216,7 +220,6 @@ public:
 
 	HRESULT RemoveImage(SVImageClass* pImage);
 
-	void UpdateSharedMemoryFilters( const SVMonitorList& p_rMonitorList );
 	virtual void Persist(SVObjectWriter& rWriter) override;
 
 	long GetResultDataIndex() const;
@@ -290,17 +293,19 @@ public:
 	bool shouldPauseRegressionTestByCondition();
 	 
 protected:
-	typedef std::map< SVString, SVObjectReference > SVNameObjectMap;
-
-	struct SVSharedMemoryFilters
+	
+	struct WatchListElement 
 	{
-		SVSharedMemoryFilters();
-
-		void clear();
-		
-		SVNameObjectMap m_LastInspectedValues;
-		SVNameObjectMap m_LastInspectedImages;
+		WatchListElement(SVObjectReference& object, const SvSml::MonitorEntryPointer& mEntryPtr)
+		{
+			ObjRef = object;
+			MonEntryPtr = mEntryPtr;
+		}
+		SVObjectReference  ObjRef;
+		SvSml::MonitorEntryPointer MonEntryPtr;
 	};
+	
+	typedef   std::unique_ptr<WatchListElement> WatchlistelementPtr;
 
 #ifdef EnableTracking
 	struct SVInspectionTrackingElement
@@ -401,10 +406,14 @@ protected:
 	void ThreadProcess( bool& p_WaitForEvents );
 
 	HRESULT ProcessInspection( bool& p_rProcessed, SVProductInfoStruct& p_rProduct );
-	HRESULT ProcessMonitorLists(); // No longer done in the Inspection Thread
-	HRESULT ProcessNotifyWithLastInspected( bool& p_rProcessed, long sharedSlotIndex );
+	HRESULT ProcessNotifyWithLastInspected(bool& p_rProcessed, SVProductInfoStruct& rProduct);
 	HRESULT ProcessCommandQueue( bool& p_rProcessed );
-
+	
+	///True if product i a reject
+	bool   CopyToWatchlist(SVProductInfoStruct& LastProduct);
+	
+	void  BuildWatchlist();
+	
 	SVGUID m_PPQId;
 
 	// DataManager index handles
@@ -453,11 +462,6 @@ private:
 
 	HRESULT FindPPQInputObjectByName( SVObjectClass*& p_rpObject, LPCTSTR p_FullName ) const;
 
-	void FillSharedData(long sharedSlotIndex, SvSml::SVSharedData& rData, const SVNameObjectMap& rValues, const SVNameObjectMap& rImages, SVProductInfoStruct& rProductInfo, SvSml::SVSharedInspectionWriter& rWriter);
-	
-	/// Set the name and Image Name in the shared memory structs. 
-	void InitSharedMemoryItemNames(const long ProductSlots, const long RejectSlots);
-
 	SVCriticalSectionPtr m_LastRunLockPtr;
 	bool m_LastRunProductNULL;
 	SVProductInfoStruct m_svLastRunProduct;
@@ -470,12 +474,14 @@ private:
 	// JMS - this variable is only used for configuration conversion.
 	SVConditionalClass* m_pToolSetConditional;
 	SVCommandQueue m_CommandQueue;
-	SVMonitorListQueue m_MonitorListQueue;
-	SVSharedMemoryFilters m_SharedMemoryFilters;
+	
 
-	TCHAR m_BufferImageFileName[BUFFER_IMAGE_FILENAME_LEN]; 	//< Buffer holds the full path of a Image
-	TCHAR* m_SecondPtrImageFileName;  //<pointer to Filename after the path 
-	int	   m_SecondPtrImageFileNameLen; //len 
+	std::vector<WatchlistelementPtr>  m_WatchListImages;
+	std::vector<WatchlistelementPtr> m_WatchListDatas;
+	
+	int m_StoreIndex; 
+	SvSml::RingBufferPointer m_SlotManager;
+
 	SVStringVector m_arViewedInputNames;
 
 	//For RegressionTest

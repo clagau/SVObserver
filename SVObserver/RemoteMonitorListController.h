@@ -40,6 +40,7 @@ public:
 	void HideShowViewTab();
 	void ResetObject();
 	void ValidateInputs();
+	// Build the PPQ monitor list. and  Insert the monitorlist copies SvSml::SharedMemWriter Singelton 
 	HRESULT BuildPPQMonitorList(PPQMonitorList& ppqMonitorList) const;
 
 	//! Activate or deactivate the Monitorlist.
@@ -73,7 +74,7 @@ public:
 	//************************************
 	static bool IsValidMonitoredObject(const SVObjectClass* pObject);
 
-	static size_t CalcSharedMemorySize(const RemoteMonitorList& rList);
+	static size_t CalcSizeForMonitorList(const RemoteMonitorList& rList);
 	
 	static LPCTSTR s_DefaultMonitorListName;
 

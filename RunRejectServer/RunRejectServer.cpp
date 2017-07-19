@@ -31,7 +31,6 @@
 #include "SVUtilityLibrary/SVString.h"
 #include "SVRemoteControlConstants.h"
 #include "JsonLib\include\json.h"
-#include "SVSharedMemoryLibrary\SVSharedPPQReader.h"
 #include "SVSharedMemoryLibrary\SVMonitorListReader.h"
 #include "SVSharedMemoryLibrary\SVSharedConfiguration.h"
 #include "SVMessage\SVMessage.h"
@@ -45,6 +44,7 @@
 #include "SVSharedMemoryLibrary\SharedMemReader.h"
 #include <mil.h>
 #include "SVMatroxLibrary\SVMatroxBufferInterface.h"
+#include "SVSharedMemoryLibrary\MLProduct.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -80,31 +80,28 @@ typedef SvSol::SVServerSocket<SvSol::UdpApi> UdpServerSocket;
 typedef SvSol::SVSocket<SvSol::UdpApi> UdpSocket;
 typedef SvSol::SVServerSocket<SvSol::TcpApi> TcpServerSocket;
 typedef SvSol::SVSocket<SvSol::TcpApi> TcpSocket;
-typedef std::pair<SvSml::ProductPtr, long> ProductPtrPair;
 typedef void(*SignalHandlerPointer)(int);
 
 
-/// For last held product from GetProduct cmd. Map with ppqnames, (productPtr, Index) 
-static std::map<SVString, ProductPtrPair> g_LastProductMap;  
-/// For last held Reject from GetProduct cmd when product filter is lastReject.Map with ppqnames, (productPtr, Index) 
-static std::map<SVString, ProductPtrPair> g_lastRejectProductMap;
-// For last held Reject from GetReject cmd. Map with ppqnames, (productPtr, Index) 
-static std::map<SVString, ProductPtrPair> g_lastRejectMap; 
-
+/// For last held product from GetProduct map with monitorlistname
+///Map with monitorlistname 
+static std::map<SVString, SvSml::productPointer> g_LastProduct;
+static std::map<SVString, SvSml::productPointer> g_LastReject;
+static std::map<SVString, SvSml::FailstatusPointer> g_LastFailstatus;
 template<typename API>
 void ClearHeld();
 
 template<>
 void ClearHeld<SvSol::TcpApi>()
 {
-	g_lastRejectMap.clear();
+	g_LastFailstatus.clear();
+	g_LastReject.clear();
 }
 
 template<>
 void ClearHeld<SvSol::UdpApi>()
 {
-	g_LastProductMap.clear();
-	g_lastRejectProductMap.clear();
+	g_LastProduct.clear();
 }
 
 SignalHandlerPointer previousHandler(nullptr);
@@ -165,6 +162,10 @@ void AccessViolationHandler(int signal)
 	throw std::exception("Access Violation");
 }
 
+void  ScanImageFileName(LPCTSTR IndexString, DWORD& ImageIndex, DWORD& ImageStoreIndex, DWORD& SlotIndex)
+{
+	_stscanf(IndexString, _T("%u %u  %u"), &ImageStoreIndex, &ImageIndex, &SlotIndex);
+}
 
 DWORD WINAPI servimg(LPVOID ptr)
 {
@@ -175,14 +176,14 @@ DWORD WINAPI servimg(LPVOID ptr)
 
 		SVByteVector ByteVector;
 		ByteVector.reserve(DefaultImageBufferSize);
-		
-		SvSml::SharedMemReader*  pSharedMemReader = static_cast<SvSml::SharedMemReader*>(  ptr);
+
+		SvSml::SharedMemReader*  pSharedMemReader = static_cast<SvSml::SharedMemReader*>(ptr);
 		UdpServerSocket sok;
 		sok.Create();
 		sok.SetBufferSize(SocketBufferSize);
 		sok.Listen(imgPort);
 		long cnt = 0;
-		while( WAIT_OBJECT_0 != WaitForSingleObject(g_ServiceStopEvent, Timeout_Thread_Functions) )
+		while (WAIT_OBJECT_0 != WaitForSingleObject(g_ServiceStopEvent, Timeout_Thread_Functions))
 		{
 			if (sok.ClientConnecting())
 			{
@@ -202,63 +203,58 @@ DWORD WINAPI servimg(LPVOID ptr)
 							if (isready)
 							{
 								SVString filename = SVString(reinterpret_cast<char *>(buf.get()), sz);
-								DWORD ImageIndex, ImageStoreIndex, SlotIndex, IsReject;
-								SvSml::SVSharedImage::ScanImageFileName(filename.c_str(), ImageIndex, ImageStoreIndex, SlotIndex, IsReject);
-								SvSml::SharedImageStore::StoreType t = IsReject ? SvSml::SharedImageStore::reject : SvSml::SharedImageStore::last;
+								DWORD ImageIndex, ImageStoreIndex, SlotIndex;
+								ScanImageFileName(filename.c_str(), ImageIndex, ImageStoreIndex, SlotIndex);
 								DWORD offset = sizeof(SvSol::header);
-								SVMatroxBufferInterface::CopyBufferToFileDIB(ByteVector, pSharedMemReader->m_ImageContainer.GetImageBuffer(SlotIndex, t, ImageStoreIndex, ImageIndex), offset, true);
+								SVMatroxBufferInterface::CopyBufferToFileDIB(ByteVector, pSharedMemReader->m_DataContainer.GetImageBuffer(SlotIndex, ImageStoreIndex, ImageIndex), offset, true);
 								client.WriteWithHeader(&ByteVector[0], ByteVector.size());
 							}
 						}
-						catch( const SvStl::MessageContainer& rExp )
+						catch (const SvStl::MessageContainer& rExp)
 						{
-							SvStl::MessageMgrStd e( SvStl::LogOnly );
-							e.setMessage( rExp.getMessage() );
+							SvStl::MessageMgrStd e(SvStl::LogOnly);
+							e.setMessage(rExp.getMessage());
 						}
-						catch(std::exception& rExp)
+						catch (std::exception& rExp)
 						{
-							SvStl::MessageMgrStd Exception( SvStl::LogOnly );
+							SvStl::MessageMgrStd Exception(SvStl::LogOnly);
 							SVStringVector msgList;
-							msgList.push_back( rExp.what() );
-							Exception.setMessage( SVMSG_RRS_2_STD_EXCEPTION, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams) );
+							msgList.push_back(rExp.what());
+							Exception.setMessage(SVMSG_RRS_2_STD_EXCEPTION, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams));
 						}
 					}
 				}
 				else
 				{
-					SvStl::MessageMgrStd Exception( SvStl::LogOnly );
+					SvStl::MessageMgrStd Exception(SvStl::LogOnly);
 					SVStringVector msgList;
-					msgList.push_back( SVString( SvSol::SVSocketError::GetErrorText(SvSol::SVSocketError::GetLastSocketError() ) ) );
-					Exception.setMessage( SVMSG_RRS_3_GENERAL_ERROR, SvStl::Tid_SocketInvalid, msgList, SvStl::SourceFileParams(StdMessageParams) );
+					msgList.push_back(SVString(SvSol::SVSocketError::GetErrorText(SvSol::SVSocketError::GetLastSocketError())));
+					Exception.setMessage(SVMSG_RRS_3_GENERAL_ERROR, SvStl::Tid_SocketInvalid, msgList, SvStl::SourceFileParams(StdMessageParams));
 				}
 			}
 		}
 	}
-	catch( const SvStl::MessageContainer& rExp )
+	catch (const SvStl::MessageContainer& rExp)
 	{
-		SvStl::MessageMgrStd e( SvStl::LogOnly );
-		e.setMessage( rExp.getMessage() );
+		SvStl::MessageMgrStd e(SvStl::LogOnly);
+		e.setMessage(rExp.getMessage());
 	}
 	catch (std::exception& rExp)
 	{
-		SvStl::MessageMgrStd Exception( SvStl::LogOnly );
+		SvStl::MessageMgrStd Exception(SvStl::LogOnly);
 		SVStringVector msgList;
-		msgList.push_back( rExp.what() );
-		Exception.setMessage( SVMSG_RRS_2_STD_EXCEPTION, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams) );
+		msgList.push_back(rExp.what());
+		Exception.setMessage(SVMSG_RRS_2_STD_EXCEPTION, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams));
 	}
-	
+
 	return 0;
 }
-
-
-
 
 JsonCmd ReadCommand(TcpSocket & sok)
 {
 	Json::Value val(Json::nullValue);
 	u_long buflen = 0;
 	bytes arr;
-
 	// read command from socket
 	SvSol::SVSocketError::ErrorEnum error = SvSol::SVSocketError::Success;
 	if (SvSol::SVSocketError::Success == (error = sok.ReadAll(arr, buflen, false)))
@@ -299,22 +295,19 @@ JsonCmd ReadCommand(UdpSocket & sok)
 	return val;
 }
 
-
-
-//@Todo[MEC][7.50] [15.05.2017] for performance reason Bytevector is static. 
+//for performance reason Bytevector is static. 
 //Function must not be called from more then one Thread
 SVString EncodeImg(SVMatroxBuffer& rMatroxBuffer)
 {
 	static SVByteVector G_ByteVector;
 	SVMatroxBufferInterface::CopyBufferToFileDIB(G_ByteVector, rMatroxBuffer);
-	DWORD len = static_cast<DWORD>( G_ByteVector.size());
+	DWORD len = static_cast<DWORD>(G_ByteVector.size());
 	int enc_len = ::Base64EncodeGetRequiredLength(len, ATL_BASE64_FLAG_NOCRLF);
 	boost::scoped_array<char>  enc_buff(new char[enc_len + 1]);
 	enc_buff[enc_len] = '\0';
 	::Base64Encode(&(G_ByteVector[0]), len, enc_buff.get(), &enc_len, ATL_BASE64_FLAG_NOCRLF);
 	return enc_buff.get();
 }
-
 
 Json::Value NewResponse(const JsonCmd & cmd)
 {
@@ -329,61 +322,57 @@ Json::Value NewResponse(const JsonCmd & cmd)
 	{
 		SvStl::MessageContainer MsgCont;
 		SVStringVector msgList;
-		msgList.push_back( SVString( cmd[SVRC::cmd::name].asString().c_str() ) );
-		MsgCont.setMessage( SVMSG_RRS_3_GENERAL_ERROR, SvStl::Tid_InvalidCommand, msgList, SvStl::SourceFileParams(StdMessageParams) );
+		msgList.push_back(SVString(cmd[SVRC::cmd::name].asString().c_str()));
+		MsgCont.setMessage(SVMSG_RRS_3_GENERAL_ERROR, SvStl::Tid_InvalidCommand, msgList, SvStl::SourceFileParams(StdMessageParams));
 		throw MsgCont;
 	}
 	return rsp;
 }
 
 
-
-// the three following functions expect the Json array and add to it value/error/image objects respectively.
-Json::Value & GenerateValues(Json::Value & rarr, SvSml:: SVSharedData* data, const SvSml::MonitorEntries& rProductItemNames)
+Json::Value& GenerateValues(Json::Value & rarr, SvSml::MLProduct* pProduct)
 {
-	int count = data->m_TriggerCount;
-	for (SvSml::SVSharedValueVector::const_iterator it = data->m_Values.begin(); it != data->m_Values.end(); ++it)
+	if (nullptr == pProduct)
+		return rarr;
+	for (int i = 0; i < pProduct->m_data.size(); i++)
 	{
-		const SvSml::SVSharedValueVector::value_type& sharedValue = *it;
-		//@TODO[MEC][7.50][30.01.2017]
-		// Is this lookup really necessary? 
-		// The MonitorList should be in sync with SVObserver, so what is written to shared memory would be correct
-		if(SvSml::SVSharedMonitorList::IsInMoListVector( sharedValue.m_ElementName.c_str(), rProductItemNames))
-		{
-			Json::Value val(Json::objectValue);
-			val[SVRC::vo::name] = sharedValue.m_ElementName.c_str();
-			val[SVRC::vo::status] = sharedValue.m_Status;
-			val[SVRC::vo::count] = count;
-			Json::Value value(Json::arrayValue);
-			value.append(sharedValue.m_Result);
-			val[SVRC::vo::array] = value;
-			rarr.append(val);
-		}
+		Json::Value val(Json::objectValue);
+		val[SVRC::vo::name] = pProduct->m_dataEntries[i]->name.c_str();
+		val[SVRC::vo::status] = (int)pProduct->m_status;
+		val[SVRC::vo::count] = (int)pProduct->m_trigger;
+		Json::Value value(Json::arrayValue);
+		value.append(pProduct->m_data[i]->c_str());
+		val[SVRC::vo::array] = value;
+		rarr.append(val);
 	}
 	return rarr;
 }
-
-Json::Value & GenerateErrors(Json::Value & arr, const SvSml:: SVSharedData* data)
+Json::Value & GenerateErrors(Json::Value & arr, SvSml::MLProduct* pProduct)
 {
 	return arr;
 }
 
-
 template<typename API>
-Json::Value & GenerateImages(Json::Value & rArr, SvSml::SVSharedData* data, const SvSml::MonitorEntries& rProductItemNames, SvSml::SharedMemReader  *pMemReader);
+Json::Value & GenerateImages(Json::Value & rArr, const SvSml::MLProduct* pProduct, SvSml::SharedMemReader  *pMemReader);
 
 template<>
-Json::Value & GenerateImages<SvSol::UdpApi>(Json::Value & rArr, SvSml::SVSharedData* data, const SvSml::MonitorEntries& rProductItemNames, SvSml::SharedMemReader  *pMemReader)
+Json::Value & GenerateImages<SvSol::UdpApi>(Json::Value & rArr, const SvSml::MLProduct* pProduct, SvSml::SharedMemReader  *pMemReader)
 {
-	int count = data->m_TriggerCount;
-	for (SvSml::SVSharedImageVector::iterator it = data->m_Images.begin(); it != data->m_Images.end(); ++it)
+	if (nullptr == pProduct)
+		return rArr;
+	int count = pProduct->m_trigger;
+	int slot = pProduct->m_slot;
+	for (auto& MeP : pProduct->m_ImageEntries)
 	{
-		const SvSml::SVSharedImageVector::value_type& sharedImage = *it;
-		SVString filename = sharedImage.m_Filename;
+		if (!MeP.get())
+			break;
+		int StoreIndex = MeP->data.InspectionStoreId;
+		int ImageIndex = MeP->data.ItemId;
+		SVString filename = SvUl::StringFunctions::Format(_T("%i %i  %i"), StoreIndex, ImageIndex, slot);
 		Json::Value val(Json::objectValue);
-		val[SVRC::io::name] = sharedImage.m_ElementName.c_str();
-		val[SVRC::io::status] = sharedImage.m_Status;
-		val[SVRC::io::count] = count;
+		val[SVRC::vo::name] = MeP->name.c_str();
+		val[SVRC::vo::status] = pProduct->m_status;
+		val[SVRC::vo::count] = count;
 		val[SVRC::io::imageFileName] = filename;
 		val[SVRC::io::fetch] = 1;
 		rArr.append(val);
@@ -392,308 +381,235 @@ Json::Value & GenerateImages<SvSol::UdpApi>(Json::Value & rArr, SvSml::SVSharedD
 }
 
 template<>
-Json::Value & GenerateImages<SvSol::TcpApi>(Json::Value & rArr, SvSml::SVSharedData* data, const SvSml::MonitorEntries& rProductItemNames, SvSml::SharedMemReader  *pMemReader)
+Json::Value & GenerateImages<SvSol::TcpApi>(Json::Value & rArr, const SvSml::MLProduct* pProd, SvSml::SharedMemReader  *pMemReader)
 {
-	int count = data->m_TriggerCount;
-	for (SvSml::SVSharedImageVector::iterator it = data->m_Images.begin(); it != data->m_Images.end(); ++it)
+	if (nullptr == pProd)
+		return rArr;
+
+	int count = pProd->m_trigger;
+	int slot = pProd->m_slot;
+	for (auto& MeP : pProd->m_ImageEntries)
 	{
-		const SvSml::SVSharedImageVector::value_type& sharedImage = *it;
-		SVString filename = sharedImage.m_Filename;
-		DWORD slotIndex = sharedImage.m_SlotIndex;
-		SvSml::SharedImageStore::StoreType t = sharedImage.m_IsReject ? SvSml::SharedImageStore::reject : SvSml::SharedImageStore::last;
-		DWORD StoreIndex = sharedImage.m_ImageStoreIndex;
-		DWORD ImageIndex = sharedImage.m_ImageIndex;
-		Json::Value val(Json::objectValue);
-		val[SVRC::io::name] = sharedImage.m_ElementName.c_str();
-		val[SVRC::io::status] = sharedImage.m_Status;
-		val[SVRC::io::count] = count;
-		val[SVRC::io::image] = EncodeImg(pMemReader->m_ImageContainer.GetImageBuffer(slotIndex, t, StoreIndex, ImageIndex));
-		rArr.append(val);
+		if (!MeP.get())
+			break;
+		int StoreIndex = MeP->data.InspectionStoreId;
+		int ImageIndex = MeP->data.ItemId;
 		
+		Json::Value val(Json::objectValue);
+		val[SVRC::vo::name] = MeP->name.c_str();
+		val[SVRC::vo::status] = pProd->m_status;
+		val[SVRC::vo::count] = count;
+		val[SVRC::io::image] = EncodeImg(pMemReader->GetImageBuffer(slot, StoreIndex, ImageIndex));
+		rArr.append(val);
 	}
 	return rArr;
 }
 
-
-
 template<typename API>
-Json::Value WriteProductItems(SvSml::ProductPtr product, const SvSml::MonitorListCpy& rMonitorListCpy,SvSml::SharedMemReader  *pMemReader) 
+Json::Value WriteProduct(SvSml::MLProduct* pProduct, SvSml::SharedMemReader  *pMemReader)
 {
-	
 	Json::Value rslt(Json::objectValue);
 	Json::Value values(Json::arrayValue);
 	Json::Value images(Json::arrayValue);
 	Json::Value errors(Json::arrayValue);
-	std::for_each(product->inspections.begin(), product->inspections.end(),
-		[&values, &images, &errors, &rMonitorListCpy, &pMemReader](std::pair<const SVString, SvSml:: SVSharedData*>& pair) 
-	{ 
-		GenerateValues(values, pair.second, rMonitorListCpy.m_MonitorEntries[SvSml::ListType::productItemsData]); 
-		GenerateImages<API>(images, pair.second, rMonitorListCpy.m_MonitorEntries[SvSml::ListType::productItemsImage],pMemReader); 
-		GenerateErrors(errors, pair.second);
-	}
-	);
+	GenerateValues(values, pProduct);
+	GenerateImages<API>(images, pProduct, pMemReader);
+	GenerateErrors(errors, pProduct);
+
 	rslt[SVRC::result::values] = values;
 	rslt[SVRC::result::images] = images;
 	rslt[SVRC::result::errors] = errors;
+	return rslt;
+}
+Json::Value WriteFailStatus(SvSml::Failstatus * pFailstatus)
+{
+	Json::Value rslt(Json::objectValue);
+	Json::Value failList(Json::arrayValue);
+	if (nullptr == pFailstatus)
+		return rslt;
+	for (SvSml::productPointer& pProduct : *pFailstatus)
+	{
+		Json::Value voList(Json::objectValue);
+		Json::Value entries(Json::arrayValue);
+		if (pProduct.get())
+		{
+			for (int i = 0; i < pProduct->m_data.size(); i++)
+			{
+				Json::Value vo(Json::objectValue);
+				vo[SVRC::vo::name] = pProduct->m_dataEntries[i]->name.c_str();
+				vo[SVRC::vo::status] = (int)pProduct->m_status;
+				vo[SVRC::vo::count] = (int)pProduct->m_trigger;
+				Json::Value valueArray(Json::arrayValue);
+				valueArray.append(pProduct->m_data[i]->c_str());
+				vo[SVRC::vo::array] = valueArray;
+				entries.append(vo);
+			}
+		}
+		voList[SVRC::result::items] = 0; // workaround for a svrc bug 
+		voList[SVRC::result::entries] = entries;
+		failList.append(voList);
+	}
+	rslt[SVRC::result::values] = failList;
 	return rslt;
 }
 
 template<typename API>
 Json::Value DispatchCommand(const JsonCmd & cmd, SvSml::SharedMemReader* pMemReader);
 
-Json::Value WriteFailStatus(const SvSml::FailStatusMap & fsMap)
+//FOR TCAPI
+Json::Value  DispatchCmdGetFailstatus(const JsonCmd & cmd, SvSml::SharedMemReader  *pMemReader)
 {
 	Json::Value rslt(Json::objectValue);
-	Json::Value failList(Json::arrayValue);
-	std::for_each(fsMap.begin(), fsMap.end(),
-		[&failList](const SvSml::FailStatusMap::value_type & entry)
+	const Json::Value &args = cmd[SVRC::cmd::arg];
+	SVString listName;
+	bool validArgs(false);
+	if (args.isMember(SVRC::arg::listName))
 	{
-		const SvSml::SVValueVector & values = entry.second;
-		Json::Value voList(Json::objectValue);
-		Json::Value entries(Json::arrayValue);
-		std::for_each(values.begin(), values.end(),
-			[&entries](const SvSml::SVValue & value)
-		{
-			Json::Value vo(Json::objectValue);
-			vo[SVRC::vo::name] = value.name;
-			vo[SVRC::vo::status] = value.status;
-			vo[SVRC::vo::count] = value.trigger;
-			Json::Value valueArray(Json::arrayValue);
-			valueArray.append(value.value);
-			vo[SVRC::vo::array] = valueArray;
-			entries.append(vo);
-		}
-		);
-		voList[SVRC::result::items] = 0; // workaround for a svrc bug, to be fixed in the next svrc beta/release
-		voList[SVRC::result::entries] = entries;
-		failList.append(voList);
+		listName = args[SVRC::arg::listName].asString();
+		validArgs = pMemReader->IsActiveMonitorList(listName);
 	}
-	);
-
-	rslt[SVRC::result::values] = failList;
-	return rslt;
-}
-
-/// for trig == -1 Get the values for the last saved product  and store the product in lastProductPtrPair
-/// for trig  > -1 return  product  from lastProductPtrPair  if it has the tigger number trig
-//! \param rReader [in] reader 
-//! \param trig [in]   triggercount
-//! \param productItemNames [in] Listof item names 
-//! \param lastRejectProduct [in,out] last saved product.
-//! \returns Json::Value
-Json::Value GetLastInspectedProduct(SvSml::SVSharedPPQReader& rReader, long trig, const SvSml::MonitorListCpy*   PMonitorListCpy, ProductPtrPair& lastProductPtrPair, SvSml::SharedMemReader  *pMemReader)
-{
-	static Json::Value lastResult(Json::objectValue);
-	Json::Value rslt(Json::objectValue);
-	if (trig >= 0)
+	if (validArgs == false)
 	{
-		if (lastProductPtrPair.second < 0 || nullptr == lastProductPtrPair.first ||  trig != lastProductPtrPair.first->product.m_TriggerCount)
-		{
-			SvStl::MessageContainer MsgCont;
-			MsgCont.setMessage( SVMSG_RRS_4_GENERAL_WARNING, SvStl::Tid_ProductNotFound, SvStl::SourceFileParams(StdMessageParams) );
-			throw MsgCont;
-		}
-		else
-		{
-			rslt = lastResult;
-		}
+		SvStl::MessageContainer MsgCont;
+		SVStringVector msgList;
+		msgList.push_back(SVString(listName.c_str()));
+		MsgCont.setMessage(SVMSG_RRS_3_GENERAL_ERROR, SvStl::Tid_InvalidMonitorlist, msgList, SvStl::SourceFileParams(StdMessageParams));
+		throw MsgCont;
 	}
-	else
+	SvSml::Failstatus* pLastFailstatus(nullptr);
+	SvSml::FailstatusPointer  new_FailstatusPtr(new SvSml::Failstatus);
+	auto& it = g_LastFailstatus.find(listName);
+	if (it != g_LastFailstatus.end())
 	{
-		long idx = -1;
-		const SvSml::ProductPtr product = rReader.RequestNextProduct(idx);
-		rslt = WriteProductItems<SvSol::UdpApi>(product, *PMonitorListCpy,pMemReader);
+		pLastFailstatus = it->second.get();
+	}
 
-		ProductPtrPair prevProduct = lastProductPtrPair;
-		lastProductPtrPair = std::make_pair(product, idx);
-		lastResult = rslt;
-		if (prevProduct.second >= 0)
-		{
-			rReader.ReleaseProduct(prevProduct.first, prevProduct.second);
-		}
+	SvSml::SharedMemReader::retvalues ret =
+		pMemReader->GetFailstatus(listName.c_str(), new_FailstatusPtr.get(), pLastFailstatus);
+
+	switch (ret)
+	{
+	case SvSml::SharedMemReader::sucess:
+	{
+		rslt = WriteFailStatus(new_FailstatusPtr.get());
+		g_LastFailstatus[listName] = std::move(new_FailstatusPtr);
+	}
+	break;
+	case SvSml::SharedMemReader::last:
+	{
+		rslt = WriteFailStatus(pLastFailstatus);
+
+	}
+	break;
+	case SvSml::SharedMemReader::fail:
+	{
+		SvStl::MessageContainer MsgCont;
+		MsgCont.setMessage(SVMSG_RRS_4_GENERAL_WARNING, SvStl::Tid_FailstatusNotFound, SvStl::SourceFileParams(StdMessageParams));
+		throw MsgCont;
+	}
+	break;
 	}
 	return rslt;
 }
 
 
-
-//! for trig == -1 Get the values for the last saved reject   and store the product in lastRejectProduct
-//! for trig  > -1 return  product  from lastRejectProduct  if it has the tigger number trig
-//! \param rReader [in] reader 
-//! \param trig [in]   triggercount
-//! \param productItemNames [in] Listof item names 
-//! \param lastRejectProduct [in,out] last saved product.
-//! \returns Json::Value
-template<typename API>
-Json::Value GetRejectedProduct(SvSml::SVSharedPPQReader& rReader, long trig,  const SvSml::MonitorListCpy& rMonitorListCpy, ProductPtrPair&  rlastRejectProduct, SvSml::SharedMemReader  *pMemReader );
-
-//! for trig == -1 Get the values for the last saved reject   and store the product in lastRejectProduct
-//! for trig  > -1 return  product  from lastRejectProduct  if it has the tigger number trig
-//! \param rReader [in] reader 
-//! \param trig [in]   triggercount
-//! \param productItemNames [in] Listof item names 
-//! \param lastRejectProduct [in,out] last saved product.
-//! \returns Json::Value
-template<>
-Json::Value GetRejectedProduct<SvSol::TcpApi>(SvSml::SVSharedPPQReader& rReader, long trig,  const SvSml::MonitorListCpy& rMonitorListCpy, ProductPtrPair&  lastReject,SvSml::SharedMemReader  *pMemReader )
+//FOR TCAPI
+Json::Value  DispatchCmdGetReject(const JsonCmd & cmd, SvSml::SharedMemReader  *pMemReader)
 {
 	Json::Value rslt(Json::objectValue);
-
-	long idx = -1;
-	SvSml::ProductPtr product = rReader.RequestReject(trig, idx);
-	rslt = WriteProductItems<SvSol::TcpApi>(product, rMonitorListCpy,pMemReader);
-
-	ProductPtrPair prevReject = lastReject;
-	lastReject = std::make_pair(product, idx);
-	// Decide which product to keep and which to release...
-	if (prevReject.second >= 0)
+	const Json::Value &args = cmd[SVRC::cmd::arg];
+	SVString listName;
+	bool validArgs(false);
+	if (args.isMember(SVRC::arg::listName))
 	{
-		rReader.ReleaseReject(prevReject.first, prevReject.second);
+		listName = args[SVRC::arg::listName].asString();
+		validArgs = pMemReader->IsActiveMonitorList(listName);
+	}
+	if (validArgs == false)
+	{
+		SvStl::MessageContainer MsgCont;
+		SVStringVector msgList;
+		msgList.push_back(SVString(listName.c_str()));
+		MsgCont.setMessage(SVMSG_RRS_3_GENERAL_ERROR, SvStl::Tid_InvalidMonitorlist, msgList, SvStl::SourceFileParams(StdMessageParams));
+		throw MsgCont;
+	}
+	int trig = -1;
+	if (args.isMember(SVRC::arg::trgrCount))
+	{
+		trig = args[SVRC::arg::trgrCount].asInt();
 	}
 
-	return rslt;
-}
-
-//! for trig == -1 Get the values for the last saved reject   and store the product in lastRejectProduct
-//! for trig  > -1 return  product  from lastRejectProduct  if it has the tigger number trig
-//! \param rReader [in] reader 
-//! \param trig [in]   triggercount
-//! \param productItemNames [in] Listof item names 
-//! \param lastRejectProduct [in,out] last saved product.
-//! \returns Json::Value
-template<>
-Json::Value GetRejectedProduct<SvSol::UdpApi>(SvSml::SVSharedPPQReader& rReader, long trig, const SvSml::MonitorListCpy& rMonitorListCpy, ProductPtrPair&  lastRejectProduct,SvSml::SharedMemReader  *pMemReader )
-{
-	static Json::Value lastResult(Json::objectValue);
-	Json::Value rslt(Json::objectValue);
-	if (trig >= 0)
+	SvSml::MLProduct* pLastReject(nullptr);
+	SvSml::productPointer new_productPtr(new SvSml::MLProduct());
+	auto& it = g_LastReject.find(listName);
+	if (it != g_LastReject.end())
 	{
-		if (lastRejectProduct.second < 0 || lastRejectProduct.first == nullptr||  trig != lastRejectProduct.first->product.m_TriggerCount)
-		{
-			SvStl::MessageContainer MsgCont;
-			MsgCont.setMessage( SVMSG_RRS_4_GENERAL_WARNING, SvStl::Tid_RejectNotFound, SvStl::SourceFileParams(StdMessageParams) );
-			throw MsgCont;
-		}
-		else
-		{
-			rslt = lastResult;
-		}
+		pLastReject = it->second.get();
 	}
-	else
+
+	SvSml::SharedMemReader::retvalues ret =
+		pMemReader->GetRejectData(listName.c_str(), trig, new_productPtr.get(), pLastReject, FALSE);
+	switch (ret)
 	{
-		long idx = -1;
-		const SvSml::ProductPtr product = rReader.RequestReject(trig, idx);
-		rslt = WriteProductItems<SvSol::UdpApi>(product, rMonitorListCpy,pMemReader);
-
-		ProductPtrPair prevReject = lastRejectProduct;
-
-		lastRejectProduct = std::make_pair(product, idx);
-		lastResult = rslt;
-		// Decide which product to keep and which to release...
-		if (prevReject.second >= 0)
+	case SvSml::SharedMemReader::sucess:
+	{
+		DWORD index = pMemReader->GetSlotManagerIndexForMonitorList(listName.c_str());
+		if (nullptr != pLastReject)
 		{
-			rReader.ReleaseReject(prevReject.first, prevReject.second);
+			///release Readerslot for last reject
+			if (index < 0)
+			{
+				SvStl::MessageContainer MsgCont;
+				MsgCont.setMessage(SVMSG_RRS_4_GENERAL_WARNING, SvStl::Tid_RejectNotFound, SvStl::SourceFileParams(StdMessageParams));
+				throw MsgCont;
+			}
+			pMemReader->GetSlotManager(index)->ReleaseReaderSlot(pLastReject->m_slot);
 		}
+
+		rslt = WriteProduct<SvSol::TcpApi>(new_productPtr.get(), pMemReader);
+		///now the last is the newone
+		g_LastProduct[listName] = std::move(new_productPtr);
+	}
+	break;
+	case SvSml::SharedMemReader::last:
+	{
+		rslt = WriteProduct<SvSol::TcpApi>(pLastReject, pMemReader);
+
+	}
+	break;
+	case SvSml::SharedMemReader::fail:
+	{
+		SvStl::MessageContainer MsgCont;
+		MsgCont.setMessage(SVMSG_RRS_4_GENERAL_WARNING, SvStl::Tid_ProductNotFound, SvStl::SourceFileParams(StdMessageParams));
+		throw MsgCont;
+	}
+	break;
 	}
 	return rslt;
 }
-
 
 
 template<>
 Json::Value DispatchCommand<SvSol::TcpApi>(const JsonCmd & cmd, SvSml::SharedMemReader  *pMemReader)
 {
 	Json::Value rslt(Json::objectValue);
-	if (false == cmd.isObject() || false ==  cmd.isMember(SVRC::cmd::name))
+	if (false == cmd.isObject() || false == cmd.isMember(SVRC::cmd::name))
 	{
 		SvStl::MessageContainer MsgCont;
 		SVStringVector msgList;
-		msgList.push_back( SVString( cmd[SVRC::cmd::name].asString().c_str() ) );
-		MsgCont.setMessage( SVMSG_RRS_3_GENERAL_ERROR, SvStl::Tid_InvalidCommand, msgList, SvStl::SourceFileParams(StdMessageParams) );
+		msgList.push_back(SVString(cmd[SVRC::cmd::name].asString().c_str()));
+		MsgCont.setMessage(SVMSG_RRS_3_GENERAL_ERROR, SvStl::Tid_InvalidCommand, msgList, SvStl::SourceFileParams(StdMessageParams));
 		throw MsgCont;
 	}
 
 	if (cmd[SVRC::cmd::name] == SVRC::cmdName::getFail)
 	{
-		const Json::Value & args = cmd[SVRC::cmd::arg];
-		SVString ppqName;
-		SVString listName;
-		bool validArgs(false);
-		if(args.isMember(SVRC::arg::listName))
-		{
-			listName = args[SVRC::arg::listName].asString();
-			validArgs = pMemReader->IsActiveMonitorList(listName);
-		}
+		return DispatchCmdGetFailstatus(cmd, pMemReader);
 
-	
-		if(validArgs)
-		{
-			const SvSml::MonitorListCpy*  mlcP =  pMemReader->m_MLContainer.GetMonitorListCpyPointer(listName);
-			ppqName = mlcP->GetPPQname();
-			SvSml::upSharedPPQReader& pPPQReader = pMemReader->GetPPQReaderPtr(ppqName);
-			if(pPPQReader.get() == nullptr)
-			{
-				SvStl::MessageContainer MsgCont;
-				MsgCont.setMessage( SVMSG_RRS_3_GENERAL_ERROR, SvStl::Tid_CannotOpenReader, SvStl::SourceFileParams(StdMessageParams) );
-				throw MsgCont;
-			}
-			SvSml::FailStatusMap fsMap = pPPQReader->GetFailStatus(mlcP->GetMonitorEntries(SvSml::ListType::failStatus));
-			if (static_cast<int>(fsMap.size()) > mlcP->m_rejectDepth)
-			{
-				size_t sz = fsMap.size();
-				SvSml::FailStatusMap::iterator it = fsMap.begin();
-				std::advance(it, sz - mlcP->m_rejectDepth);
-				fsMap.erase(fsMap.begin(), it);
-			}
-			rslt = WriteFailStatus(fsMap);
-			return rslt;
-		}
-		else
-		{
-			SvStl::MessageContainer MsgCont;
-			SVStringVector msgList;
-			msgList.push_back( SVString( listName.c_str() ) );
-			MsgCont.setMessage( SVMSG_RRS_3_GENERAL_ERROR, SvStl::Tid_InvalidArguments, msgList, SvStl::SourceFileParams(StdMessageParams) );
-			throw MsgCont;
-		}
 	}
 	else if (cmd[SVRC::cmd::name] == SVRC::cmdName::getRjct)
 	{
-		const Json::Value & args = cmd[SVRC::cmd::arg];
-		SVString ppqName;
-		SVString listName;
-		
-		
-		bool validArgs(false);
-		if(args.isMember(SVRC::arg::trgrCount)  && args.isMember(SVRC::arg::listName) )
-		{
-			listName = args[SVRC::arg::listName].asString();
-			validArgs = pMemReader->IsActiveMonitorList(listName);
-		}
-		
-		if(validArgs)
-		{
-			const SvSml::MonitorListCpy*  mlcP =  pMemReader->m_MLContainer.GetMonitorListCpyPointer(listName);
-				ppqName = mlcP->GetPPQname();
-				SvSml::upSharedPPQReader& pPPQReader = pMemReader->GetPPQReaderPtr(ppqName);
-				if(pPPQReader.get() == nullptr)
-				{
-					SvStl::MessageContainer MsgCont;
-					MsgCont.setMessage( SVMSG_RRS_3_GENERAL_ERROR, SvStl::Tid_CannotOpenReader, SvStl::SourceFileParams(StdMessageParams) );
-				throw MsgCont;
-			}
-			long trig = args[SVRC::arg::trgrCount].asInt();
-			rslt = GetRejectedProduct<SvSol::TcpApi>(*(pPPQReader.get()), trig, *(mlcP),g_lastRejectMap[ppqName],pMemReader );
-			return rslt;
-		}
-		else
-		{
-			SvStl::MessageContainer MsgCont;
-			SVStringVector msgList;
-			msgList.push_back( SVString( listName.c_str() ) );
-			MsgCont.setMessage( SVMSG_RRS_3_GENERAL_ERROR, SvStl::Tid_InvalidArguments, msgList, SvStl::SourceFileParams(StdMessageParams) );
-			throw MsgCont;
-		}
+		return DispatchCmdGetReject(cmd, pMemReader);
 	}
 	else if (cmd[SVRC::cmd::name] == SVRC::cmdName::getVersion)
 	{
@@ -701,24 +617,27 @@ Json::Value DispatchCommand<SvSol::TcpApi>(const JsonCmd & cmd, SvSml::SharedMem
 		rslt[SVRC::result::SVO_ver] = RRSVersionString::Get().c_str();
 		return rslt;
 	}
-
-	SvStl::MessageContainer MsgCont;
-	SVStringVector msgList;
-	msgList.push_back( SVString() );
-	MsgCont.setMessage( SVMSG_RRS_3_GENERAL_ERROR, SvStl::Tid_InvalidCommand, msgList, SvStl::SourceFileParams(StdMessageParams) );
-	throw MsgCont;
+	else
+	{
+		SvStl::MessageContainer MsgCont;
+		SVStringVector msgList;
+		msgList.push_back(SVString());
+		MsgCont.setMessage(SVMSG_RRS_3_GENERAL_ERROR, SvStl::Tid_InvalidCommand, msgList, SvStl::SourceFileParams(StdMessageParams));
+		throw MsgCont;
+	}
+	return rslt;
 }
 
 template<>
 Json::Value DispatchCommand<SvSol::UdpApi>(const JsonCmd & cmd, SvSml::SharedMemReader*  pMemReader)
 {
 	Json::Value rslt(Json::objectValue);
-	if ( false == cmd.isObject() || false == cmd.isMember(SVRC::cmd::name))
+	if (false == cmd.isObject() || false == cmd.isMember(SVRC::cmd::name))
 	{
 		SvStl::MessageContainer MsgCont;
 		SVStringVector msgList;
-		msgList.push_back( SVString() );
-		MsgCont.setMessage( SVMSG_RRS_3_GENERAL_ERROR, SvStl::Tid_InvalidCommand, msgList, SvStl::SourceFileParams(StdMessageParams) );
+		msgList.push_back(SVString());
+		MsgCont.setMessage(SVMSG_RRS_3_GENERAL_ERROR, SvStl::Tid_InvalidCommand, msgList, SvStl::SourceFileParams(StdMessageParams));
 		throw MsgCont;
 	}
 
@@ -726,75 +645,85 @@ Json::Value DispatchCommand<SvSol::UdpApi>(const JsonCmd & cmd, SvSml::SharedMem
 	{
 		SvStl::MessageContainer MsgCont;
 		SVStringVector msgList;
-		msgList.push_back( SVString( cmd[SVRC::cmd::name].asString().c_str() ) );
-		MsgCont.setMessage( SVMSG_RRS_3_GENERAL_ERROR, SvStl::Tid_InvalidCommand, msgList, SvStl::SourceFileParams(StdMessageParams) );
+		msgList.push_back(SVString(cmd[SVRC::cmd::name].asString().c_str()));
+		MsgCont.setMessage(SVMSG_RRS_3_GENERAL_ERROR, SvStl::Tid_InvalidCommand, msgList, SvStl::SourceFileParams(StdMessageParams));
 		throw MsgCont;
 	}
 
 	const Json::Value & args = cmd[SVRC::cmd::arg];
-	SVString ppqName;
 	SVString listName;
-	
 	bool validArgs(false);
-	if( args.isMember(SVRC::arg::listName) )
+
+	if (args.isMember(SVRC::arg::listName))
 	{
 		listName = args[SVRC::arg::listName].asString();
 		validArgs = pMemReader->IsActiveMonitorList(listName);
 	}
-
-	if(validArgs)
-	{
-
-		const SvSml::MonitorListCpy*  mlcP =  pMemReader->m_MLContainer.GetMonitorListCpyPointer(listName);
-		ppqName = mlcP->GetPPQname();
-		SvSml::upSharedPPQReader& pPPQReader = pMemReader->GetPPQReaderPtr(ppqName);
-		if(pPPQReader.get() == nullptr)
-		{
-			SvStl::MessageContainer MsgCont;
-			MsgCont.setMessage( SVMSG_RRS_3_GENERAL_ERROR, SvStl::Tid_CannotOpenReader, SvStl::SourceFileParams(StdMessageParams) );
-			throw MsgCont;
-		}
-
-		long trig = -1;
-		if (args.isMember(SVRC::arg::trgrCount))
-		{
-			trig = args[SVRC::arg::trgrCount].asInt();
-		}
-		if (SvSml::LastInspectedFilter == mlcP->m_ProductFilter)
-		{
-			rslt = GetLastInspectedProduct( *pPPQReader.get(), trig, mlcP, g_LastProductMap[ppqName],pMemReader);
-		}
-		else
-		{
-			// Check if there are rejects, if so get the rejected product, else get the last inspected product.
-			try
-			{
-				rslt = GetRejectedProduct<SvSol::UdpApi>( *pPPQReader.get(), trig, *(mlcP), g_lastRejectProductMap[ppqName],pMemReader);
-			}
-			catch( const SvStl::MessageContainer& rExp )
-			{
-				UNREFERENCED_PARAMETER(rExp);
-#if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)
-				::OutputDebugStringA(rExp.what());
-#endif
-				rslt = GetLastInspectedProduct( *pPPQReader.get(), trig, mlcP, g_LastProductMap[ppqName],pMemReader);
-			}
-		}
-	}
-	else
+	if (validArgs == false)
 	{
 		SvStl::MessageContainer MsgCont;
 		SVStringVector msgList;
-		msgList.push_back( SVString( listName.c_str() ) );
-		MsgCont.setMessage( SVMSG_RRS_3_GENERAL_ERROR, SvStl::Tid_InvalidMonitorlist, msgList, SvStl::SourceFileParams(StdMessageParams) );
+		msgList.push_back(SVString(listName.c_str()));
+		MsgCont.setMessage(SVMSG_RRS_3_GENERAL_ERROR, SvStl::Tid_InvalidMonitorlist, msgList, SvStl::SourceFileParams(StdMessageParams));
 		throw MsgCont;
 	}
+	long trig = -1;
+	if (args.isMember(SVRC::arg::trgrCount))
+	{
+		trig = args[SVRC::arg::trgrCount].asInt();
+	}
 
+	///cmd GetProduct 
+	SvSml::MLProduct* pLastProduct(nullptr);
+	SvSml::productPointer new_productPtr(new SvSml::MLProduct());
+	auto& it = g_LastProduct.find(listName);
+	if (it != g_LastProduct.end())
+	{
+		pLastProduct = it->second.get();
+	}
+
+	SvSml::SharedMemReader::retvalues ret =
+		pMemReader->GetProductData(listName.c_str(), trig, new_productPtr.get(), pLastProduct, FALSE);
+	switch (ret)
+	{
+	case SvSml::SharedMemReader::sucess:
+	{
+		DWORD index = pMemReader->GetSlotManagerIndexForMonitorList(listName.c_str());
+		if (nullptr != pLastProduct)
+		{
+			///release Readerslot for last product
+			if (index < 0)
+			{
+				SvStl::MessageContainer MsgCont;
+				MsgCont.setMessage(SVMSG_RRS_4_GENERAL_WARNING, SvStl::Tid_ProductNotFound, SvStl::SourceFileParams(StdMessageParams));
+				throw MsgCont;
+			}
+			pMemReader->GetSlotManager(index)->ReleaseReaderSlot(pLastProduct->m_slot);
+		}
+		///the last become the new one 
+		rslt = WriteProduct<SvSol::UdpApi>(new_productPtr.get(), pMemReader);
+		g_LastProduct[listName] = std::move(new_productPtr);
+	}
+	break;
+	case SvSml::SharedMemReader::last:
+	{
+		rslt = WriteProduct<SvSol::UdpApi>(pLastProduct, pMemReader);
+
+	}
+	break;
+	case SvSml::SharedMemReader::fail:
+	{
+		SvStl::MessageContainer MsgCont;
+		MsgCont.setMessage(SVMSG_RRS_4_GENERAL_WARNING, SvStl::Tid_ProductNotFound, SvStl::SourceFileParams(StdMessageParams));
+		throw MsgCont;
+	}
+	break;
+	}
 	return rslt;
 }
 
 template<typename API>
-std::string GenerateResponse(const JsonCmd & cmd,  SvSml::SharedMemReader* pMemReader )
+std::string GenerateResponse(const JsonCmd & cmd, SvSml::SharedMemReader* pMemReader)
 {
 	Json::Value rsp = NewResponse(cmd);
 	try
@@ -811,26 +740,26 @@ std::string GenerateResponse(const JsonCmd & cmd,  SvSml::SharedMemReader* pMemR
 			rsp[SVRC::cmd::reslts] = value;
 		}
 	}
-	catch( const SvStl::MessageContainer& rExp )
+	catch (const SvStl::MessageContainer& rExp)
 	{
 		rsp[SVRC::cmd::err] = rExp.what();
 		rsp[SVRC::cmd::hr] = Json::Value(E_FAIL);
 
-		SvStl::MessageMgrStd e( SvStl::LogOnly );
-		e.setMessage( rExp.getMessage() );
+		SvStl::MessageMgrStd e(SvStl::LogOnly);
+		e.setMessage(rExp.getMessage());
 	}
-	catch(std::exception& rExp)
+	catch (std::exception& rExp)
 	{
 		rsp[SVRC::cmd::err] = rExp.what();
 		rsp[SVRC::cmd::hr] = Json::Value(E_FAIL);
 
-		SvStl::MessageMgrStd Exception( SvStl::LogOnly );
+		SvStl::MessageMgrStd Exception(SvStl::LogOnly);
 		SVStringVector msgList;
-		msgList.push_back( rExp.what() );
-		Exception.setMessage( SVMSG_RRS_2_STD_EXCEPTION, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams) );
+		msgList.push_back(rExp.what());
+		Exception.setMessage(SVMSG_RRS_2_STD_EXCEPTION, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams));
 	}
 	Json::FastWriter writer;
-	return SVString( writer.write(rsp) );
+	return SVString(writer.write(rsp));
 }
 
 SVString BusyMessage(const JsonCmd & cmd)
@@ -839,7 +768,7 @@ SVString BusyMessage(const JsonCmd & cmd)
 	rsp[SVRC::cmd::hr] = STG_E_INUSE;
 	rsp[SVRC::cmd::err] = "Server busy.";
 	Json::FastWriter writer;
-	return SVString( writer.write(rsp) );
+	return SVString(writer.write(rsp));
 }
 
 
@@ -847,7 +776,7 @@ template<typename API, typename ServerSocket>
 void Handler(ServerSocket& sok, SvSml::SharedMemReader* pSharedMemReader);
 
 template <>
-void Handler<SvSol::UdpApi, UdpServerSocket>(UdpServerSocket& sok,  SvSml::SharedMemReader* pMemRead)
+void Handler<SvSol::UdpApi, UdpServerSocket>(UdpServerSocket& sok, SvSml::SharedMemReader* pMemRead)
 {
 	typedef SvSol::UdpApi API;
 	typedef UdpSocket Socket;
@@ -858,10 +787,10 @@ void Handler<SvSol::UdpApi, UdpServerSocket>(UdpServerSocket& sok,  SvSml::Share
 	Socket client = sok.Accept(&addr, &len); // for UDP this never blocks
 	if (FALSE == client.IsValidSocket())
 	{
-		SvStl::MessageMgrStd Exception( SvStl::LogOnly );
+		SvStl::MessageMgrStd Exception(SvStl::LogOnly);
 		SVStringVector msgList;
-		msgList.push_back( SVString( SvSol::SVSocketError::GetErrorText(SvSol::SVSocketError::GetLastSocketError() ) ) );
-		Exception.setMessage( SVMSG_RRS_3_GENERAL_ERROR, SvStl::Tid_SocketInvalid, msgList, SvStl::SourceFileParams(StdMessageParams) );
+		msgList.push_back(SVString(SvSol::SVSocketError::GetErrorText(SvSol::SVSocketError::GetLastSocketError())));
+		Exception.setMessage(SVMSG_RRS_3_GENERAL_ERROR, SvStl::Tid_SocketInvalid, msgList, SvStl::SourceFileParams(StdMessageParams));
 		return;
 	}
 
@@ -870,10 +799,8 @@ void Handler<SvSol::UdpApi, UdpServerSocket>(UdpServerSocket& sok,  SvSml::Share
 		const JsonCmd& cmd = ReadCommand(client);
 		if (!cmd.isNull())
 		{
-
-			bool isready = SvSml::ShareEvents::GetInstance().GetIsReady(); 
-
-			if(isready)
+			bool isready = SvSml::ShareEvents::GetInstance().GetIsReady();
+			if (isready)
 			{
 				SVString rResponse = GenerateResponse<API>(cmd, pMemRead);
 				client.Write(rResponse, SvSol::Traits<API>::needsHeader);
@@ -889,27 +816,27 @@ void Handler<SvSol::UdpApi, UdpServerSocket>(UdpServerSocket& sok,  SvSml::Share
 			std::cout << "null cmd \n";
 		}
 	}
-	catch( const SvStl::MessageContainer& rExp )
+	catch (const SvStl::MessageContainer& rExp)
 	{
-		SvStl::MessageMgrStd e( SvStl::LogOnly );
-		e.setMessage( rExp.getMessage() );
+		SvStl::MessageMgrStd e(SvStl::LogOnly);
+		e.setMessage(rExp.getMessage());
 	}
-	catch(std::exception& rExp)
+	catch (std::exception& rExp)
 	{
-		SvStl::MessageMgrStd Exception( SvStl::LogOnly );
+		SvStl::MessageMgrStd Exception(SvStl::LogOnly);
 		SVStringVector msgList;
-		msgList.push_back( rExp.what() );
-		Exception.setMessage( SVMSG_RRS_2_STD_EXCEPTION, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams) );
+		msgList.push_back(rExp.what());
+		Exception.setMessage(SVMSG_RRS_2_STD_EXCEPTION, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams));
 	}
 
 
 }
 
 template<>
-void Handler<SvSol::TcpApi, TcpServerSocket>(TcpServerSocket& sok,SvSml::SharedMemReader* pMemRead)
+void Handler<SvSol::TcpApi, TcpServerSocket>(TcpServerSocket& sok, SvSml::SharedMemReader* pMemRead)
 {
 	typedef SvSol::TcpApi API;
-	typedef TcpSocket Socket; 
+	typedef TcpSocket Socket;
 	static long lastReady = -1;
 	static long lastFilterChange = -1;
 	sockaddr addr;
@@ -921,7 +848,7 @@ void Handler<SvSol::TcpApi, TcpServerSocket>(TcpServerSocket& sok,SvSml::SharedM
 		client.DisableDelay(); // turn off nagle
 	}
 
-	while( WAIT_OBJECT_0 != WaitForSingleObject(g_ServiceStopEvent, Timeout_Thread_Functions) && client.IsValidSocket() && client.IsConnected())
+	while (WAIT_OBJECT_0 != WaitForSingleObject(g_ServiceStopEvent, Timeout_Thread_Functions) && client.IsValidSocket() && client.IsConnected())
 	{
 		if (client.DataAvailable())
 		{
@@ -930,11 +857,11 @@ void Handler<SvSol::TcpApi, TcpServerSocket>(TcpServerSocket& sok,SvSml::SharedM
 				const JsonCmd& cmd = ReadCommand(client);
 				if (!cmd.isNull())
 				{
-					bool isready = SvSml::ShareEvents::GetInstance().GetIsReady(); 
-					
-					if(isready)
+					bool isready = SvSml::ShareEvents::GetInstance().GetIsReady();
+
+					if (isready)
 					{
-						
+
 						SVString  rResponse = GenerateResponse<API>(cmd, pMemRead);
 						client.Write(rResponse, SvSol::Traits<API>::needsHeader);
 						break;
@@ -956,17 +883,17 @@ void Handler<SvSol::TcpApi, TcpServerSocket>(TcpServerSocket& sok,SvSml::SharedM
 
 				}
 			}
-			catch( const SvStl::MessageContainer& rExp )
+			catch (const SvStl::MessageContainer& rExp)
 			{
-				SvStl::MessageMgrStd e( SvStl::LogOnly );
-				e.setMessage( rExp.getMessage() );
+				SvStl::MessageMgrStd e(SvStl::LogOnly);
+				e.setMessage(rExp.getMessage());
 			}
-			catch(std::exception & rExp)
+			catch (std::exception & rExp)
 			{
-				SvStl::MessageMgrStd Exception( SvStl::LogOnly );
+				SvStl::MessageMgrStd Exception(SvStl::LogOnly);
 				SVStringVector msgList;
-				msgList.push_back( rExp.what() );
-				Exception.setMessage( SVMSG_RRS_2_STD_EXCEPTION, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams) );
+				msgList.push_back(rExp.what());
+				Exception.setMessage(SVMSG_RRS_2_STD_EXCEPTION, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams));
 			}
 		}
 	}
@@ -979,33 +906,33 @@ DWORD WINAPI servcmd(LPVOID ptr)
 	{
 		typedef SvSol::SVServerSocket<API> ServerSocket;
 
-		SvSml::SharedMemReader*  pMemRead = static_cast<SvSml::SharedMemReader*>( ptr);
-		
+		SvSml::SharedMemReader*  pMemRead = static_cast<SvSml::SharedMemReader*>(ptr);
+
 		ServerSocket sok;
 		sok.Create();
 		sok.SetBlocking();
 		sok.Listen(port<API>::number);
-		while( WAIT_OBJECT_0 != WaitForSingleObject(g_ServiceStopEvent, Timeout_Thread_Functions)  )
+		while (WAIT_OBJECT_0 != WaitForSingleObject(g_ServiceStopEvent, Timeout_Thread_Functions))
 		{
 			if (sok.ClientConnecting())
 			{
-				Handler<API>(sok,  pMemRead);
+				Handler<API>(sok, pMemRead);
 			}
 
 		}
 	}
 
-	catch( const SvStl::MessageContainer& rExp )
+	catch (const SvStl::MessageContainer& rExp)
 	{
-		SvStl::MessageMgrStd e( SvStl::LogOnly );
-		e.setMessage( rExp.getMessage() );
+		SvStl::MessageMgrStd e(SvStl::LogOnly);
+		e.setMessage(rExp.getMessage());
 	}
-	catch(std::exception & rExp)
+	catch (std::exception & rExp)
 	{
-		SvStl::MessageMgrStd Exception( SvStl::LogOnly );
+		SvStl::MessageMgrStd Exception(SvStl::LogOnly);
 		SVStringVector msgList;
-		msgList.push_back( rExp.what() );
-		Exception.setMessage( SVMSG_RRS_2_STD_EXCEPTION, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams) );
+		msgList.push_back(rExp.what());
+		Exception.setMessage(SVMSG_RRS_2_STD_EXCEPTION, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams));
 	}
 	return 0;
 }
@@ -1015,7 +942,7 @@ bool CheckCommandLineArgs(int argc, _TCHAR* argv[], LPCTSTR option)
 	bool bFound = false;
 	if (argc > 1)
 	{
-		for (int i = 1;i < argc && !bFound;i++)
+		for (int i = 1; i < argc && !bFound; i++)
 		{
 			if (_tcsicmp(argv[i], option) == 0)
 			{
@@ -1028,13 +955,24 @@ bool CheckCommandLineArgs(int argc, _TCHAR* argv[], LPCTSTR option)
 
 // Command Line arguments: /nocheck
 // /nocheck means to ignore the 2 GiG size requirement
-void StartThreads( DWORD argc, LPTSTR  *argv )
+void StartThreads(DWORD argc, LPTSTR  *argv)
 {
+
+
+	/// Allocate MilSystem
+	MIL_ID AppId = MappAlloc(M_DEFAULT, M_NULL);
+	if (AppId == M_NULL)
+	{
+		std::cout << "MapAlloc failed";
+		return;
+	}
+	MappControl(M_ERROR, M_PRINT_DISABLE);
+
 	// check command line args - if /nocheck is specified - ignore the < 2 Gig error
 	bool bCheckSizeOverride = CheckCommandLineArgs(argc, argv, _T("/nocheck"));
 
 	HRESULT hr = SvSml::SVSharedConfiguration::SharedResourcesOk();
-	if (S_OK != hr )
+	if (S_OK != hr)
 	{
 		SVString msg;
 		if (STG_E_INSUFFICIENTMEMORY == hr)
@@ -1062,29 +1000,20 @@ void StartThreads( DWORD argc, LPTSTR  *argv )
 			::OutputDebugStringA(msg.c_str());
 #endif
 			std::cout << msg;
-			// Messagebox ?
 			return;
 		}
 	}
 	try
 	{
-		
-
-		
 		SvSml::ShareEvents::GetInstance().SetCallbackFunction(EventHandler);
 		SvSml::ShareEvents::GetInstance().StartWatch();
-
-
-
 		previousHandler = signal(SIGSEGV, AccessViolationHandler);
 
 		SVString title = _T("Run/Reject Server ");
 		title += RRSVersionString::Get();
-		SetConsoleTitle( title.c_str() );
+		SetConsoleTitle(title.c_str());
 		SvSol::SVSocketLibrary::Init();
-		
 
-		
 		g_threads[0] = CreateThread(nullptr, 0, servimg, LPVOID(&g_MemReader), 0, &g_threadIds[0]); ///TODO  
 		g_threads[1] = CreateThread(nullptr, 0, servcmd<SvSol::TcpApi>, LPVOID(&g_MemReader), 0, &g_threadIds[1]);
 		g_threads[2] = CreateThread(nullptr, 0, servcmd<SvSol::UdpApi>, LPVOID(&g_MemReader), 0, &g_threadIds[2]);
@@ -1092,43 +1021,35 @@ void StartThreads( DWORD argc, LPTSTR  *argv )
 		// stop the threads...
 		::WaitForMultipleObjects(3, g_threads, true, INFINITE);
 		signal(SIGSEGV, previousHandler);
-		
+
 	}
 	catch (std::exception& rExp)
 	{
-		SvStl::MessageMgrStd Exception( SvStl::LogOnly );
+		SvStl::MessageMgrStd Exception(SvStl::LogOnly);
 		SVStringVector msgList;
-		msgList.push_back( rExp.what() );
-		Exception.setMessage( SVMSG_RRS_3_GENERAL_ERROR, SvStl::Tid_FailedtoStart, msgList, SvStl::SourceFileParams(StdMessageParams) );
+		msgList.push_back(rExp.what());
+		Exception.setMessage(SVMSG_RRS_3_GENERAL_ERROR, SvStl::Tid_FailedtoStart, msgList, SvStl::SourceFileParams(StdMessageParams));
 	}
 	SvSol::SVSocketLibrary::Destroy();
+	MappFree(AppId);
 }
 
 int _tmain(int argc, _TCHAR* argv[])
 {
 	int rc = 0;
 
-	SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-	Exception.setMessage( SVMSG_RRS_0_STARTED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
-
-	/// Allocate MilSystem
-	MIL_ID AppId  = MappAlloc(M_DEFAULT, M_NULL);
-	if(AppId == M_NULL )
-	{
-		return rc;
-	}
-	MappControl( M_ERROR, M_PRINT_DISABLE );
-	
+	SvStl::MessageMgrStd Exception(SvStl::LogOnly);
+	Exception.setMessage(SVMSG_RRS_0_STARTED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
 	//Function pointer for starting the threads
 	gp_StartThreads = &StartThreads;
 
-	SERVICE_TABLE_ENTRY ServiceTable[] = 
+	SERVICE_TABLE_ENTRY ServiceTable[] =
 	{
-		{ cServiceName, (LPSERVICE_MAIN_FUNCTION) ServiceMain },
+		{ cServiceName, (LPSERVICE_MAIN_FUNCTION)ServiceMain },
 		{ nullptr, nullptr}
 	};
 
-	if( !StartServiceCtrlDispatcher( ServiceTable ) )
+	if (!StartServiceCtrlDispatcher(ServiceTable))
 	{
 #if defined (TRACE_THEM_ALL) || defined (TRACE_FAILURE)	
 		OutputDebugString(_T("StartServiceCtrlDispatcher returned error"));
@@ -1141,7 +1062,6 @@ int _tmain(int argc, _TCHAR* argv[])
 		}
 	}
 
-	Exception.setMessage( SVMSG_RRS_1_STOPPED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
-	MappFree(AppId);
+	Exception.setMessage(SVMSG_RRS_1_STOPPED, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
 	return rc;
 }

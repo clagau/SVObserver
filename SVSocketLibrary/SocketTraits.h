@@ -42,7 +42,7 @@ namespace SvSol
 		static const std::basic_string<TCHAR> ApiName() { return _T("udp"); }
 		static void CreateOptions(Socket_t s) {}
 		static const char tick = 'u';
-		static const size_t buffer_size = 6000;// 1450;// //@Todo[MEC][7.50] [05.05.2017] 6000 was mutch faster has to be the same in SVRC client
+		static const size_t buffer_size = 6000;//has to be the same in SVRC client
 		static const bool needsHeader = true;
 	};
 } //namespace SvSol

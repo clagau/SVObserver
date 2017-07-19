@@ -24,7 +24,6 @@ namespace SvSml
 		SVString m_ShareName;
 		const SVMonitorListStore* m_store;
 		std::shared_ptr<bip::managed_shared_memory> m_pManagedSharedMemory;
-
 	public:
 		SVMonitorListReader();
 		~SVMonitorListReader();

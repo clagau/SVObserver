@@ -3,7 +3,6 @@
 /// \file MonitorEntry.h 
 /// All Rights Reserved 
 //*****************************************************************************
-
 ///classes for holding data for one element in the monitorlist  
 //******************************************************************************
 
@@ -19,28 +18,22 @@
 
 namespace SvSml
 {
-		
 	struct ShMonitorEntry; 
-	///Struct holds data for one entry in Monitorlist
-	struct MonitorEntry
-	{	
-	public:
-		MonitorEntry();
-		MonitorEntry(const SVString &name, DWORD type);
-		MonitorEntry(const ShMonitorEntry &rentry );
-		
-		bool GetMatroxImageProps(MatroxImageProps &ImageProps);
-		void SetMatroxImageProps(const MatroxImageProps  &rImageProps);
-	public:	
-		/// fills the inspectioninfomap, with information of the size for Inspection store
-		
-		SVString name; //<Full name 
+	///struct holds data element used in MonitorEntry and ShMonitorEntry
+	struct MonitorEntryData
+	{
+		MonitorEntryData();
 		DWORD InspectionStoreId; //<Inspection Store Index  
 		DWORD ItemId;	//<Index in the Inspection Store
 		DWORD ObjectType;		//<SVObjectTypeEnum 
+		DWORD variant_type; ///vt value from variant
 		DWORD Store_Offset;  ///offset in Inspection Store
+
+		BOOL isArray;
+		BOOL wholeArray;
+		long arrayIndex;
+		DWORD m_MonitorListFlag; // combination of SvSml::ListFlags[]
 		
-		//get values  SVMatroxBufferInterface::InquireBufferProperties(const SVMatroxBuffer& rBuffer, MatroxImageProps& rImageProps)
 		long long sizeY;		//< MbufInquire  M_SIZE_Y   
 		long long sizeX;		//< MbufInquire  M_SIZE_Y   
 		long long PitchByte;	//< MbufInquire  M_PITCH_BYTE   
@@ -50,8 +43,25 @@ namespace SvSml
 		long long BandSize;		//< MbufInquire  M_SIZE_BAND   
 		long long ByteSize;		//< MbufInquire  M_SIZE_BYTE   
 	};
+	
+	///Struct holds data for one entry in Monitorlist
+	struct MonitorEntry
+	{	
+	public:
+		MonitorEntry();
+		MonitorEntry(const SVString &name);
+		MonitorEntry(const ShMonitorEntry &rentry );
+		
+		bool GetMatroxImageProps(MatroxImageProps &ImageProps);
+		void SetMatroxImageProps(const MatroxImageProps  &rImageProps);
+		bool GetValue(SVString& string, BYTE* offset);
+		bool GetValue(_variant_t& val , BYTE* offset);
 
-
+	public:	
+		GUID m_Guid;   //Object Guid 
+		SVString name; //<Full name 
+		MonitorEntryData data;
+	};
 	
 	typedef std::shared_ptr<MonitorEntry>  MonitorEntryPointer; //< shared_ptr MonitorEntry 
 	typedef std::vector<MonitorEntryPointer>  MonitorEntries; //< vector MonitorEntryPointer 
@@ -64,22 +74,7 @@ namespace SvSml
 		ShMonitorEntry(const void_allocator &allocator, const MonitorEntry &rentry );
 		
 		bip_string name;
-		DWORD InspectionStoreId; //<Inspection Store Index  
-		DWORD ItemId;	//<Index in the Inspection Store
-		DWORD ObjectType;		//<SVObjectTypeEnum
-		//long long  size;		//Size of the object
-		DWORD Store_Offset;  ///offset in Inspection Store
-		
-
-		long long sizeY;
-		long long sizeX;
-		long long PitchByte; 
-		long long Pitch; 
-		long long Matrox_type; 
-		long long Attrib;
-
-		long long BandSize;
-		long long ByteSize;
+		MonitorEntryData data;
 	};
 
 	typedef bip::allocator<ShMonitorEntry, segment_manager_t>     ShMoListEntry_allocator;

@@ -81,6 +81,7 @@ public:
 	bool CompareWithCurrentValue( const SVString& rCompare ) const;
 	void setStatic( bool isStatic ) { m_isStatic = isStatic; };
 	
+
 #pragma region virtual method
 	virtual UINT SetObjectAttributesSet( UINT Attributes, SvOi::SetAttributeType Type, int iIndex=0 ) override;
 

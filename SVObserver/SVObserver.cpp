@@ -120,6 +120,7 @@
 #include "SVObjectLibrary\GlobalConst.h"
 #include "SVMatroxLibrary\SVMatroxSystemInterface.h"
 #include "SVSharedMemoryLibrary\ShareEvents.h"
+#include "SVSharedMemoryLibrary\MLPPQInfo.h"
 
 #pragma endregion Includes
 
@@ -5425,8 +5426,7 @@ void SVObserverApp::Start()
 		}
 		
 		PPQMonitorList ppqMonitorList;
-		pConfig->BuildPPQMonitorList(ppqMonitorList); //CREATE MONITORLISTCOPIES 
-	
+		pConfig->BuildPPQMonitorList(ppqMonitorList); //create MonitorlistCopies  in SvSml::SharedMemWriter
 		
 		SvSml::SharedMemWriter::Instance().CalculateStoreIds();
 		SvSml::SharedMemWriter::Instance().WriteMonitorList();
@@ -5436,8 +5436,12 @@ void SVObserverApp::Start()
 		{
 			//clear the shared memory.
 			//to clear the shared memory is only real necessary when the Monitorlist has changed
-			SvSml::SharedMemWriter::Instance().ClearPPQSharedMemory();
+			SvSml::SharedMemWriter::Instance().CloseDataConnection();
 		}
+		//create image and data stores create slot ringbuffer;
+		SvSml::SharedMemWriter::Instance().CreateManagmentAndStores(SvSml::MLPPQInfo::NumProductSlot);
+		
+
 
 		///In this loop the ImageStores are created 
 		for( long l = 0; S_OK == Result && l < lSize; l++ )
@@ -5449,10 +5453,14 @@ void SVObserverApp::Start()
 				///Set NAK Behavior
 				pPPQ->SetNAKMode(m_rInitialInfo.m_NAKMode, m_rInitialInfo.m_NAKParameter);
 
-				// Do this before calling CanGoOnline
+				
+				// Do this before calling CanGoOnline 
 				pPPQ->SetMonitorList(ppqMonitorList[pPPQ->GetName()]);
 
+				pPPQ->SetSlotmanager(SvSml::SharedMemWriter::Instance().GetSlotManager(pPPQ->GetName()));
+
 				pPPQ->PrepareGoOnline();
+				
 
 				SvTi::SVTriggerObject* pTrigger( nullptr );
 				pPPQ->GetTrigger(pTrigger);
@@ -5464,7 +5472,7 @@ void SVObserverApp::Start()
 		}// end for
 		
 		
-		if( pConfig->GetActiveMonitorListCount() > 0) 
+		if(SvSml::SharedMemWriter::Instance().GetActiveMonitorListCount() > 0)
 		{
 			SvSml::SharedMemWriter::Instance().CreateSharedMatroxBuffer();
 			SvSml::ShareEvents::GetInstance().SignaltReadyStatus();

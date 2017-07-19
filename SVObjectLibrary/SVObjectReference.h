@@ -128,7 +128,6 @@ protected:
 	mutable SvOi::IValueObject* m_pValueObject;
 	GUID m_Guid;
 	SVObjectNameInfo m_NameInfo;
-
 	long m_ArrayIndex; // zero based Array index.   -1 and true for isArray indicates reference to whole array
 };
 

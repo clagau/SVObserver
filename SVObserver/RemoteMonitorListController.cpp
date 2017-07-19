@@ -20,6 +20,7 @@
 #include "SVIODoc.h"
 #include "SVIOTabbedView.h"
 #include "SVSharedMemoryLibrary/SharedMemWriter.h"
+#include "SVSharedMemoryLibrary/SVSharedMemorySettings.h"
 #include "SVObserver.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVUtilityLibrary/SVGUID.h"
@@ -246,7 +247,7 @@ HRESULT RemoteMonitorListController::InitMonitorListInSharedMemory(size_t size)
 }
 
 
-size_t RemoteMonitorListController::CalcSharedMemorySize(const RemoteMonitorList& rList)
+size_t RemoteMonitorListController::CalcSizeForMonitorList(const RemoteMonitorList& rList)
 {
 	size_t size(0);
 	for (RemoteMonitorList::const_iterator it = rList.begin();it != rList.end();++it)
@@ -274,7 +275,7 @@ void RemoteMonitorListController::WriteMonitorListToMLContainer(const std::strin
 }
 
 ////////////////////////////////////////////////////////////////////////////
-// Build the PPQ monitor list.
+// Build the PPQ monitor list. and  Insert the monitorlist copies SvSml::SharedMemWriter Singelton 
 // It will separate and group the monitor list items by PPQ and Inspections
 // If successful, it will return S_OK
 ////////////////////////////////////////////////////////////////////////////
@@ -283,7 +284,8 @@ HRESULT RemoteMonitorListController::BuildPPQMonitorList(PPQMonitorList& ppqMoni
 	// Setup failStatus Streaming
 	SVFailStatusStreamManager::Instance().AttachPPQObservers(m_list);
 
-	size_t requiredSize = CalcSharedMemorySize(m_list);
+	
+	size_t requiredSize = CalcSizeForMonitorList(m_list);
 
 	///Clear monitorLists in shared Memory
 	HRESULT hr = InitMonitorListInSharedMemory(requiredSize);
@@ -295,8 +297,6 @@ HRESULT RemoteMonitorListController::BuildPPQMonitorList(PPQMonitorList& ppqMoni
 		for (RemoteMonitorList::const_iterator it = m_list.begin();it != m_list.end();++it)
 		{
 			// Only Activated Lists are sent to the Inspections and Monitor Lists can only be activated when Offline
-
-			///Insert Monitorlistcpy to singelton 
 			
 			bool bActive = it->second.IsActive();
 			if (bActive)
@@ -307,7 +307,7 @@ HRESULT RemoteMonitorListController::BuildPPQMonitorList(PPQMonitorList& ppqMoni
 				const MonitoredObjectList& rejectCond = it->second.GetRejectConditionList();
 				const SVString& ppqName = it->second.GetPPQName();
 
-				// write the monitorlist to shared memory...
+				// Insert the monitorlist copies SvSml::SharedMemWriter Singelton 
 				WriteMonitorListToMLContainer(it->first.c_str(), it->second);
 
 				SVMonitorItemList remoteValueList;

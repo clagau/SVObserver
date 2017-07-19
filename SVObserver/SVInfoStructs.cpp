@@ -506,7 +506,6 @@ const SVProductInfoStruct &SVProductInfoStruct::operator=( const SVProductInfoSt
 		m_svCameraInfos = p_rsvData.m_svCameraInfos;
 		m_svInspectionInfos = p_rsvData.m_svInspectionInfos;
 		m_lastInspectedSlot = p_rsvData.m_lastInspectedSlot;
-
 		if( p_rsvData.IsProductActive() )
 		{
 			SetProductActive();
@@ -541,7 +540,6 @@ HRESULT SVProductInfoStruct::Assign( const SVProductInfoStruct &p_rsvData, SVDat
 		l_Status = oPPQInfo.Assign( p_rsvData.oPPQInfo, p_LockType );
 
 		m_lastInspectedSlot = p_rsvData.m_lastInspectedSlot;
-
 		SVGuidSVCameraInfoStructMap::iterator l_Iter;
 		SVGuidSVCameraInfoStructMap::const_iterator l_RightIter;
 
@@ -618,7 +616,6 @@ void SVProductInfoStruct::InitProductInfo()
 	bStreamed           = FALSE;
 	hrPPQStatus         = S_OK;
 	m_lastInspectedSlot = -1;
-
 	oInputsInfo.Init();
 	oOutputsInfo.Init();
 	oPPQInfo.InitPPQInfo();
@@ -656,7 +653,6 @@ void SVProductInfoStruct::Reset()
 	bStreamed           = FALSE;
 	hrPPQStatus         = S_OK;
 	m_lastInspectedSlot = -1;
-
 	oInputsInfo.Reset();
 	oOutputsInfo.Reset();
 	oPPQInfo.Reset();

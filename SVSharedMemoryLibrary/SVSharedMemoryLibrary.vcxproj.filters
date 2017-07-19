@@ -7,49 +7,13 @@
     <ClCompile Include="SVSharedConfiguration.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVSharedData.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVSharedImage.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVSharedLastInspectedCache.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVSharedMemorySettings.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVSharedRejectCache.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVSharedValue.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVSharedMonitorList.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVSharedProduct.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVSharedProductStore.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVMonitorListStore.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVSharedPPQReader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVSharedPPQWriter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVSharedInspectionReader.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVSharedInspectionWriter.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVSharedInspections.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVMonitorListReader.cpp">
@@ -64,9 +28,6 @@
     <ClCompile Include="MonitorListCpy.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SharedImageStore.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="MonitorEntry.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -76,10 +37,19 @@
     <ClCompile Include="SharedMemWriter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SharedImageContainer.cpp">
+    <ClCompile Include="SharedMemReader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SharedMemReader.cpp">
+    <ClCompile Include="SharedDataStore.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SharedDataContainer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SMRingbuffer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="MLProduct.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -93,49 +63,13 @@
     <ClInclude Include="SVSharedConfiguration.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVSharedData.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVSharedImage.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVSharedMemorySettings.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVSharedLastInspectedCache.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVSharedRejectCache.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVSharedValue.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVSharedMonitorList.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVSharedProduct.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVSharedProductStore.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVMonitorListStore.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVSharedPPQReader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVSharedPPQWriter.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVSharedInspectionReader.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVSharedInspectionWriter.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVSharedInspections.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVMonitorListReader.h">
@@ -156,9 +90,6 @@
     <ClInclude Include="MonitorEntry.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SharedImageStore.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="MLInspectionInfo.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -168,10 +99,22 @@
     <ClInclude Include="SharedMemWriter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SharedImageContainer.h">
+    <ClInclude Include="SharedMemReader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SharedMemReader.h">
+    <ClInclude Include="SharedDataStore.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SharedDataContainer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SMRingbuffer.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MLPPQInfo.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="MLProduct.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

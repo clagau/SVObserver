@@ -124,6 +124,29 @@ HRESULT DoubleSortValueObject::GetValue( double& rValue, int Index, int Bucket) 
 	return E_FAIL;
 }
 
+
+HRESULT DoubleSortValueObject::CopyToMemoryBlock(BYTE* pMemoryBlock, DWORD MemByteSize, int Index /* = -1*/) const
+{
+	//! When Value Object is an array and index is -1 then use first index
+	if (isArray() && 0 > Index)
+	{
+		Index = 0;
+	}
+	if (0 <= Index)
+	{
+		if (m_sortContainer.size() > Index)
+		{
+			Index = m_sortContainer[Index];
+			return SVValueObjectClass<double>::CopyToMemoryBlock(pMemoryBlock, MemByteSize, Index);
+		}
+		else
+		{
+			return E_BOUNDS;
+		}
+	}
+	return E_FAIL;
+}
+
 HRESULT DoubleSortValueObject::getValues( std::vector<_variant_t>&  rValues, int Bucket ) const
 {
 	HRESULT Result( S_OK );

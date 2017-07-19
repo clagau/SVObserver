@@ -49,6 +49,12 @@ protected:
 	virtual int getResultSize() const override { return static_cast<int> (m_sortContainer.size()); };
 	virtual HRESULT GetArrayValues( std::vector<double>& rValues, int Bucket ) const override;
 
+	//! Copies the value object to the memory block
+	//! \param pMemoryBlock [in] Pointer to the byte address of the memory block
+	//! \param MemByteSize [in] The memory block byte size
+	//! \param Index [in] The index of the array (-1 if no array)
+	//! \returns S_OK if successful
+	virtual HRESULT CopyToMemoryBlock(BYTE* pMemoryBlock, DWORD MemByteSize, int Index = -1) const override;
 #pragma endregion Protected Methods
 
 #pragma region Private Methods

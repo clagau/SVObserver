@@ -518,5 +518,6 @@ namespace SvStl
 	(Tid_ErrorMcodeGetResult, _T("Function McodeGetResult return error: %s"))
 	(Tid_StdException, _T("Std:Exception  what: %s"))
 	(Tid_ColorToolExtentsChanged, _T("For backward compatibility: The ROI of at least one Color tool in the configuration has been changed to the size of the Main image"))
+	(Tid_FailstatusNotFound, _T("Could not get Failstatus"))
 	;
 } //namespace SvStl

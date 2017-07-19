@@ -103,7 +103,7 @@ void MonitorListDlg::FillControl()
 	}
 	CString MonitorListName = pView->m_MonListsCtrl.GetItemText(sel,0); 
 
-	const SvSml:: MonitorListCpy*   pML= pView->m_MLContainer.GetMonitorListCpyPointer(MonitorListName.GetString());
+	const SvSml:: MonitorListCpy*   pML= pView->m_MemReader.m_MLContainer.GetMonitorListCpyPointer(MonitorListName.GetString());
 
 	//SvSml::MonitorListCpyMap::const_iterator  MoLiit = pView->m_monitorMap.find(MonitorListName.GetString());
 	if(pML == nullptr)
@@ -120,8 +120,8 @@ void MonitorListDlg::FillControl()
 		{
 			m_ListCtrl.InsertItem(item, Typename[list]);
 			m_ListCtrl.SetItemText(item,Name,Eit->get()->name.c_str());
-			m_ListCtrl.SetItemText(item,Type,Type2String( Eit->get()->ObjectType) );
-			m_ListCtrl.SetItemText(item,ECOL_Size,Size2String(static_cast<DWORD>( Eit->get()->ByteSize)));
+			m_ListCtrl.SetItemText(item,Type,Type2String( Eit->get()->data.ObjectType) );
+			m_ListCtrl.SetItemText(item,ECOL_Size,Size2String(static_cast<DWORD>( Eit->get()->data.ByteSize)));
 			item++;
 		}
 	}
@@ -156,21 +156,21 @@ void MonitorListDlg::OnBnClickedButtonProperties()
 		return;
 	}
 	
-	const SvSml::MonitorEntryPointer pMe   = pView->m_MLContainer.GetMonitorEntryPointer( name);
+	const SvSml::MonitorEntryPointer pMe   = pView->m_MemReader.m_MLContainer.GetMonitorEntryPointer( name);
 
 	if(pMe.get())
 	{
 
 	MonEntryDlg ME_Dlg;
 	ME_Dlg.m_Name = pMe->name.c_str();
-	ME_Dlg.m_Height = (DWORD)pMe->sizeY;
-	ME_Dlg.m_InspectionStoreId = pMe->InspectionStoreId;
-	ME_Dlg.m_ItemId = pMe->ItemId;
-	ME_Dlg.m_Pitch = (DWORD) pMe->Pitch;
-	ME_Dlg.m_Type = pMe->ObjectType;
-	ME_Dlg.m_Size = (DWORD) pMe->ByteSize;
-	ME_Dlg.m_SToreOffset = (DWORD) pMe->Store_Offset;
-	ME_Dlg.m_Width = (DWORD) pMe->sizeX;
+	ME_Dlg.m_Height = (DWORD)pMe->data.sizeY;
+	ME_Dlg.m_InspectionStoreId = pMe->data.InspectionStoreId;
+	ME_Dlg.m_ItemId = pMe->data.ItemId;
+	ME_Dlg.m_Pitch = (DWORD) pMe->data.Pitch;
+	ME_Dlg.m_Type = pMe->data.ObjectType;
+	ME_Dlg.m_Size = (DWORD) pMe->data.ByteSize;
+	ME_Dlg.m_SToreOffset = (DWORD) pMe->data.Store_Offset;
+	ME_Dlg.m_Width = (DWORD) pMe->data.sizeX;
 
 	ME_Dlg.DoModal();
 	

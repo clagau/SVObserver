@@ -31,11 +31,13 @@ public:
 	static SVString GetNameFromMonitoredObject(const MonitoredObject& rMonitoredObject);
 	
 private:	
-	//static void AddMonitorObjects2MoListEntryVector(const MonitoredObjectList& values, SvSml::MonitorEntries  &ListEntries);
+	
 	static void AddMonitorObject2MonitorListcpy(const MonitoredObjectList& values, SvSml::ListType::typ listtype,SvSml::MonitorListCpy& molcpy );
 	static DWORD GetTypeFromMonitoredObject(const MonitoredObject& rMonitoredObject);
-	static DWORD GetSizeFromMonitoredObject(const MonitoredObject& rMonitoredObject); 
-	static void GetImagePropertiesFromMonitoredObject(const MonitoredObject& rMonitoredObject,MatroxImageProps& props);
+	///retrieves MonitorEntryData for Monitorobject from the data manager 
+	static void GetPropertiesFromMonitoredObject(const MonitoredObject& rMonitoredObject, SvSml::MonitorEntryData &data);
+
+
 	
 };
 

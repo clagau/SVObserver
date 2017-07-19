@@ -12,9 +12,10 @@
 #pragma once
 #include "SVSharedMemoryLibrary\SVMonitorListReader.h"
 #include "SVSharedMemoryLibrary\MonitorListCpy.h"
-#include "SVSharedMemoryLibrary\SharedImageStore.h"
 #include "SVSharedMemoryLibrary\MLCpyContainer.h"
-#include "SVSharedMemoryLibrary\SharedImageContainer.h"
+#include "SVSharedMemoryLibrary\SharedDataContainer.h"
+#include "SVSharedMemoryLibrary\SharedMemReader.h"
+#include "afxwin.h"
 
 
 
@@ -44,11 +45,8 @@ public:
 
 	// Implementation
 protected:
-	
-	
-	SvSml::SVMonitorListReader m_mlReader;
-	SvSml::MLCpyContainer m_MLContainer;
-	SvSml::SharedImageContainer m_ImageContainer;
+
+	SvSml::SharedMemReader m_MemReader;
 	HICON m_hIcon;
 
 	bool	 PostRefresh(DWORD par);
@@ -63,6 +61,11 @@ public:
 	friend class MonitorListDlg;
 	CStatic m_ReadyValueCtrl;
 	CListCtrl m_MonListsCtrl;
+	void DisplayProduct(bool isreject);
 	afx_msg void OnBnClickedButtonShow();
 	afx_msg void OnBnClickedButtonExit();
+	afx_msg void OnBnClickedButGetproduct();
+	CEdit m_EditTrigger;
+	afx_msg void OnBnClickedButGetfailstatus();
+	afx_msg void OnBnClickedButReject();
 };

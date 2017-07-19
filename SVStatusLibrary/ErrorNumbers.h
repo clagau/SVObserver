@@ -531,8 +531,12 @@ namespace SvStl
 	static const int Err_16233 = Mec_ErrorBase + 233;
 	static const int Err_16234 = Mec_ErrorBase + 234;
 	static const int Err_16235 = Mec_ErrorBase + 235;
-
-	
+	static const int Err_16236 = Mec_ErrorBase + 236;
+	static const int Err_16237 = Mec_ErrorBase + 237;
+	static const int Err_16238 = Mec_ErrorBase + 238;
+	static const int Err_16239 = Mec_ErrorBase + 239;
+	static const int Err_16240 = Mec_ErrorBase + 240;
+	static const int Err_16241 = Mec_ErrorBase + 241;
 	// Ben Walter
 	static const int BRW_ErrorBase = 17000;
 	static const int Err_17000_ErrorGettingPPQ = BRW_ErrorBase;

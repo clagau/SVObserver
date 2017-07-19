@@ -293,9 +293,11 @@ namespace SvMc
 			ret = int_value(m_value);
 		}
 		m_angle = val2angle(m_value);
+#ifdef TRACE_KNOB		
 		CString msg;
 		msg.Format("angle: %.4f, value: %.4f, int: %d\n", m_angle, m_value, value);
 		OutputDebugString(msg);
+#endif 		
 		Invalidate();
 		return ret;
 	}

@@ -570,6 +570,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "RRSView", "RRSView\RRSView.
 		{B479E2E3-2B4F-4E2C-A6AD-A0A03579FE59} = {B479E2E3-2B4F-4E2C-A6AD-A0A03579FE59}
 	EndProjectSection
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SlotManagerTester", "SlotManagerTester\SlotManagerTester.vcxproj", "{01BD7A65-25A4-4C8E-B36C-23D36972F58A}"
+	ProjectSection(ProjectDependencies) = postProject
+		{B479E2E3-2B4F-4E2C-A6AD-A0A03579FE59} = {B479E2E3-2B4F-4E2C-A6AD-A0A03579FE59}
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -1080,6 +1085,14 @@ Global
 		{9BEE5F0D-27E9-4A2B-879A-FC084EA8FB15}.Release|x64.Build.0 = Release|x64
 		{9BEE5F0D-27E9-4A2B-879A-FC084EA8FB15}.Unicode Debug|x64.ActiveCfg = Debug|x64
 		{9BEE5F0D-27E9-4A2B-879A-FC084EA8FB15}.Unicode Release|x64.ActiveCfg = Release|x64
+		{01BD7A65-25A4-4C8E-B36C-23D36972F58A}.Debug|x64.ActiveCfg = Debug|x64
+		{01BD7A65-25A4-4C8E-B36C-23D36972F58A}.Debug|x64.Build.0 = Debug|x64
+		{01BD7A65-25A4-4C8E-B36C-23D36972F58A}.Release|x64.ActiveCfg = Release|x64
+		{01BD7A65-25A4-4C8E-B36C-23D36972F58A}.Release|x64.Build.0 = Release|x64
+		{01BD7A65-25A4-4C8E-B36C-23D36972F58A}.Unicode Debug|x64.ActiveCfg = Debug|x64
+		{01BD7A65-25A4-4C8E-B36C-23D36972F58A}.Unicode Debug|x64.Build.0 = Debug|x64
+		{01BD7A65-25A4-4C8E-B36C-23D36972F58A}.Unicode Release|x64.ActiveCfg = Release|x64
+		{01BD7A65-25A4-4C8E-B36C-23D36972F58A}.Unicode Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -272,7 +272,7 @@ private:
 	SVString			m_Description;		//The description text for the object
 	bool				m_Created;			//Object is created
 	bool				m_Node;				//Object is only a node in the tree structure
-#pragma endregion Member Variables
+	#pragma endregion Member Variables
 };
 
 typedef SVSharedPtr< BasicValueObject > BasicValueObjectPtr;

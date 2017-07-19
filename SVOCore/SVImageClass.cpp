@@ -2452,4 +2452,3 @@ HRESULT SVImageClass::UnregisterAsSubObject()
 
 	return l_Status;
 }
-

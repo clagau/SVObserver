@@ -911,7 +911,9 @@
     <ClCompile Include="ResultListCtrl.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-
+    <ClCompile Include="InitialInformationHandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Midl Include="SVObserver.odl">
@@ -1843,13 +1845,19 @@
     <ClInclude Include="SVGlobal.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-   <ClInclude Include="ResultTabbedView.h">
+    <ClInclude Include="ResultTabbedView.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ResultTableListCtrl.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="ResultListCtrl.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="InitialInformationHandler.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVInfoStructs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

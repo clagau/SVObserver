@@ -16,6 +16,7 @@
 #include "SVSharedMemoryLibrary/MonitorEntry.h"
 #include "SVSharedMemoryLibrary/MonitorListCpy.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
+#include "ObjectInterfaces/IValueObject.h"
 
 #pragma endregion Includes
 
@@ -55,41 +56,50 @@ DWORD RemoteMonitorListHelper::GetTypeFromMonitoredObject(const MonitoredObject&
 	return  objectRef.getObject()->GetObjectType();
 }
 
-DWORD RemoteMonitorListHelper::GetSizeFromMonitoredObject(const MonitoredObject& rMonitoredObject)
-{
-	DWORD size(0);
-	SVObjectReference ObjectRef(SVObjectManagerClass::Instance().GetObject(rMonitoredObject.guid));
-	SVImageClass* pImageObject = dynamic_cast<SVImageClass*> (ObjectRef.getObject());
-	if( pImageObject)
-	{
-		long  height(0), width(0); 
-		pImageObject->GetImageExtents().GetExtentProperty( SVExtentPropertyHeight, height );
-		pImageObject->GetImageExtents().GetExtentProperty( SVExtentPropertyWidth, width );
-		size = height * width;
-	}
-	return size;
-}
 
-void RemoteMonitorListHelper::GetImagePropertiesFromMonitoredObject(const MonitoredObject& rMonitoredObject,MatroxImageProps& Imageprops)
+void RemoteMonitorListHelper::GetPropertiesFromMonitoredObject(const MonitoredObject& rMonitoredObject, SvSml::MonitorEntryData &data)
 {
-	SVObjectReference objectRef(SVObjectManagerClass::Instance().GetObject(rMonitoredObject.guid));
-	SVImageClass* pImageObject = dynamic_cast<SVImageClass*>(objectRef.getObject());
-	if( nullptr !=  pImageObject)
+	SVObjectReference ObjectRef(SVObjectManagerClass::Instance().GetObject(rMonitoredObject.guid));
+	data.wholeArray = rMonitoredObject.wholeArray;
+	data.isArray= rMonitoredObject.isArray;
+	data.arrayIndex = rMonitoredObject.arrayIndex;
+	data.ObjectType = ObjectRef.getObject()->GetObjectType();
+	
+	SVImageClass* pImageObject(nullptr);
+	SvOi::IValueObject* pValueObject = dynamic_cast<SvOi::IValueObject*>  (ObjectRef.getObject());
+	if (pValueObject)
+	{
+		data.ByteSize = pValueObject->GetByteSize();
+		data.variant_type = pValueObject->GetType();
+	}
+	else
+	{
+		pImageObject = dynamic_cast<SVImageClass*>(ObjectRef.getObject());
+	}
+	
+	if (nullptr != pImageObject)
 	{
 		SVSmartHandlePointer imageHandlePtr;
 		// Special check for Color Tool's RGBMainImage which is HSI ???
 		pImageObject->GetImageHandle(imageHandlePtr);
-		if(!imageHandlePtr.empty())
+		if (!imageHandlePtr.empty())
 		{
 			SVImageBufferHandleImage MilHandle;
-			imageHandlePtr->GetData( MilHandle );
-			SVMatroxBufferInterface::InquireBufferProperties(MilHandle.GetBuffer(),Imageprops); 
+			imageHandlePtr->GetData(MilHandle);
+			MatroxImageProps Imageprops;
+			SVMatroxBufferInterface::InquireBufferProperties(MilHandle.GetBuffer(), Imageprops);
+			data.sizeX = Imageprops.sizeX;
+			data.sizeY = Imageprops.sizeY;
+			data.PitchByte = Imageprops.PitchByte;
+			data.Pitch = Imageprops.Pitch;
+			data.Matrox_type = Imageprops.Matrox_type;
+			data.Attrib = Imageprops.Attrib;
+			data.BandSize = Imageprops.Bandsize;
+			data.ByteSize = Imageprops.Bytesize;
+
 		}
-		
-		
 	}
 }
-
 
 
 MonitoredObject RemoteMonitorListHelper::GetMonitoredObjectFromName(const SVString& name)
@@ -127,28 +137,19 @@ MonitoredObject RemoteMonitorListHelper::GetMonitoredObjectFromName(const SVStri
 
 void RemoteMonitorListHelper::AddMonitorObject2MonitorListcpy(const MonitoredObjectList& values, SvSml::ListType::typ listtype,SvSml::MonitorListCpy& molcpy )
 {
-	///TODO CALCULATE OFFSET and Image Store Index!!!!
 	MonitoredObjectList::const_iterator it;
-	SvSml::MonitorEntry Entry;
+
 	for(it = values.begin(); it != values.end() ; ++it)
 	{
 		SVString name = RemoteMonitorListHelper::GetNameFromMonitoredObject(*it);
-		DWORD type =	RemoteMonitorListHelper::GetTypeFromMonitoredObject(*it);
-		SvSml::MonitorEntryPointer MeP  = molcpy.AddEntry(listtype,name,type);
+		SvSml::MonitorEntryPointer MeP = molcpy.AddEntry(listtype, name);
+		RemoteMonitorListHelper::GetPropertiesFromMonitoredObject(*it, MeP->data);
+		MeP->m_Guid = it->guid;
 		if(listtype == SvSml::ListType::productItemsImage)
 		{
-			assert(type == SVObjectTypeEnum::SVImageObjectType );
-			MatroxImageProps ImageProperties;
-			RemoteMonitorListHelper::GetImagePropertiesFromMonitoredObject(*it,ImageProperties);
-			MeP->SetMatroxImageProps(ImageProperties);
+			assert(MeP->data.ObjectType== SVObjectTypeEnum::SVImageObjectType );
 		}
-		else
-		{
-			MeP->ByteSize =  RemoteMonitorListHelper::GetSizeFromMonitoredObject(*it);
-		}
-		
 	}
-
 }
 
 
@@ -156,7 +157,7 @@ SvSml::MonitorListCpyPointer  RemoteMonitorListHelper::CreateMLcopy(const Remote
 {
 	SvSml::MonitorListCpyPointer  MLCpPtr  = SvSml::MonitorListCpyPointer(new SvSml::MonitorListCpy);
 	MLCpPtr->SetMonitorlistname(remoteMonitorNamedlist.GetName()); 
-	MLCpPtr->SetRejectDepth(remoteMonitorNamedlist.GetRejectDepthQueue()); 
+	MLCpPtr->SetRejectDepth(remoteMonitorNamedlist.GetRejectDepthQueue() + SvSml::MLPPQInfo::NumRejectSizeDelta);
 	MLCpPtr->SetIsActive(remoteMonitorNamedlist.IsActive());
 	MLCpPtr->SetPPQname(remoteMonitorNamedlist.GetPPQName());
 	MLCpPtr->SetProductFilter(remoteMonitorNamedlist.GetProductFilter());
@@ -174,7 +175,7 @@ void RemoteMonitorListHelper::RemotMonitorNamedList2MonitorListcpy(const RemoteM
 {
 	monitorListCpy.ClearAll();
 	monitorListCpy.SetMonitorlistname(remoteMonitorNamedlist.GetName()); 
-	monitorListCpy.SetRejectDepth(remoteMonitorNamedlist.GetRejectDepthQueue()); 
+	monitorListCpy.SetRejectDepth(remoteMonitorNamedlist.GetRejectDepthQueue() + SvSml::MLPPQInfo::NumRejectSizeDelta);
 	monitorListCpy.SetIsActive(remoteMonitorNamedlist.IsActive());
 	monitorListCpy.SetPPQname(remoteMonitorNamedlist.GetPPQName());
 	monitorListCpy.SetProductFilter(remoteMonitorNamedlist.GetProductFilter());

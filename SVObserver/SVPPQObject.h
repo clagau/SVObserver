@@ -20,8 +20,8 @@
 #include "SVObjectLibrary/SVObjectWriter.h"
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVOLibrary/SVQueueObject.h"
+#include "SVSharedMemoryLibrary/SMRingbuffer.h"
 #include "SVSystemLibrary/SVAsyncProcedure.h"
-#include "SVsharedmemoryLibrary/SharedMemWriter.h"
 #include "SVInfoStructs.h"
 #include "ObjectInterfaces/SVPPQEnums.h"
 #include "SVPPQShiftRegister.h"
@@ -33,6 +33,7 @@
 #include "SVUtilityLibrary/SVString.h"
 #include "SVInspectionProcess.h"
 #pragma endregion Includes
+
 
 #pragma region Declarations
 const long	StandardPpqLength	= 2;
@@ -117,6 +118,7 @@ public:
 	/// Check and prepare if configuration can go online.
 	/// In error cases this method throw Exception.
 	void PrepareGoOnline();
+	
 	/// Go online.
 	/// In error cases this method throw Exception.
 	void GoOnline();
@@ -192,6 +194,12 @@ public:
 	/// In error cases (only possible in set case) this method throw Exception
 	void SetMonitorList(const ActiveMonitorList& rActiveList);
 	bool HasActiveMonitorList() const;
+	
+	///Set the slotmanager 
+	void SetSlotmanager(const SvSml::RingBufferPointer& Slotmanager);
+	
+	///Get the SlotManager
+	SvSml::RingBufferPointer GetSlotmanager();
 
 	//************************************
 	/// Insert objects of the children which fit to the attribute filter.
@@ -210,8 +218,6 @@ public:
 	long GetNumRejectSlots() const;
 
 protected:
-	SvSml::InspectionWriterCreationInfos m_InspectionWriterCreationInfos;
-
 	struct SVTriggerQueueElement
 	{
 		SVTriggerQueueElement();
@@ -252,15 +258,10 @@ protected:
 	typedef std::map< SVString, SVObjectReference > SVNameObjectMap;
 
 	typedef std::map<SVGUID, SVNameObjectMap> SVInspectionFilterValueMap; // Inspection Guid to FilterValueMap mapping
-	struct SVSharedMemoryFilters
-	{
-		SVSharedMemoryFilters();
-
-		void clear();
-		SVInspectionFilterValueMap m_RejectConditionValues;
-	};
-	SVSharedMemoryFilters m_SharedMemoryItems;
 	bool m_bActiveMonitorList;
+	SvSml::RingBufferPointer m_SlotManager;
+	
+
 
 	typedef std::pair< long, SVInspectionInfoStruct > SVInspectionInfoPair;
 	typedef std::pair< long, SVProductInfoRequestStruct > SVProductRequestPair;
@@ -515,13 +516,10 @@ private:
 #endif // EnableTracking
 
 	void ResetOutputValueObjects(long DataIndex);
-	void SetRejectConditionList(const SVMonitorItemList& rRejectCondList);
-	void ReleaseSharedMemory(const SVProductInfoStruct& rProduct);
-	void CommitSharedMemory(const SVProductInfoStruct& rProduct);
-	HRESULT CheckRejectCondition(const SVProductInfoStruct& rProduct, SvSml::SVSharedPPQWriter& rWriter) const;
+	void ReleaseSharedMemory(SVProductInfoStruct& rProduct);
+	void CommitSharedMemory( SVProductInfoStruct& rProduct);
 
 	BasicValueObjects	m_PpqValues;
-
 	SvOi::SVPPQOutputModeEnum m_oOutputMode;
 	long m_lOutputDelay;
 	long m_lResetDelay;
@@ -545,7 +543,6 @@ private:
 	//They are not a state of the object only a help for the method. To be able to set the method const, this parameter are muteable.
 	mutable SVObjectPtrDeque m_childObjectsForFillChildObjectList;  //<This list is saved for the method fillChildObjectList, to reuse it if the same filter (m_AttributesAllowedFilterForFillChildObjectList) is used. 
 	mutable UINT m_AttributesAllowedFilterForFillChildObjectList; //<This filter flag was used in the last run of the method fillChildObjectList.
-
 	long m_numProductSlots;
 	long m_numRejectSlots;
 };

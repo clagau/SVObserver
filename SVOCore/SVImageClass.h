@@ -170,7 +170,7 @@ protected:
 	virtual HRESULT UnregisterAsSubObject();
 
 	virtual bool ValidateImage();
-
+	
 	mutable SvTl::SVTimeStamp m_LastUpdate;
 	mutable SvTl::SVTimeStamp m_LastReset;
 
@@ -184,7 +184,6 @@ protected:
 
 private:
 	void init();
-
 	mutable bool m_bCriticalSectionCreated;
 	mutable CRITICAL_SECTION m_hCriticalSection;
 };
