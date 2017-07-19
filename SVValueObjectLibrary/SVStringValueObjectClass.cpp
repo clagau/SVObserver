@@ -72,7 +72,7 @@ HRESULT  SVStringValueObjectClass::SetObjectValue(SVObjectAttributeClass* pDataO
 		if (0 < ObjectArray.GetSize())
 		{
 			DefaultValue() = ObjectArray[ObjectArray.GetSize() - 1];
-			SvUl::RemoveEscapedSpecialCharacters(DefaultValue(), false);
+			SvUl::RemoveEscapedSpecialCharacters(DefaultValue(), true);
 		}
 
 		SetDefaultValue(GetDefaultValue().c_str(), false);
@@ -81,7 +81,7 @@ HRESULT  SVStringValueObjectClass::SetObjectValue(SVObjectAttributeClass* pDataO
 	{
 		for (size_t i = 0; i < BucketArray.size(); i++)
 		{
-			SvUl::RemoveEscapedSpecialCharacters(BucketArray[i][0], false);
+			SvUl::RemoveEscapedSpecialCharacters(BucketArray[i][0], true);
 		}
 
 		if( !isBucketized() )
@@ -122,7 +122,7 @@ HRESULT  SVStringValueObjectClass::SetObjectValue(SVObjectAttributeClass* pDataO
 		for (size_t i = 0; i < ReadValueArray.size(); i++)
 		{
 			// Remove any escapes
-			SvUl::RemoveEscapedSpecialCharacters(ReadValueArray[i], false);
+			SvUl::RemoveEscapedSpecialCharacters(ReadValueArray[i], true);
 		}
 
 		SetArraySize( static_cast< int >( ReadValueArray.size() ) );
@@ -143,7 +143,7 @@ HRESULT  SVStringValueObjectClass::SetObjectValue(SVObjectAttributeClass* pDataO
 		if ( 0 < ObjectArray.GetSize() )
 		{
 			DefaultValue() = ObjectArray[ ObjectArray.GetSize()-1 ];
-			SvUl::RemoveEscapedSpecialCharacters( DefaultValue(), false );
+			SvUl::RemoveEscapedSpecialCharacters( DefaultValue(), true );
 		}
 
 		SetDefaultValue( GetDefaultValue().c_str(), false );
@@ -152,7 +152,7 @@ HRESULT  SVStringValueObjectClass::SetObjectValue(SVObjectAttributeClass* pDataO
 	{
 		for (size_t i = 0; i < BucketArray.size(); i++)
 		{
-			SvUl::RemoveEscapedSpecialCharacters(BucketArray[i][0], false);
+			SvUl::RemoveEscapedSpecialCharacters(BucketArray[i][0], true);
 		}
 
 		if( !isBucketized() )
