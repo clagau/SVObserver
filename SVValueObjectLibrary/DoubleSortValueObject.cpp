@@ -100,7 +100,7 @@ HRESULT DoubleSortValueObject::SetValue(const double& rValue, int Index )
 HRESULT DoubleSortValueObject::GetValue( double& rValue, int Index, int Bucket) const
 {
 	//! When Value Object is an array and index is -1 then use first index
-	if (isArray() && 0 > Index)
+	if (0 > Index)
 	{
 		Index = 0;
 	}
