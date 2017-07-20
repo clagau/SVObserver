@@ -51,6 +51,7 @@ namespace SvSml
 		void BuildMapFileName();
 		void ThrowCreateFileMappingFailed(SvStl::SourceFileParams& FileParams, DWORD Programmcode);
 		void ThrowMapViewOfFileFailedFailed(SvStl::SourceFileParams& FileParams, DWORD Programmcode);
+		void LogUnMapViewOfFileFailedFailed(SvStl::SourceFileParams& FileParams, DWORD Programmcode);
 		void MapViewOfFileWriteInfos();
 
 	private:		

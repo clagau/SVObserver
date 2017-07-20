@@ -43,13 +43,16 @@ namespace SvSml
 		{
 			for (auto &vp : m_pViewDataVector)
 			{
-				if (UnmapViewOfFile(vp))
+				if (vp != nullptr)
 				{
-					vp = nullptr;
-				}
-				else
-				{
-					ThrowCreateFileMappingFailed(SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16235);
+					if (UnmapViewOfFile(vp))
+					{
+						vp = nullptr;
+					}
+					else
+					{
+						LogUnMapViewOfFileFailedFailed(SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16235);
+					}
 				}
 			}
 		}
@@ -68,7 +71,7 @@ namespace SvSml
 			}
 			else
 			{
-				ThrowMapViewOfFileFailedFailed(SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16234);
+				LogUnMapViewOfFileFailedFailed(SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16235);
 			}
 		}
 	}
@@ -165,7 +168,7 @@ namespace SvSml
 			}
 		}
 
-		
+
 	}
 
 	bool SharedDataStore::OpenDataStore(LPCTSTR StoreName)
@@ -251,10 +254,10 @@ namespace SvSml
 		}
 		else
 		{
-			res =  ((BYTE*) m_pViewData) + slot * m_slotSize + offset;
+			res = ((BYTE*)m_pViewData) + slot * m_slotSize + offset;
 		}
 		return res;
-		
+
 	}
 
 	LPCTSTR SharedDataStore::GetMapFileName() const
@@ -297,7 +300,15 @@ namespace SvSml
 		MesMan.setMessage(SVMSG_SVO_5081_MAPVIEWOFFileFAILED, SvStl::Tid_Default, msgList, FileParams, Programmcode);
 		MesMan.Throw();
 	}
-	
+
+	void SharedDataStore::LogUnMapViewOfFileFailedFailed(SvStl::SourceFileParams& FileParams, DWORD Programmcode)
+	{
+		SVString LastError = SvUl_SF::Format(_T("%s LastError:  %i"), m_MapFileName.c_str(), GetLastError());
+		SVStringVector msgList;
+		msgList.push_back(LastError);
+		SvStl::MessageMgrStd MesMan(SvStl::LogOnly);
+		MesMan.setMessage(SVMSG_SVO_5082_UNMAPVIEWOFFileFAILED, SvStl::Tid_Default, msgList, FileParams, Programmcode);
+	}
 }
 
 
