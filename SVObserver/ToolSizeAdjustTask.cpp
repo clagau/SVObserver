@@ -396,7 +396,7 @@ bool ToolSizeAdjustTask::ResetObject(SvStl::MessageContainerVector *pErrorMessag
 			msgList.push_back(GetTool()->GetName());
 		}
 		SvStl::MessageContainer message;
-		message.setMessage( SVMSG_SVO_58_TOOLADJUST_RESET_ERROR, messageId, msgList, SvStl::SourceFileParams(StdMessageParams), hresult );
+		message.setMessage( SVMSG_SVO_58_TOOLADJUST_RESET_ERROR, messageId, msgList, SvStl::SourceFileParams(StdMessageParams), hresult, GetUniqueObjectID() );
 		SvStl::MessageMgrStd Exception(SvStl::LogOnly);
 		Exception.setMessage( message.getMessage() );
 		if (nullptr != pErrorMessages)
