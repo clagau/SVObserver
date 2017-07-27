@@ -1399,8 +1399,8 @@ bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 
 		//create a sort Container with the size of founded blobs and from 0 to n
 		ValueObjectSortContainer resultTableSortContainer;
-		resultTableSortContainer.resize(m_lNumberOfBlobsFound);
-		for (int i = 0; i < m_lNumberOfBlobsFound; i++)
+		resultTableSortContainer.resize(m_lNumberOfBlobsToProcess);
+		for (int i = 0; i < m_lNumberOfBlobsToProcess; i++)
 		{
 			resultTableSortContainer[i] = msvlSortMap[i];
 		}
@@ -1738,7 +1738,7 @@ void SVBlobAnalyzerClass::CreateArray()
 		if ( m_FeaturesEnabled[iFeature] == _T('1') )
 		{
 			m_Value[iFeature].SetArraySize( m_lMaxBlobDataArraySize );	// no longer sample size (max number of blobs found)
-			m_ResultTableColumnValueObjects[iFeature] = m_pResultTable->updateOrCreateColumn(TableColumnValueObjectGuid[iFeature], BlobFeatureConstants[iFeature].NewStringResourceID, m_lBlobSampleSize);
+			m_ResultTableColumnValueObjects[iFeature] = m_pResultTable->updateOrCreateColumn(TableColumnValueObjectGuid[iFeature], BlobFeatureConstants[iFeature].NewStringResourceID, m_lMaxBlobDataArraySize);
 		}
 		else
 		{
