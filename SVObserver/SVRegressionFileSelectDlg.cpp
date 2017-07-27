@@ -115,10 +115,14 @@ void CSVRegressionFileSelectDlg::OnBtnRegTestBrowseFiles()
 	}
 	
 	int iPos = m_RegTestFiles.ReverseFind(_T('\\'));
-	if (iPos != -1)
+	if (iPos != -1) //only write out registry entry if the path is not empty.
 	{
-		//only write out registry entry if the path is not empty.
-		CString sTmpDirName = m_RegTestFiles.Left(iPos);
+		CString sTmpDirName = m_RegTestFiles;
+		if (0 == m_RegTestFiles.Right(4).CompareNoCase(_T(".bmp")))
+		{	//cut file name to save only path
+			sTmpDirName = m_RegTestFiles.Left(iPos);
+		}
+		
 		AfxGetApp()->WriteProfileString(_T("RegressionTest"), KeyName.c_str(), sTmpDirName);
 	}
 

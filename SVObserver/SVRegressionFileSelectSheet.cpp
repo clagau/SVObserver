@@ -384,8 +384,6 @@ int CSVRegressionFileSelectSheet::FillFileListFromDirectory(RegressionTestStruct
 	}
 	int count = FillFileListFromDirectory(rStruct, currentPath);
 
-	std::sort(rStruct.stdVectorFile.begin(), rStruct.stdVectorFile.end());
-
 	//set the structs starting and current position to the start
 	rStruct.stdIteratorStart = rStruct.stdVectorFile.begin();
 	rStruct.stdIteratorCurrent = rStruct.stdIteratorStart;
