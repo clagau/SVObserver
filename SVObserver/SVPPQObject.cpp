@@ -1728,20 +1728,20 @@ BOOL SVPPQObject::RemoveInput(SVIOEntryHostStructPtr pInput)
 
 	if (nullptr != pInput->getObject())
 	{
-		strName = pInput->getObject()->GetCompleteName();
+		strName = pInput->getObject()->GetName();
 	}
 	else if (!(pInput->m_IOId.empty()))
 	{
 		SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject(pInput->m_IOId);
 
-		strName = l_pObject->GetCompleteName();
+		strName = l_pObject->GetName();
 	}
 
 	SVIOEntryHostStructPtrVector::iterator l_Iter = m_AllInputs.begin();
 
 	while (l_Iter != m_AllInputs.end())
 	{
-		l_Status = (strName == (*l_Iter)->getObject()->GetCompleteName());
+		l_Status = (strName == (*l_Iter)->getObject()->GetName());
 
 		if (l_Status)
 		{
