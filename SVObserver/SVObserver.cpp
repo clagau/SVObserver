@@ -2808,7 +2808,7 @@ HRESULT SVObserverApp::OpenSVXFile(LPCTSTR PathName)
 			HideIOTab( SVRemoteOutputsViewID );
 		}
 
-		const RemoteMonitorList& rList = pConfig->GetRemoteMonitorList();
+		const RemoteMonitorListMap& rList = pConfig->GetRemoteMonitorList();
 		if (!rList.size())
 		{
 			HideRemoteMonitorListTab();

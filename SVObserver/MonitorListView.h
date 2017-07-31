@@ -72,7 +72,7 @@ protected:
 	virtual BOOL PreCreateWindow(CREATESTRUCT& cs) override;
 	virtual void OnUpdate(CView* /*pSender*/, LPARAM /*lHint*/, CObject* /*pHint*/) override;
 	
-	bool EditMonitoredItem(int item);
+	bool EditMonitoredItem(int item, bool bImage);
 	bool RemoveMonitoredItem(int item);
 
 	int GetExpandCollapseState(MonitorListViewNodeType nodeType, const ExpandCollapseState& stateHolder);
@@ -92,6 +92,7 @@ public:
 	CMenu m_ContextMenuNamedList;
 	CMenu m_ContextMenuSubList;
 	CMenu m_ContextMenuNode;
+	CMenu m_ContextMenuProductList;
 
 #ifdef _DEBUG
 	virtual void AssertValid() const override;
@@ -108,6 +109,8 @@ public:
 	void AddItem();
 	afx_msg void OnDeleteItem();
 	afx_msg void OnEditItem();
+	afx_msg void OnEditImageItem();
+	void OnEdit(bool bImageItem);
 	afx_msg void OnAddRemoveList();
 	afx_msg void OnEditListProperties();
 

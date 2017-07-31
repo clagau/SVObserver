@@ -22,10 +22,10 @@ class MonitorListAddRemoveDlg : public CDialog
 
 #pragma region Public Methods
 public:
-	MonitorListAddRemoveDlg(const RemoteMonitorList& rMonitorList, const PPQNameListNames& rList, CWnd* pParent = nullptr);   // standard constructor
+	MonitorListAddRemoveDlg(const RemoteMonitorListMap& rMonitorList, const PPQNameListNames& rList, CWnd* pParent = nullptr);   // standard constructor
 	virtual ~MonitorListAddRemoveDlg();
 
-	const RemoteMonitorList& GetRemoteMonitorList() const;
+	const RemoteMonitorListMap& GetRemoteMonitorList() const;
 
 	afx_msg void OnDblClickUsedList();
 	afx_msg void OnBnClickedAddBtn();
@@ -49,7 +49,7 @@ protected:
 
 #pragma region Private Members
 private:
-	RemoteMonitorList m_MonitorList;
+	RemoteMonitorListMap m_MonitorList;
 	PPQNameListNames m_SetupList;
 	CListBox m_AvailableList;
 	CListBox m_UsedList;

@@ -287,8 +287,8 @@ public:
 
 	bool SetupRemoteMonitorList();
 	void ClearRemoteMonitorList();
-	RemoteMonitorList GetRemoteMonitorList() const;
-	void SetRemoteMonitorList(const RemoteMonitorList& rList);
+	RemoteMonitorListMap GetRemoteMonitorList() const;
+	void SetRemoteMonitorList(const RemoteMonitorListMap& rList);
 
 	//************************************
 	// Method:    ReplaceOrAddMonitorList
@@ -308,7 +308,7 @@ public:
 	//! Activates the default monitorlists, when no monitorlist is active and default monitorlist exist  
 	//! \returns true if at least one default monitorlist was activated 
 	bool ActivateDefaultMonitorList();
-	void GetActiveRemoteMonitorList(RemoteMonitorList& rActiveList) const;
+	void GetActiveRemoteMonitorList(RemoteMonitorListMap& rActiveList) const;
 	
 	//Return the number of active Monitorlist
 	int GetActiveMonitorListCount() const;

@@ -36,7 +36,7 @@ class MonitorListPropertyDlg : public CDialog
 
 #pragma region Public
 public:
-	MonitorListPropertyDlg(RemoteMonitorList& MonitorList, LPCTSTR Name, CWnd* pParent = nullptr);   // standard constructor
+	MonitorListPropertyDlg(RemoteMonitorListMap& MonitorList, LPCTSTR Name, CWnd* pParent = nullptr);   // standard constructor
 	virtual ~MonitorListPropertyDlg();
 
 	const SVString& GetMonitorListName() const;
@@ -65,7 +65,7 @@ protected:
 #pragma endregion Protected
 
 #pragma region Private
-	RemoteMonitorList& m_MonitorList;
+	RemoteMonitorListMap& m_MonitorList;
 	SVString m_MonitorListName;	// original Monitor List name
 	SVString m_DisplayName;		// current valid Monitor List name (starts out as original Monitor List name)
 	int m_MonitorListRejectQueueDepth;

@@ -560,12 +560,12 @@ void SVIOController::ClearRemoteMonitorList()
 	m_RemoteMonitorListController.Clear();
 }
 
-const RemoteMonitorList& SVIOController::GetRemoteMonitorList() const
+const RemoteMonitorListMap& SVIOController::GetRemoteMonitorList() const
 {
 	return m_RemoteMonitorListController.GetRemoteMonitorList();
 }
 
-void SVIOController::SetRemoteMonitorList(const RemoteMonitorList& rList)
+void SVIOController::SetRemoteMonitorList(const RemoteMonitorListMap& rList)
 {
 	m_RemoteMonitorListController.SetRemoteMonitorList(rList);
 }
@@ -590,7 +590,7 @@ HRESULT SVIOController::ActivateRemoteMonitorList(const SVString& listName, bool
 	return m_RemoteMonitorListController.ActivateRemoteMonitorList(listName, bActivate);
 }
 
-void SVIOController::GetActiveRemoteMonitorList(RemoteMonitorList& rActiveList) const
+void SVIOController::GetActiveRemoteMonitorList(RemoteMonitorListMap& rActiveList) const
 {
 	m_RemoteMonitorListController.GetActiveRemoteMonitorList(rActiveList);
 }

@@ -61,7 +61,7 @@ void SVFailStatusStreamManager::Shutdown()
 }
 
 // call this anytime the remote monitor list changes
-HRESULT SVFailStatusStreamManager::ManageFailStatus(const RemoteMonitorList& rList)
+HRESULT SVFailStatusStreamManager::ManageFailStatus(const RemoteMonitorListMap& rList)
 {
 	HRESULT hr = S_OK;
 
@@ -71,7 +71,7 @@ HRESULT SVFailStatusStreamManager::ManageFailStatus(const RemoteMonitorList& rLi
 		FailStatusLists& list = it->second;
 		for (FailStatusLists::iterator listIt = list.begin();listIt != list.end();)
 		{
-			RemoteMonitorList::const_iterator rListIt = rList.find(listIt->first);
+			RemoteMonitorListMap::const_iterator rListIt = rList.find(listIt->first);
 			if (rListIt == rList.end())
 			{
 				listIt = list.erase(listIt);
@@ -94,7 +94,7 @@ HRESULT SVFailStatusStreamManager::ManageFailStatus(const RemoteMonitorList& rLi
 		}
 	}
 
-	for (RemoteMonitorList::const_iterator it = rList.begin();it != rList.end();++it)
+	for (RemoteMonitorListMap::const_iterator it = rList.begin();it != rList.end();++it)
 	{
 		const SVString& ppqName = it->second.GetPPQName();
 		const SVString& listName = it->second.GetName();
@@ -128,13 +128,13 @@ HRESULT SVFailStatusStreamManager::ManageFailStatus(const RemoteMonitorList& rLi
 }
 
 // call this before going online for the active monitor list(s)
-HRESULT SVFailStatusStreamManager::AttachPPQObservers(const RemoteMonitorList& rList)
+HRESULT SVFailStatusStreamManager::AttachPPQObservers(const RemoteMonitorListMap& rList)
 {
 	HRESULT hr = S_OK;
 	
 	RemovePPQObservers();
 
-	for (RemoteMonitorList::const_iterator it = rList.begin();it != rList.end();++it)
+	for (RemoteMonitorListMap::const_iterator it = rList.begin();it != rList.end();++it)
 	{
 		const SVString& ppqName = it->second.GetPPQName();
 		const SVString& listName = it->second.GetName();

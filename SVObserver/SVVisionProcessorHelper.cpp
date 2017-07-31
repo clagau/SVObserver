@@ -896,8 +896,8 @@ HRESULT SVVisionProcessorHelper::QueryProductList( const SVString& rListName, SV
 	HRESULT hr = SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 	if ( nullptr != pConfig )
 	{
-		const RemoteMonitorList& rList = pConfig->GetRemoteMonitorList();
-		RemoteMonitorList::const_iterator it = rList.find( rListName );
+		const RemoteMonitorListMap& rList = pConfig->GetRemoteMonitorList();
+		RemoteMonitorListMap::const_iterator it = rList.find( rListName );
 		if ( it != rList.end() )
 		{
 			const RemoteMonitorNamedList& rNamedList = it->second;
@@ -923,8 +923,8 @@ HRESULT SVVisionProcessorHelper::QueryRejectCondList( const SVString& rListName,
 	HRESULT hr = SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 	if ( nullptr != pConfig )
 	{
-		const RemoteMonitorList& rList = pConfig->GetRemoteMonitorList();
-		RemoteMonitorList::const_iterator it = rList.find( rListName );
+		const RemoteMonitorListMap& rList = pConfig->GetRemoteMonitorList();
+		RemoteMonitorListMap::const_iterator it = rList.find( rListName );
 		if ( it != rList.end() )
 		{
 			const RemoteMonitorNamedList& rNamedList = it->second;
@@ -949,8 +949,8 @@ HRESULT SVVisionProcessorHelper::QueryFailStatusList( const SVString& rListName,
 	HRESULT hr = SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 	if ( nullptr != pConfig )
 	{
-		const RemoteMonitorList& rList = pConfig->GetRemoteMonitorList();
-		RemoteMonitorList::const_iterator it = rList.find( rListName );
+		const RemoteMonitorListMap& rList = pConfig->GetRemoteMonitorList();
+		RemoteMonitorListMap::const_iterator it = rList.find( rListName );
 		if ( it != rList.end() )
 		{
 			const RemoteMonitorNamedList& rNamedList = it->second;
@@ -976,8 +976,8 @@ HRESULT SVVisionProcessorHelper::GetMonitorListProperties(const SVString& rListN
 	HRESULT hr = SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 	if ( nullptr != pConfig )
 	{
-		const RemoteMonitorList& rList = pConfig->GetRemoteMonitorList();
-		RemoteMonitorList::const_iterator it = rList.find( rListName );
+		const RemoteMonitorListMap& rList = pConfig->GetRemoteMonitorList();
+		RemoteMonitorListMap::const_iterator it = rList.find( rListName );
 		if ( it != rList.end() )
 		{
 			const RemoteMonitorNamedList& rNamedList = it->second;
@@ -1058,8 +1058,8 @@ HRESULT SVVisionProcessorHelper::QueryMonitorListNames( SVNameSet& rNames ) cons
 	HRESULT hr = SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 	if ( nullptr != pConfig )
 	{
-		const RemoteMonitorList& rList = pConfig->GetRemoteMonitorList();
-		for (RemoteMonitorList::const_iterator it = rList.begin();it != rList.end();++it)
+		const RemoteMonitorListMap& rList = pConfig->GetRemoteMonitorList();
+		for (RemoteMonitorListMap::const_iterator it = rList.begin();it != rList.end();++it)
 		{
 			// insert monitor list to result name set
 			rNames.insert(it->first);

@@ -44,14 +44,14 @@ public:
 	/// \param rList [in] - List of the items to Stream and associated PPQ(s)
 	/// \return HRESULT - S_OK for success
 	//**********************************************
-	HRESULT ManageFailStatus(const RemoteMonitorList& rList);
+	HRESULT ManageFailStatus(const RemoteMonitorListMap& rList);
 
 	//**********************************************
 	/// AttachPPQObservers adds the listeners to the PPQ(s) for the fail status streams
 	/// \param rList [in] - List of the items to Stream and associated PPQ(s)
 	/// \return HRESULT - S_OK for success
 	//**********************************************
-	HRESULT AttachPPQObservers(const RemoteMonitorList& rList);
+	HRESULT AttachPPQObservers(const RemoteMonitorListMap& rList);
 	void RemovePPQObservers();
 
 	void Clear();

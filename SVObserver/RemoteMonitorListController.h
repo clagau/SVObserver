@@ -27,8 +27,8 @@ public:
 	void Clear();
 	bool IsEmpty() const;
 	bool Setup(SVConfigurationObject* pConfig);
-	const RemoteMonitorList& GetRemoteMonitorList() const;
-	void SetRemoteMonitorList(const RemoteMonitorList& rList);
+	const RemoteMonitorListMap& GetRemoteMonitorList() const;
+	void SetRemoteMonitorList(const RemoteMonitorListMap& rList);
 
 	//************************************
 	// Method:    ReplaceOrAddMonitorList
@@ -56,9 +56,9 @@ public:
 	//! \param listName [in]
 	//! \param bActivate [in]
 	//! \returns S_OK when successfully 
-	static HRESULT ActivateRemoteMonitorList(RemoteMonitorList& rRemoteMonitorList , const SVString& listName, bool bActivate); 
+	static HRESULT ActivateRemoteMonitorList(RemoteMonitorListMap& rRemoteMonitorList , const SVString& listName, bool bActivate); 
 
-	void GetActiveRemoteMonitorList(RemoteMonitorList& rActiveList) const;
+	void GetActiveRemoteMonitorList(RemoteMonitorListMap& rActiveList) const;
 
 	//Return the number of active Monitorlist
 	int GetActiveMonitorListCount() const;
@@ -74,7 +74,7 @@ public:
 	//************************************
 	static bool IsValidMonitoredObject(const SVObjectClass* pObject);
 
-	static size_t CalcSizeForMonitorList(const RemoteMonitorList& rList);
+	static size_t CalcSizeForMonitorList(const RemoteMonitorListMap& rList);
 	
 	static LPCTSTR s_DefaultMonitorListName;
 
@@ -93,7 +93,7 @@ private:
 	//! Initialize the monitor writer 
 	static HRESULT InitMonitorListInSharedMemory(size_t size);
 
-	RemoteMonitorList m_list;
+	RemoteMonitorListMap m_list;
 
 	PPQNameListNames GetPPQMonitorLists(SVConfigurationObject* pConfig) const;
 	bool ValidateMonitoredObject(MonitoredObjectList& rList);

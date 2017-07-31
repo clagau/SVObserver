@@ -692,9 +692,9 @@ inline void SVConfigXMLPrint::WriteMonitorListSection(Writer writer) const
 	{
 		writer->WriteStartElement(nullptr,XML_MonitorLists, nullptr);
 
-		const RemoteMonitorList& remoteMonitorLists = pConfig->GetRemoteMonitorList();
+		const RemoteMonitorListMap& remoteMonitorLists = pConfig->GetRemoteMonitorList();
 
-		RemoteMonitorList::const_iterator iterMonitorList = remoteMonitorLists.begin();
+		RemoteMonitorListMap::const_iterator iterMonitorList = remoteMonitorLists.begin();
 		while (remoteMonitorLists.end() != iterMonitorList)
 		{
 			const SVString& ListName = iterMonitorList->first;

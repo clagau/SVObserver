@@ -21,7 +21,7 @@ enum {IDC_MONITOR_PROPERTY_TREE = 100};
 
 IMPLEMENT_DYNAMIC(MonitorListPropertyDlg, CDialog)
 
-MonitorListPropertyDlg::MonitorListPropertyDlg(RemoteMonitorList& MonitorList, LPCTSTR Name, CWnd* pParent)
+MonitorListPropertyDlg::MonitorListPropertyDlg(RemoteMonitorListMap& MonitorList, LPCTSTR Name, CWnd* pParent)
 : CDialog(MonitorListPropertyDlg::IDD, pParent)
 , m_MonitorList(MonitorList)
 , m_MonitorListName(Name)
@@ -60,7 +60,7 @@ BOOL MonitorListPropertyDlg::OnInitDialog()
 	long lVal = m_Tree.GetColumn();
 	m_Tree.SetColumn(200);
 
-	RemoteMonitorList::iterator it = m_MonitorList.find(SVString(m_MonitorListName));
+	RemoteMonitorListMap::iterator it = m_MonitorList.find(SVString(m_MonitorListName));
 	if ( it != m_MonitorList.end() )
 	{
 		m_DisplayName = it->second.GetName().c_str();
@@ -93,7 +93,7 @@ bool MonitorListPropertyDlg::IsValidListName(const SVString& rName, const SVStri
 {
 	bool bRetVal = true;
 	// check for uniqueness (case insensitive)
-	RemoteMonitorList::const_iterator it = std::find_if(m_MonitorList.begin(), m_MonitorList.end(), [&](const RemoteMonitorList::value_type& entry)->bool 
+	RemoteMonitorListMap::const_iterator it = std::find_if(m_MonitorList.begin(), m_MonitorList.end(), [&](const RemoteMonitorListMap::value_type& entry)->bool 
 	{ 
 		return (0 == SvUl_SF::CompareNoCase(rName, entry.first) && 0 != SvUl_SF::CompareNoCase(rOriginalName, entry.first)); 
 	} 
@@ -151,7 +151,7 @@ void MonitorListPropertyDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResu
 
 void MonitorListPropertyDlg::OnOK() 
 {
-	RemoteMonitorList::iterator it = m_MonitorList.find(SVString(m_MonitorListName));
+	RemoteMonitorListMap::iterator it = m_MonitorList.find(SVString(m_MonitorListName));
 	if ( it != m_MonitorList.end() )
 	{
 		RemoteMonitorNamedList namedList = it->second;

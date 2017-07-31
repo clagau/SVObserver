@@ -56,7 +56,7 @@ PPQNameListNames RemoteMonitorListController::GetPPQMonitorLists(SVConfiguration
 			}
 		}
 		// build collection of listnames and reject depth keyed by ppq name
-		for (RemoteMonitorList::const_iterator it = m_list.begin();it != m_list.end(); ++it)
+		for (RemoteMonitorListMap::const_iterator it = m_list.begin();it != m_list.end(); ++it)
 		{
 			const RemoteMonitorNamedList& namedList = it->second;
 			const SVString& ppqName = namedList.GetPPQName();
@@ -98,12 +98,12 @@ bool RemoteMonitorListController::Setup(SVConfigurationObject* pConfig)
 	return bRetVal;
 }
 
-const RemoteMonitorList& RemoteMonitorListController::GetRemoteMonitorList() const
+const RemoteMonitorListMap& RemoteMonitorListController::GetRemoteMonitorList() const
 {
 	return m_list;
 }
 
-void RemoteMonitorListController::SetRemoteMonitorList(const RemoteMonitorList& rList)
+void RemoteMonitorListController::SetRemoteMonitorList(const RemoteMonitorListMap& rList)
 {
 	m_list = rList;
 	HideShowViewTab();
@@ -183,7 +183,7 @@ bool RemoteMonitorListController::ValidateMonitoredObject(MonitoredObjectList& r
 
 void RemoteMonitorListController::ValidateInputs()
 {
-	for (RemoteMonitorList::iterator it = m_list.begin();it != m_list.end();)
+	for (RemoteMonitorListMap::iterator it = m_list.begin();it != m_list.end();)
 	{
 		RemoteMonitorNamedList& namedList = it->second;
 		const SVString& ppqName = namedList.GetPPQName();
@@ -238,19 +238,20 @@ HRESULT RemoteMonitorListController::InitMonitorListInSharedMemory(size_t size)
 	const SvSml::SVSharedMemorySettings& rSettings =SvSml::SharedMemWriter::Instance().GetSettings();
 	SvSml::SVMonitorListWriter& rWriter =SvSml::SharedMemWriter::Instance().GetMonitorListWriter();
 	HRESULT hr = rWriter.Create(rSettings, size);
-	if (S_OK != hr)
+	if (S_OK != hr)  
 	{
-		SvStl::MessageMgrStd Exception( SvStl::LogOnly );
+		SvStl::MessageMgrStd Exception( SvStl::DataOnly );
 		Exception.setMessage( SVMSG_SVO_44_SHARED_MEMORY, SvStl::Tid_ErrorInitMonitorListInSharedMemory, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_15044_InitMonitorListInSharedMemory );
+		Exception.Throw();
 	}
 	return hr;
 }
 
 
-size_t RemoteMonitorListController::CalcSizeForMonitorList(const RemoteMonitorList& rList)
+size_t RemoteMonitorListController::CalcSizeForMonitorList(const RemoteMonitorListMap& rList)
 {
 	size_t size(0);
-	for (RemoteMonitorList::const_iterator it = rList.begin();it != rList.end();++it)
+	for (RemoteMonitorListMap::const_iterator it = rList.begin();it != rList.end();++it)
 	{
 		const RemoteMonitorNamedList & remoteMonitorNamedList = it->second;
 		
@@ -294,7 +295,7 @@ HRESULT RemoteMonitorListController::BuildPPQMonitorList(PPQMonitorList& ppqMoni
 		// combine the lists by PPQName
 		SvSml::SharedMemWriter::Instance().ClearMonitorListCpyVector();
 
-		for (RemoteMonitorList::const_iterator it = m_list.begin();it != m_list.end();++it)
+		for (RemoteMonitorListMap::const_iterator it = m_list.begin();it != m_list.end();++it)
 		{
 			// Only Activated Lists are sent to the Inspections and Monitor Lists can only be activated when Offline
 			
@@ -341,10 +342,10 @@ HRESULT RemoteMonitorListController::BuildPPQMonitorList(PPQMonitorList& ppqMoni
 	return hr;
 }
 
-HRESULT  RemoteMonitorListController::ActivateRemoteMonitorList(RemoteMonitorList& rRemoteMonitorList , const SVString& listName, bool bActivate) 
+HRESULT  RemoteMonitorListController::ActivateRemoteMonitorList(RemoteMonitorListMap& rRemoteMonitorList , const SVString& listName, bool bActivate) 
 {
 	HRESULT hr = S_OK;
-	RemoteMonitorList::iterator it = rRemoteMonitorList.find(listName);
+	RemoteMonitorListMap::iterator it = rRemoteMonitorList.find(listName);
 	if (it != rRemoteMonitorList.end())
 	{
 		it->second.Activate(bActivate);
@@ -352,7 +353,7 @@ HRESULT  RemoteMonitorListController::ActivateRemoteMonitorList(RemoteMonitorLis
 		if(true == bActivate)
 		{	
 			SVGUID PPQ_GUID = it->second.GetPPQObjectID();
-			for(RemoteMonitorList::iterator it_S = rRemoteMonitorList.begin(); it_S != rRemoteMonitorList.end();it_S++ )
+			for(RemoteMonitorListMap::iterator it_S = rRemoteMonitorList.begin(); it_S != rRemoteMonitorList.end();it_S++ )
 			{
 				if(it_S->second.GetPPQObjectID() == PPQ_GUID && it_S != it)
 				{
@@ -374,10 +375,10 @@ HRESULT RemoteMonitorListController::ActivateRemoteMonitorList(const SVString& l
 }	
 
 
- void RemoteMonitorListController::GetActiveRemoteMonitorList(RemoteMonitorList& rActiveList) const
+ void RemoteMonitorListController::GetActiveRemoteMonitorList(RemoteMonitorListMap& rActiveList) const
 {
 	// Get all active lists
-	for (RemoteMonitorList::const_iterator it = m_list.begin();it != m_list.end();++it)
+	for (RemoteMonitorListMap::const_iterator it = m_list.begin();it != m_list.end();++it)
 	{
 		if (it->second.IsActive())
 		{
@@ -402,7 +403,7 @@ HRESULT RemoteMonitorListController::ActivateRemoteMonitorList(const SVString& l
 HRESULT RemoteMonitorListController::SetRemoteMonitorListProductFilter(const SVString& listName, SvSml::SVProductFilterEnum filter)
 {
 	HRESULT hr = S_OK;
-	RemoteMonitorList::iterator it = m_list.find(listName);
+	RemoteMonitorListMap::iterator it = m_list.find(listName);
 	if (it != m_list.end())
 	{
 		// must be active - else it's an error
@@ -426,7 +427,7 @@ HRESULT RemoteMonitorListController::SetRemoteMonitorListProductFilter(const SVS
 HRESULT RemoteMonitorListController::GetRemoteMonitorListProductFilter(const SVString& listName, SvSml::SVProductFilterEnum& rFilter) const
 {
 	HRESULT hr = S_OK;
-	RemoteMonitorList::const_iterator it = m_list.find(listName);
+	RemoteMonitorListMap::const_iterator it = m_list.find(listName);
 	if (it != m_list.end())
 	{
 		rFilter = it->second.GetProductFilter();

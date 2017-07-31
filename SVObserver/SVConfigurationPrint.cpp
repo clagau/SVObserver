@@ -2420,9 +2420,9 @@ void SVConfigurationPrint::PrintMonitorListSection(CDC* pDC, CPoint& ptCurPos, i
 
 		PrintValueObject(pDC, ptCurPos, _T("Remote Monitor List"), "");
 
-		const RemoteMonitorList& remoteMonitorLists = pConfig->GetRemoteMonitorList();
+		const RemoteMonitorListMap& remoteMonitorLists = pConfig->GetRemoteMonitorList();
 
-		RemoteMonitorList::const_iterator iterMonitorList = remoteMonitorLists.begin();
+		RemoteMonitorListMap::const_iterator iterMonitorList = remoteMonitorLists.begin();
 		while ( remoteMonitorLists.end() != iterMonitorList )
 		{
 			const SVString& ListName = iterMonitorList->first;

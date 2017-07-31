@@ -26,7 +26,7 @@ END_MESSAGE_MAP()
 
 IMPLEMENT_DYNAMIC(MonitorListAddRemoveDlg, CDialog)
 
-MonitorListAddRemoveDlg::MonitorListAddRemoveDlg(const RemoteMonitorList& rMonitorList, const PPQNameListNames& rList, CWnd* pParent /*=nullptr*/)
+MonitorListAddRemoveDlg::MonitorListAddRemoveDlg(const RemoteMonitorListMap& rMonitorList, const PPQNameListNames& rList, CWnd* pParent /*=nullptr*/)
 : CDialog(MonitorListAddRemoveDlg::IDD, pParent)
 , m_MonitorList(rMonitorList)
 , m_SetupList(rList)
@@ -47,14 +47,14 @@ void MonitorListAddRemoveDlg::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_BTN_PROPERTIES, m_PropertiesButton);
 }
 
-const RemoteMonitorList& MonitorListAddRemoveDlg::GetRemoteMonitorList() const
+const RemoteMonitorListMap& MonitorListAddRemoveDlg::GetRemoteMonitorList() const
 {
 	return m_MonitorList;
 }
 
 void MonitorListAddRemoveDlg::ReplaceList( const SVString& rOldName, const SVString& rNewName )
 {
-	RemoteMonitorList:: iterator it = m_MonitorList.find(rOldName);
+	RemoteMonitorListMap:: iterator it = m_MonitorList.find(rOldName);
 	if (it != m_MonitorList.end())
 	{
 		RemoteMonitorNamedList namedList = it->second;
@@ -173,7 +173,7 @@ void MonitorListAddRemoveDlg::OnBnClickedRemoveBtn()
 
 		// remove from master list
 		// parse out PPQ ID (PPQ_N)
-		RemoteMonitorList::iterator it = m_MonitorList.find( GetListNameFromDisplayName( DeleteName ) );
+		RemoteMonitorListMap::iterator it = m_MonitorList.find( GetListNameFromDisplayName( DeleteName ) );
 		if (it != m_MonitorList.end())
 		{
 			m_MonitorList.erase(it);

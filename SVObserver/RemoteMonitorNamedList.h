@@ -17,6 +17,7 @@
 #include "SVSharedMemoryLibrary/SVProductFilterEnum.h"
 #pragma endregion Includes
 
+///struct holds information for one entry in Monitorlist 
 struct MonitoredObject
 {
 	SVGUID guid;
@@ -28,12 +29,12 @@ struct MonitoredObject
 	bool operator==(const MonitoredObject& rhs) { return (guid == rhs.guid && isArray == rhs.isArray && wholeArray == rhs.wholeArray && arrayIndex == rhs.arrayIndex); }
 };
 
-typedef std::deque<MonitoredObject> MonitoredObjectList;
-
+/// deque of MonitorObjects 
+typedef std::deque<MonitoredObject> MonitoredObjectList; 
+/// class encapsulate 4 MonitoredObjectList  reject product productImage and failstatus 
+/// MonitorobjectList are basicly  lists with GUIDS 
 class RemoteMonitorNamedList
 {
-
-
 #pragma region PublicMethods
 public:
 	RemoteMonitorNamedList();

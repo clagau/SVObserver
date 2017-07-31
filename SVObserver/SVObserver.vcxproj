@@ -183,10 +183,7 @@ echo %time%
     <ClCompile Include="ExtrasEngine.cpp" />
     <ClCompile Include="GlobalConstantView.cpp" />
     <ClCompile Include="InitialInformationHandler.cpp" />
-    <ClCompile Include="MonitorListBasePage.cpp" />
-    <ClCompile Include="MonitorListImagesPage.cpp" />
-    <ClCompile Include="MonitorListSheet.cpp" />
-    <ClCompile Include="MonitorListValuesPage.cpp" />
+    <ClCompile Include="MonitorListSelector.cpp" />
     <ClCompile Include="RangeClassHelper.cpp" />
     <ClCompile Include="RangeXDialogClass.cpp" />
     <ClCompile Include="RemoteCommand.cpp" />
@@ -519,10 +516,7 @@ echo %time%
     <ClInclude Include="ExtrasEngine.h" />
     <ClInclude Include="GlobalConstantView.h" />
     <ClInclude Include="InitialInformationHandler.h" />
-    <ClInclude Include="MonitorListBasePage.h" />
-    <ClInclude Include="MonitorListImagesPage.h" />
-    <ClInclude Include="MonitorListSheet.h" />
-    <ClInclude Include="MonitorListValuesPage.h" />
+    <ClInclude Include="MonitorListSelector.h" />
     <ClInclude Include="RangeClassHelper.h" />
     <ClInclude Include="RangeXDialogClass.h" />
     <ClInclude Include="RemoteMonitorList.h" />

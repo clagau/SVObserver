@@ -18,8 +18,7 @@
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
-// Key is List name
-typedef std::map<SVString, RemoteMonitorNamedList> RemoteMonitorList;
+typedef std::map<SVString, RemoteMonitorNamedList> RemoteMonitorListMap;
 
 // These are for the GUI(s)
 // Listname, reject Depth

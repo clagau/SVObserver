@@ -3466,8 +3466,8 @@ bool SVConfigurationObject::SaveRemoteMonitorList(SvXml::SVObjectXMLWriter& rWri
 	bool bOk = true;
 	rWriter.StartElement( SvXml::CTAG_MONITOR_LISTS );
 
-	const RemoteMonitorList& remoteMonitorLists = GetRemoteMonitorList();
-	RemoteMonitorList::const_iterator iterMonitorList = remoteMonitorLists.begin();
+	const RemoteMonitorListMap& remoteMonitorLists = GetRemoteMonitorList();
+	RemoteMonitorListMap::const_iterator iterMonitorList = remoteMonitorLists.begin();
 	while ( bOk && remoteMonitorLists.end() != iterMonitorList )
 	{
 		const SVString& strName = iterMonitorList->first;
@@ -5099,16 +5099,16 @@ void SVConfigurationObject::ClearRemoteMonitorList()
 	}
 }
 
-RemoteMonitorList SVConfigurationObject::GetRemoteMonitorList() const
+RemoteMonitorListMap SVConfigurationObject::GetRemoteMonitorList() const
 {
 	if (nullptr != m_pIOController)
 	{
 		return m_pIOController->GetRemoteMonitorList();
 	}
-	return RemoteMonitorList();
+	return RemoteMonitorListMap();
 }
 
-void SVConfigurationObject::SetRemoteMonitorList(const RemoteMonitorList& rList)
+void SVConfigurationObject::SetRemoteMonitorList(const RemoteMonitorListMap& rList)
 {
 	if (nullptr != m_pIOController)
 	{
@@ -5146,7 +5146,7 @@ HRESULT SVConfigurationObject::ActivateRemoteMonitorList(const SVString& listNam
 bool SVConfigurationObject::ActivateDefaultMonitorList()
 {
 	bool activated(false);
-	RemoteMonitorList rActiveList ;
+	RemoteMonitorListMap rActiveList ;
 	GetActiveRemoteMonitorList( rActiveList);
 	if( rActiveList.size() ==0)
 	{
@@ -5169,7 +5169,7 @@ bool SVConfigurationObject::ActivateDefaultMonitorList()
 	return activated;
 }
 
-void SVConfigurationObject::GetActiveRemoteMonitorList(RemoteMonitorList& rActiveList) const
+void SVConfigurationObject::GetActiveRemoteMonitorList(RemoteMonitorListMap& rActiveList) const
 {
 	rActiveList.clear();
 	if (nullptr != m_pIOController)
@@ -5224,7 +5224,7 @@ HRESULT SVConfigurationObject::LoadRemoteMonitorList( SVTreeType& rTree )
 	SVTreeType::SVBranchHandle hChild( nullptr );
 	if ( SvXml::SVNavigateTree::GetItemBranch( rTree, SvXml::CTAG_MONITOR_LISTS, nullptr, hChild ) )
 	{
-		RemoteMonitorList lists;
+		RemoteMonitorListMap lists;
 		SVTreeType::SVBranchHandle hSubChild = nullptr;
 		hSubChild = rTree.getFirstBranch( hChild );
 		while ( S_OK == result && nullptr != hSubChild )

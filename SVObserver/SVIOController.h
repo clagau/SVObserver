@@ -78,8 +78,8 @@ public:
 
 	bool SetupRemoteMonitorList(SVConfigurationObject* pConfig);
 	void ClearRemoteMonitorList();
-	const RemoteMonitorList& GetRemoteMonitorList() const;
-	void SetRemoteMonitorList(const RemoteMonitorList& rList);
+	const RemoteMonitorListMap& GetRemoteMonitorList() const;
+	void SetRemoteMonitorList(const RemoteMonitorListMap& rList);
 
 	//************************************
 	// Method:    ReplaceOrAddMonitorList
@@ -96,7 +96,7 @@ public:
 	//! \param bActivate [in]
 	//! \returns S_OK when unsuccessfully 
 	HRESULT ActivateRemoteMonitorList(const SVString& rListName, bool bActivate);
-	void GetActiveRemoteMonitorList(RemoteMonitorList& rActiveList) const;
+	void GetActiveRemoteMonitorList(RemoteMonitorListMap& rActiveList) const;
 	
 	//Return the number of active Monitorlist
 	int GetActiveMonitorListCount() const; 

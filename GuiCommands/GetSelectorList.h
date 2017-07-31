@@ -18,6 +18,8 @@
 #include "AttributesAllowedFilter.h"
 #include "AttributesSetFilter.h"
 #include "RangeSelectorFilter.h"
+#include "MLProductImageFilter.h"
+#include "MLRejectValueFilter.h"
 #pragma endregion Includes
 
 namespace SvCmd
@@ -26,17 +28,19 @@ namespace SvCmd
 	{
 		AttributesAllowedFilterType = 1,
 		AttributesSetFilterType,
-		RangeSelectorFilterType
-	};
+		RangeSelectorFilterType,
+		MLProductImageFilterType,
+		MLRejectValueFilterType
 
-	template <typename Results>
+	};
+	
 	struct GetSelectorList : public boost::noncopyable
 	{
-		GetSelectorList(const GUID& rInstanceID, SelectorFilterTypeEnum filterType, UINT Attribute, bool WholeArray) 
-		: m_InstanceID(rInstanceID)
-		, m_filterType(filterType)
-		, m_Attribute(Attribute)
-		, m_WholeArray(WholeArray) 
+		GetSelectorList(const GUID& rInstanceID, SelectorFilterTypeEnum filterType, UINT Attribute, bool WholeArray)
+			: m_InstanceID(rInstanceID)
+			, m_filterType(filterType)
+			, m_Attribute(Attribute)
+			, m_WholeArray(WholeArray)
 		{}
 
 		// This method is where the real separation would occur by using sockets/named pipes/shared memory
@@ -72,54 +76,71 @@ namespace SvCmd
 					switch (m_filterType)
 					{
 					case RangeSelectorFilterType:
+					{
+						SVString name;
+						hr = pObject->GetCompleteNameToType(SVToolObjectType, name);
+						if (S_OK == hr)
 						{
-							SVString name;
-							hr = pObject->GetCompleteNameToType(SVToolObjectType, name);
-							if (S_OK == hr)
-							{
-								RangeSelectorFilter filter(name);
-								SvOi::IsObjectInfoAllowed func = boost::bind(&RangeSelectorFilter::operator(), &filter, _1, _2, _3);
-								m_SelectedList = pTaskObject->GetSelectorList(func, m_Attribute, m_WholeArray);
-								hr = S_OK;
-							}
+							RangeSelectorFilter filter(name);
+							SvOi::IsObjectInfoAllowed func = boost::bind(&RangeSelectorFilter::operator(), &filter, _1, _2, _3);
+							m_SelectedList = pTaskObject->GetSelectorList(func, m_Attribute, m_WholeArray);
+							hr = S_OK;
 						}
-						break;
+					}
+					break;
 
 					case AttributesAllowedFilterType:
-						{
-							AttributesAllowedFilter filter;
-							SvOi::IsObjectInfoAllowed func = boost::bind(&AttributesAllowedFilter::operator(), &filter, _1, _2, _3);
-							m_SelectedList = pTaskObject->GetSelectorList(func, m_Attribute, m_WholeArray);
-							hr = S_OK;
-						}
-						break;
+					{
+						AttributesAllowedFilter filter;
+						SvOi::IsObjectInfoAllowed func = boost::bind(&AttributesAllowedFilter::operator(), &filter, _1, _2, _3);
+						m_SelectedList = pTaskObject->GetSelectorList(func, m_Attribute, m_WholeArray);
+						hr = S_OK;
+					}
+					break;
 
 					case AttributesSetFilterType:
-						{
-							AttributesSetFilter filter;
-							SvOi::IsObjectInfoAllowed func = boost::bind(&AttributesSetFilter::operator(), &filter, _1, _2, _3);
-							m_SelectedList = pTaskObject->GetSelectorList(func, m_Attribute, m_WholeArray);
-							hr = S_OK;
-						}
-						break;
-
+					{
+						AttributesSetFilter filter;
+						SvOi::IsObjectInfoAllowed func = boost::bind(&AttributesSetFilter::operator(), &filter, _1, _2, _3);
+						m_SelectedList = pTaskObject->GetSelectorList(func, m_Attribute, m_WholeArray);
+						hr = S_OK;
+					}
+					break;
+					case  MLProductImageFilterType:
+					{
+						MLProductImageFilter filter;
+						SvOi::IsObjectInfoAllowed func = boost::bind(&MLProductImageFilter::operator(), &filter, _1, _2, _3);
+						m_SelectedList = pTaskObject->GetSelectorList(func, m_Attribute, m_WholeArray);
+						hr = S_OK;
+					}
+					break;
+					case  MLRejectValueFilterType:
+					{
+						MLRejectValueFilter filter;
+						SvOi::IsObjectInfoAllowed func = boost::bind(&MLRejectValueFilter::operator(), &filter, _1, _2, _3);
+						m_SelectedList = pTaskObject->GetSelectorList(func, m_Attribute, m_WholeArray);
+						hr = S_OK;
+					}
+					break;
 					default:
+					{
 						hr = E_INVALIDARG;
-						break;
+					}
+					break;
 					}
 				}
 			}
 			return hr;
 		}
 		bool empty() const { return false; }
-		const Results& GetResults() const { return m_SelectedList; }
+		const SvOi::ISelectorItemVectorPtr& GetResults() const { return m_SelectedList; }
 
 	private:
 		GUID m_InstanceID;
 		SelectorFilterTypeEnum m_filterType;
 		UINT m_Attribute;
 		bool m_WholeArray;
-		Results m_SelectedList;
+		SvOi::ISelectorItemVectorPtr m_SelectedList;
 	};
 } //namespace SvCmd
 

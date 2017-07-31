@@ -28,12 +28,11 @@ namespace SvOg
 		SvOi::ISelectorItemVectorPtr operator()(const SvOsl::SelectorOptions& rOptions)
 		{
 			SvOi::ISelectorItemVectorPtr SelectorList;
-
-			typedef SvCmd::GetSelectorList<SvOi::ISelectorItemVectorPtr> Command;
-			typedef SVSharedPtr<Command> CommandPtr;
+			
+			typedef SVSharedPtr<SvCmd::GetSelectorList> CommandPtr;
 		
 			const SVGUID& rGuid = (GUID_NULL != rOptions.getInstanceID() ) ? rOptions.getInstanceID() : rOptions.getInspectionID();
-			CommandPtr commandPtr(new Command(rGuid, FilterType, rOptions.getAttributesFilter(), rOptions.getWholeArray()));
+			CommandPtr commandPtr(new SvCmd::GetSelectorList(rGuid, FilterType, rOptions.getAttributesFilter(), rOptions.getWholeArray()));
 			SVObjectSynchronousCommandTemplate<CommandPtr> cmd(rOptions.getInspectionID(), commandPtr);
 			HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 			if (S_OK == hr)
