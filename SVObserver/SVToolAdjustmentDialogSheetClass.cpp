@@ -277,6 +277,10 @@ void SVToolAdjustmentDialogSheetClass::addPages()
 
 		case SVColorToolObjectType:
 			AddPage( new SVTADlgColorToolPageClass( m_InspectionID, m_TaskObjectID ) );
+			if (bHasSize)
+			{
+				AddPage(new SVToolAdjustmentDialogSizePage(m_InspectionID, m_TaskObjectID, this));
+			}
 			AddPage( pConditionalDlg );
 			AddPage( new SvOg::SVToolAdjustmentDialogGeneralPageClass( m_InspectionID, m_TaskObjectID ) );
 			break;
