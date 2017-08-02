@@ -191,8 +191,8 @@ namespace SvOg
 			SVStringSet::const_iterator Iter(m_SourceNames.begin());
 			for (; m_SourceNames.end() != Iter; ++Iter)
 			{
-				//If item has part of source name then this is the client for suppliers 
-				if( 0 == ItemText.find(*Iter) )
+				//If item has part of source name then this is the client for suppliers First check if tool name identical or add . then is part of name
+				if( ItemText == *Iter || 0 == ItemText.find(*Iter + '.') )
 				{
 					TextColor = SVColor::Blue;
 				}
@@ -234,8 +234,6 @@ namespace SvOg
 				}
 				if (!Name.empty())
 				{
-					//! Need to add this otherwise tool names that are sub names of other tools cause problems
-					Name += _T(".");
 					m_SourceNames.insert(Name);
 				}
 			}
