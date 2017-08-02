@@ -281,6 +281,12 @@ void CSVRegressionFileSelectSheet::ValidateAndFillFileList()
 			case RegressionFileEnum::RegSingleDirectory:
 			case RegressionFileEnum::RegSubDirectories:
 			{
+				if (pStruct->FirstFile.empty())
+				{
+					SvStl::MessageContainer Exception(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_RegressionTest_NoFilesSelected, SvStl::SourceFileParams(StdMessageParams));
+					throw Exception;
+				}
+
 				long lNmbFiles = FillFileListFromDirectory(*pStruct);
 				lTotalNumFiles += lNmbFiles;
 
@@ -376,6 +382,10 @@ int CSVRegressionFileSelectSheet::FillFileListFromDirectory(RegressionTestStruct
 			SvStl::MessageContainer Exception(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_RegressionTest_NoBmpFileSelected, SvStl::SourceFileParams(StdMessageParams));
 			throw Exception;
 		}
+	}
+
+	if (0 == SvUl_SF::CompareNoCase(SvUl_SF::Right(currentPath.c_str(), 4), SVString(_T(".bmp"))))
+	{
 		size_t Pos = currentPath.rfind('\\');
 		if (SVString::npos != Pos)
 		{
