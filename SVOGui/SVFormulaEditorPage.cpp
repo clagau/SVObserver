@@ -672,7 +672,7 @@ namespace SvOg
 		UpdateData( TRUE ); // Update the variables
 		double value = 0;
 		SvStl::MessageContainerVector ErrorMessages;
-		const int result = m_FormulaController->ValidateEquation( equationText, value, true, ErrorMessages );
+		const int result = m_FormulaController->ValidateEquation( equationText, value, false, ErrorMessages );
 		for (SvStl::MessageContainerVector::iterator iter = ErrorMessages.begin(); ErrorMessages.end() != iter; iter++ )
 		{
 			SvStl::MessageMgrStd message( SvStl::LogAndDisplay );
