@@ -117,6 +117,12 @@
     <ClInclude Include="MLProduct.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="SharedMemIniFileTags.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SMParameterStruct.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header Files">

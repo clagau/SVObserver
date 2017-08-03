@@ -13,6 +13,7 @@
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVStatusLibrary\MessageTextEnum.h"
 #include "SVMessage\SVMessage.h"
+#include "SMParameterStruct.h"
 
 namespace SvSml
 {
@@ -36,7 +37,7 @@ namespace SvSml
 	{
 		CloseConnection();
 	}
-	void SMRingBuffer::CreateConnection(LPCTSTR Name, int nTotal, int nRejects)
+	void SMRingBuffer::CreateConnection(LPCTSTR Name, int nTotal, int nRejects, const SMParameterStruct& rParam)
 	{
 		CloseConnection();
 		if (Name == nullptr || nTotal == 0 || nRejects >= nTotal)
@@ -51,7 +52,7 @@ namespace SvSml
 		
 		DWORD EntrySize = (m_TotalSlotCount + m_RejectSlotCount) * sizeof(BufferElement);
 		// Create the file mapping
-		for (int time = 0; time <= ConnectionTimeout; time += ConnectionRetryTime)
+		for (int time = 0; time <= rParam.SMCreateTimeout; time += rParam.SMCreateWaitTime)
 		{
 			SetLastError(0x0);
 			m_hMapFile = CreateFileMapping(INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, 0, m_MatchedInfoSize + EntrySize, m_FileName.c_str());
@@ -64,7 +65,7 @@ namespace SvSml
 				//Wait for the clients   to closehandle to SharedMemory 
 				CloseHandle(m_hMapFile);
 				m_hMapFile = nullptr;
-				Sleep(ConnectionRetryTime);
+				Sleep(rParam.SMCreateWaitTime);
 				continue;
 			}
 			else

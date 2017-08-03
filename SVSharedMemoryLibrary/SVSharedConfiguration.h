@@ -20,28 +20,17 @@ namespace SvSml
 	class SVSharedConfiguration
 	{
 	public:
+		static const double SharedDriveMinSize;// = 0.5;
 		static const SVString GetSharedDrive(); //<return "V:";
-		static const SVString GetControlShareName(); //<return "ControlSegment"
 		static const SVString GetShareName(); //<return "SVSharedMemory";
-		static const SVString GetLastInspectedName(); //<return "last_inspected";
-		static const SVString GetRejectsName(); //< return "rejects";
-		static const SVString GetPPQName();  //< return "PPQs";
-		static const SVString GetPPQRejectsName(); //< return "PPQrejects";
 		static const SVString GetMonitorListName(); //< return "monitor_list";
-
 		static const SVString GetSharedMemoryDirectoryName();
-		static const SVString GetImageDirectoryName();
-		static const SVString GetRejectImageDirectoryName();
 		static void Log(const SVString& msg);
-
 		static HRESULT SharedResourcesOk();
 		static void EnsureShareDirectoryExists();
 		static bool SharedDriveExists();
-	
-
 	private:
-		SVSharedConfiguration();
-		~SVSharedConfiguration();
+		SVSharedConfiguration() =delete;
 		static inline const SVString LogFilename() 
 		{ 
 			char buf[40] = {0};

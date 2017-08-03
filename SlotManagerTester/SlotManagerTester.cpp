@@ -10,6 +10,7 @@
 #include "stdafx.h"
 #include <memory.h>
 #include "SVSharedMemoryLibrary\SMRingbuffer.h"
+#include "SVSharedMemoryLibrary\SMParameterStruct.h"
 
 
 void Init( std::set<int> &prim, int max)
@@ -154,7 +155,8 @@ int main(int argc, char* argv[])
 		SvSml::SMRingBuffer Ringbufffer;
 		try
 		{
-			Ringbufffer.CreateConnection(name.c_str(), nTotal,nRejects );
+			SvSml::SMParameterStruct  Param(2000,200);
+			Ringbufffer.CreateConnection(name.c_str(), nTotal,nRejects, Param);
 			for (UINT Triggercount = 0;  Triggercount < MAXDWORD; Triggercount++)
 			{
 				int  wslot = Ringbufffer.GetNextWriteSlot();

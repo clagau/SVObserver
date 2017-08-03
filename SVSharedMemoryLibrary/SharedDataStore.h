@@ -7,6 +7,7 @@
 //******************************************************************************
 #pragma once
 #include "SVStatusLibrary\SourceFileParams.h"
+#include "SMParameterStruct.h"
 namespace SvSml
 {
 	///class for holding memory for the dataBufferes in SharedMemory
@@ -25,14 +26,12 @@ namespace SvSml
 		//! criteria if the memory is mapped to one view or one view for each slot 
 		// 0 means one view per slot in every case
 		const static int GranularityFactor = 5; 
-		const static int ConnectionTimeout = 2000;
-		const static int  ConnectionRetryTime = 200;
-
 		SharedDataStore();
 		~SharedDataStore();
-		void  CloseConnection(); //<close connection to datastore
-
-		void CreateDataStore(LPCTSTR StoreName, DWORD  size, DWORD  slots); //<Destroy the shared memory if it exist
+		///close connection to datastore
+		void  CloseConnection(); 
+		///Destroy the shared memory if it exist
+		void CreateDataStore(LPCTSTR StoreName, DWORD  size, DWORD  slots, const SMParameterStruct& rParam);
 		bool OpenDataStore(LPCTSTR StoreName); //<Connect to existing store 
 		///Get Ptr to data in shared memory
 		BYTE* GetPtr(DWORD slot, DWORD offset); 
@@ -55,6 +54,7 @@ namespace SvSml
 		void MapViewOfFileWriteInfos();
 
 	private:		
+	
 		BOOL  m_bUseOneViewPerSlot; //<if this is false if the memory is mapped to one view else  one view for each slot is used
 		DWORD m_slotCount; //<number of slots 
 		DWORD  m_slotSize; //<size per slot

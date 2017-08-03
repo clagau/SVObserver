@@ -13,6 +13,7 @@ namespace SvSml
 
 	MonitorListCpy::MonitorListCpy(void)
 	{
+		m_ProductDepth = 0;
 		m_rejectDepth =0;
 		m_IsActive = FALSE;;
 		m_ProductFilter = LastInspectedFilter;
@@ -51,6 +52,7 @@ namespace SvSml
 		m_MonitorListName = sharedMonitorList.GetName().c_str();
 		m_ppqName = sharedMonitorList.GetPPQName().c_str();
 		m_rejectDepth = sharedMonitorList.GetRejectDepth();
+		m_ProductDepth = sharedMonitorList.GetProductDepth();
 		m_ProductFilter = sharedMonitorList.GetProductFilter();
 
 		for( int t  =  0 ; t  < ListType::Count; t++)
@@ -132,6 +134,10 @@ namespace SvSml
 	{
 		m_rejectDepth = rejectDepth;
 	}
+	void MonitorListCpy::SetProductDepth(int ProductDepth)
+	{
+		m_ProductDepth = ProductDepth;
+	}
 	void MonitorListCpy::SetProductFilter(SVProductFilterEnum fEnum)
 	{
 		m_ProductFilter =fEnum;
@@ -154,6 +160,10 @@ namespace SvSml
 	{
 		return m_rejectDepth;
 	}
+	int MonitorListCpy::GetProductDepth() const
+	{
+		return m_ProductDepth;
+	}
 	SVProductFilterEnum MonitorListCpy::GetProductFilter() const
 	{
 		return m_ProductFilter;
@@ -168,9 +178,10 @@ namespace SvSml
 		DWORD PPQIndex = (DWORD)PPQInfoMap.size();
 		if (PPQInfoMap.find(m_ppqName) == PPQInfoMap.end())
 		{
-			MLPPQInfoPointer& rMLPPQInfoP =  PPQInfoMap[m_ppqName] = MLPPQInfoPointer(new MLPPQInfo);
+			MLPPQInfoPointer& rMLPPQInfoP =  PPQInfoMap[m_ppqName] 
+				= MLPPQInfoPointer(new MLPPQInfo(m_ProductDepth, m_rejectDepth));
 			rMLPPQInfoP->SlotManagerIndex = PPQIndex;
-			rMLPPQInfoP->RejectSize = m_rejectDepth;
+			
 		}
 		else
 		{
@@ -225,7 +236,7 @@ namespace SvSml
 	{
 		if (rWriter.IsCreated())
 		{
-			rWriter.AddList(m_MonitorListName, m_ppqName, m_rejectDepth, m_IsActive);
+			rWriter.AddList(m_MonitorListName, m_ppqName, m_rejectDepth,m_ProductDepth,m_IsActive);
 			rWriter.SetProductFilter(m_MonitorListName,m_ProductFilter);
 			for(int t  =  0; t  < ListType::Count; t++)
 			{

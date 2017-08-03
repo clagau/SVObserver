@@ -32,7 +32,7 @@ namespace SvSml
 		static SharedMemWriter& Instance();
 		~SharedMemWriter();
 
-		int CreateManagmentAndStores(DWORD Productslot);
+		int CreateManagmentAndStores();
 		
 		RingBufferPointer GetSlotManager(LPCTSTR PPQname);
 
@@ -61,27 +61,21 @@ namespace SvSml
 		void ClearMonitorListCpyVector(); //< clear m_MonitorListCpyVector
 		void Insert(MonitorListCpyPointer& MLCpyPtr);
 		DWORD GetInspectionImageSize(const SVString& InspName );
+		DWORD GetInspectionStoreId(const SVString& InspectionName);
+		const MonitorListCpy*  GetMonitorListCpyPointer(const SVString& Monitorlistname)  const;
+		const MonitorListCpy*  SharedMemWriter::GetMonitorListCpyPointerForPPQ(const SVString& PPQNAME)  const;
 		MonitorEntryPointer GetMonitorEntryPointer(const SVString& rname);
 		void WriteMonitorList()  ;
-
-
-		
-	//private:
+	private:
 		SharedMemWriter();
-
-		//Do not implement this method
-		SharedMemWriter(const SharedMemWriter& p_rObject);
-
-		//Do not implement this method
-		const SharedMemWriter& operator=(const SharedMemWriter& p_rObject);
-
+		SharedMemWriter(const SharedMemWriter& p_rObject) =delete;
+		const SharedMemWriter& operator=(const SharedMemWriter& p_rObject) =delete;
 		void ReadSettings();
 		void CheckDirectories();
-
-	//private:
+	private:
 		SVMonitorListWriter m_monitorListWriter;
 		SharedDataContainer m_DataContainer;
-		MLCpyContainer m_MLContainer;  //Container holds MonitorlistInformation  
+		MLCpyContainer m_MLContainer;  //<Container holds MonitorlistInformation  
 		SVSharedMemorySettings m_settings;
 	};
-} //namespace SvSml
+} 

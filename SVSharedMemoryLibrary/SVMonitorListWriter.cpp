@@ -77,8 +77,14 @@ namespace SvSml
 			Init();
 
 			// check required size
-			size_t managedShareSize = settings.MonitorStoreSize() * statics::M;
-			if (requiredSize < managedShareSize)
+			size_t managedShareSize = settings.GetMonitorStoreSize() * statics::M;
+			if (requiredSize == 0)
+			{
+				m_pManagedSharedMemory.reset();
+				m_lists = nullptr;
+
+			}
+			else if (requiredSize < managedShareSize)
 			{
 				// Allocate new repositories
 				m_pManagedSharedMemory = std::shared_ptr<bip::managed_shared_memory>(new bip::managed_shared_memory(bip::create_only, m_ShareName.c_str(), managedShareSize));
@@ -112,7 +118,7 @@ namespace SvSml
 		return l_result;
 	}
 
-	void SVMonitorListWriter::AddList(const SVString & listName, const SVString & ppqName, int rejectDepth, bool isActive )
+	void SVMonitorListWriter::AddList(const SVString & listName, const SVString & ppqName, int rejectDepth, int productDepth,bool isActive )
 	{
 		SVSharedConfiguration::Log("SVMonitorListWriter::AddList");
 		if (!m_lists)
@@ -124,6 +130,7 @@ namespace SvSml
 		isActive?   list.Activate(): list.Deactivate();  
 		list.SetNames(listName, ppqName);
 		list.SetRejectDepth(rejectDepth);
+		list.SetProductDepth(productDepth);
 		m_lists->Add(list);
 	}
 

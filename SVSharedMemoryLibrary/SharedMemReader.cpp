@@ -266,6 +266,4 @@ namespace SvSml
 		return _GetProduct(Monitorlist, TriggerNumber, false, false, pProduct, pLastProduct, releaseSlot);
 	}
 
-	
-
 } //namespace SvSml

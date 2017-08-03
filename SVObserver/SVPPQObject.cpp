@@ -315,8 +315,6 @@ SVPPQObject::SVPPQObject(LPCSTR ObjectName)
 	, m_conditionalOutputName(PPQ_CONDITIONAL_OUTPUT_ALWAYS)
 	, m_bActiveMonitorList(false)
 	, m_AttributesAllowedFilterForFillChildObjectList(0)
-	, m_numProductSlots(0)
-	, m_numRejectSlots(0)
 {
 	init();
 }
@@ -333,8 +331,6 @@ SVPPQObject::SVPPQObject(SVObjectClass* POwner, int StringResourceID)
 	, m_conditionalOutputName(PPQ_CONDITIONAL_OUTPUT_ALWAYS)
 	, m_bActiveMonitorList(false)
 	, m_AttributesAllowedFilterForFillChildObjectList(0)
-	, m_numProductSlots(0)
-	, m_numRejectSlots(0)
 {
 	init();
 }
@@ -5227,15 +5223,4 @@ void SVPPQObject::SetNAKMode(SvOi::NakGeneration nakMode, int NAKPar)
 {
 	m_NAKMode = nakMode;
 	m_NAKParameter = NAKPar;
-}
-
-
-long SVPPQObject::GetNumProductSlots() const
-{
-	return m_numProductSlots;
-}
-
-long SVPPQObject::GetNumRejectSlots() const
-{
-	return m_numRejectSlots;
 }

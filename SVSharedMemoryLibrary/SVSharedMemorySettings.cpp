@@ -16,49 +16,46 @@
 namespace SvSml
 {
 	SVSharedMemorySettings::SVSharedMemorySettings()
-	: m_monitorStoreSize(DefaultMonitorStoreSize)
-	, m_productStoreSize(DefaultProductStoreSize)
-	, m_dataStoreSize(DefaultDataStoreSize)
+	: m_MonitorStoreSize(DefaultMonitorStoreSize),
+	m_NumProductSlot(DefaultNumProductSlot),
+	m_CreateTimeout(DefaultConnectionTimout),
+	m_CreateWaitTime(DefaultCreateWaitTime)
 	{
 	}
 
-	SVSharedMemorySettings::SVSharedMemorySettings(long monitorSz, long prodStoreSize, long dataStoreSize)
-	: m_monitorStoreSize(monitorSz)
-	, m_productStoreSize(prodStoreSize)
-	, m_dataStoreSize(dataStoreSize)
+
+	int SVSharedMemorySettings::GetMonitorStoreSize() const
 	{
+		return m_MonitorStoreSize;
+	}
+	void  SVSharedMemorySettings::SetMonitorStoreSize(int StoreSize)
+	{
+		m_MonitorStoreSize = StoreSize;
+	}
+	int SVSharedMemorySettings::GetNumProductSlot() const
+	{
+		return m_NumProductSlot;
+	}
+	void  SVSharedMemorySettings::SetNumProductSlot(int Size)
+	{
+		m_NumProductSlot = Size;
+	}
+	int SVSharedMemorySettings::GetCreateTimeout() const
+	{
+		return m_CreateTimeout;
+	}
+	void  SVSharedMemorySettings::SeCreateTimout(int StoreSize)
+	{
+		m_CreateTimeout = StoreSize;
+	}
+	int SVSharedMemorySettings::GetCreateWaitTime() const
+	{
+		return m_CreateWaitTime;
+	}
+	void  SVSharedMemorySettings::SetCreateWaitTime(int StoreSize)
+	{
+		m_CreateWaitTime = StoreSize;
 	}
 
-	SVSharedMemorySettings::SVSharedMemorySettings(const SVSharedMemorySettings& rSettings)
-	: m_monitorStoreSize(rSettings.m_monitorStoreSize)
-	, m_productStoreSize(rSettings.m_productStoreSize)
-	, m_dataStoreSize(rSettings.m_dataStoreSize)
-	{
-	}
-
-	SVSharedMemorySettings& SVSharedMemorySettings::operator=(const SVSharedMemorySettings& rSettings)
-	{
-		if (this != &rSettings)
-		{
-			m_monitorStoreSize = rSettings.m_monitorStoreSize;
-			m_productStoreSize = rSettings.m_productStoreSize;
-			m_dataStoreSize = rSettings.m_dataStoreSize;
-		}
-		return *this;
-	}
-
-	long SVSharedMemorySettings::ProductStoreSize() const
-	{
-		return m_productStoreSize;
-	}
-
-	long SVSharedMemorySettings::DataStoreSize() const
-	{
-		return m_dataStoreSize;
-	}
-
-	long SVSharedMemorySettings::MonitorStoreSize() const
-	{
-		return m_monitorStoreSize;
-	}
+	
 } //namespace SvSml

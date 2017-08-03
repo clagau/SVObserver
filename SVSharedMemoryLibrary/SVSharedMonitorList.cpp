@@ -18,31 +18,33 @@
 namespace SvSml
 {
 	SVSharedMonitorList::SVSharedMonitorList(const void_allocator & allocator)
-	: m_allocator(allocator)
-	, prodItemsData(allocator)
-	, prodItemsImage(allocator)
-	, rejctCond(allocator)
-	, failStats(allocator)
-	, m_name("", allocator)
-	, m_ppq("", allocator)
-	, m_rejectDepth(0)
-	, m_active(false)
-	, m_filter(LastInspectedFilter)
+		: m_allocator(allocator)
+		, prodItemsData(allocator)
+		, prodItemsImage(allocator)
+		, rejctCond(allocator)
+		, failStats(allocator)
+		, m_name("", allocator)
+		, m_ppq("", allocator)
+		, m_rejectDepth(0)
+		, m_ProductDepth(0)
+		, m_active(false)
+		, m_filter(LastInspectedFilter)
 	{
 		SVSharedConfiguration::Log("SVSharedMonitorList::Constructor");
 	}
 
 	SVSharedMonitorList::SVSharedMonitorList(const SVSharedMonitorList & rho)
-	: m_allocator(rho.m_allocator)
-	, prodItemsData(rho.prodItemsData)
-	, prodItemsImage(rho.prodItemsImage)
-	, rejctCond(rho.rejctCond)
-	, failStats(rho.failStats)
-	, m_name(rho.m_name.c_str(), rho.m_allocator)
-	, m_ppq(rho.m_ppq.c_str(), rho.m_allocator)
-	, m_rejectDepth(rho.m_rejectDepth)
-	, m_active(rho.m_active)
-	, m_filter(rho.m_filter)
+		: m_allocator(rho.m_allocator)
+		, prodItemsData(rho.prodItemsData)
+		, prodItemsImage(rho.prodItemsImage)
+		, rejctCond(rho.rejctCond)
+		, failStats(rho.failStats)
+		, m_name(rho.m_name.c_str(), rho.m_allocator)
+		, m_ppq(rho.m_ppq.c_str(), rho.m_allocator)
+		, m_rejectDepth(rho.m_rejectDepth)
+		, m_ProductDepth(rho.m_ProductDepth)
+		, m_active(rho.m_active)
+		, m_filter(rho.m_filter)
 	{
 		SVSharedConfiguration::Log("SVSharedMonitorList::copy Constructor");
 	}
@@ -59,6 +61,7 @@ namespace SvSml
 			m_name = rho.m_name;
 			m_ppq = rho.m_ppq;
 			m_rejectDepth = rho.m_rejectDepth;
+			m_ProductDepth = rho.m_ProductDepth;
 			m_active = rho.m_active;
 			m_filter = rho.m_filter;
 		}
@@ -70,7 +73,7 @@ namespace SvSml
 		SVSharedConfiguration::Log("SVSharedMonitorList::Destructor");
 	}
 
-	
+
 	const  ShMoListEntryVector& SVSharedMonitorList::GetShMoListEntryVector(ListType::typ ltype) const
 	{
 		switch (ltype)
@@ -96,11 +99,11 @@ namespace SvSml
 
 
 
-	void SVSharedMonitorList::SetEntries(ListType::typ ltype,  const MonitorEntries & items)
+	void SVSharedMonitorList::SetEntries(ListType::typ ltype, const MonitorEntries & items)
 	{
-		
-		ShMoListEntryVector*  pEntryVector  = nullptr;
-		switch(ltype)
+
+		ShMoListEntryVector*  pEntryVector = nullptr;
+		switch (ltype)
 		{
 		case ListType::failStatus:
 			pEntryVector = &failStats;
@@ -115,7 +118,7 @@ namespace SvSml
 			pEntryVector = &rejctCond;
 			break;
 		}
-		if(pEntryVector)
+		if (pEntryVector)
 		{
 			pEntryVector->clear();
 			pEntryVector->reserve(items.size());
@@ -128,19 +131,19 @@ namespace SvSml
 	}
 
 
-		MonitorEntries::const_iterator  SVSharedMonitorList::FindInMoListVector(SVString const &name, const MonitorEntries &entryVector )
+	MonitorEntries::const_iterator  SVSharedMonitorList::FindInMoListVector(SVString const &name, const MonitorEntries &entryVector)
 	{
-		MonitorEntries::const_iterator ret; 
-		for( ret =  entryVector.begin(); ret != entryVector.end(); ++ret )
+		MonitorEntries::const_iterator ret;
+		for (ret = entryVector.begin(); ret != entryVector.end(); ++ret)
 		{
-			if(ret->get()->name == name)
+			if (ret->get()->name == name)
 				break;
 		}
 		return ret;
 	}
 
-	bool SVSharedMonitorList::IsInMoListVector(SVString const &name, const MonitorEntries &entryVector )
+	bool SVSharedMonitorList::IsInMoListVector(SVString const &name, const MonitorEntries &entryVector)
 	{
-		return FindInMoListVector(name,entryVector ) != entryVector.end();
+		return FindInMoListVector(name, entryVector) != entryVector.end();
 	}
 } //namespace SvSml

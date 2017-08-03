@@ -39,7 +39,7 @@ public:
 	void UpdateControls(bool ready);
 
 
-	enum ECOL {eName=0, ePPQ, eIsActive, eRejectDepth, eProductFilter,eImageCount,ePcount, };
+	enum ECOL {eName=0, ePPQ, eIsActive, eRejectDepth, eProductDepth,eProductFilter,eImageCount,ePcount};
 	static LPCTSTR ColHeader[ePcount+1];
 
 

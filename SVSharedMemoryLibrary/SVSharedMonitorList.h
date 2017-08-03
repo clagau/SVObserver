@@ -31,6 +31,8 @@ namespace SvSml
 		const bip_string & GetName() const { return m_name; }
 		const bip_string & GetPPQName() const { return m_ppq; }
 		int GetRejectDepth() const { return m_rejectDepth; }
+		int GetProductDepth() const { return m_ProductDepth; }
+		
 		SVProductFilterEnum GetProductFilter() const { return m_filter; };
 
 		void SetEntries(ListType::typ ltype,  const MonitorEntries & items);
@@ -45,6 +47,7 @@ namespace SvSml
 			m_ppq = bip_string(ppq.c_str(), m_allocator);
 		}
 		void SetRejectDepth(int depth) { m_rejectDepth = depth; }
+		void SetProductDepth(int depth) { m_ProductDepth = depth; }
 		void SetProductFilter(SVProductFilterEnum filter) { m_filter = filter; }
 	
 		static MonitorEntries::const_iterator  FindInMoListVector(SVString const &name, const MonitorEntries &entryVector );
@@ -61,6 +64,7 @@ namespace SvSml
 		bip_string m_name; // list name as registered
 		bip_string m_ppq; // ppq name
 		int m_rejectDepth;
+		int m_ProductDepth;
 
 		SVProductFilterEnum m_filter;
 		bool m_active; // set when activated

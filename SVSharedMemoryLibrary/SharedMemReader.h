@@ -79,7 +79,6 @@ namespace SvSml
 		/// map contains monitorlist name Slotmanager index 
 		std::map<SVString, int> m_SlotManagerIndexMap; 
 	private: 
-		 
 		//************************************
 		// Method:    _GetProduct
 		// FullName:  SvSml::SharedMemReader::_GetProduct

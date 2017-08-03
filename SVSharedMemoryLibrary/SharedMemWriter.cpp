@@ -20,12 +20,10 @@
 #include "SVMatroxLibrary/SVMatroxBuffer.h"
 #include "SVMatroxLibrary/MatroxImageProps.h"
 #include "SVMatroxLibrary/SVMatroxBufferInterface.h"
+#include "SharedMemIniFileTags.h"
 
 namespace SvSml
 {
-
-	static const double TwentyPercent = .20;
-
 	SharedMemWriter& SharedMemWriter::Instance()
 	{
 		static SharedMemWriter l_Object;
@@ -43,10 +41,13 @@ namespace SvSml
 		CheckDirectories();
 	}
 
-	int SharedMemWriter::CreateManagmentAndStores(DWORD Productslot)
+	int SharedMemWriter::CreateManagmentAndStores()
 	{
-		m_DataContainer.CreateSlotManagment(Productslot, m_MLContainer);
-		return m_DataContainer.CreateStores(m_MLContainer);
+		const SvSml::SVSharedMemorySettings& rSettings = SvSml::SharedMemWriter::Instance().GetSettings();
+		SMParameterStruct Param(rSettings.GetCreateTimeout(),rSettings.GetCreateWaitTime());
+
+		m_DataContainer.CreateSlotManagment(m_MLContainer, Param);
+		return m_DataContainer.CreateStores(m_MLContainer, Param);
 	}
 
 	RingBufferPointer SharedMemWriter::GetSlotManager(LPCTSTR PPQname)
@@ -62,16 +63,17 @@ namespace SvSml
 		}
 	}
 
-
 	void SharedMemWriter::ReadSettings()
 	{
 		SvLib::SVOINIClass reader(SvStl::GlobalPath::Inst().GetSVIMIniPath());
-
-		long monitorStoreSize = reader.GetValueInt(_T("SharedMemory"), _T("MonitorStoreSize"), SvSml::SVSharedMemorySettings::DefaultMonitorStoreSize);
-		long productStoreSize = reader.GetValueInt(_T("SharedMemory"), _T("ProductStoreSize"), SvSml::SVSharedMemorySettings::DefaultProductStoreSize);
-		long dataStoreSize = reader.GetValueInt(_T("SharedMemory"), _T("DataStoreSize"), SvSml::SVSharedMemorySettings::DefaultDataStoreSize);
-
-		m_settings = SvSml::SVSharedMemorySettings(monitorStoreSize, productStoreSize, dataStoreSize);
+		int  monitorStoreSize = reader.GetValueInt(SharedMemorySectionTag, MonitorStoreSizeTag, SvSml::SVSharedMemorySettings::DefaultMonitorStoreSize);
+		int  numProductSlot = reader.GetValueInt(SharedMemorySectionTag, NumProductSlotTag, SvSml::SVSharedMemorySettings::DefaultNumProductSlot);
+		int ConnectionTimout = reader.GetValueInt(SharedMemorySectionTag, CreateTimeoutTag, SvSml::SVSharedMemorySettings::DefaultConnectionTimout);
+		int CreateWaitTime = reader.GetValueInt(SharedMemorySectionTag, CreateWaitTimeTag, SvSml::SVSharedMemorySettings::DefaultCreateWaitTime);
+		m_settings.SetMonitorStoreSize(monitorStoreSize);
+		m_settings.SetNumProductSlot(numProductSlot);
+		m_settings.SeCreateTimout(ConnectionTimout);
+		m_settings.SetCreateWaitTime(CreateWaitTime);
 	}
 
 	void SharedMemWriter::CheckDirectories()
@@ -87,25 +89,12 @@ namespace SvSml
 				{
 					CreateDirectory(sharedMemoryDirectory.c_str(), nullptr);
 				}
-				const SVString& imageFileDirectory = SVSharedConfiguration::GetImageDirectoryName();
-				res = GetFileAttributes(imageFileDirectory.c_str());
-				if (res == INVALID_FILE_ATTRIBUTES)
-				{
-					CreateDirectory(imageFileDirectory.c_str(), nullptr);
-				}
-				const SVString& rejectImageFileDirectory = SVSharedConfiguration::GetRejectImageDirectoryName();
-				res = GetFileAttributes(rejectImageFileDirectory.c_str());
-				if (res == INVALID_FILE_ATTRIBUTES)
-				{
-					CreateDirectory(rejectImageFileDirectory.c_str(), nullptr);
-				}
 			}
 		}
 		catch (...)
 		{
 		}
 	}
-
 
 	const SvSml::SVSharedMemorySettings& SharedMemWriter::GetSettings() const
 	{
@@ -154,12 +143,21 @@ namespace SvSml
 		return true;
 	}
 
-
 	DWORD SharedMemWriter::GetInspectionImageSize(const SVString& inspectionName)
 	{
-
 		return m_MLContainer.GetInspectionImageSize(inspectionName);
-
+	}
+	DWORD SharedMemWriter::GetInspectionStoreId(const SVString& InspectionName)
+	{
+		return m_MLContainer.GetInspectionStoreId(InspectionName);
+	}
+	const MonitorListCpy*  SharedMemWriter::GetMonitorListCpyPointer(const SVString& Monitorlistname)  const
+	{
+		return m_MLContainer.GetMonitorListCpyPointer(Monitorlistname);
+	}
+	const MonitorListCpy*  SharedMemWriter::GetMonitorListCpyPointerForPPQ(const SVString& PPQNAME)  const
+	{
+		return m_MLContainer.GetMonitorListCpyPointerForPPQ(PPQNAME);
 	}
 	void SharedMemWriter::Insert(MonitorListCpyPointer& MLCpyPtr)
 	{
@@ -187,7 +185,6 @@ namespace SvSml
 	DWORD  SharedMemWriter::GetActiveMonitorListCount() const
 	{
 		return m_MLContainer.GetActiveMonitorlistCount();
-							 
 	}
 
 } //namespace SvSml

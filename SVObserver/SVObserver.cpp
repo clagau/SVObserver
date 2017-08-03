@@ -2434,6 +2434,7 @@ int SVObserverApp::ExitInstance()
 	SVSocketRemoteCommandManager::Instance().Shutdown();
 
 	SvSol::SVSocketLibrary::Destroy();
+	SvSml::ShareEvents::GetInstance().QuiesceSharedMemory();
 	SvSml::SharedMemWriter::Instance().Destroy();
 	ValidateMRUList();
 
@@ -5439,7 +5440,7 @@ void SVObserverApp::Start()
 			SvSml::SharedMemWriter::Instance().CloseDataConnection();
 		}
 		//create image and data stores create slot ringbuffer;
-		SvSml::SharedMemWriter::Instance().CreateManagmentAndStores(SvSml::MLPPQInfo::NumProductSlot);
+		SvSml::SharedMemWriter::Instance().CreateManagmentAndStores();
 		
 
 

@@ -11,6 +11,7 @@
 #include "SVUtilityLibrary\SVString.h"
 #include "SVStatusLibrary\SourceFileParams.h"
 #include <memory>
+#include "SMParameterStruct.h"
 
 
 namespace  SvSml
@@ -43,7 +44,7 @@ namespace  SvSml
 		SMRingBuffer();
 		~SMRingBuffer();
 		/// Create the Ringbuffer in shared memory  
-		void CreateConnection(LPCTSTR Name, int nTotal, int nRejects);
+		void CreateConnection(LPCTSTR Name, int nTotal, int nRejects, const SMParameterStruct& rParam);
 		///Opens The Ringbuffer in shared Memory
 		void OpenConnection(LPCTSTR Name);
 		///Close the connnection 
@@ -78,8 +79,7 @@ namespace  SvSml
 		///return the number of reject slots
 		int GetRejectSlotCount() const;
 
-		const static int ConnectionTimeout = 2000;
-		const static int  ConnectionRetryTime = 200;
+		
 
 	private:
 		static void  IncreaseSlotNumber(int &rSlotnumber, int SlotCount);

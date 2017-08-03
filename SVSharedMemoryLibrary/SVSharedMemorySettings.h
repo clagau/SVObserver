@@ -14,36 +14,28 @@ namespace SvSml
 {
 	class SVSharedMemorySettings
 	{
-	private:
-		long m_monitorStoreSize;	// in MB
-		long m_dataStoreSize;		// in MB
-		long m_productStoreSize;	// in MB
-
 	public:
-		enum Defaults
-		{
-			DefaultMonitorStoreSize = 4,
-			DefaultProductStoreSize = 8,
-			DefaultDataStoreSize = 150
-		};
+		static const int 	DefaultMonitorStoreSize = 150;
+		static const int 	DefaultNumProductSlot = 32;
+		static const int	DefaultNumRejectSlotDelta = 5;
+		static const int	DefaultConnectionTimout = 2000;
+		static const int	DefaultCreateWaitTime = 200;
+
 		SVSharedMemorySettings();
-		SVSharedMemorySettings(long monitorSz, long prodStoreSz, long dataStoreSz);
-
-		SVSharedMemorySettings(const SVSharedMemorySettings& rSettings);
-		SVSharedMemorySettings& operator=(const SVSharedMemorySettings& rSettings);
-		long MonitorStoreSize() const;
-		long ProductStoreSize() const;
-		long DataStoreSize() const;
-	};
-
-	/////////////////////////////////////////////////////////////////////////////////
-	// Structure to hold the Inspection Share Creation Info
-	/////////////////////////////////////////////////////////////////////////////////
-	struct CreationInfo
-	{
-		size_t num_entries; // number of items
-		size_t names_size;	// size of the names
-	
-		CreationInfo(size_t numEntries, size_t namesSize) : num_entries(numEntries), names_size(namesSize) {}
+		int GetMonitorStoreSize() const;
+		int GetNumProductSlot() const;
+		int GetCreateTimeout() const;
+		int GetCreateWaitTime() const;
+		
+		void SetMonitorStoreSize(int) ;
+		void SetNumProductSlot(int) ;
+		void SeCreateTimout(int);
+		void SetCreateWaitTime(int);
+		
+	private:
+		int m_MonitorStoreSize;	// in MB
+		int m_NumProductSlot ;
+		int m_CreateTimeout;
+		int  m_CreateWaitTime;;
 	};
 } //namespace SvSml

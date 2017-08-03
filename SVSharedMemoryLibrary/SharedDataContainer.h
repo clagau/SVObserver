@@ -32,7 +32,7 @@ namespace SvSml
 		~SharedDataContainer(void);
 		
 		///Create the slotmanagment for MLCpyContainer
-		int CreateSlotManagment(long Productslots, const MLCpyContainer&  rmlCont);
+		int CreateSlotManagment( const MLCpyContainer&  rmlCont, const SMParameterStruct& rParam);
 		
 		///Open the slotmanagment for MLCpyContainer
 		int OpenSlotManagment(const MLCpyContainer&  rmlCont);
@@ -40,7 +40,8 @@ namespace SvSml
 		void CloseSlotManagmentConnection();
 		
 		//Create the image and datastore with for rmlCont return number of imagestores 
-		int  CreateStores( const MLCpyContainer&  rmlCont);
+		
+		int  CreateStores( const MLCpyContainer&  rmlCont, const SMParameterStruct& rParam);
 		//open the image and datastore with for rmlCont return number of imagestores 
 		int  OpenStores(const MLCpyContainer&  rmlCont);
 		/// clear the image store and the data stores
@@ -49,6 +50,7 @@ namespace SvSml
 		
 		BYTE*  GetImageBufferPtr(DWORD  SlotIndex,  DWORD storeIndex, DWORD storeoffset);
 		BYTE*  GetDataBufferPtr(DWORD  SlotIndex, DWORD storeIndex, DWORD storeoffset);
+		
 		void CreateSharedMatroxBuffer(const MLCpyContainer&  rmlCont);
 		
 		SVMatroxBuffer& GetImageBuffer(DWORD  SlotIndex, DWORD storeIndex, DWORD ImageIndex);

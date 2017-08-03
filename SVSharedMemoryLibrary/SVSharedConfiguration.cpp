@@ -21,34 +21,11 @@
 
 namespace SvSml
 {
-	const SVString SVSharedConfiguration::GetControlShareName()
-	{
-		return "ControlSegment";
-	}
+	const double SVSharedConfiguration::SharedDriveMinSize = 0.5; 
 
 	const SVString SVSharedConfiguration::GetShareName()
 	{
 		return "SVSharedMemory";
-	}
-
-	const SVString SVSharedConfiguration::GetLastInspectedName()
-	{
-		return "last_inspected";
-	}
-
-	const SVString SVSharedConfiguration::GetRejectsName()
-	{
-		return "rejects";
-	}
-
-	const SVString SVSharedConfiguration::GetPPQName()
-	{
-		return "PPQs";
-	}
-
-	const SVString SVSharedConfiguration::GetPPQRejectsName()
-	{
-		return "PPQrejects";
 	}
 
 	const SVString SVSharedConfiguration::GetMonitorListName()
@@ -59,16 +36,6 @@ namespace SvSml
 	const SVString SVSharedConfiguration::GetSharedMemoryDirectoryName()
 	{
 		return GetSharedDrive() + "\\boost_interprocess"; //BOOST_INTERPROCESS_SHARED_DIR_PATH;
-	}
-
-	const SVString SVSharedConfiguration::GetImageDirectoryName()
-	{
-		return GetSharedDrive() + "\\Images";
-	}
-
-	const SVString SVSharedConfiguration::GetRejectImageDirectoryName()
-	{
-		return GetSharedDrive() + "\\RejectImages";
 	}
 
 	// return only the Drive letter (do not append the root dir "\\")
@@ -125,9 +92,9 @@ namespace SvSml
 			if (bResult) 
 			{
 				double size = static_cast<double>(li.Length.QuadPart) / static_cast<double>(1024 * 1024 * 1024);
-				if (size >= 2.0)
+				if (size >= SharedDriveMinSize)
 				{
-					/*
+					
 					// check available space?
 					ULARGE_INTEGER lFreeBytesAvailableToCaller;
 					ULARGE_INTEGER lTotalNumberOfBytes;
@@ -140,13 +107,12 @@ namespace SvSml
 					if (bOk)
 					{
 						size = static_cast<double>(lFreeBytesAvailableToCaller.QuadPart) / static_cast<double>(1024 * 1024 * 1024);
-						if (size >= 2.0)
+						if (size >= SharedDriveMinSize)
 						{
 							bRetVal = true;
 						}
 					}
-					*/
-					bRetVal = true;
+										bRetVal = true;
 				}
 			}
 		}
@@ -163,7 +129,7 @@ namespace SvSml
 				if (success)
 				{
 					double size = static_cast<double>(FreeBytesAvailable.QuadPart) / static_cast<double>(1024 * 1024 * 1024);
-					if (size >= 2.0)
+					if (size >= SharedDriveMinSize)
 					{
 						bRetVal = true;
 					}
@@ -175,9 +141,8 @@ namespace SvSml
 
 	HRESULT SVSharedConfiguration::SharedResourcesOk()
 	{
-		//@Todo[MEC][7.50] [06.07.2017] we do need 2 gig any more 
 		HRESULT hr = S_OK;
-		// check if drive exists and at least 2 Gig of space
+		// check if drive exists and at least SharedDriveMinSize Gig of space
 		if (SharedDriveExists())
 		{
 			if (!SharedDriveSizeOk())
@@ -200,7 +165,6 @@ namespace SvSml
 			DWORD res = GetFileAttributes(sharedMemoryDirectory.c_str());
 			if (res == INVALID_FILE_ATTRIBUTES)
 			{
-				// Create the directory
 				CreateDirectory(sharedMemoryDirectory.c_str(), nullptr);
 			}
 		}

@@ -12,6 +12,7 @@
 #include "SVMessage\SVMessage.h"
 #include "SVUtilityLibrary\SVString.h"
 #include "SharedDataStore.h"
+#include "SMParameterStruct.h"
 
 #pragma endregion Includes
 
@@ -76,7 +77,7 @@ namespace SvSml
 		}
 	}
 
-	void SharedDataStore::CreateDataStore(LPCTSTR StoreName, DWORD slotsize, DWORD  slots)
+	void SharedDataStore::CreateDataStore(LPCTSTR StoreName, DWORD slotsize, DWORD  slots, const SMParameterStruct& rParam )
 	{
 		m_StoreName = StoreName;
 		m_slotCount = slots;
@@ -94,8 +95,8 @@ namespace SvSml
 		}
 
 		DWORD SharedSize = m_slotCount * m_slotSize + m_DataStoreHeaderSize;
-
-		for (int time = 0; time <= ConnectionTimeout; time += ConnectionRetryTime)
+		
+		for (int time = 0; time <= rParam.SMCreateTimeout; time += rParam.SMCreateWaitTime)
 		{
 			SetLastError(0x0);
 			m_hMapFileImage = CreateFileMapping(INVALID_HANDLE_VALUE, NULL, PAGE_READWRITE, 0, SharedSize, m_MapFileName.c_str());
@@ -108,7 +109,7 @@ namespace SvSml
 				//Wait for the clients   to closehandle to SharedMemory 
 				CloseHandle(m_hMapFileImage);
 				m_hMapFileImage = nullptr;
-				Sleep(ConnectionRetryTime);
+				Sleep(rParam.SMCreateWaitTime);
 				continue;
 			}
 			else

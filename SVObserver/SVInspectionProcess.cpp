@@ -216,14 +216,14 @@ void SVInspectionProcess::BuildWatchlist()
 {
 	m_WatchListDatas.clear();
 	m_WatchListImages.clear();
-	m_StoreIndex = SvSml::SharedMemWriter::Instance().m_MLContainer.GetInspectionStoreId(GetName());
+	m_StoreIndex = SvSml::SharedMemWriter::Instance().GetInspectionStoreId(GetName());
 	if (m_StoreIndex < 0 || GetPPQ() == 0)
 	{
 		return;
 	}
 	SetSlotmanager(SvSml::SharedMemWriter::Instance().GetSlotManager(GetPPQ()->GetName()));
 	const SvSml::MonitorListCpy* pMonitorlist(nullptr);
-	pMonitorlist = SvSml::SharedMemWriter::Instance().m_MLContainer.GetMonitorListCpyPointerForPPQ(GetPPQ()->GetName());
+	pMonitorlist = SvSml::SharedMemWriter::Instance().GetMonitorListCpyPointerForPPQ(GetPPQ()->GetName());
 	if (!pMonitorlist)
 	{
 		return;

@@ -43,9 +43,9 @@ namespace SvSml
 		const MonitorListCpy*  GetMonitorListCpyPointer(const SVString& Monitorlistname )  const;
 		
 		const MonitorListCpy*  GetMonitorListCpyPointerForPPQ(const SVString& PPQName)  const;
-		const MonitorListCpy*  GetMonitorListCpyPointerForPPQ(const GUID& PPQ_guid)  const;
+	
 		DWORD GetInspectionStoreId(const SVString& InspectionName);
-		DWORD GetInspectionStoreId(const GUID& InspectionGUID);
+	
 		void Insert(MonitorListCpyPointer& MLCpyPtr);
 		
 		///Return the total size of the all images for this inspection 

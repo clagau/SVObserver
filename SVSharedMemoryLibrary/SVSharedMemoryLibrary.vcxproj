@@ -105,6 +105,7 @@
     <ClCompile Include="SVSharedMonitorList.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="SMParameterStruct.h" />
     <ClInclude Include="MLCpyContainer.h" />
     <ClInclude Include="MLInspectionInfo.h" />
     <ClInclude Include="MLPPQInfo.h" />
@@ -113,6 +114,7 @@
     <ClInclude Include="MonitorListCpy.h" />
     <ClInclude Include="SharedDataContainer.h" />
     <ClInclude Include="SharedDataStore.h" />
+    <ClInclude Include="SharedMemIniFileTags.h" />
     <ClInclude Include="SharedMemReader.h" />
     <ClInclude Include="SharedMemWriter.h" />
     <ClInclude Include="ShareEvents.h" />

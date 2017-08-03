@@ -14,28 +14,23 @@
 
 namespace SvSml
 {
-
-
 	const LPCTSTR SharedDataContainer::ShareNames[] = { ".SlotManager",".Images", ".Data" };
-
 	SharedDataContainer::SharedDataContainer(void)
 	{}
-
 	SharedDataContainer::~SharedDataContainer(void)
 	{
 		CloseConnection();
 	}
-	
-	int SharedDataContainer::CreateSlotManagment(long Productslots, const MLCpyContainer&  rmlCont)
+	int SharedDataContainer::CreateSlotManagment( const MLCpyContainer&  rmlCont, const SMParameterStruct& rParam)
 	{
 		m_ManagmentStore.resize(rmlCont.m_PPQInfoMap.size());
 		for (auto& PPQinfo : rmlCont.m_PPQInfoMap)
 		{
-			DWORD Reject = PPQinfo.second->RejectSize;
-			DWORD Total = PPQinfo.second->RejectSize + PPQinfo.second->DataSlotSize;
+			DWORD Reject = PPQinfo.second->NumRejectSlot;
+			DWORD Total = PPQinfo.second->NumRejectSlot + PPQinfo.second->NumLastSlot;
 			DWORD index = PPQinfo.second->SlotManagerIndex;
 			m_ManagmentStore[index] = RingBufferPointer(new SMRingBuffer);
-			m_ManagmentStore[index]->CreateConnection(PPQinfo.first.c_str(), Total, Reject);
+			m_ManagmentStore[index]->CreateConnection(PPQinfo.first.c_str(), Total, Reject, rParam);
 		}
 		return static_cast<int>(m_ManagmentStore.size());
 	}
@@ -45,8 +40,8 @@ namespace SvSml
 		m_ManagmentStore.resize(rmlCont.m_PPQInfoMap.size());
 		for (auto& PPQinfo : rmlCont.m_PPQInfoMap)
 		{
-			DWORD Reject = PPQinfo.second->RejectSize;
-			DWORD Total = PPQinfo.second->RejectSize + PPQinfo.second->DataSlotSize;
+			DWORD Reject = PPQinfo.second->NumRejectSlot;
+			DWORD Total = PPQinfo.second->NumRejectSlot + PPQinfo.second->NumLastSlot;
 			DWORD index = PPQinfo.second->SlotManagerIndex;
 			m_ManagmentStore[index] = RingBufferPointer(new SMRingBuffer);
 			m_ManagmentStore[index]->OpenConnection(PPQinfo.first.c_str());
@@ -58,7 +53,7 @@ namespace SvSml
 		m_ManagmentStore.clear();
 	}
 
-	int  SharedDataContainer::CreateStores(const MLCpyContainer&  rmlCont)
+	int  SharedDataContainer::CreateStores(const MLCpyContainer&  rmlCont, const SMParameterStruct& rParam)
 	{
 		DWORD ImageStoresCount = static_cast<DWORD>(rmlCont.m_InspectionInfoMap.size());
 		m_ImageStore.resize(ImageStoresCount);
@@ -74,10 +69,10 @@ namespace SvSml
 			DWORD ppqIndex  = Inspectioninfo.second->PPQIndex;
 			DWORD Slotsize = m_ManagmentStore[ppqIndex]->GetTotalSlotCount();
 			m_ImageStore[index] = DataStorePointer(new SharedDataStore);
-			m_ImageStore[index]->CreateDataStore(StoreNameImage.c_str(), Imagesize, Slotsize);
+			m_ImageStore[index]->CreateDataStore(StoreNameImage.c_str(), Imagesize, Slotsize, rParam);
 
 			m_DataStore[index] = DataStorePointer(new SharedDataStore);
-			m_DataStore[index]->CreateDataStore(StoreNameData.c_str(), Datasize, Slotsize);
+			m_DataStore[index]->CreateDataStore(StoreNameData.c_str(), Datasize, Slotsize, rParam);
 		}
 		return ImageStoresCount;
 	}
@@ -233,9 +228,7 @@ namespace SvSml
 			{
 				isE->CloseConnection();
 			}
-				
 		}
-
 		m_ImageStore.clear();
 		m_ImageBufferStore.clear();
 		m_DataStore.clear();
@@ -244,9 +237,7 @@ namespace SvSml
 
 	void SharedDataContainer::BuildStoreName(LPCTSTR ObjectName, StoreType type, SVString& rStoreName)
 	{
-
 		rStoreName = ObjectName;
 		rStoreName += ShareNames[type];
-
 	}
 }

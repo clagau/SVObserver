@@ -214,9 +214,6 @@ public:
 	/// \returns workload information for the most recently completed product 
 	ProductWorkloadInformation GetMostRecentWorkLoadInformation(){return m_MostRecentWorkLoadInfo;}
 
-	long GetNumProductSlots() const;
-	long GetNumRejectSlots() const;
-
 protected:
 	struct SVTriggerQueueElement
 	{
@@ -543,8 +540,6 @@ private:
 	//They are not a state of the object only a help for the method. To be able to set the method const, this parameter are muteable.
 	mutable SVObjectPtrDeque m_childObjectsForFillChildObjectList;  //<This list is saved for the method fillChildObjectList, to reuse it if the same filter (m_AttributesAllowedFilterForFillChildObjectList) is used. 
 	mutable UINT m_AttributesAllowedFilterForFillChildObjectList; //<This filter flag was used in the last run of the method fillChildObjectList.
-	long m_numProductSlots;
-	long m_numRejectSlots;
 };
 
 typedef SVVector<SVPPQObject*> SVPPQObjectPtrVector;

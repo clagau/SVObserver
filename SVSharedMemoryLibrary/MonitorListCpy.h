@@ -33,6 +33,7 @@ namespace SvSml
 		///Calculates the necessary size of the monitorlist in shared memory
 		size_t CalcMemorySize() const;
 		/// Insert the totalimage size and data size for this monitorlist to the inspectionInfoMap 
+		// Insert PPQINdex to  to PPQIndexMap
 		int InsertToMLInspectionInfoMap(MLInspectionInfoMap& inspectionInfoMap, MLPPQInfoMap& PPQIndexMap) const;
 	
 		///Write the Monitorlist to the shared Memory 
@@ -46,6 +47,8 @@ namespace SvSml
 		void SetMonitorlistname(const SVString& listname);
 		void SetPPQname(const SVString& listname);
 		void SetRejectDepth(int RejectDept);
+		void SetProductDepth(int RejectDept);
+
 		void SetProductFilter(SVProductFilterEnum fEnum);
 		void SetIsActive(bool isactive);
 		
@@ -53,18 +56,18 @@ namespace SvSml
 		const SVString&  GetPPQname() const;
 		
 		int GetRejectDepth() const;
+		int GetProductDepth() const;
 		SVProductFilterEnum GetProductFilter() const;
 		bool GetIsActive() const;
-		
 		const static DWORD ImageBufferHeaderSize; //<Constant additional size needed fore every imagebuffer
 
 	public:
-		
 		MonitorEntries m_MonitorEntries[ListType::Count]; //< entrylists  for data,image,reject and failstatus 
 		MonitorEntriesMap m_EntriesMap; //< entry map  fullname and all  element from m_MonitorEntries 
 		SVString m_MonitorListName;
 		SVString m_ppqName;
 		int m_rejectDepth;
+		int m_ProductDepth;
 		bool m_IsActive;
 		SVProductFilterEnum m_ProductFilter;
 	};

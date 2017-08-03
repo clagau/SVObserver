@@ -89,8 +89,8 @@ BEGIN_MESSAGE_MAP(CRRSViewDlg, CDialogEx)
 	ON_BN_CLICKED(IDC_BUT_REJECT, &CRRSViewDlg::OnBnClickedButReject)
 END_MESSAGE_MAP()
 
-
-LPCTSTR CRRSViewDlg::ColHeader[] = { _T("Name"),_T("PPQ"), _T("IsActive"), _T("RejectDepth"), _T("Filter"), _T("ImCount"), _T("PCount") };
+//enum ECOL { eName = 0, ePPQ, eIsActive, eRejectDepth, eProductDepth, eProductFilter, eImageCount, ePcount, };
+LPCTSTR CRRSViewDlg::ColHeader[] = { _T("Name"),_T("PPQ"), _T("IsActive"), _T("RejectDepth"), _T("ProductDepth"), _T("Filter"), _T("ImCount")};
 // CShareViewDlg message handlers
 
 bool  CRRSViewDlg::PostRefresh(DWORD par)
@@ -202,7 +202,7 @@ void CRRSViewDlg::UpdateControls(bool isready)
 		{
 			m_MonListsCtrl.InsertItem(item, it->second->m_MonitorListName.c_str());
 
-			//enum ECOL {eName=0, ePPQ, eIsActive, eRejectDepth, eProductFilter,ePcount };
+			
 			m_MonListsCtrl.SetItemText(item, ePPQ, it->second->m_ppqName.c_str());
 
 			SVString text = it->second->GetIsActive() ? _T("true") : _T("false");
@@ -210,6 +210,9 @@ void CRRSViewDlg::UpdateControls(bool isready)
 
 			text = SvUl_SF::Format(_T("%i"), it->second->m_rejectDepth);
 			m_MonListsCtrl.SetItemText(item, eRejectDepth, text.c_str());
+
+			text = SvUl_SF::Format(_T("%i"), it->second->m_ProductDepth);
+			m_MonListsCtrl.SetItemText(item, eProductDepth, text.c_str());
 
 			text = SvUl_SF::Format(_T("%i"), it->second->m_ProductFilter);
 			m_MonListsCtrl.SetItemText(item, eProductFilter, text.c_str());
@@ -240,7 +243,15 @@ LRESULT  CRRSViewDlg::OnRefresh(WPARAM wParam, LPARAM lParam)
 		SVStringVector PPQVector;
 		int inspectionCount(0);
 		DWORD version(0);
-		m_MemReader.Reload(version);
+		try
+		{
+			m_MemReader.Reload(version);
+		}
+		catch (std::exception& r)
+		{
+			AfxMessageBox("Shared Mem Reader Reload failed");
+		}
+		
 	}
 	else if (wParam == SvSml::ShareEvents::Change)
 	{

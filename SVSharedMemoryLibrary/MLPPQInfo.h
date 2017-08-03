@@ -12,12 +12,17 @@ namespace SvSml
 	/// struct with PPQ informations for MLCpyContainer
 	struct MLPPQInfo
 	{
-		MLPPQInfo::MLPPQInfo():DataSlotSize(NumProductSlot), RejectSize(0), SlotManagerIndex(-1)
-		{; };
-		DWORD DataSlotSize;
-		DWORD RejectSize;
-		DWORD SlotManagerIndex; //Index in m_ManagmentStore
-		static  const int NumProductSlot = 32;
+		MLPPQInfo::MLPPQInfo(int LastSlot, int RejectSlot)
+			:NumLastSlot(LastSlot),
+			NumRejectSlot(RejectSlot),
+			SlotManagerIndex(-1)
+		{
+			;
+		};
+		int NumLastSlot;  //<Number of slots for last products 
+		int NumRejectSlot; //<Numbetr of slots for rejects 
+		int SlotManagerIndex; //<Index in m_ManagmentStore
+	
 		static const  int NumRejectSizeDelta = 5;
 	};
 	typedef std::unique_ptr<MLPPQInfo> MLPPQInfoPointer;

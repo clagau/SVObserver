@@ -34,7 +34,7 @@ namespace SvSml
 		// returns S_OK on success
 		/////////////////////////////////////////////////////////////////////////////////
 		HRESULT Create(const SVSharedMemorySettings& settings, size_t requiredSize);
-		void AddList(const SVString& listName, const SVString& ppqName, int rejectDepth, bool isActive);
+		void AddList(const SVString& listName, const SVString& ppqName, int rejectDepth, int productDepth, bool isActive);
 		void FillList(const SVString& listName, ListType::typ type, const SvSml::MonitorEntries& list);
 		void SetProductFilter(const SVString& listName, SVProductFilterEnum filter);
 		void Release(); //<Destroy sharedMemory
