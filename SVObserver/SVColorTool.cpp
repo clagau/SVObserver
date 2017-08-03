@@ -344,25 +344,13 @@ BOOL SVColorToolClass::createBandChildLayer(BandEnum Band)
 HRESULT SVColorToolClass::CollectInputImageNames()
 {
 	SVString Name;
-	SVImageClass* l_pImage = nullptr;
-	BOOL ConvertToHSI;
-	HRESULT l_hr = m_convertToHSI.GetValue(ConvertToHSI);
-	if (S_OK == l_hr)
+
+	if (nullptr != m_pInputImage)
 	{
-		if (ConvertToHSI)
-		{
-			l_pImage = nullptr;
-		}
-		else
-		{
-			l_pImage = nullptr;
-		}
-		if (nullptr != l_pImage)
-		{
-			Name = l_pImage->GetCompleteName();
-			m_SourceImageNames.SetDefaultValue(Name, true);
-		}
+		SVString Name = m_pInputImage->GetCompleteName();
+		m_SourceImageNames.SetDefaultValue(Name, true);
+		return S_OK;
 	}
-	return l_hr;
+	return E_FAIL;
 }
 #pragma endregion Private Methods
