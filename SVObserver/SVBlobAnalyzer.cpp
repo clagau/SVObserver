@@ -1402,7 +1402,9 @@ bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 		resultTableSortContainer.resize(m_lNumberOfBlobsToProcess);
 		for (int i = 0; i < m_lNumberOfBlobsToProcess; i++)
 		{
-			resultTableSortContainer[i] = msvlSortMap[i];
+			//@TODO[MZA][7.50][02.08.2017] This version is for the case we want to go back to full size in the table tool
+			//resultTableSortContainer[i] = msvlSortMap[i];
+			resultTableSortContainer[i] = i;
 		}
 		m_pResultTable->setSortContainer(resultTableSortContainer, rRunStatus);
 
@@ -1412,13 +1414,15 @@ bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 			{
 				if (m_lNumberOfBlobsToProcess > 0)
 				{
-					if (nullptr != m_ResultTableColumnValueObjects[eFeature])
+					//@TODO[MZA][7.50][02.08.2017] This version is for the case we want to go back to full size in the table tool
+					/*if (nullptr != m_ResultTableColumnValueObjects[eFeature])
 					{
 						m_ResultTableColumnValueObjects[eFeature]->SetArrayValues(m_vec2dBlobResults[eFeature]);
-					}
+					}*/
 					// add array capability to blob results
 					for ( int iBlob = 0; iBlob < m_lNumberOfBlobsToProcess; iBlob++ )
 					{
+						m_ResultTableColumnValueObjects[eFeature]->SetValue(m_vec2dBlobResults[eFeature][msvlSortMap[iBlob]], iBlob);
 						m_Value[eFeature].SetValue(m_vec2dBlobResults[eFeature][msvlSortMap[iBlob]], iBlob );
 					}
 				}
