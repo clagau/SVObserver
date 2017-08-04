@@ -2720,6 +2720,19 @@ void SVIPDoc::SetModifiedFlag(BOOL bModified /*= TRUE*/)
 	}
 }
 
+bool  SVIPDoc::IsResultDefinitionsOutdated() const
+{
+	bool Result(true);
+	SVResultListClass* pResultList = GetResultList();
+
+	if (nullptr != pResultList  && pResultList->getUpdateTimeStamp() < m_ResultDefinitionsTimestamp)
+	{
+		Result = false;
+	}
+
+	return Result;
+}
+
 HRESULT SVIPDoc::GetResultDefinitions(SVResultDefinitionDeque& p_rDefinitions) const
 {
 	HRESULT hres = E_FAIL;

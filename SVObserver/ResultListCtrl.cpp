@@ -38,7 +38,6 @@ END_MESSAGE_MAP()
 
 #pragma region Constructor
 ResultListCtrl::ResultListCtrl() : CListCtrl()
-, m_LastUpdateTimeStamp(-1.0)
 {
 	VERIFY(m_ContextMenuItem.LoadMenu(IDR_RESULTS_CONTEXT_MENU));
 }
@@ -90,13 +89,12 @@ void ResultListCtrl::updateList(class SVIPDoc* pDoc)
 	pDoc->GetResultData( m_ResultData );
 
 	bool bRedrawDefinitions = false;
-	if (m_ResultData.m_LastDefinitionUpdateTimeStamp > m_LastUpdateTimeStamp)
+	if (pDoc->IsResultDefinitionsOutdated())
 	{
 		DeleteAllItems();
 		pDoc->GetResultDefinitions( m_ResultDefinitions );
 		///MEC_SVO_475  only necessary when Definition changed.
 		bRedrawDefinitions = true;
-		m_LastUpdateTimeStamp = m_ResultData.m_LastDefinitionUpdateTimeStamp;
 	}
 
 	int i = 0;
@@ -329,8 +327,7 @@ void ResultListCtrl::DrawItem( LPDRAWITEMSTRUCT lpDrawItemStruct )
 		// Draw item label - Column 0
 		rcLabel.left += offset/2;
 		rcLabel.right -= offset;
-		pDC->DrawText( Label.c_str(), -1, rcLabel, DT_LEFT | DT_SINGLELINE | DT_NOPREFIX | DT_NOCLIP 
-			| DT_VCENTER | DT_END_ELLIPSIS);
+		pDC->DrawText( Label.c_str(), -1, rcLabel, DT_LEFT | DT_SINGLELINE | DT_NOPREFIX | DT_NOCLIP | DT_VCENTER | DT_END_ELLIPSIS);
 	
 		// Draw labels for remaining columns
 		LV_COLUMN lvc;
@@ -378,12 +375,13 @@ void ResultListCtrl::DrawItem( LPDRAWITEMSTRUCT lpDrawItemStruct )
 				rcLabel.left += (h + 4);
 			}
 
-			pDC->DrawText(Label.c_str(), -1, rcLabel, nJustify | DT_SINGLELINE | 
-				DT_NOPREFIX | DT_VCENTER | DT_END_ELLIPSIS);
+			pDC->DrawText(Label.c_str(), -1, rcLabel, nJustify | DT_SINGLELINE | DT_NOPREFIX | DT_VCENTER | DT_END_ELLIPSIS);
 		}
 		// Draw focus rectangle if item has focus
-		if ( ( lvi.state & LVIS_FOCUSED ) && ( GetFocus() == this ) )
+		if ((lvi.state & LVIS_FOCUSED) && (GetFocus() == this))
+		{
 			pDC->DrawFocusRect(rcHighlight);
+		}
 
 		pDC->RestoreDC( nSavedDC );
 	}

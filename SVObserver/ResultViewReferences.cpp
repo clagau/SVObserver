@@ -265,7 +265,6 @@ void  ResultViewReferences::GetResultData( SVIPResultData& p_rResultData) const
 		}
 
 		p_rResultData.m_ResultData[ itemDef ] = SVIPResultItemData( Value, Color );
-		p_rResultData.m_LastDefinitionUpdateTimeStamp = m_LastUpdateTimeStamp;
 	}
 }
 
@@ -286,7 +285,6 @@ void ResultViewReferences::GetResultTableData(SVIPResultData &p_rResultData) con
 				p_rResultData.m_ResultTableData.push_back(data);
 			}
 		}
-		p_rResultData.m_LastDefinitionUpdateTimeStamp = m_LastUpdateTimeStamp;
 	}
 }
 

@@ -26,7 +26,6 @@ protected:
 	// App Wizard Generated
 	//{{AFX_MSG(SVIPSplitterFrame)
 	afx_msg LRESULT OnUpdateAllData(WPARAM wParam, LPARAM lParam);
-	afx_msg LRESULT OnUpdateNextView(WPARAM wParam, LPARAM lParam);
 	afx_msg void OnMDIActivate(BOOL bActivate, CWnd* pActivateWnd, CWnd* pDeactivateWnd);
 	//}}AFX_MSG
 	DECLARE_MESSAGE_MAP()

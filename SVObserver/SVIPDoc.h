@@ -228,6 +228,7 @@ public:
 	virtual void SetModifiedFlag(BOOL bModified = TRUE) override;
 
 	typedef std::deque< SVIPResultItemDefinition > SVResultDefinitionDeque;
+	bool  IsResultDefinitionsOutdated() const;
 	HRESULT GetResultDefinitions(SVResultDefinitionDeque& p_rDefinitions) const;
 	HRESULT GetResultData(SVIPResultData& p_rResultData) const;
 

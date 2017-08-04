@@ -28,6 +28,7 @@ IMPLEMENT_DYNCREATE(ResultTabbedView, CView)
 BEGIN_MESSAGE_MAP(ResultTabbedView, CView)
 	ON_WM_CREATE()
 	ON_WM_SIZE()
+	ON_WM_ERASEBKGND()
 END_MESSAGE_MAP()
 #pragma endregion Declarations
 
@@ -211,5 +212,11 @@ void ResultTabbedView::OnSize(UINT nType, int cx, int cy)
 		GetClientRect(Rect);
 		m_TabCtrl.MoveWindow(Rect);
 	}
+}
+
+BOOL ResultTabbedView::OnEraseBkgnd(CDC* pDC)
+{
+	//! This avoids unnecessary flicker of the result view
+	return true;
 }
 #pragma endregion Private Methods

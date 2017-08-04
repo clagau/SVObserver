@@ -17,7 +17,6 @@ SVIPResultData::SVIPResultData()
   m_ToolSetEndTime( 0.0 ),
   m_ToolSetAvgTime( 0.0 ),
   m_TriggerDistance( 0.0 ),
-  m_LastDefinitionUpdateTimeStamp( 0.0 ),
   m_ToolSetTime( 0.0 )
 {
 }
@@ -28,7 +27,6 @@ SVIPResultData::SVIPResultData( const SVResultDataMap& p_rResultData, const std:
   m_ToolSetEndTime( p_ToolSetEndTime ),
   m_ToolSetAvgTime( p_ToolSetAvgTime ),
   m_TriggerDistance( p_TriggerDistance ),
-  m_LastDefinitionUpdateTimeStamp(0.0),
   m_ToolSetTime( p_ToolSetTime )
 {
 }
@@ -39,7 +37,6 @@ SVIPResultData::SVIPResultData( const SVIPResultData& p_rObject )
   m_ToolSetEndTime( p_rObject.m_ToolSetEndTime ),
   m_ToolSetAvgTime( p_rObject.m_ToolSetAvgTime ),
   m_TriggerDistance( p_rObject.m_TriggerDistance ),
-  m_LastDefinitionUpdateTimeStamp(0.0),
   m_ToolSetTime( p_rObject.m_ToolSetTime )
 {
 }

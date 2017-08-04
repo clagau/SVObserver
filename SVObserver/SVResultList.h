@@ -12,6 +12,7 @@
 #pragma once
 
 #pragma region Includes
+//Moved to precompiled header: #include <concrt.h>
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "SVObjectLibrary/SVOutputInfoListClass.h"
 #include "SVInfoStructs.h"
@@ -74,12 +75,14 @@ public:
 	
 	const SVObjectReferenceVector& GetSelectedObjects() const;
 	bool Insert(const SVString& rDottedName);
+	SvTl::SVTimeStamp getUpdateTimeStamp();
 	void Save(SVObjectWriter& rWriter);
 
 #pragma endregion Public Methods
 
 #pragma region Member Variables
 protected:
+	mutable Concurrency::critical_section m_Lock;
 	ResultViewReferences  m_ResultViewReferences;
 	SVToolSetClass* m_pToolSet;
 	SVVector< SVResultClass* > m_results;

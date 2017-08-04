@@ -56,7 +56,6 @@ private:
 	CMenu m_ContextMenuItem;
 	SVResultDefinitionDeque m_ResultDefinitions;
 	SVIPResultData m_ResultData;
-	double m_LastUpdateTimeStamp;
 #pragma endregion Member variables
 };
 

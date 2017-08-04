@@ -40,7 +40,6 @@ END_MESSAGE_MAP()
 
 #pragma region Constructor
 ResultTableListCtrl::ResultTableListCtrl() : CListCtrl()
-, m_LastUpdateTimeStamp(-1.0)
 , m_ColumnWidthSet(false)
 , m_ColumnCount(0)
 {	
@@ -88,10 +87,9 @@ void ResultTableListCtrl::updateList(class SVIPDoc* pDoc)
 
 		pDoc->GetResultData(m_ResultData);
 
-		if (m_ResultData.m_LastDefinitionUpdateTimeStamp > m_LastUpdateTimeStamp)
+		if (pDoc->IsResultDefinitionsOutdated())
 		{
 			addColumnHeadings(m_ResultData.m_ResultTableData);
-			m_LastUpdateTimeStamp = m_ResultData.m_LastDefinitionUpdateTimeStamp;
 		}
 
 		int rowCountOld = GetItemCount();

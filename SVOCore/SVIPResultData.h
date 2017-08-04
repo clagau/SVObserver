@@ -41,6 +41,5 @@ struct SVIPResultData
 
 	double m_TriggerDistance;
 	double m_ToolSetTime;
-	double m_LastDefinitionUpdateTimeStamp;
 };
 

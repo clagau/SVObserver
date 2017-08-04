@@ -58,6 +58,8 @@ void SVResultListClass::SetToolSet(SVToolSetClass* pToolSet)
 
 void SVResultListClass::Refresh(SVTaskObjectClass* pRootObject)
 {
+	Concurrency::critical_section::scoped_lock  AutoLock(m_Lock);
+
 	m_results.RemoveAll();
 
 	// find all result classes
@@ -81,13 +83,24 @@ void SVResultListClass::Refresh(SVTaskObjectClass* pRootObject)
 	m_ResultViewReferences.RebuildReferenceVector(dynamic_cast<SVInspectionProcess*>(m_pToolSet->GetInspection()));
 }
 
+SvTl::SVTimeStamp SVResultListClass::getUpdateTimeStamp()
+{
+	Concurrency::critical_section::scoped_lock  AutoLock(m_Lock);
+
+	return m_ResultViewReferences.getUpdateTimeStamp();
+}
+
 void SVResultListClass::Save(SVObjectWriter& rWriter)
 {
+	Concurrency::critical_section::scoped_lock  AutoLock(m_Lock);
+
 	m_ResultViewReferences.Save(rWriter);
 }
 
 bool SVResultListClass::LoadViewedVariables(ResultViewReferences::SVTreeType& rTree, ResultViewReferences::SVTreeType::SVBranchHandle htiParent)
 {
+	Concurrency::critical_section::scoped_lock  AutoLock(m_Lock);
+
 	m_ResultViewReferences.Clear();
 	SVInspectionProcess* pInspec(nullptr);
 	if (m_pToolSet)
@@ -127,17 +140,23 @@ bool SVResultListClass::LoadViewedVariables(ResultViewReferences::SVTreeType& rT
 
 void SVResultListClass::RebuildReferenceVector(SVInspectionProcess* pInspection )
 {
+	Concurrency::critical_section::scoped_lock  AutoLock(m_Lock);
+
 	return m_ResultViewReferences.RebuildReferenceVector(pInspection);
 }
 
 void  SVResultListClass::GetResultData( SVIPResultData& p_rResultData) const
 {
+	Concurrency::critical_section::scoped_lock  AutoLock(m_Lock);
+
 	m_ResultViewReferences.GetResultData( p_rResultData);
 	m_ResultViewReferences.GetResultTableData(p_rResultData);
 }
 
 HRESULT SVResultListClass::GetResultDefinitions( ResultViewReferences::SVResultDefinitionDeque& rDefinitions )  const
 {
+	Concurrency::critical_section::scoped_lock  AutoLock(m_Lock);
+
 	return m_ResultViewReferences.GetResultDefinitions(rDefinitions);
 }
 
@@ -171,11 +190,15 @@ void SVResultListClass::Clear()
 
 const SVObjectReferenceVector& SVResultListClass::GetSelectedObjects() const
 {
+	Concurrency::critical_section::scoped_lock  AutoLock(m_Lock);
+
 	return m_ResultViewReferences.GetSelectedObjects();
 }
 
 bool SVResultListClass::Insert( const SVString& rDottedName )
 {
+	Concurrency::critical_section::scoped_lock  AutoLock(m_Lock);
+
 	return m_ResultViewReferences.Insert( rDottedName );
 }
 

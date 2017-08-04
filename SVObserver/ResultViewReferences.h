@@ -115,6 +115,12 @@ public:
 	bool Insert( const SVString& rDottedName );
 
 	//************************************
+	// Description:  Gets the value of the member variable m_LastUpdateTimeStamp
+	// Returns:  SvTl::SVTimeStamp:  the value of the member variable m_LastUpdateTimeStamp
+	//************************************
+	SvTl::SVTimeStamp getUpdateTimeStamp() { return m_LastUpdateTimeStamp;  };
+
+	//************************************
 	/// Check if the Object is Viewable
 	/// this is only called when loading as the original ObjectAttributesAllowed may have changed
 	/// \param reference to the SVObjectRefernce
