@@ -192,6 +192,8 @@ HRESULT SVValueObjectClass<T>::SetArraySize(int iSize)
 			}
 			else
 			{
+				//When bucketized the standard array needs to increase in size too
+				m_ValueArray.resize(m_ArraySize, GetDefaultValue());
 				if(nullptr != m_pBucketArray.get())
 				{
 					for ( int i=0; i < m_NumberOfBuckets; i++ )

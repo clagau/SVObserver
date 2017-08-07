@@ -2176,7 +2176,7 @@ BOOL SVInspectionProcess::ProcessInputRequests(SvOi::SVResetItemEnum &rResetItem
 						l_bTempReset = !pEnumerateValueObj->CompareWithCurrentValue(Value);
 					}
 
-					if (S_OK != (hrSet = pEnumerateValueObj->SetValue(atol(Value.c_str()), ObjectRef.ArrayIndex())))
+					if (S_OK != (hrSet = pEnumerateValueObj->setValue(Value, ObjectRef.ArrayIndex())))
 					{
 						if (Value.size() > 0)
 						{

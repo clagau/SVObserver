@@ -264,15 +264,18 @@ BOOL SVMaskShapeEditorDlg::OnInitDialog()
 	////////////////////////////////////////////////////////
 	// SET SHAPE PROPERTIES
 	SVMaskShape* pShape = m_mapShapes[ m_eShapeType ];
-	SVMaskShape::MapType mapProperties;
-	m_pMask->GetShapeHelper()->GetProperties( mapProperties );
-	pShape->SetProperties( mapProperties );
+	if (nullptr != pShape)
+	{
+		SVMaskShape::MapType mapProperties;
+		m_pMask->GetShapeHelper()->GetProperties(mapProperties);
+		pShape->SetProperties(mapProperties);
 
-	SVMaskFillPropertiesStruct svFillProperties;
-	m_pMask->GetFillProperties( svFillProperties );
-	pShape->SetFillProperties( svFillProperties );
+		SVMaskFillPropertiesStruct svFillProperties;
+		m_pMask->GetFillProperties(svFillProperties);
+		pShape->SetFillProperties(svFillProperties);
 
-	pShape->SetAutoResize( l_bAutoResize );
+		pShape->SetAutoResize(l_bAutoResize);
+	}
 
 	////////////////////////////////////////////////////////
 
