@@ -118,7 +118,8 @@ HRESULT SVCameraFormat::ParseAndAssignCameraFormat( const SVString& rCameraForma
 	{
 		m_eImageType = SVImageFormatMono8;
 	}
-	else if ( SVString::npos != sType.find(_T("RGB")) || SVString::npos != sType.find(_T("YUV")) || SVString::npos != sType.find(_T("BayerRG")) )
+	//! Note all Bayer formats will be possible BayerRG8 or 12, BayerGB8 10 or 12
+	else if ( SVString::npos != sType.find(_T("RGB")) || SVString::npos != sType.find(_T("YUV")) || SVString::npos != sType.find(_T("Bayer")) )
 	{
 		m_eImageType = SVImageFormatRGB8888;
 		m_bColor = true;
