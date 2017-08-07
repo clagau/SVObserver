@@ -396,7 +396,13 @@ void ResultListCtrl::OnSize(UINT nType, int cx, int cy)
 {
 	CListCtrl::OnSize(nType, cx, cy);
 
-	setColumnWidths();
+	//! This is necessary to avoid sporadic recursive calls to OnSize
+	if (m_ControlSize.cx != cx || m_ControlSize.cy != cy)
+	{
+		setColumnWidths();
+		m_ControlSize.cx = cx;
+		m_ControlSize.cy = cy;
+	}
 }
 
 void ResultListCtrl::OnContextMenu(CWnd* /*pWnd*/, CPoint point)

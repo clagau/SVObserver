@@ -56,6 +56,7 @@ private:
 	CMenu m_ContextMenuItem;
 	SVResultDefinitionDeque m_ResultDefinitions;
 	SVIPResultData m_ResultData;
+	CSize m_ControlSize = { 0, 0 };
 #pragma endregion Member variables
 };
 
