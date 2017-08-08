@@ -30,7 +30,7 @@ Get-WmiObject -Class Win32_PhysicalMemory | ForEach-Object -Process { $memory +=
 $memory = $memory / 1GB
 if ($memory -gt 12){
   # format the V:\ drive 6GB
-  $cmdout = imdisk -a -s 6G -m V: -p "/fs:ntfs /q /y"
+  $cmdout = imdisk -a -s 3G -m V: -p "/fs:ntfs /q /y"
   if ($LastExitCode -ne 0) {
     echo "Could not format imdisk for V-drive"
     write-eventlog -logname Application -source SVException -eventID 13  -entrytype Warning -message "Could not format imdisk for V-drive 6GB. $cmdout"  -Category 0

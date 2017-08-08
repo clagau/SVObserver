@@ -2,49 +2,43 @@ NOTABLE SVOBSERVER CHANGES:
 
 Compatible Changes:
 
-- New table tool
-- New table analyzer tool
-- Default activation of monitor list for RRS 
-- Hex values in result picker
-- Power (POW) operator in math dialog
+	????
 
 Incompatible Changes:
-
-- User intervention if change in camera mapping
-- Area default setting at the blob analyzer
-- Removal of gage and profile tool support
-- Removal of 32bit components
-- Removal of conditional history
-- Camera IP addresses are always fixed and cannot be changed by the user.
-
++ Variables removed
+ - Clean up SVX file – Results are not saved any more 
+ - Remove IsValid from objects
+ - SVObjectClass::Get/SetObjectValue has old name tags – removed "Friend", "DataLinkID" and "AttributesAllowed" from old configurations
++ Remote Inputs are mixed
++ Replace image transfer from V-Drive – V-Dive size was reduced
++ Invalid result values in monitor lists are provided with their default value
 Fixed Bugs:
-
-- RRS data and performance problems fixed
-- Autosave problems fixed
-- Digital Input problems fixed
-- Monitor List view problems fixed
-
++ Table
+ - Table Tool in Archive Tool
+ - TableAnalyzerTool: Invalid tool state resolved only after deletion of the affected Analyzer
+ - Table tool remove table object causes crash
++ Configuration
+ - Wrong result in Math Tool
+ - Disappearing tool
+ - Renaming of a tool can lead to duplicate tool names (by using F2 button)
+ - SVIM error message when camera address was not set
+ - Linear edge count analyzer: no tool graph with thresholds in the image
++ SVRC
+ - SVO Crash after setting via SVRC (SAMI) an empty string to two Global (Text-) Constants
+ - SVRC methode setDeviceMode() waits for timeout even when there is no connection
 
 NOTABLE SVIM IMAGE CHANGES:
 
-- New Model Number 93 51 22 13 prepared
-- SVIM.INI changes for fixed camera ip address
-- Additional event log entry for SVIM changes
-- Folder with example images
-- New packet size in Hardware.ini
-- Matrox non-paged memory size increased
-- "Safely Remove Hardware" updated
-- License check timeout for MIL activated
-- Documentation for SVIM network port usage updated
-- New SVRC version 7.40
-- Camera files updated
-
-
++ Install newly compiled LPT driver
++ Update ImageJ to version 1.51k 
++ Misleading name in Hardware.ini and Error Messages
++ Changes in ini file for RRS and ShardMemory
++ Camera
 SOFTWARE VERSIONS:
 
-Seidenader Vision Inc. SVObserver version 7.40
+Seidenader Vision Inc. SVObserver version 7.50
 
-SVRC Version 7.40
+SVRC Version 7.50
 SIAC Version 7.35
 
 SVLpt version 7.0.0.0 (11)
