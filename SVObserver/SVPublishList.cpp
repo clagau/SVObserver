@@ -133,7 +133,8 @@ void SVPublishListClass::Refresh(SVTaskObjectClass * pRootObject)
 				for( lPPQ = 0, found = false; lPPQ < lPPQSize; lPPQ++ )
 				{
 					pIOEntry = ppPPQEntries[lPPQ];
-					if( pIOEntry->getObject()->GetCompleteName() == pPublishedOutObjectInfo->m_pObject->GetCompleteName() )
+					//@WARNING [gra][7.50][09.08.2017] Not this does not work for objects with index!
+					if( pIOEntry->getObject()->GetUniqueObjectID() == pPublishedOutObjectInfo->m_pObject->GetUniqueObjectID() )
 					{
 						pPPQ->RemoveOutput( pIOEntry );
 						found = true;
@@ -169,9 +170,6 @@ void SVPublishListClass::Refresh(SVTaskObjectClass * pRootObject)
 
 		if( !found ) // not in original list - have to add it
 		{
-			//if( not yet published )
-			SVPublicAttributeEntryStruct* pPublicAttribute = pOutObjectInfo->m_pObject->GetPublicAttribute();
-
 			SVInObjectInfoStruct InObjectInfo;
 
 			InObjectInfo.SetObject( m_pInspection );
@@ -196,9 +194,8 @@ void SVPublishListClass::Refresh(SVTaskObjectClass * pRootObject)
 					SVIOEntryHostStructPtr pIOEntry;
 
 					pPPQ = m_pInspection->GetPPQ();
-					BOOL bDigital = SV_IS_KIND_OF( pObject, SVBoolValueObjectClass );
 
-					if( bDigital )
+					if(SVObjectTypeEnum::SVBoolValueObjectType == pObject->GetObjectType())
 					{
 						pIOEntry = new SVIOEntryHostStruct;
 						pIOEntry->m_DeleteValueObject = false;
@@ -265,9 +262,6 @@ void SVPublishListClass::Release(SVTaskObjectClass * pRootObject)
 		// Disconnect
 		SVObjectManagerClass::Instance().DisconnectObjectInput(pPublishedOutObjectInfo->m_UniqueObjectID, &InObjectInfo);
 		
-		//if( should not be anymore published )
-		SVPublicAttributeEntryStruct* pPublicAttribute = pPublishedOutObjectInfo->m_pObject->GetPublicAttribute();
-
 		// remove from the list
 		RemoveAt(i);
 
@@ -283,7 +277,8 @@ void SVPublishListClass::Release(SVTaskObjectClass * pRootObject)
 			for( lPPQ = 0, found = false; lPPQ < lPPQSize; lPPQ++ )
 			{
 				pIOEntry = ppPPQEntries[lPPQ];
-				if( pIOEntry->getObject()->GetCompleteName() == pPublishedOutObjectInfo->m_pObject->GetCompleteName() )
+				//@WARNING [gra][7.50][09.08.2017] Not this does not work for objects with index!
+				if( pIOEntry->getObject()->GetUniqueObjectID() == pPublishedOutObjectInfo->m_pObject->GetUniqueObjectID() )
 				{
 					pPPQ->RemoveOutput( pIOEntry );
 					found = true;
@@ -325,7 +320,8 @@ bool SVPublishListClass::RemovePublishedEntry( const SVGUID& RGuid )
 			for( lPPQ = 0, found = false; lPPQ < lPPQSize; lPPQ++ )
 			{
 				pIOEntry = ppPPQEntries[lPPQ];
-				if( pIOEntry->getObject()->GetCompleteName() == pPublishedOutObjectInfo->m_pObject->GetCompleteName() )
+				//@WARNING [gra][7.50][09.08.2017] Not this does not work for objects with index!
+				if( pIOEntry->getObject()->GetUniqueObjectID() == pPublishedOutObjectInfo->m_pObject->GetUniqueObjectID() )
 				{
 					pPPQ->RemoveOutput( pIOEntry );
 					found = true;
