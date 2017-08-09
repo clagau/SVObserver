@@ -1,17 +1,25 @@
 NOTABLE SVOBSERVER CHANGES:
 
 Compatible Changes:
-
-	????
-
++ Pattern Analyzer
++ Define center for pattern matching
++ Width and Height of Pattern Analyzer Model
++ Enable Don't Care Areas in Pattern Matching
++ Color Camera
++ Draw ROI on Color image
++ Color Tool ROI in Result Picker
++ Color Tool: Function to disable Tresholds 2nd try
++ Regression Test stop condition
++ Display Table Object
++ Return table from Blob Analyzer
 Incompatible Changes:
 + Variables removed
  - Clean up SVX file – Results are not saved any more 
  - Remove IsValid from objects
  - SVObjectClass::Get/SetObjectValue has old name tags – removed "Friend", "DataLinkID" and "AttributesAllowed" from old configurations
 + Remote Inputs are mixed
-+ Replace image transfer from V-Drive – V-Dive size was reduced
-+ Invalid result values in monitor lists are provided with their default value
++ Replace image transfer from V-Drive – V-Drive size was reduced to 3 GB
++ Invalid result values in monitor lists are provided with their default value (resp. 0)
 Fixed Bugs:
 + Table
  - Table Tool in Archive Tool
@@ -33,7 +41,8 @@ NOTABLE SVIM IMAGE CHANGES:
 + Update ImageJ to version 1.51k 
 + Misleading name in Hardware.ini and Error Messages
 + Changes in ini file for RRS and ShardMemory
-+ Camera
++ Camera files updated
+
 SOFTWARE VERSIONS:
 
 Seidenader Vision Inc. SVObserver version 7.50
