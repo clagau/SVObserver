@@ -29,6 +29,7 @@ BEGIN_MESSAGE_MAP(ResultTabbedView, CView)
 	ON_WM_CREATE()
 	ON_WM_SIZE()
 	ON_WM_ERASEBKGND()
+	ON_REGISTERED_MESSAGE(AFX_WM_CHANGING_ACTIVE_TAB, &ResultTabbedView::OnChangingActiveTab)
 END_MESSAGE_MAP()
 #pragma endregion Declarations
 
@@ -220,3 +221,23 @@ BOOL ResultTabbedView::OnEraseBkgnd(CDC* pDC)
 	return true;
 }
 #pragma endregion Private Methods
+
+
+afx_msg LRESULT ResultTabbedView::OnChangingActiveTab(WPARAM wParam, LPARAM lParam)
+{
+	//! wParam contains the active tab index
+	switch (wParam)
+	{
+	case 0:
+		m_ResultList.updateList(m_pIPDoc);
+		break;
+	case 1:
+		m_ResultTableList.updateList(m_pIPDoc);
+		break;
+
+	default:
+		break;
+	}
+
+	return 0;
+}
