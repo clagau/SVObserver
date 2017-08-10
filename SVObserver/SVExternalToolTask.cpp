@@ -155,7 +155,7 @@ SVExternalToolTask::SVExternalToolTask( SVObjectClass* POwner, int StringResourc
 	for ( i=0; i < SVExternalToolTaskData::NUM_INPUT_OBJECTS; i++)
 	{
 		// register objects
-		RegisterEmbeddedObject( &m_Data.m_aInputObjects[i], aInputObjectGUID[i], IDS_OBJECTNAME_INPUT_01 + static_cast<int>(i), false, SvOi::SVResetItemNone );
+		RegisterEmbeddedObject( &m_Data.m_aInputObjects[i], aInputObjectGUID[i], IDS_OBJECTNAME_INPUT_01 + static_cast<int>(i), false, SvOi::SVResetItemTool);
 		SVString ObjectName = SvUl_SF::LoadSVString(IDS_OBJECTNAME_INPUT_01 + static_cast<int>(i));
 		ObjectName += SvO::cLinkName;
 		RegisterEmbeddedObject(&m_Data.m_aInputObjects[i].getLinkedName(), aInputObject_LinkedGUID[i], ObjectName.c_str(), false, SvOi::SVResetItemNone);
