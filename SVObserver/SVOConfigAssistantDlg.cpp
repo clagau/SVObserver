@@ -2980,6 +2980,10 @@ BOOL CSVOConfigAssistantDlg::ItemChanged(int iItemDlg, LPCTSTR LabelName, int iA
 						const SVOCameraObjPtr pCameraObj( m_CameraList.GetCameraObjectByPosition( iC ) );
 						if( nullptr != pCameraObj )
 						{
+							//The digitizer number can change after calling the camera manager so set the camera file as changed to reload
+							int Digitizer = SVDigitizerProcessingClass::Instance().getDigitizerID(pCameraObj->GetCameraID());
+							pCameraObj->SetDigNumber(Digitizer);
+							pCameraObj->SetCameraFileChanged();
 							CheckCamera( *pCameraObj );
 							CheckColor( *pCameraObj );
 						}
