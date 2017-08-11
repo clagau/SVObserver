@@ -165,6 +165,14 @@ HRESULT SVVisionProcessorHelper::GetOfflineCount( unsigned long& rCount ) const
 
 HRESULT SVVisionProcessorHelper::LoadConfiguration( const SVString& rPackFileName )
 {
+	DWORD notAllowedStates = SV_STATE_START_PENDING | SV_STATE_STARTING | SV_STATE_STOP_PENDING | SV_STATE_STOPING |
+		SV_STATE_CREATING | SV_STATE_LOADING | SV_STATE_SAVING | SV_STATE_CLOSING;
+
+	if (SVSVIMStateClass::CheckState(notAllowedStates))
+	{
+		return SVMSG_SVO_ACCESS_DENIED;
+	}
+
 	// Check if we are in an allowed state first
 	// Not allowed to perform if in Regression or Test
 	if (SVSVIMStateClass::CheckState(SV_STATE_TEST | SV_STATE_REGRESSION))
@@ -178,6 +186,14 @@ HRESULT SVVisionProcessorHelper::LoadConfiguration( const SVString& rPackFileNam
 
 HRESULT SVVisionProcessorHelper::SaveConfiguration( const SVString& rPackFileName ) const
 {
+	DWORD notAllowedStates = SV_STATE_START_PENDING | SV_STATE_STARTING | SV_STATE_STOP_PENDING | SV_STATE_STOPING |
+		SV_STATE_CREATING | SV_STATE_LOADING | SV_STATE_SAVING | SV_STATE_CLOSING;
+
+	if (SVSVIMStateClass::CheckState(notAllowedStates))
+	{
+		return SVMSG_SVO_ACCESS_DENIED;
+	}
+
 	SVConfigurationObject* pConfig = nullptr;
 	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
 
@@ -353,10 +369,9 @@ HRESULT SVVisionProcessorHelper::GetDataDefinitionList( const SVString& rInspect
 
 HRESULT SVVisionProcessorHelper::GetItems( const SVNameSet& rNames, SVNameStorageResultMap& rItems , bool isOneBased ) const
 {
-	typedef std::map< SVString, SVNameSet > SVNameSetMap;
-
 	HRESULT l_Status = S_OK;
 
+	typedef std::map< SVString, SVNameSet > SVNameSetMap;
 	SVNameSetMap l_NameSets;
 
 	for( SVNameSet::const_iterator l_Iter = rNames.begin(); l_Iter != rNames.end(); ++l_Iter )
@@ -458,10 +473,17 @@ static bool IsRemoteInputRequest(const SVObjectNameInfo& rInfo, bool& bValidRemo
 
 HRESULT SVVisionProcessorHelper::SetItems( const SVNameStorageMap& rItems, SVNameStatusMap& rStatusItems, bool isOneBased )
 {
-	typedef std::map< SVString, SVNameStorageMap > SVStringNameStorageMap;
+	DWORD notAllowedStates = SV_STATE_START_PENDING | SV_STATE_STARTING | SV_STATE_STOP_PENDING | SV_STATE_STOPING |
+		SV_STATE_CREATING | SV_STATE_LOADING | SV_STATE_SAVING | SV_STATE_CLOSING;
 
+	if (SVSVIMStateClass::CheckState(notAllowedStates))
+	{
+		return SVMSG_SVO_ACCESS_DENIED;
+	}
+		
 	HRESULT l_Status = S_OK;
 
+	typedef std::map< SVString, SVNameStorageMap > SVStringNameStorageMap;
 	SVStringNameStorageMap l_NameStorageItems;
 
 	for( SVNameStorageMap::const_iterator l_Iter = rItems.begin(); l_Iter != rItems.end(); ++l_Iter )
@@ -620,6 +642,14 @@ HRESULT SVVisionProcessorHelper::GetStandardItems( const SVNameSet& rNames, SVNa
 
 HRESULT SVVisionProcessorHelper::GetInspectionItems( const SVNameSet& rNames, SVNameStorageResultMap& rItems ) const
 {
+	DWORD notAllowedStates = SV_STATE_START_PENDING | SV_STATE_STARTING | SV_STATE_STOP_PENDING | SV_STATE_STOPING |
+		SV_STATE_CREATING | SV_STATE_LOADING | SV_STATE_SAVING | SV_STATE_CLOSING;
+
+	if (SVSVIMStateClass::CheckState(notAllowedStates))
+	{
+		return SVMSG_SVO_ACCESS_DENIED;
+	}
+
 	HRESULT l_Status = S_OK;
 
 	SVConfigurationObject* pConfig( nullptr );
@@ -640,6 +670,14 @@ HRESULT SVVisionProcessorHelper::GetInspectionItems( const SVNameSet& rNames, SV
 
 HRESULT SVVisionProcessorHelper::GetRemoteInputItems( const SVNameSet& rNames, SVNameStorageResultMap& rItems ) const
 {
+	DWORD notAllowedStates = SV_STATE_START_PENDING | SV_STATE_STARTING | SV_STATE_STOP_PENDING | SV_STATE_STOPING |
+		SV_STATE_CREATING | SV_STATE_LOADING | SV_STATE_SAVING | SV_STATE_CLOSING;
+
+	if (SVSVIMStateClass::CheckState(notAllowedStates))
+	{
+		return SVMSG_SVO_ACCESS_DENIED;
+	}
+
 	HRESULT l_Status = S_OK;
 
 	SVConfigurationObject* pConfig( nullptr ); 
@@ -779,6 +817,14 @@ HRESULT SVVisionProcessorHelper::SetCameraItems( const SVNameStorageMap& rItems,
 
 HRESULT SVVisionProcessorHelper::GetObjectDefinition( const SVObjectClass& rObject, const long Filter, SVDataDefinitionStruct& rDataDef ) const
 {
+	DWORD notAllowedStates = SV_STATE_START_PENDING | SV_STATE_STARTING | SV_STATE_STOP_PENDING | SV_STATE_STOPING |
+		SV_STATE_CREATING | SV_STATE_LOADING | SV_STATE_SAVING | SV_STATE_CLOSING;
+
+	if (SVSVIMStateClass::CheckState(notAllowedStates))
+	{
+		return SVMSG_SVO_ACCESS_DENIED;
+	}
+
 	HRESULT l_Status = S_OK;
 
 	//Check using the filter if object should be included

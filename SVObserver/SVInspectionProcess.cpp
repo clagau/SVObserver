@@ -890,18 +890,18 @@ BOOL SVInspectionProcess::GoOffline()
 
 HRESULT SVInspectionProcess::SubmitCommand(const SVCommandTemplatePtr& p_rCommandPtr)
 {
-	HRESULT l_Status = S_OK;
+	HRESULT Result = S_OK;
 
 	if (m_CommandQueue.AddTail(p_rCommandPtr))
 	{
-		l_Status = m_AsyncProcedure.Signal(nullptr);
+		Result = m_AsyncProcedure.Signal(nullptr);
 	}
 	else
 	{
-		l_Status = E_FAIL;
+		Result = E_FAIL;
 	}
 
-	return l_Status;
+	return Result;
 }
 
 BOOL SVInspectionProcess::CanProcess(SVProductInfoStruct *pProduct)
@@ -1213,6 +1213,13 @@ bool SVInspectionProcess::AddInputRequest(const SVObjectReference& rObjectRef, c
 
 bool SVInspectionProcess::AddInputRequest(SVInputRequestInfoStructPtr p_pInRequest)
 {
+	DWORD notAllowedStates = SV_STATE_START_PENDING | SV_STATE_STARTING | SV_STATE_STOP_PENDING | SV_STATE_STOPING | SV_STATE_CLOSING;
+
+	if (SVSVIMStateClass::CheckState(notAllowedStates))
+	{
+		return false;
+	}
+
 	if (!m_InputRequests.Lock())
 	{
 		SvStl::MessageMgrStd e(SvStl::LogOnly);
@@ -1361,6 +1368,13 @@ HRESULT SVInspectionProcess::AddInputImageFileNameRequest(SVImageClass* p_psvIma
 
 HRESULT SVInspectionProcess::AddInputImageRequest(SVInputImageRequestInfoStructPtr p_pInRequest)
 {
+	DWORD notAllowedStates = SV_STATE_START_PENDING | SV_STATE_STARTING | SV_STATE_STOP_PENDING | SV_STATE_STOPING | SV_STATE_CLOSING;
+
+	if (SVSVIMStateClass::CheckState(notAllowedStates))
+	{
+		return E_FAIL;
+	}
+
 	if (!m_InputImageRequests.Lock())
 	{
 		SvStl::MessageMgrStd e(SvStl::LogOnly);
@@ -1377,7 +1391,7 @@ HRESULT SVInspectionProcess::AddInputImageRequest(SVInputImageRequestInfoStructP
 			DebugBreak();
 		}
 
-		return S_FALSE;
+		return E_FAIL;
 	}// end if
 
 	if (!m_InputImageRequests.Unlock())
