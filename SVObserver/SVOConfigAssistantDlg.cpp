@@ -3645,7 +3645,7 @@ BOOL CSVOConfigAssistantDlg::CanInspectionNameBeUsed(LPCTSTR Name)
 	bool Result( false );
 
 	SVStringVector::const_iterator Iter = std::find( m_InspectionNamesUsed.begin(), m_InspectionNamesUsed.end(), SVString(Name) );
-	if( m_InspectionNamesUsed.end() != Iter)
+	if( m_InspectionNamesUsed.end() == Iter)
 	{
 		Result = true;
 	}
