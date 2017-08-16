@@ -5310,19 +5310,33 @@ HRESULT SVConfigurationObject::LoadMonitoredObjectList( SVTreeType& rTree, SVTre
 
 		while ( S_OK == retValue && rTree.isValidLeaf( hChild, hLeaf ) )
 		{
-			SVString name( rTree.getLeafName( hLeaf ) );
+			SVString Name( rTree.getLeafName( hLeaf ) );
 
-			const MonitoredObject& rObj = RemoteMonitorListHelper::GetMonitoredObjectFromName(name);
+			const MonitoredObject& rObj = RemoteMonitorListHelper::GetMonitoredObjectFromName(Name);
 			if (!rObj.guid.empty())
 			{
 				// add object for this leaf to the list
 				rList.push_back(rObj);
-				hLeaf = rTree.getNextLeaf( hChild, hLeaf );
 			}
 			else
 			{
-				retValue = SVMSG_SVO_48_LOAD_CONFIGURATION_MONITOR_LIST;
+				SvStl::MsgTypeEnum  MsgType = SVSVIMStateClass::CheckState(SV_STATE_REMOTE_CMD) ? SvStl::LogOnly : SvStl::LogAndDisplay;
+				SvStl::MessageMgrStd Exception(MsgType);
+				SVStringVector msgList;
+				msgList.push_back(Name);
+				INT_PTR DlgResult = Exception.setMessage(SVMSG_SVO_106_MONITOR_LIST_OBJECT_MISSING, SvStl::Tid_Default, msgList, SvStl::SourceFileParams(StdMessageParams), 0, SV_GUID_NULL, MB_YESNO);
+				if (SvStl::LogAndDisplay == MsgType && IDNO == DlgResult)
+				{
+					rList.clear();
+					retValue = SVMSG_SVO_48_LOAD_CONFIGURATION_MONITOR_LIST;
+				}
+				else
+				{
+					//Configuration has changed so set it to modified
+					SVSVIMStateClass::AddState(SV_STATE_MODIFIED);
+				}
 			}
+			hLeaf = rTree.getNextLeaf(hChild, hLeaf);
 		}
 	}
 	else

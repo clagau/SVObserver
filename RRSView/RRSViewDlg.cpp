@@ -247,8 +247,9 @@ LRESULT  CRRSViewDlg::OnRefresh(WPARAM wParam, LPARAM lParam)
 		{
 			m_MemReader.Reload(version);
 		}
-		catch (std::exception& r)
+		catch (std::exception& rException)
 		{
+			UNREFERENCED_PARAMETER(rException);
 			AfxMessageBox("Shared Mem Reader Reload failed");
 		}
 		
