@@ -100,6 +100,22 @@ namespace SvSml
 			string = Text;
 			break;
 		}
+		case VT_I2:
+		{
+			short* pShort = (short*)ptr;
+			assert(data.ByteSize == 2);
+			short   value = *pShort;
+			string = std::to_string(value);
+			break;
+		}
+		case VT_UI2:
+		{
+			assert(data.ByteSize == 2);
+			WORD*   pWord = (WORD*)(ptr);
+			sprintf_s(Text, 100, _T("0x%4.4x"), *pWord);
+			string = Text;
+			break;
+		}
 		case VT_I4:
 		{
 			int* pInt = (int*)ptr;
@@ -116,6 +132,14 @@ namespace SvSml
 			string = Text;
 			break;
 		}
+		case VT_R4:
+		{
+			assert(data.ByteSize == 4);
+			float* pfloat = (float*)ptr;
+			string = std::to_string(*pfloat);
+			break;
+		}
+		
 		case VT_R8:
 		{
 			assert(data.ByteSize == 8);
@@ -147,26 +171,43 @@ namespace SvSml
 			break;
 		}
 
+		case VT_INT:
+		{
+			// BasicvalueObject converts VT_INT to VT_BOOL
+			assert(data.ByteSize == 4);
+			int*  pValue = (int*)(ptr);
+			if (*pValue)
+				string = "True";
+			else
+				string = "False";
+			break;
+		}
+		case VT_UINT:
+		{
+			assert(data.ByteSize == 4);
+			DWORD*   pDWord = (DWORD*)(ptr);
+			sprintf_s(Text, 100, _T("0x%8.8x"), *pDWord);
+			string = Text;
+			break;
+		}
+		
 		case VT_BOOL:
 		{
 			assert(data.ByteSize == 4);
 			int*  pValue = (int*)(ptr);
 			if (*pValue)
-				string = "TRUE";
+				string = "True";
 			else
-				string = "FALSE";
+				string = "False";
 			break;
 		}
-
 		case  VT_DPOINT:
 		{
 			assert(data.ByteSize == 16);
-
 			double* px = (double*)(ptr);
 			double* py = (double*)(ptr + 8);
 			sprintf_s(Text, 100, _T("( %lf, %lf)"), *px, *py);
 			string = Text;
-			break;
 			break;
 		}
 		case VT_POINT:
@@ -190,7 +231,6 @@ namespace SvSml
 	{
 		//@Todo[MEC][7.50] [17.07.2017] not implemented yet
 		return false;
-
 	}
 
 	ShMonitorEntry::ShMonitorEntry(const void_allocator &allocator) :name(allocator), data()
