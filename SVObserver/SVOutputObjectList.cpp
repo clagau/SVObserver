@@ -582,28 +582,28 @@ BOOL SVOutputObjectList::WriteOutputValue( SVIOEntryHostStructPtr pIOEntry, cons
 
 BOOL SVOutputObjectList::ResetOutput( SVIOEntryHostStructPtr pIOEntry )
 {
-	SVOutputObject	*pOutput;
-
 	if( Lock() )
 	{
 		// Check if output is enabled for this call
 		if( !( pIOEntry.empty() ))
 		{
-			pOutput	= m_OutputObjects[ pIOEntry->m_IOId ];
-
-			bool l_bEnable = pIOEntry->m_Enabled;
-			if( !l_bEnable )	// Act as if enabled when Module Ready or Raid Error 
+			SVGuidSVOutputObjectPtrMap::const_iterator Iter = m_OutputObjects.find(pIOEntry->m_IOId);
+			if (m_OutputObjects.end() != Iter && nullptr != Iter->second)
 			{
-				SVString Name = pOutput->GetName();
-				if(SvO::cModuleReady == Name || SvO::cRaidErrorIndicator == Name )
+				bool l_bEnable = pIOEntry->m_Enabled;
+				if (!l_bEnable)	// Act as if enabled when Module Ready or Raid Error 
 				{
-					l_bEnable = true;
+					SVString Name = Iter->second->GetName();
+					if (SvO::cModuleReady == Name || SvO::cRaidErrorIndicator == Name)
+					{
+						l_bEnable = true;
+					}
 				}
-			}
 
-			if( l_bEnable )
-			{
-				pOutput->Reset();
+				if (l_bEnable)
+				{
+					Iter->second->Reset();
+				}
 			}
 		}// end if
 
@@ -623,35 +623,32 @@ BOOL SVOutputObjectList::FillOutputs( SVIOEntryHostStructPtrVector& rIOEntries )
 
 	if( Lock() )
 	{
-		SVGuidSVOutputObjectPtrMap::const_iterator l_Iter = m_OutputObjects.begin();
+		auto Iter = m_OutputObjects.cbegin();
 		Result = true;
-		while( l_Iter != m_OutputObjects.end() )
+		for( ;Iter != m_OutputObjects.end(); ++Iter )
 		{
-			SVOutputObject* pOutput = l_Iter->second;
-
-			SVIOEntryHostStructPtr pIOEntry;
-
-			pIOEntry = new SVIOEntryHostStruct;
-
-			pIOEntry->m_IOId = pOutput->GetUniqueObjectID();
-			
-			switch (pOutput->GetObjectSubType())
+			if (nullptr != Iter->second)
 			{
-			case SVDigitalOutputObjectType:
-				pIOEntry->m_ObjectType = IO_DIGITAL_OUTPUT;
-				break;
-			case SVRemoteOutputObjectType:
-				pIOEntry->m_ObjectType = IO_REMOTE_OUTPUT;
-				break;
-			default:
-				Result = false;
-				break;
+				SVIOEntryHostStructPtr pIOEntry = new SVIOEntryHostStruct;
+
+				pIOEntry->m_IOId = Iter->second->GetUniqueObjectID();
+
+				switch (Iter->second->GetObjectSubType())
+				{
+				case SVDigitalOutputObjectType:
+					pIOEntry->m_ObjectType = IO_DIGITAL_OUTPUT;
+					break;
+				case SVRemoteOutputObjectType:
+					pIOEntry->m_ObjectType = IO_REMOTE_OUTPUT;
+					break;
+				default:
+					Result = false;
+					break;
+				}
+
+				rIOEntries.push_back(pIOEntry);
 			}
-
-			rIOEntries.push_back( pIOEntry );
-
-			++l_Iter;
-		}// end for
+		}
 
 		Unlock();
 	}// end if

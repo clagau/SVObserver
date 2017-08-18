@@ -304,7 +304,6 @@ void SVDiscreteOutputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHi
 void SVDiscreteOutputsView::OnLButtonDblClk( UINT nFlags, CPoint point ) 
 {
 	SVIOEntryHostStructPtr pIOEntry;
-	SVOutputObjectList *pOutputList( nullptr );
 	SVDigitalOutputObject *pDigOutput ( nullptr );
 	UINT flags;
 
@@ -325,6 +324,14 @@ void SVDiscreteOutputsView::OnLButtonDblClk( UINT nFlags, CPoint point )
 			( flags & ( LVHT_ONITEMSTATEICON | LVHT_ONITEMICON | LVHT_ONITEMLABEL ) ) )
 		{
 			SVIOAdjustDialogClass dlg;
+			SVConfigurationObject* pConfig(nullptr);
+			SVOutputObjectList* pOutputList(nullptr);
+
+			SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
+			if (nullptr != pConfig)
+			{ 
+				pOutputList = pConfig->GetOutputObjectList(); 
+			}
 
 			// Search for In or Out
 			SVDataItemManager::const_iterator l_Iter = m_Items.GetItemData(item);
@@ -339,6 +346,13 @@ void SVDiscreteOutputsView::OnLButtonDblClk( UINT nFlags, CPoint point )
 			}
 			else
 			{
+				SVGUID ParameterUID(DigitalOutputUidGuid);
+				ParameterUID.ToGUID().Data1 += item;
+				if (nullptr != pOutputList)
+				{
+					pOutputList->DetachOutput(ParameterUID);
+				}
+
 				pDigOutput = new SVDigitalOutputObject;
 				pDigOutput->updateGuid(item);
 
@@ -366,17 +380,12 @@ void SVDiscreteOutputsView::OnLButtonDblClk( UINT nFlags, CPoint point )
 					{
 						SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
 
-						SVConfigurationObject* pConfig( nullptr );
-						SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
-
 						// Check if they picked a new output
 						if( dlg.m_pIOEntry != pIOEntry )
 						{
-							SVOutputObjectList* pOutputList( nullptr );
 							SVPPQObject* pPPQ( nullptr );
 							long k = 0;
 
-							if ( nullptr != pConfig ){ pOutputList = pConfig->GetOutputObjectList( ); }
 							if( !( pIOEntry.empty() ) )
 							{									
 								// Make sure that we first reset the old output
@@ -413,7 +422,7 @@ void SVDiscreteOutputsView::OnLButtonDblClk( UINT nFlags, CPoint point )
 							{
 								dlg.m_pIOEntry->m_Enabled = TRUE;
 								dlg.m_pDigOutput->SetName( dlg.m_pIOEntry->getObject()->GetCompleteName().c_str() );
-								if( pIOEntry.empty() )
+								if( pIOEntry.empty() && nullptr != pOutputList )
 								{
 									pOutputList->AttachOutput( pDigOutput );
 								}// end if
@@ -448,8 +457,6 @@ void SVDiscreteOutputsView::OnLButtonDblClk( UINT nFlags, CPoint point )
 						// Force IO board to update if they still have one selected
 						if( !( dlg.m_pIOEntry.empty() ) )
 						{
-							pOutputList = nullptr;
-							if ( nullptr != pConfig ){ pOutputList = pConfig->GetOutputObjectList( ); }
 							if( nullptr != pOutputList )
 							{
 								pOutputList->ResetOutput( dlg.m_pIOEntry );
