@@ -659,6 +659,18 @@ HRESULT SVVisionProcessorHelper::GetInspectionItems( const SVNameSet& rNames, SV
 	if( nullptr != pConfig )
 	{
 		l_Status = pConfig->GetInspectionItems( rNames, rItems );
+		//@TODO [gra][7.50][18.08.2017] This is only for HMI compatibility which needs bool as 1 or 0
+		//This should be removed when HMI can handle bool
+		SVNameStorageResultMap::iterator Iter(rItems.begin());
+		for (; rItems.end() != Iter; ++Iter)
+		{
+			if (VT_BOOL == Iter->second.m_Storage.m_Variant.vt)
+			{
+				bool Value = Iter->second.m_Storage.m_Variant ? true : false;
+				Iter->second.m_Storage.m_Variant.Clear();
+				Iter->second.m_Storage.m_Variant = static_cast<VARIANT_BOOL> (Value);
+			}
+		}
 	}
 	else if( S_OK == l_Status )
 	{
