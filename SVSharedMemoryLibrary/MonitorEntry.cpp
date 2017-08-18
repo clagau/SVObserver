@@ -177,9 +177,9 @@ namespace SvSml
 			assert(data.ByteSize == 4);
 			int*  pValue = (int*)(ptr);
 			if (*pValue)
-				string = "True";
+				string = "TRUE";
 			else
-				string = "False";
+				string = "FALSE";
 			break;
 		}
 		case VT_UINT:
@@ -196,9 +196,9 @@ namespace SvSml
 			assert(data.ByteSize == 4);
 			int*  pValue = (int*)(ptr);
 			if (*pValue)
-				string = "True";
+				string = "TRUE";
 			else
-				string = "False";
+				string = "FALSE";
 			break;
 		}
 		case  VT_DPOINT:
