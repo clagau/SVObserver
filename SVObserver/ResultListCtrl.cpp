@@ -17,6 +17,7 @@
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "TextDefinesSvO.h"
+#include "SVTimerLibrary/SVClock.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -38,6 +39,7 @@ END_MESSAGE_MAP()
 
 #pragma region Constructor
 ResultListCtrl::ResultListCtrl() : CListCtrl()
+, m_UpdateTimeStamp(0.0)
 {
 	VERIFY(m_ContextMenuItem.LoadMenu(IDR_RESULTS_CONTEXT_MENU));
 }
@@ -89,7 +91,7 @@ void ResultListCtrl::updateList(class SVIPDoc* pDoc)
 	pDoc->GetResultData( m_ResultData );
 
 	bool bRedrawDefinitions = false;
-	if (pDoc->IsResultDefinitionsOutdated())
+	if (m_UpdateTimeStamp < pDoc->getResultDefinitionUpdatTimeStamp())
 	{
 		DeleteAllItems();
 		pDoc->GetResultDefinitions( m_ResultDefinitions );
@@ -235,6 +237,7 @@ void ResultListCtrl::updateList(class SVIPDoc* pDoc)
 		SetItemText( i + 1, 2, Temp.c_str() ); // processes/sec
 	}
 
+	m_UpdateTimeStamp = SvTl::GetTimeStamp();
 	SetRedraw( true );
 	RedrawWindow(NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW | RDW_ERASE | RDW_FRAME);
 }

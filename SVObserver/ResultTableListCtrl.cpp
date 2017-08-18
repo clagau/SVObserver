@@ -20,6 +20,7 @@
 #include "SVStatusLibrary/MessageManager.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "TextDefinesSvO.h"
+#include "SVTimerLibrary/SVClock.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -42,7 +43,8 @@ END_MESSAGE_MAP()
 ResultTableListCtrl::ResultTableListCtrl() : CListCtrl()
 , m_ColumnWidthSet(false)
 , m_ColumnCount(0)
-{	
+, m_UpdateTimeStamp(0.0)
+{
 	VERIFY(m_ContextMenuItem.LoadMenu(IDR_RESULTS_TABLE_CONTEXT_MENU));
 }
 
@@ -87,7 +89,7 @@ void ResultTableListCtrl::updateList(class SVIPDoc* pDoc)
 
 		pDoc->GetResultData(m_ResultData);
 
-		if (pDoc->IsResultDefinitionsOutdated())
+		if (m_UpdateTimeStamp < pDoc->getResultDefinitionUpdatTimeStamp())
 		{
 			addColumnHeadings(m_ResultData.m_ResultTableData);
 		}
@@ -123,6 +125,7 @@ void ResultTableListCtrl::updateList(class SVIPDoc* pDoc)
 
 		SetRedraw(true);
 		RedrawWindow(NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW | RDW_ERASE | RDW_FRAME);
+		m_UpdateTimeStamp = SvTl::GetTimeStamp();
 	}
 }
 #pragma endregion Public Methods

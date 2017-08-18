@@ -228,7 +228,7 @@ public:
 	virtual void SetModifiedFlag(BOOL bModified = TRUE) override;
 
 	typedef std::deque< SVIPResultItemDefinition > SVResultDefinitionDeque;
-	bool  IsResultDefinitionsOutdated() const;
+	SvTl::SVTimeStamp getResultDefinitionUpdatTimeStamp() const;
 	HRESULT GetResultDefinitions(SVResultDefinitionDeque& p_rDefinitions) const;
 	HRESULT GetResultData(SVIPResultData& p_rResultData) const;
 
@@ -319,7 +319,6 @@ protected:
 
 	mutable SvTl::SVTimeStamp m_ToolSetListTimestamp;
 	mutable SvTl::SVTimeStamp m_PPQListTimestamp;
-	mutable SvTl::SVTimeStamp m_ResultDefinitionsTimestamp;
 
 	bool m_bAllowRefresh;
 	SVProductDataQueue m_NewProductData;

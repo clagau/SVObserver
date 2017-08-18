@@ -52,5 +52,6 @@ private:
 	SVIPResultData m_ResultData;
 	BOOL m_ColumnWidthSet;
 	int m_ColumnCount;
+	mutable double m_UpdateTimeStamp;
 #pragma endregion Member variables
 };

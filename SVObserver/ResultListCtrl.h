@@ -57,6 +57,7 @@ private:
 	SVResultDefinitionDeque m_ResultDefinitions;
 	SVIPResultData m_ResultData;
 	CSize m_ControlSize = { 0, 0 };
+	mutable double m_UpdateTimeStamp;
 #pragma endregion Member variables
 };
 

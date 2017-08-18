@@ -203,7 +203,6 @@ SVIPDoc::SVIPDoc()
 , m_Images()
 , m_AllViewsUpdated( 0 )
 , m_pMDIChildWnd( nullptr )
-, m_ResultDefinitionsTimestamp( 0 )
 , m_ToolSetListTimestamp( 0 )
 , m_PPQListTimestamp( 0 )
 , m_bRegressionTestInitEquationText(false)
@@ -2720,14 +2719,14 @@ void SVIPDoc::SetModifiedFlag(BOOL bModified /*= TRUE*/)
 	}
 }
 
-bool  SVIPDoc::IsResultDefinitionsOutdated() const
+SvTl::SVTimeStamp  SVIPDoc::getResultDefinitionUpdatTimeStamp() const
 {
-	bool Result(true);
+	SvTl::SVTimeStamp Result(0.0);
 	SVResultListClass* pResultList = GetResultList();
 
-	if (nullptr != pResultList  && pResultList->getUpdateTimeStamp() < m_ResultDefinitionsTimestamp)
+	if (nullptr != pResultList)
 	{
-		Result = false;
+		Result = pResultList->getUpdateTimeStamp();
 	}
 
 	return Result;
@@ -2743,11 +2742,6 @@ HRESULT SVIPDoc::GetResultDefinitions(SVResultDefinitionDeque& p_rDefinitions) c
 
 		hres = pResultList->GetResultDefinitions(p_rDefinitions);
 
-	}
-
-	if (S_OK == hres)
-	{
-		m_ResultDefinitionsTimestamp = SvTl::GetTimeStamp();
 	}
 
 	return hres;
