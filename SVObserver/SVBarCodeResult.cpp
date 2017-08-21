@@ -24,12 +24,16 @@ SV_IMPLEMENT_CLASS (SVBarCodeResultClass, SVBarCodeResultClassGuid);
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-SVBarCodeResultClass::SVBarCodeResultClass (BOOL BCreateDefaultTaskList, SVObjectClass* POwner, int StringResourceID)
-  : SVStringResultClass(BCreateDefaultTaskList, POwner, StringResourceID)
+SVBarCodeResultClass::SVBarCodeResultClass(BOOL BCreateDefaultTaskList, SVObjectClass* POwner, int StringResourceID)
+	: SVStringResultClass(BCreateDefaultTaskList, POwner, StringResourceID)
+	, m_lTotalBytes(0L)
+	, m_nTotalCount(0)
+	, m_pBuffer(nullptr)
+	, m_lLowValue(-1L)
+	, m_lHighValue(-1L)
+	, m_pIndexTable(nullptr)
+	, m_dFactor(1.0)
 {
-	m_pBuffer = nullptr;
-	m_pIndexTable = nullptr;
-	m_lTotalBytes = 0;
 
 	// Identify yourself
 	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
@@ -66,7 +70,7 @@ SVBarCodeResultClass::SVBarCodeResultClass (BOOL BCreateDefaultTaskList, SVObjec
 		false, SvOi::SVResetItemNone );
 
 	msv_bUseSingleMatchString.SetDefaultValue( TRUE, TRUE );
-  msv_szMatchStringFileName.SetDefaultValue(_T(""), TRUE);
+	msv_szMatchStringFileName.SetDefaultValue(_T(""), TRUE);
 	msv_lMatchStringLine.SetDefaultValue( 0, TRUE );
 	msv_lMatchStringLine.setSaveValueFlag(false);
 	msv_bUseMatchStringFile.SetDefaultValue( FALSE, TRUE );
@@ -224,7 +228,7 @@ bool SVBarCodeResultClass::ResetObject(SvStl::MessageContainerVector *pErrorMess
 
 HRESULT SVBarCodeResultClass::LoadMatchStringFile()
 {
-	HRESULT hrRet = S_OK;
+	HRESULT Result = S_OK;
 	BOOL bOk = true;
 	BOOL bLoad = false;
 
@@ -270,7 +274,7 @@ HRESULT SVBarCodeResultClass::LoadMatchStringFile()
 						}
 						else
 						{
-							hrRet = S_FALSE;
+							Result = E_FAIL;
 						}
 					}
 
@@ -283,30 +287,34 @@ HRESULT SVBarCodeResultClass::LoadMatchStringFile()
 							bOk = BuildHashTable( m_pBuffer );
 							if ( !bOk )
 							{
-								hrRet = S_FALSE;
+								Result = E_FAIL;
 							}
 						}
 					}
 					else
 					{
-						hrRet = S_FALSE;
+						Result = E_FAIL;
 						bOk = false;
 					}
 				}
 				else
 				{
-					hrRet = S_FALSE;
+					Result = E_FAIL;
 				}
 			}
 			catch ( ... )
 			{
-				hrRet = S_FALSE;
+				Result = E_FAIL;
 				bOk = false;
 			}
 		}
+		else
+		{
+			Result = E_FAIL;
+		}
 	}
 
-	return hrRet;
+	return Result;
 }
 
 BOOL SVBarCodeResultClass::BuildHashTable(char *pBuffer)
@@ -426,10 +434,15 @@ void SVBarCodeResultClass::InsertValueToTable(short nValue, int nIndex)
 
 int SVBarCodeResultClass::CheckStringInTable( const SVString& rMatchString )
 {
-   int nReturnIndex = -1;
+   int Result = -1;
 
    long  lIndexValue = 0;
    size_t nCharCount = rMatchString.size();
+
+   if (0 < nCharCount)
+   {
+	   return Result;
+   }
 
    for( size_t i = 0; i < nCharCount; i++ )
    {
@@ -449,7 +462,7 @@ int SVBarCodeResultClass::CheckStringInTable( const SVString& rMatchString )
 
          if(rMatchString  == pData)
          {
-            nReturnIndex = m_pIndexTable[nActualIndex];
+            Result = m_pIndexTable[nActualIndex];
             break;
          }
          nActualIndex++;
@@ -462,7 +475,7 @@ int SVBarCodeResultClass::CheckStringInTable( const SVString& rMatchString )
       }
    }
 
-   return  nReturnIndex;
+   return  Result;
 }
 
 bool SVBarCodeResultClass::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) const
