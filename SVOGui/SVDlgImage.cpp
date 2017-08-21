@@ -122,8 +122,7 @@ namespace SvOg
 
 	void SVDlgImageClass::refresh()
 	{
-		//	RedrawWindow();
-		InvalidateRect((LPCRECT)&m_ClientRect, TRUE);
+		InvalidateRect(nullptr, true);
 		UpdateWindow();
 	}
 
