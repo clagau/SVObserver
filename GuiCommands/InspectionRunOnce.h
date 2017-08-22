@@ -40,16 +40,6 @@ namespace SvCmd
 					pTool = dynamic_cast<SvOi::ITaskObject *>(SvOi::getObject(m_ToolID));
 				}
 				hr = pInspection->RunOnce(pTool);
-
-				// Get additional Error Info if the run once was for the tool
-				if (pTool && (SUCCEEDED(hr) || E_FAIL == hr))
-				{
-					HRESULT	hrTemp = pTool->getFirstTaskMessage().getMessage().m_MessageCode;
-					if (!SUCCEEDED (hrTemp))
-					{
-						hr = hrTemp; // overwrite hr only if hrTemp contains error information.
-					}
-				}
 			}
 			else
 			{
