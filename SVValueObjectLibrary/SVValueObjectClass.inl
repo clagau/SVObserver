@@ -484,38 +484,49 @@ HRESULT SVValueObjectClass<T>::SetArrayValues( const ValueVector& rValues)
 template <typename T>
 HRESULT SVValueObjectClass<T>::GetArrayValues( ValueVector& rValues, int Bucket /*= -1*/ ) const
 {
-	HRESULT Result = E_FAIL;
+	HRESULT Result = S_OK;
+	if (0 == m_ResultSize)
+	{
+		return Result;
+	}
 	assert( m_ResultSize <= m_ArraySize );
 	rValues.resize( m_ResultSize );
 	if( !m_isBucketized || -1 == Bucket )
 	{
-			if ( 1 == m_ArraySize )
+		if ( 1 == m_ArraySize )
+		{
+			rValues[0] = m_Value;
+		}
+		else
+		{
+			std::copy(m_ValueArray.begin(), m_ValueArray.begin() + m_ResultSize, rValues.begin() );
+		}
+	}
+	else
+	{
+		if ( 1 == m_ArraySize )
+		{
+			if(nullptr != m_pBucket.get())
 			{
-				rValues[0] = m_Value;
+				rValues[0] = m_pBucket->at( Bucket );
 			}
 			else
 			{
-			std::copy(m_ValueArray.begin(), m_ValueArray.begin() + m_ResultSize, rValues.begin() );
+				Result = E_POINTER;
 			}
 		}
 		else
 		{
-			if ( 1 == m_ArraySize )
+			if(nullptr != m_pBucketArray.get())
 			{
-				if(nullptr != m_pBucket.get())
-				{
-					rValues[0] = m_pBucket->at( Bucket );
-				}
+				std::copy(m_pBucketArray->at( Bucket ).begin(), m_pBucketArray->at( Bucket ).begin() + m_ResultSize, rValues.begin() );
 			}
 			else
 			{
-				if(nullptr != m_pBucketArray.get())
-				{
-				std::copy(m_pBucketArray->at( Bucket ).begin(), m_pBucketArray->at( Bucket ).begin() + m_ResultSize, rValues.begin() );
-				}
+				Result = E_POINTER;
 			}
 		}
-		Result = S_OK;
+	}
 	return Result;
 }
 
@@ -651,38 +662,41 @@ HRESULT SVValueObjectClass<T>::getValues( std::vector<_variant_t>&  rValues, int
 {
 	HRESULT Result = E_FAIL;
 
+	if (0 == m_ResultSize)
+	{
+		return S_OK;
+	}
+
 	assert( m_ResultSize <= m_ArraySize );
 	rValues.resize( m_ResultSize );
-		if( 1 == m_ArraySize )
-		{
-			ValueType Value;
+	if( 1 == m_ArraySize )
+	{
+		ValueType Value;
 		Result = GetValue(Value, -1, Bucket);
-			if (S_OK == Result)
-			{
-				rValues[0] = ValueType2Variant(Value);
-			}
-		}
-		else
+		if (S_OK == Result)
 		{
-			ValueVector ValueArray;
-			Result = GetArrayValues(ValueArray, Bucket);
-			if (S_OK == Result)
-			{
-				ValueVector::const_iterator FromIter(ValueArray.begin());
+			rValues[0] = ValueType2Variant(Value);
+		}
+	}
+	else
+	{
+		ValueVector ValueArray;
+		Result = GetArrayValues(ValueArray, Bucket);
+		if (S_OK == Result)
+		{
+			ValueVector::const_iterator FromIter(ValueArray.begin());
+			std::vector<_variant_t>::iterator ToIter(rValues.begin());
 
-				std::vector<_variant_t>::iterator ToIter(rValues.begin());
-
-				while (ToIter != rValues.end() &&
-					FromIter != ValueArray.end() &&
+			while (ToIter != rValues.end() && FromIter != ValueArray.end() &&
 				FromIter != ValueArray.begin() + m_ResultSize)
-				{
-					*ToIter = ValueType2Variant(*FromIter);
+			{
+				*ToIter = ValueType2Variant(*FromIter);
 
-					++FromIter;
-					++ToIter;
-				}
+				++FromIter;
+				++ToIter;
 			}
 		}
+	}
 	return Result;
 }
 
