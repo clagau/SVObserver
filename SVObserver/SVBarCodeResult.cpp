@@ -439,7 +439,7 @@ int SVBarCodeResultClass::CheckStringInTable( const SVString& rMatchString )
    long  lIndexValue = 0;
    size_t nCharCount = rMatchString.size();
 
-   if (0 < nCharCount)
+   if (0 == nCharCount)
    {
 	   return Result;
    }
