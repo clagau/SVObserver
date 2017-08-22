@@ -318,6 +318,10 @@ void SVBlobAnalyzeFeatureDialogClass::OnButtonAdd()
 		m_pCurrentAnalyzer->m_FeaturesEnabled [lAvailableIndex] = _T('1');
 		m_pCurrentAnalyzer->EnableFeature ((SVBlobFeatureEnum) lAvailableIndex);
 
+		//@TODO[gra][7.50][22.08.2017]: This should be changed using the command pattern to avoid thread contention!
+		//Reset is required to add the table column for the new feature added
+		m_pCurrentAnalyzer->ResetObject();
+
 //      List of not enabled.
 		initFeatureListBox(m_lbAvailableFeatures, m_pCurrentAnalyzer->getFeatureList(false));
 
@@ -434,6 +438,7 @@ void SVBlobAnalyzeFeatureDialogClass::OnOK()
 	m_pIPDoc->SetModifiedFlag();
 
 	// Incase the Dimensional Data changed...
+	//@TODO[gra][7.50][22.08.2017]: This should be changed using the command pattern to avoid thread contention!
 	m_pCurrentAnalyzer->GetInspection()->resetAllObjects();
 
 	// Rebuild results list/view
