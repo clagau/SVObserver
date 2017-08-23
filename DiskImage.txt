@@ -43,6 +43,8 @@ NOTABLE SVIM IMAGE CHANGES:
 + Changes in ini file for RRS and ShardMemory
 + Camera files updated
 
+Image Name: Z7R0750A
+
 SOFTWARE VERSIONS:
 
 Seidenader Vision Inc. SVObserver version 7.50
