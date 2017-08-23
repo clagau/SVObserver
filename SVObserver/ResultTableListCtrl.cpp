@@ -85,9 +85,14 @@ void ResultTableListCtrl::updateList(class SVIPDoc* pDoc)
 
 	if (nullptr != pDoc)
 	{
-		SetRedraw(false);
-
 		pDoc->GetResultData(m_ResultData);
+		// If Result table data size is 0 then no updating required
+		if (0 == m_ResultData.m_ResultTableData.size())
+		{
+			return;
+		}
+
+		SetRedraw(false);
 
 		if (m_UpdateTimeStamp < pDoc->getResultDefinitionUpdatTimeStamp())
 		{
