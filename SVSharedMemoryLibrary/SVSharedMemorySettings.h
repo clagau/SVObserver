@@ -16,7 +16,7 @@ namespace SvSml
 	{
 	public:
 		static const int 	DefaultMonitorStoreSize = 150;
-		static const int 	DefaultNumProductSlot = 32;
+		static const int 	DefaultNumProductSlot = 48;
 		static const int	DefaultNumRejectSlotDelta = 5;
 		static const int	DefaultConnectionTimout = 2000;
 		static const int	DefaultCreateWaitTime = 200;

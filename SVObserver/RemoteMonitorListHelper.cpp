@@ -19,6 +19,8 @@
 #include "SVSharedMemoryLibrary/SharedMemWriter.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "ObjectInterfaces/IValueObject.h"
+#include "SVPPQObject.h"
+#include "SVConfigurationObject.h"
 
 #pragma endregion Includes
 
@@ -156,11 +158,25 @@ void RemoteMonitorListHelper::AddMonitorObject2MonitorListcpy(const MonitoredObj
 
 SvSml::MonitorListCpyPointer  RemoteMonitorListHelper::CreateMLcopy(const RemoteMonitorNamedList& remoteMonitorNamedlist)
 {
+
+	SVConfigurationObject* pConfig(nullptr);
+	SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
+	int len(0);
+	if (pConfig)
+	{
+		SVPPQObject* pPPQ(nullptr);
+		pConfig->GetPPQByName(remoteMonitorNamedlist.GetPPQName().c_str(), &pPPQ);
+		if (pPPQ)
+		{
+			len = pPPQ->GetPPQLength();
+		}
+	}
 	const SvSml::SVSharedMemorySettings& rSettings = SvSml::SharedMemWriter::Instance().GetSettings();
+	int ProductDepth = len + rSettings.GetNumProductSlot();
 	SvSml::MonitorListCpyPointer  MLCpPtr  = SvSml::MonitorListCpyPointer(new SvSml::MonitorListCpy);
 	MLCpPtr->SetMonitorlistname(remoteMonitorNamedlist.GetName()); 
 	MLCpPtr->SetRejectDepth(remoteMonitorNamedlist.GetRejectDepthQueue() + SvSml::MLPPQInfo::NumRejectSizeDelta);
-	MLCpPtr->SetProductDepth(rSettings.GetNumProductSlot()); 
+	MLCpPtr->SetProductDepth(ProductDepth);
 	MLCpPtr->SetIsActive(remoteMonitorNamedlist.IsActive());
 	MLCpPtr->SetPPQname(remoteMonitorNamedlist.GetPPQName());
 	MLCpPtr->SetProductFilter(remoteMonitorNamedlist.GetProductFilter());

@@ -568,7 +568,7 @@ Json::Value  DispatchCmdGetReject(const JsonCmd & cmd, SvSml::SharedMemReader  *
 
 		rslt = WriteProduct<SvSol::TcpApi>(new_productPtr.get(), pMemReader);
 		///now the last is the newone
-		g_LastProduct[listName] = std::move(new_productPtr);
+		g_LastReject[listName] = std::move(new_productPtr);
 	}
 	break;
 	case SvSml::SharedMemReader::last:

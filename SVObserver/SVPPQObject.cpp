@@ -5158,7 +5158,7 @@ void SVPPQObject::ReleaseSharedMemory( SVProductInfoStruct& rProduct)
 			long shareSlotIndex = rProduct.m_lastInspectedSlot;
 			if (shareSlotIndex >= 0 && GetSlotmanager().get())
 			{
-				GetSlotmanager()->ReleaseWriteSlot(shareSlotIndex, rProduct.ProcessCount(), FALSE);
+				GetSlotmanager()->ReleaseWriteSlot(shareSlotIndex, rProduct.ProcessCount(), true);
 				rProduct.m_lastInspectedSlot = -1;
 			}
 			
