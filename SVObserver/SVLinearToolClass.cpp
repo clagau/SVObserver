@@ -184,8 +184,6 @@ bool SVLinearToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessage
 		}
 	}
 
-	UpdateImageWithExtent();
-
 	return Result;
 }
 

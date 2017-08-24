@@ -102,6 +102,12 @@ bool SVLinearImageOperatorListClass::ResetObject(SvStl::MessageContainerVector *
 		}
 	}
 
+	SvOi::ITool* pTool = dynamic_cast<SvOi::ITool *>(GetTool());
+	if (nullptr != pTool)
+	{
+		pTool->UpdateImageWithExtent();
+	}
+
 	return Result;
 }
 
