@@ -54,7 +54,7 @@ public:
 
 	SVDeviceParamWrapper& GetHeldParam();
 	const SVDeviceParamWrapper& GetHeldParam() const;
-	static SVDeviceParam* CreateNew() { return new SVCustomDeviceParam; }
+	static SVDeviceParam* CreateNew(SVDeviceParamEnum typeEnum) { return new SVCustomDeviceParam(); }
 	
 	static SVDeviceParam* Create(SVDeviceParamEnum typeEnum, const VARIANT& rv);
 

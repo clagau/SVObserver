@@ -41,7 +41,7 @@ public:
 	typedef TDeviceParamInfo<SVString>::OptionType  OptionType;
 	typedef TDeviceParamInfo<SVString>::OptionsType OptionsType;
 
-	static SVDeviceParam* CreateNew() { return new SVStringValueDeviceParam; }
+	static SVDeviceParam* CreateNew(SVDeviceParamEnum typeEnum) { return new SVStringValueDeviceParam(typeEnum); }
 	DEFINE_VISITABLE()
 };
 

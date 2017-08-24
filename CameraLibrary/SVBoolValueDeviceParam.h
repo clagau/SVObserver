@@ -40,7 +40,7 @@ public:
 	typedef TDeviceParamInfo<bool>::OptionType  OptionType;
 	typedef TDeviceParamInfo<bool>::OptionsType OptionsType;
 
-	static SVDeviceParam* CreateNew() { return new SVBoolValueDeviceParam; }
+	static SVDeviceParam* CreateNew(SVDeviceParamEnum typeEnum) { return new SVBoolValueDeviceParam(typeEnum); }
 	DEFINE_VISITABLE()
 };
 

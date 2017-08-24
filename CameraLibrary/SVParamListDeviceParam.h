@@ -26,7 +26,7 @@ public:
 
 	std::map <SVDeviceParamEnum, SVDeviceParamWrapper> mapParameters;
 
-	static SVDeviceParam* CreateNew() { return new SVParamListDeviceParam; }
+	static SVDeviceParam* CreateNew(SVDeviceParamEnum typeEnum) { return new SVParamListDeviceParam(typeEnum); }
 	DEFINE_VISITABLE()
 };
 

@@ -196,8 +196,6 @@ public:
 	DEFINE_VISITABLE()
 
 protected:
-	void Init( const SVDeviceParam& rhs ) { m_eParam = rhs.m_eParam; };
-	virtual void Init( SVDeviceParamEnum e );
 	SVDeviceParamEnum m_eParam;
 	SVDeviceParamDataTypeEnum m_eDataType;
 	SVString m_strName;

@@ -22,9 +22,9 @@ namespace	// create unnamed namespace for the variables to live in
 }// end unnamed namespace
 
 SVLutDeviceParam::SVLutDeviceParam()
+	: SVDeviceParam(DeviceParamLut)
 {
 	m_eDataType = DeviceDataTypeComplex;
-	Init(DeviceParamLut);
 }
 
 SVLutDeviceParam::SVLutDeviceParam(SVDeviceParamEnum typeEnum)
@@ -38,9 +38,9 @@ SVLutDeviceParam::~SVLutDeviceParam()
 }
 
 SVLightReferenceDeviceParam::SVLightReferenceDeviceParam()
+	: SVDeviceParam(DeviceParamLightReference)
 {
 	m_eDataType = DeviceDataTypeComplex;
-	Init(DeviceParamLightReference);
 }
 
 SVLightReferenceDeviceParam::SVLightReferenceDeviceParam(SVDeviceParamEnum typeEnum)
@@ -54,9 +54,9 @@ SVLightReferenceDeviceParam::~SVLightReferenceDeviceParam()
 }
 
 SVCameraFormatsDeviceParam::SVCameraFormatsDeviceParam()
+	: SVStringValueDeviceParam(DeviceParamCameraFormats)
 {
 	m_eDataType = DeviceDataTypeString;
-	Init(DeviceParamCameraFormats);
 }
 
 SVCameraFormatsDeviceParam::SVCameraFormatsDeviceParam(SVDeviceParamEnum typeEnum)

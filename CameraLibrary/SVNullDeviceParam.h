@@ -25,11 +25,8 @@ public:
 	virtual SVClonable* CloneImpl() const override;
 	SVNullDeviceParam& operator=(const SVNullDeviceParam& rhs);
 
-	static SVDeviceParam* CreateNew() { return new SVNullDeviceParam; }
+	static SVDeviceParam* CreateNew(SVDeviceParamEnum typeEnum) { return new SVNullDeviceParam(typeEnum); }
 	DEFINE_VISITABLE()
-
-protected:
-	virtual void Init(SVDeviceParamEnum e);
 };
 
 

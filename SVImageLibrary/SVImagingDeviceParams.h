@@ -36,7 +36,7 @@ public:
 
 	SVLut lut;
 
-	static SVDeviceParam* CreateNew() { return new SVLutDeviceParam; }
+	static SVDeviceParam* CreateNew(SVDeviceParamEnum typeEnum) { return new SVLutDeviceParam(typeEnum); }
 	DEFINE_VISITABLE()
 };
 
@@ -59,7 +59,7 @@ public:
 
 	SVLightReference lr;
 
-	static SVDeviceParam* CreateNew() { return new SVLightReferenceDeviceParam; }
+	static SVDeviceParam* CreateNew(SVDeviceParamEnum typeEnum) { return new SVLightReferenceDeviceParam(typeEnum); }
 	DEFINE_VISITABLE()
 };
 
@@ -86,7 +86,7 @@ public:
 
 	virtual HRESULT SetMetadata(const SVDeviceParam* pParam) override;
 
-	static SVDeviceParam* CreateNew() { return new SVCameraFormatsDeviceParam; }
+	static SVDeviceParam* CreateNew(SVDeviceParamEnum typeEnum) { return new SVCameraFormatsDeviceParam(typeEnum); }
 	DEFINE_VISITABLE()
 };
 

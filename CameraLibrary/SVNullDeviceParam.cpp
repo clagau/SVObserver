@@ -43,10 +43,3 @@ SVNullDeviceParam& SVNullDeviceParam::operator=(const SVNullDeviceParam& rhs)
 {
 	return *this;
 }
-
-// Why pass a parameter and not use it...
-void SVNullDeviceParam::Init(SVDeviceParamEnum e)
-{
-	m_eParam = DeviceParamInvalid;
-}
-

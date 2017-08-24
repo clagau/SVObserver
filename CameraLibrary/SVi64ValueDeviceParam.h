@@ -43,7 +43,7 @@ public:
 	typedef TDeviceParamInfo<__int64>::OptionType  OptionType;
 	typedef TDeviceParamInfo<__int64>::OptionsType OptionsType;
 
-	static SVDeviceParam* CreateNew() { return new SVi64ValueDeviceParam; }
+	static SVDeviceParam* CreateNew(SVDeviceParamEnum typeEnum) { return new SVi64ValueDeviceParam(typeEnum); }
 	DEFINE_VISITABLE()
 
 private:

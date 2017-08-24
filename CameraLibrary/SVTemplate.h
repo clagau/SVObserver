@@ -442,7 +442,7 @@ template <typename TYPEID, typename TYPEID2, class FACTORYBASE>
 class TDoubleFactory
 {
 public:
-	typedef FACTORYBASE* (*CreateFn)();
+	typedef FACTORYBASE* (*CreateFn)(TYPEID typeEnum);
 	bool Register(const TYPEID& id, const TYPEID2& id2, CreateFn fn);
 	FACTORYBASE* New(const TYPEID& id);
 	FACTORYBASE* New(const TYPEID2& id);
@@ -529,7 +529,7 @@ FACTORYBASE* TDoubleFactory<TYPEID, TYPEID2, FACTORYBASE>::New(const TYPEID& id)
 			throw std::runtime_error(sError);
 		}
 	}
-	return (iter->second)();	// make call to Create function
+	return (iter->second)(id);	// make call to Create function
 }
 
 template <typename TYPEID, typename TYPEID2, class FACTORYBASE>

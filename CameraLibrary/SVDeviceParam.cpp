@@ -20,7 +20,6 @@ SVDeviceParam::SVDeviceParam()
 {
 	SetOrder(INT_MAX);
 	SetDetailLevel(0);
-	Init(DeviceParamInvalid);
 }
 
 SVDeviceParam::SVDeviceParam(SVDeviceParamEnum typeEnum)
@@ -43,7 +42,6 @@ SVDeviceParam::SVDeviceParam(const SVDeviceParam& rRhs)
 	SetName( rRhs.Name() );
 	SetVisualName( rRhs.VisualName() );
 	SetDescription( rRhs.Description() );
-	Init( rRhs.Type() );
 }
 
 SVDeviceParam::~SVDeviceParam()
@@ -79,11 +77,6 @@ SVDeviceParam* SVDeviceParam::Create(SVDeviceParamEnum eType)
 	}
 
 	ASSERT(pParam);
-
-	if (nullptr != pParam)
-	{
-		pParam->Init(eType);
-	}
 	return pParam;
 }
 
@@ -119,11 +112,6 @@ HRESULT SVDeviceParam::SetType( SVDeviceParamEnum e )
 		return S_OK;
 	}
 	return S_FALSE;
-}
-
-void SVDeviceParam::Init( SVDeviceParamEnum e )
-{
-	m_eParam = e;
 }
 
 HRESULT SVDeviceParam::GetValue( VARIANT& rv ) const
