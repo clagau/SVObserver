@@ -29,8 +29,8 @@ SV_IMPLEMENT_CLASS( TableTool, TableToolGuid );
 #pragma endregion Declarations
 
 #pragma region Constructor
-TableTool::TableTool( BOOL bCreateDefaultTaskList, SVObjectClass* pOwner, int stringResourceID )
-	:SVToolClass( bCreateDefaultTaskList, pOwner, stringResourceID )
+TableTool::TableTool( SVObjectClass* pOwner, int stringResourceID )
+	:SVToolClass( pOwner, stringResourceID )
 	,m_pClearEquation(nullptr)
 	,m_pTable(nullptr)
 {
@@ -43,9 +43,9 @@ TableTool::~TableTool()
 #pragma endregion Constructor
 
 #pragma region Public Methods
-BOOL TableTool::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+bool TableTool::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
-	BOOL bOk = SVToolClass::CreateObject( pCreateStructure );
+	bool bOk = SVToolClass::CreateObject( pCreateStructure );
 
 	m_MaxRow.SetObjectAttributesAllowed( SvOi::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
 

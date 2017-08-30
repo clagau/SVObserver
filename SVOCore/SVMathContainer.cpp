@@ -48,33 +48,11 @@ SVMathContainerClass::~SVMathContainerClass()
 	CloseObject();
 }
 
-BOOL SVMathContainerClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
+bool SVMathContainerClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
-	BOOL bOk = false;
-
-	if( SVTaskObjectClass::CreateObject( PCreateStructure ) &&
-		PCreateStructure->CheckCreateStructName( "SVToolLevelCreateStruct" ) 
-	  )
-	{
-		SVDoubleValueObjectClass*  pInputMathResult;
-
-		bOk = nullptr != GetInspection() && nullptr != GetTool() && 
-			  nullptr != ( pInputMathResult = getInputMathResult() );
-	}
-
-	m_isCreated = bOk;
-
-	return bOk;
-}
-
-BOOL SVMathContainerClass::CloseObject()
-{
-	if( SVTaskObjectClass::CloseObject() )
-	{
-		BOOL bRetVal = TRUE;
-		return bRetVal;
-	}
-	return FALSE;
+	m_isCreated = SVTaskObjectClass::CreateObject( pCreateStructure ) && pCreateStructure->CheckCreateStructName( "SVToolLevelCreateStruct" )
+		&& nullptr != GetInspection() && nullptr != GetTool() && nullptr != getInputMathResult();
+	return m_isCreated;
 }
 
 bool SVMathContainerClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)

@@ -96,7 +96,7 @@ inline int SVObjectClass::GetObjectDepth() const
 /*
 This method returns the creation state of the object.
 */
-inline BOOL SVObjectClass::IsCreated() const
+inline bool SVObjectClass::IsCreated() const
 {
 	return m_isCreated;
 }

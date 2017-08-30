@@ -40,8 +40,8 @@ public:
 	SVImageClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVIMAGE );
 	virtual ~SVImageClass();
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStruct ) override;
-	virtual BOOL CloseObject() override;
+	virtual bool CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
+	virtual bool CloseObject() override;
 
 	SVImageClass* GetParentImage() const;
 	const GUID& GetParentImageID() const;
@@ -66,7 +66,7 @@ public:
 	HRESULT UpdateImage( SvOi::SVImageTypeEnum p_ImageType, const GUID& p_rParentID );
 	HRESULT UpdateImage( SvOi::SVImageTypeEnum p_ImageType, const GUID& p_rParentID, const SVImageInfoClass& p_rImageInfo );
 
-	virtual BOOL SetImageDepth( long lDepth );
+	virtual bool SetImageDepth( long lDepth );
 
 	virtual const SvTl::SVTimeStamp& GetLastResetTimeStamp() const;
 	
@@ -85,18 +85,16 @@ public:
 	HRESULT GetParentImageHandle( SVImageIndexStruct p_svBufferIndex, SVSmartHandlePointer& p_rsvBufferHandle ); //@TODO:  Change method to const?
 
 	// Need to deal with source and result image buckets
-	virtual BOOL GetImageHandleIndex( SVImageIndexStruct& rsvIndex ) const;
-	virtual BOOL SetImageHandleIndex( SVImageIndexStruct  svIndex  );
+	virtual bool GetImageHandleIndex( SVImageIndexStruct& rsvIndex ) const;
+	virtual bool SetImageHandleIndex( SVImageIndexStruct  svIndex  );
 
-	virtual BOOL CopyImageTo( SVImageIndexStruct svIndex );
+	virtual bool CopyImageTo( SVImageIndexStruct svIndex );
 
-	virtual BOOL GetImageHandle( SVSmartHandlePointer& p_rHandlePtr ); //@TODO:  Change method to const?
-	virtual BOOL GetImageHandle( SVImageIndexStruct svIndex, SVSmartHandlePointer& rHandle );
+	virtual bool GetImageHandle( SVSmartHandlePointer& p_rHandlePtr ); //@TODO:  Change method to const?
+	virtual bool GetImageHandle( SVImageIndexStruct svIndex, SVSmartHandlePointer& rHandle );
 
-	BOOL SafeImageCopyToHandle     ( SVSmartHandlePointer& p_rHandle );
-	BOOL SafeImageCopyToHandle     ( SVImageIndexStruct p_svFromIndex, SVSmartHandlePointer& p_rHandle );
-	BOOL SafeImageConvertToHandle  ( SVSmartHandlePointer& p_rHandle, SVImageOperationTypeEnum p_lConversionType );
-	BOOL SafeImageConvertToHandle  ( SVImageIndexStruct p_svFromIndex, SVSmartHandlePointer& p_rHandle, SVImageOperationTypeEnum p_lConversionType );
+	bool SafeImageCopyToHandle     ( SVSmartHandlePointer& p_rHandle );
+	bool SafeImageCopyToHandle     ( SVImageIndexStruct p_svFromIndex, SVSmartHandlePointer& p_rHandle );
 
 	HRESULT LoadImageFullSize( LPCTSTR p_szFileName, SVImageExtentClass& p_rNewExtent );
 	HRESULT LoadImage( LPCTSTR p_szFileName, SVImageIndexStruct p_svToIndex );
@@ -130,7 +128,7 @@ public:
 protected:
 	typedef std::pair< SVGUID, SVImageClass* > SVParentObjectPair;
 
-	virtual BOOL DestroyImage();
+	virtual bool DestroyImage();
 
 	//- UpdateFromParentInformation () ---------------------------------------
 	//- This function will update the Tool Image to itself.

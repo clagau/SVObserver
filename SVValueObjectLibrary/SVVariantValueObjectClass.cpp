@@ -61,7 +61,7 @@ SVVariantValueObjectClass::~SVVariantValueObjectClass()
 HRESULT SVVariantValueObjectClass::SetObjectValue(SVObjectAttributeClass* pDataObject)
 {
 	HRESULT Result( E_FAIL );
-	BOOL	bOk( false );
+	bool	bOk( false );
 
 	SvCl::SVObjectArrayClassTemplate<ValueType> ObjectArray;	// for default values
 	BucketVector BucketArray;

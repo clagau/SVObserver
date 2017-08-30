@@ -30,7 +30,7 @@ public:
 
 #pragma region Public Methods
 public:
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
+	virtual bool CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
 #pragma endregion Public Methods
 
 #pragma region Protected Methods

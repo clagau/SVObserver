@@ -67,11 +67,11 @@ SVDataBufferClass::~SVDataBufferClass()
 	CloseObject();
 }
 
-BOOL SVDataBufferClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
+bool SVDataBufferClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
-	BOOL bOk = false;
+	bool bOk = false;
 
-	if( SVObjectAppClass::CreateObject( PCreateStructure ) )
+	if( SVObjectAppClass::CreateObject( pCreateStructure ) )
 	{
 		if( m_DataInfo.Type != 0 && 0 < m_DataInfo.Length )
 		{
@@ -85,9 +85,9 @@ BOOL SVDataBufferClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructur
 	return bOk;
 }
 
-BOOL SVDataBufferClass::CloseObject()
+bool SVDataBufferClass::CloseObject()
 {
-	BOOL rc = SVObjectAppClass::CloseObject();
+	bool rc = SVObjectAppClass::CloseObject();
 
 	rc = (S_OK == SVImageProcessingClass::DestroyDataBuffer( &m_DataInfo ) ) && rc;
 

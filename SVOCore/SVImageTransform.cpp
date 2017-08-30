@@ -101,9 +101,9 @@ SVImageTransformClass::~SVImageTransformClass()
 
 #pragma region Public Methods
 #pragma region virtual
-BOOL SVImageTransformClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
+bool SVImageTransformClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
-	BOOL l_bOk = SVTransformClass::CreateObject( PCreateStructure );
+	bool l_bOk = SVTransformClass::CreateObject( pCreateStructure );
 
 	SVToolClass* pTool = dynamic_cast<SVToolClass*>(GetTool());
 	l_bOk = l_bOk && nullptr != pTool;

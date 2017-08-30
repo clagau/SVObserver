@@ -15,7 +15,7 @@ class SVImageAnalyzerClass : public SVAnalyzerClass
 
 public:
 	SVImageAnalyzerClass( LPCSTR ObjectName /* = "Empty Analyzer" */ );
-	SVImageAnalyzerClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVIMAGEANALYZER );
+	SVImageAnalyzerClass(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVIMAGEANALYZER );
 	virtual ~SVImageAnalyzerClass();
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 	virtual bool onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;

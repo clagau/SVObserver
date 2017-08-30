@@ -36,12 +36,12 @@ class SVShiftTool : public SVToolClass
 
 public:
 #pragma region Constructor
-	SVShiftTool( BOOL BCreateDefaultTaskList = false, SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVSHIFTTOOL );
+	SVShiftTool( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVSHIFTTOOL );
 	virtual ~SVShiftTool();
 #pragma endregion Constructor
 
 #pragma region Public Methods
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
+	virtual bool CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	virtual HRESULT SetImageExtentToParent() override;

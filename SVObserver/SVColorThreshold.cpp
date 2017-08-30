@@ -50,12 +50,12 @@ SVColorThresholdClass::~SVColorThresholdClass()
 #pragma endregion Constructor
 
 #pragma region Public Methods
-BOOL SVColorThresholdClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+bool SVColorThresholdClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
-	BOOL bOk = FALSE;
+	bool bOk = SVOperatorClass::CreateObject(pCreateStructure);
 
 	// Owner can only be : SVOperatorClass !!!
-	if( SVOperatorClass::CreateObject( pCreateStructure ) )
+	if( bOk )
 	{
 		SVImageClass* pImage = GetBandInputImage(BandEnum::Band0);
 
@@ -126,7 +126,7 @@ BOOL SVColorThresholdClass::CreateObject( SVObjectLevelCreateStruct* pCreateStru
 	return bOk;
 }
 
-BOOL SVColorThresholdClass::CloseObject()
+bool SVColorThresholdClass::CloseObject()
 {
 	for (BandEnum Band : BandList)
 	{
@@ -770,7 +770,7 @@ bool SVColorThresholdClass::ValidateLocal() const
 		Result &= m_BandThreshold[Band].m_InputImage.IsConnected();
 		Result &= nullptr != m_BandThreshold[Band].m_InputImage.GetInputObjectInfo().m_pObject;
 		Result &= Result ? m_BandThreshold[Band].m_InputImage.GetInputObjectInfo().m_pObject->IsValid() : false;
-		Result &= m_BandThreshold[Band].m_OutputImage.IsCreated() ? true : false;
+		Result &= m_BandThreshold[Band].m_OutputImage.IsCreated();
 		Result &= m_BandThreshold[Band].m_OutputImage.IsValid();
 		if (!Result)
 		{

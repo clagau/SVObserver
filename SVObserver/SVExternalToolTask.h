@@ -83,8 +83,8 @@ public:
 	SVExternalToolTask( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SV_EXTERNAL_TOOL_TASK );
 	virtual ~SVExternalToolTask();
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
-	virtual BOOL CloseObject() override;
+	virtual bool CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
+	virtual bool CloseObject() override;
 	virtual bool ConnectAllInputs() override;
 
 	

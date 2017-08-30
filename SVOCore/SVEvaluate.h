@@ -23,8 +23,7 @@ public:
 	SVEvaluateClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVEVALUATE );
 	virtual ~SVEvaluateClass();
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
-	virtual BOOL CloseObject() override;
+	virtual bool CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
 
 protected:
 	SVDoubleValueObjectClass*		getOutputMathResult();

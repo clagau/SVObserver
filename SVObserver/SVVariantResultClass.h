@@ -22,8 +22,7 @@ public:
 	virtual ~SVVariantResultClass();
 	SV_DECLARE_CLASS( SVVariantResultClass );
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
-	virtual BOOL CloseObject() override;
+	virtual bool CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
 
 protected:
 	SVObjectClass* GetInputValue();

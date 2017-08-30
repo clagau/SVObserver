@@ -24,8 +24,8 @@
 
 SV_IMPLEMENT_CLASS( SVToolClass, SVToolClassGuid );
 
-SVToolClass::SVToolClass( BOOL BCreateDefaultTaskList, SVObjectClass* POwner, int StringResourceID /*= IDS_CLASSNAME_SVTOOL*/ )
-: SVTaskObjectListClass( BCreateDefaultTaskList, POwner, StringResourceID )
+SVToolClass::SVToolClass( SVObjectClass* POwner, int StringResourceID /*= IDS_CLASSNAME_SVTOOL*/ )
+: SVTaskObjectListClass( POwner, StringResourceID )
 , m_pToolConditional(nullptr)
 {
 	init();
@@ -180,18 +180,20 @@ SVToolClass::~SVToolClass()
 {
 }
 
-BOOL SVToolClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
+bool SVToolClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
-	BOOL bOk = FALSE;
+	bool bOk = SVTaskObjectListClass::CreateObject(pCreateStructure);
 
-	if( SVTaskObjectListClass::CreateObject( PCreateStructure ) )
+	if( bOk )
 	{
 		if( GetInspectionInterface() )
 		{
-			bOk = TRUE;
-
 			SvOi::IInspectionProcess* iIP = GetInspectionInterface();
 			m_pCurrentToolSet = dynamic_cast<SvOi::IToolSet*>(iIP->GetToolSetInterface());
+		}
+		else
+		{
+			bOk = false;
 		}
 	}
 
@@ -245,7 +247,7 @@ BOOL SVToolClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
 	return bOk;
 }
 
-BOOL SVToolClass::CloseObject()
+bool SVToolClass::CloseObject()
 {
 	m_svToolExtent.SetToolImage( nullptr );
 	m_svToolExtent.SetSelectedImage( nullptr );
@@ -878,11 +880,6 @@ HRESULT SVToolClass::GetParentExtent( SVImageExtentClass& p_rParent ) const
 	HRESULT l_hr = S_OK;
 	m_svToolExtent.GetParentExtent( p_rParent );
 	return l_hr;
-}
-
-BOOL SVToolClass::IsOkToEdit()
-{
-	return TRUE;
 }
 
 EAutoSize SVToolClass::GetAutoSizeEnabled()

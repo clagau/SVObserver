@@ -27,14 +27,12 @@ class SVPixelAnalyzerClass : public SVImageAnalyzerClass
 
 public:
 	SVPixelAnalyzerClass( LPCSTR ObjectName /* = "Pixel Analyzer" */ );
-	SVPixelAnalyzerClass(BOOL BCreateDefaultTaskList = FALSE, 
-                         SVObjectClass* POwner = nullptr,
-                         int StringResourceID = IDS_CLASSNAME_SVPIXELANALYZER );
+	SVPixelAnalyzerClass(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVPIXELANALYZER );
 
 	virtual ~SVPixelAnalyzerClass();
-	virtual BOOL CloseObject() override;
+	virtual bool CloseObject() override;
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
+	virtual bool CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 private:

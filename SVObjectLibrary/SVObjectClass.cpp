@@ -234,9 +234,9 @@ bool SVObjectClass::DisconnectObjectInput( SVInObjectInfoStruct* pObjectInInfo )
 /*
 After the object construction, the object must be created using this function with an object level depending create structure.
 */
-BOOL SVObjectClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+bool SVObjectClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
-	BOOL l_bOk = nullptr != pCreateStructure;
+	bool l_bOk = nullptr != pCreateStructure;
 
 	if( l_bOk )
 	{
@@ -266,7 +266,7 @@ void SVObjectClass::ConnectObject( const SVObjectLevelCreateStruct& rCreateStruc
 /*
 This method executes the close object method on all objects that use this object that are not closed.
 */
-BOOL SVObjectClass::CloseObject()
+bool SVObjectClass::CloseObject()
 {
 	m_isCreated = false;
 
@@ -274,72 +274,10 @@ BOOL SVObjectClass::CloseObject()
 }
 
 /*
-This method returns whether this object is a descendant of PAncestorObject.
-*/
-BOOL SVObjectClass::IsDescendantOf( SVObjectClass* pAncestorObject )
-{
-	BOOL l_Status = true;
-	
-	l_Status = l_Status && ( nullptr != pAncestorObject );
-	l_Status = l_Status && ( pAncestorObject == this );
-
-	if( !l_Status )
-	{
-		SVObjectClass* l_pOwner = GetOwner();
-
-		if( nullptr != l_pOwner && l_pOwner != this )
-		{
-			l_Status = l_pOwner->IsDescendantOf( pAncestorObject );
-		}
-	}
-	return l_Status;
-}
-
-/*
-This method returns whether this object is a descendant of type (rAncestorInfo.ObjectTypeInfo).
-*/
-BOOL SVObjectClass::IsDescendantOfType( const SVObjectInfoStruct& rAncestorInfo )
-{
-	BOOL l_Status = true;
-
-	const SVObjectInfoStruct& rInfo = GetObjectInfo();
-
-	l_Status = l_Status && ( rAncestorInfo.m_ObjectTypeInfo.ObjectType == rInfo.m_ObjectTypeInfo.ObjectType );
-	l_Status = l_Status && ( rAncestorInfo.m_ObjectTypeInfo.SubType == rInfo.m_ObjectTypeInfo.SubType );
-
-	if( !l_Status )
-	{
-		SVObjectClass* l_pOwner = GetOwner();
-
-		if( nullptr != l_pOwner && l_pOwner != this )
-		{
-			l_Status = l_pOwner->IsDescendantOfType( rAncestorInfo );
-		}
-	}
-	return l_Status;
-}
-
-/*
 This method is a placeholder for derived functionality.  This method performs not operation.
 */
 void SVObjectClass::ResetPrivateInputInterface()
 {
-}
-
-/*
-This method sets the new object owner using owner pointer instead of using TheSVObjectManager to get information about the new owner, it validates the given object pointer and gets the GUID from the new owner itself.
-
-This method will return an error state if owner not exists or not a valid object.
-*/
-BOOL SVObjectClass::InitObject( SVObjectClass* pObject )
-{
-	if( nullptr != pObject )
-	{
-		m_ownerObjectInfo.m_pObject			= pObject;
-		m_ownerObjectInfo.m_UniqueObjectID	= pObject->GetUniqueObjectID();
-		return true;
-	}
-	return false;
 }
 
 /*
@@ -433,7 +371,7 @@ SVObjectSubTypeEnum SVObjectClass::GetObjectSubType() const
 
 bool SVObjectClass::is_Created() const 
 {
-	return IsCreated() ? true : false; 
+	return IsCreated(); 
 }
 
 SvUl::NameGuidList SVObjectClass::GetCreatableObjects(const SVObjectTypeInfoStruct& rObjectTypeInfo) const
@@ -497,7 +435,7 @@ void SVObjectClass::SetObjectName( LPCTSTR ObjectName )
 /*
 Set new object owner using owner pointer.
 */
-BOOL SVObjectClass::SetObjectOwner( SVObjectClass* pNewOwner )
+bool SVObjectClass::SetObjectOwner( SVObjectClass* pNewOwner )
 {
 	// Check if object exists...
 	if( nullptr != pNewOwner )
@@ -521,7 +459,7 @@ BOOL SVObjectClass::SetObjectOwner( SVObjectClass* pNewOwner )
 /*
 Set new object owner using owner GUID.  Uses TheSVObjectManager to get the owner pointer.
 */
-BOOL SVObjectClass::SetObjectOwner( const GUID& rNewOwnerGUID )
+bool SVObjectClass::SetObjectOwner( const GUID& rNewOwnerGUID )
 {
 	SVObjectClass* pObject = SVObjectManagerClass::Instance().GetObject( rNewOwnerGUID );
 
@@ -586,7 +524,7 @@ Must override this in the derived class if you wish to set any values upon resto
 HRESULT SVObjectClass::SetObjectValue( SVObjectAttributeClass* pDataObject )
 {
 	HRESULT hr = S_FALSE;
-	BOOL bOk = FALSE;
+	bool bOk = false;
 
 	if( nullptr != pDataObject )
 	{
@@ -636,7 +574,7 @@ SVObjectClass* SVObjectClass::UpdateObject( const GUID &rFriendGuid, SVObjectCla
 /*
 This method is used to add an object to the friends list via the object's unique object identifier.
 */
-BOOL SVObjectClass::AddFriend( const GUID& rFriendGUID, const GUID& rAddPreGuid )
+bool SVObjectClass::AddFriend( const GUID& rFriendGUID, const GUID& rAddPreGuid )
 {
 	size_t position = m_friendList.size();
 	// Check GUID...
@@ -692,8 +630,7 @@ BOOL SVObjectClass::AddFriend( const GUID& rFriendGUID, const GUID& rAddPreGuid 
 		newFriendInfo.m_UniqueObjectID = rFriendGUID;
 	}
 
-	BOOL bRetVal = ( m_friendList.Insert( position, newFriendInfo ) >= 0  );
-	return bRetVal;
+	return ( m_friendList.Insert( position, newFriendInfo ) >= 0  );
 }
 
 SVObjectClass*  SVObjectClass::GetFriend( const SVObjectTypeInfoStruct& rObjectType ) const 
@@ -718,7 +655,7 @@ SVObjectClass*  SVObjectClass::GetFriend( const SVObjectTypeInfoStruct& rObjectT
 /*
 This method is used to remove an object from the friends list via the object's unique object identifier.
 */
-BOOL SVObjectClass::RemoveFriend( const GUID& rFriendGUID )
+bool SVObjectClass::RemoveFriend( const GUID& rFriendGUID )
 {
 	// Check GUID...
 	if (SV_GUID_NULL != rFriendGUID)
@@ -745,37 +682,27 @@ BOOL SVObjectClass::RemoveFriend( const GUID& rFriendGUID )
 /*
 Set the object data depth. ( Data Table )  Should be overridden and must be called in derived classes...
 */
-BOOL SVObjectClass::SetObjectDepth( int NewObjectDepth )
+void SVObjectClass::SetObjectDepth( int NewObjectDepth )
 {
-	BOOL l_bOk = true;
-
 	m_objectDepth = NewObjectDepth;
-
-	return l_bOk;
 }
 
 /*
 Set the object data depth. ( Data Table )  Should be overridden and must be called in derived classes...
 */
-BOOL SVObjectClass::SetObjectDepthWithIndex( int NewObjectDepth, int NewLastSetIndex )
+void SVObjectClass::SetObjectDepthWithIndex( int NewObjectDepth, int NewLastSetIndex )
 {
-	BOOL l_bOk = true;
-
 	m_objectDepth = NewObjectDepth;
-
-	return l_bOk;
 }
 
 /*
 Set the object image depth.  Should be overridden and must be called in derived classes...
 */
-BOOL SVObjectClass::SetImageDepth( long lDepth )
+bool SVObjectClass::SetImageDepth( long lDepth )
 {
-	BOOL l_bOk = true;
-	
 	m_lImageDepth = lDepth;
 	
-	return l_bOk;
+	return true;
 }
 
 /*
@@ -968,7 +895,7 @@ void SVObjectClass::PersistAttributes( SVObjectWriter& rWriter )
 /*
 This method walks the object hierarchy to find a child object.
 */
-BOOL SVObjectClass::GetChildObjectByName( LPCTSTR tszChildName, SVObjectClass** ppObject )
+bool SVObjectClass::GetChildObjectByName( LPCTSTR tszChildName, SVObjectClass** ppObject )
 {
 	assert( nullptr != ppObject );
 	bool bReturn = false;

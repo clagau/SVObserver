@@ -853,7 +853,7 @@ bool SVTaskObjectClass::ConnectAllInputs()
 	SVInputInfoListClass inputList;
 	
 	// Add the defaults
-	addDefaultInputObjects(TRUE, &inputList);
+	addDefaultInputObjects(&inputList);
 	
 	// tell friends to connect...
 	for (size_t j = 0; j < m_friendList.size(); ++ j)
@@ -1072,16 +1072,14 @@ HRESULT SVTaskObjectClass::ConnectToObject( SVInObjectInfoStruct* p_psvInputInfo
 	return l_svOk;
 }
 
-BOOL SVTaskObjectClass::CreateObject(SVObjectLevelCreateStruct* PCreateStruct)
+bool SVTaskObjectClass::CreateObject(SVObjectLevelCreateStruct* pCreateStructure)
 {
-	BOOL Result( true );
-	
-	if (!PCreateStruct)
+	if (!pCreateStructure)
 	{
 		return false;
 	}
 	
-	Result = SVObjectAppClass::CreateObject(PCreateStruct);
+	bool Result = SVObjectAppClass::CreateObject(pCreateStructure);
 	
 	// Create our friends
 	for (size_t j = 0; j < m_friendList.size(); ++ j)
@@ -1134,7 +1132,7 @@ bool SVTaskObjectClass::IsValid() const
 	return IsErrorMessageEmpty();
 }
 
-BOOL SVTaskObjectClass::SetObjectDepth(int NewObjectDepth)
+void SVTaskObjectClass::SetObjectDepth(int NewObjectDepth)
 {
 	// Set object depth of members here...
 	
@@ -1159,10 +1157,10 @@ BOOL SVTaskObjectClass::SetObjectDepth(int NewObjectDepth)
 		}
 	}
 	
-	return SVObjectAppClass::SetObjectDepth(NewObjectDepth);
+	SVObjectAppClass::SetObjectDepth(NewObjectDepth);
 }
 
-BOOL SVTaskObjectClass::SetObjectDepthWithIndex(int NewObjectDepth, int NewLastSetIndex)
+void SVTaskObjectClass::SetObjectDepthWithIndex(int NewObjectDepth, int NewLastSetIndex)
 {
 	// Set object depth of members here...
 	
@@ -1187,10 +1185,10 @@ BOOL SVTaskObjectClass::SetObjectDepthWithIndex(int NewObjectDepth, int NewLastS
 		}
 	}
 	
-	return SVObjectAppClass::SetObjectDepthWithIndex(NewObjectDepth, NewLastSetIndex);
+	SVObjectAppClass::SetObjectDepthWithIndex(NewObjectDepth, NewLastSetIndex);
 }
 
-BOOL SVTaskObjectClass::SetImageDepth(long lDepth)
+bool SVTaskObjectClass::SetImageDepth(long lDepth)
 {
 	// Set object depth of members here...
 	
@@ -1218,7 +1216,7 @@ BOOL SVTaskObjectClass::SetImageDepth(long lDepth)
 	return SVObjectAppClass::SetImageDepth(lDepth);
 }
 
-void SVTaskObjectClass::addDefaultInputObjects(BOOL BCallBaseClass, SVInputInfoListClass* PInputListToFill)
+void SVTaskObjectClass::addDefaultInputObjects(SVInputInfoListClass* PInputListToFill)
 {
 	int l_iCount = m_inputInterfaceList.GetSize();
 	int i( 0 );
@@ -1250,15 +1248,15 @@ void SVTaskObjectClass::addDefaultInputObjects(BOOL BCallBaseClass, SVInputInfoL
 	}
 }
 
-BOOL SVTaskObjectClass::RegisterEmbeddedObject(SVImageClass* pEmbeddedObject, const GUID& rGuidEmbeddedID, int StringResourceID)
+bool SVTaskObjectClass::RegisterEmbeddedObject(SVImageClass* pEmbeddedObject, const GUID& rGuidEmbeddedID, int StringResourceID)
 {
 	SVString Name = SvUl_SF::LoadSVString( StringResourceID );
 	return RegisterEmbeddedObject( pEmbeddedObject, rGuidEmbeddedID, Name.c_str() );
 }
 
-BOOL SVTaskObjectClass::RegisterEmbeddedObject(SVImageClass* pEmbeddedObject, const GUID& p_rguidEmbeddedID, LPCTSTR newString)
+bool SVTaskObjectClass::RegisterEmbeddedObject(SVImageClass* pEmbeddedObject, const GUID& p_rguidEmbeddedID, LPCTSTR newString)
 {
-	BOOL l_bOk = nullptr != pEmbeddedObject && RegisterEmbeddedObjectAsClass( pEmbeddedObject, p_rguidEmbeddedID, newString );
+	bool l_bOk = nullptr != pEmbeddedObject && RegisterEmbeddedObjectAsClass( pEmbeddedObject, p_rguidEmbeddedID, newString );
 
 	return l_bOk;
 }
@@ -1272,15 +1270,15 @@ BOOL SVTaskObjectClass::RegisterEmbeddedObject(SVImageClass* pEmbeddedObject, co
 // The only place that this is ever set to true is for the color HSI 
 // conversion value (Color Tool) and it is probably not necessary there.
 //
-BOOL SVTaskObjectClass::RegisterEmbeddedObject( SVObjectClass* pEmbeddedObject, const GUID& rGuidEmbeddedID, int StringResourceID, bool ResetAlways, SvOi::SVResetItemEnum RequiredReset )
+bool SVTaskObjectClass::RegisterEmbeddedObject( SVObjectClass* pEmbeddedObject, const GUID& rGuidEmbeddedID, int StringResourceID, bool ResetAlways, SvOi::SVResetItemEnum RequiredReset )
 {
 	SVString Name = SvUl_SF::LoadSVString( StringResourceID );
 	return RegisterEmbeddedObject( pEmbeddedObject, rGuidEmbeddedID, Name.c_str(), ResetAlways, RequiredReset);
 }
 
-BOOL SVTaskObjectClass::RegisterEmbeddedObject( SVObjectClass* pEmbeddedObject, const GUID& rGuidEmbeddedID, LPCTSTR Name, bool ResetAlways, SvOi::SVResetItemEnum RequiredReset )
+bool SVTaskObjectClass::RegisterEmbeddedObject( SVObjectClass* pEmbeddedObject, const GUID& rGuidEmbeddedID, LPCTSTR Name, bool ResetAlways, SvOi::SVResetItemEnum RequiredReset )
 {
-	BOOL Result(false);
+	bool Result(false);
 
 	SvOi::IValueObject* pValueObject = dynamic_cast<SvOi::IValueObject*> (pEmbeddedObject);
 	if( nullptr != pValueObject )
@@ -1293,7 +1291,7 @@ BOOL SVTaskObjectClass::RegisterEmbeddedObject( SVObjectClass* pEmbeddedObject, 
 	return Result;
 }
 
-BOOL SVTaskObjectClass::RegisterEmbeddedObjectAsClass(SVObjectClass* pEmbeddedObject, const GUID& rGuidEmbeddedID, LPCTSTR ObjectName)
+bool SVTaskObjectClass::RegisterEmbeddedObjectAsClass(SVObjectClass* pEmbeddedObject, const GUID& rGuidEmbeddedID, LPCTSTR ObjectName)
 {
 	assert( nullptr != pEmbeddedObject);
 	if( nullptr != pEmbeddedObject)
@@ -1308,7 +1306,7 @@ BOOL SVTaskObjectClass::RegisterEmbeddedObjectAsClass(SVObjectClass* pEmbeddedOb
 					SvStl::MessageMgrStd Msg( SvStl::LogOnly );
 					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_Error_DuplicateEmbeddedId, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10204 ); 
 					assert(false);
-					return FALSE;
+					return false;
 				}
 			}
 		}
@@ -1318,9 +1316,9 @@ BOOL SVTaskObjectClass::RegisterEmbeddedObjectAsClass(SVObjectClass* pEmbeddedOb
 		// Add to embedded object to List of Embedded Objects
 		AddEmbeddedObject(pEmbeddedObject);
 		
-		return TRUE;
+		return true;
 	}
-	return FALSE;
+	return false;
 }
 
 bool SVTaskObjectClass::resetAllOutputListObjects( SvStl::MessageContainerVector *pErrorMessages/*=nullptr */ )
@@ -1380,7 +1378,7 @@ SVTaskObjectClass::SVObjectPtrDeque SVTaskObjectClass::GetPostProcessObjects() c
 	return ObjectList;
 }
 
-BOOL SVTaskObjectClass::RegisterInputObject(SVInObjectInfoStruct* PInObjectInfo, const SVString& p_rInputName)
+bool SVTaskObjectClass::RegisterInputObject(SVInObjectInfoStruct* PInObjectInfo, const SVString& p_rInputName)
 {
 	if (PInObjectInfo)
 	{
@@ -1388,12 +1386,12 @@ BOOL SVTaskObjectClass::RegisterInputObject(SVInObjectInfoStruct* PInObjectInfo,
 		{
 			PInObjectInfo->SetInputName( p_rInputName );
 
-			return TRUE;
+			return true;
 		}
 
 		PInObjectInfo->SetInputName( SVString() );
 	}
-	return FALSE;
+	return false;
 }
 
 void SVTaskObjectClass::GetPrivateInputList(SVInputInfoListClass& RInputInterface) const
@@ -1535,7 +1533,7 @@ void SVTaskObjectClass::PersistInputs(SVObjectWriter& writer)
 {
 	// Set up input list...
 	SVInputInfoListClass inputList;
-	addDefaultInputObjects(TRUE, &inputList);
+	addDefaultInputObjects(&inputList);
 	
 	if (inputList.GetSize())
 	{
@@ -1819,10 +1817,10 @@ void SVTaskObjectClass::hideEmbeddedObject(SVObjectClass& rObjectToHide)
 }
 
 // Added to process friends
-BOOL SVTaskObjectClass::CloseObject()
+bool SVTaskObjectClass::CloseObject()
 {
 	// Close ourself first
-	BOOL Result = SVObjectAppClass::CloseObject();
+	bool Result = SVObjectAppClass::CloseObject();
 	
 	// Close our Friends
 	for (size_t i = 0; i < m_friendList.size(); ++ i)

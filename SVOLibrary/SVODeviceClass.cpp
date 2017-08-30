@@ -80,8 +80,8 @@ HRESULT SVODeviceClass::Create( unsigned long ulSize )
 
 		if( m_CallbackList.IsCreated() && S_OK == hrOk )
 		{
-			mbIsValid = TRUE;
-			mbIsCreated = TRUE;
+			mbIsValid = true;
+			mbIsCreated = true;
 		}
 		else
 		{
@@ -328,7 +328,7 @@ HRESULT SVODeviceClass::Start()
 
 				if ( S_OK == hrOk )
 				{
-					mbIsStarted = TRUE;
+					mbIsStarted = true;
 				}
 				else
 				{
@@ -356,7 +356,7 @@ HRESULT SVODeviceClass::Stop()
 {
 	HRESULT hrOk = S_OK;
 
-	mbIsStarted = FALSE;
+	mbIsStarted = false;
 
 	m_Thread.SetPriority( THREAD_PRIORITY_NORMAL );
 
@@ -407,7 +407,7 @@ HRESULT SVODeviceClass::Process( bool& p_WaitForEvents )
 
 	if ( mbIsValid )
 	{
-		BOOL bDone = TRUE;
+		BOOL bDone = true;
 
 		lRes = mUsedQueue.size();
 
@@ -614,8 +614,8 @@ HRESULT SVODeviceClass::DestroyLocal()
 {
 	HRESULT hrOk = S_OK;
 
-	mbIsValid = FALSE;
-	mbIsStarted = FALSE;
+	mbIsValid = false;
+	mbIsStarted = false;
 
 	m_Thread.Destroy();
 
@@ -627,7 +627,7 @@ HRESULT SVODeviceClass::DestroyLocal()
 
 	mUsedQueue.clear();
 
-	mbIsCreated = FALSE;
+	mbIsCreated = false;
 
 	return hrOk;
 }

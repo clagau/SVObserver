@@ -20,10 +20,10 @@ class SVPolarTransformationToolClass : public SVToolClass
 	SV_DECLARE_CLASS( SVPolarTransformationToolClass );
 
 public:
-	SVPolarTransformationToolClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVPOLARTRANSFORMATIONTOOL );
+	SVPolarTransformationToolClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVPOLARTRANSFORMATIONTOOL );
 	virtual ~SVPolarTransformationToolClass();
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
+	virtual bool CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
 
 	virtual bool SetDefaultFormulas(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 

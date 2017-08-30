@@ -30,8 +30,8 @@ static char THIS_FILE[]=__FILE__;
 
 SV_IMPLEMENT_CLASS( SVLoadImageToolClass, SVLoadImageToolClassGuid );
 
-SVLoadImageToolClass::SVLoadImageToolClass( BOOL BCreateDefaultTaskList, SVObjectClass* POwner, int StringResourceID )
-					 :SVToolClass( BCreateDefaultTaskList, POwner, StringResourceID )
+SVLoadImageToolClass::SVLoadImageToolClass( SVObjectClass* POwner, int StringResourceID )
+					 :SVToolClass( POwner, StringResourceID )
 {
 	init();
 }
@@ -69,11 +69,11 @@ SVLoadImageToolClass::~SVLoadImageToolClass()
 { 
 }
 
-BOOL SVLoadImageToolClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
+bool SVLoadImageToolClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
-	BOOL bOk = FALSE;
+	bool bOk = SVToolClass::CreateObject(pCreateStructure);
 
-	if( SVToolClass::CreateObject( PCreateStructure ) )
+	if( bOk )
 	{
 		SVImageClass* pImage = nullptr;
 
@@ -105,15 +105,13 @@ BOOL SVLoadImageToolClass::CreateObject( SVObjectLevelCreateStruct* PCreateStruc
 	return bOk;
 }
 
-BOOL SVLoadImageToolClass::CloseObject()
+bool SVLoadImageToolClass::CloseObject()
 {
 	if (SVToolClass::CloseObject())
 	{
-		BOOL bRetVal = m_fileImage.CloseObject();
-
-		return bRetVal;
+		return m_fileImage.CloseObject();
 	}
-	return FALSE;
+	return false;
 }
 
 bool SVLoadImageToolClass::onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages)

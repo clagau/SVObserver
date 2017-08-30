@@ -619,7 +619,7 @@ HRESULT SVODataDeviceClass::DestroyLocal()
 		mUsedQueue.Destroy();
 	}
 
-	mbIsCreated = FALSE;
+	mbIsCreated = false;
 
 	return hrOk;
 }

@@ -193,11 +193,9 @@ void SVCustomFilterClass::init()
 // -----------------------------------------------------------------------------
 // .Description : ...
 ////////////////////////////////////////////////////////////////////////////////
-BOOL SVCustomFilterClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
+bool SVCustomFilterClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
-	BOOL bOk = TRUE;
-
-	bOk &= SVFilterClass::CreateObject( PCreateStructure );
+	bool bOk = SVFilterClass::CreateObject( pCreateStructure );
 
 	RebuildKernel();
 

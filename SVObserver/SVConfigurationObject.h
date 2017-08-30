@@ -97,7 +97,7 @@ public:
 
 	unsigned long GetSVXFileVersion(SVTreeType& rTree);
 
-	BOOL SaveConfiguration(SvXml::SVObjectXMLWriter& rWriter) const;
+	void SaveConfiguration(SvXml::SVObjectXMLWriter& rWriter) const;
 
 	//************************************
 	//! Load Configuration 
@@ -174,18 +174,15 @@ public:
 	HRESULT SetRemoteInputItems( const SVNameStorageMap& p_rItems, SVNameStatusMap& p_rStatus );
 	HRESULT SetCameraItems( const SVNameStorageMap& p_rItems, SVNameStatusMap& p_rStatus );
 
-	BOOL Create();
-	BOOL Destroy();
+	bool RebuildInputOutputLists();
+	bool Activate();
 
-	BOOL RebuildInputOutputLists();
-	BOOL Activate();
+	bool DestroyConfiguration();
 
-	BOOL DestroyConfiguration();
-
-	BOOL SetInputObjectList( SVInputObjectList* pInputObjectList );
+	void SetInputObjectList( SVInputObjectList* pInputObjectList );
 	SVInputObjectList* GetInputObjectList( ) const;
 
-	BOOL SetOutputObjectList( SVOutputObjectList* pOutputObjectList );
+	void SetOutputObjectList( SVOutputObjectList* pOutputObjectList );
 	SVOutputObjectList* GetOutputObjectList( ) const;
 	HRESULT RebuildOutputObjectList();
 
@@ -193,12 +190,12 @@ public:
                                SVLightReference& rsvLight,
 							   SVLut& rLut,
 							   const SVDeviceParamCollection* rpDeviceParams );
-	BOOL ModifyAcquisitionDevice( LPCTSTR szName, SVLightReference& rsvLight );
-	BOOL ModifyAcquisitionDevice( LPCTSTR szName, const SVLut& lut );
-	BOOL ModifyAcquisitionDevice( LPCTSTR szName, const SVDeviceParamCollection* pParams );
+	bool ModifyAcquisitionDevice( LPCTSTR szName, SVLightReference& rsvLight );
+	bool ModifyAcquisitionDevice( LPCTSTR szName, const SVLut& lut );
+	bool ModifyAcquisitionDevice( LPCTSTR szName, const SVDeviceParamCollection* pParams );
 
-	BOOL RemoveAcquisitionDevice( LPCTSTR szName );
-	BOOL GetAcquisitionDevice( LPCTSTR szName, 
+	bool RemoveAcquisitionDevice( LPCTSTR szName );
+	bool GetAcquisitionDevice( LPCTSTR szName,
 	                           SVFileNameArrayClass*& pFiles,
                                SVLightReference*& pLight,
 							   SVLut*& rpLut,
@@ -216,28 +213,28 @@ public:
 	bool RemoveTrigger( SvTi::SVTriggerObject* pTrigger );
 	long GetTriggerCount( ) const;
 	SvTi::SVTriggerObject* GetTrigger( long lIndex ) const;
-	BOOL GetChildObjectByName( LPCTSTR tszName, SvTi::SVTriggerObject** ppTrigger ) const;
+	bool GetChildObjectByName( LPCTSTR tszName, SvTi::SVTriggerObject** ppTrigger ) const;
 
 	bool AddPPQ( SVPPQObject* pPPQ );
 	bool RemovePPQ( SVPPQObject* pPPQ );
 	long GetPPQCount() const;
 	SVPPQObject* GetPPQ( long lIndex ) const;
-	BOOL GetChildObjectByName( LPCTSTR tszName, SVPPQObject** ppPPQ ) const;
+	bool GetChildObjectByName( LPCTSTR tszName, SVPPQObject** ppPPQ ) const;
 	bool GetPPQByName( LPCTSTR name, SVPPQObject** ppPPQ ) const;
 
 	bool AddCamera( SVVirtualCamera* pCamera );
 	bool RemoveCamera( SVVirtualCamera* pCamera );
 	long GetCameraCount( ) const;
 	SVVirtualCamera* GetCamera( long lIndex ) const;
-	BOOL GetChildObjectByName( LPCTSTR tszName, SVVirtualCamera** ppCamera ) const;
+	bool GetChildObjectByName( LPCTSTR tszName, SVVirtualCamera** ppCamera ) const;
 
 	bool AddInspection( SVInspectionProcess* pInspection );
 	bool RemoveInspection( SVInspectionProcess* pInspection );
 	long GetInspectionCount( ) const;
 	SVInspectionProcess* GetInspection( long lIndex ) const;
-	BOOL GetInspections( std::vector<SVInspectionProcess*>& rvecInspections ) const;
-	BOOL GetChildObjectByName( LPCTSTR tszName, SVInspectionProcess** ppInspection ) const;
-	BOOL GetInspectionObject( LPCTSTR tszFullyQualifiedNameOfChild, SVInspectionProcess** ppInspection ) const;
+	void GetInspections(SVInspectionProcessPtrList& rvecInspections ) const;
+	bool GetChildObjectByName( LPCTSTR tszName, SVInspectionProcess** ppInspection ) const;
+	bool GetInspectionObject( LPCTSTR tszFullyQualifiedNameOfChild, SVInspectionProcess** ppInspection ) const;
 
 	static bool GetInspection( LPCTSTR InspectionName, SVInspectionProcess*& prInspection );
 
@@ -347,7 +344,7 @@ public:
 #pragma endregion Methods to replace processMessage
 
 protected:
-	BOOL FinishIPDoc( SVInspectionProcess* pInspection );
+	bool FinishIPDoc( SVInspectionProcess* pInspection );
 
 	SVIOController* m_pIOController;
 

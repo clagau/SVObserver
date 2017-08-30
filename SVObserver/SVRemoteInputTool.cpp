@@ -20,8 +20,8 @@
 
 SV_IMPLEMENT_CLASS( SVRemoteInputTool, SVRemoteInputToolGuid )
 
-SVRemoteInputTool::SVRemoteInputTool( BOOL BCreateDefaultTaskList, SVObjectClass* POwner, int StringResourceID )
-: SVToolClass( BCreateDefaultTaskList, POwner, StringResourceID )
+SVRemoteInputTool::SVRemoteInputTool( SVObjectClass* POwner, int StringResourceID )
+: SVToolClass( POwner, StringResourceID )
 , m_ElementIdentifier( 0 )
 {
 	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVToolObjectType;
@@ -51,9 +51,9 @@ SVRemoteInputTool::~SVRemoteInputTool()
 	m_Commands.Destroy();
 }
 
-BOOL SVRemoteInputTool::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
+bool SVRemoteInputTool::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
-	BOOL l_Status = SVToolClass::CreateObject( PCreateStructure );
+	bool l_Status = SVToolClass::CreateObject( pCreateStructure );
 
 	l_Status &= ( S_OK == SVInputStreamManager::Instance().InsertInputStream( GetCompleteName().c_str(), GetUniqueObjectID() ) );
 
@@ -65,9 +65,9 @@ BOOL SVRemoteInputTool::CreateObject( SVObjectLevelCreateStruct* PCreateStructur
 	return l_Status;
 }
 
-BOOL SVRemoteInputTool::CloseObject()
+bool SVRemoteInputTool::CloseObject()
 {
-	BOOL l_Status = ( S_OK == SVInputStreamManager::Instance().EraseInputStream( GetUniqueObjectID() ) );
+	bool l_Status = ( S_OK == SVInputStreamManager::Instance().EraseInputStream( GetUniqueObjectID() ) );
 		
 	l_Status &= SVToolClass::CloseObject();
 

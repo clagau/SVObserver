@@ -22,8 +22,8 @@ const long ResizeTool::MinScaleFactorThreshold = 0; // Scale Factor may not
 const long ResizeTool::MaxScaleFactor = 1000;       // Maximum allowed Scale Factor. 
 
 
-ResizeTool::ResizeTool( BOOL bCreateDefaultTaskList, SVObjectClass* pOwner, int stringResourceID )
-: SVToolClass( bCreateDefaultTaskList, pOwner, stringResourceID )
+ResizeTool::ResizeTool( SVObjectClass* pOwner, int stringResourceID )
+: SVToolClass( pOwner, stringResourceID )
 {
 	LocalInitialize();
 }
@@ -153,9 +153,9 @@ ResizeTool::~ResizeTool(void)
 }
 
 
-BOOL ResizeTool::CloseObject()
+bool ResizeTool::CloseObject()
 {
-	BOOL bRetVal = true;
+	bool bRetVal = true;
 
 	if ( m_isCreated )
 	{
@@ -176,9 +176,9 @@ BOOL ResizeTool::CloseObject()
 }
 
 
-BOOL ResizeTool::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+bool ResizeTool::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
-	BOOL bOk = SVToolClass::CreateObject( pCreateStructure ); 
+	bool bOk = SVToolClass::CreateObject( pCreateStructure ); 
 
 	// Override base class hiding of Scale Factors.  These values will be 
 	// exposed for the Resize Tool.

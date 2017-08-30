@@ -23,8 +23,8 @@
 
 SV_IMPLEMENT_CLASS( SVTransformationToolClass, SVTransformationToolClassGuid );
 
-SVTransformationToolClass::SVTransformationToolClass( BOOL BCreateDefaultTaskList, SVObjectClass* POwner, int StringResourceID )
-						  :SVToolClass( BCreateDefaultTaskList, POwner, StringResourceID )
+SVTransformationToolClass::SVTransformationToolClass( SVObjectClass* POwner, int StringResourceID )
+						  :SVToolClass( POwner, StringResourceID )
 {
 	init();
 }
@@ -88,17 +88,15 @@ SVTransformationToolClass::~SVTransformationToolClass()
 // Operator(s):
 //******************************************************************************
 
-BOOL SVTransformationToolClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
+bool SVTransformationToolClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
-	BOOL bOk = SVToolClass::CreateObject( PCreateStructure );
+	m_isCreated = SVToolClass::CreateObject( pCreateStructure );
 
 	m_SourceImageNames.setStatic( true );
 	m_SourceImageNames.setSaveValueFlag(false);
 	m_SourceImageNames.SetObjectAttributesAllowed( SvOi::SV_REMOTELY_SETABLE | SvOi::SV_SETABLE_ONLINE, SvOi::SetAttributeType::RemoveAttribute );
 
-	m_isCreated = bOk;
-
-	return bOk;
+	return m_isCreated;
 }
 
 bool SVTransformationToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)

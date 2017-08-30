@@ -120,21 +120,11 @@ SVConfigurationObject::SVConfigurationObject( SVObjectClass* POwner, int StringR
 
 SVConfigurationObject::~SVConfigurationObject()
 {
-	Destroy();
+	DestroyConfiguration();
 }
 #pragma endregion Constructor
 
-BOOL SVConfigurationObject::Create()
-{
-	return TRUE;
-}// end Create
-
-BOOL SVConfigurationObject::Destroy()
-{
-	return DestroyConfiguration();
-}// end Destroy
-
-BOOL SVConfigurationObject::SetInputObjectList( SVInputObjectList *pInputObjectList )
+void SVConfigurationObject::SetInputObjectList( SVInputObjectList *pInputObjectList )
 {
 	if( nullptr != m_pInputObjectList && m_pInputObjectList != pInputObjectList )
 	{
@@ -142,8 +132,6 @@ BOOL SVConfigurationObject::SetInputObjectList( SVInputObjectList *pInputObjectL
 	}
 
 	m_pInputObjectList = pInputObjectList;
-
-	return TRUE;
 }// end SetInputObjectList
 
 SVInputObjectList* SVConfigurationObject::GetInputObjectList( ) const
@@ -151,7 +139,7 @@ SVInputObjectList* SVConfigurationObject::GetInputObjectList( ) const
 	return m_pInputObjectList;
 }// end GetInputObjectList
 
-BOOL SVConfigurationObject::SetOutputObjectList( SVOutputObjectList *pOutputObjectList )
+void SVConfigurationObject::SetOutputObjectList( SVOutputObjectList *pOutputObjectList )
 {
 	if( nullptr != m_pOutputObjectList && m_pOutputObjectList != pOutputObjectList )
 	{
@@ -159,7 +147,6 @@ BOOL SVConfigurationObject::SetOutputObjectList( SVOutputObjectList *pOutputObje
 	}
 
 	m_pOutputObjectList = pOutputObjectList;
-	return TRUE;
 }// end SetOutputObjectList
 
 SVOutputObjectList* SVConfigurationObject::GetOutputObjectList( ) const
@@ -224,7 +211,7 @@ long SVConfigurationObject::GetTriggerCount( ) const
 	return m_arTriggerArray.GetSize();
 }// end GetTriggerCount
 
-BOOL SVConfigurationObject::GetChildObjectByName( LPCTSTR tszName, SvTi::SVTriggerObject** ppTrigger ) const
+bool SVConfigurationObject::GetChildObjectByName( LPCTSTR tszName, SvTi::SVTriggerObject** ppTrigger ) const
 {
 	bool bReturn = false;
 
@@ -295,9 +282,9 @@ bool SVConfigurationObject::AddAcquisitionDevice( LPCTSTR szName,
 	return bOk;
 }// end AddAcquisitionDevice
 
-BOOL SVConfigurationObject::ModifyAcquisitionDevice( LPCTSTR szName, SVLightReference& rsvLight )
+bool SVConfigurationObject::ModifyAcquisitionDevice( LPCTSTR szName, SVLightReference& rsvLight )
 {
-	BOOL bOk = FALSE;
+	bool bOk = false;
 	SVConfigurationAcquisitionDeviceInfoStruct* pDevice = nullptr;
 
 	mAcquisitionDeviceMap.Lookup( szName, pDevice);
@@ -311,9 +298,9 @@ BOOL SVConfigurationObject::ModifyAcquisitionDevice( LPCTSTR szName, SVLightRefe
 	return bOk;
 }// end AddAcquisitionDevice
 
-BOOL SVConfigurationObject::ModifyAcquisitionDevice( LPCTSTR szName, const SVLut& lut )
+bool SVConfigurationObject::ModifyAcquisitionDevice( LPCTSTR szName, const SVLut& lut )
 {
-	BOOL bOk = FALSE;
+	bool bOk = false;
 	SVConfigurationAcquisitionDeviceInfoStruct* pDevice = nullptr;
 
 	mAcquisitionDeviceMap.Lookup( szName, pDevice);
@@ -327,9 +314,9 @@ BOOL SVConfigurationObject::ModifyAcquisitionDevice( LPCTSTR szName, const SVLut
 	return bOk;
 }
 
-BOOL SVConfigurationObject::ModifyAcquisitionDevice( LPCTSTR szName, const SVDeviceParamCollection* pParams )
+bool SVConfigurationObject::ModifyAcquisitionDevice( LPCTSTR szName, const SVDeviceParamCollection* pParams )
 {
-	BOOL bOk = FALSE;
+	bool bOk = false;
 	if ( nullptr != pParams )
 	{
 		SVConfigurationAcquisitionDeviceInfoStruct* pDevice = nullptr;
@@ -357,9 +344,9 @@ BOOL SVConfigurationObject::ModifyAcquisitionDevice( LPCTSTR szName, const SVDev
 
 }
 
-BOOL SVConfigurationObject::RemoveAcquisitionDevice( LPCTSTR szName )
+bool SVConfigurationObject::RemoveAcquisitionDevice( LPCTSTR szName )
 {
-	BOOL bOk = FALSE;
+	bool bOk = false;
 
 	SVConfigurationAcquisitionDeviceInfoStruct *pDevice = nullptr;
 
@@ -377,13 +364,13 @@ BOOL SVConfigurationObject::RemoveAcquisitionDevice( LPCTSTR szName )
 	return bOk;
 }
 
-BOOL SVConfigurationObject::GetAcquisitionDevice( LPCTSTR szName, 
+bool SVConfigurationObject::GetAcquisitionDevice( LPCTSTR szName,
 	SVFileNameArrayClass*& rpFiles,
 	SVLightReference*& rpLight,
 	SVLut*& rpLut,
 	SVDeviceParamCollection*& rpDeviceParams ) const
 {
-	BOOL bOk = FALSE;
+	bool bOk = false;
 
 	SVConfigurationAcquisitionDeviceInfoStruct* pDevice = nullptr;
 
@@ -486,7 +473,7 @@ long SVConfigurationObject::GetPPQCount( ) const
 	return m_arPPQArray.GetSize();
 }// end GetPPQCount
 
-BOOL SVConfigurationObject::GetChildObjectByName( LPCTSTR tszName, SVPPQObject** ppPPQ ) const
+bool SVConfigurationObject::GetChildObjectByName( LPCTSTR tszName, SVPPQObject** ppPPQ ) const
 {
 	bool bReturn = false;
 
@@ -584,7 +571,7 @@ long SVConfigurationObject::GetCameraCount( ) const
 	return m_arCameraArray.GetSize();
 }
 
-BOOL SVConfigurationObject::GetChildObjectByName( LPCTSTR tszName, SVVirtualCamera** ppCamera ) const
+bool SVConfigurationObject::GetChildObjectByName( LPCTSTR tszName, SVVirtualCamera** ppCamera ) const
 {
 	bool bReturn = false;
 
@@ -660,9 +647,9 @@ long SVConfigurationObject::GetInspectionCount( ) const
 	return m_arInspectionArray.GetSize();
 }// end GetInspectionCount
 
-BOOL SVConfigurationObject::GetInspectionObject( LPCTSTR Name, SVInspectionProcess** ppInspection ) const
+bool SVConfigurationObject::GetInspectionObject( LPCTSTR Name, SVInspectionProcess** ppInspection ) const
 {
-	BOOL bResult = FALSE;
+	bool bResult = false;
 
 	SVString InspectionName( Name );
 	size_t Pos = InspectionName.find(_T("."));	// assumes first dot is after the inspection name
@@ -678,9 +665,9 @@ BOOL SVConfigurationObject::GetInspectionObject( LPCTSTR Name, SVInspectionProce
 	return bResult;
 }
 
-BOOL SVConfigurationObject::GetChildObjectByName( LPCTSTR tszName, SVInspectionProcess** ppInspection ) const
+bool SVConfigurationObject::GetChildObjectByName( LPCTSTR tszName, SVInspectionProcess** ppInspection ) const
 {
-	BOOL bReturn = FALSE;
+	bool bReturn = false;
 
 	//Only do an assert check so that in release mode no check is made
 	ASSERT( nullptr != ppInspection );
@@ -694,7 +681,7 @@ BOOL SVConfigurationObject::GetChildObjectByName( LPCTSTR tszName, SVInspectionP
 		if( nullptr != pInspection && Name == pInspection->GetCompleteName() )
 		{
 			*ppInspection = pInspection;
-			bReturn = TRUE;
+			bReturn = true;
 			break;
 		}
 	}
@@ -719,10 +706,9 @@ SVInspectionProcess* SVConfigurationObject::GetInspection( long lIndex ) const
 	return retValue;
 }// end GetInspection
 
-BOOL SVConfigurationObject::GetInspections( SVInspectionProcessPtrList& rvecInspections ) const
+void SVConfigurationObject::GetInspections( SVInspectionProcessPtrList& rvecInspections ) const
 {
 	std::copy( m_arInspectionArray.begin(), m_arInspectionArray.end(), std::inserter( rvecInspections, rvecInspections.begin() ) );
-	return TRUE;
 }
 
 // Add the (Imported) Input if it doesn't exists
@@ -971,14 +957,14 @@ void SVConfigurationObject::LoadEnviroment(SVTreeType& rTree , bool &Configurati
 			}
 			else
 			{
-				bThreadOk = FALSE;
+				bThreadOk = false;
 			}
 		}
 		iThreadNum++;
 	}
 
 	// Thread Manager Enable
-	BOOL bThreadMgrEnable = FALSE;
+	BOOL bThreadMgrEnable = false;
 	if (SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_THREAD_MGR_ENABLE, hChild, Value) )
 	{
 		bThreadMgrEnable = Value;
@@ -989,8 +975,8 @@ void SVConfigurationObject::LoadEnviroment(SVTreeType& rTree , bool &Configurati
 bool SVConfigurationObject::LoadIO( SVTreeType& rTree )
 {
 	SVTreeType::SVBranchHandle hChild( nullptr );
-	BOOL bOk  =  SvXml::SVNavigateTree::GetItemBranch( rTree, SvXml::CTAG_IO, nullptr, hChild );
-	if (bOk != TRUE)
+	bool bOk  =  SvXml::SVNavigateTree::GetItemBranch( rTree, SvXml::CTAG_IO, nullptr, hChild );
+	if (!bOk)
 	{
 		return false;
 	}
@@ -1104,7 +1090,7 @@ bool SVConfigurationObject::LoadIO( SVTreeType& rTree )
 			bForced = Data;
 		}// end if
 
-		BOOL bCheck;
+		bool bCheck;
 		bCheck = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_IS_COMBINED, hSubChild, Data );
 		if( bCheck )
 		{
@@ -1929,7 +1915,7 @@ bool SVConfigurationObject::LoadInspection( SVTreeType& rTree )
 
 			pInspection->SetToolsetImage( ToolsetName );
 
-			bOk = pInspection->CreateInspection( svFileName.GetFileNameOnly().c_str() ) ? true : false;
+			bOk = pInspection->CreateInspection( svFileName.GetFileNameOnly().c_str() );
 			if ( bOk )
 			{
 				pInspection->SetNewDisableMethod( 1 == NewDisableMethod );
@@ -1975,7 +1961,7 @@ bool SVConfigurationObject::LoadInspection( SVTreeType& rTree )
 bool SVConfigurationObject::LoadPPQ( SVTreeType& rTree )
 {
 	SVTreeType::SVBranchHandle hChild( nullptr );
-	BOOL bOk  = SvXml::SVNavigateTree::GetItemBranch( rTree, SvXml::CTAG_PPQ, nullptr, hChild );
+	bool bOk  = SvXml::SVNavigateTree::GetItemBranch( rTree, SvXml::CTAG_PPQ, nullptr, hChild );
 	if( !bOk )
 	{
 		return false;
@@ -2032,7 +2018,7 @@ bool SVConfigurationObject::LoadPPQ( SVTreeType& rTree )
 		{
 			lMode = Value;
 
-			bOk = pPPQ->SetPPQOutputMode( (SvOi::SVPPQOutputModeEnum)lMode );
+			pPPQ->SetPPQOutputMode( (SvOi::SVPPQOutputModeEnum)lMode );
 		}// end if
 
 		bOk = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_PPQ_LENGTH, hSubChild, Value );
@@ -2041,7 +2027,7 @@ bool SVConfigurationObject::LoadPPQ( SVTreeType& rTree )
 		{
 			lLength = Value;
 
-			bOk = pPPQ->SetPPQLength( lLength ) ? true : false;
+			pPPQ->SetPPQLength( lLength );
 		}// end if
 
 		bOk = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_PPQ_OUTPUT_RESET_DELAY_TIME, hSubChild, Value );
@@ -2050,7 +2036,7 @@ bool SVConfigurationObject::LoadPPQ( SVTreeType& rTree )
 		{
 			lDelay = Value;
 
-			bOk = pPPQ->SetResetDelay( lDelay );
+			pPPQ->SetResetDelay( lDelay );
 		}// end if
 
 		bOk = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_PPQ_OUTPUT_DELAY_TIME, hSubChild, Value );
@@ -2059,7 +2045,7 @@ bool SVConfigurationObject::LoadPPQ( SVTreeType& rTree )
 		{
 			lDelay = Value;
 
-			bOk = pPPQ->SetOutputDelay( lDelay );
+			pPPQ->SetOutputDelay( lDelay );
 		}// end if
 
 		bOk = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_PPQ_MAINTAIN_SRC_IMAGE, hSubChild, Value );
@@ -2068,7 +2054,7 @@ bool SVConfigurationObject::LoadPPQ( SVTreeType& rTree )
 		{
 			bMaintainSrcImg = Value;
 
-			bOk = pPPQ->SetMaintainSourceImages(bMaintainSrcImg);
+			pPPQ->SetMaintainSourceImages(bMaintainSrcImg);
 		}
 
 		bOk = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_PPQ_INSPECTION_TIMEOUT, hSubChild, Value );
@@ -2077,7 +2063,7 @@ bool SVConfigurationObject::LoadPPQ( SVTreeType& rTree )
 		{
 			lInspectionTimeout = Value;
 
-			bOk = pPPQ->SetInspectionTimeout(lInspectionTimeout);
+			pPPQ->SetInspectionTimeout(lInspectionTimeout);
 		}
 
 		bOk = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_PPQ_CONDITIONAL_OUTPUT, hSubChild, Value );
@@ -2092,7 +2078,7 @@ bool SVConfigurationObject::LoadPPQ( SVTreeType& rTree )
 		// Update source to remove SVOVariant
 		// PPQ State Variable
 		// Load the Unique Reference ID for the PPQ
-		BOOL bTmp = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_PPQ_STATE_UNIQUEID, hSubChild, Value );
+		bool bTmp = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_PPQ_STATE_UNIQUEID, hSubChild, Value );
 
 		if( bTmp )
 		{
@@ -2611,9 +2597,9 @@ HRESULT SVConfigurationObject::LoadDeviceParamSpecial( SVTreeType& rTree, SVTree
 	return hr;
 }
 
-BOOL SVConfigurationObject::DestroyConfiguration()
+bool SVConfigurationObject::DestroyConfiguration()
 {
-	BOOL bOk = TRUE;
+	bool bOk = true;
 
 	m_bConfigurationValid = false;
 
@@ -2904,11 +2890,11 @@ void SVConfigurationObject::SaveIO(SvXml::SVObjectXMLWriter& rWriter) const
 			rWriter.WriteAttribute( SvXml::CTAG_IS_OUTPUT, svVariant );
 			svVariant.Clear(); //Must clear VT_BOOL Type after use
 
-			svVariant = ( pInput->IsInverted() == TRUE );
+			svVariant = ( pInput->IsInverted() );
 			rWriter.WriteAttribute( SvXml::CTAG_IS_INVERTED, svVariant );
 			svVariant.Clear(); //Must clear VT_BOOL Type after use
 
-			svVariant = pInput->IsForced() == TRUE;
+			svVariant = pInput->IsForced();
 			rWriter.WriteAttribute( SvXml::CTAG_IS_FORCED, svVariant );
 			svVariant.Clear(); //Must clear VT_BOOL Type after use
 
@@ -2957,19 +2943,19 @@ void SVConfigurationObject::SaveIO(SvXml::SVObjectXMLWriter& rWriter) const
 			rWriter.WriteAttribute( SvXml::CTAG_IS_OUTPUT, svVariant );
 			svVariant.Clear(); //Must clear VT_BOOL Type after use
 
-			svVariant = ( pOutput->IsInverted() != FALSE );
+			svVariant = ( pOutput->IsInverted() );
 			rWriter.WriteAttribute( SvXml::CTAG_IS_INVERTED, svVariant );
 			svVariant.Clear(); //Must clear VT_BOOL Type after use
 
-			svVariant = ( pOutput->IsForced() != FALSE );
+			svVariant = ( pOutput->IsForced() );
 			rWriter.WriteAttribute( SvXml::CTAG_IS_FORCED, svVariant );
 			svVariant.Clear(); //Must clear VT_BOOL Type after use
 
-			svVariant = ( pOutput->GetForcedValue() != FALSE );
+			svVariant = ( pOutput->GetForcedValue() );
 			rWriter.WriteAttribute( SvXml::CTAG_FORCED_VALUE, svVariant );
 			svVariant.Clear(); //Must clear VT_BOOL Type after use
 
-			svVariant = ( pOutput->IsCombined() != FALSE );
+			svVariant = ( pOutput->IsCombined() );
 			rWriter.WriteAttribute( SvXml::CTAG_IS_COMBINED, svVariant );
 			svVariant.Clear(); //Must clear VT_BOOL Type after use
 
@@ -3576,9 +3562,8 @@ void SVConfigurationObject::ConvertColorToStandardProductType( bool& rConfigColo
 	}
 }
 
-BOOL SVConfigurationObject::SaveConfiguration(SvXml::SVObjectXMLWriter& rWriter) const
+void SVConfigurationObject::SaveConfiguration(SvXml::SVObjectXMLWriter& rWriter) const
 {
-	BOOL bOk = true;
 	SVString RootName( SvOl::FqnRoot );
 	rWriter.WriteRootElement( RootName.c_str() );
 	rWriter.WriteSchema();
@@ -3600,7 +3585,6 @@ BOOL SVConfigurationObject::SaveConfiguration(SvXml::SVObjectXMLWriter& rWriter)
 
 	rWriter.EndElement(); // end of BaseNode
 	rWriter.EndElement(); // end of Root Element
-	return bOk;
 }
 
 void SVConfigurationObject::SaveFileAcquisitionConfiguration(SvXml::SVObjectXMLWriter& rWriter, const SVDeviceParamCollection& rDeviceParams) const
@@ -3714,9 +3698,9 @@ void SVConfigurationObject::SaveDeviceParamSpecial( SvXml::SVObjectXMLWriter& rW
 	}// end switch ( pParam->Type() )
 }
 
-BOOL SVConfigurationObject::FinishIPDoc( SVInspectionProcess* pInspection )
+bool SVConfigurationObject::FinishIPDoc( SVInspectionProcess* pInspection )
 {
-	BOOL bOk = FALSE;
+	bool bOk = false;
 
 	if ( nullptr != pInspection )
 	{
@@ -3737,7 +3721,7 @@ BOOL SVConfigurationObject::FinishIPDoc( SVInspectionProcess* pInspection )
 			// Init Document
 			pInspection->ValidateAndInitialize( true, false );
 
-			bOk = TRUE;
+			bOk = true;
 		}
 
 	}
@@ -3745,9 +3729,9 @@ BOOL SVConfigurationObject::FinishIPDoc( SVInspectionProcess* pInspection )
 	return bOk;
 }
 
-BOOL SVConfigurationObject::Activate()
+bool SVConfigurationObject::Activate()
 {
-	BOOL bOk = TRUE;
+	bool bOk = true;
 
 	long lSize = m_arInspectionArray.GetSize();
 
@@ -3764,10 +3748,10 @@ BOOL SVConfigurationObject::Activate()
 	return bOk;
 }
 
-BOOL SVConfigurationObject::RebuildInputOutputLists()
+bool SVConfigurationObject::RebuildInputOutputLists()
 	// called after Environment is edited
 {
-	BOOL bOk = TRUE;
+	bool bOk = true;
 
 	long l( 0 );
 
@@ -3817,7 +3801,7 @@ unsigned long SVConfigurationObject::GetFileVersion() const
 
 unsigned long SVConfigurationObject::GetSVXFileVersion(SVTreeType& rTree)
 {
-	BOOL bOk = TRUE;
+	bool bOk = true;
 	SVTreeType::SVBranchHandle hChild = nullptr;
 	unsigned long ulVersion;
 
@@ -3972,7 +3956,7 @@ HRESULT SVConfigurationObject::AttachAcqToTriggers()
 	// Set the Software Timer Trigger period as well here
 	long lCount = GetTriggerCount( );
 
-	BOOL bOk = true;
+	bool bOk = true;
 	for ( long l = 0; bOk && l < lCount; l++ )
 	{
 		SvTi::SVTriggerObject* pTrigger = GetTrigger( l );

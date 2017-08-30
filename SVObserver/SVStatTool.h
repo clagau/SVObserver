@@ -42,10 +42,10 @@ class SVStatisticsToolClass : public SVToolClass
 {
 	SV_DECLARE_CLASS( SVStatisticsToolClass );
 public:
-	SVStatisticsToolClass( BOOL BCreateDefaultTaskList=FALSE, SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVSTATISTICSTOOL );
+	SVStatisticsToolClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVSTATISTICSTOOL );
 	virtual ~SVStatisticsToolClass();
 
-	virtual BOOL CreateObject(SVObjectLevelCreateStruct* PCreateStruct ) override;
+	virtual bool CreateObject(SVObjectLevelCreateStruct* pCreateStructure ) override;
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 	
 	BOOL HasVariable() const;

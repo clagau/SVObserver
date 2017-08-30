@@ -29,8 +29,8 @@
 
 SV_IMPLEMENT_CLASS( SVWindowToolClass, SVWindowToolClassGuid );
 
-SVWindowToolClass::SVWindowToolClass( BOOL BCreateDefaultTaskList, SVObjectClass* POwner, int StringResourceID )
-	:SVToolClass( BCreateDefaultTaskList, POwner, StringResourceID )
+SVWindowToolClass::SVWindowToolClass( SVObjectClass* POwner, int StringResourceID )
+	:SVToolClass( POwner, StringResourceID )
 {
 	init();
 }
@@ -155,9 +155,9 @@ SVWindowToolClass::~SVWindowToolClass()
 }
 
 
-BOOL SVWindowToolClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
+bool SVWindowToolClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
-	BOOL bOk = SVToolClass::CreateObject( PCreateStructure );
+	bool bOk = SVToolClass::CreateObject( pCreateStructure );
 	
 	m_SourceImageNames.setStatic( true );
 	m_SourceImageNames.setSaveValueFlag(false);

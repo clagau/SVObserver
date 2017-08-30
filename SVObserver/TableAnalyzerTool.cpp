@@ -30,8 +30,8 @@ SV_IMPLEMENT_CLASS( TableAnalyzerTool, TableAnalyzerToolGuid );
 #pragma endregion Declarations
 
 #pragma region Constructor
-TableAnalyzerTool::TableAnalyzerTool( BOOL bCreateDefaultTaskList, SVObjectClass* pOwner, int stringResourceID )
-	:SVToolClass( bCreateDefaultTaskList, pOwner, stringResourceID )
+TableAnalyzerTool::TableAnalyzerTool( SVObjectClass* pOwner, int stringResourceID )
+	:SVToolClass( pOwner, stringResourceID )
 {
 	LocalInitialize ();
 }
@@ -43,9 +43,9 @@ TableAnalyzerTool::~TableAnalyzerTool()
 #pragma endregion Constructor
 
 #pragma region Public Methods
-BOOL TableAnalyzerTool::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+bool TableAnalyzerTool::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
-	BOOL bOk = SVToolClass::CreateObject( pCreateStructure ); //  TRUE/FALSE
+	bool bOk = SVToolClass::CreateObject( pCreateStructure );
 
 	bOk &= (nullptr != GetTool());
 	bOk &= (nullptr != GetInspection());

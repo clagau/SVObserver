@@ -23,9 +23,7 @@ class TableTool : public SVToolClass
 
 #pragma region Constructor
 public:
-	TableTool(	BOOL	bCreateDefaultTaskList = FALSE, 
-		SVObjectClass*	pOwner = nullptr, 
-		int	stringResourceID = IDS_CLASSNAME_TABLE_TOOL );
+	TableTool(	SVObjectClass*	pOwner = nullptr, int stringResourceID = IDS_CLASSNAME_TABLE_TOOL );
 
 	virtual ~TableTool(void);
 
@@ -33,7 +31,7 @@ public:
 
 #pragma region Public Methods
 public:
-	virtual BOOL	CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
+	virtual bool CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
 
 	virtual HRESULT GetOutputList( SVOutputInfoListClass& p_rOutputInfoList ) const override;
 

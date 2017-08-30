@@ -53,9 +53,9 @@ SVImageClass::SVImageClass( SVObjectClass* POwner, int StringResourceID )
 	init();
 }
 
-BOOL SVImageClass::CreateObject(SVObjectLevelCreateStruct* PCreateStruct)
+bool SVImageClass::CreateObject(SVObjectLevelCreateStruct* pCreateStructure)
 {
-	BOOL l_bOk = SVObjectAppClass::CreateObject(PCreateStruct);
+	bool l_bOk = SVObjectAppClass::CreateObject(pCreateStructure);
 
 	RegisterAsSubObject();
 
@@ -69,11 +69,9 @@ BOOL SVImageClass::CreateObject(SVObjectLevelCreateStruct* PCreateStruct)
 	return l_bOk;	
 }
 
-BOOL SVImageClass::CloseObject()
+bool SVImageClass::CloseObject()
 {
-	BOOL rc = true;
-	
-	rc = ( S_OK == ClearParentConnection() );
+	bool rc = ( S_OK == ClearParentConnection() );
 
 	SvOi::ITool* pTool = dynamic_cast<SvOi::ITool*> (GetTool());
 	if( nullptr != pTool )
@@ -195,9 +193,9 @@ SVImageClass::~SVImageClass()
 	}
 }
 
-BOOL SVImageClass::DestroyImage()
+bool SVImageClass::DestroyImage()
 {
-	BOOL bOk = TRUE;
+	bool bOk = true;
 	
 	if ( m_isCreated )
 	{
@@ -520,13 +518,13 @@ HRESULT SVImageClass::UpdateImage( SvOi::SVImageTypeEnum p_ImageType, const GUID
 	return l_Status;
 }
 
-BOOL SVImageClass::SetImageDepth( long lDepth )
+bool SVImageClass::SetImageDepth( long lDepth )
 {
 	bool l_bOk = true;
 
 	if( lDepth != GetImageDepth() )
 	{
-		l_bOk = (TRUE == SVObjectAppClass::SetImageDepth( lDepth ));
+		l_bOk = SVObjectAppClass::SetImageDepth( lDepth );
 
 		m_LastUpdate = SvTl::GetTimeStamp();
 
@@ -1175,9 +1173,9 @@ const SVImageInfoClass& SVImageClass::GetImageInfo() const
 Updated method to use GetParentImage() method which validates the Parent Image pointer attribute.
 The Parent Image attribute should not be used unless it is validated first.
 */
-BOOL SVImageClass::GetImageHandleIndex( SVImageIndexStruct& rsvIndex ) const
+bool SVImageClass::GetImageHandleIndex( SVImageIndexStruct& rsvIndex ) const
 {
-	BOOL bOk = FALSE;
+	bool bOk = false;
 		
 	if( SvOi::SVImageTypeEnum::SVImageTypeDependent == m_ImageType|| 
 		SvOi::SVImageTypeEnum::SVImageTypeVirtual == m_ImageType ||
@@ -1222,7 +1220,7 @@ BOOL SVImageClass::GetImageHandleIndex( SVImageIndexStruct& rsvIndex ) const
 Updated method to use GetParentImage() method which validates the Parent Image pointer attribute.
 The Parent Image attribute should not be used unless it is validated first.
 */
-BOOL SVImageClass::SetImageHandleIndex( SVImageIndexStruct svIndex )
+bool SVImageClass::SetImageHandleIndex( SVImageIndexStruct svIndex )
 {
 	bool Result( false );
 		
@@ -1264,7 +1262,7 @@ BOOL SVImageClass::SetImageHandleIndex( SVImageIndexStruct svIndex )
 Updated method to use GetParentImage() method which validates the Parent Image pointer attribute.
 The Parent Image attribute should not be used unless it is validated first.
 */
-BOOL SVImageClass::CopyImageTo( SVImageIndexStruct svIndex )
+bool SVImageClass::CopyImageTo( SVImageIndexStruct svIndex )
 {
 	bool Result( false );
 		
@@ -1278,7 +1276,7 @@ BOOL SVImageClass::CopyImageTo( SVImageIndexStruct svIndex )
 		{
 			SVImageIndexStruct l_svIndex;
 
-			Result = l_pParentImage->GetImageHandleIndex( l_svIndex ) ? true : false;
+			Result = l_pParentImage->GetImageHandleIndex( l_svIndex );
 
 			Result = Result && (l_svIndex == svIndex);
 		}
@@ -1311,9 +1309,9 @@ BOOL SVImageClass::CopyImageTo( SVImageIndexStruct svIndex )
 	return Result;
 }
 
-BOOL SVImageClass::GetImageHandle( SVSmartHandlePointer& p_rHandlePtr )
+bool SVImageClass::GetImageHandle( SVSmartHandlePointer& p_rHandlePtr )
 {
-	BOOL bOk = FALSE;
+	bool bOk = false;
 		
 	if( SvOi::SVImageTypeEnum::SVImageTypeDependent == m_ImageType|| 
 		SvOi::SVImageTypeEnum::SVImageTypeVirtual == m_ImageType ||
@@ -1333,9 +1331,9 @@ BOOL SVImageClass::GetImageHandle( SVSmartHandlePointer& p_rHandlePtr )
 	return bOk;
 }
 
-BOOL SVImageClass::GetImageHandle( SVImageIndexStruct svIndex, SVSmartHandlePointer& rHandle )
+bool SVImageClass::GetImageHandle( SVImageIndexStruct svIndex, SVSmartHandlePointer& rHandle )
 {
-	BOOL bOk = FALSE;
+	bool bOk = false;
 		
 	if( SvOi::SVImageTypeEnum::SVImageTypeDependent == m_ImageType || 
 		SvOi::SVImageTypeEnum::SVImageTypeVirtual == m_ImageType ||
@@ -1359,9 +1357,9 @@ BOOL SVImageClass::GetImageHandle( SVImageIndexStruct svIndex, SVSmartHandlePoin
 	return bOk;
 }
 
-BOOL SVImageClass::SafeImageCopyToHandle( SVSmartHandlePointer &p_rHandle )
+bool SVImageClass::SafeImageCopyToHandle( SVSmartHandlePointer &p_rHandle )
 {
-	BOOL l_bOk = !p_rHandle.empty();
+	bool l_bOk = !p_rHandle.empty();
 
 	if ( l_bOk )
 	{
@@ -1394,9 +1392,9 @@ BOOL SVImageClass::SafeImageCopyToHandle( SVSmartHandlePointer &p_rHandle )
 	return l_bOk;
 }
 
-BOOL SVImageClass::SafeImageCopyToHandle( SVImageIndexStruct p_svFromIndex, SVSmartHandlePointer& p_rHandle )
+bool SVImageClass::SafeImageCopyToHandle( SVImageIndexStruct p_svFromIndex, SVSmartHandlePointer& p_rHandle )
 {
-	BOOL l_bOk = !p_rHandle.empty();
+	bool l_bOk = !p_rHandle.empty();
 	
 	if ( l_bOk )
 	{
@@ -1424,76 +1422,6 @@ BOOL SVImageClass::SafeImageCopyToHandle( SVImageIndexStruct p_svFromIndex, SVSm
 			}
 
 			l_bOk = Unlock() && l_bOk && S_OK == l_Code;
-		}
-	}
-	return l_bOk;
-}
-
-BOOL SVImageClass::SafeImageConvertToHandle( SVSmartHandlePointer &p_rHandle, SVImageOperationTypeEnum p_eConversionType )
-{
-	BOOL l_bOk = !p_rHandle.empty();
-	
-	if ( l_bOk )
-	{
-		if ( Lock() )
-		{
-			SVImageBufferHandleImage l_ToMilHandle;
-			p_rHandle->GetData( l_ToMilHandle );
-						
-			HRESULT l_Code;
-
-			SVSmartHandlePointer l_svHandle;
-
-			l_bOk = GetImageHandle( l_svHandle ) && !( l_svHandle.empty() );
-
-			if ( l_bOk )
-			{
-				SVImageBufferHandleImage l_FromMilHandle;
-				l_svHandle->GetData( l_FromMilHandle );
-
-				l_Code = SVMatroxImageInterface::Convert( l_ToMilHandle.GetBuffer(), l_FromMilHandle.GetBuffer(), p_eConversionType );
-			}
-			else
-			{
-				l_Code = SVMatroxBufferInterface::ClearBuffer( l_ToMilHandle.GetBuffer(), 0.0 );
-			}
-
-			l_bOk = Unlock() && l_bOk && S_OK == l_Code;
-		}
-	}
-	return l_bOk;
-}
-
-BOOL SVImageClass::SafeImageConvertToHandle( SVImageIndexStruct p_svFromIndex, SVSmartHandlePointer& p_rHandle, SVImageOperationTypeEnum p_eConversionType )
-{
-	BOOL l_bOk = !p_rHandle.empty();
-	
-	if ( l_bOk )
-	{
-		if ( Lock() )
-		{
-			SVImageBufferHandleImage l_ToMilHandle;
-			p_rHandle->GetData( l_ToMilHandle );
-			
-			HRESULT l_Code;
-
-			SVSmartHandlePointer l_svHandle;
-
-			l_bOk = GetImageHandle( p_svFromIndex, l_svHandle ) && !( l_svHandle.empty() );
-
-			if ( l_bOk )
-			{
-				SVImageBufferHandleImage l_FromMilHandle;
-				l_svHandle->GetData( l_FromMilHandle );
-
-				l_Code = SVMatroxImageInterface::Convert( l_ToMilHandle.GetBuffer(), l_FromMilHandle.GetBuffer(), p_eConversionType );
-			}
-			else
-			{
-				l_Code = SVMatroxBufferInterface::ClearBuffer( l_ToMilHandle.GetBuffer(), 0.0 );
-			}
-
-			l_bOk = Unlock() && l_bOk;
 		}
 	}
 	return l_bOk;
@@ -1598,25 +1526,18 @@ bool SVImageClass::Lock() const
 
 	try
 	{
-		BOOL bSuccess = TRUE;
 		::EnterCriticalSection( &m_hCriticalSection );
 
-		if ( bSuccess )
-		{
-			l_bOk = true;
+		l_bOk = true;
 #ifdef _DEBUG
-			DWORD dwThreadId = ::GetCurrentThreadId();
-			f_mapCritSec[dwThreadId]++;
-			//! Double casting required to avoid warnings from 64 to 32 bit conversion
-			if ( dwThreadId == static_cast<DWORD> (reinterpret_cast<LONGLONG> (m_hCriticalSection.OwningThread)) )
-			{
-				long lRecursionCount = f_mapCritSec[dwThreadId];
-			}
-#endif
-		}
-		else
+		DWORD dwThreadId = ::GetCurrentThreadId();
+		f_mapCritSec[dwThreadId]++;
+		//! Double casting required to avoid warnings from 64 to 32 bit conversion
+		if (dwThreadId == static_cast<DWORD> (reinterpret_cast<LONGLONG> (m_hCriticalSection.OwningThread)))
 		{
+			long lRecursionCount = f_mapCritSec[dwThreadId];
 		}
+#endif
 	}
 	catch ( ... )
 	{
@@ -1779,7 +1700,7 @@ HRESULT SVImageClass::GetObjectValue( const SVString& rValueName, _variant_t& rV
 HRESULT SVImageClass::SetObjectValue( SVObjectAttributeClass* PDataObject )
 {
 	HRESULT hr = S_FALSE;
-	BOOL bOk = FALSE;
+	bool bOk = false;
 	
 	SvCl::SVObjectDoubleArrayClass svDoubleArray;
 	SvCl::SVObjectLongArrayClass svLongArray;
@@ -2418,7 +2339,7 @@ bool SVImageClass::ValidateImage()
 			}
 		}
 	}
-	return (TRUE == m_isObjectValid);
+	return m_isObjectValid;
 }
 
 HRESULT SVImageClass::GetImageIndex( SVDataManagerHandle& p_rHandle, const SVImageIndexStruct& rIndex ) const

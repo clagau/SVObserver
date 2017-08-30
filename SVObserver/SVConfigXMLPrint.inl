@@ -557,32 +557,31 @@ inline void SVConfigXMLPrint::WriteResultIO(Writer writer) const
 				{
 					// Get list of available outputs
 					long	lIOEntries = 0;
-					if (pPPQ->GetAllOutputs( ppIOEntries ))
-					{
-						lIOEntries = static_cast< long >( ppIOEntries.size() );
-						
-						// Find each digital output
-						for (int k = 0; k < lIOEntries; k++)
-						{
-							if (ppIOEntries[k]->m_ObjectType != IO_DIGITAL_OUTPUT)
-								continue;
-							
-							SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject( ppIOEntries[k]->m_IOId );
+					pPPQ->GetAllOutputs(ppIOEntries);
+					
+					lIOEntries = static_cast<long>(ppIOEntries.size());
 
-							pDigOutput = dynamic_cast< SVDigitalOutputObject* >( l_pObject );
-							
-							if (!pDigOutput)
-								continue;
-							
-							if (i == pDigOutput->GetChannel())
-							{
-								writer->WriteStartElement(nullptr, L"DigitalOutput", nullptr);
-								writer->WriteAttributeString(nullptr, L"Number", nullptr, _itow(i+1, buff, 10));
-								WriteIOEntryObject(writer, ppIOEntries[k]);
-								writer->WriteEndElement();
-								continue;
-							}// end if
-						}
+					// Find each digital output
+					for (int k = 0; k < lIOEntries; k++)
+					{
+						if (ppIOEntries[k]->m_ObjectType != IO_DIGITAL_OUTPUT)
+							continue;
+
+						SVObjectClass* l_pObject = SVObjectManagerClass::Instance().GetObject(ppIOEntries[k]->m_IOId);
+
+						pDigOutput = dynamic_cast<SVDigitalOutputObject*>(l_pObject);
+
+						if (!pDigOutput)
+							continue;
+
+						if (i == pDigOutput->GetChannel())
+						{
+							writer->WriteStartElement(nullptr, L"DigitalOutput", nullptr);
+							writer->WriteAttributeString(nullptr, L"Number", nullptr, _itow(i + 1, buff, 10));
+							WriteIOEntryObject(writer, ppIOEntries[k]);
+							writer->WriteEndElement();
+							continue;
+						}// end if
 					}
 				}
 			}// end for j

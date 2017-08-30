@@ -81,6 +81,6 @@ namespace SvOi
 		virtual bool IsOffsetUpdateForced() = 0;
 
 		/// is the new disable method set?
-		virtual BOOL IsNewDisableMethodSet() = 0;
+		virtual bool IsNewDisableMethodSet() = 0;
 	};
 } //namespace SvOi

@@ -91,9 +91,9 @@ SVShapeMaskHelperClass::~SVShapeMaskHelperClass()
 		delete m_pShape;
 }
 
-BOOL SVShapeMaskHelperClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
+bool SVShapeMaskHelperClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
-	BOOL bOk = SVTaskObjectClass::CreateObject( PCreateStructure );
+	bool bOk = SVTaskObjectClass::CreateObject( pCreateStructure );
 
 	const UINT cAttributes = SvOi::SV_VIEWABLE | SvOi::SV_PUBLISHABLE | SvOi::SV_ARCHIVABLE | SvOi::SV_REMOTELY_SETABLE | SvOi::SV_SETABLE_ONLINE | SvOi::SV_PRINTABLE;
 	m_Data.bvoAutoResize.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::OverwriteAttribute );

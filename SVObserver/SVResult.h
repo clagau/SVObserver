@@ -37,15 +37,11 @@ class SVResultClass : public SVTaskObjectListClass, public ISVCancel
 	SV_DECLARE_CLASS( SVResultClass );
 
 public:
-	SVResultClass ( 
-		BOOL BCreateDefaultTaskList = FALSE, 
-		SVObjectClass* POwner = nullptr, 
-		int StringResourceID = IDS_CLASSNAME_SVRESULT 
-	);
+	SVResultClass ( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVRESULT );
 
 	virtual ~SVResultClass();
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
+	virtual bool CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	// ISVCancel interface
@@ -53,9 +49,9 @@ public:
 	virtual HRESULT GetCancelData(SVCancelData*& rpData) override;
 	virtual HRESULT SetCancelData(SVCancelData* pData) override;
 
-	BOOL IsFailed();
-	BOOL IsWarned();
-	BOOL IsGood();
+	bool IsFailed();
+	bool IsWarned();
+	bool IsGood();
 
 	// derived class overrides...
 
@@ -90,29 +86,4 @@ protected:
 	SVBoolValueObjectClass	m_Warned;
 	// Failed, if TRUE ( Reset Value: TRUE )
 	SVBoolValueObjectClass	m_Failed;
-};
-
-class SVAnalyzeFeatureClass : public SVTaskObjectClass
-{
-	SV_DECLARE_CLASS( SVAnalyzeFeatureClass );
-
-public:
-	SVAnalyzeFeatureClass( LPCSTR ObjectName = "Unknown Analyze Feature" );
-	virtual ~SVAnalyzeFeatureClass();
-
-	BOOL Create( LPCSTR ObjectName, long F );
-
-	BOOL IsFailed() const;
-	BOOL IsWarned() const;
-
-	long getFeature() const;
-
-protected:
-	long feature;
-	double* resultArray;
-	SVRangeClass* featureResultRange;
-	int resultArraySize;
-	BOOL failed;
-	BOOL warned;
-	char* resultString;
 };

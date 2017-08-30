@@ -104,11 +104,11 @@ SVLinearEdgeProcessingClass::~SVLinearEdgeProcessingClass()
 {
 }
 
-BOOL SVLinearEdgeProcessingClass::CreateObject( SVObjectLevelCreateStruct *PCreateStructure )
+bool SVLinearEdgeProcessingClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
   SVImageInfoClass ImageInfo;
 
-	BOOL bOk = SVTaskObjectClass::CreateObject( PCreateStructure );
+	bool bOk = SVTaskObjectClass::CreateObject( pCreateStructure );
 
 	bOk = bOk && S_OK == GetPixelDepth();
 

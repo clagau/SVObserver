@@ -48,7 +48,7 @@ public:
 #pragma endregion Constructor
 
 #pragma region Public Methods
-	BOOL GetImageInfo( SVImageInfoClass *pImageInfo );
+	bool GetImageInfo( SVImageInfoClass *pImageInfo );
 
 	virtual long GetImageDepth() const override;
 
@@ -60,16 +60,16 @@ public:
 	//************************************
 	virtual HRESULT RefreshObject( const SVObjectClass* const pSender, RefreshObjectType Type ) override;
 
-	BOOL Create( LPCTSTR p_szDeviceName );
-	BOOL Destroy();
+	bool Create( LPCTSTR p_szDeviceName );
+	bool Destroy();
 
 	// Runtime Functions
-	BOOL CanGoOnline() const;
-	BOOL GoOnline();
-	BOOL GoOffline();
+	bool CanGoOnline() const;
+	bool GoOnline();
+	bool GoOffline();
 
-	BOOL RegisterFinishProcess( void *pOwner, LPSVFINISHPROC pFunc );
-	BOOL UnregisterFinishProcess( void *pOwner, LPSVFINISHPROC pFunc );
+	bool RegisterFinishProcess( void *pOwner, LPSVFINISHPROC pFunc );
+	bool UnregisterFinishProcess( void *pOwner, LPSVFINISHPROC pFunc );
 
     SVAcquisitionClassPtr GetAcquisitionDevice() const { return mpsvDevice; }
 	
@@ -145,7 +145,7 @@ protected:
 
 private:
 #pragma region Private Methods
-	BOOL DestroyLocal();
+	bool DestroyLocal();
 #pragma endregion Private Methods
 
 #pragma region Member Variables

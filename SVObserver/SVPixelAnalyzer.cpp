@@ -33,8 +33,8 @@ SVPixelAnalyzerClass::SVPixelAnalyzerClass( LPCSTR ObjectName )
 	init();
 }
 
-SVPixelAnalyzerClass::SVPixelAnalyzerClass(BOOL BCreateDefaultTaskList, SVObjectClass* POwner, int StringResourceID )
-: SVImageAnalyzerClass( BCreateDefaultTaskList, POwner, StringResourceID ) 
+SVPixelAnalyzerClass::SVPixelAnalyzerClass(SVObjectClass* POwner, int StringResourceID )
+: SVImageAnalyzerClass( POwner, StringResourceID ) 
 {
 	init();
 }
@@ -60,7 +60,7 @@ void SVPixelAnalyzerClass::init()
 	addDefaultInputObjects();
 
 	// Instantiate Children
-	SVLongResultClass *pAnalyzerResult = new SVLongResultClass (true, this, IDS_CLASSNAME_SVPIXELANALYZERESULT);
+	SVLongResultClass *pAnalyzerResult = new SVLongResultClass (this, IDS_CLASSNAME_SVPIXELANALYZERESULT);
 
 	if (!pAnalyzerResult)
 	{
@@ -81,7 +81,7 @@ SVPixelAnalyzerClass::~SVPixelAnalyzerClass()
 	CloseObject();
 }
 
-BOOL SVPixelAnalyzerClass::CloseObject()
+bool SVPixelAnalyzerClass::CloseObject()
 {
     m_alHistValues.clear();
 
@@ -93,14 +93,14 @@ BOOL SVPixelAnalyzerClass::CloseObject()
 	return SVImageAnalyzerClass::CloseObject();
 }
 
-BOOL SVPixelAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
+bool SVPixelAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
     SVImageClass *pSVImage(nullptr);
 	DWORD LastError(0);
     	
     while (1)
     {
-        if (! SVImageAnalyzerClass::CreateObject( PCreateStructure ) )
+        if (! SVImageAnalyzerClass::CreateObject( pCreateStructure ) )
         {
 			
 			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );

@@ -29,11 +29,8 @@ static char THIS_FILE[] = __FILE__;
 SV_IMPLEMENT_CLASS( SVOCVAnalyzerClass, SVOCVAnalyzerClassGuid );
 
 /////////////////////////////////////////////////////////////////////////////
-SVOCVAnalyzerClass::SVOCVAnalyzerClass( 
-	BOOL BCreateDefaultTaskList, 
-	SVObjectClass* POwner, 
-	int StringResourceID )
-		:SVImageAnalyzerClass( BCreateDefaultTaskList, POwner, StringResourceID ) 
+SVOCVAnalyzerClass::SVOCVAnalyzerClass( SVObjectClass* POwner, int StringResourceID )
+		:SVImageAnalyzerClass( POwner, StringResourceID ) 
 {
 	init();
 
@@ -80,9 +77,9 @@ SVOCVAnalyzerClass::~SVOCVAnalyzerClass()
 
 
 ////////////////////////////////////////////////////////////////////////////////
-BOOL SVOCVAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
+bool SVOCVAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
-	m_isCreated = SVImageAnalyzerClass::CreateObject( PCreateStructure );
+	m_isCreated = SVImageAnalyzerClass::CreateObject( pCreateStructure );
 	
 	if ( m_bHasLicenseError )
 	{

@@ -26,8 +26,8 @@ static char THIS_FILE[] = __FILE__;
 SV_IMPLEMENT_CLASS( SVLinearImageOperatorListClass, SVLinearImageOperatorListClassGuid )
 
 
-SVLinearImageOperatorListClass::SVLinearImageOperatorListClass( BOOL BCreateDefaultTaskList, SVObjectClass* POwner, int StringResourceID )
-							    :SVStdImageOperatorListClass( BCreateDefaultTaskList, POwner, StringResourceID ) 
+SVLinearImageOperatorListClass::SVLinearImageOperatorListClass( SVObjectClass* POwner, int StringResourceID )
+							    :SVStdImageOperatorListClass( POwner, StringResourceID ) 
 {
 	init();
 }
@@ -38,9 +38,9 @@ SVLinearImageOperatorListClass::~SVLinearImageOperatorListClass()
 
 }
 
-BOOL SVLinearImageOperatorListClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
+bool SVLinearImageOperatorListClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
-	BOOL l_bOk = SVStdImageOperatorListClass::CreateObject( PCreateStructure );
+	bool l_bOk = SVStdImageOperatorListClass::CreateObject( pCreateStructure );
 
 	SVDataBufferInfoClass& rBufferInfo = m_svProfileResultData.GetDataBufferInfo();
 	rBufferInfo.Type = SVDataBufferInfoClass::SVProjectResult;
@@ -66,9 +66,9 @@ BOOL SVLinearImageOperatorListClass::CreateObject( SVObjectLevelCreateStruct* PC
 	return l_bOk;
 }
 
-BOOL SVLinearImageOperatorListClass::CloseObject()
+bool SVLinearImageOperatorListClass::CloseObject()
 {
-	BOOL l_bOk = m_svProfileResultData.CloseObject();
+	bool l_bOk = m_svProfileResultData.CloseObject();
 
 	l_bOk &= SVStdImageOperatorListClass::CloseObject();
 

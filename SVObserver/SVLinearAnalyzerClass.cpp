@@ -30,8 +30,8 @@ static char THIS_FILE[]=__FILE__;
 SV_IMPLEMENT_CLASS( SVLinearAnalyzerClass, SVLinearAnalyzerClassGuid );
 
 
-SVLinearAnalyzerClass::SVLinearAnalyzerClass( BOOL BCreateDefaultTaskList, SVObjectClass* POwner, int StringResourceID )
-					            :SVAnalyzerClass( BCreateDefaultTaskList, POwner, StringResourceID )
+SVLinearAnalyzerClass::SVLinearAnalyzerClass( SVObjectClass* POwner, int StringResourceID )
+					            :SVAnalyzerClass( POwner, StringResourceID )
 {
 	// Identify yourself
 	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVAnalyzerObjectType;
@@ -69,26 +69,26 @@ SVLinearAnalyzerClass::~SVLinearAnalyzerClass()
 {
 }
 
-BOOL SVLinearAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
+bool SVLinearAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
-  SVImageInfoClass ImageInfo;
+	SVImageInfoClass ImageInfo;
 
-	BOOL bOk = SVAnalyzerClass::CreateObject( PCreateStructure );
+	bool bOk = SVAnalyzerClass::CreateObject(pCreateStructure);
 
 	bOk = bOk && S_OK == GetPixelDepth();
 
-  if ( bOk )
-  {
+	if (bOk)
+	{
 		// Set range...
-		m_dwMinThreshold = static_cast<unsigned long>(SVGetDataTypeMin( m_lPixelDepth ));	
-		m_dwMaxThreshold = static_cast<unsigned long>(SVGetDataTypeMax( m_lPixelDepth ));	
-		m_dwColorNumber = static_cast<unsigned long>(SVGetDataTypeRange( m_lPixelDepth ));
+		m_dwMinThreshold = static_cast<unsigned long>(SVGetDataTypeMin(m_lPixelDepth));
+		m_dwMaxThreshold = static_cast<unsigned long>(SVGetDataTypeMax(m_lPixelDepth));
+		m_dwColorNumber = static_cast<unsigned long>(SVGetDataTypeRange(m_lPixelDepth));
 
-		m_svNormalizer.SetNormalRange( m_dwMinThreshold, m_dwMaxThreshold );
-		m_svNormalizer.SetRealRange( m_dwMinThreshold, m_dwMaxThreshold );
+		m_svNormalizer.SetNormalRange(m_dwMinThreshold, m_dwMaxThreshold);
+		m_svNormalizer.SetRealRange(m_dwMinThreshold, m_dwMaxThreshold);
 
-		m_svShowAllEdgeAOverlays.SetObjectAttributesAllowed( SvOi::SV_SETABLE_ONLINE | SvOi::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
-		m_svShowAllEdgeBOverlays.SetObjectAttributesAllowed( SvOi::SV_SETABLE_ONLINE | SvOi::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
+		m_svShowAllEdgeAOverlays.SetObjectAttributesAllowed(SvOi::SV_SETABLE_ONLINE | SvOi::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute);
+		m_svShowAllEdgeBOverlays.SetObjectAttributesAllowed(SvOi::SV_SETABLE_ONLINE | SvOi::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute);
 	}
 
 	return bOk;

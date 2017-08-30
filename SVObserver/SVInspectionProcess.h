@@ -84,18 +84,18 @@ public:
 	virtual ~SVInspectionProcess();
 
 	virtual bool resetAllObjects( SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
-	virtual BOOL GetChildObjectByName( LPCTSTR tszName, SVObjectClass** ppObject ) override;
+	virtual bool GetChildObjectByName( LPCTSTR tszName, SVObjectClass** ppObject ) override;
 
 	virtual HRESULT GetChildObject( SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index = 0 ) const override;
 	
-	virtual BOOL SetObjectDepth( int NewObjectDepth ) override;
-	virtual BOOL SetObjectDepthWithIndex( int NewObjectDepth, int NewLastSetIndex ) override;
-	virtual BOOL SetImageDepth( long lDepth ) override;
+	virtual void SetObjectDepth( int NewObjectDepth ) override;
+	virtual void SetObjectDepthWithIndex( int NewObjectDepth, int NewLastSetIndex ) override;
+	virtual bool SetImageDepth( long lDepth ) override;
 
 	virtual void ResetName() override;
 	virtual void SetName( LPCTSTR StrString ) override;
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStruct ) override;
+	virtual bool CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	virtual HRESULT RegisterSubObject( SVObjectClass* pObject ) override;
@@ -133,20 +133,20 @@ public:
 	void AddResetState( unsigned long p_State );
 	void RemoveResetState( unsigned long p_State );
 
-	BOOL CreateInspection( LPCTSTR szDocName );
+	bool CreateInspection( LPCTSTR szDocName );
 
 	// Runtime Functions
-	BOOL CanGoOnline();
-	BOOL CanRegressionGoOnline();
-	BOOL GoOnline();
-	BOOL GoOffline();
+	bool CanGoOnline();
+	bool CanRegressionGoOnline();
+	bool GoOnline();
+	bool GoOffline();
 
-	BOOL CanProcess( SVProductInfoStruct *pProduct );
+	bool CanProcess( SVProductInfoStruct *pProduct );
 	HRESULT StartProcess( SVProductInfoStruct *pProduct );
 
-	BOOL RebuildInspectionInputList();
+	bool RebuildInspectionInputList();
 	
-	BOOL RemoveCamera( const SVString& rCameraName );
+	void RemoveCamera( const SVString& rCameraName );
 	
 	bool AddInputRequest( const SVObjectReference& rObjectRef, const _variant_t& rValue );
 
@@ -161,12 +161,12 @@ public:
 	//************************************
 	bool CheckAndResetConditionalHistory();
 
-	BOOL DisconnectToolSetMainImage();
-	BOOL ConnectToolSetMainImage();
+	void DisconnectToolSetMainImage();
+	void ConnectToolSetMainImage();
 
 	/// is the new disable method set?
-	BOOL IsNewDisableMethodSet() override;
-	void SetNewDisableMethod( BOOL bNewDisableMethod ); 
+	bool IsNewDisableMethodSet() override;
+	void SetNewDisableMethod( bool bNewDisableMethod ); 
 
 	virtual long GetEnableAuxiliaryExtent() const override;
 	virtual void SetEnableAuxiliaryExtent( long p_lEnableAuxiliaryExtents ) override;
@@ -363,10 +363,10 @@ protected:
 
 	virtual SVObjectClass* UpdateObject( const GUID &friendGuid, SVObjectClass *p_psvObject, SVObjectClass *p_psvNewOwner ) override;
 
-	BOOL RunOnce( SVToolClass* p_psvTool = nullptr );
-	BOOL RunInspection( long lResultDataIndex, SVImageIndexStruct svResultImageIndex, SVProductInfoStruct *pProduct, bool p_UpdateCounts = true );
+	bool RunOnce( SVToolClass* p_psvTool = nullptr );
+	bool RunInspection( long lResultDataIndex, SVImageIndexStruct svResultImageIndex, SVProductInfoStruct *pProduct, bool p_UpdateCounts = true );
 
-	BOOL DestroyInspection();
+	void DestroyInspection();
 
 	HRESULT InitializeRunOnce();
 
@@ -378,11 +378,9 @@ protected:
 
 	bool AddInputRequest( SVInputRequestInfoStructPtr p_pInRequest );
 
-	BOOL RemoveAllInputRequests();
-
-	BOOL ProcessInputRequests( bool &rForceOffsetUpdate );
-	BOOL ProcessInputRequests( SvOi::SVResetItemEnum& rResetItem, SVStdMapSVToolClassPtrSVInspectionProcessResetStruct &rToolMap );
-	BOOL ProcessInputImageRequests( SVProductInfoStruct *p_psvProduct );
+	bool ProcessInputRequests( bool &rForceOffsetUpdate );
+	bool ProcessInputRequests( SvOi::SVResetItemEnum& rResetItem, SVStdMapSVToolClassPtrSVInspectionProcessResetStruct &rToolMap );
+	bool ProcessInputImageRequests( SVProductInfoStruct *p_psvProduct );
 
 	HRESULT ReserveNextResultImage( SVProductInfoStruct *p_pProduct, SVDataManagerLockTypeEnum p_eLockType, bool p_ClearOtherInspections = false );
 
@@ -466,7 +464,7 @@ private:
 	bool m_LastRunProductNULL;
 	SVProductInfoStruct m_svLastRunProduct;
 
-	BOOL                m_bNewDisableMethod;
+	bool                m_bNewDisableMethod;
 	long                m_lEnableAuxiliaryExtents;
 
 	DWORD               m_dwThreadId;

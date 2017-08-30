@@ -26,7 +26,7 @@ public:
 	SVImagePolarTransformClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVIMAGEPOLARTRANSFORM );
 	virtual ~SVImagePolarTransformClass();
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
+	virtual bool CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
 
 	virtual HRESULT IsInputImage( SVImageClass *p_psvImage ) override;
 

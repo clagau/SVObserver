@@ -32,8 +32,8 @@ SV_IMPLEMENT_CLASS( SVLinearToolClass, SVLinearToolClassGuid );
 #pragma endregion Declarations
 
 #pragma region Constructor
-SVLinearToolClass::SVLinearToolClass( BOOL BCreateDefaultTaskList, SVObjectClass* POwner, int StringResourceID )
-: SVToolClass( BCreateDefaultTaskList, POwner, StringResourceID )
+SVLinearToolClass::SVLinearToolClass( SVObjectClass* POwner, int StringResourceID )
+: SVToolClass( POwner, StringResourceID )
 {
 	init();
 }
@@ -45,11 +45,9 @@ SVLinearToolClass::~SVLinearToolClass()
 #pragma endregion Constructor
 
 #pragma region Public Methods
-BOOL SVLinearToolClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
+bool SVLinearToolClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
-	BOOL bOk = FALSE;
-
-	bOk = SVToolClass::CreateObject( PCreateStructure );
+	bool bOk = SVToolClass::CreateObject( pCreateStructure );
 
 	BOOL l_bValue = FALSE;
 
@@ -87,13 +85,6 @@ BOOL SVLinearToolClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructur
 	m_isCreated = bOk;
 
 	return bOk;
-}
-
-BOOL SVLinearToolClass::CloseObject()
-{
-	BOOL bRetVal =  SVToolClass::CloseObject();
-
-	return bRetVal;
 }
 
 bool SVLinearToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)

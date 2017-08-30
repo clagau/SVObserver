@@ -27,8 +27,8 @@ static char THIS_FILE[] = __FILE__;
 
 SV_IMPLEMENT_CLASS( SVStdImageOperatorListClass, SVStdImageOperatorListClassGuid )
 
-SVStdImageOperatorListClass::SVStdImageOperatorListClass( BOOL BCreateDefaultTaskList, SVObjectClass* POwner, int StringResourceID )
-							:SVUnaryImageOperatorListClass( BCreateDefaultTaskList, POwner, StringResourceID ) 
+SVStdImageOperatorListClass::SVStdImageOperatorListClass( SVObjectClass* POwner, int StringResourceID )
+							:SVUnaryImageOperatorListClass( POwner, StringResourceID ) 
 {
 	init();
 }
@@ -58,23 +58,19 @@ SVStdImageOperatorListClass::~SVStdImageOperatorListClass()
 	CloseObject();
 }
 
-BOOL SVStdImageOperatorListClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
+bool SVStdImageOperatorListClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
-	BOOL bOk = __super::CreateObject( PCreateStructure );
-
 	// Image input must already exist, and must be created!!!
-	
+
 	// Embedded Image output must already exist!!!
-	bOk &= ( S_OK == outputImageObject.InitializeImage( getInputImage() ) );
+	m_isCreated = __super::CreateObject( pCreateStructure ) && ( S_OK == outputImageObject.InitializeImage( getInputImage() ) );
 
-	m_isCreated = bOk;
-
-	return bOk;
+	return m_isCreated;
 }
 
-BOOL SVStdImageOperatorListClass::CloseObject()
+bool SVStdImageOperatorListClass::CloseObject()
 {
-	BOOL bRetVal = true;
+	bool bRetVal = true;
 	
 	if( getOutputImage() )
 	{

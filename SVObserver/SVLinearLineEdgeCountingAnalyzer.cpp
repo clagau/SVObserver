@@ -21,8 +21,8 @@
 
 SV_IMPLEMENT_CLASS( SVLinearEdgeCountingLineAnalyzerClass, SVLinearEdgeCountingLineAnalyzerClassGuid );
 
-SVLinearEdgeCountingLineAnalyzerClass::SVLinearEdgeCountingLineAnalyzerClass( BOOL BCreateDefaultTaskList, SVObjectClass* POwner, int StringResourceID )
-								:SVLinearAnalyzerClass( BCreateDefaultTaskList, POwner, StringResourceID ) 
+SVLinearEdgeCountingLineAnalyzerClass::SVLinearEdgeCountingLineAnalyzerClass( SVObjectClass* POwner, int StringResourceID )
+								:SVLinearAnalyzerClass( POwner, StringResourceID ) 
 {
 	m_bEnableDirection = FALSE;
 	m_bEnableEdgeSelect = FALSE;
@@ -77,9 +77,9 @@ SVLinearEdgeCountingLineAnalyzerClass::~SVLinearEdgeCountingLineAnalyzerClass()
 	CloseObject();
 }
 
-BOOL SVLinearEdgeCountingLineAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
+bool SVLinearEdgeCountingLineAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
-	BOOL bOk = SVLinearAnalyzerClass::CreateObject( PCreateStructure );
+	bool bOk = SVLinearAnalyzerClass::CreateObject( pCreateStructure );
 
 	// Set / Reset Printable Flag
 	m_svEdgeCount.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
@@ -87,11 +87,6 @@ BOOL SVLinearEdgeCountingLineAnalyzerClass::CreateObject( SVObjectLevelCreateStr
 	m_isCreated = bOk;
 
 	return bOk;
-}
-
-BOOL SVLinearEdgeCountingLineAnalyzerClass::CloseObject()
-{
-	return SVLinearAnalyzerClass::CloseObject();
 }
 
 bool SVLinearEdgeCountingLineAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)

@@ -988,7 +988,7 @@ void SVIPDoc::OnAdjustLut()
 
 void SVIPDoc::OnAddShiftTool()
 {
-	SVToolClass* pTool = new SVShiftTool( TRUE );
+	SVToolClass* pTool = new SVShiftTool( );
 
 	if( AddTool( pTool ) ) { return; }
 
@@ -997,7 +997,7 @@ void SVIPDoc::OnAddShiftTool()
 
 void SVIPDoc::OnAddWindowTool()
 {
-	SVToolClass* pTool = new SVWindowToolClass( TRUE );
+	SVToolClass* pTool = new SVWindowToolClass( );
 
 	if( AddTool( pTool ) ) { return; }
 
@@ -1006,7 +1006,7 @@ void SVIPDoc::OnAddWindowTool()
 
 void SVIPDoc::OnAddCylindricalWarpTool()
 {
-	SVToolClass* pTool = new SVCylindricalWarpToolClass( TRUE );
+	SVToolClass* pTool = new SVCylindricalWarpToolClass( );
 
 	if( AddTool( pTool ) ) { return; }
 
@@ -1015,7 +1015,7 @@ void SVIPDoc::OnAddCylindricalWarpTool()
 
 void SVIPDoc::OnAddPerspectiveTool()
 {
-	SVToolClass* pTool = new SVPerspectiveToolClass( TRUE );
+	SVToolClass* pTool = new SVPerspectiveToolClass( );
 
 	if( AddTool( pTool ) ) { return; }
 
@@ -1024,7 +1024,7 @@ void SVIPDoc::OnAddPerspectiveTool()
 
 void SVIPDoc::OnAddImageTool()
 {
-	SVToolClass* pTool = new SVImageToolClass( TRUE );
+	SVToolClass* pTool = new SVImageToolClass( );
 
 	if( AddTool( pTool ) ) { return; }
 
@@ -1033,7 +1033,7 @@ void SVIPDoc::OnAddImageTool()
 
 void SVIPDoc::OnAddAcquisitionTool()
 {
-	SVToolClass* pTool = new SVAcquisitionToolClass( TRUE );
+	SVToolClass* pTool = new SVAcquisitionToolClass( );
 
 	if( AddTool( pTool ) ) { return; }
 
@@ -1051,7 +1051,7 @@ void SVIPDoc::OnAddArchiveTool()
 
 void SVIPDoc::OnAddLinearTool()
 {
-	SVToolClass* pTool = new SVLinearToolClass( TRUE );
+	SVToolClass* pTool = new SVLinearToolClass( );
 
 	if( AddTool( pTool ) ) { return; }
 
@@ -1060,7 +1060,7 @@ void SVIPDoc::OnAddLinearTool()
 
 void SVIPDoc::OnAddLoadImageTool()
 {
-	SVToolClass* pTool = new SVLoadImageToolClass( TRUE );
+	SVToolClass* pTool = new SVLoadImageToolClass( );
 
 	if( AddTool( pTool ) ) { return; }
 
@@ -1078,7 +1078,7 @@ void SVIPDoc::OnAddMathTool()
 
 void SVIPDoc::OnAddStatisticsTool()
 {
-	SVToolClass* pTool = new SVStatisticsToolClass( TRUE );
+	SVToolClass* pTool = new SVStatisticsToolClass( );
 
 	if( AddTool( pTool ) ) { return; }
 
@@ -1105,7 +1105,7 @@ void SVIPDoc::OnAddRemoteInputTool()
 
 void SVIPDoc::OnAddResizetool()
 {
-	SVToolClass* pTool = new ResizeTool ( TRUE );
+	SVToolClass* pTool = new ResizeTool ( );
 
 	if( AddTool( pTool ) ) { return; }
 
@@ -1156,7 +1156,7 @@ void SVIPDoc::OnAddPolarUnwrapTool()
 
 void SVIPDoc::OnAddColorTool()
 {
-	SVToolClass* pTool = new SVColorToolClass( TRUE );
+	SVToolClass* pTool = new SVColorToolClass( );
 
 	if( AddTool( pTool ) ) { return; }
 
@@ -1478,31 +1478,25 @@ void SVIPDoc::OpenToolAdjustmentDialog(int tab)
 		{
 			const SVObjectTypeInfoStruct& rToolType = l_pTool->GetObjectInfo().m_ObjectTypeInfo;
 
-			// Check if can Edit this Tool
-			// Primarily for the Build Reference Tool
-			// to check if anyone is using the output image
-			if( l_pTool->IsOkToEdit() )
+			SVSVIMStateClass::AddState( SV_STATE_EDITING );
+			SVToolAdjustmentDialogSheetClass toolAdjustmentDialog(this, GetInspectionID(), GetSelectedToolID(), _T("Tool Adjustment"), nullptr, tab);
+			INT_PTR dlgResult = toolAdjustmentDialog.DoModal();
+			if (IDOK == dlgResult)
 			{
-				SVSVIMStateClass::AddState( SV_STATE_EDITING );
-				SVToolAdjustmentDialogSheetClass toolAdjustmentDialog( this, GetInspectionID(), GetSelectedToolID(), _T("Tool Adjustment"), nullptr, tab );
-				INT_PTR dlgResult = toolAdjustmentDialog.DoModal();
-				if ( IDOK == dlgResult )
+				ExtrasEngine::Instance().ExecuteAutoSaveIfAppropriate(false);//Arvid: after tool was edited: update the autosave timestamp
+				SVConfigurationObject* pConfig = nullptr;
+				SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
+				if (nullptr != pConfig)
 				{
-					ExtrasEngine::Instance().ExecuteAutoSaveIfAppropriate(false);//Arvid: after tool was edited: update the autosave timestamp
-					SVConfigurationObject* pConfig = nullptr;
-					SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
-					if( nullptr != pConfig)
-					{
-						pConfig->ValidateRemoteMonitorList();
-						TheSVObserverApp.GetIODoc()->UpdateAllViews( nullptr );
-					}
+					pConfig->ValidateRemoteMonitorList();
+					TheSVObserverApp.GetIODoc()->UpdateAllViews(nullptr);
 				}
-				else
-				{
-					l_pTool->ResetObject();
-				}
-				SVSVIMStateClass::RemoveState( SV_STATE_EDITING );
 			}
+			else
+			{
+				l_pTool->ResetObject();
+			}
+			SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
 		}
 		UpdateAllViews( nullptr, RefreshView );
 	}
@@ -2780,7 +2774,7 @@ HRESULT SVIPDoc::IsToolSetListUpdated() const
 
 void SVIPDoc::OnAddExternalTool()
 {
-	SVToolClass* pTool = new SVExternalTool( TRUE );
+	SVToolClass* pTool = new SVExternalTool( );
 
 	if( AddTool( pTool ) ) { return; }
 

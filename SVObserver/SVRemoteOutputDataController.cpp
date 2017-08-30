@@ -596,7 +596,7 @@ void SVRemoteOutputDataController::SetupRemoteOutputGroup(SVConfigurationObject*
 				if( l_dlg.m_SetupGroup[j].m_Name == NewItems[i] )
 				{
 					SVPPQObject* pPPQ( nullptr );
-					BOOL l_bTmp = pConfig->GetChildObjectByName(l_dlg.m_SetupGroup[j].m_PPQName.c_str(), &pPPQ );
+					bool l_bTmp = pConfig->GetChildObjectByName(l_dlg.m_SetupGroup[j].m_PPQName.c_str(), &pPPQ );
 					if( l_bTmp )
 					{
 						AddDefaultOutputs(NewItems[i], pPPQ );

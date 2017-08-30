@@ -60,10 +60,10 @@ protected:
 
 #pragma region Public Methods
 public:
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
-	virtual BOOL CloseObject() override;
+	virtual bool CreateObject( SVObjectLevelCreateStruct* pCreateStructure );
+	virtual bool CloseObject() override;
 	virtual bool ResetObject( SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
-	virtual BOOL SetObjectDepthWithIndex( int NewObjectDepth, int NewLastSetIndex ) override;
+	virtual void SetObjectDepthWithIndex( int NewObjectDepth, int NewLastSetIndex ) override;
 	virtual HRESULT SetArraySize(int iSize);
 	virtual HRESULT SetOutputFormat(OutputFormat outputFormat) { return E_NOTIMPL; };
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* pDataObject );

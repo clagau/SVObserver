@@ -20,12 +20,11 @@ class SVLongResultClass : public SVResultClass
 	SV_DECLARE_CLASS( SVLongResultClass );
 
 public:
-	SVLongResultClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_RESULT_LONG );
+	SVLongResultClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_RESULT_LONG );
 	virtual ~SVLongResultClass();
 
 public:
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
-	virtual BOOL CloseObject() override;
+	virtual bool CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
 
 	const GUID & GetInputEmbeddedID() const;
 

@@ -27,9 +27,8 @@ public:
 	bool m_bFailedToRead;
 	virtual bool onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 	SVStringValueObjectClass* getRegExpression();
-	virtual BOOL CloseObject() override;
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
-	SVBarCodeResultClass(BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVBARCODEANALYZERESULT);
+	virtual bool CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
+	SVBarCodeResultClass(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVBARCODEANALYZERESULT);
 	virtual ~SVBarCodeResultClass();
 
 	HRESULT LoadMatchStringFile();

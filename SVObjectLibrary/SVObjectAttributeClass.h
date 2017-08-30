@@ -56,25 +56,24 @@ public:
 	SVObjectScriptDataObjectTypeEnum GetSVObjectScriptDataObjectTypeEnum();
 
 	//These functions return the configuration object attribute data.
-	BOOL GetData(SvCl::SVObjectBoolArrayClass& svData);
-	BOOL GetData(SvCl::SVObjectByteArrayClass& svData);
-	BOOL GetData(SvCl::SVObjectArrayClassTemplate<char>& svData);	// added to allow templates to use this code more easily
-	BOOL GetData(SvCl::SVObjectSVStringArrayClass& svData);	// changed to allow templates to use this code more easily
-	BOOL GetData(SvCl::SVObjectDoubleArrayClass& svData);
-	BOOL GetData(SvCl::SVObjectDWordArrayClass& svData);
-	BOOL GetData(SvCl::SVObjectLongArrayClass& svData);
-	BOOL GetData(SVObjectSVPointArrayClass& svData);
-	BOOL GetData(SVObjectDPointArrayClass& svData);
-	BOOL GetData(SvCl::SVObjectVariantArrayClass& svData);
-	BOOL GetData(SvCl::SVObjectInt64ArrayClass& svData);
+	bool GetData(SvCl::SVObjectBoolArrayClass& svData);
+	bool GetData(SvCl::SVObjectByteArrayClass& svData);
+	bool GetData(SvCl::SVObjectArrayClassTemplate<char>& svData);	// added to allow templates to use this code more easily
+	bool GetData(SvCl::SVObjectSVStringArrayClass& svData);	// changed to allow templates to use this code more easily
+	bool GetData(SvCl::SVObjectDoubleArrayClass& svData);
+	bool GetData(SvCl::SVObjectDWordArrayClass& svData);
+	bool GetData(SvCl::SVObjectLongArrayClass& svData);
+	bool GetData(SVObjectSVPointArrayClass& svData);
+	bool GetData(SVObjectDPointArrayClass& svData);
+	bool GetData(SvCl::SVObjectVariantArrayClass& svData);
+	bool GetData(SvCl::SVObjectInt64ArrayClass& svData);
 
 	// this function handles old-style configs
 	template <typename T>	
-	BOOL GetAttributeData(LPCTSTR szName, std::vector< std::vector<T> >& raaData, T defaultValue)
+	bool GetAttributeData(LPCTSTR szName, std::vector< std::vector<T> >& raaData, T defaultValue)
 	{// VC6 compiler limitation: code must be here (inside the class definition)
-		BOOL bOk = FALSE;
 		SvCl::SVObjectArrayClassTemplate<T> svTempArray;
-		bOk = GetAttributeData( szName, svTempArray );
+		bool bOk = GetAttributeData( szName, svTempArray );
 		if ( bOk )
 		{
 			int iSourceDataSize = svTempArray.GetSize();
@@ -103,11 +102,10 @@ public:
 
 	//// new code to load values into array positions in a single bucket.
 	template <typename T>	
-	BOOL GetArrayData(LPCTSTR szName, std::vector<T>& raData, T defaultValue)
+	bool GetArrayData(LPCTSTR szName, std::vector<T>& raData, T defaultValue)
 	{// VC6 compiler limitation: code must be here (inside the class definition)
-		BOOL bOk = FALSE;
 		SvCl::SVObjectArrayClassTemplate<T> svTempArray;
-		bOk = GetAttributeData( szName, svTempArray );
+		bool bOk = GetAttributeData( szName, svTempArray );
 		if ( bOk )
 		{
 			int iSourceDataSize = svTempArray.GetSize();
@@ -127,9 +125,9 @@ public:
 	}
 
 	template <typename T>
-	BOOL GetAttributeData(LPCTSTR szName, SvCl::SVObjectArrayClassTemplate<T>& svData)
+	bool GetAttributeData(LPCTSTR szName, SvCl::SVObjectArrayClassTemplate<T>& svData)
 	{
-		BOOL bOk = (m_Name == szName );
+		bool bOk = (m_Name == szName );
 
 		if ( bOk )
 		{
@@ -142,26 +140,26 @@ public:
 	//This operator sets the internal name of the 
 	//configuration object attribute.  This operator also 
 	//resets the other internal data.
-	BOOL SetName(LPCTSTR szName);
+	void SetName(LPCTSTR szName);
 
 	//This operator sets the internal type of the 
 	//configuration object attribute.
-	BOOL SetType(int iType);
+	bool SetType(int iType);
 
 	//This operator sets the internal type of the 
 	//configuration object attribute.
-	BOOL SetType(SVObjectScriptDataObjectTypeEnum eType);
+	bool SetType(SVObjectScriptDataObjectTypeEnum eType);
 
-	BOOL AddData(BOOL Value);
-	BOOL AddData(BYTE Value);
-	BOOL AddData(LPCTSTR Value);
-	BOOL AddData(double Value);
-	BOOL AddData(DWORD Value);
-	BOOL AddData(long Value);
-	BOOL AddData(POINT Value);
-	BOOL AddData(SVDPointClass Value);
-	BOOL AddData(VARIANT Value);
-	BOOL AddData(__int64 Value);
+	bool AddData(BOOL Value);
+	bool AddData(BYTE Value);
+	bool AddData(LPCTSTR Value);
+	bool AddData(double Value);
+	bool AddData(DWORD Value);
+	bool AddData(long Value);
+	bool AddData(POINT Value);
+	bool AddData(SVDPointClass Value);
+	bool AddData(VARIANT Value);
+	bool AddData(__int64 Value);
 
 private:
 	//This attribute is responsible for maintaining the 

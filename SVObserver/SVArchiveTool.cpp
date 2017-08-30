@@ -46,10 +46,8 @@ static char THIS_FILE[] = __FILE__;
 
 SV_IMPLEMENT_CLASS(SVArchiveTool, SVArchiveToolClassGuid);
 
-SVArchiveTool::SVArchiveTool( BOOL BCreateDefaultTaskList, 
-                              SVObjectClass* POwner, 
-                              int StringResourceID )
-              : SVToolClass(BCreateDefaultTaskList, POwner, StringResourceID)
+SVArchiveTool::SVArchiveTool( SVObjectClass* POwner, int StringResourceID )
+              : SVToolClass(POwner, StringResourceID)
 {
 	initializeArchiveTool();
 }
@@ -194,17 +192,17 @@ void SVArchiveTool::initializeArchiveTool()
 	m_uiValidateCount = 0;
 }
 
-BOOL SVArchiveTool::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
+bool SVArchiveTool::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
-	BOOL bOk = FALSE;
+	bool bOk = SVToolClass::CreateObject(pCreateStructure);
 
-	if ( SVToolClass::CreateObject( PCreateStructure ) )
+	if ( bOk )
 	{
 		long Method = SVArchiveInvalidMethod;
 		m_evoArchiveMethod.GetValue( Method );
 		m_eArchiveMethod = static_cast<SVArchiveMethodEnum> (Method);
 
-		bOk = TRUE;
+		bOk = true;
 	}
 
 	m_HeaderLabelNames.setStatic( true );
@@ -313,25 +311,25 @@ SVArchiveTool::~SVArchiveTool()
 // Should be overridden and must be called in derived classes...
 // Sets Depth of Array for historical purposes 
 // (i.e. to get images/results N events ago)
-BOOL SVArchiveTool::SetObjectDepth( int NewObjectDepth )
+void SVArchiveTool::SetObjectDepth( int NewObjectDepth )
 {
 	// Set object depth of members here...
 	DWORD dwMaxImages;
 	m_dwArchiveMaxImagesCount.GetValue( dwMaxImages );
 
-	return SVToolClass::SetObjectDepth( NewObjectDepth );
+	SVToolClass::SetObjectDepth( NewObjectDepth );
 }
 
 // Should be overridden and must be called in derived classes...
 // Sets Depth of Array for historical purposes 
 // (i.e. to get images/results N events ago)
-BOOL SVArchiveTool::SetObjectDepthWithIndex( int NewObjectDepth, int NewLastSetIndex )
+void SVArchiveTool::SetObjectDepthWithIndex( int NewObjectDepth, int NewLastSetIndex )
 {
 	// Set object depth of members here...
 	DWORD dwMaxImages;
 	m_dwArchiveMaxImagesCount.GetValue( dwMaxImages );
 
-	return SVToolClass::SetObjectDepthWithIndex( NewObjectDepth, NewLastSetIndex );
+	SVToolClass::SetObjectDepthWithIndex( NewObjectDepth, NewLastSetIndex );
 }
 
 

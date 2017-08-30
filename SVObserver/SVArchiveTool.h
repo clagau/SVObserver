@@ -32,14 +32,10 @@ class SVArchiveRecord;
 class SVArchiveTool : public SVToolClass
 {
 public:
-	SVArchiveTool( 
-		BOOL BCreateDefaultTaskList = FALSE, 
-		SVObjectClass* POwner = nullptr, 
-		int StringResourceID = IDS_CLASSNAME_SVARCHIVETOOL
-	    );
+	SVArchiveTool( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVARCHIVETOOL );
 	virtual ~SVArchiveTool();
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
+	virtual bool CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 	void UpdateTaskObjectOutputList();
 	void RebuildResultsArchiveList();
@@ -54,8 +50,8 @@ public:
 	BOOL SetFileArchive( LPCTSTR lpszName );
 	BOOL SetImageArchivePath( LPCTSTR lpszName );
 
-	virtual BOOL SetObjectDepth( int NewObjectDepth ) override;
-	virtual BOOL SetObjectDepthWithIndex( int NewObjectDepth, int NewLastSetIndex ) override;
+	virtual void SetObjectDepth( int NewObjectDepth ) override;
+	virtual void SetObjectDepthWithIndex( int NewObjectDepth, int NewLastSetIndex ) override;
 
 	static long CalculateImageMemory( SVImageClass* p_pImage );
 	static long CalculateImageMemory( std::vector<SVImageClass*> p_apImages );

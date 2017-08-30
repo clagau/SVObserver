@@ -23,7 +23,7 @@ public:
 	virtual ~SVLowerThresholdEquationClass();
 
 protected:
-	virtual BOOL CreateObject(SVObjectLevelCreateStruct *PCreateStruct) override;
+	virtual bool CreateObject(SVObjectLevelCreateStruct* pCreateStructure) override;
 	void init();
 	virtual bool onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 

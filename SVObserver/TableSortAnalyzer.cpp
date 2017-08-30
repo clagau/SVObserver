@@ -47,9 +47,9 @@ TableSortAnalyzer::~TableSortAnalyzer()
 #pragma endregion Constructor
 
 #pragma region Public Methods
-BOOL TableSortAnalyzer::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+bool TableSortAnalyzer::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
-	BOOL l_bOk = __super::CreateObject( pCreateStructure );
+	bool l_bOk = __super::CreateObject( pCreateStructure );
 
 	m_isASC.SetObjectAttributesAllowed( SvOi::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
 

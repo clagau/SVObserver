@@ -45,7 +45,7 @@ public:
 	// Parameter: pCreateStructure <in> The create structure
 	// Return: True on success
 	//************************************
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
+	virtual bool CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
 
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 

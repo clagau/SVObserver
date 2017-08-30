@@ -125,7 +125,6 @@ namespace SvStl
 	(Tid_ErrorGettingInputObjectList, _T( "Error getting input object list." ))
 	(Tid_ErrorFillingInputs, _T( "Error filling inputs." ))
 	(Tid_ErrorGettingPPQCount, _T( "Error getting PPQ count." ))
-	(Tid_ErrorGettingOutputs, _T( "Error getting outputs." ))
 	(Tid_Acquisition_SourceInformationFailed, _T("Failed to get acquisition source information!"))
 	(Tid_TooManyVariables, _T("%s\nToo many variables."))
 	(Tid_EquationParserError, _T("%s\nSyntax Error at position %s"))

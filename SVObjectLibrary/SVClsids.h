@@ -191,9 +191,6 @@ extern /*const*/ GUID SVCalcStdDevObjectGuid;
 extern /*const*/ GUID SVPixelColorIndexObjectGuid;
 extern /*const*/ GUID SVPixelCountObjectGuid;
 
-// GUID for the SVAnalyzeFeatureClass
-extern /*const*/ GUID SVAnalyzeFeatureClassGuid;
-
 extern /*const*/ GUID SVBlobEnabledFeaturesObjectGuid;
 extern /*const*/ GUID SVNbrOfBlobsObjectGuid;
 extern /*const*/ GUID SVMaxBlobDataArraySizeObjectGuid;

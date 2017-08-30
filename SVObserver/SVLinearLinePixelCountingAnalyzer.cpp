@@ -21,8 +21,8 @@
 SV_IMPLEMENT_CLASS( SVLinearPixelCountingLineAnalyzerClass, SVLinearPixelCountingLineAnalyzerClassGuid );
 
 
-SVLinearPixelCountingLineAnalyzerClass::SVLinearPixelCountingLineAnalyzerClass( BOOL BCreateDefaultTaskList, SVObjectClass* POwner, int StringResourceID )
-								 :SVLinearAnalyzerClass( BCreateDefaultTaskList, POwner, StringResourceID ) 
+SVLinearPixelCountingLineAnalyzerClass::SVLinearPixelCountingLineAnalyzerClass( SVObjectClass* POwner, int StringResourceID )
+								 :SVLinearAnalyzerClass( POwner, StringResourceID ) 
 {
 	m_bEnableDirection = FALSE;
 	m_bEnableEdgeSelect = FALSE;
@@ -101,9 +101,9 @@ SVLinearPixelCountingLineAnalyzerClass::~SVLinearPixelCountingLineAnalyzerClass(
 }
 
 
-BOOL SVLinearPixelCountingLineAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
+bool SVLinearPixelCountingLineAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
-	BOOL bOk = SVLinearAnalyzerClass::CreateObject( PCreateStructure );
+	bool bOk = SVLinearAnalyzerClass::CreateObject( pCreateStructure );
 
 	// Set / Reset Printable Flag
 	blackPixelCount.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
@@ -112,11 +112,6 @@ BOOL SVLinearPixelCountingLineAnalyzerClass::CreateObject( SVObjectLevelCreateSt
 	m_isCreated = bOk;
 
 	return bOk;
-}
-
-BOOL SVLinearPixelCountingLineAnalyzerClass::CloseObject()
-{
-	return SVLinearAnalyzerClass::CloseObject();
 }
 
 bool SVLinearPixelCountingLineAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )

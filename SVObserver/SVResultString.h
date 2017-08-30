@@ -19,11 +19,10 @@ class SVStringResultClass : public SVResultClass
 	SV_DECLARE_CLASS( SVStringResultClass );
 
 public:
-	SVStringResultClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_RESULT_STRING );
+	SVStringResultClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_RESULT_STRING );
 	virtual ~SVStringResultClass();
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
-	virtual BOOL CloseObject() override;
+	virtual bool CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
 
 protected:
 	SVStringValueObjectClass* getInputString();

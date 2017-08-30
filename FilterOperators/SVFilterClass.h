@@ -30,7 +30,7 @@ public:
 	// Parameter: pCreateStructure <in> The create structure
 	// Return: True on success
 	//************************************
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
+	virtual bool CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
 
 #pragma region virtual methods (IFilter)
 	virtual bool shouldResetInspection() const override { return false; };

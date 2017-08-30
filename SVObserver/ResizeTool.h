@@ -20,14 +20,12 @@ class ResizeTool :	public SVToolClass
 
 #pragma region Public Methods
 public:
-	ResizeTool(BOOL bCreateDefaultTaskList = false, 
-				SVObjectClass* pOwner = nullptr, 
-				int stringResourceID = IDS_OBJECTNAME_RESIZETOOL);
+	ResizeTool(SVObjectClass* pOwner = nullptr, int stringResourceID = IDS_OBJECTNAME_RESIZETOOL);
 
 	virtual ~ResizeTool(void);
 
-	virtual BOOL CloseObject() override;
-	virtual BOOL CreateObject(SVObjectLevelCreateStruct* pCreateStructure) override;
+	virtual bool CloseObject() override;
+	virtual bool CreateObject(SVObjectLevelCreateStruct* pCreateStructure) override;
 
 	virtual HRESULT SetImageExtentToParent() override;
 	virtual HRESULT SetImageExtent( const SVImageExtentClass& rImageExtent ) override;

@@ -25,8 +25,8 @@ SV_IMPLEMENT_CLASS( SVPerspectiveToolClass, SVPerspectiveToolClassGuid )
 static const TCHAR* const PERSPECTIVE_WARP_TYPE_HORIZONTAL = _T("Horizontal Warp");
 static const TCHAR* const PERSPECTIVE_WARP_TYPE_VERTICAL = _T("Vertical Warp");
 
-SVPerspectiveToolClass::SVPerspectiveToolClass( BOOL p_bCreateDefaultTaskList, SVObjectClass *p_pOwner, int p_iStringResourceID )
-	:SVToolClass(p_bCreateDefaultTaskList, p_pOwner, p_iStringResourceID)
+SVPerspectiveToolClass::SVPerspectiveToolClass( SVObjectClass *p_pOwner, int p_iStringResourceID )
+	:SVToolClass(p_pOwner, p_iStringResourceID)
 {
 	LocalInitialize();
 }
@@ -36,9 +36,9 @@ SVPerspectiveToolClass::~SVPerspectiveToolClass()
 	DestroyLUT();
 }
 
-BOOL SVPerspectiveToolClass::CreateObject( SVObjectLevelCreateStruct *p_pCreateStructure )
+bool SVPerspectiveToolClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
-	BOOL l_bOk = SVToolClass::CreateObject( p_pCreateStructure );
+	bool l_bOk = SVToolClass::CreateObject( pCreateStructure );
 
 	l_bOk &= ( S_OK == m_OutputImage.InitializeImage( GetInputImage() ) );
 
@@ -51,7 +51,7 @@ BOOL SVPerspectiveToolClass::CreateObject( SVObjectLevelCreateStruct *p_pCreateS
 	return l_bOk;
 }
 
-BOOL SVPerspectiveToolClass::CloseObject()
+bool SVPerspectiveToolClass::CloseObject()
 {
 	DestroyLUT();
 

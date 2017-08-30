@@ -26,8 +26,8 @@ SV_IMPLEMENT_CLASS( RingBufferTool, RingBufferToolGuid );
 #pragma endregion Declarations
 
 #pragma region Constructor
-RingBufferTool::RingBufferTool( BOOL bCreateDefaultTaskList, SVObjectClass* pOwner, int stringResourceID )
-	:SVToolClass( bCreateDefaultTaskList, pOwner, stringResourceID )
+RingBufferTool::RingBufferTool( SVObjectClass* pOwner, int stringResourceID )
+	:SVToolClass( pOwner, stringResourceID )
 	, m_isBufferFull(false)
 	, m_nextBufferPos(0)
 {
@@ -40,9 +40,9 @@ RingBufferTool::~RingBufferTool(void)
 #pragma endregion Constructor
 
 #pragma region Public Methods
-BOOL RingBufferTool::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
+bool RingBufferTool::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
-	BOOL bOk = SVToolClass::CreateObject( PCreateStructure ); //  TRUE/FALSE
+	bool bOk = SVToolClass::CreateObject( pCreateStructure ); //  TRUE/FALSE
 
 	SVImageClass* inputImage = getInputImage ();
 	bOk &= (nullptr != inputImage);

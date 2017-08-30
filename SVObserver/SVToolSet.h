@@ -33,11 +33,11 @@ class SVToolSetClass : public SVTaskObjectListClass, public SvOi::IToolSet
 public:
 	typedef std::deque< SVGUID > SVToolIdDeque;
 
-	SVToolSetClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVTOOLSET );
+	SVToolSetClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVTOOLSET );
 
 	virtual ~SVToolSetClass();
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
+	virtual bool CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
 	virtual void SetInvalid() override;
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 

@@ -1659,7 +1659,7 @@ void SVConfigurationPrint::PrintCameraSummary(CDC* pDC, CPoint& ptCurPos, int nI
 			SVDeviceParamCollection* pDeviceParams = nullptr;
 			SVAcquisitionClassPtr pAcqDevice = pCamera->GetAcquisitionDevice();
 			ASSERT( !( pAcqDevice.empty() ) );
-			BOOL bOk = pConfig->GetAcquisitionDevice( pAcqDevice->DeviceName().c_str(), pfnac, plrcDummy, plutDummy, pDeviceParams );
+			bool bOk = pConfig->GetAcquisitionDevice( pAcqDevice->DeviceName().c_str(), pfnac, plrcDummy, plutDummy, pDeviceParams );
 			ASSERT( bOk );
 			ASSERT( pfnac );
 			if ( bOk )
@@ -2378,12 +2378,7 @@ void SVConfigurationPrint::PrintResultIO(CDC* pDC, CPoint& ptCurPos, int nIndent
 
 				// Get list of available outputs
 				long lIOEntries = 0;
-				if ( !pPPQ->GetAllOutputs( ppIOEntries ) )
-				{
-					SvStl::MessageMgrStd e( SvStl::LogOnly );
-					e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorGettingOutputs, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17005_ErrorGettingOutputs );
-					DebugBreak();
-				}
+				pPPQ->GetAllOutputs(ppIOEntries);
 
 				lIOEntries = static_cast< long >( ppIOEntries.size() );
 

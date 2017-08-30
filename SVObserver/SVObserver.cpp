@@ -4965,12 +4965,10 @@ HRESULT SVObserverApp::GetTriggersAndCounts( SVString& rTriggerCounts ) const
 			{
 				SvTi::SVTriggerObject* pTrigger( nullptr );
 				//If returns true has valid pointer
-				if( pPPQ->GetTrigger( pTrigger ))
-				{
-					l_hr = S_OK;
-					SVString Temp = SvUl_SF::Format( _T("\n%s count-%d"), pTrigger->GetName(), pTrigger->m_lTriggerCount );
-					rTriggerCounts += Temp;
-				}
+				pPPQ->GetTrigger(pTrigger);
+				l_hr = S_OK;
+				SVString Temp = SvUl_SF::Format(_T("\n%s count-%d"), pTrigger->GetName(), pTrigger->m_lTriggerCount);
+				rTriggerCounts += Temp;
 			}
 		}
 	}

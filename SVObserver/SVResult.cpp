@@ -37,8 +37,8 @@ SV_IMPLEMENT_CLASS( SVResultClass, SVResultClassGuid );
 // .Description : Standard constructor
 ////////////////////////////////////////////////////////////////////////////////
 
-SVResultClass::SVResultClass ( BOOL BCreateDefaultTaskList, SVObjectClass* POwner, int StringResourceID )
-				  :SVTaskObjectListClass( BCreateDefaultTaskList, POwner, StringResourceID )
+SVResultClass::SVResultClass ( SVObjectClass* POwner, int StringResourceID )
+				  :SVTaskObjectListClass( POwner, StringResourceID )
 {
 	init();
 }
@@ -71,14 +71,9 @@ SVResultClass::~SVResultClass()
 {
 }
 
-BOOL SVResultClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
+bool SVResultClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
-	BOOL bOk = false;
-
-	if( SVTaskObjectClass::CreateObject( PCreateStructure ) )
-	{
-		bOk = true;
-	}
+	bool bOk = SVTaskObjectClass::CreateObject(pCreateStructure);
 
 	// Set / Reset Printable Flags
 	m_Failed.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
@@ -95,25 +90,25 @@ bool SVResultClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	return __super::ResetObject(pErrorMessages) && ValidateLocal(pErrorMessages);
 }
 
-BOOL SVResultClass::IsFailed()
+bool SVResultClass::IsFailed()
 {
-	BOOL RVal = TRUE;
+	BOOL RVal = true;
 	m_Failed.GetValue( RVal );
-	return( RVal );
+	return( TRUE == RVal );
 }
 
-BOOL SVResultClass::IsWarned()
+bool SVResultClass::IsWarned()
 {
-	BOOL RVal = TRUE;
+	BOOL RVal = true;
 	m_Warned.GetValue( RVal );
-	return( RVal );
+	return( TRUE == RVal );
 }
 
-BOOL SVResultClass::IsGood()
+bool SVResultClass::IsGood()
 {
-	BOOL RVal = TRUE;
+	BOOL RVal = true;
 	m_Passed.GetValue( RVal );
-	return( RVal );
+	return( TRUE == RVal );
 }
 
 SVRangeClass* SVResultClass::GetResultRange()
@@ -252,59 +247,4 @@ bool SVResultClass::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages)
 	}
 
 	return true;
-}
-
-SV_IMPLEMENT_CLASS( SVAnalyzeFeatureClass, SVAnalyzeFeatureClassGuid );
-
-SVAnalyzeFeatureClass::SVAnalyzeFeatureClass( LPCSTR ObjectName )
-					  :SVTaskObjectClass( ObjectName )
-{
-	feature	= 0L;
-	resultArray = nullptr;
-	featureResultRange = nullptr;
-	resultArraySize = 0;
-	failed = true;
-	warned = true;
-
-	resultString = nullptr;
-}
-
-SVAnalyzeFeatureClass::~SVAnalyzeFeatureClass()
-{
-	if( featureResultRange )
-		delete( featureResultRange );
-
-	if( resultArray )
-		delete( resultArray );
-
-	if( resultString )
-		delete( resultString );
-}
-
-BOOL SVAnalyzeFeatureClass::Create( LPCSTR ObjectName, long F )
-{
-	ASSERT( ObjectName != _T( "" ) );
-
-	if( ObjectName != _T( "" ))
-	{
-		SetName( ObjectName );
-		feature = F;
-		return true;
-	}
-	return false;
-}
-
-BOOL SVAnalyzeFeatureClass::IsFailed() const
-{
-	return failed;
-}
-
-BOOL SVAnalyzeFeatureClass::IsWarned() const
-{
-	return warned;
-}
-
-long SVAnalyzeFeatureClass::getFeature() const
-{
-	return feature;
 }

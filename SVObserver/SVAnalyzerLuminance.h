@@ -22,16 +22,16 @@ class SVLuminanceAnalyzerClass : public SVImageAnalyzerClass
 
 public:
 	SVLuminanceAnalyzerClass( LPCSTR ObjectName /* = "Luminace Analyzer" */ );
-	SVLuminanceAnalyzerClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = nullptr , int StringResourceID = IDS_CLASSNAME_SVLUMINANCEANALYZER );
+	SVLuminanceAnalyzerClass( SVObjectClass* POwner = nullptr , int StringResourceID = IDS_CLASSNAME_SVLUMINANCEANALYZER );
 
 	virtual ~SVLuminanceAnalyzerClass();
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
+	virtual bool CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
 
 /*- CloseObject () ------------------------------------------*/
 /*- This function should only be called from the destructor  */
 /*- and from derived functions CloseObject () functions. ----*/
-	virtual BOOL  CloseObject() override;
+	virtual bool CloseObject() override;
 
 	SvOi::IObjectClass* GetResultObject();
    

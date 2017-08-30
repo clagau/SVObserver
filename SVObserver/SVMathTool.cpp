@@ -42,8 +42,8 @@ SV_IMPLEMENT_CLASS( SVMathToolClass, SVMathToolClassGuid );
 //                                          class name.
 //                                          Initiated in SVObjectClass.  
 ////////////////////////////////////////////////////////////////////////////////
-SVMathToolClass::SVMathToolClass( BOOL BCreateDefaultTaskList, SVObjectClass* POwner, int StringResourceID )
-: SVToolClass( BCreateDefaultTaskList, POwner, StringResourceID )
+SVMathToolClass::SVMathToolClass( SVObjectClass* POwner, int StringResourceID )
+: SVToolClass( POwner, StringResourceID )
 {
 	init();
 }
@@ -97,9 +97,9 @@ SVMathToolClass::~SVMathToolClass()
 ///////////////////////////////////////////////////////////////////////////////
 // Create Operator
 ////////////////////////////////////////////////////////////////////////////////
-BOOL SVMathToolClass::CreateObject(SVObjectLevelCreateStruct* PCreateStruct )
+bool SVMathToolClass::CreateObject(SVObjectLevelCreateStruct* pCreateStructure )
 {
-	m_isCreated = SVToolClass::CreateObject( PCreateStruct );
+	m_isCreated = SVToolClass::CreateObject( pCreateStructure );
 
 	// Override base class exposure of the drawflag
 	// This value will not be exposed for the Math Tool.

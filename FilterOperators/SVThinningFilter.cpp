@@ -58,11 +58,9 @@ void SVThinningFilterClass::init()
 // -----------------------------------------------------------------------------
 // .Description : ...
 ////////////////////////////////////////////////////////////////////////////////
-BOOL SVThinningFilterClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
+bool SVThinningFilterClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
-	BOOL bOk = TRUE;
-
-	bOk &= SVFilterClass::CreateObject( PCreateStructure );
+	bool bOk = SVFilterClass::CreateObject( pCreateStructure );
 
 	return bOk;
 }

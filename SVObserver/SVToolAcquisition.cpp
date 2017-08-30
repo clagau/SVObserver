@@ -17,8 +17,8 @@
 
 SV_IMPLEMENT_CLASS( SVAcquisitionToolClass, SVAcquisitionToolClassGuid );
 
-SVAcquisitionToolClass::SVAcquisitionToolClass( BOOL BCreateDefaultTaskList, SVObjectClass* POwner, int StringResourceID )
-					   :SVToolClass( BCreateDefaultTaskList, POwner, StringResourceID )
+SVAcquisitionToolClass::SVAcquisitionToolClass( SVObjectClass* POwner, int StringResourceID )
+					   :SVToolClass( POwner, StringResourceID )
 {
 	init();
 }
@@ -44,11 +44,11 @@ SVAcquisitionToolClass::~SVAcquisitionToolClass()
 }
 
 
-BOOL SVAcquisitionToolClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
+bool SVAcquisitionToolClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
-	BOOL bOk = FALSE;
+	bool bOk = SVToolClass::CreateObject(pCreateStructure);
 
-	if( SVToolClass::CreateObject( PCreateStructure ) )
+	if( bOk )
 	{
 		bOk = ( S_OK == SetImageExtent( mainImageObject.GetImageExtents() ) );
 		mainImageObject.SetObjectAttributesAllowed( SvOi::SV_PUBLISH_RESULT_IMAGE, SvOi::SetAttributeType::AddAttribute );

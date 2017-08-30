@@ -20,8 +20,8 @@
 
 SV_IMPLEMENT_CLASS( SVLinearEdgePositionLineAnalyzerClass, SVLinearEdgePositionLineAnalyzerClassGuid );
 
-SVLinearEdgePositionLineAnalyzerClass::SVLinearEdgePositionLineAnalyzerClass( BOOL BCreateDefaultTaskList, SVObjectClass* POwner, int StringResourceID )
-								:SVLinearAnalyzerClass( BCreateDefaultTaskList, POwner, StringResourceID ) 
+SVLinearEdgePositionLineAnalyzerClass::SVLinearEdgePositionLineAnalyzerClass( SVObjectClass* POwner, int StringResourceID )
+								:SVLinearAnalyzerClass( POwner, StringResourceID ) 
 {
 	init();
 }
@@ -103,9 +103,9 @@ SVLinearEdgePositionLineAnalyzerClass::~SVLinearEdgePositionLineAnalyzerClass()
 	CloseObject();
 }
 
-BOOL SVLinearEdgePositionLineAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
+bool SVLinearEdgePositionLineAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
-	BOOL bOk = SVLinearAnalyzerClass::CreateObject( PCreateStructure );
+	bool bOk = SVLinearAnalyzerClass::CreateObject( pCreateStructure );
 
 	dpEdge.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 	m_svLinearDistance.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
@@ -113,11 +113,6 @@ BOOL SVLinearEdgePositionLineAnalyzerClass::CreateObject( SVObjectLevelCreateStr
 	m_isCreated = bOk;
 
 	return bOk;
-}
-
-BOOL SVLinearEdgePositionLineAnalyzerClass::CloseObject()
-{
-	return SVLinearAnalyzerClass::CloseObject();
 }
 
 bool SVLinearEdgePositionLineAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)

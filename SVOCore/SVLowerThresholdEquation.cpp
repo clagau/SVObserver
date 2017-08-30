@@ -52,9 +52,9 @@ void SVLowerThresholdEquationClass::init()
 	addDefaultInputObjects();
 }
 
-BOOL SVLowerThresholdEquationClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
+bool SVLowerThresholdEquationClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
-	m_isCreated = SVEquationClass::CreateObject( PCreateStructure );
+	m_isCreated = SVEquationClass::CreateObject( pCreateStructure );
 
 	// Set / Reset Printable Flag
 	result.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );

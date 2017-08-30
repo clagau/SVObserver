@@ -36,9 +36,9 @@ public:
 
 	virtual ~SVIOController();
 
-	virtual BOOL SetObjectDepth( int NewObjectDepth ) override;
-	virtual BOOL SetObjectDepthWithIndex( int NewObjectDepth, int NewLastSetIndex ) override;
-	virtual BOOL SetImageDepth( long lDepth ) override;
+	virtual void SetObjectDepth( int NewObjectDepth ) override;
+	virtual void SetObjectDepthWithIndex( int NewObjectDepth, int NewLastSetIndex ) override;
+	virtual bool SetImageDepth( long lDepth ) override;
 
 	virtual void ResetName() override;
 	virtual void SetName( LPCTSTR StrString ) override;

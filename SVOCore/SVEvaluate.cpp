@@ -40,24 +40,14 @@ SVEvaluateClass::~SVEvaluateClass()
 	CloseObject();
 }
 
-BOOL SVEvaluateClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
+bool SVEvaluateClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
-	m_isCreated = SVMathContainerClass::CreateObject( PCreateStructure );
+	m_isCreated = SVMathContainerClass::CreateObject( pCreateStructure );
 
 	// Set / Reset Printable flag
 	m_outputMathResult.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 
 	return m_isCreated;
-}
-
-BOOL SVEvaluateClass::CloseObject()
-{
-	BOOL bRetVal = false;
-	if( SVMathContainerClass::CloseObject() )
-	{
-		bRetVal = true;
-	}
-	return bRetVal;
 }
 
 SVDoubleValueObjectClass* SVEvaluateClass::getOutputMathResult()

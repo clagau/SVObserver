@@ -198,7 +198,7 @@ SV_IMPLEMENT_CLASS( SVBlobAnalyzerClass, SVBlobAnalyzerClassGuid );
 #pragma endregion Declarations
 
 SVBlobAnalyzerClass::SVBlobAnalyzerClass( SVObjectClass* POwner, int StringResourceID )
-: SVImageAnalyzerClass(FALSE, POwner, StringResourceID ) 
+: SVImageAnalyzerClass(POwner, StringResourceID ) 
 , m_pResultTable( nullptr )
 {
 	init();
@@ -376,7 +376,7 @@ SvOi::NameValueList SVBlobAnalyzerClass::getFeatureList(bool isSelected) const
 }
 #pragma endregion IEnumerateValueObject
 
-BOOL SVBlobAnalyzerClass::CloseObject ()
+bool SVBlobAnalyzerClass::CloseObject()
 {
     SVImageAnalyzerClass::CloseObject ();
 	
@@ -389,7 +389,7 @@ BOOL SVBlobAnalyzerClass::CloseObject ()
     {
 		SVMatroxBlobInterface::Destroy(m_FeatureListID);
     }
-    return TRUE;
+    return true;
 }
 
 DWORD SVBlobAnalyzerClass::AllocateResult (SVBlobFeatureEnum aFeatureIndex)
@@ -706,7 +706,7 @@ SVLongResultClass* SVBlobAnalyzerClass::GetBlobResultObject()
 /////////////////////////////////////////////////////////////////////////////
 //
 //
-BOOL SVBlobAnalyzerClass::CreateObject(SVObjectLevelCreateStruct* PCreateStructure)
+bool SVBlobAnalyzerClass::CreateObject(SVObjectLevelCreateStruct* pCreateStructure)
 {
 	SVString            tempString;
 	SVBlobFeatureEnum   i(SV_AREA);
@@ -718,7 +718,7 @@ BOOL SVBlobAnalyzerClass::CreateObject(SVObjectLevelCreateStruct* PCreateStructu
 
 	do
 	{
-		if(!SVImageAnalyzerClass::CreateObject( PCreateStructure ))
+		if(!SVImageAnalyzerClass::CreateObject( pCreateStructure ))
 		{
 			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16116, GetUniqueObjectID());
@@ -1869,9 +1869,9 @@ HRESULT SVBlobAnalyzerClass::onCollectOverlays(SVImageClass* p_pImage, SVExtentM
 	return S_OK;
 }
 
-void SVBlobAnalyzerClass::addDefaultInputObjects( BOOL BCallBaseClass, SVInputInfoListClass* PInputListToFill )
+void SVBlobAnalyzerClass::addDefaultInputObjects( SVInputInfoListClass* PInputListToFill )
 {
-	SVImageAnalyzerClass::addDefaultInputObjects( BCallBaseClass, PInputListToFill );
+	__super::addDefaultInputObjects( PInputListToFill );
 
 #ifdef _DEBUG
 	for( SVBlobFeatureEnum i = SV_AREA; i < SV_TOPOF_LIST; i = (SVBlobFeatureEnum) (i + 1))

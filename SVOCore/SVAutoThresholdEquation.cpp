@@ -60,9 +60,9 @@ SVAutoThresholdEquationClass::~SVAutoThresholdEquationClass()
 }
 
 
-BOOL SVAutoThresholdEquationClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
+bool SVAutoThresholdEquationClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
-	m_isCreated = SVEquationClass::CreateObject( PCreateStructure );
+	m_isCreated = SVEquationClass::CreateObject( pCreateStructure );
 
 	// Set/Reset printable Flags
 	result.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );

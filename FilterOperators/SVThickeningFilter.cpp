@@ -58,11 +58,9 @@ void SVThickeningFilterClass::init()
 // -----------------------------------------------------------------------------
 // .Description : ...
 ////////////////////////////////////////////////////////////////////////////////
-BOOL SVThickeningFilterClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
+bool SVThickeningFilterClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
-	BOOL bOk = TRUE;
-
-	bOk &= SVFilterClass::CreateObject( PCreateStructure );
+	bool bOk = SVFilterClass::CreateObject( pCreateStructure );
 
 	return bOk;
 }

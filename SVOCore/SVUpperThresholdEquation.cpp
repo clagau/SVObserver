@@ -89,9 +89,9 @@ bool SVUpperThresholdEquationClass::onRun( SVRunStatusClass& rRunStatus, SvStl::
 }
 
 
-BOOL SVUpperThresholdEquationClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
+bool SVUpperThresholdEquationClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
-	BOOL bOk = SVEquationClass::CreateObject( PCreateStructure );
+	bool bOk = SVEquationClass::CreateObject( pCreateStructure );
 
 	// Set/Reset printable Flags
 	result.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );

@@ -28,8 +28,8 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-SVUnaryImageOperatorListClass::SVUnaryImageOperatorListClass( BOOL BCreateDefaultTaskList, SVObjectClass* POwner, int StringResourceID )
-							  :SVTaskObjectListClass( BCreateDefaultTaskList, POwner, StringResourceID ) 
+SVUnaryImageOperatorListClass::SVUnaryImageOperatorListClass( SVObjectClass* POwner, int StringResourceID )
+							  :SVTaskObjectListClass( POwner, StringResourceID ) 
 {
 	init();
 }
@@ -210,23 +210,10 @@ SVUnaryImageOperatorListClass::~SVUnaryImageOperatorListClass()
 	CloseObject();
 }
 
-BOOL SVUnaryImageOperatorListClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
+bool SVUnaryImageOperatorListClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
-	BOOL bOk = false;
-
-	if( SVTaskObjectListClass::CreateObject( PCreateStructure ) )
-	{
-		bOk = GetTool() && GetInspection() && getInputImage();
-	}
-
-	m_isCreated = bOk;
-
-	return bOk;
-}
-
-BOOL SVUnaryImageOperatorListClass::CloseObject()
-{
-	return SVTaskObjectListClass::CloseObject();
+	m_isCreated = SVTaskObjectListClass::CreateObject( pCreateStructure ) && GetTool() && GetInspection() && getInputImage();
+	return m_isCreated;
 }
 
 HRESULT SVUnaryImageOperatorListClass::IsInputImage( SVImageClass *p_psvImage )

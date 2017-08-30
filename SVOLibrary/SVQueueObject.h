@@ -45,52 +45,52 @@ public:
 	void push_back( const T& p_rValue );
 
 	//This method creates the internal objects to allow the queue to operate.
-	BOOL Create();
+	bool Create();
 	//This method destroys the internal objects.
-	BOOL Destroy();
+	void Destroy();
 	//This method returns the creation state of the object.
-	BOOL IsCreated() const;
+	bool IsCreated() const;
 
 	//This method locks the internal lock object.
-	BOOL Lock();
+	bool Lock();
 	//This method unlocks the internal lock object.
-	BOOL Unlock();
+	bool Unlock();
 
 	//This method adds a new element to the head of the queue. This method uses svnew instead of new. svnew uses a member variable m_Allocator that is derived from Loki::smallObject allocator.  This maintains a memory pool for each Queue object. The reason for this memory pool is to prevent contention between different tasks using new and delete.
-	BOOL AddHead( T pParam );
+	bool AddHead( T pParam );
 	//This method adds a new element to the tail of the queue.  This method uses svnew instead of new. svnew uses a member variable m_Allocator that is derived from Loki::smallObject allocator.  This maintains a memory pool for each Queue object. The reason for this memory pool is to prevent contention between different tasks using new and delete.
-	BOOL AddTail( T pParam );
+	bool AddTail( T pParam );
 
 	// Get information about the Queue
-	BOOL IsEmpty() { return m_Queue.empty(); };
+	bool IsEmpty() { return m_Queue.empty(); };
 	//This method returns the size of the queue.
-	BOOL GetSize( long& lSize );
+	bool GetSize( long& lSize );
 	//This method returns the head element of the queue.
-	BOOL GetHead( T* pParam );
+	bool GetHead( T* pParam );
 	//This method returns the tail element of the queue.
-	BOOL GetTail( T* pParam );
+	bool GetTail( T* pParam );
 
 	//This method receives the object at the supplied location in the queue into the provided object pointer.
-	BOOL GetAt( long lPosition, T* pParam );
+	bool GetAt( long lPosition, T* pParam );
 
 	//This method returns the iterator to the head element of the queue.
-	BOOL GetHeadPosition( QUEUEPOS& pos );
+	bool GetHeadPosition( QUEUEPOS& pos );
 	//This method returns the element the iterator is pointing to and moves the iterator to the next element of the queue.
-	BOOL GetNextItem( QUEUEPOS& pos, T* pParam );
+	bool GetNextItem( QUEUEPOS& pos, T* pParam );
 
 	//This method returns the element at the head of the queue and remove the element from the queue.
-	BOOL RemoveHead( T* pParam );
+	bool RemoveHead( T* pParam );
 	//This method removes the object at the provided position in the queue.
-	BOOL RemoveAt( long lPosition );
+	bool RemoveAt( long lPosition );
 	//This method removes all element in the queue.
-	BOOL RemoveAll();
+	bool RemoveAll();
 
 	//This method returns the size of the queue.
 	int GetCount();
 
 private:
 	//This attribute holds the creation state of this object.
-	BOOL m_bCreated;
+	bool m_bCreated;
 
 	//This attribute manages the multi-threaded lock.
 	SVCriticalSectionAdapter m_critsec;

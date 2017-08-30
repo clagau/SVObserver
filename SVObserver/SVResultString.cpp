@@ -17,8 +17,8 @@
 
 SV_IMPLEMENT_CLASS( SVStringResultClass, SVStringResultClassGuid );
 
-SVStringResultClass::SVStringResultClass( BOOL BCreateDefaultTaskList, SVObjectClass* POwner, int StringResourceID )
-				  :SVResultClass( BCreateDefaultTaskList, POwner, StringResourceID )
+SVStringResultClass::SVStringResultClass( SVObjectClass* POwner, int StringResourceID )
+				  :SVResultClass( POwner, StringResourceID )
 {
 	// Identify yourself
 	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
@@ -45,25 +45,15 @@ SVStringResultClass::~SVStringResultClass()
 
 }
 
-BOOL SVStringResultClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
+bool SVStringResultClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
-	BOOL bOk = false;
-
-	if( SVResultClass::CreateObject( PCreateStructure ) )
-	{
-		bOk = nullptr != getInputString();
-	}
+	bool bOk = SVResultClass::CreateObject( pCreateStructure ) && nullptr != getInputString();
 
 	m_Value.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 
 	m_isCreated = bOk;
 
 	return bOk;
-}
-
-BOOL SVStringResultClass::CloseObject()
-{
-	return SVResultClass::CloseObject();
 }
 
 SVStringValueObjectClass* SVStringResultClass::getInputString()

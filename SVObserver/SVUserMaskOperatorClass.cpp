@@ -53,7 +53,7 @@ void SVUserMaskOperatorClass::init()
 	SVShapeMaskHelperClass* pShapeHelper = new SVShapeMaskHelperClass(this);
 	m_guidShapeHelper = pShapeHelper->GetUniqueObjectID();
 
-	BOOL bAddFriend = AddFriend( pShapeHelper->GetUniqueObjectID() );
+	bool bAddFriend = AddFriend( pShapeHelper->GetUniqueObjectID() );
 	ASSERT( bAddFriend );
 
 
@@ -111,9 +111,9 @@ void SVUserMaskOperatorClass::init()
 	addDefaultInputObjects();
 }
 
-BOOL SVUserMaskOperatorClass::CloseObject()
+bool SVUserMaskOperatorClass::CloseObject()
 {
-	BOOL bOk = S_OK == DestroyLocalImageBuffer();
+	bool bOk = S_OK == DestroyLocalImageBuffer();
 
 	if ( m_isCreated )
 	{
@@ -125,9 +125,9 @@ BOOL SVUserMaskOperatorClass::CloseObject()
 	return bOk;
 }
 
-BOOL SVUserMaskOperatorClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
+bool SVUserMaskOperatorClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
-	BOOL bOk = SVUnaryImageOperatorClass::CreateObject( PCreateStructure );
+	bool bOk = SVUnaryImageOperatorClass::CreateObject( pCreateStructure );
 
 	const UINT cAttributes = SvOi::SV_PRINTABLE | SvOi::SV_REMOTELY_SETABLE | SvOi::SV_SETABLE_ONLINE;
 	// Set / Reset Printable Flag
@@ -244,7 +244,7 @@ SVShapeMaskHelperClass* SVUserMaskOperatorClass::GetShapeHelper()
 		SVShapeMaskHelperClass* pShapeHelper = new SVShapeMaskHelperClass(this);
 		m_guidShapeHelper = pShapeHelper->GetUniqueObjectID();
 
-		BOOL bAddFriend = AddFriend( pShapeHelper->GetUniqueObjectID() );
+		bool bAddFriend = AddFriend( pShapeHelper->GetUniqueObjectID() );
 		ASSERT( bAddFriend );
 
 		if( CreateChildObject(pShapeHelper) )
@@ -652,7 +652,7 @@ HRESULT SVUserMaskOperatorClass::GetObjectValue( const SVString& rValueName, _va
 HRESULT SVUserMaskOperatorClass::SetObjectValue( SVObjectAttributeClass* pDataObject )
 {
 	HRESULT hr = S_FALSE;
-	BOOL bOk = FALSE;
+	bool bOk = false;
 	
 	SvCl::SVObjectSVStringArrayClass StringArray;
 	SvCl::SVObjectLongArrayClass svLongArray;
@@ -800,7 +800,7 @@ bool SVUserMaskOperatorClass::onRun( bool First, SVSmartHandlePointer RInputImag
 			else if ( dwMaskType == MASK_TYPE_SHAPE )
 			{
 				SVShapeMaskHelperClass* pShapeHelper = GetShapeHelper();
-				BOOL bShapeOnRun = pShapeHelper->onRun(First, RInputImageHandle, ROutputImageHandle, rRunStatus);
+				pShapeHelper->onRun(First, RInputImageHandle, ROutputImageHandle, rRunStatus);
 			}
 
 			long lMaskOperator = SVImageAnd;

@@ -177,11 +177,8 @@ SVHistogramAnalyzerClass::SVHistogramAnalyzerClass( LPCSTR ObjectName )
 	init();
 }
 
-SVHistogramAnalyzerClass::SVHistogramAnalyzerClass( 
-	BOOL BCreateDefaultTaskList, 
-	SVObjectClass* POwner, 
-	int StringResourceID )
-		:SVImageAnalyzerClass( BCreateDefaultTaskList, POwner, StringResourceID ) 
+SVHistogramAnalyzerClass::SVHistogramAnalyzerClass( SVObjectClass* POwner, int StringResourceID )
+		:SVImageAnalyzerClass( POwner, StringResourceID ) 
 {
 	init();
 }
@@ -479,14 +476,14 @@ SVHistogramAnalyzerClass::~SVHistogramAnalyzerClass()
    CloseObject();
 }
 
-BOOL SVHistogramAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
+bool SVHistogramAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
     SVImageClass *pSVImage(nullptr);
    DWORD LastError(0);
 
     while (1)
     {
-        if (! SVImageAnalyzerClass::CreateObject( PCreateStructure ) )
+        if (! SVImageAnalyzerClass::CreateObject( pCreateStructure ) )
         {
 			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 			MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16153);
@@ -600,7 +597,7 @@ void SVHistogramAnalyzerClass::DisconnectImages()
    dynamic_cast<SVInspectionProcess*>(GetInspection())->RemoveImage(&m_histogramImage);
 }
 
-BOOL SVHistogramAnalyzerClass::CloseObject()
+bool SVHistogramAnalyzerClass::CloseObject()
 {
 	DWORD LastError(0);
 	
@@ -613,11 +610,11 @@ BOOL SVHistogramAnalyzerClass::CloseObject()
 
    if( 0 !=LastError)
    {
-      return FALSE;
+      return false;
    }
    else
    {
-	   return TRUE;
+	   return true;
    }
    
 }

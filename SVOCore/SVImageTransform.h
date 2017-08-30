@@ -28,7 +28,7 @@ public:
 #pragma region Public Methods
 public:
 #pragma region virtual
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
+	virtual bool CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
 	virtual HRESULT IsInputImage( SVImageClass *p_psvImage ) override;
 
 	virtual bool ResetObject( SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;

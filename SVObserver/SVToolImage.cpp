@@ -25,8 +25,8 @@
 
 SV_IMPLEMENT_CLASS( SVImageToolClass, SVImageToolClassGuid );
 
-SVImageToolClass::SVImageToolClass( BOOL BCreateDefaultTaskList, SVObjectClass* POwner, int StringResourceID )
-				 :SVToolClass( BCreateDefaultTaskList, POwner, StringResourceID )
+SVImageToolClass::SVImageToolClass( SVObjectClass* POwner, int StringResourceID )
+				 :SVToolClass( POwner, StringResourceID )
 {
 	init();
 }
@@ -129,9 +129,9 @@ SVImageToolClass::~SVImageToolClass()
 	CloseObject();
 }
 
-BOOL SVImageToolClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
+bool SVImageToolClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
-	BOOL bOk = SVToolClass::CreateObject( PCreateStructure );
+	bool bOk = SVToolClass::CreateObject( pCreateStructure );
 
 	// Set / Reset Printable Flags
 	outputEnableOffsetA.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );

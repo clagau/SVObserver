@@ -60,45 +60,45 @@ public:
 	
 	virtual HRESULT ObserverUpdate( const SVInspectionCompleteInfoStruct& p_rData ) override;
 
-	BOOL Create();
-	BOOL Rebuild();
-	BOOL Destroy();
-	BOOL DetachAll();
+	bool Create();
+	bool Rebuild();
+	void Destroy();
+	void DetachAll();
 
-	BOOL SetPPQOutputMode( SvOi::SVPPQOutputModeEnum ePPQOutputMode );
-	BOOL SetOutputDelay( long lDelayTime );
-	BOOL SetResetDelay( long lResetTime );
-	BOOL SetPPQLength( long lPPQLength );
-	BOOL SetMaintainSourceImages( bool bMaintainImages );
-	BOOL SetInspectionTimeout( long lTimeoutMillisec );
+	void SetPPQOutputMode( SvOi::SVPPQOutputModeEnum ePPQOutputMode );
+	void SetOutputDelay( long lDelayTime );
+	void SetResetDelay( long lResetTime );
+	void SetPPQLength( long lPPQLength );
+	void SetMaintainSourceImages( bool bMaintainImages );
+	void SetInspectionTimeout( long lTimeoutMillisec );
 	void SetConditionalOutputName( const SVString& conditionName );
 
-	BOOL GetPPQOutputMode( SvOi::SVPPQOutputModeEnum& rePPQOutputMode ) const;
-	BOOL GetOutputDelay( long& rlDelayTime ) const;
-	BOOL GetResetDelay( long& rlResetTime ) const;
-	BOOL GetPPQLength( long& rlPPQLength ) const;
+	void GetPPQOutputMode( SvOi::SVPPQOutputModeEnum& rePPQOutputMode ) const;
+	void GetOutputDelay( long& rlDelayTime ) const;
+	void GetResetDelay( long& rlResetTime ) const;
+	void GetPPQLength( long& rlPPQLength ) const;
 	long GetPPQLength() const;
-	BOOL GetMaintainSourceImages( bool& rbMaintainImages ) const;
-	BOOL GetInspectionTimeout( long& rlTimeoutMillisec ) const;
+	void GetMaintainSourceImages( bool& rbMaintainImages ) const;
+	void GetInspectionTimeout( long& rlTimeoutMillisec ) const;
 	const SVString& GetConditionalOutputName() const;
 
-	BOOL AttachTrigger( SvTi::SVTriggerObject* pTrigger );
-	BOOL AttachCamera( SVVirtualCamera* pCamera, long lPosition, bool p_AllowMinusOne = false );
-	BOOL AttachInspection( SVInspectionProcess* pInspection );
+	bool AttachTrigger( SvTi::SVTriggerObject* pTrigger );
+	bool AttachCamera( SVVirtualCamera* pCamera, long lPosition, bool p_AllowMinusOne = false );
+	bool AttachInspection( SVInspectionProcess* pInspection );
 
-	BOOL DetachTrigger( SvTi::SVTriggerObject* pTrigger );
-	BOOL DetachCamera( SVVirtualCamera* pCamera, BOOL bRemoveDepends = FALSE );
-	BOOL DetachInspection( SVInspectionProcess* pInspection );
+	bool DetachTrigger( SvTi::SVTriggerObject* pTrigger );
+	bool DetachCamera( SVVirtualCamera* pCamera, bool bRemoveDepends = false );
+	bool DetachInspection( SVInspectionProcess* pInspection );
 
-	BOOL AddSharedCamera(  SVVirtualCamera* pCamera );
-	BOOL GetInspectionCount( long &lSize ) const;
+	bool AddSharedCamera(  SVVirtualCamera* pCamera );
+	void GetInspectionCount( long &lSize ) const;
 
 	size_t GetCameraCount() const;
 	HRESULT GetCameraList( std::deque< SVVirtualCamera* >& p_rCameras ) const;
 	HRESULT GetVirtualCameras( SVVirtualCameraMap& p_rCameras ) const;
 
-	BOOL GetTrigger( SvTi::SVTriggerObject*& ppTrigger );
-	BOOL GetInspection( long lIndex, SVInspectionProcess*& ppInspection ) const;
+	void GetTrigger( SvTi::SVTriggerObject*& ppTrigger );
+	bool GetInspection( long lIndex, SVInspectionProcess*& ppInspection ) const;
 
 	HRESULT GetInspections( std::vector< SVInspectionProcess* >& rvecInspections ) const;
 
@@ -111,8 +111,8 @@ public:
 	bool IsObjectInPPQ( const SVObjectClass& object ) const;
 
 	// PPQ position management functions
-	BOOL SetCameraPPQPosition( long lPosition, SVVirtualCamera* pCamera );
-	BOOL GetCameraPPQPosition( long &lPosition, SVVirtualCamera* pCamera ) const;
+	bool SetCameraPPQPosition( long lPosition, SVVirtualCamera* pCamera );
+	bool GetCameraPPQPosition( long &lPosition, SVVirtualCamera* pCamera ) const;
 
 	
 	/// Check and prepare if configuration can go online.
@@ -122,23 +122,23 @@ public:
 	/// Go online.
 	/// In error cases this method throw Exception.
 	void GoOnline();
-	BOOL GoOffline();
-	BOOL IsOnline() const;
+	bool GoOffline();
+	bool IsOnline() const;
 
 	bool IsProductExpired( const SVProductInfoStruct* pProduct ) const;
 	HRESULT GetProduct( SVProductInfoStruct& p_rProduct, long lProcessCount ) const;
 
-	BOOL ReserveNextRunOnceProductInfoStruct( SVProductInfoStruct& p_rsvProduct, SVDataManagerLockTypeEnum p_LockType = SV_PPQ );
+	bool ReserveNextRunOnceProductInfoStruct( SVProductInfoStruct& p_rsvProduct, SVDataManagerLockTypeEnum p_LockType = SV_PPQ );
 
-	BOOL AddInput( SVIOEntryHostStructPtr pInput );
-	BOOL RemoveInput( SVIOEntryHostStructPtr pInput );
+	void AddInput( SVIOEntryHostStructPtr pInput );
+	bool RemoveInput( SVIOEntryHostStructPtr pInput );
 	HRESULT GetInputIOValues( SVVariantBoolVector& rInputValues ) const;
-	BOOL AssignInputs( const SVVariantBoolVector& rInputValues );
-	BOOL RebuildInputList(bool bHasCameraTrigger);
-	BOOL GetAvailableInputs( SVIOEntryHostStructPtrVector& p_IOEntries ) const;
-	BOOL GetAllInputs( SVIOEntryHostStructPtrVector& p_IOEntries ) const;
-	BOOL AddDefaultInputs();
-	BOOL AddToAvailableInputs(SVIOObjectType eType, const SVString& rName );
+	bool AssignInputs( const SVVariantBoolVector& rInputValues );
+	bool RebuildInputList(bool bHasCameraTrigger);
+	void GetAvailableInputs( SVIOEntryHostStructPtrVector& p_IOEntries ) const;
+	void GetAllInputs( SVIOEntryHostStructPtrVector& p_IOEntries ) const;
+	void AddDefaultInputs();
+	bool AddToAvailableInputs(SVIOObjectType eType, const SVString& rName );
 	SVIOEntryHostStructPtr GetInput( const SVString& rName ) const;
 
 	void AddCameraDataInputs(SVIOEntryHostStructPtrVector& list);
@@ -147,13 +147,13 @@ public:
 	bool HasCameraDataInputForConditionalOutput() const;
 	bool HasDigitalInputForConditionalOutput() const;
 
-	BOOL AddOutput( SVIOEntryHostStructPtr pOutput );
-	BOOL RemoveOutput( SVIOEntryHostStructPtr pOutput );
-	BOOL WriteOutputs( SVProductInfoStruct* pProduct );
-	BOOL ResetOutputs();
-	BOOL RebuildOutputList();
-	BOOL GetAllOutputs( SVIOEntryHostStructPtrVector& p_IOEntries ) const;
-	BOOL AddDefaultOutputs();
+	void AddOutput( SVIOEntryHostStructPtr pOutput );
+	bool RemoveOutput( SVIOEntryHostStructPtr pOutput );
+	bool WriteOutputs( SVProductInfoStruct* pProduct );
+	bool ResetOutputs();
+	bool RebuildOutputList();
+	void GetAllOutputs( SVIOEntryHostStructPtrVector& p_IOEntries ) const;
+	void AddDefaultOutputs();
 
 	//************************************
 	/// Writes DataResponse and Camera into the camera response queue
@@ -161,7 +161,7 @@ public:
 	/// \param pCaller [unused]
 	/// \param p_rTriggerInfo [in]
 	//************************************
-	BOOL FinishCamera( void *pCaller, SVODataResponseClass* pResponse );
+	bool FinishCamera( void *pCaller, SVODataResponseClass* pResponse );
 
 	//************************************
 	/// Writes trigger information into SVTriggerInfoQueue m_oTriggerQueue;
@@ -170,7 +170,7 @@ public:
 	/// \param pCaller [unused]
 	/// \param p_rTriggerInfo [in] the trigger information to be queued
 	//************************************
-	BOOL FinishTrigger( void *pCaller, SvTi::SVTriggerInfoStruct& p_rTriggerInfo );
+	bool FinishTrigger( void *pCaller, SvTi::SVTriggerInfoStruct& p_rTriggerInfo );
 
 	void DumpDMInfo( LPCTSTR p_szName ) const;
 
@@ -362,8 +362,8 @@ protected:
 	HRESULT GetProductIndex( long& p_rIndex, SvTl::SVTimeStamp p_TimeStamp ) const;
 
 	SVProductInfoStruct* IndexPPQ( SvTi::SVTriggerInfoStruct& p_rTriggerInfo );
-	BOOL InitializeProduct( SVProductInfoStruct* p_pNewProduct, const SVVariantBoolVector& p_rInputValues );
-	BOOL StartOutputs( SVProductInfoStruct* p_pProduct );
+	void InitializeProduct( SVProductInfoStruct* p_pNewProduct, const SVVariantBoolVector& p_rInputValues );
+	bool StartOutputs( SVProductInfoStruct* p_pProduct );
 	HRESULT NotifyInspections( long p_Offset );
 	HRESULT StartInspection( const SVGUID& p_rInspectionID );
 
@@ -375,9 +375,9 @@ protected:
 	bool SetProductIncomplete( long p_PPQIndex );
 	bool SetProductIncomplete( SVProductInfoStruct& p_rProduct );
 
-	BOOL RecycleProductInfo( SVProductInfoStruct *pProduct );
+	bool RecycleProductInfo( SVProductInfoStruct *pProduct );
 
-	BOOL RebuildProductInfoStructs();
+	void RebuildProductInfoStructs();
 
 	//************************************
 	/// Processes a single camera queue event
@@ -523,7 +523,7 @@ private:
 	long m_DataValidDelay;
 	bool m_bMaintainSourceImages;
 	long m_lInspectionTimeoutMillisec;
-	BOOL m_bOnline;
+	bool m_bOnline;
 
 	UINT m_uOutputTimer;
 

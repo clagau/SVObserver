@@ -50,7 +50,7 @@ SVEnumerateValueObjectClass::~SVEnumerateValueObjectClass()
 HRESULT SVEnumerateValueObjectClass::SetObjectValue( SVObjectAttributeClass* pDataObject )
 {
 	HRESULT Result( E_FAIL );
-	BOOL bOk( false );
+	bool bOk( false );
 	
 	SvCl::SVObjectSVStringArrayClass SVStringArray;
 

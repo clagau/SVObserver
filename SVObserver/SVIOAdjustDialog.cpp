@@ -217,13 +217,12 @@ BOOL SVIOAdjustDialogClass::OnInitDialog()
 				e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorGettingPPQ, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17030_ErrorGettingPPQ );
 				DebugBreak();
 			}
-			// Get list of available outputs
-			else if( !pPPQ->GetAllOutputs( ppIOEntries ) )
+			else
 			{
-				SvStl::MessageMgrStd e( SvStl::LogOnly );
-				e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorGettingOutputs, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17031_ErrorGettingOutputs );
-				DebugBreak();
+				// Get list of available outputs
+				pPPQ->GetAllOutputs(ppIOEntries);
 			}
+
 
 			lSize = static_cast< long >( ppIOEntries.size() );
 

@@ -73,7 +73,7 @@ ToolSizeAdjustTask::ToolSizeAdjustTask(bool AllowFullsize , bool AllowAdjustSize
 	}
 
 	//Add Evaluation Objects 
-	BOOL ok(false);
+	bool ok(false);
 	ok = AddEvaluationObject(&m_InObjectInfoDResult[TSWidth], EQAdjustSizeWidthGuid, _T("ToolSizeAdjustWidth"));
 	ASSERT(ok);
 	ok = AddEvaluationObject(&m_InObjectInfoDResult[TSHeight], EQAdjustSizeHeightGuid , _T("ToolSizeAdjustHeight"));
@@ -91,7 +91,7 @@ ToolSizeAdjustTask::~ToolSizeAdjustTask()
 {
 }
 
-BOOL ToolSizeAdjustTask::AddEvaluationObject(SVInObjectInfoStruct* pInfo, GUID const &GuidClass, LPCTSTR Name)
+bool ToolSizeAdjustTask::AddEvaluationObject(SVInObjectInfoStruct* pInfo, GUID const &GuidClass, LPCTSTR Name)
 {
 	SVObjectClass* pObject(nullptr);
 	SVObjectManagerClass::Instance().ConstructObject( GuidClass, pObject );

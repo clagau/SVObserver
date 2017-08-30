@@ -127,9 +127,9 @@ SVImagePolarTransformClass::~SVImagePolarTransformClass()
 	CloseObject();
 }
 
-BOOL SVImagePolarTransformClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
+bool SVImagePolarTransformClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
-	BOOL l_bOk = SVPolarTransformClass::CreateObject( PCreateStructure );
+	bool l_bOk = SVPolarTransformClass::CreateObject( pCreateStructure );
 	SVToolClass* pTool = dynamic_cast<SVToolClass*>(GetTool());
 	l_bOk = l_bOk && nullptr != pTool;
 

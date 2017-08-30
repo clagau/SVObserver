@@ -85,16 +85,16 @@ const SVValueObjectClass<T>& SVValueObjectClass<T>::operator= (const SVValueObje
 
 #pragma region Public Methods
 template <typename T>
-BOOL SVValueObjectClass<T>::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+bool SVValueObjectClass<T>::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
-	BOOL l_bOk = SVObjectClass::CreateObject( pCreateStructure );
+	bool l_bOk = SVObjectClass::CreateObject( pCreateStructure );
 
 	SVObjectManagerClass::Instance().RegisterSubObject(GetUniqueObjectID());
 	SetObjectAttributesAllowed( SvOi::SV_DD_VALUE, SvOi::SetAttributeType::AddAttribute );	// derived classes need to reset this
 
 	if ( m_NumberOfBuckets < 2 )
 	{
-		l_bOk = l_bOk && SetObjectDepth( 2 );
+		SetObjectDepth( 2 );
 	}
 
 	//A ValueObject with SvOi::SV_PUBLISHABLE set needs to be bucketized
@@ -110,7 +110,7 @@ BOOL SVValueObjectClass<T>::CreateObject( SVObjectLevelCreateStruct* pCreateStru
 }
 
 template <typename T>
-BOOL SVValueObjectClass<T>::CloseObject()
+bool SVValueObjectClass<T>::CloseObject()
 {
 	SVObjectManagerClass::Instance().UnregisterSubObject(GetUniqueObjectID());
 	return SVObjectClass::CloseObject();
@@ -124,18 +124,14 @@ bool SVValueObjectClass<T>::ResetObject( SvStl::MessageContainerVector *pErrorMe
 }
 
 template <typename T>
-BOOL SVValueObjectClass<T>::SetObjectDepthWithIndex(int iNewObjectDepth, int NewLastSetIndex)
+void SVValueObjectClass<T>::SetObjectDepthWithIndex(int iNewObjectDepth, int NewLastSetIndex)
 {
-	BOOL l_Status = true;
-
 	if( 0 < iNewObjectDepth )
 	{
-		l_Status = CopyValue(NewLastSetIndex);
-		}
+		CopyValue(NewLastSetIndex);
+	}
 
-	l_Status &= SVObjectClass::SetObjectDepthWithIndex(iNewObjectDepth, NewLastSetIndex);
-
-	return l_Status;
+	SVObjectClass::SetObjectDepthWithIndex(iNewObjectDepth, NewLastSetIndex);
 }
 
 template <typename T>
@@ -286,8 +282,8 @@ HRESULT SVValueObjectClass<T>::SetObjectValue(SVObjectAttributeClass* pDataObjec
 			SetArraySize(LongArray[0]);
 		}
 	}
-			else
-			{
+	else
+	{
 		Result = SVObjectClass::SetObjectValue(pDataObject);
 		return Result;
 	}

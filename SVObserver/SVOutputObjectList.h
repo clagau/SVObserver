@@ -26,8 +26,8 @@ public:
 
 	virtual ~SVOutputObjectList();
 
-	BOOL Create();
-	BOOL Destroy();
+	bool Create();
+	void Destroy();
 
 	SVOutputObject* GetOutput(const SVGUID& rOutputID) const;
 
@@ -38,18 +38,18 @@ public:
 	HRESULT AttachOutput( SVOutputObject *pOutput );
 	HRESULT DetachOutput( const SVGUID& rOutputID );
 
-	BOOL WriteOutputs( SVIOEntryStructVector& rIOEntries, long lDataIndex, bool p_ACK, bool p_NAK );
-	BOOL WriteOutputs( SVIOEntryHostStructPtrVector& rIOEntries, long lDataIndex, bool p_ACK, bool p_NAK );
-	BOOL ResetOutputs( SVIOEntryStructVector& rIOEntries );
-	BOOL ResetOutputs( SVIOEntryHostStructPtrVector& rIOEntries );
-	BOOL WriteOutput( SVIOEntryStruct pIOEntry, long lDataIndex, bool p_ACK, bool p_NAK );
-	BOOL WriteOutput( SVIOEntryHostStructPtr pIOEntry, long lDataIndex, bool p_ACK, bool p_NAK );
-	BOOL WriteOutputValue( SVIOEntryHostStructPtr pIOEntry, const _variant_t& rValue );
-	BOOL ResetOutput( SVIOEntryHostStructPtr pIOEntry );
+	bool WriteOutputs( SVIOEntryStructVector& rIOEntries, long lDataIndex, bool p_ACK, bool p_NAK );
+	bool WriteOutputs( SVIOEntryHostStructPtrVector& rIOEntries, long lDataIndex, bool p_ACK, bool p_NAK );
+	bool ResetOutputs( SVIOEntryStructVector& rIOEntries );
+	bool ResetOutputs( SVIOEntryHostStructPtrVector& rIOEntries );
+	bool WriteOutput( SVIOEntryStruct pIOEntry, long lDataIndex, bool p_ACK, bool p_NAK );
+	bool WriteOutput( SVIOEntryHostStructPtr pIOEntry, long lDataIndex, bool p_ACK, bool p_NAK );
+	bool WriteOutputValue( SVIOEntryHostStructPtr pIOEntry, const _variant_t& rValue );
+	bool ResetOutput( SVIOEntryHostStructPtr pIOEntry );
 	bool RenameInspection( LPCTSTR OldInspection, LPCTSTR NewInspectionName);
 	HRESULT RemoveUnusedOutputs( const SVStringVector& rInspectionNames, const SVStringVector& rPPQNames );
 
-	BOOL FillOutputs( SVIOEntryHostStructPtrVector& rIOEntries );
+	bool FillOutputs( SVIOEntryHostStructPtrVector& rIOEntries );
 
 	bool OutputIsNotValid( SVString p_strName );
 
@@ -65,7 +65,7 @@ private:
 	bool Lock() const;
 	bool Unlock() const;
 
-	BOOL m_bCreated;
+	bool m_bCreated;
 	CRITICAL_SECTION m_hCriticalSection;
 
 	SVGuidSVOutputObjectPtrMap m_OutputObjects;

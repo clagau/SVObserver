@@ -77,14 +77,9 @@ SVTransformClass::~SVTransformClass()
 	CloseObject();
 }
 
-BOOL SVTransformClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
+bool SVTransformClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
-	BOOL bOk = FALSE;
-
-	if( SVTaskObjectClass::CreateObject( PCreateStructure ) )
-	{
-		bOk = TRUE;
-	}
+	bool bOk = SVTaskObjectClass::CreateObject( pCreateStructure );
 
 	performTranslation.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
 	performRotation.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
@@ -98,16 +93,6 @@ BOOL SVTransformClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure
 	m_isCreated = bOk;
 
 	return bOk;
-}
-
-BOOL SVTransformClass::CloseObject()
-{
-	if( SVTaskObjectClass::CloseObject() )
-	{
-		BOOL bRetVal = TRUE;
-		return bRetVal;
-	}
-	return FALSE;
 }
 
 bool SVTransformClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)

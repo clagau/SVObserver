@@ -18,8 +18,8 @@
 
 SV_IMPLEMENT_CLASS( SVDoubleResultClass, SVDoubleResultClassGuid );
 
-SVDoubleResultClass::SVDoubleResultClass( BOOL BCreateDefaultTaskList, SVObjectClass* POwner, int StringResourceID )
-				  :SVResultClass( BCreateDefaultTaskList, POwner, StringResourceID )
+SVDoubleResultClass::SVDoubleResultClass( SVObjectClass* POwner, int StringResourceID )
+				  :SVResultClass( POwner, StringResourceID )
 {
 	// Identify yourself
 	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
@@ -67,25 +67,15 @@ SVDoubleResultClass::~SVDoubleResultClass()
 	CloseObject();
 }
 
-BOOL SVDoubleResultClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
+bool SVDoubleResultClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
-	BOOL bOk = false;
-
-	if( SVResultClass::CreateObject( PCreateStructure ) )
-	{
-		bOk = nullptr != getInput();
-	}
+	bool bOk = SVResultClass::CreateObject( pCreateStructure ) && nullptr != getInput();
 
 	m_Value.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 
 	m_isCreated = bOk;
 
 	return bOk;
-}
-
-BOOL SVDoubleResultClass::CloseObject()
-{
-	return SVResultClass::CloseObject();
 }
 
 bool SVDoubleResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )

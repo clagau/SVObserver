@@ -19,15 +19,11 @@ class SVOCVAnalyzerClass : public SVImageAnalyzerClass
 	SV_DECLARE_CLASS( SVOCVAnalyzerClass );
 
 public:
-	SVOCVAnalyzerClass( 
-		BOOL BCreateDefaultTaskList = FALSE, 
-		SVObjectClass* POwner = nullptr, 
-		int StringResourceID = IDS_CLASSNAME_SVOCVANALYZER
-	);
+	SVOCVAnalyzerClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVOCVANALYZER	);
 
 	virtual ~SVOCVAnalyzerClass();
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
+	virtual bool CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
 
 	SvOi::IObjectClass* GetResultObject();
 

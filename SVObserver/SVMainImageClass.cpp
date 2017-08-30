@@ -42,7 +42,7 @@ SVMainImageClass::~SVMainImageClass()
 {
 }
 
-BOOL SVMainImageClass::SetImageHandleIndex( SVImageIndexStruct svIndex )
+bool SVMainImageClass::SetImageHandleIndex( SVImageIndexStruct svIndex )
 {
 	bool Result( true );
 
@@ -63,16 +63,14 @@ BOOL SVMainImageClass::SetImageHandleIndex( SVImageIndexStruct svIndex )
 	return Result;
 }
 
-BOOL SVMainImageClass::CopyImageTo( SVImageIndexStruct svIndex )
+bool SVMainImageClass::CopyImageTo( SVImageIndexStruct svIndex )
 {
-	BOOL bOk = FALSE;
-	
-	return bOk;
+	return false;
 }
 
-BOOL SVMainImageClass::GetImageHandle( SVSmartHandlePointer& p_rHandlePtr )
+bool SVMainImageClass::GetImageHandle( SVSmartHandlePointer& p_rHandlePtr )
 {
-	BOOL bOk = nullptr != GetCameraBufferArrayPtr();
+	bool bOk = nullptr != GetCameraBufferArrayPtr();
 	
 	if ( bOk )
 	{
@@ -82,9 +80,9 @@ BOOL SVMainImageClass::GetImageHandle( SVSmartHandlePointer& p_rHandlePtr )
 	return bOk;
 }
 
-BOOL SVMainImageClass::GetImageHandle( SVImageIndexStruct svIndex, SVSmartHandlePointer& rHandle )
+bool SVMainImageClass::GetImageHandle( SVImageIndexStruct svIndex, SVSmartHandlePointer& rHandle )
 {
-	BOOL bOk = nullptr != GetCameraBufferArrayPtr();
+	bool bOk = nullptr != GetCameraBufferArrayPtr();
 	
 	if ( bOk )
 	{
@@ -101,7 +99,7 @@ bool SVMainImageClass::ValidateImage()
 		m_isObjectValid = !( GetCameraBufferArrayPtr().empty() );
 	}
 
-	return (TRUE == m_isObjectValid);
+	return m_isObjectValid;
 }
 
 const SvTl::SVTimeStamp& SVMainImageClass::GetLastResetTimeStamp() const

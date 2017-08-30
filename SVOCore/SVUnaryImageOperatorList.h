@@ -43,11 +43,10 @@ public:
 	friend class SVUnaryImageOperatorClass;
 
 public:
-	SVUnaryImageOperatorListClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = nullptr , int StringResourceID = IDS_CLASSNAME_SVUNARYIMAGEOPERATORLIST );
+	SVUnaryImageOperatorListClass( SVObjectClass* POwner = nullptr , int StringResourceID = IDS_CLASSNAME_SVUNARYIMAGEOPERATORLIST );
 	virtual ~SVUnaryImageOperatorListClass();
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
-	virtual BOOL CloseObject() override;
+	virtual bool CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
 
 	virtual HRESULT IsInputImage( SVImageClass *p_psvImage ) override;
 

@@ -21,11 +21,11 @@ class SVMathToolClass : public SVToolClass
 	SV_DECLARE_CLASS( SVMathToolClass );
 
 public:
-	SVMathToolClass( BOOL BCreateDefaultTaskList=FALSE, SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVMATHTOOL );
+	SVMathToolClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVMATHTOOL );
 
 	virtual ~SVMathToolClass();
 
-	virtual BOOL CreateObject(SVObjectLevelCreateStruct* PCreateStruct ) override;
+	virtual bool CreateObject(SVObjectLevelCreateStruct* pCreateStructure ) override;
 
 private:
 	void init(void);

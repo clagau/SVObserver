@@ -22,8 +22,8 @@ static const TCHAR* const CYLINDRICAL_WARP_TYPE_VERTICAL = _T("Vertical Warp");
 
 SV_IMPLEMENT_CLASS( SVCylindricalWarpToolClass, SVCylindricalWarpToolClassGuid )
 
-SVCylindricalWarpToolClass::SVCylindricalWarpToolClass( BOOL p_bCreateDefaultTaskList, SVObjectClass* p_pOwner, int p_iStringResourceID )
-	: SVToolClass(p_bCreateDefaultTaskList, p_pOwner, p_iStringResourceID)
+SVCylindricalWarpToolClass::SVCylindricalWarpToolClass( SVObjectClass* p_pOwner, int p_iStringResourceID )
+	: SVToolClass(p_pOwner, p_iStringResourceID)
 {
 	LocalInitialize();
 }
@@ -33,9 +33,9 @@ SVCylindricalWarpToolClass::~SVCylindricalWarpToolClass()
 	LocalDestroy();
 }
 
-BOOL SVCylindricalWarpToolClass::CreateObject( SVObjectLevelCreateStruct *p_pCreateStructure )
+bool SVCylindricalWarpToolClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
-	BOOL l_bOk = SVToolClass::CreateObject( p_pCreateStructure );
+	bool l_bOk = SVToolClass::CreateObject( pCreateStructure );
 
 	if ( l_bOk )
 	{
@@ -51,9 +51,9 @@ BOOL SVCylindricalWarpToolClass::CreateObject( SVObjectLevelCreateStruct *p_pCre
 	return l_bOk;
 }
 
-BOOL SVCylindricalWarpToolClass::CloseObject()
+bool SVCylindricalWarpToolClass::CloseObject()
 {
-	BOOL l_bOk = S_OK == LocalDestroy();
+	bool l_bOk = S_OK == LocalDestroy();
 
 	l_bOk = SVToolClass::CloseObject() && l_bOk;
 

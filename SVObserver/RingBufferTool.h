@@ -22,13 +22,13 @@ class RingBufferTool :	public SVToolClass
 
 #pragma region Constructor
 public:
-	RingBufferTool (BOOL bCreateDefaultTaskList = false, SVObjectClass*	pOwner = nullptr, int stringResourceID = IDS_CLASSNAME_RINGBUFFER_TOOL );
+	RingBufferTool (SVObjectClass*	pOwner = nullptr, int stringResourceID = IDS_CLASSNAME_RINGBUFFER_TOOL );
 
 	virtual ~RingBufferTool(void);
 #pragma endregion Constructor
 
 #pragma region Public Methods
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
+	virtual bool CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
 
 	virtual bool DoesObjectHaveExtents() const override;
 

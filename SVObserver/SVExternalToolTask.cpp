@@ -109,7 +109,7 @@ const SVExternalToolTaskData& SVExternalToolTaskData::operator = (const SVExtern
 }
 
 SVExternalToolTask::SVExternalToolTask( SVObjectClass* POwner, int StringResourceID )
-				 :SVTaskObjectListClass(FALSE, POwner, StringResourceID ), ISVCancel() 
+				 :SVTaskObjectListClass(POwner, StringResourceID ), ISVCancel() 
 {
 	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVExternalToolTaskObjectType;
 
@@ -273,12 +273,11 @@ SVExternalToolTask::~SVExternalToolTask()
 	m_embeddedList.clear();
 }
 
-BOOL SVExternalToolTask::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
+bool SVExternalToolTask::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
-	BOOL l_bOk = false;
+	bool l_bOk = SVTaskObjectListClass::CreateObject(pCreateStructure);
 
-	if( SVTaskObjectListClass::CreateObject( PCreateStructure ) &&
-			PCreateStructure->CheckCreateStructName( "SVToolLevelCreateStruct" ) )
+	if( l_bOk && pCreateStructure->CheckCreateStructName( "SVToolLevelCreateStruct" ) )
 	{
 		if( nullptr != GetInspection() && nullptr != GetTool() )
 		{
@@ -710,7 +709,7 @@ HRESULT SVExternalToolTask::Uninitialize()
 }
 
 
-BOOL SVExternalToolTask::CloseObject()
+bool SVExternalToolTask::CloseObject()
 {
 	Uninitialize();
 	if ( IsCreated() )
@@ -719,13 +718,13 @@ BOOL SVExternalToolTask::CloseObject()
 		hr = m_dll.Close();
 		if( SVTaskObjectClass::CloseObject() )
 		{
-			BOOL bRetVal = TRUE; // m_svOutputImageObject.CloseObject();
+			bool bRetVal = true; // m_svOutputImageObject.CloseObject();
 
 			return bRetVal;
 		}
-		return FALSE;
+		return false;
 	}
-	return TRUE;
+	return true;
 }
 
 bool SVExternalToolTask::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )

@@ -24,13 +24,11 @@ class SVCylindricalWarpToolClass : public SVToolClass
 	SV_DECLARE_CLASS( SVCylindricalWarpToolClass );
 
 public:
-	SVCylindricalWarpToolClass( BOOL p_bCreateDefaultTaskList = FALSE, 
-	                            SVObjectClass* p_pOwner = nullptr, 
-	                            int p_iStringResourceID = IDS_CLASSNAME_SVCYLINDRICALTOOL );
+	SVCylindricalWarpToolClass( SVObjectClass* p_pOwner = nullptr, int p_iStringResourceID = IDS_CLASSNAME_SVCYLINDRICALTOOL );
 	virtual ~SVCylindricalWarpToolClass();
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* p_pCreateStructure ) override;
-	virtual BOOL CloseObject() override;
+	virtual bool CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
+	virtual bool CloseObject() override;
 
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 

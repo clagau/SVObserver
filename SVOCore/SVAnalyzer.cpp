@@ -31,8 +31,8 @@ SVAnalyzerClass::SVAnalyzerClass( LPCSTR ObjectName )
 	init();
 }
 
-SVAnalyzerClass::SVAnalyzerClass( BOOL BCreateDefaultTaskList, SVObjectClass* POwner, int StringResourceID )
-: SVTaskObjectListClass( BCreateDefaultTaskList, POwner, StringResourceID ) 
+SVAnalyzerClass::SVAnalyzerClass( SVObjectClass* POwner, int StringResourceID )
+: SVTaskObjectListClass( POwner, StringResourceID ) 
 {
 	init();
 }
@@ -53,25 +53,11 @@ SVAnalyzerClass::~SVAnalyzerClass()
 {
 }
 
-BOOL SVAnalyzerClass::CloseObject()
+bool SVAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
-	return SVTaskObjectListClass::CloseObject();
-}
+	m_isCreated = SVTaskObjectClass::CreateObject(pCreateStructure) && GetInspection() && GetTool();
 
-BOOL SVAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
-{
-	BOOL bOk = false;
-
-	if( SVTaskObjectClass::CreateObject( PCreateStructure ) )
-	{
-		if( GetInspection() && GetTool() )
-		{
-			bOk = true;
-		}
-	}
-	m_isCreated = bOk;
-
-	return bOk;
+	return m_isCreated;
 }
 
 

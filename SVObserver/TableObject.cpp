@@ -50,9 +50,9 @@ TableObject::~TableObject()
 #pragma endregion Constructor
 
 #pragma region Public Methods
-BOOL TableObject::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+bool TableObject::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
-	BOOL l_bOk = SVTaskObjectClass::CreateObject( pCreateStructure );
+	bool l_bOk = SVTaskObjectClass::CreateObject( pCreateStructure );
 
 	m_NumberOfRows.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 	m_NumberOfRows.setSaveValueFlag(false);

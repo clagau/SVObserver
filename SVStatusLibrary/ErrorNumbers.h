@@ -544,14 +544,12 @@ namespace SvStl
 	static const int Err_17002_ErrorFillingInputs = BRW_ErrorBase + 2;
 	static const int Err_17003_ErrorGettingPPQCount = BRW_ErrorBase + 3;
 	static const int Err_17004_ErrorGettingPPQ = BRW_ErrorBase + 4;
-	static const int Err_17005_ErrorGettingOutputs = BRW_ErrorBase + 5;
 	static const int Err_17006_ErrorGettingInputObjectList = BRW_ErrorBase + 6;
 	static const int Err_17007_ErrorFillingInputs = BRW_ErrorBase + 7;
 	static const int Err_17008_ErrorGettingInputObjectList = BRW_ErrorBase + 8;
 	static const int Err_17009_ErrorFillingInputs = BRW_ErrorBase + 9;
 	static const int Err_17010_ErrorGettingPPQCount = BRW_ErrorBase + 10;
 	static const int Err_17011_ErrorGettingPPQ = BRW_ErrorBase + 11;
-	static const int Err_17012_ErrorGettingOutputs = BRW_ErrorBase + 12;
 	static const int Err_17013_ErrorLockingInputRequests = BRW_ErrorBase + 13;
 	static const int Err_17014_ErrorUnlockingInputRequests = BRW_ErrorBase + 14;
 	static const int Err_17015_ErrorUnlockingInputRequests = BRW_ErrorBase + 15;
@@ -570,7 +568,6 @@ namespace SvStl
 	static const int Err_17028_ErrorGettingTimeStamp = BRW_ErrorBase + 28;
 	static const int Err_17029_ErrorGettingPPQCount = BRW_ErrorBase + 29;
 	static const int Err_17030_ErrorGettingPPQ = BRW_ErrorBase + 30;
-	static const int Err_17031_ErrorGettingOutputs = BRW_ErrorBase + 31;
 	static const int Err_17032_ErrorFillingInputs = BRW_ErrorBase + 32;
 	static const int Err_17033_ErrorDetachingInput = BRW_ErrorBase + 33;
 	static const int Err_17034_ErrorGettingPPQCount = BRW_ErrorBase + 34;
@@ -579,8 +576,6 @@ namespace SvStl
 	static const int Err_17037_ErrorGettingPPQCount = BRW_ErrorBase + 37;
 	static const int Err_17038_ErrorGettingPPQ = BRW_ErrorBase + 38;
 	static const int Err_17040_ErrorGettingPPQCount = BRW_ErrorBase + 40;
-	static const int Err_17041_ErrorGettingInputs = BRW_ErrorBase + 41;
-	static const int Err_17042_ErrorGettingInputs = BRW_ErrorBase + 42;
 	static const int Err_17043_ErrorFindingPPQEntries = BRW_ErrorBase + 43;
 	static const int Err_17044_ErrorGettingInputObjectList = BRW_ErrorBase + 44;
 	static const int Err_17045_ErrorFillingInputs = BRW_ErrorBase + 45;
@@ -588,7 +583,6 @@ namespace SvStl
 	static const int Err_17047_ErrorFillingInputs = BRW_ErrorBase + 47;
 	static const int Err_17048_ErrorGettingPPQCount = BRW_ErrorBase + 48;
 	static const int Err_17049_ErrorGettingPPQ = BRW_ErrorBase + 49;
-	static const int Err_17050_ErrorGettingOutputs = BRW_ErrorBase + 50;
 	static const int Err_17051_ErrorGettingPPQCount = BRW_ErrorBase + 51;
 	static const int Err_17052_ErrorGettingPPQCount = BRW_ErrorBase + 52;
 

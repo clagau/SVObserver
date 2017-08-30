@@ -251,13 +251,7 @@ void SVDiscreteOutputsView::OnUpdate( CView* pSender, LPARAM lHint, CObject* pHi
 				}
 
 				// Get list of available outputs
-				if( !pPPQ->GetAllOutputs( ppIOEntries ) )
-				{
-					SvStl::MessageMgrStd e( SvStl::LogOnly );
-					e.setMessage( SVMSG_SVO_55_DEBUG_BREAK_ERROR, SvStl::Tid_ErrorGettingOutputs, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_17012_ErrorGettingOutputs );
-					DebugBreak();
-				}
-
+				pPPQ->GetAllOutputs(ppIOEntries);
 				lSize = static_cast< long >( ppIOEntries.size() );
 
 				// Find each digital output

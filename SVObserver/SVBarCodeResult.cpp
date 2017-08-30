@@ -24,8 +24,8 @@ SV_IMPLEMENT_CLASS (SVBarCodeResultClass, SVBarCodeResultClassGuid);
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-SVBarCodeResultClass::SVBarCodeResultClass(BOOL BCreateDefaultTaskList, SVObjectClass* POwner, int StringResourceID)
-	: SVStringResultClass(BCreateDefaultTaskList, POwner, StringResourceID)
+SVBarCodeResultClass::SVBarCodeResultClass(SVObjectClass* POwner, int StringResourceID)
+	: SVStringResultClass(POwner, StringResourceID)
 	, m_lTotalBytes(0L)
 	, m_nTotalCount(0)
 	, m_pBuffer(nullptr)
@@ -100,17 +100,13 @@ SVBarCodeResultClass::~SVBarCodeResultClass()
 	}
 }
 
-BOOL SVBarCodeResultClass::CreateObject(SVObjectLevelCreateStruct *PCreateStructure)
+bool SVBarCodeResultClass::CreateObject(SVObjectLevelCreateStruct* pCreateStructure)
 {
-	BOOL bOk = FALSE;
+	bool bOk = SVStringResultClass::CreateObject(pCreateStructure) && getInputString() && getRegExpression() && (S_OK == LoadMatchStringFile());
 
-	if( SVStringResultClass::CreateObject( PCreateStructure ) )
+	if (bOk)
 	{
-		bOk = getInputString() && getRegExpression() && (S_OK == LoadMatchStringFile());
-		if (bOk)
-		{
-			getRegExpression()->SetObjectAttributesAllowed( SvOi::SV_PRINTABLE | SvOi::SV_SETABLE_ONLINE | SvOi::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
-		}
+		getRegExpression()->SetObjectAttributesAllowed( SvOi::SV_PRINTABLE | SvOi::SV_SETABLE_ONLINE | SvOi::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
 	}
 
 	msv_bUseSingleMatchString.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
@@ -121,11 +117,6 @@ BOOL SVBarCodeResultClass::CreateObject(SVObjectLevelCreateStruct *PCreateStruct
 	m_isCreated = bOk;
 
 	return bOk;
-}
-
-BOOL SVBarCodeResultClass::CloseObject()
-{
-  return SVStringResultClass::CloseObject();
 }
 
 SVStringValueObjectClass* SVBarCodeResultClass::getInputString()

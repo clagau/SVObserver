@@ -115,7 +115,6 @@ namespace SvStl
 		Tid_ErrorGettingInputObjectList,
 		Tid_ErrorFillingInputs,
 		Tid_ErrorGettingPPQCount,
-		Tid_ErrorGettingOutputs,
 		Tid_Acquisition_SourceInformationFailed,
 		Tid_TooManyVariables,
 		Tid_EquationParserError,

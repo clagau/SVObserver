@@ -36,7 +36,7 @@ public:
 	SVRangeClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVRANGE );
 	virtual ~SVRangeClass();
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
+	virtual bool CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
 
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
@@ -44,7 +44,7 @@ public:
 	// Description:  Disconnect Inputs and call base class 
 	// Returns:  BOOL:  TRUE if succesful
 	//************************************
-	virtual BOOL CloseObject() override;
+	virtual bool CloseObject() override;
 
 	// ISVCancel interface
 	virtual bool CanCancel() override;

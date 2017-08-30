@@ -75,11 +75,9 @@ void SVWatershedFilterClass::init()
 // -----------------------------------------------------------------------------
 // .Description : ...
 ////////////////////////////////////////////////////////////////////////////////
-BOOL SVWatershedFilterClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
+bool SVWatershedFilterClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
-	BOOL bOk = TRUE;
-
-	bOk &= SVFilterClass::CreateObject( PCreateStructure );
+	bool bOk = SVFilterClass::CreateObject( pCreateStructure );
 
 	return bOk;
 }

@@ -24,8 +24,8 @@
 
 SV_IMPLEMENT_CLASS( SVLinearMeasurementAnalyzerClass, SVLinearMeasurementAnalyzerClassGuid );
 
-SVLinearMeasurementAnalyzerClass::SVLinearMeasurementAnalyzerClass( BOOL BCreateDefaultTaskList, SVObjectClass* POwner, int StringResourceID )
-									 :SVLinearAnalyzerClass( BCreateDefaultTaskList, POwner, StringResourceID ) 
+SVLinearMeasurementAnalyzerClass::SVLinearMeasurementAnalyzerClass( SVObjectClass* POwner, int StringResourceID )
+									 :SVLinearAnalyzerClass( POwner, StringResourceID ) 
 {
 	m_bEnableDirection = true;
 	m_bEnableEdgeSelect = true;
@@ -207,9 +207,9 @@ SVLinearMeasurementAnalyzerClass::~SVLinearMeasurementAnalyzerClass()
 	CloseObject();
 }
 
-BOOL SVLinearMeasurementAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
+bool SVLinearMeasurementAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
-	BOOL bOk = SVLinearAnalyzerClass::CreateObject( PCreateStructure );
+	bool bOk = SVLinearAnalyzerClass::CreateObject( pCreateStructure );
 
 	// Set / Reset Printable Flag
 	mdpEdgeA.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
@@ -223,11 +223,6 @@ BOOL SVLinearMeasurementAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* 
 	m_isCreated = bOk;
 
 	return bOk;
-}
-
-BOOL SVLinearMeasurementAnalyzerClass::CloseObject()
-{
-	return SVLinearAnalyzerClass::CloseObject();
 }
 
 bool SVLinearMeasurementAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)

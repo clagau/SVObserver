@@ -21,8 +21,8 @@ SV_IMPLEMENT_CLASS( SVDPointYResultClass, SVDPointYResultClassGuid );
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-SVDPointYResultClass::SVDPointYResultClass( BOOL BCreateDefaultTaskList, SVObjectClass* POwner, int StringResourceID )
-					:SVResultClass( BCreateDefaultTaskList, POwner, StringResourceID )
+SVDPointYResultClass::SVDPointYResultClass( SVObjectClass* POwner, int StringResourceID )
+					:SVResultClass( POwner, StringResourceID )
 {
 	// Identify yourself
 	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVResultObjectType;
@@ -71,14 +71,10 @@ SVDPointYResultClass::~SVDPointYResultClass()
 
 }
 
-BOOL SVDPointYResultClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
+bool SVDPointYResultClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
-	BOOL bOk = FALSE;
-
-	if( SVResultClass::CreateObject( PCreateStructure ) )
-	{
-		bOk = nullptr != getInputPoint();
-	}
+	bool bOk = SVResultClass::CreateObject(pCreateStructure);
+	bOk &= nullptr != getInputPoint();
 
 	// Set / Reset Printable Flag
 	y.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
@@ -86,11 +82,6 @@ BOOL SVDPointYResultClass::CreateObject( SVObjectLevelCreateStruct* PCreateStruc
 	m_isCreated = bOk;
 
 	return bOk;
-}
-
-BOOL SVDPointYResultClass::CloseObject()
-{
-	return SVResultClass::CloseObject();
 }
 
 SVDPointValueObjectClass* SVDPointYResultClass::getInputPoint()

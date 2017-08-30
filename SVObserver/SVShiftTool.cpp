@@ -35,8 +35,8 @@ static const LPCTSTR g_strShiftToolEnum = _T( "None=0,Absolute=1,Reference=2" );
 #pragma endregion Declarations
 
 #pragma region Constructor
-SVShiftTool::SVShiftTool( BOOL BCreateDefaultTaskList, SVObjectClass* POwner, int StringResourceID )
-: SVToolClass( BCreateDefaultTaskList, POwner, StringResourceID )
+SVShiftTool::SVShiftTool( SVObjectClass* POwner, int StringResourceID )
+: SVToolClass( POwner, StringResourceID )
 {
 	LocalInitialize();
 }
@@ -48,9 +48,9 @@ SVShiftTool::~SVShiftTool()
 #pragma endregion Constructor
 
 #pragma region Public Methods
-BOOL SVShiftTool::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
+bool SVShiftTool::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
-	BOOL l_Status = SVToolClass::CreateObject( PCreateStructure );
+	bool l_Status = SVToolClass::CreateObject( pCreateStructure );
 
 	l_Status &= (S_OK == m_OutputImage.InitializeImage( GetImageInput() ) );
 
@@ -207,7 +207,6 @@ bool SVShiftTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVe
 
 		if (Result)
 		{
-			BOOL PerformTranslation(false);
 			long LearnedTranslationX(0L);
 			long LearnedTranslationY(0L);
 			double dInputTranslationX(0.0);

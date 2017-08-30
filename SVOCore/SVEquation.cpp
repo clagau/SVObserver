@@ -302,14 +302,9 @@ SVEquationClass::~SVEquationClass()
 ////////////////////////////////////////////////////////////////////////////////
 // 
 ////////////////////////////////////////////////////////////////////////////////
-BOOL SVEquationClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
+bool SVEquationClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
-	BOOL bOk = FALSE;
-
-	if( SVTaskObjectClass::CreateObject( PCreateStructure ) )
-	{
-		bOk = nullptr != GetInspection();
-	}
+	bool bOk = SVTaskObjectClass::CreateObject( pCreateStructure ) && nullptr != GetInspection();
 
 	// Set / Reset Printable Flag
 	enabled.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
@@ -393,7 +388,7 @@ void SVEquationClass::Persist( SVObjectWriter& rWriter )
 HRESULT SVEquationClass::SetObjectValue( SVObjectAttributeClass* pDataObject )
 {
 	HRESULT hr = S_FALSE;
-	BOOL bOk = FALSE;
+	bool bOk = false;
 
 	SvCl::SVObjectSVStringArrayClass AttributeList;
 

@@ -64,16 +64,16 @@ public:
 	
 	SVMatroxBarCode m_MilCodeId;
 
-	SVBarCodeAnalyzerClass(BOOL BCreateDefaultTaskList = TRUE, SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVBARCODEANALYZER);
+	SVBarCodeAnalyzerClass(SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVBARCODEANALYZER);
 	virtual ~SVBarCodeAnalyzerClass();
 
 	void CloseMil();
 	bool InitMil(SvStl::MessageContainerVector *pErrorMessages=nullptr);
-	virtual BOOL CreateObject(SVObjectLevelCreateStruct* PCreateStructure) override;
+	virtual bool CreateObject(SVObjectLevelCreateStruct* pCreateStructure) override;
 
 	SvOi::IObjectClass* GetResultObject();
 	
-	virtual BOOL CloseObject() override;
+	virtual bool CloseObject() override;
 
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 	static bool CharIsControl(TCHAR p_Char);

@@ -75,19 +75,18 @@ public:
 	virtual void ResetPrivateInputInterface();
 
 	int GetObjectDepth() const;
-	virtual BOOL SetObjectDepth( int NewObjectDepth );
-	virtual BOOL SetObjectDepthWithIndex( int NewObjectDepth, int NewLastSetIndex );
+	virtual void SetObjectDepth( int NewObjectDepth );
+	virtual void SetObjectDepthWithIndex( int NewObjectDepth, int NewLastSetIndex );
 
 	virtual long GetImageDepth() const;
-	virtual BOOL SetImageDepth( long lDepth );
+	virtual bool SetImageDepth( long lDepth );
 
-	virtual BOOL InitObject( SVObjectClass* pObject );
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* pCreateStructure );
+	virtual bool CreateObject( SVObjectLevelCreateStruct* pCreateStructure );
 	virtual void ConnectObject( const SVObjectLevelCreateStruct& rCreateStructure );
-	virtual BOOL CloseObject();
-	virtual bool IsValid() const { return (TRUE == m_isObjectValid); }
-	virtual BOOL SetObjectOwner( SVObjectClass* pNewOwner );
-	virtual BOOL SetObjectOwner( const GUID& rNewOwnerGUID );
+	virtual bool CloseObject();
+	virtual bool IsValid() const { return m_isObjectValid; }
+	virtual bool SetObjectOwner( SVObjectClass* pNewOwner );
+	virtual bool SetObjectOwner( const GUID& rNewOwnerGUID );
 
 	virtual HRESULT GetObjectValue( const SVString& rValueName, _variant_t& rValue ) const;
 	virtual HRESULT SetValuesForAnObject( const GUID& rAimObjectID, SVObjectAttributeClass* pDataObject );
@@ -101,7 +100,7 @@ public:
 	virtual void Persist( SVObjectWriter& rWriter );
 	virtual void PersistAttributes( SVObjectWriter& rWriter );
 
-	virtual BOOL GetChildObjectByName( LPCTSTR tszName, SVObjectClass** ppObject );
+	virtual bool GetChildObjectByName( LPCTSTR tszName, SVObjectClass** ppObject );
 
 	virtual HRESULT GetChildObject( SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index = 0 ) const;
 
@@ -112,8 +111,6 @@ public:
 	virtual bool ConnectAllInputs() { return false; };
 	bool ConnectObjectInput( SVInObjectInfoStruct* pObjectInInfo );
 	virtual bool DisconnectObjectInput( SVInObjectInfoStruct* pObjectInInfo );
-	BOOL IsDescendantOf( SVObjectClass* pAncestorObject );
-	BOOL IsDescendantOfType( const SVObjectInfoStruct& rAncestorInfo );
 
 	virtual void ResetName();
 	virtual void SetObjectName( LPCTSTR ObjectName );
@@ -123,9 +120,9 @@ public:
 	/// Add the object to the friend list.
 	/// \param rFriendGUID [in] Guid of the object
 	/// \param rAddPreGuid [in] The new object will be added before this object. Default: SV_GUID_NULL This means: it will be added at the end.
-	/// \returns BOOL
-	BOOL AddFriend( const GUID& rFriendGUID, const GUID& rAddPreGuid = SV_GUID_NULL );
-	BOOL RemoveFriend( const GUID& rFriendGUID );
+	/// \returns bool
+	bool AddFriend( const GUID& rFriendGUID, const GUID& rAddPreGuid = SV_GUID_NULL );
+	bool RemoveFriend( const GUID& rFriendGUID );
 	void DestroyFriends();
 
 	/// Destroy a friend (Disconnect, CloseObject and Destroy his friend), but it must be a taskObject. 
@@ -156,7 +153,7 @@ public:
 	
 	const SVGUID& GetEmbeddedID() const;
 	const SVGUID& GetOwnerID() const;
-	BOOL IsCreated() const;
+	bool IsCreated() const;
 
 	virtual HRESULT RegisterSubObject( SVObjectClass* pObject );
 	virtual HRESULT UnregisterSubObject( SVObjectClass* pObject );
@@ -256,9 +253,9 @@ protected:
 	long m_lImageDepth;
 
 	//This attribute holds the validity state of the object.
-	mutable BOOL m_isObjectValid;
+	mutable bool m_isObjectValid;
 	// Refer to IsCreated()
-	BOOL m_isCreated;
+	bool m_isCreated;
 	//If object is embedded, set this ID
 	SVGUID m_embeddedID;
 	//Owner Info

@@ -41,8 +41,8 @@ SV_IMPLEMENT_CLASS (SVBarCodeAnalyzerClass, SVBarCodeAnalyzerClassGuid);
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-SVBarCodeAnalyzerClass::SVBarCodeAnalyzerClass (BOOL BCreateDefaultTaskList, SVObjectClass* POwner, int StringResourceID)
-	: SVImageAnalyzerClass (BCreateDefaultTaskList, POwner, StringResourceID)
+SVBarCodeAnalyzerClass::SVBarCodeAnalyzerClass (SVObjectClass* POwner, int StringResourceID)
+	: SVImageAnalyzerClass (POwner, StringResourceID)
 {
 	if ( TheSVOLicenseManager().HasMatroxIdentificationLicense() )
 	{
@@ -135,7 +135,7 @@ void SVBarCodeAnalyzerClass::init()
 	addDefaultInputObjects();
 	
 	// Instantiate Children
-	SVBarCodeResultClass *pAnalyzerResult = new SVBarCodeResultClass (TRUE, this, IDS_CLASSNAME_SVBARCODEANALYZERESULT);
+	SVBarCodeResultClass *pAnalyzerResult = new SVBarCodeResultClass (this, IDS_CLASSNAME_SVBARCODEANALYZERESULT);
 	
 	if (pAnalyzerResult)
 		Add (pAnalyzerResult);
@@ -279,9 +279,9 @@ void SVBarCodeAnalyzerClass::CloseMil ()
 	SVMatroxBarCodeInterface::Destroy( m_MilCodeId );
 }
 
-BOOL SVBarCodeAnalyzerClass::CreateObject (SVObjectLevelCreateStruct* pCreateStructure)
+bool SVBarCodeAnalyzerClass::CreateObject(SVObjectLevelCreateStruct* pCreateStructure)
 {
-	BOOL bOk = FALSE;
+	bool bOk = false;
 
 
 	if ( !m_bHasLicenseError )
@@ -293,7 +293,7 @@ BOOL SVBarCodeAnalyzerClass::CreateObject (SVObjectLevelCreateStruct* pCreateStr
 			{
 				LoadRegExpression();
 
-				bOk = TRUE;
+				bOk = true;
 			}
 			else
 			{
@@ -304,7 +304,7 @@ BOOL SVBarCodeAnalyzerClass::CreateObject (SVObjectLevelCreateStruct* pCreateStr
 	}
 	else
 	{
-		bOk = TRUE;
+		bOk = true;
 	}
 
 	// *** Set/Reset Printable Attributes ***
@@ -350,7 +350,7 @@ SVBarCodeAnalyzerClass::~SVBarCodeAnalyzerClass ()
 	CloseObject();
 }
 
-BOOL SVBarCodeAnalyzerClass::CloseObject ()
+bool SVBarCodeAnalyzerClass::CloseObject()
 {
 	CloseMil ();
 	return SVImageAnalyzerClass::CloseObject();

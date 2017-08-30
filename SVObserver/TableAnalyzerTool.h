@@ -22,7 +22,7 @@ class TableAnalyzerTool : public SVToolClass
 
 #pragma region Constructor
 public:
-	TableAnalyzerTool( BOOL bCreateDefaultTaskList = FALSE, SVObjectClass* pOwner = nullptr, int stringResourceID = IDS_CLASSNAME_TABLEANALYZER_TOOL );
+	TableAnalyzerTool( SVObjectClass* pOwner = nullptr, int stringResourceID = IDS_CLASSNAME_TABLEANALYZER_TOOL );
 
 	virtual ~TableAnalyzerTool(void);
 
@@ -30,7 +30,7 @@ public:
 
 #pragma region Public Methods
 public:
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
+	virtual bool CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
 
 	virtual bool DoesObjectHaveExtents() const override;
 

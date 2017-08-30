@@ -22,8 +22,8 @@
 
 SV_IMPLEMENT_CLASS( SVLinearMaximumBackgroundObjectLineAnalyzerClass, SVLinearMaximumBackgroundObjectLineAnalyzerClassGuid );
 
-SVLinearMaximumBackgroundObjectLineAnalyzerClass::SVLinearMaximumBackgroundObjectLineAnalyzerClass( BOOL BCreateDefaultTaskList, SVObjectClass* POwner, int StringResourceID )
-									 :SVLinearAnalyzerClass( BCreateDefaultTaskList, POwner, StringResourceID ) 
+SVLinearMaximumBackgroundObjectLineAnalyzerClass::SVLinearMaximumBackgroundObjectLineAnalyzerClass( SVObjectClass* POwner, int StringResourceID )
+									 :SVLinearAnalyzerClass( POwner, StringResourceID ) 
 {
 	m_bEnableDirection = false;
 	m_bEnableEdgeSelect = false;
@@ -213,9 +213,9 @@ SVLinearMaximumBackgroundObjectLineAnalyzerClass::~SVLinearMaximumBackgroundObje
 	CloseObject();
 }
 
-BOOL SVLinearMaximumBackgroundObjectLineAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
+bool SVLinearMaximumBackgroundObjectLineAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
-	BOOL bOk = SVLinearAnalyzerClass::CreateObject( PCreateStructure );
+	bool bOk = SVLinearAnalyzerClass::CreateObject( pCreateStructure );
 
 	mdpEdgeA.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 	mdpEdgeB.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
@@ -227,11 +227,6 @@ BOOL SVLinearMaximumBackgroundObjectLineAnalyzerClass::CreateObject( SVObjectLev
 	m_isCreated = bOk;
 
 	return bOk;
-}
-
-BOOL SVLinearMaximumBackgroundObjectLineAnalyzerClass::CloseObject()
-{
-	return SVLinearAnalyzerClass::CloseObject();
 }
 
 bool SVLinearMaximumBackgroundObjectLineAnalyzerClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)

@@ -22,7 +22,7 @@ public:
 	SVThinningFilterClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVTHINNINGFILTER );
 	virtual ~SVThinningFilterClass();
 	
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
+	virtual bool CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
 
 #pragma region virtual method (IFilter)
 	virtual bool shouldResetInspection() const override { return true; }

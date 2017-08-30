@@ -34,10 +34,8 @@ static char THIS_FILE[] = __FILE__;
 SV_IMPLEMENT_CLASS( SVStatisticsToolClass, SVStatisticsToolClassGuid );
 
 
-SVStatisticsToolClass::SVStatisticsToolClass( BOOL BCreateDefaultTaskList, 
-                                              SVObjectClass* POwner, 
-                                              int StringResourceID )
-				:SVToolClass( BCreateDefaultTaskList, POwner, StringResourceID )
+SVStatisticsToolClass::SVStatisticsToolClass( SVObjectClass* POwner, int StringResourceID )
+				:SVToolClass( POwner, StringResourceID )
 {
 	init();
 }
@@ -160,9 +158,9 @@ SVStatisticsToolClass::~SVStatisticsToolClass()
 { 
 }
 
-BOOL SVStatisticsToolClass::CreateObject(SVObjectLevelCreateStruct* PCreateStruct )
+bool SVStatisticsToolClass::CreateObject(SVObjectLevelCreateStruct* pCreateStructure )
 {
-	m_isCreated = SVToolClass::CreateObject( PCreateStruct );
+	m_isCreated = SVToolClass::CreateObject( pCreateStructure );
 
 	for ( int i = 0; i < SV_NUMBER_OF_STAT_FEATURES; i++ )
 	{

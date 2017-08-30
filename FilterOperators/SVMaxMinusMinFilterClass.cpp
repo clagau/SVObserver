@@ -39,9 +39,9 @@ SVMaxMinusMinFilterClass::~SVMaxMinusMinFilterClass()
 	CloseObject();
 }
 
-BOOL SVMaxMinusMinFilterClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
+bool SVMaxMinusMinFilterClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
-	BOOL bOk = SVFilterClass::CreateObject( PCreateStructure );
+	bool bOk = SVFilterClass::CreateObject( pCreateStructure );
 
 	if( bOk )
 	{
@@ -53,7 +53,7 @@ BOOL SVMaxMinusMinFilterClass::CreateObject( SVObjectLevelCreateStruct* PCreateS
 	return bOk;
 }
 
-BOOL SVMaxMinusMinFilterClass::CloseObject()
+bool SVMaxMinusMinFilterClass::CloseObject()
 {
 	m_ProcBufferHandlePtr.clear();
 	

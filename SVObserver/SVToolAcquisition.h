@@ -23,11 +23,11 @@ class SVAcquisitionToolClass : public SVToolClass
 	SV_DECLARE_CLASS( SVAcquisitionToolClass );
 
 public:
-	SVAcquisitionToolClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVACQUISITIONTOOL );
+	SVAcquisitionToolClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVACQUISITIONTOOL );
 
 	virtual ~SVAcquisitionToolClass();
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
+	virtual bool CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	virtual bool DoesObjectHaveExtents() const override;

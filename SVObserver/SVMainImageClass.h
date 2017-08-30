@@ -26,12 +26,12 @@ public:
 
 	virtual ~SVMainImageClass();
 
-	virtual BOOL SetImageHandleIndex( SVImageIndexStruct lIndex ) override;
+	virtual bool SetImageHandleIndex( SVImageIndexStruct lIndex ) override;
 
-	virtual BOOL CopyImageTo( SVImageIndexStruct lIndex ) override;
+	virtual bool CopyImageTo( SVImageIndexStruct lIndex ) override;
 
-	virtual BOOL GetImageHandle( SVSmartHandlePointer& p_rHandlePtr ) override;
-	virtual BOOL GetImageHandle( SVImageIndexStruct svIndex, SVSmartHandlePointer& rHandle ) override;
+	virtual bool GetImageHandle( SVSmartHandlePointer& p_rHandlePtr ) override;
+	virtual bool GetImageHandle( SVImageIndexStruct svIndex, SVSmartHandlePointer& rHandle ) override;
 
 	virtual const SvTl::SVTimeStamp& GetLastResetTimeStamp() const override;
 	

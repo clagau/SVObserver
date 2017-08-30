@@ -35,8 +35,8 @@ SVLuminanceAnalyzerClass::SVLuminanceAnalyzerClass( LPCSTR ObjectName )
 	init();
 }
 
-SVLuminanceAnalyzerClass::SVLuminanceAnalyzerClass( BOOL BCreateDefaultTaskList, SVObjectClass* POwner, int StringResourceID )
-: SVImageAnalyzerClass( BCreateDefaultTaskList, POwner, StringResourceID ) 
+SVLuminanceAnalyzerClass::SVLuminanceAnalyzerClass( SVObjectClass* POwner, int StringResourceID )
+: SVImageAnalyzerClass( POwner, StringResourceID ) 
 , msvlHistValueArraySize( 0 )
 {
 	init();
@@ -102,8 +102,7 @@ void SVLuminanceAnalyzerClass::init()
 
 	// Set Local
 
-	SVLongResultClass* pAnalyzerResult = 
-		new SVLongResultClass( true, this, IDS_CLASSNAME_SVLUMINANCEANALYZERESULT );
+	SVLongResultClass* pAnalyzerResult = new SVLongResultClass( this, IDS_CLASSNAME_SVLUMINANCEANALYZERESULT );
 
 	if(nullptr == pAnalyzerResult)
 	{
@@ -147,12 +146,12 @@ SVLuminanceAnalyzerClass::~SVLuminanceAnalyzerClass()
 	CloseObject ();
 }
 
-BOOL SVLuminanceAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
+bool SVLuminanceAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
 	SVImageClass* pSVImage(nullptr);
 	bool bError(false);
 
-	if (! SVImageAnalyzerClass::CreateObject( PCreateStructure ) )
+	if (! SVImageAnalyzerClass::CreateObject( pCreateStructure ) )
 	{
 		SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16095);
@@ -222,7 +221,7 @@ BOOL SVLuminanceAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* PCreateS
 }
 
 
-BOOL SVLuminanceAnalyzerClass::CloseObject()
+bool SVLuminanceAnalyzerClass::CloseObject()
 {
 
 	msvplHistValues.clear();
@@ -230,7 +229,7 @@ BOOL SVLuminanceAnalyzerClass::CloseObject()
 	l_lIntf.Destroy( msvHistResultID );
 	SVImageAnalyzerClass::CloseObject ();
 
-	return TRUE;
+	return true;
 }
 
 

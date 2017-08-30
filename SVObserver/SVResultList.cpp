@@ -164,9 +164,9 @@ HRESULT SVResultListClass::GetResultDefinitions( ResultViewReferences::SVResultD
 
 SVProductInspectedState SVResultListClass::GetInspectionState()
 {
-	// Only if both values are FALSE the product is good !!!!
-	BOOL masterFailed = FALSE;
-	BOOL masterWarned = FALSE;
+	// Only if both values are false the product is good !!!!
+	bool masterFailed = false;
+	bool masterWarned = false;
 
 	for( int i = 0; i < m_results.GetSize(); ++i )
 	{
@@ -174,11 +174,15 @@ SVProductInspectedState SVResultListClass::GetInspectionState()
 		masterWarned |= m_results.GetAt( i )->IsWarned();
 	}
 
-	if( masterFailed )
-		return( PRODUCT_INSPECTION_FAILED );
+	if (masterFailed)
+	{
+		return(PRODUCT_INSPECTION_FAILED);
+	}
 
-	if( masterWarned )
-		return( PRODUCT_INSPECTION_WARNING );
+	if (masterWarned)
+	{
+		return(PRODUCT_INSPECTION_WARNING);
+	}
 
 	return( PRODUCT_INSPECTION_PASSED );
 }

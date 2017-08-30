@@ -92,7 +92,7 @@ void SVRangeClass::init()
 	addDefaultInputObjects();
 }
 
-BOOL SVRangeClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+bool SVRangeClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
 	m_isCreated = SVTaskObjectClass::CreateObject( pCreateStructure );
 
@@ -150,7 +150,7 @@ bool SVRangeClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	return Result;
 }
 
-BOOL SVRangeClass::CloseObject()
+bool SVRangeClass::CloseObject()
 {
 	DisconnectAllInputObjects();
 	return SVTaskObjectClass::CloseObject();

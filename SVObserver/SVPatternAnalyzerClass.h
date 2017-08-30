@@ -26,12 +26,12 @@ class SVPatternAnalyzerClass : public SVImageAnalyzerClass, public SvOi::IPatter
 	friend class SVSetupDialogManager;
 
 public:
-	SVPatternAnalyzerClass (BOOL BCreateDefaultTaskList = TRUE, SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVPATTERNANALYZER);
+	SVPatternAnalyzerClass (SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVPATTERNANALYZER);
 
 	virtual	~SVPatternAnalyzerClass();
-	virtual	BOOL CloseObject() override;
+	virtual bool CloseObject() override;
 	
-	virtual BOOL CreateObject(SVObjectLevelCreateStruct* PCreateStructure) override;
+	virtual bool CreateObject(SVObjectLevelCreateStruct* pCreateStructure) override;
 	virtual bool onRun(SVRunStatusClass &rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	void CloseMIL();

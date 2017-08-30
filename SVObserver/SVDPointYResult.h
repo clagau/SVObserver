@@ -22,10 +22,9 @@ class SVDPointYResultClass : public SVResultClass
 	SV_DECLARE_CLASS( SVDPointYResultClass );
 
 public:
-	SVDPointYResultClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_RESULT_DPOINT_Y );
+	SVDPointYResultClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_RESULT_DPOINT_Y );
 	virtual ~SVDPointYResultClass();
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
-	virtual BOOL CloseObject() override;
+	virtual bool CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
 
 protected:
 	SVDPointValueObjectClass* getInputPoint();

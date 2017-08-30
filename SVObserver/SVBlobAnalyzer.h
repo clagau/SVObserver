@@ -150,9 +150,9 @@ public:
 	virtual SvOi::NameValueList getFeatureList(bool isSelected) const override;
 #pragma endregion IEnumerateValueObject
 
-	virtual BOOL CloseObject() override;
+	virtual bool CloseObject() override;
 
-	virtual BOOL CreateObject(SVObjectLevelCreateStruct* PCreateStructure) override;
+	virtual bool CreateObject(SVObjectLevelCreateStruct* pCreateStructure) override;
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	DWORD BuildFeatureListID ();
@@ -258,7 +258,7 @@ protected:
 	                    BOOL       abAscending);
 
 
-	virtual void addDefaultInputObjects( BOOL BCallBaseClass = false, SVInputInfoListClass* PInputListToFill = nullptr ) override;
+	virtual void addDefaultInputObjects( SVInputInfoListClass* PInputListToFill = nullptr ) override;
 
 private:
 	void init();

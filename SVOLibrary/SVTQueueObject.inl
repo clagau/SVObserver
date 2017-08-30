@@ -10,7 +10,7 @@
 // ******************************************************************************
 
 // the following proxy functions are implemented in SVQueueObject.cpp
-BOOL __stdcall InitializeCriticalSectionAndSpinCount_(LPCRITICAL_SECTION lpCriticalSection, DWORD dwSpinCount);
+bool __stdcall InitializeCriticalSectionAndSpinCount_(LPCRITICAL_SECTION lpCriticalSection, DWORD dwSpinCount);
 
 template <typename T>
 SVTQueueObject<T>::SVTQueueObject()
@@ -64,7 +64,7 @@ void SVTQueueObject<T>::push_back( const T& p_rValue )
 }
 
 template <typename T>
-BOOL SVTQueueObject<T>::Create()
+bool SVTQueueObject<T>::Create()
 {
 	if( !m_bCreated )
 	{
@@ -74,7 +74,7 @@ BOOL SVTQueueObject<T>::Create()
 }
 
 template <typename T>
-BOOL SVTQueueObject<T>::Destroy()
+void SVTQueueObject<T>::Destroy()
 {
 	if( m_bCreated )
 	{
@@ -82,44 +82,42 @@ BOOL SVTQueueObject<T>::Destroy()
 
 		m_bCreated = false;
 	}
-
-	return TRUE;
 }
 
 template <typename T>
-BOOL SVTQueueObject<T>::IsCreated() const
+bool SVTQueueObject<T>::IsCreated() const
 {
 	return m_bCreated;
 }// end IsCreated
 
 template <typename T>
-BOOL SVTQueueObject<T>::Lock()
+bool SVTQueueObject<T>::Lock()
 {
 	if( m_bCreated )
 	{
 		::EnterCriticalSection( &m_hCriticalSection );
 
-		return TRUE;
+		return true;
 	}// end if
 
-	return FALSE;
+	return false;
 }// end Lock
 
 template <typename T>
-BOOL SVTQueueObject<T>::Unlock()
+bool SVTQueueObject<T>::Unlock()
 {
 	if( m_bCreated )
 	{
 		::LeaveCriticalSection( &m_hCriticalSection );
 
-		return TRUE;
+		return true;
 	}// end if
 
-	return FALSE;
+	return false;
 }// end Unlock
 
 template <typename T>
-BOOL SVTQueueObject<T>::AddHead( T pParam )
+bool SVTQueueObject<T>::AddHead( T pParam )
 {
 	if( m_bCreated )
 	{
@@ -127,14 +125,14 @@ BOOL SVTQueueObject<T>::AddHead( T pParam )
 
 		m_Queue.push_front( pParam );
 
-		return TRUE;
+		return true;
 	}// end if
 
-	return FALSE;
+	return false;
 }// end AddHead
 
 template <typename T>
-BOOL SVTQueueObject<T>::AddTail( T pParam )
+bool SVTQueueObject<T>::AddTail( T pParam )
 {
 	if( m_bCreated )
 	{
@@ -142,10 +140,10 @@ BOOL SVTQueueObject<T>::AddTail( T pParam )
 
 		m_Queue.push_back( pParam );
 
-		return TRUE;
+		return true;
 	}// end if
 
-	return FALSE;
+	return false;
 }// end AddTail
 
 template <typename T>
@@ -162,20 +160,20 @@ int SVTQueueObject<T>::GetCount()
 }
 
 template <typename T>
-BOOL SVTQueueObject<T>::GetSize( long &lSize )
+bool SVTQueueObject<T>::GetSize( long &lSize )
 {
 	if( m_bCreated )
 	{
 		lSize = static_cast< long >( m_Queue.size() );
 
-		return TRUE;
+		return true;
 	}// end if
 
-	return FALSE;
+	return false;
 }// end GetSize
 
 template <typename T>
-BOOL SVTQueueObject<T>::GetHead( T* pParam )
+bool SVTQueueObject<T>::GetHead( T* pParam )
 {
 	if( m_bCreated && nullptr != pParam )
 	{
@@ -185,15 +183,15 @@ BOOL SVTQueueObject<T>::GetHead( T* pParam )
 		{
 			*pParam = m_Queue.front();
 
-			return TRUE;
+			return true;
 		}
 	}
 
-	return FALSE;
+	return false;
 }
 
 template <typename T>
-BOOL SVTQueueObject<T>::GetTail( T* pParam )
+bool SVTQueueObject<T>::GetTail( T* pParam )
 {
 	if( m_bCreated && nullptr != pParam )
 	{
@@ -203,15 +201,15 @@ BOOL SVTQueueObject<T>::GetTail( T* pParam )
 		{
 			*pParam = m_Queue.back();
 
-			return TRUE;
+			return true;
 		}
 	}
 
-	return FALSE;
+	return false;
 }
 
 template <typename T>
-BOOL SVTQueueObject<T>::GetAt( long lPosition, T* pParam )
+bool SVTQueueObject<T>::GetAt( long lPosition, T* pParam )
 {
 	if( m_bCreated )
 	{
@@ -221,28 +219,28 @@ BOOL SVTQueueObject<T>::GetAt( long lPosition, T* pParam )
 		{
 			*pParam = m_Queue[ lPosition ];
 
-			return TRUE;
+			return true;
 		}
 	}
 
-	return FALSE;
+	return false;
 }
 
 template <typename T>
-BOOL SVTQueueObject<T>::GetHeadPosition( QUEUEPOS& pos )
+bool SVTQueueObject<T>::GetHeadPosition( QUEUEPOS& pos )
 {
 	if( m_bCreated )
 	{
 		pos = 0;
 
-		return TRUE;
+		return true;
 	}
 
-	return FALSE;
+	return false;
 }// end GetHeadPosition
 
 template <typename T>
-BOOL SVTQueueObject<T>::GetNextItem( QUEUEPOS& pos, T* pParam )
+bool SVTQueueObject<T>::GetNextItem( QUEUEPOS& pos, T* pParam )
 {
 	if( m_bCreated )
 	{
@@ -252,15 +250,15 @@ BOOL SVTQueueObject<T>::GetNextItem( QUEUEPOS& pos, T* pParam )
 		{
 			*pParam = m_Queue[ pos++ ];
 
-			return TRUE;
+			return true;
 		}
 	}
 
-	return FALSE;
+	return false;
 }// end GetNextItem
 
 template <typename T>
-BOOL SVTQueueObject<T>::RemoveHead( T* pParam )
+bool SVTQueueObject<T>::RemoveHead( T* pParam )
 {
 	if( m_bCreated )
 	{
@@ -270,15 +268,15 @@ BOOL SVTQueueObject<T>::RemoveHead( T* pParam )
 		{
 			m_Queue.pop_front();
 
-			return TRUE;
+			return true;
 		}
 	}
 
-	return FALSE;
+	return false;
 }
 
 template <typename T>
-BOOL SVTQueueObject<T>::RemoveAt( long lPosition )
+bool SVTQueueObject<T>::RemoveAt( long lPosition )
 {
 	if( m_bCreated )
 	{
@@ -292,15 +290,15 @@ BOOL SVTQueueObject<T>::RemoveAt( long lPosition )
 		{
 			m_Queue.erase( l_Iter );
 
-			return TRUE;
+			return true;
 		}
 	}
 
-	return FALSE;
+	return false;
 }
 
 template <typename T>
-BOOL SVTQueueObject<T>::RemoveAll()
+bool SVTQueueObject<T>::RemoveAll()
 {
 	if( m_bCreated )
 	{
@@ -308,9 +306,9 @@ BOOL SVTQueueObject<T>::RemoveAll()
 
 		m_Queue.clear();
 
-		return TRUE;
+		return true;
 	}
 
-	return FALSE;
+	return false;
 }
 

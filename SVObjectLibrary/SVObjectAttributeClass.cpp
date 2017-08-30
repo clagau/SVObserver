@@ -142,9 +142,9 @@ SVObjectScriptDataObjectTypeEnum SVObjectAttributeClass::GetSVObjectScriptDataOb
 	return eType;
 }// end GetSVObjectScriptDataObjectTypeEnum()
 
-BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectBoolArrayClass& svData)
+bool SVObjectAttributeClass::GetData(SvCl::SVObjectBoolArrayClass& svData)
 {
-	BOOL bOk = FALSE;
+	bool bOk = false;
 
 	switch ( GetType() )
 	{
@@ -152,7 +152,7 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectBoolArrayClass& svData)
 		{
 			svData = m_BoolArray;
 
-			bOk = TRUE;
+			bOk = true;
 
 			break;
 		}
@@ -201,9 +201,9 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectBoolArrayClass& svData)
 	return bOk;
 }// end GetData(SVObjectBoolArrayClass& svData)
 
-BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectByteArrayClass& svData)
+bool SVObjectAttributeClass::GetData(SvCl::SVObjectByteArrayClass& svData)
 {
-	BOOL bOk = FALSE;
+	bool bOk = false;
 
 	switch ( GetType() )
 	{
@@ -215,7 +215,7 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectByteArrayClass& svData)
 		{
 			svData = m_ByteArray;
 
-			bOk = TRUE;
+			bOk = true;
 
 			break;
 		}
@@ -228,7 +228,7 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectByteArrayClass& svData)
 				svData.InsertAt( i, bTemp );
 			}
 
-			bOk = TRUE;
+			bOk = true;
 
 			break;
 		}
@@ -269,9 +269,9 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectByteArrayClass& svData)
 	return bOk;
 }
 
-BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectArrayClassTemplate<char>& svData)
+bool SVObjectAttributeClass::GetData(SvCl::SVObjectArrayClassTemplate<char>& svData)
 {
-	BOOL bOk = FALSE;
+	bool bOk = false;
 
 	switch ( GetType() )
 	{
@@ -288,7 +288,7 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectArrayClassTemplate<char>& svD
 				svData.Add(c);
 			}
 
-			bOk = TRUE;
+			bOk = true;
 
 			break;
 		}
@@ -301,7 +301,7 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectArrayClassTemplate<char>& svD
 				svData.InsertAt( i, cTemp );
 			}
 
-			bOk = TRUE;
+			bOk = true;
 
 			break;
 		}
@@ -342,9 +342,9 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectArrayClassTemplate<char>& svD
 	return bOk;
 }
 
-BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectSVStringArrayClass& svData)
+bool SVObjectAttributeClass::GetData(SvCl::SVObjectSVStringArrayClass& svData)
 {
-	BOOL bOk = FALSE;
+	bool bOk = false;
 
 	switch ( GetType() )
 	{
@@ -366,7 +366,7 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectSVStringArrayClass& svData)
 				svData.InsertAt( i, Temp );
 			}
 
-			bOk = TRUE;
+			bOk = true;
 
 			break;
 		}
@@ -379,7 +379,7 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectSVStringArrayClass& svData)
 				svData.InsertAt( i, Temp );
 			}
 
-			bOk = TRUE;
+			bOk = true;
 
 			break;
 		}
@@ -387,7 +387,7 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectSVStringArrayClass& svData)
 		{
 			svData = m_StringArray;
 
-			bOk = TRUE;
+			bOk = true;
 
 			break;
 		}
@@ -400,7 +400,7 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectSVStringArrayClass& svData)
 				svData.InsertAt( i, Temp );
 			}
 
-			bOk = TRUE;
+			bOk = true;
 
 			break;
 		}
@@ -413,7 +413,7 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectSVStringArrayClass& svData)
 				svData.InsertAt( i, Temp );
 			}
 
-			bOk = TRUE;
+			bOk = true;
 
 			break;
 		}
@@ -426,7 +426,7 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectSVStringArrayClass& svData)
 				svData.InsertAt( i, Temp );
 			}
 
-			bOk = TRUE;
+			bOk = true;
 
 			break;
 		}
@@ -437,7 +437,7 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectSVStringArrayClass& svData)
 				svData.InsertAt( i, m_PointArray[i].ToString() );
 			}
 
-			bOk = TRUE;
+			bOk = true;
 
 			break;
 		}
@@ -450,7 +450,7 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectSVStringArrayClass& svData)
 				svData.InsertAt( i, Temp );
 			}
 
-			bOk = TRUE;
+			bOk = true;
 
 			break;
 		}
@@ -473,7 +473,7 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectSVStringArrayClass& svData)
 				svData.InsertAt( i, Temp );
 			}
 
-			bOk = TRUE;
+			bOk = true;
 
 			break;
 		}
@@ -486,7 +486,7 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectSVStringArrayClass& svData)
 				svData.InsertAt( i, Temp );
 			}
 
-			bOk = TRUE;
+			bOk = true;
 
 			break;
 		}
@@ -499,9 +499,9 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectSVStringArrayClass& svData)
 	return bOk;
 }
 
-BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectDoubleArrayClass& svData)
+bool SVObjectAttributeClass::GetData(SvCl::SVObjectDoubleArrayClass& svData)
 {
-	BOOL bOk = FALSE;
+	bool bOk = false;
 
 	switch ( GetType() )
 	{
@@ -518,7 +518,7 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectDoubleArrayClass& svData)
 				svData.InsertAt( i, dTemp );
 			}
 
-			bOk = TRUE;
+			bOk = true;
 
 			break;
 		}
@@ -531,7 +531,7 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectDoubleArrayClass& svData)
 				svData.InsertAt( i, dTemp );
 			}
 
-			bOk = TRUE;
+			bOk = true;
 
 			break;
 		}
@@ -539,7 +539,7 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectDoubleArrayClass& svData)
 		{
 			svData = m_DoubleArray;
 
-			bOk = TRUE;
+			bOk = true;
 
 			break;
 		}
@@ -552,7 +552,7 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectDoubleArrayClass& svData)
 				svData.InsertAt( i, dTemp );
 			}
 
-			bOk = TRUE;
+			bOk = true;
 
 			break;
 		}
@@ -565,7 +565,7 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectDoubleArrayClass& svData)
 				svData.InsertAt( i, dTemp );
 			}
 
-			bOk = TRUE;
+			bOk = true;
 
 			break;
 		}
@@ -603,9 +603,9 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectDoubleArrayClass& svData)
 	return bOk;
 }// end GetData(SVObjectDoubleArrayClass& svData)
 
-BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectDWordArrayClass& svData)
+bool SVObjectAttributeClass::GetData(SvCl::SVObjectDWordArrayClass& svData)
 {
-	BOOL bOk = FALSE;
+	bool bOk = false;
 
 	switch ( GetType() )
 	{
@@ -622,7 +622,7 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectDWordArrayClass& svData)
 				svData.InsertAt( i, dwTemp );
 			}
 
-			bOk = TRUE;
+			bOk = true;
 
 			break;
 		}
@@ -635,7 +635,7 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectDWordArrayClass& svData)
 				svData.InsertAt( i, dwTemp );
 			}
 
-			bOk = TRUE;
+			bOk = true;
 
 			break;
 		}
@@ -648,7 +648,7 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectDWordArrayClass& svData)
 				svData.InsertAt( i, dwTemp );
 			}
 
-			bOk = TRUE;
+			bOk = true;
 
 			break;
 		}
@@ -656,7 +656,7 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectDWordArrayClass& svData)
 		{
 			svData = m_DWordArray;
 
-			bOk = TRUE;
+			bOk = true;
 
 			break;
 		}
@@ -669,7 +669,7 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectDWordArrayClass& svData)
 				svData.InsertAt( i, dwTemp );
 			}
 
-			bOk = TRUE;
+			bOk = true;
 
 			break;
 		}
@@ -707,9 +707,9 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectDWordArrayClass& svData)
 	return bOk;
 }// end GetData(SVObjectDWordArrayClass& svData)
 
-BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectLongArrayClass& svData)
+bool SVObjectAttributeClass::GetData(SvCl::SVObjectLongArrayClass& svData)
 {
-	BOOL bOk = FALSE;
+	bool bOk = false;
 
 	switch ( GetType() )
 	{
@@ -726,7 +726,7 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectLongArrayClass& svData)
 				svData.InsertAt( i, lTemp );
 			}
 
-			bOk = TRUE;
+			bOk = true;
 
 			break;
 		}
@@ -739,7 +739,7 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectLongArrayClass& svData)
 				svData.InsertAt( i, lTemp );
 			}
 
-			bOk = TRUE;
+			bOk = true;
 
 			break;
 		}
@@ -752,7 +752,7 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectLongArrayClass& svData)
 				svData.InsertAt( i, lTemp );
 			}
 
-			bOk = TRUE;
+			bOk = true;
 
 			break;
 		}
@@ -765,7 +765,7 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectLongArrayClass& svData)
 				svData.InsertAt( i, lTemp );
 			}
 
-			bOk = TRUE;
+			bOk = true;
 
 			break;
 		}
@@ -773,7 +773,7 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectLongArrayClass& svData)
 		{
 			svData = m_LongArray;
 
-			bOk = TRUE;
+			bOk = true;
 
 			break;
 		}
@@ -811,9 +811,9 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectLongArrayClass& svData)
 	return bOk;
 }// end GetData(SVObjectLongArrayClass& svData)
 
-BOOL SVObjectAttributeClass::GetData(SVObjectSVPointArrayClass& svData)
+bool SVObjectAttributeClass::GetData(SVObjectSVPointArrayClass& svData)
 {
-	BOOL bOk = FALSE;
+	bool bOk = false;
 
 	switch ( GetType() )
 	{
@@ -843,7 +843,7 @@ BOOL SVObjectAttributeClass::GetData(SVObjectSVPointArrayClass& svData)
 		}
 		case SV_OBJECT_TYPE_POINT:
 		{
-			bOk = TRUE;
+			bOk = true;
 
 			for ( int i = 0; bOk && i < m_PointArray.GetSize(); i++)
 			{
@@ -858,7 +858,7 @@ BOOL SVObjectAttributeClass::GetData(SVObjectSVPointArrayClass& svData)
 		}
 		case SV_OBJECT_TYPE_DPOINT:
 		{
-			bOk = TRUE;
+			bOk = true;
 
 			for ( int i = 0; bOk && i < m_DPointArray.GetSize(); i++)
 			{
@@ -888,9 +888,9 @@ BOOL SVObjectAttributeClass::GetData(SVObjectSVPointArrayClass& svData)
 	return bOk;
 }// end GetData(SVObjectSVPointArrayClass& svData)
 
-BOOL SVObjectAttributeClass::GetData(SVObjectDPointArrayClass& svData)
+bool SVObjectAttributeClass::GetData(SVObjectDPointArrayClass& svData)
 {
-	BOOL bOk = FALSE;
+	bool bOk = false;
 
 	switch ( GetType() )
 	{
@@ -920,7 +920,7 @@ BOOL SVObjectAttributeClass::GetData(SVObjectDPointArrayClass& svData)
 		}
 		case SV_OBJECT_TYPE_POINT:
 		{
-			bOk = TRUE;
+			bOk = true;
 
 			for ( int i = 0; bOk && i < m_PointArray.GetSize(); i++)
 			{
@@ -937,7 +937,7 @@ BOOL SVObjectAttributeClass::GetData(SVObjectDPointArrayClass& svData)
 		{
 			svData = m_DPointArray;
 
-			bOk = TRUE;
+			bOk = true;
 
 			break;
 		}
@@ -958,9 +958,9 @@ BOOL SVObjectAttributeClass::GetData(SVObjectDPointArrayClass& svData)
 	return bOk;
 }// end GetData(SVObjectDPointArrayClass& svData)
 
-BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectVariantArrayClass& svData)
+bool SVObjectAttributeClass::GetData(SvCl::SVObjectVariantArrayClass& svData)
 {
-	BOOL bOk = FALSE;
+	bool bOk = false;
 
 	switch ( GetType() )
 	{
@@ -975,7 +975,7 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectVariantArrayClass& svData)
 				svData.InsertAt( i, vt );
 			}
 
-			bOk = TRUE;
+			bOk = true;
 
 			break;
 		}
@@ -990,7 +990,7 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectVariantArrayClass& svData)
 				svData.InsertAt( i, vt );
 			}
 
-			bOk = TRUE;
+			bOk = true;
 
 			break;
 		}
@@ -1004,7 +1004,7 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectVariantArrayClass& svData)
 				svData.InsertAt( i, vt );
 			}
 
-			bOk = TRUE;
+			bOk = true;
 
 			break;
 		}
@@ -1019,7 +1019,7 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectVariantArrayClass& svData)
 				svData.InsertAt( i, vt );
 			}
 
-			bOk = TRUE;
+			bOk = true;
 
 			break;
 		}
@@ -1035,7 +1035,7 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectVariantArrayClass& svData)
 				svData.InsertAt( i, vt );
 			}
 
-			bOk = TRUE;
+			bOk = true;
 
 			break;
 		}
@@ -1051,7 +1051,7 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectVariantArrayClass& svData)
 				svData.InsertAt( i, vt );
 			}
 
-			bOk = TRUE;
+			bOk = true;
 
 			break;
 		}
@@ -1073,7 +1073,7 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectVariantArrayClass& svData)
 				svData.InsertAt(i, vtTemp);
 			}
 
-			bOk = TRUE;
+			bOk = true;
 			break;
 		}
 		case SV_OBJECT_TYPE_INT64:
@@ -1087,7 +1087,7 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectVariantArrayClass& svData)
 				svData.InsertAt( i, vt );
 			}
 
-			bOk = TRUE;
+			bOk = true;
 
 			break;
 
@@ -1101,9 +1101,9 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectVariantArrayClass& svData)
 	return bOk;
 }// end GetData(SVObjectVariantArrayClass& svData)
 
-BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectInt64ArrayClass& svData)
+bool SVObjectAttributeClass::GetData(SvCl::SVObjectInt64ArrayClass& svData)
 {
-	BOOL bOk = FALSE;
+	bool bOk = false;
 
 	switch ( GetType() )
 	{
@@ -1146,7 +1146,7 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectInt64ArrayClass& svData)
 		case SV_OBJECT_TYPE_INT64:
 		{
 			svData = m_Int64Array;
-			bOk = TRUE;
+			bOk = true;
 			break;
 		}
 		default:
@@ -1157,18 +1157,16 @@ BOOL SVObjectAttributeClass::GetData(SvCl::SVObjectInt64ArrayClass& svData)
 	return bOk;
 }// end GetData(SVObjectInt64ArrayClass& svData)
 
-BOOL SVObjectAttributeClass::SetName(LPCTSTR szName)
+void SVObjectAttributeClass::SetName(LPCTSTR szName)
 {
 	m_Name = szName;
 
 	SetType( SV_OBJECT_TYPE_UNKNOWN );
-
-	return TRUE;
 }
 
-BOOL SVObjectAttributeClass::AddData(BOOL Value)
+bool SVObjectAttributeClass::AddData(BOOL Value)
 {
-	BOOL bOk = TRUE;
+	bool bOk = true;
 
 	if ( GetType() != SV_OBJECT_TYPE_BOOL )
 	{
@@ -1183,9 +1181,9 @@ BOOL SVObjectAttributeClass::AddData(BOOL Value)
 	return bOk;
 }
 
-BOOL SVObjectAttributeClass::AddData(VARIANT Value)
+bool SVObjectAttributeClass::AddData(VARIANT Value)
 {
-	BOOL bOk = TRUE;
+	bool bOk = true;
 
 	if ( GetType() != SV_OBJECT_TYPE_VARIANT )
 	{
@@ -1202,9 +1200,9 @@ BOOL SVObjectAttributeClass::AddData(VARIANT Value)
 	return bOk;
 }
 
-BOOL SVObjectAttributeClass::AddData(BYTE Value)
+bool SVObjectAttributeClass::AddData(BYTE Value)
 {
-	BOOL bOk = TRUE;
+	bool bOk = true;
 
 	if ( GetType() != SV_OBJECT_TYPE_BYTE )
 	{
@@ -1219,9 +1217,9 @@ BOOL SVObjectAttributeClass::AddData(BYTE Value)
 	return bOk;
 }
 
-BOOL SVObjectAttributeClass::AddData(LPCTSTR Value)
+bool SVObjectAttributeClass::AddData(LPCTSTR Value)
 {
-	BOOL bOk = TRUE;
+	bool bOk = true;
 
 	if ( GetType() != SV_OBJECT_TYPE_STRING )
 	{
@@ -1236,9 +1234,9 @@ BOOL SVObjectAttributeClass::AddData(LPCTSTR Value)
 	return bOk;
 }
 
-BOOL SVObjectAttributeClass::AddData(double Value)
+bool SVObjectAttributeClass::AddData(double Value)
 {
-	BOOL bOk = TRUE;
+	bool bOk = true;
 
 	if ( GetType() != SV_OBJECT_TYPE_DOUBLE )
 	{
@@ -1253,9 +1251,9 @@ BOOL SVObjectAttributeClass::AddData(double Value)
 	return bOk;
 }
 
-BOOL SVObjectAttributeClass::AddData(DWORD Value)
+bool SVObjectAttributeClass::AddData(DWORD Value)
 {
-	BOOL bOk = TRUE;
+	bool bOk = true;
 
 	if ( GetType() != SV_OBJECT_TYPE_DWORD )
 	{
@@ -1270,9 +1268,9 @@ BOOL SVObjectAttributeClass::AddData(DWORD Value)
 	return bOk;
 }
 
-BOOL SVObjectAttributeClass::AddData(long Value)
+bool SVObjectAttributeClass::AddData(long Value)
 {
-	BOOL bOk = TRUE;
+	bool bOk = true;
 
 	if ( GetType() != SV_OBJECT_TYPE_LONG )
 	{
@@ -1287,9 +1285,9 @@ BOOL SVObjectAttributeClass::AddData(long Value)
 	return bOk;
 }
 
-BOOL SVObjectAttributeClass::AddData(POINT Value)
+bool SVObjectAttributeClass::AddData(POINT Value)
 {
-	BOOL bOk = TRUE;
+	bool bOk = true;
 
 	if ( GetType() != SV_OBJECT_TYPE_POINT )
 	{
@@ -1304,9 +1302,9 @@ BOOL SVObjectAttributeClass::AddData(POINT Value)
 	return bOk;
 }
 
-BOOL SVObjectAttributeClass::AddData(SVDPointClass Value)
+bool SVObjectAttributeClass::AddData(SVDPointClass Value)
 {
-	BOOL bOk = TRUE;
+	bool bOk = true;
 
 	if ( GetType() != SV_OBJECT_TYPE_DPOINT )
 	{
@@ -1321,9 +1319,9 @@ BOOL SVObjectAttributeClass::AddData(SVDPointClass Value)
 	return bOk;
 }
 
-BOOL SVObjectAttributeClass::AddData(__int64 Value)
+bool SVObjectAttributeClass::AddData(__int64 Value)
 {
-	BOOL bOk = TRUE;
+	bool bOk = true;
 
 	if ( GetType() != SV_OBJECT_TYPE_INT64 )
 	{
@@ -1343,7 +1341,7 @@ BOOL SVObjectAttributeClass::AddData(__int64 Value)
 
 
 
-BOOL SVObjectAttributeClass::SetType(int iType)
+bool SVObjectAttributeClass::SetType(int iType)
 {
 	miType = iType;
 
@@ -1357,12 +1355,12 @@ BOOL SVObjectAttributeClass::SetType(int iType)
 	m_DPointArray.RemoveAll();
 	m_Int64Array.RemoveAll();
 
-	return TRUE;
+	return true;
 }
 
-BOOL SVObjectAttributeClass::SetType(SVObjectScriptDataObjectTypeEnum eType)
+bool SVObjectAttributeClass::SetType(SVObjectScriptDataObjectTypeEnum eType)
 {
-	BOOL bOk = FALSE;
+	bool bOk = false;
 
 	switch ( eType )
 	{

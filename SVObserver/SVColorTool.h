@@ -40,14 +40,13 @@ class SVColorToolClass : public SVToolClass
 
 #pragma region Constructor
 public:
-	SVColorToolClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVCOLORTOOL );
+	SVColorToolClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVCOLORTOOL );
 
 	virtual ~SVColorToolClass();
 #pragma endregion Constructor
 
 #pragma region Public Methods
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
-	virtual BOOL CloseObject() override;
+	virtual bool CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
 
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
@@ -80,7 +79,7 @@ private:
 	void LocalInitialize();
 
 	SVImageClass* getInputImage() { return m_pInputImage; };
-	BOOL createBandChildLayer(BandEnum Band);
+	bool createBandChildLayer(BandEnum Band);
 	HRESULT CollectInputImageNames();
 #pragma endregion Private Methods
 

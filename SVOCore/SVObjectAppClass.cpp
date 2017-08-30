@@ -49,15 +49,12 @@ SVObjectAppClass::~SVObjectAppClass()
 // This method is here so that this class can obtain access to and hold pointers for the
 // Inspection, Tool, and/or Analyzer (via UpdateConnections)
 ////////////////////////////////////////////////////////////////////////////////////////
-BOOL SVObjectAppClass::CreateObject(SVObjectLevelCreateStruct* pCreateStruct)
+bool SVObjectAppClass::CreateObject(SVObjectLevelCreateStruct* pCreateStructure)
 {
-	UpdateConnections( pCreateStruct );
+	UpdateConnections( pCreateStructure );
 	
-	BOOL l_bOk = SVObjectClass::CreateObject( pCreateStruct );
-	
-	m_isCreated = l_bOk;
-	
-	return l_bOk;	
+	m_isCreated = SVObjectClass::CreateObject( pCreateStructure );
+	return m_isCreated;
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////

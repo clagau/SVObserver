@@ -85,9 +85,9 @@ SVImageArithmeticClass::~SVImageArithmeticClass()
 	CloseObject();
 }
 
-BOOL SVImageArithmeticClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
+bool SVImageArithmeticClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
-	BOOL bOk = SVTaskObjectClass::CreateObject( PCreateStructure );
+	bool bOk = SVTaskObjectClass::CreateObject( pCreateStructure );
 
 	bOk &= ( S_OK == outputImageObject.InitializeImage( getInputImageA() ) );
 
@@ -99,12 +99,11 @@ BOOL SVImageArithmeticClass::CreateObject( SVObjectLevelCreateStruct* PCreateStr
 	return bOk;
 }
 
-BOOL SVImageArithmeticClass::CloseObject()
+bool SVImageArithmeticClass::CloseObject()
 {
 	if( SVTaskObjectClass::CloseObject() && getOutputImage() )
 	{
-		BOOL bRetVal = true;
-		return getOutputImage()->CloseObject() && bRetVal;
+		return getOutputImage()->CloseObject();
 	}
 	return false;
 }

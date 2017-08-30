@@ -1338,7 +1338,7 @@ BOOL CSVOConfigAssistantDlg::SendPPQDataToConfiguration(SVPPQObjectPtrVector& aP
 			{
 				long lSize = 0;
 				long lInsCnt;
-				bRet = pPPQ->GetInspectionCount(lInsCnt);
+				pPPQ->GetInspectionCount(lInsCnt);
 				
 				//loop thru inspections to see if they exist in dlg
 				//if not, delete them from ppqobj
@@ -1385,7 +1385,7 @@ BOOL CSVOConfigAssistantDlg::SendPPQDataToConfiguration(SVPPQObjectPtrVector& aP
 					{
 						if (!IsCameraOnPPQ(pPPQ->GetName(), pCamera->GetName()))
 						{
-							bRet = pPPQ->DetachCamera(pCamera, TRUE);
+							bRet = pPPQ->DetachCamera(pCamera, true);
 						}
 					}
 
@@ -1394,7 +1394,7 @@ BOOL CSVOConfigAssistantDlg::SendPPQDataToConfiguration(SVPPQObjectPtrVector& aP
 
 				//check trigger...
 				SvTi::SVTriggerObject* pTrigger( nullptr );
-				bRet = pPPQ->GetTrigger(pTrigger) && bRet;
+				pPPQ->GetTrigger(pTrigger);
 				if ( nullptr != pTrigger )
 				{
 					if (!IsTriggerOnPPQ(pPPQ->GetName(), pTrigger->GetName()))
@@ -1950,7 +1950,7 @@ SVOPPQObjPtr CSVOConfigAssistantDlg::GetPPQObjectByInspectionName(const SVString
 
 BOOL CSVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 {
-	BOOL bRet = true;
+	bool bRet = true;
 	SVConfigurationObject* pConfig( nullptr );
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
 
@@ -1958,8 +1958,7 @@ BOOL CSVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 	ASSERT( nullptr != pConfig );
 	if( nullptr == pConfig )
 	{
-		bRet = false;
-		return bRet;
+		return false;
 	}
 
 	SVInspectionProcess* pInspection( nullptr );
@@ -1993,7 +1992,7 @@ BOOL CSVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 		}
 		else
 		{
-			bRet = FALSE;
+			bRet = false;
 		}
 	}
 
@@ -2037,7 +2036,7 @@ BOOL CSVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 					}
 					else
 					{
-						bRet = FALSE;
+						bRet = false;
 					}
 				}
 
@@ -2077,7 +2076,7 @@ BOOL CSVOConfigAssistantDlg::SendInspectionDataToConfiguration()
 										pPPQObj->SetImportedInputList(importer.info.m_inputList);
 									}
 
-									BOOL bNewDisableMethod = pInspection->IsNewDisableMethodSet();
+									bool bNewDisableMethod = pInspection->IsNewDisableMethodSet();
 									NewDisableMethod = (bNewDisableMethod) ? _T( "Method 2" ): _T( "Method 1" );
 									lEnableAuxiliaryExtent = pInspection->GetEnableAuxiliaryExtent();
 								}
@@ -2210,18 +2209,18 @@ BOOL CSVOConfigAssistantDlg::SendPPQAttachmentsToConfiguration(SVPPQObjectPtrVec
 				SVString PPQCameraName;
 				long lSize = 0;
 
-				bRet = pPPQ->SetPPQOutputMode((SvOi::SVPPQOutputModeEnum)pPPQObj->GetPPQMode()) && bRet;
+				pPPQ->SetPPQOutputMode((SvOi::SVPPQOutputModeEnum)pPPQObj->GetPPQMode());
 
 				// EB 20050225
 				long lOldPPQLength=0;
 				pPPQ->GetPPQLength( lOldPPQLength );
 				bool bPPQLengthChanged = lOldPPQLength != pPPQObj->GetPPQLength();
 
-				bRet = pPPQ->SetPPQLength(pPPQObj->GetPPQLength()) && bRet;
-				bRet = pPPQ->SetResetDelay(pPPQObj->GetPPQOutputResetDelay()) && bRet;
-				bRet = pPPQ->SetOutputDelay(pPPQObj->GetPPQOutputDelayTime()) && bRet;
-				bRet = pPPQ->SetMaintainSourceImages( pPPQObj->GetMaintainSourceImageProperty() ) && bRet;
-				bRet = pPPQ->SetInspectionTimeout( pPPQObj->GetInspectionTimeout() ) && bRet;
+				pPPQ->SetPPQLength(pPPQObj->GetPPQLength());
+				pPPQ->SetResetDelay(pPPQObj->GetPPQOutputResetDelay());
+				pPPQ->SetOutputDelay(pPPQObj->GetPPQOutputDelayTime());
+				pPPQ->SetMaintainSourceImages( pPPQObj->GetMaintainSourceImageProperty() );
+				pPPQ->SetInspectionTimeout( pPPQObj->GetInspectionTimeout() );
 				pPPQ->SetConditionalOutputName( pPPQObj->GetConditionalOutputName() );
 
 				int iAttachedCamCnt = pPPQObj->GetAttachedCameraCount();
@@ -2792,7 +2791,7 @@ BOOL CSVOConfigAssistantDlg::GetConfigurationForExisting()
 			}
 
 			pcfgTrigger = nullptr;
-			bRet = pcfgPPQ->GetTrigger(pcfgTrigger) && bRet;
+			pcfgPPQ->GetTrigger(pcfgTrigger);
 			if ( (nullptr != pcfgTrigger ) && (nullptr != pcfgTrigger->mpsvDevice) )
 			{
 				m_PPQList.AttachTriggerToPPQ(PPQName.c_str(), pcfgTrigger->GetName());
@@ -2826,36 +2825,33 @@ BOOL CSVOConfigAssistantDlg::GetConfigurationForExisting()
 
 				// Get List Of Inputs
 				SVIOEntryHostStructPtrVector ppIOEntries; 
-				BOOL bRet = pcfgPPQ->GetAvailableInputs( ppIOEntries );
-				if (bRet)
+				pcfgPPQ->GetAvailableInputs( ppIOEntries );
+				SVNameGuidPairList availableInputs;
+				for (SVIOEntryHostStructPtrVector::const_iterator it = ppIOEntries.begin(); it != ppIOEntries.end(); ++it)
 				{
-					SVNameGuidPairList availableInputs;
-					for (SVIOEntryHostStructPtrVector::const_iterator it = ppIOEntries.begin();it != ppIOEntries.end();++it)
+					SVIOEntryHostStructPtr entry = (*it);
+					if (entry->m_ObjectType == IO_DIGITAL_INPUT)
 					{
-						SVIOEntryHostStructPtr entry = (*it);
-						if (entry->m_ObjectType == IO_DIGITAL_INPUT)
+						if (!IsNonIOSVIM(GetProductType()))
 						{
-							if (!IsNonIOSVIM(GetProductType()))
+							availableInputs.push_back(std::make_pair(entry->getObject()->GetName(), entry->m_IOId));
+						}
+					}
+					else if (entry->m_ObjectType == IO_CAMERA_DATA_INPUT)
+					{
+						// check for Camera Input Line State...
+						if (nullptr != entry->getObject())
+						{
+							if (entry->getObject()->GetEmbeddedID() == SVCameraTriggerLineInStateGuid)
 							{
+								// Only if the camera supports it ?
 								availableInputs.push_back(std::make_pair(entry->getObject()->GetName(), entry->m_IOId));
 							}
 						}
-						else if (entry->m_ObjectType == IO_CAMERA_DATA_INPUT)
-						{
-							// check for Camera Input Line State...
-							if (nullptr != entry->getObject())
-							{
-								if (entry->getObject()->GetEmbeddedID() == SVCameraTriggerLineInStateGuid)
-								{
-									// Only if the camera supports it ?
-									availableInputs.push_back(std::make_pair(entry->getObject()->GetName(), entry->m_IOId));
-								}
-							}
-						}
 					}
-					// make list of Name/Guid pairs
-					pPPQObj->SetAvailableInputsForConditionalOutput(availableInputs);
 				}
+				// make list of Name/Guid pairs
+				pPPQObj->SetAvailableInputsForConditionalOutput(availableInputs);
 			}
 		}//end if nullptr != pcfgPPQ
 		else

@@ -34,8 +34,8 @@ public:
 	HRESULT UpdateCameraImage( LPCTSTR p_szCameraName );
 	HRESULT UpdateCameraImage( const SVGUID& p_CameraID );
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStruct ) override;
-	virtual BOOL SetImageDepth( long lDepth ) override;
+	virtual bool CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
+	virtual bool SetImageDepth( long lDepth ) override;
 
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
@@ -51,17 +51,17 @@ public:
 
 	virtual void Persist(SVObjectWriter& rWriter) override;
 
-	BOOL ResetImageIndex();
+	void ResetImageIndex();
 
 	virtual SVImageIndexStruct GetSourceImageIndex( SVDataManagerHandle* pHandle, const SVGuidSVCameraInfoStructMap& rGuidCameraMap ) override;
-	virtual BOOL GetImageHandleIndex( SVImageIndexStruct& rlIndex ) const override;
+	virtual bool GetImageHandleIndex( SVImageIndexStruct& rlIndex ) const override;
 
 	HRESULT RestoreMainImage( SVInspectionProcess* p_psvInspection );
 
 protected:
 	virtual BOOL CreateBuffers( const SVImageInfoClass& p_rImageInfo, SVImageObjectClassPtr p_ImageArrayPtr ) = 0;
 
-	virtual BOOL DestroyImage() override;
+	virtual bool DestroyImage() override;
 
 	virtual HRESULT GetImageIndex( SVDataManagerHandle& p_rHandle, const SVImageIndexStruct& rIndex ) const override;
 

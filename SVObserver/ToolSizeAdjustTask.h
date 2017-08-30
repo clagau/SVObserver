@@ -120,9 +120,9 @@ protected:
 	//! \param pInfo [in,out] inObjectinfostruct 
 	//! \param GuidClass [in] Guid of the SVEquationObject  
 	//! \param Name [in] InputObjectname
-	//! \returns BOOL TRUE if sucessfull 
+	//! \returns bool true if sucessfull 
 	//************************************
-	BOOL AddEvaluationObject(SVInObjectInfoStruct* pInfo, GUID const &GuidClass, LPCTSTR Name);
+	bool AddEvaluationObject(SVInObjectInfoStruct* pInfo, GUID const &GuidClass, LPCTSTR Name);
 	
 	//************************************
 	//! DoNothing in Run

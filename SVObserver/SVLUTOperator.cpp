@@ -109,9 +109,9 @@ SVLUTOperatorClass::~SVLUTOperatorClass()
 // -----------------------------------------------------------------------------
 // .Description : ...
 ////////////////////////////////////////////////////////////////////////////////
-BOOL SVLUTOperatorClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
+bool SVLUTOperatorClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
-	BOOL bOk = SVUnaryImageOperatorClass::CreateObject( PCreateStructure );
+	bool bOk = SVUnaryImageOperatorClass::CreateObject( pCreateStructure );
 
 	// Set / Reset Printable Flag
 	m_lutVector.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
@@ -141,7 +141,7 @@ bool SVLUTOperatorClass::ResetObject(SvStl::MessageContainerVector *pErrorMessag
 // -----------------------------------------------------------------------------
 // .Description : ...
 ////////////////////////////////////////////////////////////////////////////////
-BOOL SVLUTOperatorClass::CloseObject()
+bool SVLUTOperatorClass::CloseObject()
 {
 	m_lutBufID.clear();
 

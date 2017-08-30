@@ -46,7 +46,7 @@ namespace SvTi
 		BOOL GoOffline();
 
 		BOOL RegisterFinishProcess( void *pOwner, LPSVFINISHPROC pFunc );
-		BOOL UnregisterFinishProcess( void *pOwner );
+		bool UnregisterFinishProcess( void *pOwner );
 
 		void FinishProcess( SVOResponseClass *pResponse );
 

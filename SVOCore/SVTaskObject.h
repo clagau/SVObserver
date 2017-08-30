@@ -69,8 +69,8 @@ public:
 
 	virtual bool IsValid() const override;
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStruct ) override;
-	virtual BOOL CloseObject() override;
+	virtual bool CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
+	virtual bool CloseObject() override;
 	void Disconnect();
 	virtual bool DisconnectObjectInput(SVInObjectInfoStruct* pInObjectInfo) override;
 	virtual HRESULT GetOutputList(SVOutputInfoListClass& p_rOutputInfoList ) const override;
@@ -78,18 +78,18 @@ public:
 	virtual HRESULT DisconnectInputsOutputs(SVObjectPtrVector& rListOfObjects);
 	virtual HRESULT HideInputsOutputs(SVObjectPtrVector& rListOfObjects);
 
-	virtual BOOL SetObjectDepth( int NewObjectDepth ) override;
-	virtual BOOL SetObjectDepthWithIndex( int NewObjectDepth, int NewLastSetIndex ) override;
-	virtual BOOL SetImageDepth( long lDepth ) override;
+	virtual void SetObjectDepth( int NewObjectDepth ) override;
+	virtual void SetObjectDepthWithIndex( int NewObjectDepth, int NewLastSetIndex ) override;
+	virtual bool SetImageDepth( long lDepth ) override;
 
 	virtual void SetInvalid() override;
 	virtual void SetDisabled() override;
 
-	BOOL RegisterEmbeddedObject( SVImageClass* pEmbeddedObject, const GUID& rGuidEmbeddedID, int StringResourceID );
-	BOOL RegisterEmbeddedObject( SVImageClass* pEmbeddedObject, const GUID& rGuidEmbeddedID, LPCTSTR newString );
-	BOOL RegisterEmbeddedObject( SVObjectClass* pEmbeddedObject, const GUID& rGuidEmbeddedID, int StringResourceID, bool p_bResetAlways, SvOi::SVResetItemEnum eRequiredReset );
-	BOOL RegisterEmbeddedObject( SVObjectClass* pEmbeddedObject, const GUID& rGuidEmbeddedID, LPCTSTR strName, bool p_bResetAlways, SvOi::SVResetItemEnum eRequiredReset );
-	BOOL RegisterInputObject( SVInObjectInfoStruct* PInObjectInfo, const SVString& p_rInputName );
+	bool RegisterEmbeddedObject( SVImageClass* pEmbeddedObject, const GUID& rGuidEmbeddedID, int StringResourceID );
+	bool RegisterEmbeddedObject( SVImageClass* pEmbeddedObject, const GUID& rGuidEmbeddedID, LPCTSTR newString );
+	bool RegisterEmbeddedObject( SVObjectClass* pEmbeddedObject, const GUID& rGuidEmbeddedID, int StringResourceID, bool p_bResetAlways, SvOi::SVResetItemEnum eRequiredReset );
+	bool RegisterEmbeddedObject( SVObjectClass* pEmbeddedObject, const GUID& rGuidEmbeddedID, LPCTSTR strName, bool p_bResetAlways, SvOi::SVResetItemEnum eRequiredReset );
+	bool RegisterInputObject( SVInObjectInfoStruct* PInObjectInfo, const SVString& p_rInputName );
 
 	HRESULT GetOutputListFiltered( SVObjectReferenceVector& rvecObjects, UINT uiAttributes = SvOi::SV_NO_ATTRIBUTES, bool bAND = true ); /* true means AND, false means OR */
 
@@ -149,7 +149,7 @@ protected:
 	SVInputInfoListClass m_svToolInputList;
 	long m_lLastToolInputListIndex;
 
-	BOOL RegisterEmbeddedObjectAsClass( SVObjectClass* PEmbeddedObject, const GUID& REmbeddedID, LPCTSTR newObjectName );
+	bool RegisterEmbeddedObjectAsClass( SVObjectClass* PEmbeddedObject, const GUID& REmbeddedID, LPCTSTR newObjectName );
 
 	/// This method return true if method ConnectAllObject has to ask friends to connect this input info
 	/// \param rInfo [in] input info for the connection.
@@ -201,7 +201,7 @@ protected:
 	virtual SVObjectPtrDeque GetPreProcessObjects() const override;
 	virtual SVObjectPtrDeque GetPostProcessObjects() const override;
 
-	virtual void addDefaultInputObjects( BOOL BCallBaseClass = FALSE, SVInputInfoListClass* PInputListToFill = nullptr );
+	virtual void addDefaultInputObjects( SVInputInfoListClass* PInputListToFill = nullptr );
 
 	void hideEmbeddedObject( SVObjectClass& RObjectToHide );
 

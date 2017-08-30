@@ -12,8 +12,8 @@
 #include "stdafx.h"
 #include "SVQueueObject.h"
 
-BOOL __stdcall InitializeCriticalSectionAndSpinCount_(LPCRITICAL_SECTION lpCriticalSection, DWORD dwSpinCount)
+bool __stdcall InitializeCriticalSectionAndSpinCount_(LPCRITICAL_SECTION lpCriticalSection, DWORD dwSpinCount)
 {
-	return ::InitializeCriticalSectionAndSpinCount(lpCriticalSection, dwSpinCount);
+	return (TRUE == ::InitializeCriticalSectionAndSpinCount(lpCriticalSection, dwSpinCount));
 }
 

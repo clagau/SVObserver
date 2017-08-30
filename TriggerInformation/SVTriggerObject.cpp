@@ -184,9 +184,9 @@ namespace SvTi
 		return bOk;
 	}
 
-	BOOL SVTriggerObject::UnregisterFinishProcess( void *pOwner )
+	bool SVTriggerObject::UnregisterFinishProcess( void *pOwner )
 	{
-		BOOL bOk = ( m_pOwner == pOwner );
+		bool bOk = ( m_pOwner == pOwner );
 
 		if( bOk )
 		{

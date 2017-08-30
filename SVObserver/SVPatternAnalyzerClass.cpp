@@ -80,8 +80,8 @@ SV_IMPLEMENT_CLASS(SVPatternAnalyzerClass, SVPatternAnalyzerClassGuid);
 // Construction/Destruction
 //////////////////////////////////////////////////////////////////////
 
-SVPatternAnalyzerClass::SVPatternAnalyzerClass(BOOL BCreateDefaultTaskList, SVObjectClass* POwner, int StringResourceID)
-  : SVImageAnalyzerClass(BCreateDefaultTaskList, POwner, StringResourceID)
+SVPatternAnalyzerClass::SVPatternAnalyzerClass(SVObjectClass* POwner, int StringResourceID)
+  : SVImageAnalyzerClass(POwner, StringResourceID)
   , m_bReloadModelFromFile(false)
 {
 	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVPatternAnalyzerObjectType;
@@ -693,9 +693,9 @@ void SVPatternAnalyzerClass::CloseMIL ()
 // 	 Date		Author				Comment                                       
 //  04-12-00 	Sri				First Implementation
 ////////////////////////////////////////////////////////////////////////////////
-BOOL SVPatternAnalyzerClass::CreateObject(SVObjectLevelCreateStruct* pCreateStructure)
+bool SVPatternAnalyzerClass::CreateObject(SVObjectLevelCreateStruct* pCreateStructure)
 {
-	BOOL bOk = SVImageAnalyzerClass::CreateObject(pCreateStructure);
+	bool bOk = SVImageAnalyzerClass::CreateObject(pCreateStructure);
 
 	// Set / Reset Printable Flags
 	const UINT cAttributes = SvOi::SV_PRINTABLE | SvOi::SV_REMOTELY_SETABLE;
@@ -758,7 +758,7 @@ BOOL SVPatternAnalyzerClass::CreateObject(SVObjectLevelCreateStruct* pCreateStru
 	return bOk;
 }
 
-BOOL SVPatternAnalyzerClass::CloseObject()
+bool SVPatternAnalyzerClass::CloseObject()
 {
 	ResetResultValues(); // SEJ - Why do this here ?
 

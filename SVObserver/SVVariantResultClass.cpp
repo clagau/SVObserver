@@ -81,25 +81,16 @@ SVVariantResultClass::~SVVariantResultClass()
 
 }
 
-BOOL SVVariantResultClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
+bool SVVariantResultClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
-	BOOL bOk = false;
-
-	if( SVResultClass::CreateObject( PCreateStructure ) )
-	{
-		bOk = nullptr != GetInputValue();
-	}
+	bool bOk = SVResultClass::CreateObject(pCreateStructure);
+	bOk &= nullptr != GetInputValue();
 
 	m_Value.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 
 	m_isCreated = bOk;
 
 	return bOk;
-}
-
-BOOL SVVariantResultClass::CloseObject()
-{
-	return SVResultClass::CloseObject();
 }
 
 SVObjectClass* SVVariantResultClass::GetInputValue()

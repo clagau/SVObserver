@@ -28,8 +28,8 @@
 
 SV_IMPLEMENT_CLASS( SVToolSetClass, SVToolSetClassGuid );
 
-SVToolSetClass::SVToolSetClass( BOOL BCreateDefaultTaskList, SVObjectClass* POwner, int StringResourceID )
-			   :SVTaskObjectListClass( BCreateDefaultTaskList, POwner, StringResourceID )
+SVToolSetClass::SVToolSetClass( SVObjectClass* POwner, int StringResourceID )
+			   :SVTaskObjectListClass( POwner, StringResourceID )
 {
 	init();
 }
@@ -164,9 +164,9 @@ SVToolSetClass::~SVToolSetClass()
 ////////////////////////////////////////////////////////////////////////////////
 // Create Operator
 ////////////////////////////////////////////////////////////////////////////////
-BOOL SVToolSetClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
+bool SVToolSetClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
-	BOOL bOk = SVTaskObjectListClass::CreateObject( PCreateStructure );
+	bool bOk = SVTaskObjectListClass::CreateObject( pCreateStructure );
 
 	// Set / Reset Printable Flags
 	m_Enabled.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );

@@ -28,7 +28,7 @@ class SVHistogramAnalyzerClass : public SVImageAnalyzerClass
 //******************************************************************************
 public:
 	SVHistogramAnalyzerClass( LPCSTR ObjectName /* = "Histogram Analyzer" */ );
-	SVHistogramAnalyzerClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = nullptr , int StringResourceID = IDS_CLASSNAME_SVHISTOGRAMANALYZER );
+	SVHistogramAnalyzerClass( SVObjectClass* POwner = nullptr , int StringResourceID = IDS_CLASSNAME_SVHISTOGRAMANALYZER );
 
 public:
    long             msvlHistValueArraySize;
@@ -62,9 +62,9 @@ public:
 
 	virtual        ~SVHistogramAnalyzerClass();
 
-	virtual BOOL   CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
+	virtual bool CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
 
-	virtual BOOL   CloseObject() override;
+	virtual bool CloseObject() override;
 
 	SvOi::IObjectClass* GetResultObject(const GUID & guid);
    

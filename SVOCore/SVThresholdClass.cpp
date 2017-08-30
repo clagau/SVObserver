@@ -110,9 +110,9 @@ SVThresholdClass::~SVThresholdClass()
 	CloseObject();
 }
 
-BOOL SVThresholdClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
+bool SVThresholdClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
-	BOOL bOk = SVUnaryImageOperatorClass::CreateObject( PCreateStructure );
+	bool bOk = SVUnaryImageOperatorClass::CreateObject( pCreateStructure );
 
 	// Set / Reset Printable Flag
 	m_threshActivate.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
@@ -137,7 +137,7 @@ BOOL SVThresholdClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure
 	return bOk;
 }
 
-BOOL SVThresholdClass::CloseObject()
+bool SVThresholdClass::CloseObject()
 {
 	if( !m_histResultID.empty() )
 	{

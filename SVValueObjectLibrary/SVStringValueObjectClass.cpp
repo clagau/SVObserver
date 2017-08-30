@@ -61,7 +61,7 @@ SVStringValueObjectClass::~SVStringValueObjectClass()
 HRESULT  SVStringValueObjectClass::SetObjectValue(SVObjectAttributeClass* pDataObject)
 {
 	HRESULT Result( E_FAIL );
-	BOOL	bOk( false );
+	bool	bOk( false );
 
 	SvCl::SVObjectArrayClassTemplate<ValueType> ObjectArray;	// for default values
 	BucketVector BucketArray;

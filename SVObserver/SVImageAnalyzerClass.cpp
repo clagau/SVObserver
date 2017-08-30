@@ -24,8 +24,8 @@ SVImageAnalyzerClass::SVImageAnalyzerClass( LPCSTR ObjectName )
 	init();
 }
 
-SVImageAnalyzerClass::SVImageAnalyzerClass( BOOL bCreateDefaultTaskList, SVObjectClass* pOwner, int StringResourceID )
-: SVAnalyzerClass( bCreateDefaultTaskList, pOwner, StringResourceID ) 
+SVImageAnalyzerClass::SVImageAnalyzerClass( SVObjectClass* pOwner, int StringResourceID )
+: SVAnalyzerClass( pOwner, StringResourceID ) 
 {
 	init();
 }

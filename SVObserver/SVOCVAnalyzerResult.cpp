@@ -42,7 +42,7 @@ SV_IMPLEMENT_CLASS( SVOCVAnalyzeResultClass, SVOCVAnalyzerResultClassGuid );
 #define SV_ARC_ERROR 0xc0000000   //SV Analyzer Result Class Error.
 
 SVOCVAnalyzeResultClass::SVOCVAnalyzeResultClass( SVObjectClass* POwner, int StringResourceID  )
-						:SVResultClass(FALSE, POwner, StringResourceID )
+						:SVResultClass(POwner, StringResourceID )
 {
 	m_lCurrentFoundStringLength = 0;
 
@@ -235,9 +235,9 @@ SVImageClass* SVOCVAnalyzeResultClass::getInputImage()
 	return nullptr;
 }
 
-BOOL SVOCVAnalyzeResultClass::CreateObject(	SVObjectLevelCreateStruct* PCreateStructure )
+bool SVOCVAnalyzeResultClass::CreateObject(	SVObjectLevelCreateStruct* pCreateStructure )
 {
-	BOOL bOk = SVResultClass::CreateObject( PCreateStructure );
+	bool bOk = SVResultClass::CreateObject( pCreateStructure );
 
 	if ( bOk )
 	{
@@ -309,14 +309,12 @@ void SVOCVAnalyzeResultClass::HideResults()
 //
 //
 //
-BOOL SVOCVAnalyzeResultClass::CloseObject()
+bool SVOCVAnalyzeResultClass::CloseObject()
 {
-	BOOL bOk = FALSE;
+	bool bOk = SVResultClass::CloseObject();
 
-	if( SVResultClass::CloseObject() )
+	if( bOk )
 	{
-		bOk = TRUE;
-		
 		HRESULT l_Code;
 
 		// First destroy the MIL font and result buffer

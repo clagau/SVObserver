@@ -76,22 +76,20 @@ HRESULT SVCameraImageTemplate::UpdateCameraImage( const SVGUID& p_CameraID )
 	return RebuildCameraImage();
 }
 
-BOOL SVCameraImageTemplate::DestroyImage()
+bool SVCameraImageTemplate::DestroyImage()
 {
-	BOOL bOk = TRUE;
-	
 	mpCamera = nullptr;
 	digitizerObjectID.clear();
 	m_CurrentIndex.clear();
 
-	bOk = SVImageClass::DestroyImage();
+	bool bOk = SVImageClass::DestroyImage();
 	
 	return bOk;
 }
 
-BOOL SVCameraImageTemplate::CreateObject(SVObjectLevelCreateStruct* PCreateStruct)
+bool SVCameraImageTemplate::CreateObject(SVObjectLevelCreateStruct* pCreateStructure)
 {
-	BOOL l_bOk = SVImageClass::CreateObject(PCreateStruct);
+	bool l_bOk = SVImageClass::CreateObject(pCreateStructure);
 
 	l_bOk = l_bOk && ( S_OK == RebuildCameraImage() );
 
@@ -105,7 +103,7 @@ BOOL SVCameraImageTemplate::CreateObject(SVObjectLevelCreateStruct* PCreateStruc
 	return l_bOk;	
 }
 
-BOOL SVCameraImageTemplate::SetImageDepth( long lDepth )
+bool SVCameraImageTemplate::SetImageDepth( long lDepth )
 {
 	long l_lNewDepth = lDepth;
 
@@ -117,13 +115,9 @@ BOOL SVCameraImageTemplate::SetImageDepth( long lDepth )
   return SVImageClass::SetImageDepth( l_lNewDepth );
 }
 
-BOOL SVCameraImageTemplate::ResetImageIndex()
+void SVCameraImageTemplate::ResetImageIndex()
 {
-	BOOL l_Status = true;
-
 	m_CurrentIndex.clear();
-
-	return l_Status;
 }
 
 bool SVCameraImageTemplate::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
@@ -201,7 +195,7 @@ HRESULT SVCameraImageTemplate::GetObjectValue( const SVString& rValueName, _vari
 HRESULT SVCameraImageTemplate::SetObjectValue( SVObjectAttributeClass* PDataObject )
 {
 	HRESULT hr = S_FALSE;
-	BOOL bOk = FALSE;
+	bool bOk = false;
 
 	SvCl::SVObjectSVStringArrayClass ClassIDList;
 
@@ -288,13 +282,11 @@ HRESULT SVCameraImageTemplate::ReconnectBuffers()
 	return hr;
 }
 
-BOOL SVCameraImageTemplate::GetImageHandleIndex( SVImageIndexStruct& rsvIndex ) const
+bool SVCameraImageTemplate::GetImageHandleIndex( SVImageIndexStruct& rsvIndex ) const
 {
-	BOOL bOk = TRUE;
-
 	rsvIndex = m_CurrentIndex;
 
-	return bOk;
+	return true;
 }
 
 HRESULT SVCameraImageTemplate::GetImageIndex( SVDataManagerHandle& p_rHandle, const SVImageIndexStruct& rIndex ) const

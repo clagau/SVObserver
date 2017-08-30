@@ -21,11 +21,10 @@ class SVAnalyzerClass : public SVTaskObjectListClass
 	SV_DECLARE_CLASS( SVAnalyzerClass );
 public:
 	SVAnalyzerClass( LPCSTR ObjectName /* = "Empty Analyzer" */ );
-	SVAnalyzerClass( BOOL BCreateDefaultTaskList = false, SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVANALYZER );
+	SVAnalyzerClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVANALYZER );
 	virtual ~SVAnalyzerClass();
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
-	virtual BOOL CloseObject() override;
+	virtual bool CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
 	virtual void DisconnectImages() {};
 
 	virtual SvOi::IObjectClass* GetResultObject();

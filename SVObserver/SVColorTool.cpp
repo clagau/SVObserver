@@ -36,8 +36,8 @@ SV_IMPLEMENT_CLASS( SVColorToolClass, SVColorToolClassGuid );
 #pragma endregion Declarations
 
 #pragma region Constructor
-SVColorToolClass::SVColorToolClass( BOOL BCreateDefaultTaskList, SVObjectClass* POwner, int StringResourceID )
-: SVToolClass( BCreateDefaultTaskList, POwner, StringResourceID )
+SVColorToolClass::SVColorToolClass( SVObjectClass* POwner, int StringResourceID )
+: SVToolClass( POwner, StringResourceID )
 , m_pInputImage(nullptr)
 {
 	LocalInitialize();
@@ -49,9 +49,9 @@ SVColorToolClass::~SVColorToolClass()
 #pragma endregion Constructor
 
 #pragma region Public Methods
-BOOL SVColorToolClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+bool SVColorToolClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
-	BOOL bOk = true;
+	bool bOk = true;
 
 	if( SVToolClass::CreateObject( pCreateStructure ) )
 	{
@@ -127,11 +127,6 @@ BOOL SVColorToolClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure
 	m_isCreated = bOk;
 
 	return bOk;
-}
-
-BOOL SVColorToolClass::CloseObject()
-{
-	return SVToolClass::CloseObject();
 }
 
 bool SVColorToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
@@ -323,9 +318,9 @@ void SVColorToolClass::LocalInitialize()
 	}
 }
 
-BOOL SVColorToolClass::createBandChildLayer(BandEnum Band)
+bool SVColorToolClass::createBandChildLayer(BandEnum Band)
 {
-	BOOL l_bOk = false;
+	bool l_bOk = false;
 
 	SVGUID InputID = m_OutputImage.GetUniqueObjectID();
 	SVImageInfoClass ImageInfo = m_OutputImage.GetImageInfo();

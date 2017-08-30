@@ -63,30 +63,6 @@ SVPolarTransformClass::~SVPolarTransformClass()
 	CloseObject();
 }
 
-BOOL SVPolarTransformClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
-{
-	BOOL bOk = false;
-
-	if( SVTaskObjectClass::CreateObject( PCreateStructure ) )
-	{
-		bOk = true;
-	}
-
-	m_isCreated = bOk;
-
-	return bOk;
-}
-
-BOOL SVPolarTransformClass::CloseObject()
-{
-	BOOL bRetVal = false;
-	if( SVTaskObjectClass::CloseObject() )
-	{
-		bRetVal = true;
-	}
-	return bRetVal;
-}
-
 bool SVPolarTransformClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = true;

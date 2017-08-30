@@ -26,7 +26,7 @@ class SVTaskObjectListClass : public SVTaskObjectClass, public SvOi::ITaskObject
 public:
 #pragma region Constructor
 	SVTaskObjectListClass( LPCSTR LPSZObjectName );
-	SVTaskObjectListClass( BOOL BCreateDefaultTaskList = FALSE, SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVTASKOBJECTLIST );
+	SVTaskObjectListClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVTASKOBJECTLIST );
 	virtual ~SVTaskObjectListClass();
 #pragma endregion Constructor
 
@@ -44,7 +44,7 @@ public:
 
 	virtual HRESULT IsInputImage( SVImageClass* p_psvImage ) override;
 
-	virtual BOOL CloseObject() override;
+	virtual bool CloseObject() override;
 
 	virtual HRESULT GetChildObject( SVObjectClass*& rpObject, const SVObjectNameInfo& rNameInfo, const long Index = 0 ) const override;
 
@@ -62,9 +62,9 @@ public:
 	int Add( SVTaskObjectClass* pTaskObject, bool atBegin = false );
 	HRESULT RemoveChild( SVTaskObjectClass* pChildObject );	
 
-	virtual BOOL SetObjectDepth( int NewObjectDepth ) override;
-	virtual BOOL SetObjectDepthWithIndex( int NewObjectDepth, int NewLastSetIndex ) override;
-	virtual BOOL SetImageDepth( long lDepth ) override;
+	virtual void SetObjectDepth( int NewObjectDepth ) override;
+	virtual void SetObjectDepthWithIndex( int NewObjectDepth, int NewLastSetIndex ) override;
+	virtual bool SetImageDepth( long lDepth ) override;
 
 	virtual void SetInvalid() override;
 	virtual void SetDisabled() override;
@@ -97,7 +97,7 @@ public:
 	virtual bool ConnectAllInputs() override;
 	virtual bool replaceObject(SVObjectClass* pObject, const GUID& rNewGuid) override;
 
-	BOOL getAvailableObjects( SVClassInfoStructListClass* pList, const SVObjectTypeInfoStruct* pObjectTypeInfo ) const;
+	bool getAvailableObjects( SVClassInfoStructListClass* pList, const SVObjectTypeInfoStruct* pObjectTypeInfo ) const;
 	virtual bool resetAllObjects( SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 #pragma endregion Methods to replace processMessage
 #pragma endregion public methods	

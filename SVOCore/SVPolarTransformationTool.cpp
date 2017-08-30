@@ -24,8 +24,8 @@
 
 SV_IMPLEMENT_CLASS( SVPolarTransformationToolClass, SVPolarTransformationToolClassGuid );
 
-SVPolarTransformationToolClass::SVPolarTransformationToolClass( BOOL BCreateDefaultTaskList, SVObjectClass* POwner, int StringResourceID )
-							   :SVToolClass( BCreateDefaultTaskList, POwner, StringResourceID )
+SVPolarTransformationToolClass::SVPolarTransformationToolClass( SVObjectClass* POwner, int StringResourceID )
+							   :SVToolClass( POwner, StringResourceID )
 {
 	// BoolValueObject to use new method
 	RegisterEmbeddedObject( &m_svAngularMethod, SVOutputAngularMethodObjectGuid, IDS_OBJECTNAME_ANGULAR_METHOD,	false, SvOi::SVResetItemNone );
@@ -109,17 +109,15 @@ SVPolarTransformationToolClass::~SVPolarTransformationToolClass()
 // Operator(s):
 //******************************************************************************
 
-BOOL SVPolarTransformationToolClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
+bool SVPolarTransformationToolClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
-	BOOL bOk = SVToolClass::CreateObject( PCreateStructure );
+	m_isCreated = SVToolClass::CreateObject( pCreateStructure );
 
 	m_SourceImageNames.setStatic( true );
 	m_SourceImageNames.setSaveValueFlag(false);
 	m_SourceImageNames.SetObjectAttributesAllowed( SvOi::SV_REMOTELY_SETABLE | SvOi::SV_SETABLE_ONLINE, SvOi::SetAttributeType::RemoveAttribute );
 
-	m_isCreated = bOk;
-
-	return bOk;
+	return m_isCreated;
 }
 
 SVTaskObjectClass *SVPolarTransformationToolClass::GetObjectAtPoint( const SVExtentPointStruct &p_rsvPoint )

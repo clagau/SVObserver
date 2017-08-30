@@ -27,7 +27,7 @@ public:
 	SVObjectAppClass( LPCSTR LPSZObjectName );
 	SVObjectAppClass( SVObjectClass* pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVOBJECTAPPCLASS );
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* pCreateStruct ) override;
+	virtual bool CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
 	virtual void ConnectObject( const SVObjectLevelCreateStruct& rCreateStruct ) override;
 
 	SVObjectClass* GetInspection() const;

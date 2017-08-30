@@ -74,9 +74,9 @@ SVVirtualCamera::~SVVirtualCamera()
 	DestroyLocal();
 }
 
-BOOL SVVirtualCamera::GetImageInfo(SVImageInfoClass *pImageInfo)
+bool SVVirtualCamera::GetImageInfo(SVImageInfoClass *pImageInfo)
 {
-	BOOL bOk = FALSE;
+	bool bOk = false;
 
 	if( !( mpsvDevice.empty() ) )
 	{
@@ -115,9 +115,9 @@ HRESULT SVVirtualCamera::RefreshObject( const SVObjectClass* const pSender, Refr
 	return Result;
 }
 
-BOOL SVVirtualCamera::Create( LPCTSTR DeviceName )
+bool SVVirtualCamera::Create( LPCTSTR DeviceName )
 {
-	BOOL bOk = TRUE;
+	bool bOk = true;
 
 	if( !( mpsvDevice.empty() ) )
 	{
@@ -144,9 +144,9 @@ BOOL SVVirtualCamera::Create( LPCTSTR DeviceName )
 	return bOk;
 }
 
-BOOL SVVirtualCamera::Destroy()
+bool SVVirtualCamera::Destroy()
 {
-	BOOL bOk = TRUE;
+	bool bOk = true;
 
 	bOk = DestroyLocal();
 
@@ -176,14 +176,14 @@ HRESULT SVVirtualCamera::GetChildObject( SVObjectClass*& rpObject, const SVObjec
 	return l_Status;
 }
 
-BOOL SVVirtualCamera::CanGoOnline() const
+bool SVVirtualCamera::CanGoOnline() const
 {
 	return mpsvDevice && mpsvDevice->IsValid();
 }// end CanGoOnline
 
-BOOL SVVirtualCamera::GoOnline()
+bool SVVirtualCamera::GoOnline()
 {
-	BOOL bGoOnline = mpsvDevice && ( S_OK == mpsvDevice->Start() );
+	bool bGoOnline = mpsvDevice && ( S_OK == mpsvDevice->Start() );
 
 	if ( bGoOnline )
 	{
@@ -199,7 +199,7 @@ BOOL SVVirtualCamera::GoOnline()
 	return bGoOnline;
 }// end GoOnline
 
-BOOL SVVirtualCamera::GoOffline()
+bool SVVirtualCamera::GoOffline()
 {
 	if ( m_LogFile.m_hFile != CFile::hFileNull )
 	{
@@ -209,9 +209,9 @@ BOOL SVVirtualCamera::GoOffline()
 	return mpsvDevice && ( S_OK == mpsvDevice->Stop() );
 }// end GoOffline
 
-BOOL SVVirtualCamera::RegisterFinishProcess( void *pvOwner, LPSVFINISHPROC pCallback )
+bool SVVirtualCamera::RegisterFinishProcess( void *pvOwner, LPSVFINISHPROC pCallback )
 {
-	BOOL bOk = FALSE;
+	bool bOk = false;
 
 	if ( m_CallbackList.IsCreated() )
 	{
@@ -253,7 +253,7 @@ BOOL SVVirtualCamera::RegisterFinishProcess( void *pvOwner, LPSVFINISHPROC pCall
 
 					if ( m_CallbackList.AddTail( pData ) )
 					{
-						bOk = TRUE;
+						bOk = true;
 					}
 
 					if( bOk )
@@ -271,9 +271,9 @@ BOOL SVVirtualCamera::RegisterFinishProcess( void *pvOwner, LPSVFINISHPROC pCall
 	return bOk;
 }
 
-BOOL SVVirtualCamera::UnregisterFinishProcess(void *pvOwner, LPSVFINISHPROC pCallback)
+bool SVVirtualCamera::UnregisterFinishProcess(void *pvOwner, LPSVFINISHPROC pCallback)
 {
-	BOOL bOk = FALSE;
+	bool bOk = false;
 
 	if ( m_CallbackList.IsCreated() )
 	{
@@ -297,7 +297,7 @@ BOOL SVVirtualCamera::UnregisterFinishProcess(void *pvOwner, LPSVFINISHPROC pCal
 					{
 						if ( m_CallbackList.RemoveAt( l ) )
 						{
-							bOk = TRUE;
+							bOk = true;
 						}
 
 						if ( bOk && nullptr != mpsvDevice )
@@ -346,9 +346,9 @@ void SVVirtualCamera::FinishProcess( SVODataResponseClass *pResponse )
 	}
 }
 
-BOOL SVVirtualCamera::DestroyLocal()
+bool SVVirtualCamera::DestroyLocal()
 {
-	BOOL bOk = GoOffline();
+	bool bOk = GoOffline();
 
 	if ( m_CallbackList.IsCreated() )
 	{
@@ -373,7 +373,7 @@ BOOL SVVirtualCamera::DestroyLocal()
 
 				if ( ! m_CallbackList.RemoveAt( l ) )
 				{
-					bOk = FALSE;
+					bOk = false;
 				}
 			}
 
@@ -517,11 +517,9 @@ HRESULT SVVirtualCamera::ReserveNextImageHandleIndex( SVDataManagerHandle& p_rDM
 {
 	HRESULT l_Status = S_OK;
 
-	BOOL bOk = nullptr != mpsvDevice;
-	SVDataManagerHandle	l_DMIndexHandle;
-
-	if( !( mpsvDevice.empty() ) )
+	if(nullptr != mpsvDevice && !mpsvDevice.empty() )
 	{
+		SVDataManagerHandle	l_DMIndexHandle;
 		l_Status = mpsvDevice->GetNextIndex( l_DMIndexHandle );
 
 		if( S_OK == l_Status )

@@ -15,8 +15,8 @@
 
 SV_IMPLEMENT_CLASS( SVExternalTool, SVExternalToolGuid );
 
-SVExternalTool::SVExternalTool( BOOL BCreateDefaultTaskList, SVObjectClass* POwner, int StringResourceID )
-						  :SVToolClass( BCreateDefaultTaskList, POwner, StringResourceID )
+SVExternalTool::SVExternalTool( SVObjectClass* POwner, int StringResourceID )
+						  :SVToolClass( POwner, StringResourceID )
 {
 	Initialize();
 }
@@ -25,9 +25,9 @@ SVExternalTool::~SVExternalTool()
 { 
 }
 
-BOOL SVExternalTool::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
+bool SVExternalTool::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
-	BOOL bOk = SVToolClass::CreateObject( PCreateStructure );
+	bool bOk = SVToolClass::CreateObject( pCreateStructure );
 
 	m_SourceImageNames.setStatic( true );
 	m_SourceImageNames.setSaveValueFlag(false);

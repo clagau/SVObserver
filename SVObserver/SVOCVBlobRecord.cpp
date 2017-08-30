@@ -94,9 +94,9 @@ void SVOCVCharacterResultClass::UnhideResults()
 	m_dvoMatchScore.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::OverwriteAttribute );
 }
 
-BOOL SVOCVCharacterResultClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
+bool SVOCVCharacterResultClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
-	BOOL bOk = SVTaskObjectClass::CreateObject( PCreateStructure );
+	bool bOk = SVTaskObjectClass::CreateObject( pCreateStructure );
 
 	m_cvoLabelValue.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 
@@ -111,10 +111,3 @@ BOOL SVOCVCharacterResultClass::CreateObject( SVObjectLevelCreateStruct* PCreate
 
 	return bOk;
 }// end CreateObject
-
-BOOL SVOCVCharacterResultClass::CloseObject()
-{
-	BOOL bOk = SVTaskObjectClass::CloseObject();
-
-	return bOk;
-}// end CloseObject

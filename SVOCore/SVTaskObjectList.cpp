@@ -38,7 +38,7 @@ SVTaskObjectListClass::SVTaskObjectListClass(LPCSTR ObjectName)
 	addDefaultInputObjects();
 }
 
-SVTaskObjectListClass::SVTaskObjectListClass(BOOL BCreateDefaultTaskList, SVObjectClass* POwner, int StringResourceID)
+SVTaskObjectListClass::SVTaskObjectListClass(SVObjectClass* POwner, int StringResourceID)
 					  :SVTaskObjectClass(POwner, StringResourceID), m_LastListUpdateTimestamp( 0 ) 
 {
 	addDefaultInputObjects();
@@ -79,7 +79,7 @@ void SVTaskObjectListClass::AppendInputObjects()
 	SVTaskObjectClass::GetInputObjects(m_InputObjectList);
 	
 	// Then get your default inputs and outputs ...
-	addDefaultInputObjects(TRUE);
+	addDefaultInputObjects();
 	
 	// Append input output objects of all list members...
 	for (int i = 0; i < m_aTaskObjects.GetSize(); ++ i)
@@ -187,9 +187,9 @@ HRESULT SVTaskObjectListClass::IsInputImage( SVImageClass* p_psvImage )
 	return l_hrOk;
 }
 
-BOOL SVTaskObjectListClass::CloseObject()
+bool SVTaskObjectListClass::CloseObject()
 {
-	BOOL Result( true );
+	bool Result( true );
 
 	// Close our children
 	for (int i = 0; i < m_aTaskObjects.GetSize(); i++)
@@ -330,7 +330,7 @@ HRESULT SVTaskObjectListClass::RemoveChild( SVTaskObjectClass* pChildObject )
 }
 
 // Should be overridden and must be called in derived classes...
-BOOL SVTaskObjectListClass::SetObjectDepth(int NewObjectDepth)
+void SVTaskObjectListClass::SetObjectDepth(int NewObjectDepth)
 {
 	// Set object depth of members here...
 
@@ -342,11 +342,11 @@ BOOL SVTaskObjectListClass::SetObjectDepth(int NewObjectDepth)
 			m_aTaskObjects.GetAt(j)->SetObjectDepth(NewObjectDepth);
 		}
 	}
-	return SVTaskObjectClass::SetObjectDepth(NewObjectDepth);
+	SVTaskObjectClass::SetObjectDepth(NewObjectDepth);
 }
 
 // Should be overridden and must be called in derived classes...
-BOOL SVTaskObjectListClass::SetObjectDepthWithIndex(int NewObjectDepth, int NewLastSetIndex)
+void SVTaskObjectListClass::SetObjectDepthWithIndex(int NewObjectDepth, int NewLastSetIndex)
 {
 	// Set object depth of members here...
 
@@ -358,10 +358,10 @@ BOOL SVTaskObjectListClass::SetObjectDepthWithIndex(int NewObjectDepth, int NewL
 			m_aTaskObjects.GetAt(j)->SetObjectDepthWithIndex(NewObjectDepth, NewLastSetIndex);
 		}
 	}
-	return SVTaskObjectClass::SetObjectDepthWithIndex(NewObjectDepth, NewLastSetIndex);
+	SVTaskObjectClass::SetObjectDepthWithIndex(NewObjectDepth, NewLastSetIndex);
 }
 
-BOOL SVTaskObjectListClass::SetImageDepth(long lDepth)
+bool SVTaskObjectListClass::SetImageDepth(long lDepth)
 {
 	// Set object depth of members here...
 
@@ -600,7 +600,7 @@ bool SVTaskObjectListClass::DestroyFriendObject(SvOi::IObjectClass& rObject, DWO
 		pTaskObject->DestroyFriends();
 	}
 
-	bool retVal = (TRUE == RemoveFriend(objectID));
+	bool retVal = RemoveFriend(objectID);
 	if (retVal)
 	{
 		delete(&rObject);
@@ -918,9 +918,9 @@ SVObjectClass* SVTaskObjectListClass::UpdateObject( const GUID &p_oFriendGuid, S
 	return l_psvObject;
 }
 
-BOOL SVTaskObjectListClass::getAvailableObjects(SVClassInfoStructListClass* pList, const SVObjectTypeInfoStruct* pObjectTypeInfo) const
+bool SVTaskObjectListClass::getAvailableObjects(SVClassInfoStructListClass* pList, const SVObjectTypeInfoStruct* pObjectTypeInfo) const
 {
-	BOOL rc = FALSE;
+	bool rc = false;
 
 	for (int i = 0; i < m_availableChildren.GetSize(); i++)
 	{
@@ -931,7 +931,7 @@ BOOL SVTaskObjectListClass::getAvailableObjects(SVClassInfoStructListClass* pLis
 			)
 		{
 			pList->Add(classInfo);
-			rc = TRUE;
+			rc = true;
 		}
 	}
 	return rc;

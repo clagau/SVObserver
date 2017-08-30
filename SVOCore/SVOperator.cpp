@@ -32,18 +32,10 @@ SVOperatorClass::~SVOperatorClass()
 {
 }
 
-BOOL SVOperatorClass::CreateObject( SVObjectLevelCreateStruct* PCreateStructure )
+bool SVOperatorClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 {
-	BOOL bOk = false;
-
-	if( SVTaskObjectClass::CreateObject( PCreateStructure ) && nullptr != GetTool() )
-	{
-		bOk = true;
-	}
-
-	m_isCreated = bOk;
-
-	return bOk;
+	m_isCreated = SVTaskObjectClass::CreateObject(pCreateStructure) && nullptr != GetTool();
+	return m_isCreated;
 }
 
 void SVOperatorClass::init()

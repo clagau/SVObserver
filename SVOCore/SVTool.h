@@ -48,11 +48,11 @@ class SVToolClass : public SVTaskObjectListClass, public SvOi::ITool
 	friend class SVToolExtentClass; // For access to UpdateOffsetDataToImage()
 
 public:
-	SVToolClass( BOOL BCreateDefaultTaskList = false, SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVTOOL );
+	SVToolClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVTOOL );
 	virtual ~SVToolClass();
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct* PCreateStructure ) override;
-	virtual BOOL CloseObject() override;
+	virtual bool CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
+	virtual bool CloseObject() override;
 	virtual bool DisconnectObjectInput(SVInObjectInfoStruct* pInObjectInfo) override;
 
 	virtual HRESULT GetDrawInfo( SVExtentMultiLineStruct& p_rMultiLine ) override;
@@ -66,8 +66,7 @@ public:
 	//! \returns  EnableSize  | EnablePosition
 	//************************************
 	virtual EAutoSize GetAutoSizeEnabled();
-	
-	BOOL IsOkToEdit();
+
 	virtual bool SetDefaultFormulas(SvStl::MessageContainerVector *pErrorMessages=nullptr);
 	
 	SvOi::SVImageTypeEnum GetImageType();

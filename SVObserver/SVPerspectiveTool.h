@@ -22,13 +22,11 @@ class SVPerspectiveToolClass : public SVToolClass
 	SV_DECLARE_CLASS( SVPerspectiveToolClass );
 
 public:
-	SVPerspectiveToolClass( BOOL p_bCreateDefaultTaskList = FALSE, 
-		                    SVObjectClass *p_pOwner = nullptr, 
-												int p_iStringResourceID = IDS_CLASSNAME_SVPERSPECTIVETOOL );
+	SVPerspectiveToolClass( SVObjectClass *p_pOwner = nullptr, int p_iStringResourceID = IDS_CLASSNAME_SVPERSPECTIVETOOL );
 	virtual ~SVPerspectiveToolClass();
 
-	virtual BOOL CreateObject( SVObjectLevelCreateStruct *p_pCreateStructure ) override;
-	virtual BOOL CloseObject() override;
+	virtual bool CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
+	virtual bool CloseObject() override;
 
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 

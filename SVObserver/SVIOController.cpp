@@ -206,29 +206,37 @@ bool SVIOController::GetParameters( SvXml::SVObjectXMLWriter& rWriter ) const
 	return bOk;
 }
 
-BOOL SVIOController::SetObjectDepth( int NewObjectDepth )
+void SVIOController::SetObjectDepth( int NewObjectDepth )
 {
-	BOOL l_bOk = SVObjectClass::SetObjectDepth( NewObjectDepth );
+	SVObjectClass::SetObjectDepth( NewObjectDepth );
 
-	l_bOk &= !( m_pModuleReady.empty() ) && m_pModuleReady->getObject()->SetObjectDepth( NewObjectDepth );
-	l_bOk &= !( m_pRaidErrorBit.empty() ) && m_pRaidErrorBit->getObject()->SetObjectDepth( NewObjectDepth );
-
-	return l_bOk;
+	if (!m_pModuleReady.empty())
+	{
+		m_pModuleReady->getObject()->SetObjectDepth(NewObjectDepth);
+	}
+	if (!m_pRaidErrorBit.empty())
+	{
+		m_pRaidErrorBit->getObject()->SetObjectDepth(NewObjectDepth);
+	}
 }
 
-BOOL SVIOController::SetObjectDepthWithIndex( int NewObjectDepth, int NewLastSetIndex )
+void SVIOController::SetObjectDepthWithIndex( int NewObjectDepth, int NewLastSetIndex )
 {
-	BOOL l_bOk = SVObjectClass::SetObjectDepthWithIndex( NewObjectDepth, NewLastSetIndex );
+	SVObjectClass::SetObjectDepthWithIndex( NewObjectDepth, NewLastSetIndex );
 
-	l_bOk &= !( m_pModuleReady.empty() ) && m_pModuleReady->getObject()->SetObjectDepthWithIndex( NewObjectDepth, NewLastSetIndex );
-	l_bOk &= !( m_pRaidErrorBit.empty() ) && m_pRaidErrorBit->getObject()->SetObjectDepthWithIndex( NewObjectDepth, NewLastSetIndex );
-
-	return l_bOk;
+	if (!m_pModuleReady.empty())
+	{
+		m_pModuleReady->getObject()->SetObjectDepthWithIndex(NewObjectDepth, NewLastSetIndex);
+	}
+	if (!m_pRaidErrorBit.empty())
+	{
+		m_pRaidErrorBit->getObject()->SetObjectDepthWithIndex(NewObjectDepth, NewLastSetIndex);
+	}
 }
 
-BOOL SVIOController::SetImageDepth( long lDepth )
+bool SVIOController::SetImageDepth( long lDepth )
 {
-	BOOL l_bOk = SVObjectClass::SetImageDepth( lDepth );
+	bool l_bOk = SVObjectClass::SetImageDepth( lDepth );
 
 	l_bOk &= !( m_pModuleReady.empty() ) && m_pModuleReady->getObject()->SetImageDepth( lDepth );
 	l_bOk &= !( m_pRaidErrorBit.empty() ) && m_pRaidErrorBit->getObject()->SetImageDepth( lDepth );
