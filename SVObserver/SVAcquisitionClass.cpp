@@ -826,9 +826,9 @@ void SVAcquisitionClass::ClearDeviceIdentifier()
 {
 }
 
-BOOL SVAcquisitionClass::SetCurrentIndex( const SVDataManagerHandle& rDMIndexHandle )
+bool SVAcquisitionClass::SetCurrentIndex( const SVDataManagerHandle& rDMIndexHandle )
 {
-	BOOL l_Status = !( m_AcquisitionBuffersPtr.empty() );
+	bool l_Status = !( m_AcquisitionBuffersPtr.empty() );
 
 	if( l_Status )
 	{
@@ -838,9 +838,9 @@ BOOL SVAcquisitionClass::SetCurrentIndex( const SVDataManagerHandle& rDMIndexHan
 	return l_Status;
 }
 
-BOOL SVAcquisitionClass::SetCurrentIndex( const SVDataManagerHandle& rDMIndexHandle, SVDataManagerLockTypeEnum p_LockType )
+bool SVAcquisitionClass::SetCurrentIndex( const SVDataManagerHandle& rDMIndexHandle, SVDataManagerLockTypeEnum p_LockType )
 {
-	BOOL l_Status = !( m_AcquisitionBuffersPtr.empty() );
+	bool l_Status = !( m_AcquisitionBuffersPtr.empty() );
 
 	if( l_Status )
 	{

@@ -112,9 +112,9 @@ const SvTl::SVTimeStamp& SVMainImageClass::GetLastResetTimeStamp() const
 	return SVCameraImageTemplate::GetLastResetTimeStamp();
 }
 	
-BOOL SVMainImageClass::CreateBuffers( const SVImageInfoClass& p_rImageInfo, SVImageObjectClassPtr p_ImageArrayPtr )
+bool SVMainImageClass::CreateBuffers( const SVImageInfoClass& p_rImageInfo, SVImageObjectClassPtr p_ImageArrayPtr )
 {
-	BOOL bOk = !( p_ImageArrayPtr.empty() );
+	bool bOk = !( p_ImageArrayPtr.empty() );
 
 	if ( bOk )
 	{

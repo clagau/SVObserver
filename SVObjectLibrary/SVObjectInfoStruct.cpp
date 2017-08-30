@@ -231,9 +231,9 @@ SVObjectReference SVObjectInfoStruct::GetObjectReference() const
 	return l_Ref;
 }
 
-BOOL SVObjectInfoStruct::CheckExistence()
+bool SVObjectInfoStruct::CheckExistence()
 {
-	BOOL l_bOk = true;
+	bool l_bOk = true;
 
 	l_bOk = l_bOk && SV_GUID_NULL != m_UniqueObjectID;
 

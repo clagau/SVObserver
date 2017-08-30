@@ -21,7 +21,7 @@ namespace SvTi
 		void Reset();
 		void Init();
 
-		BOOL bValid;
+		bool bValid;
 		class SVTriggerObject* pTrigger;
 		long lTriggerCount;
 		bool m_ToggleState;

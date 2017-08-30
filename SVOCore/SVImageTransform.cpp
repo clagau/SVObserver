@@ -78,14 +78,14 @@ SVImageTransformClass::SVImageTransformClass( SVObjectClass* POwner, int StringR
 	EnumTypes += Text;
 	// And now set enum types...
 	m_interpolationMode.SetEnumTypes( EnumTypes.c_str() );
-	m_interpolationMode.SetDefaultValue( SVNearestNeighOverScanClear, TRUE );	// Refer to MIL...
+	m_interpolationMode.SetDefaultValue( SVNearestNeighOverScanClear );	// Refer to MIL...
 	RegisterEmbeddedObject( &m_interpolationMode, SVOutputInterpolationModeObjectGuid, IDS_OBJECTNAME_INTERPOLATION_MODE, false, SvOi::SVResetItemNone );
 
 	// Set Embedded defaults
-	m_useExtentsOnly.SetDefaultValue( FALSE, TRUE );
+	m_useExtentsOnly.SetDefaultValue( BOOL(false) );
 
-	m_extentWidth.SetDefaultValue( SvOi::cDefaultWindowToolWidth, TRUE );
-	m_extentHeight.SetDefaultValue( SvOi::cDefaultWindowToolHeight, TRUE );
+	m_extentWidth.SetDefaultValue( SvOi::cDefaultWindowToolWidth );
+	m_extentHeight.SetDefaultValue( SvOi::cDefaultWindowToolHeight );
 
 	m_outputImageObject.InitializeImage( SvOi::SVImageTypeEnum::SVImageTypePhysical );
 

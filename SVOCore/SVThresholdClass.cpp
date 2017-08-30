@@ -59,20 +59,20 @@ void SVThresholdClass::init()
 	RegisterEmbeddedObject( &m_useExternalUT, SVUseExternalUTObjectGuid, IDS_OBJECTNAME_USE_EXTERN_UT, false, SvOi::SVResetItemOwner );
 
 	// Set Embedded defaults
-	m_upperThresh.SetDefaultValue( SvOi::cDefaultToolUpperThreshold, TRUE );
-	m_lowerThresh.SetDefaultValue( SvOi::cDefaultToolLowerThreshold, TRUE );
-	m_threshActivate.SetDefaultValue( SvOi::cDefaultToolThresholdActivate, FALSE );
-	m_upperThreshActivate.SetDefaultValue( SvOi::cDefaultToolUpperThresholdActivate, TRUE );
-	m_lowerThreshActivate.SetDefaultValue( SvOi::cDefaultToolLowerThresholdActivate, TRUE );
+	m_upperThresh.SetDefaultValue( SvOi::cDefaultToolUpperThreshold );
+	m_lowerThresh.SetDefaultValue( SvOi::cDefaultToolLowerThreshold );
+	m_threshActivate.SetDefaultValue( SvOi::cDefaultToolThresholdActivate, false );
+	m_upperThreshActivate.SetDefaultValue( SvOi::cDefaultToolUpperThresholdActivate );
+	m_lowerThreshActivate.SetDefaultValue( SvOi::cDefaultToolLowerThresholdActivate );
 
-	m_useExternalATM.SetDefaultValue( FALSE, TRUE );
-	m_useExternalLT.SetDefaultValue( FALSE, TRUE );
-	m_useExternalUT.SetDefaultValue( FALSE, TRUE );
+	m_useExternalATM.SetDefaultValue(BOOL(false));
+	m_useExternalLT.SetDefaultValue(BOOL(false));
+	m_useExternalUT.SetDefaultValue(BOOL(false));
 
-	m_autoThreshold.SetDefaultValue( FALSE, TRUE );
-	m_blackBackground.SetDefaultValue( FALSE, TRUE );
+	m_autoThreshold.SetDefaultValue(BOOL(false));
+	m_blackBackground.SetDefaultValue( BOOL(false) );
 
-	m_dAutoThresholdMultiplier.SetDefaultValue( 1.0, TRUE );
+	m_dAutoThresholdMultiplier.SetDefaultValue( 1.0 );
 		
 	m_histValueArraySize = 0;
 	m_pixelNumber		   = 0;
@@ -232,8 +232,8 @@ bool SVThresholdClass::onRun( bool First,
 		RInputImageHandle->GetData( l_InMilHandle );
 		ROutputImageHandle->GetData( l_OutMilHandle );
 
-		BOOL bThreshActive	    = FALSE;
-		BOOL bAutoThreshold     = FALSE;
+		BOOL bThreshActive	    = false;
+		BOOL bAutoThreshold     = false;
 		
 		// Get the state of the threshold activates
 		m_threshActivate.GetValue( bThreshActive );
@@ -271,12 +271,12 @@ bool SVThresholdClass::onRun( bool First,
 
 		long lower = 0;
 		long upper = 0;
-		BOOL bUpperThreshActive = FALSE;
-		BOOL bLowerThreshActive = FALSE;
-		BOOL bBlackBackground   = FALSE;
-		BOOL bUseExternalLT     = FALSE;
-		BOOL bUseExternalUT     = FALSE;
-		BOOL bUseExternalATM    = FALSE;
+		BOOL bUpperThreshActive = false;
+		BOOL bLowerThreshActive = false;
+		BOOL bBlackBackground   = false;
+		BOOL bUseExternalLT     = false;
+		BOOL bUseExternalUT     = false;
+		BOOL bUseExternalATM    = false;
 
 		// Get current Threshold Flags...
 		m_upperThreshActivate.GetValue( bUpperThreshActive );
@@ -529,11 +529,11 @@ bool SVThresholdClass::Rebuild()
 		}
 	}
 
-	BOOL l_bAutoValue = FALSE;
-	BOOL l_bATMValue = FALSE;
+	BOOL l_bAutoValue = false;
+	BOOL l_bATMValue = false;
 
-	BOOL l_bLTValue = FALSE;
-	BOOL l_bUTValue = FALSE;
+	BOOL l_bLTValue = false;
+	BOOL l_bUTValue = false;
 
 	m_autoThreshold.GetValue( l_bAutoValue );
 	m_useExternalATM.GetValue( l_bATMValue );

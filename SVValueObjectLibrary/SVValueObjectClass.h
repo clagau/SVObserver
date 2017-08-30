@@ -69,7 +69,7 @@ public:
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* pDataObject );
 	virtual HRESULT SetValue( const T& rValue, int Index = -1 );
 	virtual HRESULT GetValue(T&  rValue, int Index = -1, int Bucket = -1) const;
-	virtual HRESULT SetDefaultValue( const T& rValue, bool bResetAll );
+	virtual HRESULT SetDefaultValue( const T& rValue, bool bResetAll = true );
 	const ValueType& GetDefaultValue() const { return m_DefaultValue; };
 
 	HRESULT SetArrayValues(typename ValueVector::const_iterator BeginIter, typename ValueVector::const_iterator EndIter);

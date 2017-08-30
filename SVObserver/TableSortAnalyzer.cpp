@@ -161,7 +161,7 @@ void TableSortAnalyzer::Initialize()
 void TableSortAnalyzer::BuildEmbeddedObjectList()
 {
 	RegisterEmbeddedObject( &m_isASC, TableAnaylzerSortIsASCGuid, IDS_OBJECTNAME_TABLEANALYZER_ISASC, true, SvOi::SVResetItemTool );
-	m_isASC.SetDefaultValue( true, TRUE );
+	m_isASC.SetDefaultValue( BOOL(true) );
 }
 
 void TableSortAnalyzer::BuildInputObjectList()

@@ -20,8 +20,8 @@ namespace SvSyl
 
 		virtual ~SVLockableClass();
 
-		BOOL Lock( DWORD DWWaitTime = INFINITE ) const;
-		BOOL Unlock() const;
+		bool Lock( DWORD DWWaitTime = INFINITE ) const;
+		bool Unlock() const;
 
 	protected:
 		HANDLE hProtectionMutex; 

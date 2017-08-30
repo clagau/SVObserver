@@ -59,14 +59,14 @@ SVTransformClass::SVTransformClass( SVObjectClass* POwner, int StringResourceID 
 	RegisterEmbeddedObject( &learnedRotationAngle, SVLearnedRotationAngleObjectGuid, IDS_OBJECTNAME_LEARNED_ROTATION_ANGLE, false, SvOi::SVResetItemTool );
 
 	// Set Embedded defaults
-	performTranslation.SetDefaultValue( FALSE, TRUE );
-	performRotation.SetDefaultValue( FALSE, TRUE );
+	performTranslation.SetDefaultValue( BOOL(false) );
+	performRotation.SetDefaultValue( BOOL(false) );
 
-	learnedTranslationX.SetDefaultValue( 0.0, TRUE );
-	learnedTranslationY.SetDefaultValue( 0.0, TRUE );
-	learnedRotationX.SetDefaultValue( 0.0, TRUE );
-	learnedRotationY.SetDefaultValue( 0.0, TRUE );
-	learnedRotationAngle.SetDefaultValue( 0.0, TRUE );
+	learnedTranslationX.SetDefaultValue( 0.0 );
+	learnedTranslationY.SetDefaultValue( 0.0 );
+	learnedRotationX.SetDefaultValue( 0.0 );
+	learnedRotationY.SetDefaultValue( 0.0 );
+	learnedRotationAngle.SetDefaultValue( 0.0 );
 
 	// Add Default Inputs and Outputs
 	addDefaultInputObjects();

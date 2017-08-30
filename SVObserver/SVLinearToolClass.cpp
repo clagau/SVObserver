@@ -49,7 +49,7 @@ bool SVLinearToolClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructur
 {
 	bool bOk = SVToolClass::CreateObject( pCreateStructure );
 
-	BOOL l_bValue = FALSE;
+	BOOL l_bValue = false;
 
 	if( S_OK == m_voUseProfileRotation.GetValue( l_bValue ) )
 	{
@@ -221,18 +221,18 @@ SVString SVLinearToolClass::GetProfileOrientation()
 	return Result;
 }
 
-BOOL SVLinearToolClass::GetRotation()
+bool SVLinearToolClass::GetRotation()
 {
 	BOOL bVal = false;
 	
 	m_voUseProfileRotation.GetValue(bVal);
 
-	return bVal;
+	return (TRUE == bVal);
 }
 
 EAutoSize SVLinearToolClass::GetAutoSizeEnabled()
 {
-	if (GetRotation() == TRUE)
+	if (GetRotation())
 	{
 		return EnableNone;
 	}
@@ -242,9 +242,9 @@ EAutoSize SVLinearToolClass::GetAutoSizeEnabled()
 	}
 }
 
-BOOL SVLinearToolClass::IsToolRotated()
+bool SVLinearToolClass::IsToolRotated()
 {
-	BOOL bRet = false;
+	bool bRet = false;
 	SVImageExtentClass svImageExtent;
 	double dRotationAngle;
 
@@ -289,12 +289,12 @@ void SVLinearToolClass::init()
 	RegisterEmbeddedObject( &m_SourceImageNames, SVSourceImageNamesGuid, IDS_OBJECTNAME_SOURCE_IMAGE_NAMES, false, SvOi::SVResetItemTool );
 
 	// Set Embedded defaults
-	m_svRotationAngle.SetDefaultValue( 0.0, TRUE );
-	m_svRotationPointX.SetDefaultValue( SvOi::cDefaultWindowToolLeft, TRUE );
-	m_svRotationPointY.SetDefaultValue( ( SvOi::cDefaultWindowToolTop + ( SvOi::cDefaultWindowToolHeight / 2 ) ), TRUE );
+	m_svRotationAngle.SetDefaultValue( 0.0, true );
+	m_svRotationPointX.SetDefaultValue( SvOi::cDefaultWindowToolLeft, true);
+	m_svRotationPointY.SetDefaultValue( ( SvOi::cDefaultWindowToolTop + ( SvOi::cDefaultWindowToolHeight / 2 ) ), true);
 	m_voProfileOrientation.SetEnumTypes(g_strOrientationEnums);
-	m_voProfileOrientation.SetDefaultValue( "Horizontal", TRUE );
-	m_voUseProfileRotation.SetDefaultValue(TRUE,TRUE);
+	m_voProfileOrientation.SetDefaultValue( "Horizontal", true);
+	m_voUseProfileRotation.SetDefaultValue( BOOL(true), true);
 
 	m_svToolExtent.SetImageType( SvOi::SVImageTypeEnum::SVImageTypePhysical );
 	m_svToolExtent.SetTranslation( SVExtentTranslationProfile );

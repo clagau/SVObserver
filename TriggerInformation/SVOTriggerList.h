@@ -29,8 +29,8 @@ namespace SvTi
 		SVOTriggerList();
 		virtual ~SVOTriggerList();
 
-		BOOL AddTriggerToList(const SVString& sTriggerName, int iDigNumber);
-		BOOL RemoveTriggerFromList(const SVString& sTriggerName);
+		bool AddTriggerToList(const SVString& sTriggerName, int iDigNumber);
+		bool RemoveTriggerFromList(const SVString& sTriggerName);
 		bool IsTriggerInList(const SVString& sTiggerName) const;
 		int GetTriggerListCount() const;
 		SVOTriggerObjPtr GetTriggerObjectByName(const SVString& sTriggerName);

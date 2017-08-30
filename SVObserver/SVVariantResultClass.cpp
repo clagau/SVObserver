@@ -45,7 +45,7 @@ SVVariantResultClass::SVVariantResultClass( BOOL BCreateDefaultTaskList , SVObje
 	// Set Embedded defaults
 	_variant_t vt;
 	
-	m_Value.SetDefaultValue( vt, TRUE );
+	m_Value.SetDefaultValue( vt );
 	m_Value.setSaveValueFlag(false);
 
 	// Instantiate Dynamic Objects

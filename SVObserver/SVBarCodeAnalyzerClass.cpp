@@ -91,28 +91,28 @@ void SVBarCodeAnalyzerClass::init()
 	RegisterEmbeddedObject (&msv_lThresholdType, SVBCThresholdTypeGuid, IDS_OBJECTNAME_BARCODETHRESHOLDTYPE, false, SvOi::SVResetItemOwner);
 
 	// Set default values
-	msv_szBarCodeValue.SetDefaultValue (_T(""), TRUE);
+	msv_szBarCodeValue.SetDefaultValue (_T(""));
 	msv_szBarCodeValue.setSaveValueFlag(false);
-	msv_szRegExpressionValue.SetDefaultValue (_T(""), TRUE);
-	msv_lBarCodeType.SetDefaultValue(SVDataMatrix, TRUE);
-	msv_dOrientation.SetDefaultValue(SVValueDefault, TRUE);
-	msv_dSkewNegative.SetDefaultValue(SVValueDefault, TRUE);
-	msv_dSkewPositive.SetDefaultValue(SVValueDefault, TRUE);
-	msv_dCellMinSize.SetDefaultValue(SVValueDefault, TRUE);
-	msv_dCellMaxSize.SetDefaultValue(SVValueDefault, TRUE);
-	msv_dCellNumberX.SetDefaultValue(SVValueAny, TRUE);
-	msv_dCellNumberY.SetDefaultValue(SVValueAny, TRUE);
-	msv_dSpeed.SetDefaultValue(SVValueMedium, TRUE);
-	msv_dThreshold.SetDefaultValue(SVValueDefault, TRUE);
-	msv_dStringSize.SetDefaultValue(SVValueDefault, TRUE);
-	msv_dErrorCorrection.SetDefaultValue(SVValueAny, TRUE);
-	msv_dEncoding.SetDefaultValue(SVValueAny, TRUE);
-	msv_dForegroundColor.SetDefaultValue(SVValueForegroundBlack, TRUE);
-	msv_bSaveStringInFile.SetDefaultValue(FALSE, TRUE);
-	msv_szStringFileName.SetDefaultValue(_T("BCRegExp.txt"), TRUE);
-	m_bWarnOnFailedRead.SetDefaultValue( FALSE, TRUE);
+	msv_szRegExpressionValue.SetDefaultValue (_T(""));
+	msv_lBarCodeType.SetDefaultValue(SVDataMatrix);
+	msv_dOrientation.SetDefaultValue(SVValueDefault);
+	msv_dSkewNegative.SetDefaultValue(SVValueDefault);
+	msv_dSkewPositive.SetDefaultValue(SVValueDefault);
+	msv_dCellMinSize.SetDefaultValue(SVValueDefault);
+	msv_dCellMaxSize.SetDefaultValue(SVValueDefault);
+	msv_dCellNumberX.SetDefaultValue(SVValueAny);
+	msv_dCellNumberY.SetDefaultValue(SVValueAny);
+	msv_dSpeed.SetDefaultValue(SVValueMedium);
+	msv_dThreshold.SetDefaultValue(SVValueDefault);
+	msv_dStringSize.SetDefaultValue(SVValueDefault);
+	msv_dErrorCorrection.SetDefaultValue(SVValueAny);
+	msv_dEncoding.SetDefaultValue(SVValueAny);
+	msv_dForegroundColor.SetDefaultValue(SVValueForegroundBlack);
+	msv_bSaveStringInFile.SetDefaultValue( BOOL(false));
+	msv_szStringFileName.SetDefaultValue(_T("BCRegExp.txt"));
+	m_bWarnOnFailedRead.SetDefaultValue( BOOL(false));
 
-	msv_bUnEvenGrid.SetDefaultValue( FALSE, TRUE);
+	msv_bUnEvenGrid.SetDefaultValue( BOOL(false));
 
 	// To support special DMCs May 2008.
 	// Use ~ to simulate non printable characters...

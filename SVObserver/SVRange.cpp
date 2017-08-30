@@ -200,7 +200,7 @@ bool SVRangeClass::InitReferencesAndInputs(SvStl::MessageContainerVector *pError
 			}
 			}
 			//check if we have an valid but disabled input
-			else if( FALSE == (m_ValueObjectReferences[i].ObjectAttributesAllowed() & SvOi::SV_SELECTABLE_FOR_EQUATION ) )
+			else if( 0 == (m_ValueObjectReferences[i].ObjectAttributesAllowed() & SvOi::SV_SELECTABLE_FOR_EQUATION ) )
 			{
 				Result = false;
 				if (nullptr != pErrorMessages)
@@ -252,7 +252,7 @@ SVDoubleValueObjectClass&  SVRangeClass::GetRange(RangeEnum::ERange range)
 		return WarnLow;
 	
 	default:
-		ASSERT (FALSE);
+		ASSERT (false);
 		return WarnLow;
 	}
 }
@@ -423,7 +423,7 @@ HRESULT SVRangeClass::SetCancelData(SVCancelData* pCancelData)
 	}
 }
 
-BOOL SVRangeClass::getInputValue( double& rValue )
+bool SVRangeClass::getInputValue( double& rValue )
 {
 	if( m_inputObjectInfo.IsConnected() && m_inputObjectInfo.GetInputObjectInfo().m_pObject )
 	{

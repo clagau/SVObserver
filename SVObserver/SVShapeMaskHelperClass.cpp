@@ -54,13 +54,13 @@ void SVShapeMaskHelperClass::init()
 	vec.push_back( SVEnumeratePair(SvUl_SF::LoadSVString(IDS_OBJECTNAME_SHAPE_TYPE_DOUGHNUT), SVMaskShapeTypeDoughnut ) );
 	vec.push_back( SVEnumeratePair(SvUl_SF::LoadSVString(IDS_OBJECTNAME_SHAPE_TYPE_SYMMETRIC_TRAPEZOID), SVMaskShapeTypeSymmetricTrapezoid ) );
 	m_Data.evoShapeType.SetEnumTypes(vec);
-	m_Data.evoShapeType.SetDefaultValue(SVMaskShapeTypeRectangle, TRUE);
+	m_Data.evoShapeType.SetDefaultValue(SVMaskShapeTypeRectangle);
 
 	vec.clear();
 	vec.push_back( SVEnumeratePair(_T( "Inside Shape" ), 1 ) );
 	vec.push_back( SVEnumeratePair(_T( "Outside Shape" ), 2 ) );
 	m_Data.evoMaskArea.SetEnumTypes(vec);
-	m_Data.evoMaskArea.SetDefaultValue(2, TRUE);
+	m_Data.evoMaskArea.SetDefaultValue(2);
 
 	vec.clear();
 	vec.push_back( SVEnumeratePair(_T( "Vertical Axis Top" ), 0 ) );
@@ -68,15 +68,15 @@ void SVShapeMaskHelperClass::init()
 	vec.push_back( SVEnumeratePair(_T( "Horizontal Axis Left" ), -90 ) );
 	vec.push_back( SVEnumeratePair(_T( "Horizontal Axis Right" ), 90 ) );
 	m_Data.evoXYSymmetry.SetEnumTypes(vec);
-	m_Data.evoXYSymmetry.SetDefaultValue((long)0, TRUE);
+	m_Data.evoXYSymmetry.SetDefaultValue(0l);
 
-	m_Data.lvoCenterX.SetDefaultValue( 50, TRUE );
-	m_Data.lvoCenterY.SetDefaultValue( 50, TRUE );
-	m_Data.lvoWidth.SetDefaultValue( 80, TRUE );
-	m_Data.lvoHeight.SetDefaultValue( 80, TRUE );
-	m_Data.lvoSideThickness.SetDefaultValue( 20, TRUE );
-	m_Data.lvoTopBottomThickness.SetDefaultValue( 20, TRUE );
-	m_Data.lvoOffset.SetDefaultValue( 20, TRUE );
+	m_Data.lvoCenterX.SetDefaultValue( 50 );
+	m_Data.lvoCenterY.SetDefaultValue( 50 );
+	m_Data.lvoWidth.SetDefaultValue( 80 );
+	m_Data.lvoHeight.SetDefaultValue( 80 );
+	m_Data.lvoSideThickness.SetDefaultValue( 20 );
+	m_Data.lvoTopBottomThickness.SetDefaultValue( 20 );
+	m_Data.lvoOffset.SetDefaultValue( 20 );
 
 
 

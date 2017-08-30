@@ -119,21 +119,6 @@ bool SVTADlgArchiveResultsPage::QueryAllowExit()
 		return false; 
 	}
 
-	//
-	// Check for possible duplicate path to results archive in any other
-	// archive tool in any other toolset, i.e. it must be unique on the 
-	// NT file system.
-	//
-	BOOL bResult = m_pTool->CheckForUniqueArchiveFilePath(ArchiveFileName.c_str());
-	if(!bResult)
-	{
-		SVStringVector msgList;
-		msgList.push_back(SVString(ArchiveFileName));
-		SvStl::MessageMgrStd Exception( SvStl::LogAndDisplay );
-		Exception.setMessage( SVMSG_SVO_73_ARCHIVE_MEMORY, SvStl::Tid_AP_InvalidFile, msgList, SvStl::SourceFileParams(StdMessageParams) );
-		return false;   // Property is ready to exit.
-	}
-
 	m_pTool->SetFileArchive( ArchiveFileName.c_str() );
 
 	m_pTool->m_dwAppendArchiveFile.SetValue(static_cast<DWORD> (m_AppendArchive));

@@ -132,18 +132,18 @@ SVPatternAnalyzerClass::SVPatternAnalyzerClass(SVObjectClass* POwner, int String
   // Set default values for search parameters
 	SetDefaultSearchValues ();
 
-	msv_szModelImageFile.SetDefaultValue (_T(""), TRUE);
-	m_DontCareImageFile.SetDefaultValue (_T(""), TRUE);
-	msv_dpatResultMatchScore.SetDefaultValue (0.0, TRUE);
+	msv_szModelImageFile.SetDefaultValue (_T(""));
+	m_DontCareImageFile.SetDefaultValue (_T(""));
+	msv_dpatResultMatchScore.SetDefaultValue (0.0);
 	msv_dpatResultMatchScore.setSaveValueFlag(false);
-	msv_dpatResultX.SetDefaultValue (0.0, TRUE);
+	msv_dpatResultX.SetDefaultValue (0.0);
 	msv_dpatResultX.setSaveValueFlag(false);
-	msv_dpatResultY.SetDefaultValue (0.0, TRUE);
+	msv_dpatResultY.SetDefaultValue (0.0);
 	msv_dpatResultY.setSaveValueFlag(false);
-	msv_dpatResultAngle.SetDefaultValue (0.0, TRUE);
+	msv_dpatResultAngle.SetDefaultValue (0.0);
 	msv_dpatResultAngle.setSaveValueFlag(false);
-	m_lpatModelCenterX.SetDefaultValue(0, true);
-	m_lpatModelCenterY.SetDefaultValue(0, true);
+	m_lpatModelCenterX.SetDefaultValue(0);
+	m_lpatModelCenterY.SetDefaultValue(0);
 	msv_lpatNumFoundOccurances.setSaveValueFlag(false);
 
 	// Setup the result
@@ -201,8 +201,8 @@ void SVPatternAnalyzerClass::CreateResult()
 			Add(pResult);
 			pAnalyzerResult = pResult; //
 			
-			pRange->FailLow.SetDefaultValue(1.0, true);
-			pRange->WarnLow.SetDefaultValue(1.0, true);
+			pRange->FailLow.SetDefaultValue(1.0);
+			pRange->WarnLow.SetDefaultValue(1.0);
 
 			pRange->FailLow.SetValue(1.0);
 			pRange->WarnLow.SetValue(1.0);
@@ -214,35 +214,35 @@ void SVPatternAnalyzerClass::CreateResult()
 
 void SVPatternAnalyzerClass::SetDefaultSearchValues()
 {
-	msv_dpatAcceptanceThreshold.SetDefaultValue(70.0, true); // Acceptance level 70%
-	msv_dpatCertaintyThreshold.SetDefaultValue(80.0, true);	 // Certainty level 80%
-	msv_lpatAccuracy.SetDefaultValue(SVValueMedium, true);
-	msv_lpatMaxOccurances.SetDefaultValue(1, true);
-	msv_bpatSearchAngleMode.SetDefaultValue(FALSE, true);
-	msv_lpatSpeed.SetDefaultValue(SVValueMedium, true);
-	msv_dpatSearchAngle.SetDefaultValue(0.0, true);
-	msv_dpatAngleDeltaNeg.SetDefaultValue(0.0, true);
-	msv_dpatAngleDeltaPos.SetDefaultValue(0.0, true);
-	msv_dpatAngleTolerance.SetDefaultValue(5.0, true);
-	msv_dpatAngleAccuracy.SetDefaultValue(SVValueDisable, true);
-	m_bAngleAccuracy = FALSE;
-	msv_dpatAngleInterpolation.SetDefaultValue(SVNearestNeighbor, true);
+	msv_dpatAcceptanceThreshold.SetDefaultValue(70.0); // Acceptance level 70%
+	msv_dpatCertaintyThreshold.SetDefaultValue(80.0);	 // Certainty level 80%
+	msv_lpatAccuracy.SetDefaultValue(SVValueMedium);
+	msv_lpatMaxOccurances.SetDefaultValue(1);
+	msv_bpatSearchAngleMode.SetDefaultValue(BOOL(false));
+	msv_lpatSpeed.SetDefaultValue(SVValueMedium);
+	msv_dpatSearchAngle.SetDefaultValue(0.0);
+	msv_dpatAngleDeltaNeg.SetDefaultValue(0.0);
+	msv_dpatAngleDeltaPos.SetDefaultValue(0.0);
+	msv_dpatAngleTolerance.SetDefaultValue(5.0);
+	msv_dpatAngleAccuracy.SetDefaultValue(SVValueDisable);
+	m_bAngleAccuracy = false;
+	msv_dpatAngleInterpolation.SetDefaultValue(SVNearestNeighbor);
 
-	msv_bpatCircularOverscan.SetDefaultValue(false, true);
-	m_bpatDontCare.SetDefaultValue(false, true);
+	msv_bpatCircularOverscan.SetDefaultValue(BOOL(false));
+	m_bpatDontCare.SetDefaultValue(BOOL(false));
 
-	msv_dpatPreliminaryAcceptanceThreshold.SetDefaultValue(SVValueDefault, true);
-	msv_lpatFastFind.SetDefaultValue(SVValueDefault, true);
-	msv_lpatModelStep.SetDefaultValue(SVValueDefault, true);
-	msv_lpatBeginningResolutionLevel.SetDefaultValue(SVValueDefault, true);
-	msv_lpatFinalResolutionLevel.SetDefaultValue(SVValueDefault, true);
-	msv_lpatAdditionalCandidates.SetDefaultValue(SVValueDefault, true);
-	msv_dpatCandidateSpacingXMin.SetDefaultValue(SVValueDefault, true);
-	msv_dpatCandidateSpacingYMin.SetDefaultValue(SVValueDefault, true);
-	m_lpatModelWidth.SetDefaultValue(SvOi::cMinPatternModelNewSize, true);
-	m_lpatModelHeight.SetDefaultValue(SvOi::cMinPatternModelNewSize, true);
-	m_dontCareWidth.SetDefaultValue(SvOi::cMinPatternModelNewSize, true);
-	m_dontCareHeight.SetDefaultValue(SvOi::cMinPatternModelNewSize, true);
+	msv_dpatPreliminaryAcceptanceThreshold.SetDefaultValue(SVValueDefault);
+	msv_lpatFastFind.SetDefaultValue(SVValueDefault);
+	msv_lpatModelStep.SetDefaultValue(SVValueDefault);
+	msv_lpatBeginningResolutionLevel.SetDefaultValue(SVValueDefault);
+	msv_lpatFinalResolutionLevel.SetDefaultValue(SVValueDefault);
+	msv_lpatAdditionalCandidates.SetDefaultValue(SVValueDefault);
+	msv_dpatCandidateSpacingXMin.SetDefaultValue(SVValueDefault);
+	msv_dpatCandidateSpacingYMin.SetDefaultValue(SVValueDefault);
+	m_lpatModelWidth.SetDefaultValue(SvOi::cMinPatternModelNewSize);
+	m_lpatModelHeight.SetDefaultValue(SvOi::cMinPatternModelNewSize);
+	m_dontCareWidth.SetDefaultValue(SvOi::cMinPatternModelNewSize);
+	m_dontCareHeight.SetDefaultValue(SvOi::cMinPatternModelNewSize);
 
 	m_vec2dPatResults.fill(0.0);
 }
@@ -541,12 +541,12 @@ bool SVPatternAnalyzerClass::SetSearchParameters ()
 																	// M_DEFAULT = 0x10000000L M_DISABLE = -9999L
 								if(dParam < 0 || dParam > 1000 )	// These values satify the old M_DEFAULT AND M_DISABLE
 								{
-									m_bAngleAccuracy = FALSE;
+									m_bAngleAccuracy = false;
 								}
 								else
 								{
 									MatroxCode = SVMatroxPatternInterface::SetAngle( m_patModelHandle, SVPatSearchAngleDeltaNeg, dParam );
-									m_bAngleAccuracy = TRUE;
+									m_bAngleAccuracy = true;
 								}
 							}
 
@@ -1005,7 +1005,7 @@ HRESULT SVPatternAnalyzerClass::onCollectOverlays(SVImageClass* p_pImage, SVExte
 // -----------------------------------------------------------------------------
 // .Description : When the user right clicks inside a tool figure, checks whether its
 //              : on a pattern. If it finds a pattern at that point, gets the index of the  
-//				: pattern and returns TRUE.
+//				: pattern and returns true.
 //				: Called from SVImageViewClass::OnContextMenu
 ////////////////////////////////////////////////////////////////////////////////
 // 	 Date		Author				Comment                                       
@@ -1481,7 +1481,7 @@ bool SVPatternAnalyzerClass::IsValidSize(SvStl::MessageContainerVector *pErrorMe
 	m_bpatDontCare.GetValue(useDontCare);
 	m_dontCareWidth.GetValue(dontCareWidth);
 	m_dontCareHeight.GetValue(dontCareHeight);
-	return IsValidSize(modelWidth, modelHeight, (TRUE == useDontCare), dontCareWidth, dontCareHeight, pErrorMessages);
+	return IsValidSize(modelWidth, modelHeight, useDontCare?true:false, dontCareWidth, dontCareHeight, pErrorMessages);
 }
 
 bool SVPatternAnalyzerClass::IsValidSize(long modelWidth, long modelHeight, bool useDontCare, long dontCareWidth, long dontCareHeight, SvStl::MessageContainerVector *pErrorMessages) const

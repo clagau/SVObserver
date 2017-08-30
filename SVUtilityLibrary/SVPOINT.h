@@ -46,7 +46,7 @@ public:
 	const SVPOINT& operator=( const POINT& p_rPoint );
 	const SVPOINT& operator=( const VARIANT& p_rVariant );
 
-	BOOL GetValue( POINT &Point ) const;
+	void GetValue( POINT &Point ) const;
 
 	long x() const;
 	long y() const;

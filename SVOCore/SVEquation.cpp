@@ -149,7 +149,7 @@ int SVEquationSymbolTableClass::AddSymbol(LPCTSTR name, SVObjectClass* pRequesto
 		return -1;
 	}
 
-	if( FALSE == (ObjectReference.ObjectAttributesAllowed() & SvOi::SV_SELECTABLE_FOR_EQUATION) )
+	if( 0 == (ObjectReference.ObjectAttributesAllowed() & SvOi::SV_SELECTABLE_FOR_EQUATION) )
 	{
 		return -1;
 	}
@@ -169,7 +169,7 @@ int SVEquationSymbolTableClass::AddSymbol(LPCTSTR name, SVObjectClass* pRequesto
 	assert(rc);
 	if( rc )
 	{
-		pSymbolStruct->IsValid = TRUE;
+		pSymbolStruct->IsValid = true;
 	}
 
 	symbolIndex = Add( pSymbolStruct );
@@ -283,7 +283,7 @@ void SVEquationClass::init()
 	RegisterEmbeddedObject( &enabled, SVEquationEnabledObjectGuid, IDS_OBJECTNAME_ENABLED, false, SvOi::SVResetItemNone );
 
 	// Set Embedded defaults
-	enabled.SetDefaultValue( TRUE, TRUE );
+	enabled.SetDefaultValue( BOOL(true), true );
 
 	// Set default inputs and outputs
 	addDefaultInputObjects();
@@ -326,7 +326,7 @@ bool SVEquationClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure 
 	return bOk;
 }
 
-BOOL SVEquationClass::HasCondition()
+bool SVEquationClass::HasCondition()
 {
 	return !m_equationStruct.EquationBuffer.empty();
 }
@@ -414,12 +414,12 @@ HRESULT SVEquationClass::SetObjectValue( SVObjectAttributeClass* pDataObject )
 ////////////////////////////////////////////////////////////////////////////////
 // 
 ////////////////////////////////////////////////////////////////////////////////
-BOOL SVEquationClass::IsEnabled()
+bool SVEquationClass::IsEnabled()
 {
 	BOOL bEnabled;
 	enabled.GetValue( bEnabled );
 		
-	return bEnabled;
+	return bEnabled ? true : false;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -619,7 +619,7 @@ bool SVEquationClass::DisconnectObjectInput( SVInObjectInfoStruct* pInObjectInfo
 ////////////////////////////////////////////////////////////////////////////////
 // 
 ////////////////////////////////////////////////////////////////////////////////
-// If Conditional is disabled equation.Run() returns always TRUE.
+// If Conditional is disabled equation.Run() returns always true.
 // Otherwise the return value depends on the Conditional equation result!
 bool SVEquationClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {

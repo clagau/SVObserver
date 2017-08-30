@@ -40,8 +40,8 @@ struct SVOutObjectInfoStruct : public SVObjectInfoStruct
 	INT_PTR GetInputSize() { return UserInfoList.GetSize(); }
 	SVInObjectInfoStruct& GetInputAt( long p_lIndex ) { return UserInfoList[ p_lIndex ]; }
 
-	BOOL Lock( DWORD p_TimeOutMilliseconds = INFINITE ) const;
-	BOOL Unlock() const;
+	bool Lock( DWORD p_TimeOutMilliseconds = INFINITE ) const;
+	bool Unlock() const;
 
 private:
 	// Who are my users...

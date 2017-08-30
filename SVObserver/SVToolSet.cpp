@@ -77,57 +77,57 @@ void SVToolSetClass::init()
 	
 
 	// Set Embedded defaults
-	m_Enabled.SetDefaultValue( true, true );
-	m_Passed.SetDefaultValue( false, true );			// Default for Passed is FALSE !!!
+	m_Enabled.SetDefaultValue( BOOL(true) );
+	m_Passed.SetDefaultValue(BOOL(false) );			// Default for Passed is FALSE !!!
 	m_Passed.setSaveValueFlag(false);
-	m_Failed.SetDefaultValue( true, true );			// Default for Failed is TRUE !!!
+	m_Failed.SetDefaultValue(BOOL(true) );			// Default for Failed is TRUE !!!
 	m_Failed.setSaveValueFlag(false);
-	m_Warned.SetDefaultValue( true, true );			// Default for Warned is TRUE !!!
+	m_Warned.SetDefaultValue(BOOL(true) );			// Default for Warned is TRUE !!!
 	m_Warned.setSaveValueFlag(false);
-	m_ExplicitFailed.SetDefaultValue( false, true );	// Default for Explicit Failed is FALSE !!!
+	m_ExplicitFailed.SetDefaultValue(BOOL(false) );	// Default for Explicit Failed is FALSE !!!
 	m_ExplicitFailed.setSaveValueFlag(false);
 
-	m_PassedCount.SetDefaultValue( 0, true );
+	m_PassedCount.SetDefaultValue( 0 );
 	m_PassedCount.setSaveValueFlag(false);
-	m_FailedCount.SetDefaultValue( 0, true );
+	m_FailedCount.SetDefaultValue( 0 );
 	m_FailedCount.setSaveValueFlag(false);
-	m_WarnedCount.SetDefaultValue( 0, true );
+	m_WarnedCount.SetDefaultValue( 0 );
 	m_WarnedCount.setSaveValueFlag(false);
 
-	m_EnabledCount.SetDefaultValue( 0, true );
+	m_EnabledCount.SetDefaultValue( 0 );
 	m_EnabledCount.setSaveValueFlag(false);
-	m_ProcessedCount.SetDefaultValue( 0, true );
+	m_ProcessedCount.SetDefaultValue( 0 );
 	m_ProcessedCount.setSaveValueFlag(false);
 
-	m_ToolTime.SetDefaultValue(0, true);
+	m_ToolTime.SetDefaultValue(0);
 	m_ToolTime.setSaveValueFlag(false);
 	m_ToolTime.SetName( "Tool Set Time" );
 
 	m_bResetMinMaxToolsetTime = true;
 
-	m_MinToolsetTime.SetDefaultValue( 0, true );
+	m_MinToolsetTime.SetDefaultValue( 0 );
 	m_MinToolsetTime.setSaveValueFlag(false);
-	m_MaxToolsetTime.SetDefaultValue( 0, true );
+	m_MaxToolsetTime.SetDefaultValue( 0 );
 	m_MaxToolsetTime.setSaveValueFlag(false);
 
-	m_RegressionTestMode.SetDefaultValue(false, true);
+	m_RegressionTestMode.SetDefaultValue(BOOL(false));
 	m_RegressionTestMode.setSaveValueFlag(false);
 
 	m_DrawFlag.SetEnumTypes( IDS_TOOLSETDRAW_ENUMOBJECT_LIST );
-	m_DrawFlag.SetDefaultValue( ( const long ) 0, true ); // 0 Should be show 'All Tools'
-	m_TriggerCount.SetDefaultValue( 0, true );
+	m_DrawFlag.SetDefaultValue( 0l ); // 0 Should be show 'All Tools'
+	m_TriggerCount.SetDefaultValue( 0 );
 	m_TriggerCount.setSaveValueFlag(false);
-	m_latestCompletionPPQIndex.SetDefaultValue( 0, true );
+	m_latestCompletionPPQIndex.SetDefaultValue( 0 );
 	m_latestCompletionPPQIndex.setSaveValueFlag(false);
-	m_TriggerDelta.SetDefaultValue( 0, true );
+	m_TriggerDelta.SetDefaultValue( 0 );
 	m_TriggerDelta.setSaveValueFlag(false);
-	m_LastTriggerToPPQCompletion.SetDefaultValue( 0, true );
+	m_LastTriggerToPPQCompletion.SetDefaultValue( 0 );
 	m_LastTriggerToPPQCompletion.setSaveValueFlag(false);
-	m_LastTriggerToStart.SetDefaultValue( 0, true );
+	m_LastTriggerToStart.SetDefaultValue( 0 );
 	m_LastTriggerToStart.setSaveValueFlag(false);
 
-	m_Width.SetDefaultValue( 0.0, true );
-	m_Height.SetDefaultValue( 0.0, true );
+	m_Width.SetDefaultValue( 0.0 );
+	m_Height.SetDefaultValue( 0.0 );
 
 	// Set local defaults
 	m_StartTime = 0.0;
@@ -858,18 +858,18 @@ bool SVToolSetClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	if( S_OK == m_ResetCounts.GetValue( bReset ) && bReset )
 	{
 		// Reset Counters...
-		m_PassedCount.SetDefaultValue( 0, true );
-		m_FailedCount.SetDefaultValue( 0, true );
-		m_WarnedCount.SetDefaultValue( 0, true );
-		m_EnabledCount.SetDefaultValue( 0, true );
-		m_ProcessedCount.SetDefaultValue( 0, true );
-		m_RegressionTestMode.SetDefaultValue( SVSVIMStateClass::CheckState( SV_STATE_REGRESSION ), true );
+		m_PassedCount.SetDefaultValue( 0 );
+		m_FailedCount.SetDefaultValue( 0 );
+		m_WarnedCount.SetDefaultValue( 0 );
+		m_EnabledCount.SetDefaultValue( 0 );
+		m_ProcessedCount.SetDefaultValue( 0 );
+		m_RegressionTestMode.SetDefaultValue( SVSVIMStateClass::CheckState( SV_STATE_REGRESSION ) );
 
 		m_bResetMinMaxToolsetTime = true;
 	}
 	else
 	{
-		m_RegressionTestMode.SetDefaultValue( SVSVIMStateClass::CheckState( SV_STATE_REGRESSION ), true );
+		m_RegressionTestMode.SetDefaultValue( SVSVIMStateClass::CheckState( SV_STATE_REGRESSION ) );
 	}
 
 	SVImageExtentClass ImageExtent( m_MainImageObject.GetImageExtents() );
@@ -878,8 +878,8 @@ bool SVToolSetClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	if( S_OK == ImageExtent.GetExtentProperty( SVExtentPropertyWidth, Width ) &&
 		S_OK == ImageExtent.GetExtentProperty( SVExtentPropertyHeight, Height) )
 	{
-		m_Width.SetDefaultValue( Width, true );
-		m_Height.SetDefaultValue( Height, true );
+		m_Width.SetDefaultValue( Width );
+		m_Height.SetDefaultValue( Height );
 	}
 	
 	updateToolPosition();

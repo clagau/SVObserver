@@ -131,7 +131,7 @@ void SVStatisticsToolClass::init(void)
 	// Set Embedded defaults
 	for (int i = SV_STATS_MIN_VALUE; i < SV_STATS_TOPOF_LIST; i = (SVStatisticsFeatureEnum) (i + 1))
 	{
-		m_Value [i].SetDefaultValue(0.0, TRUE);
+		m_Value [i].SetDefaultValue(0.0, true);
 		m_Value [i].SetObjectAttributesAllowed( SvOi::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute );
 		m_Value[i].setSaveValueFlag(false);
 
@@ -143,8 +143,7 @@ void SVStatisticsToolClass::init(void)
 	
 	szFeaturesEnabled [SV_STATS_TOPOF_LIST] = _T( '\0' );    // Null termination.
 	
-	m_PersistantFeaturesEnabled.SetDefaultValue (szFeaturesEnabled,
-		                                          TRUE);
+	m_PersistantFeaturesEnabled.SetDefaultValue (szFeaturesEnabled, true);
 
 	m_AccumulatedSquares = 0.0;
 	m_AccumulatedTotal = 0.0;
@@ -423,10 +422,7 @@ SVResultClass* SVStatisticsToolClass::GetResult(SVStatisticsFeatureEnum aFeature
 	SVDoubleResultClass*    pResult;
 	SVObjectClass*          pSVObject;
 	
-	long                    lDone;
-	
-	
-	lDone = FALSE;
+	bool                    bDone = false;
 	
 	info.ObjectType = SVResultObjectType;
 	info.SubType = SVResultDoubleObjectType;
@@ -437,7 +433,7 @@ SVResultClass* SVStatisticsToolClass::GetResult(SVStatisticsFeatureEnum aFeature
 
 	SVGetObjectDequeByTypeVisitor::SVObjectPtrDeque::const_iterator l_Iter;
 
-	for( l_Iter = l_Visitor.GetObjects().begin(); l_Iter != l_Visitor.GetObjects().end() && !lDone; ++l_Iter )
+	for( l_Iter = l_Visitor.GetObjects().begin(); l_Iter != l_Visitor.GetObjects().end() && !bDone; ++l_Iter )
 	{
 		pResult = dynamic_cast< SVDoubleResultClass* >( const_cast< SVObjectClass* >( *l_Iter ) );
 
@@ -451,7 +447,7 @@ SVResultClass* SVStatisticsToolClass::GetResult(SVStatisticsFeatureEnum aFeature
 			
 			if (&m_Value [aFeatureIndex] == pSVObject)
 			{
-				lDone = TRUE;
+				bDone = true;
 			}
 		}
 	}
@@ -595,9 +591,9 @@ double SVStatisticsToolClass::calculateVariance( double aNumberOfSamples, double
 	return value;
 }
 
-BOOL SVStatisticsToolClass::HasVariable() const
+bool SVStatisticsToolClass::HasVariable() const
 {
-	BOOL bRetVal = FALSE;
+	bool bRetVal = false;
 	SVObjectReference refObject = GetVariableSelected();
 
 	if( refObject.getObject() )
@@ -610,7 +606,7 @@ BOOL SVStatisticsToolClass::HasVariable() const
 			// which don't really go away they just change attributes
 			if ( refObject.ObjectAttributesAllowed() & SvOi::SV_SELECTABLE_FOR_STATISTICS )
 			{
-				bRetVal = TRUE;
+				bRetVal = true;
 			}
 		}
 	}

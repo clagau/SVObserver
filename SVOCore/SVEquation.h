@@ -51,12 +51,12 @@ struct SVEquationSymbolStruct
 	SVEquationSymbolTypeEnum Type;
 	SVInObjectInfoStruct	InObjectInfo;
 	SVString Name;
-	BOOL IsValid;
+	bool IsValid;
 
 	SVEquationSymbolStruct()
 	{
 		Type = SV_UNKNOWN_SYMBOL_TYPE;
-		IsValid = FALSE;
+		IsValid = false;
 	};
 };
 
@@ -173,7 +173,7 @@ public:
 
 	virtual bool CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
 	
-	BOOL HasCondition();
+	bool HasCondition();
 
 #pragma region IEquation
 	virtual const SVString& GetEquationText() const override;
@@ -194,7 +194,7 @@ public:
 	virtual double GetSubscriptedPropertyValue( int SymbolIndex, int Index, double Default = 0.0 ) override;
 	virtual HRESULT GetArrayValues( int iSymbolIndex, std::vector< double >& values ) override;
 
-	BOOL IsEnabled();
+	bool IsEnabled();
 
 	virtual void Persist(SVObjectWriter& rWriter) override;
 	virtual HRESULT GetObjectValue( const SVString& rValueName, _variant_t& rValue ) const override;

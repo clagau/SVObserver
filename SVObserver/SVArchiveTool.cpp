@@ -165,17 +165,17 @@ void SVArchiveTool::initializeArchiveTool()
 	SVString FileName = SvUl_SF::Format( _T("%s__0"), GetName() );
 	FileClass.SetFileNameOnly( FileName.c_str() );
 
-	m_stringFileArchivePath.SetDefaultValue( FileClass.GetFullFileName(), TRUE );
-	m_stringArchiveImageGuids_OBSOLETE.SetDefaultValue( _T( "" ), TRUE );
-	m_stringArchiveResultGuids_OBSOLETE.SetDefaultValue( _T( "" ), TRUE );
-	m_svoArchiveImageNames.SetDefaultValue( _T( "" ), TRUE );
-	m_svoArchiveResultNames.SetDefaultValue( _T( "" ), TRUE );
-	m_stringImageFileRootPath.SetDefaultValue( _T( "D:\\TEMP" ), TRUE );
-	m_dwAppendArchiveFile.SetDefaultValue(0, TRUE);
-	m_dwArchiveStopAtMaxImages.SetDefaultValue(1, TRUE);
-	m_dwArchiveMaxImagesCount.SetDefaultValue(10, TRUE);
+	m_stringFileArchivePath.SetDefaultValue( FileClass.GetFullFileName(), true );
+	m_stringArchiveImageGuids_OBSOLETE.SetDefaultValue( _T( "" ), true);
+	m_stringArchiveResultGuids_OBSOLETE.SetDefaultValue( _T( "" ), true);
+	m_svoArchiveImageNames.SetDefaultValue( _T( "" ), true);
+	m_svoArchiveResultNames.SetDefaultValue( _T( "" ), true);
+	m_stringImageFileRootPath.SetDefaultValue( _T( "D:\\TEMP" ), true);
+	m_dwAppendArchiveFile.SetDefaultValue(0, true);
+	m_dwArchiveStopAtMaxImages.SetDefaultValue(1, true);
+	m_dwArchiveMaxImagesCount.SetDefaultValue(10, true);
 
-	m_evoArchiveMethod.SetDefaultValue( SVArchiveAsynchronous, TRUE );
+	m_evoArchiveMethod.SetDefaultValue( SVArchiveAsynchronous, true);
 	SVEnumerateVector vec;
 	vec.push_back( SVEnumeratePair(_T("Synchronous"), SVArchiveSynchronous ) );
 	vec.push_back( SVEnumeratePair(_T("Change Mode"), SVArchiveGoOffline ) );
@@ -946,34 +946,23 @@ void SVArchiveTool::SetImageAttributesFromArchiveList( SVImageListClass* pImageL
 	}// end for (int i = 0; i < nCount; i++)
 }
 
-// Check for duplicate archive result file path in some other tool or 
-// toolset in the system.
-//
-// Return TRUE if archive file path is unique.
-// Return FALSE if another file path is found that is the same.
-//
-BOOL SVArchiveTool::CheckForUniqueArchiveFilePath( LPCTSTR pszArchiveFilePathToTest )
-{
-	return TRUE;
-}
-
-BOOL SVArchiveTool::GetFileArchive( SVString& rName )
+bool SVArchiveTool::GetFileArchive( SVString& rName )
 {
 	bool Result = (S_OK == m_stringFileArchivePath.GetValue( rName ));
 	return Result;
 }
 
-BOOL SVArchiveTool::GetImageArchivePath( SVString& rName )
+bool SVArchiveTool::GetImageArchivePath( SVString& rName )
 {
 	return S_OK == m_stringImageFileRootPath.GetValue( rName );
 }
 
-BOOL SVArchiveTool::SetFileArchive( LPCTSTR lpszName )
+bool SVArchiveTool::SetFileArchive( LPCTSTR lpszName )
 {
 	return S_OK == m_stringFileArchivePath.SetValue( SVString( lpszName ) );
 }
 
-BOOL SVArchiveTool::SetImageArchivePath( LPCTSTR lpszName )
+bool SVArchiveTool::SetImageArchivePath( LPCTSTR lpszName )
 {
 	return S_OK == m_stringImageFileRootPath.SetValue( SVString( lpszName ) );
 }

@@ -396,7 +396,7 @@ void SVPerspectiveToolClass::LocalInitialize()
 	SVString EnumTypes = SvUl_SF::Format("%s=%d,%s=%d", PERSPECTIVE_WARP_TYPE_HORIZONTAL, WarpTypeHorizontal,
 	                                   PERSPECTIVE_WARP_TYPE_VERTICAL, WarpTypeVertical);
 	m_svWarpType.SetEnumTypes( EnumTypes.c_str() );
-	m_svWarpType.SetDefaultValue( PERSPECTIVE_WARP_TYPE_VERTICAL, true );
+	m_svWarpType.SetDefaultValue( PERSPECTIVE_WARP_TYPE_VERTICAL );
 	m_svWarpType.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
 
 	// Set Default Interpolation Mode to use Nearest Neighbor
@@ -419,7 +419,7 @@ void SVPerspectiveToolClass::LocalInitialize()
 
 	// And now set enum types...
 	m_svInterpolationMode.SetEnumTypes( EnumTypes.c_str() );
-	m_svInterpolationMode.SetDefaultValue( SVNearestNeighbor, TRUE );	// Refer to MIL...
+	m_svInterpolationMode.SetDefaultValue( SVNearestNeighbor );	// Refer to MIL...
 	RegisterEmbeddedObject( &m_svInterpolationMode, SVOutputInterpolationModeObjectGuid, IDS_OBJECTNAME_INTERPOLATION_MODE, false, SvOi::SVResetItemNone );
 
 	// Initialize MIL Look up tables.

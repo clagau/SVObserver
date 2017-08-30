@@ -33,7 +33,7 @@ SVStringResultClass::SVStringResultClass( SVObjectClass* POwner, int StringResou
 	RegisterEmbeddedObject( &m_Value, SVStringValueObjectClassGuid, IDS_OBJECTNAME_VALUE, false, SvOi::SVResetItemNone );
 
 	// Set Embedded defaults
-	m_Value.SetDefaultValue (_T(""), TRUE);
+	m_Value.SetDefaultValue (_T(""));
 	m_Value.setSaveValueFlag(false);
 
 	// Add Default Inputs and Outputs

@@ -311,7 +311,7 @@ inline bool SVDLLToolLoadLibraryClass::UseMil()
 	return m_bUseMil;
 }
 
-inline BOOL SVDLLToolLoadLibraryClass::IsHandleNull()
+inline bool SVDLLToolLoadLibraryClass::IsHandleNull()
 {
 	if ( nullptr == m_hmHandle )
 	{

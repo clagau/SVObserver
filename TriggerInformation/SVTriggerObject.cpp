@@ -75,9 +75,9 @@ namespace SvTi
 		m_lTriggerCount	= 0;
 	}
 
-	BOOL SVTriggerObject::Create( SvTh::SVTriggerClass *psvDevice )
+	bool SVTriggerObject::Create( SvTh::SVTriggerClass *psvDevice )
 	{
-		BOOL bOk = TRUE;
+		bool bOk = true;
 
 		if ( nullptr != psvDevice )
 		{
@@ -89,14 +89,14 @@ namespace SvTi
 		}
 		else 
 		{
-			bOk = FALSE;
+			bOk = false;
 		}
 		return bOk;
 	}
 
-	BOOL SVTriggerObject::Destroy()
+	bool SVTriggerObject::Destroy()
 	{
-		BOOL bOk = FALSE;
+		bool bOk = false;
 
 		if ( nullptr != mpsvDevice )
 		{
@@ -107,14 +107,14 @@ namespace SvTi
 		return bOk;
 	}
 
-	BOOL SVTriggerObject::CanGoOnline()
+	bool SVTriggerObject::CanGoOnline()
 	{
 		return nullptr != mpsvDevice && mpsvDevice->IsValid();
 	}
 
-	BOOL SVTriggerObject::GoOnline()
+	bool SVTriggerObject::GoOnline()
 	{
-		BOOL bOk = TRUE;
+		bool bOk = true;
 
 		#ifdef SV_LOG_STATUS_INFO
 			m_StatusLog.clear();
@@ -127,9 +127,9 @@ namespace SvTi
 		return bOk && nullptr != mpsvDevice && ( S_OK == mpsvDevice->Start() );
 	}
 
-	BOOL SVTriggerObject::GoOffline()
+	bool SVTriggerObject::GoOffline()
 	{
-	  BOOL bOk = FALSE;
+	  bool bOk = false;
 
 	  if ( nullptr != mpsvDevice )
 	  {
@@ -170,13 +170,13 @@ namespace SvTi
 	  return bOk;  
 	}// end GoOffline
 
-	BOOL SVTriggerObject::RegisterFinishProcess( void *pOwner, LPSVFINISHPROC pFunc )
+	bool SVTriggerObject::RegisterFinishProcess( void *pOwner, LPSVFINISHPROC pFunc )
 	{
-		BOOL bOk = FALSE;
+		bool bOk = false;
 
 		if ( nullptr != mpsvDevice )
 		{
-			bOk = TRUE;
+			bOk = true;
 
 			m_pFinishProc	= pFunc;
 			m_pOwner		= pOwner;

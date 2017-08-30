@@ -45,7 +45,7 @@ DWORD EQAdjustSize::GetObjectColor() const
 
 void EQAdjustSize::Init()
 {
-	enabled.SetDefaultValue( FALSE, TRUE );
+	enabled.SetDefaultValue( BOOL(false) );
 	m_bUseOverlays = false;
 	// Identify our output type
 	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVEquationObjectType;
@@ -53,7 +53,7 @@ void EQAdjustSize::Init()
 	RegisterEmbeddedObject( &m_result, m_ResultGuid, IDS_OBJECTNAME_RESULT, false, SvOi::SVResetItemNone );
 	// Set Embedded defaults
 	static const double DefaultValue = 100.0;
-	m_result.SetDefaultValue( DefaultValue, TRUE );
+	m_result.SetDefaultValue( DefaultValue );
 	m_result.setSaveValueFlag(false);
 	// Set default inputs and outputs
 	addDefaultInputObjects();

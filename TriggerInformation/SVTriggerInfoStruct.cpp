@@ -15,7 +15,7 @@
 namespace SvTi
 {
 	SVTriggerInfoStruct::SVTriggerInfoStruct()
-	: bValid( FALSE )
+	: bValid( false )
 	, pTrigger( nullptr )
 	, lTriggerCount( 0 )
 	, m_ToggleState( false )
@@ -71,7 +71,7 @@ namespace SvTi
 
 	void SVTriggerInfoStruct::Reset()
 	{
-		bValid			= FALSE;
+		bValid			= false;
 		pTrigger		= nullptr;
 		lTriggerCount	= 0;
 		m_ToggleState = false;
@@ -89,7 +89,7 @@ namespace SvTi
 
 	void SVTriggerInfoStruct::Init()
 	{
-		bValid			= FALSE;
+		bValid			= false;
 		lTriggerCount	= 0;
 		m_ToggleState = false;
 		m_BeginProcess	= 0;

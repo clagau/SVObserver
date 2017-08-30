@@ -46,7 +46,7 @@ void SVLinearMaximumBackgroundObjectLineAnalyzerClass::init()
 	{
 		AddFriend(l_pEdgeA->GetUniqueObjectID());
 
-		l_pEdgeA->m_svPolarisation.SetDefaultValue( SV_NEGATIVE_POLARISATION, TRUE );
+		l_pEdgeA->m_svPolarisation.SetDefaultValue( SV_NEGATIVE_POLARISATION, true );
 
 		l_pEdgeA->m_svEdgeSelect.SetDefaultValue( SV_THIS_EDGE, true );
 		l_pEdgeA->m_svEdgeSelectThisValue.SetDefaultValue( 1.0, true );

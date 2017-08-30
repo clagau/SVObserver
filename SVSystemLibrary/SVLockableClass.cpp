@@ -34,9 +34,9 @@ namespace SvSyl
 	}
 
 
-	BOOL SVLockableClass::Lock( DWORD DWWaitTime /* = INFINITE */ ) const
+	bool SVLockableClass::Lock( DWORD DWWaitTime /* = INFINITE */ ) const
 	{
-		BOOL l_Status = ( nullptr != hProtectionMutex );
+		bool l_Status = ( nullptr != hProtectionMutex );
 
 		if( l_Status )
 		{
@@ -46,13 +46,13 @@ namespace SvSyl
 		return l_Status;
 	}
 
-	BOOL SVLockableClass::Unlock() const
+	bool SVLockableClass::Unlock() const
 	{
-		BOOL l_Status = ( nullptr != hProtectionMutex );
+		bool l_Status = ( nullptr != hProtectionMutex );
 
 		if( l_Status )
 		{
-			l_Status = ReleaseMutex( hProtectionMutex );
+			l_Status = (ReleaseMutex( hProtectionMutex )?true:false);
 		}
 
 		return l_Status;

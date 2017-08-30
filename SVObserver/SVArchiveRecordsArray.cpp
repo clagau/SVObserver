@@ -97,7 +97,7 @@ HRESULT SVArchiveRecordsArray::InitializeObjects(SVArchiveTool* pToolArchive, SV
 			}
 			else
 			{				// We should always find a dotted name here.
-				ASSERT(FALSE);
+				ASSERT(false);
 			}
 
 			if ( nullptr == ObjectRef.getObject() )
@@ -122,7 +122,7 @@ void SVArchiveRecordsArray::ConvertStringToGuids( SVArchiveTool * pToolArchive, 
 	
 	SVString Text = Value;
 	
-	BOOL bDone = false;
+	bool bDone = false;
 	while (!bDone)
 	{
 		SVString GuidText;
@@ -236,10 +236,10 @@ void SVArchiveRecordsArray::SetArchiveTool( SVArchiveTool* pTool )
 	}
 }
 
-BOOL SVArchiveRecordsArray::WriteArchiveImageFiles( )
+bool SVArchiveRecordsArray::WriteArchiveImageFiles( )
 {
 	ASSERT( nullptr != m_pArchiveTool );
-	BOOL bOk = TRUE;
+	bool bOk = true;
 	HRESULT	hr = 0;
 	
 	int nCount = static_cast< int >( m_vecRecords.size() );
@@ -309,7 +309,7 @@ SVString SVArchiveRecordsArray::BuildResultsArchiveString()
 {
 	SVString Result;
 	
-	BOOL bFirst = TRUE;	
+	bool bFirst = true;	
 	int nCount = static_cast< int >( m_vecRecords.size() );
 	for (int i = 0; i < nCount; i++)
 	{
@@ -329,7 +329,7 @@ SVString SVArchiveRecordsArray::BuildResultsArchiveString()
 			{
 				if ( bFirst )
 				{
-					bFirst = FALSE;
+					bFirst = false;
 				}
 				else
 				{

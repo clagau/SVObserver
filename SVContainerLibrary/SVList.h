@@ -48,7 +48,7 @@ public:
 	// Attributes (head and tail)
 	// count of elements
 	INT_PTR GetCount() const;
-	BOOL IsEmpty() const;
+	bool IsEmpty() const;
 
 	// add before head or after tail
 	iterator AddHead( SVArgType newElement );

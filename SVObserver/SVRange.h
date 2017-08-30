@@ -42,7 +42,7 @@ public:
 
 	//************************************
 	// Description:  Disconnect Inputs and call base class 
-	// Returns:  BOOL:  TRUE if succesful
+	// Returns:  bool:  true if succesful
 	//************************************
 	virtual bool CloseObject() override;
 
@@ -145,7 +145,7 @@ public:
 	
 protected:
 	void init();
-	BOOL getInputValue( double& RVal );
+	bool getInputValue( double& RVal );
 	virtual bool onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	//************************************

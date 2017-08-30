@@ -83,10 +83,10 @@ public:
 	template< typename SVObjectTypeName >
 	HRESULT GetObjectByDottedName( const SVString& rFullName, SVObjectTypeName*& rpObject );
 
-	BOOL CreateUniqueObjectID( SVObjectClass* pObject );
-	BOOL OpenUniqueObjectID( SVObjectClass* pObject );
-	BOOL CloseUniqueObjectID( SVObjectClass* pObject );
-	BOOL ChangeUniqueObjectID( SVObjectClass* pObject, const SVGUID& rNewGuid );
+	bool CreateUniqueObjectID( SVObjectClass* pObject );
+	bool OpenUniqueObjectID( SVObjectClass* pObject );
+	bool CloseUniqueObjectID( SVObjectClass* pObject );
+	bool ChangeUniqueObjectID( SVObjectClass* pObject, const SVGUID& rNewGuid );
 
 	SVObjectClass* GetObject( const SVGUID& rGuid ) const;
 	SVObjectClass* GetObjectCompleteName( LPCTSTR Name );

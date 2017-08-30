@@ -157,29 +157,29 @@ void SVOCVAnalyzeResultClass::clearAll()
 	}// end for
 
 	// Set Embedded defaults
-	m_svoMatchString.SetDefaultValue( _T( "" ), TRUE );
-	m_svoFoundString.SetDefaultValue( _T( "" ), TRUE );
+	m_svoMatchString.SetDefaultValue( _T( "" ), true );
+	m_svoFoundString.SetDefaultValue( _T( "" ), true);
 	m_svoFoundString.setSaveValueFlag(false);
 
-	m_lvoMatchLineNumber.SetDefaultValue ( (long) -1, TRUE );
+	m_lvoMatchLineNumber.SetDefaultValue ( -1l);
 	m_lvoMatchLineNumber.setSaveValueFlag(false);
-	m_bvoPerformOCR.SetDefaultValue ( (long) 1, TRUE );
-	m_bvoUseMatchFile.SetDefaultValue( FALSE, TRUE );
+	m_bvoPerformOCR.SetDefaultValue ( 1l );
+	m_bvoUseMatchFile.SetDefaultValue( BOOL(false));
 
 	// Setting exposed OCV Match Score defaults
-	m_dvoHighestMatchScore.SetDefaultValue( (double) -1.0, TRUE );
+	m_dvoHighestMatchScore.SetDefaultValue( -1.0);
 	m_dvoHighestMatchScore.setSaveValueFlag(false);
-	m_dvoLowestMatchScore.SetDefaultValue( (double) -1.0, TRUE );
+	m_dvoLowestMatchScore.SetDefaultValue( -1.0);
 	m_dvoLowestMatchScore.setSaveValueFlag(false);
-	m_dvoAverageMatchScore.SetDefaultValue( (double) -1.0, TRUE );
+	m_dvoAverageMatchScore.SetDefaultValue( -1.0);
 	m_dvoAverageMatchScore.setSaveValueFlag(false);
 
 	// Setting exposed OCV File Name defaults
-	m_fnvoFontFileName.SetDefaultValue( _T(""), TRUE );
-	m_fnvoConstraintsFileName.SetDefaultValue( _T(""), TRUE );
-	m_fnvoControlsFileName.SetDefaultValue( _T(""), TRUE );
-	m_fnvoMatchStringFileName.SetDefaultValue( _T(""), TRUE );
-	m_bvoUseMatchFile.SetDefaultValue( FALSE, TRUE );
+	m_fnvoFontFileName.SetDefaultValue( _T(""), true);
+	m_fnvoConstraintsFileName.SetDefaultValue( _T(""), true);
+	m_fnvoControlsFileName.SetDefaultValue( _T(""), true);
+	m_fnvoMatchStringFileName.SetDefaultValue( _T(""), true);
+	m_bvoUseMatchFile.SetDefaultValue( BOOL(false), true);
 
 	// Add Default Inputs and Outputs
 	addDefaultInputObjects();
@@ -349,7 +349,7 @@ void SVOCVAnalyzeResultClass::GetOCVResultString( SVString& rResult )
 // .Description : Generates the mil font model from the Font file and the
 //				  entered sampling rate.
 ////////////////////////////////////////////////////////////////////////////////
-BOOL SVOCVAnalyzeResultClass::GenerateFontModel()
+bool SVOCVAnalyzeResultClass::GenerateFontModel()
 {
 	long	l_lIsFontPreprocessed = 0;
 
@@ -372,7 +372,7 @@ BOOL SVOCVAnalyzeResultClass::GenerateFontModel()
 	SVString ControlsFileName;
 
 	m_fnvoFontFileName.GetValue( FontFileName );
-	BOOL bOk = CFile::GetStatus( FontFileName.c_str(), rStatus );
+	bool bOk = (CFile::GetStatus(FontFileName.c_str(), rStatus) ? true : false);
 	if ( bOk )
 	{
 		bOk = 0L < rStatus.m_size;
@@ -383,7 +383,7 @@ BOOL SVOCVAnalyzeResultClass::GenerateFontModel()
 		m_fnvoControlsFileName.GetValue( ControlsFileName );
 		if( !ControlsFileName.empty() )
 		{
-			bOk = CFile::GetStatus( ControlsFileName.c_str(), rStatus );
+			bOk = (CFile::GetStatus(ControlsFileName.c_str(), rStatus) ? true : false);
 			if ( bOk )
 			{
 				bOk = 0L < rStatus.m_size;
@@ -396,7 +396,7 @@ BOOL SVOCVAnalyzeResultClass::GenerateFontModel()
 		m_fnvoConstraintsFileName.GetValue( ConstraintsFileName );
 		if( !ConstraintsFileName.empty() )
 		{
-			bOk = CFile::GetStatus( ConstraintsFileName.c_str(), rStatus );
+			bOk = (CFile::GetStatus( ConstraintsFileName.c_str(), rStatus ) ? true : false);
 			if ( bOk )
 			{
 				bOk = 0L < rStatus.m_size;
@@ -519,7 +519,7 @@ HRESULT SVOCVAnalyzeResultClass::LoadMatchString()
 	   m_nTotalCount = 0;
 		 
 		 m_bvoUseMatchFile.GetValue( bUseFile );
-		 if( bUseFile == TRUE )
+		 if( bUseFile )
 		 {		   
 			 //
 			 // Check to see if the file exists..
@@ -666,8 +666,6 @@ bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messag
 	BYTE* pMilBuffer = nullptr;
 	BOOL bOperation;
 	BOOL bUseFile;
-	BOOL bStringPassed;
-	BOOL bCharsPassed;
 
 	long l_lLength = 0;
 
@@ -1091,12 +1089,12 @@ bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messag
 				else
 				{
 					FoundString = _T( "" );
-					bOk = TRUE;
+					bOk = true;
 				}// end else
 
 				// Determine MIL pass/fail status 
-				bStringPassed = dValidString == SVValueTrue;
-				bCharsPassed = TRUE;
+				bool bStringPassed = dValidString == SVValueTrue;
+				bool bCharsPassed = true;
 				for( k = 0; k < l_lLength; k++ )
 				{
 					bCharsPassed &= l_adValidChars[k] == SVValueTrue;
@@ -1272,10 +1270,10 @@ bool SVOCVAnalyzeResultClass::onRun( SVRunStatusClass& rRunStatus, SvStl::Messag
 	return bOk;
 }
 
-BOOL SVOCVAnalyzeResultClass::BuildHashTable( char *pBuffer )
+bool SVOCVAnalyzeResultClass::BuildHashTable( char *pBuffer )
 {
 	long lBufIndex = 0;
-	BOOL  bRet = TRUE;
+	bool  bRet = true;
 	
 	for(int i = 0; i < OCV_MAX_ENTREES; i++)
 		m_pDataArr[i] = 0;
@@ -1343,7 +1341,7 @@ BOOL SVOCVAnalyzeResultClass::BuildHashTable( char *pBuffer )
 		m_pIndexTable = new short[m_nTotalCount * 10];
 		if( nullptr == m_pIndexTable)
 		{
-			bRet = FALSE;
+			bRet = false;
 			break;
 		}
 		

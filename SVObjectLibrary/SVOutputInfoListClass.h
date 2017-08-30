@@ -34,7 +34,7 @@ public:
 
 	iterator erase( iterator p_Where );
 
-	BOOL CheckExistence( int Index = -1 );
+	bool CheckExistence( int Index = -1 );
 
 	int GetSize() const;
 

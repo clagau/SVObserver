@@ -356,7 +356,6 @@ namespace SvStl
 	(Tid_InvalidImagePath, _T("Invalid Keywords in Archive Image Path."))
 	(Tid_InvalidDrive, _T("Invalid drive: %s"))
 	(Tid_InvalidFileName, _T("Invalid Keywords in Archive Filename/Path."))
-	(Tid_AP_InvalidFile, _T("ERROR: Archive File is not unique in system:\nChange archive file name:\n%s"))
 	(Tid_Error_you_have_Selected_X_Must_less_then_Y, _T("Error: You have selected %s for the Max Images count. The image count must be less then %s"))
 	(Tid_ArchiveTool_WarningMaxImages, _T("WARNING: You have selected %s for the Max Images count"))
 	(Tid_AP_NotEnoughImageMemoryInChangeMode, _T("There is not enough Available Archive Image Memory for %s images in Change Mode. Available\nArchive Image Memory is the result of the selected images and the Max Images number.\nThe selection will be reset."))

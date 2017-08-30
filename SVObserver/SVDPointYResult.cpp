@@ -37,7 +37,7 @@ SVDPointYResultClass::SVDPointYResultClass( SVObjectClass* POwner, int StringRes
 	RegisterEmbeddedObject( &y, SVDYObjectGuid, IDS_OBJECTNAME_DY, false, SvOi::SVResetItemNone );
 
 	// Set Embedded defaults
-	y.SetDefaultValue( 0.0, TRUE );
+	y.SetDefaultValue( 0.0, true);
 	y.setSaveValueFlag(false);
 
 	// Instantiate Dynamic Objects

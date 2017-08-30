@@ -88,7 +88,7 @@ void SVLinearMaximumObjectLineAnalyzerClass::init()
 	mdpEdgeB.setSaveValueFlag(false);
 	mdpCenter.SetDefaultValue( defaultPoint, true );
 	mdpCenter.setSaveValueFlag(false);
-	mdWidth.SetDefaultValue( 0.0, TRUE );
+	mdWidth.SetDefaultValue( 0.0, true );
 	mdWidth.setSaveValueFlag(false);
 
 	// Set default inputs and outputs

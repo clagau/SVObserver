@@ -33,7 +33,7 @@ public:
 
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
-	BOOL RecalcLUT( SVRunStatusClass& rRunStatus );
+	bool RecalcLUT( SVRunStatusClass& rRunStatus );
 
 protected:
 	virtual bool onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;

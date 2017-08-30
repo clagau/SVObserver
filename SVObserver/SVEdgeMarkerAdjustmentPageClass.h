@@ -67,12 +67,12 @@ public:
 	SVDWordValueObjectClass* m_pvoEdgeUpperThresholdValue;
 	
 	//flags
-	BOOL m_bEnableDirection;
-	BOOL m_bEnableEdgeSelect;
-	BOOL m_bEnablePolarisation;
-	BOOL m_bEnablePosition;
-	BOOL m_bEnableThreshold;
-	BOOL m_bEdgeA;
+	bool m_bEnableDirection;
+	bool m_bEnableEdgeSelect;
+	bool m_bEnablePolarisation;
+	bool m_bEnablePosition;
+	bool m_bEnableThreshold;
+	bool m_bEdgeA;
 
 // Dialogfelddaten
 	//{{AFX_DATA(SVEdgeMarkerAdjustmentPageClass)

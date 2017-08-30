@@ -126,8 +126,8 @@ public:
 
 	virtual HRESULT SingleGrab( SVSmartHandlePointer p_SingleGrabHandle );
 
-	virtual BOOL SetCurrentIndex( const SVDataManagerHandle& rDMIndexHandle );
-	virtual BOOL SetCurrentIndex( const SVDataManagerHandle& rDMIndexHandle, SVDataManagerLockTypeEnum p_LockType );
+	virtual bool SetCurrentIndex( const SVDataManagerHandle& rDMIndexHandle );
+	virtual bool SetCurrentIndex( const SVDataManagerHandle& rDMIndexHandle, SVDataManagerLockTypeEnum p_LockType );
 	
 	void DumpDMInfo( LPCTSTR p_szName ) const;
 

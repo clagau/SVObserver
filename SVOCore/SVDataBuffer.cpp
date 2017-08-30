@@ -94,7 +94,7 @@ bool SVDataBufferClass::CloseObject()
 	return rc;
 }
 
-BOOL SVDataBufferClass::Resize( int NewLength )
+bool SVDataBufferClass::Resize( int NewLength )
 {
 	return S_OK == SVImageProcessingClass::ResizeDataBuffer( &m_DataInfo, NewLength );
 }

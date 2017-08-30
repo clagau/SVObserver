@@ -166,8 +166,8 @@ SVExternalToolTask::SVExternalToolTask( SVObjectClass* POwner, int StringResourc
 		VARIANT vtTemp;
 		::VariantInit(&vtTemp);
 		vtTemp.vt = VT_EMPTY;
-		m_Data.m_aInputObjects[i].SetDefaultValue(vtTemp, TRUE);
-		m_Data.m_aInputObjectNames[i].SetDefaultValue(SVString(), TRUE);
+		m_Data.m_aInputObjects[i].SetDefaultValue(vtTemp, true);
+		m_Data.m_aInputObjectNames[i].SetDefaultValue(SVString(), true);
 		m_Data.m_aInputObjectNames[i].setSaveValueFlag(false);
 	}
 
@@ -209,7 +209,7 @@ SVExternalToolTask::SVExternalToolTask( SVObjectClass* POwner, int StringResourc
 		VARIANT vtTemp;
 		::VariantInit( &vtTemp);
 		vtTemp.vt = VT_EMPTY;
-		m_Data.m_aResultObjects[i].SetDefaultValue(vtTemp, TRUE);
+		m_Data.m_aResultObjects[i].SetDefaultValue(vtTemp, true);
 		m_Data.m_aResultObjects[i].setSaveValueFlag(false);
 	}
 
@@ -491,7 +491,7 @@ HRESULT SVExternalToolTask::Initialize(	SVDllLoadLibraryCallback fnNotify )
 
 				// get Input object name
 				SVStringValueObjectClass& rvo = m_Data.m_aInputObjectNames[i];
-				rvo.SetDefaultValue(SvUl_SF::createSVString(paInputValueDefs[i].m_bDisplayName), TRUE);	// set to all buckets
+				rvo.SetDefaultValue(SvUl_SF::createSVString(paInputValueDefs[i].m_bDisplayName), true);	// set to all buckets
 			
 			}// end for ( int i = 0 ; i < m_Data.m_lNumInputValues ; i++)
 
@@ -1540,7 +1540,7 @@ HRESULT SVExternalToolTask::ClearData()
 	for ( i=0; i < m_Data.m_lNumResultValues; i++)
 	{
 		_variant_t vt;
-		m_Data.m_aResultObjects[i].SetDefaultValue(vt, TRUE);
+		m_Data.m_aResultObjects[i].SetDefaultValue(vt, true);
 	}
 
 	std::vector< SVResultClass*> apResults = GetResultRangeObjects();
@@ -1565,8 +1565,8 @@ HRESULT SVExternalToolTask::SetDefaultValues()
 
 	for ( int i=0; i < m_Data.m_lNumInputValues; i++)
 	{
-		m_Data.m_aInputObjects[i].SetDefaultValue(m_Data.m_aInputValueDefinitions[i].m_DefaultValue, TRUE);
-		m_Data.m_aInputObjectNames[i].SetDefaultValue(_T(""), TRUE);
+		m_Data.m_aInputObjects[i].SetDefaultValue(m_Data.m_aInputValueDefinitions[i].m_DefaultValue, true);
+		m_Data.m_aInputObjectNames[i].SetDefaultValue(_T(""), true);
 	}
 
 	return hr;

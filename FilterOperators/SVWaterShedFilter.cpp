@@ -51,9 +51,9 @@ void SVWatershedFilterClass::init()
 
 
 	// Default Values
-	m_bvoUseMarker.SetDefaultValue( FALSE, TRUE);
-	m_lvoMinVariation.SetDefaultValue( 1, TRUE );
-	m_lvoControlFlag.SetDefaultValue( SVImageWSWatershed + SVImageWSMinimaFill + SVImageWSRegular + SVImage4Connected, TRUE );
+	m_bvoUseMarker.SetDefaultValue(BOOL(false));
+	m_lvoMinVariation.SetDefaultValue( 1 );
+	m_lvoControlFlag.SetDefaultValue( SVImageWSWatershed + SVImageWSMinimaFill + SVImageWSRegular + SVImage4Connected );
 
 	// Set Attributes
 	const UINT cAttributes = SvOi::SV_PRINTABLE | SvOi::SV_SETABLE_ONLINE | SvOi::SV_REMOTELY_SETABLE;

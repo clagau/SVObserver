@@ -66,7 +66,7 @@ HRESULT SVOutObjectInfoStruct::AddInput( SVInObjectInfoStruct& p_rsvInput )
 
 HRESULT SVOutObjectInfoStruct::RemoveInput( SVInObjectInfoStruct& p_rsvInput )
 {
-	BOOL l_bFound = FALSE;
+	bool l_bFound = false;
 
 	long l_lCount = UserInfoList.GetSize();
 
@@ -153,9 +153,9 @@ HRESULT SVOutObjectInfoStruct::GetDependentsList( SVObjectClass* p_psvObject, SV
 	return S_OK;
 }
 
-BOOL SVOutObjectInfoStruct::Lock( DWORD p_TimeOutMilliseconds ) const
+bool SVOutObjectInfoStruct::Lock( DWORD p_TimeOutMilliseconds ) const
 {
-	BOOL l_Status = true;
+	bool l_Status = true;
 
 	if( m_CriticalSectionPtr.empty() )
 	{
@@ -172,9 +172,9 @@ BOOL SVOutObjectInfoStruct::Lock( DWORD p_TimeOutMilliseconds ) const
 	return l_Status;
 }
 
-BOOL SVOutObjectInfoStruct::Unlock() const
+bool SVOutObjectInfoStruct::Unlock() const
 {
-	BOOL l_Status = !( m_CriticalSectionPtr.empty() );
+	bool l_Status = !( m_CriticalSectionPtr.empty() );
 
 	if( l_Status )
 	{

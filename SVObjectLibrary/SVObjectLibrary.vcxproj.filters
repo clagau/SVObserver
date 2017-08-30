@@ -172,9 +172,6 @@
     <ClInclude Include="SVOutputInfoListClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVPublicAttributeEntryStruct.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="SVToolLevelCreateStruct.h">
       <Filter>Header Files</Filter>
     </ClInclude>

@@ -114,9 +114,9 @@ BOOL SVToolAdjustmentDialogLinearSpecialPageClass::OnInitDialog()
 	{
 		SetTaskObject( pTool );
 
-		BOOL bRotate = pTool->GetRotation();
+		bool bRotate = pTool->GetRotation();
 
-		m_ctlUseRotation.SetCheck(bRotate);
+		m_ctlUseRotation.SetCheck(bRotate?BST_CHECKED:BST_UNCHECKED);
 		
 		if ( bRotate )
 		{
@@ -151,7 +151,7 @@ void SVToolAdjustmentDialogLinearSpecialPageClass::OnCheckRotation()
 	{
 		BOOL l_bUpdateRotation = TRUE;
 
-		BOOL bIsRotated = pTool->IsToolRotated();
+		bool bIsRotated = pTool->IsToolRotated();
 
 		BOOL l_bValue = m_ctlUseRotation.GetCheck();
 		

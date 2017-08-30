@@ -84,7 +84,7 @@ void SVCylindricalWarpToolClass::LocalInitialize()
 	SVString EnumTypes = SvUl_SF::Format( _T("%s=%d,%s=%d"), CYLINDRICAL_WARP_TYPE_HORIZONTAL, WarpTypeHorizontal,
 	                                   CYLINDRICAL_WARP_TYPE_VERTICAL, WarpTypeVertical);
 	m_svWarpType.SetEnumTypes( EnumTypes.c_str() );
-	m_svWarpType.SetDefaultValue( CYLINDRICAL_WARP_TYPE_HORIZONTAL, TRUE );
+	m_svWarpType.SetDefaultValue( CYLINDRICAL_WARP_TYPE_HORIZONTAL, true);
 	m_svWarpType.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
 
 	// Set Default Interpolation Mode to use Nearest Neighbor
@@ -107,7 +107,7 @@ void SVCylindricalWarpToolClass::LocalInitialize()
 
 	// And now set enum types...
 	m_svInterpolationMode.SetEnumTypes( EnumTypes.c_str() );
-	m_svInterpolationMode.SetDefaultValue( SVNearestNeighbor, TRUE );	// Refer to MIL...
+	m_svInterpolationMode.SetDefaultValue( SVNearestNeighbor, true);	// Refer to MIL...
 	RegisterEmbeddedObject( &m_svInterpolationMode, SVOutputInterpolationModeObjectGuid, IDS_OBJECTNAME_INTERPOLATION_MODE, false, SvOi::SVResetItemNone );
 
 
@@ -118,7 +118,7 @@ void SVCylindricalWarpToolClass::LocalInitialize()
 	// Currently we double the start angle and make it symetrical
 	// the work is done in SVImageExtentClass.
 	RegisterEmbeddedObject( &m_svWarpAngle, SVWarpAngleObjectGuid, IDS_OBJECTNAME_WARPANGLE, false, SvOi::SVResetItemTool );
-	m_svWarpAngle.SetDefaultValue( 180.0, TRUE );
+	m_svWarpAngle.SetDefaultValue( 180.0, true);
 	m_svWarpAngle.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
 	m_svToolExtent.SetExtentObject( SVExtentPropertyStartAngle, &m_svWarpAngle );
 

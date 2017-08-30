@@ -442,7 +442,7 @@ DWORD BasicValueObject::GetObjectColor() const
 
 
 #pragma region Private Methods
-BOOL BasicValueObject::Create( SVObjectClass* pOwner )
+void BasicValueObject::Create( SVObjectClass* pOwner )
 {
 	m_Value.Clear();
 	SetObjectDepth( 1 );
@@ -460,10 +460,9 @@ BOOL BasicValueObject::Create( SVObjectClass* pOwner )
 	}
 	::InitializeCriticalSection( &m_CriticalSection );
 	m_Created = true;
-	return true;
 }
 
-BOOL BasicValueObject::Destroy()
+void BasicValueObject::Destroy()
 {
 	if( m_Created )
 	{
@@ -472,21 +471,16 @@ BOOL BasicValueObject::Destroy()
 		::DeleteCriticalSection( &m_CriticalSection );
 		m_Created = false;
 	}
-	return true;
 }
 
-BOOL BasicValueObject::Lock()
+void BasicValueObject::Lock()
 {
 	::EnterCriticalSection( &m_CriticalSection );
-
-	return TRUE;
 }
 
-BOOL BasicValueObject::Unlock()
+void BasicValueObject::Unlock()
 {
 	::LeaveCriticalSection( &m_CriticalSection );
-
-	return TRUE;
 }
 
 HRESULT BasicValueObject::RefreshObject( const SVObjectClass* const pSender, RefreshObjectType Type )

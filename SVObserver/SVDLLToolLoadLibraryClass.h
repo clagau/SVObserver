@@ -108,7 +108,7 @@ public:
 	HRESULT GetResultImageDefinitions (GUID tool, long* plArraySize, SVImageDefinitionStruct** ppaImageDefinitions);
 	HRESULT DestroyImageDefinitionStructure ( SVImageDefinitionStruct* paStructs);
 	bool UseMil();
-	BOOL IsHandleNull();
+	bool IsHandleNull();
 private:
 	HMODULE m_hmHandle;
 

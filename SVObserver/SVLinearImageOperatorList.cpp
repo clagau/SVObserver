@@ -415,9 +415,9 @@ void SVLinearImageOperatorListClass::init()
 	RegisterEmbeddedObject(&m_svMinThreshold, SVLinearThresholdMinObjectGuid, IDS_OBJECTNAME_LINEAR_THRESHOLD_MINVALUE, false, SvOi::SVResetItemNone );
 	RegisterEmbeddedObject(&m_svMaxThreshold, SVLinearThresholdMaxObjectGuid, IDS_OBJECTNAME_LINEAR_THRESHOLD_MAXVALUE, false, SvOi::SVResetItemNone );
 
-	m_svMinThreshold.SetDefaultValue( 0.0, TRUE );
+	m_svMinThreshold.SetDefaultValue(0.0);
 	m_svMinThreshold.setSaveValueFlag(false);
-	m_svMaxThreshold.SetDefaultValue( 0.0, TRUE );
+	m_svMaxThreshold.SetDefaultValue( 0.0);
 	m_svMaxThreshold.setSaveValueFlag(false);
 
 	m_ulLineLength = 0;

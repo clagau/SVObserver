@@ -34,7 +34,7 @@ SVObjectLevelCreateStruct::~SVObjectLevelCreateStruct()
 {
 }
 
-BOOL SVObjectLevelCreateStruct::CheckCreateStructName( const char* StrCreateStructureName ) const
+bool SVObjectLevelCreateStruct::CheckCreateStructName( const char* StrCreateStructureName ) const
 {
 	assert( StrCreateStructureName );
 	if( StrCreateStructureName )

@@ -41,8 +41,8 @@ void SVThickeningFilterClass::init()
 	RegisterEmbeddedObject( &m_lvoItterations, SVThickeningFilterItterationsGuid, IDS_OBJECTNAME_THICKENINGFILTER_ITTERATIONS, false, SvOi::SVResetItemNone );
 	RegisterEmbeddedObject( &m_bvoGrayOn, SVThickeningFilterGrayOnGuid, IDS_OBJECTNAME_THICKENINGFILTER_GRAYON, false, SvOi::SVResetItemNone );
 
-	m_lvoItterations.SetDefaultValue( 1L, true );
-	m_bvoGrayOn.SetDefaultValue( false, true );
+	m_lvoItterations.SetDefaultValue( 1L );
+	m_bvoGrayOn.SetDefaultValue(BOOL(false));
 
 
 	const UINT cAttributes = SvOi::SV_PRINTABLE | SvOi::SV_SETABLE_ONLINE | SvOi::SV_REMOTELY_SETABLE;

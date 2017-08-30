@@ -33,9 +33,9 @@ SVInputInfoListClass::~SVInputInfoListClass()
 {
 }
 
-BOOL SVInputInfoListClass::CheckExistence( int Index /*= -1*/ )
+bool SVInputInfoListClass::CheckExistence( int Index /*= -1*/ )
 {
-	BOOL BRetVal = FALSE;
+	bool BRetVal = false;
 	if( Index < GetSize() && Index >= -1 )
 	{
 		if( Index > -1 )
@@ -49,7 +49,7 @@ BOOL SVInputInfoListClass::CheckExistence( int Index /*= -1*/ )
 		else
 		{
 			// Check all entries...
-			BRetVal = TRUE;
+			BRetVal = true;
 			for( int i = 0; i < GetSize(); ++i )
 			{
 				if( GetAt( i ) )

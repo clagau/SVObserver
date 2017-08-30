@@ -87,9 +87,9 @@ HRESULT SVEnumerateValueObjectClass::SetDefaultValue( LPCTSTR Value, bool bReset
 //				: standard enumeration defines an incremental number.
 //				: ( e.g. "NULL,ONE,TWO,BigNumber=99999,BiggerNumber" ) 
 ////////////////////////////////////////////////////////////////////////////////
-BOOL SVEnumerateValueObjectClass::SetEnumTypes( LPCTSTR szEnumList )
+bool SVEnumerateValueObjectClass::SetEnumTypes( LPCTSTR szEnumList )
 {
-	BOOL bRetVal = FALSE;
+	bool bRetVal = false;
 	if( szEnumList )
 	{
 		TCHAR* szList = _tcsdup( szEnumList );
@@ -99,7 +99,7 @@ BOOL SVEnumerateValueObjectClass::SetEnumTypes( LPCTSTR szEnumList )
 			TCHAR* szEnumToken;
 			long enumValue = 0L;
 
-			bRetVal = TRUE;
+			bRetVal = true;
 
 			// Extract enumerations...
 			szEnumToken = _tcstok( szList, sep );   
@@ -143,7 +143,7 @@ BOOL SVEnumerateValueObjectClass::SetEnumTypes( LPCTSTR szEnumList )
 				else
 				{
 					// Something was wrong...
-					bRetVal = FALSE;
+					bRetVal = false;
 				}
 
 			} while( szEnumToken = _tcstok( nullptr, sep ) );
@@ -155,7 +155,7 @@ BOOL SVEnumerateValueObjectClass::SetEnumTypes( LPCTSTR szEnumList )
 	return bRetVal;
 }
 
-BOOL SVEnumerateValueObjectClass::SetEnumTypes( const SVEnumerateVector& rVec )
+bool SVEnumerateValueObjectClass::SetEnumTypes( const SVEnumerateVector& rVec )
 {
 	for ( size_t i=0; i < rVec.size(); i++ )
 	{
@@ -167,7 +167,7 @@ BOOL SVEnumerateValueObjectClass::SetEnumTypes( const SVEnumerateVector& rVec )
 	return true;
 }
 
-BOOL SVEnumerateValueObjectClass::GetEnumTypes( SVEnumerateVector& rVec ) const
+bool SVEnumerateValueObjectClass::GetEnumTypes( SVEnumerateVector& rVec ) const
 {
 	rVec.clear();
 
@@ -178,7 +178,7 @@ BOOL SVEnumerateValueObjectClass::GetEnumTypes( SVEnumerateVector& rVec ) const
 	return true;
 }
 
-BOOL SVEnumerateValueObjectClass::SetEnumTypes( int StringResourceID )
+bool SVEnumerateValueObjectClass::SetEnumTypes( int StringResourceID )
 {
 	SVString EnumList;
 	EnumList = SvUl_SF::LoadSVString( StringResourceID );
@@ -192,11 +192,11 @@ BOOL SVEnumerateValueObjectClass::SetEnumTypes( int StringResourceID )
 // .Description : Returns in lValue the value of a given Enumerator defined by 
 //				: szEnumerator.
 //				: If Enumerator is not defined, the function fails and returns
-//				: FALSE.
+//				: false.
 ////////////////////////////////////////////////////////////////////////////////
-BOOL SVEnumerateValueObjectClass::GetEnumerator( LPCTSTR szEnumerator, long& lValue ) const
+bool SVEnumerateValueObjectClass::GetEnumerator( LPCTSTR szEnumerator, long& lValue ) const
 {
-	BOOL bRetVal = false;
+	bool bRetVal = false;
 	if( szEnumerator )
 	{
 		// Check if enumerator is defined...
@@ -280,11 +280,11 @@ SvOi::NameValueList SVEnumerateValueObjectClass::GetEnumList() const
 //				: lValue.
 //				: If Enumerator is not defined for this value, the function 
 //				: returns in rEnumerator the value converted to a String and
-//				: returns FALSE.
+//				: returns false.
 ////////////////////////////////////////////////////////////////////////////////
-BOOL SVEnumerateValueObjectClass::GetEnumeratorName( long lValue, SVString& rEnumerator ) const
+bool SVEnumerateValueObjectClass::GetEnumeratorName( long lValue, SVString& rEnumerator ) const
 {
-	BOOL bRetVal = FALSE;
+	bool bRetVal = false;
 	// Check if enumerator is defined...
 	for( int i = 0; i < m_enumValueTable.GetSize(); ++ i )
 	{
@@ -293,7 +293,7 @@ BOOL SVEnumerateValueObjectClass::GetEnumeratorName( long lValue, SVString& rEnu
 		{
 			// Found it...
 			rEnumerator = m_enumStringTable.GetAt( i );
-			bRetVal = TRUE;
+			bRetVal = true;
 		}
 
 		if( ! bRetVal )
@@ -310,9 +310,9 @@ BOOL SVEnumerateValueObjectClass::GetEnumeratorName( long lValue, SVString& rEnu
 // -----------------------------------------------------------------------------
 // .Description : Returns a string with all defined enumerations and their values
 ////////////////////////////////////////////////////////////////////////////////
-BOOL SVEnumerateValueObjectClass::GetEnumTypes( SVString& rEnumList ) const
+bool SVEnumerateValueObjectClass::GetEnumTypes( SVString& rEnumList ) const
 {
-	BOOL bRetVal = TRUE;
+	bool bRetVal = true;
 	// Get Enumeration types...
 	for( int i = 0; i < m_enumStringTable.GetSize(); ++ i )
 	{
@@ -355,14 +355,14 @@ int SVEnumerateValueObjectClass::GetFirstEnumTypePos() const
 // .Description : Returns in RStrEnum the next defined enumeration identifier
 //				: and in REnumValue its value.
 //				:
-//				: If there is no next enumerator it fails and returns FALSE.
+//				: If there is no next enumerator it fails and returns false.
 //				:
 //				: Use Iterator which is returned by GetFirstEnumType(...),
 //				:	to iterate through list of enum types.
 ////////////////////////////////////////////////////////////////////////////////
-BOOL SVEnumerateValueObjectClass::GetNextEnumType( int& RIterator, SVString& RStrEnum, long& REnumValue ) const
+bool SVEnumerateValueObjectClass::GetNextEnumType( int& RIterator, SVString& RStrEnum, long& REnumValue ) const
 {
-	BOOL bRetVal = FALSE;
+	bool bRetVal = false;
 	if( RIterator >= 0 && RIterator < m_enumStringTable.GetSize() )
 	{
 		RStrEnum	= m_enumStringTable.GetAt( RIterator );
@@ -370,7 +370,7 @@ BOOL SVEnumerateValueObjectClass::GetNextEnumType( int& RIterator, SVString& RSt
 
 		// Prepare next iterator...
 		++RIterator;
-		bRetVal = TRUE;
+		bRetVal = true;
 	}
 	return bRetVal;
 }

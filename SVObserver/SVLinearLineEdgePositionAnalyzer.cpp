@@ -40,18 +40,18 @@ void SVLinearEdgePositionLineAnalyzerClass::init()
 	m_svLinearDistance.setSaveValueFlag(false);
 	RegisterEmbeddedObject( &m_svShowAllEdgeAOverlays, SVShowAllEdgeAOverlaysGuid, IDS_OBJECTNAME_SHOW_ALL_EDGE_A_OVERLAYS, false, SvOi::SVResetItemNone );
 
-	m_bEnableDirection = TRUE;
-	m_bEnableEdgeSelect = TRUE;
-	m_bEnablePolarisation = TRUE;
-	m_bEnablePosition = TRUE;
-	m_bEnableThreshold = TRUE;
+	m_bEnableDirection = true;
+	m_bEnableEdgeSelect = true;
+	m_bEnablePolarisation = true;
+	m_bEnablePosition = true;
+	m_bEnableThreshold = true;
 
 	// Set Embedded defaults
 	POINT defaultPoint;
 	defaultPoint.x = 0;
 	defaultPoint.y = 0;
 
-	dpEdge.SetDefaultValue( defaultPoint, TRUE );
+	dpEdge.SetDefaultValue( defaultPoint, true);
 	dpEdge.setSaveValueFlag(false);
 
 	// Populate the available result list

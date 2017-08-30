@@ -69,12 +69,12 @@ SVBarCodeResultClass::SVBarCodeResultClass(SVObjectClass* POwner, int StringReso
 		IDS_OBJECTNAME_BC_READ_SCORE,
 		false, SvOi::SVResetItemNone );
 
-	msv_bUseSingleMatchString.SetDefaultValue( TRUE, TRUE );
-	msv_szMatchStringFileName.SetDefaultValue(_T(""), TRUE);
-	msv_lMatchStringLine.SetDefaultValue( 0, TRUE );
+	msv_bUseSingleMatchString.SetDefaultValue( BOOL(true), true );
+	msv_szMatchStringFileName.SetDefaultValue(_T(""), true);
+	msv_lMatchStringLine.SetDefaultValue( 0, true);
 	msv_lMatchStringLine.setSaveValueFlag(false);
-	msv_bUseMatchStringFile.SetDefaultValue( FALSE, TRUE );
-	m_dReadScore.SetDefaultValue( ( double ) -1.0, TRUE );
+	msv_bUseMatchStringFile.SetDefaultValue( BOOL(false), true);
+	m_dReadScore.SetDefaultValue( -1.0, true);
 	m_dReadScore.setSaveValueFlag(false);
   // Specify which string SVResultString should require
 	m_inputObjectInfo.SetInputObjectType( SVBarCodeObjectGuid );
@@ -147,14 +147,14 @@ bool SVBarCodeResultClass::onRun(SVRunStatusClass &rRunStatus, SvStl::MessageCon
 	  if( this->m_bFailedToRead )
 	  {
 		  rRunStatus.SetWarned();
-		  return TRUE;
+		  return true;
 	  }
 
 	SVStringValueObjectClass* pValue = getInputString();
 
     if (pValue->IsValid())
     {
-		BOOL bLoad = FALSE;
+		BOOL bLoad = false;
 
 		SVString InputString;
 		pValue->GetValue(InputString);
@@ -220,7 +220,7 @@ bool SVBarCodeResultClass::ResetObject(SvStl::MessageContainerVector *pErrorMess
 HRESULT SVBarCodeResultClass::LoadMatchStringFile()
 {
 	HRESULT Result = S_OK;
-	BOOL bOk = true;
+	bool bOk = true;
 	BOOL bLoad = false;
 
 	if ( nullptr != m_pBuffer )
@@ -249,7 +249,7 @@ HRESULT SVBarCodeResultClass::LoadMatchStringFile()
 			//
 			try
 			{
-				bOk = matchFile.Open( FileName.c_str(), CFile::modeRead | CFile::shareDenyNone);
+				bOk = (matchFile.Open(FileName.c_str(), CFile::modeRead | CFile::shareDenyNone) ? true : false);
 				if ( bOk )
 				{
 					unsigned long ulLength = static_cast<unsigned long>(matchFile.GetLength());
@@ -308,10 +308,10 @@ HRESULT SVBarCodeResultClass::LoadMatchStringFile()
 	return Result;
 }
 
-BOOL SVBarCodeResultClass::BuildHashTable(char *pBuffer)
+bool SVBarCodeResultClass::BuildHashTable(char *pBuffer)
 {
    long lBufIndex = 0;
-   BOOL  bRet = TRUE;
+   bool  bRet = true;
 
    for(int i = 0; i < BC_MAX_ENTREES; i++)
       m_pDataArr[i] = 0;
@@ -365,7 +365,7 @@ BOOL SVBarCodeResultClass::BuildHashTable(char *pBuffer)
       m_pIndexTable = new short[m_nTotalCount * 10];
       if(!m_pIndexTable)
       {
-         bRet = FALSE;
+         bRet = false;
          break;
       }
       memset(m_pIndexTable, 0, (size_t)(sizeof(short) * m_nTotalCount * 10));

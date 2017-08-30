@@ -22,7 +22,6 @@
 #include "SVObjectInfoStruct.h"
 #include "SVObjectLibrary.h"
 #include "SVOutObjectInfoStruct.h"
-#include "SVPublicAttributeEntryStruct.h"
 #include "SVObjectWriter.h"
 #include "SVObjectInfoArrayClass.h"
 #include "SVUtilityLibrary/NameGuidList.h"
@@ -134,7 +133,6 @@ public:
 	//! \returns SVObjectClass*
 	//************************************
 	SVObjectClass* GetFriend( const SVObjectTypeInfoStruct& rObjectType ) const; 
-	SVPublicAttributeEntryStruct* GetPublicAttribute();
 
 	//************************************
 	// Method:    GetAncestor
@@ -264,8 +262,6 @@ protected:
 	SVOutObjectInfoStruct m_outObjectInfo;
 	//Contains a list of friend objects, which will be informed about certain actions or messages this object is doing/processing.
 	SVObjectInfoArrayClass m_friendList;
-	//Output table
-	SVPublicAttributeEntryStruct m_publicAttribute;
 
 private:
 	void init();

@@ -30,9 +30,9 @@ SVCriticalSection::~SVCriticalSection()
 	}
 }
 
-BOOL SVCriticalSection::Lock( DWORD p_TimeOutMilliseconds ) const
+bool SVCriticalSection::Lock( DWORD p_TimeOutMilliseconds ) const
 {
-	BOOL l_Status = true;
+	bool l_Status = true;
 
 	if( p_TimeOutMilliseconds == INFINITE )
 	{
@@ -64,9 +64,9 @@ BOOL SVCriticalSection::Lock( DWORD p_TimeOutMilliseconds ) const
 	return l_Status;
 }
 
-BOOL SVCriticalSection::Unlock() const
+bool SVCriticalSection::Unlock() const
 {
-	BOOL l_Status = true;
+	bool l_Status = true;
 
 	l_Status = m_IsLockCreated;
 
@@ -78,9 +78,9 @@ BOOL SVCriticalSection::Unlock() const
 	return l_Status;
 }
 
-BOOL SVCriticalSection::EnterLock() const
+bool SVCriticalSection::EnterLock() const
 {
-	BOOL l_Status = true;
+	bool l_Status = true;
 
 	if( !m_IsLockCreated )
 	{
@@ -97,9 +97,9 @@ BOOL SVCriticalSection::EnterLock() const
 	return l_Status;
 }
 
-BOOL SVCriticalSection::TryEnterLock() const
+bool SVCriticalSection::TryEnterLock() const
 {
-	BOOL l_Status = true;
+	bool l_Status = true;
 
 	if( !m_IsLockCreated )
 	{
@@ -110,7 +110,7 @@ BOOL SVCriticalSection::TryEnterLock() const
 
 	if( l_Status )
 	{
-		l_Status = ::TryEnterCriticalSection( &m_Lock );
+		l_Status = ::TryEnterCriticalSection(&m_Lock) ? true : false;
 	}
 
 	return l_Status;

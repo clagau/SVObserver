@@ -1796,7 +1796,7 @@ bool SVConfigurationObject::LoadTrigger( SVTreeType& rTree )
 
 				if ( nullptr != psvDevice )
 				{
-					bOk = pTrigger->Create( psvDevice ) ? true : false;
+					bOk = pTrigger->Create( psvDevice );
 				}
 			}
 

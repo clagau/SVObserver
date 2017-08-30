@@ -112,9 +112,9 @@ SVOutputInfoListClass::iterator SVOutputInfoListClass::erase( iterator p_Where )
 	return m_svObjectArray.erase( p_Where );
 }
 
-BOOL SVOutputInfoListClass::CheckExistence( int Index /*= -1*/ )
+bool SVOutputInfoListClass::CheckExistence( int Index /*= -1*/ )
 {
-	BOOL BRetVal = FALSE;
+	bool BRetVal = false;
 	long l_lSize = m_svObjectArray.GetSize();
 
 	if( Index < l_lSize && Index >= -1 )

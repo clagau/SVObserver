@@ -48,7 +48,7 @@ public:
 	virtual bool CreateObject(SVObjectLevelCreateStruct* pCreateStructure ) override;
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 	
-	BOOL HasVariable() const;
+	bool HasVariable() const;
 
 	SVString GetFeatureString();
 	SVString GetFeatureName( int aIndex );

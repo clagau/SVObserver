@@ -44,7 +44,7 @@ SVPatGeneralPageClass::SVPatGeneralPageClass()
 	m_lAcceptance = 0;
 	m_lCertainty = 0;
 	m_nOccurances = 0;
-	m_bAccuracy = FALSE;
+	m_bAccuracy = false;
 	//}}AFX_DATA_INIT
 	m_dInterpolationMode = SVNearestNeighbor;
 	m_nPosAccuracyIndex = 1; 
@@ -348,7 +348,7 @@ void SVPatGeneralPageClass::OnAngularSearch()
 	if(!m_bAngleSearch)
 	{
 		((CButton *)GetDlgItem(IDC_PAT_ANGULAR_ACCURACY))->SetCheck(0);
-		m_bAccuracy = FALSE;
+		m_bAccuracy = false;
 		EnableAngleAccuracyControls(m_bAccuracy);
 	}
 }

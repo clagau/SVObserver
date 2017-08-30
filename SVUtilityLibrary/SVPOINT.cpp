@@ -73,10 +73,9 @@ SVPOINT::operator _variant_t () const
 	return _variant_t( ToString().c_str());
 }
 
-BOOL SVPOINT::GetValue(POINT &Point) const
+void SVPOINT::GetValue(POINT &Point) const
 {
 	Point = m_Point;
-	return TRUE;
 }
 
 SVString SVPOINT::ToString() const

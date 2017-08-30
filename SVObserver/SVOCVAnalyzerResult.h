@@ -40,14 +40,13 @@ public:
 
 	void GetOCVResultString( SVString& rResult );
 	
-	BOOL GenerateFontModel();
+	bool GenerateFontModel();
 	HRESULT LoadMatchString();
 	void HideResults();
 
-	BOOL BuildHashTable(char *pBuffer);
+	bool BuildHashTable(char *pBuffer);
 	void InsertValueToTable(short nValue, int index);
 	long CheckStringInTable(const SVString& rMatchString);
-	BOOL UpdateResultFigure( long p_lIndex );
 
 	SVImageClass* getInputImage();
 

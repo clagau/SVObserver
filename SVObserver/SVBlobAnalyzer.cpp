@@ -298,7 +298,7 @@ void SVBlobAnalyzerClass::init()
 			BlobFeatureConstants[i].NewStringResourceID,
 			false, SvOi::SVResetItemNone );
 
-		m_Value[i].SetDefaultValue(0, TRUE);
+		m_Value[i].SetDefaultValue(0, true);
 		m_Value[i].setSaveValueFlag(false);
 		m_Value[i].setSaveDefaultValueFlag(true);
 
@@ -308,8 +308,8 @@ void SVBlobAnalyzerClass::init()
 
 	m_FeaturesEnabled [SV_TOPOF_LIST] = _T('\0');    // Null termination.
 
-	m_SortAscending.SetDefaultValue(FALSE,TRUE);
-	m_bExcludeFailed.SetDefaultValue(FALSE,TRUE);
+	m_SortAscending.SetDefaultValue(BOOL(false), true);
+	m_bExcludeFailed.SetDefaultValue(BOOL(false), true);
 
 	m_DefaultAttributes = m_Value[0].ObjectAttributesAllowed();
 
@@ -325,24 +325,24 @@ void SVBlobAnalyzerClass::init()
 		m_Value[i].SetObjectAttributesAllowed( SvOi::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::RemoveAttribute );
 	}
 
-	m_PersistantFeaturesEnabled.SetDefaultValue (m_FeaturesEnabled, TRUE);
+	m_PersistantFeaturesEnabled.SetDefaultValue (m_FeaturesEnabled, true);
 	/*--- End of FEATURE LIST. -------------------------------------------------*/
 
-	m_lvoBlobSampleSize.SetDefaultValue (SV_MAX_NUMBER_OF_BLOBS, TRUE);
-	m_lvoMaxBlobDataArraySize.SetDefaultValue(1, TRUE);
+	m_lvoBlobSampleSize.SetDefaultValue (SV_MAX_NUMBER_OF_BLOBS, true);
+	m_lvoMaxBlobDataArraySize.SetDefaultValue(1, true);
 
-	m_SortFeature.SetDefaultValue (SV_AREA, TRUE);
+	m_SortFeature.SetDefaultValue (SV_AREA, true);
 
 	CreateArray();
 
 	m_colorBlobEnumValue.SetEnumTypes(g_strBlobColorEnums);
-	m_colorBlobEnumValue.SetDefaultValue(SV_BLOB_WHITE,TRUE);	
+	m_colorBlobEnumValue.SetDefaultValue(SV_BLOB_WHITE, true);
 	//set default values for the BlobFill value objects
-	m_bvoFillBlobs.SetDefaultValue(FALSE,TRUE);
+	m_bvoFillBlobs.SetDefaultValue(BOOL(false), true);
 	m_evoBlobFillColor.SetEnumTypes(g_strBlobFillColorEnums);
-	m_evoBlobFillColor.SetDefaultValue(SV_BLOB_FILL_BLACK,TRUE);
+	m_evoBlobFillColor.SetDefaultValue(SV_BLOB_FILL_BLACK, true);
 	m_evoBlobType.SetEnumTypes(g_strBlobFillTypeEnums);
-	m_evoBlobType.SetDefaultValue(SV_BLOB_FILL_EXCLUDED,TRUE);
+	m_evoBlobType.SetDefaultValue(SV_BLOB_FILL_EXCLUDED, true);
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -1010,7 +1010,7 @@ bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 
 		if ( ! pImage->GetImageHandle( ImageHandle ) || ImageHandle.empty() )
 		{
-			ASSERT( FALSE );
+			ASSERT( false );
 			Result = false;
 			if (nullptr != pErrorMessages)
 			{
@@ -1025,7 +1025,7 @@ bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 
 		if ( l_MilBuffer.empty() )
 		{
-			ASSERT( FALSE );
+			ASSERT( false );
 			Result = false;
 			if (nullptr != pErrorMessages)
 			{
@@ -1042,7 +1042,7 @@ bool SVBlobAnalyzerClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageCon
 
 		if( S_OK != MatroxCode )
 		{
-			ASSERT( FALSE );
+			ASSERT( false );
 			Result = false;
 			if (nullptr != pErrorMessages)
 			{
@@ -1494,93 +1494,77 @@ void SVBlobAnalyzerClass::SortBlobs (long alSortFeature,
 		alSortMap [i] = i;
 	}
 
-	BOOL ascending(FALSE);
+	BOOL ascending(false);
 	m_SortAscending.GetValue(ascending);
 	if (m_vec2dBlobResults[alSortFeature].size() > 0)
 	{
-		MapQuickSort (&(m_vec2dBlobResults[alSortFeature][0]),
-			alSortMap,
-			0, 
-			p_lArraySize - 1, 
-		ascending);                           // Ascending
+		MapQuickSort(&(m_vec2dBlobResults[alSortFeature][0]), alSortMap, 0, p_lArraySize - 1, ascending ? true : false);                           // Ascending
 
 	}
 }
 
-void SVBlobAnalyzerClass::MapQuickSort (double*    aSortArray, 
-	long*      alSortMap,
-	long       alBeginning,
-	long       alEnd,
-	BOOL       abAscending)
+void SVBlobAnalyzerClass::MapQuickSort(double* aSortArray, long* alSortMap,	long alBeginning, long alEnd, bool abAscending)
 {
 	long    i = alEnd;
 	long   	j = alBeginning;
-	
-		if (alEnd < 0)
-		{
-			//          Number of blobs is zero.  This is not a fatal error, but there is 
-			//          nothing to sort.
+
+	if (alEnd < 0)
+	{
+		//          Number of blobs is zero.  This is not a fatal error, but there is 
+		//          nothing to sort.
 		return;
-		}
+	}
 
 	double val = aSortArray[alSortMap[(alBeginning + alEnd) / 2]];
 
-		do
+	do
+	{
+		if (abAscending)
 		{
-			if (abAscending)
-			{
 			while (aSortArray[alSortMap[j]] < val)
-				{
-					j++;
-				}
+			{
+				j++;
+			}
 			while (aSortArray[alSortMap[i]] > val)
-				{
-					i--;
-				}
-			}
-			else
 			{
+				i--;
+			}
+		}
+		else
+		{
 			while (aSortArray[alSortMap[j]] > val)
-				{
-					j++;
-				}
-			while (aSortArray[alSortMap[i]] < val)
-				{
-					i--;
-				}
-			}
-
-			if (i >= j)
 			{
-				if (i != j)
-				{
+				j++;
+			}
+			while (aSortArray[alSortMap[i]] < val)
+			{
+				i--;
+			}
+		}
+
+		if (i >= j)
+		{
+			if (i != j)
+			{
 				long lTemp = alSortMap[i];
 				alSortMap[i] = alSortMap[j];
 				alSortMap[j] = lTemp;
-				}
+			}
 
 			i--;
 			j++;
-			}
+		}
 
-		} while (j <= i);
+	} while (j <= i);
 
-		if (alBeginning < i)
-		{
-		MapQuickSort(aSortArray,
-				alSortMap,
-				alBeginning,
-				i,
-				abAscending);
-			}
-		if (j < alEnd)
-		{
-		MapQuickSort(aSortArray,
-				alSortMap,
-				j,
-				alEnd,
-				abAscending);
-			}
+	if (alBeginning < i)
+	{
+		MapQuickSort(aSortArray, alSortMap,	alBeginning, i,	abAscending);
+	}
+	if (j < alEnd)
+	{
+		MapQuickSort(aSortArray, alSortMap,	j, alEnd, abAscending);
+	}
 }
 
 /////////////////////////////////////////////////////////////////////////////
@@ -1647,7 +1631,7 @@ DWORD SVBlobAnalyzerClass::BuildFeatureListID ()
 // -----------------------------------------------------------------------------
 // .Description : When the user right clicks inside a tool figure, checks whether its
 //              : on a blob. If it finds a blob at that point, gets the index of the  
-//				: blob and returns TRUE.
+//				: blob and returns true.
 //				: Called from SVImageViewClass::OnContextMenu
 ////////////////////////////////////////////////////////////////////////////////
 // 	 Date		Author				Comment                                       
@@ -1878,7 +1862,7 @@ void SVBlobAnalyzerClass::addDefaultInputObjects( SVInputInfoListClass* PInputLi
 	{
 		UINT uiAttributes = m_Value[i].ObjectAttributesAllowed();
 		TCHAR tchEnabled = m_FeaturesEnabled[i];
-		BOOL l_bOk = ( tchEnabled == _T('1') && 
+		bool l_bOk = ( tchEnabled == _T('1') && 
 			( uiAttributes & SvOi::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES) != SvOi::SV_NO_ATTRIBUTES ) ||
 			( tchEnabled == _T('0') && 
 			(uiAttributes & SvOi::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES) == SvOi::SV_NO_ATTRIBUTES );

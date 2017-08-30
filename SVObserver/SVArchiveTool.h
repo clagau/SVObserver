@@ -43,12 +43,10 @@ public:
 	void RebuildImageArchiveList();
 	void SetImageAttributesFromArchiveList(SVImageListClass* pImageList);
 
-	BOOL CheckForUniqueArchiveFilePath(LPCTSTR pszArchiveFilePathToTest);
-
-	BOOL GetFileArchive( SVString& rName );
-	BOOL GetImageArchivePath( SVString& rName );
-	BOOL SetFileArchive( LPCTSTR lpszName );
-	BOOL SetImageArchivePath( LPCTSTR lpszName );
+	bool GetFileArchive( SVString& rName );
+	bool GetImageArchivePath( SVString& rName );
+	bool SetFileArchive( LPCTSTR lpszName );
+	bool SetImageArchivePath( LPCTSTR lpszName );
 
 	virtual void SetObjectDepth( int NewObjectDepth ) override;
 	virtual void SetObjectDepthWithIndex( int NewObjectDepth, int NewLastSetIndex ) override;

@@ -62,32 +62,32 @@ SVLinearEdgeProcessingClass::SVLinearEdgeProcessingClass( SVObjectClass* POwner,
 	m_svEdgeSelect.SetEnumTypes( cEdgeSelectEnums );
 	m_svPosition.SetEnumTypes( cPositionEnums );
 
-	m_svDirection.SetDefaultValue(SV_HEAD_TO_TAIL_DIRECTION,TRUE);
-	m_svPolarisation.SetDefaultValue(SV_ANY_POLARISATION,TRUE);
-	m_svEdgeSelect.SetDefaultValue(SV_FIRST_EDGE,TRUE);
-	m_svEdgeSelectThisValue.SetDefaultValue(1.0,TRUE);
+	m_svDirection.SetDefaultValue(SV_HEAD_TO_TAIL_DIRECTION);
+	m_svPolarisation.SetDefaultValue(SV_ANY_POLARISATION);
+	m_svEdgeSelect.SetDefaultValue(SV_FIRST_EDGE);
+	m_svEdgeSelectThisValue.SetDefaultValue(1.0);
 
-	m_svIsFixedEdgeMarker.SetDefaultValue(FALSE,TRUE);
-	m_svPosition.SetDefaultValue(SV_START_POSITION,TRUE);
-	m_svPositionOffsetValue.SetDefaultValue(1.0,TRUE);		
+	m_svIsFixedEdgeMarker.SetDefaultValue(BOOL(false));
+	m_svPosition.SetDefaultValue(SV_START_POSITION);
+	m_svPositionOffsetValue.SetDefaultValue(1.0);
 
-	m_svUseLowerThresholdSelectable.SetDefaultValue(TRUE,TRUE);
-	m_svUseLowerThresholdMaxMinusPercentDiff.SetDefaultValue(FALSE,TRUE);
-	m_svUseLowerThresholdMaxMinusOffset.SetDefaultValue(FALSE,TRUE);
-	m_svUseLowerThresholdMinPlusOffset.SetDefaultValue(FALSE,TRUE);
-	m_svLowerThresholdValue.SetDefaultValue(SvOi::cDefaultToolLowerThreshold,TRUE);
-	m_svLowerMaxMinusPercentDiffValue.SetDefaultValue(0,TRUE);
-	m_svLowerMaxMinusOffsetValue.SetDefaultValue(0,TRUE);
-	m_svLowerMinPlusOffsetValue.SetDefaultValue(0,TRUE);
+	m_svUseLowerThresholdSelectable.SetDefaultValue(BOOL(true));
+	m_svUseLowerThresholdMaxMinusPercentDiff.SetDefaultValue(BOOL(false));
+	m_svUseLowerThresholdMaxMinusOffset.SetDefaultValue(BOOL(false));
+	m_svUseLowerThresholdMinPlusOffset.SetDefaultValue(BOOL(false));
+	m_svLowerThresholdValue.SetDefaultValue(SvOi::cDefaultToolLowerThreshold);
+	m_svLowerMaxMinusPercentDiffValue.SetDefaultValue(0);
+	m_svLowerMaxMinusOffsetValue.SetDefaultValue(0);
+	m_svLowerMinPlusOffsetValue.SetDefaultValue(0);
 
-	m_svUseUpperThresholdSelectable.SetDefaultValue(TRUE,TRUE);
-	m_svUseUpperThresholdMaxMinusPercentDiff.SetDefaultValue(FALSE,TRUE);
-	m_svUseUpperThresholdMaxMinusOffset.SetDefaultValue(FALSE,TRUE);
-	m_svUseUpperThresholdMinPlusOffset.SetDefaultValue(FALSE,TRUE);
-	m_svUpperThresholdValue.SetDefaultValue(SvOi::cDefaultToolUpperThreshold,TRUE);
-	m_svUpperMaxMinusPercentDiffValue.SetDefaultValue(0,TRUE);
-	m_svUpperMaxMinusOffsetValue.SetDefaultValue(0,TRUE);
-	m_svUpperMinPlusOffsetValue.SetDefaultValue(0,TRUE);
+	m_svUseUpperThresholdSelectable.SetDefaultValue(BOOL(true));
+	m_svUseUpperThresholdMaxMinusPercentDiff.SetDefaultValue(BOOL(false));
+	m_svUseUpperThresholdMaxMinusOffset.SetDefaultValue(BOOL(false));
+	m_svUseUpperThresholdMinPlusOffset.SetDefaultValue(BOOL(false));
+	m_svUpperThresholdValue.SetDefaultValue(SvOi::cDefaultToolUpperThreshold);
+	m_svUpperMaxMinusPercentDiffValue.SetDefaultValue(0);
+	m_svUpperMaxMinusOffsetValue.SetDefaultValue(0);
+	m_svUpperMinPlusOffsetValue.SetDefaultValue(0);
 
 	m_cfThresholds = SV_DEFAULT_SUB_FUNCTION_COLOR_1;
 	m_cfHistogram = SV_DEFAULT_SUB_FUNCTION_COLOR_1;

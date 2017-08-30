@@ -34,7 +34,7 @@ public:
 
 	HRESULT AllocateBuffers( long lBufferSize );
 
-	BOOL WriteArchiveImageFiles( );
+	bool WriteArchiveImageFiles( );
 	HRESULT WriteImageQueue();
 
 	int ValidateResultsObjects();

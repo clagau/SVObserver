@@ -103,9 +103,9 @@ template
 <
 	typename SVT_TYPE
 >
-BOOL SVList< SVT_TYPE >::IsEmpty() const
+bool SVList< SVT_TYPE >::IsEmpty() const
 {
-	return static_cast< BOOL >( m_List.empty() );
+	return m_List.empty();
 }
 
 template

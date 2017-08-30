@@ -105,17 +105,17 @@ SVImagePolarTransformClass::SVImagePolarTransformClass( SVObjectClass* POwner, i
 
 
 	// Set Embedded defaults
-	m_interpolationMode.SetDefaultValue( SVNearestNeighOverScanEnable, TRUE );	// Refer to MIL...
-	m_centerX.SetDefaultValue( ( double ) SvOi::cDefaultPolarTransformCenterX, TRUE );
-	m_centerY.SetDefaultValue( ( double ) SvOi::cDefaultPolarTransformCenterY, TRUE );
-	m_startRadius.SetDefaultValue( ( double ) SvOi::cDefaultPolarTransformStartRadius, TRUE );
-	m_endRadius.SetDefaultValue( ( double ) SvOi::cDefaultPolarTransformEndRadius, TRUE );
-	m_startAngle.SetDefaultValue( ( double ) SvOi::cDefaultPolarTransformStartAngle, TRUE );
-	m_endAngle.SetDefaultValue( ( double ) SvOi::cDefaultPolarTransformEndAngle, TRUE );
+	m_interpolationMode.SetDefaultValue( SVNearestNeighOverScanEnable );	// Refer to MIL...
+	m_centerX.SetDefaultValue( ( double ) SvOi::cDefaultPolarTransformCenterX );
+	m_centerY.SetDefaultValue( ( double ) SvOi::cDefaultPolarTransformCenterY );
+	m_startRadius.SetDefaultValue( ( double ) SvOi::cDefaultPolarTransformStartRadius );
+	m_endRadius.SetDefaultValue( ( double ) SvOi::cDefaultPolarTransformEndRadius );
+	m_startAngle.SetDefaultValue( ( double ) SvOi::cDefaultPolarTransformStartAngle );
+	m_endAngle.SetDefaultValue( ( double ) SvOi::cDefaultPolarTransformEndAngle );
 
 	outputImageObject.InitializeImage( SvOi::SVImageTypeEnum::SVImageTypePhysical );
 
-	m_useFormulaInput.SetDefaultValue( FALSE, TRUE );	// Default: Don't use formulas...
+	m_useFormulaInput.SetDefaultValue( BOOL(false) );	// Default: Don't use formulas...
 
 
 	// Add Default Inputs and Outputs

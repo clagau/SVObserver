@@ -886,7 +886,7 @@ bool SVTaskObjectClass::ConnectAllInputs()
 						SVObjectClass* pOwner = GetOwner();
 						SVObjectClass* pRequestor = pInInfo->m_pObject;
 						const SvOi::IObjectClass* pObject( nullptr );
-						BOOL bSuccess = false;
+						bool bSuccess = false;
 						
 						if (hasToAskFriendForConnection(info, pOwner))
 						{

@@ -155,14 +155,14 @@ public:
 
 	// Overlay section
 	long GetOverlayCount() const;
-	BOOL GetOverlayFigureAt( long Index, SVOverlayStruct& rOverlay );
+	void GetOverlayFigureAt( long Index, SVOverlayStruct& rOverlay );
 
 	// General and header section
-	BOOL SetBufferSize( long Size, bool ClearBuffer = true );
+	void SetBufferSize( long Size, bool ClearBuffer = true );
 
 	// Overlay section
-	BOOL SetOverlayCount( long Count );
-	BOOL SetOverlayFigureAt( long Index, SVOverlayStruct& rOverlay );
+	void SetOverlayCount( long Count );
+	void SetOverlayFigureAt( long Index, SVOverlayStruct& rOverlay );
 
 	long CalculateSize();
 

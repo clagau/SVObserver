@@ -35,7 +35,7 @@ public:
 	virtual void Persist(SVObjectWriter& rWriter) override;
 
 	virtual HRESULT SetValue( const SVString& rValue, int Index = -1 ) override;
-	HRESULT SetDefaultValue( const SVString& rValue, bool bResetAll ) override;
+	HRESULT SetDefaultValue( const SVString& rValue, bool bResetAll = true ) override;
 
 protected:
 	virtual double ValueType2Double(const SVString& rValue) const override { return E_NOTIMPL; };

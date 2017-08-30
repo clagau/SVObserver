@@ -131,7 +131,7 @@ BOOL SVAdjustToolSizePositionDlg::OnInitDialog()
 	SVLinearToolClass* lt = dynamic_cast< SVLinearToolClass* >( m_pToolTask );
 	if( nullptr != lt )
 	{
-		BOOL rotation = lt->GetRotation();
+		bool rotation = lt->GetRotation();
 		if ( rotation )
 		{
 			bShow = false;

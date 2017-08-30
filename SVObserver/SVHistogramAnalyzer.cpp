@@ -387,8 +387,8 @@ void SVHistogramAnalyzerClass::init()
 		msvValleyUpperBound.SetDefaultValue(255, true);
 		msvValleyDefault.SetDefaultValue(0, true);
 
-		msvDynamicHeight.SetDefaultValue(false, true);
-		msvAccumulateCounts.SetDefaultValue(false, true);
+		msvDynamicHeight.SetDefaultValue( BOOL(false), true);
+		msvAccumulateCounts.SetDefaultValue( BOOL(false), true);
 
 		// Set default inputs and outputs
 		addDefaultInputObjects();

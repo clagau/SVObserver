@@ -321,7 +321,6 @@ namespace SvStl
 		Tid_InvalidImagePath,
 		Tid_InvalidDrive,
 		Tid_InvalidFileName,
-		Tid_AP_InvalidFile,
 		Tid_Error_you_have_Selected_X_Must_less_then_Y,
 		Tid_ArchiveTool_WarningMaxImages,
 		Tid_AP_NotEnoughImageMemoryInChangeMode,

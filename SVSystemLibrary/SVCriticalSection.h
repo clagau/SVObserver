@@ -20,12 +20,12 @@ public:
 
 	virtual ~SVCriticalSection();
 
-	BOOL Lock( DWORD p_TimeOutMilliseconds = INFINITE ) const;
-	BOOL Unlock() const;
+	bool Lock( DWORD p_TimeOutMilliseconds = INFINITE ) const;
+	bool Unlock() const;
 
 protected:
-	BOOL EnterLock() const;
-	BOOL TryEnterLock() const;
+	bool EnterLock() const;
+	bool TryEnterLock() const;
 
 	DWORD m_SpinCount;
 

@@ -115,9 +115,6 @@ void SVPublishListClass::Refresh(SVTaskObjectClass * pRootObject)
 			// Disconnect
 			SVObjectManagerClass::Instance().DisconnectObjectInput(pPublishedOutObjectInfo->m_UniqueObjectID, &InObjectInfo);
 
-			//if( should not be anymore published )
-			SVPublicAttributeEntryStruct* pPublicAttribute = pPublishedOutObjectInfo->m_pObject->GetPublicAttribute();
-
 			// remove from the list
 			RemoveAt(i);
 

@@ -53,14 +53,14 @@ SVLinearAnalyzerClass::SVLinearAnalyzerClass( SVObjectClass* POwner, int StringR
 	m_dwMaxThreshold = 0;
 	m_dwColorNumber = 0;
 
-	m_bEnableDirection = FALSE;
-	m_bEnableEdgeSelect = FALSE;
-	m_bEnablePolarisation = FALSE;
-	m_bEnablePosition = FALSE;
-	m_bEnableThreshold = FALSE;
+	m_bEnableDirection = false;
+	m_bEnableEdgeSelect = false;
+	m_bEnablePolarisation = false;
+	m_bEnablePosition = false;
+	m_bEnableThreshold = false;
 
-	m_svShowAllEdgeAOverlays.SetDefaultValue( FALSE, TRUE );
-	m_svShowAllEdgeBOverlays.SetDefaultValue( FALSE, TRUE );
+	m_svShowAllEdgeAOverlays.SetDefaultValue( BOOL(false), true );
+	m_svShowAllEdgeBOverlays.SetDefaultValue( BOOL(false), true);
 
 	addDefaultInputObjects();
 }
@@ -168,7 +168,7 @@ HRESULT SVLinearAnalyzerClass::GetImageExtent( SVImageExtentClass &rImageExtent 
 	long Width( 0 );
 	long Height( 0 );
 	long Angle( 0 );
-	BOOL bUseRotation( false );
+	bool bUseRotation( false );
 
 	HRESULT l_hrOk = rImageExtent.Initialize();
 
@@ -278,7 +278,7 @@ HRESULT SVLinearAnalyzerClass::GetInputProfileOrientation(long& rProfileOrientat
 	return Result;
 }
 
-HRESULT SVLinearAnalyzerClass::GetInputUseRotationAngle(BOOL& rUseRotationAngle)
+HRESULT SVLinearAnalyzerClass::GetInputUseRotationAngle(bool& rUseRotationAngle)
 {
 	HRESULT Result(E_FAIL);
 	if( m_svInputUseRotationAngle.IsConnected() && nullptr != m_svInputUseRotationAngle.GetInputObjectInfo().m_pObject )
@@ -300,7 +300,7 @@ HRESULT SVLinearAnalyzerClass::onCollectOverlays(SVImageClass *p_Image,SVExtentM
 
 	SVImageExtentClass l_svToolExtents;
 	SVImageExtentClass l_svAnalyzerExtents;
-	BOOL l_bOk = TRUE;
+	bool l_bOk = true;
 
 	SVToolClass* pTool = dynamic_cast<SVToolClass*>(GetTool());
 	l_bOk = l_bOk && nullptr != pTool && S_OK == pTool->GetImageExtent( l_svToolExtents );

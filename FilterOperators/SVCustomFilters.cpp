@@ -162,14 +162,14 @@ void SVCustomFilterClass::init()
 
 	for( l = 0; l < 49; l++ )
 	{
-		m_plvoKernelCells[l]->SetDefaultValue( 1, TRUE );
+		m_plvoKernelCells[l]->SetDefaultValue( 1 );
 	}// end for
 
-	m_lvoKernelWidth.SetDefaultValue( 3L, TRUE );
-	m_lvoKernelHeight.SetDefaultValue( 3L, TRUE );
-	m_bvoClippingOn.SetDefaultValue( TRUE, TRUE );
-	m_bvoAbsoluteValue.SetDefaultValue( TRUE, TRUE );
-	m_lvoTransformationFactor.SetDefaultValue( 1, TRUE );
+	m_lvoKernelWidth.SetDefaultValue( 3L );
+	m_lvoKernelHeight.SetDefaultValue( 3L );
+	m_bvoClippingOn.SetDefaultValue(BOOL(true));
+	m_bvoAbsoluteValue.SetDefaultValue(BOOL(true));
+	m_lvoTransformationFactor.SetDefaultValue( 1 );
 
 	const UINT cAttributes = SvOi::SV_PRINTABLE | SvOi::SV_SETABLE_ONLINE | SvOi::SV_REMOTELY_SETABLE;
 	for( l = 0; l < 49; l++ )

@@ -149,12 +149,12 @@ void SVRankingFilterClass::init()
 
 	for( l = 0; l < 49; l++ )
 	{
-		m_plvoRankingCells[l]->SetDefaultValue( 1, TRUE );
+		m_plvoRankingCells[l]->SetDefaultValue( 1 );
 	}// end for
 
-	m_lvoRankingWidth.SetDefaultValue( 3L, TRUE );
-	m_lvoRankingHeight.SetDefaultValue( 3L, TRUE );
-	m_lvoRankingRank.SetDefaultValue( SVValueMedian, TRUE );
+	m_lvoRankingWidth.SetDefaultValue( 3L );
+	m_lvoRankingHeight.SetDefaultValue( 3L );
+	m_lvoRankingRank.SetDefaultValue( SVValueMedian );
 
 	const UINT cAttributes = SvOi::SV_PRINTABLE | SvOi::SV_SETABLE_ONLINE | SvOi::SV_REMOTELY_SETABLE;
 	for( l = 0; l < 49; l++ )

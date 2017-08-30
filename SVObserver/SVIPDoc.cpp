@@ -1146,7 +1146,7 @@ void SVIPDoc::OnAddPolarUnwrapTool()
 	if( AddTool( pTool ) )
 	{
 		// Set the Use Anglular Method2 to the new type.
-		pTool->m_svAngularMethod.SetDefaultValue( _T("Angular Method2"), TRUE );
+		pTool->m_svAngularMethod.SetDefaultValue( _T("Angular Method2"), true);
 
 		return;
 	}

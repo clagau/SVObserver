@@ -228,7 +228,7 @@ HRESULT SVObjectBuilder::CreateFriendObject(const GUID& classID, const GUID& uni
 		}
 		if( SV_GUID_NULL != friendId )
 		{
-			BOOL Result = pOwnerObject->AddFriend(friendId, rAddPreGuid);
+			bool Result = pOwnerObject->AddFriend(friendId, rAddPreGuid);
 			if (Result)
 			{
 				pOwnerObject->CreateChildObject(pObject);

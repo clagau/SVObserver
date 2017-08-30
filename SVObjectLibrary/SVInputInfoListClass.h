@@ -24,7 +24,7 @@ public:
 // Standard destructor
 	virtual ~SVInputInfoListClass();
 
-	BOOL CheckExistence( int Index = -1 );
+	bool CheckExistence( int Index = -1 );
 
 	int Add( SVInObjectInfoStruct* );
 	void InsertAt( int nIndex, SVInObjectInfoStruct* PInObjectInfo );

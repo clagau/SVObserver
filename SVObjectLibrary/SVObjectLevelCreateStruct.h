@@ -28,7 +28,7 @@ struct SVObjectLevelCreateStruct
 
 	virtual ~SVObjectLevelCreateStruct();
 
-	BOOL CheckCreateStructName( const char* StrCreateStructureName ) const;
+	bool CheckCreateStructName( const char* StrCreateStructureName ) const;
 
 	SVObjectInfoStruct OwnerObjectInfo;
 

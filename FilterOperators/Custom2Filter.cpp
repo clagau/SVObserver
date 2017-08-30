@@ -195,13 +195,13 @@ void Custom2Filter::init()
 	RegisterEmbeddedObject( &m_ClippingEnabled, SVCustomFilterClippingGuid, IDS_OBJECTNAME_CUSTOMFILTER_CLIPPING, false, SvOi::SVResetItemOwner );
 
 	m_KernelArray.SetArraySize( SvOi::ICustom2Filter::StandardKernelSize*SvOi::ICustom2Filter::StandardKernelSize );
-	m_KernelArray.SetDefaultValue( 1, TRUE );
+	m_KernelArray.SetDefaultValue( 1 );
 
-	m_KernelWidth.SetDefaultValue( SvOi::ICustom2Filter::StandardKernelSize, TRUE );
-	m_KernelHeight.SetDefaultValue( SvOi::ICustom2Filter::StandardKernelSize, TRUE );
-	m_ClippingEnabled.SetDefaultValue( TRUE, TRUE );
-	m_AbsoluteValue.SetDefaultValue( TRUE, TRUE );
-	m_NormalizationFactor.SetDefaultValue( SvOi::ICustom2Filter::StandardKernelSize*SvOi::ICustom2Filter::StandardKernelSize, TRUE );
+	m_KernelWidth.SetDefaultValue( SvOi::ICustom2Filter::StandardKernelSize );
+	m_KernelHeight.SetDefaultValue( SvOi::ICustom2Filter::StandardKernelSize );
+	m_ClippingEnabled.SetDefaultValue(BOOL(true));
+	m_AbsoluteValue.SetDefaultValue(BOOL(true));
+	m_NormalizationFactor.SetDefaultValue( SvOi::ICustom2Filter::StandardKernelSize*SvOi::ICustom2Filter::StandardKernelSize );
 
 	const UINT cAttributes = SvOi::SV_PRINTABLE | SvOi::SV_SETABLE_ONLINE | SvOi::SV_REMOTELY_SETABLE;
 	m_KernelArray.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::AddAttribute );

@@ -436,9 +436,9 @@ HRESULT SVObjectManagerClass::GetObjectByDottedName( const SVString& rFullName, 
 	return Result;
 }
 
-BOOL SVObjectManagerClass::CreateUniqueObjectID( SVObjectClass* pObject )
+bool SVObjectManagerClass::CreateUniqueObjectID( SVObjectClass* pObject )
 {
-	BOOL Result = ( ReadWrite == m_State );
+	bool Result = ( ReadWrite == m_State );
 
 	if( Result )
 	{
@@ -477,9 +477,9 @@ BOOL SVObjectManagerClass::CreateUniqueObjectID( SVObjectClass* pObject )
 	return Result;
 }
 
-BOOL SVObjectManagerClass::OpenUniqueObjectID( SVObjectClass* pObject )
+bool SVObjectManagerClass::OpenUniqueObjectID( SVObjectClass* pObject )
 {
-	BOOL Result = ( ReadWrite == m_State );
+	bool Result = ( ReadWrite == m_State );
 
 	if( Result )
 	{
@@ -520,9 +520,9 @@ BOOL SVObjectManagerClass::OpenUniqueObjectID( SVObjectClass* pObject )
 	return Result;
 }
 
-BOOL SVObjectManagerClass::CloseUniqueObjectID( SVObjectClass* pObject )
+bool SVObjectManagerClass::CloseUniqueObjectID( SVObjectClass* pObject )
 {
-	BOOL Result = ( ReadWrite == m_State );
+	bool Result = ( ReadWrite == m_State );
 
 	if( Result )
 	{
@@ -551,26 +551,26 @@ BOOL SVObjectManagerClass::CloseUniqueObjectID( SVObjectClass* pObject )
 	return Result;
 }
 
-BOOL SVObjectManagerClass::ChangeUniqueObjectID( SVObjectClass* pObject, const SVGUID& rNewGuid )
+bool SVObjectManagerClass::ChangeUniqueObjectID( SVObjectClass* pObject, const SVGUID& rNewGuid )
 {
 	if(	SV_GUID_NULL != rNewGuid && CloseUniqueObjectID( pObject ) )
 	{
 		pObject->m_outObjectInfo.m_UniqueObjectID = rNewGuid;
-		BOOL bRetVal = OpenUniqueObjectID( pObject );
+		bool bRetVal = OpenUniqueObjectID( pObject );
 
 		// Change ObjectID setting in private input interface...
 		pObject->ResetPrivateInputInterface();
 
 		return bRetVal;
 	}
-	return FALSE;
+	return false;
 }
 
 SVObjectClass* SVObjectManagerClass::GetObject( const SVGUID& rGuid ) const
 {
 	SVObjectClass* pObject = nullptr;
 	SVAutoLockAndReleaseTemplate< SVCriticalSection > AutoLock;
-	BOOL Result = ( SV_GUID_NULL != rGuid );
+	bool Result = ( SV_GUID_NULL != rGuid );
 
 	if( Result && ReadWrite == m_State )
 	{
@@ -1672,7 +1672,7 @@ HRESULT SVObjectManagerClass::GetObserverDataNames( const SVGUID& rObserverID, S
 	{
 		SVAutoLockAndReleaseTemplate< SVCriticalSection > AutoLock;
 
-		BOOL l_LockStatus = true;
+		bool l_LockStatus = true;
 
 		if( ReadWrite == m_State )
 		{
@@ -1713,7 +1713,7 @@ HRESULT SVObjectManagerClass::GetObservers( const SVString& rSubjectDataName, co
 	{
 		SVAutoLockAndReleaseTemplate< SVCriticalSection > AutoLock;
 
-		BOOL l_LockStatus = true;
+		bool l_LockStatus = true;
 
 		if( ReadWrite == m_State )
 		{

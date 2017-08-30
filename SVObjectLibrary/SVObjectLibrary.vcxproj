@@ -177,7 +177,6 @@
     <ClInclude Include="SVObserverTemplate.h" />
     <ClInclude Include="SVOutObjectInfoStruct.h" />
     <ClInclude Include="SVOutputInfoListClass.h" />
-    <ClInclude Include="SVPublicAttributeEntryStruct.h" />
     <ClInclude Include="SVToolLevelCreateStruct.h" />
     <ClInclude Include="SVToolsetScriptTags.h" />
     <ClInclude Include="TextDefinesSvOl.h" />

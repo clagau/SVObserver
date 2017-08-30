@@ -46,10 +46,10 @@ void SVLUTEquationClass::init()
 	RegisterEmbeddedObject( &m_isLUTFormulaClipped, SVLUTEquationClipFlagObjectGuid, IDS_OBJECTNAME_LUT_EQUATION_CLIP, false, SvOi::SVResetItemTool  );
 
 	// Set Embedded defaults
-	m_byteVectorResult.SetDefaultValue( 0, TRUE );
+	m_byteVectorResult.SetDefaultValue( 0 );
 	m_byteVectorResult.setSaveValueFlag(false);
 	m_lutIndex.setSaveValueFlag(false);
-	m_isLUTFormulaClipped.SetDefaultValue( TRUE, TRUE );
+	m_isLUTFormulaClipped.SetDefaultValue( BOOL(true) );
 
 	// NOTE: Vector Size Setting...
 	// Set default vector size in CreateObject, since objectDepth must be set before!!!

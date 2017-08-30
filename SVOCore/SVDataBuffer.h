@@ -56,7 +56,7 @@ public:
 
 	virtual bool CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
 	virtual bool CloseObject() override;
-	BOOL Resize( int NewLength );
+	bool Resize( int NewLength );
 
 	SVDataBufferInfoClass&		GetDataBufferInfo();
 	SVDataBufferHandleStruct&	GetDataBufferHandle();

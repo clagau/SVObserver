@@ -579,7 +579,7 @@ HRESULT SVSetupDialogManager::SVLinearAnalyzerClassSetupDialog( const SVGUID& p_
 			{
 				pPageA->m_pCurrentAnalyzer = l_pAnalyzer;
 				pPageA->SetNormalizer( l_pAnalyzer->m_svNormalizer );
-				pPageA->m_bEdgeA = TRUE;
+				pPageA->m_bEdgeA = true;
 
 				pPageA->m_pvoUseLowerThresholdSelectable = &l_psvEdgeA->m_svUseLowerThresholdSelectable;
 				pPageA->m_pvoUseLowerThresholdMaxMinusPercentDiff= &l_psvEdgeA->m_svUseLowerThresholdMaxMinusPercentDiff;		
@@ -864,7 +864,6 @@ HRESULT SVSetupDialogManager::SVPatternAnalyzerClassSetupDialog( const SVGUID& p
 	{
 		double dParam;
 		long lParam;
-		BOOL bPreProcess = false;
 		long lSpeedFactor[5] = { SVValueVeryLow, SVValueLow, SVValueMedium, SVValueHigh, SVValueVeryHigh };
 		int index;
 
@@ -939,7 +938,7 @@ HRESULT SVSetupDialogManager::SVPatternAnalyzerClassSetupDialog( const SVGUID& p
 
 		if (IDOK == SetupDlgSheet.DoModal())
 		{
-			l_pAnalyzer->m_bAngleAccuracy = GeneralPage.m_bAccuracy;
+			l_pAnalyzer->m_bAngleAccuracy = GeneralPage.m_bAccuracy?true:false;
 
 			try
 			{

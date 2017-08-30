@@ -48,7 +48,7 @@ public:
 	virtual HRESULT IsInputImage( SVImageClass *p_psvImage ) override;
 	virtual HRESULT onCollectOverlays(SVImageClass *p_Image, SVExtentMultiLineStructVector& p_rMultiLineArray ) override;
 
-	BOOL Refresh();
+	bool Refresh();
 	HRESULT GetFillProperties( SVMaskFillPropertiesStruct& rsvFillStruct );
 
 	SVImageClass* getMaskInputImage();

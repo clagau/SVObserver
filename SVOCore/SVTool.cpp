@@ -321,9 +321,9 @@ HRESULT SVToolClass::GetDrawInfo( SVExtentMultiLineStruct& p_rMultiLine )
 	
 	drawToolFlag.GetValue( p_rMultiLine.m_ToolDrawFlag );
 
-	BOOL bPassed = TRUE;
-	BOOL bFailed = TRUE;
-	BOOL bWarned = TRUE;
+	BOOL bPassed = true;
+	BOOL bFailed = true;
+	BOOL bWarned = true;
 
 	m_Passed.GetValue( bPassed );
 	m_Failed.GetValue( bFailed );
@@ -431,7 +431,6 @@ bool SVToolClass::Run( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVect
 			else
 			{
 				rRunStatus.SetDisabledByCondition();
-				//bDisabled = TRUE;
 			}// end else
 		}
 		else
@@ -519,7 +518,7 @@ bool SVToolClass::RunWithNewDisable( SVRunStatusClass& rRunStatus, SvStl::Messag
 	bool Return = true;
 	long lCount = 0;
 	
-	BOOL bDisabled = FALSE;
+	bool bDisabled = false;
 
 	if( IsEnabled() )
 	{
@@ -565,7 +564,7 @@ bool SVToolClass::RunWithNewDisable( SVRunStatusClass& rRunStatus, SvStl::Messag
 		else
 		{
 			rRunStatus.SetDisabledByCondition();
-			bDisabled = TRUE;
+			bDisabled = true;
 		}// end else
 
 	}// end if
@@ -574,7 +573,7 @@ bool SVToolClass::RunWithNewDisable( SVRunStatusClass& rRunStatus, SvStl::Messag
 		Return = !( rRunStatus.m_UpdateCounters );
 		SetDisabled();
 		rRunStatus.SetDisabled();
-		bDisabled = TRUE;
+		bDisabled = true;
 	}// end else
 
 	// if disabled or disabled by condition
@@ -788,11 +787,11 @@ bool SVToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 			if(S_OK == pToolSet->getResetCounts(l_bReset) && l_bReset )
 				{
 					// Reset Counter...
-					m_PassedCount.SetDefaultValue(0, TRUE);
-					m_FailedCount.SetDefaultValue(0, TRUE);
-					m_WarnedCount.SetDefaultValue(0, TRUE);
-					m_EnabledCount.SetDefaultValue(0, TRUE);
-					m_ProcessedCount.SetDefaultValue(0, TRUE);
+					m_PassedCount.SetDefaultValue(0, true);
+					m_FailedCount.SetDefaultValue(0, true);
+					m_WarnedCount.SetDefaultValue(0, true);
+					m_EnabledCount.SetDefaultValue(0, true);
+					m_ProcessedCount.SetDefaultValue(0, true);
 				}
 		}
 	}

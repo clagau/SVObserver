@@ -80,25 +80,25 @@ void SVUserMaskOperatorClass::init()
 	vec.push_back( SVEnumeratePair(_T( "MAX" ), SVImageMax ) );	
 	vec.push_back( SVEnumeratePair(_T( "PASS" ), SVImagePass ) );
 	m_Data.evoCurrentMaskOperator.SetEnumTypes(vec);
-	m_Data.evoCurrentMaskOperator.SetDefaultValue(SVImageAnd, TRUE);
+	m_Data.evoCurrentMaskOperator.SetDefaultValue(SVImageAnd, true);
 
 	vec.clear();
 	vec.push_back( SVEnumeratePair(_T("Mask Area"), 0 ) );
 	vec.push_back( SVEnumeratePair(_T("Background"), 1 ) );
 	m_Data.evoFillArea.SetEnumTypes(vec);
-	m_Data.evoFillArea.SetDefaultValue((long)0, TRUE);	// mask area is default
+	m_Data.evoFillArea.SetDefaultValue(0l, true);	// mask area is default
 
-	m_Data.lvoFillColor.SetDefaultValue(0, TRUE);	// black default
+	m_Data.lvoFillColor.SetDefaultValue(0, true);	// black default
 
 	vec.clear();
 	vec.push_back( SVEnumeratePair(_T("None"), SVNone ) );
 	vec.push_back( SVEnumeratePair(_T("Non-Black"), SVNonBlackPixels ) );
 	vec.push_back( SVEnumeratePair(_T("Non-White"), SVNonWhitePixels ) );
 	m_Data.evoDrawCriteria.SetEnumTypes( vec );
-	m_Data.evoDrawCriteria.SetDefaultValue( SVNone, TRUE );
+	m_Data.evoDrawCriteria.SetDefaultValue( SVNone, true );
 
-	m_Data.bvoActivated.SetDefaultValue( FALSE, TRUE );
-	m_Data.dwvoMaskType.SetDefaultValue(MASK_TYPE_STATIC, TRUE);
+	m_Data.bvoActivated.SetDefaultValue( BOOL(false), true);
+	m_Data.dwvoMaskType.SetDefaultValue(MASK_TYPE_STATIC, true);
 
 
 
@@ -149,7 +149,7 @@ bool SVUserMaskOperatorClass::ResetObject(SvStl::MessageContainerVector *pErrorM
 
 	DWORD dwMaskType;
 	m_Data.dwvoMaskType.GetValue( dwMaskType );
-	BOOL bActive = FALSE;
+	BOOL bActive = false;
 	m_Data.bvoActivated.GetValue(bActive);
 
 	SVShapeMaskHelperClass* pShapeHelper = GetShapeHelper();
@@ -501,7 +501,7 @@ HRESULT SVUserMaskOperatorClass::DestroyLocalImageBuffer()
 // .Description : Refresh mask buffer...
 //              :
 ////////////////////////////////////////////////////////////////////////////////
-BOOL SVUserMaskOperatorClass::Refresh()
+bool SVUserMaskOperatorClass::Refresh()
 {
 	SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(GetInspection());
 
@@ -704,7 +704,7 @@ HRESULT SVUserMaskOperatorClass::SetObjectValue( SVObjectAttributeClass* pDataOb
 // .Title       : onRun
 // -----------------------------------------------------------------------------
 // .Description : Runs this operator.
-//              : Returns FALSE, if operator cannot run ( may be deactivated ! )
+//              : Returns false, if operator cannot run ( may be deactivated ! )
 ////////////////////////////////////////////////////////////////////////////////
 bool SVUserMaskOperatorClass::onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 { 
@@ -885,7 +885,7 @@ bool SVUserMaskOperatorClass::onRun( bool First, SVSmartHandlePointer RInputImag
 	}
 
 	// Was deactivated, but everything is ok !!!
-	// So just return FALSE, don't invalidate !!!
+	// So just return false, don't invalidate !!!
 	SVShapeMaskHelperClass* pShapeHelper = GetShapeHelper();
 	if ( pShapeHelper )
 	{

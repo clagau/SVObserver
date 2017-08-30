@@ -49,10 +49,6 @@ protected:
 	SVMatroxImageResult m_histResultID;
 	SVMatroxLongArray  m_HistValueArray;
 	int    m_histValueArraySize;
-
-	// Contents the current pixel number, call
-	// BOOL SVThresholdClass::Resize( SVExtentClass& RExtent );
-	// to (re-)calculate...
 	__int64 m_pixelNumber;
 
 

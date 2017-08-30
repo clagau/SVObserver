@@ -48,12 +48,10 @@ SVDPointClass::~SVDPointClass()
 {
 }
 
-BOOL SVDPointClass::GetValue(POINT &Point) const
+void SVDPointClass::GetValue(POINT &Point) const
 {
 	Point.x = static_cast< long >( x );
 	Point.y = static_cast< long >( y );
-
-	return TRUE;
 }
 
 SVDPointClass::operator POINT () const

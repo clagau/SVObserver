@@ -706,14 +706,6 @@ bool SVObjectClass::SetImageDepth( long lDepth )
 }
 
 /*
-This method returns the current state of the public attributes.
-*/
-SVPublicAttributeEntryStruct* SVObjectClass::GetPublicAttribute()
-{
-	return &m_publicAttribute;
-}
-
-/*
 This method returns Ancestor Object of specified Object Type of this Object, if any.  Otherwise it returns NULL.
 */
 SVObjectClass* SVObjectClass::GetAncestor( SVObjectTypeEnum AncestorObjectType ) const

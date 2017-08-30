@@ -32,28 +32,28 @@ namespace SvTi
 	{
 	}
 
-	BOOL SVOTriggerList::AddTriggerToList(const SVString& sTriggerName, int iDigNumber)
+	bool SVOTriggerList::AddTriggerToList(const SVString& sTriggerName, int iDigNumber)
 	{
-		BOOL bRet = FALSE;
+		bool bRet = false;
 
 		if (!IsTriggerInList(sTriggerName))
 		{
 			SVOTriggerObjPtr pTriggerObj = new SVOTriggerObj(sTriggerName, iDigNumber);
 			m_TriggerList.AddTail(pTriggerObj);
-			bRet = TRUE;
+			bRet = true;
 		}
 		return bRet;
 	}
 
 
-	BOOL SVOTriggerList::RemoveTriggerFromList(const SVString& sTriggerName)
+	bool SVOTriggerList::RemoveTriggerFromList(const SVString& sTriggerName)
 	{
-		BOOL bRet = FALSE;
+		bool bRet = false;
 		iterator pos = FindTriggerPosition(sTriggerName);
 		if (pos != m_TriggerList.end())
 		{
 			m_TriggerList.RemoveAt(pos);
-			bRet = TRUE;
+			bRet = true;
 		}
 
 		return bRet;

@@ -147,7 +147,7 @@ private:
 	SVMatroxPatternModel m_patModelHandle;		// Model Identifer Handle
 	SVMatroxPatResult m_patResultHandle;	// Pattern matching result buffer identifier handle
 
-	BOOL m_bAngleAccuracy;
+	bool m_bAngleAccuracy;
 
 	// Value Objects for Model Search Parameters.
 

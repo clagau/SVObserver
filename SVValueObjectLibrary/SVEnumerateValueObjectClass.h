@@ -37,20 +37,20 @@ public:
 	//virtual HRESULT GetObjectValue( const SVString& rValueName, _variant_t& rValue ) const override;
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* PDataObject ) override;
 
-	BOOL GetEnumerator( LPCTSTR szEnumerator, long& lValue ) const;
-	BOOL GetEnumeratorName( long lValue, SVString& rEnumerator ) const;
-	BOOL GetEnumTypes( SVEnumerateVector& rVec ) const;
-	BOOL GetEnumTypes( SVString& rEnumList ) const;
+	bool GetEnumerator( LPCTSTR szEnumerator, long& lValue ) const;
+	bool GetEnumeratorName( long lValue, SVString& rEnumerator ) const;
+	bool GetEnumTypes( SVEnumerateVector& rVec ) const;
+	bool GetEnumTypes( SVString& rEnumList ) const;
 	int  GetFirstEnumTypePos() const;
-	BOOL GetNextEnumType( int& rIterator, SVString& rEnum, long& rValue ) const;
+	bool GetNextEnumType( int& rIterator, SVString& rEnum, long& rValue ) const;
 
-	BOOL SetEnumTypes( const SVEnumerateVector& rVec );
-	BOOL SetEnumTypes( LPCTSTR szEnumList );
-	BOOL SetEnumTypes( int StringResourceID );
+	bool SetEnumTypes( const SVEnumerateVector& rVec );
+	bool SetEnumTypes( LPCTSTR szEnumList );
+	bool SetEnumTypes( int StringResourceID );
 
-	HRESULT SetDefaultValue( LPCTSTR Value, bool bResetAll );
+	HRESULT SetDefaultValue( LPCTSTR Value, bool bResetAll = true );
 
-	virtual HRESULT SetDefaultValue( const long& rValue, bool bResetAll ) override { return __super::SetDefaultValue( rValue, bResetAll ); };
+	virtual HRESULT SetDefaultValue( const long& rValue, bool bResetAll = true ) override { return __super::SetDefaultValue( rValue, bResetAll ); };
 
 #pragma region IEnumerateValueObject
 	virtual SvOi::NameValueList GetEnumList() const override;

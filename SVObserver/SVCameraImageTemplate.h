@@ -59,7 +59,7 @@ public:
 	HRESULT RestoreMainImage( SVInspectionProcess* p_psvInspection );
 
 protected:
-	virtual BOOL CreateBuffers( const SVImageInfoClass& p_rImageInfo, SVImageObjectClassPtr p_ImageArrayPtr ) = 0;
+	virtual bool CreateBuffers( const SVImageInfoClass& p_rImageInfo, SVImageObjectClassPtr p_ImageArrayPtr ) = 0;
 
 	virtual bool DestroyImage() override;
 

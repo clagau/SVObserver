@@ -49,7 +49,7 @@ void SVMathEquationClass::init()
 	RegisterEmbeddedObject( &result, SVMathEquationResultObjectGuid, IDS_OBJECTNAME_RESULT, false, SvOi::SVResetItemNone );
 
 	// Set Embedded defaults
-	result.SetDefaultValue( 0.0, TRUE );
+	result.SetDefaultValue( 0.0 );
 	result.setSaveValueFlag(false);
 
 	// Set default inputs and outputs

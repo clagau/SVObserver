@@ -42,14 +42,14 @@ public:
 	virtual bool DoesObjectHaveExtents() const override;
 
 	SVString GetProfileOrientation();
-	BOOL GetRotation();
+	bool GetRotation();
 
 	//************************************
 	//! return Flag with enabled Autosize
 	//! \returns  EnableSize  | EnablePosition
 	//************************************
 	virtual EAutoSize GetAutoSizeEnabled() override;
-	BOOL IsToolRotated();
+	bool IsToolRotated();
 
 	virtual SVStringValueObjectClass* GetInputImageNames() override;
 #pragma endregion Public Methods

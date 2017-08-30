@@ -32,7 +32,7 @@ public:
 	virtual ~SVBarCodeResultClass();
 
 	HRESULT LoadMatchStringFile();
-	BOOL BuildHashTable(char *szBuffer);
+	bool BuildHashTable(char *szBuffer);
 	void InsertValueToTable(short nValue, int index);
 
 	int CheckStringInTable( const SVString& rMatchString );

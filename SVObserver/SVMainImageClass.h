@@ -38,7 +38,7 @@ public:
 protected:
 	virtual bool ValidateImage() override;
 
-	virtual BOOL CreateBuffers( const SVImageInfoClass& p_rImageInfo, SVImageObjectClassPtr p_ImageArrayPtr ) override;
+	virtual bool CreateBuffers( const SVImageInfoClass& p_rImageInfo, SVImageObjectClassPtr p_ImageArrayPtr ) override;
 
 	virtual SVImageObjectClassPtr GetBufferArrayPtr() const override;
 

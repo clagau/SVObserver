@@ -60,11 +60,11 @@ void SVImageToolClass::init()
 	POINT defaultPoint;
 	defaultPoint.x = 0;
 	defaultPoint.y = 0;
-	outputEnableOffsetA.SetDefaultValue( FALSE, TRUE );
-	outputOffsetAPoint.SetDefaultValue( defaultPoint, TRUE );
-	outputEnableOffsetB.SetDefaultValue( FALSE, TRUE );
-	outputOffsetBPoint.SetDefaultValue( defaultPoint, TRUE );
-	outputOperator.SetDefaultValue( SVImageSubSaturation, TRUE );
+	outputEnableOffsetA.SetDefaultValue( BOOL(false) );
+	outputOffsetAPoint.SetDefaultValue( defaultPoint );
+	outputEnableOffsetB.SetDefaultValue(BOOL(false) );
+	outputOffsetBPoint.SetDefaultValue( defaultPoint );
+	outputOperator.SetDefaultValue( SVImageSubSaturation );
 
 	// Default taskObjectList items:
 
@@ -93,7 +93,7 @@ void SVImageToolClass::init()
 			// Activated by default!
 			// We don't want to use this operator by default.
 			// So deactivate it...
-			pThresholdOperator->GetThresholdActivateAttribute().SetDefaultValue( FALSE, TRUE );
+			pThresholdOperator->GetThresholdActivateAttribute().SetDefaultValue(BOOL(false) );
 			pOperatorList->Add( pThresholdOperator );
 		}
 

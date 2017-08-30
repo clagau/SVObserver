@@ -524,7 +524,7 @@ HRESULT SVExternalToolDlg::RestoreOriginalData()
 	int iDepSize = static_cast< int >( m_pTask->m_Data.m_aDllDependencies.size() );
 	for ( i = 0 ; i < iDepSize ; i++)
 	{
-		m_pTask->m_Data.m_aDllDependencies[i].SetDefaultValue( _T("") , TRUE);
+		m_pTask->m_Data.m_aDllDependencies[i].SetDefaultValue( _T("") , true);
 	}
 
 	// Set all File Paths from listbox

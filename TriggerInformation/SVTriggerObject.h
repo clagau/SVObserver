@@ -37,15 +37,15 @@ namespace SvTi
 		SVTriggerObject( SVObjectClass *pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVTRIGGEROBJECT );
 		virtual ~SVTriggerObject();
 
-		BOOL Create( SvTh::SVTriggerClass *psvDevice );
-		BOOL Destroy();
+		bool Create( SvTh::SVTriggerClass *psvDevice );
+		bool Destroy();
 
 		// Runtime Functions
-		BOOL CanGoOnline();
-		BOOL GoOnline();
-		BOOL GoOffline();
+		bool CanGoOnline();
+		bool GoOnline();
+		bool GoOffline();
 
-		BOOL RegisterFinishProcess( void *pOwner, LPSVFINISHPROC pFunc );
+		bool RegisterFinishProcess( void *pOwner, LPSVFINISHPROC pFunc );
 		bool UnregisterFinishProcess( void *pOwner );
 
 		void FinishProcess( SVOResponseClass *pResponse );

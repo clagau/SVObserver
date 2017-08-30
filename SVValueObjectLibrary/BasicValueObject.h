@@ -221,27 +221,23 @@ private:
 	//************************************
 	//! The method creates the value object
 	//! \param pOwner <in> pointer to the parent object
-	//! \returns true on success
 	//************************************
-	BOOL Create( SVObjectClass* pOwner );
+	void Create( SVObjectClass* pOwner );
 
 	//************************************
 	//! The method destroys the value object
-	//! \returns true on success
 	//************************************
-	BOOL Destroy();
+	void Destroy();
 
 	//************************************
 	//! The method locks the value object for writing
-	//! \returns true on success
 	//************************************
-	BOOL Lock();
+	void Lock();
 
 	//************************************
 	//! The method unlocks the value object
-	//! \returns true on success
 	//************************************
-	BOOL Unlock();
+	void Unlock();
 
 	//************************************
 	//! The method refreshes the object and sends its parent a RefreshObject

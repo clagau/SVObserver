@@ -40,16 +40,12 @@ SVTimerValueObjectClass::~SVTimerValueObjectClass()
 {
 }
 
-BOOL SVTimerValueObjectClass::Start()
+void SVTimerValueObjectClass::Start()
 {
-	BOOL bOk = true;
-
 	m_Start = SvTl::GetTimeStamp();
-
-	return bOk;
 }
 
-BOOL SVTimerValueObjectClass::Stop()
+bool SVTimerValueObjectClass::Stop()
 {
 	double Value = SvTl::ConvertTo( SvTl::Microseconds, ( SvTl::GetTimeStamp() - m_Start ) );
 

@@ -26,8 +26,8 @@ public:
 	SVTimerValueObjectClass( SVObjectClass *pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVINT64VALUEOBJECT );
 	virtual ~SVTimerValueObjectClass();
 
-	BOOL Start();
-	BOOL Stop();
+	void Start();
+	bool Stop();
 
 private:
 	void LocalInitialize();

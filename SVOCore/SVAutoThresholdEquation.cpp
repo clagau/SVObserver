@@ -45,7 +45,7 @@ void SVAutoThresholdEquationClass::init()
 	RegisterEmbeddedObject( &result, SVAutoThresholdEquationResultObjectGuid, IDS_OBJECTNAME_AUTO_THRESHOLD_RESULT, false, SvOi::SVResetItemNone );
 
 	// Set Embedded defaults
-	result.SetDefaultValue( 0.0, TRUE );
+	result.SetDefaultValue( 0.0 );
 	result.setSaveValueFlag(false);
 
 	// Set default inputs and outputs

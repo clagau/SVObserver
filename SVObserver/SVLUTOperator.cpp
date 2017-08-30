@@ -55,28 +55,28 @@ void SVLUTOperatorClass::init()
 
 	// LUT Vector...
 	m_lutVector.SetLegacyVectorObjectCompatibility();
-	m_lutVector.SetDefaultValue( 0, TRUE );
+	m_lutVector.SetDefaultValue( 0, true );
 
 	// Use LUT...
-	// Default must be FALSE, since we have to be compatible to 
+	// Default must be false, since we have to be compatible to 
 	//	older versions, which had no LUT yet.
-	m_useLUT.SetDefaultValue( FALSE, TRUE ); 
+	m_useLUT.SetDefaultValue( BOOL(false), true);
 
 	// Continuous Recalc LUT...
-	// Default is FALSE.
-	m_continuousRecalcLUT.SetDefaultValue( FALSE, TRUE ); 
+	// Default is false.
+	m_continuousRecalcLUT.SetDefaultValue( BOOL(false), true);
 
 	// LUT Mode...
 	// Enumerate Value Object...
 	m_lutMode.SetEnumTypes( IDS_LUTMODE_ENUMOBJECT_LIST );
 	// Default should be Identity...
-	m_lutMode.SetDefaultValue( ( const long ) 0 , TRUE );
+	m_lutMode.SetDefaultValue( ( const long ) 0 , true);
 
 	// Upper Clip Value for Clip Mode...
-	m_upperClip.SetDefaultValue( 128, TRUE );
+	m_upperClip.SetDefaultValue( 128, true);
 
 	// Lower Clip Value for Clip Mode...
-	m_lowerClip.SetDefaultValue( 0, TRUE );
+	m_lowerClip.SetDefaultValue( 0, true);
 
 	// Trivial mil lut buffer...
 	m_lutElementNumber = 0;
@@ -157,7 +157,7 @@ bool SVLUTOperatorClass::CloseObject()
 //              : If MIL LUT buffer is not yet allocated, it tries to do this, 
 //				: also.
 ////////////////////////////////////////////////////////////////////////////////
-BOOL SVLUTOperatorClass::RecalcLUT( SVRunStatusClass& rRunStatus )
+bool SVLUTOperatorClass::RecalcLUT( SVRunStatusClass& rRunStatus )
 {
 	long lLutMode = 0;
 
@@ -182,13 +182,15 @@ BOOL SVLUTOperatorClass::RecalcLUT( SVRunStatusClass& rRunStatus )
 			if( m_lutBufID.empty() )
 			{
 				// Something is wrong, cannot allocate LUT buffer...
-				return FALSE;
+				return false;
 			}
 		}
 
 		// Get current LUT Operator Mode...
-		if( S_OK != m_lutMode.GetValue( lLutMode ) )
-			return FALSE;
+		if (S_OK != m_lutMode.GetValue(lLutMode))
+		{
+			return false;
+		}
 
 		switch( lLutMode )
 		{
@@ -206,7 +208,7 @@ BOOL SVLUTOperatorClass::RecalcLUT( SVRunStatusClass& rRunStatus )
 				m_lutVector.SetArraySize(static_cast<int>(byteVec.size()));
 				if( S_OK != m_lutVector.SetArrayValues(byteVec) )
 				{
-					return FALSE;
+					return false;
 				}
 			}
 			break;
@@ -224,7 +226,7 @@ BOOL SVLUTOperatorClass::RecalcLUT( SVRunStatusClass& rRunStatus )
 
 				if( S_OK != m_lutVector.SetArrayValues(byteVec) )
 				{
-					return FALSE;
+					return false;
 				}
 			}
 			break;
@@ -242,7 +244,7 @@ BOOL SVLUTOperatorClass::RecalcLUT( SVRunStatusClass& rRunStatus )
 
 				if( S_OK != m_lutVector.SetArrayValues(byteVec) )
 				{
-					return FALSE;
+					return false;
 				}
 			}
 			break;
@@ -261,7 +263,7 @@ BOOL SVLUTOperatorClass::RecalcLUT( SVRunStatusClass& rRunStatus )
 				long lLowerClip = 0;
 				if( ( S_OK != m_upperClip.GetValue( lUpperClip ) ) || ( S_OK != m_lowerClip.GetValue( lLowerClip ) ) )
 				{
-					return FALSE;
+					return false;
 				}
 
 				// Clip...
@@ -283,14 +285,14 @@ BOOL SVLUTOperatorClass::RecalcLUT( SVRunStatusClass& rRunStatus )
 
 				if( S_OK != m_lutVector.SetArrayValues(byteVec) )
 				{
-					return FALSE;
+					return false;
 				}
 			}
 			break;
 
 			case 4: // Formula...
 			{
-				BOOL l_bOk = runFriends( rRunStatus );
+				bool l_bOk = runFriends( rRunStatus );
 
 				// Get LUT Vector from equation and stick it inside m_lutVector...
 				std::vector<BYTE> byteVector;
@@ -302,7 +304,7 @@ BOOL SVLUTOperatorClass::RecalcLUT( SVRunStatusClass& rRunStatus )
 
 				if( ! l_bOk )
 				{
-					return FALSE;
+					return false;
 				}
 			}
 			break;
@@ -313,7 +315,7 @@ BOOL SVLUTOperatorClass::RecalcLUT( SVRunStatusClass& rRunStatus )
 
 			default:
 				// Unknown Mode...
-				return FALSE;
+				return false;
 		}
 
 		// Check LUT Vector size...
@@ -337,7 +339,7 @@ BOOL SVLUTOperatorClass::RecalcLUT( SVRunStatusClass& rRunStatus )
 					}
 
 					// Success...
-					return TRUE;
+					return true;
 				}
 			}
 
@@ -348,7 +350,7 @@ BOOL SVLUTOperatorClass::RecalcLUT( SVRunStatusClass& rRunStatus )
 
 		}
 	}
-	return FALSE;
+	return false;
 }
 
 
@@ -369,7 +371,7 @@ SVByteValueObjectClass* SVLUTOperatorClass::getInputLUTVectorResult()
 // .Title       : onRun
 // -----------------------------------------------------------------------------
 // .Description : Runs this operator.
-//              : Returns FALSE, if operator cannot run ( may be deactivated ! )
+//              : Returns false, if operator cannot run ( may be deactivated ! )
 ////////////////////////////////////////////////////////////////////////////////
 bool SVLUTOperatorClass::onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 { 
@@ -396,8 +398,8 @@ bool SVLUTOperatorClass::onRun( bool First, SVSmartHandlePointer RInputImageHand
 	RInputImageHandle->GetData( l_InMilHandle );
 	ROutputImageHandle->GetData( l_OutMilHandle );
 
-	BOOL bUseLUT  = FALSE;
-	BOOL bContinuousRecalcLUT = FALSE;
+	BOOL bUseLUT  = false;
+	BOOL bContinuousRecalcLUT = false;
 
 	// Check, if LUT shall run...
 	if( S_OK != m_useLUT.GetValue( bUseLUT ) )
@@ -419,8 +421,8 @@ bool SVLUTOperatorClass::onRun( bool First, SVSmartHandlePointer RInputImageHand
 		// Disable only this operator...
 		SetDisabled();
 
-		// Do not return TRUE here !!!
-		//return TRUE;
+		// Do not return true here !!!
+		//return true;
 
 		// Signal that this operator was not running...
 		// But everything was ok!!!!
@@ -454,7 +456,7 @@ bool SVLUTOperatorClass::onRun( bool First, SVSmartHandlePointer RInputImageHand
 			// Signal that something was wrong...
 			SetInvalid();
 			rRunStatus.SetInvalid();
-			return FALSE;
+			return false;
 		}
 
 		m_bForceLUTRecalc = false;

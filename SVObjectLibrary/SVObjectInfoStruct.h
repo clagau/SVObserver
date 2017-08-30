@@ -48,7 +48,7 @@ struct SVObjectInfoStruct
 	bool operator == ( const SVObjectReference& rRhs ) const;
 
 	SVObjectReference GetObjectReference() const;
-	BOOL CheckExistence();
+	bool CheckExistence();
 
 	SVObjectClass* m_pObject;					// Where I am
 	SVGUID m_UniqueObjectID;					// Who I am

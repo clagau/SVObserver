@@ -24,11 +24,11 @@ SV_IMPLEMENT_CLASS( SVLinearEdgeCountingLineAnalyzerClass, SVLinearEdgeCountingL
 SVLinearEdgeCountingLineAnalyzerClass::SVLinearEdgeCountingLineAnalyzerClass( SVObjectClass* POwner, int StringResourceID )
 								:SVLinearAnalyzerClass( POwner, StringResourceID ) 
 {
-	m_bEnableDirection = FALSE;
-	m_bEnableEdgeSelect = FALSE;
-	m_bEnablePolarisation = TRUE;
-	m_bEnablePosition = FALSE;
-	m_bEnableThreshold = TRUE;
+	m_bEnableDirection = false;
+	m_bEnableEdgeSelect = false;
+	m_bEnablePolarisation = true;
+	m_bEnablePosition = false;
+	m_bEnableThreshold = true;
 
 	init();
 }
@@ -47,7 +47,7 @@ void SVLinearEdgeCountingLineAnalyzerClass::init()
 	RegisterEmbeddedObject(&m_svShowAllEdgeAOverlays, SVShowAllEdgeAOverlaysGuid, IDS_OBJECTNAME_SHOW_ALL_EDGE_A_OVERLAYS, false, SvOi::SVResetItemNone);
 
 	// Set Embedded defaults
-	m_svEdgeCount.SetDefaultValue( 0, TRUE );
+	m_svEdgeCount.SetDefaultValue( 0 );
 	m_svEdgeCount.setSaveValueFlag(false);
 	
 	// Set default inputs and outputs

@@ -251,11 +251,7 @@ protected:
 /*- MapQuickSort () ----------------------------------------------------------*/
 /*- This should not be called directly, but through SortBlobs () -------------*/
 
-	void MapQuickSort (double*    aSortArray, 
-	                    long*      alSortMap,
-	                    long       alBeginning,
-	                    long       alEnd,
-	                    BOOL       abAscending);
+	void MapQuickSort (double* aSortArray, long* alSortMap, long alBeginning, long alEnd, bool abAscending);
 
 
 	virtual void addDefaultInputObjects( SVInputInfoListClass* PInputListToFill = nullptr ) override;

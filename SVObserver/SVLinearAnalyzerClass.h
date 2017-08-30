@@ -52,7 +52,7 @@ protected:
 	HRESULT GetProjectedExtent( long p_lIndex, long &p_rlBottom, SVImageExtentClass &p_rsvImageExtent );
 
 	HRESULT GetInputProfileOrientation(long& rProfileOrientation);
-	HRESULT GetInputUseRotationAngle(BOOL& rUseRotationAngle);
+	HRESULT GetInputUseRotationAngle(bool& rUseRotationAngle);
 	bool ValidateEdgeA(SvStl::MessageContainerVector *pErrorMessages=nullptr);
 	bool ValidateEdgeB(SvStl::MessageContainerVector *pErrorMessages=nullptr);
 
@@ -66,11 +66,11 @@ protected:
 	DWORD m_dwMaxThreshold;
 	DWORD m_dwColorNumber;
 
-	BOOL m_bEnableDirection;
-	BOOL m_bEnableEdgeSelect;
-	BOOL m_bEnablePolarisation;
-	BOOL m_bEnablePosition;
-	BOOL m_bEnableThreshold;
+	bool m_bEnableDirection;
+	bool m_bEnableEdgeSelect;
+	bool m_bEnablePolarisation;
+	bool m_bEnablePosition;
+	bool m_bEnableThreshold;
 
 	SVValueBaseNormalizerClass m_svNormalizer;
 };

@@ -24,11 +24,11 @@ SV_IMPLEMENT_CLASS( SVLinearPixelCountingLineAnalyzerClass, SVLinearPixelCountin
 SVLinearPixelCountingLineAnalyzerClass::SVLinearPixelCountingLineAnalyzerClass( SVObjectClass* POwner, int StringResourceID )
 								 :SVLinearAnalyzerClass( POwner, StringResourceID ) 
 {
-	m_bEnableDirection = FALSE;
-	m_bEnableEdgeSelect = FALSE;
-	m_bEnablePolarisation = FALSE;
-	m_bEnablePosition = FALSE;
-	m_bEnableThreshold = TRUE;
+	m_bEnableDirection = false;
+	m_bEnableEdgeSelect = false;
+	m_bEnablePolarisation = false;
+	m_bEnablePosition = false;
+	m_bEnableThreshold = true;
 
 	init();
 }
