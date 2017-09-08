@@ -139,68 +139,69 @@ HRESULT SVValueObjectClass<T>::SetArraySize(int iSize)
 {
 	HRESULT hr = S_OK;
 
-	if( m_ArraySize != iSize )
+	m_ArraySize = (std::max)(iSize, 1);	// minimum one array element //parentheses around std::max avoid problems if a max macro has beed defined somewhere (e.g. in windows.h)
+
+	if( m_ArraySize <= 1 )
 	{
-		m_ArraySize = (std::max)(iSize, 1);	// minimum one array element //parentheses around std::max avoid problems if a max macro has beed defined somewhere (e.g. in windows.h)
-
-		if( m_ArraySize <= 1 )
+		if( SVString::npos != m_TypeName.find( _T(" Array") ) )
 		{
-			if( SVString::npos != m_TypeName.find( _T(" Array") ) )
+			m_TypeName = SvUl_SF::Left( m_TypeName, m_TypeName.size() - 6 );
+		}
+	}
+	else
+	{
+		if( SVString::npos == m_TypeName.find( _T(" Array") ) )
+		{
+			m_TypeName += _T(" Array") ;
+		}
+	}
+
+	m_ResultSize = iSize;
+
+	m_ObjectAttributesSet.resize( m_ArraySize, m_DefaultObjectAttributesSet );
+
+	if( !m_isBucketized )
+	{
+		if ( 1 == m_ArraySize )
+		{
+			if (iSize == 0)
 			{
-				m_TypeName = SvUl_SF::Left( m_TypeName, m_TypeName.size() - 6 );
+				m_Value = GetDefaultValue();
+			}
+			m_ValueArray.clear();
+		}
+		else
+		{
+			if ( iSize == 0 )
+			{
+				m_ValueArray.clear();	// minimum array size is 1. If iSize == 0, clear the array then resize back to 1 below with the default value.
+			}
+			m_ValueArray.resize( m_ArraySize, GetDefaultValue() );
+		}
+	}
+	else
+	{
+		if ( 1 == m_ArraySize )
+		{
+			if(nullptr != m_pBucket.get())
+			{
+				std::fill( m_pBucket->begin(), m_pBucket->end(), GetDefaultValue() );
 			}
 		}
 		else
 		{
-			if( SVString::npos == m_TypeName.find( _T(" Array") ) )
+			//When bucketized the standard array needs to increase in size too
+			m_ValueArray.resize(m_ArraySize, GetDefaultValue());
+			if(nullptr != m_pBucketArray.get())
 			{
-				m_TypeName += _T(" Array") ;
+				for ( int i=0; i < m_NumberOfBuckets; i++ )
+				{
+					ValueVector& rBucket = m_pBucketArray->at( i );
+					rBucket.resize( m_ArraySize, GetDefaultValue() );
+				}
 			}
 		}
 
-		m_ResultSize = iSize;
-
-		m_ObjectAttributesSet.resize( m_ArraySize, m_DefaultObjectAttributesSet );
-
-		if( !m_isBucketized )
-		{
-			if ( 1 == m_ArraySize )
-			{
-				m_ValueArray.clear();
-			}
-			else
-			{
-				if ( iSize == 0 )
-				{
-					m_ValueArray.clear();	// minimum array size is 1. If iSize == 0, clear the array then resize back to 1 below with the default value.
-				}
-				m_ValueArray.resize( m_ArraySize, GetDefaultValue() );
-			}
-		}
-		else
-		{
-			if ( 1 == m_ArraySize )
-			{
-				if(nullptr != m_pBucket.get())
-				{
-					std::fill( m_pBucket->begin(), m_pBucket->end(), GetDefaultValue() );
-				}
-			}
-			else
-			{
-				//When bucketized the standard array needs to increase in size too
-				m_ValueArray.resize(m_ArraySize, GetDefaultValue());
-				if(nullptr != m_pBucketArray.get())
-				{
-					for ( int i=0; i < m_NumberOfBuckets; i++ )
-					{
-						ValueVector& rBucket = m_pBucketArray->at( i );
-						rBucket.resize( m_ArraySize, GetDefaultValue() );
-					}
-				}
-			}
-
-		}
 	}
 
 	return hr;

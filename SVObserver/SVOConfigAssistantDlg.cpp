@@ -99,6 +99,7 @@ static const TCHAR* const MESSAGE_UNSUPPORTED_CAM_FILE ( _T("The camera file you
 static const TCHAR* const MESSAGE_INCORRECT_CAM_FILE   ( _T("The selected camera file does not match the physical camera.") );
 static const TCHAR* const MESSAGE_NOT_COLOR_CAM_FILE   ( _T("The selected camera file is not a color camera file.") );
 static const TCHAR* const MESSAGE_NOT_COLOR_CAM        ( _T("The physical camera is not a color camera.") );
+static const TCHAR* const MESSAGE_NOT_MONO_CAM_FILE    (_T("The selected camera file is not a mono camera file."));
 static const TCHAR* const MESSAGE_ONE_INVERT_CONTROL   ( _T("There is only one Invert control on a SVIM X-Series for all triggers and strobes.") );
 static const TCHAR* const MESSAGE_SOFTWARE_TRIGGER_NOT_ALLOWED ( _T("The camera does not support Software Triggering.") );
 static const TCHAR* const MESSAGE_FILE_ACQUISITION_NOT_ALLOWED ( _T("File Acquisition is not allowed.") );
@@ -3914,9 +3915,11 @@ HRESULT CSVOConfigAssistantDlg::CheckCamera( SVOCameraObj& rCameraObj, bool SetF
 			}
 
 			SVString MessageNotColorCamFile = BuildDisplayMessage(MESSAGE_TYPE_ERROR, CameraName.c_str(), MESSAGE_NOT_COLOR_CAM_FILE);
+			SVString MessageNotMonoCamFile = BuildDisplayMessage(MESSAGE_TYPE_ERROR, CameraName.c_str(), MESSAGE_NOT_MONO_CAM_FILE);
 			SVString MessageNoColorCam = BuildDisplayMessage(MESSAGE_TYPE_WARNING, CameraName.c_str(), MESSAGE_NOT_COLOR_CAM);
 
 			RemoveMessageFromList(MessageNotColorCamFile.c_str());
+			RemoveMessageFromList(MessageNotMonoCamFile.c_str());
 			RemoveMessageFromList(MessageNoColorCam.c_str());
 			// if camera file color mismatch selected product color - error
 			//      only color product and b/w cam file
@@ -3949,6 +3952,18 @@ HRESULT CSVOConfigAssistantDlg::CheckCamera( SVOCameraObj& rCameraObj, bool SetF
 					}// end if ( l_HardwareCapabilities.ParameterExists( DeviceParamCameraFormats ) )
 				}// end if ( params.ParameterExists( DeviceParamCameraFormats ) )
 			}
+			else
+			{
+				if (DeviceParams.ParameterExists(DeviceParamCameraFormats))
+				{
+					const SVCameraFormatsDeviceParam* pParam = DeviceParams.Parameter(DeviceParamCameraFormats).DerivedValue(pParam);
+					if (!pParam->SupportsMono())
+					{
+						AddMessageToList(CAMERA_DLG, MessageNotMonoCamFile.c_str());
+					}
+				}
+			}
+
 		}// end if ( pDevice )
 	}
 	return S_OK;

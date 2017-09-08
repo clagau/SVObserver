@@ -64,14 +64,8 @@ bool TableObject::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = __super::ResetObject(pErrorMessages);
 
-	m_sortContainer.clear();
+	clearTable();
 
-	for (std::vector<DoubleSortValuePtr>::iterator iter = m_ValueList.begin(); iter != m_ValueList.end(); ++iter )
-	{
-		(*iter)->setSortContainer(m_sortContainer);
-		(*iter)->setSaveValueFlag(false);
-	}
-	m_NumberOfRows.SetValue(0L);
 	dynamic_cast<SVInspectionProcess*>(GetInspection())->SetDefaultInputs();
 
 	return Result;
@@ -164,6 +158,18 @@ void TableObject::removeColumn(const GUID& rEmbeddedId)
 		pValueObject.reset();
 		dynamic_cast<SVInspectionProcess*>(GetInspection())->SetDefaultInputs();
 	}
+}
+
+void TableObject::clearTable()
+{
+	m_sortContainer.clear();
+
+	for (std::vector<DoubleSortValuePtr>::iterator iter = m_ValueList.begin(); iter != m_ValueList.end(); ++iter)
+	{
+		(*iter)->setSortContainer(m_sortContainer);
+		(*iter)->setSaveValueFlag(false);
+	}
+	m_NumberOfRows.SetValue(0L);
 }
 
 SVObjectClass* TableObject::OverwriteEmbeddedObject(const GUID& rUniqueID, const GUID& rEmbeddedID)

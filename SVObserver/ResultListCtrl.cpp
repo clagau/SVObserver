@@ -39,7 +39,6 @@ END_MESSAGE_MAP()
 
 #pragma region Constructor
 ResultListCtrl::ResultListCtrl() : CListCtrl()
-, m_UpdateTimeStamp(0.0)
 {
 	VERIFY(m_ContextMenuItem.LoadMenu(IDR_RESULTS_CONTEXT_MENU));
 }
@@ -82,13 +81,14 @@ void ResultListCtrl::updateList(class SVIPDoc* pDoc)
 	}
 	Update = Update || !SVSVIMStateClass::CheckState( SV_STATE_RUNNING );
 
-	if( !Update )
+	pDoc->GetResultData(m_ResultData);
+	//If Result Definition time stamp invalid return (Initial value is 0.0)
+	if (!Update || 1.0 > pDoc->getResultDefinitionUpdatTimeStamp())
 	{
 		return;
 	}
 
 	SetRedraw( false );
-	pDoc->GetResultData( m_ResultData );
 
 	bool bRedrawDefinitions = false;
 	if (m_UpdateTimeStamp < pDoc->getResultDefinitionUpdatTimeStamp())
@@ -239,7 +239,7 @@ void ResultListCtrl::updateList(class SVIPDoc* pDoc)
 
 	m_UpdateTimeStamp = SvTl::GetTimeStamp();
 	SetRedraw( true );
-	RedrawWindow(NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW | RDW_ERASE | RDW_FRAME);
+	RedrawWindow(nullptr, nullptr, RDW_INVALIDATE | RDW_UPDATENOW | RDW_ERASE | RDW_FRAME);
 }
 #pragma endregion Public Methods
 
@@ -395,19 +395,6 @@ void ResultListCtrl::DrawItem( LPDRAWITEMSTRUCT lpDrawItemStruct )
 	}
 }
 
-void ResultListCtrl::OnSize(UINT nType, int cx, int cy)
-{
-	CListCtrl::OnSize(nType, cx, cy);
-
-	//! This is necessary to avoid sporadic recursive calls to OnSize
-	if (m_ControlSize.cx != cx || m_ControlSize.cy != cy)
-	{
-		setColumnWidths();
-		m_ControlSize.cx = cx;
-		m_ControlSize.cy = cy;
-	}
-}
-
 void ResultListCtrl::OnContextMenu(CWnd* /*pWnd*/, CPoint point)
 {
 
@@ -444,32 +431,38 @@ SVString ResultListCtrl::CalcProcessesPerSecond(double p_LastTriggerDistance)
 
 void ResultListCtrl::addColumnHeadings()
 {
+	m_ColumnWidthSet = false;
 	// load the Column names
 	for (int i = 0; i < SV_NUMBER_RESULTVIEW_COLUMNS; i++)
 	{
 		SVString ColumnName = SvUl_SF::LoadSVString(IDS_RESULTVIEW_COLUMN_NAME0 + i);
 		InsertColumn(i, ColumnName.c_str(), LVCFMT_LEFT, LVSCW_AUTOSIZE, i);
 	}
+	setColumnWidths();
 }
 
 void ResultListCtrl::setColumnWidths()
 {
-	CRect viewRect;
-	GetClientRect(viewRect);
-
-	//the last column is only used so that we can use the LVSCW_AUTOSIZE_USEHEADER style
-	//on autosizing the 2nd last column.
-
-	//calc the width of the first three columns
-	int columnWidth = (viewRect.Width() - 50) / (SV_NUMBER_RESULTVIEW_COLUMNS - 1);
-
-	//set the width of the first three columns
-	for (int i = 0; i < SV_NUMBER_RESULTVIEW_COLUMNS - 1; i++)
+	if (!m_ColumnWidthSet)
 	{
-		SetColumnWidth(i, columnWidth);
-	}
+		CRect viewRect;
+		GetClientRect(viewRect);
 
-	SetColumnWidth(SV_NUMBER_RESULTVIEW_COLUMNS - 1, LVSCW_AUTOSIZE_USEHEADER);
+		//the last column is only used so that we can use the LVSCW_AUTOSIZE_USEHEADER style
+		//on autosizing the 2nd last column.
+
+		//calc the width of the first three columns
+		int columnWidth = (viewRect.Width() - 50) / (SV_NUMBER_RESULTVIEW_COLUMNS - 1);
+
+		//set the width of the first three columns
+		for (int i = 0; i < SV_NUMBER_RESULTVIEW_COLUMNS - 1; i++)
+		{
+			SetColumnWidth(i, columnWidth);
+		}
+
+		SetColumnWidth(SV_NUMBER_RESULTVIEW_COLUMNS - 1, LVSCW_AUTOSIZE_USEHEADER);
+		m_ColumnWidthSet = true;
+	}
 }
 #pragma endregion Private Methods
 

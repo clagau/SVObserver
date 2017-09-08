@@ -41,7 +41,6 @@ public:
 private:
 	virtual void DrawItem(LPDRAWITEMSTRUCT lpDrawItemStruct) override;
 
-	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg void OnContextMenu(CWnd* pWnd, CPoint point);
 
 	SVString CalcProcessesPerSecond(double p_LastTriggerDistance);
@@ -56,8 +55,9 @@ private:
 	CMenu m_ContextMenuItem;
 	SVResultDefinitionDeque m_ResultDefinitions;
 	SVIPResultData m_ResultData;
-	CSize m_ControlSize = { 0, 0 };
-	mutable double m_UpdateTimeStamp;
+	bool m_ColumnWidthSet = false;
+	mutable double m_UpdateTimeStamp = 0.0;
+
 #pragma endregion Member variables
 };
 

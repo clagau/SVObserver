@@ -158,20 +158,27 @@ HRESULT SVCameraFormatsDeviceParam::SetMetadata(const SVDeviceParam* pBaseParam)
 
 bool SVCameraFormatsDeviceParam::SupportsColor() const
 {
-	bool bSupportsColor = false;
+	bool Result = false;
 
 	SVCameraFormatsDeviceParam::OptionsType::const_iterator iter;
-	for (iter = options.begin(); iter != options.end(); ++iter)
+	for (iter = options.begin(); !Result && iter != options.end(); ++iter)
 	{
-		if (iter->second.m_bColor)
-		{
-			bSupportsColor = true;
-			break;
-		}
+		Result = iter->second.m_bColor ? true : false;
 	}
-	return bSupportsColor;
+	return Result;
 }
 
+bool SVCameraFormatsDeviceParam::SupportsMono() const
+{
+	bool Result = false;
+
+	SVCameraFormatsDeviceParam::OptionsType::const_iterator iter;
+	for (iter = options.begin(); !Result && iter != options.end(); ++iter)
+	{
+		Result = iter->second.m_bColor ? false : true;
+	}
+	return Result;
+}
 #if defined(_DEBUG)
 
 SVLut& Lut(SVDeviceParamWrapper& w) 

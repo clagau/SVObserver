@@ -114,6 +114,7 @@ namespace SvOsl
 
 		Sheet.AddPage( &selectorPage );
 		Sheet.AddPage( &filterPage );
+		//@TODO[gra][7.50][30.08.2017]: The help ID's should be done differently this is becoming to complicated
 		int HelpID( IDD_OBJECT_SELECTOR_PPG );
 		if( isSingleObject)
 		{
@@ -127,7 +128,14 @@ namespace SvOsl
 			}
 			else if( SvOi::SV_PUBLISHABLE == m_AttributesFilter )
 			{
-				HelpID = IDD_PUBLISHED_RESULTS;
+				if (TypeSetAttributes == (m_SelectorType & TypeSetAttributes))
+				{
+					HelpID = IDD_PUBLISHED_RESULTS;
+				}
+				else
+				{
+					HelpID = IDD_MONITOR_LIST_SELECTOR;
+				}
 			}
 		}
 		selectorPage.setHelpID( HelpID );

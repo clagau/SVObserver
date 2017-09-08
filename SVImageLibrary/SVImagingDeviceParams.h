@@ -80,6 +80,7 @@ public:
 	virtual SVClonable* CloneImpl() const override;
 	const SVCameraFormatsDeviceParam& operator=(const SVCameraFormatsDeviceParam& rhs);
 	bool SupportsColor() const;
+	bool SupportsMono() const;
 
 	typedef std::map<SVString, SVCameraFormat> OptionsType;
 	OptionsType options;

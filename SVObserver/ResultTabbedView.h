@@ -35,11 +35,13 @@ public:
 #pragma region Private Methods
 private:
 	virtual void OnDraw(CDC* pDC) override;
+	virtual void OnUpdate(CView* /*pSender*/, LPARAM /*lHint*/, CObject* /*pHint*/) override;
 
 	afx_msg int OnCreate(LPCREATESTRUCT lpCreateStruct);
 	afx_msg void OnSize(UINT nType, int cx, int cy);
-	afx_msg BOOL OnEraseBkgnd(CDC* pDC);
 	afx_msg LRESULT OnChangingActiveTab(WPARAM wParam, LPARAM lParam);
+
+	void UpdateTab(int TabIndex = -1);
 #pragma endregion Private Methods
 
 #pragma region Member variables

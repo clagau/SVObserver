@@ -1545,7 +1545,13 @@ void SVIPDoc::Dump(CDumpContext& dc) const
 
 void SVIPDoc::OnResultsPicker()
 {
-	SVSVIMStateClass::AddState( SV_STATE_EDITING ); /// do this before calling validate for security as it may display a logon dialog!
+	//@TODO [gra][7.50][06.09.2017] This is a work around for the situation when in run mode and the Result Picker is called that
+	//this causes the mode to change to SVIM_MODE_CHANGING which means it is no longer in Run mode, which could cause the Inspection to not work properly!
+	//This needs to be looked into so that when in run mode no other state can change it
+	if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING))
+	{
+		SVSVIMStateClass::AddState(SV_STATE_EDITING); /// do this before calling validate for security as it may display a logon dialog!
+	}
 	if( S_OK == TheSVObserverApp.m_svSecurityMgr.SVValidate(SECURITY_POINT_EDIT_MENU_RESULT_PICKER) )
 	{
 		SVInspectionProcess* pInspection( GetInspectionProcess() );
@@ -1587,12 +1593,21 @@ void SVIPDoc::OnResultsPicker()
 		}
 	}
 
-	SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
+	if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING))
+	{
+		SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
+	}
 }
 
 void SVIPDoc::OnResultsTablePicker()
 {
-	SVSVIMStateClass::AddState(SV_STATE_EDITING); /// do this before calling validate for security as it may display a logon dialog!
+	//@TODO [gra][7.50][06.09.2017] This is a work around for the situation when in run mode and the Result Table Picker is called that
+	//this causes the mode to change to SVIM_MODE_CHANGING which means it is no longer in Run mode, which could cause the Inspection to not work properly!
+	//This needs to be looked into so that when in run mode no other state can change it
+	if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING))
+	{
+		SVSVIMStateClass::AddState(SV_STATE_EDITING); /// do this before calling validate for security as it may display a logon dialog!
+	}
 	if (S_OK == TheSVObserverApp.m_svSecurityMgr.SVValidate(SECURITY_POINT_EDIT_MENU_RESULT_PICKER))
 	{
 		SVResultListClass* pResultList(GetResultList());
@@ -1632,7 +1647,10 @@ void SVIPDoc::OnResultsTablePicker()
 		}
 	}
 
-	SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
+	if (!SVSVIMStateClass::CheckState(SV_STATE_RUNNING))
+	{
+		SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
+	}
 }
 
 void SVIPDoc::OnPublishedResultsPicker()

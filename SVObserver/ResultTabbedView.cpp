@@ -28,7 +28,6 @@ IMPLEMENT_DYNCREATE(ResultTabbedView, CView)
 BEGIN_MESSAGE_MAP(ResultTabbedView, CView)
 	ON_WM_CREATE()
 	ON_WM_SIZE()
-	ON_WM_ERASEBKGND()
 	ON_REGISTERED_MESSAGE(AFX_WM_CHANGING_ACTIVE_TAB, &ResultTabbedView::OnChangingActiveTab)
 END_MESSAGE_MAP()
 #pragma endregion Declarations
@@ -162,20 +161,15 @@ void ResultTabbedView::SetViewSize(CSize &Size)
 void ResultTabbedView::OnDraw(CDC* pDC)
 {
 	m_TabCtrl.RedrawWindow();
-	switch (m_TabCtrl.GetActiveTab())
-	{
-	case 0:
-		m_ResultList.updateList(m_pIPDoc);
-		break;
-	case 1:
-		m_ResultTableList.updateList(m_pIPDoc);
-		break;
-
-	default:
-		break;
-	}
+	m_ResultList.RedrawWindow();
+	m_ResultTableList.RedrawWindow();
 	__super::OnDraw(pDC);
 };
+
+void ResultTabbedView::OnUpdate(CView* /*pSender*/, LPARAM /*lHint*/, CObject* /*pHint*/)
+{
+	UpdateTab();
+}
 
 int ResultTabbedView::OnCreate(LPCREATESTRUCT lpCreateStruct)
 {
@@ -214,19 +208,21 @@ void ResultTabbedView::OnSize(UINT nType, int cx, int cy)
 		m_TabCtrl.MoveWindow(Rect);
 	}
 }
-
-BOOL ResultTabbedView::OnEraseBkgnd(CDC* pDC)
-{
-	//! This avoids unnecessary flicker of the result view
-	return true;
-}
 #pragma endregion Private Methods
 
 
 afx_msg LRESULT ResultTabbedView::OnChangingActiveTab(WPARAM wParam, LPARAM lParam)
 {
 	//! wParam contains the active tab index
-	switch (wParam)
+	UpdateTab(static_cast<int> (wParam));
+
+	return 0;
+}
+
+void ResultTabbedView::UpdateTab(int TabIndex /*= -1*/)
+{
+	TabIndex = (-1 == TabIndex) ? m_TabCtrl.GetActiveTab() : TabIndex;
+	switch (TabIndex)
 	{
 	case 0:
 		m_ResultList.updateList(m_pIPDoc);
@@ -238,6 +234,4 @@ afx_msg LRESULT ResultTabbedView::OnChangingActiveTab(WPARAM wParam, LPARAM lPar
 	default:
 		break;
 	}
-
-	return 0;
 }

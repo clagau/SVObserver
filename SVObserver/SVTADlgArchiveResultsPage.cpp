@@ -216,18 +216,8 @@ BOOL SVTADlgArchiveResultsPage::OnInitDialog()
 	m_pTool->m_dwAppendArchiveFile.GetValue( dwTemp );
 	m_AppendArchive = (int)dwTemp;
 
-	BOOL bUseColumnHeaders( false );
-	m_pTool->m_bvoUseHeaders.GetValue( bUseColumnHeaders );
-	if(bUseColumnHeaders && m_pTool->m_arrayResultsInfoObjectsToArchive.GetSize() > 0)
-	{
-		m_ColumnHeaders = 1;
-		GetDlgItem(IDC_HEADER_BTN)->EnableWindow();
-	}
-	else
-	{
-		m_ColumnHeaders = 0;
-		GetDlgItem(IDC_HEADER_BTN)->EnableWindow(FALSE);
-	}
+	m_pTool->m_bvoUseHeaders.GetValue(m_ColumnHeaders);
+	GetDlgItem(IDC_HEADER_BTN)->EnableWindow(m_ColumnHeaders);
 
 	SvOsl::SelectorOptions BuildOptions( m_pTool->GetInspection()->GetUniqueObjectID(), SvOi::SV_ARCHIVABLE );
 	SvOg::ToolSetItemSelector<SvCmd::AttributesSetFilterType> toolsetItemSelector;

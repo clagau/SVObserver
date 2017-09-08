@@ -186,7 +186,7 @@ bool TableTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVect
 		//clear table if required
 		if( m_pClearEquation->HasCondition() && m_pClearEquation->IsEnabled() && 0 != m_pClearEquation->GetYACCResult() )
 		{
-			returnValue = m_pTable->ResetObject(pErrorMessages);
+			m_pTable->clearTable();
 		}
 	}
 

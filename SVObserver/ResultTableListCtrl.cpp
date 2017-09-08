@@ -41,9 +41,6 @@ END_MESSAGE_MAP()
 
 #pragma region Constructor
 ResultTableListCtrl::ResultTableListCtrl() : CListCtrl()
-, m_ColumnWidthSet(false)
-, m_ColumnCount(0)
-, m_UpdateTimeStamp(0.0)
 {
 	VERIFY(m_ContextMenuItem.LoadMenu(IDR_RESULTS_TABLE_CONTEXT_MENU));
 }
@@ -77,9 +74,8 @@ void ResultTableListCtrl::updateList(class SVIPDoc* pDoc)
 		Update = 0.0 < Value ? true : false;
 	}
 	Update = Update || !SVSVIMStateClass::CheckState(SV_STATE_RUNNING);
-
 	if (!Update)
-	{
+	{ 
 		return;
 	}
 
@@ -89,6 +85,9 @@ void ResultTableListCtrl::updateList(class SVIPDoc* pDoc)
 		// If Result table data size is 0 then no updating required
 		if (0 == m_ResultData.m_ResultTableData.size())
 		{
+			DeleteAllItems();
+			//Deletes all columns
+			addColumnHeadings(m_ResultData.m_ResultTableData);
 			return;
 		}
 
@@ -128,9 +127,9 @@ void ResultTableListCtrl::updateList(class SVIPDoc* pDoc)
 			DeleteAllItems();
 		}
 
-		SetRedraw(true);
-		RedrawWindow(NULL, NULL, RDW_INVALIDATE | RDW_UPDATENOW | RDW_ERASE | RDW_FRAME);
 		m_UpdateTimeStamp = SvTl::GetTimeStamp();
+		SetRedraw(true);
+		RedrawWindow(nullptr, nullptr, RDW_INVALIDATE | RDW_UPDATENOW | RDW_ERASE | RDW_FRAME);
 	}
 }
 #pragma endregion Public Methods
@@ -210,7 +209,7 @@ void ResultTableListCtrl::setColumnWidths()
 			SetColumnWidth( i, columnWidth );
 		}
 
-		m_ColumnWidthSet = TRUE;
+		m_ColumnWidthSet = true;
 	}
 }
 #pragma endregion Private Methods

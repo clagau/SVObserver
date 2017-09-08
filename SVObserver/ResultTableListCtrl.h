@@ -50,8 +50,8 @@ private:
 	CMenu m_ContextMenuItem;						//Menu object for context menu
 
 	SVIPResultData m_ResultData;
-	BOOL m_ColumnWidthSet;
-	int m_ColumnCount;
-	mutable double m_UpdateTimeStamp;
+	bool m_ColumnWidthSet = false;
+	int m_ColumnCount = 0;
+	mutable double m_UpdateTimeStamp = 0.0;
 #pragma endregion Member variables
 };

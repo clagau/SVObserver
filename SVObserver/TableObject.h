@@ -52,6 +52,9 @@ public:
 	/// \param rEmbeddedId [in] Emdedded GUID of the value object.
 	void removeColumn(const GUID& rEmbeddedId);
 
+	/// Clear the table
+	void clearTable();
+
 	virtual SVObjectClass* OverwriteEmbeddedObject(const GUID& uniqueID, const GUID& rEmbeddedID) override;
 #pragma endregion Public Methods
 

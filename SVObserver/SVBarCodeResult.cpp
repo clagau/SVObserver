@@ -102,7 +102,7 @@ SVBarCodeResultClass::~SVBarCodeResultClass()
 
 bool SVBarCodeResultClass::CreateObject(SVObjectLevelCreateStruct* pCreateStructure)
 {
-	bool bOk = SVStringResultClass::CreateObject(pCreateStructure) && getInputString() && getRegExpression() && (S_OK == LoadMatchStringFile());
+	bool bOk = SVStringResultClass::CreateObject(pCreateStructure) && getInputString() && getRegExpression();
 
 	if (bOk)
 	{
