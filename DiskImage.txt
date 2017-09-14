@@ -50,7 +50,7 @@ SOFTWARE VERSIONS:
 Seidenader Vision Inc. SVObserver version 7.50
 
 SVRC Version 7.50
-SIAC Version 7.35
+SIAC Version 7.50
 
 SVLpt version 7.0.0.0 (11)
 
