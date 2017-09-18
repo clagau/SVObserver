@@ -115,8 +115,17 @@ namespace SvOg
 
 	HRESULT FormulaController::IsOwnerAndEquationEnabled(bool& ownerEnabled, bool& equationEnabled) const
 	{
-		ownerEnabled = m_taskValues.Get<bool>(EnabledTag);
-		equationEnabled = m_equationValues.Get<bool>(EnabledTag);
+		//Only when the controller is of type SVConditionalObjectType
+		if (SVConditionalObjectType == m_info.SubType)
+		{
+			ownerEnabled = m_taskValues.Get<bool>(EnabledTag);
+			equationEnabled = m_equationValues.Get<bool>(EnabledTag);
+		}
+		else
+		{
+			ownerEnabled = true,
+			equationEnabled = true;
+		}
 		return S_OK;
 	}
 
@@ -240,8 +249,12 @@ namespace SvOg
 
 	void FormulaController::init()
 	{
-		m_taskValues.Init();
-		m_equationValues.Init();
+		//Only when the controller is of type SVConditionalObjectType
+		if (SVConditionalObjectType == m_info.SubType)
+		{
+			m_taskValues.Init();
+			m_equationValues.Init();
+		}
 
 		if (SV_GUID_NULL == m_EquationID)
 		{
