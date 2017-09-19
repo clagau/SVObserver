@@ -50,7 +50,7 @@ public:
 
 	virtual bool resetAllObjects( SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
-	virtual HRESULT IsInputImage( SVImageClass* p_psvImage );
+	virtual bool isInputImage(const SVGUID& rImageGuid) const override;
 
 	virtual SVTaskObjectClass* GetObjectAtPoint( const SVExtentPointStruct &p_rsvPoint );
 	virtual bool DoesObjectHaveExtents() const;
@@ -69,7 +69,7 @@ public:
 
 	virtual bool IsValid() const override;
 
-	virtual bool CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
+	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 	virtual bool CloseObject() override;
 	void Disconnect();
 	virtual bool DisconnectObjectInput(SVInObjectInfoStruct* pInObjectInfo) override;

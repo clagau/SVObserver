@@ -23,7 +23,7 @@ public:
 	SVUnaryImageOperatorClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVUNARYIMAGEOPERATOR );
 	virtual ~SVUnaryImageOperatorClass();
 
-	virtual bool CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
+	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 
 	//First definition of onRun with this parameter (SVTaskObjectClass has different parameter), so override is not possible
 	virtual bool Run( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr );

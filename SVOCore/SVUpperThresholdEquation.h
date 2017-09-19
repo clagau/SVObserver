@@ -22,7 +22,7 @@ public:
 	SVUpperThresholdEquationClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVUPPERTHRESHOLDEQUATION );
 	virtual ~SVUpperThresholdEquationClass();
 
-	virtual bool CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
+	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 
 protected:
 	void init();

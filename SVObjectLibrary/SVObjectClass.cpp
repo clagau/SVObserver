@@ -234,25 +234,22 @@ bool SVObjectClass::DisconnectObjectInput( SVInObjectInfoStruct* pObjectInInfo )
 /*
 After the object construction, the object must be created using this function with an object level depending create structure.
 */
-bool SVObjectClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+bool SVObjectClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 {
-	bool l_bOk = nullptr != pCreateStructure;
-
-	if( l_bOk )
+	bool Result(false);
+	if( rCreateStructure.OwnerObjectInfo.m_pObject != this && rCreateStructure.OwnerObjectInfo.m_UniqueObjectID != GetUniqueObjectID() )
 	{
-		if( pCreateStructure->OwnerObjectInfo.m_pObject != this && pCreateStructure->OwnerObjectInfo.m_UniqueObjectID != GetUniqueObjectID() )
-		{
-			SetObjectOwner( pCreateStructure->OwnerObjectInfo.m_pObject );
-		}
-		else
-		{
-			assert(false);
-		}
+		SetObjectOwner( rCreateStructure.OwnerObjectInfo.m_pObject );
+		Result = true;
+	}
+	else
+	{
+		assert(false);
 	}
 
-	m_isCreated = l_bOk;
+	m_isCreated = Result;
 
-	return l_bOk;
+	return Result;
 }
 
 void SVObjectClass::ConnectObject( const SVObjectLevelCreateStruct& rCreateStructure )
@@ -808,8 +805,7 @@ const SVObjectInfoArrayClass& SVObjectClass::GetFriendList() const
 
 bool SVObjectClass::createAllObjects(const SVObjectLevelCreateStruct& rCreateStructure)
 {
-	SVObjectLevelCreateStruct* createStruct = const_cast<SVObjectLevelCreateStruct*>(&rCreateStructure);
-	if( !IsCreated() && !CreateObject( createStruct ) )
+	if( !IsCreated() && !CreateObject( rCreateStructure ) )
 	{
 		assert( false );
 

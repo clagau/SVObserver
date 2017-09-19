@@ -97,9 +97,9 @@ SVMathToolClass::~SVMathToolClass()
 ///////////////////////////////////////////////////////////////////////////////
 // Create Operator
 ////////////////////////////////////////////////////////////////////////////////
-bool SVMathToolClass::CreateObject(SVObjectLevelCreateStruct* pCreateStructure )
+bool SVMathToolClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	m_isCreated = SVToolClass::CreateObject( pCreateStructure );
+	m_isCreated = SVToolClass::CreateObject(rCreateStructure);
 
 	// Override base class exposure of the drawflag
 	// This value will not be exposed for the Math Tool.

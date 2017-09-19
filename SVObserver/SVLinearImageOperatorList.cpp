@@ -12,7 +12,7 @@
 #include "stdafx.h"
 #include "SVLinearImageOperatorList.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
-#include "SVObjectLibrary/SVAnalyzerLevelCreateStruct.h"
+#include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 #include "SVLinearToolClass.h"
 #include "SVOCore/SVUnaryImageOperatorClass.h"
 #include "SVOCore/SVTool.h"
@@ -38,9 +38,9 @@ SVLinearImageOperatorListClass::~SVLinearImageOperatorListClass()
 
 }
 
-bool SVLinearImageOperatorListClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+bool SVLinearImageOperatorListClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	bool l_bOk = SVStdImageOperatorListClass::CreateObject( pCreateStructure );
+	bool l_bOk = SVStdImageOperatorListClass::CreateObject(rCreateStructure);
 
 	SVDataBufferInfoClass& rBufferInfo = m_svProfileResultData.GetDataBufferInfo();
 	rBufferInfo.Type = SVDataBufferInfoClass::SVProjectResult;
@@ -102,7 +102,7 @@ bool SVLinearImageOperatorListClass::ResetObject(SvStl::MessageContainerVector *
 		}
 	}
 
-	SvOi::ITool* pTool = dynamic_cast<SvOi::ITool *>(GetTool());
+	SvOi::ITool* pTool = GetToolInterface();
 	if (nullptr != pTool)
 	{
 		pTool->UpdateImageWithExtent();

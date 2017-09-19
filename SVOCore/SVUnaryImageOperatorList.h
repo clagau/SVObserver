@@ -46,12 +46,13 @@ public:
 	SVUnaryImageOperatorListClass( SVObjectClass* POwner = nullptr , int StringResourceID = IDS_CLASSNAME_SVUNARYIMAGEOPERATORLIST );
 	virtual ~SVUnaryImageOperatorListClass();
 
-	virtual bool CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
+	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 
-	virtual HRESULT IsInputImage( SVImageClass *p_psvImage ) override;
-
-	SVImageClass* getInputImage();
+	SVImageClass* getInputImage() const;
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
+
+protected:
+	virtual bool isInputImage(const SVGUID& rImageGuid) const override;
 
 private:
 	void init();

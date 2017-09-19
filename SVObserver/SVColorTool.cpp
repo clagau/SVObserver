@@ -49,11 +49,11 @@ SVColorToolClass::~SVColorToolClass()
 #pragma endregion Constructor
 
 #pragma region Public Methods
-bool SVColorToolClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+bool SVColorToolClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
 	bool bOk = true;
 
-	if( SVToolClass::CreateObject( pCreateStructure ) )
+	if( SVToolClass::CreateObject(rCreateStructure) )
 	{
 		SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*> (GetInspection());
 		if (nullptr != pInspection && nullptr != pInspection->GetToolSet())
@@ -196,13 +196,14 @@ SVTaskObjectClass* SVColorToolClass::GetObjectAtPoint(const SVExtentPointStruct 
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
-HRESULT SVColorToolClass::IsInputImage(SVImageClass *pImage)
+bool SVColorToolClass::isInputImage(const SVGUID& rImageGuid) const
 {
-	HRESULT Result = E_FAIL;
+	bool Result(false);
 
-	if (nullptr != pImage && pImage == getInputImage())
+	SVImageClass* pImage = getInputImage();
+	if (nullptr != pImage && rImageGuid == pImage->GetUniqueObjectID())
 	{
-		Result = S_OK;
+		Result = true;
 	}
 	return Result;
 }

@@ -50,9 +50,9 @@ TableExcludeAnalyzer::~TableExcludeAnalyzer()
 #pragma endregion Constructor
 
 #pragma region Public Methods
-bool TableExcludeAnalyzer::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+bool TableExcludeAnalyzer::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	bool l_bOk = __super::CreateObject( pCreateStructure );
+	bool l_bOk = __super::CreateObject(rCreateStructure);
 
 	m_excludeHigh.SetObjectAttributesAllowed( SvOi::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
 	m_excludeLow.SetObjectAttributesAllowed( SvOi::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );

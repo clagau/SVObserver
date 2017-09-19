@@ -46,7 +46,7 @@ public:
 #pragma endregion Constructor
 
 #pragma region Public Methods
-	virtual bool CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
+	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
@@ -69,7 +69,7 @@ public:
 
 #pragma region Protected Methods
 protected:
-	virtual HRESULT IsInputImage(SVImageClass *pImage) override;
+	virtual bool isInputImage(const SVGUID& rImageGuid) const override;
 	virtual bool onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 #pragma endregion Protected Methods
 
@@ -78,7 +78,7 @@ private:
 	//! Initialize the class
 	void LocalInitialize();
 
-	SVImageClass* getInputImage() { return m_pInputImage; };
+	SVImageClass* getInputImage() const { return m_pInputImage; };
 	bool createBandChildLayer(BandEnum Band);
 	HRESULT CollectInputImageNames();
 #pragma endregion Private Methods

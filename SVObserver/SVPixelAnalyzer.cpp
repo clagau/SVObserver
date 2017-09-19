@@ -93,14 +93,14 @@ bool SVPixelAnalyzerClass::CloseObject()
 	return SVImageAnalyzerClass::CloseObject();
 }
 
-bool SVPixelAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+bool SVPixelAnalyzerClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
     SVImageClass *pSVImage(nullptr);
 	DWORD LastError(0);
     	
     while (1)
     {
-        if (! SVImageAnalyzerClass::CreateObject( pCreateStructure ) )
+        if (! SVImageAnalyzerClass::CreateObject(rCreateStructure) )
         {
 			
 			SvStl::MessageMgrStd MesMan( SvStl::LogOnly );

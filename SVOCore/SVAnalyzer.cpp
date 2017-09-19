@@ -15,7 +15,7 @@
 #include "SVObjectLibrary/SVClsIds.h"
 #include "SVImageLibrary/SVImageInfoClass.h"
 #include "SVImageClass.h"
-#include "SVObjectLibrary/SVAnalyzerLevelCreateStruct.h"
+#include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -53,9 +53,9 @@ SVAnalyzerClass::~SVAnalyzerClass()
 {
 }
 
-bool SVAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+bool SVAnalyzerClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	m_isCreated = SVTaskObjectClass::CreateObject(pCreateStructure) && GetInspection() && GetTool();
+	m_isCreated = SVTaskObjectClass::CreateObject(rCreateStructure) && nullptr != GetInspection() && nullptr != GetTool();
 
 	return m_isCreated;
 }
@@ -71,22 +71,22 @@ SvOi::IObjectClass* SVAnalyzerClass::GetResultObject()
 
 bool SVAnalyzerClass::createAllObjectsFromChild( SVObjectClass& rChildObject )
 {
-	SVAnalyzerLevelCreateStruct createStruct;
-	createStruct.OwnerObjectInfo        = this;
-	createStruct.AnalyzerObjectInfo		= this;
-	createStruct.ToolObjectInfo			= GetTool();
-	createStruct.InspectionObjectInfo	= GetInspection();
+	SVObjectLevelCreateStruct createStruct;
+	createStruct.OwnerObjectInfo = this;
+	createStruct.m_pInspection = GetInspection();
+	createStruct.m_pTool = GetTool();
+	createStruct.m_pAnalyzer = this;
 	
 	return rChildObject.createAllObjects(createStruct);
 }
 
 void SVAnalyzerClass::connectChildObject( SVTaskObjectClass& rChildObject )
 {
-	SVAnalyzerLevelCreateStruct createStruct;
-	createStruct.OwnerObjectInfo        = this;
-	createStruct.AnalyzerObjectInfo		= this;
-	createStruct.ToolObjectInfo			= GetTool();
-	createStruct.InspectionObjectInfo	= GetInspection();
+	SVObjectLevelCreateStruct createStruct;
+	createStruct.OwnerObjectInfo = this;
+	createStruct.m_pInspection = GetInspection();
+	createStruct.m_pTool = GetTool();
+	createStruct.m_pAnalyzer = this;
 
 	rChildObject.ConnectObject(createStruct);
 }

@@ -22,7 +22,7 @@ public:
 	SVStringResultClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_RESULT_STRING );
 	virtual ~SVStringResultClass();
 
-	virtual bool CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
+	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 
 protected:
 	SVStringValueObjectClass* getInputString();

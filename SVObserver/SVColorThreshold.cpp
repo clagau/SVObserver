@@ -50,9 +50,9 @@ SVColorThresholdClass::~SVColorThresholdClass()
 #pragma endregion Constructor
 
 #pragma region Public Methods
-bool SVColorThresholdClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+bool SVColorThresholdClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	bool bOk = SVOperatorClass::CreateObject(pCreateStructure);
+	bool bOk = SVOperatorClass::CreateObject(rCreateStructure);
 
 	// Owner can only be : SVOperatorClass !!!
 	if( bOk )

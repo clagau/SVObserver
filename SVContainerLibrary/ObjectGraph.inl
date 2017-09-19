@@ -21,9 +21,9 @@ namespace SvCl
 	}
 
 	template< typename VertexName, typename EdgeType >
-	ObjectGraph<VertexName, EdgeType>::ObjectGraph( const Dependencies& rList, const EdgeType& rEdgeType )
+	ObjectGraph<VertexName, EdgeType>::ObjectGraph( const DependencySet& rList, const EdgeType& rEdgeType )
 	{
-		Dependencies::const_iterator it( rList.cbegin() );
+		DependencySet::const_iterator it( rList.cbegin() );
 		for(; rList.cend() != it; ++it )
 		{
 			Add( it->first );
@@ -135,15 +135,13 @@ namespace SvCl
 	}
 
 	template< typename VertexName, typename EdgeType >
-	HRESULT ObjectGraph<VertexName, EdgeType>::getDependents( const VertexName& rStartName, DependencyInserter Inserter, const EdgeType& rEdgeType, bool InvertEdge, bool DepthFirstSearch ) const
+	HRESULT ObjectGraph<VertexName, EdgeType>::getDependents(const VertexSet& rVertexSet, DependencyInserter Inserter, const EdgeType& rEdgeType, bool InvertEdge, bool DepthFirstSearch ) const
 	{
 		HRESULT Result = S_OK;
 
 		typedef boost::filtered_graph< DependencyGraph, filter_edge_type<EdgeTypeMapConst, EdgeType> > EdgeTypeFilteredGraph;
 		typedef dependency_visitor<VertexName, DependencyInserter, boost::dfs_visitor<>> DfsVisitor;
 		typedef dependency_visitor<VertexName, DependencyInserter, boost::bfs_visitor<>> BfsVisitor;
-
-		const VertexData StartVertex = getVertex( rStartName );
 
 		EdgeTypeMapConst ConstEdgeTypeMap( boost::get( edge_type_t(), m_Graph ) );
 		filter_edge_type<EdgeTypeMapConst, EdgeType> FilterEdgeType( &ConstEdgeTypeMap, &rEdgeType );
@@ -153,24 +151,32 @@ namespace SvCl
 		{
 			const boost::reverse_graph<EdgeTypeFilteredGraph> ReverseGraph( FilteredGraph );
 
-			if( DepthFirstSearch )
+			for (const VertexName& rVertexName : rVertexSet)
 			{
-				boost::depth_first_search( ReverseGraph,  boost::visitor( DfsVisitor( rStartName, Inserter )).root_vertex(StartVertex) );
-			}
-			else
-			{
-				boost::breadth_first_search( ReverseGraph,  StartVertex, boost::visitor( BfsVisitor( rStartName, Inserter )) );
+				const VertexData StartVertex = getVertex(rVertexName);
+				if (DepthFirstSearch)
+				{
+					boost::depth_first_search(ReverseGraph, boost::visitor(DfsVisitor(rVertexName, Inserter)).root_vertex(StartVertex));
+				}
+				else
+				{
+					boost::breadth_first_search(ReverseGraph, StartVertex, boost::visitor(BfsVisitor(rVertexName, Inserter)));
+				}
 			}
 		}
 		else
 		{
-			if( DepthFirstSearch )
+			for (const VertexName& rVertexName : rVertexSet)
 			{
-				boost::depth_first_search( FilteredGraph,  boost::visitor( DfsVisitor( rStartName, Inserter )).root_vertex(StartVertex) );
-			}
-			else
-			{
-				boost::breadth_first_search( FilteredGraph,  StartVertex,  boost::visitor( BfsVisitor( rStartName, Inserter )) );
+				const VertexData StartVertex = getVertex(rVertexName);
+				if (DepthFirstSearch)
+				{
+					boost::depth_first_search(FilteredGraph, boost::visitor(DfsVisitor(rVertexName, Inserter)).root_vertex(StartVertex));
+				}
+				else
+				{
+					boost::breadth_first_search(FilteredGraph, StartVertex, boost::visitor(BfsVisitor(rVertexName, Inserter)));
+				}
 			}
 		}
 
@@ -178,42 +184,28 @@ namespace SvCl
 	}
 
 	template< typename VertexName, typename EdgeType >
-	HRESULT ObjectGraph<VertexName, EdgeType>::getChildDependents( const VertexName& rStartName, DependencyInserter Inserter, const EdgeType& rChildEdgeType, const EdgeType& rEdgeType, bool InvertEdge ) const
+	HRESULT ObjectGraph<VertexName, EdgeType>::getChildDependents( const VertexSet& rVertexSet, DependencyInserter Inserter, const EdgeType& rChildEdgeType, const EdgeType& rEdgeType, bool InvertEdge ) const
 	{
 		HRESULT Result = S_OK;
 
-		Dependencies ChildDependencies;
+		DependencySet ChildDependencies;
 
 		//Search first using Depth First Search
-		getDependents( rStartName, std::inserter( ChildDependencies, ChildDependencies.end() ), rChildEdgeType, false, true );
+		getDependents(rVertexSet, std::inserter( ChildDependencies, ChildDependencies.end() ), rChildEdgeType, false, true);
 
-		Dependent Children;
-		//Insert the main Vertex in the dependency check
-		Children.insert(rStartName);
-		Dependencies::const_iterator Iter( ChildDependencies.begin() );
+		VertexSet Children;
+		//Insert the main Vertex in the dependency check and all dependencies found
+		Children.insert(rVertexSet.begin(), rVertexSet.end());
+		DependencySet::const_iterator Iter( ChildDependencies.begin() );
 		for( ; ChildDependencies.end() != Iter; ++Iter )
 		{
 			Children.insert( Iter->first );
 			Children.insert( Iter->second );
 		}
 
-		ChildDependencies.clear();
-		Dependent::const_iterator ChildIter( Children.begin() );
-		for( ; Children.end() != ChildIter; ++ChildIter )
-		{
-			//Now search using Breadth First Search as it should only be one Vertex away
-			getDependents( *ChildIter, std::inserter( ChildDependencies, ChildDependencies.end() ), rEdgeType, InvertEdge );
+		//Now search using Breadth First Search as it should only be one Vertex away
+		getDependents(Children, Inserter, rEdgeType, InvertEdge);
 
-			if( 0 < ChildDependencies.size() )
-			{
-				Dependencies::const_iterator It( ChildDependencies.begin() );
-				for( ; ChildDependencies.end() != It; ++It )
-				{
-					*Inserter = *It;
-				}
-				ChildDependencies.clear();
-			}
-		}
 		return Result;
 	}
 

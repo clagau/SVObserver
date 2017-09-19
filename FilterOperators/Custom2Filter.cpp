@@ -42,9 +42,9 @@ Custom2Filter::~Custom2Filter()
 #pragma endregion Constructor
 
 #pragma region Public Methods
-bool Custom2Filter::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+bool Custom2Filter::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	bool bOk = SVFilterClass::CreateObject( pCreateStructure );
+	bool bOk = SVFilterClass::CreateObject(rCreateStructure);
 
 	RebuildKernel();
 

@@ -42,7 +42,7 @@ public:
 
 	virtual SVTaskObjectClass* GetObjectAtPoint( const SVExtentPointStruct &p_rsvPoint ) override;
 
-	virtual HRESULT IsInputImage( SVImageClass* p_psvImage ) override;
+	virtual bool isInputImage(const SVGUID& rImageGuid) const override;
 
 	virtual bool CloseObject() override;
 

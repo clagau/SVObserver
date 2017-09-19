@@ -157,9 +157,9 @@ SVStatisticsToolClass::~SVStatisticsToolClass()
 { 
 }
 
-bool SVStatisticsToolClass::CreateObject(SVObjectLevelCreateStruct* pCreateStructure )
+bool SVStatisticsToolClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	m_isCreated = SVToolClass::CreateObject( pCreateStructure );
+	m_isCreated = SVToolClass::CreateObject(rCreateStructure);
 
 	for ( int i = 0; i < SV_NUMBER_OF_STAT_FEATURES; i++ )
 	{

@@ -69,9 +69,9 @@ SVLongResultClass::~SVLongResultClass()
 
 }
 
-bool SVLongResultClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+bool SVLongResultClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	bool bOk = SVResultClass::CreateObject(pCreateStructure) && nullptr != getInput();
+	bool bOk = SVResultClass::CreateObject(rCreateStructure) && nullptr != getInput();
 	
 	m_Value.SetObjectAttributesAllowed(SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 

@@ -12,7 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVRange.h"
-#include "SVObjectLibrary/SVAnalyzerLevelCreateStruct.h"
+#include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVOCore/SVTool.h"
 #include "SVInspectionProcess.h"
@@ -92,9 +92,9 @@ void SVRangeClass::init()
 	addDefaultInputObjects();
 }
 
-bool SVRangeClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+bool SVRangeClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	m_isCreated = SVTaskObjectClass::CreateObject( pCreateStructure );
+	m_isCreated = SVTaskObjectClass::CreateObject(rCreateStructure);
 
 	// Set / Reset Printable Flags
 	const UINT cAttributes = SvOi::SV_PRINTABLE | SvOi::SV_SETABLE_ONLINE | SvOi::SV_REMOTELY_SETABLE;

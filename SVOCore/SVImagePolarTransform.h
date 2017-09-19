@@ -26,9 +26,7 @@ public:
 	SVImagePolarTransformClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVIMAGEPOLARTRANSFORM );
 	virtual ~SVImagePolarTransformClass();
 
-	virtual bool CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
-
-	virtual HRESULT IsInputImage( SVImageClass *p_psvImage ) override;
+	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 
 	bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr);
 
@@ -45,6 +43,7 @@ protected:
 
 	bool SetDefaultEquation( SVEquationClass* pEquation, const SVString& rName, SvStl::MessageContainerVector *pErrorMessages=nullptr );
 
+	virtual bool isInputImage(const SVGUID& rImageGuid) const override;
 	virtual bool onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 	
 	SVImageClass				outputImageObject;

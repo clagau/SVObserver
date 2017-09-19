@@ -455,7 +455,7 @@ void BasicValueObject::Create( SVObjectClass* pOwner )
 		SVObjectLevelCreateStruct CreateStruct;
 
 		CreateStruct.OwnerObjectInfo.SetObject(pOwner);
-		CreateObject( &CreateStruct );
+		CreateObject( CreateStruct );
 
 	}
 	::InitializeCriticalSection( &m_CriticalSection );

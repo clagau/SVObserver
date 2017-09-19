@@ -25,7 +25,7 @@ public:
 
 	virtual ~SVMathToolClass();
 
-	virtual bool CreateObject(SVObjectLevelCreateStruct* pCreateStructure ) override;
+	virtual bool CreateObject(const SVObjectLevelCreateStruct& rCreateStructure ) override;
 
 private:
 	void init(void);

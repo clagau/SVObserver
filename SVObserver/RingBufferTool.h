@@ -28,7 +28,7 @@ public:
 #pragma endregion Constructor
 
 #pragma region Public Methods
-	virtual bool CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
+	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 
 	virtual bool DoesObjectHaveExtents() const override;
 
@@ -42,8 +42,8 @@ public:
 
 #pragma region Protected Methods
 protected:
-	virtual HRESULT IsInputImage( SVImageClass *p_psvImage ) override;
-	
+	virtual bool isInputImage(const SVGUID& rImageGuid) const override;
+
 	virtual bool onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 #pragma endregion Protected Methods
 

@@ -31,13 +31,11 @@ class SVToolSetClass : public SVTaskObjectListClass, public SvOi::IToolSet
 
 #pragma region Public Methods
 public:
-	typedef std::deque< SVGUID > SVToolIdDeque;
-
 	SVToolSetClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVTOOLSET );
 
 	virtual ~SVToolSetClass();
 
-	virtual bool CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
+	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 	virtual void SetInvalid() override;
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
@@ -74,7 +72,19 @@ public:
 
 	SVConditionalClass* GetToolSetConditional() const;
 
-	void GetToolIds( SVToolIdDeque& p_rToolIds ) const;
+	template<typename SvGuidInserter>
+	void GetToolIds(SvGuidInserter Inserter) const
+	{
+		for (SVTaskObjectPtrVector::const_iterator Iter = m_aTaskObjects.begin(); Iter != m_aTaskObjects.end(); ++Iter)
+		{
+			SVTaskObjectClass* pTask = (*Iter);
+
+			if (nullptr != pTask)
+			{
+				Inserter = pTask->GetUniqueObjectID();
+			}
+		}
+	};
 
 	HRESULT getResetCounts( bool& rResetCounts ) const override;
 

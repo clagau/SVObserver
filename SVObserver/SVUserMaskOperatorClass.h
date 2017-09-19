@@ -41,17 +41,16 @@ public:
 	SVUserMaskOperatorClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVUSERMASKOPERATOR );
 	virtual ~SVUserMaskOperatorClass();
 
-	virtual bool CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
+	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 	virtual bool CloseObject() override;
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
-	virtual HRESULT IsInputImage( SVImageClass *p_psvImage ) override;
 	virtual HRESULT onCollectOverlays(SVImageClass *p_Image, SVExtentMultiLineStructVector& p_rMultiLineArray ) override;
 
 	bool Refresh();
 	HRESULT GetFillProperties( SVMaskFillPropertiesStruct& rsvFillStruct );
 
-	SVImageClass* getMaskInputImage();
+	SVImageClass* getMaskInputImage() const;
 
 	virtual void Persist(SVObjectWriter& rWriter) override;
 
@@ -79,6 +78,7 @@ public:
 	};
 
 protected:
+	virtual bool isInputImage(const SVGUID& rImageGuid) const override;
 	virtual bool onRun( bool First, SVSmartHandlePointer RInputImageHandle, SVSmartHandlePointer ROutputImageHandle, SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 	virtual bool hasToAskFriendForConnection( const SVObjectTypeInfoStruct& rInfo, SVObjectClass*& rPOwner ) const override;
 	

@@ -23,7 +23,7 @@ public:
 
 	virtual ~SVOCVAnalyzerClass();
 
-	virtual bool CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
+	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 
 	SvOi::IObjectClass* GetResultObject();
 

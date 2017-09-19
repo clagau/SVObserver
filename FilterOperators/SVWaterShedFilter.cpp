@@ -70,17 +70,6 @@ void SVWatershedFilterClass::init()
 	addDefaultInputObjects();
 
 }
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : CreateObject
-// -----------------------------------------------------------------------------
-// .Description : ...
-////////////////////////////////////////////////////////////////////////////////
-bool SVWatershedFilterClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
-{
-	bool bOk = SVFilterClass::CreateObject( pCreateStructure );
-
-	return bOk;
-}
 
 bool SVWatershedFilterClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {

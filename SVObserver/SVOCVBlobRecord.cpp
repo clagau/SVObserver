@@ -11,7 +11,7 @@
 
 #include "stdafx.h"
 #include "SVOCVBlobRecord.h"
-#include "SVObjectLibrary/SVAnalyzerLevelCreateStruct.h"
+#include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -94,9 +94,9 @@ void SVOCVCharacterResultClass::UnhideResults()
 	m_dvoMatchScore.SetObjectAttributesAllowed( cAttributes, SvOi::SetAttributeType::OverwriteAttribute );
 }
 
-bool SVOCVCharacterResultClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+bool SVOCVCharacterResultClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	bool bOk = SVTaskObjectClass::CreateObject( pCreateStructure );
+	bool bOk = SVTaskObjectClass::CreateObject(rCreateStructure);
 
 	m_cvoLabelValue.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 

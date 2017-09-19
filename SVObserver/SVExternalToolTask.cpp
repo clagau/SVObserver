@@ -14,7 +14,7 @@
 #include "SVExternalToolTask.h"
 
 #include "SVImageLibrary\SVImageBufferHandleImage.h"
-#include "SVObjectLibrary\SVAnalyzerLevelCreateStruct.h"
+#include "SVObjectLibrary\SVObjectLevelCreateStruct.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVLibrary\SVOINIClass.h"
 #include "SVStatusLibrary\MessageContainer.h"
@@ -273,11 +273,11 @@ SVExternalToolTask::~SVExternalToolTask()
 	m_embeddedList.clear();
 }
 
-bool SVExternalToolTask::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+bool SVExternalToolTask::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	bool l_bOk = SVTaskObjectListClass::CreateObject(pCreateStructure);
+	bool l_bOk = SVTaskObjectListClass::CreateObject(rCreateStructure);
 
-	if( l_bOk && pCreateStructure->CheckCreateStructName( "SVToolLevelCreateStruct" ) )
+	if( l_bOk && nullptr != rCreateStructure.m_pTool )
 	{
 		if( nullptr != GetInspection() && nullptr != GetTool() )
 		{

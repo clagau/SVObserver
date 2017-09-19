@@ -22,7 +22,7 @@ class SVOperatorClass : public SVTaskObjectClass
 public:
 	SVOperatorClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVOPERATOR );
 	virtual ~SVOperatorClass();
-	virtual bool CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
+	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 
 private:
 	void init();

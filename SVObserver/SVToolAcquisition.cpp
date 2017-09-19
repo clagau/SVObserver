@@ -44,9 +44,9 @@ SVAcquisitionToolClass::~SVAcquisitionToolClass()
 }
 
 
-bool SVAcquisitionToolClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+bool SVAcquisitionToolClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	bool bOk = SVToolClass::CreateObject(pCreateStructure);
+	bool bOk = SVToolClass::CreateObject(rCreateStructure);
 
 	if( bOk )
 	{

@@ -28,18 +28,17 @@ public:
 	SVImageArithmeticClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVIMAGEARITHMETIC );
 	virtual ~SVImageArithmeticClass();
 
-	virtual bool CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
+	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 	virtual bool CloseObject() override;
 
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
-
-	virtual HRESULT IsInputImage( SVImageClass *p_psvImage ) override;
 
 	SVImageClass* getInputImageA() const;
 	SVImageClass* getInputImageB() const;
 	SVImageClass* getOutputImage();
 
 protected:
+	virtual bool isInputImage(const SVGUID& rImageGuid) const override;
 	virtual bool onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
 private:
@@ -57,18 +56,18 @@ private:
 
 	bool ValidateLocal(SvStl::MessageContainerVector *pErrorMessages=nullptr) const;
 
-	SVInObjectInfoStruct		inputImageAInfo;
-	SVInObjectInfoStruct		inputEnableOffsetAInfo;
-	SVInObjectInfoStruct		inputOffsetAPointInfo;
+	SVInObjectInfoStruct		m_InputImageAInfo;
+	SVInObjectInfoStruct		m_InputEnableOffsetAInfo;
+	SVInObjectInfoStruct		m_InputOffsetAPointInfo;
 
-	SVInObjectInfoStruct		inputImageBInfo;
-	SVInObjectInfoStruct		inputEnableOffsetBInfo;
-	SVInObjectInfoStruct		inputOffsetBPointInfo;
+	SVInObjectInfoStruct		m_InputImageBInfo;
+	SVInObjectInfoStruct		m_InputEnableOffsetBInfo;
+	SVInObjectInfoStruct		m_InputOffsetBPointInfo;
 
-	SVInObjectInfoStruct		inputArithOperatorInfo;
+	SVInObjectInfoStruct		m_InputArithmaticOperatorInfo;
 
 	// Embedded Object:
-	SVImageClass				outputImageObject;
+	SVImageClass				m_OutputImage;
 
 };
 

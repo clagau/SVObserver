@@ -127,9 +127,9 @@ SVImagePolarTransformClass::~SVImagePolarTransformClass()
 	CloseObject();
 }
 
-bool SVImagePolarTransformClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+bool SVImagePolarTransformClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	bool l_bOk = SVPolarTransformClass::CreateObject( pCreateStructure );
+	bool l_bOk = SVPolarTransformClass::CreateObject(rCreateStructure);
 	SVToolClass* pTool = dynamic_cast<SVToolClass*>(GetTool());
 	l_bOk = l_bOk && nullptr != pTool;
 
@@ -160,22 +160,27 @@ bool SVImagePolarTransformClass::CreateObject( SVObjectLevelCreateStruct* pCreat
 	return m_isCreated;
 }
 
-HRESULT SVImagePolarTransformClass::IsInputImage( SVImageClass *p_psvImage )
+bool SVImagePolarTransformClass::isInputImage(const SVGUID& rImageGuid) const
 {
-	HRESULT l_hrOk = S_FALSE;
+	bool Result(false);
 
-	if ( nullptr != p_psvImage && p_psvImage == getInputImage() )
+	SVImageClass* pImage = getInputImage();
+	if ( nullptr != pImage && rImageGuid == pImage->GetUniqueObjectID())
 	{
-		l_hrOk = S_OK;
+		Result = true;
 	}
 
-	return l_hrOk;
+	return Result;
 }
 
 SVImageClass* SVImagePolarTransformClass::getInputImage() const
 {
-	if( m_inputImageObjectInfo.IsConnected() && m_inputImageObjectInfo.GetInputObjectInfo().m_pObject )
-		return ( SVImageClass* ) m_inputImageObjectInfo.GetInputObjectInfo().m_pObject;
+	if (m_inputImageObjectInfo.IsConnected() && nullptr != m_inputImageObjectInfo.GetInputObjectInfo().m_pObject)
+	{
+		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
+		//! We are sure that when m_pObject is not nullptr then it is a SVImageClass
+		return static_cast<SVImageClass*> (m_inputImageObjectInfo.GetInputObjectInfo().m_pObject);
+	}
 
 	return nullptr;
 }
@@ -808,12 +813,12 @@ HRESULT SVImagePolarTransformClass::CollectInputImageNames()
 {
 	HRESULT l_hr = S_FALSE;
 	SVImageClass* l_pInputImage = getInputImage();
-	SVPolarTransformationToolClass* l_pTool = dynamic_cast<SVPolarTransformationToolClass*>(GetTool());
-	if( l_pInputImage && l_pTool )
+	SVPolarTransformationToolClass* pTool = dynamic_cast<SVPolarTransformationToolClass*>(GetTool());
+	if( l_pInputImage && pTool )
 	{
 		SVString Name = l_pInputImage->GetCompleteName();
 
-		l_pTool->m_SourceImageNames.SetValue(Name);
+		pTool->m_SourceImageNames.SetValue(Name);
 
 		l_hr = S_OK;
 	}

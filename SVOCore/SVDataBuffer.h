@@ -54,7 +54,7 @@ public:
 	SVDataBufferClass( SVObjectClass* pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVDATABUFFER );
 	virtual ~SVDataBufferClass();
 
-	virtual bool CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
+	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 	virtual bool CloseObject() override;
 	bool Resize( int NewLength );
 

@@ -60,7 +60,7 @@ protected:
 
 #pragma region Public Methods
 public:
-	virtual bool CreateObject( SVObjectLevelCreateStruct* pCreateStructure );
+	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure );
 	virtual bool CloseObject() override;
 	virtual bool ResetObject( SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 	virtual void SetObjectDepthWithIndex( int NewObjectDepth, int NewLastSetIndex ) override;

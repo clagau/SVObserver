@@ -176,9 +176,9 @@ void SVRankingFilterClass::init()
 // -----------------------------------------------------------------------------
 // .Description : ...
 ////////////////////////////////////////////////////////////////////////////////
-bool SVRankingFilterClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+bool SVRankingFilterClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	bool bOk = SVFilterClass::CreateObject( pCreateStructure );
+	bool bOk = SVFilterClass::CreateObject(rCreateStructure);
 
 	RebuildRanking();
 

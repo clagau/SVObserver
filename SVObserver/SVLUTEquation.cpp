@@ -71,9 +71,9 @@ SVLUTEquationClass::~SVLUTEquationClass()
 // -----------------------------------------------------------------------------
 // .Description : Creates this object.
 ////////////////////////////////////////////////////////////////////////////////
-bool SVLUTEquationClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+bool SVLUTEquationClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	bool bOk = SVEquationClass::CreateObject( pCreateStructure );
+	bool bOk = SVEquationClass::CreateObject(rCreateStructure);
 
 	// Set / Reset Printable Flag
 	m_lutIndex.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );

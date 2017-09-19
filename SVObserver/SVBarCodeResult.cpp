@@ -100,9 +100,9 @@ SVBarCodeResultClass::~SVBarCodeResultClass()
 	}
 }
 
-bool SVBarCodeResultClass::CreateObject(SVObjectLevelCreateStruct* pCreateStructure)
+bool SVBarCodeResultClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 {
-	bool bOk = SVStringResultClass::CreateObject(pCreateStructure) && getInputString() && getRegExpression();
+	bool bOk = SVStringResultClass::CreateObject(rCreateStructure) && getInputString() && getRegExpression();
 
 	if (bOk)
 	{

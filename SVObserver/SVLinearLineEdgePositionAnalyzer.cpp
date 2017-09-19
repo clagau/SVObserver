@@ -103,9 +103,9 @@ SVLinearEdgePositionLineAnalyzerClass::~SVLinearEdgePositionLineAnalyzerClass()
 	CloseObject();
 }
 
-bool SVLinearEdgePositionLineAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+bool SVLinearEdgePositionLineAnalyzerClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	bool bOk = SVLinearAnalyzerClass::CreateObject( pCreateStructure );
+	bool bOk = SVLinearAnalyzerClass::CreateObject(rCreateStructure);
 
 	dpEdge.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 	m_svLinearDistance.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );

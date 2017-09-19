@@ -51,9 +51,9 @@ SVFilterClass::~SVFilterClass()
 {
 }
 
-bool SVFilterClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+bool SVFilterClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	bool bOk = SVUnaryImageOperatorClass::CreateObject( pCreateStructure );
+	bool bOk = SVUnaryImageOperatorClass::CreateObject(rCreateStructure);
 
 	//hide valid, status and color for the result picker.
 	m_statusTag.SetObjectAttributesAllowed( SvOi::SV_HIDDEN, SvOi::SetAttributeType::AddAttribute );

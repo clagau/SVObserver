@@ -9,6 +9,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "DependencyManager.h"
+#include "SVObjectLibrary/ObjectNameLookup.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -37,84 +38,96 @@ namespace SvOl
 		return DependencyMgr;
 	}
 
-	void DependencyManager::getToolDependency( SvOi::StringPairInserter Inserter, const SVGuidSet& rSourceSet, SVObjectTypeEnum nameToObjectType, SvOi::ToolDependencyEnum ToolDependency /*= SvOi::ToolDependencyEnum::Client*/ ) const
+	void DependencyManager::getToolDependency( SvOi::StringPairInserter Inserter, const SVGuidSet& rSourceSet, SVObjectTypeEnum nameToObjectType, SvOi::ToolDependencyEnum ToolDependency /*= SvOi::ToolDependencyEnum::Client*/, const SVString& rFileName /*= SVString()*/) const
 	{
 		//! Note before calling this method the graph index must be updated this is done in the interface!
-		SVGuidSet::const_iterator Iter( rSourceSet.begin() );
-		for( ; rSourceSet.end() != Iter; ++Iter )
+		std::vector<Dependency> DependencyVector;
+		Dependencies ObjectDependencies;
+
+		if( SvOi::ToolDependencyEnum::Client == (SvOi::ToolDependencyEnum::Client & ToolDependency) )
 		{
-			SVObjectClass* pSource = SVObjectManagerClass::Instance().GetObject( *Iter );
-			if (nullptr != pSource)
+			getChildDependents(rSourceSet, std::inserter(ObjectDependencies, ObjectDependencies.end()), SvOl::JoinType::Owner, SvOl::JoinType::Dependent, false);
+		}
+		if( SvOi::ToolDependencyEnum::Supplier == (SvOi::ToolDependencyEnum::Supplier & ToolDependency) ) 
+		{
+			// Here the pairs need to be reversed
+			Dependencies ToolSuppliers;
+			getChildDependents(rSourceSet, std::inserter(ToolSuppliers, ToolSuppliers.end()), SvOl::JoinType::Owner, SvOl::JoinType::Dependent, true);
+			Dependencies::const_iterator SupplierIter(ToolSuppliers.begin());
+			for (; ToolSuppliers.end() != SupplierIter; ++SupplierIter)
 			{
-				Dependencies ObjectDependencies;
+				ObjectDependencies.insert( Dependency( SupplierIter->second, SupplierIter->first) );
+			}
+		}
 
-				if( SvOi::ToolDependencyEnum::Client == (SvOi::ToolDependencyEnum::Client & ToolDependency) )
+		//! This filters dependencies which are dependent on the same tool
+		std::copy_if(ObjectDependencies.begin(), ObjectDependencies.end(), std::back_inserter(DependencyVector), [](const Dependency &rDependency)
+		{
+			bool CopyItem( false );
+			//! Check if same Tool
+			SVObjectClass* pSupplier = SVObjectManagerClass::Instance().GetObject( rDependency.first );
+			SVObjectClass* pClient = SVObjectManagerClass::Instance().GetObject( rDependency.second );
+			if (nullptr != pSupplier && nullptr != pClient)
+			{
+				//Global constant objects don't have tools then use the Global constant object and check if main object is of type ToolObjectType
+				bool isSupplier = pSupplier->GetObjectSubType() == SVGlobalConstantObjectType || pSupplier->GetObjectType() == SVToolObjectType;
+				bool isClient = pClient->GetObjectType() == SVToolObjectType;
+				SVObjectClass* pToolSupplier = isSupplier ? pSupplier : pSupplier->GetAncestor(SVToolObjectType);
+				SVObjectClass* pToolClient = isClient ? pClient : pClient->GetAncestor(SVToolObjectType);
+				if (nullptr != pToolSupplier && nullptr != pToolClient && pToolSupplier != pToolClient)
 				{
-					getChildDependents( *Iter, std::inserter(ObjectDependencies, ObjectDependencies.end()), SvOl::JoinType::Owner, SvOl::JoinType::Dependent, false );
+					CopyItem = true;
 				}
-				if( SvOi::ToolDependencyEnum::Supplier == (SvOi::ToolDependencyEnum::Supplier & ToolDependency) ) 
+			}
+			return CopyItem;
+		});
+
+		//! First sort the supplier then the clients
+		std::sort(DependencyVector.begin(), DependencyVector.end(), DependencySort(true));
+		std::sort(DependencyVector.begin(), DependencyVector.end(), DependencySort(false));
+
+		ObjectDependencies.clear();
+		std::vector<Dependency>::const_iterator IterDependency(DependencyVector.begin());
+		for (; DependencyVector.end() != IterDependency; ++IterDependency)
+		{
+			SVObjectClass* pSupplier = SVObjectManagerClass::Instance().GetObject(IterDependency->first);
+			SVObjectClass* pClient = SVObjectManagerClass::Instance().GetObject(IterDependency->second);
+			if (nullptr != pSupplier && nullptr != pClient)
+			{
+				SVString SupplierName = pSupplier->GetCompleteObjectNameToObjectType(nullptr, nameToObjectType);
+				SVString ClientName = pClient->GetCompleteObjectNameToObjectType(nullptr, nameToObjectType);
+
+				Inserter = SVStringPair(SupplierName, ClientName);
+
+				// If the file name is not empty we want to save a tool dependency graph
+				if (!rFileName.empty())
 				{
-					// Here the pairs need to be reversed
-					Dependencies ToolSuppliers;
-					getChildDependents( *Iter, std::inserter(ToolSuppliers, ToolSuppliers.end()), SvOl::JoinType::Owner, SvOl::JoinType::Dependent, true );
-					Dependencies::const_iterator SupplierIter(ToolSuppliers.begin());
-					for (; ToolSuppliers.end() != SupplierIter; ++SupplierIter)
+					//Global constant objects don't have tools then use the Global constant object and check if main object is of type ToolObjectType
+					bool isSupplier = pSupplier->GetObjectSubType() == SVGlobalConstantObjectType || pSupplier->GetObjectType() == SVToolObjectType;
+					bool isClient = pClient->GetObjectType() == SVToolObjectType;
+					SVObjectClass* pToolSupplier = isSupplier ? pSupplier : pSupplier->GetAncestor(SVToolObjectType);
+					SVObjectClass* pToolClient = isClient ? pClient : pClient->GetAncestor(SVToolObjectType);
+					if (nullptr != pToolSupplier && nullptr != pToolClient && pToolSupplier != pToolClient)
 					{
-						ObjectDependencies.insert( Dependency( SupplierIter->second, SupplierIter->first) );
-					}
-				}
-
-
-				std::vector<Dependency> DependencyVector;
-				//! This filters dependencies which are dependent on the same tool
-				std::copy_if(ObjectDependencies.begin(), ObjectDependencies.end(), std::back_inserter(DependencyVector), [](const Dependency &rDependency)
-				{
-					bool CopyItem( false );
-					//! Check if same Tool
-					SVObjectClass* pSupplier = SVObjectManagerClass::Instance().GetObject( rDependency.first );
-					SVObjectClass* pClient = SVObjectManagerClass::Instance().GetObject( rDependency.second );
-					if (nullptr != pSupplier && nullptr != pClient)
-					{
-						//Global constant objects don't have tools then use the Global constant object and check if main object is of type ToolObjectType
-						bool isSupplier = pSupplier->GetObjectSubType() == SVGlobalConstantObjectType || pSupplier->GetObjectType() == SVToolObjectType;
-						bool isClient = pClient->GetObjectType() == SVToolObjectType;
-						SVObjectClass* pToolSupplier = isSupplier ? pSupplier : pSupplier->GetAncestor(SVToolObjectType);
-						SVObjectClass* pToolClient = isClient ? pClient : pClient->GetAncestor(SVToolObjectType);
-						if (nullptr != pToolSupplier && nullptr != pToolClient && pToolSupplier != pToolClient)
-						{
-							CopyItem = true;
-						}
-					}
-					return CopyItem;
-				});
-
-				//! First sort the supplier then the clients
-				std::sort(DependencyVector.begin(), DependencyVector.end(), DependencySort(true));
-				std::sort(DependencyVector.begin(), DependencyVector.end(), DependencySort(false));
-
-				std::vector<Dependency>::const_iterator IterDependency(DependencyVector.begin());
-				for( ; DependencyVector.end() != IterDependency; ++IterDependency )
-				{
-					SVObjectClass* pSupplier = SVObjectManagerClass::Instance().GetObject( IterDependency->first );
-					SVObjectClass* pClient = SVObjectManagerClass::Instance().GetObject( IterDependency->second );
-					if( nullptr != pSupplier && nullptr != pClient )
-					{
-						SVString SupplierName = pSupplier->GetCompleteObjectNameToObjectType( nullptr, nameToObjectType );
-						SVString ClientName = pClient->GetCompleteObjectNameToObjectType( nullptr, nameToObjectType );
-
-						Inserter = SVStringPair( SupplierName, ClientName );
+						ObjectDependencies.insert(Dependency(pToolSupplier->GetUniqueObjectID(), pToolClient->GetUniqueObjectID()));
 					}
 				}
 			}
+		}
+		if (!rFileName.empty())
+		{
+			SvCl::ObjectGraph<SVGUID, SvOl::JoinType> OutputGraph(ObjectDependencies, SvOl::JoinType::Owner);
+			SvOl::ObjectNameLookup NameLookup;
+			OutputGraph.saveGraphDot(rFileName.c_str(), NameLookup);
 		}
 	}
 	#pragma endregion Public Methods
 } //namespace SvOl
 
 #pragma region IDependencyManager
-void SvOi::getToolDependency( StringPairInserter Inserter, const SVGuidSet& rSourceSet, SVObjectTypeEnum nameToObjectType, SvOi::ToolDependencyEnum ToolDependency /*= SvOi::ToolDependencyEnum::Client*/ )
+void SvOi::getToolDependency( StringPairInserter Inserter, const SVGuidSet& rSourceSet, SVObjectTypeEnum nameToObjectType, SvOi::ToolDependencyEnum ToolDependency /*= SvOi::ToolDependencyEnum::Client*/, const SVString& rFileName /*= SVString()*/)
 {
 	SvOl::DependencyManager::Instance().updateVertexIndex();
-	SvOl::DependencyManager::Instance().getToolDependency( Inserter, rSourceSet, nameToObjectType, ToolDependency );
+	SvOl::DependencyManager::Instance().getToolDependency(Inserter, rSourceSet, nameToObjectType, ToolDependency, rFileName);
 }
 #pragma endregion IDependencyManager

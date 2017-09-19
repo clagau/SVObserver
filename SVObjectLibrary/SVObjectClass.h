@@ -80,7 +80,7 @@ public:
 	virtual long GetImageDepth() const;
 	virtual bool SetImageDepth( long lDepth );
 
-	virtual bool CreateObject( SVObjectLevelCreateStruct* pCreateStructure );
+	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure );
 	virtual void ConnectObject( const SVObjectLevelCreateStruct& rCreateStructure );
 	virtual bool CloseObject();
 	virtual bool IsValid() const { return m_isObjectValid; }
@@ -110,6 +110,8 @@ public:
 	virtual bool ConnectAllInputs() { return false; };
 	bool ConnectObjectInput( SVInObjectInfoStruct* pObjectInInfo );
 	virtual bool DisconnectObjectInput( SVInObjectInfoStruct* pObjectInInfo );
+
+	virtual bool isInputImage(const SVGUID& rImageGuid) const { return false; };
 
 	virtual void ResetName();
 	virtual void SetObjectName( LPCTSTR ObjectName );

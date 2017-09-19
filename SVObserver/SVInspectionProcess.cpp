@@ -16,7 +16,6 @@
 #include "SVImageLibrary\SVImageBufferHandleImage.h"
 #include "SVImageLibrary\SVImagingDeviceParams.h"
 #include "SVObjectLibrary\SVObjectLevelCreateStruct.h"
-#include "SVObjectLibrary\SVInspectionLevelCreateStruct.h"
 #include "SVObjectLibrary\SVObjectManagerClass.h"
 #include "SVSystemLibrary\SVAutoLockAndReleaseTemplate.h"
 #include "SVXMLLibrary\SVConfigurationTags.h"
@@ -3040,14 +3039,14 @@ SVToolSetClass* SVInspectionProcess::GetToolSet() const
 	return m_pCurrentToolset;
 }
 
-bool SVInspectionProcess::CreateObject(SVObjectLevelCreateStruct* pCreateStructure)
+bool SVInspectionProcess::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 {
-	bool l_bOk = SVObjectClass::CreateObject(pCreateStructure);
+	bool l_bOk = SVObjectClass::CreateObject(rCreateStructure);
 
-	SVInspectionLevelCreateStruct createStruct;
+	SVObjectLevelCreateStruct createStruct;
 
 	createStruct.OwnerObjectInfo = this;
-	createStruct.InspectionObjectInfo = this;
+	createStruct.m_pInspection = this;
 
 	l_bOk = l_bOk && m_pCurrentToolset->createAllObjects(createStruct);
 
@@ -4006,9 +4005,9 @@ bool SVInspectionProcess::CreateChildObject(SVObjectClass* pChildObject, DWORD c
 		pChildObject->SetObjectDepthWithIndex(m_objectDepth, l_LastIndex);
 		pChildObject->SetImageDepth(m_lImageDepth);
 
-		SVInspectionLevelCreateStruct createStruct;
+		SVObjectLevelCreateStruct createStruct;
 		createStruct.OwnerObjectInfo = this;
-		createStruct.InspectionObjectInfo = this;
+		createStruct.m_pInspection = this;
 
 		bool Return = pChildObject->createAllObjects(createStruct);
 

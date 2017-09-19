@@ -53,9 +53,9 @@ SVImageClass::SVImageClass( SVObjectClass* POwner, int StringResourceID )
 	init();
 }
 
-bool SVImageClass::CreateObject(SVObjectLevelCreateStruct* pCreateStructure)
+bool SVImageClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 {
-	bool l_bOk = SVObjectAppClass::CreateObject(pCreateStructure);
+	bool l_bOk = SVObjectAppClass::CreateObject(rCreateStructure);
 
 	RegisterAsSubObject();
 
@@ -683,7 +683,7 @@ HRESULT SVImageClass::UpdateFromToolInformation()
 {
 	HRESULT l_Status = S_OK;
 
-	SVGUID l_ToolID;
+	SVGUID ToolID;
 	SVImageExtentClass l_ToolExtent = m_ImageInfo.GetExtents();
 
 	// When initialized from CreateObject(), tool is nullptr.
@@ -735,20 +735,20 @@ HRESULT SVImageClass::UpdateFromToolInformation()
 			SvOi::SVImageTypeEnum::SVImageTypeIndependent != m_ImageType && 
 			SvOi::SVImageTypeEnum::SVImageTypeDependent != m_ImageType )
 		{
-			SvOi::ITool* pTool = dynamic_cast<SvOi::ITool*> (GetTool());
+			SvOi::ITool* pTool = GetToolInterface();
 			if( nullptr != pTool )
 			{
 				pTool->SetToolImage( GetUniqueObjectID() );
 			}
 		}
 
-		l_ToolID = GetTool()->GetUniqueObjectID(); 
+		ToolID = nullptr != GetTool() ? GetTool()->GetUniqueObjectID() : SV_GUID_NULL;
 	}
 
-	if( m_ImageInfo.GetOwnerID() != l_ToolID )
+	if( m_ImageInfo.GetOwnerID() != ToolID )
 	{
 		// Set the owning Tool before setting the extents
-		m_ImageInfo.SetOwner( l_ToolID );
+		m_ImageInfo.SetOwner( ToolID );
 
 		m_LastUpdate = SvTl::GetTimeStamp();
 	}
@@ -1748,7 +1748,7 @@ SVImageIndexStruct SVImageClass::GetSourceImageIndex( SVDataManagerHandle* pHand
 	SVImageIndexStruct svIndex;
 	if( SvOi::SV_PUBLISH_RESULT_IMAGE == (ObjectAttributesSet() & SvOi::SV_PUBLISH_RESULT_IMAGE) )
 	{
-		SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess*> (GetInspection());
+		SvOi::IInspectionProcess* pInspection = GetInspectionInterface();
 		assert( nullptr != pInspection );
 		if ( nullptr != pHandle && nullptr != pInspection )
 		{

@@ -69,9 +69,9 @@ SVPointXResultClass::~SVPointXResultClass()
 
 }
 
-bool SVPointXResultClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+bool SVPointXResultClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	m_isCreated = SVResultClass::CreateObject( pCreateStructure ) && nullptr != getInputPoint();
+	m_isCreated = SVResultClass::CreateObject(rCreateStructure) && nullptr != getInputPoint();
 	
 	m_X.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 

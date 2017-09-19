@@ -45,9 +45,9 @@ SVLinearToolClass::~SVLinearToolClass()
 #pragma endregion Constructor
 
 #pragma region Public Methods
-bool SVLinearToolClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+bool SVLinearToolClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	bool bOk = SVToolClass::CreateObject( pCreateStructure );
+	bool bOk = SVToolClass::CreateObject(rCreateStructure);
 
 	BOOL l_bValue = false;
 

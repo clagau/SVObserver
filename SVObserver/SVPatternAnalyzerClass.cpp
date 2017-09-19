@@ -693,9 +693,9 @@ void SVPatternAnalyzerClass::CloseMIL ()
 // 	 Date		Author				Comment                                       
 //  04-12-00 	Sri				First Implementation
 ////////////////////////////////////////////////////////////////////////////////
-bool SVPatternAnalyzerClass::CreateObject(SVObjectLevelCreateStruct* pCreateStructure)
+bool SVPatternAnalyzerClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 {
-	bool bOk = SVImageAnalyzerClass::CreateObject(pCreateStructure);
+	bool bOk = SVImageAnalyzerClass::CreateObject(rCreateStructure);
 
 	// Set / Reset Printable Flags
 	const UINT cAttributes = SvOi::SV_PRINTABLE | SvOi::SV_REMOTELY_SETABLE;

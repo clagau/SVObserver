@@ -176,9 +176,9 @@ bool ResizeTool::CloseObject()
 }
 
 
-bool ResizeTool::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+bool ResizeTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	bool bOk = SVToolClass::CreateObject( pCreateStructure ); 
+	bool bOk = SVToolClass::CreateObject( rCreateStructure ); 
 
 	// Override base class hiding of Scale Factors.  These values will be 
 	// exposed for the Resize Tool.
@@ -217,36 +217,26 @@ bool ResizeTool::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 	return bOk;
 }
 
-HRESULT ResizeTool::IsInputImage( SVImageClass *p_psvImage )
+SVImageClass* ResizeTool::getInputImage() const
 {
-	HRESULT l_hrOk = S_FALSE;
-
-	const SVImageClass* inputImage = getInputImage();
-
-	if ( nullptr != p_psvImage && p_psvImage == inputImage )
+	if (m_InputImageObjectInfo.IsConnected() && m_InputImageObjectInfo.GetInputObjectInfo().m_pObject)
 	{
-		l_hrOk = S_OK;
+		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
+		//! We are sure that when m_pObject is not nullptr then it is a SVImageClass
+		return static_cast<SVImageClass*> (m_InputImageObjectInfo.GetInputObjectInfo().m_pObject);
 	}
-	return l_hrOk;
-}	
-
-SVImageClass* ResizeTool::getInputImage()
-{
-	if( m_InputImageObjectInfo.IsConnected() && 
-		m_InputImageObjectInfo.GetInputObjectInfo().m_pObject )
-		return dynamic_cast<SVImageClass*>(m_InputImageObjectInfo.GetInputObjectInfo().m_pObject);
 
 	return nullptr;
 }
 
 SVImageClass* ResizeTool::getOutputImage()
 {
-	return static_cast <SVImageClass*> (&m_OutputImage);
+	return &m_OutputImage;
 }
 
 SVImageClass* ResizeTool::getLogicalROIImage()
 {
-	return static_cast <SVImageClass*> (&m_LogicalROIImage);
+	return &m_LogicalROIImage;
 }
 
 HRESULT ResizeTool::SetImageExtentToParent()
@@ -553,6 +543,19 @@ HRESULT	ResizeTool::GetBackupInspectionParameters (	double*	oldHeightScaleFactor
 	*oldPerformance = m_ResizePerformance_Backup;
 
 	return hr;
+}
+
+bool ResizeTool::isInputImage(const SVGUID& rImageGuid) const
+{
+	bool Result(false);
+
+	const SVImageClass* pImage = getInputImage();
+	if (nullptr != pImage && rImageGuid == pImage->GetUniqueObjectID())
+	{
+		Result = true;
+	}
+
+	return Result;
 }
 
 bool ResizeTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )

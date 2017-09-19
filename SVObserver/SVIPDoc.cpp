@@ -54,9 +54,9 @@
 #include "SVXMLLibrary/SVNavigateTree.h"
 #include "SVMessage/SVMessage.h"
 #include "ObjectInterfaces/SVUserMessage.h"
+#include "ObjectInterfaces/IDependencyManager.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
-#include "SVObjectLibrary/SVAnalyzerLevelCreateStruct.h"
-#include "SVObjectLibrary/SVInspectionLevelCreateStruct.h"
+#include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 #include "SVLinearToolClass.h"
 #include "SVAdjustToolSizePositionDlg.h"
 #include "SVDataDefinitionSheet.h"
@@ -100,6 +100,7 @@
 #include "SVOGui/ResultTableSelectionDlg.h"
 #include "GuiCommands/GetAvailableObjects.h"
 #include "SVOGui/TextDefinesSvOg.h"
+#include "SVStatusLibrary/GlobalPath.h"
 #pragma endregion Includes
 
 #pragma region Declarations
@@ -192,6 +193,7 @@ BEGIN_MESSAGE_MAP(SVIPDoc, CDocument)
 	ON_UPDATE_COMMAND_UI(ID_ADD_ENDTOOLGROUPING, OnUpdateAddEndToolGrouping)
 	ON_COMMAND(ID_ADD_STARTTOOLGROUPING, OnAddStartToolGrouping)
 	ON_COMMAND(ID_ADD_ENDTOOLGROUPING, OnAddEndToolGrouping)
+	ON_COMMAND(ID_TOOL_DEPENDENCIES, OnToolDependencies)
 END_MESSAGE_MAP()
 #pragma endregion Declarations
 
@@ -1389,9 +1391,9 @@ void SVIPDoc::OnEditPaste()
 			pTool->SetObjectDepthWithIndex( pInspection->GetObjectDepth(), 1 );
 			pTool->SetImageDepth( pInspection->GetImageDepth() );
 
-			SVInspectionLevelCreateStruct createStruct;
+			SVObjectLevelCreateStruct createStruct;
 			createStruct.OwnerObjectInfo = pInspection;
-			createStruct.InspectionObjectInfo = pInspection;
+			createStruct.m_pInspection = pInspection;
 
 			pInspection->ConnectObject(createStruct);
 			pInspection->ConnectAllInputs();
@@ -3002,6 +3004,31 @@ void SVIPDoc::OnUpdateShowToolRelations(CCmdUI* pCmdUI)
 	Enabled = Enabled && TheSVObserverApp.OkToEdit();
 
 	pCmdUI->Enable( Enabled );
+}
+
+void SVIPDoc::OnToolDependencies()
+{
+	SVToolSetClass* pToolSet = GetToolSet();
+	if (nullptr != pToolSet)
+	{
+		CWaitCursor MouseBusy;
+		SVGuidSet ToolIDSet;
+		pToolSet->GetToolIds(std::inserter(ToolIDSet, ToolIDSet.end()));
+		StringPairVector m_dependencyList;
+		SVString FileName;
+		//Don't need to check inspection pointer because ToolSet pointer is valid
+		FileName = SvUl_SF::Format(_T("%s\\%s.dot"), SvStl::GlobalPath::Inst().GetTempPath().c_str(), GetInspectionProcess()->GetName());
+		SvOi::getToolDependency(std::back_inserter(m_dependencyList), ToolIDSet, SVToolObjectType, SvOi::ToolDependencyEnum::Client, FileName);
+	}
+}
+
+void SVIPDoc::OnUpdateToolDependencies(CCmdUI* pCmdUI)
+{
+	BOOL Enabled = SVSVIMStateClass::CheckState(SV_STATE_READY) && SVSVIMStateClass::CheckState(SV_STATE_EDIT);
+	// Check current user access...
+	Enabled = Enabled && TheSVObserverApp.OkToEdit();
+
+	pCmdUI->Enable(Enabled);
 }
 
 void SVIPDoc::OnViewResetAllCounts()

@@ -33,9 +33,9 @@ SVCylindricalWarpToolClass::~SVCylindricalWarpToolClass()
 	LocalDestroy();
 }
 
-bool SVCylindricalWarpToolClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+bool SVCylindricalWarpToolClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	bool l_bOk = SVToolClass::CreateObject( pCreateStructure );
+	bool l_bOk = SVToolClass::CreateObject(rCreateStructure);
 
 	if ( l_bOk )
 	{

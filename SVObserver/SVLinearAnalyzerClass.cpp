@@ -69,11 +69,11 @@ SVLinearAnalyzerClass::~SVLinearAnalyzerClass()
 {
 }
 
-bool SVLinearAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+bool SVLinearAnalyzerClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
 	SVImageInfoClass ImageInfo;
 
-	bool bOk = SVAnalyzerClass::CreateObject(pCreateStructure);
+	bool bOk = SVAnalyzerClass::CreateObject(rCreateStructure);
 
 	bOk = bOk && S_OK == GetPixelDepth();
 

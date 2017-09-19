@@ -22,8 +22,6 @@ public:
 	SVThickeningFilterClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVTHICKENINGFILTER );
 	virtual ~SVThickeningFilterClass();
 	
-	virtual bool CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
-
 #pragma region virtual method (IFilter)
 	virtual bool shouldResetInspection() const override { return true; }
 #pragma region virtual method (IFilter)

@@ -26,7 +26,7 @@ public:
 
 	virtual ~SVLuminanceAnalyzerClass();
 
-	virtual bool CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
+	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 
 /*- CloseObject () ------------------------------------------*/
 /*- This function should only be called from the destructor  */

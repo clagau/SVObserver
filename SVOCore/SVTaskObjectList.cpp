@@ -17,7 +17,6 @@
 #include "SVObjectLibrary/SVClsIds.h"
 #include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVObjectLibrary/SVAnalyzerLevelCreateStruct.h"
 #include "ObjectInterfaces/SVObjectTypeInfoStruct.h"
 #include "SVTimerLibrary/SVClock.h"
 #include "SVImageLibrary/SVImageInfoClass.h"
@@ -164,27 +163,6 @@ SVTaskObjectClass* SVTaskObjectListClass::GetObjectAtPoint( const SVExtentPointS
 	}
 
 	return l_psvObject;
-}
-
-HRESULT SVTaskObjectListClass::IsInputImage( SVImageClass* p_psvImage )
-{
-	HRESULT l_hrOk = SVTaskObjectClass::IsInputImage( p_psvImage );
-
-	if ( nullptr != p_psvImage )
-	{
-		// Get Object from our children
-		for (int i = 0; S_OK != l_hrOk && i < m_aTaskObjects.GetSize(); i++)
-		{
-			SVTaskObjectClass* l_psvObject = m_aTaskObjects.GetAt(i);
-
-			if ( nullptr != l_psvObject )
-			{
-				l_hrOk = l_psvObject->IsInputImage( p_psvImage );
-			}
-		}
-	}
-
-	return l_hrOk;
 }
 
 bool SVTaskObjectListClass::CloseObject()
@@ -606,7 +584,7 @@ bool SVTaskObjectListClass::DestroyFriendObject(SvOi::IObjectClass& rObject, DWO
 		delete(&rObject);
 	}
 
-	SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess*> (GetInspection());
+	SvOi::IInspectionProcess* pInspection = GetInspectionInterface();
 	if( nullptr != pInspection )
 	{
 		if( SvOi::SVMFSetDefaultInputs == ( context & SvOi::SVMFSetDefaultInputs ) )
@@ -646,11 +624,11 @@ bool SVTaskObjectListClass::createAllObjects( const SVObjectLevelCreateStruct& r
 {
 	bool Result = __super::createAllObjects( rCreateStructure );
 
-	SVAnalyzerLevelCreateStruct createStruct;
+	SVObjectLevelCreateStruct createStruct;
 	createStruct.OwnerObjectInfo = this;
-	createStruct.AnalyzerObjectInfo = GetAnalyzer();
-	createStruct.ToolObjectInfo	= GetTool();
-	createStruct.InspectionObjectInfo = GetInspection();
+	createStruct.m_pInspection = GetInspection();
+	createStruct.m_pTool	= GetTool();
+	createStruct.m_pAnalyzer = GetAnalyzer();
 
 	for (int i = 0; i < m_aTaskObjects.GetSize(); i++)
 	{
@@ -666,11 +644,11 @@ void SVTaskObjectListClass::ConnectObject( const SVObjectLevelCreateStruct& rCre
 {
 	__super::ConnectObject( rCreateStructure );
 
-	SVAnalyzerLevelCreateStruct createStruct;
+	SVObjectLevelCreateStruct createStruct;
 	createStruct.OwnerObjectInfo = this;
-	createStruct.AnalyzerObjectInfo = GetAnalyzer();
-	createStruct.ToolObjectInfo	= GetTool();
-	createStruct.InspectionObjectInfo	= GetInspection();
+	createStruct.m_pInspection = GetInspection();
+	createStruct.m_pTool = GetTool();
+	createStruct.m_pAnalyzer = GetAnalyzer();
 
 	for (int i = 0; i < m_aTaskObjects.GetSize(); i++)
 	{
@@ -955,6 +933,25 @@ bool SVTaskObjectListClass::resetAllOutputListObjects( SvStl::MessageContainerVe
 	return Result;
 }
 
+bool SVTaskObjectListClass::isInputImage(const SVGUID& rImageGuid) const
+{
+	bool Result = SVTaskObjectClass::isInputImage(rImageGuid);
+
+	if (SV_GUID_NULL != rImageGuid)
+	{
+		// Get Object from our children
+		for (int i = 0; !Result && i < m_aTaskObjects.GetSize(); i++)
+		{
+			if (nullptr != m_aTaskObjects.GetAt(i))
+			{
+				Result = m_aTaskObjects.GetAt(i)->isInputImage(rImageGuid);
+			}
+		}
+	}
+
+	return Result;
+}
+
 bool SVTaskObjectListClass::Run(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	clearRunErrorMessages();
@@ -1067,12 +1064,12 @@ bool SVTaskObjectListClass::resetAllObjects( SvStl::MessageContainerVector *pErr
 
 void SVTaskObjectListClass::connectChildObject( SVTaskObjectClass& rChildObject )
 {
-	SVAnalyzerLevelCreateStruct createStruct;
+	SVObjectLevelCreateStruct createStruct;
 
 	createStruct.OwnerObjectInfo = this;
-	createStruct.AnalyzerObjectInfo = GetAnalyzer();
-	createStruct.ToolObjectInfo	= GetTool();
-	createStruct.InspectionObjectInfo	= GetInspection();
+	createStruct.m_pInspection = GetInspection();
+	createStruct.m_pTool	= GetTool();
+	createStruct.m_pAnalyzer = GetAnalyzer();
 
 	rChildObject.ConnectObject(createStruct);
 }
@@ -1096,7 +1093,7 @@ void SVTaskObjectListClass::DestroyTaskObject(SVTaskObjectClass& rTaskObject, DW
 	// Remove it from the SVTaskObjectList ( Destruct it )
 	Delete(objectID);
 
-	SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess*>(GetInspection());
+	SvOi::IInspectionProcess* pInspection = GetInspectionInterface();
 	if( nullptr != pInspection )
 	{
 		if( SvOi::SVMFSetDefaultInputs == ( context & SvOi::SVMFSetDefaultInputs ) )

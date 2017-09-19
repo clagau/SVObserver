@@ -13,7 +13,7 @@
 #include "SVToolSet.h"
 
 #include "SVMessage/SVMessage.h"
-#include "SVObjectLibrary/SVInspectionLevelCreateStruct.h"
+#include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 
 #include "SVOCore/SVAnalyzer.h"
@@ -164,9 +164,9 @@ SVToolSetClass::~SVToolSetClass()
 ////////////////////////////////////////////////////////////////////////////////
 // Create Operator
 ////////////////////////////////////////////////////////////////////////////////
-bool SVToolSetClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+bool SVToolSetClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	bool bOk = SVTaskObjectListClass::CreateObject( pCreateStructure );
+	bool bOk = SVTaskObjectListClass::CreateObject(rCreateStructure);
 
 	// Set / Reset Printable Flags
 	m_Enabled.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
@@ -362,21 +362,6 @@ SVConditionalClass* SVToolSetClass::GetToolSetConditional() const
 	return l_pConditional; 
 }
 
-void SVToolSetClass::GetToolIds( SVToolIdDeque& p_rToolIds ) const
-{
-	p_rToolIds.clear();
-
-	for( SVTaskObjectPtrVector::const_iterator l_Iter = m_aTaskObjects.begin(); l_Iter != m_aTaskObjects.end(); ++l_Iter )
-	{
-		SVTaskObjectClass* l_pTask = ( *l_Iter );
-
-		if( nullptr != l_pTask )
-		{
-			p_rToolIds.push_back( l_pTask->GetUniqueObjectID() );
-		}
-	}
-}
-
 HRESULT SVToolSetClass::getResetCounts( bool& rResetCounts )  const
 {
 	BOOL Value( false );
@@ -396,16 +381,17 @@ void SVToolSetClass::goingOffline()
 #pragma region virtual method (IToolSet)
 bool SVToolSetClass::IsToolPreviousToSelected( const SVGUID& p_rToolID ) const
 {
-	bool l_Status = false;
-	SVToolSetClass::SVToolIdDeque l_ToolIds;
-	GetToolIds( l_ToolIds );
+	bool Result(false);
+	
+	SVGuidVector ToolIds;
+	GetToolIds(std::back_inserter(ToolIds));
 
-	for( SVToolSetClass::SVToolIdDeque::const_iterator l_Iter = l_ToolIds.begin(); !l_Status && l_Iter != l_ToolIds.end(); ++l_Iter )
+	for( SVGuidVector::const_iterator l_Iter = ToolIds.begin(); !Result && l_Iter != ToolIds.end(); ++l_Iter )
 	{
-		l_Status = ( p_rToolID == ( *l_Iter ) );
+		Result = ( p_rToolID == ( *l_Iter ) );
 	}
 
-	return l_Status;
+	return Result;
 }
 
 SvOi::IObjectClass* SVToolSetClass::getBand0Image() const
@@ -935,18 +921,18 @@ bool SVToolSetClass::createAllObjectsFromChild( SVObjectClass& rChildObject )
 	// Set defaults, to ensure that no invalid input info exists...
 	SetDefaultInputs();
 
-	SVInspectionLevelCreateStruct createStruct;
-	createStruct.OwnerObjectInfo        = this;
-	createStruct.InspectionObjectInfo	= GetInspection();
+	SVObjectLevelCreateStruct createStruct;
+	createStruct.OwnerObjectInfo  = this;
+	createStruct.m_pInspection	= GetInspection();
 
 	return rChildObject.createAllObjects(createStruct);
 }
 
 void SVToolSetClass::connectChildObject( SVTaskObjectClass& rChildObject )
 {
-	SVInspectionLevelCreateStruct createStruct;
-	createStruct.OwnerObjectInfo        = this;
-	createStruct.InspectionObjectInfo	= GetInspection();
+	SVObjectLevelCreateStruct createStruct;
+	createStruct.OwnerObjectInfo = this;
+	createStruct.m_pInspection = GetInspection();
 
 	rChildObject.ConnectObject(createStruct);
 }

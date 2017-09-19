@@ -40,9 +40,9 @@ RingBufferTool::~RingBufferTool(void)
 #pragma endregion Constructor
 
 #pragma region Public Methods
-bool RingBufferTool::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+bool RingBufferTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	bool bOk = SVToolClass::CreateObject( pCreateStructure ); //  TRUE/FALSE
+	bool bOk = SVToolClass::CreateObject( rCreateStructure );
 
 	SVImageClass* inputImage = getInputImage ();
 	bOk &= (nullptr != inputImage);
@@ -157,10 +157,11 @@ bool RingBufferTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 
 SVImageClass* RingBufferTool::getInputImage()
 {
-	if( m_InputImageObjectInfo.IsConnected() && 
-		m_InputImageObjectInfo.GetInputObjectInfo().m_pObject )
+	if (m_InputImageObjectInfo.IsConnected() && nullptr != m_InputImageObjectInfo.GetInputObjectInfo().m_pObject)
 	{
-		return static_cast< SVImageClass* >(m_InputImageObjectInfo.GetInputObjectInfo().m_pObject);
+		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
+		//! We are sure that when m_pObject is not nullptr then it is a SVImageClass
+		return static_cast<SVImageClass*> (m_InputImageObjectInfo.GetInputObjectInfo().m_pObject);
 	}
 
 	return nullptr;
@@ -178,13 +179,13 @@ SVImageClass* RingBufferTool::getOutputImage(int index)
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
-HRESULT RingBufferTool::IsInputImage( SVImageClass *p_psvImage )
+bool RingBufferTool::isInputImage(const SVGUID& rImageGuid) const
 {
-	HRESULT l_hrOk = S_FALSE;
+	bool Result(false);
 	//@Hack: [MZA][24.04.15] This method is only used by CollectOverlays and the recursive functionality of IsInputImage. 
-	// Always FALSE, optimizes the CollectOverlay (there is no overlay of this tool). 
+	// Always false, optimizes the CollectOverlay (there is no overlay of this tool). 
 	// In further implementation, it should be possible to return the right result and have nevertheless a optimized CollectOverlay method. 
-	return l_hrOk;
+	return Result;
 }	
 
 bool RingBufferTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )

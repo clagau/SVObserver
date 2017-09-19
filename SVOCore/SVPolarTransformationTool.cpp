@@ -109,9 +109,9 @@ SVPolarTransformationToolClass::~SVPolarTransformationToolClass()
 // Operator(s):
 //******************************************************************************
 
-bool SVPolarTransformationToolClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+bool SVPolarTransformationToolClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	m_isCreated = SVToolClass::CreateObject( pCreateStructure );
+	m_isCreated = SVToolClass::CreateObject(rCreateStructure);
 
 	m_SourceImageNames.setStatic( true );
 	m_SourceImageNames.setSaveValueFlag(false);

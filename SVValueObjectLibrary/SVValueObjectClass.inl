@@ -85,9 +85,9 @@ const SVValueObjectClass<T>& SVValueObjectClass<T>::operator= (const SVValueObje
 
 #pragma region Public Methods
 template <typename T>
-bool SVValueObjectClass<T>::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+bool SVValueObjectClass<T>::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	bool l_bOk = SVObjectClass::CreateObject( pCreateStructure );
+	bool l_bOk = SVObjectClass::CreateObject( rCreateStructure );
 
 	SVObjectManagerClass::Instance().RegisterSubObject(GetUniqueObjectID());
 	SetObjectAttributesAllowed( SvOi::SV_DD_VALUE, SvOi::SetAttributeType::AddAttribute );	// derived classes need to reset this

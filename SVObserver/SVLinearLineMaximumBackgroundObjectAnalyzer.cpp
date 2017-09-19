@@ -213,9 +213,9 @@ SVLinearMaximumBackgroundObjectLineAnalyzerClass::~SVLinearMaximumBackgroundObje
 	CloseObject();
 }
 
-bool SVLinearMaximumBackgroundObjectLineAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+bool SVLinearMaximumBackgroundObjectLineAnalyzerClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	bool bOk = SVLinearAnalyzerClass::CreateObject( pCreateStructure );
+	bool bOk = SVLinearAnalyzerClass::CreateObject(rCreateStructure);
 
 	mdpEdgeA.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 	mdpEdgeB.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );

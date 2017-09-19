@@ -14,7 +14,7 @@
 #include "SVTaskObject.h"
 #include "SVImageClass.h"
 #include "SVObjectLibrary/SVClsIds.h"
-#include "SVObjectLibrary/SVAnalyzerLevelCreateStruct.h"
+#include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVObjectLibrary/SVObjectAttributeClass.h"
 #include "CameraLibrary/SVTemplate.h"
@@ -715,38 +715,34 @@ void SVTaskObjectClass::OnObjectRenamed(const SVObjectClass& rRenamedObject, con
 	}
 }
 
-HRESULT SVTaskObjectClass::IsInputImage( SVImageClass* pImage )
+bool SVTaskObjectClass::isInputImage(const SVGUID& rImageGuid) const
 {
-	HRESULT l_hrOk = S_FALSE;
+	bool Result(false);
 
-	if( nullptr != pImage)
+	if(SV_GUID_NULL != rImageGuid)
 	{
 		// Notify friends...
-		for( size_t i = 0; S_OK != l_hrOk && i < m_friendList.size(); ++i )
+		for( size_t i = 0; !Result && i < m_friendList.size(); ++i )
 		{
-			const SVObjectInfoStruct &l_rsvFriend = m_friendList[i];
+			const SVObjectInfoStruct &rFriend = m_friendList[i];
 
-			SVTaskObjectClass* pObject = dynamic_cast<SVTaskObjectClass*>(l_rsvFriend.m_pObject);
-
-			if( nullptr != pObject && pObject->GetOwner() == this )
+			if( nullptr != rFriend.m_pObject && rFriend.m_pObject->GetOwner() == this )
 			{
-				l_hrOk = pObject->IsInputImage( pImage );
+				Result = rFriend.m_pObject->isInputImage(rImageGuid);
 			}
 		}
 
 		// Notify embeddeds...
-		for( SVObjectPtrVector::iterator Iter = m_embeddedList.begin(); S_OK != l_hrOk && m_embeddedList.end() != Iter; ++Iter )
+		for( SVObjectPtrVector::const_iterator Iter = m_embeddedList.begin(); !Result && m_embeddedList.end() != Iter; ++Iter )
 		{
-			SVTaskObjectClass* pObject = dynamic_cast<SVTaskObjectClass*> ( *Iter );
-
-			if( nullptr != pObject )
+			if( nullptr != *Iter)
 			{
-				l_hrOk = pObject->IsInputImage( pImage );
+				Result = (*Iter)->isInputImage(rImageGuid);
 			}
 		}
 	}
 
-	return l_hrOk;
+	return Result;
 }
 
 SVTaskObjectClass* SVTaskObjectClass::GetObjectAtPoint( const SVExtentPointStruct &rPoint )
@@ -1072,14 +1068,9 @@ HRESULT SVTaskObjectClass::ConnectToObject( SVInObjectInfoStruct* p_psvInputInfo
 	return l_svOk;
 }
 
-bool SVTaskObjectClass::CreateObject(SVObjectLevelCreateStruct* pCreateStructure)
+bool SVTaskObjectClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 {
-	if (!pCreateStructure)
-	{
-		return false;
-	}
-	
-	bool Result = SVObjectAppClass::CreateObject(pCreateStructure);
+	bool Result = SVObjectAppClass::CreateObject(rCreateStructure);
 	
 	// Create our friends
 	for (size_t j = 0; j < m_friendList.size(); ++ j)

@@ -29,7 +29,7 @@ public:
 	
 protected:
 	void Init();
-	virtual bool CreateObject(SVObjectLevelCreateStruct* pCreateStructure) override ;
+	virtual bool CreateObject(const SVObjectLevelCreateStruct& rCreateStructure) override ;
 	virtual bool onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override ;
 	
 protected:

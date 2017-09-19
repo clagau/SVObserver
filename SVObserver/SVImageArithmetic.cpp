@@ -14,7 +14,7 @@
 #include "SVImageArithmetic.h"
 
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
-#include "SVObjectLibrary/SVAnalyzerLevelCreateStruct.h"
+#include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 
 #include "SVOCore/SVImageClass.h"
 #include "SVOCore/SVTool.h"
@@ -34,44 +34,44 @@ SVImageArithmeticClass::SVImageArithmeticClass( SVObjectClass* POwner, int Strin
 
 	// Input A...
 	// Image
-	inputImageAInfo.SetInputObjectType( SVImageObjectType );
-	inputImageAInfo.SetObject( GetObjectInfo() );
-	RegisterInputObject( &inputImageAInfo, _T( "ImageArithmeticAImage" ) );
+	m_InputImageAInfo.SetInputObjectType( SVImageObjectType );
+	m_InputImageAInfo.SetObject( GetObjectInfo() );
+	RegisterInputObject( &m_InputImageAInfo, _T( "ImageArithmeticAImage" ) );
 	// Enable Offset
-	inputEnableOffsetAInfo.SetInputObjectType( SVEnableOffsetAObjectGuid, SVBoolValueObjectType );
-	inputEnableOffsetAInfo.SetObject( GetObjectInfo() );
-	RegisterInputObject( &inputEnableOffsetAInfo, _T( "ImageArithmeticAEnableOffset" ) );
+	m_InputEnableOffsetAInfo.SetInputObjectType( SVEnableOffsetAObjectGuid, SVBoolValueObjectType );
+	m_InputEnableOffsetAInfo.SetObject( GetObjectInfo() );
+	RegisterInputObject( &m_InputEnableOffsetAInfo, _T( "ImageArithmeticAEnableOffset" ) );
 	// Offset Point
-	inputOffsetAPointInfo.SetInputObjectType( SVOffsetAPointObjectGuid, SVPointValueObjectType );
-	inputOffsetAPointInfo.SetObject( GetObjectInfo() );
-	RegisterInputObject( &inputOffsetAPointInfo, _T( "ImageArithmeticAOffsetPoint" ) );
+	m_InputOffsetAPointInfo.SetInputObjectType( SVOffsetAPointObjectGuid, SVPointValueObjectType );
+	m_InputOffsetAPointInfo.SetObject( GetObjectInfo() );
+	RegisterInputObject( &m_InputOffsetAPointInfo, _T( "ImageArithmeticAOffsetPoint" ) );
 
 	// Input B...
 	// Image
-	inputImageBInfo.SetInputObjectType( SVImageObjectType );
-	inputImageBInfo.SetObject( GetObjectInfo() );
-	RegisterInputObject( &inputImageBInfo, _T( "ImageArithmeticBImage" ) );
+	m_InputImageBInfo.SetInputObjectType( SVImageObjectType );
+	m_InputImageBInfo.SetObject( GetObjectInfo() );
+	RegisterInputObject( &m_InputImageBInfo, _T( "ImageArithmeticBImage" ) );
 	// Enable Offset
-	inputEnableOffsetBInfo.SetInputObjectType( SVEnableOffsetBObjectGuid, SVBoolValueObjectType );
-	inputEnableOffsetBInfo.SetObject( GetObjectInfo() );
-	RegisterInputObject( &inputEnableOffsetBInfo, _T( "ImageArithmeticBEnableOffset" ) );
+	m_InputEnableOffsetBInfo.SetInputObjectType( SVEnableOffsetBObjectGuid, SVBoolValueObjectType );
+	m_InputEnableOffsetBInfo.SetObject( GetObjectInfo() );
+	RegisterInputObject( &m_InputEnableOffsetBInfo, _T( "ImageArithmeticBEnableOffset" ) );
 	// Offset Point
-	inputOffsetBPointInfo.SetInputObjectType( SVOffsetBPointObjectGuid, SVPointValueObjectType );
-	inputOffsetBPointInfo.SetObject( GetObjectInfo() );
-	RegisterInputObject( &inputOffsetBPointInfo, _T( "ImageArithmeticBOffsetPoint" ) );
+	m_InputOffsetBPointInfo.SetInputObjectType( SVOffsetBPointObjectGuid, SVPointValueObjectType );
+	m_InputOffsetBPointInfo.SetObject( GetObjectInfo() );
+	RegisterInputObject( &m_InputOffsetBPointInfo, _T( "ImageArithmeticBOffsetPoint" ) );
 
 	// Operator Input...
-	inputArithOperatorInfo.SetInputObjectType( SVArithmeticOperatorObjectGuid, SVLongValueObjectType );
-	inputArithOperatorInfo.SetObject( GetObjectInfo() );
-	RegisterInputObject( &inputArithOperatorInfo, _T( "ImageArithmeticOperator" ) );
+	m_InputArithmaticOperatorInfo.SetInputObjectType( SVArithmeticOperatorObjectGuid, SVLongValueObjectType );
+	m_InputArithmaticOperatorInfo.SetObject( GetObjectInfo() );
+	RegisterInputObject( &m_InputArithmaticOperatorInfo, _T( "ImageArithmeticOperator" ) );
 
 
 	// Register Embedded Objects
-	RegisterEmbeddedObject( &outputImageObject, SVOutputImageObjectGuid, IDS_OBJECTNAME_IMAGE1 );
+	RegisterEmbeddedObject( &m_OutputImage, SVOutputImageObjectGuid, IDS_OBJECTNAME_IMAGE1 );
 
 	// Set Embedded defaults
 
-	outputImageObject.InitializeImage( SvOi::SVImageTypeEnum::SVImageTypePhysical );
+	m_OutputImage.InitializeImage( SvOi::SVImageTypeEnum::SVImageTypePhysical );
 
 	// Set up draw objects...
 //	graphFigure.SetDrawPen( TRUE, PS_SOLID, 1, SV_DEFAULT_SUB_FUNCTION_COLOR_1 );
@@ -85,14 +85,14 @@ SVImageArithmeticClass::~SVImageArithmeticClass()
 	CloseObject();
 }
 
-bool SVImageArithmeticClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+bool SVImageArithmeticClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	bool bOk = SVTaskObjectClass::CreateObject( pCreateStructure );
+	bool bOk = SVTaskObjectClass::CreateObject(rCreateStructure);
 
-	bOk &= ( S_OK == outputImageObject.InitializeImage( getInputImageA() ) );
+	bOk &= ( S_OK == m_OutputImage.InitializeImage( getInputImageA() ) );
 
 	// Reset Printable flag
-	outputImageObject.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
+	m_OutputImage.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );
 
 	m_isCreated = bOk;
 
@@ -111,7 +111,7 @@ bool SVImageArithmeticClass::CloseObject()
 bool SVImageArithmeticClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	bool Result = true;
-	HRESULT l_hrOk = outputImageObject.InitializeImage( getInputImageA() );
+	HRESULT l_hrOk = m_OutputImage.InitializeImage( getInputImageA() );
 	if (S_OK != l_hrOk)
 	{
 		Result = false;
@@ -128,77 +128,107 @@ bool SVImageArithmeticClass::ResetObject(SvStl::MessageContainerVector *pErrorMe
 	return Result;
 }
 
-HRESULT SVImageArithmeticClass::IsInputImage( SVImageClass *p_psvImage )
+bool SVImageArithmeticClass::isInputImage(const SVGUID& rImageGuid) const
 {
-	HRESULT l_hrOk = S_FALSE;
+	bool Result(false);
 
-	if ( nullptr != p_psvImage && ( p_psvImage == getInputImageA() || p_psvImage == getInputImageB() ) )
+	const SVImageClass* pImageA = getInputImageA();
+	const SVImageClass* pImageB = getInputImageB();
+	if ((nullptr != pImageA && rImageGuid == pImageA->GetUniqueObjectID()) || (nullptr != pImageB && rImageGuid == pImageB->GetUniqueObjectID()))
 	{
-		l_hrOk = S_OK;
+		Result = true;
 	}
 
-	return l_hrOk;
+	return Result;
 }
 
 SVImageClass* SVImageArithmeticClass::getInputImageA() const
 {
-	if( inputImageAInfo.IsConnected() && inputImageAInfo.GetInputObjectInfo().m_pObject )
-		return ( SVImageClass* ) inputImageAInfo.GetInputObjectInfo().m_pObject;
+	if (m_InputImageAInfo.IsConnected() && nullptr != m_InputImageAInfo.GetInputObjectInfo().m_pObject)
+	{
+		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
+		//! We are sure that when m_pObject is not nullptr then it is a SVImageClass
+		return static_cast<SVImageClass*> (m_InputImageAInfo.GetInputObjectInfo().m_pObject);
+	}
 
 	return nullptr;
 }
 
 SVBoolValueObjectClass* SVImageArithmeticClass::getInputEnableOffsetA() const
 {
-	if( inputEnableOffsetAInfo.IsConnected() && inputEnableOffsetAInfo.GetInputObjectInfo().m_pObject )
-		return ( SVBoolValueObjectClass* ) inputEnableOffsetAInfo.GetInputObjectInfo().m_pObject;
+	if (m_InputEnableOffsetAInfo.IsConnected() && m_InputEnableOffsetAInfo.GetInputObjectInfo().m_pObject)
+	{
+		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
+		//! We are sure that when m_pObject is not nullptr then it is a SVBoolValueObjectClass
+		return static_cast<SVBoolValueObjectClass*> (m_InputEnableOffsetAInfo.GetInputObjectInfo().m_pObject);
+	}
 
 	return nullptr;
 }
 
 SVPointValueObjectClass* SVImageArithmeticClass::getInputOffsetAPoint() const
 {
-	if( inputOffsetAPointInfo.IsConnected() && inputOffsetAPointInfo.GetInputObjectInfo().m_pObject )
-		return ( SVPointValueObjectClass* ) inputOffsetAPointInfo.GetInputObjectInfo().m_pObject;
+	if (m_InputOffsetAPointInfo.IsConnected() && m_InputOffsetAPointInfo.GetInputObjectInfo().m_pObject)
+	{
+		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
+		//! We are sure that when m_pObject is not nullptr then it is a SVPointValueObjectClass
+		return static_cast<SVPointValueObjectClass*> (m_InputOffsetAPointInfo.GetInputObjectInfo().m_pObject);
+	}
 
 	return nullptr;
 }
 
 SVImageClass* SVImageArithmeticClass::getInputImageB() const
 {
-	if( inputImageBInfo.IsConnected() && inputImageBInfo.GetInputObjectInfo().m_pObject )
-		return ( SVImageClass* ) inputImageBInfo.GetInputObjectInfo().m_pObject;
+	if (m_InputImageBInfo.IsConnected() && nullptr != m_InputImageBInfo.GetInputObjectInfo().m_pObject)
+	{
+		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
+		//! We are sure that when m_pObject is not nullptr then it is a SVImageClass
+		return static_cast<SVImageClass*> (m_InputImageBInfo.GetInputObjectInfo().m_pObject);
+	}
 
 	return nullptr;
 }
 
 SVBoolValueObjectClass* SVImageArithmeticClass::getInputEnableOffsetB() const
 {
-	if( inputEnableOffsetBInfo.IsConnected() && inputEnableOffsetBInfo.GetInputObjectInfo().m_pObject )
-		return ( SVBoolValueObjectClass* ) inputEnableOffsetBInfo.GetInputObjectInfo().m_pObject;
+	if (m_InputEnableOffsetBInfo.IsConnected() && m_InputEnableOffsetBInfo.GetInputObjectInfo().m_pObject)
+	{
+		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
+		//! We are sure that when m_pObject is not nullptr then it is a SVBoolValueObjectClass
+		return static_cast<SVBoolValueObjectClass*> (m_InputEnableOffsetBInfo.GetInputObjectInfo().m_pObject);
+	}
 
 	return nullptr;
 }
 
 SVPointValueObjectClass* SVImageArithmeticClass::getInputOffsetBPoint() const
 {
-	if( inputOffsetBPointInfo.IsConnected() && inputOffsetBPointInfo.GetInputObjectInfo().m_pObject )
-		return ( SVPointValueObjectClass* ) inputOffsetBPointInfo.GetInputObjectInfo().m_pObject;
+	if (m_InputOffsetBPointInfo.IsConnected() && m_InputOffsetBPointInfo.GetInputObjectInfo().m_pObject)
+	{
+		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
+		//! We are sure that when m_pObject is not nullptr then it is a SVPointValueObjectClass
+		return static_cast<SVPointValueObjectClass*> (m_InputOffsetBPointInfo.GetInputObjectInfo().m_pObject);
+	}
 
 	return nullptr;
 }
 
 SVLongValueObjectClass* SVImageArithmeticClass::getInputArithOperator() const
 {
-	if( inputArithOperatorInfo.IsConnected() && inputArithOperatorInfo.GetInputObjectInfo().m_pObject )
-		return ( SVLongValueObjectClass* ) inputArithOperatorInfo.GetInputObjectInfo().m_pObject;
+	if (m_InputArithmaticOperatorInfo.IsConnected() && m_InputArithmaticOperatorInfo.GetInputObjectInfo().m_pObject)
+	{
+		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
+		//! We are sure that when m_pObject is not nullptr then it is a SVLongValueObjectClass
+		return static_cast<SVLongValueObjectClass*> (m_InputArithmaticOperatorInfo.GetInputObjectInfo().m_pObject);
+	}
 
 	return nullptr;
 }
 	
 SVImageClass* SVImageArithmeticClass::getOutputImage()
 {
-	return &outputImageObject;
+	return &m_OutputImage;
 }
 
 bool SVImageArithmeticClass::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )

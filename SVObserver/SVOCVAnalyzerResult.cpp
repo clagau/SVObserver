@@ -235,9 +235,9 @@ SVImageClass* SVOCVAnalyzeResultClass::getInputImage()
 	return nullptr;
 }
 
-bool SVOCVAnalyzeResultClass::CreateObject(	SVObjectLevelCreateStruct* pCreateStructure )
+bool SVOCVAnalyzeResultClass::CreateObject(	const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	bool bOk = SVResultClass::CreateObject( pCreateStructure );
+	bool bOk = SVResultClass::CreateObject(rCreateStructure);
 
 	if ( bOk )
 	{

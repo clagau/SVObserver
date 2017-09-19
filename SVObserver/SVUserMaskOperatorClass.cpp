@@ -125,9 +125,9 @@ bool SVUserMaskOperatorClass::CloseObject()
 	return bOk;
 }
 
-bool SVUserMaskOperatorClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+bool SVUserMaskOperatorClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	bool bOk = SVUnaryImageOperatorClass::CreateObject( pCreateStructure );
+	bool bOk = SVUnaryImageOperatorClass::CreateObject(rCreateStructure);
 
 	const UINT cAttributes = SvOi::SV_PRINTABLE | SvOi::SV_REMOTELY_SETABLE | SvOi::SV_SETABLE_ONLINE;
 	// Set / Reset Printable Flag
@@ -277,29 +277,34 @@ HRESULT SVUserMaskOperatorClass::GetCancelData(SVInputRequestStructMap& rMap)
 	return hr;
 }
 
-HRESULT SVUserMaskOperatorClass::IsInputImage( SVImageClass *p_psvImage )
+bool SVUserMaskOperatorClass::isInputImage(const SVGUID& rImageGuid) const
 {
-	HRESULT l_hrOk = S_FALSE;
+	bool Result(false);
 
 	DWORD dwMaskType = 0;
 	m_Data.dwvoMaskType.GetValue( dwMaskType );
 
-	if ( dwMaskType == MASK_TYPE_IMAGE )
+	if (MASK_TYPE_IMAGE == dwMaskType)
 	{
-		if ( nullptr != p_psvImage && p_psvImage == getMaskInputImage() )
+		SVImageClass* pImage = getMaskInputImage();
+		if (nullptr != pImage && rImageGuid == pImage->GetUniqueObjectID())
 		{
-			l_hrOk = S_OK;
+			Result = true;
 		}
 	}
 	else
 	{
-		if( p_psvImage == m_pCurrentUIOPL->getInputImage() )
+		if (nullptr != m_pCurrentUIOPL)
 		{
-			l_hrOk = S_OK;
+			SVImageClass* pImage = m_pCurrentUIOPL->getInputImage();
+			if (nullptr != pImage && rImageGuid == pImage->GetUniqueObjectID())
+			{
+				Result = true;
+			}
 		}
 	}
 
-	return l_hrOk;
+	return Result;
 }
 
 HRESULT SVUserMaskOperatorClass::onCollectOverlays(SVImageClass *p_Image, SVExtentMultiLineStructVector &p_MultiLineArray )
@@ -895,12 +900,13 @@ bool SVUserMaskOperatorClass::onRun( bool First, SVSmartHandlePointer RInputImag
 	return false;
 }
 
-SVImageClass* SVUserMaskOperatorClass::getMaskInputImage()
+SVImageClass* SVUserMaskOperatorClass::getMaskInputImage() const
 {
-	if( m_inObjectInfo.IsConnected() && 
-		m_inObjectInfo.GetInputObjectInfo().m_pObject )
+	if( m_inObjectInfo.IsConnected() && nullptr != m_inObjectInfo.GetInputObjectInfo().m_pObject )
 	{
-		return dynamic_cast< SVImageClass* > ( m_inObjectInfo.GetInputObjectInfo().m_pObject );
+		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
+		//! We are sure that when m_pObject is not nullptr then it is a SVImageClass
+		return static_cast<SVImageClass*> (m_inObjectInfo.GetInputObjectInfo().m_pObject);
 	}
 	return nullptr;
 }

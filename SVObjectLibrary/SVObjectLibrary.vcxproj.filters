@@ -14,9 +14,6 @@
     <ClCompile Include="StdAfx.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVAnalyzerLevelCreateStruct.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVClassRegisterClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -27,9 +24,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVInputInfoListClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVInspectionLevelCreateStruct.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVObjectAttributeClass.cpp">
@@ -68,9 +62,6 @@
     <ClCompile Include="SVOutputInfoListClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVToolLevelCreateStruct.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVGetObjectDequeByTypeVisitor.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -83,9 +74,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="StdAfx.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVAnalyzerLevelCreateStruct.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVClassRegisterClass.h">
@@ -101,9 +89,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVInputInfoListClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVInspectionLevelCreateStruct.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVObjectAttributeClass.h">
@@ -170,9 +155,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVOutputInfoListClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVToolLevelCreateStruct.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVObjectAsynchronousCommandTemplate.h">

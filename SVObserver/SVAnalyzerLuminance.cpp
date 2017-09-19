@@ -146,12 +146,12 @@ SVLuminanceAnalyzerClass::~SVLuminanceAnalyzerClass()
 	CloseObject ();
 }
 
-bool SVLuminanceAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+bool SVLuminanceAnalyzerClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
 	SVImageClass* pSVImage(nullptr);
 	bool bError(false);
 
-	if (! SVImageAnalyzerClass::CreateObject( pCreateStructure ) )
+	if (! SVImageAnalyzerClass::CreateObject( rCreateStructure ) )
 	{
 		SvStl::MessageMgrStd MesMan( SvStl::LogOnly );
 		MesMan.setMessage( SVMSG_SVO_103_REPLACE_ERROR_TRAP, SvStl::Tid_UnexpectedError, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16095);

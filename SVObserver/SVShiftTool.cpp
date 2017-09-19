@@ -48,11 +48,11 @@ SVShiftTool::~SVShiftTool()
 #pragma endregion Constructor
 
 #pragma region Public Methods
-bool SVShiftTool::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+bool SVShiftTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	bool l_Status = SVToolClass::CreateObject( pCreateStructure );
+	bool l_Status = SVToolClass::CreateObject(rCreateStructure);
 
-	l_Status &= (S_OK == m_OutputImage.InitializeImage( GetImageInput() ) );
+	l_Status &= (S_OK == m_OutputImage.InitializeImage( getInputImage() ) );
 
 	const UINT cAttributes = SvOi::SV_REMOTELY_SETABLE | SvOi::SV_SETABLE_ONLINE | SvOi::SV_PRINTABLE;
 	m_SourceImageName.SetObjectAttributesAllowed( SvOi::SV_REMOTELY_SETABLE | SvOi::SV_SETABLE_ONLINE, SvOi::SetAttributeType::RemoveAttribute );
@@ -88,7 +88,7 @@ bool SVShiftTool::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
 bool SVShiftTool::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 {
 	SVGUID l_ParentGuid;
-	SVImageClass* l_pInputImage = GetImageInput();
+	SVImageClass* l_pInputImage = getInputImage();
 
 	SetAttributeData();
 
@@ -122,17 +122,6 @@ SVStringValueObjectClass* SVShiftTool::GetInputImageNames()
 	return &m_SourceImageName;
 }
 
-HRESULT SVShiftTool::IsInputImage( SVImageClass *p_psvImage )
-{
-	HRESULT l_hrOk = S_FALSE;
-
-	if ( nullptr != p_psvImage && p_psvImage == GetImageInput() )
-	{
-		l_hrOk = S_OK;
-	}
-	return l_hrOk;
-}
-
 SVTaskObjectClass* SVShiftTool::GetObjectAtPoint( const SVExtentPointStruct &p_rPoint )
 {
 	SVImageExtentClass l_Extents;
@@ -154,6 +143,18 @@ bool SVShiftTool::DoesObjectHaveExtents() const
 #pragma endregion Public Methods
 
 #pragma region Protected Methods
+bool SVShiftTool::isInputImage(const SVGUID& rImageGuid) const
+{
+	bool Result(false);
+
+	SVImageClass* pImage = getInputImage();
+	if (nullptr != pImage && rImageGuid == pImage->GetUniqueObjectID())
+	{
+		Result = true;
+	}
+	return Result;
+}
+
 bool SVShiftTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	//@WARNING[MZA][7.50][17.01.2017] Not sure if we need to check ValidateLocal in Run-mode, maybe it is enough to check it in ResetObject
@@ -302,7 +303,7 @@ bool SVShiftTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVe
 			SVSmartHandlePointer InImageHandle;
 			SVImageBufferHandleImage l_InMilHandle;
 
-			SVImageClass* l_pImageInput = GetImageInput();
+			SVImageClass* l_pImageInput = getInputImage();
 
 			double l_OffsetX = 0.0;
 			double l_OffsetY = 0.0;
@@ -360,15 +361,17 @@ bool SVShiftTool::onRun( SVRunStatusClass& rRunStatus, SvStl::MessageContainerVe
 	return Result;
 }
 
-SVImageClass* SVShiftTool::GetImageInput() const
+SVImageClass* SVShiftTool::getInputImage() const
 {
-	SVImageClass* l_pImage = nullptr;
+	SVImageClass* pImage = nullptr;
 
-	if( m_ImageInput.IsConnected() )
+	if( m_ImageInput.IsConnected() && nullptr != m_ImageInput.GetInputObjectInfo().m_pObject)
 	{
-		l_pImage = dynamic_cast< SVImageClass* >( m_ImageInput.GetInputObjectInfo().m_pObject );
+		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
+		//! We are sure that when m_pObject is not nullptr then it is a SVImageClass
+		pImage = static_cast<SVImageClass*> (m_ImageInput.GetInputObjectInfo().m_pObject);
 	}
-	return l_pImage;
+	return pImage;
 }
 
 SVDoubleValueObjectClass* SVShiftTool::GetTranslationXInput() const
@@ -590,7 +593,7 @@ bool SVShiftTool::ValidateLocal(SvStl::MessageContainerVector *pErrorMessages) c
 	long mode = SV_SHIFT_NONE;
 	m_evoShiftMode.GetValue(mode);
 
-	if ( nullptr == GetImageInput() )
+	if ( nullptr == getInputImage() )
 	{
 		Result = false;
 		if (nullptr != pErrorMessages)

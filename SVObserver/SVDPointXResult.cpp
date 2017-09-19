@@ -72,9 +72,9 @@ SVDPointXResultClass::~SVDPointXResultClass()
 
 }
 
-bool SVDPointXResultClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+bool SVDPointXResultClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	bool bOk = SVResultClass::CreateObject(pCreateStructure);
+	bool bOk = SVResultClass::CreateObject(rCreateStructure);
 	bOk &= nullptr != getInputPoint();
 
 	// Set / Reset Printable Flag

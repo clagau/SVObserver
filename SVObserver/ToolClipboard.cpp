@@ -19,7 +19,6 @@
 #include "SVXMLLibrary\SVNavigateTree.h"
 
 #include "SVObjectLibrary\SVToolsetScriptTags.h"
-#include "SVObjectLibrary\SVInspectionLevelCreateStruct.h"
 #include "SVXMLLibrary\SVConfigurationTags.h"
 #include "SVUtilityLibrary\ZipHelper.h"
 #include "SVSystemLibrary\SVEncodeDecodeUtilities.h"

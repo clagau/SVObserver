@@ -25,9 +25,9 @@ SVExternalTool::~SVExternalTool()
 { 
 }
 
-bool SVExternalTool::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+bool SVExternalTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	bool bOk = SVToolClass::CreateObject( pCreateStructure );
+	bool bOk = SVToolClass::CreateObject(rCreateStructure);
 
 	m_SourceImageNames.setStatic( true );
 	m_SourceImageNames.setSaveValueFlag(false);

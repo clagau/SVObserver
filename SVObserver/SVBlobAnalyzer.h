@@ -152,7 +152,7 @@ public:
 
 	virtual bool CloseObject() override;
 
-	virtual bool CreateObject(SVObjectLevelCreateStruct* pCreateStructure) override;
+	virtual bool CreateObject(const SVObjectLevelCreateStruct& rCreateStructure) override;
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	DWORD BuildFeatureListID ();

@@ -77,9 +77,9 @@ SVOCVAnalyzerClass::~SVOCVAnalyzerClass()
 
 
 ////////////////////////////////////////////////////////////////////////////////
-bool SVOCVAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+bool SVOCVAnalyzerClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	m_isCreated = SVImageAnalyzerClass::CreateObject( pCreateStructure );
+	m_isCreated = SVImageAnalyzerClass::CreateObject(rCreateStructure);
 	
 	if ( m_bHasLicenseError )
 	{

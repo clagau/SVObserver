@@ -51,9 +51,9 @@ SVRemoteInputTool::~SVRemoteInputTool()
 	m_Commands.Destroy();
 }
 
-bool SVRemoteInputTool::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+bool SVRemoteInputTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	bool l_Status = SVToolClass::CreateObject( pCreateStructure );
+	bool l_Status = SVToolClass::CreateObject(rCreateStructure);
 
 	l_Status &= ( S_OK == SVInputStreamManager::Instance().InsertInputStream( GetCompleteName().c_str(), GetUniqueObjectID() ) );
 

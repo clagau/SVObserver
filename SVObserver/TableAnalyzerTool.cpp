@@ -43,9 +43,9 @@ TableAnalyzerTool::~TableAnalyzerTool()
 #pragma endregion Constructor
 
 #pragma region Public Methods
-bool TableAnalyzerTool::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+bool TableAnalyzerTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	bool bOk = SVToolClass::CreateObject( pCreateStructure );
+	bool bOk = SVToolClass::CreateObject(rCreateStructure);
 
 	bOk &= (nullptr != GetTool());
 	bOk &= (nullptr != GetInspection());

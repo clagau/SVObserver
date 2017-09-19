@@ -12,7 +12,7 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVEvaluate.h"
-#include "SVObjectLibrary/SVAnalyzerLevelCreateStruct.h"
+#include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 #include "SVObjectLibrary/SVClsids.h"
 #pragma endregion Includes
 
@@ -40,9 +40,9 @@ SVEvaluateClass::~SVEvaluateClass()
 	CloseObject();
 }
 
-bool SVEvaluateClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+bool SVEvaluateClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	m_isCreated = SVMathContainerClass::CreateObject( pCreateStructure );
+	m_isCreated = SVMathContainerClass::CreateObject(rCreateStructure);
 
 	// Set / Reset Printable flag
 	m_outputMathResult.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );

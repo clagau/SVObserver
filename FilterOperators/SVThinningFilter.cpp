@@ -53,17 +53,6 @@ void SVThinningFilterClass::init()
 	addDefaultInputObjects();
 
 }
-////////////////////////////////////////////////////////////////////////////////
-// .Title       : CreateObject
-// -----------------------------------------------------------------------------
-// .Description : ...
-////////////////////////////////////////////////////////////////////////////////
-bool SVThinningFilterClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
-{
-	bool bOk = SVFilterClass::CreateObject( pCreateStructure );
-
-	return bOk;
-}
 
 ////////////////////////////////////////////////////////////////////////////////
 // .Title       : onRun

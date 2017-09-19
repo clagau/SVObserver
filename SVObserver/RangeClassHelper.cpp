@@ -505,15 +505,15 @@ bool RangeClassHelper::FillObjectSelector()
 	bool bRetVal = false;
 	if (nullptr != m_pRange)
 	{
-		SVInspectionProcess* pInspectionProcess = dynamic_cast<SVInspectionProcess*>(m_pRange->GetInspection());
-		if (nullptr != pInspectionProcess)
+		SVInspectionProcess* pInspection = dynamic_cast<SVInspectionProcess*>(m_pRange->GetInspection());
+		if (nullptr != pInspection)
 		{
-			SVTaskObjectListClass* pTaskObjectList = dynamic_cast<SVTaskObjectListClass*>(pInspectionProcess->GetToolSet());
+			SVTaskObjectListClass* pTaskObjectList = dynamic_cast<SVTaskObjectListClass*>(pInspection->GetToolSet());
 			if (nullptr != pTaskObjectList)
 			{
 				SVString PPQName = SvOl::FqnPPQVariables; 
-				SVString InspectionName = pInspectionProcess->GetName();
-				SVPPQObject* pPPQ = pInspectionProcess->GetPPQ();
+				SVString InspectionName = pInspection->GetName();
+				SVPPQObject* pPPQ = pInspection->GetPPQ();
 				if( nullptr != pPPQ )
 				{
 					PPQName = pPPQ->GetName();
@@ -524,7 +524,7 @@ bool RangeClassHelper::FillObjectSelector()
 				SvOsl::ObjectTreeGenerator::Instance().setLocationFilter( SvOsl::ObjectTreeGenerator::FilterOutput, PPQName, SVString( _T("")  ));
 				SvOsl::ObjectTreeGenerator::Instance().setSelectorType( SvOsl::ObjectTreeGenerator::SelectorTypeEnum::TypeSingleObject );
 
-				SvOsl::SelectorOptions BuildOptions( pInspectionProcess->GetUniqueObjectID(), SvOi::SV_SELECTABLE_FOR_EQUATION, m_pRange->GetUniqueObjectID() );
+				SvOsl::SelectorOptions BuildOptions( pInspection->GetUniqueObjectID(), SvOi::SV_SELECTABLE_FOR_EQUATION, m_pRange->GetUniqueObjectID() );
 				SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::GlobalSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<SvCmd::RangeSelectorFilterType>>( BuildOptions );
 				bRetVal = true;
 			}//@TODO return meaningful error on else

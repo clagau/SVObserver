@@ -39,9 +39,9 @@ SVMaxMinusMinFilterClass::~SVMaxMinusMinFilterClass()
 	CloseObject();
 }
 
-bool SVMaxMinusMinFilterClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+bool SVMaxMinusMinFilterClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	bool bOk = SVFilterClass::CreateObject( pCreateStructure );
+	bool bOk = SVFilterClass::CreateObject(rCreateStructure);
 
 	if( bOk )
 	{

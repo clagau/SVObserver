@@ -279,14 +279,14 @@ void SVBarCodeAnalyzerClass::CloseMil ()
 	SVMatroxBarCodeInterface::Destroy( m_MilCodeId );
 }
 
-bool SVBarCodeAnalyzerClass::CreateObject(SVObjectLevelCreateStruct* pCreateStructure)
+bool SVBarCodeAnalyzerClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 {
 	bool bOk = false;
 
 
 	if ( !m_bHasLicenseError )
 	{
-		if (SVImageAnalyzerClass::CreateObject (pCreateStructure))
+		if (SVImageAnalyzerClass::CreateObject (rCreateStructure))
 		{
 
 			if (InitMil ())

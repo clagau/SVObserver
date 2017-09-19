@@ -238,11 +238,11 @@ HRESULT SVSetupDialogManager::SVBarCodeAnalyzerClassSetupDialog( const SVGUID& p
 {
 	HRESULT l_Status = S_OK;
 
-	SVBarCodeAnalyzerClass* l_pAnalyzer = dynamic_cast< SVBarCodeAnalyzerClass* >( SVObjectManagerClass::Instance().GetObject( p_rObjectId ) );
+	SVBarCodeAnalyzerClass* pAnalyzer = dynamic_cast< SVBarCodeAnalyzerClass* >( SVObjectManagerClass::Instance().GetObject( p_rObjectId ) );
 	
 	SVInspectionProcess* pInspection( nullptr );
 	
-	if( nullptr != l_pAnalyzer && nullptr != (pInspection = dynamic_cast<SVInspectionProcess*>(l_pAnalyzer->GetInspection())) )
+	if( nullptr != pAnalyzer && nullptr != (pInspection = dynamic_cast<SVInspectionProcess*>(pAnalyzer->GetInspection())) )
 	{
 		SVIPDoc* pIPDoc = TheSVObserverApp.GetIPDoc( pInspection->GetUniqueObjectID() );
 
@@ -260,38 +260,38 @@ HRESULT SVSetupDialogManager::SVBarCodeAnalyzerClassSetupDialog( const SVGUID& p
 		BOOL bUseMultiple;
 		SVString MultiFile;
 		
-		SVBarCodeResultClass *pResult = dynamic_cast< SVBarCodeResultClass* >( l_pAnalyzer->GetResultObject() );
+		SVBarCodeResultClass *pResult = dynamic_cast< SVBarCodeResultClass* >( pAnalyzer->GetResultObject() );
 		
-		dlgProp.m_dlgBarCodeGeneral.SetBarCodeSearchSpeed(l_pAnalyzer->msv_dSpeed);
-		dlgProp.m_dlgBarCodeGeneral.SetBarCodeType(l_pAnalyzer->msv_lBarCodeType);
-		dlgProp.m_dlgBarCodeGeneral.SetOrientation(l_pAnalyzer->msv_dOrientation);
-		dlgProp.m_dlgBarCodeGeneral.SetSkewNegative(l_pAnalyzer->msv_dSkewNegative);
-		dlgProp.m_dlgBarCodeGeneral.SetSkewPositive(l_pAnalyzer->msv_dSkewPositive);
-		dlgProp.m_dlgBarCodeGeneral.SetThreshold(l_pAnalyzer->msv_dThreshold);
-		dlgProp.m_dlgBarCodeGeneral.SetForegroundColor(l_pAnalyzer->msv_dForegroundColor);
-		dlgProp.m_dlgBarCodeGeneral.SetBarCodeStringSize(l_pAnalyzer->msv_dStringSize);
-		dlgProp.m_dlgBarCodeGeneral.SetTimeout(l_pAnalyzer->msv_lBarcodeTimeout);
+		dlgProp.m_dlgBarCodeGeneral.SetBarCodeSearchSpeed(pAnalyzer->msv_dSpeed);
+		dlgProp.m_dlgBarCodeGeneral.SetBarCodeType(pAnalyzer->msv_lBarCodeType);
+		dlgProp.m_dlgBarCodeGeneral.SetOrientation(pAnalyzer->msv_dOrientation);
+		dlgProp.m_dlgBarCodeGeneral.SetSkewNegative(pAnalyzer->msv_dSkewNegative);
+		dlgProp.m_dlgBarCodeGeneral.SetSkewPositive(pAnalyzer->msv_dSkewPositive);
+		dlgProp.m_dlgBarCodeGeneral.SetThreshold(pAnalyzer->msv_dThreshold);
+		dlgProp.m_dlgBarCodeGeneral.SetForegroundColor(pAnalyzer->msv_dForegroundColor);
+		dlgProp.m_dlgBarCodeGeneral.SetBarCodeStringSize(pAnalyzer->msv_dStringSize);
+		dlgProp.m_dlgBarCodeGeneral.SetTimeout(pAnalyzer->msv_lBarcodeTimeout);
 
 		// To support special DMCs May 2008.
-		dlgProp.m_dlgBarCodeGeneral.SetBarcodeStringFormat( l_pAnalyzer->msv_eStringFormat );
-		dlgProp.m_dlgBarCodeGeneral.SetBarcodeThresholdType( l_pAnalyzer->msv_lThresholdType );
+		dlgProp.m_dlgBarCodeGeneral.SetBarcodeStringFormat( pAnalyzer->msv_eStringFormat );
+		dlgProp.m_dlgBarCodeGeneral.SetBarcodeThresholdType( pAnalyzer->msv_lThresholdType );
 
 		//for support for the Uneven grid step for DMCs
-		dlgProp.m_dlgBarCodeGeneral.SetUnEvenGrid( l_pAnalyzer->msv_bUnEvenGrid );
+		dlgProp.m_dlgBarCodeGeneral.SetUnEvenGrid( pAnalyzer->msv_bUnEvenGrid );
 
 		BOOL bTmp = FALSE;
-		l_pAnalyzer->m_bWarnOnFailedRead.GetValue(bTmp);
+		pAnalyzer->m_bWarnOnFailedRead.GetValue(bTmp);
 		dlgProp.m_dlgBarCodeGeneral.SetWarnOnFail(bTmp);
 		
-		dlgProp.m_dlgBarCodeAttributes.SetEncoding (l_pAnalyzer->msv_dEncoding);
-		dlgProp.m_dlgBarCodeAttributes.SetErrCorrection (l_pAnalyzer->msv_dErrorCorrection);
+		dlgProp.m_dlgBarCodeAttributes.SetEncoding (pAnalyzer->msv_dEncoding);
+		dlgProp.m_dlgBarCodeAttributes.SetErrCorrection (pAnalyzer->msv_dErrorCorrection);
 		
-		l_pAnalyzer->LoadRegExpression();
+		pAnalyzer->LoadRegExpression();
 		
 		pResult->msv_bUseSingleMatchString.GetValue( bUseSingle );
-		l_pAnalyzer->msv_szRegExpressionValue.GetValue( RegExp );
-		l_pAnalyzer->msv_bSaveStringInFile.GetValue( bSaveInFile );
-		l_pAnalyzer->msv_szStringFileName.GetValue ( SingleFile );
+		pAnalyzer->msv_szRegExpressionValue.GetValue( RegExp );
+		pAnalyzer->msv_bSaveStringInFile.GetValue( bSaveInFile );
+		pAnalyzer->msv_szStringFileName.GetValue ( SingleFile );
 		pResult->msv_bUseMatchStringFile.GetValue( bUseMultiple );
 		pResult->msv_szMatchStringFileName.GetValue( MultiFile );
 		
@@ -302,10 +302,10 @@ HRESULT SVSetupDialogManager::SVBarCodeAnalyzerClassSetupDialog( const SVGUID& p
 		dlgProp.m_dlgBarCodeStringMatch.SetUseMultiple( bUseMultiple );
 		dlgProp.m_dlgBarCodeStringMatch.SetMultiFileName( MultiFile.c_str() );
 		
-		dlgProp.m_dlgBarCodeDataMatrix.SetCellX (l_pAnalyzer->msv_dCellNumberX);
-		dlgProp.m_dlgBarCodeDataMatrix.SetCellY (l_pAnalyzer->msv_dCellNumberY);
-		dlgProp.m_dlgBarCodeDataMatrix.SetMinCellSize (l_pAnalyzer->msv_dCellMinSize);
-		dlgProp.m_dlgBarCodeDataMatrix.SetMaxCellSize (l_pAnalyzer->msv_dCellMaxSize);
+		dlgProp.m_dlgBarCodeDataMatrix.SetCellX (pAnalyzer->msv_dCellNumberX);
+		dlgProp.m_dlgBarCodeDataMatrix.SetCellY (pAnalyzer->msv_dCellNumberY);
+		dlgProp.m_dlgBarCodeDataMatrix.SetMinCellSize (pAnalyzer->msv_dCellMinSize);
+		dlgProp.m_dlgBarCodeDataMatrix.SetMaxCellSize (pAnalyzer->msv_dCellMaxSize);
 
 		//remove the apply button
 		dlgProp.m_psh.dwFlags |= PSH_NOAPPLYNOW;
@@ -323,41 +323,41 @@ HRESULT SVSetupDialogManager::SVBarCodeAnalyzerClassSetupDialog( const SVGUID& p
 				
 			try
 			{
-				pInspection->AddInputRequest( &l_pAnalyzer->msv_lBarCodeType, dlgProp.m_dlgBarCodeGeneral.GetBarCodeType() );
-				pInspection->AddInputRequest( &l_pAnalyzer->msv_dSpeed, dlgProp.m_dlgBarCodeGeneral.GetBarCodeSearchSpeed() );
-				pInspection->AddInputRequest( &l_pAnalyzer->msv_dOrientation, dlgProp.m_dlgBarCodeGeneral.GetOrientation() );
-				pInspection->AddInputRequest( &l_pAnalyzer->msv_dSkewNegative, dlgProp.m_dlgBarCodeGeneral.GetSkewNegative() );
-				pInspection->AddInputRequest( &l_pAnalyzer->msv_dSkewPositive, dlgProp.m_dlgBarCodeGeneral.GetSkewPositive() );
-				pInspection->AddInputRequest( &l_pAnalyzer->msv_dThreshold, dlgProp.m_dlgBarCodeGeneral.GetThreshold() );
-				pInspection->AddInputRequest( &l_pAnalyzer->msv_dForegroundColor, dlgProp.m_dlgBarCodeGeneral.GetForegroundColor() );
-				pInspection->AddInputRequest( &l_pAnalyzer->msv_dStringSize, dlgProp.m_dlgBarCodeGeneral.GetBarCodeStringSize() );
-				pInspection->AddInputRequest( &l_pAnalyzer->m_bWarnOnFailedRead, dlgProp.m_dlgBarCodeGeneral.GetWarnedOnFail() );
-				pInspection->AddInputRequest( &l_pAnalyzer->msv_dEncoding, dlgProp.m_dlgBarCodeAttributes.GetEncoding() );
-				pInspection->AddInputRequest( &l_pAnalyzer->msv_dErrorCorrection, dlgProp.m_dlgBarCodeAttributes.GetErrorCorrection() );
+				pInspection->AddInputRequest( &pAnalyzer->msv_lBarCodeType, dlgProp.m_dlgBarCodeGeneral.GetBarCodeType() );
+				pInspection->AddInputRequest( &pAnalyzer->msv_dSpeed, dlgProp.m_dlgBarCodeGeneral.GetBarCodeSearchSpeed() );
+				pInspection->AddInputRequest( &pAnalyzer->msv_dOrientation, dlgProp.m_dlgBarCodeGeneral.GetOrientation() );
+				pInspection->AddInputRequest( &pAnalyzer->msv_dSkewNegative, dlgProp.m_dlgBarCodeGeneral.GetSkewNegative() );
+				pInspection->AddInputRequest( &pAnalyzer->msv_dSkewPositive, dlgProp.m_dlgBarCodeGeneral.GetSkewPositive() );
+				pInspection->AddInputRequest( &pAnalyzer->msv_dThreshold, dlgProp.m_dlgBarCodeGeneral.GetThreshold() );
+				pInspection->AddInputRequest( &pAnalyzer->msv_dForegroundColor, dlgProp.m_dlgBarCodeGeneral.GetForegroundColor() );
+				pInspection->AddInputRequest( &pAnalyzer->msv_dStringSize, dlgProp.m_dlgBarCodeGeneral.GetBarCodeStringSize() );
+				pInspection->AddInputRequest( &pAnalyzer->m_bWarnOnFailedRead, dlgProp.m_dlgBarCodeGeneral.GetWarnedOnFail() );
+				pInspection->AddInputRequest( &pAnalyzer->msv_dEncoding, dlgProp.m_dlgBarCodeAttributes.GetEncoding() );
+				pInspection->AddInputRequest( &pAnalyzer->msv_dErrorCorrection, dlgProp.m_dlgBarCodeAttributes.GetErrorCorrection() );
 				pInspection->AddInputRequest( &( pResult->msv_bUseSingleMatchString ), bUseSingle );
-				pInspection->AddInputRequest( &l_pAnalyzer->msv_szRegExpressionValue, RegExp.c_str() );
-				pInspection->AddInputRequest( &l_pAnalyzer->msv_bSaveStringInFile, bSaveInFile );
-				pInspection->AddInputRequest( &l_pAnalyzer->msv_szStringFileName, SingleFile.c_str() );
+				pInspection->AddInputRequest( &pAnalyzer->msv_szRegExpressionValue, RegExp.c_str() );
+				pInspection->AddInputRequest( &pAnalyzer->msv_bSaveStringInFile, bSaveInFile );
+				pInspection->AddInputRequest( &pAnalyzer->msv_szStringFileName, SingleFile.c_str() );
 				pInspection->AddInputRequest( &( pResult->msv_bUseMatchStringFile ), bUseMultiple );
 				pInspection->AddInputRequest( &( pResult->msv_szMatchStringFileName ), MultiFile.c_str() );
-				pInspection->AddInputRequest( &l_pAnalyzer->msv_dCellNumberX, dlgProp.m_dlgBarCodeDataMatrix.GetCellX() );
-				pInspection->AddInputRequest( &l_pAnalyzer->msv_dCellNumberY, dlgProp.m_dlgBarCodeDataMatrix.GetCellY() );
-				pInspection->AddInputRequest( &l_pAnalyzer->msv_dCellMinSize, dlgProp.m_dlgBarCodeDataMatrix.GetMinCellSize() );
-				pInspection->AddInputRequest( &l_pAnalyzer->msv_dCellMaxSize, dlgProp.m_dlgBarCodeDataMatrix.GetMaxCellSize() );
-				pInspection->AddInputRequest( &l_pAnalyzer->msv_lBarcodeTimeout, dlgProp.m_dlgBarCodeGeneral.GetTimeout() );
+				pInspection->AddInputRequest( &pAnalyzer->msv_dCellNumberX, dlgProp.m_dlgBarCodeDataMatrix.GetCellX() );
+				pInspection->AddInputRequest( &pAnalyzer->msv_dCellNumberY, dlgProp.m_dlgBarCodeDataMatrix.GetCellY() );
+				pInspection->AddInputRequest( &pAnalyzer->msv_dCellMinSize, dlgProp.m_dlgBarCodeDataMatrix.GetMinCellSize() );
+				pInspection->AddInputRequest( &pAnalyzer->msv_dCellMaxSize, dlgProp.m_dlgBarCodeDataMatrix.GetMaxCellSize() );
+				pInspection->AddInputRequest( &pAnalyzer->msv_lBarcodeTimeout, dlgProp.m_dlgBarCodeGeneral.GetTimeout() );
 
 				// To support special DMCs May 2008.
-				pInspection->AddInputRequest( &l_pAnalyzer->msv_eStringFormat, dlgProp.m_dlgBarCodeGeneral.GetBarcodeStringFormat( ) );
-				pInspection->AddInputRequest( &l_pAnalyzer->msv_lThresholdType, dlgProp.m_dlgBarCodeGeneral.GetBarcodeThresholdType( ) );
+				pInspection->AddInputRequest( &pAnalyzer->msv_eStringFormat, dlgProp.m_dlgBarCodeGeneral.GetBarcodeStringFormat( ) );
+				pInspection->AddInputRequest( &pAnalyzer->msv_lThresholdType, dlgProp.m_dlgBarCodeGeneral.GetBarcodeThresholdType( ) );
 
 				//for support for the Uneven grid step for DMCs
-				pInspection->AddInputRequest( &l_pAnalyzer->msv_bUnEvenGrid, dlgProp.m_dlgBarCodeGeneral.GetUnEvenGrid( ) );
+				pInspection->AddInputRequest( &pAnalyzer->msv_bUnEvenGrid, dlgProp.m_dlgBarCodeGeneral.GetUnEvenGrid( ) );
 
 				pInspection->AddInputRequestMarker();
 
 				SVGUID l_ToolId;
 
-				SVObjectClass* pTool = l_pAnalyzer->GetTool();
+				SVObjectClass* pTool = pAnalyzer->GetTool();
 				if( nullptr != pTool )
 				{
 					l_ToolId = pTool->GetUniqueObjectID();

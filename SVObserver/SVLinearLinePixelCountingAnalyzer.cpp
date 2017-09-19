@@ -101,9 +101,9 @@ SVLinearPixelCountingLineAnalyzerClass::~SVLinearPixelCountingLineAnalyzerClass(
 }
 
 
-bool SVLinearPixelCountingLineAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+bool SVLinearPixelCountingLineAnalyzerClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	bool bOk = SVLinearAnalyzerClass::CreateObject( pCreateStructure );
+	bool bOk = SVLinearAnalyzerClass::CreateObject(rCreateStructure);
 
 	// Set / Reset Printable Flag
 	blackPixelCount.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );

@@ -24,7 +24,7 @@ public:
 	SVAnalyzerClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVANALYZER );
 	virtual ~SVAnalyzerClass();
 
-	virtual bool CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
+	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 	virtual void DisconnectImages() {};
 
 	virtual SvOi::IObjectClass* GetResultObject();

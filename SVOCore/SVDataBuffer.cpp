@@ -67,11 +67,11 @@ SVDataBufferClass::~SVDataBufferClass()
 	CloseObject();
 }
 
-bool SVDataBufferClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+bool SVDataBufferClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
 	bool bOk = false;
 
-	if( SVObjectAppClass::CreateObject( pCreateStructure ) )
+	if( SVObjectAppClass::CreateObject(rCreateStructure) )
 	{
 		if( m_DataInfo.Type != 0 && 0 < m_DataInfo.Length )
 		{

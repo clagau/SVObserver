@@ -11,7 +11,7 @@
 
 #include "stdafx.h"
 #include "SVPolarTransform.h"
-#include "SVObjectLibrary/SVAnalyzerLevelCreateStruct.h"
+#include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 #include "SVObjectLibrary/SVClsIds.h"
 
 SV_IMPLEMENT_CLASS( SVPolarTransformClass, SVPolarTransformClassGuid )

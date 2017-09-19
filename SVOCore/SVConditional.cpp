@@ -59,9 +59,9 @@ SVConditionalClass::~SVConditionalClass()
 {
 }
 
-bool SVConditionalClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+bool SVConditionalClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	m_isCreated = SVEquationClass::CreateObject( pCreateStructure );
+	m_isCreated = SVEquationClass::CreateObject(rCreateStructure);
 
 	// Set/Reset printable Flags
 	result.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );

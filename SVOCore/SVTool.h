@@ -51,7 +51,7 @@ public:
 	SVToolClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVTOOL );
 	virtual ~SVToolClass();
 
-	virtual bool CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
+	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 	virtual bool CloseObject() override;
 	virtual bool DisconnectObjectInput(SVInObjectInfoStruct* pInObjectInfo) override;
 

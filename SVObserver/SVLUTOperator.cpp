@@ -109,9 +109,9 @@ SVLUTOperatorClass::~SVLUTOperatorClass()
 // -----------------------------------------------------------------------------
 // .Description : ...
 ////////////////////////////////////////////////////////////////////////////////
-bool SVLUTOperatorClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+bool SVLUTOperatorClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	bool bOk = SVUnaryImageOperatorClass::CreateObject( pCreateStructure );
+	bool bOk = SVUnaryImageOperatorClass::CreateObject(rCreateStructure);
 
 	// Set / Reset Printable Flag
 	m_lutVector.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );

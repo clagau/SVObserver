@@ -15,7 +15,7 @@
 #include "SVObjectLibrary/SVClsids.h"
 #include "ObjectInterfaces/IObjectManager.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
-#include "SVObjectLibrary/SVAnalyzerLevelCreateStruct.h"
+#include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 #include "SVUtilityLibrary/SetBits.h"
 #include "SVAnalyzer.h"
 #include "SVConditional.h"
@@ -180,9 +180,9 @@ SVToolClass::~SVToolClass()
 {
 }
 
-bool SVToolClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+bool SVToolClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	bool bOk = SVTaskObjectListClass::CreateObject(pCreateStructure);
+	bool bOk = SVTaskObjectListClass::CreateObject(rCreateStructure);
 
 	if( bOk )
 	{
@@ -987,13 +987,13 @@ HRESULT SVToolClass::UpdateOverlayIDs( SVExtentMultiLineStruct& p_rMultiLine )
 	return l_Status;
 }
 
-HRESULT SVToolClass::CollectOverlays( SVImageClass *p_Image, SVExtentMultiLineStructVector &p_MultiLineArray )
+HRESULT SVToolClass::CollectOverlays( SVImageClass *pImage, SVExtentMultiLineStructVector &MultiLineArray )
 {
 	HRESULT l_Status = S_OK;
 
-	if( S_OK == IsInputImage( p_Image ) )
+	if( nullptr != pImage && isInputImage( pImage->GetUniqueObjectID() ) )
 	{
-		l_Status = SVTaskObjectListClass::CollectOverlays( p_Image, p_MultiLineArray );
+		l_Status = SVTaskObjectListClass::CollectOverlays( pImage, MultiLineArray );
 	}
 
 	return l_Status;
@@ -1032,24 +1032,24 @@ void SVToolClass::UpdateTaskObjectOutputListAttributes( SVObjectReference refTar
 }
 
 // Source Image Functions
-HRESULT SVToolClass::GetSourceImages( SVImageListClass* p_psvImageList ) const
+HRESULT SVToolClass::GetSourceImages( SVImageListClass* pImageList ) const
 {
 	HRESULT l_hr = S_OK;
 
-	SVImageClass* l_psvImageParent = nullptr;
-	const SVToolClass* l_psvTool = this;
+	SVImageClass* pImageParent = nullptr;
+	const SVToolClass* pTool = this;
 	if( m_svToolExtent.GetToolImage() )
 	{
-		l_psvImageParent = m_svToolExtent.GetToolImage()->GetParentImage();
-		if( nullptr != l_psvImageParent )
+		pImageParent = m_svToolExtent.GetToolImage()->GetParentImage();
+		if( nullptr != pImageParent )
 		{
-			 l_psvTool = dynamic_cast<SVToolClass*>( l_psvImageParent->GetTool() );
+			 pTool = dynamic_cast<SVToolClass*>(pImageParent->GetTool());
 
-			 if( nullptr != l_psvTool && l_psvTool != this )
+			 if( nullptr != pTool && pTool != this )
 			 {
-				 l_psvTool->GetSourceImages( p_psvImageList );
+				 pTool->GetSourceImages( pImageList );
 			 }
-			 p_psvImageList->Add( l_psvImageParent );
+			 pImageList->Add( pImageParent );
 		}
 	}
 	else
@@ -1228,20 +1228,20 @@ SVObjectClass* SVToolClass::GetToolComment()
 
 bool SVToolClass::createAllObjectsFromChild( SVObjectClass& rChildObject )
 {
-	SVToolLevelCreateStruct createStruct;
-	createStruct.OwnerObjectInfo        = this;
-	createStruct.ToolObjectInfo			= this;
-	createStruct.InspectionObjectInfo = dynamic_cast<SVObjectClass*>(GetInspectionInterface());
+	SVObjectLevelCreateStruct createStruct;
+	createStruct.OwnerObjectInfo = this;
+	createStruct.m_pInspection = dynamic_cast<SVObjectClass*>(GetInspectionInterface());
+	createStruct.m_pTool = this;
 
 	return rChildObject.createAllObjects(createStruct);
 }
 
 void SVToolClass::connectChildObject( SVTaskObjectClass& rChildObject )
 {
-	SVToolLevelCreateStruct createStruct;
-	createStruct.OwnerObjectInfo        = this;
-	createStruct.ToolObjectInfo			= this;
-	createStruct.InspectionObjectInfo	= dynamic_cast<SVObjectClass*>(GetInspectionInterface());
+	SVObjectLevelCreateStruct createStruct;
+	createStruct.OwnerObjectInfo = this;
+	createStruct.m_pInspection = dynamic_cast<SVObjectClass*>(GetInspectionInterface());
+	createStruct.m_pTool = this;
 
 	rChildObject.ConnectObject(createStruct);
 }

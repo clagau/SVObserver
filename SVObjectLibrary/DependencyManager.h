@@ -21,7 +21,7 @@ namespace SvOl
 	class DependencyManager : public SvCl::ObjectGraph<SVGUID, JoinType>
 	{
 	public:
-		typedef SvCl::ObjectGraph<SVGUID, JoinType>::Dependencies Dependencies;
+		typedef SvCl::ObjectGraph<SVGUID, JoinType>::DependencySet Dependencies;
 		typedef SvCl::ObjectGraph<SVGUID, JoinType>::DependencyInserter DependencyInserter;
 
 	#pragma region Constructor
@@ -40,7 +40,8 @@ namespace SvOl
 	//! \param rSourceSet [in] reference to the source set of GUIDs
 	//! \param nameToObjectType [in] Object type to define the dotted name start
 	//! \param ToolDependency [in] The tool dependency types to get
-	void getToolDependency( SvOi::StringPairInserter Inserter, const SVGuidSet& rSourceSet, SVObjectTypeEnum nameToObjectType, SvOi::ToolDependencyEnum ToolDependency = SvOi::ToolDependencyEnum::Client ) const;
+	//! \param rFileName [in] Optional file name to save the graph file 
+	void getToolDependency( SvOi::StringPairInserter Inserter, const SVGuidSet& rSourceSet, SVObjectTypeEnum nameToObjectType, SvOi::ToolDependencyEnum ToolDependency = SvOi::ToolDependencyEnum::Client, const SVString& rFileName = SVString()) const;
 
 	#pragma endregion Public Methods
 

@@ -25,7 +25,7 @@ public:
 	virtual ~ResizeTool(void);
 
 	virtual bool CloseObject() override;
-	virtual bool CreateObject(SVObjectLevelCreateStruct* pCreateStructure) override;
+	virtual bool CreateObject(const SVObjectLevelCreateStruct& rCreateStructure) override;
 
 	virtual HRESULT SetImageExtentToParent() override;
 	virtual HRESULT SetImageExtent( const SVImageExtentClass& rImageExtent ) override;
@@ -58,9 +58,9 @@ public:
 		long*	oldOverscan,
 		long*	oldPerformance);
 		
-	SVImageClass* getInputImage();
+	SVImageClass* getInputImage() const;
 	SVImageClass* getLogicalROIImage();
-	SVImageClass* getOutputImage(); 
+	SVImageClass* getOutputImage();
 
 	SVEnumerateValueObjectClass& getInterpolationMode() { return m_ResizeInterpolationMode; };
 	SVEnumerateValueObjectClass& getOverscan() { return m_ResizeOverscan; };
@@ -74,8 +74,8 @@ protected:
 	void BuildInputObjectList();
 	void BuildEmbeddedObjectList();
 
-	virtual HRESULT IsInputImage(SVImageClass *p_psvImage) override;
-	
+	virtual bool isInputImage(const SVGUID& rImageGuid) const override;
+
 	virtual bool onRun(SVRunStatusClass& rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	// Interpolation Mode - embedded

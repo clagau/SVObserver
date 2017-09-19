@@ -48,9 +48,9 @@ TableLimitAnalyzer::~TableLimitAnalyzer()
 #pragma endregion Constructor
 
 #pragma region Public Methods
-bool TableLimitAnalyzer::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+bool TableLimitAnalyzer::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	bool l_bOk = __super::CreateObject( pCreateStructure );
+	bool l_bOk = __super::CreateObject(rCreateStructure);
 
 	m_LimitValue.SetObjectAttributesAllowed( SvOi::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
 	

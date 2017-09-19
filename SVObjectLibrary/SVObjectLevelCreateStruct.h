@@ -12,6 +12,7 @@
 #pragma once
 
 #pragma region Includes
+#include "SVObjectClass.h"
 #include "SVObjectInfoStruct.h"
 #pragma endregion Includes
 
@@ -24,15 +25,12 @@
 struct SVObjectLevelCreateStruct
 {
 	SVObjectLevelCreateStruct();
-	SVObjectLevelCreateStruct( const SVObjectLevelCreateStruct& ROLCS );
 
 	virtual ~SVObjectLevelCreateStruct();
 
-	bool CheckCreateStructName( const char* StrCreateStructureName ) const;
-
 	SVObjectInfoStruct OwnerObjectInfo;
-
-protected:
-	const char* strCreateStructName;
+	SVObjectClass* m_pInspection;
+	SVObjectClass* m_pTool;
+	SVObjectClass* m_pAnalyzer;
 };
 

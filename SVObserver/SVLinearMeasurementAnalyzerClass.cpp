@@ -207,9 +207,9 @@ SVLinearMeasurementAnalyzerClass::~SVLinearMeasurementAnalyzerClass()
 	CloseObject();
 }
 
-bool SVLinearMeasurementAnalyzerClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+bool SVLinearMeasurementAnalyzerClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	bool bOk = SVLinearAnalyzerClass::CreateObject( pCreateStructure );
+	bool bOk = SVLinearAnalyzerClass::CreateObject(rCreateStructure);
 
 	// Set / Reset Printable Flag
 	mdpEdgeA.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );

@@ -42,10 +42,10 @@ namespace SvCl
 	#pragma region Declarations
 	public:
 		//! The graph dependency decelerations which are vertex pairs defining an edge
-		typedef std::set< VertexName > Dependent;
-		typedef std::pair< VertexName, VertexName > Dependency;
-		typedef std::set< Dependency > Dependencies;
-		typedef std::insert_iterator< Dependencies > DependencyInserter;
+		typedef std::set<VertexName> VertexSet;
+		typedef std::pair<VertexName, VertexName> Dependency;
+		typedef std::set<Dependency> DependencySet;
+		typedef std::insert_iterator<DependencySet> DependencyInserter;
 
 		//! The boost graph vertex and edge properties
 		typedef typename boost::property< boost::vertex_name_t, VertexName > VertexObj;
@@ -79,10 +79,10 @@ namespace SvCl
 		ObjectGraph( const ObjectGraph& rObjectGraphManager );
 		ObjectGraph& operator=( const ObjectGraph& rObjectGraphManager );
 
-		//! Graph constructor using dependency list and edge type
-		//! \param rList [in] reference to the dependency list
+		//! Graph constructor using dependency set and edge type
+		//! \param rList [in] reference to the dependency set
 		//! \param rEdgeType [in] reference to the dependency edge type
-		ObjectGraph( const Dependencies& rList, const EdgeType& rEdgeType );
+		ObjectGraph( const DependencySet& rList, const EdgeType& rEdgeType );
 		virtual ~ObjectGraph();
 	#pragma endregion Constructor
 
@@ -116,22 +116,22 @@ namespace SvCl
 		HRESULT Disconnect( const VertexName& rSrcName, const VertexName& rDestName, const EdgeType& rEdgeType );
 
 		//! Obtains a list of dependencies with the defined edge type
-		//! \param rStartName [in] reference to the start vertex
+		//! \param rVertexSet [in] reference to the vertex set
 		//! \param Inserter [in] inserter to fill the dependency list
 		//! \param rEdgeType [in] reference to the edge type
 		//! \param InvertEdge [in] flag to invert the edges of the graph
 		//! \param DepthFirstSearch [in] flag to use Depth First Search instead of the Breadth First Search
 		//! \returns S_OK on success
-		HRESULT getDependents( const VertexName& rStartName, DependencyInserter Inserter, const EdgeType& rEdgeType, bool InvertEdge=false, bool DepthFirstSearch=false ) const;
+		HRESULT getDependents( const VertexSet& rVertexSet, DependencyInserter Inserter, const EdgeType& rEdgeType, bool InvertEdge=false, bool DepthFirstSearch=false ) const;
 
 		//! Obtains a list of dependencies with the defined edge type
-		//! \param rStartName [in] reference to the start vertex
+		//! \param rVertexSet [in] reference to the vertex set
 		//! \param Inserter [in] inserter to fill the dependency list
 		//! \param rChildEdgeType [in] reference to the child edge type
 		//! \param rEdgeType [in] reference to the edge type
 		//! \param InvertEdge [in] flag to invert the edges of the graph
 		//! \returns S_OK on success
-		HRESULT getChildDependents( const VertexName& rStartName, DependencyInserter Inserter, const EdgeType& rChildEdgeType, const EdgeType& rEdgeType, bool InvertEdge=false ) const;
+		HRESULT getChildDependents(const VertexSet& rVertexSet, DependencyInserter Inserter, const EdgeType& rChildEdgeType, const EdgeType& rEdgeType, bool InvertEdge=false ) const;
 
 		//! Determines if the graph is cyclic
 		//! \returns true if the graph is cyclic

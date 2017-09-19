@@ -92,12 +92,10 @@ static void WriteGlobalConstants(SvXml::SVObjectXMLWriter& rWriter, SVObjectClas
 	if ( nullptr != pInspection && nullptr != pInspection->GetToolSet() )
 	{
 		BasicValueObjects::ValueVector GlobalConstantObjects;
-		//Only Global variables which the inspection is dependent on should be included
-		SvOl::DependencyManager::Dependencies DependencyList;
 
+		SvOl::DependencyManager::VertexSet GlobalConstantSet;
 		RootObject::getRootChildObjectList( GlobalConstantObjects, SvOl::FqnGlobal, 0 );
 		BasicValueObjects::ValueVector::const_iterator Iter( GlobalConstantObjects.cbegin() );
-		//Need to convert list to SVObjectVector
 		for( ; GlobalConstantObjects.end() != Iter; ++Iter )
 		{
 			if (!Iter->empty())
@@ -105,12 +103,15 @@ static void WriteGlobalConstants(SvXml::SVObjectXMLWriter& rWriter, SVObjectClas
 				SVObjectClass* pGlobalConstantObject = dynamic_cast<SVObjectClass*> ((*Iter).get());
 				if (nullptr != pGlobalConstantObject)
 				{
-					SvOl::DependencyManager::DependencyInserter Inserter(std::inserter(DependencyList, DependencyList.end()));
-					SvOl::DependencyManager::Instance().getDependents( pGlobalConstantObject->GetUniqueObjectID(), Inserter, SvOl::JoinType::Dependent );
+					GlobalConstantSet.insert(pGlobalConstantObject->GetUniqueObjectID());
 				}
 			}
 		}
-		
+		//Only Global variables which the inspection is dependent on should be included
+		SvOl::DependencyManager::Dependencies DependencyList;
+		SvOl::DependencyManager::DependencyInserter Inserter(std::inserter(DependencyList, DependencyList.end()));
+		SvOl::DependencyManager::Instance().getDependents(GlobalConstantSet, Inserter, SvOl::JoinType::Dependent);
+
 		SvOl::DependencyManager::Dependencies::const_iterator PairIter( DependencyList.begin() );
 
 		for( ; DependencyList.end() != PairIter; ++PairIter )

@@ -43,9 +43,9 @@ TableTool::~TableTool()
 #pragma endregion Constructor
 
 #pragma region Public Methods
-bool TableTool::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+bool TableTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	bool bOk = SVToolClass::CreateObject( pCreateStructure );
+	bool bOk = SVToolClass::CreateObject(rCreateStructure);
 
 	m_MaxRow.SetObjectAttributesAllowed( SvOi::SV_REMOTELY_SETABLE, SvOi::SetAttributeType::AddAttribute );
 

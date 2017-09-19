@@ -11,7 +11,7 @@
 
 #include "stdafx.h"
 #include "SVTransform.h"
-#include "SVObjectLibrary/SVAnalyzerLevelCreateStruct.h"
+#include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 #include "SVObjectLibrary/SVClsIds.h"
 
 SV_IMPLEMENT_CLASS( SVTransformClass, SVTransformClassGuid )
@@ -77,9 +77,9 @@ SVTransformClass::~SVTransformClass()
 	CloseObject();
 }
 
-bool SVTransformClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+bool SVTransformClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	bool bOk = SVTaskObjectClass::CreateObject( pCreateStructure );
+	bool bOk = SVTaskObjectClass::CreateObject(rCreateStructure);
 
 	performTranslation.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );
 	performRotation.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );

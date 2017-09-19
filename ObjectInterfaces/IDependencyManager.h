@@ -28,5 +28,6 @@ namespace SvOi
 	//! \param Inserter [in] Iterator to insert the named dependency pairs
 	//! \param rSourceSet [in] reference to the source set of GUIDs
 	//! \param nameToObjectType [in] Object type to define the dotted name start
-	void getToolDependency( StringPairInserter Inserter, const SVGuidSet& rSourceSet, SVObjectTypeEnum nameToObjectType, ToolDependencyEnum ToolDependency = Client );
+	//! \param rFileName [in] Optional file name to save the graph file 
+	void getToolDependency( StringPairInserter Inserter, const SVGuidSet& rSourceSet, SVObjectTypeEnum nameToObjectType, ToolDependencyEnum ToolDependency = Client, const SVString& rFileName = SVString());
 } //namespace SvOi

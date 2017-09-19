@@ -56,9 +56,9 @@ void SVMathEquationClass::init()
 	addDefaultInputObjects();
 }
 
-bool SVMathEquationClass::CreateObject(SVObjectLevelCreateStruct* pCreateStructure)
+bool SVMathEquationClass::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 {
-	m_isCreated = SVEquationClass::CreateObject(pCreateStructure);
+	m_isCreated = SVEquationClass::CreateObject(rCreateStructure);
 
 	// Set / Reset Printable Flag
 	result.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );

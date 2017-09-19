@@ -36,9 +36,9 @@ SVPerspectiveToolClass::~SVPerspectiveToolClass()
 	DestroyLUT();
 }
 
-bool SVPerspectiveToolClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+bool SVPerspectiveToolClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	bool l_bOk = SVToolClass::CreateObject( pCreateStructure );
+	bool l_bOk = SVToolClass::CreateObject(rCreateStructure);
 
 	l_bOk &= ( S_OK == m_OutputImage.InitializeImage( GetInputImage() ) );
 
@@ -247,17 +247,18 @@ bool SVPerspectiveToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMe
 	return Result;
 }
 
-SVImageClass* SVPerspectiveToolClass::GetInputImage()
+SVImageClass* SVPerspectiveToolClass::GetInputImage() const
 {
-	SVImageClass *l_pImage = nullptr;
+	SVImageClass *pImage = nullptr;
 
-	if( m_InputImageObjectInfo.IsConnected() && 
-		nullptr != m_InputImageObjectInfo.GetInputObjectInfo().m_pObject )
+	if( m_InputImageObjectInfo.IsConnected() && nullptr != m_InputImageObjectInfo.GetInputObjectInfo().m_pObject )
 	{
-		l_pImage = (SVImageClass *)m_InputImageObjectInfo.GetInputObjectInfo().m_pObject;
+		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
+		//! We are sure that when m_pObject is not nullptr then it is a SVImageClass
+		pImage = static_cast<SVImageClass*> (m_InputImageObjectInfo.GetInputObjectInfo().m_pObject);
 	}
 
-	return l_pImage;
+	return pImage;
 }
 
 SVTaskObjectClass* SVPerspectiveToolClass::GetObjectAtPoint( const SVExtentPointStruct &p_rsvPoint )
@@ -280,16 +281,16 @@ bool SVPerspectiveToolClass::DoesObjectHaveExtents() const
 	return true;
 }
 
-HRESULT SVPerspectiveToolClass::IsInputImage( SVImageClass *p_psvImage )
+bool SVPerspectiveToolClass::isInputImage(const SVGUID& rImageGuid) const
 {
-	HRESULT l_hrOk = S_FALSE;
+	bool Result(false);
 
-	if ( nullptr != p_psvImage && p_psvImage == GetInputImage() )
+	if ( nullptr != GetInputImage() && rImageGuid == GetInputImage()->GetUniqueObjectID() )
 	{
-		l_hrOk = S_OK;
+		Result = true;
 	}
 
-	return l_hrOk;
+	return Result;
 }
 
 

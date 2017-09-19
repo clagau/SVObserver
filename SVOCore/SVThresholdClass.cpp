@@ -110,9 +110,9 @@ SVThresholdClass::~SVThresholdClass()
 	CloseObject();
 }
 
-bool SVThresholdClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+bool SVThresholdClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	bool bOk = SVUnaryImageOperatorClass::CreateObject( pCreateStructure );
+	bool bOk = SVUnaryImageOperatorClass::CreateObject(rCreateStructure);
 
 	// Set / Reset Printable Flag
 	m_threshActivate.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );

@@ -13,7 +13,7 @@
 #include "stdafx.h"
 #include "SVResult.h"
 #include "SVRange.h"
-#include "SVObjectLibrary/SVAnalyzerLevelCreateStruct.h"
+#include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -71,9 +71,9 @@ SVResultClass::~SVResultClass()
 {
 }
 
-bool SVResultClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+bool SVResultClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	bool bOk = SVTaskObjectClass::CreateObject(pCreateStructure);
+	bool bOk = SVTaskObjectClass::CreateObject(rCreateStructure);
 
 	// Set / Reset Printable Flags
 	m_Failed.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::RemoveAttribute );

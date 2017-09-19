@@ -14,7 +14,7 @@
 //Moved to precompiled header: #include <float.h>
 #include "SVEquation.h"
 #include "SVObjectLibrary/SVClsIds.h"
-#include "SVObjectLibrary/SVAnalyzerLevelCreateStruct.h"
+#include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 #include "SVObjectLibrary/SVObjectAttributeClass.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVUtilityLibrary/SVSafeArray.h"
@@ -302,9 +302,9 @@ SVEquationClass::~SVEquationClass()
 ////////////////////////////////////////////////////////////////////////////////
 // 
 ////////////////////////////////////////////////////////////////////////////////
-bool SVEquationClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+bool SVEquationClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	bool bOk = SVTaskObjectClass::CreateObject( pCreateStructure ) && nullptr != GetInspection();
+	bool bOk = SVTaskObjectClass::CreateObject(rCreateStructure) && nullptr != GetInspection();
 
 	// Set / Reset Printable Flag
 	enabled.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );

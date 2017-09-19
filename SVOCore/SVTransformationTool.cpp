@@ -88,9 +88,9 @@ SVTransformationToolClass::~SVTransformationToolClass()
 // Operator(s):
 //******************************************************************************
 
-bool SVTransformationToolClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+bool SVTransformationToolClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	m_isCreated = SVToolClass::CreateObject( pCreateStructure );
+	m_isCreated = SVToolClass::CreateObject(rCreateStructure);
 
 	m_SourceImageNames.setStatic( true );
 	m_SourceImageNames.setSaveValueFlag(false);
@@ -117,11 +117,6 @@ SVTaskObjectClass *SVTransformationToolClass::GetObjectAtPoint( const SVExtentPo
 bool SVTransformationToolClass::DoesObjectHaveExtents() const
 {
 	return true;
-}
-
-HRESULT SVTransformationToolClass::IsInputImage( SVImageClass *p_psvImage )
-{
-	return S_FALSE;
 }
 
 HRESULT SVTransformationToolClass::UpdateImageWithExtent()

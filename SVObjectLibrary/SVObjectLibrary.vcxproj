@@ -115,14 +115,12 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="SVAnalyzerLevelCreateStruct.cpp" />
     <ClCompile Include="SVClassRegisterClass.cpp" />
     <ClCompile Include="SVClassRegisterListClass.cpp" />
     <ClCompile Include="SVClsids.cpp" />
     <ClCompile Include="SVGetObjectDequeByTypeVisitor.cpp" />
     <ClCompile Include="SVInObjectInfoStruct.cpp" />
     <ClCompile Include="SVInputInfoListClass.cpp" />
-    <ClCompile Include="SVInspectionLevelCreateStruct.cpp" />
     <ClCompile Include="SVObjectAttributeClass.cpp" />
     <ClCompile Include="SVObjectBuilder.cpp" />
     <ClCompile Include="SVObjectClass.cpp" />
@@ -135,7 +133,6 @@
     <ClCompile Include="SVObserverNotificationFunctor.cpp" />
     <ClCompile Include="SVOutObjectInfoStruct.cpp" />
     <ClCompile Include="SVOutputInfoListClass.cpp" />
-    <ClCompile Include="SVToolLevelCreateStruct.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="DependencyManager.h" />
@@ -144,7 +141,6 @@
     <ClInclude Include="GlobalConst.h" />
     <ClInclude Include="ObjectNameLookup.h" />
     <ClInclude Include="StdAfx.h" />
-    <ClInclude Include="SVAnalyzerLevelCreateStruct.h" />
     <ClInclude Include="SVClassRegisterClass.h" />
     <ClInclude Include="SVClassRegisterListClass.h" />
     <ClInclude Include="SVClsids.h" />
@@ -152,7 +148,6 @@
     <ClInclude Include="SVGetObjectListVisitor.h" />
     <ClInclude Include="SVInObjectInfoStruct.h" />
     <ClInclude Include="SVInputInfoListClass.h" />
-    <ClInclude Include="SVInspectionLevelCreateStruct.h" />
     <ClInclude Include="SVObjectAsynchronousCommandTemplate.h" />
     <ClInclude Include="SVObjectAttributeClass.h" />
     <ClInclude Include="SVObjectBuilder.h" />
@@ -177,7 +172,6 @@
     <ClInclude Include="SVObserverTemplate.h" />
     <ClInclude Include="SVOutObjectInfoStruct.h" />
     <ClInclude Include="SVOutputInfoListClass.h" />
-    <ClInclude Include="SVToolLevelCreateStruct.h" />
     <ClInclude Include="SVToolsetScriptTags.h" />
     <ClInclude Include="TextDefinesSvOl.h" />
   </ItemGroup>

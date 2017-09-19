@@ -10,7 +10,7 @@
 #include "SVStdImageOperatorListClass.h"
 
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
-#include "SVObjectLibrary/SVAnalyzerLevelCreateStruct.h"
+#include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 
 #include "SVImageClass.h"
 #include "SVImageProcessingClass.h"
@@ -58,12 +58,12 @@ SVStdImageOperatorListClass::~SVStdImageOperatorListClass()
 	CloseObject();
 }
 
-bool SVStdImageOperatorListClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+bool SVStdImageOperatorListClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
 	// Image input must already exist, and must be created!!!
 
 	// Embedded Image output must already exist!!!
-	m_isCreated = __super::CreateObject( pCreateStructure ) && ( S_OK == outputImageObject.InitializeImage( getInputImage() ) );
+	m_isCreated = __super::CreateObject(rCreateStructure) && ( S_OK == outputImageObject.InitializeImage( getInputImage() ) );
 
 	return m_isCreated;
 }
@@ -179,8 +179,8 @@ bool SVStdImageOperatorListClass::Run( SVRunStatusClass& rRunStatus, SvStl::Mess
 				
 				// Use the Child layer on Input Image as our input image
 
-				SvOi::ITool* pTool = dynamic_cast<SvOi::ITool *>(GetTool());
-				if( pTool && pOutputImage->GetLastResetTimeStamp() <= pInputImage->GetLastResetTimeStamp() )
+				SvOi::ITool* pTool = GetToolInterface();
+				if( nullptr != pTool && pOutputImage->GetLastResetTimeStamp() <= pInputImage->GetLastResetTimeStamp() )
 				{
 					pTool->UpdateImageWithExtent();
 				}
@@ -318,8 +318,8 @@ HRESULT SVStdImageOperatorListClass::CollectInputImageNames()
 {
 	HRESULT hr = S_FALSE;
 	SVImageClass* pInputImage = getInputImage();
-	SvOi::ITool* pTool = dynamic_cast<SvOi::ITool *>(GetTool());
-	if( pInputImage && pTool )
+	SvOi::ITool* pTool = GetToolInterface();
+	if (nullptr != pInputImage && nullptr != pTool)
 	{
 		SVString Name = pInputImage->GetCompleteName();
 

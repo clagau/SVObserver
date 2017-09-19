@@ -192,9 +192,9 @@ void SVArchiveTool::initializeArchiveTool()
 	m_uiValidateCount = 0;
 }
 
-bool SVArchiveTool::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+bool SVArchiveTool::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	bool bOk = SVToolClass::CreateObject(pCreateStructure);
+	bool bOk = SVToolClass::CreateObject(rCreateStructure);
 
 	if ( bOk )
 	{

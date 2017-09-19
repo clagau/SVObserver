@@ -24,8 +24,6 @@ public:
 	SVWatershedFilterClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVWATERSHEDFILTER );
 	virtual ~SVWatershedFilterClass();
 	
-	virtual bool CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
-
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 #pragma region virtual method (IFilter)

@@ -129,9 +129,9 @@ SVImageToolClass::~SVImageToolClass()
 	CloseObject();
 }
 
-bool SVImageToolClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+bool SVImageToolClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	bool bOk = SVToolClass::CreateObject( pCreateStructure );
+	bool bOk = SVToolClass::CreateObject(rCreateStructure);
 
 	// Set / Reset Printable Flags
 	outputEnableOffsetA.SetObjectAttributesAllowed( SvOi::SV_PRINTABLE, SvOi::SetAttributeType::AddAttribute );

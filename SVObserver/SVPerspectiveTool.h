@@ -25,14 +25,13 @@ public:
 	SVPerspectiveToolClass( SVObjectClass *p_pOwner = nullptr, int p_iStringResourceID = IDS_CLASSNAME_SVPERSPECTIVETOOL );
 	virtual ~SVPerspectiveToolClass();
 
-	virtual bool CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
+	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 	virtual bool CloseObject() override;
 
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
-	SVImageClass *GetInputImage();
+	SVImageClass* GetInputImage() const;
 
-	virtual HRESULT IsInputImage( SVImageClass *p_psvImage ) override;
 	virtual SVTaskObjectClass* GetObjectAtPoint( const SVExtentPointStruct &p_rsvPoint ) override;
 	virtual bool DoesObjectHaveExtents() const override;
 	virtual HRESULT SetImageExtent( const SVImageExtentClass& rImageExtent ) override;
@@ -50,6 +49,7 @@ public:
 
 protected:
 	HRESULT UpdateOutputImageExtents();
+	virtual bool isInputImage(const SVGUID& rImageGuid) const override;
 	virtual bool onRun( SVRunStatusClass &p_rRunStatus, SvStl::MessageContainerVector *pErrorMessages = nullptr ) override;
 
 private:

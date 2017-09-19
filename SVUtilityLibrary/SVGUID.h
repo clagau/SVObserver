@@ -10,10 +10,10 @@
 //******************************************************************************
 #pragma once
 
+#pragma region Includes
 //Moved to precompiled header: #include <comdef.h>
 //Moved to precompiled header: #include <set>
-
-#pragma region Includes
+//Moved to precompiled header: #include <vector>
 #include "SVString.h"
 #include "SVUtilityGlobals.h"
 #pragma endregion Includes
@@ -81,4 +81,5 @@ inline bool operator>( const GUID& p_rLeft, const SVGUID& p_rRight )
 	return ( p_rRight < p_rLeft );
 }
 
-typedef std::set< SVGUID > SVGuidSet;
+typedef std::set<SVGUID> SVGuidSet;
+typedef std::vector<SVGUID> SVGuidVector;

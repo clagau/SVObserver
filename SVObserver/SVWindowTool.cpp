@@ -155,9 +155,9 @@ SVWindowToolClass::~SVWindowToolClass()
 }
 
 
-bool SVWindowToolClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+bool SVWindowToolClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	bool bOk = SVToolClass::CreateObject( pCreateStructure );
+	bool bOk = SVToolClass::CreateObject(rCreateStructure);
 	
 	m_SourceImageNames.setStatic( true );
 	m_SourceImageNames.setSaveValueFlag(false);

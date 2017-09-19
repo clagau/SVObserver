@@ -24,7 +24,7 @@ public:
 	virtual ~SVLongResultClass();
 
 public:
-	virtual bool CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
+	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 
 	const GUID & GetInputEmbeddedID() const;
 

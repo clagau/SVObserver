@@ -15,6 +15,7 @@
 #include "SVObjectLibrary/SVObjectClass.h"
 #include "ObjectInterfaces/IObjectAppClass.h"
 #include "ObjectInterfaces/IInspectionProcess.h"
+#include "ObjectInterfaces/ITool.h"
 #include "SVOResource/resource.h"
 #pragma endregion Includes
 
@@ -27,14 +28,16 @@ public:
 	SVObjectAppClass( LPCSTR LPSZObjectName );
 	SVObjectAppClass( SVObjectClass* pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVOBJECTAPPCLASS );
 
-	virtual bool CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
-	virtual void ConnectObject( const SVObjectLevelCreateStruct& rCreateStruct ) override;
+	virtual bool CreateObject(const SVObjectLevelCreateStruct& rCreateStructure) override;
+	virtual void ConnectObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 
-	SVObjectClass* GetInspection() const;
-	SvOi::IInspectionProcess* GetInspectionInterface() const;
+	SVObjectClass* GetInspection() const { return m_pInspection;  };
+	SvOi::IInspectionProcess* GetInspectionInterface() const { return m_pInspectionInterface; };
 
-	SVObjectClass* GetTool() const;
-	SVObjectClass* GetAnalyzer() const;
+	SVObjectClass* GetTool() const { return m_pTool; };
+	SvOi::ITool* GetToolInterface() const { return m_pToolInterface; };
+
+	SVObjectClass* GetAnalyzer() const { return m_pAnalyzer; };
 
 #pragma region virtual methods (IObjectAppClass)
 	virtual bool CreateChildObject(SvOi::IObjectClass& rChildObject, DWORD context) override;
@@ -47,13 +50,17 @@ public:
 	virtual bool CreateChildObject( SVObjectClass* pChildObject, DWORD context = 0 ) override;
 
 protected:
-	void UpdateConnections( const SVObjectLevelCreateStruct* PCreateStruct );
+	void UpdateConnections(const SVObjectLevelCreateStruct& rCreateStructure);
 
 	virtual bool createAllObjectsFromChild( SVObjectClass& rChildObject ) override;
 
 private:
-	SVObjectClass* m_psvInspection;
-	SVObjectClass* m_psvTool;
-	SVObjectClass* m_psvAnalyzer;
+	SVObjectClass* m_pInspection;
+	SVObjectClass* m_pTool;
+	SVObjectClass* m_pAnalyzer;
+
+	//! We need both interface and object pointers to optimize speed in run mode
+	SvOi::IInspectionProcess* m_pInspectionInterface;
+	SvOi::ITool* m_pToolInterface;
 };
 

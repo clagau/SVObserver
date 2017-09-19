@@ -35,7 +35,7 @@ public:
 
 	virtual ~SVOCVAnalyzeResultClass();
 
-	virtual bool CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
+	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 	virtual bool CloseObject() override;
 
 	void GetOCVResultString( SVString& rResult );

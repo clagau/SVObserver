@@ -34,7 +34,7 @@ public:
 	HRESULT UpdateCameraImage( LPCTSTR p_szCameraName );
 	HRESULT UpdateCameraImage( const SVGUID& p_CameraID );
 
-	virtual bool CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
+	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 	virtual bool SetImageDepth( long lDepth ) override;
 
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;

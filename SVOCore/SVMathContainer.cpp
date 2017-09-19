@@ -12,7 +12,7 @@
 #include "stdafx.h"
 #include "SVMathContainer.h"
 #include "SVMathEquation.h"
-#include "SVObjectLibrary/SVAnalyzerLevelCreateStruct.h"
+#include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 #include "SVObjectLibrary/SVClsids.h"
 
 
@@ -48,10 +48,10 @@ SVMathContainerClass::~SVMathContainerClass()
 	CloseObject();
 }
 
-bool SVMathContainerClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+bool SVMathContainerClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	m_isCreated = SVTaskObjectClass::CreateObject( pCreateStructure ) && pCreateStructure->CheckCreateStructName( "SVToolLevelCreateStruct" )
-		&& nullptr != GetInspection() && nullptr != GetTool() && nullptr != getInputMathResult();
+	m_isCreated = SVTaskObjectClass::CreateObject(rCreateStructure ) && nullptr != GetInspection() && 
+		nullptr != GetTool() && nullptr != getInputMathResult();
 	return m_isCreated;
 }
 

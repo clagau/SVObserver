@@ -42,13 +42,11 @@ HRESULT SVToolExtentPropertiesClass::GetProperties( SVImageExtentClass& rExtents
 
 	for ( iter = m_svProperties.begin(); S_OK == l_hrOk && iter != m_svProperties.end(); ++iter )
 	{
-		SvOi::IValueObject* pValueObject = dynamic_cast<SvOi::IValueObject*> (iter->second.pValueObject);
-
-		if ( nullptr != pValueObject )
+		if ( nullptr != iter->second.pValueObject )
 		{
 			_variant_t Value;
 
-			if ( S_OK == ( l_hrOk = pValueObject->getValue( Value ) ) )
+			if ( S_OK == ( l_hrOk = iter->second.pValueObject->getValue( Value ) ) )
 			{
 				l_hrOk = rExtents.SetExtentProperty( iter->first, Value.dblVal );
 			}

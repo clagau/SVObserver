@@ -45,10 +45,10 @@ void SVUnaryImageOperatorClass::init()
 	addDefaultInputObjects();
 }
 
-bool SVUnaryImageOperatorClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+bool SVUnaryImageOperatorClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
 	// Owner can only be : SVUnaryImageOperatorListClass !!!
-	m_isCreated = __super::CreateObject(pCreateStructure) && (nullptr != (m_pCurrentUIOPL = dynamic_cast<SVUnaryImageOperatorListClass*>(GetOwner())));
+	m_isCreated = __super::CreateObject(rCreateStructure) && (nullptr != (m_pCurrentUIOPL = dynamic_cast<SVUnaryImageOperatorListClass*>(GetOwner())));
 	return m_isCreated;
 }
 

@@ -17,30 +17,13 @@
 #pragma endregion Includes
 
 SVObjectLevelCreateStruct::SVObjectLevelCreateStruct()
+: m_pInspection(nullptr)
+, m_pTool(nullptr)
+, m_pAnalyzer(nullptr)
 {
-	strCreateStructName = "SVObjectLevelCreateStruct";
-}
-
-SVObjectLevelCreateStruct::SVObjectLevelCreateStruct( const SVObjectLevelCreateStruct& ROLCS )
-{
-	strCreateStructName = "SVObjectLevelCreateStruct";
-	if( ROLCS.CheckCreateStructName( strCreateStructName ) )
-	{
-		OwnerObjectInfo = ROLCS.OwnerObjectInfo;		
-	}
 }
 
 SVObjectLevelCreateStruct::~SVObjectLevelCreateStruct()
 {
-}
-
-bool SVObjectLevelCreateStruct::CheckCreateStructName( const char* StrCreateStructureName ) const
-{
-	assert( StrCreateStructureName );
-	if( StrCreateStructureName )
-	{
-		return( nullptr != strstr( strCreateStructName, StrCreateStructureName ) );
-	}
-	return false;
 }
 

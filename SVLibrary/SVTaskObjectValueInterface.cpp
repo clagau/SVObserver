@@ -49,7 +49,7 @@ HRESULT SVTaskObjectValueInterface::AddInputRequest( const SVObjectReference& rO
 
 	try
 	{
-		SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess*> (m_pTaskObject->GetInspection());
+		SvOi::IInspectionProcess* pInspection = m_pTaskObject->GetInspectionInterface();
 
 		if( pInspection->AddInputRequest( rObjectRef.getObject()->GetUniqueObjectID(), rValue, rObjectRef.ArrayIndex() ) )
 		{
@@ -88,7 +88,7 @@ HRESULT SVTaskObjectValueInterface::AddInputRequestMarker()
 
 	try
 	{
-		SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess*> (m_pTaskObject->GetInspection());
+		SvOi::IInspectionProcess* pInspection = m_pTaskObject->GetInspectionInterface();
 
 		if( pInspection->AddInputRequestMarker() )
 		{

@@ -87,9 +87,9 @@ bool SVCameraImageTemplate::DestroyImage()
 	return bOk;
 }
 
-bool SVCameraImageTemplate::CreateObject(SVObjectLevelCreateStruct* pCreateStructure)
+bool SVCameraImageTemplate::CreateObject(const SVObjectLevelCreateStruct& rCreateStructure)
 {
-	bool l_bOk = SVImageClass::CreateObject(pCreateStructure);
+	bool l_bOk = SVImageClass::CreateObject(rCreateStructure);
 
 	l_bOk = l_bOk && ( S_OK == RebuildCameraImage() );
 

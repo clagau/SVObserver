@@ -24,7 +24,7 @@ class SVDPointYResultClass : public SVResultClass
 public:
 	SVDPointYResultClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_RESULT_DPOINT_Y );
 	virtual ~SVDPointYResultClass();
-	virtual bool CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
+	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 
 protected:
 	SVDPointValueObjectClass* getInputPoint();

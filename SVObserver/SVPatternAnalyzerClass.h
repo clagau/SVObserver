@@ -31,7 +31,7 @@ public:
 	virtual	~SVPatternAnalyzerClass();
 	virtual bool CloseObject() override;
 	
-	virtual bool CreateObject(SVObjectLevelCreateStruct* pCreateStructure) override;
+	virtual bool CreateObject(const SVObjectLevelCreateStruct& rCreateStructure) override;
 	virtual bool onRun(SVRunStatusClass &rRunStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	void CloseMIL();

@@ -28,18 +28,18 @@ public:
 #pragma region Public Methods
 public:
 #pragma region virtual
-	virtual bool CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
-	virtual HRESULT IsInputImage( SVImageClass *p_psvImage ) override;
+	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 
 	virtual bool ResetObject( SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 #pragma endregion
 
-	SVImageClass* getInputImage();
+	SVImageClass* getInputImage() const;
 	SVImageClass* getOutputImage();
 #pragma endregion
 
 #pragma region Protected Methods
 protected:
+	virtual bool isInputImage(const SVGUID& rImageGuid) const override;
 	virtual bool onRun( SVRunStatusClass& runStatus, SvStl::MessageContainerVector *pErrorMessages=nullptr ) override;
 
 	HRESULT UpdateTransformData();

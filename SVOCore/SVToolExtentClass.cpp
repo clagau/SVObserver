@@ -185,7 +185,7 @@ HRESULT SVToolExtentClass::UpdateImageWithExtent( SVToolExtentTypeEnum p_ToolExt
 				{
 					l_Status = GetImageExtent( l_Extent );
 
-					SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess*>(m_psvToolImage->GetInspectionInterface());
+					SvOi::IInspectionProcess* pInspection = m_psvToolImage->GetInspectionInterface();
 
 					if ( nullptr != pInspection && pInspection->IsResetStateSet( SvOi::SVResetAutoMoveAndResize ) )
 					{
@@ -243,7 +243,7 @@ HRESULT SVToolExtentClass::UpdateImageWithExtent( SVToolExtentTypeEnum p_ToolExt
 			{
 				if( nullptr != m_psvTool )
 				{
-					SvOi::IInspectionProcess* pInspection = dynamic_cast<SvOi::IInspectionProcess*>(m_psvTool->GetInspectionInterface());
+					SvOi::IInspectionProcess* pInspection = m_psvTool->GetInspectionInterface();
 					if (pInspection)
 					{
 						pInspection->ForceOffsetUpdate();
@@ -596,7 +596,7 @@ HRESULT SVToolExtentClass::GetSelectedOffsetData( SVExtentOffsetStruct& p_rsvOff
 	return l_svOk;
 }
 
-HRESULT SVToolExtentClass::UpdateOffsetDataToImage( SVExtentOffsetStruct& p_rsvOffsetData, SVImageClass* p_svToolImage )
+HRESULT SVToolExtentClass::UpdateOffsetDataToImage( SVExtentOffsetStruct& p_rsvOffsetData, SVImageClass* pToolImage )
 {
 	HRESULT l_svOk = S_OK;
 
@@ -604,18 +604,18 @@ HRESULT SVToolExtentClass::UpdateOffsetDataToImage( SVExtentOffsetStruct& p_rsvO
 	{
 		SVExtentOffsetStruct l_svOffsetData;
 
-		SVImageClass* l_psvImageParent = m_psvToolImage->GetParentImage();
+		SVImageClass* pImageParent = m_psvToolImage->GetParentImage();
 
-		if( nullptr != l_psvImageParent )
+		if( nullptr != pImageParent )
 		{
-			SVToolClass* l_psvToolParent = dynamic_cast<SVToolClass*>(l_psvImageParent->GetTool());
+			SVToolClass* pToolParent = dynamic_cast<SVToolClass*>(pImageParent->GetTool());
 
-			if( l_psvImageParent != p_svToolImage && l_psvImageParent != m_psvToolImage && 
-				nullptr != l_psvToolParent && l_psvToolParent != m_psvTool )
+			if( pImageParent != pToolImage && pImageParent != m_psvToolImage && 
+				nullptr != pToolParent && pToolParent != m_psvTool )
 			{
-				l_svOk = l_psvToolParent->UpdateOffsetDataToImage( l_svOffsetData, p_svToolImage );
+				l_svOk = pToolParent->UpdateOffsetDataToImage( l_svOffsetData, pToolImage );
 			}
-			else if( l_psvImageParent == p_svToolImage || nullptr == p_svToolImage )
+			else if( pImageParent == pToolImage || nullptr == pToolImage )
 			{
 				SVImageExtentClass l_svExtent;
 
@@ -647,16 +647,16 @@ HRESULT SVToolExtentClass::UpdateOffsetDataToImage( SVExtentOffsetStruct& p_rsvO
 						}
 						else
 						{
-							l_svOffsetData.m_psvRootImage = l_psvImageParent;
+							l_svOffsetData.m_psvRootImage = pImageParent;
 						}
 					}
 
-					l_svOffsetData.m_psvImage = l_psvImageParent;
+					l_svOffsetData.m_psvImage = pImageParent;
 					l_svOffsetData.m_bAlwaysUpdate |= m_bAlwaysUpdate;
 
-					if( nullptr != l_psvImageParent )
+					if( nullptr != pImageParent )
 					{
-						l_svOffsetData.m_csImageName = l_psvImageParent->GetCompleteName();
+						l_svOffsetData.m_csImageName = pImageParent->GetCompleteName();
 					}
 				}
 			}
@@ -685,21 +685,21 @@ HRESULT SVToolExtentClass::UpdateOffsetData( bool p_bForceUpdate )
 			{
 				SVExtentOffsetStruct l_svOffsetData;
 
-				SVImageClass* l_psvImageParent = m_psvToolImage->GetParentImage();
+				SVImageClass* pImageParent = m_psvToolImage->GetParentImage();
 
-				if( nullptr != l_psvImageParent )
+				if( nullptr != pImageParent )
 				{
-					SVToolClass* l_psvToolParent = dynamic_cast<SVToolClass*>(l_psvImageParent->GetTool());
+					SVToolClass* pToolParent = dynamic_cast<SVToolClass*>(pImageParent->GetTool());
 
-					if( nullptr != l_psvToolParent && l_psvToolParent != m_psvTool )
+					if( nullptr != pToolParent && pToolParent != m_psvTool )
 					{
-						l_svOk = l_psvToolParent->GetRootOffsetData( l_svOffsetData );
+						l_svOk = pToolParent->GetRootOffsetData( l_svOffsetData );
 					}
 					else
 					{
-						l_svOffsetData.m_psvRootImage = l_psvImageParent;
-						l_svOffsetData.m_psvImage = l_psvImageParent;
-						l_svOffsetData.m_csImageName = l_psvImageParent->GetCompleteName();
+						l_svOffsetData.m_psvRootImage = pImageParent;
+						l_svOffsetData.m_psvImage = pImageParent;
+						l_svOffsetData.m_csImageName = pImageParent->GetCompleteName();
 					}
 				}
 				else
@@ -711,13 +711,13 @@ HRESULT SVToolExtentClass::UpdateOffsetData( bool p_bForceUpdate )
 
 				if( S_OK == l_svOk )
 				{
-					SVImageExtentClass l_svExtent;
+					SVImageExtentClass Extent;
 
-					l_svOk = GetImageExtent( l_svExtent );
+					l_svOk = GetImageExtent( Extent );
 
 					if( S_OK == l_svOk )
 					{
-						l_svOk = l_svExtent.UpdateSourceOffset( l_svOffsetData );
+						l_svOk = Extent.UpdateSourceOffset( l_svOffsetData );
 					}
 				}
 
@@ -801,15 +801,15 @@ HRESULT SVToolExtentClass::TranslatePointToSource( SVExtentPointStruct p_svIn, S
 				{
 					if( nullptr != m_psvToolImage )
 					{
-						SVImageClass* l_psvImageParent = m_psvToolImage->GetParentImage();
+						SVImageClass* pImageParent = m_psvToolImage->GetParentImage();
 
-						if( nullptr != l_psvImageParent )
+						if( nullptr != pImageParent )
 						{
-							SVToolClass* l_psvToolParent = dynamic_cast<SVToolClass*>(l_psvImageParent->GetTool());
+							SVToolClass* pToolParent = dynamic_cast<SVToolClass*>(pImageParent->GetTool());
 
-							if( nullptr != l_psvToolParent )
+							if( nullptr != pToolParent )
 							{
-								l_svOk = l_psvToolParent->TranslatePointToSource( p_svIn, p_svIn );
+								l_svOk = pToolParent->TranslatePointToSource( p_svIn, p_svIn );
 							}
 						}
 					}

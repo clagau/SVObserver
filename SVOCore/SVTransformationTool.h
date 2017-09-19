@@ -23,17 +23,16 @@ public:
 	SVTransformationToolClass( SVObjectClass* POwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVTRANSFORMATIONTOOL );
 	virtual ~SVTransformationToolClass();
 
-	virtual bool CreateObject( SVObjectLevelCreateStruct* pCreateStructure ) override;
+	virtual bool CreateObject( const SVObjectLevelCreateStruct& rCreateStructure ) override;
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 
 	virtual SVTaskObjectClass *GetObjectAtPoint( const SVExtentPointStruct &p_rsvPoint ) override;
 	virtual bool DoesObjectHaveExtents() const override;
 
-	virtual HRESULT IsInputImage( SVImageClass *p_psvImage ) override;
-
 	virtual SVStringValueObjectClass* GetInputImageNames() override;
 
 protected:
+	virtual bool isInputImage(const SVGUID& rImageGuid) const override { return false; };
 	virtual HRESULT UpdateImageWithExtent() override;
 
 private:

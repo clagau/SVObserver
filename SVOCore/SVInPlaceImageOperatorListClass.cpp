@@ -9,7 +9,7 @@
 #include "SVInplaceImageOperatorListClass.h"
 
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
-#include "SVObjectLibrary/SVAnalyzerLevelCreateStruct.h"
+#include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 
 #include "SVImageClass.h"
 #include "SVImageProcessingClass.h"
@@ -49,11 +49,6 @@ void SVInPlaceImageOperatorListClass::init()
 SVInPlaceImageOperatorListClass::~SVInPlaceImageOperatorListClass() 
 { 
 	CloseObject();
-}
-
-HRESULT SVInPlaceImageOperatorListClass::IsInputImage( SVImageClass *p_psvImage )
-{
-	return S_FALSE;
 }
 
 bool SVInPlaceImageOperatorListClass::ResetObject(SvStl::MessageContainerVector *pErrorMessages)

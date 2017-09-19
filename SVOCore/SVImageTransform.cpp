@@ -14,7 +14,7 @@
 #include "SVOCore/SVImageTransform.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVMatroxLibrary/SVMatroxLibrary.h"
-#include "SVObjectLibrary/SVAnalyzerLevelCreateStruct.h"
+#include "SVObjectLibrary/SVObjectLevelCreateStruct.h"
 #include "ObjectInterfaces/GlobalConst.h"
 #include "SVTool.h"
 #include "SVTransformationTool.h"
@@ -101,9 +101,9 @@ SVImageTransformClass::~SVImageTransformClass()
 
 #pragma region Public Methods
 #pragma region virtual
-bool SVImageTransformClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+bool SVImageTransformClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	bool l_bOk = SVTransformClass::CreateObject( pCreateStructure );
+	bool l_bOk = SVTransformClass::CreateObject(rCreateStructure);
 
 	SVToolClass* pTool = dynamic_cast<SVToolClass*>(GetTool());
 	l_bOk = l_bOk && nullptr != pTool;
@@ -133,18 +133,6 @@ bool SVImageTransformClass::CreateObject( SVObjectLevelCreateStruct* pCreateStru
 	return l_bOk;
 }
 
-HRESULT SVImageTransformClass::IsInputImage( SVImageClass *p_psvImage )
-{
-	HRESULT l_hrOk = S_FALSE;
-
-	if ( nullptr != p_psvImage && p_psvImage == getInputImage() )
-	{
-		l_hrOk = S_OK;
-	}
-
-	return l_hrOk;
-}
-
 bool SVImageTransformClass::ResetObject( SvStl::MessageContainerVector *pErrorMessages )
 {
 	bool Result = true;
@@ -171,10 +159,14 @@ bool SVImageTransformClass::ResetObject( SvStl::MessageContainerVector *pErrorMe
 }
 #pragma endregion
 
-SVImageClass* SVImageTransformClass::getInputImage()
+SVImageClass* SVImageTransformClass::getInputImage() const
 {
-	if( m_inputImageObjectInfo.IsConnected() && m_inputImageObjectInfo.GetInputObjectInfo().m_pObject )
-		return ( SVImageClass* ) m_inputImageObjectInfo.GetInputObjectInfo().m_pObject;
+	if (m_inputImageObjectInfo.IsConnected() && nullptr != m_inputImageObjectInfo.GetInputObjectInfo().m_pObject)
+	{
+		//! Use static_cast to avoid time penalty in run mode for dynamic_cast
+		//! We are sure that when m_pObject is not nullptr then it is a SVImageClass
+		return static_cast<SVImageClass*> (m_inputImageObjectInfo.GetInputObjectInfo().m_pObject);
+	}
 
 	return nullptr;
 }
@@ -186,6 +178,19 @@ SVImageClass* SVImageTransformClass::getOutputImage()
 #pragma endregion
 
 #pragma region Protected Methods
+bool SVImageTransformClass::isInputImage(const SVGUID& rImageGuid) const
+{
+	bool Result(false);
+
+	SVImageClass* pImage = getInputImage();
+	if (nullptr != pImage && rImageGuid == pImage->GetUniqueObjectID())
+	{
+		Result = true;
+	}
+
+	return Result;
+}
+
 bool SVImageTransformClass::onRun( SVRunStatusClass& runStatus, SvStl::MessageContainerVector *pErrorMessages )
 {
 	bool bRetVal = SVTransformClass::onRun( runStatus, pErrorMessages );

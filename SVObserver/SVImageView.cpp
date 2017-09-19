@@ -1817,19 +1817,18 @@ BOOL SVImageViewClass::GetObjectAtPoint( POINT p_point )
 
 	m_svLocation = SVExtentLocationPropertyUnknown;
 
-	SVImageClass* l_pImage = dynamic_cast< SVImageClass* >( SVObjectManagerClass::Instance().GetObject( m_ImageId.ToGUID() ) );
-	SVToolClass* l_psvTool = nullptr;
+	SVToolClass* pTool = nullptr;
 
 	if( nullptr != GetIPDoc() )
 	{
-		l_psvTool = dynamic_cast< SVToolClass* >( SVObjectManagerClass::Instance().GetObject( GetIPDoc()->GetSelectedToolID() ) );
+		pTool = dynamic_cast<SVToolClass*> ( SVObjectManagerClass::Instance().GetObject( GetIPDoc()->GetSelectedToolID() ) );
 	}
 
-	if( nullptr != l_psvTool && S_OK == l_psvTool->IsInputImage( l_pImage ) )
+	if( nullptr != pTool && pTool->isInputImage( m_ImageId ) )
 	{
 		SVImageExtentClass l_svExtents;
 
-		m_psvObject = l_psvTool->GetObjectAtPoint( p_point );
+		m_psvObject = pTool->GetObjectAtPoint( p_point );
 
 		if( S_OK == GetToolExtents( l_svExtents ) )
 		{
@@ -1837,7 +1836,7 @@ BOOL SVImageViewClass::GetObjectAtPoint( POINT p_point )
 		}
 	
 		////check if move or sizing is allowed  
-		if(false == l_psvTool->IsAllowedLocation(m_svLocation))
+		if(false == pTool->IsAllowedLocation(m_svLocation))
 		{
 				m_svLocation = SVExtentLocationPropertyDisabled;
 		}

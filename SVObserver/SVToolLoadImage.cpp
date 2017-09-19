@@ -69,9 +69,9 @@ SVLoadImageToolClass::~SVLoadImageToolClass()
 { 
 }
 
-bool SVLoadImageToolClass::CreateObject( SVObjectLevelCreateStruct* pCreateStructure )
+bool SVLoadImageToolClass::CreateObject( const SVObjectLevelCreateStruct& rCreateStructure )
 {
-	bool bOk = SVToolClass::CreateObject(pCreateStructure);
+	bool bOk = SVToolClass::CreateObject(rCreateStructure);
 
 	if( bOk )
 	{
@@ -184,23 +184,23 @@ bool SVLoadImageToolClass::ResetObject(SvStl::MessageContainerVector *pErrorMess
 	return Result && ValidateLocal(pErrorMessages);
 }
 
-HRESULT SVLoadImageToolClass::IsInputImage(SVImageClass *p_psvImage)
+bool SVLoadImageToolClass::isInputImage(const SVGUID& rImageGuid) const
 {
-	HRESULT l_hrOk = S_FALSE;
+	bool Result(false);
 
-	if ( nullptr != p_psvImage )
+	//! Use static_cast to avoid time penalty in run mode for dynamic_cast
+	//! We are sure that when m_pObject is not nullptr then it is a SVImageClass
+	SVImageClass* pImage = static_cast<SVImageClass*> (m_pCurrentToolSet->getCurrentImageInterface());
+	if (nullptr != pImage && rImageGuid == pImage->GetUniqueObjectID())
 	{
-		if (p_psvImage == dynamic_cast<SVToolSetClass*>(m_pCurrentToolSet)->getCurrentImageInterface())
-		{
-			l_hrOk = S_OK;
-		}
-		else
-		{
-			l_hrOk = SVToolClass::IsInputImage( p_psvImage );
-		}
+		Result = true;
+	}
+	else
+	{
+		Result = SVToolClass::isInputImage(rImageGuid);
 	}
 
-	return l_hrOk;
+	return Result;
 }
 
 SVTaskObjectClass *SVLoadImageToolClass::GetObjectAtPoint( const SVExtentPointStruct &p_rsvPoint )
