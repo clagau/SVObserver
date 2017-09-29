@@ -11,7 +11,7 @@
 
 #include "stdafx.h"
 #include "CameraLibrary/SVDeviceParams.h"
-#include "SVImageLibrary/SVDigitizerLoadLibraryClass.h"
+#include "TriggerHandling/SVDigitizerLoadLibraryClass.h"
 #include "SVAcquisitionInitiator.h"
 
 namespace SvTh
@@ -55,7 +55,7 @@ namespace SvTh
 		}
 	}
 
-	HRESULT SVAcquisitionInitiator::RegisterCallback(const SvTh::TriggerDispatcher& rDispatcher)
+	HRESULT SVAcquisitionInitiator::RegisterCallback(const TriggerDispatcher& rDispatcher)
 	{
 		HRESULT hr = S_FALSE;
 		if (m_initiatorList.size())
@@ -77,7 +77,7 @@ namespace SvTh
 		return hr;
 	}
 
-	HRESULT SVAcquisitionInitiator::UnRegisterCallback(const SvTh::TriggerDispatcher& rDispatcher)
+	HRESULT SVAcquisitionInitiator::UnRegisterCallback(const TriggerDispatcher& rDispatcher)
 	{
 		HRESULT hr = S_FALSE;
 		if (m_initiatorList.size())

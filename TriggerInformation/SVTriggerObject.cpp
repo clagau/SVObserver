@@ -15,8 +15,8 @@
 #include "TriggerHandling/TriggerBasics.h"
 #include "TriggerHandling/SVTriggerClass.h"
 #include "SVTriggerObject.h"
-#include "TriggerHandling/SVTriggerConstants.h"
-#include "SVTriggerLibrary/SVTriggerEnums.h"
+#include "SVTriggerConstants.h"
+#include "SVTriggerEnums.h"
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
@@ -44,7 +44,7 @@ namespace SvTi
 	, m_pOwner(nullptr)
 	, m_lTriggerCount(0)
 	, m_bSoftwareTrigger(false)
-	, m_timerPeriod(SvTh::TimerPeriod) 
+	, m_timerPeriod(TimerPeriod) 
 	{
 		#ifdef SV_LOG_STATUS_INFO
 			m_StatusLog.Create();
@@ -58,7 +58,7 @@ namespace SvTi
 	, m_pOwner(nullptr)
 	, m_lTriggerCount(0)
 	, m_bSoftwareTrigger(false)
-	, m_timerPeriod(SvTh::TimerPeriod) 
+	, m_timerPeriod(TimerPeriod) 
 	{
 		#ifdef SV_LOG_STATUS_INFO
 			m_StatusLog.Create();
@@ -280,7 +280,7 @@ namespace SvTi
 		if (mpsvDevice)
 		{
 			SVString name = mpsvDevice->GetDeviceName();
-			bRet = (0 == name.find(SvTh::CameraTriggerName) );
+			bRet = (0 == name.find(CameraTriggerName) );
 		}
 		return bRet;
 	}

@@ -21,9 +21,9 @@
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVMessage/SVMessage.h"
 #include "SVHBitmapUtilitiesLibrary/SVImageFormatEnum.h"
-#include "SVTriggerLibrary/SVTriggerActivatorFunc.h"
-#include "SVTriggerLibrary/SVTriggerCallbackFunc.h"
-#include "SVTriggerLibrary/SVTriggerEnums.h"
+#include "TriggerInformation/SVTriggerActivatorFunc.h"
+#include "TriggerInformation/SVTriggerCallbackFunc.h"
+#include "TriggerInformation/SVTriggerEnums.h"
 #include "SVTimerLibrary/SVClock.h"
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
@@ -679,11 +679,11 @@ HRESULT SVFileAcquisitionDevice::RegisterInternalTriggerCallback( unsigned long 
 {
 	m_acquisitionTriggers.Add(p_ulIndex, rDispatcher );
 	
-	typedef SVTriggerActivatorFunc<SVFileAcquisitionDevice> Activator;
-	typedef SVTriggerCallbackFunc<SVFileAcquisitionDevice> TriggerCallback;
-	SVTriggerHandler handler(p_ulIndex, 
-							SVTriggerActivator(new Activator(this, &SVFileAcquisitionDevice::FireOneShot)), 
-							SVTriggerCallback(new TriggerCallback(this, &SVFileAcquisitionDevice::DispatchTriggerCallback)));
+	typedef SvTi::SVTriggerActivatorFunc<SVFileAcquisitionDevice> Activator;
+	typedef SvTi::SVTriggerCallbackFunc<SVFileAcquisitionDevice> TriggerCallback;
+	SvTh::SVTriggerHandler handler(p_ulIndex,
+		SvTh::SVTriggerActivator(new Activator(this, &SVFileAcquisitionDevice::FireOneShot)),
+		SvTh::SVTriggerCallback(new TriggerCallback(this, &SVFileAcquisitionDevice::DispatchTriggerCallback)));
 
 	return m_triggerMgr.Subscribe(p_ulIndex, handler);
 }
@@ -842,7 +842,7 @@ HRESULT SVFileAcquisitionDevice::TriggerGetParameterName( unsigned long triggerc
 		{
 			switch ( p_ulIndex )
 			{
-				case SVAcquisitionTriggered:
+				case SvTi::SVAcquisitionTriggered:
 				*p_pbstrName = ::SysAllocString( L"Acquisition Triggered" );
 				break;
 			}
@@ -870,7 +870,7 @@ HRESULT SVFileAcquisitionDevice::TriggerGetParameterValue( unsigned long trigger
 				// as an array and therefore this enum may not apply.
 				switch ( p_ulIndex)
 				{
-					case SVAcquisitionTriggered:
+					case SvTi::SVAcquisitionTriggered:
 					{
 						p_pvarValue->vt = VT_BOOL;
 						bool bAcquisitonTriggered;
@@ -901,7 +901,7 @@ HRESULT SVFileAcquisitionDevice::TriggerSetParameterValue( unsigned long trigger
 		{
 			switch (p_ulIndex)
 			{
-				case SVAcquisitionTriggered:
+				case SvTi::SVAcquisitionTriggered:
 				{
 					if( p_pvarValue->vt == VT_BOOL )
 					{

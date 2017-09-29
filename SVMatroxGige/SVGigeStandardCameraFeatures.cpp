@@ -14,8 +14,6 @@
 //Moved to precompiled header: #include <boost/config.hpp>
 //Moved to precompiled header: #include <boost/assign/list_of.hpp>
 #include "SVGigeStandardCameraFeatures.h"
-#include "SVMatroxDigitizerLibrary/SVMatroxDigitizerRef.h"
-#include "SVGigeCameraParametersLibrary/SVGigeFeature.h"
 #include "SVGigeCameraParametersLibrary/SVGigeEmptySetter.h"
 #include "SVGigeCameraParametersLibrary/SVGigeEmptyGetter.h"
 #include "SVGigeCameraParametersLibrary/SVGigeLUTSetter.h"

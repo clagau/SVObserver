@@ -14,7 +14,7 @@
 
 #include "SVDigitizerProcessingClass.h"
 #include "SVGigeCameraParametersLibrary/SVGigeEnums.h"
-#include "SVImageLibrary/SVDigitizerLoadLibraryClass.h"
+#include "TriggerHandling/SVDigitizerLoadLibraryClass.h"
 #include "SVImageLibrary/SVLut.h"
 #include "CameraLibrary/SVi64ValueDeviceParam.h"
 #include "SVFileAcquisitionClass.h"
@@ -148,7 +148,7 @@ void SVDigitizerProcessingClass::ClearDevices()
 	}
 }
 
-HRESULT SVDigitizerProcessingClass::UpdateDigitizerSubsystem( SVDigitizerLoadLibraryClass* pDigitizerSubsystem )
+HRESULT SVDigitizerProcessingClass::UpdateDigitizerSubsystem( SvTh::SVDigitizerLoadLibraryClass* pDigitizerSubsystem )
 {
 	HRESULT Result = S_FALSE;
 
@@ -234,9 +234,9 @@ bool SVDigitizerProcessingClass::IsValidDigitizerSubsystem( LPCTSTR digitizerNam
 	return ( nullptr != GetDigitizerSubsystem( digitizerName ) );
 }
 
-SVDigitizerLoadLibraryClass* SVDigitizerProcessingClass::GetDigitizerSubsystem( LPCTSTR digitizerName ) const
+SvTh::SVDigitizerLoadLibraryClass* SVDigitizerProcessingClass::GetDigitizerSubsystem( LPCTSTR digitizerName ) const
 {
-	SVDigitizerLoadLibraryClass* l_pSubsystem = nullptr;
+	SvTh::SVDigitizerLoadLibraryClass* l_pSubsystem = nullptr;
 
 	SVNameDigitizerSubsystemMap::const_iterator l_Iter = m_DigitizerSubsystems.find( digitizerName );
 
@@ -467,7 +467,7 @@ HRESULT SVDigitizerProcessingClass::RestoreLastCameraImage()
 	return l_Status;
 }
 
-HRESULT SVDigitizerProcessingClass::AddDigitizer( LPCTSTR Name, LPCTSTR AcquisitionName, SVDigitizerLoadLibraryClass* pDigitizerSubsystem, unsigned long p_Handle )
+HRESULT SVDigitizerProcessingClass::AddDigitizer( LPCTSTR Name, LPCTSTR AcquisitionName, SvTh::SVDigitizerLoadLibraryClass* pDigitizerSubsystem, unsigned long p_Handle )
 {
 	HRESULT Result( S_OK );
 	SVString DigitizerName( Name );
@@ -584,7 +584,7 @@ HRESULT SVDigitizerProcessingClass::UpdateMatroxDevices()
 
 	if( IsValidDigitizerSubsystem( deviceName.c_str() ) )
 	{
-		SVDigitizerLoadLibraryClass* pLibrary = GetDigitizerSubsystem( deviceName.c_str() );
+		SvTh::SVDigitizerLoadLibraryClass* pLibrary = GetDigitizerSubsystem( deviceName.c_str() );
 
 		unsigned long Count = 0;
 

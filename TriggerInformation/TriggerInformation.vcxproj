@@ -83,30 +83,52 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="AcquisitionTriggers.cpp" />
+    <ClCompile Include="IODeviceBase.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="SVAcquisitionConstructParams.cpp" />
+    <ClCompile Include="SVCameraTriggerClass.cpp" />
+    <ClCompile Include="SVCameraTriggerData.cpp" />
+    <ClCompile Include="SVFileAcquisitionInitiator.cpp" />
     <ClCompile Include="SVHardwareManifest.cpp" />
+    <ClCompile Include="SVInternalTrigger.cpp" />
     <ClCompile Include="SVOTriggerList.cpp" />
     <ClCompile Include="SVOTriggerObj.cpp" />
+    <ClCompile Include="SVSoftwareTriggerClass.cpp" />
     <ClCompile Include="SVTriggerDeviceParams.cpp" />
     <ClCompile Include="SVTriggerInfoStruct.cpp" />
     <ClCompile Include="SVTriggerObject.cpp" />
     <ClCompile Include="SVTriggerProcessingClass.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="AcquisitionTriggers.h" />
+    <ClInclude Include="IODeviceBase.h" />
     <ClInclude Include="Stdafx.h" />
     <ClInclude Include="SVAcquisitionConstructParams.h" />
+    <ClInclude Include="SVCameraTriggerClass.h" />
+    <ClInclude Include="SVCameraTriggerData.h" />
+    <ClInclude Include="SVFileAcquisitionInitiator.h" />
     <ClInclude Include="SVHardwareManifest.h" />
     <ClInclude Include="SVIMTypeInfoStruct.h" />
+    <ClInclude Include="SVInternalTrigger.h" />
     <ClInclude Include="SVOTriggerList.h" />
     <ClInclude Include="SVOTriggerObj.h" />
+    <ClInclude Include="SVSoftwareTriggerClass.h" />
+    <ClInclude Include="SVTriggerActivatorFunc.h" />
+    <ClInclude Include="SVTriggerCallbackFunc.h" />
+    <ClInclude Include="SVTriggerConstants.h" />
     <ClInclude Include="SVTriggerDeviceParams.h" />
+    <ClInclude Include="SVTriggerEnums.h" />
     <ClInclude Include="SVTriggerInfoStruct.h" />
     <ClInclude Include="SVTriggerObject.h" />
     <ClInclude Include="SVTriggerProcessingClass.h" />
+    <ClInclude Include="SVTriggerRelayClass.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="SVTriggerRelayClass.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

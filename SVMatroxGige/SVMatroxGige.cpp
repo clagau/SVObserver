@@ -13,24 +13,17 @@
 //Moved to precompiled header: #include <map>
 #include "CameraLibrary\SVDeviceParams.h"
 #include "SVMatroxGige.h"
-#include "SVMatroxLibrary/SVMatroxImagingLibrary.h" // for SV_CURRENT_MIL_VERSION define
-#include "SVMatroxLibrary/SVMatroxApplicationInterface.h"
-#include "SVMatroxLibrary/SVMatroxBufferInterface.h"
+
 #include "SVMatroxLibrary/SVMatroxSystemInterface.h"
-#include "SVMatroxDigitizerLibrary/SVMatroxDigitizerInterface.h"
-#include "SVUtilityLibrary/SVUtilityGlobals.h"
-#include "SVTriggerLibrary/SVTriggerActivatorFunc.h"
-#include "SVTriggerLibrary/SVTriggerCallbackFunc.h"
-#include "SVTriggerLibrary/SVTriggerEnums.h"
-#include "SVStatusLibrary\MessageManager.h"
-#include "SVMessage/SVMessage.h"
-#include "SVGigeCameraParametersLibrary/SVGigeEnums.h"
+
+#include "TriggerInformation/SVTriggerActivatorFunc.h"
+#include "TriggerInformation/SVTriggerCallbackFunc.h"
+#include "TriggerInformation/SVTriggerEnums.h"
 #include "SVMatroxGigeApp.h"
 #include "SVMatroxGigeCallbackStruct.h"
 #include "SVMatroxGigeDeviceParameterManager.h"
 #include "SVImageLibrary/SVAcquisitionBufferInterface.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
-#include "SVImageLibrary/SVImageBufferHandleInterface.h"
 #pragma endregion Includes
 
 // helpers for System/Digitizer Handles
@@ -1228,11 +1221,11 @@ HRESULT SVMatroxGige::RegisterInternalTriggerCallback( unsigned long p_Handle, c
 	{
 		m_acquisitionTriggers.Add(p_Handle, rDispatcher);
 		
-		typedef SVTriggerActivatorFunc<SVMatroxGige> Activator;
-		typedef SVTriggerCallbackFunc<SVMatroxGige> TriggerCallback;
-		SVTriggerHandler handler(p_Handle, 
-								SVTriggerActivator(new Activator(this, &SVMatroxGige::FireOneShot)), 
-								SVTriggerCallback(new TriggerCallback(this, &SVMatroxGige::DispatchTriggerCallback)));
+		typedef SvTi::SVTriggerActivatorFunc<SVMatroxGige> Activator;
+		typedef SvTi::SVTriggerCallbackFunc<SVMatroxGige> TriggerCallback;
+		SvTh::SVTriggerHandler handler(p_Handle,
+			SvTh::SVTriggerActivator(new Activator(this, &SVMatroxGige::FireOneShot)),
+			SvTh::SVTriggerCallback(new TriggerCallback(this, &SVMatroxGige::DispatchTriggerCallback)));
 
 		hr = m_triggerMgr.Subscribe(p_Handle, handler);
 	}
@@ -1845,7 +1838,7 @@ HRESULT SVMatroxGige::TriggerGetParameterName( unsigned long triggerchannel, uns
 		{
 			switch ( p_ulIndex )
 			{
-				case SVAcquisitionTriggered:
+				case SvTi::SVAcquisitionTriggered:
 				*p_pbstrName = ::SysAllocString( L"Acquisition Triggered" );
 				break;
 			}
@@ -1870,7 +1863,7 @@ HRESULT SVMatroxGige::TriggerGetParameterValue( unsigned long triggerchannel, un
 			{
 				switch ( p_ulIndex)
 				{
-					case SVAcquisitionTriggered:
+					case SvTi::SVAcquisitionTriggered:
 					{
 						p_pvarValue->vt = VT_BOOL;
 						bool bAcquisitonTriggered;
@@ -1901,7 +1894,7 @@ HRESULT SVMatroxGige::TriggerSetParameterValue( unsigned long triggerchannel, un
 		{
 			switch (p_ulIndex)
 			{
-				case SVAcquisitionTriggered:
+				case SvTi::SVAcquisitionTriggered:
 				{
 					if( p_pvarValue->vt == VT_BOOL )
 					{

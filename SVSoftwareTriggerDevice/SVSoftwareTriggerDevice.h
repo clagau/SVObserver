@@ -16,7 +16,7 @@
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <vector>
 #include "SVTimerLibrary/SVTimerCallbackImpl.h"
-#include "TriggerHandling/IODeviceBase.h"
+#include "TriggerInformation/IODeviceBase.h"
 #include "SVContainerLibrary/SVBidirectionalMap.h"
 #include "SVSystemLibrary/SVCriticalSection.h"
 #include "SVUtilityLibrary/SVString.h"
@@ -25,7 +25,7 @@
 ///////////////////////////////////////////////////////////////////////
 //
 ///////////////////////////////////////////////////////////////////////
-class SVSoftwareTriggerDevice : public SvTh::IODeviceBase
+class SVSoftwareTriggerDevice : public SvTi::IODeviceBase
 {
 	///////////////////////////////////////////////////////////////////////
 	//

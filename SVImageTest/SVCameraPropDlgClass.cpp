@@ -14,7 +14,7 @@
 #include "CameraLibrary\SVDeviceParams.h"
 #include "SVImageTest.h"
 #include "SVCameraPropDlgClass.h"
-#include "SVImageLibrary/SVDigitizerLoadLibraryClass.h"
+#include "TriggerHandling/SVDigitizerLoadLibraryClass.h"
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 

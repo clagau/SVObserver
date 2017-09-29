@@ -78,7 +78,10 @@ enum PROPERTY_PAGE_PROPERTY
 /////////////////////////////////////////////////////////////////////////////
 // CSVOPropertyPageDlg dialog
 
-class SvTi::SVOTriggerObj;
+namespace SvTi
+{
+	class SVOTriggerObj;
+} //namespace SvTi
 class SVOInspectionObj;
 class SVOPPQObj;
 class CSVOConfigAssistantDlg;

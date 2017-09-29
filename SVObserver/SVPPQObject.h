@@ -27,7 +27,7 @@
 #include "SVPPQShiftRegister.h"
 #include "SVValueObjectLibrary/SVValueObject.h"
 #include "SVVirtualCamera.h"
-#include "TriggerHandling/SVCameraTriggerData.h"
+#include "TriggerInformation/SVCameraTriggerData.h"
 #include "SVValueObjectLibrary/BasicValueObjects.h"
 #include "SVMonitorList.h"
 #include "SVUtilityLibrary/SVString.h"
@@ -186,7 +186,7 @@ public:
 
 	void PersistInputs(SVObjectWriter& rWriter);
 
-	SvTh::SVCameraTriggerData& GetCameraInputData();
+	SvTi::SVCameraTriggerData& GetCameraInputData();
 	long GetExtraBufferSize() const;
 
 	/// Set or unset Monitor list and activated the shared memory for it.
@@ -448,7 +448,7 @@ protected:
 	SVBoolValueObjectClass  m_voNotInspected;
 	SVBoolValueObjectClass  m_voDataValid;
 
-	SvTh::SVCameraTriggerData m_CameraInputData;
+	SvTi::SVCameraTriggerData m_CameraInputData;
 
 	bool m_TriggerToggle;
 	bool m_OutputToggle;

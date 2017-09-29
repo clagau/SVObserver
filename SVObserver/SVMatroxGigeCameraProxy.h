@@ -17,7 +17,11 @@
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
-class SVDigitizerLoadLibraryClass;
+namespace SvTh
+{
+	class SVDigitizerLoadLibraryClass;
+}//namespace SvTh
+
 class SVMatroxGigeAcquisitionClass;
 
 class SVMatroxGigeCameraProxy : public SVGigeCameraProxy
@@ -26,7 +30,7 @@ private:
 	SVMatroxGigeAcquisitionClass* m_pAcquisition;
 
 	//
-	HRESULT SetDigitizerParameters( const SVDeviceParamCollection& rDeviceParams, unsigned long hDigitizer, SVDigitizerLoadLibraryClass* pDigitizer );
+	HRESULT SetDigitizerParameters( const SVDeviceParamCollection& rDeviceParams, unsigned long hDigitizer, SvTh::SVDigitizerLoadLibraryClass* pDigitizer );
 
 	const SVDeviceParamWrapper& GetCameraDeviceParam( SVDeviceParamEnum e ) const;
 	SVDeviceParamWrapper& GetCameraDeviceParamNonConst( SVDeviceParamEnum e );
@@ -37,29 +41,29 @@ public:
 
 	void SetOwner(SVMatroxGigeAcquisitionClass* pAcquisition);
 	
-	HRESULT GoOnline(unsigned long hDigitizer, SVDigitizerLoadLibraryClass* pDigitizer);
-	HRESULT GoOffline(unsigned long hDigitizer, SVDigitizerLoadLibraryClass* pDigitizer);
+	HRESULT GoOnline(unsigned long hDigitizer, SvTh::SVDigitizerLoadLibraryClass* pDigitizer);
+	HRESULT GoOffline(unsigned long hDigitizer, SvTh::SVDigitizerLoadLibraryClass* pDigitizer);
 	bool IsOnline() const;
 
-	HRESULT InitializeDevice( const SVDeviceParamWrapper& rwParam, SVDeviceParamCollection& rDeviceParams, unsigned long hDigitizer, SVDigitizerLoadLibraryClass* pDigitizer);
-	HRESULT InitializeDevice( const SVDeviceParamCollection& rDeviceParams, unsigned long hDigitizer, SVDigitizerLoadLibraryClass* pDigitizer );
+	HRESULT InitializeDevice( const SVDeviceParamWrapper& rwParam, SVDeviceParamCollection& rDeviceParams, unsigned long hDigitizer, SvTh::SVDigitizerLoadLibraryClass* pDigitizer);
+	HRESULT InitializeDevice( const SVDeviceParamCollection& rDeviceParams, unsigned long hDigitizer, SvTh::SVDigitizerLoadLibraryClass* pDigitizer );
 
-	HRESULT SetStandardCameraParameter( const SVDeviceParamWrapper& rw, SVDeviceParamCollection& rDeviceParams, unsigned long hDigitizer, SVDigitizerLoadLibraryClass* pDigitizer );
-	HRESULT SetCameraFormatParameters(unsigned long hDigitizer, SVDigitizerLoadLibraryClass* pDigitizer, const SVCameraFormatsDeviceParam* pParam);
-	HRESULT SetDeviceParameters( const SVDeviceParamCollection& rDeviceParams, unsigned long hDigitizer, SVDigitizerLoadLibraryClass* pDigitizer );
+	HRESULT SetStandardCameraParameter( const SVDeviceParamWrapper& rw, SVDeviceParamCollection& rDeviceParams, unsigned long hDigitizer, SvTh::SVDigitizerLoadLibraryClass* pDigitizer );
+	HRESULT SetCameraFormatParameters(unsigned long hDigitizer, SvTh::SVDigitizerLoadLibraryClass* pDigitizer, const SVCameraFormatsDeviceParam* pParam);
+	HRESULT SetDeviceParameters( const SVDeviceParamCollection& rDeviceParams, unsigned long hDigitizer, SvTh::SVDigitizerLoadLibraryClass* pDigitizer );
 	
 	//************************************
 	/// Check if camera file valid to current camera. Returns always TRUE, if invalid it throw an exception.
 	//************************************
-	HRESULT IsValidCameraFileParameters( SVDeviceParamCollection& rDeviceParams, unsigned long hDigitizer, SVDigitizerLoadLibraryClass* pDigitizer);
-	bool CameraMatchesCameraFile(const SVDeviceParamCollection& rCameraFileDeviceParams, unsigned long hDigitizer, SVDigitizerLoadLibraryClass* pDigitizer);
+	HRESULT IsValidCameraFileParameters( SVDeviceParamCollection& rDeviceParams, unsigned long hDigitizer, SvTh::SVDigitizerLoadLibraryClass* pDigitizer);
+	bool CameraMatchesCameraFile(const SVDeviceParamCollection& rCameraFileDeviceParams, unsigned long hDigitizer, SvTh::SVDigitizerLoadLibraryClass* pDigitizer);
 
-	HRESULT SetGigeFeatureOverrides(const SVString& xmlData, unsigned long hDigitizer, SVDigitizerLoadLibraryClass* pDigitizer);
-	HRESULT SetDigitizerParameter( const SVDeviceParamWrapper& rw, unsigned long hDigitizer, SVDigitizerLoadLibraryClass* pDigitizer );
+	HRESULT SetGigeFeatureOverrides(const SVString& xmlData, unsigned long hDigitizer, SvTh::SVDigitizerLoadLibraryClass* pDigitizer);
+	HRESULT SetDigitizerParameter( const SVDeviceParamWrapper& rw, unsigned long hDigitizer, SvTh::SVDigitizerLoadLibraryClass* pDigitizer );
 
 	bool CanSoftwareTrigger() const;
-	HRESULT EnableSoftwareTrigger(unsigned long hDigitizer, SVDigitizerLoadLibraryClass* pDigitizer);
-	HRESULT SoftwareTrigger(unsigned long hDigitizer, SVDigitizerLoadLibraryClass* pDigitizer);
+	HRESULT EnableSoftwareTrigger(unsigned long hDigitizer, SvTh::SVDigitizerLoadLibraryClass* pDigitizer);
+	HRESULT SoftwareTrigger(unsigned long hDigitizer, SvTh::SVDigitizerLoadLibraryClass* pDigitizer);
 
 	HRESULT SVLUTToSafeArray(const SVLut& lut, _variant_t& output);
 };

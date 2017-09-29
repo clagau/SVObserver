@@ -11,15 +11,14 @@
 
 #pragma once
 
-#include "SVTriggerLibrary/SVInternalTrigger.h"
-#include "TriggerHandling/AcquisitionTriggers.h"
+#include "TriggerInformation/SVInternalTrigger.h"
+#include "TriggerInformation/AcquisitionTriggers.h"
 
 #include "SVOLibrary/SVQueueObject.h"
 #include "SVFileAcquisitionDeviceExports.h"
 #include "SVFileCamera.h"
 
 class SVAcquisitionBufferInterface;
-
 
 class SVFileAcquisitionDevice
 {
@@ -28,8 +27,8 @@ private:
 
 	SVFileCameraList m_cameras;
 	
-	SVInternalTrigger m_triggerMgr;
-	SvTh::AcquisitionTriggers m_acquisitionTriggers;
+	SvTi::SVInternalTrigger m_triggerMgr;
+	SvTi::AcquisitionTriggers m_acquisitionTriggers;
 
 public:
 	SVFileAcquisitionDevice();

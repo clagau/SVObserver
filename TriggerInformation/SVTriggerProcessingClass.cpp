@@ -14,9 +14,9 @@
 #include "SVTriggerProcessingClass.h"
 #include "SVHardwareManifest.h"
 #include "TriggerHandling/SVTriggerClass.h"
-#include "TriggerHandling/SVSoftwareTriggerClass.h"
-#include "TriggerHandling/SVCameraTriggerClass.h"
-#include "TriggerHandling/SVTriggerConstants.h"
+#include "SVSoftwareTriggerClass.h"
+#include "TriggerInformation/SVCameraTriggerClass.h"
+#include "SVTriggerConstants.h"
 #pragma endregion Includes
 
 static int i = 0;
@@ -49,17 +49,17 @@ namespace SvTi
 		{
 			SvTh::SVTriggerClass* l_pTrigger = nullptr;
 
-			if( 0 == l_Iter->m_Name.find( SvTh::SoftwareTriggerName ) )
+			if( 0 == l_Iter->m_Name.find( SoftwareTriggerName ) )
 			{
-				l_pTrigger = new SvTh::SVSoftwareTriggerClass( l_Iter->m_Name.c_str() );
+				l_pTrigger = new SVSoftwareTriggerClass( l_Iter->m_Name.c_str() );
 			}
 			else if( 0 == l_Iter->m_Name.find( _T( "IO_Board" ) ) )
 			{
 				l_pTrigger = new SvTh::SVTriggerClass( l_Iter->m_Name.c_str() );
 			}
-			else if( 0 == l_Iter->m_Name.find( SvTh::CameraTriggerName ) )
+			else if( 0 == l_Iter->m_Name.find( CameraTriggerName ) )
 			{
-				l_pTrigger = new SvTh::SVCameraTriggerClass( l_Iter->m_Name.c_str() );
+				l_pTrigger = new SVCameraTriggerClass( l_Iter->m_Name.c_str() );
 			}
 
 			if( nullptr != l_pTrigger )

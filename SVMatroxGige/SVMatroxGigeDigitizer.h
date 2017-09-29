@@ -15,15 +15,9 @@
 //Moved to precompiled header: #include <stack>
 //Moved to precompiled header: #include <vector>
 #include "SVGigeCameraParametersLibrary/SVGigeDeviceParameterStruct.h"
-#include "SVMatroxLibrary/SVMatroxSystem.h"
-#include "SVMatroxLibrary/SVMatroxBuffer.h"
-#include "SVMatroxLibrary/SVMatroxBufferArray.h"
-#include "SVMatroxDigitizerLibrary/SVMatroxDigitizer.h"
 #include "SVMatroxDigitizerLibrary/SVMatroxDigitizerInterface.h"
-#include "SVMatroxDigitizerLibrary/SVMatroxDigitizerRef.h"
 #include "SVTimerLibrary/SVClock.h"
 #include "SVUtilityLibrary/SVString.h"
-#include "SVMatroxGigeCallbackStruct.h"
 #include "SVMatroxGigeCameraId.h"
 #include "SVMatroxGigeAcqParams.h"
 #include "SVMatroxGigeBufferCreator.h"

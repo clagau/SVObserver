@@ -18,8 +18,8 @@
 #include "SVImageLibrary/SVLightReference.h"
 #include "SVImageLibrary/SVLut.h"
 #include "SVObjectLibrary/SVObjectClass.h"
-#include "TriggerHandling/SVTriggerRelayClass.h"
-#include "TriggerHandling/SVFileAcquisitionInitiator.h"
+#include "TriggerInformation/SVTriggerRelayClass.h"
+#include "TriggerInformation/SVFileAcquisitionInitiator.h"
 #include "SVUtilityLibrary/SVString.h"
 #include "SVAcquisitionClass.h"
 #include "SVValueObjectLibrary/BasicValueObjects.h"
@@ -162,7 +162,7 @@ private:
 	bool m_bImageSizeEditModeFileBased;
 	long m_imageLoadingMode;
 	SIZE m_imageSize;
-	SvTh::SVTriggerRelayClass<SvTh::SVFileAcquisitionInitiator> m_triggerRelay;
+	SvTi::SVTriggerRelayClass<SvTi::SVFileAcquisitionInitiator> m_triggerRelay;
 	long m_CameraID;
 #pragma endregion Member Variables
 };

@@ -26,8 +26,8 @@
 #include "SVPPQObject.h"
 #include "TriggerInformation/SVTriggerObject.h"
 #include "TriggerHandling/SVTriggerClass.h"
-#include "TriggerHandling/SVSoftwareTriggerClass.h"
-#include "TriggerHandling/SVCameraTriggerClass.h"
+#include "TriggerInformation/SVSoftwareTriggerClass.h"
+#include "TriggerInformation/SVCameraTriggerClass.h"
 #include "SVStorage.h"
 #include "SVStorageResult.h"
 #include "RemoteMonitorList.h"
@@ -405,8 +405,8 @@ private:
 	void SaveDeviceParamSpecial( SvXml::SVObjectXMLWriter& rWriter, const SVDeviceParam* pParam ) const;
 	HRESULT LoadDeviceParamSpecial( SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent, SVDeviceParam* pParam );
 
-	void SetupSoftwareTrigger(SvTh::SVSoftwareTriggerClass* pTriggerDevice, int iDigNum, long triggerPeriod, SVPPQObject* pPPQ);
-	void SetupCameraTrigger(SvTh::SVCameraTriggerClass* pTriggerDevice, int iDigNum, SVPPQObject* pPPQ, bool bSoftwareTrigger, long triggerPeriod);
+	void SetupSoftwareTrigger(SvTi::SVSoftwareTriggerClass* pTriggerDevice, int iDigNum, long triggerPeriod, SVPPQObject* pPPQ);
+	void SetupCameraTrigger(SvTi::SVCameraTriggerClass* pTriggerDevice, int iDigNum, SVPPQObject* pPPQ, bool bSoftwareTrigger, long triggerPeriod);
 
 	void GetRemoteInputInspections( const SVString& p_rRemoteInputName, SVInspectionSet& p_rInspections ) const;
 

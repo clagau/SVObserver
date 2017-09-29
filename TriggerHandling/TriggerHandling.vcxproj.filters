@@ -18,22 +18,7 @@
     <ClCompile Include="STDAFX.CPP">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVCameraTriggerClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVCameraTriggerData.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVSoftwareTriggerClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="IODeviceBase.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="TriggerBasics.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVFileAcquisitionInitiator.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="SVAcquisitionInitiator.cpp">
@@ -42,7 +27,13 @@
     <ClCompile Include="SVTriggerClass.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AcquisitionTriggers.cpp">
+    <ClCompile Include="SVTriggerActivator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVTriggerHandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="SVTriggerCallback.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -50,31 +41,10 @@
     <ClInclude Include="Stdafx.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVCameraTriggerClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVCameraTriggerData.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVSoftwareTriggerClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVTriggerConstants.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="TriggerBasics.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="SVTriggerRelayClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="CallbackStructContainers.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="IODeviceBase.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVFileAcquisitionInitiator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVAcquisitionInitiator.h">
@@ -83,12 +53,27 @@
     <ClInclude Include="SVTriggerClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="AcquisitionTriggers.h">
+    <ClInclude Include="SVDigitizerLoadLibraryClass.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVTriggerActivator.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVTriggerActivatorFuncInterface.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVTriggerCallback.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVTriggerCallbackFuncInterface.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="SVTriggerHandler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="SVTriggerRelayClass.inl">
+    <None Include="SVDigitizerLoadLibraryClass.inl">
       <Filter>Header Files</Filter>
     </None>
   </ItemGroup>

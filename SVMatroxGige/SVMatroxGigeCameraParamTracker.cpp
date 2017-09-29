@@ -11,7 +11,6 @@
 #pragma region Includes
 #include "stdafx.h"
 #include "SVMatroxGigeCameraParamTracker.h"
-#include "SVMatroxGigeDigitizer.h"
 #include "SVMatroxGigeDeviceParameterManager.h"
 #pragma endregion Includes
 

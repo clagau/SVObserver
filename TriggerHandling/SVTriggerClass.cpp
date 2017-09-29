@@ -20,7 +20,7 @@
 
 namespace SvTh
 {
-	HRESULT CALLBACK TriggerCallbackSvtc(SvTh::TriggerParameters triggerparams)
+	HRESULT CALLBACK TriggerCallbackSvtc(TriggerParameters triggerparams)
 	{
 		HRESULT hrOk = S_OK;
 
@@ -66,7 +66,7 @@ namespace SvTh
 	{
 		HRESULT l_hrOk = S_OK;
 
-		SvTh::TriggerDispatcher dispatcher(TriggerCallbackSvtc,SvTh::TriggerParameters(this, pvOwner));
+		TriggerDispatcher dispatcher(TriggerCallbackSvtc,TriggerParameters(this, pvOwner));
 
 		l_hrOk = SVODeviceClass::RegisterCallback( pCallback, pvOwner, pvCaller );
 
@@ -99,7 +99,7 @@ namespace SvTh
 
 		if ( nullptr != m_pDLLTrigger )
 		{
-			SvTh::TriggerDispatcher dispatcher(TriggerCallbackSvtc, SvTh::TriggerParameters(this, pvOwner));
+			TriggerDispatcher dispatcher(TriggerCallbackSvtc, TriggerParameters(this, pvOwner));
 
 			l_hrOk = m_pDLLTrigger->Unregister( m_triggerchannel, dispatcher );
 		}

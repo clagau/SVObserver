@@ -479,7 +479,7 @@ void CSVOConfigAssistantDlg::ReloadForCurrentSystem()
 			case SVIM_PRODUCT_X2_GD8A_NONIO:
 			case SVIM_PRODUCT_X2_GD8A_NONIO_COLOR:
 			{
-				CreateDefaultForSVIMDigital(2, SvTh::CameraTriggerName);
+				CreateDefaultForSVIMDigital(2, SvTi::CameraTriggerName);
 				break;
 			}
 			default:

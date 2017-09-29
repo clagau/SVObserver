@@ -53,8 +53,8 @@ private:
 
 	SVString m_IOBoardOption;			// TRB - Added to have a parameter to send to Rabbit Board. (original name: m_DigitalOption)
 
-	SVDigitizerLoadLibraryClass m_svDLLDigitizers;
-	SVDigitizerLoadLibraryClass m_svDLLFileAcquisition;
+	SvTh::SVDigitizerLoadLibraryClass m_svDLLDigitizers;
+	SvTh::SVDigitizerLoadLibraryClass m_svDLLFileAcquisition;
 
 	SVIOTriggerLoadLibraryClass m_svDLLTriggers;
 	SVIOTriggerLoadLibraryClass m_svDLLSoftwareTriggers;

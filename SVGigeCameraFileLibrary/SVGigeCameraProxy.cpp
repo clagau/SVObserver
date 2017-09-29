@@ -11,7 +11,7 @@
 
 #include "stdafx.h"
 #include "SVGigeCameraProxy.h"
-#include "SVImageLibrary/SVDigitizerLoadLibraryClass.h"
+#include "TriggerHandling/SVDigitizerLoadLibraryClass.h"
 #include "SVGigeCameraFileReader.h"
 #include "CameraLibrary/SVBoolValueDeviceParam.h"
 #include "CameraLibrary/SVLongValueDeviceParam.h"

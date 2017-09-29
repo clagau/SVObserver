@@ -27,7 +27,7 @@
 #include "CameraLibrary/SVLongValueDeviceParam.h"
 #include "CameraLibrary/SVBoolValueDeviceParam.h"
 #include "CameraLibrary/SVCustomDeviceParam.h"
-#include "SVImageLibrary/SVDigitizerLoadLibraryClass.h"
+#include "TriggerHandling/SVDigitizerLoadLibraryClass.h"
 #include "SVMatroxGigeAcquisitionClass.h"
 #include "SVStatusLibrary/ErrorNumbers.h"
 #include "TextDefinesSvO.h"
@@ -105,7 +105,7 @@ void SVMatroxGigeCameraProxy::SetOwner(SVMatroxGigeAcquisitionClass* pAcquisitio
 	m_pAcquisition = pAcquisition;
 }
 
-HRESULT SVMatroxGigeCameraProxy::InitializeDevice( const SVDeviceParamWrapper& rwParam, SVDeviceParamCollection& rDeviceParams, unsigned long hDigitizer, SVDigitizerLoadLibraryClass* pDigitizer )
+HRESULT SVMatroxGigeCameraProxy::InitializeDevice( const SVDeviceParamWrapper& rwParam, SVDeviceParamCollection& rDeviceParams, unsigned long hDigitizer, SvTh::SVDigitizerLoadLibraryClass* pDigitizer )
 {
 	HRESULT hr = S_OK;
 
@@ -127,7 +127,7 @@ HRESULT SVMatroxGigeCameraProxy::InitializeDevice( const SVDeviceParamWrapper& r
 	return hr;
 }
 
-HRESULT SVMatroxGigeCameraProxy::InitializeDevice( const SVDeviceParamCollection& rDeviceParams, unsigned long hDigitizer, SVDigitizerLoadLibraryClass* pDigitizer )
+HRESULT SVMatroxGigeCameraProxy::InitializeDevice( const SVDeviceParamCollection& rDeviceParams, unsigned long hDigitizer, SvTh::SVDigitizerLoadLibraryClass* pDigitizer )
 {
 	HRESULT hr = S_OK;
 
@@ -146,7 +146,7 @@ HRESULT SVMatroxGigeCameraProxy::InitializeDevice( const SVDeviceParamCollection
 	return hr;
 }
 
-HRESULT SVMatroxGigeCameraProxy::SetGigeFeatureOverrides(const SVString& xmlData, unsigned long hDigitizer, SVDigitizerLoadLibraryClass* pDigitizer)
+HRESULT SVMatroxGigeCameraProxy::SetGigeFeatureOverrides(const SVString& xmlData, unsigned long hDigitizer, SvTh::SVDigitizerLoadLibraryClass* pDigitizer)
 {
 	HRESULT hr = S_OK;
 
@@ -207,7 +207,7 @@ DeviceParamVerticalBinning			- SVGigeParameterVerticalBinning
 DeviceParamGigePacketSize			- SVGigeParameterPacketSize
 */
 
-HRESULT SVMatroxGigeCameraProxy::SetStandardCameraParameter( const SVDeviceParamWrapper& rw, SVDeviceParamCollection& rDeviceParams, unsigned long hDigitizer, SVDigitizerLoadLibraryClass* pDigitizer )
+HRESULT SVMatroxGigeCameraProxy::SetStandardCameraParameter( const SVDeviceParamWrapper& rw, SVDeviceParamCollection& rDeviceParams, unsigned long hDigitizer, SvTh::SVDigitizerLoadLibraryClass* pDigitizer )
 {
 	HRESULT hr = S_OK;
 
@@ -780,7 +780,7 @@ HRESULT SVMatroxGigeCameraProxy::SetStandardCameraParameter( const SVDeviceParam
 	return hr;
 }
 
-HRESULT SVMatroxGigeCameraProxy::SetCameraFormatParameters(unsigned long hDigitizer, SVDigitizerLoadLibraryClass* pDigitizer, const SVCameraFormatsDeviceParam* pParam)
+HRESULT SVMatroxGigeCameraProxy::SetCameraFormatParameters(unsigned long hDigitizer, SvTh::SVDigitizerLoadLibraryClass* pDigitizer, const SVCameraFormatsDeviceParam* pParam)
 {
 	HRESULT hr = S_OK;
 	HRESULT l_Temp = S_OK;
@@ -968,7 +968,7 @@ HRESULT SVMatroxGigeCameraProxy::SetCameraFormatParameters(unsigned long hDigiti
 	return hr;
 }
 
-HRESULT SVMatroxGigeCameraProxy::SetDeviceParameters( const SVDeviceParamCollection& rDeviceParams, unsigned long hDigitizer, SVDigitizerLoadLibraryClass* pDigitizer )
+HRESULT SVMatroxGigeCameraProxy::SetDeviceParameters( const SVDeviceParamCollection& rDeviceParams, unsigned long hDigitizer, SvTh::SVDigitizerLoadLibraryClass* pDigitizer )
 {
 	HRESULT hr = S_OK;
 	// Send notification to start tracking main camera parameters
@@ -988,7 +988,7 @@ HRESULT SVMatroxGigeCameraProxy::SetDeviceParameters( const SVDeviceParamCollect
 	return hr;
 }
 
-HRESULT SVMatroxGigeCameraProxy::IsValidCameraFileParameters( SVDeviceParamCollection& rDeviceParams, unsigned long hDigitizer, SVDigitizerLoadLibraryClass* pDigitizer)
+HRESULT SVMatroxGigeCameraProxy::IsValidCameraFileParameters( SVDeviceParamCollection& rDeviceParams, unsigned long hDigitizer, SvTh::SVDigitizerLoadLibraryClass* pDigitizer)
 {
 	if( 0 != hDigitizer && nullptr != pDigitizer &&
 		rDeviceParams.ParameterExists( DeviceParamVendorName ) )
@@ -1034,7 +1034,7 @@ HRESULT SVMatroxGigeCameraProxy::IsValidCameraFileParameters( SVDeviceParamColle
 	return S_OK;
 }
 
-bool SVMatroxGigeCameraProxy::CameraMatchesCameraFile(const SVDeviceParamCollection& rCameraFileDeviceParams, unsigned long hDigitizer, SVDigitizerLoadLibraryClass* pDigitizer)
+bool SVMatroxGigeCameraProxy::CameraMatchesCameraFile(const SVDeviceParamCollection& rCameraFileDeviceParams, unsigned long hDigitizer, SvTh::SVDigitizerLoadLibraryClass* pDigitizer)
 {
 	bool l_bOk = true;
 	
@@ -1067,7 +1067,7 @@ bool SVMatroxGigeCameraProxy::CameraMatchesCameraFile(const SVDeviceParamCollect
 	return l_bOk;
 }
 
-HRESULT SVMatroxGigeCameraProxy::GoOnline(unsigned long hDigitizer, SVDigitizerLoadLibraryClass* pDigitizer)
+HRESULT SVMatroxGigeCameraProxy::GoOnline(unsigned long hDigitizer, SvTh::SVDigitizerLoadLibraryClass* pDigitizer)
 {
 	HRESULT hr = S_OK;
 
@@ -1089,7 +1089,7 @@ HRESULT SVMatroxGigeCameraProxy::GoOnline(unsigned long hDigitizer, SVDigitizerL
 	return hr;
 }
 
-HRESULT SVMatroxGigeCameraProxy::GoOffline(unsigned long hDigitizer, SVDigitizerLoadLibraryClass* pDigitizer)
+HRESULT SVMatroxGigeCameraProxy::GoOffline(unsigned long hDigitizer, SvTh::SVDigitizerLoadLibraryClass* pDigitizer)
 {
 	HRESULT hr = S_OK;
 
@@ -1122,7 +1122,7 @@ bool SVMatroxGigeCameraProxy::IsOnline() const
 }
 
 //
-HRESULT SVMatroxGigeCameraProxy::SetDigitizerParameters( const SVDeviceParamCollection& rDeviceParams, unsigned long hDigitizer, SVDigitizerLoadLibraryClass* pDigitizer )
+HRESULT SVMatroxGigeCameraProxy::SetDigitizerParameters( const SVDeviceParamCollection& rDeviceParams, unsigned long hDigitizer, SvTh::SVDigitizerLoadLibraryClass* pDigitizer )
 {
 	HRESULT hr = S_OK;
 
@@ -1138,7 +1138,7 @@ HRESULT SVMatroxGigeCameraProxy::SetDigitizerParameters( const SVDeviceParamColl
 	return hr;
 }
 
-HRESULT SVMatroxGigeCameraProxy::SetDigitizerParameter( const SVDeviceParamWrapper& rw, unsigned long hDigitizer, SVDigitizerLoadLibraryClass* pDigitizer )
+HRESULT SVMatroxGigeCameraProxy::SetDigitizerParameter( const SVDeviceParamWrapper& rw, unsigned long hDigitizer, SvTh::SVDigitizerLoadLibraryClass* pDigitizer )
 {
 	HRESULT hr = S_FALSE;
 
@@ -1173,13 +1173,13 @@ bool SVMatroxGigeCameraProxy::CanSoftwareTrigger() const
 }
 
 // For SingleGrabHelper
-HRESULT SVMatroxGigeCameraProxy::EnableSoftwareTrigger(unsigned long hDigitizer, SVDigitizerLoadLibraryClass* pDigitizer)
+HRESULT SVMatroxGigeCameraProxy::EnableSoftwareTrigger(unsigned long hDigitizer, SvTh::SVDigitizerLoadLibraryClass* pDigitizer)
 {
 	return pDigitizer->InternalTriggerEnable(hDigitizer);
 }
 
 // For SingleGrabHelper
-HRESULT SVMatroxGigeCameraProxy::SoftwareTrigger(unsigned long hDigitizer, SVDigitizerLoadLibraryClass* pDigitizer)
+HRESULT SVMatroxGigeCameraProxy::SoftwareTrigger(unsigned long hDigitizer, SvTh::SVDigitizerLoadLibraryClass* pDigitizer)
 {
 	return pDigitizer->InternalTrigger(hDigitizer);
 }

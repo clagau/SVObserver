@@ -83,37 +83,32 @@
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="AcquisitionTriggers.cpp" />
-    <ClCompile Include="IODeviceBase.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="SVAcquisitionInitiator.cpp" />
-    <ClCompile Include="SVFileAcquisitionInitiator.cpp" />
+    <ClCompile Include="SVTriggerActivator.cpp" />
+    <ClCompile Include="SVTriggerCallback.cpp" />
     <ClCompile Include="SVTriggerClass.cpp" />
+    <ClCompile Include="SVTriggerHandler.cpp" />
     <ClCompile Include="TriggerBasics.cpp" />
-    <ClCompile Include="SVCameraTriggerClass.cpp" />
-    <ClCompile Include="SVCameraTriggerData.cpp" />
-    <ClCompile Include="SVSoftwareTriggerClass.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CallbackStructContainers.h" />
-    <ClInclude Include="IODeviceBase.h" />
     <ClInclude Include="Stdafx.h" />
     <ClInclude Include="SVAcquisitionInitiator.h" />
-    <ClInclude Include="SVCameraTriggerClass.h" />
-    <ClInclude Include="SVCameraTriggerData.h" />
-    <ClInclude Include="SVFileAcquisitionInitiator.h" />
-    <ClInclude Include="SVSoftwareTriggerClass.h" />
-    <ClInclude Include="AcquisitionTriggers.h" />
+    <ClInclude Include="SVDigitizerLoadLibraryClass.h" />
+    <ClInclude Include="SVTriggerActivator.h" />
+    <ClInclude Include="SVTriggerActivatorFuncInterface.h" />
+    <ClInclude Include="SVTriggerCallback.h" />
+    <ClInclude Include="SVTriggerCallbackFuncInterface.h" />
     <ClInclude Include="SVTriggerClass.h" />
-    <ClInclude Include="SVTriggerConstants.h" />
-    <ClInclude Include="SVTriggerRelayClass.h" />
+    <ClInclude Include="SVTriggerHandler.h" />
     <ClInclude Include="TriggerBasics.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="SVTriggerRelayClass.inl" />
+    <None Include="SVDigitizerLoadLibraryClass.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

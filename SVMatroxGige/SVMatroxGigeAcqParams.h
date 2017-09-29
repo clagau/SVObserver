@@ -11,7 +11,6 @@
 #pragma once
 
 #pragma region Includes
-#include "SVMatroxDigitizerLibrary/SVMatroxDigitizerGrabEnums.h"
 #include "SVHBitmapUtilitiesLibrary/SVImageFormatEnum.h"
 #pragma endregion Includes
 

@@ -24,7 +24,7 @@ namespace SvTi
 	SVOTriggerObj::SVOTriggerObj(const SVString& name, int nDig)
 	: m_sTriggerDisplayName(name)
 	, m_iDigNumber(nDig)
-	, m_timerPeriod(SvTh::TimerPeriod)
+	, m_timerPeriod(SvTi::TimerPeriod)
 	, m_bSoftwareTrigger(false)
 	{
 	}
@@ -67,7 +67,7 @@ namespace SvTi
 
 	bool SVOTriggerObj::IsAcquisitionTrigger() const
 	{
-		bool bRet = ( 0 ==m_sTriggerDisplayName.find(SvTh::CameraTriggerName) );
+		bool bRet = ( 0 ==m_sTriggerDisplayName.find(SvTi::CameraTriggerName) );
 		return bRet;
 	}
 } //namespace SvTi

@@ -13,7 +13,7 @@
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <vector>
 #include "SVLptIO.h"
-#include "TriggerHandling/IODeviceBase.h"
+#include "TriggerInformation/IODeviceBase.h"
 
 
 enum ParallelBoardInterfaceType
@@ -26,7 +26,7 @@ enum ParallelBoardInterfaceType
 ///////////////////////////////////////////////////////////////////////
 //
 ///////////////////////////////////////////////////////////////////////
-class SVLptIOImpl : public SVLptIO, public SvTh::IODeviceBase
+class SVLptIOImpl : public SVLptIO, public SvTi::IODeviceBase
 //@TODO [developer] it might be better to use aggregation instead of multiple inheritance here
 {
 #pragma region Declarations

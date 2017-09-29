@@ -839,7 +839,7 @@ void CSVOPropertyPageDlg::SetupAdvancedTrigger()
 		{
 			pEdit->SetCtrlID(PROP_ADV_TRIGGER_PERIOD);
 			pEdit->SetLabelText(_T("Timer Period"));
-			SVString Text = SvUl_SF::Format( _T("Enter the period for the Software Trigger, in milliseconds (minimum %d milliseconds)."), SvTh::MinTimerPeriod);
+			SVString Text = SvUl_SF::Format( _T("Enter the period for the Software Trigger, in milliseconds (minimum %d milliseconds)."), SvTi::MinTimerPeriod);
 			pEdit->SetInfoText( Text.c_str() );
 			
 			pEdit->SetItemValue(m_TriggerObj.GetTimerPeriod());
@@ -1475,7 +1475,7 @@ void CSVOPropertyPageDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
 					m_Tree.FindItem(ctrlID)->GetItemValue(lType);
 
 					// validate against minimum timer period
-					if (lType < SvTh::MinTimerPeriod)
+					if (lType < SvTi::MinTimerPeriod)
 					{
 						MessageBeep(MB_ICONASTERISK);
 						*plResult = S_FALSE;

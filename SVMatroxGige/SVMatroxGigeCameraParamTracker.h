@@ -13,7 +13,6 @@
 #pragma region Includes
 //Moved to precompiled header: #include <map>
 #include "SVUtilityLibrary/SVString.h"
-#include "SVMatroxGigeCameraParam.h"
 #include "SVMatroxGigeCameraParamList.h"
 #pragma endregion Includes
 

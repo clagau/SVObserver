@@ -19,10 +19,10 @@
 
 #pragma endregion Includes
 
-class SVDigitizerLoadLibraryClass;
-
 namespace SvTh
 {
+	class SVDigitizerLoadLibraryClass;
+
 	typedef std::vector<unsigned long> SVAcquisitionInitiatorHandleList;
 	typedef std::map<SVDigitizerLoadLibraryClass*, SVAcquisitionInitiatorHandleList> SVAcquisitionInitiatorList;
 
@@ -39,8 +39,8 @@ namespace SvTh
 
 		HRESULT EnableInternalTrigger();
 		HRESULT Exec();
-		HRESULT RegisterCallback(const SvTh::TriggerDispatcher& rDispatcher );
-		HRESULT UnRegisterCallback(const SvTh::TriggerDispatcher& rDispatcher );
+		HRESULT RegisterCallback(const TriggerDispatcher& rDispatcher );
+		HRESULT UnRegisterCallback(const TriggerDispatcher& rDispatcher );
 		HRESULT UnRegisterAllCallbacks();
 	};
 } //namespace SvTh

@@ -13,10 +13,8 @@
 #include "SVMatroxGigeExports.h"
 #include "SVMatroxGigeApp.h"
 
-#include "SVHBitmapUtilitiesLibrary/SVImageFormatEnum.h"
-#include "CameraLibrary/SVDeviceParams.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
-#include "SVImageLibrary/SVLut.h"
+
 #pragma endregion Includes
 
 // General Export Functions

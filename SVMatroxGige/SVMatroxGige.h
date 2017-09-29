@@ -11,14 +11,8 @@
 #pragma once
 
 #pragma region Includes
-#include "SVUtilityLibrary/SVString.h"
-#include "SVImageLibrary/SVLut.h"
-#include "SVImageLibrary/SVLightReference.h"
-#include "SVTriggerLibrary/SVInternalTrigger.h"
-#include "TriggerHandling/AcquisitionTriggers.h"
-#include "SVMatroxGigeExports.h"
-#include "SVMatroxGigeDigitizer.h"
-#include "SVMatroxGigeSystem.h"
+#include "TriggerInformation/SVInternalTrigger.h"
+#include "TriggerInformation/AcquisitionTriggers.h"
 #include "SVMatroxGigeSystemList.h" 
 #include "SVMatroxGigeCameraParamTracker.h"
 #pragma endregion Includes
@@ -94,8 +88,8 @@ private:
 
 	SVMatroxGigeSystemList m_Systems;
 
-	SVInternalTrigger m_triggerMgr;
-	SvTh::AcquisitionTriggers m_acquisitionTriggers;
+	SvTi::SVInternalTrigger m_triggerMgr;
+	SvTi::AcquisitionTriggers m_acquisitionTriggers;
 
 	SVMatroxGigeCameraParamTracker m_trackedCameraParameters;
 

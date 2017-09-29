@@ -19,10 +19,14 @@
 
 class SVIOTriggerLoadLibraryClass;
 
+
+namespace SvTh
+{
+	class SVTriggerClass;
+} //namespace SvTh
+
 namespace SvTi
 {
-	class SvTh::SVTriggerClass;
-
 	class SVTriggerProcessingClass
 	{
 	public:

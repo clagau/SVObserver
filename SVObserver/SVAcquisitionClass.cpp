@@ -15,7 +15,7 @@
 
 #include "SVAcquisitionClass.h"
 #include "SVDataManagerLibrary/DataManager.h"
-#include "SVImageLibrary/SVDigitizerLoadLibraryClass.h"
+#include "TriggerHandling/SVDigitizerLoadLibraryClass.h"
 #include "SVImageLibrary/SVImageBufferHandleImage.h"
 #include "SVImageLibrary/SVImageBufferHandleInterface.h"
 #include "SVImageLibrary/SVImagingDeviceParams.h"
@@ -24,7 +24,7 @@
 #include "TriggerInformation/SVAcquisitionConstructParams.h"
 #include "SVDigitizerProcessingClass.h"
 #include "SVSystemLibrary/SVFileNameManagerClass.h"
-#include "SVGlobal.h"
+#include "SVDataManagerLibrary/DataManager.h"
 #include "SVOCore/SVImageObjectClass.h"
 #include "SVOCore/SVImageProcessingClass.h"
 #include "SVStatusLibrary\MessageManager.h"
@@ -36,6 +36,8 @@
 #define new DEBUG_NEW
 #endif
 #pragma endregion Declarations
+
+extern SVDataManager TheSVDataManager;
 
 SVAcquisitionClass::SVAcquisitionClass( const SvTi::SVAcquisitionConstructParams& p_rParams )
 : SVODataDeviceClass( p_rParams.m_DigitizerName.c_str() )

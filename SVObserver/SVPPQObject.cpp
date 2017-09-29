@@ -4044,7 +4044,7 @@ HRESULT SVPPQObject::ProcessTrigger( bool& rProcessed )
 
 					if (!poppedFromQueue.m_TriggerInfo.m_Data.empty())
 					{
-						m_CameraInputData.Set(boost::any_cast<SvTh::SVCameraTriggerData::NameVariantMap>(poppedFromQueue.m_TriggerInfo.m_Data));
+						m_CameraInputData.Set(boost::any_cast<SvTi::SVCameraTriggerData::NameVariantMap>(poppedFromQueue.m_TriggerInfo.m_Data));
 					}
 					// Get Shared Memory Slot
 					if (HasActiveMonitorList() && GetSlotmanager().get())
@@ -4819,7 +4819,7 @@ void SVPPQObject::PersistInputs(SVObjectWriter& rWriter)
 	rWriter.EndElement();
 }
 
-SvTh::SVCameraTriggerData& SVPPQObject::GetCameraInputData()
+SvTi::SVCameraTriggerData& SVPPQObject::GetCameraInputData()
 {
 	return m_CameraInputData;
 }

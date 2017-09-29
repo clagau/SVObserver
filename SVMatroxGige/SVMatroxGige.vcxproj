@@ -83,7 +83,7 @@
       <ModuleDefinitionFile>.\SVMatroxGige.def</ModuleDefinitionFile>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Windows</SubSystem>
-      <AdditionalDependencies>CameraLibrary.lib;SVDataManagerLibrary.lib;SVGigeCameraParametersLibrary.lib;SVImageLibrary.lib;SVMatroxDigitizerLibrary.lib;SVMatroxLibrary.lib;SVOLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib;SVTriggerLibrary.lib;SVUtilityLibrary.lib;TriggerHandling.lib;Rpcrt4.lib</AdditionalDependencies>
+      <AdditionalDependencies>CameraLibrary.lib;SVDataManagerLibrary.lib;SVGigeCameraParametersLibrary.lib;SVImageLibrary.lib;SVMatroxDigitizerLibrary.lib;SVMatroxLibrary.lib;SVOLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib;SVUtilityLibrary.lib;TriggerHandling.lib;TriggerInformation.lib;Rpcrt4.lib	</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(OutDir);C:\Program Files\Matrox Imaging\mil\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <Bscmake>
@@ -134,7 +134,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <LinkTimeCodeGeneration>Default</LinkTimeCodeGeneration>
-      <AdditionalDependencies>CameraLibrary.lib;SVDataManagerLibrary.lib;SVGigeCameraParametersLibrary.lib;SVImageLibrary.lib;SVMatroxDigitizerLibrary.lib;SVMatroxLibrary.lib;SVOLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib;SVTriggerLibrary.lib;SVUtilityLibrary.lib;TriggerHandling.lib;Rpcrt4.lib</AdditionalDependencies>
+      <AdditionalDependencies>CameraLibrary.lib;SVDataManagerLibrary.lib;SVGigeCameraParametersLibrary.lib;SVImageLibrary.lib;SVMatroxDigitizerLibrary.lib;SVMatroxLibrary.lib;SVOLibrary.lib;SVStatusLibrary.lib;SVSystemLibrary.lib;SVTimerLibrary.lib;SVUtilityLibrary.lib;TriggerHandling.lib;TriggerInformation.lib;Rpcrt4.lib	</AdditionalDependencies>
       <AdditionalLibraryDirectories>$(OutDir);C:\Program Files\Matrox Imaging\mil\Lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <Bscmake>
@@ -146,7 +146,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="SVGigeCameraDatabase.cpp" />
     <ClCompile Include="SVGigeStandardCameraFeatures.cpp" />
     <ClCompile Include="SVMatroxGige.cpp" />
     <ClCompile Include="SVMatroxGigeApp.cpp" />
@@ -173,7 +172,6 @@
     <ClInclude Include="..\AutoBuild\AutoBuild.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="StdAfx.h" />
-    <ClInclude Include="SVGigeCameraDatabase.h" />
     <ClInclude Include="SVGigeStandardCameraFeatures.h" />
     <ClInclude Include="SVMatroxGige.h" />
     <ClInclude Include="SVMatroxGigeAcqParams.h" />

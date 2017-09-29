@@ -11,11 +11,6 @@
 #pragma once
 
 #pragma region Includes
-#include "SVMatroxLibrary/SVMatroxSystem.h"
-#include "SVMatroxLibrary/SVMatroxEnums.h"
-#include "SVMatroxLibrary/SVMatroxBufferCreateStruct.h"
-#include "SVMatroxLibrary/SVMatroxBuffer.h"
-#include "SVMatroxLibrary/SVMatroxBufferInterface.h"
 #include "SVMatroxGigeBufferStruct.h"
 #pragma endregion Includes
 

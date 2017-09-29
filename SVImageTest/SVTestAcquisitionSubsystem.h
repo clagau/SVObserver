@@ -11,7 +11,7 @@
 
 #pragma once
 
-#include "SVImageLibrary/SVDigitizerLoadLibraryClass.h"
+#include "TriggerHandling/SVDigitizerLoadLibraryClass.h"
 
 class SVTestAcquisitionClass;
 
@@ -19,7 +19,7 @@ class SVTestAcquisitionSubsystem
 {
 
 public:
-	SVDigitizerLoadLibraryClass m_svDigitizers;
+	SvTh::SVDigitizerLoadLibraryClass m_svDigitizers;
 
 public:
 	SVTestAcquisitionSubsystem();

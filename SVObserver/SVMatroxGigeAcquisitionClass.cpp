@@ -78,7 +78,7 @@ bool SVMatroxGigeAcquisitionClass::IsValidBoard() const
 	{
 		_variant_t l_oValue;
 
-		SVDigitizerLoadLibraryClass* l_psvLibrary = m_rDigitizerProc.GetDigitizerSubsystem(m_DigName.c_str());
+		SvTh::SVDigitizerLoadLibraryClass* l_psvLibrary = m_rDigitizerProc.GetDigitizerSubsystem(m_DigName.c_str());
 
 		if( nullptr != l_psvLibrary && S_OK == l_psvLibrary->ParameterGetValue( m_hDigitizer, 100, 0, &l_oValue ) )
 		{
@@ -479,7 +479,7 @@ HRESULT SVMatroxGigeAcquisitionClass::SetStandardCameraParameter( const SVDevice
 	{
 		if ( 0 != m_hDigitizer )
 		{
-			SVDigitizerLoadLibraryClass* pDigitizer = m_rDigitizerProc.GetDigitizerSubsystem(m_DigName.c_str());
+			SvTh::SVDigitizerLoadLibraryClass* pDigitizer = m_rDigitizerProc.GetDigitizerSubsystem(m_DigName.c_str());
 
 			hr = m_cameraProxy.SetStandardCameraParameter(rw, m_DeviceParams, m_hDigitizer, pDigitizer);
 
@@ -630,7 +630,7 @@ HRESULT SVMatroxGigeAcquisitionClass::GetCameraImageInfo( SVImageInfoClass &pIma
 	int iFormat = SVImageFormatUnknown;
 
 	//check if valid board, subsystem and if connected camera matches chosen camera file
-	SVDigitizerLoadLibraryClass *digSub = m_rDigitizerProc.GetDigitizerSubsystem(m_DigName.c_str());
+	SvTh::SVDigitizerLoadLibraryClass *digSub = m_rDigitizerProc.GetDigitizerSubsystem(m_DigName.c_str());
 	if ( IsValidBoard() && nullptr != digSub && CameraMatchesCameraFile() )
 	{
 		digSub->GetBufferHeight( m_hDigitizer, &bufHeight );
@@ -703,7 +703,7 @@ HRESULT SVMatroxGigeAcquisitionClass::SingleGrab( SVSmartHandlePointer p_SingleG
 
 	if( S_OK == hr )
 	{
-		SVDigitizerLoadLibraryClass* pDigitizer = m_rDigitizerProc.GetDigitizerSubsystem(m_DigName.c_str());
+		SvTh::SVDigitizerLoadLibraryClass* pDigitizer = m_rDigitizerProc.GetDigitizerSubsystem(m_DigName.c_str());
 		if (nullptr != pDigitizer)
 		{
 			mbTempOnline = true;
@@ -777,7 +777,7 @@ HRESULT SVMatroxGigeAcquisitionClass::SetGigeFeatureOverrides(const SVString& fe
 	{
 		if (0 != m_hDigitizer)
 		{
-			SVDigitizerLoadLibraryClass* pDigitizer = m_rDigitizerProc.GetDigitizerSubsystem(m_DigName.c_str());
+			SvTh::SVDigitizerLoadLibraryClass* pDigitizer = m_rDigitizerProc.GetDigitizerSubsystem(m_DigName.c_str());
 
 			hr = m_cameraProxy.SetGigeFeatureOverrides(featureOverrides, m_hDigitizer, pDigitizer);
 		}
@@ -792,7 +792,7 @@ HRESULT SVMatroxGigeAcquisitionClass::StartDigitizer()
 	// Send notification to end tracking main camera parameters
 	_variant_t dummy;
 
-	SVDigitizerLoadLibraryClass* pDigitizer = m_rDigitizerProc.GetDigitizerSubsystem(m_DigName.c_str());
+	SvTh::SVDigitizerLoadLibraryClass* pDigitizer = m_rDigitizerProc.GetDigitizerSubsystem(m_DigName.c_str());
 	if (pDigitizer)
 	{
 		hr = m_rDigitizerProc.GetDigitizerSubsystem(m_DigName.c_str())->ParameterSetValue(m_hDigitizer, SVGigeEndTrackParameters, 0, &dummy);

@@ -670,14 +670,14 @@ HRESULT SVVirtualCamera::RegisterTriggerRelay(SVIOTriggerLoadLibraryClass* trigg
 			SvTh::SVAcquisitionInitiator  acqInitiator;
 
 			// need the digitizer name here ...
-			SVDigitizerLoadLibraryClass* pAcqDLL = SVDigitizerProcessingClass::Instance().GetDigitizerSubsystem(pAcq->DigName().c_str());
+			SvTh::SVDigitizerLoadLibraryClass* pAcqDLL = SVDigitizerProcessingClass::Instance().GetDigitizerSubsystem(pAcq->DigName().c_str());
 
 			if (pAcqDLL)
 			{
 				acqInitiator.Add(pAcqDLL, pAcq->m_hDigitizer);
 			}
 
-			hr = m_triggerRelay.RegisterTriggerRelay(triggerDLL, ulHandle, SvTh::SVFileAcquisitionInitiator(acqInitiator));
+			hr = m_triggerRelay.RegisterTriggerRelay(triggerDLL, ulHandle, SvTi::SVFileAcquisitionInitiator(acqInitiator));
 		}
 	}
 	return hr;

@@ -12,10 +12,8 @@
 #include "stdafx.h"
 #include "SVMatroxGigeDigitizer.h"
 #include "SVMatroxGigeDeviceParameterManager.h"
-#include "SVMatroxDigitizerLibrary/SVMatroxDigitizerFeatureEnums.h"
-#include "SVMatroxDigitizerLibrary/SVMatroxDigitizerInterface.h"
+
 #include "SVGigeStandardCameraFeatures.h"
-#include "SVGigeCameraDatabase.h"
 #pragma endregion Includes
 
 const SVGigeDeviceParameterMap& SVMatroxGigeDeviceParameterManager::GetParameterMap()

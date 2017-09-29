@@ -12,7 +12,7 @@
 #pragma once
 
 #pragma region Includes
-#include "SVImageLibrary/SVDigitizerLoadLibraryClass.h"
+#include "TriggerHandling/SVDigitizerLoadLibraryClass.h"
 #include "SVIOLibrary/SVIOTriggerLoadLibraryClass.h"
 #include "InitialInformationHandler.h"
 #include "SVSecurity/SVSecurityManager.h"

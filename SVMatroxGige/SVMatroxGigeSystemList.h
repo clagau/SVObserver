@@ -12,7 +12,6 @@
 
 #pragma region Includes
 #include "SVMatroxGigeSystem.h"
-#include "SVMatroxGigeHandleList.h"
 #pragma endregion Includes
 
 namespace

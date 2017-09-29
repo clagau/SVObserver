@@ -15,7 +15,7 @@
 #include "resource.h"
 //Moved to precompiled header: #include <map>
 //Moved to precompiled header: #include <vector>
-#include "TriggerHandling/IODeviceBase.h"
+#include "TriggerInformation/IODeviceBase.h"
 #include "SVTestIOExports.h"
 
 
@@ -23,7 +23,7 @@ const int c_upperBoundForInputChannel = 9;
 const int c_upperBoundForOutputChannel = 17;
 
 
-class SVTestIODlg : public CDialog, public SvTh::IODeviceBase
+class SVTestIODlg : public CDialog, public SvTi::IODeviceBase
 {
 	DECLARE_DYNAMIC(SVTestIODlg)
 
