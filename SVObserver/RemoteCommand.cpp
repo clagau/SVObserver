@@ -22,23 +22,21 @@
 #pragma endregion includes
 
 #pragma region Global functions
-BOOL GlobalRCGoOnline()
+void GlobalRCGoOnline()
 {
 	SendMessage (AfxGetApp()->m_pMainWnd->m_hWnd, WM_COMMAND, MAKEWPARAM (ID_RC_GO_ONLINE, 0), 0);
-	return TRUE;
 }
 
-BOOL GlobalRCGoOffline()
+void GlobalRCGoOffline()
 {
 	SendMessage (AfxGetApp()->m_pMainWnd->m_hWnd, WM_COMMAND, MAKEWPARAM (ID_RC_GO_OFFLINE, 0), 0);
-	return TRUE;
 }
 
-BOOL GlobalRCGetState( DWORD* pdwSVIMState )
+bool GlobalRCGetState( DWORD* pdwSVIMState )
 {
 	*pdwSVIMState = 0;
 
-	BOOL bOk = SVSVIMStateClass::CheckState( SV_STATE_AVAILABLE );
+	bool bOk = SVSVIMStateClass::CheckState( SV_STATE_AVAILABLE );
 
 	if ( SVSVIMStateClass::CheckState( SV_STATE_READY ) )
 	{
@@ -132,13 +130,12 @@ SVString GlobalRCGetConfigurationName()
 	return Result;
 }
 
-BOOL GlobalRCSaveConfiguration()
+void GlobalRCSaveConfiguration()
 {
 	SendMessage (AfxGetApp()->m_pMainWnd->m_hWnd, WM_COMMAND, MAKEWPARAM (ID_RC_SAVE_ALL_AND_GET_CONFIG, 0), 0);
-	return TRUE;
 }
 
-BOOL GlobalRCOpenConfiguration( LPCTSTR ConfigName )
+bool GlobalRCOpenConfiguration( LPCTSTR ConfigName )
 {
 	SVRCSetSVCPathName( ConfigName );
 
@@ -157,22 +154,20 @@ BOOL GlobalRCOpenConfiguration( LPCTSTR ConfigName )
 	}
 	else
 	{
-		return FALSE;
+		return false;
 	}
 
-	return TRUE;
+	return true;
 }
 
-BOOL GlobalRCCloseAndCleanConfiguration()
+void GlobalRCCloseAndCleanConfiguration()
 {
 	SendMessage (AfxGetApp()->m_pMainWnd->m_hWnd, WM_COMMAND, MAKEWPARAM (ID_RC_CLOSE_AND_CLEAN_RUN_DIR, 0), 0);
-	return TRUE;
 }
 
-BOOL GlobalRCCloseConfiguration()
+void GlobalRCCloseConfiguration()
 {
 	SendMessage (AfxGetApp()->m_pMainWnd->m_hWnd, WM_COMMAND, MAKEWPARAM (ID_RC_CLOSE, 0), 0);
-	return TRUE;
 }
 #pragma endregion Global functions
 

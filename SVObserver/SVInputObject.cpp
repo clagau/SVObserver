@@ -34,14 +34,14 @@ SVInputObject::~SVInputObject()
 	}
 }
 
-BOOL SVInputObject::Create()
+bool SVInputObject::Create()
 {
 	m_isCreated = true;
 
 	return m_isCreated;
 }
 
-BOOL SVInputObject::Destroy()
+bool SVInputObject::Destroy()
 {
 	m_isCreated = false;
 

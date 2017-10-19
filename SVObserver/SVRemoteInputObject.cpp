@@ -36,7 +36,7 @@ SVRemoteInputObject::~SVRemoteInputObject()
 	}
 }
 
-BOOL SVRemoteInputObject::Create()
+bool SVRemoteInputObject::Create()
 {
 	if( !m_isCreated )
 	{
@@ -51,7 +51,7 @@ BOOL SVRemoteInputObject::Create()
 	return true;
 }// end Create
 
-BOOL SVRemoteInputObject::Destroy()
+bool SVRemoteInputObject::Destroy()
 {
 	m_vtRemoteCache.Clear();
 
@@ -62,18 +62,14 @@ BOOL SVRemoteInputObject::Destroy()
 	return true;
 }// end Destroy
 
-BOOL SVRemoteInputObject::Lock()
+void SVRemoteInputObject::Lock()
 {
 	::EnterCriticalSection( &m_hCriticalSection );
-
-	return true;
 }// end Lock
 
-BOOL SVRemoteInputObject::Unlock()
+void SVRemoteInputObject::Unlock()
 {
 	::LeaveCriticalSection( &m_hCriticalSection );
-
-	return true;
 }// end Unlock
 
 HRESULT SVRemoteInputObject::Read( _variant_t& p_rValue )

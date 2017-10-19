@@ -28,10 +28,10 @@ public:
 	//specified by PackedFileName. The szFile parameter may 
 	//specify one file or may contain wildcard characters to 
 	//specify multiple files.
-	BOOL PackFiles( LPCTSTR Files, LPCTSTR PackedFileName );
+	bool PackFiles( LPCTSTR Files, LPCTSTR PackedFileName );
 
 	//Extracts the files contained in szPackedFile.
-	BOOL UnPackFiles( LPCTSTR PackedFileName, LPCTSTR UnPackDir = nullptr );
+	bool UnPackFiles( LPCTSTR PackedFileName, LPCTSTR UnPackDir = nullptr );
 
 private:
 	SVString m_configFilePath;

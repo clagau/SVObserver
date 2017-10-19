@@ -14,14 +14,14 @@
 #include "SVUtilityLibrary/SVString.h"
 #pragma endregion Includes
 
-extern BOOL GlobalRCGoOnline();
-extern BOOL GlobalRCGoOffline();
-extern BOOL GlobalRCGetState( DWORD* pdwSVIMState );
+extern void GlobalRCGoOnline();
+extern void GlobalRCGoOffline();
+extern bool GlobalRCGetState( DWORD* pdwSVIMState );
 extern HRESULT GlobalRCSetMode( unsigned long lSVIMNewMode );
 extern HRESULT GlobalRCGetMode( unsigned long* p_plMode );
 extern SVString GlobalRCGetConfigurationName();
-extern BOOL GlobalRCSaveConfiguration();
-extern BOOL GlobalRCOpenConfiguration( LPCTSTR ConfigName );
-extern BOOL GlobalRCCloseAndCleanConfiguration();
-extern BOOL GlobalRCCloseConfiguration();
+extern void GlobalRCSaveConfiguration();
+extern bool GlobalRCOpenConfiguration( LPCTSTR ConfigName );
+extern void GlobalRCCloseAndCleanConfiguration();
+extern void GlobalRCCloseConfiguration();
 

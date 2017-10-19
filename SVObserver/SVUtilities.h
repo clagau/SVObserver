@@ -20,18 +20,18 @@ class SVUtilitiesClass
 {
 public:
 	CMenu *FindSubMenuByName(CMenu *pMenu, LPCTSTR Name);
-	BOOL LoadMenu (CMenu *pMenu);
-	BOOL SetupUtilities (CMenu *pMenu);
+	void LoadMenu (CMenu *pMenu);
+	void SetupUtilities (CMenu *pMenu);
 	void RunUtility (SVSecurityManager* pAccess, UINT uiUtilityId);
 	SVUtilitiesClass();
 	virtual ~SVUtilitiesClass();
-	BOOL LoadMenuFromINI(CMenu *pMenu);
+	bool LoadMenuFromINI(CMenu *pMenu);
 
-	BOOL CleanupIni();
+	void CleanupIni();
 
-	BOOL UpdateIni();
+	void UpdateIni();
 
 private:
-	BOOL ClearMenu (CMenu *pMenu);
+	void ClearMenu (CMenu *pMenu);
 };
 

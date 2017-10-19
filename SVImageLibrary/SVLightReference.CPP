@@ -69,43 +69,25 @@ const SVLightReferenceBand& SVLightReferenceBand::operator=( const SVLightRefere
 {
     if ( this != &rhs )
 	{
-		if ( Create( rhs.m_iNumAttributes ) )
-		{
-			m_aAttributeInfo = rhs.m_aAttributeInfo;
-		}
+		Create(rhs.m_iNumAttributes);
+		m_aAttributeInfo = rhs.m_aAttributeInfo;
 	}
 
 	return( *this );
 }
 
-BOOL SVLightReferenceBand::Create(int iSize)
+void SVLightReferenceBand::Create(int iSize)
 {
-	BOOL bOk = FALSE;
+	Destroy();
 
-	bOk = Destroy();
-	if ( bOk )
-	{
-		// we can now create 0 size LR's (for digital). The attributes are added with calls to AddAttribute
-		m_iNumAttributes = iSize;
-		m_aAttributeInfo.resize( iSize );
-
-		bOk = TRUE;
-
-		if ( !bOk )
-		{
-			Destroy();
-		}
-	}
-	return bOk;
+	// we can now create 0 size LR's (for digital). The attributes are added with calls to AddAttribute
+	m_iNumAttributes = iSize;
+	m_aAttributeInfo.resize(iSize);
 }
 
-BOOL SVLightReferenceBand::Destroy()
+void SVLightReferenceBand::Destroy()
 {
-	BOOL bOk = TRUE;
-
 	m_aAttributeInfo.clear();
-
-	return bOk;
 }
 
 SVLightReferenceAttributeInfo* SVLightReferenceBand::AttributeByType( DWORD dwAttributeType )
@@ -180,24 +162,18 @@ SVLightReference::~SVLightReference()
 	DeleteAll();
 }
 
-BOOL SVLightReference::Create( int iNewSize )
+bool SVLightReference::Create( int iNewSize )
 {
 	// Rosco removed this to prevent annoying assert dialogs even though eric told him not to.
     // assert (iNewSize > 0);
 
-	BOOL bOk = FALSE;
-
 	DeleteAll();
 
-	bOk = 0 < iNewSize;
+	bool bOk = 0 < iNewSize;
 	if ( bOk )
 	{
 		m_aLightReferenceBand.resize( iNewSize );
-		bOk = TRUE;
-		if ( bOk )
-		{
-			m_iNumBands = iNewSize;
-		}
+		m_iNumBands = iNewSize;
 	}
 
 	return bOk;

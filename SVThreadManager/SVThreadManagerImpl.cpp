@@ -250,17 +250,17 @@ long SVThreadManagerImpl::GetPipeCount( )
 }
 
 // Set new affinity 
-BOOL SVThreadManagerImpl::SetThreadHandleAffinity( HANDLE hThread, DWORD_PTR dwAffinityBitNum )
+bool SVThreadManagerImpl::SetThreadHandleAffinity( HANDLE hThread, DWORD_PTR dwAffinityBitNum )
 {
 	// Set Thread Affinity
 	DWORD_PTR myCurrentMask;
 	DWORD_PTR systemAffinityMask;
 	DWORD_PTR newAffinityBits;
-	BOOL bRet = FALSE;
+	bool bRet = false;
 
 	if( nullptr != hThread )
 	{
-		bRet = ::GetProcessAffinityMask( GetCurrentProcess(), &systemAffinityMask, &myCurrentMask);
+		bRet = ::GetProcessAffinityMask( GetCurrentProcess(), &systemAffinityMask, &myCurrentMask)?true:false;
 		if( bRet )
 		{
 			if( dwAffinityBitNum > 0 )
@@ -271,12 +271,12 @@ BOOL SVThreadManagerImpl::SetThreadHandleAffinity( HANDLE hThread, DWORD_PTR dwA
 					// SetThreadAffinityMask returns previous affinity, 0 is error
 					if( SetThreadAffinityMask(hThread, newAffinityBits ) == 0)
 					{
-						bRet = FALSE;
+						bRet = false;
 					}
 				}
 				else
 				{
-					bRet = FALSE;
+					bRet = false;
 				}
 			}
 			else
@@ -284,7 +284,7 @@ BOOL SVThreadManagerImpl::SetThreadHandleAffinity( HANDLE hThread, DWORD_PTR dwA
 				// SetThreadAffinityMask returns previous affinity, 0 is error
 				if( SetThreadAffinityMask( hThread, myCurrentMask ) == 0) // Set to all processors.
 				{
-					bRet = FALSE;
+					bRet = false;
 				}
 			}
 		}
@@ -293,15 +293,15 @@ BOOL SVThreadManagerImpl::SetThreadHandleAffinity( HANDLE hThread, DWORD_PTR dwA
 }
 
 // Sets the affinity bit number if found in the thread affinity list.
-BOOL SVThreadManagerImpl::SetAffinity( LPCTSTR ThreadName, DWORD_PTR dwAffinityBitNum )
+bool SVThreadManagerImpl::SetAffinity( LPCTSTR ThreadName, DWORD_PTR dwAffinityBitNum )
 {
-	BOOL bRet = FALSE;
+	bool bRet = false;
 	for( ThreadList::iterator it = m_threads.begin() ; it != m_threads.end() ; ++it)
 	{
 		if( it->m_strName == ThreadName )
 		{
 			it->m_lAffinity = static_cast<long>(dwAffinityBitNum);
-			bRet = TRUE;
+			bRet = true;
 			if( m_bThreadManagementActive )
 			{
 				SetThreadHandleAffinity( it->m_hThread, it->m_lAffinity );
@@ -379,8 +379,8 @@ HRESULT SVThreadManagerImpl::StartAffinityMgnt()
 			{
 				if( nullptr != it->m_hThread )
 				{
-					BOOL bRet = SetThreadHandleAffinity(it->m_hThread, it->m_lAffinity);
-					if( 0 == bRet )
+					bool bRet = SetThreadHandleAffinity(it->m_hThread, it->m_lAffinity);
+					if( !bRet )
 					{
 						OutputDebugString("\nAffinity Set Failed");
 					}
@@ -419,8 +419,8 @@ HRESULT SVThreadManagerImpl::StopAffinityMgmt()
 			{
 				if( nullptr != it->m_hThread )
 				{
-					BOOL bRet = SetThreadHandleAffinity(it->m_hThread, 0); // 0 = all processors.
-					if( 0 == bRet )
+					bool bRet = SetThreadHandleAffinity(it->m_hThread, 0); // 0 = all processors.
+					if( !bRet )
 					{
 						OutputDebugString("\nAffinity Reset Failed");
 					}

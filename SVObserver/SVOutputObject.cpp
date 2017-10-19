@@ -34,14 +34,14 @@ SVOutputObject::~SVOutputObject()
 	}
 }
 
-BOOL SVOutputObject::Create()
+bool SVOutputObject::Create()
 {
 	m_isCreated = true;
 	
 	return m_isCreated;
 }
 
-BOOL SVOutputObject::Destroy()
+bool SVOutputObject::Destroy()
 {
 	m_isCreated = false;
 

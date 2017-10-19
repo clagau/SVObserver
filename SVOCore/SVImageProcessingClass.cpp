@@ -630,8 +630,6 @@ HRESULT SVImageProcessingClass::LoadImageBuffer( void* pBuffer,
                                               SVSmartHandlePointer& rBufferHandle,
                                               SVImageInfoClass& rCameraInfo )
 {
-	BOOL l_bCreateBuffer = FALSE;
-
 	BITMAPINFOHEADER* pbmhInfo;
 	BITMAPINFO* pbmInfo;
 	BYTE* pBits;
@@ -703,8 +701,6 @@ HRESULT SVImageProcessingClass::LoadImageBuffer( void* pBuffer,
 		{
 			return S_FALSE;
 		}
-
-		l_bCreateBuffer = TRUE;
 	}// end else
 
 	SVImageInfoClass oTempInfo;

@@ -1277,40 +1277,39 @@ bool SVConfigurationObject::LoadAcquisitionDevice( SVTreeType& rTree, SVString& 
 									{
 										int iSize = Value;
 
-										if ( svLight.Band( i ).Create( iSize ) )
+										svLight.Band(i).Create(iSize);
+										
+										for (int j = 0; j < iSize; j++)
 										{
-											for ( int j = 0; j < iSize; j++ )
+											SVTreeType::SVBranchHandle hLight = nullptr;
+
+											SVString LightRef = SvUl_SF::Format(SvXml::CTAGF_LIGHTREFERENCE_X, j);
+
+											if (SvXml::SVNavigateTree::GetItemBranch(rTree, LightRef.c_str(), hBand, hLight))
 											{
-												SVTreeType::SVBranchHandle hLight = nullptr;
-
-												SVString LightRef = SvUl_SF::Format( SvXml::CTAGF_LIGHTREFERENCE_X, j );
-
-												if ( SvXml::SVNavigateTree::GetItemBranch( rTree, LightRef.c_str(), hBand, hLight ) )
+												if (SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_NAME, hLight, Value))
 												{
-													if ( SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_NAME, hLight,  Value) )
+													svLight.Band(i).Attribute(j).strName = SvUl_SF::createSVString(Value);
+													//Legacy: changed name from Contrast to Gain
+													if (SvO::cCameraContrast == svLight.Band(i).Attribute(j).strName)
 													{
-														svLight.Band( i ).Attribute( j ).strName = SvUl_SF::createSVString(Value);
-														//Legacy: changed name from Contrast to Gain
-														if( SvO::cCameraContrast == svLight.Band( i ).Attribute( j ).strName )
-														{
-															svLight.Band( i ).Attribute( j ).strName = SvOl::FqnCameraGain;
-														}
+														svLight.Band(i).Attribute(j).strName = SvOl::FqnCameraGain;
 													}
-													if ( SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_RESOURCE_ID, hLight, Value ) )
-													{
-														svLight.Band( i ).Attribute( j ).iIDCaption = Value;
-													}
-													if ( SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_TYPE, hLight, Value ) )
-													{
-														svLight.Band( i ).Attribute( j ).dwType = Value;
-													}
-													if ( SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_VALUE, hLight, Value ) )
-													{
-														svLight.Band( i ).Attribute( j ).lValue = Value;
-													}
-
-													bLightDone = true;
 												}
+												if (SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_RESOURCE_ID, hLight, Value))
+												{
+													svLight.Band(i).Attribute(j).iIDCaption = Value;
+												}
+												if (SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_TYPE, hLight, Value))
+												{
+													svLight.Band(i).Attribute(j).dwType = Value;
+												}
+												if (SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_VALUE, hLight, Value))
+												{
+													svLight.Band(i).Attribute(j).lValue = Value;
+												}
+
+												bLightDone = true;
 											}
 										}
 									}

@@ -56,9 +56,9 @@ public:
 
 	//************************************
 	//! returns True if a formula or Autosize is used 
-	//! \returns BOOL
+	//! \returns bool
 	//************************************
-	BOOL UseAutoMode() const;
+	bool UseAutoMode() const;
 	
 	virtual bool ResetObject(SvStl::MessageContainerVector *pErrorMessages=nullptr) override;
 

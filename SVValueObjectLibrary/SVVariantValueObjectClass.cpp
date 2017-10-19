@@ -166,39 +166,6 @@ VARTYPE SVVariantValueObjectClass::GetDefaultType( ) const
 }
 
 
-BOOL SVVariantValueObjectClass::SetType( int vt )
-{
-	if ( DefaultValue().vt != vt )
-	{
-		DefaultValue().Clear();
-		DefaultValue().ChangeType( vt );
-	}
-	if ( 1 == getArraySize() )
-	{
-		if ( Value().vt != vt )
-		{
-			Value().Clear();
-			Value().ChangeType( vt );
-		}
-	}
-	else
-	{
-		for (int i = 0; i < getArraySize(); i++)
-		{
-			for (int j = 0; j < getNumberOfBuckets(); j++)
-			{
-				_variant_t* pValue = getValuePointer( i, j );
-				if ( nullptr != pValue && pValue->vt != vt )
-				{
-					pValue->Clear();
-					pValue->ChangeType( vt );
-				}
-			}
-		}
-	}
-	return true;
-}
-
 HRESULT SVVariantValueObjectClass::SetValueKeepType(LPCTSTR Value, int Index)
 {
 	HRESULT hr = S_OK;

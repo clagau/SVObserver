@@ -44,10 +44,8 @@ ResultTabbedView::~ResultTabbedView()
 #pragma endregion Constructor
 
 #pragma region Public Methods
-BOOL ResultTabbedView::GetParameters(SVObjectWriter& rWriter)
+void ResultTabbedView::GetParameters(SVObjectWriter& rWriter)
 {
-	BOOL bOk = TRUE;
-
 	CRect Rect;
 	GetWindowRect(Rect);
 
@@ -60,13 +58,11 @@ BOOL ResultTabbedView::GetParameters(SVObjectWriter& rWriter)
 	svVariant = Rect.Width();
 	rWriter.WriteAttribute(SvXml::CTAG_CELL_WIDTH, svVariant);
 	svVariant.Clear();
-
-	return bOk;
 }
 
-BOOL ResultTabbedView::SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent)
+bool ResultTabbedView::SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent)
 {
-	BOOL bOk = FALSE;
+	bool bOk = false;
 
 	CSize l_Size;
 
@@ -95,9 +91,9 @@ BOOL ResultTabbedView::SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHand
 	return bOk;
 }// end SetParameters
 
-BOOL ResultTabbedView::CheckParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent)
+bool ResultTabbedView::CheckParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent)
 {
-	BOOL bOk = FALSE;
+	bool bOk = false;
 
 	CSize l_Size;
 

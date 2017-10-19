@@ -61,13 +61,13 @@ public:
 	SVImageClass* GetImage();
 	void GetImageRect( CRect &p_rect );
 
-	BOOL GetParameters(SVObjectWriter& rWriter);
+	void GetParameters(SVObjectWriter& rWriter);
 
 	typedef SvXml::SVXMLMaterialsTree SVTreeType;
 
-	BOOL SetParameters( SVTreeType& p_tree, SVTreeType::SVBranchHandle p_parent );
+	bool SetParameters( SVTreeType& p_tree, SVTreeType::SVBranchHandle p_parent );
 
-	BOOL CheckParameters( SVTreeType& p_tree, SVTreeType::SVBranchHandle p_parent );
+	bool CheckParameters( SVTreeType& p_tree, SVTreeType::SVBranchHandle p_parent );
 
 	HRESULT RecreateImageSurface();
 

@@ -80,8 +80,8 @@ namespace SvOg
 		, m_NormalizationFactor( 1 )
 		, m_NormilizationResult( _T("") )
 		, m_GridEditMode( false )
-		, m_AbsoluteValue( FALSE )
-		, m_ClippingEnabled( FALSE )
+		, m_AbsoluteValue( false )
+		, m_ClippingEnabled( false )
 		, m_EditCell( _T("") )
 		, m_GridStatus( _T("") )
 		,m_filterID(rFilterID)
@@ -182,7 +182,7 @@ namespace SvOg
 
 	BOOL Custom2FilterDlg::PreTranslateMessage(MSG* pMsg)
 	{
-		BOOL Result( FALSE );
+		BOOL Result( false );
 
 		if( doesControlHaveFocus( IDC_GRID ) )
 		{
@@ -454,9 +454,9 @@ namespace SvOg
 		m_KernelArray = ConvertVariantSafeArrayToVector<long>(m_Values.Get<_variant_t>(KernelValueTag));
 	}
 
-	BOOL Custom2FilterDlg::inputGridCtrlCharacter( WPARAM Character )
+	bool Custom2FilterDlg::inputGridCtrlCharacter( WPARAM Character )
 	{
-		BOOL Result( FALSE );
+		bool Result( false );
 
 		bool isNumeric = '0' <= Character && '9' >= Character;
 		//Minus sign resets edit mode so that it will be the first character
@@ -501,9 +501,9 @@ namespace SvOg
 		return Result;
 	}
 
-	BOOL Custom2FilterDlg::inputGridCtrlKey( WPARAM Key )
+	bool Custom2FilterDlg::inputGridCtrlKey( WPARAM Key )
 	{
-		BOOL Result( FALSE );
+		bool Result( false );
 
 		bool hasPositionChanged = VK_PRIOR <= Key && VK_DOWN >= Key || VK_RETURN == Key;
 		if( hasPositionChanged )
@@ -523,12 +523,12 @@ namespace SvOg
 			if( m_KernelHeight == Cell.row && m_KernelWidth == Cell.col && !ShiftKeyPressed)
 			{
 				GetDlgItem( IDC_IMPORT_FILTER )->SetFocus();
-				Result = TRUE;
+				Result = true;
 			}
 			else if( 1 == Cell.row && 1 == Cell.col && ShiftKeyPressed)
 			{
 				GetDlgItem( IDC_CLIPPING_ON )->SetFocus();
-				Result = TRUE;
+				Result = true;
 			}
 			else if( -1 == Cell.row && -1 == Cell.col )
 			{

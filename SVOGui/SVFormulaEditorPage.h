@@ -57,7 +57,7 @@ namespace SvOg
 		void deleteInEditor( long Pos );
 		SVString getEquationText() const;
 		void setEquationText();
-		BOOL createToolbars();
+		bool createToolbars();
 
 		void HandleValidateError( int posFailed );
 

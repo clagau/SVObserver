@@ -96,14 +96,14 @@ namespace SvOg
 		// Parameter: Character <in> The character to be input to the control
 		// Return: True when character has been handled 
 		//************************************
-		BOOL inputGridCtrlCharacter( WPARAM Character );
+		bool inputGridCtrlCharacter( WPARAM Character );
 
 		//************************************
 		// Description: This handles key input to the grid control
 		// Parameter: Key <in> The key to be input to the control
 		// Return: True when key has been handled 
 		//************************************
-		BOOL inputGridCtrlKey( WPARAM Character );
+		bool inputGridCtrlKey( WPARAM Character );
 
 		//************************************
 		// Description: The method recalculates the kernel with a new width and height

@@ -229,7 +229,7 @@ HRESULT SVThreadManager::GetPipeCount( long& lrPipeCount)
 
 BOOL SVThreadManager::SetAffinity( LPCTSTR ThreadName, DWORD_PTR dwAffinityBitNum )
 {
-	BOOL bRet = FALSE;
+	BOOL bRet = false;
 	if( nullptr != m_pSetAffinity )
 	{
 		_bstr_t bstName(ThreadName);

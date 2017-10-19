@@ -41,8 +41,8 @@ public:
 	const SVLightReferenceBand& operator=( const SVLightReferenceBand& rhs );
 	~SVLightReferenceBand();
 
-	BOOL Create( int iNumAttributes );
-	BOOL Destroy();
+	void Create( int iNumAttributes );
+	void Destroy();
     inline int NumAttributes() const {return m_iNumAttributes;}
 	SVLightReferenceAttributeInfo& Attribute( int iAttributeIndex ) { return m_aAttributeInfo[iAttributeIndex];}
 	const SVLightReferenceAttributeInfo& Attribute( int iAttributeIndex ) const { return m_aAttributeInfo[iAttributeIndex];}
@@ -68,7 +68,7 @@ public:
 	const SVLightReference& operator=( const SVLightReference& rhs );
 	~SVLightReference();
 
-	BOOL Create( int iNumBands );
+	bool Create( int iNumBands );
 	void Reset();
 	void DeleteAll();
     bool SetBandData(const SVLightReference& rhs, unsigned int uiBand);

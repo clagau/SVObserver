@@ -963,9 +963,9 @@ HRESULT	SVTADlgTranslationResizePage::ExitTabValidation ()
 	// below validates the whole tool.
 	if (SUCCEEDED (message.getMessage().m_MessageCode))
 	{
-		BOOL br = m_pTool->resetAllObjects();
+		bool br = m_pTool->resetAllObjects();
 		message = m_pTool->getFirstTaskMessage();
-		if ((TRUE == br) != SUCCEEDED (message.getMessage().m_MessageCode))
+		if ( br != SUCCEEDED (message.getMessage().m_MessageCode))
 		{
 			message.clearMessage();
 			message.setMessage( SvStl::MessageData(SVMSG_SVO_5078_INCONSISTENTDATA) );

@@ -45,7 +45,7 @@ public:
 	//This operator will clear the exising array of object 
 	//and create an array of objects corresponding to each 
 	//element in the semi-colon separated string list.
-	BOOL SetFileNameList(LPCTSTR szFileNameList);
+	bool SetFileNameList(LPCTSTR szFileNameList);
 
 	//This operator will create a semicolon separated string 
 	//list of file names contained within the array.

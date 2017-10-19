@@ -134,7 +134,7 @@ void SVRegistryClass::InitRegistry(LPCTSTR p_szKey)
 	
 	if( lResult == ERROR_SUCCESS )
 	{
-		mbCreatedNewKey = FALSE;
+		mbCreatedNewKey = false;
 	}
 	else
 	{
@@ -156,7 +156,7 @@ void SVRegistryClass::InitRegistry(LPCTSTR p_szKey)
 				Exception.Throw();
 			}
 
-			mbCreatedNewKey = TRUE;
+			mbCreatedNewKey = true;
 		}
 		else
 		{
@@ -193,7 +193,7 @@ SVRegistryClass::~SVRegistryClass()
 		RegCloseKey (mhKey);
 }
 
-BOOL SVRegistryClass::GetRegistryValue( LPCTSTR szValueName, SVString& szValue)
+bool SVRegistryClass::GetRegistryValue( LPCTSTR szValueName, SVString& szValue)
 {
 	DWORD dwType = 0L, dwSize = 0L;
 
@@ -220,20 +220,20 @@ BOOL SVRegistryClass::GetRegistryValue( LPCTSTR szValueName, SVString& szValue)
 				{
 					szValue = (LPCTSTR)pBuff;
 					delete [] pBuff;
-					return TRUE;
+					return true;
 				}
 				else
 				{
 					delete [] pBuff;
-					return FALSE;
+					return false;
 				}
 			}
 		}
 	}
-	return FALSE;
+	return false;
 }
 
-BOOL SVRegistryClass::SetRegistryValue( LPCTSTR szValueName, LPCTSTR szValue )
+bool SVRegistryClass::SetRegistryValue( LPCTSTR szValueName, LPCTSTR szValue )
 {
 	DWORD dwType = 0L;
 
@@ -244,7 +244,7 @@ BOOL SVRegistryClass::SetRegistryValue( LPCTSTR szValueName, LPCTSTR szValue )
 		( BYTE* )( szValue ),  //BRW - This conversion only works when a C-style cast is used. [2007]
 		( DWORD )( strlen( szValue ) * sizeof( TCHAR ) ) ) )  //BRW - This conversion only works when a C-style cast is used. [2007]
 	{
-		return TRUE;
+		return true;
 	}
 	else
 	{
@@ -253,10 +253,10 @@ BOOL SVRegistryClass::SetRegistryValue( LPCTSTR szValueName, LPCTSTR szValue )
 		Exception.Throw();
   }
 
-	return FALSE;
+	return false;
 }
 
-BOOL SVRegistryClass::GetRegistryValue( LPCTSTR szValueName, DWORD *pdwValue)
+bool SVRegistryClass::GetRegistryValue( LPCTSTR szValueName, DWORD *pdwValue)
 {
 	DWORD dwType = 0L, dwSize = 0L;
 
@@ -278,18 +278,18 @@ BOOL SVRegistryClass::GetRegistryValue( LPCTSTR szValueName, DWORD *pdwValue)
 				(LPBYTE) pdwValue,
 				&dwSize))
 			{
-				return TRUE;
+				return true;
 			}
 			else
 			{
-				return FALSE;
+				return false;
 			}
 		}
 	}
-	return FALSE;
+	return false;
 }
 
-BOOL SVRegistryClass::SetRegistryValue( LPCTSTR szValueName, DWORD dwValue )
+bool SVRegistryClass::SetRegistryValue( LPCTSTR szValueName, DWORD dwValue )
 {
 	DWORD dwType = 0L, dwSize = 0L;
 
@@ -300,7 +300,7 @@ BOOL SVRegistryClass::SetRegistryValue( LPCTSTR szValueName, DWORD dwValue )
 		reinterpret_cast< BYTE* >( &dwValue ),
 		static_cast< DWORD >( sizeof( DWORD ) ) ) )
 	{
-		return TRUE;
+		return true;
 	}
 	else
 	{
@@ -308,10 +308,10 @@ BOOL SVRegistryClass::SetRegistryValue( LPCTSTR szValueName, DWORD dwValue )
 		Exception.setMessage( SVMSG_LIB_SET_REGISTRY_VALUE_FAILED, szValueName, SvStl::SourceFileParams(StdMessageParams) );
 		Exception.Throw();
 	}
-	return FALSE;
+	return false;
 }
 
-BOOL SVRegistryClass::GetRegistryValue( LPCTSTR szValueName, SVByteVector& baValue)
+bool SVRegistryClass::GetRegistryValue( LPCTSTR szValueName, SVByteVector& baValue)
 {
 	DWORD dwType = 0L, dwSize = 0L;
 
@@ -334,13 +334,13 @@ BOOL SVRegistryClass::GetRegistryValue( LPCTSTR szValueName, SVByteVector& baVal
 			(LPBYTE) baValue.GetData(),
 			&dwSize))
 		{
-			return TRUE;
+			return true;
 		}
 	}
-	return FALSE;
+	return false;
 }
 
-BOOL SVRegistryClass::SetRegistryValue( LPCTSTR szValueName, SVByteVector& baValue )
+bool SVRegistryClass::SetRegistryValue( LPCTSTR szValueName, SVByteVector& baValue )
 {
 	DWORD dwType = 0L;
 	DWORD dwSize = 0L;
@@ -355,7 +355,7 @@ BOOL SVRegistryClass::SetRegistryValue( LPCTSTR szValueName, SVByteVector& baVal
 
 	if( lResult == ERROR_SUCCESS )
 	{
-		return TRUE;
+		return true;
 	}
 	else
 	{
@@ -364,10 +364,10 @@ BOOL SVRegistryClass::SetRegistryValue( LPCTSTR szValueName, SVByteVector& baVal
 		Exception.Throw();
 	}
 
-	return FALSE;
+	return false;
 }
 
-BOOL SVRegistryClass::SetRegistryValue( LPCTSTR szValueName, SVByteVector& baValue, DWORD dwType, DWORD dwLength )
+bool SVRegistryClass::SetRegistryValue( LPCTSTR szValueName, SVByteVector& baValue, DWORD dwType, DWORD dwLength )
 {
 	LONG lResult;
 
@@ -380,7 +380,7 @@ BOOL SVRegistryClass::SetRegistryValue( LPCTSTR szValueName, SVByteVector& baVal
 
 	if( lResult == ERROR_SUCCESS )
 	{
-		return TRUE;
+		return true;
 	}
 	else
 	{
@@ -388,10 +388,10 @@ BOOL SVRegistryClass::SetRegistryValue( LPCTSTR szValueName, SVByteVector& baVal
 		Exception.setMessage( SVMSG_LIB_SET_REGISTRY_VALUE_FAILED, szValueName, SvStl::SourceFileParams(StdMessageParams) );
 		Exception.Throw();
 	}
-	return FALSE;
+	return false;
 }
 
-BOOL SVRegistryClass::SaveKey(LPCTSTR p_szHive)
+bool SVRegistryClass::SaveKey(LPCTSTR p_szHive)
 {
 	LONG dwResult;
 
@@ -404,7 +404,7 @@ BOOL SVRegistryClass::SaveKey(LPCTSTR p_szHive)
 	return (ERROR_SUCCESS == dwResult);
 }
 
-BOOL SVRegistryClass::ReplaceKey(LPCTSTR p_szHive)
+bool SVRegistryClass::ReplaceKey(LPCTSTR p_szHive)
 {
 	WIN32_FIND_DATA wfd;
 	LONG dwResult;
@@ -416,10 +416,10 @@ BOOL SVRegistryClass::ReplaceKey(LPCTSTR p_szHive)
 
 	dwResult = RegRestoreKey (mhKey, p_szHive, 0L);
 
-	return TRUE;
+	return true;
 }
 
-BOOL SVRegistryClass::AdjustPrivileges(TCHAR *pszPrivilege)
+bool SVRegistryClass::AdjustPrivileges(TCHAR *pszPrivilege)
 {
 	HANDLE hToken;
 	TOKEN_PRIVILEGES NewState;
@@ -433,11 +433,11 @@ BOOL SVRegistryClass::AdjustPrivileges(TCHAR *pszPrivilege)
 
 		if (OpenProcessToken (GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES, &hToken))
 		{
-			return AdjustTokenPrivileges (hToken, FALSE, &NewState, 0, nullptr, nullptr);
+			return AdjustTokenPrivileges(hToken, false, &NewState, 0, nullptr, nullptr) ? true : false;
 		}
 	}
 
-	return FALSE;
+	return false;
 }
 
 void SVRegistryClass::EnumKeys(PFKEYENUMPROC pKeyEnumProc, LPVOID pUserData)
@@ -476,18 +476,18 @@ void SVRegistryClass::EnumKeys(PFKEYENUMPROC pKeyEnumProc, LPVOID pUserData)
 	}
 }
 
-BOOL SVRegistryClass::DeleteKey()
+bool SVRegistryClass::DeleteKey()
 {
 	if (ERROR_SUCCESS == RegDeleteKey (mhKey, _T("")))
 	{
 		mhKey = nullptr;
-		return TRUE;
+		return true;
 	}
 	
-	return FALSE;
+	return false;
 }
 
-BOOL SVRegistryClass::CreatedNewKey()
+bool SVRegistryClass::CreatedNewKey()
 {
 	return mbCreatedNewKey;
 }
@@ -506,22 +506,22 @@ SVRegistryClass * SVRegistryClass::OpenSubKey( LPCTSTR p_szSubKey )
 	return new SVRegistryClass( szKey.c_str() );
 }
 
-BOOL SVRegistryClass::DeleteValue(LPCTSTR p_szValueName)
+bool SVRegistryClass::DeleteValue(LPCTSTR p_szValueName)
 {
 	return (ERROR_SUCCESS == RegDeleteValue (mhKey, p_szValueName));
 }
 
-BOOL SVRegistryClass::SetShadowFileName(LPCTSTR szFileName)
+bool SVRegistryClass::SetShadowFileName(LPCTSTR szFileName)
 {
 	return SetRegistryValue( SV_SHADOWFILE, szFileName );
 }
 
-BOOL SVRegistryClass::GetShadowFileName(SVString & szShadowFile)
+bool SVRegistryClass::GetShadowFileName(SVString & szShadowFile)
 {
 	return GetRegistryValue( SV_SHADOWFILE, szShadowFile );
 }
 
-BOOL SVRegistryClass::GetDefaultShadowFileName(SVString & szShadowFile)
+bool SVRegistryClass::GetDefaultShadowFileName(SVString & szShadowFile)
 {
 	TCHAR szFname[_MAX_FNAME], szPath[_MAX_PATH];
 	SVString szKey;
@@ -539,13 +539,13 @@ BOOL SVRegistryClass::GetDefaultShadowFileName(SVString & szShadowFile)
 		SvUl_SF::searchAndReplace (szKey, SV_BACKSLASH, SV_UNDERLINE);
 		szShadowFile += szKey;
 		szShadowFile += SV_SHADOWFILEEXT;
-		return TRUE;
+		return true;
 	}
 
-	return FALSE;
+	return false;
 }
 
-BOOL SVRegistryClass::Import()
+bool SVRegistryClass::Import()
 {
 	SVString szShadowFile;
 
@@ -561,15 +561,15 @@ BOOL SVRegistryClass::Import()
 		}
 		else
 		{
-			return FALSE;
+			return false;
 		}
 	}
 }
 
-BOOL SVRegistryClass::Import(LPCTSTR szFileName)
+bool SVRegistryClass::Import(LPCTSTR szFileName)
 {
 	FILE *pFile;
-	BOOL rc = FALSE;
+	bool rc = false;
 	TCHAR cNewLine = _T('0');
 
 	if (pFile = _tfopen (szFileName, _T("r")))
@@ -597,9 +597,9 @@ BOOL SVRegistryClass::Import(LPCTSTR szFileName)
 	return rc;
 }
 
-BOOL SVRegistryClass::ImportKeys(FILE * pFile)
+bool SVRegistryClass::ImportKeys(FILE * pFile)
 {
-	BOOL rc = TRUE;
+	bool rc = true;
 	SVString szName;
 	SVByteVector baValue;
 	DWORD dwType;
@@ -791,7 +791,7 @@ int SVRegistryClass::GetImportString(FILE * pFile, SVString& rName, SVByteVector
 	return SV_ISERROR;
 }
 
-BOOL SVRegistryClass::Export()
+bool SVRegistryClass::Export()
 {
 	SVString szShadowFile;
 
@@ -807,15 +807,15 @@ BOOL SVRegistryClass::Export()
 		}
 		else
 		{
-			return FALSE;
+			return false;
 		}
 	}
 }
 
-BOOL SVRegistryClass::Export(LPCTSTR szFileName)
+bool SVRegistryClass::Export(LPCTSTR szFileName)
 {
 	FILE *pFile;
-	BOOL rc = FALSE;
+	bool rc = false;
 
 	if (pFile = _tfopen (szFileName, _T("w")))
 	{
@@ -836,9 +836,9 @@ BOOL SVRegistryClass::Export(LPCTSTR szFileName)
 	return rc;
 }
 
-BOOL SVRegistryClass::ExportKeys(FILE * pFile)
+bool SVRegistryClass::ExportKeys(FILE * pFile)
 {
-	BOOL rc = TRUE;
+	bool rc = true;
 	SVString szKey;
 	DWORD dwIndex;
 	DWORD dwcSubKeys;
@@ -873,13 +873,13 @@ BOOL SVRegistryClass::ExportKeys(FILE * pFile)
 				}
 				catch ( SvStl::MessageContainer& rSvE )
 				{
-					rc = FALSE;
+					rc = false;
 					rSvE.logMessage();
 				}
 			}
 			else
 			{
-				rc = FALSE;
+				rc = false;
 				SvStl::MessageMgrStd Exception( SvStl::DataOnly );
 				Exception.setMessage( SVMSG_LIB_REGISTRY_KEY_EXPORT_FAILED, szKey.c_str(), SvStl::SourceFileParams(StdMessageParams) );
 				Exception.Throw();
@@ -888,15 +888,15 @@ BOOL SVRegistryClass::ExportKeys(FILE * pFile)
 	}
 	else
 	{
-		rc = FALSE;
+		rc = false;
 	}
 
 	return rc;
 }
 
-BOOL SVRegistryClass::ExportValues(FILE * pFile)
+bool SVRegistryClass::ExportValues(FILE * pFile)
 {
-	BOOL rc = TRUE;
+	bool rc = true;
 	TCHAR *pszName, *ptData;
 	BYTE *pData;
 	DWORD dwIndex;
@@ -1030,7 +1030,7 @@ BOOL SVRegistryClass::ExportValues(FILE * pFile)
 			}
 			else
 			{
-				rc = FALSE;
+				rc = false;
 				SvStl::MessageMgrStd Exception( SvStl::DataOnly );
 				Exception.setMessage( SVMSG_LIB_REGISTRY_VALUE_EXPORT_FAILED, mszKey.c_str(), SvStl::SourceFileParams(StdMessageParams) );
 				Exception.Throw();
@@ -1043,9 +1043,9 @@ BOOL SVRegistryClass::ExportValues(FILE * pFile)
 	return rc;
 }
 
-BOOL SVRegistryClass::GetRegistryValue(DWORD dwIndex, SVString& szValueName, SVString& szValue, LPDWORD pdwType)
+bool SVRegistryClass::GetRegistryValue(DWORD dwIndex, SVString& szValueName, SVString& szValue, LPDWORD pdwType)
 {
-	BOOL rc = FALSE;
+	bool rc = false;
 	DWORD dwcbNameMax, dwcbValueMax, dwcbName, dwcbValue;
 	
 	RegQueryInfoKey (mhKey, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, nullptr, &dwcbNameMax, &dwcbValueMax, nullptr, nullptr);
@@ -1063,7 +1063,7 @@ BOOL SVRegistryClass::GetRegistryValue(DWORD dwIndex, SVString& szValueName, SVS
 
 		szValueName = pName;
 		szValue = pValue;
-		rc = TRUE;
+		rc = true;
 	}
 
 	delete [] pName;

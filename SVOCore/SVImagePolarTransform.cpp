@@ -756,7 +756,7 @@ bool SVImagePolarTransformClass::ResetObject(SvStl::MessageContainerVector *pErr
 
 	HRESULT hr;
 	BOOL Value( false );
-	BOOL bOk = ( S_OK == m_useFormulaInput.GetValue( Value ) );	// one formula option for all values?
+	bool Result = ( S_OK == m_useFormulaInput.GetValue( Value ) );	// one formula option for all values?
 	bool bUseFormula = Value ? true : false;
 	SVExtentPropertyInfoStruct info;
 
@@ -788,7 +788,6 @@ bool SVImagePolarTransformClass::ResetObject(SvStl::MessageContainerVector *pErr
 	info.bFormula = bUseFormula;
 	hr = pTool->m_svToolExtent.SetExtentPropertyInfo( SVExtentPropertyRotationAngle, info );
 
-	bool Result = true;
 	if (S_OK != outputImageObject.InitializeImage( getInputImage() ))
 	{
 		Result = false;

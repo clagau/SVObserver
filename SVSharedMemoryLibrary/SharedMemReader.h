@@ -46,30 +46,30 @@ namespace SvSml
 		
 		///Fills MLProduct for Monitorlistname and Trigger, last product for Trigger = -1 returns true if successful
 		/// the readerslot is released if releaseslot = true;
-		BOOL GetRejectData(LPCTSTR Monitorlist, int TriggerNumber, MLProduct* pProduct, BOOL releaseslot);
+		bool GetRejectData(LPCTSTR Monitorlist, int TriggerNumber, MLProduct* pProduct, bool releaseslot);
 		
 		///Fills MLProduct for Monitorlistname and Trigger, last product for Trigger = -1 returns true if successful
 		/// the readerslot is released if releaseslot = true;
-		BOOL GetProductData(LPCTSTR Monitorlist, int TriggerNumber, MLProduct* pProduct, BOOL releaseSlot);
+		bool GetProductData(LPCTSTR Monitorlist, int TriggerNumber, MLProduct* pProduct, bool releaseSlot);
 		
 		///Fills Failstatus  for Monitorlistname  returns true if successful
-		BOOL GetFailstatus(LPCTSTR Monitorlist, productPointerVector* pFailstatus);
+		bool GetFailstatus(LPCTSTR Monitorlist, productPointerVector* pFailstatus);
 
 		
 		///Fills MLProduct for Monitorlistname and Trigger, last product for Trigger = -1 returns sucess if successful
 		/// the readerslot is released if releaseslot = true;
 		// if pLastProduct has the same trigger as rProduct last is returned 
-		retvalues GetRejectData(LPCTSTR Monitorlist, int TriggerNumber, MLProduct* pProduct, const MLProduct* pLastProduct, BOOL releaseslot);
+		retvalues GetRejectData(LPCTSTR Monitorlist, int TriggerNumber, MLProduct* pProduct, const MLProduct* pLastProduct, bool releaseslot);
 		///Fills MLProduct for Monitorlistname and Trigger, last product for Trigger = -1 returns sucess if successful
 		/// the readerslot is released if releaseslot = true;
 		// if pLastProduct has the same trigger as rProduct last is returned 
-		retvalues GetProductData(LPCTSTR Monitorlist, int TriggerNumber, MLProduct* pProduct, const MLProduct* pLastProduct, BOOL  releaseslot);
+		retvalues GetProductData(LPCTSTR Monitorlist, int TriggerNumber, MLProduct* pProduct, const MLProduct* pLastProduct, bool  releaseslot);
 		
 		///Fills Failstatus  for Monitorlistname  returns sucess if successful
 		///if pLastFailstatus has the same trigger as failstatus would have last is returned
 		retvalues GetFailstatus(LPCTSTR Monitorlist, productPointerVector* pFailstatus, productPointerVector*  pLastFailstatus);
 		
-		BOOL  GetFailStatusData(LPCTSTR Monitorlist, int TriggerNumber, MLProduct* pProduct);
+		bool  GetFailStatusData(LPCTSTR Monitorlist, int TriggerNumber, MLProduct* pProduct);
 		SVMatroxBuffer& GetImageBuffer(DWORD  SlotIndex, DWORD storeIndex, DWORD ImageIndex);
 
 	//private:
@@ -90,9 +90,9 @@ namespace SvSml
 		// Parameter: bool failstatus if true only values in Failstatuslist 
 		// Parameter: bool reject if true returns last reject for -1 
 		// Parameter: MLProduct & rProduct
-		// Parameter: BOOL releaseSlot  if true the reader slot is released after this call 
+		// Parameter: bool releaseSlot  if true the reader slot is released after this call 
 		//************************************
-		retvalues _GetProduct(LPCTSTR Monitorlist, int trigger, bool failstatus, bool reject, MLProduct* pProduct, const MLProduct* pLastProduct, BOOL releaseSlot);
+		retvalues _GetProduct(LPCTSTR Monitorlist, int trigger, bool failstatus, bool reject, MLProduct* pProduct, const MLProduct* pLastProduct, bool releaseSlot);
 
 	};
 } //namespace SvSml

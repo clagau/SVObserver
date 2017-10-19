@@ -23,8 +23,8 @@ public:
 
 	virtual ~SVOutputObject();
 
-	virtual BOOL Create();
-	virtual BOOL Destroy();
+	virtual bool Create();
+	virtual bool Destroy();
 
 	virtual HRESULT Write( const _variant_t& rValue ) = 0;
 	virtual HRESULT Reset() = 0;

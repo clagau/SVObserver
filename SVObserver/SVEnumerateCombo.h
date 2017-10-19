@@ -21,7 +21,7 @@ public:
 	SVEnumerateComboClass();
 	virtual ~SVEnumerateComboClass();
 
-	BOOL SetEnumTypes( LPCTSTR szEnumList );
+	bool SetEnumTypes( LPCTSTR szEnumList );
 
 	int SetCurSelItemData( DWORD_PTR dwItemData );
 	DWORD_PTR  GetCurSelItemData();

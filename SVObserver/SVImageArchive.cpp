@@ -53,21 +53,19 @@ SVImageArchiveClass::~SVImageArchiveClass()
 {
 }
 
-BOOL SVImageArchiveClass::SetImageArchiveFileTemplate( const SVString& rTemplate )
+void SVImageArchiveClass::SetImageArchiveFileTemplate( const SVString& rTemplate )
 {
 	m_ArchiveFileTemplate = rTemplate;
 	SvUl_SF::searchAndReplace( m_ArchiveFileTemplate, _T("."), _T("_") );
-	return true;
 }
 
-BOOL SVImageArchiveClass::SetImageArchivePath( const SVString& rPath )
+void SVImageArchiveClass::SetImageArchivePath( const SVString& rPath )
 {
 	m_ImageArchivePath = rPath;
 	if ( m_ImageArchivePath.empty() || SvUl_SF::Right( m_ImageArchivePath, 1) != _T("\\") )
 	{
 		m_ImageArchivePath += _T('\\');
 	}
-	return true;
 }
 
 DWORD SVImageArchiveClass::ResetFileNumber()
@@ -90,7 +88,7 @@ DWORD SVImageArchiveClass::NextFileName()
 	return m_FileNumber++;
 }
 
-BOOL SVImageArchiveClass::LoadImageArchiveFile( SVSmartHandlePointer p_HandlePtr )
+bool SVImageArchiveClass::LoadImageArchiveFile( SVSmartHandlePointer p_HandlePtr )
 {
 	SVFileNameClass svFileName;
 	SVString FileName;
@@ -123,9 +121,9 @@ BOOL SVImageArchiveClass::LoadImageArchiveFile( SVSmartHandlePointer p_HandlePtr
 	return false;
 }
 
-BOOL SVImageArchiveClass::LoadImageArchiveFile(SVImageClass *pImage)
+bool SVImageArchiveClass::LoadImageArchiveFile(SVImageClass *pImage)
 {
-	BOOL bOk = FALSE;
+	bool bOk = false;
 
 	SVSmartHandlePointer l_ImageHandlePtr;
 
@@ -138,11 +136,11 @@ BOOL SVImageArchiveClass::LoadImageArchiveFile(SVImageClass *pImage)
 }
 
 
-BOOL SVImageArchiveClass::LoadImageArchiveFile( SVImageObjectClassPtr p_AcquisitionCircleBufferPtr )
+bool SVImageArchiveClass::LoadImageArchiveFile( SVImageObjectClassPtr p_AcquisitionCircleBufferPtr )
 {
 	SVSmartHandlePointer l_ImageHandlePtr;
 	
-	BOOL bRetValue = false;
+	bool bRetValue = false;
 	
 	int i;
 	
@@ -177,7 +175,7 @@ BOOL SVImageArchiveClass::LoadImageArchiveFile( SVImageObjectClassPtr p_Acquisit
 	return bRetValue;
 }
 
-BOOL SVImageArchiveClass::ImageArchiveFileExists( const SVString &rFileName)
+bool SVImageArchiveClass::ImageArchiveFileExists( const SVString &rFileName)
 {
 	return (0 == ::_access( rFileName.c_str(), 0 ) );
 }

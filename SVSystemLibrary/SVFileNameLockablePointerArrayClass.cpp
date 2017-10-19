@@ -52,12 +52,12 @@ LPCTSTR SVFileNameLockablePointerArrayClass::GetFileNameList() const
 	return mcsFileList.c_str();
 }
 
-BOOL SVFileNameLockablePointerArrayClass::Lock()
+bool SVFileNameLockablePointerArrayClass::Lock()
 {
 	return mcmArrayLock.Lock( 300000 );
 }
 
-BOOL SVFileNameLockablePointerArrayClass::Unlock()
+bool SVFileNameLockablePointerArrayClass::Unlock()
 {
 	return mcmArrayLock.Unlock();
 }

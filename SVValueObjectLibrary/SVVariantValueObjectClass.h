@@ -30,7 +30,6 @@ public:
 
 	virtual HRESULT SetObjectValue( SVObjectAttributeClass* pDataObject ) override;
 
-	BOOL SetType( int vt );
 	HRESULT SetValueKeepType(LPCTSTR Value) {return SetValueKeepType(Value, 0);}
 	HRESULT SetValueKeepType(LPCTSTR Value, int Index);
 	VARTYPE GetDefaultType() const;

@@ -126,90 +126,90 @@ public:
 	//mcsFileSaveDialogTitle, mcsDefaultFileExtension, 
 	//mcsDefaultFileName, mdwFileSelectFlags, 
 	//mdwFileSaveFlags, mcsFileExtensionFilterList attributes.
-	BOOL SetFileType(DWORD dwFileType);
+	bool SetFileType(DWORD dwFileType);
 
 	//This operator changes the string contained in the 
 	//mcsPathName, mcsFileName and mcsExtension attributes to 
 	//the value contain in the operator parameter.
-	BOOL SetFullFileName(LPCTSTR szFullName);
+	void SetFullFileName(LPCTSTR szFullName);
 
 	//This operator changes the string contained in the 
 	//mcsPathName attribute to the value contain in the 
 	//operator parameter.
-	BOOL SetPathName(LPCTSTR szPathName);
+	void SetPathName(LPCTSTR szPathName);
 
 	//This operator changes the string contained in the 
 	//mcsFileName attribute to the value contain in the 
 	//operator parameter.
-	BOOL SetFileName(LPCTSTR szFileName);
+	void SetFileName(LPCTSTR szFileName);
 
 	//This operator changes the string contained in the 
 	//mcsFileNameOnly attribute to the value contain in the 
 	//operator parameter.
-	BOOL SetFileNameOnly(LPCTSTR szFileName);
+	void SetFileNameOnly(LPCTSTR szFileName);
 
 	//This operator changes the string contained in the 
 	//mcsExtension attribute to the value contain in the 
 	//operator parameter.
-	BOOL SetExtension(LPCTSTR szExtension);
+	void SetExtension(LPCTSTR szExtension);
 
 	//This operator changes the string contained in the 
 	//mcsFileSelectDialogTitle attribute to the value contain 
 	//in the operator parameter.
-	BOOL SetFileSelectDialogTitle(LPCTSTR szTitle);
+	void SetFileSelectDialogTitle(LPCTSTR szTitle);
 
 	//This operator changes the string contained in the 
 	//mcsFileSaveDialogTitle attribute to the value contain 
 	//in the operator parameter.
-	BOOL SetFileSaveDialogTitle(LPCTSTR szTitle);
+	void SetFileSaveDialogTitle(LPCTSTR szTitle);
 
 	//This operator changes the string contained in the 
 	//mcsFileExtensionFilterList attribute to the value 
 	//contain in the operator parameter.
-	BOOL SetFileExtensionFilterList(const SVString& rFilter);
+	void SetFileExtensionFilterList(const SVString& rFilter);
 
 	//This operator changes the string contained in the 
 	//mdwFileSaveFlags attribute to the value contain in the 
 	//operator parameter.
-	BOOL SetFileSaveFlags(DWORD dwFlags);
+	void SetFileSaveFlags(DWORD dwFlags);
 
 	//This operator changes the string contained in the 
 	//mdwFileSelectFlags attribute to the value contain in 
 	//the operator parameter.
-	BOOL SetFileSelectFlags(DWORD dwFlags);
+	void SetFileSelectFlags(DWORD dwFlags);
 
-	BOOL SetDefaultFullFileName(LPCTSTR FullName);
+	void SetDefaultFullFileName(LPCTSTR FullName);
 
-	BOOL SetDefaultPathName(const SVString& rName);
+	void SetDefaultPathName(const SVString& rName);
 
 	//This operator changes the string contained in the 
 	//mcsDefaultFileName attribute to the value contain in 
 	//the operator parameter.
-	BOOL SetDefaultFileName(const SVString& rName);
+	void SetDefaultFileName(const SVString& rName);
 
 	//This operator changes the string contained in the 
 	//mcsDefaultFileExtension attribute to the value contain 
 	//in the operator parameter.
-	BOOL SetDefaultFileExtension(const SVString& rExtension);
+	void SetDefaultFileExtension(const SVString& rExtension);
 
 	//This operator uses the object's attributes to build a 
 	//file dialog for selecting a path for the object.  A 
 	//file and or path may be selected, but only the path 
 	//information is stored within the object.  The 
 	//mcsFileName attribute will remain empty.
-	BOOL SelectPath();
+	bool SelectPath();
 
 	//This operator uses the object's attributes to build a 
 	//file dialog for selecting a full file name for the 
 	//object.  A file needs to be selected and it is stored 
 	//within the object.
-	BOOL SelectFile();
+	bool SelectFile();
 
 	//This operator uses the object's attributes to build a 
 	//file dialog for selecting a full file name for the 
 	//object. The file needs to be selected and it is stored 
 	//within the object.
-	BOOL SaveFile();
+	bool SaveFile();
 
 	//************************************
 	//! Method to set a list of characters to exclude for the file name

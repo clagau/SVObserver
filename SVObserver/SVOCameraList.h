@@ -30,16 +30,16 @@ public:
     SVOCameraList& operator=(const SVOCameraList &source);
     SVOCameraList* operator=(const SVOCameraList *source);
 
-    BOOL AddCameraToList( LPCTSTR CameraName, int Dig, int CameraID );
-    BOOL AddCameraToList( LPCTSTR CameraName, int Dig, int iBands, int CameraID );
-    BOOL SetCameraFile( LPCTSTR CameraName, LPCTSTR FileName );
-	BOOL SetCameraDeviceParams( LPCTSTR CameraName, const SVDeviceParamCollection& rCameraDeviceParams, const SVDeviceParamCollection& rCameraFileParams );
-    BOOL RemoveCameraFromList( LPCTSTR CameraName );
+    bool AddCameraToList( LPCTSTR CameraName, int Dig, int CameraID );
+    bool AddCameraToList( LPCTSTR CameraName, int Dig, int iBands, int CameraID );
+    bool SetCameraFile( LPCTSTR CameraName, LPCTSTR FileName );
+	bool SetCameraDeviceParams( LPCTSTR CameraName, const SVDeviceParamCollection& rCameraDeviceParams, const SVDeviceParamCollection& rCameraFileParams );
+    bool RemoveCameraFromList( LPCTSTR CameraName );
 
     SVOCameraObjPtr GetCameraObjectByName( LPCTSTR CameraName );
     SVOCameraObjPtr GetCameraObjectByPosition(int iPos);
 	const SVOCameraObjPtr GetCameraObjectByPosition(int iPos) const;
-    BOOL IsCameraInList( LPCTSTR CameraName ) const;
+    bool IsCameraInList( LPCTSTR CameraName ) const;
 
     void ResetContent();
 

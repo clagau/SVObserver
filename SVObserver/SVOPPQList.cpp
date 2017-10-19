@@ -33,38 +33,38 @@ SVOPPQList::~SVOPPQList()
 
 }
 
-BOOL SVOPPQList::AddPPQToList(LPCTSTR PPQName)
+bool SVOPPQList::AddPPQToList(LPCTSTR PPQName)
 {
-	BOOL bRet = FALSE;
+	bool bRet = false;
 
 	if (!IsPPQInList( PPQName ))
 	{
 		SVOPPQObjPtr pPPQObj = new SVOPPQObj();
 		pPPQObj->SetPPQName( PPQName );
 		m_PPQList.AddTail(pPPQObj);
-		bRet = TRUE;
+		bRet = true;
 	}
 
 	return bRet;
 }
 
-BOOL SVOPPQList::RemovePPQFromList(LPCTSTR PPQName)
+bool SVOPPQList::RemovePPQFromList(LPCTSTR PPQName)
 {
-	BOOL bRet = FALSE;
+	bool bRet = false;
 	iterator pos = FindPPQPosition( PPQName );
 
 	if (pos != m_PPQList.end())
 	{
-		bRet = TRUE;
+		bRet = true;
 		m_PPQList.RemoveAt(pos);
 	}
 
 	return bRet;
 }
 
-BOOL SVOPPQList::AttachCameraToPPQ(LPCTSTR PPQName, LPCTSTR Camera)
+bool SVOPPQList::AttachCameraToPPQ(LPCTSTR PPQName, LPCTSTR Camera)
 {
-	BOOL Result( FALSE );
+	bool Result( false );
 	SVOPPQObjPtr pPPQObj = GetPPQObjectByName( PPQName );
 	ASSERT(nullptr != pPPQObj);
 
@@ -76,9 +76,9 @@ BOOL SVOPPQList::AttachCameraToPPQ(LPCTSTR PPQName, LPCTSTR Camera)
 	return Result;
 }
 
-BOOL SVOPPQList::AttachInspectToPPQ(LPCTSTR PPQName, LPCTSTR Inspect)
+bool SVOPPQList::AttachInspectToPPQ(LPCTSTR PPQName, LPCTSTR Inspect)
 {
-	BOOL Result( FALSE );
+	bool Result( false );
 	SVOPPQObjPtr pPPQObj = GetPPQObjectByName( PPQName );
 	ASSERT(nullptr != pPPQObj);
 
@@ -90,7 +90,7 @@ BOOL SVOPPQList::AttachInspectToPPQ(LPCTSTR PPQName, LPCTSTR Inspect)
 	return Result;
 }
 
-BOOL SVOPPQList::AttachTriggerToPPQ(LPCTSTR PPQName, LPCTSTR Trigger)
+void SVOPPQList::AttachTriggerToPPQ(LPCTSTR PPQName, LPCTSTR Trigger)
 {
 	SVOPPQObjPtr pPPQObj = GetPPQObjectByName( PPQName );
 	ASSERT(nullptr != pPPQObj);
@@ -99,14 +99,12 @@ BOOL SVOPPQList::AttachTriggerToPPQ(LPCTSTR PPQName, LPCTSTR Trigger)
 	{
 		pPPQObj->AttachTriggerToPPQ( Trigger );
 	}
-
-	return TRUE;
 }
 
-BOOL SVOPPQList::IsPPQInList(LPCTSTR PPQName) const
+bool SVOPPQList::IsPPQInList(LPCTSTR PPQName) const
 {
 	const_iterator pos( m_PPQList.begin() );
-	BOOL bFound = FALSE;
+	bool bFound = false;
 
 	while( pos != m_PPQList.end() && (!bFound) )
 	{
@@ -114,7 +112,7 @@ BOOL SVOPPQList::IsPPQInList(LPCTSTR PPQName) const
 
 		if( nullptr != pPPQObj && PPQName == pPPQObj->GetPPQName() )
 		{
-			bFound = TRUE;
+			bFound = true;
 		}
 		else
 		{

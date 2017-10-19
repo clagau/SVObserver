@@ -26,13 +26,13 @@ public:
 
 #pragma region Public Methods
 public:
-	virtual BOOL Create() override;
-	virtual BOOL Destroy() override;
+	virtual bool Create() override;
+	virtual bool Destroy() override;
 
 	virtual HRESULT Read( _variant_t& p_rValue ) override;
 
-	BOOL Lock();
-	BOOL Unlock();
+	void Lock();
+	void Unlock();
 
 	HRESULT WriteCache( const _variant_t& p_rValue );
 	HRESULT GetCache( _variant_t& p_rValue );

@@ -27,8 +27,8 @@ class SVImageClass;
 
 // Threshold Dialog
 void AFXAPI DDX_SVThresholdText( CDataExchange* pDX, int nIDC, DWORD& Value );
-BOOL GetThreshold( CWnd* pWnd, DWORD& Value );
-BOOL GetThreshold( HWND hWnd, DWORD& Value );
+bool GetThreshold( CWnd* pWnd, DWORD& Value );
+bool GetThreshold( HWND hWnd, DWORD& Value );
 void SetThreshold( CWnd* pWnd, DWORD Value );
 void SetThreshold( HWND hWnd, DWORD Value );
 

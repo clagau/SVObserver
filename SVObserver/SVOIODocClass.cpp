@@ -85,22 +85,16 @@ void SVOIODocClass::Serialize(CArchive& ar)
 
 BOOL SVOIODocClass::OnOpenDocument(LPCTSTR lpszPathName) 
 {
-	BOOL bOk = FALSE;
-
 	if ( lpszPathName )
 	{
-		bOk = msvFileName.SetFullFileName( lpszPathName );
+		msvFileName.SetFullFileName( lpszPathName );
 	}
 	else
 	{
-		bOk = msvFileName.SetFullFileName( GetPathName() );
+		msvFileName.SetFullFileName( GetPathName() );
 	}
 
-	if ( bOk )
-	{
-		bOk = SVFileNameManagerClass::Instance().LoadItem( &msvFileName );
-	}
-
+	BOOL bOk = SVFileNameManagerClass::Instance().LoadItem( &msvFileName );
 	if ( bOk )
 	{
 		bOk = COleServerDoc::OnOpenDocument( msvFileName.GetFullFileName().c_str() );

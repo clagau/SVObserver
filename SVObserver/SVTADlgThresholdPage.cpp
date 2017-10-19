@@ -1156,13 +1156,13 @@ void AFXAPI DDX_SVThresholdText( CDataExchange* pDX, int nIDC, DWORD& Value )
 	}
 }
 
-BOOL GetThreshold( CWnd* pWnd, DWORD& Value )
+bool GetThreshold( CWnd* pWnd, DWORD& Value )
 {
 	ASSERT( nullptr != pWnd );
 	return GetThreshold( pWnd->m_hWnd, Value );
 }
 
-BOOL GetThreshold( HWND hWnd, DWORD& Value )
+bool GetThreshold( HWND hWnd, DWORD& Value )
 {
 	TCHAR szWindowText[20];
 	long con;
@@ -1174,18 +1174,18 @@ BOOL GetThreshold( HWND hWnd, DWORD& Value )
 	{
 		if( ( *index < '0' ) || ( *index > '9') )
 		{
-			return FALSE;
+			return false;
 		}
 	}
 
 	if( ( con = _ttol( szWindowText ) ) > MaxThresholdValue )
 	{
-		return FALSE;
+		return false;
 	}
 
 	Value = static_cast<DWORD>(con);
 
-	return TRUE;
+	return true;
 }
 
 void SetThreshold( CWnd* pWnd, DWORD Value )

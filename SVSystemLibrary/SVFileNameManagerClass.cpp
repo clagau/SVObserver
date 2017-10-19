@@ -99,15 +99,15 @@ bool SVFileNameManagerClass::SetConfigurationPathName(LPCTSTR szPathName)
 	return Result;
 }
 
-BOOL SVFileNameManagerClass::FindItem(SVFileNameClass* svpFileNameClass)
+bool SVFileNameManagerClass::FindItem(SVFileNameClass* svpFileNameClass)
 {
-	BOOL bOk = false;
+	bool bOk = false;
 
 	SVFileNameManagerClass& rFileMgr = Instance();
 
 	if ( 0 < rFileMgr.m_svFileNameList.GetSize() )
 	{
-		BOOL bDone = false;
+		bool bDone = false;
 
 		rFileMgr.m_iCurrentItem = static_cast<int>(rFileMgr.m_svFileNameList.GetSize());
 		
@@ -135,7 +135,7 @@ bool SVFileNameManagerClass::AddItem(SVFileNameClass* pFileName)
 
 	if ( m_svFileNameList.Lock() )
 	{
-		Result = FindItem( pFileName ) ? true : false;
+		Result = FindItem( pFileName );
 
 		if( !Result )
 		{
@@ -164,7 +164,7 @@ bool SVFileNameManagerClass::RemoveItem(SVFileNameClass* pFileName)
 
 	if ( m_svFileNameList.Lock() )
 	{
-		Result = FindItem( pFileName ) ? true : false;
+		Result = FindItem( pFileName );
 
 		if ( Result )
 		{
@@ -337,7 +337,7 @@ bool SVFileNameManagerClass::LoadItem(SVFileNameClass* pFileName)
 
 			if ( Result )
 			{
-				Result = pFileName->SetPathName( GetRunPathName().c_str() ) ? true : false;
+				pFileName->SetPathName( GetRunPathName().c_str() );
 			}
 		}
 	}
@@ -354,7 +354,7 @@ bool SVFileNameManagerClass::SaveItem( SVFileNameClass* pFileName )
 		Result = CopyFileToPath( GetRunPathName(), pFileName );
 		if ( Result )
 		{
-			Result = pFileName->SetPathName( GetRunPathName().c_str() ) ? true : false;
+			pFileName->SetPathName( GetRunPathName().c_str() );
 		}
 
 		if ( Result )
@@ -368,14 +368,12 @@ bool SVFileNameManagerClass::SaveItem( SVFileNameClass* pFileName )
 
 bool SVFileNameManagerClass::RenameItem(SVFileNameClass* pFileName)
 {
-	bool Result( true );
-
 	if ( !SVString( pFileName->GetFileName() ).empty() )
 	{
-		Result = pFileName->SetPathName( GetRunPathName().c_str() ) ? true : false;
+		pFileName->SetPathName( GetRunPathName().c_str() );
 	}
 
-	return Result;
+	return true;
 }
 
 bool SVFileNameManagerClass::SaveItems()

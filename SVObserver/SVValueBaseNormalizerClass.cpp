@@ -51,7 +51,7 @@ const SVValueBaseNormalizerClass& SVValueBaseNormalizerClass::operator=( const S
 	return (*this);	
 };
 
-BOOL SVValueBaseNormalizerClass::SetNormalRange( double Min, double Max, double Step)
+bool SVValueBaseNormalizerClass::SetNormalRange( double Min, double Max, double Step)
 {
 	double baseSize = calcBaseSize( Min, Max, Step );
 	if( baseSize >= 1.0 )
@@ -60,12 +60,12 @@ BOOL SVValueBaseNormalizerClass::SetNormalRange( double Min, double Max, double 
 		normalMin		= Min;
 		normalStep		= Step;
 		normalBaseSize	= baseSize;
-		return TRUE;
+		return true;
 	}
-	return FALSE;
+	return false;
 };
 
-BOOL SVValueBaseNormalizerClass::SetRealRange( double Min, double Max, double Step)
+bool SVValueBaseNormalizerClass::SetRealRange( double Min, double Max, double Step)
 {
 	double baseSize = calcBaseSize( Min, Max, Step );
 	if( baseSize >= 1.0 )
@@ -74,9 +74,9 @@ BOOL SVValueBaseNormalizerClass::SetRealRange( double Min, double Max, double St
 		rangeMin		= Min;
 		rangeStep		= Step;
 		rangeBaseSize	= baseSize;
-		return TRUE;
+		return true;
 	}
-	return FALSE;
+	return false;
 };
 
 double SVValueBaseNormalizerClass::GetNormalRangeBaseSize()

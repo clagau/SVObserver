@@ -21,24 +21,24 @@ public:
 
 #pragma region Public Methods
 public:
-	virtual BOOL Create() override;
-	virtual BOOL Destroy() override;
+	virtual bool Create() override;
+	virtual bool Destroy() override;
 
 	virtual HRESULT Write( const _variant_t& rValue ) override;
 	virtual HRESULT Reset() override;
 	virtual bool IsCombined() const override;
 	virtual bool GetCombinedValue() const override;
 
-	BOOL Force( bool bForce, bool bForcedValue );
-	BOOL Invert( bool bInvert );
-	BOOL Combine( bool bCombine, bool bCombineACK );
+	bool Force( bool bForce, bool bForcedValue );
+	bool Invert( bool bInvert );
+	void Combine( bool bCombine, bool bCombineACK );
 
 	bool IsForced() const;
 	bool GetForcedValue() const;
 	bool IsInverted() const;
 	bool GetValue() const;
 
-	BOOL SetChannel( long lChannel );
+	void SetChannel( long lChannel );
 	long GetChannel() const;
 
 	/// Update the GUID to a fix GUID depend of a position (must between 0 and 0x100).

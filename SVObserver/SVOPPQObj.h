@@ -37,13 +37,13 @@ public:
 	void DetachTriggerFromPPQ();
 	const SVString& GetAttachedTriggerName() const;
 
-	BOOL AttachCameraToPPQ(LPCTSTR CameraName);
-	BOOL DetachCameraFromPPQ(LPCTSTR CameraName);
+	bool AttachCameraToPPQ(LPCTSTR CameraName);
+	bool DetachCameraFromPPQ(LPCTSTR CameraName);
 	int GetAttachedCameraCount() const;
 	SVString GetAttachedCamera(int ipos) const;
 
-	BOOL AttachInspectionToPPQ(LPCTSTR InspectName);
-	BOOL DetachInspectionFromPPQ(LPCTSTR InspectName);
+	bool AttachInspectionToPPQ(LPCTSTR InspectName);
+	bool DetachInspectionFromPPQ(LPCTSTR InspectName);
 	int GetAttachedInspectionCount();
 	SVString GetAttachedInspection(int iPos);
 

@@ -43,7 +43,7 @@ SVDigitalInputObject::~SVDigitalInputObject()
 	m_isCreated	= false;
 }
 
-BOOL SVDigitalInputObject::Create()
+bool SVDigitalInputObject::Create()
 {
 	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVIoObjectType;
 	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVDigitalInputObjectType;
@@ -53,7 +53,7 @@ BOOL SVDigitalInputObject::Create()
 	return true;
 }// end Create
 
-BOOL SVDigitalInputObject::Destroy()
+bool SVDigitalInputObject::Destroy()
 {
 	m_isCreated = false;
 
@@ -79,26 +79,22 @@ HRESULT SVDigitalInputObject::Read( _variant_t& p_rValue )
 	return l_Status;
 }// end Read
 
-BOOL SVDigitalInputObject::Force( bool bForce, bool bForcedValue )
+bool SVDigitalInputObject::Force( bool bForce, bool bForcedValue )
 {
-	BOOL l_bOk = FALSE;
-
 	m_bForced = bForce;
 	m_bForcedValue = bForcedValue;
 
-	l_bOk = S_OK == SVIOConfigurationInterfaceClass::Instance().SetDigitalInputIsForced( m_lChannel, m_bForced );
+	bool l_bOk = S_OK == SVIOConfigurationInterfaceClass::Instance().SetDigitalInputIsForced( m_lChannel, m_bForced );
 	l_bOk = S_OK == SVIOConfigurationInterfaceClass::Instance().SetDigitalInputForcedValue( m_lChannel, m_bForcedValue ) && l_bOk;
 
 	return l_bOk;
 }// end Force
 
-BOOL SVDigitalInputObject::Invert( bool bInvert )
+bool SVDigitalInputObject::Invert( bool bInvert )
 {
-	BOOL l_bOk = FALSE;
-
 	m_bInverted = bInvert;
 
-	l_bOk = S_OK == SVIOConfigurationInterfaceClass::Instance().SetDigitalInputIsInverted( m_lChannel, m_bInverted );
+	bool l_bOk = S_OK == SVIOConfigurationInterfaceClass::Instance().SetDigitalInputIsInverted( m_lChannel, m_bInverted );
 
 	return l_bOk;
 }// end Invert
@@ -123,7 +119,7 @@ bool SVDigitalInputObject::IsInverted() const
 	return m_bInverted;
 }// end IsInverted
 
-BOOL SVDigitalInputObject::SetChannel( long lChannel )
+void SVDigitalInputObject::SetChannel( long lChannel )
 {
 	if( m_lChannel != lChannel )
 	{
@@ -133,7 +129,6 @@ BOOL SVDigitalInputObject::SetChannel( long lChannel )
 		SVIOConfigurationInterfaceClass::Instance().SetDigitalInputIsForced(m_lChannel, m_bForced);
 		SVIOConfigurationInterfaceClass::Instance().SetDigitalInputForcedValue(m_lChannel, m_bForcedValue);
 	}
-	return TRUE;
 }
 
 long SVDigitalInputObject::GetChannel() const

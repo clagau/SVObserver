@@ -81,9 +81,9 @@ bool SVRemoteOutputObject::GetParameters(SvXml::SVObjectXMLWriter& rWriter ) con
 }
 
 // Sets parameters from Tree Control
-BOOL SVRemoteOutputObject::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent )
+bool SVRemoteOutputObject::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent )
 {
-	BOOL bOk = FALSE;
+	bool bOk = false;
 	_variant_t svVariant;
 
 	bOk = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_UNIQUE_REFERENCE_ID, htiParent, svVariant );

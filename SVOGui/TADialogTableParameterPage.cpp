@@ -120,7 +120,7 @@ namespace SvOg {
 
 	void TADialogTableParameterPage::OnBnClickedButtonFormula()
 	{
-		BOOL updateState = UpdateData(TRUE);
+		BOOL updateState = UpdateData(true);
 		if (updateState)
 		{
 			CString strCaption = _T("Clear Conditional Formula");
@@ -136,7 +136,7 @@ namespace SvOg {
 	HRESULT TADialogTableParameterPage::SetPageData()
 	{
 		HRESULT hResult = S_FALSE;
-		BOOL updateState = UpdateData(TRUE);
+		BOOL updateState = UpdateData(true);
 		if (updateState)
 		{
 			m_Values.Set<long>(MaxRowTag, m_maxRows);

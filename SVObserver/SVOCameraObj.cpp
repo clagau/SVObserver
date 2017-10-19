@@ -78,11 +78,11 @@ void SVOCameraObj::SetCameraFile(const SVString& rFileName)
     m_CameraFile = rFileName;
     if (!m_CameraFile.empty())
     {
-        m_CameraFileSet = TRUE;
+        m_CameraFileSet = true;
     }
     else
     {
-        m_CameraFileSet = FALSE;
+        m_CameraFileSet = false;
     }
     //check to see if Camera is ok...
 
@@ -91,10 +91,10 @@ void SVOCameraObj::SetCameraFile(const SVString& rFileName)
 
 void SVOCameraObj::SetCameraFileChanged()
 {
-    m_CameraFileChanged = TRUE;
+    m_CameraFileChanged = true;
 }
 
-BOOL SVOCameraObj::GetCameraFileChanged()
+bool SVOCameraObj::GetCameraFileChanged()
 {
     return m_CameraFileChanged;
 }
@@ -104,7 +104,7 @@ const SVString& SVOCameraObj::GetCameraFile() const
     return m_CameraFile;
 }
 
-BOOL SVOCameraObj::IsCameraObjOk()
+bool SVOCameraObj::IsCameraObjOk()
 {
 	if (IsFileAcquisition())
 	{

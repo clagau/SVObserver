@@ -30,9 +30,9 @@ SVEnumerateComboClass::~SVEnumerateComboClass()
 {
 }
 
-BOOL SVEnumerateComboClass::SetEnumTypes( LPCTSTR szEnumList )
+bool SVEnumerateComboClass::SetEnumTypes( LPCTSTR szEnumList )
 {
-	BOOL bRetVal = enumObject.SetEnumTypes( szEnumList );
+	bool bRetVal = enumObject.SetEnumTypes( szEnumList );
 	if( bRetVal )
 	{
 		// Flush combo...
@@ -51,7 +51,7 @@ BOOL SVEnumerateComboClass::SetEnumTypes( LPCTSTR szEnumList )
 				SetItemData( index, ( DWORD ) lValue );
 			}
 			else
-				bRetVal = FALSE;
+				bRetVal = false;
 		}
 	}
 	return bRetVal;

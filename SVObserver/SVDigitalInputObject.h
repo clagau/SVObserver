@@ -21,20 +21,20 @@ public:
 
 #pragma region Public Methods
 public:
-	virtual BOOL Create() override;
-	virtual BOOL Destroy() override;
+	virtual bool Create() override;
+	virtual bool Destroy() override;
 
 	virtual HRESULT Read( _variant_t& p_rValue ) override;
 
-	BOOL Force( bool bForce, bool bForcedValue );
-	BOOL Invert( bool bInvert );
+	bool Force( bool bForce, bool bForcedValue );
+	bool Invert( bool bInvert );
 
 	bool IsForced() const;
 	bool GetForcedValue() const;
 	bool IsInverted() const;
 	bool GetValue() const;
 
-	BOOL SetChannel( long lChannel );
+	void SetChannel( long lChannel );
 	long GetChannel() const;
 
 	/// Update the GUID to a fix GUID depend of a position (must between 0 and 0x100).

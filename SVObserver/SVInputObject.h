@@ -23,8 +23,8 @@ public:
 
 	virtual ~SVInputObject();
 
-	virtual BOOL Create();
-	virtual BOOL Destroy();
+	virtual bool Create();
+	virtual bool Destroy();
 
 	virtual HRESULT Read( _variant_t& p_rValue ) = 0;
 };

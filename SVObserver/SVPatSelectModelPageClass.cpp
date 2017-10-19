@@ -761,11 +761,11 @@ bool SVPatModelPageClass::GetModelFile(bool bMode, CString& rFileName)
 	svfncFileName.SetFullFileName(rFileName);
 	if ( bMode )
 	{
-		bOk = (TRUE == svfncFileName.SelectFile());
+		bOk = svfncFileName.SelectFile();
 	}
 	else
 	{
-		bOk = (TRUE == svfncFileName.SaveFile());
+		bOk = svfncFileName.SaveFile();
 	}
 
 	if ( bOk )

@@ -327,7 +327,7 @@ void SVConfigurationPrint::DoPrintConfig()
 		{
 			// begin SES 11-Jan-2001
 			// Use SVFileNameClass for browsing
-			if (m_svfnFileName.SaveFile() != IDOK)
+			if (!m_svfnFileName.SaveFile())
 			{
 				return;
 			}

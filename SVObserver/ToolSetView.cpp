@@ -756,9 +756,9 @@ void ToolSetView::SetViewSize(CSize &Size)
 	}
 }
 
-BOOL ToolSetView::SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent)
+bool ToolSetView::SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent)
 {
-	BOOL bOk = false;
+	bool bOk = false;
 
 	CSize l_Size;
 	_variant_t svVariant;
@@ -785,9 +785,9 @@ BOOL ToolSetView::SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle ht
 	return bOk;
 }
 
-BOOL ToolSetView::CheckParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent)
+bool ToolSetView::CheckParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent)
 {
-	BOOL bOk = false;
+	bool bOk = false;
 	CSize l_Size;
 	_variant_t svVariant;
 
@@ -830,10 +830,8 @@ SVIPDoc* ToolSetView::GetIPDoc() const
 	return dynamic_cast<SVIPDoc*>(GetDocument());
 }
 
-BOOL ToolSetView::GetParameters(SVObjectWriter& rWriter)
+void ToolSetView::GetParameters(SVObjectWriter& rWriter)
 {
-	BOOL bOk = true;
-
 	CRect l_cRect;
 
 	GetWindowRect(l_cRect);
@@ -847,8 +845,6 @@ BOOL ToolSetView::GetParameters(SVObjectWriter& rWriter)
 	svVariant = l_cRect.Width();
 	rWriter.WriteAttribute(SvXml::CTAG_CELL_WIDTH, svVariant);
 	svVariant.Clear();
-
-	return bOk;
 }
 
 const SVToolGrouping& ToolSetView::GetToolGroupings() const

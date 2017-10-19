@@ -152,9 +152,9 @@ const SVString& SVFileNameClass::GetFileExtensionFilterList() const
 	return m_FileExtensionFilterList;
 }
 
-BOOL SVFileNameClass::SetFileType(DWORD dwFileType)
+bool SVFileNameClass::SetFileType(DWORD dwFileType)
 {
-	BOOL bOk = false;
+	bool bOk = false;
 
 	m_FileType = dwFileType;
 
@@ -185,7 +185,7 @@ BOOL SVFileNameClass::SetFileType(DWORD dwFileType)
 			SetFileSaveFlags( OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER );
 			SetFileExtensionFilterList( _T("Digitizer Files (*.cca)|*.cca||") );
 
-			bOk = TRUE;
+			bOk = true;
 			break;
 		}
 		case SV_IMAGE_SOURCE_FILE_TYPE:
@@ -255,7 +255,7 @@ BOOL SVFileNameClass::SetFileType(DWORD dwFileType)
 			SetFileSaveFlags( OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT | OFN_ENABLESIZING | OFN_EXPLORER );
 			SetFileExtensionFilterList( _T("Text Files (*.txt)|*.txt|All Files (*.*)|*.*||") );
 
-			bOk = TRUE;
+			bOk = true;
 			break;
 		}
 		case SV_OCR_MATCH_STRING_FILE_TYPE:
@@ -309,7 +309,7 @@ BOOL SVFileNameClass::SetFileType(DWORD dwFileType)
 	return bOk;
 }
 
-BOOL SVFileNameClass::SetFullFileName(LPCTSTR szFullName)
+void SVFileNameClass::SetFullFileName(LPCTSTR szFullName)
 {
 	SVString sFullName;
 	if (szFullName)
@@ -341,10 +341,9 @@ BOOL SVFileNameClass::SetFullFileName(LPCTSTR szFullName)
 		SetExtension( ext );
 		SetPathName( sPathName.c_str() );
 	}
-	return true;
 }
 
-BOOL SVFileNameClass::SetPathName(LPCTSTR szPathName)
+void SVFileNameClass::SetPathName(LPCTSTR szPathName)
 {
 	if (szPathName)
 	{
@@ -357,10 +356,9 @@ BOOL SVFileNameClass::SetPathName(LPCTSTR szPathName)
 	{
 		m_PathName.clear();
 	}
-	return true;
 }
 
-BOOL SVFileNameClass::SetFileName(LPCTSTR szFileName)
+void SVFileNameClass::SetFileName(LPCTSTR szFileName)
 {
 	SVString sFullFileName = GetPathName();
 
@@ -377,10 +375,10 @@ BOOL SVFileNameClass::SetFileName(LPCTSTR szFileName)
 		}
 	}
 
-	return SetFullFileName( sFullFileName.c_str() );
+	SetFullFileName( sFullFileName.c_str() );
 }
 
-BOOL SVFileNameClass::SetFileNameOnly(LPCTSTR szFileName)
+void SVFileNameClass::SetFileNameOnly(LPCTSTR szFileName)
 {
 	if (szFileName)
 	{
@@ -391,10 +389,9 @@ BOOL SVFileNameClass::SetFileNameOnly(LPCTSTR szFileName)
 	{
 		m_FileNameOnly.clear();
 	}
-	return true;
 }
 
-BOOL SVFileNameClass::SetExtension(LPCTSTR szExtension)
+void SVFileNameClass::SetExtension(LPCTSTR szExtension)
 {
 	if (szExtension)
 	{
@@ -404,11 +401,9 @@ BOOL SVFileNameClass::SetExtension(LPCTSTR szExtension)
 	{
 		m_Extension.clear();
 	}
-
-	return true;
 }
 
-BOOL SVFileNameClass::SetFileSelectDialogTitle(LPCTSTR szTitle)
+void SVFileNameClass::SetFileSelectDialogTitle(LPCTSTR szTitle)
 {
 	if (szTitle)
 	{
@@ -418,11 +413,9 @@ BOOL SVFileNameClass::SetFileSelectDialogTitle(LPCTSTR szTitle)
 	{
 		m_FileSelectDialogTitle.clear();
 	}
-
-	return true;
 }
 
-BOOL SVFileNameClass::SetFileSaveDialogTitle(LPCTSTR szTitle)
+void SVFileNameClass::SetFileSaveDialogTitle(LPCTSTR szTitle)
 {
 	if (szTitle)
 	{
@@ -432,10 +425,9 @@ BOOL SVFileNameClass::SetFileSaveDialogTitle(LPCTSTR szTitle)
 	{
 		m_FileSaveDialogTitle.clear();
 	}
-	return true;
 }
 
-BOOL SVFileNameClass::SetDefaultFullFileName(LPCTSTR FullName)
+void SVFileNameClass::SetDefaultFullFileName(LPCTSTR FullName)
 {
 	SVString sFullName;
 
@@ -468,11 +460,9 @@ BOOL SVFileNameClass::SetDefaultFullFileName(LPCTSTR FullName)
 		SetDefaultFileExtension( SVString(ext) );
 		SetDefaultPathName( sPathName );
 	}
-
-	return true;
 }
 
-BOOL SVFileNameClass::SetDefaultPathName(const SVString& rPath)
+void SVFileNameClass::SetDefaultPathName(const SVString& rPath)
 {
 	if( !rPath.empty() )
 	{
@@ -485,47 +475,36 @@ BOOL SVFileNameClass::SetDefaultPathName(const SVString& rPath)
 	{
 		m_DefaultPathName.clear();
 	}
-	return true;
 }
 
-BOOL SVFileNameClass::SetDefaultFileName(const SVString& rName)
+void SVFileNameClass::SetDefaultFileName(const SVString& rName)
 {
 	m_DefaultFileName = rName;
-
-	return true;
 }
 
-BOOL SVFileNameClass::SetDefaultFileExtension(const SVString& rExtension)
+void SVFileNameClass::SetDefaultFileExtension(const SVString& rExtension)
 {
 	m_DefaultFileExtension = rExtension;
-
-	return true;
 }
 
-BOOL SVFileNameClass::SetFileSelectFlags(DWORD dwFlags)
+void SVFileNameClass::SetFileSelectFlags(DWORD dwFlags)
 {
 	m_FileSelectFlags = dwFlags;
-
-	return true;
 }
 
-BOOL SVFileNameClass::SetFileSaveFlags(DWORD dwFlags)
+void SVFileNameClass::SetFileSaveFlags(DWORD dwFlags)
 {
 	m_FileSaveFlags = dwFlags;
-
-	return true;
 }
 
-BOOL SVFileNameClass::SetFileExtensionFilterList(const SVString& rFilter)
+void SVFileNameClass::SetFileExtensionFilterList(const SVString& rFilter)
 {
 	m_FileExtensionFilterList = rFilter;
-
-	return true;
 }
 
-BOOL SVFileNameClass::SelectPath()
+bool SVFileNameClass::SelectPath()
 {
-	BOOL bOk = false;
+	bool bOk = false;
 	SVString strPath;
 
 	SVString initialDir = GetPathName();
@@ -540,15 +519,16 @@ BOOL SVFileNameClass::SelectPath()
 	if ( IDOK == dlg.DoModal() )
 	{
 		strPath = dlg.GetPathName();
-		bOk = SetPathName( strPath.c_str() );
+		SetPathName( strPath.c_str() );
 		SetDefaultPathName( strPath.c_str() );
+		bOk = true;
 	}
 	return bOk;
 }
 
-BOOL SVFileNameClass::SelectFile()
+bool SVFileNameClass::SelectFile()
 {
-	BOOL bOk = false;
+	bool bOk = false;
 
 	if ( GetDefaultPathName().empty() )
 	{
@@ -592,18 +572,19 @@ BOOL SVFileNameClass::SelectFile()
 
 	if ( IDOK == dlg.DoModal() )
 	{
-		bOk = SetFullFileName( dlg.GetPathName() );
+		SetFullFileName( dlg.GetPathName() );
 		
 		SetDefaultFullFileName( dlg.GetPathName() );
+		bOk = true;
 	}
 
 	return bOk;
 }
 
-BOOL SVFileNameClass::SaveFile()
+bool SVFileNameClass::SaveFile()
 {
-	BOOL bOk = false;
-	BOOL bDone = false;
+	bool bOk = false;
+	bool bDone = false;
 
 	if ( GetDefaultPathName().empty() )
 	{
@@ -653,7 +634,7 @@ BOOL SVFileNameClass::SaveFile()
 		{
 			SVString PathName = checkFileName( dlg.GetPathName(), dlg.GetFileName() );
 
-			bOk = SetFullFileName( PathName.c_str() );
+			SetFullFileName( PathName.c_str() );
 			SetDefaultFullFileName( PathName.c_str() );
 
 			bDone = GetFileType() != SV_SVX_CONFIGURATION_FILE_TYPE ;
@@ -677,7 +658,7 @@ BOOL SVFileNameClass::SaveFile()
 					csNewFullFileName += _T( "\\" );
 					csNewFullFileName += GetFileName();
 
-					bOk = SetFullFileName( csNewFullFileName.c_str() );
+					SetFullFileName( csNewFullFileName.c_str() );
 
 					bDone = 0 != _access( GetFullFileName().c_str(), 0 );
 

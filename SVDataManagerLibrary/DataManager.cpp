@@ -681,9 +681,9 @@ long SVDataManager::GetLockCountByType( LONGLONG IndexArrayHandle, SVDataManager
 	return l_Count;
 }
 
-BOOL SVDataManager::Lock( unsigned long Timeout ) const
+bool SVDataManager::Lock( unsigned long Timeout ) const
 {
-	BOOL Result = m_IsLockCreated;
+	bool Result = m_IsLockCreated;
 	
 	if( Result )
 	{
@@ -696,7 +696,7 @@ BOOL SVDataManager::Lock( unsigned long Timeout ) const
 			SvTl::SVTimeStamp l_CurrentTime = 0.0;
 			SvTl::SVTimeStamp l_EndTime = 0.0;
 			
-			BOOL l_LockAcquired = false;
+			bool l_LockAcquired = false;
 			
 			l_CurrentTime = SvTl::GetTimeStamp();
 			
@@ -704,7 +704,7 @@ BOOL SVDataManager::Lock( unsigned long Timeout ) const
 			
 			while( ! l_LockAcquired && l_CurrentTime <= l_EndTime )
 			{
-				l_LockAcquired = ::TryEnterCriticalSection( &m_Lock );
+				l_LockAcquired = ::TryEnterCriticalSection(&m_Lock) ? true : false;
 				
 				if( ! l_LockAcquired && l_CurrentTime < l_EndTime)
 				{
@@ -724,9 +724,9 @@ BOOL SVDataManager::Lock( unsigned long Timeout ) const
 	return Result;
 }
 
-BOOL SVDataManager::Unlock() const
+bool SVDataManager::Unlock() const
 {
-	BOOL Result = m_IsLockCreated;
+	bool Result = m_IsLockCreated;
 	
 	if( Result )
 	{

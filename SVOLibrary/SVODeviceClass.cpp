@@ -407,7 +407,7 @@ HRESULT SVODeviceClass::Process( bool& p_WaitForEvents )
 
 	if ( mbIsValid )
 	{
-		BOOL bDone = true;
+		bool bDone = true;
 
 		lRes = mUsedQueue.size();
 

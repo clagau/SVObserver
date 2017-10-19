@@ -68,10 +68,10 @@ public:
 #pragma region private
 private:
 	// Set new Affinity to thread handle.
-	BOOL SetThreadHandleAffinity( HANDLE hThread, DWORD_PTR dwNewAffinity );
+	bool SetThreadHandleAffinity( HANDLE hThread, DWORD_PTR dwNewAffinity );
 	public:
 	// Set Affinity based on Thread Name.
-	BOOL SetAffinity( LPCTSTR ThreadName, DWORD_PTR dwNewAffinity );
+	bool SetAffinity( LPCTSTR ThreadName, DWORD_PTR dwNewAffinity );
 
 	// Remove will delete the entry from the thread list.
 	HRESULT Remove( HANDLE p_hThread );

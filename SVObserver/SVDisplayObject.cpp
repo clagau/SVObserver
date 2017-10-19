@@ -223,9 +223,9 @@ BOOL SVDisplayObject::Destroy()
 	return true;
 }
 
-BOOL SVDisplayObject::CanGoOnline()
+bool SVDisplayObject::CanGoOnline()
 {
-	BOOL l_Status = m_CriticalSectionCreated;
+	bool l_Status = m_CriticalSectionCreated;
 
 	l_Status &= ( nullptr != GetIPDoc() );
 	l_Status &= ( nullptr != m_hStopEvent );
@@ -235,10 +235,10 @@ BOOL SVDisplayObject::CanGoOnline()
 	return l_Status;
 }// end CanGoOnline
 
-BOOL SVDisplayObject::GoOnline()
+bool SVDisplayObject::GoOnline()
 {
 	if( !::SetThreadPriority( m_hDisplayThread, THREAD_PRIORITY_IDLE ) )
-		return FALSE;
+		return false;
 
 	::InterlockedExchange( &m_IPDocDisplayComplete, 1 );
 
@@ -246,10 +246,10 @@ BOOL SVDisplayObject::GoOnline()
 
 	GetIPDoc()->UpdateAllViews( nullptr );
 
-	return TRUE;
+	return true;
 }// end GoOnline
 
-BOOL SVDisplayObject::GoOffline()
+bool SVDisplayObject::GoOffline()
 {
 	SVIPDoc* l_pIPDoc = GetIPDoc();
 
@@ -259,9 +259,9 @@ BOOL SVDisplayObject::GoOffline()
 	}
 
 	if( !::SetThreadPriority( m_hDisplayThread, THREAD_PRIORITY_NORMAL ) )
-		return FALSE;
+		return false;
 
-	return TRUE;
+	return true;
 }// end GoOffline
 
 void SVDisplayObject::SetIPDocDisplayComplete()

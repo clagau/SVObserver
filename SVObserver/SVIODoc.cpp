@@ -409,21 +409,16 @@ CFile* SVIODoc::GetFile( LPCTSTR lpszFileName, UINT nOpenFlags, CFileException* 
 
 BOOL SVIODoc::OnOpenDocument(LPCTSTR lpszPathName)
 {
-	BOOL bOk = FALSE;
-
 	if ( lpszPathName )
 	{
-		bOk = msvFileName.SetFullFileName( lpszPathName );
+		msvFileName.SetFullFileName( lpszPathName );
 	}
 	else
 	{
-		bOk = msvFileName.SetFullFileName( GetPathName() );
+		msvFileName.SetFullFileName( GetPathName() );
 	}
 
-	if ( bOk )
-	{
-		bOk = SVFileNameManagerClass::Instance().LoadItem( &msvFileName );
-	}
+	BOOL bOk = SVFileNameManagerClass::Instance().LoadItem( &msvFileName );
 
 	if ( bOk )
 	{
@@ -436,23 +431,19 @@ BOOL SVIODoc::OnOpenDocument(LPCTSTR lpszPathName)
 BOOL SVIODoc::OnSaveDocument(LPCTSTR lpszPathName)
 {
 
-	BOOL bOk = msvFileName.SetFullFileName( lpszPathName );
+	msvFileName.SetFullFileName( lpszPathName );
 
-	if ( bOk && 0 != SvUl_SF::CompareNoCase( msvFileName.GetPathName(),SVFileNameManagerClass::Instance().GetRunPathName() ) )
+	if ( 0 != SvUl_SF::CompareNoCase( msvFileName.GetPathName(),SVFileNameManagerClass::Instance().GetRunPathName() ) )
 	{
-		bOk = msvFileName.SetPathName( SVFileNameManagerClass::Instance().GetRunPathName().c_str() );
+		msvFileName.SetPathName( SVFileNameManagerClass::Instance().GetRunPathName().c_str() );
 	}
 
-	if ( bOk && 0 != SvUl_SF::CompareNoCase( msvFileName.GetExtension(), SVString(_T(".iod") ) ) )
+	if ( 0 != SvUl_SF::CompareNoCase( msvFileName.GetExtension(), SVString(_T(".iod") ) ) )
 	{
-		bOk = msvFileName.SetExtension( _T(".iod") );
+		msvFileName.SetExtension( _T(".iod") );
 	}
 	
-	if ( bOk )
-	{
-		bOk = CDocument::OnSaveDocument( msvFileName.GetFullFileName().c_str() );
-	}
-	
+	BOOL bOk = CDocument::OnSaveDocument( msvFileName.GetFullFileName().c_str() );
 	if ( bOk )
 	{
 		bOk = SVFileNameManagerClass::Instance().SaveItem( &msvFileName );

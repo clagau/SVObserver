@@ -663,7 +663,7 @@ BOOL ToolSizeAdjustTask::UseSizeAdjust( SVObjectClass *pObject)
 	return ret;
 }
 
-BOOL ToolSizeAdjustTask::UseAutoMode() const
+bool ToolSizeAdjustTask::UseAutoMode() const
 {
 	long Mode(TSModeCount);
 	for( int vType  = TSPositionX ; vType < TSValuesCount ; ++vType)

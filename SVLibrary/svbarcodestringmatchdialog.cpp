@@ -151,7 +151,7 @@ END_MESSAGE_MAP()
 
 void SVBarCodeStringMatchDialog::OnBarcodeSaveInFile() 
 {
-	UpdateData (TRUE);
+	UpdateData (true);
 	EnableFileSelect (m_SaveInFile);
 }
 
@@ -162,11 +162,11 @@ void SVBarCodeStringMatchDialog::OnBarCodeSelectFile()
 
 	svfnFileName.SetFileType ( SV_BAR_CODE_STORE_VALUE_FILE_TYPE );
 
-	if ( svfnFileName.SelectFile () == IDOK )
+	if ( svfnFileName.SelectFile () )
 	{
 		m_StringFileName = svfnFileName.GetFullFileName().c_str();
 
-		UpdateData ( FALSE );
+		UpdateData ( false );
 	}
 	// end SES 18-Jan-2001
 }
@@ -199,10 +199,10 @@ void SVBarCodeStringMatchDialog::OnBcMultiSelectfile()
 
 	svfnFileName.SetFileType ( SV_BAR_CODE_MATCH_STRING_FILE_TYPE );
 
-	if ( svfnFileName.SelectFile () == IDOK )
+	if ( svfnFileName.SelectFile () )
 	{
 		m_MultiMatchFileName = svfnFileName.GetFullFileName().c_str();
 
-		UpdateData ( FALSE );
+		UpdateData ( false );
 	}
 }

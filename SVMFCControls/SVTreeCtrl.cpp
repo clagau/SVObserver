@@ -112,7 +112,7 @@ namespace SvMc
 			{
 				BOOL bCheckState = GetCheckState(hItem);
 
-				BOOL bNewCheckState = bCheckState ? FALSE : TRUE;
+				BOOL bNewCheckState = bCheckState ? false : true;
 
 				SetCheckState(hItem,bNewCheckState);
 			}

@@ -78,7 +78,7 @@ public:
 	//This operator will search the global application list 
 	//for a match for the pointer address.  It will reset the 
 	//array index pointer to the appropriate array element.
-	static BOOL FindItem(SVFileNameClass* pFileName);
+	static bool FindItem(SVFileNameClass* pFileName);
 
 	//This operator will return the pointer address to the 
 	//appropriate file object at the current array index.

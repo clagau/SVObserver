@@ -98,8 +98,7 @@ BOOL WINAPI SVSetAffinity( BSTR ThreadName, DWORD_PTR dwNewAffinity )
 {
 	_bstr_t bstName;
 	bstName.Attach( ThreadName );
-	BOOL bOk = gThreadManager.SetAffinity( bstName, dwNewAffinity);
-	return bOk;
+	return gThreadManager.SetAffinity(bstName, dwNewAffinity);
 }
 
 // Remove will delete the entry from the thread list.

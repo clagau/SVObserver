@@ -311,10 +311,8 @@ void SVImageViewScroll::SetImageSize( SIZE p_oSize )
 	ScrollToPosition( l_oPoint );
 }
 
-BOOL SVImageViewScroll::GetParameters(SVObjectWriter& rWriter)
+void SVImageViewScroll::GetParameters(SVObjectWriter& rWriter)
 {
-	BOOL bOk = TRUE;
-
 	CRect l_WindowRect;
 	CSize l_ScrollSize = GetTotalSize();
 	CPoint l_ScrollPoint = GetScrollPosition();
@@ -324,7 +322,7 @@ BOOL SVImageViewScroll::GetParameters(SVObjectWriter& rWriter)
 	_variant_t svVariant;
 
 	rWriter.StartElement(SvXml::CTAG_IMAGE_VIEW);
-	bOk = m_pView->GetParameters(rWriter) && bOk;
+	m_pView->GetParameters(rWriter);
 	rWriter.EndElement();
 
 	rWriter.StartElement(SvXml::CTAG_SCROLL_SIZE);
@@ -356,13 +354,11 @@ BOOL SVImageViewScroll::GetParameters(SVObjectWriter& rWriter)
 	svVariant = l_WindowRect.Width();
 	rWriter.WriteAttribute(SvXml::CTAG_CELL_WIDTH, svVariant);
 	svVariant.Clear();
-
-	return bOk;
 }
 
-BOOL SVImageViewScroll::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent )
+bool SVImageViewScroll::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent )
 {
-	BOOL bOk = FALSE;
+	bool bOk = false;
 
 	_variant_t svVariant;
 
@@ -463,9 +459,9 @@ BOOL SVImageViewScroll::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHa
 	return bOk;
 }
 
-BOOL SVImageViewScroll::CheckParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent )
+bool SVImageViewScroll::CheckParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent )
 {
-	BOOL bOk = FALSE;
+	bool bOk = false;
 
 	_variant_t svVariant;
 

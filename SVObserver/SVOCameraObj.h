@@ -40,11 +40,11 @@ public:
 	void SetCameraID(int CameraID);
     void SetCameraFile(const SVString& rFileName);
 	void SetCameraFileChanged();
-	BOOL GetCameraFileChanged();
+	bool GetCameraFileChanged();
     void SetBandNumber(int BandNumber);
 	void SetCameraFileParams(const SVDeviceParamCollection& rParams);
 	void SetCameraDeviceParams(const SVDeviceParamCollection& rParams);
-    BOOL IsCameraObjOk();
+    bool IsCameraObjOk();
 
 	bool IsFileAcquisition() const;
 	void SetFileAcquisitionMode(bool FileAcquisition);
@@ -75,9 +75,9 @@ private:  //data members
     int m_BandNumber;
     bool m_IsColor;
     SVString m_CameraFile;
-    BOOL m_CameraFileSet;
-	BOOL m_CameraFileChanged;
-    BOOL m_CameraObjOk;
+    bool m_CameraFileSet;
+	bool m_CameraFileChanged;
+    bool m_CameraObjOk;
 	SVDeviceParamCollection m_CameraDeviceParams;
 	SVDeviceParamCollection m_CameraFileParams;
 

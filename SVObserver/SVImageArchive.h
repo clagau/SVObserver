@@ -26,14 +26,14 @@ class SVImageClass;
 class SVImageArchiveClass
 {
 public:
-	BOOL LoadImageArchiveFile( SVImageObjectClassPtr p_AcquisitionCircleBufferPtr );
-	BOOL ImageArchiveFileExists( const SVString& rFileName );
-	BOOL LoadImageArchiveFile( SVImageClass *pImage );
-	BOOL LoadImageArchiveFile( SVSmartHandlePointer p_HandlePtr );
+	bool LoadImageArchiveFile( SVImageObjectClassPtr p_AcquisitionCircleBufferPtr );
+	bool ImageArchiveFileExists( const SVString& rFileName );
+	bool LoadImageArchiveFile( SVImageClass *pImage );
+	bool LoadImageArchiveFile( SVSmartHandlePointer p_HandlePtr );
 	DWORD NextFileName ();
 	DWORD ResetFileNumber ();
-	BOOL SetImageArchivePath( const SVString& rPath );
-	BOOL SetImageArchiveFileTemplate(const SVString& rTemplate);
+	void SetImageArchivePath( const SVString& rPath );
+	void SetImageArchiveFileTemplate(const SVString& rTemplate);
 	SVImageArchiveClass();
 	SVImageArchiveClass( const SVString& rFileName);
 	virtual ~SVImageArchiveClass();

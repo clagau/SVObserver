@@ -68,7 +68,7 @@ const SVString& SVOPPQObj::GetAttachedTriggerName() const
 	return m_AttachedTrigger;
 }
 
-BOOL SVOPPQObj::AttachCameraToPPQ( LPCTSTR CameraName )
+bool SVOPPQObj::AttachCameraToPPQ( LPCTSTR CameraName )
 {
 	bool Result( false );
 	//check to see if it is already in list
@@ -83,7 +83,7 @@ BOOL SVOPPQObj::AttachCameraToPPQ( LPCTSTR CameraName )
 	return Result;
 }
 
-BOOL SVOPPQObj::DetachCameraFromPPQ(LPCTSTR CameraName)
+bool SVOPPQObj::DetachCameraFromPPQ(LPCTSTR CameraName)
 {
 	bool Result( false );
 	
@@ -118,7 +118,7 @@ SVString SVOPPQObj::GetAttachedCamera(int iPos) const
 	return SVString();
 }
 
-BOOL SVOPPQObj::AttachInspectionToPPQ(LPCTSTR InspectName)
+bool SVOPPQObj::AttachInspectionToPPQ(LPCTSTR InspectName)
 {
 	bool Result( false );
 	
@@ -132,7 +132,7 @@ BOOL SVOPPQObj::AttachInspectionToPPQ(LPCTSTR InspectName)
 	return Result;
 }
 
-BOOL SVOPPQObj::DetachInspectionFromPPQ(LPCTSTR InspectName)
+bool SVOPPQObj::DetachInspectionFromPPQ(LPCTSTR InspectName)
 {
 	bool Result( false );
 	

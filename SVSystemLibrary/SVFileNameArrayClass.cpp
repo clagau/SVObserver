@@ -49,10 +49,10 @@ LPCTSTR SVFileNameArrayClass::GetFileNameList()
 	return mcsFileList.c_str();
 }
 
-BOOL SVFileNameArrayClass::SetFileNameList(LPCTSTR szFileNameList)
+bool SVFileNameArrayClass::SetFileNameList(LPCTSTR szFileNameList)
 {
-	BOOL bOk = true;
-	BOOL bDone = false;
+	bool bOk = true;
+	bool bDone = false;
 
 	SVString sTemp;
 	SVString sFileNameList = szFileNameList;

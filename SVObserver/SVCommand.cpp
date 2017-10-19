@@ -71,8 +71,8 @@
 static char THIS_FILE[] = __FILE__;
 #endif
 
-volatile BOOL CSVCommand::m_bRunStreamData = FALSE;
-volatile BOOL CSVCommand::m_bRegisteredStream = FALSE;
+volatile bool CSVCommand::m_bRunStreamData = false;
+volatile bool CSVCommand::m_bRegisteredStream = false;
 volatile DWORD CSVCommand::m_dwStreamDataProcessId = 0;
 volatile long CSVCommand::m_lLastStreamedProduct = -1;
 volatile HANDLE CSVCommand::m_hStopStreamEvent = nullptr;
@@ -108,30 +108,24 @@ CSVCommand::~CSVCommand()
 
 STDMETHODIMP CSVCommand::SVGetSVIMState(unsigned long *ulState)
 {
-	HRESULT hrResult;
-	BOOL bSuccess;
+	HRESULT hrResult = S_OK;
+	bool bSuccess = false;
 
-	do
+	try
 	{
-		hrResult = S_OK;
-		bSuccess = FALSE;
+		bSuccess = GlobalRCGetState(ulState);
+	}
+	catch (...)
+	{
+		bSuccess = false;
+	}
 
-		try
-		{
-			bSuccess = GlobalRCGetState( ulState );
-		}
-		catch (...)
-		{
-			bSuccess = FALSE;
-		}
-
-		if( !bSuccess )
-		{
-			SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-			Exception.setMessage( SVMSG_CMDCOMSRV_ERROR, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
-			hrResult = S_FALSE;
-		}
-	} while (0);
+	if (!bSuccess)
+	{
+		SvStl::MessageMgrStd Exception(SvStl::LogOnly);
+		Exception.setMessage(SVMSG_CMDCOMSRV_ERROR, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
+		hrResult = S_FALSE;
+	}
 
 	return hrResult;
 }// end SVGetSVIMState
@@ -199,8 +193,8 @@ STDMETHODIMP CSVCommand::SVGetSVIMMode(unsigned long* p_plSVIMMode)
 
 STDMETHODIMP CSVCommand::SVSetSVIMState(unsigned long ulSVIMState)
 {
-	HRESULT hrResult;
-	BOOL bSuccess;
+	HRESULT hrResult = S_OK;
+	bool bSuccess = false;
 
 	if( SVSVIMStateClass::CheckState( SV_STATE_EDITING ) )
 	{
@@ -208,9 +202,6 @@ STDMETHODIMP CSVCommand::SVSetSVIMState(unsigned long ulSVIMState)
 	}
 	else
 	{
-		hrResult = S_OK;
-		bSuccess = FALSE;
-
 		try
 		{
 			if( ulSVIMState )
@@ -221,16 +212,17 @@ STDMETHODIMP CSVCommand::SVSetSVIMState(unsigned long ulSVIMState)
 				{
 					return SVMSG_63_SVIM_IN_WRONG_MODE;
 				}
-				bSuccess = GlobalRCGoOnline();
+				GlobalRCGoOnline();
 			}
 			else
 			{
-				bSuccess = GlobalRCGoOffline();
+				GlobalRCGoOffline();
 			}
+			bSuccess = true;
 		}
 		catch (...)
 		{
-			bSuccess = FALSE;
+			bSuccess = false;
 		}
 
 		if( !bSuccess )
@@ -249,8 +241,6 @@ STDMETHODIMP CSVCommand::SVGetSVIMConfig( long lOffset, long *lBlockSize, BSTR *
 	SVString PackedFileName;
 	SVString ConfigName;
 	SVPackedFile PackedFile;
-	HRESULT hrResult;
-	BOOL bSuccess;
 	CFile binFile;
 	CFileStatus Status;
 	long lSize = 0;
@@ -258,114 +248,105 @@ STDMETHODIMP CSVCommand::SVGetSVIMConfig( long lOffset, long *lBlockSize, BSTR *
 	long lFileSize = 0;
 	long lBytesToGo = 0;
 	CFileException *ex;
-	BOOL bHrSet = FALSE;
+	bool bHrSet = false;
+	HRESULT hrResult = S_OK;
+	bool bSuccess = false;
 
-	do
+	try
 	{
-		hrResult = S_OK;
-		bSuccess = FALSE;
+		ConfigName = GlobalRCGetConfigurationName();
 
-		try
+		bSuccess = !ConfigName.empty();
+		if (bSuccess)
 		{
-			ConfigName = GlobalRCGetConfigurationName();
+			PackedFileName = ConfigName + _T(".svf");
+		}
 
-			bSuccess = !ConfigName.empty();
-			if( bSuccess )
-			{
-				PackedFileName = ConfigName + _T(".svf");
-			}
-
-			// check offset: if zero then it is first time in
-			if (lOffset < 1)
-			{
-				// on first time
-				// pack files to temp area before sending packets
-
-				if( bSuccess )
-				{
-					bSuccess = GlobalRCSaveConfiguration();
-				}
-
-				if( bSuccess )
-				{
-					bSuccess = PackedFile.PackFiles( ConfigName.c_str(), PackedFileName.c_str() );
-				}
-			}//offset < 1  end of the fist time
-
-			//send data back to control
+		// check offset: if zero then it is first time in
+		if (lOffset < 1)
+		{
+			// on first time
+			// pack files to temp area before sending packets
 
 			if (bSuccess)
 			{
-				ex = new CFileException;
-				if( binFile.Open( PackedFileName.c_str(), CFile::shareDenyNone | CFile::modeRead | CFile::typeBinary, ex ) )
-				{
-					lFileSize = (long)binFile.GetLength();
-					lBytesToGo = lFileSize - lOffset;
-					if ( (*lBlockSize > lBytesToGo) || (*lBlockSize < 1) )
-					{
-						*lBlockSize = lBytesToGo;
-						*bLastFlag = TRUE;
-					}
+				GlobalRCSaveConfiguration();
+				bSuccess = PackedFile.PackFiles(ConfigName.c_str(), PackedFileName.c_str());
+			}
+		}//offset < 1  end of the fist time
 
-					*bstrFileData = SysAllocStringByteLen(nullptr, *lBlockSize);
-					if ( nullptr == (*bstrFileData) )
-					{
-						AfxThrowMemoryException( );
-					}
+		//send data back to control
 
-					binFile.Seek( lOffset, CFile::begin );
-					binFile.Read( *bstrFileData, *lBlockSize );
-					// Close the file
-					binFile.Close();
-					ex->Delete();
-				}// end if
-				else
+		if (bSuccess)
+		{
+			ex = new CFileException;
+			if (binFile.Open(PackedFileName.c_str(), CFile::shareDenyNone | CFile::modeRead | CFile::typeBinary, ex))
+			{
+				lFileSize = (long)binFile.GetLength();
+				lBytesToGo = lFileSize - lOffset;
+				if ((*lBlockSize > lBytesToGo) || (*lBlockSize < 1))
 				{
-					//unable to open file
-					bSuccess = FALSE;
-					throw (ex);
+					*lBlockSize = lBytesToGo;
+					*bLastFlag = true;
 				}
-			}//end if
-		}
-		catch (CMemoryException *memEx)
-		{
-			TCHAR szCause[255];
-			memEx->GetErrorMessage(szCause,255);
-#ifdef _DEBUG
-			SVString Formatted = _T("ERROR - ");
-			Formatted += szCause;
-			ASSERT(false);// szFormatted
-#endif
-			hrResult = SVMSG_CMDCOMSRV_MEMORY_ERROR;
-			bHrSet = TRUE;
-			memEx->Delete();
-		}
-		catch (CFileException *ex)
-		{
-			TCHAR szCause[255];
-			ex->GetErrorMessage(szCause,255);
-#ifdef _DEBUG
-			SVString Formatted = _T("ERROR - ");
-			Formatted += szCause;
-			ASSERT(false);//szFormatted
-#endif
-			hrResult = SVMSG_CMDCOMSRV_FILE_ERROR;
-			bHrSet = TRUE;
-			ex->Delete();
-		}
-		catch (...)
-		{
-			bSuccess = FALSE;
-		}
 
-		if( (!bSuccess) && (!bHrSet) )
-		{
-			SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-			Exception.setMessage( SVMSG_CMDCOMSRV_ERROR, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
-			hrResult = S_FALSE;
-		}
-		break;
-	} while (0);
+				*bstrFileData = SysAllocStringByteLen(nullptr, *lBlockSize);
+				if (nullptr == (*bstrFileData))
+				{
+					AfxThrowMemoryException();
+				}
+
+				binFile.Seek(lOffset, CFile::begin);
+				binFile.Read(*bstrFileData, *lBlockSize);
+				// Close the file
+				binFile.Close();
+				ex->Delete();
+			}// end if
+			else
+			{
+				//unable to open file
+				bSuccess = false;
+				throw (ex);
+			}
+		}//end if
+	}
+	catch (CMemoryException *memEx)
+	{
+		TCHAR szCause[255];
+		memEx->GetErrorMessage(szCause, 255);
+#ifdef _DEBUG
+		SVString Formatted = _T("ERROR - ");
+		Formatted += szCause;
+		ASSERT(false);// szFormatted
+#endif
+		hrResult = SVMSG_CMDCOMSRV_MEMORY_ERROR;
+		bHrSet = true;
+		memEx->Delete();
+	}
+	catch (CFileException *ex)
+	{
+		TCHAR szCause[255];
+		ex->GetErrorMessage(szCause, 255);
+#ifdef _DEBUG
+		SVString Formatted = _T("ERROR - ");
+		Formatted += szCause;
+		ASSERT(false);//szFormatted
+#endif
+		hrResult = SVMSG_CMDCOMSRV_FILE_ERROR;
+		bHrSet = true;
+		ex->Delete();
+	}
+	catch (...)
+	{
+		bSuccess = false;
+	}
+
+	if ((!bSuccess) && (!bHrSet))
+	{
+		SvStl::MessageMgrStd Exception(SvStl::LogOnly);
+		Exception.setMessage(SVMSG_CMDCOMSRV_ERROR, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
+		hrResult = S_FALSE;
+	}
 
 	return hrResult;
 }// end SVGetSVIMConfig
@@ -375,12 +356,11 @@ STDMETHODIMP CSVCommand::SVPutSVIMConfig(long lOffset, long lBlockSize, BSTR *bs
 	SVString configFileName;
 	SVString PackedFileName;
 	SVPackedFile svPackedFile;
-	HRESULT hrResult;
-	BOOL bSuccess;
+	HRESULT hrResult = S_OK;
 	CFile binFile;
-	BOOL bRet = FALSE;
+	bool bRet = false;
 	CFileException *ex;
-	BOOL bHrSet = FALSE;
+	bool bHrSet = false;
 
 	// Check if we are in an allowed state first
 	// Not allowed to perform if Mode is Regression or Test
@@ -391,116 +371,111 @@ STDMETHODIMP CSVCommand::SVPutSVIMConfig(long lOffset, long lBlockSize, BSTR *bs
 
 	SVSVIMStateClass::AddState( SV_STATE_REMOTE_CMD );
 
-	do
-	{
-		hrResult = S_OK;
-		bSuccess = FALSE;
+	bool bSuccess = false;
 
-		try
+	try
+	{
+		if (CreateDirPath(SvStl::GlobalPath::Inst().GetTempPath().c_str()))
 		{
-			if( CreateDirPath(SvStl::GlobalPath::Inst().GetTempPath().c_str()) ) 
+			PackedFileName = SvStl::GlobalPath::Inst().GetTempPath(_T("temp.svf"));
+			ex = new CFileException;
+			if (lOffset < 1)
 			{
-				PackedFileName = SvStl::GlobalPath::Inst().GetTempPath(_T("temp.svf"));
-				ex = new CFileException;
-				if (lOffset < 1)
+				if (binFile.Open(PackedFileName.c_str(), CFile::shareDenyNone | CFile::modeWrite | CFile::modeCreate | CFile::typeBinary, ex))
 				{
-					if (binFile.Open(PackedFileName.c_str(), CFile::shareDenyNone | CFile::modeWrite | CFile::modeCreate | CFile::typeBinary, ex) )
-					{
-						bRet = TRUE;
-					}
-					else
-					{
-						throw (ex);
-					}
+					bRet = true;
 				}
 				else
 				{
-					if(binFile.Open( PackedFileName.c_str(), CFile::shareDenyNone | CFile::modeWrite | CFile::modeCreate | CFile::modeNoTruncate  | CFile::typeBinary, ex) )
-					{
-						bRet = TRUE;
-					}
-					else
-					{
-						throw (ex);
-					}
+					throw (ex);
 				}
-
-				if (bRet)
+			}
+			else
+			{
+				if (binFile.Open(PackedFileName.c_str(), CFile::shareDenyNone | CFile::modeWrite | CFile::modeCreate | CFile::modeNoTruncate | CFile::typeBinary, ex))
 				{
-					binFile.Seek( lOffset, CFile::begin );
-					binFile.Write(*bstrFileData,lBlockSize);
-					binFile.Close();
-					ex->Delete();
-					bSuccess = TRUE;
+					bRet = true;
+				}
+				else
+				{
+					throw (ex);
 				}
 			}
 
-			if (bLastFlag)
+			if (bRet)
+			{
+				binFile.Seek(lOffset, CFile::begin);
+				binFile.Write(*bstrFileData, lBlockSize);
+				binFile.Close();
+				ex->Delete();
+				bSuccess = true;
+			}
+		}
+
+		if (bLastFlag)
+		{
+			// make sure file exists
+			bSuccess = (0 == _access(PackedFileName.c_str(), 0));
+
+			// global function to close config and clean up c:\run dir
+			GlobalRCCloseAndCleanConfiguration();
+
+			if (bSuccess)
+			{
+				//unpack the files in the c:\run directory
+				bSuccess = svPackedFile.UnPackFiles(PackedFileName.c_str(), SvStl::GlobalPath::Inst().GetRunPath().c_str());
+				if (!bSuccess)
+				{
+					hrResult = SVMSG_CMDCOMSRV_PACKEDFILE_ERROR;
+					bHrSet = true;
+					SvStl::MessageMgrStd Exception(SvStl::LogOnly);
+					Exception.setMessage(hrResult, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
+				}
+			}
+
+			if (bSuccess)
+			{
+				// check for a good path on the config in the packed file
+				configFileName = svPackedFile.getConfigFilePath();
+				bSuccess = !(configFileName.empty());
+			}
+
+			if (bSuccess)
 			{
 				// make sure file exists
-				bSuccess = (0 == _access( PackedFileName.c_str(), 0 ) );
+				bSuccess = (0 == _access(configFileName.c_str(), 0));
+			}
 
-				// global function to close config and clean up c:\run dir
-				bSuccess = GlobalRCCloseAndCleanConfiguration();
-
-				if( bSuccess )
-				{
-					//unpack the files in the c:\run directory
-					bSuccess = svPackedFile.UnPackFiles( PackedFileName.c_str(), SvStl::GlobalPath::Inst().GetRunPath().c_str() );
-					if (!bSuccess)
-					{
-						hrResult = SVMSG_CMDCOMSRV_PACKEDFILE_ERROR;
-						bHrSet = TRUE;
-						SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-						Exception.setMessage( hrResult, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
-					}
-				}
-
-				if( bSuccess )
-				{
-					// check for a good path on the config in the packed file
-					configFileName = svPackedFile.getConfigFilePath();
-					bSuccess = !( configFileName.empty() );
-				}
-
-				if( bSuccess )
-				{
-					// make sure file exists
-					bSuccess = ( 0 == _access( configFileName.c_str(), 0 ) );
-				}
-
-				if( bSuccess )
-				{
-					//load the config
-					bSuccess = GlobalRCOpenConfiguration( configFileName.c_str() );
-				}
+			if (bSuccess)
+			{
+				//load the config
+				bSuccess = GlobalRCOpenConfiguration(configFileName.c_str());
 			}
 		}
-		catch (CFileException *theEx)
-		{
-			TCHAR szCause[255];
-			theEx->GetErrorMessage(szCause,255);
+	}
+	catch (CFileException *theEx)
+	{
+		TCHAR szCause[255];
+		theEx->GetErrorMessage(szCause, 255);
 #ifdef _DEBUG
-			SVString Formatted = _T("Error - ");
-			Formatted += szCause;
-			ASSERT(false);//sFormatted
+		SVString Formatted = _T("Error - ");
+		Formatted += szCause;
+		ASSERT(false);//sFormatted
 #endif
-			hrResult = theEx->m_lOsError;
-			theEx->Delete();
-		}
-		catch (...)
-		{
-			bSuccess = FALSE;
-		}
+		hrResult = theEx->m_lOsError;
+		theEx->Delete();
+	}
+	catch (...)
+	{
+		bSuccess = false;
+	}
 
-		if( (!bSuccess) && (!bHrSet) )
-		{
-			SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-			Exception.setMessage( SVMSG_CMDCOMSRV_ERROR, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
-			hrResult = S_FALSE;
-		}
-		break;
-	} while (0);
+	if ((!bSuccess) && (!bHrSet))
+	{
+		SvStl::MessageMgrStd Exception(SvStl::LogOnly);
+		Exception.setMessage(SVMSG_CMDCOMSRV_ERROR, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
+		hrResult = S_FALSE;
+	}
 
 	SVSVIMStateClass::RemoveState( SV_STATE_REMOTE_CMD );
 
@@ -545,7 +520,7 @@ STDMETHODIMP CSVCommand::SVGetSVIMFile(BSTR bstrSourceFile, long lOffset, long *
 				if ( (*lBlockSize > lBytesToGo) || (*lBlockSize < 1) )
 				{
 					*lBlockSize = lBytesToGo;
-					*lLastPacketFlag = TRUE;
+					*lLastPacketFlag = true;
 				}
 
 				*bstrFileData = SysAllocStringByteLen( nullptr, *lBlockSize );
@@ -703,10 +678,7 @@ STDMETHODIMP CSVCommand::SVLoadSVIMConfig(BSTR bstrConfigFilename)
 	TCHAR szFile[_MAX_FNAME];
 	TCHAR szExt[_MAX_EXT];
 	TCHAR szPath[_MAX_PATH];
-	HRESULT hrResult;
-	BOOL bSuccess;
 	CFileException ex;
-	BOOL bHrSet = TRUE;
 
 	// Check the mode first - Not allowed to perform if Mode is Regression or Test
 	if (SVSVIMStateClass::CheckState(SV_STATE_TEST | SV_STATE_REGRESSION))
@@ -716,82 +688,79 @@ STDMETHODIMP CSVCommand::SVLoadSVIMConfig(BSTR bstrConfigFilename)
 
 	SVSVIMStateClass::AddState( SV_STATE_REMOTE_CMD );
 
-	do
+	bool bHrSet = false;
+	HRESULT hrResult = S_OK;
+	bool bSuccess = false;
+
+	try
 	{
-		hrResult = S_OK;
-		bSuccess = FALSE;
+		ConfigFile = SvUl_SF::createSVString(_bstr_t(bstrConfigFilename));
 
-		try
-		{
-			ConfigFile = SvUl_SF::createSVString( _bstr_t(bstrConfigFilename) );
+		//split filename into peices
+		_tsplitpath(ConfigFile.c_str(), szDrive, szDir, szFile, szExt);
 
-			//split filename into peices
-			_tsplitpath( ConfigFile.c_str(), szDrive, szDir, szFile, szExt );
-
-			if( !_tcscmp( szDrive, _T("") ) )
-			{ //just the file name, search the run directory for the filename
-				if( 0 == _tcscmp( szExt, _T( ".svx" ) ) || 0 == _tcscmp( szExt, _T( "" ) ) )
-				{
-					_tmakepath( szPath, _T("C"), _T("\\Run\\"), szFile, _T("svx") );
-					//check for existence of file first
-					bSuccess = ( 0 == _access( szPath, 0 ) );
-
-					if( bSuccess )
-					{
-						ConfigFile = szPath;
-						//global function to close config and clean up c:\run dir
-						bSuccess = GlobalRCCloseAndCleanConfiguration();
-					}
-				}
-				else
-				{
-					bSuccess = FALSE;
-				}
-			}
-			else if( 0 == _tcscmp( szExt, _T( ".svx" ) ) ) //fully qualified path with svx extension
+		if (!_tcscmp(szDrive, _T("")))
+		{ //just the file name, search the run directory for the filename
+			if (0 == _tcscmp(szExt, _T(".svx")) || 0 == _tcscmp(szExt, _T("")))
 			{
+				_tmakepath(szPath, _T("C"), _T("\\Run\\"), szFile, _T("svx"));
 				//check for existence of file first
-				bSuccess = ( 0 == _access( ConfigFile.c_str(), 0 ) );
+				bSuccess = (0 == _access(szPath, 0));
 
-				if( bSuccess )
+				if (bSuccess)
 				{
+					ConfigFile = szPath;
 					//global function to close config and clean up c:\run dir
-					bSuccess = GlobalRCCloseAndCleanConfiguration();
-				}
-				else
-				{
-					throw ( (CFileException*)(&ex) );
+					GlobalRCCloseAndCleanConfiguration();
 				}
 			}
 			else
 			{
-				bSuccess = FALSE;
+				bSuccess = false;
 			}
+		}
+		else if (0 == _tcscmp(szExt, _T(".svx"))) //fully qualified path with svx extension
+		{
+			//check for existence of file first
+			bSuccess = (0 == _access(ConfigFile.c_str(), 0));
 
-			if( bSuccess )
+			if (bSuccess)
 			{
-				bSuccess = GlobalRCOpenConfiguration( ConfigFile.c_str() );
+				//global function to close config and clean up c:\run dir
+				GlobalRCCloseAndCleanConfiguration();
+			}
+			else
+			{
+				throw ((CFileException*)(&ex));
 			}
 		}
-		catch (CFileException* &theEx)
+		else
 		{
-			hrResult = SVMSG_CMDCOMCTRL_FILE_ERROR;
-			bHrSet = TRUE;
-			Exception.setMessage( hrResult, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
-			theEx->Delete();
-		}
-		catch (...)
-		{
-			bSuccess = FALSE;
+			bSuccess = false;
 		}
 
-		if( (!bSuccess) && (!bHrSet) )
+		if (bSuccess)
 		{
-			Exception.setMessage( SVMSG_CMDCOMSRV_ERROR, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
-			hrResult = S_FALSE;
+			bSuccess = GlobalRCOpenConfiguration(ConfigFile.c_str());
 		}
-		break;
-	} while (0);
+	}
+	catch (CFileException* &theEx)
+	{
+		hrResult = SVMSG_CMDCOMCTRL_FILE_ERROR;
+		bHrSet = true;
+		Exception.setMessage(hrResult, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
+		theEx->Delete();
+	}
+	catch (...)
+	{
+		bSuccess = false;
+	}
+
+	if ((!bSuccess) && (!bHrSet))
+	{
+		Exception.setMessage(SVMSG_CMDCOMSRV_ERROR, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
+		hrResult = S_FALSE;
+	}
 
 	SVSVIMStateClass::RemoveState( SV_STATE_REMOTE_CMD );
 
@@ -830,64 +799,50 @@ STDMETHODIMP CSVCommand::SVGetSVIMConfigName(BSTR *bstrConfigFilename)
 
 STDMETHODIMP CSVCommand::SVGetSVIMOfflineCount(unsigned long *ulOfflineCount)
 {
-	HRESULT hrResult;
-	BOOL bSuccess;
+	HRESULT hrResult = S_OK;
+	bool bSuccess = false;
 
-	do
+	try
 	{
-		hrResult = S_OK;
-		bSuccess = FALSE;
+		*ulOfflineCount = TheSVObserverApp.getOfflineCount();
+		bSuccess = true;
+	}
+	catch (...)
+	{
+		bSuccess = false;
+	}
 
-		try
-		{
-			*ulOfflineCount = TheSVObserverApp.getOfflineCount();
-			bSuccess = TRUE;
-		}
-		catch (...)
-		{
-			bSuccess = FALSE;
-		}
-
-		if( !bSuccess )
-		{
-			SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-			Exception.setMessage( SVMSG_CMDCOMSRV_ERROR, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
-			hrResult = S_FALSE;
-		}
-
-	} while (0);
+	if (!bSuccess)
+	{
+		SvStl::MessageMgrStd Exception(SvStl::LogOnly);
+		Exception.setMessage(SVMSG_CMDCOMSRV_ERROR, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
+		hrResult = S_FALSE;
+	}
 
 	return hrResult;
 }
 
 STDMETHODIMP CSVCommand::SVGetSVIMVersion(unsigned long *ulVersion)
 {
-	HRESULT hrResult;
-	BOOL bSuccess;
+	HRESULT hrResult = S_OK;
+	bool bSuccess = false;
 
-	do
+	try
 	{
-		hrResult = S_OK;
-		bSuccess = FALSE;
+		*ulVersion = TheSVObserverApp.getCurrentVersion();
+		bSuccess = true;
+	}
+	catch (...)
+	{
+		bSuccess = false;
+	}
 
-		try
-		{
-			*ulVersion = TheSVObserverApp.getCurrentVersion();
-			bSuccess = TRUE;
-		}
-		catch (...)
-		{
-			bSuccess = FALSE;
-		}
-
-		if( !bSuccess )
-		{
-			SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-			Exception.setMessage( SVMSG_CMDCOMSRV_ERROR, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
-			hrResult = S_FALSE;
-		}
-
-	} while (0);
+	if (!bSuccess)
+	{
+		SvStl::MessageMgrStd Exception(SvStl::LogOnly);
+		Exception.setMessage(SVMSG_CMDCOMSRV_ERROR, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
+		hrResult = S_FALSE;
+	}
 
 	return hrResult;
 }
@@ -895,38 +850,31 @@ STDMETHODIMP CSVCommand::SVGetSVIMVersion(unsigned long *ulVersion)
 STDMETHODIMP CSVCommand::SVGetSVIMConfigPrint(long lOffset, long *lBlockSize, BSTR *bstrConfigPrint, BOOL *bLastFlag)
 {
 	SVString ConfigPrint;
-	HRESULT hrResult;
-	BOOL bSuccess;
+	HRESULT hrResult = S_OK;
+	bool bSuccess = false;
 
-	do
+	try
 	{
-		hrResult = S_OK;
-		bSuccess = FALSE;
+		SVConfigurationPrint printConfig;
+		printConfig.printConfigToStringBuffer(ConfigPrint);
 
-		try
-		{
-			SVConfigurationPrint printConfig;
-			printConfig.printConfigToStringBuffer( ConfigPrint );
+		*bstrConfigPrint = _bstr_t(ConfigPrint.c_str()).Detach();
+		*lBlockSize = ::SysStringByteLen(*bstrConfigPrint);
+		*bLastFlag = true;
 
-			*bstrConfigPrint = _bstr_t(ConfigPrint.c_str()).Detach();
-			*lBlockSize = ::SysStringByteLen( *bstrConfigPrint );
-			*bLastFlag = TRUE;
+		bSuccess = true;
+	}
+	catch (...)
+	{
+		bSuccess = false;
+	}
 
-			bSuccess = TRUE;
-		}
-		catch (...)
-		{
-			bSuccess = FALSE;
-		}
-
-		if( !bSuccess )
-		{
-			SvStl::MessageMgrStd Exception( SvStl::LogOnly );
-			Exception.setMessage( SVMSG_CMDCOMSRV_ERROR, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
-			hrResult = S_FALSE;
-		}
-
-	} while (0);
+	if (!bSuccess)
+	{
+		SvStl::MessageMgrStd Exception(SvStl::LogOnly);
+		Exception.setMessage(SVMSG_CMDCOMSRV_ERROR, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
+		hrResult = S_FALSE;
+	}
 
 	return hrResult;
 }
@@ -1208,12 +1156,10 @@ STDMETHODIMP CSVCommand::SVRegisterStream(SAFEARRAY* psaName, VARIANT vtInterfac
 	BSTR bstrName;
 	SVString sName;
 	SVString sInspectionName;
-	BOOL bSamePPQ = TRUE;
+	bool bSamePPQ = true;
 	SVInspectionProcess* pInspection( nullptr );
-	BOOL bRet = TRUE;
-	BOOL bNotAllItemsFound=FALSE;
-	BOOL l_bGoodItem = FALSE;
-	BOOL l_bGoodInspection = FALSE;
+	bool bNotAllItemsFound= false;
+	bool l_bGoodInspection = false;
 
 	//put check to see if a configuration is loaded.  if it is not,
 	// then error out...
@@ -1255,186 +1201,183 @@ STDMETHODIMP CSVCommand::SVRegisterStream(SAFEARRAY* psaName, VARIANT vtInterfac
 
 			return hrRet;
 		}// end else
+		
+		CSVCommand* pThis = this;
+		StreamDataStruct* pstData;
 
-		if ( bRet )
+		m_InspectionNames.clear();
+		m_arInspections.RemoveAll();
+
+		//check list of names to make sure they are all on the same PPQ
+		long lNumberOfElements = psaName->rgsabound[0].cElements;
+
+		for (long lIndex = 0; lIndex < lNumberOfElements; lIndex++)
 		{
-			CSVCommand* pThis = this;
-			StreamDataStruct* pstData;
-
-			m_InspectionNames.clear();
-			m_arInspections.RemoveAll();
-
-			//check list of names to make sure they are all on the same PPQ
-			long lNumberOfElements = psaName->rgsabound[0].cElements;
-
-			for ( long lIndex = 0; lIndex < lNumberOfElements; lIndex++ )
+			SafeArrayGetElementNoCopy(psaName, &lIndex, &bstrName);
+			sName = SvUl_SF::createSVString(_bstr_t(bstrName));
+			sInspectionName = SvUl_SF::Left(sName, sName.find('.'));
+			SVStringVector::iterator Iter = std::find(m_InspectionNames.begin(), m_InspectionNames.end(), sInspectionName);
+			if (m_InspectionNames.end() == Iter)
 			{
-				SafeArrayGetElementNoCopy(psaName, &lIndex, &bstrName);
-				sName = SvUl_SF::createSVString( _bstr_t(bstrName) );
-				sInspectionName = SvUl_SF::Left( sName,  sName.find('.'));
-				SVStringVector::iterator Iter = std::find( m_InspectionNames.begin(), m_InspectionNames.end(), sInspectionName );
-				if ( m_InspectionNames.end() == Iter )
-				{
-					// add inspection name to list
-					m_InspectionNames.push_back(sInspectionName);
-				}//end if
-			}// end for
+				// add inspection name to list
+				m_InspectionNames.push_back(sInspectionName);
+			}//end if
+		}// end for
 
-			SVGUID PPQId;
+		SVGUID PPQId;
 
-			SVConfigurationObject* pConfig( nullptr );
-			SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
-			SVStringVector::iterator Iter( m_InspectionNames.begin() );
-			for ( ; m_InspectionNames.end() != Iter && bSamePPQ; ++Iter )
+		SVConfigurationObject* pConfig(nullptr);
+		SVObjectManagerClass::Instance().GetConfigurationObject(pConfig);
+		SVStringVector::iterator Iter(m_InspectionNames.begin());
+		for (; m_InspectionNames.end() != Iter && bSamePPQ; ++Iter)
+		{
+			if (nullptr != pConfig && pConfig->GetInspectionObject(Iter->c_str(), &pInspection) && nullptr != pInspection)
 			{
-				if ( nullptr != pConfig && pConfig->GetInspectionObject(Iter->c_str(), &pInspection) && nullptr != pInspection )
+				if (PPQId.empty())
 				{
-					if ( PPQId.empty() )
-					{
-						PPQId = pInspection->GetPPQIdentifier();
-					}
-					else
-					{
-						if ( PPQId != pInspection->GetPPQIdentifier() )
-						{
-							bSamePPQ = false;
-						}
-					}
+					PPQId = pInspection->GetPPQIdentifier();
 				}
 				else
 				{
-					m_InspectionNames.erase(Iter);
-				}
-			}
-
-			// requested values are not on same PPQ - return an error...
-			if ( !bSamePPQ )
-			{
-				hrRet = SVMSG_REQUESTED_OBJECTS_ON_DIFFERENT_PPQS;
-				Exception.setMessage( hrRet, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
-				// go through all items in psaStatus and set to hrRet;
-				lNumberOfElements = (*ppsaStatus)->rgsabound[0].cElements;
-				for (long l = 0; l < lNumberOfElements; l++)
-				{
-					::SafeArrayPutElement(*ppsaStatus,&l,&hrRet);
-				}
-				m_bRegisteredStream = FALSE;
-				hrRet = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
-				return hrRet;
-			}
-
-			HRESULT hrStatus = S_OK;
-			//create list of value objects
-			for ( long x = 0; x < lNumberOfElements; x++ )
-			{
-				SVString Temp;
-
-				SafeArrayGetElementNoCopy(psaName,&x,&bstrName);
-				Temp = SvUl_SF::createSVString( _bstr_t( bstrName ) );
-
-				sInspectionName = SvUl_SF::Left( Temp, Temp.find('.') );
-				BOOL bFound = FALSE;
-
-				pstData = new StreamDataStruct;
-
-				if ( nullptr != pConfig && pConfig->GetInspectionObject(Temp.c_str(), &pInspection) )
-				{
-					if ( sInspectionName == pInspection->GetName() )
+					if (PPQId != pInspection->GetPPQIdentifier())
 					{
-						bFound = TRUE;
+						bSamePPQ = false;
 					}
+				}
+			}
+			else
+			{
+				m_InspectionNames.erase(Iter);
+			}
+		}
 
-					if ( bFound )
+		// requested values are not on same PPQ - return an error...
+		if (!bSamePPQ)
+		{
+			hrRet = SVMSG_REQUESTED_OBJECTS_ON_DIFFERENT_PPQS;
+			Exception.setMessage(hrRet, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams));
+			// go through all items in psaStatus and set to hrRet;
+			lNumberOfElements = (*ppsaStatus)->rgsabound[0].cElements;
+			for (long l = 0; l < lNumberOfElements; l++)
+			{
+				::SafeArrayPutElement(*ppsaStatus, &l, &hrRet);
+			}
+			m_bRegisteredStream = false;
+			hrRet = SVMSG_NOT_ALL_LIST_ITEMS_PROCESSED;
+			return hrRet;
+		}
+
+		HRESULT hrStatus = S_OK;
+		//create list of value objects
+		for (long x = 0; x < lNumberOfElements; x++)
+		{
+			SVString Temp;
+
+			SafeArrayGetElementNoCopy(psaName, &x, &bstrName);
+			Temp = SvUl_SF::createSVString(_bstr_t(bstrName));
+
+			sInspectionName = SvUl_SF::Left(Temp, Temp.find('.'));
+			bool bFound = false;
+
+			pstData = new StreamDataStruct;
+
+			if (nullptr != pConfig && pConfig->GetInspectionObject(Temp.c_str(), &pInspection))
+			{
+				if (sInspectionName == pInspection->GetName())
+				{
+					bFound = true;
+				}
+
+				if (bFound)
+				{
+					l_bGoodInspection = true;
+					pstData->m_InspectionID = pInspection->GetUniqueObjectID();
+					pstData->strValueName = Temp;
+
+					SVObjectReference ObjectRef;
+					HRESULT hrFind = SVObjectManagerClass::Instance().GetObjectByDottedName(Temp.c_str(), ObjectRef);
+					if (S_OK != hrFind)
 					{
-						l_bGoodInspection = TRUE;
-						pstData->m_InspectionID = pInspection->GetUniqueObjectID();
-						pstData->strValueName = Temp;
-
-						SVObjectReference ObjectRef;
-						HRESULT hrFind = SVObjectManagerClass::Instance().GetObjectByDottedName( Temp.c_str(), ObjectRef );
-						if( S_OK != hrFind )
+						pstData->pValueObject = nullptr;
+						m_arStreamList.Add(pstData);
+						hrRet = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
+						::SafeArrayPutElement(*ppsaStatus, &x, &hrRet);
+					}// end if
+					else
+					{
+						if (nullptr != ObjectRef.getValueObject())
 						{
-							pstData->pValueObject = nullptr;
-							m_arStreamList.Add( pstData );
-							hrRet = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
-							::SafeArrayPutElement(*ppsaStatus,&x,&hrRet);
+							hrStatus = S_OK;
+							pstData->pValueObject = ObjectRef.getObject();
+							pstData->arrayIndex = ObjectRef.ArrayIndex();
+							m_arStreamList.Add(pstData);
 						}// end if
 						else
 						{
-							if( nullptr != ObjectRef.getValueObject() )
-							{
-								hrStatus = S_OK;
-								pstData->pValueObject = ObjectRef.getObject();
-								pstData->arrayIndex = ObjectRef.ArrayIndex();
-								m_arStreamList.Add( pstData );
-							}// end if
-							else
-							{
-								pstData->pValueObject = nullptr;
-								m_arStreamList.Add( pstData );
-								hrRet = SVMSG_OBJECT_NOT_PROCESSED;
-								::SafeArrayPutElement(*ppsaStatus,&x,&hrRet);
-								bNotAllItemsFound = TRUE;
-							}// end else
+							pstData->pValueObject = nullptr;
+							m_arStreamList.Add(pstData);
+							hrRet = SVMSG_OBJECT_NOT_PROCESSED;
+							::SafeArrayPutElement(*ppsaStatus, &x, &hrRet);
+							bNotAllItemsFound = true;
 						}// end else
-					}// end if
-				} // if ( nullptr != pConfig && pConfig->GetInspectionObject(sTmp, &pInspection) )
-				else
-				{	// Inspection Not Found
-					// put following error code in
-					pstData->m_InspectionID.clear();
-					pstData->pValueObject = nullptr;
-					pstData->strValueName = Temp;
-					m_arStreamList.Add( pstData );
+					}// end else
+				}// end if
+			} // if ( nullptr != pConfig && pConfig->GetInspectionObject(sTmp, &pInspection) )
+			else
+			{	// Inspection Not Found
+				// put following error code in
+				pstData->m_InspectionID.clear();
+				pstData->pValueObject = nullptr;
+				pstData->strValueName = Temp;
+				m_arStreamList.Add(pstData);
 
-					// to compile 
-					hrRet = SVMSG_ONE_OR_MORE_INSPECTIONS_DO_NOT_EXIST;
-					::SafeArrayPutElement(*ppsaStatus,&x,&hrRet);
-				}// end else
-			}// end for
+				// to compile 
+				hrRet = SVMSG_ONE_OR_MORE_INSPECTIONS_DO_NOT_EXIST;
+				::SafeArrayPutElement(*ppsaStatus, &x, &hrRet);
+			}// end else
+		}// end for
 
-			Iter = m_InspectionNames.begin();
-			for ( ; m_InspectionNames.end() != Iter && bSamePPQ; ++Iter )
+		Iter = m_InspectionNames.begin();
+		for (; m_InspectionNames.end() != Iter && bSamePPQ; ++Iter)
+		{
+			pInspection = nullptr;
+			if (nullptr != pConfig) { pConfig->GetInspectionObject(Iter->c_str(), &pInspection); }
+			if (nullptr != pInspection && *Iter == pInspection->GetName())
 			{
-				pInspection = nullptr;
-				if( nullptr != pConfig){ pConfig->GetInspectionObject( Iter->c_str(), &pInspection); }
-				if (nullptr != pInspection && *Iter == pInspection->GetName() )
-				{
-					SVCommandStreamManager::Instance().EnableInspectionCallback( pInspection->GetUniqueObjectID() );
+				SVCommandStreamManager::Instance().EnableInspectionCallback(pInspection->GetUniqueObjectID());
 
-					// add inspections to list
-					m_arInspections.Add( pInspection );
-				}
+				// add inspections to list
+				m_arInspections.Add(pInspection);
 			}
+		}
 
-			RebuildStreamingDataList();
+		RebuildStreamingDataList();
 
-			m_bRunStreamData = TRUE;
-			m_bRegisteredStream = TRUE;
+		m_bRunStreamData = true;
+		m_bRegisteredStream = true;
 
-			SVCommandStreamManager::Instance().InsertCommandCallback( 
-				boost::bind( &CSVCommand::StreamingDataCallback, this, _1 ), 
-				boost::bind( &CSVCommand::RebuildStreamingDataList, this ) );
+		SVCommandStreamManager::Instance().InsertCommandCallback(
+			boost::bind(&CSVCommand::StreamingDataCallback, this, _1),
+			boost::bind(&CSVCommand::RebuildStreamingDataList, this));
 
-			m_hStopStreamEvent = ::CreateEvent( nullptr, false, false, nullptr );
-			m_hStreamingThread = ::CreateThread( nullptr, 0, SVStreamDataThread, this, 0, nullptr);
-			SVThreadManager::Instance().Add( m_hStreamingThread, "SIAC Streaming Data" );
-		}// end if
+		m_hStopStreamEvent = ::CreateEvent(nullptr, false, false, nullptr);
+		m_hStreamingThread = ::CreateThread(nullptr, 0, SVStreamDataThread, this, 0, nullptr);
+		SVThreadManager::Instance().Add(m_hStreamingThread, "SIAC Streaming Data");
 	}//try
 	catch(...)
 	{
 		// send error message
 		hr = S_FALSE;
-		m_bRegisteredStream = FALSE;
-		m_bRunStreamData = FALSE;
+		m_bRegisteredStream = false;
+		m_bRunStreamData = false;
 		m_dwStreamDataProcessId = 0;
 	}
 
 	if ( !(l_bGoodInspection) )
 	{
-		m_bRegisteredStream = FALSE;
+		m_bRegisteredStream = false;
 		m_dwStreamDataProcessId = 0;
-		bNotAllItemsFound = TRUE;
+		bNotAllItemsFound = true;
 	}
 
 	if ( hr != S_FALSE )
@@ -1478,8 +1421,8 @@ STDMETHODIMP CSVCommand::SVUnRegisterStream(VARIANT vtInterface)
 				m_hStreamingThread = nullptr;
 			}
 
-			m_bRegisteredStream = FALSE;
-			m_bRunStreamData = FALSE;
+			m_bRegisteredStream = false;
+			m_bRunStreamData = false;
 
 			SVCommandStreamManager::Instance().EraseCommandCallback();
 			m_InspectionNames.clear();
@@ -1524,7 +1467,6 @@ HRESULT CSVCommand::StreamingDataCallback( const SVInspectionCompleteInfoStruct&
 	ProductDataStruct *pProductData;
 	PacketDataStruct oPacketData;
 	StreamDataStruct *pStreamData;
-	BOOL bFound;
 	long l;
 	long lSize;
 
@@ -1534,7 +1476,7 @@ HRESULT CSVCommand::StreamingDataCallback( const SVInspectionCompleteInfoStruct&
 		::EnterCriticalSection( CProductCriticalSection::Get());
 
 		// search the list for this product
-		bFound = FALSE;
+		bool bFound = false;
 		pProductData = nullptr;
 		lSize = static_cast< long >( m_arProductList.GetSize() );
 
@@ -1544,7 +1486,7 @@ HRESULT CSVCommand::StreamingDataCallback( const SVInspectionCompleteInfoStruct&
 			{
 				if( pProductData->lProductCount == p_rData.m_ProductInfo.ProcessCount() )
 				{
-					bFound = TRUE;
+					bFound = true;
 					break;
 				}// end if
 			}// end if
@@ -1638,25 +1580,21 @@ DWORD WINAPI CSVCommand::SVStreamDataThread(LPVOID lpParam)
 	ProductDataStruct *pProductData;
 	PacketDataStruct oPacketData;
 	SVString strValue;
-	BOOL bRunning;
+	bool bRunning = true;
 	DWORD dwResult;
 	BSTR bstr;
 	long lSize;
 	long lIndex;
-	long lStreamSize;
-	long lStreamCount;
+	long lStreamCount = 0;
 	long lInspectIndex;
 	long lProductCount;
 	long lPacketCount;
-	long lNoProduct;
+	long lNoProduct = -1;
 	long l;
 	long k;
 
 	CSVCommand *pThis = (CSVCommand*) lpParam; //@TODO:  Should check pThis before dereferencing.  Avoid c-style casts.
-	lStreamSize = static_cast< long >( pThis->m_arStreamList.GetSize() );
-	lStreamCount = 0;
-	lNoProduct = -1;
-	bRunning = TRUE;
+	long lStreamSize = static_cast< long >( pThis->m_arStreamList.GetSize() );
 
 	// Initialize COM
 	CoInitialize( nullptr );    
@@ -1669,13 +1607,13 @@ DWORD WINAPI CSVCommand::SVStreamDataThread(LPVOID lpParam)
 		}// end if
 		else
 		{
-			dwResult = ::WaitForSingleObjectEx( pThis->m_hStopStreamEvent, INFINITE, TRUE );
+			dwResult = ::WaitForSingleObjectEx( pThis->m_hStopStreamEvent, INFINITE, true);
 		}// end else
 
 		switch( dwResult )
 		{
 		case WAIT_OBJECT_0 :
-			bRunning = FALSE;
+			bRunning = false;
 			break;
 		case WAIT_IO_COMPLETION :
 			// pass one - check for products to stream now that we are awake
@@ -1826,7 +1764,7 @@ DWORD WINAPI CSVCommand::SVStreamDataThread(LPVOID lpParam)
 				}// end for
 				m_arProductList.RemoveAll();
 
-				bRunning = FALSE;
+				bRunning = false;
 			}// end if
 
 			break;
@@ -1849,8 +1787,8 @@ DWORD WINAPI CSVCommand::SVStreamDataThread(LPVOID lpParam)
 	}// end if
 
 	//reset flags
-	m_bRegisteredStream = FALSE;
-	m_bRunStreamData = FALSE;
+	m_bRegisteredStream = false;
+	m_bRunStreamData = false;
 
 	// Uninitialize COM
 	CoUninitialize();
@@ -1866,7 +1804,7 @@ STDMETHODIMP CSVCommand::SVGetProductDataList(long lProcessCount, SAFEARRAY* psa
 	SVStringVector ValueNames;
 	SVInspectionProcessVector aInspections;
 	SVObjectReferenceVector aValueObjects;
-	BOOL l_bItemNotExist = FALSE;
+	bool l_bItemNotExist = false;
 
 	//check to see if in Run Mode.  if not return SVMSG_53_SVIM_NOT_IN_RUN_MODE
 
@@ -2018,11 +1956,11 @@ STDMETHODIMP CSVCommand::SVGetProductDataList(long lProcessCount, SAFEARRAY* psa
 						SafeArrayPutElementNoCopy(*ppsaData, &i, bstrTmpVal.Detach());
 						//::SysFreeString(bstrTmpVal);
 						::SafeArrayPutElement(*ppsaStatus, &i, &hr);
-						l_bItemNotExist = TRUE;
+						l_bItemNotExist = true;
 					}// else invalid or out of range index
 					else	// some generic error; currently should not get here
 					{
-						ASSERT( FALSE );
+						ASSERT( false );
 						hrStatus = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
 						// did not get value.  set value to -1
 						Value = _T("-1");
@@ -2030,7 +1968,7 @@ STDMETHODIMP CSVCommand::SVGetProductDataList(long lProcessCount, SAFEARRAY* psa
 						SafeArrayPutElementNoCopy(*ppsaData, &i, bstrTmpVal.Detach());
 						//::SysFreeString(bstrTmpVal);
 						::SafeArrayPutElement(*ppsaStatus, &i, &hr);
-						l_bItemNotExist = TRUE;
+						l_bItemNotExist = true;
 					}
 				}// if ( !ref.IsEntireArray() )
 				else	// GET ENTIRE ARRAY
@@ -2070,7 +2008,7 @@ STDMETHODIMP CSVCommand::SVGetProductDataList(long lProcessCount, SAFEARRAY* psa
 
 				HRESULT hrItem = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
 				SafeArrayPutElement(*ppsaStatus, &i, &hrItem);
-				l_bItemNotExist = TRUE;
+				l_bItemNotExist = true;
 			}
 		}// end for (long i=0; i < lNumberOfElements; i++)
 	}// end if (pPPQ->GetProductInfoStruct(lProcessCount, &pProductInfoStruct))
@@ -2441,7 +2379,7 @@ HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo, SVSmartHandlePoin
 
 		char* pDIB = nullptr;
 
-		BOOL bDestroyHandle = FALSE;
+		bool bDestroyHandle = false;
 
 		oChildInfo = rImageInfo;
 		oChildHandle = rImageHandle;
@@ -2469,7 +2407,7 @@ HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo, SVSmartHandlePoin
 
 		if ( IsColor && l_lType == SvOi::SVImageTypeEnum::SVImageTypePhysical && l_lBandNumber == 3)
 		{
-			bDestroyHandle = TRUE;
+			bDestroyHandle = true;
 
 			oChildInfo.SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyBandNumber, 1 );
 
@@ -2489,7 +2427,7 @@ HRESULT CSVCommand::ImageToBSTR(SVImageInfoClass&  rImageInfo, SVSmartHandlePoin
 		if ((l_lType == SvOi::SVImageTypeEnum::SVImageTypeLogicalAndPhysical) ||
 			(l_lType == SvOi::SVImageTypeEnum::SVImageTypeLogical))
 		{
-			bDestroyHandle = TRUE;
+			bDestroyHandle = true;
 
 			HRESULT hrImage = SVImageProcessingClass::CreateImageBuffer( oChildInfo, oChildHandle );
 
@@ -2671,8 +2609,8 @@ HRESULT CSVCommand::SVGetDataList(SAFEARRAY* psaNames, SAFEARRAY** ppsaValues, S
 {
 	HRESULT Result = S_OK;
 	HRESULT Status = S_OK;
-	BOOL    ItemNotFound = FALSE;
-	BOOL    InspectionNotFound = FALSE;
+	bool    ItemNotFound = false;
+	bool    InspectionNotFound = false;
 
 	//get number of elements out of the incoming safearray
 	long Size = psaNames->rgsabound[0].cElements;
@@ -2724,12 +2662,12 @@ HRESULT CSVCommand::SVGetDataList(SAFEARRAY* psaNames, SAFEARRAY** ppsaValues, S
 				{
 					if ( S_OK != pValueObject->getValue( Value ) )
 					{
-						ItemNotFound = TRUE;
+						ItemNotFound = true;
 					}
 				}
 				else
 				{
-					ItemNotFound = TRUE;
+					ItemNotFound = true;
 				}
 			}
 			else
@@ -2760,15 +2698,15 @@ HRESULT CSVCommand::SVGetDataList(SAFEARRAY* psaNames, SAFEARRAY** ppsaValues, S
 							{
 								Value = _T("-1");
 							}
-							ItemNotFound = TRUE;
+							ItemNotFound = true;
 						}// else invalid or out of range index
 						else	// some generic error; currently should not get here
 						{
-							ASSERT( FALSE );
+							ASSERT(false);
 							Status = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
 							// did not get value.  set value to -1
 							Value = _T("-1");
-							ItemNotFound = TRUE;
+							ItemNotFound = true;
 						} //end else generic error
 					}// if ( !ValueObjectRef.IsEntireArray() )
 					else	// GET ENTIRE ARRAY
@@ -2803,7 +2741,7 @@ HRESULT CSVCommand::SVGetDataList(SAFEARRAY* psaNames, SAFEARRAY** ppsaValues, S
 					Status = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
 					// did not get value.  set value to -1
 					Value = _T("-1");
-					ItemNotFound = TRUE;
+					ItemNotFound = true;
 				} //else could not find object
 			}// else inspection object
 		}//end if object or inspection
@@ -2812,7 +2750,7 @@ HRESULT CSVCommand::SVGetDataList(SAFEARRAY* psaNames, SAFEARRAY** ppsaValues, S
 			Status = SVMSG_ONE_OR_MORE_INSPECTIONS_DO_NOT_EXIST;
 			// did not get value.  set value to -1
 			Value = _T("-1");
-			InspectionNotFound = TRUE;
+			InspectionNotFound = true;
 		}// else inspection not found
 
 		//Results have been prepared so can place them in the list
@@ -2927,7 +2865,7 @@ STDMETHODIMP CSVCommand::SVSetInputs(SAFEARRAY* psaNames, SAFEARRAY* psaValues, 
 
 		for (long l = 0; l < lNumberOfElements1; l++)
 		{
-			BOOL bAddRequest = FALSE;
+			bool bAddRequest = false;
 
 			hrStatus = SafeArrayGetElementNoCopy(psaNames, &l, &bstrName);
 			if ( FAILED( hrStatus ) ) { break; }
@@ -2951,7 +2889,7 @@ STDMETHODIMP CSVCommand::SVSetInputs(SAFEARRAY* psaNames, SAFEARRAY* psaValues, 
 					if( SV_IS_KIND_OF(pOwnerObject, SVInspectionProcess) )
 					{
 						// this object was found and is an input
-						bAddRequest = TRUE;
+						bAddRequest = true;
 					}// end if
 					else
 					{
@@ -3026,7 +2964,7 @@ HRESULT CSVCommand::SVSetImageList(SAFEARRAY *psaNames, SAFEARRAY *psaImages, SA
 	BSTR bstrName = nullptr;
 	BSTR bstrImage = nullptr;
 	SVString TmpName;
-	BOOL l_bItemNotFound = FALSE;
+	bool l_bItemNotFound = false;
 
 	do
 	{
@@ -3044,7 +2982,7 @@ HRESULT CSVCommand::SVSetImageList(SAFEARRAY *psaNames, SAFEARRAY *psaImages, SA
 
 		for ( long l = 0; l < lNumberOfElements1; l++ )
 		{
-			BOOL bAddRequest = FALSE;
+			bool bAddRequest = false;
 
 			hrStatus = ::SafeArrayGetElement(psaNames, &l, &bstrName);
 			if ( FAILED( hrStatus ) ) { break; }
@@ -3069,7 +3007,7 @@ HRESULT CSVCommand::SVSetImageList(SAFEARRAY *psaNames, SAFEARRAY *psaImages, SA
 					{
 						// currently all SvOi::SV_REMOTELY_SETABLE parameters are also SvOi::SV_SETABLE_ONLINE
 						// if this changes, this code needs updated
-						bAddRequest = TRUE;
+						bAddRequest = true;
 					}// end if
 					else
 					{
@@ -3083,7 +3021,7 @@ HRESULT CSVCommand::SVSetImageList(SAFEARRAY *psaNames, SAFEARRAY *psaImages, SA
 					// object not found.  send back status
 					hrStatus = SVMSG_ONE_OR_MORE_REQUESTED_OBJECTS_DO_NOT_EXIST;
 					::SafeArrayPutElement(*ppsaStatus,&l,&hrStatus);
-					l_bItemNotFound = TRUE;
+					l_bItemNotFound = true;
 				}// end else
 			}// end if
 			else
@@ -3092,7 +3030,7 @@ HRESULT CSVCommand::SVSetImageList(SAFEARRAY *psaNames, SAFEARRAY *psaImages, SA
 				//put an error back into the list
 				hrStatus = SVMSG_ONE_OR_MORE_INSPECTIONS_DO_NOT_EXIST;
 				::SafeArrayPutElement(*ppsaStatus,&l,&hrStatus);
-				l_bItemNotFound = TRUE;
+				l_bItemNotFound = true;
 			} // end else
 
 			if ( bAddRequest )
@@ -3115,7 +3053,7 @@ HRESULT CSVCommand::SVSetImageList(SAFEARRAY *psaNames, SAFEARRAY *psaImages, SA
 				else
 				{
 					//error
-					l_bItemNotFound = TRUE;
+					l_bItemNotFound = true;
 					delete pInRequest;
 				}
 			}
@@ -3192,7 +3130,7 @@ HRESULT CSVCommand::SVSetToolParameterList(SAFEARRAY* psaNames, SAFEARRAY* psaVa
 		SVInspectionProcess*	pInspection = nullptr;
 		SVObjectReference		ObjectRef;
 
-		BOOL AddRequest = FALSE;
+		bool AddRequest = false;
 
 		BSTR bstrName = nullptr;
 		Status = SafeArrayGetElementNoCopy(psaNames, &l, &bstrName);
@@ -3258,7 +3196,7 @@ HRESULT CSVCommand::SVSetToolParameterList(SAFEARRAY* psaNames, SAFEARRAY* psaVa
 					}
 					else
 					{
-						AddRequest = TRUE;
+						AddRequest = true;
 						ParameterNames.insert( strCompleteObjectName );
 					}
 
@@ -3579,7 +3517,7 @@ HRESULT CSVCommand::SVUnlockAllImages()
 STDMETHODIMP CSVCommand::SVGetRemoteInputCount(long *lCount)
 {
 	HRESULT hrResult = S_OK;
-	BOOL bSuccess = FALSE;
+	bool bSuccess = false;
 
 	try
 	{
@@ -3591,13 +3529,13 @@ STDMETHODIMP CSVCommand::SVGetRemoteInputCount(long *lCount)
 			SVInputObjectList* pInputObjectList = pConfig->GetInputObjectList();
 			if( nullptr != pInputObjectList && pInputObjectList->GetRemoteInputCount( *lCount ) )
 			{
-				bSuccess = TRUE;
+				bSuccess = true;
 			}
 		}
 	}
 	catch (...)
 	{
-		bSuccess = FALSE;
+		bSuccess = false;
 	}
 
 	if( !bSuccess )
@@ -3613,7 +3551,7 @@ STDMETHODIMP CSVCommand::SVGetRemoteInputCount(long *lCount)
 STDMETHODIMP CSVCommand::SVSetRemoteInput(long lIndex, VARIANT vtValue)
 {
 	HRESULT hrResult = S_OK;
-	BOOL bSuccess = FALSE;
+	bool bSuccess = false;
 
 	try
 	{
@@ -3625,13 +3563,13 @@ STDMETHODIMP CSVCommand::SVSetRemoteInput(long lIndex, VARIANT vtValue)
 			SVInputObjectList* pInputObjectList = pConfig->GetInputObjectList( );
 			if( nullptr != pInputObjectList && pInputObjectList->SetRemoteInput( lIndex, _variant_t(vtValue) ) )
 			{
-				bSuccess = TRUE;
+				bSuccess = true;
 			}
 		}
 	}
 	catch (...)
 	{
-		bSuccess = FALSE;
+		bSuccess = false;
 	}
 
 	if( !bSuccess )
@@ -4859,7 +4797,7 @@ HRESULT CSVCommand::RebuildStreamingDataList()
 	return hr;
 }
 
-BOOL CSVCommand::ResetStreamingDataAndLockedImages()
+void CSVCommand::ResetStreamingDataAndLockedImages()
 {
 	// Do what CSVCommand::SVUnlockAllImages does
 	SVActiveXLockStruct SVaxls;
@@ -4892,8 +4830,8 @@ BOOL CSVCommand::ResetStreamingDataAndLockedImages()
 		m_hStreamingThread = nullptr;
 	}// end if
 
-	m_bRegisteredStream = FALSE;
-	m_bRunStreamData = FALSE;
+	m_bRegisteredStream = false;
+	m_bRunStreamData = false;
 
 	SVCommandStreamManager::Instance().EraseCommandCallback();
 	m_dwStreamDataProcessId = 0;
@@ -4913,8 +4851,6 @@ BOOL CSVCommand::ResetStreamingDataAndLockedImages()
 		delete pProduct;
 	}// end for
 	m_arProductList.RemoveAll();
-
-	return TRUE;
 }// end if
 
 // This method is used to connect the event object to the application.

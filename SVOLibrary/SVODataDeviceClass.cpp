@@ -402,7 +402,7 @@ HRESULT SVODataDeviceClass::Process( bool& p_WaitForEvents )
 
 	if ( mbIsValid )
 	{
-		BOOL bDone = TRUE;
+		bool bDone = true;
 
 		mUsedQueue.GetSize( lRes );
 

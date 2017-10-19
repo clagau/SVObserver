@@ -547,8 +547,7 @@ Json::Value  DispatchCmdGetReject(const JsonCmd & cmd, SvSml::SharedMemReader  *
 		pLastReject = it->second.get();
 	}
 
-	SvSml::SharedMemReader::retvalues ret =
-		pMemReader->GetRejectData(listName.c_str(), trig, new_productPtr.get(), pLastReject, FALSE);
+	SvSml::SharedMemReader::retvalues ret =	pMemReader->GetRejectData(listName.c_str(), trig, new_productPtr.get(), pLastReject, false);
 	switch (ret)
 	{
 	case SvSml::SharedMemReader::sucess:
@@ -683,7 +682,7 @@ Json::Value DispatchCommand<SvSol::UdpApi>(const JsonCmd & cmd, SvSml::SharedMem
 	}
 
 	SvSml::SharedMemReader::retvalues ret =
-		pMemReader->GetProductData(listName.c_str(), trig, new_productPtr.get(), pLastProduct, FALSE);
+		pMemReader->GetProductData(listName.c_str(), trig, new_productPtr.get(), pLastProduct, false);
 	switch (ret)
 	{
 	case SvSml::SharedMemReader::sucess:

@@ -230,7 +230,7 @@ void SVHistogramAnalyzerSetupClass::OnBnClickedFirstpeakRange()
 
 void SVHistogramAnalyzerSetupClass::OnEnChangeDistThreshold()
 {
-	BOOL l_ok = FALSE;
+	BOOL l_ok = false;
 	int l_threshold = static_cast<int>(GetDlgItemInt(IDC_DIST_THRESHOLD, &l_ok, FALSE));
 	if (l_ok && m_histogram.SetPeakThreshold(l_threshold))
 	{
@@ -240,7 +240,7 @@ void SVHistogramAnalyzerSetupClass::OnEnChangeDistThreshold()
 
 void SVHistogramAnalyzerSetupClass::OnEnChangeDefaultPeak()
 {
-	BOOL l_ok = FALSE;
+	BOOL l_ok = false;
 	int l_defaultPeak = static_cast<int>(GetDlgItemInt(IDC_DEFAULT_PEAK, &l_ok, FALSE));
 	if(l_ok && m_histogram.SetPeakDefault(l_defaultPeak))
 	{
@@ -250,7 +250,7 @@ void SVHistogramAnalyzerSetupClass::OnEnChangeDefaultPeak()
 
 void SVHistogramAnalyzerSetupClass::OnEnChangeHeightThreshold()
 {
-	BOOL l_ok = FALSE;
+	BOOL l_ok = false;
 	TCHAR buff[32];
 	l_ok = GetDlgItemText(IDC_HEIGHT_THRESHOLD, buff, 31);
 	if (l_ok)
@@ -263,7 +263,7 @@ void SVHistogramAnalyzerSetupClass::OnEnChangeHeightThreshold()
 
 void SVHistogramAnalyzerSetupClass::OnEnChangeLowclip()
 {
-	BOOL l_ok = FALSE;
+	BOOL l_ok = false;
 	int l_low = static_cast<int>(GetDlgItemInt(IDC_LOWCLIP, &l_ok, FALSE));
 	if (l_ok && m_histogram.Clip(l_low, SvUl::no_clip))
 	{
@@ -273,7 +273,7 @@ void SVHistogramAnalyzerSetupClass::OnEnChangeLowclip()
 
 void SVHistogramAnalyzerSetupClass::OnEnChangeHighclip()
 {
-	BOOL l_ok = FALSE;
+	BOOL l_ok = false;
 	int l_high = static_cast<int>(GetDlgItemInt(IDC_HIGHCLIP, &l_ok, FALSE));
 	if (l_ok && m_histogram.Clip(SvUl::no_clip, l_high))
 	{
@@ -283,7 +283,7 @@ void SVHistogramAnalyzerSetupClass::OnEnChangeHighclip()
 
 void SVHistogramAnalyzerSetupClass::OnEnChangeFixededit()
 {
-	BOOL l_ok = FALSE;
+	BOOL l_ok = false;
 	TCHAR buff[32];
 	l_ok = GetDlgItemText(IDC_FIXEDEDIT, buff, 31);
 	if (l_ok)
@@ -296,7 +296,7 @@ void SVHistogramAnalyzerSetupClass::OnEnChangeFixededit()
 
 void SVHistogramAnalyzerSetupClass::OnEnChangeLowValley()
 {
-	BOOL l_ok = FALSE;
+	BOOL l_ok = false;
 	int l_tmp = static_cast<int>(GetDlgItemInt(IDC_LOW_VALLEY, &l_ok, FALSE));
 	if(l_ok && m_histogram.SetValleyLow(l_tmp))
 	{
@@ -306,7 +306,7 @@ void SVHistogramAnalyzerSetupClass::OnEnChangeLowValley()
 
 void SVHistogramAnalyzerSetupClass::OnEnChangeHighValley()
 {
-	BOOL l_ok = FALSE;
+	BOOL l_ok = false;
 	int l_tmp = static_cast<int>(GetDlgItemInt(IDC_HIGH_VALLEY, &l_ok, FALSE));
 	if(l_ok && m_histogram.SetValleyHigh(l_tmp))
 	{
@@ -316,7 +316,7 @@ void SVHistogramAnalyzerSetupClass::OnEnChangeHighValley()
 
 void SVHistogramAnalyzerSetupClass::OnEnChangeDefaultValley()
 {
-	BOOL l_ok = FALSE;
+	BOOL l_ok = false;
 	int l_tmp = static_cast<int>(GetDlgItemInt(IDC_DEFAULT_VALLEY, &l_ok, FALSE));
 	if(l_ok && m_histogram.SetValleyDefault(l_tmp))
 	{

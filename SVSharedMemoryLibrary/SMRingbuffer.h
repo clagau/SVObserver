@@ -66,7 +66,7 @@ namespace  SvSml
 
 		void SetToReject(int writerslot);
 		///  Writerlock is released slot becomes the last written slot if it is valid 
-		void ReleaseWriteSlot(int slot, DWORD triggerNumber, BOOL isValid);
+		void ReleaseWriteSlot(int slot, DWORD triggerNumber, bool isValid);
 
 		///Triggernumber for Readerslot 
 		DWORD GetTriggerNumber(int Readerslot) const;
@@ -85,7 +85,7 @@ namespace  SvSml
 		static void  IncreaseSlotNumber(int &rSlotnumber, int SlotCount);
 		static void DecreaseSlotNumber(int &rSlotnumber, int SlotCount);
 		static DWORD MatchedSize(DWORD size, DWORD AllocationGranularity );    //<Match size to Allocation Granularity
-		BOOL Push_ToReject(DWORD triggerNumber, int slotNumber);
+		bool Push_ToReject(DWORD triggerNumber, int slotNumber);
 		void ThrowCreateFileMappingFailed(SvStl::SourceFileParams& FileParams, DWORD Programmcode);
 		void ThrowMapViewOfFileFailedFailed(SvStl::SourceFileParams& FileParams, DWORD Programmcode);
 		void MapViewOfFileWriteInfos();

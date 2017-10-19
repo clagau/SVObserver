@@ -76,11 +76,11 @@ public:
 
 	void RebuildResultsList();
 
-	BOOL InitAfterSystemIsDocked();
+	bool InitAfterSystemIsDocked();
 
 	void CloseDocument();
 
-	BOOL IsColorInspectionDocument() const;
+	bool IsColorInspectionDocument() const;
 
 	void RecreateImageSurfaces();
 
@@ -89,14 +89,14 @@ public:
 	void SaveToolGroupings(SVObjectWriter& rWriter);
 	void SaveViewedVariables(SVObjectWriter& rWriter);
 	
-	BOOL GetParameters(SVObjectWriter& rWriter);
+	bool GetParameters(SVObjectWriter& rWriter);
 
 	typedef SvXml::SVXMLMaterialsTree SVTreeType;
 
-	BOOL SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent );
+	bool SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent );
 
-	BOOL GoOnline();
-	BOOL GoOffline();
+	bool GoOnline();
+	bool GoOffline();
 
 	HRESULT RemoveImage(SVImageClass* pImage);
 	HRESULT RemoveImage(const SVGUID& p_rImageId);
@@ -106,7 +106,7 @@ public:
 	HRESULT GetCameras( SVVirtualCameraPtrSet& p_rCameras ) const;
 
 	HRESULT UpdateWithLastProduct();
-	BOOL RunOnce( SVToolClass* p_pTool = nullptr );
+	bool RunOnce( SVToolClass* p_pTool = nullptr );
 
 	
 	//Regression Test Methods
@@ -134,8 +134,8 @@ public:
 
 	HANDLE m_hDisplayChangedEvent; // Set if the display settings have been changed since the Doc was opened. // @WARNING:  bad practice making members public
 
-	BOOL IsNew; // @WARNING:  bad practice making members public
-	BOOL mbInitImagesByName; // @WARNING:  bad practice making members public
+	bool IsNew; // @WARNING:  bad practice making members public
+	bool mbInitImagesByName; // @WARNING:  bad practice making members public
 
 	#ifdef _DEBUG
 		virtual void AssertValid() const override;
@@ -280,7 +280,7 @@ protected:
 
 	void EditToolSetCondition();
 
-	BOOL AddTool( SVToolClass* PTool );
+	bool AddTool( SVToolClass* PTool );
 	HRESULT DeleteTool(SVTaskObjectClass* pTaskObject);
 
 	bool AddToolGrouping(bool bStartGroup = true);
@@ -317,7 +317,7 @@ protected:
 	HRESULT UpdateExtentsToFit( SVTaskObjectClass* p_pTask, const SVImageExtentClass& p_rExtents );
 	SVImageClass* GetImageByName( LPCTSTR ImageName ) const;
 
-	BOOL checkOkToDelete( SVTaskObjectClass* pTaskObject );
+	bool checkOkToDelete( SVTaskObjectClass* pTaskObject );
 
 	mutable SvTl::SVTimeStamp m_ToolSetListTimestamp;
 	mutable SvTl::SVTimeStamp m_PPQListTimestamp;

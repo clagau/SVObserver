@@ -637,7 +637,7 @@ void SVImageViewClass::SaveViewOrImageToDisk(bool ViewOnly, bool showOverlays)
 	SVString Path = AfxGetApp()->GetProfileString( RegSection, RegKeySaveViewPath, DefaultPath );
 	m_ViewOrImageFilename.SetPathName( Path.c_str() );
 	
-	BOOL bResult = m_ViewOrImageFilename.SaveFile(); // Show Save File Dialog
+	bool bResult = m_ViewOrImageFilename.SaveFile(); // Show Save File Dialog
 
 	if(bResult)
 	{
@@ -1847,10 +1847,8 @@ BOOL SVImageViewClass::GetObjectAtPoint( POINT p_point )
 	return l_bOk;
 }
 
-BOOL SVImageViewClass::GetParameters(SVObjectWriter& rWriter)
+void SVImageViewClass::GetParameters(SVObjectWriter& rWriter)
 {
-	BOOL l_bOk = TRUE;
-
 	_variant_t l_svVariant;
 
 	SVImageClass* l_pImage = dynamic_cast< SVImageClass* >( SVObjectManagerClass::Instance().GetObject( m_ImageId.ToGUID() ) );
@@ -1870,14 +1868,12 @@ BOOL SVImageViewClass::GetParameters(SVObjectWriter& rWriter)
 		rWriter.WriteAttribute(SvXml::CTAG_IMAGE_NAME, l_svVariant);
 		l_svVariant.Clear();
 	}
-
-	return l_bOk;
 }
 
-BOOL SVImageViewClass::SetParameters( SVTreeType& p_tree, SVTreeType::SVBranchHandle p_parent )
+bool SVImageViewClass::SetParameters( SVTreeType& p_tree, SVTreeType::SVBranchHandle p_parent )
 {
-	BOOL l_bOk = FALSE;
-	BOOL bZoomExOK = FALSE;
+	bool l_bOk = false;
+	bool bZoomExOK = false;
 
 	_variant_t Value;
 
@@ -1952,9 +1948,9 @@ BOOL SVImageViewClass::SetParameters( SVTreeType& p_tree, SVTreeType::SVBranchHa
 	return l_bOk;
 }
 
-BOOL SVImageViewClass::CheckParameters( SVTreeType& p_tree, SVTreeType::SVBranchHandle p_parent )
+bool SVImageViewClass::CheckParameters( SVTreeType& p_tree, SVTreeType::SVBranchHandle p_parent )
 {
-	BOOL l_bOk = FALSE;
+	bool l_bOk = false;
 
 	_variant_t Value;
 
@@ -2031,7 +2027,7 @@ BOOL SVImageViewClass::CheckParameters( SVTreeType& p_tree, SVTreeType::SVBranch
 			}
 			else
 			{
-				l_bOk = FALSE;
+				l_bOk = false;
 			}
 		}
 	}

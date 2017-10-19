@@ -48,14 +48,14 @@ SVDigitalOutputObject::~SVDigitalOutputObject()
 	}
 }
 
-BOOL SVDigitalOutputObject::Create()
+bool SVDigitalOutputObject::Create()
 {
 	m_isCreated = true;
 	
 	return m_isCreated;
 }
 
-BOOL SVDigitalOutputObject::Destroy()
+bool SVDigitalOutputObject::Destroy()
 {
 	m_isCreated = false;
 
@@ -82,38 +82,30 @@ HRESULT SVDigitalOutputObject::Reset()
 	return l_Status;
 }
 
-BOOL SVDigitalOutputObject::Force( bool bForce, bool bForcedValue )
+bool SVDigitalOutputObject::Force( bool bForce, bool bForcedValue )
 {
-	BOOL l_bOk = FALSE;
-
 	m_bForced = bForce;
 	m_bForcedValue = bForcedValue;
 
-	l_bOk = S_OK == SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputIsForced( m_lChannel, m_bForced );
+	bool l_bOk = S_OK == SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputIsForced( m_lChannel, m_bForced );
 	l_bOk = S_OK == SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputForcedValue( m_lChannel, m_bForcedValue ) && l_bOk;
 
 	return l_bOk;
 }
 
-BOOL SVDigitalOutputObject::Invert( bool bInvert )
+bool SVDigitalOutputObject::Invert( bool bInvert )
 {
-	BOOL l_bOk = FALSE;
-
 	m_bInverted = bInvert;
 
-	l_bOk = S_OK == SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputIsInverted( m_lChannel, m_bInverted );
+	bool l_bOk = S_OK == SVIOConfigurationInterfaceClass::Instance().SetDigitalOutputIsInverted( m_lChannel, m_bInverted );
 
 	return l_bOk;
 }
 
-BOOL SVDigitalOutputObject::Combine( bool bCombine, bool bCombineACK )
+void SVDigitalOutputObject::Combine( bool bCombine, bool bCombineACK )
 {
-	BOOL l_bOk = TRUE;
-
 	m_bCombined = bCombine;
 	m_bCombinedACK = bCombineACK;
-
-	return l_bOk;
 }
 
 bool SVDigitalOutputObject::IsForced() const
@@ -146,10 +138,9 @@ bool SVDigitalOutputObject::GetValue() const
 	return m_bLastValue;
 }
 
-BOOL SVDigitalOutputObject::SetChannel( long lChannel )
+void SVDigitalOutputObject::SetChannel( long lChannel )
 {
 	m_lChannel = lChannel;
-	return TRUE;
 }
 
 long SVDigitalOutputObject::GetChannel() const

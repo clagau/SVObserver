@@ -26,9 +26,9 @@ protected:
 public:
 	typedef SvXml::SVXMLMaterialsTree SVTreeType;
 
-	BOOL GetParameters(SVObjectWriter& rWriter);
-	BOOL SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle hParent);
-	BOOL CheckParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle hParent);
+	void GetParameters(SVObjectWriter& rWriter);
+	bool SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle hParent);
+	bool CheckParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle hParent);
 	void SetViewSize(CSize &Size);
 #pragma endregion Public Methods
 

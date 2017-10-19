@@ -38,13 +38,13 @@ public:
 	SVImageViewScroll();
 	virtual ~SVImageViewScroll();
 
-	BOOL GetParameters(SVObjectWriter& rWriter);
+	void GetParameters(SVObjectWriter& rWriter);
 
 	typedef SvXml::SVXMLMaterialsTree SVTreeType;
 
-	BOOL SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent );
+	bool SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent );
 
-	BOOL CheckParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent );
+	bool CheckParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent );
 
 	void SetViewSize( CSize &p_rcSize );
 	void SetImageSize( SIZE p_oSize );

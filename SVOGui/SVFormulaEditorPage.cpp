@@ -192,13 +192,13 @@ namespace SvOg
 
 	/////////////////////////////////////////////////////////////////////////////
 	//The function length breaks the programming guidelines, but it is not split because it would reduce the readability.
-	BOOL SVFormulaEditorPageClass::createToolbars()
+	bool SVFormulaEditorPageClass::createToolbars()
 	{
 		CRect	rect;
 		CRect	trect;
 		CSize	size( 28, 28 );
 		int numButtons;
-		BOOL retVal = TRUE;
+		bool retVal = true;
 
 		// Get base rectangle
 		GetDlgItem( IDC_TOOLBAR_STATIC )->GetWindowRect( &rect );
@@ -263,8 +263,8 @@ namespace SvOg
 		trect.left	 = trect.right;
 		trect.right  = trect.left + ( ( size.cx + ( SV_TOOLBAR_BORDER_W * 2 ) ) * numButtons );
 		trect.bottom = trect.top + size.cy + ( SV_TOOLBAR_BORDER_H * 2 );
-		retVal = m_punctuationBar.Create(	WS_CHILD | WS_VISIBLE | CCS_NODIVIDER | CBRS_SIZE_DYNAMIC,
-			trect, this, IDR_MATH_PUNCTUATION_TOOLBAR, ID_FORMULA_LPARENBUTTON, numButtons, size );
+		retVal = ( TRUE == m_punctuationBar.Create(	WS_CHILD | WS_VISIBLE | CCS_NODIVIDER | CBRS_SIZE_DYNAMIC,
+			trect, this, IDR_MATH_PUNCTUATION_TOOLBAR, ID_FORMULA_LPARENBUTTON, numButtons, size ));
 
 		// Common Cursor movements toolbar
 		size = CSize( 37, 28 );

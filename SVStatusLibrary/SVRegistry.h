@@ -14,7 +14,7 @@
 #include "SVUtilityLibrary/SVString.h"
 #include "SVContainerLibrary/SVVector.h"
 
-typedef BOOL (CALLBACK *PFKEYENUMPROC) (LPCTSTR p_szKey, LPVOID pUserData);
+typedef bool (CALLBACK *PFKEYENUMPROC) (LPCTSTR p_szKey, LPVOID pUserData);
 
 //SVRegistryClass manages entries in the registry for 
 //Seidenader Vision Inc. Applications.
@@ -34,11 +34,11 @@ public:
 	//key.
 	DWORD NumSubKeys();
 
-	//BOOL GetRegistryValue (int iIndex, SVString 
+	//bool GetRegistryValue (int iIndex, SVString 
 	//&szValueName, SVString &szValue, LPDWORD pdwType)
 	//
 	//Return Value:
-	//TRUE if a REG_SZ value was found for szValueName.
+	//true if a REG_SZ value was found for szValueName.
 	//
 	//Parameters:
 	//iIndex - zero based index identifying the value to 
@@ -52,14 +52,14 @@ public:
 	//Remarks:
 	//Use this function to enumerate through the list of 
 	//values for a key.
-	BOOL GetRegistryValue(DWORD dwIndex, SVString& szValueName, SVString& szValue, LPDWORD pdwType);
+	bool GetRegistryValue(DWORD dwIndex, SVString& szValueName, SVString& szValue, LPDWORD pdwType);
 
-	//BOOL SetRegistryValue (SVString &szValueName, ByteArray 
+	//bool SetRegistryValue (SVString &szValueName, ByteArray 
 	//&baValue, DWORD dwType, DWORD dwLength)
 	//throws SVException
 	//
 	//Return Value:
-	//TRUE if the value was set.
+	//true if the value was set.
 	//
 	//Parameters:
 	//szValueName -- Reference to a SVString containing the 
@@ -74,45 +74,45 @@ public:
 	//Remarks:
 	//Sets the  registry value for the entry specified 
 	//by szValueName.
-	BOOL SetRegistryValue( LPCTSTR szValueName, SVByteVector& baValue, DWORD dwType, DWORD dwLength);
+	bool SetRegistryValue( LPCTSTR szValueName, SVByteVector& baValue, DWORD dwType, DWORD dwLength);
 
-	//BOOL GetRegistryValue (SVString &szValueName, SVByteArray 
+	//bool GetRegistryValue (SVString &szValueName, SVByteArray 
 	//&baValue)
 	//
 	//Returns:
-	//TRUE if the value was found in the current key, FALSE 
+	//true if the value was found in the current key, false 
 	//otherwise.
 	//
 	//Remarks:
 	//Retrieves the value specified by szValueName and stores 
 	//it in baValue.
-	BOOL GetRegistryValue( LPCTSTR szValueName, SVByteVector& baValue );
+	bool GetRegistryValue( LPCTSTR szValueName, SVByteVector& baValue );
 
-	//BOOL SetRegistryValue (SVString &szValueName, SVByteArray 
+	//bool SetRegistryValue (SVString &szValueName, SVByteArray 
 	//&baValue)
 	//
 	//Returns:
-	//TRUE if the value was successfully set, FALSE otherwise.
+	//true if the value was successfully set, false otherwise.
 	//
 	//Remarks:
 	//Sets a registry value with the data supplied in baValue.
-	BOOL SetRegistryValue( LPCTSTR szValueName, SVByteVector& baValue );
+	bool SetRegistryValue( LPCTSTR szValueName, SVByteVector& baValue );
 
-	//BOOL DeleteValue (SVString &szValueName)
+	//bool DeleteValue (SVString &szValueName)
 	//
 	//Returns:
-	//TRUE if the value was deleted, FALSE otherwise.
+	//true if the value was deleted, false otherwise.
 	//
 	//Remarks:
 	//The value specified by szValueName is deleted from the
 	//registry. If the value did not exist previous to the
-	//call to DeleteValue, the function returns TRUE.
-	BOOL DeleteValue(LPCTSTR p_szValueName);
+	//call to DeleteValue, the function returns true.
+	bool DeleteValue(LPCTSTR p_szValueName);
 
-	//BOOL Import (LPCTSTR szFileName)
+	//bool Import (LPCTSTR szFileName)
 	//
 	//Return Value:
-	//TRUE if the file was imported.
+	//true if the file was imported.
 	//
 	//Parameters:
 	//szFileName - fully qualified name of the file where the 
@@ -122,22 +122,22 @@ public:
 	//Remarks:
 	//Imports the data in the specified file into the 
 	//registry.
-	BOOL Import(LPCTSTR szFileName);
+	bool Import(LPCTSTR szFileName);
 
-	//BOOL Import (LPCTSTR szFileName)
+	//bool Import (LPCTSTR szFileName)
 	//
 	//Return Value:
-	//TRUE if the file was imported.
+	//true if the file was imported.
 	//
 	//Remarks:
 	//Imports the data in the default shadow file into the 
 	//registry.
-	BOOL Import();
+	bool Import();
 
-	//BOOL Export (LPCTSTR szFileName)
+	//bool Export (LPCTSTR szFileName)
 	//
 	//Return Value:
-	//TRUE if the key was exported.
+	//true if the key was exported.
 	//
 	//Parameters:
 	//szFileName - fully qualified name of the file where the 
@@ -148,17 +148,17 @@ public:
 	//Writes the contents of the current key & subkeys to the 
 	//file
 	//specified by szFileName.
-	BOOL Export(LPCTSTR szFileName);
+	bool Export(LPCTSTR szFileName);
 
-	//BOOL Export ()
+	//bool Export ()
 	//
 	//Return Value:
-	//TRUE if the key was exported.
+	//true if the key was exported.
 	//
 	//Remarks:
 	//Writes the contents of the current key & subkeys to the 
 	//default shadow file.
-	BOOL Export();
+	bool Export();
 
 	//SVRegistryClass ();
 	//throws SVException
@@ -202,38 +202,38 @@ public:
 	//Closes the current key and opens the key
 	SVRegistryClass& operator=(const SVRegistryClass &svrRight);
 
-	//BOOL CreatedNewKey ()
+	//bool CreatedNewKey ()
 	//
 	//Return Value:
-	//TRUE if the key specified in the call to the 
-	//SVRegistryClass constructor was a new key, FALSE if the 
+	//true if the key specified in the call to the 
+	//SVRegistryClass constructor was a new key, false if the 
 	//key existed before the call to the constructor.
 	//
 	//Parameters:
 	//None.
 	//
 	//Remarks:
-	//Returns TRUE if the constructor had to create the key 
+	//Returns true if the constructor had to create the key 
 	//in order to open it.
-	BOOL CreatedNewKey();
+	bool CreatedNewKey();
 
-	//BOOL DeleteKey ()
+	//bool DeleteKey ()
 	//
 	//Return Value:
-	//TRUE if the key was deleted.
+	//true if the key was deleted.
 	//
 	//Parameters:
 	//None.
 	//
 	//Remarks:
 	//Deletes the key and all its sub-keys  from the registry.
-	BOOL DeleteKey ();
+	bool DeleteKey ();
 
 	//void EnumKeys (PFKEYENUMPROC pKeyEnumProc, LPVOID 
 	//pUserData);
 	//
 	//Return Value:
-	//TRUE if all keys were enumerated.
+	//true if all keys were enumerated.
 	//
 	//Parameters:
 	//pKeyEnumProc -- Pointer to a function that will be 
@@ -254,10 +254,10 @@ public:
 	//children of children are not enumerated).
 	void EnumKeys(PFKEYENUMPROC pKeyEnumProc, LPVOID pUserData);
 
-	//BOOL ReplaceKey (SVString &szHive);
+	//bool ReplaceKey (SVString &szHive);
 	//
 	//Return Value:
-	//TRUE if the registry was restored.
+	//true if the registry was restored.
 	//
 	//Parameters:
 	//szHive -- Name of the file where the registry 
@@ -266,12 +266,12 @@ public:
 	//Remarks:
 	//Loads the registry with keys and values saved in a 
 	//previous SaveKey operation.
-	BOOL ReplaceKey (LPCTSTR p_szHive);
+	bool ReplaceKey (LPCTSTR p_szHive);
 
-	//BOOL SaveKey (SVString &szHive);
+	//bool SaveKey (SVString &szHive);
 	//
 	//Return Value:
-	//TRUE if the registry was successfully saved.
+	//true if the registry was successfully saved.
 	//
 	//Parameters:
 	//szHive -- Name of the file where the registry 
@@ -280,14 +280,14 @@ public:
 	//Remarks:
 	//Writes the contents of the registry key, its subkeys 
 	//and values to a file specified by szFile.
-	BOOL SaveKey (LPCTSTR p_szHive);
+	bool SaveKey (LPCTSTR p_szHive);
 
-	//BOOL SetRegistryValue (SVString &szValueName, DWORD 
+	//bool SetRegistryValue (SVString &szValueName, DWORD 
 	//pdwValue)
 	//throws SVException
 	//
 	//Return Value:
-	//TRUE if the value was successfully set, FALSE otherwise.
+	//true if the value was successfully set, false otherwise.
 	//
 	//Parameters:
 	//szValueName -- Reference to a SVString containing the 
@@ -298,13 +298,13 @@ public:
 	//Remarks:
 	//Sets the registry value for the DWORD registry entry 
 	//specified by szValueName.
-	BOOL SetRegistryValue( LPCTSTR szValueName, DWORD dwValue );
+	bool SetRegistryValue( LPCTSTR szValueName, DWORD dwValue );
 
-	//BOOL GetRegistryValue (SVString &szValueName, DWORD 
+	//bool GetRegistryValue (SVString &szValueName, DWORD 
 	//*pdwValue)
 	//
 	//Return Value:
-	//TRUE if a DWORD value was found for szValueName.
+	//true if a DWORD value was found for szValueName.
 	//
 	//Parameters:
 	//szValueName -- Reference to a SvString containing the 
@@ -316,14 +316,14 @@ public:
 	//Remarks:
 	//Reads the DWORD registry value for the entry specified 
 	//by szValueName.
-	BOOL GetRegistryValue( LPCTSTR szValueName, DWORD *pdwValue );
+	bool GetRegistryValue( LPCTSTR szValueName, DWORD *pdwValue );
 
-	//BOOL SetRegistryValue (SVString &szValueName, SVString 
+	//bool SetRegistryValue (SVString &szValueName, SVString 
 	//&szValue)
 	//throws SVException
 	//
 	//Return Value:
-	//TRUE if the REG_SZ value was set.
+	//true if the REG_SZ value was set.
 	//
 	//Parameters:
 	//szValueName -- Reference to a SvString containing the 
@@ -334,13 +334,13 @@ public:
 	//Remarks:
 	//Sets the REG_SZ registry value for the entry specified 
 	//by szValueName.
-	BOOL SetRegistryValue( LPCTSTR szValueName, LPCTSTR szValue );
+	bool SetRegistryValue( LPCTSTR szValueName, LPCTSTR szValue );
 
-	//BOOL GetRegistryValue (SVString &szValueName, SVString 
+	//bool GetRegistryValue (SVString &szValueName, SVString 
 	//&szValue)
 	//
 	//Return Value:
-	//TRUE if a REG_SZ value was found for szValueName.
+	//true if a REG_SZ value was found for szValueName.
 	//
 	//Parameters:
 	//szValueName -- Reference to a SVString containing the 
@@ -352,7 +352,7 @@ public:
 	//Remarks:
 	//Reads the REG_SZ registry value for the entry specified 
 	//by szValueName.
-	BOOL GetRegistryValue( LPCTSTR szValueName, SVString& szValue );
+	bool GetRegistryValue( LPCTSTR szValueName, SVString& szValue );
 
 	//SVRegistryClass (LPCTSTR szKey)
 	//throws SVException
@@ -366,7 +366,7 @@ public:
 	//Remarks:
 	//Opens the key specified by szKey. If it does not exist, 
 	//it is created,
-	//and CreatedNewKey() function will return TRUE when 
+	//and CreatedNewKey() function will return true when 
 	//called.
 	//
 	//szKey can be an absolute key,  application key, or 
@@ -449,46 +449,46 @@ private:
 	int GetImportString(FILE * pFile, SVString & szName, SVByteVector & baValue, DWORD * pdwType);
 
 	//This is a supporting function for the Import function.
-	BOOL ImportKeys(FILE * pFile);
+	bool ImportKeys(FILE * pFile);
 
 	//Walks the registry tree structure from the current key
 	//outputting the keys to the file specified by pFile.
 	//
 	//This is a supporting function for the Export function.
-	BOOL ExportKeys(FILE * pFile);
+	bool ExportKeys(FILE * pFile);
 
 	//Exports the values of the current key to the file 
 	//specified by
 	//pFile.
-	BOOL ExportValues(FILE * pFile);
+	bool ExportValues(FILE * pFile);
 
-	//BOOL SetShadowFileName (LPCTSTR szFileName)
+	//bool SetShadowFileName (LPCTSTR szFileName)
 	//
 	//Returns:
-	//TRUE if the SVShadowFile registry value was successfully
-	//set for the current key. FALSE otherwise.
-	BOOL SetShadowFileName(LPCTSTR szFileName);
+	//true if the SVShadowFile registry value was successfully
+	//set for the current key. false otherwise.
+	bool SetShadowFileName(LPCTSTR szFileName);
 
-	//BOOL GetShadowFileName (SVString &szShadowFile)
+	//bool GetShadowFileName (SVString &szShadowFile)
 	//
 	//Returns:
-	//TRUE if a shadow filename was found for the current key.
-	//FALSE otherwise
+	//true if a shadow filename was found for the current key.
+	//false otherwise
 	//
 	//Remarks:
 	//Gets the shadow filename for a key.
-	BOOL GetShadowFileName(SVString & szShadowFile);
+	bool GetShadowFileName(SVString & szShadowFile);
 
-	//BOOL GetDefaultShadowFileName (SVString &szShadowFile)
+	//bool GetDefaultShadowFileName (SVString &szShadowFile)
 	//
 	//Returns:
-	//TRUE if a default shadow filename was successfully 
-	//generated. FALSE otherwise.
+	//true if a default shadow filename was successfully 
+	//generated. false otherwise.
 	//
 	//Remarks:
 	//Generates a filename to use for an Export or Import 
 	//operation.
-	BOOL GetDefaultShadowFileName(SVString & szShadowFile);
+	bool GetDefaultShadowFileName(SVString & szShadowFile);
 
 	//void InitRegistry (SVString szKey)
 	//throws SVException
@@ -511,12 +511,12 @@ private:
 	//Flag indicating if the key had to be created in the 
 	//constructor or not. The value of this element can be 
 	//read via the CreatedNewKey method.
-	BOOL mbCreatedNewKey;
+	bool mbCreatedNewKey;
 
-	//BOOL AdjustPrivileges (TCHAR *pszPrivilege);
+	//bool AdjustPrivileges (TCHAR *pszPrivilege);
 	//
 	//Return Value:
-	//TRUE if the request privilege was granted.
+	//true if the request privilege was granted.
 	//
 	//Parameters:
 	//Privilege to grant.
@@ -525,7 +525,7 @@ private:
 	//This member function is private scope.
 	//Alters the process's privileges to allow registry 
 	//modification.
-	BOOL AdjustPrivileges (TCHAR *pszPrivilege);
+	bool AdjustPrivileges (TCHAR *pszPrivilege);
 
 };
 

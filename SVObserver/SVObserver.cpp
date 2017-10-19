@@ -364,7 +364,7 @@ SVObserverApp::SVObserverApp()
 	m_LastValidConfigPNVariableValue		= _T( "" );
 
 	m_OfflineCount = 0;
-	m_ShouldRunLastEnvironmentAutomatically = FALSE;
+	m_ShouldRunLastEnvironmentAutomatically = false;
 	m_AutoRunDelayTime = 1000;
 
 	m_CurrentVersion = SvSyl::SVVersionInfo::GetLongVersion();
@@ -411,7 +411,7 @@ void SVObserverApp::OnFileNewConfig()
 	SVSVIMStateClass::AddState( SV_STATE_CREATING );
 	if( S_OK == m_svSecurityMgr.SVValidate( SECURITY_POINT_FILE_MENU_NEW ) )
 	{
-		if ( (ShowConfigurationAssistant( 0, TRUE )) ) // if not cancelled
+		if ( (ShowConfigurationAssistant( 0, true )) ) // if not cancelled
 		{
 			if( OkToEdit() || !m_svSecurityMgr.SVIsSecured( SECURITY_POINT_MODE_MENU_EDIT_TOOLSET ) )
 			{
@@ -617,7 +617,7 @@ void SVObserverApp::OnEnvironmentSettings()
 
 		if( IDOK == cfdDlg.DoModal() )
 		{
-			m_ShouldRunLastEnvironmentAutomatically = cfdDlg.StartLastAutomatically;
+			m_ShouldRunLastEnvironmentAutomatically = cfdDlg.StartLastAutomatically ? true : false;
 
 			WriteProfileInt( _T( "Settings" ), 
 				_T( "Run Last Configuration Automatically" ), 
@@ -1448,14 +1448,14 @@ void SVObserverApp::OnUpdateExtrasLogout( CCmdUI* PCmdUI )
 //
 BOOL SVObserverApp::OnOpenRecentFile( UINT nID ) 
 {
-	BOOL l_bOk = false;
+	bool l_bOk = false;
 	if( S_OK == m_svSecurityMgr.SVValidate( SECURITY_POINT_FILE_MENU_RECENT_CONFIGURATIONS ) )
 	{
 		ValidateMRUList();
 
 		if ( !SVSVIMStateClass::CheckState( SV_STATE_UNAVAILABLE ) )
 		{
-			BOOL bRunning = SVSVIMStateClass::CheckState( SV_STATE_RUNNING );
+			bool bRunning = SVSVIMStateClass::CheckState( SV_STATE_RUNNING );
 
 			if ( !bRunning )
 			{
@@ -1479,7 +1479,7 @@ void SVObserverApp::OnRunMostRecentMRU()
 
 	if ( !SVSVIMStateClass::CheckState( SV_STATE_UNAVAILABLE ) )
 	{
-		BOOL bRunning = SVSVIMStateClass::CheckState( SV_STATE_RUNNING );
+		bool bRunning = SVSVIMStateClass::CheckState( SV_STATE_RUNNING );
 
 		if ( !bRunning )
 		{
@@ -1492,7 +1492,7 @@ void SVObserverApp::OnUpdateRecentFileMenu( CCmdUI* PCmdUI )
 {
 	CWinApp::OnUpdateRecentFileMenu( PCmdUI );
 
-	BOOL bEnable = ( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_REGRESSION | SV_STATE_TEST )
+	bool bEnable = ( ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_REGRESSION | SV_STATE_TEST )
 		&& m_svSecurityMgr.SVIsDisplayable(SECURITY_POINT_FILE_MENU_RECENT_CONFIGURATIONS ) && (TheSVOLicenseManager().HasMatroxLicense()) );
 
 	for( long l = ID_FILE_MRU_FILE1; !bEnable && l < (long)(PCmdUI->m_nID); l++ )
@@ -1610,7 +1610,7 @@ void SVObserverApp::OnExtrasUtilitiesEdit()
 
 void SVObserverApp::OnUpdateAddColorTool( CCmdUI* PCmdUI ) 
 {
-	BOOL Enabled = ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST );
+	bool Enabled = ! SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST );
 	// Check current user access...
 	Enabled = Enabled && TheSVObserverApp.OkToEdit();
 
@@ -1623,7 +1623,7 @@ void SVObserverApp::OnUpdateAddColorTool( CCmdUI* PCmdUI )
 			SVIPDoc* pCurrentDocument = dynamic_cast< SVIPDoc* > ( pMDIChild->GetActiveDocument() );
 			if( nullptr != pCurrentDocument && pCurrentDocument->IsColorInspectionDocument() )
 			{
-				Enabled = TRUE;
+				Enabled = true;
 			}
 		}
 	}
@@ -1693,7 +1693,7 @@ void SVObserverApp::OnRCSaveAllAndGetConfig()
 	// SVRCComm.Dll and at least closes the current config, because the opened 
 	// SVObserver documents cannot be transfered to SVFocus!
 
-	BOOL bRunning = SVSVIMStateClass::CheckState( SV_STATE_RUNNING );
+	bool bRunning = SVSVIMStateClass::CheckState( SV_STATE_RUNNING );
 
 	if ( bRunning )
 	{
@@ -1702,7 +1702,7 @@ void SVObserverApp::OnRCSaveAllAndGetConfig()
 
 	if ( SVSVIMStateClass::CheckState( SV_STATE_READY ) )
 	{
-		BOOL bModified = SVSVIMStateClass::CheckState( SV_STATE_MODIFIED );
+		bool bModified = SVSVIMStateClass::CheckState( SV_STATE_MODIFIED );
 
 		SVString ConfigPath = SVFileNameManagerClass::Instance().GetConfigurationPathName();
 
@@ -1752,7 +1752,7 @@ void SVObserverApp::OnRCCloseAndCleanUpDownloadDirectory()
 	// Cleans up execution directory ( download directory )
 
 	// Close config immediately, without hint or user message...
-	DestroyConfig( FALSE, TRUE );	// Close config immediately
+	DestroyConfig( false, true );	// Close config immediately
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -1970,7 +1970,7 @@ void SVObserverApp::OnRCClose()
 	// Cleans up execution directory ( download directory )
 
 	// Close config immediately, without hint or user message...
-	DestroyConfig( FALSE, TRUE );	// Close config immediately
+	DestroyConfig( false, true );	// Close config immediately
 }
 #pragma endregion AFX_MSG Methods
 
@@ -2527,11 +2527,10 @@ HRESULT SVObserverApp::OpenSVXFile(LPCTSTR PathName)
 	SvTl::SVTimeStamp l_StartLoading;
 	SvTl::SVTimeStamp l_FinishLoad;
 
-	BOOL bOk;
+	bool bOk = false;
 
 	hr = S_OK;
 	hrDestroyed = S_OK;
-	bOk = 0;
 
 	while (1)
 	{
@@ -2976,17 +2975,17 @@ HRESULT SVObserverApp::CanCloseMainFrame()
 // -----------------------------------------------------------------------------
 // .Description : ...
 ////////////////////////////////////////////////////////////////////////////////
-HRESULT SVObserverApp::DestroyConfig( BOOL AskForSavingOrClosing /* = TRUE */, 
-	BOOL CloseWithoutHint /* = FALSE */ )
+HRESULT SVObserverApp::DestroyConfig( bool AskForSavingOrClosing /* = true */, 
+	bool CloseWithoutHint /* = false */ )
 {
-	BOOL bCancel = FALSE;
+	bool bCancel = false;
 
-	BOOL bOk = ! SVSVIMStateClass::CheckState( SV_STATE_READY | SV_STATE_RUNNING | SV_STATE_TEST );
+	bool bOk = ! SVSVIMStateClass::CheckState( SV_STATE_READY | SV_STATE_RUNNING | SV_STATE_TEST );
 	HRESULT hr= S_OK;
 
 	if ( ! bOk )
 	{
-		BOOL bClose = TRUE;
+		bool bClose = true;
 
 		if ( CloseWithoutHint )
 		{
@@ -2999,8 +2998,10 @@ HRESULT SVObserverApp::DestroyConfig( BOOL AskForSavingOrClosing /* = TRUE */,
 			SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 			INT_PTR result = Msg.setMessage( SVMSG_SVO_94_GENERAL_Informational, SvStl::Tid_UserQuestionCloseConfig, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10130, SV_GUID_NULL, MB_YESNO );
 			bClose = IDYES == result;
-			if (bClose == FALSE)
+			if (!bClose)
+			{
 				hr = ERROR_CANCELLED;
+			}
 		}
 
 		if ( bClose )
@@ -3024,7 +3025,7 @@ HRESULT SVObserverApp::DestroyConfig( BOOL AskForSavingOrClosing /* = TRUE */,
 					case IDNO:
 						{
 							SVSVIMStateClass::AddState( SV_STATE_CANCELING );
-							ResetAllIPDocModifyFlag(FALSE);
+							ResetAllIPDocModifyFlag(false);
 							break;
 						}
 					case IDYES:
@@ -3032,7 +3033,7 @@ HRESULT SVObserverApp::DestroyConfig( BOOL AskForSavingOrClosing /* = TRUE */,
 							if( S_OK == m_svSecurityMgr.SVValidate( SECURITY_POINT_FILE_MENU_SAVE_CONFIGURATION ) )
 							{
 								OnFileSaveConfig();
-								ResetAllIPDocModifyFlag(FALSE);
+								ResetAllIPDocModifyFlag(false);
 
 								// Check whether config saving is done.
 								// If not, an error or an user cancel
@@ -3045,8 +3046,8 @@ HRESULT SVObserverApp::DestroyConfig( BOOL AskForSavingOrClosing /* = TRUE */,
 					case IDCANCEL:  // Fall through to default case.
 					default:	// Don´t close config!
 						{
-							bCancel = TRUE;
-							bClose = FALSE;
+							bCancel = true;
+							bClose = false;
 							break;
 						}
 					}// end switch( result )
@@ -3204,7 +3205,7 @@ SVIODoc* SVObserverApp::GetIODoc() const
 	return pIODoc;
 }
 
-BOOL SVObserverApp::Logout( BOOL BForceLogout )
+bool SVObserverApp::Logout( bool bForceLogout )
 {
 	SVSVIMStateClass::RemoveState( SV_STATE_SECURED );
 
@@ -3217,7 +3218,7 @@ BOOL SVObserverApp::Logout( BOOL BForceLogout )
 		// Logged on User changed
 		pWndMain->PostMessage( SV_LOGGED_ON_USER_CHANGED, 0 );
 	}
-	return FALSE;
+	return false;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -3280,9 +3281,9 @@ bool SVObserverApp::IsMatroxGige() const
 	return l_bOk;
 }
 
-BOOL SVObserverApp::CheckSVIMType() const
+bool SVObserverApp::CheckSVIMType() const
 {
-	BOOL Result = FALSE;
+	bool Result = false;
 
 	SVConfigurationObject* pConfig( nullptr );
 	SVObjectManagerClass::Instance().GetConfigurationObject( pConfig );
@@ -3381,7 +3382,7 @@ void SVObserverApp::ValidateMRUList()
 		iSize = m_pRecentFileList->GetSize();
 		for( i = iSize - 1; i >= 0; i-- )
 		{
-			BOOL bGone = ( _access( m_pRecentFileList->m_arrNames[i], 0 ) != 0 );
+			bool bGone = ( _access( m_pRecentFileList->m_arrNames[i], 0 ) != 0 );
 			if( bGone )
 			{
 				m_pRecentFileList->Remove( i );
@@ -3930,7 +3931,7 @@ HRESULT SVObserverApp::RebuildOutputList()
 // -----------------------------------------------------------------------------
 // .Description : ...
 ////////////////////////////////////////////////////////////////////////////////
-BOOL SVObserverApp::SetStatusText( LPCTSTR PStrStatusText )
+bool SVObserverApp::SetStatusText( LPCTSTR PStrStatusText )
 {
 	// If PStrStatusText is a nullptr, the Main Frame deletes the last status info.
 	// If no Main Frame exists, the function returns FALSE.
@@ -3938,9 +3939,9 @@ BOOL SVObserverApp::SetStatusText( LPCTSTR PStrStatusText )
 	if( m_pMainWnd )
 	{
 		GetMainFrame()->SetStatusInfoText( PStrStatusText );
-		return TRUE;
+		return true;
 	}
-	return FALSE;
+	return false;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -3973,66 +3974,65 @@ const SVString& SVObserverApp::getConfigFullFileName() const
 	return m_ConfigFileName.GetFullFileName();
 }
 
-BOOL SVObserverApp::setConfigFullFileName(LPCTSTR csFullFileName, DWORD dwAction)
+bool SVObserverApp::setConfigFullFileName(LPCTSTR csFullFileName, DWORD dwAction)
 {
-	BOOL bOk = m_ConfigFileName.SetFullFileName( csFullFileName );
+	m_ConfigFileName.SetFullFileName( csFullFileName );
 
-	if ( bOk )
+	bool bOk = true;
+
+	if (m_ConfigFileName.GetPathName().empty())
 	{
-		if ( m_ConfigFileName.GetPathName().empty() )
+		SVFileNameManagerClass::Instance().SetConfigurationPathName(nullptr);
+	}
+	else
+	{
+		if (0 == SvUl_SF::CompareNoCase(m_ConfigFileName.GetPathName(), SvStl::GlobalPath::Inst().GetRunPath()))
 		{
-			SVFileNameManagerClass::Instance().SetConfigurationPathName( nullptr );
+			SVFileNameManagerClass::Instance().SetConfigurationPathName(nullptr);
 		}
 		else
 		{
-			if ( 0 == SvUl_SF::CompareNoCase( m_ConfigFileName.GetPathName(), SvStl::GlobalPath::Inst().GetRunPath() ) )
+			bOk = SVFileNameManagerClass::Instance().SetConfigurationPathName(m_ConfigFileName.GetPathName().c_str());
+			// if this returns FALSE, unable to access specified path!
+			if (!bOk)
 			{
-				SVFileNameManagerClass::Instance().SetConfigurationPathName( nullptr );
-			}
-			else
-			{
-				bOk = SVFileNameManagerClass::Instance().SetConfigurationPathName( m_ConfigFileName.GetPathName().c_str() );
-				// if this returns FALSE, unable to access specified path!
-				if ( !bOk )
-				{
-					ASSERT( dwAction == SAVE_CONFIG ||
-						dwAction == LOAD_CONFIG ||
-						dwAction == RENAME_CONFIG );
+				ASSERT(dwAction == SAVE_CONFIG ||
+					dwAction == LOAD_CONFIG ||
+					dwAction == RENAME_CONFIG);
 
-					SVStringVector msgList;
-					msgList.push_back(SvStl::MessageData::convertId2AddtionalText(dwAction == LOAD_CONFIG ? SvStl::Tid_Load : SvStl::Tid_Save));
-					msgList.push_back(m_ConfigFileName.GetPathName());
-					SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-					Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_UnableConfig, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10132 );
-				}
+				SVStringVector msgList;
+				msgList.push_back(SvStl::MessageData::convertId2AddtionalText(dwAction == LOAD_CONFIG ? SvStl::Tid_Load : SvStl::Tid_Save));
+				msgList.push_back(m_ConfigFileName.GetPathName());
+				SvStl::MessageMgrStd Msg(SvStl::LogAndDisplay);
+				Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_UnableConfig, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10132);
 			}
 		}
+	}
 
-		if ( bOk )
+	if (bOk)
+	{
+		switch (dwAction)
 		{
-			switch( dwAction )
-			{
-			case LOAD_CONFIG:
-				{
-					bOk = SVFileNameManagerClass::Instance().LoadItem( &m_ConfigFileName );
-					break;
-				}
-			case SAVE_CONFIG:
-				{
-					bOk = SVFileNameManagerClass::Instance().SaveItem( &m_ConfigFileName );
-					break;
-				}
-			case RENAME_CONFIG:
-				{
-					bOk = SVFileNameManagerClass::Instance().RenameItem( &m_ConfigFileName );
-					break;
-				}
-			default:
-				{
-					// Do nothing.
-					break;
-				}
-			}
+		case LOAD_CONFIG:
+		{
+			bOk = SVFileNameManagerClass::Instance().LoadItem(&m_ConfigFileName);
+			break;
+		}
+		case SAVE_CONFIG:
+		{
+			bOk = SVFileNameManagerClass::Instance().SaveItem(&m_ConfigFileName);
+			break;
+		}
+		case RENAME_CONFIG:
+		{
+			bOk = SVFileNameManagerClass::Instance().RenameItem(&m_ConfigFileName);
+			break;
+		}
+		default:
+		{
+			// Do nothing.
+			break;
+		}
 		}
 	}
 
@@ -4119,9 +4119,9 @@ SVIPDoc* SVObserverApp::GetIPDoc( LPCTSTR StrIPDocPathName ) const
 // -----------------------------------------------------------------------------
 // .Description : ...
 ////////////////////////////////////////////////////////////////////////////////
-BOOL SVObserverApp::AlreadyExistsIPDocTitle( LPCTSTR StrIPDocTitle )
+bool SVObserverApp::AlreadyExistsIPDocTitle( LPCTSTR StrIPDocTitle )
 {
-	return FALSE;
+	return false;
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -4129,14 +4129,14 @@ BOOL SVObserverApp::AlreadyExistsIPDocTitle( LPCTSTR StrIPDocTitle )
 // -----------------------------------------------------------------------------
 // .Description : ...
 ////////////////////////////////////////////////////////////////////////////////
-BOOL SVObserverApp::ShowConfigurationAssistant( int Page /*= 3*/, 
-	BOOL bFileNewConfiguration /*= FALSE*/ )
+bool SVObserverApp::ShowConfigurationAssistant( int Page /*= 3*/, 
+	bool bFileNewConfiguration /*= false*/ )
 {
-	BOOL bOk = FALSE;
+	bool bOk = false;
 
 	// Access denied, if... // Check Edit Mode
 	if( SVSVIMStateClass::CheckState( SV_STATE_RUNNING | SV_STATE_TEST ) )
-		return FALSE;
+		return false;
 
 	if ( bFileNewConfiguration )
 	{
@@ -4146,7 +4146,7 @@ BOOL SVObserverApp::ShowConfigurationAssistant( int Page /*= 3*/,
 			// Needs Attention !!!
 			// Should get error code if returned S_FALSE; 
 			// If returned ERROR_CANCELLED, user cancelled
-			return FALSE;
+			return false;
 		}
 
 		if (bFileNewConfiguration)
@@ -4162,7 +4162,7 @@ BOOL SVObserverApp::ShowConfigurationAssistant( int Page /*= 3*/,
 
 		// Clean up Execution Directory...
 		// Check path, create if necessary and delete contents...
-		InitPath( SVString( SVFileNameManagerClass::Instance().GetRunPathName() + _T("\\")).c_str(), TRUE, TRUE );
+		InitPath( SVString( SVFileNameManagerClass::Instance().GetRunPathName() + _T("\\")).c_str(), true, true );
 
 		// Ensure that DestroyConfig() can do his work...
 		SVSVIMStateClass::AddState( SV_STATE_READY );
@@ -4172,7 +4172,7 @@ BOOL SVObserverApp::ShowConfigurationAssistant( int Page /*= 3*/,
 		CWaitCursor wait;
 
 		SVSVIMStateClass::CheckState( SV_STATE_READY );
-		ResetAllIPDocModifyFlag(FALSE);
+		ResetAllIPDocModifyFlag(false);
 	}
 
 	//****RPY - Start - added new AppAssistant
@@ -4244,7 +4244,7 @@ BOOL SVObserverApp::ShowConfigurationAssistant( int Page /*= 3*/,
 	SVSVIMStateClass::AddState( SV_STATE_EDITING );
 	if (cDlg.DoModal() == IDOK)
 	{
-		bOk = TRUE;
+		bOk = true;
 		if (cDlg.Modified())
 		{
 			SVSVIMStateClass::AddState( SV_STATE_MODIFIED );
@@ -4422,9 +4422,9 @@ bool SVObserverApp::OkToEdit()
 	return l_bOk;
 }
 
-BOOL SVObserverApp::IsMonochromeImageAvailable()
+bool SVObserverApp::IsMonochromeImageAvailable()
 {
-	BOOL Monochrome(false);
+	bool Monochrome(false);
 
 	CMDIChildWnd* pMDIChild( nullptr );
 	if( m_pMainWnd && ( pMDIChild = ( ( CMDIFrameWnd* ) m_pMainWnd )->MDIGetActive() ) )
@@ -5767,7 +5767,7 @@ void SVObserverApp::fileSaveAsSVX( SVString SaveAsPathName, bool isAutoSave)
 	bool bOk = true;
 
 	SVSVIMStateClass::AddState( SV_STATE_SAVING );
-	ResetAllIPDocModifyFlag(FALSE);
+	ResetAllIPDocModifyFlag(false);
 	//
 	// Is the input parameter for save as path empty?
 	//
@@ -5779,7 +5779,7 @@ void SVObserverApp::fileSaveAsSVX( SVString SaveAsPathName, bool isAutoSave)
 		}
 		else
 		{
-			bOk = (setConfigFullFileName( SaveAsPathName.c_str(), FALSE ) == TRUE);
+			bOk = setConfigFullFileName( SaveAsPathName.c_str(), FALSE );
 		}
 	}
 	if ( bOk && !SvUl_SF::CompareNoCase( m_ConfigFileName.GetExtension(), SVString(_T(".svx")) ) )
@@ -5924,7 +5924,7 @@ void SVObserverApp::SaveConfigurationAndRelatedFiles(bool isAutoSave)
 //  file from the Most Recent Used (MRU) list under menu File.\
 //
 //
-BOOL SVObserverApp::OpenConfigFileFromMostRecentList(int nID)
+bool SVObserverApp::OpenConfigFileFromMostRecentList(int nID)
 {
 	ASSERT_VALID(this);
 	ASSERT(nullptr != m_pRecentFileList);
@@ -5938,7 +5938,7 @@ BOOL SVObserverApp::OpenConfigFileFromMostRecentList(int nID)
 	TRACE2("MRU: open file (%d) '%s'.\n", (nIndex) + 1,
 		(LPCTSTR)(*m_pRecentFileList)[nIndex]);
 #endif
-	BOOL bResult = false;
+	bool bResult = false;
 
 	// Check Security to see if save is allowed
 
@@ -6290,11 +6290,11 @@ HRESULT SVObserverApp::ConstructMissingDocuments()
 // .Description : Destroys still open message windows
 // -----------------------------------------------------------------------------
 // .Return Value
-//	: BOOL									Returns TRUE, if a message window 
+//	: bool									Returns true, if a message window 
 //											was existent. Otherwise it returns
-//											FALSE.
+//											false.
 ////////////////////////////////////////////////////////////////////////////////
-BOOL SVObserverApp::DestroyMessageWindow()
+bool SVObserverApp::DestroyMessageWindow()
 {
 	if( m_pMessageWindow )
 	{
@@ -6305,9 +6305,9 @@ BOOL SVObserverApp::DestroyMessageWindow()
 
 		delete m_pMessageWindow;
 		m_pMessageWindow = nullptr;
-		return TRUE;
+		return true;
 	}
-	return FALSE;
+	return false;
 }
 #pragma endregion Protected Methods
 
@@ -6348,14 +6348,14 @@ void SVObserverApp::OnStopAll()
 }// end OnStopAll
 
 
-BOOL SVObserverApp::InitATL()
+bool SVObserverApp::InitATL()
 {
 	HRESULT l_Status( S_OK );
 
 	bool l_AppRegister( false );
 	bool l_AppUnregister( false );
 
-	m_ATLInited = FALSE;
+	m_ATLInited = false;
 
 	// Parse command line for standard shell commands, DDE, file open
 	CCommandLineInfo cmdInfo;
@@ -6364,7 +6364,6 @@ BOOL SVObserverApp::InitATL()
 	LPTSTR lpCmdLine = GetCommandLine(); //this line necessary for _ATL_MIN_CRT
 	TCHAR szTokens[] = _T("-/");
 
-	BOOL bRun = TRUE;
 	LPCTSTR lpszToken = _Module.FindOneOf(lpCmdLine, szTokens);
 	while (nullptr != lpszToken)
 	{
@@ -6385,7 +6384,7 @@ BOOL SVObserverApp::InitATL()
 	l_Status = _Module.RegisterClassObjects( CLSCTX_LOCAL_SERVER, REGCLS_MULTIPLEUSE );
 	if( SUCCEEDED( l_Status ) )
 	{
-		m_ATLInited = TRUE;
+		m_ATLInited = true;
 	}
 #endif // !defined(_WIN32_WCE) || defined(_CE_DCOM)
 
@@ -6400,7 +6399,7 @@ BOOL SVObserverApp::InitATL()
 			INT_PTR result = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_SVObserver_RegisterClassObjectsFailed_Question, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10135, SV_GUID_NULL, MB_YESNO );
 			if( IDYES == result )
 			{
-				return FALSE;
+				return false;
 			}
 		}
 		else
@@ -6409,7 +6408,7 @@ BOOL SVObserverApp::InitATL()
 		{
 			SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
 			INT_PTR result = Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_SVObserver_RegisterClassObjectsFailed, msgList, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10136 );
-			return FALSE;
+			return false;
 		}
 	}
 
@@ -6418,14 +6417,14 @@ BOOL SVObserverApp::InitATL()
 	{
 		if( SUCCEEDED( l_Status ) )
 		{
-			_Module.UpdateRegistryAppId(FALSE);
+			_Module.UpdateRegistryAppId(false);
 
-			_Module.UnregisterServer(TRUE);
+			_Module.UnregisterServer(true);
 
 			std::cout << _T( "****** SVObserver and SVCommand Un-registered ******" ) << std::endl;
 		}
 
-		return FALSE;
+		return false;
 	}
 
 	// App was launched with /Register or /Regserver switch.
@@ -6440,17 +6439,17 @@ BOOL SVObserverApp::InitATL()
 			std::cout << _T( "***** SVObserver and SVCommand Registered *****" ) << std::endl;
 		}
 
-		return FALSE;
+		return false;
 	}
 
 	// DON'T display a new MDI child window during startup!!!
 	cmdInfo.m_nShellCommand = CCommandLineInfo::FileNothing;
 
-	// Dispatch commands specified on the command line.  Will return FALSE if
+	// Dispatch commands specified on the command line.  Will return false if
 	// app was launched with /RegServer, /Register, /Unregserver or /Unregister.
-	if( !ProcessShellCommand( cmdInfo ) ) { return FALSE; }
+	if( !ProcessShellCommand( cmdInfo ) ) { return false; }
 
-	return TRUE;
+	return true;
 }
 
 void SVObserverApp::StopRegression()

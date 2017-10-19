@@ -18,7 +18,7 @@
 
 namespace SvSml
 {
-	SharedDataStore::SharedDataStore() :m_bUseOneViewPerSlot(FALSE),
+	SharedDataStore::SharedDataStore() :m_bUseOneViewPerSlot(false),
 		m_slotCount(0),
 		m_slotSize(0),
 		m_hMapFileImage(0),
@@ -85,12 +85,12 @@ namespace SvSml
 		CloseConnection();
 		if (slotsize > m_AllocationGranularity * GranularityFactor)
 		{
-			m_bUseOneViewPerSlot = TRUE;
+			m_bUseOneViewPerSlot = true;
 			m_slotSize = (slotsize / m_AllocationGranularity + 1) *  m_AllocationGranularity;
 		}
 		else
 		{
-			m_bUseOneViewPerSlot = FALSE;
+			m_bUseOneViewPerSlot = false;
 			m_slotSize = slotsize;
 		}
 
@@ -198,7 +198,7 @@ namespace SvSml
 		DataStoreHeader* pHeader = reinterpret_cast<DataStoreHeader*>(m_pViewHeader);
 		m_slotCount = pHeader->slotCount;
 		m_slotSize = pHeader->slotSize;
-		m_bUseOneViewPerSlot = pHeader->UseOneViewPerSlot;
+		m_bUseOneViewPerSlot = pHeader->UseOneViewPerSlot ? true: false;
 		if (m_slotCount <= 0)
 		{
 			ThrowMapViewOfFileFailedFailed(SvStl::SourceFileParams(StdMessageParams), SvStl::Err_16232);

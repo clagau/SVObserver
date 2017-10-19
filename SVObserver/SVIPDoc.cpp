@@ -261,7 +261,7 @@ void SVIPDoc::init()
 {
 	SVFileNameManagerClass::Instance().AddItem( &msvFileName );
 
-	mbInitImagesByName = FALSE;
+	mbInitImagesByName = false;
 
 	IsNew = true;
 
@@ -326,14 +326,14 @@ void SVIPDoc::SetMDIChild( CMDIChildWnd* p_pMDIChildWnd )
 // .Description : "Creates this IPDoc" and his embedded tool and freeze set.
 //              : Shall become some kind of CreateObject(...) in future time.
 ////////////////////////////////////////////////////////////////////////////////
-BOOL SVIPDoc::InitAfterSystemIsDocked()
+bool SVIPDoc::InitAfterSystemIsDocked()
 {
 	// Init Utility and Tool Set Draw menus...
 	InitMenu();
 
 	SVInspectionProcess* pInspection( GetInspectionProcess() );
 
-	BOOL l_bOk = ( nullptr != pInspection );
+	bool l_bOk = ( nullptr != pInspection );
 
 	if( l_bOk )
 	{
@@ -439,7 +439,7 @@ SVString SVIPDoc::CheckName( const SVString& rToolName ) const
 // Operation(s) Of Writing Access:
 //******************************************************************************
 
-BOOL SVIPDoc::AddTool(SVToolClass* pTool)
+bool SVIPDoc::AddTool(SVToolClass* pTool)
 {
 	if (nullptr != pTool)
 	{
@@ -669,12 +669,12 @@ SVConditionalClass* SVIPDoc::GetToolSetCondition()
 	return l_pObject;
 }
 
-BOOL SVIPDoc::GoOnline()
+bool SVIPDoc::GoOnline()
 {
 	return m_oDisplay.GoOnline();
 }
 
-BOOL SVIPDoc::GoOffline()
+bool SVIPDoc::GoOffline()
 {
 	return m_oDisplay.GoOffline();
 }
@@ -1781,9 +1781,9 @@ void SVIPDoc::RebuildResultsList()
 	}
 }
 
-BOOL SVIPDoc::checkOkToDelete( SVTaskObjectClass* pTaskObject )
+bool SVIPDoc::checkOkToDelete( SVTaskObjectClass* pTaskObject )
 {
-	BOOL bRetVal = false;
+	bool bRetVal = false;
 
 	SVSVIMStateClass::AddState(SV_STATE_EDITING);
 	// show dependents dialog
@@ -1794,7 +1794,7 @@ BOOL SVIPDoc::checkOkToDelete( SVTaskObjectClass* pTaskObject )
 	
 		INT_PTR dlgResult = SvOg::SVShowDependentsDialog::StandardDialog( pTaskObject->GetName(), TaskObjectID );
 
-		bRetVal = ( IDCANCEL == dlgResult ) ? false : true;
+		bRetVal = ( IDCANCEL == dlgResult );
 	}
 	SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
 	return bRetVal;
@@ -2115,25 +2115,20 @@ CFile* SVIPDoc::GetFile( LPCTSTR lpszFileName, UINT nOpenFlags, CFileException* 
 
 BOOL SVIPDoc::OnOpenDocument(LPCTSTR lpszPathName)
 {
-	BOOL bOk = FALSE;
-
 	if ( lpszPathName )
 	{
-		bOk = msvFileName.SetFullFileName( lpszPathName );
+		msvFileName.SetFullFileName( lpszPathName );
 	}
 	else
 	{
-		bOk = msvFileName.SetFullFileName( GetPathName() );
+		msvFileName.SetFullFileName( GetPathName() );
 	}
 
-	if ( bOk )
-	{
-		bOk = SVFileNameManagerClass::Instance().LoadItem( &msvFileName );
+	BOOL bOk = SVFileNameManagerClass::Instance().LoadItem( &msvFileName );
 
-		if ( bOk )
-		{
-			bOk = CDocument::OnOpenDocument( msvFileName.GetFullFileName().c_str() );
-		}
+	if (bOk)
+	{
+		bOk = CDocument::OnOpenDocument(msvFileName.GetFullFileName().c_str());
 	}
 
 	return bOk;
@@ -2141,39 +2136,34 @@ BOOL SVIPDoc::OnOpenDocument(LPCTSTR lpszPathName)
 
 BOOL SVIPDoc::OnSaveDocument(LPCTSTR lpszPathName)
 {
-	BOOL bOk = msvFileName.SetFullFileName( lpszPathName );
-
-	if( bOk && 0 != SvUl_SF::CompareNoCase( msvFileName.GetPathName(), SVFileNameManagerClass::Instance().GetRunPathName() ) )
+	msvFileName.SetFullFileName( lpszPathName );
+	if( 0 != SvUl_SF::CompareNoCase( msvFileName.GetPathName(), SVFileNameManagerClass::Instance().GetRunPathName() ) )
 	{
-		bOk = msvFileName.SetPathName( SVFileNameManagerClass::Instance().GetRunPathName().c_str() );
+		msvFileName.SetPathName( SVFileNameManagerClass::Instance().GetRunPathName().c_str() );
 	}
 
-	if( bOk && 0 != SvUl_SF::CompareNoCase( msvFileName.GetExtension(), SVString( _T(".ipd") ) ) )
+	if( 0 != SvUl_SF::CompareNoCase( msvFileName.GetExtension(), SVString( _T(".ipd") ) ) )
 	{
-		bOk = msvFileName.SetExtension( _T(".ipd") );
+		msvFileName.SetExtension( _T(".ipd") );
 	}
 
+	BOOL bOk = CDocument::OnSaveDocument( msvFileName.GetFullFileName().c_str() );
 	if ( bOk )
 	{
-		bOk = CDocument::OnSaveDocument( msvFileName.GetFullFileName().c_str() );
+		bOk = SVFileNameManagerClass::Instance().SaveItem(&msvFileName);
 
-		if ( bOk )
+		if (bOk)
 		{
-			bOk = SVFileNameManagerClass::Instance().SaveItem( &msvFileName );
-
-			if ( bOk )
-			{
-				CDocument::SetPathName( msvFileName.GetFullFileName().c_str(), FALSE );
-			}
+			CDocument::SetPathName(msvFileName.GetFullFileName().c_str(), FALSE);
 		}
 	}
 
 	return bOk;
 }
 
-BOOL SVIPDoc::IsColorInspectionDocument() const
+bool SVIPDoc::IsColorInspectionDocument() const
 {
-	BOOL bRetVal = FALSE;
+	bool bRetVal = false;
 
 	SVInspectionProcess* pInspection = GetInspectionProcess();
 
@@ -2185,7 +2175,7 @@ BOOL SVIPDoc::IsColorInspectionDocument() const
 	return bRetVal;
 }
 
-BOOL SVIPDoc::GetParameters(SVObjectWriter& rWriter)
+bool SVIPDoc::GetParameters(SVObjectWriter& rWriter)
 {
 	_variant_t svVariant;
 
@@ -2343,7 +2333,7 @@ void SVIPDoc::SaveViewPlacements(SVObjectWriter& rWriter)
 
 			if (pFrame &&pFrame->GetSafeHwnd())
 			{
-				BOOL bResult = pFrame->GetWindowPlacement( &wndpl );
+				pFrame->GetWindowPlacement( &wndpl );
 			}
 		}
 	}
@@ -2412,9 +2402,9 @@ void SVIPDoc::SaveToolGroupings(SVObjectWriter& rWriter)
 	m_toolGroupings.GetParameters(rWriter);
 }
 
-BOOL SVIPDoc::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent )
+bool SVIPDoc::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent )
 {
-	BOOL bOk = FALSE;
+	bool bOk = false;
 
 	SVViewUnion View;
 	_variant_t svVariant;
@@ -2550,7 +2540,7 @@ BOOL SVIPDoc::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiPa
 
 					if( pFrame && pFrame->GetSafeHwnd() )
 					{
-						bOk = pFrame->SetWindowPlacement( &wndpl ); // WINDOWPLACEMENT* lpwndpl
+						bOk = pFrame->SetWindowPlacement(&wndpl) ? true : false; // WINDOWPLACEMENT* lpwndpl
 					}// end if
 				} // if(pFrame && pFrame->GetSafeHwnd())
 			} // if(pWndSplitter && pWndSplitter->GetSafeHwnd())
@@ -2566,7 +2556,7 @@ BOOL SVIPDoc::SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiPa
 		if (bOk)
 		{
 			// Serialze View Data...
-			mbInitImagesByName = TRUE;
+			mbInitImagesByName = true;
 			POSITION vPos;
 			SVString Name;
 			_variant_t svVariant;
@@ -2866,7 +2856,7 @@ HRESULT SVIPDoc::DeleteTool(SVTaskObjectClass* pTaskObject)
 	if( pTaskObject )
 	{
 		// Check for Dependents
-		int rc = checkOkToDelete( pTaskObject );
+		bool rc = checkOkToDelete( pTaskObject );
 
 		if( rc )
 		{
@@ -2953,13 +2943,13 @@ void SVIPDoc::OnEditAdjustToolPosition()
 
 void SVIPDoc::OnUpdateEditAdjustToolPosition(CCmdUI* pCmdUI)
 {
-	BOOL Enabled = SVSVIMStateClass::CheckState( SV_STATE_READY ) && SVSVIMStateClass::CheckState( SV_STATE_EDIT );
+	bool Enabled = SVSVIMStateClass::CheckState( SV_STATE_READY ) && SVSVIMStateClass::CheckState( SV_STATE_EDIT );
 	// Check current user access...
 	Enabled = Enabled && TheSVObserverApp.OkToEdit();
 
 	if( Enabled )
 	{
-		Enabled = FALSE;
+		Enabled = false;
 		ToolSetView* pToolSetView = GetToolSetView();
 		SVToolSetClass* pToolSet = GetToolSet();
 		if( nullptr != pToolSet && nullptr != pToolSetView && !pToolSetView->IsLabelEditing())
@@ -2976,7 +2966,7 @@ void SVIPDoc::OnUpdateEditAdjustToolPosition(CCmdUI* pCmdUI)
 					//check to see if the tool has extents
 					if ( Tool->DoesObjectHaveExtents() )
 					{
-						Enabled = TRUE;
+						Enabled = true;
 					}
 				}
 			}
@@ -2999,7 +2989,7 @@ void SVIPDoc::OnShowToolRelations()
 
 void SVIPDoc::OnUpdateShowToolRelations(CCmdUI* pCmdUI)
 {
-	BOOL Enabled = SVSVIMStateClass::CheckState( SV_STATE_READY ) && SVSVIMStateClass::CheckState( SV_STATE_EDIT );
+	bool Enabled = SVSVIMStateClass::CheckState( SV_STATE_READY ) && SVSVIMStateClass::CheckState( SV_STATE_EDIT );
 	// Check current user access...
 	Enabled = Enabled && TheSVObserverApp.OkToEdit();
 
@@ -3024,7 +3014,7 @@ void SVIPDoc::OnToolDependencies()
 
 void SVIPDoc::OnUpdateToolDependencies(CCmdUI* pCmdUI)
 {
-	BOOL Enabled = SVSVIMStateClass::CheckState(SV_STATE_READY) && SVSVIMStateClass::CheckState(SV_STATE_EDIT);
+	bool Enabled = SVSVIMStateClass::CheckState(SV_STATE_READY) && SVSVIMStateClass::CheckState(SV_STATE_EDIT);
 	// Check current user access...
 	Enabled = Enabled && TheSVObserverApp.OkToEdit();
 
@@ -4063,10 +4053,10 @@ HRESULT SVIPDoc::UpdateWithLastProduct()
 	return l_Status;
 }
 
-BOOL SVIPDoc::RunOnce( SVToolClass* p_pTool )
+bool SVIPDoc::RunOnce( SVToolClass* p_pTool )
 {
 	SVInspectionProcess* pInspection = GetInspectionProcess();
-	BOOL l_Status = ( nullptr != pInspection );
+	bool l_Status = ( nullptr != pInspection );
 
 	if( l_Status )
 	{

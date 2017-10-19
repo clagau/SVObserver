@@ -102,7 +102,7 @@ namespace SvOg
 				svfncImageFile.SetFileType(SV_IMAGE_SOURCE_FILE_TYPE);
 				svfncImageFile.SetPathName( Path.c_str() );
 			
-				BOOL bResult = svfncImageFile.SaveFile(); // Show Save File Dialog
+				bool bResult = svfncImageFile.SaveFile(); // Show Save File Dialog
 			
 				if (bResult)
 				{

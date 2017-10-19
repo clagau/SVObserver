@@ -550,7 +550,7 @@ public:
   STDMETHOD(SVIsAvailiable)();
 
 public:
-	static BOOL ResetStreamingDataAndLockedImages();
+	static void ResetStreamingDataAndLockedImages();
 
 	static HRESULT ImageToBSTR( SVImageInfoClass &rImageInfo, SVSmartHandlePointer ImageHandle, BSTR *pbstr);
 	static HRESULT SafeImageToBSTR( SVImageClass *p_pImage, SVImageIndexStruct p_svIndex, BSTR *pbstr);
@@ -580,8 +580,8 @@ private:
 	static SVVector<SVInspectionProcess*> m_arInspections;
 	static SVStringVector m_InspectionNames;
 
-    static volatile BOOL m_bRunStreamData;
-    static volatile BOOL m_bRegisteredStream;
+    static volatile bool m_bRunStreamData;
+    static volatile bool m_bRegisteredStream;
     static volatile DWORD m_dwStreamDataProcessId;
 	static volatile long m_lLastStreamedProduct;
     static volatile HANDLE m_hStopStreamEvent;

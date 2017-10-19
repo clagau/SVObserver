@@ -172,7 +172,7 @@ int main(int argc, char* argv[])
 				{
 					Ringbufffer.SetToReject(wslot);
 				}
-				Ringbufffer.ReleaseWriteSlot(wslot, Triggercount, TRUE);
+				Ringbufffer.ReleaseWriteSlot(wslot, Triggercount, true);
 				Sleep(delay);
 			}
 		}

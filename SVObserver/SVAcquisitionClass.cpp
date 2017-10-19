@@ -411,9 +411,9 @@ HRESULT SVAcquisitionClass::CreateLightReference( int iBands )
 
 	if ( iBands > 0 )
 	{
-		BOOL bResult = (TRUE == mLightReference.Create( iBands ));
+		bool bResult = mLightReference.Create( iBands );
 
-        if (TRUE == bResult )
+        if ( bResult )
 		{
             hrOk = S_OK;
 		}
@@ -468,10 +468,8 @@ HRESULT SVAcquisitionClass::CreateLightReferenceBand( int iBand, int iAttributes
 
 	if ( iBand < mLightReference.NumBands() && mLightReference.m_aLightReferenceBand.size() > 0 )
 	{
-		if ( mLightReference.m_aLightReferenceBand[iBand].Create( iAttributes ) )
-		{
-			hrOk = S_OK;
-		}
+		mLightReference.m_aLightReferenceBand[iBand].Create(iAttributes);
+		hrOk = S_OK;
 	}
 
 	return hrOk;

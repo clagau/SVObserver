@@ -27,8 +27,8 @@ public:
 	SVInputObjectList( SVObjectClass *pOwner = nullptr, int StringResourceID = IDS_CLASSNAME_SVINPUTOBJECTLIST );
 	virtual ~SVInputObjectList();
 
-	BOOL Create();
-	BOOL Destroy();
+	bool Create();
+	bool Destroy();
 
 	SVInputObject* GetInput( const SVGUID& rInputID ) const;
 
@@ -39,20 +39,20 @@ public:
 	HRESULT AttachInput( SVInputObject *pInput );
 	HRESULT DetachInput( const SVGUID& p_rOutputID );
 
-	BOOL ReadInputs( const SVIOEntryHostStructPtrVector& p_rInputs, SVVariantBoolVector& p_rInputValues );
-	BOOL ReadInput( SVIOEntryStruct pIOEntry, _variant_t& rVariant );
+	bool ReadInputs( const SVIOEntryHostStructPtrVector& p_rInputs, SVVariantBoolVector& p_rInputValues );
+	bool ReadInput( SVIOEntryStruct pIOEntry, _variant_t& rVariant );
 
-	BOOL FillInputs( SVIOEntryHostStructPtrVector& p_IOEntries );
+	bool FillInputs( SVIOEntryHostStructPtrVector& p_IOEntries );
 
-	BOOL GetRemoteInputCount( long &lSize );
-	BOOL SetRemoteInput( long lIndex, const _variant_t& rValue );
+	bool GetRemoteInputCount( long &lSize );
+	bool SetRemoteInput( long lIndex, const _variant_t& rValue );
 
 private:
 	bool Lock() const;
 	bool Unlock() const;
 
 	CRITICAL_SECTION m_hCriticalSection;
-	BOOL m_bCreated;
+	bool m_bCreated;
 
 	SVGuidSVInputObjectPtrMap m_InputObjects;
 };

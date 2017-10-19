@@ -55,7 +55,7 @@ namespace SvSml
 
 	private:		
 	
-		BOOL  m_bUseOneViewPerSlot; //<if this is false if the memory is mapped to one view else  one view for each slot is used
+		bool  m_bUseOneViewPerSlot; //<if this is false if the memory is mapped to one view else  one view for each slot is used
 		DWORD m_slotCount; //<number of slots 
 		DWORD  m_slotSize; //<size per slot
 		DWORD m_DataStoreHeaderSize;

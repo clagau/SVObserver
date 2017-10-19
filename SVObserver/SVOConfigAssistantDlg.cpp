@@ -309,11 +309,10 @@ BOOL CSVOConfigAssistantDlg::AddToTriggerList(LPCTSTR TriggerName, int iDig)
 
 BOOL CSVOConfigAssistantDlg::AddToPPQList(LPCTSTR PPQ, LPCTSTR Camera, LPCTSTR Trigger, LPCTSTR Inspection)
 {
-	BOOL bRet = FALSE;
-	bRet = m_PPQList.AddPPQToList( PPQ );
+	bool bRet = m_PPQList.AddPPQToList( PPQ );
 	bRet = m_PPQList.AttachCameraToPPQ( PPQ, Camera ) && bRet;
 	bRet = m_PPQList.AttachInspectToPPQ( PPQ, Inspection ) && bRet;
-	bRet = m_PPQList.AttachTriggerToPPQ( PPQ, Trigger ) && bRet;
+	m_PPQList.AttachTriggerToPPQ( PPQ, Trigger );
 
 	return bRet;
 }
@@ -557,7 +556,7 @@ void CSVOConfigAssistantDlg::CreateDefaultForSVIMDigital(int Number, LPCTSTR Tri
 SVString CSVOConfigAssistantDlg::GetNextCameraName()
 {
 	int iRet = 0;
-	BOOL bFound = TRUE;
+	bool bFound = true;
 	SVString Result;
 
 	while ( bFound )
@@ -619,7 +618,7 @@ SVString CSVOConfigAssistantDlg::GetNextPPQName() const
 	{
 		iRet++;
 		Result = SvUl_SF::Format( _T("%s%d"), SvO::cPpqFixedName, iRet );
-		bFound = m_PPQList.IsPPQInList( Result.c_str() ) ? true : false;
+		bFound = m_PPQList.IsPPQInList( Result.c_str() );
 	}
 	return Result;
 }
@@ -1897,7 +1896,7 @@ BOOL CSVOConfigAssistantDlg::SendTriggerDataToConfiguration()
 
 BOOL CSVOConfigAssistantDlg::RenameInspectionObjects(LPCTSTR InspectionName, LPCTSTR NewInspectionName)
 {
-	BOOL bRet = TRUE;
+	bool bRet = true;
 	if( InspectionName != NewInspectionName )
 	{
 		// PPQ Object Inspection Name...

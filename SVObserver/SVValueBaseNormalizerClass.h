@@ -22,8 +22,8 @@ public:
 
 	const SVValueBaseNormalizerClass& operator=( const SVValueBaseNormalizerClass& S2 );
 
-	BOOL SetNormalRange( double Min, double Max, double Step = 1.0 );
-	BOOL SetRealRange( double Min, double Max, double Step = 1.0 );
+	bool SetNormalRange( double Min, double Max, double Step = 1.0 );
+	bool SetRealRange( double Min, double Max, double Step = 1.0 );
 
 	double GetNormalRangeBaseSize();
 	double GetNormalRangeMax();

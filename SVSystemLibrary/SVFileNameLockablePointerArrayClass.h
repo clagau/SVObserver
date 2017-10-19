@@ -45,10 +45,10 @@ public:
 	LPCTSTR GetFileNameList() const;
 
 	//This operator locks the object.
-	BOOL Lock();
+	bool Lock();
 
 	//This operation unlocks the object.
-	BOOL Unlock();
+	bool Unlock();
 
 private:
 	//This attribute is the shared lock for the object.

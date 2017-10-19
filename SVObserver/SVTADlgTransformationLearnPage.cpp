@@ -134,7 +134,7 @@ void SVToolAdjustmentDialogTransformationLearnPageClass::refresh()
 		m_translationXValue = 0.0;
 		m_translationYValue = 0.0;
 
-		BOOL bPerformTranslation = FALSE;
+		BOOL bPerformTranslation = false;
 		if( pPerformTranslation )
 			pPerformTranslation->GetValue( bPerformTranslation );
 
@@ -154,7 +154,7 @@ void SVToolAdjustmentDialogTransformationLearnPageClass::refresh()
 		m_rotationYValue = 0.0;
 		m_rotationAngleValue = 0.0;
 
-		BOOL bPerformRotation = FALSE;
+		BOOL bPerformRotation = false;
 		if( pPerformRotation )
 			pPerformRotation->GetValue( bPerformRotation );
 

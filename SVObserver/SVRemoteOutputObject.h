@@ -55,7 +55,7 @@ public:
 	HRESULT SetInputObjectId( GUID p_ObjectId );
 	HRESULT SetGroupID( const SVString& p_strGroupID );
 
-	BOOL SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent );
+	bool SetParameters( SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent );
 #pragma endregion Public Methods
 
 #pragma region Private Methods

@@ -47,9 +47,9 @@ public:
 	BOOL Destroy();
 
 	// Runtime Functions
-	BOOL CanGoOnline();
-	BOOL GoOnline();
-	BOOL GoOffline();
+	bool CanGoOnline();
+	bool GoOnline();
+	bool GoOffline();
 
 	void SetIPDocDisplayComplete();
 

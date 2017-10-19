@@ -252,7 +252,6 @@ protected:
 	SVString FormatOutput(const T& rValue) const;
 	void setOutputFormat( LPCTSTR OutFormat ) { m_OutFormat = OutFormat; };
 	LPCTSTR getOutputFormat() const { return m_OutFormat.c_str(); };
-	const int& getNumberOfBuckets() const { return m_NumberOfBuckets; };
 	bool isLegacyVectorObjectCompatibility() const { return m_LegacyVectorObjectCompatibility; };
 
 	void swap( SVValueObjectClass& rRhs );

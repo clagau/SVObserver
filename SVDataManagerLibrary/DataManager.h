@@ -82,8 +82,8 @@ protected:
 	// This references the last position in the svmManagedIndexArrayList which have been destroyed.
 	LONGLONG m_LastUnusedIndex;
 	
-	BOOL Lock( unsigned long Timeout ) const;
-	BOOL Unlock() const;
+	bool Lock( unsigned long Timeout ) const;
+	bool Unlock() const;
 
 	bool m_IsLockCreated;
 

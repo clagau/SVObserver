@@ -59,9 +59,9 @@ SVOCameraList &SVOCameraList::operator =(const SVOCameraList &source)
 }
 
 
-BOOL SVOCameraList::IsCameraInList(LPCTSTR CameraName) const
+bool SVOCameraList::IsCameraInList(LPCTSTR CameraName) const
 {
-	BOOL bFound = FALSE;
+	bool bFound = false;
 
 	const_iterator pos( m_CameraList.begin() );
 
@@ -71,7 +71,7 @@ BOOL SVOCameraList::IsCameraInList(LPCTSTR CameraName) const
 
 		if ( nullptr != pCameraObj && CameraName == pCameraObj->GetCameraDisplayName())
 		{
-			bFound = TRUE;
+			bFound = true;
 		}
 		else
 		{
@@ -82,9 +82,9 @@ BOOL SVOCameraList::IsCameraInList(LPCTSTR CameraName) const
 	return bFound;
 }
 
-BOOL SVOCameraList::AddCameraToList(LPCTSTR CameraName, int Dig, int CameraID)
+bool SVOCameraList::AddCameraToList(LPCTSTR CameraName, int Dig, int CameraID)
 {
-	BOOL bRet = FALSE;
+	bool bRet = false;
 
 	if (!IsCameraInList(CameraName))
 	{
@@ -93,15 +93,15 @@ BOOL SVOCameraList::AddCameraToList(LPCTSTR CameraName, int Dig, int CameraID)
 		pObj->SetDigNumber(Dig);
 		pObj->SetCameraID(CameraID);
 		m_CameraList.AddTail(pObj);
-		bRet = TRUE;
+		bRet = true;
 	}
 
 	return bRet;
 }
 
-BOOL SVOCameraList::AddCameraToList(LPCTSTR CameraName, int Dig, int Bands, int CameraID)
+bool SVOCameraList::AddCameraToList(LPCTSTR CameraName, int Dig, int Bands, int CameraID)
 {
-	BOOL bRet = FALSE;
+	bool bRet = false;
 
 	if (!IsCameraInList(CameraName))
 	{
@@ -111,7 +111,7 @@ BOOL SVOCameraList::AddCameraToList(LPCTSTR CameraName, int Dig, int Bands, int 
 		pObj->SetCameraID(CameraID);
 		pObj->SetBandNumber(Bands);
 		m_CameraList.AddTail(pObj);
-		bRet = TRUE;
+		bRet = true;
 	}
 
 	return bRet;
@@ -139,26 +139,26 @@ SVOCameraList::iterator SVOCameraList::FindCameraPosition(LPCTSTR CameraName)
 	return pos;
 }
 
-BOOL SVOCameraList::SetCameraFile(LPCTSTR CameraName, LPCTSTR FileName)
+bool SVOCameraList::SetCameraFile(LPCTSTR CameraName, LPCTSTR FileName)
 {
 	iterator pos = FindCameraPosition(CameraName);
-	BOOL bRet = FALSE;
+	bool bRet = false;
 
 	if (pos != m_CameraList.end())
 	{
 		SVOCameraObjPtr pObj = m_CameraList.GetAt(pos);
 		pObj->SetCameraFile( SVString(FileName) );
 		m_CameraList.SetAt(pos, pObj);
-		bRet = TRUE;
+		bRet = true;
 	}
 
 	return bRet;
 }
 
-BOOL SVOCameraList::SetCameraDeviceParams( LPCTSTR CameraName, const SVDeviceParamCollection& rCameraDeviceParams, const SVDeviceParamCollection& rCameraFileParams )
+bool SVOCameraList::SetCameraDeviceParams( LPCTSTR CameraName, const SVDeviceParamCollection& rCameraDeviceParams, const SVDeviceParamCollection& rCameraFileParams )
 {
 	iterator pos = FindCameraPosition(CameraName);
-	BOOL bRet = FALSE;
+	bool bRet = false;
 
 	if (pos != m_CameraList.end())
 	{
@@ -166,22 +166,22 @@ BOOL SVOCameraList::SetCameraDeviceParams( LPCTSTR CameraName, const SVDevicePar
 		pObj->SetCameraFileParams( rCameraFileParams );
 		pObj->SetCameraDeviceParams( rCameraDeviceParams );
 		m_CameraList.SetAt(pos,pObj);
-		bRet = TRUE;
+		bRet = true;
 	}
 
 	return bRet;
 }
 
 
-BOOL SVOCameraList::RemoveCameraFromList( LPCTSTR CameraName )
+bool SVOCameraList::RemoveCameraFromList( LPCTSTR CameraName )
 {
 	iterator pos = FindCameraPosition( CameraName );
-	BOOL bRet = FALSE;
+	bool bRet = false;
 
 	if (pos != m_CameraList.end())
 	{
 		m_CameraList.RemoveAt(pos);
-		bRet = TRUE;
+		bRet = true;
 	}
 	//Reorder the camera digitizer
 	pos = m_CameraList.begin();

@@ -33,10 +33,12 @@ namespace SvSml
 		m_MatchedInfoSize = MatchedSize(m_InfoSize, m_AllocationGranularity);
 		
 	}
+
 	SMRingBuffer::~SMRingBuffer()
 	{
 		CloseConnection();
 	}
+
 	void SMRingBuffer::CreateConnection(LPCTSTR Name, int nTotal, int nRejects, const SMParameterStruct& rParam)
 	{
 		CloseConnection();
@@ -113,6 +115,7 @@ namespace SvSml
 			m_pRingBufferReject[slot].SlotNumberReject = slot;
 		}
 	}
+
 	void  SMRingBuffer::OpenConnection(LPCTSTR Name)
 	{
 		CloseConnection();
@@ -134,9 +137,13 @@ namespace SvSml
 		{
 			std::stringstream ss;
 			if (!m_pRingBufferInfos)
+			{
 				ss << "Create File Mapping failed: " << GetLastError();
+			}
 			else
+			{
 				ss << "OpenConnection failed for  : " << Name << ": Entry empty" << std::endl;;
+			}
 			throw std::exception(ss.str().c_str());
 		}
 		m_TotalSlotCount = m_pRingBufferInfos->TotalSlotCount;
@@ -149,6 +156,7 @@ namespace SvSml
 		}
 		m_pRingBufferReject = m_pRingBufferLast + m_TotalSlotCount;
 	}
+
 	void SMRingBuffer::CloseConnection()
 	{
 		if (m_pRingBufferInfos && UnmapViewOfFile(m_pRingBufferInfos))
@@ -166,6 +174,7 @@ namespace SvSml
 			m_hMapFile = 0;
 		}
 	}
+
 	int  SMRingBuffer::GetReaderSlotLastWritten(SlotType  type)
 	{
 		if (!m_pRingBufferInfos)
@@ -209,6 +218,7 @@ namespace SvSml
 #endif
 		return  -1;
 	}
+
 	int  SMRingBuffer::GetReaderSlotByTrigger(DWORD Triggercount)
 	{
 
@@ -257,6 +267,7 @@ namespace SvSml
 		return -1;
 
 	}
+
 	void SMRingBuffer::ReleaseReaderSlot(int  readerslot)
 	{
 		if (nullptr == m_pRingBufferLast || readerslot < 0)
@@ -264,25 +275,25 @@ namespace SvSml
 			throw std::exception("No Ringbuffer or invalid slot");
 		}
 
-
 		long sync = InterlockedDecrement(&(m_pRingBufferLast[readerslot].SyncDWord));
 #if defined(TRACE_MANAGER) 
 		SVString DebugStr = SvUl_SF::Format("Release ReaderSlot: %i to %i \n", readerslot, sync);
 		::OutputDebugString(DebugStr.c_str());
 #endif
 	}
+
 	void SMRingBuffer::SetToReject(int writerslot)
 	{
 		if (!m_pRingBufferInfos || !m_pRingBufferLast || writerslot < 0)
 		{
 			throw std::exception("No Ringbuffer or invalid slot");
 		}
-		m_pRingBufferLast[writerslot].isReject = TRUE;
+		m_pRingBufferLast[writerslot].isReject = true;
 		return;
 	}
+
 	int   SMRingBuffer::GetNextWriteSlot()
 	{
-
 		if (!m_pRingBufferInfos)
 		{
 			throw std::exception("No Ringbuffer");
@@ -300,7 +311,6 @@ namespace SvSml
 				::OutputDebugString(DebugStr.c_str());
 #endif 
 				return slot;
-
 			}
 		}
 #if defined(TRACE_MANAGER) 
@@ -309,10 +319,9 @@ namespace SvSml
 #endif
 
 		return  -1;
-
 	}
 	
-	void	SMRingBuffer::ReleaseWriteSlot(int slot, DWORD triggerNumber, BOOL isValid)
+	void	SMRingBuffer::ReleaseWriteSlot(int slot, DWORD triggerNumber, bool isValid)
 	{
 		if (!m_pRingBufferInfos || !m_pRingBufferLast || slot < 0)
 		{
@@ -332,7 +341,7 @@ namespace SvSml
 		}
 
 		//reset reject flag 
-		m_pRingBufferLast[slot].isReject = FALSE;
+		m_pRingBufferLast[slot].isReject = false;
 		if (isValid && isReject)
 		{
 			m_pRingBufferLast[slot].SyncDWord = 0x1;
@@ -354,6 +363,7 @@ namespace SvSml
 #endif 
 
 	}
+
 	DWORD SMRingBuffer::GetTriggerNumber(int slot) const
 	{
 		if (!m_pRingBufferInfos || !m_pRingBufferLast || slot < 0)
@@ -362,6 +372,7 @@ namespace SvSml
 		}
 		return m_pRingBufferLast[slot].TriggerNumber;
 	}
+
 	int SMRingBuffer::GetRejects(std::vector<DWORD> &rRejects)  const
 	{
 		if (!m_pRingBufferInfos || !m_pRingBufferReject)
@@ -390,18 +401,22 @@ namespace SvSml
 		}
 		return static_cast<int>(rRejects.size());
 	}
+
 	int SMRingBuffer::GetTotalSlotCount() const
 	{
 		return m_TotalSlotCount;
 	}
+
 	int SMRingBuffer::GetRejectSlotCount() const
 	{
 		return m_RejectSlotCount;
 	}
+
 	void  SMRingBuffer::IncreaseSlotNumber(int &rSlotnumber, int SlotCount)
 	{
 		rSlotnumber = (++rSlotnumber) % SlotCount;
 	}
+
 	void  SMRingBuffer::DecreaseSlotNumber(int &rSlotnumber, int SlotCount)
 	{
 		rSlotnumber--;
@@ -410,6 +425,7 @@ namespace SvSml
 			rSlotnumber += SlotCount;
 		}
 	}
+
 	DWORD SMRingBuffer::MatchedSize(DWORD size, DWORD  AllocationGranularity)
 	{
 		DWORD ret;
@@ -418,14 +434,14 @@ namespace SvSml
 			ret += AllocationGranularity;
 		return ret;
 	}
-	BOOL SMRingBuffer::Push_ToReject(DWORD triggerNumber, int slotNrLast)
-	{
 
+	bool SMRingBuffer::Push_ToReject(DWORD triggerNumber, int slotNrLast)
+	{
 		if (!m_pRingBufferInfos || !m_pRingBufferLast || !m_pRingBufferReject)
 		{
 			throw std::exception("No Ringbuffer");
 		}
-		BOOL sucess(false);
+		bool success(false);
 		int  rejectSlot = m_pRingBufferInfos->LastUsedRejectSlot;
 
 		for (int i = 0; i < m_RejectSlotCount; i++)
@@ -433,11 +449,11 @@ namespace SvSml
 			IncreaseSlotNumber(rejectSlot, m_RejectSlotCount);
 			if (InterlockedCompareExchange(&(m_pRingBufferReject[rejectSlot].SyncDWord), WRITE_FLAG, 0x0) == 0x0)
 			{
-				sucess = TRUE;
+				success = true;
 				break;
 			}
 		}
-		if (sucess)
+		if (success)
 		{
 			if (m_pRingBufferReject[rejectSlot].SlotNumberLast >= 0)
 			{
@@ -450,10 +466,8 @@ namespace SvSml
 			m_pRingBufferReject[rejectSlot].SlotNumberLast = slotNrLast;
 			m_pRingBufferReject[rejectSlot].TriggerNumber = triggerNumber;
 			m_pRingBufferReject[rejectSlot].SyncDWord = 0x0;
-
-
 		}
-		return sucess;
+		return success;
 	}
 
 	void SMRingBuffer::ThrowCreateFileMappingFailed(SvStl::SourceFileParams& FileParams, DWORD Programmcode)
@@ -466,6 +480,7 @@ namespace SvSml
 		MesMan.setMessage(SVMSG_SVO_5080_CREATEFILEMAPPINGFAILED, SvStl::Tid_Default, msgList, FileParams, Programmcode);
 		MesMan.Throw();
 	}
+
 	void SMRingBuffer::ThrowMapViewOfFileFailedFailed(SvStl::SourceFileParams& FileParams, DWORD Programmcode)
 	{
 		SVString LastError = SvUl_SF::Format(_T("%s LastError:  %i"), m_FileName.c_str(), GetLastError());
@@ -476,7 +491,5 @@ namespace SvSml
 		MesMan.setMessage(SVMSG_SVO_5081_MAPVIEWOFFileFAILED, SvStl::Tid_Default, msgList, FileParams, Programmcode);
 		MesMan.Throw();
 	}
-
-
 }
 

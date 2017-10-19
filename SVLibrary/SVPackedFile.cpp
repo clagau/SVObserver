@@ -33,7 +33,7 @@ SVPackedFile::~SVPackedFile()
 {
 }
 
-BOOL SVPackedFile::PackFiles( LPCTSTR Files, LPCTSTR PackedFileName )
+bool SVPackedFile::PackFiles( LPCTSTR Files, LPCTSTR PackedFileName )
 {
 	CFileException FileException;
 	SvStl::MessageMgrStd Exception( SvStl::DataOnly );
@@ -76,7 +76,7 @@ BOOL SVPackedFile::PackFiles( LPCTSTR Files, LPCTSTR PackedFileName )
 	if (hFindFile == INVALID_HANDLE_VALUE)
 	{
 		PackedFile.Close ();
-		return FALSE;
+		return false;
 	}
 
 	Path = szDrive;
@@ -143,10 +143,10 @@ BOOL SVPackedFile::PackFiles( LPCTSTR Files, LPCTSTR PackedFileName )
 	PackedFile.Close();
 	FindClose (hFindFile);
 
-	return (BOOL) NumFiles;
+	return 0 < NumFiles;
 }
 
-BOOL SVPackedFile::UnPackFiles( LPCTSTR PackedFileName, LPCTSTR UnPackDir /* = nullpt*/ )
+bool SVPackedFile::UnPackFiles( LPCTSTR PackedFileName, LPCTSTR UnPackDir /* = nullpt*/ )
 {
 	WIN32_FIND_DATAW FindData;
 	CFile PackedFile, SourceFile;
@@ -220,12 +220,12 @@ BOOL SVPackedFile::UnPackFiles( LPCTSTR PackedFileName, LPCTSTR UnPackDir /* = n
 							}
 						}
 						PackedFile.Close();
-						return TRUE;
+						return true;
 						break;
 
 					default :
 						PackedFile.Close();
-						return FALSE;
+						return false;
 						break;
 				}
 			}
@@ -245,6 +245,6 @@ BOOL SVPackedFile::UnPackFiles( LPCTSTR PackedFileName, LPCTSTR UnPackDir /* = n
 		PackedFile.Close();
 	}
 
-	return FALSE;
+	return false;
 }
 

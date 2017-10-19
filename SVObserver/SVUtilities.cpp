@@ -118,7 +118,7 @@ void SVUtilitiesClass::RunUtility(SVSecurityManager* pAccess, UINT uiUtilityId)
 	}
 }
 
-BOOL SVUtilitiesClass::SetupUtilities(CMenu *pMenu)
+void SVUtilitiesClass::SetupUtilities(CMenu *pMenu)
 {
 	SVUtilitiesCustomizeDialogClass dlg;
 
@@ -128,26 +128,24 @@ BOOL SVUtilitiesClass::SetupUtilities(CMenu *pMenu)
 	{	
 		UpdateIni();
 	}
-	return LoadMenu(pMenu);
+	LoadMenu(pMenu);
 }
 
-BOOL SVUtilitiesClass::ClearMenu(CMenu *pMenu)
+void SVUtilitiesClass::ClearMenu(CMenu *pMenu)
 {
 	while (pMenu->GetMenuItemCount () > 2)
 	{
 		pMenu->RemoveMenu (2, MF_BYPOSITION);
 	}
-	return true;
 }
 
-BOOL SVUtilitiesClass::LoadMenu(CMenu *pMenu)
+void SVUtilitiesClass::LoadMenu(CMenu *pMenu)
 {
 	if ( !LoadMenuFromINI(pMenu) )
 	{
 		CleanupIni();
 		LoadMenuFromINI(pMenu);
 	}
-	return true;
 }
 
 CMenu *SVUtilitiesClass::FindSubMenuByName(CMenu *pMenu, LPCTSTR Name)
@@ -179,9 +177,9 @@ CMenu *SVUtilitiesClass::FindSubMenuByName(CMenu *pMenu, LPCTSTR Name)
 	return nullptr;
 }
 
-BOOL SVUtilitiesClass::LoadMenuFromINI(CMenu *pMenu)
+bool SVUtilitiesClass::LoadMenuFromINI(CMenu *pMenu)
 {
-	BOOL bRet = true;
+	bool bRet = true;
 	SvLib::SVOINIClass UtilityIni( SvStl::GlobalPath::Inst().GetSVUtilityIniPath() );
 	int l_iHighestIndex =0;
 	int iId = ID_EXTRAS_UTILITIES_BASE;
@@ -237,7 +235,7 @@ BOOL SVUtilitiesClass::LoadMenuFromINI(CMenu *pMenu)
 	return bRet;
 }
 
-BOOL SVUtilitiesClass::CleanupIni()
+void SVUtilitiesClass::CleanupIni()
 {  //this function will cleanup the utility ini file.  
 	int l_iHighestIndex = 0;
 
@@ -272,7 +270,7 @@ BOOL SVUtilitiesClass::CleanupIni()
 
 	//find all utilites in the INI file and store into the deque
 
-	BOOL bDone = false;
+	bool bDone = false;
 	int iUtilityIndex = 0;
 	SVString Value;
 	int l_iProcessedUtility = 0;
@@ -307,7 +305,7 @@ BOOL SVUtilitiesClass::CleanupIni()
 		}
 		if ( l_iProcessedUtility == l_iHighestIndex )
 		{
-			bDone = TRUE;
+			bDone = true;
 		}
 	}
 
@@ -342,13 +340,10 @@ BOOL SVUtilitiesClass::CleanupIni()
 			UtilityIni.SetValueString( Stanza, cPromptName, rUtilityStruct.m_PromptForArguments.c_str() );
 		}
 	}
-
-	return true;
 }
 
-BOOL SVUtilitiesClass::UpdateIni()
+void SVUtilitiesClass::UpdateIni()
 {
-	BOOL bRet = TRUE;
 	SVObserverApp* pApp = static_cast<SVObserverApp*> (AfxGetApp());
 	SvLib::SVOINIClass UtilityIni( SvStl::GlobalPath::Inst().GetSVUtilityIniPath() );
 
@@ -372,5 +367,4 @@ BOOL SVUtilitiesClass::UpdateIni()
 
 		++Iter;
 	}
-	return bRet;
 }

@@ -74,7 +74,7 @@ namespace SvSml
 		}
 	}
 	
-	SharedMemReader::retvalues  SharedMemReader::_GetProduct(LPCTSTR Monitorlist, int trigger,bool failstatus, bool reject,   MLProduct* pProduct, const MLProduct* pLastProduct, BOOL releaseSlot)
+	SharedMemReader::retvalues  SharedMemReader::_GetProduct(LPCTSTR Monitorlist, int trigger,bool failstatus, bool reject,   MLProduct* pProduct, const MLProduct* pLastProduct, bool releaseSlot)
 	{
 		if (nullptr == pProduct)
 			return fail;
@@ -87,13 +87,13 @@ namespace SvSml
 		int SlotManagerIndex = GetSlotManagerIndexForMonitorList(Monitorlist);
 		if (SlotManagerIndex < 0)
 		{
-			assert(FALSE);
+			assert(false);
 			return fail;
 		}
 		RingBufferPointer rBp = GetSlotManager(SlotManagerIndex);
 		if (FALSE == rBp.get())
 		{
-			assert(FALSE);
+			assert(false);
 			return fail;
 		}
 		//get readerslot
@@ -168,18 +168,18 @@ namespace SvSml
 		return sucess;
 
 	}
-	BOOL SharedMemReader::GetRejectData(LPCTSTR Monitorlist, int TriggerNumber, MLProduct* pProduct, BOOL releaseSlot)
+	bool SharedMemReader::GetRejectData(LPCTSTR Monitorlist, int TriggerNumber, MLProduct* pProduct, bool releaseSlot)
 	{
 		return (sucess == _GetProduct(Monitorlist, TriggerNumber, false, true, pProduct,nullptr, releaseSlot));
 	}
 	
-	BOOL  SharedMemReader::GetProductData(LPCTSTR Monitorlist, int TriggerNumber, MLProduct* pProduct, BOOL releaseSlot)
+	bool  SharedMemReader::GetProductData(LPCTSTR Monitorlist, int TriggerNumber, MLProduct* pProduct, bool releaseSlot)
 	{
 		return (sucess == _GetProduct(Monitorlist, TriggerNumber, false, false, pProduct, nullptr, releaseSlot));
 	}
 
 
-	BOOL SharedMemReader::GetFailStatusData(LPCTSTR Monitorlist, int  TriggerNumber, MLProduct* pProduct)
+	bool SharedMemReader::GetFailStatusData(LPCTSTR Monitorlist, int  TriggerNumber, MLProduct* pProduct)
 	{
 		return (sucess == _GetProduct(Monitorlist, TriggerNumber, true, false, pProduct, nullptr, true));
 	}
@@ -204,7 +204,7 @@ namespace SvSml
 		}
 	}
 	
-	BOOL  SharedMemReader::GetFailstatus(LPCTSTR Monitorlist, productPointerVector* pFailstatus)
+	bool  SharedMemReader::GetFailstatus(LPCTSTR Monitorlist, productPointerVector* pFailstatus)
 	{
 		return(sucess == GetFailstatus(Monitorlist, pFailstatus, nullptr));
 		
@@ -257,11 +257,11 @@ namespace SvSml
 		return sucess;
 	}
 
-	SharedMemReader::retvalues SharedMemReader::GetRejectData(LPCTSTR Monitorlist, int TriggerNumber, MLProduct* pProduct, const MLProduct* pLastProduct, BOOL releaseSlot)
+	SharedMemReader::retvalues SharedMemReader::GetRejectData(LPCTSTR Monitorlist, int TriggerNumber, MLProduct* pProduct, const MLProduct* pLastProduct, bool releaseSlot)
 	{
 		return _GetProduct(Monitorlist, TriggerNumber, false, true, pProduct, pLastProduct, releaseSlot);
 	}
-	SharedMemReader::retvalues SharedMemReader::GetProductData(LPCTSTR Monitorlist, int TriggerNumber, MLProduct* pProduct, const MLProduct* pLastProduct, BOOL  releaseSlot)
+	SharedMemReader::retvalues SharedMemReader::GetProductData(LPCTSTR Monitorlist, int TriggerNumber, MLProduct* pProduct, const MLProduct* pLastProduct, bool  releaseSlot)
 	{
 		return _GetProduct(Monitorlist, TriggerNumber, false, false, pProduct, pLastProduct, releaseSlot);
 	}

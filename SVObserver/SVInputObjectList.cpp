@@ -37,13 +37,13 @@ SVInputObjectList::~SVInputObjectList()
 	}
 }
 
-BOOL SVInputObjectList::Create()
+bool SVInputObjectList::Create()
 {
 	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVInputObjectListType;
 
 	try
 	{
-		m_bCreated = ::InitializeCriticalSectionAndSpinCount( &m_hCriticalSection, 4000 );
+		m_bCreated = ::InitializeCriticalSectionAndSpinCount(&m_hCriticalSection, 4000) ? true : false;
 	}
 	catch(...)
 	{
@@ -53,7 +53,7 @@ BOOL SVInputObjectList::Create()
 	return m_bCreated;
 }// end Create
 
-BOOL SVInputObjectList::Destroy()
+bool SVInputObjectList::Destroy()
 {
 	try
 	{
@@ -83,11 +83,11 @@ BOOL SVInputObjectList::Destroy()
 	}
 	catch(...)
 	{
-		return FALSE;
+		return false;
 	}
 
-	m_bCreated = FALSE;
-	return TRUE;
+	m_bCreated = false;
+	return true;
 }// end Destroy
 
 SVInputObject* SVInputObjectList::GetInput(const SVGUID& rInputID) const
@@ -242,7 +242,7 @@ HRESULT SVInputObjectList::DetachInput( const SVGUID& p_rOutputID )
 	return l_Status;
 }// end RemoveInput
 
-BOOL SVInputObjectList::ReadInputs( const SVIOEntryHostStructPtrVector& p_rInputs, SVVariantBoolVector& p_rInputValues )
+bool SVInputObjectList::ReadInputs( const SVIOEntryHostStructPtrVector& p_rInputs, SVVariantBoolVector& p_rInputValues )
 {
 	size_t l_IOSize( p_rInputs.size() );
 	size_t i( 0 );
@@ -280,17 +280,17 @@ BOOL SVInputObjectList::ReadInputs( const SVIOEntryHostStructPtrVector& p_rInput
 		}// end for
 
 		Unlock();
-		return TRUE;
+		return true;
 	}// end if
 
-	return FALSE;
+	return false;
 }// end ReadInputs
 
-BOOL SVInputObjectList::ReadInput( SVIOEntryStruct pIOEntry, _variant_t& p_rVariant )
+bool SVInputObjectList::ReadInput( SVIOEntryStruct pIOEntry, _variant_t& p_rVariant )
 {
 	p_rVariant.Clear();
 
-	BOOL l_Status = Lock();
+	bool l_Status = Lock();
 
 	if( l_Status )
 	{
@@ -317,7 +317,7 @@ BOOL SVInputObjectList::ReadInput( SVIOEntryStruct pIOEntry, _variant_t& p_rVari
 	return l_Status;
 }// end ReadInput
 
-BOOL SVInputObjectList::FillInputs( SVIOEntryHostStructPtrVector& p_IOEntries )
+bool SVInputObjectList::FillInputs( SVIOEntryHostStructPtrVector& p_IOEntries )
 {
 	bool Result(false);
 	p_IOEntries.clear();
@@ -362,7 +362,7 @@ BOOL SVInputObjectList::FillInputs( SVIOEntryHostStructPtrVector& p_IOEntries )
 	return Result;
 }
 
-BOOL SVInputObjectList::GetRemoteInputCount( long &lCount )
+bool SVInputObjectList::GetRemoteInputCount( long &lCount )
 {
 	long lTempCount;
 
@@ -389,17 +389,17 @@ BOOL SVInputObjectList::GetRemoteInputCount( long &lCount )
 		lCount = lTempCount;
 
 		Unlock();
-		return TRUE;
+		return true;
 	}
 
-	return FALSE;
+	return false;
 }
 
-BOOL SVInputObjectList::SetRemoteInput( long lIndex, const _variant_t& rValue)
+bool SVInputObjectList::SetRemoteInput( long lIndex, const _variant_t& rValue)
 {
 	if( Lock() )
 	{
-		BOOL bFound = FALSE;
+		bool bFound = false;
 
 		SVGuidSVInputObjectPtrMap::iterator	l_Iter = m_InputObjects.begin();
 
@@ -427,7 +427,7 @@ BOOL SVInputObjectList::SetRemoteInput( long lIndex, const _variant_t& rValue)
 		return bFound;
 	}
 
-	return FALSE;
+	return false;
 }
 
 bool SVInputObjectList::Lock() const

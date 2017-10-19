@@ -36,13 +36,13 @@ class ToolSetView : public CFormView
 
 public:
 	SVIPDoc* GetIPDoc() const;
-	BOOL GetParameters(SVObjectWriter& rWriter);
+	void GetParameters(SVObjectWriter& rWriter);
 	const SVToolGrouping& GetToolGroupings() const;
 
 	typedef SvXml::SVXMLMaterialsTree SVTreeType;
 
-	BOOL SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent);
-	BOOL CheckParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent);
+	bool SetParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent);
+	bool CheckParameters(SVTreeType& rTree, SVTreeType::SVBranchHandle htiParent);
 
 	void SetViewSize(CSize &Size);
 	bool IsLabelEditing() const;

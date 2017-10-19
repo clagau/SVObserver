@@ -204,16 +204,16 @@ public:
 
 	SVMainFrame* GetMainFrame() const;
 	HRESULT CanCloseMainFrame();
-	HRESULT DestroyConfig( BOOL AskForSavingOrClosing = TRUE, BOOL CloseWithoutHint = FALSE );
+	HRESULT DestroyConfig( bool AskForSavingOrClosing = true, bool CloseWithoutHint = false );
 	void RemoveUnusedFiles();
 	SVIODoc* GetIODoc() const;
 
-	BOOL Logout( BOOL BForceLogout = FALSE );
+	bool Logout( bool BForceLogout = false );
 	bool InitPath( LPCTSTR PathName, bool CreateIfDoesNotExist = true, bool DeleteContents = true );
 
 	bool IsMatroxGige() const;
 
-	BOOL CheckSVIMType() const;
+	bool CheckSVIMType() const;
 	SVIMProductEnum GetSVIMType() const;
 
 	bool IsProductTypeRAID() const;
@@ -227,23 +227,23 @@ public:
 
 	HRESULT OnObjectRenamed( const SVString& p_rOldName, const SVGUID& p_rObjectId );
 	HRESULT RebuildOutputList();
-	BOOL SetStatusText( LPCTSTR PStrStatusText );
+	bool SetStatusText( LPCTSTR PStrStatusText );
 	void UpdatePPQBar();
 
 	const SVString& getConfigFileNameOnly() const;
 	const SVString& getConfigPathName() const;
 	const SVString& getConfigFileName() const;
 	const SVString& getConfigFullFileName() const;
-	BOOL setConfigFullFileName(LPCTSTR csFullFileName, DWORD bLoadFile = TRUE);
+	bool setConfigFullFileName(LPCTSTR csFullFileName, DWORD bLoadFile = TRUE);
 
 	SVIPDoc* GetIPDoc( const SVGUID& rInspectionID ) const;
 	SVIPDoc* GetIPDoc( LPCTSTR StrIPDocPathName ) const;
-	BOOL AlreadyExistsIPDocTitle( LPCTSTR StrIPDocTitle );
+	bool AlreadyExistsIPDocTitle( LPCTSTR StrIPDocTitle );
 
-	BOOL ShowConfigurationAssistant( int Page = 3, BOOL bFileNewConfiguration = FALSE );
+	bool ShowConfigurationAssistant( int Page = 3, bool bFileNewConfiguration = false );
 
 	bool OkToEdit();
-	BOOL IsMonochromeImageAvailable();
+	bool IsMonochromeImageAvailable();
 	void OnRCOpenCurrentSVX();
 	void UpdateAllMenuExtrasUtilities();
 
@@ -297,7 +297,7 @@ public:
 	long getOfflineCount() const { return m_OfflineCount; }
 	SVIPDoc* getCurrentDocument() const { return m_pCurrentDocument; }
 	void setCurrentDocument(SVIPDoc* pIPDoc) { m_pCurrentDocument = pIPDoc; }
-	BOOL getShouldRunLastEnvironmentAutomatically() const { return m_ShouldRunLastEnvironmentAutomatically; }
+	bool getShouldRunLastEnvironmentAutomatically() const { return m_ShouldRunLastEnvironmentAutomatically; }
 	DWORD getCurrentVersion() const { return m_CurrentVersion; }
 	DWORD getLoadingVersion() const { return m_LoadingVersion; }
 	void setLoadingVersion(DWORD version) { m_LoadingVersion = version; }
@@ -319,7 +319,7 @@ protected:
 	HRESULT ConnectCameraBuffers();
 	HRESULT InitializeSecurity();
 
-    BOOL OpenConfigFileFromMostRecentList(int nID);
+    bool OpenConfigFileFromMostRecentList(int nID);
 	void EnableTriggerSettings();
 	void DisableTriggerSettings();
 
@@ -327,13 +327,13 @@ protected:
 
 	HRESULT ConstructMissingDocuments();
 
-	BOOL DestroyMessageWindow();
+	bool DestroyMessageWindow();
 #pragma endregion Protected Methods
 
 #pragma region Private Methods
 private:
 	void OnStopAll();
-	BOOL InitATL();
+	bool InitATL();
 	void StopRegression();
 
 	bool AddSecurityNode(HMODULE hMessageDll, long lId, LPCTSTR NTGroup, bool bForcePrompt = false);
@@ -368,7 +368,7 @@ private:
 
 	SVIPDoc* m_pCurrentDocument;
 	long m_OfflineCount;
-	BOOL m_ShouldRunLastEnvironmentAutomatically;
+	bool m_ShouldRunLastEnvironmentAutomatically;
 	DWORD m_AutoRunDelayTime;
 
 	// Version numbering code:
@@ -409,7 +409,7 @@ private:
 
 	SVFileNamePtrVector m_svFileNames;
 
-	BOOL m_ATLInited;
+	bool m_ATLInited;
 
 	mutable SVFileNameClass m_ConfigFileName;	// JMS - Added for File Management
 
