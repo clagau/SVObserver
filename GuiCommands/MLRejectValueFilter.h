@@ -30,19 +30,8 @@ namespace SvCmd
 			{
 				if (nullptr != pObject)
 				{
-					
-					const SvOi::IValueObject* pValueObject = dynamic_cast<const SvOi::IValueObject*> (pObject);
-					if (nullptr != pValueObject && pValueObject->isArray())
-					{
-						Result = (Attribute == (pObject->ObjectAttributesSet(ArrayIndex) & Attribute));
-					}
-					else
-					{
-						Result = (Attribute == (pObject->ObjectAttributesSet() & Attribute));
-					}
-					Result = Result && IsAllowedType(pObject->GetObjectType());
-
-									}
+					Result = IsAllowedType(pObject->GetObjectType());
+				}
 			}
 			return Result;
 		}
@@ -60,7 +49,7 @@ namespace SvCmd
 			case	DoubleSortValueObjectType:
 				return true;
 			default:
-					return false;
+				return false;
 			}
 
 		}

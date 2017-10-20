@@ -2486,6 +2486,12 @@ int SVObserverApp::ExitInstance()
 		}
 	#endif
 
+	//! This is required due to the ResultTabbedView using the CMFCTabCtrl which generates this instance and needs to be deleted when app exits
+	if (nullptr != CMFCVisualManager::GetInstance())
+	{
+		delete CMFCVisualManager::GetInstance();
+	}
+
 	return CWinApp::ExitInstance();
 }
 

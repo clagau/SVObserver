@@ -18,7 +18,6 @@
 #include "AttributesAllowedFilter.h"
 #include "AttributesSetFilter.h"
 #include "RangeSelectorFilter.h"
-#include "MLProductImageFilter.h"
 #include "MLRejectValueFilter.h"
 #pragma endregion Includes
 
@@ -29,7 +28,6 @@ namespace SvCmd
 		AttributesAllowedFilterType = 1,
 		AttributesSetFilterType,
 		RangeSelectorFilterType,
-		MLProductImageFilterType,
 		MLRejectValueFilterType
 
 	};
@@ -102,14 +100,6 @@ namespace SvCmd
 					{
 						AttributesSetFilter filter;
 						SvOi::IsObjectInfoAllowed func = boost::bind(&AttributesSetFilter::operator(), &filter, _1, _2, _3);
-						m_SelectedList = pTaskObject->GetSelectorList(func, m_Attribute, m_WholeArray);
-						hr = S_OK;
-					}
-					break;
-					case  MLProductImageFilterType:
-					{
-						MLProductImageFilter filter;
-						SvOi::IsObjectInfoAllowed func = boost::bind(&MLProductImageFilter::operator(), &filter, _1, _2, _3);
 						m_SelectedList = pTaskObject->GetSelectorList(func, m_Attribute, m_WholeArray);
 						hr = S_OK;
 					}

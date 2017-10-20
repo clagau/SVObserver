@@ -79,6 +79,7 @@ namespace Gdiplus
 #include <afxcview.h>		// MFC CListView Support
 #include <afxtabview.h>
 #include <afxtempl.h>		// MFC Templates
+#include <afxvisualmanager.h>
 #include <afxmt.h>
 #include <afxcoll.h>
 #include <afxpriv.h>

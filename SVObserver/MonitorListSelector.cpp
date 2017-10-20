@@ -93,17 +93,17 @@ int  MonitorlistSelector::DisplayDialog()
 		{
 			if (m_bImage == TRUE && m_eListType == PRODUCT_OBJECT_LIST)
 			{
-				SvOsl::SelectorOptions BuildOptions(pInspection->GetUniqueObjectID(), SvOi::SV_PUBLISH_RESULT_IMAGE);
-				SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::NoSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<SvCmd::MLProductImageFilterType>>(BuildOptions);
+				SvOsl::SelectorOptions BuildOptions(pInspection->GetUniqueObjectID(), SvOi::SV_ARCHIVABLE_IMAGE);
+				SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::NoSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<>>(BuildOptions);
 			}
 			else if(m_eListType == PRODUCT_OBJECT_LIST)
 			{
-				SvOsl::SelectorOptions BuildOptions(pInspection->GetUniqueObjectID(), SvOi::SV_PUBLISHABLE);
-				SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::NoSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<SvCmd::AttributesSetFilterType>>(BuildOptions);
+				SvOsl::SelectorOptions BuildOptions(pInspection->GetUniqueObjectID(), SvOi::SV_VIEWABLE);
+				SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::NoSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<>>(BuildOptions);
 			}
 			else
 			{
-				SvOsl::SelectorOptions BuildOptions(pInspection->GetUniqueObjectID(), SvOi::SV_PUBLISHABLE);
+				SvOsl::SelectorOptions BuildOptions(pInspection->GetUniqueObjectID(), SvOi::SV_VIEWABLE);
 				SvOsl::ObjectTreeGenerator::Instance().BuildSelectableItems<SvOg::NoSelector, SvOg::NoSelector, SvOg::ToolSetItemSelector<SvCmd::MLRejectValueFilterType>>(BuildOptions);
 			}
 

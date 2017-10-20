@@ -24,7 +24,6 @@
 #include "SVObserver.h"
 #include "SVObjectLibrary/SVObjectManagerClass.h"
 #include "SVUtilityLibrary/SVGUID.h"
-#include "SVMainImageClass.h"
 #include "RemoteMonitorListHelper.h"
 #include "SVToolSet.h"
 #include "SVStatusLibrary/SVSVIMStateClass.h"
@@ -143,15 +142,13 @@ bool RemoteMonitorListController::IsValidMonitoredObject(const SVObjectClass* pO
 	bool bRetVal = false;
 	if (nullptr != pObject)
 	{
-		UINT attr = pObject->ObjectAttributesSet();
-		bRetVal = (attr & (SvOi::SV_PUBLISHABLE | SvOi::SV_PUBLISH_RESULT_IMAGE) ? true : false);
-		//check to see if MainImageClass
-		if (!bRetVal)
+		if (SV_IS_KIND_OF(pObject, const SVImageClass))
 		{
-			if ( SV_IS_KIND_OF(pObject->GetOwner(), const SVToolSetClass) && (SV_IS_KIND_OF(pObject, const SVMainImageClass)) )
-			{
-				bRetVal = true;
-			}
+			bRetVal = true;
+		}
+		else if (SV_IS_KIND_OF(pObject, const SvOi::IValueObject))
+		{
+			bRetVal = true;
 		}
 	}
 	return bRetVal;
@@ -268,7 +265,6 @@ size_t RemoteMonitorListController::CalcSizeForMonitorList(const RemoteMonitorLi
 
 void RemoteMonitorListController::WriteMonitorListToMLContainer(const std::string& name, const RemoteMonitorNamedList& remoteMonitorNamedlist)
 {
-	SvSml::MonitorListCpy*  pMonitorListCpy = new SvSml::MonitorListCpy;
 	const SvSml::SVSharedMemorySettings& rSettings = SvSml::SharedMemWriter::Instance().GetSettings();
 	SvSml::SVMonitorListWriter& rWriter = SvSml::SharedMemWriter::Instance().GetMonitorListWriter();
 	SvSml::MonitorListCpyPointer  MLCpPtr = RemoteMonitorListHelper::CreateMLcopy(remoteMonitorNamedlist);

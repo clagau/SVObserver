@@ -49,7 +49,6 @@
     <ClInclude Include="ConstructAndInsertTaskObject.h" />
     <ClInclude Include="InspectionRunOnce.h" />
     <ClInclude Include="IsValid.h" />
-    <ClInclude Include="MLProductImageFilter.h" />
     <ClInclude Include="MLRejectValueFilter.h" />
     <ClInclude Include="RangeSelectorFilter.h" />
     <ClInclude Include="ResetObject.h" />
