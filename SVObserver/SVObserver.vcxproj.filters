@@ -374,24 +374,6 @@
     <ClCompile Include="SVOInspectionSourceDlg.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="SVOIODocClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVOIOFrameWndClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVOIOViewClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVOIPDocClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVOIPFrameWndClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="SVOIPViewClass.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="SVOPPQList.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -1282,24 +1264,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVOInspectionSourceDlg.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVOIODocClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVOIOFrameWndClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVOIOViewClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVOIPDocClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVOIPFrameWndClass.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="SVOIPViewClass.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="SVOPPQList.h">

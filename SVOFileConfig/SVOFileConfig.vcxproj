@@ -144,18 +144,6 @@
       <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</MultiProcessorCompilation>
       <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</MultiProcessorCompilation>
     </ClCompile>
-    <ClCompile Include="SVOIODocClass.cpp">
-      <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</MultiProcessorCompilation>
-      <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</MultiProcessorCompilation>
-    </ClCompile>
-    <ClCompile Include="SVOIOFrameWndClass.cpp" />
-    <ClCompile Include="SVOIOViewClass.cpp" />
-    <ClCompile Include="SVOIPDocClass.cpp">
-      <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</MultiProcessorCompilation>
-      <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</MultiProcessorCompilation>
-    </ClCompile>
-    <ClCompile Include="SVOIPFrameWndClass.cpp" />
-    <ClCompile Include="SVOIPViewClass.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="SVOFileConfig.rc" />
@@ -166,12 +154,6 @@
     <ClInclude Include="StdAfx.h" />
     <ClInclude Include="SVOFileConfig.h" />
     <ClInclude Include="SVOFileConfigDlg.h" />
-    <ClInclude Include="SVOIODocClass.h" />
-    <ClInclude Include="SVOIOFrameWndClass.h" />
-    <ClInclude Include="SVOIOViewClass.h" />
-    <ClInclude Include="SVOIPDocClass.h" />
-    <ClInclude Include="SVOIPFrameWndClass.h" />
-    <ClInclude Include="SVOIPViewClass.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="res\SVOFileConfig.ico" />

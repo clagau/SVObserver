@@ -374,18 +374,6 @@ echo %time%
     <ClCompile Include="SVOInspectionList.cpp" />
     <ClCompile Include="SVOInspectionObj.cpp" />
     <ClCompile Include="SVOInspectionSourceDlg.cpp" />
-    <ClCompile Include="SVOIODocClass.cpp">
-      <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</MultiProcessorCompilation>
-      <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</MultiProcessorCompilation>
-    </ClCompile>
-    <ClCompile Include="SVOIOFrameWndClass.cpp" />
-    <ClCompile Include="SVOIOViewClass.cpp" />
-    <ClCompile Include="SVOIPDocClass.cpp">
-      <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</MultiProcessorCompilation>
-      <MultiProcessorCompilation Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</MultiProcessorCompilation>
-    </ClCompile>
-    <ClCompile Include="SVOIPFrameWndClass.cpp" />
-    <ClCompile Include="SVOIPViewClass.cpp" />
     <ClCompile Include="SVOPPQList.cpp" />
     <ClCompile Include="SVOPPQObj.cpp" />
     <ClCompile Include="SVOPropertyPageDlg.cpp" />
@@ -712,12 +700,6 @@ echo %time%
     <ClInclude Include="SVOInspectionList.h" />
     <ClInclude Include="SVOInspectionObj.h" />
     <ClInclude Include="SVOInspectionSourceDlg.h" />
-    <ClInclude Include="SVOIODocClass.h" />
-    <ClInclude Include="SVOIOFrameWndClass.h" />
-    <ClInclude Include="SVOIOViewClass.h" />
-    <ClInclude Include="SVOIPDocClass.h" />
-    <ClInclude Include="SVOIPFrameWndClass.h" />
-    <ClInclude Include="SVOIPViewClass.h" />
     <ClInclude Include="SVOPPQList.h" />
     <ClInclude Include="SVOPPQObj.h" />
     <ClInclude Include="SVOPropertyPageDlg.h" />

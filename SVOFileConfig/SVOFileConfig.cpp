@@ -16,14 +16,6 @@
 #include "SVOFileConfig.h"
 #include "SVOFileConfigDlg.h"
 
-#include "SVOIODocClass.h"
-#include "SVOIOFrameWndClass.h"
-#include "SVOIOViewClass.h"
-
-#include "SVOIPDocClass.h"
-#include "SVOIPFrameWndClass.h"
-#include "SVOIPViewClass.h"
-
 static const CLSID clsid =
 { 0xf4c4d491, 0xd660, 0x11d0, { 0x9b, 0x52, 0x0, 0x80, 0x5f, 0x71, 0x7d, 0xff } };
 
@@ -81,24 +73,6 @@ BOOL SVOFileConfigApp::InitInstance()
 		return FALSE;
 	}
 
-	CMultiDocTemplate *pDocTemp = new CMultiDocTemplate( IDR_IODOC_MENU,
-												                               RUNTIME_CLASS( SVOIODocClass ),
-												                               RUNTIME_CLASS( SVOIOFrameWndClass ),
-												                               RUNTIME_CLASS( SVOIOViewClass ) );
-	
-	pDocTemp->SetContainerInfo( IDR_IODOC_MENU );
-
-	AddDocTemplate( pDocTemp );
-	
-	CMultiDocTemplate *pDocTemp1 = new CMultiDocTemplate( IDR_IPDOC_MENU,
-												                                RUNTIME_CLASS( SVOIPDocClass ),
-												                                RUNTIME_CLASS( SVOIPFrameWndClass ),
-												                                RUNTIME_CLASS( SVOIPViewClass ) );
-	
-	pDocTemp1->SetContainerInfo( IDR_IPDOC_MENU );
-
-	AddDocTemplate( pDocTemp1 );
-	
 	pdlg = new SVOFileConfigDlg;
 	m_pMainWnd = pdlg;
 	INT_PTR nResponse = pdlg->DoModal();

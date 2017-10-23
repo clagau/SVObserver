@@ -43,12 +43,6 @@
 #include "SVUtilities.h"
 #include "SVIPDoc.h"
 #include "SVIODoc.h"
-#include "SVOIPDocClass.h"
-#include "SVOIPFrameWndClass.h"
-#include "SVOIPViewClass.h"
-#include "SVOIODocClass.h"
-#include "SVOIOFrameWndClass.h"
-#include "SVOIOViewClass.h"
 #include "SVMessageWindow.h"
 #include "SVToolSet.h"
 #include "ExtrasEngine.h"
@@ -2211,23 +2205,10 @@ BOOL SVObserverApp::InitInstance()
 	// IODoc
 	SVMultiDocTemplateClass* pDocTemplate1 = new SVMultiDocTemplateClass( IDR_SVOBSERVER_IODOCTYPE,
 		RUNTIME_CLASS( SVIODoc ),
-		RUNTIME_CLASS( SVIOTabbedView ), // The SVIOTabbedView allows tabbed views using TVisualFramework. TRB
+		RUNTIME_CLASS( SVIOTabbedView ),
 		RUNTIME_CLASS( SVDiscreteInputsView ) );
 
 	AddDocTemplate( pDocTemplate1 );
-
-	CMultiDocTemplate *pDocTemp2 = new CMultiDocTemplate( IDR_IPDOC_MENU,
-		RUNTIME_CLASS( SVOIPDocClass ),
-		RUNTIME_CLASS( SVOIPFrameWndClass ),
-		RUNTIME_CLASS( SVOIPViewClass ) );
-
-	AddDocTemplate( pDocTemp2 );
-
-	CMultiDocTemplate *pDocTemp3 = new CMultiDocTemplate( IDR_IODOC_MENU,
-		RUNTIME_CLASS( SVOIODocClass ),
-		RUNTIME_CLASS( SVOIOFrameWndClass ),
-		RUNTIME_CLASS( SVOIOViewClass ) );
-	AddDocTemplate( pDocTemp3 );
 
 	// Haupt-MDI-Rahmenfenster erzeugen
 	SVMainFrame* pMainFrame = new SVMainFrame;
