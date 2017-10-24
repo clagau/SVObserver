@@ -410,6 +410,39 @@ SvOi::IObjectClass* SVObjectClass::getFirstObject(const SVObjectTypeInfoStruct& 
 
 	return nullptr;
 }
+
+void SVObjectClass::moveFriendObject(const SVGUID& objectToMoveId, const SVGUID& preObjectId)
+{
+	int currentPos = -1;
+	int newPos = -1;
+	for (int i = 0; i <= m_friendList.size(); i++)
+	{
+		if (m_friendList[i].m_UniqueObjectID == objectToMoveId)
+		{
+			currentPos = i;
+		}
+		if (m_friendList[i].m_UniqueObjectID == preObjectId)
+		{
+			newPos = i;
+		}
+	}
+
+	if (0 <= currentPos && m_friendList.size() > currentPos)
+	{
+		auto object = m_friendList[currentPos];
+		//change first object which is later in the list.
+		if (currentPos > newPos)
+		{
+			m_friendList.RemoveAt(currentPos);
+			m_friendList.Insert(newPos, object);
+		}
+		else
+		{
+			m_friendList.Insert(newPos, object);
+			m_friendList.RemoveAt(currentPos);
+		}
+	}
+}
 #pragma endregion virtual method (IObjectClass)
 
 /*

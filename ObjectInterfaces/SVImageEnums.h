@@ -118,7 +118,6 @@ namespace SvOi
 		SVImagePropertyPixelDepth = 0x00000002,
 		SVImagePropertyBandNumber = 0x00000004,
 		SVImagePropertyBandLink = 0x00000008,
-		SVImagePropertyResetOwner = 0x00000010,
 	};
 } //namespace SvOi
 

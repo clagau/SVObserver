@@ -173,11 +173,6 @@ HRESULT SVImageInfoClass::Initialize()
 		l_hrOk = S_FALSE;
 	}
 
-	if ( S_OK != SetImageProperty( SvOi::SVImagePropertyEnum::SVImagePropertyResetOwner, false ) )
-	{
-		l_hrOk = S_FALSE;
-	}
-
 	return l_hrOk;
 }
 

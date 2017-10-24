@@ -177,6 +177,7 @@ public:
 	virtual SvUl::NameGuidList GetCreatableObjects(const SVObjectTypeInfoStruct& rObjectTypeInfo) const override;
 	virtual void SetName( LPCTSTR Name ) override;
 	virtual SvOi::IObjectClass* getFirstObject(const SVObjectTypeInfoStruct& rObjectTypeInfo, bool useFriends = true, const SvOi::IObjectClass* pRequestor = nullptr) const override;
+	virtual void moveFriendObject(const SVGUID& objectToMoveId, const SVGUID& preObjectId = SV_GUID_NULL) override;
 	virtual bool resetAllObjects( SvStl::MessageContainerVector *pErrorMessages=nullptr ) override { return ResetObject(pErrorMessages); };
 	virtual HRESULT getValue(double& rValue, int Index = -1, int Bucket = -1) const override { return E_NOTIMPL; };
 	virtual HRESULT getValues(std::vector<double>& rValues, int Bucket = -1) const override { return E_NOTIMPL; };

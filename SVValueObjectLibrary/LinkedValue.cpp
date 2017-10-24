@@ -104,6 +104,15 @@ void LinkedValue::UpdateLinkedName()
 		m_LinkedName.SetObjectAttributesAllowed( SvOi::SV_HIDDEN, SvOi::SetAttributeType::OverwriteAttribute );
 	}
 }
+
+void LinkedValue::setIndirectValueSaveFlag(bool shouldSaveValue)
+{
+	if (nullptr != m_LinkedObjectRef.getValueObject())
+	{
+		m_LinkedObjectRef.getValueObject()->setSaveValueFlag(shouldSaveValue);
+	}
+}
+
 #pragma endregion Public Methods
 
 #pragma region Protected Methods

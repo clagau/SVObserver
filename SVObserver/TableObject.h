@@ -65,6 +65,17 @@ protected:
 	/// \param name [in] The name of the new object.
 	/// \param arraySize [in] The array size of the new object.
 	DoubleSortValueObject* createColumnObject(SVGUID embeddedID, LPCTSTR name, int arraySize);
+
+	/// Updated object-name and max number for the array of a columnValueObject.
+	/// \param pos [in] Position in the m_ValueList.
+	/// \param objectName [in] The new name.
+	/// \param maxArray [in] The new maximum numbers of the array.
+	void UpdateColumnValueObject(int pos, SVString objectName, int maxArray);
+
+	/// Moved an columnValueObject in the m_ValueList and also in the embedded-list (this is necessary to keep the order after reloading)
+	/// \param oldPos [in] The old position in the m_ValueList.
+	/// \param newPos [in] The new position in the m_ValueList.
+	void MoveValueColumn(int oldPos, int newPos);
 #pragma endregion Protected Methods
 
 #pragma region Private Methods

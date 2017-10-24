@@ -191,6 +191,8 @@ public:
 	virtual HRESULT CopyToMemoryBlock(BYTE* pMemoryBlock, DWORD MemByteSize, int Index = -1) const override;
 
 	virtual void Persist(SVObjectWriter& rWriter) override;
+
+	virtual void setSaveValueFlag(bool shouldSaveValue) override { m_shouldSaveValue = shouldSaveValue; } ;
 #pragma endregion virtual method
 	
 	void SetLegacyVectorObjectCompatibility() { m_LegacyVectorObjectCompatibility = true; }
@@ -199,7 +201,6 @@ public:
 
 	/// getter and setter for ShouldSaveValue-Flag
 	bool shouldSaveValue() { return m_shouldSaveValue; };
-	void setSaveValueFlag(bool isValueSaved) { m_shouldSaveValue = isValueSaved; };
 
 	/// getter and setter for ShouldSaveDefaultValue-Flag
 	bool shouldSaveDefaultValue() { return m_shouldSaveDefaultValue; };

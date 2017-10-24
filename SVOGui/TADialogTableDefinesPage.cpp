@@ -20,6 +20,7 @@
 #include "SVStatusLibrary\MessageManager.h"
 #include "SVMessage\SVMessage.h"
 #include "GuiCommands\GetErrorMessageList.h"
+#include "GuiCommands\MoveFriendObject.h"
 #pragma endregion Includes
 
 #ifdef _DEBUG
@@ -42,9 +43,12 @@ namespace SvOg {
 		//{{AFX_MSG_MAP(TADialogTableDefinesPage)
 		ON_BN_CLICKED(IDC_BUTTON_REMOVE, OnBnClickedButtonRemove)
 		ON_BN_CLICKED(IDC_BUTTON_ADD, OnBnClickedButtonAdd)
+		ON_BN_CLICKED(IDC_BUTTON_MOVEUP, OnBnClickedMoveUp)
+		ON_BN_CLICKED(IDC_BUTTON_MOVEDOWN, OnBnClickedMoveDown)
 		ON_NOTIFY(NM_DBLCLK, IDC_GRID, OnGridDblClick)
 		ON_NOTIFY(NM_RCLICK, IDC_GRID, OnGridRClick)
 		ON_NOTIFY(GVN_ENDLABELEDIT, IDC_GRID, OnGridEndEdit)
+		ON_NOTIFY(GVN_SELCHANGED, IDC_GRID, OnSelectionChanged)
 		ON_COMMAND( ID_ADD_COLUMN, OnBnClickedButtonAdd )
 		ON_COMMAND( ID_REMOVE_COLUMNS, OnBnClickedButtonRemove )
 		//}}AFX_MSG_MAP
@@ -125,6 +129,46 @@ namespace SvOg {
 			}
 		}
 		FillGridControl();
+	}
+
+	void TADialogTableDefinesPage::OnBnClickedMoveUp()
+	{
+		SVGUID moveGuid = SV_GUID_NULL;
+		SVGUID preGuid = SV_GUID_NULL;
+		SvGcl::CCellRange Selection = m_Grid.GetSelectedCellRange();
+		if (Selection.GetMinRow() == Selection.GetMaxRow() && 1 < Selection.GetMinRow())
+		{
+			moveGuid = m_gridList[Selection.GetMinRow() - 1].second;
+			preGuid = m_gridList[Selection.GetMinRow() - 2].second;
+			MoveColumn(moveGuid, preGuid);
+			Selection.SetMinRow(Selection.GetMinRow() - 1);
+			Selection.SetMaxRow(Selection.GetMaxRow() - 1);
+			m_Grid.SetSelectedRange(Selection, true);
+			m_Grid.SetFocusCell(Selection.GetMaxRow(), Selection.GetMaxCol());
+			FillGridControl();
+		}
+	}
+
+	void TADialogTableDefinesPage::OnBnClickedMoveDown()
+	{
+		SVGUID moveGuid = SV_GUID_NULL;
+		SVGUID preGuid = SV_GUID_NULL;
+		SvGcl::CCellRange Selection = m_Grid.GetSelectedCellRange();
+		if (Selection.GetMinRow() == Selection.GetMaxRow() && 0 < Selection.GetMinRow() && Selection.GetMinRow()+1 < m_Grid.GetRowCount())
+		{
+			moveGuid = m_gridList[Selection.GetMinRow() - 1].second;
+			if (Selection.GetMinRow() + 2 < m_Grid.GetRowCount())
+			{
+				preGuid = m_gridList[Selection.GetMinRow()+1].second;
+			}
+
+			MoveColumn(moveGuid, preGuid);
+			Selection.SetMinRow(Selection.GetMinRow() + 1);
+			Selection.SetMaxRow(Selection.GetMaxRow() + 1);
+			m_Grid.SetSelectedRange(Selection, true);
+			m_Grid.SetFocusCell(Selection.GetMaxRow(), Selection.GetMaxCol());
+			FillGridControl();
+		}
 	}
 
 	void TADialogTableDefinesPage::OnBnClickedButtonAdd()
@@ -237,6 +281,11 @@ namespace SvOg {
 
 		*pResult = (bAcceptChange)? 0 : -1;
 	}
+
+	void TADialogTableDefinesPage::OnSelectionChanged(NMHDR *pNotifyStruct, LRESULT* pResult)
+	{
+		UpdateEnableButtons();
+	}
 #pragma endregion Protected Methods
 
 #pragma region Private Methods
@@ -323,14 +372,7 @@ namespace SvOg {
 			}
 		}
 		m_Grid.Refresh();
-		if (c_maxTableColumn > m_gridList.size())
-		{
-			GetDlgItem( IDC_BUTTON_ADD )->EnableWindow(TRUE);
-		}
-		else
-		{
-			GetDlgItem( IDC_BUTTON_ADD )->EnableWindow(FALSE);
-		}
+		UpdateEnableButtons();
 	}
 
 	bool TADialogTableDefinesPage::isTableNameUnique(const SVString& name)
@@ -360,5 +402,48 @@ namespace SvOg {
 			}
 		}
 	}
+
+	void TADialogTableDefinesPage::MoveColumn(SVGUID moveGuid, SVGUID preGuid)
+	{
+		typedef SvCmd::MoveFriendObject Command;
+		typedef SVSharedPtr<Command> CommandPtr;
+		CommandPtr commandPtr = new Command(m_TaskObjectID, moveGuid, preGuid);
+		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
+		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
+		if (S_OK != hr)
+		{
+			SVStringVector msgList;
+			msgList.push_back(SvUl_SF::Format(_T("%d"), hr));
+			SvStl::MessageMgrStd Msg(SvStl::LogAndDisplay);
+			Msg.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_TableColumn_AddingFailed, msgList, SvStl::SourceFileParams(StdMessageParams));
+			//@TODO[MZA][7.50][11.10.2017] add right error message
+		}
+	}
+
+	void TADialogTableDefinesPage::UpdateEnableButtons()
+	{
+		SvGcl::CCellRange Selection = m_Grid.GetSelectedCellRange();
+		bool bMoveUpEnable = false;
+		bool bMoveDownEnable = false;
+		if (Selection.GetMinRow() == Selection.GetMaxRow())
+		{
+			bMoveUpEnable = (1 < Selection.GetMinRow());
+			bMoveDownEnable = (0 < Selection.GetMinRow() && Selection.GetMinRow() + 1 < m_Grid.GetRowCount());
+		}
+
+		GetDlgItem(IDC_BUTTON_MOVEUP)->EnableWindow(bMoveUpEnable);
+		GetDlgItem(IDC_BUTTON_MOVEDOWN)->EnableWindow(bMoveDownEnable);
+		GetDlgItem(IDC_BUTTON_REMOVE)->EnableWindow(-1 != Selection.GetMaxRow());
+
+		if (c_maxTableColumn > m_gridList.size())
+		{
+			GetDlgItem(IDC_BUTTON_ADD)->EnableWindow(true);
+		}
+		else
+		{
+			GetDlgItem(IDC_BUTTON_ADD)->EnableWindow(false);
+		}
+	}
+
 #pragma endregion Private Mehods
 } //namespace SvOg

@@ -957,7 +957,7 @@
 #define IDS_OBJECTNAME_RINGBUFFER_INDEX2 11132
 #define IDS_OBJECTNAME_RINGBUFFER_FLAG  11133
 #define IDR_GLOBAL_CONSTANT_CONTEXT_MENU 11134
-#define  IDR_MONITOR_PRODUCT_LIST		11135
+#define IDR_MONITOR_PRODUCT_LIST        11135
 #define IDS_OBJECTNAME_INPUT_01         14001
 #define IDS_OBJECTNAME_INPUT_02         14002
 #define IDS_OBJECTNAME_INPUT_03         14003
@@ -2135,9 +2135,11 @@
 #define IDC_LIMIT_LABEL                 16117
 #define IDC_EDIT_LIMIT_VALUE            16118
 #define IDC_BUTTON_LIMIT_VALUE          16119
-#define IDC_CHECK_PLAY_COND            16120
+#define IDC_CHECK_PLAY_COND             16120
 #define IDC_EDIT_PAUSE_EQUATION         16121
 #define IDC_BTN_REG_TEST_PAUSE_EQUATION 16122
+#define IDC_BUTTON_MOVEUP               16123
+#define IDC_BUTTON_MOVEDOWN             16124
 #define ID_TEST                         20000
 #define ID_BROWSE_BUTTON                20001
 #define ID_PLUSBUTTON                   20002
@@ -2360,7 +2362,7 @@
 #define _APS_3D_CONTROLS                     1
 #define _APS_NEXT_RESOURCE_VALUE        11136
 #define _APS_NEXT_COMMAND_VALUE         20358
-#define _APS_NEXT_CONTROL_VALUE         16123
+#define _APS_NEXT_CONTROL_VALUE         16125
 #define _APS_NEXT_SYMED_VALUE           3002
 #endif
 #endif

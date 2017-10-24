@@ -116,6 +116,11 @@ namespace SvOi
 		/// \returns IObjectClass* Pointer to the object, if not found nullptr.
 		virtual IObjectClass* getFirstObject(const SVObjectTypeInfoStruct& rObjectTypeInfo, bool useFriends = true, const IObjectClass* pRequestor = nullptr) const = 0;
 
+		/// Move an object in the friend-list to a position in front of another object.
+		/// \param objectToMoveId [in] GUID of the object to move.
+		/// \param preObjectId [in] GUID of the object in front of the other object should moved. If this GUID is SV_GUID_NULL, the other object will be moved to the end of the list.
+		virtual void moveFriendObject(const SVGUID& objectToMoveId, const SVGUID& preObjectId = SV_GUID_NULL) = 0;
+
 		/// Reset this object and all children and required all friends.
 		/// \param pErrorMessages [in,out] Pointer to an Error Message Container. If the pointer unequal nullptr, an error message will be added if it happens during reset.
 		/// \returns bool

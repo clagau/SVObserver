@@ -53,77 +53,43 @@ bool TableCopyObject::ResetObject(SvStl::MessageContainerVector *pErrorMessages)
 	if (nullptr != m_pSourceTable)
 	{
 		std::vector<DoubleSortValuePtr> SourceValues = m_pSourceTable->getValueList();
-		for (int i=0; i<m_ValueList.size(); ++i)
+		int i = 0;
+		for (std::vector<DoubleSortValuePtr>::iterator forIter = SourceValues.begin(); SourceValues.end() != forIter; forIter++, i++)
 		{
-			std::vector<DoubleSortValuePtr>::const_iterator it = std::find_if(SourceValues.begin(), SourceValues.end(), [&](const DoubleSortValuePtr& entry)->bool 
-			{ 
-				return (nullptr != entry.get() && entry->GetEmbeddedID() == m_ValueList[i]->GetEmbeddedID()); 
-			} 
+			std::vector<DoubleSortValuePtr>::iterator findIter = std::find_if(m_ValueList.begin(), m_ValueList.end(), [&](const DoubleSortValuePtr& entry)->bool
+			{
+				return (nullptr != entry.get() && nullptr != forIter->get() && entry->GetEmbeddedID() == forIter->get()->GetEmbeddedID());
+			}
 			);
 
-			if (SourceValues.end() != it && nullptr != it->get())
-			{	//value already exist, rename and resize object if needed.
-				if ((*it)->GetName() != SVString(m_ValueList[i]->GetName()))
-				{
-					SVString OldName = m_ValueList[i]->GetName();
-					m_ValueList[i]->SetName((*it)->GetName());
-					GetInspection()->OnObjectRenamed(*(m_ValueList[i].get()), OldName );
-				}
-				if ((*it)->getArraySize() != m_ValueList[i]->getArraySize())
-				{
-					m_ValueList[i]->SetArraySize((*it)->getArraySize());
-				}
-				SourceValues.erase(it);
-			}
-			else
-			{	//value not longer needed, delete it.
-				DoubleSortValuePtr pValueObject = m_ValueList[i];
-				std::vector<DoubleSortValuePtr>::iterator valueIter =m_ValueList.begin()+i;
-				m_ValueList.erase(valueIter);
-				i--;
-				if (nullptr != pValueObject.get())
-				{
-					hideEmbeddedObject(*pValueObject.get());
-					RemoveEmbeddedObject(pValueObject.get());
-				}
-				
-				//Object must be deleted, before SetDefaultInputs is called.
-				pValueObject.reset();
-			}
-		}
-		
-		//Add new value columns
-		for (std::vector<DoubleSortValuePtr>::const_iterator iter = SourceValues.cbegin(); iter != SourceValues.cend(); ++iter )
-		{
-			DoubleSortValueObject* pSourceObject = (*iter).get();
-			if (nullptr != pSourceObject)
+			if (m_ValueList.end() != findIter)
 			{
-				try
+				auto oldPos = std::distance(m_ValueList.begin(), findIter);
+				if (oldPos != i)
 				{
-					createColumnObject(pSourceObject->GetEmbeddedID(), pSourceObject->GetName(), pSourceObject->getArraySize());
+					MoveValueColumn(static_cast<int>(oldPos), i);
 				}
-				catch( const SvStl::MessageContainer& rSvE )
-				{
-					SvStl::MessageMgrStd e( SvStl::LogOnly );
-					e.setMessage( rSvE.getMessage() );
-				}
-				
+				UpdateColumnValueObject(i, (*forIter)->GetName(), (*forIter)->getArraySize());
 			}
 			else
 			{
-				SvStl::MessageMgrStd e( SvStl::LogOnly );
-				e.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_TableObject_createColumnValueObjectFailed, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
-				ASSERT(FALSE);
+				//new column, add it.
+				createColumnObject((*forIter)->GetEmbeddedID(), (*forIter)->GetName(), (*forIter)->getArraySize());
+				//move object from last position to wanted
+				MoveValueColumn(static_cast<int>(m_ValueList.size() - 1), i);
 			}
 		}
-	}
-	else
-	{
-		while(0 < m_ValueList.size())
+
+		while (m_ValueList.size() > SourceValues.size())
 		{
-			DoubleSortValuePtr pObject = m_ValueList.back();
+			//erase not longer used value object
+			DoubleSortValuePtr pValueObject = m_ValueList.back();
 			m_ValueList.pop_back();
-			RemoveEmbeddedObject(pObject.get());
+			if (nullptr != pValueObject.get())
+			{
+				hideEmbeddedObject(*pValueObject.get());
+				RemoveEmbeddedObject(pValueObject.get());
+			}
 		}
 	}
 

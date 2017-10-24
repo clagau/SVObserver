@@ -55,10 +55,13 @@ namespace SvOg
 		virtual BOOL OnKillActive( ) override;
 		void OnBnClickedButtonRemove();
 		void OnBnClickedButtonAdd();
+		void OnBnClickedMoveUp();
+		void OnBnClickedMoveDown();
 
 		void OnGridDblClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/);
 		void OnGridRClick(NMHDR *pNotifyStruct, LRESULT* /*pResult*/);
 		void OnGridEndEdit(NMHDR *pNotifyStruct, LRESULT* pResult);
+		void OnSelectionChanged(NMHDR *pNotifyStruct, LRESULT* pResult);		
 		//}}AFX_MSG
 
 #pragma endregion Protected Methods
@@ -83,6 +86,14 @@ namespace SvOg
 		/// Show the context menu for right mouse click
 		/// \param point [in] Mouse position
 		void showContextMenu( CPoint point );
+
+		/// Move Column in front of other column.
+		/// \param moveGuid [in] GUID of the object to move.
+		/// \param preGuid [in] GUID of the object in front of the other object should be moved.
+		void MoveColumn(SVGUID moveGuid, SVGUID preGuid);
+		
+		/// Update the state of the buttons, which are enabled and disabled.
+		void UpdateEnableButtons();
 #pragma endregion Private Methods
 
 #pragma region Member Variables

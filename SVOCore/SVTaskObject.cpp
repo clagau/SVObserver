@@ -1312,6 +1312,26 @@ bool SVTaskObjectClass::RegisterEmbeddedObjectAsClass(SVObjectClass* pEmbeddedOb
 	return false;
 }
 
+void SVTaskObjectClass::MovedEmbeddedObject(SVObjectClass* pToMoveObject, SVObjectClass* pPosObject)
+{
+	auto currentIter = std::find(m_embeddedList.begin(), m_embeddedList.end(), pToMoveObject);
+	auto newPosIter = std::find(m_embeddedList.begin(), m_embeddedList.end(), pPosObject);
+	if (currentIter != newPosIter && m_embeddedList.end() != currentIter && m_embeddedList.end() != newPosIter)
+	{
+		//change first object which is later in the list.
+		if (currentIter > newPosIter)
+		{   
+			m_embeddedList.erase(currentIter);
+			m_embeddedList.insert(newPosIter, pToMoveObject);
+		}
+		else
+		{
+			m_embeddedList.insert(newPosIter, pToMoveObject);
+			m_embeddedList.erase(currentIter);
+		}
+	}
+}
+
 bool SVTaskObjectClass::resetAllOutputListObjects( SvStl::MessageContainerVector *pErrorMessages/*=nullptr */ )
 {
 	bool Result = true;

@@ -60,60 +60,54 @@ void TableFillByEquationObject::setColumnValueObjects(const std::vector<TableCol
 	}
 	ASSERT(m_equationList.size() == m_ValueList.size());
 
-	for (int i=0; i<m_equationList.size(); i++)
+	int i = 0;
+	for (std::vector<TableColumnEquation*>::iterator forIter = columnList.begin(); columnList.end() != forIter; forIter++, i++)
 	{
-		std::vector<TableColumnEquation*>::iterator vecIter = std::find(columnList.begin(), columnList.end(), m_equationList[i]);
-		if (columnList.end() != vecIter)
+		//check if column at position i different between old equation list and new one
+		if (m_equationList.size() <=i || *forIter != *(m_equationList.begin()+i))
 		{
-			columnList.erase(vecIter);
-			//value already exist, update the name and size if needed.
-			DoubleSortValueObject* pValueObject = m_ValueList[i].get();
-			if (nullptr != pValueObject)
+			std::vector<TableColumnEquation*>::iterator findIter = std::find(m_equationList.begin(), m_equationList.end(), *forIter);
+			if (m_equationList.end() != findIter)
 			{
-				SVString objectName = m_equationList[i]->GetName();
-				if (pValueObject->GetName() != objectName)
-				{
-					SVString OldName = pValueObject->GetName();
-					pValueObject->SetName(objectName.c_str());
-					GetInspection()->OnObjectRenamed(*pValueObject, OldName );
-				}
-				pValueObject->SetArraySize(maxArray);
+				//move to new position
+				auto oldPos = std::distance(m_equationList.begin(), findIter);
+				m_equationList.erase(findIter);
+				m_equationList.insert(m_equationList.begin() + i, *forIter);
+				MoveValueColumn(static_cast<int>(oldPos), i);
+				UpdateColumnValueObject(i, m_equationList[i]->GetName(), maxArray);
 			}
 			else
 			{
-				SvStl::MessageMgrStd e( SvStl::DataOnly );
-				e.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_TableObject_columnValueMapInvalid, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
-				e.Throw();
+				//new column, add it.
+				SVGUID newGuid = getNextFreeEmbeddedColumGUID();
+				if (SV_GUID_NULL == newGuid)
+				{
+					SvStl::MessageMgrStd e(SvStl::LogOnly);
+					e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_TableObject_columnValue_NoFreeGUID, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+					e.Throw();
+				}
+				createColumnObject(newGuid, (*forIter)->GetName(), maxArray);
+				m_equationList.insert(m_equationList.begin()+i, *forIter);
+				//move object from last position to wanted
+				MoveValueColumn(static_cast<int>(m_ValueList.size()-1), i);
 			}
 		}
 		else
 		{
-			//erase not longer used value object
-			DoubleSortValuePtr pValueObject = m_ValueList[i];
-			std::vector<TableColumnEquation*>::iterator equationIter = m_equationList.begin()+i;
-			std::vector<DoubleSortValuePtr>::iterator valueIter =m_ValueList.begin()+i;
-			m_equationList.erase(equationIter);
-			m_ValueList.erase(valueIter);
-			i--;
-			RemoveEmbeddedObject(pValueObject.get());
-			//Object must be deleted, before SetDefaultInputs is called.
-			pValueObject.reset();
-			dynamic_cast<SVInspectionProcess*>(GetInspection())->SetDefaultInputs();
+			UpdateColumnValueObject(i, m_equationList[i]->GetName(), maxArray);
 		}
 	}
 
-	//add remaining elements from vector to map
-	for (std::vector<TableColumnEquation*>::iterator iter = columnList.begin(); iter != columnList.end(); ++iter )
+	while (m_equationList.size() > columnList.size())
 	{
-		SVGUID newGuid = getNextFreeEmbeddedColumGUID();
-		if (SV_GUID_NULL == newGuid)
-		{
-			SvStl::MessageMgrStd e( SvStl::LogOnly );
-			e.setMessage( SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_TableObject_columnValue_NoFreeGUID, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID() );
-			e.Throw();
-		}
-		createColumnObject(newGuid, (*iter)->GetName(), maxArray);
-		m_equationList.push_back(*iter);
+		//erase not longer used value object
+		DoubleSortValuePtr pValueObject = m_ValueList.back();
+		m_equationList.pop_back();
+		m_ValueList.pop_back();
+		RemoveEmbeddedObject(pValueObject.get());
+		//Object must be deleted, before SetDefaultInputs is called.
+		pValueObject.reset();
+		dynamic_cast<SVInspectionProcess*>(GetInspection())->SetDefaultInputs();
 	}
 }
 #pragma endregion Public Methods
@@ -173,5 +167,4 @@ SVGUID TableFillByEquationObject::getNextFreeEmbeddedColumGUID()
 	}
 	return SV_GUID_NULL;
 }
-
 #pragma endregion Private Methods

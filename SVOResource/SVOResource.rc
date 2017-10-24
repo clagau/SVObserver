@@ -2548,6 +2548,8 @@ BEGIN
     CONTROL         "Grid",IDC_GRID,"MfcGridCtrl",WS_TABSTOP,7,7,439,229
     PUSHBUTTON      "Remove",IDC_BUTTON_REMOVE,251,245,92,12
     PUSHBUTTON      "Add",IDC_BUTTON_ADD,354,245,92,12
+    PUSHBUTTON      "Move Up",IDC_BUTTON_MOVEUP,7,245,92,12
+    PUSHBUTTON      "Move Down",IDC_BUTTON_MOVEDOWN,109,245,92,12
 END
 
 /////////////////////////////////////////////////////////////////////////////

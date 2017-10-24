@@ -49,7 +49,9 @@ public:
 
 	SVStringValueObjectClass& getLinkedName() { return m_LinkedName; };
 
-	bool isIndirectValue() { return ( nullptr != m_LinkedObjectRef.getObject() ); };
+	bool isIndirectValue() { return (nullptr != m_LinkedObjectRef.getObject()); };
+
+	void setIndirectValueSaveFlag(bool shouldSaveValue);
 
 #pragma region Methods to replace processMessage
 	virtual void OnObjectRenamed(const SVObjectClass& rRenamedObject, const SVString& rOldName) override { UpdateLinkedName(); };

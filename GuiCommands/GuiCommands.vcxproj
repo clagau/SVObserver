@@ -50,6 +50,7 @@
     <ClInclude Include="InspectionRunOnce.h" />
     <ClInclude Include="IsValid.h" />
     <ClInclude Include="MLRejectValueFilter.h" />
+    <ClInclude Include="MoveFriendObject.h" />
     <ClInclude Include="RangeSelectorFilter.h" />
     <ClInclude Include="ResetObject.h" />
     <ClInclude Include="SaveImage.h" />

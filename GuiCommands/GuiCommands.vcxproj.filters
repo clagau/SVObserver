@@ -168,5 +168,8 @@
     <ClInclude Include="MLRejectValueFilter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="MoveFriendObject.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

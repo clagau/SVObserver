@@ -1269,6 +1269,10 @@ HRESULT SVExternalToolTask::InspectionInputsToVariantArray()
 {
 	for( int i = 0 ; i < m_Data.m_lNumInputValues ; i++ )
 	{
+		if (m_Data.m_aInputObjects[i].isIndirectValue())
+		{
+			m_Data.m_aInputObjects[i].setIndirectValueSaveFlag(true);
+		}
 		_variant_t Value;
 		m_Data.m_aInputObjects[i].GetValue( Value );
 

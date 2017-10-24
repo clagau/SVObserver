@@ -27,11 +27,9 @@
 #include "SVStatusLibrary/ErrorNumbers.h"
 #pragma endregion Includes
 
-HRESULT SVImageProcessingClass::CreateImageBuffer( const SVImageInfoClass& rInfo, SVSmartHandlePointer& rHandle )
+HRESULT SVImageProcessingClass::CreateImageBuffer( const SVImageInfoClass& rInfo, SVSmartHandlePointer& rHandle, SvStl::MessageContainerVector* pErrorContainer)
 {
 	HRESULT Result( S_OK );
-
-	bool bDisplayedErrorMessage = false;
 
 	SVImageFormatEnum l_eFormat;
 	int l_iBandNumber = 0;
@@ -83,13 +81,20 @@ HRESULT SVImageProcessingClass::CreateImageBuffer( const SVImageInfoClass& rInfo
 	if (SVMEE_MBUF_ALLOCATION_FAILED == Result)
 	{
 		Result = SVMSG_SVO_5067_IMAGEALLOCATIONFAILED;
+		if (nullptr != pErrorContainer)
+		{
+			SvStl::MessageContainer message;
+			message.setMessage(SVMSG_SVO_5067_IMAGEALLOCATIONFAILED, SvStl::Tid_Default, SvStl::SourceFileParams(StdMessageParams));
+			pErrorContainer->push_back(message);
+		}
 	}
 	else
 	{
-		if ( S_OK != Result && !bDisplayedErrorMessage )
+		if ( S_OK != Result && nullptr != pErrorContainer)
 		{
-			SvStl::MessageMgrStd Msg( SvStl::LogAndDisplay );
-			Msg.setMessage( SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_CreateBufferFailed, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10064 );
+			SvStl::MessageContainer message;
+			message.setMessage(SVMSG_SVO_93_GENERAL_WARNING, SvStl::Tid_CreateBufferFailed, SvStl::SourceFileParams(StdMessageParams), SvStl::Err_10064);
+			pErrorContainer->push_back(message);
 		}
 	}
 

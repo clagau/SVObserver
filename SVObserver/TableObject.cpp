@@ -220,6 +220,40 @@ DoubleSortValueObject* TableObject::createColumnObject(SVGUID embeddedID, LPCTST
 	}
 	return pObject;
 }
+
+void TableObject::UpdateColumnValueObject(int pos, SVString objectName, int maxArray)
+{
+	//value already exist, update the name and size if needed.
+	DoubleSortValueObject* pValueObject = m_ValueList[pos].get();
+	if (nullptr != pValueObject)
+	{
+		if (pValueObject->GetName() != objectName)
+		{
+			SVString OldName = pValueObject->GetName();
+			pValueObject->SetName(objectName.c_str());
+			GetInspection()->OnObjectRenamed(*pValueObject, OldName);
+		}
+		pValueObject->SetArraySize(maxArray);
+	}
+	else
+	{
+		SvStl::MessageMgrStd e(SvStl::DataOnly);
+		e.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_TableObject_columnValueMapInvalid, SvStl::SourceFileParams(StdMessageParams), 0, GetUniqueObjectID());
+		e.Throw();
+	}
+}
+
+void TableObject::MoveValueColumn(int oldPos, int newPos)
+{
+	if (oldPos != newPos && 0 <= oldPos  && m_ValueList.size() > oldPos && 0 <= newPos && m_ValueList.size() > newPos)
+	{
+		auto value = *(m_ValueList.begin() + oldPos);
+		auto posObject = *(m_ValueList.begin() + newPos);
+		m_ValueList.erase(m_ValueList.begin() + oldPos);
+		m_ValueList.insert(m_ValueList.begin() + newPos, value);
+		MovedEmbeddedObject(value.get(), posObject.get());
+	}
+}
 #pragma endregion Protected Methods
 
 #pragma region Private Methods

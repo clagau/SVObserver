@@ -151,6 +151,9 @@ public:
 	//! \param Index [in] The index of the array (-1 if no array)
 	//! \returns S_OK if successful
 	virtual HRESULT CopyToMemoryBlock(BYTE* pMemoryBlock, DWORD MemByteSize, int Index = -1) const override;
+
+	//This method is empty as it is a virtual method and is not needed for this class
+	virtual void setSaveValueFlag(bool shouldSaveValue) override { };
 #pragma endregion virtual method (IObjectClass)
 
 	//************************************

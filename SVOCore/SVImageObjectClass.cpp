@@ -711,25 +711,10 @@ bool SVImageObjectClass::CreateImageBuffer(SVImageInfoClass &rInfo, long p_Index
 	SVImageObjectElementPtr l_IndexHandle;
 	SVSmartHandlePointer l_Handle;
 
-	HRESULT hr = SVImageProcessingClass::CreateImageBuffer( rInfo, l_Handle );
+	HRESULT hr = SVImageProcessingClass::CreateImageBuffer( rInfo, l_Handle, pErrorContainer );
 	if (S_OK != hr)
 	{
 		Result = false;
-		if (nullptr != pErrorContainer)
-		{
-			if (SVMSG_SVO_5067_IMAGEALLOCATIONFAILED == hr)
-			{
-				SvStl::MessageContainer message;
-				message.setMessage( hr, SvStl::Tid_Default, SvStl::SourceFileParams(StdMessageParams) );
-				pErrorContainer->push_back(message);
-			}
-			else 
-			{
-				SvStl::MessageContainer message;
-				message.setMessage( SVMSG_SVO_5065_COULDNOTCREATEIMAGEBUFFER, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
-				pErrorContainer->push_back(message);
-			}
-		}
 	}
 
 	if( !l_Handle.empty() && Result )

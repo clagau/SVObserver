@@ -89,6 +89,10 @@ public:
 	bool RegisterEmbeddedObject( SVImageClass* pEmbeddedObject, const GUID& rGuidEmbeddedID, LPCTSTR newString );
 	bool RegisterEmbeddedObject( SVObjectClass* pEmbeddedObject, const GUID& rGuidEmbeddedID, int StringResourceID, bool p_bResetAlways, SvOi::SVResetItemEnum eRequiredReset );
 	bool RegisterEmbeddedObject( SVObjectClass* pEmbeddedObject, const GUID& rGuidEmbeddedID, LPCTSTR strName, bool p_bResetAlways, SvOi::SVResetItemEnum eRequiredReset );
+	/// Moved an embedded-object in the embedded-list to a new position.
+	/// \param pToMoveObject [in] This object should moved.
+	/// \param pPosObject [in] The other object will be moved before this object.
+	void MovedEmbeddedObject(SVObjectClass* pToMoveObject, SVObjectClass* pPosObject);
 	bool RegisterInputObject( SVInObjectInfoStruct* PInObjectInfo, const SVString& p_rInputName );
 
 	HRESULT GetOutputListFiltered( SVObjectReferenceVector& rvecObjects, UINT uiAttributes = SvOi::SV_NO_ATTRIBUTES, bool bAND = true ); /* true means AND, false means OR */

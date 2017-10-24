@@ -321,9 +321,9 @@ HRESULT SVGigeCameraFileReader::ReadCameraFileStringParam( SVDeviceParamCollecti
 	SVString Value;
 	Value.resize( MAX_STRING_BUFFER, '\0' );
 	DWORD ValueSize = GetPrivateProfileString( rSection.c_str(), rKey.c_str(), _T(""), &Value.at(0), MAX_STRING_BUFFER, m_Filename.c_str() );
+	Value.resize( ValueSize );
 	if ( !Value.empty() )
 	{
-		Value.resize( ValueSize );
 		rParams.SetParameter( e, (const SVDeviceParam*) SVDeviceParamTempWrapper(SVDeviceParam::Create( e )) );
 
 		SVStringValueDeviceParam* pParam = rParams.GetParameter( e ).DerivedValue(pParam);

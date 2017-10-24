@@ -132,6 +132,10 @@ namespace SvOi
 		//! \param pMemoryBlock [in] The index of the array (-1 if no array)
 		//! \returns S_OK if succesful
 		virtual HRESULT CopyToMemoryBlock(BYTE* pMemoryBlock, DWORD MemByteSize, int Index=-1) const = 0;
+
+		//! Sets the save flag for the value object
+		//! \param shouldSaveValue [in] flag determining if value saved
+		virtual void setSaveValueFlag(bool shouldSaveValue) = 0;
 	};
 
 	typedef std::set<IValueObject*> IValueObjectPtrSet;
