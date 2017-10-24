@@ -771,7 +771,7 @@ HRESULT SVMatroxGigeAcquisitionClass::IsValidCameraFileParameters( SVDeviceParam
 
 HRESULT SVMatroxGigeAcquisitionClass::SetGigeFeatureOverrides(const SVString& featureOverrides)
 {
-	HRESULT hr = S_FALSE;
+	HRESULT hr = S_OK;
 	
 	if (IsDigitizerSubsystemValid() && CameraMatchesCameraFile())
 	{

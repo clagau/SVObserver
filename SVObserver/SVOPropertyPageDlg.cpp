@@ -1342,6 +1342,16 @@ void CSVOPropertyPageDlg::OnItemChanged(NMHDR* pNotifyStruct, LRESULT* plResult)
 					m_Tree.FindItem(PROP_AD_FILE_NAME)->GetItemValue( FileName );
 					SvUl_SF::TrimLeft( FileName );
 					SvUl_SF::TrimRight( FileName );
+					//! Check if file exists
+					if (!FileName.empty() && 0 != _access(FileName.c_str(), 0))
+					{
+						SvStl::MessageMgrStd Exception(SvStl::LogAndDisplay);
+						SVStringVector msgList;
+						msgList.push_back(FileName);
+						Exception.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Config_CameraFileNameInvalid, msgList, SvStl::SourceFileParams(StdMessageParams));
+						m_Tree.FindItem(PROP_AD_FILE_NAME)->SetItemValue(m_CameraObj.GetCameraFile().c_str());
+						break;
+					}
 					m_CameraObj.SetCameraFile( FileName );
 					m_CameraObj.SetCameraFileChanged();
 					if( m_CameraObj.GetCameraFileChanged()  && m_InitialCameraFileName != m_CameraObj.GetCameraFile() )

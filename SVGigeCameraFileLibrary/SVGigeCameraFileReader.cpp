@@ -153,7 +153,7 @@ HRESULT SVGigeCameraFileReader::ReadCameraFileImpl( SVDeviceParamCollection &rPa
 	else
 	{
 		// couldn't open file
-		hr = S_FALSE;
+		hr = E_FAIL;
 	}
 	return hr;
 }
@@ -161,16 +161,16 @@ HRESULT SVGigeCameraFileReader::ReadCameraFileImpl( SVDeviceParamCollection &rPa
 
 HRESULT SVGigeCameraFileReader::ReadParams( SVDeviceParamCollection& rParams )
 {
-	HRESULT Result( S_OK );
 	SVString sSection( cINFO );
 
-	ReadCameraFileStringParam( rParams, DeviceParamVendorName,  sSection );
-	ReadCameraFileStringParam( rParams, DeviceParamModelName, sSection );
-	ReadCameraFileStringParam( rParams, DeviceParamFirmware,  sSection );
+	HRESULT Result = ReadCameraFileStringParam( rParams, DeviceParamVendorName,  sSection);
+
+	Result = (S_OK == Result) ? ReadCameraFileStringParam(rParams, DeviceParamModelName, sSection) : Result;
+	ReadCameraFileStringParam( rParams, DeviceParamFirmware,  sSection);
 
 	sSection = cSETTINGS;
 
-	ReadCameraFileCameraFormatsParam( rParams, DeviceParamCameraFormats, sSection );
+	Result = (S_OK == Result) ? ReadCameraFileCameraFormatsParam( rParams, DeviceParamCameraFormats, sSection ) : Result;
 	ReadCameraFileStringParam( rParams, DeviceParamCameraDefaultSettings, sSection );
 	ReadCameraFileLongParam( rParams, DeviceParamNumCameraBuffers, sSection );
 	ReadCameraFileLutParam( rParams, DeviceParamLut, sSection );
@@ -356,6 +356,10 @@ HRESULT SVGigeCameraFileReader::ReadCameraFileStringParam( SVDeviceParamCollecti
 			Value.resize( MAX_STRING_BUFFER, '\0' );
 		}
 	}
+	else
+	{
+		return ERROR_INVALID_PARAMETER;
+	}
 	return S_OK;
 }
 
@@ -442,9 +446,9 @@ HRESULT SVGigeCameraFileReader::ReadCameraFileCameraFormatsParam( SVDeviceParamC
 	SVString Value;
 	Value.resize( MAX_STRING_BUFFER, '\0' );
 	DWORD ValueSize = GetPrivateProfileString(sSection.c_str(), rKey.c_str(), _T(""), &Value.at(0), MAX_STRING_BUFFER, m_Filename.c_str());
-	if ( !Value.empty() )
+	Value.resize(ValueSize);
+	if (!Value.empty())
 	{
-		Value.resize( ValueSize );
 		rParams.SetParameter( e, (const SVDeviceParam*) SVDeviceParamTempWrapper(SVDeviceParam::Create( e )) );
 		SVCameraFormatsDeviceParam* pParam = rParams.GetParameter( e ).DerivedValue( pParam );
 		ASSERT( pParam );
@@ -540,6 +544,10 @@ HRESULT SVGigeCameraFileReader::ReadCameraFileCameraFormatsParam( SVDeviceParamC
 				}
 			}
 		}
+	}
+	else
+	{ 
+		return ERROR_INVALID_PARAMETER;
 	}
 	return S_OK;
 }

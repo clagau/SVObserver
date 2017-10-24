@@ -320,6 +320,8 @@ namespace SvStl
 	(Tid_Config_SwitchResetQuestion, _T("By switching the system (product) the camera, trigger, inspection and ppq data will be reset, do you wish to continue?"))
 	(Tid_Config_SwitchInvalidQuestion, _T("By switching the system (product) the camera files will become invalid, do you wish to continue?"))
 	(Tid_Config_InspectionImportFailed, _T("Inspection Import failed. Error = %s"))
+	(Tid_Config_CameraFileNameInvalid, _T("Camera file name is invalid %s"))
+	(Tid_Config_CameraFileInvalid, _T("Camera file is invalid %s"))
 	(Tid_Error_NoMilHostBuffer, _T("No Mil Host Buffer Pointer"))
 	(Tid_Error_MilImageTypeInvalid, _T("MIL Image Type Not 8 Bit Unsigned: %s"))
 	(Tid_Error_FontNotMfoExt, _T( "Font File Requires '.mfo' Extension: %s" ))

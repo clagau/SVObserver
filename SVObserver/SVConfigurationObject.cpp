@@ -1229,8 +1229,7 @@ bool SVConfigurationObject::LoadAcquisitionDevice( SVTreeType& rTree, SVString& 
 			{
 				++lNumAcqDig;
 
-				bool bFileDone = false;
-				bool bLightDone = false;
+				bool bLightReferenceDone = false;
 				bool bLutDone = false;
 				bool bLutCreated = false;
 
@@ -1246,12 +1245,15 @@ bool SVConfigurationObject::LoadAcquisitionDevice( SVTreeType& rTree, SVString& 
 
 				hDataChild = rTree.getFirstBranch( hDigChild );
 
-				bFileDone = SvXml::SVNavigateTree::GetItem( rTree, SvXml::CTAG_ACQUISITION_DEVICE_FILE_NAME, hDigChild, Name );
-
-				if( bFileDone )
+				if (!SvXml::SVNavigateTree::GetItem(rTree, SvXml::CTAG_ACQUISITION_DEVICE_FILE_NAME, hDigChild, Name))
 				{
-					svFileArray.SetFileNameList( SvUl_SF::createSVString( Name.bstrVal ).c_str() );
+					SvStl::MessageContainer MsgCont;
+					SVStringVector msgList;
+					msgList.push_back(SvUl_SF::createSVString(Name.bstrVal));
+					MsgCont.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Config_CameraFileNameInvalid, msgList, SvStl::SourceFileParams(StdMessageParams));
+					throw MsgCont;
 				}
+				svFileArray.SetFileNameList( SvUl_SF::createSVString( Name.bstrVal ).c_str() );
 
 				if( SvXml::SVNavigateTree::GetItemBranch( rTree, SvXml::CTAG_LIGHT_REFERENCE_ARRAY, hDigChild, hDataChild ) )
 				{
@@ -1309,7 +1311,7 @@ bool SVConfigurationObject::LoadAcquisitionDevice( SVTreeType& rTree, SVString& 
 													svLight.Band(i).Attribute(j).lValue = Value;
 												}
 
-												bLightDone = true;
+												bLightReferenceDone = true;
 											}
 										}
 									}
@@ -1317,6 +1319,15 @@ bool SVConfigurationObject::LoadAcquisitionDevice( SVTreeType& rTree, SVString& 
 							}
 						}
 					}
+				}
+
+				if (!bLightReferenceDone)
+				{
+					SvStl::MessageContainer MsgCont;
+					SVStringVector msgList;
+					msgList.push_back(DigName);
+					MsgCont.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_LightReference_NotAvailable, msgList, SvStl::SourceFileParams(StdMessageParams));
+					throw MsgCont;
 				}
 
 				if( SvXml::SVNavigateTree::GetItemBranch( rTree, SvXml::CTAG_LUT, hDigChild, hDataChild ) )
@@ -1416,13 +1427,19 @@ bool SVConfigurationObject::LoadAcquisitionDevice( SVTreeType& rTree, SVString& 
 						}
 					}
 				}
+				if (!bLutDone)
+				{
+					SvStl::MessageContainer MsgCont;
+					MsgCont.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_LUT_NotAvailable, SvStl::SourceFileParams(StdMessageParams));
+					throw MsgCont;
+				}
 
 				if( SvXml::SVNavigateTree::GetItemBranch( rTree, SvXml::CTAG_DEVICE_PARAM_LIST, hDigChild, hDataChild ) )
 				{
 					LoadDeviceParameters(rTree, hDataChild, svDeviceParams);
 				}
 
-				bOk = bFileDone && bLightDone;
+				bOk = bLightReferenceDone & bLutDone;
 				if ( bOk )
 				{
 					long l_BandCount = 1;
@@ -1510,12 +1527,20 @@ bool SVConfigurationObject::LoadAcquisitionDevice( SVTreeType& rTree, SVString& 
 						if ( bOk )
 						{
 							SVImageInfoClass svImageInfo;
-
-							if( SVMSG_SVO_IGNORE_EXCEPTION == psvDevice->LoadFiles( svFileArray ) )
+							HRESULT CameraFileResult = psvDevice->LoadFiles(svFileArray);
+							if( SVMSG_SVO_IGNORE_EXCEPTION == CameraFileResult)
 							{
 								//This stops loading without any further messages
 								SvStl::MessageContainer MsgCont;
 								MsgCont.setMessage( SVMSG_SVO_IGNORE_EXCEPTION, SvStl::Tid_Empty, SvStl::SourceFileParams(StdMessageParams) );
+								throw MsgCont;
+							}
+							else if (S_OK != CameraFileResult)
+							{
+								SvStl::MessageContainer MsgCont;
+								SVStringVector msgList;
+								msgList.push_back(SVString(svFileArray.GetFileNameList()));
+								MsgCont.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Config_CameraFileInvalid, msgList, SvStl::SourceFileParams(StdMessageParams));
 								throw MsgCont;
 							}
 

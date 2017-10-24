@@ -287,13 +287,21 @@ void CSVOCameraDlg::OnBtnPropVc()
 						SVString DigName = m_pParent->BuildDigName( *pCameraObj );
 						SVDigitizerProcessingClass::Instance().SetDigitizerColor( DigName.c_str(), pCameraObj->IsColor() );
 						SVAcquisitionClassPtr psvDevice( SVDigitizerProcessingClass::Instance().GetAcquisitionDevice( DigName.c_str() ) );
-						if ( nullptr != psvDevice )
+						if (nullptr != psvDevice)
 						{
 							SVFileNameArrayClass svFiles;
 							SVFileNameClass svFile;
-							svFile.SetFullFileName( pCameraObj->GetCameraFile().c_str() );
-							svFiles.Add( svFile );
-							psvDevice->LoadFiles( svFiles );
+							svFile.SetFullFileName(pCameraObj->GetCameraFile().c_str());
+							svFiles.Add(svFile);
+							if (S_OK != psvDevice->LoadFiles(svFiles))
+							{
+								SvStl::MessageMgrStd Msg(SvStl::LogAndDisplay);
+								SVStringVector msgList;
+								msgList.push_back(pCameraObj->GetCameraFile());
+								Msg.setMessage(SVMSG_SVO_92_GENERAL_ERROR, SvStl::Tid_Config_CameraFileInvalid, msgList, SvStl::SourceFileParams(StdMessageParams));
+								pCameraObj->SetCameraFile(SVString());
+								m_pParent->ItemChanged(CAMERA_DLG, pCameraObj->GetCameraDisplayName().c_str(), ITEM_ACTION_PROP);
+							}
 						}
 					}
 				}

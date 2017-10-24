@@ -998,22 +998,17 @@ HRESULT SVInspectionProcess::StartProcess(SVProductInfoStruct *pProduct)
 		{
 			SVCameraImageTemplate* l_pImage = (*l_ImageIter);
 
-			if (nullptr != l_pImage)
+			if (nullptr != l_pImage && nullptr != l_pImage->GetCamera())
 			{
-				SVVirtualCamera* pCamera = l_pImage->GetCamera();
+				SVGuidSVCameraInfoStructMap::iterator l_Iter;
 
-				if (nullptr != pCamera)
+				l_Iter = pProduct->m_svCameraInfos.find(l_pImage->GetCamera()->GetUniqueObjectID());
+
+				if (l_Iter != pProduct->m_svCameraInfos.end())
 				{
-					SVGuidSVCameraInfoStructMap::iterator l_Iter;
-
-					l_Iter = pProduct->m_svCameraInfos.find(pCamera->GetUniqueObjectID());
-
-					if (l_Iter != pProduct->m_svCameraInfos.end())
+					if (l_Iter->second.GetIndex() < 0)
 					{
-						if (l_Iter->second.GetIndex() < 0)
-						{
-							hr = SVMSG_SVO_71_INVALID_SOURCE_IMAGE_INDEX;
-						}
+						hr = SVMSG_SVO_71_INVALID_SOURCE_IMAGE_INDEX;
 					}
 				}
 			}

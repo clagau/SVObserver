@@ -285,6 +285,8 @@ namespace SvStl
 		Tid_Config_SwitchResetQuestion,
 		Tid_Config_SwitchInvalidQuestion,
 		Tid_Config_InspectionImportFailed,
+		Tid_Config_CameraFileNameInvalid,
+		Tid_Config_CameraFileInvalid,
 		Tid_Error_NoMilHostBuffer,
 		Tid_Error_MilImageTypeInvalid,
 		Tid_Error_FontNotMfoExt,

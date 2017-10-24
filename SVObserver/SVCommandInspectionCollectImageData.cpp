@@ -184,7 +184,7 @@ HRESULT SVCommandInspectionCollectImageData::UpdateBuffer(const SVGUID& rImageId
 			pMainImage = dynamic_cast<SVCameraImageTemplate*> ( pImage->GetParentImage() );
 		}
 
-		if( nullptr != pMainImage )
+		if( nullptr != pMainImage && nullptr != pMainImage->GetCamera())
 		{
 			SVGuidSVCameraInfoStructMap::const_iterator l_svIter;
 
