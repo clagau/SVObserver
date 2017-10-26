@@ -280,6 +280,7 @@ void ResultViewReferences::GetResultTableData(SVIPResultData &p_rResultData) con
 			if (nullptr != valueObject)
 			{
 				IPResultTableData data = IPResultTableData();
+				data.m_LastUpdateTimeStamp = m_LastUpdateTimeStamp;
 				data.m_columnName = valueObject->GetName();
 				valueObject->getValues(data.m_rowData);
 				p_rResultData.m_ResultTableData.push_back(data);

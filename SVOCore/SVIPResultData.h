@@ -12,7 +12,7 @@
 
 #pragma region Includes
 //Moved to precompiled header: #include <map>
-
+#include "SVTimerLibrary\SVClock.h"
 #include "SVIPResultItemData.h"
 #include "SVIPResultItemDefinition.h"
 #pragma endregion Includes
@@ -20,6 +20,7 @@
 struct IPResultTableData
 {
 	SVString m_columnName;
+	SvTl::SVTimeStamp m_LastUpdateTimeStamp;
 	std::vector<_variant_t> m_rowData;
 };
 

@@ -96,6 +96,7 @@ void ResultTableListCtrl::updateList(class SVIPDoc* pDoc)
 		if (m_UpdateTimeStamp < pDoc->getResultDefinitionUpdatTimeStamp())
 		{
 			addColumnHeadings(m_ResultData.m_ResultTableData);
+			m_UpdateTimeStamp = m_ResultData.m_ResultTableData[0].m_LastUpdateTimeStamp;
 		}
 
 		int rowCountOld = GetItemCount();
@@ -127,7 +128,6 @@ void ResultTableListCtrl::updateList(class SVIPDoc* pDoc)
 			DeleteAllItems();
 		}
 
-		m_UpdateTimeStamp = SvTl::GetTimeStamp();
 		SetRedraw(true);
 		RedrawWindow(nullptr, nullptr, RDW_INVALIDATE | RDW_UPDATENOW | RDW_ERASE | RDW_FRAME);
 	}
