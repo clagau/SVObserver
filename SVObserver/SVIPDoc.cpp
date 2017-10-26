@@ -1794,7 +1794,7 @@ bool SVIPDoc::checkOkToDelete( SVTaskObjectClass* pTaskObject )
 	
 		INT_PTR dlgResult = SvOg::SVShowDependentsDialog::StandardDialog( pTaskObject->GetName(), TaskObjectID );
 
-		bRetVal = ( IDCANCEL == dlgResult );
+		bRetVal = ( IDOK == dlgResult );
 	}
 	SVSVIMStateClass::RemoveState(SV_STATE_EDITING);
 	return bRetVal;
