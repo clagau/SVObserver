@@ -101,4 +101,4 @@ if ($booleanVDrive -eq $false){
   }
 }
 C:\SVObserver\bin\SVObserver.exe
-start /MIN C:\SVObserver\bin\SyncSystemTime.bat
+start-process "C:\SVObserver\bin\SyncSystemTime.bat" -WindowStyle Minimized
