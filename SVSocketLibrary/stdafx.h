@@ -32,7 +32,6 @@
 //************************************
 #pragma region Precompiled Headers
 #include <windows.h>
-
 #include <algorithm>
 #include <comdef.h>
 #include <cstdio>

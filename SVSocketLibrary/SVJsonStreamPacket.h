@@ -26,7 +26,7 @@ namespace SvSol
 
 	public:
 		SVJsonStreamPacket();
-		void Add(const std::basic_string<TCHAR>& data);
+	void Add(const std::string& data);
 		bool IsComplete() const;
 		bool IsValid() const;
 		std::istream& GetJsonDataStream();

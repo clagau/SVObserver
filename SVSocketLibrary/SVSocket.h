@@ -1,12 +1,11 @@
-//******************************************************************************
-//* COPYRIGHT (c) 2011 by Seidenader Vision Inc., Harrisburg
-//* All Rights Reserved
-//******************************************************************************
-//* .Module Name     : SVSocket
-//* .File Name       : $Workfile:   SVSocket.h  $
-//* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.7  $
-//* .Check In Date   : $Date:   27 Oct 2014 09:43:22  $
+//*****************************************************************************
+/// \copyright (c) 2017,2017 by Seidenader Maschinenbau GmbH
+/// \file SVSocket.h
+/// All Rights Reserved 
+//*****************************************************************************
+/// This is a part of the socket library 
+/// In this project std::string is used. The project can be used independ of the compileflag 
+///  Unicode.  
 //******************************************************************************
 
 #pragma once
@@ -98,7 +97,7 @@ namespace SvSol
 		virtual void Destroy();
 
 		ULONG GetAddr() const;
-		void  Log(const std::basic_string<TCHAR> & msg, bool full = false) const;
+			void Log(const std::string & msg, bool full = false) const;
 
 		Err SetNonBlocking();
 		Err SetBlocking();
@@ -114,7 +113,7 @@ namespace SvSol
 		Err SetBufferSize(int sz);
 		Err SetReadTimeout(u_int tout);
 
-		Err Write(const std::basic_string<TCHAR>& data, bool hasHeader = false); // Use for non-JSON data.
+		Err Write(const std::string& data, bool hasHeader = false); // Use for non-JSON data.
 		Err Write(const unsigned char* buffer, size_t len, bool hasHeader = false); // Use for non-JSON data.
 		
 		Err WriteWithHeader( unsigned char* buffer, size_t len);
@@ -135,11 +134,11 @@ namespace SvSol
 		}
 		bool IsConnected() const { return m_isConnected; }
 
-		std::basic_string<TCHAR> state() const;
+			std::string state() const;
 
 		bool IsValidPayload(size_t) { return true; } // Currently, we say every payload is valid.  May be specialized later.
-		Err Bind(const TCHAR* hostAddr, unsigned short portNo);
-		SVSocketError::ErrorEnum Send( const std::basic_string<TCHAR>& data ); // Use Send for JSON (no header).
+			Err Bind(const char* hostAddr, unsigned short portNo);
+			SVSocketError::ErrorEnum Send( const std::string& data ); // Use Send for JSON (no header).
 
 		bool DataAvailable() const
 		{

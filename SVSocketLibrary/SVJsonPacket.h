@@ -19,16 +19,16 @@ namespace SvSol
 	class SVJsonPacket
 	{
 	private:
-		std::basic_string<TCHAR> m_packet;
-		std::basic_string<TCHAR> m_pending;
+		std::string m_packet;
+		std::string m_pending;
 		int m_count;
 
 	public:
 		SVJsonPacket();
-		void Add(const std::basic_string<TCHAR>& data);
+		void Add(const std::string& data);
 		bool IsComplete() const;
 		bool IsValid() const;
-		const std::basic_string<TCHAR>& GetJsonData() const;
+		const std::string& GetJsonData() const;
 		void Clear();
 		void Reset();
 	};

@@ -28,7 +28,7 @@ namespace SvSol
 	class SVSocketThread
 	{
 	private:
-		bool m_bQuit;
+	HANDLE m_hStopEvent;
 		HANDLE m_hThread;
 		unsigned long m_ulThreadID;
 		_bstr_t m_tag;

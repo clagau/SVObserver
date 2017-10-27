@@ -21,10 +21,10 @@ namespace SvSol
 	{
 	}
 
-	void SVJsonPacket::Add(const std::basic_string<TCHAR>& data)
+void SVJsonPacket::Add(const std::string& data)
 	{
 		// match opening/closing braces
-		for (std::basic_string<TCHAR>::const_iterator it = data.begin();it != data.end();++it)
+		for (std::string::const_iterator it = data.begin();it != data.end();++it)
 		{
 			if ((*it) == '{')
 			{
@@ -71,7 +71,7 @@ namespace SvSol
 		return bRetVal;
 	}
 
-	const std::basic_string<TCHAR>& SVJsonPacket::GetJsonData() const
+	const std::string& SVJsonPacket::GetJsonData() const
 	{
 		return m_packet;
 	}
@@ -84,7 +84,7 @@ namespace SvSol
 		if (m_pending.length() > 0)
 		{
 			// match opening/closing braces
-			for (std::basic_string<TCHAR>::iterator it = m_pending.begin();it != m_pending.end();++it)
+			for (std::string::iterator it = m_pending.begin();it != m_pending.end();++it)
 			{
 				if ((*it) == '{')
 				{

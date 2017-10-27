@@ -1,12 +1,11 @@
-//******************************************************************************
-//* COPYRIGHT (c) 2011 by Seidenader Vision Inc., Harrisburg
-//* All Rights Reserved
-//******************************************************************************
-//* .Module Name     : SVSocketError
-//* .File Name       : $Workfile:   SVSocketError.h  $
-//* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.2  $
-//* .Check In Date   : $Date:   15 Aug 2014 14:12:34  $
+//*****************************************************************************
+/// \copyright (c) 2017,2017 by Seidenader Maschinenbau GmbH
+/// \file SVSocketError.h
+/// All Rights Reserved 
+//*****************************************************************************
+//This is a part of the socket library
+/// In this project std::string is used. The project can be used independ of the compileflag 
+///  Unicode.  
 //******************************************************************************
 
 #pragma once
@@ -77,7 +76,7 @@ namespace SvSol
 		};
 		static SVSocketError::ErrorEnum GetLastSocketError();
 		static SVSocketError::ErrorEnum TranslateError(int errorCode);
-		static LPCTSTR GetErrorText(ErrorEnum err);
+			static const char * GetErrorText(ErrorEnum err);
 		static HRESULT HrFromSocketError(ErrorEnum err);
 
 	private:
@@ -86,7 +85,7 @@ namespace SvSol
 	};
 } //namespace SvSol
 
-#if _MSC_VER < 1700
+
 #define INET_E_INVALID_URL					_HRESULT_TYPEDEF_(0x800C0002L)
 #define INET_E_NO_SESSION					_HRESULT_TYPEDEF_(0x800C0003L)
 #define INET_E_CANNOT_CONNECT				_HRESULT_TYPEDEF_(0x800C0004L)
@@ -103,5 +102,6 @@ namespace SvSol
 #define E_PROTOCOL_EXTENSIONS_NOT_SUPPORTED _HRESULT_TYPEDEF_(0x83760003L)
 #define E_SUBPROTOCOL_NOT_SUPPORTED			_HRESULT_TYPEDEF_(0x83760004L)
 #define E_PROTOCOL_VERSION_NOT_SUPPORTED	_HRESULT_TYPEDEF_(0x83760005L)
-#endif
+#define INET_E_NO_IMAGE_SOCKET 	_HRESULT_TYPEDEF_(0x83760006L)
+
 

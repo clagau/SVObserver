@@ -1,12 +1,11 @@
-//******************************************************************************
-//* COPYRIGHT (c) 2011 by Seidenader Vision Inc., Harrisburg
-//* All Rights Reserved
-//******************************************************************************
-//* .Module Name     : SVServerSocket
-//* .File Name       : $Workfile:   SVServerSocket.h  $
-//* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.3  $
-//* .Check In Date   : $Date:   27 Oct 2014 09:45:14  $
+//*****************************************************************************
+/// \copyright (c) 2017,2017 by Seidenader Maschinenbau GmbH
+/// \file SVServerSocket.h
+/// All Rights Reserved 
+//*****************************************************************************
+//This is a part of the socket library
+/// In this project std::string is used. The project can be used independ of the compileflag 
+///  Unicode.  
 //******************************************************************************
 
 #pragma once
@@ -35,7 +34,7 @@ namespace SvSol
 	template<typename API>
 	inline bool SVServerSocket<API>::ClientConnecting() const
 	{
-		timeval timeout = {0, 200};
+		timeval timeout = { 0, 200 };
 		fd_set readset;
 		FD_ZERO(&readset);
 		FD_SET(m_socket, &readset);
@@ -47,8 +46,8 @@ namespace SvSol
 	inline typename Traits<UdpApi>::Socket_t SVServerSocket<UdpApi>::Accept(sockaddr* addr, int* addrlen)
 	{
 		// TODO: negotiate buffer size. For now assume 48K.
-		size_t bufsz = 1024*48;
-		unsigned char buf[1024*48];
+		size_t bufsz = 1024 * 48;
+		unsigned char buf[1024 * 48];
 		sockaddr_in * addr_in = reinterpret_cast<sockaddr_in *>(addr);
 		if (!IsValidSocket())
 		{
@@ -59,7 +58,7 @@ namespace SvSol
 		Err error;
 		if (SVSocketError::Success != (error = PeekFrom(buf, bufsz, bufsz, *addr_in, len)))
 		{
-			std::basic_string<TCHAR> msg = "accept: ";
+			std::string msg = "accept: ";
 			Log(msg + SVSocketError::GetErrorText(error), true);
 			m_socket = InvalidSock;
 			return *this;

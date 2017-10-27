@@ -1,12 +1,12 @@
-//******************************************************************************
-//* COPYRIGHT (c) 2014 by Seidenader
-//* All Rights Reserved
-//******************************************************************************
-//* .Module Name     : SVSocket
-//* .File Name       : $Workfile:   SVSocket.inl  $
-//* ----------------------------------------------------------------------------
-//* .Current Version : $Revision:   1.6  $
-//* .Check In Date   : $Date:   28 Oct 2014 10:46:28  $
+
+//*****************************************************************************
+/// \copyright (c) 2017,2017 by Seidenader Maschinenbau GmbH
+/// \file SVSocket.inl
+/// All Rights Reserved 
+//*****************************************************************************
+//This is a part of the socket library
+/// In this project std::string is used. The project can be used independ of the compileflag 
+///  Unicode.  
 //******************************************************************************
 
 #pragma warning(push)
@@ -14,7 +14,7 @@
 
 namespace SvSol
 {
-	inline std::basic_string<TCHAR> addr2s(const sockaddr_in & addr)
+		inline std::string addr2s(const sockaddr_in & addr)
 	{
 		std::ostringstream os;
 		os << static_cast< short >( addr.sin_addr.S_un.S_un_b.s_b1 ) << '.' <<
@@ -102,13 +102,13 @@ namespace SvSol
 	}
 
 	template<typename API>
-	inline std::basic_string<TCHAR> SVSocket<API>::state()const
+		inline std::string SVSocket<API>::state()const
 	{
-		return std::basic_string<TCHAR>( m_hasOwner ? " owner" : "" ) + ( IsValidSocket() ? "" : " invalid" );
+			return std::string( m_hasOwner ? " owner" : "" ) + ( IsValidSocket() ? "" : " invalid" );
 	}
 
 	template<typename API>
-	inline void  SVSocket<API>::Log(const std::basic_string<TCHAR> & msg, bool full) const
+		inline void  SVSocket<API>::Log(const std::string & msg, bool full) const
 	{
 #if defined (TRACE_THEM_ALL) || defined (TRACE_SOCKET)
 		static int tick = 0;
@@ -161,9 +161,9 @@ namespace SvSol
 	}
 
 	template<typename API>
-	inline Err SVSocket<API>::Bind(const TCHAR* hostAddr, unsigned short portNo)
+		inline Err SVSocket<API>::Bind(const char* hostAddr, unsigned short portNo)
 	{
-		std::basic_string<TCHAR> msg = "bind: ";
+			std::string msg = "bind: ";
 		Err error = SVSocketError::Success;
 		if (IsValidSocket())
 		{
@@ -338,7 +338,7 @@ namespace SvSol
 	}
 
 	template<typename API>
-	inline Err SVSocket<API>::Write(const std::basic_string<TCHAR>& data, bool hasHeader)
+	inline Err SVSocket<API>::Write(const std::string& data, bool hasHeader)
 	{
 		return Write( reinterpret_cast< const unsigned char* >( data.c_str() ), static_cast< int >( data.length() ), hasHeader);
 	}
@@ -416,7 +416,7 @@ namespace SvSol
 				buff += chunk_sz;
 				assert(left >= head.len); // sanity check
 				left -= head.len;
-				head.len = std::min(chunk_sz, left);
+				head.len =  (std::min)(chunk_sz, left);
 				++head.seq;
 				
 			} while ((l_Error != SOCKET_ERROR) && (left != 0));
@@ -478,7 +478,7 @@ namespace SvSol
 					buff += chunk_sz;
 					assert(left >= head.len); // sanity check
 					left -= head.len;
-					head.len = std::min(chunk_sz, left);
+					head.len = (std::min)(chunk_sz, left);
 					++head.seq;
 					//Sleep(1);
 				}
@@ -746,7 +746,7 @@ namespace SvSol
 	}
 
 	template<typename API>
-	inline SVSocketError::ErrorEnum SVSocket<API>::Send( const std::basic_string<TCHAR>& data )
+		inline SVSocketError::ErrorEnum SVSocket<API>::Send( const std::string& data )
 	{
 		SVSocketError::ErrorEnum retVal = SVSocketError::Success;
 		int status = API::send( m_socket, data.c_str(), static_cast< int >( data.size() ), 0 );
