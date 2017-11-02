@@ -27,7 +27,7 @@ SVMathContainerClass::SVMathContainerClass( SVObjectClass* POwner, int StringRes
 	// Identify our input type needs...
 
 	// Input Math Result...
-	inputMathResult.SetInputObjectType( SVMathEquationResultObjectGuid, SVDoubleValueObjectType );
+	inputMathResult.SetInputObjectType(SVMathEquationResultObjectGuid, SVValueObjectType, SVDoubleValueObjectType);
 	inputMathResult.SetObject( GetObjectInfo() );
 	RegisterInputObject( &inputMathResult, _T( "MathResult" ) );
 

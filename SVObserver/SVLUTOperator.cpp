@@ -90,7 +90,7 @@ void SVLUTOperatorClass::init()
 	// Identify our input type needs...
 
 	// input of lut equation...
-	m_inputLUTVectorResult.SetInputObjectType( SVLUTEquationResultObjectGuid, SVByteValueObjectType );
+	m_inputLUTVectorResult.SetInputObjectType(SVLUTEquationResultObjectGuid, SVValueObjectType, SVByteValueObjectType);
 	m_inputLUTVectorResult.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_inputLUTVectorResult, _T( "LUTOperator" ) );
 

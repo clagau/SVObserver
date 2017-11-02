@@ -168,7 +168,7 @@ void SVToolClass::init()
 	AddFriend( pCondition->GetUniqueObjectID() );
 
 	// Identify our input type needs
-	inputConditionBoolObjectInfo.SetInputObjectType( SVConditionalResultObjectGuid, SVBoolValueObjectType );
+	inputConditionBoolObjectInfo.SetInputObjectType(SVConditionalResultObjectGuid, SVValueObjectType, SVBoolValueObjectType);
 	inputConditionBoolObjectInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &inputConditionBoolObjectInfo, _T( "ToolConditionalValue" ) );
 

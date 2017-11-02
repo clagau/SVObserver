@@ -167,7 +167,7 @@ void TableSortAnalyzer::BuildEmbeddedObjectList()
 void TableSortAnalyzer::BuildInputObjectList()
 {
 	// Source Table.
-	m_sortColumnObjectInfo.SetInputObjectType( DoubleSortValueObjectType );
+	m_sortColumnObjectInfo.SetInputObjectType(SVValueObjectType, DoubleSortValueObjectType );
 	m_sortColumnObjectInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_sortColumnObjectInfo, SvO::cInputTag_SortColumn );
 

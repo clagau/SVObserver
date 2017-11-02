@@ -1412,7 +1412,8 @@ HRESULT SVExternalToolTask::AllocateResult (int iIndex)
 		Add( pResult );
 		
 		SVObjectTypeInfoStruct info;
-		info.ObjectType = SVVariantValueObjectType;
+		info.ObjectType = SVValueObjectType;
+		info.SubType = SVVariantValueObjectType;
 		info.EmbeddedID = SVValueObjectGuid;
 		
 		SVVariantValueObjectClass* pValue = dynamic_cast<SVVariantValueObjectClass*>(pResult->getFirstObject(info));

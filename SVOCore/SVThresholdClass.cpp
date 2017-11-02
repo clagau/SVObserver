@@ -90,15 +90,15 @@ void SVThresholdClass::init()
 
 	// Identify our input type needs...
 
-	m_inputUT.SetInputObjectType( SVUpperThresholdEquationResultObjectGuid, SVDoubleValueObjectType );
+	m_inputUT.SetInputObjectType( SVUpperThresholdEquationResultObjectGuid, SVValueObjectType, SVDoubleValueObjectType );
 	m_inputUT.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_inputUT, _T( "UpperThreshold" ) );
 
-	m_inputLT.SetInputObjectType( SVLowerThresholdEquationResultObjectGuid, SVDoubleValueObjectType );
+	m_inputLT.SetInputObjectType( SVLowerThresholdEquationResultObjectGuid, SVValueObjectType, SVDoubleValueObjectType );
 	m_inputLT.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_inputLT, _T( "LowerThreshold" ) );
 
-	m_inputATM.SetInputObjectType( SVAutoThresholdEquationResultObjectGuid, SVDoubleValueObjectType );
+	m_inputATM.SetInputObjectType( SVAutoThresholdEquationResultObjectGuid, SVValueObjectType, SVDoubleValueObjectType );
 	m_inputATM.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_inputATM, _T( "AutoThreshold" ) );
 

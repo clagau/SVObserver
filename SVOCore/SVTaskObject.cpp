@@ -473,7 +473,7 @@ void SVTaskObjectClass::GetInputs(SvUl::InputNameGuidPairList& rList, const SVOb
 
 		if( nullptr != pInputInfo && (SVNotSetObjectType == typeInfo.ObjectType || 
 					( typeInfo.ObjectType == pInputInfo->GetInputObjectInfo().m_ObjectTypeInfo.ObjectType && 
-					( SVNotSetSubObjectType == typeInfo.SubType || typeInfo.SubType == typeInfo.SubType == pInputInfo->GetInputObjectInfo().m_ObjectTypeInfo.SubType))) )
+					( SVNotSetSubObjectType == typeInfo.SubType || typeInfo.SubType == pInputInfo->GetInputObjectInfo().m_ObjectTypeInfo.SubType))) )
 		{
 			SvOi::IObjectClass* pObject = pInputInfo->GetInputObjectInfo().m_pObject;
 			SVString name = "";

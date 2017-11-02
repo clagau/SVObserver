@@ -192,7 +192,7 @@ void TableExcludeAnalyzer::BuildEmbeddedObjectList()
 void TableExcludeAnalyzer::BuildInputObjectList()
 {
 	// Source Table.
-	m_excludeColumnObjectInfo.SetInputObjectType( DoubleSortValueObjectType );
+	m_excludeColumnObjectInfo.SetInputObjectType(SVValueObjectType, DoubleSortValueObjectType);
 	m_excludeColumnObjectInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_excludeColumnObjectInfo, SvO::cInputTag_ExcludeColumn );
 

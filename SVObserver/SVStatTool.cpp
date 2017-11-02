@@ -344,7 +344,8 @@ void SVStatisticsToolClass::AllocateResult (SVStatisticsFeatureEnum aFeatureInde
 		Add( pResult );
 
 		SVObjectTypeInfoStruct info;
-		info.ObjectType = SVDoubleValueObjectType;
+		info.ObjectType = SVValueObjectType;
+		info.SubType = SVDoubleValueObjectType;
 		info.EmbeddedID = SVValueObjectGuid;
 
 		// Get the output of the result

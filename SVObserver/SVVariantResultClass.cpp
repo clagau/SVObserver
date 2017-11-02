@@ -34,7 +34,7 @@ SVVariantResultClass::SVVariantResultClass( BOOL BCreateDefaultTaskList , SVObje
 	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVResultVariantObjectType;
 
 	// Identify our input type needs
-	m_inputObjectInfo.SetInputObjectType( SVVariantValueObjectType );
+	m_inputObjectInfo.SetInputObjectType(SVValueObjectType, SVVariantValueObjectType);
 	m_inputObjectInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_inputObjectInfo, _T( "VariantResultValue" ) );
 
@@ -55,8 +55,8 @@ SVVariantResultClass::SVVariantResultClass( BOOL BCreateDefaultTaskList , SVObje
 	SVObjectTypeInfoStruct interfaceInfo;
 
 	// Declare Input Interface of the SVRangeClass...
-	interfaceInfo.ObjectType = SVVariantValueObjectType;
-//	interfaceInfo.ObjectType = SVVariantValueObjectType;
+	interfaceInfo.ObjectType = SVValueObjectType;
+	interfaceInfo.SubType = SVVariantValueObjectType;
 	interfaceInfo.EmbeddedID = SVValueObjectGuid;
 	rangeClassInfo.m_DesiredInputInterface.Add( interfaceInfo );
 

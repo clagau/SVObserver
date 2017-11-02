@@ -844,6 +844,7 @@ void SVValueObjectClass<T>::Initialize()
 	m_isBucketized = false;
 	m_isStatic = false;
 	m_ResultSize = 1;
+	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVValueObjectType;
 
 	SetObjectAttributesAllowed( SvOi::SV_DEFAULT_VALUE_OBJECT_ATTRIBUTES, SvOi::SetAttributeType::OverwriteAttribute );
 }

@@ -278,7 +278,8 @@ BOOL SVToolAdjustmentDialogPolarTransformPageClass::OnInitDialog()
 
 		// Set up the requestor for the Evaluate result
 		SVObjectTypeInfoStruct resultObjectInfo;
-		resultObjectInfo.ObjectType = SVDoubleValueObjectType;
+		resultObjectInfo.ObjectType = SVValueObjectType;
+		resultObjectInfo.SubType = SVDoubleValueObjectType;
 
 		// Get Evaluate Center X...
 		evaluateObjectInfo.SubType = SVEvaluateCenterXObjectType;		

@@ -25,7 +25,7 @@ SVStringResultClass::SVStringResultClass( SVObjectClass* POwner, int StringResou
 	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVResultStringObjectType;
 
 	// Identify our input type needs
-	m_inputObjectInfo.SetInputObjectType( SVStringValueObjectType );
+	m_inputObjectInfo.SetInputObjectType(SVValueObjectType, SVStringValueObjectType );
 	m_inputObjectInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_inputObjectInfo, _T( "StringResultValue" ) );
 

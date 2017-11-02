@@ -27,7 +27,7 @@ SVLongResultClass::SVLongResultClass( SVObjectClass* POwner, int StringResourceI
 	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVResultLongObjectType;
 
 	// Identify our input type needs
-	m_inputObjectInfo.SetInputObjectType( SVLongValueObjectType );
+	m_inputObjectInfo.SetInputObjectType(SVValueObjectType, SVLongValueObjectType );
 	m_inputObjectInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_inputObjectInfo, SvO::cInputTag_LongResultValue );
 
@@ -45,7 +45,8 @@ SVLongResultClass::SVLongResultClass( SVObjectClass* POwner, int StringResourceI
 	SVObjectTypeInfoStruct interfaceInfo;
 
 	// Declare Input Interface of the SVRangeClass...
-	interfaceInfo.ObjectType = SVLongValueObjectType;
+	interfaceInfo.ObjectType = SVValueObjectType;
+	interfaceInfo.SubType = SVLongValueObjectType;
 	interfaceInfo.EmbeddedID = SVValueObjectGuid;
 	rangeClassInfo.m_DesiredInputInterface.Add( interfaceInfo );
 
@@ -82,7 +83,7 @@ bool SVLongResultClass::CreateObject( const SVObjectLevelCreateStruct& rCreateSt
 
 const GUID & SVLongResultClass::GetInputEmbeddedID() const
 {
-	if (nullptr != getInput() && SVLongValueObjectType == getInput()->GetObjectType())
+	if (nullptr != getInput() && SVLongValueObjectType == getInput()->GetObjectSubType())
 	{
 		return getInput()->GetEmbeddedID();
 	}

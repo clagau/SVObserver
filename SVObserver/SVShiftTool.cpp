@@ -431,11 +431,11 @@ void SVShiftTool::LocalInitialize()
 	m_ImageInput.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_ImageInput, _T( "ShiftToolImage" ) );
 
-	m_TranslationXInput.SetInputObjectType( SVOutputEvaluateTranslationXResultObjectGuid, SVDoubleValueObjectType );
+	m_TranslationXInput.SetInputObjectType(SVOutputEvaluateTranslationXResultObjectGuid, SVValueObjectType, SVDoubleValueObjectType);
 	m_TranslationXInput.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_TranslationXInput, _T( "ShiftToolTranslationX" ) );
 
-	m_TranslationYInput.SetInputObjectType( SVOutputEvaluateTranslationYResultObjectGuid, SVDoubleValueObjectType );
+	m_TranslationYInput.SetInputObjectType( SVOutputEvaluateTranslationYResultObjectGuid, SVValueObjectType, SVDoubleValueObjectType );
 	m_TranslationYInput.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_TranslationYInput, _T( "ShiftToolTranslationY" ) );
 

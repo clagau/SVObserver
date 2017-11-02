@@ -252,7 +252,7 @@ namespace SvOg {
 			HRESULT hr = E_INVALIDARG;
 			typedef SvCmd::ConnectToObject Command;
 			typedef SVSharedPtr<Command> CommandPtr;
-			CommandPtr commandPtr = new Command(m_selectedAnalyzerID, m_inputName, columnGuid, DoubleSortValueObjectType);
+			CommandPtr commandPtr = new Command(m_selectedAnalyzerID, m_inputName, columnGuid, SVValueObjectType);
 			SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 			hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 			if ( S_OK != hr )
@@ -447,7 +447,7 @@ namespace SvOg {
 		typedef SvCmd::GetAvailableObjects Command;
 		typedef SVSharedPtr<Command> CommandPtr;
 
-		CommandPtr commandPtr = new Command(m_TaskObjectID, SVObjectTypeInfoStruct(DoubleSortValueObjectType, SVNotSetSubObjectType));
+		CommandPtr commandPtr = new Command(m_TaskObjectID, SVObjectTypeInfoStruct(SVValueObjectType, DoubleSortValueObjectType));
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		if (S_OK == hr)
@@ -551,7 +551,7 @@ namespace SvOg {
 		SVString selectedTableName;
 		typedef SvCmd::GetInputs Command;
 		typedef SVSharedPtr<Command> CommandPtr;
-		CommandPtr commandPtr = new Command(m_selectedAnalyzerID, SVObjectTypeInfoStruct(DoubleSortValueObjectType, SVNotSetSubObjectType));
+		CommandPtr commandPtr = new Command(m_selectedAnalyzerID, SVObjectTypeInfoStruct(SVValueObjectType, DoubleSortValueObjectType));
 		SVObjectSynchronousCommandTemplate<CommandPtr> cmd(m_InspectionID, commandPtr);
 		HRESULT hr = cmd.Execute(TWO_MINUTE_CMD_TIMEOUT);
 		if (S_OK == hr)

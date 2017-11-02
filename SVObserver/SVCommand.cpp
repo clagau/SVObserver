@@ -4972,7 +4972,7 @@ STDMETHODIMP CSVCommand::SVGetTransferValueDefinitionList(BSTR bstrInspectionNam
 			// Enumeration List.
 			l_Index[1] = 3;
 			Value.Clear();
-			if( SelectedObjects[i]->GetObjectType() == SVEnumValueObjectType)
+			if( SelectedObjects[i]->GetObjectSubType() == SVEnumValueObjectType)
 			{
 				// Get the strings from the enumeration value object class.
 				SVEnumerateValueObjectClass* l_pEnumVO = dynamic_cast<SVEnumerateValueObjectClass*>(SelectedObjects[i]);
@@ -4994,7 +4994,7 @@ STDMETHODIMP CSVCommand::SVGetTransferValueDefinitionList(BSTR bstrInspectionNam
 					Value.parray = l_psaTemp;
 				}
 			}
-			else if( SelectedObjects[i]->GetObjectType() == SVBoolValueObjectType)
+			else if( SelectedObjects[i]->GetObjectSubType() == SVBoolValueObjectType)
 			{
 				// Get the strings from the enumeration value object class.
 				SVBoolValueObjectClass* l_pBoolVO = dynamic_cast<SVBoolValueObjectClass*>(SelectedObjects[i]);

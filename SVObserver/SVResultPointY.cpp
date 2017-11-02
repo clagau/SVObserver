@@ -27,7 +27,7 @@ SVPointYResultClass::SVPointYResultClass( SVObjectClass* POwner, int StringResou
 
 	// Identify our input type needs
 	
-	m_inputObjectInfo.SetInputObjectType( SVPointValueObjectType );
+	m_inputObjectInfo.SetInputObjectType(SVValueObjectType, SVPointValueObjectType );
 	m_inputObjectInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_inputObjectInfo, _T( "PointYResultValue" ) );
 
@@ -46,7 +46,8 @@ SVPointYResultClass::SVPointYResultClass( SVObjectClass* POwner, int StringResou
 	SVObjectTypeInfoStruct interfaceInfo;
 
 	// Declare Input Interface of the SVRangeClass...
-	interfaceInfo.ObjectType = SVLongValueObjectType;
+	interfaceInfo.ObjectType = SVValueObjectType;
+	interfaceInfo.SubType = SVLongValueObjectType;
 	interfaceInfo.EmbeddedID = SVYObjectGuid;
 	rangeClassInfo.m_DesiredInputInterface.Add( interfaceInfo );
 

@@ -33,7 +33,7 @@
 
 typedef std::vector<SVString> split_vector_type;
 
-typedef std::map<SVObjectTypeEnum, SVObjectScriptDataObjectTypeEnum> ObjectTypeTable;
+typedef std::map<SVObjectSubTypeEnum, SVObjectScriptDataObjectTypeEnum> ObjectTypeTable;
 
 static ObjectTypeTable typeTable = boost::assign::map_list_of<>
 (SVBoolValueObjectType, SV_BOOL_Type)
@@ -447,7 +447,7 @@ HRESULT SVObjectBuilder::GetObjectDataType(const GUID& ownerID, const GUID& obje
 	/////////////////////////////////////////////////////////////////////
 	if (pOwnerObject && pObject)
 	{
-		SVObjectTypeEnum type = pObject->GetObjectType();
+		SVObjectSubTypeEnum type = pObject->GetObjectSubType();
 		dataType = SV_UNKNOWN_Type;
 		ObjectTypeTable::const_iterator it = typeTable.find(type);
 		if (it != typeTable.end())

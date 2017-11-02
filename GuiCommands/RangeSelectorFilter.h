@@ -20,10 +20,10 @@ namespace SvCmd
 	class RangeSelectorFilter
 	{
 	private:
-		std::set<SVObjectTypeEnum> m_filter;
+		std::set<SVObjectSubTypeEnum> m_filter;
 		SVString m_excludePath;
 
-		static bool IsExcluded(SVObjectTypeEnum type, const std::set<SVObjectTypeEnum>& rFilter)
+		static bool IsExcluded(SVObjectSubTypeEnum type, const std::set<SVObjectSubTypeEnum>& rFilter)
 		{
 			return (rFilter.size() > 0 && rFilter.end() == rFilter.find(type));
 		}
@@ -44,7 +44,7 @@ namespace SvCmd
 			return bSame;
 		}
 
-		static bool IsAllowed(SVObjectTypeEnum type, UINT attributesFilter, UINT attributesAllowed, const SVString& name, const std::set<SVObjectTypeEnum>& filter, const SVString& excludePath)
+		static bool IsAllowed(SVObjectSubTypeEnum type, UINT attributesFilter, UINT attributesAllowed, const SVString& name, const std::set<SVObjectSubTypeEnum>& filter, const SVString& excludePath)
 		{
 			return (HasAttribute(attributesFilter, attributesAllowed) && !IsSameLineage(name, excludePath) && !IsExcluded(type, filter));
 		}
@@ -59,7 +59,7 @@ namespace SvCmd
 				(DoubleSortValueObjectType)
 				(SVBoolValueObjectType)
 				(SVPointValueObjectType)
-				(SVByteValueObjectType)).convert_to_container<std::set<SVObjectTypeEnum>>())
+				(SVByteValueObjectType)).convert_to_container<std::set<SVObjectSubTypeEnum>>())
 
 		{
 		}
@@ -69,7 +69,7 @@ namespace SvCmd
 			bool bRetVal = false;
 			if (pObject)
 			{
-				const SVObjectTypeEnum& type = pObject->GetObjectType();
+				const SVObjectSubTypeEnum& type = pObject->GetObjectSubType();
 				const UINT attributesAllowed = pObject->ObjectAttributesAllowed();
 				const SVString& name = pObject->GetCompleteName();
 				bRetVal = IsAllowed(type, attributeMask, attributesAllowed, name, m_filter, m_excludePath);

@@ -26,7 +26,7 @@ SVDoubleResultClass::SVDoubleResultClass( SVObjectClass* POwner, int StringResou
 	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVResultDoubleObjectType;
 
 	// Identify our input type needs
-	m_inputObjectInfo.SetInputObjectType( SVDoubleValueObjectType );
+	m_inputObjectInfo.SetInputObjectType( SVValueObjectType, SVDoubleValueObjectType );
 	m_inputObjectInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_inputObjectInfo, _T( "DoubleResultValue" ) );
 
@@ -43,7 +43,8 @@ SVDoubleResultClass::SVDoubleResultClass( SVObjectClass* POwner, int StringResou
 	SVObjectTypeInfoStruct interfaceInfo;
 
 	// Declare Input Interface of the SVRangeClass...
-	interfaceInfo.ObjectType = SVDoubleValueObjectType;
+	interfaceInfo.ObjectType = SVValueObjectType;
+	interfaceInfo.SubType = SVDoubleValueObjectType;
 	interfaceInfo.EmbeddedID = SVValueObjectGuid;
 	rangeClassInfo.m_DesiredInputInterface.Add( interfaceInfo );
 

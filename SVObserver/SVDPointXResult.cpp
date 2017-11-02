@@ -29,7 +29,7 @@ SVDPointXResultClass::SVDPointXResultClass( SVObjectClass* POwner, int StringRes
 	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVResultDPointXObjectType;
 
 	// Identify our input type needs
-	m_inputObjectInfo.SetInputObjectType( SVDPointValueObjectType );
+	m_inputObjectInfo.SetInputObjectType(SVValueObjectType, SVDPointValueObjectType);
 	m_inputObjectInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_inputObjectInfo, _T( "DPointXResult" ) );
 
@@ -48,7 +48,8 @@ SVDPointXResultClass::SVDPointXResultClass( SVObjectClass* POwner, int StringRes
 	SVObjectTypeInfoStruct interfaceInfo;
 
 	// Declare Input Interface of the SVRangeClass...
-	interfaceInfo.ObjectType = SVDoubleValueObjectType;
+	interfaceInfo.ObjectType = SVValueObjectType;
+	interfaceInfo.SubType = SVDoubleValueObjectType;
 	interfaceInfo.EmbeddedID = SVDXObjectGuid;
 	rangeClassInfo.m_DesiredInputInterface.Add( interfaceInfo );
 

@@ -40,15 +40,15 @@ SVLinearEdgeProcessingClass::SVLinearEdgeProcessingClass( SVObjectClass* POwner,
 	m_svInputImageObjectInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_svInputImageObjectInfo, _T( "LinearEdgeProcessingImage" ) );
 
-	m_svInputMinThreshold.SetInputObjectType( SVLinearThresholdMinObjectGuid, SVDoubleValueObjectType );
+	m_svInputMinThreshold.SetInputObjectType( SVLinearThresholdMinObjectGuid, SVValueObjectType, SVDoubleValueObjectType );
 	m_svInputMinThreshold.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_svInputMinThreshold, _T( "LinearEdgeProcessingMinThreshold" ) );
 
-	m_svInputMaxThreshold.SetInputObjectType( SVLinearThresholdMaxObjectGuid, SVDoubleValueObjectType );
+	m_svInputMaxThreshold.SetInputObjectType( SVLinearThresholdMaxObjectGuid, SVValueObjectType, SVDoubleValueObjectType );
 	m_svInputMaxThreshold.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_svInputMaxThreshold, _T( "LinearEdgeProcessingMaxThreshold" ) );
 
-	m_svInputLinearData.SetInputObjectType( SVLinearDataClassGuid, SVDoubleValueObjectType );
+	m_svInputLinearData.SetInputObjectType( SVLinearDataClassGuid, SVValueObjectType, SVDoubleValueObjectType );
 	m_svInputLinearData.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_svInputLinearData, _T( "LinearEdgeProcessingInputLinearData" ) );
 

@@ -80,7 +80,7 @@ SVBarCodeResultClass::SVBarCodeResultClass(SVObjectClass* POwner, int StringReso
 	m_inputObjectInfo.SetInputObjectType( SVBarCodeObjectGuid );
 
 	// Identify our input type needs
-	m_SVRegExpressionObjectInfo.SetInputObjectType( SVRegExpressionObjectGuid, SVStringValueObjectType );
+	m_SVRegExpressionObjectInfo.SetInputObjectType(SVRegExpressionObjectGuid, SVValueObjectType, SVStringValueObjectType);
 	m_SVRegExpressionObjectInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_SVRegExpressionObjectInfo, _T( "BarCodeResultString" ) );
 }

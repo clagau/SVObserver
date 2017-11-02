@@ -121,7 +121,7 @@ void SVCharValueObjectClass::WriteDefaultValues(SVObjectWriter& rWriter)
 
 void SVCharValueObjectClass::LocalInitialize()
 {
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVCharValueObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVCharValueObjectType;
 	DefaultValue() = 0;
 	SetTypeName( _T("Char") );
 	setOutputFormat( _T("%c") );

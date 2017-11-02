@@ -110,7 +110,7 @@ bool ToolSizeAdjustTask::AddEvaluationObject(SVInObjectInfoStruct* pInfo, GUID c
 		return false;
 	}
 
-	pInfo->SetInputObjectType( pAdjustSize->GetResultGuid(), SVDoubleValueObjectType );
+	pInfo->SetInputObjectType(pAdjustSize->GetResultGuid(), SVValueObjectType, SVDoubleValueObjectType);
 	pInfo->SetObject( GetObjectInfo() );
 	return RegisterInputObject( pInfo, Name );
 }

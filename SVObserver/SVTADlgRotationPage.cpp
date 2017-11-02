@@ -122,7 +122,8 @@ BOOL SVToolAdjustmentDialogRotationPageClass::OnInitDialog()
 	
 		// Set up the requestor for the evaluate result object
 		SVObjectTypeInfoStruct resultObjectInfo;
-		resultObjectInfo.ObjectType = SVDoubleValueObjectType;
+		resultObjectInfo.ObjectType = SVValueObjectType;
+		resultObjectInfo.SubType = SVDoubleValueObjectType;
 		
 		// Get Evaluate Object for the X coordinate...
 		evaluateObjectInfo.SubType = SVEvaluateRotationXObjectType;
@@ -156,12 +157,13 @@ BOOL SVToolAdjustmentDialogRotationPageClass::OnInitDialog()
 		
 		// Get Rotation enabled...
 		SVObjectTypeInfoStruct objectInfo;
-		objectInfo.ObjectType = SVBoolValueObjectType;
+		objectInfo.ObjectType = SVValueObjectType;
+		objectInfo.SubType = SVBoolValueObjectType;
 		objectInfo.EmbeddedID = SVPerformRotationObjectGuid;
 		m_pPerformRotation = dynamic_cast<SVBoolValueObjectClass*>(m_pTool->getFirstObject(objectInfo));
 
 		// Interpolation Mode
-		objectInfo.ObjectType = SVEnumValueObjectType;
+		objectInfo.SubType = SVEnumValueObjectType;
 		objectInfo.EmbeddedID = SVOutputInterpolationModeObjectGuid;
 		m_pInterpolationMode = dynamic_cast<SVEnumerateValueObjectClass*>(m_pTool->getFirstObject(objectInfo));
 		if( nullptr != m_pInterpolationMode )

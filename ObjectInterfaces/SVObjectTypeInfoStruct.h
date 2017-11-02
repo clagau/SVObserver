@@ -65,19 +65,7 @@
 			SVLinearEdgeProcessingObjectType        = 0x00000060,
 			SVBasicValueObjectType			        = 0x00000061,
 
-			SVDWordValueObjectType					= 0x00000100,
-			SVLongValueObjectType					= 0x00000101,
-			SVDoubleValueObjectType					= 0x00000102,
-			SVBoolValueObjectType					= 0x00000103,
-			SVPointValueObjectType					= 0x00000104,
-			SVByteValueObjectType					= 0x00000105,
-			SVStringValueObjectType					= 0x00000106,
-			SVEnumValueObjectType					= 0x00000107,
-			SVDPointValueObjectType					= 0x00000108,
-			SVInt64ValueObjectType					= 0x00000109,
-			SVCharValueObjectType					= 0x0000010A,
-			SVVariantValueObjectType				= 0x0000010B,
-			DoubleSortValueObjectType				= 0x0000010C,
+			SVValueObjectType						= 0x00000200,
 
 			SVOperatorObjectType					= 0x00001000,
 			SVBinaryOperatorObjectType				= 0x00002000,
@@ -274,6 +262,21 @@
 			TableAnalyzerSortType					= 0x00004010,
 			TableAnalyzerExcludeType				= 0x00004011,
 			TableAnalyzerLimitType					= 0x00004012,
+
+			//ValueObject SubTypes
+			SVDWordValueObjectType = 0x00005000,
+			SVLongValueObjectType = 0x00005001,
+			SVDoubleValueObjectType = 0x00005002,
+			SVBoolValueObjectType = 0x00005003,
+			SVPointValueObjectType = 0x00005004,
+			SVByteValueObjectType = 0x00005005,
+			SVStringValueObjectType = 0x00005006,
+			SVEnumValueObjectType = 0x00005007,
+			SVDPointValueObjectType = 0x00005008,
+			SVInt64ValueObjectType = 0x00005009,
+			SVCharValueObjectType = 0x0000500A,
+			SVVariantValueObjectType = 0x0000500B,
+			DoubleSortValueObjectType = 0x0000500C,
 
 			// unknown
 			SVRegressionTestModeObjectType				= 0x00011010,

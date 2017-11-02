@@ -38,11 +38,11 @@ SVImageArithmeticClass::SVImageArithmeticClass( SVObjectClass* POwner, int Strin
 	m_InputImageAInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_InputImageAInfo, _T( "ImageArithmeticAImage" ) );
 	// Enable Offset
-	m_InputEnableOffsetAInfo.SetInputObjectType( SVEnableOffsetAObjectGuid, SVBoolValueObjectType );
+	m_InputEnableOffsetAInfo.SetInputObjectType(SVEnableOffsetAObjectGuid, SVValueObjectType, SVBoolValueObjectType);
 	m_InputEnableOffsetAInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_InputEnableOffsetAInfo, _T( "ImageArithmeticAEnableOffset" ) );
 	// Offset Point
-	m_InputOffsetAPointInfo.SetInputObjectType( SVOffsetAPointObjectGuid, SVPointValueObjectType );
+	m_InputOffsetAPointInfo.SetInputObjectType(SVOffsetAPointObjectGuid, SVValueObjectType, SVPointValueObjectType);
 	m_InputOffsetAPointInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_InputOffsetAPointInfo, _T( "ImageArithmeticAOffsetPoint" ) );
 
@@ -52,16 +52,16 @@ SVImageArithmeticClass::SVImageArithmeticClass( SVObjectClass* POwner, int Strin
 	m_InputImageBInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_InputImageBInfo, _T( "ImageArithmeticBImage" ) );
 	// Enable Offset
-	m_InputEnableOffsetBInfo.SetInputObjectType( SVEnableOffsetBObjectGuid, SVBoolValueObjectType );
+	m_InputEnableOffsetBInfo.SetInputObjectType( SVEnableOffsetBObjectGuid, SVValueObjectType, SVBoolValueObjectType );
 	m_InputEnableOffsetBInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_InputEnableOffsetBInfo, _T( "ImageArithmeticBEnableOffset" ) );
 	// Offset Point
-	m_InputOffsetBPointInfo.SetInputObjectType( SVOffsetBPointObjectGuid, SVPointValueObjectType );
+	m_InputOffsetBPointInfo.SetInputObjectType( SVOffsetBPointObjectGuid, SVValueObjectType, SVPointValueObjectType );
 	m_InputOffsetBPointInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_InputOffsetBPointInfo, _T( "ImageArithmeticBOffsetPoint" ) );
 
 	// Operator Input...
-	m_InputArithmaticOperatorInfo.SetInputObjectType( SVArithmeticOperatorObjectGuid, SVLongValueObjectType );
+	m_InputArithmaticOperatorInfo.SetInputObjectType( SVArithmeticOperatorObjectGuid, SVValueObjectType, SVLongValueObjectType );
 	m_InputArithmaticOperatorInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_InputArithmaticOperatorInfo, _T( "ImageArithmeticOperator" ) );
 

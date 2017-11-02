@@ -435,7 +435,8 @@ DWORD SVBlobAnalyzerClass::AllocateResult (SVBlobFeatureEnum aFeatureIndex)
 		Add( pResult );
 
 		SVObjectTypeInfoStruct info;
-		info.ObjectType = SVDoubleValueObjectType;
+		info.ObjectType = SVValueObjectType;
+		info.SubType = SVDoubleValueObjectType;
 		info.EmbeddedID = SVValueObjectGuid;
 
 		SVDoubleValueObjectClass* pValue = dynamic_cast<SVDoubleValueObjectClass*>( getFirstObject( info ) );
@@ -530,7 +531,7 @@ DWORD SVBlobAnalyzerClass::AllocateBlobResult ()
 		Add( m_pResultBlob );
 		
 		SVObjectTypeInfoStruct info;
-		info.ObjectType = SVLongValueObjectType;
+		info.SubType = SVLongValueObjectType;
 		info.EmbeddedID = SVValueObjectGuid;
 		
 		SVLongValueObjectClass* pValue = dynamic_cast<SVLongValueObjectClass*>( getFirstObject( info ) );

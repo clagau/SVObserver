@@ -442,7 +442,7 @@ void SVEnumerateValueObjectClass::WriteDefaultValues(SVObjectWriter& rWriter)
 
 void SVEnumerateValueObjectClass::LocalInitialize()
 {
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVEnumValueObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVEnumValueObjectType;
 
 	SetTypeName( _T("Enumeration") );
 

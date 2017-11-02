@@ -40,11 +40,11 @@ SVLinearAnalyzerClass::SVLinearAnalyzerClass( SVObjectClass* POwner, int StringR
 	m_svInputImageObjectInfo.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_svInputImageObjectInfo, _T( "LinearAnalyzerImage" ) );
 
-	m_svInputProfileOrientation.SetInputObjectType( SVProfileOrientationGuid, SVEnumValueObjectType );
+	m_svInputProfileOrientation.SetInputObjectType( SVProfileOrientationGuid, SVValueObjectType, SVEnumValueObjectType );
 	m_svInputProfileOrientation.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_svInputProfileOrientation, _T( "LinearAnalyzerOrientation" ) );
 
-	m_svInputUseRotationAngle.SetInputObjectType( SVLinearToolUseRotationGuid, SVBoolValueObjectType );
+	m_svInputUseRotationAngle.SetInputObjectType( SVLinearToolUseRotationGuid, SVValueObjectType, SVBoolValueObjectType );
 	m_svInputUseRotationAngle.SetObject( GetObjectInfo() );
 	RegisterInputObject( &m_svInputUseRotationAngle, _T( "LinearAnalyzerUseRotationAngle" ) );
 

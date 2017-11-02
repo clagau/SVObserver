@@ -400,11 +400,11 @@ void SVLinearImageOperatorListClass::init()
 	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVUnaryImageOperatorListObjectType;
 	m_outObjectInfo.m_ObjectTypeInfo.SubType	= SVLinearImageOperatorListObjectType;
 
-	inputProfileOrientation.SetInputObjectType( SVProfileOrientationGuid, SVEnumValueObjectType );
+	inputProfileOrientation.SetInputObjectType( SVProfileOrientationGuid, SVValueObjectType, SVEnumValueObjectType );
 	inputProfileOrientation.SetObject( GetObjectInfo() );
 	RegisterInputObject( &inputProfileOrientation, _T( "LinearImageOperatorListProfileOrientation" ) );
 
-	inputUseRotationAngle.SetInputObjectType( SVLinearToolUseRotationGuid, SVBoolValueObjectType );
+	inputUseRotationAngle.SetInputObjectType( SVLinearToolUseRotationGuid, SVValueObjectType, SVBoolValueObjectType );
 	inputUseRotationAngle.SetObject( GetObjectInfo() );
 	RegisterInputObject( &inputUseRotationAngle, _T( "LinearImageOperatorListUseRotationAngle" ) );
 

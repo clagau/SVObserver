@@ -101,17 +101,20 @@ SVToolAdjustmentDialogThresholdPageClass::SVToolAdjustmentDialogThresholdPageCla
 				// Try to get Threshold Embeddeds...
 
 				SVObjectTypeInfoStruct infoATM;
-				infoATM.ObjectType = SVBoolValueObjectType;
+				infoATM.ObjectType = SVValueObjectType;
+				infoATM.SubType = SVBoolValueObjectType;
 				infoATM.EmbeddedID = SVUseExternalATMObjectGuid;
 				m_pUseExternATM = dynamic_cast<SVBoolValueObjectClass*>(m_pCurrentThreshold->getFirstObject(infoATM));
 
 				SVObjectTypeInfoStruct infoLT;
-				infoLT.ObjectType = SVBoolValueObjectType;
+				infoLT.ObjectType = SVValueObjectType;
+				infoLT.SubType = SVBoolValueObjectType;
 				infoLT.EmbeddedID = SVUseExternalLTObjectGuid;
 				m_pUseExternLT = dynamic_cast<SVBoolValueObjectClass*>(m_pCurrentThreshold->getFirstObject(infoLT));
 
 				SVObjectTypeInfoStruct infoUT;
-				infoUT.ObjectType = SVBoolValueObjectType;
+				infoUT.ObjectType = SVValueObjectType;
+				infoUT.SubType = SVBoolValueObjectType;
 				infoUT.EmbeddedID = SVUseExternalUTObjectGuid;
 				m_pUseExternUT = dynamic_cast<SVBoolValueObjectClass*>(m_pCurrentThreshold->getFirstObject(infoUT));
 			}

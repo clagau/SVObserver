@@ -234,7 +234,8 @@ BOOL SVToolAdjustmentDialogTransformationLearnPageClass::OnInitDialog()
 
 		// Prep Requestor for Results
 		SVObjectTypeInfoStruct resultObjectInfo;
-		resultObjectInfo.ObjectType = SVDoubleValueObjectType;
+		resultObjectInfo.ObjectType = SVValueObjectType;
+		resultObjectInfo.SubType = SVDoubleValueObjectType;
 
 		// Get Evaluate Object for Translation X Coordinate...
 		evaluateObjectInfo.SubType	   = SVEvaluateTranslationXObjectType;
@@ -288,7 +289,8 @@ BOOL SVToolAdjustmentDialogTransformationLearnPageClass::OnInitDialog()
 
 		// Get Rotation enabled...
 		SVObjectTypeInfoStruct objectInfo;
-		objectInfo.ObjectType = SVBoolValueObjectType;
+		objectInfo.ObjectType = SVValueObjectType;
+		objectInfo.SubType = SVBoolValueObjectType;
 		objectInfo.EmbeddedID = SVPerformRotationObjectGuid;
 		pPerformRotation = dynamic_cast<SVBoolValueObjectClass*>(pTool->getFirstObject(objectInfo));
 
@@ -306,7 +308,8 @@ BOOL SVToolAdjustmentDialogTransformationLearnPageClass::OnInitDialog()
 		{
 			// Get learned Objects...
 			SVObjectTypeInfoStruct learnedObjectInfo;
-			learnedObjectInfo.ObjectType = SVDoubleValueObjectType;
+			learnedObjectInfo.ObjectType = SVValueObjectType;
+			learnedObjectInfo.SubType = SVDoubleValueObjectType;
 
 			// Get learned Translation X Object...
 			learnedObjectInfo.EmbeddedID = SVLearnedTranslationXObjectGuid;

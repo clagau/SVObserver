@@ -154,7 +154,7 @@ void SVByteValueObjectClass::WriteDefaultValues(SVObjectWriter& rWriter)
 
 void SVByteValueObjectClass::LocalInitialize()
 {
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVByteValueObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVByteValueObjectType;
 	DefaultValue() = 0;
 	SetTypeName( _T("Integer8") );
 	InitializeBuckets();

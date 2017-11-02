@@ -93,7 +93,7 @@ void SVInt64ValueObjectClass::WriteDefaultValues(SVObjectWriter& rWriter)
 
 void SVInt64ValueObjectClass::LocalInitialize()
 {
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVInt64ValueObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVInt64ValueObjectType;
 	DefaultValue() = 0;
 	SetTypeName( _T("Integer64") );
 

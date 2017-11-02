@@ -30,13 +30,13 @@ namespace SvCmd
 			{
 				if (nullptr != pObject)
 				{
-					Result = IsAllowedType(pObject->GetObjectType());
+					Result = IsAllowedType(pObject->GetObjectSubType());
 				}
 			}
 			return Result;
 		}
 	private:
-		static bool IsAllowedType(SVObjectTypeEnum type)
+		static bool IsAllowedType(SVObjectSubTypeEnum type)
 		{
 			switch (type)
 			{
@@ -45,7 +45,7 @@ namespace SvCmd
 			case 	SVDoubleValueObjectType:
 			case	SVBoolValueObjectType:
 			case	SVByteValueObjectType:
-			case 		SVInt64ValueObjectType:
+			case 	SVInt64ValueObjectType:
 			case	DoubleSortValueObjectType:
 				return true;
 			default:

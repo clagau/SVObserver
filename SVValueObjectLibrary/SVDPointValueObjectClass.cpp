@@ -163,7 +163,7 @@ void SVDPointValueObjectClass::WriteDefaultValues(SVObjectWriter& rWriter)
 
 void SVDPointValueObjectClass::LocalInitialize()
 {
-	m_outObjectInfo.m_ObjectTypeInfo.ObjectType = SVDPointValueObjectType;
+	m_outObjectInfo.m_ObjectTypeInfo.SubType = SVDPointValueObjectType;
 
 	SetObjectAttributesAllowed( SvOi::SV_VIEWABLE | SvOi::SV_ARCHIVABLE | SvOi::SV_EMBEDABLE | SvOi::SV_PRINTABLE | SvOi::SV_DD_VALUE, SvOi::SetAttributeType::OverwriteAttribute );
 

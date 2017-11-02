@@ -871,7 +871,7 @@ HRESULT SVVisionProcessorHelper::GetObjectDefinition( const SVObjectClass& rObje
 			rDataDef.m_Type = _T("Image");
 		}
 		//This part fills the additional info section
-		if( SVEnumValueObjectType == rObject.GetObjectType() )
+		if( SVEnumValueObjectType == rObject.GetObjectSubType() )
 		{
 			// Get the strings from the enumeration value object class.
 			const SVEnumerateValueObjectClass* l_pEnumVO = dynamic_cast<const SVEnumerateValueObjectClass*> (&rObject);
@@ -887,7 +887,7 @@ HRESULT SVVisionProcessorHelper::GetObjectDefinition( const SVObjectClass& rObje
 				}
 			}
 		}
-		else if( SVBoolValueObjectType == rObject.GetObjectType() )
+		else if( SVBoolValueObjectType == rObject.GetObjectSubType() )
 		{
 			// Get the strings from the enumeration value object class.
 			const SVBoolValueObjectClass* l_pBoolVO = dynamic_cast<const SVBoolValueObjectClass*> (&rObject);

@@ -89,7 +89,8 @@ BOOL SVTADlgColorThresholdROI::OnInitDialog()
 	{
 		// Get Train Color Extent Variables
 		SVObjectTypeInfoStruct extentObjectInfo;
-		extentObjectInfo.ObjectType = SVDoubleValueObjectType;
+		extentObjectInfo.ObjectType = SVValueObjectType;
+		extentObjectInfo.SubType = SVDoubleValueObjectType;
 
 		// Get Train Color ROI Extent Left Object...
 		extentObjectInfo.EmbeddedID = SVExtentRelativeLeftPositionObjectGuid;

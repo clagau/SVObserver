@@ -84,7 +84,8 @@ BOOL SVToolAdjustmentDialogTranslationPageClass::OnInitDialog()
 
 		// Interpolation Mode
 		SVObjectTypeInfoStruct objectInfo;
-		objectInfo.ObjectType = SVEnumValueObjectType;
+		objectInfo.ObjectType = SVValueObjectType;
+		objectInfo.SubType = SVEnumValueObjectType;
 		objectInfo.EmbeddedID = SVOutputInterpolationModeObjectGuid;
 		m_pInterpolationMode = dynamic_cast<SVEnumerateValueObjectClass*>(m_pTool->getFirstObject(objectInfo));
 		if( m_pInterpolationMode )
